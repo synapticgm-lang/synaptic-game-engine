@@ -29,6 +29,7 @@ import {
 import { resolvePanelBudget } from './panelBudget';
 import { buildVisualConsistencyBlock } from './visualConsistency';
 import { fallbackSuggestionForState, findUnsupportedItemClaims, isSuggestionValidForState } from './suggestionValidation';
+import { isChoiceGroundedInTurn, resolvePipelineChoices } from './choicePipeline';
 import { sanitizeNarrativeMechanics } from './narrativeSanitize';
 import { extractUpdates, extractNewItems, parseActionTags, stripActionTags, matchLoreCards, eventsToLoreCards, parseTurnFrame, eventsToQuestUpdates, eventsToEncounterUpdate, parsePanels, eventsToMilestone, eventsToLootVideo, eventsToVisualUpdate, stripChoiceList, extractChoiceLines } from './parser';
 import { inferItemType } from './salvage';
@@ -1220,7 +1221,33 @@ Do NOT print dice notation, d20 lines, modifiers, DCs, or "Strength Check:" text
       const suggestionState: GameState = newLoreCards.length > 0
         ? { ...liveCurrent, lorebook: [...(liveCurrent.lorebook ?? []), ...newLoreCards] }
         : liveCurrent;
-      const parsedChoices = extractChoicesFromText(result.text, suggestionState);
+      // Choice tier (4-tier pipeline): ground options in this turn's story prose + active info cards.
+      // Rejects unprompted environmental events / plot jumps and regenerates when needed.
+      const pipelineChoices = await resolvePipelineChoices({
+        gmText: result.text,
+        state: suggestionState,
+        loreCards: activeLoreCards,
+        settings: settingsRef.current,
+      });
+      const habitAugmented = extractChoicesFromText(
+        pipelineChoices.choices.map((c, i) => `${i + 1}. ${c}`).join('\n'),
+        suggestionState
+      );
+      const storyProseForChoices = stripChoiceList(result.text);
+      const parsedChoices = (habitAugmented.length > 0 ? habitAugmented : pipelineChoices.choices)
+        .filter((choice) => isChoiceGroundedInTurn(choice, storyProseForChoices, suggestionState, activeLoreCards))
+        .slice(0, 4);
+      const finalChoices =
+        parsedChoices.length > 0
+          ? parsedChoices
+          : pipelineChoices.choices.slice(0, 4);
+      if (pipelineChoices.regenerated || pipelineChoices.rejectedCount > 0) {
+        debugLogger.record('STATE_UPDATE', 'Choice pipeline enforced turn grounding', {
+          regenerated: pipelineChoices.regenerated,
+          rejectedCount: pipelineChoices.rejectedCount,
+          finalCount: finalChoices.length,
+        });
+      }
       const isComicView = shouldUseComicGrid(
         settingsRef.current,
         comicModeRef.current,
@@ -1381,7 +1408,7 @@ Do NOT print dice notation, d20 lines, modifiers, DCs, or "Strength Check:" text
         lorebook: mergedLorebook,
         turn: liveCurrent.turn + 1,
         pendingImagePrompt: result.imagePrompt,
-        choices: parsedChoices,
+        choices: finalChoices,
         ...(turnFrame ? { turnFrameTheme: turnFrame } : {}),
       };
 

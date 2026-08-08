@@ -185,7 +185,7 @@ export async function callGm(
     systemPrompt += `\n\n[IMAGE GENERATION RULE]\nWhen creating a [CINEMATIC SCENE PROMPT], if any of the following entities are in the scene, you MUST append their exact visual description to the prompt:\n${activeAnchors.join('\n')}`;
   }
 
-  const prompt = buildContextPrompt(state, playerInput);
+  const prompt = buildContextPrompt(state, playerInput, activeLoreCards);
 
   // ROBUST PROVIDER NORMALIZATION & DEEPSEEK/OPENROUTER FALLBACK
   let provider = settings.aiProvider ?? 'gemini';

@@ -2,6 +2,7 @@ import type { GameState, Settings, LoreCard, GmStrictness } from './types';
 import { buildArchetypeRules, getDefaultArchetype } from './archetypes';
 import { computeInventoryCapacity } from './inventory';
 import { resolvePanelBudget } from './panelBudget';
+import { CHOICE_TIER_PROMPT_RULES } from './choicePipeline';
 
 export const WORLD_STATE_INTEGRITY_RULES = `CRITICAL RULE: WORLD-STATE INTEGRITY & ENTITY EXISTENCE (HIGHEST PRIORITY)
 * Treat the supplied active game state as authoritative ground truth. Never invent, spawn, or assume the existence of companions, party members, or key NPCs unless they are explicitly present in that state.
@@ -38,6 +39,8 @@ CRITICAL RULE: PLAYER AGENCY & ANTI-AUTOPILOT PROTOCOL (HIGHEST PRIORITY)
 ${WORLD_STATE_INTEGRITY_RULES}
 
 ${TONE_AND_CHOICE_RULES}
+
+${CHOICE_TIER_PROMPT_RULES}
 
 1. CAMPAIGN PREMISE & OPEN-WORLD QUEST ENGINE ("GUIDE BOOK" PROTOCOL)
 - Main Campaign Anchor: The active campaign/module acts as a background "Guide Book". It defines the overarching world threat and endgame goals.
@@ -359,7 +362,11 @@ export function buildImagePromptModifier(settings: Settings): string {
   return `DARK FANTASY MATURE: Dramatic lighting, gritty texture, intense combat, mature themes allowed. ${styleSuffix}`;
 }
 
-export function buildContextPrompt(state: GameState, playerInput: string): string {
+export function buildContextPrompt(
+  state: GameState,
+  playerInput: string,
+  activeLoreCards: LoreCard[] = []
+): string {
   const c = state.character;
   const cap = computeInventoryCapacity(state);
   const inv = state.inventory
@@ -374,9 +381,16 @@ export function buildContextPrompt(state: GameState, playerInput: string): strin
     )
     .join('\n');
 
+  const loreBlock =
+    activeLoreCards.length > 0
+      ? activeLoreCards
+          .map((card) => `[${card.type.toUpperCase()}] ${card.name} — ${card.summary}`)
+          .join('\n')
+      : 'none';
+
   const logEntries = state.log;
   const macroWindow = logEntries.slice(-2);
-  let tier4MacroSection = `=== TIER 4: MACRO-SCENE CONTEXT (ACTIVE EVENT / PHASE) ===\n`;
+  let tier4MacroSection = '';
   if (macroWindow.length > 0) {
     for (const l of macroWindow) {
       tier4MacroSection += `${l.role.toUpperCase()}: ${l.content}\n`;
@@ -384,36 +398,45 @@ export function buildContextPrompt(state: GameState, playerInput: string): strin
   } else {
     tier4MacroSection += `[Scene Initialization]\n`;
   }
-  tier4MacroSection += `==========================================================\n`;
 
   return `
-${tier4MacroSection}
-
-CURRENT CHARACTER SHEET:
+=== TIER 1: GROUND-TRUTH STATE (AUTHORITATIVE) ===
 Name: ${c.name} | Level: ${c.level} | XP: ${c.xp}/${c.xpToNext}
-HP: ${c.hp}/${c.maxHp} | MP: ${c.mp}/${c.maxMp} | SP: ${c.sp}/${c.maxSp}
+HP: ${c.hp}/${c.maxHp} | MP: ${c.mp}/${c.maxMp} | SP: ${c.sp}/${c.maxSp} | Gold: ${state.gold ?? 0}
+Location: ${state.currentLocation || 'unspecified'}
+Encounter: ${state.activeEncounter?.name ?? 'none'}
 Attributes: STR ${c.attributes.STR} DEX ${c.attributes.DEX} CON ${c.attributes.CON} INT ${c.attributes.INT} WIS ${c.attributes.WIS} CHA ${c.attributes.CHA}
 Conditions: ${c.conditions.join(', ') || 'none'}
-
-INVENTORY (${cap.usedSlots}/${cap.totalSlots} slots${cap.hasMagicalContainer ? ' + magical container' : ''}):
+Inventory (${cap.usedSlots}/${cap.totalSlots} slots${cap.hasMagicalContainer ? ' + magical container' : ''}):
 ${inv || 'empty'}
-
-EQUIPPED GEAR:
-${state.inventory.filter(i => i.equipped).map(i => `${i.name} (${i.slot ?? 'slot'})`).join('\n') || 'none'}
-
-ACTIVE COMPANIONS (AUTHORITATIVE):
+Equipped Gear:
+${state.inventory.filter((i) => i.equipped).map((i) => `${i.name} (${i.slot ?? 'slot'})`).join('\n') || 'none'}
+Active Companions:
 ${companions || 'none'}
-
-MATERIALS:
-${state.materials.map(m => `${m.name} x${m.quantity}`).join('\n') || 'none'}
-
-ACTIVE QUEST LOG:
+Materials:
+${state.materials.map((m) => `${m.name} x${m.quantity}`).join('\n') || 'none'}
+Active Quest Log:
 ${quests || 'none'}
+=================================================
+
+=== TIER 2: ACTIVE INFO / LORE CARDS (STRICT CONSTRAINTS) ===
+${loreBlock}
+Use these only as established world facts. Do NOT invent crises from cards that the scene has not activated.
+=================================================
+
+=== TIER 3: TURN STORY + CHOICE ORDERING ===
+Write the narrative prose for this turn FIRST.
+Then emit numbered choices that inspect THAT prose: no environmental events (tremors, alarms, etc.) or plot jumps unless they appear in the prose you just wrote.
+=================================================
+
+=== TIER 4: MACRO-SCENE CONTEXT (ACTIVE EVENT / PHASE) ===
+${tier4MacroSection}=================================================
 
 PLAYER ACTION:
 ${playerInput}
 
-Respond as the GM. Follow all system rules.
+Respond as the GM. Follow the 4-tier pipeline and all system rules.
 Validate the action against Inventory / Equipped Gear / Gold above before narrating success.
-Keep story prose free of dice math (LitRPG/RPG). Finish every sentence. End with numbered contextual choices and "What do you do?"`.trim();
+Keep story prose free of dice math (LitRPG/RPG). Finish every sentence.
+End with numbered contextual choices grounded in this turn's prose + Tier 1/2 facts, then "What do you do?"`.trim();
 }
