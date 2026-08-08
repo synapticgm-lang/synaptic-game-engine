@@ -554,6 +554,8 @@ export interface GenerateComicImageOptions {
   timeoutMs?: number;
   /** Explicitly route milestone/splash artwork to the higher-fidelity hero model. */
   hero?: boolean;
+  /** When true, classic text mode may still generate a memorable-moment splash. */
+  memorableMoment?: boolean;
 }
 
 /**
@@ -568,9 +570,20 @@ export async function generateComicImage(
   mode: 'kid' | 'adult' | 'unrestricted',
   settings: Settings,
   options?: GenerateComicImageOptions
-): Promise<string> {
+): Promise<string | null> {
+  // Classic text mode is prose-only unless memorable-moment splashes are explicitly enabled.
+  if (settings.visualMode === 'classic') {
+    const allowMemorable = Boolean(options?.memorableMoment && settings.classicMemorableImages);
+    if (!allowMemorable) {
+      console.log('[ImageService] Skipping image generation for classic text mode.');
+      return null;
+    }
+  }
+
   const timeoutMs = options?.timeoutMs ?? DEFAULT_IMAGE_GEN_TIMEOUT_MS;
   const provider = settings.imageProvider || 'gemini';
+  // Prefer the configured OpenRouter image model; default stays Flux Schnell.
+  const imageModel = settings.imageModel?.trim() || PRIMARY_IMAGE_MODEL;
 
   // Style Spec Configuration: every image request — whatever backend it ends up routed to —
   // funnels through this one client entry point, so the active style's prefix/suffix/negative
@@ -626,7 +639,8 @@ export async function generateComicImage(
   const openRouterPrompt = `${styledPrompt}\n\nAvoid depicting: ${effectiveNegativePrompt}.`;
   const apiKey = settings.openrouterApiKey || settings.geminiApiKey || undefined;
   const useHeroModel = options?.hero === true || HERO_IMAGE_TRIGGER.test(prompt);
-  const routedModel = useHeroModel ? HERO_IMAGE_MODEL : PRIMARY_IMAGE_MODEL;
+  // Hero/milestone shots can still upgrade to Flux Dev; otherwise honor settings.imageModel.
+  const routedModel = useHeroModel ? HERO_IMAGE_MODEL : imageModel;
   return withAbortTimeout(
     (signal) =>
       fetchComicPanel(openRouterPrompt, mode, 'western', apiKey, routedModel, {

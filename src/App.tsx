@@ -433,7 +433,8 @@ export default function App() {
       )}
 
       <ToastStack toasts={game.toasts} onDismiss={game.dismissToast} />
-      {!isComicView && <DiceTrayToolbar />}
+      {/* Dice tray is D&D-only — never cover the action input in LitRPG / RPG / classic text. */}
+      {state.engineMode === 'dnd' && !isComicView && <DiceTrayToolbar />}
       <AutoSaveIndicator status={game.saveStatus || 'idle'} />
 
       {game.autoFightWarning && (

@@ -116,6 +116,7 @@ export function createDefaultSettings(): Settings {
     videoModel: '',
     postLoginBehavior: 'MAIN_MENU',
     visualMode: 'comic',
+    classicMemorableImages: false,
     bgMode: 'static',
     bgOpacity: 40,
     artStylePreset: 'classic-book',

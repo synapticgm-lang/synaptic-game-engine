@@ -22,6 +22,7 @@ import { ImageModerationError, softenPrompt } from './imageGen';
 import {
   buildImagePromptForKind,
   shouldUseComicGrid,
+  allowsImageGeneration,
   type ImagePromptKind,
   type ImagePromptContext,
 } from './comicImagePrompt';
@@ -457,6 +458,12 @@ export function useGame() {
     promptKind: ImagePromptKind,
     context?: ImagePromptContext
   ): Promise<string | null> => {
+    // Classic text: skip routine art; optional memorable-moment splashes still allowed.
+    if (!allowsImageGeneration(settings, promptKind)) {
+      debugLogger.record('SYSTEM', 'Skipping image generation for classic text mode', { promptKind });
+      return null;
+    }
+
     const mode = getContentMode(settings);
     const builtPrompt = buildImagePromptForKind(prompt, settings, mode, promptKind, context);
     const saveId = stateRef.current?.saveId?.trim() ?? '';
@@ -495,6 +502,7 @@ export function useGame() {
       generateComicImage(finalPrompt, mode, settings, {
         useRawPrompt: true,
         hero: promptKind === 'milestone-illustration',
+        memorableMoment: promptKind === 'milestone-illustration',
       });
 
     const storeIfPossible = async (imageUrl: string | null) => {
@@ -588,6 +596,14 @@ export function useGame() {
   });
 
   const enqueueImageGen = useCallbackRef((job: ImageGenJob) => {
+    const settings = settingsRef.current;
+    if (!allowsImageGeneration(settings, job.promptKind)) {
+      debugLogger.record('SYSTEM', 'Skipping image job enqueue for classic text mode', {
+        kind: job.kind,
+        promptKind: job.promptKind,
+      });
+      return;
+    }
     imageGenJobsRef.current.push(job);
     setImageGenEpoch((epoch) => epoch + 1);
   });
@@ -1364,7 +1380,11 @@ CODE ENFORCED OUTCOME FOR THIS ACTION: ${codeResolutionText}${hiddenSimUpdate}
           promptKind: 'comic-panel',
           visualContext,
         });
-      } else if (!isComicView && result.imagePrompt?.length) {
+      } else if (
+        !isComicView &&
+        allowsImageGeneration(settingsRef.current, 'classic-illustration') &&
+        result.imagePrompt?.length
+      ) {
         postCommitImageJobs.push({
           kind: 'turn',
           entryId: gmEntry.id,
@@ -1373,7 +1393,7 @@ CODE ENFORCED OUTCOME FOR THIS ACTION: ${codeResolutionText}${hiddenSimUpdate}
           visualContext,
         });
       }
-      if (milestoneReq) {
+      if (milestoneReq && allowsImageGeneration(settingsRef.current, 'milestone-illustration')) {
         postCommitImageJobs.push({
           kind: 'turn',
           entryId: gmEntry.id,
@@ -1441,16 +1461,32 @@ CODE ENFORCED OUTCOME FOR THIS ACTION: ${codeResolutionText}${hiddenSimUpdate}
     }
   });
 
-  const startNewGame = useCallbackRef(async (character: Partial<GameState['character']>, storyName?: string, engineMode: EngineMode = 'litrpg', gmStrictness: GmStrictness = 'standard', archetype?: CampaignArchetype, selectedVisualMode?: 'comic' | 'classic', selectedArtStyle?: ArtStylePreset) => {
-    if (selectedVisualMode || selectedArtStyle) {
+  const startNewGame = useCallbackRef(async (
+    character: Partial<GameState['character']>,
+    storyName?: string,
+    engineMode: EngineMode = 'litrpg',
+    gmStrictness: GmStrictness = 'standard',
+    archetype?: CampaignArchetype,
+    selectedVisualMode?: 'comic' | 'classic',
+    selectedArtStyle?: ArtStylePreset,
+    classicMemorableImages?: boolean,
+  ) => {
+    if (
+      selectedVisualMode ||
+      selectedArtStyle ||
+      typeof classicMemorableImages === 'boolean'
+    ) {
       const updated = { ...settingsRef.current } as Settings;
       if (selectedVisualMode) updated.visualMode = selectedVisualMode;
       if (selectedArtStyle) updated.artStylePreset = selectedArtStyle;
+      if (typeof classicMemorableImages === 'boolean') {
+        updated.classicMemorableImages = classicMemorableImages;
+      }
       setSettings(updated);
       settingsRef.current = updated;
       saveSettings(updated);
       setComicMode(updated.visualMode === 'comic');
-      setNarrativeMode(updated.visualMode === 'narrative');
+      setNarrativeMode(false);
     }
 
     const base = createInitialState(storyName, engineMode, archetype);

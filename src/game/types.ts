@@ -299,7 +299,8 @@ export interface LogEntry {
   lootItemRarity?: Rarity;
 }
 
-export type EngineMode = 'litrpg' | 'dnd';
+/** Distinct rule engines chosen at campaign setup. */
+export type EngineMode = 'litrpg' | 'dnd' | 'rpg';
 export type DiceAnimationMode = 'visual' | 'text';
 export type ContentMode = 'kid' | 'adult';
 export type GmStrictness = 'forgiving' | 'standard' | 'hardcore';
@@ -374,6 +375,11 @@ export interface Settings {
   videoModel: string;
   postLoginBehavior: PostLoginBehavior;
   visualMode: 'comic' | 'classic';
+  /**
+   * Classic Text mode only: when true, still generate clean splash art for memorable
+   * moments (milestones / first kills / legendary drops). Routine panels stay off.
+   */
+  classicMemorableImages: boolean;
   bgMode: BgMode;
   bgOpacity: number;
   artStylePreset: ArtStylePreset;

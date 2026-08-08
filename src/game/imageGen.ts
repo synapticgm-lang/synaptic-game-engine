@@ -20,7 +20,12 @@ export async function generateImage(
   prompt: string,
   settings: Settings,
   styleModifier: string
-): Promise<string> {
+): Promise<string | null> {
+  if (settings.visualMode === 'classic' && !settings.classicMemorableImages) {
+    console.log('[ImageService] Skipping image generation for classic text mode.');
+    return null;
+  }
+
   const finalPrompt = buildFinalPrompt(prompt, styleModifier);
   const apiKey = settings.openrouterApiKey || settings.geminiApiKey;
   if (!apiKey) throw new Error('No OpenRouter API key configured for image generation.');
@@ -32,7 +37,8 @@ export async function generateImage(
       finalPrompt,
       modeFromSettings(settings),
       settings.artStylePreset ?? 'western',
-      apiKey
+      apiKey,
+      settings.imageModel?.trim() || undefined
     );
     return imageUrl;
   } catch (err) {

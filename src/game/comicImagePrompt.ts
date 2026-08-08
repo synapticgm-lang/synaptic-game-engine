@@ -50,6 +50,18 @@ export function isComicVisualMode(
 }
 
 /**
+ * Classic text mode skips routine art. Memorable-moment splashes are allowed only when
+ * `classicMemorableImages` is enabled and the request is a milestone illustration.
+ */
+export function allowsImageGeneration(
+  settings: Settings,
+  promptKind?: ImagePromptKind
+): boolean {
+  if (settings.visualMode !== 'classic') return true;
+  return Boolean(settings.classicMemorableImages && promptKind === 'milestone-illustration');
+}
+
+/**
  * Classic Book Illustration is prose-only: never multi-panel ComicGrid.
  * Returns false when artStylePreset is classic-book regardless of visualMode toggle.
  */

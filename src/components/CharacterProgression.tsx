@@ -27,7 +27,7 @@ export function CharacterProgression({ state }: Props) {
     <div className="flex h-full flex-col">
       {/* Mode toggle */}
       <div className="flex gap-1 border-b border-slate-800 bg-slate-950/60 p-2">
-        {(['dnd', 'litrpg'] as ProgressionMode[]).map((m) => (
+        {(['dnd', 'litrpg', 'rpg'] as ProgressionMode[]).map((m) => (
           <button
             key={m}
             onClick={() => setMode(m)}
@@ -37,7 +37,7 @@ export function CharacterProgression({ state }: Props) {
                 : 'text-slate-500 hover:text-slate-300 hover:bg-slate-800/50 border border-transparent'
             }`}
           >
-            {m === 'dnd' ? 'D&D Mode' : 'LitRPG Mode'}
+            {m === 'dnd' ? 'D&D Mode' : m === 'rpg' ? 'RPG Mode' : 'LitRPG Mode'}
           </button>
         ))}
       </div>

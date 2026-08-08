@@ -23,6 +23,10 @@ export function getCampaignBibleById(id: string): CampaignBible | undefined {
   return ALL_CAMPAIGN_BIBLES.find((c) => c.id === id);
 }
 
-export function getCampaignBiblesByEngineMode(mode: 'litrpg' | 'dnd'): CampaignBible[] {
+export function getCampaignBiblesByEngineMode(mode: 'litrpg' | 'dnd' | 'rpg'): CampaignBible[] {
+  // RPG campaigns currently share the narrative LitRPG bible set (no separate RPG bibles yet).
+  if (mode === 'rpg') {
+    return ALL_CAMPAIGN_BIBLES.filter((c) => c.engineMode === 'litrpg');
+  }
   return ALL_CAMPAIGN_BIBLES.filter((c) => c.engineMode === mode);
 }

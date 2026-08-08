@@ -1,10 +1,11 @@
-import { Sparkles, Dices, Compass } from 'lucide-react';
-import type { GameState } from '@/game/types';
+import { Sparkles, Dices } from 'lucide-react';
+import type { EngineMode, GameState } from '@/game/types';
 
 interface ActionBarProps {
   state: GameState;
   busy: boolean;
   onAction: (action: string) => void;
+  engineMode?: EngineMode;
 }
 
 const COMBAT_ACTIONS = ['Draw weapon', 'Attack the nearest enemy', 'Cast a spell', 'Take cover'];
@@ -43,8 +44,9 @@ function resolveActions(state: GameState): { actions: string[]; isGmGenerated: b
   return { actions: fallbackSuggestions(state), isGmGenerated: false };
 }
 
-export function ActionBar({ state, busy, onAction }: ActionBarProps) {
+export function ActionBar({ state, busy, onAction, engineMode }: ActionBarProps) {
   const { actions, isGmGenerated } = resolveActions(state);
+  const isDnd = engineMode === 'dnd' || state.engineMode === 'dnd';
 
   const handleFatesPick = () => {
     const pick = actions[Math.floor(Math.random() * actions.length)];
@@ -70,7 +72,7 @@ export function ActionBar({ state, busy, onAction }: ActionBarProps) {
         title="Fate's Pick — randomly selects one action and submits it"
         className="flex items-center gap-1 rounded-full border border-amber-500/50 bg-black/85 px-2.5 py-1 text-xs font-medium text-slate-100 backdrop-blur-md transition-all hover:bg-amber-600 hover:text-white hover:border-amber-500 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-black/85 disabled:hover:text-slate-100"
       >
-        <Dices size={11} />
+        {isDnd ? <Dices size={11} /> : <Sparkles size={11} />}
         Fate's Pick
       </button>
     </div>

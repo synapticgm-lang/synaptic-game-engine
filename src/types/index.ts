@@ -44,7 +44,7 @@ export { PRINT_FORMATS } from './pdfExport';
 
 // ===== Progression types =====
 
-export type ProgressionMode = 'dnd' | 'litrpg';
+export type ProgressionMode = 'dnd' | 'litrpg' | 'rpg';
 
 export interface SpellSlot {
   level: number;

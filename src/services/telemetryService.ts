@@ -90,7 +90,9 @@ function mapProvider(raw?: string | null): string {
 
 function mapEngineMode(raw?: string | null): string {
   const m = (raw || engineMode || 'litrpg').toLowerCase();
-  return m === 'dnd' || m === '5e' ? '5e' : 'LitRPG';
+  if (m === 'dnd' || m === '5e') return '5e';
+  if (m === 'rpg') return 'RPG';
+  return 'LitRPG';
 }
 
 /** Fire-and-forget insert into `telemetry_logs`. Safe no-op when Supabase is unset. */

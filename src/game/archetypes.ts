@@ -50,12 +50,25 @@ export const DND_OPENINGS: ArchetypeOption[] = [
   { value: 'wilderness_expedition', label: 'Wilderness Expedition', description: 'Survival, tracking, and hazard navigation in untamed lands' },
 ];
 
+/** Narrative RPG openings reuse LitRPG seeds but with story-first framing in the UI. */
+export const RPG_OPENINGS: ArchetypeOption[] = [
+  { value: 'ai_random', label: 'AI Story Seed', description: 'A bespoke narrative opening without system HUDs or dice math' },
+  { value: 'isekai', label: 'Another World', description: 'Awaken in a strange realm — motives and bonds drive the tale' },
+  { value: 'regression', label: 'Second Chance', description: 'Return to a pivotal past moment with hard-won foresight' },
+  { value: 'dungeon_transport', label: 'Threshold Crossing', description: 'Step through a doorway into an unknown realm of danger' },
+  { value: 'void_audience', label: 'Bargain in the Dark', description: 'Negotiate fate with a mysterious patron after death' },
+  { value: 'cyberpunk', label: 'Neon Underworld', description: 'Street-level intrigue in a rain-soaked megacity' },
+];
+
 export function getArchetypeOptions(engineMode: EngineMode): ArchetypeOption[] {
-  return engineMode === 'dnd' ? DND_OPENINGS : LITRPG_ARCHETYPES;
+  if (engineMode === 'dnd') return DND_OPENINGS;
+  if (engineMode === 'rpg') return RPG_OPENINGS;
+  return LITRPG_ARCHETYPES;
 }
 
 export function getDefaultArchetype(engineMode: EngineMode): CampaignArchetype {
-  return engineMode === 'dnd' ? 'ai_custom' : 'ai_random';
+  if (engineMode === 'dnd') return 'ai_custom';
+  return 'ai_random';
 }
 
 const LITRPG_RULES: Record<LitRpgArchetype, string> = {
@@ -159,7 +172,15 @@ export function buildArchetypeRules(engineMode: EngineMode, archetype: CampaignA
     const opening = (DND_RULES as Record<string, string>)[archetype] ?? DND_RULES.ai_custom;
     return `${DND_5E_CORE_RULES}\n\n${opening}`;
   }
-  return (LITRPG_RULES as Record<string, string>)[archetype] ?? LITRPG_RULES.ai_random;
+  const litrpgOpening = (LITRPG_RULES as Record<string, string>)[archetype] ?? LITRPG_RULES.ai_random;
+  if (engineMode === 'rpg') {
+    return `${litrpgOpening}
+
+RPG NARRATIVE OVERRIDE:
+- Strip LitRPG HUD language from the opening and ongoing play.
+- Prefer character, place, and consequence over system panels.`;
+  }
+  return litrpgOpening;
 }
 
 export function buildArchetypeIntro(engineMode: EngineMode, archetype: CampaignArchetype, characterName: string): string {
@@ -187,6 +208,15 @@ export function buildArchetypeIntro(engineMode: EngineMode, archetype: CampaignA
     cyberpunk: `Your eyes snap open. The HUD boots in a cascade of red text — system critical, thermal warning, neural link unstable. Nanites crawl under your skin, interfacing with hardware you don't remember installing. ${name}, you're in a back alley of a city that never sleeps, and something went very wrong last night.\n\n[ SYSTEM ] Boot complete. Neural HUD online. Welcome, ${name}.\n\nWhat do you do?`,
     dungeon_transport: `One step — and the world changes. The portal snaps shut behind you with a sound like breaking glass. You're in a stone corridor, torches guttering on the walls. The air is damp and old. ${name}, there is no way back — only down.\n\n[ SYSTEM ] Welcome, ${name}. Floor 1 of [???]. Descend.\n\nWhat do you do?`,
   };
-  return intros[(archetype as LitRpgArchetype) ?? 'ai_random'] ?? intros.ai_random;
+  const litrpgIntro = intros[(archetype as LitRpgArchetype) ?? 'ai_random'] ?? intros.ai_random;
+  if (engineMode === 'rpg') {
+    return litrpgIntro
+      .replace(/\n\n\[ SYSTEM \][^\n]*/g, '')
+      .replace(/A (?:translucent blue panel|blue panel|panel)[^.]*\.\s*/gi, '')
+      .replace(/The HUD[^.]*\.\s*/gi, '')
+      .trim()
+      .replace(/\n{3,}/g, '\n\n');
+  }
+  return litrpgIntro;
 }
 

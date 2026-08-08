@@ -90,22 +90,26 @@ export function CenterPanel({ state, busy, error, errorKind, currentImage, bgIma
         </div>
       )}
       {comicMode ? (
-        <ComicGrid
-          log={state.log}
-          lorebook={state.lorebook}
-          busy={busy}
-          diceAnimating={!!diceRoll}
-          currentImage={currentImage}
-          bgImage={bgImage}
-          artStylePreset={artStylePreset}
-          imagesGenerating={imagesGenerating}
-          onRetryPanelImage={onRetryPanelImage}
-          onUpdatePanelOverlay={onUpdatePanelOverlay}
-        />
+        <div className="relative z-10 min-h-0 flex-1 overflow-hidden">
+          <ComicGrid
+            log={state.log}
+            lorebook={state.lorebook}
+            busy={busy}
+            diceAnimating={!!diceRoll}
+            currentImage={currentImage}
+            bgImage={bgImage}
+            artStylePreset={artStylePreset}
+            imagesGenerating={imagesGenerating}
+            onRetryPanelImage={onRetryPanelImage}
+            onUpdatePanelOverlay={onUpdatePanelOverlay}
+          />
+        </div>
       ) : narrativeMode ? (
-        <NarrativeView log={state.log} busy={busy} />
+        <div className="relative z-10 min-h-0 flex-1 overflow-hidden">
+          <NarrativeView log={state.log} busy={busy} />
+        </div>
       ) : (
-        <div ref={logRef} className="relative z-10 flex-1 overflow-y-auto px-3 py-4 sm:px-6">
+        <div ref={logRef} className="relative z-10 min-h-0 flex-1 overflow-y-auto px-3 py-4 sm:px-6">
           <div className="mx-auto max-w-2xl space-y-4">
             {state.log.map((entry) => (
               <LogRow key={entry.id} entry={entry} lorebook={state.lorebook} showSystemLog={showSystemLog} statVerbosity={statVerbosity} />
@@ -200,9 +204,9 @@ export function CenterPanel({ state, busy, error, errorKind, currentImage, bgIma
         </div>
       )}
 
-      <div className="border-t border-slate-800 bg-slate-950 px-3 py-3 sm:px-6">
+      <div className="relative z-50 shrink-0 border-t border-slate-800 bg-slate-950 px-3 py-3 sm:px-6">
         <div className="mx-auto max-w-2xl">
-          <ActionBar state={state} busy={busy} onAction={onSend} />
+          <ActionBar state={state} busy={busy} onAction={onSend} engineMode={engineMode} />
           {state.activeEncounter && (
             <div className="mb-2">
               <EnemyTargetFrame encounter={state.activeEncounter} />
@@ -223,9 +227,11 @@ export function CenterPanel({ state, busy, error, errorKind, currentImage, bgIma
               <Swords size={13} />
               <span className="hidden xs:inline">Auto-Fight</span>
             </button>
-            <button onClick={onToggleRolls} title="Toggle roll history" className={`rounded-md p-1.5 transition-colors ${showRolls ? 'bg-slate-800 text-crimson-400' : 'hover:bg-slate-800 hover:text-slate-300'} ${!isDnd ? 'opacity-30 pointer-events-none' : ''}`}>
-              <Dice5 size={15} />
-            </button>
+            {isDnd && (
+              <button onClick={onToggleRolls} title="Toggle roll history" className={`rounded-md p-1.5 transition-colors ${showRolls ? 'bg-slate-800 text-crimson-400' : 'hover:bg-slate-800 hover:text-slate-300'}`}>
+                <Dice5 size={15} />
+              </button>
+            )}
             <button onClick={onExport} title="Export save" className="rounded-md p-1.5 hover:bg-slate-800 hover:text-slate-300 transition-colors">
               <Download size={15} />
             </button>
@@ -272,6 +278,7 @@ export function CenterPanel({ state, busy, error, errorKind, currentImage, bgIma
               disabled={busy}
               placeholder={voice.listening ? 'Listening...' : 'What do you do?'}
               rows={2}
+              aria-label="Player action input"
               className="min-w-0 flex-1 resize-none rounded-lg border border-slate-700 bg-slate-900 px-3 py-2 text-sm text-slate-100 placeholder-slate-500 focus:border-crimson-500 focus:outline-none focus:ring-1 focus:ring-crimson-500 disabled:opacity-50"
             />
             <button

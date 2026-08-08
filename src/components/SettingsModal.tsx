@@ -11,7 +11,7 @@ import { exportSessionToPdf, downloadPdf } from '@/services/pdfExportService';
 interface Props {
   settings: Settings;
   storyName: string;
-  engineMode: 'litrpg' | 'dnd';
+  engineMode: 'litrpg' | 'dnd' | 'rpg';
   gameState?: GameState | null; // Added to check if story has started
   onSave: (s: Settings) => void;
   onStoryNameChange: (name: string) => void;
@@ -368,6 +368,7 @@ export function SettingsModal({ settings, storyName, engineMode, gameState, onSa
               <ChoiceCard
                 icon={<Grid3x3 size={15} />}
                 label="Comic / Illustrated"
+                sublabel="Multi-panel pages with speech bubbles"
                 selected={draft.visualMode === 'comic'}
                 onClick={() => { if (!isStoryActive) update('visualMode', 'comic' as 'comic' | 'classic'); }}
                 disabled={isStoryActive}
@@ -375,11 +376,21 @@ export function SettingsModal({ settings, storyName, engineMode, gameState, onSa
               <ChoiceCard
                 icon={<MessageSquareMore size={15} />}
                 label="Classic Text"
+                sublabel="Prose-first log; optional rare splash art"
                 selected={draft.visualMode === 'classic'}
                 onClick={() => { if (!isStoryActive) update('visualMode', 'classic' as 'comic' | 'classic'); }}
                 disabled={isStoryActive}
               />
             </div>
+            {draft.visualMode === 'classic' && (
+              <ToggleRow
+                icon={<Sparkles size={14} />}
+                label="Memorable Moment Images"
+                description="Generate clean splash art (no text/bubbles) for milestones, first kills, and legendary drops. Routine panels stay off."
+                checked={draft.classicMemorableImages}
+                onChange={(v) => update('classicMemorableImages', v)}
+              />
+            )}
             <div>
               <label className="mb-2 block text-xs font-medium text-slate-400">Art Style Preset (image generation only)</label>
               <div className="space-y-1.5">

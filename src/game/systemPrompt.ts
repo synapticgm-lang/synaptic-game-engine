@@ -58,17 +58,30 @@ NARRATIVE BREVITY RULES (MANDATORY):
 - Conclude every turn with 3 to 4 distinct, actionable choices for the player, formatted as a numbered list.`;
 
 const LITRPG_RULES = `
-ENGINE MODE: LITRPG (NARRATIVE FOCUS)
-You are running in LitRPG narrative mode. Follow these rules strictly:
-- HIDDEN MECHANICS: Resolve ALL skill checks internally. NEVER show dice notation or roll math.
-- NARRATIVE CONSEQUENCES: Report outcomes as vivid narrative consequences.
+ENGINE MODE: LITRPG (SYSTEM FOCUS)
+You are running a LitRPG campaign. Follow these rules strictly:
+- SYSTEM NOTIFICATIONS: Use brief private [ SYSTEM ] lines for level-ups, skill unlocks, quest updates, and status changes.
+- ATTRIBUTE GROWTH: Track and reference STR/DEX/CON/INT/WIS/CHA (or campaign equivalents), HP/MP, and progression gates.
+- HIDDEN CHECK MATH: Resolve skill checks internally — NEVER show dice notation or roll math.
+- NARRATIVE CONSEQUENCES: Report outcomes as vivid story consequences tied to system results.
 - NO ROLL BLOCKS: Do NOT output [ SYSTEM ROLL ] blocks.`;
 
 const DND_RULES = `
-ENGINE MODE: 5e TTRPG (MECHANICAL FOCUS)
-You are running in 5e TTRPG mode with full mechanical transparency under SRD 5.1 rules.
+ENGINE MODE: 5e TTRPG / D&D-COMPATIBLE (MECHANICAL FOCUS)
+You are running a strict Fifth Edition–compatible tabletop campaign under SRD 5.1 rules.
 - TRANSPARENT ROLLS: Include standard TTRPG notation for ALL combat and skill checks.
+- ENCOUNTERS: Track initiative, AC, HP, spell slots, conditions, and resource economy faithfully.
+- CHARACTER SHEETS: Respect class features, backgrounds, and prepared abilities from the active character state.
 - TRADEMARK SAFETY (MANDATORY): Never use trademarked names like "Dungeons & Dragons" or "Dungeon Master". Use "5e Fantasy Rules" or "GM".`;
+
+const RPG_RULES = `
+ENGINE MODE: RPG (NARRATIVE RULES FOCUS)
+You are running a story-first RPG without LitRPG system HUDs and without 5e dice transparency.
+- NARRATIVE RULES: Soft skill checks and conflicts resolve through fiction-first consequences.
+- NO SYSTEM POPUPS: Do not emit [ SYSTEM ] level-up panels, XP tickers, or video-game HUDs.
+- NO DICE NOTATION: Do not show roll math, d20 lines, or [ SYSTEM ROLL ] blocks.
+- CHARACTER GROWTH: Advance abilities through story beats, relationships, and earned revelations — not numeric grind.
+- TONE: Immersive prose RPG — character motives, scene pressure, and player choice drive every turn.`;
 
 // Exported so other prompt builders (e.g. `services/llmDirectorService.ts`) can reuse the
 // exact same Kid Mode copy instead of duplicating/rewriting the safety rule text.
@@ -148,8 +161,14 @@ Format the chat log in classic tabletop style with boxed read-aloud descriptions
 Use bold headers for scene transitions (**The Tavern of the Broken Tankard**) and italicize NPC dialogue.
 Keep the tone immersive and tabletop-faithful — avoid LitRPG system notifications or video-game-style popups.`;
 
+function engineModeRules(engineMode: GameState['engineMode']): string {
+  if (engineMode === 'dnd') return DND_RULES;
+  if (engineMode === 'rpg') return RPG_RULES;
+  return LITRPG_RULES;
+}
+
 export function buildSystemPrompt(state: GameState, settings: Settings, activeLoreCards: LoreCard[] = []): string {
-  const modeRules = state.engineMode === 'dnd' ? DND_RULES : LITRPG_RULES;
+  const modeRules = engineModeRules(state.engineMode);
   const archetypeRules = buildArchetypeRules(state.engineMode, state.campaignArchetype ?? getDefaultArchetype(state.engineMode));
   const contentRules = settings.contentMode === 'kid' ? KID_MODE_RULES : ADULT_MODE_RULES;
   const strictnessRules = STRICTNESS_RULES[state.gmStrictness ?? 'standard'];
