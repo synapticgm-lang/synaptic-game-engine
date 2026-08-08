@@ -1,5 +1,6 @@
 import { Sparkles, Dices } from 'lucide-react';
 import type { EngineMode, GameState } from '@/game/types';
+import { isSuggestionValidForState } from '@/game/suggestionValidation';
 
 interface ActionBarProps {
   state: GameState;
@@ -8,36 +9,69 @@ interface ActionBarProps {
   engineMode?: EngineMode;
 }
 
-const COMBAT_ACTIONS = ['Draw weapon', 'Attack the nearest enemy', 'Cast a spell', 'Take cover'];
-const SOCIAL_ACTIONS = ['Bribe the guard', 'Intimidate', 'Persuade with charm', 'Ask for information'];
-const EXPLORE_ACTIONS = ['Search the room', 'Investigate the area', 'Move carefully forward', 'Listen at the door'];
-const REST_ACTIONS = ['Check inventory', 'Rest briefly', 'Examine surroundings', 'Talk to companion'];
+const COMBAT_ACTIONS = ['Assess the threat', 'Attack the nearest enemy', 'Take cover', 'Look for an escape route'];
+const SOCIAL_ACTIONS = ['Ask for information', 'Listen carefully', 'Respond cautiously', 'Observe their reaction'];
+const EXPLORE_ACTIONS = ['Search the area', 'Investigate nearby details', 'Move carefully forward', 'Listen for danger'];
+const REST_ACTIONS = ['Check inventory', 'Examine surroundings', 'Rest briefly', 'Plan the next move'];
 
 const FALLBACK_CHOICE = '🎲 Let Fate Decide';
 
 function fallbackSuggestions(state: GameState): string[] {
   const lastEntry = state.log[state.log.length - 1];
   const text = (lastEntry?.content ?? '').toLowerCase();
+  const location = (state.currentLocation ?? '').toLowerCase();
+  const haystack = `${text} ${location}`;
 
-  if (text.includes('combat') || text.includes('enemy') || text.includes('attack') || text.includes('fight') || text.includes('initiative')) {
-    return COMBAT_ACTIONS;
+  let pool: string[];
+  if (
+    state.activeEncounter ||
+    haystack.includes('combat') ||
+    haystack.includes('enemy') ||
+    haystack.includes('attack') ||
+    haystack.includes('fight') ||
+    haystack.includes('initiative')
+  ) {
+    pool = COMBAT_ACTIONS;
+  } else if (
+    haystack.includes('guard') ||
+    haystack.includes('merchant') ||
+    haystack.includes('talk') ||
+    haystack.includes('npc') ||
+    haystack.includes('speak') ||
+    haystack.includes('innkeeper')
+  ) {
+    pool = SOCIAL_ACTIONS;
+  } else if (
+    haystack.includes('room') ||
+    haystack.includes('door') ||
+    haystack.includes('corridor') ||
+    haystack.includes('path') ||
+    haystack.includes('explore') ||
+    state.activeDungeon
+  ) {
+    pool = EXPLORE_ACTIONS;
+  } else {
+    pool = REST_ACTIONS;
   }
-  if (text.includes('guard') || text.includes('merchant') || text.includes('talk') || text.includes('npc') || text.includes('speak')) {
-    return SOCIAL_ACTIONS;
-  }
-  if (text.includes('room') || text.includes('door') || text.includes('corridor') || text.includes('path') || text.includes('explore')) {
-    return EXPLORE_ACTIONS;
-  }
-  return REST_ACTIONS;
+
+  // Drop companion talk when alone; drop spend/bribe-style leftovers via validator.
+  return pool
+    .filter((action) => {
+      if (/companion/i.test(action) && (state.companions ?? []).length === 0) return false;
+      return isSuggestionValidForState(action, state);
+    })
+    .slice(0, 4);
 }
 
 /**
  * Prefers the GM's own generated choices (parsed from the turn's numbered/bulleted
  * options list) so the action buttons reflect what the story actually offered. Falls
- * back to generic keyword-based suggestions only when the GM didn't produce real choices.
+ * back to scene-aware suggestions only when the GM didn't produce real choices.
  */
 function resolveActions(state: GameState): { actions: string[]; isGmGenerated: boolean } {
-  const gmChoices = (state.choices ?? []).filter((c) => c && c !== FALLBACK_CHOICE);
+  const gmChoices = (state.choices ?? [])
+    .filter((c) => c && c !== FALLBACK_CHOICE)
+    .filter((c) => isSuggestionValidForState(c, state));
   if (gmChoices.length > 0) {
     return { actions: gmChoices, isGmGenerated: true };
   }
@@ -67,7 +101,7 @@ export function ActionBar({ state, busy, onAction, engineMode }: ActionBarProps)
         </button>
       ))}
       <button
-        disabled={busy}
+        disabled={busy || actions.length === 0}
         onClick={handleFatesPick}
         title="Fate's Pick — randomly selects one action and submits it"
         className="flex items-center gap-1 rounded-full border border-amber-500/50 bg-black/85 px-2.5 py-1 text-xs font-medium text-slate-100 backdrop-blur-md transition-all hover:bg-amber-600 hover:text-white hover:border-amber-500 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-black/85 disabled:hover:text-slate-100"

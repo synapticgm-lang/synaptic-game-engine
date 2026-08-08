@@ -1,6 +1,11 @@
 import { buildSystemPrompt, buildContextPrompt } from './systemPrompt';
 import type { GameState, Settings, LoreCard } from './types';
 import { logger } from './logger';
+import {
+  extractSystemRollBlocks,
+  sanitizeNarrativeMechanics,
+  trimAbruptCutoff,
+} from './narrativeSanitize';
 
 export interface GmResult {
   text: string;
@@ -21,8 +26,10 @@ export class RateLimitError extends Error {
 const MAX_RETRIES = 4;
 const BASE_DELAY_MS = 10000;
 const BACKOFF_DELAYS_MS = [5000, 15000, 30000, 60000];
-const AI_REQUEST_TIMEOUT_MS = 25_000;
-const AI_MAX_OUTPUT_TOKENS = 2_048;
+/** Longer timeout to match higher completion budgets (multi-panel + choices + system-log). */
+const AI_REQUEST_TIMEOUT_MS = 45_000;
+/** Raised so comic panels + narrative + choices are less likely to truncate mid-sentence. */
+const AI_MAX_OUTPUT_TOKENS = 4_096;
 
 async function fetchWithTimeout(
   input: RequestInfo | URL,
@@ -108,14 +115,6 @@ function stripImageBlock(text: string): string {
     .replace(/\n?\[\s*CINEMATIC SCENE PROMPT\s*\][\s\S]*?(?=\n\[|\nWhat do you do\?|$)/gi, '')
     .replace(/\n?---+\s*CINEMATIC SCENE PROMPT\s*---+[\s\S]*?(?=---+|$)/gi, '')
     .trim();
-}
-
-function extractRolls(text: string): string[] {
-  const rolls: string[] = [];
-  const re = /\[ ?SYSTEM ROLL:[\s\S]*?Outcome: ?[^\]]+\]/gi;
-  let m;
-  while ((m = re.exec(text)) !== null) rolls.push(m[0]);
-  return rolls;
 }
 
 function extractSystemLog(text: string): string[] {
@@ -228,11 +227,19 @@ export async function callGm(
   const systemLog = extractSystemLog(cleanText);
   cleanText = stripSystemLog(cleanText);
 
+  const rolls = extractSystemRollBlocks(cleanText);
+  const sanitized = sanitizeNarrativeMechanics(cleanText, state.engineMode);
+  cleanText = trimAbruptCutoff(sanitized.text);
+
+  const mergedLog = Array.from(
+    new Set([...systemLog, ...sanitized.extracted, ...rolls].map((l) => l.trim()).filter(Boolean))
+  );
+
   return {
     text: cleanText,
     imagePrompt,
-    rolls: extractRolls(cleanText),
-    systemLog,
+    rolls,
+    systemLog: mergedLog,
   };
 }
 

@@ -28,7 +28,8 @@ import {
 } from './comicImagePrompt';
 import { resolvePanelBudget } from './panelBudget';
 import { buildVisualConsistencyBlock } from './visualConsistency';
-import { fallbackSuggestionForState, isSuggestionValidForState } from './suggestionValidation';
+import { fallbackSuggestionForState, findUnsupportedItemClaims, isSuggestionValidForState } from './suggestionValidation';
+import { sanitizeNarrativeMechanics } from './narrativeSanitize';
 import { extractUpdates, extractNewItems, parseActionTags, stripActionTags, matchLoreCards, eventsToLoreCards, parseTurnFrame, eventsToQuestUpdates, eventsToEncounterUpdate, parsePanels, eventsToMilestone, eventsToLootVideo, eventsToVisualUpdate, stripChoiceList, extractChoiceLines } from './parser';
 import { inferItemType } from './salvage';
 import { initializeDungeon, moveToNode, exitDungeon as engineExitDungeon } from './mapEngine';
@@ -1074,9 +1075,11 @@ export function useGame() {
       const difficultyClass = 12;
       const outcome = evaluateRoll(d20Roll, strMod, difficultyClass);
 
-      const codeResolutionText = outcome.isSuccess 
+      const isDndEngine = liveCurrent.engineMode === 'dnd';
+      const codeResolutionText = outcome.isSuccess
         ? `SUCCESS (Rolled d20: ${d20Roll} + Mod: ${strMod} = ${outcome.totalScore} vs DC ${difficultyClass})`
         : `FAILURE (Rolled d20: ${d20Roll} + Mod: ${strMod} = ${outcome.totalScore} vs DC ${difficultyClass})`;
+      const narrativeOutcomeLabel = outcome.isSuccess ? 'SUCCESS' : 'FAILURE';
 
       logRollResults([
         {
@@ -1104,11 +1107,28 @@ export function useGame() {
         }
       }
 
-      const deterministicStateBlock = `
+      const unsupportedItems = findUnsupportedItemClaims(sanitizedInput, liveCurrent);
+      const inventoryGate = unsupportedItems.length
+        ? `\n[INVENTORY GATE — MANDATORY]: Player attempted to use item(s) NOT in inventory: ${unsupportedItems.join(', ')}. REJECT the use. Do not invent the item. Narrate the failed attempt, emit <system>Action failed: item not in inventory.</system>, and offer alternatives based on Equipped Gear / Inventory only.`
+        : '';
+
+      // LitRPG/RPG: keep dice math out of the model-facing story cue so it is less likely to echo into prose.
+      const deterministicStateBlock = isDndEngine
+        ? `
 --- DETERMINISTIC GAME ENGINE STATE (MANDATORY) ---
 Character: ${liveCurrent.character.name} (Lvl ${liveCurrent.character.level})
 HP: ${liveCurrent.character.hp}/${liveCurrent.character.maxHp}
-CODE ENFORCED OUTCOME FOR THIS ACTION: ${codeResolutionText}${hiddenSimUpdate}
+Gold: ${liveCurrent.gold ?? 0}
+CODE ENFORCED OUTCOME FOR THIS ACTION: ${codeResolutionText}${hiddenSimUpdate}${inventoryGate}
+-------------------------------------------------
+`
+        : `
+--- DETERMINISTIC GAME ENGINE STATE (MANDATORY) ---
+Character: ${liveCurrent.character.name} (Lvl ${liveCurrent.character.level})
+HP: ${liveCurrent.character.hp}/${liveCurrent.character.maxHp}
+Gold: ${liveCurrent.gold ?? 0}
+CODE ENFORCED OUTCOME FOR THIS ACTION: ${narrativeOutcomeLabel}
+Do NOT print dice notation, d20 lines, modifiers, DCs, or "Strength Check:" text in the narrative or <narrative> panels. Put that math only inside <system-log>. Narrate the ${narrativeOutcomeLabel.toLowerCase()} as story consequences only.${hiddenSimUpdate}${inventoryGate}
 -------------------------------------------------
 `;
 
@@ -1150,13 +1170,14 @@ CODE ENFORCED OUTCOME FOR THIS ACTION: ${codeResolutionText}${hiddenSimUpdate}
         );
       }
 
+      const codeSystemLogLine = `Action Check: d20(${d20Roll}) + Mod(${strMod}) = ${outcome.totalScore} vs DC ${difficultyClass} — ${narrativeOutcomeLabel}`;
       const gmEntry: LogEntry = {
         id: uid(),
         turn: liveCurrent.turn + 1,
         role: 'gm',
         content: result.text,
         timestamp: Date.now(),
-        systemLog: result.systemLog,
+        systemLog: Array.from(new Set([...(result.systemLog ?? []), codeSystemLogLine])),
       };
 
       // `events`/derived requests must be parsed BEFORE anything below references them
@@ -1213,9 +1234,12 @@ CODE ENFORCED OUTCOME FOR THIS ACTION: ${codeResolutionText}${hiddenSimUpdate}
       // Defensive: the GM sometimes runs the trailing choice list directly into the last
       // panel's <narrative> block instead of the top-level response text. Strip it there
       // too so numbered options never render as raw scene text inside a panel overlay.
-      const sanitizedPanels = budgetedPanels.map((panel, idx) =>
-        idx === budgetedPanels.length - 1 ? { ...panel, narrative: stripChoiceList(panel.narrative) } : panel
-      );
+      const sanitizedPanels = budgetedPanels.map((panel, idx) => {
+        let narrative = panel.narrative;
+        if (idx === budgetedPanels.length - 1) narrative = stripChoiceList(narrative);
+        narrative = sanitizeNarrativeMechanics(narrative, liveCurrent.engineMode).text;
+        return { ...panel, narrative };
+      });
       let comicPanelsForLog = isComicView ? sanitizedPanels : [];
 
       // Visual Consistency Manager: deterministic block built from canonical state

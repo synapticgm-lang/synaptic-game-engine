@@ -11,6 +11,17 @@ const GENERIC_SCENE_ROLES = new Set([
   'villagers', 'stranger', 'prisoner', 'enemy',
 ]);
 
+const ITEM_USE_CLAIM =
+  /\b(?:use|throw|lob|toss|drink|eat|equip|wield|draw|deploy|detonate|fire|load|pull(?:\s+out)?|unsheathe|brandish)\s+(?:(?:a|an|the|my|your)\s+)?([a-z][\w'\-]+(?:\s+[a-z][\w'\-]+){0,3})/i;
+
+const GOLD_SPEND_CLAIM =
+  /\b(?:pay|bribe|spend|offer|buy|purchase|tip|donate|bet)\b[^.]{0,48}?\b(\d{1,7})\s*(?:gold|gp|coins?|crowns?)\b/i;
+
+const NON_ITEM_TOKENS = new Set([
+  'breath', 'lever', 'door', 'curtain', 'attention', 'cover', 'aim', 'time', 'distance',
+  'sword arm', 'hand', 'hands', 'fist', 'fists', 'voice', 'gaze', 'look', 'step', 'stance',
+]);
+
 function normalize(value: string): string {
   return value.trim().toLocaleLowerCase();
 }
@@ -31,10 +42,51 @@ function knownEntityNames(state: GameState): Set<string> {
   return names;
 }
 
+function inventoryCatalog(state: GameState): string[] {
+  return [
+    ...state.inventory.map((i) => normalize(i.name)),
+    ...state.materials.map((m) => normalize(m.name)),
+  ];
+}
+
+export function inventoryHasItem(state: GameState, claimed: string): boolean {
+  const needle = normalize(claimed);
+  if (!needle || NON_ITEM_TOKENS.has(needle)) return true;
+
+  // Generic "weapon" / "blade" allowed if any equipped/weapon-like item exists.
+  if (/^(weapon|blade|sword|gun|bow|staff|wand)$/i.test(needle)) {
+    return state.inventory.some(
+      (i) =>
+        i.equipped ||
+        /weapon|sword|blade|bow|gun|axe|mace|dagger|staff|wand|crossbow/i.test(i.name)
+    );
+  }
+
+  const catalog = inventoryCatalog(state);
+  return catalog.some(
+    (name) => name === needle || name.includes(needle) || needle.includes(name)
+  );
+}
+
 /**
- * Suggestions are untrusted model output. Reject actions whose premise requires a companion
- * or named actor that is absent from structured state instead of turning that premise into a
- * clickable button.
+ * Detect player-input claims that use items not present in structured inventory.
+ * Used to inject an inventory gate into the GM context prompt.
+ */
+export function findUnsupportedItemClaims(input: string, state: GameState): string[] {
+  const claims: string[] = [];
+  const re = new RegExp(ITEM_USE_CLAIM.source, 'gi');
+  let m: RegExpExecArray | null;
+  while ((m = re.exec(input)) !== null) {
+    const claimed = (m[1] ?? '').trim();
+    if (!claimed || NON_ITEM_TOKENS.has(normalize(claimed))) continue;
+    if (!inventoryHasItem(state, claimed)) claims.push(claimed);
+  }
+  return Array.from(new Set(claims));
+}
+
+/**
+ * Suggestions are untrusted model output. Reject actions whose premise requires a companion,
+ * named actor, inventory item, or gold amount that is absent from structured state.
  */
 export function isSuggestionValidForState(suggestion: string, state: GameState): boolean {
   const companions = state.companions ?? [];
@@ -44,9 +96,6 @@ export function isSuggestionValidForState(suggestion: string, state: GameState):
     return false;
   }
 
-  // A named social command is allowed only for an entity tracked as a companion, NPC lore
-  // card, or active encounter. This catches choices such as "Ask Elara for advice" when the
-  // model invented Elara solely inside its option list.
   const namedTarget = suggestion.match(NAMED_INTERACTION)?.[1];
   if (
     namedTarget
@@ -54,6 +103,19 @@ export function isSuggestionValidForState(suggestion: string, state: GameState):
     && !knownEntityNames(state).has(normalize(namedTarget))
   ) {
     return false;
+  }
+
+  const itemClaim = suggestion.match(ITEM_USE_CLAIM)?.[1];
+  if (itemClaim && !inventoryHasItem(state, itemClaim)) {
+    return false;
+  }
+
+  const goldMatch = suggestion.match(GOLD_SPEND_CLAIM);
+  if (goldMatch) {
+    const amount = Number(goldMatch[1]);
+    if (Number.isFinite(amount) && amount > (state.gold ?? 0)) {
+      return false;
+    }
   }
 
   return true;
