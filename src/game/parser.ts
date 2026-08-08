@@ -1,0 +1,571 @@
+import type { GameState, LoreCard, LoreCardType, TurnFrameTheme, Quest, QuestType, QuestStatus, MapTier, ActiveEncounter, ComicPanel } from './types';
+
+export interface GameEvent {
+  type: 
+    | 'item-gain' 
+    | 'item-use' 
+    | 'heal' 
+    | 'damage' 
+    | 'lore-card' 
+    | 'quest-add' 
+    | 'quest-update' 
+    | 'quest-complete'
+    | 'dungeon-load'
+    | 'dungeon-move'
+    | 'dungeon-exit'
+    | 'map-floor-change'
+    | 'hex-move'
+    | 'enemy-appear'
+    | 'encounter-end'
+    | 'milestone-event'
+    | 'loot-video'
+    | 'visual-update';
+  id?: string;
+  name?: string;
+  qty?: number;
+  amount?: number;
+  cardType?: LoreCardType;
+  keywords?: string[];
+  summary?: string;
+  visualAnchor?: string; // Added to handle image descriptions
+  questType?: QuestType;
+  description?: string;
+  objectiveId?: string;
+  completed?: boolean;
+  // Spatial & Dungeon XML Attributes
+  blueprintId?: string;
+  dungeonName?: string;
+  isProcedural?: boolean;
+  nodeId?: string;
+  tier?: MapTier;
+  q?: number;
+  r?: number;
+  z?: number;
+  elevation?: number;
+  nodeCount?: number;
+  // Enemy encounter
+  enemyName?: string;
+  enemyLevel?: number;
+  enemyHp?: number;
+  enemyAc?: number;
+  enemyStr?: number;
+  enemyDex?: number;
+  enemyCon?: number;
+  enemyXp?: number;
+  enemyGold?: number;
+  // Milestone illustrations / legendary loot videos / player appearance updates
+  imagePromptText?: string;
+  itemRarity?: string;
+  visualDescription?: string;
+  /** True when a <visual-update> represents a radical base-form/species change (GM-flagged). */
+  formChange?: boolean;
+}
+
+const CHOICE_HEADER_REGEX = /(?:what do you do|options|choices|actions|what will you do)[?: \t]*\n([\s\S]+)$/i;
+// Choices must be explicitly numbered. Never treat generic Markdown bullets (`-`, `*`, `•`)
+// or lettered inventory/stat lists as actions; those commonly appear in GM loot summaries.
+// Supported forms include `1. Action`, `1) Action`, `Option 1: Action`, `[1] Action`,
+// `(1) Action`, and markdown-emphasized variants such as `**1.** Action`.
+const CHOICE_LINE_REGEX = /^\s*(?:\*\*|\*)?\s*(?:(?:Option\s+)?\d+[.):]|\[\d+\]|\(\d+\))\s*(?:\*\*|\*)?\s+(.+)$/i;
+
+/**
+ * Removes the trailing GM-generated choice list (explicitly numbered options, with or
+ * without a "What do you do?" style header) from narrative text. The same choices are
+ * parsed separately by `extractChoiceLines` and rendered as action buttons, so they must
+ * not also remain visible as raw text in the narrative stream — including inside a comic
+ * panel's <narrative> block, which the GM sometimes runs the choice list directly into.
+ */
+export function stripChoiceList(text: string): string {
+  if (!text) return text;
+
+  const headerMatch = text.match(CHOICE_HEADER_REGEX);
+  if (headerMatch && typeof headerMatch.index === 'number') {
+    return text.slice(0, headerMatch.index).trim();
+  }
+
+  const lines = text.split('\n');
+  let cut = lines.length;
+  for (let i = lines.length - 1; i >= 0; i--) {
+    const line = lines[i];
+    if (line.trim() === '') { cut = i; continue; }
+    if (CHOICE_LINE_REGEX.test(line)) { cut = i; continue; }
+    break;
+  }
+  return lines.slice(0, cut).join('\n').trim();
+}
+
+/**
+ * Pure extraction of explicitly numbered choice lines from GM narrative text (no habit
+ * blending — see `extractChoicesFromText` in useGame.ts for the habit-augmented wrapper
+ * used by the UI). This is the actual "narrative parser" half of the choice pipeline:
+ * it finds the trailing options list (after a "What do you do?"-style header if present,
+ * otherwise by scanning backward from the end of the text) and returns clean option text
+ * with markdown/HTML stripped.
+ */
+export function extractChoiceLines(text: string): string[] {
+  if (!text) return [];
+
+  let targetText = text;
+  const headerMatch = text.match(CHOICE_HEADER_REGEX);
+  if (headerMatch && headerMatch[1]) {
+    targetText = headerMatch[1];
+  }
+
+  const lines = targetText.split('\n');
+  const choices: string[] = [];
+
+  for (const line of lines) {
+    const trimmed = line.trim();
+    if (!trimmed) continue;
+
+    const match = trimmed.match(CHOICE_LINE_REGEX);
+    if (match && match[1]) {
+      const clean = match[1]
+        .replace(/^\s*["']|["']\s*$/g, '')
+        .replace(/\*\*(.*?)\*\*/g, '$1')
+        .replace(/\*(.*?)\*/g, '$1')
+        .replace(/`([^`]+)`/g, '$1')
+        .replace(/<[^>]+>/g, '')
+        .trim();
+
+      if (clean.length > 2 && clean.length < 160) {
+        choices.push(clean);
+      }
+    }
+  }
+
+  return Array.from(new Set(choices));
+}
+
+export function extractUpdates(state: GameState, gmText: string): Partial<GameState> {
+  const updates: Partial<GameState> = {};
+
+  const hpMatch = gmText.match(/HP:\s*(\d+)\s*\/\s*(\d+)/i);
+  if (hpMatch) {
+    updates.character = {
+      ...state.character,
+      hp: parseInt(hpMatch[1], 10),
+      maxHp: parseInt(hpMatch[2], 10),
+    };
+  }
+
+  const mpMatch = gmText.match(/MP:\s*(\d+)\s*\/\s*(\d+)/i);
+  if (mpMatch) {
+    updates.character = {
+      ...(updates.character ?? state.character),
+      mp: parseInt(mpMatch[1], 10),
+      maxMp: parseInt(mpMatch[2], 10),
+    };
+  }
+
+  const xpMatch = gmText.match(/XP:\s*(\d+)\s*\/\s*(\d+)/i);
+  if (xpMatch) {
+    updates.character = {
+      ...(updates.character ?? state.character),
+      xp: parseInt(xpMatch[1], 10),
+      xpToNext: parseInt(xpMatch[2], 10),
+    };
+  }
+
+  const levelMatch = gmText.match(/Level:\s*(\d+)/i);
+  if (levelMatch) {
+    updates.character = {
+      ...(updates.character ?? state.character),
+      level: parseInt(levelMatch[1], 10),
+    };
+  }
+
+  return updates;
+}
+
+export function extractNewItems(gmText: string): Array<{ name: string; rarity: string; provenance?: string }> {
+  const items: Array<{ name: string; rarity: string; provenance?: string }> = [];
+  const re = /\[(Common|Uncommon|Rare|Epic|Legendary)\]\s+([^\n\]]+?)(?:\s*\(Looted:\s*([^)]+)\))?/gi;
+  let m;
+  while ((m = re.exec(gmText)) !== null) {
+    items.push({ rarity: m[1], name: m[2].trim(), provenance: m[3]?.trim() });
+  }
+  return items;
+}
+
+const TAG_PATTERNS: Array<{ type: GameEvent['type']; re: RegExp; parse: (m: RegExpMatchArray) => GameEvent }> = [
+  {
+    type: 'item-gain',
+    re: /<item-gain\s+id="([^"]*)"\s+name="([^"]*)"\s+qty="(\d+)"\s*\/>/gi,
+    parse: (m) => ({ type: 'item-gain', id: m[1], name: m[2], qty: parseInt(m[3], 10) }),
+  },
+  {
+    type: 'item-use',
+    re: /<item-use\s+id="([^"]*)"\s+name="([^"]*)"\s+qty="(\d+)"\s*\/>/gi,
+    parse: (m) => ({ type: 'item-use', id: m[1], name: m[2], qty: parseInt(m[3], 10) }),
+  },
+  {
+    type: 'heal',
+    re: /<heal\s+amount="(\d+)"\s*\/>/gi,
+    parse: (m) => ({ type: 'heal', amount: parseInt(m[1], 10) }),
+  },
+  {
+    type: 'damage',
+    re: /<damage\s+amount="(\d+)"\s*\/>/gi,
+    parse: (m) => ({ type: 'damage', amount: parseInt(m[1], 10) }),
+  },
+  {
+    // Updated to optionally extract the visualAnchor attribute
+    type: 'lore-card',
+    re: /<lore-card\s+id="([^"]*)"\s+name="([^"]*)"\s+type="([^"]*)"\s+keywords="([^"]*)"\s+summary="([^"]*)"(?:\s+visualAnchor="([^"]*)")?\s*\/>/gi,
+    parse: (m) => ({
+      type: 'lore-card',
+      id: m[1],
+      name: m[2],
+      cardType: m[3] as LoreCardType,
+      keywords: m[4].split(',').map((k) => k.trim()).filter(Boolean),
+      summary: m[5],
+      visualAnchor: m[6], // Extracted anchor
+    }),
+  },
+  {
+    type: 'quest-add',
+    re: /<quest-add\s+id="([^"]*)"\s+name="([^"]*)"\s+type="([^"]*)"\s+description="([^"]*)"\s*\/>/gi,
+    parse: (m) => ({
+      type: 'quest-add',
+      id: m[1],
+      name: m[2],
+      questType: (m[3] as QuestType) || 'side',
+      description: m[4],
+    }),
+  },
+  {
+    type: 'quest-update',
+    re: /<quest-update\s+id="([^"]*)"\s+objectiveId="([^"]*)"\s+completed="([^"]*)"\s*\/>/gi,
+    parse: (m) => ({
+      type: 'quest-update',
+      id: m[1],
+      objectiveId: m[2],
+      completed: m[3] === 'true',
+    }),
+  },
+  {
+    type: 'quest-complete',
+    re: /<quest-complete\s+id="([^"]*)"\s*\/>/gi,
+    parse: (m) => ({
+      type: 'quest-complete',
+      id: m[1],
+    }),
+  },
+  {
+    type: 'dungeon-load',
+    re: /<dungeon-load\s+(?:id|blueprintId|shape)="([^"]*)"\s+name="([^"]*)"(?:\s+procedural="(true|false)")?(?:\s+tier="(\d+)")?(?:\s+nodes="(\d+)")?\s*\/>/gi,
+    parse: (m) => ({
+      type: 'dungeon-load',
+      blueprintId: m[1],
+      dungeonName: m[2],
+      isProcedural: m[3] === 'true',
+      tier: m[4] ? (parseInt(m[4], 10) as MapTier) : 4,
+      nodeCount: m[5] ? parseInt(m[5], 10) : undefined,
+    }),
+  },
+  {
+    type: 'dungeon-move',
+    re: /<dungeon-move\s+(?:node|nodeId)="([^"]*)"\s*\/>/gi,
+    parse: (m) => ({
+      type: 'dungeon-move',
+      nodeId: m[1],
+    }),
+  },
+  {
+    type: 'dungeon-exit',
+    re: /<dungeon-exit\s*\/>/gi,
+    parse: () => ({
+      type: 'dungeon-exit',
+    }),
+  },
+  {
+    type: 'map-floor-change',
+    re: /<map-floor-change\s+z="(-?\d+)"\s*\/>/gi,
+    parse: (m) => ({
+      type: 'map-floor-change',
+      z: parseInt(m[1], 10),
+    }),
+  },
+  {
+    type: 'hex-move',
+    re: /<hex-move\s+q="(-?\d+)"\s+r="(-?\d+)"(?:\s+tier="(\d+)")?(?:\s+z="(-?\d+)")?\s*\/>/gi,
+    parse: (m) => ({
+      type: 'hex-move',
+      q: parseInt(m[1], 10),
+      r: parseInt(m[2], 10),
+      tier: m[3] ? (parseInt(m[3], 10) as MapTier) : undefined,
+      z: m[4] ? parseInt(m[4], 10) : undefined,
+    }),
+  },
+  {
+    type: 'enemy-appear',
+    re: /<enemy\s+name="([^"]*)"\s+level="(\d+)"\s+hp="(\d+)"\s+ac="(\d+)"\s+str="(\d+)"\s+dex="(\d+)"\s+con="(\d+)"\s+xp="(\d+)"\s+gold="(\d+)"\s*\/>/gi,
+    parse: (m) => ({
+      type: 'enemy-appear',
+      enemyName: m[1],
+      enemyLevel: parseInt(m[2], 10),
+      enemyHp: parseInt(m[3], 10),
+      enemyAc: parseInt(m[4], 10),
+      enemyStr: parseInt(m[5], 10),
+      enemyDex: parseInt(m[6], 10),
+      enemyCon: parseInt(m[7], 10),
+      enemyXp: parseInt(m[8], 10),
+      enemyGold: parseInt(m[9], 10),
+    }),
+  },
+  {
+    type: 'encounter-end',
+    re: /<encounter-end\s*\/>/gi,
+    parse: () => ({
+      type: 'encounter-end',
+    }),
+  },
+  {
+    type: 'milestone-event',
+    re: /<milestone-event\s+prompt="([^"]*)"\s*\/>/gi,
+    parse: (m) => ({
+      type: 'milestone-event',
+      imagePromptText: m[1],
+    }),
+  },
+  {
+    type: 'loot-video',
+    re: /<loot-video\s+item="([^"]*)"\s+rarity="([^"]*)"\s+prompt="([^"]*)"\s*\/>/gi,
+    parse: (m) => ({
+      type: 'loot-video',
+      name: m[1],
+      itemRarity: m[2],
+      imagePromptText: m[3],
+    }),
+  },
+  {
+    type: 'visual-update',
+    re: /<visual-update\s+description="([^"]*)"(?:\s+form-change="(true|false)")?\s*\/>/gi,
+    parse: (m) => ({
+      type: 'visual-update',
+      visualDescription: m[1],
+      formChange: m[2] === 'true',
+    }),
+  },
+];
+
+export function parseActionTags(text: string): GameEvent[] {
+  const events: GameEvent[] = [];
+  for (const { re, parse } of TAG_PATTERNS) {
+    let m: RegExpExecArray | null;
+    re.lastIndex = 0;
+    while ((m = re.exec(text)) !== null) {
+      events.push(parse(m));
+    }
+  }
+  return events;
+}
+
+export function stripActionTags(text: string): string {
+  return text
+    .replace(/<item-gain\s+[^/]*\/>/gi, '')
+    .replace(/<item-use\s+[^/]*\/>/gi, '')
+    .replace(/<heal\s+[^/]*\/>/gi, '')
+    .replace(/<damage\s+[^/]*\/>/gi, '')
+    .replace(/<lore-card\s+[^/]*\/>/gi, '')
+    .replace(/<quest-add\s+[^/]*\/>/gi, '')
+    .replace(/<quest-update\s+[^/]*\/>/gi, '')
+    .replace(/<quest-complete\s+[^/]*\/>/gi, '')
+    .replace(/<turn-frame\s+[^/]*\/>/gi, '')
+    .replace(/<dungeon-load\s+[^/]*\/>/gi, '')
+    .replace(/<dungeon-move\s+[^/]*\/>/gi, '')
+    .replace(/<dungeon-exit\s*\/?>/gi, '')
+    .replace(/<map-floor-change\s+[^/]*\/>/gi, '')
+    .replace(/<hex-move\s+[^/]*\/>/gi, '')
+    .replace(/<enemy\s+[^/]*\/>/gi, '')
+    .replace(/<encounter-end\s*\/>/gi, '')
+    .replace(/<milestone-event\s+[^/]*\/>/gi, '')
+    .replace(/<loot-video\s+[^/]*\/>/gi, '')
+    .replace(/<visual-update\s+[^/]*\/>/gi, '')
+    .replace(/<panel>[\s\S]*?<\/panel>/gi, '')
+    .replace(/<image-prompt>[\s\S]*?<\/image-prompt>/gi, '')
+    .replace(/<narrative>[\s\S]*?<\/narrative>/gi, '')
+    .replace(/\n{3,}/g, '\n\n')
+    .trim();
+}
+
+export function parsePanels(text: string): ComicPanel[] {
+  const panels: ComicPanel[] = [];
+  const panelRegex = /<panel>([\s\S]*?)<\/panel>/gi;
+  let match;
+  while ((match = panelRegex.exec(text)) !== null) {
+    const body = match[1];
+    const imagePromptMatch = body.match(/<image-prompt>([\s\S]*?)<\/image-prompt>/i);
+    const narrativeMatch = body.match(/<narrative>([\s\S]*?)<\/narrative>/i);
+    if (imagePromptMatch && narrativeMatch) {
+      panels.push({
+        imagePrompt: imagePromptMatch[1].trim(),
+        narrative: narrativeMatch[1].trim(),
+      });
+    }
+  }
+  return panels;
+}
+
+export function parseTurnFrame(text: string): TurnFrameTheme | null {
+  const m = text.match(/<turn-frame\s+([^/]*?)\/>/i);
+  if (!m) return null;
+  const attrs = m[1];
+  const icon = attrs.match(/icon="([^"]*)"/i)?.[1];
+  const accentColor = attrs.match(/accentColor="([^"]*)"/i)?.[1];
+  const frameStyle = attrs.match(/frameStyle="([^"]*)"/i)?.[1];
+  if (!icon || !accentColor || !frameStyle) return null;
+  return { icon, accentColor, frameStyle };
+}
+
+export function eventsToEncounterUpdate(events: GameEvent[], current: ActiveEncounter | null): ActiveEncounter | null {
+  let encounter = current;
+  for (const e of events) {
+    if (e.type === 'enemy-appear' && e.enemyName) {
+      encounter = {
+        name: e.enemyName,
+        level: e.enemyLevel ?? 1,
+        hp: e.enemyHp ?? 10,
+        maxHp: e.enemyHp ?? 10,
+        armorClass: e.enemyAc ?? 10,
+        strength: e.enemyStr ?? 10,
+        dexterity: e.enemyDex ?? 10,
+        constitution: e.enemyCon ?? 10,
+        xpReward: e.enemyXp ?? 0,
+        goldReward: e.enemyGold ?? 0,
+      };
+    } else if (e.type === 'encounter-end') {
+      encounter = null;
+    }
+  }
+  return encounter;
+}
+
+export function matchLoreCards(input: string, recentNarrative: string, lorebook: LoreCard[], limit = 5): LoreCard[] {
+  if (lorebook.length === 0) return [];
+  const haystack = `${input} ${recentNarrative}`.toLowerCase();
+  const scored = lorebook
+    .map((card) => {
+      let score = 0;
+      for (const kw of card.keywords) {
+        if (haystack.includes(kw.toLowerCase())) score += 1;
+      }
+      if (haystack.includes(card.name.toLowerCase())) score += 2;
+      return { card, score };
+    })
+    .filter((s) => s.score > 0)
+    .sort((a, b) => b.score - a.score)
+    .slice(0, limit)
+    .map((s) => s.card);
+  return scored;
+}
+
+export function eventsToLoreCards(events: GameEvent[], currentTurn: number): LoreCard[] {
+  return events
+    .filter((e) => e.type === 'lore-card' && e.id && e.name && e.cardType)
+    .map((e) => ({
+      id: e.id!,
+      name: e.name!,
+      type: e.cardType!,
+      keywords: e.keywords ?? [],
+      summary: e.summary ?? '',
+      visualAnchor: e.visualAnchor, // Maps parsed anchor to the state
+      lastSeenTurn: currentTurn,
+    }));
+}
+
+export interface MilestoneRequest {
+  imagePrompt: string;
+}
+
+/** At most one milestone flag is honored per turn even if the model emits several. */
+export function eventsToMilestone(events: GameEvent[]): MilestoneRequest | null {
+  const e = events.find((ev) => ev.type === 'milestone-event' && ev.imagePromptText?.trim());
+  return e ? { imagePrompt: e.imagePromptText!.trim() } : null;
+}
+
+export interface LootVideoRequest {
+  itemName: string;
+  itemRarity: string;
+  imagePrompt: string;
+}
+
+/** At most one loot-video flag is honored per turn — these are meant to be rare/legendary. */
+export function eventsToLootVideo(events: GameEvent[]): LootVideoRequest | null {
+  const e = events.find((ev) => ev.type === 'loot-video' && ev.name && ev.imagePromptText?.trim());
+  if (!e) return null;
+  return {
+    itemName: e.name!,
+    itemRarity: e.itemRarity ?? 'Legendary',
+    imagePrompt: e.imagePromptText!.trim(),
+  };
+}
+
+/**
+ * Heuristic safety net for radical base-form/species transformations, used alongside (not
+ * instead of) the GM's explicit `form-change="true"` flag on `<visual-update>` — models
+ * forget to set flags, but rarely fail to describe a transformation in the text itself.
+ */
+const FORM_CHANGE_PATTERNS = [
+  /\b(reptil|serpentine|drakon|dragon-?kin|were-?\w+|lycanthrop|polymorph(?:ed)?|shape-?shift(?:ed)?)\b/i,
+  /\btransform(?:ed|s)?\s+into\b/i,
+  /\b(turned|morphed|mutated|shrunk|shrank)\s+into\b/i,
+  /\bno longer (?:look|looks|appear|appears)\s+(?:human|humanoid)\b/i,
+  /\b(beast|feral|monstrous|inhuman|amorphous|ooze|slime|undead|skeleton|golem|construct|elemental)\s+(?:form|body|creature)\b/i,
+  /\bsmall (?:reptilian|lizard|scaled)\s+creature\b/i,
+];
+
+export function isRadicalFormChange(description: string): boolean {
+  if (!description) return false;
+  return FORM_CHANGE_PATTERNS.some((re) => re.test(description));
+}
+
+export interface VisualUpdateRequest {
+  description: string;
+  /** GM-flagged OR heuristically-detected radical base-form/species change. */
+  formChange: boolean;
+}
+
+/** Player's own canonical appearance can change mid-game (new gear, transformation, injury). */
+export function eventsToVisualUpdate(events: GameEvent[]): VisualUpdateRequest | null {
+  const e = events.find((ev) => ev.type === 'visual-update' && ev.visualDescription?.trim());
+  if (!e) return null;
+  const description = e.visualDescription!.trim();
+  return { description, formChange: !!e.formChange || isRadicalFormChange(description) };
+}
+
+export function eventsToQuestUpdates(events: GameEvent[], currentQuests: Quest[] = []): Quest[] {
+  let updatedQuests = [...currentQuests];
+
+  for (const e of events) {
+    if (e.type === 'quest-add' && e.id && e.name) {
+      const exists = updatedQuests.some((q) => q.id === e.id);
+      if (!exists) {
+        const newQuest: Quest = {
+          id: e.id,
+          name: e.name,
+          description: e.description ?? '',
+          type: e.questType ?? 'side',
+          status: 'active',
+          objectives: [],
+        };
+        updatedQuests.push(newQuest);
+      }
+    } else if (e.type === 'quest-update' && e.id && e.objectiveId) {
+      updatedQuests = updatedQuests.map((q) => {
+        if (q.id !== e.id) return q;
+        const objectives = q.objectives ?? [];
+        const objExists = objectives.some((o) => o.id === e.objectiveId);
+        const updatedObjs = objExists
+          ? objectives.map((o) => (o.id === e.objectiveId ? { ...o, completed: !!e.completed } : o))
+          : [...objectives, { id: e.objectiveId!, description: e.objectiveId!, completed: !!e.completed }];
+        return { ...q, objectives: updatedObjs };
+      });
+    } else if (e.type === 'quest-complete' && e.id) {
+      updatedQuests = updatedQuests.map((q) => (q.id === e.id ? { ...q, status: 'completed' as QuestStatus } : q));
+    }
+  }
+
+  return updatedQuests;
+}
