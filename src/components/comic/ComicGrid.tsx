@@ -1,4 +1,4 @@
-import type { LogEntry, LoreCard, ArtStylePreset, ComicPanel, PanelImageStatus, ComicOverlayEdit } from '@/game/types';
+import type { LogEntry, LoreCard, ArtStylePreset, ComicPanel, PanelImageStatus, ComicOverlayEdit, ComicLayoutMode, ComicReadingDirection } from '@/game/types';
 import { normalizeTextAnchor, type ComicTextAnchor } from '@/types/comicScript';
 import { getEffectiveComicPreset } from '@/game/comicImagePrompt';
 import { getStyleSpec, type UiOverlayTheme } from '@/styles/styleSpecs';
@@ -20,6 +20,8 @@ interface ComicGridProps {
   currentImage: string | string[] | null;
   bgImage: string | null;
   artStylePreset: ArtStylePreset;
+  comicLayout?: ComicLayoutMode;
+  comicReadingDirection?: ComicReadingDirection;
   imagesGenerating?: number;
   onRetryPanelImage?: (entryId: string, panelIndex: number) => void;
   onUpdatePanelOverlay?: (entryId: string, panelIndex: number, edit: ComicOverlayEdit) => void;
@@ -32,6 +34,8 @@ export function ComicGrid({
   diceAnimating,
   currentImage,
   artStylePreset,
+  comicLayout = 'paged',
+  comicReadingDirection = 'ltr',
   imagesGenerating = 0,
   onRetryPanelImage,
   onUpdatePanelOverlay,
@@ -97,10 +101,14 @@ export function ComicGrid({
     [recentLog]
   );
 
+  const isWebtoon = comicLayout === 'webtoon';
+  const isRtl = comicReadingDirection === 'rtl';
+
   return (
     <div
       ref={containerRef}
-      className={`relative h-full w-full flex-1 overflow-y-auto overscroll-contain px-2 py-3 sm:px-4 pb-32 flex flex-col ${containerClass}`}
+      dir={isRtl ? 'rtl' : 'ltr'}
+      className={`relative h-full w-full flex-1 overflow-y-auto overscroll-contain px-2 py-3 sm:px-4 pb-32 flex flex-col ${containerClass} ${isWebtoon ? 'comic-webtoon' : 'comic-paged'}`}
     >
       {isScreentone && <div className="manga-screentone-overlay fixed inset-0 z-0 pointer-events-none" />}
 
@@ -157,7 +165,7 @@ export function ComicGrid({
         className="mx-auto w-full max-w-3xl relative z-10 transition-transform duration-150 ease-out"
         style={{ transform: `scale(${scale})`, transformOrigin: 'top center' }}
       >
-        <div className="flex flex-col gap-6">
+        <div className={`flex flex-col ${isWebtoon ? 'gap-10 max-w-xl mx-auto' : 'gap-6'}`}>
           {recentLog.map((entry) => (
             <LogEntryRenderer
               key={entry.id}
@@ -167,6 +175,8 @@ export function ComicGrid({
               introImages={introImages}
               theme={theme}
               editorMode={editorMode}
+              comicLayout={comicLayout}
+              comicReadingDirection={comicReadingDirection}
               onRetryPanelImage={onRetryPanelImage}
               onUpdatePanelOverlay={onUpdatePanelOverlay}
             />
@@ -232,6 +242,8 @@ function LogEntryRenderer({
   introImages,
   theme,
   editorMode,
+  comicLayout = 'paged',
+  comicReadingDirection = 'ltr',
   onRetryPanelImage,
   onUpdatePanelOverlay,
 }: {
@@ -241,9 +253,15 @@ function LogEntryRenderer({
   introImages: string[];
   theme: UiOverlayTheme;
   editorMode: boolean;
+  comicLayout?: ComicLayoutMode;
+  comicReadingDirection?: ComicReadingDirection;
   onRetryPanelImage?: (entryId: string, panelIndex: number) => void;
   onUpdatePanelOverlay?: (entryId: string, panelIndex: number, edit: ComicOverlayEdit) => void;
 }) {
+  const isWebtoon = comicLayout === 'webtoon';
+  const panelGridClass = isWebtoon
+    ? 'flex flex-col gap-8 py-2'
+    : `grid grid-cols-1 gap-4 py-2 sm:grid-cols-2 sm:gap-5 lg:grid-cols-3 ${comicReadingDirection === 'rtl' ? 'direction-rtl' : ''}`;
   // Milestone/loot-video entries get a distinct full-page/cinematic treatment regardless of
   // whatever else the turn contains — checked first so they always win layout priority.
   if (entry.entryKind === 'milestone') {
@@ -268,9 +286,11 @@ function LogEntryRenderer({
 
   if (entry.panels && entry.panels.length > 0) {
     return (
-      <div className="grid grid-cols-1 gap-4 py-2 sm:grid-cols-2 sm:gap-5 lg:grid-cols-3">
+      <div className={panelGridClass}>
         {entry.panels.map((panel, idx) => {
-          const placement = getPanelGridPlacement(idx, entry.panels!.length);
+          const placement = isWebtoon
+            ? { className: 'w-full', featured: true }
+            : getPanelGridPlacement(idx, entry.panels!.length);
           return (
             <div key={`${entry.id}-panel-${idx}`} className={placement.className}>
               <ComicPanelCell
@@ -282,6 +302,7 @@ function LogEntryRenderer({
                 theme={theme}
                 featured={placement.featured}
                 editorMode={editorMode}
+                tall={isWebtoon}
                 onRetry={
                   onRetryPanelImage
                     ? () => onRetryPanelImage(entry.id, idx)
@@ -312,9 +333,11 @@ function LogEntryRenderer({
   // sometimes a bright one — sat behind it).
   if (entryImages.length > 0) {
     return (
-      <div className="grid grid-cols-1 gap-4 py-2 sm:grid-cols-2 sm:gap-5 lg:grid-cols-3">
+      <div className={panelGridClass}>
         {entryImages.map((img, idx) => {
-          const placement = getPanelGridPlacement(idx, entryImages.length);
+          const placement = isWebtoon
+            ? { className: 'w-full', featured: true }
+            : getPanelGridPlacement(idx, entryImages.length);
           return (
             <div key={`${entry.id}-img-${idx}`} className={placement.className}>
               <ComicPanelCell
@@ -331,6 +354,7 @@ function LogEntryRenderer({
                 theme={theme}
                 featured={placement.featured}
                 editorMode={editorMode}
+                tall={isWebtoon}
               />
             </div>
           );
@@ -840,6 +864,7 @@ function ComicPanelCell({
   turn,
   theme,
   featured = false,
+  tall = false,
   editorMode = false,
   onRetry,
   onUpdateOverlay,
@@ -851,6 +876,8 @@ function ComicPanelCell({
   turn?: number;
   theme: UiOverlayTheme;
   featured?: boolean;
+  /** Webtoon vertical scroll uses taller panel frames. */
+  tall?: boolean;
   editorMode?: boolean;
   onRetry?: () => void;
   onUpdateOverlay?: (edit: ComicOverlayEdit) => void;
@@ -878,8 +905,8 @@ function ComicPanelCell({
   const [autoAnchor, setAutoAnchor] = useState<ComicTextAnchor>(initialAnchor);
   const analysisVersionRef = useRef(0);
   const overlayPlacement = ANCHORED_OVERLAY_GROUP_POSITIONS[autoAnchor];
-  // Standard panels lock to 1:1; splash/featured establishing shots use 16:9.
-  const aspectClass = featured ? 'aspect-video' : 'aspect-square';
+  // Webtoon = tall scroll frames; splash/featured = 16:9; otherwise square.
+  const aspectClass = tall ? 'aspect-[3/4]' : featured ? 'aspect-video' : 'aspect-square';
 
   useEffect(() => {
     analysisVersionRef.current += 1;

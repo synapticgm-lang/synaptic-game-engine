@@ -2,7 +2,8 @@ import { useEffect, useRef, useState, useMemo } from 'react';
 import { Send, Dice5, Download, Upload, X, Mic, Square, Volume2, RefreshCw, Settings as SettingsIcon, AlertTriangle, FileDown, LayoutGrid, MessageSquare, Terminal, Swords, User, BookOpen } from 'lucide-react';
 import { EnemyTargetFrame } from './EnemyTargetFrame';
 
-import type { GameState, LogEntry, EngineMode, DiceAnimationMode, LoreCard, ArtStylePreset, StatVerbosity, ComicOverlayEdit } from '@/game/types';
+import type { GameState, LogEntry, EngineMode, DiceAnimationMode, LoreCard, ArtStylePreset, StatVerbosity, ComicOverlayEdit, ComicLayoutMode, ComicReadingDirection } from '@/game/types';
+import { filterSystemLogForEngine } from '@/game/systemLog';
 import type { VoiceState } from '@/game/useVoice';
 import { FormattedText } from './FormattedText';
 import { logger } from '@/game/logger';
@@ -27,6 +28,8 @@ interface Props {
   comicMode: boolean;
   narrativeMode?: boolean;
   artStylePreset: ArtStylePreset;
+  comicLayout?: ComicLayoutMode;
+  comicReadingDirection?: ComicReadingDirection;
   imagesGenerating?: number;
   canRewind: boolean;
   onSend: (input: string) => void;
@@ -40,6 +43,8 @@ interface Props {
   onStopSpeaking: () => void;
   onRewind: () => void;
   onToggleComicMode: () => void;
+  /** When true, comic/narrative/classic view cycling is disabled for the active session. */
+  sessionPresentationLocked?: boolean;
   onAutoFight: () => void;
   onOpenCharacter: () => void;
   onOpenMerchant: () => void;
@@ -47,7 +52,7 @@ interface Props {
   onUpdatePanelOverlay?: (entryId: string, panelIndex: number, edit: ComicOverlayEdit) => void;
 }
 
-export function CenterPanel({ state, busy, error, errorKind, currentImage, bgImage, bgOpacity, showRolls, engineMode, diceAnimation, statVerbosity, voice, comicMode, narrativeMode, artStylePreset, imagesGenerating = 0, canRewind, onSend, onToggleRolls, onExport, onImport, onStartListening, onStopListening, onStopSpeaking, onRetry, onOpenApiSettings, onRewind, onToggleComicMode, onAutoFight, onOpenCharacter, onOpenMerchant, onRetryPanelImage, onUpdatePanelOverlay }: Props) {
+export function CenterPanel({ state, busy, error, errorKind, currentImage, bgImage, bgOpacity, showRolls, engineMode, diceAnimation, statVerbosity, voice, comicMode, narrativeMode, artStylePreset, comicLayout = 'paged', comicReadingDirection = 'ltr', imagesGenerating = 0, canRewind, onSend, onToggleRolls, onExport, onImport, onStartListening, onStopListening, onStopSpeaking, onRetry, onOpenApiSettings, onRewind, onToggleComicMode, sessionPresentationLocked = false, onAutoFight, onOpenCharacter, onOpenMerchant, onRetryPanelImage, onUpdatePanelOverlay }: Props) {
   const [input, setInput] = useState('');
   const [diceRoll, setDiceRoll] = useState<string | null>(null);
   const logRef = useRef<HTMLDivElement>(null);
@@ -99,6 +104,8 @@ export function CenterPanel({ state, busy, error, errorKind, currentImage, bgIma
             currentImage={currentImage}
             bgImage={bgImage}
             artStylePreset={artStylePreset}
+            comicLayout={comicLayout}
+            comicReadingDirection={comicReadingDirection}
             imagesGenerating={imagesGenerating}
             onRetryPanelImage={onRetryPanelImage}
             onUpdatePanelOverlay={onUpdatePanelOverlay}
@@ -106,13 +113,13 @@ export function CenterPanel({ state, busy, error, errorKind, currentImage, bgIma
         </div>
       ) : narrativeMode ? (
         <div className="relative z-10 min-h-0 flex-1 overflow-hidden">
-          <NarrativeView log={state.log} busy={busy} />
+          <NarrativeView log={state.log} busy={busy} engineMode={engineMode} />
         </div>
       ) : (
         <div ref={logRef} className="relative z-10 min-h-0 flex-1 overflow-y-auto px-3 py-4 sm:px-6">
           <div className="mx-auto max-w-2xl space-y-4">
             {state.log.map((entry) => (
-              <LogRow key={entry.id} entry={entry} lorebook={state.lorebook} showSystemLog={showSystemLog} statVerbosity={statVerbosity} />
+              <LogRow key={entry.id} entry={entry} lorebook={state.lorebook} showSystemLog={showSystemLog} statVerbosity={statVerbosity} engineMode={engineMode} />
             ))}
             {busy && (
               <div className="flex items-center gap-2 text-sm text-slate-500">
@@ -219,7 +226,26 @@ export function CenterPanel({ state, busy, error, errorKind, currentImage, bgIma
             <button onClick={onOpenMerchant} title="Inventory / Merchant" className="rounded-md p-1.5 transition-colors hover:bg-slate-800 hover:text-slate-300">
               <LayoutGrid size={15} />
             </button>
-            <button onClick={onToggleComicMode} title={narrativeMode ? 'Narrative view' : comicMode ? 'Comic grid view' : 'Classic log view'} className={`rounded-md p-1.5 transition-colors ${comicMode || narrativeMode ? 'bg-slate-800 text-crimson-400' : 'hover:bg-slate-800 hover:text-slate-300'}`}>
+            <button
+              onClick={onToggleComicMode}
+              disabled={sessionPresentationLocked}
+              title={
+                sessionPresentationLocked
+                  ? 'Presentation locked for this session (chosen at New Game)'
+                  : narrativeMode
+                    ? 'Narrative view'
+                    : comicMode
+                      ? 'Comic grid view'
+                      : 'Classic log view'
+              }
+              className={`rounded-md p-1.5 transition-colors ${
+                sessionPresentationLocked
+                  ? 'cursor-not-allowed opacity-40'
+                  : comicMode || narrativeMode
+                    ? 'bg-slate-800 text-crimson-400'
+                    : 'hover:bg-slate-800 hover:text-slate-300'
+              }`}
+            >
               {narrativeMode ? <BookOpen size={15} /> : comicMode ? <LayoutGrid size={15} /> : <MessageSquare size={15} />}
             </button>
             <RewindBar canRewind={canRewind} onRewind={onRewind} />
@@ -295,7 +321,7 @@ export function CenterPanel({ state, busy, error, errorKind, currentImage, bgIma
   );
 }
 
-function LogRow({ entry, lorebook, showSystemLog, statVerbosity }: { entry: LogEntry; lorebook?: LoreCard[]; showSystemLog: boolean; statVerbosity: StatVerbosity }) {
+function LogRow({ entry, lorebook, showSystemLog, statVerbosity, engineMode }: { entry: LogEntry; lorebook?: LoreCard[]; showSystemLog: boolean; statVerbosity: StatVerbosity; engineMode: EngineMode }) {
   // Text/Milestone Mode: a rare, GM-flagged full-page illustration — rendered large and
   // distinct from the routine text log, instead of only surfacing via the small image strip.
   if (entry.entryKind === 'milestone') {
@@ -366,7 +392,10 @@ function LogRow({ entry, lorebook, showSystemLog, statVerbosity }: { entry: LogE
         <FormattedText content={entry.content} lorebook={lorebook} />
       </div>
       {showSystemLog && entry.systemLog && entry.systemLog.length > 0 && (
-        <SystemLogPanel lines={entry.systemLog} verbosity={statVerbosity} />
+        <SystemLogPanel
+          lines={filterSystemLogForEngine(entry.systemLog, engineMode)}
+          verbosity={statVerbosity}
+        />
       )}
     </div>
   );

@@ -1,12 +1,13 @@
 import { useState, useRef, useEffect } from 'react';
 import { X, Save, BookText, Volume2, Mic, Dice5, Shield, Lock, Baby, Gauge, Download, Upload, KeyRound, Eye, EyeOff, RefreshCw, Check, Loader2, ChevronDown, Image as ImageIcon, Trash2, ZoomIn, Scale, Home, Zap, CircleSlash, Sparkles, Grid3x3, MessageSquareMore, Palette, Layers, Dot, MessageCircle, Map, Eye as EyeIcon, BarChart3, Clock, ScrollText, BookOpen, Swords } from 'lucide-react';
-import type { Settings, DiceAnimationMode, ContentMode, GmStrictness, AiProvider, KeyStatus, PostLoginBehavior, BgMode, ColorVariant, PanelFrequency, PanelBorderIntensity, MapTriggerMode, FogRevealThreshold, StatVerbosity, StatFrequency, GameState, NarrativePerspective, ViolenceLevel, CursingLevel } from '@/game/types';
+import type { Settings, DiceAnimationMode, ContentMode, GmStrictness, AiProvider, KeyStatus, PostLoginBehavior, BgMode, ColorVariant, PanelFrequency, PanelBorderIntensity, MapTriggerMode, FogRevealThreshold, StatVerbosity, StatFrequency, GameState, NarrativePerspective, ViolenceLevel, CursingLevel, ComicLayoutMode, ComicReadingDirection } from '@/game/types';
 import { ART_STYLE_PRESETS } from '@/game/types';
 import { validateApiKey, fetchModelsForProvider, getDefaultModels } from '@/game/apiValidation';
 import { CampaignSettings } from './CampaignSettings';
 import { bgList, bgDelete, type BgEntry } from '@/game/bgCache';
 import { SETTINGS_EVENT_NAME } from '@/game/useGame';
 import { exportSessionToPdf, downloadPdf } from '@/services/pdfExportService';
+import { exportSessionToCbz, downloadCbz } from '@/services/cbzExportService';
 
 interface Props {
   settings: Settings;
@@ -46,6 +47,8 @@ export function SettingsModal({ settings, storyName, engineMode, gameState, onSa
   const [showImageSettings, setShowImageSettings] = useState(false);
   const [pdfExporting, setPdfExporting] = useState(false);
   const [pdfError, setPdfError] = useState<string | null>(null);
+  const [cbzExporting, setCbzExporting] = useState(false);
+  const [cbzError, setCbzError] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const isDnd = engineMode === 'dnd';
@@ -149,6 +152,23 @@ export function SettingsModal({ settings, storyName, engineMode, gameState, onSa
       setPdfError(err instanceof Error ? err.message : 'Failed to generate PDF.');
     } finally {
       setPdfExporting(false);
+    }
+  };
+
+  const handleExportCbz = async () => {
+    if (!gameState || cbzExporting) return;
+    setCbzExporting(true);
+    setCbzError(null);
+    try {
+      const blob = await exportSessionToCbz(gameState);
+      const safeName = (storyName || gameState.character.name || 'comic')
+        .replace(/[^a-z0-9-_]+/gi, '_')
+        .replace(/^_+|_+$/g, '') || 'comic';
+      downloadCbz(blob, `${safeName}.cbz`);
+    } catch (err) {
+      setCbzError(err instanceof Error ? err.message : 'Failed to generate CBZ.');
+    } finally {
+      setCbzExporting(false);
     }
   };
 
@@ -391,18 +411,61 @@ export function SettingsModal({ settings, storyName, engineMode, gameState, onSa
                 onChange={(v) => update('classicMemorableImages', v)}
               />
             )}
+            {draft.visualMode === 'comic' && (
+              <div className="grid grid-cols-2 gap-2">
+                <div>
+                  <label className="mb-1 block text-xs font-medium text-slate-400">
+                    Comic layout{isStoryActive ? ' (locked)' : ''}
+                  </label>
+                  <select
+                    disabled={isStoryActive}
+                    value={draft.comicLayout ?? 'paged'}
+                    onChange={(e) => update('comicLayout', e.target.value as ComicLayoutMode)}
+                    className="w-full rounded-lg border border-slate-600 bg-slate-800 px-2 py-2 text-xs text-slate-100 disabled:opacity-60"
+                  >
+                    <option value="paged">Paged (multi-panel)</option>
+                    <option value="webtoon">Webtoon (vertical)</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="mb-1 block text-xs font-medium text-slate-400">
+                    Reading direction{isStoryActive ? ' (locked)' : ''}
+                  </label>
+                  <select
+                    disabled={isStoryActive}
+                    value={draft.comicReadingDirection ?? 'ltr'}
+                    onChange={(e) => update('comicReadingDirection', e.target.value as ComicReadingDirection)}
+                    className="w-full rounded-lg border border-slate-600 bg-slate-800 px-2 py-2 text-xs text-slate-100 disabled:opacity-60"
+                  >
+                    <option value="ltr">LTR (left → right)</option>
+                    <option value="rtl">RTL (manga)</option>
+                  </select>
+                </div>
+              </div>
+            )}
             <div>
-              <label className="mb-2 block text-xs font-medium text-slate-400">Art Style Preset (image generation only)</label>
+              <label className="mb-2 block text-xs font-medium text-slate-400">
+                Art Style Preset (image generation only)
+                {isStoryActive ? ' — locked for this session' : ''}
+              </label>
+              {isStoryActive && (
+                <p className="mb-2 text-[11px] text-amber-400">
+                  Art style is locked for the active campaign. Start a New Game to choose a different style.
+                </p>
+              )}
               <div className="space-y-1.5">
                 {availableArtPresets.map((preset) => (
                   <button
                     key={preset.value}
-                    onClick={() => update('artStylePreset', preset.value)}
+                    disabled={isStoryActive}
+                    onClick={() => {
+                      if (!isStoryActive) update('artStylePreset', preset.value);
+                    }}
                     className={`flex w-full items-center gap-2 rounded-lg border px-3 py-2 text-left transition-all ${
                       draft.artStylePreset === preset.value
                         ? 'border-crimson-500 bg-crimson-950/30'
                         : 'border-slate-700 bg-slate-800/40 hover:bg-slate-800/70'
-                    }`}
+                    } ${isStoryActive ? 'cursor-not-allowed opacity-60' : ''}`}
                   >
                     <Palette size={14} className={draft.artStylePreset === preset.value ? 'text-crimson-400' : 'text-slate-500'} />
                     <div className="flex-1">
@@ -680,18 +743,30 @@ export function SettingsModal({ settings, storyName, engineMode, gameState, onSa
           {/* Illustrated Book Export (Phase 3 — PDF Exporter Engine) */}
           <Section icon={<BookOpen size={16} />} title="Illustrated Book Export" visible={activeTab === 'visuals'}>
             <p className="mb-1 text-xs text-slate-500">
-              Compile this session's panels and narrative into a print-ready PDF (US Trade Comic format, 300 DPI).
+              Compile this session's panels into a print-ready PDF or a CBZ comic archive for readers.
             </p>
-            <button
-              type="button"
-              onClick={handleExportPdf}
-              disabled={!gameState || pdfExporting}
-              className="flex w-full items-center justify-center gap-2 rounded-lg border border-slate-700 bg-slate-800/40 px-3 py-2 text-sm text-slate-200 transition-colors hover:bg-slate-800/70 disabled:cursor-not-allowed disabled:opacity-50"
-            >
-              {pdfExporting ? <Loader2 size={15} className="animate-spin" /> : <BookOpen size={15} />}
-              {pdfExporting ? 'Generating PDF…' : 'Download Graphic Novel (PDF)'}
-            </button>
+            <div className="space-y-2">
+              <button
+                type="button"
+                onClick={handleExportPdf}
+                disabled={!gameState || pdfExporting}
+                className="flex w-full items-center justify-center gap-2 rounded-lg border border-slate-700 bg-slate-800/40 px-3 py-2 text-sm text-slate-200 transition-colors hover:bg-slate-800/70 disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                {pdfExporting ? <Loader2 size={15} className="animate-spin" /> : <BookOpen size={15} />}
+                {pdfExporting ? 'Generating PDF…' : 'Download Graphic Novel (PDF)'}
+              </button>
+              <button
+                type="button"
+                onClick={handleExportCbz}
+                disabled={!gameState || cbzExporting}
+                className="flex w-full items-center justify-center gap-2 rounded-lg border border-slate-700 bg-slate-800/40 px-3 py-2 text-sm text-slate-200 transition-colors hover:bg-slate-800/70 disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                {cbzExporting ? <Loader2 size={15} className="animate-spin" /> : <Download size={15} />}
+                {cbzExporting ? 'Packing CBZ…' : 'Download Comic Archive (CBZ)'}
+              </button>
+            </div>
             {pdfError && <p className="mt-1.5 text-[11px] text-red-400">{pdfError}</p>}
+            {cbzError && <p className="mt-1.5 text-[11px] text-red-400">{cbzError}</p>}
             {!gameState && <p className="mt-1.5 text-[11px] text-slate-600">Start a story to enable export.</p>}
           </Section>
 

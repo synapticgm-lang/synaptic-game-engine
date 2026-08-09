@@ -5,6 +5,13 @@ import { createInitialState } from './defaults';
 import type { CampaignArchetype } from './archetypes';
 import { buildArchetypeIntro } from './archetypes';
 import { loadGame, saveGame, loadSettings, saveSettings, exportSave, importSave } from './db';
+import {
+  syncGameToCloud,
+  fetchLatestCloudSave,
+  fetchSupabaseSaveSlot,
+  gameStateToLocalSlot,
+} from './cloudSync';
+import { filterSystemLogForEngine } from './systemLog';
 import { callGm, callGmAutoFight } from './aiService';
 import { simulateCombat, buildAutoFightPrompt } from './combat';
 import type { EnemyStats } from './combat';
@@ -247,6 +254,12 @@ export function useGame() {
   if (!loadedSettings.visualMode) {
     loadedSettings.visualMode = 'classic';
   }
+  if (!loadedSettings.comicLayout) {
+    loadedSettings.comicLayout = 'paged';
+  }
+  if (!loadedSettings.comicReadingDirection) {
+    loadedSettings.comicReadingDirection = 'ltr';
+  }
   debugLogger.record('SYSTEM', 'Settings loaded', {
     aiProvider: loadedSettings.aiProvider,
     visualMode: loadedSettings.visualMode,
@@ -352,12 +365,33 @@ export function useGame() {
     return () => window.removeEventListener('popstate', handlePopState);
   }, [showSettings, showMapModal, showRolls, showNewGame, showApiSetup, showCharacterWindow, showMerchantWindow, leftOpen, rightOpen]);
 
+  const refreshSaveSlots = useCallbackRef(async () => {
+    try {
+      const local = await loadGame();
+      setLocalSlot(gameStateToLocalSlot(local));
+      const cloudSlotInfo = await fetchSupabaseSaveSlot();
+      setCloudSlot(cloudSlotInfo);
+      debugLogger.record('SYSTEM', 'Save slots refreshed', {
+        hasLocal: !!local,
+        hasCloud: !!cloudSlotInfo,
+        localTurn: local?.turn,
+        cloudTurn: cloudSlotInfo?.turn,
+      });
+    } catch (err) {
+      debugLogger.record('ERROR', 'Failed to refresh save slots', {
+        error: err instanceof Error ? err.message : String(err),
+      });
+    }
+  });
+
   const applySupabaseSession = useCallbackRef((session: Session | null) => {
     if (!session?.user) {
       setTelemetryContext({ playerId: 'guest' });
       if (googleUserRef.current && !googleUserRef.current.isGuest) {
         setGoogleUser(null);
       }
+      setCloudSlot(null);
+      void refreshSaveSlots();
       return;
     }
 
@@ -380,7 +414,13 @@ export function useGame() {
     // OAuth redirect returns here — skip welcome/auth gates when a session exists.
     setBootPhase((phase) => (phase === 'welcome' || phase === 'auth' ? 'hub' : phase));
     isHydratedRef.current = true;
+    void refreshSaveSlots();
   });
+
+  useEffect(() => {
+    // Always surface the IndexedDB save on the hub; cloud slot fills in after auth.
+    void refreshSaveSlots();
+  }, [refreshSaveSlots]);
 
   useEffect(() => {
     if (!supabase) {
@@ -449,6 +489,12 @@ export function useGame() {
     setSaveStatus('saving');
     await saveGame(s);
     localStorage.setItem(LOCAL_UPDATED_KEY, String(Date.now()));
+    // Best-effort cloud SSOT for signed-in players (IndexedDB stays primary offline cache).
+    void syncGameToCloud(s, settingsRef.current).then((result) => {
+      if (!result.ok && result.error && result.error !== 'Not signed in' && result.error !== 'Supabase not configured') {
+        debugLogger.record('ERROR', 'Cloud save sync failed', { error: result.error });
+      }
+    });
     setSaveStatus('saved');
     if (saveTimerRef.current) clearTimeout(saveTimerRef.current);
     saveTimerRef.current = setTimeout(() => { setSaveStatus('idle'); }, 2500);
@@ -1129,7 +1175,9 @@ Character: ${liveCurrent.character.name} (Lvl ${liveCurrent.character.level})
 HP: ${liveCurrent.character.hp}/${liveCurrent.character.maxHp}
 Gold: ${liveCurrent.gold ?? 0}
 CODE ENFORCED OUTCOME FOR THIS ACTION: ${narrativeOutcomeLabel}
-Do NOT print dice notation, d20 lines, modifiers, DCs, or "Strength Check:" text in the narrative or <narrative> panels. Put that math only inside <system-log>. Narrate the ${narrativeOutcomeLabel.toLowerCase()} as story consequences only.${hiddenSimUpdate}${inventoryGate}
+CODE OUTCOME (HIDDEN): ${narrativeOutcomeLabel}. Narrate story consequences only.
+Do NOT print dice notation, d20 lines, modifiers, DCs, "Strength Check:", or Action Check math anywhere — not in narrative, not in <narrative> panels, and not in <system-log>.
+In <system-log>, only emit LitRPG/RPG progression lines (XP, loot, HP change as story system text) with zero dice formulas.${hiddenSimUpdate}${inventoryGate}
 -------------------------------------------------
 `;
 
@@ -1171,14 +1219,22 @@ Do NOT print dice notation, d20 lines, modifiers, DCs, or "Strength Check:" text
         );
       }
 
-      const codeSystemLogLine = `Action Check: d20(${d20Roll}) + Mod(${strMod}) = ${outcome.totalScore} vs DC ${difficultyClass} — ${narrativeOutcomeLabel}`;
+      // Dice math belongs in the player-facing system log only for D&D / 5e.
+      const codeSystemLogLine = isDndEngine
+        ? `Action Check: d20(${d20Roll}) + Mod(${strMod}) = ${outcome.totalScore} vs DC ${difficultyClass} — ${narrativeOutcomeLabel}`
+        : null;
+      const rawSystemLog = [
+        ...(result.systemLog ?? []),
+        ...(codeSystemLogLine ? [codeSystemLogLine] : []),
+      ];
+      const filteredSystemLog = filterSystemLogForEngine(rawSystemLog, liveCurrent.engineMode);
       const gmEntry: LogEntry = {
         id: uid(),
         turn: liveCurrent.turn + 1,
         role: 'gm',
         content: result.text,
         timestamp: Date.now(),
-        systemLog: Array.from(new Set([...(result.systemLog ?? []), codeSystemLogLine])),
+        systemLog: Array.from(new Set(filteredSystemLog)),
       };
 
       // `events`/derived requests must be parsed BEFORE anything below references them
@@ -1521,11 +1577,15 @@ Do NOT print dice notation, d20 lines, modifiers, DCs, or "Strength Check:" text
     selectedVisualMode?: 'comic' | 'classic',
     selectedArtStyle?: ArtStylePreset,
     classicMemorableImages?: boolean,
+    comicLayout?: Settings['comicLayout'],
+    comicReadingDirection?: Settings['comicReadingDirection'],
   ) => {
     if (
       selectedVisualMode ||
       selectedArtStyle ||
-      typeof classicMemorableImages === 'boolean'
+      typeof classicMemorableImages === 'boolean' ||
+      comicLayout ||
+      comicReadingDirection
     ) {
       const updated = { ...settingsRef.current } as Settings;
       if (selectedVisualMode) updated.visualMode = selectedVisualMode;
@@ -1533,6 +1593,8 @@ Do NOT print dice notation, d20 lines, modifiers, DCs, or "Strength Check:" text
       if (typeof classicMemorableImages === 'boolean') {
         updated.classicMemorableImages = classicMemorableImages;
       }
+      if (comicLayout) updated.comicLayout = comicLayout;
+      if (comicReadingDirection) updated.comicReadingDirection = comicReadingDirection;
       setSettings(updated);
       settingsRef.current = updated;
       saveSettings(updated);
@@ -1826,28 +1888,69 @@ Do NOT print dice notation, d20 lines, modifiers, DCs, or "Strength Check:" text
       setTelemetryContext({ playerId: 'guest' });
       setBootPhase('hub');
       isHydratedRef.current = true;
+      setCloudSlot(null);
+      void refreshSaveSlots();
     },
     continueGame: async () => {
-      debugLogger.record('SYSTEM', 'continueGame invoked — loading saved game from storage');
-      const saved = await loadGame();
-      if (saved) {
+      debugLogger.record('SYSTEM', 'continueGame invoked — resolving local + Supabase cloud save');
+      setSyncPhase('syncing');
+      try {
+        const local = await loadGame();
+        const cloud = await fetchLatestCloudSave();
+
+        const localTs = local?.lastUpdated ?? 0;
+        const cloudTs = cloud?.updatedAtMs ?? 0;
+        const useCloud = !!cloud && (!local || cloudTs > localTs);
+        const saved = useCloud ? cloud!.state : local;
+
+        if (!saved) {
+          debugLogger.record('WARN', 'continueGame found no local or cloud save');
+          addToast('No save found on this device or in the cloud.', 'error');
+          return;
+        }
+
         // Image requests are intentionally not persisted/resumed. A saved `pending` status
         // therefore has no live promise behind it and must become a terminal fallback state.
         const recovered = settleOrphanedImageJobs(saved);
+
+        if (useCloud && cloud) {
+          // Restore locked presentation settings from the cloud row when present.
+          const nextSettings: Settings = {
+            ...settingsRef.current,
+            ...(cloud.visualMode ? { visualMode: cloud.visualMode } : {}),
+            ...(cloud.artStylePreset ? { artStylePreset: cloud.artStylePreset } : {}),
+          };
+          setSettings(nextSettings);
+          settingsRef.current = nextSettings;
+          saveSettings(nextSettings);
+          setComicMode(nextSettings.visualMode === 'comic');
+          setNarrativeMode(false);
+          window.dispatchEvent(new CustomEvent(SETTINGS_EVENT_NAME, { detail: nextSettings }));
+          addToast('Restored save from cloud (Supabase).', 'success');
+        }
+
         debugLogger.record('STATE_UPDATE', 'Saved game loaded — hydrating state', {
+          source: useCloud ? 'supabase' : 'local',
           turn: recovered.turn,
           storyName: recovered.storyName,
           logEntries: recovered.log.length,
-          engineMode: recovered.engineMode
+          engineMode: recovered.engineMode,
         });
         setState(recovered);
         stateRef.current = recovered;
         bindSessionImageCache(recovered.saveId);
         setTelemetryContext({ saveId: recovered.saveId, engineMode: recovered.engineMode });
         isHydratedRef.current = true;
-        if (recovered !== saved) await persist(recovered);
-      } else {
-        debugLogger.record('WARN', 'continueGame found no saved game — state unchanged');
+        // Always write the chosen save into IndexedDB so offline continue works.
+        await saveGame(recovered);
+        const slot = gameStateToLocalSlot(recovered);
+        setLocalSlot(slot);
+        if (useCloud && slot) setCloudSlot({ ...slot, source: 'cloud' });
+        if (recovered !== saved || useCloud) {
+          await persist(recovered);
+        }
+      } finally {
+        setSyncPhase('idle');
       }
     },
     handleSetupComplete: async (contentMode, apiKey, provider, model, baseUrl) => {

@@ -71,12 +71,28 @@ export function MainMenu({
             <div className="flex items-center gap-2 text-xs text-slate-500">
               <BookOpen size={12} />
               <span className="font-medium text-slate-400">Active Save:</span>
+              <span className="ml-auto text-[10px] uppercase tracking-wide text-slate-600">
+                {(cloudSlot?.lastUpdated ?? 0) > (localSlot?.lastUpdated ?? 0) ? 'cloud' : 'local'}
+              </span>
             </div>
             <div className="mt-1 text-sm text-slate-300">
-              {localSlot?.storyName ?? cloudSlot?.storyName ?? 'Unknown'}
+              {((cloudSlot?.lastUpdated ?? 0) > (localSlot?.lastUpdated ?? 0) ? cloudSlot : localSlot)?.storyName
+                ?? localSlot?.storyName
+                ?? cloudSlot?.storyName
+                ?? 'Unknown'}
             </div>
             <div className="text-xs text-slate-500">
-              {localSlot?.characterName ?? cloudSlot?.characterName} · Lv.{localSlot?.level ?? cloudSlot?.level} · Turn {localSlot?.turn ?? cloudSlot?.turn}
+              {((cloudSlot?.lastUpdated ?? 0) > (localSlot?.lastUpdated ?? 0) ? cloudSlot : localSlot)?.characterName
+                ?? localSlot?.characterName
+                ?? cloudSlot?.characterName}
+              {' · Lv.'}
+              {((cloudSlot?.lastUpdated ?? 0) > (localSlot?.lastUpdated ?? 0) ? cloudSlot : localSlot)?.level
+                ?? localSlot?.level
+                ?? cloudSlot?.level}
+              {' · Turn '}
+              {((cloudSlot?.lastUpdated ?? 0) > (localSlot?.lastUpdated ?? 0) ? cloudSlot : localSlot)?.turn
+                ?? localSlot?.turn
+                ?? cloudSlot?.turn}
             </div>
           </div>
         )}
@@ -88,7 +104,7 @@ export function MainMenu({
             </span>
           ) : googleSignedIn ? (
             <span className="flex items-center gap-1.5 rounded-full border border-emerald-800/40 bg-emerald-950/30 px-2.5 py-1 text-emerald-400/90">
-              <Cloud size={12} /> Cloud Connected{googleEmail ? `: ${googleEmail}` : ''}
+              <Cloud size={12} /> Cloud save (Supabase){googleEmail ? `: ${googleEmail}` : ''}
             </span>
           ) : null}
         </div>

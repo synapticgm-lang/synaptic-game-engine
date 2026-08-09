@@ -1,5 +1,7 @@
 import { useState, useMemo } from 'react';
 import type { LogEntry } from '@/types';
+import type { EngineMode } from '@/game/types';
+import { filterSystemLogForEngine } from '@/game/systemLog';
 import {
   ChevronRight, ChevronDown, Zap, Sword, Shield, Sparkles,
   TrendingUp, Skull, Heart, Dice5, Eye, EyeOff, Terminal,
@@ -8,6 +10,7 @@ import {
 interface Props {
   log: LogEntry[];
   busy?: boolean;
+  engineMode?: EngineMode;
 }
 
 type ActionKind = 'crit' | 'damage' | 'heal' | 'skill' | 'defeat' | 'miss';
@@ -29,10 +32,10 @@ const ACTION_META: Record<ActionKind, { color: string; bg: string; border: strin
   miss:     { color: 'text-slate-400',   bg: 'bg-slate-900/40',   border: 'border-slate-700',      icon: Shield,   label: 'MISS' },
 };
 
-function extractActions(log: LogEntry[]): ActionCard[] {
+function extractActions(log: LogEntry[], engineMode: EngineMode = 'litrpg'): ActionCard[] {
   const cards: ActionCard[] = [];
   for (const entry of log) {
-    const lines = entry.systemLog ?? [];
+    const lines = filterSystemLogForEngine(entry.systemLog ?? [], engineMode);
     for (const line of lines) {
       const lower = line.toLowerCase();
       let kind: ActionKind | null = null;
@@ -57,9 +60,9 @@ function extractActions(log: LogEntry[]): ActionCard[] {
   return cards.slice(-20).reverse();
 }
 
-export function NarrativeView({ log, busy }: Props) {
+export function NarrativeView({ log, busy, engineMode = 'litrpg' }: Props) {
   const [streamOpen, setStreamOpen] = useState(true);
-  const actionCards = useMemo(() => extractActions(log), [log]);
+  const actionCards = useMemo(() => extractActions(log, engineMode), [log, engineMode]);
 
   return (
     <div className="relative flex h-full overflow-hidden">
@@ -67,7 +70,7 @@ export function NarrativeView({ log, busy }: Props) {
       <div className="flex-1 overflow-y-auto px-3 py-4 sm:px-6">
         <div className="mx-auto max-w-2xl space-y-4">
           {log.map((entry) => (
-            <NarrativeEntry key={entry.id} entry={entry} />
+            <NarrativeEntry key={entry.id} entry={entry} engineMode={engineMode} />
           ))}
           {busy && (
             <div className="flex items-center gap-2 text-sm text-slate-500">
@@ -90,17 +93,21 @@ export function NarrativeView({ log, busy }: Props) {
 
 /* ============ NARRATIVE ENTRY DISPATCHER ============ */
 
-function NarrativeEntry({ entry }: { entry: LogEntry }) {
+function NarrativeEntry({ entry, engineMode }: { entry: LogEntry; engineMode: EngineMode }) {
   if (entry.role === 'player') return <PlayerBubble entry={entry} />;
   if (entry.role === 'system') return <SystemMessage entry={entry} />;
-  return <DmNarration entry={entry} />;
+  return <DmNarration entry={entry} engineMode={engineMode} />;
 }
 
 /* ============ 1. AI DM NARRATION PANEL ============ */
 
-function DmNarration({ entry }: { entry: LogEntry }) {
+function DmNarration({ entry, engineMode }: { entry: LogEntry; engineMode: EngineMode }) {
   const segments = useMemo(() => parseSegments(entry.content), [entry.content]);
-  const hasSystemLog = entry.systemLog && entry.systemLog.length > 0;
+  const systemLines = useMemo(
+    () => filterSystemLogForEngine(entry.systemLog ?? [], engineMode),
+    [entry.systemLog, engineMode],
+  );
+  const hasSystemLog = systemLines.length > 0;
 
   return (
     <div className="space-y-3">
@@ -143,7 +150,7 @@ function DmNarration({ entry }: { entry: LogEntry }) {
               System Log
             </div>
             <div className="space-y-0.5">
-              {entry.systemLog!.map((line, i) => (
+              {systemLines.map((line, i) => (
                 <div key={i} className="font-mono text-[10px] text-slate-500">{line}</div>
               ))}
             </div>

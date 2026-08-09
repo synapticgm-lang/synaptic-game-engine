@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import { X, Sparkles, Wand2, BookOpen, Palette, ChevronRight, Dices, ScrollText, Cpu } from 'lucide-react';
-import type { EngineMode, GmStrictness, ArtStylePreset } from '@/game/types';
+import { X, Sparkles, Wand2, BookOpen, Palette, ChevronRight, ChevronLeft, Dices, ScrollText, Cpu } from 'lucide-react';
+import type { EngineMode, GmStrictness, ArtStylePreset, ComicLayoutMode, ComicReadingDirection } from '@/game/types';
 import { ART_STYLE_PRESETS } from '@/game/types';
 import { getArchetypeOptions, getDefaultArchetype, type CampaignArchetype } from '@/game/archetypes';
 
@@ -14,11 +14,14 @@ interface Props {
     visualMode?: 'comic' | 'classic',
     artStylePreset?: ArtStylePreset,
     classicMemorableImages?: boolean,
+    comicLayout?: ComicLayoutMode,
+    comicReadingDirection?: ComicReadingDirection,
   ) => void;
   onClose: () => void;
 }
 
-type WizardStep = 'type_select' | 'premade_setup' | 'custom_setup';
+type PathKind = 'premade' | 'custom';
+type WizardStep = 'path' | 'system' | 'presentation' | 'character';
 
 const ENGINE_MODE_CARDS: Array<{
   value: EngineMode;
@@ -46,14 +49,24 @@ const ENGINE_MODE_CARDS: Array<{
   },
 ];
 
+const STEP_LABELS: Record<WizardStep, string> = {
+  path: 'Begin New Journey',
+  system: '1 · Game System',
+  presentation: '2 · Presentation',
+  character: '3 · Character',
+};
+
 export function NewGameModal({ onStart, onClose }: Props) {
-  const [step, setStep] = useState<WizardStep>('type_select');
+  const [path, setPath] = useState<PathKind | null>(null);
+  const [step, setStep] = useState<WizardStep>('path');
 
   const [storyName, setStoryName] = useState(`Campaign - ${Date.now().toString().slice(-6)}`);
   const [archetype, setArchetype] = useState<CampaignArchetype>('ai_random');
   const [visualMode, setVisualMode] = useState<'comic' | 'classic'>('classic');
   const [artStylePreset, setArtStylePreset] = useState<ArtStylePreset>('manga-screentone');
   const [classicMemorableImages, setClassicMemorableImages] = useState(false);
+  const [comicLayout, setComicLayout] = useState<ComicLayoutMode>('paged');
+  const [comicReadingDirection, setComicReadingDirection] = useState<ComicReadingDirection>('ltr');
 
   const [charName, setCharName] = useState('Survivor');
   const [className, setClassName] = useState('Wanderer');
@@ -64,11 +77,44 @@ export function NewGameModal({ onStart, onClose }: Props) {
   const [customArchetype, setCustomArchetype] = useState<CampaignArchetype>(getDefaultArchetype('litrpg'));
 
   const archetypeOptions = getArchetypeOptions(engineMode);
-  const premadeArchetypeOptions = getArchetypeOptions(engineMode);
-  const selectedPremadeArchetype = premadeArchetypeOptions.find((o) => o.value === archetype);
-  const selectedCustomArchetype = archetypeOptions.find((o) => o.value === customArchetype);
+  const selectedArchetype = archetypeOptions.find((o) =>
+    o.value === (path === 'custom' ? customArchetype : archetype),
+  );
 
-  const handleStartPremade = () => {
+  const selectEngineMode = (mode: EngineMode) => {
+    setEngineMode(mode);
+    const next = getDefaultArchetype(mode);
+    setCustomArchetype(next);
+    setArchetype(next);
+  };
+
+  const choosePath = (kind: PathKind) => {
+    setPath(kind);
+    setStep('system');
+  };
+
+  const goBack = () => {
+    if (step === 'system') {
+      setStep('path');
+      setPath(null);
+    } else if (step === 'presentation') {
+      setStep('system');
+    } else if (step === 'character') {
+      setStep('presentation');
+    }
+  };
+
+  const goNext = () => {
+    if (step === 'system') setStep('presentation');
+    else if (step === 'presentation') {
+      if (path === 'custom') setStep('character');
+      else beginPremade();
+    } else if (step === 'character') {
+      beginCustom();
+    }
+  };
+
+  const beginPremade = () => {
     onStart(
       { name: 'Adventurer', classTitle: 'Hero' },
       storyName.trim() || undefined,
@@ -78,10 +124,12 @@ export function NewGameModal({ onStart, onClose }: Props) {
       visualMode,
       artStylePreset,
       classicMemorableImages,
+      comicLayout,
+      comicReadingDirection,
     );
   };
 
-  const handleStartCustom = () => {
+  const beginCustom = () => {
     onStart(
       { name: charName.trim() || 'Survivor', classTitle: className.trim() || 'Wanderer', bio: backstory, appearance },
       storyName.trim() || undefined,
@@ -91,15 +139,17 @@ export function NewGameModal({ onStart, onClose }: Props) {
       visualMode,
       artStylePreset,
       classicMemorableImages,
+      comicLayout,
+      comicReadingDirection,
     );
   };
 
-  const selectEngineMode = (mode: EngineMode) => {
-    setEngineMode(mode);
-    const next = getDefaultArchetype(mode);
-    setCustomArchetype(next);
-    setArchetype(next);
-  };
+  const nextLabel =
+    step === 'presentation' && path === 'premade'
+      ? 'Begin Journey'
+      : step === 'character'
+        ? 'Begin Journey'
+        : 'Continue';
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 backdrop-blur-sm p-3" onClick={onClose}>
@@ -110,25 +160,42 @@ export function NewGameModal({ onStart, onClose }: Props) {
         <div className="flex shrink-0 items-center justify-between border-b border-slate-800 bg-slate-950 px-4 py-3">
           <div className="flex items-center gap-2">
             <Sparkles className="text-crimson-400" size={16} />
-            <h2 className="font-serif text-sm text-slate-100">
-              {step === 'type_select' && 'Begin New Journey'}
-              {step === 'premade_setup' && 'Quick Start / Pre-Made Campaign'}
-              {step === 'custom_setup' && 'Full Custom Setup'}
-            </h2>
+            <h2 className="font-serif text-sm text-slate-100">{STEP_LABELS[step]}</h2>
           </div>
           <button onClick={onClose} className="text-slate-400 hover:text-slate-200 transition-colors p-1">
             <X size={18} />
           </button>
         </div>
 
+        {step !== 'path' && (
+          <div className="flex shrink-0 gap-1 border-b border-slate-800/80 bg-slate-950/80 px-4 py-2">
+            {(['system', 'presentation', ...(path === 'custom' ? (['character'] as const) : [])] as WizardStep[]).map((s, i) => {
+              const order: WizardStep[] = path === 'custom'
+                ? ['system', 'presentation', 'character']
+                : ['system', 'presentation'];
+              const activeIdx = order.indexOf(step);
+              const done = i < activeIdx;
+              const current = s === step;
+              return (
+                <div
+                  key={s}
+                  className={`h-1 flex-1 rounded-full ${current ? 'bg-crimson-500' : done ? 'bg-crimson-800' : 'bg-slate-800'}`}
+                />
+              );
+            })}
+          </div>
+        )}
+
         <div className="flex-1 space-y-4 overflow-y-auto p-4 text-xs">
-          {step === 'type_select' && (
+          {step === 'path' && (
             <div className="space-y-3">
-              <p className="text-slate-400 text-xs">Choose how you want to launch your adventure:</p>
+              <p className="text-slate-400 text-xs">
+                Presentation and system are locked for the whole session after you begin — choose carefully.
+              </p>
 
               <button
                 type="button"
-                onClick={() => setStep('premade_setup')}
+                onClick={() => choosePath('premade')}
                 className="group flex w-full items-center gap-3 rounded-xl border border-slate-700 bg-slate-800/50 p-3 text-left transition-all hover:border-crimson-500 hover:bg-slate-800"
               >
                 <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-crimson-500/30 bg-crimson-950/40 text-crimson-400">
@@ -140,14 +207,14 @@ export function NewGameModal({ onStart, onClose }: Props) {
                     <ChevronRight size={16} className="text-slate-500 group-hover:text-crimson-400" />
                   </div>
                   <p className="mt-0.5 text-[11px] text-slate-400">
-                    Pick a game mode, archetype preset, and visual style — then jump straight into the story.
+                    System → Presentation, then jump in with a preset archetype.
                   </p>
                 </div>
               </button>
 
               <button
                 type="button"
-                onClick={() => setStep('custom_setup')}
+                onClick={() => choosePath('custom')}
                 className="group flex w-full items-center gap-3 rounded-xl border border-slate-700 bg-slate-800/50 p-3 text-left transition-all hover:border-sky-500 hover:bg-slate-800"
               >
                 <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-sky-500/30 bg-sky-950/40 text-sky-400">
@@ -159,83 +226,24 @@ export function NewGameModal({ onStart, onClose }: Props) {
                     <ChevronRight size={16} className="text-slate-500 group-hover:text-sky-400" />
                   </div>
                   <p className="mt-0.5 text-[11px] text-slate-400">
-                    Deep customization: character bio, LitRPG / D&D / RPG rules, GM strictness, and art style.
+                    System → Presentation → Character, with bio and GM strictness.
                   </p>
                 </div>
               </button>
             </div>
           )}
 
-          {(step === 'premade_setup' || step === 'custom_setup') && (
+          {step === 'system' && (
             <div className="space-y-3">
-              {step === 'custom_setup' && (
-                <>
-                  <div>
-                    <label className="mb-1 block font-medium text-slate-300">Campaign Name</label>
-                    <input
-                      type="text"
-                      value={storyName}
-                      onChange={(e) => setStoryName(e.target.value)}
-                      className="w-full rounded-lg border border-slate-700 bg-slate-800 px-3 py-1.5 text-xs text-slate-100 focus:border-crimson-500 focus:outline-none"
-                    />
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-2">
-                    <div>
-                      <label className="mb-1 block font-medium text-slate-300">Character Name</label>
-                      <input
-                        type="text"
-                        value={charName}
-                        onChange={(e) => setCharName(e.target.value)}
-                        className="w-full rounded-lg border border-slate-700 bg-slate-800 px-3 py-1.5 text-xs text-slate-100 focus:border-crimson-500 focus:outline-none"
-                      />
-                    </div>
-                    <div>
-                      <label className="mb-1 block font-medium text-slate-300">Class / Archetype</label>
-                      <input
-                        type="text"
-                        value={className}
-                        onChange={(e) => setClassName(e.target.value)}
-                        className="w-full rounded-lg border border-slate-700 bg-slate-800 px-3 py-1.5 text-xs text-slate-100 focus:border-crimson-500 focus:outline-none"
-                      />
-                    </div>
-                  </div>
-
-                  <div>
-                    <label className="mb-1 block font-medium text-slate-300">Appearance</label>
-                    <input
-                      type="text"
-                      value={appearance}
-                      onChange={(e) => setAppearance(e.target.value)}
-                      placeholder="Character look..."
-                      className="w-full rounded-lg border border-slate-700 bg-slate-800 px-3 py-1.5 text-xs text-slate-100 focus:border-crimson-500 focus:outline-none"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="mb-1 block font-medium text-slate-300">Background / Backstory</label>
-                    <textarea
-                      rows={2}
-                      value={backstory}
-                      onChange={(e) => setBackstory(e.target.value)}
-                      placeholder="Short backstory..."
-                      className="w-full rounded-lg border border-slate-700 bg-slate-800 px-3 py-1.5 text-xs text-slate-100 focus:border-crimson-500 focus:outline-none resize-none"
-                    />
-                  </div>
-                </>
-              )}
-
-              {step === 'premade_setup' && (
-                <div>
-                  <label className="mb-1 block font-medium text-slate-300">Campaign Name</label>
-                  <input
-                    type="text"
-                    value={storyName}
-                    onChange={(e) => setStoryName(e.target.value)}
-                    className="w-full rounded-lg border border-slate-700 bg-slate-800 px-3 py-2 text-xs text-slate-100 focus:border-crimson-500 focus:outline-none"
-                  />
-                </div>
-              )}
+              <div>
+                <label className="mb-1 block font-medium text-slate-300">Campaign Name</label>
+                <input
+                  type="text"
+                  value={storyName}
+                  onChange={(e) => setStoryName(e.target.value)}
+                  className="w-full rounded-lg border border-slate-700 bg-slate-800 px-3 py-1.5 text-xs text-slate-100 focus:border-crimson-500 focus:outline-none"
+                />
+              </div>
 
               <div>
                 <label className="mb-1.5 block font-medium text-slate-300">Game Mode</label>
@@ -265,28 +273,27 @@ export function NewGameModal({ onStart, onClose }: Props) {
 
               <div>
                 <label className="mb-1 block font-medium text-slate-300">
-                  {step === 'premade_setup' ? 'Story Archetype Preset' : 'Story Opening Archetype'}
+                  {path === 'premade' ? 'Story Archetype Preset' : 'Story Opening Archetype'}
                 </label>
                 <select
-                  value={step === 'premade_setup' ? archetype : customArchetype}
+                  value={path === 'custom' ? customArchetype : archetype}
                   onChange={(e) => {
                     const value = e.target.value as CampaignArchetype;
-                    if (step === 'premade_setup') setArchetype(value);
-                    else setCustomArchetype(value);
+                    if (path === 'custom') setCustomArchetype(value);
+                    else setArchetype(value);
                   }}
                   className="w-full rounded-lg border border-slate-700 bg-slate-800 px-3 py-2 text-xs text-slate-100 focus:border-crimson-500 focus:outline-none truncate"
                 >
-                  {(step === 'premade_setup' ? premadeArchetypeOptions : archetypeOptions).map((opt) => (
+                  {archetypeOptions.map((opt) => (
                     <option key={opt.value} value={opt.value}>{opt.label}</option>
                   ))}
                 </select>
                 <p className="mt-1.5 text-[10px] leading-snug text-slate-500">
-                  {(step === 'premade_setup' ? selectedPremadeArchetype : selectedCustomArchetype)?.description
-                    ?? 'Choose an opening seed that matches your preferred tone.'}
+                  {selectedArchetype?.description ?? 'Choose an opening seed that matches your preferred tone.'}
                 </p>
               </div>
 
-              {step === 'custom_setup' && (
+              {path === 'custom' && (
                 <div>
                   <label className="mb-1 block font-medium text-slate-300">GM Strictness</label>
                   <div className="grid grid-cols-3 gap-1.5">
@@ -312,6 +319,14 @@ export function NewGameModal({ onStart, onClose }: Props) {
                   </div>
                 </div>
               )}
+            </div>
+          )}
+
+          {step === 'presentation' && (
+            <div className="space-y-3">
+              <p className="text-[11px] text-amber-400/90">
+                Visual mode and art style lock for this campaign after you begin.
+              </p>
 
               <div>
                 <label className="mb-1.5 block font-medium text-slate-300">Story Output Format</label>
@@ -364,39 +379,137 @@ export function NewGameModal({ onStart, onClose }: Props) {
               )}
 
               {visualMode === 'comic' && (
-                <div className="rounded-lg border border-slate-800 bg-slate-950/50 p-2.5 space-y-1.5">
-                  <label className="block text-[11px] font-medium text-slate-400">Comic Art Style Sub-Preset</label>
-                  <div className="grid grid-cols-1 gap-1 max-h-36 overflow-y-auto pr-1">
-                    {ART_STYLE_PRESETS.filter((p) => p.value !== 'classic-book').map((preset) => (
-                      <button
-                        key={preset.value}
-                        type="button"
-                        onClick={() => setArtStylePreset(preset.value)}
-                        className={`flex flex-col rounded border px-2 py-1.5 text-left text-[11px] transition-colors ${
-                          artStylePreset === preset.value
-                            ? 'border-crimson-500 bg-crimson-900/20 text-crimson-200'
-                            : 'border-slate-800 bg-slate-800/30 text-slate-400 hover:bg-slate-800/60'
-                        }`}
-                      >
-                        <span className="font-medium truncate">{preset.label}</span>
-                        <span className="text-[9px] text-slate-500">{preset.description}</span>
-                      </button>
-                    ))}
+                <>
+                  <div className="grid grid-cols-2 gap-2">
+                    <div>
+                      <label className="mb-1 block text-[11px] font-medium text-slate-400">Layout</label>
+                      <div className="grid grid-cols-1 gap-1">
+                        {([
+                          { value: 'paged' as const, label: 'Paged', tip: 'Multi-panel pages' },
+                          { value: 'webtoon' as const, label: 'Webtoon', tip: 'Vertical scroll' },
+                        ]).map((opt) => (
+                          <button
+                            key={opt.value}
+                            type="button"
+                            onClick={() => setComicLayout(opt.value)}
+                            className={`rounded border px-2 py-1.5 text-left text-[11px] ${
+                              comicLayout === opt.value
+                                ? 'border-crimson-500 bg-crimson-900/20 text-crimson-200'
+                                : 'border-slate-800 bg-slate-800/30 text-slate-400'
+                            }`}
+                          >
+                            <span className="font-medium">{opt.label}</span>
+                            <span className="mt-0.5 block text-[9px] text-slate-500">{opt.tip}</span>
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                    <div>
+                      <label className="mb-1 block text-[11px] font-medium text-slate-400">Reading direction</label>
+                      <div className="grid grid-cols-1 gap-1">
+                        {([
+                          { value: 'ltr' as const, label: 'LTR', tip: 'Left → right' },
+                          { value: 'rtl' as const, label: 'RTL', tip: 'Right → left (manga)' },
+                        ]).map((opt) => (
+                          <button
+                            key={opt.value}
+                            type="button"
+                            onClick={() => setComicReadingDirection(opt.value)}
+                            className={`rounded border px-2 py-1.5 text-left text-[11px] ${
+                              comicReadingDirection === opt.value
+                                ? 'border-crimson-500 bg-crimson-900/20 text-crimson-200'
+                                : 'border-slate-800 bg-slate-800/30 text-slate-400'
+                            }`}
+                          >
+                            <span className="font-medium">{opt.label}</span>
+                            <span className="mt-0.5 block text-[9px] text-slate-500">{opt.tip}</span>
+                          </button>
+                        ))}
+                      </div>
+                    </div>
                   </div>
-                </div>
+
+                  <div className="rounded-lg border border-slate-800 bg-slate-950/50 p-2.5 space-y-1.5">
+                    <label className="block text-[11px] font-medium text-slate-400">Comic Art Style Sub-Preset</label>
+                    <div className="grid grid-cols-1 gap-1 max-h-36 overflow-y-auto pr-1">
+                      {ART_STYLE_PRESETS.filter((p) => p.value !== 'classic-book').map((preset) => (
+                        <button
+                          key={preset.value}
+                          type="button"
+                          onClick={() => setArtStylePreset(preset.value)}
+                          className={`flex flex-col rounded border px-2 py-1.5 text-left text-[11px] transition-colors ${
+                            artStylePreset === preset.value
+                              ? 'border-crimson-500 bg-crimson-900/20 text-crimson-200'
+                              : 'border-slate-800 bg-slate-800/30 text-slate-400 hover:bg-slate-800/60'
+                          }`}
+                        >
+                          <span className="font-medium truncate">{preset.label}</span>
+                          <span className="text-[9px] text-slate-500">{preset.description}</span>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                </>
               )}
+            </div>
+          )}
+
+          {step === 'character' && (
+            <div className="space-y-3">
+              <div className="grid grid-cols-2 gap-2">
+                <div>
+                  <label className="mb-1 block font-medium text-slate-300">Character Name</label>
+                  <input
+                    type="text"
+                    value={charName}
+                    onChange={(e) => setCharName(e.target.value)}
+                    className="w-full rounded-lg border border-slate-700 bg-slate-800 px-3 py-1.5 text-xs text-slate-100 focus:border-crimson-500 focus:outline-none"
+                  />
+                </div>
+                <div>
+                  <label className="mb-1 block font-medium text-slate-300">Class / Archetype</label>
+                  <input
+                    type="text"
+                    value={className}
+                    onChange={(e) => setClassName(e.target.value)}
+                    className="w-full rounded-lg border border-slate-700 bg-slate-800 px-3 py-1.5 text-xs text-slate-100 focus:border-crimson-500 focus:outline-none"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="mb-1 block font-medium text-slate-300">Appearance</label>
+                <input
+                  type="text"
+                  value={appearance}
+                  onChange={(e) => setAppearance(e.target.value)}
+                  placeholder="Character look..."
+                  className="w-full rounded-lg border border-slate-700 bg-slate-800 px-3 py-1.5 text-xs text-slate-100 focus:border-crimson-500 focus:outline-none"
+                />
+              </div>
+
+              <div>
+                <label className="mb-1 block font-medium text-slate-300">Background / Backstory</label>
+                <textarea
+                  rows={3}
+                  value={backstory}
+                  onChange={(e) => setBackstory(e.target.value)}
+                  placeholder="Short backstory..."
+                  className="w-full rounded-lg border border-slate-700 bg-slate-800 px-3 py-1.5 text-xs text-slate-100 focus:border-crimson-500 focus:outline-none resize-none"
+                />
+              </div>
             </div>
           )}
         </div>
 
         <div className="flex shrink-0 items-center justify-between border-t border-slate-800 bg-slate-950 px-4 py-3">
-          {step !== 'type_select' ? (
+          {step !== 'path' ? (
             <button
               type="button"
-              onClick={() => setStep('type_select')}
-              className="text-xs text-slate-400 hover:text-slate-200 transition-colors"
+              onClick={goBack}
+              className="flex items-center gap-1 text-xs text-slate-400 hover:text-slate-200 transition-colors"
             >
-              ← Back
+              <ChevronLeft size={14} /> Back
             </button>
           ) : (
             <div />
@@ -410,22 +523,18 @@ export function NewGameModal({ onStart, onClose }: Props) {
             >
               Cancel
             </button>
-            {step === 'premade_setup' && (
+            {step !== 'path' && (
               <button
                 type="button"
-                onClick={handleStartPremade}
+                onClick={goNext}
                 className="flex items-center gap-1.5 rounded-lg bg-crimson-600 px-4 py-1.5 text-xs font-semibold text-white hover:bg-crimson-500 transition-colors shadow"
               >
-                <Sparkles size={14} /> Begin Journey
-              </button>
-            )}
-            {step === 'custom_setup' && (
-              <button
-                type="button"
-                onClick={handleStartCustom}
-                className="flex items-center gap-1.5 rounded-lg bg-crimson-600 px-4 py-1.5 text-xs font-semibold text-white hover:bg-crimson-500 transition-colors shadow"
-              >
-                <Sparkles size={14} /> Begin Journey
+                {(step === 'presentation' && path === 'premade') || step === 'character' ? (
+                  <Sparkles size={14} />
+                ) : (
+                  <ChevronRight size={14} />
+                )}
+                {nextLabel}
               </button>
             )}
           </div>

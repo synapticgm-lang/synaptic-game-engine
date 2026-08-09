@@ -84,9 +84,9 @@ ENGINE MODE: LITRPG (SYSTEM FOCUS)
 You are running a LitRPG campaign. Follow these rules strictly:
 - SYSTEM NOTIFICATIONS: Use brief private [ SYSTEM ] lines for level-ups, skill unlocks, quest updates, and status changes.
 - ATTRIBUTE GROWTH: Track and reference STR/DEX/CON/INT/WIS/CHA (or campaign equivalents), HP/MP, and progression gates.
-- HIDDEN CHECK MATH (MANDATORY): Resolve skill checks behind the scenes. NEVER put dice notation, d20 lines, "Strength Check: d20...", modifiers, DC math, or SUCCESS/FAILURE(Rolled...) strings in narrative prose or <narrative> panels.
+- HIDDEN CHECK MATH (MANDATORY): Resolve skill checks entirely behind the scenes. NEVER put dice notation, d20 lines, "Strength Check: d20...", "Action Check:", modifiers, DC math, or SUCCESS/FAILURE(Rolled...) strings anywhere the player can see — not in narrative, not in <narrative> panels, and not in <system-log>.
 - NARRATIVE CONSEQUENCES: Report outcomes only as vivid story consequences ("the latch gives", "your grip slips") — never as spreadsheet math.
-- SYSTEM LOG ONLY: Put ALL check math, damage tallies, XP, and loot lines exclusively inside the <system-log> block (collapsed UI).
+- SYSTEM LOG (NO DICE): <system-log> may contain LitRPG progression only (XP, loot, HP/MP deltas as system text, quest updates). Dice/check formulas are forbidden in LitRPG.
 - NO ROLL BLOCKS: Do NOT output [ SYSTEM ROLL ] blocks in the story stream.`;
 
 const DND_RULES = `
@@ -102,7 +102,7 @@ ENGINE MODE: RPG (NARRATIVE RULES FOCUS)
 You are running a story-first RPG without LitRPG system HUDs and without 5e dice transparency.
 - NARRATIVE RULES: Soft skill checks and conflicts resolve through fiction-first consequences.
 - NO SYSTEM POPUPS: Do not emit [ SYSTEM ] level-up panels, XP tickers, or video-game HUDs.
-- NO DICE NOTATION: Do not show roll math, d20 lines, "Strength Check: d20...", or [ SYSTEM ROLL ] blocks in the story. Put any internal resolution notes only in <system-log> if needed.
+- NO DICE NOTATION: Do not show roll math, d20 lines, "Strength Check: d20...", or [ SYSTEM ROLL ] blocks anywhere (story or <system-log>).
 - CHARACTER GROWTH: Advance abilities through story beats, relationships, and earned revelations — not numeric grind.
 - TONE: Immersive prose RPG — character motives, scene pressure, and player choice drive every turn. Do not leap to violence without scene justification.`;
 
@@ -277,8 +277,9 @@ When combat ends (enemy defeated or player flees), emit: <encounter-end />.
 This clears the active encounter from the game state.
 
 SYSTEM LOG PROTOCOL (MANDATORY):
-After your narrative, emit a <system-log> block containing the raw mechanics for this turn.
-Format each mechanic on its own line inside the block. Examples:
+After your narrative, emit a <system-log> block for this turn. Format each line separately.
+
+D&D / 5e mode — include transparent check math + combat tallies. Example:
 <system-log>
 Strength Check: d20(14) + Mod(2) = 16 vs DC 12 — Success
 Dealt 12 Slashing Damage to Goblin
@@ -286,8 +287,16 @@ Goblin HP: 8/20 -> 0/20 (Defeated)
 XP Gained: 25
 Loot: [Uncommon] Rusty Short Sword
 </system-log>
-The system-log is shown ONLY in a collapsed mechanics panel. In LitRPG and RPG modes, this is the sole place dice/check math may appear.
-Do NOT include system-log content, d20 formulas, or "Strength Check:" lines in the narrative, dialogue, or <narrative> panels.`;
+
+LitRPG / RPG modes — NEVER include d20 formulas, Mod(), DC lines, or Action/Strength Check math. Example:
+<system-log>
+XP Gained: 25
+Loot: [Uncommon] Rusty Short Sword
+HP: 18/24
+</system-log>
+
+The system-log is shown ONLY in a collapsed mechanics panel.
+Do NOT include system-log content or dice formulas in the narrative, dialogue, or <narrative> panels.`;
 
 const TURN_FRAME_INSTRUCTIONS = `
 TURN FRAME THEME PROTOCOL:
@@ -349,10 +358,15 @@ This tells the image pipeline to STOP depicting the player's previous equipped g
 export function buildImagePromptModifier(settings: Settings): string {
   const styleMap: Record<string, string> = {
     'manga-screentone': 'manga art style, detailed line art, dynamic shadows, monochrome ink, halftone screentone shading, japanese manga aesthetic',
-    'classic-book': 'western comic book style, vibrant bold ink lines, dynamic superhero comic coloring, highly detailed',
+    'manhwa-webtoon': 'full color manhwa webtoon style, clean digital line art, soft cel shading, vertical scroll comic aesthetic',
+    'classic-book': 'classic book illustration, detailed ink line-art, soft muted watercolor washes, storybook aesthetic',
     'sin-city-noir': 'gritty graphic novel artwork, heavy shadows, high contrast black and white, noir aesthetic',
     'dark-fantasy-mignola': 'dark fantasy mignola style, heavy blocky shadows, muted gothic palette, comic book noir',
     'cyberpunk-cel': 'clean animated fantasy style, crisp cell shading, bright colorful adventure art, cyberpunk aesthetic',
+    'western-pulp': 'western pulp comic book style, bold ink outlines, saturated primary colors, dynamic action poses',
+    'watercolor-lush': 'lush watercolor comic illustration, soft wet-on-wet washes, delicate ink underdrawing, atmospheric color',
+    'euro-ligne-claire': 'ligne claire european comic style, even clear ink contours, flat clean colors, bande dessinee aesthetic',
+    'ink-wash-sumi': 'sumi-e ink wash comic style, expressive brush strokes, misty negative space, east asian ink painting aesthetic',
   };
   const styleSuffix = styleMap[settings.artStylePreset] ?? styleMap['classic-book'];
 

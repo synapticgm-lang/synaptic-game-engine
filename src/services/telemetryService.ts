@@ -141,9 +141,32 @@ export async function logAiTraffic(
     payload: event.payload ?? null,
   };
 
-  const { error } = await supabase.from('ai_traffic').insert(row);
+  const { data: inserted, error } = await supabase.from('ai_traffic').insert(row).select('id').maybeSingle();
   if (error) {
     console.warn('[telemetry] ai_traffic insert failed', error.message);
+  }
+
+  // Auto-queue moderation review for failed AI calls (Ops Flagged Narrative Review).
+  const status = String(row.status ?? '');
+  if (status && status !== '200 OK') {
+    void supabase.from('moderation_reports').insert({
+      status: 'Pending',
+      source: 'auto_error',
+      reason: `Client auto-flag: ${status}`,
+      excerpt: String(row.ai_response ?? row.player_input ?? '').slice(0, 500),
+      reporter: 'game-client',
+      player_id: row.player_id,
+      campaign: row.save_id ?? null,
+      engine_mode: row.engine_mode ?? null,
+      ai_traffic_id: inserted?.id ? String(inserted.id) : null,
+      payload: {
+        provider: row.provider,
+        latency: row.latency,
+        status,
+      },
+    }).then(({ error: modErr }) => {
+      if (modErr) console.warn('[telemetry] moderation_reports insert failed', modErr.message);
+    });
   }
 }
 

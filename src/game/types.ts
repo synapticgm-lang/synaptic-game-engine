@@ -338,17 +338,36 @@ export interface LoreCard {
 
 export type PostLoginBehavior = 'MAIN_MENU' | 'AUTO_RESUME';
 export type BgMode = 'static' | 'adaptive' | 'off';
-export type ArtStylePreset = 'classic-book' | 'sin-city-noir' | 'manga-screentone' | 'dark-fantasy-mignola' | 'cyberpunk-cel';
+export type ArtStylePreset =
+  | 'classic-book'
+  | 'sin-city-noir'
+  | 'manga-screentone'
+  | 'dark-fantasy-mignola'
+  | 'cyberpunk-cel'
+  | 'western-pulp'
+  | 'watercolor-lush'
+  | 'euro-ligne-claire'
+  | 'manhwa-webtoon'
+  | 'ink-wash-sumi';
 export type ColorVariant = 'default' | 'monochrome' | 'color';
 export type PanelFrequency = 'minimal' | 'balanced' | 'high';
 export type PanelBorderIntensity = 'subtle' | 'bold';
+/** Paged = traditional multi-panel pages; webtoon = vertical single-column scroll. */
+export type ComicLayoutMode = 'paged' | 'webtoon';
+/** Panel / page reading order for comic mode. */
+export type ComicReadingDirection = 'ltr' | 'rtl';
 
 export const ART_STYLE_PRESETS: Array<{ value: ArtStylePreset; label: string; description: string; keywords: string }> = [
   { value: 'classic-book', label: 'Classic Book Illustration', description: 'Storybook ink & watercolor wash', keywords: 'classic book illustration, detailed ink line-art, soft muted watercolor washes, storybook aesthetic' },
   { value: 'sin-city-noir', label: 'Sin City Noir', description: 'Stark B&W with crimson accents', keywords: 'sin city noir, stark black and white, deep inks, crimson red accents, high contrast noir' },
   { value: 'manga-screentone', label: 'Manga / Screentone', description: 'Monochrome ink, speed lines, halftone', keywords: 'manga style, monochrome ink, speed lines, halftone screentone shading, japanese manga aesthetic' },
+  { value: 'manhwa-webtoon', label: 'Manhwa / Webtoon Color', description: 'Full-color Korean webtoon look', keywords: 'full color manhwa webtoon, clean digital line art, soft cel shading, vertical scroll comic aesthetic' },
   { value: 'dark-fantasy-mignola', label: 'Dark Fantasy / Mignola', description: 'Blocky shadows, gothic palette', keywords: 'dark fantasy mignola style, heavy blocky shadows, muted gothic palette, comic book noir' },
   { value: 'cyberpunk-cel', label: 'Cyberpunk / Cel-Shaded', description: 'Neon highlights, vector line art', keywords: 'cyberpunk cel-shaded, vibrant neon highlights, crisp vector line art, futuristic aesthetic' },
+  { value: 'western-pulp', label: 'Western Pulp', description: 'Bold 80s American comic inks', keywords: 'western pulp comic book, bold ink outlines, saturated primary colors, dynamic action poses, classic american comics' },
+  { value: 'watercolor-lush', label: 'Lush Watercolor', description: 'Painterly washes, soft edges', keywords: 'lush watercolor comic illustration, soft wet-on-wet washes, delicate ink underdrawing, atmospheric color' },
+  { value: 'euro-ligne-claire', label: 'Ligne Claire', description: 'Clear-line European bande dessinée', keywords: 'ligne claire, clear line european comic, even ink contours, flat clean colors, bande dessinee aesthetic' },
+  { value: 'ink-wash-sumi', label: 'Sumi Ink Wash', description: 'East Asian brush & wash', keywords: 'sumi-e ink wash, expressive brush strokes, misty negative space, east asian ink painting comic aesthetic' },
 ];
 
 export interface Settings {
@@ -380,6 +399,10 @@ export interface Settings {
    * moments (milestones / first kills / legendary drops). Routine panels stay off.
    */
   classicMemorableImages: boolean;
+  /** Comic mode page packing vs vertical webtoon scroll. Locked for active sessions. */
+  comicLayout: ComicLayoutMode;
+  /** Comic reading order (LTR Western / RTL manga). Locked for active sessions. */
+  comicReadingDirection: ComicReadingDirection;
   bgMode: BgMode;
   bgOpacity: number;
   artStylePreset: ArtStylePreset;

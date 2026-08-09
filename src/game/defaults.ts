@@ -117,6 +117,8 @@ export function createDefaultSettings(): Settings {
     postLoginBehavior: 'MAIN_MENU',
     visualMode: 'comic',
     classicMemorableImages: false,
+    comicLayout: 'paged',
+    comicReadingDirection: 'ltr',
     bgMode: 'static',
     bgOpacity: 40,
     artStylePreset: 'classic-book',

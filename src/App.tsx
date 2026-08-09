@@ -257,6 +257,8 @@ export default function App() {
             comicMode={isComicView}
             narrativeMode={game.narrativeMode}
             artStylePreset={game.settings.artStylePreset}
+            comicLayout={game.settings.comicLayout}
+            comicReadingDirection={game.settings.comicReadingDirection}
             imagesGenerating={game.imagesGenerating}
             canRewind={game.canRewind}
             onRetryPanelImage={game.retryPanelImage}
@@ -271,7 +273,14 @@ export default function App() {
             onRetry={game.retryAction}
             onOpenApiSettings={() => { game.clearError(); setForceApiSetup(true); }}
             onRewind={game.rewindOneTurn}
+            sessionPresentationLocked={
+              !!state && (state.turn > 0 || (state.log?.length ?? 0) > 1)
+            }
             onToggleComicMode={() => {
+              // Session presentation is locked once a campaign is underway —
+              // visualMode / art style are chosen at New Game only.
+              const locked = !!state && (state.turn > 0 || (state.log?.length ?? 0) > 1);
+              if (locked) return;
               if (game.narrativeMode) {
                 game.setNarrativeMode(false);
                 game.setComicMode(false);
