@@ -151,7 +151,7 @@ export function createDefaultSettings(): Settings {
     socialRoleplay: 50,
     worldBuilding: 50,
     strictEncumbrance: false,
-    requireTurnConfirm: true,
+    requireTurnConfirm: false,
     secretDeathSaves: false,
     cleaveMechanics: false,
     flankingAdvantage: false,

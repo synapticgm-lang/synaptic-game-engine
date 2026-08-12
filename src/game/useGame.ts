@@ -1356,13 +1356,20 @@ In <system-log>, only emit LitRPG/RPG progression lines (XP, loot, HP change as 
         normalizeStoryCorpus(result.text)
       );
       const storyProseForChoices = normalizeStoryCorpus(result.text);
+      const inventedEntityNames = warden.notes
+        .map((n) => n.match(/unestablished entity:\s*(.+)$/i)?.[1]?.trim().toLowerCase())
+        .filter((n): n is string => !!n);
       const parsedChoices = (habitAugmented.length > 0 ? habitAugmented : pipelineChoices.choices)
         .filter((choice) => isChoiceGroundedInTurn(choice, storyProseForChoices, suggestionState, activeLoreCards))
+        .filter((choice) => {
+          const lower = choice.toLowerCase();
+          return !inventedEntityNames.some((name) => name.length >= 3 && lower.includes(name));
+        })
         .slice(0, 4);
       const finalChoices =
         parsedChoices.length > 0
           ? parsedChoices
-          : sceneSafeFallbacks(suggestionState, storyProseForChoices);
+          : sceneSafeFallbacks(suggestionState, '');
       if (pipelineChoices.regenerated || pipelineChoices.rejectedCount > 0) {
         debugLogger.record('STATE_UPDATE', 'Choice pipeline enforced turn grounding', {
           regenerated: pipelineChoices.regenerated,
@@ -1689,7 +1696,9 @@ In <system-log>, only emit LitRPG/RPG progression lines (XP, loot, HP change as 
           : { kind: 'text' as const, text: cleanText },
       };
 
-      const requireConfirm = settingsRef.current.requireTurnConfirm !== false;
+      // Pending-turn confirm is off for normal play — send action, get story back immediately.
+      // (Setting retained for possible future opt-in; not exposed in UI.)
+      const requireConfirm = false;
 
       if (requireConfirm) {
         const proposal = buildPendingProposal({

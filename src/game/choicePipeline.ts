@@ -144,6 +144,30 @@ export function observeThreatWithoutSetup(
   return !THREAT_IN_PROSE.test(storyProse);
 }
 
+/**
+ * Facts established BEFORE this GM reply — used so choices cannot invent NPCs/places
+ * that only appear in the same turn's hallucinated prose.
+ */
+export function priorEstablishedProse(state: GameState, loreCards: LoreCard[] = []): string {
+  const parts: string[] = [];
+  if (state.currentLocation) parts.push(state.currentLocation);
+  if (state.locationSheet?.name) parts.push(state.locationSheet.name);
+  for (const it of state.locationSheet?.interactables ?? []) {
+    if (it.name) parts.push(it.name);
+  }
+  for (const exit of state.locationSheet?.exits ?? []) {
+    if (exit.label) parts.push(exit.label);
+  }
+  for (const f of (state.timeline ?? []).slice(-16)) parts.push(f.text);
+  for (const c of loreCards) parts.push(`${c.name} ${c.summary ?? ''}`);
+  for (const entry of state.log.slice(-6)) {
+    if (entry.role === 'gm' || entry.role === 'player') {
+      parts.push(stripChoiceList(entry.content).slice(0, 600));
+    }
+  }
+  return parts.join('\n');
+}
+
 export function isChoiceGroundedInTurn(
   choice: string,
   storyProse: string,
@@ -152,7 +176,10 @@ export function isChoiceGroundedInTurn(
 ): boolean {
   const cleaned = stripChoiceDecorators(choice);
   if (!cleaned) return false;
-  if (!isSuggestionValidForState(cleaned, state, storyProse)) return false;
+  // Named people/places/objects: prior ledger only (not this turn's invented prose).
+  // Threat/environment checks below still use current turn prose.
+  const established = priorEstablishedProse(state, loreCards);
+  if (!isSuggestionValidForState(cleaned, state, established)) return false;
 
   const envHits = environmentalEventViolations(cleaned, storyProse);
   if (envHits.length > 0) return false;
@@ -161,10 +188,10 @@ export function isChoiceGroundedInTurn(
 
   for (const re of PLOT_JUMP_PATTERNS) {
     if (re.test(cleaned)) {
-      // Allow only if the destination/event words also appear in story or lore.
+      // Allow only if the destination/event words also appear in established facts or lore.
       const tokens = cleaned.toLowerCase().match(/[a-z]{4,}/g) ?? [];
       const lore = loreCorpus(loreCards);
-      const hay = `${storyProse} ${lore} ${state.currentLocation ?? ''}`.toLowerCase();
+      const hay = `${established} ${lore} ${state.currentLocation ?? ''}`.toLowerCase();
       const grounded = tokens.some((t) => hay.includes(t) && !/^(travel|journey|leave|start|begin|abandon|quest|campaign|adventure|sail|fly|portal|teleport)$/.test(t));
       if (!grounded) return false;
     }
@@ -185,7 +212,8 @@ export function filterChoicesToTurnFacts(
   for (const choice of choices) {
     const cleaned = stripChoiceDecorators(choice);
     const reasons: string[] = [];
-    if (!isSuggestionValidForState(cleaned, state, storyProse)) {
+    const established = priorEstablishedProse(state, loreCards);
+    if (!isSuggestionValidForState(cleaned, state, established)) {
       reasons.push('violates state/inventory/companion/scene guardrails');
     }
     const env = environmentalEventViolations(cleaned, storyProse);

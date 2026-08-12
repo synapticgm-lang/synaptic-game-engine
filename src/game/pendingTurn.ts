@@ -24,7 +24,8 @@ function summarizeDeltas(params: {
   for (const q of params.questChanges) lines.push(q);
   if (params.encounterName) lines.push(`Encounter: ${params.encounterName}`);
   if (params.location) lines.push(`Location: ${params.location}`);
-  for (const w of params.wardenNotes.slice(0, 4)) lines.push(`Warden: ${w}`);
+  // Warden notes stay on the proposal for DEV UI only — never player-facing chips.
+  void params.wardenNotes;
   if (!lines.length) lines.push('No sheet changes (story only)');
   return lines;
 }

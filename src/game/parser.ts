@@ -79,12 +79,15 @@ const CHOICE_LINE_REGEX = /^\s*(?:\*\*|\*)?\s*(?:(?:Option\s+)?\d+[.):]|\[\d+\]|
 export function stripChoiceList(text: string): string {
   if (!text) return text;
 
+  // Cut at "What do you do?" / Options header when present, then still strip
+  // numbered option lines from the remainder (GM often puts 1–4 ABOVE the header).
+  let body = text;
   const headerMatch = text.match(CHOICE_HEADER_REGEX);
   if (headerMatch && typeof headerMatch.index === 'number') {
-    return text.slice(0, headerMatch.index).trim();
+    body = text.slice(0, headerMatch.index).trim();
   }
 
-  const lines = text.split('\n');
+  const lines = body.split('\n');
   let cut = lines.length;
   for (let i = lines.length - 1; i >= 0; i--) {
     const line = lines[i];
@@ -92,7 +95,14 @@ export function stripChoiceList(text: string): string {
     if (CHOICE_LINE_REGEX.test(line)) { cut = i; continue; }
     break;
   }
-  return lines.slice(0, cut).join('\n').trim();
+  let result = lines.slice(0, cut).join('\n').trim();
+
+  const remain = result.split('\n').map((l) => l.trim()).filter(Boolean);
+  const choiceCount = remain.filter((l) => CHOICE_LINE_REGEX.test(l)).length;
+  if (remain.length > 0 && choiceCount >= Math.ceil(remain.length * 0.5)) {
+    result = remain.filter((l) => !CHOICE_LINE_REGEX.test(l)).join('\n').trim();
+  }
+  return result;
 }
 
 /**

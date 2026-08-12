@@ -1,4 +1,5 @@
 import type { EngineMode } from './types';
+import { stripChoiceList } from './parser';
 
 const SYSTEM_ROLL_BLOCK =
   /\[?\s*SYSTEM\s+ROLL:[\s\S]*?Outcome:\s*[^\]]+\]?/gi;
@@ -116,19 +117,26 @@ export function narrativeMentionsPlayerHarm(prose: string): boolean {
  * If the model returned nearly empty narrative, acknowledge the player's action.
  */
 export function ensureTurnProse(cleanText: string, playerAction: string): string {
-  const prose = cleanText
+  // Never treat a numbered option list as the story — strip it first.
+  const withoutChoices = stripChoiceList(cleanText);
+  const prose = withoutChoices
     .replace(/<[^>]+>/g, ' ')
     .replace(/\[SYSTEM[^\]]*\]/gi, ' ')
     .replace(/\s+/g, ' ')
     .trim();
-  const hasSentence = /[.!?]/.test(prose);
-  if (prose.length >= MEANINGFUL_PROSE_MIN && hasSentence) return cleanText;
+  const hasSentence = /[.!]/.test(prose) || (/\?/.test(prose) && prose.length >= MEANINGFUL_PROSE_MIN);
+  if (prose.length >= MEANINGFUL_PROSE_MIN && hasSentence) {
+    // Keep non-choice body; choices render as buttons separately.
+    return withoutChoices.trim() || cleanText;
+  }
 
   const actionSnippet = (playerAction || 'your action').replace(/\s+/g, ' ').trim().slice(0, 140);
-  const bridge =
-    `You follow through — ${actionSnippet}. The moment settles as you take in what changed around you.`;
-  if (!cleanText.trim()) return bridge;
-  return `${bridge}\n\n${cleanText}`.trim();
+  const looksLikeQuestion = /\?/.test(actionSnippet) || /^(what|why|how|who|where|when|can|do|does|is|are)\b/i.test(actionSnippet);
+  const bridge = looksLikeQuestion
+    ? `You press for clarity — ${actionSnippet}. What you already know stays put while you read the moment for a real answer.`
+    : `You follow through — ${actionSnippet}. The moment settles as you take in what changed around you.`;
+  if (!withoutChoices.trim()) return bridge;
+  return `${bridge}\n\n${withoutChoices}`.trim();
 }
 
 /**

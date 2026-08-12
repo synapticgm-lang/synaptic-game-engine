@@ -5,7 +5,6 @@ import {
   normalizeStoryCorpus,
   sceneSafeFallbacks,
 } from '@/game/choicePipeline';
-import { isSuggestionValidForState } from '@/game/suggestionValidation';
 
 interface ActionBarProps {
   state: GameState;
@@ -28,16 +27,15 @@ function resolveActions(state: GameState): { actions: string[]; isGmGenerated: b
 
   const gmChoices = (state.choices ?? [])
     .filter((c) => c && c !== FALLBACK_CHOICE)
-    .filter((c) => isSuggestionValidForState(c, state, storyProse))
     .filter((c) => isChoiceGroundedInTurn(c, storyProse, state, state.lorebook ?? []));
 
   if (gmChoices.length > 0) {
     return { actions: gmChoices, isGmGenerated: true };
   }
 
-  // Pipeline-built scene-safe list — already encounter/prose aware; don't re-ground against empty prose.
+  // Scene-safe list from established state only (no invented same-turn nouns).
   return {
-    actions: sceneSafeFallbacks(state, storyProse),
+    actions: sceneSafeFallbacks(state, ''),
     isGmGenerated: false,
   };
 }
