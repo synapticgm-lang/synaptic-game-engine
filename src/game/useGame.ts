@@ -36,8 +36,16 @@ import {
 import { resolvePanelBudget } from './panelBudget';
 import { buildVisualConsistencyBlock } from './visualConsistency';
 import { fallbackSuggestionForState, findUnsupportedItemClaims, isSuggestionValidForState } from './suggestionValidation';
-import { isChoiceGroundedInTurn, resolvePipelineChoices } from './choicePipeline';
-import { sanitizeNarrativeMechanics } from './narrativeSanitize';
+import { isChoiceGroundedInTurn, normalizeStoryCorpus, resolvePipelineChoices, sceneSafeFallbacks } from './choicePipeline';
+import { sanitizeNarrativeMechanics, ensureTurnProse, ensureDamageNarration, ensureXpNarration, stripResidualMechanicTags } from './narrativeSanitize';
+import { runWarden, sanitizeExtractedCharacterUpdates } from './warden';
+import { applyStructuralEvents } from './structuralEvents';
+import { collectTurnTimelineFacts, mergeTimeline } from './timeline';
+import { seedStateFromArchetype, seedStateFromCampaignBible } from './campaignSeed';
+import { getCampaignBibleById } from '@/data/campaigns';
+import { parsePlayerIntent, groundPlayerAction } from './intentParser';
+import { mergeNpcMemoriesFromTurn } from './npcMemory';
+import { buildPendingProposal, getProposedState, withEditedNarrative, touchLocationSheet } from './pendingTurn';
 import { extractUpdates, extractNewItems, parseActionTags, stripActionTags, matchLoreCards, eventsToLoreCards, parseTurnFrame, eventsToQuestUpdates, eventsToEncounterUpdate, parsePanels, eventsToMilestone, eventsToLootVideo, eventsToVisualUpdate, stripChoiceList, extractChoiceLines } from './parser';
 import { inferItemType } from './salvage';
 import { initializeDungeon, moveToNode, exitDungeon as engineExitDungeon } from './mapEngine';
@@ -211,7 +219,7 @@ function getLearnedChoices(gmText: string): string[] {
  * actual numbered/bulleted-list interception and stripping lives in `parser.ts` since that's
  * genuinely parsing the GM's narrative text, not a UI/habit concern.
  */
-export function extractChoicesFromText(text: string, state?: GameState): string[] {
+export function extractChoicesFromText(text: string, state?: GameState, storyProse = ''): string[] {
   if (!text) return ['🎲 Let Fate Decide'];
 
   const choices = extractChoiceLines(text);
@@ -224,7 +232,7 @@ export function extractChoicesFromText(text: string, state?: GameState): string[
   }
 
   const validatedChoices = state
-    ? choices.filter((choice) => isSuggestionValidForState(choice, state))
+    ? choices.filter((choice) => isSuggestionValidForState(choice, state, storyProse))
     : choices;
 
   if (validatedChoices.length === 0) {
@@ -320,6 +328,7 @@ export function useGame() {
   // committed the merged GameState. This keeps persistence, TTS, and media queue dispatch
   // out of state calculation and removes any dependency on updater execution timing.
   const postCommitTurnEffectsRef = useRef<PostCommitTurnEffects[]>([]);
+  const pendingEffectsRef = useRef<PostCommitTurnEffects | null>(null);
   const [postCommitTurnEpoch, setPostCommitTurnEpoch] = useState(0);
   const postCommitTurnRunningRef = useRef(false);
 
@@ -1017,7 +1026,21 @@ export function useGame() {
     if (settingsRef.current.fogRevealThreshold === 'full') {
       dungeonState.visitedNodeIds = dungeonState.nodes.map(n => n.id);
     }
-    const updated = { ...previous, activeDungeon: dungeonState, lastUpdated: Date.now() };
+    const updated: GameState = {
+      ...previous,
+      activeDungeon: dungeonState,
+      currentLocation: dungeonName,
+      timeline: mergeTimeline(previous.timeline, [
+        {
+          id: uid(),
+          turn: previous.turn,
+          kind: 'dungeon',
+          text: `Entered dungeon: ${dungeonName}`,
+          at: Date.now(),
+        },
+      ]),
+      lastUpdated: Date.now(),
+    };
     stateRef.current = updated;
     setState(updated);
     void persist(updated);
@@ -1060,6 +1083,10 @@ export function useGame() {
     if (!input.trim() || busy) return;
     const current = stateRef.current;
     if (!current) return;
+    if (current.pendingTurn) {
+      addToast('Accept, edit, or discard the pending turn first.', 'info');
+      return;
+    }
 
     debugLogger.record('TURN_START', 'sendAction invoked', {
       input: input.slice(0, 100),
@@ -1068,11 +1095,19 @@ export function useGame() {
     });
 
     const mode = settingsRef.current.contentMode === 'kid' ? 'kid' : 'adult';
-    const sanitizedInput = sanitizeInput(input, mode);
+    const contentSanitized = sanitizeInput(input, mode);
+    const lastGmForGround = current.log.filter((l) => l.role === 'gm').pop()?.content ?? '';
+    const storyProseForGround = normalizeStoryCorpus(lastGmForGround);
+    const grounded = groundPlayerAction(contentSanitized, current, storyProseForGround);
+    const sanitizedInput = grounded.text;
+    if (grounded.rewritten) {
+      addToast(`Action grounded: ${grounded.notes[0] ?? 'adjusted to match scene/inventory'}`, 'info');
+    }
 
     debugLogger.record('STATE_UPDATE', 'Input sanitized', {
       original: input.slice(0, 50),
       sanitized: sanitizedInput.slice(0, 50),
+      grounded: grounded.rewritten,
       mode
     });
     logPlayerAction(sanitizedInput, {
@@ -1086,7 +1121,7 @@ export function useGame() {
     setErrorKind(null);
     setLastInput(input);
 
-    const lastGmText = current.log.filter((l) => l.role === 'gm').pop()?.content ?? '';
+    const lastGmText = lastGmForGround;
     saveHabit(sanitizedInput, lastGmText);
 
     const loadingTimer = setTimeout(() => setShowLoadingOverlay(true), 2500);
@@ -1136,7 +1171,9 @@ export function useGame() {
         },
       ]);
 
-      let engineHpDelta = outcome.isSuccess ? 0 : -2;
+      // Never silently apply HP for failed skill checks — damage must come from explicit
+      // <damage> tags (and be narrated). Silent -2 on every fail made HP drop "for no reason".
+      let engineHpDelta = 0;
 
       let hiddenSimUpdate = '';
       if (liveCurrent.worldLedger) {
@@ -1158,6 +1195,10 @@ export function useGame() {
       const inventoryGate = unsupportedItems.length
         ? `\n[INVENTORY GATE — MANDATORY]: Player attempted to use item(s) NOT in inventory: ${unsupportedItems.join(', ')}. REJECT the use. Do not invent the item. Narrate the failed attempt, emit <system>Action failed: item not in inventory.</system>, and offer alternatives based on Equipped Gear / Inventory only.`
         : '';
+      const groundingGate = grounded.notes.length
+        ? `\n[SCENE GROUNDING GATE]: Player input was soft-corrected for: ${grounded.notes.join('; ')}. Stay inside Situation Packet + Inventory + Timeline. Do not invent the rejected premise.`
+        : '';
+      const actionGates = `${inventoryGate}${groundingGate}`;
 
       // LitRPG/RPG: keep dice math out of the model-facing story cue so it is less likely to echo into prose.
       const deterministicStateBlock = isDndEngine
@@ -1166,7 +1207,7 @@ export function useGame() {
 Character: ${liveCurrent.character.name} (Lvl ${liveCurrent.character.level})
 HP: ${liveCurrent.character.hp}/${liveCurrent.character.maxHp}
 Gold: ${liveCurrent.gold ?? 0}
-CODE ENFORCED OUTCOME FOR THIS ACTION: ${codeResolutionText}${hiddenSimUpdate}${inventoryGate}
+CODE ENFORCED OUTCOME FOR THIS ACTION: ${codeResolutionText}${hiddenSimUpdate}${actionGates}
 -------------------------------------------------
 `
         : `
@@ -1177,7 +1218,7 @@ Gold: ${liveCurrent.gold ?? 0}
 CODE ENFORCED OUTCOME FOR THIS ACTION: ${narrativeOutcomeLabel}
 CODE OUTCOME (HIDDEN): ${narrativeOutcomeLabel}. Narrate story consequences only.
 Do NOT print dice notation, d20 lines, modifiers, DCs, "Strength Check:", or Action Check math anywhere — not in narrative, not in <narrative> panels, and not in <system-log>.
-In <system-log>, only emit LitRPG/RPG progression lines (XP, loot, HP change as story system text) with zero dice formulas.${hiddenSimUpdate}${inventoryGate}
+In <system-log>, only emit LitRPG/RPG progression lines (XP, loot, HP change as story system text) with zero dice formulas.${hiddenSimUpdate}${actionGates}
 -------------------------------------------------
 `;
 
@@ -1240,7 +1281,12 @@ In <system-log>, only emit LitRPG/RPG progression lines (XP, loot, HP change as 
       // `events`/derived requests must be parsed BEFORE anything below references them
       // (e.g. `lootVideoEntry`) — declaring them later caused a
       // "Cannot access before initialization" crash in the job runner.
-      const events = parseActionTags(result.text);
+      const rawEvents = parseActionTags(result.text);
+      const intent = grounded.intent.kind !== 'other'
+        ? grounded.intent
+        : parsePlayerIntent(sanitizedInput, liveCurrent);
+      const warden = runWarden(liveCurrent, rawEvents, result.text, sanitizedInput, intent);
+      const events = warden.events;
       const milestoneReq = eventsToMilestone(events);
       const lootVideoReq = eventsToLootVideo(events);
       const visualUpdate = eventsToVisualUpdate(events);
@@ -1269,14 +1315,33 @@ In <system-log>, only emit LitRPG/RPG progression lines (XP, loot, HP change as 
       ];
 
       const updates = extractUpdates(liveCurrent, result.text);
-      const newItems = extractNewItems(result.text);
-      const cleanText = stripChoiceList(stripActionTags(result.text));
+      if (updates.character) {
+        updates.character = {
+          ...liveCurrent.character,
+          ...sanitizeExtractedCharacterUpdates(updates.character, intent),
+        };
+        // If sanitize stripped everything meaningful beyond identity fields already on character,
+        // keep XP progression lines only when present in the sanitized partial.
+      }
+      const regexLoot = extractNewItems(result.text);
+      let cleanText = stripResidualMechanicTags(stripChoiceList(stripActionTags(result.text)));
+      cleanText = ensureTurnProse(cleanText, sanitizedInput);
+
+      // Apply previously-unwired structural tags (items, dungeon, hex) after Warden filter.
+      const structural = applyStructuralEvents(liveCurrent, events, {
+        strictEncumbrance: settingsRef.current.strictEncumbrance === true,
+      });
+      let workingState = structural.state;
       const parsedPanels = parsePanels(result.text);
       const newLoreCards = eventsToLoreCards(events, liveCurrent.turn + 1);
       const turnFrame = parseTurnFrame(result.text);
-      const suggestionState: GameState = newLoreCards.length > 0
-        ? { ...liveCurrent, lorebook: [...(liveCurrent.lorebook ?? []), ...newLoreCards] }
-        : liveCurrent;
+      const suggestionState: GameState = {
+        ...workingState,
+        lorebook:
+          newLoreCards.length > 0
+            ? [...(workingState.lorebook ?? []), ...newLoreCards]
+            : workingState.lorebook,
+      };
       // Choice tier (4-tier pipeline): ground options in this turn's story prose + active info cards.
       // Rejects unprompted environmental events / plot jumps and regenerates when needed.
       const pipelineChoices = await resolvePipelineChoices({
@@ -1287,16 +1352,17 @@ In <system-log>, only emit LitRPG/RPG progression lines (XP, loot, HP change as 
       });
       const habitAugmented = extractChoicesFromText(
         pipelineChoices.choices.map((c, i) => `${i + 1}. ${c}`).join('\n'),
-        suggestionState
+        suggestionState,
+        normalizeStoryCorpus(result.text)
       );
-      const storyProseForChoices = stripChoiceList(result.text);
+      const storyProseForChoices = normalizeStoryCorpus(result.text);
       const parsedChoices = (habitAugmented.length > 0 ? habitAugmented : pipelineChoices.choices)
         .filter((choice) => isChoiceGroundedInTurn(choice, storyProseForChoices, suggestionState, activeLoreCards))
         .slice(0, 4);
       const finalChoices =
         parsedChoices.length > 0
           ? parsedChoices
-          : pipelineChoices.choices.slice(0, 4);
+          : sceneSafeFallbacks(suggestionState, storyProseForChoices);
       if (pipelineChoices.regenerated || pipelineChoices.rejectedCount > 0) {
         debugLogger.record('STATE_UPDATE', 'Choice pipeline enforced turn grounding', {
           regenerated: pipelineChoices.regenerated,
@@ -1384,7 +1450,28 @@ In <system-log>, only emit LitRPG/RPG progression lines (XP, loot, HP change as 
         }
       }
 
-      const newInventoryItems: Item[] = newItems.map((ni) => ({
+      const tagGainedNames = new Set(
+        structural.gainedItems.map((i) => i.name.toLowerCase())
+      );
+      // Regex [Rarity] Name loot is untrusted without structured tags or a search/combat pay-off.
+      const allowRegexLoot =
+        intent.kind === 'search' ||
+        intent.kind === 'attack' ||
+        events.some(
+          (e) =>
+            e.type === 'item-gain' ||
+            e.type === 'loot-video' ||
+            e.type === 'encounter-end'
+        );
+      const regexOnlyLoot = allowRegexLoot
+        ? regexLoot.filter((ni) => !tagGainedNames.has(ni.name.toLowerCase()))
+        : [];
+      if (!allowRegexLoot && regexLoot.length > 0) {
+        warden.notes.push(
+          `Dropped untagged regex loot (${regexLoot.map((r) => r.name).join(', ')}) — require <item-gain>`
+        );
+      }
+      const newInventoryItems: Item[] = regexOnlyLoot.map((ni) => ({
         id: uid(),
         name: ni.name,
         rarity: ni.rarity as Item['rarity'],
@@ -1393,28 +1480,50 @@ In <system-log>, only emit LitRPG/RPG progression lines (XP, loot, HP change as 
       }));
 
       let hpDelta = engineHpDelta;
+      let playerDamageTaken = 0;
       for (const e of events) {
         if (e.type === 'heal' && e.amount) hpDelta += e.amount;
-        if (e.type === 'damage' && e.amount) hpDelta -= e.amount;
+        if (e.type === 'damage' && e.amount) {
+          hpDelta -= e.amount;
+          playerDamageTaken += e.amount;
+        }
       }
+
+      if (playerDamageTaken > 0) {
+        const appear = events.find((e) => e.type === 'enemy-appear');
+        cleanText = ensureDamageNarration(
+          cleanText,
+          playerDamageTaken,
+          appear?.enemyName ?? liveCurrent.activeEncounter?.name
+        );
+      }
+      const mergedSystemLog = Array.from(
+        new Set([
+          ...(gmEntry.systemLog ?? []),
+          ...warden.systemLogExtra,
+          ...structural.notes.filter((n) => /blocked|failed|full/i.test(n)),
+        ])
+      );
+      cleanText = ensureXpNarration(cleanText, mergedSystemLog);
 
       debugLogger.record('STATE_UPDATE', 'Merging GM response into game state', {
         turn: liveCurrent.turn,
         newTurn: liveCurrent.turn + 1,
         hpDelta,
-        newItems: newInventoryItems.length,
+        newItems: newInventoryItems.length + structural.gainedItems.length,
         newLoreCards: newLoreCards.length,
+        wardenNotes: warden.notes.length,
         pendingImagePrompt: !!result.imagePrompt
       });
       // Build the complete next snapshot as a pure calculation. React updater functions must
       // stay side-effect-free and must not be used as a synchronization primitive for queues,
       // persistence, TTS, or any external service.
-      const existingLoreIds = new Set((liveCurrent.lorebook ?? []).map((c) => c.id));
+      const existingLoreIds = new Set((workingState.lorebook ?? []).map((c) => c.id));
       const mergedLorebook = [
-        ...(liveCurrent.lorebook ?? []),
+        ...(workingState.lorebook ?? []),
         ...newLoreCards.filter((c) => !existingLoreIds.has(c.id)),
       ];
-      const baseChar = { ...liveCurrent.character, ...(updates.character ?? {}) };
+      const baseChar = { ...workingState.character, ...(updates.character ?? {}) };
       if (hpDelta !== 0) {
         baseChar.hp = Math.max(0, Math.min(baseChar.maxHp, (baseChar.hp ?? 0) + hpDelta));
       }
@@ -1423,26 +1532,79 @@ In <system-log>, only emit LitRPG/RPG progression lines (XP, loot, HP change as 
       }
 
       const inventoryAfterFormChange = visualUpdate?.formChange
-        ? liveCurrent.inventory.map((item) => {
+        ? workingState.inventory.map((item) => {
             if (!item.equipped) return item;
             const type = inferItemType(item);
             return type === 'weapon' || type === 'armor' ? { ...item, equipped: false } : item;
           })
-        : liveCurrent.inventory;
+        : workingState.inventory;
 
-      const updatedQuests = eventsToQuestUpdates(events, liveCurrent.quests ?? []);
-      const updatedEncounter = eventsToEncounterUpdate(events, liveCurrent.activeEncounter ?? null);
+      const updatedQuests = eventsToQuestUpdates(events, workingState.quests ?? []);
+      const updatedEncounter = eventsToEncounterUpdate(events, workingState.activeEncounter ?? null);
+
+      const nextTurn = liveCurrent.turn + 1;
+      const turnFacts = collectTurnTimelineFacts({
+        turn: nextTurn,
+        playerAction: sanitizedInput,
+        stateBefore: liveCurrent,
+        stateAfter: {
+          currentLocation: workingState.currentLocation ?? updates.currentLocation,
+          activeEncounter: updatedEncounter,
+          activeDungeon: workingState.activeDungeon,
+          character: baseChar,
+          quests: updatedQuests,
+        },
+        events,
+        systemLog: mergedSystemLog,
+        newItemNames: [
+          ...structural.gainedItems.map((i) => i.name),
+          ...newInventoryItems.map((i) => i.name),
+        ],
+        wardenNotes: warden.notes,
+      });
+      const mergedTimeline = mergeTimeline(workingState.timeline, turnFacts);
+      const npcMemories = mergeNpcMemoriesFromTurn(
+        workingState,
+        events,
+        turnFacts,
+        nextTurn
+      );
+      const resolvedLocation =
+        workingState.currentLocation ??
+        updates.currentLocation ??
+        liveCurrent.currentLocation;
+      const locationSheet = touchLocationSheet(workingState, resolvedLocation);
+
+      const usedItemNames = events
+        .filter((e) => e.type === 'item-use' && e.name)
+        .map((e) => e.name!);
+      const questChangeNotes: string[] = [];
+      for (const e of events) {
+        if (e.type === 'quest-add' && e.name) questChangeNotes.push(`Quest add: ${e.name}`);
+        if (e.type === 'quest-complete') questChangeNotes.push(`Quest complete: ${e.id}`);
+      }
+
       const mergedState: GameState = {
-        ...liveCurrent,
+        ...workingState,
         ...updates,
         character: baseChar,
         quests: updatedQuests,
         activeEncounter: updatedEncounter,
+        currentLocation: resolvedLocation,
+        activeDungeon: workingState.activeDungeon,
+        currentCoordinates: workingState.currentCoordinates ?? liveCurrent.currentCoordinates,
+        timeline: mergedTimeline,
+        npcMemories,
+        locationSheet,
+        campaignPremise: workingState.campaignPremise ?? liveCurrent.campaignPremise,
+        campaignBibleId: workingState.campaignBibleId ?? liveCurrent.campaignBibleId,
+        pendingTurn: null,
         log: [
           ...liveCurrent.log,
           {
             ...gmEntry,
             content: cleanText,
+            systemLog: mergedSystemLog,
             ...(comicPanelsForLog.length > 0
               ? {
                   panels: comicPanelsForLog.map((panel) => ({
@@ -1462,7 +1624,7 @@ In <system-log>, only emit LitRPG/RPG progression lines (XP, loot, HP change as 
         rolls: [...liveCurrent.rolls, ...newRolls],
         inventory: [...inventoryAfterFormChange, ...newInventoryItems],
         lorebook: mergedLorebook,
-        turn: liveCurrent.turn + 1,
+        turn: nextTurn,
         pendingImagePrompt: result.imagePrompt,
         choices: finalChoices,
         ...(turnFrame ? { turnFrameTheme: turnFrame } : {}),
@@ -1518,27 +1680,68 @@ In <system-log>, only emit LitRPG/RPG progression lines (XP, loot, HP change as 
           }
         : null;
 
-      // Commit first, then stage the side-effect descriptor. The useEffect consumer above
-      // cannot run until React has committed this render, so persistence, TTS, and media
-      // dispatch are guaranteed to observe the final merged snapshot.
-      stateRef.current = mergedState;
-      setState(mergedState);
-
-      debugLogger.record('STATE_UPDATE', 'State updated — turn incremented', {
-        turn: mergedState.turn,
-        logEntries: mergedState.log.length,
-        imagePromptAttached: !!mergedState.pendingImagePrompt
-      });
-
-      postCommitTurnEffectsRef.current.push({
+      const effectsPayload = {
         snapshot: mergedState,
         imageJobs: postCommitImageJobs,
         videoJob: postCommitVideoJob,
         speech: isComicView && comicPanelsForLog.length > 0
-          ? { kind: 'sequence', texts: buildComicSpeechQueue(comicPanelsForLog) }
-          : { kind: 'text', text: result.text },
-      });
-      setPostCommitTurnEpoch((epoch) => epoch + 1);
+          ? { kind: 'sequence' as const, texts: buildComicSpeechQueue(comicPanelsForLog) }
+          : { kind: 'text' as const, text: cleanText },
+      };
+
+      const requireConfirm = settingsRef.current.requireTurnConfirm !== false;
+
+      if (requireConfirm) {
+        const proposal = buildPendingProposal({
+          playerAction: sanitizedInput,
+          playerEntryId: playerEntry.id,
+          intent,
+          narrative: cleanText,
+          systemLog: mergedSystemLog,
+          choices: finalChoices,
+          wardenNotes: warden.notes,
+          proposedState: mergedState,
+          hpDelta,
+          gainedItemNames: [
+            ...structural.gainedItems.map((i) => i.name),
+            ...newInventoryItems.map((i) => i.name),
+          ],
+          usedItemNames,
+          questChangeNotes,
+          comicPanels: comicPanelsForLog,
+          imagePrompt: result.imagePrompt,
+          turnFrame,
+        });
+        // Hold ledger commit: keep player entry + pending proposal only.
+        const holdingState: GameState = {
+          ...liveCurrent,
+          pendingTurn: proposal,
+          // Freeze choices until accept
+          choices: [],
+        };
+        pendingEffectsRef.current = effectsPayload;
+        stateRef.current = holdingState;
+        setState(holdingState);
+        void persist(holdingState);
+        debugLogger.record('STATE_UPDATE', 'Turn proposed — awaiting player confirm', {
+          turn: liveCurrent.turn,
+          deltas: proposal.deltaSummary,
+          wardenNotes: warden.notes.length,
+        });
+        addToast('Review the turn — Accept, Edit, Reroll, or Discard', 'info');
+      } else {
+        stateRef.current = mergedState;
+        setState(mergedState);
+
+        debugLogger.record('STATE_UPDATE', 'State updated — turn incremented', {
+          turn: mergedState.turn,
+          logEntries: mergedState.log.length,
+          imagePromptAttached: !!mergedState.pendingImagePrompt
+        });
+
+        postCommitTurnEffectsRef.current.push(effectsPayload);
+        setPostCommitTurnEpoch((epoch) => epoch + 1);
+      }
     } catch (e) {
       const errMsg = e instanceof Error ? e.message : 'Unknown error';
       const stack = e instanceof Error ? e.stack : undefined;
@@ -1566,6 +1769,77 @@ In <system-log>, only emit LitRPG/RPG progression lines (XP, loot, HP change as 
       setRetryStatus(null);
       setBusy(false);
     }
+  });
+
+  const acceptPendingTurn = useCallbackRef(() => {
+    const previous = stateRef.current;
+    if (!previous?.pendingTurn) return;
+    const proposed = getProposedState(previous.pendingTurn);
+    if (!proposed) {
+      addToast('Pending turn data missing — discard and retry', 'error');
+      return;
+    }
+    const committed: GameState = { ...proposed, pendingTurn: null };
+    stateRef.current = committed;
+    setState(committed);
+    void persist(committed);
+    const effects = pendingEffectsRef.current;
+    pendingEffectsRef.current = null;
+    if (effects) {
+      postCommitTurnEffectsRef.current.push({ ...effects, snapshot: committed });
+      setPostCommitTurnEpoch((epoch) => epoch + 1);
+    }
+    addToast('Turn committed to World State Ledger', 'info');
+  });
+
+  const discardPendingTurn = useCallbackRef(() => {
+    const snapshot = snapshotRef.current;
+    pendingEffectsRef.current = null;
+    if (snapshot) {
+      stateRef.current = { ...snapshot, pendingTurn: null };
+      setState({ ...snapshot, pendingTurn: null });
+      void persist({ ...snapshot, pendingTurn: null });
+      snapshotRef.current = null;
+      setCanRewind(false);
+    } else {
+      const previous = stateRef.current;
+      if (!previous) return;
+      const cleared = {
+        ...previous,
+        pendingTurn: null,
+        log: previous.log.filter((e) => e.id !== previous.pendingTurn?.playerEntryId),
+      };
+      stateRef.current = cleared;
+      setState(cleared);
+      void persist(cleared);
+    }
+    addToast('Pending turn discarded', 'info');
+  });
+
+  const editPendingNarrative = useCallbackRef((narrative: string) => {
+    const previous = stateRef.current;
+    if (!previous?.pendingTurn) return;
+    const updated = withEditedNarrative(previous.pendingTurn, narrative);
+    const next = { ...previous, pendingTurn: updated };
+    stateRef.current = next;
+    setState(next);
+  });
+
+  const rerollPendingTurn = useCallbackRef(async () => {
+    const previous = stateRef.current;
+    const action = previous?.pendingTurn?.playerAction;
+    if (!previous || !action) return;
+    // Roll back to pre-action snapshot, then resubmit the same action.
+    const snapshot = snapshotRef.current;
+    pendingEffectsRef.current = null;
+    if (snapshot) {
+      stateRef.current = { ...snapshot, pendingTurn: null };
+      setState({ ...snapshot, pendingTurn: null });
+    } else {
+      stateRef.current = { ...previous, pendingTurn: null };
+      setState({ ...previous, pendingTurn: null });
+    }
+    await sendAction(action);
   });
 
   const startNewGame = useCallbackRef(async (
@@ -1603,14 +1877,15 @@ In <system-log>, only emit LitRPG/RPG progression lines (XP, loot, HP change as 
     }
 
     const base = createInitialState(storyName, engineMode, archetype);
+    const seeded = seedStateFromArchetype(base, engineMode, archetype ?? base.campaignArchetype);
     const introContent = buildArchetypeIntro(engineMode, archetype ?? 'ai_random', character.name ?? 'Survivor');
-    const initialChoices = extractChoicesFromText(introContent, base);
+    const initialChoices = extractChoicesFromText(introContent, seeded);
     const cleanIntroContent = stripChoiceList(introContent);
 
     const newState: GameState = {
-      ...base,
+      ...seeded,
       gmStrictness,
-      character: { ...base.character, ...character },
+      character: { ...seeded.character, ...character },
       currentCoordinates: { q: 0, r: 0, tier: 2, z: 0 },
       choices: initialChoices,
       log: [{ id: 'intro-1', turn: 0, role: 'gm', content: cleanIntroContent, timestamp: Date.now() }],
@@ -1879,9 +2154,27 @@ In <system-log>, only emit LitRPG/RPG progression lines (XP, loot, HP change as 
       setCanRewind(false);
       persist(snapshot);
     },
+    acceptPendingTurn,
+    discardPendingTurn,
+    editPendingNarrative,
+    rerollPendingTurn,
     canRewind, comicMode, setComicMode, narrativeMode, setNarrativeMode,
     updateLorebook: (cards) => setState((prev) => prev ? { ...prev, lorebook: cards, lastUpdated: Date.now() } : prev),
     updateGameState: (newState: GameState) => { setState(newState); stateRef.current = newState; persist(newState); },
+    applyCampaignBible: (bibleId: string) => {
+      const previous = stateRef.current;
+      if (!previous) return;
+      const bible = getCampaignBibleById(bibleId);
+      if (!bible) {
+        addToast('Campaign bible not found', 'error');
+        return;
+      }
+      const seeded = seedStateFromCampaignBible(previous, bible);
+      stateRef.current = seeded;
+      setState(seeded);
+      void persist(seeded);
+      addToast(`Loaded campaign rails: ${bible.title}`, 'info');
+    },
     loadDungeon, moveDungeonNode, exitDungeon,
     handleGuestSignIn: async () => {
       setGoogleUser(GUEST_USER);

@@ -249,7 +249,7 @@ export function CharacterWindow({ isOpen, onClose, state, settings }: Props) {
   ];
 
   if (settings.dndMode) {
-    tabs.push({ key: 'dnd', label: 'D&D Sheet', icon: <ScrollText size={14} /> });
+    tabs.push({ key: 'dnd', label: '5e Sheet', icon: <ScrollText size={14} /> });
   }
 
   return (

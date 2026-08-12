@@ -93,3 +93,72 @@ export function trimAbruptCutoff(text: string): string {
   }
   return cut;
 }
+
+const PLAYER_HARM_CUES =
+  /\b(you\s+(?:are\s+)?(?:hit|struck|wounded|hurt|injured|clawed|bitten|slashed|pierced|slammed|knocked)|(?:take|took|suffer(?:ed)?)\s+(?:\d+\s+)?(?:damage|wound)|pain\s+(?:flares|lances|shoots)|blood|your\s+(?:armor|flesh|side|arm|leg|chest|shoulder|ribs?)\b)/i;
+
+const MEANINGFUL_PROSE_MIN = 90;
+
+/** Strip residual mechanic XML the model left in player-facing prose. */
+export function stripResidualMechanicTags(text: string): string {
+  return text
+    .replace(/<\/?(?:enemy|damage|heal|item-gain|item-use|system-log|quest-[\w-]+|encounter-end|milestone-event|loot-video|visual-update|turn-frame|dungeon-[\w-]+|map-floor-change|hex-move|lore-card)[^>]*>/gi, '')
+    .replace(/\n{3,}/g, '\n\n')
+    .trim();
+}
+
+export function narrativeMentionsPlayerHarm(prose: string): boolean {
+  return PLAYER_HARM_CUES.test(prose);
+}
+
+/**
+ * Guarantee the turn has readable story prose (not just choices / system lines).
+ * If the model returned nearly empty narrative, acknowledge the player's action.
+ */
+export function ensureTurnProse(cleanText: string, playerAction: string): string {
+  const prose = cleanText
+    .replace(/<[^>]+>/g, ' ')
+    .replace(/\[SYSTEM[^\]]*\]/gi, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+  const hasSentence = /[.!?]/.test(prose);
+  if (prose.length >= MEANINGFUL_PROSE_MIN && hasSentence) return cleanText;
+
+  const actionSnippet = (playerAction || 'your action').replace(/\s+/g, ' ').trim().slice(0, 140);
+  const bridge =
+    `You follow through — ${actionSnippet}. The moment settles as you take in what changed around you.`;
+  if (!cleanText.trim()) return bridge;
+  return `${bridge}\n\n${cleanText}`.trim();
+}
+
+/**
+ * When HP drops from combat tags/logs but prose never describes being hit, inject a short line
+ * so the player can follow why their health changed.
+ */
+export function ensureDamageNarration(
+  cleanText: string,
+  amount: number,
+  enemyName?: string | null
+): string {
+  if (amount <= 0 || narrativeMentionsPlayerHarm(cleanText)) return cleanText;
+  const foe = enemyName?.trim() || 'your foe';
+  const line = `Before you can fully recover your footing, ${foe} lashes out — you take ${amount} damage.`;
+  return cleanText.trim() ? `${cleanText.trim()}\n\n${line}` : line;
+}
+
+/**
+ * If system-log awards XP but the story never explains why, add a one-line beat.
+ */
+export function ensureXpNarration(cleanText: string, systemLog: string[]): string {
+  const xpLine = systemLog.find((l) => /xp\s+gained|gained\s+\d+\s*xp/i.test(l));
+  if (!xpLine) return cleanText;
+  if (/\b(experience|xp\b|reward(?:ed)?|defeat(?:ed)?|slain|victory|triumph)/i.test(cleanText)) {
+    return cleanText;
+  }
+  const amount = xpLine.match(/(\d+)/)?.[1];
+  const line = amount
+    ? `The clash leaves you wiser — you gain ${amount} XP.`
+    : `The clash leaves you wiser — you gain experience.`;
+  return cleanText.trim() ? `${cleanText.trim()}\n\n${line}` : line;
+}
+

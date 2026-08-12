@@ -31,13 +31,28 @@ const levelMap: Record<LogLevel, string> = {
 };
 
 function pushEntry(level: LogLevel, category: string, message: string, data?: unknown) {
-  const entry: LogEntry = { t: Date.now(), level, category, message, data };
+  // Production: drop debug/info chatter that can leak pipeline internals in DevTools.
+  if (import.meta.env.PROD && (level === 'debug' || level === 'info')) {
+    return;
+  }
+
+  let safeData = data;
+  if (import.meta.env.PROD && data !== undefined) {
+    const sensitive = /prompt|system|warden|pipeline|apiKey|authorization|bearer/i.test(category + message);
+    if (sensitive) {
+      safeData = undefined;
+    } else if (typeof data === 'string' && data.length > 400) {
+      safeData = `${data.slice(0, 400)}…`;
+    }
+  }
+
+  const entry: LogEntry = { t: Date.now(), level, category, message, data: safeData };
   buffer.push(entry);
   if (buffer.length > MAX_ENTRIES) buffer.shift();
   listeners.forEach((l) => l());
 
   // Bridge into the UI-visible Debug panel
-  debugLogger.record(levelMap[level], `[${category}] ${message}`, data);
+  debugLogger.record(levelMap[level], `[${category}] ${message}`, safeData);
 }
 
 export const logger = {

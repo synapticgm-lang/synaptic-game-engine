@@ -121,7 +121,7 @@ function DmNarration({ entry, engineMode }: { entry: LogEntry; engineMode: Engin
             <Sparkles size={12} className="text-crimson-400" />
           </div>
           <span className="font-serif text-xs font-bold uppercase tracking-wider text-crimson-300">
-            Dungeon Master
+            Game Master
           </span>
           <span className="ml-auto font-mono text-[10px] text-slate-600">
             Turn {entry.turn}

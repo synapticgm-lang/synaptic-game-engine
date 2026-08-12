@@ -28,7 +28,7 @@ import { ALL_CAMPAIGN_BIBLES, type CampaignBible, type LoreSnippet, type KeyNPC 
 interface GMLibraryProps {
   open: boolean;
   onClose: () => void;
-  onSelectCampaign?: (archetype: CampaignArchetype, engineMode: EngineMode) => void;
+  onSelectCampaign?: (archetype: CampaignArchetype, engineMode: EngineMode, bibleId?: string) => void;
   onSelectMap?: (mapId: string) => void;
 }
 
@@ -73,6 +73,10 @@ const ARCHETYPE_ACCENTS: Record<string, string> = {
   regression: 'cyan',
   cyberpunk: 'fuchsia',
   dungeon_transport: 'orange',
+  tower_ascent: 'violet',
+  magic_academy: 'sky',
+  dungeon_core: 'emerald',
+  custom_world: 'amber',
   caravan_escort: 'amber',
   prisoner_shipwrecked: 'sky',
   patrons_quest: 'crimson',
@@ -92,6 +96,10 @@ const ARCHETYPE_ICONS: Record<string, LucideIcon> = {
   regression: Compass,
   cyberpunk: Swords,
   dungeon_transport: Mountain,
+  tower_ascent: Mountain,
+  magic_academy: BookOpen,
+  dungeon_core: Skull,
+  custom_world: Sparkles,
   caravan_escort: Castle,
   prisoner_shipwrecked: Waves,
   patrons_quest: Shield,
@@ -126,7 +134,11 @@ function bibleToStarter(bible: CampaignBible): CampaignStarter {
     archetype: bible.archetype,
     engineMode: bible.engineMode,
     title: bible.title,
-    description: bible.premise.length > 140 ? bible.premise.slice(0, 137) + '...' : bible.premise,
+    description: bible.shortDescription
+      ? bible.shortDescription
+      : bible.premise.length > 140
+        ? bible.premise.slice(0, 137) + '...'
+        : bible.premise,
     difficulty: bible.difficulty,
     accent: ARCHETYPE_ACCENTS[bible.archetype] ?? 'crimson',
     icon: ARCHETYPE_ICONS[bible.archetype] ?? Sparkles,
@@ -306,7 +318,7 @@ export function GMLibrary({ open, onClose, onSelectCampaign, onSelectMap }: GMLi
               maxPage={maxCarouselPage}
               onPrev={() => setCarouselIndex((i) => Math.max(0, i - 1))}
               onNext={() => setCarouselIndex((i) => Math.min(maxCarouselPage, i + 1))}
-              onSelect={(c) => onSelectCampaign?.(c.archetype, c.engineMode)}
+              onSelect={(c) => onSelectCampaign?.(c.archetype, c.engineMode, c.id)}
             />
           )}
 
@@ -442,7 +454,7 @@ function CampaignCarousel({
                 <p className="text-[11px] leading-relaxed text-slate-400">{c.description}</p>
                 <div className="mt-auto flex items-center gap-1.5 pt-1">
                   <span className="rounded bg-slate-800/80 px-1.5 py-0.5 text-[9px] uppercase tracking-wide text-slate-500">
-                    {c.engineMode === 'dnd' ? 'D&D / 5e' : c.engineMode === 'rpg' ? 'RPG' : 'LitRPG'}
+                    {c.engineMode === 'dnd' ? '5e Fantasy' : c.engineMode === 'rpg' ? 'Story RPG' : 'LitRPG'}
                   </span>
                   <span className={`text-[10px] ${ACCENT_ICON[c.accent]} opacity-0 transition-opacity group-hover:opacity-100`}>
                     Select →

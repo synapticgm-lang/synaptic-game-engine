@@ -95,6 +95,21 @@ class DebugLogger {
   }
 
   public record(type: string, message: string, data?: any) {
+    if (import.meta.env.PROD) {
+      const t = type.toUpperCase();
+      // Keep errors; drop verbose pipeline / request payloads in production DevTools.
+      if (t !== 'ERROR' && t !== 'CRITICAL' && t !== 'WARN') {
+        return;
+      }
+      if (data && typeof data === 'object') {
+        const clone = { ...data };
+        delete (clone as any).prompt;
+        delete (clone as any).systemPrompt;
+        delete (clone as any).apiKey;
+        delete (clone as any).settings;
+        data = clone;
+      }
+    }
     const entry: DebugLogEntry = {
       timestamp: new Date().toISOString(),
       type: type.toUpperCase(),
@@ -146,7 +161,13 @@ class DebugLogger {
       logType: 'event-log',
       exportTimestamp: now.toISOString(),
       ...telemetry,
-      settings: currentSettings,
+      settings: currentSettings
+        ? {
+            ...currentSettings,
+            openrouterApiKey: currentSettings.openrouterApiKey ? '[redacted]' : '',
+            geminiApiKey: currentSettings.geminiApiKey ? '[redacted]' : '',
+          }
+        : null,
       character: currentState?.character || null,
       recentTurns: currentState?.log?.slice(-25) || [],
       recentRolls: currentState?.rolls?.slice(-20) || [],

@@ -47,6 +47,10 @@ export interface CampaignBible {
   difficulty: Difficulty;
   tagline: string;
   premise: string;
+  /** Short blurb for library cards (1–2 sentences). */
+  shortDescription?: string;
+  /** Copyright / license note for creators (never copy closed IP). */
+  licenseNote?: string;
   loreSnippets: LoreSnippet[];
   keyNPCs: KeyNPC[];
   starterQuests: StarterQuest[];

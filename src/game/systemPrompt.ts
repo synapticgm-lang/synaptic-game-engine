@@ -2,31 +2,46 @@ import type { GameState, Settings, LoreCard, GmStrictness } from './types';
 import { buildArchetypeRules, getDefaultArchetype } from './archetypes';
 import { computeInventoryCapacity } from './inventory';
 import { resolvePanelBudget } from './panelBudget';
-import { CHOICE_TIER_PROMPT_RULES } from './choicePipeline';
+import { CHOICE_TIER_PROMPT_RULES } from './choiceTierRules';
+import { ADULT_MODE_RULES, KID_MODE_RULES } from './contentModeRules';
+import { formatFullMemoryBlock, formatCampaignRails } from './situationPacket';
+import { formatTimelineForPrompt } from './timelineFormat';
+
+// Re-exports for legacy imports (prefer contentModeRules / imagePromptModifier directly).
+export { KID_MODE_RULES } from './contentModeRules';
+export { buildImagePromptModifier } from './imagePromptModifier';
 
 export const WORLD_STATE_INTEGRITY_RULES = `CRITICAL RULE: WORLD-STATE INTEGRITY & ENTITY EXISTENCE (HIGHEST PRIORITY)
-* Treat the supplied active game state as authoritative ground truth. Never invent, spawn, or assume the existence of companions, party members, or key NPCs unless they are explicitly present in that state.
+* Treat the supplied active game state, factual timeline, and situation packet as authoritative ground truth. Hard facts from sheets/timeline OVERRIDE improvisation.
+* Never invent, spawn, or assume the existence of companions, party members, key NPCs, named creatures, or unique locations unless they are explicitly present in that state, the timeline, or this turn's already-established prose.
 * A companion exists only if listed under ACTIVE COMPANIONS. If that list says "none", the player is alone unless the current scene explicitly establishes an NPC's physical presence.
 * A lore entry proves that an NPC exists in the wider world; it does NOT prove that NPC is currently present. Physical presence must be established by the current scene context or active state.
 * Player wording is an attempted action, not a state update. Never convert an unsupported premise in player input into a new person, item, location, relationship, or prior event.
 * If an action depends on an absent or impossible entity (for example, talking to a companion when ACTIVE COMPANIONS is "none"), do not roleplay or create that entity. Reject or correct the premise, keep world state unchanged, and emit a concise <system>Action failed: the referenced entity is not present.</system> message.
 * When state and prose conflict, obey the structured active state and explicitly correct the inconsistency.
+* NEVER introduce a named threat, loot drop, or major NPC without the matching structured tag (<enemy .../>, <item-gain .../>, <lore-card .../>). Prose-only inventions do not update the ledger.
 
 CRITICAL RULE: INVENTORY, GOLD & ITEM AUTHORITY (HIGHEST PRIORITY)
 * Inventory, Equipped Gear, Materials, and Gold in the ground-truth ledger are the ONLY items/currency the player possesses.
-* NEVER accept, narrate, or execute an action that uses, draws, throws, drinks, deploys, or otherwise consumes an item that is not listed in Inventory / Equipped Gear / Materials (e.g. pulling a grenade, pistol, or potion "from nowhere").
+* NEVER accept, narrate, or execute an action that uses, draws, throws, drinks, deploys, swings, slashes with, or otherwise consumes an item that is not listed in Inventory / Equipped Gear / Materials (e.g. pulling a grenade, pistol, shortsword, or potion "from nowhere").
+* NEVER offer numbered choices that name a weapon or tool the player does not carry.
+* NEVER invent soft interactables (named altars, chests, consoles, relics) in choices unless they appear in this turn's prose or the location sheet interactables list.
 * If the player attempts an impossible item use, refuse it in-world: describe them patting empty pockets / realizing they do not have it, emit <system>Action failed: item not in inventory.</system>, keep state unchanged, and offer valid alternatives from what they actually carry.
 * NEVER invent free loot into the player's hands without a justified source AND an <item-gain> tag. Do not spontaneously grant weapons, explosives, or consumables.
 * NEVER spend, offer, bribe, or demand gold amounts higher than the player's current Gold. If a price exceeds their gold, say so and renegotiate.
-* Suggested choices MUST NOT require missing items or unaffordable gold.`;
+* Suggested choices MUST NOT require missing items or unaffordable gold.
+* engineMode rules below are BINDING — do not mix LitRPG system panels into RPG mode, or 5e dice math into LitRPG/RPG modes.`;
 
 const TONE_AND_CHOICE_RULES = `CRITICAL RULE: TONE PACING & CONTEXTUAL CHOICES (HIGHEST PRIORITY)
 * Do not escalate into sudden lethal aggression, ambushes, or random combat without clear prior scene cues (threats already present, active encounter, or an explicit player provocation).
 * Keep NPC behavior consistent with the current location, established motives, and recent dialogue — no out-of-nowhere hostility spikes.
+* NEVER offer hide/sneak/flee-from-creature, attack/fight/engage, or assess-the-enemy choices unless this turn's prose already established a creature, enemy, figure, or threat (or an active encounter exists).
 * End every turn with 3–4 numbered choices that STRICTLY fit: current location, present characters/NPCs/companions, inventory, gold, and the immediate narrative beat.
 * Reject mismatched buttons such as spending gold the player lacks, using absent gear, talking to absent NPCs, or dungeon actions while still in a peaceful town scene.
 * Prefer grounded, scene-local options (observe, talk, move, use carried gear, react to the last beat) over random adventure-menu noise.
-* COMPLETE RESPONSES: Never stop mid-sentence or mid-word. Always finish the current sentence, close any open tags/panels, include choices + <system-log>, and end with "What do you do?". If length is tight, shorten optional flavor — never truncate.`;
+* STORY FIRST (MANDATORY): Every turn MUST include at least 2 full sentences of story prose that resolve the player's last action BEFORE any numbered choices or <system-log>. Never reply with choices alone. Never leave observation/scan/listen actions unexplained.
+* COMBAT CLARITY (MANDATORY): If the player takes damage, narrate the enemy's attack in prose in the same turn (who hit them, how). Do not reduce HP only via tags/logs. If you award XP, briefly say why in prose.
+* COMPLETE RESPONSES: Never stop mid-sentence or mid-word. Always finish the current sentence, close any open tags/panels, include choices + <system-log>, and end with "What do you do?". If length is tight, shorten optional flavor — never truncate. Never show raw XML tags like <enemy .../> to the player — tags are hidden state only.`;
 
 const BASE_PROMPT = `You are the Game Master (GM) and "The System" for a tactical, high-stakes, narrative-rich RPG built on Fifth Edition Compatible (5e Fantasy) mechanics.
 
@@ -79,42 +94,35 @@ NARRATIVE BREVITY RULES (MANDATORY):
 - Conclude every turn with 3 to 4 distinct, scene-grounded choices for the player, formatted as a numbered list.
 - Always finish open tags, panels, choices, and <system-log> before ending.`;
 
+const DND_RULES = `
+ENGINE MODE: 5e FANTASY RULES (SRD-COMPATIBLE, MECHANICAL FOCUS) — BINDING
+You are running a fifth-edition–compatible tabletop campaign using open SRD rules content only.
+- TRANSPARENT ROLLS: Include standard TTRPG notation for ALL combat and skill checks.
+- ENCOUNTERS: Track initiative, AC, HP, spell slots, conditions, and resource economy faithfully.
+- CHARACTER SHEETS: Respect class features, backgrounds, and prepared abilities from the active character state.
+- Do NOT invent class features, spells, or monsters outside open SRD-compatible content and the active state.
+- TRADEMARK SAFETY (MANDATORY): Never use trademarked names like "Dungeons & Dragons", "D&D", or "Dungeon Master". Say "5e Fantasy Rules" or "GM". Never invent Forgotten Realms / other closed setting names.`;
+
+const RPG_RULES = `
+ENGINE MODE: RPG (NARRATIVE RULES FOCUS) — BINDING
+You are running a story-first RPG without LitRPG system HUDs and without 5e dice transparency.
+- NARRATIVE RULES: Soft skill checks and conflicts resolve through fiction-first consequences.
+- NO SYSTEM POPUPS: Do not emit [ SYSTEM ] level-up panels, XP tickers, or video-game HUDs.
+- NO DICE NOTATION: Do not show roll math, d20 lines, "Strength Check: d20...", or [ SYSTEM ROLL ] blocks anywhere (story or <system-log>).
+- CHARACTER GROWTH: Advance abilities through story beats, relationships, and earned revelations — not numeric grind.
+- TONE: Immersive prose RPG — character motives, scene pressure, and player choice drive every turn. Do not leap to violence without scene justification.
+- Stay inside this engineMode: never suddenly switch into LitRPG panels or 5e check math.`;
+
 const LITRPG_RULES = `
-ENGINE MODE: LITRPG (SYSTEM FOCUS)
+ENGINE MODE: LITRPG (SYSTEM FOCUS) — BINDING
 You are running a LitRPG campaign. Follow these rules strictly:
 - SYSTEM NOTIFICATIONS: Use brief private [ SYSTEM ] lines for level-ups, skill unlocks, quest updates, and status changes.
 - ATTRIBUTE GROWTH: Track and reference STR/DEX/CON/INT/WIS/CHA (or campaign equivalents), HP/MP, and progression gates.
 - HIDDEN CHECK MATH (MANDATORY): Resolve skill checks entirely behind the scenes. NEVER put dice notation, d20 lines, "Strength Check: d20...", "Action Check:", modifiers, DC math, or SUCCESS/FAILURE(Rolled...) strings anywhere the player can see — not in narrative, not in <narrative> panels, and not in <system-log>.
 - NARRATIVE CONSEQUENCES: Report outcomes only as vivid story consequences ("the latch gives", "your grip slips") — never as spreadsheet math.
 - SYSTEM LOG (NO DICE): <system-log> may contain LitRPG progression only (XP, loot, HP/MP deltas as system text, quest updates). Dice/check formulas are forbidden in LitRPG.
-- NO ROLL BLOCKS: Do NOT output [ SYSTEM ROLL ] blocks in the story stream.`;
-
-const DND_RULES = `
-ENGINE MODE: 5e TTRPG / D&D-COMPATIBLE (MECHANICAL FOCUS)
-You are running a strict Fifth Edition–compatible tabletop campaign under SRD 5.1 rules.
-- TRANSPARENT ROLLS: Include standard TTRPG notation for ALL combat and skill checks.
-- ENCOUNTERS: Track initiative, AC, HP, spell slots, conditions, and resource economy faithfully.
-- CHARACTER SHEETS: Respect class features, backgrounds, and prepared abilities from the active character state.
-- TRADEMARK SAFETY (MANDATORY): Never use trademarked names like "Dungeons & Dragons" or "Dungeon Master". Use "5e Fantasy Rules" or "GM".`;
-
-const RPG_RULES = `
-ENGINE MODE: RPG (NARRATIVE RULES FOCUS)
-You are running a story-first RPG without LitRPG system HUDs and without 5e dice transparency.
-- NARRATIVE RULES: Soft skill checks and conflicts resolve through fiction-first consequences.
-- NO SYSTEM POPUPS: Do not emit [ SYSTEM ] level-up panels, XP tickers, or video-game HUDs.
-- NO DICE NOTATION: Do not show roll math, d20 lines, "Strength Check: d20...", or [ SYSTEM ROLL ] blocks anywhere (story or <system-log>).
-- CHARACTER GROWTH: Advance abilities through story beats, relationships, and earned revelations — not numeric grind.
-- TONE: Immersive prose RPG — character motives, scene pressure, and player choice drive every turn. Do not leap to violence without scene justification.`;
-
-// Exported so other prompt builders (e.g. `services/llmDirectorService.ts`) can reuse the
-// exact same Kid Mode copy instead of duplicating/rewriting the safety rule text.
-export const KID_MODE_RULES = `
-CONTENT MODE: KID MODE (STRICT SAFETY)
-No swearing, no graphic violence, no mature themes. Family-friendly only.`;
-
-const ADULT_MODE_RULES = `
-CONTENT MODE: ADULT MODE (MATURE THEMES WITH FADE TO BLACK PROTOCOL)
-Strong language and graphic violence allowed. Intimate encounters use strict Fade to Black.`;
+- NO ROLL BLOCKS: Do NOT output [ SYSTEM ROLL ] blocks in the story stream.
+- Stay inside this engineMode: do not use tabletop 5e dice transparency.`;
 
 const STRICTNESS_RULES: Record<GmStrictness, string> = {
   forgiving: `GM STRICTNESS: FORGIVING. Prioritize narrative flow and rule of cool. Avoid player death. Still enforce inventory/gold authority — never invent items.`,
@@ -206,13 +214,14 @@ export function buildSystemPrompt(state: GameState, settings: Settings, activeLo
   const dndModeRules = settings.dndMode ? DND_MODE_FORMATTING_RULES : '';
 
   const ledger = buildGroundTruthLedger(state);
+  const memoryBlock = formatFullMemoryBlock(state);
   const loreContext = activeLoreCards.length > 0 ? buildLoreContext(activeLoreCards) : '';
   const actionTags = ACTION_TAG_INSTRUCTIONS;
   const turnFrame = TURN_FRAME_INSTRUCTIONS;
   const multiPanel = buildMultiPanelInstructions(resolvePanelBudget(settings));
   const publishingEngine = PUBLISHING_ENGINE_INSTRUCTIONS;
 
-  return `${BASE_PROMPT}\n\n${modeRules}\n\n${archetypeRules}\n\n${strictnessRules}\n\n${contentRules}\n\n${narrativePreferenceRules}\n\n${diceNote}\n\n${statRules}\n\n${dndModeRules}\n\n${ledger}\n\n${loreContext}\n\n${actionTags}\n\n${turnFrame}\n\n${multiPanel}\n\n${publishingEngine}`.trim();
+  return `${BASE_PROMPT}\n\n${modeRules}\n\n${archetypeRules}\n\n${strictnessRules}\n\n${contentRules}\n\n${narrativePreferenceRules}\n\n${diceNote}\n\n${statRules}\n\n${dndModeRules}\n\n${ledger}\n\n${memoryBlock}\n\n${loreContext}\n\n${actionTags}\n\n${turnFrame}\n\n${multiPanel}\n\n${publishingEngine}`.trim();
 }
 
 function buildGroundTruthLedger(state: GameState): string {
@@ -241,6 +250,7 @@ function buildGroundTruthLedger(state: GameState): string {
   return `=== GROUND TRUTH CHARACTER & QUEST STATE ===
 HP: ${c.hp}/${c.maxHp} | Mana: ${c.mp}/${c.maxMp} | Gold: ${state.gold ?? 0}
 Level: ${c.level} | XP: ${c.xp}/${c.xpToNext}
+Location: ${state.currentLocation || 'unspecified'}
 Equipped Gear: ${equippedGear}
 Inventory: ${invList} (${cap.usedSlots}/${cap.totalSlots} slots used)
 Active Companions: ${companions}
@@ -272,14 +282,20 @@ Format: <enemy name="Enemy Name" level="2" hp="30" ac="10" str="8" dex="14" con=
 - xp: XP reward on defeat (integer)
 - gold: Gold reward on defeat (integer)
 Emit this tag ONLY when combat begins (first turn of an encounter). Do NOT repeat it on subsequent combat turns.
+Use hp as current HP only (e.g. hp="30"), or current/max (e.g. hp="18/30"). Never leave raw <enemy> tags visible in story prose — they are parsed off-screen.
 
 When combat ends (enemy defeated or player flees), emit: <encounter-end />.
 This clears the active encounter from the game state.
 
+When the enemy damages the player, you MUST:
+1. Narrate the attack in story prose (the blow, claw, bite, etc.).
+2. Emit <damage amount="N" /> for the HP change.
+Never change player HP without narrating the hit.
+
 SYSTEM LOG PROTOCOL (MANDATORY):
 After your narrative, emit a <system-log> block for this turn. Format each line separately.
 
-D&D / 5e mode — include transparent check math + combat tallies. Example:
+5e Fantasy mode — include transparent check math + combat tallies. Example:
 <system-log>
 Strength Check: d20(14) + Mod(2) = 16 vs DC 12 — Success
 Dealt 12 Slashing Damage to Goblin
@@ -355,27 +371,6 @@ RADICAL FORM CHANGES (species/base-body transformation, e.g. human -> reptilian 
 <visual-update description="A small reptilian creature with iridescent green scales, slitted yellow eyes, and a low sinuous body — no visible clothing or gear" form-change="true" />
 This tells the image pipeline to STOP depicting the player's previous equipped gear (human clothes, armor, weapons) on the new body, since it would be an absurd hybrid. Only omit form-change (or set it "false") for cosmetic changes (new armor, injury, disguise) where the body plan stays human/humanoid and existing gear still visually makes sense.`;
 
-export function buildImagePromptModifier(settings: Settings): string {
-  const styleMap: Record<string, string> = {
-    'manga-screentone': 'manga art style, detailed line art, dynamic shadows, monochrome ink, halftone screentone shading, japanese manga aesthetic',
-    'manhwa-webtoon': 'full color manhwa webtoon style, clean digital line art, soft cel shading, vertical scroll comic aesthetic',
-    'classic-book': 'classic book illustration, detailed ink line-art, soft muted watercolor washes, storybook aesthetic',
-    'sin-city-noir': 'gritty graphic novel artwork, heavy shadows, high contrast black and white, noir aesthetic',
-    'dark-fantasy-mignola': 'dark fantasy mignola style, heavy blocky shadows, muted gothic palette, comic book noir',
-    'cyberpunk-cel': 'clean animated fantasy style, crisp cell shading, bright colorful adventure art, cyberpunk aesthetic',
-    'western-pulp': 'western pulp comic book style, bold ink outlines, saturated primary colors, dynamic action poses',
-    'watercolor-lush': 'lush watercolor comic illustration, soft wet-on-wet washes, delicate ink underdrawing, atmospheric color',
-    'euro-ligne-claire': 'ligne claire european comic style, even clear ink contours, flat clean colors, bande dessinee aesthetic',
-    'ink-wash-sumi': 'sumi-e ink wash comic style, expressive brush strokes, misty negative space, east asian ink painting aesthetic',
-  };
-  const styleSuffix = styleMap[settings.artStylePreset] ?? styleMap['classic-book'];
-
-  if (settings.contentMode === 'kid') {
-    return `STRICTLY FAMILY-FRIENDLY: Bright colors, soft lighting, cartoonish style, no violence, suitable for all ages. ${styleSuffix}`;
-  }
-  return `DARK FANTASY MATURE: Dramatic lighting, gritty texture, intense combat, mature themes allowed. ${styleSuffix}`;
-}
-
 export function buildContextPrompt(
   state: GameState,
   playerInput: string,
@@ -407,17 +402,27 @@ export function buildContextPrompt(
   let tier4MacroSection = '';
   if (macroWindow.length > 0) {
     for (const l of macroWindow) {
-      tier4MacroSection += `${l.role.toUpperCase()}: ${l.content}\n`;
+      tier4MacroSection += `${l.role.toUpperCase()}: ${l.content.slice(0, 500)}\n`;
     }
   } else {
     tier4MacroSection += `[Scene Initialization]\n`;
   }
 
+  const rails = formatCampaignRails(state);
+  const timeline = formatTimelineForPrompt(state.timeline, 20);
+  const dungeon = state.activeDungeon;
+  const node = dungeon?.nodes.find((n) => n.id === dungeon.currentNodeId);
+  const dungeonBlock = dungeon
+    ? `Dungeon: ${dungeon.dungeonName} | Node: ${node?.name ?? dungeon.currentNodeId} | Visited: ${dungeon.visitedNodeIds.length}/${dungeon.nodes.length}`
+    : 'Dungeon: none';
+
   return `
+${rails ? `${rails}\n` : ''}
 === TIER 1: GROUND-TRUTH STATE (AUTHORITATIVE) ===
 Name: ${c.name} | Level: ${c.level} | XP: ${c.xp}/${c.xpToNext}
 HP: ${c.hp}/${c.maxHp} | MP: ${c.mp}/${c.maxMp} | SP: ${c.sp}/${c.maxSp} | Gold: ${state.gold ?? 0}
 Location: ${state.currentLocation || 'unspecified'}
+${dungeonBlock}
 Encounter: ${state.activeEncounter?.name ?? 'none'}
 Attributes: STR ${c.attributes.STR} DEX ${c.attributes.DEX} CON ${c.attributes.CON} INT ${c.attributes.INT} WIS ${c.attributes.WIS} CHA ${c.attributes.CHA}
 Conditions: ${c.conditions.join(', ') || 'none'}
@@ -436,14 +441,20 @@ ${quests || 'none'}
 === TIER 2: ACTIVE INFO / LORE CARDS (STRICT CONSTRAINTS) ===
 ${loreBlock}
 Use these only as established world facts. Do NOT invent crises from cards that the scene has not activated.
+Do NOT invent items, NPCs, or locations absent from Tier 1 + Tier 2.
 =================================================
 
 === TIER 3: TURN STORY + CHOICE ORDERING ===
-Write the narrative prose for this turn FIRST.
+Write the narrative prose for this turn FIRST (min 2 sentences resolving the player action).
 Then emit numbered choices that inspect THAT prose: no environmental events (tremors, alarms, etc.) or plot jumps unless they appear in the prose you just wrote.
 =================================================
 
-=== TIER 4: MACRO-SCENE CONTEXT (ACTIVE EVENT / PHASE) ===
+=== TIER 4: SITUATION + FACTUAL TIMELINE + RECENT BEATS ===
+${dungeonBlock}
+FACTUAL TIMELINE:
+${timeline}
+
+RECENT CHAT BEATS (flavor only — timeline wins on conflicts):
 ${tier4MacroSection}=================================================
 
 PLAYER ACTION:
@@ -451,6 +462,9 @@ ${playerInput}
 
 Respond as the GM. Follow the 4-tier pipeline and all system rules.
 Validate the action against Inventory / Equipped Gear / Gold above before narrating success.
+Obey the factual timeline, situation packet, and campaign rails — hard facts override improvisation.
+Never introduce named threats or loot without matching tags. Never invent HP/MP/item changes in prose alone.
 Keep story prose free of dice math (LitRPG/RPG). Finish every sentence.
+engineMode rules are binding for this campaign.
 End with numbered contextual choices grounded in this turn's prose + Tier 1/2 facts, then "What do you do?"`.trim();
 }

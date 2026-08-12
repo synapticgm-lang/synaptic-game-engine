@@ -37,7 +37,7 @@ export function CharacterProgression({ state }: Props) {
                 : 'text-slate-500 hover:text-slate-300 hover:bg-slate-800/50 border border-transparent'
             }`}
           >
-            {m === 'dnd' ? 'D&D Mode' : m === 'rpg' ? 'RPG Mode' : 'LitRPG Mode'}
+            {m === 'dnd' ? '5e Fantasy Mode' : m === 'rpg' ? 'Story RPG Mode' : 'LitRPG Mode'}
           </button>
         ))}
       </div>

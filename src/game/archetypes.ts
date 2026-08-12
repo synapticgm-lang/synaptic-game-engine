@@ -9,7 +9,11 @@ export type LitRpgArchetype =
   | 'void_audience'
   | 'regression'
   | 'cyberpunk'
-  | 'dungeon_transport';
+  | 'dungeon_transport'
+  | 'tower_ascent'
+  | 'magic_academy'
+  | 'dungeon_core'
+  | 'custom_world';
 
 export type DndOpening =
   | 'ai_custom'
@@ -38,10 +42,14 @@ export const LITRPG_ARCHETYPES: ArchetypeOption[] = [
   { value: 'regression', label: 'Regression / Second Chance', description: 'Waking up years in the past with future knowledge' },
   { value: 'cyberpunk', label: 'Cyber-Neural Boot', description: 'Sci-fi setting with nanite-driven HUD interface and heat mechanics' },
   { value: 'dungeon_transport', label: 'Dungeon Transport', description: 'Accidentally stepping through a portal into a subterranean maze' },
+  { value: 'tower_ascent', label: 'Tower Ascent', description: 'Climb a ranked multi-floor Spire with floor laws and wardens' },
+  { value: 'magic_academy', label: 'Magic Academy', description: 'School-arc progression, houses, exams, and rivalries' },
+  { value: 'dungeon_core', label: 'Dungeon Core', description: 'Awaken as a Core — expand rooms, spawn defenders, bargain with raiders' },
+  { value: 'custom_world', label: 'Custom World Builder', description: 'Blank rails — you write the bible; the AI must follow' },
 ];
 
 export const DND_OPENINGS: ArchetypeOption[] = [
-  { value: 'ai_custom', label: 'AI Custom 5e Campaign', description: 'AI generates a custom opening based on class/background' },
+  { value: 'ai_custom', label: 'Custom 5e Fantasy Campaign', description: 'AI generates a custom opening based on class/background (SRD-safe)' },
   { value: 'caravan_escort', label: 'Caravan Escort / Tavern Meeting', description: 'Classic low-level start guarding cargo or gathering info' },
   { value: 'prisoner_shipwrecked', label: 'Prisoner / Shipwrecked', description: 'Start stripped of gear; focus on escape and scavenging' },
   { value: 'patrons_quest', label: "Patron's Quest", description: 'Hired by a wealthy noble or wizard with specific objectives and starter gear' },
@@ -58,6 +66,9 @@ export const RPG_OPENINGS: ArchetypeOption[] = [
   { value: 'dungeon_transport', label: 'Threshold Crossing', description: 'Step through a doorway into an unknown realm of danger' },
   { value: 'void_audience', label: 'Bargain in the Dark', description: 'Negotiate fate with a mysterious patron after death' },
   { value: 'cyberpunk', label: 'Neon Underworld', description: 'Street-level intrigue in a rain-soaked megacity' },
+  { value: 'tower_ascent', label: 'The Climb', description: 'A towering trial of floors, rivals, and hard choices' },
+  { value: 'magic_academy', label: 'Scholars & Secrets', description: 'Rival houses, forbidden stacks, coming-of-age stakes' },
+  { value: 'custom_world', label: 'Custom Story World', description: 'Blank canvas — define lore cards before the AI invents' },
 ];
 
 export function getArchetypeOptions(engineMode: EngineMode): ArchetypeOption[] {
@@ -116,6 +127,26 @@ You have creative freedom to invent or blend LitRPG tropes. Design a unique open
 - Designated safe rooms appear between floors for rest and resupply.
 - The player accidentally stepped through a portal; escape means clearing the dungeon.
 - Each floor escalates in difficulty; boss floors gate progression.`,
+  tower_ascent: `ARCHETYPE: TOWER ASCENT
+- The Spire is the campaign spine: clear floors to progress.
+- Each floor may publish temporary Floor Laws — enforce them.
+- Ranking, rival climbers, and Floor Wardens drive tension.
+- Death or retreat has Spire costs (gear loss, rank humiliation).`,
+  magic_academy: `ARCHETYPE: MAGIC ACADEMY
+- Structure play around terms, exams, houses, and social stakes.
+- Magic has school rules (ink, glyphs, scheduled lessons).
+- Rivalry and secrets matter as much as combat.
+- Forbidden areas exist; discovery should feel earned.`,
+  dungeon_core: `ARCHETYPE: DUNGEON CORE
+- The player is (or pilots) a Core: expand, spawn, bargain.
+- Adventurers are environmental hazards and customers.
+- Theme binding locks aesthetic and spawn options.
+- Growth vs stealth vs diplomacy are valid strategies.`,
+  custom_world: `ARCHETYPE: CUSTOM WORLD BUILDER
+- Treat player Codex / lore cards as the only major setting truth.
+- Do not invent kingdoms, gods, or metaplot without confirmation.
+- Propose new facts; wait for ledger confirmation when turn-confirm is on.
+- Prefer questions that help the player define their world.`,
 };
 
 const DND_RULES: Record<DndOpening, string> = {
@@ -207,6 +238,10 @@ export function buildArchetypeIntro(engineMode: EngineMode, archetype: CampaignA
     regression: `You gasp awake. The ceiling is wrong — too low, too familiar. The date on the calendar makes your blood run cold. You've come back. Years of memory crash into you: the war, the losses, the things you wish you'd done differently. ${name}, you have a second chance.\n\n[ SYSTEM ] Temporal anomaly detected. Welcome back, ${name}.\n\nWhat do you do?`,
     cyberpunk: `Your eyes snap open. The HUD boots in a cascade of red text — system critical, thermal warning, neural link unstable. Nanites crawl under your skin, interfacing with hardware you don't remember installing. ${name}, you're in a back alley of a city that never sleeps, and something went very wrong last night.\n\n[ SYSTEM ] Boot complete. Neural HUD online. Welcome, ${name}.\n\nWhat do you do?`,
     dungeon_transport: `One step — and the world changes. The portal snaps shut behind you with a sound like breaking glass. You're in a stone corridor, torches guttering on the walls. The air is damp and old. ${name}, there is no way back — only down.\n\n[ SYSTEM ] Welcome, ${name}. Floor 1 of [???]. Descend.\n\nWhat do you do?`,
+    tower_ascent: `Wind screams around a black Spire that should not exist. A Ranking Board lists names you do not recognize. ${name}, a Climber’s Tag burns cold in your palm.\n\n[ SYSTEM ] Ascending Spire registration confirmed. Floor 1 unlocked.\n\nWhat do you do?`,
+    magic_academy: `Morning bells. A blank Class Codex sits on your dorm desk, pages waiting. Outside, house banners crack like sails. ${name}, orientation begins whether you are ready or not.\n\n[ SYSTEM ] Inkbound Academy — Term 1 enrolled.\n\nWhat do you do?`,
+    dungeon_core: `You have no hands — only facets of light. Stone chambers pulse around a crystal heart that is you. A menu unfolds: Expand. Spawn. Bargain.\n\n[ SYSTEM ] Core awakening complete. Designation: ${name}.\n\nWhat do you do?`,
+    custom_world: `The ledger is almost empty. A single line waits for an author: ${name}. Define the first truth of this world — place, rule, or threat — and the story will follow only what you lock in.\n\n[ SYSTEM ] Custom world shell ready. Awaiting canon.\n\nWhat do you do?`,
   };
   const litrpgIntro = intros[(archetype as LitRpgArchetype) ?? 'ai_random'] ?? intros.ai_random;
   if (engineMode === 'rpg') {

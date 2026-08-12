@@ -1,5 +1,5 @@
 import { debugLogger } from '../game/debugLogger';
-import { KID_MODE_RULES } from '../game/systemPrompt';
+import { KID_MODE_RULES } from '../game/contentModeRules';
 import {
   CAMERA_ANGLE_EXAMPLES,
   normalizeTextAnchor,
@@ -17,7 +17,7 @@ import {
  * `dialogue`/`caption`/`sfx` -> the existing React overlay components).
  */
 
-const OPENROUTER_API_KEY = import.meta.env.VITE_OPENROUTER_API_KEY;
+const OPENROUTER_API_KEY = ''; // Provider keys from Settings / edge secrets only — never VITE_*.
 const BASE_URL = 'https://openrouter.ai/api/v1';
 const DIRECTOR_MODEL_FALLBACK = 'deepseek/deepseek-chat';
 const DEFAULT_DIRECTOR_TIMEOUT_MS = 20_000;

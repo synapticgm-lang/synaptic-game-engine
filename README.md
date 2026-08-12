@@ -404,7 +404,11 @@ With four owner-scoped RLS policies (SELECT, INSERT, UPDATE, DELETE) using `auth
 - [ ] Add `campaignBibleId` field to `GameState`
 - [ ] Inject campaign bible lore into `systemPrompt.ts`
 - [ ] Wire GM Library campaign selection to `startNewGame()`
-- [ ] Deploy edge function to proxy AI requests server-side (keep API keys off the client)
+- [x] Deploy edge function to proxy AI requests server-side (keep API keys off the client)
+  - Function: `supabase/functions/gm-turn`
+  - Sync prompt sources: `npm run sync:gm-edge`
+  - Secrets: `OPENROUTER_API_KEY` / `GEMINI_API_KEY` (edge only)
+  - Client: `VITE_REQUIRE_GM_PROXY=true` for production
 
 ### Phase 3: Native Mobile
 - [ ] PWA manifest + service worker for offline play

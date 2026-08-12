@@ -230,6 +230,18 @@ export interface GameState {
   pendingImagePrompt?: string[] | null;
   choices?: string[];
   lorebook: LoreCard[];
+  /** Append-only factual event timeline (compressed memory). */
+  timeline?: TimelineFact[];
+  /** Campaign bible id when seeded from GM Library / archetype match. */
+  campaignBibleId?: string | null;
+  /** Short premise injected every turn as Guide Book rails. */
+  campaignPremise?: string | null;
+  /** Per-NPC memory ledger. */
+  npcMemories?: NpcMemory[];
+  /** Current location sheet (interactables / exits). */
+  locationSheet?: LocationSheet | null;
+  /** AI turn awaiting player accept / edit / reroll. */
+  pendingTurn?: PendingTurnProposal | null;
   gold: number;
   gmStrictness: GmStrictness;
   statDisplayMode: StatDisplayMode;
@@ -324,7 +336,7 @@ export interface TurnFrameTheme {
 
 export type KeyStatus = 'untested' | 'validating' | 'valid' | 'invalid';
 export type ErrorKind = 'rate-limit' | 'network' | 'generic';
-export type LoreCardType = 'npc' | 'location' | 'item' | 'quest' | 'faction';
+export type LoreCardType = 'npc' | 'location' | 'item' | 'quest' | 'faction' | 'lore';
 
 export interface LoreCard {
   id: string;
@@ -334,6 +346,92 @@ export interface LoreCard {
   summary: string;
   visualAnchor?: string;
   lastSeenTurn: number;
+}
+
+/** Append-only factual chronicle — no narrative fluff. */
+export type TimelineFactKind =
+  | 'location'
+  | 'combat'
+  | 'damage'
+  | 'heal'
+  | 'item'
+  | 'quest'
+  | 'npc'
+  | 'dungeon'
+  | 'discovery'
+  | 'other';
+
+export interface TimelineFact {
+  id: string;
+  turn: number;
+  kind: TimelineFactKind;
+  text: string;
+  at: number;
+}
+
+/** Live situation packet rebuilt each turn from structured state. */
+export interface SituationPacket {
+  location: string;
+  coordinates?: string;
+  encounter: string;
+  dungeon: string;
+  presentEntities: string[];
+  activeQuests: string[];
+  recentFacts: string[];
+}
+
+/** Per-NPC memory so knowledge does not bleed across characters. */
+export interface NpcMemory {
+  npcId: string;
+  npcName: string;
+  disposition: 'hostile' | 'neutral' | 'friendly' | 'allied' | 'romanced' | 'unknown';
+  facts: string[];
+  lastSeenTurn: number;
+}
+
+/** Location sheet — spatial facts for the current zone. */
+export interface LocationInteractable {
+  id: string;
+  name: string;
+  state: string;
+}
+
+export interface LocationExit {
+  id: string;
+  label: string;
+  locked?: boolean;
+  keyItem?: string;
+}
+
+export interface LocationSheet {
+  name: string;
+  climate?: string;
+  timeOfDay?: string;
+  interactables: LocationInteractable[];
+  exits: LocationExit[];
+  presentNpcIds: string[];
+}
+
+/**
+ * Propose → confirm → commit: AI output held here until the player accepts.
+ * `proposedState` is the full next snapshot applied on Accept.
+ */
+export interface PendingTurnProposal {
+  id: string;
+  playerAction: string;
+  playerEntryId: string;
+  narrative: string;
+  systemLog: string[];
+  choices: string[];
+  wardenNotes: string[];
+  intentLabel: string;
+  deltaSummary: string[];
+  comicPanels?: ComicPanel[];
+  imagePrompt?: string[] | null;
+  turnFrame?: TurnFrameTheme;
+  createdAt: number;
+  /** Full next GameState if accepted (local-only; stripped from cloud if huge). */
+  proposedState?: GameState;
 }
 
 export type PostLoginBehavior = 'MAIN_MENU' | 'AUTO_RESUME';
@@ -429,6 +527,11 @@ export interface Settings {
   socialRoleplay: number;
   worldBuilding: number;
   strictEncumbrance: boolean;
+  /**
+   * When true (default), AI turns are proposed for Accept / Edit / Reroll
+   * before World State Ledger commits.
+   */
+  requireTurnConfirm: boolean;
   secretDeathSaves: boolean;
   cleaveMechanics: boolean;
   flankingAdvantage: boolean;

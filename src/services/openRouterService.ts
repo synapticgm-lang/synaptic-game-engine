@@ -13,7 +13,7 @@ import {
 } from '../styles/styleSpecs';
 import type { Settings } from '../game/types';
 
-const OPENROUTER_API_KEY = import.meta.env.VITE_OPENROUTER_API_KEY;
+const OPENROUTER_API_KEY = ''; // Provider keys must come from Settings / edge secrets — never VITE_*.
 const BASE_URL = 'https://openrouter.ai/api/v1';
 
 export const PRIMARY_IMAGE_MODEL = 'black-forest-labs/flux-schnell';

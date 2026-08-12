@@ -11,6 +11,8 @@ export default defineConfig({
     },
   },
   build: {
+    // Do not publish source maps — they reverse-engineer prompt/orchestration IP.
+    sourcemap: false,
     rollupOptions: {
       output: {
         manualChunks: {

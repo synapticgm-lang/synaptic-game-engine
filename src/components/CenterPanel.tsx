@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, useMemo } from 'react';
-import { Send, Dice5, Download, Upload, X, Mic, Square, Volume2, RefreshCw, Settings as SettingsIcon, AlertTriangle, FileDown, LayoutGrid, MessageSquare, Terminal, Swords, User, BookOpen } from 'lucide-react';
+import { Send, Dice5, Download, Upload, X, Mic, Square, Volume2, RefreshCw, Settings as SettingsIcon, AlertTriangle, FileDown, LayoutGrid, MessageSquare, Terminal, Swords, User, BookOpen, EyeOff, Eye, List, Type } from 'lucide-react';
 import { EnemyTargetFrame } from './EnemyTargetFrame';
 
 import type { GameState, LogEntry, EngineMode, DiceAnimationMode, LoreCard, ArtStylePreset, StatVerbosity, ComicOverlayEdit, ComicLayoutMode, ComicReadingDirection } from '@/game/types';
@@ -11,6 +11,28 @@ import { ComicGrid } from './comic/ComicGrid';
 import { NarrativeView } from './NarrativeView';
 import { ActionBar } from './qol/ActionBar';
 import { RewindBar } from './qol/RewindBar';
+import { TurnConfirmBar } from './qol/TurnConfirmBar';
+
+const HIDE_OPTIONS_KEY = 'synapticgm-hide-options';
+const HIDE_TEXT_KEY = 'synapticgm-hide-text';
+
+function readBoolPref(key: string, fallback = false): boolean {
+  try {
+    const raw = sessionStorage.getItem(key);
+    if (raw === null) return fallback;
+    return raw === '1';
+  } catch {
+    return fallback;
+  }
+}
+
+function writeBoolPref(key: string, value: boolean): void {
+  try {
+    sessionStorage.setItem(key, value ? '1' : '0');
+  } catch {
+    /* ignore quota / private mode */
+  }
+}
 
 interface Props {
   state: GameState;
@@ -42,6 +64,10 @@ interface Props {
   onStopListening: () => void;
   onStopSpeaking: () => void;
   onRewind: () => void;
+  onAcceptPendingTurn?: () => void;
+  onDiscardPendingTurn?: () => void;
+  onRerollPendingTurn?: () => void;
+  onEditPendingNarrative?: (text: string) => void;
   onToggleComicMode: () => void;
   /** When true, comic/narrative/classic view cycling is disabled for the active session. */
   sessionPresentationLocked?: boolean;
@@ -52,14 +78,32 @@ interface Props {
   onUpdatePanelOverlay?: (entryId: string, panelIndex: number, edit: ComicOverlayEdit) => void;
 }
 
-export function CenterPanel({ state, busy, error, errorKind, currentImage, bgImage, bgOpacity, showRolls, engineMode, diceAnimation, statVerbosity, voice, comicMode, narrativeMode, artStylePreset, comicLayout = 'paged', comicReadingDirection = 'ltr', imagesGenerating = 0, canRewind, onSend, onToggleRolls, onExport, onImport, onStartListening, onStopListening, onStopSpeaking, onRetry, onOpenApiSettings, onRewind, onToggleComicMode, sessionPresentationLocked = false, onAutoFight, onOpenCharacter, onOpenMerchant, onRetryPanelImage, onUpdatePanelOverlay }: Props) {
+export function CenterPanel({ state, busy, error, errorKind, currentImage, bgImage, bgOpacity, showRolls, engineMode, diceAnimation, statVerbosity, voice, comicMode, narrativeMode, artStylePreset, comicLayout = 'paged', comicReadingDirection = 'ltr', imagesGenerating = 0, canRewind, onSend, onToggleRolls, onExport, onImport, onStartListening, onStopListening, onStopSpeaking, onRetry, onOpenApiSettings, onRewind, onAcceptPendingTurn, onDiscardPendingTurn, onRerollPendingTurn, onEditPendingNarrative, onToggleComicMode, sessionPresentationLocked = false, onAutoFight, onOpenCharacter, onOpenMerchant, onRetryPanelImage, onUpdatePanelOverlay }: Props) {
   const [input, setInput] = useState('');
   const [diceRoll, setDiceRoll] = useState<string | null>(null);
+  const [hideOptions, setHideOptions] = useState(() => readBoolPref(HIDE_OPTIONS_KEY));
+  const [hideText, setHideText] = useState(() => readBoolPref(HIDE_TEXT_KEY));
   const logRef = useRef<HTMLDivElement>(null);
   const fileRef = useRef<HTMLInputElement>(null);
   const isDnd = engineMode === 'dnd';
   const showRollsPanel = isDnd && showRolls && state.rolls.length > 0;
   const showSystemLog = statVerbosity !== 'minimal';
+  const bothChromeHidden = hideOptions && hideText;
+
+  const toggleHideOptions = () => {
+    setHideOptions((prev) => {
+      const next = !prev;
+      writeBoolPref(HIDE_OPTIONS_KEY, next);
+      return next;
+    });
+  };
+  const toggleHideText = () => {
+    setHideText((prev) => {
+      const next = !prev;
+      writeBoolPref(HIDE_TEXT_KEY, next);
+      return next;
+    });
+  };
 
   useEffect(() => {
     if (voice.transcript) setInput(voice.transcript);
@@ -67,7 +111,7 @@ export function CenterPanel({ state, busy, error, errorKind, currentImage, bgIma
 
   useEffect(() => {
     logRef.current?.scrollTo({ top: logRef.current.scrollHeight, behavior: 'smooth' });
-  }, [state.log, busy]);
+  }, [state.log, state.pendingTurn, busy]);
 
   useEffect(() => {
     if (!isDnd || diceAnimation !== 'visual' || !busy) return;
@@ -79,7 +123,7 @@ export function CenterPanel({ state, busy, error, errorKind, currentImage, bgIma
   }, [busy, isDnd, diceAnimation]);
 
   const handleSend = () => {
-    if (!input.trim() || busy) return;
+    if (!input.trim() || busy || !!state.pendingTurn) return;
     onSend(input);
     setInput('');
   };
@@ -211,14 +255,72 @@ export function CenterPanel({ state, busy, error, errorKind, currentImage, bgIma
         </div>
       )}
 
-      <div className="relative z-50 shrink-0 border-t border-slate-800 bg-slate-950 px-3 py-3 sm:px-6">
+      <div className="relative z-50 shrink-0 border-t border-slate-800 bg-slate-950/95 px-3 py-2 sm:px-6 sm:py-3">
         <div className="mx-auto max-w-2xl">
-          <ActionBar state={state} busy={busy} onAction={onSend} engineMode={engineMode} />
-          {state.activeEncounter && (
+          {state.pendingTurn && onAcceptPendingTurn && onDiscardPendingTurn && onRerollPendingTurn && onEditPendingNarrative && (
+            <TurnConfirmBar
+              pending={state.pendingTurn}
+              busy={busy}
+              onAccept={onAcceptPendingTurn}
+              onDiscard={onDiscardPendingTurn}
+              onReroll={onRerollPendingTurn}
+              onEditNarrative={onEditPendingNarrative}
+            />
+          )}
+
+          <div className="mb-1.5 flex items-center gap-1.5">
+            <button
+              type="button"
+              onClick={toggleHideOptions}
+              aria-pressed={hideOptions}
+              aria-label={hideOptions ? 'Show options' : 'Hide options'}
+              title={hideOptions ? 'Show options' : 'Hide options'}
+              className={`flex min-h-[40px] items-center gap-1.5 rounded-md border px-2.5 py-1.5 text-[11px] font-medium transition-colors ${
+                hideOptions
+                  ? 'border-crimson-700/50 bg-crimson-950/40 text-crimson-300'
+                  : 'border-slate-700 bg-slate-900 text-slate-400 hover:bg-slate-800 hover:text-slate-200'
+              }`}
+            >
+              {hideOptions ? <Eye size={14} /> : <EyeOff size={14} />}
+              <List size={14} className="opacity-70" />
+              <span>{hideOptions ? 'Show options' : 'Hide options'}</span>
+            </button>
+            <button
+              type="button"
+              onClick={toggleHideText}
+              aria-pressed={hideText}
+              aria-label={hideText ? 'Show text' : 'Hide text'}
+              title={hideText ? 'Show text' : 'Hide text'}
+              className={`flex min-h-[40px] items-center gap-1.5 rounded-md border px-2.5 py-1.5 text-[11px] font-medium transition-colors ${
+                hideText
+                  ? 'border-crimson-700/50 bg-crimson-950/40 text-crimson-300'
+                  : 'border-slate-700 bg-slate-900 text-slate-400 hover:bg-slate-800 hover:text-slate-200'
+              }`}
+            >
+              {hideText ? <Eye size={14} /> : <EyeOff size={14} />}
+              <Type size={14} className="opacity-70" />
+              <span>{hideText ? 'Show text' : 'Hide text'}</span>
+            </button>
+            {bothChromeHidden && (
+              <span className="ml-auto text-[10px] uppercase tracking-wider text-slate-600">
+                More room for story
+              </span>
+            )}
+          </div>
+
+          <ActionBar
+            state={state}
+            busy={busy || !!state.pendingTurn}
+            onAction={onSend}
+            engineMode={engineMode}
+            hidden={hideOptions}
+          />
+          {!hideText && state.activeEncounter && (
             <div className="mb-2">
               <EnemyTargetFrame encounter={state.activeEncounter} />
             </div>
           )}
+          {!hideText && (
           <div className="mb-2 flex items-center gap-1 text-slate-500">
             <button onClick={onOpenCharacter} title="Character Sheet" className="rounded-md p-1.5 transition-colors hover:bg-slate-800 hover:text-slate-300">
               <User size={15} />
@@ -266,6 +368,8 @@ export function CenterPanel({ state, busy, error, errorKind, currentImage, bgIma
             </button>
             <input ref={fileRef} type="file" accept="application/json" className="hidden" onChange={(e) => { const f = e.target.files?.[0]; if (f) onImport(f); e.target.value = ''; }} />
           </div>
+          )}
+          {!hideText && (
           <div className="flex gap-2">
             {voice.sttSupported && (
               <button
@@ -315,6 +419,7 @@ export function CenterPanel({ state, busy, error, errorKind, currentImage, bgIma
               <Send size={18} />
             </button>
           </div>
+          )}
         </div>
       </div>
     </div>

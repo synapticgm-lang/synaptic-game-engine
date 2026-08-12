@@ -37,14 +37,14 @@ const ENGINE_MODE_CARDS: Array<{
   },
   {
     value: 'dnd',
-    label: 'D&D / 5e',
-    description: 'Strict dice, encounters, AC/HP, and character-sheet mechanics under SRD 5.1-safe rules.',
+    label: '5e Fantasy (SRD)',
+    description: 'Open fifth-edition–compatible fantasy rules (SRD CC-BY). Transparent checks & combat.',
     icon: Dices,
   },
   {
     value: 'rpg',
-    label: 'RPG',
-    description: 'Story-first narrative rules — no LitRPG HUDs and no transparent dice math.',
+    label: 'Story RPG',
+    description: 'Fiction-first narrative — relationships, mysteries, heists. No LitRPG HUDs, no 5e dice math.',
     icon: ScrollText,
   },
 ];

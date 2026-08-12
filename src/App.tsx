@@ -137,6 +137,10 @@ export default function App() {
           <GMLibrary
             open={showGMLibrary}
             onClose={() => setShowGMLibrary(false)}
+            onSelectCampaign={(_archetype, _engineMode, bibleId) => {
+              if (bibleId) game.applyCampaignBible(bibleId);
+              setShowGMLibrary(false);
+            }}
           />
         </Suspense>
         <ToastStack toasts={game.toasts} onDismiss={game.dismissToast} />
@@ -209,6 +213,10 @@ export default function App() {
           <GMLibrary
             open={showGMLibrary}
             onClose={() => setShowGMLibrary(false)}
+            onSelectCampaign={(_archetype, _engineMode, bibleId) => {
+              if (bibleId) game.applyCampaignBible(bibleId);
+              setShowGMLibrary(false);
+            }}
           />
         </Suspense>
         <ToastStack toasts={game.toasts} onDismiss={game.dismissToast} />
@@ -273,6 +281,10 @@ export default function App() {
             onRetry={game.retryAction}
             onOpenApiSettings={() => { game.clearError(); setForceApiSetup(true); }}
             onRewind={game.rewindOneTurn}
+            onAcceptPendingTurn={game.acceptPendingTurn}
+            onDiscardPendingTurn={game.discardPendingTurn}
+            onRerollPendingTurn={game.rerollPendingTurn}
+            onEditPendingNarrative={game.editPendingNarrative}
             sessionPresentationLocked={
               !!state && (state.turn > 0 || (state.log?.length ?? 0) > 1)
             }
@@ -415,6 +427,10 @@ export default function App() {
         <GMLibrary
           open={showGMLibrary}
           onClose={() => setShowGMLibrary(false)}
+          onSelectCampaign={(_archetype, _engineMode, bibleId) => {
+            if (bibleId) game.applyCampaignBible(bibleId);
+            setShowGMLibrary(false);
+          }}
         />
       </Suspense>
 

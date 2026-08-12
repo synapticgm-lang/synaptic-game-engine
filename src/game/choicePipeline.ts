@@ -58,6 +58,11 @@ const ENVIRONMENTAL_EVENT_RULES: { label: string; choiceRe: RegExp; narrativeKey
     choiceRe: /\b(war\s*horn|raid\s+horn|ambush\s+signal|battle\s+horn)\b/i,
     narrativeKeys: /\b(war\s*horn|raid\s+horn|ambush|battle\s+horn|horns?\s+sound)\b/i,
   },
+  {
+    label: 'creature/threat reaction',
+    choiceRe: /\b(hide\s+from|sneak\s+(?:past|away\s+from|around)|flee\s+(?:the|from)|retreat\s+from|ambush\s+the|stalk\s+the|creature|beast|monster|mutated|feline|goblin|predator)\b/i,
+    narrativeKeys: /\b(creature|enemy|beast|monster|figure|silhouette|threat|hostile|mutated|feline|goblin|predator|adversary|foe|attacker|stalk|lurk|growl|snarl)\b/i,
+  },
 ];
 
 const PLOT_JUMP_PATTERNS: RegExp[] = [
@@ -66,8 +71,8 @@ const PLOT_JUMP_PATTERNS: RegExp[] = [
   /\b(?:start|begin)\s+(?:a\s+)?(?:new\s+)?(?:quest|campaign|adventure)\b/i,
 ];
 
-function normalizeStoryCorpus(gmText: string): string {
-  // Strip choice lists and XML-ish tags so grounding checks use prose facts only.
+/** Strip choice lists / tags so grounding checks use prose facts only. */
+export function normalizeStoryCorpus(gmText: string): string {
   let prose = stripChoiceList(gmText);
   prose = prose
     .replace(/<system-log>[\s\S]*?<\/system-log>/gi, ' ')
@@ -80,6 +85,11 @@ function normalizeStoryCorpus(gmText: string): string {
     .replace(/\s+/g, ' ')
     .trim();
   return prose;
+}
+
+/** Strip habit/Fate decorative prefixes before grounding checks. */
+export function stripChoiceDecorators(choice: string): string {
+  return choice.replace(/^[\s✨🎲⭐️•\-–—]+/u, '').trim();
 }
 
 function loreCorpus(cards: LoreCard[]): string {
@@ -99,22 +109,60 @@ export function environmentalEventViolations(choice: string, storyProse: string)
   return violations;
 }
 
+const THREAT_IN_PROSE =
+  /\b(creature|enemy|beast|monster|figure|silhouette|threat|hostile|mutated|feline|goblin|predator|adversary|foe|attacker|stalk|lurk|growl|snarl|bandit|raider|assassin|wolf|undead|skeleton|zombie|orc|troll|demon|dragon|spider|serpent|guard\s+dog)\b/i;
+
+/** Combat / threat-reaction choices need turn prose OR an active encounter. */
+export function threatChoiceWithoutSetup(
+  choice: string,
+  storyProse: string,
+  state: GameState
+): boolean {
+  const cleaned = stripChoiceDecorators(choice);
+  const isThreatReact =
+    /\b(hide|sneak|ambush|creature|beast|monster|feline|goblin|retreat\s+from|flee\s+(?:the|from)|edge\s+toward.+cover|keep(?:ing)?\s+eyes?\s+on\s+the\s+(?:silhouette|figure|creature)|attack|fight|engage(?:\s+the)?|take\s+cover|draw\s+(?:your\s+)?weapon|charge(?:\s+the)?|strike\s+the|kill\s+the|nearest\s+enemy)\b/i.test(
+      cleaned
+    );
+  if (!isThreatReact) return false;
+  if (state.activeEncounter) return false;
+  return !THREAT_IN_PROSE.test(storyProse);
+}
+
+/** Observe/scan-the-enemy style options also need a present threat. */
+export function observeThreatWithoutSetup(
+  choice: string,
+  storyProse: string,
+  state: GameState
+): boolean {
+  const cleaned = stripChoiceDecorators(choice);
+  const observesThreat =
+    /\b(assess|observe|scan|watch|study|inspect)\b.{0,40}\b(enemy|enemies|threat|creature|beast|monster|foe|hostile|silhouette|figure)\b/i.test(
+      cleaned
+    ) || /\b(enemy|threat|creature)\b.{0,24}\b(assess|observe|scan|watch)\b/i.test(cleaned);
+  if (!observesThreat) return false;
+  if (state.activeEncounter) return false;
+  return !THREAT_IN_PROSE.test(storyProse);
+}
+
 export function isChoiceGroundedInTurn(
   choice: string,
   storyProse: string,
   state: GameState,
   loreCards: LoreCard[] = []
 ): boolean {
-  if (!choice?.trim()) return false;
-  if (!isSuggestionValidForState(choice, state)) return false;
+  const cleaned = stripChoiceDecorators(choice);
+  if (!cleaned) return false;
+  if (!isSuggestionValidForState(cleaned, state, storyProse)) return false;
 
-  const envHits = environmentalEventViolations(choice, storyProse);
+  const envHits = environmentalEventViolations(cleaned, storyProse);
   if (envHits.length > 0) return false;
+  if (threatChoiceWithoutSetup(cleaned, storyProse, state)) return false;
+  if (observeThreatWithoutSetup(cleaned, storyProse, state)) return false;
 
   for (const re of PLOT_JUMP_PATTERNS) {
-    if (re.test(choice)) {
+    if (re.test(cleaned)) {
       // Allow only if the destination/event words also appear in story or lore.
-      const tokens = choice.toLowerCase().match(/[a-z]{4,}/g) ?? [];
+      const tokens = cleaned.toLowerCase().match(/[a-z]{4,}/g) ?? [];
       const lore = loreCorpus(loreCards);
       const hay = `${storyProse} ${lore} ${state.currentLocation ?? ''}`.toLowerCase();
       const grounded = tokens.some((t) => hay.includes(t) && !/^(travel|journey|leave|start|begin|abandon|quest|campaign|adventure|sail|fly|portal|teleport)$/.test(t));
@@ -135,17 +183,24 @@ export function filterChoicesToTurnFacts(
   const rejected: { choice: string; reasons: string[] }[] = [];
 
   for (const choice of choices) {
+    const cleaned = stripChoiceDecorators(choice);
     const reasons: string[] = [];
-    if (!isSuggestionValidForState(choice, state)) {
-      reasons.push('violates state/inventory/companion guardrails');
+    if (!isSuggestionValidForState(cleaned, state, storyProse)) {
+      reasons.push('violates state/inventory/companion/scene guardrails');
     }
-    const env = environmentalEventViolations(choice, storyProse);
+    const env = environmentalEventViolations(cleaned, storyProse);
     if (env.length) reasons.push(`unprompted environmental event: ${env.join(', ')}`);
-    if (!isChoiceGroundedInTurn(choice, storyProse, state, loreCards) && reasons.length === 0) {
+    if (threatChoiceWithoutSetup(cleaned, storyProse, state)) {
+      reasons.push('combat/threat reaction without creature/encounter in turn prose');
+    }
+    if (observeThreatWithoutSetup(cleaned, storyProse, state)) {
+      reasons.push('observe-threat option without creature/encounter in turn prose');
+    }
+    if (!isChoiceGroundedInTurn(cleaned, storyProse, state, loreCards) && reasons.length === 0) {
       reasons.push('not grounded in turn story / lore cards');
     }
     if (reasons.length) rejected.push({ choice, reasons });
-    else kept.push(choice);
+    else kept.push(cleaned);
   }
 
   return { kept, rejected };
@@ -157,6 +212,7 @@ function buildTierContext(state: GameState, loreCards: LoreCard[], storyProse: s
     `Gold: ${state.gold ?? 0}`,
     `Companions: ${(state.companions ?? []).map((c) => c.name).join(', ') || 'none'}`,
     `Encounter: ${state.activeEncounter?.name ?? 'none'}`,
+    `Dungeon: ${state.activeDungeon?.dungeonName ?? 'none'}`,
     `Inventory: ${state.inventory.map((i) => i.name).join(', ') || 'empty'}`,
   ].join('\n');
 
@@ -164,6 +220,11 @@ function buildTierContext(state: GameState, loreCards: LoreCard[], storyProse: s
     loreCards.length > 0
       ? loreCards.map((c) => `[${c.type}] ${c.name}: ${c.summary}`).join('\n')
       : '(no active info cards)';
+
+  const t4facts = (state.timeline ?? [])
+    .slice(-8)
+    .map((f) => `T${f.turn}: ${f.text}`)
+    .join('\n') || '(none)';
 
   const t4 = state.log
     .slice(-2)
@@ -179,7 +240,10 @@ ${t2}
 === TIER 3: CURRENT TURN STORY PROSE (AUTHORITATIVE FOR CHOICES) ===
 ${storyProse || '(empty)'}
 
-=== TIER 4: MACRO-SCENE CONTEXT ===
+=== TIER 4: FACTUAL TIMELINE + MACRO ===
+${t4facts}
+
+Recent beats:
 ${t4}`;
 }
 
@@ -196,9 +260,12 @@ Your ONLY job: output 3 or 4 numbered player choices.
 STRICT RULES:
 1. Inspect Tier 3 story prose first. Every choice MUST be an immediate reaction to facts explicitly present there.
 2. If an environmental event (tremor, alarm, explosion, flood, blackout, cave-in, war horn, etc.) is NOT in the Tier 3 prose, you MUST NOT mention it in any choice.
-3. Do not invent NPCs, locations, items, or plot jumps absent from Tier 1–3. Info cards (Tier 2) may inform tone/identity but cannot invent a new crisis.
-4. Choices must be actionable and scene-local (observe, talk, move carefully, use carried gear, react to the last beat).
-5. Output ONLY a numbered list like:
+3. If no creature/enemy/threat is established in Tier 3 prose AND Encounter is "none", do NOT offer hide/sneak/ambush/attack/fight/engage/assess-enemy choices.
+4. Do not invent NPCs, locations, items, creatures, or plot jumps absent from Tier 1–3. Info cards (Tier 2) may inform tone/identity but cannot invent a new crisis.
+5. NEVER name a weapon (shortsword, dagger, bow, etc.) unless that exact item appears in Tier 1 Inventory.
+6. NEVER name a unique object/interactable (altar, chest, terminal, etc.) unless it appears in Tier 3 prose, Location interactables, or Tier 1 state.
+7. Choices must be actionable and scene-local (observe, talk, move carefully, use carried gear, react to the last beat).
+8. Output ONLY a numbered list like:
 1. ...
 2. ...
 3. ...
@@ -291,7 +358,8 @@ Generate 3-4 grounded choices now.`;
   return extractChoiceLines(raw);
 }
 
-function sceneSafeFallbacks(state: GameState, storyProse: string): string[] {
+/** Scene-local fallbacks used by the pipeline and ActionBar when GM choices fail. */
+export function sceneSafeFallbacks(state: GameState, storyProse = ''): string[] {
   const options = [
     fallbackSuggestionForState(state),
     'Examine the immediate surroundings',
@@ -301,6 +369,10 @@ function sceneSafeFallbacks(state: GameState, storyProse: string): string[] {
   if (state.activeEncounter) options.push('Focus on the active threat');
   if (/\b(door|gate|path|corridor|alley)\b/i.test(storyProse)) {
     options.push('Approach cautiously');
+  }
+  const interactables = state.locationSheet?.interactables ?? [];
+  for (const item of interactables.slice(0, 2)) {
+    if (item.name?.trim()) options.push(`Inspect the ${item.name.trim()}`);
   }
   return Array.from(new Set(options)).slice(0, 4);
 }
@@ -367,11 +439,4 @@ export async function resolvePipelineChoices(params: {
   };
 }
 
-/** Prompt block injected into the GM system instructions for defense-in-depth. */
-export const CHOICE_TIER_PROMPT_RULES = `CRITICAL RULE: 4-TIER CHOICE PIPELINE (HIGHEST PRIORITY)
-Choices are Tier-3 outputs and MUST be generated ONLY after the turn's story prose is written.
-* Inspect the story text you just wrote. Every numbered option must react to facts present in that prose.
-* NEVER offer choices about environmental events (tremors, alarms, explosions, floods, blackouts, cave-ins, war horns, etc.) unless those events were explicitly narrated in this turn's prose.
-* NEVER invent unprompted plot jumps, distant travel, or NPCs/locations absent from the active scene state and active info/lore cards.
-* Info/lore cards constrain identity and world facts — they do NOT authorize inventing a new crisis mid-choice-list.
-* Prefer 3–4 immediate, scene-local actions.`;
+export { CHOICE_TIER_PROMPT_RULES } from './choiceTierRules';

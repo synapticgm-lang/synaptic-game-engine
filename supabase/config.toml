@@ -1,0 +1,5 @@
+# SynapticGM Supabase config (minimal — extend as needed)
+project_id = "synapticgm"
+
+[functions.gm-turn]
+verify_jwt = false

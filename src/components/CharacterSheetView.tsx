@@ -42,7 +42,7 @@ export function CharacterSheetView({ state }: Props) {
 
 function LayoutToggle({ layout, onChange }: { layout: LayoutMode; onChange: (m: LayoutMode) => void }) {
   const tabs: { key: LayoutMode; label: string }[] = [
-    { key: 'dnd', label: 'D&D Dashboard' },
+    { key: 'dnd', label: '5e Dashboard' },
     { key: 'litrpg', label: 'LitRPG Status' },
     { key: 'cards', label: 'Pre-Made Cards' },
   ];

@@ -8,7 +8,8 @@
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "typecheck": "tsc --noEmit -p tsconfig.app.json"
+    "typecheck": "tsc --noEmit -p tsconfig.app.json",
+    "sync:gm-edge": "node scripts/sync-gm-edge-shared.mjs"
   },
   "dependencies": {
     "@react-oauth/google": "^0.13.5",

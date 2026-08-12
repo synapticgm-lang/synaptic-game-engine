@@ -1,5 +1,5 @@
 import type { Settings } from './types';
-import { buildImagePromptModifier } from './systemPrompt';
+import { buildImagePromptModifier } from './imagePromptModifier';
 import { fetchComicPanel } from '@/services/openRouterService';
 import { debugLogger } from './debugLogger';
 

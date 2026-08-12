@@ -51,8 +51,8 @@ export function loadSettings(): Settings {
       return { 
         ...createDefaultSettings(), 
         ...parsed,
-        // Automatically pull from the .env file if the setting isn't saved yet
-        openrouterApiKey: parsed.openrouterApiKey?.trim() ? parsed.openrouterApiKey : (import.meta.env.VITE_OPENROUTER_API_KEY || '')
+        // Prefer user-saved keys only — never bake VITE_* provider secrets into the client bundle path.
+        openrouterApiKey: parsed.openrouterApiKey?.trim() ? parsed.openrouterApiKey : '',
       };
     }
   } catch {
@@ -62,7 +62,7 @@ export function loadSettings(): Settings {
   // Default for first-time load
   return {
     ...createDefaultSettings(),
-    openrouterApiKey: import.meta.env.VITE_OPENROUTER_API_KEY || ''
+    openrouterApiKey: '',
   };
 }
 

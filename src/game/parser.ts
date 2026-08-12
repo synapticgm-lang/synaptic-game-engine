@@ -47,6 +47,7 @@ export interface GameEvent {
   enemyName?: string;
   enemyLevel?: number;
   enemyHp?: number;
+  enemyMaxHp?: number;
   enemyAc?: number;
   enemyStr?: number;
   enemyDex?: number;
@@ -191,13 +192,33 @@ export function extractNewItems(gmText: string): Array<{ name: string; rarity: s
 const TAG_PATTERNS: Array<{ type: GameEvent['type']; re: RegExp; parse: (m: RegExpMatchArray) => GameEvent }> = [
   {
     type: 'item-gain',
-    re: /<item-gain\s+id="([^"]*)"\s+name="([^"]*)"\s+qty="(\d+)"\s*\/>/gi,
-    parse: (m) => ({ type: 'item-gain', id: m[1], name: m[2], qty: parseInt(m[3], 10) }),
+    re: /<item-gain\b([^>]*)\/?>/gi,
+    parse: (m) => {
+      const attrs = Object.fromEntries(
+        [...String(m[1] ?? '').matchAll(/(\w+)="([^"]*)"/g)].map((x) => [x[1].toLowerCase(), x[2]])
+      );
+      return {
+        type: 'item-gain' as const,
+        id: attrs.id || crypto.randomUUID(),
+        name: attrs.name || '',
+        qty: parseInt(attrs.qty ?? '1', 10) || 1,
+      };
+    },
   },
   {
     type: 'item-use',
-    re: /<item-use\s+id="([^"]*)"\s+name="([^"]*)"\s+qty="(\d+)"\s*\/>/gi,
-    parse: (m) => ({ type: 'item-use', id: m[1], name: m[2], qty: parseInt(m[3], 10) }),
+    re: /<item-use\b([^>]*)\/?>/gi,
+    parse: (m) => {
+      const attrs = Object.fromEntries(
+        [...String(m[1] ?? '').matchAll(/(\w+)="([^"]*)"/g)].map((x) => [x[1].toLowerCase(), x[2]])
+      );
+      return {
+        type: 'item-use' as const,
+        id: attrs.id || '',
+        name: attrs.name || '',
+        qty: parseInt(attrs.qty ?? '1', 10) || 1,
+      };
+    },
   },
   {
     type: 'heal',
@@ -300,19 +321,30 @@ const TAG_PATTERNS: Array<{ type: GameEvent['type']; re: RegExp; parse: (m: RegE
   },
   {
     type: 'enemy-appear',
-    re: /<enemy\s+name="([^"]*)"\s+level="(\d+)"\s+hp="(\d+)"\s+ac="(\d+)"\s+str="(\d+)"\s+dex="(\d+)"\s+con="(\d+)"\s+xp="(\d+)"\s+gold="(\d+)"\s*\/>/gi,
-    parse: (m) => ({
-      type: 'enemy-appear',
-      enemyName: m[1],
-      enemyLevel: parseInt(m[2], 10),
-      enemyHp: parseInt(m[3], 10),
-      enemyAc: parseInt(m[4], 10),
-      enemyStr: parseInt(m[5], 10),
-      enemyDex: parseInt(m[6], 10),
-      enemyCon: parseInt(m[7], 10),
-      enemyXp: parseInt(m[8], 10),
-      enemyGold: parseInt(m[9], 10),
-    }),
+    // Attribute order varies; hp may be "18" or "18/30". Do not use [^/]* — "/" appears in hp.
+    re: /<enemy\b([^>]*)\/?>/gi,
+    parse: (m) => {
+      const attrs = Object.fromEntries(
+        [...String(m[1] ?? '').matchAll(/(\w+)="([^"]*)"/g)].map((x) => [x[1].toLowerCase(), x[2]])
+      );
+      const hpRaw = attrs.hp ?? '10';
+      const hpParts = hpRaw.split('/');
+      const cur = parseInt(hpParts[0] ?? '10', 10);
+      const max = parseInt(hpParts[1] ?? hpParts[0] ?? '10', 10);
+      return {
+        type: 'enemy-appear' as const,
+        enemyName: attrs.name || 'Enemy',
+        enemyLevel: parseInt(attrs.level ?? '1', 10) || 1,
+        enemyHp: Number.isFinite(cur) ? cur : 10,
+        enemyMaxHp: Number.isFinite(max) ? max : Number.isFinite(cur) ? cur : 10,
+        enemyAc: parseInt(attrs.ac ?? '10', 10) || 10,
+        enemyStr: parseInt(attrs.str ?? '10', 10) || 10,
+        enemyDex: parseInt(attrs.dex ?? '10', 10) || 10,
+        enemyCon: parseInt(attrs.con ?? '10', 10) || 10,
+        enemyXp: parseInt(attrs.xp ?? '0', 10) || 0,
+        enemyGold: parseInt(attrs.gold ?? '0', 10) || 0,
+      };
+    },
   },
   {
     type: 'encounter-end',
@@ -363,26 +395,28 @@ export function parseActionTags(text: string): GameEvent[] {
 }
 
 export function stripActionTags(text: string): string {
+  // Use [^>]* (not [^/]*) so attributes like hp="18/30" still match.
   return text
-    .replace(/<item-gain\s+[^/]*\/>/gi, '')
-    .replace(/<item-use\s+[^/]*\/>/gi, '')
-    .replace(/<heal\s+[^/]*\/>/gi, '')
-    .replace(/<damage\s+[^/]*\/>/gi, '')
-    .replace(/<lore-card\s+[^/]*\/>/gi, '')
-    .replace(/<quest-add\s+[^/]*\/>/gi, '')
-    .replace(/<quest-update\s+[^/]*\/>/gi, '')
-    .replace(/<quest-complete\s+[^/]*\/>/gi, '')
-    .replace(/<turn-frame\s+[^/]*\/>/gi, '')
-    .replace(/<dungeon-load\s+[^/]*\/>/gi, '')
-    .replace(/<dungeon-move\s+[^/]*\/>/gi, '')
+    .replace(/<item-gain\b[^>]*\/?>/gi, '')
+    .replace(/<item-use\b[^>]*\/?>/gi, '')
+    .replace(/<heal\b[^>]*\/?>/gi, '')
+    .replace(/<damage\b[^>]*\/?>/gi, '')
+    .replace(/<lore-card\b[^>]*\/?>/gi, '')
+    .replace(/<quest-add\b[^>]*\/?>/gi, '')
+    .replace(/<quest-update\b[^>]*\/?>/gi, '')
+    .replace(/<quest-complete\b[^>]*\/?>/gi, '')
+    .replace(/<turn-frame\b[^>]*\/?>/gi, '')
+    .replace(/<dungeon-load\b[^>]*\/?>/gi, '')
+    .replace(/<dungeon-move\b[^>]*\/?>/gi, '')
     .replace(/<dungeon-exit\s*\/?>/gi, '')
-    .replace(/<map-floor-change\s+[^/]*\/>/gi, '')
-    .replace(/<hex-move\s+[^/]*\/>/gi, '')
-    .replace(/<enemy\s+[^/]*\/>/gi, '')
-    .replace(/<encounter-end\s*\/>/gi, '')
-    .replace(/<milestone-event\s+[^/]*\/>/gi, '')
-    .replace(/<loot-video\s+[^/]*\/>/gi, '')
-    .replace(/<visual-update\s+[^/]*\/>/gi, '')
+    .replace(/<map-floor-change\b[^>]*\/?>/gi, '')
+    .replace(/<hex-move\b[^>]*\/?>/gi, '')
+    .replace(/<enemy\b[^>]*\/?>/gi, '')
+    .replace(/<encounter-end\s*\/?>/gi, '')
+    .replace(/<milestone-event\b[^>]*\/?>/gi, '')
+    .replace(/<loot-video\b[^>]*\/?>/gi, '')
+    .replace(/<visual-update\b[^>]*\/?>/gi, '')
+    .replace(/<system-log>[\s\S]*?<\/system-log>/gi, '')
     .replace(/<panel>[\s\S]*?<\/panel>/gi, '')
     .replace(/<image-prompt>[\s\S]*?<\/image-prompt>/gi, '')
     .replace(/<narrative>[\s\S]*?<\/narrative>/gi, '')
@@ -423,11 +457,13 @@ export function eventsToEncounterUpdate(events: GameEvent[], current: ActiveEnco
   let encounter = current;
   for (const e of events) {
     if (e.type === 'enemy-appear' && e.enemyName) {
+      const cur = e.enemyHp ?? 10;
+      const max = e.enemyMaxHp ?? cur;
       encounter = {
         name: e.enemyName,
         level: e.enemyLevel ?? 1,
-        hp: e.enemyHp ?? 10,
-        maxHp: e.enemyHp ?? 10,
+        hp: cur,
+        maxHp: max,
         armorClass: e.enemyAc ?? 10,
         strength: e.enemyStr ?? 10,
         dexterity: e.enemyDex ?? 10,
@@ -442,7 +478,7 @@ export function eventsToEncounterUpdate(events: GameEvent[], current: ActiveEnco
   return encounter;
 }
 
-export function matchLoreCards(input: string, recentNarrative: string, lorebook: LoreCard[], limit = 5): LoreCard[] {
+export function matchLoreCards(input: string, recentNarrative: string, lorebook: LoreCard[], limit = 7): LoreCard[] {
   if (lorebook.length === 0) return [];
   const haystack = `${input} ${recentNarrative}`.toLowerCase();
   const scored = lorebook

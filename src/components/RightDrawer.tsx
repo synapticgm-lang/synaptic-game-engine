@@ -279,9 +279,9 @@ function MaterialsTab({ state }: { state: GameState }) {
   );
 }
 
-const LORE_TYPES: LoreCardType[] = ['npc', 'location', 'item', 'quest', 'faction'];
+const LORE_TYPES: LoreCardType[] = ['npc', 'location', 'item', 'quest', 'faction', 'lore'];
 const LORE_TYPE_ICONS: Record<LoreCardType, string> = {
-  npc: '👤', location: '📍', item: '🗡️', quest: '❗', faction: '⚔️',
+  npc: '👤', location: '📍', item: '🗡️', quest: '❗', faction: '⚔️', lore: '📜',
 };
 
 function CodexTab({ lorebook, onUpdate }: { lorebook: LoreCard[]; onUpdate?: (cards: LoreCard[]) => void }) {
