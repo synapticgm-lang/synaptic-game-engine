@@ -1,8 +1,14 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { X, Sparkles, Wand2, BookOpen, Palette, ChevronRight, ChevronLeft, Dices, ScrollText, Cpu } from 'lucide-react';
 import type { EngineMode, GmStrictness, ArtStylePreset, ComicLayoutMode, ComicReadingDirection } from '@/game/types';
 import { ART_STYLE_PRESETS } from '@/game/types';
 import { getArchetypeOptions, getDefaultArchetype, type CampaignArchetype } from '@/game/archetypes';
+import {
+  formatCampaignStoryName,
+  getCampaignBiblesByEngineMode,
+  getCampaignBlurb,
+  type CampaignBible,
+} from '@/data/campaigns';
 
 interface Props {
   onStart: (
@@ -16,6 +22,7 @@ interface Props {
     classicMemorableImages?: boolean,
     comicLayout?: ComicLayoutMode,
     comicReadingDirection?: ComicReadingDirection,
+    bibleId?: string,
   ) => void;
   onClose: () => void;
 }
@@ -60,8 +67,9 @@ export function NewGameModal({ onStart, onClose }: Props) {
   const [path, setPath] = useState<PathKind | null>(null);
   const [step, setStep] = useState<WizardStep>('path');
 
-  const [storyName, setStoryName] = useState(`Campaign - ${Date.now().toString().slice(-6)}`);
+  const [storyName, setStoryName] = useState(formatCampaignStoryName('New Campaign'));
   const [archetype, setArchetype] = useState<CampaignArchetype>('ai_random');
+  const [bibleId, setBibleId] = useState<string | undefined>(undefined);
   const [visualMode, setVisualMode] = useState<'comic' | 'classic'>('classic');
   const [artStylePreset, setArtStylePreset] = useState<ArtStylePreset>('manga-screentone');
   const [classicMemorableImages, setClassicMemorableImages] = useState(false);
@@ -80,17 +88,41 @@ export function NewGameModal({ onStart, onClose }: Props) {
   const selectedArchetype = archetypeOptions.find((o) =>
     o.value === (path === 'custom' ? customArchetype : archetype),
   );
+  const premadeBibles = useMemo(
+    () => getCampaignBiblesByEngineMode(engineMode),
+    [engineMode],
+  );
+
+  const selectPremade = (bible: CampaignBible) => {
+    setBibleId(bible.id);
+    setArchetype(bible.archetype);
+    setStoryName(formatCampaignStoryName(bible.title));
+  };
 
   const selectEngineMode = (mode: EngineMode) => {
     setEngineMode(mode);
     const next = getDefaultArchetype(mode);
     setCustomArchetype(next);
     setArchetype(next);
+    setBibleId(undefined);
+    const first = getCampaignBiblesByEngineMode(mode)[0];
+    if (path === 'premade' && first) {
+      selectPremade(first);
+    } else {
+      setStoryName(formatCampaignStoryName('New Campaign'));
+    }
   };
 
   const choosePath = (kind: PathKind) => {
     setPath(kind);
     setStep('system');
+    if (kind === 'premade') {
+      const first = getCampaignBiblesByEngineMode(engineMode)[0];
+      if (first) selectPremade(first);
+    } else {
+      setBibleId(undefined);
+      setStoryName(formatCampaignStoryName('Custom Campaign'));
+    }
   };
 
   const goBack = () => {
@@ -126,6 +158,7 @@ export function NewGameModal({ onStart, onClose }: Props) {
       classicMemorableImages,
       comicLayout,
       comicReadingDirection,
+      bibleId,
     );
   };
 
@@ -141,6 +174,7 @@ export function NewGameModal({ onStart, onClose }: Props) {
       classicMemorableImages,
       comicLayout,
       comicReadingDirection,
+      undefined,
     );
   };
 
@@ -271,27 +305,60 @@ export function NewGameModal({ onStart, onClose }: Props) {
                 </div>
               </div>
 
-              <div>
-                <label className="mb-1 block font-medium text-slate-300">
-                  {path === 'premade' ? 'Story Archetype Preset' : 'Story Opening Archetype'}
-                </label>
-                <select
-                  value={path === 'custom' ? customArchetype : archetype}
-                  onChange={(e) => {
-                    const value = e.target.value as CampaignArchetype;
-                    if (path === 'custom') setCustomArchetype(value);
-                    else setArchetype(value);
-                  }}
-                  className="w-full rounded-lg border border-slate-700 bg-slate-800 px-3 py-2 text-xs text-slate-100 focus:border-crimson-500 focus:outline-none truncate"
-                >
-                  {archetypeOptions.map((opt) => (
-                    <option key={opt.value} value={opt.value}>{opt.label}</option>
-                  ))}
-                </select>
-                <p className="mt-1.5 text-[10px] leading-snug text-slate-500">
-                  {selectedArchetype?.description ?? 'Choose an opening seed that matches your preferred tone.'}
-                </p>
-              </div>
+              {path === 'premade' ? (
+                <div>
+                  <label className="mb-1.5 block font-medium text-slate-300">Premade Story</label>
+                  <p className="mb-2 text-[10px] leading-snug text-slate-500">
+                    Pick a world — campaign name updates to the title plus today’s date.
+                  </p>
+                  <div className="max-h-56 space-y-2 overflow-y-auto pr-0.5">
+                    {premadeBibles.map((bible) => {
+                      const selected = bibleId === bible.id;
+                      return (
+                        <button
+                          key={bible.id}
+                          type="button"
+                          onClick={() => selectPremade(bible)}
+                          className={`w-full rounded-lg border p-2.5 text-left transition-all ${
+                            selected
+                              ? 'border-crimson-500 bg-crimson-950/35'
+                              : 'border-slate-700 bg-slate-800/40 hover:border-slate-500 hover:bg-slate-800'
+                          }`}
+                        >
+                          <div className="flex items-start justify-between gap-2">
+                            <span className="font-semibold text-slate-100">{bible.title}</span>
+                            <span className="shrink-0 rounded-full border border-slate-600 px-1.5 py-0.5 text-[9px] uppercase text-slate-400">
+                              {bible.difficulty}
+                            </span>
+                          </div>
+                          <p className="mt-0.5 text-[11px] italic text-slate-300">{bible.tagline}</p>
+                          <p className="mt-1 text-[10px] leading-snug text-slate-400">
+                            {getCampaignBlurb(bible)}
+                          </p>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              ) : (
+                <div>
+                  <label className="mb-1 block font-medium text-slate-300">Story Opening Archetype</label>
+                  <select
+                    value={customArchetype}
+                    onChange={(e) => {
+                      setCustomArchetype(e.target.value as CampaignArchetype);
+                    }}
+                    className="w-full rounded-lg border border-slate-700 bg-slate-800 px-3 py-2 text-xs text-slate-100 focus:border-crimson-500 focus:outline-none truncate"
+                  >
+                    {archetypeOptions.map((opt) => (
+                      <option key={opt.value} value={opt.value}>{opt.label}</option>
+                    ))}
+                  </select>
+                  <p className="mt-1.5 text-[10px] leading-snug text-slate-500">
+                    {selectedArchetype?.description ?? 'Choose an opening seed that matches your preferred tone.'}
+                  </p>
+                </div>
+              )}
 
               {path === 'custom' && (
                 <div>

@@ -104,6 +104,24 @@ export function getCampaignBibleById(id: string): CampaignBible | undefined {
   return ALL_CAMPAIGN_BIBLES.find((c) => c.id === id);
 }
 
+/** Player-facing blurb for pickers (never dump the full premise). */
+export function getCampaignBlurb(bible: CampaignBible): string {
+  if (bible.shortDescription?.trim()) return bible.shortDescription.trim();
+  if (bible.tagline?.trim()) return bible.tagline.trim();
+  const first = bible.premise.split(/(?<=[.!?])\s+/)[0]?.trim() ?? bible.premise;
+  return first.length > 160 ? `${first.slice(0, 157)}…` : first;
+}
+
+/** Auto campaign save name: premade title + start date. */
+export function formatCampaignStoryName(title: string, at: Date = new Date()): string {
+  const date = at.toLocaleDateString(undefined, {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+  });
+  return `${title} — ${date}`;
+}
+
 export function getCampaignBiblesByEngineMode(mode: 'litrpg' | 'dnd' | 'rpg'): CampaignBible[] {
   if (mode === 'rpg') {
     const rpgOnly = ALL_CAMPAIGN_BIBLES.filter((c) => c.engineMode === 'rpg');

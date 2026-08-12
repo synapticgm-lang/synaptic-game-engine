@@ -1,9 +1,10 @@
 import type { GameState, EngineMode, Settings } from './types';
 import { getDefaultArchetype, type CampaignArchetype } from './archetypes';
+import { formatCampaignStoryName } from '@/data/campaigns';
 
 export function createInitialState(storyName?: string, engineMode: EngineMode = 'litrpg', archetype?: CampaignArchetype): GameState {
   const now = Date.now();
-  const defaultStory = `Campaign - ${new Date(now).toLocaleDateString()}`;
+  const defaultStory = formatCampaignStoryName('New Campaign', new Date(now));
   return {
     version: 1,
     saveId: crypto.randomUUID(),

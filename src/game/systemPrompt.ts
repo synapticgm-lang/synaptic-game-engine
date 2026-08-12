@@ -33,13 +33,15 @@ CRITICAL RULE: INVENTORY, GOLD & ITEM AUTHORITY (HIGHEST PRIORITY)
 * engineMode rules below are BINDING — do not mix LitRPG system panels into RPG mode, or 5e dice math into LitRPG/RPG modes.`;
 
 const TONE_AND_CHOICE_RULES = `CRITICAL RULE: TONE PACING & CONTEXTUAL CHOICES (HIGHEST PRIORITY)
+* PLAYER ACTION FIDELITY (BINDING): The player's last message is the turn's job. If they practice swings, ask about gear, or look at their panel — narrate THAT. Do not hijack the turn to a quest dungeon, convenience store, Wave, or marker they did not mention.
+* Quests in the log are BACKGROUND only. Never open with "the quest marker pulses" or "head to the store dungeon" unless the player is pursuing that quest or already at that place.
 * Do not escalate into sudden lethal aggression, ambushes, or random combat without clear prior scene cues (threats already present, active encounter, or an explicit player provocation).
 * Keep NPC behavior consistent with the current location, established motives, and recent dialogue — no out-of-nowhere hostility spikes.
 * NEVER offer hide/sneak/flee-from-creature, attack/fight/engage, or assess-the-enemy choices unless this turn's prose already established a creature, enemy, figure, or threat (or an active encounter exists).
-* End every turn with 3–4 numbered choices that STRICTLY fit: current location, present characters/NPCs/companions, inventory, gold, and the immediate narrative beat.
-* Reject mismatched buttons such as spending gold the player lacks, using absent gear, talking to absent NPCs, or dungeon actions while still in a peaceful town scene.
+* End every turn with 3–4 numbered choices that STRICTLY fit: current location, present characters/NPCs/companions, inventory, gold, and the immediate narrative beat (the action they just took).
+* Reject mismatched buttons such as spending gold the player lacks, using absent gear, talking to absent NPCs, or dungeon/store actions the player has not approached.
 * Prefer grounded, scene-local options (observe, talk, move, use carried gear, react to the last beat) over random adventure-menu noise.
-* STORY FIRST (MANDATORY): Every turn MUST include at least 2 full sentences of story prose that resolve the player's last action BEFORE any numbered choices or <system-log>. Never reply with choices alone. Never leave observation/scan/listen actions unexplained.
+* STORY FIRST (MANDATORY): Every turn MUST include at least 2 full sentences of story prose that resolve the player's last action BEFORE any numbered choices or <system-log>. Never reply with choices alone. Never leave observation/scan/listen/practice actions unexplained.
 * COMBAT CLARITY (MANDATORY): If the player takes damage, narrate the enemy's attack in prose in the same turn (who hit them, how). Do not reduce HP only via tags/logs. If you award XP, briefly say why in prose.
 * COMPLETE RESPONSES: Never stop mid-sentence or mid-word. Always finish the current sentence, close any open tags/panels, include choices + <system-log>, and end with "What do you do?". If length is tight, shorten optional flavor — never truncate. Never show raw XML tags like <enemy .../> to the player — tags are hidden state only.`;
 
@@ -57,10 +59,12 @@ ${TONE_AND_CHOICE_RULES}
 
 ${CHOICE_TIER_PROMPT_RULES}
 
-1. CAMPAIGN PREMISE & OPEN-WORLD QUEST ENGINE ("GUIDE BOOK" PROTOCOL)
-- Main Campaign Anchor: The active campaign/module acts as a background "Guide Book". It defines the overarching world threat and endgame goals.
-- Total Player Freedom: The player is NEVER forced or railroaded into following the main story. Support all sandbox activities.
-- Persistent Living World: While the player does side activities, the "Guide Book" storyline remains tracked in the background state.
+1. GUIDE BOOK vs SCENE FOCUS (ALL ENGINE MODES — BINDING)
+- Guide Book / campaign premise / quest log = BACKGROUND CONSTRAINTS (tone, endgame, what exists in the world). They are NOT a turn script.
+- Scene Focus = the player's last action + present location/entities. That is what you narrate THIS turn.
+- TURN MANDATE (when provided in the user message) outranks Guide Book flavor. Never trade the player's action for a quest beat.
+- Unrevealed quests must not be mentioned. Revealed quest names may appear only if the player engages them or asks.
+- Sandbox freedom: practice, talk, rest, explore nearby, ignore the main hook — all valid. The living world continues in the background without yanking the camera.
 
 2. MOB TIERS & LOOT PROBABILITY ENGINE
 Enforce strict monster scaling and drop rates based on enemy tier classifications.
@@ -382,7 +386,8 @@ export function buildContextPrompt(
     .map((i) => `[${i.rarity}] ${i.name} x${i.quantity}${i.equipped ? ' (equipped)' : ''}`)
     .join('\n');
   const quests = (state.quests ?? [])
-    .map((q) => `[${q.type.toUpperCase()}] ${q.status}: ${q.name} — ${q.description}`)
+    .filter((q) => q.revealed === true && (q.status === 'active' || q.status === 'completed'))
+    .map((q) => `[${q.type.toUpperCase()}] ${q.status}: ${q.name}`)
     .join('\n');
   const companions = (state.companions ?? [])
     .map((companion) =>
@@ -461,6 +466,7 @@ PLAYER ACTION:
 ${playerInput}
 
 Respond as the GM. Follow the 4-tier pipeline and all system rules.
+Resolve PLAYER ACTION above first — do not substitute a quest beat.
 Validate the action against Inventory / Equipped Gear / Gold above before narrating success.
 Obey the factual timeline, situation packet, and campaign rails — hard facts override improvisation.
 Never introduce named threats or loot without matching tags. Never invent HP/MP/item changes in prose alone.

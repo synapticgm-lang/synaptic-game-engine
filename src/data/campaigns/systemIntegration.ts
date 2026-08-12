@@ -7,6 +7,8 @@ export const systemIntegration: CampaignBible = {
   engineMode: 'litrpg',
   difficulty: 'Hardcore',
   tagline: 'Earth was not asked. Earth was registered.',
+  shortDescription:
+    'LitRPG system apocalypse: blue panels, permanent death, dungeon zones in modern cities. Survive Waves and claim a Foundation Core.',
   premise:
     'At 03:14 UTC, every human on Earth received a translucent blue panel. No government claimed responsibility. No satellite detected the source. The panels simply appeared — floating at eye level, impossible to dismiss, written in the viewer\'s native language. They read: "Integration Protocol Active. Welcome, Citizen. You have been registered." Within hours, the rules became clear: stats were real, levels were real, and death was permanent. Modern infrastructure buckled as ambient mana flooded the atmosphere, frying electronics and rendering firearms unreliable. Cities fractured into survivor hubs, dungeon zones, and dead zones. The System broadcasts globally — quests, wave warnings, leaderboard rankings — and it does not negotiate.',
 

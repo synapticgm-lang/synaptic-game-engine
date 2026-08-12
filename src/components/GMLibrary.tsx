@@ -23,7 +23,13 @@ import {
 } from 'lucide-react';
 import type { CampaignArchetype } from '@/game/archetypes';
 import type { EngineMode } from '@/game/types';
-import { ALL_CAMPAIGN_BIBLES, type CampaignBible, type LoreSnippet, type KeyNPC } from '@/data/campaigns';
+import {
+  ALL_CAMPAIGN_BIBLES,
+  getCampaignBlurb,
+  type CampaignBible,
+  type LoreSnippet,
+  type KeyNPC,
+} from '@/data/campaigns';
 
 interface GMLibraryProps {
   open: boolean;
@@ -40,6 +46,7 @@ interface CampaignStarter {
   archetype: CampaignArchetype;
   engineMode: EngineMode;
   title: string;
+  tagline: string;
   description: string;
   difficulty: Difficulty;
   accent: string;
@@ -134,11 +141,8 @@ function bibleToStarter(bible: CampaignBible): CampaignStarter {
     archetype: bible.archetype,
     engineMode: bible.engineMode,
     title: bible.title,
-    description: bible.shortDescription
-      ? bible.shortDescription
-      : bible.premise.length > 140
-        ? bible.premise.slice(0, 137) + '...'
-        : bible.premise,
+    tagline: bible.tagline,
+    description: getCampaignBlurb(bible),
     difficulty: bible.difficulty,
     accent: ARCHETYPE_ACCENTS[bible.archetype] ?? 'crimson',
     icon: ARCHETYPE_ICONS[bible.archetype] ?? Sparkles,
@@ -451,6 +455,9 @@ function CampaignCarousel({
                     {c.difficulty}
                   </span>
                 </div>
+                {c.tagline && (
+                  <p className="text-[11px] italic leading-snug text-slate-300">{c.tagline}</p>
+                )}
                 <p className="text-[11px] leading-relaxed text-slate-400">{c.description}</p>
                 <div className="mt-auto flex items-center gap-1.5 pt-1">
                   <span className="rounded bg-slate-800/80 px-1.5 py-0.5 text-[9px] uppercase tracking-wide text-slate-500">

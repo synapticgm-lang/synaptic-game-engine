@@ -35,7 +35,9 @@ export interface GroundedPlayerAction {
 
 const RULES: { kind: IntentKind; re: RegExp; label: string }[] = [
   { kind: 'flee', re: /\b(flee|run away|retreat|escape|back away)\b/i, label: 'Flee / disengage' },
-  { kind: 'attack', re: /\b(attack|strike|slash|stab|swing|shoot|fight|hit|melee|cast fireball)\b/i, label: 'Attack' },
+  // Practice / gear tests before attack so "practice swings" is not treated as combat.
+  { kind: 'observe', re: /\b(practice|test\s+(?:the\s+)?[\w'-]+(?:\s+[\w'-]+){0,3}\s+balance|a\s+few\s+swings|warm[- ]?up)\b/i, label: 'Practice' },
+  { kind: 'attack', re: /\b(attack|strike|slash|stab|shoot|fight|hit|melee|cast fireball|swing\s+(?:at|toward|towards))\b/i, label: 'Attack' },
   { kind: 'cast', re: /\b(cast|channel|invoke|spell)\b/i, label: 'Cast / magic' },
   { kind: 'use_item', re: /\b(use|drink|eat|equip|wield|draw|throw|deploy)\b/i, label: 'Use item' },
   { kind: 'talk', re: /\b(ask|tell|speak|talk|persuade|intimidate|negotiate|greet)\b/i, label: 'Talk' },

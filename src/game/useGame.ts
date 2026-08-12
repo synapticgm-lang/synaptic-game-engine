@@ -42,8 +42,20 @@ import { runWarden, sanitizeExtractedCharacterUpdates } from './warden';
 import { applyStructuralEvents } from './structuralEvents';
 import { collectTurnTimelineFacts, mergeTimeline } from './timeline';
 import { seedStateFromArchetype, seedStateFromCampaignBible } from './campaignSeed';
-import { getCampaignBibleById } from '@/data/campaigns';
+import { formatCampaignStoryName, getCampaignBibleById } from '@/data/campaigns';
 import { parsePlayerIntent, groundPlayerAction } from './intentParser';
+import {
+  buildTurnMandate,
+  detectSceneHijack,
+  filterHijackChoices,
+  maybeRevealQuestsFromPlayerAction,
+  stripHijackSentences,
+} from './sceneFocus';
+import {
+  buildResolutionUserPayload,
+  isUnresolvedActionNarrative,
+  synthesizeActionResolution,
+} from './actionResolution';
 import { mergeNpcMemoriesFromTurn } from './npcMemory';
 import { buildPendingProposal, getProposedState, withEditedNarrative, touchLocationSheet } from './pendingTurn';
 import { extractUpdates, extractNewItems, parseActionTags, stripActionTags, matchLoreCards, eventsToLoreCards, parseTurnFrame, eventsToQuestUpdates, eventsToEncounterUpdate, parsePanels, eventsToMilestone, eventsToLootVideo, eventsToVisualUpdate, stripChoiceList, extractChoiceLines } from './parser';
@@ -1225,6 +1237,25 @@ In <system-log>, only emit LitRPG/RPG progression lines (XP, loot, HP change as 
       const recentNarrative = liveCurrent.log.slice(-4).map((e) => e.content).join(' ');
       const activeLoreCards = matchLoreCards(input, recentNarrative, liveCurrent.lorebook ?? []);
 
+      // Cross-mode scene focus: reveal quests only when asked; bind the turn to the player's action.
+      const revealedQuests = maybeRevealQuestsFromPlayerAction(liveCurrent, sanitizedInput);
+      if (revealedQuests !== liveCurrent.quests) {
+        liveCurrent.quests = revealedQuests;
+        stateRef.current = { ...liveCurrent };
+      }
+      const intentForMandate =
+        grounded.intent.kind !== 'other'
+          ? grounded.intent
+          : parsePlayerIntent(sanitizedInput, liveCurrent);
+      const turnMandate = buildTurnMandate(sanitizedInput, intentForMandate, liveCurrent);
+      const gmPlayerPayload = buildResolutionUserPayload({
+        mandateBlock: turnMandate.block,
+        playerAction: sanitizedInput,
+        deterministicBlock: deterministicStateBlock,
+        retry: false,
+        intent: intentForMandate,
+      });
+
       debugLogger.record('API_REQUEST', 'Calling callGm for narrative generation', {
         turn: liveCurrent.turn,
         inputLength: sanitizedInput.length,
@@ -1232,10 +1263,42 @@ In <system-log>, only emit LitRPG/RPG progression lines (XP, loot, HP change as 
         hasApiKey: !!(settingsRef.current.geminiApiKey || settingsRef.current.openrouterApiKey)
       });
       const gmStartTime = performance.now();
-      const result = await callGm(liveCurrent, `${sanitizedInput}\n\n${deterministicStateBlock}`, settingsRef.current, activeLoreCards, (attempt, delayMs) => {
+      let result = await callGm(liveCurrent, gmPlayerPayload, settingsRef.current, activeLoreCards, (attempt, delayMs) => {
         debugLogger.record('WARN', `Rate limited — retry ${attempt}/4`, { delayMs });
         setRetryStatus(`Rate limited — retry ${attempt}/4 in ${Math.round(delayMs / 1000)}s…`);
       });
+
+      // System-wide: if the model returned bridge-only / no findings, regenerate once.
+      {
+        const probeText = ensureTurnProse(
+          stripResidualMechanicTags(stripChoiceList(stripActionTags(result.text))),
+          sanitizedInput,
+        );
+        if (isUnresolvedActionNarrative(sanitizedInput, probeText, intentForMandate)) {
+          debugLogger.record('WARN', 'Unresolved action narrative — resolution retry', {
+            turn: liveCurrent.turn,
+            intent: intentForMandate.kind,
+          });
+          setRetryStatus('Refining story resolution…');
+          result = await callGm(
+            liveCurrent,
+            buildResolutionUserPayload({
+              mandateBlock: turnMandate.block,
+              playerAction: sanitizedInput,
+              deterministicBlock: deterministicStateBlock,
+              retry: true,
+              intent: intentForMandate,
+            }),
+            settingsRef.current,
+            activeLoreCards,
+            (attempt, delayMs) => {
+              debugLogger.record('WARN', `Rate limited — retry ${attempt}/4`, { delayMs });
+              setRetryStatus(`Rate limited — retry ${attempt}/4 in ${Math.round(delayMs / 1000)}s…`);
+            },
+          );
+        }
+      }
+
       const gmLatency = Math.round(performance.now() - gmStartTime);
       setRetryStatus(null);
 
@@ -1359,17 +1422,35 @@ In <system-log>, only emit LitRPG/RPG progression lines (XP, loot, HP change as 
       const inventedEntityNames = warden.notes
         .map((n) => n.match(/unestablished entity:\s*(.+)$/i)?.[1]?.trim().toLowerCase())
         .filter((n): n is string => !!n);
+      const hijack = detectSceneHijack(sanitizedInput, result.text, suggestionState);
+      if (hijack.hijacked) {
+        warden.notes.push(...hijack.notes);
+        cleanText = stripHijackSentences(cleanText, hijack.keywordsHit);
+        cleanText = ensureTurnProse(cleanText, sanitizedInput);
+      }
       const parsedChoices = (habitAugmented.length > 0 ? habitAugmented : pipelineChoices.choices)
         .filter((choice) => isChoiceGroundedInTurn(choice, storyProseForChoices, suggestionState, activeLoreCards))
         .filter((choice) => {
           const lower = choice.toLowerCase();
           return !inventedEntityNames.some((name) => name.length >= 3 && lower.includes(name));
-        })
-        .slice(0, 4);
+        });
+      const focusFiltered = hijack.hijacked || !turnMandate.playerEngagedQuestFocus
+        ? filterHijackChoices(parsedChoices, turnMandate.focusKeywords)
+        : parsedChoices;
+      // Still unresolved after retry/hijack strip → local concrete resolution (all modes).
+      if (isUnresolvedActionNarrative(sanitizedInput, cleanText, intentForMandate)) {
+        cleanText = synthesizeActionResolution(sanitizedInput, intentForMandate, suggestionState);
+        debugLogger.record('STATE_UPDATE', 'Synthesized action resolution after empty/bridge GM prose', {
+          intent: intentForMandate.kind,
+        });
+      }
+      const groundedAfterResolve = focusFiltered.filter((choice) =>
+        isChoiceGroundedInTurn(choice, normalizeStoryCorpus(cleanText), suggestionState, activeLoreCards)
+      );
       const finalChoices =
-        parsedChoices.length > 0
-          ? parsedChoices
-          : sceneSafeFallbacks(suggestionState, '');
+        groundedAfterResolve.length > 0
+          ? groundedAfterResolve.slice(0, 4)
+          : sceneSafeFallbacks(suggestionState, normalizeStoryCorpus(cleanText));
       if (pipelineChoices.regenerated || pipelineChoices.rejectedCount > 0) {
         debugLogger.record('STATE_UPDATE', 'Choice pipeline enforced turn grounding', {
           regenerated: pipelineChoices.regenerated,
@@ -1862,6 +1943,7 @@ In <system-log>, only emit LitRPG/RPG progression lines (XP, loot, HP change as 
     classicMemorableImages?: boolean,
     comicLayout?: Settings['comicLayout'],
     comicReadingDirection?: Settings['comicReadingDirection'],
+    bibleId?: string,
   ) => {
     if (
       selectedVisualMode ||
@@ -1885,16 +1967,30 @@ In <system-log>, only emit LitRPG/RPG progression lines (XP, loot, HP change as 
       setNarrativeMode(false);
     }
 
-    const base = createInitialState(storyName, engineMode, archetype);
-    const seeded = seedStateFromArchetype(base, engineMode, archetype ?? base.campaignArchetype);
-    const introContent = buildArchetypeIntro(engineMode, archetype ?? 'ai_random', character.name ?? 'Survivor');
-    const initialChoices = extractChoicesFromText(introContent, seeded);
+    const bible = bibleId ? getCampaignBibleById(bibleId) : undefined;
+    const resolvedArchetype = bible?.archetype ?? archetype;
+    const resolvedName =
+      storyName?.trim()
+      || (bible ? formatCampaignStoryName(bible.title) : undefined);
+    const base = createInitialState(resolvedName, engineMode, resolvedArchetype);
+    const seeded = bible
+      ? seedStateFromCampaignBible(base, bible)
+      : seedStateFromArchetype(base, engineMode, resolvedArchetype ?? base.campaignArchetype);
+    const namedSeeded = bible
+      ? { ...seeded, storyName: resolvedName || formatCampaignStoryName(bible.title) }
+      : seeded;
+    const introContent = buildArchetypeIntro(
+      engineMode,
+      resolvedArchetype ?? 'ai_random',
+      character.name ?? 'Survivor',
+    );
+    const initialChoices = extractChoicesFromText(introContent, namedSeeded);
     const cleanIntroContent = stripChoiceList(introContent);
 
     const newState: GameState = {
-      ...seeded,
+      ...namedSeeded,
       gmStrictness,
-      character: { ...seeded.character, ...character },
+      character: { ...namedSeeded.character, ...character },
       currentCoordinates: { q: 0, r: 0, tier: 2, z: 0 },
       choices: initialChoices,
       log: [{ id: 'intro-1', turn: 0, role: 'gm', content: cleanIntroContent, timestamp: Date.now() }],
@@ -2179,9 +2275,14 @@ In <system-log>, only emit LitRPG/RPG progression lines (XP, loot, HP change as 
         return;
       }
       const seeded = seedStateFromCampaignBible(previous, bible);
-      stateRef.current = seeded;
-      setState(seeded);
-      void persist(seeded);
+      const named = {
+        ...seeded,
+        storyName: formatCampaignStoryName(bible.title),
+        lastUpdated: Date.now(),
+      };
+      stateRef.current = named;
+      setState(named);
+      void persist(named);
       addToast(`Loaded campaign rails: ${bible.title}`, 'info');
     },
     loadDungeon, moveDungeonNode, exitDungeon,

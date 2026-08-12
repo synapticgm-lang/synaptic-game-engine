@@ -130,11 +130,10 @@ export function ensureTurnProse(cleanText: string, playerAction: string): string
     return withoutChoices.trim() || cleanText;
   }
 
+  // Thin placeholder only — useGame's actionResolution layer must replace bridge-only
+  // replies with a real resolve (retry GM or synthesize). Do not invent findings here.
   const actionSnippet = (playerAction || 'your action').replace(/\s+/g, ' ').trim().slice(0, 140);
-  const looksLikeQuestion = /\?/.test(actionSnippet) || /^(what|why|how|who|where|when|can|do|does|is|are)\b/i.test(actionSnippet);
-  const bridge = looksLikeQuestion
-    ? `You press for clarity — ${actionSnippet}. What you already know stays put while you read the moment for a real answer.`
-    : `You follow through — ${actionSnippet}. The moment settles as you take in what changed around you.`;
+  const bridge = `You follow through — ${actionSnippet}.`;
   if (!withoutChoices.trim()) return bridge;
   return `${bridge}\n\n${withoutChoices}`.trim();
 }

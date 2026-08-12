@@ -29,16 +29,10 @@ export function buildSituationPacket(state: GameState): SituationPacket {
     .slice(-4);
   presentEntities.push(...recentNpcMentions);
 
+  // Revealed + active names only. Unrevealed quests stay out of the scene packet.
   const activeQuests = (state.quests ?? [])
-    .filter((q) => q.status === 'active')
-    .map((q) => {
-      const obj = (q.objectives ?? [])
-        .filter((o) => !o.completed)
-        .map((o) => o.description)
-        .slice(0, 2)
-        .join('; ');
-      return `${q.type.toUpperCase()}: ${q.name}${obj ? ` — ${obj}` : ''}`;
-    });
+    .filter((q) => q.status === 'active' && q.revealed === true)
+    .map((q) => `${q.type.toUpperCase()}: ${q.name}`);
 
   const coords = state.currentCoordinates
     ? `q=${state.currentCoordinates.q} r=${state.currentCoordinates.r} tier=${state.currentCoordinates.tier} z=${state.currentCoordinates.z ?? 0}`
@@ -68,19 +62,26 @@ Location sheet: ${state.locationSheet?.name ?? s.location} | interactables: ${(s
 Encounter: ${s.encounter}
 Dungeon: ${s.dungeon}
 Present entities: ${s.presentEntities.join(' | ')}
-Active quests: ${s.activeQuests.join(' | ')}
+Active quests (background names only — do not force): ${s.activeQuests.join(' | ')}
 NPC memories:
 ${npcBlock || '(none)'}
 Recent facts:
 ${s.recentFacts.length ? s.recentFacts.join('\n') : '(none)'}
-RAILS: Hard facts above + factual timeline OVERRIDE improvisation. Do not invent named threats, loot, NPCs, or interactables absent from this packet / location sheet / tags.`;
+RAILS: Hard facts above + factual timeline OVERRIDE improvisation. Do not invent named threats, loot, NPCs, or interactables absent from this packet / location sheet / tags.
+PLAYER ACTION FIDELITY: Resolve the player's last stated action first. Never pivot the scene to a quest location, dungeon, store, or marker unless the player mentioned it or is already there.`;
 }
 
 export function formatCampaignRails(state: GameState): string {
   if (!state.campaignPremise?.trim()) return '';
+  // Strip legacy "ACTIVE OPENING QUEST (narrate...)" rails that railroad older saves.
+  const premise = state.campaignPremise
+    .replace(/\n*ACTIVE OPENING QUEST[\s\S]*?(?=\n[A-Z]|\n*$)/i, '')
+    .replace(/\n*BACKGROUND QUEST[\s\S]*?(?=\n[A-Z]|\n*$)/i, '')
+    .trim();
   return `=== CAMPAIGN GUIDE BOOK (RAILS — DO NOT CONTRADICT) ===
-${state.campaignPremise.trim()}
-Stay inside this premise. Side scenes are allowed; jumping to unrelated endgames is not.
+${premise}
+Stay inside this premise. Side scenes and downtime are allowed.
+PLAYER ACTION FIDELITY (BINDING): Answer the player's last action first (e.g. practice swings, ask a question, look at gear). Do NOT redirect to quest dungeons, convenience stores, or System markers unless the player engages them. Quests are background Guide Book only — not a turn-by-turn script.
 ===========================================================`;
 }
 

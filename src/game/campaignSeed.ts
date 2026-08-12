@@ -73,6 +73,8 @@ export function seedStateFromCampaignBible(
       name: q.title,
       description: q.description,
       status,
+      // Seeded quests start unrevealed so Guide Book hooks cannot steal scene focus.
+      revealed: false,
       type: 'main' as const,
       recommendedLevel: q.recommendedLevel,
       objectives: q.objectives.map((desc, i) => ({
@@ -108,14 +110,14 @@ export function seedStateFromCampaignBible(
 
   const activeQuest = quests.find((q) => q.status === 'active');
   const questRail = activeQuest
-    ? `ACTIVE OPENING QUEST (narrate in prose before related choices): ${activeQuest.name} — ${activeQuest.description.slice(0, 280)} Hidden quests must not be mentioned or offered until the story reveals them.`
+    ? `BACKGROUND QUEST (Guide Book only — NEVER railroad): "${activeQuest.name}" is tracked in the quest log. Do NOT narrate quest markers, dungeons, shops, or objectives unless the player asks about the quest or travels there. Always resolve the player's immediate action first. Hidden quests stay unspoken.`
     : 'No opening quest yet — do not invent quest log entries.';
 
   return {
     ...state,
     campaignBibleId: bible.id,
     campaignPremise: `${bible.title}: ${bible.premise}\n\n${questRail}`.slice(0, 1600),
-    storyName: state.storyName?.startsWith('Campaign') ? bible.title : state.storyName,
+    storyName: state.storyName,
     lorebook: dedupedLore,
     quests,
     inventory: [...state.inventory, ...starterItems],
@@ -135,7 +137,7 @@ export function seedStateFromCampaignBible(
               id: crypto.randomUUID(),
               turn: 0,
               kind: 'quest' as const,
-              text: `System assigned quest: ${activeQuest.name} (reveal hook in narration before related choices).`,
+              text: `Quest logged (background): ${activeQuest.name}. Do not force the player toward it.`,
               at: Date.now(),
             },
           ]

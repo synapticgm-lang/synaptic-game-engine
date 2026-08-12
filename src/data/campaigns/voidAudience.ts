@@ -7,6 +7,8 @@ export const voidAudience: CampaignBible = {
   engineMode: 'litrpg',
   difficulty: 'Hardcore',
   tagline: 'You died. That was the easy part.',
+  shortDescription:
+    'Negotiate rebirth with a cosmic Auditor, then entertain the Void Audience — Flaws, Boons, and Cosmic Favor decide if you live.',
   premise:
     'You were nobody special — an ordinary person with an ordinary death. But death was not the end. You woke in the Void: a featureless expanse of soft grey light, standing before a desk that materialized from nothing. Behind the desk sits an entity that calls itself the Auditor. It is not a god, not a demon, not an AI. It is a function — a mechanism of a larger System that processes dead souls for "repurposing." The Auditor explains, with the patience of someone who has done this trillions of times, that you have been selected for a rebirth trial. You will negotiate your starting stats, choose your Flaws and Boons, and be reincarnated into a world called the Resonance — a magical realm where your every action is observed by the Void Audience, a collective of interdimensional entities who watch rebirth trials for entertainment. Your Cosmic Favor score determines their investment in your survival. Entertain them, and they intervene on your behalf. Bore them, and they withdraw support — and without support, the Resonance will kill you.',
 

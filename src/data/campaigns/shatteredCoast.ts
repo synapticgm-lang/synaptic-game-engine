@@ -7,6 +7,8 @@ export const shatteredCoast: CampaignBible = {
   engineMode: 'dnd',
   difficulty: 'Standard',
   tagline: 'Five guilds. One city. A dragon that should be dead.',
+  shortDescription:
+    '5e-friendly coastal intrigue in Saltmar: guild politics, deep-sea secrets, and rumors of a dragon the histories say is dead.',
   premise:
     'The Shattered Coast is a region of cliffs, harbors, and ancient ruins along the western edge of the continent. Its capital, Saltmar, is the largest city in the known world — a sprawling metropolis of 80,000 souls built into and onto the coastal cliffs, connected by bridges, lifts, and tunnels. Saltmar is governed by five guilds: the Mariners, the Miners, the Merchants, the Scribes, and the Sentinels. They maintain an uneasy peace through the Compact, a treaty that has held for 40 years. But the Compact is cracking. The Mariners have found something in the deep sea. The Miners have broken through a wall they shouldn\'t have. And the Scribes have translated a text that mentions a dragon — a dragon the histories say was slain 300 years ago. You are a newcomer to Saltmar, hired by one of the guilds (or by someone outside them) to investigate. The city does not welcome outsiders, but it pays them well. And it needs them now more than it admits.',
 

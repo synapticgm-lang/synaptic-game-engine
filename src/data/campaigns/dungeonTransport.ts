@@ -7,6 +7,8 @@ export const dungeonTransport: CampaignBible = {
   engineMode: 'litrpg',
   difficulty: 'Hardcore',
   tagline: 'One step. No way back. Only down.',
+  shortDescription:
+    'Accidental portal into a floor-by-floor dungeon climb. Resource pressure, safe rooms, and no easy exit — only deeper.',
   premise:
     'You were walking home from an unremarkable evening when the air split. A rift — vertical, silent, rimmed with pale blue light — opened in the alley behind the convenience store. You should have run. Instead, curiosity pulled you forward, and one step through the threshold sealed your fate. The rift closed behind you with a sound like breaking glass. You are in a stone corridor. The air is damp and ancient. Torches gutter on the walls, burning without fuel. A blue panel flickers into view: "Welcome. Floor 1 of the Abyssal Spire. Descend." There is no exit. There is no map. There is only down.',
 

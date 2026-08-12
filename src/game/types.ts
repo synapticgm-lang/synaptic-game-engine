@@ -140,6 +140,11 @@ export interface Quest {
   recommendedLevel?: number;
   location?: string;
   objectives?: QuestObjective[];
+  /**
+   * When false/undefined, quest is tracked but not spoiled to the player or GM scene focus.
+   * Set true after the story/System reveals it, or the player asks about quests.
+   */
+  revealed?: boolean;
   rewards?: {
     xp?: number;
     gold?: number;

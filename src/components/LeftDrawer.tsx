@@ -58,9 +58,13 @@ function QuestsSection({ state }: { state: GameState }) {
         <ScrollText size={14} /> Quests
       </h3>
       {(() => {
-        const visible = state.quests.filter((q) => q.status === 'active' || q.status === 'completed');
+        const visible = state.quests.filter(
+          (q) =>
+            (q.status === 'active' || q.status === 'completed')
+            && q.revealed === true,
+        );
         if (visible.length === 0) {
-          return <p className="text-xs text-slate-500">No active quests.</p>;
+          return <p className="text-xs text-slate-500">No revealed quests yet.</p>;
         }
         return (
           <ul className="space-y-1.5">
