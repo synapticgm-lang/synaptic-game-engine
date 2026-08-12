@@ -57,18 +57,22 @@ function QuestsSection({ state }: { state: GameState }) {
       <h3 className="mb-2 flex items-center gap-2 font-serif text-sm uppercase tracking-wider text-crimson-400">
         <ScrollText size={14} /> Quests
       </h3>
-      {state.quests.length === 0 ? (
-        <p className="text-xs text-slate-500">No active quests.</p>
-      ) : (
-        <ul className="space-y-1.5">
-          {state.quests.map(q => (
-            <li key={q.id} className="rounded-md bg-slate-900 px-2.5 py-1.5 text-xs">
-              <div className="font-medium text-slate-200">{q.name}</div>
-              <div className={`capitalize ${q.status === 'active' ? 'text-amber-400' : q.status === 'completed' ? 'text-emerald-400' : 'text-rose-400'}`}>{q.status}</div>
-            </li>
-          ))}
-        </ul>
-      )}
+      {(() => {
+        const visible = state.quests.filter((q) => q.status === 'active' || q.status === 'completed');
+        if (visible.length === 0) {
+          return <p className="text-xs text-slate-500">No active quests.</p>;
+        }
+        return (
+          <ul className="space-y-1.5">
+            {visible.map((q) => (
+              <li key={q.id} className="rounded-md bg-slate-900 px-2.5 py-1.5 text-xs">
+                <div className="font-medium text-slate-200">{q.name}</div>
+                <div className={`capitalize ${q.status === 'active' ? 'text-amber-400' : q.status === 'completed' ? 'text-emerald-400' : 'text-rose-400'}`}>{q.status}</div>
+              </li>
+            ))}
+          </ul>
+        );
+      })()}
     </section>
   );
 }

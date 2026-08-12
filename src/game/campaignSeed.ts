@@ -62,20 +62,27 @@ export function seedStateFromCampaignBible(
     return true;
   });
 
-  const starterQuests: Quest[] = bible.starterQuests.map((q) => ({
-    id: q.id,
-    name: q.title,
-    description: q.description,
-    status: 'active' as const,
-    type: 'main' as const,
-    recommendedLevel: q.recommendedLevel,
-    objectives: q.objectives.map((desc, i) => ({
-      id: `${q.id}-obj-${i + 1}`,
-      description: desc,
-      completed: false,
-    })),
-    rewards: { items: q.rewards ? [q.rewards] : undefined },
-  }));
+  // Only the first level-appropriate quest starts active. The rest stay hidden until the
+  // story/System reveals them — so the quest log doesn't dump the whole campaign at once.
+  const playerLevel = state.character?.level ?? 1;
+  const starterQuests: Quest[] = bible.starterQuests.map((q, index) => {
+    const levelOk = (q.recommendedLevel ?? 1) <= playerLevel;
+    const status = index === 0 && levelOk ? ('active' as const) : ('hidden' as const);
+    return {
+      id: q.id,
+      name: q.title,
+      description: q.description,
+      status,
+      type: 'main' as const,
+      recommendedLevel: q.recommendedLevel,
+      objectives: q.objectives.map((desc, i) => ({
+        id: `${q.id}-obj-${i + 1}`,
+        description: desc,
+        completed: false,
+      })),
+      rewards: { items: q.rewards ? [q.rewards] : undefined },
+    };
+  });
 
   const existingQuestIds = new Set((state.quests ?? []).map((q) => q.id));
   const quests = [
@@ -99,10 +106,15 @@ export function seedStateFromCampaignBible(
       provenance: `Campaign: ${bible.title}`,
     }));
 
+  const activeQuest = quests.find((q) => q.status === 'active');
+  const questRail = activeQuest
+    ? `ACTIVE OPENING QUEST (narrate in prose before related choices): ${activeQuest.name} — ${activeQuest.description.slice(0, 280)} Hidden quests must not be mentioned or offered until the story reveals them.`
+    : 'No opening quest yet — do not invent quest log entries.';
+
   return {
     ...state,
     campaignBibleId: bible.id,
-    campaignPremise: `${bible.title}: ${bible.premise}`.slice(0, 1200),
+    campaignPremise: `${bible.title}: ${bible.premise}\n\n${questRail}`.slice(0, 1600),
     storyName: state.storyName?.startsWith('Campaign') ? bible.title : state.storyName,
     lorebook: dedupedLore,
     quests,
@@ -117,6 +129,17 @@ export function seedStateFromCampaignBible(
         text: `Campaign seeded: ${bible.title}`,
         at: Date.now(),
       },
+      ...(activeQuest
+        ? [
+            {
+              id: crypto.randomUUID(),
+              turn: 0,
+              kind: 'quest' as const,
+              text: `System assigned quest: ${activeQuest.name} (reveal hook in narration before related choices).`,
+              at: Date.now(),
+            },
+          ]
+        : []),
     ],
   };
 }

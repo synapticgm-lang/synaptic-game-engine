@@ -185,6 +185,11 @@ export function isChoiceGroundedInTurn(
   if (envHits.length > 0) return false;
   if (threatChoiceWithoutSetup(cleaned, storyProse, state)) return false;
   if (observeThreatWithoutSetup(cleaned, storyProse, state)) return false;
+  // "X dungeon" choices need an active dungeon OR the current turn's story to say so —
+  // not just a quest-card spoiler the player hasn't heard yet.
+  if (/\bdungeon\b/i.test(cleaned) && !state.activeDungeon && !/\bdungeon\b/i.test(storyProse)) {
+    return false;
+  }
 
   for (const re of PLOT_JUMP_PATTERNS) {
     if (re.test(cleaned)) {
