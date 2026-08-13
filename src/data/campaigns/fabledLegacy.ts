@@ -9,6 +9,8 @@ export const fabledLegacy: CampaignBible = {
   tagline: 'Every hero starts somewhere. Yours starts in a village that time forgot.',
   shortDescription:
     'Soft LitRPG village start — no neon HUD focus. Choices, relationships, and consequences in Mossford before the wider world arrives.',
+  startingLocation: 'The village of Mossford',
+
   premise:
     'There are no blue panels. No stat screens. No level-up notifications. There is only the world — the village of Mossford, nestled in a valley between the Greentooth Hills, where nothing exciting has happened in living memory. You are a farmhand, a baker\'s apprentice, or a blacksmith\'s ward. Your parents are gone. Your guardian is old. The harvest festival is in three weeks. And then, one morning, a stranger rides into town with a wound that will not close, a map with a missing piece, and a name that makes the village elder weep. What happens next is up to you. The world does not have a System. It has consequences. Every choice you make — who you help, who you hurt, who you ignore — ripples outward and changes the world in ways you will not see coming. This is not a game with stats. This is a story with teeth.',
 

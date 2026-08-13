@@ -273,8 +273,6 @@ export default function App() {
             onUpdatePanelOverlay={game.updatePanelOverlay}
             onSend={game.sendAction}
             onToggleRolls={() => game.setShowRolls(!game.showRolls)}
-            onExport={game.handleExport}
-            onImport={game.handleImport}
             onStartListening={game.voice.startListening}
             onStopListening={game.voice.stopListening}
             onStopSpeaking={game.voice.stopSpeaking}
@@ -305,7 +303,7 @@ export default function App() {
               }
             }}
             onAutoFight={() => game.autoFight()}
-            onOpenMerchant={() => game.setShowMerchantWindow(true)}
+            onOpenCharacter={() => game.setShowCharacterWindow(true)}
           />
         </main>
 
@@ -372,6 +370,8 @@ export default function App() {
           isOpen={showMapModal}
           onClose={() => setShowMapModal(false)}
           activeDungeon={state.activeDungeon ?? null}
+          currentLocation={state.currentLocation}
+          currentCoordinates={state.currentCoordinates}
           onLoadDungeon={(blueprintId, dungeonName, isProcedural, tier, nodeCount) => {
             if (game.loadDungeon) {
               game.loadDungeon(blueprintId, dungeonName, isProcedural, tier, nodeCount);
@@ -441,6 +441,7 @@ export default function App() {
             onClose={() => game.setShowCharacterWindow(false)}
             state={state}
             settings={game.settings}
+            initialTab="inventory"
           />
         </Suspense>
       )}

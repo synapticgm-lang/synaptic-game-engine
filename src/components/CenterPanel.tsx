@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, useMemo } from 'react';
-import { Send, Dice5, Download, Upload, X, Mic, Square, Volume2, RefreshCw, Settings as SettingsIcon, AlertTriangle, FileDown, LayoutGrid, MessageSquare, Terminal, Swords, User, BookOpen, EyeOff, Eye, List, Type } from 'lucide-react';
+import { Send, Dice5, X, Mic, Square, Volume2, RefreshCw, Settings as SettingsIcon, AlertTriangle, FileDown, Backpack, LayoutGrid, MessageSquare, Terminal, Swords, BookOpen, EyeOff, Eye, List, Type } from 'lucide-react';
 import { EnemyTargetFrame } from './EnemyTargetFrame';
 
 import type { GameState, LogEntry, EngineMode, DiceAnimationMode, LoreCard, ArtStylePreset, StatVerbosity, ComicOverlayEdit, ComicLayoutMode, ComicReadingDirection } from '@/game/types';
@@ -56,8 +56,6 @@ interface Props {
   canRewind: boolean;
   onSend: (input: string) => void;
   onToggleRolls: () => void;
-  onExport: () => void;
-  onImport: (file: File) => void;
   onRetry: () => void;
   onOpenApiSettings: () => void;
   onStartListening: () => void;
@@ -73,18 +71,16 @@ interface Props {
   sessionPresentationLocked?: boolean;
   onAutoFight: () => void;
   onOpenCharacter: () => void;
-  onOpenMerchant: () => void;
   onRetryPanelImage?: (entryId: string, panelIndex: number) => void;
   onUpdatePanelOverlay?: (entryId: string, panelIndex: number, edit: ComicOverlayEdit) => void;
 }
 
-export function CenterPanel({ state, busy, error, errorKind, currentImage, bgImage, bgOpacity, showRolls, engineMode, diceAnimation, statVerbosity, voice, comicMode, narrativeMode, artStylePreset, comicLayout = 'paged', comicReadingDirection = 'ltr', imagesGenerating = 0, canRewind, onSend, onToggleRolls, onExport, onImport, onStartListening, onStopListening, onStopSpeaking, onRetry, onOpenApiSettings, onRewind, onAcceptPendingTurn, onDiscardPendingTurn, onRerollPendingTurn, onEditPendingNarrative, onToggleComicMode, sessionPresentationLocked = false, onAutoFight, onOpenCharacter, onOpenMerchant, onRetryPanelImage, onUpdatePanelOverlay }: Props) {
+export function CenterPanel({ state, busy, error, errorKind, currentImage, bgImage, bgOpacity, showRolls, engineMode, diceAnimation, statVerbosity, voice, comicMode, narrativeMode, artStylePreset, comicLayout = 'paged', comicReadingDirection = 'ltr', imagesGenerating = 0, canRewind, onSend, onToggleRolls, onStartListening, onStopListening, onStopSpeaking, onRetry, onOpenApiSettings, onRewind, onAcceptPendingTurn, onDiscardPendingTurn, onRerollPendingTurn, onEditPendingNarrative, onToggleComicMode, sessionPresentationLocked = false, onAutoFight, onOpenCharacter, onRetryPanelImage, onUpdatePanelOverlay }: Props) {
   const [input, setInput] = useState('');
   const [diceRoll, setDiceRoll] = useState<string | null>(null);
   const [hideOptions, setHideOptions] = useState(() => readBoolPref(HIDE_OPTIONS_KEY));
   const [hideText, setHideText] = useState(() => readBoolPref(HIDE_TEXT_KEY));
   const logRef = useRef<HTMLDivElement>(null);
-  const fileRef = useRef<HTMLInputElement>(null);
   const isDnd = engineMode === 'dnd';
   const showRollsPanel = isDnd && showRolls && state.rolls.length > 0;
   const showSystemLog = statVerbosity !== 'minimal';
@@ -321,12 +317,10 @@ export function CenterPanel({ state, busy, error, errorKind, currentImage, bgIma
             </div>
           )}
           {!hideText && (
-          <div className="mb-2 flex items-center gap-1 text-slate-500">
-            <button onClick={onOpenCharacter} title="Character Sheet" className="rounded-md p-1.5 transition-colors hover:bg-slate-800 hover:text-slate-300">
-              <User size={15} />
-            </button>
-            <button onClick={onOpenMerchant} title="Inventory / Merchant" className="rounded-md p-1.5 transition-colors hover:bg-slate-800 hover:text-slate-300">
-              <LayoutGrid size={15} />
+          <div className="mb-2 flex flex-wrap items-center gap-1 text-slate-500">
+            <button onClick={onOpenCharacter} title="Inventory & character" className="flex items-center gap-1 rounded-md px-2 py-1.5 text-[11px] transition-colors hover:bg-slate-800 hover:text-slate-300">
+              <Backpack size={15} />
+              <span className="hidden sm:inline">Inventory</span>
             </button>
             <button
               onClick={onToggleComicMode}
@@ -351,22 +345,17 @@ export function CenterPanel({ state, busy, error, errorKind, currentImage, bgIma
               {narrativeMode ? <BookOpen size={15} /> : comicMode ? <LayoutGrid size={15} /> : <MessageSquare size={15} />}
             </button>
             <RewindBar canRewind={canRewind} onRewind={onRewind} />
-            <button onClick={onAutoFight} disabled={busy || !state.activeEncounter} title={state.activeEncounter ? 'Auto-resolve combat' : 'No active encounter'} className={`flex items-center gap-1 rounded-md px-2 py-1 text-xs transition-colors disabled:cursor-not-allowed disabled:opacity-40 ${busy || !state.activeEncounter ? 'bg-slate-800 text-slate-500' : 'border border-crimson-700/40 bg-crimson-950/30 text-crimson-400 hover:bg-crimson-900/40'}`}>
-              <Swords size={13} />
-              <span className="hidden xs:inline">Auto-Fight</span>
-            </button>
+            {state.activeEncounter && (
+              <button onClick={onAutoFight} disabled={busy} title="Auto-resolve combat" className={`flex items-center gap-1 rounded-md px-2 py-1 text-xs transition-colors disabled:cursor-not-allowed disabled:opacity-40 ${busy ? 'bg-slate-800 text-slate-500' : 'border border-crimson-700/40 bg-crimson-950/30 text-crimson-400 hover:bg-crimson-900/40'}`}>
+                <Swords size={13} />
+                <span className="hidden xs:inline">Auto-Fight</span>
+              </button>
+            )}
             {isDnd && (
               <button onClick={onToggleRolls} title="Toggle roll history" className={`rounded-md p-1.5 transition-colors ${showRolls ? 'bg-slate-800 text-crimson-400' : 'hover:bg-slate-800 hover:text-slate-300'}`}>
                 <Dice5 size={15} />
               </button>
             )}
-            <button onClick={onExport} title="Export save" className="rounded-md p-1.5 hover:bg-slate-800 hover:text-slate-300 transition-colors">
-              <Download size={15} />
-            </button>
-            <button onClick={() => fileRef.current?.click()} title="Import save" className="rounded-md p-1.5 hover:bg-slate-800 hover:text-slate-300 transition-colors">
-              <Upload size={15} />
-            </button>
-            <input ref={fileRef} type="file" accept="application/json" className="hidden" onChange={(e) => { const f = e.target.files?.[0]; if (f) onImport(f); e.target.value = ''; }} />
           </div>
           )}
           {!hideText && (

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import type { GameState, GoogleUser, Settings as GameSettings } from '../game/types';
-import { Bug, ChevronDown, ChevronUp, Settings, Map, Compass, User, Coins } from 'lucide-react';
+import { Bug, ChevronDown, ChevronUp, Settings, Map, Compass, Coins, Backpack } from 'lucide-react';
 
 interface Props {
   state: GameState;
@@ -102,10 +102,10 @@ export function Hud({ state, onSettings, onOpenMap, onOpenQuestLog, onOpenCharac
           <button onClick={onOpenQuestLog} title="Quests" className="p-2 bg-slate-900 hover:bg-slate-800 border border-slate-800 rounded text-slate-300 transition-colors">
             <Compass size={15} />
           </button>
-          <button onClick={onOpenCharacter} title="Character" className="p-2 bg-slate-900 hover:bg-slate-800 border border-slate-800 rounded text-slate-300 transition-colors">
-            <User size={15} />
+          <button onClick={onOpenCharacter} title="Inventory & Character" className="p-2 bg-slate-900 hover:bg-slate-800 border border-slate-800 rounded text-slate-300 transition-colors">
+            <Backpack size={15} />
           </button>
-          <button onClick={onOpenMerchant} title="Merchant" className="p-2 bg-slate-900 hover:bg-slate-800 border border-slate-800 rounded text-slate-300 transition-colors">
+          <button onClick={onOpenMerchant} title="Merchant (sell / salvage)" className="p-2 bg-slate-900 hover:bg-slate-800 border border-slate-800 rounded text-slate-300 transition-colors">
             <Coins size={15} />
           </button>
           <button onClick={onSettings} title="Settings" className="p-2 bg-slate-900 hover:bg-slate-800 border border-slate-800 rounded text-slate-300 transition-colors">
@@ -127,8 +127,8 @@ export function Hud({ state, onSettings, onOpenMap, onOpenQuestLog, onOpenCharac
             <span className="text-[10px]">Quests</span>
           </button>
           <button onClick={onOpenCharacter} className="flex flex-col items-center gap-1 text-slate-300 p-2">
-            <User size={16} className="text-cyan-400" />
-            <span className="text-[10px]">Character</span>
+            <Backpack size={16} className="text-cyan-400" />
+            <span className="text-[10px]">Inventory</span>
           </button>
           <button onClick={onOpenMerchant} className="flex flex-col items-center gap-1 text-slate-300 p-2">
             <Coins size={16} className="text-amber-400" />

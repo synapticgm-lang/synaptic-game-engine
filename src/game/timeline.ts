@@ -100,6 +100,24 @@ export function collectTurnTimelineFacts(params: {
     if (e.type === 'lore-card' && e.name) {
       pushFact(facts, turn, 'discovery', `Lore noted: ${e.name}`);
     }
+    if (e.type === 'world-deal' && e.name) {
+      pushFact(facts, turn, 'world', `Deal sealed: ${e.name}`);
+    }
+    if (e.type === 'world-holding' && e.name) {
+      pushFact(facts, turn, 'world', `Holding claimed: ${e.name}`);
+    }
+    if (e.type === 'world-order' && (e.name || e.order)) {
+      pushFact(facts, turn, 'world', `Standing order: ${e.name ?? 'holding'} → ${e.order ?? 'profit'}`);
+    }
+    if (e.type === 'world-clock' && e.name) {
+      pushFact(facts, turn, 'world', `Rival clock: ${e.name}`);
+    }
+    if (e.type === 'world-actor' && e.name) {
+      pushFact(facts, turn, 'world', `Off-screen actor: ${e.name}`);
+    }
+    if (e.type === 'time-pass' && e.amount) {
+      pushFact(facts, turn, 'world', `Time passed: ${e.amount} day${e.amount === 1 ? '' : 's'}`);
+    }
   }
 
   for (const name of newItemNames) {

@@ -55,4 +55,6 @@ export interface CampaignBible {
   keyNPCs: KeyNPC[];
   starterQuests: StarterQuest[];
   starterItems: StarterItem[];
+  /** Player-facing starting place. Never use a lore-article title here. */
+  startingLocation?: string;
 }

@@ -1,6 +1,7 @@
 import type { GameState, EngineMode, Settings } from './types';
 import { getDefaultArchetype, type CampaignArchetype } from './archetypes';
 import { formatCampaignStoryName } from '@/data/campaigns';
+import { emptyWorldLedger } from './worldSim';
 
 export function createInitialState(storyName?: string, engineMode: EngineMode = 'litrpg', archetype?: CampaignArchetype): GameState {
   const now = Date.now();
@@ -40,6 +41,8 @@ export function createInitialState(storyName?: string, engineMode: EngineMode = 
         equipped: true,
         slot: 'Main Hand',
         provenance: 'Found on arrival',
+        description: 'A nicked iron blade. 1d6 slashing. Worn but serviceable.',
+        itemType: 'weapon',
         modifiers: { STR: 1 },
       },
       {
@@ -50,6 +53,8 @@ export function createInitialState(storyName?: string, engineMode: EngineMode = 
         equipped: true,
         slot: 'Body',
         provenance: 'Found on arrival',
+        description: 'Scuffed leather. Better than a shirt.',
+        itemType: 'armor',
         modifiers: { CON: 1 },
       },
       {
@@ -62,7 +67,7 @@ export function createInitialState(storyName?: string, engineMode: EngineMode = 
       },
     ],
     containers: [
-      { id: 'spatial-bag', name: 'Spatial Pouch', capacity: 20, used: 3, modifier: 'none', itemIds: [], storageType: 'General', kind: 'magical', equipped: true, slot: 'Container' },
+      { id: 'starter-satchel', name: 'Worn Satchel', capacity: 20, used: 3, modifier: 'none', itemIds: [], storageType: 'General', kind: 'physical', equipped: true, slot: 'Container' },
     ],
     materials: [],
     companions: [],
@@ -91,6 +96,7 @@ export function createInitialState(storyName?: string, engineMode: EngineMode = 
     locationSheet: null,
     pendingTurn: null,
     gold: 0,
+    worldLedger: emptyWorldLedger(),
     gmStrictness: 'standard',
     statDisplayMode: 'inline',
     turnFrameTheme: { icon: '🎲', accentColor: 'cyan-400', frameStyle: 'minimal-holo' },

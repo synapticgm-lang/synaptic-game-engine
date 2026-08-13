@@ -22,6 +22,7 @@ export function makeBible(opts: {
     itemType?: ItemType;
     itemLevel?: number;
   }>;
+  startingLocation?: string;
 }): CampaignBible {
   const p = opts.id;
   return {
@@ -65,5 +66,6 @@ export function makeBible(opts: {
       itemLevel: it.itemLevel ?? 1,
       description: it.description,
     })),
+    startingLocation: opts.startingLocation,
   };
 }

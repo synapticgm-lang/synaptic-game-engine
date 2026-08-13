@@ -52,7 +52,7 @@ const GENERIC_SCENE_NOUNS = new Set([
   ...GENERIC_SCENE_ROLES,
   'surroundings', 'environment', 'room', 'chamber', 'hall', 'hallway', 'street', 'road',
   'path', 'trail', 'exit', 'entrance', 'stairs', 'ladder', 'bridge', 'table', 'chair',
-  'bed', 'chest', 'box', 'crate', 'barrel', 'bag', 'pack', 'pouch', 'sign', 'poster',
+  'bed', 'chest', 'box', 'crate', 'barrel', 'sign', 'poster',
   'note', 'letter', 'book', 'shelf', 'counter', 'bar', 'hearth', 'fire', 'torch',
   'lantern', 'keyhole', 'lock', 'rubble', 'debris', 'blood', 'tracks', 'footprints',
   'noise', 'sound', 'voice', 'voices', 'crowd', 'people', 'body', 'corpse', 'remains',
@@ -88,8 +88,11 @@ export function buildGroundingCorpus(state: GameState, storyProse = ''): Set<str
   const names = new Set<string>();
   for (const item of state.inventory ?? []) addNameTokens(names, item.name);
   for (const mat of state.materials ?? []) addNameTokens(names, mat.name);
+  for (const bag of state.containers ?? []) addNameTokens(names, bag.name);
   for (const companion of state.companions ?? []) addNameTokens(names, companion.name);
-  for (const card of state.lorebook ?? []) addNameTokens(names, card.name);
+  for (const card of state.lorebook ?? []) {
+    if (card.revealed === true || (card.lastSeenTurn ?? 0) > 0) addNameTokens(names, card.name);
+  }
   if (state.activeEncounter?.name) addNameTokens(names, state.activeEncounter.name);
   if (state.currentLocation) addNameTokens(names, state.currentLocation);
   if (state.locationSheet?.name) addNameTokens(names, state.locationSheet.name);
@@ -122,6 +125,7 @@ function inventoryCatalog(state: GameState): string[] {
   return [
     ...state.inventory.map((i) => normalize(i.name)),
     ...state.materials.map((m) => normalize(m.name)),
+    ...(state.containers ?? []).map((c) => normalize(c.name)),
   ];
 }
 
@@ -259,6 +263,8 @@ export function isSuggestionValidForState(
 
   if (findUnsupportedItemClaims(suggestion, state).length > 0) return false;
 
+  if (isLockedProgressionChoice(suggestion, state)) return false;
+
   if (findUngroundedNamedClaims(suggestion, state, storyProse).length > 0) return false;
 
   const goldMatch = suggestion.match(GOLD_SPEND_CLAIM);
@@ -270,6 +276,20 @@ export function isSuggestionValidForState(
   }
 
   return true;
+}
+
+/** Reject choices that advertise locked / level-gated System features. */
+export function isLockedProgressionChoice(choice: string, state: GameState): boolean {
+  const text = choice.toLowerCase();
+  if (/\block(?:ed)?\b/.test(text) && /\b(level|skill|class|menu|studies|profession|feature)\b/.test(text)) {
+    return true;
+  }
+  const gated = text.match(/level\s*(\d+)\s*\+/) || text.match(/requires?\s+level\s*(\d+)/);
+  if (gated) {
+    const need = Number(gated[1]);
+    if (Number.isFinite(need) && need > (state.character?.level ?? 1)) return true;
+  }
+  return false;
 }
 
 export function fallbackSuggestionForState(state: GameState): string {

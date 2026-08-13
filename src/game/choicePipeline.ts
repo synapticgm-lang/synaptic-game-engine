@@ -1,7 +1,9 @@
 import type { GameState, LoreCard, Settings } from './types';
 import { extractChoiceLines, stripChoiceList } from './parser';
+import { playerFacingLocation } from './locationName';
 import {
   fallbackSuggestionForState,
+  isLockedProgressionChoice,
   isSuggestionValidForState,
 } from './suggestionValidation';
 import { logger } from './logger';
@@ -159,7 +161,11 @@ export function priorEstablishedProse(state: GameState, loreCards: LoreCard[] = 
     if (exit.label) parts.push(exit.label);
   }
   for (const f of (state.timeline ?? []).slice(-16)) parts.push(f.text);
-  for (const c of loreCards) parts.push(`${c.name} ${c.summary ?? ''}`);
+  for (const c of loreCards) {
+    if (c.revealed === true || (c.lastSeenTurn ?? 0) > 0) {
+      parts.push(`${c.name} ${c.summary ?? ''}`);
+    }
+  }
   for (const entry of state.log.slice(-6)) {
     if (entry.role === 'gm' || entry.role === 'player') {
       parts.push(stripChoiceList(entry.content).slice(0, 600));
@@ -221,6 +227,9 @@ export function filterChoicesToTurnFacts(
     if (!isSuggestionValidForState(cleaned, state, established)) {
       reasons.push('violates state/inventory/companion/scene guardrails');
     }
+    if (isLockedProgressionChoice(cleaned, state)) {
+      reasons.push('locked or level-gated feature');
+    }
     const env = environmentalEventViolations(cleaned, storyProse);
     if (env.length) reasons.push(`unprompted environmental event: ${env.join(', ')}`);
     if (threatChoiceWithoutSetup(cleaned, storyProse, state)) {
@@ -241,7 +250,7 @@ export function filterChoicesToTurnFacts(
 
 function buildTierContext(state: GameState, loreCards: LoreCard[], storyProse: string): string {
   const t1 = [
-    `Location: ${state.currentLocation || 'unspecified'}`,
+    `Location: ${playerFacingLocation(state)}`,
     `Gold: ${state.gold ?? 0}`,
     `Companions: ${(state.companions ?? []).map((c) => c.name).join(', ') || 'none'}`,
     `Encounter: ${state.activeEncounter?.name ?? 'none'}`,
@@ -297,12 +306,14 @@ STRICT RULES:
 4. Do not invent NPCs, locations, items, creatures, or plot jumps absent from Tier 1–3. Info cards (Tier 2) may inform tone/identity but cannot invent a new crisis.
 5. NEVER name a weapon (shortsword, dagger, bow, etc.) unless that exact item appears in Tier 1 Inventory.
 6. NEVER name a unique object/interactable (altar, chest, terminal, etc.) unless it appears in Tier 3 prose, Location interactables, or Tier 1 state.
-7. Choices must be actionable and scene-local (observe, talk, move carefully, use carried gear, react to the last beat).
-8. Output ONLY a numbered list like:
+7. NEVER offer locked or level-gated System features. If something is greyed out, it is not a choice.
+8. NEVER name cities, hubs, outposts, or survivor camps the player has not visited.
+9. Choices must be actionable and scene-local (observe, talk, move carefully, use carried gear, react to the last beat).
+10. Output ONLY a numbered list like:
 1. ...
 2. ...
 3. ...
-No narrative, no preamble, no tags.`;
+No narrative, no preamble, no tags. Always output 3 or 4 choices.`;
 
 async function callChoiceModel(
   settings: Settings,
@@ -410,6 +421,21 @@ export function sceneSafeFallbacks(state: GameState, storyProse = ''): string[] 
   return Array.from(new Set(options)).slice(0, 4);
 }
 
+export function padChoicesToCount(
+  choices: string[],
+  state: GameState,
+  storyProse = '',
+  min = 3
+): string[] {
+  const merged = Array.from(new Set(choices.map((c) => c.trim()).filter(Boolean)));
+  if (merged.length >= min) return merged.slice(0, 4);
+  for (const extra of sceneSafeFallbacks(state, storyProse)) {
+    if (merged.length >= min) break;
+    if (!merged.some((c) => c.toLowerCase() === extra.toLowerCase())) merged.push(extra);
+  }
+  return merged.slice(0, 4);
+}
+
 export interface ChoicePipelineResult {
   choices: string[];
   regenerated: boolean;
@@ -432,7 +458,7 @@ export async function resolvePipelineChoices(params: {
 
   const firstPass = filterChoicesToTurnFacts(rawChoices, storyProse, state, loreCards);
   if (firstPass.rejected.length === 0 && firstPass.kept.length >= 3) {
-    return { choices: firstPass.kept.slice(0, 4), regenerated: false, rejectedCount: 0 };
+    return { choices: padChoicesToCount(firstPass.kept, state, storyProse), regenerated: false, rejectedCount: 0 };
   }
 
   // Any environmental/plot violation OR too few survivors → regenerate from Tier 3 prose.
@@ -449,7 +475,11 @@ export async function resolvePipelineChoices(params: {
   try {
     const regenerated = await regenerateChoices(state, loreCards, storyProse, settings, rejectedSummary);
     const secondPass = filterChoicesToTurnFacts(regenerated, storyProse, state, loreCards);
-    const merged = Array.from(new Set([...secondPass.kept, ...firstPass.kept])).slice(0, 4);
+    const merged = padChoicesToCount(
+      Array.from(new Set([...secondPass.kept, ...firstPass.kept])),
+      state,
+      storyProse
+    );
     if (merged.length >= 2) {
       return {
         choices: merged,
@@ -464,7 +494,7 @@ export async function resolvePipelineChoices(params: {
   }
 
   const fallbacks = sceneSafeFallbacks(state, storyProse);
-  const merged = Array.from(new Set([...firstPass.kept, ...fallbacks])).slice(0, 4);
+  const merged = padChoicesToCount(Array.from(new Set([...firstPass.kept, ...fallbacks])), state, storyProse);
   return {
     choices: merged,
     regenerated: true,

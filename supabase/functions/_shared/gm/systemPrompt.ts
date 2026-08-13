@@ -6,11 +6,12 @@ import { CHOICE_TIER_PROMPT_RULES } from './choiceTierRules.ts';
 import { ADULT_MODE_RULES, KID_MODE_RULES } from './contentModeRules.ts';
 import { formatFullMemoryBlock, formatCampaignRails } from './situationPacket.ts';
 import { formatTimelineForPrompt } from './timelineFormat.ts';
+import { playerFacingLocation } from './locationName.ts';
 
 // Re-exports for legacy imports (prefer contentModeRules / imagePromptModifier directly).
 
 export const WORLD_STATE_INTEGRITY_RULES = `CRITICAL RULE: WORLD-STATE INTEGRITY & ENTITY EXISTENCE (HIGHEST PRIORITY)
-* Treat the supplied active game state, factual timeline, and situation packet as authoritative ground truth. Hard facts from sheets/timeline OVERRIDE improvisation.
+* Treat the supplied active game state, factual timeline, WORLD LEDGER, and situation packet as authoritative ground truth. Hard facts from sheets/timeline/ledger OVERRIDE improvisation. Off-screen weekly results come only from the ledger or a VISIT / WEEK TICK block — never from improvisation.
 * Never invent, spawn, or assume the existence of companions, party members, key NPCs, named creatures, or unique locations unless they are explicitly present in that state, the timeline, or this turn's already-established prose.
 * A companion exists only if listed under ACTIVE COMPANIONS. If that list says "none", the player is alone unless the current scene explicitly establishes an NPC's physical presence.
 * A lore entry proves that an NPC exists in the wider world; it does NOT prove that NPC is currently present. Physical presence must be established by the current scene context or active state.
@@ -28,6 +29,10 @@ CRITICAL RULE: INVENTORY, GOLD & ITEM AUTHORITY (HIGHEST PRIORITY)
 * NEVER invent free loot into the player's hands without a justified source AND an <item-gain> tag. Do not spontaneously grant weapons, explosives, or consumables.
 * NEVER spend, offer, bribe, or demand gold amounts higher than the player's current Gold. If a price exceeds their gold, say so and renegotiate.
 * Suggested choices MUST NOT require missing items or unaffordable gold.
+* UNKNOWN ITEMS: A newly spotted material may look valuable or unstable. Do NOT dump crafting recipes, market prices, or "this is good for X" unless the player inspects it or a System description already exists in Inventory.
+* CONTAINERS: Only name storage the Containers list actually has (e.g. Worn Satchel). Never invent a spatial pouch.
+* LOCKED PROGRESSION: Never offer greyed-out, locked, or level-gated System menus/skills as numbered choices. If the player inspects a locked entry, say it is locked and stop — do not make it an action button.
+* UNREVEALED WORLD: Lore-article titles are encyclopedia headings, not the player's current location. Do not name distant hubs, cities, outposts, or NPCs until the player has met them or asked.
 * engineMode rules below are BINDING — do not mix LitRPG system panels into RPG mode, or 5e dice math into LitRPG/RPG modes.`;
 
 const TONE_AND_CHOICE_RULES = `CRITICAL RULE: TONE PACING & CONTEXTUAL CHOICES (HIGHEST PRIORITY)
@@ -40,8 +45,10 @@ const TONE_AND_CHOICE_RULES = `CRITICAL RULE: TONE PACING & CONTEXTUAL CHOICES (
 * Reject mismatched buttons such as spending gold the player lacks, using absent gear, talking to absent NPCs, or dungeon/store actions the player has not approached.
 * Prefer grounded, scene-local options (observe, talk, move, use carried gear, react to the last beat) over random adventure-menu noise.
 * STORY FIRST (MANDATORY): Every turn MUST include at least 2 full sentences of story prose that resolve the player's last action BEFORE any numbered choices or <system-log>. Never reply with choices alone. Never leave observation/scan/listen/practice actions unexplained.
-* COMBAT CLARITY (MANDATORY): If the player takes damage, narrate the enemy's attack in prose in the same turn (who hit them, how). Do not reduce HP only via tags/logs. If you award XP, briefly say why in prose.
-* COMPLETE RESPONSES: Never stop mid-sentence or mid-word. Always finish the current sentence, close any open tags/panels, include choices + <system-log>, and end with "What do you do?". If length is tight, shorten optional flavor — never truncate. Never show raw XML tags like <enemy .../> to the player — tags are hidden state only.`;
+* NEVER write "You commit to the action" or "the result lands in [category]". Narrate what happens.
+* NEVER echo the player's wording back as the story. Resolve it.
+* COMBAT CLARITY (MANDATORY): If combat begins, narrate WHERE the enemy came from (rubble, doorway, behind cover) in the same turn as the <enemy> tag. If the player takes damage, narrate the enemy's attack in prose (who hit them, how). Do not reduce HP only via tags/logs. If you award XP, briefly say why in prose.
+* COMPLETE RESPONSES: Never stop mid-sentence or mid-word. Always finish the current sentence, close any open tags/panels, include 3–4 choices + <system-log>, and end with "What do you do?". If length is tight, shorten optional flavor — never truncate. Never show raw XML tags like <enemy .../> to the player — tags are hidden state only.`;
 
 const BASE_PROMPT = `You are the Game Master (GM) and "The System" for a tactical, high-stakes, narrative-rich RPG built on Fifth Edition Compatible (5e Fantasy) mechanics.
 
@@ -81,7 +88,8 @@ Format notifications, character sheets, and items using clean code blocks with c
 Support survival checks and harvesting.
 
 7. ADVANCED SYSTEM MECHANICS
-- Overexertion & Mana Strain, Faction Clocks, Bestiary, and Resting mechanics.
+- Overexertion & Mana Strain, Bestiary, and Resting mechanics.
+- Living world: off-screen deals, holdings, and rival clocks resolve in the WORLD LEDGER as in-game weeks pass from player turns. Never invent those outcomes.
 
 8. DUNGEON MANIFEST & PRE-GENERATION
 Pre-generate a [DUNGEON MANIFEST: <Dungeon Name>].
@@ -228,7 +236,9 @@ export function buildSystemPrompt(state: GameState, settings: Settings, activeLo
 
 function buildGroundTruthLedger(state: GameState): string {
   const c = state.character;
-  const invList = state.inventory.map(i => `${i.name} x${i.quantity}`).join(', ') || 'None';
+  const invList = state.inventory
+    .map((i) => `${i.name} x${i.quantity}${i.description ? ` — ${i.description}` : ''}`)
+    .join('; ') || 'None';
   const companions = (state.companions ?? [])
     .map(companion => `${companion.name} [${companion.type}; ${companion.role}; assignment: ${companion.assignment || 'none'}]`)
     .join('; ') || 'None';
@@ -252,7 +262,7 @@ function buildGroundTruthLedger(state: GameState): string {
   return `=== GROUND TRUTH CHARACTER & QUEST STATE ===
 HP: ${c.hp}/${c.maxHp} | Mana: ${c.mp}/${c.maxMp} | Gold: ${state.gold ?? 0}
 Level: ${c.level} | XP: ${c.xp}/${c.xpToNext}
-Location: ${state.currentLocation || 'unspecified'}
+Location: ${playerFacingLocation(state)}
 Equipped Gear: ${equippedGear}
 Inventory: ${invList} (${cap.usedSlots}/${cap.totalSlots} slots used)
 Active Companions: ${companions}
@@ -272,6 +282,17 @@ function buildLoreContext(cards: LoreCard[]): string {
 const ACTION_TAG_INSTRUCTIONS = `
 ACTION TAG PROTOCOL (MANDATORY):
 Emit structural XML tags for state changes: <item-gain />, <item-use />, <heal />, <damage />, <lore-card />, <quest-add />, <quest-update />, <quest-complete />.
+
+LIVING WORLD PROTOCOL (MANDATORY):
+The engine ticks in-game time from player turns and writes weekly facts into the WORLD LEDGER. Player speech is an attempt; the tag is the commit. When a recurring deal or standing order is sealed this turn, emit the matching tag. Do not invent off-screen profit, guild progress, or rival moves — narrate ledger / VISIT REPORT facts only.
+<world-deal name="Street Runs" partner="Mira" share="0.2" risk="mixed" runs="3" ethic="steady" />
+<world-holding name="Nightshade Cell" kind="guild" order="profit" ethic="driven" />
+<world-order holding="Nightshade Cell" order="steal" />
+<world-clock name="Iron Jackals" ethic="steady" />
+<world-actor name="Mira" ethic="steady" profession="merchant" level="2" />
+<time-pass days="7" />
+ethic: idle | steady | driven. order: jobs | profit | steal | expand | upgrade | defend. risk: safe | mixed | dangerous.
+share may be 0.2 or 20 (percent). New deals/holdings start next week — do not narrate a first payout this turn unless a VISIT REPORT or WEEK TICK is supplied.
 
 ENEMY ENCOUNTER PROTOCOL (MANDATORY):
 Whenever the player enters combat with an enemy, you MUST emit an <enemy> tag alongside the narrative. This tag establishes the encounter in the game's tracking system.
@@ -424,7 +445,7 @@ ${rails ? `${rails}\n` : ''}
 === TIER 1: GROUND-TRUTH STATE (AUTHORITATIVE) ===
 Name: ${c.name} | Level: ${c.level} | XP: ${c.xp}/${c.xpToNext}
 HP: ${c.hp}/${c.maxHp} | MP: ${c.mp}/${c.maxMp} | SP: ${c.sp}/${c.maxSp} | Gold: ${state.gold ?? 0}
-Location: ${state.currentLocation || 'unspecified'}
+Location: ${playerFacingLocation(state)}
 ${dungeonBlock}
 Encounter: ${state.activeEncounter?.name ?? 'none'}
 Attributes: STR ${c.attributes.STR} DEX ${c.attributes.DEX} CON ${c.attributes.CON} INT ${c.attributes.INT} WIS ${c.attributes.WIS} CHA ${c.attributes.CHA}

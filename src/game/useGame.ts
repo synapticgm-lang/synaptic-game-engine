@@ -36,8 +36,8 @@ import {
 import { resolvePanelBudget } from './panelBudget';
 import { buildVisualConsistencyBlock } from './visualConsistency';
 import { fallbackSuggestionForState, findUnsupportedItemClaims, isSuggestionValidForState } from './suggestionValidation';
-import { isChoiceGroundedInTurn, normalizeStoryCorpus, resolvePipelineChoices, sceneSafeFallbacks } from './choicePipeline';
-import { sanitizeNarrativeMechanics, ensureTurnProse, ensureDamageNarration, ensureXpNarration, stripResidualMechanicTags } from './narrativeSanitize';
+import { isChoiceGroundedInTurn, normalizeStoryCorpus, padChoicesToCount, resolvePipelineChoices, sceneSafeFallbacks } from './choicePipeline';
+import { sanitizeNarrativeMechanics, ensureTurnProse, ensureDamageNarration, ensureEncounterNarration, ensureXpNarration, stripResidualMechanicTags } from './narrativeSanitize';
 import { runWarden, sanitizeExtractedCharacterUpdates } from './warden';
 import { applyStructuralEvents } from './structuralEvents';
 import { collectTurnTimelineFacts, mergeTimeline } from './timeline';
@@ -89,6 +89,15 @@ import {
 } from '@/services/telemetryService';
 import type { Session } from '@supabase/supabase-js';
 import { evaluateRoll, simulateMerchantTurn } from './gameEngine';
+import {
+  applyWorldEvents,
+  daysForPlayerAction,
+  formatTickForGm,
+  normalizeWorldLedger,
+  reportsForVisit,
+  tickWorld,
+  emptyWorldLedger,
+} from './worldSim';
 
 export const SETTINGS_EVENT_NAME = 'tactical-litrpg-settings-update';
 const HABIT_STORAGE_KEY = 'tactical-litrpg-player-habits';
@@ -1187,20 +1196,44 @@ export function useGame() {
       // <damage> tags (and be narrated). Silent -2 on every fail made HP drop "for no reason".
       let engineHpDelta = 0;
 
-      let hiddenSimUpdate = '';
-      if (liveCurrent.worldLedger) {
-        const simResult = simulateMerchantTurn(liveCurrent.worldLedger.caravans);
-        liveCurrent.worldLedger.caravans = simResult.updatedCaravans;
-        for (const ev of simResult.newEvents) {
-          liveCurrent.worldLedger.pendingHiddenEvents.push(ev);
-        }
-      }
+      const intentForMandate =
+        grounded.intent.kind !== 'other'
+          ? grounded.intent
+          : parsePlayerIntent(sanitizedInput, liveCurrent);
 
-      if (liveCurrent.worldLedger && liveCurrent.worldLedger.pendingHiddenEvents.length > 0) {
-        const revealedEvent = liveCurrent.worldLedger.pendingHiddenEvents.shift();
-        if (revealedEvent) {
-          hiddenSimUpdate = `\n[DISCOVERED BACKGROUND EVENT]: ${revealedEvent}`;
-        }
+      let worldLedger = normalizeWorldLedger(liveCurrent.worldLedger);
+      const preTick = tickWorld(
+        worldLedger,
+        daysForPlayerAction(sanitizedInput, intentForMandate),
+        liveCurrent.seed,
+        liveCurrent.character.level,
+      );
+      worldLedger = preTick.ledger;
+      const caravanSim = simulateMerchantTurn(worldLedger.caravans);
+      worldLedger = {
+        ...worldLedger,
+        caravans: caravanSim.updatedCaravans,
+        pendingHiddenEvents: [...worldLedger.pendingHiddenEvents, ...caravanSim.newEvents],
+      };
+      const visitReports = reportsForVisit(
+        worldLedger,
+        sanitizedInput,
+        liveCurrent.currentLocation,
+      );
+      let hiddenSimUpdate = formatTickForGm(preTick, visitReports);
+      if (worldLedger.pendingHiddenEvents.length > 0) {
+        const [revealedEvent, ...restEvents] = worldLedger.pendingHiddenEvents;
+        worldLedger = { ...worldLedger, pendingHiddenEvents: restEvents };
+        hiddenSimUpdate = `${hiddenSimUpdate}\n[DISCOVERED BACKGROUND EVENT]: ${revealedEvent}`;
+      }
+      liveCurrent.worldLedger = worldLedger;
+      if (preTick.goldPaid > 0) {
+        liveCurrent.gold = Math.max(0, (liveCurrent.gold ?? 0) + preTick.goldPaid);
+      }
+      let extraWeekGold = 0;
+      const worldNotes: string[] = [];
+      if (preTick.weeksResolved > 0 && preTick.goldPaid > 0) {
+        worldNotes.push(`Weekly cut: +${preTick.goldPaid}g`);
       }
 
       const unsupportedItems = findUnsupportedItemClaims(sanitizedInput, liveCurrent);
@@ -1243,10 +1276,6 @@ In <system-log>, only emit LitRPG/RPG progression lines (XP, loot, HP change as 
         liveCurrent.quests = revealedQuests;
         stateRef.current = { ...liveCurrent };
       }
-      const intentForMandate =
-        grounded.intent.kind !== 'other'
-          ? grounded.intent
-          : parsePlayerIntent(sanitizedInput, liveCurrent);
       const turnMandate = buildTurnMandate(sanitizedInput, intentForMandate, liveCurrent);
       const gmPlayerPayload = buildResolutionUserPayload({
         mandateBlock: turnMandate.block,
@@ -1350,6 +1379,23 @@ In <system-log>, only emit LitRPG/RPG progression lines (XP, loot, HP change as 
         : parsePlayerIntent(sanitizedInput, liveCurrent);
       const warden = runWarden(liveCurrent, rawEvents, result.text, sanitizedInput, intent);
       const events = warden.events;
+      const appliedWorld = applyWorldEvents(worldLedger, events, worldLedger.clock.week);
+      worldLedger = appliedWorld.ledger;
+      worldNotes.push(...appliedWorld.notes);
+      if (appliedWorld.extraDays > 0) {
+        const postTick = tickWorld(
+          worldLedger,
+          appliedWorld.extraDays,
+          liveCurrent.seed,
+          liveCurrent.character.level,
+        );
+        worldLedger = postTick.ledger;
+        extraWeekGold += postTick.goldPaid;
+        if (postTick.goldPaid > 0) {
+          worldNotes.push(`Time-pass cut: +${postTick.goldPaid}g`);
+        }
+        worldNotes.push(...postTick.weekSummaries.slice(0, 6));
+      }
       const milestoneReq = eventsToMilestone(events);
       const lootVideoReq = eventsToLootVideo(events);
       const visualUpdate = eventsToVisualUpdate(events);
@@ -1447,10 +1493,14 @@ In <system-log>, only emit LitRPG/RPG progression lines (XP, loot, HP change as 
       const groundedAfterResolve = focusFiltered.filter((choice) =>
         isChoiceGroundedInTurn(choice, normalizeStoryCorpus(cleanText), suggestionState, activeLoreCards)
       );
-      const finalChoices =
+      const finalChoices = padChoicesToCount(
         groundedAfterResolve.length > 0
-          ? groundedAfterResolve.slice(0, 4)
-          : sceneSafeFallbacks(suggestionState, normalizeStoryCorpus(cleanText));
+          ? groundedAfterResolve
+          : sceneSafeFallbacks(suggestionState, normalizeStoryCorpus(cleanText)),
+        suggestionState,
+        normalizeStoryCorpus(cleanText),
+        3
+      );
       if (pipelineChoices.regenerated || pipelineChoices.rejectedCount > 0) {
         debugLogger.record('STATE_UPDATE', 'Choice pipeline enforced turn grounding', {
           regenerated: pipelineChoices.regenerated,
@@ -1585,11 +1635,20 @@ In <system-log>, only emit LitRPG/RPG progression lines (XP, loot, HP change as 
           appear?.enemyName ?? liveCurrent.activeEncounter?.name
         );
       }
+      const appearEvent = events.find((e) => e.type === 'enemy-appear' && e.enemyName);
+      if (appearEvent?.enemyName) {
+        cleanText = ensureEncounterNarration(
+          cleanText,
+          appearEvent.enemyName,
+          liveCurrent.currentLocation || liveCurrent.locationSheet?.name || 'nearby cover'
+        );
+      }
       const mergedSystemLog = Array.from(
         new Set([
           ...(gmEntry.systemLog ?? []),
           ...warden.systemLogExtra,
           ...structural.notes.filter((n) => /blocked|failed|full/i.test(n)),
+          ...worldNotes,
         ])
       );
       cleanText = ensureXpNarration(cleanText, mergedSystemLog);
@@ -1715,6 +1774,8 @@ In <system-log>, only emit LitRPG/RPG progression lines (XP, loot, HP change as 
         turn: nextTurn,
         pendingImagePrompt: result.imagePrompt,
         choices: finalChoices,
+        gold: Math.max(0, (workingState.gold ?? liveCurrent.gold ?? 0) + extraWeekGold),
+        worldLedger,
         ...(turnFrame ? { turnFrameTheme: turnFrame } : {}),
       };
 
@@ -1994,7 +2055,7 @@ In <system-log>, only emit LitRPG/RPG progression lines (XP, loot, HP change as 
       currentCoordinates: { q: 0, r: 0, tier: 2, z: 0 },
       choices: initialChoices,
       log: [{ id: 'intro-1', turn: 0, role: 'gm', content: cleanIntroContent, timestamp: Date.now() }],
-      worldLedger: { caravans: [], pendingHiddenEvents: [] },
+      worldLedger: emptyWorldLedger(),
     };
     setState(newState);
     stateRef.current = newState;

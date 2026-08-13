@@ -127,11 +127,12 @@ export function applyStructuralEvents(
     }
   }
 
-  // Infer location from lore-card location type if still unspecified
+  // Infer location from a newly revealed place — never from encyclopedia headings.
   if (!next.currentLocation) {
     const locCard = events.find((ev) => ev.type === 'lore-card' && ev.cardType === 'location' && ev.name);
-    if (locCard?.name) {
-      next = { ...next, currentLocation: locCard.name };
+    const name = locCard?.name?.trim() ?? '';
+    if (name && !/&/.test(name) && !/\bzones?\b/i.test(name)) {
+      next = { ...next, currentLocation: name };
     }
   }
 

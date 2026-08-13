@@ -94,9 +94,10 @@ function renderRarityTags(text: string, lorebook: LoreCard[]): React.ReactNode {
 }
 
 function InlineTextWithBadges({ text, lorebook }: { text: string; lorebook: LoreCard[] }) {
-  if (lorebook.length === 0) return <span>{text}</span>;
+  const visible = lorebook.filter((c) => c.revealed === true || (c.lastSeenTurn ?? 0) > 0);
+  if (visible.length === 0) return <span>{text}</span>;
 
-  const sortedByLength = [...lorebook].sort((a, b) => b.name.length - a.name.length);
+  const sortedByLength = [...visible].sort((a, b) => b.name.length - a.name.length);
   type Segment = { text: string; card?: LoreCard };
   let segments: Segment[] = [{ text }];
 

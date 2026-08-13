@@ -194,8 +194,74 @@ export interface TradeCaravan {
   status: 'active' | 'returning' | 'completed' | 'ambushed';
 }
 
+export type WorkEthic = 'idle' | 'steady' | 'driven';
+export type DealRisk = 'safe' | 'mixed' | 'dangerous';
+export type HoldingKind = 'guild' | 'town' | 'shop' | 'camp';
+export type HoldingOrder = 'jobs' | 'profit' | 'steal' | 'expand' | 'upgrade' | 'defend';
+
+/** In-game calendar. Advances on player turns — not while the app is closed. */
+export interface WorldClock {
+  day: number;
+  week: number;
+}
+
+export interface WorldDeal {
+  id: string;
+  name: string;
+  partnerName: string;
+  playerShare: number;
+  risk: DealRisk;
+  runsPerWeek: number;
+  workEthic: WorkEthic;
+  active: boolean;
+  goldPaid: number;
+  lastResolvedWeek: number;
+  lastWeekSummary?: string;
+}
+
+export interface WorldHolding {
+  id: string;
+  name: string;
+  kind: HoldingKind;
+  order: HoldingOrder;
+  workEthic: WorkEthic;
+  level: number;
+  progress: number;
+  treasury: number;
+  heat: number;
+  lastResolvedWeek: number;
+  lastSeenTurn: number;
+  lastWeekSummary?: string;
+}
+
+export interface WorldHostile {
+  id: string;
+  name: string;
+  workEthic: WorkEthic;
+  level: number;
+  progress: number;
+  lastResolvedWeek: number;
+  lastWeekSummary?: string;
+}
+
+export interface WorldActor {
+  id: string;
+  name: string;
+  workEthic: WorkEthic;
+  level: number;
+  profession?: string;
+  professionLevel: number;
+  lastResolvedWeek: number;
+  lastSeenTurn: number;
+}
+
 export interface WorldLedger {
+  clock: WorldClock;
   caravans: TradeCaravan[];
+  deals: WorldDeal[];
+  holdings: WorldHolding[];
+  hostiles: WorldHostile[];
+  actors: WorldActor[];
   pendingHiddenEvents: string[];
 }
 
@@ -351,6 +417,8 @@ export interface LoreCard {
   summary: string;
   visualAnchor?: string;
   lastSeenTurn: number;
+  /** When false/undefined, this is GM-only background — do not treat the title as a place the player has visited. */
+  revealed?: boolean;
 }
 
 /** Append-only factual chronicle — no narrative fluff. */
@@ -364,6 +432,7 @@ export type TimelineFactKind =
   | 'npc'
   | 'dungeon'
   | 'discovery'
+  | 'world'
   | 'other';
 
 export interface TimelineFact {

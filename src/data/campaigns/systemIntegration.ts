@@ -213,6 +213,8 @@ export const systemIntegration: CampaignBible = {
     },
   ],
 
+  startingLocation: 'A city street, hours after Registration',
+
   starterItems: [
     {
       id: 'si-item-1',

@@ -1,5 +1,6 @@
-import { X, ScrollText, Landmark, Users } from 'lucide-react';
+import { X, ScrollText, Landmark, Users, Globe2 } from 'lucide-react';
 import type { GameState, EngineMode } from '@/game/types';
+import { clockLabel, normalizeWorldLedger } from '@/game/worldSim';
 
 interface Props {
   state: GameState;
@@ -19,12 +20,54 @@ export function LeftDrawer({ state, open, onClose }: Props) {
         </div>
 
         <div className="space-y-5 p-4">
+          <WorldSection state={state} />
           <SquadSection state={state} />
           <QuestsSection state={state} />
           <ShrinesSection state={state} />
         </div>
       </aside>
     </>
+  );
+}
+
+function WorldSection({ state }: { state: GameState }) {
+  const ledger = normalizeWorldLedger(state.worldLedger);
+  const deals = ledger.deals.filter((d) => d.active);
+  return (
+    <section>
+      <h3 className="mb-2 flex items-center gap-2 font-serif text-sm uppercase tracking-wider text-crimson-400">
+        <Globe2 size={14} /> World
+      </h3>
+      <p className="mb-2 text-xs text-slate-400">{clockLabel(ledger.clock)}</p>
+      {deals.length === 0 && ledger.holdings.length === 0 && ledger.hostiles.length === 0 ? (
+        <p className="text-xs text-slate-500">No off-screen deals or holdings yet.</p>
+      ) : (
+        <ul className="space-y-1.5">
+          {deals.map((d) => (
+            <li key={d.id} className="rounded-md bg-slate-900 px-2.5 py-1.5 text-xs">
+              <div className="font-medium text-slate-200">{d.name}</div>
+              <div className="text-slate-500">
+                {Math.round(d.playerShare * 100)}% cut · {d.risk} · {d.goldPaid}g paid
+              </div>
+            </li>
+          ))}
+          {ledger.holdings.map((h) => (
+            <li key={h.id} className="rounded-md bg-slate-900 px-2.5 py-1.5 text-xs">
+              <div className="font-medium text-slate-200">{h.name}</div>
+              <div className="text-slate-500">
+                {h.kind} · {h.order} · rank {h.level} · {h.treasury}g
+              </div>
+            </li>
+          ))}
+          {ledger.hostiles.map((h) => (
+            <li key={h.id} className="rounded-md bg-slate-900 px-2.5 py-1.5 text-xs">
+              <div className="font-medium text-slate-200">{h.name}</div>
+              <div className="text-slate-500">pressure {h.progress}/100 · rank {h.level}</div>
+            </li>
+          ))}
+        </ul>
+      )}
+    </section>
   );
 }
 

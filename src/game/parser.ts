@@ -19,11 +19,24 @@ export interface GameEvent {
     | 'encounter-end'
     | 'milestone-event'
     | 'loot-video'
-    | 'visual-update';
+    | 'visual-update'
+    | 'world-deal'
+    | 'world-holding'
+    | 'world-order'
+    | 'world-clock'
+    | 'world-actor'
+    | 'time-pass';
   id?: string;
   name?: string;
   qty?: number;
   amount?: number;
+  partner?: string;
+  share?: number;
+  risk?: string;
+  runs?: number;
+  ethic?: string;
+  order?: string;
+  holdingKind?: string;
   cardType?: LoreCardType;
   keywords?: string[];
   summary?: string;
@@ -102,6 +115,13 @@ export function stripChoiceList(text: string): string {
   if (remain.length > 0 && choiceCount >= Math.ceil(remain.length * 0.5)) {
     result = remain.filter((l) => !CHOICE_LINE_REGEX.test(l)).join('\n').trim();
   }
+
+  // GM sometimes jams "1. … 2. … 3. What do you do?" into the last paragraph.
+  const inlineIdx = result.search(/\s1[.)]\s+\S[\s\S]*\s2[.)]/);
+  if (inlineIdx >= 0 && inlineIdx > result.length * 0.25) {
+    result = result.slice(0, inlineIdx).trim();
+  }
+  result = result.replace(/\s+\d+[.)]\s+what do you do\??\s*$/i, '').trim();
   return result;
 }
 
@@ -139,8 +159,30 @@ export function extractChoiceLines(text: string): string[] {
         .replace(/<[^>]+>/g, '')
         .trim();
 
-      if (clean.length > 2 && clean.length < 160) {
+      if (
+        clean.length > 2
+        && clean.length < 160
+        && !/^what do you do\??$/i.test(clean)
+      ) {
         choices.push(clean);
+      }
+    }
+  }
+
+  if (choices.length < 2) {
+    const inline = targetText.match(/\d+[.)]\s+([^\n]+?)(?=\s+\d+[.)]|\s+what do you do|$)/gi) ?? [];
+    for (const raw of inline) {
+      const cleaned = raw
+        .replace(/^\s*\d+[.)]\s+/, '')
+        .replace(/<[^>]+>/g, '')
+        .replace(/\*\*(.*?)\*\*/g, '$1')
+        .trim();
+      if (
+        cleaned.length > 2
+        && cleaned.length < 160
+        && !/^what do you do\??$/i.test(cleaned)
+      ) {
+        choices.push(cleaned);
       }
     }
   }
@@ -390,6 +432,103 @@ const TAG_PATTERNS: Array<{ type: GameEvent['type']; re: RegExp; parse: (m: RegE
       formChange: m[2] === 'true',
     }),
   },
+  {
+    type: 'world-deal',
+    re: /<world-deal\b([^>]*)\/?>/gi,
+    parse: (m) => {
+      const attrs = Object.fromEntries(
+        [...String(m[1] ?? '').matchAll(/(\w+)="([^"]*)"/g)].map((x) => [x[1].toLowerCase(), x[2]])
+      );
+      const rawShare = parseFloat(attrs.share ?? '0.2');
+      return {
+        type: 'world-deal' as const,
+        id: attrs.id,
+        name: attrs.name || '',
+        partner: attrs.partner || attrs.name || '',
+        share: Number.isFinite(rawShare) ? rawShare : 0.2,
+        risk: attrs.risk,
+        runs: parseInt(attrs.runs ?? '2', 10) || 2,
+        ethic: attrs.ethic,
+      };
+    },
+  },
+  {
+    type: 'world-holding',
+    re: /<world-holding\b([^>]*)\/?>/gi,
+    parse: (m) => {
+      const attrs = Object.fromEntries(
+        [...String(m[1] ?? '').matchAll(/(\w+)="([^"]*)"/g)].map((x) => [x[1].toLowerCase(), x[2]])
+      );
+      return {
+        type: 'world-holding' as const,
+        id: attrs.id,
+        name: attrs.name || '',
+        holdingKind: attrs.kind,
+        order: attrs.order,
+        ethic: attrs.ethic,
+      };
+    },
+  },
+  {
+    type: 'world-order',
+    re: /<world-order\b([^>]*)\/?>/gi,
+    parse: (m) => {
+      const attrs = Object.fromEntries(
+        [...String(m[1] ?? '').matchAll(/(\w+)="([^"]*)"/g)].map((x) => [x[1].toLowerCase(), x[2]])
+      );
+      return {
+        type: 'world-order' as const,
+        id: attrs.id,
+        name: attrs.holding || attrs.name || '',
+        order: attrs.order,
+      };
+    },
+  },
+  {
+    type: 'world-clock',
+    re: /<world-clock\b([^>]*)\/?>/gi,
+    parse: (m) => {
+      const attrs = Object.fromEntries(
+        [...String(m[1] ?? '').matchAll(/(\w+)="([^"]*)"/g)].map((x) => [x[1].toLowerCase(), x[2]])
+      );
+      return {
+        type: 'world-clock' as const,
+        id: attrs.id,
+        name: attrs.name || '',
+        ethic: attrs.ethic,
+      };
+    },
+  },
+  {
+    type: 'world-actor',
+    re: /<world-actor\b([^>]*)\/?>/gi,
+    parse: (m) => {
+      const attrs = Object.fromEntries(
+        [...String(m[1] ?? '').matchAll(/(\w+)="([^"]*)"/g)].map((x) => [x[1].toLowerCase(), x[2]])
+      );
+      return {
+        type: 'world-actor' as const,
+        id: attrs.id,
+        name: attrs.name || '',
+        ethic: attrs.ethic,
+        summary: attrs.profession || attrs.summary,
+        enemyLevel: parseInt(attrs.level ?? '1', 10) || 1,
+      };
+    },
+  },
+  {
+    type: 'time-pass',
+    re: /<time-pass\b([^>]*)\/?>/gi,
+    parse: (m) => {
+      const attrs = Object.fromEntries(
+        [...String(m[1] ?? '').matchAll(/(\w+)="([^"]*)"/g)].map((x) => [x[1].toLowerCase(), x[2]])
+      );
+      return {
+        type: 'time-pass' as const,
+        amount: parseFloat(attrs.days ?? attrs.amount ?? '0') || 0,
+      };
+    },
+  },
 ];
 
 export function parseActionTags(text: string): GameEvent[] {
@@ -426,6 +565,12 @@ export function stripActionTags(text: string): string {
     .replace(/<milestone-event\b[^>]*\/?>/gi, '')
     .replace(/<loot-video\b[^>]*\/?>/gi, '')
     .replace(/<visual-update\b[^>]*\/?>/gi, '')
+    .replace(/<world-deal\b[^>]*\/?>/gi, '')
+    .replace(/<world-holding\b[^>]*\/?>/gi, '')
+    .replace(/<world-order\b[^>]*\/?>/gi, '')
+    .replace(/<world-clock\b[^>]*\/?>/gi, '')
+    .replace(/<world-actor\b[^>]*\/?>/gi, '')
+    .replace(/<time-pass\b[^>]*\/?>/gi, '')
     .replace(/<system-log>[\s\S]*?<\/system-log>/gi, '')
     .replace(/<panel>[\s\S]*?<\/panel>/gi, '')
     .replace(/<image-prompt>[\s\S]*?<\/image-prompt>/gi, '')
@@ -488,10 +633,18 @@ export function eventsToEncounterUpdate(events: GameEvent[], current: ActiveEnco
   return encounter;
 }
 
+export function isLoreRevealed(card: LoreCard): boolean {
+  return card.revealed === true || (card.lastSeenTurn ?? 0) > 0;
+}
+
 export function matchLoreCards(input: string, recentNarrative: string, lorebook: LoreCard[], limit = 7): LoreCard[] {
   if (lorebook.length === 0) return [];
   const haystack = `${input} ${recentNarrative}`.toLowerCase();
-  const scored = lorebook
+  // Unrevealed encyclopedia cards stay GM-background. Matching their titles into the
+  // prompt is how "Dungeon Zones & Dead Zones" gets treated as the current place.
+  const visible = lorebook.filter(isLoreRevealed);
+  if (visible.length === 0) return [];
+  const scored = visible
     .map((card) => {
       let score = 0;
       for (const kw of card.keywords) {
@@ -518,6 +671,7 @@ export function eventsToLoreCards(events: GameEvent[], currentTurn: number): Lor
       summary: e.summary ?? '',
       visualAnchor: e.visualAnchor, // Maps parsed anchor to the state
       lastSeenTurn: currentTurn,
+      revealed: true,
     }));
 }
 

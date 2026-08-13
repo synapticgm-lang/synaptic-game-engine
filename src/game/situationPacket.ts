@@ -1,5 +1,6 @@
-import type { GameState, SituationPacket } from './types';
+import type { GameState, SituationPacket, WorldLedger } from './types';
 import { formatTimelineForPrompt } from './timelineFormat';
+import { playerFacingLocation } from './locationName';
 
 /**
  * Rebuild the live Situation packet from structured state.
@@ -39,7 +40,7 @@ export function buildSituationPacket(state: GameState): SituationPacket {
     : undefined;
 
   return {
-    location: state.currentLocation || (dungeon ? dungeon.dungeonName : 'unspecified'),
+    location: playerFacingLocation(state) || (dungeon ? dungeon.dungeonName : 'unspecified'),
     coordinates: coords,
     encounter: state.activeEncounter
       ? `${state.activeEncounter.name} L${state.activeEncounter.level} HP ${state.activeEncounter.hp}/${state.activeEncounter.maxHp}`
@@ -68,7 +69,48 @@ ${npcBlock || '(none)'}
 Recent facts:
 ${s.recentFacts.length ? s.recentFacts.join('\n') : '(none)'}
 RAILS: Hard facts above + factual timeline OVERRIDE improvisation. Do not invent named threats, loot, NPCs, or interactables absent from this packet / location sheet / tags.
-PLAYER ACTION FIDELITY: Resolve the player's last stated action first. Never pivot the scene to a quest location, dungeon, store, or marker unless the player mentioned it or is already there.`;
+PLAYER ACTION FIDELITY: Resolve the player's last stated action first. Never pivot the scene to a quest location, dungeon, store, or marker unless the player mentioned it or is already there.
+Do not write "You commit to the action" or "the result lands in [lore title]". Narrate what actually happens.
+Lore-article titles are not the current location. Do not name unvisited hubs, cities, or NPCs.
+${formatWorldLedgerBlock(state.worldLedger)}`;
+}
+
+function formatWorldLedgerBlock(raw?: WorldLedger): string {
+  const clock = raw?.clock ?? { day: 0, week: 0 };
+  const deals = raw?.deals?.filter((d) => d.active) ?? [];
+  const holdings = raw?.holdings ?? [];
+  const hostiles = raw?.hostiles ?? [];
+  const actors = raw?.actors ?? [];
+  const hasWork = deals.length + holdings.length + hostiles.length + actors.length > 0;
+  const lines = [
+    `In-game calendar: day ${Number(clock.day || 0).toFixed(1)}, week ${clock.week || 0}. Time advances as the player takes turns — not while the app is closed.`,
+  ];
+  if (!hasWork) {
+    lines.push('No off-screen deals, holdings, or rival clocks yet.');
+    return `WORLD LEDGER (ENGINE AUTHORITY — do not invent extra off-screen results):\n${lines.join('\n')}`;
+  }
+  for (const d of deals) {
+    lines.push(
+      `DEAL ${d.name} / ${d.partnerName}: ${Math.round(d.playerShare * 100)}% of ${d.runsPerWeek}/wk ${d.risk} runs (${d.workEthic}). Paid ${d.goldPaid}g. ${d.lastWeekSummary ?? ''}`
+    );
+  }
+  for (const h of holdings) {
+    lines.push(
+      `HOLDING ${h.name} [${h.kind}] order=${h.order} ethic=${h.workEthic} rank=${h.level} progress=${h.progress} treasury=${h.treasury}g heat=${h.heat}. ${h.lastWeekSummary ?? ''}`
+    );
+  }
+  for (const h of hostiles) {
+    lines.push(`RIVAL ${h.name}: pressure ${h.progress}/100 rank ${h.level} (${h.workEthic}).`);
+  }
+  for (const a of actors) {
+    lines.push(
+      `ACTOR ${a.name}: lvl ${a.level}${a.profession ? ` ${a.profession} ${a.professionLevel}` : ''} (${a.workEthic}).`
+    );
+  }
+  lines.push(
+    'Narrate a deal/holding/actor report ONLY if the player is there, asks, or a VISIT REPORT is supplied. Never invent weekly outcomes.'
+  );
+  return `WORLD LEDGER (ENGINE AUTHORITY — do not invent extra off-screen results):\n${lines.join('\n')}`;
 }
 
 export function formatCampaignRails(state: GameState): string {

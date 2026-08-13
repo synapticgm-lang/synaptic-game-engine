@@ -722,6 +722,9 @@ export function SettingsModal({ settings, storyName, engineMode, gameState, onSa
           {/* Save File Management */}
           {(onExport || onImport) && (
             <Section icon={<Save size={16} />} title="Save File Management" visible={activeTab === 'general'}>
+              <p className="mb-2 text-xs text-slate-500">
+                Import and export live here — same as most games putting Load/Save in the pause or title menu, not on the action bar.
+              </p>
               <div className="flex gap-2">
                 {onExport && (
                   <button onClick={onExport} className="flex flex-1 items-center justify-center gap-2 rounded-lg border border-slate-700 bg-slate-800/40 px-3 py-2 text-sm text-slate-200 hover:bg-slate-800/70 transition-colors">

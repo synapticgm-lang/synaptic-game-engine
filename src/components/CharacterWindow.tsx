@@ -9,14 +9,17 @@ import {
   X, ChevronLeft, ChevronRight,
   HardHat, Shield, Shirt, Sword, Footprints,
   Sparkles, Hammer, Cat, Trophy, ScrollText, Camera, TrendingUp,
-  Heart, Droplet, Zap, Users,
+  Heart, Droplet, Zap, Users, Backpack,
 } from 'lucide-react';
+
+type BottomTab = 'inventory' | 'spells' | 'professions' | 'pets' | 'titles' | 'dnd' | 'sheet' | 'portrait' | 'progression' | 'combat';
 
 interface Props {
   isOpen: boolean;
   onClose: () => void;
   state: GameState;
   settings: Settings;
+  initialTab?: BottomTab;
 }
 
 type EquipSlotKey = 'Head' | 'Shoulders' | 'Chest' | 'Main Hand' | 'Off Hand' | 'Legs' | 'Feet';
@@ -48,8 +51,6 @@ const RARITY_BG: Record<Rarity, string> = {
   Epic: 'bg-purple-950/40',
   Legendary: 'bg-amber-950/40',
 };
-
-type BottomTab = 'spells' | 'professions' | 'pets' | 'titles' | 'dnd' | 'sheet' | 'import' | 'progression' | 'combat';
 
 function getEquippedItem(state: GameState, slot: EquipSlotKey): Item | undefined {
   return state.inventory.find((it) => it.equipped && it.slot === slot);
@@ -222,9 +223,52 @@ function DndSheet({ state }: { state: GameState }) {
   );
 }
 
-export function CharacterWindow({ isOpen, onClose, state, settings }: Props) {
+function InventoryPanel({ state }: { state: GameState }) {
+  const bags = state.containers ?? [];
+  const items = state.inventory ?? [];
+  return (
+    <div className="space-y-3 text-left">
+      {bags.length > 0 && (
+        <div>
+          <h4 className="mb-1 text-[10px] font-medium uppercase tracking-wider text-slate-500">Containers</h4>
+          <ul className="space-y-1">
+            {bags.map((bag) => (
+              <li key={bag.id} className="rounded border border-slate-700 bg-slate-900/60 px-2 py-1.5 text-xs text-slate-200">
+                <span className="font-medium">{bag.name}</span>
+                <span className="ml-2 text-slate-500">{bag.used}/{bag.capacity} slots · {bag.kind ?? 'physical'}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+      <div>
+        <h4 className="mb-1 text-[10px] font-medium uppercase tracking-wider text-slate-500">Carried</h4>
+        {items.length === 0 ? (
+          <p className="text-xs italic text-slate-500">Nothing carried.</p>
+        ) : (
+          <ul className="space-y-1.5">
+            {items.map((it) => (
+              <li key={it.id} className="rounded border border-slate-700 bg-slate-900/60 px-2 py-1.5">
+                <div className="flex items-baseline justify-between gap-2">
+                  <span className="text-xs font-medium text-slate-100">{it.name}</span>
+                  <span className="shrink-0 text-[10px] text-slate-500">
+                    {it.equipped ? `Equipped${it.slot ? ` · ${it.slot}` : ''}` : `x${it.quantity}`}
+                  </span>
+                </div>
+                {it.description && <p className="mt-0.5 text-[11px] text-slate-400">{it.description}</p>}
+                {it.provenance && <p className="text-[10px] text-slate-600">{it.provenance}</p>}
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
+    </div>
+  );
+}
+
+export function CharacterWindow({ isOpen, onClose, state, settings, initialTab }: Props) {
   const [sidePanelOpen, setSidePanelOpen] = useState(true);
-  const [activeTab, setActiveTab] = useState<BottomTab>('spells');
+  const [activeTab, setActiveTab] = useState<BottomTab>(initialTab ?? 'inventory');
 
   const equipped = useMemo(() => {
     const map = {} as Record<EquipSlotKey, Item | undefined>;
@@ -238,14 +282,15 @@ export function CharacterWindow({ isOpen, onClose, state, settings }: Props) {
 
   const c = state.character;
   const tabs: { key: BottomTab; label: string; icon: React.ReactNode }[] = [
+    { key: 'inventory', label: 'Inventory', icon: <Backpack size={14} /> },
+    { key: 'sheet', label: 'Sheet', icon: <ScrollText size={14} /> },
+    { key: 'progression', label: 'Progress', icon: <TrendingUp size={14} /> },
+    { key: 'combat', label: 'Combat', icon: <Sword size={14} /> },
     { key: 'spells', label: 'Spells', icon: <Sparkles size={14} /> },
     { key: 'professions', label: 'Professions', icon: <Hammer size={14} /> },
     { key: 'pets', label: 'Pets', icon: <Cat size={14} /> },
     { key: 'titles', label: 'Titles', icon: <Trophy size={14} /> },
-    { key: 'sheet', label: 'Sheet', icon: <ScrollText size={14} /> },
-    { key: 'import', label: 'Import', icon: <Camera size={14} /> },
-    { key: 'progression', label: 'Progress', icon: <TrendingUp size={14} /> },
-    { key: 'combat', label: 'Combat', icon: <Sword size={14} /> },
+    { key: 'portrait', label: 'Portrait', icon: <Camera size={14} /> },
   ];
 
   if (settings.dndMode) {
@@ -314,14 +359,15 @@ export function CharacterWindow({ isOpen, onClose, state, settings }: Props) {
             )}
 
             {/* Tab Content */}
-            <div className="w-full flex-1 min-h-[120px] rounded-md bg-slate-800/30 border border-slate-700 p-3">
+            <div className="w-full flex-1 min-h-[120px] rounded-md bg-slate-800/30 border border-slate-700 p-3 overflow-y-auto">
+              {activeTab === 'inventory' && <InventoryPanel state={state} />}
               {activeTab === 'spells' && <EmptyTabContent message="No spells learned yet." />}
               {activeTab === 'professions' && <EmptyTabContent message="No professions acquired." />}
               {activeTab === 'pets' && <EmptyTabContent message="No pets or summons bonded." />}
               {activeTab === 'titles' && <EmptyTabContent message="No titles or achievements earned." />}
               {activeTab === 'dnd' && <DndSheet state={state} />}
               {activeTab === 'sheet' && <CharacterSheetView state={state} />}
-              {activeTab === 'import' && <UploadImport />}
+              {activeTab === 'portrait' && <UploadImport />}
               {activeTab === 'progression' && <CharacterProgression state={state} />}
               {activeTab === 'combat' && <CombatEncounter activeDungeon={state.activeDungeon} currentCoordinates={state.currentCoordinates} />}
             </div>
@@ -334,20 +380,19 @@ export function CharacterWindow({ isOpen, onClose, state, settings }: Props) {
         </div>
 
         {/* Bottom Navigation */}
-        <div className="flex border-t border-slate-800 bg-slate-950/50">
+        <div className="flex overflow-x-auto border-t border-slate-800 bg-slate-950/50">
           {tabs.map((tab) => (
             <button
               key={tab.key}
               onClick={() => setActiveTab(tab.key)}
-              className={`flex-1 flex flex-col items-center gap-1 py-2.5 text-xs transition-colors ${
+              className={`flex min-w-[3.25rem] flex-1 flex-col items-center gap-1 px-1 py-2.5 text-xs transition-colors ${
                 activeTab === tab.key
                   ? 'text-crimson-400 bg-slate-800/50 border-t-2 border-crimson-500'
                   : 'text-slate-500 hover:text-slate-300 hover:bg-slate-800/30'
               }`}
             >
               {tab.icon}
-              <span className="hidden sm:inline">{tab.label}</span>
-              <span className="sm:hidden text-[10px]">{tab.label.split(' ')[0]}</span>
+              <span className="text-[9px] sm:text-xs">{tab.label}</span>
             </button>
           ))}
         </div>

@@ -103,7 +103,7 @@ const MEANINGFUL_PROSE_MIN = 90;
 /** Strip residual mechanic XML the model left in player-facing prose. */
 export function stripResidualMechanicTags(text: string): string {
   return text
-    .replace(/<\/?(?:enemy|damage|heal|item-gain|item-use|system-log|quest-[\w-]+|encounter-end|milestone-event|loot-video|visual-update|turn-frame|dungeon-[\w-]+|map-floor-change|hex-move|lore-card)[^>]*>/gi, '')
+    .replace(/<\/?(?:enemy|damage|heal|item-gain|item-use|system-log|quest-[\w-]+|encounter-end|milestone-event|loot-video|visual-update|turn-frame|dungeon-[\w-]+|map-floor-change|hex-move|lore-card|world-deal|world-holding|world-order|world-clock|world-actor|time-pass)[^>]*>/gi, '')
     .replace(/\n{3,}/g, '\n\n')
     .trim();
 }
@@ -150,6 +150,27 @@ export function ensureDamageNarration(
   if (amount <= 0 || narrativeMentionsPlayerHarm(cleanText)) return cleanText;
   const foe = enemyName?.trim() || 'your foe';
   const line = `Before you can fully recover your footing, ${foe} lashes out — you take ${amount} damage.`;
+  return cleanText.trim() ? `${cleanText.trim()}\n\n${line}` : line;
+}
+
+/**
+ * If an enemy entered the encounter but prose never says where they came from, add a beat.
+ */
+export function ensureEncounterNarration(
+  cleanText: string,
+  enemyName: string,
+  location?: string | null
+): string {
+  const name = enemyName.trim();
+  if (!name) return cleanText;
+  const originCue =
+    /\b(emerges?|lunges?|steps? out|crawls?|drops?|charges?|blocks?|from (?:the |a )?(?:rubble|door|shadow|alley|corner|wreck|debris|dark|cover|hall|stair)|appears? from|comes? from|was (?:hiding|waiting|crouching))\b/i;
+  const mentionsEnemy = new RegExp(name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i').test(cleanText);
+  if (mentionsEnemy && originCue.test(cleanText)) return cleanText;
+  const place = location?.trim() || 'nearby cover';
+  const line = mentionsEnemy
+    ? `${name} did not appear from nowhere — it comes from ${place}, close enough that you can see how it got there.`
+    : `${name} is here. It comes from ${place}, close enough that you can see how it got there — not dropped in without a source.`;
   return cleanText.trim() ? `${cleanText.trim()}\n\n${line}` : line;
 }
 

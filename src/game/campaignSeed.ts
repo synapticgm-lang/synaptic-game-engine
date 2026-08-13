@@ -42,6 +42,7 @@ export function seedStateFromCampaignBible(
       keywords: [...s.tags, s.title],
       summary: s.body.slice(0, 600),
       lastSeenTurn: 0,
+      revealed: false,
     })),
     ...bible.keyNPCs.map((npc) => ({
       id: npc.id,
@@ -51,6 +52,7 @@ export function seedStateFromCampaignBible(
       summary: `${npc.role}. Disposition: ${npc.disposition}. ${npc.description}`.slice(0, 600),
       visualAnchor: npc.description.slice(0, 160),
       lastSeenTurn: 0,
+      revealed: false,
     })),
   ];
 
@@ -93,9 +95,19 @@ export function seedStateFromCampaignBible(
   ];
 
   // Only add bible starter items that aren't already present by name.
+  // Never stack a second weapon on top of character-creation gear, and never
+  // grant level-gated items the player cannot use yet.
   const invNames = new Set(state.inventory.map((i) => i.name.toLowerCase()));
+  const alreadyHasWeapon = state.inventory.some(
+    (i) =>
+      i.itemType === 'weapon'
+      || i.slot === 'Main Hand'
+      || /sword|knife|blade|axe|bow|staff|mace|spear|dagger/i.test(i.name)
+  );
   const starterItems: Item[] = bible.starterItems
     .filter((si) => !invNames.has(si.name.toLowerCase()))
+    .filter((si) => (si.itemLevel ?? 1) <= playerLevel)
+    .filter((si) => !(si.itemType === 'weapon' && alreadyHasWeapon))
     .slice(0, 3)
     .map((si) => ({
       id: si.id,
@@ -147,8 +159,9 @@ export function seedStateFromCampaignBible(
 }
 
 function inferStartingLocation(bible: CampaignBible): string {
-  const loc = bible.loreSnippets.find((s) => s.category === 'world');
-  return loc?.title ?? bible.title;
+  if (bible.startingLocation?.trim()) return bible.startingLocation.trim();
+  // Never use lore-article titles ("Dungeon Zones & Dead Zones") as the current place.
+  return `The opening of ${bible.title}`;
 }
 
 export function seedStateFromArchetype(

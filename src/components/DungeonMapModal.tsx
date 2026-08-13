@@ -7,8 +7,16 @@ interface DungeonMapModalProps {
   onClose: () => void;
   activeDungeon: ActiveDungeonState | null;
   currentCoordinates?: Location3D;
+  currentLocation?: string;
   onMoveNode: (nodeId: string) => void;
   onExitDungeon: () => void;
+  onLoadDungeon?: (
+    blueprintId: string,
+    dungeonName: string,
+    isProcedural: boolean,
+    tier: number,
+    nodeCount: number
+  ) => void;
 }
 
 export const DungeonMapModal: React.FC<DungeonMapModalProps> = ({
@@ -16,10 +24,39 @@ export const DungeonMapModal: React.FC<DungeonMapModalProps> = ({
   onClose,
   activeDungeon,
   currentCoordinates,
+  currentLocation,
   onMoveNode,
   onExitDungeon,
 }) => {
-  if (!isOpen || !activeDungeon) return null;
+  if (!isOpen) return null;
+
+  if (!activeDungeon) {
+    return (
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
+        <div className="relative w-full max-w-lg rounded-xl border border-cyan-500/30 bg-slate-900/95 p-6 shadow-2xl text-slate-100">
+          <div className="flex items-start justify-between gap-3 pb-4 border-b border-slate-700">
+            <div>
+              <p className="text-xs font-semibold text-cyan-400 mb-1">Map</p>
+              <h2 className="text-xl font-bold">No mapped area yet</h2>
+            </div>
+            <button
+              onClick={onClose}
+              className="px-3 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-600 text-sm transition"
+            >
+              ✕ Close
+            </button>
+          </div>
+          <p className="mt-4 text-sm text-slate-300 leading-relaxed">
+            You are in <span className="font-medium text-slate-100">{currentLocation?.trim() || 'an unmapped place'}</span>.
+            A tactical map appears after you enter a dungeon or a mapped interior — the same way most tabletop apps only show a battle map once you are on the grid.
+          </p>
+          <p className="mt-3 text-xs text-slate-500">
+            Explore, find an entrance, or wait until the story puts you in a mapped site.
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   const currentNode = activeDungeon.nodes.find((n) => n.id === activeDungeon.currentNodeId);
 
