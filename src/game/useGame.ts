@@ -4,11 +4,13 @@ import type { GameState, Settings, LogEntry, RollRecord, Item, GoogleUser, SaveS
 import { createInitialState } from './defaults';
 import type { CampaignArchetype } from './archetypes';
 import { buildArchetypeIntro } from './archetypes';
-import { loadGame, saveGame, loadSettings, saveSettings, exportSave, importSave } from './db';
+import { loadGame, saveGame, deleteGame, loadSettings, saveSettings, exportSave, importSave } from './db';
 import {
   syncGameToCloud,
   fetchLatestCloudSave,
-  fetchSupabaseSaveSlot,
+  fetchAllCloudSaveSlots,
+  deleteCloudSave,
+  deleteCloudSavesExcept,
   gameStateToLocalSlot,
 } from './cloudSync';
 import { filterSystemLogForEngine } from './systemLog';
@@ -20,6 +22,7 @@ import { generateComicImage, generateVideo, VideoProviderNotConfiguredError } fr
 import { generatePanelScript } from '@/services/llmDirectorService';
 import {
   bindSessionImageCache,
+  clearSessionImageCache,
   getSessionCachedImage,
   hashImageCacheParts,
   putSessionCachedImage,
@@ -323,6 +326,7 @@ export function useGame() {
   const [syncPhase, setSyncPhase] = useState<SyncPhase>('idle');
   const [toasts, setToasts] = useState<Toast[]>([]);
   const [cloudSlot, setCloudSlot] = useState<SaveSlotInfo | null>(null);
+  const [cloudSlots, setCloudSlots] = useState<SaveSlotInfo[]>([]);
   const [localSlot, setLocalSlot] = useState<SaveSlotInfo | null>(null);
   const [comicMode, setComicMode] = useState(settings.visualMode === 'comic');
   const [narrativeMode, setNarrativeMode] = useState(false);
@@ -399,13 +403,15 @@ export function useGame() {
     try {
       const local = await loadGame();
       setLocalSlot(gameStateToLocalSlot(local));
-      const cloudSlotInfo = await fetchSupabaseSaveSlot();
-      setCloudSlot(cloudSlotInfo);
+      const allCloud = await fetchAllCloudSaveSlots();
+      setCloudSlots(allCloud);
+      setCloudSlot(allCloud[0] ?? null);
       debugLogger.record('SYSTEM', 'Save slots refreshed', {
         hasLocal: !!local,
-        hasCloud: !!cloudSlotInfo,
+        hasCloud: allCloud.length > 0,
+        cloudCount: allCloud.length,
         localTurn: local?.turn,
-        cloudTurn: cloudSlotInfo?.turn,
+        cloudTurn: allCloud[0]?.turn,
       });
     } catch (err) {
       debugLogger.record('ERROR', 'Failed to refresh save slots', {
@@ -421,6 +427,7 @@ export function useGame() {
         setGoogleUser(null);
       }
       setCloudSlot(null);
+      setCloudSlots([]);
       void refreshSaveSlots();
       return;
     }
@@ -2306,12 +2313,138 @@ In <system-log>, only emit LitRPG/RPG progression lines (XP, loot, HP change as 
     void persist(updated);
   });
 
+  const abortPendingPersists = () => {
+    if (persistDebounceRef.current) {
+      clearTimeout(persistDebounceRef.current);
+      persistDebounceRef.current = null;
+    }
+    if (saveTimerRef.current) {
+      clearTimeout(saveTimerRef.current);
+      saveTimerRef.current = null;
+    }
+  };
+
+  const unloadActiveCampaign = (saveId?: string) => {
+    abortPendingPersists();
+    const activeId = stateRef.current?.saveId;
+    if (saveId && activeId && activeId !== saveId) return;
+    if (!stateRef.current && !saveId) return;
+    isHydratedRef.current = false;
+    setState(null);
+    stateRef.current = null;
+    setBootPhase('hub');
+    setShowSettings(false);
+    isHydratedRef.current = true;
+  };
+
+  const handleExport = useCallbackRef(() => {
+    const current = stateRef.current;
+    if (current) {
+      exportSave(current);
+      return;
+    }
+    void loadGame().then((local) => {
+      if (local) exportSave(local);
+      else addToast('No save to export.', 'error');
+    });
+  });
+
+  const handleImport = useCallbackRef(async (file: File) => {
+    try {
+      const imported = await importSave(file);
+      const recovered = settleOrphanedImageJobs(imported);
+      setState(recovered);
+      stateRef.current = recovered;
+      bindSessionImageCache(recovered.saveId);
+      setTelemetryContext({ saveId: recovered.saveId, engineMode: recovered.engineMode });
+      isHydratedRef.current = true;
+      await persist(recovered);
+      await refreshSaveSlots();
+      addToast('Save imported.', 'success');
+    } catch (e) {
+      addToast(e instanceof Error ? e.message : 'Failed to import save.', 'error');
+    }
+  });
+
+  const deleteSavedGame = useCallbackRef(async (saveId: string) => {
+    const trimmed = saveId.trim();
+    if (!trimmed) return;
+    abortPendingPersists();
+    const local = await loadGame();
+    const isLocal = local?.saveId === trimmed;
+    const isActive = stateRef.current?.saveId === trimmed;
+
+    if (isActive) unloadActiveCampaign(trimmed);
+
+    if (isLocal || isActive) {
+      await deleteGame();
+      localStorage.removeItem(LOCAL_UPDATED_KEY);
+    }
+
+    const cloudResult = await deleteCloudSave(trimmed);
+    if (!cloudResult.ok && cloudResult.error && cloudResult.error !== 'Not signed in' && cloudResult.error !== 'Supabase not configured') {
+      addToast(`Cloud delete failed: ${cloudResult.error}`, 'error');
+    }
+
+    await clearSessionImageCache(trimmed);
+    await refreshSaveSlots();
+    addToast('Save deleted.', 'success');
+  });
+
+  const deleteExtraSaves = useCallbackRef(async () => {
+    abortPendingPersists();
+    const keepSaveId =
+      stateRef.current?.saveId
+      ?? localSlot?.saveId
+      ?? cloudSlots[0]?.saveId
+      ?? null;
+
+    const extras = cloudSlots.filter((slot) => slot.saveId !== keepSaveId);
+    const result = await deleteCloudSavesExcept(keepSaveId);
+    if (!result.ok && result.error && result.error !== 'Not signed in' && result.error !== 'Supabase not configured') {
+      addToast(`Could not clear extra saves: ${result.error}`, 'error');
+      return;
+    }
+
+    for (const slot of extras) {
+      void clearSessionImageCache(slot.saveId);
+    }
+
+    await refreshSaveSlots();
+    const cleared = result.deleted || extras.length;
+    addToast(cleared ? `Cleared ${cleared} leftover save${cleared === 1 ? '' : 's'}.` : 'No extra cloud saves to clear.', 'success');
+  });
+
+  const deleteAllSaves = useCallbackRef(async () => {
+    abortPendingPersists();
+    const ids = new Set<string>();
+    if (stateRef.current?.saveId) ids.add(stateRef.current.saveId);
+    if (localSlot?.saveId) ids.add(localSlot.saveId);
+    for (const slot of cloudSlots) ids.add(slot.saveId);
+
+    unloadActiveCampaign();
+    await deleteGame();
+    localStorage.removeItem(LOCAL_UPDATED_KEY);
+
+    const result = await deleteCloudSavesExcept(null);
+    if (!result.ok && result.error && result.error !== 'Not signed in' && result.error !== 'Supabase not configured') {
+      addToast(`Cloud delete failed: ${result.error}`, 'error');
+    }
+
+    for (const id of ids) {
+      void clearSessionImageCache(id);
+    }
+
+    await refreshSaveSlots();
+    addToast('All saved games deleted.', 'success');
+  });
+
   return {
     state, settings, googleUser, bootPhase, busy, error, errorKind, showLoadingOverlay, retryStatus, currentImages, currentImage: currentImages[0] ?? null,
     imagesGenerating, videosGenerating,
     saveStatus, showSettings, setShowSettings, showApiSetup, setShowApiSetup, showNewGame, setShowNewGame,
     showRolls, setShowRolls, showMapModal, setShowMapModal, leftOpen, setLeftOpen, rightOpen, setRightOpen,
-    showWelcome, setShowWelcome, showCharacterWindow, setShowCharacterWindow, showMerchantWindow, setShowMerchantWindow, syncPhase, toasts, dismissToast, addToast, cloudSlot, localSlot,
+    showWelcome, setShowWelcome, showCharacterWindow, setShowCharacterWindow, showMerchantWindow, setShowMerchantWindow, syncPhase, toasts, dismissToast, addToast, cloudSlot, cloudSlots, localSlot,
     sendAction,
     retryAction: () => { if (lastInput.trim()) sendAction(lastInput); },
     retryPanelImage,
@@ -2319,6 +2452,7 @@ In <system-log>, only emit LitRPG/RPG progression lines (XP, loot, HP change as 
     clearError: () => setError(null),
     autoFight, autoFightWarning, cancelAutoFightWarning: () => setAutoFightWarning(null),
     startNewGame, updateSettings: (s) => { setSettings(s); settingsRef.current = s; saveSettings(s); },
+    handleExport, handleImport, deleteSavedGame, deleteExtraSaves, deleteAllSaves,
     updateStoryName: async (name) => {
       const s = stateRef.current;
       if (!s) return;
@@ -2378,6 +2512,7 @@ In <system-log>, only emit LitRPG/RPG progression lines (XP, loot, HP change as 
       setBootPhase('hub');
       isHydratedRef.current = true;
       setCloudSlot(null);
+      setCloudSlots([]);
       void refreshSaveSlots();
     },
     continueGame: async () => {

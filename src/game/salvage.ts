@@ -1,5 +1,5 @@
 import type { GameState, Item, Rarity, ProfessionType, SalvageRequirement, CraftingMaterial, ItemType, ProfessionSkill, Companion } from './types';
-import { canAddMaterials } from './inventory';
+import { canAddMaterials, removeItem } from './inventory';
 
 interface SalvageProfessionSource {
   type: ProfessionType;
@@ -184,10 +184,7 @@ export function salvageItem(state: GameState, itemId: string): SalvageResult {
   const matCheck = canAddMaterials(state, materials.reduce((s, m) => s + m.quantity, 0));
   if (!matCheck.ok) return { ok: false, reason: matCheck.reason };
 
-  let newState = {
-    ...state,
-    inventory: state.inventory.filter((i) => i.id !== itemId),
-  };
+  let newState = removeItem(state, itemId);
 
   const existing = [...newState.materials];
   for (const mat of materials) {

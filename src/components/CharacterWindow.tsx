@@ -6,11 +6,12 @@ import { UploadImport } from './UploadImport';
 import { CharacterProgression } from './CharacterProgression';
 import { CombatEncounter } from './CombatEncounter';
 import {
-  X, ChevronLeft, ChevronRight,
+  X, ChevronLeft, ChevronRight, ChevronDown, ChevronUp,
   HardHat, Shield, Shirt, Sword, Footprints,
   Sparkles, Hammer, Cat, Trophy, ScrollText, Camera, TrendingUp,
   Heart, Droplet, Zap, Users, Backpack,
 } from 'lucide-react';
+import { getItemsInContainer } from '@/game/inventory';
 
 type BottomTab = 'inventory' | 'spells' | 'professions' | 'pets' | 'titles' | 'dnd' | 'sheet' | 'portrait' | 'progression' | 'combat';
 
@@ -226,18 +227,54 @@ function DndSheet({ state }: { state: GameState }) {
 function InventoryPanel({ state }: { state: GameState }) {
   const bags = state.containers ?? [];
   const items = state.inventory ?? [];
+  const [expandedBagId, setExpandedBagId] = useState<string | null>(bags[0]?.id ?? null);
   return (
     <div className="space-y-3 text-left">
       {bags.length > 0 && (
         <div>
           <h4 className="mb-1 text-[10px] font-medium uppercase tracking-wider text-slate-500">Containers</h4>
           <ul className="space-y-1">
-            {bags.map((bag) => (
-              <li key={bag.id} className="rounded border border-slate-700 bg-slate-900/60 px-2 py-1.5 text-xs text-slate-200">
-                <span className="font-medium">{bag.name}</span>
-                <span className="ml-2 text-slate-500">{bag.used}/{bag.capacity} slots · {bag.kind ?? 'physical'}</span>
-              </li>
-            ))}
+            {bags.map((bag) => {
+              const contents = getItemsInContainer(state, bag.id);
+              const used = contents.length;
+              const expanded = expandedBagId === bag.id;
+              return (
+                <li key={bag.id}>
+                  <button
+                    type="button"
+                    onClick={() => setExpandedBagId(expanded ? null : bag.id)}
+                    className="w-full rounded border border-slate-700 bg-slate-900/60 px-2 py-1.5 text-left text-xs text-slate-200 hover:border-slate-600 transition"
+                  >
+                    <div className="flex items-center justify-between gap-2">
+                      <span>
+                        <span className="font-medium">{bag.name}</span>
+                        <span className="ml-2 text-slate-500">{used}/{bag.capacity} slots · {bag.kind ?? 'physical'}</span>
+                      </span>
+                      {expanded ? <ChevronUp size={12} className="shrink-0 text-slate-500" /> : <ChevronDown size={12} className="shrink-0 text-slate-500" />}
+                    </div>
+                    {expanded && (
+                      <div className="mt-1.5 pt-1.5 border-t border-slate-800 space-y-1">
+                        <div className="text-[10px] text-slate-400 font-medium">Contents:</div>
+                        {contents.length > 0 ? (
+                          contents.map((item) => (
+                            <div key={item.id} className="flex justify-between gap-2 text-[11px] text-slate-300">
+                              <span className="truncate">• {item.name}</span>
+                              <span className="shrink-0 text-slate-500">
+                                {item.equipped
+                                  ? <span className="text-emerald-400">equipped{item.slot ? ` · ${item.slot}` : ''}</span>
+                                  : item.quantity > 1 ? `x${item.quantity}` : null}
+                              </span>
+                            </div>
+                          ))
+                        ) : (
+                          <div className="text-[11px] italic text-slate-500">Bag is empty</div>
+                        )}
+                      </div>
+                    )}
+                  </button>
+                </li>
+              );
+            })}
           </ul>
         </div>
       )}

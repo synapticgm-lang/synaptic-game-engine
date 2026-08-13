@@ -46,6 +46,16 @@ export default function App() {
 
   const hasSave = !!game.localSlot || !!game.cloudSlot;
   const shouldAutoResume = game.settings.postLoginBehavior === 'AUTO_RESUME' && hasSave;
+  const saveManagement = {
+    localSlot: game.localSlot,
+    cloudSlots: game.cloudSlots,
+    currentSaveId: game.state?.saveId ?? game.localSlot?.saveId ?? null,
+    onDeleteSave: game.deleteSavedGame,
+    onDeleteExtraSaves: game.deleteExtraSaves,
+    onDeleteAllSaves: game.deleteAllSaves,
+    onExport: game.handleExport,
+    onImport: game.handleImport,
+  };
 
   // Auto-resume logic
   useEffect(() => {
@@ -116,8 +126,7 @@ export default function App() {
               onStoryNameChange={game.updateStoryName}
               onSetContentMode={game.setContentMode}
               onVerifyPin={game.verifyContentPin}
-              onExport={game.handleExport}
-              onImport={game.handleImport}
+              {...saveManagement}
               onClose={() => game.setShowSettings(false)}
             />
           </Suspense>
@@ -192,8 +201,7 @@ export default function App() {
               onStoryNameChange={game.updateStoryName}
               onSetContentMode={game.setContentMode}
               onVerifyPin={game.verifyContentPin}
-              onExport={game.handleExport}
-              onImport={game.handleImport}
+              {...saveManagement}
               onClose={() => game.setShowSettings(false)}
             />
           </Suspense>
@@ -321,8 +329,7 @@ export default function App() {
             onStoryNameChange={game.updateStoryName}
             onSetContentMode={game.setContentMode}
             onVerifyPin={game.verifyContentPin}
-            onExport={game.handleExport}
-            onImport={game.handleImport}
+            {...saveManagement}
             onClose={() => game.setShowSettings(false)}
             currentBgUrl={bgImage.url}
           />

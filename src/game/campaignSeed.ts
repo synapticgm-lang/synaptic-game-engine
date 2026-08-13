@@ -2,6 +2,7 @@ import type { CampaignBible } from '@/data/campaigns/types';
 import { ALL_CAMPAIGN_BIBLES } from '@/data/campaigns';
 import type { CampaignArchetype } from './archetypes';
 import type { EngineMode, GameState, Item, LoreCard, LoreCardType, Quest } from './types';
+import { syncContainerOccupancy } from './inventory';
 
 function snippetType(category: string): LoreCardType {
   if (category === 'faction') return 'faction';
@@ -125,7 +126,7 @@ export function seedStateFromCampaignBible(
     ? `BACKGROUND QUEST (Guide Book only — NEVER railroad): "${activeQuest.name}" is tracked in the quest log. Do NOT narrate quest markers, dungeons, shops, or objectives unless the player asks about the quest or travels there. Always resolve the player's immediate action first. Hidden quests stay unspoken.`
     : 'No opening quest yet — do not invent quest log entries.';
 
-  return {
+  return syncContainerOccupancy({
     ...state,
     campaignBibleId: bible.id,
     campaignPremise: `${bible.title}: ${bible.premise}\n\n${questRail}`.slice(0, 1600),
@@ -155,7 +156,7 @@ export function seedStateFromCampaignBible(
           ]
         : []),
     ],
-  };
+  });
 }
 
 function inferStartingLocation(bible: CampaignBible): string {

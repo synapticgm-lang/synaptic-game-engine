@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { X, Save, BookText, Volume2, Mic, Dice5, Shield, Lock, Baby, Gauge, Download, Upload, KeyRound, Eye, EyeOff, RefreshCw, Check, Loader2, ChevronDown, Image as ImageIcon, Trash2, ZoomIn, Scale, Home, Zap, CircleSlash, Sparkles, Grid3x3, MessageSquareMore, Palette, Layers, Dot, MessageCircle, Map, Eye as EyeIcon, BarChart3, Clock, ScrollText, BookOpen, Swords } from 'lucide-react';
-import type { Settings, DiceAnimationMode, ContentMode, GmStrictness, AiProvider, KeyStatus, PostLoginBehavior, BgMode, ColorVariant, PanelFrequency, PanelBorderIntensity, MapTriggerMode, FogRevealThreshold, StatVerbosity, StatFrequency, GameState, NarrativePerspective, ViolenceLevel, CursingLevel, ComicLayoutMode, ComicReadingDirection } from '@/game/types';
+import type { Settings, DiceAnimationMode, ContentMode, GmStrictness, AiProvider, KeyStatus, PostLoginBehavior, BgMode, ColorVariant, PanelFrequency, PanelBorderIntensity, MapTriggerMode, FogRevealThreshold, StatVerbosity, StatFrequency, GameState, NarrativePerspective, ViolenceLevel, CursingLevel, ComicLayoutMode, ComicReadingDirection, SaveSlotInfo } from '@/game/types';
 import { ART_STYLE_PRESETS } from '@/game/types';
 import { validateApiKey, fetchModelsForProvider, getDefaultModels } from '@/game/apiValidation';
 import { CampaignSettings } from './CampaignSettings';
@@ -20,6 +20,12 @@ interface Props {
   onVerifyPin: (pin: string) => boolean;
   onExport?: () => void;
   onImport?: (file: File) => void;
+  localSlot?: SaveSlotInfo | null;
+  cloudSlots?: SaveSlotInfo[];
+  currentSaveId?: string | null;
+  onDeleteSave?: (saveId: string) => Promise<void>;
+  onDeleteExtraSaves?: () => Promise<void>;
+  onDeleteAllSaves?: () => Promise<void>;
   onClose: () => void;
   currentBgUrl?: string | null;
 }
@@ -33,7 +39,7 @@ const SETTINGS_TABS: Array<{ id: SettingsTab; label: string }> = [
   { id: 'visuals', label: 'Visuals' },
 ];
 
-export function SettingsModal({ settings, storyName, engineMode, gameState, onSave, onStoryNameChange, onSetContentMode, onVerifyPin, onExport, onImport, onClose, currentBgUrl }: Props) {
+export function SettingsModal({ settings, storyName, engineMode, gameState, onSave, onStoryNameChange, onSetContentMode, onVerifyPin, onExport, onImport, localSlot, cloudSlots, currentSaveId, onDeleteSave, onDeleteExtraSaves, onDeleteAllSaves, onClose, currentBgUrl }: Props) {
   const [draft, setDraft] = useState<Settings>(settings);
   const [activeTab, setActiveTab] = useState<SettingsTab>('general');
   const [storyNameDraft, setStoryNameDraft] = useState(storyName);
@@ -720,10 +726,10 @@ export function SettingsModal({ settings, storyName, engineMode, gameState, onSa
           </Section>
 
           {/* Save File Management */}
-          {(onExport || onImport) && (
+          {(onExport || onImport || onDeleteSave) && (
             <Section icon={<Save size={16} />} title="Save File Management" visible={activeTab === 'general'}>
               <p className="mb-2 text-xs text-slate-500">
-                Import and export live here — same as most games putting Load/Save in the pause or title menu, not on the action bar.
+                Import, export, and delete saved games here — leftover cloud campaigns stay until you remove them.
               </p>
               <div className="flex gap-2">
                 {onExport && (
@@ -740,6 +746,16 @@ export function SettingsModal({ settings, storyName, engineMode, gameState, onSa
                   </>
                 )}
               </div>
+              {onDeleteSave && (
+                <SaveSlotsManager
+                  localSlot={localSlot ?? null}
+                  cloudSlots={cloudSlots ?? []}
+                  currentSaveId={currentSaveId ?? gameState?.saveId ?? null}
+                  onDeleteSave={onDeleteSave}
+                  onDeleteExtraSaves={onDeleteExtraSaves}
+                  onDeleteAllSaves={onDeleteAllSaves}
+                />
+              )}
             </Section>
           )}
 
@@ -814,6 +830,169 @@ export function SettingsModal({ settings, storyName, engineMode, gameState, onSa
       )}
       {showPinUnlock && (
         <PinDialog title="Enter PIN to Exit Kid Mode" subtitle="Enter your PIN to switch to Adult Mode." value={pinUnlock} onChange={setPinUnlock} onConfirm={handlePinUnlockConfirm} onCancel={() => { setShowPinUnlock(false); setPinUnlock(''); setPinError(''); }} error={pinError} />
+      )}
+    </div>
+  );
+}
+
+type ManagedSave = SaveSlotInfo & { sources: Array<'local' | 'cloud'> };
+
+function mergeSaveSlots(localSlot: SaveSlotInfo | null, cloudSlots: SaveSlotInfo[]): ManagedSave[] {
+  const map = new Map<string, ManagedSave>();
+  for (const slot of cloudSlots) {
+    if (!slot.saveId) continue;
+    map.set(slot.saveId, { ...slot, sources: ['cloud'] });
+  }
+  if (localSlot?.saveId) {
+    const existing = map.get(localSlot.saveId);
+    if (existing) {
+      const newer = localSlot.lastUpdated > existing.lastUpdated ? localSlot : existing;
+      map.set(localSlot.saveId, { ...newer, sources: ['local', 'cloud'] });
+    } else {
+      map.set(localSlot.saveId, { ...localSlot, sources: ['local'] });
+    }
+  }
+  return [...map.values()].sort((a, b) => b.lastUpdated - a.lastUpdated);
+}
+
+function SaveSlotsManager({
+  localSlot,
+  cloudSlots,
+  currentSaveId,
+  onDeleteSave,
+  onDeleteExtraSaves,
+  onDeleteAllSaves,
+}: {
+  localSlot: SaveSlotInfo | null;
+  cloudSlots: SaveSlotInfo[];
+  currentSaveId: string | null;
+  onDeleteSave: (saveId: string) => Promise<void>;
+  onDeleteExtraSaves?: () => Promise<void>;
+  onDeleteAllSaves?: () => Promise<void>;
+}) {
+  const [confirmKey, setConfirmKey] = useState<string | null>(null);
+  const [busy, setBusy] = useState(false);
+  const slots = mergeSaveSlots(localSlot, cloudSlots);
+  const extraCount = Math.max(0, cloudSlots.filter((slot) => slot.saveId !== currentSaveId && slot.saveId !== localSlot?.saveId).length);
+  const keepId = currentSaveId ?? localSlot?.saveId ?? cloudSlots[0]?.saveId ?? null;
+  const leftoverCount = keepId ? slots.filter((slot) => slot.saveId !== keepId).length : slots.length;
+
+  const run = async (key: string, action: () => Promise<void>) => {
+    setBusy(true);
+    try {
+      await action();
+      setConfirmKey(null);
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  if (slots.length === 0) {
+    return <p className="text-[11px] text-slate-600">No saved games on this device or in the cloud.</p>;
+  }
+
+  return (
+    <div className="space-y-2">
+      <div className="text-xs text-slate-500">Saved games ({slots.length})</div>
+      {slots.map((slot) => {
+        const isCurrent = slot.saveId === currentSaveId || slot.saveId === localSlot?.saveId;
+        const confirming = confirmKey === slot.saveId;
+        return (
+          <div key={slot.saveId} className="rounded-lg border border-slate-700 bg-slate-800/40 px-3 py-2">
+            <div className="flex items-start gap-2">
+              <div className="min-w-0 flex-1">
+                <div className="truncate text-sm font-medium text-slate-200">
+                  {slot.storyName}
+                  {isCurrent && <span className="ml-1.5 text-[10px] font-normal uppercase tracking-wide text-emerald-400">current</span>}
+                </div>
+                <div className="text-[11px] text-slate-500">
+                  {slot.characterName} · Lv.{slot.level} · Turn {slot.turn}
+                </div>
+                <div className="mt-0.5 flex flex-wrap gap-1">
+                  {slot.sources.map((source) => (
+                    <span key={source} className="rounded border border-slate-700 px-1.5 py-0 text-[10px] uppercase tracking-wide text-slate-500">
+                      {source}
+                    </span>
+                  ))}
+                </div>
+              </div>
+              {!confirming ? (
+                <button
+                  type="button"
+                  disabled={busy}
+                  onClick={() => setConfirmKey(slot.saveId)}
+                  className="shrink-0 rounded-lg border border-rose-900/60 bg-rose-950/30 p-1.5 text-rose-400 transition-colors hover:bg-rose-950/60 hover:text-rose-300 disabled:opacity-50"
+                  title="Delete save"
+                >
+                  <Trash2 size={14} />
+                </button>
+              ) : (
+                <div className="flex shrink-0 flex-col gap-1">
+                  <button
+                    type="button"
+                    disabled={busy}
+                    onClick={() => run(slot.saveId, () => onDeleteSave(slot.saveId))}
+                    className="rounded-lg bg-rose-600 px-2 py-1 text-[10px] font-medium text-white hover:bg-rose-500 disabled:opacity-50"
+                  >
+                    {busy ? 'Deleting…' : 'Confirm'}
+                  </button>
+                  <button
+                    type="button"
+                    disabled={busy}
+                    onClick={() => setConfirmKey(null)}
+                    className="rounded-lg px-2 py-0.5 text-[10px] text-slate-400 hover:text-slate-200"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              )}
+            </div>
+          </div>
+        );
+      })}
+      {leftoverCount > 0 && onDeleteExtraSaves && (
+        confirmKey === 'extras' ? (
+          <div className="rounded-lg border border-rose-900/50 bg-rose-950/20 px-3 py-2">
+            <p className="mb-2 text-[11px] text-rose-300">Delete {leftoverCount} leftover save{leftoverCount === 1 ? '' : 's'}? Your current campaign is kept.</p>
+            <div className="flex gap-2">
+              <button type="button" disabled={busy} onClick={() => run('extras', () => onDeleteExtraSaves())} className="rounded-lg bg-rose-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-rose-500 disabled:opacity-50">
+                {busy ? 'Clearing…' : 'Confirm'}
+              </button>
+              <button type="button" disabled={busy} onClick={() => setConfirmKey(null)} className="rounded-lg px-3 py-1.5 text-xs text-slate-400 hover:text-slate-200">Cancel</button>
+            </div>
+          </div>
+        ) : (
+          <button
+            type="button"
+            disabled={busy}
+            onClick={() => setConfirmKey('extras')}
+            className="flex w-full items-center justify-center gap-2 rounded-lg border border-slate-700 bg-slate-800/40 px-3 py-2 text-sm text-slate-300 transition-colors hover:bg-slate-800/70 disabled:opacity-50"
+          >
+            <Trash2 size={14} /> Clear leftover saves{extraCount > 0 ? ` (${leftoverCount})` : ''}
+          </button>
+        )
+      )}
+      {onDeleteAllSaves && (
+        confirmKey === 'all' ? (
+          <div className="rounded-lg border border-rose-900/50 bg-rose-950/20 px-3 py-2">
+            <p className="mb-2 text-[11px] text-rose-300">Delete every saved game on this device and in the cloud? This cannot be undone.</p>
+            <div className="flex gap-2">
+              <button type="button" disabled={busy} onClick={() => run('all', () => onDeleteAllSaves())} className="rounded-lg bg-rose-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-rose-500 disabled:opacity-50">
+                {busy ? 'Deleting…' : 'Delete all'}
+              </button>
+              <button type="button" disabled={busy} onClick={() => setConfirmKey(null)} className="rounded-lg px-3 py-1.5 text-xs text-slate-400 hover:text-slate-200">Cancel</button>
+            </div>
+          </div>
+        ) : (
+          <button
+            type="button"
+            disabled={busy}
+            onClick={() => setConfirmKey('all')}
+            className="flex w-full items-center justify-center gap-2 rounded-lg border border-rose-900/50 bg-rose-950/20 px-3 py-2 text-sm text-rose-300 transition-colors hover:bg-rose-950/40 disabled:opacity-50"
+          >
+            <Trash2 size={14} /> Delete all saved games
+          </button>
+        )
       )}
     </div>
   );

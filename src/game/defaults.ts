@@ -2,11 +2,12 @@ import type { GameState, EngineMode, Settings } from './types';
 import { getDefaultArchetype, type CampaignArchetype } from './archetypes';
 import { formatCampaignStoryName } from '@/data/campaigns';
 import { emptyWorldLedger } from './worldSim';
+import { syncContainerOccupancy } from './inventory';
 
 export function createInitialState(storyName?: string, engineMode: EngineMode = 'litrpg', archetype?: CampaignArchetype): GameState {
   const now = Date.now();
   const defaultStory = formatCampaignStoryName('New Campaign', new Date(now));
-  return {
+  return syncContainerOccupancy({
     version: 1,
     saveId: crypto.randomUUID(),
     storyName: storyName || defaultStory,
@@ -40,6 +41,7 @@ export function createInitialState(storyName?: string, engineMode: EngineMode = 
         quantity: 1,
         equipped: true,
         slot: 'Main Hand',
+        containerId: 'starter-satchel',
         provenance: 'On you when you arrived',
         description: 'A nicked iron blade. 1d6 slashing. Worn but serviceable.',
         itemType: 'weapon',
@@ -52,6 +54,7 @@ export function createInitialState(storyName?: string, engineMode: EngineMode = 
         quantity: 1,
         equipped: true,
         slot: 'Body',
+        containerId: 'starter-satchel',
         provenance: 'On you when you arrived',
         description: 'Scuffed leather. Better than a shirt.',
         itemType: 'armor',
@@ -62,12 +65,13 @@ export function createInitialState(storyName?: string, engineMode: EngineMode = 
         name: 'Minor Healing Draught',
         rarity: 'Common',
         quantity: 3,
+        containerId: 'starter-satchel',
         provenance: 'On you when you arrived',
         description: 'Restores 2d4+2 HP.',
       },
     ],
     containers: [
-      { id: 'starter-satchel', name: 'Worn Satchel', capacity: 20, used: 3, modifier: 'none', itemIds: [], storageType: 'General', kind: 'physical', equipped: true, slot: 'Container' },
+      { id: 'starter-satchel', name: 'Worn Satchel', capacity: 20, used: 3, modifier: 'none', itemIds: ['starter-weapon', 'starter-armor', 'starter-potion'], storageType: 'General', kind: 'physical', equipped: true, slot: 'Container' },
     ],
     materials: [],
     companions: [],
@@ -102,7 +106,7 @@ export function createInitialState(storyName?: string, engineMode: EngineMode = 
     turnFrameTheme: { icon: '🎲', accentColor: 'cyan-400', frameStyle: 'minimal-holo' },
     currentCoordinates: { q: 0, r: 0, tier: 2, z: 0 },
     activeEncounter: null,
-  };
+  });
 }
 
 export function createDefaultSettings(): Settings {

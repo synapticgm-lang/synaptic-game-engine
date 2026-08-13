@@ -62,9 +62,106 @@ export async function fetchLatestCloudSave(): Promise<CloudSaveBundle | null> {
 }
 
 export async function fetchSupabaseSaveSlot(): Promise<SaveSlotInfo | null> {
-  const cloud = await fetchLatestCloudSave();
-  if (!cloud) return null;
-  return slotFromState(cloud.state, 'cloud', cloud.updatedAtMs);
+  const slots = await fetchAllCloudSaveSlots();
+  return slots[0] ?? null;
+}
+
+function slotFromCloudRow(row: {
+  save_id: string;
+  story_name: string | null;
+  turn: number | null;
+  updated_at: string | null;
+  game_state: unknown;
+}): SaveSlotInfo {
+  const state = row.game_state && typeof row.game_state === 'object' ? (row.game_state as GameState) : null;
+  const character = state?.character ?? {};
+  const updatedAtMs = row.updated_at ? Date.parse(String(row.updated_at)) : (state?.lastUpdated ?? 0);
+  return {
+    saveId: state?.saveId || row.save_id,
+    storyName: state?.storyName ?? row.story_name ?? 'Campaign',
+    characterName: String(character.name ?? 'Adventurer'),
+    lastUpdated: Number.isFinite(updatedAtMs) ? updatedAtMs : 0,
+    turn: state?.turn ?? row.turn ?? 0,
+    level: Number(character.level ?? 1),
+    source: 'cloud',
+  };
+}
+
+/** All cloud campaigns for the signed-in user, newest first. */
+export async function fetchAllCloudSaveSlots(): Promise<SaveSlotInfo[]> {
+  if (!isSupabaseConfigured || !supabase) return [];
+
+  const { data: authData, error: authError } = await supabase.auth.getUser();
+  if (authError || !authData.user) return [];
+
+  const { data, error } = await supabase
+    .from('game_saves')
+    .select('save_id, story_name, turn, updated_at, game_state')
+    .eq('user_id', authData.user.id)
+    .order('updated_at', { ascending: false })
+    .limit(50);
+
+  if (error || !data?.length) return [];
+
+  return data
+    .filter((row) => row.save_id)
+    .map((row) => slotFromCloudRow(row));
+}
+
+export async function deleteCloudSave(saveId: string): Promise<{ ok: boolean; error?: string }> {
+  if (!isSupabaseConfigured || !supabase) {
+    return { ok: false, error: 'Supabase not configured' };
+  }
+
+  const { data: authData, error: authError } = await supabase.auth.getUser();
+  if (authError || !authData.user) {
+    return { ok: false, error: 'Not signed in' };
+  }
+
+  const trimmed = saveId.trim();
+  if (!trimmed) return { ok: false, error: 'Missing saveId' };
+
+  const { error: saveError } = await supabase
+    .from('game_saves')
+    .delete()
+    .eq('user_id', authData.user.id)
+    .eq('save_id', trimmed);
+
+  if (saveError) {
+    return { ok: false, error: saveError.message };
+  }
+
+  await supabase.from('game_sessions').delete().eq('save_id', trimmed);
+  return { ok: true };
+}
+
+export async function deleteCloudSavesExcept(
+  keepSaveId?: string | null,
+): Promise<{ ok: boolean; deleted: number; error?: string }> {
+  if (!isSupabaseConfigured || !supabase) {
+    return { ok: false, deleted: 0, error: 'Supabase not configured' };
+  }
+
+  const { data: authData, error: authError } = await supabase.auth.getUser();
+  if (authError || !authData.user) {
+    return { ok: false, deleted: 0, error: 'Not signed in' };
+  }
+
+  const keep = keepSaveId?.trim() ?? '';
+  let query = supabase.from('game_saves').delete().eq('user_id', authData.user.id);
+  if (keep) query = query.neq('save_id', keep);
+
+  const { data, error } = await query.select('save_id');
+  if (error) {
+    return { ok: false, deleted: 0, error: error.message };
+  }
+
+  const deletedIds = (data ?? []).map((row) => String(row.save_id)).filter(Boolean);
+  if (deletedIds.length) {
+    await supabase.from('game_sessions').delete().in('save_id', deletedIds);
+  }
+
+  return { ok: true, deleted: deletedIds.length };
 }
 
 /**

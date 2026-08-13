@@ -1,5 +1,5 @@
 import type { GameState, Item, Rarity } from './types';
-import { getItemValue } from './inventory';
+import { getItemValue, removeItem } from './inventory';
 
 const RARITY_SELL_MULTIPLIER: Record<Rarity, number> = {
   Common: 0.25,
@@ -40,13 +40,13 @@ export function sellItem(state: GameState, itemId: string): SellResult {
 
   const price = getSellPrice(item);
 
+  const next = removeItem(state, itemId);
   return {
     ok: true,
     goldGained: price,
     newState: {
-      ...state,
-      inventory: state.inventory.filter((i) => i.id !== itemId),
-      gold: (state.gold ?? 0) + price,
+      ...next,
+      gold: (next.gold ?? 0) + price,
     },
   };
 }

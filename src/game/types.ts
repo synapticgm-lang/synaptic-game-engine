@@ -13,6 +13,8 @@ export interface Item {
   provenance?: string;
   equipped?: boolean;
   slot?: string;
+  /** Equipped gear still occupies a slot in this container. */
+  containerId?: string;
   itemLevel?: number;
   modifiers?: Partial<Record<AttributeKey, number>>;
   containerCapacity?: number;

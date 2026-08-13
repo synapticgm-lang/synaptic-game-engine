@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { X, Backpack, Swords, Heart, Zap, Plus, Search, Trash2, Save, ChevronDown, ChevronUp, Shield, Layers, AlertTriangle } from 'lucide-react';
 import type { GameState, Rarity, LoreCard, LoreCardType, Item } from '@/game/types';
 import { RARITY_COLORS } from '@/game/types';
-import { computeInventoryCapacity } from '@/game/inventory';
+import { computeInventoryCapacity, getItemsInContainer } from '@/game/inventory';
 
 interface Props {
   state: GameState;
@@ -134,36 +134,52 @@ export function RightDrawer({ state, open, onClose, onUpdateLorebook }: Props) {
           {/* Containers Tab with Bag Contents Dropdown */}
           {tab === 'containers' && (
             <div className="space-y-2">
-              {state.containers.map(con => (
-                <div 
-                  key={con.id} 
-                  onClick={() => setExpandedBagId(expandedBagId === con.id ? null : con.id)}
-                  className="cursor-pointer rounded-lg border border-slate-800 bg-slate-900 p-2.5 hover:border-slate-700 transition"
-                >
-                  <div className="flex items-center justify-between">
-                    <span className="flex items-center gap-1.5 text-xs text-slate-200"><Backpack size={14} /> {con.name}</span>
-                    <span className="text-[10px] text-slate-500">{con.used}/{con.capacity}</span>
-                  </div>
-                  <div className="mt-1.5 h-1.5 overflow-hidden rounded-full bg-slate-800">
-                    <div className="h-full rounded-full bg-crimson-500" style={{ width: `${(con.used / con.capacity) * 100}%` }} />
-                  </div>
-                  {expandedBagId === con.id && (
-                    <div className="mt-2 pt-2 border-t border-slate-800 space-y-1 pl-2">
-                      <div className="text-[10px] text-slate-400 font-medium">Contents:</div>
-                      {con.contents && con.contents.length > 0 ? (
-                        con.contents.map((item: any) => (
-                          <div key={item.id} className="text-xs text-slate-300 flex justify-between">
-                            <span>• {item.name}</span>
-                            <span className="text-slate-500">x{item.quantity}</span>
-                          </div>
-                        ))
-                      ) : (
-                        <div className="text-[11px] text-slate-500 italic">Bag is empty</div>
+              {state.containers.length === 0 ? (
+                <p className="text-xs text-slate-500">No containers equipped.</p>
+              ) : (
+                state.containers.map(con => {
+                  const contents = getItemsInContainer(state, con.id);
+                  const used = contents.length;
+                  const expanded = expandedBagId === con.id;
+                  return (
+                    <div
+                      key={con.id}
+                      onClick={() => setExpandedBagId(expanded ? null : con.id)}
+                      className="cursor-pointer rounded-lg border border-slate-800 bg-slate-900 p-2.5 hover:border-slate-700 transition"
+                    >
+                      <div className="flex items-center justify-between">
+                        <span className="flex items-center gap-1.5 text-xs text-slate-200"><Backpack size={14} /> {con.name}</span>
+                        <span className="flex items-center gap-1.5 text-[10px] text-slate-500">
+                          {used}/{con.capacity}
+                          {expanded ? <ChevronUp size={12} /> : <ChevronDown size={12} />}
+                        </span>
+                      </div>
+                      <div className="mt-1.5 h-1.5 overflow-hidden rounded-full bg-slate-800">
+                        <div className="h-full rounded-full bg-crimson-500" style={{ width: `${con.capacity > 0 ? (used / con.capacity) * 100 : 0}%` }} />
+                      </div>
+                      {expanded && (
+                        <div className="mt-2 pt-2 border-t border-slate-800 space-y-1 pl-2">
+                          <div className="text-[10px] text-slate-400 font-medium">Contents:</div>
+                          {contents.length > 0 ? (
+                            contents.map((item) => (
+                              <div key={item.id} className="text-xs text-slate-300 flex justify-between gap-2">
+                                <span className="truncate">• {item.name}</span>
+                                <span className="shrink-0 text-slate-500">
+                                  {item.equipped
+                                    ? <span className="text-emerald-400">equipped{item.slot ? ` · ${item.slot}` : ''}</span>
+                                    : item.quantity > 1 ? `x${item.quantity}` : null}
+                                </span>
+                              </div>
+                            ))
+                          ) : (
+                            <div className="text-[11px] text-slate-500 italic">Bag is empty</div>
+                          )}
+                        </div>
                       )}
                     </div>
-                  )}
-                </div>
-              ))}
+                  );
+                })
+              )}
             </div>
           )}
 
