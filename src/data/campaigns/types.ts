@@ -30,7 +30,17 @@ export interface StarterQuest {
   rewards: string;
 }
 
-export type OpeningPromptKind = 'location' | 'appearance' | 'kit' | 'identity' | 'species';
+export type OpeningPromptKind = 'name' | 'location' | 'appearance' | 'kit' | 'identity' | 'species';
+export type OpeningVoice = 'system' | 'inworld';
+
+/** Who asks the opening questions — The System, an Auditor, a clerk, the tale itself. */
+export interface OpeningRegistrar {
+  voice: OpeningVoice;
+  /** Panel label, e.g. SYSTEM, THE AUDITOR, GREYHOLLOW REGISTER */
+  label: string;
+  /** First-contact line, e.g. "Starting. Please confirm your name and current location." */
+  startLine: string;
+}
 
 /** Asked at game start so the story does not invent who/where the player is. */
 export interface OpeningPrompt {
@@ -78,5 +88,6 @@ export interface CampaignBible {
   startingContainer?: { id: string; name: string; capacity: number };
   /** Hook before establishment questions. If omitted, the archetype intro is softened. */
   openingHook?: string;
+  openingRegistrar?: OpeningRegistrar;
   openingPrompts?: OpeningPrompt[];
 }

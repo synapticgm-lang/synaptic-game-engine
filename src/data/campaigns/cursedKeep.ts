@@ -10,7 +10,17 @@ export const cursedKeep: CampaignBible = {
   shortDescription:
     '5e-friendly horror mystery: Greyhollow won’t talk about the abandoned keep — until the dead start stirring and the road washes out.',
   startingLocation: 'Greyhollow, at the inn',
+  openingRegistrar: {
+    voice: 'inworld',
+    label: 'GREYHOLLOW REGISTER',
+    startLine: 'The inn book is open. State your name, and where you were before the last coach left you here.',
+  },
   openingPrompts: [
+    {
+      id: 'name',
+      kind: 'name',
+      question: 'What name shall the inn book take?',
+    },
     {
       id: 'folk',
       kind: 'species',

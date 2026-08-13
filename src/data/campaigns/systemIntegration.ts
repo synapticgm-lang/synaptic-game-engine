@@ -216,12 +216,22 @@ export const systemIntegration: CampaignBible = {
   startingLocation: 'A cracked city street',
   replaceDefaultLoadout: true,
   openingHook:
-    'The sky tears open. A voice — not human, not machine — speaks to every mind on Earth: "Integration complete. Welcome to the System." A blue panel flickers at eye level.\n\n[ SYSTEM ] Welcome. You have been registered. Survive.',
+    'The sky tears open. A voice — not human, not machine — speaks to every mind on Earth: "Integration complete. Welcome to the System." A blue panel flickers at eye level.',
+  openingRegistrar: {
+    voice: 'system',
+    label: 'SYSTEM',
+    startLine: 'Starting. Please confirm your name and current location.',
+  },
   openingPrompts: [
+    {
+      id: 'name',
+      kind: 'name',
+      question: 'Confirm designation.',
+    },
     {
       id: 'where',
       kind: 'location',
-      question: 'Where were you when the sky tore open — the real place, not a fantasy town?',
+      question: 'Confirm current location.',
       suggestions: [
         'On a city street walking somewhere ordinary',
         'In my apartment or house',
@@ -232,7 +242,7 @@ export const systemIntegration: CampaignBible = {
     {
       id: 'wear',
       kind: 'appearance',
-      question: 'What were you wearing — the clothes you actually had on this morning?',
+      question: 'Visual profile incomplete. Describe garments worn at Registration.',
       suggestions: [
         'Jeans, a jacket, everyday street clothes',
         'Work clothes or a uniform',
@@ -243,7 +253,7 @@ export const systemIntegration: CampaignBible = {
     {
       id: 'pockets',
       kind: 'kit',
-      question: 'What did you have on you? Phone, keys, bag — not a traveler kit.',
+      question: 'Personal-effects scan. List items on your person. Combat-grade declarations will be rejected.',
       suggestions: [
         'Phone, keys, and wallet',
         'A backpack with everyday stuff',

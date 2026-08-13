@@ -1,12 +1,21 @@
-import type { CampaignBible, OpeningPrompt } from '@/data/campaigns/types';
+import type { CampaignBible, OpeningPrompt, OpeningRegistrar } from '@/data/campaigns/types';
 import type { CampaignArchetype } from './archetypes';
 import type { EngineMode, GameState, Item, OpeningEstablishment } from './types';
 
+const GENERIC_NAMES = /^(adventurer|survivor|unknown survivor|hero|wanderer|unknown)$/i;
+
+const NAME_PROMPT: OpeningPrompt = {
+  id: 'name',
+  kind: 'name',
+  question: 'Confirm designation.',
+};
+
 const SI_PROMPTS: OpeningPrompt[] = [
+  NAME_PROMPT,
   {
     id: 'where',
     kind: 'location',
-    question: 'Where were you when the sky tore open — the real place, not a fantasy town?',
+    question: 'Confirm current location.',
     suggestions: [
       'On a city street walking somewhere ordinary',
       'In my apartment or house',
@@ -17,7 +26,7 @@ const SI_PROMPTS: OpeningPrompt[] = [
   {
     id: 'wear',
     kind: 'appearance',
-    question: 'What were you wearing — the clothes you actually had on this morning?',
+    question: 'Visual profile incomplete. Describe garments worn at Registration.',
     suggestions: [
       'Jeans, a jacket, everyday street clothes',
       'Work clothes or a uniform',
@@ -28,7 +37,7 @@ const SI_PROMPTS: OpeningPrompt[] = [
   {
     id: 'pockets',
     kind: 'kit',
-    question: 'What did you have on you? Phone, keys, bag — not a traveler kit.',
+    question: 'Personal-effects scan. List items on your person. Combat-grade declarations will be rejected.',
     suggestions: [
       'Phone, keys, and wallet',
       'A backpack with everyday stuff',
@@ -38,16 +47,17 @@ const SI_PROMPTS: OpeningPrompt[] = [
 ];
 
 const FANTASY_PROMPTS: OpeningPrompt[] = [
+  { id: 'name', kind: 'name', question: 'Give the name this tale will use.' },
   {
     id: 'folk',
     kind: 'species',
-    question: 'What people are you — human, elf, dwarf, or something else this world allows?',
+    question: 'Name your people — human, elf, dwarf, or another folk of this world.',
     suggestions: ['Human', 'Elf', 'Dwarf', 'Halfling'],
   },
   {
     id: 'look',
     kind: 'appearance',
-    question: 'What do you look like, and what are you wearing as this starts?',
+    question: 'Describe your face and what you are wearing as this begins.',
     suggestions: [
       'Travel-worn and practical',
       'Local clothes, nothing fancy',
@@ -57,26 +67,92 @@ const FANTASY_PROMPTS: OpeningPrompt[] = [
 ];
 
 const SPECIES_PROMPTS: OpeningPrompt[] = [
+  { id: 'name', kind: 'name', question: 'Confirm designation.' },
   {
     id: 'form',
     kind: 'species',
-    question: 'What are you now — the body you woke in?',
+    question: 'Species scan incomplete. What body did you wake in?',
     suggestions: ['A small beast', 'Something with claws', 'Not human, and I can feel it'],
   },
 ];
+
+const SYSTEM_ARCHETYPES = new Set<CampaignArchetype>([
+  'system_apocalypse',
+  'vrmmo',
+  'isekai',
+  'regression',
+  'cyberpunk',
+  'dungeon_transport',
+  'tower_ascent',
+  'magic_academy',
+  'dungeon_core',
+  'ai_random',
+]);
+
+export function resolveOpeningRegistrar(
+  bible: CampaignBible | undefined,
+  engineMode: EngineMode,
+  archetype?: CampaignArchetype
+): OpeningRegistrar {
+  if (bible?.openingRegistrar) return bible.openingRegistrar;
+  if (archetype === 'void_audience') {
+    return {
+      voice: 'inworld',
+      label: 'THE AUDITOR',
+      startLine: 'Speak your name. Then tell me where you died.',
+    };
+  }
+  if (engineMode === 'dnd') {
+    return {
+      voice: 'inworld',
+      label: 'THE TALE',
+      startLine: 'Before the first page is set: confirm your name, and where this begins.',
+    };
+  }
+  if (engineMode === 'rpg' && !SYSTEM_ARCHETYPES.has(archetype ?? 'ai_random')) {
+    return {
+      voice: 'inworld',
+      label: 'THE STORY',
+      startLine: 'Who are you, and where does this open?',
+    };
+  }
+  return {
+    voice: 'system',
+    label: 'SYSTEM',
+    startLine: 'Starting. Please confirm your name and current location.',
+  };
+}
+
+export function formatRegistrarLine(
+  registrar: OpeningRegistrar,
+  query: string,
+  options?: { includeStartLine?: boolean; extra?: string }
+): string {
+  const start = options?.includeStartLine ? `${registrar.startLine}\n` : '';
+  const extra = options?.extra ? `${options.extra}\n` : '';
+  if (registrar.voice === 'system') {
+    return `[ ${registrar.label} ]\n${start}${extra}${query}`.trim();
+  }
+  return `${start}${extra}${query}`.trim();
+}
 
 export function resolveOpeningPrompts(
   bible: CampaignBible | undefined,
   engineMode: EngineMode,
   archetype?: CampaignArchetype
 ): OpeningPrompt[] {
-  if (bible?.openingPrompts?.length) return bible.openingPrompts;
-  if (bible?.id === 'system-integration' || archetype === 'system_apocalypse') return SI_PROMPTS;
-  if (archetype === 'monster_reincarnation') return SPECIES_PROMPTS;
-  if (engineMode === 'dnd' || archetype === 'cursed_manor') {
-    return FANTASY_PROMPTS;
+  let prompts: OpeningPrompt[] = [];
+  if (bible?.openingPrompts?.length) prompts = bible.openingPrompts;
+  else if (bible?.id === 'system-integration' || archetype === 'system_apocalypse') prompts = SI_PROMPTS;
+  else if (archetype === 'monster_reincarnation') prompts = SPECIES_PROMPTS;
+  else if (engineMode === 'dnd' || archetype === 'cursed_manor') prompts = FANTASY_PROMPTS;
+  else if (engineMode === 'litrpg' || SYSTEM_ARCHETYPES.has(archetype ?? 'ai_random')) prompts = SI_PROMPTS;
+  else prompts = FANTASY_PROMPTS;
+
+  if (!prompts.some((p) => p.kind === 'name')) {
+    return [NAME_PROMPT, ...prompts];
   }
-  return [];
+  return prompts;
 }
 
 export function filterOpeningPrompts(
@@ -84,6 +160,7 @@ export function filterOpeningPrompts(
   character: GameState['character']
 ): OpeningPrompt[] {
   return prompts.filter((p) => {
+    if (p.kind === 'name' && character.name?.trim() && !GENERIC_NAMES.test(character.name.trim())) return false;
     if (p.kind === 'appearance' && character.appearance?.trim()) return false;
     if ((p.kind === 'species' || p.kind === 'identity') && /\b(elf|dwarf|human|orc|beast)\b/i.test(character.bio ?? '')) {
       return false;
@@ -111,15 +188,25 @@ export function formatPlayerCanon(state: GameState): string {
 export function buildEstablishmentIntro(
   archetypeIntro: string,
   prompts: OpeningPrompt[],
-  bible?: CampaignBible
+  bible?: CampaignBible,
+  registrar?: OpeningRegistrar,
+  characterName?: string
 ): { text: string; choices: string[] } {
   if (!prompts.length) {
     return { text: archetypeIntro, choices: [] };
   }
+  const voice = registrar ?? resolveOpeningRegistrar(bible, bible?.engineMode ?? 'litrpg', bible?.archetype);
   const hook = (bible?.openingHook?.trim() || softenAssumedPlace(archetypeIntro)).replace(/\s*What do you do\??\s*$/i, '').trim();
   const first = prompts[0];
+  const designation = characterName?.trim() && !GENERIC_NAMES.test(characterName.trim())
+    ? `Current designation: ${characterName}`
+    : 'Current designation: unconfirmed';
+  const query = formatRegistrarLine(voice, first.question, {
+    includeStartLine: true,
+    extra: voice.voice === 'system' ? designation : undefined,
+  });
   return {
-    text: `${hook}\n\nThe story will start from your life, not a generic adventurer sheet. ${first.question}`,
+    text: `${hook}\n\n${query}`,
     choices: first.suggestions ?? [],
   };
 }
@@ -166,6 +253,10 @@ export function sanitizeOpeningAnswer(
       .replace(/\s+([,.])/g, '$1')
       .trim();
   }
+  if (kind === 'name') {
+    const name = text.split(/[,.—–-]| and | in | at | on /i)[0]?.trim() || text;
+    return { text: name.slice(0, 40) || 'Adventurer', cheated, mundaneNames: [] };
+  }
   if (kind === 'appearance' && (cheated || !text)) {
     text = text || 'The ordinary clothes you had on this morning';
   }
@@ -205,6 +296,9 @@ function grantMundaneStartingItems(inventory: Item[], names: string[]): Item[] {
 
 function applyKindToState(state: GameState, prompt: OpeningPrompt, answer: string): GameState {
   const clean = sanitizeOpeningAnswer(prompt.kind, answer);
+  if (prompt.kind === 'name') {
+    return { ...state, character: { ...state.character, name: clean.text.slice(0, 40) } };
+  }
   if (prompt.kind === 'location') {
     return { ...state, currentLocation: clean.text.slice(0, 80) };
   }
@@ -273,13 +367,20 @@ export function applyOpeningAnswer(state: GameState, rawInput: string): {
   const clean = sanitizeOpeningAnswer(current.kind, answer);
   const afterKind = applyKindToState(state, current, answer);
   const answers = { ...est.answers, [current.id]: clean.text };
+  const registrar = est.registrar ?? {
+    voice: 'system' as const,
+    label: 'SYSTEM',
+    startLine: 'Starting. Please confirm your name and current location.',
+  };
   const cheatNote = clean.cheated
     ? {
         id: crypto.randomUUID(),
         turn: afterKind.turn,
         role: 'gm' as const,
-        content:
-          'You reach for something no ordinary morning — and no Registration allotment — would put in your hands. It is not there. Clothes, pockets, and starting kit stay ordinary. Power is earned in play, not declared.',
+        content: formatRegistrarLine(
+          registrar,
+          'Invalid declaration. High-tier weapons, armor, and endgame gear are rejected. Allotment unchanged. Power is earned in play.'
+        ),
         timestamp: Date.now(),
       }
     : null;
@@ -290,18 +391,19 @@ export function applyOpeningAnswer(state: GameState, rawInput: string): {
 
   if (pending.length) {
     const next = pending[0];
+    const accepted = current.kind === 'name' ? `Designation logged: ${clean.text}` : undefined;
     const gmEntry = {
       id: crypto.randomUUID(),
       turn: afterKind.turn,
       role: 'gm' as const,
-      content: next.question,
+      content: formatRegistrarLine(registrar, next.question, { extra: accepted }),
       timestamp: Date.now(),
     };
     return {
       generateOpening: false,
       state: {
         ...afterKind,
-        openingEstablishment: { pending, answers, complete: false },
+        openingEstablishment: { pending, answers, complete: false, registrar },
         choices: next.suggestions ?? [],
         log: playerAlreadyLogged
           ? [...afterKind.log, ...(cheatNote ? [cheatNote] : []), gmEntry]
@@ -321,7 +423,7 @@ export function applyOpeningAnswer(state: GameState, rawInput: string): {
     state: {
       ...afterKind,
       campaignPremise: premise,
-      openingEstablishment: { pending: [], answers, complete: true },
+      openingEstablishment: { pending: [], answers, complete: true, registrar },
       pendingGeneratedOpening: true,
       choices: [],
       log: cheatNote ? [...afterKind.log, cheatNote] : afterKind.log,

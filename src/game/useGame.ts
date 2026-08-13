@@ -52,6 +52,7 @@ import {
   filterOpeningPrompts,
   isOpeningEstablishmentPending,
   resolveOpeningPrompts,
+  resolveOpeningRegistrar,
   synthesizeOpeningScene,
 } from './openingEstablishment';
 import { formatCampaignStoryName, getCampaignBibleById } from '@/data/campaigns';
@@ -2147,7 +2148,18 @@ In <system-log>, only emit LitRPG/RPG progression lines (XP, loot, HP change as 
       resolveOpeningPrompts(bible, engineMode, resolvedArchetype ?? namedSeeded.campaignArchetype),
       mergedCharacter
     );
-    const establishedIntro = buildEstablishmentIntro(introContent, openingPrompts, bible);
+    const registrar = resolveOpeningRegistrar(
+      bible,
+      engineMode,
+      resolvedArchetype ?? namedSeeded.campaignArchetype
+    );
+    const establishedIntro = buildEstablishmentIntro(
+      introContent,
+      openingPrompts,
+      bible,
+      registrar,
+      mergedCharacter.name
+    );
     const initialChoices = establishedIntro.choices.length
       ? establishedIntro.choices
       : extractChoicesFromText(introContent, namedSeeded);
@@ -2161,8 +2173,8 @@ In <system-log>, only emit LitRPG/RPG progression lines (XP, loot, HP change as 
       log: [{ id: 'intro-1', turn: 0, role: 'gm', content: cleanIntroContent, timestamp: Date.now() }],
       worldLedger: emptyWorldLedger(),
       openingEstablishment: openingPrompts.length
-        ? { pending: openingPrompts, answers: {}, complete: false }
-        : { pending: [], answers: {}, complete: true },
+        ? { pending: openingPrompts, answers: {}, complete: false, registrar }
+        : { pending: [], answers: {}, complete: true, registrar },
     };
     setState(newState);
     stateRef.current = newState;
