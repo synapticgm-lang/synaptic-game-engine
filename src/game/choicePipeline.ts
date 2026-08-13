@@ -544,8 +544,13 @@ export async function resolvePipelineChoices(params: {
   const rawChoices = extractChoiceLines(gmText);
 
   const firstPass = filterChoicesToTurnFacts(rawChoices, storyProse, state, loreCards);
-  if (firstPass.rejected.length === 0 && firstPass.kept.length >= 3) {
-    return { choices: padChoicesToCount(firstPass.kept, state, storyProse), regenerated: false, rejectedCount: 0 };
+  // Two grounded options are enough — pad locally instead of another model call.
+  if (firstPass.kept.length >= 2) {
+    return {
+      choices: padChoicesToCount(firstPass.kept, state, storyProse),
+      regenerated: false,
+      rejectedCount: firstPass.rejected.length,
+    };
   }
 
   // Any environmental/plot violation OR too few survivors → regenerate from Tier 3 prose.

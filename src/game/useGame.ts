@@ -62,6 +62,7 @@ import {
 import { applyCommittedNarrative, extractSceneFacts, seedOpeningSceneFacts } from './sceneFacts';
 import { applyFactLocks, detectFactLockViolations } from './factLocks';
 import { dropInsultGear } from './wornGear';
+import { needsPortraitRefresh, paperDollPrompt, portraitCacheKey } from './inventoryArt';
 import { formatCampaignStoryName, getCampaignBibleById } from '@/data/campaigns';
 import { parsePlayerIntent, groundPlayerAction } from './intentParser';
 import { interpretPlayerUtterance } from './playerUtterance';
@@ -1307,6 +1308,8 @@ export function useGame() {
         mode: 'play',
         lastScene: storyProseForGround,
         settings: settingsRef.current,
+        // Local parse already has the act — skip the extra small-model round trip.
+        skipModel: grounded.intent.kind !== 'other' || grounded.rewritten,
       });
       if (!grounded.rewritten && interpreted.messy && interpreted.meaning) {
         sanitizedInput = interpreted.meaning;
@@ -1422,7 +1425,9 @@ In <system-log>, only emit LitRPG/RPG progression lines (XP, loot, HP change as 
           sanitizedInput,
         );
         const probeLocks = detectFactLockViolations(liveCurrent, probeText, sanitizedInput);
-        if (isUnresolvedActionNarrative(sanitizedInput, probeText, intentForMandate) || probeLocks.length) {
+        // Fact-lock slips are cut locally after this. Only burn a second GM call when
+        // the turn did not resolve the player's action at all.
+        if (isUnresolvedActionNarrative(sanitizedInput, probeText, intentForMandate)) {
           debugLogger.record('WARN', 'Unresolved action narrative — resolution retry', {
             turn: liveCurrent.turn,
             intent: intentForMandate.kind,
@@ -1446,6 +1451,11 @@ In <system-log>, only emit LitRPG/RPG progression lines (XP, loot, HP change as 
               setRetryStatus(`Rate limited — retry ${attempt}/4 in ${Math.round(delayMs / 1000)}s…`);
             },
           );
+        } else if (probeLocks.length) {
+          debugLogger.record('STATE_UPDATE', 'Fact-lock slips will be cut locally — skipping GM retry', {
+            turn: liveCurrent.turn,
+            factLocks: probeLocks.map((v) => v.kind),
+          });
         }
       }
 
@@ -1686,8 +1696,10 @@ In <system-log>, only emit LitRPG/RPG progression lines (XP, loot, HP change as 
       // (`isComicView` is false for both), so their pipelines are completely untouched. If the
       // Director call fails, times out, or returns something unusable, we silently keep the
       // GM's own `<panel>`-tag panels computed above — Comic Mode never blocks or breaks
-      // waiting on this extra, optional pass.
-      if (isComicView && panelBudget > 0) {
+      // waiting on this extra, optional pass. Skip it when the GM already wrote usable
+      // panels — that extra call was holding the input box for up to 20s every turn.
+      const gmPanelsUsable = sanitizedPanels.some((panel) => (panel.narrative ?? '').trim().length > 40);
+      if (isComicView && panelBudget > 0 && !gmPanelsUsable) {
         try {
           const infoCards = [
             ...activeLoreCards.map((c) => `${c.name}: ${c.summary}`),
@@ -2404,6 +2416,42 @@ In <system-log>, only emit LitRPG/RPG progression lines (XP, loot, HP change as 
     setState(next);
     void persist(next);
   });
+
+  const portraitLock = useRef(false);
+  useEffect(() => {
+    const current = state;
+    if (!current || busy || showCharacterWindow || portraitLock.current) return;
+    if (!needsPortraitRefresh(current)) return;
+    let cancelled = false;
+    portraitLock.current = true;
+    void (async () => {
+      try {
+        const live = stateRef.current ?? current;
+        const url = await generateInventoryArt(paperDollPrompt(live), 'character-portrait');
+        if (url && !cancelled) {
+          commitInventoryArt({
+            portraitUrl: url,
+            portraitKey: portraitCacheKey(stateRef.current ?? live),
+          });
+        }
+      } finally {
+        portraitLock.current = false;
+      }
+    })();
+    return () => {
+      cancelled = true;
+      portraitLock.current = false;
+    };
+  }, [
+    busy,
+    showCharacterWindow,
+    state?.character.appearance,
+    state?.character.portraitKey,
+    state?.character.portraitUrl,
+    state?.inventory,
+    generateInventoryArt,
+    commitInventoryArt,
+  ]);
 
   const retryPanelImage = useCallbackRef((entryId: string, panelIndex: number) => {
     const current = stateRef.current;

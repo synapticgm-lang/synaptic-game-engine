@@ -1,4 +1,5 @@
 import type { GameState, LoreCard } from './types';
+import { characterLikeness } from './inventoryArt';
 
 /**
  * Visual Consistency Manager.
@@ -26,8 +27,8 @@ export interface VisualConsistencyOptions {
   /**
    * True when this turn's `<visual-update>` represents a radical base-form/species change
    * (GM-flagged or heuristically detected — see `isRadicalFormChange` in parser.ts). Replaces
-   * the equipped-gear value with an explicit bare/no-gear state, so the image model doesn't
-   * keep drawing human clothes/weapons on a body that no longer has human anatomy.
+   * the equipped-gear value so the image model doesn't keep drawing the old clothes or
+   * weapons on a body that no longer has human anatomy.
    */
   formChange?: boolean;
 }
@@ -39,25 +40,18 @@ export function buildVisualConsistencyBlock(
 ): string {
   const lines: string[] = [];
 
-  const character = state.character;
-  const appearance =
-    options.appearanceOverride?.trim()
-    || character?.appearance?.trim()
-    || character?.bio?.trim()
-    || character?.name?.trim()
-    || 'Unspecified player character';
+  const likeness = characterLikeness(state, {
+    appearanceOverride: options.appearanceOverride,
+    formChange: options.formChange,
+  });
+  const outfit = options.formChange
+    ? 'New form only — do not keep the old clothes or weapons unless the description names them.'
+    : (likeness.gear || likeness.look);
 
-  const equipped = (state.inventory ?? []).filter((item) => item?.equipped);
-  const gearString = options.formChange || equipped.length === 0
-    ? 'No clothing, armor, or weapons equipped. Completely bare.'
-    : equipped
-        .map((item) => `${item.name}${item.slot ? ` (${item.slot})` : ''}`)
-        .join(', ');
-
-  lines.push(`Player Character: ${appearance}`);
-  lines.push(`Equipped Gear: ${gearString}`);
+  lines.push(`Player Character (SAME PERSON in every image, including inventory portrait): ${likeness.look}`);
+  lines.push(`Current outfit / held gear for THIS image: ${outfit}`);
   lines.push(
-    'CRITICAL: Strictly adhere to the Player Character description. If the character is described as a creature, monster, or non-human, DO NOT draw a human. Do NOT add generic adventurer clothing, cloaks, or swords unless explicitly listed in the Equipped Gear.'
+    'LIKENESS LOCK: Keep the same face, hair, skin, body type, and age they described. Do not redesign them. Only clothing, armor, and held items change when Current outfit changes. If they described street clothes, draw those clothes — never a generic adventurer kit, cloak, or sword unless listed in Current outfit. If they are a creature or non-human, do not draw a human.'
   );
 
   if (options.formChange) {

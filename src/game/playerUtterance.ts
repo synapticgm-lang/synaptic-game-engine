@@ -212,11 +212,14 @@ export async function interpretPlayerUtterance(params: {
   settings?: Settings;
   /** Opening: current field still empty after the fast path. */
   forceModel?: boolean;
+  /** Play: skip the small-model call when local parse already has the act. */
+  skipModel?: boolean;
 }): Promise<InterpretedUtterance> {
   const raw = params.raw.replace(/\s+/g, ' ').trim();
   const local = localInterpret(raw);
   const shouldAskModel =
     !!params.settings &&
+    !params.skipModel &&
     !local.questionOnly &&
     (local.messy || !!params.forceModel);
 

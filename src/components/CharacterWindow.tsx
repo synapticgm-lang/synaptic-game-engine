@@ -9,7 +9,7 @@ import {
   X, ChevronLeft, ChevronRight, ChevronDown, ChevronUp,
   HardHat, Shield, Shirt, Sword, Footprints,
   Sparkles, Hammer, Cat, Trophy, ScrollText, Camera, TrendingUp,
-  Heart, Droplet, Zap, Users, Backpack,
+  Heart, Droplet, Zap, Users, Backpack, Loader2,
 } from 'lucide-react';
 import { getItemsInContainer } from '@/game/inventory';
 import { findEquippedInSlot, type DisplayEquipSlot } from '@/game/wornGear';
@@ -329,7 +329,7 @@ function InventoryPanel({ state }: { state: GameState }) {
 export function CharacterWindow({ isOpen, onClose, state, settings, initialTab, onGenerateArt, onCommitArt }: Props) {
   const [sidePanelOpen, setSidePanelOpen] = useState(true);
   const [activeTab, setActiveTab] = useState<BottomTab>(initialTab ?? 'inventory');
-  const artLock = useRef(false);
+  const [artBusy, setArtBusy] = useState(false);
 
   const equipped = useMemo(() => {
     const map = {} as Record<EquipSlotKey, Item | undefined>;
@@ -339,13 +339,14 @@ export function CharacterWindow({ isOpen, onClose, state, settings, initialTab, 
     return map;
   }, [state.inventory]);
 
+  const lookKey = portraitCacheKey(state);
   const stateRef = useRef(state);
   stateRef.current = state;
 
   useEffect(() => {
-    if (!isOpen || !onGenerateArt || !onCommitArt || artLock.current) return;
+    if (!isOpen || !onGenerateArt || !onCommitArt) return;
     let cancelled = false;
-    artLock.current = true;
+    setArtBusy(true);
     void (async () => {
       try {
         const live = stateRef.current;
@@ -363,16 +364,16 @@ export function CharacterWindow({ isOpen, onClose, state, settings, initialTab, 
         const needPortrait = after.character.portraitKey !== key || !after.character.portraitUrl;
         if (!cancelled && needPortrait) {
           const url = await onGenerateArt(paperDollPrompt(after), 'character-portrait');
-          if (url && !cancelled) onCommitArt({ portraitUrl: url, portraitKey: key });
+          if (url && !cancelled) onCommitArt({ portraitUrl: url, portraitKey: portraitCacheKey(stateRef.current) });
         }
       } finally {
-        artLock.current = false;
+        if (!cancelled) setArtBusy(false);
       }
     })();
     return () => {
       cancelled = true;
     };
-  }, [isOpen, onGenerateArt, onCommitArt]);
+  }, [isOpen, onGenerateArt, onCommitArt, lookKey]);
 
   if (!isOpen) return null;
 
@@ -423,7 +424,13 @@ export function CharacterWindow({ isOpen, onClose, state, settings, initialTab, 
               <EquipSlot slotKey="Main Hand" item={equipped['Main Hand']} />
 
               {/* Portrait */}
-              <div className="w-28 h-40 sm:w-36 sm:h-52 rounded-lg border-2 border-slate-600 bg-slate-800/40 flex items-center justify-center overflow-hidden">
+              <div className="w-28 h-40 sm:w-36 sm:h-52 rounded-lg border-2 border-slate-600 bg-slate-800/40 flex items-center justify-center overflow-hidden relative">
+                {artBusy && (!c.portraitUrl || c.portraitKey !== lookKey) ? (
+                  <div className="absolute inset-0 z-10 flex flex-col items-center justify-center gap-2 bg-slate-900/70">
+                    <Loader2 size={22} className="animate-spin text-crimson-400" />
+                    <span className="text-[10px] text-slate-400">Drawing you…</span>
+                  </div>
+                ) : null}
                 {c.portraitUrl ? (
                   <img src={c.portraitUrl} alt={c.name} className="h-full w-full object-cover object-top" />
                 ) : c.appearance ? (

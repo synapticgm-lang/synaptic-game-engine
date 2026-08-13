@@ -6,14 +6,49 @@ export interface InventoryArtPatch {
   portraitKey?: string;
 }
 
-export function portraitCacheKey(state: GameState): string {
-  const look = (state.character.appearance || state.character.bio || state.character.name || '').trim();
-  const gear = (state.inventory ?? [])
+export interface CharacterLikeness {
+  look: string;
+  gear: string;
+  key: string;
+}
+
+function equippedGearLine(state: GameState, formChange = false): string {
+  if (formChange) return '';
+  return (state.inventory ?? [])
     .filter((i) => i.equipped)
-    .map((i) => `${i.slot ?? ''}:${i.name}`)
+    .map((i) => `${i.name}${i.slot ? ` (${i.slot})` : ''}`)
     .sort()
-    .join('|');
-  return `${look}::${gear}`.slice(0, 240);
+    .join(', ');
+}
+
+/** Face/body from their description, plus what they are wearing right now. */
+export function characterLikeness(
+  state: GameState,
+  options: { appearanceOverride?: string; formChange?: boolean } = {}
+): CharacterLikeness {
+  const look = (
+    options.appearanceOverride?.trim()
+    || state.character.appearance?.trim()
+    || state.character.bio?.trim()
+    || state.character.name?.trim()
+    || 'ordinary clothes from this morning'
+  );
+  const gear = equippedGearLine(state, options.formChange);
+  return {
+    look,
+    gear,
+    key: `${look}::${gear}`.slice(0, 240),
+  };
+}
+
+export function portraitCacheKey(state: GameState): string {
+  return characterLikeness(state).key;
+}
+
+export function needsPortraitRefresh(state: GameState): boolean {
+  if (!state.character.appearance?.trim() && !state.character.bio?.trim()) return false;
+  const key = portraitCacheKey(state);
+  return !state.character.portraitUrl || state.character.portraitKey !== key;
 }
 
 export function itemIconPrompt(item: Item): string {
@@ -23,11 +58,14 @@ export function itemIconPrompt(item: Item): string {
 }
 
 export function paperDollPrompt(state: GameState): string {
+  const { look, gear } = characterLikeness(state);
   const name = state.character.name || 'the player';
-  const look = state.character.appearance?.trim() || 'ordinary clothes from this morning';
-  const gear = (state.inventory ?? [])
-    .filter((i) => i.equipped)
-    .map((i) => `${i.name}${i.slot ? ` (${i.slot})` : ''}`)
-    .join(', ') || 'everyday clothes';
-  return `${name} standing in an inventory paper-doll pose. Appearance: ${look}. Equipped: ${gear}. Same person, full body visible.`;
+  const outfit = gear || look;
+  return [
+    `${name} standing in an inventory paper-doll pose.`,
+    `This is the same person they described: ${look}.`,
+    `Currently wearing and holding: ${outfit}.`,
+    'Keep their face, hair, skin, body, and age. Only the listed gear may differ from an older look.',
+    'Same person, full body visible from head to feet.',
+  ].join(' ');
 }
