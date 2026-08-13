@@ -8,7 +8,9 @@ Choices are Tier-3 outputs and MUST be generated ONLY after the turn's story pro
 * NEVER name weapons or tools the player does not have in Inventory / Equipped Gear.
 * NEVER offer locked, greyed-out, or level-gated System menus/skills as numbered choices.
 * NEVER invent named cities, hubs, outposts, or NPCs the player has not met — lore titles are not places you are standing in.
-* NEVER invent soft interactables (named altars, chests, consoles, relics) unless they appear in this turn's prose or the location sheet.
+* NEVER invent soft interactables (named altars, chests, consoles, relics, cars, vans, tire irons) unless they appear in this turn's prose or the location sheet.
+* If the player named a specific object, the story MUST resolve that object. Do not substitute a generic look-around.
+* If they ask where gear came from, answer from item provenance and equipped slots. Do not say the question is "opaque" when the sheet already knows.
 * NEVER mention a spatial pouch or fancy container unless that exact name is in Containers.
 * Info/lore cards constrain identity and world facts — they do NOT authorize inventing a new crisis mid-choice-list.
 * Prefer 3–4 immediate, scene-local actions. Always emit 3 or 4 options. Prefer scene-safe fallbacks over ungrounded creativity.`;

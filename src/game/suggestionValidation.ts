@@ -13,7 +13,7 @@ const GENERIC_SCENE_ROLES = new Set([
 
 /** Soft interactable / invented object claims in choices or free text. */
 const NAMED_INTERACTABLE_CLAIM =
-  /\b(?:inspect|examine|open|search|take|grab|pick\s+up|approach|activate|pull|push|read|unlock|loot|rummage(?:\s+through)?)\s+(?:(?:a|an|the|my|your)\s+)?([A-Za-z][\w'-]*(?:\s+[A-Za-z][\w'-]*){0,3})\b/gi;
+  /\b(?:inspect|examine|open|search|check|test|heft|take|grab|pick\s+up|approach|activate|pull|push|read|unlock|loot|rummage(?:\s+through)?)\s+(?:(?:the\s+heft\s+of\s+)?(?:a|an|the|my|your)\s+)?([A-Za-z][\w'-]*(?:\s+[A-Za-z][\w'-]*){0,3})\b/gi;
 
 /** Named creature / foe targeted by combat or stealth reactions. */
 const NAMED_THREAT_CLAIM =

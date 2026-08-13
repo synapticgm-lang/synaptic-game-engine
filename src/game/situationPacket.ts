@@ -69,7 +69,7 @@ ${npcBlock || '(none)'}
 Recent facts:
 ${s.recentFacts.length ? s.recentFacts.join('\n') : '(none)'}
 RAILS: Hard facts above + factual timeline OVERRIDE improvisation. Do not invent named threats, loot, NPCs, or interactables absent from this packet / location sheet / tags.
-PLAYER ACTION FIDELITY: Resolve the player's last stated action first. Never pivot the scene to a quest location, dungeon, store, or marker unless the player mentioned it or is already there.
+PLAYER ACTION FIDELITY: Resolve the player's last stated action first — the named object, question, or motion. Never swap a specific search for a generic look-around. Never pivot the scene to a quest location, dungeon, store, or marker unless the player mentioned it or is already there.
 Do not write "You commit to the action" or "the result lands in [lore title]". Narrate what actually happens.
 Lore-article titles are not the current location. Do not name unvisited hubs, cities, or NPCs.
 ${formatWorldLedgerBlock(state.worldLedger)}`;
@@ -123,7 +123,7 @@ export function formatCampaignRails(state: GameState): string {
   return `=== CAMPAIGN GUIDE BOOK (RAILS — DO NOT CONTRADICT) ===
 ${premise}
 Stay inside this premise. Side scenes and downtime are allowed.
-PLAYER ACTION FIDELITY (BINDING): Answer the player's last action first (e.g. practice swings, ask a question, look at gear). Do NOT redirect to quest dungeons, convenience stores, or System markers unless the player engages them. Quests are background Guide Book only — not a turn-by-turn script.
+PLAYER ACTION FIDELITY (BINDING): Answer the player's last action first (e.g. search this car, ask where the tunic came from, practice swings). Do NOT redirect to quest dungeons, convenience stores, or System markers unless the player engages them. Quests are background Guide Book only — not a turn-by-turn script.
 ===========================================================`;
 }
 

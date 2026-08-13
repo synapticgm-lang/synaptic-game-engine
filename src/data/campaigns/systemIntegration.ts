@@ -213,7 +213,7 @@ export const systemIntegration: CampaignBible = {
     },
   ],
 
-  startingLocation: 'A city street, hours after Registration',
+  startingLocation: 'A cracked city street',
 
   starterItems: [
     {

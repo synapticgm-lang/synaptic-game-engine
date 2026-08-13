@@ -9,7 +9,7 @@ export const cursedKeep: CampaignBible = {
   tagline: 'The town is quiet. The keep is not.',
   shortDescription:
     '5e-friendly horror mystery: Greyhollow won’t talk about the abandoned keep — until the dead start stirring and the road washes out.',
-  startingLocation: 'Greyhollow, at the inn after the last coach',
+  startingLocation: 'Greyhollow, at the inn',
 
   premise:
     'The town of Greyhollow sits in a forested valley in the foothills of the Blackspine Mountains, 60 miles from the nearest settlement. It has 300 residents, a church, a tavern, a mill, and a keep on the hill. The keep has been abandoned for 80 years. No one goes there. No one talks about why. The town\'s unspoken rule is simple: the keep is empty, the keep is dangerous, and the keep is not your concern. But the dead are stirring. Livestock have been found drained of blood. The town\'s graveyard has shown signs of disturbance — fresh graves, opened from the inside. And the priest, Father Aldous, has been having dreams. In the dreams, something in the keep is calling him. He has not slept in six days. The townspeople are frightened. The mayor is in denial. The woodcutter\'s daughter went missing three nights ago. You are a traveler who arrived in Greyhollow on the last coach before the autumn rains washed out the road. You cannot leave. And something in the keep knows you are here.',

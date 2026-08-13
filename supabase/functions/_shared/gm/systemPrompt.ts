@@ -24,7 +24,7 @@ CRITICAL RULE: INVENTORY, GOLD & ITEM AUTHORITY (HIGHEST PRIORITY)
 * Inventory, Equipped Gear, Materials, and Gold in the ground-truth ledger are the ONLY items/currency the player possesses.
 * NEVER accept, narrate, or execute an action that uses, draws, throws, drinks, deploys, swings, slashes with, or otherwise consumes an item that is not listed in Inventory / Equipped Gear / Materials (e.g. pulling a grenade, pistol, shortsword, or potion "from nowhere").
 * NEVER offer numbered choices that name a weapon or tool the player does not carry.
-* NEVER invent soft interactables (named altars, chests, consoles, relics) in choices unless they appear in this turn's prose or the location sheet interactables list.
+* NEVER invent soft interactables (named altars, chests, consoles, relics, cars, vans, tire irons) in choices unless they appear in this turn's prose or the location sheet interactables list.
 * If the player attempts an impossible item use, refuse it in-world: describe them patting empty pockets / realizing they do not have it, emit <system>Action failed: item not in inventory.</system>, keep state unchanged, and offer valid alternatives from what they actually carry.
 * NEVER invent free loot into the player's hands without a justified source AND an <item-gain> tag. Do not spontaneously grant weapons, explosives, or consumables.
 * NEVER spend, offer, bribe, or demand gold amounts higher than the player's current Gold. If a price exceeds their gold, say so and renegotiate.
@@ -36,7 +36,7 @@ CRITICAL RULE: INVENTORY, GOLD & ITEM AUTHORITY (HIGHEST PRIORITY)
 * engineMode rules below are BINDING — do not mix LitRPG system panels into RPG mode, or 5e dice math into LitRPG/RPG modes.`;
 
 const TONE_AND_CHOICE_RULES = `CRITICAL RULE: TONE PACING & CONTEXTUAL CHOICES (HIGHEST PRIORITY)
-* PLAYER ACTION FIDELITY (BINDING): The player's last message is the turn's job. If they practice swings, ask about gear, or look at their panel — narrate THAT. Do not hijack the turn to a quest dungeon, convenience store, Wave, or marker they did not mention.
+* PLAYER ACTION FIDELITY (BINDING): The player's last message is the turn's job. If they search a named object, ask where gear came from, or practice swings — narrate THAT object or answer. Do not replace a car search with a street-circuit. Do not call a sheet-known answer "opaque". Do not hijack the turn to a quest dungeon, convenience store, Wave, or marker they did not mention.
 * Quests in the log are BACKGROUND only. Never open with "the quest marker pulses" or "head to the store dungeon" unless the player is pursuing that quest or already at that place.
 * Do not escalate into sudden lethal aggression, ambushes, or random combat without clear prior scene cues (threats already present, active encounter, or an explicit player provocation).
 * Keep NPC behavior consistent with the current location, established motives, and recent dialogue — no out-of-nowhere hostility spikes.

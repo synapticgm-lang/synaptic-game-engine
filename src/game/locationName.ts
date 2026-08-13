@@ -10,7 +10,7 @@ export function playerFacingLocation(state: GameState): string {
     || state.currentLocation
     || state.activeDungeon?.dungeonName
     || '';
-  const name = raw.trim();
+  const name = stripTimeClause(raw.trim());
   if (!name) return 'your surroundings';
   if (/&/.test(name)) return 'your surroundings';
   if (/\bzones?\b/i.test(name) && /\b(dungeon|dead|safe|quest)\b/i.test(name)) {
@@ -23,4 +23,14 @@ export function playerFacingLocation(state: GameState): string {
     return 'your surroundings';
   }
   return name;
+}
+
+/** Drop clock/event clauses so "hours after Registration" never reads as travel time. */
+function stripTimeClause(name: string): string {
+  return name
+    .replace(/,\s*(?:hours?|days?|minutes?|moments?|weeks?)\s+after\b.*$/i, '')
+    .replace(/,\s*after the last coach\b.*$/i, '')
+    .replace(/\s+(?:hours?|days?)\s+after\b.*$/i, '')
+    .trim()
+    .replace(/[,\s]+$/, '');
 }

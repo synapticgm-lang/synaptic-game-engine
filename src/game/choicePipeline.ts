@@ -65,6 +65,11 @@ const ENVIRONMENTAL_EVENT_RULES: { label: string; choiceRe: RegExp; narrativeKey
     choiceRe: /\b(hide\s+from|sneak\s+(?:past|away\s+from|around)|flee\s+(?:the|from)|retreat\s+from|ambush\s+the|stalk\s+the|creature|beast|monster|mutated|feline|goblin|predator)\b/i,
     narrativeKeys: /\b(creature|enemy|beast|monster|figure|silhouette|threat|hostile|mutated|feline|goblin|predator|adversary|foe|attacker|stalk|lurk|growl|snarl)\b/i,
   },
+  {
+    label: 'distant commotion',
+    choiceRe: /\b(distant (?:shouting|screams?|gunfire)|three\s+blocks?|\d+\s+blocks?\s+(?:east|west|north|south)|down the (?:street|road) )\b/i,
+    narrativeKeys: /\b(shout|scream|blocks?|commotion|distant|gunfire)\b/i,
+  },
 ];
 
 const PLOT_JUMP_PATTERNS: RegExp[] = [
@@ -185,7 +190,10 @@ export function isChoiceGroundedInTurn(
   // Named people/places/objects: prior ledger only (not this turn's invented prose).
   // Threat/environment checks below still use current turn prose.
   const established = priorEstablishedProse(state, loreCards);
-  if (!isSuggestionValidForState(cleaned, state, established)) return false;
+  // Objects in THIS turn's prose may ground a choice; objects only in prior log/player
+  // wording are not enough to invent a tire iron or a van the story never showed.
+  if (!isSuggestionValidForState(cleaned, state, `${established}\n${storyProse}`)) return false;
+  if (choiceNamesUnnarratedObject(cleaned, storyProse, state)) return false;
 
   const envHits = environmentalEventViolations(cleaned, storyProse);
   if (envHits.length > 0) return false;
@@ -211,6 +219,58 @@ export function isChoiceGroundedInTurn(
   return true;
 }
 
+const GENERIC_LOOKAROUND =
+  /^(examine|inspect|observe|look around|wait|listen|ask|rest|hide|approach cautiously|check (?:your |my )?(?:gear|inventory|wounds)|inspect the immediate surroundings|observe the environment carefully)\b/i;
+
+/** Concrete props in a choice must appear in this turn's story, inventory, or the location sheet. */
+export function choiceNamesUnnarratedObject(
+  choice: string,
+  storyProse: string,
+  state: GameState
+): boolean {
+  if (GENERIC_LOOKAROUND.test(choice.trim()) && choice.length < 56) return false;
+  const hay = [
+    storyProse,
+    ...(state.inventory ?? []).map((i) => i.name),
+    ...(state.containers ?? []).map((c) => c.name),
+    state.locationSheet?.name ?? '',
+    ...(state.locationSheet?.interactables ?? []).map((i) => i.name),
+    ...(state.locationSheet?.exits ?? []).map((e) => e.label),
+    state.activeEncounter?.name ?? '',
+  ].join(' ').toLowerCase();
+
+  const objects = [
+    ...choice.matchAll(
+      /\b(?:the|a|an)\s+([a-z][\w'-]*(?:\s+[a-z][\w'-]*){0,2})\b/gi
+    ),
+  ].map((m) => (m[1] ?? '').toLowerCase());
+
+  const skip = /^(immediate|nearest|nearby|other|another|few|some|your|my|old|new|next|last|same)$/;
+  for (const obj of objects) {
+    const core = obj.replace(/^(nearest|nearby|other|another|immediate|overturned|parked|open|ajar|distant)\s+/, '');
+    if (!core || skip.test(core)) continue;
+    if (/^(surroundings|environment|area|street|room|scene|ground|air|cover|gear|inventory|wounds?)$/.test(core)) {
+      continue;
+    }
+    if (hay.includes(core) || core.split(/\s+/).some((w) => w.length >= 4 && hay.includes(w))) {
+      continue;
+    }
+    if (
+      /^(car|van|truck|bus|vehicle|wreck)$/.test(core)
+      && /\b(car|van|truck|bus|vehicle|wreck)\b/.test(hay)
+    ) {
+      continue;
+    }
+    return true;
+  }
+  return false;
+}
+
+export function isLookAroundChoice(choice: string): boolean {
+  return /\b(examin|inspect|observe|look around|scout)\b/i.test(choice)
+    && /\b(surroundings|environment|area|street)\b/i.test(choice);
+}
+
 export function filterChoicesToTurnFacts(
   choices: string[],
   storyProse: string,
@@ -224,8 +284,11 @@ export function filterChoicesToTurnFacts(
     const cleaned = stripChoiceDecorators(choice);
     const reasons: string[] = [];
     const established = priorEstablishedProse(state, loreCards);
-    if (!isSuggestionValidForState(cleaned, state, established)) {
+    if (!isSuggestionValidForState(cleaned, state, `${established}\n${storyProse}`)) {
       reasons.push('violates state/inventory/companion/scene guardrails');
+    }
+    if (choiceNamesUnnarratedObject(cleaned, storyProse, state)) {
+      reasons.push('names an object not in this turn\'s story');
     }
     if (isLockedProgressionChoice(cleaned, state)) {
       reasons.push('locked or level-gated feature');
@@ -403,12 +466,29 @@ Generate 3-4 grounded choices now.`;
 }
 
 /** Scene-local fallbacks used by the pipeline and ActionBar when GM choices fail. */
-export function sceneSafeFallbacks(state: GameState, storyProse = ''): string[] {
-  const options = [
-    fallbackSuggestionForState(state),
-    'Examine the immediate surroundings',
-    'Wait and listen carefully',
-  ];
+export function sceneSafeFallbacks(
+  state: GameState,
+  storyProse = '',
+  lastPlayerAction = ''
+): string[] {
+  const justLooked = isLookAroundChoice(lastPlayerAction)
+    || /\b(look around|surroundings|scout|circuit)\b/i.test(lastPlayerAction);
+  const options: string[] = [];
+  if (!justLooked) options.push(fallbackSuggestionForState(state));
+  if (/\b(car|van|vehicle|truck|wreck)\b/i.test(storyProse)) {
+    options.push('Search the vehicle more carefully');
+  }
+  if (/\b(people|crowd|someone|scream|shout)\b/i.test(storyProse)) {
+    options.push('Call out to someone nearby');
+  }
+  if (/\b(panel|system)\b/i.test(storyProse)) {
+    options.push('Read the System panel more closely');
+  }
+  if (/\b(crystal|crack)\b/i.test(storyProse)) {
+    options.push('Inspect the crystals breaking the street');
+  }
+  if (/\b(alley)\b/i.test(storyProse)) options.push('Check the nearest alley');
+  options.push('Wait and listen carefully');
   if ((state.companions ?? []).length > 0) options.push('Check in with your companion');
   if (state.activeEncounter) options.push('Focus on the active threat');
   if (/\b(door|gate|path|corridor|alley)\b/i.test(storyProse)) {
@@ -418,6 +498,9 @@ export function sceneSafeFallbacks(state: GameState, storyProse = ''): string[] 
   for (const item of interactables.slice(0, 2)) {
     if (item.name?.trim()) options.push(`Inspect the ${item.name.trim()}`);
   }
+  if (!justLooked && options.length < 3) {
+    options.push('Examine the immediate surroundings');
+  }
   return Array.from(new Set(options)).slice(0, 4);
 }
 
@@ -425,11 +508,15 @@ export function padChoicesToCount(
   choices: string[],
   state: GameState,
   storyProse = '',
-  min = 3
+  min = 3,
+  lastPlayerAction = ''
 ): string[] {
-  const merged = Array.from(new Set(choices.map((c) => c.trim()).filter(Boolean)));
+  let merged = Array.from(new Set(choices.map((c) => c.trim()).filter(Boolean)));
+  if (isLookAroundChoice(lastPlayerAction)) {
+    merged = merged.filter((c) => !isLookAroundChoice(c));
+  }
   if (merged.length >= min) return merged.slice(0, 4);
-  for (const extra of sceneSafeFallbacks(state, storyProse)) {
+  for (const extra of sceneSafeFallbacks(state, storyProse, lastPlayerAction)) {
     if (merged.length >= min) break;
     if (!merged.some((c) => c.toLowerCase() === extra.toLowerCase())) merged.push(extra);
   }

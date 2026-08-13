@@ -1485,7 +1485,17 @@ In <system-log>, only emit LitRPG/RPG progression lines (XP, loot, HP change as 
         : parsedChoices;
       // Still unresolved after retry/hijack strip → local concrete resolution (all modes).
       if (isUnresolvedActionNarrative(sanitizedInput, cleanText, intentForMandate)) {
-        cleanText = synthesizeActionResolution(sanitizedInput, intentForMandate, suggestionState);
+        const lastScene = liveCurrent.log
+          .filter((e) => e.role === 'gm')
+          .slice(-3)
+          .map((e) => e.content)
+          .join('\n');
+        cleanText = synthesizeActionResolution(
+          sanitizedInput,
+          intentForMandate,
+          suggestionState,
+          lastScene
+        );
         debugLogger.record('STATE_UPDATE', 'Synthesized action resolution after empty/bridge GM prose', {
           intent: intentForMandate.kind,
         });
@@ -1496,10 +1506,11 @@ In <system-log>, only emit LitRPG/RPG progression lines (XP, loot, HP change as 
       const finalChoices = padChoicesToCount(
         groundedAfterResolve.length > 0
           ? groundedAfterResolve
-          : sceneSafeFallbacks(suggestionState, normalizeStoryCorpus(cleanText)),
+          : sceneSafeFallbacks(suggestionState, normalizeStoryCorpus(cleanText), sanitizedInput),
         suggestionState,
         normalizeStoryCorpus(cleanText),
-        3
+        3,
+        sanitizedInput
       );
       if (pipelineChoices.regenerated || pipelineChoices.rejectedCount > 0) {
         debugLogger.record('STATE_UPDATE', 'Choice pipeline enforced turn grounding', {
