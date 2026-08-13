@@ -54,7 +54,14 @@ const RARITY_BG: Record<Rarity, string> = {
 };
 
 function getEquippedItem(state: GameState, slot: EquipSlotKey): Item | undefined {
-  return state.inventory.find((it) => it.equipped && it.slot === slot);
+  const direct = state.inventory.find((it) => it.equipped && it.slot === slot);
+  if (direct) return direct;
+  if (slot === 'Chest') {
+    return state.inventory.find(
+      (it) => it.equipped && (it.slot === 'Body' || /clothes|tunic|jacket|shirt|armor/i.test(it.name))
+    );
+  }
+  return undefined;
 }
 
 function StatBar({ label, current, max, color, icon }: { label: string; current: number; max: number; color: string; icon: React.ReactNode }) {
@@ -292,7 +299,9 @@ function InventoryPanel({ state }: { state: GameState }) {
                     {it.equipped ? `Equipped${it.slot ? ` · ${it.slot}` : ''}` : `x${it.quantity}`}
                   </span>
                 </div>
-                {it.description && <p className="mt-0.5 text-[11px] text-slate-400">{it.description}</p>}
+                {typeof it.description === 'string' && it.description && (
+                  <p className="mt-0.5 text-[11px] text-slate-400">{it.description}</p>
+                )}
                 {it.provenance && <p className="text-[10px] text-slate-600">{it.provenance}</p>}
               </li>
             ))}

@@ -290,8 +290,9 @@ function askNearbyNarration(state: GameState, fullAction: string): string {
   const screenBit = asksAboutScreen(fullAction) || isIntegrationPremise(state)
     ? 'You jab a finger at the blue panel hanging in front of your eyes. '
     : '';
+  const place = state.currentLocation || 'this city';
   const situationBit = isWorldSituationQuestion(fullAction) && isIntegrationPremise(state)
-    ? 'The city is the one you woke up in — only the sky tore and this System wrote itself over the morning. '
+    ? `This is still ${place} — your life, this morning. The sky tore and the System wrote itself over the street. `
     : '';
   return (
     `${situationBit}${screenBit}`

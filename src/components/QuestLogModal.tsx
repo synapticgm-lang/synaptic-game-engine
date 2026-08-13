@@ -13,9 +13,22 @@ export const QuestLogModal: React.FC<QuestLogModalProps> = ({
   quests = [],
 }) => {
   const [filter, setFilter] = useState<QuestStatus | 'all'>('active');
+  const knownIds = quests
+    .filter((q) => q.revealed === true || q.status === 'completed')
+    .map((q) => q.id);
   const [selectedQuestId, setSelectedQuestId] = useState<string | null>(
-    quests[0]?.id || null
+    knownIds[0] ?? null
   );
+
+  function formatQuestRewards(rewards: Quest['rewards']): string {
+    if (!rewards) return '';
+    if (typeof rewards === 'string') return rewards;
+    const bits: string[] = [];
+    if (rewards.xp) bits.push(`${rewards.xp} XP`);
+    if (rewards.gold) bits.push(`${rewards.gold} gold`);
+    if (rewards.items?.length) bits.push(rewards.items.join(', '));
+    return bits.join(' · ');
+  }
 
   if (!isOpen) return null;
 
@@ -169,12 +182,12 @@ export const QuestLogModal: React.FC<QuestLogModalProps> = ({
                 </div>
 
                 {/* Rewards section if available */}
-                {selectedQuest.rewards && (
+                {formatQuestRewards(selectedQuest.rewards) && (
                   <div className="p-4 rounded-lg bg-amber-950/10 border border-amber-800/30">
                     <h4 className="text-xs font-bold uppercase tracking-wider text-amber-400 mb-1">
                       Quest Rewards
                     </h4>
-                    <p className="text-sm text-slate-300">{selectedQuest.rewards}</p>
+                    <p className="text-sm text-slate-300">{formatQuestRewards(selectedQuest.rewards)}</p>
                   </div>
                 )}
               </div>
