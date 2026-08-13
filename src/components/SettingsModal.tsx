@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
-import { X, Save, BookText, Volume2, Mic, Dice5, Shield, Lock, Baby, Gauge, Download, Upload, KeyRound, Eye, EyeOff, RefreshCw, Check, Loader2, ChevronDown, Image as ImageIcon, Trash2, ZoomIn, Scale, Home, Zap, CircleSlash, Sparkles, Grid3x3, MessageSquareMore, Palette, Layers, Dot, MessageCircle, Map, Eye as EyeIcon, BarChart3, Clock, ScrollText, BookOpen, Swords } from 'lucide-react';
+import { X, Save, BookText, Volume2, Mic, Dice5, Shield, Lock, Baby, Gauge, Download, Upload, KeyRound, Eye, EyeOff, RefreshCw, Check, Loader2, ChevronDown, Image as ImageIcon, Trash2, ZoomIn, Scale, Home, Zap, CircleSlash, Sparkles, Grid3x3, MessageSquareMore, Palette, Layers, Dot, MessageCircle, Map as MapIcon, Eye as EyeIcon, BarChart3, Clock, ScrollText, BookOpen, Swords } from 'lucide-react';
 import type { Settings, DiceAnimationMode, ContentMode, GmStrictness, AiProvider, KeyStatus, PostLoginBehavior, BgMode, ColorVariant, PanelFrequency, PanelBorderIntensity, MapTriggerMode, FogRevealThreshold, StatVerbosity, StatFrequency, GameState, NarrativePerspective, ViolenceLevel, CursingLevel, ComicLayoutMode, ComicReadingDirection, SaveSlotInfo } from '@/game/types';
 import { ART_STYLE_PRESETS } from '@/game/types';
 import { validateApiKey, fetchModelsForProvider, getDefaultModels } from '@/game/apiValidation';
@@ -251,12 +251,18 @@ export function SettingsModal({ settings, storyName, engineMode, gameState, onSa
           </Section>
 
           <Section icon={<BookText size={16} />} title="Narrative Perspective" visible={activeTab === 'narrative'}>
-            <div className="grid grid-cols-2 gap-2">
+            <div className="grid grid-cols-3 gap-2">
               <ChoiceCard
                 label="First Person"
                 sublabel="I / me / my"
                 selected={draft.perspective === 'first-person'}
                 onClick={() => update('perspective', 'first-person' as NarrativePerspective)}
+              />
+              <ChoiceCard
+                label="Second Person"
+                sublabel="You / your"
+                selected={draft.perspective === 'second-person'}
+                onClick={() => update('perspective', 'second-person' as NarrativePerspective)}
               />
               <ChoiceCard
                 label="Third Person"
@@ -337,7 +343,7 @@ export function SettingsModal({ settings, storyName, engineMode, gameState, onSa
           </Section>
 
           {/* Spatial & Map Engine Options */}
-          <Section icon={<Map size={16} />} title="Spatial & Map Engine Options" visible={activeTab === 'mechanics'}>
+          <Section icon={<MapIcon size={16} />} title="Spatial & Map Engine Options" visible={activeTab === 'mechanics'}>
             <div>
               <label className="mb-2 block text-xs font-medium text-slate-400">Map Tag Execution Mode</label>
               <div className="grid grid-cols-2 gap-2">

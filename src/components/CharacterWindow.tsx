@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import type { GameState, Item, Rarity, Settings, AttributeKey } from '@/game/types';
 import { RARITY_COLORS } from '@/game/types';
 import { CharacterSheetView } from './CharacterSheetView';
@@ -13,6 +13,8 @@ import {
 } from 'lucide-react';
 import { getItemsInContainer } from '@/game/inventory';
 import { findEquippedInSlot, type DisplayEquipSlot } from '@/game/wornGear';
+import { itemIconPrompt, paperDollPrompt, portraitCacheKey, type InventoryArtPatch } from '@/game/inventoryArt';
+import type { ImagePromptKind } from '@/game/comicImagePrompt';
 
 type BottomTab = 'inventory' | 'spells' | 'professions' | 'pets' | 'titles' | 'dnd' | 'sheet' | 'portrait' | 'progression' | 'combat';
 
@@ -22,6 +24,17 @@ interface Props {
   state: GameState;
   settings: Settings;
   initialTab?: BottomTab;
+  onGenerateArt?: (prompt: string, kind: Extract<ImagePromptKind, 'item-icon' | 'character-portrait'>) => Promise<string | null>;
+  onCommitArt?: (patch: InventoryArtPatch) => void;
+}
+
+function LegsIcon({ size = 22, className }: { size?: number; className?: string }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+      <path d="M8 3h8l1 7-3 11h-4L7 10 8 3z" />
+      <path d="M12 10v11" />
+    </svg>
+  );
 }
 
 type EquipSlotKey = 'Head' | 'Shoulders' | 'Chest' | 'Main Hand' | 'Off Hand' | 'Legs' | 'Feet';
@@ -32,7 +45,7 @@ const SLOT_META: Record<EquipSlotKey, { icon: React.ReactNode; label: string }> 
   Chest: { icon: <Shirt size={22} />, label: 'Chest' },
   'Main Hand': { icon: <Sword size={22} />, label: 'Main Hand' },
   'Off Hand': { icon: <Shield size={22} />, label: 'Off Hand' },
-  Legs: { icon: <Shirt size={22} />, label: 'Legs' },
+  Legs: { icon: <LegsIcon />, label: 'Legs' },
   Feet: { icon: <Footprints size={22} />, label: 'Feet' },
 };
 
@@ -85,13 +98,17 @@ function EquipSlot({ slotKey, item }: { slotKey: EquipSlotKey; item?: Item }) {
 
   return (
     <div
-      className={`relative flex flex-col items-center justify-center rounded-lg border-2 ${borderClass} ${bgClass} w-16 h-16 sm:w-20 sm:h-20 transition-all hover:scale-105 cursor-default group`}
+      className={`relative flex flex-col items-center justify-center rounded-lg border-2 ${borderClass} ${bgClass} w-16 h-16 sm:w-20 sm:h-20 transition-all hover:scale-105 cursor-default group overflow-hidden`}
       title={item ? `${item.name} (${rarity})` : meta.label}
     >
-      <span className={item ? '' : 'text-slate-600'} style={item ? { color: rarityColor } : undefined}>
-        {meta.icon}
-      </span>
-      <span className="text-[9px] text-slate-500 mt-0.5 hidden sm:block">{meta.label}</span>
+      {item?.iconUrl ? (
+        <img src={item.iconUrl} alt={item.name} className="absolute inset-0 h-full w-full object-cover" />
+      ) : (
+        <span className={item ? '' : 'text-slate-600'} style={item ? { color: rarityColor } : undefined}>
+          {meta.icon}
+        </span>
+      )}
+      <span className="absolute bottom-0 left-0 right-0 text-[9px] text-slate-200 bg-black/55 text-center hidden sm:block">{meta.label}</span>
       {item?.itemLevel != null && (
         <span className="absolute bottom-0.5 right-1 text-[10px] font-mono font-bold text-slate-200 bg-black/70 px-0.5 rounded">
           {item.itemLevel}
@@ -287,8 +304,11 @@ function InventoryPanel({ state }: { state: GameState }) {
           <ul className="space-y-1.5">
             {items.map((it) => (
               <li key={it.id} className="rounded border border-slate-700 bg-slate-900/60 px-2 py-1.5">
-                <div className="flex items-baseline justify-between gap-2">
-                  <span className="text-xs font-medium text-slate-100">{it.name}</span>
+                <div className="flex items-center justify-between gap-2">
+                  {it.iconUrl ? (
+                    <img src={it.iconUrl} alt="" className="h-8 w-8 shrink-0 rounded object-cover border border-slate-700" />
+                  ) : null}
+                  <span className="text-xs font-medium text-slate-100 flex-1 truncate">{it.name}</span>
                   <span className="shrink-0 text-[10px] text-slate-500">
                     {it.equipped ? `Equipped${it.slot ? ` · ${it.slot}` : ''}` : `x${it.quantity}`}
                   </span>
@@ -306,9 +326,10 @@ function InventoryPanel({ state }: { state: GameState }) {
   );
 }
 
-export function CharacterWindow({ isOpen, onClose, state, settings, initialTab }: Props) {
+export function CharacterWindow({ isOpen, onClose, state, settings, initialTab, onGenerateArt, onCommitArt }: Props) {
   const [sidePanelOpen, setSidePanelOpen] = useState(true);
   const [activeTab, setActiveTab] = useState<BottomTab>(initialTab ?? 'inventory');
+  const artLock = useRef(false);
 
   const equipped = useMemo(() => {
     const map = {} as Record<EquipSlotKey, Item | undefined>;
@@ -317,6 +338,41 @@ export function CharacterWindow({ isOpen, onClose, state, settings, initialTab }
     }
     return map;
   }, [state.inventory]);
+
+  const stateRef = useRef(state);
+  stateRef.current = state;
+
+  useEffect(() => {
+    if (!isOpen || !onGenerateArt || !onCommitArt || artLock.current) return;
+    let cancelled = false;
+    artLock.current = true;
+    void (async () => {
+      try {
+        const live = stateRef.current;
+        const key = portraitCacheKey(live);
+        const missing = (live.inventory ?? [])
+          .filter((item) => !item.iconUrl)
+          .sort((a, b) => Number(!!b.equipped) - Number(!!a.equipped))
+          .slice(0, 8);
+        for (const item of missing) {
+          if (cancelled) return;
+          const url = await onGenerateArt(itemIconPrompt(item), 'item-icon');
+          if (url && !cancelled) onCommitArt({ itemIcons: { [item.id]: url } });
+        }
+        const after = stateRef.current;
+        const needPortrait = after.character.portraitKey !== key || !after.character.portraitUrl;
+        if (!cancelled && needPortrait) {
+          const url = await onGenerateArt(paperDollPrompt(after), 'character-portrait');
+          if (url && !cancelled) onCommitArt({ portraitUrl: url, portraitKey: key });
+        }
+      } finally {
+        artLock.current = false;
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [isOpen, onGenerateArt, onCommitArt]);
 
   if (!isOpen) return null;
 
@@ -367,13 +423,15 @@ export function CharacterWindow({ isOpen, onClose, state, settings, initialTab }
               <EquipSlot slotKey="Main Hand" item={equipped['Main Hand']} />
 
               {/* Portrait */}
-              <div className="w-28 h-28 sm:w-36 sm:h-36 rounded-lg border-2 border-slate-600 bg-slate-800/40 flex items-center justify-center overflow-hidden">
-                {c.appearance ? (
+              <div className="w-28 h-40 sm:w-36 sm:h-52 rounded-lg border-2 border-slate-600 bg-slate-800/40 flex items-center justify-center overflow-hidden">
+                {c.portraitUrl ? (
+                  <img src={c.portraitUrl} alt={c.name} className="h-full w-full object-cover object-top" />
+                ) : c.appearance ? (
                   <div className="text-center p-2">
                     <div className="w-16 h-16 mx-auto rounded-full bg-gradient-to-b from-slate-700 to-slate-900 border border-slate-600 flex items-center justify-center mb-1">
                       <Users size={28} className="text-slate-500" />
                     </div>
-                    <p className="text-[10px] text-slate-500 line-clamp-2">{c.appearance}</p>
+                    <p className="text-[10px] text-slate-500 line-clamp-3">{c.appearance}</p>
                   </div>
                 ) : (
                   <Users size={40} className="text-slate-600" />

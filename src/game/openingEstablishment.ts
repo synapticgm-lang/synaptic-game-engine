@@ -1,7 +1,7 @@
 import type { CampaignBible, OpeningPrompt, OpeningRegistrar } from '@/data/campaigns/types';
 import type { CampaignArchetype } from './archetypes';
 import type { EngineMode, GameState, Item, OpeningEstablishment, Settings } from './types';
-import { interpretPlayerUtterance, isSetupRefusal, utteranceIsMessy } from './playerUtterance';
+import { extractSystemRename, interpretPlayerUtterance, isJunkSetupValue, isSetupRefusal, utteranceIsMessy } from './playerUtterance';
 import { materializeWornClothes } from './wornGear';
 
 const GENERIC_NAMES = /^(adventurer|survivor|unknown survivor|hero|wanderer|unknown)$/i;
@@ -196,6 +196,20 @@ export function filterOpeningPrompts(
     }
     return true;
   });
+}
+
+export function applySystemRename(state: GameState, raw: string): GameState {
+  const name = extractSystemRename(raw);
+  if (!name) return state;
+  const registrar = state.openingEstablishment?.registrar;
+  if (!registrar) return state;
+  return {
+    ...state,
+    openingEstablishment: {
+      ...state.openingEstablishment,
+      registrar: { ...registrar, label: name.toUpperCase() },
+    },
+  };
 }
 
 export function isOpeningEstablishmentPending(state: GameState): boolean {
@@ -414,8 +428,8 @@ function acceptCurrentField(kind: OpeningPrompt['kind'], raw: string): string | 
   if (!cleaned || cleaned.length < 2) return null;
   if (kind === 'name') return extractGivenName(cleaned);
   if (kind === 'location') return extractLocation(raw) ?? (cleaned.split(/\s+/).length <= 8 && !NOT_A_PLACE.test(cleaned) ? cleaned : null);
-  if (kind === 'appearance' && cleaned.split(/\s+/).length >= 2) return cleaned;
-  if (kind === 'kit' && cleaned.split(/\s+/).length >= 2) return cleaned;
+  if (kind === 'appearance' && cleaned.split(/\s+/).length >= 2 && !isJunkSetupValue(cleaned)) return cleaned;
+  if (kind === 'kit' && cleaned.split(/\s+/).length >= 2 && !isJunkSetupValue(cleaned)) return cleaned;
   if ((kind === 'species' || kind === 'identity') && cleaned.split(/\s+/).length <= 8) return cleaned;
   return null;
 }
@@ -463,6 +477,7 @@ export function sanitizeOpeningAnswer(
   }
   if (kind === 'appearance') {
     text = stripPlayerVoice(text) || 'ordinary clothes from this morning';
+    if (isJunkSetupValue(text)) text = 'everyday street clothes';
     return { text: text.slice(0, 240), cheated, mundaneNames: [] };
   }
   if (kind === 'kit') {
@@ -581,7 +596,11 @@ export async function applyOpeningAnswer(
   if (!answer) return { state, generateOpening: false };
 
   const harvest = harvestUtterance(answer);
+  if (harvest.appearance && isJunkSetupValue(harvest.appearance)) harvest.appearance = null;
+  if (harvest.kit && isJunkSetupValue(harvest.kit)) harvest.kit = null;
+  if (harvest.name && isJunkSetupValue(harvest.name)) harvest.name = null;
   const declined = [...(est.declinedFields ?? [])];
+  const renamedTo = extractSystemRename(answer);
   if (isSetupRefusal(answer)) {
     harvest.appearance = null;
     harvest.kit = null;
@@ -631,18 +650,23 @@ export async function applyOpeningAnswer(
     harvest.species = harvest.species ?? read.answers.species;
     harvest.askedWho = harvest.askedWho || read.askedWho;
     harvest.askedWhat = harvest.askedWhat || read.askedWhat;
-    if (currentKind && !fieldForKind(currentKind, harvest) && read.meaning && !read.questionOnly) {
+    if (currentKind && !fieldForKind(currentKind, harvest) && read.meaning && !read.questionOnly && !isJunkSetupValue(read.meaning)) {
       if (currentKind === 'name') harvest.name = harvest.name ?? read.meaning;
       if (currentKind === 'location') harvest.location = harvest.location ?? read.meaning;
       if (currentKind === 'appearance') harvest.appearance = harvest.appearance ?? read.meaning;
       if (currentKind === 'kit') harvest.kit = harvest.kit ?? read.meaning;
       if (currentKind === 'species' || currentKind === 'identity') harvest.species = harvest.species ?? read.meaning;
     }
+    if (harvest.appearance && isJunkSetupValue(harvest.appearance)) harvest.appearance = null;
+    if (harvest.kit && isJunkSetupValue(harvest.kit)) harvest.kit = null;
   }
-  const registrar = est.registrar ?? {
-    voice: 'system' as const,
-    label: 'SYSTEM',
-    startLine: 'Starting. Please confirm your name and current location.',
+  const registrar = {
+    ...(est.registrar ?? {
+      voice: 'system' as const,
+      label: 'SYSTEM',
+      startLine: 'Starting. Please confirm your name and current location.',
+    }),
+    ...(renamedTo ? { label: renamedTo.toUpperCase() } : {}),
   };
 
   let nextState = state;

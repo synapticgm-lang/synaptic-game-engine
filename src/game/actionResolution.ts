@@ -129,7 +129,9 @@ function equippedWeaponName(state: GameState): string | null {
 }
 
 function carriedGearLine(state: GameState): string {
-  const equipped = state.inventory.filter((i) => i.equipped).map((i) => i.name);
+  const equipped = state.inventory
+    .filter((i) => i.equipped && !/^(?:you\s+)?(perve?|creep|weirdo|freak|sicko|pervert)$/i.test(i.name.trim()))
+    .map((i) => i.name);
   if (equipped.length) return equipped.join(', ');
   const carried = state.inventory.slice(0, 3).map((i) => i.name);
   return carried.length ? carried.join(', ') : 'what you actually have on you';

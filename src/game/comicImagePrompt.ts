@@ -1,6 +1,11 @@
 import type { ArtStylePreset, Settings } from './types';
 
-export type ImagePromptKind = 'comic-panel' | 'classic-illustration' | 'milestone-illustration';
+export type ImagePromptKind =
+  | 'comic-panel'
+  | 'classic-illustration'
+  | 'milestone-illustration'
+  | 'item-icon'
+  | 'character-portrait';
 
 /** Extra deterministic context threaded into a prompt build, independent of the GM's own narrative text. */
 export interface ImagePromptContext {
@@ -57,6 +62,7 @@ export function allowsImageGeneration(
   settings: Settings,
   promptKind?: ImagePromptKind
 ): boolean {
+  if (promptKind === 'item-icon' || promptKind === 'character-portrait') return true;
   if (settings.visualMode !== 'classic') return true;
   return Boolean(settings.classicMemorableImages && promptKind === 'milestone-illustration');
 }
@@ -146,6 +152,12 @@ export function buildMilestoneIllustrationPrompt(
   ].join('\n\n');
 }
 
+const ITEM_ICON_DIRECTIVE =
+  'Square game inventory icon in the style of World of Warcraft or Baldur\'s Gate 3. Isolated object only, centered, no person, no hands, no text, no UI chrome, painted item icon on a dark subtle background.';
+
+const PAPER_DOLL_DIRECTIVE =
+  'Character inventory paper-doll portrait like World of Warcraft or Baldur\'s Gate 3: standing three-quarter view, full body from head to feet, wearing the listed gear, neutral dark studio backdrop, no text, no UI, no inventory frame.';
+
 export function buildImagePromptForKind(
   scenePrompt: string,
   settings: Settings,
@@ -153,6 +165,18 @@ export function buildImagePromptForKind(
   kind: ImagePromptKind,
   context?: ImagePromptContext
 ): string {
+  if (kind === 'item-icon') {
+    return [scenePrompt.trim(), ITEM_ICON_DIRECTIVE, PURE_ART_DIRECTIVE, contentTone(mode)].join('\n\n');
+  }
+  if (kind === 'character-portrait') {
+    return [
+      withDeterministicContext(scenePrompt, context),
+      PAPER_DOLL_DIRECTIVE,
+      WORLD_GENRE_PRESERVATION_DIRECTIVE,
+      PURE_ART_DIRECTIVE,
+      contentTone(mode),
+    ].join('\n\n');
+  }
   if (kind === 'classic-illustration') return buildClassicIllustrationPrompt(scenePrompt, settings, mode, context);
   if (kind === 'milestone-illustration') return buildMilestoneIllustrationPrompt(scenePrompt, settings, mode, context);
   return buildComicPanelImagePrompt(scenePrompt, mode, context);

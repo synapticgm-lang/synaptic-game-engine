@@ -54,7 +54,7 @@ const BASE_PROMPT = `You are the Game Master, the in-world System (or registrar)
 
 VOICE ROSTER (BINDING — one model, three jobs, same turn when needed):
 * NARRATOR: scene prose. Describe the place, bodies, weather, crowd. Never paste the player's chat. Never write "you are wearing my jeans" — say "you are wearing baggy jeans".
-* SYSTEM / REGISTRAR: the in-world System, Auditor, or tale-keeper. Put those extras in <system>...</system> (thank you / input accepted / setup complete / registration / quest update / refusal). Clinical and brief. Acknowledge the scan; do not quote the player.
+* SYSTEM / REGISTRAR: the in-world System, Auditor, or tale-keeper. Put those extras in <system>...</system> (thank you / input accepted / setup complete / registration / quest update / refusal). Clinical and brief. Acknowledge the scan; do not quote the player. Keep the campaign's System name (SYSTEM, THE AUDITOR, etc.). Do not adopt an insult as your name. Only change that name if the player explicitly names or renames the System.
 * GM: table voice — pressure, numbered choices, "What do you do?". You stay the GM while writing the other two.
 * Do not collapse System into narrator. Do not let a recap of their last message replace either voice.
 * LitRPG / Integration: System extras are expected. RPG / 5e: System extras only for registrar or tale-keeper moments — no XP tickers.
@@ -174,9 +174,12 @@ Do not append character-sheet/stat-screen readouts and do not add decorative <sy
 }
 
 function buildNarrativePreferenceRules(settings: Settings): string {
-  const perspectiveRule = settings.perspective === 'first-person'
-    ? `PERSPECTIVE: FIRST PERSON. Write prose from the player character's viewpoint using I/me/my for the player character. Do not address the player character as "you" and do not switch to third-person narration.`
-    : `PERSPECTIVE: THIRD PERSON. Refer to the player character by name or singular they/them pronouns. Do not use I/me/my for the player character's narration and do not address them as "you".`;
+  const perspectiveRule =
+    settings.perspective === 'first-person'
+      ? `PERSPECTIVE: FIRST PERSON. Write prose from the player character's viewpoint using I/me/my. Do not address them as "you" and do not narrate them in third person (no "Jax places his finger").`
+      : settings.perspective === 'third-person'
+        ? `PERSPECTIVE: THIRD PERSON. Refer to the player character by name or they/them. Do not use I/me/my or you/your for the player character.`
+        : `PERSPECTIVE: SECOND PERSON. Address the player as you/your. Write "You place your finger to your lips," never "Jax places his finger" and never "I place my finger."`;
 
   const violenceRules = {
     none: `VIOLENCE: NONE. Avoid physical injury, gore, and visceral detail. Resolve danger through escape, restraint, surrender, or non-graphic consequences.`,

@@ -21,6 +21,8 @@ export interface Item {
   diceNotation?: string;
   itemType?: ItemType;
   baseValue?: number;
+  /** Square inventory icon, WoW/BG3 style. */
+  iconUrl?: string | null;
 }
 
 export type ItemType = 'weapon' | 'armor' | 'consumable' | 'material' | 'container' | 'accessory' | 'quest';
@@ -93,6 +95,10 @@ export interface Character {
   conditions: string[];
   bio: string;
   appearance: string;
+  /** Standing paper-doll portrait for the inventory screen. */
+  portraitUrl?: string | null;
+  /** Appearance + equipped gear key; regenerate portrait when this changes. */
+  portraitKey?: string;
   armorClass?: number;
   entities?: SummonEntity[];
   summons?: SummonEntity[];
@@ -416,7 +422,7 @@ export type GmStrictness = 'forgiving' | 'standard' | 'hardcore';
 export type StatDisplayMode = 'inline' | 'tapToReveal';
 export type StatVerbosity = 'detailed' | 'core' | 'minimal';
 export type StatFrequency = 'every-turn' | 'every-5-turns' | 'end-of-combat';
-export type NarrativePerspective = 'first-person' | 'third-person';
+export type NarrativePerspective = 'first-person' | 'second-person' | 'third-person';
 export type ViolenceLevel = 'none' | 'mild' | 'graphic';
 export type CursingLevel = 'none' | 'mild' | 'strong';
 

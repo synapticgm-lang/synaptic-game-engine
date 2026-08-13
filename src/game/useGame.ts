@@ -47,6 +47,7 @@ import { collectTurnTimelineFacts, mergeTimeline } from './timeline';
 import { applyCampaignCharacter, reconcileCampaignLoadout, seedStateFromArchetype, seedStateFromCampaignBible } from './campaignSeed';
 import {
   applyOpeningAnswer,
+  applySystemRename,
   ensureSystemReceipt,
   establishmentChoices,
   sanitizeOpeningNarration,
@@ -60,6 +61,7 @@ import {
 } from './openingEstablishment';
 import { applyCommittedNarrative, extractSceneFacts, seedOpeningSceneFacts } from './sceneFacts';
 import { applyFactLocks, detectFactLockViolations } from './factLocks';
+import { dropInsultGear } from './wornGear';
 import { formatCampaignStoryName, getCampaignBibleById } from '@/data/campaigns';
 import { parsePlayerIntent, groundPlayerAction } from './intentParser';
 import { interpretPlayerUtterance } from './playerUtterance';
@@ -1198,6 +1200,10 @@ export function useGame() {
     try {
       let liveCurrent = stateRef.current;
       if (!liveCurrent) return;
+      liveCurrent = applySystemRename(
+        { ...liveCurrent, inventory: dropInsultGear(liveCurrent.inventory) },
+        contentSanitized
+      );
 
       if (isOpeningEstablishmentPending(current) || liveCurrent.pendingGeneratedOpening) {
         const stepped = isOpeningEstablishmentPending(current)
@@ -2369,6 +2375,36 @@ In <system-log>, only emit LitRPG/RPG progression lines (XP, loot, HP change as 
     }
   });
 
+  const generateInventoryArt = useCallbackRef(async (
+    prompt: string,
+    kind: Extract<ImagePromptKind, 'item-icon' | 'character-portrait'>
+  ): Promise<string | null> => {
+    const current = stateRef.current;
+    if (!current) return null;
+    return fetchPanelImage(prompt, settingsRef.current, kind, {
+      visualConsistency: kind === 'character-portrait' ? buildVisualConsistencyBlock(current, []) : undefined,
+    });
+  });
+
+  const commitInventoryArt = useCallbackRef((patch: {
+    itemIcons?: Record<string, string>;
+    portraitUrl?: string;
+    portraitKey?: string;
+  }) => {
+    const current = stateRef.current;
+    if (!current) return;
+    const inventory = patch.itemIcons
+      ? current.inventory.map((item) => (patch.itemIcons?.[item.id] ? { ...item, iconUrl: patch.itemIcons[item.id] } : item))
+      : current.inventory;
+    const character = patch.portraitUrl
+      ? { ...current.character, portraitUrl: patch.portraitUrl, portraitKey: patch.portraitKey }
+      : current.character;
+    const next = { ...current, inventory, character, lastUpdated: Date.now() };
+    stateRef.current = next;
+    setState(next);
+    void persist(next);
+  });
+
   const retryPanelImage = useCallbackRef((entryId: string, panelIndex: number) => {
     const current = stateRef.current;
     if (!current) return;
@@ -2583,6 +2619,8 @@ In <system-log>, only emit LitRPG/RPG progression lines (XP, loot, HP change as 
     sendAction,
     retryAction: () => { if (lastInput.trim()) sendAction(lastInput); },
     retryPanelImage,
+    generateInventoryArt,
+    commitInventoryArt,
     updatePanelOverlay,
     clearError: () => setError(null),
     autoFight, autoFightWarning, cancelAutoFightWarning: () => setAutoFightWarning(null),

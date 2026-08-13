@@ -449,6 +449,8 @@ export default function App() {
             state={state}
             settings={game.settings}
             initialTab="inventory"
+            onGenerateArt={game.generateInventoryArt}
+            onCommitArt={game.commitInventoryArt}
           />
         </Suspense>
       )}

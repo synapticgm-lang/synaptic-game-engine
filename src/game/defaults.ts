@@ -149,7 +149,7 @@ export function createDefaultSettings(): Settings {
     statDisplayMode: 'inline',
     statVerbosity: 'core',
     statFrequency: 'every-5-turns',
-    perspective: 'third-person',
+    perspective: 'second-person',
     violenceLevel: 'mild',
     cursingLevel: 'mild',
     romanceSubplots: false,

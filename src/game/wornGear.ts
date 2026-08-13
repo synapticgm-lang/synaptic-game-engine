@@ -124,7 +124,9 @@ function makeWornItem(piece: WornPiece, appearance: string, containerId?: string
  */
 export function materializeWornClothes(inventory: Item[], appearance: string, containerId?: string): Item[] {
   const look = appearance.replace(/\s+/g, ' ').trim();
-  if (!look || /\bwhy should(?: i)? tell you\b/i.test(look)) return inventory;
+  if (!look || /\bwhy should(?: i)? tell you\b/i.test(look) || /\b(?:you\s+)?(perve?|creep|weirdo|freak)\b/i.test(look)) {
+    return dropInsultGear(inventory);
+  }
 
   const pieces = parseWornPieces(look);
   if (!pieces.length) return inventory;
@@ -147,5 +149,10 @@ export function materializeWornClothes(inventory: Item[], appearance: string, co
     next.push(worn);
   }
 
-  return next;
+  return dropInsultGear(next);
+}
+
+/** Insults must not sit on the sheet as equipped "clothes". */
+export function dropInsultGear(inventory: Item[]): Item[] {
+  return inventory.filter((item) => !/^(?:you\s+)?(perve?|creep|weirdo|freak|sicko|pervert)$/i.test(item.name.trim()));
 }
