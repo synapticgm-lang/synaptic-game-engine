@@ -214,15 +214,31 @@ export const systemIntegration: CampaignBible = {
   ],
 
   startingLocation: 'A cracked city street',
+  replaceDefaultLoadout: true,
+  startingContainer: { id: 'si-pack', name: 'Everyday Backpack', capacity: 20 },
 
   starterItems: [
+    {
+      id: 'si-clothes',
+      name: 'The clothes you had on this morning',
+      rarity: 'Common',
+      itemType: 'armor',
+      itemLevel: 1,
+      equipped: true,
+      slot: 'Body',
+      provenance: 'What you were wearing when Integration hit',
+      description: 'Jeans, a jacket, whatever you put on today. Not armor. Not a costume. The same street clothes you had before the sky tore open.',
+    },
     {
       id: 'si-item-1',
       name: 'System-Issue Survival Knife',
       rarity: 'Common',
       itemType: 'weapon',
       itemLevel: 1,
-      description: 'A utilitarian blade that materialized in your hand at Registration. The System logo is etched into the pommel. Deals 1d6 slashing damage. Unbreakable but cannot be enchanted.',
+      equipped: true,
+      slot: 'Main Hand',
+      provenance: 'Materialized at Registration',
+      description: 'A utilitarian blade that materialized in your hand at Registration. The System logo is etched into the pommel. You did not walk around with this yesterday. Deals 1d6 slashing damage. Unbreakable but cannot be enchanted.',
     },
     {
       id: 'si-item-2',
@@ -230,7 +246,8 @@ export const systemIntegration: CampaignBible = {
       rarity: 'Common',
       itemType: 'consumable',
       itemLevel: 1,
-      description: 'A thumb-sized vial of translucent red liquid. Restores 2d4+2 HP on consumption. Drops from Tier 1 dungeon mobs. Bitter taste. Shelf-stable indefinitely.',
+      provenance: 'System allotment at Registration',
+      description: 'A thumb-sized vial of translucent red liquid. Restores 2d4+2 HP on consumption. Issued with Registration, not looted off this street. Bitter taste. Shelf-stable indefinitely.',
     },
     {
       id: 'si-item-3',

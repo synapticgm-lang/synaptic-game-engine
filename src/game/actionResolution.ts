@@ -17,7 +17,7 @@ const DEAD_STUB_MARKERS =
   /slow circuit of|main approach and watch for secondary gaps|opaque remains opaque|ordinary quiet|no fresh landmarks announce themselves|that is what you can act on next|not a blank circuit|you put the question plainly|anything the sheet and the last scene|rather than changing the subject/i;
 
 const FINDING_CUES =
-  /\b(find|found|see|saw|seen|notice|noticed|spot|spotted|hear|heard|reveal|reveals|empty|locked|ajar|open|door|entrance|exit|alley|wall|corner|shadow|quiet|noise|nothing|glint|track|tracks|window|side|rear|front|roof|balance|grip|weight|swing|hum|buzz|flicker|smell|dust|crack|gap|boarded|intact|threat|movement|stillness|cool|warm|heavy|panel|menu|level|hp|mp|greyed|grayed|readout|list|entry|entries|light in (?:your|the) hand|car|van|tunic|clothes|sword)\b/i;
+  /\b(find|found|see|saw|seen|notice|noticed|spot|spotted|hear|heard|reveal|reveals|empty|locked|ajar|open|door|entrance|exit|alley|wall|corner|shadow|quiet|noise|nothing|glint|track|tracks|window|side|rear|front|roof|balance|grip|weight|swing|hum|buzz|flicker|smell|dust|crack|gap|boarded|intact|threat|movement|stillness|cool|warm|heavy|panel|menu|level|hp|mp|greyed|grayed|readout|list|entry|entries|light in (?:your|the) hand|car|van|tunic|clothes|sword|knife|integration|registered|earth|crystal|street|city|people|scream)\b/i;
 
 const NEEDS_FINDINGS_ACTION =
   /\b(scout|circle|search|look|inspect|examin|listen|check\s+for|find|survey|recon|practice|test|ask|what|where|how|who|why|observe|scan|watch|study|wonder)\b/i;
@@ -65,6 +65,10 @@ export function isUnresolvedActionNarrative(
   if (isGenericBridgeNarrative(narrative)) return true;
   if (/bring the System panel in close/i.test(prose) && !isPanelOnlyAction(playerAction)) return true;
 
+  const worldAsk = isWorldSituationQuestion(playerAction);
+  if (worldAsk && proseTracksPremise(prose) && prose.length >= 80) return false;
+  if (isGearOriginQuestion(playerAction) && proseExplainsGear(prose)) return false;
+
   const needsFindings =
     NEEDS_FINDINGS_ACTION.test(job)
     || intent.kind === 'observe'
@@ -72,15 +76,17 @@ export function isUnresolvedActionNarrative(
     || intent.kind === 'move'
     || intent.kind === 'talk';
 
-  if (needsFindings && !FINDING_CUES.test(prose)) return true;
+  if (needsFindings && !FINDING_CUES.test(prose) && !proseTracksPremise(prose)) return true;
 
   const focus = job.match(FOCUS_NOUN)?.[1];
-  if (focus && !new RegExp(`\\b${focus}\\b`, 'i').test(prose)) return true;
+  if (focus && !worldAsk && !isGearOriginQuestion(playerAction) && !new RegExp(`\\b${focus}\\b`, 'i').test(prose)) {
+    return true;
+  }
 
   const tokens = (job.toLowerCase().match(/[a-z]{4,}/g) ?? []).filter(
     (t) => !/^(with|from|that|this|have|into|your|their|about|would|could|should|first|other|more|closely|additional|nearest|nearby|wonder)$/.test(t)
   );
-  if (tokens.length >= 3) {
+  if (tokens.length >= 3 && !worldAsk && !isGearOriginQuestion(playerAction)) {
     const hay = prose.toLowerCase();
     const hits = tokens.filter((t) => hay.includes(t)).length;
     if (hits === 0 && needsFindings) return true;
@@ -101,7 +107,7 @@ REQUIRED:
 2. If they search/inspect a specific thing (a car, alley, panel, body): go to THAT thing and say what is in/on it. Do NOT replace it with a general circuit of the street.
 3. If they look around / ask what is around them: write sensory story of the LAST scene (street, wrecks, people, power dying). Do NOT list inventory. Do NOT mention "the sheet".
 4. If they practice/test gear: describe feel, balance, sound — not a quest redirect. Use ONLY equipped/inventory gear.
-5. If they ask a question: answer from inventory provenance, equipped slots, and established scene. Never write "the sheet", "stays unknown", or "rather than changing the subject".
+5. If they ask what is going on: answer from the campaign premise and the last scene (this street, this Earth, Integration). If they also ask about a weapon, use that item's description (Registration / System-issue) — never "you arrived" or "the sheet".
 6. Do NOT reply with "you follow through", "you commit to the action", "the result lands in [category]", "main approach", or "ordinary quiet" against a live scene.
 7. Do NOT echo the location label as a sentence. Do NOT invent loot or named enemies without tags.
 Then give 3–4 choices grounded in what you just described — not objects you never narrated.
@@ -173,6 +179,12 @@ function lookAroundNarration(state: GameState, lastScene: string, place: string)
     const head = beats.length ? `${beats.join('; ')}, and ${last}` : last;
     return `You stand still and take in what is around you. ${head.charAt(0).toUpperCase()}${head.slice(1)}. That is the street as it is now — not a list of what you are carrying.`;
   }
+  if (isIntegrationPremise(state)) {
+    return (
+      `You stand still on ${place}. The familiar street is breaking — cracks through walls and air, green crystals pushing concrete, power dying, overturned cars, people confused and shouting. `
+      + `This is the world you already lived in, being Integrated. You do not recite your inventory.`
+    );
+  }
   return `You stand still on ${place} and look. The place you are already in is still here: cover, the nearest wreck or doorway, and whoever is close enough to hear. You do not go blank. You do not recite your inventory.`;
 }
 
@@ -227,48 +239,100 @@ function isGeneralLookAround(action: string, intent: PlayerIntent): boolean {
   );
 }
 
-function provenanceLine(item: { name: string; provenance?: string; description?: string }): string {
-  const prov = (item.provenance ?? '').trim();
-  const desc = (item.description ?? '').trim();
-  if (/materializ|registration|system-issue|system logo/i.test(`${prov} ${desc}`)) {
-    return `The ${item.name} came with Registration — it was on you when the System finished, not something you picked up off this street.`;
-  }
-  if (/found on arrival|on you when you arrived|appeared at/i.test(prov)) {
-    return `The ${item.name} was on you when you arrived here (${prov}). You did not loot it from this spot.`;
-  }
-  if (/^campaign:/i.test(prov)) {
-    return `The ${item.name} is part of the kit you started with.`;
-  }
-  if (prov) return `The ${item.name}: ${prov}.`;
-  return `The ${item.name} is in your inventory; the street does not add a shop story for it.`;
+function isWorldSituationQuestion(action: string): boolean {
+  return /\b(what'?s?\s+(?:the\s+hell\s+)?going\s+on|what\s+the\s+(?:hell|fuck)\s+is\s+going|what\s+happened|why\s+is\s+(?:this|the\s+world|everything)|explain\s+(?:this|what)|what\s+is\s+(?:the\s+)?(?:system|integration))\b/i.test(
+    action
+  );
 }
 
-function answerFromSheet(action: string, state: GameState, gear: string): string | null {
+function isGearOriginQuestion(action: string): boolean {
+  return /\b(why\s+(?:do|did)\s+i\s+have|where\s+did\s+(?:this|the|my)\s+\w+\s+come|whose\s+\w+\s+is\s+this|suddenly\s+have)\b/i.test(
+    action
+  );
+}
+
+function proseTracksPremise(prose: string): boolean {
+  return /\b(integration|registered|system|crystal|street|city|people|scream|panel|earth|sky|mana)\b/i.test(prose);
+}
+
+function proseExplainsGear(prose: string): boolean {
+  return /\b(materializ|registration|system-issue|system\s+put|did\s+not\s+walk\s+around|not\s+something\s+you\s+carried|in\s+your\s+hand)\b/i.test(
+    prose
+  );
+}
+
+function isIntegrationPremise(state: GameState): boolean {
+  return /system integration|every human on earth|integration protocol/i.test(state.campaignPremise ?? '');
+}
+
+function premiseFrame(state: GameState, place: string): string {
+  if (isIntegrationPremise(state)) {
+    return (
+      `This is still ${place} in the world you already lived in — not a place you traveled to. `
+      + `The System registered Earth. The sky tore open; a voice that was not human spoke to every mind at once.`
+    );
+  }
+  const first = (state.campaignPremise ?? '').split('\n')[0]?.replace(/^OPENING KIT[\s\S]*/i, '').trim().slice(0, 220);
+  if (first) return `What is happening is the story you are already in: ${first}`;
+  return `You are still in ${place}. The situation has not become a different genre.`;
+}
+
+function provenanceLine(
+  item: { name: string; provenance?: string; description?: string },
+  state: GameState
+): string {
+  const prov = (item.provenance ?? '').trim();
+  const desc = (item.description ?? '').trim();
+  const blob = `${prov} ${desc}`;
+  if (/materializ|registration|system-issue|system logo|system allotment/i.test(blob)) {
+    return `The ${item.name} is not something you carried yesterday. It came with Registration — the System put it on you when it finished, not a blade you walked the modern street with.`;
+  }
+  if (/wearing when integration|clothes you had on|what you were wearing/i.test(blob)) {
+    return `The ${item.name} are what you already had on this morning, before the sky tore open.`;
+  }
+  if (/found on arrival|on you when you arrived|appeared at/i.test(prov)) {
+    if (isIntegrationPremise(state)) {
+      return `The ${item.name} is starting kit from Registration — the System issued it. You did not walk this street yesterday as an adventurer.`;
+    }
+    return `The ${item.name} is part of the kit you started this story with. You did not loot it from this spot.`;
+  }
+  if (/^campaign:/i.test(prov)) {
+    return `The ${item.name} is part of the opening kit for this campaign.`;
+  }
+  if (desc) return `${item.name}: ${desc}`;
+  if (prov) return `The ${item.name}: ${prov}.`;
+  return `The ${item.name} is what you are actually carrying. The street does not invent a shop story for it.`;
+}
+
+function explainHeldWeapon(state: GameState): string {
+  const weapon = state.inventory.find(
+    (i) => i.equipped && (i.itemType === 'weapon' || /sword|knife|blade|weapon/i.test(i.name))
+  ) ?? state.inventory.find((i) => /sword|knife|blade|weapon/i.test(i.name));
+  if (!weapon) {
+    return isIntegrationPremise(state)
+      ? 'You are not holding a fantasy traveler\'s sword. If your hand is empty, the System has not issued a weapon yet.'
+      : 'You are not holding a weapon unless inventory says so.';
+  }
+  return provenanceLine(weapon, state);
+}
+
+function answerGearOrigin(action: string, state: GameState): string | null {
   const t = action.toLowerCase();
-  const asksOrigin = /\b(where|come from|came from|whose|who(?:se)?|why (?:do|did) i (?:have|wear)|suddenly have|old cloth)\b/i.test(t);
+  const asksOrigin = isGearOriginQuestion(t) || /\b(where|come from|came from|whose|old cloth)\b/i.test(t);
   const asksClothes = /\b(tunic|cloth|wear|wearing|outfit|shirt|jacket|coat|armor)\b/i.test(t);
   const asksWeapon = /\b(sword|blade|knife|weapon)\b/i.test(t);
   if (!asksOrigin && !asksClothes && !asksWeapon) return null;
   if (!asksOrigin && intentLooksLikePractice(t)) return null;
 
   const parts: string[] = [];
-  if (asksWeapon) {
-    const weapon = state.inventory.find((i) => /sword|blade|knife|weapon/i.test(i.name));
-    if (weapon) parts.push(provenanceLine(weapon));
-  }
+  if (asksWeapon) parts.push(explainHeldWeapon(state));
   if (asksClothes || (asksOrigin && /\btunic\b/.test(t))) {
     const body = state.inventory.find(
-      (i) => i.equipped && (i.slot === 'Body' || /tunic|armor|leather|coat|shirt|jacket/i.test(i.name))
+      (i) => i.equipped && (i.slot === 'Body' || /tunic|armor|leather|coat|shirt|jacket|clothes/i.test(i.name))
     );
-    if (body) {
-      parts.push(provenanceLine(body));
-      parts.push(
-        `That ${body.name} is what you are wearing now. Your old clothes are not on you — they are not listed in inventory.`
-      );
-    } else {
-      parts.push(
-        `Nothing in inventory is tagged as your old clothes. You are wearing whatever is equipped on Body, or the arrival kit.`
-      );
+    if (body) parts.push(provenanceLine(body, state));
+    else if (isIntegrationPremise(state)) {
+      parts.push('You are still in the clothes you had on this morning — not a patched traveler tunic.');
     }
   }
   if (!parts.length) return null;
@@ -315,17 +379,27 @@ export function synthesizeActionResolution(
     );
   }
 
+  if (isWorldSituationQuestion(full) || isWorldSituationQuestion(action)) {
+    const gearBit = isGearOriginQuestion(full) || /\b(sword|blade|knife|weapon)\b/i.test(full)
+      ? ` ${explainHeldWeapon(state)}`
+      : '';
+    return (
+      `${prefix}${premiseFrame(state, place)} `
+      + `${lookAroundNarration(state, lastSceneProse, place)}${gearBit}`
+    );
+  }
+
   if (isGeneralLookAround(full, intent) || isGeneralLookAround(action, intent)) {
     return `${prefix}${lookAroundNarration(state, lastSceneProse, place)}`;
   }
 
-  const sheetAnswer = answerFromSheet(action, state, gear);
+  const gearAnswer = answerGearOrigin(action, state);
   if (
-    sheetAnswer
+    gearAnswer
     && !isGeneralLookAround(full, intent)
-    && (intent.kind === 'talk' || /\?/.test(action) || /\bwonder\b/i.test(action))
+    && (intent.kind === 'talk' || /\?/.test(action) || /\bwonder\b/i.test(action) || isGearOriginQuestion(action))
   ) {
-    return prefix + sheetAnswer;
+    return prefix + gearAnswer;
   }
 
   if (lookingFor && focus) {
@@ -365,8 +439,8 @@ export function synthesizeActionResolution(
       return `${prefix}${lookAroundNarration(state, lastSceneProse, place)}`;
     }
     return (
-      sheetAnswer
-      ?? `${prefix}You ask it. What you can see from here is still the same street: ${lookAroundNarration(state, lastSceneProse, place)}`
+      gearAnswer
+      ?? `${prefix}${premiseFrame(state, place)} ${lookAroundNarration(state, lastSceneProse, place)}`
     );
   }
 

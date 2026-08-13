@@ -72,6 +72,7 @@ RULES:
 3. Do NOT mention quest markers, dungeons, shops, or quest locations unless the player engaged them or is already there.
 4. Do NOT substitute a main-quest beat for the player's chosen action (practice, talk, inspect gear, ask a question, rest, etc.).
 5. Numbered choices must follow from the action you just resolved — not from a distant quest card.
+6. If they ask what is going on: answer from THIS campaign premise + the last scene. Modern Integration = this Earth, already in progress — they did not arrive as a fantasy traveler. Never write "the sheet".
 Player engaged quest-focus locations this turn: ${engaged ? 'YES' : 'NO'}
 ========================================================`;
 

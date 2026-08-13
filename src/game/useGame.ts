@@ -44,7 +44,7 @@ import { sanitizeNarrativeMechanics, ensureTurnProse, ensureDamageNarration, ens
 import { runWarden, sanitizeExtractedCharacterUpdates } from './warden';
 import { applyStructuralEvents } from './structuralEvents';
 import { collectTurnTimelineFacts, mergeTimeline } from './timeline';
-import { seedStateFromArchetype, seedStateFromCampaignBible } from './campaignSeed';
+import { applyCampaignCharacter, reconcileCampaignLoadout, seedStateFromArchetype, seedStateFromCampaignBible } from './campaignSeed';
 import { formatCampaignStoryName, getCampaignBibleById } from '@/data/campaigns';
 import { parsePlayerIntent, groundPlayerAction } from './intentParser';
 import {
@@ -2080,10 +2080,13 @@ In <system-log>, only emit LitRPG/RPG progression lines (XP, loot, HP change as 
     const initialChoices = extractChoicesFromText(introContent, namedSeeded);
     const cleanIntroContent = stripChoiceList(introContent);
 
+    const mergedCharacter = bible
+      ? applyCampaignCharacter({ ...namedSeeded.character, ...character }, bible)
+      : { ...namedSeeded.character, ...character };
     const newState: GameState = {
       ...namedSeeded,
       gmStrictness,
-      character: { ...namedSeeded.character, ...character },
+      character: mergedCharacter,
       currentCoordinates: { q: 0, r: 0, tier: 2, z: 0 },
       choices: initialChoices,
       log: [{ id: 'intro-1', turn: 0, role: 'gm', content: cleanIntroContent, timestamp: Date.now() }],
@@ -2352,7 +2355,7 @@ In <system-log>, only emit LitRPG/RPG progression lines (XP, loot, HP change as 
   const handleImport = useCallbackRef(async (file: File) => {
     try {
       const imported = await importSave(file);
-      const recovered = settleOrphanedImageJobs(imported);
+      const recovered = reconcileCampaignLoadout(settleOrphanedImageJobs(imported));
       setState(recovered);
       stateRef.current = recovered;
       bindSessionImageCache(recovered.saveId);
@@ -2535,7 +2538,7 @@ In <system-log>, only emit LitRPG/RPG progression lines (XP, loot, HP change as 
 
         // Image requests are intentionally not persisted/resumed. A saved `pending` status
         // therefore has no live promise behind it and must become a terminal fallback state.
-        const recovered = settleOrphanedImageJobs(saved);
+        const recovered = reconcileCampaignLoadout(settleOrphanedImageJobs(saved));
 
         if (useCloud && cloud) {
           // Restore locked presentation settings from the cloud row when present.

@@ -72,6 +72,7 @@ export function primaryActionClause(input: string): string {
  */
 export function parsePlayerIntent(input: string, _state: GameState): PlayerIntent {
   const text = primaryActionClause(input);
+  for (const rule of RULES) {
     if (rule.re.test(text)) {
       const targets =
         text.match(/\b(?:the|a|an)\s+([a-z][\w'-]+(?:\s+[a-z][\w'-]+){0,2})/gi)?.map((t) =>

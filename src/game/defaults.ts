@@ -27,7 +27,7 @@ export function createInitialState(storyName?: string, engineMode: EngineMode = 
       maxSp: 20,
       attributes: { STR: 14, DEX: 12, CON: 14, INT: 12, WIS: 10, CHA: 10 },
       conditions: [],
-      bio: 'A transmigrated soul, newly arrived in an unfamiliar world with no local knowledge.',
+      bio: 'Someone already living in this world when the story begins.',
       // Do not assume a human body or generic adventurer clothing. Character creation or a
       // later <visual-update> supplies the canonical physical description; image prompts
       // safely fall back to bio/name while it is empty.

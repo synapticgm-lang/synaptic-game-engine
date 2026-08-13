@@ -37,6 +37,9 @@ export interface StarterItem {
   itemType: ItemType;
   itemLevel: number;
   description: string;
+  equipped?: boolean;
+  slot?: string;
+  provenance?: string;
 }
 
 export interface CampaignBible {
@@ -57,4 +60,10 @@ export interface CampaignBible {
   starterItems: StarterItem[];
   /** Player-facing starting place. Never use a lore-article title here. */
   startingLocation?: string;
+  /**
+   * When true, drop the generic fantasy sword/tunic/satchel and use this campaign's kit.
+   * Leave unset for fantasy arrivals that should keep the default traveler pack.
+   */
+  replaceDefaultLoadout?: boolean;
+  startingContainer?: { id: string; name: string; capacity: number };
 }

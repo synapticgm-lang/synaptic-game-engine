@@ -122,8 +122,10 @@ export function formatCampaignRails(state: GameState): string {
     .trim();
   return `=== CAMPAIGN GUIDE BOOK (RAILS — DO NOT CONTRADICT) ===
 ${premise}
-Stay inside this premise. Side scenes and downtime are allowed.
-PLAYER ACTION FIDELITY (BINDING): Answer the player's last action first (e.g. search this car, ask where the tunic came from, practice swings). Do NOT redirect to quest dungeons, convenience stores, or System markers unless the player engages them. Quests are background Guide Book only — not a turn-by-turn script.
+Stay inside this premise. Side scenes, exploration, and side quests are allowed — they must still be THIS world, not a different genre.
+PREMISE CONTINUITY (BINDING): If the premise is modern Earth being Integrated, the player already lived here. They did not "arrive" as a fantasy traveler. Opening kit / worn clothes are authority. Never invent an iron shortsword or leather tunic that is not in Inventory.
+SITUATION QUESTIONS: "What's going on?" is answered from this premise + the last scene (street, crystals, people, System). Not from inventory labels. Not "the sheet".
+PLAYER ACTION FIDELITY (BINDING): Answer the player's last action first (e.g. search this car, ask why they have a System-issue knife, practice swings). Do NOT redirect to quest dungeons, convenience stores, or System markers unless the player engages them. Quests are background Guide Book only — not a turn-by-turn script.
 ===========================================================`;
 }
 
