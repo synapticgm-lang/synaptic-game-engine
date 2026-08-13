@@ -72,6 +72,23 @@ export function runWarden(
         notes.push('Blocked empty item-gain');
         continue;
       }
+      const level = state.character?.level ?? 1;
+      if (
+        level < 8
+        && /\b(legendary|mythic|artifact|relic|unique|god(?:like)?|excalibur|vorpal|holy avenger)\b/i.test(name)
+      ) {
+        notes.push(`Blocked high-tier item-gain at level ${level}: ${name}`);
+        systemLogExtra.push('Action failed: that gear is not available yet.');
+        continue;
+      }
+      if (
+        level < 5
+        && /\b(epic|legendary|mythic)\b/i.test(name)
+      ) {
+        notes.push(`Blocked epic+ item-gain at level ${level}: ${name}`);
+        systemLogExtra.push('Action failed: that gear is not available yet.');
+        continue;
+      }
       // Peaceful intents shouldn't spontaneously invent weapons / major loot
       if (
         intent &&

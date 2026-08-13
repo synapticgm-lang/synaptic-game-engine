@@ -1,5 +1,5 @@
 import type { CampaignBible } from './types';
-export type { CampaignBible, LoreSnippet, KeyNPC, StarterQuest, StarterItem, Difficulty } from './types';
+export type { CampaignBible, LoreSnippet, KeyNPC, StarterQuest, StarterItem, Difficulty, OpeningPrompt } from './types';
 
 import { systemIntegration } from './systemIntegration';
 import { voidAudience } from './voidAudience';

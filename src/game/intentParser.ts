@@ -50,17 +50,32 @@ const RULES: { kind: IntentKind; re: RegExp; label: string }[] = [
 const THREAT_PRESENT =
   /\b(creature|enemy|beast|monster|figure|silhouette|threat|hostile|attacker|foe|adversary|bandit|raider|goblin|predator)\b/i;
 
+/** Player wants a nearby person to answer — not a narrator lecture. */
+export function isAskNearbyPerson(action: string): boolean {
+  return (
+    /\b(ask|tell|speak(?:\s+to)?|talk(?:\s+to)?)\b[\s\S]{0,60}\b(some\s*one|somebody|anyone|anybody|person|people|stranger|near(?:by)?|them)\b/i.test(
+      action
+    )
+    || /\b(ask|see)\s+if\s+(?:they|someone|some\s*one|anybody|anyone)\b/i.test(action)
+    || /\bif they see\b/i.test(action)
+  );
+}
+
 /**
  * In "dismiss X and look for a door", the last clause is the job.
- * Short trailing fragments stay attached to the full line.
+ * Question marks also split clauses so "what's going on? ask someone" keeps the ask.
  */
 export function primaryActionClause(input: string): string {
   const text = input.replace(/\s+/g, ' ').trim();
   const parts = text
-    .split(/\s+(?:and then|then|, then|and)\s+/i)
-    .map((s) => s.trim())
-    .filter(Boolean);
-  if (parts.length < 2) return text;
+    .split(/\s+(?:and then|then|, then|and)\s+|[?]+/)
+    .map((s) => s.replace(/^[.!,;]+|[.!,;]+$/g, '').trim())
+    .filter((s) => s.length >= 3);
+  if (parts.length < 2) return text.replace(/[?]+$/g, '').trim() || text;
+  const talk = [...parts].reverse().find(
+    (p) => isAskNearbyPerson(p) || /^(ask|tell|speak|talk)\b/i.test(p)
+  );
+  if (talk && talk.split(/\s+/).length >= 3) return talk;
   const last = parts[parts.length - 1];
   if (last.split(/\s+/).length >= 3) return last;
   return text;

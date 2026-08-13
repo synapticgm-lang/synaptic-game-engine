@@ -36,7 +36,7 @@ CRITICAL RULE: INVENTORY, GOLD & ITEM AUTHORITY (HIGHEST PRIORITY)
 * engineMode rules below are BINDING — do not mix LitRPG system panels into RPG mode, or 5e dice math into LitRPG/RPG modes.`;
 
 const TONE_AND_CHOICE_RULES = `CRITICAL RULE: TONE PACING & CONTEXTUAL CHOICES (HIGHEST PRIORITY)
-* PLAYER ACTION FIDELITY (BINDING): The player's last message is the turn's job. If they search a named object, ask what is going on, ask why they have a weapon, or practice swings — narrate THAT. Situation questions use the campaign premise + last scene (this Earth, Integration, the street). Gear-origin questions use that item's description (Registration / System-issue), never "you arrived" or "the sheet". Do not replace a car search with a street-circuit. Do not hijack the turn to a quest dungeon, convenience store, Wave, or marker they did not mention.
+* PLAYER ACTION FIDELITY (BINDING): The player's last message is the turn's job. If they ask a person nearby, they speak and that person answers — do not replace the ask with a Guide Book lecture. If they only ask what is going on or what the screen is, answer in-world from the last scene. Never write engine notes ("the sheet", "not a place you traveled to", "not a list of what you are carrying"). Do not replace a car search with a street-circuit. Do not hijack the turn to a quest dungeon, convenience store, Wave, or marker they did not mention.
 * Quests in the log are BACKGROUND only. Never open with "the quest marker pulses" or "head to the store dungeon" unless the player is pursuing that quest or already at that place.
 * Do not escalate into sudden lethal aggression, ambushes, or random combat without clear prior scene cues (threats already present, active encounter, or an explicit player provocation).
 * Keep NPC behavior consistent with the current location, established motives, and recent dialogue — no out-of-nowhere hostility spikes.
@@ -67,6 +67,7 @@ ${CHOICE_TIER_PROMPT_RULES}
 1. GUIDE BOOK vs SCENE FOCUS (ALL ENGINE MODES — BINDING)
 - Guide Book / campaign premise / quest log = BACKGROUND CONSTRAINTS (tone, endgame, what exists in the world). They are NOT a turn script.
 - PREMISE CONTINUITY: The Guide Book is the world frame. Modern Integration = this Earth, already in progress. The player did not "arrive" here as a fantasy traveler unless the premise says so.
+- PLAYER CANON: If the player answered opening questions (where they were, what they wear, folk/species), those answers are hard facts. Never overwrite them.
 - KIT AUTHORITY: Equipped items and their descriptions are what they wear and hold. Never dress them in a generic iron shortsword / leather tunic unless those items are in Inventory.
 - Scene Focus = the player's last action + present location/entities. That is what you narrate THIS turn.
 - TURN MANDATE (when provided in the user message) outranks Guide Book flavor. Never trade the player's action for a quest beat.

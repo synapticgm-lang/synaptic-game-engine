@@ -45,6 +45,15 @@ import { runWarden, sanitizeExtractedCharacterUpdates } from './warden';
 import { applyStructuralEvents } from './structuralEvents';
 import { collectTurnTimelineFacts, mergeTimeline } from './timeline';
 import { applyCampaignCharacter, reconcileCampaignLoadout, seedStateFromArchetype, seedStateFromCampaignBible } from './campaignSeed';
+import {
+  applyOpeningAnswer,
+  buildEstablishmentIntro,
+  buildOpeningSceneMandate,
+  filterOpeningPrompts,
+  isOpeningEstablishmentPending,
+  resolveOpeningPrompts,
+  synthesizeOpeningScene,
+} from './openingEstablishment';
 import { formatCampaignStoryName, getCampaignBibleById } from '@/data/campaigns';
 import { parsePlayerIntent, groundPlayerAction } from './intentParser';
 import {
@@ -56,6 +65,7 @@ import {
 } from './sceneFocus';
 import {
   buildResolutionUserPayload,
+  isGenericBridgeNarrative,
   isUnresolvedActionNarrative,
   synthesizeActionResolution,
 } from './actionResolution';
@@ -1179,6 +1189,59 @@ export function useGame() {
       const liveCurrent = stateRef.current;
       if (!liveCurrent) return;
 
+      if (isOpeningEstablishmentPending(current) || liveCurrent.pendingGeneratedOpening) {
+        const stepped = isOpeningEstablishmentPending(current)
+          ? applyOpeningAnswer(liveCurrent, sanitizedInput)
+          : { state: { ...liveCurrent, pendingGeneratedOpening: false }, generateOpening: true };
+
+        if (!stepped.generateOpening) {
+          stateRef.current = stepped.state;
+          setState(stepped.state);
+          void persist(stepped.state);
+          return;
+        }
+
+        const openingState = { ...stepped.state, pendingGeneratedOpening: false };
+        let openingText = '';
+        try {
+          const openingResult = await callGm(
+            openingState,
+            `${buildOpeningSceneMandate(openingState)}\n\nBegin the opening scene from the player's canon.`,
+            settingsRef.current,
+            [],
+            (attempt, delayMs) => {
+              setRetryStatus(`Rate limited — retry ${attempt}/4 in ${Math.round(delayMs / 1000)}s…`);
+            },
+          );
+          openingText = stripChoiceList(stripActionTags(openingResult.text));
+        } catch {
+          openingText = '';
+        }
+        if (!openingText || openingText.length < 60 || isGenericBridgeNarrative(openingText)) {
+          openingText = synthesizeOpeningScene(openingState);
+        }
+        const openingChoices = extractChoicesFromText(openingText, openingState);
+        const cleanOpening = stripChoiceList(openingText);
+        const openingGm: LogEntry = {
+          id: uid(),
+          turn: openingState.turn,
+          role: 'gm',
+          content: cleanOpening,
+          timestamp: Date.now(),
+        };
+        const committed: GameState = {
+          ...openingState,
+          turn: openingState.turn + 1,
+          log: [...openingState.log, openingGm],
+          choices: openingChoices.length ? openingChoices : undefined,
+          lastUpdated: Date.now(),
+        };
+        stateRef.current = committed;
+        setState(committed);
+        void persist(committed);
+        return;
+      }
+
       const strengthVal = liveCurrent.character.strength ?? liveCurrent.character.attributes?.STR ?? 14;
       const strMod = Math.floor((strengthVal - 10) / 2);
       const d20Roll = Math.floor(Math.random() * 20) + 1;
@@ -2077,12 +2140,18 @@ In <system-log>, only emit LitRPG/RPG progression lines (XP, loot, HP change as 
       resolvedArchetype ?? 'ai_random',
       character.name ?? 'Survivor',
     );
-    const initialChoices = extractChoicesFromText(introContent, namedSeeded);
-    const cleanIntroContent = stripChoiceList(introContent);
-
     const mergedCharacter = bible
       ? applyCampaignCharacter({ ...namedSeeded.character, ...character }, bible)
       : { ...namedSeeded.character, ...character };
+    const openingPrompts = filterOpeningPrompts(
+      resolveOpeningPrompts(bible, engineMode, resolvedArchetype ?? namedSeeded.campaignArchetype),
+      mergedCharacter
+    );
+    const establishedIntro = buildEstablishmentIntro(introContent, openingPrompts, bible);
+    const initialChoices = establishedIntro.choices.length
+      ? establishedIntro.choices
+      : extractChoicesFromText(introContent, namedSeeded);
+    const cleanIntroContent = stripChoiceList(establishedIntro.text);
     const newState: GameState = {
       ...namedSeeded,
       gmStrictness,
@@ -2091,6 +2160,9 @@ In <system-log>, only emit LitRPG/RPG progression lines (XP, loot, HP change as 
       choices: initialChoices,
       log: [{ id: 'intro-1', turn: 0, role: 'gm', content: cleanIntroContent, timestamp: Date.now() }],
       worldLedger: emptyWorldLedger(),
+      openingEstablishment: openingPrompts.length
+        ? { pending: openingPrompts, answers: {}, complete: false }
+        : { pending: [], answers: {}, complete: true },
     };
     setState(newState);
     stateRef.current = newState;

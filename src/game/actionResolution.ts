@@ -1,5 +1,5 @@
 import type { GameState } from './types';
-import { primaryActionClause, type PlayerIntent } from './intentParser';
+import { isAskNearbyPerson, primaryActionClause, type PlayerIntent } from './intentParser';
 import { stripChoiceList } from './parser';
 import { playerFacingLocation } from './locationName';
 
@@ -14,7 +14,7 @@ const BRIDGE_MARKERS =
   /you follow through —|the moment settles as you take in what changed|you press for clarity —|you commit to the action|the immediate result lands in/i;
 
 const DEAD_STUB_MARKERS =
-  /slow circuit of|main approach and watch for secondary gaps|opaque remains opaque|ordinary quiet|no fresh landmarks announce themselves|that is what you can act on next|not a blank circuit|you put the question plainly|anything the sheet and the last scene|rather than changing the subject/i;
+  /slow circuit of|main approach and watch for secondary gaps|opaque remains opaque|ordinary quiet|no fresh landmarks announce themselves|that is what you can act on next|not a blank circuit|you put the question plainly|anything the sheet and the last scene|rather than changing the subject|not a place you traveled to|not a list of what you are carrying|you do not recite your inventory|this is still a cracked city street|the situation has not become a different genre/i;
 
 const FINDING_CUES =
   /\b(find|found|see|saw|seen|notice|noticed|spot|spotted|hear|heard|reveal|reveals|empty|locked|ajar|open|door|entrance|exit|alley|wall|corner|shadow|quiet|noise|nothing|glint|track|tracks|window|side|rear|front|roof|balance|grip|weight|swing|hum|buzz|flicker|smell|dust|crack|gap|boarded|intact|threat|movement|stillness|cool|warm|heavy|panel|menu|level|hp|mp|greyed|grayed|readout|list|entry|entries|light in (?:your|the) hand|car|van|tunic|clothes|sword|knife|integration|registered|earth|crystal|street|city|people|scream)\b/i;
@@ -65,6 +65,11 @@ export function isUnresolvedActionNarrative(
   if (isGenericBridgeNarrative(narrative)) return true;
   if (/bring the System panel in close/i.test(prose) && !isPanelOnlyAction(playerAction)) return true;
 
+  const askedSomeone = isAskNearbyPerson(playerAction);
+  if (askedSomeone) {
+    return !proseResolvesTalk(prose);
+  }
+
   const worldAsk = isWorldSituationQuestion(playerAction);
   if (worldAsk && proseTracksPremise(prose) && prose.length >= 80) return false;
   if (isGearOriginQuestion(playerAction) && proseExplainsGear(prose)) return false;
@@ -107,9 +112,10 @@ REQUIRED:
 2. If they search/inspect a specific thing (a car, alley, panel, body): go to THAT thing and say what is in/on it. Do NOT replace it with a general circuit of the street.
 3. If they look around / ask what is around them: write sensory story of the LAST scene (street, wrecks, people, power dying). Do NOT list inventory. Do NOT mention "the sheet".
 4. If they practice/test gear: describe feel, balance, sound — not a quest redirect. Use ONLY equipped/inventory gear.
-5. If they ask what is going on: answer from the campaign premise and the last scene (this street, this Earth, Integration). If they also ask about a weapon, use that item's description (Registration / System-issue) — never "you arrived" or "the sheet".
-6. Do NOT reply with "you follow through", "you commit to the action", "the result lands in [category]", "main approach", or "ordinary quiet" against a live scene.
-7. Do NOT echo the location label as a sentence. Do NOT invent loot or named enemies without tags.
+5. If they ask a person / someone nearby: they MUST speak and that person MUST answer. Do not replace the conversation with a Guide Book lecture that "everyone heard it."
+6. If they only ask what is going on / what the screen is: answer in-world from the last scene (blue panel, street, Integration). Never write engine notes ("not a place you traveled to", "not a list of what you are carrying", "the sheet", "This is still [location]").
+7. Do NOT reply with "you follow through", "you commit to the action", "the result lands in [category]", "main approach", or "ordinary quiet" against a live scene.
+8. Do NOT echo the location label as a sentence. Do NOT invent loot or named enemies without tags.
 Then give 3–4 choices grounded in what you just described — not objects you never narrated.
 ===========================================================`;
 }
@@ -177,15 +183,12 @@ function lookAroundNarration(state: GameState, lastScene: string, place: string)
   if (beats.length) {
     const last = beats.pop()!;
     const head = beats.length ? `${beats.join('; ')}, and ${last}` : last;
-    return `You stand still and take in what is around you. ${head.charAt(0).toUpperCase()}${head.slice(1)}. That is the street as it is now — not a list of what you are carrying.`;
+    return `You stand still and take in what is around you. ${head.charAt(0).toUpperCase()}${head.slice(1)}.`;
   }
   if (isIntegrationPremise(state)) {
-    return (
-      `You stand still on ${place}. The familiar street is breaking — cracks through walls and air, green crystals pushing concrete, power dying, overturned cars, people confused and shouting. `
-      + `This is the world you already lived in, being Integrated. You do not recite your inventory.`
-    );
+    return `You stand still. The familiar street is breaking — cracks through walls and air, green crystals pushing concrete, power dying, overturned cars, people confused and shouting.`;
   }
-  return `You stand still on ${place} and look. The place you are already in is still here: cover, the nearest wreck or doorway, and whoever is close enough to hear. You do not go blank. You do not recite your inventory.`;
+  return `You stand still on ${place} and look. Cover, the nearest wreck or doorway, and whoever is close enough to hear are still here.`;
 }
 
 function sceneContinuation(lastScene: string): string {
@@ -245,6 +248,17 @@ function isWorldSituationQuestion(action: string): boolean {
   );
 }
 
+function asksAboutScreen(action: string): boolean {
+  return /\b(this|the|that)\s+(screen|panel|window|hud|blue\s+(?:box|screen|panel))\b/i.test(action)
+    || /\bwhat is this screen\b/i.test(action);
+}
+
+function proseResolvesTalk(prose: string): boolean {
+  return /\b(says?|said|asks?|asked|replies|replied|nods?|shakes?\s+(?:their|his|her)\s+head|stranger|"[^"]{3,}"|they\s+(?:see|saw|have|got))\b/i.test(
+    prose
+  );
+}
+
 function isGearOriginQuestion(action: string): boolean {
   return /\b(why\s+(?:do|did)\s+i\s+have|where\s+did\s+(?:this|the|my)\s+\w+\s+come|whose\s+\w+\s+is\s+this|suddenly\s+have)\b/i.test(
     action
@@ -267,14 +281,24 @@ function isIntegrationPremise(state: GameState): boolean {
 
 function premiseFrame(state: GameState, place: string): string {
   if (isIntegrationPremise(state)) {
-    return (
-      `This is still ${place} in the world you already lived in — not a place you traveled to. `
-      + `The System registered Earth. The sky tore open; a voice that was not human spoke to every mind at once.`
-    );
+    return 'The blue panel is still hanging in front of you. The street is cracking. The System called it Integration.';
   }
-  const first = (state.campaignPremise ?? '').split('\n')[0]?.replace(/^OPENING KIT[\s\S]*/i, '').trim().slice(0, 220);
-  if (first) return `What is happening is the story you are already in: ${first}`;
-  return `You are still in ${place}. The situation has not become a different genre.`;
+  return `You are still on ${place}. What you can see has not gone blank.`;
+}
+
+function askNearbyNarration(state: GameState, fullAction: string): string {
+  const screenBit = asksAboutScreen(fullAction) || isIntegrationPremise(state)
+    ? 'You jab a finger at the blue panel hanging in front of your eyes. '
+    : '';
+  const situationBit = isWorldSituationQuestion(fullAction) && isIntegrationPremise(state)
+    ? 'The city is the one you woke up in — only the sky tore and this System wrote itself over the morning. '
+    : '';
+  return (
+    `${situationBit}${screenBit}`
+    + `You catch the nearest person still on their feet. "Do you see this too?" `
+    + `They flinch, then nod, staring at a matching panel in their own sight. "Yeah. I see it. I didn't put it there." `
+    + `Whatever this is, it is not only yours.`
+  );
 }
 
 function provenanceLine(
@@ -379,12 +403,19 @@ export function synthesizeActionResolution(
     );
   }
 
-  if (isWorldSituationQuestion(full) || isWorldSituationQuestion(action)) {
+  if (isAskNearbyPerson(full) || isAskNearbyPerson(action)) {
+    return `${prefix}${askNearbyNarration(state, full)}`;
+  }
+
+  if (isWorldSituationQuestion(full) || isWorldSituationQuestion(action) || asksAboutScreen(full)) {
     const gearBit = isGearOriginQuestion(full) || /\b(sword|blade|knife|weapon)\b/i.test(full)
       ? ` ${explainHeldWeapon(state)}`
       : '';
+    const screenBit = asksAboutScreen(full)
+      ? ' The blue screen is a System panel — Registration, hanging at eye level, written in your language. It is not a phone and it will not swipe away.'
+      : '';
     return (
-      `${prefix}${premiseFrame(state, place)} `
+      `${prefix}${premiseFrame(state, place)}${screenBit} `
       + `${lookAroundNarration(state, lastSceneProse, place)}${gearBit}`
     );
   }
@@ -435,6 +466,9 @@ export function synthesizeActionResolution(
   }
 
   if (intent.kind === 'talk' || /\?/.test(action) || /\bwonder\b/i.test(action)) {
+    if (isAskNearbyPerson(full) || isAskNearbyPerson(action)) {
+      return `${prefix}${askNearbyNarration(state, full)}`;
+    }
     if (isGeneralLookAround(full, intent) || /\baround\b/i.test(full)) {
       return `${prefix}${lookAroundNarration(state, lastSceneProse, place)}`;
     }

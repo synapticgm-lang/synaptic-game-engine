@@ -215,6 +215,42 @@ export const systemIntegration: CampaignBible = {
 
   startingLocation: 'A cracked city street',
   replaceDefaultLoadout: true,
+  openingHook:
+    'The sky tears open. A voice — not human, not machine — speaks to every mind on Earth: "Integration complete. Welcome to the System." A blue panel flickers at eye level.\n\n[ SYSTEM ] Welcome. You have been registered. Survive.',
+  openingPrompts: [
+    {
+      id: 'where',
+      kind: 'location',
+      question: 'Where were you when the sky tore open — the real place, not a fantasy town?',
+      suggestions: [
+        'On a city street walking somewhere ordinary',
+        'In my apartment or house',
+        'In a car stuck in traffic',
+        'At a shop, cafe, or work',
+      ],
+    },
+    {
+      id: 'wear',
+      kind: 'appearance',
+      question: 'What were you wearing — the clothes you actually had on this morning?',
+      suggestions: [
+        'Jeans, a jacket, everyday street clothes',
+        'Work clothes or a uniform',
+        'Gym clothes',
+        'Whatever I slept in',
+      ],
+    },
+    {
+      id: 'pockets',
+      kind: 'kit',
+      question: 'What did you have on you? Phone, keys, bag — not a traveler kit.',
+      suggestions: [
+        'Phone, keys, and wallet',
+        'A backpack with everyday stuff',
+        'Almost nothing in my pockets',
+      ],
+    },
+  ],
   startingContainer: { id: 'si-pack', name: 'Everyday Backpack', capacity: 20 },
 
   starterItems: [

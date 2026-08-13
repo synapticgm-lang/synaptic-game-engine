@@ -30,6 +30,16 @@ export interface StarterQuest {
   rewards: string;
 }
 
+export type OpeningPromptKind = 'location' | 'appearance' | 'kit' | 'identity' | 'species';
+
+/** Asked at game start so the story does not invent who/where the player is. */
+export interface OpeningPrompt {
+  id: string;
+  kind: OpeningPromptKind;
+  question: string;
+  suggestions?: string[];
+}
+
 export interface StarterItem {
   id: string;
   name: string;
@@ -66,4 +76,7 @@ export interface CampaignBible {
    */
   replaceDefaultLoadout?: boolean;
   startingContainer?: { id: string; name: string; capacity: number };
+  /** Hook before establishment questions. If omitted, the archetype intro is softened. */
+  openingHook?: string;
+  openingPrompts?: OpeningPrompt[];
 }

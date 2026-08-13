@@ -280,6 +280,17 @@ export interface ActiveEncounter {
   goldReward: number;
 }
 
+export interface OpeningEstablishment {
+  pending: Array<{
+    id: string;
+    kind: 'location' | 'appearance' | 'kit' | 'identity' | 'species';
+    question: string;
+    suggestions?: string[];
+  }>;
+  answers: Record<string, string>;
+  complete: boolean;
+}
+
 export interface GameState {
   version: number;
   saveId: string;
@@ -309,6 +320,10 @@ export interface GameState {
   campaignBibleId?: string | null;
   /** Short premise injected every turn as Guide Book rails. */
   campaignPremise?: string | null;
+  /** Campaign-start interview (where / clothes / folk). Undefined on old saves = already playing. */
+  openingEstablishment?: OpeningEstablishment;
+  /** After the last establishment answer, generate the real opening scene once. */
+  pendingGeneratedOpening?: boolean;
   /** Per-NPC memory ledger. */
   npcMemories?: NpcMemory[];
   /** Current location sheet (interactables / exits). */
