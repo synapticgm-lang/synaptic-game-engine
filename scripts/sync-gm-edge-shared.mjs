@@ -16,6 +16,7 @@ const FILES = [
   'inventory.ts',
   'panelBudget.ts',
   'situationPacket.ts',
+  'sceneFacts.ts',
   'locationName.ts',
   'timelineFormat.ts',
   'choiceTierRules.ts',

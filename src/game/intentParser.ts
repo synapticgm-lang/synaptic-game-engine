@@ -40,7 +40,7 @@ const RULES: { kind: IntentKind; re: RegExp; label: string }[] = [
   { kind: 'attack', re: /\b(attack|strike|slash|stab|shoot|fight|hit|melee|cast fireball|swing\s+(?:at|toward|towards))\b/i, label: 'Attack' },
   { kind: 'cast', re: /\b(cast|channel|invoke|spell)\b/i, label: 'Cast / magic' },
   { kind: 'use_item', re: /\b(use|drink|eat|equip|wield|draw|throw|deploy)\b/i, label: 'Use item' },
-  { kind: 'talk', re: /\b(ask|tell|speak|talk|persuade|intimidate|negotiate|greet)\b/i, label: 'Talk' },
+  { kind: 'talk', re: /\b(ask|tell|speak|talk|shout|yell|call out|persuade|intimidate|negotiate|greet)\b/i, label: 'Talk' },
   { kind: 'search', re: /\b(search|loot|rummage|open chest|pick lock)\b/i, label: 'Search / interact' },
   { kind: 'observe', re: /\b(observ|scan|listen|look|study|inspect|watch|assess|examin)\b/i, label: 'Observe' },
   { kind: 'move', re: /\b(go|move|walk|sneak|climb|enter|leave|head|approach|edge toward)\b/i, label: 'Move' },
@@ -53,10 +53,11 @@ const THREAT_PRESENT =
 /** Player wants a nearby person to answer — not a narrator lecture. */
 export function isAskNearbyPerson(action: string): boolean {
   return (
-    /\b(ask|tell|speak(?:\s+to)?|talk(?:\s+to)?)\b[\s\S]{0,60}\b(some\s*one|somebody|anyone|anybody|person|people|stranger|near(?:by)?|them)\b/i.test(
+    /\b(ask|tell|speak(?:\s+to)?|talk(?:\s+to)?|shout|yell|call out)\b[\s\S]{0,80}\b(some\s*one|somebody|anyone|anybody|everyone|every\s+one|else|person|people|stranger|near(?:by)?|them)\b/i.test(
       action
     )
-    || /\b(ask|see)\s+if\s+(?:they|someone|some\s*one|anybody|anyone)\b/i.test(action)
+    || /\b(shout|yell|call out)\b/i.test(action)
+    || /\b(ask|see)\s+if\s+(?:they|someone|some\s*one|anybody|anyone|everyone)\b/i.test(action)
     || /\bif they see\b/i.test(action)
   );
 }
@@ -73,7 +74,7 @@ export function primaryActionClause(input: string): string {
     .filter((s) => s.length >= 3);
   if (parts.length < 2) return text.replace(/[?]+$/g, '').trim() || text;
   const talk = [...parts].reverse().find(
-    (p) => isAskNearbyPerson(p) || /^(ask|tell|speak|talk)\b/i.test(p)
+    (p) => isAskNearbyPerson(p) || /^(ask|tell|speak|talk|shout|yell)\b/i.test(p)
   );
   if (talk && talk.split(/\s+/).length >= 3) return talk;
   const last = parts[parts.length - 1];

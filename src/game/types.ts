@@ -331,6 +331,8 @@ export interface GameState {
   pendingGeneratedOpening?: boolean;
   /** Per-NPC memory ledger. */
   npcMemories?: NpcMemory[];
+  /** Bound last-beat scene (crowd, noise, props). Authority over improvisation. */
+  sceneFacts?: SceneFacts;
   /** Current location sheet (interactables / exits). */
   locationSheet?: LocationSheet | null;
   /** AI turn awaiting player accept / edit / reroll. */
@@ -455,7 +457,21 @@ export type TimelineFactKind =
   | 'dungeon'
   | 'discovery'
   | 'world'
+  | 'scene'
   | 'other';
+
+export type CrowdPresence = 'present' | 'sparse' | 'none' | 'unknown';
+export type SceneNoise = 'shouting' | 'voices' | 'quiet' | 'unknown';
+
+/** Bound last-beat facts. Prose cannot empty a present crowd without time passing. */
+export interface SceneFacts {
+  crowd: CrowdPresence;
+  noise: SceneNoise;
+  present: string[];
+  props: string[];
+  lastBeat: string;
+  updatedTurn: number;
+}
 
 export interface TimelineFact {
   id: string;

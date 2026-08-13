@@ -8,6 +8,7 @@ import {
 import type { PlayerIntent } from './intentParser';
 import { narrativeMentionsPlayerHarm } from './narrativeSanitize';
 import { isUnresolvedActionNarrative } from './actionResolution';
+import { detectSceneContradiction } from './sceneFacts';
 
 export interface WardenResult {
   /** Events allowed after sheet checks. */
@@ -18,6 +19,8 @@ export interface WardenResult {
   systemLogExtra: string[];
   /** Lore / quest events held as proposals only until player confirms (write-path). */
   deferredEvents: GameEvent[];
+  /** Last-beat contradiction — caller must rewrite narrative. */
+  continuityBreak?: string;
 }
 
 const PEACEFUL_INTENTS = new Set<PlayerIntent['kind']>([
@@ -193,6 +196,11 @@ export function runWarden(
     notes.push('Narrative does not resolve the player action');
   }
 
+  const continuityBreak = detectSceneContradiction(state.sceneFacts, narrativeText) ?? undefined;
+  if (continuityBreak) {
+    notes.push(`Continuity break: ${continuityBreak}`);
+  }
+
   if (
     /\b(?:cast|channel|expend)\b/i.test(playerInput) &&
     (state.character.mp ?? 0) <= 0 &&
@@ -214,6 +222,7 @@ export function runWarden(
     notes,
     systemLogExtra,
     deferredEvents: deferred,
+    continuityBreak,
   };
 }
 

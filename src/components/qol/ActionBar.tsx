@@ -1,6 +1,7 @@
 import { Sparkles, Dices } from 'lucide-react';
 import type { EngineMode, GameState } from '@/game/types';
 import { padChoicesToCount } from '@/game/choicePipeline';
+import { establishmentChoices, isOpeningEstablishmentPending } from '@/game/openingEstablishment';
 
 interface ActionBarProps {
   state: GameState;
@@ -18,6 +19,10 @@ const FALLBACK_CHOICE = '🎲 Let Fate Decide';
  * valid options so the numbered list and the buttons disagreed.
  */
 function resolveActions(state: GameState): string[] {
+  if (isOpeningEstablishmentPending(state)) {
+    const chips = (state.choices ?? []).filter((c) => c && c !== FALLBACK_CHOICE);
+    return (chips.length ? chips : establishmentChoices(state.openingEstablishment?.pending ?? [])).slice(0, 4);
+  }
   const gmChoices = (state.choices ?? []).filter((c) => c && c !== FALLBACK_CHOICE);
   if (gmChoices.length >= 3) return gmChoices.slice(0, 4);
   return padChoicesToCount(gmChoices, state, '', 3);

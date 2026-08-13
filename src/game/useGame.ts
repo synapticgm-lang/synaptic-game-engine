@@ -48,6 +48,7 @@ import { applyCampaignCharacter, reconcileCampaignLoadout, seedStateFromArchetyp
 import {
   applyOpeningAnswer,
   ensureSystemReceipt,
+  establishmentChoices,
   sanitizeOpeningNarration,
   buildEstablishmentIntro,
   buildOpeningSceneMandate,
@@ -57,6 +58,7 @@ import {
   resolveOpeningRegistrar,
   synthesizeOpeningScene,
 } from './openingEstablishment';
+import { applyCommittedNarrative, detectSceneContradiction, extractSceneFacts, rewriteContinuityBreak, seedOpeningSceneFacts } from './sceneFacts';
 import { formatCampaignStoryName, getCampaignBibleById } from '@/data/campaigns';
 import { parsePlayerIntent, groundPlayerAction } from './intentParser';
 import {
@@ -1189,7 +1191,7 @@ export function useGame() {
     setState(optimisticState);
 
     try {
-      const liveCurrent = stateRef.current;
+      let liveCurrent = stateRef.current;
       if (!liveCurrent) return;
 
       if (isOpeningEstablishmentPending(current) || liveCurrent.pendingGeneratedOpening) {
@@ -1233,9 +1235,17 @@ export function useGame() {
           content: cleanOpening,
           timestamp: Date.now(),
         };
+        const openingTurn = openingState.turn + 1;
+        const seeded = seedOpeningSceneFacts({ ...openingState, turn: openingTurn });
+        const sceneFacts = applyCommittedNarrative(
+          { ...openingState, sceneFacts: seeded, turn: openingTurn },
+          cleanOpening,
+          openingTurn
+        );
         const committed: GameState = {
           ...openingState,
-          turn: openingState.turn + 1,
+          turn: openingTurn,
+          sceneFacts,
           log: [...openingState.log, openingGm],
           choices: openingChoices.length ? openingChoices : undefined,
           lastUpdated: Date.now(),
@@ -1244,6 +1254,16 @@ export function useGame() {
         setState(committed);
         void persist(committed);
         return;
+      }
+
+      if (!liveCurrent.sceneFacts) {
+        const lastGm = [...liveCurrent.log].reverse().find((e) => e.role === 'gm')?.content ?? '';
+        liveCurrent = {
+          ...liveCurrent,
+          sceneFacts: lastGm
+            ? extractSceneFacts(lastGm, undefined, liveCurrent.turn)
+            : seedOpeningSceneFacts(liveCurrent),
+        };
       }
 
       const strengthVal = liveCurrent.character.strength ?? liveCurrent.character.attributes?.STR ?? 14;
@@ -1574,6 +1594,12 @@ In <system-log>, only emit LitRPG/RPG progression lines (XP, loot, HP change as 
           intent: intentForMandate.kind,
         });
       }
+      if (warden.continuityBreak) {
+        cleanText = rewriteContinuityBreak(liveCurrent, sanitizedInput, cleanText);
+        debugLogger.record('STATE_UPDATE', 'Rewrote continuity break', {
+          reason: warden.continuityBreak,
+        });
+      }
       const groundedAfterResolve = focusFiltered.filter((choice) =>
         isChoiceGroundedInTurn(choice, normalizeStoryCorpus(cleanText), suggestionState, activeLoreCards)
       );
@@ -1751,6 +1777,9 @@ In <system-log>, only emit LitRPG/RPG progression lines (XP, loot, HP change as 
         );
         cleanText = stripUnearnedXpProse(cleanText);
       }
+      if (warden.continuityBreak || detectSceneContradiction(liveCurrent.sceneFacts, cleanText)) {
+        cleanText = rewriteContinuityBreak(liveCurrent, sanitizedInput, cleanText);
+      }
 
       debugLogger.record('STATE_UPDATE', 'Merging GM response into game state', {
         turn: liveCurrent.turn,
@@ -1807,6 +1836,7 @@ In <system-log>, only emit LitRPG/RPG progression lines (XP, loot, HP change as 
           ...newInventoryItems.map((i) => i.name),
         ],
         wardenNotes: warden.notes,
+        sceneBeat: applyCommittedNarrative(liveCurrent, cleanText, nextTurn).lastBeat,
       });
       const mergedTimeline = mergeTimeline(workingState.timeline, turnFacts);
       const npcMemories = mergeNpcMemoriesFromTurn(
@@ -1842,6 +1872,7 @@ In <system-log>, only emit LitRPG/RPG progression lines (XP, loot, HP change as 
         timeline: mergedTimeline,
         npcMemories,
         locationSheet,
+        sceneFacts: applyCommittedNarrative(liveCurrent, cleanText, nextTurn),
         campaignPremise: workingState.campaignPremise ?? liveCurrent.campaignPremise,
         campaignBibleId: workingState.campaignBibleId ?? liveCurrent.campaignBibleId,
         pendingTurn: null,
@@ -2165,7 +2196,7 @@ In <system-log>, only emit LitRPG/RPG progression lines (XP, loot, HP change as 
     );
     const initialChoices = establishedIntro.choices.length
       ? establishedIntro.choices
-      : extractChoicesFromText(introContent, namedSeeded);
+      : establishmentChoices(openingPrompts);
     const cleanIntroContent = stripChoiceList(establishedIntro.text);
     const newState: GameState = {
       ...namedSeeded,

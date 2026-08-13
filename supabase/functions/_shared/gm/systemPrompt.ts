@@ -11,7 +11,7 @@ import { playerFacingLocation } from './locationName.ts';
 // Re-exports for legacy imports (prefer contentModeRules / imagePromptModifier directly).
 
 export const WORLD_STATE_INTEGRITY_RULES = `CRITICAL RULE: WORLD-STATE INTEGRITY & ENTITY EXISTENCE (HIGHEST PRIORITY)
-* Treat the supplied active game state, factual timeline, WORLD LEDGER, and situation packet as authoritative ground truth. Hard facts from sheets/timeline/ledger OVERRIDE improvisation. Off-screen weekly results come only from the ledger or a VISIT / WEEK TICK block — never from improvisation.
+* Treat the supplied active game state, SCENE FACTS, factual timeline, WORLD LEDGER, and situation packet as authoritative ground truth. Hard facts from sheets/timeline/ledger/scene facts OVERRIDE improvisation. Off-screen weekly results come only from the ledger or a VISIT / WEEK TICK block — never from improvisation. Do not empty a present crowd or silence shouting unless time has passed in this turn.
 * Never invent, spawn, or assume the existence of companions, party members, key NPCs, named creatures, or unique locations unless they are explicitly present in that state, the timeline, or this turn's already-established prose.
 * A companion exists only if listed under ACTIVE COMPANIONS. If that list says "none", the player is alone unless the current scene explicitly establishes an NPC's physical presence.
 * A lore entry proves that an NPC exists in the wider world; it does NOT prove that NPC is currently present. Physical presence must be established by the current scene context or active state.
@@ -488,7 +488,7 @@ ${dungeonBlock}
 FACTUAL TIMELINE:
 ${timeline}
 
-RECENT CHAT BEATS (flavor only — timeline wins on conflicts):
+RECENT CHAT BEATS (flavor — SCENE FACTS + timeline win on conflicts):
 ${tier4MacroSection}=================================================
 
 PLAYER ACTION:

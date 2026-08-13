@@ -37,6 +37,7 @@ export function collectTurnTimelineFacts(params: {
   systemLog: string[];
   newItemNames: string[];
   wardenNotes?: string[];
+  sceneBeat?: string;
 }): TimelineFact[] {
   const {
     turn,
@@ -47,6 +48,7 @@ export function collectTurnTimelineFacts(params: {
     systemLog,
     newItemNames,
     wardenNotes = [],
+    sceneBeat,
   } = params;
   const facts: TimelineFact[] = [];
 
@@ -133,6 +135,10 @@ export function collectTurnTimelineFacts(params: {
 
   for (const note of wardenNotes) {
     pushFact(facts, turn, 'other', `Warden: ${note}`);
+  }
+
+  if (sceneBeat) {
+    pushFact(facts, turn, 'scene', sceneBeat);
   }
 
   return facts;

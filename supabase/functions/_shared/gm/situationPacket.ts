@@ -1,6 +1,7 @@
 import type { GameState, SituationPacket, WorldLedger } from './types.ts';
 import { formatTimelineForPrompt } from './timelineFormat.ts';
 import { playerFacingLocation } from './locationName.ts';
+import { formatSceneFactsForPrompt } from './sceneFacts.ts';
 
 /**
  * Rebuild the live Situation packet from structured state.
@@ -14,6 +15,9 @@ export function buildSituationPacket(state: GameState): SituationPacket {
     : 'none';
 
   const presentEntities: string[] = [];
+  for (const who of state.sceneFacts?.present ?? []) {
+    presentEntities.push(who);
+  }
   if (state.activeEncounter) {
     presentEntities.push(
       `Enemy: ${state.activeEncounter.name} HP ${state.activeEncounter.hp}/${state.activeEncounter.maxHp}`
@@ -46,7 +50,9 @@ export function buildSituationPacket(state: GameState): SituationPacket {
       ? `${state.activeEncounter.name} L${state.activeEncounter.level} HP ${state.activeEncounter.hp}/${state.activeEncounter.maxHp}`
       : 'none',
     dungeon: dungeonLine,
-    presentEntities: presentEntities.length ? presentEntities : ['none established'],
+    presentEntities: presentEntities.length
+      ? Array.from(new Set(presentEntities))
+      : ['none established'],
     activeQuests: activeQuests.length ? activeQuests : ['none'],
     recentFacts: (state.timeline ?? []).slice(-8).map((f) => `T${f.turn}: ${f.text}`),
   };
@@ -58,9 +64,10 @@ export function formatSituationForPrompt(state: GameState): string {
     .slice(0, 5)
     .map((m) => `${m.npcName}[${m.disposition}]: ${m.facts.slice(-2).join('; ') || '—'}`)
     .join('\n');
+  const sceneBlock = formatSceneFactsForPrompt(state.sceneFacts);
   return `Location: ${s.location}${s.coordinates ? ` (${s.coordinates})` : ''}
 Location sheet: ${state.locationSheet?.name ?? s.location} | interactables: ${(state.locationSheet?.interactables ?? []).map((i) => `${i.name}:${i.state}`).join(', ') || 'none'}
-Encounter: ${s.encounter}
+${sceneBlock ? `${sceneBlock}\n` : ''}Encounter: ${s.encounter}
 Dungeon: ${s.dungeon}
 Present entities: ${s.presentEntities.join(' | ')}
 Active quests (background names only — do not force): ${s.activeQuests.join(' | ')}
@@ -68,7 +75,7 @@ NPC memories:
 ${npcBlock || '(none)'}
 Recent facts:
 ${s.recentFacts.length ? s.recentFacts.join('\n') : '(none)'}
-RAILS: Hard facts above + factual timeline OVERRIDE improvisation. Do not invent named threats, loot, NPCs, or interactables absent from this packet / location sheet / tags.
+RAILS: Hard facts above + SCENE FACTS + factual timeline OVERRIDE improvisation. Do not invent named threats, loot, NPCs, or interactables absent from this packet / location sheet / tags. Do not empty a present crowd or silence shouting without narrating time passing.
 PLAYER ACTION FIDELITY: Resolve the player's last stated action first — the named object, question, or motion. Never swap a specific search for a generic look-around. Never pivot the scene to a quest location, dungeon, store, or marker unless the player mentioned it or is already there.
 Do not write "You commit to the action" or "the result lands in [lore title]". Narrate what actually happens.
 Lore-article titles are not the current location. Do not name unvisited hubs, cities, or NPCs.

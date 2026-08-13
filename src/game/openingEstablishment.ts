@@ -8,7 +8,36 @@ const NAME_PROMPT: OpeningPrompt = {
   id: 'name',
   kind: 'name',
   question: 'Confirm designation.',
+  suggestions: ['Random designation', 'Random place'],
 };
+
+const RANDOM_NAMES = ['Jax', 'Ren', 'Sam', 'Morgan', 'Casey', 'Riley', 'Quinn', 'Avery', 'Jordan', 'Blake'];
+const RANDOM_PLACES = [
+  'Peterborough UK',
+  'Manchester',
+  'a Leeds side street',
+  'Birmingham',
+  'a London pavement',
+  'Sheffield',
+];
+
+function pickRandom(list: string[]): string {
+  return list[Math.floor(Math.random() * list.length)] ?? list[0];
+}
+
+export function establishmentChoices(pending: OpeningPrompt[]): string[] {
+  const chips: string[] = [];
+  if (pending.some((p) => p.kind === 'name')) chips.push('Random designation');
+  if (pending.some((p) => p.kind === 'location')) chips.push('Random place');
+  for (const prompt of pending) {
+    for (const s of prompt.suggestions ?? []) {
+      if (!/random (designation|name|place|location)/i.test(s) && !chips.includes(s)) {
+        chips.push(s);
+      }
+    }
+  }
+  return chips.slice(0, 4);
+}
 
 const SI_PROMPTS: OpeningPrompt[] = [
   NAME_PROMPT,
@@ -205,7 +234,7 @@ export function buildEstablishmentIntro(
   });
   return {
     text: `${hook}\n\n${query}`,
-    choices: first.suggestions ?? [],
+    choices: establishmentChoices(prompts),
   };
 }
 
@@ -273,12 +302,30 @@ export function extractLocation(raw: string): string | null {
   return titlePlace(place);
 }
 
+function stripLeadingQuestions(raw: string): string {
+  return raw
+    .replace(/^[^.?!]{0,80}\?\s*/i, '')
+    .replace(/\bwhat am i wearing\??\s*/gi, '')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
 export function extractAppearance(raw: string): string | null {
+  const afterWearQ = raw.replace(/^[\s\S]*?\bwhat am i wearing\??\s*/i, '').trim();
+  if (afterWearQ && afterWearQ !== raw.replace(/\s+/g, ' ').trim()) {
+    const cleaned = stripPlayerVoice(afterWearQ.split(/[?]/)[0] ?? afterWearQ);
+    if (cleaned.length >= 8) return cleaned;
+  }
   const m = raw.match(
     /\b(?:i(?:'m|m|\s+am)\s+wearing|wearing|dressed\s+in|i\s+have\s+on)\s+([^.?!]{3,100})/i
   );
   const bit = m?.[1]?.replace(/\s+/g, ' ').trim();
-  return bit ? stripPlayerVoice(bit) : null;
+  if (bit) return stripPlayerVoice(bit);
+  if (/\b(jeans|boots|t-?shirt|hoodie|jacket|trainers|sneakers)\b/i.test(raw)) {
+    const list = stripPlayerVoice(stripLeadingQuestions(raw));
+    return list.length >= 8 ? list : null;
+  }
+  return null;
 }
 
 export function extractKit(raw: string): string | null {
@@ -494,6 +541,12 @@ export function applyOpeningAnswer(state: GameState, rawInput: string): {
   if (!answer) return { state, generateOpening: false };
 
   const harvest = harvestUtterance(answer);
+  if (/^random\s+(name|designation)\b/i.test(answer) || /^use a random (name|designation)\b/i.test(answer)) {
+    harvest.name = harvest.name ?? pickRandom(RANDOM_NAMES);
+  }
+  if (/^random\s+(place|location|city)\b/i.test(answer) || /^use a random (place|location)\b/i.test(answer)) {
+    harvest.location = harvest.location ?? pickRandom(RANDOM_PLACES);
+  }
   const registrar = est.registrar ?? {
     voice: 'system' as const,
     label: 'SYSTEM',
@@ -511,10 +564,13 @@ export function applyOpeningAnswer(state: GameState, rawInput: string): {
     const isCurrent = prompt.id === est.pending[0].id;
     let value = harvested;
     const questionDump = (answer.match(/[?]/g)?.length ?? 0) >= 1 && answer.split(/\s+/).length > 8;
-    if (!value && isCurrent && prompt.kind !== 'name' && !questionDump) {
-      const clean = sanitizeOpeningAnswer(prompt.kind, answer);
-      if (clean.text) value = clean.text;
-      cheated = cheated || clean.cheated;
+    if (!value && isCurrent && prompt.kind !== 'name') {
+      const source = questionDump ? stripLeadingQuestions(answer) : answer;
+      if (source.length >= 6) {
+        const clean = sanitizeOpeningAnswer(prompt.kind, source);
+        if (clean.text) value = clean.text;
+        cheated = cheated || clean.cheated;
+      }
     }
     if (prompt.kind === 'name' && !value) {
       stillPending.push(prompt);
@@ -566,7 +622,7 @@ export function applyOpeningAnswer(state: GameState, rawInput: string): {
       state: {
         ...nextState,
         openingEstablishment: { pending: stillPending, answers, complete: false, registrar },
-        choices: next.suggestions ?? [],
+        choices: establishmentChoices(stillPending),
         log: playerAlreadyLogged ? [...nextState.log, gmEntry] : nextState.log,
         lastUpdated: Date.now(),
       },
@@ -645,7 +701,7 @@ ${canon}
 ${extra}
 You are the System AND the narrator. Do not recap their chat.
 1) SYSTEM first, in <system>...</system>: thank them, say input accepted / setup complete, log designation / location / visual profile / personal effects from CANON (already cleaned — no I/my). Then lock registration.
-2) NARRATOR next: 3–5 sentences of second-person story in the place they named. "You are wearing baggy jeans", never "you are wearing my baggy jeans".
+2) NARRATOR next: 3–5 sentences of second-person story in the place they named. Do NOT re-list clothes or pockets — the System block already logged those. Continue the street: sky, panel, crowd, noise.
 Do not grant weapons, armor, or rare items because they typed them. Only ordinary pocket stuff already on the sheet.
 Do not invent a different city, race, or traveler origin.
 Do not ask more chargen questions.
@@ -672,17 +728,13 @@ export function synthesizeOpeningScene(state: GameState): string {
     startLine: 'Starting. Please confirm your name and current location.',
   };
   const where = a.where || state.currentLocation || 'where you already were';
-  const wear = stripPlayerVoice(a.wear || a.look || state.character.appearance || 'the clothes you had on');
-  const kit = stripPlayerVoice(a.pockets || a.kit || '');
   const folk = a.folk || a.form || '';
   const folkBit = folk ? ` You are ${folk}.` : '';
-  const kitBit = kit ? ` In your pockets: ${kit}.` : '';
   const scene = /system integration|every human on earth/i.test(state.campaignPremise ?? '')
     ? (
       `The panel dims. You are still in ${where} — same morning, same life — while the sky stays torn and the blue screen hangs at eye level.${folkBit} `
-      + `You are wearing ${wear}.${kitBit} `
       + `Concrete and air are cracking. People nearby are shouting.`
     )
-    : `The particulars are locked. You are in ${where}.${folkBit} You are wearing ${wear}.${kitBit}`;
+    : `The particulars are locked. You are in ${where}.${folkBit} The scene that was already moving is still moving.`;
   return `${formatSetupComplete(registrar, state)}\n\n${scene}`;
 }
