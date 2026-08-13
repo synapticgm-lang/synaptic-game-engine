@@ -63,7 +63,7 @@ export function isUnresolvedActionNarrative(
   const prose = proseOnly(narrative);
   if (!prose || prose.length < 60) return true;
   if (isGenericBridgeNarrative(narrative)) return true;
-  if (/bring the System panel in close/i.test(prose) && !isPanelOnlyAction(job)) return true;
+  if (/bring the System panel in close/i.test(prose) && !isPanelOnlyAction(playerAction)) return true;
 
   const needsFindings =
     NEEDS_FINDINGS_ACTION.test(job)
@@ -179,17 +179,17 @@ export function actionFocusPhrase(action: string): string | null {
 }
 
 function isPanelOnlyAction(action: string): boolean {
-  const job = primaryActionClause(action);
-  if (/\b(dismiss|close|put away|hide|ignore|wave (?:off|away))\b/i.test(action)
-    && /\b(look|search|explor|door|around|walk|go)\b/i.test(job)) {
+  const full = action.replace(/\s+/g, ' ').trim();
+  const job = primaryActionClause(full);
+  // Dismiss / look-for / explore always wins. Never open the panel for a compound line.
+  if (/\b(dismiss|close|put away|hide|ignore|wave (?:off|away)|look for|look around|explor|open door)\b/i.test(full)) {
     return false;
   }
-  if (/\b(look around|search|explor|open door|for an? open)\b/i.test(job)
-    && !/\b(check|read|open|study)\b.{0,20}\b(system|pann?el|menu)\b/i.test(job)) {
-    return false;
-  }
-  return /\b(system\s*pann?el|status\s+panel|character\s+sheet|system\s+menu)\b/i.test(job)
-    || (/^\s*(?:check|read|open|study)\b/i.test(job) && /\b(system|pann?el|menu)\b/i.test(job));
+  if (/\b(door|alley|car|street|wreck|around me|near me)\b/i.test(job)) return false;
+  return (
+    /^(?:check|read|open|study|inspect)\b.{0,40}\b(system\s*pann?el|status\s+panel|character\s+sheet|system\s+menu)\b/i.test(job)
+    || /^(?:check|read|open|study|inspect)\s+(?:the\s+)?(?:system\s*)?pann?el\b/i.test(job)
+  );
 }
 
 function isGeneralLookAround(action: string, intent: PlayerIntent): boolean {

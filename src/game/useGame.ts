@@ -43,7 +43,7 @@ import { applyStructuralEvents } from './structuralEvents';
 import { collectTurnTimelineFacts, mergeTimeline } from './timeline';
 import { seedStateFromArchetype, seedStateFromCampaignBible } from './campaignSeed';
 import { formatCampaignStoryName, getCampaignBibleById } from '@/data/campaigns';
-import { parsePlayerIntent, groundPlayerAction, primaryActionClause } from './intentParser';
+import { parsePlayerIntent, groundPlayerAction } from './intentParser';
 import {
   buildTurnMandate,
   detectSceneHijack,
@@ -1670,7 +1670,7 @@ In <system-log>, only emit LitRPG/RPG progression lines (XP, loot, HP change as 
           .map((e) => e.content)
           .join('\n');
         cleanText = synthesizeActionResolution(
-          primaryActionClause(sanitizedInput),
+          sanitizedInput,
           intentForMandate,
           suggestionState,
           lastScene
