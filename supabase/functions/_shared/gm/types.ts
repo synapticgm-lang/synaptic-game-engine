@@ -283,12 +283,17 @@ export interface ActiveEncounter {
 export interface OpeningEstablishment {
   pending: Array<{
     id: string;
-    kind: 'location' | 'appearance' | 'kit' | 'identity' | 'species';
+    kind: 'name' | 'location' | 'appearance' | 'kit' | 'identity' | 'species';
     question: string;
     suggestions?: string[];
   }>;
   answers: Record<string, string>;
   complete: boolean;
+  registrar?: {
+    voice: 'system' | 'inworld';
+    label: string;
+    startLine: string;
+  };
 }
 
 export interface GameState {

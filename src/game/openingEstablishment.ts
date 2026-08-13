@@ -130,10 +130,8 @@ export function formatRegistrarLine(
 ): string {
   const start = options?.includeStartLine ? `${registrar.startLine}\n` : '';
   const extra = options?.extra ? `${options.extra}\n` : '';
-  if (registrar.voice === 'system') {
-    return `[ ${registrar.label} ]\n${start}${extra}${query}`.trim();
-  }
-  return `${start}${extra}${query}`.trim();
+  const body = `${start}${extra}${query}`.trim();
+  return `<system>[ ${registrar.label} ]\n${body}</system>`;
 }
 
 export function resolveOpeningPrompts(
@@ -179,7 +177,7 @@ export function formatPlayerCanon(state: GameState): string {
   if (!answers || !Object.keys(answers).length) return '';
   const lines = Object.entries(answers).map(([id, text]) => `- ${id}: ${text}`);
   return (
-    `PLAYER CANON (place / look / ordinary pockets — NOT a loot grant):\n${lines.join('\n')}\n`
+    `PLAYER CANON (facts only — rewrite in System/narrator voice, never quote I/my chat):\n${lines.join('\n')}\n`
     + `Inventory and equipped gear on the sheet are the only items they have. `
     + `Rejected chargen claims (legendary weapons, best armor, endgame gear) stay rejected.`
   );
@@ -277,16 +275,30 @@ export function extractLocation(raw: string): string | null {
 
 export function extractAppearance(raw: string): string | null {
   const m = raw.match(
-    /\b(?:i(?:'m|\s+am)\s+wearing|wearing|dressed\s+in|i\s+have\s+on)\s+([^.?!]{3,80})/i
+    /\b(?:i(?:'m|m|\s+am)\s+wearing|wearing|dressed\s+in|i\s+have\s+on)\s+([^.?!]{3,100})/i
   );
-  return m?.[1]?.replace(/\s+/g, ' ').trim() ?? null;
+  const bit = m?.[1]?.replace(/\s+/g, ' ').trim();
+  return bit ? stripPlayerVoice(bit) : null;
 }
 
 export function extractKit(raw: string): string | null {
   const m = raw.match(
-    /\b(?:i\s+have|got|carrying|in\s+my\s+(?:pockets?|bag|pack))\s+([^.?!]{3,80})/i
+    /\b(?:i\s+have|i've got|got|carrying|in\s+my\s+(?:pockets?|bag|pack)|wallet|phone|keys|headphones)\b/i
   );
-  return m?.[1]?.replace(/\s+/g, ' ').trim() ?? null;
+  if (!m) return null;
+  return stripPlayerVoice(raw);
+}
+
+/** Turn "im wearing my jeans" into "baggy jeans and a band t-shirt" — never keep I/my. */
+export function stripPlayerVoice(raw: string): string {
+  let t = raw.replace(/\s+/g, ' ').trim();
+  t = t.replace(/\b(?:erm|uh+|um+|like)\b/gi, ' ');
+  t = t.replace(/\b(?:i(?:'m|m|\s+am)\s+wearing|wearing|dressed\s+in|i\s+have\s+on)\s+/gi, '');
+  t = t.replace(/\b(?:i\s+have|i've got|got|carrying)\s+/gi, '');
+  t = t.replace(/\b(?:my|i(?:'m|m)?|i\s+am)\s+/gi, '');
+  t = t.replace(/\b(?:so confused|what'?s going on|who are you|what is this).*$/i, '');
+  t = (t.split(/[?!]/)[0] ?? t).replace(/\s+/g, ' ').replace(/^[,.\s]+|[,.\s]+$/g, '').trim();
+  return t;
 }
 
 function harvestUtterance(raw: string): {
@@ -323,8 +335,10 @@ const COMBAT_GEAR_CLAIM =
 
 const MUNDANE_STARTING: Array<{ re: RegExp; name: string; description: string }> = [
   { re: /\bphones?\b/i, name: 'Phone', description: 'The phone you already had. Reception is dying with the rest of the grid.' },
-  { re: /\bkeys?\b/i, name: 'Keys', description: 'House or car keys from this morning.' },
+  { re: /\b(?:house\s+)?keys?\b/i, name: 'Keys', description: 'House or car keys from this morning.' },
   { re: /\bwallets?\b/i, name: 'Wallet', description: 'Cards and a little cash. The System does not care about either yet.' },
+  { re: /\bheadphones?\b/i, name: 'Headphones', description: 'The pair you had on you this morning.' },
+  { re: /\b(?:leatherman|multi[-\s]?tool)\b/i, name: 'Leatherman', description: 'A pocket multi-tool. Ordinary steel. Not System-issue.' },
 ];
 
 export function isPowerGameClaim(text: string): boolean {
@@ -354,15 +368,17 @@ export function sanitizeOpeningAnswer(
     const place = extractLocation(raw) ?? (cheated ? text.split(/[,.]/)[0]?.trim() : text);
     return { text: (place ?? '').slice(0, 80), cheated, mundaneNames: [] };
   }
-  if (kind === 'appearance' && (cheated || !text)) {
-    text = text || 'The ordinary clothes you had on this morning';
+  if (kind === 'appearance') {
+    text = stripPlayerVoice(text) || 'ordinary clothes from this morning';
+    return { text: text.slice(0, 240), cheated, mundaneNames: [] };
   }
   if (kind === 'kit') {
     const mundaneNames = MUNDANE_STARTING.filter((m) => m.re.test(raw)).map((m) => m.name);
+    text = stripPlayerVoice(text);
     if (cheated || !text) {
       text = mundaneNames.length
-        ? mundaneNames.join(', ').toLowerCase()
-        : 'Phone, keys, or whatever a normal morning actually puts in your pockets';
+        ? mundaneNames.join(', ')
+        : 'ordinary pocket contents from this morning';
     }
     return { text: text.slice(0, 240), cheated, mundaneNames };
   }
@@ -468,6 +484,7 @@ function registrarAside(registrar: OpeningRegistrar, harvest: ReturnType<typeof 
 export function applyOpeningAnswer(state: GameState, rawInput: string): {
   state: GameState;
   generateOpening: boolean;
+  openingNotes?: string;
 } {
   const est = state.openingEstablishment;
   if (!est || est.complete || !est.pending.length) {
@@ -560,16 +577,7 @@ export function applyOpeningAnswer(state: GameState, rawInput: string): {
   const premise = nextState.campaignPremise
     ? `${nextState.campaignPremise}\n\nPLAYER CANON: ${canonLine}`.slice(0, 2400)
     : `PLAYER CANON: ${canonLine}`;
-  const wrapUp = [aside, cheatLine, ...logged].filter(Boolean).join('\n');
-  const wrapEntry = wrapUp
-    ? {
-        id: crypto.randomUUID(),
-        turn: nextState.turn,
-        role: 'gm' as const,
-        content: formatRegistrarLine(registrar, wrapUp),
-        timestamp: Date.now(),
-      }
-    : null;
+  const openingNotes = [aside, cheatLine].filter(Boolean).join(' ');
 
   return {
     generateOpening: true,
@@ -579,40 +587,102 @@ export function applyOpeningAnswer(state: GameState, rawInput: string): {
       openingEstablishment: { pending: [], answers, complete: true, registrar },
       pendingGeneratedOpening: true,
       choices: [],
-      log: wrapEntry ? [...nextState.log, wrapEntry] : nextState.log,
       lastUpdated: Date.now(),
     },
+    openingNotes,
   };
 }
 
-export function buildOpeningSceneMandate(state: GameState): string {
+export function formatSetupComplete(
+  registrar: OpeningRegistrar,
+  state: GameState
+): string {
+  const a = state.openingEstablishment?.answers ?? {};
+  const name = a.name || state.character.name || 'unconfirmed';
+  const where = a.where || state.currentLocation || 'unconfirmed';
+  const wear = stripPlayerVoice(a.wear || a.look || state.character.appearance || 'ordinary clothes');
+  const kit = stripPlayerVoice(a.pockets || a.kit || 'ordinary pocket contents');
+  if (registrar.voice === 'system') {
+    return formatRegistrarLine(
+      registrar,
+      [
+        'Input accepted. Thank you.',
+        'Setup complete.',
+        `Designation: ${name}`,
+        `Location: ${where}`,
+        `Visual profile: ${wear}`,
+        `Personal effects: ${kit}`,
+        'Registration locked. Survive.',
+      ].join('\n')
+    );
+  }
+  return formatRegistrarLine(
+    registrar,
+    `Those particulars are taken down. Thank you. The tale is set: ${name}, at ${where}.`
+  );
+}
+
+export function hasSystemVoice(text: string): boolean {
+  return /<system>|\[[^\]]*(SYSTEM|AUDITOR|TALE|STORY)[^\]]*\]/i.test(text);
+}
+
+export function ensureSystemReceipt(state: GameState, narrative: string): string {
+  const cleaned = sanitizeOpeningNarration(narrative).trim();
+  if (hasSystemVoice(cleaned)) return cleaned;
+  const registrar = state.openingEstablishment?.registrar ?? {
+    voice: 'system' as const,
+    label: 'SYSTEM',
+    startLine: 'Starting. Please confirm your name and current location.',
+  };
+  return `${formatSetupComplete(registrar, state)}\n\n${cleaned}`.trim();
+}
+
+export function buildOpeningSceneMandate(state: GameState, notes?: string): string {
   const canon = formatPlayerCanon(state) || 'The player finished establishment.';
-  return `=== OPENING SCENE (BINDING) ===
+  const extra = notes?.trim() ? `\nAlso address this in the System block: ${notes.trim()}\n` : '';
+  return `=== OPENING (BINDING — YOU WRITE BOTH VOICES) ===
 ${canon}
-Write 3–5 sentences that BEGIN play in the place they named, wearing what they named.
-Do not grant weapons, armor, or rare items because they typed them. Only ordinary pocket stuff already on the sheet (phone, keys, campaign kit).
+${extra}
+You are the System AND the narrator. Do not recap their chat.
+1) SYSTEM first, in <system>...</system>: thank them, say input accepted / setup complete, log designation / location / visual profile / personal effects from CANON (already cleaned — no I/my). Then lock registration.
+2) NARRATOR next: 3–5 sentences of second-person story in the place they named. "You are wearing baggy jeans", never "you are wearing my baggy jeans".
+Do not grant weapons, armor, or rare items because they typed them. Only ordinary pocket stuff already on the sheet.
 Do not invent a different city, race, or traveler origin.
 Do not ask more chargen questions.
-Do not write engine notes ("the sheet", "not a place you traveled to", "not a list of what you are carrying").
 If this is modern Integration: this Earth, already in progress; the blue panel is here; people around them are reacting.
 Then give 3–4 choices grounded in THAT opening.
 ================================================`;
 }
 
+/** If the GM quotes the player, rewrite first-person leftovers. */
+export function sanitizeOpeningNarration(text: string): string {
+  return text
+    .replace(/\b([Yy]ou are wearing)\s+my\b/g, '$1')
+    .replace(/\b([Ww]earing)\s+my\b/g, '$1')
+    .replace(/\b([Oo]n you:)\s*my\b/g, '$1')
+    .replace(/\b([Ii]n your pockets:)\s*my\b/g, '$1')
+    .replace(/\bmy (wallet|phone|headphones|keys|house keys|leatherman|jeans|boots|t-?shirt)\b/gi, '$1');
+}
+
 export function synthesizeOpeningScene(state: GameState): string {
   const a = state.openingEstablishment?.answers ?? {};
+  const registrar = state.openingEstablishment?.registrar ?? {
+    voice: 'system' as const,
+    label: 'SYSTEM',
+    startLine: 'Starting. Please confirm your name and current location.',
+  };
   const where = a.where || state.currentLocation || 'where you already were';
-  const wear = a.wear || a.look || state.character.appearance || 'the clothes you had on';
-  const kit = a.pockets || a.kit || '';
+  const wear = stripPlayerVoice(a.wear || a.look || state.character.appearance || 'the clothes you had on');
+  const kit = stripPlayerVoice(a.pockets || a.kit || '');
   const folk = a.folk || a.form || '';
   const folkBit = folk ? ` You are ${folk}.` : '';
-  const kitBit = kit ? ` On you: ${kit}.` : '';
-  if (/system integration|every human on earth/i.test(state.campaignPremise ?? '')) {
-    return (
-      `You are still ${where} — the same morning, the same life — when the sky tears and the blue panel hangs in front of you.${folkBit} `
+  const kitBit = kit ? ` In your pockets: ${kit}.` : '';
+  const scene = /system integration|every human on earth/i.test(state.campaignPremise ?? '')
+    ? (
+      `The panel dims. You are still in ${where} — same morning, same life — while the sky stays torn and the blue screen hangs at eye level.${folkBit} `
       + `You are wearing ${wear}.${kitBit} `
-      + `Concrete and air are cracking. People nearby are shouting. The System has registered you. Survive.`
-    );
-  }
-  return `This is where you said you are: ${where}.${folkBit} You are wearing ${wear}.${kitBit} The story starts from that, not from a blank adventurer sheet.`;
+      + `Concrete and air are cracking. People nearby are shouting.`
+    )
+    : `The particulars are locked. You are in ${where}.${folkBit} You are wearing ${wear}.${kitBit}`;
+  return `${formatSetupComplete(registrar, state)}\n\n${scene}`;
 }

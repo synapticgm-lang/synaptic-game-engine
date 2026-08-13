@@ -122,7 +122,7 @@ export function formatCampaignRails(state: GameState): string {
     .trim();
   const answers = state.openingEstablishment?.answers;
   const canon = answers && Object.keys(answers).length
-    ? `\nPLAYER CANON (AUTHORITY — the player said this; do not overwrite):\n${Object.entries(answers).map(([id, text]) => `- ${id}: ${text}`).join('\n')}`
+    ? `\nPLAYER CANON (AUTHORITY — facts extracted from their answers; rewrite in System/narrator voice, never quote I/my chat):\n${Object.entries(answers).map(([id, text]) => `- ${id}: ${text}`).join('\n')}`
     : '';
   return `=== CAMPAIGN GUIDE BOOK (RAILS — DO NOT CONTRADICT) ===
 ${premise}${canon}

@@ -385,7 +385,34 @@ function parseSegments(text: string): Segment[] {
   }
 
   const remaining = text.slice(lastIndex).trim();
-  if (remaining) segments.push({ type: 'scene', text: remaining });
+  if (remaining) segments.push(...splitRegistrarHeaders(remaining));
 
-  return segments;
+  return segments.flatMap((seg) =>
+    seg.type === 'scene' ? splitRegistrarHeaders(seg.text) : [seg]
+  );
+}
+
+const REGISTRAR_HEADER = /\[\s*(SYSTEM|THE AUDITOR|THE TALE|THE STORY)\s*\][ \t]*\n?/gi;
+
+function splitRegistrarHeaders(text: string): Segment[] {
+  const parts: Segment[] = [];
+  const matches: Array<{ start: number; end: number }> = [];
+  const re = new RegExp(REGISTRAR_HEADER.source, 'gi');
+  let found: RegExpExecArray | null;
+  while ((found = re.exec(text)) !== null) {
+    matches.push({ start: found.index, end: found.index + found[0].length });
+  }
+  if (!matches.length) {
+    return text.trim() ? [{ type: 'scene', text: text.trim() }] : [];
+  }
+  let last = 0;
+  for (let i = 0; i < matches.length; i++) {
+    const before = text.slice(last, matches[i].start).trim();
+    if (before) parts.push({ type: 'scene', text: before });
+    const bodyEnd = i + 1 < matches.length ? matches[i + 1].start : text.length;
+    const body = text.slice(matches[i].end, bodyEnd).trim();
+    if (body) parts.push({ type: 'system', text: body });
+    last = bodyEnd;
+  }
+  return parts;
 }

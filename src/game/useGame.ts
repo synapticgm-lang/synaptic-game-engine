@@ -47,6 +47,8 @@ import { collectTurnTimelineFacts, mergeTimeline } from './timeline';
 import { applyCampaignCharacter, reconcileCampaignLoadout, seedStateFromArchetype, seedStateFromCampaignBible } from './campaignSeed';
 import {
   applyOpeningAnswer,
+  ensureSystemReceipt,
+  sanitizeOpeningNarration,
   buildEstablishmentIntro,
   buildOpeningSceneMandate,
   filterOpeningPrompts,
@@ -1207,7 +1209,7 @@ export function useGame() {
         try {
           const openingResult = await callGm(
             openingState,
-            `${buildOpeningSceneMandate(openingState)}\n\nBegin the opening scene from the player's canon.`,
+            `${buildOpeningSceneMandate(openingState, stepped.openingNotes)}\n\nWrite the System receipt, then begin the opening scene.`,
             settingsRef.current,
             [],
             (attempt, delayMs) => {
@@ -1221,6 +1223,7 @@ export function useGame() {
         if (!openingText || openingText.length < 60 || isGenericBridgeNarrative(openingText)) {
           openingText = synthesizeOpeningScene(openingState);
         }
+        openingText = ensureSystemReceipt(openingState, sanitizeOpeningNarration(openingText));
         const openingChoices = extractChoicesFromText(openingText, openingState);
         const cleanOpening = stripChoiceList(openingText);
         const openingGm: LogEntry = {
