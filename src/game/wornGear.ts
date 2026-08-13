@@ -124,7 +124,7 @@ function makeWornItem(piece: WornPiece, appearance: string, containerId?: string
  */
 export function materializeWornClothes(inventory: Item[], appearance: string, containerId?: string): Item[] {
   const look = appearance.replace(/\s+/g, ' ').trim();
-  if (!look) return inventory;
+  if (!look || /\bwhy should(?: i)? tell you\b/i.test(look)) return inventory;
 
   const pieces = parseWornPieces(look);
   if (!pieces.length) return inventory;

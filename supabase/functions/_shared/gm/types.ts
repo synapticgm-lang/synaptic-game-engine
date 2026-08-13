@@ -294,6 +294,8 @@ export interface OpeningEstablishment {
     label: string;
     startLine: string;
   };
+  /** Setup fields the player declined (e.g. appearance). */
+  declinedFields?: string[];
 }
 
 export interface GameState {

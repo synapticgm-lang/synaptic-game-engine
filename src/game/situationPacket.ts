@@ -92,6 +92,9 @@ function formatWorldLedgerBlock(raw?: WorldLedger): string {
   const lines = [
     `In-game calendar: day ${Number(clock.day || 0).toFixed(1)}, week ${clock.week || 0}. Time advances as the player takes turns — not while the app is closed.`,
   ];
+  if (Number(clock.day || 0) < 0.4 && Number(clock.week || 0) < 1) {
+    lines.push('CLOCK LOCK: this is still the same morning. Do not write hours ago, hours later, or a day passing.');
+  }
   if (!hasWork) {
     lines.push('No off-screen deals, holdings, or rival clocks yet.');
     return `WORLD LEDGER (ENGINE AUTHORITY — do not invent extra off-screen results):\n${lines.join('\n')}`;

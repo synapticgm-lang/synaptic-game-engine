@@ -1,4 +1,5 @@
 import type { GameState, SceneFacts } from './types';
+import { applyFactLocks } from './factLocks';
 
 const EMPTY_STREET =
   /\b(eerily silent|unnervingly quiet|empty (?:street|buildings|road)|no one (?:is )?(?:here|around|responds)|deserted|abandoned street|world feels frozen|holding its breath)\b/i;
@@ -9,7 +10,8 @@ const QUIET = /\b(silent|silence|quiet|stillness|hushed)\b/i;
 const PANEL = /\b(blue panel|system panel|blue screen)\b/i;
 const CRACKS = /\b(crack(?:ing|s)?|crystal|concrete)\b/i;
 const DIALOGUE = /"[^"]{3,}"|<\s*dialogue\b/i;
-const TIME_PASSED = /\b(hours? later|next (?:day|morning)|after (?:a |the )?crowd (?:left|fled|scattered)|street (?:cleared|emptied))\b/i;
+/** Narrated time that actually clears a crowd — not "hours ago" on turn one. */
+const TIME_PASSED = /\b(after (?:a |the )?crowd (?:left|fled|scattered)|street (?:cleared|emptied)|crowd (?:thins|disperses|moves on))\b/i;
 
 export function emptySceneFacts(turn = 0): SceneFacts {
   return {
@@ -107,7 +109,9 @@ Present: ${present}
 Props: ${props}
 Last beat: ${facts.lastBeat || '—'}
 If crowd is present, people are still here. Do not write an empty or silent street.
-If noise is shouting, the shouting is still happening unless you narrate it stopping.`;
+If noise is shouting, the shouting is still happening unless you narrate it stopping.
+Do not write "hours ago" or "hours later" unless the world clock has advanced.
+Do not list inventory or pat pockets on look-around.`;
 }
 
 /** True when new prose wipes a bound crowd/noise without time passing. */
@@ -121,32 +125,18 @@ export function detectSceneContradiction(prev: SceneFacts | undefined, narrative
   if (prev.noise === 'shouting' && emptied && !SHOUTING.test(narrative)) {
     return 'People were shouting; new prose made the street silent.';
   }
+  if (prev.noise === 'shouting' && QUIET.test(narrative) && SHOUTING.test(narrative)) {
+    return 'Prose claims silence while people are still shouting.';
+  }
   return null;
 }
 
 export function rewriteContinuityBreak(
   state: GameState,
   playerAction: string,
-  _brokenNarrative: string
+  brokenNarrative: string
 ): string {
-  const facts = state.sceneFacts;
-  const place = state.currentLocation || 'the street';
-  const crowdBit = facts?.crowd === 'present' || facts?.noise === 'shouting'
-    ? 'The people who were already here are still here. The shouting did not vanish.'
-    : 'What you already saw is still happening.';
-  const panelBit = facts?.props.includes('blue panel') || facts?.present.includes('blue panel')
-    ? ' The blue panel still hangs at eye level.'
-    : '';
-  const asked = /\b(shout|yell|call out|ask|tell|speak|talk|everyone|anybody|anyone)\b/i.test(playerAction);
-  if (asked) {
-    return (
-      `${crowdBit}${panelBit} You shout so the nearest faces can hear. `
-      + `A window scrapes open. Someone leans out, pale, staring at a matching screen. `
-      + `"You see it too?" they call. "I didn't put it there." `
-      + `Whatever this is, it is not only yours.`
-    );
-  }
-  return `${crowdBit}${panelBit} You are still in ${place}. The last beat holds.`;
+  return applyFactLocks(state, brokenNarrative, playerAction);
 }
 
 export function applyCommittedNarrative(

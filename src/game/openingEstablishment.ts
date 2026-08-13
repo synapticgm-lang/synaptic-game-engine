@@ -1,7 +1,7 @@
 import type { CampaignBible, OpeningPrompt, OpeningRegistrar } from '@/data/campaigns/types';
 import type { CampaignArchetype } from './archetypes';
 import type { EngineMode, GameState, Item, OpeningEstablishment, Settings } from './types';
-import { interpretPlayerUtterance, utteranceIsMessy } from './playerUtterance';
+import { interpretPlayerUtterance, isSetupRefusal, utteranceIsMessy } from './playerUtterance';
 import { materializeWornClothes } from './wornGear';
 
 const GENERIC_NAMES = /^(adventurer|survivor|unknown survivor|hero|wanderer|unknown)$/i;
@@ -324,10 +324,12 @@ function stripConfusion(raw: string): string {
 
 function isMetaOnly(raw: string): boolean {
   const t = raw.replace(/\s+/g, ' ').trim().replace(/[?!.,]+$/g, '');
+  if (isSetupRefusal(raw)) return true;
   return /^(who are you|what'?s going on|what is this|why|huh|what|idk|i don'?t know)$/i.test(t);
 }
 
 export function extractAppearance(raw: string): string | null {
+  if (isSetupRefusal(raw) || isMetaOnly(raw)) return null;
   const afterWearQ = raw.replace(/^[\s\S]*?\bwhat am i wearing\??\s*/i, '').trim();
   if (afterWearQ && afterWearQ !== raw.replace(/\s+/g, ' ').trim()) {
     const cleaned = stripPlayerVoice(stripConfusion(afterWearQ));
@@ -405,7 +407,7 @@ function fieldForKind(kind: OpeningPrompt['kind'], harvest: ReturnType<typeof ha
 
 /** Current field takes a normal sentence if it is not only a meta question. */
 function acceptCurrentField(kind: OpeningPrompt['kind'], raw: string): string | null {
-  if (isMetaOnly(raw)) return null;
+  if (isMetaOnly(raw) || isSetupRefusal(raw)) return null;
   const harvested = fieldForKind(kind, harvestUtterance(raw));
   if (harvested) return harvested;
   const cleaned = stripPlayerVoice(stripConfusion(raw));
@@ -555,7 +557,7 @@ function registrarAside(registrar: OpeningRegistrar, harvest: ReturnType<typeof 
   if (harvest.askedWhat) {
     bits.push(
       registrar.voice === 'system'
-        ? 'Integration protocol is active. Earth is being written into the System. Confirm remaining fields.'
+        ? 'Integration protocol is active. Earth is being written into the System. A refusal is not a visual profile. Confirm garments or everyday street clothes will be assumed.'
         : 'The opening has begun. Finish these particulars, then the scene will move.'
     );
   }
@@ -579,6 +581,18 @@ export async function applyOpeningAnswer(
   if (!answer) return { state, generateOpening: false };
 
   const harvest = harvestUtterance(answer);
+  const declined = [...(est.declinedFields ?? [])];
+  if (isSetupRefusal(answer)) {
+    harvest.appearance = null;
+    harvest.kit = null;
+    harvest.askedWhat = true;
+    const kind = est.pending[0]?.kind;
+    if (kind === 'appearance' && declined.includes('appearance')) {
+      harvest.appearance = 'everyday street clothes';
+    } else if (kind === 'appearance') {
+      declined.push('appearance');
+    }
+  }
   if (/^random\s+(name|designation)\b/i.test(answer) || /^use a random (name|designation)\b/i.test(answer)) {
     harvest.name = harvest.name ?? pickRandom(RANDOM_NAMES);
   }
@@ -599,6 +613,7 @@ export async function applyOpeningAnswer(
   const needsRead =
     !!settings &&
     !isMetaOnly(answer) &&
+    !isSetupRefusal(answer) &&
     (utteranceIsMessy(answer) || !!(currentKind && !fieldForKind(currentKind, harvest)));
   if (needsRead) {
     const read = await interpretPlayerUtterance({
@@ -697,7 +712,7 @@ export async function applyOpeningAnswer(
       generateOpening: false,
       state: {
         ...nextState,
-        openingEstablishment: { pending: stillPending, answers, complete: false, registrar },
+        openingEstablishment: { pending: stillPending, answers, complete: false, registrar, declinedFields: declined },
         choices: establishmentChoices(stillPending),
         log: playerAlreadyLogged ? [...nextState.log, gmEntry] : nextState.log,
         lastUpdated: Date.now(),
@@ -716,7 +731,7 @@ export async function applyOpeningAnswer(
     state: {
       ...nextState,
       campaignPremise: premise,
-      openingEstablishment: { pending: [], answers, complete: true, registrar },
+      openingEstablishment: { pending: [], answers, complete: true, registrar, declinedFields: declined },
       pendingGeneratedOpening: true,
       choices: [],
       lastUpdated: Date.now(),
@@ -732,7 +747,8 @@ export function formatSetupComplete(
   const a = state.openingEstablishment?.answers ?? {};
   const name = a.name || state.character.name || 'unconfirmed';
   const where = a.where || state.currentLocation || 'unconfirmed';
-  const wear = stripPlayerVoice(a.wear || a.look || state.character.appearance || 'ordinary clothes');
+  const wearRaw = a.wear || a.look || state.character.appearance || 'ordinary clothes';
+  const wear = isSetupRefusal(wearRaw) ? 'everyday street clothes' : stripPlayerVoice(wearRaw);
   const kit = stripPlayerVoice(a.pockets || a.kit || 'ordinary pocket contents');
   if (registrar.voice === 'system') {
     return formatRegistrarLine(

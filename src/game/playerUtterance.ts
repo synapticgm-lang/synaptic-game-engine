@@ -56,8 +56,19 @@ const EMPTY_ANSWERS: SetupAnswers = {
 const FILLER_HEAD =
   /^(erm|uh+|um+|uhh+|hmm+|like|so+|well|idk|i dunno|i don't know|i guess|kinda|sort of)\s+/i;
 
+export function isSetupRefusal(raw: string): boolean {
+  const t = raw.replace(/\s+/g, ' ').trim();
+  if (!t) return false;
+  if (/\bwhy should(?: i)? tell you\b/i.test(t)) return true;
+  if (/\b(none of your business|not telling|won'?t tell|mind your own|rather not)\b/i.test(t)) return true;
+  if (/\bi don'?t (?:have to|want to) (?:tell|say|answer)\b/i.test(t)) return true;
+  if (/^(no|nope|pass|skip|whatever)\b/i.test(t) && t.split(/\s+/).length <= 6) return true;
+  return false;
+}
+
 export function utteranceIsQuestionOnly(raw: string): boolean {
   const t = raw.replace(/\s+/g, ' ').trim().replace(/[?!.,]+$/g, '');
+  if (isSetupRefusal(raw)) return true;
   return /^(who are you|what'?s going on|what is this|what(?:'s| is) happening|why|huh|what|where am i|how|idk|i don'?t know)$/i.test(
     t
   );
@@ -124,6 +135,7 @@ Rules:
 - If they answered setup (name, clothes/look, place, pockets, folk/body), fill those fields. meaning = the cleaned answer as a short noun phrase (no I/my).
 - kit = ordinary pocket items only. Legendary/combat-grade claims → kit null.
 - location = a real place they are in, never clothes.
+- If they refuse a setup question (why should I tell you, none of your business), all answer fields stay null. That is not clothing.
 - If they only asked a question and gave no answer/action, meaning is that question, intent other, fields null.
 - If they want to act in the scene, meaning is the action ("Ask someone nearby what is happening", "Hide behind the nearest car").
 - intent is the primary act. Talk if they address people. Observe if they look/listen. Move if they go somewhere.

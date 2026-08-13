@@ -1,5 +1,6 @@
 import type { GameState } from './types';
 import { isAskNearbyPerson, primaryActionClause, type PlayerIntent } from './intentParser';
+import { buildFactLockRetryBlock, type FactLockViolation } from './factLocks';
 import { stripChoiceList } from './parser';
 import { playerFacingLocation } from './locationName';
 
@@ -14,7 +15,7 @@ const BRIDGE_MARKERS =
   /you follow through —|the moment settles as you take in what changed|you press for clarity —|you commit to the action|the immediate result lands in/i;
 
 const DEAD_STUB_MARKERS =
-  /slow circuit of|main approach and watch for secondary gaps|opaque remains opaque|ordinary quiet|no fresh landmarks announce themselves|that is what you can act on next|not a blank circuit|you put the question plainly|anything the sheet and the last scene|rather than changing the subject|not a place you traveled to|not a list of what you are carrying|you do not recite your inventory|this is still a cracked city street|the situation has not become a different genre/i;
+  /slow circuit of|main approach and watch for secondary gaps|opaque remains opaque|ordinary quiet|no fresh landmarks announce themselves|that is what you can act on next|not a blank circuit|you put the question plainly|anything the sheet and the last scene|rather than changing the subject|not a place you traveled to|not a list of what you are carrying|you do not recite your inventory|this is still a cracked city street|the situation has not become a different genre|the last beat holds|the people who were already here are still here/i;
 
 const FINDING_CUES =
   /\b(find|found|see|saw|seen|notice|noticed|spot|spotted|hear|heard|reveal|reveals|empty|locked|ajar|open|door|entrance|exit|alley|wall|corner|shadow|quiet|noise|nothing|glint|track|tracks|window|side|rear|front|roof|balance|grip|weight|swing|hum|buzz|flicker|smell|dust|crack|gap|boarded|intact|threat|movement|stillness|cool|warm|heavy|panel|menu|level|hp|mp|greyed|grayed|readout|list|entry|entries|light in (?:your|the) hand|car|van|tunic|clothes|sword|knife|integration|registered|earth|crystal|street|city|people|scream)\b/i;
@@ -242,8 +243,8 @@ function isGeneralLookAround(action: string, intent: PlayerIntent): boolean {
   );
 }
 
-function isWorldSituationQuestion(action: string): boolean {
-  return /\b(what'?s?\s+(?:the\s+hell\s+)?going\s+on|what\s+the\s+(?:hell|fuck)\s+is\s+going|what\s+happened|why\s+is\s+(?:this|the\s+world|everything)|explain\s+(?:this|what)|what\s+is\s+(?:the\s+)?(?:system|integration))\b/i.test(
+export function isWorldSituationQuestion(action: string): boolean {
+  return /\b(what'?s?\s+(?:the\s+hell\s+)?going\s+on|what\s+the\s+(?:hell|fuck)\s+is\s+going|what\s+happened|why\s+is\s+(?:this|the\s+world|everything)|explain\s+(?:this|what)|what\s+is\s+(?:the\s+)?(?:system|integration)|what do you want from me|registration complete)\b/i.test(
     action
   );
 }
@@ -505,7 +506,9 @@ export function buildResolutionUserPayload(params: {
   deterministicBlock: string;
   retry: boolean;
   intent: PlayerIntent;
+  factLocks?: FactLockViolation[];
 }): string {
   const retry = params.retry ? `${buildResolutionRetryBlock(params.playerAction, params.intent)}\n\n` : '';
-  return `${params.mandateBlock}\n\n${retry}${params.playerAction}\n\n${params.deterministicBlock}`;
+  const locks = params.factLocks?.length ? `${buildFactLockRetryBlock(params.factLocks)}\n\n` : '';
+  return `${params.mandateBlock}\n\n${retry}${locks}${params.playerAction}\n\n${params.deterministicBlock}`;
 }

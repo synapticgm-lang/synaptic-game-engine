@@ -58,7 +58,8 @@ import {
   resolveOpeningRegistrar,
   synthesizeOpeningScene,
 } from './openingEstablishment';
-import { applyCommittedNarrative, detectSceneContradiction, extractSceneFacts, rewriteContinuityBreak, seedOpeningSceneFacts } from './sceneFacts';
+import { applyCommittedNarrative, extractSceneFacts, seedOpeningSceneFacts } from './sceneFacts';
+import { applyFactLocks, detectFactLockViolations } from './factLocks';
 import { formatCampaignStoryName, getCampaignBibleById } from '@/data/campaigns';
 import { parsePlayerIntent, groundPlayerAction } from './intentParser';
 import { interpretPlayerUtterance } from './playerUtterance';
@@ -1414,10 +1415,12 @@ In <system-log>, only emit LitRPG/RPG progression lines (XP, loot, HP change as 
           stripResidualMechanicTags(stripChoiceList(stripActionTags(result.text))),
           sanitizedInput,
         );
-        if (isUnresolvedActionNarrative(sanitizedInput, probeText, intentForMandate)) {
+        const probeLocks = detectFactLockViolations(liveCurrent, probeText, sanitizedInput);
+        if (isUnresolvedActionNarrative(sanitizedInput, probeText, intentForMandate) || probeLocks.length) {
           debugLogger.record('WARN', 'Unresolved action narrative — resolution retry', {
             turn: liveCurrent.turn,
             intent: intentForMandate.kind,
+            factLocks: probeLocks.map((v) => v.kind),
           });
           setRetryStatus('Refining story resolution…');
           result = await callGm(
@@ -1428,6 +1431,7 @@ In <system-log>, only emit LitRPG/RPG progression lines (XP, loot, HP change as 
               deterministicBlock: deterministicStateBlock,
               retry: true,
               intent: intentForMandate,
+              factLocks: probeLocks,
             }),
             settingsRef.current,
             activeLoreCards,
@@ -1592,7 +1596,8 @@ In <system-log>, only emit LitRPG/RPG progression lines (XP, loot, HP change as 
       const focusFiltered = hijack.hijacked || !turnMandate.playerEngagedQuestFocus
         ? filterHijackChoices(parsedChoices, turnMandate.focusKeywords)
         : parsedChoices;
-      // Still unresolved after retry/hijack strip → local concrete resolution (all modes).
+      // Cut broken sentences first. Only synthesize if the turn is still empty or a stub.
+      cleanText = applyFactLocks(liveCurrent, cleanText, sanitizedInput);
       if (isUnresolvedActionNarrative(sanitizedInput, cleanText, intentForMandate)) {
         const lastScene = liveCurrent.log
           .filter((e) => e.role === 'gm')
@@ -1605,14 +1610,9 @@ In <system-log>, only emit LitRPG/RPG progression lines (XP, loot, HP change as 
           suggestionState,
           lastScene
         );
+        cleanText = applyFactLocks(liveCurrent, cleanText, sanitizedInput);
         debugLogger.record('STATE_UPDATE', 'Synthesized action resolution after empty/bridge GM prose', {
           intent: intentForMandate.kind,
-        });
-      }
-      if (warden.continuityBreak) {
-        cleanText = rewriteContinuityBreak(liveCurrent, sanitizedInput, cleanText);
-        debugLogger.record('STATE_UPDATE', 'Rewrote continuity break', {
-          reason: warden.continuityBreak,
         });
       }
       const groundedAfterResolve = focusFiltered.filter((choice) =>
@@ -1778,6 +1778,7 @@ In <system-log>, only emit LitRPG/RPG progression lines (XP, loot, HP change as 
         ])
       );
       cleanText = ensureXpNarration(cleanText, mergedSystemLog);
+      cleanText = applyFactLocks(liveCurrent, cleanText, sanitizedInput);
       if (isUnresolvedActionNarrative(sanitizedInput, cleanText, intentForMandate)) {
         const lastScene = liveCurrent.log
           .filter((e) => e.role === 'gm')
@@ -1790,10 +1791,8 @@ In <system-log>, only emit LitRPG/RPG progression lines (XP, loot, HP change as 
           suggestionState,
           lastScene
         );
+        cleanText = applyFactLocks(liveCurrent, cleanText, sanitizedInput);
         cleanText = stripUnearnedXpProse(cleanText);
-      }
-      if (warden.continuityBreak || detectSceneContradiction(liveCurrent.sceneFacts, cleanText)) {
-        cleanText = rewriteContinuityBreak(liveCurrent, sanitizedInput, cleanText);
       }
 
       debugLogger.record('STATE_UPDATE', 'Merging GM response into game state', {

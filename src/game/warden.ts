@@ -9,6 +9,7 @@ import type { PlayerIntent } from './intentParser';
 import { narrativeMentionsPlayerHarm } from './narrativeSanitize';
 import { isUnresolvedActionNarrative } from './actionResolution';
 import { detectSceneContradiction } from './sceneFacts';
+import { detectFactLockViolations } from './factLocks';
 
 export interface WardenResult {
   /** Events allowed after sheet checks. */
@@ -196,8 +197,13 @@ export function runWarden(
     notes.push('Narrative does not resolve the player action');
   }
 
-  const continuityBreak = detectSceneContradiction(state.sceneFacts, narrativeText) ?? undefined;
-  if (continuityBreak) {
+  const factLocks = detectFactLockViolations(state, narrativeText, playerInput);
+  for (const lock of factLocks) {
+    notes.push(`Fact lock: ${lock.reason}`);
+  }
+  const continuityBreak =
+    factLocks[0]?.reason ?? detectSceneContradiction(state.sceneFacts, narrativeText) ?? undefined;
+  if (continuityBreak && !factLocks.length) {
     notes.push(`Continuity break: ${continuityBreak}`);
   }
 
