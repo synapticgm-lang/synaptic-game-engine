@@ -65,7 +65,7 @@ import { dropInsultGear } from './wornGear';
 import { needsPortraitRefresh, paperDollPrompt, portraitCacheKey } from './inventoryArt';
 import { formatCampaignStoryName, getCampaignBibleById } from '@/data/campaigns';
 import { parsePlayerIntent, groundPlayerAction } from './intentParser';
-import { interpretPlayerUtterance } from './playerUtterance';
+import { interpretPlayerUtterance, isJunkSetupValue } from './playerUtterance';
 import {
   buildTurnMandate,
   detectSceneHijack,
@@ -1202,7 +1202,13 @@ export function useGame() {
       let liveCurrent = stateRef.current;
       if (!liveCurrent) return;
       liveCurrent = applySystemRename(
-        { ...liveCurrent, inventory: dropInsultGear(liveCurrent.inventory) },
+        {
+          ...liveCurrent,
+          inventory: dropInsultGear(liveCurrent.inventory),
+          character: isJunkSetupValue(liveCurrent.character.appearance)
+            ? { ...liveCurrent.character, appearance: 'everyday street clothes' }
+            : liveCurrent.character,
+        },
         contentSanitized
       );
 

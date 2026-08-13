@@ -61,11 +61,11 @@ const INSULT_NAME = /\b(?:you\s+)?(perve?|creep|weirdo|freak|sicko|pervert)\b/i;
 export function isSetupRefusal(raw: string): boolean {
   const t = raw.replace(/\s+/g, ' ').trim();
   if (!t) return false;
-  if (/\bwhy should(?: i)? tell you\b/i.test(t)) return true;
-  if (/\bwhy (?:do|would) you want to know\b/i.test(t)) return true;
+  if (/\bwhy should(?: i)? (?:give|tell|say|share|provide)\b/i.test(t)) return true;
+  if (/\bwhy (?:do|would) (?:i|you) (?:give|tell|want to know|need)\b/i.test(t)) return true;
   if (/\bwhat i(?:'?m| am) wearing\b/i.test(t) && /\b(why|perve?|creep|weirdo)\b/i.test(t)) return true;
   if (/\b(none of your business|not telling|won'?t tell|mind your own|rather not)\b/i.test(t)) return true;
-  if (/\bi don'?t (?:have to|want to) (?:tell|say|answer)\b/i.test(t)) return true;
+  if (/\bi don'?t (?:have to|want to) (?:tell|say|answer|give)\b/i.test(t)) return true;
   if (INSULT_NAME.test(t) && !extractSystemRename(t)) return true;
   if (/^(no|nope|pass|skip|whatever)\b/i.test(t) && t.split(/\s+/).length <= 6) return true;
   return false;
@@ -78,7 +78,13 @@ export function isJunkSetupValue(raw: string): boolean {
   if (isSetupRefusal(t)) return true;
   if (INSULT_NAME.test(t) && !extractSystemRename(t)) return true;
   if (/^you\s+\w+$/i.test(t)) return true;
-  if (/\bwhy do you want to know\b/i.test(t)) return true;
+  if (/^why\b/i.test(t)) return true;
+  if (/\bwhy should\b/i.test(t)) return true;
+  if (/\b(?:you'?re|your)\s+pushy\b/i.test(t)) return true;
+  if (/\bgive you (?:my )?(?:name|location|designation)\b/i.test(t)) return true;
+  if (/\?/.test(t) && !/\b(?:i(?:'m|m|\s+am)\s+(?:wearing|in|at)|my name is|i have|call me)\b/i.test(t)) {
+    return true;
+  }
   return false;
 }
 
@@ -168,7 +174,7 @@ Rules:
 - If they answered setup (name, clothes/look, place, pockets, folk/body), fill those fields. meaning = the cleaned answer as a short noun phrase (no I/my).
 - kit = ordinary pocket items only. Legendary/combat-grade claims → kit null.
 - location = a real place they are in, never clothes.
-- If they refuse a setup question (why should I tell you, why do you want to know what I'm wearing) or insult the System (you perve), all answer fields stay null. That is not clothing, kit, or a name.
+- If they refuse a setup question (why should I give you my name, why should I tell you, why do you want to know what I'm wearing) or insult the System (you perve), all answer fields stay null. That is not clothing, kit, or a name.
 - Only fill a System rename if they explicitly name it ("I'll call you X", "your name is X"). "You perve" is not a rename.
 - If they only asked a question and gave no answer/action, meaning is that question, intent other, fields null.
 - If they want to act in the scene, meaning is the action ("Ask someone nearby what is happening", "Hide behind the nearest car").

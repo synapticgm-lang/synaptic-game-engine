@@ -190,7 +190,9 @@ export function filterOpeningPrompts(
 ): OpeningPrompt[] {
   return prompts.filter((p) => {
     if (p.kind === 'name' && character.name?.trim() && !GENERIC_NAMES.test(character.name.trim())) return false;
-    if (p.kind === 'appearance' && character.appearance?.trim()) return false;
+    if (p.kind === 'appearance' && character.appearance?.trim() && !isJunkSetupValue(character.appearance)) {
+      return false;
+    }
     if ((p.kind === 'species' || p.kind === 'identity') && /\b(elf|dwarf|human|orc|beast)\b/i.test(character.bio ?? '')) {
       return false;
     }
@@ -343,39 +345,38 @@ function isMetaOnly(raw: string): boolean {
 }
 
 export function extractAppearance(raw: string): string | null {
-  if (isSetupRefusal(raw) || isMetaOnly(raw)) return null;
+  if (isSetupRefusal(raw) || isMetaOnly(raw) || isJunkSetupValue(raw)) return null;
   const afterWearQ = raw.replace(/^[\s\S]*?\bwhat am i wearing\??\s*/i, '').trim();
   if (afterWearQ && afterWearQ !== raw.replace(/\s+/g, ' ').trim()) {
     const cleaned = stripPlayerVoice(stripConfusion(afterWearQ));
-    if (cleaned.length >= 6) return cleaned;
+    if (cleaned.length >= 6 && (CLOTHES_NOUN.test(cleaned) || /wearing|dressed/i.test(raw))) return cleaned;
   }
   const m = raw.match(
     /\b(?:i(?:'m|m|\s+am)\s+wearing|wearing|dressed\s+in|i\s+have\s+on)\s+([^.?!]{3,100})/i
   );
   const bit = m?.[1]?.replace(/\s+/g, ' ').trim();
-  if (bit) return stripPlayerVoice(stripConfusion(bit));
+  if (bit && !isJunkSetupValue(bit)) return stripPlayerVoice(stripConfusion(bit));
   const list = stripPlayerVoice(stripConfusion(raw));
-  if (CLOTHES_NOUN.test(raw) && list.length >= 6) return list;
-  if (list.split(/\s+/).length >= 3 && !isMetaOnly(raw)) return list;
+  if (CLOTHES_NOUN.test(raw) && list.length >= 6 && !isJunkSetupValue(list)) return list;
   return null;
 }
 
 export function extractSpecies(raw: string): string | null {
+  if (isSetupRefusal(raw) || isMetaOnly(raw) || isJunkSetupValue(raw)) return null;
   const m = raw.match(/\b(human|elf|dwarf|halfling|orc|beast|goblin|tiefling|dragonborn)\b/i);
   if (m) return m[1].charAt(0).toUpperCase() + m[1].slice(1).toLowerCase();
-  const cleaned = stripPlayerVoice(stripConfusion(raw));
-  if (cleaned && cleaned.split(/\s+/).length <= 6 && !isMetaOnly(raw) && !CLOTHES_NOUN.test(cleaned)) {
-    return cleaned;
-  }
   return null;
 }
 
 export function extractKit(raw: string): string | null {
+  if (isSetupRefusal(raw) || isMetaOnly(raw) || isJunkSetupValue(raw)) return null;
   const m = raw.match(
     /\b(?:i\s+have|i've got|got|carrying|in\s+my\s+(?:pockets?|bag|pack)|wallet|phone|keys|headphones)\b/i
   );
   if (!m) return null;
-  return stripPlayerVoice(stripConfusion(raw));
+  const cleaned = stripPlayerVoice(stripConfusion(raw));
+  if (!cleaned || isJunkSetupValue(cleaned)) return null;
+  return cleaned;
 }
 
 /** Turn "im wearing my jeans" into "baggy jeans and a band t-shirt" — never keep I/my. */
@@ -596,9 +597,16 @@ export async function applyOpeningAnswer(
   if (!answer) return { state, generateOpening: false };
 
   const harvest = harvestUtterance(answer);
-  if (harvest.appearance && isJunkSetupValue(harvest.appearance)) harvest.appearance = null;
+  if (harvest.appearance && (isJunkSetupValue(harvest.appearance) || !extractAppearance(answer))) {
+    harvest.appearance = null;
+  }
   if (harvest.kit && isJunkSetupValue(harvest.kit)) harvest.kit = null;
   if (harvest.name && isJunkSetupValue(harvest.name)) harvest.name = null;
+  if (isSetupRefusal(answer) || isMetaOnly(answer)) {
+    harvest.appearance = null;
+    harvest.kit = null;
+    harvest.species = null;
+  }
   const declined = [...(est.declinedFields ?? [])];
   const renamedTo = extractSystemRename(answer);
   if (isSetupRefusal(answer)) {
@@ -772,7 +780,9 @@ export function formatSetupComplete(
   const name = a.name || state.character.name || 'unconfirmed';
   const where = a.where || state.currentLocation || 'unconfirmed';
   const wearRaw = a.wear || a.look || state.character.appearance || 'ordinary clothes';
-  const wear = isSetupRefusal(wearRaw) ? 'everyday street clothes' : stripPlayerVoice(wearRaw);
+  const wear = isJunkSetupValue(wearRaw) || isSetupRefusal(wearRaw)
+    ? 'everyday street clothes'
+    : stripPlayerVoice(wearRaw);
   const kit = stripPlayerVoice(a.pockets || a.kit || 'ordinary pocket contents');
   if (registrar.voice === 'system') {
     return formatRegistrarLine(

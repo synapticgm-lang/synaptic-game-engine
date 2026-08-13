@@ -94,8 +94,6 @@ export function parseWornPieces(appearance: string): WornPiece[] {
   if (!pieces.length) {
     if (/\b(gym clothes|work clothes|uniform|street clothes|slept in|travel-worn|practical)\b/i.test(text)) {
       take('Chest', titleGarment(text.split(/[,.]/)[0] ?? text) || 'Everyday clothes');
-    } else if (text.split(/\s+/).length >= 2) {
-      take('Chest', titleGarment(text) || 'Clothes worn at the start');
     }
   }
 
@@ -124,7 +122,12 @@ function makeWornItem(piece: WornPiece, appearance: string, containerId?: string
  */
 export function materializeWornClothes(inventory: Item[], appearance: string, containerId?: string): Item[] {
   const look = appearance.replace(/\s+/g, ' ').trim();
-  if (!look || /\bwhy should(?: i)? tell you\b/i.test(look) || /\b(?:you\s+)?(perve?|creep|weirdo|freak)\b/i.test(look)) {
+  if (
+    !look
+    || /\bwhy should\b/i.test(look)
+    || /\bgive you (?:my )?(?:name|location)\b/i.test(look)
+    || /\b(?:you\s+)?(perve?|creep|weirdo|freak)\b/i.test(look)
+  ) {
     return dropInsultGear(inventory);
   }
 
@@ -154,5 +157,11 @@ export function materializeWornClothes(inventory: Item[], appearance: string, co
 
 /** Insults must not sit on the sheet as equipped "clothes". */
 export function dropInsultGear(inventory: Item[]): Item[] {
-  return inventory.filter((item) => !/^(?:you\s+)?(perve?|creep|weirdo|freak|sicko|pervert)$/i.test(item.name.trim()));
+  return inventory.filter((item) => {
+    const n = item.name.trim();
+    if (/^(?:you\s+)?(perve?|creep|weirdo|freak|sicko|pervert)$/i.test(n)) return false;
+    if (/\bwhy should\b/i.test(n)) return false;
+    if (/\bgive you\b/i.test(n) && /\bname\b/i.test(n)) return false;
+    return true;
+  });
 }
