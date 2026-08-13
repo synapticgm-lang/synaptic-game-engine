@@ -222,6 +222,99 @@ function stripChoicePrefix(raw: string): string {
   return raw.replace(/^\s*\d+[.)]\s*/, '').replace(/\s+/g, ' ').trim();
 }
 
+const NAME_STOP = new Set([
+  'my', 'name', 'its', 'it', 'is', 'who', 'are', 'you', 'im', 'i', 'am', 'in', 'at', 'on',
+  'the', 'a', 'an', 'what', 'whats', 'going', 'on', 'please', 'confirm', 'uk', 'usa',
+  'hello', 'hi', 'hey', 'yes', 'no', 'ok', 'okay',
+]);
+
+function titleName(raw: string): string {
+  return raw
+    .split(/[\s-]+/)
+    .filter(Boolean)
+    .map((w) => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase())
+    .join(' ');
+}
+
+function titlePlace(raw: string): string {
+  return raw
+    .split(/[\s,]+/)
+    .filter(Boolean)
+    .map((w) => (w.length <= 3 ? w.toUpperCase() : w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()))
+    .join(' ');
+}
+
+/** Pull a real given name out of chat, not the whole sentence. */
+export function extractGivenName(raw: string): string | null {
+  const text = raw.replace(/\s+/g, ' ').trim();
+  const patterns = [
+    /\bit(?:'s|s|\s+is)\s+([A-Za-z][A-Za-z'-]{1,20})\b/i,
+    /\bmy\s+name\s+is\s+([A-Za-z][A-Za-z'-]{1,20})\b/i,
+    /\bcall\s+me\s+([A-Za-z][A-Za-z'-]{1,20})\b/i,
+    /\bname[:\s]+([A-Za-z][A-Za-z'-]{1,20})\b/i,
+    /\bi(?:'m|m|\s+am)\s+([A-Za-z][A-Za-z'-]{1,20})\b/i,
+  ];
+  for (const re of patterns) {
+    const m = text.match(re);
+    const token = m?.[1]?.trim();
+    if (token && !NAME_STOP.has(token.toLowerCase())) return titleName(token);
+  }
+  const lonely = text.match(/^([A-Za-z][A-Za-z'-]{1,20})$/);
+  if (lonely && !NAME_STOP.has(lonely[1].toLowerCase())) return titleName(lonely[1]);
+  return null;
+}
+
+export function extractLocation(raw: string): string | null {
+  const text = raw.replace(/\s+/g, ' ').trim();
+  const m = text.match(
+    /\b(?:i(?:'m|m|\s+am)\s+(?:in|at|from)|(?:i\s+)?live\s+in|in|at|from)\s+([A-Za-z][A-Za-z0-9\s,'-]{1,60}?)(?:\s*[.?!]|\s+(?:what|who|where|why|how)\b|$)/i
+  );
+  const place = m?.[1]?.replace(/\s+/g, ' ').trim();
+  if (!place || NAME_STOP.has(place.toLowerCase())) return null;
+  if (place.split(/\s+/).length > 8) return titlePlace(place.split(/\s+/).slice(0, 6).join(' '));
+  return titlePlace(place);
+}
+
+export function extractAppearance(raw: string): string | null {
+  const m = raw.match(
+    /\b(?:i(?:'m|\s+am)\s+wearing|wearing|dressed\s+in|i\s+have\s+on)\s+([^.?!]{3,80})/i
+  );
+  return m?.[1]?.replace(/\s+/g, ' ').trim() ?? null;
+}
+
+export function extractKit(raw: string): string | null {
+  const m = raw.match(
+    /\b(?:i\s+have|got|carrying|in\s+my\s+(?:pockets?|bag|pack))\s+([^.?!]{3,80})/i
+  );
+  return m?.[1]?.replace(/\s+/g, ' ').trim() ?? null;
+}
+
+function harvestUtterance(raw: string): {
+  name: string | null;
+  location: string | null;
+  appearance: string | null;
+  kit: string | null;
+  askedWho: boolean;
+  askedWhat: boolean;
+} {
+  return {
+    name: extractGivenName(raw),
+    location: extractLocation(raw),
+    appearance: extractAppearance(raw),
+    kit: extractKit(raw),
+    askedWho: /\bwho\s+are\s+you\b/i.test(raw),
+    askedWhat: /\bwhat(?:'s|\s+is)\s+going\s+on\b/i.test(raw),
+  };
+}
+
+function fieldForKind(kind: OpeningPrompt['kind'], harvest: ReturnType<typeof harvestUtterance>): string | null {
+  if (kind === 'name') return harvest.name;
+  if (kind === 'location') return harvest.location;
+  if (kind === 'appearance') return harvest.appearance;
+  if (kind === 'kit') return harvest.kit;
+  return null;
+}
+
 const POWER_CLAIM =
   /\b(legendary|mythic|artifact|relic|god(?:like|-tier)?|best(?:\s+in\s+slot)?|strongest|highest(?:-|\s+)?(?:power|tier|rarity)|overpowered|\bop\b|plus\s*\d{2,}|nuclear|excalibur|mjolnir|infinity|unlimited|endgame|unique\s+weapon|vorpal|holy\s+avenger|dragon(?:scale|slayer)|mithril|adamant(?:ine|ite)?|plasma|laser|minigun|exosuit|power\s*armor)\b/i;
 
@@ -254,8 +347,12 @@ export function sanitizeOpeningAnswer(
       .trim();
   }
   if (kind === 'name') {
-    const name = text.split(/[,.—–-]| and | in | at | on /i)[0]?.trim() || text;
-    return { text: name.slice(0, 40) || 'Adventurer', cheated, mundaneNames: [] };
+    const name = extractGivenName(raw) ?? extractGivenName(text);
+    return { text: (name ?? '').slice(0, 40), cheated, mundaneNames: [] };
+  }
+  if (kind === 'location') {
+    const place = extractLocation(raw) ?? (cheated ? text.split(/[,.]/)[0]?.trim() : text);
+    return { text: (place ?? '').slice(0, 80), cheated, mundaneNames: [] };
   }
   if (kind === 'appearance' && (cheated || !text)) {
     text = text || 'The ordinary clothes you had on this morning';
@@ -268,9 +365,6 @@ export function sanitizeOpeningAnswer(
         : 'Phone, keys, or whatever a normal morning actually puts in your pockets';
     }
     return { text: text.slice(0, 240), cheated, mundaneNames };
-  }
-  if (kind === 'location' && cheated) {
-    text = text.split(/[,.]/)[0]?.trim() || 'Where you already were this morning';
   }
   return { text: text.slice(0, 280), cheated, mundaneNames: [] };
 }
@@ -352,6 +446,25 @@ function retouchKit(inventory: Item[], answer: string): Item[] {
   });
 }
 
+function registrarAside(registrar: OpeningRegistrar, harvest: ReturnType<typeof harvestUtterance>): string {
+  const bits: string[] = [];
+  if (harvest.askedWho) {
+    bits.push(
+      registrar.voice === 'system'
+        ? 'This unit is the System. You have been registered.'
+        : 'I am the voice that opened this page. Answer, and the tale continues.'
+    );
+  }
+  if (harvest.askedWhat) {
+    bits.push(
+      registrar.voice === 'system'
+        ? 'Integration protocol is active. Earth is being written into the System. Confirm remaining fields.'
+        : 'The opening has begun. Finish these particulars, then the scene will move.'
+    );
+  }
+  return bits.join(' ');
+}
+
 export function applyOpeningAnswer(state: GameState, rawInput: string): {
   state: GameState;
   generateOpening: boolean;
@@ -360,73 +473,113 @@ export function applyOpeningAnswer(state: GameState, rawInput: string): {
   if (!est || est.complete || !est.pending.length) {
     return { state, generateOpening: false };
   }
-  const current = est.pending[0];
   const answer = stripChoicePrefix(rawInput);
   if (!answer) return { state, generateOpening: false };
 
-  const clean = sanitizeOpeningAnswer(current.kind, answer);
-  const afterKind = applyKindToState(state, current, answer);
-  const answers = { ...est.answers, [current.id]: clean.text };
+  const harvest = harvestUtterance(answer);
   const registrar = est.registrar ?? {
     voice: 'system' as const,
     label: 'SYSTEM',
     startLine: 'Starting. Please confirm your name and current location.',
   };
-  const cheatNote = clean.cheated
-    ? {
-        id: crypto.randomUUID(),
-        turn: afterKind.turn,
-        role: 'gm' as const,
-        content: formatRegistrarLine(
-          registrar,
-          'Invalid declaration. High-tier weapons, armor, and endgame gear are rejected. Allotment unchanged. Power is earned in play.'
-        ),
-        timestamp: Date.now(),
-      }
-    : null;
-  const pending = est.pending.slice(1);
-  const playerAlreadyLogged = afterKind.log.some(
-    (e) => e.role === 'player' && e.content === rawInput && e.turn === afterKind.turn
+
+  let nextState = state;
+  const answers = { ...est.answers };
+  const stillPending: OpeningPrompt[] = [];
+  const logged: string[] = [];
+  let cheated = false;
+
+  for (const prompt of est.pending) {
+    const harvested = fieldForKind(prompt.kind, harvest);
+    const isCurrent = prompt.id === est.pending[0].id;
+    let value = harvested;
+    const questionDump = (answer.match(/[?]/g)?.length ?? 0) >= 1 && answer.split(/\s+/).length > 8;
+    if (!value && isCurrent && prompt.kind !== 'name' && !questionDump) {
+      const clean = sanitizeOpeningAnswer(prompt.kind, answer);
+      if (clean.text) value = clean.text;
+      cheated = cheated || clean.cheated;
+    }
+    if (prompt.kind === 'name' && !value) {
+      stillPending.push(prompt);
+      continue;
+    }
+    if (prompt.kind === 'location' && !value) {
+      stillPending.push(prompt);
+      continue;
+    }
+    if (!value) {
+      stillPending.push(prompt);
+      continue;
+    }
+    const clean = sanitizeOpeningAnswer(prompt.kind, value);
+    cheated = cheated || clean.cheated;
+    if (prompt.kind === 'name' && !clean.text) {
+      stillPending.push(prompt);
+      continue;
+    }
+    nextState = applyKindToState(nextState, prompt, clean.text || value);
+    answers[prompt.id] = clean.text || value;
+    if (prompt.kind === 'name') logged.push(`Designation logged: ${answers[prompt.id]}`);
+    if (prompt.kind === 'location') logged.push(`Location logged: ${answers[prompt.id]}`);
+  }
+
+  const aside = registrarAside(registrar, harvest);
+  const cheatLine = cheated
+    ? 'Invalid declaration. High-tier weapons, armor, and endgame gear are rejected. Allotment unchanged.'
+    : '';
+  const playerAlreadyLogged = nextState.log.some(
+    (e) => e.role === 'player' && e.content === rawInput && e.turn === nextState.turn
   );
 
-  if (pending.length) {
-    const next = pending[0];
-    const accepted = current.kind === 'name' ? `Designation logged: ${clean.text}` : undefined;
+  if (stillPending.length) {
+    const next = stillPending[0];
+    const extra = [aside, cheatLine, ...logged].filter(Boolean).join('\n');
+    const parseFail = est.pending[0]?.kind === 'name' && !harvest.name
+      ? 'Unable to parse designation. State your name only.'
+      : '';
     const gmEntry = {
       id: crypto.randomUUID(),
-      turn: afterKind.turn,
+      turn: nextState.turn,
       role: 'gm' as const,
-      content: formatRegistrarLine(registrar, next.question, { extra: accepted }),
+      content: formatRegistrarLine(registrar, parseFail || next.question, { extra: extra || undefined }),
       timestamp: Date.now(),
     };
     return {
       generateOpening: false,
       state: {
-        ...afterKind,
-        openingEstablishment: { pending, answers, complete: false, registrar },
+        ...nextState,
+        openingEstablishment: { pending: stillPending, answers, complete: false, registrar },
         choices: next.suggestions ?? [],
-        log: playerAlreadyLogged
-          ? [...afterKind.log, ...(cheatNote ? [cheatNote] : []), gmEntry]
-          : afterKind.log,
+        log: playerAlreadyLogged ? [...nextState.log, gmEntry] : nextState.log,
         lastUpdated: Date.now(),
       },
     };
   }
 
   const canonLine = Object.values(answers).join(' / ').slice(0, 400);
-  const premise = afterKind.campaignPremise
-    ? `${afterKind.campaignPremise}\n\nPLAYER CANON: ${canonLine}`.slice(0, 2400)
+  const premise = nextState.campaignPremise
+    ? `${nextState.campaignPremise}\n\nPLAYER CANON: ${canonLine}`.slice(0, 2400)
     : `PLAYER CANON: ${canonLine}`;
+  const wrapUp = [aside, cheatLine, ...logged].filter(Boolean).join('\n');
+  const wrapEntry = wrapUp
+    ? {
+        id: crypto.randomUUID(),
+        turn: nextState.turn,
+        role: 'gm' as const,
+        content: formatRegistrarLine(registrar, wrapUp),
+        timestamp: Date.now(),
+      }
+    : null;
 
   return {
     generateOpening: true,
     state: {
-      ...afterKind,
+      ...nextState,
       campaignPremise: premise,
       openingEstablishment: { pending: [], answers, complete: true, registrar },
       pendingGeneratedOpening: true,
       choices: [],
-      log: cheatNote ? [...afterKind.log, cheatNote] : afterKind.log,
+      log: wrapEntry ? [...nextState.log, wrapEntry] : nextState.log,
       lastUpdated: Date.now(),
     },
   };
