@@ -14,7 +14,7 @@ const BRIDGE_MARKERS =
   /you follow through —|the moment settles as you take in what changed|you press for clarity —|you commit to the action|the immediate result lands in/i;
 
 const DEAD_STUB_MARKERS =
-  /slow circuit of|main approach and watch for secondary gaps|opaque remains opaque|ordinary quiet|no fresh landmarks announce themselves|that is what you can act on next|not a blank circuit/i;
+  /slow circuit of|main approach and watch for secondary gaps|opaque remains opaque|ordinary quiet|no fresh landmarks announce themselves|that is what you can act on next|not a blank circuit|you put the question plainly|anything the sheet and the last scene|rather than changing the subject/i;
 
 const FINDING_CUES =
   /\b(find|found|see|saw|seen|notice|noticed|spot|spotted|hear|heard|reveal|reveals|empty|locked|ajar|open|door|entrance|exit|alley|wall|corner|shadow|quiet|noise|nothing|glint|track|tracks|window|side|rear|front|roof|balance|grip|weight|swing|hum|buzz|flicker|smell|dust|crack|gap|boarded|intact|threat|movement|stillness|cool|warm|heavy|panel|menu|level|hp|mp|greyed|grayed|readout|list|entry|entries|light in (?:your|the) hand|car|van|tunic|clothes|sword)\b/i;
@@ -99,9 +99,9 @@ Intent: ${intent.label} (${intent.kind})
 REQUIRED:
 1. Write at least 3 full sentences of story prose that resolve THIS action — the named object, person, or question — with concrete sensory results.
 2. If they search/inspect a specific thing (a car, alley, panel, body): go to THAT thing and say what is in/on it. Do NOT replace it with a general circuit of the street.
-3. If they look around: continue the LAST established scene (people, noise, crystals, weather). Do not empty a live street.
+3. If they look around / ask what is around them: write sensory story of the LAST scene (street, wrecks, people, power dying). Do NOT list inventory. Do NOT mention "the sheet".
 4. If they practice/test gear: describe feel, balance, sound — not a quest redirect. Use ONLY equipped/inventory gear.
-5. If they ask a question: answer from inventory provenance, equipped slots, and established scene. Do not say "what is opaque remains opaque" when the sheet already knows.
+5. If they ask a question: answer from inventory provenance, equipped slots, and established scene. Never write "the sheet", "stays unknown", or "rather than changing the subject".
 6. Do NOT reply with "you follow through", "you commit to the action", "the result lands in [category]", "main approach", or "ordinary quiet" against a live scene.
 7. Do NOT echo the location label as a sentence. Do NOT invent loot or named enemies without tags.
 Then give 3–4 choices grounded in what you just described — not objects you never narrated.
@@ -135,22 +135,45 @@ function sceneIsLive(lastScene: string): boolean {
 }
 
 function describeWhatIsNear(state: GameState, lastScene: string, place: string): string {
+  return lookAroundNarration(state, lastScene, place);
+}
+
+/** Player-facing look-around. Story only — no inventory dump, no "sheet" talk. */
+function lookAroundNarration(state: GameState, lastScene: string, place: string): string {
   const s = lastScene.toLowerCase();
-  const bits: string[] = [];
-  if (/\b(scream|shout|panic|people|crowd)\b/.test(s)) bits.push('people still moving and making noise');
-  if (/\bcrystal/.test(s)) bits.push('green crystals breaking the concrete');
-  if (/\b(car|van|vehicle|wreck)\b/.test(s)) bits.push('at least one wrecked vehicle on the curb');
-  if (/\balley\b/.test(s)) bits.push('an alley cutting off the street');
-  if (/\b(panel|system)\b/.test(s)) bits.push('the System panel still at the edge of your sight if you want it');
+  const beats: string[] = [];
+  if (/\b(crack|breaking|changing|crystal|integration|mana)\b/.test(s)) {
+    beats.push(
+      'The street you have walked a hundred times is changing — cracks through walls and air that were not there this morning'
+    );
+  }
+  if (/\b(alarm|electronic|power|mana saturation|siren)\b/.test(s)) {
+    beats.push('sound is thinning as power dies, alarms and fried electronics fading out');
+  }
+  if (/\b(car|truck|van|vehicle|wreck|overturn)\b/.test(s)) {
+    beats.push('overturned cars and trucks sit where traffic should be');
+  }
+  if (/\b(food truck|fire|unattended)\b/.test(s)) {
+    beats.push('an unattended fire still works in a wrecked food truck');
+  }
+  if (/\b(people|crowd|scream|confused|shout|panic)\b/.test(s)) {
+    beats.push('people stand in the open, confused, some still shouting');
+  }
+  if (/\bcrystal/.test(s) && !beats.some((b) => /crack/.test(b))) {
+    beats.push('green crystals split the concrete');
+  }
   const exits = (state.locationSheet?.exits ?? []).map((e) => e.label).filter(Boolean);
   const props = (state.locationSheet?.interactables ?? []).map((i) => i.name).filter(Boolean).slice(0, 3);
-  if (exits.length) bits.push(`ways onward: ${exits.join('; ')}`);
-  if (props.length) bits.push(`in reach: ${props.join(', ')}`);
-  if (state.activeEncounter?.name) bits.push(`${state.activeEncounter.name} already in view`);
-  if (bits.length) {
-    return `Near you at ${place}: ${bits.join('; ')}.`;
+  if (exits.length) beats.push(`ways you can actually take: ${exits.join(', ')}`);
+  if (props.length) beats.push(`close enough to touch: ${props.join(', ')}`);
+  if (state.activeEncounter?.name) beats.push(`${state.activeEncounter.name} is already in view`);
+
+  if (beats.length) {
+    const last = beats.pop()!;
+    const head = beats.length ? `${beats.join('; ')}, and ${last}` : last;
+    return `You stand still and take in what is around you. ${head.charAt(0).toUpperCase()}${head.slice(1)}. That is the street as it is now — not a list of what you are carrying.`;
   }
-  return `Near you at ${place}: the street itself, ordinary cover, and whatever doorway or wreck is closest — the scene you are already in, not an empty void.`;
+  return `You stand still on ${place} and look. The place you are already in is still here: cover, the nearest wreck or doorway, and whoever is close enough to hear. You do not go blank. You do not recite your inventory.`;
 }
 
 function sceneContinuation(lastScene: string): string {
@@ -193,11 +216,12 @@ function isPanelOnlyAction(action: string): boolean {
 }
 
 function isGeneralLookAround(action: string, intent: PlayerIntent): boolean {
-  if (actionFocusPhrase(action) && /\b(search|inspect|check|loot|rummage|open)\b/i.test(action)) {
+  if (actionFocusPhrase(action) && /\b(search|inspect|check|loot|rummage|open)\b/i.test(action)
+    && !/\b(around|standing|surround)\b/i.test(action)) {
     return false;
   }
   return (
-    /\b(what'?s around|around me now|surroundings|scan (?:the )?(?:area|room|street)|look around|examine the immediate)\b/i.test(action)
+    /\b(what'?s?\s+(?:is\s+|it\s+)?around|around me|where i(?:'?m| am) standing|stand still|surroundings|scan (?:the )?(?:area|room|street)|look around|examine the immediate|what is near)\b/i.test(action)
     || ((intent.kind === 'observe' || intent.kind === 'search') && !actionFocusPhrase(action)
       && /\b(scout|circle|survey|recon|look|examin|inspect)\b/i.test(action))
   );
@@ -248,7 +272,7 @@ function answerFromSheet(action: string, state: GameState, gear: string): string
     }
   }
   if (!parts.length) return null;
-  return `${parts.join(' ')} The sheet knows that much; it does not invent a merchant or a memory you have not earned. You are still carrying ${gear}.`;
+  return parts.join(' ');
 }
 
 function intentLooksLikePractice(t: string): boolean {
@@ -291,8 +315,16 @@ export function synthesizeActionResolution(
     );
   }
 
+  if (isGeneralLookAround(full, intent) || isGeneralLookAround(action, intent)) {
+    return `${prefix}${lookAroundNarration(state, lastSceneProse, place)}`;
+  }
+
   const sheetAnswer = answerFromSheet(action, state, gear);
-  if (sheetAnswer && (intent.kind === 'talk' || /\?/.test(action) || /\bwonder\b/i.test(action))) {
+  if (
+    sheetAnswer
+    && !isGeneralLookAround(full, intent)
+    && (intent.kind === 'talk' || /\?/.test(action) || /\bwonder\b/i.test(action))
+  ) {
     return prefix + sheetAnswer;
   }
 
@@ -313,8 +345,8 @@ export function synthesizeActionResolution(
     );
   }
 
-  if (isGeneralLookAround(action, intent) || (intent.kind === 'observe' && !focus) || /\blook around\b/i.test(action)) {
-    return `${prefix}You look around. ${nearby}`;
+  if (intent.kind === 'observe' && !focus) {
+    return `${prefix}${lookAroundNarration(state, lastSceneProse, place)}`;
   }
 
   if (intentLooksLikePractice(action) || (intent.kind === 'other' && /\b(practice|swing|balance)\b/i.test(action))) {
@@ -329,12 +361,12 @@ export function synthesizeActionResolution(
   }
 
   if (intent.kind === 'talk' || /\?/.test(action) || /\bwonder\b/i.test(action)) {
+    if (isGeneralLookAround(full, intent) || /\baround\b/i.test(full)) {
+      return `${prefix}${lookAroundNarration(state, lastSceneProse, place)}`;
+    }
     return (
       sheetAnswer
-      ?? (
-        `You put the question plainly. From what you already know: you are in ${place}, carrying ${gear}. `
-        + `Anything the sheet and the last scene do not list stays unknown — and you say so, rather than changing the subject.`
-      )
+      ?? `${prefix}You ask it. What you can see from here is still the same street: ${lookAroundNarration(state, lastSceneProse, place)}`
     );
   }
 
