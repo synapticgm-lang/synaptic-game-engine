@@ -12,6 +12,7 @@ import {
   Heart, Droplet, Zap, Users, Backpack,
 } from 'lucide-react';
 import { getItemsInContainer } from '@/game/inventory';
+import { findEquippedInSlot, type DisplayEquipSlot } from '@/game/wornGear';
 
 type BottomTab = 'inventory' | 'spells' | 'professions' | 'pets' | 'titles' | 'dnd' | 'sheet' | 'portrait' | 'progression' | 'combat';
 
@@ -54,14 +55,7 @@ const RARITY_BG: Record<Rarity, string> = {
 };
 
 function getEquippedItem(state: GameState, slot: EquipSlotKey): Item | undefined {
-  const direct = state.inventory.find((it) => it.equipped && it.slot === slot);
-  if (direct) return direct;
-  if (slot === 'Chest') {
-    return state.inventory.find(
-      (it) => it.equipped && (it.slot === 'Body' || /clothes|tunic|jacket|shirt|armor/i.test(it.name))
-    );
-  }
-  return undefined;
+  return findEquippedInSlot(state.inventory, slot as DisplayEquipSlot);
 }
 
 function StatBar({ label, current, max, color, icon }: { label: string; current: number; max: number; color: string; icon: React.ReactNode }) {

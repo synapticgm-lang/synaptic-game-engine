@@ -1,8 +1,9 @@
 import { useState } from 'react';
 import { X, Backpack, Swords, Heart, Zap, Plus, Search, Trash2, Save, ChevronDown, ChevronUp, Shield, Layers, AlertTriangle } from 'lucide-react';
-import type { GameState, Rarity, LoreCard, LoreCardType, Item } from '@/game/types';
+import type { GameState, Rarity, LoreCard, LoreCardType } from '@/game/types';
 import { RARITY_COLORS } from '@/game/types';
 import { computeInventoryCapacity, getItemsInContainer } from '@/game/inventory';
+import { findEquippedInSlot, type DisplayEquipSlot } from '@/game/wornGear';
 
 interface Props {
   state: GameState;
@@ -11,7 +12,7 @@ interface Props {
   onUpdateLorebook?: (cards: LoreCard[]) => void;
 }
 
-const EQUIP_SLOTS = ['Head', 'Chest', 'Main Hand', 'Off Hand', 'Boots', 'Accessories'] as const;
+const EQUIP_SLOTS: DisplayEquipSlot[] = ['Head', 'Chest', 'Main Hand', 'Off Hand', 'Legs', 'Feet'];
 
 export function RightDrawer({ state, open, onClose, onUpdateLorebook }: Props) {
   const [tab, setTab] = useState<'gear' | 'materials' | 'containers' | 'companions' | 'codex'>('gear');
@@ -20,11 +21,6 @@ export function RightDrawer({ state, open, onClose, onUpdateLorebook }: Props) {
   const [expandedBagId, setExpandedBagId] = useState<string | null>(null);
 
   const c = state.character;
-  const equipped = state.inventory.filter(i => i.equipped);
-  const slotMap = new Map<string, Item>();
-  for (const item of equipped) {
-    if (item.slot) slotMap.set(item.slot, item);
-  }
 
   return (
     <>
@@ -75,7 +71,7 @@ export function RightDrawer({ state, open, onClose, onUpdateLorebook }: Props) {
                   <div className="text-[10px] uppercase tracking-wider text-slate-500 mb-1">Equipped Gear</div>
                   <div className="space-y-1">
                     {EQUIP_SLOTS.map(slot => {
-                      const item = slotMap.get(slot);
+                      const item = findEquippedInSlot(state.inventory, slot);
                       if (!item) {
                         return (
                           <div key={slot} className="flex items-center justify-between rounded bg-slate-950/50 px-2 py-1 text-[11px] text-slate-600">
@@ -213,8 +209,9 @@ export function RightDrawer({ state, open, onClose, onUpdateLorebook }: Props) {
   );
 }
 
-function ItemCard({ item }: { item: { name: string; rarity: Rarity; quantity: number; provenance?: string; equipped?: boolean; slot?: string } }) {
+function ItemCard({ item }: { item: { name: string; rarity: Rarity; quantity: number; provenance?: string; description?: string; equipped?: boolean; slot?: string; modifiers?: Partial<Record<string, number>> } }) {
   const color = RARITY_COLORS[item.rarity] || '#cbd5e1';
+  const bonuses = Object.entries(item.modifiers ?? {}).filter(([, n]) => typeof n === 'number' && n !== 0);
   return (
     <div className="rounded-md border-l-2 bg-slate-900 px-2.5 py-1.5 text-xs" style={{ borderColor: color }}>
       <div className="flex items-center justify-between">
@@ -224,7 +221,11 @@ function ItemCard({ item }: { item: { name: string; rarity: Rarity; quantity: nu
       <div className="flex items-center gap-2 text-[10px] text-slate-500">
         <span className="uppercase" style={{ color }}>{item.rarity}</span>
         {item.equipped && <span className="text-emerald-400">equipped{item.slot ? ` · ${item.slot}` : ''}</span>}
+        {bonuses.length
+          ? bonuses.map(([k, n]) => <span key={k}>{k} {n! > 0 ? '+' : ''}{n}</span>)
+          : item.equipped ? <span className="text-slate-600">no bonuses</span> : null}
       </div>
+      {item.description && <div className="text-[10px] text-slate-400">{item.description}</div>}
       {item.provenance && <div className="text-[10px] text-slate-600">{item.provenance}</div>}
     </div>
   );

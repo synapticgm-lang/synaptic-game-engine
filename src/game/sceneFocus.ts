@@ -57,14 +57,20 @@ export interface TurnMandate {
 export function buildTurnMandate(
   playerAction: string,
   intent: PlayerIntent,
-  state: GameState
+  state: GameState,
+  typedVerbatim?: string
 ): TurnMandate {
   const focusKeywords = extractQuestFocusKeywords(state.quests ?? []);
   const engaged = playerEngagesFocus(playerAction, focusKeywords);
   const action = playerAction.replace(/\s+/g, ' ').trim().slice(0, 220);
+  const typed = typedVerbatim?.replace(/\s+/g, ' ').trim().slice(0, 220);
+  const actionLine =
+    typed && typed.toLowerCase() !== action.toLowerCase()
+      ? `Player typed: "${typed}"\nEngine reading (resolve THIS): "${action}"`
+      : `Player action to resolve THIS turn: "${action}"`;
 
   const block = `=== TURN MANDATE (BINDING — ALL ENGINE MODES) ===
-Player action to resolve THIS turn: "${action}"
+${actionLine}
 Parsed intent: ${intent.label} (${intent.kind})
 RULES:
 1. Narrate the outcome of THAT action first (min 2 sentences about it).

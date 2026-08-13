@@ -86,7 +86,7 @@ export function primaryActionClause(input: string): string {
  * Map free-text player input to a coarse programmatic intent.
  * Used for Warden rules and turn summaries — not a full command language yet.
  */
-export function parsePlayerIntent(input: string, _state: GameState): PlayerIntent {
+export function parsePlayerIntent(input: string, _state?: GameState): PlayerIntent {
   const text = primaryActionClause(input);
   for (const rule of RULES) {
     if (rule.re.test(text)) {

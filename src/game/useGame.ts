@@ -61,6 +61,7 @@ import {
 import { applyCommittedNarrative, detectSceneContradiction, extractSceneFacts, rewriteContinuityBreak, seedOpeningSceneFacts } from './sceneFacts';
 import { formatCampaignStoryName, getCampaignBibleById } from '@/data/campaigns';
 import { parsePlayerIntent, groundPlayerAction } from './intentParser';
+import { interpretPlayerUtterance } from './playerUtterance';
 import {
   buildTurnMandate,
   detectSceneHijack,
@@ -1141,8 +1142,11 @@ export function useGame() {
     const contentSanitized = sanitizeInput(input, mode);
     const lastGmForGround = current.log.filter((l) => l.role === 'gm').pop()?.content ?? '';
     const storyProseForGround = normalizeStoryCorpus(lastGmForGround);
-    const grounded = groundPlayerAction(contentSanitized, current, storyProseForGround);
-    const sanitizedInput = grounded.text;
+    const openingPending = isOpeningEstablishmentPending(current);
+    const grounded = openingPending
+      ? { text: contentSanitized, intent: parsePlayerIntent(contentSanitized, current), rewritten: false, notes: [] as string[] }
+      : groundPlayerAction(contentSanitized, current, storyProseForGround);
+    let sanitizedInput = grounded.text;
     if (grounded.rewritten) {
       addToast(`Action grounded: ${grounded.notes[0] ?? 'adjusted to match scene/inventory'}`, 'info');
     }
@@ -1173,7 +1177,7 @@ export function useGame() {
       id: uid(),
       turn: current.turn,
       role: 'player',
-      content: sanitizedInput,
+      content: contentSanitized,
       timestamp: Date.now(),
     };
 
@@ -1196,7 +1200,7 @@ export function useGame() {
 
       if (isOpeningEstablishmentPending(current) || liveCurrent.pendingGeneratedOpening) {
         const stepped = isOpeningEstablishmentPending(current)
-          ? applyOpeningAnswer(liveCurrent, sanitizedInput)
+          ? await applyOpeningAnswer(liveCurrent, contentSanitized, settingsRef.current)
           : { state: { ...liveCurrent, pendingGeneratedOpening: false }, generateOpening: true };
 
         if (!stepped.generateOpening) {
@@ -1290,10 +1294,23 @@ export function useGame() {
       // <damage> tags (and be narrated). Silent -2 on every fail made HP drop "for no reason".
       let engineHpDelta = 0;
 
+      const typedAction = contentSanitized;
+      const interpreted = await interpretPlayerUtterance({
+        raw: typedAction,
+        mode: 'play',
+        lastScene: storyProseForGround,
+        settings: settingsRef.current,
+      });
+      if (!grounded.rewritten && interpreted.messy && interpreted.meaning) {
+        sanitizedInput = interpreted.meaning;
+      }
+
       const intentForMandate =
-        grounded.intent.kind !== 'other'
-          ? grounded.intent
-          : parsePlayerIntent(sanitizedInput, liveCurrent);
+        interpreted.intent.kind !== 'other'
+          ? interpreted.intent
+          : grounded.intent.kind !== 'other'
+            ? grounded.intent
+            : parsePlayerIntent(sanitizedInput, liveCurrent);
 
       let worldLedger = normalizeWorldLedger(liveCurrent.worldLedger);
       const preTick = tickWorld(
@@ -1370,7 +1387,7 @@ In <system-log>, only emit LitRPG/RPG progression lines (XP, loot, HP change as 
         liveCurrent.quests = revealedQuests;
         stateRef.current = { ...liveCurrent };
       }
-      const turnMandate = buildTurnMandate(sanitizedInput, intentForMandate, liveCurrent);
+      const turnMandate = buildTurnMandate(sanitizedInput, intentForMandate, liveCurrent, typedAction);
       const gmPlayerPayload = buildResolutionUserPayload({
         mandateBlock: turnMandate.block,
         playerAction: sanitizedInput,
@@ -1468,9 +1485,7 @@ In <system-log>, only emit LitRPG/RPG progression lines (XP, loot, HP change as 
       // (e.g. `lootVideoEntry`) — declaring them later caused a
       // "Cannot access before initialization" crash in the job runner.
       const rawEvents = parseActionTags(result.text);
-      const intent = grounded.intent.kind !== 'other'
-        ? grounded.intent
-        : parsePlayerIntent(sanitizedInput, liveCurrent);
+      const intent = intentForMandate;
       const warden = runWarden(liveCurrent, rawEvents, result.text, sanitizedInput, intent);
       const events = warden.events;
       const appliedWorld = applyWorldEvents(worldLedger, events, worldLedger.clock.week);

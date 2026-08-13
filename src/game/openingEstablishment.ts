@@ -1,6 +1,8 @@
 import type { CampaignBible, OpeningPrompt, OpeningRegistrar } from '@/data/campaigns/types';
 import type { CampaignArchetype } from './archetypes';
-import type { EngineMode, GameState, Item, OpeningEstablishment } from './types';
+import type { EngineMode, GameState, Item, OpeningEstablishment, Settings } from './types';
+import { interpretPlayerUtterance, utteranceIsMessy } from './playerUtterance';
+import { materializeWornClothes } from './wornGear';
 
 const GENERIC_NAMES = /^(adventurer|survivor|unknown survivor|hero|wanderer|unknown)$/i;
 
@@ -291,39 +293,63 @@ export function extractGivenName(raw: string): string | null {
   return null;
 }
 
+const NOT_A_PLACE =
+  /\b(jeans|boots|t-?shirt|hoodie|jacket|wallet|phone|keys|headphones|leatherman)\b/i;
+
 export function extractLocation(raw: string): string | null {
   const text = raw.replace(/\s+/g, ' ').trim();
   const m = text.match(
-    /\b(?:i(?:'m|m|\s+am)\s+(?:in|at|from)|(?:i\s+)?live\s+in|in|at|from)\s+([A-Za-z][A-Za-z0-9\s,'-]{1,60}?)(?:\s*[.?!]|\s+(?:what|who|where|why|how)\b|$)/i
+    /\b(?:i(?:'m|m|\s+am)\s+(?:in|at|from)|(?:i\s+)?live\s+in|(?:i(?:'m|m)\s+)?from)\s+([A-Za-z][A-Za-z0-9\s,'-]{1,60}?)(?:\s*[.?!]|\s+(?:what|who|where|why|how)\b|$)/i
   );
   const place = m?.[1]?.replace(/\s+/g, ' ').trim();
-  if (!place || NAME_STOP.has(place.toLowerCase())) return null;
+  if (!place || NAME_STOP.has(place.toLowerCase()) || NOT_A_PLACE.test(place)) return null;
   if (place.split(/\s+/).length > 8) return titlePlace(place.split(/\s+/).slice(0, 6).join(' '));
   return titlePlace(place);
 }
 
-function stripLeadingQuestions(raw: string): string {
+const CLOTHES_NOUN =
+  /\b(jeans|boots|t-?shirt|tee|hoodie|jacket|coat|jumper|sweater|trainers|sneakers|docs?|doc\s*martens?|docmartin)\b/i;
+
+/** Drop leading "what am I wearing?" and trailing "why?" — never wipe a clothes list. */
+function stripConfusion(raw: string): string {
   return raw
-    .replace(/^[^.?!]{0,80}\?\s*/i, '')
-    .replace(/\bwhat am i wearing\??\s*/gi, '')
     .replace(/\s+/g, ' ')
+    .trim()
+    .replace(/^(erm|uh+|um+|like)\s+/gi, '')
+    .replace(/^(what am i wearing|what do i (?:look like|have on)|who are you|what'?s going on|what is this)\??\s*/i, '')
+    .replace(/\s+\b(why|what'?s going on|who are you|what is this)\??\s*$/i, '')
+    .replace(/[?]+$/g, '')
     .trim();
+}
+
+function isMetaOnly(raw: string): boolean {
+  const t = raw.replace(/\s+/g, ' ').trim().replace(/[?!.,]+$/g, '');
+  return /^(who are you|what'?s going on|what is this|why|huh|what|idk|i don'?t know)$/i.test(t);
 }
 
 export function extractAppearance(raw: string): string | null {
   const afterWearQ = raw.replace(/^[\s\S]*?\bwhat am i wearing\??\s*/i, '').trim();
   if (afterWearQ && afterWearQ !== raw.replace(/\s+/g, ' ').trim()) {
-    const cleaned = stripPlayerVoice(afterWearQ.split(/[?]/)[0] ?? afterWearQ);
-    if (cleaned.length >= 8) return cleaned;
+    const cleaned = stripPlayerVoice(stripConfusion(afterWearQ));
+    if (cleaned.length >= 6) return cleaned;
   }
   const m = raw.match(
     /\b(?:i(?:'m|m|\s+am)\s+wearing|wearing|dressed\s+in|i\s+have\s+on)\s+([^.?!]{3,100})/i
   );
   const bit = m?.[1]?.replace(/\s+/g, ' ').trim();
-  if (bit) return stripPlayerVoice(bit);
-  if (/\b(jeans|boots|t-?shirt|hoodie|jacket|trainers|sneakers)\b/i.test(raw)) {
-    const list = stripPlayerVoice(stripLeadingQuestions(raw));
-    return list.length >= 8 ? list : null;
+  if (bit) return stripPlayerVoice(stripConfusion(bit));
+  const list = stripPlayerVoice(stripConfusion(raw));
+  if (CLOTHES_NOUN.test(raw) && list.length >= 6) return list;
+  if (list.split(/\s+/).length >= 3 && !isMetaOnly(raw)) return list;
+  return null;
+}
+
+export function extractSpecies(raw: string): string | null {
+  const m = raw.match(/\b(human|elf|dwarf|halfling|orc|beast|goblin|tiefling|dragonborn)\b/i);
+  if (m) return m[1].charAt(0).toUpperCase() + m[1].slice(1).toLowerCase();
+  const cleaned = stripPlayerVoice(stripConfusion(raw));
+  if (cleaned && cleaned.split(/\s+/).length <= 6 && !isMetaOnly(raw) && !CLOTHES_NOUN.test(cleaned)) {
+    return cleaned;
   }
   return null;
 }
@@ -333,7 +359,7 @@ export function extractKit(raw: string): string | null {
     /\b(?:i\s+have|i've got|got|carrying|in\s+my\s+(?:pockets?|bag|pack)|wallet|phone|keys|headphones)\b/i
   );
   if (!m) return null;
-  return stripPlayerVoice(raw);
+  return stripPlayerVoice(stripConfusion(raw));
 }
 
 /** Turn "im wearing my jeans" into "baggy jeans and a band t-shirt" — never keep I/my. */
@@ -353,6 +379,7 @@ function harvestUtterance(raw: string): {
   location: string | null;
   appearance: string | null;
   kit: string | null;
+  species: string | null;
   askedWho: boolean;
   askedWhat: boolean;
 } {
@@ -361,8 +388,9 @@ function harvestUtterance(raw: string): {
     location: extractLocation(raw),
     appearance: extractAppearance(raw),
     kit: extractKit(raw),
+    species: extractSpecies(raw),
     askedWho: /\bwho\s+are\s+you\b/i.test(raw),
-    askedWhat: /\bwhat(?:'s|\s+is)\s+going\s+on\b/i.test(raw),
+    askedWhat: /\bwhat(?:'s|\s+is)\s+going\s+on\b/i.test(raw) || /\bwhy\??\s*$/i.test(raw),
   };
 }
 
@@ -371,6 +399,22 @@ function fieldForKind(kind: OpeningPrompt['kind'], harvest: ReturnType<typeof ha
   if (kind === 'location') return harvest.location;
   if (kind === 'appearance') return harvest.appearance;
   if (kind === 'kit') return harvest.kit;
+  if (kind === 'species' || kind === 'identity') return harvest.species;
+  return null;
+}
+
+/** Current field takes a normal sentence if it is not only a meta question. */
+function acceptCurrentField(kind: OpeningPrompt['kind'], raw: string): string | null {
+  if (isMetaOnly(raw)) return null;
+  const harvested = fieldForKind(kind, harvestUtterance(raw));
+  if (harvested) return harvested;
+  const cleaned = stripPlayerVoice(stripConfusion(raw));
+  if (!cleaned || cleaned.length < 2) return null;
+  if (kind === 'name') return extractGivenName(cleaned);
+  if (kind === 'location') return extractLocation(raw) ?? (cleaned.split(/\s+/).length <= 8 && !NOT_A_PLACE.test(cleaned) ? cleaned : null);
+  if (kind === 'appearance' && cleaned.split(/\s+/).length >= 2) return cleaned;
+  if (kind === 'kit' && cleaned.split(/\s+/).length >= 2) return cleaned;
+  if ((kind === 'species' || kind === 'identity') && cleaned.split(/\s+/).length <= 8) return cleaned;
   return null;
 }
 
@@ -460,10 +504,11 @@ function applyKindToState(state: GameState, prompt: OpeningPrompt, answer: strin
     return { ...state, currentLocation: clean.text.slice(0, 80) };
   }
   if (prompt.kind === 'appearance') {
+    const look = clean.text.slice(0, 280);
     return {
       ...state,
-      character: { ...state.character, appearance: clean.text.slice(0, 280) },
-      inventory: retouchClothes(state.inventory, clean.text),
+      character: { ...state.character, appearance: look },
+      inventory: materializeWornClothes(state.inventory, look),
     };
   }
   if (prompt.kind === 'species' || prompt.kind === 'identity') {
@@ -487,17 +532,6 @@ function applyKindToState(state: GameState, prompt: OpeningPrompt, answer: strin
     };
   }
   return state;
-}
-
-function retouchClothes(inventory: Item[], answer: string): Item[] {
-  return inventory.map((item) => {
-    if (item.slot !== 'Body' && !/clothes|tunic|jacket|shirt|armor/i.test(item.name)) return item;
-    return {
-      ...item,
-      description: answer.slice(0, 240),
-      provenance: item.provenance || 'What you were wearing when this started',
-    };
-  });
 }
 
 function retouchKit(inventory: Item[], answer: string): Item[] {
@@ -528,11 +562,15 @@ function registrarAside(registrar: OpeningRegistrar, harvest: ReturnType<typeof 
   return bits.join(' ');
 }
 
-export function applyOpeningAnswer(state: GameState, rawInput: string): {
+export async function applyOpeningAnswer(
+  state: GameState,
+  rawInput: string,
+  settings?: Settings
+): Promise<{
   state: GameState;
   generateOpening: boolean;
   openingNotes?: string;
-} {
+}> {
   const est = state.openingEstablishment;
   if (!est || est.complete || !est.pending.length) {
     return { state, generateOpening: false };
@@ -546,6 +584,45 @@ export function applyOpeningAnswer(state: GameState, rawInput: string): {
   }
   if (/^random\s+(place|location|city)\b/i.test(answer) || /^use a random (place|location)\b/i.test(answer)) {
     harvest.location = harvest.location ?? pickRandom(RANDOM_PLACES);
+  }
+  const currentKind = est.pending[0]?.kind;
+  if (currentKind && !fieldForKind(currentKind, harvest) && !isMetaOnly(answer)) {
+    const accepted = acceptCurrentField(currentKind, answer);
+    if (accepted) {
+      if (currentKind === 'name') harvest.name = accepted;
+      if (currentKind === 'location') harvest.location = accepted;
+      if (currentKind === 'appearance') harvest.appearance = accepted;
+      if (currentKind === 'kit') harvest.kit = accepted;
+      if (currentKind === 'species' || currentKind === 'identity') harvest.species = accepted;
+    }
+  }
+  const needsRead =
+    !!settings &&
+    !isMetaOnly(answer) &&
+    (utteranceIsMessy(answer) || !!(currentKind && !fieldForKind(currentKind, harvest)));
+  if (needsRead) {
+    const read = await interpretPlayerUtterance({
+      raw: answer,
+      mode: 'opening',
+      pendingKinds: est.pending.map((p) => p.kind),
+      pendingQuestions: est.pending.map((p) => p.question),
+      settings,
+      forceModel: !!(currentKind && !fieldForKind(currentKind, harvest)),
+    });
+    harvest.name = harvest.name ?? read.answers.name;
+    harvest.location = harvest.location ?? read.answers.location;
+    harvest.appearance = harvest.appearance ?? read.answers.appearance;
+    harvest.kit = harvest.kit ?? read.answers.kit;
+    harvest.species = harvest.species ?? read.answers.species;
+    harvest.askedWho = harvest.askedWho || read.askedWho;
+    harvest.askedWhat = harvest.askedWhat || read.askedWhat;
+    if (currentKind && !fieldForKind(currentKind, harvest) && read.meaning && !read.questionOnly) {
+      if (currentKind === 'name') harvest.name = harvest.name ?? read.meaning;
+      if (currentKind === 'location') harvest.location = harvest.location ?? read.meaning;
+      if (currentKind === 'appearance') harvest.appearance = harvest.appearance ?? read.meaning;
+      if (currentKind === 'kit') harvest.kit = harvest.kit ?? read.meaning;
+      if (currentKind === 'species' || currentKind === 'identity') harvest.species = harvest.species ?? read.meaning;
+    }
   }
   const registrar = est.registrar ?? {
     voice: 'system' as const,
@@ -563,11 +640,10 @@ export function applyOpeningAnswer(state: GameState, rawInput: string): {
     const harvested = fieldForKind(prompt.kind, harvest);
     const isCurrent = prompt.id === est.pending[0].id;
     let value = harvested;
-    const questionDump = (answer.match(/[?]/g)?.length ?? 0) >= 1 && answer.split(/\s+/).length > 8;
     if (!value && isCurrent && prompt.kind !== 'name') {
-      const source = questionDump ? stripLeadingQuestions(answer) : answer;
-      if (source.length >= 6) {
-        const clean = sanitizeOpeningAnswer(prompt.kind, source);
+      const accepted = acceptCurrentField(prompt.kind, answer);
+      if (accepted) {
+        const clean = sanitizeOpeningAnswer(prompt.kind, accepted);
         if (clean.text) value = clean.text;
         cheated = cheated || clean.cheated;
       }

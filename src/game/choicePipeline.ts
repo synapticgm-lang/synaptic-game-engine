@@ -378,7 +378,7 @@ STRICT RULES:
 3. ...
 No narrative, no preamble, no tags. Always output 3 or 4 choices.`;
 
-async function callChoiceModel(
+export async function callSmallModel(
   settings: Settings,
   systemPrompt: string,
   userPrompt: string
@@ -461,7 +461,7 @@ ${rejectedSummary || '(none)'}
 
 Generate 3-4 grounded choices now.`;
 
-  const raw = await callChoiceModel(settings, CHOICE_TIER_SYSTEM, userPrompt);
+  const raw = await callSmallModel(settings, CHOICE_TIER_SYSTEM, userPrompt);
   return extractChoiceLines(raw);
 }
 
