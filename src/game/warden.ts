@@ -7,6 +7,7 @@ import {
 } from './suggestionValidation';
 import type { PlayerIntent } from './intentParser';
 import { narrativeMentionsPlayerHarm } from './narrativeSanitize';
+import { isUnresolvedActionNarrative } from './actionResolution';
 
 export interface WardenResult {
   /** Events allowed after sheet checks. */
@@ -168,6 +169,11 @@ export function runWarden(
   const inputClaims = findUnsupportedItemClaims(playerInput, state);
   if (inputClaims.length) {
     notes.push(`Player claimed missing item(s): ${inputClaims.join(', ')}`);
+  }
+
+  const resolvedIntent = intent ?? { kind: 'other' as const, label: 'Free action', targets: [] };
+  if (isUnresolvedActionNarrative(playerInput, narrativeText, resolvedIntent)) {
+    notes.push('Narrative does not resolve the player action');
   }
 
   if (

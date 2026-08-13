@@ -51,12 +51,27 @@ const THREAT_PRESENT =
   /\b(creature|enemy|beast|monster|figure|silhouette|threat|hostile|attacker|foe|adversary|bandit|raider|goblin|predator)\b/i;
 
 /**
+ * In "dismiss X and look for a door", the last clause is the job.
+ * Short trailing fragments stay attached to the full line.
+ */
+export function primaryActionClause(input: string): string {
+  const text = input.replace(/\s+/g, ' ').trim();
+  const parts = text
+    .split(/\s+(?:and then|then|, then|and)\s+/i)
+    .map((s) => s.trim())
+    .filter(Boolean);
+  if (parts.length < 2) return text;
+  const last = parts[parts.length - 1];
+  if (last.split(/\s+/).length >= 3) return last;
+  return text;
+}
+
+/**
  * Map free-text player input to a coarse programmatic intent.
  * Used for Warden rules and turn summaries — not a full command language yet.
  */
 export function parsePlayerIntent(input: string, _state: GameState): PlayerIntent {
-  const text = input.trim();
-  for (const rule of RULES) {
+  const text = primaryActionClause(input);
     if (rule.re.test(text)) {
       const targets =
         text.match(/\b(?:the|a|an)\s+([a-z][\w'-]+(?:\s+[a-z][\w'-]+){0,2})/gi)?.map((t) =>

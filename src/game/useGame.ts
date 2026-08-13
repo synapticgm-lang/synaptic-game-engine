@@ -37,13 +37,13 @@ import { resolvePanelBudget } from './panelBudget';
 import { buildVisualConsistencyBlock } from './visualConsistency';
 import { fallbackSuggestionForState, findUnsupportedItemClaims, isSuggestionValidForState } from './suggestionValidation';
 import { isChoiceGroundedInTurn, normalizeStoryCorpus, padChoicesToCount, resolvePipelineChoices, sceneSafeFallbacks } from './choicePipeline';
-import { sanitizeNarrativeMechanics, ensureTurnProse, ensureDamageNarration, ensureEncounterNarration, ensureXpNarration, stripResidualMechanicTags } from './narrativeSanitize';
+import { sanitizeNarrativeMechanics, ensureTurnProse, ensureDamageNarration, ensureEncounterNarration, ensureXpNarration, stripUnearnedXpProse, stripResidualMechanicTags } from './narrativeSanitize';
 import { runWarden, sanitizeExtractedCharacterUpdates } from './warden';
 import { applyStructuralEvents } from './structuralEvents';
 import { collectTurnTimelineFacts, mergeTimeline } from './timeline';
 import { seedStateFromArchetype, seedStateFromCampaignBible } from './campaignSeed';
 import { formatCampaignStoryName, getCampaignBibleById } from '@/data/campaigns';
-import { parsePlayerIntent, groundPlayerAction } from './intentParser';
+import { parsePlayerIntent, groundPlayerAction, primaryActionClause } from './intentParser';
 import {
   buildTurnMandate,
   detectSceneHijack,
@@ -1487,7 +1487,7 @@ In <system-log>, only emit LitRPG/RPG progression lines (XP, loot, HP change as 
       if (isUnresolvedActionNarrative(sanitizedInput, cleanText, intentForMandate)) {
         const lastScene = liveCurrent.log
           .filter((e) => e.role === 'gm')
-          .slice(-3)
+          .slice(0, 8)
           .map((e) => e.content)
           .join('\n');
         cleanText = synthesizeActionResolution(
@@ -1663,6 +1663,20 @@ In <system-log>, only emit LitRPG/RPG progression lines (XP, loot, HP change as 
         ])
       );
       cleanText = ensureXpNarration(cleanText, mergedSystemLog);
+      if (isUnresolvedActionNarrative(sanitizedInput, cleanText, intentForMandate)) {
+        const lastScene = liveCurrent.log
+          .filter((e) => e.role === 'gm')
+          .slice(0, 8)
+          .map((e) => e.content)
+          .join('\n');
+        cleanText = synthesizeActionResolution(
+          primaryActionClause(sanitizedInput),
+          intentForMandate,
+          suggestionState,
+          lastScene
+        );
+        cleanText = stripUnearnedXpProse(cleanText);
+      }
 
       debugLogger.record('STATE_UPDATE', 'Merging GM response into game state', {
         turn: liveCurrent.turn,

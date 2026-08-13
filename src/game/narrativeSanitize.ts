@@ -177,9 +177,15 @@ export function ensureEncounterNarration(
 /**
  * If system-log awards XP but the story never explains why, add a one-line beat.
  */
+function isPositiveXpLogLine(line: string): boolean {
+  if (/\bno\s+xp\b/i.test(line)) return false;
+  if (/xp\s+gained:\s*0\b/i.test(line)) return false;
+  return /(?:^|[^\w])(?:xp gained|gained\s+\d+\s*xp)\b/i.test(line) && /\d+/.test(line);
+}
+
 export function ensureXpNarration(cleanText: string, systemLog: string[]): string {
-  const xpLine = systemLog.find((l) => /xp\s+gained|gained\s+\d+\s*xp/i.test(l));
-  if (!xpLine) return cleanText;
+  const xpLine = systemLog.find(isPositiveXpLogLine);
+  if (!xpLine) return stripUnearnedXpProse(cleanText);
   if (/\b(experience|xp\b|reward(?:ed)?|defeat(?:ed)?|slain|victory|triumph)/i.test(cleanText)) {
     return cleanText;
   }
@@ -188,5 +194,14 @@ export function ensureXpNarration(cleanText: string, systemLog: string[]): strin
     ? `The clash leaves you wiser — you gain ${amount} XP.`
     : `The clash leaves you wiser — you gain experience.`;
   return cleanText.trim() ? `${cleanText.trim()}\n\n${line}` : line;
+}
+
+/** Remove story XP claims when the ledger did not award any. */
+export function stripUnearnedXpProse(text: string): string {
+  return text
+    .replace(/\s*The clash leaves you wiser[^.?!]*[.?!]/gi, '')
+    .replace(/\s*You gain(?:ed)?(?:\s+\d+)?\s+(?:XP|experience)[^.?!]*[.?!]/gi, '')
+    .replace(/\n{3,}/g, '\n\n')
+    .trim();
 }
 

@@ -1,5 +1,5 @@
 import type { GameState } from './types';
-import type { PlayerIntent } from './intentParser';
+import { primaryActionClause, type PlayerIntent } from './intentParser';
 import { stripChoiceList } from './parser';
 import { playerFacingLocation } from './locationName';
 
@@ -14,7 +14,7 @@ const BRIDGE_MARKERS =
   /you follow through —|the moment settles as you take in what changed|you press for clarity —|you commit to the action|the immediate result lands in/i;
 
 const DEAD_STUB_MARKERS =
-  /slow circuit of|main approach and watch for secondary gaps|opaque remains opaque|ordinary quiet|no fresh landmarks announce themselves/i;
+  /slow circuit of|main approach and watch for secondary gaps|opaque remains opaque|ordinary quiet|no fresh landmarks announce themselves|that is what you can act on next|not a blank circuit/i;
 
 const FINDING_CUES =
   /\b(find|found|see|saw|seen|notice|noticed|spot|spotted|hear|heard|reveal|reveals|empty|locked|ajar|open|door|entrance|exit|alley|wall|corner|shadow|quiet|noise|nothing|glint|track|tracks|window|side|rear|front|roof|balance|grip|weight|swing|hum|buzz|flicker|smell|dust|crack|gap|boarded|intact|threat|movement|stillness|cool|warm|heavy|panel|menu|level|hp|mp|greyed|grayed|readout|list|entry|entries|light in (?:your|the) hand|car|van|tunic|clothes|sword)\b/i;
@@ -59,12 +59,14 @@ export function isUnresolvedActionNarrative(
   narrative: string,
   intent: PlayerIntent
 ): boolean {
+  const job = primaryActionClause(playerAction);
   const prose = proseOnly(narrative);
   if (!prose || prose.length < 60) return true;
   if (isGenericBridgeNarrative(narrative)) return true;
+  if (/bring the System panel in close/i.test(prose) && !isPanelOnlyAction(job)) return true;
 
   const needsFindings =
-    NEEDS_FINDINGS_ACTION.test(playerAction)
+    NEEDS_FINDINGS_ACTION.test(job)
     || intent.kind === 'observe'
     || intent.kind === 'search'
     || intent.kind === 'move'
@@ -72,10 +74,10 @@ export function isUnresolvedActionNarrative(
 
   if (needsFindings && !FINDING_CUES.test(prose)) return true;
 
-  const focus = playerAction.match(FOCUS_NOUN)?.[1];
+  const focus = job.match(FOCUS_NOUN)?.[1];
   if (focus && !new RegExp(`\\b${focus}\\b`, 'i').test(prose)) return true;
 
-  const tokens = (playerAction.toLowerCase().match(/[a-z]{4,}/g) ?? []).filter(
+  const tokens = (job.toLowerCase().match(/[a-z]{4,}/g) ?? []).filter(
     (t) => !/^(with|from|that|this|have|into|your|their|about|would|could|should|first|other|more|closely|additional|nearest|nearby|wonder)$/.test(t)
   );
   if (tokens.length >= 3) {
@@ -132,6 +134,25 @@ function sceneIsLive(lastScene: string): boolean {
   );
 }
 
+function describeWhatIsNear(state: GameState, lastScene: string, place: string): string {
+  const s = lastScene.toLowerCase();
+  const bits: string[] = [];
+  if (/\b(scream|shout|panic|people|crowd)\b/.test(s)) bits.push('people still moving and making noise');
+  if (/\bcrystal/.test(s)) bits.push('green crystals breaking the concrete');
+  if (/\b(car|van|vehicle|wreck)\b/.test(s)) bits.push('at least one wrecked vehicle on the curb');
+  if (/\balley\b/.test(s)) bits.push('an alley cutting off the street');
+  if (/\b(panel|system)\b/.test(s)) bits.push('the System panel still at the edge of your sight if you want it');
+  const exits = (state.locationSheet?.exits ?? []).map((e) => e.label).filter(Boolean);
+  const props = (state.locationSheet?.interactables ?? []).map((i) => i.name).filter(Boolean).slice(0, 3);
+  if (exits.length) bits.push(`ways onward: ${exits.join('; ')}`);
+  if (props.length) bits.push(`in reach: ${props.join(', ')}`);
+  if (state.activeEncounter?.name) bits.push(`${state.activeEncounter.name} already in view`);
+  if (bits.length) {
+    return `Near you at ${place}: ${bits.join('; ')}.`;
+  }
+  return `Near you at ${place}: the street itself, ordinary cover, and whatever doorway or wreck is closest — the scene you are already in, not an empty void.`;
+}
+
 function sceneContinuation(lastScene: string): string {
   const s = lastScene.toLowerCase();
   const bits: string[] = [];
@@ -155,6 +176,20 @@ export function actionFocusPhrase(action: string): string | null {
   if (targeted) return targeted[0].replace(/\s+/g, ' ').trim();
   const bare = action.match(FOCUS_NOUN);
   return bare ? bare[0] : null;
+}
+
+function isPanelOnlyAction(action: string): boolean {
+  const job = primaryActionClause(action);
+  if (/\b(dismiss|close|put away|hide|ignore|wave (?:off|away))\b/i.test(action)
+    && /\b(look|search|explor|door|around|walk|go)\b/i.test(job)) {
+    return false;
+  }
+  if (/\b(look around|search|explor|open door|for an? open)\b/i.test(job)
+    && !/\b(check|read|open|study)\b.{0,20}\b(system|pann?el|menu)\b/i.test(job)) {
+    return false;
+  }
+  return /\b(system\s*pann?el|status\s+panel|character\s+sheet|system\s+menu)\b/i.test(job)
+    || (/^\s*(?:check|read|open|study)\b/i.test(job) && /\b(system|pann?el|menu)\b/i.test(job));
 }
 
 function isGeneralLookAround(action: string, intent: PlayerIntent): boolean {
@@ -231,16 +266,21 @@ export function synthesizeActionResolution(
   lastSceneProse = ''
 ): string {
   const place = playerFacingLocation(state);
-  const action = playerAction.replace(/\s+/g, ' ').trim().slice(0, 160);
+  const full = playerAction.replace(/\s+/g, ' ').trim().slice(0, 200);
+  const action = primaryActionClause(full).slice(0, 160);
+  const dismissed = /\b(dismiss|close|put away|hide|ignore)\b/i.test(full)
+    && /\b(system|pann?el|menu)\b/i.test(full);
+  const prefix = dismissed ? 'You put the System panel away. ' : '';
   const gear = carriedGearLine(state);
   const weapon = equippedWeaponName(state);
   const pack = containerName(state);
   const level = state.character?.level ?? 1;
   const live = sceneContinuation(lastSceneProse);
+  const nearby = describeWhatIsNear(state, lastSceneProse, place);
   const focus = actionFocusPhrase(action);
+  const lookingFor = /\b(?:look|search|check|find|scan)\s+(?:around\s+)?for\b/i.test(action);
 
-  if (/\b(system\s+panel|status\s+panel|character\s+sheet|menus?|additional menus|system\s+want)\b/i.test(action)
-    || (intent.kind === 'observe' && /\b(panel|system|menu|options?)\b/i.test(action))) {
+  if (isPanelOnlyAction(full)) {
     const locked = level < 5
       ? 'A few headings sit greyed out with a level gate — they will not open yet, and they are not choices you can take.'
       : 'The menus you have unlocked respond; nothing extra invents itself.';
@@ -253,41 +293,28 @@ export function synthesizeActionResolution(
 
   const sheetAnswer = answerFromSheet(action, state, gear);
   if (sheetAnswer && (intent.kind === 'talk' || /\?/.test(action) || /\bwonder\b/i.test(action))) {
-    return sheetAnswer;
+    return prefix + sheetAnswer;
   }
 
-  if (focus && /\b(search|inspect|check|loot|rummage|open|look (?:in|inside|through))\b/i.test(action)) {
-    const around = live
-      ? ` Around you, ${live}.`
-      : ` You stay at ${place} — this search does not teleport you.`;
+  if (lookingFor && focus) {
     return (
-      `You go to ${focus} and search it for anything you can use. `
-      + `Inside is ordinary wreckage: torn material, dust, nothing that jumps into your inventory as a new weapon or kit. `
-      + `You finish knowing ${focus} has no ready supplies worth taking.${around}`
+      `${prefix}You look for ${focus} from ${place}. ${nearby} `
+      + (/\bdoor|gate|entrance\b/i.test(focus)
+        ? `The nearest door you can actually reach is a street-front door — shut, but close enough to try. No dungeon entrance invents itself.`
+        : `You do not invent a new landmark; you only mark whether ${focus} is in reach from here.`)
     );
   }
 
-  if (isGeneralLookAround(action, intent) || (intent.kind === 'observe' && !focus)) {
-    if (live) {
-      return (
-        `You look again from ${place}. ${live.charAt(0).toUpperCase()}${live.slice(1)}. `
-        + `That is what you can act on next — a person, a sound, cover, or the panel — not a blank circuit of sealed gaps.`
-      );
-    }
-    const exits = (state.locationSheet?.exits ?? []).map((e) => e.label).filter(Boolean);
-    const interactables = (state.locationSheet?.interactables ?? [])
-      .map((i) => i.name)
-      .filter(Boolean)
-      .slice(0, 3);
-    const foe = state.activeEncounter?.name;
-    const exitLine = exits.length
-      ? `Ways onward you can actually see: ${exits.join('; ')}.`
-      : `You note cover and the nearest way off this spot.`;
-    const propLine = interactables.length
-      ? ` Close enough to touch: ${interactables.join(', ')}.`
-      : ` You pick one concrete next beat: listen, move to cover, or check the nearest ordinary object in reach.`;
-    const foeLine = foe ? ` ${foe} is already in view.` : '';
-    return `You look around from ${place}. ${exitLine}${propLine}${foeLine}`;
+  if (focus && /\b(search|inspect|check|loot|rummage|open|look (?:in|inside|through))\b/i.test(action) && !lookingFor) {
+    return (
+      `${prefix}You go to ${focus} and search it for anything you can use. `
+      + `Inside is ordinary wreckage: torn material, dust, nothing that jumps into your inventory as a new weapon or kit. `
+      + `You finish knowing ${focus} has no ready supplies worth taking. ${nearby}`
+    );
+  }
+
+  if (isGeneralLookAround(action, intent) || (intent.kind === 'observe' && !focus) || /\blook around\b/i.test(action)) {
+    return `${prefix}You look around. ${nearby}`;
   }
 
   if (intentLooksLikePractice(action) || (intent.kind === 'other' && /\b(practice|swing|balance)\b/i.test(action))) {
@@ -296,7 +323,7 @@ export function synthesizeActionResolution(
       ? `The street does not go quiet for the drill; the noise you already heard stays in the background.`
       : `Nobody treats the motion as a challenge.`;
     return (
-      `You take a moment with ${named} — weight, grip, a short controlled arc. `
+      `${prefix}You take a moment with ${named} — weight, grip, a short controlled arc. `
       + `The balance is workable; the motion steadies your breathing. ${noise}`
     );
   }

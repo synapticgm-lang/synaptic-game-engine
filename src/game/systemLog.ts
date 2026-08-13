@@ -6,7 +6,10 @@ export function isDiceMechanicsLine(line: string): boolean {
 }
 
 export function filterSystemLogForEngine(lines: string[], engineMode: EngineMode): string[] {
-  const cleaned = lines.map((l) => l.trim()).filter(Boolean);
+  const cleaned = lines
+    .map((l) => l.trim())
+    .filter(Boolean)
+    .filter((l) => !/^no xp gained\.?$/i.test(l));
   if (engineMode === 'dnd') return cleaned;
   return cleaned.filter((l) => !isDiceMechanicsLine(l));
 }
