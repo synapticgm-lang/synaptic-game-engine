@@ -16,6 +16,7 @@ export type IntentKind =
   | 'rest'
   | 'search'
   | 'flee'
+  | 'refuse'
   | 'other';
 
 export interface PlayerIntent {
@@ -35,6 +36,11 @@ export interface GroundedPlayerAction {
 
 const RULES: { kind: IntentKind; re: RegExp; label: string }[] = [
   { kind: 'flee', re: /\b(flee|run away|retreat|escape|back away)\b/i, label: 'Flee / disengage' },
+  {
+    kind: 'refuse',
+    re: /\b(i\s+refuse|i\s+won'?t|didn'?t\s+agree|don'?t\s+agree|not\s+agreeing|i\s+didn'?t\s+(?:sign|ask|want)|no\s+thanks|i\s+decline)\b/i,
+    label: 'Refuse / protest',
+  },
   // Practice / gear tests before attack so "practice swings" is not treated as combat.
   { kind: 'observe', re: /\b(practice|test\s+(?:the\s+)?[\w'-]+(?:\s+[\w'-]+){0,3}\s+balance|a\s+few\s+swings|warm[- ]?up)\b/i, label: 'Practice' },
   { kind: 'attack', re: /\b(attack|strike|slash|stab|shoot|fight|hit|melee|cast fireball|swing\s+(?:at|toward|towards))\b/i, label: 'Attack' },
@@ -111,6 +117,9 @@ export function primaryActionClause(input: string): string {
 export function parsePlayerIntent(input: string, _state?: GameState): PlayerIntent {
   const text = primaryActionClause(input);
   if (isSpeechOrProtest(text) || isSpeechOrProtest(input)) {
+    if (/\b(refuse|won'?t|didn'?t\s+agree|don'?t\s+agree|decline)\b/i.test(text + ' ' + input)) {
+      return { kind: 'refuse', label: 'Refuse / protest', targets: [] };
+    }
     return { kind: 'talk', label: 'Talk / protest', targets: [] };
   }
   for (const rule of RULES) {

@@ -186,6 +186,14 @@ function ItemInspectCard({ item, slotLabel, onClose }: { item: Item; slotLabel: 
 }
 
 function AttributeGrid({ state }: { state: GameState }) {
+  const reveal = state.statusReveal ?? (state.tutorialProgress?.fullStatusUnlocked ? 'full' : 'minimal');
+  if (reveal === 'minimal') {
+    return (
+      <p className="text-[11px] text-slate-500 italic">
+        Full attributes unlock after your first rest, level-up, or tutorial boss.
+      </p>
+    );
+  }
   const attrs = state.character.attributes ?? {} as Record<AttributeKey, number>;
   const entries: [AttributeKey, number][] = (['STR', 'DEX', 'CON', 'INT', 'WIS', 'CHA'] as AttributeKey[]).map((k) => [k, attrs[k] ?? 0]);
 
@@ -194,7 +202,7 @@ function AttributeGrid({ state }: { state: GameState }) {
       {entries.map(([key, val]) => (
         <div key={key} className="rounded-md bg-slate-800/60 border border-slate-700 px-2 py-1.5 text-center">
           <div className="text-[10px] text-slate-500 font-medium">{key}</div>
-          <div className="text-sm font-mono font-bold text-slate-100">{val}</div>
+          <div className="text-sm font-mono font-bold text-slate-100">{reveal === 'full' ? val : '—'}</div>
         </div>
       ))}
     </div>
@@ -203,14 +211,17 @@ function AttributeGrid({ state }: { state: GameState }) {
 
 function SidePanel({ state }: { state: GameState }) {
   const c = state.character;
+  const reveal = state.statusReveal ?? (state.tutorialProgress?.fullStatusUnlocked ? 'full' : 'minimal');
   return (
     <div className="h-full w-64 space-y-4 overflow-y-auto bg-slate-950/95 p-3 sm:w-56">
       <div>
         <h3 className="mb-2 font-serif text-sm uppercase tracking-wider text-crimson-400">Vitals</h3>
         <div className="space-y-2">
           <StatBar label="Health" current={c.hp} max={c.maxHp} color="bg-gradient-to-r from-rose-700 to-rose-500" icon={<Heart size={12} className="text-rose-400" />} />
-          <StatBar label="Mana" current={c.mp} max={c.maxMp} color="bg-gradient-to-r from-sky-600 to-sky-400" icon={<Droplet size={12} className="text-sky-400" />} />
-          {c.sp !== undefined && c.maxSp !== undefined && c.maxSp > 0 && (
+          {(reveal !== 'minimal') && (
+            <StatBar label="Mana" current={c.mp} max={c.maxMp} color="bg-gradient-to-r from-sky-600 to-sky-400" icon={<Droplet size={12} className="text-sky-400" />} />
+          )}
+          {reveal === 'full' && c.sp !== undefined && c.maxSp !== undefined && c.maxSp > 0 && (
             <StatBar label="Stamina" current={c.sp} max={c.maxSp} color="bg-gradient-to-r from-emerald-600 to-emerald-400" icon={<Zap size={12} className="text-emerald-400" />} />
           )}
         </div>
@@ -223,8 +234,10 @@ function SidePanel({ state }: { state: GameState }) {
         <h3 className="mb-2 font-serif text-sm uppercase tracking-wider text-crimson-400">Progress</h3>
         <div className="space-y-1 text-xs text-slate-300">
           <div className="flex justify-between"><span>Level</span><span className="font-mono font-bold text-amber-400">{c.level}</span></div>
-          <div className="flex justify-between"><span>XP</span><span className="font-mono">{c.xp}/{c.xpToNext}</span></div>
-          {c.armorClass != null && <div className="flex justify-between"><span>Armor Class</span><span className="font-mono font-bold">{c.armorClass}</span></div>}
+          {reveal !== 'minimal' && (
+            <div className="flex justify-between"><span>XP</span><span className="font-mono">{c.xp}/{c.xpToNext}</span></div>
+          )}
+          {reveal === 'full' && c.armorClass != null && <div className="flex justify-between"><span>Armor Class</span><span className="font-mono font-bold">{c.armorClass}</span></div>}
           <div className="flex justify-between"><span>Gold</span><span className="font-mono text-amber-400">{state.gold ?? 0}</span></div>
         </div>
       </div>
@@ -238,7 +251,7 @@ function SidePanel({ state }: { state: GameState }) {
           </div>
         </div>
       )}
-      {c.bio && (
+      {reveal === 'full' && c.bio && (
         <div>
           <h3 className="mb-2 font-serif text-sm uppercase tracking-wider text-crimson-400">Biography</h3>
           <p className="text-xs leading-relaxed text-slate-300">{c.bio}</p>

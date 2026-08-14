@@ -1,0 +1,31 @@
+---
+description: Open playtest issues to fix in the next update batch. Do not patch these until John says to ship the next update.
+alwaysApply: true
+---
+
+# Playtest notes (next update)
+
+John is playtesting live. Collect issues here. Do not implement until he asks for the next update.
+
+## Open
+
+(none)
+
+## Done (already shipped)
+
+- Settings crash (Lucide `Map` shadowing `Map`)
+- Second-person narration option
+- Insults / “why should I give you my name” stored as clothes
+- Inventory portrait + icons matching described look
+- Quest journal counts vs hidden Guide Book hooks; blue System window; local map from named real-world places (`7e6d043`)
+- Do not ask “What do you do?” until a real story beat exists (`206dde7`)
+- Story first, then System; never System-only / `XP Gained: 0` as the whole turn (`41f7814` + this batch)
+- Tier mismatch: street stays Tier 1; map label is scale not dungeon danger; no “Every Mind” / “Tier 2 Urban Ruin”
+- Street-style local map; no bouncing MOVE orbs on the street
+- Kill canned look-around / “you follow through” collage; never swap a real GM beat for templates
+- Talk / protest treated as dialogue, not a physical action stub
+- Duplicate send lock (repeat-yourself); collapse identical player bubbles
+- Entering/scouting: describe the room before any creature; no “comes from Peterborough”
+- Character paper-doll layout: Show stats collapse; tabs replace the doll; tabs above phone chrome
+- HUD Merchant → clinical System **Salvage** (anywhere; no street shopkeeper)
+- Kid Mode fun swear swap (PIN lock; slurs masked)

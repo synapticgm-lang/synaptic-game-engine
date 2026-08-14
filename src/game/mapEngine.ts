@@ -1,6 +1,47 @@
 import type { Location3D, MapTier } from './types';
 import { isDummyStreetNodeName, isGenericMapPlace } from './questPlay';
 
+export type MobRole = 'trash' | 'elite' | 'miniBoss' | 'boss';
+
+export interface NodeHiddenLoot {
+  rarity: import('./types').Rarity;
+  qty: number;
+  gold?: number;
+  itemHint?: string;
+  pityKey?: string;
+}
+
+export interface NodeHidden {
+  traps: Array<{
+    id: string;
+    dc: number;
+    skillHint: 'perception' | 'investigation' | 'thievery' | 'athletics';
+    damage?: number;
+    revealed: boolean;
+    disarmed: boolean;
+  }>;
+  lootables: Array<{
+    id: string;
+    label: string;
+    opened: boolean;
+    loot: NodeHiddenLoot;
+    trapId?: string;
+  }>;
+  secrets: Array<{
+    id: string;
+    clue?: string;
+    revealed: boolean;
+    unlocksNodeId?: string;
+  }>;
+  mobs: Array<{
+    id: string;
+    name: string;
+    level: number;
+    role: MobRole;
+    spawned: boolean;
+  }>;
+}
+
 export interface MapNode {
   id: string;
   name: string;
@@ -15,6 +56,8 @@ export interface MapNode {
     secondary: string[];
   };
   subMapId?: string; // Link to nested tier map inside this node
+  /** Engine-seeded traps/loot/secrets/mobs — set by dungeonSeed, not the LLM. */
+  hidden?: NodeHidden;
 }
 
 export interface MapBlueprint {
@@ -29,7 +72,10 @@ export interface MapBlueprint {
 export interface ActiveDungeonState {
   blueprintId: string;
   dungeonName: string;
+  /** Map SCALE (1 world … 4 tactical). For local-area street maps this is 3 — not danger. */
   tier: MapTier;
+  /** Dungeon danger T1–T4 for loot/enemies. Omit on street maps. */
+  dangerTier?: MapTier;
   parentCoordinates?: Location3D;
   currentZLevel: number;
   currentNodeId: string;
@@ -40,6 +86,10 @@ export interface ActiveDungeonState {
     hazard?: string;
     bossNode?: string;
   };
+  /** First clear of boss room still pending Epic+ guarantee. */
+  bossFirstClearPending?: boolean;
+  /** Guaranteed Rare+/Epic+ floor for this run (Pack 1). */
+  runFloorMet?: boolean;
 }
 
 export const CORE_BLUEPRINTS: MapBlueprint[] = [
@@ -108,7 +158,7 @@ export function generateProceduralBlueprint(
         name: `${name} - Sector ${i + 1}`,
         description: `Section ${i + 1} radiating from the core hub.`,
         connections: [hubId],
-        tags: ['spoke'],
+        tags: i === spokeCount - 1 ? ['spoke', 'boss', 'lootable'] : i % 3 === 0 ? ['spoke', 'lootable'] : i % 3 === 1 ? ['spoke', 'hazard'] : ['spoke'],
         coordinates: { x, y },
         zLevel,
       });
@@ -131,11 +181,23 @@ export function generateProceduralBlueprint(
       if (i > 0) connections.push(`node_gen_${i}`);
       if (i < count - 1) connections.push(`node_gen_${i + 2}`);
 
+      const tags: string[] =
+        i === 0
+          ? ['entry']
+          : i === count - 1
+            ? ['boss', 'lootable']
+            : i % 3 === 1
+              ? ['lootable']
+              : i % 3 === 2
+                ? ['hazard']
+                : ['passage'];
+
       nodes.push({
         id,
         name: `${name} - Hex ${i + 1}`,
         description: `Navigable hex sector ${i + 1} of ${name}.`,
         connections,
+        tags,
         coordinates: { x, y },
         zLevel,
         features: {
@@ -182,12 +244,15 @@ export function initializeDungeon(
     blueprintId: blueprint.id,
     dungeonName,
     tier,
+    dangerTier: tier,
     parentCoordinates: parentCoords,
     currentZLevel: initialZ,
     currentNodeId: startNodeId,
     visitedNodeIds: [startNodeId],
     clearedNodeIds: [],
     nodes: blueprint.nodes,
+    bossFirstClearPending: true,
+    runFloorMet: false,
   };
 }
 
@@ -280,7 +345,7 @@ export function buildLocalAreaMap(
       connections: neighbors,
       coordinates: slot,
       zLevel: 0,
-      tags: i === 0 ? ['here', 'entry'] : ['local'],
+      tags: i === 0 ? ['here', 'entry'] : lookLikeEntrance(name) ? ['local', 'entrance', 'micro_dungeon'] : ['local'],
     };
   });
 
@@ -288,6 +353,8 @@ export function buildLocalAreaMap(
     blueprintId: 'local-area',
     dungeonName: here,
     tier: 3,
+    // Street map: scale only — no dungeon dangerTier
+    dangerTier: undefined,
     parentCoordinates: parentCoords,
     currentZLevel: 0,
     currentNodeId: 'local_0',
@@ -295,6 +362,13 @@ export function buildLocalAreaMap(
     clearedNodeIds: [],
     nodes,
   };
+}
+
+/** Heuristic: named buildings that can open a seeded micro-dungeon. */
+export function lookLikeEntrance(name: string): boolean {
+  return /\b(store|shop|mart|tesco|ruins?|warehouse|bunker|basement|mall|station|garage|tower|facility|lab|clinic|hospital|school|church|temple|cave|dungeon|complex|depot|yard|factory|plant)\b/i.test(
+    name
+  );
 }
 
 /** Drop dummy Cover/Side street nodes and junk titles (Every Mind, First Blood) from a saved street map. */
@@ -346,7 +420,7 @@ export function addLandmarkToLocalMap(dungeon: ActiveDungeonState, landmark: str
     connections: here ? [here.id] : [],
     coordinates: slot,
     zLevel: 0,
-    tags: ['local'],
+    tags: lookLikeEntrance(name) ? ['local', 'entrance', 'micro_dungeon'] : ['local'],
   };
   const nodes = dungeon.nodes.map((n) =>
     n.id === here?.id ? { ...n, connections: [...n.connections, id] } : n

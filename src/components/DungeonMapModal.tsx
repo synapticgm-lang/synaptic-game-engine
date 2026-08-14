@@ -31,6 +31,7 @@ export const DungeonMapModal: React.FC<DungeonMapModalProps> = ({
   onMoveNode,
   onExitDungeon,
   onEnsureLocalMap,
+  onLoadDungeon,
 }) => {
   useEffect(() => {
     if (isOpen) onEnsureLocalMap?.();
@@ -94,6 +95,7 @@ export const DungeonMapModal: React.FC<DungeonMapModalProps> = ({
     3: 'Local streets · 1 km scale',
     4: 'Tactical interior',
   };
+  const mapScaleStreet = 'Local streets · ~1 km scale';
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
@@ -103,7 +105,12 @@ export const DungeonMapModal: React.FC<DungeonMapModalProps> = ({
         <div className="flex justify-between items-center pb-4 border-b border-slate-700">
           <div>
             <div className="flex items-center gap-2 text-xs font-semibold text-cyan-400 mb-1">
-              <span>🗺️ {isStreet ? 'Street map · local scale' : (scaleNames[displayDungeon.tier] ?? 'Map')}</span>
+              <span>🗺️ {isStreet ? mapScaleStreet : (scaleNames[displayDungeon.tier] ?? 'Map')}</span>
+              {!isStreet && displayDungeon.dangerTier != null && (
+                <span className="rounded bg-rose-950/60 px-2 py-0.5 text-rose-200 border border-rose-800/40">
+                  Danger Tier {displayDungeon.dangerTier}
+                </span>
+              )}
               {currentCoordinates && !isStreet && (
                 <span className="rounded bg-slate-800 px-2 py-0.5 text-slate-300">
                   q: {currentCoordinates.q}, r: {currentCoordinates.r} | Floor: {displayDungeon.currentZLevel}
@@ -129,7 +136,19 @@ export const DungeonMapModal: React.FC<DungeonMapModalProps> = ({
         {/* Map Visualizer Canvas */}
         <div className="relative flex-1 my-4 min-h-[360px] overflow-auto rounded-lg bg-slate-950 border border-slate-800 p-4">
           {isStreet ? (
-            <StreetMapCanvas dungeon={displayDungeon} currentNodeId={displayDungeon.currentNodeId} onMoveNode={onMoveNode} />
+            <StreetMapCanvas
+              dungeon={displayDungeon}
+              currentNodeId={displayDungeon.currentNodeId}
+              onMoveNode={onMoveNode}
+              onEnterSite={
+                onLoadDungeon
+                  ? (siteName) => {
+                      onLoadDungeon('grid', siteName, true, 1, 6);
+                      onClose();
+                    }
+                  : undefined
+              }
+            />
           ) : (
             <>
               <svg className="absolute inset-0 w-full h-full min-w-[500px] min-h-[500px] pointer-events-none">
@@ -249,10 +268,12 @@ function StreetMapCanvas({
   dungeon,
   currentNodeId,
   onMoveNode,
+  onEnterSite,
 }: {
   dungeon: ActiveDungeonState;
   currentNodeId: string;
   onMoveNode: (nodeId: string) => void;
+  onEnterSite?: (siteName: string) => void;
 }) {
   const roads = [40, 160, 280, 400, 520];
   const size = 560;
@@ -317,22 +338,43 @@ function StreetMapCanvas({
         const { x, y } = streetPx(node);
         const isCurrent = node.id === currentNodeId;
         const canMove = !!current?.connections.includes(node.id);
+        const isEntrance = (node.tags ?? []).some(
+          (t) => t === 'entrance' || t === 'micro_dungeon'
+        );
         return (
           <button
             key={node.id}
             type="button"
-            onClick={() => canMove && onMoveNode(node.id)}
+            onClick={() => {
+              if (isEntrance && isCurrent && onEnterSite) {
+                onEnterSite(node.name);
+                return;
+              }
+              if (canMove) onMoveNode(node.id);
+            }}
             disabled={!canMove && !isCurrent}
-            title={node.name}
+            title={isEntrance ? `${node.name} (enter site)` : node.name}
             style={{ left: `${x - 70}px`, top: `${y - 18}px` }}
             className={`absolute z-10 w-[140px] rounded-md border px-2 py-1.5 text-center shadow-md ${
               isCurrent
                 ? 'border-cyan-200 bg-cyan-700/95 text-white'
-                : 'border-slate-500/80 bg-slate-900/90 text-slate-100 hover:border-cyan-400'
-            } ${canMove ? 'cursor-pointer' : ''}`}
+                : isEntrance
+                  ? 'border-amber-500/80 bg-slate-900/95 text-amber-50 hover:border-amber-300'
+                  : 'border-slate-500/80 bg-slate-900/90 text-slate-100 hover:border-cyan-400'
+            } ${canMove || (isEntrance && isCurrent) ? 'cursor-pointer' : ''}`}
           >
-            <span className="block text-[11px] font-medium leading-tight break-words">{node.name}</span>
-            {isCurrent && <span className="mt-0.5 block text-[8px] uppercase tracking-wide text-cyan-100">You are here</span>}
+            <span className="block text-[11px] font-medium leading-tight break-words">
+              {isEntrance ? '🚪 ' : ''}
+              {node.name}
+            </span>
+            {isEntrance && (
+              <span className="mt-0.5 block text-[8px] uppercase tracking-wide text-amber-200/90">
+                {isCurrent ? 'Tap to enter' : 'Site entrance'}
+              </span>
+            )}
+            {isCurrent && !isEntrance && (
+              <span className="mt-0.5 block text-[8px] uppercase tracking-wide text-cyan-100">You are here</span>
+            )}
           </button>
         );
       })}

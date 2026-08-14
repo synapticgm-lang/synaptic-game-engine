@@ -114,7 +114,7 @@ export function daysForPlayerAction(action: string, intent: PlayerIntent): numbe
   if (intent.kind === 'rest') return 1;
   if (intent.kind === 'move') return 0.5;
   if (intent.kind === 'search') return 0.25;
-  if (intent.kind === 'talk' || intent.kind === 'observe') return 0.15;
+  if (intent.kind === 'talk' || intent.kind === 'refuse' || intent.kind === 'observe') return 0.15;
   if (intent.kind === 'attack' || intent.kind === 'flee') return 0.1;
   return 0.2;
 }

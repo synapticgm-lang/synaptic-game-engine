@@ -280,6 +280,25 @@ export function SettingsModal({ settings, storyName, engineMode, gameState, onSa
               </p>
             )}
             <div>
+              <label className="mb-2 block text-xs font-medium text-slate-400">Maturity Tier</label>
+              <div className="grid grid-cols-2 gap-2">
+                <ChoiceCard
+                  label="PG-13"
+                  sublabel="Default"
+                  selected={(draft.maturityTier ?? 'pg13') === 'pg13'}
+                  onClick={() => update('maturityTier', 'pg13')}
+                  disabled={isKidMode}
+                />
+                <ChoiceCard
+                  label="Mature"
+                  sublabel="Opt-in 18+"
+                  selected={draft.maturityTier === 'mature'}
+                  onClick={() => update('maturityTier', 'mature')}
+                  disabled={isKidMode}
+                />
+              </div>
+            </div>
+            <div>
               <label className="mb-2 block text-xs font-medium text-slate-400">Violence Detail</label>
               <div className="grid grid-cols-3 gap-2">
                 {([
@@ -317,6 +336,48 @@ export function SettingsModal({ settings, storyName, engineMode, gameState, onSa
                 ))}
               </div>
             </div>
+            <ToggleRow
+              icon={<Shield size={15} />}
+              label="Sexual content (fade-to-black)"
+              description="Allow implied intimacy; still fades to black"
+              checked={!!draft.sexualContent}
+              onChange={(value) => update('sexualContent', value)}
+              disabled={isKidMode || draft.maturityTier !== 'mature'}
+            />
+            <ToggleRow
+              icon={<Shield size={15} />}
+              label="Substance use"
+              description="Alcohol / drugs may appear in fiction"
+              checked={draft.substanceUse !== false}
+              onChange={(value) => update('substanceUse', value)}
+              disabled={isKidMode}
+            />
+            <div>
+              <label className="mb-2 block text-xs font-medium text-slate-400">Dark themes</label>
+              <div className="grid grid-cols-3 gap-2">
+                {([
+                  ['none', 'None'],
+                  ['implied', 'Implied'],
+                  ['explored', 'Explored'],
+                ] as const).map(([value, label]) => (
+                  <ChoiceCard
+                    key={value}
+                    label={label}
+                    selected={(draft.darkThemes ?? 'implied') === value}
+                    onClick={() => update('darkThemes', value)}
+                    disabled={isKidMode}
+                  />
+                ))}
+              </div>
+            </div>
+            <ToggleRow
+              icon={<Shield size={15} />}
+              label="Confirm content rewrites"
+              description='Pause on "System interprets…" before applying rating rewrites'
+              checked={draft.confirmContentRewrites !== false}
+              onChange={(value) => update('confirmContentRewrites', value)}
+              disabled={isKidMode}
+            />
           </Section>
 
           <Section icon={<MessageCircle size={16} />} title="Relationship Subplots" visible={activeTab === 'narrative'}>

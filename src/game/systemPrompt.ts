@@ -7,6 +7,7 @@ import { ADULT_MODE_RULES, KID_MODE_RULES } from './contentModeRules';
 import { formatFullMemoryBlock, formatCampaignRails } from './situationPacket';
 import { formatTimelineForPrompt } from './timelineFormat';
 import { playerFacingLocation } from './locationName';
+import { formatMaturityRules } from './maturity';
 
 // Re-exports for legacy imports (prefer contentModeRules / imagePromptModifier directly).
 export { KID_MODE_RULES } from './contentModeRules';
@@ -213,6 +214,7 @@ ${kidMode ? violenceRules.none : violenceRules[settings.violenceLevel]}
 ${kidMode ? cursingRules.none : cursingRules[settings.cursingLevel]}
 ${romanceRule}
 ${haremRule}
+${formatMaturityRules(settings)}
 These controls constrain presentation only; they never authorize inventing entities or contradicting deterministic game state.`;
 }
 
@@ -300,7 +302,8 @@ function buildLoreContext(cards: LoreCard[]): string {
 
 const ACTION_TAG_INSTRUCTIONS = `
 ACTION TAG PROTOCOL (MANDATORY):
-Emit structural XML tags for state changes: <item-gain />, <item-use />, <heal />, <damage />, <lore-card />, <quest-add />, <quest-update />, <quest-complete />.
+Emit structural XML tags for state changes: <item-gain name="Item" rarity="Rare" qty="1" />, <item-use />, <heal />, <damage />, <lore-card />, <quest-add />, <quest-update />, <quest-complete />.
+When HIDDEN ROOM LEDGER lists a closed lootable rarity, that rarity is mandatory on <item-gain> — never upgrade or downgrade the code-rolled tier.
 
 LIVING WORLD PROTOCOL (MANDATORY):
 The engine ticks in-game time from player turns and writes weekly facts into the WORLD LEDGER. Player speech is an attempt; the tag is the commit. When a recurring deal or standing order is sealed this turn, emit the matching tag. Do not invent off-screen profit, guild progress, or rival moves — narrate ledger / VISIT REPORT facts only.

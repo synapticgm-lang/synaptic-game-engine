@@ -3,6 +3,16 @@ import type { GameState, Item, Rarity } from './types';
 import { addItem, canAddItem } from './inventory';
 import { initializeDungeon, moveToNode, exitDungeon } from './mapEngine';
 import type { MapTier } from './types';
+import {
+  markLootablesOpenedOnGain,
+  mergeSheetWithNode,
+  resolveSeededRarity,
+  seedDungeonState,
+  currentDungeonNode,
+} from './dungeonSeed';
+import { advanceLocationMemory } from './locationMemory';
+import { ensureLocationSheet } from './pendingTurn';
+import { closePlaceArc, upsertPlaceFromSheet } from './places';
 
 function uid(): string {
   return crypto.randomUUID();
@@ -29,12 +39,40 @@ export function applyStructuralEvents(
   for (const e of events) {
     if (e.type === 'item-gain' && e.name) {
       const qty = Math.max(1, e.qty ?? 1);
+      const seeded = resolveSeededRarity(next.activeDungeon, e.name, e.rarity, {
+        pity: next.lootPity,
+        seed: next.seed || 'seed',
+        source: e.lootSource,
+        claimedRarity: e.rarity,
+        firstChestUncommonBias: next.tutorialProgress?.firstChestUncommonBiasPending === true,
+      });
+      const rarity = (seeded.rarity || (e.rarity as Rarity) || 'Common') as Rarity;
+      if (seeded.tier != null && seeded.nextPity != null) {
+        next = {
+          ...next,
+          lootPity: {
+            byTier: {
+              ...(next.lootPity?.byTier ?? {}),
+              [seeded.tier]: seeded.nextPity,
+            },
+          },
+        };
+      }
+      if (next.activeDungeon && seeded.dungeonPatch) {
+        next = {
+          ...next,
+          activeDungeon: { ...next.activeDungeon, ...seeded.dungeonPatch },
+        };
+      }
       const item: Item = {
         id: e.id || uid(),
         name: e.name,
-        rarity: 'Common' as Rarity,
+        rarity,
         quantity: qty,
-        provenance: 'Found during adventure',
+        provenance:
+          e.lootSource === 'quest' || e.lootSource === 'story' || e.lootSource === 'key'
+            ? `Quest/story grant (${e.lootSource})`
+            : 'Found during adventure',
       };
       if (strict) {
         const check = canAddItem(next, item);
@@ -45,7 +83,6 @@ export function applyStructuralEvents(
       }
       const result = addItem(next, item);
       if (!result.ok) {
-        // Soft-fail: still grant if not strict (keeps loot flowing) but note it.
         if (strict) {
           notes.push(result.reason ?? 'Could not add item');
           continue;
@@ -55,6 +92,22 @@ export function applyStructuralEvents(
         next = result.state;
       }
       gainedItems.push(item);
+      if (next.activeDungeon) {
+        next = {
+          ...next,
+          activeDungeon: markLootablesOpenedOnGain(next.activeDungeon, [item.name]) ?? next.activeDungeon,
+        };
+      }
+      notes.push(`Loot granted: [${rarity}] ${item.name}`);
+      if (seeded.pityTriggered) {
+        notes.push('Pity Protocol engaged — Epic+ guarantee applied.');
+      }
+      if (seeded.bossFirstClear) {
+        notes.push('Boss first-clear: Epic+ guarantee applied.');
+      }
+      if (seeded.runFloorApplied) {
+        notes.push('Run floor guarantee applied.');
+      }
     }
 
     if (e.type === 'item-use' && (e.name || e.id)) {
@@ -83,7 +136,7 @@ export function applyStructuralEvents(
       const blueprint = e.blueprintId || 'grid';
       const procedural = e.isProcedural ?? true;
       const tier = (e.tier ?? 4) as MapTier;
-      const dungeon = initializeDungeon(
+      let dungeon = initializeDungeon(
         blueprint,
         e.dungeonName,
         procedural,
@@ -91,27 +144,74 @@ export function applyStructuralEvents(
         next.currentCoordinates,
         e.nodeCount
       );
+      dungeon = seedDungeonState(dungeon, next.seed || 'seed');
+      const locMem = advanceLocationMemory(next, e.dungeonName);
+      const sheet = mergeSheetWithNode(
+        locMem.locationSheet ?? ensureLocationSheet({ ...next, ...locMem }),
+        currentDungeonNode(dungeon)
+      );
       next = {
         ...next,
+        ...locMem,
+        locationSheet: sheet,
         activeDungeon: dungeon,
         currentLocation: e.dungeonName,
       };
-      notes.push(`Dungeon loaded: ${e.dungeonName}`);
+      notes.push(`Dungeon loaded: ${e.dungeonName} (seeded hidden loot/traps/mobs)`);
     }
 
     if (e.type === 'dungeon-move' && e.nodeId && next.activeDungeon) {
+      let moved = moveToNode(next.activeDungeon, e.nodeId);
+      // Run floor becomes eligible once half the site is visited.
+      if (
+        !moved.runFloorMet &&
+        moved.visitedNodeIds.length >= Math.ceil(moved.nodes.length * 0.5)
+      ) {
+        // Flag stays false until a chest consumes the floor guarantee.
+      }
+      const node = currentDungeonNode(moved);
+      const locMem = advanceLocationMemory(
+        next,
+        node ? `${moved.dungeonName} — ${node.name}` : next.currentLocation
+      );
       next = {
         ...next,
-        activeDungeon: moveToNode(next.activeDungeon, e.nodeId),
+        ...locMem,
+        locationSheet: mergeSheetWithNode(
+          locMem.locationSheet ?? ensureLocationSheet({ ...next, ...locMem }),
+          node
+        ),
+        activeDungeon: moved,
       };
     }
 
     if (e.type === 'dungeon-exit') {
+      const leftDungeon = next.activeDungeon;
+      const parentName =
+        leftDungeon?.parentCoordinates
+          ? next.previousLocationSheet?.name || next.currentLocation
+          : next.previousLocationSheet?.name || next.currentLocation;
+      const locMem = advanceLocationMemory(next, parentName || 'Outside');
+      const closedSummary = leftDungeon
+        ? `Cleared/left ${leftDungeon.dungeonName} (T${leftDungeon.dangerTier ?? leftDungeon.tier}); visited ${leftDungeon.visitedNodeIds.length}/${leftDungeon.nodes.length} nodes.`
+        : '';
       next = {
         ...next,
+        ...locMem,
         activeDungeon: exitDungeon(),
+        places: leftDungeon
+          ? closePlaceArc(
+              upsertPlaceFromSheet(next.places ?? [], next.previousLocationSheet, {
+                dungeonRef: leftDungeon.blueprintId,
+              }),
+              leftDungeon.dungeonName,
+              closedSummary,
+              next.turn
+            )
+          : next.places,
       };
       notes.push('Dungeon exited');
+      if (closedSummary) notes.push(closedSummary);
     }
 
     if (e.type === 'hex-move' && typeof e.q === 'number' && typeof e.r === 'number') {

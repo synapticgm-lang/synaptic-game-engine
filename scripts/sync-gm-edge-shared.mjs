@@ -23,6 +23,13 @@ const FILES = [
   'choiceTierRules.ts',
   'contentModeRules.ts',
   'mapEngine.ts',
+  'seededRng.ts',
+  'dungeonSeed.ts',
+  'placeAuthority.ts',
+  'places.ts',
+  'campaignMemory.ts',
+  'tutorialBeats.ts',
+  'maturity.ts',
 ];
 
 function rewriteImports(source, file) {

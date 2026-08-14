@@ -32,6 +32,9 @@ export interface GameEvent {
   id?: string;
   name?: string;
   qty?: number;
+  rarity?: string;
+  /** quest | story | key | boss | random — non-random bypasses loot table. */
+  lootSource?: string;
   amount?: number;
   partner?: string;
   share?: number;
@@ -258,6 +261,8 @@ const TAG_PATTERNS: Array<{ type: GameEvent['type']; re: RegExp; parse: (m: RegE
         id: attrs.id || crypto.randomUUID(),
         name: attrs.name || '',
         qty: parseInt(attrs.qty ?? '1', 10) || 1,
+        rarity: attrs.rarity || undefined,
+        lootSource: attrs.source || attrs.lootsource || undefined,
       };
     },
   },
@@ -740,7 +745,7 @@ export function eventsToVisualUpdate(events: GameEvent[]): VisualUpdateRequest |
   return { description, formChange: !!e.formChange || isRadicalFormChange(description) };
 }
 
-export function eventsToQuestUpdates(events: GameEvent[], currentQuests: Quest[] = []): Quest[] {
+export function eventsToQuestUpdates(events: GameEvent[], currentQuests: Quest[] = [], turn = 0): Quest[] {
   let updatedQuests = [...currentQuests];
 
   for (const e of events) {
@@ -754,6 +759,9 @@ export function eventsToQuestUpdates(events: GameEvent[], currentQuests: Quest[]
           type: e.questType ?? 'side',
           status: 'active',
           revealed: true,
+          revealedTurn: turn,
+          activatedTurn: turn,
+          minTurnsBeforeComplete: 1,
           objectives: [],
         };
         updatedQuests.push(newQuest);
@@ -769,13 +777,25 @@ export function eventsToQuestUpdates(events: GameEvent[], currentQuests: Quest[]
         return {
           ...q,
           revealed: true,
+          revealedTurn: q.revealedTurn ?? turn,
+          activatedTurn: q.activatedTurn ?? turn,
           status: q.status === 'hidden' ? 'active' : q.status,
           objectives: updatedObjs,
         };
       });
     } else if (e.type === 'quest-complete' && e.id) {
-      updatedQuests = updatedQuests.map((q) =>
-        q.id === e.id ? { ...q, status: 'completed' as QuestStatus, revealed: true } : q
+      const q = updatedQuests.find((x) => x.id === e.id);
+      if (!q) continue;
+      const activated = q.activatedTurn ?? q.revealedTurn ?? turn;
+      const min = q.minTurnsBeforeComplete ?? 1;
+      if (q.status === 'hidden' || turn - activated < min) {
+        // Block same-turn create→complete (Hidden Door anti-pattern)
+        continue;
+      }
+      updatedQuests = updatedQuests.map((quest) =>
+        quest.id === e.id
+          ? { ...quest, status: 'completed' as QuestStatus, revealed: true, completedTurn: turn }
+          : quest
       );
     }
   }

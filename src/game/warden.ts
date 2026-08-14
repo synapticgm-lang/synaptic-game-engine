@@ -10,6 +10,7 @@ import { narrativeMentionsPlayerHarm } from './narrativeSanitize';
 import { isUnresolvedActionNarrative } from './actionResolution';
 import { detectSceneContradiction } from './sceneFacts';
 import { detectFactLockViolations } from './factLocks';
+import { resolveSeededRarity } from './dungeonSeed';
 
 export interface WardenResult {
   /** Events allowed after sheet checks. */
@@ -27,6 +28,7 @@ export interface WardenResult {
 const PEACEFUL_INTENTS = new Set<PlayerIntent['kind']>([
   'observe',
   'talk',
+  'refuse',
   'move',
   'rest',
 ]);
@@ -60,7 +62,8 @@ export function runWarden(
   const combatOk = hasCombatContext(state, events, intent);
   const harmNarrated = narrativeMentionsPlayerHarm(narrativeText);
 
-  for (const e of events) {
+  for (const raw of events) {
+    let e = raw;
     if (e.type === 'item-use') {
       const name = e.name ?? '';
       if (!name || !inventoryHasItem(state, name)) {
@@ -77,8 +80,17 @@ export function runWarden(
         continue;
       }
       const level = state.character?.level ?? 1;
+      const seededRarity = resolveSeededRarity(
+        state.activeDungeon,
+        name,
+        e.rarity,
+        state.lootPity,
+        state.seed || 'seed'
+      ).rarity;
+      // Code-seeded dungeon loot may be Epic/Legendary even at low level — rarity was rolled at seed time.
       if (
-        level < 8
+        !seededRarity
+        && level < 8
         && /\b(legendary|mythic|artifact|relic|unique|god(?:like)?|excalibur|vorpal|holy avenger)\b/i.test(name)
       ) {
         notes.push(`Blocked high-tier item-gain at level ${level}: ${name}`);
@@ -86,7 +98,8 @@ export function runWarden(
         continue;
       }
       if (
-        level < 5
+        !seededRarity
+        && level < 5
         && /\b(epic|legendary|mythic)\b/i.test(name)
       ) {
         notes.push(`Blocked epic+ item-gain at level ${level}: ${name}`);
@@ -94,9 +107,11 @@ export function runWarden(
         continue;
       }
       // Peaceful intents shouldn't spontaneously invent weapons / major loot
+      // (search / attack / use_item still allowed). Seeded room lootables may grant on search.
       if (
         intent &&
         PEACEFUL_INTENTS.has(intent.kind) &&
+        !seededRarity &&
         /\b(sword|blade|gun|rifle|grenade|axe|bow|staff|wand|armor|shield|potion|elixir|artifact|relic)\b/i.test(
           name
         )
@@ -104,6 +119,9 @@ export function runWarden(
         notes.push(`Deferred loot during ${intent.kind}: ${name}`);
         deferred.push(e);
         continue;
+      }
+      if (seededRarity && e.rarity !== seededRarity) {
+        e = { ...e, rarity: seededRarity };
       }
     }
 

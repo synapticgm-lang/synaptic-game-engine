@@ -232,14 +232,14 @@ function DungeonViewport({
             style={{ left: `${x - 22}px`, top: `${y - 22}px` }}
             className={`absolute flex h-11 w-11 flex-col items-center justify-center rounded-full border-2 p-1 text-center transition-all ${
               isCurrent
-                ? 'scale-110 animate-pulse border-cyan-400 bg-cyan-500 text-slate-950 ring-4 ring-cyan-500/30'
+                ? 'scale-110 border-cyan-400 bg-cyan-500 text-slate-950 ring-4 ring-cyan-500/30'
                 : isVisited
                   ? 'border-cyan-500/50 bg-slate-800 text-slate-200 hover:border-cyan-400'
-                  : 'animate-bounce border-amber-500 bg-amber-950/80 text-amber-200'
+                  : 'border-amber-500/70 bg-amber-950/80 text-amber-100'
             }`}
           >
             <span className="truncate text-[8px] font-medium leading-tight">{node.name}</span>
-            {!isVisited && isReachable && <span className="text-[7px] font-bold text-amber-300">MOVE</span>}
+            {isCurrent && <span className="text-[6px] font-bold text-slate-900">YOU</span>}
           </button>
         );
       })}

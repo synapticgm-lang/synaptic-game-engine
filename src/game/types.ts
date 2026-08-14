@@ -146,13 +146,24 @@ export interface Quest {
   status: QuestStatus;
   type: QuestType;
   recommendedLevel?: number;
+  /** Place name or id reference — prefer resolving tier from Place / locationSheet. */
   location?: string;
+  /** Danger tier for the quest site — prefer reading from Place when locationRef exists. */
+  dangerTier?: MapTier;
+  locationRef?: string;
   objectives?: QuestObjective[];
   /**
    * When false/undefined, quest is tracked but not spoiled to the player or GM scene focus.
    * Set true after the story/System reveals it, or the player asks about quests.
    */
   revealed?: boolean;
+  revealedTurn?: number | null;
+  activatedTurn?: number | null;
+  completedTurn?: number | null;
+  /** Min turns between revealed → active (default 1). */
+  minTurnsBeforeActive?: number;
+  /** Min turns between active → completed (default 1). */
+  minTurnsBeforeComplete?: number;
   rewards?: {
     xp?: number;
     gold?: number;
@@ -343,6 +354,23 @@ export interface GameState {
   sceneFacts?: SceneFacts;
   /** Current location sheet (interactables / exits). */
   locationSheet?: LocationSheet | null;
+  /** Sheet for the place just left — injected with current for dual-location memory. */
+  previousLocationSheet?: LocationSheet | null;
+  /** Pack 1 pity: consecutive non-Epic+ chests per danger tier. */
+  lootPity?: LootPityState;
+  /** Pack 3 first-session beat sheet. */
+  tutorialProgress?: TutorialProgress;
+  /** Pack 4/5 Place registry — name/tier/arc authority. */
+  places?: PlaceRecord[];
+  /** Pack 6 long-campaign compressed memory. */
+  campaignMemory?: CampaignMemoryState;
+  /**
+   * Progressive status reveal: minimal until rest/level/boss unlocks full.
+   * Mirrors tutorialProgress.fullStatusUnlocked for UI.
+   */
+  statusReveal?: 'minimal' | 'core' | 'full';
+  /** Diegetic content rewrite awaiting Proceed / cancel (Pack 7). */
+  pendingContentRewrite?: { rewritten: string; message: string; original: string } | null;
   /** AI turn awaiting player accept / edit / reroll. */
   pendingTurn?: PendingTurnProposal | null;
   gold: number;
@@ -507,13 +535,21 @@ export interface NpcMemory {
   disposition: 'hostile' | 'neutral' | 'friendly' | 'allied' | 'romanced' | 'unknown';
   facts: string[];
   lastSeenTurn: number;
+  /** Pack 6 short relationship texture for prompts. */
+  relationshipSummary?: string;
 }
 
 /** Location sheet — spatial facts for the current zone. */
+export type MapScale = 'district' | 'street' | 'interior' | 'dungeon';
+
 export interface LocationInteractable {
   id: string;
   name: string;
   state: string;
+  kind?: 'chest' | 'door' | 'hazard' | 'secret' | 'prop';
+  /** Player-visible; hidden loot/trap truth lives on MapNode.hidden. */
+  revealed?: boolean;
+  lootableId?: string;
 }
 
 export interface LocationExit {
@@ -527,9 +563,83 @@ export interface LocationSheet {
   name: string;
   climate?: string;
   timeOfDay?: string;
+  /** Dungeon/site danger T1–T4 — single authority for System/journal (not map scale). */
+  dangerTier?: MapTier;
+  /** Which map view this place uses. */
+  mapScale?: MapScale;
   interactables: LocationInteractable[];
   exits: LocationExit[];
   presentNpcIds: string[];
+}
+
+/** Per-tier dry-chest counts for Epic+ pity (Pack 1). */
+export interface LootPityState {
+  byTier: Partial<Record<1 | 2 | 3 | 4, number>>;
+}
+
+/** Durable Place record (Pack 4/5) — single authority for name + tiers. */
+export interface PlaceRecord {
+  id: string;
+  name: string;
+  loreName?: string;
+  aliases?: string[];
+  dangerTier?: MapTier;
+  mapScale?: MapScale;
+  dungeonRef?: string | null;
+  arcSummary?: string;
+  arcStatus?: 'open' | 'visited' | 'cleared' | 'closed';
+  lastVisitedTurn?: number;
+}
+
+export interface TutorialProgress {
+  completed: Partial<
+    Record<
+      | 'awakening'
+      | 'lookAround'
+      | 'firstThreat'
+      | 'stickyFail'
+      | 'firstLoot'
+      | 'firstQuest'
+      | 'firstRest'
+      | 'firstBoss',
+      boolean
+    >
+  >;
+  firstChestUncommonBiasPending: boolean;
+  fullStatusUnlocked: boolean;
+  stickyFailScheduled: boolean;
+}
+
+export interface TurnSummary {
+  id: string;
+  turn: number;
+  text: string;
+}
+
+export interface MemoryPin {
+  id: string;
+  kind: 'auto' | 'player' | 'quest';
+  label: string;
+  text: string;
+  createdTurn: number;
+  archived?: boolean;
+}
+
+export interface ConsequenceThread {
+  id: string;
+  text: string;
+  createdTurn: number;
+  unresolved: boolean;
+}
+
+export interface CampaignMemoryState {
+  campaignSummary?: string | null;
+  personalitySummary?: string | null;
+  turnSummaries?: TurnSummary[];
+  pins: MemoryPin[];
+  consequences?: ConsequenceThread[];
+  lastCampaignSummaryTurn?: number;
+  lastTurnSummaryTurn?: number;
 }
 
 /**
@@ -595,6 +705,16 @@ export interface Settings {
   contentMode: ContentMode;
   kidModeLocked: boolean;
   contentPin: string | null;
+  /** Pack 7 base rating. Kid Mode forces pg13 behavior. */
+  maturityTier: 'pg13' | 'mature';
+  sexualContent: boolean;
+  substanceUse: boolean;
+  darkThemes: 'none' | 'implied' | 'explored';
+  /**
+   * When true, rating rewrites pause for diegetic confirm ("System interprets…").
+   * When false, rewrite applies automatically with a System note.
+   */
+  confirmContentRewrites: boolean;
   geminiApiKey: string;
   openrouterApiKey: string;
   aiProvider: AiProvider;

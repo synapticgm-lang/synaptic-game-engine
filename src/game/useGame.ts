@@ -66,6 +66,28 @@ import { needsPortraitRefresh, paperDollPrompt, portraitCacheKey } from './inven
 import { formatCampaignStoryName, getCampaignBibleById } from '@/data/campaigns';
 import { parsePlayerIntent, groundPlayerAction } from './intentParser';
 import { interpretPlayerUtterance, isJunkSetupValue } from './playerUtterance';
+import { runPlayerCheck } from './checkMath';
+import { buildOutcomeToken, formatOutcomeTokenForPrompt } from './outcomeToken';
+import { mediatePlayerInput } from './inputMediation';
+import { maybeRatingRewrite } from './maturity';
+import { postFilterGmOutput } from './contentPostFilter';
+import {
+  advanceTutorialBeats,
+  ensureTutorialQuest,
+  emptyTutorialProgress,
+} from './tutorialBeats';
+import {
+  advanceCampaignMemory,
+  upsertNpcRelationshipSummary,
+} from './campaignMemory';
+import { touchPlaceVisit, upsertPlaceFromSheet } from './places';
+import { normalizeSheetAuthority } from './placeAuthority';
+import {
+  seedDungeonState,
+  mergeSheetWithNode,
+  currentDungeonNode,
+} from './dungeonSeed';
+import { advanceLocationMemory } from './locationMemory';
 import {
   buildTurnMandate,
   detectSceneHijack,
@@ -79,7 +101,7 @@ import {
   isUnresolvedActionNarrative,
 } from './actionResolution';
 import { mergeNpcMemoriesFromTurn } from './npcMemory';
-import { buildPendingProposal, getProposedState, withEditedNarrative, touchLocationSheet } from './pendingTurn';
+import { buildPendingProposal, getProposedState, withEditedNarrative, touchLocationSheet, ensureLocationSheet } from './pendingTurn';
 import { extractUpdates, extractNewItems, parseActionTags, stripActionTags, matchLoreCards, eventsToLoreCards, parseTurnFrame, eventsToQuestUpdates, eventsToEncounterUpdate, parsePanels, eventsToMilestone, eventsToLootVideo, eventsToVisualUpdate, stripChoiceList, extractChoiceLines, stripTurnCloser, storyHasBody } from './parser';
 import { hasRealGmStory } from './turnAsk';
 import { encounterOriginPlace } from './locationName';
@@ -113,7 +135,7 @@ import {
   logErrorStack,
 } from '@/services/telemetryService';
 import type { Session } from '@supabase/supabase-js';
-import { evaluateRoll, simulateMerchantTurn } from './gameEngine';
+import { simulateMerchantTurn } from './gameEngine';
 import {
   applyWorldEvents,
   daysForPlayerAction,
@@ -1073,12 +1095,20 @@ export function useGame() {
   const loadDungeon = useCallbackRef((blueprintId: string, dungeonName: string, isProcedural: boolean = false, tier: MapTier = 4, nodeCount?: number) => {
     const previous = stateRef.current;
     if (!previous) return;
-    const dungeonState = initializeDungeon(blueprintId, dungeonName, isProcedural, tier, previous.currentCoordinates, nodeCount);
+    let dungeonState = initializeDungeon(blueprintId, dungeonName, isProcedural, tier, previous.currentCoordinates, nodeCount);
+    dungeonState = seedDungeonState(dungeonState, previous.seed || 'seed');
     if (settingsRef.current.fogRevealThreshold === 'full') {
       dungeonState.visitedNodeIds = dungeonState.nodes.map(n => n.id);
     }
+    const locMem = advanceLocationMemory(previous, dungeonName);
+    const sheet = mergeSheetWithNode(
+      locMem.locationSheet ?? ensureLocationSheet({ ...previous, ...locMem }),
+      currentDungeonNode(dungeonState)
+    );
     const updated: GameState = {
       ...previous,
+      ...locMem,
+      locationSheet: sheet,
       activeDungeon: dungeonState,
       currentLocation: dungeonName,
       timeline: mergeTimeline(previous.timeline, [
@@ -1147,7 +1177,8 @@ export function useGame() {
   const moveDungeonNode = useCallbackRef((targetNodeId: string) => {
     const previous = stateRef.current;
     if (!previous?.activeDungeon) return;
-    const updatedDungeon = moveToNode(previous.activeDungeon, targetNodeId);
+    let updatedDungeon = moveToNode(previous.activeDungeon, targetNodeId);
+    updatedDungeon = seedDungeonState(updatedDungeon, previous.seed || 'seed');
     const threshold = settingsRef.current.fogRevealThreshold ?? 'adjacent';
     if (threshold === 'full') {
       updatedDungeon.visitedNodeIds = updatedDungeon.nodes.map(n => n.id);
@@ -1158,7 +1189,22 @@ export function useGame() {
         updatedDungeon.visitedNodeIds = Array.from(visited);
       }
     }
-    const updated = { ...previous, activeDungeon: updatedDungeon, lastUpdated: Date.now() };
+    const node = currentDungeonNode(updatedDungeon);
+    const placeName = node
+      ? `${updatedDungeon.dungeonName} — ${node.name}`
+      : previous.currentLocation;
+    const locMem = advanceLocationMemory(previous, placeName);
+    const sheet = mergeSheetWithNode(
+      locMem.locationSheet ?? ensureLocationSheet({ ...previous, ...locMem }),
+      node
+    );
+    const updated = {
+      ...previous,
+      ...locMem,
+      locationSheet: sheet,
+      activeDungeon: updatedDungeon,
+      lastUpdated: Date.now(),
+    };
     stateRef.current = updated;
     setState(updated);
     void persist(updated);
@@ -1167,8 +1213,14 @@ export function useGame() {
   const exitDungeon = useCallbackRef(() => {
     const previous = stateRef.current;
     if (!previous) return;
-    const updatedDungeon = engineExitDungeon();
-    const updated = { ...previous, activeDungeon: updatedDungeon, lastUpdated: Date.now() };
+    const backName = previous.previousLocationSheet?.name || previous.currentLocation || 'Outside';
+    const locMem = advanceLocationMemory(previous, backName);
+    const updated = {
+      ...previous,
+      ...locMem,
+      activeDungeon: engineExitDungeon(),
+      lastUpdated: Date.now(),
+    };
     stateRef.current = updated;
     setState(updated);
     void persist(updated);
@@ -1208,7 +1260,69 @@ export function useGame() {
     });
 
     const mode = settingsRef.current.contentMode === 'kid' ? 'kid' : 'adult';
-    const contentSanitized = sanitizeInput(input, mode);
+    const mediated = mediatePlayerInput(input);
+    if (mediated.action === 'block') {
+      addToast(mediated.playerMessage ?? "That action isn't available.", 'info');
+      turnInFlightRef.current = false;
+      return;
+    }
+
+    // Diegetic content rewrite confirm (Pack 7)
+    const pendingRewrite = current.pendingContentRewrite;
+    let rewriteSource = mediated.text;
+    if (pendingRewrite) {
+      const proceed = /^(proceed|yes|y|ok|okay|confirm|continue)\b/i.test(mediated.text.trim())
+        || mediated.text.trim().toLowerCase() === pendingRewrite.rewritten.toLowerCase();
+      if (proceed) {
+        rewriteSource = pendingRewrite.rewritten;
+        setState((s) => (s ? { ...s, pendingContentRewrite: null } : s));
+      } else if (/^(cancel|no|nope|nevermind|try\s+else)\b/i.test(mediated.text.trim())) {
+        setState((s) => (s ? { ...s, pendingContentRewrite: null } : s));
+        addToast('System clears the interpretation. Try another action.', 'info');
+        turnInFlightRef.current = false;
+        return;
+      } else {
+        // New free-text cancels pending rewrite and continues with new text
+        setState((s) => (s ? { ...s, pendingContentRewrite: null } : s));
+      }
+    } else {
+      const soft = maybeRatingRewrite(mediated.text, settingsRef.current);
+      if (soft) {
+        if (settingsRef.current.confirmContentRewrites !== false) {
+          setState((s) =>
+            s
+              ? {
+                  ...s,
+                  pendingContentRewrite: {
+                    rewritten: soft.rewritten,
+                    message: soft.diegeticMessage,
+                    original: mediated.text,
+                  },
+                  choices: ['Proceed with System interpretation', 'Try something else'],
+                  log: [
+                    ...s.log,
+                    {
+                      id: crypto.randomUUID(),
+                      turn: s.turn,
+                      role: 'system',
+                      content: soft.diegeticMessage,
+                      timestamp: Date.now(),
+                      systemLog: [soft.diegeticMessage],
+                    },
+                  ],
+                }
+              : s
+          );
+          addToast(soft.diegeticMessage, 'info');
+          turnInFlightRef.current = false;
+          return;
+        }
+        rewriteSource = soft.rewritten;
+        addToast(soft.diegeticMessage, 'info');
+      }
+    }
+
+    const contentSanitized = sanitizeInput(rewriteSource, mode);
     const lastGmForGround = current.log.filter((l) => l.role === 'gm').pop()?.content ?? '';
     const storyProseForGround = normalizeStoryCorpus(lastGmForGround);
     const openingPending = isOpeningEstablishmentPending(current);
@@ -1356,30 +1470,6 @@ export function useGame() {
         };
       }
 
-      const strengthVal = liveCurrent.character.strength ?? liveCurrent.character.attributes?.STR ?? 14;
-      const strMod = Math.floor((strengthVal - 10) / 2);
-      const d20Roll = Math.floor(Math.random() * 20) + 1;
-      const difficultyClass = 12;
-      const outcome = evaluateRoll(d20Roll, strMod, difficultyClass);
-
-      const isDndEngine = liveCurrent.engineMode === 'dnd';
-      const codeResolutionText = outcome.isSuccess
-        ? `SUCCESS (Rolled d20: ${d20Roll} + Mod: ${strMod} = ${outcome.totalScore} vs DC ${difficultyClass})`
-        : `FAILURE (Rolled d20: ${d20Roll} + Mod: ${strMod} = ${outcome.totalScore} vs DC ${difficultyClass})`;
-      const narrativeOutcomeLabel = outcome.isSuccess ? 'SUCCESS' : 'FAILURE';
-
-      logRollResults([
-        {
-          label: 'action_check',
-          total: outcome.totalScore,
-          detail: `d20=${d20Roll} mod=${strMod} dc=${difficultyClass} ${outcome.isSuccess ? 'SUCCESS' : 'FAILURE'}`,
-        },
-      ]);
-
-      // Never silently apply HP for failed skill checks — damage must come from explicit
-      // <damage> tags (and be narrated). Silent -2 on every fail made HP drop "for no reason".
-      let engineHpDelta = 0;
-
       const typedAction = contentSanitized;
       const interpreted = await interpretPlayerUtterance({
         raw: typedAction,
@@ -1399,6 +1489,34 @@ export function useGame() {
           : grounded.intent.kind !== 'other'
             ? grounded.intent
             : parsePlayerIntent(sanitizedInput, liveCurrent);
+
+      const check = runPlayerCheck(liveCurrent, intentForMandate, sanitizedInput);
+      const d20Roll = check.d20;
+      const strMod = check.modifier;
+      const difficultyClass = check.dc;
+      const outcome = check;
+      const outcomeToken = buildOutcomeToken(check, intentForMandate);
+
+      const isDndEngine = liveCurrent.engineMode === 'dnd';
+      const codeResolutionText = check.codeResolutionText;
+      const narrativeOutcomeLabel = check.narrativeOutcomeLabel;
+      const refuseGate =
+        intentForMandate.kind === 'refuse'
+          ? `\n[REFUSE / PROTEST GATE]: Player is refusing / did not agree. Narrate the System's cold acknowledgment in-fiction. Do not break character. Do not say "choose an action to continue." If in combat, the enemy may press the advantage (outcome token still applies).`
+          : '';
+
+      logRollResults([
+        {
+          label: 'action_check',
+          total: outcome.totalScore,
+          detail: `d20=${d20Roll} mod=${strMod} dc=${difficultyClass} ${check.label} ${outcome.isSuccess ? 'SUCCESS' : 'FAILURE'}`,
+        },
+      ]);
+
+      // Never silently apply HP for failed skill checks — damage must come from explicit
+      // <damage> tags (and be narrated). Silent -2 on every fail made HP drop "for no reason".
+      // Crit-fail trap risk is hinted to the GM via code outcome; sticky HP still needs <damage>.
+      let engineHpDelta = 0;
 
       let worldLedger = normalizeWorldLedger(liveCurrent.worldLedger);
       const preTick = tickWorld(
@@ -1442,7 +1560,8 @@ export function useGame() {
       const groundingGate = grounded.notes.length
         ? `\n[SCENE GROUNDING GATE]: Player input was soft-corrected for: ${grounded.notes.join('; ')}. Stay inside Situation Packet + Inventory + Timeline. Do not invent the rejected premise.`
         : '';
-      const actionGates = `${inventoryGate}${groundingGate}`;
+      const actionGates = `${inventoryGate}${groundingGate}${refuseGate}`;
+      const outcomeBlock = formatOutcomeTokenForPrompt(outcomeToken, !isDndEngine);
 
       // LitRPG/RPG: keep dice math out of the model-facing story cue so it is less likely to echo into prose.
       const deterministicStateBlock = isDndEngine
@@ -1451,7 +1570,8 @@ export function useGame() {
 Character: ${liveCurrent.character.name} (Lvl ${liveCurrent.character.level})
 HP: ${liveCurrent.character.hp}/${liveCurrent.character.maxHp}
 Gold: ${liveCurrent.gold ?? 0}
-CODE ENFORCED OUTCOME FOR THIS ACTION: ${codeResolutionText}${hiddenSimUpdate}${actionGates}
+CODE ENFORCED OUTCOME FOR THIS ACTION: ${codeResolutionText}
+${outcomeBlock}${hiddenSimUpdate}${actionGates}
 -------------------------------------------------
 `
         : `
@@ -1460,9 +1580,10 @@ Character: ${liveCurrent.character.name} (Lvl ${liveCurrent.character.level})
 HP: ${liveCurrent.character.hp}/${liveCurrent.character.maxHp}
 Gold: ${liveCurrent.gold ?? 0}
 CODE ENFORCED OUTCOME FOR THIS ACTION: ${narrativeOutcomeLabel}
+${outcomeBlock}
 CODE OUTCOME (HIDDEN): ${narrativeOutcomeLabel}. Narrate story consequences only.
 Do NOT print dice notation, d20 lines, modifiers, DCs, "Strength Check:", or Action Check math anywhere — not in narrative, not in <narrative> panels, and not in <system-log>.
-In <system-log>, only emit LitRPG/RPG progression lines (XP, loot, HP change as story system text) with zero dice formulas.${hiddenSimUpdate}${actionGates}
+In <system-log>, only emit LitRPG/RPG progression lines (XP, loot, HP change as story system text) with zero dice formulas. Never emit XP Gained: 0. Story beat first, then System chrome — never System-only.${hiddenSimUpdate}${actionGates}
 -------------------------------------------------
 `;
 
@@ -1674,6 +1795,7 @@ In <system-log>, only emit LitRPG/RPG progression lines (XP, loot, HP change as 
       }
       const regexLoot = extractNewItems(result.text);
       let cleanText = stripResidualMechanicTags(stripChoiceList(stripActionTags(result.text)));
+      cleanText = postFilterGmOutput(cleanText, settingsRef.current);
       cleanText = ensureTurnProse(cleanText, sanitizedInput);
       const storyBeforeCuts = cleanText;
 
@@ -1883,12 +2005,12 @@ In <system-log>, only emit LitRPG/RPG progression lines (XP, loot, HP change as 
           encounterOriginPlace(liveCurrent, `${cleanText}\n${lastGmText}`)
         );
       }
-      const mergedSystemLog = filterSystemLogForEngine(
+      let mergedSystemLog = filterSystemLogForEngine(
         Array.from(
           new Set([
             ...(gmEntry.systemLog ?? []),
             ...warden.systemLogExtra,
-            ...structural.notes.filter((n) => /blocked|failed|full/i.test(n)),
+            ...structural.notes.filter((n) => /blocked|failed|full|Pity|Boss first|Run floor|Loot granted/i.test(n)),
             ...worldNotes,
           ])
         ),
@@ -1962,14 +2084,42 @@ In <system-log>, only emit LitRPG/RPG progression lines (XP, loot, HP change as 
           })
         : workingState.inventory;
 
-      const updatedQuests = syncQuestsFromPlay(
-        eventsToQuestUpdates(events, workingState.quests ?? []),
+      const nextTurn = liveCurrent.turn + 1;
+      let updatedQuests = syncQuestsFromPlay(
+        eventsToQuestUpdates(events, workingState.quests ?? [], nextTurn),
         mergedSystemLog,
         `${sanitizedInput}\n${cleanText}\n${mergedSystemLog.join('\n')}`
       );
-      const updatedEncounter = eventsToEncounterUpdate(events, workingState.activeEncounter ?? null);
+      updatedQuests = ensureTutorialQuest(
+        { ...workingState, quests: updatedQuests },
+        nextTurn
+      );
 
-      const nextTurn = liveCurrent.turn + 1;
+      const leveledUp = (baseChar.level ?? 1) > (liveCurrent.character.level ?? 1);
+      const bossCleared =
+        events.some((e) => e.type === 'encounter-end') &&
+        !!(workingState.activeDungeon && workingState.activeDungeon.blueprintId !== 'local-area');
+      const tutorialAdv = advanceTutorialBeats(
+        { ...workingState, tutorialProgress: workingState.tutorialProgress ?? emptyTutorialProgress() },
+        {
+          turn: nextTurn,
+          playerAction: sanitizedInput,
+          narrative: cleanText,
+          systemLog: mergedSystemLog,
+          checkFailed: !outcome.isSuccess,
+          critFail: outcome.d20 === 1,
+          gainedLoot: structural.gainedItems.length > 0,
+          quests: updatedQuests,
+          bossCleared,
+          rested: /\b(rest|camp|sleep|recover)\b/i.test(sanitizedInput),
+          leveled: leveledUp,
+        }
+      );
+      if (tutorialAdv.systemNotes.length) {
+        mergedSystemLog.push(...tutorialAdv.systemNotes);
+      }
+
+      const updatedEncounter = eventsToEncounterUpdate(events, workingState.activeEncounter ?? null);
       const turnFacts = collectTurnTimelineFacts({
         turn: nextTurn,
         playerAction: sanitizedInput,
@@ -2001,7 +2151,6 @@ In <system-log>, only emit LitRPG/RPG progression lines (XP, loot, HP change as 
         workingState.currentLocation ??
         updates.currentLocation ??
         liveCurrent.currentLocation;
-      const locationSheet = touchLocationSheet(workingState, resolvedLocation);
 
       const usedItemNames = events
         .filter((e) => e.type === 'item-use' && e.name)
@@ -2016,12 +2165,76 @@ In <system-log>, only emit LitRPG/RPG progression lines (XP, loot, HP change as 
         `${sanitizedInput}\n${cleanText}\n${mergedSystemLog.join('\n')}\n${resolvedLocation ?? ''}`
       );
       const mapName = mapAnchorName(resolvedLocation, landmarks);
+      const finalLocationName =
+        isGenericMapPlace(resolvedLocation) && mapName ? mapName : resolvedLocation;
+
+      if (workingState.activeDungeon && workingState.activeDungeon.blueprintId !== 'local-area') {
+        workingState = {
+          ...workingState,
+          activeDungeon: seedDungeonState(
+            workingState.activeDungeon,
+            workingState.seed || liveCurrent.seed || 'seed'
+          ),
+        };
+      }
+
+      const locMem = advanceLocationMemory(
+        {
+          ...workingState,
+          locationSheet: workingState.locationSheet ?? liveCurrent.locationSheet,
+          previousLocationSheet:
+            workingState.previousLocationSheet ?? liveCurrent.previousLocationSheet,
+        },
+        finalLocationName
+      );
+      let locationSheet = locMem.locationSheet ?? touchLocationSheet(workingState, finalLocationName);
+      if (workingState.activeDungeon?.blueprintId !== 'local-area') {
+        locationSheet = mergeSheetWithNode(
+          locationSheet,
+          currentDungeonNode(workingState.activeDungeon)
+        );
+      }
       let areaMap = workingState.activeDungeon ?? liveCurrent.activeDungeon ?? null;
       if (!areaMap && mapName) {
         areaMap = buildLocalAreaMap(mapName, landmarks, liveCurrent.currentCoordinates);
       } else if (areaMap?.blueprintId === 'local-area') {
         for (const named of landmarks) areaMap = addLandmarkToLocalMap(areaMap, named);
       }
+      locationSheet = normalizeSheetAuthority(locationSheet, areaMap);
+
+      let places = upsertPlaceFromSheet(
+        touchPlaceVisit(workingState.places ?? liveCurrent.places ?? [], finalLocationName, nextTurn),
+        locationSheet,
+        {
+          dungeonRef:
+            areaMap && areaMap.blueprintId !== 'local-area' ? areaMap.blueprintId : undefined,
+        }
+      );
+
+      const topLoot = structural.gainedItems[0];
+      const campaignMemory = advanceCampaignMemory(
+        {
+          ...workingState,
+          currentLocation: finalLocationName,
+          character: baseChar,
+          quests: updatedQuests,
+        },
+        nextTurn,
+        {
+          playerAction: sanitizedInput,
+          narrative: cleanText,
+          gainedLootRarity: topLoot?.rarity ?? null,
+          questNote: questChangeNotes[0] ?? null,
+          significantChoice: intentForMandate.kind === 'refuse' || /choose|accept|refuse/i.test(sanitizedInput),
+        }
+      );
+
+      const npcMemoriesWithRel = upsertNpcRelationshipSummary(npcMemories, nextTurn);
+      const statusReveal = tutorialAdv.progress.fullStatusUnlocked
+        ? 'full'
+        : nextTurn >= 5
+          ? 'core'
+          : 'minimal';
 
       const mergedState: GameState = {
         ...workingState,
@@ -2029,13 +2242,18 @@ In <system-log>, only emit LitRPG/RPG progression lines (XP, loot, HP change as 
         character: baseChar,
         quests: updatedQuests,
         activeEncounter: updatedEncounter,
-        currentLocation:
-          isGenericMapPlace(resolvedLocation) && mapName ? mapName : resolvedLocation,
+        currentLocation: finalLocationName,
         activeDungeon: areaMap,
         currentCoordinates: workingState.currentCoordinates ?? liveCurrent.currentCoordinates,
         timeline: mergedTimeline,
-        npcMemories,
+        npcMemories: npcMemoriesWithRel,
         locationSheet,
+        previousLocationSheet: locMem.previousLocationSheet,
+        tutorialProgress: tutorialAdv.progress,
+        places,
+        campaignMemory,
+        statusReveal,
+        pendingContentRewrite: null,
         sceneFacts: applyCommittedNarrative(liveCurrent, cleanText, nextTurn),
         campaignPremise: workingState.campaignPremise ?? liveCurrent.campaignPremise,
         campaignBibleId: workingState.campaignBibleId ?? liveCurrent.campaignBibleId,
