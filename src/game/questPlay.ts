@@ -16,7 +16,10 @@ function overlap(a: string, b: string): boolean {
 }
 
 const PLACE_STOP =
-  /^(the|a|an|system|earth|info|what|dungeon|thing|this|that|your|their|here|there|england's)$/i;
+  /^(the|a|an|system|earth|info|what|dungeon|thing|this|that|your|their|here|there|england's|every|mind|survive)$/i;
+
+const JUNK_PLACE =
+  /^(every mind|every human|first blood|foundation core|integration protocol|the system|micro dungeon|micro-dungeon)$/i;
 
 function titleCasePlace(name: string): string {
   return name
@@ -31,7 +34,7 @@ function clipPlace(raw: string): string {
 
 function pushPlace(found: string[], raw: string | undefined): void {
   const name = titleCasePlace(clipPlace(raw ?? ''));
-  if (!name || PLACE_STOP.test(name) || name.length < 3) return;
+  if (!name || PLACE_STOP.test(name) || JUNK_PLACE.test(name) || name.length < 3) return;
   if (found.some((p) => p.toLowerCase() === name.toLowerCase())) return;
   found.push(name);
 }
@@ -152,6 +155,7 @@ export function isGenericMapPlace(name: string | undefined): boolean {
   const n = (name ?? '').trim();
   if (!n) return true;
   if (COARSE_PLACE.test(n)) return true;
+  if (/^(every mind|every human|first blood|foundation core)$/i.test(n)) return true;
   return /^the opening of /i.test(n) || /^your surroundings$/i.test(n) || /^a cracked city street$/i.test(n);
 }
 

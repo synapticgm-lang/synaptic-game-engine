@@ -6,7 +6,7 @@ import { UploadImport } from './UploadImport';
 import { CharacterProgression } from './CharacterProgression';
 import { CombatEncounter } from './CombatEncounter';
 import {
-  X, ChevronLeft, ChevronRight, ChevronDown, ChevronUp,
+  X, ChevronDown, ChevronUp,
   HardHat, Shield, Shirt, Sword, Footprints,
   Sparkles, Hammer, Cat, Trophy, ScrollText, Camera, TrendingUp,
   Heart, Droplet, Zap, Users, Backpack, Loader2,
@@ -139,13 +139,13 @@ function AttributeGrid({ state }: { state: GameState }) {
   );
 }
 
-function SidePanel({ state, open, onToggle }: { state: GameState; open: boolean; onToggle: () => void }) {
+function SidePanel({ state, open }: { state: GameState; open: boolean; onToggle?: () => void }) {
   const c = state.character;
   return (
     <div className={`transition-all duration-300 overflow-hidden ${open ? 'w-56' : 'w-0'}`}>
-      <div className="w-56 h-full border-l border-slate-800 bg-slate-950/60 p-3 space-y-4 overflow-y-auto">
+      <div className="h-full w-56 space-y-4 overflow-y-auto border-l border-slate-800 bg-slate-950/60 p-3">
         <div>
-          <h3 className="font-serif text-sm uppercase tracking-wider text-crimson-400 mb-2">Vitals</h3>
+          <h3 className="mb-2 font-serif text-sm uppercase tracking-wider text-crimson-400">Vitals</h3>
           <div className="space-y-2">
             <StatBar label="Health" current={c.hp} max={c.maxHp} color="bg-gradient-to-r from-rose-700 to-rose-500" icon={<Heart size={12} className="text-rose-400" />} />
             <StatBar label="Mana" current={c.mp} max={c.maxMp} color="bg-gradient-to-r from-sky-600 to-sky-400" icon={<Droplet size={12} className="text-sky-400" />} />
@@ -154,14 +154,12 @@ function SidePanel({ state, open, onToggle }: { state: GameState; open: boolean;
             )}
           </div>
         </div>
-
         <div>
-          <h3 className="font-serif text-sm uppercase tracking-wider text-crimson-400 mb-2">Attributes</h3>
+          <h3 className="mb-2 font-serif text-sm uppercase tracking-wider text-crimson-400">Attributes</h3>
           <AttributeGrid state={state} />
         </div>
-
         <div>
-          <h3 className="font-serif text-sm uppercase tracking-wider text-crimson-400 mb-2">Progress</h3>
+          <h3 className="mb-2 font-serif text-sm uppercase tracking-wider text-crimson-400">Progress</h3>
           <div className="space-y-1 text-xs text-slate-300">
             <div className="flex justify-between"><span>Level</span><span className="font-mono font-bold text-amber-400">{c.level}</span></div>
             <div className="flex justify-between"><span>XP</span><span className="font-mono">{c.xp}/{c.xpToNext}</span></div>
@@ -169,25 +167,17 @@ function SidePanel({ state, open, onToggle }: { state: GameState; open: boolean;
             <div className="flex justify-between"><span>Gold</span><span className="font-mono text-amber-400">{state.gold ?? 0}</span></div>
           </div>
         </div>
-
         {c.conditions.length > 0 && (
           <div>
-            <h3 className="font-serif text-sm uppercase tracking-wider text-crimson-400 mb-2">Conditions</h3>
+            <h3 className="mb-2 font-serif text-sm uppercase tracking-wider text-crimson-400">Conditions</h3>
             <div className="flex flex-wrap gap-1">
               {c.conditions.map((cond) => (
-                <span key={cond} className="text-[10px] px-1.5 py-0.5 rounded bg-rose-500/15 text-rose-300 border border-rose-500/30">{cond}</span>
+                <span key={cond} className="rounded border border-rose-500/30 bg-rose-500/15 px-1.5 py-0.5 text-[10px] text-rose-300">{cond}</span>
               ))}
             </div>
           </div>
         )}
       </div>
-      <button
-        onClick={onToggle}
-        className="absolute top-1/2 -translate-y-1/2 -right-3 z-10 w-6 h-12 bg-slate-800 border border-slate-700 rounded-r flex items-center justify-center hover:bg-slate-700 transition-colors"
-        title={open ? 'Collapse stats' : 'Expand stats'}
-      >
-        {open ? <ChevronRight size={16} className="text-slate-400" /> : <ChevronLeft size={16} className="text-slate-400" />}
-      </button>
     </div>
   );
 }
@@ -327,7 +317,7 @@ function InventoryPanel({ state }: { state: GameState }) {
 }
 
 export function CharacterWindow({ isOpen, onClose, state, settings, initialTab, onGenerateArt, onCommitArt }: Props) {
-  const [sidePanelOpen, setSidePanelOpen] = useState(true);
+  const [sidePanelOpen, setSidePanelOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<BottomTab>(initialTab ?? 'inventory');
   const [artBusy, setArtBusy] = useState(false);
 
@@ -395,8 +385,8 @@ export function CharacterWindow({ isOpen, onClose, state, settings, initialTab, 
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
-      <div className="relative w-full max-w-3xl h-[85vh] bg-slate-900 border border-slate-700 rounded-xl shadow-2xl flex flex-col overflow-hidden text-slate-100">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/80 backdrop-blur-sm">
+      <div className="relative flex h-[100dvh] max-h-[100dvh] w-full max-w-3xl flex-col overflow-hidden rounded-xl border border-slate-700 bg-slate-900 text-slate-100 shadow-2xl sm:h-[85vh] sm:max-h-[85vh]">
 
         {/* Header */}
         <div className="flex items-center justify-between px-4 py-3 border-b border-slate-800 bg-slate-950/50">
@@ -404,9 +394,22 @@ export function CharacterWindow({ isOpen, onClose, state, settings, initialTab, 
             <h2 className="font-serif text-lg font-bold text-crimson-400">{c.name}</h2>
             <span className="text-xs text-slate-500">Level {c.level}</span>
           </div>
-          <button onClick={onClose} className="p-1.5 rounded hover:bg-slate-800 text-slate-400 hover:text-slate-200 transition-colors" title="Close">
-            <X size={18} />
-          </button>
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={() => setSidePanelOpen((o) => !o)}
+              className={`rounded-md border px-2 py-1 text-[11px] font-medium ${
+                sidePanelOpen
+                  ? 'border-crimson-600/50 bg-crimson-950/40 text-crimson-300'
+                  : 'border-slate-700 bg-slate-800 text-slate-300'
+              }`}
+            >
+              {sidePanelOpen ? 'Hide stats' : 'Show stats'}
+            </button>
+            <button onClick={onClose} className="p-1.5 rounded hover:bg-slate-800 text-slate-400 hover:text-slate-200 transition-colors" title="Close">
+              <X size={18} />
+            </button>
+          </div>
         </div>
 
         {/* Main Content: Equipment + Portrait + Side Panel */}
@@ -480,12 +483,12 @@ export function CharacterWindow({ isOpen, onClose, state, settings, initialTab, 
 
           {/* Collapsible Side Panel */}
           <div className="relative flex">
-            <SidePanel state={state} open={sidePanelOpen} onToggle={() => setSidePanelOpen(!sidePanelOpen)} />
+            <SidePanel state={state} open={sidePanelOpen} />
           </div>
         </div>
 
         {/* Bottom Navigation */}
-        <div className="flex overflow-x-auto border-t border-slate-800 bg-slate-950/50">
+        <div className="z-20 flex shrink-0 overflow-x-auto border-t border-slate-800 bg-slate-950 pb-[max(0.5rem,env(safe-area-inset-bottom))]">
           {tabs.map((tab) => (
             <button
               key={tab.key}

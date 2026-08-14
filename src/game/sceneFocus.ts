@@ -40,8 +40,11 @@ export function extractQuestFocusKeywords(quests: Quest[]): string[] {
 }
 
 export function playerEngagesFocus(playerAction: string, keywords: string[]): boolean {
-  const hay = playerAction.toLowerCase();
-  return keywords.some((k) => k.length >= 4 && hay.includes(k));
+  const hay = playerAction.toLowerCase().replace(/[-_]+/g, ' ').replace(/\s+/g, ' ');
+  return keywords.some((k) => {
+    const key = k.toLowerCase().replace(/[-_]+/g, ' ').replace(/\s+/g, ' ').trim();
+    return key.length >= 4 && hay.includes(key);
+  });
 }
 
 export interface TurnMandate {

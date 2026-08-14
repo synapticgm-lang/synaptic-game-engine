@@ -8,8 +8,12 @@ export function isDiceMechanicsLine(line: string): boolean {
 export function filterSystemLogForEngine(lines: string[], engineMode: EngineMode): string[] {
   const cleaned = lines
     .map((l) => l.replace(/^[ \t]*_>\s*/, '').trim())
+    .map((l) =>
+      /^location:/i.test(l) ? l.replace(/\s*\([^)]*tier[^)]*\)/gi, '').replace(/\s{2,}/g, ' ').trim() : l
+    )
     .filter(Boolean)
     .filter((l) => !/^no xp gained\.?$/i.test(l))
+    .filter((l) => !/^xp gained:\s*0\b/i.test(l))
     .filter((l) => !/^(?:_>\s*)?SYSTEM LOG$/i.test(l))
     .filter((l) => !/^(?:what do you do(?:\s+next)?|what will you do)\s*[?:.]?$/i.test(l));
   if (engineMode === 'dnd') return cleaned;

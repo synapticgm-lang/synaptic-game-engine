@@ -1,7 +1,7 @@
 import type { GameState, LoreCard, LoreCardType, TurnFrameTheme, Quest, QuestType, QuestStatus, MapTier, ActiveEncounter, ComicPanel } from './types';
 import { stripTurnCloser } from './turnAsk';
 
-export { stripTurnCloser, isTurnCloserLine, shouldShowTurnAsk, TURN_ASK } from './turnAsk';
+export { stripTurnCloser, isTurnCloserLine, shouldShowTurnAsk, TURN_ASK, storyHasBody } from './turnAsk';
 
 export interface GameEvent {
   type: 

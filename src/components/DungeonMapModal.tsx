@@ -96,8 +96,8 @@ export const DungeonMapModal: React.FC<DungeonMapModalProps> = ({
         <div className="flex justify-between items-center pb-4 border-b border-slate-700">
           <div>
             <div className="flex items-center gap-2 text-xs font-semibold text-cyan-400 mb-1">
-              <span>🗺️ {tierNames[displayDungeon.tier]}</span>
-              {currentCoordinates && (
+              <span>🗺️ {displayDungeon.blueprintId === 'local-area' ? 'Street map' : (tierNames[displayDungeon.tier] ?? 'Map')}</span>
+              {currentCoordinates && displayDungeon.blueprintId !== 'local-area' && (
                 <span className="rounded bg-slate-800 px-2 py-0.5 text-slate-300">
                   q: {currentCoordinates.q}, r: {currentCoordinates.r} | Floor: {displayDungeon.currentZLevel}
                 </span>
@@ -107,7 +107,8 @@ export const DungeonMapModal: React.FC<DungeonMapModalProps> = ({
               {displayDungeon.dungeonName}
             </h2>
             <p className="text-xs text-slate-400">
-              Active Node: <span className="text-amber-300 font-semibold">{currentNode?.name || 'Unknown'}</span>
+              {displayDungeon.blueprintId === 'local-area' ? 'You are here: ' : 'Active Node: '}
+              <span className="text-amber-300 font-semibold">{currentNode?.name || 'Unknown'}</span>
             </p>
           </div>
           <button
@@ -120,6 +121,16 @@ export const DungeonMapModal: React.FC<DungeonMapModalProps> = ({
 
         {/* Map Visualizer Canvas */}
         <div className="relative flex-1 my-4 min-h-[360px] overflow-auto rounded-lg bg-slate-950 border border-slate-800 p-4">
+          {displayDungeon.blueprintId === 'local-area' && (
+            <div
+              className="pointer-events-none absolute inset-0 opacity-40"
+              style={{
+                backgroundImage:
+                  'linear-gradient(to right, #1e293b 1px, transparent 1px), linear-gradient(to bottom, #1e293b 1px, transparent 1px)',
+                backgroundSize: '48px 48px',
+              }}
+            />
+          )}
           <svg className="absolute inset-0 w-full h-full min-w-[500px] min-h-[500px] pointer-events-none">
             {displayDungeon.nodes.map((node) => {
               const start = getNodePos(node);
@@ -175,20 +186,19 @@ export const DungeonMapModal: React.FC<DungeonMapModalProps> = ({
                   key={node.id}
                   onClick={() => isReachable && onMoveNode(node.id)}
                   disabled={!isReachable && !isCurrent}
-                  style={{ left: `${x - 28}px`, top: `${y - 28}px` }}
-                  className={`absolute w-14 h-14 rounded-full border-2 transition-all flex flex-col items-center justify-center p-1 text-center ${
+                  style={{ left: `${x - 48}px`, top: `${y - 22}px` }}
+                  className={`absolute w-24 min-h-[44px] rounded-md border px-1.5 py-1 transition-colors flex flex-col items-center justify-center text-center ${
                     isCurrent
-                      ? 'bg-cyan-500 border-white ring-4 ring-cyan-500/40 text-slate-950 font-bold z-20 scale-110 animate-pulse'
+                      ? 'bg-cyan-700/90 border-cyan-200 text-white z-20'
                       : isVisited
-                      ? 'bg-slate-800 border-cyan-500/60 text-slate-200 hover:border-cyan-400 z-10'
-                      : 'bg-amber-950/80 border-amber-500 text-amber-200 animate-bounce z-10 cursor-pointer'
+                      ? 'bg-slate-800 border-slate-500 text-slate-200 hover:border-cyan-400 z-10'
+                      : 'bg-slate-800/90 border-amber-600/70 text-amber-100 z-10 cursor-pointer'
                   }`}
                 >
-                  <span className="text-[10px] leading-tight font-medium truncate max-w-full">
+                  <span className="text-[10px] leading-tight font-medium line-clamp-2 max-w-full">
                     {node.name}
                   </span>
-                  {isCurrent && <span className="text-[8px] bg-slate-950 text-cyan-300 px-1 rounded">YOU</span>}
-                  {!isVisited && isReachable && <span className="text-[8px] text-amber-300 font-bold">MOVE</span>}
+                  {isCurrent && <span className="text-[8px] text-cyan-200">You are here</span>}
                 </button>
               );
             })}
@@ -209,7 +219,9 @@ export const DungeonMapModal: React.FC<DungeonMapModalProps> = ({
 
           <div className="flex justify-between items-center pt-2 border-t border-slate-700/60">
             <span className="text-xs text-slate-400">
-              Discovered: {displayDungeon.visitedNodeIds.length} / {displayDungeon.nodes.length} sectors
+              {displayDungeon.blueprintId === 'local-area'
+                ? `Places: ${displayDungeon.visitedNodeIds.length} / ${displayDungeon.nodes.length}`
+                : `Discovered: ${displayDungeon.visitedNodeIds.length} / ${displayDungeon.nodes.length} sectors`}
             </span>
             <button
               onClick={onExitDungeon}

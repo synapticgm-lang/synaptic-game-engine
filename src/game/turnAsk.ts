@@ -37,7 +37,16 @@ export function gmStoryText(entry: LogEntry | undefined): string {
 
 export function hasRealGmStory(entry: LogEntry | undefined): boolean {
   const story = gmStoryText(entry);
-  return story.length >= 60 && /[.!?]/.test(story);
+  return story.length >= 24 && /[a-z]/i.test(story);
+}
+
+/** True when stripped GM prose is enough to show as a turn (not System-only). */
+export function storyHasBody(text: string | undefined): boolean {
+  const story = stripTurnCloser(text ?? '')
+    .replace(/<[^>]+>/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+  return story.length >= 24 && /[a-z]/i.test(story);
 }
 
 /**

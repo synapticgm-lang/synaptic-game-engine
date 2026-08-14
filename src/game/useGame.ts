@@ -80,7 +80,7 @@ import {
 } from './actionResolution';
 import { mergeNpcMemoriesFromTurn } from './npcMemory';
 import { buildPendingProposal, getProposedState, withEditedNarrative, touchLocationSheet } from './pendingTurn';
-import { extractUpdates, extractNewItems, parseActionTags, stripActionTags, matchLoreCards, eventsToLoreCards, parseTurnFrame, eventsToQuestUpdates, eventsToEncounterUpdate, parsePanels, eventsToMilestone, eventsToLootVideo, eventsToVisualUpdate, stripChoiceList, extractChoiceLines, stripTurnCloser } from './parser';
+import { extractUpdates, extractNewItems, parseActionTags, stripActionTags, matchLoreCards, eventsToLoreCards, parseTurnFrame, eventsToQuestUpdates, eventsToEncounterUpdate, parsePanels, eventsToMilestone, eventsToLootVideo, eventsToVisualUpdate, stripChoiceList, extractChoiceLines, stripTurnCloser, storyHasBody } from './parser';
 import { extractNamedPlaces, harvestPlayText, isGenericMapPlace, mapAnchorName, syncQuestsFromPlay } from './questPlay';
 import { inferItemType } from './salvage';
 import { initializeDungeon, moveToNode, exitDungeon as engineExitDungeon, buildLocalAreaMap, addLandmarkToLocalMap } from './mapEngine';
@@ -1626,6 +1626,7 @@ In <system-log>, only emit LitRPG/RPG progression lines (XP, loot, HP change as 
       const regexLoot = extractNewItems(result.text);
       let cleanText = stripResidualMechanicTags(stripChoiceList(stripActionTags(result.text)));
       cleanText = ensureTurnProse(cleanText, sanitizedInput);
+      const storyBeforeCuts = cleanText;
 
       // Apply previously-unwired structural tags (items, dungeon, hex) after Warden filter.
       const structural = applyStructuralEvents(liveCurrent, events, {
@@ -1844,6 +1845,14 @@ In <system-log>, only emit LitRPG/RPG progression lines (XP, loot, HP change as 
       cleanText = ensureXpNarration(cleanText, mergedSystemLog);
       cleanText = applyFactLocks(liveCurrent, cleanText, sanitizedInput);
       cleanText = stripUnearnedXpProse(cleanText);
+      if (!storyHasBody(cleanText) && storyHasBody(storyBeforeCuts)) {
+        cleanText = storyBeforeCuts;
+      }
+      if (!storyHasBody(cleanText) && storyHasBody(stripChoiceList(stripActionTags(result.text)))) {
+        cleanText = stripTurnCloser(
+          stripResidualMechanicTags(stripChoiceList(stripActionTags(result.text)))
+        );
+      }
 
       debugLogger.record('STATE_UPDATE', 'Merging GM response into game state', {
         turn: liveCurrent.turn,

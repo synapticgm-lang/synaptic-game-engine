@@ -235,7 +235,8 @@ export function buildLocalAreaMap(
 ): ActiveDungeonState {
   const here = place.replace(/\s+/g, ' ').trim() || 'Local area';
   const extras = uniqueNames(landmarks.filter((n) => n.toLowerCase() !== here.toLowerCase()));
-  const names = uniqueNames([here, ...extras, 'Side street', 'Cover / doorway']).slice(0, 6);
+  const names = uniqueNames([here, ...extras]).slice(0, 6);
+  if (names.length === 1) names.push('Street');
 
   const nodes: MapNode[] = names.map((name, i) => {
     const neighbors: string[] = [];
