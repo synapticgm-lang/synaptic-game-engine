@@ -6,17 +6,17 @@ import { UploadImport } from './UploadImport';
 import { CharacterProgression } from './CharacterProgression';
 import { CombatEncounter } from './CombatEncounter';
 import {
-  X, ChevronDown, ChevronUp,
+  X, ChevronDown, ChevronUp, ChevronLeft, ChevronRight,
   HardHat, Shield, Shirt, Sword, Footprints,
   Sparkles, Hammer, Cat, Trophy, ScrollText, Camera, TrendingUp,
-  Heart, Droplet, Zap, Users, Backpack, Loader2,
+  Heart, Droplet, Zap, Users, Backpack, Loader2, UserRound,
 } from 'lucide-react';
 import { getItemsInContainer } from '@/game/inventory';
 import { findEquippedInSlot, type DisplayEquipSlot } from '@/game/wornGear';
 import { itemIconPrompt, paperDollPrompt, portraitCacheKey, type InventoryArtPatch } from '@/game/inventoryArt';
 import type { ImagePromptKind } from '@/game/comicImagePrompt';
 
-type BottomTab = 'inventory' | 'spells' | 'professions' | 'pets' | 'titles' | 'dnd' | 'sheet' | 'portrait' | 'progression' | 'combat';
+type BottomTab = 'character' | 'inventory' | 'spells' | 'professions' | 'pets' | 'titles' | 'dnd' | 'sheet' | 'portrait' | 'progression' | 'combat';
 
 interface Props {
   isOpen: boolean;
@@ -50,6 +50,8 @@ const SLOT_META: Record<EquipSlotKey, { icon: React.ReactNode; label: string }> 
 };
 
 const SLOT_ORDER: EquipSlotKey[] = ['Head', 'Shoulders', 'Chest', 'Main Hand', 'Off Hand', 'Legs', 'Feet'];
+const LEFT_SLOTS: EquipSlotKey[] = ['Head', 'Chest', 'Legs', 'Feet'];
+const RIGHT_SLOTS: EquipSlotKey[] = ['Shoulders', 'Main Hand', 'Off Hand'];
 
 const RARITY_GLOW: Record<Rarity, string> = {
   Common: 'border-slate-600',
@@ -89,20 +91,34 @@ function StatBar({ label, current, max, color, icon }: { label: string; current:
   );
 }
 
-function EquipSlot({ slotKey, item }: { slotKey: EquipSlotKey; item?: Item }) {
+function EquipSlot({
+  slotKey,
+  item,
+  selected,
+  onSelect,
+}: {
+  slotKey: EquipSlotKey;
+  item?: Item;
+  selected: boolean;
+  onSelect: (item: Item | undefined, slotKey: EquipSlotKey) => void;
+}) {
   const meta = SLOT_META[slotKey];
   const rarity: Rarity = item?.rarity ?? 'Common';
-  const borderClass = RARITY_GLOW[rarity];
+  const borderClass = selected ? 'border-crimson-400 ring-1 ring-crimson-400/60' : RARITY_GLOW[rarity];
   const bgClass = RARITY_BG[rarity];
   const rarityColor = RARITY_COLORS[rarity];
 
   return (
-    <div
-      className={`relative flex flex-col items-center justify-center rounded-lg border-2 ${borderClass} ${bgClass} w-16 h-16 sm:w-20 sm:h-20 transition-all hover:scale-105 cursor-default group overflow-hidden`}
+    <button
+      type="button"
+      onClick={() => onSelect(item, slotKey)}
+      className={`relative flex flex-col items-center justify-center rounded-lg border-2 ${borderClass} ${bgClass} h-14 w-14 shrink-0 sm:h-16 sm:w-16 md:h-20 md:w-20 transition-all hover:scale-105 overflow-hidden`}
       title={item ? `${item.name} (${rarity})` : meta.label}
+      aria-label={item ? `${meta.label}: ${item.name}` : `Empty ${meta.label}`}
+      aria-pressed={selected}
     >
       {item?.iconUrl ? (
-        <img src={item.iconUrl} alt={item.name} className="absolute inset-0 h-full w-full object-cover" />
+        <img src={item.iconUrl} alt="" className="absolute inset-0 h-full w-full object-cover" />
       ) : (
         <span className={item ? '' : 'text-slate-600'} style={item ? { color: rarityColor } : undefined}>
           {meta.icon}
@@ -114,10 +130,56 @@ function EquipSlot({ slotKey, item }: { slotKey: EquipSlotKey; item?: Item }) {
           {item.itemLevel}
         </span>
       )}
-      {item && (
-        <div className="absolute inset-0 rounded-lg opacity-0 group-hover:opacity-100 bg-slate-900/95 flex items-center justify-center p-1 transition-opacity pointer-events-none">
-          <span className="text-[10px] text-center text-slate-200 leading-tight line-clamp-3">{item.name}</span>
+    </button>
+  );
+}
+
+function ItemInspectCard({ item, slotLabel, onClose }: { item: Item; slotLabel: string; onClose: () => void }) {
+  const rarityColor = RARITY_COLORS[item.rarity];
+  const mods = Object.entries(item.modifiers ?? {}).filter(([, v]) => typeof v === 'number' && v !== 0) as [AttributeKey, number][];
+
+  return (
+    <div
+      className="w-full max-w-sm rounded-lg border border-slate-600 bg-slate-950 p-3 shadow-2xl"
+      onClick={(e) => e.stopPropagation()}
+    >
+      <div className="flex items-start justify-between gap-2">
+        <div className="min-w-0">
+          <h3 className="font-serif text-sm font-bold leading-tight" style={{ color: rarityColor }}>{item.name}</h3>
+          <p className="mt-0.5 text-[11px] text-slate-400">
+            {item.rarity}
+            {item.itemType ? ` · ${item.itemType}` : ''}
+            {` · ${slotLabel}`}
+            {item.itemLevel != null ? ` · iLvl ${item.itemLevel}` : ''}
+          </p>
         </div>
+        <button type="button" onClick={onClose} className="shrink-0 rounded p-1 text-slate-500 hover:bg-slate-800 hover:text-slate-200" title="Close">
+          <X size={14} />
+        </button>
+      </div>
+      {item.diceNotation && (
+        <p className="mt-2 text-xs font-mono text-amber-300">{item.diceNotation}</p>
+      )}
+      {mods.length > 0 && (
+        <ul className="mt-2 grid grid-cols-3 gap-1">
+          {mods.map(([key, val]) => (
+            <li key={key} className="rounded bg-slate-800/80 px-1.5 py-1 text-center">
+              <div className="text-[9px] text-slate-500">{key}</div>
+              <div className={`text-xs font-mono font-bold ${val > 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
+                {val > 0 ? `+${val}` : val}
+              </div>
+            </li>
+          ))}
+        </ul>
+      )}
+      {item.description && (
+        <p className="mt-2 text-xs leading-relaxed text-slate-300">{item.description}</p>
+      )}
+      {item.provenance && (
+        <p className="mt-1 text-[10px] text-slate-500">{item.provenance}</p>
+      )}
+      {!item.description && mods.length === 0 && !item.diceNotation && (
+        <p className="mt-2 text-xs italic text-slate-500">No listed stats.</p>
       )}
     </div>
   );
@@ -147,50 +209,54 @@ function AttributeGrid({ state }: { state: GameState }) {
   );
 }
 
-function SidePanel({ state, open }: { state: GameState; open: boolean; onToggle?: () => void }) {
+function SidePanel({ state }: { state: GameState }) {
   const c = state.character;
   const reveal = state.statusReveal ?? (state.tutorialProgress?.fullStatusUnlocked ? 'full' : 'minimal');
   return (
-    <div className={`transition-all duration-300 overflow-hidden ${open ? 'w-56' : 'w-0'}`}>
-      <div className="h-full w-56 space-y-4 overflow-y-auto border-l border-slate-800 bg-slate-950/60 p-3">
-        <div>
-          <h3 className="mb-2 font-serif text-sm uppercase tracking-wider text-crimson-400">Vitals</h3>
-          <div className="space-y-2">
-            <StatBar label="Health" current={c.hp} max={c.maxHp} color="bg-gradient-to-r from-rose-700 to-rose-500" icon={<Heart size={12} className="text-rose-400" />} />
-            {reveal !== 'minimal' && (
-              <StatBar label="Mana" current={c.mp} max={c.maxMp} color="bg-gradient-to-r from-sky-600 to-sky-400" icon={<Droplet size={12} className="text-sky-400" />} />
-            )}
-            {reveal === 'full' && c.sp !== undefined && c.maxSp !== undefined && c.maxSp > 0 && (
-              <StatBar label="Stamina" current={c.sp} max={c.maxSp} color="bg-gradient-to-r from-emerald-600 to-emerald-400" icon={<Zap size={12} className="text-emerald-400" />} />
-            )}
-          </div>
+    <div className="h-full w-64 space-y-4 overflow-y-auto bg-slate-950/95 p-3 sm:w-56">
+      <div>
+        <h3 className="mb-2 font-serif text-sm uppercase tracking-wider text-crimson-400">Vitals</h3>
+        <div className="space-y-2">
+          <StatBar label="Health" current={c.hp} max={c.maxHp} color="bg-gradient-to-r from-rose-700 to-rose-500" icon={<Heart size={12} className="text-rose-400" />} />
+          {(reveal !== 'minimal') && (
+            <StatBar label="Mana" current={c.mp} max={c.maxMp} color="bg-gradient-to-r from-sky-600 to-sky-400" icon={<Droplet size={12} className="text-sky-400" />} />
+          )}
+          {reveal === 'full' && c.sp !== undefined && c.maxSp !== undefined && c.maxSp > 0 && (
+            <StatBar label="Stamina" current={c.sp} max={c.maxSp} color="bg-gradient-to-r from-emerald-600 to-emerald-400" icon={<Zap size={12} className="text-emerald-400" />} />
+          )}
         </div>
-        <div>
-          <h3 className="mb-2 font-serif text-sm uppercase tracking-wider text-crimson-400">Attributes</h3>
-          <AttributeGrid state={state} />
-        </div>
-        <div>
-          <h3 className="mb-2 font-serif text-sm uppercase tracking-wider text-crimson-400">Progress</h3>
-          <div className="space-y-1 text-xs text-slate-300">
-            <div className="flex justify-between"><span>Level</span><span className="font-mono font-bold text-amber-400">{c.level}</span></div>
-            {reveal !== 'minimal' && (
-              <div className="flex justify-between"><span>XP</span><span className="font-mono">{c.xp}/{c.xpToNext}</span></div>
-            )}
-            {reveal === 'full' && c.armorClass != null && <div className="flex justify-between"><span>Armor Class</span><span className="font-mono font-bold">{c.armorClass}</span></div>}
-            <div className="flex justify-between"><span>Gold</span><span className="font-mono text-amber-400">{state.gold ?? 0}</span></div>
-          </div>
-        </div>
-        {c.conditions.length > 0 && (
-          <div>
-            <h3 className="mb-2 font-serif text-sm uppercase tracking-wider text-crimson-400">Conditions</h3>
-            <div className="flex flex-wrap gap-1">
-              {c.conditions.map((cond) => (
-                <span key={cond} className="rounded border border-rose-500/30 bg-rose-500/15 px-1.5 py-0.5 text-[10px] text-rose-300">{cond}</span>
-              ))}
-            </div>
-          </div>
-        )}
       </div>
+      <div>
+        <h3 className="mb-2 font-serif text-sm uppercase tracking-wider text-crimson-400">Attributes</h3>
+        <AttributeGrid state={state} />
+      </div>
+      <div>
+        <h3 className="mb-2 font-serif text-sm uppercase tracking-wider text-crimson-400">Progress</h3>
+        <div className="space-y-1 text-xs text-slate-300">
+          <div className="flex justify-between"><span>Level</span><span className="font-mono font-bold text-amber-400">{c.level}</span></div>
+          {reveal !== 'minimal' && (
+            <div className="flex justify-between"><span>XP</span><span className="font-mono">{c.xp}/{c.xpToNext}</span></div>
+          )}
+          {reveal === 'full' && c.armorClass != null && <div className="flex justify-between"><span>Armor Class</span><span className="font-mono font-bold">{c.armorClass}</span></div>}
+          <div className="flex justify-between"><span>Gold</span><span className="font-mono text-amber-400">{state.gold ?? 0}</span></div>
+        </div>
+      </div>
+      {c.conditions.length > 0 && (
+        <div>
+          <h3 className="mb-2 font-serif text-sm uppercase tracking-wider text-crimson-400">Conditions</h3>
+          <div className="flex flex-wrap gap-1">
+            {c.conditions.map((cond) => (
+              <span key={cond} className="rounded border border-rose-500/30 bg-rose-500/15 px-1.5 py-0.5 text-[10px] text-rose-300">{cond}</span>
+            ))}
+          </div>
+        </div>
+      )}
+      {reveal === 'full' && c.bio && (
+        <div>
+          <h3 className="mb-2 font-serif text-sm uppercase tracking-wider text-crimson-400">Biography</h3>
+          <p className="text-xs leading-relaxed text-slate-300">{c.bio}</p>
+        </div>
+      )}
     </div>
   );
 }
@@ -329,10 +395,78 @@ function InventoryPanel({ state }: { state: GameState }) {
   );
 }
 
+function PaperDoll({
+  state,
+  equipped,
+  artBusy,
+  lookKey,
+  inspect,
+  onSelect,
+}: {
+  state: GameState;
+  equipped: Record<EquipSlotKey, Item | undefined>;
+  artBusy: boolean;
+  lookKey: string;
+  inspect: { item: Item; slotKey: EquipSlotKey } | null;
+  onSelect: (item: Item | undefined, slotKey: EquipSlotKey) => void;
+}) {
+  const c = state.character;
+  const portraitReady = Boolean(c.portraitUrl);
+  const drawing = artBusy && (!c.portraitUrl || c.portraitKey !== lookKey);
+
+  return (
+    <div className="relative flex h-full min-h-0 w-full items-center justify-center gap-2 px-2 py-3 sm:gap-3 sm:px-4">
+      <div className="flex h-full flex-col justify-center gap-2">
+        {LEFT_SLOTS.map((slotKey) => (
+          <EquipSlot
+            key={slotKey}
+            slotKey={slotKey}
+            item={equipped[slotKey]}
+            selected={inspect?.slotKey === slotKey}
+            onSelect={onSelect}
+          />
+        ))}
+      </div>
+
+      <div className="relative flex h-full min-h-0 min-w-0 flex-1 items-center justify-center">
+        <div className="relative h-full w-auto max-w-[min(100%,16rem)] overflow-hidden rounded-lg border-2 border-slate-600 bg-slate-800/40 aspect-[3/5] sm:max-w-[min(100%,20rem)]">
+          {drawing ? (
+            <div className="absolute inset-0 z-10 flex flex-col items-center justify-center gap-2 bg-slate-900/70">
+              <Loader2 size={22} className="animate-spin text-crimson-400" />
+              <span className="text-[10px] text-slate-400">Drawing you…</span>
+            </div>
+          ) : null}
+          {portraitReady ? (
+            <img src={c.portraitUrl!} alt={c.name} className="h-full w-full object-cover object-top" />
+          ) : (
+            <div className="flex h-full w-full flex-col items-center justify-center gap-2 p-3">
+              <Users size={40} className="text-slate-600" />
+              {!drawing && <p className="text-[10px] text-slate-500 text-center">Portrait pending</p>}
+            </div>
+          )}
+        </div>
+      </div>
+
+      <div className="flex h-full flex-col justify-center gap-2">
+        {RIGHT_SLOTS.map((slotKey) => (
+          <EquipSlot
+            key={slotKey}
+            slotKey={slotKey}
+            item={equipped[slotKey]}
+            selected={inspect?.slotKey === slotKey}
+            onSelect={onSelect}
+          />
+        ))}
+      </div>
+    </div>
+  );
+}
+
 export function CharacterWindow({ isOpen, onClose, state, settings, initialTab, onGenerateArt, onCommitArt }: Props) {
   const [sidePanelOpen, setSidePanelOpen] = useState(false);
-  const [activeTab, setActiveTab] = useState<BottomTab>(initialTab ?? 'inventory');
+  const [activeTab, setActiveTab] = useState<BottomTab>(initialTab ?? 'character');
   const [artBusy, setArtBusy] = useState(false);
+  const [inspect, setInspect] = useState<{ item: Item; slotKey: EquipSlotKey } | null>(null);
 
   const equipped = useMemo(() => {
     const map = {} as Record<EquipSlotKey, Item | undefined>;
@@ -345,6 +479,11 @@ export function CharacterWindow({ isOpen, onClose, state, settings, initialTab, 
   const lookKey = portraitCacheKey(state);
   const stateRef = useRef(state);
   stateRef.current = state;
+  const onCharacter = activeTab === 'character';
+
+  useEffect(() => {
+    if (initialTab) setActiveTab(initialTab);
+  }, [initialTab]);
 
   useEffect(() => {
     if (!isOpen || !onGenerateArt || !onCommitArt) return;
@@ -353,7 +492,6 @@ export function CharacterWindow({ isOpen, onClose, state, settings, initialTab, 
     void (async () => {
       try {
         const live = stateRef.current;
-        const key = portraitCacheKey(live);
         const missing = (live.inventory ?? [])
           .filter((item) => !item.iconUrl)
           .sort((a, b) => Number(!!b.equipped) - Number(!!a.equipped))
@@ -364,7 +502,7 @@ export function CharacterWindow({ isOpen, onClose, state, settings, initialTab, 
           if (url && !cancelled) onCommitArt({ itemIcons: { [item.id]: url } });
         }
         const after = stateRef.current;
-        const needPortrait = after.character.portraitKey !== key || !after.character.portraitUrl;
+        const needPortrait = after.character.portraitKey !== lookKey || !after.character.portraitUrl;
         if (!cancelled && needPortrait) {
           const url = await onGenerateArt(paperDollPrompt(after), 'character-portrait');
           if (url && !cancelled) onCommitArt({ portraitUrl: url, portraitKey: portraitCacheKey(stateRef.current) });
@@ -382,7 +520,8 @@ export function CharacterWindow({ isOpen, onClose, state, settings, initialTab, 
 
   const c = state.character;
   const tabs: { key: BottomTab; label: string; icon: React.ReactNode }[] = [
-    { key: 'inventory', label: 'Inventory', icon: <Backpack size={14} /> },
+    { key: 'character', label: 'Character', icon: <UserRound size={14} /> },
+    { key: 'inventory', label: 'Bags', icon: <Backpack size={14} /> },
     { key: 'sheet', label: 'Sheet', icon: <ScrollText size={14} /> },
     { key: 'progression', label: 'Progress', icon: <TrendingUp size={14} /> },
     { key: 'combat', label: 'Combat', icon: <Sword size={14} /> },
@@ -397,90 +536,75 @@ export function CharacterWindow({ isOpen, onClose, state, settings, initialTab, 
     tabs.push({ key: 'dnd', label: '5e Sheet', icon: <ScrollText size={14} /> });
   }
 
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/80 backdrop-blur-sm">
-      <div className="relative flex h-[100dvh] max-h-[100dvh] w-full max-w-3xl flex-col overflow-hidden rounded-xl border border-slate-700 bg-slate-900 text-slate-100 shadow-2xl sm:h-[85vh] sm:max-h-[85vh]">
+  const handleSelect = (item: Item | undefined, slotKey: EquipSlotKey) => {
+    if (!item) {
+      setInspect(null);
+      return;
+    }
+    setInspect((prev) => (prev?.slotKey === slotKey ? null : { item, slotKey }));
+  };
 
-        {/* Header */}
-        <div className="flex items-center justify-between px-4 py-3 border-b border-slate-800 bg-slate-950/50">
+  const handleTab = (key: BottomTab) => {
+    setInspect(null);
+    setActiveTab(key);
+    if (key !== 'character') setSidePanelOpen(false);
+  };
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-stretch justify-center bg-black/80 backdrop-blur-sm sm:items-center sm:p-4">
+      <div className="relative flex h-[100dvh] w-full max-w-3xl flex-col overflow-hidden border-slate-700 bg-slate-900 text-slate-100 shadow-2xl sm:h-[85vh] sm:max-h-[85vh] sm:rounded-xl sm:border">
+
+        <div className="flex shrink-0 items-center justify-between border-b border-slate-800 bg-slate-950/50 px-4 py-3">
           <div className="flex items-center gap-3">
             <h2 className="font-serif text-lg font-bold text-crimson-400">{c.name}</h2>
             <span className="text-xs text-slate-500">Level {c.level}</span>
           </div>
           <div className="flex items-center gap-2">
-            <button
-              type="button"
-              onClick={() => setSidePanelOpen((o) => !o)}
-              className={`rounded-md border px-2 py-1 text-[11px] font-medium ${
-                sidePanelOpen
-                  ? 'border-crimson-600/50 bg-crimson-950/40 text-crimson-300'
-                  : 'border-slate-700 bg-slate-800 text-slate-300'
-              }`}
-            >
-              {sidePanelOpen ? 'Hide stats' : 'Show stats'}
-            </button>
+            {onCharacter && (
+              <button
+                type="button"
+                onClick={() => setSidePanelOpen((o) => !o)}
+                aria-pressed={sidePanelOpen}
+                className={`rounded-md border px-2 py-1 text-[11px] font-medium ${
+                  sidePanelOpen
+                    ? 'border-crimson-600/50 bg-crimson-950/40 text-crimson-300'
+                    : 'border-slate-700 bg-slate-800 text-slate-300'
+                }`}
+              >
+                {sidePanelOpen ? 'Hide stats' : 'Show stats'}
+              </button>
+            )}
             <button onClick={onClose} className="p-1.5 rounded hover:bg-slate-800 text-slate-400 hover:text-slate-200 transition-colors" title="Close">
               <X size={18} />
             </button>
           </div>
         </div>
 
-        {/* Main Content: Equipment + Portrait + Side Panel */}
-        <div className="flex flex-1 overflow-hidden">
-          {/* Equipment & Portrait area */}
-          <div className="flex-1 flex flex-col items-center justify-start p-4 overflow-y-auto">
-            {/* Top row: Head, Shoulders */}
-            <div className="flex gap-2 mb-2">
-              <EquipSlot slotKey="Head" item={equipped.Head} />
-              <EquipSlot slotKey="Shoulders" item={equipped.Shoulders} />
+        <div className="relative flex min-h-0 flex-1 overflow-hidden">
+          {onCharacter ? (
+            <div className="relative min-h-0 min-w-0 flex-1">
+              <PaperDoll
+                state={state}
+                equipped={equipped}
+                artBusy={artBusy}
+                lookKey={lookKey}
+                inspect={inspect}
+                onSelect={handleSelect}
+              />
+              {onCharacter && (
+                <button
+                  type="button"
+                  onClick={() => setSidePanelOpen((o) => !o)}
+                  className="absolute right-0 top-1/2 z-[5] -translate-y-1/2 rounded-l-md border border-r-0 border-slate-700 bg-slate-900/90 p-1 text-slate-400 hover:bg-slate-800 hover:text-slate-200"
+                  title={sidePanelOpen ? 'Hide stats' : 'Show stats'}
+                  aria-label={sidePanelOpen ? 'Hide stats' : 'Show stats'}
+                >
+                  {sidePanelOpen ? <ChevronRight size={16} /> : <ChevronLeft size={16} />}
+                </button>
+              )}
             </div>
-
-            {/* Middle row: Main Hand, Portrait, Off Hand */}
-            <div className="flex items-center gap-2 mb-2">
-              <EquipSlot slotKey="Main Hand" item={equipped['Main Hand']} />
-
-              {/* Portrait */}
-              <div className="w-28 h-40 sm:w-36 sm:h-52 rounded-lg border-2 border-slate-600 bg-slate-800/40 flex items-center justify-center overflow-hidden relative">
-                {artBusy && (!c.portraitUrl || c.portraitKey !== lookKey) ? (
-                  <div className="absolute inset-0 z-10 flex flex-col items-center justify-center gap-2 bg-slate-900/70">
-                    <Loader2 size={22} className="animate-spin text-crimson-400" />
-                    <span className="text-[10px] text-slate-400">Drawing you…</span>
-                  </div>
-                ) : null}
-                {c.portraitUrl ? (
-                  <img src={c.portraitUrl} alt={c.name} className="h-full w-full object-cover object-top" />
-                ) : c.appearance ? (
-                  <div className="text-center p-2">
-                    <div className="w-16 h-16 mx-auto rounded-full bg-gradient-to-b from-slate-700 to-slate-900 border border-slate-600 flex items-center justify-center mb-1">
-                      <Users size={28} className="text-slate-500" />
-                    </div>
-                    <p className="text-[10px] text-slate-500 line-clamp-3">{c.appearance}</p>
-                  </div>
-                ) : (
-                  <Users size={40} className="text-slate-600" />
-                )}
-              </div>
-
-              <EquipSlot slotKey="Off Hand" item={equipped['Off Hand']} />
-            </div>
-
-            {/* Bottom row: Chest, Legs, Feet */}
-            <div className="flex gap-2 mb-4">
-              <EquipSlot slotKey="Chest" item={equipped.Chest} />
-              <EquipSlot slotKey="Legs" item={equipped.Legs} />
-              <EquipSlot slotKey="Feet" item={equipped.Feet} />
-            </div>
-
-            {/* Bio */}
-            {c.bio && (
-              <div className="w-full max-w-sm rounded-md bg-slate-800/40 border border-slate-700 p-3 mb-3">
-                <h4 className="text-xs text-slate-500 mb-1 font-medium">Biography</h4>
-                <p className="text-xs text-slate-300 leading-relaxed line-clamp-4">{c.bio}</p>
-              </div>
-            )}
-
-            {/* Tab Content */}
-            <div className="w-full flex-1 min-h-[120px] rounded-md bg-slate-800/30 border border-slate-700 p-3 overflow-y-auto">
+          ) : (
+            <div className="min-h-0 flex-1 overflow-y-auto p-4">
               {activeTab === 'inventory' && <InventoryPanel state={state} />}
               {activeTab === 'spells' && <EmptyTabContent message="No spells learned yet." />}
               {activeTab === 'professions' && <EmptyTabContent message="No professions acquired." />}
@@ -492,20 +616,42 @@ export function CharacterWindow({ isOpen, onClose, state, settings, initialTab, 
               {activeTab === 'progression' && <CharacterProgression state={state} />}
               {activeTab === 'combat' && <CombatEncounter activeDungeon={state.activeDungeon} currentCoordinates={state.currentCoordinates} />}
             </div>
-          </div>
+          )}
 
-          {/* Collapsible Side Panel */}
-          <div className="relative flex">
-            <SidePanel state={state} open={sidePanelOpen} />
-          </div>
+          {onCharacter && sidePanelOpen && (
+            <>
+              <button
+                type="button"
+                className="absolute inset-0 z-10 bg-black/50 sm:hidden"
+                aria-label="Hide stats"
+                onClick={() => setSidePanelOpen(false)}
+              />
+              <div className="absolute inset-y-0 right-0 z-20 border-l border-slate-800 sm:relative sm:z-0">
+                <SidePanel state={state} />
+              </div>
+            </>
+          )}
+
+          {inspect && (
+            <div
+              className="absolute inset-0 z-30 flex items-end justify-center bg-black/50 p-3 sm:items-center"
+              onClick={() => setInspect(null)}
+            >
+              <ItemInspectCard
+                item={inspect.item}
+                slotLabel={SLOT_META[inspect.slotKey].label}
+                onClose={() => setInspect(null)}
+              />
+            </div>
+          )}
         </div>
 
-        {/* Bottom Navigation */}
-        <div className="z-20 flex shrink-0 overflow-x-auto border-t border-slate-800 bg-slate-950 pb-[max(0.5rem,env(safe-area-inset-bottom))]">
+        <div className="z-20 flex shrink-0 overflow-x-auto border-t border-slate-800 bg-slate-950 pb-[max(0.75rem,env(safe-area-inset-bottom))]">
           {tabs.map((tab) => (
             <button
               key={tab.key}
-              onClick={() => setActiveTab(tab.key)}
+              type="button"
+              onClick={() => handleTab(tab.key)}
               className={`flex min-w-[3.25rem] flex-1 flex-col items-center gap-1 px-1 py-2.5 text-xs transition-colors ${
                 activeTab === tab.key
                   ? 'text-crimson-400 bg-slate-800/50 border-t-2 border-crimson-500'
