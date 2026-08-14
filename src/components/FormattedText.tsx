@@ -2,6 +2,7 @@ import { useState, useRef } from 'react';
 import { RARITY_COLORS } from '@/game/types';
 import type { Rarity, LoreCard } from '@/game/types';
 import { parseNarrativeSegments, NarrativeSegmentBlock } from './comic/NarrativeText';
+import { isTurnCloserLine, stripTurnCloser } from '@/game/turnAsk';
 
 interface Props {
   content: string;
@@ -26,7 +27,7 @@ type Block = { type: 'prose' | 'code' | 'roll' | 'prompt'; text: string };
 
 function parseBlocks(text: string): Block[] {
   const blocks: Block[] = [];
-  const lines = text.split('\n');
+  const lines = stripTurnCloser(text).split('\n');
   let buffer: string[] = [];
   let inCode = false;
 
@@ -69,9 +70,11 @@ function parseBlocks(text: string): Block[] {
     }
     if (inCode) {
       buffer.push(line);
+    } else if (isTurnCloserLine(line)) {
+      flush();
     } else {
       buffer.push(line);
-      if (line.trim() === '' || line.includes('What do you do?')) {
+      if (line.trim() === '') {
         flush();
       }
     }

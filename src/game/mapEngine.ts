@@ -212,3 +212,80 @@ export function moveToNode(currentState: ActiveDungeonState, targetNodeId: strin
 export function exitDungeon(): undefined {
   return undefined;
 }
+
+function uniqueNames(names: string[]): string[] {
+  const seen = new Set<string>();
+  const out: string[] = [];
+  for (const raw of names) {
+    const name = raw.replace(/\s+/g, ' ').trim();
+    if (!name) continue;
+    const key = name.toLowerCase();
+    if (seen.has(key)) continue;
+    seen.add(key);
+    out.push(name.slice(0, 48));
+  }
+  return out;
+}
+
+/** Street-scale map of wherever the player said they are — Tesco Extra, a Kyoto alley, anywhere. */
+export function buildLocalAreaMap(
+  place: string,
+  landmarks: string[] = [],
+  parentCoords?: Location3D
+): ActiveDungeonState {
+  const here = place.replace(/\s+/g, ' ').trim() || 'Local area';
+  const extras = uniqueNames(landmarks.filter((n) => n.toLowerCase() !== here.toLowerCase()));
+  const names = uniqueNames([here, ...extras, 'Side street', 'Cover / doorway']).slice(0, 6);
+
+  const nodes: MapNode[] = names.map((name, i) => {
+    const neighbors: string[] = [];
+    if (i > 0) neighbors.push('local_0');
+    if (i === 0) {
+      for (let j = 1; j < names.length; j++) neighbors.push(`local_${j}`);
+    } else if (i < names.length - 1) {
+      neighbors.push(`local_${i + 1}`);
+    }
+    return {
+      id: `local_${i}`,
+      name,
+      description: i === 0 ? `You are here: ${name}.` : `${name}, near ${here}.`,
+      connections: neighbors,
+      coordinates: { x: i === 0 ? 1 : i % 2 === 1 ? 0 : 2, y: i === 0 ? 1 : Math.ceil(i / 2) },
+      zLevel: 0,
+      tags: i === 0 ? ['here', 'entry'] : ['local'],
+    };
+  });
+
+  return {
+    blueprintId: 'local-area',
+    dungeonName: here,
+    tier: 3,
+    parentCoordinates: parentCoords,
+    currentZLevel: 0,
+    currentNodeId: 'local_0',
+    visitedNodeIds: ['local_0'],
+    clearedNodeIds: [],
+    nodes,
+  };
+}
+
+export function addLandmarkToLocalMap(dungeon: ActiveDungeonState, landmark: string): ActiveDungeonState {
+  const name = landmark.replace(/\s+/g, ' ').trim();
+  if (!name) return dungeon;
+  if (dungeon.nodes.some((n) => n.name.toLowerCase() === name.toLowerCase())) return dungeon;
+  const id = `local_${dungeon.nodes.length}`;
+  const here = dungeon.nodes.find((n) => n.id === dungeon.currentNodeId) ?? dungeon.nodes[0];
+  const node: MapNode = {
+    id,
+    name,
+    description: `${name}, near ${dungeon.dungeonName}.`,
+    connections: here ? [here.id] : [],
+    coordinates: { x: (here?.coordinates?.x ?? 1) + 1, y: here?.coordinates?.y ?? 1 },
+    zLevel: 0,
+    tags: ['local'],
+  };
+  const nodes = dungeon.nodes.map((n) =>
+    n.id === here?.id ? { ...n, connections: [...n.connections, id] } : n
+  );
+  return { ...dungeon, nodes: [...nodes, node] };
+}

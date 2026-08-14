@@ -24,7 +24,7 @@ const NEEDS_FINDINGS_ACTION =
   /\b(scout|circle|search|look|inspect|examin|listen|check\s+for|find|survey|recon|practice|test|ask|what|where|how|who|why|observe|scan|watch|study|wonder)\b/i;
 
 const FOCUS_NOUN =
-  /\b(car|van|truck|bus|vehicle|door|gate|alley|panel|tunic|clothes|shirt|jacket|coat|crate|body|corpse|shop|stall|sword|knife|blade|dumpster|window|wreck)\b/i;
+  /\b(car|van|truck|bus|vehicle|door|gate|alley|panel|tunic|clothes|shirt|jacket|coat|crate|body|corpse|shop|stall|store|market|mart|tesco|entrance|sword|knife|blade|dumpster|window|wreck)\b/i;
 
 function proseOnly(text: string): string {
   return stripChoiceList(text)
@@ -63,6 +63,7 @@ export function isUnresolvedActionNarrative(
   const job = primaryActionClause(playerAction);
   const prose = proseOnly(narrative);
   if (!prose || prose.length < 60) return true;
+  if (/^(?:what do you do(?:\s+next)?|what will you do)\s*[?:.]?\s*$/i.test(prose)) return true;
   if (isGenericBridgeNarrative(narrative)) return true;
   if (/bring the System panel in close/i.test(prose) && !isPanelOnlyAction(playerAction)) return true;
 

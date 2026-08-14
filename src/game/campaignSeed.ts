@@ -76,8 +76,8 @@ export function seedStateFromCampaignBible(
       name: q.title,
       description: q.description,
       status,
-      // Seeded quests start unrevealed so Guide Book hooks cannot steal scene focus.
-      revealed: false,
+      // Opening active quest is journal-visible. Other Guide Book hooks stay hidden.
+      revealed: status === 'active',
       type: 'main' as const,
       recommendedLevel: q.recommendedLevel,
       objectives: q.objectives.map((desc, i) => ({

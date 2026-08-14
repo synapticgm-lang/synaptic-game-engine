@@ -1,5 +1,7 @@
-import React from 'react';
+import React, { useEffect, useMemo } from 'react';
 import type { ActiveDungeonState, MapNode } from '../game/mapEngine';
+import { buildLocalAreaMap } from '../game/mapEngine';
+import { isGenericMapPlace } from '../game/questPlay';
 import type { Location3D } from '../game/types';
 
 interface DungeonMapModalProps {
@@ -10,6 +12,7 @@ interface DungeonMapModalProps {
   currentLocation?: string;
   onMoveNode: (nodeId: string) => void;
   onExitDungeon: () => void;
+  onEnsureLocalMap?: () => void;
   onLoadDungeon?: (
     blueprintId: string,
     dungeonName: string,
@@ -27,38 +30,50 @@ export const DungeonMapModal: React.FC<DungeonMapModalProps> = ({
   currentLocation,
   onMoveNode,
   onExitDungeon,
+  onEnsureLocalMap,
 }) => {
+  useEffect(() => {
+    if (isOpen) onEnsureLocalMap?.();
+  }, [isOpen, activeDungeon, onEnsureLocalMap]);
+
+  const displayDungeon = useMemo(() => {
+    if (activeDungeon) return activeDungeon;
+    const place = currentLocation?.trim();
+    if (!place || isGenericMapPlace(place)) return null;
+    return buildLocalAreaMap(place, [], currentCoordinates);
+  }, [activeDungeon, currentLocation, currentCoordinates]);
+
   if (!isOpen) return null;
 
-  if (!activeDungeon) {
+  if (!displayDungeon) {
     return (
       <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
-        <div className="relative w-full max-w-lg rounded-xl border border-cyan-500/30 bg-slate-900/95 p-6 shadow-2xl text-slate-100">
-          <div className="flex items-start justify-between gap-3 pb-4 border-b border-slate-700">
+        <div className="relative w-full max-w-lg rounded-xl border border-blue-500/40 bg-slate-950 shadow-2xl shadow-blue-950/40 p-6 text-slate-100">
+          <div className="flex items-start justify-between gap-3 pb-4 border-b border-blue-500/30">
             <div>
-              <p className="text-xs font-semibold text-cyan-400 mb-1">Map</p>
-              <h2 className="text-xl font-bold">No mapped area yet</h2>
+              <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-blue-300 mb-1">System</p>
+              <h2 className="text-xl font-bold text-blue-100">Local map pending</h2>
             </div>
             <button
               onClick={onClose}
-              className="px-3 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-600 text-sm transition"
+              className="px-3 py-1 rounded bg-slate-800 hover:bg-slate-700 text-blue-200 border border-blue-800/50 text-sm transition"
             >
               ✕ Close
             </button>
           </div>
           <p className="mt-4 text-sm text-slate-300 leading-relaxed">
-            You are in <span className="font-medium text-slate-100">{currentLocation?.trim() || 'an unmapped place'}</span>.
-            A tactical map appears after you enter a dungeon or a mapped interior — the same way most tabletop apps only show a battle map once you are on the grid.
+            You are in <span className="font-medium text-blue-100">{currentLocation?.trim() || 'an unmapped place'}</span>.
+            The System builds a street map from wherever you said you are — a Tesco Extra in England, a Kyoto alley, anywhere in the world.
           </p>
-          <p className="mt-3 text-xs text-slate-500">
-            Explore, find an entrance, or wait until the story puts you in a mapped site.
+          <p className="mt-3 text-xs text-blue-400/70 font-mono uppercase tracking-wider">
+            Name the street or store in play if this is still empty.
           </p>
         </div>
       </div>
     );
   }
 
-  const currentNode = activeDungeon.nodes.find((n) => n.id === activeDungeon.currentNodeId);
+  const currentNode = displayDungeon.nodes.find((n) => n.id === displayDungeon.currentNodeId);
 
   const getNodePos = (node: MapNode) => {
     const x = (node.coordinates?.x ?? 0) * 120 + 80;
@@ -81,15 +96,15 @@ export const DungeonMapModal: React.FC<DungeonMapModalProps> = ({
         <div className="flex justify-between items-center pb-4 border-b border-slate-700">
           <div>
             <div className="flex items-center gap-2 text-xs font-semibold text-cyan-400 mb-1">
-              <span>🗺️ {tierNames[activeDungeon.tier]}</span>
+              <span>🗺️ {tierNames[displayDungeon.tier]}</span>
               {currentCoordinates && (
                 <span className="rounded bg-slate-800 px-2 py-0.5 text-slate-300">
-                  q: {currentCoordinates.q}, r: {currentCoordinates.r} | Floor: {activeDungeon.currentZLevel}
+                  q: {currentCoordinates.q}, r: {currentCoordinates.r} | Floor: {displayDungeon.currentZLevel}
                 </span>
               )}
             </div>
             <h2 className="text-xl font-bold text-slate-100 flex items-center gap-2">
-              {activeDungeon.dungeonName}
+              {displayDungeon.dungeonName}
             </h2>
             <p className="text-xs text-slate-400">
               Active Node: <span className="text-amber-300 font-semibold">{currentNode?.name || 'Unknown'}</span>
@@ -106,15 +121,15 @@ export const DungeonMapModal: React.FC<DungeonMapModalProps> = ({
         {/* Map Visualizer Canvas */}
         <div className="relative flex-1 my-4 min-h-[360px] overflow-auto rounded-lg bg-slate-950 border border-slate-800 p-4">
           <svg className="absolute inset-0 w-full h-full min-w-[500px] min-h-[500px] pointer-events-none">
-            {activeDungeon.nodes.map((node) => {
+            {displayDungeon.nodes.map((node) => {
               const start = getNodePos(node);
-              const isVisited = activeDungeon.visitedNodeIds.includes(node.id);
+              const isVisited = displayDungeon.visitedNodeIds.includes(node.id);
 
               return node.connections.map((targetId) => {
-                const targetNode = activeDungeon.nodes.find((n) => n.id === targetId);
+                const targetNode = displayDungeon.nodes.find((n) => n.id === targetId);
                 if (!targetNode) return null;
                 const end = getNodePos(targetNode);
-                const isTargetVisited = activeDungeon.visitedNodeIds.includes(targetId);
+                const isTargetVisited = displayDungeon.visitedNodeIds.includes(targetId);
                 const lineVisible = isVisited || isTargetVisited;
 
                 return (
@@ -136,10 +151,10 @@ export const DungeonMapModal: React.FC<DungeonMapModalProps> = ({
 
           {/* Render Hex Nodes */}
           <div className="relative min-w-[500px] min-h-[500px]">
-            {activeDungeon.nodes.map((node) => {
+            {displayDungeon.nodes.map((node) => {
               const { x, y } = getNodePos(node);
-              const isCurrent = node.id === activeDungeon.currentNodeId;
-              const isVisited = activeDungeon.visitedNodeIds.includes(node.id);
+              const isCurrent = node.id === displayDungeon.currentNodeId;
+              const isVisited = displayDungeon.visitedNodeIds.includes(node.id);
               const isReachable = currentNode?.connections.includes(node.id);
 
               if (!isVisited && !isReachable) {
@@ -194,13 +209,13 @@ export const DungeonMapModal: React.FC<DungeonMapModalProps> = ({
 
           <div className="flex justify-between items-center pt-2 border-t border-slate-700/60">
             <span className="text-xs text-slate-400">
-              Discovered: {activeDungeon.visitedNodeIds.length} / {activeDungeon.nodes.length} sectors
+              Discovered: {displayDungeon.visitedNodeIds.length} / {displayDungeon.nodes.length} sectors
             </span>
             <button
               onClick={onExitDungeon}
               className="px-3 py-1 rounded bg-rose-900/60 hover:bg-rose-800 text-rose-200 border border-rose-700/50 text-xs transition"
             >
-              Exit Map Mode
+              {displayDungeon.blueprintId === 'local-area' ? 'Close Map' : 'Exit Map Mode'}
             </button>
           </div>
         </div>

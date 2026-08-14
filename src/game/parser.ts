@@ -1,4 +1,7 @@
 import type { GameState, LoreCard, LoreCardType, TurnFrameTheme, Quest, QuestType, QuestStatus, MapTier, ActiveEncounter, ComicPanel } from './types';
+import { stripTurnCloser } from './turnAsk';
+
+export { stripTurnCloser, isTurnCloserLine, shouldShowTurnAsk, TURN_ASK } from './turnAsk';
 
 export interface GameEvent {
   type: 
@@ -92,12 +95,13 @@ const CHOICE_LINE_REGEX = /^\s*(?:\*\*|\*)?\s*(?:(?:Option\s+)?\d+[.):]|\[\d+\]|
 export function stripChoiceList(text: string): string {
   if (!text) return text;
 
-  // Cut at "What do you do?" / Options header when present, then still strip
-  // numbered option lines from the remainder (GM often puts 1–4 ABOVE the header).
-  let body = text;
-  const headerMatch = text.match(CHOICE_HEADER_REGEX);
+  // Instructed GM format is numbered choices THEN "What do you do?". Strip that
+  // trailing closer first so the walk-from-the-end can see the option lines.
+  // (If the closer is a header *above* the list, CHOICE_HEADER_REGEX still cuts.)
+  let body = stripTurnCloser(text);
+  const headerMatch = body.match(CHOICE_HEADER_REGEX);
   if (headerMatch && typeof headerMatch.index === 'number') {
-    body = text.slice(0, headerMatch.index).trim();
+    body = body.slice(0, headerMatch.index).trim();
   }
 
   const lines = body.split('\n');
@@ -122,7 +126,7 @@ export function stripChoiceList(text: string): string {
     result = result.slice(0, inlineIdx).trim();
   }
   result = result.replace(/\s+\d+[.)]\s+what do you do\??\s*$/i, '').trim();
-  return result;
+  return stripTurnCloser(result);
 }
 
 /**
@@ -572,6 +576,7 @@ export function stripActionTags(text: string): string {
     .replace(/<world-actor\b[^>]*\/?>/gi, '')
     .replace(/<time-pass\b[^>]*\/?>/gi, '')
     .replace(/<system-log>[\s\S]*?<\/system-log>/gi, '')
+    .replace(/^[ \t]*(?:_>\s*)?SYSTEM LOG\s*$/gim, '')
     .replace(/<panel>[\s\S]*?<\/panel>/gi, '')
     .replace(/<image-prompt>[\s\S]*?<\/image-prompt>/gi, '')
     .replace(/<narrative>[\s\S]*?<\/narrative>/gi, '')
@@ -748,6 +753,7 @@ export function eventsToQuestUpdates(events: GameEvent[], currentQuests: Quest[]
           description: e.description ?? '',
           type: e.questType ?? 'side',
           status: 'active',
+          revealed: true,
           objectives: [],
         };
         updatedQuests.push(newQuest);
@@ -760,10 +766,17 @@ export function eventsToQuestUpdates(events: GameEvent[], currentQuests: Quest[]
         const updatedObjs = objExists
           ? objectives.map((o) => (o.id === e.objectiveId ? { ...o, completed: !!e.completed } : o))
           : [...objectives, { id: e.objectiveId!, description: e.objectiveId!, completed: !!e.completed }];
-        return { ...q, objectives: updatedObjs };
+        return {
+          ...q,
+          revealed: true,
+          status: q.status === 'hidden' ? 'active' : q.status,
+          objectives: updatedObjs,
+        };
       });
     } else if (e.type === 'quest-complete' && e.id) {
-      updatedQuests = updatedQuests.map((q) => (q.id === e.id ? { ...q, status: 'completed' as QuestStatus } : q));
+      updatedQuests = updatedQuests.map((q) =>
+        q.id === e.id ? { ...q, status: 'completed' as QuestStatus, revealed: true } : q
+      );
     }
   }
 

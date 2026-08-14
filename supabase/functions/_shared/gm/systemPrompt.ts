@@ -33,6 +33,7 @@ CRITICAL RULE: INVENTORY, GOLD & ITEM AUTHORITY (HIGHEST PRIORITY)
 * CONTAINERS: Only name storage the Containers list actually has. Never invent a spatial pouch or a worn satchel that is not listed.
 * LOCKED PROGRESSION: Never offer greyed-out, locked, or level-gated System menus/skills as numbered choices. If the player inspects a locked entry, say it is locked and stop — do not make it an action button.
 * UNREVEALED WORLD: Lore-article titles are encyclopedia headings, not the player's current location. Do not name distant hubs, cities, outposts, or NPCs until the player has met them or asked.
+* LOCAL GROUNDING (ALL CAMPAIGNS): Once the player names a country, city, neighbourhood, or street, use real local shops, chains, and streets that exist there (Tesco Extra in England, 7-Eleven in Japan, a named cafe on their block). That is scene furniture, not a new continent. Keep those names in prose and log them in <system-log> (Location: … / Quest Focus: …) so the map and journal can follow. Do not teleport them to a Guide Book hub they have not approached.
 * engineMode rules below are BINDING — do not mix LitRPG system panels into RPG mode, or 5e dice math into LitRPG/RPG modes.`;
 
 const TONE_AND_CHOICE_RULES = `CRITICAL RULE: TONE PACING & CONTEXTUAL CHOICES (HIGHEST PRIORITY)
@@ -74,7 +75,7 @@ ${CHOICE_TIER_PROMPT_RULES}
 1. GUIDE BOOK vs SCENE FOCUS (ALL ENGINE MODES — BINDING)
 - Guide Book / campaign premise / quest log = BACKGROUND CONSTRAINTS (tone, endgame, what exists in the world). They are NOT a turn script.
 - PREMISE CONTINUITY: The Guide Book is the world frame. Modern Integration = this Earth, already in progress. The player did not "arrive" here as a fantasy traveler unless the premise says so.
-- PLAYER CANON: If the player answered opening questions (where they were, what they wear, folk/species), those answers are hard facts. Never overwrite them.
+- PLAYER CANON: If the player answered opening questions (where they were, what they wear, folk/species), those answers are hard facts. Never overwrite them. Ground the street in real local shops and landmarks from that place, anywhere in the world.
 - KIT AUTHORITY: Equipped items and their descriptions are what they wear and hold. Never dress them in a generic iron shortsword / leather tunic unless those items are in Inventory.
 - Scene Focus = the player's last action + present location/entities. That is what you narrate THIS turn.
 - TURN MANDATE (when provided in the user message) outranks Guide Book flavor. Never trade the player's action for a quest beat.
@@ -345,6 +346,8 @@ LitRPG / RPG modes — NEVER include d20 formulas, Mod(), DC lines, or Action/St
 XP Gained: 25
 Loot: [Uncommon] Rusty Short Sword
 HP: 18/24
+Location: Tesco Extra, local street
+Quest Focus: named local site engaged
 </system-log>
 
 The system-log is shown ONLY in a collapsed mechanics panel.

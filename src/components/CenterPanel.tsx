@@ -12,6 +12,7 @@ import { NarrativeView } from './NarrativeView';
 import { ActionBar } from './qol/ActionBar';
 import { RewindBar } from './qol/RewindBar';
 import { TurnConfirmBar } from './qol/TurnConfirmBar';
+import { shouldShowTurnAsk, TURN_ASK } from '@/game/turnAsk';
 
 const HIDE_OPTIONS_KEY = 'synapticgm-hide-options';
 const HIDE_TEXT_KEY = 'synapticgm-hide-text';
@@ -158,8 +159,16 @@ export function CenterPanel({ state, busy, error, errorKind, currentImage, bgIma
       ) : (
         <div ref={logRef} className="relative z-10 min-h-0 flex-1 overflow-y-auto px-3 py-4 sm:px-6">
           <div className="mx-auto max-w-2xl space-y-4">
-            {state.log.map((entry) => (
-              <LogRow key={entry.id} entry={entry} lorebook={state.lorebook} showSystemLog={showSystemLog} statVerbosity={statVerbosity} engineMode={engineMode} />
+            {state.log.map((entry, index) => (
+              <LogRow
+                key={entry.id}
+                entry={entry}
+                lorebook={state.lorebook}
+                showSystemLog={showSystemLog}
+                statVerbosity={statVerbosity}
+                engineMode={engineMode}
+                showTurnAsk={shouldShowTurnAsk(state.log, index, busy)}
+              />
             ))}
             {busy && (
               <div className="flex items-center gap-2 text-sm text-slate-500">
@@ -415,7 +424,7 @@ export function CenterPanel({ state, busy, error, errorKind, currentImage, bgIma
   );
 }
 
-function LogRow({ entry, lorebook, showSystemLog, statVerbosity, engineMode }: { entry: LogEntry; lorebook?: LoreCard[]; showSystemLog: boolean; statVerbosity: StatVerbosity; engineMode: EngineMode }) {
+function LogRow({ entry, lorebook, showSystemLog, statVerbosity, engineMode, showTurnAsk }: { entry: LogEntry; lorebook?: LoreCard[]; showSystemLog: boolean; statVerbosity: StatVerbosity; engineMode: EngineMode; showTurnAsk: boolean }) {
   // Text/Milestone Mode: a rare, GM-flagged full-page illustration — rendered large and
   // distinct from the routine text log, instead of only surfacing via the small image strip.
   if (entry.entryKind === 'milestone') {
@@ -491,7 +500,14 @@ function LogRow({ entry, lorebook, showSystemLog, statVerbosity, engineMode }: {
           verbosity={statVerbosity}
         />
       )}
+      {showTurnAsk && <TurnAskLine />}
     </div>
+  );
+}
+
+function TurnAskLine() {
+  return (
+    <p className="px-1 pt-1 text-sm font-medium text-slate-200">{TURN_ASK}</p>
   );
 }
 
@@ -499,7 +515,7 @@ function SystemLogPanel({ lines, verbosity }: { lines: string[]; verbosity: Stat
   const filtered = useMemo(() => {
     if (verbosity === 'detailed') return lines;
     if (verbosity === 'core') {
-      return lines.filter((l) => /success|fail|damage|heal|defeated|xp|loot|level/i.test(l));
+      return lines.filter((l) => /success|fail|damage|heal|defeated|xp|loot|level|quest|dungeon|objective|registered|location/i.test(l));
     }
     return lines.slice(0, 2);
   }, [lines, verbosity]);
@@ -507,13 +523,13 @@ function SystemLogPanel({ lines, verbosity }: { lines: string[]; verbosity: Stat
   if (filtered.length === 0) return null;
 
   return (
-    <div className="ml-4 rounded-md border-l-2 border-crimson-700/50 bg-slate-950/60 px-3 py-2">
-      <div className="mb-1 flex items-center gap-1 text-[10px] uppercase tracking-wider text-crimson-500/70">
-        <Terminal size={10} /> System Log
+    <div className="ml-4 mt-2 max-w-lg rounded-lg border border-blue-500/50 border-l-4 border-l-sky-400 bg-blue-950/50 px-3 py-2 shadow-inner shadow-blue-900/40">
+      <div className="mb-1 flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.18em] text-blue-300">
+        <Terminal size={10} /> System
       </div>
       <div className="space-y-0.5">
         {filtered.map((line, i) => (
-          <div key={i} className="font-mono text-[11px] text-slate-400">{line}</div>
+          <div key={i} className="font-mono text-[11px] text-blue-100/90">{line}</div>
         ))}
       </div>
     </div>

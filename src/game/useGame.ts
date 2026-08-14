@@ -81,8 +81,9 @@ import {
 import { mergeNpcMemoriesFromTurn } from './npcMemory';
 import { buildPendingProposal, getProposedState, withEditedNarrative, touchLocationSheet } from './pendingTurn';
 import { extractUpdates, extractNewItems, parseActionTags, stripActionTags, matchLoreCards, eventsToLoreCards, parseTurnFrame, eventsToQuestUpdates, eventsToEncounterUpdate, parsePanels, eventsToMilestone, eventsToLootVideo, eventsToVisualUpdate, stripChoiceList, extractChoiceLines } from './parser';
+import { extractNamedPlaces, harvestPlayText, isGenericMapPlace, mapAnchorName, syncQuestsFromPlay } from './questPlay';
 import { inferItemType } from './salvage';
-import { initializeDungeon, moveToNode, exitDungeon as engineExitDungeon } from './mapEngine';
+import { initializeDungeon, moveToNode, exitDungeon as engineExitDungeon, buildLocalAreaMap, addLandmarkToLocalMap } from './mapEngine';
 import type { Toast } from '@/components/ToastStack';
 import {
   syncToDrive,
@@ -1094,6 +1095,52 @@ export function useGame() {
     addToast(`Entered: ${dungeonName}`, 'info');
   });
 
+  const hydratePlayFromLog = useCallbackRef((opts?: { persist?: boolean }) => {
+    const previous = stateRef.current;
+    if (!previous) return;
+    const blob = harvestPlayText(previous.log, [
+      previous.currentLocation ?? '',
+      previous.locationSheet?.name ?? '',
+    ]);
+    const systemLines = (previous.log ?? []).flatMap((e) => e.systemLog ?? []);
+    const quests = syncQuestsFromPlay(previous.quests ?? [], systemLines, blob);
+    const landmarks = extractNamedPlaces(blob);
+    const place = mapAnchorName(
+      previous.currentLocation || previous.locationSheet?.name,
+      landmarks
+    );
+    let areaMap = previous.activeDungeon ?? null;
+    if (!areaMap && place) {
+      areaMap = buildLocalAreaMap(place, landmarks, previous.currentCoordinates);
+    } else if (areaMap?.blueprintId === 'local-area') {
+      if (place && !isGenericMapPlace(place) && isGenericMapPlace(areaMap.dungeonName)) {
+        areaMap = buildLocalAreaMap(place, landmarks, previous.currentCoordinates);
+      } else {
+        for (const named of landmarks) areaMap = addLandmarkToLocalMap(areaMap, named);
+      }
+    }
+    const nextLocation =
+      isGenericMapPlace(previous.currentLocation) && place ? place : previous.currentLocation;
+    const questsChanged = JSON.stringify(quests) !== JSON.stringify(previous.quests ?? []);
+    const mapChanged = areaMap !== previous.activeDungeon;
+    const locationChanged = nextLocation !== previous.currentLocation;
+    if (!questsChanged && !mapChanged && !locationChanged) return;
+    const updated: GameState = {
+      ...previous,
+      quests,
+      activeDungeon: areaMap,
+      currentLocation: nextLocation,
+      lastUpdated: Date.now(),
+    };
+    stateRef.current = updated;
+    setState(updated);
+    if (opts?.persist !== false) void persist(updated);
+  });
+
+  const ensureLocalMap = useCallbackRef(() => {
+    hydratePlayFromLog();
+  });
+
   const moveDungeonNode = useCallbackRef((targetNodeId: string) => {
     const previous = stateRef.current;
     if (!previous?.activeDungeon) return;
@@ -1190,12 +1237,20 @@ export function useGame() {
     // Commit the optimistic player entry as a concrete snapshot. Do not derive later turn
     // work inside a React updater: updater execution may be deferred or repeated by React,
     // which previously left `stateRef` stale and made post-turn media jobs timing-dependent.
+    // Strip the previous GM closer so "What do you do?" cannot sit under this new command.
+    const priorLog = current.log.map((entry, i, arr) => {
+      const laterGm = arr.slice(i + 1).some((e) => e.role === 'gm');
+      if (entry.role !== 'gm' || laterGm) return entry;
+      const stripped = stripChoiceList(entry.content);
+      return stripped === entry.content ? entry : { ...entry, content: stripped };
+    });
     const optimisticState: GameState = {
       ...current,
-      log: [...current.log, playerEntry],
+      log: [...priorLog, playerEntry],
     };
     stateRef.current = optimisticState;
     setState(optimisticState);
+    hydratePlayFromLog({ persist: false });
 
     try {
       let liveCurrent = stateRef.current;
@@ -1831,7 +1886,11 @@ In <system-log>, only emit LitRPG/RPG progression lines (XP, loot, HP change as 
           })
         : workingState.inventory;
 
-      const updatedQuests = eventsToQuestUpdates(events, workingState.quests ?? []);
+      const updatedQuests = syncQuestsFromPlay(
+        eventsToQuestUpdates(events, workingState.quests ?? []),
+        mergedSystemLog,
+        `${sanitizedInput}\n${cleanText}\n${mergedSystemLog.join('\n')}`
+      );
       const updatedEncounter = eventsToEncounterUpdate(events, workingState.activeEncounter ?? null);
 
       const nextTurn = liveCurrent.turn + 1;
@@ -1877,14 +1936,26 @@ In <system-log>, only emit LitRPG/RPG progression lines (XP, loot, HP change as 
         if (e.type === 'quest-complete') questChangeNotes.push(`Quest complete: ${e.id}`);
       }
 
+      const landmarks = extractNamedPlaces(
+        `${sanitizedInput}\n${cleanText}\n${mergedSystemLog.join('\n')}\n${resolvedLocation ?? ''}`
+      );
+      const mapName = mapAnchorName(resolvedLocation, landmarks);
+      let areaMap = workingState.activeDungeon ?? liveCurrent.activeDungeon ?? null;
+      if (!areaMap && mapName) {
+        areaMap = buildLocalAreaMap(mapName, landmarks, liveCurrent.currentCoordinates);
+      } else if (areaMap?.blueprintId === 'local-area') {
+        for (const named of landmarks) areaMap = addLandmarkToLocalMap(areaMap, named);
+      }
+
       const mergedState: GameState = {
         ...workingState,
         ...updates,
         character: baseChar,
         quests: updatedQuests,
         activeEncounter: updatedEncounter,
-        currentLocation: resolvedLocation,
-        activeDungeon: workingState.activeDungeon,
+        currentLocation:
+          isGenericMapPlace(resolvedLocation) && mapName ? mapName : resolvedLocation,
+        activeDungeon: areaMap,
         currentCoordinates: workingState.currentCoordinates ?? liveCurrent.currentCoordinates,
         timeline: mergedTimeline,
         npcMemories,
@@ -2711,7 +2782,7 @@ In <system-log>, only emit LitRPG/RPG progression lines (XP, loot, HP change as 
       void persist(named);
       addToast(`Loaded campaign rails: ${bible.title}`, 'info');
     },
-    loadDungeon, moveDungeonNode, exitDungeon,
+    loadDungeon, ensureLocalMap, hydratePlayFromLog, moveDungeonNode, exitDungeon,
     handleGuestSignIn: async () => {
       setGoogleUser(GUEST_USER);
       setTelemetryContext({ playerId: 'guest' });

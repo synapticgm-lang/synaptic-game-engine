@@ -2,6 +2,7 @@ import { useState, useMemo } from 'react';
 import type { LogEntry } from '@/types';
 import type { EngineMode } from '@/game/types';
 import { filterSystemLogForEngine } from '@/game/systemLog';
+import { shouldShowTurnAsk, stripTurnCloser, TURN_ASK } from '@/game/turnAsk';
 import {
   ChevronRight, ChevronDown, Zap, Sword, Shield, Sparkles,
   TrendingUp, Skull, Heart, Dice5, Eye, EyeOff, Terminal,
@@ -69,8 +70,13 @@ export function NarrativeView({ log, busy, engineMode = 'litrpg' }: Props) {
       {/* Main narrative column */}
       <div className="flex-1 overflow-y-auto px-3 py-4 sm:px-6">
         <div className="mx-auto max-w-2xl space-y-4">
-          {log.map((entry) => (
-            <NarrativeEntry key={entry.id} entry={entry} engineMode={engineMode} />
+          {log.map((entry, index) => (
+            <NarrativeEntry
+              key={entry.id}
+              entry={entry}
+              engineMode={engineMode}
+              showTurnAsk={shouldShowTurnAsk(log, index, !!busy)}
+            />
           ))}
           {busy && (
             <div className="flex items-center gap-2 text-sm text-slate-500">
@@ -93,16 +99,16 @@ export function NarrativeView({ log, busy, engineMode = 'litrpg' }: Props) {
 
 /* ============ NARRATIVE ENTRY DISPATCHER ============ */
 
-function NarrativeEntry({ entry, engineMode }: { entry: LogEntry; engineMode: EngineMode }) {
+function NarrativeEntry({ entry, engineMode, showTurnAsk }: { entry: LogEntry; engineMode: EngineMode; showTurnAsk: boolean }) {
   if (entry.role === 'player') return <PlayerBubble entry={entry} />;
   if (entry.role === 'system') return <SystemMessage entry={entry} />;
-  return <DmNarration entry={entry} engineMode={engineMode} />;
+  return <DmNarration entry={entry} engineMode={engineMode} showTurnAsk={showTurnAsk} />;
 }
 
 /* ============ 1. AI DM NARRATION PANEL ============ */
 
-function DmNarration({ entry, engineMode }: { entry: LogEntry; engineMode: EngineMode }) {
-  const segments = useMemo(() => parseSegments(entry.content), [entry.content]);
+function DmNarration({ entry, engineMode, showTurnAsk }: { entry: LogEntry; engineMode: EngineMode; showTurnAsk: boolean }) {
+  const segments = useMemo(() => parseSegments(stripTurnCloser(entry.content)), [entry.content]);
   const systemLines = useMemo(
     () => filterSystemLogForEngine(entry.systemLog ?? [], engineMode),
     [entry.systemLog, engineMode],
@@ -142,21 +148,23 @@ function DmNarration({ entry, engineMode }: { entry: LogEntry; engineMode: Engin
           })}
         </div>
 
-        {/* System log footer */}
         {hasSystemLog && (
-          <div className="border-t border-slate-800 bg-slate-950/50 px-4 py-2">
-            <div className="mb-1 flex items-center gap-1 text-[10px] uppercase tracking-wider text-slate-600">
+          <div className="border-t border-blue-500/40 bg-blue-950/40 px-4 py-2">
+            <div className="mb-1 flex items-center gap-1 font-mono text-[10px] uppercase tracking-[0.18em] text-blue-300">
               <Terminal size={10} />
-              System Log
+              System
             </div>
             <div className="space-y-0.5">
               {systemLines.map((line, i) => (
-                <div key={i} className="font-mono text-[10px] text-slate-500">{line}</div>
+                <div key={i} className="font-mono text-[11px] text-blue-100/90">{line}</div>
               ))}
             </div>
           </div>
         )}
       </div>
+      {showTurnAsk && (
+        <p className="px-1 text-sm font-medium text-slate-200">{TURN_ASK}</p>
+      )}
     </div>
   );
 }

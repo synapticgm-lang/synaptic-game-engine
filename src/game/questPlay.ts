@@ -1,0 +1,163 @@
+import type { LogEntry, Quest } from './types';
+
+function slug(raw: string): string {
+  return raw.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 40) || 'quest';
+}
+
+function tokens(raw: string): string[] {
+  return (raw.toLowerCase().match(/[a-z][a-z0-9'-]{3,}/g) ?? []).filter(
+    (t) => !/^(this|that|with|from|your|their|have|been|will|into|near|quest|focus|engaged|system|dungeon|thing|does|info|whats|what)$/.test(t)
+  );
+}
+
+function overlap(a: string, b: string): boolean {
+  const left = new Set(tokens(a));
+  return tokens(b).some((t) => left.has(t) && t.length >= 5);
+}
+
+const PLACE_STOP =
+  /^(the|a|an|system|earth|info|what|dungeon|thing|this|that|your|their|here|there|england's)$/i;
+
+function titleCasePlace(name: string): string {
+  return name
+    .replace(/\s+/g, ' ')
+    .trim()
+    .replace(/\b\w/g, (c) => c.toUpperCase());
+}
+
+function clipPlace(raw: string): string {
+  return raw.replace(/\s+\b(and|then|what|with|for|to|around|before|after|near)\b[\s\S]*$/i, '').trim();
+}
+
+function pushPlace(found: string[], raw: string | undefined): void {
+  const name = titleCasePlace(clipPlace(raw ?? ''));
+  if (!name || PLACE_STOP.test(name) || name.length < 3) return;
+  if (found.some((p) => p.toLowerCase() === name.toLowerCase())) return;
+  found.push(name);
+}
+
+/** Pull named places from player chat, GM prose, or System lines — Tesco Extra, a Kyoto alley, anywhere. */
+export function extractNamedPlaces(raw: string): string[] {
+  const text = raw.replace(/\s+/g, ' ').trim();
+  const found: string[] = [];
+  const toward =
+    /\b(?:towards?|toward|to|into|at|in|near|from)\s+(?:the\s+)?([A-Za-z][A-Za-z0-9'&-]{2,}(?:\s+[A-Za-z][A-Za-z0-9'&-]{2,}){0,3})/g;
+  let m: RegExpExecArray | null;
+  while ((m = toward.exec(text))) {
+    pushPlace(found, m[1]);
+  }
+  const branded =
+    /\b([A-Z][A-Za-z0-9'&-]+(?:\s+[A-Z][A-Za-z0-9'&-]+){0,2})\s+(Extra|Express|Superstore|Mart|Market|Store|Shop|Cafe|Café|Station|Temple|Shrine)\b/g;
+  while ((m = branded.exec(text))) {
+    pushPlace(found, `${m[1]} ${m[2]}`);
+  }
+  const focus = text.match(/quest\s*focus:\s*(.+)$/im)?.[1];
+  if (focus) {
+    pushPlace(found, focus.replace(/\s+engaged\.?$/i, '').replace(/\s+micro-dungeon.*$/i, '').trim());
+  }
+  const locLine = text.match(/(?:^|\n)\s*location:\s*(.+)$/im)?.[1];
+  if (locLine) {
+    pushPlace(found, locLine.split(',')[0].trim());
+  }
+  return found;
+}
+
+export function harvestPlayText(log: LogEntry[] | undefined, extra: string[] = []): string {
+  const parts = [...extra];
+  for (const entry of (log ?? []).slice(-16)) {
+    if (entry.content) parts.push(entry.content);
+    if (entry.systemLog?.length) parts.push(...entry.systemLog);
+  }
+  return parts.join('\n');
+}
+
+function labelFromLogLine(line: string): string | null {
+  const t = line.replace(/\s+/g, ' ').trim();
+  const focus = t.match(/quest\s*focus:\s*(.+)$/i)?.[1];
+  const started = t.match(/quest\s*(?:add|accepted|started|updated):\s*(.+)$/i)?.[1];
+  const raw = (focus ?? started ?? '').replace(/\s+engaged\.?$/i, '').trim();
+  return raw ? raw.slice(0, 80) : null;
+}
+
+/** Journal tabs/lists: opening active quests show; Guide Book hooks stay hidden until revealed. */
+export function isJournalQuest(q: Quest): boolean {
+  if (q.status === 'hidden') return false;
+  if (q.status === 'completed' || q.status === 'failed') return true;
+  if (q.status === 'active') return true;
+  return q.revealed === true;
+}
+
+/**
+ * When the System names a quest in the log, or the player walks toward a place a
+ * seeded quest already describes, show it in the journal. Campaign-agnostic.
+ */
+export function syncQuestsFromPlay(
+  quests: Quest[],
+  systemLog: string[],
+  playerAction: string
+): Quest[] {
+  let next = quests.map((q) => ({ ...q }));
+
+  for (const line of systemLog) {
+    const label = labelFromLogLine(line);
+    if (!label) continue;
+    const existing = next.find(
+      (q) =>
+        q.name.toLowerCase() === label.toLowerCase()
+        || overlap(q.name, label)
+        || overlap(q.description, label)
+    );
+    if (existing) {
+      next = next.map((q) =>
+        q.id === existing.id
+          ? {
+              ...q,
+              revealed: true,
+              status: q.status === 'hidden' ? 'active' : q.status,
+              location: q.location ?? label,
+            }
+          : q
+      );
+    } else {
+      next.push({
+        id: `play-${slug(label)}`,
+        name: label,
+        description: label,
+        status: 'active',
+        type: 'side',
+        revealed: true,
+        location: label,
+        objectives: [{ id: 'obj-1', description: label, completed: false }],
+      });
+    }
+  }
+
+  const action = playerAction.replace(/\s+/g, ' ').trim();
+  const places = extractNamedPlaces(action);
+  next = next.map((q) => {
+    if (q.revealed || q.status === 'completed' || q.status === 'failed') return q;
+    const blob = `${q.name} ${q.description} ${q.location ?? ''}`.toLowerCase();
+    const hit = places.some((p) => blob.includes(p.toLowerCase()) || overlap(blob, p));
+    if (!hit) return q;
+    return { ...q, revealed: true, status: q.status === 'hidden' ? 'active' : q.status };
+  });
+
+  return next;
+}
+
+const COARSE_PLACE =
+  /^(england|britain|uk|united kingdom|scotland|wales|earth|the world|europe|asia|america|usa|the united states|japan|france|germany|australia|canada)$/i;
+
+export function isGenericMapPlace(name: string | undefined): boolean {
+  const n = (name ?? '').trim();
+  if (!n) return true;
+  if (COARSE_PLACE.test(n)) return true;
+  return /^the opening of /i.test(n) || /^your surroundings$/i.test(n) || /^a cracked city street$/i.test(n);
+}
+
+export function mapAnchorName(currentLocation: string | undefined, landmarks: string[]): string {
+  const specific = landmarks[0];
+  if (specific && isGenericMapPlace(currentLocation)) return specific;
+  if (!isGenericMapPlace(currentLocation)) return currentLocation!.trim();
+  return specific || currentLocation?.trim() || '';
+}

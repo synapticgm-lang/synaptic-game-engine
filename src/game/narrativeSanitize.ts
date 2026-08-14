@@ -76,7 +76,9 @@ export function trimAbruptCutoff(text: string): string {
   const trimmed = text.trimEnd();
   if (!trimmed) return trimmed;
   if (/[.!?…"'`»)\]]\s*$/.test(trimmed)) return trimmed;
-  if (/what do you do\??\s*$/i.test(trimmed)) return trimmed;
+  if (/what do you do\??\s*$/i.test(trimmed)) {
+    return trimmed.replace(/\s*what do you do\??\s*$/i, '').trim();
+  }
 
   const lastTerm = Math.max(
     trimmed.lastIndexOf('. '),
@@ -88,11 +90,7 @@ export function trimAbruptCutoff(text: string): string {
   );
   if (lastTerm < Math.floor(trimmed.length * 0.4)) return trimmed;
 
-  let cut = trimmed.slice(0, lastTerm + 1).trim();
-  if (!/what do you do\??\s*$/i.test(cut)) {
-    cut = `${cut}\n\nWhat do you do?`;
-  }
-  return cut;
+  return trimmed.slice(0, lastTerm + 1).trim();
 }
 
 const PLAYER_HARM_CUES =
@@ -104,6 +102,7 @@ const MEANINGFUL_PROSE_MIN = 90;
 export function stripResidualMechanicTags(text: string): string {
   return text
     .replace(/<\/?(?:enemy|damage|heal|item-gain|item-use|system-log|quest-[\w-]+|encounter-end|milestone-event|loot-video|visual-update|turn-frame|dungeon-[\w-]+|map-floor-change|hex-move|lore-card|world-deal|world-holding|world-order|world-clock|world-actor|time-pass)[^>]*>/gi, '')
+    .replace(/^[ \t]*(?:_>\s*)?SYSTEM LOG\s*$/gim, '')
     .replace(/\n{3,}/g, '\n\n')
     .trim();
 }

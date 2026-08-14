@@ -245,10 +245,16 @@ export default function App() {
         onApiSettings={() => game.setShowApiSetup(true)}
         onToggleLeft={() => game.setLeftOpen(true)}
         onToggleRight={() => game.setRightOpen(true)}
-        onOpenQuestLog={() => setShowQuestLog(true)}
+        onOpenQuestLog={() => {
+          game.hydratePlayFromLog?.();
+          setShowQuestLog(true);
+        }}
         onOpenCharacter={() => game.setShowCharacterWindow(true)}
         onOpenMerchant={() => game.setShowMerchantWindow(true)}
-        onOpenMap={() => setShowMapModal(true)}
+        onOpenMap={() => {
+          game.hydratePlayFromLog?.();
+          setShowMapModal(true);
+        }}
         onOpenDebug={() => setShowDebug(true)}
         syncPhase={game.syncPhase}
       />
@@ -362,11 +368,8 @@ export default function App() {
       {/* Quest Journal Modal */}
       <Suspense fallback={null}>
         <QuestLogModal
-          isOpen={showQuestLog || game.showQuestLog}
-          onClose={() => {
-            setShowQuestLog(false);
-            if (game.setShowQuestLog) game.setShowQuestLog(false);
-          }}
+          isOpen={showQuestLog}
+          onClose={() => setShowQuestLog(false)}
           quests={state?.quests ?? []}
         />
       </Suspense>
@@ -379,9 +382,13 @@ export default function App() {
           activeDungeon={state.activeDungeon ?? null}
           currentLocation={state.currentLocation}
           currentCoordinates={state.currentCoordinates}
+          onEnsureLocalMap={game.hydratePlayFromLog}
           onLoadDungeon={(blueprintId, dungeonName, isProcedural, tier, nodeCount) => {
             if (game.loadDungeon) {
-              game.loadDungeon(blueprintId, dungeonName, isProcedural, tier, nodeCount);
+              const mapTier = ([1, 2, 3, 4] as const).includes(tier as 1 | 2 | 3 | 4)
+                ? (tier as 1 | 2 | 3 | 4)
+                : 4;
+              game.loadDungeon(blueprintId, dungeonName, isProcedural, mapTier, nodeCount);
             }
           }}
           onMoveNode={(nodeId) => {
@@ -390,7 +397,8 @@ export default function App() {
             }
           }}
           onExitDungeon={() => {
-            if (game.exitDungeon) {
+            const local = state.activeDungeon?.blueprintId === 'local-area';
+            if (!local && game.exitDungeon) {
               game.exitDungeon();
             }
             setShowMapModal(false);
