@@ -12,7 +12,7 @@ All competitor + design packs for SynapticGM. Do not treat as live tickets until
 | [pack-05-quest-journal-authority-2026-08-14.md](./pack-05-quest-journal-authority-2026-08-14.md) | Place authority; quest state machine |
 | [pack-06-long-campaign-memory-2026-08-14.md](./pack-06-long-campaign-memory-2026-08-14.md) | Turn 80–200 memory; compression; pins |
 | [pack-07-mediated-freetext-content-ratings-2026-08-14.md](./pack-07-mediated-freetext-content-ratings-2026-08-14.md) | Mediation; ratings; hate vs swears |
-| [pack-08-wow-scale-world-intel-2026-08-14.md](./pack-08-wow-scale-world-intel-2026-08-14.md) | Later-release: races, starting zones, quest DAGs, presence ladder (gather, don’t build) |
+| [pack-08-authored-world-intel-2026-08-14.md](./pack-08-authored-world-intel-2026-08-14.md) | Later-release: original races/places, quest DAGs, presence ladder (gather, don’t build) |
 | [MASTER-IMPROVEMENT-PLAN-2026-08-14.md](./MASTER-IMPROVEMENT-PLAN-2026-08-14.md) | Compiled backlog from all packs |
 
 **Also related:** `.cursor/rules/playtest-notes.mdc` — live playtest issues (John).
