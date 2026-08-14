@@ -456,7 +456,7 @@ export default function App() {
             onClose={() => game.setShowCharacterWindow(false)}
             state={state}
             settings={game.settings}
-            initialTab="character"
+            initialTab="inventory"
             onGenerateArt={game.generateInventoryArt}
             onCommitArt={game.commitInventoryArt}
           />

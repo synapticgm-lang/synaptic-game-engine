@@ -9,7 +9,8 @@ John is playtesting live. Collect issues here. Do not implement until he asks fo
 
 ## Open
 
-(none)
+### Inventory: WoW-style paper doll — skip
+John said do not ship the Warcraft-style paper-doll layout. Leave the existing equipment + portrait sheet. Do not implement unless he asks again.
 
 ## Done (already shipped)
 
@@ -26,6 +27,6 @@ John is playtesting live. Collect issues here. Do not implement until he asks fo
 - Talk / protest treated as dialogue, not a physical action stub
 - Duplicate send lock (repeat-yourself); collapse identical player bubbles
 - Entering/scouting: describe the room before any creature; no “comes from Peterborough”
-- Character paper-doll layout: Show stats collapse; tabs replace the doll; tabs above phone chrome
+- Character **Show stats** collapse (keep). Warcraft paper-doll layout was reverted — do not re-ship.
 - HUD Merchant → clinical System **Salvage** (anywhere; no street shopkeeper)
 - Kid Mode fun swear swap (PIN lock; slurs masked)
