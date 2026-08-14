@@ -77,7 +77,6 @@ import {
   buildResolutionUserPayload,
   isGenericBridgeNarrative,
   isUnresolvedActionNarrative,
-  synthesizeActionResolution,
 } from './actionResolution';
 import { mergeNpcMemoriesFromTurn } from './npcMemory';
 import { buildPendingProposal, getProposedState, withEditedNarrative, touchLocationSheet } from './pendingTurn';
@@ -1618,25 +1617,8 @@ In <system-log>, only emit LitRPG/RPG progression lines (XP, loot, HP change as 
       const focusFiltered = hijack.hijacked || !turnMandate.playerEngagedQuestFocus
         ? filterHijackChoices(parsedChoices, turnMandate.focusKeywords)
         : parsedChoices;
-      // Cut broken sentences first. Only synthesize if the turn is still empty or a stub.
+      // Keep the GM's story. Do not replace it with a local template.
       cleanText = applyFactLocks(liveCurrent, cleanText, sanitizedInput);
-      if (isUnresolvedActionNarrative(sanitizedInput, cleanText, intentForMandate)) {
-        const lastScene = liveCurrent.log
-          .filter((e) => e.role === 'gm')
-          .slice(0, 8)
-          .map((e) => e.content)
-          .join('\n');
-        cleanText = synthesizeActionResolution(
-          sanitizedInput,
-          intentForMandate,
-          suggestionState,
-          lastScene
-        );
-        cleanText = applyFactLocks(liveCurrent, cleanText, sanitizedInput);
-        debugLogger.record('STATE_UPDATE', 'Synthesized action resolution after empty/bridge GM prose', {
-          intent: intentForMandate.kind,
-        });
-      }
       const groundedAfterResolve = focusFiltered.filter((choice) =>
         isChoiceGroundedInTurn(choice, normalizeStoryCorpus(cleanText), suggestionState, activeLoreCards)
       );
@@ -1803,21 +1785,7 @@ In <system-log>, only emit LitRPG/RPG progression lines (XP, loot, HP change as 
       );
       cleanText = ensureXpNarration(cleanText, mergedSystemLog);
       cleanText = applyFactLocks(liveCurrent, cleanText, sanitizedInput);
-      if (isUnresolvedActionNarrative(sanitizedInput, cleanText, intentForMandate)) {
-        const lastScene = liveCurrent.log
-          .filter((e) => e.role === 'gm')
-          .slice(0, 8)
-          .map((e) => e.content)
-          .join('\n');
-        cleanText = synthesizeActionResolution(
-          sanitizedInput,
-          intentForMandate,
-          suggestionState,
-          lastScene
-        );
-        cleanText = applyFactLocks(liveCurrent, cleanText, sanitizedInput);
-        cleanText = stripUnearnedXpProse(cleanText);
-      }
+      cleanText = stripUnearnedXpProse(cleanText);
 
       debugLogger.record('STATE_UPDATE', 'Merging GM response into game state', {
         turn: liveCurrent.turn,
@@ -1842,6 +1810,17 @@ In <system-log>, only emit LitRPG/RPG progression lines (XP, loot, HP change as 
       }
       if (visualUpdate) {
         baseChar.appearance = visualUpdate.description;
+      }
+      if (mode === 'kid') {
+        const kidTalk = (s: string) => sanitizeInput(s, 'kid');
+        cleanText = kidTalk(cleanText);
+        comicPanelsForLog = comicPanelsForLog.map((panel) => ({
+          ...panel,
+          narrative: kidTalk(panel.narrative),
+          imagePrompt: kidTalk(panel.imagePrompt),
+        }));
+        for (const item of newInventoryItems) item.name = kidTalk(item.name);
+        if (baseChar.appearance) baseChar.appearance = kidTalk(baseChar.appearance);
       }
 
       const inventoryAfterFormChange = visualUpdate?.formChange
@@ -1941,7 +1920,7 @@ In <system-log>, only emit LitRPG/RPG progression lines (XP, loot, HP change as 
         lorebook: mergedLorebook,
         turn: nextTurn,
         pendingImagePrompt: result.imagePrompt,
-        choices: finalChoices,
+        choices: mode === 'kid' ? finalChoices.map((c) => sanitizeInput(c, 'kid')) : finalChoices,
         gold: Math.max(0, (workingState.gold ?? liveCurrent.gold ?? 0) + extraWeekGold),
         worldLedger,
         ...(turnFrame ? { turnFrameTheme: turnFrame } : {}),
@@ -2017,7 +1996,7 @@ In <system-log>, only emit LitRPG/RPG progression lines (XP, loot, HP change as 
           intent,
           narrative: cleanText,
           systemLog: mergedSystemLog,
-          choices: finalChoices,
+          choices: mode === 'kid' ? finalChoices.map((c) => sanitizeInput(c, 'kid')) : finalChoices,
           wardenNotes: warden.notes,
           proposedState: mergedState,
           hpDelta,

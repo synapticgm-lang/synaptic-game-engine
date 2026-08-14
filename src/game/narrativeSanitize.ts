@@ -130,12 +130,8 @@ export function ensureTurnProse(cleanText: string, playerAction: string): string
     return withoutChoices.trim() || cleanText;
   }
 
-  // Thin placeholder only — useGame's actionResolution layer must replace bridge-only
-  // replies with a real resolve (retry GM or synthesize). Do not invent findings here.
-  const actionSnippet = (playerAction || 'your action').replace(/\s+/g, ' ').trim().slice(0, 140);
-  const bridge = `You follow through — ${actionSnippet}.`;
-  if (!withoutChoices.trim()) return bridge;
-  return `${bridge}\n\n${withoutChoices}`.trim();
+  // Thin GM copy stays as-is. Never pad with "You follow through".
+  return withoutChoices.trim() || cleanText;
 }
 
 /**

@@ -12,7 +12,7 @@ export { playerFacingLocation } from './locationName';
  */
 
 const BRIDGE_MARKERS =
-  /you follow through —|the moment settles as you take in what changed|you press for clarity —|you commit to the action|the immediate result lands in/i;
+  /you follow through(?:\s+on that)?|the moment settles as you take in what changed|you press for clarity —|you commit to the action|the immediate result lands in|the result is local and visible/i;
 
 const DEAD_STUB_MARKERS =
   /slow circuit of|main approach and watch for secondary gaps|opaque remains opaque|ordinary quiet|no fresh landmarks announce themselves|that is what you can act on next|not a blank circuit|you put the question plainly|anything the sheet and the last scene|rather than changing the subject|not a place you traveled to|not a list of what you are carrying|you do not recite your inventory|this is still a cracked city street|the situation has not become a different genre|the last beat holds|the people who were already here are still here/i;
@@ -41,7 +41,7 @@ export function isGenericBridgeNarrative(narrative: string): boolean {
   if (BRIDGE_MARKERS.test(prose) && prose.length < 280) return true;
   if (BRIDGE_MARKERS.test(prose)) {
     const withoutBridge = prose
-      .replace(/you follow through —[^.?!]*[.?!]/gi, '')
+      .replace(/you follow through(?:\s+on that)?[^.?!]*[.?!]/gi, '')
       .replace(/the moment settles[^.?!]*[.?!]/gi, '')
       .replace(/you press for clarity —[^.?!]*[.?!]/gi, '')
       .replace(/you commit to the action[^.?!]*[.?!]?/gi, '')
@@ -495,11 +495,7 @@ export function synthesizeActionResolution(
     return `You move to ${focus} and stop within reach of it.${around} You can search it, watch from here, or turn back.`;
   }
 
-  return (
-    `You follow through on that: ${action.replace(/[.?!]+$/g, '')}. `
-    + `Here at ${place} the result is local and visible — you learn what changed in arm's reach and what you can do next with ${gear}.`
-    + (live ? ` ${live.charAt(0).toUpperCase()}${live.slice(1)}.` : '')
-  );
+  return `${prefix}${premiseFrame(state, place)} ${lookAroundNarration(state, lastSceneProse, place)}`;
 }
 
 export function buildResolutionUserPayload(params: {

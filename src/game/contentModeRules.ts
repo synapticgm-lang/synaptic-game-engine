@@ -1,7 +1,8 @@
 /** Content-mode safety copy shared by GM + Director. Safe to ship on client. */
 export const KID_MODE_RULES = `
 CONTENT MODE: KID MODE (STRICT SAFETY)
-No swearing, no graphic violence, no mature themes. Family-friendly only.`;
+No swearing, no graphic violence, no mature themes. Family-friendly only.
+The player's chat has already been rewritten into silly kid-safe wording (fuck → feck/duck, and the same idea for other swears). Use that wording. Never restore the original swear. Never store a swear as an item name, clothing, or System name. Keep the scene playful, not preachy.`;
 
 export const ADULT_MODE_RULES = `
 CONTENT MODE: ADULT MODE (MATURE THEMES WITH FADE TO BLACK PROTOCOL)
