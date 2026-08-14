@@ -12,7 +12,7 @@ import { NarrativeView } from './NarrativeView';
 import { ActionBar } from './qol/ActionBar';
 import { RewindBar } from './qol/RewindBar';
 import { TurnConfirmBar } from './qol/TurnConfirmBar';
-import { shouldShowTurnAsk, TURN_ASK, hasRealGmStory } from '@/game/turnAsk';
+import { shouldShowTurnAsk, TURN_ASK, hasRealGmStory, shouldSkipDuplicatePlayerBubble } from '@/game/turnAsk';
 
 const HIDE_OPTIONS_KEY = 'synapticgm-hide-options';
 const HIDE_TEXT_KEY = 'synapticgm-hide-text';
@@ -160,15 +160,17 @@ export function CenterPanel({ state, busy, error, errorKind, currentImage, bgIma
         <div ref={logRef} className="relative z-10 min-h-0 flex-1 overflow-y-auto px-3 py-4 sm:px-6">
           <div className="mx-auto max-w-2xl space-y-4">
             {state.log.map((entry, index) => (
-              <LogRow
-                key={entry.id}
-                entry={entry}
-                lorebook={state.lorebook}
-                showSystemLog={showSystemLog}
-                statVerbosity={statVerbosity}
-                engineMode={engineMode}
-                showTurnAsk={shouldShowTurnAsk(state.log, index, busy)}
-              />
+              shouldSkipDuplicatePlayerBubble(state.log, index) ? null : (
+                <LogRow
+                  key={entry.id}
+                  entry={entry}
+                  lorebook={state.lorebook}
+                  showSystemLog={showSystemLog}
+                  statVerbosity={statVerbosity}
+                  engineMode={engineMode}
+                  showTurnAsk={shouldShowTurnAsk(state.log, index, busy)}
+                />
+              )
             ))}
             {busy && (
               <div className="flex items-center gap-2 text-sm text-slate-500">
@@ -489,7 +491,7 @@ function LogRow({ entry, lorebook, showSystemLog, statVerbosity, engineMode, sho
       <div className="text-center text-xs text-slate-500">{entry.content}</div>
     );
   }
-  if (!hasRealGmStory(entry) && !showTurnAsk && !(entry.systemLog && entry.systemLog.length > 0)) {
+  if (!hasRealGmStory(entry) && !showTurnAsk) {
     return null;
   }
   return (
@@ -499,7 +501,7 @@ function LogRow({ entry, lorebook, showSystemLog, statVerbosity, engineMode, sho
           <FormattedText content={entry.content} lorebook={lorebook} />
         </div>
       )}
-      {showSystemLog && entry.systemLog && entry.systemLog.length > 0 && (
+      {hasRealGmStory(entry) && showSystemLog && entry.systemLog && entry.systemLog.length > 0 && (
         <SystemLogPanel
           lines={filterSystemLogForEngine(entry.systemLog, engineMode)}
           verbosity={statVerbosity}

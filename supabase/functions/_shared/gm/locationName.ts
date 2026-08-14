@@ -12,6 +12,9 @@ export function playerFacingLocation(state: GameState): string {
     || '';
   const name = stripTimeClause(raw.trim());
   if (!name) return 'your surroundings';
+  if (/^(every mind|every human|first blood|foundation core|the system)$/i.test(name)) {
+    return 'your surroundings';
+  }
   if (/&/.test(name)) return 'your surroundings';
   if (/\bzones?\b/i.test(name) && /\b(dungeon|dead|safe|quest)\b/i.test(name)) {
     return 'your surroundings';

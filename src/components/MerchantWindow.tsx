@@ -65,15 +65,18 @@ export function MerchantWindow({ isOpen, onClose, state, onStateChange, onToast 
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
-      <div className="relative w-full max-w-4xl h-[85vh] bg-slate-900 border border-slate-700 rounded-xl shadow-2xl flex flex-col overflow-hidden text-slate-100">
+    <div className="fixed inset-0 z-50 flex items-stretch justify-center bg-black/80 backdrop-blur-sm sm:items-center sm:p-4">
+      <div className="relative flex h-[100dvh] w-full max-w-4xl flex-col overflow-hidden border-slate-700 bg-slate-900 text-slate-100 shadow-2xl sm:h-[85vh] sm:rounded-xl sm:border">
 
         {/* Header */}
-        <div className="flex items-center justify-between px-4 py-3 border-b border-slate-800 bg-slate-950/50">
-          <div className="flex items-center gap-2">
-            <Coins size={20} className="text-amber-400" />
-            <h2 className="font-serif text-lg font-bold text-amber-400">Merchant</h2>
-            <span className="text-sm text-slate-400 ml-2">Gold: <span className="font-mono font-bold text-amber-400">{state.gold ?? 0}</span></span>
+        <div className="flex shrink-0 items-center justify-between px-4 py-3 border-b border-slate-800 bg-slate-950/50">
+          <div className="flex items-center gap-2 min-w-0">
+            <Recycle size={20} className="shrink-0 text-sky-400" />
+            <div className="min-w-0">
+              <h2 className="font-serif text-lg font-bold text-sky-400">Salvage</h2>
+              <p className="text-[11px] text-slate-500 leading-snug">System conversion of surplus goods. Available anywhere. No vendor present.</p>
+            </div>
+            <span className="text-sm text-slate-400 ml-2 shrink-0">Gold: <span className="font-mono font-bold text-amber-400">{state.gold ?? 0}</span></span>
           </div>
           <button onClick={onClose} className="p-1.5 rounded hover:bg-slate-800 text-slate-400 hover:text-slate-200 transition-colors" title="Close">
             <X size={18} />
@@ -81,7 +84,7 @@ export function MerchantWindow({ isOpen, onClose, state, onStateChange, onToast 
         </div>
 
         {/* Tab Bar */}
-        <div className="flex border-b border-slate-800 bg-slate-950/30">
+        <div className="flex shrink-0 border-b border-slate-800 bg-slate-950/30">
           <button
             onClick={() => setTab('sell')}
             className={`flex-1 flex items-center justify-center gap-2 py-2.5 text-sm transition-colors ${tab === 'sell' ? 'text-amber-400 bg-slate-800/50 border-t-2 border-amber-500' : 'text-slate-500 hover:text-slate-300 hover:bg-slate-800/30'}`}
@@ -97,7 +100,7 @@ export function MerchantWindow({ isOpen, onClose, state, onStateChange, onToast 
         </div>
 
         {/* Content */}
-        <div className="flex-1 overflow-y-auto p-4">
+        <div className="min-h-0 flex-1 overflow-y-auto p-4 pb-[max(1rem,env(safe-area-inset-bottom))]">
           {tab === 'sell' && (
             <div className="space-y-4">
               {/* Items */}
@@ -106,7 +109,7 @@ export function MerchantWindow({ isOpen, onClose, state, onStateChange, onToast 
                   <Package size={14} /> Items
                 </h3>
                 {sellableItems.length === 0 ? (
-                  <p className="text-slate-600 text-sm italic">No sellable items in your inventory.</p>
+                  <p className="text-slate-600 text-sm italic">No surplus items eligible for conversion.</p>
                 ) : (
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                     {sellableItems.map((item) => {

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import type { GameState, GoogleUser, Settings as GameSettings } from '../game/types';
-import { Bug, ChevronDown, ChevronUp, Settings, Map, Compass, Coins, Backpack } from 'lucide-react';
+import { Bug, ChevronDown, ChevronUp, Settings, Map, Compass, Recycle, Backpack } from 'lucide-react';
 
 interface Props {
   state: GameState;
@@ -105,8 +105,8 @@ export function Hud({ state, onSettings, onOpenMap, onOpenQuestLog, onOpenCharac
           <button onClick={onOpenCharacter} title="Inventory & Character" className="p-2 bg-slate-900 hover:bg-slate-800 border border-slate-800 rounded text-slate-300 transition-colors">
             <Backpack size={15} />
           </button>
-          <button onClick={onOpenMerchant} title="Merchant (sell / salvage)" className="p-2 bg-slate-900 hover:bg-slate-800 border border-slate-800 rounded text-slate-300 transition-colors">
-            <Coins size={15} />
+          <button onClick={onOpenMerchant} title="Salvage — System sell / salvage" className="p-2 bg-slate-900 hover:bg-slate-800 border border-slate-800 rounded text-slate-300 transition-colors">
+            <Recycle size={15} />
           </button>
           <button onClick={onSettings} title="Settings" className="p-2 bg-slate-900 hover:bg-slate-800 border border-slate-800 rounded text-slate-300 transition-colors">
             <Settings size={15} />
@@ -131,8 +131,8 @@ export function Hud({ state, onSettings, onOpenMap, onOpenQuestLog, onOpenCharac
             <span className="text-[10px]">Inventory</span>
           </button>
           <button onClick={onOpenMerchant} className="flex flex-col items-center gap-1 text-slate-300 p-2">
-            <Coins size={16} className="text-amber-400" />
-            <span className="text-[10px]">Merchant</span>
+            <Recycle size={16} className="text-sky-400" />
+            <span className="text-[10px]">Salvage</span>
           </button>
           <button onClick={onSettings} className="flex flex-col items-center gap-1 text-slate-300 p-2">
             <Settings size={16} className="text-purple-400" />

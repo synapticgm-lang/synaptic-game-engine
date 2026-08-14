@@ -83,6 +83,9 @@ RULES:
 5. Numbered choices must follow from the action you just resolved — not from a distant quest card.
 6. If they ask a person / someone nearby: they speak and that person answers. Do not replace the conversation with a lecture that everyone already heard the voice.
 7. If they only ask what is going on: answer in-world from the last scene. Never write engine notes ("the sheet", "not a place you traveled to", "This is still [location label]").
+8. If they enter, scout an entrance, sneak, or move forward: describe the space they step into (aisle, door, shelves, light, smell) BEFORE any creature acts. Never open on "the nearest creature". Unique story this turn — only Integration / System registrar lines may stay canned.
+9. If they protest, joke, refuse, or ask who is in charge: that is DIALOGUE, not a physical action. Answer in System/registrar or narrator voice. Do not narrate a knife-grip or "follow through".
+10. Story first, then <system-log>. Never emit XP Gained: 0. Never reply with a system-log and no story.
 Player engaged quest-focus locations this turn: ${engaged ? 'YES' : 'NO'}
 ========================================================`;
 

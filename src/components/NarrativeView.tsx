@@ -2,7 +2,7 @@ import { useState, useMemo } from 'react';
 import type { LogEntry } from '@/types';
 import type { EngineMode } from '@/game/types';
 import { filterSystemLogForEngine } from '@/game/systemLog';
-import { shouldShowTurnAsk, stripTurnCloser, TURN_ASK, hasRealGmStory } from '@/game/turnAsk';
+import { shouldShowTurnAsk, stripTurnCloser, TURN_ASK, hasRealGmStory, shouldSkipDuplicatePlayerBubble } from '@/game/turnAsk';
 import {
   ChevronRight, ChevronDown, Zap, Sword, Shield, Sparkles,
   TrendingUp, Skull, Heart, Dice5, Eye, EyeOff, Terminal,
@@ -71,12 +71,14 @@ export function NarrativeView({ log, busy, engineMode = 'litrpg' }: Props) {
       <div className="flex-1 overflow-y-auto px-3 py-4 sm:px-6">
         <div className="mx-auto max-w-2xl space-y-4">
           {log.map((entry, index) => (
-            <NarrativeEntry
-              key={entry.id}
-              entry={entry}
-              engineMode={engineMode}
-              showTurnAsk={shouldShowTurnAsk(log, index, !!busy)}
-            />
+            shouldSkipDuplicatePlayerBubble(log, index) ? null : (
+              <NarrativeEntry
+                key={entry.id}
+                entry={entry}
+                engineMode={engineMode}
+                showTurnAsk={shouldShowTurnAsk(log, index, !!busy)}
+              />
+            )
           ))}
           {busy && (
             <div className="flex items-center gap-2 text-sm text-slate-500">
@@ -102,7 +104,7 @@ export function NarrativeView({ log, busy, engineMode = 'litrpg' }: Props) {
 function NarrativeEntry({ entry, engineMode, showTurnAsk }: { entry: LogEntry; engineMode: EngineMode; showTurnAsk: boolean }) {
   if (entry.role === 'player') return <PlayerBubble entry={entry} />;
   if (entry.role === 'system') return <SystemMessage entry={entry} />;
-  if (!hasRealGmStory(entry) && !showTurnAsk && !(entry.systemLog && entry.systemLog.length > 0)) {
+  if (!hasRealGmStory(entry) && !showTurnAsk) {
     return null;
   }
   return <DmNarration entry={entry} engineMode={engineMode} showTurnAsk={showTurnAsk} />;
@@ -151,7 +153,7 @@ function DmNarration({ entry, engineMode, showTurnAsk }: { entry: LogEntry; engi
           })}
         </div>
 
-        {hasSystemLog && (
+        {hasSystemLog && hasRealGmStory(entry) && (
           <div className="border-t border-blue-500/40 bg-blue-950/40 px-4 py-2">
             <div className="mb-1 flex items-center gap-1 font-mono text-[10px] uppercase tracking-[0.18em] text-blue-300">
               <Terminal size={10} />

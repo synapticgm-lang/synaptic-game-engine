@@ -89,12 +89,24 @@ export function CombatEncounter({ activeDungeon, currentCoordinates, onMoveNode,
           </span>
           {activeDungeon && (
             <span className="text-[10px] text-slate-500">
-              {activeDungeon.dungeonName} · Floor {activeDungeon.currentZLevel}
+              {activeDungeon.blueprintId === 'local-area'
+                ? activeDungeon.dungeonName
+                : `${activeDungeon.dungeonName} · Floor ${activeDungeon.currentZLevel}`}
             </span>
           )}
         </div>
         <div className="relative flex-1 overflow-auto bg-slate-950 p-2">
-          {activeDungeon ? (
+          {activeDungeon?.blueprintId === 'local-area' ? (
+            <div className="flex h-full min-h-[200px] items-center justify-center p-4 text-center">
+              <div>
+                <MapIcon size={32} className="mx-auto mb-2 text-slate-700" />
+                <p className="text-sm text-slate-300">{activeDungeon.dungeonName}</p>
+                <p className="mt-1 text-xs text-slate-500">
+                  Street map — open Map for the local streets. This panel is for dungeon interiors.
+                </p>
+              </div>
+            </div>
+          ) : activeDungeon ? (
             <DungeonViewport activeDungeon={activeDungeon} currentCoordinates={currentCoordinates} onMoveNode={onMoveNode} onExitDungeon={onExitDungeon} />
           ) : (
             <div className="flex h-full min-h-[200px] items-center justify-center text-center">

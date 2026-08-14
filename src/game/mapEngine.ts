@@ -1,4 +1,5 @@
 import type { Location3D, MapTier } from './types';
+import { isDummyStreetNodeName, isGenericMapPlace } from './questPlay';
 
 export interface MapNode {
   id: string;
@@ -218,40 +219,66 @@ function uniqueNames(names: string[]): string[] {
   const out: string[] = [];
   for (const raw of names) {
     const name = raw.replace(/\s+/g, ' ').trim();
-    if (!name) continue;
+    if (!name || !usableStreetLabel(name)) continue;
     const key = name.toLowerCase();
     if (seen.has(key)) continue;
     seen.add(key);
-    out.push(name.slice(0, 48));
+    out.push(name.slice(0, 64));
   }
   return out;
 }
 
-/** Street-scale map of wherever the player said they are — Tesco Extra, a Kyoto alley, anywhere. */
+function usableStreetLabel(name: string): boolean {
+  if (isDummyStreetNodeName(name)) return false;
+  if (isGenericMapPlace(name)) return false;
+  return true;
+}
+
+/** Intersection slots on a 3×3 block grid (center is "you are here"). */
+const STREET_SLOTS: Array<{ x: number; y: number }> = [
+  { x: 2, y: 2 },
+  { x: 1, y: 2 },
+  { x: 3, y: 2 },
+  { x: 2, y: 1 },
+  { x: 2, y: 3 },
+  { x: 1, y: 1 },
+  { x: 3, y: 1 },
+  { x: 1, y: 3 },
+  { x: 3, y: 3 },
+];
+
+function nextStreetSlot(dungeon: ActiveDungeonState): { x: number; y: number } {
+  const used = new Set(dungeon.nodes.map((n) => `${n.coordinates?.x ?? 0},${n.coordinates?.y ?? 0}`));
+  return STREET_SLOTS.find((slot) => !used.has(`${slot.x},${slot.y}`)) ?? { x: 3, y: 3 };
+}
+
+/**
+ * Street-scale map of wherever the player said they are — Tesco Extra, a Kyoto alley, anywhere.
+ * `tier: 3` is map SCALE (local ~1 km), not dungeon danger.
+ */
 export function buildLocalAreaMap(
   place: string,
   landmarks: string[] = [],
   parentCoords?: Location3D
 ): ActiveDungeonState {
-  const here = place.replace(/\s+/g, ' ').trim() || 'Local area';
-  const extras = uniqueNames(landmarks.filter((n) => n.toLowerCase() !== here.toLowerCase()));
-  const names = uniqueNames([here, ...extras]).slice(0, 6);
-  if (names.length === 1) names.push('Street');
+  const rawHere = place.replace(/\s+/g, ' ').trim();
+  const extras = uniqueNames(landmarks.filter((n) => n.toLowerCase() !== rawHere.toLowerCase()));
+  const here = usableStreetLabel(rawHere) ? rawHere : extras[0] || 'Local streets';
+  const names = uniqueNames([here, ...extras.filter((n) => n.toLowerCase() !== here.toLowerCase())]).slice(0, 8);
 
   const nodes: MapNode[] = names.map((name, i) => {
     const neighbors: string[] = [];
     if (i > 0) neighbors.push('local_0');
     if (i === 0) {
       for (let j = 1; j < names.length; j++) neighbors.push(`local_${j}`);
-    } else if (i < names.length - 1) {
-      neighbors.push(`local_${i + 1}`);
     }
+    const slot = STREET_SLOTS[i] ?? { x: (i % 3) + 1, y: Math.floor(i / 3) + 1 };
     return {
       id: `local_${i}`,
       name,
       description: i === 0 ? `You are here: ${name}.` : `${name}, near ${here}.`,
       connections: neighbors,
-      coordinates: { x: i === 0 ? 1 : i % 2 === 1 ? 0 : 2, y: i === 0 ? 1 : Math.ceil(i / 2) },
+      coordinates: slot,
       zLevel: 0,
       tags: i === 0 ? ['here', 'entry'] : ['local'],
     };
@@ -264,29 +291,69 @@ export function buildLocalAreaMap(
     parentCoordinates: parentCoords,
     currentZLevel: 0,
     currentNodeId: 'local_0',
-    visitedNodeIds: ['local_0'],
+    visitedNodeIds: names.map((_, i) => `local_${i}`),
     clearedNodeIds: [],
     nodes,
   };
 }
 
+/** Drop dummy Cover/Side street nodes and junk titles (Every Mind, First Blood) from a saved street map. */
+export function presentLocalAreaMap(
+  dungeon: ActiveDungeonState,
+  fallbackPlace?: string
+): ActiveDungeonState {
+  if (dungeon.blueprintId !== 'local-area') return dungeon;
+  const fallbackRaw = (fallbackPlace ?? '').replace(/\s+/g, ' ').trim();
+  const fallback = usableStreetLabel(fallbackRaw)
+    ? fallbackRaw
+    : usableStreetLabel(dungeon.dungeonName)
+      ? dungeon.dungeonName
+      : 'Local streets';
+  const title = usableStreetLabel(dungeon.dungeonName) ? dungeon.dungeonName : fallback;
+
+  const keep: MapNode[] = [];
+  for (const n of dungeon.nodes) {
+    const junk = !usableStreetLabel(n.name);
+    if (junk && n.id !== dungeon.currentNodeId && n.id !== 'local_0') continue;
+    keep.push(junk ? { ...n, name: title, description: `You are here: ${title}.` } : n);
+  }
+  if (keep.length === 0) {
+    return buildLocalAreaMap(title, [], dungeon.parentCoordinates);
+  }
+  const ids = new Set(keep.map((n) => n.id));
+  return {
+    ...dungeon,
+    dungeonName: title,
+    nodes: keep.map((n) => ({ ...n, connections: n.connections.filter((c) => ids.has(c)) })),
+    visitedNodeIds: Array.from(new Set([...dungeon.visitedNodeIds.filter((id) => ids.has(id)), ...keep.map((n) => n.id)])),
+    currentNodeId: ids.has(dungeon.currentNodeId) ? dungeon.currentNodeId : keep[0]!.id,
+  };
+}
+
 export function addLandmarkToLocalMap(dungeon: ActiveDungeonState, landmark: string): ActiveDungeonState {
+  dungeon = presentLocalAreaMap(dungeon);
   const name = landmark.replace(/\s+/g, ' ').trim();
-  if (!name) return dungeon;
+  if (!usableStreetLabel(name)) return dungeon;
   if (dungeon.nodes.some((n) => n.name.toLowerCase() === name.toLowerCase())) return dungeon;
+  if (dungeon.nodes.length >= 8) return dungeon;
   const id = `local_${dungeon.nodes.length}`;
   const here = dungeon.nodes.find((n) => n.id === dungeon.currentNodeId) ?? dungeon.nodes[0];
+  const slot = nextStreetSlot(dungeon);
   const node: MapNode = {
     id,
     name,
     description: `${name}, near ${dungeon.dungeonName}.`,
     connections: here ? [here.id] : [],
-    coordinates: { x: (here?.coordinates?.x ?? 1) + 1, y: here?.coordinates?.y ?? 1 },
+    coordinates: slot,
     zLevel: 0,
     tags: ['local'],
   };
   const nodes = dungeon.nodes.map((n) =>
     n.id === here?.id ? { ...n, connections: [...n.connections, id] } : n
   );
-  return { ...dungeon, nodes: [...nodes, node] };
+  return {
+    ...dungeon,
+    nodes: [...nodes, node],
+    visitedNodeIds: Array.from(new Set([...dungeon.visitedNodeIds, id])),
+  };
 }

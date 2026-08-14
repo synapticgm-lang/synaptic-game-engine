@@ -19,7 +19,10 @@ const PLACE_STOP =
   /^(the|a|an|system|earth|info|what|dungeon|thing|this|that|your|their|here|there|england's|every|mind|survive)$/i;
 
 const JUNK_PLACE =
-  /^(every mind|every human|first blood|foundation core|integration protocol|the system|micro dungeon|micro-dungeon)$/i;
+  /^(every mind|every human|first blood|foundation core|integration protocol|the system|micro dungeon|micro-dungeon|side street|side st\.?|cover(?:\s*\/\s*doorway)?|cover|doorway|street)$/i;
+
+const DUMMY_STREET_NODE =
+  /^(street|side street|side st\.?|cover(?:\s*\/\s*doorway)?|cover|doorway)$/i;
 
 function titleCasePlace(name: string): string {
   return name
@@ -29,7 +32,11 @@ function titleCasePlace(name: string): string {
 }
 
 function clipPlace(raw: string): string {
-  return raw.replace(/\s+\b(and|then|what|with|for|to|around|before|after|near)\b[\s\S]*$/i, '').trim();
+  return raw
+    .replace(/\s*\([^)]*tier[^)]*\)/gi, '')
+    .replace(/\s*\([^)]*urban\s+ruin[^)]*\)/gi, '')
+    .replace(/\s+\b(and|then|what|with|for|to|around|before|after|near)\b[\s\S]*$/i, '')
+    .trim();
 }
 
 function pushPlace(found: string[], raw: string | undefined): void {
@@ -151,11 +158,16 @@ export function syncQuestsFromPlay(
 const COARSE_PLACE =
   /^(england|britain|uk|united kingdom|scotland|wales|earth|the world|europe|asia|america|usa|the united states|japan|france|germany|australia|canada)$/i;
 
+export function isDummyStreetNodeName(name: string | undefined): boolean {
+  return DUMMY_STREET_NODE.test((name ?? '').replace(/\s+/g, ' ').trim());
+}
+
 export function isGenericMapPlace(name: string | undefined): boolean {
   const n = (name ?? '').trim();
   if (!n) return true;
   if (COARSE_PLACE.test(n)) return true;
-  if (/^(every mind|every human|first blood|foundation core)$/i.test(n)) return true;
+  if (JUNK_PLACE.test(n)) return true;
+  if (DUMMY_STREET_NODE.test(n)) return true;
   return /^the opening of /i.test(n) || /^your surroundings$/i.test(n) || /^a cracked city street$/i.test(n);
 }
 

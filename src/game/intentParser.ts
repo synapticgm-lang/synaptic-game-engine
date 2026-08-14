@@ -57,9 +57,28 @@ export function isAskNearbyPerson(action: string): boolean {
       action
     )
     || /\b(shout|yell|call out)\b/i.test(action)
-    || /\b(ask|see)\s+if\s+(?:they|someone|some\s*one|anybody|anyone|everyone)\b/i.test(action)
+    || /\b(ask|see)\s+if\s+(?:they|someone|some\s+one|anybody|anyone|everyone)\b/i.test(action)
     || /\bif they see\b/i.test(action)
   );
+}
+
+const LOOK_OR_PHYSICAL =
+  /\b(look around|look towards?|look at|look for|scout|search|inspect|enter|sneak|attack|go to|walk to|head to|approach|circle|survey|what'?s?\s+(?:is\s+)?around|around me|surroundings)\b/i;
+
+const SPEECH_OR_PROTEST =
+  /\b(who'?s in charge|who is in charge|didn'?t agree|don'?t agree|are you joking|are you (?:serious|kidding)|i didn'?t (?:sign(?:\s+up)?|ask for|agree)|not agreeing|good luck\b|who'?s responsible|who (?:runs|controls) this|this is (?:a joke|ridiculous)|i didn'?t (?:ask|want) (?:for )?this)\b/i;
+
+/**
+ * Joke, objection, refusal, or "who's in charge" — dialogue, not a physical action.
+ * Look-around / scout / enter still wins when mixed into the same line.
+ */
+export function isSpeechOrProtest(action: string): boolean {
+  const t = action.replace(/\s+/g, ' ').trim();
+  if (!t) return false;
+  if (LOOK_OR_PHYSICAL.test(t)) return false;
+  if (SPEECH_OR_PROTEST.test(t)) return true;
+  if (/^(?:who|what|why|how|where|wait|hey|excuse me)\b/i.test(t)) return true;
+  return false;
 }
 
 /**
@@ -74,7 +93,10 @@ export function primaryActionClause(input: string): string {
     .filter((s) => s.length >= 3);
   if (parts.length < 2) return text.replace(/[?]+$/g, '').trim() || text;
   const talk = [...parts].reverse().find(
-    (p) => isAskNearbyPerson(p) || /^(ask|tell|speak|talk|shout|yell)\b/i.test(p)
+    (p) =>
+      isAskNearbyPerson(p)
+      || isSpeechOrProtest(p)
+      || /^(ask|tell|speak|talk|shout|yell)\b/i.test(p)
   );
   if (talk && talk.split(/\s+/).length >= 3) return talk;
   const last = parts[parts.length - 1];
@@ -88,6 +110,9 @@ export function primaryActionClause(input: string): string {
  */
 export function parsePlayerIntent(input: string, _state?: GameState): PlayerIntent {
   const text = primaryActionClause(input);
+  if (isSpeechOrProtest(text) || isSpeechOrProtest(input)) {
+    return { kind: 'talk', label: 'Talk / protest', targets: [] };
+  }
   for (const rule of RULES) {
     if (rule.re.test(text)) {
       const targets =

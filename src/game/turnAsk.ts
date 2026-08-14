@@ -40,6 +40,33 @@ export function hasRealGmStory(entry: LogEntry | undefined): boolean {
   return story.length >= 24 && /[a-z]/i.test(story);
 }
 
+function isHiddenGmRow(entry: LogEntry): boolean {
+  return (
+    entry.role === 'gm'
+    && entry.entryKind !== 'milestone'
+    && entry.mediaKind !== 'video'
+    && !hasRealGmStory(entry)
+    && !(entry.systemLog && entry.systemLog.length > 0)
+  );
+}
+
+/** Hide a second player bubble when only an empty/hidden GM sits between identical sends. */
+export function shouldSkipDuplicatePlayerBubble(log: LogEntry[], index: number): boolean {
+  const entry = log[index];
+  if (!entry || entry.role !== 'player') return false;
+  const text = entry.content.replace(/\s+/g, ' ').trim().toLowerCase();
+  if (!text) return false;
+  for (let i = index - 1; i >= 0; i--) {
+    const prev = log[i];
+    if (prev.role === 'system' || isHiddenGmRow(prev)) continue;
+    if (prev.role === 'player') {
+      return prev.content.replace(/\s+/g, ' ').trim().toLowerCase() === text;
+    }
+    return false;
+  }
+  return false;
+}
+
 /** True when stripped GM prose is enough to show as a turn (not System-only). */
 export function storyHasBody(text: string | undefined): boolean {
   const story = stripTurnCloser(text ?? '')

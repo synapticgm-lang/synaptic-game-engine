@@ -4,6 +4,7 @@ import {
   sanitizeNarrativeMechanics,
   trimAbruptCutoff,
 } from './narrativeSanitize';
+import { filterSystemLogForEngine } from './systemLog';
 import { logger } from './logger';
 
 export interface GmResult {
@@ -102,8 +103,11 @@ export function processGmCompletion(text: string, engineMode: EngineMode): GmRes
   const rolls = extractSystemRollBlocks(cleanText);
   const sanitized = sanitizeNarrativeMechanics(cleanText, engineMode);
   cleanText = trimAbruptCutoff(sanitized.text);
-  const mergedLog = Array.from(
-    new Set([...systemLog, ...sanitized.extracted, ...rolls].map((l) => l.trim()).filter(Boolean))
+  const mergedLog = filterSystemLogForEngine(
+    Array.from(
+      new Set([...systemLog, ...sanitized.extracted, ...rolls].map((l) => l.trim()).filter(Boolean))
+    ),
+    engineMode
   );
   return {
     text: cleanText,

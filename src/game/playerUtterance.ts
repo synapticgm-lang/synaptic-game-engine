@@ -176,9 +176,10 @@ Rules:
 - location = a real place they are in, never clothes.
 - If they refuse a setup question (why should I give you my name, why should I tell you, why do you want to know what I'm wearing) or insult the System (you perve), all answer fields stay null. That is not clothing, kit, or a name.
 - Only fill a System rename if they explicitly name it ("I'll call you X", "your name is X"). "You perve" is not a rename.
-- If they only asked a question and gave no answer/action, meaning is that question, intent other, fields null.
+- If they only asked a question and gave no answer/action, meaning is that question, intent talk, fields null.
+- If they protest, joke, refuse, or ask who is in charge, intent is talk — not a physical action.
 - If they want to act in the scene, meaning is the action ("Ask someone nearby what is happening", "Hide behind the nearest car").
-- intent is the primary act. Talk if they address people. Observe if they look/listen. Move if they go somewhere.
+- intent is the primary act. Talk if they address people, protest, or ask. Observe if they look/listen. Move if they go somewhere.
 - Use null for unused answer fields. questions = short strings they asked (why, what's going on, who are you).`;
 
 function localInterpret(raw: string): InterpretedUtterance {

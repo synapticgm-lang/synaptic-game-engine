@@ -81,6 +81,8 @@ import {
 import { mergeNpcMemoriesFromTurn } from './npcMemory';
 import { buildPendingProposal, getProposedState, withEditedNarrative, touchLocationSheet } from './pendingTurn';
 import { extractUpdates, extractNewItems, parseActionTags, stripActionTags, matchLoreCards, eventsToLoreCards, parseTurnFrame, eventsToQuestUpdates, eventsToEncounterUpdate, parsePanels, eventsToMilestone, eventsToLootVideo, eventsToVisualUpdate, stripChoiceList, extractChoiceLines, stripTurnCloser, storyHasBody } from './parser';
+import { hasRealGmStory } from './turnAsk';
+import { encounterOriginPlace } from './locationName';
 import { extractNamedPlaces, harvestPlayText, isGenericMapPlace, mapAnchorName, syncQuestsFromPlay } from './questPlay';
 import { inferItemType } from './salvage';
 import { initializeDungeon, moveToNode, exitDungeon as engineExitDungeon, buildLocalAreaMap, addLandmarkToLocalMap } from './mapEngine';
@@ -327,6 +329,7 @@ export function useGame() {
   const [googleUser, setGoogleUser] = useState<GoogleUser | null>(null);
   const [bootPhase, setBootPhase] = useState<BootPhase>('welcome');
   const [busy, setBusy] = useState(false);
+  const turnInFlightRef = useRef(false);
   const [error, setError] = useState<string | null>(null);
   const [errorKind, setErrorKind] = useState<ErrorKind | null>(null);
   const [showLoadingOverlay, setShowLoadingOverlay] = useState(false);
@@ -1174,14 +1177,30 @@ export function useGame() {
   });
 
   const sendAction = useCallbackRef(async (input: string) => {
-    if (!input.trim() || busy) return;
+    if (!input.trim() || busy || turnInFlightRef.current) return;
     const current = stateRef.current;
     if (!current) return;
     if (current.pendingTurn) {
       addToast('Accept, edit, or discard the pending turn first.', 'info');
       return;
     }
-
+    const lastVisible = [...current.log].reverse().find((e) => {
+      if (e.role === 'player') return !!e.content?.trim();
+      if (e.role === 'gm') return hasRealGmStory(e);
+      return false;
+    });
+    if (
+      !error
+      && lastVisible?.role === 'player'
+      && lastVisible.content.replace(/\s+/g, ' ').trim().toLowerCase()
+        === input.replace(/\s+/g, ' ').trim().toLowerCase()
+    ) {
+      return;
+    }
+    turnInFlightRef.current = true;
+    let loadingTimer: ReturnType<typeof setTimeout> | undefined;
+    let sanitizedInput = '';
+    try {
     debugLogger.record('TURN_START', 'sendAction invoked', {
       input: input.slice(0, 100),
       currentTurn: current.turn,
@@ -1196,7 +1215,7 @@ export function useGame() {
     const grounded = openingPending
       ? { text: contentSanitized, intent: parsePlayerIntent(contentSanitized, current), rewritten: false, notes: [] as string[] }
       : groundPlayerAction(contentSanitized, current, storyProseForGround);
-    let sanitizedInput = grounded.text;
+    sanitizedInput = grounded.text;
     if (grounded.rewritten) {
       addToast(`Action grounded: ${grounded.notes[0] ?? 'adjusted to match scene/inventory'}`, 'info');
     }
@@ -1221,7 +1240,7 @@ export function useGame() {
     const lastGmText = lastGmForGround;
     saveHabit(sanitizedInput, lastGmText);
 
-    const loadingTimer = setTimeout(() => setShowLoadingOverlay(true), 2500);
+    loadingTimer = setTimeout(() => setShowLoadingOverlay(true), 2500);
 
     const playerEntry: LogEntry = {
       id: uid(),
@@ -1252,7 +1271,6 @@ export function useGame() {
     setState(optimisticState);
     hydratePlayFromLog({ persist: false });
 
-    try {
       let liveCurrent = stateRef.current;
       if (!liveCurrent) return;
       liveCurrent = applySystemRename(
@@ -1478,21 +1496,28 @@ In <system-log>, only emit LitRPG/RPG progression lines (XP, loot, HP change as 
         setRetryStatus(`Rate limited — retry ${attempt}/4 in ${Math.round(delayMs / 1000)}s…`);
       });
 
-      // System-wide: if the model returned bridge-only / no findings, regenerate once.
+      // System-wide: if the model returned bridge-only / empty / no findings, regenerate.
+      // Never swap a real GM beat for a local story template.
       {
-        const probeText = ensureTurnProse(
-          stripResidualMechanicTags(stripChoiceList(stripActionTags(result.text))),
-          sanitizedInput,
-        );
+        const probeOf = (text: string) =>
+          ensureTurnProse(
+            stripResidualMechanicTags(stripChoiceList(stripActionTags(text))),
+            sanitizedInput,
+          );
+        let probeText = probeOf(result.text);
         const probeLocks = detectFactLockViolations(liveCurrent, probeText, sanitizedInput);
         const previousGm =
           [...liveCurrent.log].reverse().find((e) => e.role === 'gm')?.content ?? '';
-        // Fact-lock slips are cut locally after this. Only burn a second GM call when
-        // the turn did not resolve the player's action at all.
-        if (isUnresolvedActionNarrative(sanitizedInput, probeText, intentForMandate, previousGm)) {
-          debugLogger.record('WARN', 'Unresolved action narrative — resolution retry', {
+        const needsStoryRetry =
+          !storyHasBody(probeText)
+          || isUnresolvedActionNarrative(sanitizedInput, probeText, intentForMandate, previousGm);
+        // Fact-lock slips are cut locally after this. Only burn extra GM calls when
+        // the turn did not resolve the player's action at all, or returned no story.
+        if (needsStoryRetry) {
+          debugLogger.record('WARN', 'Unresolved or empty action narrative — resolution retry', {
             turn: liveCurrent.turn,
             intent: intentForMandate.kind,
+            empty: !storyHasBody(probeText),
             factLocks: probeLocks.map((v) => v.kind),
           });
           setRetryStatus('Refining story resolution…');
@@ -1513,6 +1538,30 @@ In <system-log>, only emit LitRPG/RPG progression lines (XP, loot, HP change as 
               setRetryStatus(`Rate limited — retry ${attempt}/4 in ${Math.round(delayMs / 1000)}s…`);
             },
           );
+          probeText = probeOf(result.text);
+          if (!storyHasBody(probeText)) {
+            debugLogger.record('WARN', 'Empty GM story after retry — second resolution retry', {
+              turn: liveCurrent.turn,
+            });
+            setRetryStatus('Writing the scene…');
+            result = await callGm(
+              liveCurrent,
+              buildResolutionUserPayload({
+                mandateBlock: turnMandate.block,
+                playerAction: sanitizedInput,
+                deterministicBlock: deterministicStateBlock,
+                retry: true,
+                intent: intentForMandate,
+                factLocks: detectFactLockViolations(liveCurrent, probeText, sanitizedInput),
+              }),
+              settingsRef.current,
+              activeLoreCards,
+              (attempt, delayMs) => {
+                debugLogger.record('WARN', `Rate limited — retry ${attempt}/4`, { delayMs });
+                setRetryStatus(`Rate limited — retry ${attempt}/4 in ${Math.round(delayMs / 1000)}s…`);
+              },
+            );
+          }
         } else if (probeLocks.length) {
           debugLogger.record('STATE_UPDATE', 'Fact-lock slips will be cut locally — skipping GM retry', {
             turn: liveCurrent.turn,
@@ -1831,16 +1880,19 @@ In <system-log>, only emit LitRPG/RPG progression lines (XP, loot, HP change as 
         cleanText = ensureEncounterNarration(
           cleanText,
           appearEvent.enemyName,
-          liveCurrent.currentLocation || liveCurrent.locationSheet?.name || 'nearby cover'
+          encounterOriginPlace(liveCurrent, `${cleanText}\n${lastGmText}`)
         );
       }
-      const mergedSystemLog = Array.from(
-        new Set([
-          ...(gmEntry.systemLog ?? []),
-          ...warden.systemLogExtra,
-          ...structural.notes.filter((n) => /blocked|failed|full/i.test(n)),
-          ...worldNotes,
-        ])
+      const mergedSystemLog = filterSystemLogForEngine(
+        Array.from(
+          new Set([
+            ...(gmEntry.systemLog ?? []),
+            ...warden.systemLogExtra,
+            ...structural.notes.filter((n) => /blocked|failed|full/i.test(n)),
+            ...worldNotes,
+          ])
+        ),
+        liveCurrent.engineMode
       );
       cleanText = ensureXpNarration(cleanText, mergedSystemLog);
       cleanText = applyFactLocks(liveCurrent, cleanText, sanitizedInput);
@@ -1852,6 +1904,18 @@ In <system-log>, only emit LitRPG/RPG progression lines (XP, loot, HP change as 
         cleanText = stripTurnCloser(
           stripResidualMechanicTags(stripChoiceList(stripActionTags(result.text)))
         );
+      }
+      if (!storyHasBody(cleanText)) {
+        debugLogger.record('WARN', 'Refusing System-only turn — no story body', {
+          turn: liveCurrent.turn,
+        });
+        const snap = snapshotRef.current;
+        if (snap) {
+          stateRef.current = snap;
+          setState(snap);
+        }
+        setError('The story did not come through. Try that action again.');
+        return;
       }
 
       debugLogger.record('STATE_UPDATE', 'Merging GM response into game state', {
@@ -2145,9 +2209,10 @@ In <system-log>, only emit LitRPG/RPG progression lines (XP, loot, HP change as 
       });
       setError(errMsg);
     } finally {
-      clearTimeout(loadingTimer);
+      if (loadingTimer !== undefined) clearTimeout(loadingTimer);
       setShowLoadingOverlay(false);
       setRetryStatus(null);
+      turnInFlightRef.current = false;
       setBusy(false);
     }
   });
