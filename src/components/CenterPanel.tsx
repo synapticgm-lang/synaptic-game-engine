@@ -12,7 +12,7 @@ import { NarrativeView } from './NarrativeView';
 import { ActionBar } from './qol/ActionBar';
 import { RewindBar } from './qol/RewindBar';
 import { TurnConfirmBar } from './qol/TurnConfirmBar';
-import { shouldShowTurnAsk, TURN_ASK } from '@/game/turnAsk';
+import { shouldShowTurnAsk, TURN_ASK, hasRealGmStory } from '@/game/turnAsk';
 
 const HIDE_OPTIONS_KEY = 'synapticgm-hide-options';
 const HIDE_TEXT_KEY = 'synapticgm-hide-text';
@@ -489,11 +489,16 @@ function LogRow({ entry, lorebook, showSystemLog, statVerbosity, engineMode, sho
       <div className="text-center text-xs text-slate-500">{entry.content}</div>
     );
   }
+  if (!hasRealGmStory(entry) && !showTurnAsk && !(entry.systemLog && entry.systemLog.length > 0)) {
+    return null;
+  }
   return (
     <div className="space-y-1.5">
-      <div className="rounded-lg border border-slate-800 bg-slate-900/50 px-4 py-3">
-        <FormattedText content={entry.content} lorebook={lorebook} />
-      </div>
+      {hasRealGmStory(entry) && (
+        <div className="rounded-lg border border-slate-800 bg-slate-900/50 px-4 py-3">
+          <FormattedText content={entry.content} lorebook={lorebook} />
+        </div>
+      )}
       {showSystemLog && entry.systemLog && entry.systemLog.length > 0 && (
         <SystemLogPanel
           lines={filterSystemLogForEngine(entry.systemLog, engineMode)}

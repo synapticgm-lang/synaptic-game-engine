@@ -2,7 +2,7 @@ import { useState, useMemo } from 'react';
 import type { LogEntry } from '@/types';
 import type { EngineMode } from '@/game/types';
 import { filterSystemLogForEngine } from '@/game/systemLog';
-import { shouldShowTurnAsk, stripTurnCloser, TURN_ASK } from '@/game/turnAsk';
+import { shouldShowTurnAsk, stripTurnCloser, TURN_ASK, hasRealGmStory } from '@/game/turnAsk';
 import {
   ChevronRight, ChevronDown, Zap, Sword, Shield, Sparkles,
   TrendingUp, Skull, Heart, Dice5, Eye, EyeOff, Terminal,
@@ -102,6 +102,9 @@ export function NarrativeView({ log, busy, engineMode = 'litrpg' }: Props) {
 function NarrativeEntry({ entry, engineMode, showTurnAsk }: { entry: LogEntry; engineMode: EngineMode; showTurnAsk: boolean }) {
   if (entry.role === 'player') return <PlayerBubble entry={entry} />;
   if (entry.role === 'system') return <SystemMessage entry={entry} />;
+  if (!hasRealGmStory(entry) && !showTurnAsk && !(entry.systemLog && entry.systemLog.length > 0)) {
+    return null;
+  }
   return <DmNarration entry={entry} engineMode={engineMode} showTurnAsk={showTurnAsk} />;
 }
 

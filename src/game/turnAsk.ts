@@ -4,10 +4,10 @@ import type { LogEntry } from './types';
 export const TURN_ASK = 'What do you do?';
 
 const TURN_CLOSER_LINE =
-  /^(?:what do you do(?:\s+next)?|what will you do)\s*[?:.]?\s*$/i;
+  /^(?:\*{0,2}|_{0,2}|["'«]*)(?:what do you do(?:\s+next)?|what will you do)\s*[?:.]?\s*(?:\*{0,2}|_{0,2}|["'»]*)\s*$/i;
 
 const TURN_CLOSER_TRAILING =
-  /(?:\n|\s)+(?:what do you do(?:\s+next)?|what will you do)\s*[?:.]?\s*$/i;
+  /(?:\n|\s)+(?:\*{0,2}|_{0,2})?(?:what do you do(?:\s+next)?|what will you do)\s*[?:.]?\s*(?:\*{0,2}|_{0,2})?\s*$/i;
 
 export function isTurnCloserLine(line: string): boolean {
   return TURN_CLOSER_LINE.test(line.trim());
@@ -26,16 +26,31 @@ export function stripTurnCloser(text: string): string {
   return next.trim();
 }
 
+export function gmStoryText(entry: LogEntry | undefined): string {
+  if (!entry) return '';
+  const fromPanels = (entry.panels ?? []).map((p) => p.narrative ?? '').join(' ');
+  return stripTurnCloser(`${entry.content ?? ''}\n${fromPanels}`)
+    .replace(/<[^>]+>/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+export function hasRealGmStory(entry: LogEntry | undefined): boolean {
+  const story = gmStoryText(entry);
+  return story.length >= 60 && /[.!?]/.test(story);
+}
+
 /**
- * Show the ask only on the latest unanswered GM beat (after story + System log).
- * Hide it once a player message follows, while the world is still resolving, or on
- * superseded GM turns — otherwise it reads as a fake extra GM line under the command.
+ * Show the ask only after a real GM beat that still has no player reply.
+ * Never show it under a command they just sent, on an empty/closer-only GM row,
+ * or while the world is still resolving.
  */
 export function shouldShowTurnAsk(log: LogEntry[], index: number, busy: boolean): boolean {
   const entry = log[index];
   if (!entry || entry.role !== 'gm') return false;
   if (entry.entryKind === 'milestone' || entry.mediaKind === 'video') return false;
   if (busy) return false;
+  if (!hasRealGmStory(entry)) return false;
   for (let i = index + 1; i < log.length; i++) {
     const role = log[i].role;
     if (role === 'player' || role === 'gm') return false;

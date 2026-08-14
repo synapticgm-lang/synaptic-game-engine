@@ -58,7 +58,8 @@ export function isGenericBridgeNarrative(narrative: string): boolean {
 export function isUnresolvedActionNarrative(
   playerAction: string,
   narrative: string,
-  intent: PlayerIntent
+  intent: PlayerIntent,
+  previousNarrative = ''
 ): boolean {
   const job = primaryActionClause(playerAction);
   const prose = proseOnly(narrative);
@@ -66,6 +67,8 @@ export function isUnresolvedActionNarrative(
   if (/^(?:what do you do(?:\s+next)?|what will you do)\s*[?:.]?\s*$/i.test(prose)) return true;
   if (isGenericBridgeNarrative(narrative)) return true;
   if (/bring the System panel in close/i.test(prose) && !isPanelOnlyAction(playerAction)) return true;
+  if (isRecycledLookAround(playerAction, intent, prose, previousNarrative)) return true;
+  if (asksIfEveryoneGotGear(playerAction) && !proseAnswersEveryoneGear(prose)) return true;
 
   const askedSomeone = isAskNearbyPerson(playerAction);
   if (askedSomeone) {
@@ -232,6 +235,37 @@ function isPanelOnlyAction(action: string): boolean {
     /^(?:check|read|open|study|inspect)\b.{0,40}\b(system\s*pann?el|status\s+panel|character\s+sheet|system\s+menu)\b/i.test(job)
     || /^(?:check|read|open|study|inspect)\s+(?:the\s+)?(?:system\s*)?pann?el\b/i.test(job)
   );
+}
+
+function asksIfEveryoneGotGear(action: string): boolean {
+  return /\b(did we all|everyone get|everybody get|we all get|all get (?:a |the )?(?:knife|weapon|gear)|did (?:they|everyone|people) (?:get|also get))\b/i.test(
+    action
+  );
+}
+
+function proseAnswersEveryoneGear(prose: string): boolean {
+  return /\b(everyone|everybody|all of (?:you|them|us)|only you|just you|not everyone|others (?:have|got|hold|weren'?t)|allotment|issued to (?:every|all)|each (?:person|citizen|human)|nobody else|no one else)\b/i.test(
+    prose
+  );
+}
+
+function isRecycledLookAround(
+  action: string,
+  intent: PlayerIntent,
+  prose: string,
+  previous: string
+): boolean {
+  if (!isGeneralLookAround(action, intent)) return false;
+  const prior = proseOnly(previous).toLowerCase();
+  if (prior.length < 80) return false;
+  const sentences = prose
+    .toLowerCase()
+    .split(/[.!?]+/)
+    .map((s) => s.trim())
+    .filter((s) => s.length > 28);
+  if (sentences.length === 0) return true;
+  const recycled = sentences.filter((s) => prior.includes(s.slice(0, 42))).length;
+  return recycled >= Math.ceil(sentences.length * 0.6);
 }
 
 function isGeneralLookAround(action: string, intent: PlayerIntent): boolean {

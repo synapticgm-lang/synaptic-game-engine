@@ -80,7 +80,7 @@ import {
 } from './actionResolution';
 import { mergeNpcMemoriesFromTurn } from './npcMemory';
 import { buildPendingProposal, getProposedState, withEditedNarrative, touchLocationSheet } from './pendingTurn';
-import { extractUpdates, extractNewItems, parseActionTags, stripActionTags, matchLoreCards, eventsToLoreCards, parseTurnFrame, eventsToQuestUpdates, eventsToEncounterUpdate, parsePanels, eventsToMilestone, eventsToLootVideo, eventsToVisualUpdate, stripChoiceList, extractChoiceLines } from './parser';
+import { extractUpdates, extractNewItems, parseActionTags, stripActionTags, matchLoreCards, eventsToLoreCards, parseTurnFrame, eventsToQuestUpdates, eventsToEncounterUpdate, parsePanels, eventsToMilestone, eventsToLootVideo, eventsToVisualUpdate, stripChoiceList, extractChoiceLines, stripTurnCloser } from './parser';
 import { extractNamedPlaces, harvestPlayText, isGenericMapPlace, mapAnchorName, syncQuestsFromPlay } from './questPlay';
 import { inferItemType } from './salvage';
 import { initializeDungeon, moveToNode, exitDungeon as engineExitDungeon, buildLocalAreaMap, addLandmarkToLocalMap } from './mapEngine';
@@ -1485,9 +1485,11 @@ In <system-log>, only emit LitRPG/RPG progression lines (XP, loot, HP change as 
           sanitizedInput,
         );
         const probeLocks = detectFactLockViolations(liveCurrent, probeText, sanitizedInput);
+        const previousGm =
+          [...liveCurrent.log].reverse().find((e) => e.role === 'gm')?.content ?? '';
         // Fact-lock slips are cut locally after this. Only burn a second GM call when
         // the turn did not resolve the player's action at all.
-        if (isUnresolvedActionNarrative(sanitizedInput, probeText, intentForMandate)) {
+        if (isUnresolvedActionNarrative(sanitizedInput, probeText, intentForMandate, previousGm)) {
           debugLogger.record('WARN', 'Unresolved action narrative — resolution retry', {
             turn: liveCurrent.turn,
             intent: intentForMandate.kind,
@@ -1709,6 +1711,7 @@ In <system-log>, only emit LitRPG/RPG progression lines (XP, loot, HP change as 
       const sanitizedPanels = budgetedPanels.map((panel, idx) => {
         let narrative = panel.narrative;
         if (idx === budgetedPanels.length - 1) narrative = stripChoiceList(narrative);
+        narrative = stripTurnCloser(narrative);
         narrative = sanitizeNarrativeMechanics(narrative, liveCurrent.engineMode).text;
         return { ...panel, narrative };
       });
