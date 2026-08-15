@@ -12,7 +12,15 @@ All competitor + design packs for SynapticGM. Do not treat as live tickets until
 | [pack-05-quest-journal-authority-2026-08-14.md](./pack-05-quest-journal-authority-2026-08-14.md) | Place authority; quest state machine |
 | [pack-06-long-campaign-memory-2026-08-14.md](./pack-06-long-campaign-memory-2026-08-14.md) | Turn 80–200 memory; compression; pins |
 | [pack-07-mediated-freetext-content-ratings-2026-08-14.md](./pack-07-mediated-freetext-content-ratings-2026-08-14.md) | Mediation; ratings; hate vs swears |
-| [pack-08-authored-world-intel-2026-08-14.md](./pack-08-authored-world-intel-2026-08-14.md) | Later-release: original races/places, quest DAGs, presence ladder (gather, don’t build) |
+| [pack-09-monetization-cosmetics-audio-iap-2026-08.md](./pack-09-monetization-cosmetics-audio-iap-2026-08.md) | Cosmetics, audio, dice, ads, IAP; never sell outcomes (WOF bits → `wof/pack-14-…`) |
+| [pack-10-cosmetic-catalog-themes-fonts-voices-dice-2026-08-15.md](./pack-10-cosmetic-catalog-themes-fonts-voices-dice-2026-08-15.md) | Sellable theme/font/voice/dice catalog; copyright-safe names |
+| [pack-11-live-gameplay-dump-2026-08-15.md](./pack-11-live-gameplay-dump-2026-08-15.md) | After First Blood, combat feel, street map, fail/protest, salvage loop, choices, street NPC, phone chrome |
+| [RESEARCH-PROMPT-visual-tabletop-bolt.md](./RESEARCH-PROMPT-visual-tabletop-bolt.md) | Bolt prompt: comic/illustration on every engine + D&D/tabletop |
+| [pack-12-visual-tabletop-dump-2026-08-15.md](./pack-12-visual-tabletop-dump-2026-08-15.md) | Comic/illustration on every engine; D&D table feel; story RPG; empty-turn / a11y |
+| [RESEARCH-PROMPT-remaining-live-holes-bolt.md](./RESEARCH-PROMPT-remaining-live-holes-bolt.md) | Bolt prompt: locality, place harvest, opening kit/portrait, turn cost |
+| [pack-13-remaining-live-holes-2026-08-15.md](./pack-13-remaining-live-holes-2026-08-15.md) | Locality token, pin allowlist, kit/portrait, turn cost / hang / beat fidelity |
 | [MASTER-IMPROVEMENT-PLAN-2026-08-14.md](./MASTER-IMPROVEMENT-PLAN-2026-08-14.md) | Compiled backlog from all packs |
+
+**WOF (World of Fantasy)** — later project, not live. Quarantined under [wof/](./wof/). Rule: `.cursor/rules/wof-sandbox.mdc`.
 
 **Also related:** `.cursor/rules/playtest-notes.mdc` — live playtest issues (John).

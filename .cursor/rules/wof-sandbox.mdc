@@ -1,0 +1,18 @@
+---
+description: WOF (World of Fantasy) is a later-release research project. Never implement it into the live SynapticGM game.
+alwaysApply: true
+---
+
+# WOF sandbox (World of Fantasy)
+
+WOF is a **separate later project**. Everything in WOF chats is a **future release**, not the live game. Intel lives only under `docs/research/wof/` and WOF canvases.
+
+**Never** put WOF races, places, factions, quests, dungeons, raids, multiplayer, housing, auction, or businesses into live game code (`src/`, `supabase/`, prompts, settings, saves).
+
+If John asks for a live-game fix, ignore WOF. If he asks to build WOF, confirm it is not a live-game change.
+
+Working names (WOF only): Ash Compact, Tide Covenant, Hearthborn, Lanternfolk, Saltkin, Stonevein, Reedfen, Lampwood, Brinewatch, Granite Stair.
+
+Original / public-domain folklore inspiration only. No licensed races or places.
+
+When John pastes WOF research into chat, save it verbatim under `docs/research/wof/pasted/` before answering. Do not leave dumps only in the conversation.
