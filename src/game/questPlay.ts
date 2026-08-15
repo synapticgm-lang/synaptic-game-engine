@@ -172,6 +172,13 @@ export function isGenericMapPlace(name: string | undefined): boolean {
   return /^the opening of /i.test(n) || /^your surroundings$/i.test(n) || /^a cracked city street$/i.test(n);
 }
 
+export function newlyRevealedQuests(before: Quest[] | undefined, after: Quest[] | undefined): Quest[] {
+  const prior = new Set(
+    (before ?? []).filter((q) => q.revealed === true).map((q) => q.id)
+  );
+  return (after ?? []).filter((q) => q.revealed === true && !prior.has(q.id));
+}
+
 /** After they finish name+place, show only the local starter — never Wave/Riverside. */
 export function revealLocalStarterQuest(quests: Quest[]): Quest[] {
   const first =

@@ -25,6 +25,7 @@ const DebugModal = lazy(() => import('@/components/DebugModal').then(m => ({ def
 const GMLibrary = lazy(() => import('@/components/GMLibrary').then(m => ({ default: m.GMLibrary })));
 const CharacterWindow = lazy(() => import('@/components/CharacterWindow').then(m => ({ default: m.CharacterWindow })));
 const MerchantWindow = lazy(() => import('@/components/MerchantWindow').then(m => ({ default: m.MerchantWindow })));
+const QuestUnlockModal = lazy(() => import('@/components/QuestUnlockModal').then(m => ({ default: m.QuestUnlockModal })));
 
 export default function App() {
   const game = useGame();
@@ -471,6 +472,19 @@ export default function App() {
             state={state}
             onStateChange={(newState) => game.updateGameState(newState)}
             onToast={game.addToast}
+          />
+        </Suspense>
+      )}
+
+      {game.unlockedQuests.length > 0 && (
+        <Suspense fallback={null}>
+          <QuestUnlockModal
+            quests={game.unlockedQuests}
+            onClose={game.dismissUnlockedQuests}
+            onOpenJournal={() => {
+              game.dismissUnlockedQuests();
+              setShowQuestLog(true);
+            }}
           />
         </Suspense>
       )}

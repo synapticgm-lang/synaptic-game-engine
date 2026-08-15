@@ -1,6 +1,6 @@
 import { useCallbackRef } from './useCallbackRef';
 import { useEffect, useRef, useState, useCallback, startTransition } from 'react';
-import type { GameState, Settings, LogEntry, RollRecord, Item, GoogleUser, SaveSlotInfo, EngineMode, LoreCard, GmStrictness, ContentMode, ErrorKind, AiProvider, Location3D, MapTier, ArtStylePreset, ComicOverlayEdit } from './types';
+import type { GameState, Settings, LogEntry, RollRecord, Item, GoogleUser, SaveSlotInfo, EngineMode, LoreCard, GmStrictness, ContentMode, ErrorKind, AiProvider, Location3D, MapTier, ArtStylePreset, ComicOverlayEdit, Quest } from './types';
 import { createInitialState } from './defaults';
 import type { CampaignArchetype } from './archetypes';
 import { buildArchetypeIntro } from './archetypes';
@@ -113,7 +113,7 @@ import { buildPendingProposal, getProposedState, withEditedNarrative, touchLocat
 import { extractUpdates, extractNewItems, parseActionTags, stripActionTags, matchLoreCards, eventsToLoreCards, parseTurnFrame, eventsToQuestUpdates, eventsToEncounterUpdate, parsePanels, eventsToMilestone, eventsToLootVideo, eventsToVisualUpdate, stripChoiceList, extractChoiceLines, stripTurnCloser, storyHasBody } from './parser';
 import { hasRealGmStory } from './turnAsk';
 import { encounterOriginPlace } from './locationName';
-import { extractNamedPlaces, harvestPlayText, isGenericMapPlace, mapAnchorName, syncQuestsFromPlay } from './questPlay';
+import { extractNamedPlaces, harvestPlayText, isGenericMapPlace, mapAnchorName, newlyRevealedQuests, syncQuestsFromPlay } from './questPlay';
 import { inferItemType } from './salvage';
 import { initializeDungeon, moveToNode, exitDungeon as engineExitDungeon, buildLocalAreaMap, addLandmarkToLocalMap } from './mapEngine';
 import type { Toast } from '@/components/ToastStack';
@@ -376,6 +376,7 @@ export function useGame() {
   const [showWelcome, setShowWelcome] = useState(false);
   const [showCharacterWindow, setShowCharacterWindow] = useState(false);
   const [showMerchantWindow, setShowMerchantWindow] = useState(false);
+  const [unlockedQuests, setUnlockedQuests] = useState<Quest[]>([]);
   const [syncPhase, setSyncPhase] = useState<SyncPhase>('idle');
   const [toasts, setToasts] = useState<Toast[]>([]);
   const [cloudSlot, setCloudSlot] = useState<SaveSlotInfo | null>(null);
@@ -1394,6 +1395,7 @@ export function useGame() {
 
       let liveCurrent = stateRef.current;
       if (!liveCurrent) return;
+      const questsAtTurnStart = liveCurrent.quests ?? [];
       liveCurrent = applySystemRename(
         {
           ...liveCurrent,
@@ -1439,12 +1441,14 @@ export function useGame() {
         openingText = ensureSystemReceipt(openingState, sanitizeOpeningNarration(openingText));
         const openingChoices = extractChoicesFromText(openingText, openingState);
         const cleanOpening = stripChoiceList(openingText);
+        const openingUnlocks = newlyRevealedQuests(questsAtTurnStart, openingState.quests);
         const openingGm: LogEntry = {
           id: uid(),
           turn: openingState.turn,
           role: 'gm',
           content: cleanOpening,
           timestamp: Date.now(),
+          systemLog: openingUnlocks.map((q) => `Quest Unlocked: ${q.name}`),
         };
         const openingTurn = openingState.turn + 1;
         const seeded = seedOpeningSceneFacts({ ...openingState, turn: openingTurn });
@@ -1464,6 +1468,7 @@ export function useGame() {
         stateRef.current = committed;
         setState(committed);
         void persist(committed);
+        if (openingUnlocks.length) setUnlockedQuests(openingUnlocks);
         return;
       }
 
@@ -2143,6 +2148,11 @@ In <system-log>, only emit LitRPG/RPG progression lines (XP, loot, HP change as 
         { ...workingState, quests: updatedQuests },
         nextTurn
       );
+      const turnUnlocks = newlyRevealedQuests(questsAtTurnStart, updatedQuests);
+      if (turnUnlocks.length) {
+        mergedSystemLog.push(...turnUnlocks.map((q) => `Quest Unlocked: ${q.name}`));
+        setUnlockedQuests(turnUnlocks);
+      }
 
       const leveledUp = (baseChar.level ?? 1) > (liveCurrent.character.level ?? 1);
       const bossCleared =
@@ -3066,7 +3076,7 @@ In <system-log>, only emit LitRPG/RPG progression lines (XP, loot, HP change as 
     imagesGenerating, videosGenerating,
     saveStatus, showSettings, setShowSettings, showApiSetup, setShowApiSetup, showNewGame, setShowNewGame,
     showRolls, setShowRolls, showMapModal, setShowMapModal, leftOpen, setLeftOpen, rightOpen, setRightOpen,
-    showWelcome, setShowWelcome, showCharacterWindow, setShowCharacterWindow, showMerchantWindow, setShowMerchantWindow, syncPhase, toasts, dismissToast, addToast, cloudSlot, cloudSlots, localSlot,
+    showWelcome, setShowWelcome, showCharacterWindow, setShowCharacterWindow, showMerchantWindow, setShowMerchantWindow, unlockedQuests, dismissUnlockedQuests: () => setUnlockedQuests([]), syncPhase, toasts, dismissToast, addToast, cloudSlot, cloudSlots, localSlot,
     sendAction,
     retryAction: () => { if (lastInput.trim()) sendAction(lastInput); },
     retryPanelImage,
