@@ -13,6 +13,7 @@ John is playtesting live. Collect issues here. Do not implement until he asks fo
 
 ## Done (already shipped)
 
+- PYOA bible: **The Vesper-Glass Cipher** (`vesper-glass-cipher`) — Silas, factions, six endings (`2026-08-15h`)
 - Pick Your Own Adventure is a fourth New Game system; Thornferry Road lives there; more bibles can be commissioned (`2026-08-15g`)
 - Image fail holds the story: captions/prose show while art is pending or failed; player comments stay visible (`2026-08-15f`)
 - Opening name/place swap: “a random location” picks a real place; never the character name or campaign title (`2026-08-15f`)

@@ -10,6 +10,7 @@ import { shatteredCoast } from './shatteredCoast';
 import { cursedKeep } from './cursedKeep';
 import { summonedPact } from './summonedPact';
 import { thornferryRoad } from './thornferryRoad';
+import { vesperGlassCipher } from './vesperGlassCipher';
 import {
   ascendingSpire,
   inkboundAcademy,
@@ -45,6 +46,7 @@ export {
   cursedKeep,
   summonedPact,
   thornferryRoad,
+  vesperGlassCipher,
   ascendingSpire,
   inkboundAcademy,
   hollowCore,
@@ -84,6 +86,7 @@ export const ALL_CAMPAIGN_BIBLES: CampaignBible[] = [
   blankCanvas,
   // Pick Your Own Adventure (main spine + forks)
   thornferryRoad,
+  vesperGlassCipher,
   // Story RPG (fiction-first, multi-genre)
   saltRoadHeist,
   glassHarborLetters,
