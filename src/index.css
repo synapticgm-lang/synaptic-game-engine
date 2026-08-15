@@ -13,12 +13,12 @@
     touch-action: manipulation;
   }
   body {
-    font-family: 'Inter', system-ui, sans-serif;
+    font-family: var(--sgm-font-ui, 'Inter', system-ui, sans-serif);
     background-color: #020617;
     color: #e2e8f0;
   }
   .font-serif {
-    font-family: 'Cinzel', serif;
+    font-family: var(--sgm-font-story, 'Cinzel', serif);
   }
 }
 

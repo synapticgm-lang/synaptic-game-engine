@@ -6,8 +6,11 @@ export function themeBySettingsId(uiThemeId: string | undefined): ShopItem {
   return shopItemById(id) ?? THEME_ITEMS[0]!;
 }
 
-/** Apply theme CSS variables to :root for live preview / play. */
-export function applyUiThemeToDocument(theme: ShopItem | null | undefined): void {
+/** Apply theme + optional font/dice kit CSS variables to :root. */
+export function applyUiThemeToDocument(
+  theme: ShopItem | null | undefined,
+  extras?: { font?: ShopItem | null; dice?: ShopItem | null },
+): void {
   const p = theme?.preview;
   const root = document.documentElement;
   if (!p) {
@@ -18,6 +21,8 @@ export function applyUiThemeToDocument(theme: ShopItem | null | undefined): void
     root.style.removeProperty('--sgm-muted');
     root.style.removeProperty('--sgm-font-ui');
     root.style.removeProperty('--sgm-font-story');
+    root.style.removeProperty('--sgm-dice-accent');
+    root.style.removeProperty('--sgm-dice-face');
     return;
   }
   root.style.setProperty('--sgm-accent', p.accent);
@@ -25,7 +30,24 @@ export function applyUiThemeToDocument(theme: ShopItem | null | undefined): void
   root.style.setProperty('--sgm-panel', p.panel);
   root.style.setProperty('--sgm-text', p.text);
   root.style.setProperty('--sgm-muted', p.muted);
-  if (p.fontUi) root.style.setProperty('--sgm-font-ui', p.fontUi);
-  if (p.fontStory) root.style.setProperty('--sgm-font-story', p.fontStory);
+  const fontUi = extras?.font?.preview?.fontUi ?? p.fontUi;
+  const fontStory = extras?.font?.preview?.fontStory ?? p.fontStory;
+  if (fontUi) root.style.setProperty('--sgm-font-ui', fontUi);
+  if (fontStory) root.style.setProperty('--sgm-font-story', fontStory);
+  const diceAccent = extras?.dice?.diceSkin?.accent ?? p.accent;
+  const diceFace = extras?.dice?.diceSkin?.face ?? p.panel;
+  root.style.setProperty('--sgm-dice-accent', diceAccent);
+  root.style.setProperty('--sgm-dice-face', diceFace);
   root.dataset.sgmTheme = theme?.themeKey ?? 'integration-blue';
+}
+
+export function applySettingsCosmetics(settings: {
+  uiThemeId?: string;
+  fontPackId?: string;
+  diceCosmeticId?: string;
+}): void {
+  applyUiThemeToDocument(themeBySettingsId(settings.uiThemeId), {
+    font: shopItemById(settings.fontPackId ?? ''),
+    dice: shopItemById(settings.diceCosmeticId ?? ''),
+  });
 }

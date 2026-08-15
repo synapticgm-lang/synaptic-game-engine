@@ -2,7 +2,7 @@ import { shouldUseComicGrid } from '@/game/comicImagePrompt';
 import { visibleJournalQuests } from '@/game/questPlay';
 import { useGame } from '@/game/useGame';
 import { useBgImage } from '@/game/useBgImage';
-import { applyUiThemeToDocument, themeBySettingsId } from '@/game/uiTheme';
+import { applySettingsCosmetics } from '@/game/uiTheme';
 import { ensureTestCosmeticUnlock } from '@/game/cosmeticEntitlements';
 import { lazy, Suspense, useEffect, useState } from 'react';
 import { Hud } from '@/components/Hud';
@@ -53,8 +53,8 @@ export default function App() {
   }, []);
 
   useEffect(() => {
-    applyUiThemeToDocument(themeBySettingsId(game.settings.uiThemeId));
-  }, [game.settings.uiThemeId]);
+    applySettingsCosmetics(game.settings);
+  }, [game.settings.uiThemeId, game.settings.fontPackId, game.settings.diceCosmeticId]);
 
   const hasSave = !!game.localSlot || !!game.cloudSlot;
   const shouldAutoResume = game.settings.postLoginBehavior === 'AUTO_RESUME' && hasSave;

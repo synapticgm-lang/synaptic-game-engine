@@ -21,7 +21,7 @@ import {
   shopItemById,
 } from '@/game/cosmeticCatalog';
 import { ensureTestCosmeticUnlock, isOwned } from '@/game/cosmeticEntitlements';
-import { applyUiThemeToDocument, themeBySettingsId } from '@/game/uiTheme';
+import { applySettingsCosmetics, applyUiThemeToDocument, themeBySettingsId } from '@/game/uiTheme';
 
 type HubTab = 'play' | 'themes' | 'shop';
 
@@ -61,8 +61,8 @@ export function MainMenu({
   }, []);
 
   useEffect(() => {
-    applyUiThemeToDocument(themeBySettingsId(settings.uiThemeId));
-  }, [settings.uiThemeId]);
+    applySettingsCosmetics(settings);
+  }, [settings.uiThemeId, settings.fontPackId, settings.diceCosmeticId]);
 
   return (
     <div
@@ -244,11 +244,14 @@ function ThemesTab({
   const selectedTheme = useMemo(() => themeBySettingsId(draftTheme), [draftTheme]);
 
   useEffect(() => {
-    applyUiThemeToDocument(selectedTheme);
+    applyUiThemeToDocument(selectedTheme, {
+      font: shopItemById(draftFont),
+      dice: shopItemById(draftDice),
+    });
     return () => {
-      applyUiThemeToDocument(themeBySettingsId(settings.uiThemeId));
+      applySettingsCosmetics(settings);
     };
-  }, [selectedTheme, settings.uiThemeId]);
+  }, [selectedTheme, draftFont, draftDice, settings]);
 
   const fonts = SHOP_CATALOG.filter((i) => i.slot === 'font');
   const dice = SHOP_CATALOG.filter((i) => i.slot === 'dice');
@@ -270,10 +273,10 @@ function ThemesTab({
   return (
     <div className="flex w-full flex-col gap-4 pb-8">
       <p className="text-center text-xs text-slate-500">
-        All themes unlocked for testing. Preview updates as you select — tap Save to keep.
+        Race themes include a matching font, dice skin, and narrator voice. Preview updates as you select — tap Save to keep. You can still override font, dice, or voice after.
       </p>
 
-      <ThemePreviewCard theme={selectedTheme} frameId={draftFrame} diceId={draftDice} voiceId={draftVoice} />
+      <ThemePreviewCard theme={selectedTheme} frameId={draftFrame} diceId={draftDice} voiceId={draftVoice} fontId={draftFont} />
 
       <Section title="UI theme">
         <div className="grid gap-2 sm:grid-cols-2">
@@ -285,7 +288,14 @@ function ThemesTab({
               subtitle={item.blurb}
               swatch={item.preview?.accent}
               owned={isOwned(item.id)}
-              onClick={() => setDraftTheme(item.id)}
+              onClick={() => {
+                setDraftTheme(item.id);
+                if (item.kit) {
+                  setDraftFont(item.kit.fontId);
+                  setDraftDice(item.kit.diceId);
+                  setDraftVoice(item.kit.voiceId);
+                }
+              }}
             />
           ))}
         </div>
@@ -370,16 +380,19 @@ function ThemePreviewCard({
   frameId,
   diceId,
   voiceId,
+  fontId,
 }: {
   theme: ShopItem;
   frameId: string;
   diceId: string;
   voiceId: string;
+  fontId: string;
 }) {
   const p = theme.preview;
   const frame = shopItemById(frameId);
   const dice = shopItemById(diceId);
   const voice = shopItemById(voiceId);
+  const font = shopItemById(fontId);
   return (
     <div
       className="overflow-hidden rounded-xl border shadow-lg"
@@ -420,6 +433,9 @@ function ThemePreviewCard({
         <div className="flex flex-wrap gap-2 text-[10px] font-sans uppercase tracking-wide" style={{ color: p?.muted }}>
           <span className="rounded border px-2 py-1" style={{ borderColor: `${p?.accent}44` }}>
             Frame: {frame?.name ?? '—'}
+          </span>
+          <span className="rounded border px-2 py-1" style={{ borderColor: `${p?.accent}44` }}>
+            Font: {font?.name ?? 'Theme default'}
           </span>
           <span className="rounded border px-2 py-1" style={{ borderColor: `${p?.accent}44` }}>
             Dice: {dice?.name ?? '—'}

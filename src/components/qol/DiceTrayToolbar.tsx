@@ -171,7 +171,13 @@ export function DiceTrayToolbar() {
         </div>
 
         {/* Toolbar */}
-        <div className="relative rounded-2xl border border-slate-700/50 bg-slate-950/85 px-2 py-2 shadow-2xl shadow-black/50 backdrop-blur-xl sm:px-3">
+        <div
+          className="relative rounded-2xl border px-2 py-2 shadow-2xl shadow-black/50 backdrop-blur-xl sm:px-3"
+          style={{
+            borderColor: 'color-mix(in srgb, var(--sgm-dice-accent, #64748b) 45%, transparent)',
+            background: 'color-mix(in srgb, var(--sgm-dice-face, #020617) 72%, #020617)',
+          }}
+        >
           {/* Top row: toggle + modifiers */}
           <div className="mb-2 flex items-center justify-between gap-2">
             <button
@@ -246,11 +252,16 @@ export function DiceTrayToolbar() {
                 key={d.die}
                 onClick={() => handleRoll(d.die)}
                 disabled={rolling !== null}
-                className={`group relative flex flex-1 flex-col items-center gap-0.5 rounded-lg border border-slate-700/50 bg-slate-800/40 py-1.5 transition-all duration-200 hover:-translate-y-1 hover:border-slate-500 hover:bg-slate-700/40 hover:shadow-lg ${d.glow} disabled:opacity-50 sm:py-2`}
+                className={`group relative flex flex-1 flex-col items-center gap-0.5 rounded-lg border py-1.5 transition-all duration-200 hover:-translate-y-1 hover:shadow-lg ${d.glow} disabled:opacity-50 sm:py-2`}
+                style={{
+                  borderColor: 'color-mix(in srgb, var(--sgm-dice-accent, #64748b) 40%, transparent)',
+                  background: 'color-mix(in srgb, var(--sgm-dice-face, #1e293b) 55%, #0f172a)',
+                  color: 'var(--sgm-dice-accent, #e2e8f0)',
+                }}
               >
                 <svg
                   viewBox="0 0 24 24"
-                  className={`h-6 w-6 transition-transform group-hover:scale-110 sm:h-7 sm:w-7 ${d.color} ${rolling === d.die ? 'animate-spin' : ''}`}
+                  className={`h-6 w-6 transition-transform group-hover:scale-110 sm:h-7 sm:w-7 ${rolling === d.die ? 'animate-spin' : ''}`}
                   fill="none"
                   stroke="currentColor"
                   strokeWidth={1.5}
@@ -258,7 +269,7 @@ export function DiceTrayToolbar() {
                 >
                   <path d={dieShape(d.die)} />
                 </svg>
-                <span className={`text-[10px] font-bold tracking-wide ${d.color} sm:text-xs`}>{d.label}</span>
+                <span className="text-[10px] font-bold tracking-wide sm:text-xs">{d.label}</span>
               </button>
             ))}
           </div>

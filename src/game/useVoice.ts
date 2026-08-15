@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { shopItemById } from './cosmeticCatalog';
 
 type SpeechRecognitionType = typeof window & {
   SpeechRecognition?: new () => SpeechRecognitionInstance;
@@ -30,7 +31,20 @@ export interface VoiceState {
   sttSupported: boolean;
 }
 
-export function useVoice(ttsEnabled: boolean) {
+function resolveTts(voices: SpeechSynthesisVoice[], voicePackId?: string) {
+  const pack = voicePackId ? shopItemById(voicePackId) : undefined;
+  const tts = pack?.tts ?? { rate: 0.95, pitch: 0.9, voiceHint: 'en' };
+  const hint = tts.voiceHint.toLowerCase();
+  const english = voices.filter((v) => v.lang.toLowerCase().startsWith('en'));
+  const hinted =
+    english.find((v) => v.name.toLowerCase().includes(hint))
+    ?? english.find((v) => v.name.toLowerCase().includes('google'))
+    ?? english[0]
+    ?? voices[0];
+  return { voice: hinted, rate: tts.rate, pitch: tts.pitch };
+}
+
+export function useVoice(ttsEnabled: boolean, voicePackId?: string) {
   const [speaking, setSpeaking] = useState(false);
   const [listening, setListening] = useState(false);
   const [transcript, setTranscript] = useState('');
@@ -60,11 +74,10 @@ export function useVoice(ttsEnabled: boolean) {
     };
   }, [ttsSupported]);
 
-  const preferredVoice = useCallback(() => (
-    voices.find((v) => v.lang.startsWith('en') && v.name.toLowerCase().includes('google'))
-      ?? voices.find((v) => v.lang.startsWith('en'))
-      ?? voices[0]
-  ), [voices]);
+  const preferredVoice = useCallback(
+    () => resolveTts(voices, voicePackId),
+    [voices, voicePackId],
+  );
 
   const cleanForSpeech = (text: string) => text.replace(/\[[^\]]*\]/g, '').replace(/\*[^*]*\*/g, '').trim();
 
@@ -76,10 +89,10 @@ export function useVoice(ttsEnabled: boolean) {
     const clean = cleanForSpeech(text);
     if (!clean) return;
     const u = new SpeechSynthesisUtterance(clean);
-    u.rate = 0.95;
-    u.pitch = 0.9;
     const preferred = preferredVoice();
-    if (preferred) u.voice = preferred;
+    u.rate = preferred.rate;
+    u.pitch = preferred.pitch;
+    if (preferred.voice) u.voice = preferred.voice;
     u.onstart = () => setSpeaking(true);
     u.onend = () => setSpeaking(false);
     u.onerror = () => setSpeaking(false);
@@ -115,9 +128,9 @@ export function useVoice(ttsEnabled: boolean) {
       }
       const u = new SpeechSynthesisUtterance(queue[index]);
       index += 1;
-      u.rate = 0.95;
-      u.pitch = 0.9;
-      if (preferred) u.voice = preferred;
+      u.rate = preferred.rate;
+      u.pitch = preferred.pitch;
+      if (preferred.voice) u.voice = preferred.voice;
       u.onstart = () => setSpeaking(true);
       u.onend = () => speakNext();
       u.onerror = () => { cancelled = true; setSpeaking(false); };

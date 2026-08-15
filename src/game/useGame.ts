@@ -417,7 +417,7 @@ export function useGame() {
   const [postCommitTurnEpoch, setPostCommitTurnEpoch] = useState(0);
   const postCommitTurnRunningRef = useRef(false);
 
-  const voice = useVoice(settings.ttsEnabled);
+  const voice = useVoice(settings.ttsEnabled, settings.voicePackId);
 
   const snapshotRef = useRef<GameState | null>(null);
   const isHydratedRef = useRef(false);

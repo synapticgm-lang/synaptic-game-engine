@@ -26,6 +26,12 @@ export interface ShopItem {
   includes?: string[];
   /** Theme CSS token key */
   themeKey?: string;
+  /** When this theme is selected, also apply these cosmetics. */
+  kit?: { fontId: string; diceId: string; voiceId: string };
+  /** TTS flavour — pitch/rate always apply; voiceHint matches a browser voice name if present. */
+  tts?: { rate: number; pitch: number; voiceHint: string };
+  /** Dice tray tint. Cosmetic only — odds unchanged. */
+  diceSkin?: { accent: string; face: string };
   preview?: {
     accent: string;
     bg: string;
@@ -465,6 +471,7 @@ export const SHOP_CATALOG: ShopItem[] = [
     blurb: 'Cyan holographic etch. Cosmetic only — odds unchanged.',
     priceGbp: '£2.99',
     priceUsd: '$2.99',
+    diceSkin: { accent: '#22d3ee', face: '#0e7490' },
   },
   {
     id: 'dice.bone-iron',
@@ -473,6 +480,7 @@ export const SHOP_CATALOG: ShopItem[] = [
     blurb: 'Weathered bone faces, iron numerals.',
     priceGbp: '£2.99',
     priceUsd: '$2.99',
+    diceSkin: { accent: '#d6d3d1', face: '#78716c' },
   },
   {
     id: 'dice.frost-crystal',
@@ -481,6 +489,7 @@ export const SHOP_CATALOG: ShopItem[] = [
     blurb: 'Clear frosted glass polyhedral set.',
     priceGbp: '£3.99',
     priceUsd: '$3.99',
+    diceSkin: { accent: '#7dd3fc', face: '#0369a1' },
   },
   {
     id: 'dice.neon-edge',
@@ -489,6 +498,7 @@ export const SHOP_CATALOG: ShopItem[] = [
     blurb: 'Black dice with neon rim light.',
     priceGbp: '£2.99',
     priceUsd: '$2.99',
+    diceSkin: { accent: '#f0abfc', face: '#a21caf' },
   },
 
   // --- Voices ---
@@ -499,6 +509,7 @@ export const SHOP_CATALOG: ShopItem[] = [
     blurb: 'Flat, precise System / Auditor voice.',
     priceGbp: '£4.99',
     priceUsd: '$4.99',
+    tts: { rate: 0.95, pitch: 0.85, voiceHint: 'david' },
   },
   {
     id: 'voice.street-chronicler',
@@ -507,6 +518,7 @@ export const SHOP_CATALOG: ShopItem[] = [
     blurb: 'Gritty urban Integration narrator.',
     priceGbp: '£4.99',
     priceUsd: '$4.99',
+    tts: { rate: 1.02, pitch: 0.92, voiceHint: 'mark' },
   },
   {
     id: 'voice.grizzled-mentor',
@@ -515,6 +527,7 @@ export const SHOP_CATALOG: ShopItem[] = [
     blurb: 'Older advisor tone, dry humour.',
     priceGbp: '£4.99',
     priceUsd: '$4.99',
+    tts: { rate: 0.88, pitch: 0.78, voiceHint: 'daniel' },
   },
 
   // --- Frames / System window ---
@@ -561,6 +574,15 @@ export const SHOP_CATALOG: ShopItem[] = [
     blurb: 'Clinical UI + readable serif story pair.',
     priceGbp: '£1.99',
     priceUsd: '$1.99',
+    preview: {
+      accent: '#22d3ee',
+      bg: '#020617',
+      panel: '#0f172a',
+      text: '#e2e8f0',
+      muted: '#64748b',
+      fontUi: 'ui-sans-serif, system-ui, sans-serif',
+      fontStory: 'ui-serif, Georgia, serif',
+    },
   },
   {
     id: 'font.terminal-grid',
@@ -569,6 +591,15 @@ export const SHOP_CATALOG: ShopItem[] = [
     blurb: 'Monospace log-file fantasy pair.',
     priceGbp: '£1.99',
     priceUsd: '$1.99',
+    preview: {
+      accent: '#4ade80',
+      bg: '#000000',
+      panel: '#052e16',
+      text: '#bbf7d0',
+      muted: '#166534',
+      fontUi: 'ui-monospace, SFMono-Regular, Menlo, monospace',
+      fontStory: 'ui-monospace, SFMono-Regular, Menlo, monospace',
+    },
   },
 
   // --- Badge ---
@@ -614,7 +645,7 @@ export const SHOP_CATALOG: ShopItem[] = [
     id: 'bundle.ancestry-sampler',
     slot: 'bundle',
     name: 'Ancestry Sampler',
-    blurb: 'Wood Elf Grove + Dark Elf Umbrance + Dwarf Forgehall + Dragon Hoard (~value pack).',
+    blurb: 'Wood Elf, Dark Elf, Dwarf, and Dragon themes — each packs a matching font, dice skin, and narrator voice.',
     priceGbp: '£9.99',
     priceUsd: '$12.99',
     includes: [
@@ -625,6 +656,305 @@ export const SHOP_CATALOG: ShopItem[] = [
     ],
   },
 ];
+
+type RaceKitDef = {
+  themeId: string;
+  slug: string;
+  fontName: string;
+  fontBlurb: string;
+  fontUi: string;
+  fontStory: string;
+  diceName: string;
+  diceBlurb: string;
+  diceAccent: string;
+  diceFace: string;
+  voiceName: string;
+  voiceBlurb: string;
+  tts: { rate: number; pitch: number; voiceHint: string };
+};
+
+const RACE_THEME_KITS: RaceKitDef[] = [
+  {
+    themeId: 'theme.wood-elf-grove',
+    slug: 'grove',
+    fontName: 'Canopy Serif',
+    fontBlurb: 'Leaf-gold story serif with a soft UI sans.',
+    fontUi: 'ui-sans-serif, system-ui, sans-serif',
+    fontStory: 'Georgia, "Palatino Linotype", Palatino, serif',
+    diceName: 'Amber Leaf',
+    diceBlurb: 'Moss-and-amber polyhedrals. Odds unchanged.',
+    diceAccent: '#84cc16',
+    diceFace: '#3f6212',
+    voiceName: 'Grove Whisper',
+    voiceBlurb: 'Soft canopy narrator — unhurried, close.',
+    tts: { rate: 0.92, pitch: 1.08, voiceHint: 'zira' },
+  },
+  {
+    themeId: 'theme.dark-elf-umbrance',
+    slug: 'umbrance',
+    fontName: 'Umbrance Serif',
+    fontBlurb: 'Pale court serif on dusk panels.',
+    fontUi: 'ui-sans-serif, system-ui, sans-serif',
+    fontStory: '"Palatino Linotype", Palatino, Georgia, serif',
+    diceName: 'Violet Obsidian',
+    diceBlurb: 'Dark glass with violet rims. Odds unchanged.',
+    diceAccent: '#c084fc',
+    diceFace: '#6b21a8',
+    voiceName: 'Under-Realm',
+    voiceBlurb: 'Low, measured dusk voice.',
+    tts: { rate: 0.88, pitch: 0.82, voiceHint: 'hazel' },
+  },
+  {
+    themeId: 'theme.high-elf-spire',
+    slug: 'spire',
+    fontName: 'Ivory Court',
+    fontBlurb: 'Formal Times pair for lofty chrome.',
+    fontUi: 'ui-sans-serif, system-ui, sans-serif',
+    fontStory: '"Times New Roman", Times, Georgia, serif',
+    diceName: 'Sky Gold',
+    diceBlurb: 'Ivory faces, gold numerals. Odds unchanged.',
+    diceAccent: '#fbbf24',
+    diceFace: '#b45309',
+    voiceName: 'Lofty Court',
+    voiceBlurb: 'Precise, slightly lifted court diction.',
+    tts: { rate: 0.96, pitch: 1.05, voiceHint: 'samantha' },
+  },
+  {
+    themeId: 'theme.dwarf-forgehall',
+    slug: 'forgehall',
+    fontName: 'Rune Stone',
+    fontBlurb: 'Heavy serif for mountain holds.',
+    fontUi: 'Georgia, "Palatino Linotype", serif',
+    fontStory: 'Georgia, "Palatino Linotype", serif',
+    diceName: 'Hammered Brass',
+    diceBlurb: 'Brass faces, soot numerals. Odds unchanged.',
+    diceAccent: '#d97706',
+    diceFace: '#78350f',
+    voiceName: 'Forge Deep',
+    voiceBlurb: 'Low hall voice, unhurried.',
+    tts: { rate: 0.84, pitch: 0.72, voiceHint: 'david' },
+  },
+  {
+    themeId: 'theme.orc-warcamp',
+    slug: 'warcamp',
+    fontName: 'War Banner',
+    fontBlurb: 'Hard sans for camp orders.',
+    fontUi: 'Arial Black, Impact, sans-serif',
+    fontStory: 'ui-sans-serif, system-ui, sans-serif',
+    diceName: 'Blood Iron',
+    diceBlurb: 'Pitted iron, rust-green rims. Odds unchanged.',
+    diceAccent: '#65a30d',
+    diceFace: '#3f6212',
+    voiceName: 'Warcamp',
+    voiceBlurb: 'Rough, short-breathed camp bark.',
+    tts: { rate: 1.02, pitch: 0.76, voiceHint: 'mark' },
+  },
+  {
+    themeId: 'theme.dragon-hoard',
+    slug: 'hoard',
+    fontName: 'Wyrm Gold',
+    fontBlurb: 'Gilded serif for lair ledgers.',
+    fontUi: 'ui-sans-serif, system-ui, sans-serif',
+    fontStory: 'Georgia, "Times New Roman", serif',
+    diceName: 'Molten Scale',
+    diceBlurb: 'Scale-green faces, gold pips. Odds unchanged.',
+    diceAccent: '#eab308',
+    diceFace: '#854d0e',
+    voiceName: 'Hoard Rumble',
+    voiceBlurb: 'Deep, slow wyrm diction.',
+    tts: { rate: 0.8, pitch: 0.68, voiceHint: 'daniel' },
+  },
+  {
+    themeId: 'theme.phoenix-ashrise',
+    slug: 'ashrise',
+    fontName: 'Ember Script',
+    fontBlurb: 'Warm serif through rose-gold flame.',
+    fontUi: 'ui-sans-serif, system-ui, sans-serif',
+    fontStory: 'Georgia, Palatino, serif',
+    diceName: 'Ash Flame',
+    diceBlurb: 'Char faces, ember rims. Odds unchanged.',
+    diceAccent: '#fb7185',
+    diceFace: '#9f1239',
+    voiceName: 'Ashrise',
+    voiceBlurb: 'Warm mid voice, a little brighter.',
+    tts: { rate: 0.97, pitch: 1.06, voiceHint: 'zira' },
+  },
+  {
+    themeId: 'theme.cyborg-chassis',
+    slug: 'chassis',
+    fontName: 'Optic Mono',
+    fontBlurb: 'Monospace HUD + clean sans story.',
+    fontUi: 'ui-monospace, SFMono-Regular, Menlo, monospace',
+    fontStory: 'ui-sans-serif, system-ui, sans-serif',
+    diceName: 'Hazard Cyan',
+    diceBlurb: 'Gunmetal dice, optic-cyan edge. Odds unchanged.',
+    diceAccent: '#22d3ee',
+    diceFace: '#155e75',
+    voiceName: 'Chassis Synth',
+    voiceBlurb: 'Flat, slightly fast augmented tone.',
+    tts: { rate: 1.06, pitch: 0.88, voiceHint: 'google' },
+  },
+  {
+    themeId: 'theme.angelic-radiance',
+    slug: 'radiance',
+    fontName: 'Marble Serif',
+    fontBlurb: 'Garamond-like calm for marble panels.',
+    fontUi: 'ui-sans-serif, system-ui, sans-serif',
+    fontStory: 'Georgia, Garamond, "Times New Roman", serif',
+    diceName: 'Halo Gold',
+    diceBlurb: 'Pale gold polyhedrals. Odds unchanged.',
+    diceAccent: '#fde68a',
+    diceFace: '#ca8a04',
+    voiceName: 'Radiance',
+    voiceBlurb: 'Soft, lifted celestial diction.',
+    tts: { rate: 0.93, pitch: 1.12, voiceHint: 'samantha' },
+  },
+  {
+    themeId: 'theme.infernal-pact',
+    slug: 'pact',
+    fontName: 'Sulfur Serif',
+    fontBlurb: 'Heat-stained serif for sealed contracts.',
+    fontUi: 'ui-sans-serif, system-ui, sans-serif',
+    fontStory: 'Georgia, "Times New Roman", serif',
+    diceName: 'Sulfur Bone',
+    diceBlurb: 'Bone faces, sulfur-red rims. Odds unchanged.',
+    diceAccent: '#ef4444',
+    diceFace: '#7f1d1d',
+    voiceName: 'Pact Heat',
+    voiceBlurb: 'Low, slow sealed-contract voice.',
+    tts: { rate: 0.86, pitch: 0.74, voiceHint: 'david' },
+  },
+  {
+    themeId: 'theme.undead-ossuary',
+    slug: 'ossuary',
+    fontName: 'Crypt Serif',
+    fontBlurb: 'Cold Times pair for bone-white text.',
+    fontUi: 'ui-sans-serif, system-ui, sans-serif',
+    fontStory: '"Times New Roman", Times, Georgia, serif',
+    diceName: 'Bone Teal',
+    diceBlurb: 'Ivory dice, crypt-teal edge. Odds unchanged.',
+    diceAccent: '#2dd4bf',
+    diceFace: '#115e59',
+    voiceName: 'Ossuary',
+    voiceBlurb: 'Whispered, low crypt tone.',
+    tts: { rate: 0.82, pitch: 0.7, voiceHint: 'hazel' },
+  },
+  {
+    themeId: 'theme.fae-glamour',
+    slug: 'glamour',
+    fontName: 'Twilight Serif',
+    fontBlurb: 'Iridescent Palatino for court mischief.',
+    fontUi: 'ui-sans-serif, system-ui, sans-serif',
+    fontStory: '"Palatino Linotype", Palatino, Georgia, serif',
+    diceName: 'Iridescent',
+    diceBlurb: 'Pink-teal shimmer faces. Odds unchanged.',
+    diceAccent: '#e879f9',
+    diceFace: '#a21caf',
+    voiceName: 'Glamour',
+    voiceBlurb: 'Playful, slightly lifted twilight voice.',
+    tts: { rate: 1.04, pitch: 1.14, voiceHint: 'zira' },
+  },
+  {
+    themeId: 'theme.goblin-scrapheap',
+    slug: 'scrapheap',
+    fontName: 'Scrap Sans',
+    fontBlurb: 'Workshop sans — loud labels, messy logs.',
+    fontUi: 'Trebuchet MS, Verdana, sans-serif',
+    fontStory: 'Trebuchet MS, Verdana, sans-serif',
+    diceName: 'Scrap Yellow',
+    diceBlurb: 'Rusty olive dice, scrap-yellow pips. Odds unchanged.',
+    diceAccent: '#facc15',
+    diceFace: '#854d0e',
+    voiceName: 'Scrap Cackle',
+    voiceBlurb: 'Faster, brighter workshop bark.',
+    tts: { rate: 1.1, pitch: 1.16, voiceHint: 'zira' },
+  },
+  {
+    themeId: 'theme.merfolk-abyss',
+    slug: 'abyss',
+    fontName: 'Tide Serif',
+    fontBlurb: 'Pearl serif under pressure.',
+    fontUi: 'ui-sans-serif, system-ui, sans-serif',
+    fontStory: 'Georgia, Palatino, serif',
+    diceName: 'Pearl Teal',
+    diceBlurb: 'Tide-glass dice. Odds unchanged.',
+    diceAccent: '#2dd4bf',
+    diceFace: '#115e59',
+    voiceName: 'Abyss Tide',
+    voiceBlurb: 'Slow, resonant deep-water diction.',
+    tts: { rate: 0.86, pitch: 0.8, voiceHint: 'daniel' },
+  },
+  {
+    themeId: 'theme.vampire-nocturne',
+    slug: 'nocturne',
+    fontName: 'Velvet Serif',
+    fontBlurb: 'Wine-dark Times for aristocratic night.',
+    fontUi: 'ui-sans-serif, system-ui, sans-serif',
+    fontStory: '"Times New Roman", Georgia, serif',
+    diceName: 'Wine Obsidian',
+    diceBlurb: 'Black velvet dice, wine-red rims. Odds unchanged.',
+    diceAccent: '#be123c',
+    diceFace: '#881337',
+    voiceName: 'Nocturne',
+    voiceBlurb: 'Low, measured night-court voice.',
+    tts: { rate: 0.87, pitch: 0.76, voiceHint: 'david' },
+  },
+];
+
+function attachRaceThemeKits(): void {
+  for (const def of RACE_THEME_KITS) {
+    const fontId = `font.${def.slug}`;
+    const diceId = `dice.${def.slug}`;
+    const voiceId = `voice.${def.slug}`;
+    const theme = SHOP_CATALOG.find((i) => i.id === def.themeId);
+    if (theme?.preview) {
+      theme.preview.fontUi = def.fontUi;
+      theme.preview.fontStory = def.fontStory;
+      theme.kit = { fontId, diceId, voiceId };
+      theme.includes = [fontId, diceId, voiceId];
+      theme.blurb = `${theme.blurb} Includes matching font, dice, and voice.`;
+    }
+    SHOP_CATALOG.push(
+      {
+        id: fontId,
+        slot: 'font',
+        name: def.fontName,
+        blurb: def.fontBlurb,
+        priceGbp: '£1.99',
+        priceUsd: '$1.99',
+        preview: {
+          accent: def.diceAccent,
+          bg: theme?.preview?.bg ?? '#020617',
+          panel: theme?.preview?.panel ?? '#0f172a',
+          text: theme?.preview?.text ?? '#e2e8f0',
+          muted: theme?.preview?.muted ?? '#64748b',
+          fontUi: def.fontUi,
+          fontStory: def.fontStory,
+        },
+      },
+      {
+        id: diceId,
+        slot: 'dice',
+        name: def.diceName,
+        blurb: def.diceBlurb,
+        priceGbp: '£2.99',
+        priceUsd: '$2.99',
+        diceSkin: { accent: def.diceAccent, face: def.diceFace },
+      },
+      {
+        id: voiceId,
+        slot: 'voice',
+        name: def.voiceName,
+        blurb: def.voiceBlurb,
+        priceGbp: '£4.99',
+        priceUsd: '$4.99',
+        tts: def.tts,
+      },
+    );
+  }
+}
+
+attachRaceThemeKits();
 
 export const THEME_ITEMS = SHOP_CATALOG.filter((i) => i.slot === 'theme');
 
