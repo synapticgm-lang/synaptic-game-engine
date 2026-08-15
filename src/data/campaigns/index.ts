@@ -16,6 +16,7 @@ import { roseGoldUltimatum } from './roseGoldUltimatum';
 import { giltwoodEstate } from './giltwoodEstate';
 import { nullParameterProtocol } from './nullParameterProtocol';
 import { resinSonata } from './resinSonata';
+import { umbraProtocol } from './umbraProtocol';
 import {
   ascendingSpire,
   inkboundAcademy,
@@ -57,6 +58,7 @@ export {
   giltwoodEstate,
   nullParameterProtocol,
   resinSonata,
+  umbraProtocol,
   ascendingSpire,
   inkboundAcademy,
   hollowCore,
@@ -102,6 +104,7 @@ export const ALL_CAMPAIGN_BIBLES: CampaignBible[] = [
   giltwoodEstate,
   nullParameterProtocol,
   resinSonata,
+  umbraProtocol,
   // Story RPG (fiction-first, multi-genre)
   saltRoadHeist,
   glassHarborLetters,
