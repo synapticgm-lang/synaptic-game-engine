@@ -202,5 +202,6 @@ export function formatFullMemoryBlock(state: GameState): string {
 === FACTUAL TIMELINE (NO FLUFF — AUTHORITATIVE MEMORY, TRIMMED) ===
 ${timeline}
 =================================================
-OUTCOME TOKEN RECAP: Obey the structured outcome token supplied with this turn; never invert success/fail.`;
+OUTCOME TOKEN RECAP: Obey the structured outcome token supplied with this turn; never invert success/fail.
+FLUIDITY: Atmosphere and unnamed detail are free. Named people, unique places, unique gear, and quest titles must already be in the ledger / packets above — do not soft-invent them.`;
 }

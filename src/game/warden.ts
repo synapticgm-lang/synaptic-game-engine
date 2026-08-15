@@ -11,6 +11,7 @@ import { isUnresolvedActionNarrative } from './actionResolution';
 import { detectSceneContradiction } from './sceneFacts';
 import { detectFactLockViolations } from './factLocks';
 import { resolveSeededRarity } from './dungeonSeed';
+import { scrubInventedProperNouns } from './narrativeScrub';
 
 export interface WardenResult {
   /** Events allowed after sheet checks. */
@@ -23,6 +24,8 @@ export interface WardenResult {
   deferredEvents: GameEvent[];
   /** Last-beat contradiction — caller must rewrite narrative. */
   continuityBreak?: string;
+  /** Narrative after claim-grounding scrub (invented Proper Names softened). */
+  scrubbedNarrative?: string;
 }
 
 const PEACEFUL_INTENTS = new Set<PlayerIntent['kind']>([
@@ -205,22 +208,29 @@ export function runWarden(
     }
   }
 
+  const scrub = scrubInventedProperNouns(narrativeText, state, '');
+  if (scrub.stripped.length) {
+    for (const name of scrub.stripped.slice(0, 6)) {
+      notes.push(`Claim-ground scrub: ${name}`);
+    }
+  }
+
   const inputClaims = findUnsupportedItemClaims(playerInput, state);
   if (inputClaims.length) {
     notes.push(`Player claimed missing item(s): ${inputClaims.join(', ')}`);
   }
 
   const resolvedIntent = intent ?? { kind: 'other' as const, label: 'Free action', targets: [] };
-  if (isUnresolvedActionNarrative(playerInput, narrativeText, resolvedIntent)) {
+  if (isUnresolvedActionNarrative(playerInput, scrub.text, resolvedIntent)) {
     notes.push('Narrative does not resolve the player action');
   }
 
-  const factLocks = detectFactLockViolations(state, narrativeText, playerInput);
+  const factLocks = detectFactLockViolations(state, scrub.text, playerInput);
   for (const lock of factLocks) {
     notes.push(`Fact lock: ${lock.reason}`);
   }
   const continuityBreak =
-    factLocks[0]?.reason ?? detectSceneContradiction(state.sceneFacts, narrativeText) ?? undefined;
+    factLocks[0]?.reason ?? detectSceneContradiction(state.sceneFacts, scrub.text) ?? undefined;
   if (continuityBreak && !factLocks.length) {
     notes.push(`Continuity break: ${continuityBreak}`);
   }
@@ -247,6 +257,7 @@ export function runWarden(
     systemLogExtra,
     deferredEvents: deferred,
     continuityBreak,
+    scrubbedNarrative: scrub.text !== narrativeText ? scrub.text : undefined,
   };
 }
 

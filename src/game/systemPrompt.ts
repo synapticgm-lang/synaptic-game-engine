@@ -6,6 +6,7 @@ import { CHOICE_TIER_PROMPT_RULES } from './choiceTierRules';
 import { ADULT_MODE_RULES, KID_MODE_RULES, NSFW_CAMPAIGN_RULES } from './contentModeRules';
 import { getCampaignBibleById, isNsfwCampaign } from '@/data/campaigns';
 import { formatFullMemoryBlock, formatCampaignRails } from './situationPacket';
+import { formatClaimGroundingDirective } from './claimGrounding';
 import { formatTimelineForPrompt } from './timelineFormat';
 import { playerFacingLocation } from './locationName';
 import { formatMaturityRules } from './maturity';
@@ -297,6 +298,7 @@ export function buildSystemPrompt(state: GameState, settings: Settings, activeLo
   const dndModeRules = state.engineMode === 'dnd' || settings.dndMode ? DND_MODE_FORMATTING_RULES : '';
 
   const ledger = buildGroundTruthLedger(state);
+  const claimGrounding = formatClaimGroundingDirective();
   const memoryBlock = formatFullMemoryBlock(state);
   const loreContext = activeLoreCards.length > 0 ? buildLoreContext(activeLoreCards) : '';
   const actionTags = ACTION_TAG_INSTRUCTIONS;
@@ -304,7 +306,7 @@ export function buildSystemPrompt(state: GameState, settings: Settings, activeLo
   const multiPanel = buildMultiPanelInstructions(resolvePanelBudget(settings), state.engineMode);
   const publishingEngine = PUBLISHING_ENGINE_INSTRUCTIONS;
 
-  return `${BASE_PROMPT}\n\n${modeRules}\n\n${archetypeRules}\n\n${strictnessRules}\n\n${contentRules}\n\n${narrativePreferenceRules}\n\n${diceNote}\n\n${statRules}\n\n${dndModeRules}\n\n${ledger}\n\n${memoryBlock}\n\n${loreContext}\n\n${actionTags}\n\n${turnFrame}\n\n${multiPanel}\n\n${publishingEngine}`.trim();
+  return `${BASE_PROMPT}\n\n${modeRules}\n\n${archetypeRules}\n\n${strictnessRules}\n\n${contentRules}\n\n${narrativePreferenceRules}\n\n${diceNote}\n\n${statRules}\n\n${dndModeRules}\n\n${ledger}\n\n${claimGrounding}\n\n${memoryBlock}\n\n${loreContext}\n\n${actionTags}\n\n${turnFrame}\n\n${multiPanel}\n\n${publishingEngine}`.trim();
 }
 
 function buildGroundTruthLedger(state: GameState): string {

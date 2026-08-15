@@ -303,6 +303,8 @@ export interface OpeningEstablishment {
     kind: 'name' | 'location' | 'appearance' | 'kit' | 'identity' | 'species';
     question: string;
     suggestions?: string[];
+    style?: 'inworld' | 'system';
+    required?: boolean;
   }>;
   answers: Record<string, string>;
   complete: boolean;
@@ -313,9 +315,13 @@ export interface OpeningEstablishment {
   };
   /** Setup fields the player declined (e.g. appearance). */
   declinedFields?: string[];
+  /** First page already written — do not run a second registrar opening. */
+  sceneWritten?: boolean;
+  mode?: 'scene' | 'weave';
 }
 
 export interface GameState {
+  /** Save generation. Clients reject anything below CURRENT_SAVE_VERSION. */
   version: number;
   saveId: string;
   storyName: string;
@@ -344,7 +350,10 @@ export interface GameState {
   campaignBibleId?: string | null;
   /** Short premise injected every turn as Guide Book rails. */
   campaignPremise?: string | null;
-  /** Writer-only stamps (e.g. mystery culprit). Never show in player HUD. */
+  /**
+   * Writer-only stamps (e.g. mystery culprit). Never show in player HUD / journal.
+   * Keys such as culpritId, culpritName, culpritRole, culpritMotive.
+   */
   hiddenStamps?: Record<string, string>;
   /** Genre-native PYOA fork/spine/ending rails. Writer-only. */
   campaignStyleRail?: string | null;
@@ -754,6 +763,16 @@ export interface Settings {
   bgOpacity: number;
   artStylePreset: ArtStylePreset;
   colorVariant: ColorVariant;
+  /** Active UI theme cosmetic id (e.g. theme.neon-protocol). */
+  uiThemeId: string;
+  /** Active font pack id. */
+  fontPackId: string;
+  /** Active dice cosmetic id. */
+  diceCosmeticId: string;
+  /** Active TTS voice pack id (when premium voices ship). */
+  voicePackId: string;
+  /** Active turn-frame cosmetic id. */
+  turnFrameCosmeticId: string;
   panelFrequency: PanelFrequency;
   halftoneOverlay: boolean;
   sfxPopups: boolean;

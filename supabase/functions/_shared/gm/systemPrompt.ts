@@ -3,8 +3,10 @@ import { buildArchetypeRules, getDefaultArchetype } from './archetypes.ts';
 import { computeInventoryCapacity } from './inventory.ts';
 import { resolvePanelBudget } from './panelBudget.ts';
 import { CHOICE_TIER_PROMPT_RULES } from './choiceTierRules.ts';
-import { ADULT_MODE_RULES, KID_MODE_RULES } from './contentModeRules.ts';
+import { ADULT_MODE_RULES, KID_MODE_RULES, NSFW_CAMPAIGN_RULES } from './contentModeRules.ts';
+import { getCampaignBibleById, isNsfwCampaign } from '@/data/campaigns';
 import { formatFullMemoryBlock, formatCampaignRails } from './situationPacket.ts';
+import { formatClaimGroundingDirective } from './claimGrounding.ts';
 import { formatTimelineForPrompt } from './timelineFormat.ts';
 import { playerFacingLocation } from './locationName.ts';
 import { formatMaturityRules } from './maturity.ts';
@@ -120,13 +122,37 @@ NARRATIVE BREVITY RULES (MANDATORY):
 - Always finish open tags, panels, choices, and <system-log> before ending.`;
 
 const DND_RULES = `
-ENGINE MODE: 5e FANTASY RULES (SRD-COMPATIBLE, MECHANICAL FOCUS) — BINDING
-You are running a fifth-edition–compatible tabletop campaign using open SRD rules content only.
-- TRANSPARENT ROLLS: Include standard TTRPG notation for ALL combat and skill checks.
-- ENCOUNTERS: Track initiative, AC, HP, spell slots, conditions, and resource economy faithfully.
-- CHARACTER SHEETS: Respect class features, backgrounds, and prepared abilities from the active character state.
-- Do NOT invent class features, spells, or monsters outside open SRD-compatible content and the active state.
-- TRADEMARK SAFETY (MANDATORY): Never use trademarked names like "Dungeons & Dragons", "D&D", or "Dungeon Master". Say "5e Fantasy Rules" or "GM". Never invent Forgotten Realms / other closed setting names.`;
+ENGINE MODE: 5e FANTASY RULES (SRD-SAFE, THEATRE OF THE MIND) — BINDING
+You are the table GM for a solo fifth-edition–compatible fantasy campaign. Use only open SRD-safe generic terms (attack roll, armor class, hit points, ability check, saving throw, spell slot, short rest, long rest, conditions such as prone or grappled). Never resolve math the code already owns.
+
+COPYRIGHT / TRADEMARK SAFETY (MANDATORY):
+- Never write the product names "Dungeons & Dragons", "D&D", "Dungeon Master", or "Forgotten Realms".
+- Say "5e Fantasy Rules" or "GM". Never "DM".
+- Never use licensed adventure text, official monster names/stat blocks, or closed setting places.
+- Prefer original names. If you need a many-eyed aberration or a huge dragon, invent an original creature — do not paste a published stat block.
+
+CODE OWNS THE DICE. YOU WRITE THE CAMERA:
+- Do not declare hit, miss, damage totals, death, gold, XP, spell slots, or loot grants. Narrate the outcome token the engine already resolved.
+- Do not invent extra NPCs, enemies, or items. Only people and gear in the ledger / scene may appear.
+- Failures stick. A miss is a miss. A failed save applies. Do not retcon.
+
+PROSE SHAPE:
+- Open the turn with boxed read-aloud: what they see, hear, and smell. Do not describe the player's action in that box. Do not put dice math in that box.
+- Then narrate the consequence of their move in theatre-of-the-mind prose (2–6 sentences).
+- OOC rules tips are not your job. Do not write parenthetical table talk.
+
+NO LITRPG CHROME (MANDATORY):
+- Never mention Integration, Wave, Foundation Core, First Blood, Salvage, System-Issue gear, or blue System registrar panels.
+- Never emit [ SYSTEM ] XP boxes, level-up video-game HUDs, or salvage credits.
+- This is a tavern / road / keep / wood / dungeon tale — not an Integration street.
+
+SOLO TABLE:
+- The player is alone. NPCs may talk and quest-give; they do not join as a combat party unless the ledger already lists a companion.
+- If they ask for a hireling: they are on their own for now; allies may come later. Do not refuse forever.
+
+IMAGE PROMPTS (when you emit <image-prompt>):
+- Medieval fantasy only unless the scene already named a modern object.
+- No phones, cars, streetlights, jeans, System glow, or UI text in the picture description.`;
 
 const RPG_RULES = `
 ENGINE MODE: RPG (NARRATIVE RULES FOCUS) — BINDING
@@ -194,7 +220,7 @@ Do not append character-sheet/stat-screen readouts and do not add decorative <sy
   return `STAT SCREENS: ENABLED.\n${verbosity}\n${frequency}\n${turnNote}`;
 }
 
-function buildNarrativePreferenceRules(settings: Settings): string {
+function buildNarrativePreferenceRules(settings: Settings, nsfw?: boolean): string {
   const perspectiveRule =
     settings.perspective === 'first-person'
       ? `PERSPECTIVE: FIRST PERSON. Write prose from the player character's viewpoint using I/me/my. Do not address them as "you" and do not narrate them in third person (no "Jax places his finger").`
@@ -215,12 +241,16 @@ function buildNarrativePreferenceRules(settings: Settings): string {
   } as const;
 
   const kidMode = settings.contentMode === 'kid';
-  const romanceRule = !kidMode && settings.romanceSubplots
-    ? `ROMANCE SUBPLOTS: ENABLED. Romance may develop only through explicit narrative setup and player choice; never force attraction or intimacy.`
-    : `ROMANCE SUBPLOTS: DISABLED. Do not initiate flirtation, attraction, dating, or romantic arcs.`;
-  const haremRule = !kidMode && settings.romanceSubplots && settings.haremContent
-    ? `MULTIPLE ROMANCE / HAREM CONTENT: ENABLED. Multiple consensual romance interests may exist, but each must be independently established in active state and must never be spawned solely to satisfy this preference.`
-    : `MULTIPLE ROMANCE / HAREM CONTENT: DISABLED. Do not create a collection of simultaneous love interests or harem-style dynamics.`;
+  const romanceRule = nsfw && !kidMode
+    ? `ROMANCE SUBPLOTS: THIS NSFW CAMPAIGN. Attraction, heat, and sex are in-tone when the player steers there. Never force a scene they refuse. Never involve minors.`
+    : !kidMode && settings.romanceSubplots
+      ? `ROMANCE SUBPLOTS: ENABLED. Romance may develop only through explicit narrative setup and player choice; never force attraction or intimacy.`
+      : `ROMANCE SUBPLOTS: DISABLED. Do not initiate flirtation, attraction, dating, or romantic arcs.`;
+  const haremRule = nsfw && !kidMode
+    ? `MULTIPLE ROMANCE / HAREM CONTENT: THIS NSFW CAMPAIGN. A hollow bound-lover ending is one possible late-game resolve — never dump a harem in the opening hour.`
+    : !kidMode && settings.romanceSubplots && settings.haremContent
+      ? `MULTIPLE ROMANCE / HAREM CONTENT: ENABLED. Multiple consensual romance interests may exist, but each must be independently established in active state and must never be spawned solely to satisfy this preference.`
+      : `MULTIPLE ROMANCE / HAREM CONTENT: DISABLED. Do not create a collection of simultaneous love interests or harem-style dynamics.`;
 
   return `NARRATIVE & TONE SETTINGS (MANDATORY):
 ${perspectiveRule}
@@ -228,14 +258,15 @@ ${kidMode ? violenceRules.none : violenceRules[settings.violenceLevel]}
 ${kidMode ? cursingRules.none : cursingRules[settings.cursingLevel]}
 ${romanceRule}
 ${haremRule}
-${formatMaturityRules(settings)}
+${formatMaturityRules(settings, { nsfw })}
 These controls constrain presentation only; they never authorize inventing entities or contradicting deterministic game state.`;
 }
 
-const DND_MODE_FORMATTING_RULES = `DND MODE FORMATTING (CHAT LOG):
-Format the chat log in classic tabletop style with boxed read-aloud descriptions and inline dice notation (e.g. [d20+5] = 18). The configured PERSPECTIVE rule remains authoritative; do not default to second person.
+const DND_MODE_FORMATTING_RULES = `TABLETOP FORMATTING (CHAT LOG):
+Open with boxed read-aloud (italic, scene-only). Then consequence prose. Inline dice notation only when the engine already rolled (e.g. [d20+5] = 18) — never invent a roll.
+The configured PERSPECTIVE rule remains authoritative; do not default to second person.
 Use bold headers for scene transitions (**The Tavern of the Broken Tankard**) and italicize NPC dialogue.
-Keep the tone immersive and tabletop-faithful — avoid LitRPG system notifications or video-game-style popups.`;
+Keep the tone immersive and tabletop-faithful — no Integration System notifications, Salvage, Wave, or video-game popups.`;
 
 function engineModeRules(engineMode: GameState['engineMode']): string {
   if (engineMode === 'dnd') return DND_RULES;
@@ -245,9 +276,14 @@ function engineModeRules(engineMode: GameState['engineMode']): string {
 }
 
 export function buildSystemPrompt(state: GameState, settings: Settings, activeLoreCards: LoreCard[] = []): string {
+  const nsfw = isNsfwCampaign(getCampaignBibleById(state.campaignBibleId ?? ''));
   const modeRules = engineModeRules(state.engineMode);
   const archetypeRules = buildArchetypeRules(state.engineMode, state.campaignArchetype ?? getDefaultArchetype(state.engineMode));
-  const contentRules = settings.contentMode === 'kid' ? KID_MODE_RULES : ADULT_MODE_RULES;
+  const contentRules = settings.contentMode === 'kid'
+    ? KID_MODE_RULES
+    : nsfw
+      ? NSFW_CAMPAIGN_RULES
+      : ADULT_MODE_RULES;
   const strictnessRules = STRICTNESS_RULES[state.gmStrictness ?? 'standard'];
   const diceNote = state.engineMode === 'dnd'
     ? settings.diceAnimation === 'visual'
@@ -256,18 +292,19 @@ export function buildSystemPrompt(state: GameState, settings: Settings, activeLo
     : '';
 
   const statRules = buildStatRules(settings, state);
-  const narrativePreferenceRules = buildNarrativePreferenceRules(settings);
-  const dndModeRules = settings.dndMode ? DND_MODE_FORMATTING_RULES : '';
+  const narrativePreferenceRules = buildNarrativePreferenceRules(settings, nsfw);
+  const dndModeRules = state.engineMode === 'dnd' || settings.dndMode ? DND_MODE_FORMATTING_RULES : '';
 
   const ledger = buildGroundTruthLedger(state);
+  const claimGrounding = formatClaimGroundingDirective();
   const memoryBlock = formatFullMemoryBlock(state);
   const loreContext = activeLoreCards.length > 0 ? buildLoreContext(activeLoreCards) : '';
   const actionTags = ACTION_TAG_INSTRUCTIONS;
   const turnFrame = TURN_FRAME_INSTRUCTIONS;
-  const multiPanel = buildMultiPanelInstructions(resolvePanelBudget(settings));
+  const multiPanel = buildMultiPanelInstructions(resolvePanelBudget(settings), state.engineMode);
   const publishingEngine = PUBLISHING_ENGINE_INSTRUCTIONS;
 
-  return `${BASE_PROMPT}\n\n${modeRules}\n\n${archetypeRules}\n\n${strictnessRules}\n\n${contentRules}\n\n${narrativePreferenceRules}\n\n${diceNote}\n\n${statRules}\n\n${dndModeRules}\n\n${ledger}\n\n${memoryBlock}\n\n${loreContext}\n\n${actionTags}\n\n${turnFrame}\n\n${multiPanel}\n\n${publishingEngine}`.trim();
+  return `${BASE_PROMPT}\n\n${modeRules}\n\n${archetypeRules}\n\n${strictnessRules}\n\n${contentRules}\n\n${narrativePreferenceRules}\n\n${diceNote}\n\n${statRules}\n\n${dndModeRules}\n\n${ledger}\n\n${claimGrounding}\n\n${memoryBlock}\n\n${loreContext}\n\n${actionTags}\n\n${turnFrame}\n\n${multiPanel}\n\n${publishingEngine}`.trim();
 }
 
 function buildGroundTruthLedger(state: GameState): string {
@@ -294,10 +331,17 @@ function buildGroundTruthLedger(state: GameState): string {
   const cap = computeInventoryCapacity(state);
   const equippedGear = state.inventory.filter(i => i.equipped).map(i => `${i.name}${i.slot ? ` (${i.slot})` : ''}`).join(', ') || 'None';
   const containerInfo = cap.containerBreakdown.map(c => `${c.name} [${c.storageType}, ${c.kind}] ${c.used}/${c.capacity} slots`).join('; ') || 'None';
+  const isTabletop = state.engineMode === 'dnd';
+  const header = isTabletop
+    ? '=== TABLETOP CHARACTER STATE (SRD-SAFE GENERICS ONLY) ==='
+    : '=== GROUND TRUTH CHARACTER & QUEST STATE ===';
+  const progressLine = isTabletop
+    ? `Level: ${c.level} | Do not mention Integration, Wave, Salvage, Foundation Core, or First Blood.`
+    : `Level: ${c.level} | XP: ${c.xp}/${c.xpToNext}`;
 
-  return `=== GROUND TRUTH CHARACTER & QUEST STATE ===
+  return `${header}
 HP: ${c.hp}/${c.maxHp} | Mana: ${c.mp}/${c.maxMp} | Gold: ${state.gold ?? 0}
-Level: ${c.level} | XP: ${c.xp}/${c.xpToNext}
+${progressLine}
 Location: ${playerFacingLocation(state)}
 Equipped Gear: ${equippedGear}
 Inventory: ${invList} (${cap.usedSlots}/${cap.totalSlots} slots used)
@@ -382,10 +426,20 @@ const TURN_FRAME_INSTRUCTIONS = `
 TURN FRAME THEME PROTOCOL:
 Emit <turn-frame icon="EMOJI" accentColor="TAILWIND_COLOR" frameStyle="STYLE_ID" /> once early in the opening narrative.`;
 
-function buildMultiPanelInstructions(panelBudget: number): string {
+function buildMultiPanelInstructions(panelBudget: number, engineMode?: GameState['engineMode']): string {
+  const aftermathExample = engineMode === 'dnd'
+    ? 'an NPC\'s response, a door giving way, or the room after the swing'
+    : engineMode === 'rpg' || engineMode === 'pyoa'
+      ? 'an NPC\'s response, a reveal, or the emotional aftermath'
+      : 'an NPC\'s response, a system/level-up notification, loot appearing, etc.';
+  const eraRule = engineMode === 'dnd'
+    ? '- WORLD CANON: <image-prompt> is medieval fantasy (tavern, road, keep, wood, dungeon). No phones, cars, streetlights, jeans, or System UI in the picture description.'
+    : engineMode === 'rpg' || engineMode === 'pyoa'
+      ? '- WORLD CANON: <image-prompt> matches the campaign premise and this scene only. No Integration System chrome in the picture description.'
+      : '- WORLD CANON: <image-prompt> is modern Integration Earth unless the scene is inside a seeded store/dungeon. Knife stays a knife. No medieval plate unless the ledger lists it.';
   const utilizationRule = panelBudget === 1
     ? `Synthesize the whole turn into a single composite keyframe that captures the most important beat.`
-    : `USE YOUR FULL BUDGET — do NOT cram every beat of the turn into panel 1 and leave the remaining ${panelBudget - 1} panel${panelBudget - 1 === 1 ? '' : 's'} unused. Split the turn across the ${panelBudget} distinct beats it actually has. For example, with a budget of 2: panel 1 shows the scene/action itself (the player's move and its immediate consequence), and panel 2 shows the reaction/aftermath — an NPC's response, a system/level-up notification, loot appearing, etc. With a budget of 3, add a third beat (e.g. a mid-action turning point) between those two. Only fall back to fewer panels than the budget if the turn genuinely has fewer distinct beats than the budget allows — never as a default.`;
+    : `USE YOUR FULL BUDGET — do NOT cram every beat of the turn into panel 1 and leave the remaining ${panelBudget - 1} panel${panelBudget - 1 === 1 ? '' : 's'} unused. Split the turn across the ${panelBudget} distinct beats it actually has. For example, with a budget of 2: panel 1 shows the scene/action itself (the player's move and its immediate consequence), and panel 2 shows the reaction/aftermath — ${aftermathExample}. With a budget of 3, add a third beat (e.g. a mid-action turning point) between those two. Only fall back to fewer panels than the budget if the turn genuinely has fewer distinct beats than the budget allows — never as a default.`;
 
   return `
 MULTI-PANEL COMIC PROTOCOL (MANDATORY):
@@ -402,14 +456,17 @@ Each panel MUST contain both an image prompt and a narrative snippet, formatted 
 Rules:
 - The FIRST panel MUST visually depict the consequence or execution of the player's submitted action — the player must see themselves in the opening image of every turn.
 - Each <image-prompt> must be a vivid visual description suitable for an image generation model. NEVER include text, words, or speech bubbles in the image prompt — all text is rendered as HTML overlays by the game engine.
+${eraRule}
 - Each <narrative> should be 1-3 sentences of story text for that panel.
 - Format <narrative> content using these HTML-style tags so the game engine can style them:
   - Normal scene descriptions: just plain text (no tags needed).
   - Dialogue: <dialogue>Speaker: "The words"</dialogue>
   - Internal thoughts: <thought>Internal monologue</thought>
-  - System messages / stat blocks / level-up notifications: <system>Level Up! Strength +1</system>
+${engineMode === 'dnd'
+    ? '- Do not put System / level-up / XP / Salvage chrome inside <narrative>. Tabletop uses boxed read-aloud and dialogue only.'
+    : `  - System messages / stat blocks / level-up notifications: <system>Level Up! Strength +1</system>
   - You may mix multiple tags within a single <narrative> block. Example:
-    <narrative>You enter the tavern. <dialogue>Innkeeper: "Welcome, traveler!"</dialogue> <thought>This place smells awful.</thought> <system>Quest Updated: Find the Lost Artifact</system></narrative>
+    <narrative>You enter the tavern. <dialogue>Innkeeper: "Welcome, traveler!"</dialogue> <thought>This place smells awful.</thought> <system>Quest Updated: Find the Lost Artifact</system></narrative>`}
 - After all <panel> blocks, continue with your normal GM response (choices, system-log, action tags, etc.).
 - If you output panels, you do NOT need to also output a separate <image-prompt> tag outside the panels.
 - NEVER put the numbered/lettered choice list inside a panel's <narrative> block. Choices always belong in your normal response text, after all <panel> blocks have closed.`;

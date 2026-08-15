@@ -28,6 +28,7 @@ const FILES = [
   'placeAuthority.ts',
   'places.ts',
   'campaignMemory.ts',
+  'claimGrounding.ts',
   'tutorialBeats.ts',
   'maturity.ts',
 ];

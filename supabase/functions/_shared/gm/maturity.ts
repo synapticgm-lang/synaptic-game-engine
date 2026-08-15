@@ -40,9 +40,18 @@ export function resolveMaturity(settings: Settings): MaturityToggles & {
   };
 }
 
-export function formatMaturityRules(settings: Settings): string {
+export function formatMaturityRules(settings: Settings, opts?: { nsfw?: boolean }): string {
   const m = resolveMaturity(settings);
   if (m.kid) return '';
+  if (opts?.nsfw) {
+    return [
+      'CONTENT MATURITY (MANDATORY):',
+      'This campaign is NSFW adult dark romance.',
+      'SEXUAL CONTENT: explicit allowed when the player steers there. Do not fade to black by default.',
+      'VIOLENCE: in-tone, including lethal and possessive scenes.',
+      'Never involve minors. Honor PERSPECTIVE.',
+    ].join('\n');
+  }
   const lines = [
     `MATURITY TIER: ${m.maturityTier.toUpperCase()}`,
     `SEXUAL CONTENT: ${m.sexualContent ? 'allowed with fade-to-black' : 'none — fade or omit'}`,
@@ -76,12 +85,16 @@ export type SoftRewrite = {
  * Rating-compliance rewrite before GM. Returns null if no rewrite needed.
  * Hard blocks stay in inputMediation.
  */
-export function maybeRatingRewrite(raw: string, settings: Settings): SoftRewrite | null {
+export function maybeRatingRewrite(
+  raw: string,
+  settings: Settings,
+  opts?: { nsfw?: boolean },
+): SoftRewrite | null {
   const m = resolveMaturity(settings);
   const text = raw.replace(/\s+/g, ' ').trim();
   if (!text) return null;
 
-  if (!m.sexualContent && SEX_EXPLICIT.test(text)) {
+  if (!(opts?.nsfw && !m.kid) && !m.sexualContent && SEX_EXPLICIT.test(text)) {
     return {
       rewritten: 'I try to escalate the situation romantically, then pause at the System fade-to-black.',
       diegeticMessage:

@@ -8,6 +8,7 @@ import { formatPlacesForPrompt } from './places.ts';
 import { formatCampaignMemoryForPrompt } from './campaignMemory.ts';
 import { formatTutorialBeatMandate } from './tutorialBeats.ts';
 import { formatLocalityForPrompt } from './locality.ts';
+import { formatHiddenCulpritRail } from './mysteryCulprit.ts';
 
 /**
  * Rebuild the live Situation packet from structured state.
@@ -95,28 +96,37 @@ export function formatSituationForPrompt(state: GameState): string {
   const hiddenLedger = formatHiddenRoomLedger(state.activeDungeon);
   const placeRegistry = formatPlacesForPrompt(state.places, currentSheet?.name ?? s.location);
   const tutorialMandate = formatTutorialBeatMandate(state);
-  return `${currentLine}
-${previousLine}
-${placeRegistry ? `PLACE REGISTRY (authority for name/tier/arc):\n${placeRegistry}\n` : ''}${sceneBlock ? `${sceneBlock}\n` : ''}Encounter: ${s.encounter}
-Dungeon: ${s.dungeon}
-Present entities: ${s.presentEntities.join(' | ')}
-Active quests (revealed only — never mention hidden Guide Book hooks): ${s.activeQuests.join(' | ')}
-NPC memories:
-${npcBlock || '(none')}
-Place-scoped facts (current + last location):
-${placeFacts.length ? placeFacts.join('\n') : '(none)'}
-Recent facts:
-${s.recentFacts.length ? s.recentFacts.join('\n') : '(none)'}
-${hiddenLedger ? `${hiddenLedger}\n` : ''}${tutorialMandate ? `${tutorialMandate}\n` : ''}${formatLocalityForPrompt(state) ? `${formatLocalityForPrompt(state)}\n` : ''}RAILS: Hard facts above + SCENE FACTS + factual timeline OVERRIDE improvisation. Do not invent named threats, loot tiers, NPCs, or interactables absent from this packet / location sheet / tags / HIDDEN ROOM LEDGER. Do not invent a dungeon danger tier for street/outdoors (no "Tier 2 Urban Ruin" while mapScale is local streets). Do not empty a present crowd or silence shouting without narrating time passing.
-PLAYER ACTION FIDELITY: Resolve the player's last stated action first — the named object, question, or motion. Never swap a specific search for a generic look-around. Never pivot the scene to a quest location, dungeon, store, or marker unless the player mentioned it or is already there.
-BEAT ANSWER (BINDING): If they ask what a named glint, sound, or object is, name it or say they need to get closer. Do not write "might be nothing." If the camera already named debris on the floor, they can grab and throw junk — empty hands only if the room is actually bare.
-NO LEFTOVER STOCK: Do not re-sell a knife they already hold (no "reassuring weight/grip"). New camera only.
-Do not write "You commit to the action" or "the result lands in [lore title]". Narrate what actually happens.
-Lore-article titles are not the current location. Do not name unvisited hubs, cities, or NPCs.
-DUAL LOCATION MEMORY: Keep continuity with CURRENT and PREVIOUS location sheets. The player just left the previous place — do not forget what was there.
-REFUSE / PROTEST: If the player refuses the System or a quest, acknowledge in-fiction (cold System voice). Do not break character or say "choose an action to continue." Mechanics may still advance (timer, free attack) via the outcome token.
-HIDDEN QUESTS: Never spoil quests with status hidden or revealed=false.
-${formatWorldLedgerBlock(state.worldLedger)}`;
+  const none = '(none)';
+  const lines = [
+    currentLine,
+    previousLine,
+    placeRegistry ? `PLACE REGISTRY (authority for name/tier/arc):\n${placeRegistry}` : '',
+    sceneBlock || '',
+    `Encounter: ${s.encounter}`,
+    `Dungeon: ${s.dungeon}`,
+    `Present entities: ${s.presentEntities.join(' | ')}`,
+    `Active quests (revealed only — never mention hidden Guide Book hooks): ${s.activeQuests.join(' | ')}`,
+    'NPC memories:',
+    npcBlock || none,
+    'Place-scoped facts (current + last location):',
+    placeFacts.length ? placeFacts.join('\n') : none,
+    'Recent facts:',
+    s.recentFacts.length ? s.recentFacts.join('\n') : none,
+    hiddenLedger || '',
+    tutorialMandate || '',
+    formatLocalityForPrompt(state) || '',
+    'RAILS: Hard facts above + SCENE FACTS + factual timeline OVERRIDE improvisation. Do not invent named threats, loot tiers, NPCs, or interactables absent from this packet / location sheet / tags / HIDDEN ROOM LEDGER. Do not invent a dungeon danger tier for street/outdoors (no "Tier 2 Urban Ruin" while mapScale is local streets). Do not empty a present crowd or silence shouting without narrating time passing.',
+    'PLAYER ACTION FIDELITY: Resolve the player\'s last stated action first — the named object, question, or motion. Never swap a specific search for a generic look-around. Never pivot the scene to a quest location, dungeon, store, or marker unless the player mentioned it or is already there.',
+    'BEAT ANSWER (BINDING): If they ask what a named glint, sound, or object is, name it or say they need to get closer. Do not write "might be nothing." If the camera already named debris on the floor, they can grab and throw junk — empty hands only if the room is actually bare.',
+    'NO LEFTOVER STOCK: Do not re-sell a knife they already hold (no "reassuring weight/grip"). New camera only.',
+    'Do not write "You commit to the action" or "the result lands in [lore title]". Narrate what actually happens.',
+    'Lore-article titles are not the current location. Do not name unvisited hubs, cities, or NPCs.',
+    'DUAL LOCATION MEMORY: Keep continuity with CURRENT and PREVIOUS location sheets. The player just left the previous place — do not forget what was there.',
+    'REFUSE / PROTEST: If the player refuses the System or a quest, acknowledge in-fiction (cold System voice). Do not break character or say "choose an action to continue." Mechanics may still advance (timer, free attack) via the outcome token.',
+    'HIDDEN QUESTS: Never spoil quests with status hidden or revealed=false.',
+    formatWorldLedgerBlock(state.worldLedger),
+  ];
+  return lines.filter((line) => line !== '').join('\n');
 }
 
 function formatWorldLedgerBlock(raw?: WorldLedger): string {
@@ -171,28 +181,7 @@ export function formatCampaignRails(state: GameState): string {
   const canon = answers && Object.keys(answers).length
     ? `\nPLAYER CANON (AUTHORITY — facts extracted from their answers; rewrite in System/narrator voice, never quote I/my chat):\n${Object.entries(answers).map(([id, text]) => `- ${id}: ${text}`).join('\n')}`
     : '';
-  const stamps = state.hiddenStamps;
-  const culpritName = stamps?.culpritName?.trim();
-  const culpritRole = stamps?.culpritRole?.trim();
-  const culpritMotive = stamps?.culpritMotive?.trim();
-  const hiddenLines: string[] = [];
-  if (culpritName) {
-    hiddenLines.push(
-      `HIDDEN CULPRIT (ENGINE AUTHORITY — never name, hint, or contradict until the player earns the reveal or the ending): The hand that killed Lord Harrington is ${culpritName}${culpritRole ? ` (${culpritRole})` : ''}.${culpritMotive ? ` Motive: ${culpritMotive}` : ''} Others may lie or cover it up. Do not invent a different true killer.`
-    );
-  }
-  if (stamps?.clueWeapon || stamps?.clueTell || stamps?.clueCover) {
-    hiddenLines.push(
-      `HIDDEN CLUES (ENGINE AUTHORITY — plant only when the player searches, asks, or handles evidence; never dump): weapon tell: ${stamps.clueWeapon ?? '—'}; scene tell: ${stamps.clueTell ?? '—'}; cover story: ${stamps.clueCover ?? '—'}. Do not invent a second murder weapon.`
-    );
-  }
-  if (stamps?.accusedName?.trim()) {
-    const match = stamps.accusedId && stamps.culpritId && stamps.accusedId === stamps.culpritId;
-    hiddenLines.push(
-      `HIDDEN ACCUSED (ENGINE AUTHORITY — the player named ${stamps.accusedName}. Treat that as a locked public theory.${match ? ' They named the true killer — do not confirm until the vault or a confession.' : ' They named the wrong person. Graves and gossip may still believe them. The true killer is unchanged.'}`
-    );
-  }
-  const culpritRail = hiddenLines.join('\n');
+  const culpritRail = formatHiddenCulpritRail(state.hiddenStamps);
   const styleRail = state.campaignStyleRail?.trim();
   return `=== CAMPAIGN GUIDE BOOK (RAILS — DO NOT CONTRADICT) ===
 ${premise}${canon}${culpritRail ? `\n${culpritRail}` : ''}${styleRail ? `\n${styleRail}` : ''}
@@ -213,5 +202,6 @@ export function formatFullMemoryBlock(state: GameState): string {
 === FACTUAL TIMELINE (NO FLUFF — AUTHORITATIVE MEMORY, TRIMMED) ===
 ${timeline}
 =================================================
-OUTCOME TOKEN RECAP: Obey the structured outcome token supplied with this turn; never invert success/fail.`;
+OUTCOME TOKEN RECAP: Obey the structured outcome token supplied with this turn; never invert success/fail.
+FLUIDITY: Atmosphere and unnamed detail are free. Named people, unique places, unique gear, and quest titles must already be in the ledger / packets above — do not soft-invent them.`;
 }

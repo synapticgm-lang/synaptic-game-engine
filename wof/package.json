@@ -1,0 +1,6 @@
+{
+  "name": "wof-prep",
+  "private": true,
+  "type": "commonjs",
+  "description": "Isolated WOF prep. Not live SynapticGM."
+}

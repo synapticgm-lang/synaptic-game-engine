@@ -1,6 +1,6 @@
 # WOF (World of Fantasy) — research only
 
-**Not the live game.** Do not implement anything here into SynapticGM (`src/`, `supabase/`, prompts, saves).
+**Not the live game.** Do not implement anything here into SynapticGM (`src/`, `supabase/`, prompts, saves). Isolated prep code: [`wof/`](../../wof/) (run `npm run wof:check`).
 
 WOF is a later-release authored faction world: original races/places, quest lines, optional multiplayer (dungeons + raids).
 
@@ -15,6 +15,7 @@ WOF is a later-release authored faction world: original races/places, quest line
 | [pack-12-realtime-group-sync-2026-08-15.md](./pack-12-realtime-group-sync-2026-08-15.md) | Wall-clock world vs lockstep group combat |
 | [pack-13-battle-plan-autorun-2026-08-15.md](./pack-13-battle-plan-autorun-2026-08-15.md) | Plan of attack; auto-run vs manual lockstep rounds |
 | [pack-14-monetization-notes-from-sgm-pack09-2026-08-15.md](./pack-14-monetization-notes-from-sgm-pack09-2026-08-15.md) | WOF-only excerpt: chat cosmetics + F&F multiplayer billing notes from SGM Pack 9 |
+| [pack-15-mp-memory-from-pack11-2026-08-15.md](./pack-15-mp-memory-from-pack11-2026-08-15.md) | **Deploy-ready** MP memory: scopes, leak rules, Mode A/C cost, SP→MP port map; stubs in `wof/src/engine/memory.ts` |
 | [pack-15-audience-skins-systems-2026-08-15.md](./pack-15-audience-skins-systems-2026-08-15.md) | Non-tabletop audiences; per-skin maths; anime/sci-fi/cozy |
 | [pack-16-golive-systems-map-2026-08-15.md](./pack-16-golive-systems-map-2026-08-15.md) | Memory, catalogs, quests, trees, builder, go-live checklist |
 | [pasted/WOF_GoLive_Systems_Dump.md](./pasted/WOF_GoLive_Systems_Dump.md) | Go-live dump: memory, catalogs, quests, trees, builder, skin matrix |
@@ -30,6 +31,7 @@ WOF is a later-release authored faction world: original races/places, quest line
 | [RESEARCH-PROMPT-remaining-holes-bolt.md](./RESEARCH-PROMPT-remaining-holes-bolt.md) | Bolt → WOF_RemainingHoles_Dump.md (**ingested**) |
 | [pasted/WOF_RemainingHoles_Dump.md](./pasted/WOF_RemainingHoles_Dump.md) | Turns, two apps, raid phone, death, family, ops, push |
 | [pack-22-remaining-holes-ingested-2026-08-15.md](./pack-22-remaining-holes-ingested-2026-08-15.md) | Working reference — remaining-holes v1 picks |
+| [pack-23-starting-zones-quest-lines-2026-08-15.md](./pack-23-starting-zones-quest-lines-2026-08-15.md) | Four race starts + 36 quests + 4 solo 5-mans (prep catalog) |
 | [RESEARCH-PROMPT-gap-fill-bolt.md](./RESEARCH-PROMPT-gap-fill-bolt.md) | Bolt prompt → WOF_Gap_Fill_Dump.md (already ingested) |
 | [RESEARCH-PROMPT-golive-systems-bolt.md](./RESEARCH-PROMPT-golive-systems-bolt.md) | Bolt prompt → WOF_GoLive_Systems_Dump.md (already ingested) |
 | [RESEARCH-PROMPT-first-hour-bolt.md](./RESEARCH-PROMPT-first-hour-bolt.md) | Bolt → WOF_FirstHour_Dump.md |

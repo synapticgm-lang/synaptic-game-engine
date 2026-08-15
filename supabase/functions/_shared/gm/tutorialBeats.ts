@@ -45,6 +45,7 @@ export function advanceTutorialBeats(
     narrative: string;
     systemLog: string[];
     checkFailed?: boolean;
+    ledgerChanged?: boolean;
     critFail?: boolean;
     gainedLoot?: boolean;
     quests?: Quest[];
@@ -77,7 +78,7 @@ export function advanceTutorialBeats(
 
   if (
     !progress.completed.stickyFail &&
-    (opts.critFail || (opts.checkFailed && opts.turn >= 5 && opts.turn <= 12))
+    (opts.critFail || (opts.checkFailed && opts.ledgerChanged && opts.turn >= 5 && opts.turn <= 12))
   ) {
     progress = mark(progress, 'stickyFail', { stickyFailScheduled: true });
     notes.push('Tutorial: first sticky failure registered — wounds/conditions persist.');
@@ -165,26 +166,14 @@ export function formatTutorialBeatMandate(state: GameState): string {
 export function ensureTutorialQuest(state: GameState, turn: number): Quest[] {
   const quests = [...(state.quests ?? [])];
   if (turn < 8 || turn > 16) return quests;
-  const hasRevealed = quests.some((q) => q.revealed && (q.status === 'active' || q.status === 'hidden'));
-  if (hasRevealed) {
-    return quests.map((q) => {
-      if (q.status === 'hidden' && turn >= 8 && (q.type === 'main' || !q.type)) {
-        return {
-          ...q,
-          status: 'active' as const,
-          revealed: true,
-          revealedTurn: turn,
-          activatedTurn: turn,
-        };
-      }
-      return q;
-    });
-  }
-  if (quests.some((q) => q.id === 'tutorial-first-blood')) return quests;
+  const hasRevealed = quests.some((q) => q.revealed && q.status === 'active');
+  if (hasRevealed) return quests;
+  if (quests.some((q) => q.id === 'tutorial-first-blood' || /first blood/i.test(q.name))) return quests;
   quests.push({
     id: 'tutorial-first-blood',
     name: 'First Blood',
-    description: 'Survive your first Integrated site: scout, loot once, and reach the exit.',
+    description:
+      'A nearby convenience store is a Tier 1 micro-dungeon. Clear the rooms, the mini-boss, and claim the Foundation Core.',
     status: 'active',
     type: 'main',
     revealed: true,
@@ -192,9 +181,10 @@ export function ensureTutorialQuest(state: GameState, turn: number): Quest[] {
     activatedTurn: turn,
     dangerTier: 1,
     objectives: [
-      { id: 'scout', description: 'Enter and scout the site', completed: !!state.activeDungeon },
-      { id: 'loot', description: 'Claim one cache', completed: false },
-      { id: 'exit', description: 'Reach the exit alive', completed: false },
+      { id: 'enter', description: 'Enter the convenience store micro-dungeon', completed: !!(state.activeDungeon && state.activeDungeon.blueprintId !== 'local-area') },
+      { id: 'mobs', description: 'Defeat the dungeon mobs (estimated 4-6 Tier 1 creatures)', completed: false },
+      { id: 'boss', description: 'Defeat the mini-boss: [Corrupted Stockboy] (Level 3)', completed: false },
+      { id: 'core', description: 'Claim the dungeon drop: [Foundation Core]', completed: false },
     ],
   });
   return quests;

@@ -1,0 +1,126 @@
+/**
+ * Post-GM claim scrub — soft-replace invented Proper Names without killing atmosphere.
+ * Client/Warden only (not synced to edge).
+ */
+
+import type { GameState } from './types';
+import { findUngroundedNamedClaims } from './suggestionValidation';
+
+const ALWAYS_ALLOW = new Set(
+  [
+    'the system',
+    'system',
+    'earth',
+    'integration',
+    'foundation core',
+    'first blood',
+    'what do you do',
+    'united kingdom',
+    'england',
+    'scotland',
+    'wales',
+    'london',
+    'tesco',
+    'tesco extra',
+  ].map((s) => s.toLowerCase())
+);
+
+/**
+ * Soft-scrub Proper Names that look invented (Title Case multi-word) when ungrounded.
+ * Single-token names are left alone to avoid wrecking common words mid-sentence.
+ */
+export function scrubInventedProperNouns(
+  narrative: string,
+  state: GameState,
+  establishedProse = ''
+): { text: string; stripped: string[] } {
+  if (!narrative?.trim()) return { text: narrative, stripped: [] };
+
+  const interactionClaims = findUngroundedNamedClaims(narrative, state, establishedProse);
+  const stripped: string[] = [...interactionClaims];
+  let text = narrative;
+
+  const grounded = buildLooseGroundSet(state, establishedProse);
+  const found: string[] = [];
+  const re = /\b([A-Z][\p{L}'-]{2,}(?:\s+[A-Z][\p{L}'-]{2,}){1,3})\b/gu;
+  let m: RegExpExecArray | null;
+  while ((m = re.exec(narrative)) !== null) {
+    const name = m[1]!.trim();
+    const key = name.toLowerCase();
+    if (ALWAYS_ALLOW.has(key)) continue;
+    if (grounded.has(key)) continue;
+    if (key.split(/\s+/).every((p) => ALWAYS_ALLOW.has(p))) continue;
+    found.push(name);
+  }
+
+  for (const name of Array.from(new Set(found))) {
+    stripped.push(name);
+    text = text.replace(new RegExp(escapeReg(name), 'g'), guessGenericReplacement(name));
+  }
+
+  for (const claim of interactionClaims) {
+    if (claim.length < 3) continue;
+    const generic = /\b(chest|door|crate|cache|altar|console)\b/i.test(claim)
+      ? 'something nearby'
+      : /\b(creature|beast|enemy|foe|hatchling|mob)\b/i.test(claim)
+        ? 'a nearby threat'
+        : 'someone nearby';
+    text = text.replace(new RegExp(`\\b${escapeReg(claim)}\\b`, 'gi'), generic);
+  }
+
+  return { text, stripped: Array.from(new Set(stripped)) };
+}
+
+function guessGenericReplacement(name: string): string {
+  if (/\b(keep|tower|fort|castle|hall|manor|estate|temple|cathedral)\b/i.test(name)) {
+    return 'a nearby building';
+  }
+  if (/\b(street|road|avenue|lane|alley|plaza)\b/i.test(name)) {
+    return 'a nearby street';
+  }
+  if (/\b(blade|sword|gun|rifle|staff|wand|armor|relic|artifact)\b/i.test(name)) {
+    return 'a piece of gear';
+  }
+  return 'a figure';
+}
+
+function escapeReg(s: string): string {
+  return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+function buildLooseGroundSet(state: GameState, prose: string): Set<string> {
+  const set = new Set<string>(ALWAYS_ALLOW);
+  const add = (raw?: string | null) => {
+    if (!raw?.trim()) return;
+    const n = raw.trim().toLowerCase();
+    set.add(n);
+    for (const part of n.split(/\s+/)) if (part.length >= 3) set.add(part);
+  };
+  add(state.character?.name);
+  add(state.currentLocation);
+  add(state.locationSheet?.name);
+  add(state.previousLocationSheet?.name);
+  add(state.activeDungeon?.dungeonName);
+  add(state.activeEncounter?.name);
+  for (const i of state.inventory ?? []) add(i.name);
+  for (const c of state.companions ?? []) add(c.name);
+  for (const q of state.quests ?? []) {
+    if (q.revealed) add(q.name);
+  }
+  for (const n of state.npcMemories ?? []) add(n.npcName);
+  for (const l of state.lorebook ?? []) {
+    if (l.revealed !== false) add(l.name);
+  }
+  for (const it of state.locationSheet?.interactables ?? []) add(it.name);
+  for (const node of state.activeDungeon?.nodes ?? []) {
+    if (state.activeDungeon?.visitedNodeIds?.includes(node.id)) add(node.name);
+  }
+  const blob = `${prose}\n${(state.timeline ?? [])
+    .slice(-20)
+    .map((t) => t.text)
+    .join('\n')}`;
+  for (const hit of blob.matchAll(/\b([A-Z][\p{L}'-]{2,}(?:\s+[A-Z][\p{L}'-]{2,}){0,3})\b/gu)) {
+    add(hit[1]);
+  }
+  return set;
+}

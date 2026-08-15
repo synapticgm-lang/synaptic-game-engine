@@ -1811,6 +1811,8 @@ In <system-log>, only emit LitRPG/RPG progression lines (XP, loot, HP change as 
       const intent = intentForMandate;
       const warden = runWarden(liveCurrent, rawEvents, result.text, sanitizedInput, intent);
       const events = warden.events;
+      // Prefer claim-ground scrubbed prose for player-facing story (tags still from raw).
+      const narrativeSource = warden.scrubbedNarrative ?? result.text;
       const appliedWorld = applyWorldEvents(worldLedger, events, worldLedger.clock.week);
       worldLedger = appliedWorld.ledger;
       worldNotes.push(...appliedWorld.notes);
@@ -1865,7 +1867,7 @@ In <system-log>, only emit LitRPG/RPG progression lines (XP, loot, HP change as 
         // keep XP progression lines only when present in the sanitized partial.
       }
       const regexLoot = extractNewItems(result.text);
-      let cleanText = stripResidualMechanicTags(stripChoiceList(stripActionTags(result.text)));
+      let cleanText = stripResidualMechanicTags(stripChoiceList(stripActionTags(narrativeSource)));
       cleanText = postFilterGmOutput(cleanText, settingsRef.current, {
         nsfw: isNsfwCampaign(getCampaignBibleById(stateRef.current?.campaignBibleId ?? '')),
       });
@@ -1890,7 +1892,7 @@ In <system-log>, only emit LitRPG/RPG progression lines (XP, loot, HP change as 
       // Choice tier (4-tier pipeline): ground options in this turn's story prose + active info cards.
       // Rejects unprompted environmental events / plot jumps and regenerates when needed.
       const pipelineChoices = await resolvePipelineChoices({
-        gmText: result.text,
+        gmText: narrativeSource,
         state: suggestionState,
         loreCards: activeLoreCards,
         settings: settingsRef.current,
@@ -1898,13 +1900,13 @@ In <system-log>, only emit LitRPG/RPG progression lines (XP, loot, HP change as 
       const habitAugmented = extractChoicesFromText(
         pipelineChoices.choices.map((c, i) => `${i + 1}. ${c}`).join('\n'),
         suggestionState,
-        normalizeStoryCorpus(result.text)
+        normalizeStoryCorpus(narrativeSource)
       );
-      const storyProseForChoices = normalizeStoryCorpus(result.text);
+      const storyProseForChoices = normalizeStoryCorpus(narrativeSource);
       const inventedEntityNames = warden.notes
-        .map((n) => n.match(/unestablished entity:\s*(.+)$/i)?.[1]?.trim().toLowerCase())
+        .map((n) => n.match(/(?:unestablished entity|Claim-ground scrub):\s*(.+)$/i)?.[1]?.trim().toLowerCase())
         .filter((n): n is string => !!n);
-      const hijack = detectSceneHijack(sanitizedInput, result.text, suggestionState);
+      const hijack = detectSceneHijack(sanitizedInput, narrativeSource, suggestionState);
       if (hijack.hijacked) {
         warden.notes.push(...hijack.notes);
         cleanText = stripHijackSentences(cleanText, hijack.keywordsHit);
@@ -2338,6 +2340,10 @@ In <system-log>, only emit LitRPG/RPG progression lines (XP, loot, HP change as 
           gainedLootRarity: topLoot?.rarity ?? null,
           questNote: questChangeNotes[0] ?? null,
           significantChoice: intentForMandate.kind === 'refuse' || /choose|accept|refuse/i.test(sanitizedInput),
+          locationChanged:
+            !!finalLocationName &&
+            !!liveCurrent.currentLocation &&
+            finalLocationName !== liveCurrent.currentLocation,
         }
       );
 

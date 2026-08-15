@@ -11,6 +11,11 @@ const PLAYER_PIN_LIMIT = 10;
 /** Soft token budget for memory middle section (~4 chars/token). */
 const MEMORY_CHAR_BUDGET = 2000 * 4;
 
+/** Pack 11: micro summaries every ~5 turns (was 15). */
+const MICRO_SUMMARY_EVERY = 5;
+/** Pack 11: campaign paragraph every ~50 turns. */
+const CAMPAIGN_SUMMARY_EVERY = 50;
+
 export function emptyCampaignMemory(): CampaignMemoryState {
   return {
     campaignSummary: null,
@@ -31,13 +36,136 @@ function compressLine(text: string, max = 220): string {
   return text.replace(/\s+/g, ' ').trim().slice(0, max);
 }
 
-/** Build a cheap extractive turn summary every 15 turns. */
+/**
+ * Lossless fact extract BEFORE compression — keep named NPCs, places, promises,
+ * and loot beats as auto-pins so later summaries don't erase them.
+ */
+export function extractLosslessFacts(
+  memory: CampaignMemoryState,
+  state: GameState,
+  turn: number,
+  narrative: string,
+  playerAction: string
+): CampaignMemoryState {
+  let next = memory;
+  const blob = `${playerAction}\n${narrative}`;
+
+  // Named NPCs already on sheet — reinforce last-seen fact
+  for (const npc of state.npcMemories ?? []) {
+    if (!npc.npcName?.trim()) continue;
+    if (new RegExp(`\\b${escapeReg(npc.npcName)}\\b`, 'i').test(blob)) {
+      next = autoPin(next, {
+        label: `NPC ${npc.npcName}`,
+        text: `${npc.npcName} present at T${turn} (${state.currentLocation ?? 'site'}). ${npc.disposition ?? ''}`.trim(),
+        createdTurn: turn,
+      });
+    }
+  }
+
+  // Active revealed quests mentioned
+  for (const q of state.quests ?? []) {
+    if (!q.revealed || q.status !== 'active' || !q.name) continue;
+    if (new RegExp(`\\b${escapeReg(q.name)}\\b`, 'i').test(blob)) {
+      next = autoPin(next, {
+        label: `Quest ${q.name}`,
+        text: `Quest "${q.name}" referenced at T${turn}.`,
+        createdTurn: turn,
+      });
+    }
+  }
+
+  // Location sheet interactables that appear in prose
+  for (const it of state.locationSheet?.interactables ?? []) {
+    if (!it.name || it.name.length < 3) continue;
+    if (new RegExp(`\\b${escapeReg(it.name)}\\b`, 'i').test(narrative)) {
+      next = autoPin(next, {
+        label: `Scene ${it.name}`,
+        text: `${it.name} observed at ${state.currentLocation ?? 'site'} (T${turn}).`,
+        createdTurn: turn,
+      });
+    }
+  }
+
+  // Promise / threat language → consequence threads
+  next = extractPromisesFromProse(next, narrative, turn);
+  return next;
+}
+
+const PROMISE_PATTERNS: RegExp[] = [
+  /\b(?:i(?:'| a)?ll|we(?:'| wi)?ll|they(?:'| wi)?ll)\s+([^.!?\n]{8,100})/gi,
+  /\b(?:promise[sd]?|owe[sd]?|warn(?:ed|s)?|threaten(?:ed|s)?|debt|deadline|until|before)\b[^.!?\n]{8,120}/gi,
+  /\b(?:come back|return|meet(?: me)?|find you|pay you back|make you pay)\b[^.!?\n]{0,80}/gi,
+];
+
+export function extractPromisesFromProse(
+  memory: CampaignMemoryState,
+  narrative: string,
+  turn: number
+): CampaignMemoryState {
+  let next = memory;
+  const seen = new Set(
+    (memory.consequences ?? []).map((c) => c.text.toLowerCase().slice(0, 60))
+  );
+  for (const re of PROMISE_PATTERNS) {
+    const local = new RegExp(re.source, re.flags);
+    let m: RegExpExecArray | null;
+    while ((m = local.exec(narrative)) !== null) {
+      const text = compressLine(m[0], 160);
+      const key = text.toLowerCase().slice(0, 60);
+      if (seen.has(key) || text.length < 12) continue;
+      seen.add(key);
+      next = addConsequence(next, `Open thread (T${turn}): ${text}`, turn);
+      if ((next.consequences ?? []).filter((c) => c.unresolved).length >= 12) return next;
+    }
+  }
+  return next;
+}
+
+/** Mark consequences resolved when quests complete or keywords match narrative. */
+export function resolveConsequences(
+  memory: CampaignMemoryState,
+  state: GameState,
+  narrative: string
+): CampaignMemoryState {
+  const completedQuestNames = (state.quests ?? [])
+    .filter((q) => q.status === 'completed' || q.status === 'failed')
+    .map((q) => q.name.toLowerCase());
+  const hay = narrative.toLowerCase();
+
+  return {
+    ...memory,
+    consequences: (memory.consequences ?? []).map((c) => {
+      if (!c.unresolved) return c;
+      const t = c.text.toLowerCase();
+      if (completedQuestNames.some((n) => n.length >= 4 && t.includes(n))) {
+        return { ...c, unresolved: false };
+      }
+      if (
+        /\b(resolved|settled|paid|forgave|done|over)\b/i.test(hay) &&
+        t.split(/\W+/).filter((w) => w.length > 4).some((w) => hay.includes(w))
+      ) {
+        return { ...c, unresolved: false };
+      }
+      return c;
+    }),
+  };
+}
+
+function escapeReg(s: string): string {
+  return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+/** Build a cheap extractive turn summary on Pack 11 micro schedule. */
 export function maybeAppendTurnSummary(
   memory: CampaignMemoryState,
   turn: number,
-  bits: { location?: string; action?: string; outcome?: string; quest?: string }
+  bits: { location?: string; action?: string; outcome?: string; quest?: string },
+  force = false
 ): CampaignMemoryState {
-  if (turn < 15 || turn - (memory.lastTurnSummaryTurn || 0) < 15) return memory;
+  const due =
+    force ||
+    (turn >= MICRO_SUMMARY_EVERY && turn - (memory.lastTurnSummaryTurn || 0) >= MICRO_SUMMARY_EVERY);
+  if (!due) return memory;
   const parts = [
     bits.location ? `At ${bits.location}` : null,
     bits.action ? `acted: ${bits.action}` : null,
@@ -56,26 +184,32 @@ export function maybeAppendTurnSummary(
   };
 }
 
-/** Refresh campaign paragraph every 50 turns. */
+/** Refresh campaign paragraph every ~50 turns. */
 export function maybeRefreshCampaignSummary(
   memory: CampaignMemoryState,
   state: GameState,
   turn: number
 ): CampaignMemoryState {
-  if (turn < 50 || turn - (memory.lastCampaignSummaryTurn || 0) < 50) return memory;
+  if (turn < CAMPAIGN_SUMMARY_EVERY || turn - (memory.lastCampaignSummaryTurn || 0) < CAMPAIGN_SUMMARY_EVERY) {
+    return memory;
+  }
   const quests = (state.quests ?? [])
     .filter((q) => q.revealed && q.status === 'active')
     .map((q) => q.name)
     .slice(0, 3);
+  const open = (memory.consequences ?? []).filter((c) => c.unresolved).slice(0, 3);
   const loc = state.currentLocation || state.locationSheet?.name || 'unknown';
   const cond = state.character.conditions?.length
     ? `Conditions: ${state.character.conditions.join(', ')}.`
     : '';
+  const openLine = open.length
+    ? ` Open threads: ${open.map((c) => c.text).join('; ')}.`
+    : '';
   const text = compressLine(
     `${state.character.name} (L${state.character.level}) continues the Integration. Now at ${loc}.` +
       (quests.length ? ` Active: ${quests.join('; ')}.` : '') +
-      ` ${cond} ${memory.personalitySummary ?? ''}`.trim(),
-    600
+      ` ${cond}${openLine} ${memory.personalitySummary ?? ''}`.trim(),
+    700
   );
   return {
     ...memory,
@@ -114,18 +248,27 @@ export function autoPin(
   pin: Omit<MemoryPin, 'id' | 'kind'> & { kind?: MemoryPin['kind'] }
 ): CampaignMemoryState {
   const id = `apin_${pin.label.toLowerCase().replace(/[^a-z0-9]+/g, '_').slice(0, 40)}_${pin.createdTurn}`;
-  if (memory.pins.some((p) => p.id === id || (p.label === pin.label && p.kind === 'auto'))) {
+  if (memory.pins.some((p) => p.id === id || (p.label === pin.label && p.kind === 'auto' && p.createdTurn === pin.createdTurn))) {
     return memory;
   }
-  const next: MemoryPin = {
-    id,
+  // Refresh same-label auto pin text instead of duplicating forever
+  const existingIdx = memory.pins.findIndex(
+    (p) => p.label === pin.label && p.kind === 'auto' && !p.archived
+  );
+  const nextPin: MemoryPin = {
+    id: existingIdx >= 0 ? memory.pins[existingIdx]!.id : id,
     kind: pin.kind ?? 'auto',
     label: pin.label,
     text: compressLine(pin.text, 240),
     createdTurn: pin.createdTurn,
     archived: false,
   };
-  return { ...memory, pins: [...memory.pins, next].slice(-80) };
+  if (existingIdx >= 0) {
+    const pins = [...memory.pins];
+    pins[existingIdx] = nextPin;
+    return { ...memory, pins };
+  }
+  return { ...memory, pins: [...memory.pins, nextPin].slice(-80) };
 }
 
 export function addPlayerPin(
@@ -193,6 +336,11 @@ export function retrieveMemorySnippets(
     const score = q.reduce((s, w) => s + (hay.includes(w) ? 1 : 0), 0);
     if (score) scored.push({ score, line: `Pin[${p.kind}]: ${p.label} — ${p.text}` });
   }
+  for (const c of (memory.consequences ?? []).filter((x) => x.unresolved)) {
+    const hay = c.text.toLowerCase();
+    const score = q.reduce((s, w) => s + (hay.includes(w) ? 1 : 0), 0);
+    if (score) scored.push({ score, line: `Open: ${c.text}` });
+  }
   return scored
     .sort((a, b) => b.score - a.score)
     .slice(0, limit)
@@ -242,7 +390,7 @@ ${state.character.conditions?.length ? state.character.conditions.join(', ') : '
 ${retrieved || '(none)'}
 === PLAYER / AUTO PINS ===
 ${pins || '(none)'}
-=== UNRESOLVED CONSEQUENCES ===
+=== UNRESOLVED CONSEQUENCES (MUST NOT FORGET) ===
 ${consequences || '(none)'}
 === NPC RELATIONSHIP SUMMARIES ===
 ${npcLines || '(none)'}
@@ -252,7 +400,7 @@ ${npcLines || '(none)'}
   if (body.length > MEMORY_CHAR_BUDGET) {
     body = body
       .replace(/=== RETRIEVED MEMORY[\s\S]*?(?==== )/m, '=== RETRIEVED MEMORY ===\n(pruned)\n')
-      .replace(/=== PLAYER \/ AUTO PINS[\s\S]*?(?==== )/m, '=== PLAYER / AUTO PINS ===\n(pruned)\n');
+      .replace(/=== PLAYER \/ AUTO PINS[\s\S]*?(?==== )/m, '=== PLAYER \/ AUTO PINS ===\n(pruned)\n');
   }
   if (body.length > MEMORY_CHAR_BUDGET) {
     body = body.replace(
@@ -264,7 +412,7 @@ ${npcLines || '(none)'}
   return body.trim();
 }
 
-/** End-of-turn memory maintenance. */
+/** End-of-turn memory maintenance (Pack 11 schedule + lossless extract). */
 export function advanceCampaignMemory(
   state: GameState,
   turn: number,
@@ -274,6 +422,7 @@ export function advanceCampaignMemory(
     gainedLootRarity?: string | null;
     questNote?: string | null;
     significantChoice?: boolean;
+    locationChanged?: boolean;
   }
 ): CampaignMemoryState {
   let memory = ensureCampaignMemory(state);
@@ -281,12 +430,23 @@ export function advanceCampaignMemory(
     ...memory,
     personalitySummary: memory.personalitySummary || derivePersonalitySummary(state),
   };
-  memory = maybeAppendTurnSummary(memory, turn, {
-    location: state.currentLocation,
-    action: opts.playerAction.slice(0, 80),
-    outcome: opts.narrative.slice(0, 120),
-    quest: opts.questNote ?? undefined,
-  });
+
+  // 1) Lossless extract first so compression cannot erase facts
+  memory = extractLosslessFacts(memory, state, turn, opts.narrative, opts.playerAction);
+  memory = resolveConsequences(memory, state, opts.narrative);
+
+  // 2) Micro summary every 5 turns OR on location change
+  memory = maybeAppendTurnSummary(
+    memory,
+    turn,
+    {
+      location: state.currentLocation,
+      action: opts.playerAction.slice(0, 80),
+      outcome: opts.narrative.slice(0, 120),
+      quest: opts.questNote ?? undefined,
+    },
+    !!opts.locationChanged
+  );
   memory = maybeRefreshCampaignSummary(memory, state, turn);
 
   if (opts.gainedLootRarity && /uncommon|rare|epic|legendary/i.test(opts.gainedLootRarity)) {

@@ -7,7 +7,7 @@ alwaysApply: true
 
 WOF is a **separate later project**. Everything in WOF chats is a **future release**, not the live game. Intel lives only under `docs/research/wof/` and WOF canvases.
 
-**Never** put WOF races, places, factions, quests, dungeons, raids, multiplayer, housing, auction, or businesses into live game code (`src/`, `supabase/`, prompts, settings, saves).
+**Isolated build** lives in `wof/` only. Never import `wof/` from live SynapticGM (`src/`, `supabase/`, prompts, settings, saves). Never add WOF races, places, factions, quests, dungeons, raids, multiplayer, housing, auction, or businesses to those live paths.
 
 If John asks for a live-game fix, ignore WOF. If he asks to build WOF, confirm it is not a live-game change.
 

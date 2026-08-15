@@ -13,10 +13,11 @@ John is playtesting live. Collect issues here. Do not implement until he asks fo
 
 ## Waiting (research — not tickets yet)
 
-- Long memory / anti-hallucination: Gemini dump archived as `docs/research/pack-11-long-memory-antihallucination-sp-mp-2026-08-gemini.md`. Second dump pending. See `docs/research/HOLD-long-memory-pack11.md`. Do not ship a memory wave until John opens the next update after playtest.
+(none)
 
 ## Done (already shipped)
 
+- Pack 11 memory / anti-hallucination (SP): claim-grounding + Warden invent scrub; 5-turn / location micro-summaries; lossless pins; unresolved consequence ledger — atmosphere stays free
 - Themes locker: sticky preview, expand-only selected set, Customize accordion (`2026-08-15aa`)
 - Shop and Themes group race sets with font samples, dice previews, and a bundle price (`2026-08-15z`)
 - Openings are generated from each bible (not a fixed registrar); PYOA drops into the crisis; LitRPG/isekai weave in-world covers; Earth is not ingested (`2026-08-15y`)
