@@ -27,11 +27,13 @@ export interface ShopItem {
   /** Theme CSS token key */
   themeKey?: string;
   /** When this theme is selected, also apply these cosmetics. */
-  kit?: { fontId: string; diceId: string; voiceId: string };
+  kit?: { fontId: string; diceId: string; voiceId: string; frameId: string };
   /** TTS flavour — pitch/rate always apply; voiceHint matches a browser voice name if present. */
   tts?: { rate: number; pitch: number; voiceHint: string };
   /** Dice tray tint. Cosmetic only — odds unchanged. */
   diceSkin?: { accent: string; face: string };
+  /** Turn-card border style id (CSS `data-sgm-frame`). */
+  frameSkin?: { style: string };
   preview?: {
     accent: string;
     bg: string;
@@ -538,6 +540,7 @@ export const SHOP_CATALOG: ShopItem[] = [
     blurb: 'Turn-frame borders with static edges.',
     priceGbp: '£1.99',
     priceUsd: '$1.99',
+    frameSkin: { style: 'glitch' },
   },
   {
     id: 'frame.ornate-brass',
@@ -546,6 +549,7 @@ export const SHOP_CATALOG: ShopItem[] = [
     blurb: 'Brass fittings around each turn beat.',
     priceGbp: '£1.99',
     priceUsd: '$1.99',
+    frameSkin: { style: 'brass' },
   },
   {
     id: 'system.cold-registrar',
@@ -645,7 +649,7 @@ export const SHOP_CATALOG: ShopItem[] = [
     id: 'bundle.ancestry-sampler',
     slot: 'bundle',
     name: 'Ancestry Sampler',
-    blurb: 'Wood Elf, Dark Elf, Dwarf, and Dragon themes — each packs a matching font, dice skin, and narrator voice.',
+    blurb: 'Wood Elf, Dark Elf, Dwarf, and Dragon themes — each packs a matching font, dice skin, narrator voice, and turn frame.',
     priceGbp: '£9.99',
     priceUsd: '$12.99',
     includes: [
@@ -901,18 +905,38 @@ const RACE_THEME_KITS: RaceKitDef[] = [
   },
 ];
 
+const RACE_FRAMES: Record<string, { name: string; blurb: string; style: string }> = {
+  grove: { name: 'Vine Lattice', blurb: 'Living vine corners on each turn beat.', style: 'vine' },
+  umbrance: { name: 'Obsidian Filigree', blurb: 'Dark-glass corners, violet inlay.', style: 'filigree' },
+  spire: { name: 'Ivory Arch', blurb: 'Crystal-gold arches around the beat.', style: 'ivory' },
+  forgehall: { name: 'Rune Brass', blurb: 'Hammered brass with rune corners.', style: 'rune' },
+  warcamp: { name: 'Iron Spike', blurb: 'Hard iron border, camp-banner corners.', style: 'iron' },
+  hoard: { name: 'Scale Gold', blurb: 'Overlapping scale rim, molten corners.', style: 'scale' },
+  ashrise: { name: 'Ember Filigree', blurb: 'Char-and-flame corners on each beat.', style: 'ember' },
+  chassis: { name: 'Circuit Bezel', blurb: 'Optic-cyan HUD bezel.', style: 'circuit' },
+  radiance: { name: 'Halo Arch', blurb: 'Soft gold halo around the beat.', style: 'halo' },
+  pact: { name: 'Sulfur Seal', blurb: 'Heat-stained contract frame.', style: 'sulfur' },
+  ossuary: { name: 'Bone Inlay', blurb: 'Ivory corners on crypt teal.', style: 'bone' },
+  glamour: { name: 'Twilight Filigree', blurb: 'Iridescent court frame.', style: 'twilight' },
+  scrapheap: { name: 'Scrap Weld', blurb: 'Welded scrap corners.', style: 'scrap' },
+  abyss: { name: 'Pearl Tide', blurb: 'Tide-glass rim, pearl corners.', style: 'tide' },
+  nocturne: { name: 'Velvet Arch', blurb: 'Wine-dark velvet frame.', style: 'velvet' },
+};
+
 function attachRaceThemeKits(): void {
   for (const def of RACE_THEME_KITS) {
     const fontId = `font.${def.slug}`;
     const diceId = `dice.${def.slug}`;
     const voiceId = `voice.${def.slug}`;
+    const frameId = `frame.${def.slug}`;
+    const frame = RACE_FRAMES[def.slug];
     const theme = SHOP_CATALOG.find((i) => i.id === def.themeId);
     if (theme?.preview) {
       theme.preview.fontUi = def.fontUi;
       theme.preview.fontStory = def.fontStory;
-      theme.kit = { fontId, diceId, voiceId };
-      theme.includes = [fontId, diceId, voiceId];
-      theme.blurb = `${theme.blurb} Includes matching font, dice, and voice.`;
+      theme.kit = { fontId, diceId, voiceId, frameId };
+      theme.includes = [fontId, diceId, voiceId, frameId];
+      theme.blurb = `${theme.blurb} Includes matching font, dice, voice, and turn frame.`;
     }
     SHOP_CATALOG.push(
       {
@@ -949,6 +973,15 @@ function attachRaceThemeKits(): void {
         priceGbp: '£4.99',
         priceUsd: '$4.99',
         tts: def.tts,
+      },
+      {
+        id: frameId,
+        slot: 'frame',
+        name: frame?.name ?? `${def.slug} Frame`,
+        blurb: frame?.blurb ?? 'Matching turn-frame border.',
+        priceGbp: '£1.99',
+        priceUsd: '$1.99',
+        frameSkin: { style: frame?.style ?? def.slug },
       },
     );
   }

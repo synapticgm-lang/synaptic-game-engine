@@ -62,7 +62,7 @@ export function MainMenu({
 
   useEffect(() => {
     applySettingsCosmetics(settings);
-  }, [settings.uiThemeId, settings.fontPackId, settings.diceCosmeticId]);
+  }, [settings.uiThemeId, settings.fontPackId, settings.diceCosmeticId, settings.turnFrameCosmeticId]);
 
   return (
     <div
@@ -247,11 +247,12 @@ function ThemesTab({
     applyUiThemeToDocument(selectedTheme, {
       font: shopItemById(draftFont),
       dice: shopItemById(draftDice),
+      frame: shopItemById(draftFrame),
     });
     return () => {
       applySettingsCosmetics(settings);
     };
-  }, [selectedTheme, draftFont, draftDice, settings]);
+  }, [selectedTheme, draftFont, draftDice, draftFrame, settings]);
 
   const fonts = SHOP_CATALOG.filter((i) => i.slot === 'font');
   const dice = SHOP_CATALOG.filter((i) => i.slot === 'dice');
@@ -273,7 +274,7 @@ function ThemesTab({
   return (
     <div className="flex w-full flex-col gap-4 pb-8">
       <p className="text-center text-xs text-slate-500">
-        Race themes include a matching font, dice skin, and narrator voice. Preview updates as you select — tap Save to keep. You can still override font, dice, or voice after.
+        Race themes include a matching font, dice skin, narrator voice, and turn frame. Preview updates as you select — tap Save to keep. You can still override font, dice, voice, or frame after.
       </p>
 
       <ThemePreviewCard theme={selectedTheme} frameId={draftFrame} diceId={draftDice} voiceId={draftVoice} fontId={draftFont} />
@@ -294,6 +295,7 @@ function ThemesTab({
                   setDraftFont(item.kit.fontId);
                   setDraftDice(item.kit.diceId);
                   setDraftVoice(item.kit.voiceId);
+                  setDraftFrame(item.kit.frameId);
                 }
               }}
             />
@@ -395,7 +397,7 @@ function ThemePreviewCard({
   const font = shopItemById(fontId);
   return (
     <div
-      className="overflow-hidden rounded-xl border shadow-lg"
+      className="sgm-turn-frame overflow-hidden rounded-xl border shadow-lg"
       style={{
         borderColor: p?.accent ?? '#334155',
         background: p?.bg ?? '#020617',

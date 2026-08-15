@@ -6,10 +6,10 @@ export function themeBySettingsId(uiThemeId: string | undefined): ShopItem {
   return shopItemById(id) ?? THEME_ITEMS[0]!;
 }
 
-/** Apply theme + optional font/dice kit CSS variables to :root. */
+/** Apply theme + optional font/dice/frame kit CSS variables to :root. */
 export function applyUiThemeToDocument(
   theme: ShopItem | null | undefined,
-  extras?: { font?: ShopItem | null; dice?: ShopItem | null },
+  extras?: { font?: ShopItem | null; dice?: ShopItem | null; frame?: ShopItem | null },
 ): void {
   const p = theme?.preview;
   const root = document.documentElement;
@@ -23,6 +23,7 @@ export function applyUiThemeToDocument(
     root.style.removeProperty('--sgm-font-story');
     root.style.removeProperty('--sgm-dice-accent');
     root.style.removeProperty('--sgm-dice-face');
+    delete root.dataset.sgmFrame;
     return;
   }
   root.style.setProperty('--sgm-accent', p.accent);
@@ -39,15 +40,18 @@ export function applyUiThemeToDocument(
   root.style.setProperty('--sgm-dice-accent', diceAccent);
   root.style.setProperty('--sgm-dice-face', diceFace);
   root.dataset.sgmTheme = theme?.themeKey ?? 'integration-blue';
+  root.dataset.sgmFrame = extras?.frame?.frameSkin?.style ?? 'plain';
 }
 
 export function applySettingsCosmetics(settings: {
   uiThemeId?: string;
   fontPackId?: string;
   diceCosmeticId?: string;
+  turnFrameCosmeticId?: string;
 }): void {
   applyUiThemeToDocument(themeBySettingsId(settings.uiThemeId), {
     font: shopItemById(settings.fontPackId ?? ''),
     dice: shopItemById(settings.diceCosmeticId ?? ''),
+    frame: shopItemById(settings.turnFrameCosmeticId ?? ''),
   });
 }

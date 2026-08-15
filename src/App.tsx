@@ -54,7 +54,7 @@ export default function App() {
 
   useEffect(() => {
     applySettingsCosmetics(game.settings);
-  }, [game.settings.uiThemeId, game.settings.fontPackId, game.settings.diceCosmeticId]);
+  }, [game.settings.uiThemeId, game.settings.fontPackId, game.settings.diceCosmeticId, game.settings.turnFrameCosmeticId]);
 
   const hasSave = !!game.localSlot || !!game.cloudSlot;
   const shouldAutoResume = game.settings.postLoginBehavior === 'AUTO_RESUME' && hasSave;

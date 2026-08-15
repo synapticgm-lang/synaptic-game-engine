@@ -122,9 +122,9 @@ function DmNarration({ entry, engineMode, showTurnAsk }: { entry: LogEntry; engi
 
   return (
     <div className="space-y-3">
-      <div className="relative overflow-hidden rounded-xl border border-slate-700/60 bg-slate-900/60 shadow-lg">
+      <div className="sgm-turn-frame relative overflow-hidden rounded-xl border border-slate-700/60 bg-slate-900/60 shadow-lg">
         {/* Decorative top accent bar */}
-        <div className="h-1 w-full bg-gradient-to-r from-crimson-600 via-crimson-500 to-transparent" />
+        <div className="sgm-turn-frame-bar h-1 w-full bg-gradient-to-r from-crimson-600 via-crimson-500 to-transparent" />
 
         {/* Header */}
         <div className="flex items-center gap-2 border-b border-slate-800 bg-slate-950/40 px-4 py-2">

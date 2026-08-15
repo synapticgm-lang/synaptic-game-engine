@@ -222,3 +222,107 @@
   z-index: 1;
   opacity: 0.5;
 }
+
+/* ===== TURN FRAMES (cosmetic; no gameplay) ===== */
+
+.sgm-turn-frame {
+  position: relative;
+  border-color: color-mix(in srgb, var(--sgm-accent, #64748b) 48%, #334155);
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--sgm-accent, #64748b) 16%, transparent);
+}
+.sgm-turn-frame-bar {
+  background: linear-gradient(to right, var(--sgm-accent, #ef4444), transparent) !important;
+}
+.sgm-turn-frame::before,
+.sgm-turn-frame::after {
+  content: '';
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  pointer-events: none;
+  z-index: 2;
+  border-color: var(--sgm-accent, #94a3b8);
+}
+.sgm-turn-frame::before {
+  top: 5px;
+  left: 5px;
+  border-top: 2px solid;
+  border-left: 2px solid;
+}
+.sgm-turn-frame::after {
+  bottom: 5px;
+  right: 5px;
+  border-bottom: 2px solid;
+  border-right: 2px solid;
+}
+
+html[data-sgm-frame='glitch'] .sgm-turn-frame {
+  border-style: dashed;
+  box-shadow: 0 0 14px color-mix(in srgb, var(--sgm-accent, #22d3ee) 28%, transparent);
+}
+html[data-sgm-frame='brass'] .sgm-turn-frame,
+html[data-sgm-frame='rune'] .sgm-turn-frame {
+  border-width: 2px;
+  border-color: #b45309;
+  box-shadow: inset 0 0 0 1px #fbbf2466, 0 0 16px #b4530933;
+}
+html[data-sgm-frame='vine'] .sgm-turn-frame {
+  border-color: #65a30d;
+  box-shadow: inset 0 0 24px #84cc1618, 0 0 0 2px #3f621244;
+}
+html[data-sgm-frame='filigree'] .sgm-turn-frame {
+  border-color: #c084fc;
+  box-shadow: inset 0 0 20px #6b21a828, 0 0 12px #c084fc22;
+}
+html[data-sgm-frame='ivory'] .sgm-turn-frame {
+  border-color: #fbbf24;
+  box-shadow: inset 0 0 0 1px #fef3c744, 0 0 14px #fbbf2422;
+}
+html[data-sgm-frame='iron'] .sgm-turn-frame {
+  border-width: 2px;
+  border-color: #4d7c0f;
+  box-shadow: inset 0 0 0 1px #36531488;
+}
+html[data-sgm-frame='scale'] .sgm-turn-frame {
+  border-color: #eab308;
+  box-shadow: inset 0 0 22px #14532d55, 0 0 12px #eab30833;
+}
+html[data-sgm-frame='ember'] .sgm-turn-frame {
+  border-color: #fb7185;
+  box-shadow: inset 0 0 24px #9f123928, 0 0 16px #fb718533;
+}
+html[data-sgm-frame='circuit'] .sgm-turn-frame {
+  border-style: double;
+  border-color: #22d3ee;
+  box-shadow: 0 0 12px #22d3ee33;
+}
+html[data-sgm-frame='halo'] .sgm-turn-frame {
+  border-color: #fde68a;
+  box-shadow: 0 0 18px #fde68a44, inset 0 0 16px #fef3c718;
+}
+html[data-sgm-frame='sulfur'] .sgm-turn-frame {
+  border-color: #ef4444;
+  box-shadow: inset 0 0 20px #7f1d1d44, 0 0 12px #ef444433;
+}
+html[data-sgm-frame='bone'] .sgm-turn-frame {
+  border-color: #e7e5e4;
+  box-shadow: inset 0 0 0 1px #2dd4bf44, 0 0 10px #115e5933;
+}
+html[data-sgm-frame='twilight'] .sgm-turn-frame {
+  border-color: #e879f9;
+  box-shadow: inset 0 0 20px #a21caf22, 0 0 14px #2dd4bf22;
+}
+html[data-sgm-frame='scrap'] .sgm-turn-frame {
+  border-style: outset;
+  border-color: #facc15;
+  box-shadow: inset 0 0 0 1px #854d0e88;
+}
+html[data-sgm-frame='tide'] .sgm-turn-frame {
+  border-color: #2dd4bf;
+  box-shadow: inset 0 0 24px #115e5933, 0 0 12px #2dd4bf33;
+}
+html[data-sgm-frame='velvet'] .sgm-turn-frame {
+  border-width: 2px;
+  border-color: #be123c;
+  box-shadow: inset 0 0 22px #88133744, 0 0 14px #be123c33;
+}
