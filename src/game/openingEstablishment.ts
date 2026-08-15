@@ -39,7 +39,7 @@ export function isRandomPlaceRequest(raw: string): boolean {
 export function pickPlaceForCampaign(state: GameState): string {
   const bible = getCampaignBibleById(state.campaignBibleId ?? '');
   if (bible?.startingLocation?.trim()) return bible.startingLocation.trim();
-  if (bible?.engineMode === 'rpg' || bible?.engineMode === 'dnd') {
+  if (bible?.engineMode === 'rpg' || bible?.engineMode === 'pyoa' || bible?.engineMode === 'dnd') {
     return 'where this tale opens';
   }
   return pickRandom(RANDOM_PLACES);
@@ -202,7 +202,7 @@ export function resolveOpeningRegistrar(
       startLine: 'Before the first page is set: confirm your name, and where this begins.',
     };
   }
-  if (engineMode === 'rpg' && !SYSTEM_ARCHETYPES.has(archetype ?? 'ai_random')) {
+  if (engineMode === 'rpg' || engineMode === 'pyoa') {
     return {
       voice: 'inworld',
       label: 'THE STORY',
@@ -236,7 +236,7 @@ export function resolveOpeningPrompts(
   if (bible?.openingPrompts?.length) prompts = bible.openingPrompts;
   else if (bible?.id === 'system-integration' || archetype === 'system_apocalypse') prompts = SI_PROMPTS;
   else if (archetype === 'monster_reincarnation') prompts = SPECIES_PROMPTS;
-  else if (engineMode === 'rpg') prompts = STORY_RPG_PROMPTS;
+  else if (engineMode === 'rpg' || engineMode === 'pyoa') prompts = STORY_RPG_PROMPTS;
   else if (engineMode === 'dnd' || archetype === 'cursed_manor') prompts = FANTASY_PROMPTS;
   else if (engineMode === 'litrpg' || SYSTEM_ARCHETYPES.has(archetype ?? 'ai_random')) prompts = SI_PROMPTS;
   else prompts = FANTASY_PROMPTS;

@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { X, Sparkles, Wand2, BookOpen, Palette, ChevronRight, ChevronLeft, Dices, ScrollText, Cpu } from 'lucide-react';
+import { X, Sparkles, Wand2, BookOpen, Palette, ChevronRight, ChevronLeft, Dices, ScrollText, Cpu, GitFork } from 'lucide-react';
 import type { EngineMode, GmStrictness, ArtStylePreset, ComicLayoutMode, ComicReadingDirection } from '@/game/types';
 import { ART_STYLE_PRESETS } from '@/game/types';
 import { getArchetypeOptions, getDefaultArchetype, type CampaignArchetype } from '@/game/archetypes';
@@ -53,6 +53,12 @@ const ENGINE_MODE_CARDS: Array<{
     label: 'Story RPG',
     description: 'Fiction-first narrative — relationships, mysteries, heists. No LitRPG HUDs, no 5e dice math.',
     icon: ScrollText,
+  },
+  {
+    value: 'pyoa',
+    label: 'Pick Your Own Adventure',
+    description: 'A main story with forks: ally or betray, party or solo, inner comments, several endings.',
+    icon: GitFork,
   },
 ];
 
@@ -281,7 +287,7 @@ export function NewGameModal({ onStart, onClose }: Props) {
 
               <div>
                 <label className="mb-1.5 block font-medium text-slate-300">Game Mode</label>
-                <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
+                <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
                   {ENGINE_MODE_CARDS.map((card) => {
                     const Icon = card.icon;
                     const selected = engineMode === card.value;

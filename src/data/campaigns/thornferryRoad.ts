@@ -9,11 +9,11 @@ export const thornferryRoad: CampaignBible = {
   id: 'thornferry-road',
   title: 'Thornferry Road',
   archetype: 'custom_world',
-  engineMode: 'rpg',
+  engineMode: 'pyoa',
   difficulty: 'Standard',
   tagline: 'A clear road. Hard choices. Your comments are the hero’s pulse.',
   shortDescription:
-    'Story RPG with a main path and optional side work. Ally or betray, travel with someone or go alone. Honor the visual style you picked — comic, classic, tabletop, or LitRPG chrome stays off.',
+    'Pick-your-own-adventure: a main path and optional side work. Ally or betray, travel with someone or go alone. Several endings. Comic or classic presentation is a separate choice.',
   licenseNote:
     'Original SynapticGM setting. Uses common moral-choice / companion / village-road tropes. Not based on Fable, Albion, or any named game, novel, or show.',
   startingLocation: 'the mill landing at Thornferry',
@@ -69,6 +69,14 @@ SIDE QUEST SEEDS (writer only — spawn when earned; never dump):
 - Quiet Bell: a chapel wants the charter blessed. Blessing is politics.
 
 OPENING KIT (AUTHORITY): Worn clothes they named. The Millstone Charter is a quest paper, not a sword. Never invent an iron shortsword or traveler tunic unless the ledger has it.
+
+ENDINGS (pick one when the charter is resolved; never list them in play; never end in the opening hour):
+- Mill kept, Wren stayed: local peace, Highmark levy delayed.
+- Mill kept, Wren gone or betrayed: you hold the mill alone; Pell sends collectors.
+- Sold to Pell, Wren still walking with you: coin and a cold companion.
+- Sold to Pell, solo: gold, no friends, mill riot rumor.
+- Charter burned or forged: both sides hunt you; a third-path rumor.
+- Delivered honestly with Wren: Highmark job offer; the mill remembers.
 
 Do not name distant capitals until the road actually reaches them. Unique story every turn. Styles (wry / earnest / dark) follow the player’s comments.`,
 

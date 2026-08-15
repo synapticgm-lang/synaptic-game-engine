@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { X, Save, BookText, Volume2, Mic, Dice5, Shield, Lock, Baby, Gauge, Download, Upload, KeyRound, Eye, EyeOff, RefreshCw, Check, Loader2, ChevronDown, Image as ImageIcon, Trash2, ZoomIn, Scale, Home, Zap, CircleSlash, Sparkles, Grid3x3, MessageSquareMore, Palette, Layers, Dot, MessageCircle, Map as MapIcon, Eye as EyeIcon, BarChart3, Clock, ScrollText, BookOpen, Swords } from 'lucide-react';
-import type { Settings, DiceAnimationMode, ContentMode, GmStrictness, AiProvider, KeyStatus, PostLoginBehavior, BgMode, ColorVariant, PanelFrequency, PanelBorderIntensity, MapTriggerMode, FogRevealThreshold, StatVerbosity, StatFrequency, GameState, NarrativePerspective, ViolenceLevel, CursingLevel, ComicLayoutMode, ComicReadingDirection, SaveSlotInfo } from '@/game/types';
+import type { Settings, DiceAnimationMode, ContentMode, GmStrictness, AiProvider, KeyStatus, PostLoginBehavior, BgMode, ColorVariant, PanelFrequency, PanelBorderIntensity, MapTriggerMode, FogRevealThreshold, StatVerbosity, StatFrequency, GameState, NarrativePerspective, ViolenceLevel, CursingLevel, ComicLayoutMode, ComicReadingDirection, SaveSlotInfo, EngineMode } from '@/game/types';
 import { ART_STYLE_PRESETS } from '@/game/types';
 import { validateApiKey, fetchModelsForProvider, getDefaultModels } from '@/game/apiValidation';
 import { CampaignSettings } from './CampaignSettings';
@@ -12,7 +12,7 @@ import { exportSessionToCbz, downloadCbz } from '@/services/cbzExportService';
 interface Props {
   settings: Settings;
   storyName: string;
-  engineMode: 'litrpg' | 'dnd' | 'rpg';
+  engineMode: EngineMode;
   gameState?: GameState | null; // Added to check if story has started
   onSave: (s: Settings) => void;
   onStoryNameChange: (name: string) => void;

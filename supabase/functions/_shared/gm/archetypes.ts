@@ -73,12 +73,13 @@ export const RPG_OPENINGS: ArchetypeOption[] = [
 
 export function getArchetypeOptions(engineMode: EngineMode): ArchetypeOption[] {
   if (engineMode === 'dnd') return DND_OPENINGS;
-  if (engineMode === 'rpg') return RPG_OPENINGS;
+  if (engineMode === 'rpg' || engineMode === 'pyoa') return RPG_OPENINGS;
   return LITRPG_ARCHETYPES;
 }
 
 export function getDefaultArchetype(engineMode: EngineMode): CampaignArchetype {
   if (engineMode === 'dnd') return 'ai_custom';
+  if (engineMode === 'pyoa') return 'custom_world';
   return 'ai_random';
 }
 
@@ -204,12 +205,17 @@ export function buildArchetypeRules(engineMode: EngineMode, archetype: CampaignA
     return `${DND_5E_CORE_RULES}\n\n${opening}`;
   }
   const litrpgOpening = (LITRPG_RULES as Record<string, string>)[archetype] ?? LITRPG_RULES.ai_random;
-  if (engineMode === 'rpg') {
+  if (engineMode === 'rpg' || engineMode === 'pyoa') {
     return `${litrpgOpening}
 
-RPG NARRATIVE OVERRIDE:
+${engineMode === 'pyoa' ? `PYOA NARRATIVE OVERRIDE:
+- This is a pick-your-own-adventure with a clear main spine and optional sides.
+- Strip LitRPG HUD language and 5e dice math.
+- Player comments are the hero's inner voice. Ally, betray, party, and solo stick.
+- Several endings exist; play toward one only when the spine is complete.` : `RPG NARRATIVE OVERRIDE:
 - Strip LitRPG HUD language from the opening and ongoing play.
-- Prefer character, place, and consequence over system panels.`;
+- Prefer character, place, and consequence over system panels.`}
+`;
   }
   return litrpgOpening;
 }
@@ -244,7 +250,7 @@ export function buildArchetypeIntro(engineMode: EngineMode, archetype: CampaignA
     custom_world: `The ledger is almost empty. A single line waits for an author: ${name}. Define the first truth of this world — place, rule, or threat — and the story will follow only what you lock in.\n\n[ SYSTEM ] Custom world shell ready. Awaiting canon.\n\nWhat do you do?`,
   };
   const litrpgIntro = intros[(archetype as LitRpgArchetype) ?? 'ai_random'] ?? intros.ai_random;
-  if (engineMode === 'rpg') {
+  if (engineMode === 'rpg' || engineMode === 'pyoa') {
     return litrpgIntro
       .replace(/\n\n\[ SYSTEM \][^\n]*/g, '')
       .replace(/A (?:translucent blue panel|blue panel|panel)[^.]*\.\s*/gi, '')

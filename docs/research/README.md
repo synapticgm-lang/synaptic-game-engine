@@ -20,6 +20,7 @@ All competitor + design packs for SynapticGM. Do not treat as live tickets until
 | [RESEARCH-PROMPT-remaining-live-holes-bolt.md](./RESEARCH-PROMPT-remaining-live-holes-bolt.md) | Bolt prompt: locality, place harvest, opening kit/portrait, turn cost |
 | [pack-13-remaining-live-holes-2026-08-15.md](./pack-13-remaining-live-holes-2026-08-15.md) | Locality token, pin allowlist, kit/portrait, turn cost / hang / beat fidelity |
 | [pack-14-isekai-hero-villain-summon-tropes-2026-08-15.md](./pack-14-isekai-hero-villain-summon-tropes-2026-08-15.md) | Hero/villain summon tropes → premade The Summoned Pact (no IP) |
+| [pyoa-story-commission-prompt.md](./pyoa-story-commission-prompt.md) | Prompt to commission more PYOA bibles (spine, stamps, endings) |
 | [MASTER-IMPROVEMENT-PLAN-2026-08-14.md](./MASTER-IMPROVEMENT-PLAN-2026-08-14.md) | Compiled backlog from all packs |
 
 **WOF (World of Fantasy)** — later project, not live. Quarantined under [wof/](./wof/). Rule: `.cursor/rules/wof-sandbox.mdc`.

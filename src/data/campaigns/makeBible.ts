@@ -69,7 +69,7 @@ export function makeBible(opts: {
       description: it.description,
     })),
     startingLocation: opts.startingLocation,
-    replaceDefaultLoadout: opts.replaceDefaultLoadout ?? opts.engineMode === 'rpg',
+    replaceDefaultLoadout: opts.replaceDefaultLoadout ?? (opts.engineMode === 'rpg' || opts.engineMode === 'pyoa'),
     startingContainer: opts.startingContainer,
   };
 }

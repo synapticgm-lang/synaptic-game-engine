@@ -2,6 +2,7 @@ import type { CampaignBible, StarterItem } from '@/data/campaigns/types';
 import { ALL_CAMPAIGN_BIBLES } from '@/data/campaigns';
 import type { CampaignArchetype } from './archetypes';
 import type { Character, Container, EngineMode, GameState, Item, LoreCard, LoreCardType } from './types';
+import { isFictionEngine } from './types';
 import { syncContainerOccupancy } from './inventory';
 
 function snippetType(category: string): LoreCardType {
@@ -17,12 +18,16 @@ export function findBibleForArchetype(
   archetype?: CampaignArchetype
 ): CampaignBible | undefined {
   if (!archetype || archetype === 'ai_random') {
-    return ALL_CAMPAIGN_BIBLES.find((b) => b.engineMode === (engineMode === 'rpg' ? 'litrpg' : engineMode));
+    return ALL_CAMPAIGN_BIBLES.find((b) => b.engineMode === engineMode)
+      ?? ALL_CAMPAIGN_BIBLES.find((b) => isFictionEngine(engineMode) && isFictionEngine(b.engineMode));
   }
   const exact = ALL_CAMPAIGN_BIBLES.find(
-    (b) => b.archetype === archetype && (engineMode === 'rpg' ? b.engineMode === 'litrpg' : b.engineMode === engineMode)
+    (b) => b.archetype === archetype && b.engineMode === engineMode
   );
   if (exact) return exact;
+  if (isFictionEngine(engineMode)) {
+    return ALL_CAMPAIGN_BIBLES.find((b) => b.archetype === archetype && isFictionEngine(b.engineMode));
+  }
   return ALL_CAMPAIGN_BIBLES.find((b) => b.archetype === archetype);
 }
 
@@ -180,7 +185,7 @@ function buildCampaignLoadout(
   bible: CampaignBible,
   playerLevel: number
 ): { inventory: Item[]; containers: Container[] } {
-  const replace = bible.replaceDefaultLoadout === true || bible.engineMode === 'rpg';
+  const replace = bible.replaceDefaultLoadout === true || isFictionEngine(bible.engineMode);
   const containerSpec = bible.startingContainer;
   const campaignReady = bible.starterItems.filter((si) => (si.itemLevel ?? 1) <= playerLevel);
 
@@ -238,7 +243,7 @@ export function reconcileCampaignLoadout(state: GameState): GameState {
   const bible = state.campaignBibleId
     ? ALL_CAMPAIGN_BIBLES.find((b) => b.id === state.campaignBibleId)
     : findBibleForArchetype(state.engineMode, state.campaignArchetype);
-  const shouldReplace = bible?.replaceDefaultLoadout === true || bible?.engineMode === 'rpg';
+  const shouldReplace = bible?.replaceDefaultLoadout === true || isFictionEngine(bible?.engineMode);
   if (!bible || !shouldReplace) return state;
   const kitStale = inventoryHasGenericFantasyKit(state);
   const premiseStale = !state.campaignPremise || !/OPENING KIT/i.test(state.campaignPremise);

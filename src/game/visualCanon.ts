@@ -4,7 +4,7 @@ export type WorldEra = 'modern_earth' | 'medieval_fantasy' | 'story_defined';
 
 export function worldEraForEngine(engineMode: EngineMode | undefined): WorldEra {
   if (engineMode === 'dnd') return 'medieval_fantasy';
-  if (engineMode === 'rpg') return 'story_defined';
+  if (engineMode === 'rpg' || engineMode === 'pyoa') return 'story_defined';
   return 'modern_earth';
 }
 

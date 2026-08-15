@@ -13,6 +13,7 @@ John is playtesting live. Collect issues here. Do not implement until he asks fo
 
 ## Done (already shipped)
 
+- Pick Your Own Adventure is a fourth New Game system; Thornferry Road lives there; more bibles can be commissioned (`2026-08-15g`)
 - Image fail holds the story: captions/prose show while art is pending or failed; player comments stay visible (`2026-08-15f`)
 - Opening name/place swap: “a random location” picks a real place; never the character name or campaign title (`2026-08-15f`)
 - Quest with no context: starter journal unlocks after the opening scene; vague “travel-worn” is not an item; story RPG drops the iron shortsword (`2026-08-15f`)

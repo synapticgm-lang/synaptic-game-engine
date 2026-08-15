@@ -461,7 +461,13 @@ function CampaignCarousel({
                 <p className="text-[11px] leading-relaxed text-slate-400">{c.description}</p>
                 <div className="mt-auto flex items-center gap-1.5 pt-1">
                   <span className="rounded bg-slate-800/80 px-1.5 py-0.5 text-[9px] uppercase tracking-wide text-slate-500">
-                    {c.engineMode === 'dnd' ? '5e Fantasy' : c.engineMode === 'rpg' ? 'Story RPG' : 'LitRPG'}
+                    {c.engineMode === 'dnd'
+                      ? '5e Fantasy'
+                      : c.engineMode === 'pyoa'
+                        ? 'Pick Your Own Adventure'
+                        : c.engineMode === 'rpg'
+                          ? 'Story RPG'
+                          : 'LitRPG'}
                   </span>
                   <span className={`text-[10px] ${ACCENT_ICON[c.accent]} opacity-0 transition-opacity group-hover:opacity-100`}>
                     Select →

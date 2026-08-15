@@ -1,4 +1,5 @@
 import type { CampaignBible } from './types';
+import type { EngineMode } from '@/game/types';
 export type { CampaignBible, LoreSnippet, KeyNPC, StarterQuest, StarterItem, Difficulty, OpeningPrompt } from './types';
 
 import { systemIntegration } from './systemIntegration';
@@ -81,8 +82,9 @@ export const ALL_CAMPAIGN_BIBLES: CampaignBible[] = [
   dungeonTransport,
   fabledLegacy,
   blankCanvas,
-  // Story RPG (fiction-first, multi-genre)
+  // Pick Your Own Adventure (main spine + forks)
   thornferryRoad,
+  // Story RPG (fiction-first, multi-genre)
   saltRoadHeist,
   glassHarborLetters,
   embercourtOath,
@@ -128,13 +130,12 @@ export function formatCampaignStoryName(title: string, at: Date = new Date()): s
   return `${title} — ${date}`;
 }
 
-export function getCampaignBiblesByEngineMode(mode: 'litrpg' | 'dnd' | 'rpg'): CampaignBible[] {
-  if (mode === 'rpg') {
-    const rpgOnly = ALL_CAMPAIGN_BIBLES.filter((c) => c.engineMode === 'rpg');
-    if (rpgOnly.length > 0) return rpgOnly;
-    return ALL_CAMPAIGN_BIBLES.filter((c) => c.engineMode === 'litrpg');
-  }
-  return ALL_CAMPAIGN_BIBLES.filter((c) => c.engineMode === mode);
+export function getCampaignBiblesByEngineMode(mode: EngineMode): CampaignBible[] {
+  const exact = ALL_CAMPAIGN_BIBLES.filter((c) => c.engineMode === mode);
+  if (exact.length > 0) return exact;
+  if (mode === 'pyoa') return ALL_CAMPAIGN_BIBLES.filter((c) => c.engineMode === 'rpg');
+  if (mode === 'rpg') return ALL_CAMPAIGN_BIBLES.filter((c) => c.engineMode === 'litrpg');
+  return exact;
 }
 
 /** Short catalog for UI / docs. */
