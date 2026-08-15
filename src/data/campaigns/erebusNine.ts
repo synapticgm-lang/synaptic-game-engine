@@ -16,6 +16,9 @@ export const erebusNine: CampaignBible = {
     'Swarm-rig survival. The air-lock is failing, Private Vance begs you to open it, and the only nav-drive is in your hands. Side with the miners or Apex — several ways off the rock.',
   licenseNote:
     'Original SynapticGM dark sci-fi. Corporate dystopia, biological swarms, blue-collar survival tropes. Not based on Aliens, Fable, Albion, or any named series, game, or film.',
+  styleRail: `FORK STYLE (BINDING): seal a door, vent a corridor, share air, leave someone, override a lock. Do not offer take-hand / shove-Vance-as-bait / hide-the-drive / tap-the-drive unless they typed that.
+SPINE OVERRIDE: Survival clock — one safe room, one bad call about the swarm, then who is on the pod. Not a two-faction tour.
+ENDING LOGIC: Key on who is breathing at evac and whether the fleet is warned. Not a MacGuffin shop.`,
   startingLocation: 'Air-Lock Bay 4, Deep-Seam Mining Rig Charybdis',
   replaceDefaultLoadout: true,
   startingContainer: { id: 'e9-pockets', name: 'Fatigue pockets', capacity: 14 },
@@ -26,7 +29,7 @@ export const erebusNine: CampaignBible = {
     startLine: 'The bulkhead is already failing. Confirm your name, then where this breach opens.',
   },
   openingHook:
-    'Emergency strobes paint Air-Lock Bay 4 in bloody flashes. The outer bulkhead shudders under a chitinous impact. Scorched wiring fills your lungs. Private Vance clutches a ruptured plasma-rifle and begs you to override the lockdown so he can run. The extraction shuttle’s nav-drive — a heavy beryllium sphere, the colony’s only remaining flight coordinates — sits ice-cold in your hands. A wet clicking screech from the vents above. The next page waits on whether you open that lock for him.',
+    'Emergency strobes paint Air-Lock Bay 4 in bloody flashes. The outer bulkhead shudders under a chitinous impact. Scorched wiring fills your lungs. Private Vance clutches a ruptured plasma-rifle and begs you to override the lockdown so he can run. The extraction shuttle’s nav-drive — a heavy beryllium sphere, the colony’s only remaining flight coordinates — sits ice-cold in your hands. A wet clicking screech from the vents above. The next page waits on the lock, the vents, and whether you share the air.',
   openingPrompts: [
     { id: 'name', kind: 'name', question: 'Give the name this tale will use.' },
     {
@@ -48,18 +51,18 @@ export const erebusNine: CampaignBible = {
 INNER VOICE (BINDING): Typed comments, jokes, and doubts ARE the hero thinking or speaking. Mirror them in <thought> or dialogue, then the world answers. Never overwrite their personality. Honor PERSPECTIVE and the session’s visual style. No meta (“the sheet”, “alignment”).
 
 ALLY / BETRAY / PARTY / SOLO (BINDING):
-- Private Vance begs the override. Open it with him = Walks With You. Seal him in = Rival. Leave him and crawl away = Left. Stamps stick; betrayal is not forgiven.
+- Private Vance begs the override. Open the lock with him = Walks With You. Seal him in = Rival. Crawl away = Left. Stamps stick.
 - Foreman Rigg (miners / Drill Bosses) vs Director Sterling (Apex Executives). Ally or sell out. Both remember.
 - No alignment-meter speech. No licensed xenomorph lore, face-huggers, or named film plots — this swarm is original chitin and wet clicking, bred by Apex.
 
 STORY SPINE (skeleton — unique prose each run; do not lecture):
-1. Air-Lock Bay 4. Nav-drive in hand. Vance’s plea. Something in the vents. First player comment is in-character.
-2. Collapsed mining tunnels. Drill Bosses / Foreman Rigg. Heavy munitions vs stealing fusion-charges.
-3. Barricaded luxury suites. Apex retrieval team / Director Sterling. Clearance codes vs feeding them to the swarm.
-4. Hive Core: atmospheric processors become a breeding ground; find the primary relay.
-5. Transmission: decode the nav-drive — Apex bred the swarm for a bioweapon contract.
-6. Evac squeeze: miners, execs, and Vance-as-rival (if stamped) converge on the last drop-ship.
-7. Resolve the drive: deliver to the fleet, keep for blackmail, sell to a rival corp, burn in the reactor, or forge coordinates to strand everyone. Then play the matching ending. Never end in the opening hour. Never name endings.
+1. Air-Lock Bay 4. Nav-drive. Vance’s plea. Something in the vents. First player comment is in-character.
+2. One sealed room and a choice about air. Do not tour the whole rig.
+3. One bad call about the swarm (a vent, a scream, a door).
+4. The relay — only when they go looking.
+5. Apex bred the swarm. Who they tell is the fork.
+6. Last drop-ship. Who is on it.
+7. Ending from who is breathing and whether the fleet is warned. Never end in the opening hour. Never name endings.
 
 SIDE SEEDS (writer only — spawn when earned; never dump):
 - Hydroponics: carnivorous flora digesting a heavy assault mech.
@@ -71,13 +74,13 @@ SIDE SEEDS (writer only — spawn when earned; never dump):
 
 OPENING KIT (AUTHORITY): Scorched hazard fatigues and the Beryllium Nav-Drive are the kit. Vance’s ruptured rifle is his, broken — not yours unless the ledger says you took it. Never invent an iron shortsword.
 
-ENDINGS (pick one after beat 7; never list in play):
-- Honest delivery + Vance stayed: fleet gets the drive; Apex exposed; swarm glassed; whistleblower payout split.
-- Sell the bio-data + Vance left or rival: rival corp penthouse. If Rival, he bypasses security; a smuggled swarm-spawn in the dark; cut to black.
-- Burn + Vance stayed: nav-drive into the reactor; localized fusion; rig, swarm, secrets, and both of you into the void.
-- Forge + solo: fake coordinates send Apex’s rescue into a dying orbit; you take the only pod; no Vance left to stop you.
-- Hoard + Vance left: keep the drive unused; paranoid deep-space drifter hunted by Apex wet-work; isolation eats you.
-- Honest delivery + solo: fleet gets the truth; an Apex plant on the extraction team puts you out an airlock halfway home.
+ENDINGS (pick one after beat 7; never list in play — keyed to the pod and the warning):
+- Fleet warned + Vance stayed: swarm glassed; Apex exposed; you two split the payout.
+- You take the only air and leave them: the pod is yours; no Vance left to stop you.
+- Drive into the reactor + Vance stayed: the rig, the swarm, and both of you into the void.
+- You sell the bio-data and live rich. If Vance is Rival, a smuggled swarm-spawn in the dark; cut to black.
+- You keep the drive and drift: hunted; isolation eats you.
+- Fleet warned + solo: an Apex plant puts you out an airlock halfway home.
 
 Do not name the Hive Core as a visited place until they are on that descent. Unique story every turn.`,
 

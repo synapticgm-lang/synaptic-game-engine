@@ -17,6 +17,8 @@ export const thornferryRoad: CampaignBible = {
     'Wren Holt offers to walk the road with you — or you go alone. Ally with the mill, sell out to the magistrate, optional side work, several endings.',
   licenseNote:
     'Original SynapticGM setting. Uses common moral-choice / companion / village-road tropes. Not based on Fable, Albion, or any named game, novel, or show.',
+  styleRail: `FORK STYLE (BINDING): walk with Wren, go alone, take Pell’s coin, help or rob at the ford, bless or refuse the chapel. Do not offer shove-Wren-as-bait / hide-the-charter / tap-the-charter unless they typed that.
+ENDING LOGIC: Key on where the Millstone Charter went and whether Wren still walks with them. Local mill politics — not a god-emperor ending.`,
   startingLocation: 'the mill landing at Thornferry',
   replaceDefaultLoadout: true,
   startingContainer: { id: 'tf-pack', name: 'Travel pack', capacity: 16 },

@@ -16,6 +16,9 @@ export const resinSonata: CampaignBible = {
     'The High-Architect is dead in the Glass Atrium, the last uncorrupted Eden-Resin is in a brass syringe in your hand, and Aris offers the maintenance shafts before a Brass-Gargant arrives. Laborers or aristocrats — several endings.',
   licenseNote:
     'Original SynapticGM retro-futuristic biological-horror tropes (underwater dystopia, genetic splicing, ruined aristocracy). Not based on BioShock, Fable, Albion, or any named game, film, or novel.',
+  styleRail: `FORK STYLE (BINDING): dose or don’t, follow the drip, leave Aris, seal a hatch. Do not offer shove-him-at-the-Gargant / hide-the-syringe / inject-on-the-spot unless they typed that.
+SPINE OVERRIDE: Underwater horror — one dry room, one person already changing, then the parasite speaks. Not a two-faction tour.
+ENDING LOGIC: Key on whether the parasite lives and who made it to the surface.`,
   startingLocation: 'the Glass Atrium of the Grand Funicular',
   replaceDefaultLoadout: true,
   startingContainer: { id: 'rs-coat', name: 'Diving-coat pockets', capacity: 14 },
@@ -26,7 +29,7 @@ export const resinSonata: CampaignBible = {
     startLine: 'The atrium already groans. Confirm your name, then where this pressure opens.',
   },
   openingHook:
-    'Brass trim groans under the subterranean ocean. Icy seawater weeps through the cracks and pools around the dead High-Architect. In your shaking hands is the Sovereign Syringe — the last uncorrupted vial of Eden-Resin in ruined Opaline. Across the shattered mosaic, Aris the rogue chirurgeon pries a bloody wrench from a mutated socialite’s skull and extends a resin-stained glove: he knows the maintenance shafts to the lower pressure-levels. Heavy Brass-Gargant footsteps echo down the promenade. The next page waits on whether you take his hand.',
+    'Brass trim groans under the subterranean ocean. Icy seawater weeps through the cracks and pools around the dead High-Architect. In your shaking hands is the Sovereign Syringe — the last uncorrupted vial of Eden-Resin in ruined Opaline. Across the shattered mosaic, Aris the rogue chirurgeon pries a bloody wrench from a mutated socialite’s skull and extends a resin-stained glove: he knows the maintenance shafts to the lower pressure-levels. Heavy Brass-Gargant footsteps echo down the promenade. The next page waits on the syringe, the shafts, and whether you follow the drip.',
   openingPrompts: [
     { id: 'name', kind: 'name', question: 'Give the name this tale will use.' },
     {
@@ -50,17 +53,17 @@ ENGINE (BINDING): This is Pick Your Own Adventure, not live LitRPG chrome or 5e 
 INNER VOICE (BINDING): Typed comments, jokes, and doubts ARE the hero thinking or speaking. Mirror them in <thought> or dialogue, then the world answers. Never overwrite their personality. Honor PERSPECTIVE. No meta. Never name BioShock, Rapture, plasmids, ADAM, Big Daddies, Little Sisters, or any licensed series.
 
 ALLY / BETRAY / PARTY / SOLO (BINDING):
-- Aris offers the shafts. Take his hand = Walks With You. Shove him at the Gargant = Rival. Hide the syringe and surrender = Left (or Gargant path). Stamps stick; betrayal is violently remembered and never forgiven.
+- Aris offers the shafts. Go with him = Walks With You. Leave him to the Gargant = Rival. Surrender the atrium = Left. Stamps stick.
 - Foreman Galt (Muck-Walkers) vs Maestro Valerius (Gilded Chorus). Ally or sell out. Both remember.
 
 STORY SPINE (skeleton — unique prose each run; do not lecture):
-1. Glass Atrium. High-Architect dead. Sovereign Syringe in hand. Aris’s offer. Brass-Gargant coming. First player comment is in-character.
-2. Dredge-Works. Muck-Walkers / Galt. Tunnel access and brute force vs turning on automated turrets for loot.
-3. Velvet Promenade. Gilded Chorus / Valerius. Passcodes vs opening floodgates for the laborers.
-4. Filtration Core — geothermal plant and the centrifuge that can read the Syringe.
-5. Administrator's truth: Eden-Resin is not a miracle; it is a sentient parasite farming the city for biomass.
-6. Pressure clash: Walkers, Chorus, and Aris-as-rival (if stamped) converge on Bathysphere Bay as the ocean breaches.
-7. Resolve the Syringe: deliver to the surface, keep for power, sell to a faction, burn in the vents, or forge a fake cure to enslave survivors. Then play the matching ending. Never end in the opening hour. Never name endings.
+1. Glass Atrium. Dead Architect. Syringe. Aris. Gargant coming. First player comment is in-character.
+2. One dry room. One person already changing. Do not tour two factions as a checklist.
+3. The centrifuge — only when they go looking.
+4. Eden-Resin is a parasite. It can speak.
+5. Who they tell is the fork.
+6. The ocean breaches. Aris-as-rival (if stamped) may be in the water.
+7. Ending from whether the parasite lives and who made the surface. Never end in the opening hour. Never name endings.
 
 SIDE SEEDS (writer only — spawn when earned; never dump):
 - Flooded neon opera: a mutated soprano still shatters glass when you swim past.
@@ -73,13 +76,13 @@ SIDE SEEDS (writer only — spawn when earned; never dump):
 
 OPENING KIT (AUTHORITY): Tarnished art-deco diving coat and the Sovereign Syringe are the kit. Never invent an iron shortsword or a starter firearm. Injecting a micro-dose is a scene choice, not starting loot. Coat “resistance” is flavor for neoprene and brass — not a real armor stat block.
 
-ENDINGS (pick one after beat 7; never list in play):
-- Honest delivery + Aris stayed: bathysphere to the surface; syringe to a health body; a cure; you two are wealthy whistleblowers.
-- Sell to Valerius + Aris left or rival: dry penthouse at the top. If Rival, he bypasses the bio-scanners; rusted infected needle; cut to black.
-- Burn + Aris stayed: syringe into geothermal magma; parasite dies; grid collapses; last escape pod; Opaline left to the dark.
-- Forge + solo: mass-produce a tainted addictive resin; survivors as thralls; no Aris left to make a counter-agent; you as the new High-Architect.
-- Hoard + Aris left: keep unused in a Dredge-Works bunker; hunted by mutants and elites; isolation and the Resin’s whisper drive you mad.
-- Honest delivery + solo: surface authorities get the truth; without a doctor watching your exposure, trace-spores take hold in quarantine; they execute the mutation they cannot treat.
+ENDINGS (pick one after beat 7; never list in play — keyed to the parasite and the surface):
+- Surface with a cure + Aris stayed: a health body synthesizes it; you two live.
+- Parasite burned in the vents + Aris stayed: last pod; Opaline left to the dark.
+- You stay and rule the infected + solo: no Aris left to make a counter-agent.
+- You sell the last strain: dry penthouse. If Aris is Rival, an infected needle; cut to black.
+- You hoard the unused vial: the Resin whispers you mad.
+- Surface + solo: quarantine; trace-spores; they execute what they cannot treat.
 
 Do not name the Filtration Core as visited until they breach it. Unique story every turn.`,
 

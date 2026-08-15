@@ -171,14 +171,31 @@ export function formatCampaignRails(state: GameState): string {
   const canon = answers && Object.keys(answers).length
     ? `\nPLAYER CANON (AUTHORITY — facts extracted from their answers; rewrite in System/narrator voice, never quote I/my chat):\n${Object.entries(answers).map(([id, text]) => `- ${id}: ${text}`).join('\n')}`
     : '';
-  const culpritName = state.hiddenStamps?.culpritName?.trim();
-  const culpritRole = state.hiddenStamps?.culpritRole?.trim();
-  const culpritMotive = state.hiddenStamps?.culpritMotive?.trim();
-  const culpritRail = culpritName
-    ? `HIDDEN CULPRIT (ENGINE AUTHORITY — never name, hint, or contradict until the player earns the reveal or the ending): The hand that killed Lord Harrington is ${culpritName}${culpritRole ? ` (${culpritRole})` : ''}.${culpritMotive ? ` Motive: ${culpritMotive}` : ''} Others may lie or cover it up. Do not invent a different true killer.`
-    : '';
+  const stamps = state.hiddenStamps;
+  const culpritName = stamps?.culpritName?.trim();
+  const culpritRole = stamps?.culpritRole?.trim();
+  const culpritMotive = stamps?.culpritMotive?.trim();
+  const hiddenLines: string[] = [];
+  if (culpritName) {
+    hiddenLines.push(
+      `HIDDEN CULPRIT (ENGINE AUTHORITY — never name, hint, or contradict until the player earns the reveal or the ending): The hand that killed Lord Harrington is ${culpritName}${culpritRole ? ` (${culpritRole})` : ''}.${culpritMotive ? ` Motive: ${culpritMotive}` : ''} Others may lie or cover it up. Do not invent a different true killer.`
+    );
+  }
+  if (stamps?.clueWeapon || stamps?.clueTell || stamps?.clueCover) {
+    hiddenLines.push(
+      `HIDDEN CLUES (ENGINE AUTHORITY — plant only when the player searches, asks, or handles evidence; never dump): weapon tell: ${stamps.clueWeapon ?? '—'}; scene tell: ${stamps.clueTell ?? '—'}; cover story: ${stamps.clueCover ?? '—'}. Do not invent a second murder weapon.`
+    );
+  }
+  if (stamps?.accusedName?.trim()) {
+    const match = stamps.accusedId && stamps.culpritId && stamps.accusedId === stamps.culpritId;
+    hiddenLines.push(
+      `HIDDEN ACCUSED (ENGINE AUTHORITY — the player named ${stamps.accusedName}. Treat that as a locked public theory.${match ? ' They named the true killer — do not confirm until the vault or a confession.' : ' They named the wrong person. Graves and gossip may still believe them. The true killer is unchanged.'}`
+    );
+  }
+  const culpritRail = hiddenLines.join('\n');
+  const styleRail = state.campaignStyleRail?.trim();
   return `=== CAMPAIGN GUIDE BOOK (RAILS — DO NOT CONTRADICT) ===
-${premise}${canon}${culpritRail ? `\n${culpritRail}` : ''}
+${premise}${canon}${culpritRail ? `\n${culpritRail}` : ''}${styleRail ? `\n${styleRail}` : ''}
 Stay inside this premise. Side scenes, exploration, and side quests are allowed — they must still be THIS world, not a different genre.
 PREMISE CONTINUITY (BINDING): If the premise is modern Earth being Integrated, the player already lived here. They did not "arrive" as a fantasy traveler. Opening kit / worn clothes are authority. Never invent an iron shortsword or leather tunic that is not in Inventory.
 SITUATION QUESTIONS: "What's going on?" is answered from this premise + the last scene (street, crystals, people, System). Not from inventory labels. Not "the sheet".

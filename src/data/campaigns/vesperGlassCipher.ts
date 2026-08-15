@@ -17,6 +17,9 @@ export const vesperGlassCipher: CampaignBible = {
     'Dark aether heist. You stole a humming cipher from Oakhaven’s flooded archives. Silas offers a way out. Trust him or use him, then choose the Rust-Barons, the Seers, or no one.',
   licenseNote:
     'Original SynapticGM dark-aether fantasy. Tropes only. Not based on Fable, Albion, or any named series, game, or novel.',
+  styleRail: `FORK STYLE (BINDING): take the smuggler route, bribe a pipe-listener, smash a soul-lamp, ask Silas what he heard, play one line of the glass. Do not offer take-hand / shove-as-bait / hide-cylinder / tap-glass unless they typed that.
+SPINE OVERRIDE: Occult archive heist — one liar, one costly reading, then who hears the truth. Not a two-faction tour.
+ENDING LOGIC: Key on who heard the unedited history and whether Silas still has a sister to save.`,
   startingLocation: 'the Flooded Archives of Oakhaven',
   replaceDefaultLoadout: true,
   startingContainer: { id: 'vg-coat', name: 'Trench-coat pockets', capacity: 14 },
@@ -27,7 +30,7 @@ export const vesperGlassCipher: CampaignBible = {
     startLine: 'The bells are already ringing. Confirm your name, then where this theft opens.',
   },
   openingHook:
-    'Water drips onto the cracked leather of the tome you just stole. The brass spine of the Vesper-Glass hums warm against your chest. Archivist Guild bells scream down the flooded subterranean tunnel. Beside you, the thief Silas wipes blood from a split lip and offers a soot-stained hand — the smuggler’s route to the surface, before the tunnel comes down. Armored boots splash behind you. Guild Enforcers. The next page waits on whether you take his hand.',
+    'Water drips onto the cracked leather of the tome you just stole. The brass spine of the Vesper-Glass hums warm against your chest. Archivist Guild bells scream down the flooded subterranean tunnel. Beside you, the thief Silas wipes blood from a split lip and offers a soot-stained hand — the smuggler’s route to the surface, before the tunnel comes down. Armored boots splash behind you. Guild Enforcers. The next page waits on the route, the bells, and whether you trust him.',
   openingPrompts: [
     { id: 'name', kind: 'name', question: 'Give the name this tale will use.' },
     {
@@ -49,18 +52,18 @@ export const vesperGlassCipher: CampaignBible = {
 INNER VOICE (BINDING): Typed comments, jokes, and doubts ARE the hero thinking or speaking. Mirror them in <thought> or dialogue, then the world answers. Never overwrite their personality. Honor PERSPECTIVE and the session’s visual style. No meta (“the sheet”, “alignment”).
 
 ALLY / BETRAY / PARTY / SOLO (BINDING):
-- Silas Blackwood offers the smuggler route. Take his hand = Walks With You. Leave him = Left. Shove/sell him = Rival. Stamps stick; betrayal is not forgiven.
+- Silas offers the smuggler route. Go with him = Walks With You. Leave him = Left. Sell him to the bells = Rival. Stamps stick.
 - Baroness Vane (Rust-Barons) vs First-Voice Elara (Chorus of Seers). Ally or sell out. Both remember.
 - No alignment-meter speech. Mercy and cruelty have social cost.
 
 STORY SPINE (skeleton — unique prose each run; do not lecture):
-1. Flooded Archives. Vesper-Glass on you. Silas’s hand. Enforcers behind. First player comment is in-character.
-2. Under-Bazaar. Rust-Barons / Baroness Vane. Safe passage vs quick resources. One pressure, not three quests.
-3. Glass Wastes. Chorus of Seers / Elara. Decode help vs bounty hunters.
-4. Zenith Spire infiltration — the reading machine.
-5. Revelation: unedited history; ruling class are usurpers.
-6. Convergence: whoever you did not burn arrives (Barons, Chorus, Silas-as-rival).
-7. Resolve the cylinder: deliver, keep, sell, burn, or forge a new history. Then play the matching ending. Never end in the opening hour. Never name endings.
+1. Flooded Archives. Cylinder on you. Bells. Silas’s route. First player comment is in-character.
+2. One source who will lie for coin (Bazaar or a pipe-listener). One pressure.
+3. A reading that costs a memory or a name. Do not tour two factions as a checklist.
+4. The machine that can play the glass — only when they seek it.
+5. Unedited history: the ruling class are usurpers. Who they tell is the fork.
+6. Whoever they burned arrives (Barons, Chorus, Silas-as-rival).
+7. Ending from who heard the truth and whether Silas’s sister still lives. Never end in the opening hour. Never name endings.
 
 SIDE SEEDS (writer only — spawn when earned; never dump):
 - Sunken District: a clockwork leviathan that wakes to one tuning-fork pitch.
@@ -73,13 +76,13 @@ SIDE SEEDS (writer only — spawn when earned; never dump):
 
 OPENING KIT (AUTHORITY): Oil-stained trench coat and the Vesper-Glass Cylinder are the kit. Never invent an iron shortsword or traveler tunic unless the ledger has it.
 
-ENDINGS (pick one after beat 7; never list in play):
-- Honest delivery + Silas stayed: Chorus broadcasts the truth; revolution; Silas’s sister freed; you are hailed.
-- Sell to Vane + Silas left or rival: truth buried; luxurious isolation. If Rival, Silas reaches the penthouse and the blade.
-- Burn + Silas stayed: smash the cylinder in the Spire; penniless in the Wastes, hunted, free of the city’s politics.
-- Forge + solo: rewrite reality with you as ruler; Silas is written out of existence.
-- Hoard + Silas left: keep the cylinder unused; paranoid wanderer, hunted by everyone, the secret eats you.
-- Honest delivery + solo: Chorus restores history; Elara kills you so no one else knows how the truth was taken.
+ENDINGS (pick one after beat 7; never list in play — keyed to who heard the truth):
+- Truth broadcast + Silas stayed: revolution; his sister freed; you are hailed.
+- Truth sold to Vane: buried; luxurious isolation. If Silas is Rival, he reaches you with a blade.
+- Cylinder smashed + Silas stayed: penniless in the Wastes, hunted, free of the city’s politics.
+- You keep the only copy and tell no one: the secret eats you; hunted by everyone.
+- You play a forged history with yourself as savior: Silas is written out if he Left.
+- Truth to the Chorus + solo: history restored; Elara kills the thief so the method dies with you.
 
 Do not name the Zenith Spire as a visited place until they are on that road. Unique story every turn.`,
 

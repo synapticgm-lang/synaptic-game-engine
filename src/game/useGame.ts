@@ -66,6 +66,7 @@ import { applyFactLocks, detectFactLockViolations } from './factLocks';
 import { dropInsultGear } from './wornGear';
 import { needsPortraitRefresh, paperDollPrompt, portraitCacheKey } from './inventoryArt';
 import { formatCampaignStoryName, getCampaignBibleById, isNsfwCampaign } from '@/data/campaigns';
+import { applyAccusationFromInput } from './mysteryCulprit';
 import { parsePlayerIntent, groundPlayerAction } from './intentParser';
 import { interpretPlayerUtterance, isJunkSetupValue } from './playerUtterance';
 import { runPlayerCheck } from './checkMath';
@@ -1548,6 +1549,13 @@ export function useGame() {
           : grounded.intent.kind !== 'other'
             ? grounded.intent
             : parsePlayerIntent(sanitizedInput, liveCurrent);
+
+      const accuseBible = getCampaignBibleById(liveCurrent.campaignBibleId ?? '');
+      const accusedState = applyAccusationFromInput(liveCurrent, sanitizedInput, accuseBible);
+      if (accusedState !== liveCurrent) {
+        liveCurrent = accusedState;
+        stateRef.current = accusedState;
+      }
 
       const check = runPlayerCheck(liveCurrent, intentForMandate, sanitizedInput);
       const d20Roll = check.d20;

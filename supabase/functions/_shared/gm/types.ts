@@ -346,6 +346,8 @@ export interface GameState {
   campaignPremise?: string | null;
   /** Writer-only stamps (e.g. mystery culprit). Never show in player HUD. */
   hiddenStamps?: Record<string, string>;
+  /** Genre-native PYOA fork/spine/ending rails. Writer-only. */
+  campaignStyleRail?: string | null;
   /** Campaign-start interview (where / clothes / folk). Undefined on old saves = already playing. */
   openingEstablishment?: OpeningEstablishment;
   /** After the last establishment answer, generate the real opening scene once. */

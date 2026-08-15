@@ -111,4 +111,15 @@ export interface CampaignBible {
    * Writer must honor HIDDEN CULPRIT in the rails — never invent a different killer.
    */
   mysteryCulprits?: MysteryCulprit[];
+  /** Picked at New Game with the culprit. Writer may hint only when the player searches. */
+  mysteryCluePools?: {
+    weapons: string[];
+    tells: string[];
+    covers: string[];
+  };
+  /**
+   * Injected every turn (not sliced with premise). Genre-native forks, spine, ending logic.
+   * Stops every PYOA playing as take-hand / shove-as-bait / hide-MacGuffin / tap-MacGuffin.
+   */
+  styleRail?: string;
 }

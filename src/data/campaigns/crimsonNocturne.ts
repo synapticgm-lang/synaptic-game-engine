@@ -16,6 +16,9 @@ export const crimsonNocturne: CampaignBible = {
     'Blood on your lace cuffs, the Antediluvian Ampoule torn from your slaughtered sire’s ashes, and the Inquisition’s blessed fire already at the mausoleum doors. Julian offers the catacombs — Silk Court or Ashen Dawn, several endings.',
   licenseNote:
     'Original SynapticGM gothic vampire tropes (immortality as a cage, night courts, holy inquisitions, a cursed vial). Not based on Vampire Chronicles, Vampire: The Masquerade, Twilight, Buffy, Castlevania, Fable, Albion, or any named novel, game, or film. Do not use Camarilla, Kindred, Disciplines, Blood Bond, or Gehenna.',
+  styleRail: `FORK STYLE (BINDING): drink, refuse, take Julian into the dark, kneel to the hunters. Do not offer shove-him-into-the-fire / hide-the-Ampoule / lick-the-vial unless they typed that.
+SPINE OVERRIDE: Gothic vampire — first thirst, one court debt, then the cure is real. Not a two-faction tour.
+ENDING LOGIC: Key on whether anyone drinks the cure and who still walks in the sun.`,
   startingLocation: 'The Weeping Mausoleum of House Valerius',
   replaceDefaultLoadout: true,
   startingContainer: { id: 'cn-coat', name: 'Frock-coat pockets', capacity: 14 },
@@ -26,7 +29,7 @@ export const crimsonNocturne: CampaignBible = {
     startLine: 'The rams are already at the stone. Confirm your name, then where this mausoleum opens.',
   },
   openingHook:
-    'Blood darkens the lace at your cuffs. You ripped the Antediluvian Ampoule from your slaughtered sire’s ashes as the Inquisition’s battering rams shook the Weeping Mausoleum and blessed fire licked the marble. Julian weeps scarlet tears on a sarcophagus and offers the catacombs. The next page waits on whether you take his hand.',
+    'Blood darkens the lace at your cuffs. You ripped the Antediluvian Ampoule from your slaughtered sire’s ashes as the Inquisition’s battering rams shook the Weeping Mausoleum and blessed fire licked the marble. Julian weeps scarlet tears on a sarcophagus and offers the catacombs. The next page waits on the vial, the fire, and whether you drink.',
   openingPrompts: [
     { id: 'name', kind: 'name', question: 'Give the name this tale will use.' },
     {
@@ -50,17 +53,17 @@ ENGINE (BINDING): This is Pick Your Own Adventure, not live LitRPG chrome or 5e 
 INNER VOICE (BINDING): Typed comments, jokes, and doubts ARE the hero thinking or speaking. Mirror them in <thought> or dialogue, then the world answers. Never overwrite their personality. Honor PERSPECTIVE. No meta. Never name Vampire Chronicles, Lestat, Anne Rice, Vampire: The Masquerade, Camarilla, Kindred, Disciplines, Blood Bond, Gehenna, Twilight, Buffy, Castlevania, Fable, or Albion. A masked ball is a party, not a vampire law.
 
 ALLY / BETRAY / PARTY / SOLO (BINDING):
-- Julian offers the catacombs. Take his hand = Walks With You. Shove him into the blessed fire = Rival. Conceal the Ampoule and feign mortal = Left (or Inquisition path). Stamps stick; betrayal is repaid in blood and never forgiven.
+- Julian offers the catacombs. Take him into the dark = Walks With You. Leave him to the fire = Rival. Kneel to the hunters = Left. Stamps stick.
 - Marquise Elara (Silk Court) vs Father Silas (Order of the Ashen Dawn). Ally or sell out. Both remember.
 
 STORY SPINE (skeleton — unique prose each run; do not lecture):
-1. Weeping Mausoleum of House Valerius, Lacrimosa. Sire already ash. Antediluvian Ampoule in hand. Julian’s offer. Inquisition rams and blessed fire. First player comment is in-character. Mausoleum escape: party, solo, or bait with Julian.
-2. Silk Court opera. Marquise Elara. Ally for invitations and night-carriages, or sell the Ampoule’s secret to her.
-3. Ashen Dawn cathedrals. Father Silas. Ally for sanctuary and holy cover, or hand him a weapon against night-walkers.
-4. Cathedral of Whispers — Altar of the Firstborn. Stone that can read the Ampoule.
-5. Revelation: the Ampoule is a cure that strips immortality. It is not a key to walking in the sun while remaining eternal.
-6. Danse Macabre: Silk Court, Ashen Dawn, and Julian-as-rival (if stamped) converge on the cathedral floor as the music starts.
-7. Resolve the Ampoule: deliver it as a true cure, keep it, sell it, burn it, or forge a false sun-walking draught. Then play the matching ending. Never end in the opening hour. Never name endings.
+1. Weeping Mausoleum. Sire already ash. Ampoule. Julian. Blessed fire. First player comment is in-character.
+2. First thirst. One court debt. Do not tour two factions as a checklist.
+3. The altar that can read the Ampoule — only when they go looking.
+4. The Ampoule is a cure that strips immortality. Not a sun-walking key.
+5. Who they tell is the fork.
+6. Danse Macabre. Julian-as-rival (if stamped) may already be in the choir.
+7. Ending from whether anyone drinks the cure and who still walks in the sun. Never end in the opening hour. Never name endings.
 
 SIDE SEEDS (writer only — spawn when earned; never dump):
 - A chandelier of crystallized prince-blood still drips when the opera house goes dark.
@@ -73,13 +76,13 @@ SIDE SEEDS (writer only — spawn when earned; never dump):
 
 OPENING KIT (AUTHORITY): Midnight Damask Frock Coat and the Antediluvian Ampoule are the kit. Never invent an iron shortsword or a starter firearm. The coat is funeral cloth — flavor only, not a real armor stat block. No weapons at start.
 
-ENDINGS (pick one after beat 7; never list in play):
-- Honest cure + Julian stayed: you both drink; immortality goes; two mortals walk into a short, bright life.
-- Sell to Elara + Julian left or rival: her tyrant’s court. If Rival, his fangs find you at her masked ball; cut to black.
-- Burn + Julian stayed: Ampoule into blessed fire; the cure is gone; you two walk as outcasts, hunted by court and church.
-- Forge + solo: a false sun-walking draught; you walk the day; the others go to ash; no Julian left to warn them.
-- Hoard + Julian left: unused in a paranoid vault; every footstep a thief; never a night you trust the lock.
-- Honest cure + solo: you drink and become mortal; without a witness, Father Silas executes the newly mortal you as proof the night can die.
+ENDINGS (pick one after beat 7; never list in play — keyed to the cure and the sun):
+- You both drink: two mortals, a short bright life.
+- Cure burned + Julian stayed: outcasts in the rain; the night stays eternal.
+- You drink alone: Silas executes the newly mortal you.
+- You sell the night: Elara’s court. If Julian is Rival, fangs at the ball; cut to black.
+- You walk the day and leave the others to ash + solo: no Julian left to warn them.
+- Unused in a vault: every footstep a thief.
 
 Do not name the Cathedral of Whispers as visited until they breach it. Unique story every turn.`,
 

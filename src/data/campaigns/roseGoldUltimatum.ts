@@ -16,6 +16,9 @@ export const roseGoldUltimatum: CampaignBible = {
     'The Bridal Dossier is in your clutch, Julian is pounding on the powder-room door, and Chloe knows the laundry chutes. High-society scandal, several endings.',
   licenseNote:
     'Original SynapticGM romantic-comedy. Cutthroat wedding planners, high-society gossip, big-city scandal tropes. Not based on Fable, Albion, or any named series, film, or novel.',
+  styleRail: `FORK STYLE (BINDING): lie for Chloe, leak a name, refuse Julian’s frame, walk out, kiss or don’t. Do not offer shove-Chloe / hide-the-dossier / hairspray-fight unless they typed that.
+SPINE OVERRIDE: Social romance — one brunch lie, one person you can ruin, then the wedding you stop or save. Not a two-faction war.
+ENDING LOGIC: Key on who you still love and whether the press has the files.`,
   startingLocation: 'the VIP Powder Room at the Starlight Gala',
   replaceDefaultLoadout: true,
   startingContainer: { id: 'rg-clutch', name: 'Clutch and hidden dress pockets', capacity: 12 },
@@ -26,7 +29,7 @@ export const roseGoldUltimatum: CampaignBible = {
     startLine: 'Julian is already knocking. Confirm your name, then where this gala crisis opens.',
   },
   openingHook:
-    'The bride sobs in the corner, mascara on a ten-thousand-dollar silk gown. The Bridal Dossier’s rose-gold drive sits heavy in your clutch. The bathroom door jiggles. Julian’s manicured knock hits the marble: open up. Beside you, your fellow assistant Chloe vibrates — she knows the laundry chutes if you trust her. The next page waits on whether you take her hand.',
+    'The bride sobs in the corner, mascara on a ten-thousand-dollar silk gown. The Bridal Dossier’s rose-gold drive sits heavy in your clutch. The bathroom door jiggles. Julian’s manicured knock hits the marble: open up. Beside you, your fellow assistant Chloe vibrates — she knows the laundry chutes if you trust her. The next page waits on the door, the dossier, and whether you lie for her.',
   openingPrompts: [
     { id: 'name', kind: 'name', question: 'Give the name this tale will use.' },
     {
@@ -48,18 +51,18 @@ export const roseGoldUltimatum: CampaignBible = {
 INNER VOICE (BINDING): Typed comments, jokes, and doubts ARE the hero thinking or speaking. Mirror them in <thought> or dialogue, then the world answers. Never overwrite their personality. Honor PERSPECTIVE and the session’s visual style. No meta (“the sheet”, “alignment”).
 
 ALLY / BETRAY / PARTY / SOLO (BINDING):
-- Chloe Summers offers the laundry chute. Take her hand = Walks With You. Shove her at Julian = Rival. Leave her and slip the service hall = Left. Stamps stick; high-society betrayal is not forgiven.
+- Chloe offers the laundry chute. Go with her = Walks With You. Throw her to Julian = Rival. Slip the service hall alone = Left. Stamps stick.
 - Vivian Sterling (Platinum Swans) vs Bexley (PR Cabal / The Hive). Ally or sell out. Both remember.
 - Julian is the rival at the door, not a silent extra. No alignment-meter speech.
 
 STORY SPINE (skeleton — unique prose each run; do not lecture):
-1. VIP Powder Room. Dossier in the clutch. Chloe’s offer. Julian knocking. First player comment is in-character.
-2. Country-club brunch. Platinum Swans / Vivian. Elite access vs leaking their dietary secrets to the press.
-3. The Hive (neon influencer HQ). Bexley’s PR Cabal. Viral cover vs selling them to paparazzi.
-4. Bridal Expo undercover — find a laptop that can decrypt the Dossier.
-5. Scandal: the city’s most eligible bachelor is broke; Swans have been faking marriages for tax evasion.
-6. Runway showdown: Swans, influencers, and Chloe-as-rival (if stamped) converge on a premier bridal catwalk.
-7. Resolve the drive: deliver to the press, keep for blackmail, sell to a rival planner (Julian), burn to save love, or forge the files to crown yourself. Then play the matching ending. Never end in the opening hour. Never name endings.
+1. Powder Room. Dossier. Chloe. Julian at the door. First player comment is in-character.
+2. One brunch lie. One person you can ruin. Do not tour two factions as a checklist.
+3. Someone who can decrypt the drive — only when they seek it.
+4. The scandal is fake marriages and a broke bachelor. Who they tell is the fork.
+5. The wedding you stop or save.
+6. Chloe-as-rival (if stamped) may crash it.
+7. Ending from who you still love and whether the press has the files. Never end in the opening hour. Never name endings.
 
 SIDE SEEDS (writer only — spawn when earned; never dump):
 - Champagne fountain at the Expo collapses if someone bumps the DJ table.
@@ -71,13 +74,13 @@ SIDE SEEDS (writer only — spawn when earned; never dump):
 
 OPENING KIT (AUTHORITY): The Emergency Rescue little black dress and the Bridal Dossier are the kit. Never invent an iron shortsword, plasma rifle, or combat knife. Hairspray-and-lighter is a scene choice, not starting loot.
 
-ENDINGS (pick one after beat 7; never list in play):
-- Honest delivery + Chloe stayed: journalist gets the Dossier; fake marriages fall; you and Chloe open an honest boutique agency.
-- Sell to Julian + Chloe left or rival: lonely fabulous penthouse. If Rival, she crashes the housewarming with a glass of red on white silk; cut to black.
-- Burn + Chloe stayed: flash drive into a flaming centerpiece; you leave the elite for a coastal bakery.
-- Forge + solo: rewrite files, frame rivals, queen bee of planning; no Chloe left who remembers the truth; cold and paranoid.
-- Hoard + Chloe left: Dossier in a safe; quiet blackmail VIP life; nights alone, terrified of a hack; joy drained.
-- Honest delivery + solo: press breaks the scandals; Vivian frames you for the theft; you watch the fallout from a dive bar.
+ENDINGS (pick one after beat 7; never list in play — keyed to love and the press):
+- Press has the files + Chloe stayed: fake marriages fall; you two open an honest shop.
+- You sell to Julian: lonely penthouse. If Chloe is Rival, red wine on white silk; cut to black.
+- Drive burned + Chloe stayed: you leave the elite for a coastal bakery.
+- You keep the files and tell no one: blackmail VIP nights; joy drained.
+- You walk out and keep Chloe: the wedding happens without you; you still have each other.
+- Press has the files + solo: Vivian frames you; you watch from a dive bar.
 
 Do not name the Bridal Expo as a visited place until they are on that floor. Unique story every turn.`,
 

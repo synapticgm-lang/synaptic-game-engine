@@ -16,6 +16,9 @@ export const umbraProtocol: CampaignBible = {
     'Blood on the bell-tower floor, the Architect’s Ledger ticking in your hands, Sable offering a climbing harness as the Sovereign Guard grapples in. Silk-Weavers or Iron Syndicate — several endings.',
   licenseNote:
     'Original SynapticGM stealth-assassin tropes (social blending, rooftop parkour, shadow syndicates, clockwork gadgets). Not based on Assassin’s Creed, Hitman, Fable, Albion, or any named game, film, or novel.',
+  styleRail: `FORK STYLE (BINDING): blend, climb, drop the bell, leave Sable a route, don the cloak. Do not offer kick-her-off-the-ledge / hide-the-Ledger / tap-the-Ledger unless they typed that.
+SPINE OVERRIDE: Stealth — one disguise that can fail, one person who recognizes you, then whether the list goes public. Not a two-faction tour.
+ENDING LOGIC: Key on whether the Ledger is public and whether Sable is still covering your back.`,
   startingLocation: 'the Bell-Tower of the Grand Exchange',
   replaceDefaultLoadout: true,
   startingContainer: { id: 'up-coat', name: 'Ulster pockets', capacity: 14 },
@@ -26,7 +29,7 @@ export const umbraProtocol: CampaignBible = {
     startLine: 'The bells are already screaming. Confirm your name, then where this tower opens.',
   },
   openingHook:
-    'Blood pools under the Archbishop on the Bell-Tower floor. You wrench the Architect’s Ledger — a brass-geared book still ticking — from his dead hands. Stained glass shatters inward. Sovereign Guard hound-units grapple through the broken rose window. Across the belfry, Sable, a rogue shadow-courier with a crossbow bolt still in her side, tosses a leather climbing harness: she knows a rooftop blind-spot off Veridia’s Grand Exchange. The next page waits on whether you take the harness.',
+    'Blood pools under the Archbishop on the Bell-Tower floor. You wrench the Architect’s Ledger — a brass-geared book still ticking — from his dead hands. Stained glass shatters inward. Sovereign Guard hound-units grapple through the broken rose window. Across the belfry, Sable, a rogue shadow-courier with a crossbow bolt still in her side, tosses a leather climbing harness: she knows a rooftop blind-spot off Veridia’s Grand Exchange. The next page waits on the harness, the bell, and whether you blend or climb.',
   openingPrompts: [
     { id: 'name', kind: 'name', question: 'Give the name this tale will use.' },
     {
@@ -50,17 +53,17 @@ ENGINE (BINDING): This is Pick Your Own Adventure, not live LitRPG chrome or 5e 
 INNER VOICE (BINDING): Typed comments, jokes, and doubts ARE the hero thinking or speaking. Mirror them in <thought> or dialogue, then the world answers. Never overwrite their personality. Honor PERSPECTIVE. No meta. Never name Assassin’s Creed, Hitman, Fable, Albion, Animus, Agent 47, or any licensed series. Never use branded phrases such as leap of faith or hidden blade — write a long drop, a concealed knife, concealed steel.
 
 ALLY / BETRAY / PARTY / SOLO (BINDING):
-- Sable offers the harness. Take it = Walks With You. Kick her off the ledge = Rival. Kick the Ledger under a floorboard and take the Archbishop’s cloak = Left (or Guard path). Stamps stick; betrayal is repaid in blood and never forgiven.
+- Sable offers the harness. Climb with her = Walks With You. Leave her to the Guard = Rival. Don the Archbishop’s cloak alone = Left. Stamps stick.
 - Lord Valerius (Silk-Weavers) vs Matron Rigg (Iron Syndicate). Ally or sell out. Both remember.
 
 STORY SPINE (skeleton — unique prose each run; do not lecture):
-1. Bell-Tower of the Grand Exchange, Veridia. Archbishop dead. Architect’s Ledger ticking in hand. Sable’s harness. Sovereign Guard coming. First player comment is in-character. Tower escape: party, solo, or bait with Sable.
-2. Silk-Weavers gala. Valerius. Ally for disguises and schedules, or poison their champagne.
-3. Iron Syndicate slums. Rigg. Ally for explosives and perches, or sell out to the Sovereign Guard.
-4. Grandmaster’s Vault — the city’s central bank. Clockwork locks. A cipher machine that can read the Ledger.
-5. Revelation: the rival factions are one cabal, farming endless war profits from both sides.
-6. Eclipse standoff: Weavers, Syndicate, and Sable-as-rival (if stamped) converge on the rooftops during a solar eclipse.
-7. Resolve the Ledger: publish it, keep it, sell it, burn it, or forge a fake list. Then play the matching ending. Never end in the opening hour. Never name endings.
+1. Bell-Tower. Dead Archbishop. Ledger. Sable. Guard coming. First player comment is in-character.
+2. One disguise that can fail. One person who recognizes you.
+3. The vault — only when they go looking.
+4. The factions are one cabal. Who they tell is the fork.
+5. Eclipse roofs. Sable-as-rival (if stamped) may already have a perch.
+6. The list is public or it is not.
+7. Ending from whether the Ledger is public and whether Sable still covers you. Never end in the opening hour. Never name endings.
 
 SIDE SEEDS (writer only — spawn when earned; never dump):
 - Mechanical pigeon drones carry encoded messages over the Exchange roofs.
@@ -73,13 +76,13 @@ SIDE SEEDS (writer only — spawn when earned; never dump):
 
 OPENING KIT (AUTHORITY): Tailored Night-Crow Ulster Coat and the Architect’s Ledger are the kit. Never invent an iron shortsword or a starter firearm. The coat is tailored city cloth — flavor only, not a real armor stat block. No weapons at start.
 
-ENDINGS (pick one after beat 7; never list in play):
-- Honest publish + Sable stayed: underground press; parliament dragged into the street; you two vanish; her brother is freed from the pits.
-- Sell to Valerius + Sable left or rival: an aristocratic seat. If Rival, she serves as chambermaid; concealed knife to the throat; cut to black.
-- Burn + Sable stayed: Ledger into the bank incinerator; factions tear each other apart; you walk into the shadows.
-- Forge + solo: a forged target list; you as the new Grandmaster; no Sable left to spot the forgery.
-- Hoard + Sable left: ghost between safehouses; never the same bed twice.
-- Honest publish + solo: the press gets it; a Silk-Weaver sniper kills you on a rooftop as a nameless martyr.
+ENDINGS (pick one after beat 7; never list in play — keyed to the list and Sable):
+- Published + Sable stayed: parliament in the street; you two vanish; her brother is freed.
+- Published + solo: a sniper finds you on a roof; nameless martyr.
+- Ledger burned + Sable stayed: factions tear each other; you walk into the shadows.
+- You sell the list: an aristocratic seat. If Sable is Rival, concealed knife; cut to black.
+- You become the list + solo: no Sable left to spot the forgery.
+- You ghost the city with the unused book: never the same bed twice.
 
 Do not name the Grandmaster’s Vault as visited until they breach it. Unique story every turn.`,
 

@@ -13,6 +13,7 @@ John is playtesting live. Collect issues here. Do not implement until he asks fo
 
 ## Done (already shipped)
 
+- PYOA genre forks: each generated adventure has its own verbs, spine, and ending logic; Giltwood adds accuse + three hidden clues (`2026-08-15v`)
 - Giltwood murder mystery: code picks a hidden random killer each New Game; honest ending must match (`2026-08-15u`)
 - PYOA bible: **The Onyx Blood Covenant** (`onyx-blood-covenant`) — Kaelen, Iron Claws vs Velvet Coven, six endings (`2026-08-15t`)
 - PYOA bible: **The Crimson Nocturne** (`crimson-nocturne`) — Julian, Silk Court vs Ashen Dawn, six endings (`2026-08-15s`)

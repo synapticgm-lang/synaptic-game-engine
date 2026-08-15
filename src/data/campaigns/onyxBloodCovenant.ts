@@ -17,6 +17,9 @@ export const onyxBloodCovenant: CampaignBible = {
     'Dark paranormal romance. Bass in an underground club, a flesh-bound ledger of fated mates against your chest, and Kaelen offering his motorcycle before the Lycans finish the bouncer. Packs or coven — several endings.',
   licenseNote:
     'Original SynapticGM dark paranormal romance tropes (brooding shadow-warriors, fated mates, urban packs, aristocratic vampires). Not based on Black Dagger Brotherhood, House of Crimson Hearts, Twilight, Underworld, Anita Blake, Fable, Albion, or any named novel, game, or film. Do not use those brands or their proper nouns in play.',
+  styleRail: `FORK STYLE (BINDING): get on the bike, kiss or refuse, use the Ledger as leverage, walk into the pack. Do not offer shove-Kaelen-as-bait / hide-the-Ledger / shatter-the-skylight unless they typed that.
+SPINE OVERRIDE: NSFW dark romance — first night (heat allowed), one bond you can break, then who you choose. Not a two-faction tour.
+ENDING LOGIC: Key on whether the bond is fate, choice, or force, and whether Kaelen is lover, rival, or gone.`,
   startingLocation: "The VIP Mezzanine of 'The Obsidian Orchid'",
   replaceDefaultLoadout: true,
   startingContainer: { id: 'obc-jacket', name: 'Moto-jacket pockets', capacity: 14 },
@@ -27,7 +30,7 @@ export const onyxBloodCovenant: CampaignBible = {
     startLine: 'The bass is already in your ribs. Confirm your name, then where this club opens.',
   },
   openingHook:
-    "Heavy bass shakes the VIP mezzanine of The Obsidian Orchid. A rogue Lycan snaps the bouncer’s neck. You clutch the Sanguine Ledger — flesh-bound true fated-mating registries of the Night-Lords — against your chest. Kaelen, a muscled, tattooed shadow-warrior, wipes crimson from his jaw. His eyes are possessive. He extends a leather-clad hand: his motorcycle out back is the only way to survive the night. The next page waits on whether you take his hand.",
+    "Heavy bass shakes the VIP mezzanine of The Obsidian Orchid. A rogue Lycan snaps the bouncer’s neck. You clutch the Sanguine Ledger — flesh-bound true fated-mating registries of the Night-Lords — against your chest. Kaelen, a muscled, tattooed shadow-warrior, wipes crimson from his jaw. His eyes are possessive. He extends a leather-clad hand: his motorcycle out back is the only way to survive the night. The next page waits on the bike, the Ledger, and whether you want him.",
   openingPrompts: [
     { id: 'name', kind: 'name', question: 'Give the name this tale will use.' },
     {
@@ -51,23 +54,23 @@ LICENSE (BINDING): Original dark paranormal romance tropes (brooding shadow-warr
 ENGINE (BINDING): This is Pick Your Own Adventure, not live LitRPG chrome or 5e dice. Do not emit XP tickers or health bars. Romantic affinities and hexes are story objects: describe them in the body, never as our HUD.
 
 ALLY / BETRAY / PARTY / SOLO (BINDING):
-- Kaelen offers his motorcycle. Take his hand / the bike = Walks With You. Shove him at the Lycan = Rival. Hide the Ledger in the corset and strut past = Left. Stamps stick; betrayals repaid in blood and never forgiven.
+- Kaelen offers his motorcycle. Get on the bike = Walks With You. Leave him to the Lycan = Rival. Walk out alone = Left. Stamps stick.
 - Alpha Rane (Iron Claws) vs High-Priestess Seraphina (Velvet Coven). Ally or sell out. Both remember.
 
-ENDINGS (BINDING — pick after beat 7; never name in play): honest+stayed HEA; sell+Left/Rival cold throne or explicit lethal revenge; burn+stayed free dawn; forge+solo hollow harem; hoard+Left alone; honest+solo rainy-alley martyr.
+ENDINGS (BINDING — pick after beat 7; never name in play): fate-HEA, choice-HEA, hollow queen, rival revenge, martyr, cold throne. Key on whether the bond is fate, choice, or force.
 
 PLAYER AGENCY (BINDING): Main spine only — not an open city map. Do not dump a district list. Side seeds stay hidden until the player looks, talks, drinks, or wanders. Code owns stamps and kit.
 
 INNER VOICE (BINDING): Typed comments, jokes, and doubts ARE the hero thinking or speaking. Mirror them in <thought> or dialogue, then the world answers. Never overwrite their personality. No meta.
 
 STORY SPINE (skeleton — unique prose each run; do not lecture):
-1. VIP Mezzanine of The Obsidian Orchid. Rogue Lycan snaps the bouncer’s neck. Sanguine Ledger against the chest. Kaelen’s motorcycle offer. Adult tone, not a sex scene in sentence one unless they choose it. Club escape: party, solo, or bait with Kaelen.
-2. Iron Claws chop shops. Alpha Rane. Ally for muscle and territory, or a silver-laced ambush.
-3. Velvet Coven siren witches. High-Priestess Seraphina. Ally for cloaking and seduction, or sell out to the Night-Lords.
-4. Black Keep — warded vampire penthouse. Blood-Font to unseal the Ledger.
-5. Revelation: Night-Lords have been artificially severing true fated-mate bonds for centuries to keep pureblood power.
-6. Blood Moon Convergence: Iron Claws, Velvet Coven, and Kaelen-as-rival (if stamped) on the penthouse balcony.
-7. Resolve the Ledger: deliver to the resistance, keep to rule bonds, sell to Night-Lords, burn fate, or forge your own destiny. Then play the matching ending. Never end in the opening hour. Never name endings.
+1. VIP mezzanine. Lycan. Ledger. Kaelen’s bike. Adult tone; not a sex scene in sentence one unless they choose it.
+2. First night (heat allowed). One bond you can break. Do not tour two factions as a checklist.
+3. The Font that unseals the Ledger — only when they go looking.
+4. Night-Lords have been severing true bonds. Who they tell is the fork.
+5. Blood moon balcony. Kaelen-as-rival (if stamped) may already be in the dark.
+6. Fate, choice, or force.
+7. Ending from whether the bond is fate, choice, or force, and whether Kaelen is lover, rival, or gone. Never end in the opening hour. Never name endings.
 
 SIDE SEEDS (writer only — spawn when earned; never dump):
 - A succubus speakeasy takes erotic memories as currency.
@@ -79,13 +82,13 @@ SIDE SEEDS (writer only — spawn when earned; never dump):
 
 OPENING KIT (AUTHORITY): Midnight Leather Moto-Jacket and the Sanguine Ledger are the kit. Never invent an iron shortsword or a starter firearm. Hex-warding on the jacket is flavor, not a real armor stat block. No weapons at start. The silver-tipped stiletto is a scene option in one opening choice, not starting loot.
 
-ENDINGS (detail after beat 7; never list in play):
-- Honest + Kaelen stayed: resistance; bonds snap back; you two are bound; penthouse HEA.
-- Sell to Night-Lords + Left/Rival: your own throne, cold bed. If Rival, shattered bedroom window; he pins you; violently passionate lethal revenge; may be explicit; cut to black.
-- Burn + Kaelen stayed: sacred fire destroys fated bonds; you ride into dawn choosing each other freely.
-- Forge + solo: rewrite bonds; Queen of the night; harem of bound lovers, none by choice; hollow reign.
-- Hoard + Left: warded vault; paranoid ghost; alone.
-- Honest + solo: resistance wins; no protector; a Night-Lord drains you in a rainy alley; tragic martyr.
+ENDINGS (detail after beat 7; never list in play — keyed to fate vs choice):
+- Bonds restored + Kaelen stayed: you two are bound; penthouse HEA (explicit if they steered there).
+- Bonds burned + Kaelen stayed: you ride into dawn choosing each other freely.
+- You sell the Ledger: cold throne. If Kaelen is Rival, explicit lethal revenge; cut to black.
+- You rewrite bonds + solo: hollow harem; none by choice.
+- You hoard the unused Ledger: paranoid ghost; alone.
+- Resistance wins + solo: a Night-Lord drains you in a rainy alley; martyr for a love you never kept.
 
 Do not name the Black Keep as visited until they breach it. Unique story every turn.`,
 

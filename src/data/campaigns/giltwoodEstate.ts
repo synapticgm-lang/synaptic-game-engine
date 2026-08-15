@@ -26,7 +26,7 @@ export const giltwoodEstate: CampaignBible = {
     startLine: 'Midnight has already struck. Confirm your name, then where this storm opens.',
   },
   openingHook:
-    'Thunder rattles the stained glass. The grandfather clock strikes midnight and almost hides the thud of Lord Harrington’s body on the Persian rug. From his stiffening fingers you pry a silver pocket watch that runs stubbornly backward. Beatrice, the parlor maid, drops a tray of brandy. Wild-eyed, she whispers the servants’ passage to the wine cellar — if you swear not to leave her alone. The next page waits on whether you take her hand.',
+    'Thunder rattles the stained glass. The grandfather clock strikes midnight and almost hides the thud of Lord Harrington’s body on the Persian rug. From his stiffening fingers you pry a silver pocket watch that runs stubbornly backward. Beatrice, the parlor maid, drops a tray of brandy. Wild-eyed, she whispers the servants’ passage to the wine cellar — if you swear not to leave her alone. The next page waits on the watch, the body, and whether you believe her.',
   openingPrompts: [
     { id: 'name', kind: 'name', question: 'Give the name this tale will use.' },
     {
@@ -48,18 +48,18 @@ export const giltwoodEstate: CampaignBible = {
 INNER VOICE (BINDING): Typed comments, jokes, and doubts ARE the hero thinking or speaking. Mirror them in <thought> or dialogue, then the world answers. Never overwrite their personality. Honor PERSPECTIVE and the session’s visual style. No meta (“the sheet”, “alignment”). Never name Clue/Cluedo characters, rooms-as-a-board, or Knives Out plots.
 
 ALLY / BETRAY / PARTY / SOLO (BINDING):
-- Beatrice offers the servants’ passage. Take her hand = Walks With You. Accuse her as the fall guy = Rival. Slip away without her = Left. Stamps stick; betrayal is not forgiven.
-- Chef Bouchard (Kitchen Staff) vs Lady Genevieve (Aristocratic Suspects). Ally or sell out. Both remember.
-- Inspector Graves wants a tidy arrest by dawn, guilt optional.
+- Beatrice offers the servants’ passage. Walk with her = Walks With You. Name her as the killer without proof = Rival. Slip away = Left. Stamps stick.
+- Kitchen and guests remember who you sold out. Graves wants a tidy arrest by dawn, guilt optional.
+- If the player types “it was X” or accuses a named person, that is HIDDEN ACCUSED. Honor it.
 
 STORY SPINE (skeleton — unique prose each run; do not lecture):
-1. Billiard Room. Harrington dead. Backward Watch. Beatrice’s plea. First player comment is in-character.
-2. Servants’ quarters. Kitchen Staff / Bouchard. Passkeys vs selling them to the police for an alibi.
-3. Drawing room quarantine. Aristocrats / Genevieve. Political cover vs leaking their scandals.
-4. Locked study — Harrington’s trapped inner sanctum; cipher key.
-5. Revelation: the watch is a combination to a vault. The vault names the HIDDEN CULPRIT — that person killed Harrington. Others may have covered it up. Never invent a different killer.
-6. Glasshouse climax: staff, aristocrats, and Beatrice-as-rival (if stamped) converge in a storm.
-7. Resolve the watch: deliver to Graves, keep for blackmail, sell to the guilty, burn in the fireplace, or forge a fake confession. Then play the matching ending. Never end in the opening hour. Never name endings.
+1. Billiard Room. Body. Watch. Beatrice’s first lie or truth. First player comment is in-character.
+2. One room, one clue (search or talk). Do not tour the whole house.
+3. Someone accuses the player — or the player accuses first.
+4. A second clue that fits HIDDEN CLUES. A wrong theory may still spread.
+5. Vault / watch combination names the HIDDEN CULPRIT. Never invent a different killer.
+6. Dawn: Graves, the accused, and Beatrice-as-rival (if stamped) in one room.
+7. Play the ending from accused vs culprit + what they did with the watch. Never end in the opening hour. Never name endings.
 
 HIDDEN CULPRIT (BINDING): Code already picked who did it. Honor HIDDEN CULPRIT in the rails. Plant consistent clues only when the player looks, talks, or searches. Do not accuse someone else as the true killer. Do not spoil the name in the opening hour. If Beatrice is the culprit and Walks With You, she is still guilty — the honest ending is a tragic reveal, not an agency HEA.
 
@@ -73,14 +73,13 @@ SIDE SEEDS (writer only — spawn when earned; never dump):
 
 OPENING KIT (AUTHORITY): Tailored velvet smoking jacket and the Backward Watch are the kit. Never invent an iron shortsword or a candlestick-as-starting-weapon. Search for a murder weapon is a scene choice, not starting loot.
 
-ENDINGS (pick one after beat 7; never list in play):
-- Honest delivery + Beatrice stayed + she is NOT the culprit: Graves gets the watch with her corroboration; the HIDDEN CULPRIT is caught; you open a detective agency together.
-- Honest delivery + Beatrice stayed + she IS the culprit: Graves gets the watch; she is arrested; bittersweet, no agency HEA.
-- Sell to Genevieve + Beatrice left or rival: hush-money manor. If Rival, she slips in as the new maid; poison in the brandy; cut to black. The HIDDEN CULPRIT still did the first murder — do not rewrite that.
-- Burn + Beatrice stayed: watch into the glasshouse furnace; secrets die; you sneak into the storm penniless and free.
-- Forge + solo: master confession naming everyone else; you as sole beneficiary; no Beatrice left to contradict you; you inherit.
-- Hoard + Beatrice left: blackmail the survivors; fabulous and paranoid in empty halls, waiting for the HIDDEN CULPRIT.
-- Honest delivery + solo: the HIDDEN CULPRIT is named; Graves pins the first murder on you for a tidy file; you hang at dawn.
+ENDINGS (pick one after beat 7; never list in play — keyed to accused vs culprit, not a MacGuffin shop):
+- Right name + watch to Graves: the HIDDEN CULPRIT is taken. If Beatrice stayed and is innocent, a detective partnership. If she is the culprit, she is arrested.
+- Wrong name + watch to Graves: the accused hangs or is ruined; the true killer walks. You may be paid for a tidy file.
+- No accusation + watch burned: the storm takes the proof; you leave penniless; the killer remains in the house.
+- You frame someone else (forged confession): you inherit; the HIDDEN CULPRIT still did the first murder.
+- You take the fall (solo, no witness): Graves pins it on you; you hang at dawn.
+- You bury the watch and stay: blackmail and empty halls; you wait for the HIDDEN CULPRIT.
 
 Do not name the locked study as visited until they force that door. Unique story every turn.`,
 
@@ -172,6 +171,31 @@ Do not name the locked study as visited until they force that door. Unique story
       hooks: ['Ask about Harrington’s last toast', 'Hide a letter', 'Offer an alibi for a price'],
     },
   ],
+
+  styleRail: `FORK STYLE (BINDING): search a room, ask who last saw him, pocket or plant the watch, accuse a named person, stay and lie to Graves. Do not offer take-hand / shove-as-bait / hide-MacGuffin / tap-MacGuffin unless they typed that.
+SPINE OVERRIDE: This is a locked-room mystery, not a two-faction war. One clue per beat. Honor HIDDEN CULPRIT, HIDDEN CLUES, HIDDEN ACCUSED.
+ENDING LOGIC: Key on whether they named the right person and what they did with the watch. Do not play deliver/keep/sell/burn/forge as the only menu.`,
+
+  mysteryCluePools: {
+    weapons: [
+      'a brass letter-opener wiped and left in the ice bucket',
+      'a curtain cord cut and retied',
+      'a hatpin snapped at the tip, blood in the groove',
+      'the heavy billiard cue, one end freshly waxed',
+    ],
+    tells: [
+      'Harrington’s right cuff is buttoned by the wrong hand',
+      'the brandy on the rug is unsipped — he never drank it',
+      'the backward watch was forced into his fist after death',
+      'ash on the hearth matches a cigar no guest admits to',
+    ],
+    covers: [
+      'the first loud story is that a poacher came through the garden',
+      'someone swears they heard a second shot that never happened',
+      'a guest claims they were at the piano the whole hour',
+      'the staff were told to say he collapsed of the heart',
+    ],
+  },
 
   mysteryCulprits: [
     {

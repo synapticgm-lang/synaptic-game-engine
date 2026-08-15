@@ -87,6 +87,7 @@ export function seedStateFromCampaignBible(
     campaignBibleId: bible.id,
     campaignPremise: `${bible.title}: ${bible.premise}\n\n${kitRail}\n\n${questRail}`.slice(0, 2200),
     hiddenStamps: stampMysteryCulprit(state, bible),
+    campaignStyleRail: bible.styleRail?.trim() || state.campaignStyleRail || null,
     storyName: state.storyName,
     lorebook: dedupedLore,
     quests,
@@ -247,10 +248,13 @@ export function reconcileCampaignLoadout(state: GameState): GameState {
   const bible = state.campaignBibleId
     ? ALL_CAMPAIGN_BIBLES.find((b) => b.id === state.campaignBibleId)
     : findBibleForArchetype(state.engineMode, state.campaignArchetype);
-  const stamped =
-    bible?.mysteryCulprits?.length && !state.hiddenStamps?.culpritId
-      ? { ...state, hiddenStamps: stampMysteryCulprit(state, bible) }
-      : state;
+  let stamped = state;
+  if (bible?.mysteryCulprits?.length && !state.hiddenStamps?.culpritId) {
+    stamped = { ...stamped, hiddenStamps: stampMysteryCulprit(stamped, bible) };
+  }
+  if (bible?.styleRail?.trim() && !stamped.campaignStyleRail?.trim()) {
+    stamped = { ...stamped, campaignStyleRail: bible.styleRail.trim() };
+  }
   const shouldReplace = bible?.replaceDefaultLoadout === true || isFictionEngine(bible?.engineMode);
   if (!bible || !shouldReplace) return stamped;
   const kitStale = inventoryHasGenericFantasyKit(state);

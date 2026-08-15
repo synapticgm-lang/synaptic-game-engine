@@ -17,6 +17,9 @@ export const nullParameterProtocol: CampaignBible = {
     'Cubicle to a smoking summoning dais, ERROR 404 in your eyes, Kaelen offering a cloak. Side with glitch-rebels or the Crown — several endings.',
   licenseNote:
     'Original SynapticGM isekai/system tropes (screens, glitches, overpowered anomalies). Not based on Sword Art Online, Fable, Albion, or any named novel, anime, or game.',
+  styleRail: `FORK STYLE (BINDING): ask Kaelen what the error means, run, talk to the Vanguard, poke one hologram. Do not offer trip-him-as-bait / hide-the-crystal / tap-the-interface unless they typed that.
+SPINE OVERRIDE: Isekai — first person who treats you as a class, one bug you can abuse, then whether the System stays. Not a two-faction checklist.
+ENDING LOGIC: Key on whether the System still exists and who remembers you were from Earth.`,
   startingLocation: 'the Shattered Summoning Dais of Aethelgard',
   replaceDefaultLoadout: true,
   startingContainer: { id: 'np-suit', name: 'Suit pockets', capacity: 14 },
@@ -27,7 +30,7 @@ export const nullParameterProtocol: CampaignBible = {
     startLine: 'The cubicle is already gone. Confirm your name, then where this failed summon opens.',
   },
   openingHook:
-    'Office fluorescent light is gone. Ozone. Shattered obsidian pillars into a crimson sky. You lie in a crater of geometric runes, clutching a polyhedral crystal that throws translucent ERROR 404: HERO NOT FOUND into your eyes. Kaelen, a rogue battle-mage, bleeds from backlash and offers a trembling hand and his cloak — the Royal Vanguard’s Level-Capped executioners are coming to purge failed summoners. The next page waits on whether you take his hand.',
+    'Office fluorescent light is gone. Ozone. Shattered obsidian pillars into a crimson sky. You lie in a crater of geometric runes, clutching a polyhedral crystal that throws translucent ERROR 404: HERO NOT FOUND into your eyes. Kaelen, a rogue battle-mage, bleeds from backlash and offers a trembling hand and his cloak — the Royal Vanguard’s Level-Capped executioners are coming to purge failed summoners. The next page waits on the error, the cloak, and whether you run.',
   openingPrompts: [
     { id: 'name', kind: 'name', question: 'Give the name this tale will use.' },
     {
@@ -51,17 +54,17 @@ ENGINE (BINDING): This is Pick Your Own Adventure, not live LitRPG chrome. Do no
 INNER VOICE (BINDING): Typed comments, jokes, and doubts ARE the hero thinking or speaking. Mirror them in <thought> or dialogue, then the world answers. Never overwrite their personality. Honor PERSPECTIVE. No meta. No Sword Art Online plots, log-out buttons as the story, or named series.
 
 ALLY / BETRAY / PARTY / SOLO (BINDING):
-- Kaelen offers cloak and wilds. Take his hand = Walks With You. Trip him into the Vanguard = Rival. Pocket the crystal and play victim = Left (or Vanguard path). Stamps stick; betrayal is not forgiven.
+- Kaelen offers cloak and wilds. Go with him = Walks With You. Use him as cover = Rival. Play the clueless victim = Left. Stamps stick.
 - Cipher-Lord Elara (Glitch-Walkers) vs Commander Vane (Royal Vanguard). Ally or sell out. Both remember.
 
 STORY SPINE (skeleton — unique prose each run; do not lecture):
-1. Shattered dais. Genesis Matrix in hand. Kaelen’s offer. Vanguard coming. First player comment is in-character.
-2. Outlands. Glitch-Walkers / Elara. System bypasses vs Crown bounty.
-3. Fortified checkpoint. Vanguard / Vane. Noble status vs leaking patrol routes.
-4. Firewall Dungeon / Server-Keep — the System trying to delete invalid entities.
-5. Administrator's truth: this reality is a harvesting simulation; the Kings are bloated admin programs.
-6. Bandwidth clash: Walkers, Vanguard, and Kaelen-as-rival (if stamped) converge on the Server-Keep.
-7. Resolve the Matrix: deliver to a faction, keep for raw power, sell to a noble, burn to delete magic, or forge a new admin reality. Then play the matching ending. Never end in the opening hour. Never name endings.
+1. Dais. Matrix. Kaelen. Vanguard coming. First player comment is in-character.
+2. First person who treats you as a Class. One pressure.
+3. One bug you can abuse (a wall, a skill lock, a false quest).
+4. The Keep — only when they go looking.
+5. This reality is a harvest. The Kings are bloated admin programs.
+6. Who still wants the Matrix arrives (Walkers, Vanguard, Kaelen-as-rival).
+7. Ending from whether the System still exists and who remembers Earth. Never end in the opening hour. Never name endings.
 
 SIDE SEEDS (writer only — spawn when earned; never dump):
 - Northern border is unrendered white that unmakes matter.
@@ -74,13 +77,13 @@ SIDE SEEDS (writer only — spawn when earned; never dump):
 
 OPENING KIT (AUTHORITY): Coffee-stained business suit and the Genesis Matrix are the kit. Never invent an iron shortsword or a starter spellbook. “+10 Confusion” is flavor for how people stare at Earth clothes — not a real stat block.
 
-ENDINGS (pick one after beat 7; never list in play):
-- Honest delivery + Kaelen stayed: Matrix to Elara; system crashed; levels gone; you two are legends in chaotic free magic.
-- Sell to Vane + Kaelen left or rival: max-title palace. If Rival, he glitches the walls and deletes your file; cut to black.
-- Burn + Kaelen stayed: Matrix into a null-void; magic and UI die; the world becomes ordinary; you wander as mortals.
-- Forge + solo: rewrite core code; you are unchallenged admin; no Kaelen left who remembers the cubicle.
-- Hoard + Kaelen left: keep the cheat unused; hunted by kill-squads and hackers; never safe enough to sleep.
-- Honest delivery + solo: Walkers free the system; without a witness they treat you as a foreign virus; Elara quarantines you into a forgotten patch.
+ENDINGS (pick one after beat 7; never list in play — keyed to whether the System stays):
+- System crashed + Kaelen stayed: levels gone; you two are legends in chaotic free magic.
+- System stays and you take a Crown title: palace. If Kaelen is Rival, he deletes your file; cut to black.
+- Matrix into a null-void + Kaelen stayed: the world becomes ordinary; you wander as mortals.
+- You rewrite yourself admin + solo: no one left who remembers the cubicle.
+- You keep the cheat unused: hunted; never safe enough to sleep.
+- System crashed + solo: Walkers treat you as a virus; you die a forgotten patch.
 
 Do not name the Server-Keep as visited until they breach it. Unique story every turn.`,
 
