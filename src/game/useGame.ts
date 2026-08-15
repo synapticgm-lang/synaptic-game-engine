@@ -65,7 +65,7 @@ import { applyCommittedNarrative, extractSceneFacts, seedOpeningSceneFacts } fro
 import { applyFactLocks, detectFactLockViolations } from './factLocks';
 import { dropInsultGear } from './wornGear';
 import { needsPortraitRefresh, paperDollPrompt, portraitCacheKey } from './inventoryArt';
-import { formatCampaignStoryName, getCampaignBibleById } from '@/data/campaigns';
+import { formatCampaignStoryName, getCampaignBibleById, isNsfwCampaign } from '@/data/campaigns';
 import { parsePlayerIntent, groundPlayerAction } from './intentParser';
 import { interpretPlayerUtterance, isJunkSetupValue } from './playerUtterance';
 import { runPlayerCheck } from './checkMath';
@@ -1323,7 +1323,8 @@ export function useGame() {
         setState((s) => (s ? { ...s, pendingContentRewrite: null } : s));
       }
     } else {
-      const soft = maybeRatingRewrite(mediated.text, settingsRef.current);
+      const nsfwTurn = isNsfwCampaign(getCampaignBibleById(stateRef.current?.campaignBibleId ?? ''));
+      const soft = maybeRatingRewrite(mediated.text, settingsRef.current, { nsfw: nsfwTurn });
       if (soft) {
         if (settingsRef.current.confirmContentRewrites !== false) {
           setState((s) =>
@@ -1853,7 +1854,9 @@ In <system-log>, only emit LitRPG/RPG progression lines (XP, loot, HP change as 
       }
       const regexLoot = extractNewItems(result.text);
       let cleanText = stripResidualMechanicTags(stripChoiceList(stripActionTags(result.text)));
-      cleanText = postFilterGmOutput(cleanText, settingsRef.current);
+      cleanText = postFilterGmOutput(cleanText, settingsRef.current, {
+        nsfw: isNsfwCampaign(getCampaignBibleById(stateRef.current?.campaignBibleId ?? '')),
+      });
       cleanText = ensureTurnProse(cleanText, sanitizedInput);
       const storyBeforeCuts = cleanText;
 
@@ -2653,6 +2656,10 @@ In <system-log>, only emit LitRPG/RPG progression lines (XP, loot, HP change as 
     }
 
     const bible = bibleId ? getCampaignBibleById(bibleId) : undefined;
+    if (bible && isNsfwCampaign(bible) && settingsRef.current.contentMode === 'kid') {
+      addToast('This adventure is NSFW. Exit Kid Mode (PIN) to play it.', 'error');
+      return;
+    }
     const resolvedArchetype = bible?.archetype ?? archetype;
     const resolvedName =
       storyName?.trim()
@@ -3194,6 +3201,10 @@ In <system-log>, only emit LitRPG/RPG progression lines (XP, loot, HP change as 
       const bible = getCampaignBibleById(bibleId);
       if (!bible) {
         addToast('Campaign bible not found', 'error');
+        return;
+      }
+      if (isNsfwCampaign(bible) && settingsRef.current.contentMode === 'kid') {
+        addToast('This adventure is NSFW. Exit Kid Mode (PIN) to play it.', 'error');
         return;
       }
       const seeded = seedStateFromCampaignBible(previous, bible);

@@ -74,6 +74,12 @@ export interface CampaignBible {
   genreTag?: string;
   /** Short blurb for library cards (1–2 sentences). */
   shortDescription?: string;
+  /**
+   * Adult / explicit campaign. Show an NSFW chip on the picker.
+   * Hidden when Kid Mode (`contentMode === 'kid'`) is on. Only set on campaigns
+   * that are written as NSFW — do not mark other PYOA by default.
+   */
+  nsfw?: boolean;
   /** Copyright / license note for creators (never copy closed IP). */
   licenseNote?: string;
   loreSnippets: LoreSnippet[];

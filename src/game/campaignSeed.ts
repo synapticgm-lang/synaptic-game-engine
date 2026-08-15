@@ -17,18 +17,20 @@ export function findBibleForArchetype(
   engineMode: EngineMode,
   archetype?: CampaignArchetype
 ): CampaignBible | undefined {
+  // Never silently seed an NSFW bible from an archetype fallback.
+  const catalog = ALL_CAMPAIGN_BIBLES.filter((b) => !b.nsfw);
   if (!archetype || archetype === 'ai_random') {
-    return ALL_CAMPAIGN_BIBLES.find((b) => b.engineMode === engineMode)
-      ?? ALL_CAMPAIGN_BIBLES.find((b) => isFictionEngine(engineMode) && isFictionEngine(b.engineMode));
+    return catalog.find((b) => b.engineMode === engineMode)
+      ?? catalog.find((b) => isFictionEngine(engineMode) && isFictionEngine(b.engineMode));
   }
-  const exact = ALL_CAMPAIGN_BIBLES.find(
+  const exact = catalog.find(
     (b) => b.archetype === archetype && b.engineMode === engineMode
   );
   if (exact) return exact;
   if (isFictionEngine(engineMode)) {
-    return ALL_CAMPAIGN_BIBLES.find((b) => b.archetype === archetype && isFictionEngine(b.engineMode));
+    return catalog.find((b) => b.archetype === archetype && isFictionEngine(b.engineMode));
   }
-  return ALL_CAMPAIGN_BIBLES.find((b) => b.archetype === archetype);
+  return catalog.find((b) => b.archetype === archetype);
 }
 
 /**

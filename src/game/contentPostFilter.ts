@@ -17,7 +17,11 @@ const GORE =
 const EXPLICIT_SEX =
   /\b(penis|vagina|clitoris|ejaculat\w*|orgasm\w*|thrust(?:ing|s)?\s+(?:into|deep))\b/gi;
 
-export function postFilterGmOutput(text: string, settings: Settings): string {
+export function postFilterGmOutput(
+  text: string,
+  settings: Settings,
+  opts?: { nsfw?: boolean },
+): string {
   if (!text) return text;
   const m = resolveMaturity(settings);
   let out = text;
@@ -34,7 +38,7 @@ export function postFilterGmOutput(text: string, settings: Settings): string {
     out = out.replace(GORE, 'a harsh impact');
   }
 
-  if (!m.sexualContent) {
+  if (!m.sexualContent && !(opts?.nsfw && !m.kid)) {
     out = out.replace(EXPLICIT_SEX, '…');
   }
 

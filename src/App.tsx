@@ -148,6 +148,7 @@ export default function App() {
         {game.showNewGame && (
           <Suspense fallback={null}>
             <NewGameModal
+              contentMode={game.settings.contentMode}
               onStart={(...args) => {
                 setUserInGame(true);
                 game.startNewGame(...args);
@@ -159,6 +160,7 @@ export default function App() {
         <Suspense fallback={null}>
           <GMLibrary
             open={showGMLibrary}
+            contentMode={game.settings.contentMode}
             onClose={() => setShowGMLibrary(false)}
             onSelectCampaign={(_archetype, _engineMode, bibleId) => {
               if (bibleId) game.applyCampaignBible(bibleId);
@@ -225,6 +227,7 @@ export default function App() {
         {game.showNewGame && (
           <Suspense fallback={null}>
             <NewGameModal
+              contentMode={game.settings.contentMode}
               onStart={(...args) => {
                 setUserInGame(true);
                 game.startNewGame(...args);
@@ -236,6 +239,7 @@ export default function App() {
         <Suspense fallback={null}>
           <GMLibrary
             open={showGMLibrary}
+            contentMode={game.settings.contentMode}
             onClose={() => setShowGMLibrary(false)}
             onSelectCampaign={(_archetype, _engineMode, bibleId) => {
               if (bibleId) game.applyCampaignBible(bibleId);
@@ -372,7 +376,8 @@ export default function App() {
       )}
       {game.showNewGame && (
         <Suspense fallback={null}>
-          <NewGameModal
+            <NewGameModal
+            contentMode={game.settings.contentMode}
             onStart={game.startNewGame}
             onClose={() => game.setShowNewGame(false)}
           />
@@ -460,6 +465,7 @@ export default function App() {
       <Suspense fallback={null}>
         <GMLibrary
           open={showGMLibrary}
+          contentMode={game.settings.contentMode}
           onClose={() => setShowGMLibrary(false)}
           onSelectCampaign={(_archetype, _engineMode, bibleId) => {
             if (bibleId) game.applyCampaignBible(bibleId);

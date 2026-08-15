@@ -7,3 +7,8 @@ The player's chat has already been rewritten into silly kid-safe wording (fuck â
 export const ADULT_MODE_RULES = `
 CONTENT MODE: ADULT MODE (MATURE THEMES WITH FADE TO BLACK PROTOCOL)
 Strong language and graphic violence allowed. Intimate encounters use strict Fade to Black.`;
+
+/** Active only when the seeded campaign bible is flagged `nsfw`. Kid Mode still wins. */
+export const NSFW_CAMPAIGN_RULES = `
+CONTENT MODE: NSFW CAMPAIGN (ADULT DARK ROMANCE â€” NOT FADE TO BLACK)
+This premade is adult. Heat, sex, violence, and possessive/obsessive attraction are in-tone when the player steers there. Write explicit scenes when they choose them. Do not fade to black by default. Never involve minors. Honor PERSPECTIVE. Strong language and graphic violence allowed.`;

@@ -1,5 +1,5 @@
 import type { CampaignBible } from './types';
-import type { EngineMode } from '@/game/types';
+import type { ContentMode, EngineMode } from '@/game/types';
 export type { CampaignBible, LoreSnippet, KeyNPC, StarterQuest, StarterItem, Difficulty, OpeningPrompt } from './types';
 
 import { systemIntegration } from './systemIntegration';
@@ -18,6 +18,7 @@ import { nullParameterProtocol } from './nullParameterProtocol';
 import { resinSonata } from './resinSonata';
 import { umbraProtocol } from './umbraProtocol';
 import { crimsonNocturne } from './crimsonNocturne';
+import { onyxBloodCovenant } from './onyxBloodCovenant';
 import {
   ascendingSpire,
   inkboundAcademy,
@@ -61,6 +62,7 @@ export {
   resinSonata,
   umbraProtocol,
   crimsonNocturne,
+  onyxBloodCovenant,
   ascendingSpire,
   inkboundAcademy,
   hollowCore,
@@ -108,6 +110,7 @@ export const ALL_CAMPAIGN_BIBLES: CampaignBible[] = [
   resinSonata,
   umbraProtocol,
   crimsonNocturne,
+  onyxBloodCovenant,
   // Story RPG (fiction-first, multi-genre)
   saltRoadHeist,
   glassHarborLetters,
@@ -154,12 +157,33 @@ export function formatCampaignStoryName(title: string, at: Date = new Date()): s
   return `${title} — ${date}`;
 }
 
-export function getCampaignBiblesByEngineMode(mode: EngineMode): CampaignBible[] {
+/** True when this bible is adult/explicit and must stay out of Kid Mode. */
+export function isNsfwCampaign(bible: Pick<CampaignBible, 'nsfw'> | undefined): boolean {
+  return bible?.nsfw === true;
+}
+
+/** Kid Mode hides NSFW campaigns. Adult mode shows the NSFW chip. */
+export function filterBiblesForContentMode(
+  bibles: CampaignBible[],
+  contentMode?: ContentMode,
+): CampaignBible[] {
+  if (contentMode !== 'kid') return bibles;
+  return bibles.filter((b) => !isNsfwCampaign(b));
+}
+
+export function getCampaignBiblesByEngineMode(
+  mode: EngineMode,
+  contentMode?: ContentMode,
+): CampaignBible[] {
   const exact = ALL_CAMPAIGN_BIBLES.filter((c) => c.engineMode === mode);
-  if (exact.length > 0) return exact;
-  if (mode === 'pyoa') return ALL_CAMPAIGN_BIBLES.filter((c) => c.engineMode === 'rpg');
-  if (mode === 'rpg') return ALL_CAMPAIGN_BIBLES.filter((c) => c.engineMode === 'litrpg');
-  return exact;
+  const pool = exact.length > 0
+    ? exact
+    : mode === 'pyoa'
+      ? ALL_CAMPAIGN_BIBLES.filter((c) => c.engineMode === 'rpg')
+      : mode === 'rpg'
+        ? ALL_CAMPAIGN_BIBLES.filter((c) => c.engineMode === 'litrpg')
+        : exact;
+  return filterBiblesForContentMode(pool, contentMode);
 }
 
 /** Short catalog for UI / docs. */

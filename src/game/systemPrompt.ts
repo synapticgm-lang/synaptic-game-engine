@@ -3,7 +3,8 @@ import { buildArchetypeRules, getDefaultArchetype } from './archetypes';
 import { computeInventoryCapacity } from './inventory';
 import { resolvePanelBudget } from './panelBudget';
 import { CHOICE_TIER_PROMPT_RULES } from './choiceTierRules';
-import { ADULT_MODE_RULES, KID_MODE_RULES } from './contentModeRules';
+import { ADULT_MODE_RULES, KID_MODE_RULES, NSFW_CAMPAIGN_RULES } from './contentModeRules';
+import { getCampaignBibleById, isNsfwCampaign } from '@/data/campaigns';
 import { formatFullMemoryBlock, formatCampaignRails } from './situationPacket';
 import { formatTimelineForPrompt } from './timelineFormat';
 import { playerFacingLocation } from './locationName';
@@ -218,7 +219,7 @@ Do not append character-sheet/stat-screen readouts and do not add decorative <sy
   return `STAT SCREENS: ENABLED.\n${verbosity}\n${frequency}\n${turnNote}`;
 }
 
-function buildNarrativePreferenceRules(settings: Settings): string {
+function buildNarrativePreferenceRules(settings: Settings, nsfw?: boolean): string {
   const perspectiveRule =
     settings.perspective === 'first-person'
       ? `PERSPECTIVE: FIRST PERSON. Write prose from the player character's viewpoint using I/me/my. Do not address them as "you" and do not narrate them in third person (no "Jax places his finger").`
@@ -239,12 +240,16 @@ function buildNarrativePreferenceRules(settings: Settings): string {
   } as const;
 
   const kidMode = settings.contentMode === 'kid';
-  const romanceRule = !kidMode && settings.romanceSubplots
-    ? `ROMANCE SUBPLOTS: ENABLED. Romance may develop only through explicit narrative setup and player choice; never force attraction or intimacy.`
-    : `ROMANCE SUBPLOTS: DISABLED. Do not initiate flirtation, attraction, dating, or romantic arcs.`;
-  const haremRule = !kidMode && settings.romanceSubplots && settings.haremContent
-    ? `MULTIPLE ROMANCE / HAREM CONTENT: ENABLED. Multiple consensual romance interests may exist, but each must be independently established in active state and must never be spawned solely to satisfy this preference.`
-    : `MULTIPLE ROMANCE / HAREM CONTENT: DISABLED. Do not create a collection of simultaneous love interests or harem-style dynamics.`;
+  const romanceRule = nsfw && !kidMode
+    ? `ROMANCE SUBPLOTS: THIS NSFW CAMPAIGN. Attraction, heat, and sex are in-tone when the player steers there. Never force a scene they refuse. Never involve minors.`
+    : !kidMode && settings.romanceSubplots
+      ? `ROMANCE SUBPLOTS: ENABLED. Romance may develop only through explicit narrative setup and player choice; never force attraction or intimacy.`
+      : `ROMANCE SUBPLOTS: DISABLED. Do not initiate flirtation, attraction, dating, or romantic arcs.`;
+  const haremRule = nsfw && !kidMode
+    ? `MULTIPLE ROMANCE / HAREM CONTENT: THIS NSFW CAMPAIGN. A hollow bound-lover ending is one possible late-game resolve — never dump a harem in the opening hour.`
+    : !kidMode && settings.romanceSubplots && settings.haremContent
+      ? `MULTIPLE ROMANCE / HAREM CONTENT: ENABLED. Multiple consensual romance interests may exist, but each must be independently established in active state and must never be spawned solely to satisfy this preference.`
+      : `MULTIPLE ROMANCE / HAREM CONTENT: DISABLED. Do not create a collection of simultaneous love interests or harem-style dynamics.`;
 
   return `NARRATIVE & TONE SETTINGS (MANDATORY):
 ${perspectiveRule}
@@ -252,7 +257,7 @@ ${kidMode ? violenceRules.none : violenceRules[settings.violenceLevel]}
 ${kidMode ? cursingRules.none : cursingRules[settings.cursingLevel]}
 ${romanceRule}
 ${haremRule}
-${formatMaturityRules(settings)}
+${formatMaturityRules(settings, { nsfw })}
 These controls constrain presentation only; they never authorize inventing entities or contradicting deterministic game state.`;
 }
 
@@ -270,9 +275,14 @@ function engineModeRules(engineMode: GameState['engineMode']): string {
 }
 
 export function buildSystemPrompt(state: GameState, settings: Settings, activeLoreCards: LoreCard[] = []): string {
+  const nsfw = isNsfwCampaign(getCampaignBibleById(state.campaignBibleId ?? ''));
   const modeRules = engineModeRules(state.engineMode);
   const archetypeRules = buildArchetypeRules(state.engineMode, state.campaignArchetype ?? getDefaultArchetype(state.engineMode));
-  const contentRules = settings.contentMode === 'kid' ? KID_MODE_RULES : ADULT_MODE_RULES;
+  const contentRules = settings.contentMode === 'kid'
+    ? KID_MODE_RULES
+    : nsfw
+      ? NSFW_CAMPAIGN_RULES
+      : ADULT_MODE_RULES;
   const strictnessRules = STRICTNESS_RULES[state.gmStrictness ?? 'standard'];
   const diceNote = state.engineMode === 'dnd'
     ? settings.diceAnimation === 'visual'
@@ -281,7 +291,7 @@ export function buildSystemPrompt(state: GameState, settings: Settings, activeLo
     : '';
 
   const statRules = buildStatRules(settings, state);
-  const narrativePreferenceRules = buildNarrativePreferenceRules(settings);
+  const narrativePreferenceRules = buildNarrativePreferenceRules(settings, nsfw);
   const dndModeRules = state.engineMode === 'dnd' || settings.dndMode ? DND_MODE_FORMATTING_RULES : '';
 
   const ledger = buildGroundTruthLedger(state);

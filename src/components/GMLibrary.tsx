@@ -22,9 +22,10 @@ import {
   type LucideIcon,
 } from 'lucide-react';
 import type { CampaignArchetype } from '@/game/archetypes';
-import type { EngineMode } from '@/game/types';
+import type { ContentMode, EngineMode } from '@/game/types';
 import {
   ALL_CAMPAIGN_BIBLES,
+  filterBiblesForContentMode,
   getCampaignBlurb,
   type CampaignBible,
   type LoreSnippet,
@@ -33,6 +34,7 @@ import {
 
 interface GMLibraryProps {
   open: boolean;
+  contentMode?: ContentMode;
   onClose: () => void;
   onSelectCampaign?: (archetype: CampaignArchetype, engineMode: EngineMode, bibleId?: string) => void;
   onSelectMap?: (mapId: string) => void;
@@ -51,6 +53,8 @@ interface CampaignStarter {
   difficulty: Difficulty;
   accent: string;
   icon: LucideIcon;
+  nsfw?: boolean;
+  genreTag?: string;
 }
 
 interface MapTemplate {
@@ -146,6 +150,8 @@ function bibleToStarter(bible: CampaignBible): CampaignStarter {
     difficulty: bible.difficulty,
     accent: ARCHETYPE_ACCENTS[bible.archetype] ?? 'crimson',
     icon: ARCHETYPE_ICONS[bible.archetype] ?? Sparkles,
+    nsfw: bible.nsfw,
+    genreTag: bible.genreTag,
   };
 }
 
@@ -192,10 +198,6 @@ const MAP_TEMPLATES: MapTemplate[] = [
   { id: 'volcanic-cavern', name: 'Volcanic Cavern', description: 'Magma rivers, heat hazards, obsidian bridges', icon: Flame, tier: 3 },
   { id: 'void-rift', name: 'Void Rift', description: 'Fractured reality, floating debris, cosmic entities', icon: Layers, tier: 4 },
 ];
-
-const CAMPAIGN_STARTERS: CampaignStarter[] = ALL_CAMPAIGN_BIBLES.map(bibleToStarter);
-
-const INFO_CARDS: InfoCard[] = ALL_CAMPAIGN_BIBLES.flatMap(bibleToInfoCards);
 
 const CATEGORY_META: Record<InfoCategory, { label: string; icon: LucideIcon }> = {
   lore: { label: 'Lore', icon: BookOpen },
@@ -246,7 +248,7 @@ const ACCENT_GRADIENT: Record<string, string> = {
 
 type Tab = 'campaigns' | 'maps' | 'info';
 
-export function GMLibrary({ open, onClose, onSelectCampaign, onSelectMap }: GMLibraryProps) {
+export function GMLibrary({ open, contentMode, onClose, onSelectCampaign, onSelectMap }: GMLibraryProps) {
   const [tab, setTab] = useState<Tab>('campaigns');
   const [carouselIndex, setCarouselIndex] = useState(0);
   const [selectedMap, setSelectedMap] = useState<string | null>(null);
@@ -254,16 +256,23 @@ export function GMLibrary({ open, onClose, onSelectCampaign, onSelectMap }: GMLi
   const [activeCategory, setActiveCategory] = useState<InfoCategory | 'all'>('all');
   const [mobileFilterOpen, setMobileFilterOpen] = useState(false);
 
+  const visibleBibles = useMemo(
+    () => filterBiblesForContentMode(ALL_CAMPAIGN_BIBLES, contentMode),
+    [contentMode],
+  );
+  const starters = useMemo(() => visibleBibles.map(bibleToStarter), [visibleBibles]);
+  const infoCards = useMemo(() => visibleBibles.flatMap(bibleToInfoCards), [visibleBibles]);
+
   const carouselVisible = useMemo(() => {
     const start = carouselIndex * 3;
-    return CAMPAIGN_STARTERS.slice(start, start + 3);
-  }, [carouselIndex]);
+    return starters.slice(start, start + 3);
+  }, [carouselIndex, starters]);
 
-  const maxCarouselPage = Math.ceil(CAMPAIGN_STARTERS.length / 3) - 1;
+  const maxCarouselPage = Math.max(0, Math.ceil(starters.length / 3) - 1);
 
   const filteredCards = useMemo(() => {
     const q = search.trim().toLowerCase();
-    return INFO_CARDS.filter((c) => {
+    return infoCards.filter((c) => {
       if (activeCategory !== 'all' && c.category !== activeCategory) return false;
       if (!q) return true;
       return (
@@ -272,7 +281,7 @@ export function GMLibrary({ open, onClose, onSelectCampaign, onSelectMap }: GMLi
         c.tags.some((t) => t.includes(q))
       );
     });
-  }, [search, activeCategory]);
+  }, [search, activeCategory, infoCards]);
 
   if (!open) return null;
 
@@ -353,7 +362,7 @@ export function GMLibrary({ open, onClose, onSelectCampaign, onSelectMap }: GMLi
         {/* Footer */}
         <div className="flex shrink-0 items-center justify-between border-t border-slate-800 bg-slate-950 px-4 py-3 sm:px-6">
           <span className="text-[11px] text-slate-600">
-            {tab === 'campaigns' && `${CAMPAIGN_STARTERS.length} campaign starters available`}
+            {tab === 'campaigns' && `${starters.length} campaign starters available`}
             {tab === 'maps' && `${MAP_TEMPLATES.length} map templates`}
             {tab === 'info' && `${filteredCards.length} info cards`}
           </span>
@@ -455,6 +464,20 @@ function CampaignCarousel({
                     {c.difficulty}
                   </span>
                 </div>
+                {(c.nsfw || c.genreTag) && (
+                  <div className="flex flex-wrap items-center gap-1">
+                    {c.nsfw ? (
+                      <span className="rounded-full border border-rose-500/80 bg-rose-950/70 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-rose-100">
+                        NSFW
+                      </span>
+                    ) : null}
+                    {c.genreTag ? (
+                      <span className="rounded-full border border-crimson-700/70 bg-crimson-950/55 px-2 py-0.5 text-[10px] font-medium text-crimson-200">
+                        {c.genreTag}
+                      </span>
+                    ) : null}
+                  </div>
+                )}
                 {c.tagline && (
                   <p className="text-[11px] italic leading-snug text-slate-300">{c.tagline}</p>
                 )}

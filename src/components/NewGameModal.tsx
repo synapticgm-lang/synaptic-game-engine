@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 import { X, Sparkles, Wand2, BookOpen, Palette, ChevronRight, ChevronLeft, Dices, ScrollText, Cpu, GitFork } from 'lucide-react';
-import type { EngineMode, GmStrictness, ArtStylePreset, ComicLayoutMode, ComicReadingDirection } from '@/game/types';
+import type { ContentMode, EngineMode, GmStrictness, ArtStylePreset, ComicLayoutMode, ComicReadingDirection } from '@/game/types';
 import { ART_STYLE_PRESETS } from '@/game/types';
 import { getArchetypeOptions, getDefaultArchetype, type CampaignArchetype } from '@/game/archetypes';
 import {
@@ -11,6 +11,7 @@ import {
 } from '@/data/campaigns';
 
 interface Props {
+  contentMode?: ContentMode;
   onStart: (
     character: Record<string, any>,
     storyName?: string,
@@ -69,7 +70,7 @@ const STEP_LABELS: Record<WizardStep, string> = {
   character: '3 · Character',
 };
 
-export function NewGameModal({ onStart, onClose }: Props) {
+export function NewGameModal({ contentMode, onStart, onClose }: Props) {
   const [path, setPath] = useState<PathKind | null>(null);
   const [step, setStep] = useState<WizardStep>('path');
 
@@ -95,8 +96,8 @@ export function NewGameModal({ onStart, onClose }: Props) {
     o.value === (path === 'custom' ? customArchetype : archetype),
   );
   const premadeBibles = useMemo(
-    () => getCampaignBiblesByEngineMode(engineMode),
-    [engineMode],
+    () => getCampaignBiblesByEngineMode(engineMode, contentMode),
+    [engineMode, contentMode],
   );
 
   const selectPremade = (bible: CampaignBible) => {
@@ -111,7 +112,7 @@ export function NewGameModal({ onStart, onClose }: Props) {
     setCustomArchetype(next);
     setArchetype(next);
     setBibleId(undefined);
-    const first = getCampaignBiblesByEngineMode(mode)[0];
+    const first = getCampaignBiblesByEngineMode(mode, contentMode)[0];
     if (path === 'premade' && first) {
       selectPremade(first);
     } else {
@@ -123,7 +124,7 @@ export function NewGameModal({ onStart, onClose }: Props) {
     setPath(kind);
     setStep('system');
     if (kind === 'premade') {
-      const first = getCampaignBiblesByEngineMode(engineMode)[0];
+      const first = getCampaignBiblesByEngineMode(engineMode, contentMode)[0];
       if (first) selectPremade(first);
     } else {
       setBibleId(undefined);
@@ -333,11 +334,18 @@ export function NewGameModal({ onStart, onClose }: Props) {
                         >
                           <div className="flex items-start justify-between gap-2">
                             <div className="min-w-0">
-                              {bible.genreTag ? (
-                                <span className="mb-1 inline-block rounded-full border border-crimson-700/70 bg-crimson-950/55 px-2 py-0.5 text-[10px] font-medium text-crimson-200">
-                                  {bible.genreTag}
-                                </span>
-                              ) : null}
+                              <div className="mb-1 flex flex-wrap items-center gap-1">
+                                {bible.nsfw ? (
+                                  <span className="inline-block rounded-full border border-rose-500/80 bg-rose-950/70 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-rose-100">
+                                    NSFW
+                                  </span>
+                                ) : null}
+                                {bible.genreTag ? (
+                                  <span className="inline-block rounded-full border border-crimson-700/70 bg-crimson-950/55 px-2 py-0.5 text-[10px] font-medium text-crimson-200">
+                                    {bible.genreTag}
+                                  </span>
+                                ) : null}
+                              </div>
                               <span className="block font-semibold text-slate-100">{bible.title}</span>
                             </div>
                             <span className="shrink-0 rounded-full border border-slate-600 px-1.5 py-0.5 text-[9px] uppercase text-slate-400">
