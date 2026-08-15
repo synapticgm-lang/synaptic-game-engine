@@ -4,11 +4,18 @@ import { formatCampaignStoryName } from '@/data/campaigns';
 import { emptyWorldLedger } from './worldSim';
 import { syncContainerOccupancy } from './inventory';
 
+/** Bump this to retire every older local/cloud/Drive save after a playtest wipe. */
+export const CURRENT_SAVE_VERSION = 2;
+
+export function isPlayableSave(state: GameState | null | undefined): state is GameState {
+  return !!state && typeof state.saveId === 'string' && (state.version ?? 0) >= CURRENT_SAVE_VERSION;
+}
+
 export function createInitialState(storyName?: string, engineMode: EngineMode = 'litrpg', archetype?: CampaignArchetype): GameState {
   const now = Date.now();
   const defaultStory = formatCampaignStoryName('New Campaign', new Date(now));
   return syncContainerOccupancy({
-    version: 1,
+    version: CURRENT_SAVE_VERSION,
     saveId: crypto.randomUUID(),
     storyName: storyName || defaultStory,
     engineMode,

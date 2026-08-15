@@ -1,4 +1,5 @@
 import type { ArtStylePreset, GameState, SaveSlotInfo, Settings } from './types';
+import { isPlayableSave } from './defaults';
 import { supabase, isSupabaseConfigured } from '@/lib/supabase';
 
 export type CloudSaveBundle = {
@@ -46,7 +47,7 @@ export async function fetchLatestCloudSave(): Promise<CloudSaveBundle | null> {
   if (error || !data?.game_state) return null;
 
   const state = data.game_state as GameState;
-  if (!state || typeof state !== 'object' || !state.saveId) return null;
+  if (!isPlayableSave(state)) return null;
 
   const updatedAtMs = data.updated_at ? Date.parse(String(data.updated_at)) : (state.lastUpdated ?? 0);
 
@@ -104,7 +105,7 @@ export async function fetchAllCloudSaveSlots(): Promise<SaveSlotInfo[]> {
   if (error || !data?.length) return [];
 
   return data
-    .filter((row) => row.save_id)
+    .filter((row) => row.save_id && isPlayableSave(row.game_state as GameState))
     .map((row) => slotFromCloudRow(row));
 }
 

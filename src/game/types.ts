@@ -316,6 +316,7 @@ export interface OpeningEstablishment {
 }
 
 export interface GameState {
+  /** Save generation. Clients reject anything below CURRENT_SAVE_VERSION. */
   version: number;
   saveId: string;
   storyName: string;

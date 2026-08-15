@@ -1,4 +1,5 @@
 import type { GameState, SaveSlotInfo } from './types';
+import { isPlayableSave } from './defaults';
 
 const DRIVE_SCOPE = 'https://www.googleapis.com/auth/drive.appdata';
 const SAVE_FILENAME = 'litrpg_save_active.json';
@@ -195,7 +196,9 @@ export async function fetchCloudSave(): Promise<CloudSave | null> {
     headers: authHeaders(),
   });
   if (!res.ok) throw new Error('Drive download failed: ' + res.status);
-  return (await res.json()) as CloudSave;
+  const cloud = (await res.json()) as CloudSave;
+  if (!isPlayableSave(cloud.rawState) && (cloud.version ?? 0) < 2) return null;
+  return cloud;
 }
 
 export function cloudSaveToLocal(cloud: CloudSave): GameState {

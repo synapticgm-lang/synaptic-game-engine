@@ -1,5 +1,5 @@
 import type { GameState, Settings } from './types';
-import { createDefaultSettings } from './defaults';
+import { createDefaultSettings, isPlayableSave } from './defaults';
 import { syncContainerOccupancy } from './inventory';
 
 const DB_NAME = 'tactical-litrpg';
@@ -29,7 +29,16 @@ export async function loadGame(): Promise<GameState | null> {
     const req = tx.objectStore(STORE_GAME).get('current');
     req.onsuccess = () => {
       const raw = req.result ?? null;
-      resolve(raw ? syncContainerOccupancy(raw) : null);
+      if (!raw) {
+        resolve(null);
+        return;
+      }
+      const state = syncContainerOccupancy(raw);
+      if (!isPlayableSave(state)) {
+        resolve(null);
+        return;
+      }
+      resolve(state);
     };
     req.onerror = () => reject(req.error);
   });
@@ -128,7 +137,12 @@ export function importSave(file: File): Promise<GameState> {
           reject(new Error('Invalid save file: missing narrative log'));
           return;
         }
-        resolve(syncContainerOccupancy(parsed as GameState));
+        const imported = syncContainerOccupancy(parsed as GameState);
+        if (!isPlayableSave(imported)) {
+          reject(new Error('This save is from before the playtest wipe. Start a new game.'));
+          return;
+        }
+        resolve(imported);
       } catch (e) {
         reject(e);
       }
