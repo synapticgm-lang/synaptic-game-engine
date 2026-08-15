@@ -10,9 +10,10 @@ export const resinSonata: CampaignBible = {
   archetype: 'custom_world',
   engineMode: 'pyoa',
   difficulty: 'Standard',
+  genreTag: 'Underwater horror',
   tagline: 'Evolution was a symphony, but the orchestra went mad.',
   shortDescription:
-    'Drowned art-deco horror. The High-Architect is dead in the Glass Atrium, the last uncorrupted Eden-Resin is in a brass syringe in your hand, and Aris offers the maintenance shafts before a Brass-Gargant arrives. Laborers or aristocrats — several endings.',
+    'The High-Architect is dead in the Glass Atrium, the last uncorrupted Eden-Resin is in a brass syringe in your hand, and Aris offers the maintenance shafts before a Brass-Gargant arrives. Laborers or aristocrats — several endings.',
   licenseNote:
     'Original SynapticGM retro-futuristic biological-horror tropes (underwater dystopia, genetic splicing, ruined aristocracy). Not based on BioShock, Fable, Albion, or any named game, film, or novel.',
   startingLocation: 'the Glass Atrium of the Grand Funicular',

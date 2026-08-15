@@ -10,9 +10,10 @@ export const umbraProtocol: CampaignBible = {
   archetype: 'custom_world',
   engineMode: 'pyoa',
   difficulty: 'Standard',
+  genreTag: 'Rooftop assassin',
   tagline: 'To kill a king, you only need a blade; to kill an empire, you need the names of its architects.',
   shortDescription:
-    'Stealth-assassin rooftop run. Blood on the bell-tower floor, the Architect’s Ledger ticking in your hands, Sable offering a climbing harness as the Sovereign Guard grapples in. Silk-Weavers or Iron Syndicate — several endings.',
+    'Blood on the bell-tower floor, the Architect’s Ledger ticking in your hands, Sable offering a climbing harness as the Sovereign Guard grapples in. Silk-Weavers or Iron Syndicate — several endings.',
   licenseNote:
     'Original SynapticGM stealth-assassin tropes (social blending, rooftop parkour, shadow syndicates, clockwork gadgets). Not based on Assassin’s Creed, Hitman, Fable, Albion, or any named game, film, or novel.',
   startingLocation: 'the Bell-Tower of the Grand Exchange',

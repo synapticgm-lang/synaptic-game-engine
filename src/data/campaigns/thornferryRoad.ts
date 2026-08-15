@@ -11,9 +11,10 @@ export const thornferryRoad: CampaignBible = {
   archetype: 'custom_world',
   engineMode: 'pyoa',
   difficulty: 'Standard',
+  genreTag: 'Small-town road',
   tagline: 'A clear road. Hard choices. Your comments are the hero’s pulse.',
   shortDescription:
-    'Mill-town fantasy. Wren Holt offers to walk the road with you — or you go alone. Ally with the mill, sell out to the magistrate, optional side work, several endings.',
+    'Wren Holt offers to walk the road with you — or you go alone. Ally with the mill, sell out to the magistrate, optional side work, several endings.',
   licenseNote:
     'Original SynapticGM setting. Uses common moral-choice / companion / village-road tropes. Not based on Fable, Albion, or any named game, novel, or show.',
   startingLocation: 'the mill landing at Thornferry',

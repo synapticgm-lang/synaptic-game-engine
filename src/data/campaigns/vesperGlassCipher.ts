@@ -11,6 +11,7 @@ export const vesperGlassCipher: CampaignBible = {
   archetype: 'custom_world',
   engineMode: 'pyoa',
   difficulty: 'Standard',
+  genreTag: 'Occult mystery',
   tagline: 'To rewrite the past, you must first survive the people trying to erase it.',
   shortDescription:
     'Dark aether heist. You stole a humming cipher from Oakhaven’s flooded archives. Silas offers a way out. Trust him or use him, then choose the Rust-Barons, the Seers, or no one.',

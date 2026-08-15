@@ -15,9 +15,10 @@ export const ascendingSpire = makeBible({
   archetype: 'tower_ascent',
   engineMode: 'litrpg',
   difficulty: 'Hardcore',
+  genreTag: 'Tower climb',
   tagline: 'One tower. One hundred floors. Climb or be forgotten.',
   shortDescription:
-    'LitRPG tower-climb: ranked floors, floor bosses, and a System that only rewards ascent. Genre trope — original world.',
+    'Ranked floors, floor bosses, and a System that only rewards ascent. Genre trope — original world.',
   licenseNote:
     'Original SynapticGM setting. Uses common LitRPG “tower climb” tropes (not any specific novel). Rules language may reference SRD-compatible fantasy terms under CC-BY where applicable.',
   premise:
@@ -89,6 +90,7 @@ export const inkboundAcademy = makeBible({
   archetype: 'magic_academy',
   engineMode: 'litrpg',
   difficulty: 'Standard',
+  genreTag: 'Magic school',
   tagline: 'Write your class. Bleed for your grades.',
   shortDescription:
     'School-arc LitRPG: dorms, exams, rival houses, and a living rulebook. Original academy — not any anime/novel IP.',
@@ -163,9 +165,10 @@ export const hollowCore = makeBible({
   archetype: 'dungeon_core',
   engineMode: 'litrpg',
   difficulty: 'Hardcore',
+  genreTag: 'Dungeon core',
   tagline: 'You are the dungeon. Grow or be mined.',
   shortDescription:
-    'Dungeon-core / monster evolution vibe: build rooms, spawn defenders, bargain with adventurers. Original.',
+    'Build rooms, spawn defenders, bargain with adventurers. Original.',
   licenseNote:
     'Original SynapticGM setting. Uses common “dungeon core / monster reincarnation” genre tropes — not any specific book series.',
   premise:
@@ -225,6 +228,7 @@ export const millstoneRoad = makeBible({
   archetype: 'caravan_escort',
   engineMode: 'dnd',
   difficulty: 'Easy',
+  genreTag: 'Caravan',
   tagline: 'Wagons, weather, and whatever waits past the next hill.',
   shortDescription:
     'Classic 5e-friendly caravan start: escort, tavern rumors, low-level threats. Original — not a published FR module.',
@@ -293,6 +297,7 @@ export const brokenCrownKeep = makeBible({
   archetype: 'cursed_manor',
   engineMode: 'dnd',
   difficulty: 'Standard',
+  genreTag: 'Dungeon crawl',
   tagline: 'A ruined keep. Two warbands. One prisoner. Your call.',
   shortDescription:
     'Dungeon-site keep crawl with rival factions below. Original OSR-style site — not a licensed module text.',
@@ -355,6 +360,7 @@ export const verdantBlight = makeBible({
   archetype: 'patrons_quest',
   engineMode: 'dnd',
   difficulty: 'Standard',
+  genreTag: 'Village mystery',
   tagline: 'A village sickens. The forest is too green.',
   shortDescription:
     'Investigation one-shot vibe: clues, moral choices, optional combat. Original mystery — not a copied itch.io PDF.',
@@ -417,6 +423,7 @@ export const stillrootVeil = makeBible({
   archetype: 'wilderness_expedition',
   engineMode: 'dnd',
   difficulty: 'Hardcore',
+  genreTag: 'Village horror',
   tagline: 'A cozy hamlet. Warm beds. Wrong shadows.',
   shortDescription:
     'Horror-tinged village drop-in: kindness on the surface, rot underneath. Original — not a reprint of any CC0 zine text.',
@@ -479,6 +486,7 @@ export const gatebreakWard = makeBible({
   archetype: 'system_apocalypse',
   engineMode: 'litrpg',
   difficulty: 'Hardcore',
+  genreTag: 'Gate raids',
   tagline: 'The city has gates. The gates have bosses. Your district is next.',
   shortDescription:
     'Urban System apocalypse: district defense, ranked gates, hunter guilds. Original world.',
@@ -541,6 +549,7 @@ export const blankCanvas = makeBible({
   archetype: 'custom_world',
   engineMode: 'litrpg',
   difficulty: 'Standard',
+  genreTag: 'Custom world',
   tagline: 'You define the rules. The AI must obey your bible.',
   shortDescription:
     'Empty rails for custom worldbuilding: add your own lore cards, quests, and premises in Codex / GM Library.',
@@ -575,6 +584,7 @@ export const blankCanvasDnd = makeBible({
   archetype: 'ai_custom',
   engineMode: 'dnd',
   difficulty: 'Standard',
+  genreTag: 'Custom world',
   tagline: 'Build your own 5e-compatible world on open rails.',
   shortDescription:
     'Empty 5e-friendly custom shell. Use SRD rules; avoid Forgotten Realms and other closed settings.',
@@ -613,9 +623,10 @@ export const saltRoadHeist = makeBible({
   archetype: 'custom_world',
   engineMode: 'rpg',
   difficulty: 'Standard',
+  genreTag: 'Heist',
   tagline: 'One crew. One score. Everything after is consequences.',
   shortDescription:
-    'Heist story RPG: planning, betrayal, and fallout. Choices and heat drive outcomes — no dice HUD.',
+    'Planning, betrayal, and fallout. Choices and heat drive outcomes — no dice HUD.',
   licenseNote: 'Original SynapticGM story. Generic heist pacing only; no closed IP text.',
   premise:
     'You and a small crew plan to steal a salt-tax ledger from the Consul’s caravan before it reaches the coast. Allies want cuts. Rivals want your names. The story tracks trust, heat, and what you owe after the score.',
@@ -667,6 +678,7 @@ export const glassHarborLetters = makeBible({
   archetype: 'custom_world',
   engineMode: 'rpg',
   difficulty: 'Easy',
+  genreTag: 'Letters',
   tagline: 'A port city of secrets, debts, and unfinished letters.',
   shortDescription:
     'Harbor mystery / relationships. Clues live in people and favors, not loot tables.',
@@ -717,6 +729,7 @@ export const embercourtOath = makeBible({
   archetype: 'custom_world',
   engineMode: 'rpg',
   difficulty: 'Standard',
+  genreTag: 'Court intrigue',
   tagline: 'Court intrigue where every promise is a weapon.',
   shortDescription:
     'Political intrigue: factions, favors, and oaths. Reputation matters more than HP.',
@@ -765,6 +778,7 @@ export const rainglassCase = makeBible({
   archetype: 'custom_world',
   engineMode: 'rpg',
   difficulty: 'Standard',
+  genreTag: 'Noir',
   tagline: 'Noir investigation under neon and rain.',
   shortDescription:
     'Mystery / noir: interview witnesses, weigh lies, choose who the truth protects.',
@@ -813,6 +827,7 @@ export const staticHouse = makeBible({
   archetype: 'custom_world',
   engineMode: 'rpg',
   difficulty: 'Hardcore',
+  genreTag: 'Isolation horror',
   tagline: 'Isolation horror. The signal is wrong.',
   shortDescription:
     'Survival horror in a remote station: dwindling resources, unreliable senses, soft-then-hard dread.',
@@ -861,6 +876,7 @@ export const driftwakeCrew = makeBible({
   archetype: 'custom_world',
   engineMode: 'rpg',
   difficulty: 'Standard',
+  genreTag: 'Space crew',
   tagline: 'A small ship, a big debt, and stars that do not care.',
   shortDescription:
     'Space-opera crew drama: jobs, mutiny risk, and loyalty under pressure.',
@@ -909,6 +925,7 @@ export const ashlineConvoy = makeBible({
   archetype: 'custom_world',
   engineMode: 'rpg',
   difficulty: 'Hardcore',
+  genreTag: 'Wasteland',
   tagline: 'Road story after the sky burned.',
   shortDescription:
     'Post-apocalypse travelogue: fuel, trust, and which settlements you save.',
@@ -957,6 +974,7 @@ export const twinLanterns = makeBible({
   archetype: 'custom_world',
   engineMode: 'rpg',
   difficulty: 'Easy',
+  genreTag: 'Romance',
   tagline: 'Romance with stakes — who you love changes the city.',
   shortDescription:
     'Relationship drama: rival festivals, soft conflict, hard choices of allegiance.',
@@ -1005,9 +1023,10 @@ export const redmesaClaim = makeBible({
   archetype: 'custom_world',
   engineMode: 'rpg',
   difficulty: 'Standard',
+  genreTag: 'Western',
   tagline: 'Frontier justice, scarce water, and a claim worth killing for.',
   shortDescription:
-    'Western / frontier: land disputes, duels of reputation, dust and dusk panels.',
+    'Land disputes, duels of reputation, dust and dusk panels.',
   licenseNote: 'Original SynapticGM western. No licensed film or game settings.',
   premise:
     'You hold a half-legal claim on Redmesa’s only spring. A rail company, a rancher, and a buried town all want it. Stories resolve through reputation, alliances, and who draws first — not hit points.',
@@ -1053,6 +1072,7 @@ export const capeDistrictVigil = makeBible({
   archetype: 'cyberpunk',
   engineMode: 'rpg',
   difficulty: 'Standard',
+  genreTag: 'Street heroes',
   tagline: 'Street-level powers. City-level consequences.',
   shortDescription:
     'Original superhero street drama: masks, media heat, and who you save first.',
@@ -1102,6 +1122,7 @@ export const wayfarersMap = makeBible({
   archetype: 'custom_world',
   engineMode: 'rpg',
   difficulty: 'Easy',
+  genreTag: 'Travelogue',
   tagline: 'Found family on the long road between wonders.',
   shortDescription:
     'Travelogue adventure: companions, soft conflict, places that change you.',
@@ -1150,6 +1171,7 @@ export const hearthwickTeas = makeBible({
   archetype: 'custom_world',
   engineMode: 'rpg',
   difficulty: 'Easy',
+  genreTag: 'Tea shop',
   tagline: 'Cozy mystery in a shop that hears everything.',
   shortDescription:
     'Slice-of-life cozy mystery: soft stakes, warm panels, puzzles in gossip.',
@@ -1198,6 +1220,7 @@ export const blankCanvasRpg = makeBible({
   archetype: 'custom_world',
   engineMode: 'rpg',
   difficulty: 'Standard',
+  genreTag: 'Custom world',
   tagline: 'Fiction-first custom world — you write the people and stakes.',
   shortDescription:
     'Empty story-RPG shell. No system HUD. Build lore cards; the AI follows your canon.',

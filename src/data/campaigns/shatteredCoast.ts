@@ -6,6 +6,7 @@ export const shatteredCoast: CampaignBible = {
   archetype: 'patrons_quest',
   engineMode: 'dnd',
   difficulty: 'Standard',
+  genreTag: 'City intrigue',
   tagline: 'Five guilds. One city. A dragon that should be dead.',
   shortDescription:
     '5e-friendly coastal intrigue in Saltmar: guild politics, deep-sea secrets, and rumors of a dragon the histories say is dead.',

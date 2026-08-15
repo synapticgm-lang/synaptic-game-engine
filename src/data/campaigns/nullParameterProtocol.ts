@@ -11,9 +11,10 @@ export const nullParameterProtocol: CampaignBible = {
   archetype: 'custom_world',
   engineMode: 'pyoa',
   difficulty: 'Standard',
+  genreTag: 'Isekai',
   tagline: 'You were summoned to save their world, but you just found the admin password to destroy it.',
   shortDescription:
-    'Isekai with the cheat in your pocket. Cubicle to a smoking summoning dais, ERROR 404 in your eyes, Kaelen offering a cloak. Side with glitch-rebels or the Crown — several endings.',
+    'Cubicle to a smoking summoning dais, ERROR 404 in your eyes, Kaelen offering a cloak. Side with glitch-rebels or the Crown — several endings.',
   licenseNote:
     'Original SynapticGM isekai/system tropes (screens, glitches, overpowered anomalies). Not based on Sword Art Online, Fable, Albion, or any named novel, anime, or game.',
   startingLocation: 'the Shattered Summoning Dais of Aethelgard',

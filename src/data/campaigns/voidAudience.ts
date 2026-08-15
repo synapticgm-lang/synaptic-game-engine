@@ -6,6 +6,7 @@ export const voidAudience: CampaignBible = {
   archetype: 'void_audience',
   engineMode: 'litrpg',
   difficulty: 'Hardcore',
+  genreTag: 'Afterlife',
   tagline: 'You died. That was the easy part.',
   shortDescription:
     'Negotiate rebirth with a cosmic Auditor, then entertain the Void Audience — Flaws, Boons, and Cosmic Favor decide if you live.',

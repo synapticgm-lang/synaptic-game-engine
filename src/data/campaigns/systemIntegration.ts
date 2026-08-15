@@ -6,6 +6,7 @@ export const systemIntegration: CampaignBible = {
   archetype: 'system_apocalypse',
   engineMode: 'litrpg',
   difficulty: 'Hardcore',
+  genreTag: 'Apocalypse',
   tagline: 'Earth was not asked. Earth was registered.',
   shortDescription:
     'LitRPG system apocalypse: blue panels, permanent death, dungeon zones in modern cities. Survive Waves and claim a Foundation Core.',

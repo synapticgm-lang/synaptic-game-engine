@@ -6,6 +6,7 @@ export const cursedKeep: CampaignBible = {
   archetype: 'cursed_manor',
   engineMode: 'dnd',
   difficulty: 'Standard',
+  genreTag: 'Haunted keep',
   tagline: 'The town is quiet. The keep is not.',
   shortDescription:
     '5e-friendly horror mystery: Greyhollow won’t talk about the abandoned keep — until the dead start stirring and the road washes out.',

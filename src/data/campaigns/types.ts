@@ -70,6 +70,8 @@ export interface CampaignBible {
   difficulty: Difficulty;
   tagline: string;
   premise: string;
+  /** Player-facing genre chip on picker cards (1–4 words, sentence case). */
+  genreTag?: string;
   /** Short blurb for library cards (1–2 sentences). */
   shortDescription?: string;
   /** Copyright / license note for creators (never copy closed IP). */

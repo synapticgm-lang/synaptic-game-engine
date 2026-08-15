@@ -332,7 +332,14 @@ export function NewGameModal({ onStart, onClose }: Props) {
                           }`}
                         >
                           <div className="flex items-start justify-between gap-2">
-                            <span className="font-semibold text-slate-100">{bible.title}</span>
+                            <div className="min-w-0">
+                              {bible.genreTag ? (
+                                <span className="mb-1 inline-block rounded-full border border-crimson-700/70 bg-crimson-950/55 px-2 py-0.5 text-[10px] font-medium text-crimson-200">
+                                  {bible.genreTag}
+                                </span>
+                              ) : null}
+                              <span className="block font-semibold text-slate-100">{bible.title}</span>
+                            </div>
                             <span className="shrink-0 rounded-full border border-slate-600 px-1.5 py-0.5 text-[9px] uppercase text-slate-400">
                               {bible.difficulty}
                             </span>

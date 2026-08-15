@@ -6,6 +6,7 @@ export const fabledLegacy: CampaignBible = {
   archetype: 'ai_random',
   engineMode: 'litrpg',
   difficulty: 'Easy',
+  genreTag: 'Village start',
   tagline: 'Every hero starts somewhere. Yours starts in a village that time forgot.',
   shortDescription:
     'Soft LitRPG village start — no neon HUD focus. Choices, relationships, and consequences in Mossford before the wider world arrives.',

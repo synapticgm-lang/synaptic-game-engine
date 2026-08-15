@@ -9,6 +9,7 @@ export function makeBible(opts: {
   archetype: CampaignArchetype;
   engineMode: EngineMode;
   difficulty: CampaignBible['difficulty'];
+  genreTag: string;
   tagline: string;
   shortDescription: string;
   premise: string;
@@ -33,6 +34,7 @@ export function makeBible(opts: {
     archetype: opts.archetype,
     engineMode: opts.engineMode,
     difficulty: opts.difficulty,
+    genreTag: opts.genreTag,
     tagline: opts.tagline,
     shortDescription: opts.shortDescription,
     premise: opts.premise,

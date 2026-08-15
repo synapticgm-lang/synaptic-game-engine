@@ -10,9 +10,10 @@ export const giltwoodEstate: CampaignBible = {
   archetype: 'custom_world',
   engineMode: 'pyoa',
   difficulty: 'Standard',
+  genreTag: 'Murder mystery',
   tagline: 'Six guests, one corpse, and a pocket watch counting down to the next murder.',
   shortDescription:
-    'Locked-room mystery. Lord Harrington is dead on the rug, a pocket watch ticks backward in your hand, and Beatrice knows a servants’ passage — if you will not pin the murder on her.',
+    'Lord Harrington is dead on the rug, a pocket watch ticks backward in your hand, and Beatrice knows a servants’ passage — if you will not pin the murder on her.',
   licenseNote:
     'Original SynapticGM locked-room mystery. Aristocratic blackmail and hidden passages as tropes. Not based on Clue/Cluedo, Knives Out, Fable, Albion, or any named series, film, or board game.',
   startingLocation: 'the Billiard Room of Giltwood Estate',

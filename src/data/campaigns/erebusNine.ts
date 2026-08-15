@@ -10,6 +10,7 @@ export const erebusNine: CampaignBible = {
   archetype: 'custom_world',
   engineMode: 'pyoa',
   difficulty: 'Hardcore',
+  genreTag: 'Alone in space',
   tagline: 'They dug too deep to find the cure; now we have to bury the disease.',
   shortDescription:
     'Swarm-rig survival. The air-lock is failing, Private Vance begs you to open it, and the only nav-drive is in your hands. Side with the miners or Apex — several ways off the rock.',

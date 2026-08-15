@@ -6,6 +6,7 @@ export const dungeonTransport: CampaignBible = {
   archetype: 'dungeon_transport',
   engineMode: 'litrpg',
   difficulty: 'Hardcore',
+  genreTag: 'Dungeon crawl',
   tagline: 'One step. No way back. Only down.',
   shortDescription:
     'Accidental portal into a floor-by-floor dungeon climb. Resource pressure, safe rooms, and no easy exit — only deeper.',
