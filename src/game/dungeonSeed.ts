@@ -385,7 +385,7 @@ export function resolveSeededRarity(
   const pity = opts.pity;
   const seed = opts.seed ?? seedArg;
   const source = (opts.source || '').toLowerCase();
-  const claim = (opts.claimedRarity ?? claimed || '').trim();
+  const claim = (opts.claimedRarity ?? claimed ?? '').trim();
 
   // Non-random paths bypass table rolls.
   if (source === 'quest' || source === 'story' || source === 'key') {

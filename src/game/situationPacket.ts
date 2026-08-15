@@ -94,26 +94,34 @@ export function formatSituationForPrompt(state: GameState): string {
   const hiddenLedger = formatHiddenRoomLedger(state.activeDungeon);
   const placeRegistry = formatPlacesForPrompt(state.places, currentSheet?.name ?? s.location);
   const tutorialMandate = formatTutorialBeatMandate(state);
-  return `${currentLine}
-${previousLine}
-${placeRegistry ? `PLACE REGISTRY (authority for name/tier/arc):\n${placeRegistry}\n` : ''}${sceneBlock ? `${sceneBlock}\n` : ''}Encounter: ${s.encounter}
-Dungeon: ${s.dungeon}
-Present entities: ${s.presentEntities.join(' | ')}
-Active quests (revealed only — never mention hidden Guide Book hooks): ${s.activeQuests.join(' | ')}
-NPC memories:
-${npcBlock || '(none')}
-Place-scoped facts (current + last location):
-${placeFacts.length ? placeFacts.join('\n') : '(none)'}
-Recent facts:
-${s.recentFacts.length ? s.recentFacts.join('\n') : '(none)'}
-${hiddenLedger ? `${hiddenLedger}\n` : ''}${tutorialMandate ? `${tutorialMandate}\n` : ''}RAILS: Hard facts above + SCENE FACTS + factual timeline OVERRIDE improvisation. Do not invent named threats, loot tiers, NPCs, or interactables absent from this packet / location sheet / tags / HIDDEN ROOM LEDGER. Do not invent a dungeon danger tier for street/outdoors (no "Tier 2 Urban Ruin" while mapScale is local streets). Do not empty a present crowd or silence shouting without narrating time passing.
-PLAYER ACTION FIDELITY: Resolve the player's last stated action first — the named object, question, or motion. Never swap a specific search for a generic look-around. Never pivot the scene to a quest location, dungeon, store, or marker unless the player mentioned it or is already there.
-Do not write "You commit to the action" or "the result lands in [lore title]". Narrate what actually happens.
-Lore-article titles are not the current location. Do not name unvisited hubs, cities, or NPCs.
-DUAL LOCATION MEMORY: Keep continuity with CURRENT and PREVIOUS location sheets. The player just left the previous place — do not forget what was there.
-REFUSE / PROTEST: If the player refuses the System or a quest, acknowledge in-fiction (cold System voice). Do not break character or say "choose an action to continue." Mechanics may still advance (timer, free attack) via the outcome token.
-HIDDEN QUESTS: Never spoil quests with status hidden or revealed=false.
-${formatWorldLedgerBlock(state.worldLedger)}`;
+  const none = '(none)';
+  const lines = [
+    currentLine,
+    previousLine,
+    placeRegistry ? `PLACE REGISTRY (authority for name/tier/arc):\n${placeRegistry}` : '',
+    sceneBlock || '',
+    `Encounter: ${s.encounter}`,
+    `Dungeon: ${s.dungeon}`,
+    `Present entities: ${s.presentEntities.join(' | ')}`,
+    `Active quests (revealed only — never mention hidden Guide Book hooks): ${s.activeQuests.join(' | ')}`,
+    'NPC memories:',
+    npcBlock || none,
+    'Place-scoped facts (current + last location):',
+    placeFacts.length ? placeFacts.join('\n') : none,
+    'Recent facts:',
+    s.recentFacts.length ? s.recentFacts.join('\n') : none,
+    hiddenLedger || '',
+    tutorialMandate || '',
+    'RAILS: Hard facts above + SCENE FACTS + factual timeline OVERRIDE improvisation. Do not invent named threats, loot tiers, NPCs, or interactables absent from this packet / location sheet / tags / HIDDEN ROOM LEDGER. Do not invent a dungeon danger tier for street/outdoors (no "Tier 2 Urban Ruin" while mapScale is local streets). Do not empty a present crowd or silence shouting without narrating time passing.',
+    'PLAYER ACTION FIDELITY: Resolve the player\'s last stated action first — the named object, question, or motion. Never swap a specific search for a generic look-around. Never pivot the scene to a quest location, dungeon, store, or marker unless the player mentioned it or is already there.',
+    'Do not write "You commit to the action" or "the result lands in [lore title]". Narrate what actually happens.',
+    'Lore-article titles are not the current location. Do not name unvisited hubs, cities, or NPCs.',
+    'DUAL LOCATION MEMORY: Keep continuity with CURRENT and PREVIOUS location sheets. The player just left the previous place — do not forget what was there.',
+    'REFUSE / PROTEST: If the player refuses the System or a quest, acknowledge in-fiction (cold System voice). Do not break character or say "choose an action to continue." Mechanics may still advance (timer, free attack) via the outcome token.',
+    'HIDDEN QUESTS: Never spoil quests with status hidden or revealed=false.',
+    formatWorldLedgerBlock(state.worldLedger),
+  ];
+  return lines.filter((line) => line !== '').join('\n');
 }
 
 function formatWorldLedgerBlock(raw?: WorldLedger): string {
