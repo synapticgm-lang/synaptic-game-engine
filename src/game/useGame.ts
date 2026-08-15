@@ -113,7 +113,7 @@ import { buildPendingProposal, getProposedState, withEditedNarrative, touchLocat
 import { extractUpdates, extractNewItems, parseActionTags, stripActionTags, matchLoreCards, eventsToLoreCards, parseTurnFrame, eventsToQuestUpdates, eventsToEncounterUpdate, parsePanels, eventsToMilestone, eventsToLootVideo, eventsToVisualUpdate, stripChoiceList, extractChoiceLines, stripTurnCloser, storyHasBody } from './parser';
 import { hasRealGmStory } from './turnAsk';
 import { encounterOriginPlace } from './locationName';
-import { extractNamedPlaces, harvestPlayText, isGenericMapPlace, mapAnchorName, newlyRevealedQuests, syncQuestsFromPlay } from './questPlay';
+import { clampLeakedOpeningQuests, extractNamedPlaces, harvestPlayText, isGenericMapPlace, mapAnchorName, newlyRevealedQuests, questsLockedDuringOpening, syncQuestsFromPlay } from './questPlay';
 import { inferItemType } from './salvage';
 import { initializeDungeon, moveToNode, exitDungeon as engineExitDungeon, buildLocalAreaMap, addLandmarkToLocalMap } from './mapEngine';
 import type { Toast } from '@/components/ToastStack';
@@ -1144,7 +1144,8 @@ export function useGame() {
       previous.currentLocation ?? '',
       previous.locationSheet?.name ?? '',
     ]);
-    const quests = previous.quests ?? [];
+    const clamped = clampLeakedOpeningQuests(previous);
+    const quests = clamped.quests ?? [];
     const landmarks = extractNamedPlaces(blob);
     const place = mapAnchorName(
       previous.currentLocation || previous.locationSheet?.name,
@@ -2142,7 +2143,8 @@ In <system-log>, only emit LitRPG/RPG progression lines (XP, loot, HP change as 
       let updatedQuests = syncQuestsFromPlay(
         eventsToQuestUpdates(events, workingState.quests ?? [], nextTurn),
         mergedSystemLog,
-        `${sanitizedInput}\n${cleanText}\n${mergedSystemLog.join('\n')}`
+        `${sanitizedInput}\n${cleanText}\n${mergedSystemLog.join('\n')}`,
+        { locked: questsLockedDuringOpening(liveCurrent) }
       );
       updatedQuests = ensureTutorialQuest(
         { ...workingState, quests: updatedQuests },
@@ -2643,7 +2645,7 @@ In <system-log>, only emit LitRPG/RPG progression lines (XP, loot, HP change as 
       ? establishedIntro.choices
       : establishmentChoices(openingPrompts);
     const cleanIntroContent = stripChoiceList(establishedIntro.text);
-    const newState: GameState = {
+    const newState: GameState = clampLeakedOpeningQuests({
       ...namedSeeded,
       gmStrictness,
       character: mergedCharacter,
@@ -2654,7 +2656,7 @@ In <system-log>, only emit LitRPG/RPG progression lines (XP, loot, HP change as 
       openingEstablishment: openingPrompts.length
         ? { pending: openingPrompts, answers: {}, complete: false, registrar }
         : { pending: [], answers: {}, complete: true, registrar },
-    };
+    });
     setState(newState);
     stateRef.current = newState;
     bindSessionImageCache(newState.saveId);
@@ -2984,7 +2986,9 @@ In <system-log>, only emit LitRPG/RPG progression lines (XP, loot, HP change as 
   const handleImport = useCallbackRef(async (file: File) => {
     try {
       const imported = await importSave(file);
-      const recovered = reconcileCampaignLoadout(settleOrphanedImageJobs(imported));
+      const recovered = clampLeakedOpeningQuests(
+        reconcileCampaignLoadout(settleOrphanedImageJobs(imported))
+      );
       setState(recovered);
       stateRef.current = recovered;
       bindSessionImageCache(recovered.saveId);
@@ -3169,7 +3173,9 @@ In <system-log>, only emit LitRPG/RPG progression lines (XP, loot, HP change as 
 
         // Image requests are intentionally not persisted/resumed. A saved `pending` status
         // therefore has no live promise behind it and must become a terminal fallback state.
-        const recovered = reconcileCampaignLoadout(settleOrphanedImageJobs(saved));
+        const recovered = clampLeakedOpeningQuests(
+          reconcileCampaignLoadout(settleOrphanedImageJobs(saved))
+        );
 
         if (useCloud && cloud) {
           // Restore locked presentation settings from the cloud row when present.

@@ -187,6 +187,7 @@ export function withQuestReveal(quests: Quest[], questId: string): Quest[] {
 /** Reveal first active quest when player explicitly asks about quests / registration objectives. */
 export function maybeRevealQuestsFromPlayerAction(state: GameState, playerAction: string): Quest[] {
   const quests = state.quests ?? [];
+  if (state.openingEstablishment && state.openingEstablishment.complete === false) return quests;
   if (!/\b(quest|quests|objective|objectives|what\s+do\s+i\s+(?:do|get)|register(?:ing|ed)?|system\s+want|main\s+story|guide)\b/i.test(playerAction)) {
     return quests;
   }

@@ -1,4 +1,4 @@
-import type { LogEntry, Quest } from './types';
+import type { GameState, LogEntry, Quest } from './types';
 
 function slug(raw: string): string {
   return raw.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 40) || 'quest';
@@ -89,11 +89,45 @@ function labelFromLogLine(line: string): string | null {
   return raw ? raw.slice(0, 80) : null;
 }
 
+/** Journal stays empty while the System is still asking for name/place. */
+export function questsLockedDuringOpening(state: {
+  openingEstablishment?: { complete?: boolean } | null;
+  log?: Array<{ role: string; content: string }>;
+}): boolean {
+  const est = state.openingEstablishment;
+  if (est && est.complete === false) return true;
+  if (est?.complete === true) return false;
+  const lastGm = [...(state.log ?? [])].reverse().find((e) => e.role === 'gm')?.content ?? '';
+  return /confirm designation|confirm your name and current location|current designation:\s*unconfirmed/i.test(lastGm);
+}
+
+function hideSeededQuests(quests: Quest[]): Quest[] {
+  let changed = false;
+  const next = quests.map((q) => {
+    if (q.revealed !== true && q.status === 'hidden') return q;
+    changed = true;
+    return { ...q, revealed: false, status: 'hidden' as const };
+  });
+  return changed ? next : quests;
+}
+
+/** Old / cloud saves can already have First Blood + Wave marked active on the opening beat. */
+export function clampLeakedOpeningQuests(state: GameState): GameState {
+  if (!questsLockedDuringOpening(state)) return state;
+  const quests = hideSeededQuests(state.quests ?? []);
+  return quests === state.quests ? state : { ...state, quests };
+}
+
 /** Journal tabs/lists: only revealed quests. Hidden Guide Book hooks stay out. */
 export function isJournalQuest(q: Quest): boolean {
   if (q.status === 'hidden') return false;
   if (q.revealed !== true) return false;
   return q.status === 'active' || q.status === 'completed' || q.status === 'failed';
+}
+
+export function visibleJournalQuests(state: GameState): Quest[] {
+  if (questsLockedDuringOpening(state)) return [];
+  return (state.quests ?? []).filter(isJournalQuest);
 }
 
 /**
@@ -103,8 +137,10 @@ export function isJournalQuest(q: Quest): boolean {
 export function syncQuestsFromPlay(
   quests: Quest[],
   systemLog: string[],
-  playerAction: string
+  playerAction: string,
+  opts?: { locked?: boolean }
 ): Quest[] {
+  if (opts?.locked) return quests;
   let next = quests.map((q) => ({ ...q }));
 
   for (const line of systemLog) {

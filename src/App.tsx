@@ -1,4 +1,5 @@
 import { shouldUseComicGrid } from '@/game/comicImagePrompt';
+import { visibleJournalQuests } from '@/game/questPlay';
 import { useGame } from '@/game/useGame';
 import { useBgImage } from '@/game/useBgImage';
 import { lazy, Suspense, useEffect, useState } from 'react';
@@ -247,7 +248,6 @@ export default function App() {
         onToggleLeft={() => game.setLeftOpen(true)}
         onToggleRight={() => game.setRightOpen(true)}
         onOpenQuestLog={() => {
-          game.hydratePlayFromLog?.();
           setShowQuestLog(true);
         }}
         onOpenCharacter={() => game.setShowCharacterWindow(true)}
@@ -371,7 +371,7 @@ export default function App() {
         <QuestLogModal
           isOpen={showQuestLog}
           onClose={() => setShowQuestLog(false)}
-          quests={state?.quests ?? []}
+          quests={state ? visibleJournalQuests(state) : []}
         />
       </Suspense>
 
