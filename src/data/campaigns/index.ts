@@ -14,6 +14,7 @@ import { vesperGlassCipher } from './vesperGlassCipher';
 import { erebusNine } from './erebusNine';
 import { roseGoldUltimatum } from './roseGoldUltimatum';
 import { giltwoodEstate } from './giltwoodEstate';
+import { nullParameterProtocol } from './nullParameterProtocol';
 import {
   ascendingSpire,
   inkboundAcademy,
@@ -53,6 +54,7 @@ export {
   erebusNine,
   roseGoldUltimatum,
   giltwoodEstate,
+  nullParameterProtocol,
   ascendingSpire,
   inkboundAcademy,
   hollowCore,
@@ -96,6 +98,7 @@ export const ALL_CAMPAIGN_BIBLES: CampaignBible[] = [
   erebusNine,
   roseGoldUltimatum,
   giltwoodEstate,
+  nullParameterProtocol,
   // Story RPG (fiction-first, multi-genre)
   saltRoadHeist,
   glassHarborLetters,
