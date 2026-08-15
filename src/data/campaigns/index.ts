@@ -12,6 +12,7 @@ import { summonedPact } from './summonedPact';
 import { thornferryRoad } from './thornferryRoad';
 import { vesperGlassCipher } from './vesperGlassCipher';
 import { erebusNine } from './erebusNine';
+import { roseGoldUltimatum } from './roseGoldUltimatum';
 import {
   ascendingSpire,
   inkboundAcademy,
@@ -49,6 +50,7 @@ export {
   thornferryRoad,
   vesperGlassCipher,
   erebusNine,
+  roseGoldUltimatum,
   ascendingSpire,
   inkboundAcademy,
   hollowCore,
@@ -90,6 +92,7 @@ export const ALL_CAMPAIGN_BIBLES: CampaignBible[] = [
   thornferryRoad,
   vesperGlassCipher,
   erebusNine,
+  roseGoldUltimatum,
   // Story RPG (fiction-first, multi-genre)
   saltRoadHeist,
   glassHarborLetters,
