@@ -746,6 +746,16 @@ export interface Settings {
   bgOpacity: number;
   artStylePreset: ArtStylePreset;
   colorVariant: ColorVariant;
+  /** Active UI theme cosmetic id (e.g. theme.neon-protocol). */
+  uiThemeId: string;
+  /** Active font pack id. */
+  fontPackId: string;
+  /** Active dice cosmetic id. */
+  diceCosmeticId: string;
+  /** Active TTS voice pack id (when premium voices ship). */
+  voicePackId: string;
+  /** Active turn-frame cosmetic id. */
+  turnFrameCosmeticId: string;
   panelFrequency: PanelFrequency;
   halftoneOverlay: boolean;
   sfxPopups: boolean;

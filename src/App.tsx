@@ -2,6 +2,8 @@ import { shouldUseComicGrid } from '@/game/comicImagePrompt';
 import { visibleJournalQuests } from '@/game/questPlay';
 import { useGame } from '@/game/useGame';
 import { useBgImage } from '@/game/useBgImage';
+import { applyUiThemeToDocument, themeBySettingsId } from '@/game/uiTheme';
+import { ensureTestCosmeticUnlock } from '@/game/cosmeticEntitlements';
 import { lazy, Suspense, useEffect, useState } from 'react';
 import { Hud } from '@/components/Hud';
 import { LeftDrawer } from '@/components/LeftDrawer';
@@ -45,6 +47,14 @@ export default function App() {
     const interval = setInterval(() => setElapsed(Date.now() - start), 100);
     return () => clearInterval(interval);
   }, [game.showLoadingOverlay]);
+
+  useEffect(() => {
+    ensureTestCosmeticUnlock();
+  }, []);
+
+  useEffect(() => {
+    applyUiThemeToDocument(themeBySettingsId(game.settings.uiThemeId));
+  }, [game.settings.uiThemeId]);
 
   const hasSave = !!game.localSlot || !!game.cloudSlot;
   const shouldAutoResume = game.settings.postLoginBehavior === 'AUTO_RESUME' && hasSave;
@@ -110,6 +120,7 @@ export default function App() {
           googleSignedIn={!!game.googleUser && !game.googleUser.isGuest}
           googleEmail={game.googleUser?.email ?? undefined}
           isGuest={!!game.googleUser?.isGuest}
+          settings={game.settings}
           onContinue={() => {
             setUserInGame(true);
             game.continueGame();
@@ -117,6 +128,7 @@ export default function App() {
           onNewGame={() => game.setShowNewGame(true)}
           onSettings={() => game.setShowSettings(true)}
           onOpenLibrary={() => setShowGMLibrary(true)}
+          onSaveCosmetics={(patch) => game.updateSettings({ ...game.settings, ...patch })}
         />
         {game.showSettings && (
           <Suspense fallback={null}>
@@ -185,6 +197,7 @@ export default function App() {
           googleSignedIn={!!game.googleUser && !game.googleUser.isGuest}
           googleEmail={game.googleUser?.email ?? undefined}
           isGuest={!!game.googleUser?.isGuest}
+          settings={game.settings}
           onContinue={() => {
             setUserInGame(true);
             game.continueGame();
@@ -192,6 +205,7 @@ export default function App() {
           onNewGame={() => game.setShowNewGame(true)}
           onSettings={() => game.setShowSettings(true)}
           onOpenLibrary={() => setShowGMLibrary(true)}
+          onSaveCosmetics={(patch) => game.updateSettings({ ...game.settings, ...patch })}
         />
         {game.showSettings && (
           <Suspense fallback={null}>
