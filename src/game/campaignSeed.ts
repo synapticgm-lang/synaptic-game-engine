@@ -76,8 +76,9 @@ export function seedStateFromCampaignBible(
       name: q.title,
       description: q.description,
       status,
-      // Opening active quest is journal-visible. Other Guide Book hooks stay hidden.
-      revealed: status === 'active',
+      // Tracked in state, but the journal stays empty until they finish opening
+      // (name + place). Hidden Guide Book hooks stay unspoken.
+      revealed: false,
       type: 'main' as const,
       recommendedLevel: q.recommendedLevel,
       objectives: q.objectives.map((desc, i) => ({

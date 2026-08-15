@@ -3,6 +3,7 @@ import type { CampaignArchetype } from './archetypes';
 import type { EngineMode, GameState, Item, OpeningEstablishment, Settings } from './types';
 import { extractSystemRename, interpretPlayerUtterance, isJunkSetupValue, isSetupRefusal, utteranceIsMessy } from './playerUtterance';
 import { materializeWornClothes } from './wornGear';
+import { revealLocalStarterQuest } from './questPlay';
 
 const GENERIC_NAMES = /^(adventurer|survivor|unknown survivor|hero|wanderer|unknown)$/i;
 
@@ -764,6 +765,7 @@ export async function applyOpeningAnswer(
       ...nextState,
       campaignPremise: premise,
       openingEstablishment: { pending: [], answers, complete: true, registrar, declinedFields: declined },
+      quests: revealLocalStarterQuest(nextState.quests ?? []),
       pendingGeneratedOpening: true,
       choices: [],
       lastUpdated: Date.now(),

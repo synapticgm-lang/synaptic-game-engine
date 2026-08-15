@@ -6,7 +6,7 @@ function slug(raw: string): string {
 
 function tokens(raw: string): string[] {
   return (raw.toLowerCase().match(/[a-z][a-z0-9'-]{3,}/g) ?? []).filter(
-    (t) => !/^(this|that|with|from|your|their|have|been|will|into|near|quest|focus|engaged|system|dungeon|thing|does|info|whats|what)$/.test(t)
+    (t) => !/^(this|that|with|from|your|their|have|been|will|into|near|quest|focus|engaged|system|dungeon|thing|does|info|whats|what|every|earth|needs|level|region|days|warning|strike|clock|coming|wave|complete|welcome|starting|please|confirm|name|current|location)$/.test(t)
   );
 }
 
@@ -89,12 +89,11 @@ function labelFromLogLine(line: string): string | null {
   return raw ? raw.slice(0, 80) : null;
 }
 
-/** Journal tabs/lists: opening active quests show; Guide Book hooks stay hidden until revealed. */
+/** Journal tabs/lists: only revealed quests. Hidden Guide Book hooks stay out. */
 export function isJournalQuest(q: Quest): boolean {
   if (q.status === 'hidden') return false;
-  if (q.status === 'completed' || q.status === 'failed') return true;
-  if (q.status === 'active') return true;
-  return q.revealed === true;
+  if (q.revealed !== true) return false;
+  return q.status === 'active' || q.status === 'completed' || q.status === 'failed';
 }
 
 /**
@@ -143,11 +142,13 @@ export function syncQuestsFromPlay(
   }
 
   const action = playerAction.replace(/\s+/g, ' ').trim();
-  const places = extractNamedPlaces(action);
+  const places = extractNamedPlaces(action).filter((p) => p.length >= 6 && !/earth|system|every mind/i.test(p));
   next = next.map((q) => {
     if (q.revealed || q.status === 'completed' || q.status === 'failed') return q;
-    const blob = `${q.name} ${q.description} ${q.location ?? ''}`.toLowerCase();
-    const hit = places.some((p) => blob.includes(p.toLowerCase()) || overlap(blob, p));
+    const recommended = q.recommendedLevel ?? 1;
+    if (recommended > 1) return q;
+    const hay = `${q.name} ${q.location ?? ''}`.toLowerCase();
+    const hit = places.some((p) => hay.includes(p.toLowerCase()) || overlap(q.name, p));
     if (!hit) return q;
     return { ...q, revealed: true, status: q.status === 'hidden' ? 'active' : q.status };
   });
@@ -169,6 +170,19 @@ export function isGenericMapPlace(name: string | undefined): boolean {
   if (JUNK_PLACE.test(n)) return true;
   if (DUMMY_STREET_NODE.test(n)) return true;
   return /^the opening of /i.test(n) || /^your surroundings$/i.test(n) || /^a cracked city street$/i.test(n);
+}
+
+/** After they finish name+place, show only the local starter — never Wave/Riverside. */
+export function revealLocalStarterQuest(quests: Quest[]): Quest[] {
+  const first =
+    quests.find((q) => q.id === 'si-quest-1' || /first blood/i.test(q.name))
+    ?? quests.find((q) => (q.recommendedLevel ?? 1) <= 1 && (q.type === 'main' || !q.type));
+  if (!first) return quests;
+  return quests.map((q) =>
+    q.id === first.id
+      ? { ...q, status: 'active' as const, revealed: true }
+      : q
+  );
 }
 
 export function mapAnchorName(currentLocation: string | undefined, landmarks: string[]): string {

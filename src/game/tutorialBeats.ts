@@ -165,21 +165,8 @@ export function formatTutorialBeatMandate(state: GameState): string {
 export function ensureTutorialQuest(state: GameState, turn: number): Quest[] {
   const quests = [...(state.quests ?? [])];
   if (turn < 8 || turn > 16) return quests;
-  const hasRevealed = quests.some((q) => q.revealed && (q.status === 'active' || q.status === 'hidden'));
-  if (hasRevealed) {
-    return quests.map((q) => {
-      if (q.status === 'hidden' && turn >= 8 && (q.type === 'main' || !q.type)) {
-        return {
-          ...q,
-          status: 'active' as const,
-          revealed: true,
-          revealedTurn: turn,
-          activatedTurn: turn,
-        };
-      }
-      return q;
-    });
-  }
+  const hasRevealed = quests.some((q) => q.revealed && q.status === 'active');
+  if (hasRevealed) return quests;
   if (quests.some((q) => q.id === 'tutorial-first-blood' || /first blood/i.test(q.name))) return quests;
   quests.push({
     id: 'tutorial-first-blood',
