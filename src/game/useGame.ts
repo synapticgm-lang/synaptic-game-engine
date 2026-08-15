@@ -1143,11 +1143,7 @@ export function useGame() {
       previous.currentLocation ?? '',
       previous.locationSheet?.name ?? '',
     ]);
-    const systemLines = (previous.log ?? []).flatMap((e) => e.systemLog ?? []);
-    const openingPending = isOpeningEstablishmentPending(previous);
-    const quests = openingPending
-      ? previous.quests ?? []
-      : syncQuestsFromPlay(previous.quests ?? [], systemLines, blob);
+    const quests = previous.quests ?? [];
     const landmarks = extractNamedPlaces(blob);
     const place = mapAnchorName(
       previous.currentLocation || previous.locationSheet?.name,

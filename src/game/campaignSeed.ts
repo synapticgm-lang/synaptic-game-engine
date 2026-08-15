@@ -68,9 +68,8 @@ export function seedStateFromCampaignBible(
   // Only the first level-appropriate quest starts active. The rest stay hidden until the
   // story/System reveals them — so the quest log doesn't dump the whole campaign at once.
   const playerLevel = state.character?.level ?? 1;
-  const starterQuests: Quest[] = bible.starterQuests.map((q, index) => {
-    const levelOk = (q.recommendedLevel ?? 1) <= playerLevel;
-    const status = index === 0 && levelOk ? ('active' as const) : ('hidden' as const);
+  const starterQuests: Quest[] = bible.starterQuests.map((q) => {
+    const status = 'hidden' as const;
     return {
       id: q.id,
       name: q.title,

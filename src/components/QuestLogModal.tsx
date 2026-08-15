@@ -37,6 +37,7 @@ export const QuestLogModal: React.FC<QuestLogModalProps> = ({
 
   const filteredQuests = knownQuests.filter((q) => {
     if (filter === 'all') return true;
+    if (filter === 'active') return q.status === 'active' && q.revealed === true;
     return q.status === filter;
   });
 
