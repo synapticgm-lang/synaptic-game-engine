@@ -11,6 +11,7 @@ import { cursedKeep } from './cursedKeep';
 import { summonedPact } from './summonedPact';
 import { thornferryRoad } from './thornferryRoad';
 import { vesperGlassCipher } from './vesperGlassCipher';
+import { erebusNine } from './erebusNine';
 import {
   ascendingSpire,
   inkboundAcademy,
@@ -47,6 +48,7 @@ export {
   summonedPact,
   thornferryRoad,
   vesperGlassCipher,
+  erebusNine,
   ascendingSpire,
   inkboundAcademy,
   hollowCore,
@@ -87,6 +89,7 @@ export const ALL_CAMPAIGN_BIBLES: CampaignBible[] = [
   // Pick Your Own Adventure (main spine + forks)
   thornferryRoad,
   vesperGlassCipher,
+  erebusNine,
   // Story RPG (fiction-first, multi-genre)
   saltRoadHeist,
   glassHarborLetters,
