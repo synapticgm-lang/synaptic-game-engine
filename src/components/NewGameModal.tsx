@@ -317,7 +317,7 @@ export function NewGameModal({ onStart, onClose }: Props) {
                   <p className="mb-2 text-[10px] leading-snug text-slate-500">
                     Pick a world — campaign name updates to the title plus today’s date.
                   </p>
-                  <div className="max-h-56 space-y-2 overflow-y-auto pr-0.5">
+                  <div className="max-h-72 space-y-2 overflow-y-auto pr-0.5">
                     {premadeBibles.map((bible) => {
                       const selected = bibleId === bible.id;
                       return (
@@ -337,8 +337,8 @@ export function NewGameModal({ onStart, onClose }: Props) {
                               {bible.difficulty}
                             </span>
                           </div>
-                          <p className="mt-0.5 text-[11px] italic text-slate-300">{bible.tagline}</p>
-                          <p className="mt-1 text-[10px] leading-snug text-slate-400">
+                          <p className="mt-0.5 text-xs italic text-slate-300">{bible.tagline}</p>
+                          <p className="mt-1 text-[11px] leading-snug text-slate-400">
                             {getCampaignBlurb(bible)}
                           </p>
                         </button>

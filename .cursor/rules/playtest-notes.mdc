@@ -13,6 +13,7 @@ John is playtesting live. Collect issues here. Do not implement until he asks fo
 
 ## Done (already shipped)
 
+- PYOA picker blurbs: each adventure shows a plain-language pitch under the title (`2026-08-15l`)
 - PYOA bible: **The Giltwood Estate Conundrum** (`giltwood-estate-conundrum`) — Beatrice, staff vs aristocrats, six endings (`2026-08-15k`)
 - PYOA bible: **The Rose-Gold Ultimatum** (`rose-gold-ultimatum`) — Chloe, Swans vs PR Cabal, six endings (`2026-08-15j`)
 - PYOA bible: **Erebus-9: The Swarm Directive** (`erebus-9-swarm-directive`) — Vance, miners vs Apex, six endings (`2026-08-15i`)

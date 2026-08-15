@@ -13,7 +13,7 @@ export const vesperGlassCipher: CampaignBible = {
   difficulty: 'Standard',
   tagline: 'To rewrite the past, you must first survive the people trying to erase it.',
   shortDescription:
-    'PYOA heist: steal a humming cipher, choose Silas, sell out factions or keep them, several endings. No dice HUD.',
+    'Dark aether heist. You stole a humming cipher from Oakhaven’s flooded archives. Silas offers a way out. Trust him or use him, then choose the Rust-Barons, the Seers, or no one.',
   licenseNote:
     'Original SynapticGM dark-aether fantasy. Tropes only. Not based on Fable, Albion, or any named series, game, or novel.',
   startingLocation: 'the Flooded Archives of Oakhaven',

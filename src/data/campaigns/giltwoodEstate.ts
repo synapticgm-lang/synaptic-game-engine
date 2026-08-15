@@ -12,7 +12,7 @@ export const giltwoodEstate: CampaignBible = {
   difficulty: 'Standard',
   tagline: 'Six guests, one corpse, and a pocket watch counting down to the next murder.',
   shortDescription:
-    'PYOA mystery: a backward watch in a dead man’s hand, Beatrice in the doorway, staff vs aristocrats, several endings. No dice HUD.',
+    'Locked-room mystery. Lord Harrington is dead on the rug, a pocket watch ticks backward in your hand, and Beatrice knows a servants’ passage — if you will not pin the murder on her.',
   licenseNote:
     'Original SynapticGM locked-room mystery. Aristocratic blackmail and hidden passages as tropes. Not based on Clue/Cluedo, Knives Out, Fable, Albion, or any named series, film, or board game.',
   startingLocation: 'the Billiard Room of Giltwood Estate',

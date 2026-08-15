@@ -12,7 +12,7 @@ export const roseGoldUltimatum: CampaignBible = {
   difficulty: 'Easy',
   tagline: 'Love is a battlefield, and somebody just stole the only map.',
   shortDescription:
-    'PYOA rom-com: Bridal Dossier in your clutch, Chloe at the powder-room door, Swans vs PR Cabal, several endings. No dice HUD.',
+    'Wedding-planner rom-com. The Bridal Dossier is in your clutch, Julian is pounding on the powder-room door, and Chloe knows the laundry chutes. High-society scandal, several endings.',
   licenseNote:
     'Original SynapticGM romantic-comedy. Cutthroat wedding planners, high-society gossip, big-city scandal tropes. Not based on Fable, Albion, or any named series, film, or novel.',
   startingLocation: 'the VIP Powder Room at the Starlight Gala',

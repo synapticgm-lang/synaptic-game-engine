@@ -12,7 +12,7 @@ export const erebusNine: CampaignBible = {
   difficulty: 'Hardcore',
   tagline: 'They dug too deep to find the cure; now we have to bury the disease.',
   shortDescription:
-    'PYOA survival: nav-drive in your hands, Vance at the airlock, miners vs Apex execs, several endings. No dice HUD.',
+    'Swarm-rig survival. The air-lock is failing, Private Vance begs you to open it, and the only nav-drive is in your hands. Side with the miners or Apex — several ways off the rock.',
   licenseNote:
     'Original SynapticGM dark sci-fi. Corporate dystopia, biological swarms, blue-collar survival tropes. Not based on Aliens, Fable, Albion, or any named series, game, or film.',
   startingLocation: 'Air-Lock Bay 4, Deep-Seam Mining Rig Charybdis',
