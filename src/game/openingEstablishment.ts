@@ -1,4 +1,4 @@
-import type { CampaignBible, OpeningPrompt, OpeningRegistrar } from '@/data/campaigns/types';
+import type { CampaignBible, OpeningMode, OpeningPrompt, OpeningPromptKind, OpeningRegistrar } from '@/data/campaigns/types';
 import { getCampaignBibleById } from '@/data/campaigns';
 import type { CampaignArchetype } from './archetypes';
 import type { EngineMode, GameState, Item, OpeningEstablishment, Settings } from './types';
@@ -219,12 +219,60 @@ export function resolveOpeningRegistrar(
 export function formatRegistrarLine(
   registrar: OpeningRegistrar,
   query: string,
-  options?: { includeStartLine?: boolean; extra?: string }
+  options?: { includeStartLine?: boolean; extra?: string; style?: 'inworld' | 'system' }
 ): string {
-  const start = options?.includeStartLine ? `${registrar.startLine}\n` : '';
+  const start = options?.includeStartLine && options.style === 'system' ? `${registrar.startLine}\n` : '';
   const extra = options?.extra ? `${options.extra}\n` : '';
   const body = `${start}${extra}${query}`.trim();
-  return `<system>[ ${registrar.label} ]\n${body}</system>`;
+  const style = options?.style ?? (registrar.voice === 'system' ? 'system' : 'inworld');
+  if (style === 'system') {
+    return `<system>[ ${registrar.label} ]\n${body}</system>`;
+  }
+  return body;
+}
+
+export function resolveOpeningMode(
+  bible: CampaignBible | undefined,
+  engineMode: EngineMode
+): OpeningMode {
+  if (bible?.openingMode) return bible.openingMode;
+  if (engineMode === 'pyoa' || engineMode === 'rpg' || bible?.engineMode === 'pyoa' || bible?.engineMode === 'rpg') {
+    return 'scene';
+  }
+  return 'weave';
+}
+
+const BIBLE_INWORLD: Record<string, Partial<Record<OpeningPromptKind, string>>> = {
+  'summoned-pact': {
+    name: 'A robed figure leans over the circle. “A name. What do we call you?”',
+    location: 'The stone is cold under your back. Before the light took you — which Earth place were you in? A city, a street, a home. Not a place in this cathedral.',
+    appearance: 'You look down. You are still wearing what the circle stole you in. What is it?',
+    kit: 'Pockets, bag, whatever rode with you. What is actually on you? Nothing invented for a fight.',
+  },
+  'system-integration': {
+    name: 'The panel waits on a name you already use. What should it show?',
+    location: 'The street has not moved. Where are you standing — which city, which pavement or room?',
+    appearance: 'You look down. You are still wearing this morning’s clothes. What are they?',
+    kit: 'Phone, keys, bag — what is actually on you? Combat-grade inventions will not appear.',
+  },
+};
+
+const DEFAULT_INWORLD: Record<OpeningPromptKind, string> = {
+  name: 'Someone in the scene needs a name for you. What do they call you?',
+  location: 'Where are you, exactly, as this opens?',
+  appearance: 'You look down. You are still wearing what you had on when this started. What is it?',
+  kit: 'Your pockets and bag are still yours. What is actually on you?',
+  identity: 'Who are you in this place — what do they take you for?',
+  species: 'You can feel the body you woke in. What is it?',
+};
+
+function inworldizePrompt(prompt: OpeningPrompt, bible?: CampaignBible): OpeningPrompt {
+  const override = bible?.id ? BIBLE_INWORLD[bible.id]?.[prompt.kind] : undefined;
+  return {
+    ...prompt,
+    style: prompt.style ?? 'inworld',
+    question: override ?? (prompt.style === 'system' ? prompt.question : DEFAULT_INWORLD[prompt.kind] ?? prompt.question),
+  };
 }
 
 export function resolveOpeningPrompts(
@@ -241,10 +289,36 @@ export function resolveOpeningPrompts(
   else if (engineMode === 'litrpg' || SYSTEM_ARCHETYPES.has(archetype ?? 'ai_random')) prompts = SI_PROMPTS;
   else prompts = FANTASY_PROMPTS;
 
-  if (!prompts.some((p) => p.kind === 'name')) {
-    return [NAME_PROMPT, ...prompts];
+  const mode = resolveOpeningMode(bible, engineMode);
+  const withName = prompts.some((p) => p.kind === 'name') ? prompts : [NAME_PROMPT, ...prompts];
+  const styled = withName.map((p) => inworldizePrompt(p, bible));
+  if (mode === 'scene') {
+    return styled.map((p) => ({ ...p, required: false, style: 'inworld' as const }));
   }
-  return prompts;
+  return styled.map((p) => ({ ...p, required: p.required !== false }));
+}
+
+export function seedCoverAnswers(
+  bible: CampaignBible | undefined,
+  character: GameState['character']
+): Record<string, string> {
+  const answers: Record<string, string> = {};
+  if (bible?.startingLocation?.trim()) answers.where = bible.startingLocation.trim();
+  if (character.name?.trim() && !GENERIC_NAMES.test(character.name.trim())) answers.name = character.name.trim();
+  if (character.appearance?.trim() && !isJunkSetupValue(character.appearance)) {
+    answers.wear = character.appearance.trim();
+    answers.look = character.appearance.trim();
+  }
+  return answers;
+}
+
+export function pendingRequiredCovers(
+  prompts: OpeningPrompt[],
+  character: GameState['character'],
+  mode: OpeningMode
+): OpeningPrompt[] {
+  if (mode === 'scene') return [];
+  return filterOpeningPrompts(prompts.filter((p) => p.required !== false), character);
 }
 
 export function filterOpeningPrompts(
@@ -310,8 +384,9 @@ export function buildEstablishmentIntro(
     ? `Current designation: ${characterName}`
     : 'Current designation: unconfirmed';
   const query = formatRegistrarLine(voice, first.question, {
-    includeStartLine: true,
-    extra: voice.voice === 'system' ? designation : undefined,
+    includeStartLine: first.style === 'system',
+    style: first.style ?? 'inworld',
+    extra: first.style === 'system' ? designation : undefined,
   });
   return {
     text: `${hook}\n\n${query}`,
@@ -659,21 +734,33 @@ function applyKindToState(state: GameState, prompt: OpeningPrompt, answer: strin
   return state;
 }
 
-function registrarAside(registrar: OpeningRegistrar, harvest: ReturnType<typeof harvestUtterance>): string {
+function registrarAside(
+  registrar: OpeningRegistrar,
+  harvest: ReturnType<typeof harvestUtterance>,
+  bibleId?: string
+): string {
   const bits: string[] = [];
   if (harvest.askedWho) {
-    bits.push(
-      registrar.voice === 'system'
-        ? 'This unit is the System. You have been registered.'
-        : 'I am the voice that opened this page. Answer, and the tale continues.'
-    );
+    if (bibleId === 'summoned-pact') {
+      bits.push('The voices over the circle are waiting. They pulled you from Earth. They want a name.');
+    } else if (bibleId === 'system-integration') {
+      bits.push('The panel is here, in this life. It is not eating the planet. It wants a name you already use.');
+    } else {
+      bits.push(
+        registrar.voice === 'system'
+          ? 'The System is a panel in this life — not a machine eating Earth.'
+          : 'The scene is still moving. They are waiting on who you are.'
+      );
+    }
   }
   if (harvest.askedWhat) {
-    bits.push(
-      registrar.voice === 'system'
-        ? 'Integration protocol is active. Earth is being written into the System.'
-        : 'The opening has begun. Finish these particulars, then the scene will move.'
-    );
+    if (bibleId === 'summoned-pact') {
+      bits.push('You were taken from Earth. This world is not writing Earth into a System.');
+    } else if (bibleId === 'system-integration') {
+      bits.push('Integration is a panel over this Earth, already in progress — not Earth being ingested.');
+    } else {
+      bits.push('The opening has begun. The story will take the next particular in the scene, not as a form.');
+    }
   }
   return bits.join(' ');
 }
@@ -789,7 +876,6 @@ export async function applyOpeningAnswer(
   let nextState = state;
   const answers = { ...est.answers };
   const stillPending: OpeningPrompt[] = [];
-  const logged: string[] = [];
   let cheated = false;
 
   for (const prompt of est.pending) {
@@ -824,13 +910,11 @@ export async function applyOpeningAnswer(
     }
     nextState = applyKindToState(nextState, prompt, clean.text || value);
     answers[prompt.id] = clean.text || value;
-    if (prompt.kind === 'name') logged.push(`Designation logged: ${answers[prompt.id]}`);
-    if (prompt.kind === 'location') logged.push(`Location logged: ${answers[prompt.id]}`);
   }
 
-  const aside = registrarAside(registrar, harvest);
+  const aside = registrarAside(registrar, harvest, nextState.campaignBibleId);
   const cheatLine = cheated
-    ? 'Invalid declaration. High-tier weapons, armor, and endgame gear are rejected. Allotment unchanged.'
+    ? 'That gear does not appear. Ordinary pockets only.'
     : '';
   const playerAlreadyLogged = nextState.log.some(
     (e) => e.role === 'player' && e.content === rawInput && e.turn === nextState.turn
@@ -838,22 +922,33 @@ export async function applyOpeningAnswer(
 
   if (stillPending.length) {
     const next = stillPending[0];
-    const extra = [aside, cheatLine, ...logged].filter(Boolean).join('\n');
+    const extra = [aside, cheatLine].filter(Boolean).join('\n');
     const parseFail = est.pending[0]?.kind === 'name' && !harvest.name
-      ? 'Unable to parse designation. State your name only.'
+      ? 'They are still waiting for a name you will own.'
       : '';
     const gmEntry = {
       id: crypto.randomUUID(),
       turn: nextState.turn,
       role: 'gm' as const,
-      content: formatRegistrarLine(registrar, parseFail || next.question, { extra: extra || undefined }),
+      content: formatRegistrarLine(registrar, parseFail || next.question, {
+        extra: extra || undefined,
+        style: next.style ?? 'inworld',
+      }),
       timestamp: Date.now(),
     };
     return {
       generateOpening: false,
       state: {
         ...nextState,
-        openingEstablishment: { pending: stillPending, answers, complete: false, registrar, declinedFields: declined },
+        openingEstablishment: {
+          pending: stillPending,
+          answers,
+          complete: false,
+          registrar,
+          declinedFields: declined,
+          sceneWritten: est.sceneWritten,
+          mode: est.mode,
+        },
         choices: establishmentChoices(stillPending),
         log: playerAlreadyLogged ? [...nextState.log, gmEntry] : nextState.log,
         lastUpdated: Date.now(),
@@ -871,19 +966,41 @@ export async function applyOpeningAnswer(
     : pickPlaceForCampaign(nextState);
   answers.where = lockedWhere;
 
+  const lockLine = est.sceneWritten
+    ? [aside, cheatLine, 'The particulars settle. The scene does not pause for a form.'].filter(Boolean).join(' ')
+    : '';
+  const lockEntry = lockLine
+    ? [{
+        id: crypto.randomUUID(),
+        turn: nextState.turn,
+        role: 'gm' as const,
+        content: lockLine,
+        timestamp: Date.now(),
+      }]
+    : [];
+
   return {
-    generateOpening: true,
+    generateOpening: !est.sceneWritten,
     state: {
       ...nextState,
       currentLocation: lockedWhere,
       campaignPremise: premise,
-      openingEstablishment: { pending: [], answers, complete: true, registrar, declinedFields: declined },
+      openingEstablishment: {
+        pending: [],
+        answers,
+        complete: true,
+        registrar,
+        declinedFields: declined,
+        sceneWritten: est.sceneWritten,
+        mode: est.mode,
+      },
       quests: seedLocalStarterQuest(
         nextState.quests ?? [],
         getCampaignBibleById(nextState.campaignBibleId ?? '')?.starterQuests ?? []
       ),
-      pendingGeneratedOpening: true,
-      choices: [],
+      pendingGeneratedOpening: !est.sceneWritten,
+      choices: est.sceneWritten ? nextState.choices : [],
+      log: lockEntry.length && playerAlreadyLogged ? [...nextState.log, ...lockEntry] : nextState.log,
       lastUpdated: Date.now(),
     },
     openingNotes,
@@ -908,21 +1025,11 @@ export function formatSetupComplete(
   if (registrar.voice === 'system') {
     return formatRegistrarLine(
       registrar,
-      [
-        'Input accepted. Thank you.',
-        'Setup complete.',
-        `Designation: ${name}`,
-        `Location: ${where}`,
-        `Visual profile: ${wear}`,
-        `Personal effects: ${kit}`,
-        'Registration locked. Survive.',
-      ].join('\n')
+      `Name on the panel: ${name}. You are still in ${where}, wearing ${wear}. Ordinary kit: ${kit}.`,
+      { style: 'system' }
     );
   }
-  return formatRegistrarLine(
-    registrar,
-    `Those particulars are taken down. Thank you. The tale is set: ${name}, at ${where}.`
-  );
+  return `${name}, still in ${where}, still wearing ${wear}.`;
 }
 
 export function hasSystemVoice(text: string): boolean {
@@ -930,30 +1037,37 @@ export function hasSystemVoice(text: string): boolean {
 }
 
 export function ensureSystemReceipt(state: GameState, narrative: string): string {
-  const cleaned = sanitizeOpeningNarration(narrative).trim();
-  if (hasSystemVoice(cleaned)) return cleaned;
-  const registrar = state.openingEstablishment?.registrar ?? {
-    voice: 'system' as const,
-    label: 'SYSTEM',
-    startLine: 'Starting. Please confirm your name and current location.',
-  };
-  return `${formatSetupComplete(registrar, state)}\n\n${cleaned}`.trim();
+  return sanitizeOpeningNarration(narrative).trim();
 }
 
 export function buildOpeningSceneMandate(state: GameState, notes?: string): string {
-  const canon = formatPlayerCanon(state) || 'The player finished establishment.';
-  const extra = notes?.trim() ? `\nAlso address this in the System block: ${notes.trim()}\n` : '';
-  return `=== OPENING (BINDING — YOU WRITE BOTH VOICES) ===
+  const canon = formatPlayerCanon(state) || 'Use the campaign bible. Do not invent a different premise.';
+  const extra = notes?.trim() ? `\nPlayer just said/asked: ${notes.trim()}\n` : '';
+  const bible = getCampaignBibleById(state.campaignBibleId ?? '');
+  const cover = state.openingEstablishment?.pending[0];
+  const coverLine = cover
+    ? `End by weaving this ONE in-world question into the scene (not a form, not [ SYSTEM ] unless the bible is a System-panel moment): ${cover.question}`
+    : 'Do not ask chargen questions. The first page is playable.';
+  const hook = bible?.openingHook?.trim()
+    ? `Hook ingredients (rewrite — do not reprint as a script):\n${bible.openingHook.trim()}\n`
+    : '';
+  return `=== OPENING (BINDING) ===
 ${canon}
 ${extra}
-You are the System AND the narrator. Do not recap their chat.
-1) SYSTEM first, in <system>...</system>: thank them, say input accepted / setup complete, log designation / location / visual profile / personal effects from CANON (already cleaned — no I/my). Then lock registration.
-2) NARRATOR next: 3–5 sentences of second-person story in the place they named. Do NOT re-list clothes or pockets — the System block already logged those. Continue the street: sky, panel, crowd, noise.
-Do not grant weapons, armor, or rare items because they typed them. Only ordinary pocket stuff already on the sheet.
-Do not invent a different city, race, or traveler origin.
-Do not ask more chargen questions.
-If this is modern Integration: this Earth, already in progress; the blue panel is here; people around them are reacting.
-Then give 3–4 choices grounded in THAT opening.
+${hook}
+Write THIS run's first page from the campaign bible and its game rules. Unique camera each New Game — not a template, not a registration form.
+
+Genre practice (honor the story type):
+- CYOA / Choice of Games / PYOA: drop into the crisis. No name form.
+- LitRPG / System apocalypse: ordinary street first, then the panel as a moment. Earth is NOT being ingested.
+- Isekai summon: arrive in the circle; people talk; clothes are a look-down, origin is "where the light took you from".
+- Mystery / romance / space horror: body, door, or bulkhead already in motion.
+
+1) 4–7 sentences of second-person story in the seeded place.
+2) Never print Confirm designation / Visual profile / Location logged / Setup complete.
+3) ${coverLine}
+4) Do not grant weapons or rare items. Only kit already on the sheet.
+5) Then 3–4 local choices grounded in THAT opening.
 ================================================`;
 }
 
@@ -969,19 +1083,15 @@ export function sanitizeOpeningNarration(text: string): string {
 
 export function synthesizeOpeningScene(state: GameState): string {
   const a = state.openingEstablishment?.answers ?? {};
-  const registrar = state.openingEstablishment?.registrar ?? {
-    voice: 'system' as const,
-    label: 'SYSTEM',
-    startLine: 'Starting. Please confirm your name and current location.',
-  };
   const where = a.where || state.currentLocation || 'where you already were';
   const folk = a.folk || a.form || '';
   const folkBit = folk ? ` You are ${folk}.` : '';
-  const scene = /system integration|every human on earth/i.test(state.campaignPremise ?? '')
-    ? (
-      `The panel dims. You are still in ${where} — same morning, same life — while the sky stays torn and the blue screen hangs at eye level.${folkBit} `
-      + `Concrete and air are cracking. People nearby are shouting.`
-    )
-    : `The particulars are locked. You are in ${where}.${folkBit} The scene that was already moving is still moving.`;
-  return `${formatSetupComplete(registrar, state)}\n\n${scene}`;
+  const bible = getCampaignBibleById(state.campaignBibleId ?? '');
+  const hook = bible?.openingHook?.trim();
+  const scene = hook
+    || (/system integration|every human on earth/i.test(state.campaignPremise ?? '')
+      ? `You are still in ${where} — same morning, same life — while the sky stays torn and a blue panel hangs at eye level.${folkBit} People nearby are shouting.`
+      : `You are in ${where}.${folkBit} The scene that was already moving is still moving.`);
+  const cover = state.openingEstablishment?.pending[0]?.question;
+  return cover ? `${scene}\n\n${cover}` : scene;
 }

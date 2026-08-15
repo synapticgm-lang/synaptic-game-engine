@@ -53,12 +53,13 @@ import {
   ensureSystemReceipt,
   establishmentChoices,
   sanitizeOpeningNarration,
-  buildEstablishmentIntro,
   buildOpeningSceneMandate,
-  filterOpeningPrompts,
   isOpeningEstablishmentPending,
+  pendingRequiredCovers,
+  resolveOpeningMode,
   resolveOpeningPrompts,
   resolveOpeningRegistrar,
+  seedCoverAnswers,
   synthesizeOpeningScene,
 } from './openingEstablishment';
 import { applyCommittedNarrative, extractSceneFacts, seedOpeningSceneFacts } from './sceneFacts';
@@ -1465,7 +1466,7 @@ export function useGame() {
         try {
           const openingResult = await callGm(
             openingState,
-            `${buildOpeningSceneMandate(openingState, stepped.openingNotes)}\n\nWrite the System receipt, then begin the opening scene.`,
+            `${buildOpeningSceneMandate(openingState, stepped.openingNotes)}\n\nWrite the opening scene now.`,
             settingsRef.current,
             [],
             (attempt, delayMs) => {
@@ -1511,6 +1512,9 @@ export function useGame() {
           quests: questsAfterScene,
           log: [...openingState.log, openingGm],
           choices: openingChoices.length ? openingChoices : undefined,
+          openingEstablishment: openingState.openingEstablishment
+            ? { ...openingState.openingEstablishment, sceneWritten: true }
+            : openingState.openingEstablishment,
           lastUpdated: Date.now(),
         };
         stateRef.current = committed;
@@ -2687,37 +2691,38 @@ In <system-log>, only emit LitRPG/RPG progression lines (XP, loot, HP change as 
     const mergedCharacter = bible
       ? applyCampaignCharacter({ ...namedSeeded.character, ...character }, bible)
       : { ...namedSeeded.character, ...character };
-    const openingPrompts = filterOpeningPrompts(
-      resolveOpeningPrompts(bible, engineMode, resolvedArchetype ?? namedSeeded.campaignArchetype),
-      mergedCharacter
+    const openingMode = resolveOpeningMode(bible, engineMode);
+    const openingPrompts = resolveOpeningPrompts(
+      bible,
+      engineMode,
+      resolvedArchetype ?? namedSeeded.campaignArchetype
     );
     const registrar = resolveOpeningRegistrar(
       bible,
       engineMode,
       resolvedArchetype ?? namedSeeded.campaignArchetype
     );
-    const establishedIntro = buildEstablishmentIntro(
-      introContent,
-      openingPrompts,
-      bible,
-      registrar,
-      mergedCharacter.name
-    );
-    const initialChoices = establishedIntro.choices.length
-      ? establishedIntro.choices
-      : establishmentChoices(openingPrompts);
-    const cleanIntroContent = stripChoiceList(establishedIntro.text);
+    const coverAnswers = seedCoverAnswers(bible, mergedCharacter);
+    const pendingCovers = pendingRequiredCovers(openingPrompts, mergedCharacter, openingMode);
+    const seededWhere = coverAnswers.where || bible?.startingLocation || namedSeeded.currentLocation;
     const newState: GameState = clampLeakedOpeningQuests({
       ...namedSeeded,
       gmStrictness,
       character: mergedCharacter,
+      currentLocation: seededWhere || namedSeeded.currentLocation,
       currentCoordinates: { q: 0, r: 0, tier: 2, z: 0 },
-      choices: initialChoices,
-      log: [{ id: 'intro-1', turn: 0, role: 'gm', content: cleanIntroContent, timestamp: Date.now() }],
+      choices: pendingCovers.length ? establishmentChoices(pendingCovers) : [],
+      log: [],
       worldLedger: emptyWorldLedger(),
-      openingEstablishment: openingPrompts.length
-        ? { pending: openingPrompts, answers: {}, complete: false, registrar }
-        : { pending: [], answers: {}, complete: true, registrar },
+      pendingGeneratedOpening: true,
+      openingEstablishment: {
+        pending: pendingCovers,
+        answers: coverAnswers,
+        complete: pendingCovers.length === 0,
+        registrar,
+        sceneWritten: false,
+        mode: openingMode,
+      },
     });
     setState(newState);
     stateRef.current = newState;
@@ -2732,6 +2737,84 @@ In <system-log>, only emit LitRPG/RPG progression lines (XP, loot, HP change as 
     persist(newState);
     setShowNewGame(false);
 
+    setBusy(true);
+    setError(null);
+    const openingAbort = new AbortController();
+    turnAbortRef.current = openingAbort;
+    const openingTimer = setTimeout(() => setShowLoadingOverlay(true), 800);
+    try {
+      let openingText = '';
+      try {
+        const openingResult = await callGm(
+          newState,
+          `${buildOpeningSceneMandate(newState)}\n\nWrite the opening scene now.`,
+          settingsRef.current,
+          [],
+          (attempt, delayMs) => {
+            setRetryStatus(`Rate limited — retry ${attempt}/4 in ${Math.round(delayMs / 1000)}s…`);
+          },
+          openingAbort.signal,
+        );
+        openingText = stripChoiceList(stripActionTags(openingResult.text));
+      } catch {
+        openingText = '';
+      }
+      if (!openingText || openingText.length < 60 || isGenericBridgeNarrative(openingText)) {
+        openingText = synthesizeOpeningScene(newState);
+      }
+      openingText = ensureSystemReceipt(newState, sanitizeOpeningNarration(openingText));
+      const openingChoices = extractChoicesFromText(openingText, newState);
+      const cleanOpening = stripChoiceList(openingText);
+      const openingBible = getCampaignBibleById(newState.campaignBibleId ?? '');
+      const questsAfterScene = revealLocalStarterQuest(
+        newState.quests ?? [],
+        openingBible?.starterQuests ?? []
+      );
+      const openingUnlocks = newlyRevealedQuests(newState.quests ?? [], questsAfterScene);
+      const openingGm: LogEntry = {
+        id: uid(),
+        turn: newState.turn,
+        role: 'gm',
+        content: cleanOpening,
+        timestamp: Date.now(),
+        systemLog: openingUnlocks.map((q) => `Quest Unlocked: ${q.name}`),
+      };
+      const openingTurn = newState.turn + 1;
+      const seeded = seedOpeningSceneFacts({ ...newState, turn: openingTurn });
+      const sceneFacts = applyCommittedNarrative(
+        { ...newState, sceneFacts: seeded, turn: openingTurn },
+        cleanOpening,
+        openingTurn
+      );
+      const committed: GameState = {
+        ...newState,
+        turn: openingTurn,
+        sceneFacts,
+        quests: questsAfterScene,
+        log: [openingGm],
+        choices: openingChoices.length
+          ? openingChoices
+          : pendingCovers.length
+            ? establishmentChoices(pendingCovers)
+            : undefined,
+        pendingGeneratedOpening: false,
+        openingEstablishment: {
+          ...newState.openingEstablishment!,
+          sceneWritten: true,
+        },
+        lastUpdated: Date.now(),
+      };
+      stateRef.current = committed;
+      setState(committed);
+      void persist(committed);
+      if (openingUnlocks.length) setUnlockedQuests(openingUnlocks);
+    } finally {
+      clearTimeout(openingTimer);
+      setBusy(false);
+      setShowLoadingOverlay(false);
+      setRetryStatus(null);
+    }
+
     const introIsComic = shouldUseComicGrid(
       settingsRef.current,
       comicModeRef.current,
@@ -2741,7 +2824,7 @@ In <system-log>, only emit LitRPG/RPG progression lines (XP, loot, HP change as 
       kind: 'intro',
       prompt: introContent.slice(0, 200),
       promptKind: introIsComic ? 'comic-panel' : 'classic-illustration',
-      visualContext: buildVisualConsistencyBlock(newState, []),
+      visualContext: buildVisualConsistencyBlock(stateRef.current ?? newState, []),
     });
   });
 

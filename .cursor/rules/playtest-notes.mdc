@@ -13,6 +13,7 @@ John is playtesting live. Collect issues here. Do not implement until he asks fo
 
 ## Done (already shipped)
 
+- Openings are generated from each bible (not a fixed registrar); PYOA drops into the crisis; LitRPG/isekai weave in-world covers; Earth is not ingested (`2026-08-15y`)
 - Race-style themes include matching font, dice, voice, and turn frame (`2026-08-15x`)
 - Race-style themes include matching font, dice skin, and narrator voice (`2026-08-15w`)
 - PYOA genre forks: each generated adventure has its own verbs, spine, and ending logic; Giltwood adds accuse + three hidden clues (`2026-08-15v`)

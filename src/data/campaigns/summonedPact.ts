@@ -21,10 +21,11 @@ export const summonedPact: CampaignBible = {
   replaceDefaultLoadout: true,
   startingContainer: { id: 'sp-pockets', name: 'Pockets and bag from Earth', capacity: 16 },
 
+  openingMode: 'weave',
   openingRegistrar: {
-    voice: 'system',
-    label: 'SYSTEM',
-    startLine: 'Summoning complete. Confirm designation. Then name the Earth place the circle took you from — not a destination in this world.',
+    voice: 'inworld',
+    label: 'THE CIRCLE',
+    startLine: 'Light, then stone. They want a name. Then the Earth place the light took you from.',
   },
   openingHook:
     'Light, then cold stone. You are on your back inside a seven-ring summoning circle under a cathedral vault. Robed figures freeze mid-chant. A blue panel hangs at eye level — private, yours. One of them whispers “Pactborn.” Another, quieter: “The Mark is wrong.” Nobody hands you a sword. Your Earth clothes are still on you. The System has not asked you to save anyone yet.',

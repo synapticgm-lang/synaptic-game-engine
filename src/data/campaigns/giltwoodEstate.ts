@@ -20,6 +20,7 @@ export const giltwoodEstate: CampaignBible = {
   replaceDefaultLoadout: true,
   startingContainer: { id: 'ge-jacket', name: 'Smoking-jacket pockets', capacity: 12 },
 
+  openingMode: 'scene',
   openingRegistrar: {
     voice: 'inworld',
     label: 'THE STORY',

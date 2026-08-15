@@ -218,10 +218,11 @@ export const systemIntegration: CampaignBible = {
   replaceDefaultLoadout: true,
   openingHook:
     'The sky tears open. A voice — not human, not machine — speaks to every mind on Earth: "Integration complete. Welcome to the System." A blue panel flickers at eye level.',
+  openingMode: 'weave',
   openingRegistrar: {
-    voice: 'system',
+    voice: 'inworld',
     label: 'SYSTEM',
-    startLine: 'Starting. Please confirm your name and current location.',
+    startLine: 'The street is still yours. The panel is new.',
   },
   openingPrompts: [
     {

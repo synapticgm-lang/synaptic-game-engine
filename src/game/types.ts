@@ -303,6 +303,8 @@ export interface OpeningEstablishment {
     kind: 'name' | 'location' | 'appearance' | 'kit' | 'identity' | 'species';
     question: string;
     suggestions?: string[];
+    style?: 'inworld' | 'system';
+    required?: boolean;
   }>;
   answers: Record<string, string>;
   complete: boolean;
@@ -313,6 +315,9 @@ export interface OpeningEstablishment {
   };
   /** Setup fields the player declined (e.g. appearance). */
   declinedFields?: string[];
+  /** First page already written — do not run a second registrar opening. */
+  sceneWritten?: boolean;
+  mode?: 'scene' | 'weave';
 }
 
 export interface GameState {

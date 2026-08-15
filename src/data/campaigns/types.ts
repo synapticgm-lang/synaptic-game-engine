@@ -40,6 +40,9 @@ export interface StarterQuest {
 
 export type OpeningPromptKind = 'name' | 'location' | 'appearance' | 'kit' | 'identity' | 'species';
 export type OpeningVoice = 'system' | 'inworld';
+export type OpeningAskStyle = 'inworld' | 'system';
+/** scene = generate the first page from the bible; weave = same, then cover remaining facts in-world. */
+export type OpeningMode = 'scene' | 'weave';
 
 /** Who asks the opening questions — The System, an Auditor, a clerk, the tale itself. */
 export interface OpeningRegistrar {
@@ -56,6 +59,10 @@ export interface OpeningPrompt {
   kind: OpeningPromptKind;
   question: string;
   suggestions?: string[];
+  /** How to ask if this fact is still missing. Default in-world, not a System form. */
+  style?: OpeningAskStyle;
+  /** If false, seed or skip — do not block the story for a form. */
+  required?: boolean;
 }
 
 export interface StarterItem {
@@ -102,10 +109,15 @@ export interface CampaignBible {
    */
   replaceDefaultLoadout?: boolean;
   startingContainer?: { id: string; name: string; capacity: number };
-  /** Hook before establishment questions. If omitted, the archetype intro is softened. */
+  /** Hook ingredients for the generated opening. Not a script to reprint. */
   openingHook?: string;
   openingRegistrar?: OpeningRegistrar;
   openingPrompts?: OpeningPrompt[];
+  /**
+   * scene (default PYOA/story): writer opens from the bible; no registrar.
+   * weave (LitRPG / isekai): writer opens first, then covers remaining facts in-world.
+   */
+  openingMode?: OpeningMode;
   /**
    * If set, code picks one culprit at New Game (hidden from the player).
    * Writer must honor HIDDEN CULPRIT in the rails — never invent a different killer.

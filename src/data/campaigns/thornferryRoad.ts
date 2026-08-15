@@ -23,6 +23,7 @@ ENDING LOGIC: Key on where the Millstone Charter went and whether Wren still wal
   replaceDefaultLoadout: true,
   startingContainer: { id: 'tf-pack', name: 'Travel pack', capacity: 16 },
 
+  openingMode: 'scene',
   openingRegistrar: {
     voice: 'inworld',
     label: 'THE STORY',
