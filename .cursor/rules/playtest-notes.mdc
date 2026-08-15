@@ -9,10 +9,21 @@ John is playtesting live. Collect issues here. Do not implement until he asks fo
 
 ## Open
 
-(none — next-update batch shipped: ledger-first turn, First Blood store lock, fogged dungeon map, kit/cleared gates, combat/choice rules)
+(none)
 
 ## Done (already shipped)
 
+- Opening clothes / natural answer: pull named garments; underwear refusal is protest, not a missing field (`2026-08-15e`)
+- Kit split: one card per garment; bag extras (backpack, phone, headphones, leatherman, keys) are their own items (`2026-08-15e`)
+- Portrait generates once a look or worn garment exists (`2026-08-15e`)
+- Map pin deny: Chaos / Disbelief / Your Palm / Eye Level / Registration are not places (`2026-08-15e`)
+- Eye Level is camera height, not a shop (`2026-08-15e`)
+- UK locality token: no civilian pistols on the street; pavement / £ / 999 (`2026-08-15e`)
+- Perspective warden honors second person (`2026-08-15e`)
+- Turn hang: 30s proxy timeout, Cancel after 15s, persist last committed before overlay, Continue prefers higher turn (`2026-08-15e`)
+- No leftover “reassuring knife”; glint/debris must be answered (`2026-08-15e`)
+- Sticky-fail tutorial only when the ledger actually changed (`2026-08-15e`)
+- Indoor map is a floor-plan silhouette with fog labels; no 100 km chrome in a shop (`2026-08-15e`)
 - Settings crash (Lucide `Map` shadowing `Map`)
 - Second-person narration option
 - Insults / “why should I give you my name” stored as clothes

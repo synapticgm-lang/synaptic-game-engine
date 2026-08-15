@@ -265,13 +265,17 @@ export default function App() {
           setShowQuestLog(true);
         }}
         onOpenCharacter={() => game.setShowCharacterWindow(true)}
-        onOpenMerchant={() => game.setShowMerchantWindow(true)}
+        onOpenMerchant={() => {
+          if (state.engineMode === 'dnd') return;
+          game.setShowMerchantWindow(true);
+        }}
         onOpenMap={() => {
           game.hydratePlayFromLog?.();
           setShowMapModal(true);
         }}
         onOpenDebug={() => setShowDebug(true)}
         syncPhase={game.syncPhase}
+        lastSavedTurn={game.lastSavedTurn}
       />
 
       <div className="flex flex-1 overflow-hidden">
@@ -421,7 +425,7 @@ export default function App() {
         />
       </Suspense>
 
-      <LoadingOverlay visible={game.showLoadingOverlay} elapsed={elapsed} theme={state.turnFrameTheme} retryStatus={game.retryStatus} />
+      <LoadingOverlay visible={game.showLoadingOverlay} elapsed={elapsed} theme={state.turnFrameTheme} retryStatus={game.retryStatus} onCancel={game.cancelTurn} />
       <ErrorModal
         visible={!!game.errorKind && game.errorKind !== 'rate-limit'}
         errorKind={game.errorKind}

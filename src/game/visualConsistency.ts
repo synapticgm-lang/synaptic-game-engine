@@ -1,5 +1,7 @@
 import type { GameState, LoreCard } from './types';
 import { characterLikeness } from './inventoryArt';
+import { equippedWeaponName } from './ledgerCombat';
+import { formatWorldCanonForPrompt } from './visualCanon';
 
 /**
  * Visual Consistency Manager.
@@ -50,8 +52,15 @@ export function buildVisualConsistencyBlock(
 
   lines.push(`Player Character (SAME PERSON in every image, including inventory portrait): ${likeness.look}`);
   lines.push(`Current outfit / held gear for THIS image: ${outfit}`);
+  const weapon = equippedWeaponName(state);
+  lines.push(`EQUIPPED WEAPON (draw this exact tool, never a substitute): ${weapon}`);
+  const place = state.locationSheet?.name || state.currentLocation;
+  if (place?.trim()) {
+    lines.push(`LOCATION (same place every panel this turn): ${place.trim()}`);
+  }
+  lines.push(formatWorldCanonForPrompt(state));
   lines.push(
-    'LIKENESS LOCK: Keep the same face, hair, skin, body type, and age they described. Do not redesign them. Only clothing, armor, and held items change when Current outfit changes. If they described street clothes, draw those clothes — never a generic adventurer kit, cloak, or sword unless listed in Current outfit. If they are a creature or non-human, do not draw a human.'
+    'LIKENESS LOCK: Keep the same face, hair, skin, body type, and age they described. Do not redesign them. Only clothing, armor, and held items change when Current outfit changes. If they described street clothes, draw those clothes — never a generic adventurer kit, cloak, or sword unless listed in Current outfit. If they are a creature or non-human, do not draw a human. Only depict people and items named in this block or the scene — do not invent extra characters or loot.'
   );
 
   if (options.formChange) {

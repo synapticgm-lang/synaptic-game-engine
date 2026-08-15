@@ -31,6 +31,8 @@ function pickClientApiKey(settings: Settings): string | undefined {
   return settings.openrouterApiKey || undefined;
 }
 
+const GM_PROXY_TIMEOUT_MS = 30_000;
+
 export async function invokeGmProxy(params: {
   mode: GmProxyMode;
   state: GameState;
@@ -38,6 +40,7 @@ export async function invokeGmProxy(params: {
   settings: Settings;
   activeLoreCards?: LoreCard[];
   onRetry?: (attempt: number, delayMs: number) => void;
+  signal?: AbortSignal;
 }): Promise<string> {
   if (!isGmProxyAvailable()) {
     throw new Error('GM proxy unavailable — configure VITE_SUPABASE_URL / VITE_SUPABASE_ANON_KEY.');
@@ -82,11 +85,30 @@ export async function invokeGmProxy(params: {
       hasClientKey: !!body.clientApiKey,
     });
 
-    const res = await fetch(gmProxyUrl(), {
-      method: 'POST',
-      headers,
-      body: JSON.stringify(body),
-    });
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), GM_PROXY_TIMEOUT_MS);
+    const onExternalAbort = () => controller.abort();
+    if (params.signal) {
+      if (params.signal.aborted) controller.abort();
+      else params.signal.addEventListener('abort', onExternalAbort);
+    }
+    let res: Response;
+    try {
+      res = await fetch(gmProxyUrl(), {
+        method: 'POST',
+        headers,
+        body: JSON.stringify(body),
+        signal: controller.signal,
+      });
+    } catch (err) {
+      if (controller.signal.aborted) {
+        throw new Error('The System is still compiling. Try again, or cancel and keep the last scene.');
+      }
+      throw err;
+    } finally {
+      clearTimeout(timer);
+      params.signal?.removeEventListener('abort', onExternalAbort);
+    }
 
     if (res.status === 429) {
       const retryAfterSec = Number(res.headers.get('Retry-After') ?? 0);

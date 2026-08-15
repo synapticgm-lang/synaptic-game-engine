@@ -41,7 +41,10 @@ export async function withRetry<T>(
       const isRateLimit =
         e instanceof RateLimitError ||
         (e instanceof Error && (e.message.includes('429') || e.message.toLowerCase().includes('rate limit')));
-      if (!isRateLimit || attempt === MAX_RETRIES) {
+      const aborted =
+        e instanceof Error &&
+        (/aborted|still compiling|cancel/i.test(e.message) || e.name === 'AbortError');
+      if (aborted || !isRateLimit || attempt === MAX_RETRIES) {
         logger.error(
           'ai-retry',
           `retries exhausted or non-retryable`,

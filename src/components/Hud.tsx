@@ -19,9 +19,10 @@ interface Props {
   onOpenMap: () => void;
   onOpenDebug: () => void;
   syncPhase: string;
+  lastSavedTurn?: number | null;
 }
 
-export function Hud({ state, onSettings, onOpenMap, onOpenQuestLog, onOpenCharacter, onOpenMerchant, onOpenDebug }: Props) {
+export function Hud({ state, onSettings, onOpenMap, onOpenQuestLog, onOpenCharacter, onOpenMerchant, onOpenDebug, lastSavedTurn }: Props) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const c = state?.character;
@@ -37,12 +38,19 @@ export function Hud({ state, onSettings, onOpenMap, onOpenQuestLog, onOpenCharac
     onOpenDebug();
   };
 
+  const showSalvage = state.engineMode !== 'dnd';
+
   return (
     <header className="bg-slate-950/95 border-b border-slate-800 px-2 py-2 sm:px-4 sm:py-2.5 flex items-center justify-between text-xs text-slate-200 sticky top-0 z-40 backdrop-blur w-full">
       
       {/* Left Spacer / Branding or status if needed */}
       <div className="flex items-center gap-1 w-auto sm:w-1/4 shrink">
         <span className="font-serif text-crimson-400 font-bold hidden md:inline">Synaptic GM</span>
+        {lastSavedTurn != null && (
+          <span className="hidden sm:inline font-mono text-[10px] text-slate-500" title="Last committed turn saved on this device">
+            T{lastSavedTurn} saved
+          </span>
+        )}
       </div>
 
       {/* DEAD CENTER: Permanent Health & Mana/Resource Bars */}
@@ -73,7 +81,7 @@ export function Hud({ state, onSettings, onOpenMap, onOpenQuestLog, onOpenCharac
         <div className="flex items-center gap-1 md:hidden">
           <button
             onClick={handleBugClick}
-            title="Debug 2026-08-15c — if this tooltip is missing, Chrome is on Friday's build"
+            title={`Debug 2026-08-15e — playtest kit/map/hang${lastSavedTurn != null ? ` · last saved T${lastSavedTurn}` : ''}`}
             className="p-1 sm:p-1.5 bg-rose-950/60 border border-rose-800 text-rose-400 rounded hover:bg-rose-900 transition-colors"
           >
             <Bug size={14} />
@@ -91,7 +99,7 @@ export function Hud({ state, onSettings, onOpenMap, onOpenQuestLog, onOpenCharac
         <div className="hidden md:flex items-center gap-2">
           <button
             onClick={handleBugClick}
-            title="Debug 2026-08-15c — if this tooltip is missing, Chrome is on Friday's build"
+            title={`Debug 2026-08-15e — playtest kit/map/hang${lastSavedTurn != null ? ` · last saved T${lastSavedTurn}` : ''}`}
             className="p-2 bg-rose-950/60 border border-rose-800 text-rose-400 rounded hover:bg-rose-900 transition-colors flex items-center gap-1 text-[11px]"
           >
             <Bug size={14} /> Debug
@@ -105,9 +113,11 @@ export function Hud({ state, onSettings, onOpenMap, onOpenQuestLog, onOpenCharac
           <button onClick={onOpenCharacter} title="Inventory & Character" className="p-2 bg-slate-900 hover:bg-slate-800 border border-slate-800 rounded text-slate-300 transition-colors">
             <Backpack size={15} />
           </button>
+          {showSalvage && (
           <button onClick={onOpenMerchant} title="Salvage — System sell / salvage" className="p-2 bg-slate-900 hover:bg-slate-800 border border-slate-800 rounded text-slate-300 transition-colors">
             <Recycle size={15} />
           </button>
+          )}
           <button onClick={onSettings} title="Settings" className="p-2 bg-slate-900 hover:bg-slate-800 border border-slate-800 rounded text-slate-300 transition-colors">
             <Settings size={15} />
           </button>
@@ -130,10 +140,12 @@ export function Hud({ state, onSettings, onOpenMap, onOpenQuestLog, onOpenCharac
             <Backpack size={16} className="text-cyan-400" />
             <span className="text-[10px]">Inventory</span>
           </button>
+          {showSalvage && (
           <button onClick={onOpenMerchant} className="flex flex-col items-center gap-1 text-slate-300 p-2">
             <Recycle size={16} className="text-sky-400" />
             <span className="text-[10px]">Salvage</span>
           </button>
+          )}
           <button onClick={onSettings} className="flex flex-col items-center gap-1 text-slate-300 p-2">
             <Settings size={16} className="text-purple-400" />
             <span className="text-[10px]">Settings</span>

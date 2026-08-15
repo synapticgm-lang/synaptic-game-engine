@@ -46,7 +46,12 @@ export function portraitCacheKey(state: GameState): string {
 }
 
 export function needsPortraitRefresh(state: GameState): boolean {
-  if (!state.character.appearance?.trim() && !state.character.bio?.trim()) return false;
+  const look = state.character.appearance?.trim();
+  const bio = state.character.bio?.trim();
+  const worn = (state.inventory ?? []).some(
+    (i) => i.equipped && /shirt|jeans|boots|hoodie|jacket|tee|trainers|sneakers|doc/i.test(i.name)
+  );
+  if (!look && !bio && !worn) return false;
   const key = portraitCacheKey(state);
   return !state.character.portraitUrl || state.character.portraitKey !== key;
 }

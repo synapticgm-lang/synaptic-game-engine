@@ -19,7 +19,8 @@ import { simulateCombat, buildAutoFightPrompt } from './combat';
 import type { EnemyStats } from './combat';
 import { isAutoFightWarningDismissed } from '@/components/AutoFightWarningModal';
 import { generateComicImage, generateVideo, VideoProviderNotConfiguredError } from '@/services/openRouterService';
-import { generatePanelScript } from '@/services/llmDirectorService';
+import { enforcePerspective } from './perspectiveWarden';
+import { applyLocalityWarden } from './locality';
 import {
   bindSessionImageCache,
   clearSessionImageCache,
@@ -38,6 +39,7 @@ import {
 } from './comicImagePrompt';
 import { resolvePanelBudget } from './panelBudget';
 import { buildVisualConsistencyBlock } from './visualConsistency';
+import { classifyImageGenFailure, diegeticImageFailureMessage } from './visualCanon';
 import { fallbackSuggestionForState, findUnsupportedItemClaims, isSuggestionValidForState } from './suggestionValidation';
 import { isChoiceGroundedInTurn, normalizeStoryCorpus, padChoicesToCount, resolvePipelineChoices, sceneSafeFallbacks } from './choicePipeline';
 import { sanitizeNarrativeMechanics, ensureTurnProse, ensureDamageNarration, ensureEncounterNarration, ensureXpNarration, stripUnearnedXpProse, stripResidualMechanicTags } from './narrativeSanitize';
@@ -360,6 +362,8 @@ export function useGame() {
   const [bootPhase, setBootPhase] = useState<BootPhase>('welcome');
   const [busy, setBusy] = useState(false);
   const turnInFlightRef = useRef(false);
+  const turnAbortRef = useRef<AbortController | null>(null);
+  const [lastSavedTurn, setLastSavedTurn] = useState<number | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [errorKind, setErrorKind] = useState<ErrorKind | null>(null);
   const [showLoadingOverlay, setShowLoadingOverlay] = useState(false);
@@ -395,6 +399,7 @@ export function useGame() {
   const imageGenJobsRef = useRef<ImageGenJob[]>([]);
   const [imageGenEpoch, setImageGenEpoch] = useState(0);
   const imageGenRunningRef = useRef(false);
+  const lastImageFailToastAtRef = useRef(0);
 
   // Loot-video jobs run on a fully separate queue/effect so a slow (30s-2min+) video
   // request can never block the image panel queue for subsequent turns.
@@ -566,6 +571,27 @@ export function useGame() {
     setToasts((prev) => [...prev, { id, message, type }]);
   }, []);
 
+  const notifyImageFailure = useCallback((error: unknown) => {
+    const now = Date.now();
+    if (now - lastImageFailToastAtRef.current < 8000) return;
+    lastImageFailToastAtRef.current = now;
+    addToast(diegeticImageFailureMessage(classifyImageGenFailure(error)), 'info');
+  }, [addToast]);
+
+  const sceneImageContext = useCallback((
+    visualConsistency?: string,
+    playerActionContext?: string
+  ): ImagePromptContext => {
+    const s = stateRef.current;
+    return {
+      visualConsistency,
+      playerActionContext,
+      engineMode: s?.engineMode,
+      currentLocation: s?.locationSheet?.name || s?.currentLocation,
+      campaignPremise: s?.campaignPremise ?? undefined,
+    };
+  }, []);
+
   const dismissToast = useCallback((id: string) => {
     setToasts((prev) => prev.filter((t) => t.id !== id));
   }, []);
@@ -579,6 +605,7 @@ export function useGame() {
     });
     setSaveStatus('saving');
     await saveGame(s);
+    setLastSavedTurn(s.turn);
     localStorage.setItem(LOCAL_UPDATED_KEY, String(Date.now()));
     // Best-effort cloud SSOT for signed-in players (IndexedDB stays primary offline cache).
     void syncGameToCloud(s, settingsRef.current).then((result) => {
@@ -661,14 +688,19 @@ export function useGame() {
 
     try {
       const imageUrl = await requestImage(builtPrompt);
-      return await storeIfPossible(imageUrl || null);
+      if (!imageUrl) {
+        notifyImageFailure(new Error('Image provider returned an empty image URL.'));
+        return null;
+      }
+      return await storeIfPossible(imageUrl);
     } catch (e) {
       if (e instanceof ImageModerationError) {
         try {
           const softened = buildImagePromptForKind(softenPrompt(prompt), settings, mode, promptKind, context);
           const imageUrl = await requestImage(softened);
           return await storeIfPossible(imageUrl || null);
-        } catch {
+        } catch (retryErr) {
+          notifyImageFailure(retryErr ?? e);
           return null;
         }
       }
@@ -678,6 +710,7 @@ export function useGame() {
         promptKind,
         timedOut: e instanceof Error && e.message.includes('timed out'),
       });
+      notifyImageFailure(e);
       return null;
     }
   });
@@ -816,11 +849,10 @@ export function useGame() {
                   promptKind: job.promptKind,
                 });
 
-                const imageUrl = await fetchPanelImage(prompt, settingsRef.current, job.promptKind, {
-                  visualConsistency: job.visualContext,
-                  // Player-action-first guarantee: only the FIRST panel of the turn gets the raw action context.
-                  playerActionContext: panelIndex === 0 ? job.playerActionContext : undefined,
-                });
+                const imageUrl = await fetchPanelImage(prompt, settingsRef.current, job.promptKind, sceneImageContext(
+                  job.visualContext,
+                  panelIndex === 0 ? job.playerActionContext : undefined
+                ));
                 if (!imageUrl) throw new Error('Image provider returned an empty image URL.');
                 commitPanelResult(imageUrl, 'ready');
               } catch (err) {
@@ -875,10 +907,10 @@ export function useGame() {
                 panelIndex,
                 prompt: job.prompt.slice(0, 100),
               });
-              const imageUrl = await fetchPanelImage(job.prompt, settingsRef.current, job.promptKind, {
-                visualConsistency: job.visualContext,
-                playerActionContext: job.playerActionContext,
-              });
+              const imageUrl = await fetchPanelImage(job.prompt, settingsRef.current, job.promptKind, sceneImageContext(
+                job.visualContext,
+                job.playerActionContext
+              ));
               if (!imageUrl) throw new Error('Image provider returned an empty image URL.');
               commitPanelResult(imageUrl, 'ready');
             } catch (err) {
@@ -900,9 +932,7 @@ export function useGame() {
             const urls: string[] = [];
             for (const prompt of job.prompts) {
               try {
-                const imageUrl = await fetchPanelImage(prompt, settingsRef.current, job.promptKind, {
-                  visualConsistency: job.visualContext,
-                });
+                const imageUrl = await fetchPanelImage(prompt, settingsRef.current, job.promptKind, sceneImageContext(job.visualContext));
                 if (imageUrl) urls.push(imageUrl);
               } catch (err) {
                 debugLogger.record('ERROR', 'Unexpected turn image job failure', {
@@ -936,9 +966,7 @@ export function useGame() {
           if (job.kind === 'intro') {
             setImagesGenerating(1);
             try {
-              const imageUrl = await fetchPanelImage(job.prompt, settingsRef.current, job.promptKind, {
-                visualConsistency: job.visualContext,
-              });
+              const imageUrl = await fetchPanelImage(job.prompt, settingsRef.current, job.promptKind, sceneImageContext(job.visualContext));
               if (imageUrl) {
                 startTransition(() => setCurrentImages([imageUrl]));
               }
@@ -1019,7 +1047,7 @@ export function useGame() {
               entryId: job.entryId,
               prompt: job.prompt.slice(0, 100),
             });
-            videoUrl = await fetchLootVideo(job.prompt, settingsRef.current, { visualConsistency: job.visualContext });
+            videoUrl = await fetchLootVideo(job.prompt, settingsRef.current, sceneImageContext(job.visualContext));
           } catch (err) {
             debugLogger.record('ERROR', 'Unexpected loot video job failure', {
               entryId: job.entryId,
@@ -1375,6 +1403,16 @@ export function useGame() {
 
     snapshotRef.current = current;
     setCanRewind(true);
+    turnAbortRef.current?.abort();
+    const turnAbort = new AbortController();
+    turnAbortRef.current = turnAbort;
+    try {
+      await persist(current);
+    } catch (persistError) {
+      debugLogger.record('ERROR', 'Pre-overlay persist failed', {
+        error: persistError instanceof Error ? persistError.message : String(persistError),
+      });
+    }
 
     // Commit the optimistic player entry as a concrete snapshot. Do not derive later turn
     // work inside a React updater: updater execution may be deferred or repeated by React,
@@ -1431,6 +1469,7 @@ export function useGame() {
             (attempt, delayMs) => {
               setRetryStatus(`Rate limited — retry ${attempt}/4 in ${Math.round(delayMs / 1000)}s…`);
             },
+            turnAbort.signal,
           );
           openingText = stripChoiceList(stripActionTags(openingResult.text));
         } catch {
@@ -1649,7 +1688,7 @@ In <system-log>, only emit LitRPG/RPG progression lines (XP, loot, HP change as 
       let result = await callGm(liveCurrent, gmPlayerPayload, settingsRef.current, activeLoreCards, (attempt, delayMs) => {
         debugLogger.record('WARN', `Rate limited — retry ${attempt}/4`, { delayMs });
         setRetryStatus(`Rate limited — retry ${attempt}/4 in ${Math.round(delayMs / 1000)}s…`);
-      });
+      }, turnAbort.signal);
 
       // System-wide: if the model returned bridge-only / empty / no findings, regenerate.
       // Never swap a real GM beat for a local story template.
@@ -1693,31 +1732,9 @@ In <system-log>, only emit LitRPG/RPG progression lines (XP, loot, HP change as 
               debugLogger.record('WARN', `Rate limited — retry ${attempt}/4`, { delayMs });
               setRetryStatus(`Rate limited — retry ${attempt}/4 in ${Math.round(delayMs / 1000)}s…`);
             },
+            turnAbort.signal,
           );
           probeText = probeOf(result.text);
-          if (!storyHasBody(probeText)) {
-            debugLogger.record('WARN', 'Empty GM story after retry — second resolution retry', {
-              turn: liveCurrent.turn,
-            });
-            setRetryStatus('Writing the scene…');
-            result = await callGm(
-              liveCurrent,
-              buildResolutionUserPayload({
-                mandateBlock: turnMandate.block,
-                playerAction: sanitizedInput,
-                deterministicBlock: deterministicStateBlock,
-                retry: true,
-                intent: intentForMandate,
-                factLocks: detectFactLockViolations(liveCurrent, probeText, sanitizedInput),
-              }),
-              settingsRef.current,
-              activeLoreCards,
-              (attempt, delayMs) => {
-                debugLogger.record('WARN', `Rate limited — retry ${attempt}/4`, { delayMs });
-                setRetryStatus(`Rate limited — retry ${attempt}/4 in ${Math.round(delayMs / 1000)}s…`);
-              },
-            );
-          }
         } else if (probeLocks.length) {
           debugLogger.record('STATE_UPDATE', 'Fact-lock slips will be cut locally — skipping GM retry', {
             turn: liveCurrent.turn,
@@ -1952,7 +1969,7 @@ In <system-log>, only emit LitRPG/RPG progression lines (XP, loot, HP change as 
       // waiting on this extra, optional pass. Skip it when the GM already wrote usable
       // panels — that extra call was holding the input box for up to 20s every turn.
       const gmPanelsUsable = sanitizedPanels.some((panel) => (panel.narrative ?? '').trim().length > 40);
-      if (isComicView && panelBudget > 0 && !gmPanelsUsable) {
+      if (false && isComicView && panelBudget > 0 && !gmPanelsUsable) {
         try {
           const infoCards = [
             ...activeLoreCards.map((c) => `${c.name}: ${c.summary}`),
@@ -2119,6 +2136,12 @@ In <system-log>, only emit LitRPG/RPG progression lines (XP, loot, HP change as 
       if (visualUpdate) {
         baseChar.appearance = visualUpdate.description;
       }
+      const hasFirearm = (workingState.inventory ?? []).some((i) =>
+        /\b(pistol|handgun|revolver|rifle|shotgun|firearm|gun)\b/i.test(i.name)
+      );
+      cleanText = applyLocalityWarden(cleanText, workingState.currentLocation ?? liveCurrent.currentLocation, hasFirearm);
+      cleanText = enforcePerspective(cleanText, settingsRef.current, liveCurrent.character.name);
+
       if (mode === 'kid') {
         const kidTalk = (s: string) => sanitizeInput(s, 'kid');
         cleanText = kidTalk(cleanText);
@@ -2168,6 +2191,10 @@ In <system-log>, only emit LitRPG/RPG progression lines (XP, loot, HP change as 
           narrative: cleanText,
           systemLog: mergedSystemLog,
           checkFailed: !outcome.isSuccess,
+          ledgerChanged:
+            (baseChar.hp ?? 0) !== (liveCurrent.character.hp ?? 0)
+            || (baseChar.conditions?.length ?? 0) !== (liveCurrent.character.conditions?.length ?? 0)
+            || (baseChar.conditions ?? []).some((c, i) => c !== liveCurrent.character.conditions?.[i]),
           critFail: outcome.d20 === 1,
           gainedLoot: structural.gainedItems.length > 0,
           quests: updatedQuests,
@@ -2357,7 +2384,10 @@ In <system-log>, only emit LitRPG/RPG progression lines (XP, loot, HP change as 
 
       // Prepare work descriptors before committing, but do not dispatch anything yet.
       const postCommitImageJobs: ImageGenJob[] = [];
-      if (isComicView && comicPanelsForLog.length > 0) {
+      const allowSceneArt = storyHasBody(cleanText);
+      if (!allowSceneArt) {
+        debugLogger.record('SYSTEM', 'Skipping scene images — no story body this turn');
+      } else if (isComicView && comicPanelsForLog.length > 0) {
         postCommitImageJobs.push({
           kind: 'panels',
           entryId: gmEntry.id,
@@ -2387,7 +2417,7 @@ In <system-log>, only emit LitRPG/RPG progression lines (XP, loot, HP change as 
           visualContext,
         });
       }
-      if (milestoneReq && allowsImageGeneration(settingsRef.current, 'milestone-illustration')) {
+      if (allowSceneArt && milestoneReq && allowsImageGeneration(settingsRef.current, 'milestone-illustration')) {
         postCommitImageJobs.push({
           kind: 'turn',
           entryId: gmEntry.id,
@@ -2459,6 +2489,13 @@ In <system-log>, only emit LitRPG/RPG progression lines (XP, loot, HP change as 
       } else {
         stateRef.current = mergedState;
         setState(mergedState);
+        try {
+          await persist(mergedState);
+        } catch (persistError) {
+          debugLogger.record('ERROR', 'Immediate turn persist failed', {
+            error: persistError instanceof Error ? persistError.message : String(persistError),
+          });
+        }
 
         debugLogger.record('STATE_UPDATE', 'State updated — turn incremented', {
           turn: mergedState.turn,
@@ -2470,6 +2507,10 @@ In <system-log>, only emit LitRPG/RPG progression lines (XP, loot, HP change as 
         setPostCommitTurnEpoch((epoch) => epoch + 1);
       }
     } catch (e) {
+      if (turnAbortRef.current?.signal.aborted) {
+        debugLogger.record('WARN', 'sendAction aborted — last committed scene kept');
+        return;
+      }
       const errMsg = e instanceof Error ? e.message : 'Unknown error';
       const stack = e instanceof Error ? e.stack : undefined;
       debugLogger.record('ERROR', 'sendAction failed', {
@@ -2808,9 +2849,12 @@ In <system-log>, only emit LitRPG/RPG progression lines (XP, loot, HP change as 
   ): Promise<string | null> => {
     const current = stateRef.current;
     if (!current) return null;
-    return fetchPanelImage(prompt, settingsRef.current, kind, {
-      visualConsistency: kind === 'character-portrait' ? buildVisualConsistencyBlock(current, []) : undefined,
-    });
+    return fetchPanelImage(
+      prompt,
+      settingsRef.current,
+      kind,
+      sceneImageContext(kind === 'character-portrait' ? buildVisualConsistencyBlock(current, []) : undefined)
+    );
   });
 
   const commitInventoryArt = useCallbackRef((patch: {
@@ -3082,6 +3126,20 @@ In <system-log>, only emit LitRPG/RPG progression lines (XP, loot, HP change as 
     showRolls, setShowRolls, showMapModal, setShowMapModal, leftOpen, setLeftOpen, rightOpen, setRightOpen,
     showWelcome, setShowWelcome, showCharacterWindow, setShowCharacterWindow, showMerchantWindow, setShowMerchantWindow, unlockedQuests, dismissUnlockedQuests: () => setUnlockedQuests([]), syncPhase, toasts, dismissToast, addToast, cloudSlot, cloudSlots, localSlot,
     sendAction,
+    cancelTurn: () => {
+      const snap = snapshotRef.current;
+      turnAbortRef.current?.abort();
+      if (snap) {
+        stateRef.current = snap;
+        setState(snap);
+      }
+      setShowLoadingOverlay(false);
+      setRetryStatus(null);
+      turnInFlightRef.current = false;
+      setBusy(false);
+      addToast('Turn cancelled. Last committed scene kept.', 'info');
+    },
+    lastSavedTurn,
     retryAction: () => { if (lastInput.trim()) sendAction(lastInput); },
     retryPanelImage,
     generateInventoryArt,
@@ -3162,7 +3220,11 @@ In <system-log>, only emit LitRPG/RPG progression lines (XP, loot, HP change as 
 
         const localTs = local?.lastUpdated ?? 0;
         const cloudTs = cloud?.updatedAtMs ?? 0;
-        const useCloud = !!cloud && (!local || cloudTs > localTs);
+        const localTurn = local?.turn ?? -1;
+        const cloudTurn = cloud?.state?.turn ?? -1;
+        const useCloud =
+          !!cloud &&
+          (!local || cloudTurn > localTurn || (cloudTurn === localTurn && cloudTs > localTs));
         const saved = useCloud ? cloud!.state : local;
 
         if (!saved) {

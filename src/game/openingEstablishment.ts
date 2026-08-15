@@ -326,7 +326,7 @@ export function extractLocation(raw: string): string | null {
 }
 
 const CLOTHES_NOUN =
-  /\b(jeans|boots|t-?shirt|tee|hoodie|jacket|coat|jumper|sweater|trainers|sneakers|docs?|doc\s*martens?|docmartin)\b/i;
+  /\b(jeans|boots|t-?shirt|tee|hoodie|jacket|coat|jumper|sweater|trainers|sneakers|docs?|doc\s*martens?|docmartin|metallica)\b/i;
 
 /** Drop leading "what am I wearing?" and trailing "why?" — never wipe a clothes list. */
 function stripConfusion(raw: string): string {
@@ -347,6 +347,14 @@ function isMetaOnly(raw: string): boolean {
 }
 
 export function extractAppearance(raw: string): string | null {
+  if (CLOTHES_NOUN.test(raw)) {
+    const list = stripPlayerVoice(stripConfusion(raw))
+      .replace(/\b(no|not|refused?|without|ain'?t wearing)\s+(any\s+)?underwear\b/gi, '')
+      .replace(/\b(perve?|creep|weirdo|freak|sicko)\b/gi, '')
+      .replace(/\s{2,}/g, ' ')
+      .trim();
+    if (list.length >= 6) return list;
+  }
   if (isSetupRefusal(raw) || isMetaOnly(raw) || isJunkSetupValue(raw)) return null;
   const afterWearQ = raw.replace(/^[\s\S]*?\bwhat am i wearing\??\s*/i, '').trim();
   if (afterWearQ && afterWearQ !== raw.replace(/\s+/g, ' ').trim()) {
@@ -371,9 +379,14 @@ export function extractSpecies(raw: string): string | null {
 }
 
 export function extractKit(raw: string): string | null {
-  if (isSetupRefusal(raw) || isMetaOnly(raw) || isJunkSetupValue(raw)) return null;
+  if (
+    (isSetupRefusal(raw) || isMetaOnly(raw) || isJunkSetupValue(raw)) &&
+    !/\b(backpack|phone|keys|headphones|leatherman|wallet|multi[-\s]?tool)\b/i.test(raw)
+  ) {
+    return null;
+  }
   const m = raw.match(
-    /\b(?:i\s+have|i've got|got|carrying|in\s+my\s+(?:pockets?|bag|pack)|wallet|phone|keys|headphones)\b/i
+    /\b(?:i\s+have|i've got|got|carrying|in\s+my\s+(?:pockets?|bag|pack)|wallet|phone|keys|headphones|backpack|leatherman)\b/i
   );
   if (!m) return null;
   const cleaned = stripPlayerVoice(stripConfusion(raw));
@@ -546,21 +559,16 @@ function applyKindToState(state: GameState, prompt: OpeningPrompt, answer: strin
     };
   }
   if (prompt.kind === 'kit') {
+    const look = `${state.character.appearance ?? ''} ${clean.text}`.trim();
     return {
       ...state,
-      inventory: retouchKit(grantMundaneStartingItems(state.inventory, clean.mundaneNames), clean.text),
+      inventory: materializeWornClothes(
+        grantMundaneStartingItems(state.inventory, clean.mundaneNames),
+        look
+      ),
     };
   }
   return state;
-}
-
-function retouchKit(inventory: Item[], answer: string): Item[] {
-  return inventory.map((item) => {
-    if (item.itemType === 'container' || /backpack|satchel|bag/i.test(item.name)) {
-      return { ...item, description: `${item.description ?? item.name}. ${answer}`.slice(0, 240) };
-    }
-    return item;
-  });
 }
 
 function registrarAside(registrar: OpeningRegistrar, harvest: ReturnType<typeof harvestUtterance>): string {
@@ -575,7 +583,7 @@ function registrarAside(registrar: OpeningRegistrar, harvest: ReturnType<typeof 
   if (harvest.askedWhat) {
     bits.push(
       registrar.voice === 'system'
-        ? 'Integration protocol is active. Earth is being written into the System. A refusal is not a visual profile. Confirm garments or everyday street clothes will be assumed.'
+        ? 'Integration protocol is active. Earth is being written into the System.'
         : 'The opening has begun. Finish these particulars, then the scene will move.'
     );
   }
@@ -604,14 +612,14 @@ export async function applyOpeningAnswer(
   }
   if (harvest.kit && isJunkSetupValue(harvest.kit)) harvest.kit = null;
   if (harvest.name && isJunkSetupValue(harvest.name)) harvest.name = null;
-  if (isSetupRefusal(answer) || isMetaOnly(answer)) {
+  if ((isSetupRefusal(answer) || isMetaOnly(answer)) && !harvest.appearance && !CLOTHES_NOUN.test(answer)) {
     harvest.appearance = null;
     harvest.kit = null;
     harvest.species = null;
   }
   const declined = [...(est.declinedFields ?? [])];
   const renamedTo = extractSystemRename(answer);
-  if (isSetupRefusal(answer)) {
+  if (isSetupRefusal(answer) && !harvest.appearance && !CLOTHES_NOUN.test(answer)) {
     harvest.appearance = null;
     harvest.kit = null;
     harvest.askedWhat = true;
@@ -786,9 +794,11 @@ export function formatSetupComplete(
   const name = a.name || state.character.name || 'unconfirmed';
   const where = a.where || state.currentLocation || 'unconfirmed';
   const wearRaw = a.wear || a.look || state.character.appearance || 'ordinary clothes';
-  const wear = isJunkSetupValue(wearRaw) || isSetupRefusal(wearRaw)
-    ? 'everyday street clothes'
-    : stripPlayerVoice(wearRaw);
+  const wear = CLOTHES_NOUN.test(wearRaw)
+    ? stripPlayerVoice(wearRaw)
+    : isJunkSetupValue(wearRaw) || isSetupRefusal(wearRaw)
+      ? 'everyday street clothes'
+      : stripPlayerVoice(wearRaw);
   const kit = stripPlayerVoice(a.pockets || a.kit || 'ordinary pocket contents');
   if (registrar.voice === 'system') {
     return formatRegistrarLine(

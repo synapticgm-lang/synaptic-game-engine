@@ -532,7 +532,7 @@ export function CharacterWindow({ isOpen, onClose, state, settings, initialTab, 
     { key: 'portrait', label: 'Portrait', icon: <Camera size={14} /> },
   ];
 
-  if (settings.dndMode) {
+  if (settings.dndMode || state.engineMode === 'dnd') {
     tabs.push({ key: 'dnd', label: '5e Sheet', icon: <ScrollText size={14} /> });
   }
 

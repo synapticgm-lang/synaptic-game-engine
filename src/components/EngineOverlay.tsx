@@ -38,19 +38,22 @@ interface LoadingOverlayProps {
   elapsed: number;
   theme?: TurnFrameTheme | null;
   retryStatus?: string | null;
+  onCancel?: () => void;
 }
 
-export function LoadingOverlay({ visible, elapsed, theme, retryStatus }: LoadingOverlayProps) {
+export function LoadingOverlay({ visible, elapsed, theme, retryStatus, onCancel }: LoadingOverlayProps) {
   if (!visible) return null;
 
   const activeTheme = theme ?? DEFAULT_TURN_FRAME;
   const preset = GENRE_LOADING_PRESETS[activeTheme.frameStyle] ?? GENRE_LOADING_PRESETS['minimal-holo'];
 
-  const message = elapsed > 10000
-    ? preset.long
-    : elapsed > 3500
-      ? preset.short
-      : null;
+  const message = elapsed > 15000
+    ? 'The GM is still thinking…'
+    : elapsed > 10000
+      ? preset.long
+      : elapsed > 3500
+        ? preset.short
+        : null;
 
   if (!message) return null;
 
@@ -75,6 +78,15 @@ export function LoadingOverlay({ visible, elapsed, theme, retryStatus }: Loading
             <Clock size={14} className="animate-pulse text-amber-400" />
             <span className="text-xs text-amber-200/90">{retryStatus}</span>
           </div>
+        )}
+        {elapsed > 15000 && onCancel && (
+          <button
+            type="button"
+            onClick={onCancel}
+            className="rounded-lg border border-slate-600 bg-slate-800/80 px-4 py-2 text-xs font-medium text-slate-200 hover:bg-slate-800"
+          >
+            Cancel and keep last scene
+          </button>
         )}
       </div>
     </div>

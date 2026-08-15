@@ -82,20 +82,8 @@ export const DungeonMapModal: React.FC<DungeonMapModalProps> = ({
   const currentNode = displayDungeon.nodes.find((n) => n.id === displayDungeon.currentNodeId);
   const isStreet = displayDungeon.blueprintId === 'local-area';
 
-  const getNodePos = (node: MapNode) => {
-    const x = (node.coordinates?.x ?? 0) * 120 + 80;
-    const y = (node.coordinates?.y ?? 0) * 120 + 80;
-    return { x, y };
-  };
-
-  /** Map scale only — never dungeon danger. */
-  const scaleNames: Record<number, string> = {
-    1: 'World map · 100 km scale',
-    2: 'Region map · 10 km scale',
-    3: 'Local streets · 1 km scale',
-    4: 'Tactical interior',
-  };
   const mapScaleStreet = 'Local streets · ~1 km scale';
+  const mapScaleInterior = 'Interior floor plan';
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
@@ -105,7 +93,7 @@ export const DungeonMapModal: React.FC<DungeonMapModalProps> = ({
         <div className="flex justify-between items-center pb-4 border-b border-slate-700">
           <div>
             <div className="flex items-center gap-2 text-xs font-semibold text-cyan-400 mb-1">
-              <span>🗺️ {isStreet ? mapScaleStreet : (scaleNames[displayDungeon.tier] ?? 'Map')}</span>
+              <span>🗺️ {isStreet ? mapScaleStreet : mapScaleInterior}</span>
               {!isStreet && displayDungeon.dangerTier != null && (
                 <span className="rounded bg-rose-950/60 px-2 py-0.5 text-rose-200 border border-rose-800/40">
                   Danger Tier {displayDungeon.dangerTier}
@@ -121,7 +109,7 @@ export const DungeonMapModal: React.FC<DungeonMapModalProps> = ({
               {displayDungeon.dungeonName}
             </h2>
             <p className="text-xs text-slate-400">
-              {isStreet ? 'You are here: ' : 'Active Node: '}
+              {isStreet ? 'You are here: ' : 'Current room: '}
               <span className="text-amber-300 font-semibold">{currentNode?.name || 'Unknown'}</span>
             </p>
           </div>
@@ -150,79 +138,11 @@ export const DungeonMapModal: React.FC<DungeonMapModalProps> = ({
               }
             />
           ) : (
-            <>
-              <svg className="absolute inset-0 w-full h-full min-w-[500px] min-h-[500px] pointer-events-none">
-                {displayDungeon.nodes.map((node) => {
-                  const start = getNodePos(node);
-                  const isVisited = displayDungeon.visitedNodeIds.includes(node.id);
-
-                  return node.connections.map((targetId) => {
-                    const targetNode = displayDungeon.nodes.find((n) => n.id === targetId);
-                    if (!targetNode) return null;
-                    const end = getNodePos(targetNode);
-                    const isTargetVisited = displayDungeon.visitedNodeIds.includes(targetId);
-                    const lineVisible = isVisited || isTargetVisited;
-
-                    return (
-                      <line
-                        key={`${node.id}-${targetId}`}
-                        x1={start.x}
-                        y1={start.y}
-                        x2={end.x}
-                        y2={end.y}
-                        stroke={lineVisible ? (isVisited && isTargetVisited ? '#38bdf8' : '#475569') : '#0f172a'}
-                        strokeWidth={lineVisible ? '3' : '1'}
-                        strokeDasharray={!isVisited || !isTargetVisited ? '4 4' : undefined}
-                        opacity={lineVisible ? 0.8 : 0.2}
-                      />
-                    );
-                  });
-                })}
-              </svg>
-
-              <div className="relative min-w-[500px] min-h-[500px]">
-                {displayDungeon.nodes.map((node) => {
-                  const { x, y } = getNodePos(node);
-                  const isCurrent = node.id === displayDungeon.currentNodeId;
-                  const isVisited = displayDungeon.visitedNodeIds.includes(node.id);
-                  const isReachable = currentNode?.connections.includes(node.id);
-
-                  if (!isVisited && !isReachable) {
-                    return (
-                      <div
-                        key={node.id}
-                        style={{ left: `${x - 20}px`, top: `${y - 20}px` }}
-                        className="absolute w-10 h-10 rounded-full bg-slate-900/40 border border-slate-800 flex items-center justify-center text-xs text-slate-700"
-                        title="Unexplored Fog"
-                      >
-                        ?
-                      </div>
-                    );
-                  }
-
-                  return (
-                    <button
-                      key={node.id}
-                      onClick={() => isReachable && onMoveNode(node.id)}
-                      disabled={!isReachable && !isCurrent}
-                      style={{ left: `${x - 48}px`, top: `${y - 22}px` }}
-                      className={`absolute w-24 min-h-[44px] rounded-md border px-1.5 py-1 transition-colors flex flex-col items-center justify-center text-center ${
-                        isCurrent
-                          ? 'bg-cyan-700/90 border-cyan-200 text-white z-20'
-                          : isVisited
-                          ? 'bg-slate-800 border-slate-500 text-slate-200 hover:border-cyan-400 z-10'
-                          : 'bg-slate-800/90 border-amber-600/70 text-amber-100 z-10 cursor-pointer'
-                      }`}
-                    >
-                      <span className="text-[10px] leading-tight font-medium line-clamp-2 max-w-full">
-                        {node.name}
-                      </span>
-                      {isCurrent && <span className="text-[8px] text-cyan-200">You are here</span>}
-                    </button>
-                  );
-                })}
-              </div>
-            </>
+            <InteriorFloorPlan
+              dungeon={displayDungeon}
+              currentNodeId={displayDungeon.currentNodeId}
+              onMoveNode={onMoveNode}
+            />
           )}
         </div>
 
@@ -242,7 +162,7 @@ export const DungeonMapModal: React.FC<DungeonMapModalProps> = ({
             <span className="text-xs text-slate-400">
               {isStreet
                 ? `Places: ${displayDungeon.nodes.length}`
-                : `Discovered: ${displayDungeon.visitedNodeIds.length} / ${displayDungeon.nodes.length} sectors`}
+                : `Rooms: ${displayDungeon.visitedNodeIds.length} mapped / ${displayDungeon.nodes.length} on this floor`}
             </span>
             <button
               onClick={onExitDungeon}
@@ -257,6 +177,119 @@ export const DungeonMapModal: React.FC<DungeonMapModalProps> = ({
     </div>
   );
 };
+
+function InteriorFloorPlan({
+  dungeon,
+  currentNodeId,
+  onMoveNode,
+}: {
+  dungeon: ActiveDungeonState;
+  currentNodeId: string;
+  onMoveNode: (nodeId: string) => void;
+}) {
+  const nodes = dungeon.nodes;
+  const xs = nodes.map((n) => n.coordinates?.x ?? 0);
+  const ys = nodes.map((n) => n.coordinates?.y ?? 0);
+  const minX = Math.min(...xs, 0);
+  const minY = Math.min(...ys, 0);
+  const maxX = Math.max(...xs, 1);
+  const maxY = Math.max(...ys, 1);
+  const cell = 108;
+  const gap = 10;
+  const pad = 28;
+  const width = (maxX - minX + 1) * cell + pad * 2;
+  const height = (maxY - minY + 1) * cell + pad * 2;
+  const current = nodes.find((n) => n.id === currentNodeId);
+
+  const roomBox = (node: MapNode) => {
+    const gx = node.coordinates?.x ?? 0;
+    const gy = node.coordinates?.y ?? 0;
+    return {
+      x: pad + (gx - minX) * cell,
+      y: pad + (gy - minY) * cell,
+      w: cell - gap,
+      h: cell - gap,
+    };
+  };
+
+  return (
+    <div className="relative" style={{ minWidth: width, minHeight: height }}>
+      <svg className="absolute inset-0" width={width} height={height} aria-hidden>
+        <rect width={width} height={height} fill="#0b1220" />
+        {nodes.map((node) =>
+          node.connections.map((targetId) => {
+            if (node.id >= targetId) return null;
+            const target = nodes.find((n) => n.id === targetId);
+            if (!target) return null;
+            const a = roomBox(node);
+            const b = roomBox(target);
+            const visited = dungeon.visitedNodeIds.includes(node.id) || dungeon.visitedNodeIds.includes(targetId);
+            return (
+              <line
+                key={`${node.id}-${targetId}`}
+                x1={a.x + a.w / 2}
+                y1={a.y + a.h / 2}
+                x2={b.x + b.w / 2}
+                y2={b.y + b.h / 2}
+                stroke={visited ? '#334155' : '#1e293b'}
+                strokeWidth={14}
+                opacity={visited ? 0.7 : 0.35}
+              />
+            );
+          })
+        )}
+        {nodes.map((node) => {
+          const box = roomBox(node);
+          const isVisited = dungeon.visitedNodeIds.includes(node.id);
+          const isCurrent = node.id === currentNodeId;
+          return (
+            <rect
+              key={`floor-${node.id}`}
+              x={box.x}
+              y={box.y}
+              width={box.w}
+              height={box.h}
+              rx={8}
+              fill={isCurrent ? '#0e7490' : isVisited ? '#1e293b' : '#0f172a'}
+              stroke={isCurrent ? '#a5f3fc' : isVisited ? '#64748b' : '#334155'}
+              strokeWidth={isCurrent ? 2.5 : 1.5}
+              strokeDasharray={isVisited ? undefined : '5 4'}
+              opacity={isVisited ? 1 : 0.55}
+            />
+          );
+        })}
+      </svg>
+      {nodes.map((node) => {
+        const box = roomBox(node);
+        const isVisited = dungeon.visitedNodeIds.includes(node.id);
+        const isCurrent = node.id === currentNodeId;
+        const isReachable = !!current?.connections.includes(node.id);
+        return (
+          <button
+            key={node.id}
+            type="button"
+            onClick={() => isReachable && onMoveNode(node.id)}
+            disabled={!isReachable && !isCurrent}
+            title={isVisited ? node.name : 'Unmapped room'}
+            style={{ left: box.x, top: box.y, width: box.w, height: box.h }}
+            className="absolute z-10 flex flex-col items-center justify-center px-1 text-center"
+          >
+            {isVisited ? (
+              <>
+                <span className={`text-[11px] font-medium leading-tight ${isCurrent ? 'text-white' : 'text-slate-100'}`}>
+                  {node.name}
+                </span>
+                {isCurrent && <span className="mt-0.5 text-[8px] uppercase tracking-wide text-cyan-100">You are here</span>}
+              </>
+            ) : (
+              <span className="text-[10px] text-slate-600"> </span>
+            )}
+          </button>
+        );
+      })}
+    </div>
+  );
+}
 
 function streetPx(node: MapNode) {
   const gx = node.coordinates?.x ?? 2;

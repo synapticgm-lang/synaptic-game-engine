@@ -7,6 +7,7 @@ import { dangerTierLabel, mapScaleLabel, resolveDangerTier, resolveMapScale } fr
 import { formatPlacesForPrompt } from './places';
 import { formatCampaignMemoryForPrompt } from './campaignMemory';
 import { formatTutorialBeatMandate } from './tutorialBeats';
+import { formatLocalityForPrompt } from './locality';
 
 /**
  * Rebuild the live Situation packet from structured state.
@@ -112,8 +113,11 @@ export function formatSituationForPrompt(state: GameState): string {
     s.recentFacts.length ? s.recentFacts.join('\n') : none,
     hiddenLedger || '',
     tutorialMandate || '',
+    formatLocalityForPrompt(state) || '',
     'RAILS: Hard facts above + SCENE FACTS + factual timeline OVERRIDE improvisation. Do not invent named threats, loot tiers, NPCs, or interactables absent from this packet / location sheet / tags / HIDDEN ROOM LEDGER. Do not invent a dungeon danger tier for street/outdoors (no "Tier 2 Urban Ruin" while mapScale is local streets). Do not empty a present crowd or silence shouting without narrating time passing.',
     'PLAYER ACTION FIDELITY: Resolve the player\'s last stated action first — the named object, question, or motion. Never swap a specific search for a generic look-around. Never pivot the scene to a quest location, dungeon, store, or marker unless the player mentioned it or is already there.',
+    'BEAT ANSWER (BINDING): If they ask what a named glint, sound, or object is, name it or say they need to get closer. Do not write "might be nothing." If the camera already named debris on the floor, they can grab and throw junk — empty hands only if the room is actually bare.',
+    'NO LEFTOVER STOCK: Do not re-sell a knife they already hold (no "reassuring weight/grip"). New camera only.',
     'Do not write "You commit to the action" or "the result lands in [lore title]". Narrate what actually happens.',
     'Lore-article titles are not the current location. Do not name unvisited hubs, cities, or NPCs.',
     'DUAL LOCATION MEMORY: Keep continuity with CURRENT and PREVIOUS location sheets. The player just left the previous place — do not forget what was there.',

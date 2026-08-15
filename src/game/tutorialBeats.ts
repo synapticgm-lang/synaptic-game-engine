@@ -45,6 +45,7 @@ export function advanceTutorialBeats(
     narrative: string;
     systemLog: string[];
     checkFailed?: boolean;
+    ledgerChanged?: boolean;
     critFail?: boolean;
     gainedLoot?: boolean;
     quests?: Quest[];
@@ -77,7 +78,7 @@ export function advanceTutorialBeats(
 
   if (
     !progress.completed.stickyFail &&
-    (opts.critFail || (opts.checkFailed && opts.turn >= 5 && opts.turn <= 12))
+    (opts.critFail || (opts.checkFailed && opts.ledgerChanged && opts.turn >= 5 && opts.turn <= 12))
   ) {
     progress = mark(progress, 'stickyFail', { stickyFailScheduled: true });
     notes.push('Tutorial: first sticky failure registered — wounds/conditions persist.');

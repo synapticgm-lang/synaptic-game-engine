@@ -24,7 +24,8 @@ export async function callGm(
   playerInput: string,
   settings: Settings,
   activeLoreCards: LoreCard[] = [],
-  onRetry?: (attempt: number, delayMs: number) => void
+  onRetry?: (attempt: number, delayMs: number) => void,
+  signal?: AbortSignal
 ): Promise<GmResult> {
   const preferProxy = isGmProxyRequired() || isGmProxyAvailable();
 
@@ -37,6 +38,7 @@ export async function callGm(
         settings,
         activeLoreCards,
         onRetry,
+        signal,
       });
       return processGmCompletion(text, state.engineMode);
     } catch (err) {

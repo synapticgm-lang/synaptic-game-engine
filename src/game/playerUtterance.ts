@@ -58,9 +58,18 @@ const FILLER_HEAD =
 
 const INSULT_NAME = /\b(?:you\s+)?(perve?|creep|weirdo|freak|sicko|pervert)\b/i;
 
+/** Insults and asides are not clothes, kit, or a System name. */
+const NAMED_CLOTHES =
+  /\b(jeans|boots|t-?shirt|tee|hoodie|jacket|coat|jumper|sweater|trainers|sneakers|docs?|doc\s*martens?|metallica)\b/i;
+
+export function hasNamedClothes(raw: string): boolean {
+  return NAMED_CLOTHES.test(raw);
+}
+
 export function isSetupRefusal(raw: string): boolean {
   const t = raw.replace(/\s+/g, ' ').trim();
   if (!t) return false;
+  if (hasNamedClothes(t)) return false;
   if (/\bwhy should(?: i)? (?:give|tell|say|share|provide)\b/i.test(t)) return true;
   if (/\bwhy (?:do|would) (?:i|you) (?:give|tell|want to know|need)\b/i.test(t)) return true;
   if (/\bwhat i(?:'?m| am) wearing\b/i.test(t) && /\b(why|perve?|creep|weirdo)\b/i.test(t)) return true;
@@ -71,10 +80,10 @@ export function isSetupRefusal(raw: string): boolean {
   return false;
 }
 
-/** Insults and asides are not clothes, kit, or a System name. */
 export function isJunkSetupValue(raw: string): boolean {
   const t = raw.replace(/\s+/g, ' ').trim();
   if (!t) return true;
+  if (hasNamedClothes(t)) return false;
   if (isSetupRefusal(t)) return true;
   if (INSULT_NAME.test(t) && !extractSystemRename(t)) return true;
   if (/^you\s+\w+$/i.test(t)) return true;

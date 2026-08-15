@@ -33,6 +33,13 @@ export function filterSystemLogForEngine(lines: string[], engineMode: EngineMode
     .filter((l) => !/^xp gained:\s*0\b/i.test(l))
     .filter((l) => !/^(?:_>\s*)?SYSTEM LOG$/i.test(l))
     .filter((l) => !/^(?:what do you do(?:\s+next)?|what will you do)\s*[?:.]?$/i.test(l));
-  if (engineMode === 'dnd') return cleaned;
+  if (engineMode === 'dnd') {
+    return cleaned.filter((l) => !isLitrpgChromeLine(l));
+  }
   return cleaned.filter((l) => !isDiceMechanicsLine(l));
+}
+
+/** LitRPG System lines must never leak into tabletop chrome. */
+export function isLitrpgChromeLine(line: string): boolean {
+  return /integration|foundation core|first blood|system-issue|salvage|\bwave\s*\d|xp gained|level\s*up/i.test(line);
 }

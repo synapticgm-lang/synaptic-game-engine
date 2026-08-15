@@ -1,4 +1,5 @@
-import type { ArtStylePreset, Settings } from './types';
+import type { ArtStylePreset, EngineMode, Settings } from './types';
+import { formatWorldCanonForPrompt, kidSafeArtDirective } from './visualCanon';
 
 export type ImagePromptKind =
   | 'comic-panel'
@@ -13,6 +14,10 @@ export interface ImagePromptContext {
   visualConsistency?: string;
   /** Only set for the FIRST panel of a turn — guarantees the player's actual action is depicted, not just narrated. */
   playerActionContext?: string;
+  /** Rules mode — picture era must match (LitRPG street vs tabletop tavern). */
+  engineMode?: EngineMode;
+  currentLocation?: string;
+  campaignPremise?: string;
 }
 
 /**
@@ -29,7 +34,7 @@ export const WORLD_GENRE_PRESERVATION_DIRECTIVE =
 
 /** Negative prompt for endpoints that accept a dedicated negative-prompt field (e.g. Automatic1111, ComfyUI). */
 export const NEGATIVE_ART_PROMPT =
-  'text, words, letters, numbers, writing, speech bubble, thought bubble, caption, subtitle, watermark, signature, logo, UI, HUD, blurry, low quality, deformed, extra limbs';
+  'text, words, letters, numbers, writing, speech bubble, thought bubble, caption, subtitle, watermark, signature, logo, UI, HUD, System panel, XP box, blurry, low quality, deformed, extra limbs, extra arms, extra legs, six fingers, mutated hands';
 
 const CLASSIC_ILLUSTRATION_DIRECTIVE =
   'Classic book illustration accent: detailed ink line-art, soft muted watercolor washes, storybook vignette composition, painterly single-scene illustration suitable for narrative prose — NOT a comic panel grid or multi-cell layout.';
@@ -88,7 +93,7 @@ export function getEffectiveComicPreset(preset: ArtStylePreset): Exclude<ArtStyl
 
 function contentTone(mode: 'kid' | 'adult' | 'unrestricted'): string {
   if (mode === 'kid') {
-    return 'STRICTLY FAMILY-FRIENDLY: bright colors, soft lighting, cartoonish tone, no graphic violence, suitable for all ages.';
+    return `STRICTLY FAMILY-FRIENDLY: bright colors, soft lighting, cartoonish tone, suitable for all ages. ${kidSafeArtDirective()}`;
   }
   if (mode === 'unrestricted') {
     return 'Mature fantasy tone: dramatic lighting, gritty texture, intense action allowed.';
@@ -99,6 +104,13 @@ function contentTone(mode: 'kid' | 'adult' | 'unrestricted'): string {
 /** Prepends deterministic context (visual consistency, first-panel player action) ahead of the scene prompt. */
 function withDeterministicContext(scenePrompt: string, context?: ImagePromptContext): string {
   const parts: string[] = [];
+  if (context?.engineMode) {
+    parts.push(formatWorldCanonForPrompt({
+      engineMode: context.engineMode,
+      currentLocation: context.currentLocation,
+      campaignPremise: context.campaignPremise,
+    }));
+  }
   if (context?.playerActionContext?.trim()) {
     parts.push(`The scene must visually depict the player's action: "${context.playerActionContext.trim()}"`);
   }
@@ -153,10 +165,10 @@ export function buildMilestoneIllustrationPrompt(
 }
 
 const ITEM_ICON_DIRECTIVE =
-  'Square game inventory icon in the style of World of Warcraft or Baldur\'s Gate 3. Isolated object only, centered, no person, no hands, no text, no UI chrome, painted item icon on a dark subtle background.';
+  'Square painted inventory icon: isolated object only, centered, no person, no hands, no text, no UI chrome, dark subtle background.';
 
 const PAPER_DOLL_DIRECTIVE =
-  'Character inventory paper-doll portrait like World of Warcraft or Baldur\'s Gate 3: standing three-quarter view, full body from head to feet, wearing the listed gear, neutral dark studio backdrop, no text, no UI, no inventory frame.';
+  'Standing three-quarter inventory portrait, full body from head to feet, wearing the listed gear, neutral dark studio backdrop, no text, no UI, no inventory frame.';
 
 export function buildImagePromptForKind(
   scenePrompt: string,
@@ -166,7 +178,16 @@ export function buildImagePromptForKind(
   context?: ImagePromptContext
 ): string {
   if (kind === 'item-icon') {
-    return [scenePrompt.trim(), ITEM_ICON_DIRECTIVE, PURE_ART_DIRECTIVE, contentTone(mode)].join('\n\n');
+    const canon = context?.engineMode
+      ? formatWorldCanonForPrompt({
+          engineMode: context.engineMode,
+          currentLocation: context.currentLocation,
+          campaignPremise: context.campaignPremise,
+        })
+      : '';
+    return [canon, scenePrompt.trim(), ITEM_ICON_DIRECTIVE, PURE_ART_DIRECTIVE, contentTone(mode)]
+      .filter(Boolean)
+      .join('\n\n');
   }
   if (kind === 'character-portrait') {
     return [
