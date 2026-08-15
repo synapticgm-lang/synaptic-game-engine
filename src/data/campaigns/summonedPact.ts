@@ -11,11 +11,12 @@ export const summonedPact: CampaignBible = {
   archetype: 'isekai',
   engineMode: 'litrpg',
   difficulty: 'Standard',
+  genreTag: 'Isekai',
   tagline: 'They meant to summon a hero. The System also stamped a calamity.',
   shortDescription:
     'Hero/villain summoning LitRPG: Earth clothes, a glitched blessing, and a kingdom that needs you obedient. Obey, refuse, or play both sides — original world.',
   licenseNote:
-    'Original SynapticGM setting. Uses common isekai summon tropes (circle, prophecy, cheat blessing, kingdom vs “demon” court, hero/villain stamp). Not based on any named series, novel, or anime.',
+    'Original SynapticGM setting. Uses common isekai/LitRPG tropes (Earth origin, summoning circle, System screens, classes, inn/guild/dungeon as generic hubs, healer-who-fights as a possible class, hero/villain stamp). Not based on The Wandering Inn, Azarinth Healer, Sword Art Online, Fable, Albion, or any named series, novel, or anime.',
   startingLocation: 'The Sevenfold Circle under Valespire Cathedral',
   replaceDefaultLoadout: true,
   startingContainer: { id: 'sp-pockets', name: 'Pockets and bag from Earth', capacity: 16 },
@@ -51,6 +52,16 @@ export const summonedPact: CampaignBible = {
 
   premise: `You were an ordinary person on Earth. A ritual in another world — the Sevenfold Circle, under Valespire Cathedral — pulled you through. The kingdom of Pellane summoned a [Pactborn] to end a war with the Ash Court. The System also rolled a second stamp: [Calamity Mark]. One summoned soul can carry either, or flicker between them. The court will call you Hero. The Ash Court will call you theirs. You do not have to answer either.
 
+ORIGINALITY (BINDING): Never name published novels, anime, or games in play. Never import unique skill names, distinctive places, or plots from any series. Inn, guild, and dungeon are generic hubs with SynapticGM names only.
+
+GENRE PALETTE (ORIGINAL NAMES — use these):
+- System screens and classes are in-world. A blue panel is private and earned after the scene; code owns numbers. Classes exist (handler, field chirurgeon, wall-warden, unmarked). A healer class may still fight — that is a job, not a copied protagonist.
+- Hero-summon gone wrong / villain-summon: [Pactborn] vs [Calamity Mark]. Player choice. No forced allegiance.
+- Earth origin: clothes and pockets. Permanent displacement. No logout button, no VR-helmet plot.
+- Inn hub: The Weighing Cup, a cathedral-close common room (beds, rumor, stew).
+- Guild hub: Valespire Contract Hall (posted jobs, rank boards, politics).
+- Dungeon: Cathedral Undercroft — numbered floors; fog on unvisited rooms. Street map stays outdoors.
+
 OPENING KIT (AUTHORITY): Worn clothes and pocket contents from Earth are the kit. Never invent an iron shortsword, traveler tunic, or healing draught unless the ledger already has it. The only System gift at registration is an unidentified [Circle Blessing] (glitched passive). Appraisal is required to name it.
 
 PLAYER AGENCY (BINDING): No forced allegiance. Protest, jokes, and “why should I save you” are dialogue. The first scene is the circle and the people in the vault — not a journal dump. Do not unlock or name Guide Book quests until they are spoken in play.
@@ -63,7 +74,7 @@ HERO / VILLAIN FORK (CODE + WRITER):
 
 STORY SPINE (skeleton — unique each run; do not recap as a lecture):
 1. Circle. Names. Blessing unidentified. Court argument in front of you.
-2. First free hour in Valespire (cathedral close, market, or a locked guest wing) — ordinary people, not the war.
+2. First free hour in Valespire (cathedral close, The Weighing Cup, Lowmarket, Contract Hall notice-board, or a locked guest wing) — ordinary people, not the war.
 3. A handler asks you to swear the Pact. Swearing is optional. Refusal has social cost, not instant prison unless they attack.
 4. First real threat is local (marked beast in the close, a sabotaged ward, a frightened crowd) — not the Ash King.
 5. Proof the war story is incomplete (a letter, a prisoner, a cracked circle).
@@ -77,6 +88,9 @@ SIDE QUEST SEEDS (writer only — spawn when the player looks, talks, or wanders
 - Appraisal Errand: a licensed Appraiser will name your Blessing for a favor — or lie.
 - Wall-Watch: militia wants you on the west wall “for morale.” You can walk the wall, fake it, or vanish.
 - Quiet Funeral: someone died in the ritual that brought you. Their sibling wants answers, not a hero speech.
+- The Weighing Cup: a room, a rumor, or a drunk sergeant who saw the seventh ring fail.
+- Contract Slip: a posted Hall job is a lie, a test, or a trap for a Calamity Mark.
+- Undercroft First Floor: a sanctioned delve the court wants as a “hero demo.” You can walk it, refuse, or cheat the map.
 
 SPECIAL / HIDDEN QUEST SEEDS (writer only — earn in scene; never as opening journal):
 - The Other Circle: locate the second summoning site (failed or successful).
@@ -114,7 +128,7 @@ Do not name distant hubs, the Ash King, or the other summoned until the player a
       id: 'sp-lore-4',
       title: 'Pellane and Valespire',
       category: 'world',
-      body: 'Pellane is a highland kingdom. Valespire is its capital: cathedral, palace, Lowmarket, west wall. They are losing a grinding war against the Ash Court — not cartoon demons, a rival polity that uses ember-wards and bargains. The court told the public that a summoned Pactborn will end the war in a season. That is propaganda. The player should discover the real military situation by talking and walking, not by a lore dump.',
+      body: 'Pellane is a highland kingdom. Valespire is its capital: cathedral, palace, Lowmarket, west wall, The Weighing Cup, Contract Hall, Cathedral Undercroft. They are losing a grinding war against the Ash Court — not cartoon demons, a rival polity that uses ember-wards and bargains. The court told the public that a summoned Pactborn will end the war in a season. That is propaganda. The player should discover the real military situation by talking and walking, not by a lore dump.',
       tags: ['pellane', 'valespire', 'war', 'capital'],
     },
     {
@@ -144,6 +158,27 @@ Do not name distant hubs, the Ash King, or the other summoned until the player a
       category: 'history',
       body: 'Every successful Sevenfold ritual in recorded Pellane history pulled two souls and only advertised one. The other is hidden, exiled, or working for the Ash Court. This age’s other summoned is alive. Do not name them until the Other Circle or a rumor the player chases. They are a person with Earth clothes too — not a boss statue.',
       tags: ['double-summon', 'secret', 'mirror'],
+    },
+    {
+      id: 'sp-lore-9',
+      title: 'The Weighing Cup',
+      category: 'world',
+      body: 'A cathedral-close inn. Stew, beds, and rumor. Classes and stamps show in how people treat you at the bar — not as a lecture. Keep it a generic hub. Do not invent a named-series innkeeper personality. The player may sleep here, listen, or skip it.',
+      tags: ['inn', 'hub', 'valespire'],
+    },
+    {
+      id: 'sp-lore-10',
+      title: 'Valespire Contract Hall',
+      category: 'faction',
+      body: 'The city’s job board and rank desk. Posted contracts, politics, and a clerk who cares more about stamps than people. Guild pressure is social, not a forced party. Do not dump a rank tree on turn one.',
+      tags: ['guild', 'hub', 'contracts'],
+    },
+    {
+      id: 'sp-lore-11',
+      title: 'Cathedral Undercroft',
+      category: 'world',
+      body: 'Numbered dungeon floors under the cathedral. Visited rooms are known; the rest are outline and fog. First Blood rules: describe the room before any creature. The court may send a Pactborn here as a morale show. A field chirurgeon class still has to fight on these floors.',
+      tags: ['dungeon', 'floors', 'undercroft'],
     },
   ],
 

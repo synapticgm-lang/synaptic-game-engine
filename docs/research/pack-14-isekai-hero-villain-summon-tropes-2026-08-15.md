@@ -2,7 +2,8 @@
 
 **Date:** 15 Aug 2026  
 **Status:** Research for live SynapticGM premade **The Summoned Pact**. Not WOF.  
-**Rule:** Original names only in game data. This file may mention published series as *genre examples we did not copy*.
+**Rule:** Original names only in game data. This file may mention published series as *genre examples we did not copy*.  
+**Titled source harvest (2026-08-15q):** [litrpg-isekai-trope-harvest.md](./litrpg-isekai-trope-harvest.md) — book titles as inspiration-scope only; tropes, not plots.
 
 ## Do we already have one?
 
@@ -38,12 +39,16 @@ English LitRPG / isekai that use *summoning* as a machine (titles for research o
 | Other summoned | Opposite stamp; Other Circle special |
 | Earth kit | Clothes + pockets; no iron shortsword |
 | No forced allegiance | Archetype + premise; protest is dialogue |
+| Inn as hub | The Weighing Cup (generic common room) |
+| Guild politics | Valespire Contract Hall |
+| Dungeon floors | Cathedral Undercroft |
+| Healer who fights | Possible class / Blessing path, original name |
 
 ## Writer seeds (unique each run)
 
 Skeleton: circle → free hour in the city → Pact asked → local threat → proof of a lie → other summoned → choose a path.
 
-Side: Otherworld Junk, Kitchen Saint, Marked Child, Appraisal Errand, Wall-Watch, Quiet Funeral.
+Side: Otherworld Junk, Kitchen Saint, Marked Child, Appraisal Errand, Wall-Watch, Quiet Funeral, The Weighing Cup, Contract Slip, Undercroft First Floor.
 
 Special: Other Circle, Queen’s Ledger, Ash Court Letter, Sevenfold Crack, Blessing True Name, Pactbreaker.
 
