@@ -1,5 +1,14 @@
 import type { GameState, LogEntry, Quest } from './types';
 
+export type StarterQuestSeed = {
+  id: string;
+  title: string;
+  description: string;
+  recommendedLevel?: number;
+  objectives: string[];
+  rewards?: string;
+};
+
 function slug(raw: string): string {
   return raw.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 40) || 'quest';
 }
@@ -215,13 +224,34 @@ export function newlyRevealedQuests(before: Quest[] | undefined, after: Quest[] 
   return (after ?? []).filter((q) => q.revealed === true && !prior.has(q.id));
 }
 
+function asSeededQuest(q: StarterQuestSeed): Quest {
+  return {
+    id: q.id,
+    name: q.title,
+    description: q.description,
+    status: 'hidden',
+    revealed: false,
+    type: 'main',
+    recommendedLevel: q.recommendedLevel,
+    objectives: q.objectives.map((desc, i) => ({
+      id: `${q.id}-obj-${i + 1}`,
+      description: desc,
+      completed: false,
+    })),
+    rewards: { items: q.rewards ? [q.rewards] : undefined },
+  };
+}
+
 /** After they finish name+place, show only the local starter — never Wave/Riverside. */
-export function revealLocalStarterQuest(quests: Quest[]): Quest[] {
+export function revealLocalStarterQuest(quests: Quest[], seeds: StarterQuestSeed[] = []): Quest[] {
+  const extra = seeds.filter((s) => !quests.some((q) => q.id === s.id)).map(asSeededQuest);
+  const pool = [...quests, ...extra];
   const first =
-    quests.find((q) => q.id === 'si-quest-1' || /first blood/i.test(q.name))
-    ?? quests.find((q) => (q.recommendedLevel ?? 1) <= 1 && (q.type === 'main' || !q.type));
+    pool.find((q) => q.id === 'si-quest-1' || /first blood/i.test(q.name))
+    ?? pool.find((q) => (q.recommendedLevel ?? 1) <= 1 && (q.type === 'main' || !q.type));
   if (!first) return quests;
-  return quests.map((q) =>
+  const withFirst = quests.some((q) => q.id === first.id) ? quests : [...quests, first];
+  return withFirst.map((q) =>
     q.id === first.id
       ? { ...q, status: 'active' as const, revealed: true }
       : q

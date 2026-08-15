@@ -73,7 +73,7 @@ export function Hud({ state, onSettings, onOpenMap, onOpenQuestLog, onOpenCharac
         <div className="flex items-center gap-1 md:hidden">
           <button
             onClick={handleBugClick}
-            title="Download Telemetry Debug Log"
+            title="Debug 2026-08-15c — if this tooltip is missing, Chrome is on Friday's build"
             className="p-1 sm:p-1.5 bg-rose-950/60 border border-rose-800 text-rose-400 rounded hover:bg-rose-900 transition-colors"
           >
             <Bug size={14} />
@@ -91,7 +91,7 @@ export function Hud({ state, onSettings, onOpenMap, onOpenQuestLog, onOpenCharac
         <div className="hidden md:flex items-center gap-2">
           <button
             onClick={handleBugClick}
-            title="Download Telemetry Debug Log"
+            title="Debug 2026-08-15c — if this tooltip is missing, Chrome is on Friday's build"
             className="p-2 bg-rose-950/60 border border-rose-800 text-rose-400 rounded hover:bg-rose-900 transition-colors flex items-center gap-1 text-[11px]"
           >
             <Bug size={14} /> Debug

@@ -1,4 +1,5 @@
 import type { CampaignBible, OpeningPrompt, OpeningRegistrar } from '@/data/campaigns/types';
+import { getCampaignBibleById } from '@/data/campaigns';
 import type { CampaignArchetype } from './archetypes';
 import type { EngineMode, GameState, Item, OpeningEstablishment, Settings } from './types';
 import { extractSystemRename, interpretPlayerUtterance, isJunkSetupValue, isSetupRefusal, utteranceIsMessy } from './playerUtterance';
@@ -765,7 +766,10 @@ export async function applyOpeningAnswer(
       ...nextState,
       campaignPremise: premise,
       openingEstablishment: { pending: [], answers, complete: true, registrar, declinedFields: declined },
-      quests: revealLocalStarterQuest(nextState.quests ?? []),
+      quests: revealLocalStarterQuest(
+        nextState.quests ?? [],
+        getCampaignBibleById(nextState.campaignBibleId ?? '')?.starterQuests ?? []
+      ),
       pendingGeneratedOpening: true,
       choices: [],
       lastUpdated: Date.now(),

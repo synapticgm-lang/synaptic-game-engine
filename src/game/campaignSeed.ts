@@ -1,7 +1,7 @@
 import type { CampaignBible, StarterItem } from '@/data/campaigns/types';
 import { ALL_CAMPAIGN_BIBLES } from '@/data/campaigns';
 import type { CampaignArchetype } from './archetypes';
-import type { Character, Container, EngineMode, GameState, Item, LoreCard, LoreCardType, Quest } from './types';
+import type { Character, Container, EngineMode, GameState, Item, LoreCard, LoreCardType } from './types';
 import { syncContainerOccupancy } from './inventory';
 
 function snippetType(category: string): LoreCardType {
@@ -65,44 +65,12 @@ export function seedStateFromCampaignBible(
     return true;
   });
 
-  // Only the first level-appropriate quest starts active. The rest stay hidden until the
-  // story/System reveals them — so the quest log doesn't dump the whole campaign at once.
   const playerLevel = state.character?.level ?? 1;
-  const starterQuests: Quest[] = bible.starterQuests.map((q) => {
-    const status = 'hidden' as const;
-    return {
-      id: q.id,
-      name: q.title,
-      description: q.description,
-      status,
-      // Tracked in state, but the journal stays empty until they finish opening
-      // (name + place). Hidden Guide Book hooks stay unspoken.
-      revealed: false,
-      type: 'main' as const,
-      recommendedLevel: q.recommendedLevel,
-      objectives: q.objectives.map((desc, i) => ({
-        id: `${q.id}-obj-${i + 1}`,
-        description: desc,
-        completed: false,
-      })),
-      rewards: { items: q.rewards ? [q.rewards] : undefined },
-    };
-  });
-
-  const existingQuestIds = new Set((state.quests ?? []).map((q) => q.id));
-  const quests = [
-    ...(state.quests ?? []),
-    ...starterQuests.filter((q) => !existingQuestIds.has(q.id)),
-  ];
-
+  const quests = state.quests ?? [];
   const loadout = buildCampaignLoadout(state, bible, playerLevel);
   const character = applyCampaignCharacter(state.character, bible);
-
-  const activeQuest = quests.find((q) => q.status === 'active');
-  const questRail = activeQuest
-    ? `BACKGROUND QUEST (Guide Book only — NEVER railroad): "${activeQuest.name}" is tracked in the quest log. Do NOT narrate quest markers, dungeons, shops, or objectives unless the player asks about the quest or travels there. Always resolve the player's immediate action first. Hidden quests stay unspoken.`
-    : 'No opening quest yet — do not invent quest log entries.';
-
+  const questRail =
+    'No opening quest yet — do not invent quest log entries. Guide Book hooks stay unspoken until the System reveals them.';
   const kitRail = formatKitRail(bible, loadout.inventory);
 
   return syncContainerOccupancy({
@@ -125,17 +93,6 @@ export function seedStateFromCampaignBible(
         text: `Campaign seeded: ${bible.title}`,
         at: Date.now(),
       },
-      ...(activeQuest
-        ? [
-            {
-              id: crypto.randomUUID(),
-              turn: 0,
-              kind: 'quest' as const,
-              text: `Quest logged (background): ${activeQuest.name}. Do not force the player toward it.`,
-              at: Date.now(),
-            },
-          ]
-        : []),
     ],
   });
 }
