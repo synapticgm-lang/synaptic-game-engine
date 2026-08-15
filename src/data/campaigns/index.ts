@@ -13,6 +13,7 @@ import { thornferryRoad } from './thornferryRoad';
 import { vesperGlassCipher } from './vesperGlassCipher';
 import { erebusNine } from './erebusNine';
 import { roseGoldUltimatum } from './roseGoldUltimatum';
+import { giltwoodEstate } from './giltwoodEstate';
 import {
   ascendingSpire,
   inkboundAcademy,
@@ -51,6 +52,7 @@ export {
   vesperGlassCipher,
   erebusNine,
   roseGoldUltimatum,
+  giltwoodEstate,
   ascendingSpire,
   inkboundAcademy,
   hollowCore,
@@ -93,6 +95,7 @@ export const ALL_CAMPAIGN_BIBLES: CampaignBible[] = [
   vesperGlassCipher,
   erebusNine,
   roseGoldUltimatum,
+  giltwoodEstate,
   // Story RPG (fiction-first, multi-genre)
   saltRoadHeist,
   glassHarborLetters,
