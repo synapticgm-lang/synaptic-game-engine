@@ -1006,3 +1006,30 @@ export const SLOT_LABELS: Record<CosmeticSlot, string> = {
 export function shopItemById(id: string): ShopItem | undefined {
   return SHOP_CATALOG.find((i) => i.id === id);
 }
+
+export function themeKitItems(theme: ShopItem): { label: string; item: ShopItem }[] {
+  if (!theme.kit) return [];
+  const rows: { label: string; id: string }[] = [
+    { label: 'Font', id: theme.kit.fontId },
+    { label: 'Dice', id: theme.kit.diceId },
+    { label: 'Voice', id: theme.kit.voiceId },
+    { label: 'Frame', id: theme.kit.frameId },
+  ];
+  return rows
+    .map((row) => {
+      const item = shopItemById(row.id);
+      return item ? { label: row.label, item } : null;
+    })
+    .filter((row): row is { label: string; item: ShopItem } => !!row);
+}
+
+const KIT_PART_IDS = new Set(
+  THEME_ITEMS.flatMap((theme) => theme.includes ?? Object.values(theme.kit ?? {}))
+);
+
+export function isRaceKitPart(id: string): boolean {
+  return KIT_PART_IDS.has(id);
+}
+
+export const RACE_THEME_ITEMS = THEME_ITEMS.filter((item) => !!item.kit);
+export const OTHER_THEME_ITEMS = THEME_ITEMS.filter((item) => !item.kit);

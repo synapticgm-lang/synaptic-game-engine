@@ -14,11 +14,14 @@ import {
 import type { SaveSlotInfo, Settings } from '@/game/types';
 import {
   SHOP_CATALOG,
-  THEME_ITEMS,
   SLOT_LABELS,
+  RACE_THEME_ITEMS,
+  OTHER_THEME_ITEMS,
   type CosmeticSlot,
   type ShopItem,
   shopItemById,
+  themeKitItems,
+  isRaceKitPart,
 } from '@/game/cosmeticCatalog';
 import { ensureTestCosmeticUnlock, isOwned } from '@/game/cosmeticEntitlements';
 import { applySettingsCosmetics, applyUiThemeToDocument, themeBySettingsId } from '@/game/uiTheme';
@@ -254,10 +257,10 @@ function ThemesTab({
     };
   }, [selectedTheme, draftFont, draftDice, draftFrame, settings]);
 
-  const fonts = SHOP_CATALOG.filter((i) => i.slot === 'font');
-  const dice = SHOP_CATALOG.filter((i) => i.slot === 'dice');
-  const voices = SHOP_CATALOG.filter((i) => i.slot === 'voice');
-  const frames = SHOP_CATALOG.filter((i) => i.slot === 'frame');
+  const fonts = SHOP_CATALOG.filter((i) => i.slot === 'font' && !isRaceKitPart(i.id));
+  const dice = SHOP_CATALOG.filter((i) => i.slot === 'dice' && !isRaceKitPart(i.id));
+  const voices = SHOP_CATALOG.filter((i) => i.slot === 'voice' && !isRaceKitPart(i.id));
+  const frames = SHOP_CATALOG.filter((i) => i.slot === 'frame' && !isRaceKitPart(i.id));
 
   const handleSave = () => {
     onSave({
@@ -279,15 +282,13 @@ function ThemesTab({
 
       <ThemePreviewCard theme={selectedTheme} frameId={draftFrame} diceId={draftDice} voiceId={draftVoice} fontId={draftFont} />
 
-      <Section title="UI theme">
-        <div className="grid gap-2 sm:grid-cols-2">
-          {THEME_ITEMS.map((item) => (
-            <SelectCard
+      <Section title="Race style sets">
+        <div className="grid gap-3">
+          {RACE_THEME_ITEMS.map((item) => (
+            <SetCard
               key={item.id}
+              theme={item}
               selected={draftTheme === item.id}
-              title={item.name}
-              subtitle={item.blurb}
-              swatch={item.preview?.accent}
               owned={isOwned(item.id)}
               onClick={() => {
                 setDraftTheme(item.id);
@@ -303,65 +304,93 @@ function ThemesTab({
         </div>
       </Section>
 
-      <Section title="Font pack">
-        <div className="grid gap-2 sm:grid-cols-2">
-          {fonts.map((item) => (
-            <SelectCard
-              key={item.id}
-              selected={draftFont === item.id}
-              title={item.name}
-              subtitle={item.blurb}
-              owned={isOwned(item.id)}
-              onClick={() => setDraftFont(item.id)}
-            />
-          ))}
-        </div>
-      </Section>
+      {OTHER_THEME_ITEMS.length > 0 && (
+        <Section title="Other UI themes">
+          <div className="grid gap-2 sm:grid-cols-2">
+            {OTHER_THEME_ITEMS.map((item) => (
+              <SelectCard
+                key={item.id}
+                selected={draftTheme === item.id}
+                title={item.name}
+                subtitle={item.blurb}
+                swatch={item.preview?.accent}
+                owned={isOwned(item.id)}
+                onClick={() => setDraftTheme(item.id)}
+              />
+            ))}
+          </div>
+        </Section>
+      )}
 
-      <Section title="Dice skin">
-        <div className="grid gap-2 sm:grid-cols-2">
-          {dice.map((item) => (
-            <SelectCard
-              key={item.id}
-              selected={draftDice === item.id}
-              title={item.name}
-              subtitle={item.blurb}
-              owned={isOwned(item.id)}
-              onClick={() => setDraftDice(item.id)}
-            />
-          ))}
-        </div>
-      </Section>
+      {fonts.length > 0 && (
+        <Section title="Extra font packs">
+          <div className="grid gap-2 sm:grid-cols-2">
+            {fonts.map((item) => (
+              <SelectCard
+                key={item.id}
+                selected={draftFont === item.id}
+                title={item.name}
+                subtitle={item.blurb}
+                owned={isOwned(item.id)}
+                onClick={() => setDraftFont(item.id)}
+                fontSample={item}
+              />
+            ))}
+          </div>
+        </Section>
+      )}
 
-      <Section title="Narrator voice">
-        <div className="grid gap-2 sm:grid-cols-2">
-          {voices.map((item) => (
-            <SelectCard
-              key={item.id}
-              selected={draftVoice === item.id}
-              title={item.name}
-              subtitle={item.blurb}
-              owned={isOwned(item.id)}
-              onClick={() => setDraftVoice(item.id)}
-            />
-          ))}
-        </div>
-      </Section>
+      {dice.length > 0 && (
+        <Section title="Extra dice skins">
+          <div className="grid gap-2 sm:grid-cols-2">
+            {dice.map((item) => (
+              <SelectCard
+                key={item.id}
+                selected={draftDice === item.id}
+                title={item.name}
+                subtitle={item.blurb}
+                owned={isOwned(item.id)}
+                onClick={() => setDraftDice(item.id)}
+                diceItem={item}
+              />
+            ))}
+          </div>
+        </Section>
+      )}
 
-      <Section title="Turn frame">
-        <div className="grid gap-2 sm:grid-cols-2">
-          {frames.map((item) => (
-            <SelectCard
-              key={item.id}
-              selected={draftFrame === item.id}
-              title={item.name}
-              subtitle={item.blurb}
-              owned={isOwned(item.id)}
-              onClick={() => setDraftFrame(item.id)}
-            />
-          ))}
-        </div>
-      </Section>
+      {voices.length > 0 && (
+        <Section title="Extra narrator voices">
+          <div className="grid gap-2 sm:grid-cols-2">
+            {voices.map((item) => (
+              <SelectCard
+                key={item.id}
+                selected={draftVoice === item.id}
+                title={item.name}
+                subtitle={item.blurb}
+                owned={isOwned(item.id)}
+                onClick={() => setDraftVoice(item.id)}
+              />
+            ))}
+          </div>
+        </Section>
+      )}
+
+      {frames.length > 0 && (
+        <Section title="Extra turn frames">
+          <div className="grid gap-2 sm:grid-cols-2">
+            {frames.map((item) => (
+              <SelectCard
+                key={item.id}
+                selected={draftFrame === item.id}
+                title={item.name}
+                subtitle={item.blurb}
+                owned={isOwned(item.id)}
+                onClick={() => setDraftFrame(item.id)}
+              />
+            ))}
+          </div>
+        </Section>
+      )}
 
       <div className="sticky bottom-0 z-10 -mx-1 border-t border-slate-800 bg-slate-950/95 px-1 py-3 backdrop-blur">
         <button
@@ -463,13 +492,13 @@ function ThemePreviewCard({
 }
 
 function ShopTab({ settings }: { settings: Settings }) {
-  const slots = useMemo(() => {
+  const extras = useMemo(() => {
     const order: CosmeticSlot[] = [
       'bundle',
       'theme',
+      'font',
       'dice',
       'voice',
-      'font',
       'frame',
       'systemWindow',
       'sfx',
@@ -477,18 +506,34 @@ function ShopTab({ settings }: { settings: Settings }) {
     ];
     return order.map((slot) => ({
       slot,
-      items: SHOP_CATALOG.filter((i) => i.slot === slot),
+      items: SHOP_CATALOG.filter((item) => {
+        if (item.slot !== slot) return false;
+        if (item.kit) return false;
+        if (isRaceKitPart(item.id)) return false;
+        return true;
+      }),
     }));
   }, []);
 
   return (
-    <div className="flex w-full flex-col gap-5 pb-10">
+    <div className="flex w-full flex-col gap-6 pb-10">
       <div className="rounded-lg border border-amber-800/40 bg-amber-950/20 px-3 py-2 text-center text-xs text-amber-200/90">
         Merchant preview — payments not live. All items unlocked for this test account.
         Active theme: {themeBySettingsId(settings.uiThemeId).name}
       </div>
 
-      {slots.map(({ slot, items }) =>
+      <Section title="Race style sets">
+        <p className="mb-3 text-[11px] leading-snug text-slate-500">
+          Each set is one theme plus its matching font, dice, voice, and turn frame. Buy the set as a bundle.
+        </p>
+        <div className="grid gap-3">
+          {RACE_THEME_ITEMS.map((item) => (
+            <SetCard key={item.id} theme={item} selected={false} owned={isOwned(item.id)} shop />
+          ))}
+        </div>
+      </Section>
+
+      {extras.map(({ slot, items }) =>
         items.length ? (
           <Section key={slot} title={SLOT_LABELS[slot]}>
             <div className="grid gap-2 sm:grid-cols-2">
@@ -518,17 +563,20 @@ function ShopCard({ item }: { item: ShopItem }) {
       }
     >
       <div className="flex items-start justify-between gap-2">
-        <div>
+        <div className="min-w-0 flex-1">
           <div className="text-sm font-semibold text-slate-100">{item.name}</div>
           <div className="mt-1 text-[11px] leading-snug text-slate-400">{item.blurb}</div>
+          {item.slot === 'font' && <FontSample item={item} />}
         </div>
-        {item.preview?.accent && (
+        {item.slot === 'dice' ? (
+          <DicePreview item={item} />
+        ) : item.preview?.accent ? (
           <span
             className="mt-0.5 h-8 w-8 shrink-0 rounded-full border border-white/10"
             style={{ background: item.preview.accent }}
             title="Accent"
           />
-        )}
+        ) : null}
       </div>
       {item.includes && (
         <div className="mt-2 text-[10px] text-slate-500">
@@ -555,6 +603,136 @@ function ShopCard({ item }: { item: ShopItem }) {
   );
 }
 
+function FontSample({ item }: { item: ShopItem }) {
+  const family = item.preview?.fontStory ?? item.preview?.fontUi;
+  if (!family) return null;
+  return (
+    <p className="mt-1.5 text-[13px] leading-snug text-slate-200" style={{ fontFamily: family }}>
+      The tale opens here.
+    </p>
+  );
+}
+
+function DicePreview({ item, size = 36 }: { item: ShopItem; size?: number }) {
+  const accent = item.diceSkin?.accent ?? item.preview?.accent ?? '#94a3b8';
+  const face = item.diceSkin?.face ?? item.preview?.panel ?? '#1e293b';
+  return (
+    <svg
+      viewBox="0 0 32 32"
+      width={size}
+      height={size}
+      className="shrink-0"
+      aria-hidden
+    >
+      <polygon
+        points="16,2 28,10 28,22 16,30 4,22 4,10"
+        fill={face}
+        stroke={accent}
+        strokeWidth="1.6"
+      />
+      <circle cx="16" cy="15" r="3.2" fill={accent} />
+      <text x="16" y="25" textAnchor="middle" fill={accent} fontSize="6" fontWeight="700">
+        d20
+      </text>
+    </svg>
+  );
+}
+
+function SetCard({
+  theme,
+  selected,
+  owned,
+  onClick,
+  shop,
+}: {
+  theme: ShopItem;
+  selected: boolean;
+  owned: boolean;
+  onClick?: () => void;
+  shop?: boolean;
+}) {
+  const parts = themeKitItems(theme);
+  const p = theme.preview;
+  const inner = (
+    <>
+      <div className="flex items-start gap-3">
+        {p?.accent && (
+          <span
+            className="mt-0.5 h-8 w-8 shrink-0 rounded-md border border-white/10"
+            style={{ background: p.accent }}
+          />
+        )}
+        <div className="min-w-0 flex-1">
+          <div className="text-sm font-semibold text-slate-100">{theme.name}</div>
+          <div className="mt-0.5 text-[11px] leading-snug text-slate-400">{theme.blurb}</div>
+        </div>
+        {selected && <Check size={16} className="mt-0.5 shrink-0 text-cyan-400" />}
+      </div>
+      <div className="mt-3 space-y-2 border-t border-white/5 pt-3">
+        {parts.map(({ label, item }) => (
+          <div key={item.id} className="flex items-start gap-2">
+            {item.slot === 'dice' ? (
+              <DicePreview item={item} size={28} />
+            ) : (
+              <span className="w-10 shrink-0 pt-0.5 text-[10px] font-semibold uppercase tracking-wide text-slate-500">
+                {label}
+              </span>
+            )}
+            <div className="min-w-0 flex-1">
+              {item.slot !== 'dice' && (
+                <div className="text-[10px] font-semibold uppercase tracking-wide text-slate-500">{label}</div>
+              )}
+              <div className="text-xs font-medium text-slate-200">
+                {item.slot === 'dice' ? `${label} · ${item.name}` : item.name}
+              </div>
+              {item.slot === 'font' && <FontSample item={item} />}
+            </div>
+          </div>
+        ))}
+      </div>
+      <div className="mt-3 border-t border-white/5 pt-2 text-xs text-cyan-300">
+        {theme.free ? 'Free set' : `Set bundle ${theme.priceGbp} · ${theme.priceUsd}`}
+        <span className="ml-1 text-slate-500">— theme, font, dice, voice, and frame</span>
+      </div>
+      {shop && (
+        <div className="mt-2 text-right">
+          <span className="rounded-lg border border-emerald-800/50 bg-emerald-950/40 px-3 py-1.5 text-xs font-medium text-emerald-300">
+            {owned ? (theme.free ? 'Included' : 'Owned') : 'Buy (soon)'}
+          </span>
+        </div>
+      )}
+    </>
+  );
+
+  const style = p
+    ? {
+        borderColor: selected ? `${p.accent}99` : `${p.accent}44`,
+        background: `linear-gradient(145deg, ${p.panel}cc, #020617aa)`,
+      }
+    : undefined;
+
+  if (onClick) {
+    return (
+      <button
+        type="button"
+        onClick={onClick}
+        disabled={!owned}
+        className={`w-full rounded-xl border p-3 text-left transition ${
+          selected ? 'ring-1 ring-cyan-400/40' : ''
+        } ${!owned ? 'cursor-not-allowed opacity-40' : 'hover:border-slate-500'}`}
+        style={style}
+      >
+        {inner}
+      </button>
+    );
+  }
+  return (
+    <div className="rounded-xl border p-3" style={style}>
+      {inner}
+    </div>
+  );
+}
+
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <section className="w-full">
@@ -571,6 +749,8 @@ function SelectCard({
   swatch,
   owned,
   onClick,
+  fontSample,
+  diceItem,
 }: {
   selected: boolean;
   title: string;
@@ -578,6 +758,8 @@ function SelectCard({
   swatch?: string;
   owned: boolean;
   onClick: () => void;
+  fontSample?: ShopItem;
+  diceItem?: ShopItem;
 }) {
   return (
     <button
@@ -590,12 +772,15 @@ function SelectCard({
           : 'border-slate-800 bg-slate-900/50 hover:border-slate-600'
       } ${!owned ? 'opacity-40 cursor-not-allowed' : ''}`}
     >
-      {swatch && (
+      {diceItem ? (
+        <DicePreview item={diceItem} />
+      ) : swatch ? (
         <span className="mt-0.5 h-7 w-7 shrink-0 rounded-md border border-white/10" style={{ background: swatch }} />
-      )}
+      ) : null}
       <span className="min-w-0 flex-1">
         <span className="block text-sm font-medium text-slate-100">{title}</span>
         <span className="mt-0.5 block text-[11px] leading-snug text-slate-500">{subtitle}</span>
+        {fontSample && <FontSample item={fontSample} />}
       </span>
       {selected && <Check size={16} className="mt-0.5 shrink-0 text-cyan-400" />}
     </button>
