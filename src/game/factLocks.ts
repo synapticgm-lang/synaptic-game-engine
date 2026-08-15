@@ -1,6 +1,7 @@
 import type { GameState } from './types';
+import { remainingDungeonMobs } from './ledgerCombat';
 
-export type FactLockKind = 'clock' | 'silence' | 'kit' | 'stub';
+export type FactLockKind = 'clock' | 'silence' | 'kit' | 'stub' | 'weapon' | 'cleared';
 
 export interface FactLockViolation {
   kind: FactLockKind;
@@ -26,6 +27,12 @@ const STUB_MARKERS =
 
 const REFUSAL_CLOTHES =
   /\bwhy should(?: i)? tell you|none of your|not telling|won'?t tell|mind your own\b/i;
+
+const INVENTED_SWORD =
+  /\b(?:iron\s+)?(?:short)?sword|longsword|broadsword|the sword\b/i;
+
+const DUNGEON_CLEARED =
+  /\b(?:micro-?)?dungeon has been cleared|no active threats remain|dungeon (?:is|was) (?:cleared|finished|done)\b/i;
 
 function clockAllowsSkip(state: GameState): boolean {
   const day = Number(state.worldLedger?.clock?.day ?? 0);
@@ -71,6 +78,20 @@ export function detectFactLockViolations(
   if (REFUSAL_CLOTHES.test(prose) && /clothing|streetwear|wearing/i.test(prose)) {
     found.push({ kind: 'kit', reason: 'A refusal is not a clothing name.' });
   }
+  const hasSwordItem = (state.inventory ?? []).some((i) => /\bsword\b/i.test(i.name));
+  if (!hasSwordItem && INVENTED_SWORD.test(prose)) {
+    found.push({
+      kind: 'weapon',
+      reason: 'Equipped kit has no sword. Narrate the real weapon name only.',
+    });
+  }
+  const remain = remainingDungeonMobs(state);
+  if (remain.alive > 0 && DUNGEON_CLEARED.test(prose)) {
+    found.push({
+      kind: 'cleared',
+      reason: `Dungeon is not cleared — ${remain.alive} threats still on the locked map.`,
+    });
+  }
   return found;
 }
 
@@ -84,6 +105,9 @@ function lockSentence(state: GameState, sentence: string, playerAction: string, 
   if (!playerAskedKit(playerAction) && KIT_RECAP.test(sentence)) return null;
   if (STUB_MARKERS.test(sentence)) return null;
   if (REFUSAL_CLOTHES.test(sentence) && /clothing|streetwear|wearing/i.test(sentence)) return null;
+  const hasSwordItem = (state.inventory ?? []).some((i) => /\bsword\b/i.test(i.name));
+  if (!hasSwordItem && INVENTED_SWORD.test(sentence)) return null;
+  if (remainingDungeonMobs(state).alive > 0 && DUNGEON_CLEARED.test(sentence)) return null;
 
   let next = sentence;
   if (crowdIsLoud(state, full) && SILENCE_ONLY.test(next)) {

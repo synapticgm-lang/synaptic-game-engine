@@ -135,6 +135,39 @@ export function threatChoiceWithoutSetup(
   return !THREAT_IN_PROSE.test(storyProse);
 }
 
+function enemyIsDead(storyProse: string, state: GameState): boolean {
+  if (state.activeEncounter && state.activeEncounter.hp <= 0) return true;
+  if (!state.activeEncounter && /\b(collapsed|dead|corpse|lifeless|final hiss|ichor)\b/i.test(storyProse)) {
+    return true;
+  }
+  return false;
+}
+
+export function fightChoiceAfterEnemyDead(
+  choice: string,
+  storyProse: string,
+  state: GameState
+): boolean {
+  if (!enemyIsDead(storyProse, state)) return false;
+  return /\b(lunge|strike|attack|fight|engage|maintain distance|active threat|draw (?:your )?weapon)\b/i.test(
+    choice
+  );
+}
+
+export function lootChoiceAfterHarvest(choice: string, state: GameState): boolean {
+  if (!/\b(loot|inspect (?:the )?(?:body|corpse|hatchling)|usable materials|harvest)\b/i.test(choice)) {
+    return false;
+  }
+  return (state.inventory ?? []).some((i) => /fang|ichor|carapace|trophy/i.test(i.name));
+}
+
+export function exploreStubInCombat(choice: string, state: GameState): boolean {
+  if (!state.activeEncounter || state.activeEncounter.hp <= 0) return false;
+  return /^(wait and listen|read the system panel|focus on the active threat|examine the immediate)\b/i.test(
+    choice.trim()
+  );
+}
+
 /** Observe/scan-the-enemy style options also need a present threat. */
 export function observeThreatWithoutSetup(
   choice: string,
@@ -199,6 +232,9 @@ export function isChoiceGroundedInTurn(
   if (envHits.length > 0) return false;
   if (threatChoiceWithoutSetup(cleaned, storyProse, state)) return false;
   if (observeThreatWithoutSetup(cleaned, storyProse, state)) return false;
+  if (fightChoiceAfterEnemyDead(cleaned, storyProse, state)) return false;
+  if (lootChoiceAfterHarvest(cleaned, state)) return false;
+  if (exploreStubInCombat(cleaned, state)) return false;
   // "X dungeon" choices need an active dungeon OR the current turn's story to say so —
   // not just a quest-card spoiler the player hasn't heard yet.
   if (/\bdungeon\b/i.test(cleaned) && !state.activeDungeon && !/\bdungeon\b/i.test(storyProse)) {
@@ -490,7 +526,13 @@ export function sceneSafeFallbacks(
   if (/\b(alley)\b/i.test(storyProse)) options.push('Check the nearest alley');
   options.push('Wait and listen carefully');
   if ((state.companions ?? []).length > 0) options.push('Check in with your companion');
-  if (state.activeEncounter) options.push('Focus on the active threat');
+  if (state.activeEncounter && state.activeEncounter.hp > 0) {
+    options.push('Strike with what you are holding');
+    options.push('Guard and watch for the next opening');
+  } else if (/\b(corpse|dead|collapsed)\b/i.test(storyProse)) {
+    options.push('Check your wounds');
+    options.push('Look for the next room or exit');
+  }
   if (/\b(door|gate|path|corridor|alley)\b/i.test(storyProse)) {
     options.push('Approach cautiously');
   }

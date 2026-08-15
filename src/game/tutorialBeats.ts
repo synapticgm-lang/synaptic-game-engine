@@ -180,11 +180,12 @@ export function ensureTutorialQuest(state: GameState, turn: number): Quest[] {
       return q;
     });
   }
-  if (quests.some((q) => q.id === 'tutorial-first-blood')) return quests;
+  if (quests.some((q) => q.id === 'tutorial-first-blood' || /first blood/i.test(q.name))) return quests;
   quests.push({
     id: 'tutorial-first-blood',
     name: 'First Blood',
-    description: 'Survive your first Integrated site: scout, loot once, and reach the exit.',
+    description:
+      'A nearby convenience store is a Tier 1 micro-dungeon. Clear the rooms, the mini-boss, and claim the Foundation Core.',
     status: 'active',
     type: 'main',
     revealed: true,
@@ -192,9 +193,10 @@ export function ensureTutorialQuest(state: GameState, turn: number): Quest[] {
     activatedTurn: turn,
     dangerTier: 1,
     objectives: [
-      { id: 'scout', description: 'Enter and scout the site', completed: !!state.activeDungeon },
-      { id: 'loot', description: 'Claim one cache', completed: false },
-      { id: 'exit', description: 'Reach the exit alive', completed: false },
+      { id: 'enter', description: 'Enter the convenience store micro-dungeon', completed: !!(state.activeDungeon && state.activeDungeon.blueprintId !== 'local-area') },
+      { id: 'mobs', description: 'Defeat the dungeon mobs (estimated 4-6 Tier 1 creatures)', completed: false },
+      { id: 'boss', description: 'Defeat the mini-boss: [Corrupted Stockboy] (Level 3)', completed: false },
+      { id: 'core', description: 'Claim the dungeon drop: [Foundation Core]', completed: false },
     ],
   });
   return quests;

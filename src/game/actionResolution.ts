@@ -19,7 +19,7 @@ const BRIDGE_MARKERS =
   /you follow through(?:\s+on that)?|the moment settles as you take in what changed|you press for clarity —|you commit to the action|the immediate result lands in|the result is local and visible|here at england/i;
 
 const DEAD_STUB_MARKERS =
-  /slow circuit of|main approach and watch for secondary gaps|opaque remains opaque|ordinary quiet|no fresh landmarks announce themselves|that is what you can act on next|not a blank circuit|you put the question plainly|anything the sheet and the last scene|rather than changing the subject|not a place you traveled to|not a list of what you are carrying|you do not recite your inventory|this is still a cracked city street|the situation has not become a different genre|the last beat holds|the people who were already here are still here|green crystals still split the concrete|the system panel still hangs|you stand still and take in what is around you|ordinary wreckage: torn material|the familiar street is breaking — cracks through walls/i;
+  /slow circuit of|main approach and watch for secondary gaps|opaque remains opaque|ordinary quiet|no fresh landmarks announce themselves|that is what you can act on next|not a blank circuit|you put the question plainly|anything the sheet and the last scene|rather than changing the subject|not a place you traveled to|not a list of what you are carrying|you do not recite your inventory|this is still a cracked city street|the situation has not become a different genre|the last beat holds|the people who were already here are still here|green crystals still split the concrete|the system panel still hangs|you stand still and take in what is around you|ordinary wreckage: torn material|the familiar street is breaking — cracks through walls|shelves (?:are )?(?:overturned|toppled)|broken glass (?:and debris|litter)|glass shards glitter|boots crunching on broken glass|the integration has only just begun/i;
 
 const FINDING_CUES =
   /\b(find|found|see|saw|seen|notice|noticed|spot|spotted|hear|heard|reveal|reveals|empty|locked|ajar|open|door|entrance|exit|alley|wall|corner|shadow|quiet|noise|nothing|glint|track|tracks|window|side|rear|front|roof|balance|grip|weight|swing|hum|buzz|flicker|smell|dust|crack|gap|boarded|intact|threat|movement|stillness|cool|warm|heavy|panel|menu|level|hp|mp|greyed|grayed|readout|list|entry|entries|light in (?:your|the) hand|car|van|tunic|clothes|sword|knife|integration|registered|earth|crystal|street|city|people|scream)\b/i;
@@ -74,6 +74,13 @@ export function isUnresolvedActionNarrative(
   if (isRecycledLookAround(playerAction, intent, prose, previousNarrative)) return true;
   if (asksIfEveryoneGotGear(playerAction) && !proseAnswersEveryoneGear(prose)) return true;
   if (isCreatureWithoutRoom(playerAction, prose)) return true;
+  if (isHealQuestion(playerAction) && !proseAnswersHeal(prose)) return true;
+  if (
+    intent.kind === 'attack'
+    && !/\b(strike|stab|cut|slash|hit|knife|blow|drive|wrench|claw|blood|miss|dodge|parry|shriek)\b/i.test(prose)
+  ) {
+    return true;
+  }
 
   const askedSomeone = isAskNearbyPerson(playerAction);
   if (askedSomeone) {
@@ -241,6 +248,18 @@ function proseResolvesSpeech(prose: string): boolean {
     )
     || /\[[^\]]*(?:SYSTEM|AUDITOR)[^\]]*\]/i.test(prose)
   );
+}
+
+export function isHealQuestion(action: string): boolean {
+  return /\b(heal|healing|recover(?:y| hp)?|restore hp|how do i (?:heal|get hp)|hp recovery|health vial|drink)\b/i.test(
+    action
+  );
+}
+
+function proseAnswersHeal(prose: string): boolean {
+  if (/hp recovery options:\s*$/i.test(prose.trim())) return false;
+  return /\b(vial|potion|rest|bandage|restore \d+|heal \d+|hp \+|drink|safe zone|healer)\b/i.test(prose)
+    && !/hp recovery options:\s*$/i.test(prose);
 }
 
 function isGearOriginQuestion(action: string): boolean {

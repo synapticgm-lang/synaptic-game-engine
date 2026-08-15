@@ -153,30 +153,11 @@ export function ensureDamageNarration(
  */
 export function ensureEncounterNarration(
   cleanText: string,
-  enemyName: string,
-  location?: string | null
+  _enemyName: string,
+  _location?: string | null
 ): string {
-  const name = enemyName.trim();
-  if (!name) return cleanText;
-  const originCue =
-    /\b(emerges?|lunges?|steps? out|crawls?|drops?|charges?|blocks?|from (?:the |a )?(?:rubble|door|shadow|alley|corner|wreck|debris|dark|cover|hall|stair|aisle|shelf|counter)|appears? from|comes? from|was (?:hiding|waiting|crouching)|wrinkles|screech|whips? (?:its )?head|beady eyes|locks onto)\b/i;
-  const mentionsEnemy = new RegExp(name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i').test(cleanText);
-  if (mentionsEnemy && originCue.test(cleanText)) return cleanText;
-  const place = (location ?? '').trim();
-  const placeIsCity =
-    !place
-    || /^(?:your surroundings|nearby cover|just ahead of you)$/i.test(place)
-    || /\b(uk|england|britain|united kingdom|urban ruin|peterborough)\b/i.test(place)
-    || /^the opening of /i.test(place);
-  if (placeIsCity) {
-    if (mentionsEnemy) return cleanText;
-    const line = `${name} is just ahead of you — close enough to see how it got there, not dropped in without a source.`;
-    return cleanText.trim() ? `${cleanText.trim()}\n\n${line}` : line;
-  }
-  const line = mentionsEnemy
-    ? `${name} did not appear from nowhere — it comes from ${place}, close enough that you can see how it got there.`
-    : `${name} is here. It comes from ${place}, close enough that you can see how it got there — not dropped in without a source.`;
-  return cleanText.trim() ? `${cleanText.trim()}\n\n${line}` : line;
+  // Never inject a canned origin line. The writer + outcome token own the beat.
+  return cleanText;
 }
 
 /**

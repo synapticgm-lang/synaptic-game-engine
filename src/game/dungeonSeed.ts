@@ -273,7 +273,7 @@ export function formatHiddenRoomLedger(
   dungeon: ActiveDungeonState | null | undefined
 ): string {
   const node = currentDungeonNode(dungeon);
-  if (!node?.hidden) return '';
+  if (!dungeon || !node?.hidden) return '';
   const h = node.hidden;
   const lines: string[] = [
     `HIDDEN ROOM LEDGER @ ${node.name} (ENGINE AUTHORITY — narrate when revealed; do not invent alternate loot tiers, traps, or bosses):`,
@@ -300,7 +300,11 @@ export function formatHiddenRoomLedger(
       `- Mob ${mob.name} (${mob.role} L${mob.level}) id=${mob.id} spawned=${mob.spawned}`
     );
   }
-  if (lines.length === 1) return '';
+  const unspawned = dungeon.nodes.flatMap((n) => (n.hidden?.mobs ?? []).filter((m) => !m.spawned));
+  lines.push(
+    `DUNGEON CLEAR: ${unspawned.length} unfought mobs remain on the locked map. Do not declare the dungeon cleared.`
+  );
+  if (lines.length <= 2 && !h.lootables.length && !h.mobs.length) return '';
   return lines.join('\n');
 }
 

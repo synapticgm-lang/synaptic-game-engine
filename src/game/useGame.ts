@@ -68,6 +68,14 @@ import { parsePlayerIntent, groundPlayerAction } from './intentParser';
 import { interpretPlayerUtterance, isJunkSetupValue } from './playerUtterance';
 import { runPlayerCheck } from './checkMath';
 import { buildOutcomeToken, formatOutcomeTokenForPrompt } from './outcomeToken';
+import { maybeEnterInteriorDungeon } from './enterInterior';
+import {
+  equippedWeaponName,
+  remainingDungeonMobs,
+  resolveLedgerCombat,
+  spawnRoomEncounter,
+  type LedgerCombatRound,
+} from './ledgerCombat';
 import { mediatePlayerInput } from './inputMediation';
 import { maybeRatingRewrite } from './maturity';
 import { postFilterGmOutput } from './contentPostFilter';
@@ -1495,7 +1503,28 @@ export function useGame() {
       const strMod = check.modifier;
       const difficultyClass = check.dc;
       const outcome = check;
-      const outcomeToken = buildOutcomeToken(check, intentForMandate);
+      liveCurrent = maybeEnterInteriorDungeon(liveCurrent, sanitizedInput);
+      if (
+        intentForMandate.kind === 'attack'
+        || intentForMandate.kind === 'move'
+        || /\b(enter|scout|forward|sneak|aisle|inside)\b/i.test(sanitizedInput)
+      ) {
+        liveCurrent = spawnRoomEncounter(liveCurrent);
+      }
+      let ledgerRound: LedgerCombatRound | null = null;
+      if (intentForMandate.kind === 'attack') {
+        liveCurrent = spawnRoomEncounter(liveCurrent);
+        const resolved = resolveLedgerCombat(liveCurrent, check);
+        if (resolved) {
+          liveCurrent = resolved.state;
+          ledgerRound = resolved.round;
+        }
+      }
+      const outcomeToken = buildOutcomeToken(check, intentForMandate, {
+        kitWeapon: equippedWeaponName(liveCurrent),
+        combat: ledgerRound ?? undefined,
+        dungeonRemaining: remainingDungeonMobs(liveCurrent),
+      });
 
       const isDndEngine = liveCurrent.engineMode === 'dnd';
       const codeResolutionText = check.codeResolutionText;
@@ -1631,7 +1660,8 @@ In <system-log>, only emit LitRPG/RPG progression lines (XP, loot, HP change as 
           [...liveCurrent.log].reverse().find((e) => e.role === 'gm')?.content ?? '';
         const needsStoryRetry =
           !storyHasBody(probeText)
-          || isUnresolvedActionNarrative(sanitizedInput, probeText, intentForMandate, previousGm);
+          || isUnresolvedActionNarrative(sanitizedInput, probeText, intentForMandate, previousGm)
+          || probeLocks.some((l) => l.kind === 'weapon' || l.kind === 'cleared');
         // Fact-lock slips are cut locally after this. Only burn extra GM calls when
         // the turn did not resolve the player's action at all, or returned no story.
         if (needsStoryRetry) {
@@ -1981,11 +2011,19 @@ In <system-log>, only emit LitRPG/RPG progression lines (XP, loot, HP change as 
 
       let hpDelta = engineHpDelta;
       let playerDamageTaken = 0;
-      for (const e of events) {
-        if (e.type === 'heal' && e.amount) hpDelta += e.amount;
-        if (e.type === 'damage' && e.amount) {
-          hpDelta -= e.amount;
-          playerDamageTaken += e.amount;
+      if (ledgerRound) {
+        playerDamageTaken = ledgerRound.received;
+        hpDelta = 0;
+        for (const e of events) {
+          if (e.type === 'heal' && e.amount) hpDelta += e.amount;
+        }
+      } else {
+        for (const e of events) {
+          if (e.type === 'heal' && e.amount) hpDelta += e.amount;
+          if (e.type === 'damage' && e.amount) {
+            hpDelta -= e.amount;
+            playerDamageTaken += e.amount;
+          }
         }
       }
 
@@ -1998,7 +2036,7 @@ In <system-log>, only emit LitRPG/RPG progression lines (XP, loot, HP change as 
         );
       }
       const appearEvent = events.find((e) => e.type === 'enemy-appear' && e.enemyName);
-      if (appearEvent?.enemyName) {
+      if (appearEvent?.enemyName && !ledgerRound) {
         cleanText = ensureEncounterNarration(
           cleanText,
           appearEvent.enemyName,
@@ -2012,6 +2050,13 @@ In <system-log>, only emit LitRPG/RPG progression lines (XP, loot, HP change as 
             ...warden.systemLogExtra,
             ...structural.notes.filter((n) => /blocked|failed|full|Pity|Boss first|Run floor|Loot granted/i.test(n)),
             ...worldNotes,
+            ...(ledgerRound
+              ? [
+                  `Damage Dealt: ${ledgerRound.dealt} (${ledgerRound.enemyName} HP ${ledgerRound.enemyHpBefore} -> ${ledgerRound.enemyHpAfter})`,
+                  ...(ledgerRound.received ? [`Damage Received: ${ledgerRound.received}`] : []),
+                  ...(ledgerRound.xp ? [`XP Gained: ${ledgerRound.xp}`] : []),
+                ]
+              : []),
           ])
         ),
         liveCurrent.engineMode
@@ -2058,7 +2103,12 @@ In <system-log>, only emit LitRPG/RPG progression lines (XP, loot, HP change as 
         ...newLoreCards.filter((c) => !existingLoreIds.has(c.id)),
       ];
       const baseChar = { ...workingState.character, ...(updates.character ?? {}) };
-      if (hpDelta !== 0) {
+      if (ledgerRound) {
+        baseChar.hp = ledgerRound.playerHpAfter;
+        if (ledgerRound.xp > 0) {
+          baseChar.xp = (baseChar.xp ?? 0) + ledgerRound.xp;
+        }
+      } else if (hpDelta !== 0) {
         baseChar.hp = Math.max(0, Math.min(baseChar.maxHp, (baseChar.hp ?? 0) + hpDelta));
       }
       if (visualUpdate) {
@@ -2119,7 +2169,10 @@ In <system-log>, only emit LitRPG/RPG progression lines (XP, loot, HP change as 
         mergedSystemLog.push(...tutorialAdv.systemNotes);
       }
 
-      const updatedEncounter = eventsToEncounterUpdate(events, workingState.activeEncounter ?? null);
+      let updatedEncounter = eventsToEncounterUpdate(events, workingState.activeEncounter ?? null);
+      if (ledgerRound) {
+        updatedEncounter = ledgerRound.enemyDead ? null : (liveCurrent.activeEncounter ?? null);
+      }
       const turnFacts = collectTurnTimelineFacts({
         turn: nextTurn,
         playerAction: sanitizedInput,

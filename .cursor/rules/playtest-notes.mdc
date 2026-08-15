@@ -9,7 +9,7 @@ John is playtesting live. Collect issues here. Do not implement until he asks fo
 
 ## Open
 
-(none)
+(none — next-update batch shipped: ledger-first turn, First Blood store lock, fogged dungeon map, kit/cleared gates, combat/choice rules)
 
 ## Done (already shipped)
 
@@ -29,3 +29,8 @@ John is playtesting live. Collect issues here. Do not implement until he asks fo
 - Character paper-doll layout (WoW-like, no Blizzard IP): Show stats; tabs replace the doll; tabs above phone chrome
 - HUD Merchant → clinical System **Salvage** (anywhere; no street shopkeeper)
 - Kid Mode fun swear swap (PIN lock; slurs masked)
+- Ledger-first turn: code combat + outcome token before writer; no canned “just ahead of you”
+- Enter store locks First Blood graph (rooms, 4 trash/hatchling, Stockboy, Foundation Core); one quest text
+- Inside = dungeon map + fog (visited rooms; rest outline/?). Street map only outdoors
+- Kit/cleared/heal/attack gates: no sword if you have a knife; no “cleared” with mobs left; heal question needs a heal answer; fight beat required
+- Choices: no lunge at a corpse, no loot-again, combat buttons are fight moves
