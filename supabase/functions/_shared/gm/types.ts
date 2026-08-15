@@ -344,6 +344,8 @@ export interface GameState {
   campaignBibleId?: string | null;
   /** Short premise injected every turn as Guide Book rails. */
   campaignPremise?: string | null;
+  /** Writer-only stamps (e.g. mystery culprit). Never show in player HUD. */
+  hiddenStamps?: Record<string, string>;
   /** Campaign-start interview (where / clothes / folk). Undefined on old saves = already playing. */
   openingEstablishment?: OpeningEstablishment;
   /** After the last establishment answer, generate the real opening scene once. */

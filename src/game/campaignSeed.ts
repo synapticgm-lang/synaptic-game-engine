@@ -4,6 +4,7 @@ import type { CampaignArchetype } from './archetypes';
 import type { Character, Container, EngineMode, GameState, Item, LoreCard, LoreCardType } from './types';
 import { isFictionEngine } from './types';
 import { syncContainerOccupancy } from './inventory';
+import { stampMysteryCulprit } from './mysteryCulprit';
 
 function snippetType(category: string): LoreCardType {
   if (category === 'faction') return 'faction';
@@ -85,6 +86,7 @@ export function seedStateFromCampaignBible(
     character,
     campaignBibleId: bible.id,
     campaignPremise: `${bible.title}: ${bible.premise}\n\n${kitRail}\n\n${questRail}`.slice(0, 2200),
+    hiddenStamps: stampMysteryCulprit(state, bible),
     storyName: state.storyName,
     lorebook: dedupedLore,
     quests,
@@ -245,13 +247,17 @@ export function reconcileCampaignLoadout(state: GameState): GameState {
   const bible = state.campaignBibleId
     ? ALL_CAMPAIGN_BIBLES.find((b) => b.id === state.campaignBibleId)
     : findBibleForArchetype(state.engineMode, state.campaignArchetype);
+  const stamped =
+    bible?.mysteryCulprits?.length && !state.hiddenStamps?.culpritId
+      ? { ...state, hiddenStamps: stampMysteryCulprit(state, bible) }
+      : state;
   const shouldReplace = bible?.replaceDefaultLoadout === true || isFictionEngine(bible?.engineMode);
-  if (!bible || !shouldReplace) return state;
+  if (!bible || !shouldReplace) return stamped;
   const kitStale = inventoryHasGenericFantasyKit(state);
   const premiseStale = !state.campaignPremise || !/OPENING KIT/i.test(state.campaignPremise);
   const bioStale = /transmigrated|unfamiliar world|newly arrived/i.test(state.character?.bio ?? '');
-  if (!kitStale && !premiseStale && !bioStale) return state;
-  return seedStateFromCampaignBible(state, bible);
+  if (!kitStale && !premiseStale && !bioStale) return stamped;
+  return seedStateFromCampaignBible(stamped, bible);
 }
 
 export function seedStateFromArchetype(

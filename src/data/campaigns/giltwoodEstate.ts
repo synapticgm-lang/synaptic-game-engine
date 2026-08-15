@@ -57,9 +57,11 @@ STORY SPINE (skeleton — unique prose each run; do not lecture):
 2. Servants’ quarters. Kitchen Staff / Bouchard. Passkeys vs selling them to the police for an alibi.
 3. Drawing room quarantine. Aristocrats / Genevieve. Political cover vs leaking their scandals.
 4. Locked study — Harrington’s trapped inner sanctum; cipher key.
-5. Revelation: the watch is a combination to a vault proving the guests conspired.
+5. Revelation: the watch is a combination to a vault. The vault names the HIDDEN CULPRIT — that person killed Harrington. Others may have covered it up. Never invent a different killer.
 6. Glasshouse climax: staff, aristocrats, and Beatrice-as-rival (if stamped) converge in a storm.
 7. Resolve the watch: deliver to Graves, keep for blackmail, sell to the guilty, burn in the fireplace, or forge a fake confession. Then play the matching ending. Never end in the opening hour. Never name endings.
+
+HIDDEN CULPRIT (BINDING): Code already picked who did it. Honor HIDDEN CULPRIT in the rails. Plant consistent clues only when the player looks, talks, or searches. Do not accuse someone else as the true killer. Do not spoil the name in the opening hour. If Beatrice is the culprit and Walks With You, she is still guilty — the honest ending is a tragic reveal, not an agency HEA.
 
 SIDE SEEDS (writer only — spawn when earned; never dump):
 - Taxidermy bear: hollow glass eye hides a microscopic will.
@@ -72,12 +74,13 @@ SIDE SEEDS (writer only — spawn when earned; never dump):
 OPENING KIT (AUTHORITY): Tailored velvet smoking jacket and the Backward Watch are the kit. Never invent an iron shortsword or a candlestick-as-starting-weapon. Search for a murder weapon is a scene choice, not starting loot.
 
 ENDINGS (pick one after beat 7; never list in play):
-- Honest delivery + Beatrice stayed: Graves gets the watch with her corroboration; true killer caught; you open a detective agency together.
-- Sell to Genevieve + Beatrice left or rival: hush-money manor. If Rival, she slips in as the new maid; poison in the brandy; cut to black.
+- Honest delivery + Beatrice stayed + she is NOT the culprit: Graves gets the watch with her corroboration; the HIDDEN CULPRIT is caught; you open a detective agency together.
+- Honest delivery + Beatrice stayed + she IS the culprit: Graves gets the watch; she is arrested; bittersweet, no agency HEA.
+- Sell to Genevieve + Beatrice left or rival: hush-money manor. If Rival, she slips in as the new maid; poison in the brandy; cut to black. The HIDDEN CULPRIT still did the first murder — do not rewrite that.
 - Burn + Beatrice stayed: watch into the glasshouse furnace; secrets die; you sneak into the storm penniless and free.
 - Forge + solo: master confession naming everyone else; you as sole beneficiary; no Beatrice left to contradict you; you inherit.
-- Hoard + Beatrice left: blackmail the survivors; fabulous and paranoid in empty halls, waiting for the real killer.
-- Honest delivery + solo: conspiracy uncovered; Graves pins the first murder on you for a tidy file; you hang at dawn.
+- Hoard + Beatrice left: blackmail the survivors; fabulous and paranoid in empty halls, waiting for the HIDDEN CULPRIT.
+- Honest delivery + solo: the HIDDEN CULPRIT is named; Graves pins the first murder on you for a tidy file; you hang at dawn.
 
 Do not name the locked study as visited until they force that door. Unique story every turn.`,
 
@@ -152,6 +155,61 @@ Do not name the locked study as visited until they force that door. Unique story
       description: 'Wants a clean arrest before dawn, true guilt optional, for a city promotion. Betrayal or a messy solo delivery: he may pin the first murder on you.',
       hooks: ['Demand a tidy story', 'Take the watch', 'Frame you if you have no witness'],
     },
+    {
+      id: 'ge-npc-5',
+      name: 'Aldric Voss',
+      role: 'Harrington’s solicitor, dinner guest',
+      disposition: 'ambiguous',
+      description: 'Carries the draft of a new will. Polite, dry, always between rooms. Do not introduce until the player meets the guests or searches the study.',
+      hooks: ['Mention the unsigned will', 'Offer a private reading', 'Ask who inherits'],
+    },
+    {
+      id: 'ge-npc-6',
+      name: 'Celeste Vale',
+      role: 'Dinner guest',
+      disposition: 'ambiguous',
+      description: 'Jewels a shade too bright for her debts. Laughs late. Do not introduce until the drawing-room quarantine or a guest list.',
+      hooks: ['Ask about Harrington’s last toast', 'Hide a letter', 'Offer an alibi for a price'],
+    },
+  ],
+
+  mysteryCulprits: [
+    {
+      id: 'ge-npc-1',
+      name: 'Beatrice',
+      role: 'Parlor maid',
+      motive: 'Harrington meant to have her transported for a theft she did not commit. The watch was her proof — and her panic.',
+    },
+    {
+      id: 'ge-npc-2',
+      name: 'Chef Bouchard',
+      role: 'Kitchen staff',
+      motive: 'Harrington threatened a dawn raid that would take Bouchard’s undocumented people. The billiard room was quieter than a courtroom.',
+    },
+    {
+      id: 'ge-npc-3',
+      name: 'Lady Genevieve',
+      role: 'Aristocratic guest',
+      motive: 'The affair was going into the papers. She stopped Harrington’s mouth before the watch could open the vault.',
+    },
+    {
+      id: 'ge-npc-4',
+      name: 'Inspector Graves',
+      role: 'The law',
+      motive: 'Harrington had proof of Graves’ bought cases. Graves arrived early, did the work, then put on the badge.',
+    },
+    {
+      id: 'ge-npc-5',
+      name: 'Aldric Voss',
+      role: 'Solicitor',
+      motive: 'The new will cut him out. He needed Harrington dead before dawn witnesses signed.',
+    },
+    {
+      id: 'ge-npc-6',
+      name: 'Celeste Vale',
+      role: 'Dinner guest',
+      motive: 'Harrington was going to name her forged jewels and ruin her. She struck first.',
+    },
   ],
 
   starterQuests: [
@@ -159,7 +217,7 @@ Do not name the locked study as visited until they force that door. Unique story
       id: 'ge-quest-1',
       title: 'Away from the Rug',
       description:
-        'Leave the Billiard Room with the Backward Watch before the dinner party converges. Decide whether to trust Beatrice. Hide before you are framed. Unravel the watch before the real killer names you.',
+        'Leave the Billiard Room with the Backward Watch before the dinner party converges. Decide whether to trust Beatrice. Hide before you are framed. Unravel the watch before the killer names you.',
       recommendedLevel: 1,
       objectives: ['Answer Beatrice’s offer', 'Get out of the Billiard Room', 'Keep the Backward Watch'],
       rewards: 'A companion, a rival, or both',

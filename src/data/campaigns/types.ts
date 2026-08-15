@@ -21,6 +21,14 @@ export interface KeyNPC {
   hooks: string[];
 }
 
+/** One possible murderer. Code picks one at New Game; the writer must honor the stamp. */
+export interface MysteryCulprit {
+  id: string;
+  name: string;
+  role: string;
+  motive: string;
+}
+
 export interface StarterQuest {
   id: string;
   title: string;
@@ -98,4 +106,9 @@ export interface CampaignBible {
   openingHook?: string;
   openingRegistrar?: OpeningRegistrar;
   openingPrompts?: OpeningPrompt[];
+  /**
+   * If set, code picks one culprit at New Game (hidden from the player).
+   * Writer must honor HIDDEN CULPRIT in the rails — never invent a different killer.
+   */
+  mysteryCulprits?: MysteryCulprit[];
 }

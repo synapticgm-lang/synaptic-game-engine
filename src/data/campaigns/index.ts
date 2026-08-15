@@ -1,6 +1,6 @@
 import type { CampaignBible } from './types';
 import type { ContentMode, EngineMode } from '@/game/types';
-export type { CampaignBible, LoreSnippet, KeyNPC, StarterQuest, StarterItem, Difficulty, OpeningPrompt } from './types';
+export type { CampaignBible, LoreSnippet, KeyNPC, StarterQuest, StarterItem, Difficulty, OpeningPrompt, MysteryCulprit } from './types';
 
 import { systemIntegration } from './systemIntegration';
 import { voidAudience } from './voidAudience';
