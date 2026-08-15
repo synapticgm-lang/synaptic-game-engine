@@ -13,6 +13,11 @@ John is playtesting live. Collect issues here. Do not implement until he asks fo
 
 ## Done (already shipped)
 
+- Image fail holds the story: captions/prose show while art is pending or failed; player comments stay visible (`2026-08-15f`)
+- Opening name/place swap: “a random location” picks a real place; never the character name or campaign title (`2026-08-15f`)
+- Quest with no context: starter journal unlocks after the opening scene; vague “travel-worn” is not an item; story RPG drops the iron shortsword (`2026-08-15f`)
+- Isekai hero/villain summon premade: **The Summoned Pact** (`summoned-pact`) — Earth origin, Pactborn vs Calamity Mark, no copied series (`2026-08-15f`)
+- Main-spine PYOA: **Thornferry Road** — ally/betray, party/solo, inner comments, optional sides; not Fable/Albion (`2026-08-15f`)
 - Opening clothes / natural answer: pull named garments; underwear refusal is protest, not a missing field (`2026-08-15e`)
 - Kit split: one card per garment; bag extras (backpack, phone, headphones, leatherman, keys) are their own items (`2026-08-15e`)
 - Portrait generates once a look or worn garment exists (`2026-08-15e`)

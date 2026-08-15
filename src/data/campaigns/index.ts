@@ -7,6 +7,8 @@ import { dungeonTransport } from './dungeonTransport';
 import { fabledLegacy } from './fabledLegacy';
 import { shatteredCoast } from './shatteredCoast';
 import { cursedKeep } from './cursedKeep';
+import { summonedPact } from './summonedPact';
+import { thornferryRoad } from './thornferryRoad';
 import {
   ascendingSpire,
   inkboundAcademy,
@@ -40,6 +42,8 @@ export {
   fabledLegacy,
   shatteredCoast,
   cursedKeep,
+  summonedPact,
+  thornferryRoad,
   ascendingSpire,
   inkboundAcademy,
   hollowCore,
@@ -68,6 +72,7 @@ export {
 export const ALL_CAMPAIGN_BIBLES: CampaignBible[] = [
   // LitRPG
   systemIntegration,
+  summonedPact,
   gatebreakWard,
   ascendingSpire,
   inkboundAcademy,
@@ -77,6 +82,7 @@ export const ALL_CAMPAIGN_BIBLES: CampaignBible[] = [
   fabledLegacy,
   blankCanvas,
   // Story RPG (fiction-first, multi-genre)
+  thornferryRoad,
   saltRoadHeist,
   glassHarborLetters,
   embercourtOath,

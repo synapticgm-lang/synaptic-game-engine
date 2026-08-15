@@ -84,6 +84,12 @@ export function isSpeechOrProtest(action: string): boolean {
   if (LOOK_OR_PHYSICAL.test(t)) return false;
   if (SPEECH_OR_PROTEST.test(t)) return true;
   if (/^(?:who|what|why|how|where|wait|hey|excuse me)\b/i.test(t)) return true;
+  if (
+    /^(i (?:don't|dont|do not|think|feel|hate|like|trust|won't|will not)|ugh|wow|yeah|no way)\b/i.test(t)
+    && t.split(/\s+/).length <= 24
+  ) {
+    return true;
+  }
   return false;
 }
 

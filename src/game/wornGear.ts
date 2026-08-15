@@ -110,7 +110,7 @@ export function parseWornPieces(appearance: string): WornPiece[] {
   take('Head', phraseInChunks(text, /beanie|cap|hat|hood\b/));
 
   if (!pieces.length) {
-    if (/\b(gym clothes|work clothes|uniform|street clothes|slept in|travel-worn|practical)\b/i.test(text)) {
+    if (/\b(gym clothes|work clothes|uniform|street clothes|slept in)\b/i.test(text)) {
       take('Chest', titleGarment(text.split(/[,.]/)[0] ?? text) || 'Everyday clothes');
     }
   }

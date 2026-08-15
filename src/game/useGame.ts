@@ -115,7 +115,7 @@ import { buildPendingProposal, getProposedState, withEditedNarrative, touchLocat
 import { extractUpdates, extractNewItems, parseActionTags, stripActionTags, matchLoreCards, eventsToLoreCards, parseTurnFrame, eventsToQuestUpdates, eventsToEncounterUpdate, parsePanels, eventsToMilestone, eventsToLootVideo, eventsToVisualUpdate, stripChoiceList, extractChoiceLines, stripTurnCloser, storyHasBody } from './parser';
 import { hasRealGmStory } from './turnAsk';
 import { encounterOriginPlace } from './locationName';
-import { clampLeakedOpeningQuests, extractNamedPlaces, harvestPlayText, isGenericMapPlace, mapAnchorName, newlyRevealedQuests, questsLockedDuringOpening, syncQuestsFromPlay } from './questPlay';
+import { clampLeakedOpeningQuests, extractNamedPlaces, harvestPlayText, isGenericMapPlace, mapAnchorName, newlyRevealedQuests, questsLockedDuringOpening, revealLocalStarterQuest, syncQuestsFromPlay } from './questPlay';
 import { inferItemType } from './salvage';
 import { initializeDungeon, moveToNode, exitDungeon as engineExitDungeon, buildLocalAreaMap, addLandmarkToLocalMap } from './mapEngine';
 import type { Toast } from '@/components/ToastStack';
@@ -1481,7 +1481,12 @@ export function useGame() {
         openingText = ensureSystemReceipt(openingState, sanitizeOpeningNarration(openingText));
         const openingChoices = extractChoicesFromText(openingText, openingState);
         const cleanOpening = stripChoiceList(openingText);
-        const openingUnlocks = newlyRevealedQuests(questsAtTurnStart, openingState.quests);
+        const openingBible = getCampaignBibleById(openingState.campaignBibleId ?? '');
+        const questsAfterScene = revealLocalStarterQuest(
+          openingState.quests ?? [],
+          openingBible?.starterQuests ?? []
+        );
+        const openingUnlocks = newlyRevealedQuests(questsAtTurnStart, questsAfterScene);
         const openingGm: LogEntry = {
           id: uid(),
           turn: openingState.turn,
@@ -1501,6 +1506,7 @@ export function useGame() {
           ...openingState,
           turn: openingTurn,
           sceneFacts,
+          quests: questsAfterScene,
           log: [...openingState.log, openingGm],
           choices: openingChoices.length ? openingChoices : undefined,
           lastUpdated: Date.now(),

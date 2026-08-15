@@ -23,6 +23,8 @@ export function makeBible(opts: {
     itemLevel?: number;
   }>;
   startingLocation?: string;
+  replaceDefaultLoadout?: boolean;
+  startingContainer?: { id: string; name: string; capacity: number };
 }): CampaignBible {
   const p = opts.id;
   return {
@@ -67,5 +69,7 @@ export function makeBible(opts: {
       description: it.description,
     })),
     startingLocation: opts.startingLocation,
+    replaceDefaultLoadout: opts.replaceDefaultLoadout ?? opts.engineMode === 'rpg',
+    startingContainer: opts.startingContainer,
   };
 }

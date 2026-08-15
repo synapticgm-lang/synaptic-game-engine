@@ -249,7 +249,14 @@ function asSeededQuest(q: StarterQuestSeed): Quest {
   };
 }
 
-/** After they finish name+place, show only the local starter — never Wave/Riverside. */
+/** After they finish name+place, seed the local starter hidden — never Wave/Riverside. */
+export function seedLocalStarterQuest(quests: Quest[], seeds: StarterQuestSeed[] = []): Quest[] {
+  const extra = seeds.filter((s) => !quests.some((q) => q.id === s.id)).map(asSeededQuest);
+  if (!extra.length) return quests;
+  return [...quests, ...extra];
+}
+
+/** Reveal the first local starter after the opening scene exists. */
 export function revealLocalStarterQuest(quests: Quest[], seeds: StarterQuestSeed[] = []): Quest[] {
   const extra = seeds.filter((s) => !quests.some((q) => q.id === s.id)).map(asSeededQuest);
   const pool = [...quests, ...extra];

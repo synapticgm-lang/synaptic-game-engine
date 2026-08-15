@@ -4,7 +4,7 @@ import type { CampaignArchetype } from './archetypes';
 import type { EngineMode, GameState, Item, OpeningEstablishment, Settings } from './types';
 import { extractSystemRename, interpretPlayerUtterance, isJunkSetupValue, isSetupRefusal, utteranceIsMessy } from './playerUtterance';
 import { materializeWornClothes } from './wornGear';
-import { revealLocalStarterQuest } from './questPlay';
+import { seedLocalStarterQuest } from './questPlay';
 
 const GENERIC_NAMES = /^(adventurer|survivor|unknown survivor|hero|wanderer|unknown)$/i;
 
@@ -27,6 +27,40 @@ const RANDOM_PLACES = [
 
 function pickRandom(list: string[]): string {
   return list[Math.floor(Math.random() * list.length)] ?? list[0];
+}
+
+const RANDOM_PLACE_REQUEST =
+  /\b(?:a\s+)?random\s+(?:place|location|city|town|spot)\b|\b(?:pick|choose|give)\s+(?:me\s+)?(?:a\s+)?random\b|\bi\s+can'?t\s+think\s+of\s+(?:a\s+)?(?:place|location|one)\b|\bthe\s+place\s+this\s+tale\s+names\b/i;
+
+export function isRandomPlaceRequest(raw: string): boolean {
+  return RANDOM_PLACE_REQUEST.test(raw.replace(/\s+/g, ' ').trim());
+}
+
+export function pickPlaceForCampaign(state: GameState): string {
+  const bible = getCampaignBibleById(state.campaignBibleId ?? '');
+  if (bible?.startingLocation?.trim()) return bible.startingLocation.trim();
+  if (bible?.engineMode === 'rpg' || bible?.engineMode === 'dnd') {
+    return 'where this tale opens';
+  }
+  return pickRandom(RANDOM_PLACES);
+}
+
+function isUnusablePlace(place: string, state: GameState): boolean {
+  const p = place.replace(/\s+/g, ' ').trim();
+  if (!p) return true;
+  if (NAME_STOP.has(p.toLowerCase())) return true;
+  if (NOT_A_PLACE.test(p)) return true;
+  if (isRandomPlaceRequest(p)) return true;
+  if (/^the opening of /i.test(p)) return true;
+  const name = (
+    state.openingEstablishment?.answers?.name
+    || state.character.name
+    || ''
+  ).trim();
+  if (name && p.toLowerCase() === name.toLowerCase()) return true;
+  const bible = getCampaignBibleById(state.campaignBibleId ?? '');
+  if (bible && p.toLowerCase() === bible.title.toLowerCase()) return true;
+  return false;
 }
 
 export function establishmentChoices(pending: OpeningPrompt[]): string[] {
@@ -82,6 +116,12 @@ const SI_PROMPTS: OpeningPrompt[] = [
 const FANTASY_PROMPTS: OpeningPrompt[] = [
   { id: 'name', kind: 'name', question: 'Give the name this tale will use.' },
   {
+    id: 'where',
+    kind: 'location',
+    question: 'Where does this open? Name a place in this world, or pick a random place.',
+    suggestions: ['Random place', 'The place this tale names', 'A street I invent'],
+  },
+  {
     id: 'folk',
     kind: 'species',
     question: 'Name your people — human, elf, dwarf, or another folk of this world.',
@@ -92,9 +132,29 @@ const FANTASY_PROMPTS: OpeningPrompt[] = [
     kind: 'appearance',
     question: 'Describe your face and what you are wearing as this begins.',
     suggestions: [
-      'Travel-worn and practical',
+      'Wool cloak, boots, and a plain shirt',
       'Local clothes, nothing fancy',
-      'Armor or a uniform I already owned',
+      'A coat and the shoes I already owned',
+    ],
+  },
+];
+
+const STORY_RPG_PROMPTS: OpeningPrompt[] = [
+  { id: 'name', kind: 'name', question: 'Give the name this tale will use.' },
+  {
+    id: 'where',
+    kind: 'location',
+    question: 'Where does this open? Name a place in this world, or pick a random place.',
+    suggestions: ['Random place', 'The place this tale names', 'A street I invent'],
+  },
+  {
+    id: 'look',
+    kind: 'appearance',
+    question: 'Describe your face and what you are wearing as this begins.',
+    suggestions: [
+      'Wool cloak, boots, and a plain shirt',
+      'Local clothes, nothing fancy',
+      'A coat and the shoes I already owned',
     ],
   },
 ];
@@ -176,6 +236,7 @@ export function resolveOpeningPrompts(
   if (bible?.openingPrompts?.length) prompts = bible.openingPrompts;
   else if (bible?.id === 'system-integration' || archetype === 'system_apocalypse') prompts = SI_PROMPTS;
   else if (archetype === 'monster_reincarnation') prompts = SPECIES_PROMPTS;
+  else if (engineMode === 'rpg') prompts = STORY_RPG_PROMPTS;
   else if (engineMode === 'dnd' || archetype === 'cursed_manor') prompts = FANTASY_PROMPTS;
   else if (engineMode === 'litrpg' || SYSTEM_ARCHETYPES.has(archetype ?? 'ai_random')) prompts = SI_PROMPTS;
   else prompts = FANTASY_PROMPTS;
@@ -315,6 +376,7 @@ const NOT_A_PLACE =
   /\b(jeans|boots|t-?shirt|hoodie|jacket|wallet|phone|keys|headphones|leatherman)\b/i;
 
 export function extractLocation(raw: string): string | null {
+  if (isRandomPlaceRequest(raw)) return null;
   const text = raw.replace(/\s+/g, ' ').trim();
   const m = text.match(
     /\b(?:i(?:'m|m|\s+am)\s+(?:in|at|from)|(?:i\s+)?live\s+in|(?:i(?:'m|m)\s+)?from)\s+([A-Za-z][A-Za-z0-9\s,'-]{1,60}?)(?:\s*[.?!]|\s+(?:what|who|where|why|how)\b|$)/i
@@ -436,14 +498,24 @@ function fieldForKind(kind: OpeningPrompt['kind'], harvest: ReturnType<typeof ha
 }
 
 /** Current field takes a normal sentence if it is not only a meta question. */
-function acceptCurrentField(kind: OpeningPrompt['kind'], raw: string): string | null {
+function acceptCurrentField(kind: OpeningPrompt['kind'], raw: string, state?: GameState): string | null {
   if (isMetaOnly(raw) || isSetupRefusal(raw)) return null;
   const harvested = fieldForKind(kind, harvestUtterance(raw));
-  if (harvested) return harvested;
+  if (harvested) {
+    if (kind === 'location' && state && isUnusablePlace(harvested, state)) return null;
+    return harvested;
+  }
   const cleaned = stripPlayerVoice(stripConfusion(raw));
   if (!cleaned || cleaned.length < 2) return null;
   if (kind === 'name') return extractGivenName(cleaned);
-  if (kind === 'location') return extractLocation(raw) ?? (cleaned.split(/\s+/).length <= 8 && !NOT_A_PLACE.test(cleaned) ? cleaned : null);
+  if (kind === 'location') {
+    if (isRandomPlaceRequest(raw) || isRandomPlaceRequest(cleaned)) {
+      return state ? pickPlaceForCampaign(state) : pickRandom(RANDOM_PLACES);
+    }
+    const extracted = extractLocation(raw);
+    if (extracted && (!state || !isUnusablePlace(extracted, state))) return extracted;
+    return null;
+  }
   if (kind === 'appearance' && cleaned.split(/\s+/).length >= 2 && !isJunkSetupValue(cleaned)) return cleaned;
   if (kind === 'kit' && cleaned.split(/\s+/).length >= 2 && !isJunkSetupValue(cleaned)) return cleaned;
   if ((kind === 'species' || kind === 'identity') && cleaned.split(/\s+/).length <= 8) return cleaned;
@@ -488,8 +560,20 @@ export function sanitizeOpeningAnswer(
     return { text: (name ?? '').slice(0, 40), cheated, mundaneNames: [] };
   }
   if (kind === 'location') {
-    const place = extractLocation(raw) ?? (cheated ? text.split(/[,.]/)[0]?.trim() : text);
-    return { text: (place ?? '').slice(0, 80), cheated, mundaneNames: [] };
+    if (isRandomPlaceRequest(raw)) return { text: '', cheated, mundaneNames: [] };
+    const extracted = extractLocation(raw);
+    if (extracted) return { text: extracted.slice(0, 80), cheated, mundaneNames: [] };
+    const token = text.replace(/^the\s+/i, '').trim();
+    if (
+      text
+      && text.split(/\s+/).length <= 8
+      && !NOT_A_PLACE.test(text)
+      && !isRandomPlaceRequest(text)
+      && token.length >= 2
+    ) {
+      return { text: text.slice(0, 80), cheated, mundaneNames: [] };
+    }
+    return { text: '', cheated, mundaneNames: [] };
   }
   if (kind === 'appearance') {
     text = stripPlayerVoice(text) || 'ordinary clothes from this morning';
@@ -534,7 +618,11 @@ function applyKindToState(state: GameState, prompt: OpeningPrompt, answer: strin
     return { ...state, character: { ...state.character, name: clean.text.slice(0, 40) } };
   }
   if (prompt.kind === 'location') {
-    return { ...state, currentLocation: clean.text.slice(0, 80) };
+    const place = clean.text.slice(0, 80);
+    if (!place || isUnusablePlace(place, state)) {
+      return { ...state, currentLocation: pickPlaceForCampaign(state) };
+    }
+    return { ...state, currentLocation: place };
   }
   if (prompt.kind === 'appearance') {
     const look = clean.text.slice(0, 280);
@@ -633,12 +721,20 @@ export async function applyOpeningAnswer(
   if (/^random\s+(name|designation)\b/i.test(answer) || /^use a random (name|designation)\b/i.test(answer)) {
     harvest.name = harvest.name ?? pickRandom(RANDOM_NAMES);
   }
-  if (/^random\s+(place|location|city)\b/i.test(answer) || /^use a random (place|location)\b/i.test(answer)) {
-    harvest.location = harvest.location ?? pickRandom(RANDOM_PLACES);
+  if (isRandomPlaceRequest(answer)) {
+    harvest.location = harvest.location && !isUnusablePlace(harvest.location, state)
+      ? harvest.location
+      : pickPlaceForCampaign(state);
+  }
+  if (harvest.location && harvest.name && harvest.location.toLowerCase() === harvest.name.toLowerCase()) {
+    harvest.location = null;
+  }
+  if (harvest.location && isUnusablePlace(harvest.location, state)) {
+    harvest.location = isRandomPlaceRequest(answer) ? pickPlaceForCampaign(state) : null;
   }
   const currentKind = est.pending[0]?.kind;
   if (currentKind && !fieldForKind(currentKind, harvest) && !isMetaOnly(answer)) {
-    const accepted = acceptCurrentField(currentKind, answer);
+    const accepted = acceptCurrentField(currentKind, answer, state);
     if (accepted) {
       if (currentKind === 'name') harvest.name = accepted;
       if (currentKind === 'location') harvest.location = accepted;
@@ -677,6 +773,9 @@ export async function applyOpeningAnswer(
     }
     if (harvest.appearance && isJunkSetupValue(harvest.appearance)) harvest.appearance = null;
     if (harvest.kit && isJunkSetupValue(harvest.kit)) harvest.kit = null;
+    if (harvest.location && (isUnusablePlace(harvest.location, state) || harvest.location.toLowerCase() === (harvest.name ?? '').toLowerCase())) {
+      harvest.location = isRandomPlaceRequest(answer) ? pickPlaceForCampaign(state) : null;
+    }
   }
   const registrar = {
     ...(est.registrar ?? {
@@ -698,7 +797,7 @@ export async function applyOpeningAnswer(
     const isCurrent = prompt.id === est.pending[0].id;
     let value = harvested;
     if (!value && isCurrent && prompt.kind !== 'name') {
-      const accepted = acceptCurrentField(prompt.kind, answer);
+      const accepted = acceptCurrentField(prompt.kind, answer, nextState);
       if (accepted) {
         const clean = sanitizeOpeningAnswer(prompt.kind, accepted);
         if (clean.text) value = clean.text;
@@ -767,14 +866,19 @@ export async function applyOpeningAnswer(
     ? `${nextState.campaignPremise}\n\nPLAYER CANON: ${canonLine}`.slice(0, 2400)
     : `PLAYER CANON: ${canonLine}`;
   const openingNotes = [aside, cheatLine].filter(Boolean).join(' ');
+  const lockedWhere = answers.where && !isUnusablePlace(answers.where, nextState)
+    ? answers.where
+    : pickPlaceForCampaign(nextState);
+  answers.where = lockedWhere;
 
   return {
     generateOpening: true,
     state: {
       ...nextState,
+      currentLocation: lockedWhere,
       campaignPremise: premise,
       openingEstablishment: { pending: [], answers, complete: true, registrar, declinedFields: declined },
-      quests: revealLocalStarterQuest(
+      quests: seedLocalStarterQuest(
         nextState.quests ?? [],
         getCampaignBibleById(nextState.campaignBibleId ?? '')?.starterQuests ?? []
       ),
@@ -792,7 +896,8 @@ export function formatSetupComplete(
 ): string {
   const a = state.openingEstablishment?.answers ?? {};
   const name = a.name || state.character.name || 'unconfirmed';
-  const where = a.where || state.currentLocation || 'unconfirmed';
+  let where = a.where || state.currentLocation || 'unconfirmed';
+  if (isUnusablePlace(where, state)) where = pickPlaceForCampaign(state);
   const wearRaw = a.wear || a.look || state.character.appearance || 'ordinary clothes';
   const wear = CLOTHES_NOUN.test(wearRaw)
     ? stripPlayerVoice(wearRaw)

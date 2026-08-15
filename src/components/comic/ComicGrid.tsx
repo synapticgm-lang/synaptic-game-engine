@@ -273,9 +273,15 @@ function LogEntryRenderer({
   }
 
   if (entry.role === 'player') {
-    // The submitted action is already depicted by the first generated panel. Do not render a
-    // separate floating card that competes with or covers the comic artwork.
-    return null;
+    // Keep the player's line readable even when art is pending or failed. Comic art still
+    // depicts the beat; this caption is the comment/reaction they typed.
+    return (
+      <div className="my-1 flex justify-end">
+        <div className="max-w-[85%] rounded-2xl border border-slate-700/70 bg-slate-900/90 px-3 py-1.5 text-sm leading-relaxed text-slate-200">
+          {entry.content}
+        </div>
+      </div>
+    );
   }
 
   if (entry.role === 'system') {
@@ -285,38 +291,46 @@ function LogEntryRenderer({
   }
 
   if (entry.panels && entry.panels.length > 0) {
+    const artReady = entry.panels.every(
+      (panel) => resolvePanelStatus(panel) === 'ready' && !!panel.imageUrl
+    );
     return (
-      <div className={panelGridClass}>
-        {entry.panels.map((panel, idx) => {
-          const placement = isWebtoon
-            ? { className: 'w-full', featured: true }
-            : getPanelGridPlacement(idx, entry.panels!.length);
-          return (
-            <div key={`${entry.id}-panel-${idx}`} className={placement.className}>
-              <ComicPanelCell
-                panel={panel}
-                isScreentone={isScreentone}
-                index={idx}
-                entryId={entry.id}
-                turn={entry.turn}
-                theme={theme}
-                featured={placement.featured}
-                editorMode={editorMode}
-                tall={isWebtoon}
-                onRetry={
-                  onRetryPanelImage
-                    ? () => onRetryPanelImage(entry.id, idx)
-                    : undefined
-                }
-                onUpdateOverlay={
-                  onUpdatePanelOverlay
-                    ? (edit) => onUpdatePanelOverlay(entry.id, idx, edit)
-                    : undefined
-                }
-              />
-            </div>
-          );
-        })}
+      <div className="flex flex-col gap-3">
+        <div className={panelGridClass}>
+          {entry.panels.map((panel, idx) => {
+            const placement = isWebtoon
+              ? { className: 'w-full', featured: true }
+              : getPanelGridPlacement(idx, entry.panels!.length);
+            return (
+              <div key={`${entry.id}-panel-${idx}`} className={placement.className}>
+                <ComicPanelCell
+                  panel={panel}
+                  isScreentone={isScreentone}
+                  index={idx}
+                  entryId={entry.id}
+                  turn={entry.turn}
+                  theme={theme}
+                  featured={placement.featured}
+                  editorMode={editorMode}
+                  tall={isWebtoon}
+                  onRetry={
+                    onRetryPanelImage
+                      ? () => onRetryPanelImage(entry.id, idx)
+                      : undefined
+                  }
+                  onUpdateOverlay={
+                    onUpdatePanelOverlay
+                      ? (edit) => onUpdatePanelOverlay(entry.id, idx, edit)
+                      : undefined
+                  }
+                />
+              </div>
+            );
+          })}
+        </div>
+        {!artReady && entry.content?.trim() ? (
+          <TextPanel entry={entry} lorebook={lorebook} isScreentone={isScreentone} />
+        ) : null}
       </div>
     );
   }
@@ -365,20 +379,25 @@ function LogEntryRenderer({
 
   if (entryImageStatus === 'pending' || entryImageStatus === 'error') {
     return (
-      <ComicPanelCell
-        panel={{
-          imagePrompt: '',
-          narrative: entry.content,
-          imageUrl: null,
-          imageStatus: entryImageStatus,
-        }}
-        isScreentone={isScreentone}
-        index={0}
-        entryId={entry.id}
-        turn={entry.turn}
-        theme={theme}
-        editorMode={editorMode}
-      />
+      <div className="flex flex-col gap-3">
+        <ComicPanelCell
+          panel={{
+            imagePrompt: '',
+            narrative: entry.content,
+            imageUrl: null,
+            imageStatus: entryImageStatus,
+          }}
+          isScreentone={isScreentone}
+          index={0}
+          entryId={entry.id}
+          turn={entry.turn}
+          theme={theme}
+          editorMode={editorMode}
+        />
+        {entry.content?.trim() ? (
+          <TextPanel entry={entry} lorebook={lorebook} isScreentone={isScreentone} />
+        ) : null}
+      </div>
     );
   }
 

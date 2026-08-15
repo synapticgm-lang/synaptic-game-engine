@@ -671,6 +671,8 @@ export const glassHarborLetters = makeBible({
   shortDescription:
     'Harbor mystery / relationships. Clues live in people and favors, not loot tables.',
   licenseNote: 'Original SynapticGM narrative setting. No closed novel or franchise content.',
+  startingLocation: 'the docks at Glass Harbor',
+  startingContainer: { id: 'gh-coat', name: 'Coat pockets', capacity: 12 },
   premise:
     'You arrive in Glass Harbor with a sealed letter addressed to someone who died last week. Every pier has a rumor. Every tavern has a debt. The story follows who you trust and which truths you publish.',
   lore: [

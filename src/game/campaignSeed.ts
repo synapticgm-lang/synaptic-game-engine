@@ -99,8 +99,7 @@ export function seedStateFromCampaignBible(
 
 function inferStartingLocation(bible: CampaignBible): string {
   if (bible.startingLocation?.trim()) return bible.startingLocation.trim();
-  // Never use lore-article titles ("Dungeon Zones & Dead Zones") as the current place.
-  return `The opening of ${bible.title}`;
+  return 'where this tale opens';
 }
 
 const GENERIC_FANTASY_ITEM =
@@ -181,7 +180,7 @@ function buildCampaignLoadout(
   bible: CampaignBible,
   playerLevel: number
 ): { inventory: Item[]; containers: Container[] } {
-  const replace = bible.replaceDefaultLoadout === true;
+  const replace = bible.replaceDefaultLoadout === true || bible.engineMode === 'rpg';
   const containerSpec = bible.startingContainer;
   const campaignReady = bible.starterItems.filter((si) => (si.itemLevel ?? 1) <= playerLevel);
 
@@ -239,7 +238,8 @@ export function reconcileCampaignLoadout(state: GameState): GameState {
   const bible = state.campaignBibleId
     ? ALL_CAMPAIGN_BIBLES.find((b) => b.id === state.campaignBibleId)
     : findBibleForArchetype(state.engineMode, state.campaignArchetype);
-  if (!bible?.replaceDefaultLoadout) return state;
+  const shouldReplace = bible?.replaceDefaultLoadout === true || bible?.engineMode === 'rpg';
+  if (!bible || !shouldReplace) return state;
   const kitStale = inventoryHasGenericFantasyKit(state);
   const premiseStale = !state.campaignPremise || !/OPENING KIT/i.test(state.campaignPremise);
   const bioStale = /transmigrated|unfamiliar world|newly arrived/i.test(state.character?.bio ?? '');
