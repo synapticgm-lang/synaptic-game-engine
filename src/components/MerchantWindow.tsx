@@ -66,14 +66,15 @@ export function MerchantWindow({ isOpen, onClose, state, onStateChange, onToast 
 
   return (
     <div className="fixed inset-0 z-50 flex items-stretch justify-center bg-black/80 backdrop-blur-sm sm:items-center sm:p-4">
-      <div className="relative flex h-[100dvh] w-full max-w-4xl flex-col overflow-hidden border-slate-700 bg-slate-900 text-slate-100 shadow-2xl sm:h-[85vh] sm:rounded-xl sm:border">
+      <div className="sgm-turn-frame sgm-info-panel relative flex h-[100dvh] w-full max-w-4xl flex-col overflow-hidden shadow-2xl sm:h-[85vh] sm:rounded-xl sm:border">
+        <div className="sgm-turn-frame-bar h-1 w-full shrink-0" />
 
         {/* Header */}
-        <div className="flex shrink-0 items-center justify-between px-4 py-3 border-b border-slate-800 bg-slate-950/50">
+        <div className="flex shrink-0 items-center justify-between px-4 py-3 border-b border-slate-800/80 bg-black/20">
           <div className="flex items-center gap-2 min-w-0">
-            <Recycle size={20} className="shrink-0 text-sky-400" />
+            <Recycle size={20} className="sgm-info-accent shrink-0" />
             <div className="min-w-0">
-              <h2 className="font-serif text-lg font-bold text-sky-400">Salvage</h2>
+              <h2 className="sgm-info-heading text-lg font-bold">Salvage</h2>
               <p className="text-[11px] text-slate-500 leading-snug">System conversion of surplus goods. Available anywhere. No vendor present.</p>
             </div>
             <span className="text-sm text-slate-400 ml-2 shrink-0">Gold: <span className="font-mono font-bold text-amber-400">{state.gold ?? 0}</span></span>
@@ -87,13 +88,13 @@ export function MerchantWindow({ isOpen, onClose, state, onStateChange, onToast 
         <div className="flex shrink-0 border-b border-slate-800 bg-slate-950/30">
           <button
             onClick={() => setTab('sell')}
-            className={`flex-1 flex items-center justify-center gap-2 py-2.5 text-sm transition-colors ${tab === 'sell' ? 'text-amber-400 bg-slate-800/50 border-t-2 border-amber-500' : 'text-slate-500 hover:text-slate-300 hover:bg-slate-800/30'}`}
+            className={`flex-1 flex items-center justify-center gap-2 border-t-2 py-2.5 text-sm transition-colors ${tab === 'sell' ? 'sgm-info-tab-on' : 'border-transparent text-slate-500 hover:text-slate-300 hover:bg-slate-800/30'}`}
           >
             <Coins size={14} /> Sell
           </button>
           <button
             onClick={() => setTab('salvage')}
-            className={`flex-1 flex items-center justify-center gap-2 py-2.5 text-sm transition-colors ${tab === 'salvage' ? 'text-emerald-400 bg-slate-800/50 border-t-2 border-emerald-500' : 'text-slate-500 hover:text-slate-300 hover:bg-slate-800/30'}`}
+            className={`flex-1 flex items-center justify-center gap-2 border-t-2 py-2.5 text-sm transition-colors ${tab === 'salvage' ? 'sgm-info-tab-on' : 'border-transparent text-slate-500 hover:text-slate-300 hover:bg-slate-800/30'}`}
           >
             <Recycle size={14} /> Salvage
           </button>
@@ -105,7 +106,7 @@ export function MerchantWindow({ isOpen, onClose, state, onStateChange, onToast 
             <div className="space-y-4">
               {/* Items */}
               <div>
-                <h3 className="font-serif text-sm uppercase tracking-wider text-crimson-400 mb-2 flex items-center gap-1">
+                <h3 className="sgm-info-heading mb-2 flex items-center gap-1 text-sm uppercase tracking-wider">
                   <Package size={14} /> Items
                 </h3>
                 {sellableItems.length === 0 ? (
@@ -142,7 +143,7 @@ export function MerchantWindow({ isOpen, onClose, state, onStateChange, onToast 
               {/* Materials */}
               {state.materials.length > 0 && (
                 <div>
-                  <h3 className="font-serif text-sm uppercase tracking-wider text-crimson-400 mb-2 flex items-center gap-1">
+                  <h3 className="sgm-info-heading mb-2 flex items-center gap-1 text-sm uppercase tracking-wider">
                     <Layers size={14} /> Materials
                   </h3>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">

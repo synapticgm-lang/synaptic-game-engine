@@ -6,16 +6,18 @@ import type {
   MemorableOfferKind,
   Settings,
 } from './types';
+import type { ActiveDungeonState } from './mapEngine';
 import type { GameEvent, LootVideoRequest, MilestoneRequest } from './parser';
 import { storyHasBody } from './turnAsk';
+import { isUnsalvageableKidImagePrompt, prepareKidSafeImagePrompt, stripKidUnsafeImageLexicon } from './visualCanon';
 
 /** Skip this many story turns after a splash (death/ending ignore it). */
 export const MEMORABLE_COOLDOWN_TURNS = 3;
-/** Opener + at most one more in the first sitting. */
+/** Opener + at most one more in the first sitting. Death and first-dungeon-boss kills may exceed. */
 export const FIRST_SESSION_HARD_CAP = 2;
 export const FIRST_SESSION_SOFT_CAP = FIRST_SESSION_HARD_CAP;
 export const FIRST_SESSION_TURN_HORIZON = 16;
-/** Later sittings (after ~16 turns, or a new night). Death may exceed. */
+/** Later sittings (after ~16 turns, or a new night). Death and first-dungeon-boss kills may exceed. */
 export const SESSION_HARD_CAP = 3;
 export const SESSION_SOFT_CAP = SESSION_HARD_CAP;
 /** Treat a gap this long as a new night / sitting. */
@@ -25,6 +27,7 @@ export type MemorableBeatKind =
   | 'opening'
   | 'death'
   | 'legendary'
+  | 'dungeon-boss'
   | 'writer-tag'
   | 'ruler-audience';
 
@@ -43,6 +46,8 @@ export interface ResolveMemorableInput {
   characterHp: number;
   characterConditions: string[];
   gainedItems: Array<{ name: string; rarity?: string }>;
+  /** Ledger / auto-fight kill this turn — required for dungeon-boss splash. */
+  defeatedEnemyName?: string | null;
 }
 
 export interface DetectedBeautyOffer {
@@ -130,6 +135,10 @@ function isLegendaryRarity(rarity: string | undefined): boolean {
   return !!rarity && LEGENDARY_RARITY.test(rarity.trim());
 }
 
+function kidModeOn(settings: Pick<Settings, 'contentMode'> | undefined): boolean {
+  return settings?.contentMode === 'kid';
+}
+
 export function synthesizeMemorablePrompt(opts: {
   beat: MemorableBeatKind | 'beauty-offer';
   storyText: string;
@@ -137,36 +146,59 @@ export function synthesizeMemorablePrompt(opts: {
   extra?: string;
   kidMode?: boolean;
 }): string {
-  const excerpt = excerptForImage(opts.storyText);
+  const kid = opts.kidMode === true;
+  const excerpt = kid
+    ? (stripKidUnsafeImageLexicon(excerptForImage(opts.storyText)) || 'A bright storybook scene, no text.')
+    : excerptForImage(opts.storyText);
   const place = opts.location?.trim();
-  const extra = opts.extra?.trim();
+  const extra = kid
+    ? stripKidUnsafeImageLexicon(opts.extra?.trim() ?? '')
+    : opts.extra?.trim();
   if (opts.beat === 'opening') {
-    return place
+    const shot = place
       ? `Wide establishing shot of ${place}. ${excerpt}`
       : `Wide establishing shot of the opening scene. ${excerpt}`;
+    return kid
+      ? `Kid-safe establishing shot, bright and welcoming, no frightening imagery. ${shot}`
+      : shot;
   }
   if (opts.beat === 'death') {
-    return `The fatal moment. ${excerpt}`;
+    return kid
+      ? `Kid-safe storybook close: the hero at rest after a hard journey, lights dimming like a book ending. No injury shown, no blood, no corpse. ${excerpt}`
+      : `The fatal moment. ${excerpt}`;
+  }
+  if (opts.beat === 'dungeon-boss') {
+    if (kid) {
+      const foe = extra || "the first dungeon's final foe";
+      return `Storybook victory: ${foe} slumped asleep or knocked out on the floor, hero standing triumphant. No blood, no wounds, no corpse close-up. ${excerpt}`;
+    }
+    return extra
+      ? `The first dungeon's final foe falls: ${extra}. ${excerpt}`
+      : `The first dungeon's final foe falls. ${excerpt}`;
   }
   if (opts.beat === 'legendary') {
-    return extra
+    const reveal = extra
       ? `A legendary item revealed: ${extra}. ${excerpt}`
       : `A legendary prize revealed. ${excerpt}`;
+    return kid ? `Kid-safe wonder, no gore. ${reveal}` : reveal;
   }
   if (opts.beat === 'ruler-audience') {
-    return extra
+    const audience = extra
       ? `First royal audience with ${extra}. ${excerpt}`
       : `A first audience with a ruler. ${excerpt}`;
+    return kid
+      ? `Kid-safe courtly scene, everyone fully clothed, no frightening imagery. ${audience}`
+      : audience;
   }
   if (opts.beat === 'beauty-offer') {
     const look = extra
       ? `A striking first look at ${extra}. ${excerpt}`
       : `A striking first look at someone noteworthy. ${excerpt}`;
-    return opts.kidMode
-      ? `Tasteful, fully clothed storybook portrait. ${look}`
+    return kid
+      ? `Kid-safe, tasteful, fully clothed, non-suggestive storybook portrait. ${look}`
       : look;
   }
-  return excerpt;
+  return kid ? `Kid-safe storybook moment, fully clothed, no blood. ${excerpt}` : excerpt;
 }
 
 function excerptForImage(text: string): string {
@@ -200,12 +232,18 @@ function stamp(
   prev: MemorableMomentState,
   turn: number,
   beat: MemorableBeatKind,
-  extra?: { rulerKey?: string }
+  extra?: { rulerKey?: string; dungeonBossKey?: string }
 ): MemorableMomentState {
   const next: MemorableMomentState = nextSplashStamp(prev, turn);
   if (beat === 'opening') next.openingSplashFired = true;
   if (beat === 'death') next.deathSplashFired = true;
   if (beat === 'legendary') next.legendarySplashFired = true;
+  if (beat === 'dungeon-boss') {
+    next.firstDungeonBossSplashFired = true;
+    if (extra?.dungeonBossKey) {
+      next.dungeonBossSplashKeys = uniqueKeys(prev.dungeonBossSplashKeys, extra.dungeonBossKey);
+    }
+  }
   if (beat === 'ruler-audience' && extra?.rulerKey) {
     next.rulerNamesSplashed = uniqueKeys(prev.rulerNamesSplashed, extra.rulerKey);
   }
@@ -240,15 +278,28 @@ function fire(
   input: ResolveMemorableInput,
   prev: MemorableMomentState,
   synthesized: string,
-  extras?: { skipImageForLootVideo?: boolean; rulerKey?: string }
+  extras?: { skipImageForLootVideo?: boolean; rulerKey?: string; dungeonBossKey?: string }
 ): MemorableDecision {
-  const prompt = pickPrompt(input.writerTag, synthesized);
-  return {
-    request: extras?.skipImageForLootVideo ? null : { imagePrompt: prompt },
-    nextState: stamp(prev, input.turn, beat, { rulerKey: extras?.rulerKey }),
+  const stamped = stamp(prev, input.turn, beat, {
+    rulerKey: extras?.rulerKey,
+    dungeonBossKey: extras?.dungeonBossKey,
+  });
+  const idleStamp: MemorableDecision = {
+    request: null,
+    nextState: stamped,
     beat,
     skipImageForLootVideo: extras?.skipImageForLootVideo,
   };
+  if (extras?.skipImageForLootVideo) return idleStamp;
+
+  // Kid Mode: never send the writer's raw tag — use the rewritten kid-safe beat.
+  const raw = kidModeOn(input.settings) ? synthesized : pickPrompt(input.writerTag, synthesized);
+  if (kidModeOn(input.settings)) {
+    const prepared = prepareKidSafeImagePrompt(raw, { skipIfUnsalvageable: true });
+    if (prepared.skip) return idleStamp;
+    return { ...idleStamp, request: { imagePrompt: prepared.prompt } };
+  }
+  return { ...idleStamp, request: { imagePrompt: raw } };
 }
 
 function offerDecision(
@@ -265,6 +316,96 @@ function offerDecision(
   };
 }
 
+/** Locked First Blood convenience-store graph from `buildConvenienceStoreDungeon`. */
+export const FIRST_DUNGEON_BLUEPRINT_ID = 'first-blood-store';
+const FIRST_DUNGEON_BOSS_NAME = 'corrupted stockboy';
+
+function isDesignatedBossNode(dungeon: ActiveDungeonState, nodeId: string): boolean {
+  if (dungeon.dungeonRules?.bossNode === nodeId) return true;
+  const node = dungeon.nodes.find((n) => n.id === nodeId);
+  return (node?.tags ?? []).some((tag) => {
+    const t = tag.toLowerCase();
+    return t === 'boss' || t === 'boss_room';
+  });
+}
+
+function normalizeMobLabel(name: string): string {
+  return name.trim().toLowerCase().replace(/\s+/g, ' ');
+}
+
+function dungeonHasCorruptedStockboy(dungeon: ActiveDungeonState): boolean {
+  for (const node of dungeon.nodes) {
+    for (const mob of node.hidden?.mobs ?? []) {
+      if (normalizeMobLabel(mob.name) === FIRST_DUNGEON_BOSS_NAME) return true;
+    }
+  }
+  return false;
+}
+
+function pinFirstDungeonGraph(
+  prev: MemorableMomentState,
+  dungeon: ActiveDungeonState | null | undefined
+): MemorableMomentState {
+  if (prev.firstDungeonBlueprintId) return prev;
+  if (!dungeon || dungeon.blueprintId === 'local-area') return prev;
+  return { ...prev, firstDungeonBlueprintId: dungeon.blueprintId };
+}
+
+export function firstDungeonBossAlreadyConsumed(mem: MemorableMomentState): boolean {
+  if (mem.firstDungeonBossSplashFired) return true;
+  return (mem.dungeonBossSplashKeys?.length ?? 0) > 0;
+}
+
+/**
+ * Campaign’s first dungeon graph: First Blood store (`first-blood-store`) /
+ * Corrupted Stockboy, or the first non-street dungeon pinned on entry.
+ * Street maps (`local-area`) never count. If the tutorial first-boss beat is
+ * already done, a later graph cannot qualify (old saves / messy detection).
+ */
+export function isCampaignFirstDungeonGraph(
+  dungeon: ActiveDungeonState | null | undefined,
+  mem?: MemorableMomentState,
+  tutorialFirstBossDone?: boolean
+): boolean {
+  if (!dungeon || dungeon.blueprintId === 'local-area') return false;
+  if (dungeon.blueprintId === FIRST_DUNGEON_BLUEPRINT_ID) return true;
+  if (dungeonHasCorruptedStockboy(dungeon)) return true;
+  if (tutorialFirstBossDone) return false;
+  const pinned = mem?.firstDungeonBlueprintId;
+  if (pinned) return dungeon.blueprintId === pinned;
+  return true;
+}
+
+/**
+ * Final boss of the locked dungeon graph — not trash, not mid-dungeon elites.
+ * First Blood’s Corrupted Stockboy is a miniBoss on bossNode; generated dungeons use role `boss`.
+ */
+export function detectDungeonFinalBossDefeat(
+  dungeon: ActiveDungeonState | null | undefined,
+  defeatedEnemyName: string | null | undefined,
+  alreadySplashed: string[] | undefined
+): { key: string; label: string } | null {
+  const name = defeatedEnemyName?.trim();
+  if (!name || !dungeon || dungeon.blueprintId === 'local-area') return null;
+
+  const needle = normalizeMobLabel(name);
+  const seen = alreadySplashed ?? [];
+
+  for (const node of dungeon.nodes) {
+    for (const mob of node.hidden?.mobs ?? []) {
+      const isFinal =
+        mob.role === 'boss' || (mob.role === 'miniBoss' && isDesignatedBossNode(dungeon, node.id));
+      if (!isFinal) continue;
+      const label = mob.name.trim();
+      if (normalizeMobLabel(label) !== needle) continue;
+      const key = `${dungeon.blueprintId}:${mob.id}`;
+      if (seen.includes(key)) return null;
+      return { key, label };
+    }
+  }
+  return null;
+}
+
 function detectOpening(
   input: ResolveMemorableInput,
   prev: MemorableMomentState
@@ -276,6 +417,7 @@ function detectOpening(
       beat: 'opening',
       storyText: input.storyText,
       location: input.state.currentLocation,
+      kidMode: kidModeOn(input.settings),
     });
   }
   if (input.state.openingEstablishment?.sceneWritten) return null;
@@ -284,6 +426,7 @@ function detectOpening(
     beat: 'opening',
     storyText: input.storyText,
     location: input.state.currentLocation,
+    kidMode: kidModeOn(input.settings),
   });
 }
 
@@ -470,12 +613,15 @@ export function detectNoteworthyBeauty(
 
 /**
  * Classic memorable only. Comic mode is untouched.
- * Auto: opening + death. Legendary is loot-video only (no second still).
- * Soft beats (ruler audience, writer tag, beauty) are tap-yes offers.
- * First combat is never auto and is never offered unless the writer tagged a real milestone.
+ * Auto: opening + death + the campaign’s first dungeon final-boss defeat only.
+ * Later dungeon bosses never auto — writer tag can still become a tap-yes offer.
+ * Legendary is loot-video only (no second still). First combat / trash / boss reveal never auto.
  */
 export function resolveMemorableMoment(input: ResolveMemorableInput): MemorableDecision {
-  const prev = input.state.memorableMoments ?? emptyMemorableState();
+  const prev = pinFirstDungeonGraph(
+    input.state.memorableMoments ?? emptyMemorableState(),
+    input.state.activeDungeon
+  );
   const idle: MemorableDecision = { request: null, nextState: prev, beat: null };
   if (!isClassicMemorableEnabled(input.settings)) return idle;
   if (!storyHasBody(input.storyText)) return idle;
@@ -485,13 +631,51 @@ export function resolveMemorableMoment(input: ResolveMemorableInput): MemorableD
       'death',
       input,
       prev,
-      synthesizeMemorablePrompt({ beat: 'death', storyText: input.storyText })
+      synthesizeMemorablePrompt({
+        beat: 'death',
+        storyText: input.storyText,
+        kidMode: kidModeOn(input.settings),
+      })
     );
   }
 
   const openingPrompt = detectOpening(input, prev);
   if (openingPrompt) {
     return fire('opening', input, prev, openingPrompt);
+  }
+
+  const dungeon = input.state.activeDungeon;
+  if (
+    !firstDungeonBossAlreadyConsumed(prev)
+    && isCampaignFirstDungeonGraph(
+      dungeon,
+      prev,
+      input.state.tutorialProgress?.completed?.firstBoss
+    )
+  ) {
+    const bossKill = detectDungeonFinalBossDefeat(
+      dungeon,
+      input.defeatedEnemyName,
+      prev.dungeonBossSplashKeys
+    );
+    if (bossKill) {
+      return fire(
+        'dungeon-boss',
+        input,
+        prev,
+        synthesizeMemorablePrompt({
+          beat: 'dungeon-boss',
+          storyText: input.storyText,
+          extra: bossKill.label,
+          location: input.state.currentLocation,
+          kidMode: kidModeOn(input.settings),
+        }),
+        {
+          skipImageForLootVideo: Boolean(input.lootVideo),
+          dungeonBossKey: bossKill.key,
+        }
+      );
+    }
   }
 
   const legendaryItem =
@@ -505,6 +689,7 @@ export function resolveMemorableMoment(input: ResolveMemorableInput): MemorableD
       beat: 'legendary',
       storyText: input.storyText,
       extra: legendaryItem?.name ?? input.lootVideo?.itemName,
+      kidMode: kidModeOn(input.settings),
     });
     if (input.lootVideo) {
       return fire('legendary', input, prev, synthesized, { skipImageForLootVideo: true });
@@ -520,6 +705,15 @@ export function resolveMemorableMoment(input: ResolveMemorableInput): MemorableD
 
   const ruler = detectRulerAudience(input.storyText, input.events, prev.rulerNamesSplashed);
   if (ruler) {
+    const rulerPrompt = synthesizeMemorablePrompt({
+      beat: 'ruler-audience',
+      storyText: input.storyText,
+      extra: ruler.label,
+      kidMode: kidModeOn(input.settings),
+    });
+    if (kidModeOn(input.settings) && isUnsalvageableKidImagePrompt(rulerPrompt)) {
+      return idle;
+    }
     return offerDecision(
       prev,
       input.turn,
@@ -527,20 +721,24 @@ export function resolveMemorableMoment(input: ResolveMemorableInput): MemorableD
         kind: 'ruler-audience',
         personKey: ruler.key,
         personLabel: ruler.label,
-        imagePrompt: synthesizeMemorablePrompt({
-          beat: 'ruler-audience',
-          storyText: input.storyText,
-          extra: ruler.label,
-        }),
+        imagePrompt: kidModeOn(input.settings)
+          ? prepareKidSafeImagePrompt(rulerPrompt, { skipIfUnsalvageable: true }).prompt
+          : rulerPrompt,
       },
       { rulerKey: ruler.key }
     );
   }
 
   if (input.writerTag?.imagePrompt?.trim()) {
+    let writerPrompt = input.writerTag.imagePrompt.trim();
+    if (kidModeOn(input.settings)) {
+      const prepared = prepareKidSafeImagePrompt(writerPrompt, { skipIfUnsalvageable: true });
+      if (prepared.skip) return idle;
+      writerPrompt = `Kid-safe storybook moment, fully clothed, no blood. ${prepared.prompt}`;
+    }
     return offerDecision(prev, input.turn, {
       kind: 'writer-tag',
-      imagePrompt: input.writerTag.imagePrompt.trim(),
+      imagePrompt: writerPrompt,
     });
   }
 
@@ -550,6 +748,36 @@ export function resolveMemorableMoment(input: ResolveMemorableInput): MemorableD
     prev.beautyOfferedKeys
   );
   if (beauty) {
+    const rawLook = synthesizeMemorablePrompt({
+      beat: 'beauty-offer',
+      storyText: input.storyText,
+      extra: beauty.label,
+      kidMode: false,
+    });
+    if (kidModeOn(input.settings) && isUnsalvageableKidImagePrompt(rawLook)) {
+      return idle;
+    }
+    const beautyPrompt = synthesizeMemorablePrompt({
+      beat: 'beauty-offer',
+      storyText: input.storyText,
+      extra: beauty.label,
+      kidMode: kidModeOn(input.settings),
+    });
+    if (kidModeOn(input.settings)) {
+      const prepared = prepareKidSafeImagePrompt(beautyPrompt, { skipIfUnsalvageable: true });
+      if (prepared.skip) return idle;
+      return offerDecision(
+        prev,
+        input.turn,
+        {
+          kind: 'beauty',
+          personKey: beauty.key,
+          personLabel: beauty.label,
+          imagePrompt: prepared.prompt,
+        },
+        { personKey: beauty.key }
+      );
+    }
     return offerDecision(
       prev,
       input.turn,
@@ -557,12 +785,7 @@ export function resolveMemorableMoment(input: ResolveMemorableInput): MemorableD
         kind: 'beauty',
         personKey: beauty.key,
         personLabel: beauty.label,
-        imagePrompt: synthesizeMemorablePrompt({
-          beat: 'beauty-offer',
-          storyText: input.storyText,
-          extra: beauty.label,
-          kidMode: input.settings.contentMode === 'kid',
-        }),
+        imagePrompt: beautyPrompt,
       },
       { personKey: beauty.key }
     );
@@ -578,9 +801,23 @@ export function decideClassicMemorable(
 ): MemorableDecision {
   const decision = resolveMemorableMoment(input);
   if (!canSpendMemorable && (decision.request || decision.beautyOffer)) {
+    const prev = input.state.memorableMoments ?? emptyMemorableState();
+    if (decision.beat === 'dungeon-boss') {
+      return {
+        request: null,
+        beat: null,
+        nextState: {
+          ...prev,
+          firstDungeonBlueprintId:
+            decision.nextState.firstDungeonBlueprintId ?? prev.firstDungeonBlueprintId,
+          firstDungeonBossSplashFired: true,
+          dungeonBossSplashKeys: decision.nextState.dungeonBossSplashKeys ?? prev.dungeonBossSplashKeys,
+        },
+      };
+    }
     return {
       request: null,
-      nextState: input.state.memorableMoments ?? emptyMemorableState(),
+      nextState: prev,
       beat: null,
     };
   }

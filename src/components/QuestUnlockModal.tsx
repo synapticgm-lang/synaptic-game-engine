@@ -11,10 +11,11 @@ export function QuestUnlockModal({ quests, onClose, onOpenJournal }: Props) {
   const multi = quests.length > 1;
   return (
     <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/70 p-4 backdrop-blur-sm">
-      <div className="w-full max-w-md overflow-hidden rounded-xl border border-sky-500/50 bg-slate-950 shadow-2xl shadow-sky-950/50">
-        <div className="border-b border-sky-500/30 bg-sky-950/50 px-5 py-3">
-          <p className="font-mono text-[10px] uppercase tracking-[0.25em] text-sky-400">System</p>
-          <h2 className="mt-1 text-lg font-bold uppercase tracking-wide text-sky-100">
+      <div className="sgm-turn-frame sgm-info-panel w-full max-w-md overflow-hidden rounded-xl border shadow-2xl">
+        <div className="sgm-turn-frame-bar h-1 w-full" />
+        <div className="border-b border-slate-800/80 bg-black/20 px-5 py-3">
+          <p className="sgm-info-accent font-mono text-[10px] uppercase tracking-[0.25em]">System</p>
+          <h2 className="sgm-info-heading mt-1 text-lg font-bold uppercase tracking-wide">
             {multi ? 'Quests unlocked' : 'Quest unlocked'}
           </h2>
         </div>
@@ -26,7 +27,7 @@ export function QuestUnlockModal({ quests, onClose, onOpenJournal }: Props) {
                 <p className="mt-1 text-sm leading-relaxed text-slate-300 line-clamp-4">{q.description}</p>
               )}
               {q.objectives?.[0]?.description && (
-                <p className="mt-2 text-xs text-sky-300">
+                <p className="mt-2 text-xs sgm-info-accent">
                   First objective: {q.objectives[0].description}
                 </p>
               )}
@@ -38,7 +39,7 @@ export function QuestUnlockModal({ quests, onClose, onOpenJournal }: Props) {
             <button
               type="button"
               onClick={onOpenJournal}
-              className="flex-1 rounded-md border border-sky-600/50 bg-sky-900/40 px-3 py-2 text-sm font-medium text-sky-100 hover:bg-sky-800/50"
+              className="sgm-info-tab-on flex-1 rounded-md border px-3 py-2 text-sm font-medium"
             >
               Open journal
             </button>

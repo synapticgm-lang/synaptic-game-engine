@@ -48,7 +48,7 @@ ENDING LOGIC: Key on whether the Ledger is public and whether Sable is still cov
 
   premise: `PLAYER AGENCY (BINDING): Main spine only — not an open city map. Do not dump a district list. Side seeds stay hidden until the player looks, talks, climbs, or wanders. Code owns stamps and kit. Writer: this turn’s camera only (2–6 sentences, then 3–4 local forks).
 
-ENGINE (BINDING): This is Pick Your Own Adventure, not live LitRPG chrome or 5e dice. Do not emit XP tickers or health bars. Disguises, climbing kits, flash-powder, and clockwork gadgets are story objects: describe them in the body, never as our HUD.
+ENGINE (BINDING): This is Pick Your Own Adventure, not live LitRPG chrome or tabletop dice. Do not emit XP tickers or health bars. Disguises, climbing kits, flash-powder, and clockwork gadgets are story objects: describe them in the body, never as our HUD.
 
 INNER VOICE (BINDING): Typed comments, jokes, and doubts ARE the hero thinking or speaking. Mirror them in <thought> or dialogue, then the world answers. Never overwrite their personality. Honor PERSPECTIVE. No meta. Never name Assassin’s Creed, Hitman, Fable, Albion, Animus, Agent 47, or any licensed series. Never use branded phrases such as leap of faith or hidden blade — write a long drop, a concealed knife, concealed steel.
 

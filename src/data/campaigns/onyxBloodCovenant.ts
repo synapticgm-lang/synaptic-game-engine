@@ -51,7 +51,7 @@ ENDING LOGIC: Key on whether the bond is fate, choice, or force, and whether Kae
 
 LICENSE (BINDING): Original dark paranormal romance tropes (brooding shadow-warriors, fated mates, urban packs, aristocratic vampires). Never name Black Dagger Brotherhood, House of Crimson Hearts, Twilight, Underworld, Anita Blake, Fable, Albion, or any named IP. Never use those brands in play.
 
-ENGINE (BINDING): This is Pick Your Own Adventure, not live LitRPG chrome or 5e dice. Do not emit XP tickers or health bars. Romantic affinities and hexes are story objects: describe them in the body, never as our HUD.
+ENGINE (BINDING): This is Pick Your Own Adventure, not live LitRPG chrome or tabletop dice. Do not emit XP tickers or health bars. Romantic affinities and hexes are story objects: describe them in the body, never as our HUD.
 
 ALLY / BETRAY / PARTY / SOLO (BINDING):
 - Kaelen offers his motorcycle. Get on the bike = Walks With You. Leave him to the Lycan = Rival. Walk out alone = Left. Stamps stick.

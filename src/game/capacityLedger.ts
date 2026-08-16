@@ -220,9 +220,21 @@ export function spendCapacity(
 export function grantAdReward(ledger = loadCapacityLedger()): CapacityLedger {
   const def = getTierDefinition(ledger.tier);
   if (def.noAds || def.adTextTurns <= 0) return ledger;
+  return grantAdBonusTurns(def.adTextTurns, ledger);
+}
+
+/**
+ * Grant a specific number of ad bonus turns (Kid Mode / soft shop path).
+ * Does not check noAds — caller must gate eligibility.
+ */
+export function grantAdBonusTurns(
+  turns: number,
+  ledger = loadCapacityLedger()
+): CapacityLedger {
+  if (turns <= 0) return ledger;
   const next = {
     ...ledger,
-    textAdBonusToday: ledger.textAdBonusToday + def.adTextTurns,
+    textAdBonusToday: ledger.textAdBonusToday + turns,
     adsWatchedToday: ledger.adsWatchedToday + 1,
   };
   saveCapacityLedger(next);

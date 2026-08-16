@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Loader2, Tv } from 'lucide-react';
 import {
   type TurnPackDefinition,
   type TurnPackArtId,
@@ -6,6 +7,15 @@ import {
   illustratedShopPacks,
 } from '@/game/subscriptionTiers';
 import { grantTurnPack, loadCapacityLedger, type CapacityLedger } from '@/game/capacityLedger';
+import {
+  canOfferRewardedTurns,
+  canWatchRewardedAdNow,
+  rewardedAdsRemainingToday,
+  rewardedTurnsPerAd,
+  watchRewardedAdForTurns,
+  ADULT_MAX_REWARDED_ADS_PER_DAY,
+} from '@/game/rewardedAds';
+import { ParentPurchaseGate, requestParentPurchaseApproval } from './ParentPurchaseGate';
 
 function packBalances(ledger: CapacityLedger) {
   return {
@@ -16,13 +26,28 @@ function packBalances(ledger: CapacityLedger) {
 
 export function CapacityPackShop({
   onGranted,
+  contentMode,
+  contentPin,
+  verifyPin,
 }: {
   onGranted?: (message: string) => void;
+  contentMode?: string | null;
+  contentPin?: string | null;
+  verifyPin?: (pin: string) => boolean;
 }) {
   const [ledger, setLedger] = useState(() => loadCapacityLedger());
+  const [adBusy, setAdBusy] = useState(false);
+  const [adError, setAdError] = useState<string | null>(null);
+  const [gateOpen, setGateOpen] = useState(false);
+  const [pendingPack, setPendingPack] = useState<TurnPackDefinition | null>(null);
   const bal = packBalances(ledger);
+  const showEarn = canOfferRewardedTurns(contentMode);
+  const adTurns = rewardedTurnsPerAd(contentMode);
+  const adsLeft = rewardedAdsRemainingToday(contentMode, ledger);
+  const canWatch = canWatchRewardedAdNow(contentMode);
+  const isKid = contentMode === 'kid';
 
-  const buy = (pack: TurnPackDefinition) => {
+  const applyPack = (pack: TurnPackDefinition) => {
     if (!pack.shopLive) return;
     const next = grantTurnPack(pack.id);
     setLedger(next);
@@ -33,15 +58,97 @@ export function CapacityPackShop({
     onGranted?.(`${pack.name} added — ${gained} (preview grant; payments not live).`);
   };
 
+  const buy = (pack: TurnPackDefinition) => {
+    if (!pack.shopLive) return;
+    requestParentPurchaseApproval({
+      contentMode,
+      contentPin,
+      openGate: () => {
+        setPendingPack(pack);
+        setGateOpen(true);
+      },
+      action: () => applyPack(pack),
+    });
+  };
+
+  const watchAd = async () => {
+    setAdBusy(true);
+    setAdError(null);
+    const result = await watchRewardedAdForTurns({ contentMode });
+    setAdBusy(false);
+    if (!result.ok) {
+      setAdError(result.error ?? 'Ad failed');
+      return;
+    }
+    setLedger(result.ledger);
+    onGranted?.(
+      `Ad complete — +${result.turnsGranted} turns today (provider: ${result.provider}). Watch again anytime.`
+    );
+  };
+
   return (
     <div className="flex flex-col gap-6">
+      <ParentPurchaseGate
+        contentMode={contentMode}
+        contentPin={contentPin}
+        verifyPin={verifyPin ?? ((p) => !!contentPin && p === contentPin)}
+        open={gateOpen}
+        onClose={() => {
+          setGateOpen(false);
+          setPendingPack(null);
+        }}
+        onApproved={() => {
+          if (pendingPack) applyPack(pendingPack);
+          setPendingPack(null);
+        }}
+      />
+
       <div className="rounded-lg border border-slate-700/60 bg-slate-900/50 px-3 py-2 text-[11px] text-slate-400">
         Pack balance:{' '}
         <span className="text-cyan-300">{bal.text} text</span>
         {' · '}
         <span className="text-rose-300">{bal.illustrated} illustrated</span>
         <span className="text-slate-600"> — packs never expire</span>
+        {ledger.textAdBonusToday > 0 && (
+          <span className="text-amber-300/90"> · +{ledger.textAdBonusToday} from ads today</span>
+        )}
       </div>
+
+      {isKid && (
+        <p className="text-[11px] text-amber-200/80">
+          Kid Mode: watching ads is OK. Buying packs or themes needs a parent PIN.
+        </p>
+      )}
+
+      {showEarn && (
+        <section>
+          <h2 className="mb-2 text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">
+            Earn turns
+          </h2>
+          <p className="mb-3 text-[11px] leading-snug text-slate-500">
+            {isKid
+              ? `Optional. Watch a short ad for +${adTurns} turns today — no daily cap in Kid Mode. Only completed ads grant turns.`
+              : `Optional. Watch for +${adTurns} turns — up to ${ADULT_MAX_REWARDED_ADS_PER_DAY} ads/day on Free. After that, buy a pack or upgrade.`}
+          </p>
+          <button
+            type="button"
+            disabled={adBusy || !canWatch}
+            onClick={() => void watchAd()}
+            className="flex w-full items-center justify-center gap-2 rounded-xl border border-cyan-700/50 bg-cyan-950/40 px-4 py-3 text-sm font-medium text-cyan-100 hover:bg-cyan-900/50 disabled:opacity-50"
+          >
+            {adBusy ? <Loader2 size={18} className="animate-spin" /> : <Tv size={18} />}
+            {canWatch
+              ? `Watch for +${adTurns} turns`
+              : 'Daily ad limit reached'}
+          </button>
+          <p className="mt-2 text-[11px] text-slate-500">
+            {isKid
+              ? `Ads watched today: ${ledger.adsWatchedToday}`
+              : `${adsLeft ?? 0} of ${ADULT_MAX_REWARDED_ADS_PER_DAY} ads left today`}
+          </p>
+          {adError && <p className="mt-2 text-[11px] text-red-400">{adError}</p>}
+        </section>
+      )}
 
       <section>
         <h2 className="mb-2 text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">

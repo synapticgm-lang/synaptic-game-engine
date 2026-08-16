@@ -49,7 +49,7 @@ ENDING LOGIC: Key on whether the System still exists and who remembers you were 
 
   premise: `PLAYER AGENCY (BINDING): Main spine only — not an open MMO map. Do not dump a zone list. Side seeds stay hidden until the player looks, talks, hacks, or wanders. Code owns stamps and kit. Writer: this turn’s camera only (2–6 sentences, then 3–4 local forks).
 
-ENGINE (BINDING): This is Pick Your Own Adventure, not live LitRPG chrome. Do not emit XP tickers, level-up panels, or 5e dice. The world's "System" is in-fiction: holographic errors, classes, and glitches the player can crash, sell, or forge. Describe those as story, never as our HUD.
+ENGINE (BINDING): This is Pick Your Own Adventure, not live LitRPG chrome. Do not emit XP tickers, level-up panels, or tabletop dice. The world's "System" is in-fiction: holographic errors, classes, and glitches the player can crash, sell, or forge. Describe those as story, never as our HUD.
 
 INNER VOICE (BINDING): Typed comments, jokes, and doubts ARE the hero thinking or speaking. Mirror them in <thought> or dialogue, then the world answers. Never overwrite their personality. Honor PERSPECTIVE. No meta. No Sword Art Online plots, log-out buttons as the story, or named series.
 

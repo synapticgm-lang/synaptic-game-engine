@@ -21,6 +21,8 @@ All competitor + design packs for SynapticGM. Do not treat as live tickets until
 | [HOLD-long-memory-pack11.md](./HOLD-long-memory-pack11.md) | Both dumps in; no memory wave until next update ask |
 | [RESEARCH-PROMPT-visual-tabletop-bolt.md](./RESEARCH-PROMPT-visual-tabletop-bolt.md) | Bolt prompt: comic/illustration on every engine + D&D/tabletop |
 | [pack-12-visual-tabletop-dump-2026-08-15.md](./pack-12-visual-tabletop-dump-2026-08-15.md) | Comic/illustration on every engine; D&D table feel; story RPG; empty-turn / a11y |
+| [memorable-illustration-beats-2026-08-16.md](./memorable-illustration-beats-2026-08-16.md) | When Classic memorable splashes should fire; opening scene vs GM-tag-only; VN/CYOA/comic/AI-RPG consensus |
+| [kid-mode-google-families-2026-08-16.md](./kid-mode-google-families-2026-08-16.md) | Google Play Families / Designed for Families bar used as Kid Mode pass/fail; shared filter module |
 | [RESEARCH-PROMPT-remaining-live-holes-bolt.md](./RESEARCH-PROMPT-remaining-live-holes-bolt.md) | Bolt prompt: locality, place harvest, opening kit/portrait, turn cost |
 | [pack-13-remaining-live-holes-2026-08-15.md](./pack-13-remaining-live-holes-2026-08-15.md) | Locality token, pin allowlist, kit/portrait, turn cost / hang / beat fidelity |
 | [pack-14-isekai-hero-villain-summon-tropes-2026-08-15.md](./pack-14-isekai-hero-villain-summon-tropes-2026-08-15.md) | Hero/villain summon tropes → premade The Summoned Pact (no IP) |

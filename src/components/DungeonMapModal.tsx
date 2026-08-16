@@ -54,24 +54,25 @@ export const DungeonMapModal: React.FC<DungeonMapModalProps> = ({
   if (!displayDungeon) {
     return (
       <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
-        <div className="relative w-full max-w-lg rounded-xl border border-blue-500/40 bg-slate-950 shadow-2xl shadow-blue-950/40 p-6 text-slate-100">
-          <div className="flex items-start justify-between gap-3 pb-4 border-b border-blue-500/30">
+        <div className="sgm-turn-frame sgm-info-panel relative w-full max-w-lg rounded-xl border shadow-2xl p-6">
+          <div className="sgm-turn-frame-bar h-1 w-full -mx-6 -mt-6 mb-4 rounded-t-xl" />
+          <div className="flex items-start justify-between gap-3 pb-4 border-b border-slate-800/80">
             <div>
-              <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-blue-300 mb-1">System</p>
-              <h2 className="text-xl font-bold text-blue-100">Local map pending</h2>
+              <p className="sgm-info-accent font-mono text-[10px] uppercase tracking-[0.2em] mb-1">System</p>
+              <h2 className="sgm-info-heading text-xl font-bold">Local map pending</h2>
             </div>
             <button
               onClick={onClose}
-              className="px-3 py-1 rounded bg-slate-800 hover:bg-slate-700 text-blue-200 border border-blue-800/50 text-sm transition"
+              className="px-3 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 text-sm transition"
             >
               ✕ Close
             </button>
           </div>
           <p className="mt-4 text-sm text-slate-300 leading-relaxed">
-            You are in <span className="font-medium text-blue-100">{currentLocation?.trim() || 'an unmapped place'}</span>.
+            You are in <span className="font-medium sgm-info-accent">{currentLocation?.trim() || 'an unmapped place'}</span>.
             The System builds a street map from wherever you said you are — a Tesco Extra in England, a Kyoto alley, anywhere in the world.
           </p>
-          <p className="mt-3 text-xs text-blue-400/70 font-mono uppercase tracking-wider">
+          <p className="mt-3 text-xs sgm-info-accent font-mono uppercase tracking-wider opacity-80">
             Name the street or store in play if this is still empty.
           </p>
         </div>
@@ -87,12 +88,13 @@ export const DungeonMapModal: React.FC<DungeonMapModalProps> = ({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
-      <div className="relative w-full max-w-4xl rounded-xl border border-cyan-500/30 bg-slate-900/95 p-6 shadow-2xl text-slate-100 flex flex-col max-h-[90vh]">
+      <div className="sgm-turn-frame sgm-info-panel relative w-full max-w-4xl rounded-xl border p-6 shadow-2xl flex flex-col max-h-[90vh]">
+        <div className="sgm-turn-frame-bar h-1 w-full -mx-6 -mt-6 mb-4 rounded-t-xl" />
         
         {/* Navigation Breadcrumbs & Header */}
-        <div className="flex justify-between items-center pb-4 border-b border-slate-700">
+        <div className="flex justify-between items-center pb-4 border-b border-slate-700/80">
           <div>
-            <div className="flex items-center gap-2 text-xs font-semibold text-cyan-400 mb-1">
+            <div className="sgm-info-accent flex items-center gap-2 text-xs font-semibold mb-1">
               <span>🗺️ {isStreet ? mapScaleStreet : mapScaleInterior}</span>
               {!isStreet && displayDungeon.dangerTier != null && (
                 <span className="rounded bg-rose-950/60 px-2 py-0.5 text-rose-200 border border-rose-800/40">
@@ -105,7 +107,7 @@ export const DungeonMapModal: React.FC<DungeonMapModalProps> = ({
                 </span>
               )}
             </div>
-            <h2 className="text-xl font-bold text-slate-100 flex items-center gap-2">
+            <h2 className="sgm-info-heading text-xl font-bold flex items-center gap-2">
               {displayDungeon.dungeonName}
             </h2>
             <p className="text-xs text-slate-400">

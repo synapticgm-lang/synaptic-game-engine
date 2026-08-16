@@ -25,20 +25,20 @@ export function RightDrawer({ state, open, onClose, onUpdateLorebook }: Props) {
   return (
     <>
       {open && <div className="fixed inset-0 z-30 bg-black/50 lg:hidden" onClick={onClose} />}
-      <aside className={`fixed right-0 top-0 z-40 h-full w-80 transform overflow-y-auto border-l border-slate-800 bg-slate-950 transition-transform duration-300 lg:static lg:z-0 lg:w-80 lg:translate-x-0 ${open ? 'translate-x-0' : 'translate-x-full'}`}>
-        <div className="flex items-center justify-between border-b border-slate-800 px-4 py-3">
-          <span className="font-serif text-slate-200">Adventurer Panel</span>
+      <aside className={`sgm-info-panel fixed right-0 top-0 z-40 h-full w-80 transform overflow-y-auto border-l transition-transform duration-300 lg:static lg:z-0 lg:w-80 lg:translate-x-0 ${open ? 'translate-x-0' : 'translate-x-full'}`}>
+        <div className="flex items-center justify-between border-b border-slate-800/80 px-4 py-3">
+          <span className="sgm-info-heading">Adventurer Panel</span>
           <button onClick={onClose} className="text-slate-400 hover:text-slate-200"><X size={18} /></button>
         </div>
 
         <div className="p-4 space-y-4">
           {/* Adventurer Summary Card */}
-          <div className="rounded-lg border border-slate-800 bg-slate-900 p-3">
+          <div className="sgm-turn-frame sgm-info-panel rounded-lg border p-3">
             <div className="flex items-center justify-between mb-2">
-              <span className="font-serif text-sm text-slate-200">{c.name || 'Adventurer'}</span>
+              <span className="font-serif text-sm">{c.name || 'Adventurer'}</span>
               <button
                 onClick={() => setShowProfile(!showProfile)}
-                className="text-[10px] px-2 py-0.5 bg-crimson-600/30 hover:bg-crimson-600/50 text-crimson-300 rounded border border-crimson-500/40 transition"
+                className="sgm-info-tab-on text-[10px] px-2 py-0.5 rounded border transition"
               >
                 {showProfile ? 'Hide Profile' : 'Show Profile'}
               </button>
@@ -60,7 +60,7 @@ export function RightDrawer({ state, open, onClose, onUpdateLorebook }: Props) {
             {showProfile && (
               <div className="mt-3 pt-3 border-t border-slate-800 space-y-3">
                 <div className="flex flex-col items-center">
-                  <div className="w-16 h-16 rounded-full bg-slate-800 border-2 border-crimson-500/60 overflow-hidden mb-1 flex items-center justify-center text-slate-400">
+                  <div className="sgm-info-slot-on w-16 h-16 rounded-full bg-slate-800 border-2 overflow-hidden mb-1 flex items-center justify-center text-slate-400">
                     <span className="text-2xl">🛡️</span>
                   </div>
                   <div className="text-xs font-semibold text-slate-200">{c.name}</div>
@@ -100,7 +100,7 @@ export function RightDrawer({ state, open, onClose, onUpdateLorebook }: Props) {
               <button
                 key={t}
                 onClick={() => setTab(t)}
-                className={`flex-1 rounded-md px-2 py-1.5 text-xs font-medium capitalize transition-colors ${tab === t ? 'bg-crimson-600 text-white' : 'text-slate-400 hover:text-slate-200'}`}
+                className={`flex-1 rounded-md px-2 py-1.5 text-xs font-medium capitalize transition-colors ${tab === t ? 'sgm-info-tab-on' : 'text-slate-400 hover:text-slate-200'}`}
               >
                 {t}
               </button>
@@ -151,7 +151,7 @@ export function RightDrawer({ state, open, onClose, onUpdateLorebook }: Props) {
                         </span>
                       </div>
                       <div className="mt-1.5 h-1.5 overflow-hidden rounded-full bg-slate-800">
-                        <div className="h-full rounded-full bg-crimson-500" style={{ width: `${con.capacity > 0 ? (used / con.capacity) * 100 : 0}%` }} />
+                        <div className="sgm-info-fill h-full rounded-full" style={{ width: `${con.capacity > 0 ? (used / con.capacity) * 100 : 0}%` }} />
                       </div>
                       {expanded && (
                         <div className="mt-2 pt-2 border-t border-slate-800 space-y-1 pl-2">
@@ -243,7 +243,7 @@ function CapacityBar({ state }: { state: GameState }) {
         <span className={isFull ? 'text-rose-400 font-bold' : ''}>{cap.usedSlots}/{cap.totalSlots}</span>
       </div>
       <div className="h-1.5 rounded-full bg-slate-800 overflow-hidden">
-        <div className={`h-full rounded-full transition-all ${isFull ? 'bg-rose-500' : 'bg-crimson-500'}`} style={{ width: `${pct}%` }} />
+        <div className={`h-full rounded-full transition-all ${isFull ? 'bg-rose-500' : 'sgm-info-fill'}`} style={{ width: `${pct}%` }} />
       </div>
       <div className="mt-1.5 flex flex-wrap gap-1">
         {cap.containerBreakdown.map((c, i) => (
@@ -349,12 +349,12 @@ function CodexTab({ lorebook, onUpdate }: { lorebook: LoreCard[]; onUpdate?: (ca
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search codex..."
-            className="w-full rounded-lg border border-slate-700 bg-slate-800 py-1.5 pl-8 pr-3 text-xs text-slate-150 placeholder-slate-500 focus:border-crimson-500 focus:outline-none"
+            className="w-full rounded-lg border border-slate-700 bg-slate-800 py-1.5 pl-8 pr-3 text-xs text-slate-150 placeholder-slate-500 focus:border-[color:var(--sgm-accent,#ef4444)] focus:outline-none"
           />
         </div>
         <button
           onClick={() => setCreating(true)}
-          className="flex items-center gap-1 rounded-lg bg-crimson-600 px-2.5 py-1.5 text-xs font-medium text-white hover:bg-crimson-500 transition-colors"
+          className="sgm-info-fill flex items-center gap-1 rounded-lg px-2.5 py-1.5 text-xs font-medium text-white transition-colors"
         >
           <Plus size={14} /> New
         </button>
@@ -413,7 +413,7 @@ function LoreCardEditor({ card, onSave, onCancel, onDelete }: any) {
         <input
           value={name}
           onChange={(e) => setName(e.target.value)}
-          className="w-full rounded-lg border border-slate-700 bg-slate-800 px-3 py-1.5 text-xs text-slate-100 focus:border-crimson-500 focus:outline-none"
+          className="w-full rounded-lg border border-slate-700 bg-slate-800 px-3 py-1.5 text-xs text-slate-100 focus:border-[color:var(--sgm-accent,#ef4444)] focus:outline-none"
         />
       </div>
       <div>
@@ -422,12 +422,12 @@ function LoreCardEditor({ card, onSave, onCancel, onDelete }: any) {
           value={summary}
           onChange={(e) => setSummary(e.target.value)}
           rows={3}
-          className="w-full resize-none rounded-lg border border-slate-700 bg-slate-800 px-3 py-1.5 text-xs text-slate-100 focus:border-crimson-500 focus:outline-none"
+          className="w-full resize-none rounded-lg border border-slate-700 bg-slate-800 px-3 py-1.5 text-xs text-slate-100 focus:border-[color:var(--sgm-accent,#ef4444)] focus:outline-none"
         />
       </div>
       <div className="flex justify-end gap-2">
         <button onClick={onCancel} className="rounded-lg px-3 py-1.5 text-xs text-slate-400">Cancel</button>
-        <button onClick={handleSave} className="rounded-lg bg-crimson-600 px-3 py-1.5 text-xs font-medium text-white">Save</button>
+        <button onClick={handleSave} className="sgm-info-fill rounded-lg px-3 py-1.5 text-xs font-medium text-white">Save</button>
       </div>
     </div>
   );

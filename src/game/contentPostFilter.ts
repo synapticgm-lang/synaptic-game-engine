@@ -1,10 +1,11 @@
 /**
  * Post-filter GM output to the player's maturity / Kid Mode settings (Pack 7).
- * Kid Mode casual swear swap remains in filterLogic.sanitizeInput.
+ * Kid Mode uses the shared Google Families bar in kidModeSafety (fun swear swap + blocks).
  */
 
 import type { Settings } from './types';
 import { resolveMaturity } from './maturity';
+import { filterKidModeText } from './kidModeSafety';
 
 const STRONG_SWEARS =
   /\b(fuck(?:ing|ed|er)?|motherfuck(?:er|ing)?|shit(?:ty|ting)?|cunt|cock|dick|asshole|bastard)\b/gi;
@@ -24,15 +25,16 @@ export function postFilterGmOutput(
 ): string {
   if (!text) return text;
   const m = resolveMaturity(settings);
+  if (m.kid) return filterKidModeText(text);
   let out = text;
 
-  if (m.kid || m.cursingLevel === 'none') {
+  if (m.cursingLevel === 'none') {
     out = out.replace(STRONG_SWEARS, '—').replace(MILD_SWEARS, '—');
   } else if (m.cursingLevel === 'mild') {
     out = out.replace(STRONG_SWEARS, '—');
   }
 
-  if (m.kid || m.violenceLevel === 'none') {
+  if (m.violenceLevel === 'none') {
     out = out.replace(GORE, 'the fight ends');
   } else if (m.violenceLevel === 'mild') {
     out = out.replace(GORE, 'a harsh impact');

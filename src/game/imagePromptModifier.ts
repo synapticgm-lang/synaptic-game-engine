@@ -17,7 +17,7 @@ export function buildImagePromptModifier(settings: Settings): string {
   const styleSuffix = styleMap[settings.artStylePreset] ?? styleMap['classic-book'];
 
   if (settings.contentMode === 'kid') {
-    return `STRICTLY FAMILY-FRIENDLY: Bright colors, soft lighting, cartoonish style, no violence, suitable for all ages. ${styleSuffix}`;
+    return `STRICTLY FAMILY-FRIENDLY (Google Play Families): Bright colors, soft lighting, cartoonish style, no gore, no nudity, no alcohol/drugs/smoking, no gambling, suitable for all ages. ${styleSuffix}`;
   }
   return `DARK FANTASY MATURE: Dramatic lighting, gritty texture, intense combat, mature themes allowed. ${styleSuffix}`;
 }

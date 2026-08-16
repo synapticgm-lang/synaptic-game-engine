@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { RefreshCw, Cloud, ChevronRight, UserRound } from 'lucide-react';
 import type { BootPhase } from '@/game/useGame';
+import { LegalLinks } from './LegalLinks';
 
 export function WelcomeSplash({ onTap }: { onTap: () => void }) {
   useEffect(() => {
@@ -43,6 +44,19 @@ export function WelcomeSplash({ onTap }: { onTap: () => void }) {
             <ChevronRight size={16} className="transition-transform duration-300 group-hover:translate-x-1" />
           </div>
           <p className="text-[11px] text-amber-200/40">Press any key or tap anywhere to begin</p>
+          <div
+            className="pointer-events-auto pt-2"
+            onClick={(e) => e.stopPropagation()}
+            onKeyDown={(e) => e.stopPropagation()}
+          >
+            <nav className="flex flex-wrap items-center justify-center gap-x-3 gap-y-1 text-[11px] text-amber-200/35" aria-label="Legal">
+              <a href="/terms" className="hover:text-amber-100/70 underline-offset-2 hover:underline">Terms</a>
+              <span aria-hidden>·</span>
+              <a href="/privacy" className="hover:text-amber-100/70 underline-offset-2 hover:underline">Privacy</a>
+              <span aria-hidden>·</span>
+              <a href="/credits" className="hover:text-amber-100/70 underline-offset-2 hover:underline">Credits</a>
+            </nav>
+          </div>
         </div>
       </div>
     </button>
@@ -129,6 +143,8 @@ export function AuthOverlay({ onSignIn, onGuest }: AuthProps) {
             <span>Saves stored in your private app data folder on Drive</span>
             {onGuest && <span className="text-slate-600">Guest mode stores saves locally in your browser</span>}
           </div>
+
+          <LegalLinks className="mt-1" />
         </div>
       </div>
     </div>

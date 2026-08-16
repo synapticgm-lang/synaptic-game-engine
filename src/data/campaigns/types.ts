@@ -134,4 +134,11 @@ export interface CampaignBible {
    * Stops every PYOA playing as take-hand / shove-as-bait / hide-MacGuffin / tap-MacGuffin.
    */
   styleRail?: string;
+  /**
+   * Premade world outline id from `worldOutlines.ts`.
+   * - omit: pick by engine mode + seed (open worlds); PYOA defaults to none
+   * - string: pin that outline
+   * - null: closed story — no continent atlas
+   */
+  worldOutlineId?: string | null;
 }

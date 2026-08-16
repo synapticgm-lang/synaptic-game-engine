@@ -40,7 +40,7 @@ import {
 } from './comicImagePrompt';
 import { resolvePanelBudget } from './panelBudget';
 import { buildVisualConsistencyBlock } from './visualConsistency';
-import { classifyImageGenFailure, diegeticImageFailureMessage } from './visualCanon';
+import { classifyImageGenFailure, diegeticImageFailureMessage, prepareKidSafeImagePrompt } from './visualCanon';
 import { fallbackSuggestionForState, findUnsupportedItemClaims, isSuggestionValidForState } from './suggestionValidation';
 import { isChoiceGroundedInTurn, normalizeStoryCorpus, padChoicesToCount, resolvePipelineChoices, sceneSafeFallbacks } from './choicePipeline';
 import { sanitizeNarrativeMechanics, ensureTurnProse, ensureDamageNarration, ensureEncounterNarration, ensureXpNarration, stripUnearnedXpProse, stripResidualMechanicTags } from './narrativeSanitize';
@@ -84,6 +84,7 @@ import {
 import { mediatePlayerInput } from './inputMediation';
 import { maybeRatingRewrite } from './maturity';
 import { postFilterGmOutput } from './contentPostFilter';
+import { filterKidModeText } from './kidModeSafety';
 import {
   advanceTutorialBeats,
   ensureTutorialQuest,
@@ -149,10 +150,10 @@ import {
   calculateAge,
 } from './drive';
 import { useVoice } from './useVoice';
-import { sanitizeInput } from '@/utils/filterLogic';
 import { logger } from './logger';
 import { debugLogger } from './debugLogger';
 import { supabase, signInWithGoogleOAuth, signOutSupabase, isSupabaseConfigured } from '@/lib/supabase';
+import { syncEntitlementsFromServer } from './entitlementSync';
 import {
   installTelemetryDebugBridge,
   setTelemetryContext,
@@ -402,6 +403,7 @@ export function useGame() {
   const [unlockedQuests, setUnlockedQuests] = useState<Quest[]>([]);
   const [syncPhase, setSyncPhase] = useState<SyncPhase>('idle');
   const [toasts, setToasts] = useState<Toast[]>([]);
+  const [outOfTurnsAdOffer, setOutOfTurnsAdOffer] = useState(false);
   const [cloudSlot, setCloudSlot] = useState<SaveSlotInfo | null>(null);
   const [cloudSlots, setCloudSlots] = useState<SaveSlotInfo[]>([]);
   const [localSlot, setLocalSlot] = useState<SaveSlotInfo | null>(null);
@@ -531,6 +533,18 @@ export function useGame() {
     setBootPhase((phase) => (phase === 'welcome' || phase === 'auth' ? 'hub' : phase));
     isHydratedRef.current = true;
     void refreshSaveSlots();
+    void syncEntitlementsFromServer().then((result) => {
+      if (!result.ok || result.skipped) return;
+      const next = loadSettings();
+      setSettings(next);
+      settingsRef.current = next;
+      debugLogger.record('SYSTEM', 'Entitlements synced from server', {
+        planId: result.planId,
+        textPackBalance: result.textPackBalance,
+        cosmeticsGranted: result.cosmeticsGranted,
+        error: result.error,
+      });
+    });
   });
 
   useEffect(() => {
@@ -677,7 +691,18 @@ export function useGame() {
     }
 
     const mode = getContentMode(settings);
-    const builtPrompt = buildImagePromptForKind(prompt, settings, mode, promptKind, context);
+    let scenePrompt = prompt;
+    if (mode === 'kid') {
+      const prepared = prepareKidSafeImagePrompt(prompt, { skipIfUnsalvageable: true });
+      if (prepared.skip) {
+        debugLogger.record('SYSTEM', 'Skipping kid-unsafe image before API call', {
+          promptKind,
+        });
+        return null;
+      }
+      scenePrompt = prepared.prompt;
+    }
+    const builtPrompt = buildImagePromptForKind(scenePrompt, settings, mode, promptKind, context);
     const saveId = stateRef.current?.saveId?.trim() ?? '';
     const promptHash = saveId
       ? hashImageCacheParts([
@@ -741,8 +766,12 @@ export function useGame() {
       return await storeIfPossible(imageUrl);
     } catch (e) {
       if (e instanceof ImageModerationError) {
+        if (mode === 'kid') {
+          notifyImageFailure(e);
+          return null;
+        }
         try {
-          const softened = buildImagePromptForKind(softenPrompt(prompt), settings, mode, promptKind, context);
+          const softened = buildImagePromptForKind(softenPrompt(scenePrompt), settings, mode, promptKind, context);
           const imageUrl = await requestImage(softened);
           return await storeIfPossible(imageUrl || null);
         } catch (retryErr) {
@@ -768,7 +797,16 @@ export function useGame() {
     context?: ImagePromptContext
   ): Promise<string | null> => {
     const mode = getContentMode(settings);
-    const builtPrompt = buildImagePromptForKind(prompt, settings, mode, 'milestone-illustration', context);
+    let scenePrompt = prompt;
+    if (mode === 'kid') {
+      const prepared = prepareKidSafeImagePrompt(prompt, { skipIfUnsalvageable: true });
+      if (prepared.skip) {
+        debugLogger.record('SYSTEM', 'Skipping kid-unsafe loot video before API call');
+        return null;
+      }
+      scenePrompt = prepared.prompt;
+    }
+    const builtPrompt = buildImagePromptForKind(scenePrompt, settings, mode, 'milestone-illustration', context);
     try {
       const videoUrl = await generateVideo(builtPrompt, settings);
       return videoUrl || null;
@@ -1352,6 +1390,7 @@ export function useGame() {
     setActiveSubscriptionTier(settingsRef.current.subscriptionTier ?? 'free');
     if (!canSpend('text')) {
       addToast(capacityStatusMessage('text'), 'info');
+      setOutOfTurnsAdOffer(true);
       setRestoreDraft(input);
       turnInFlightRef.current = false;
       return;
@@ -1415,7 +1454,7 @@ export function useGame() {
       }
     }
 
-    const contentSanitized = sanitizeInput(rewriteSource, mode);
+    const contentSanitized = mode === 'kid' ? filterKidModeText(rewriteSource) : rewriteSource;
     const lastGmForGround = current.log.filter((l) => l.role === 'gm').pop()?.content ?? '';
     const storyProseForGround = normalizeStoryCorpus(lastGmForGround);
     const openingPending = isOpeningEstablishmentPending(current);
@@ -1548,6 +1587,9 @@ export function useGame() {
         openingText = applyProseWarden(
           enforcePerspective(openingText, settingsRef.current, openingState.character.name)
         );
+        if (settingsRef.current.contentMode === 'kid') {
+          openingText = filterKidModeText(openingText);
+        }
         const openingChoices = extractChoicesFromText(openingText, openingState);
         const cleanOpening = stripChoiceList(openingText);
         const openingBible = getCampaignBibleById(openingState.campaignBibleId ?? '');
@@ -1890,7 +1932,7 @@ In <system-log>, only emit LitRPG/RPG progression lines (XP, loot, HP change as 
         );
       }
 
-      // Dice math belongs in the player-facing system log only for D&D / 5e.
+      // Dice math belongs in the player-facing system log only for tabletop fantasy.
       const codeSystemLogLine = isDndEngine
         ? `Action Check: d20(${d20Roll}) + Mod(${strMod}) = ${outcome.totalScore} vs DC ${difficultyClass} — ${narrativeOutcomeLabel}`
         : null;
@@ -2089,7 +2131,7 @@ In <system-log>, only emit LitRPG/RPG progression lines (XP, loot, HP change as 
       // remains the sole source of truth for every game-mechanics side effect (inventory,
       // quests, HP, encounters, choices, system-log) via `events`/`updates` computed from
       // `result.text` — the Director only ever replaces `comicPanelsForLog`, i.e. which panels
-      // get rendered/imaged in `ComicGrid`. Text Mode and D&D Mode never reach this branch
+      // get rendered/imaged in `ComicGrid`. Text Mode and tabletop fantasy never reach this branch
       // (`isComicView` is false for both), so their pipelines are completely untouched. If the
       // Director call fails, times out, or returns something unusable, we silently keep the
       // GM's own `<panel>`-tag panels computed above — Comic Mode never blocks or breaks
@@ -2267,15 +2309,26 @@ In <system-log>, only emit LitRPG/RPG progression lines (XP, loot, HP change as 
       cleanText = applyProseWarden(cleanText);
 
       if (mode === 'kid') {
-        const kidTalk = (s: string) => sanitizeInput(s, 'kid');
+        const kidTalk = (s: string) => filterKidModeText(s);
         cleanText = kidTalk(cleanText);
         comicPanelsForLog = comicPanelsForLog.map((panel) => ({
           ...panel,
           narrative: kidTalk(panel.narrative),
           imagePrompt: kidTalk(panel.imagePrompt),
         }));
-        for (const item of newInventoryItems) item.name = kidTalk(item.name);
+        for (const item of newInventoryItems) {
+          item.name = kidTalk(item.name);
+          if (item.description) item.description = kidTalk(item.description);
+        }
         if (baseChar.appearance) baseChar.appearance = kidTalk(baseChar.appearance);
+        mergedSystemLog = mergedSystemLog.map(kidTalk);
+        for (const card of newLoreCards) {
+          if (card.name) card.name = kidTalk(card.name);
+          if (card.summary) card.summary = kidTalk(card.summary);
+        }
+        if (result.imagePrompt?.length) {
+          result.imagePrompt = result.imagePrompt.map(kidTalk);
+        }
       }
 
       const inventoryAfterFormChange = visualUpdate?.formChange
@@ -2297,6 +2350,17 @@ In <system-log>, only emit LitRPG/RPG progression lines (XP, loot, HP change as 
         { ...workingState, quests: updatedQuests },
         nextTurn
       );
+      if (mode === 'kid') {
+        updatedQuests = updatedQuests.map((q) => ({
+          ...q,
+          name: filterKidModeText(q.name),
+          description: filterKidModeText(q.description),
+          objectives: q.objectives?.map((o) => ({
+            ...o,
+            description: filterKidModeText(o.description),
+          })),
+        }));
+      }
       const turnUnlocks = newlyRevealedQuests(questsAtTurnStart, updatedQuests);
       if (turnUnlocks.length) {
         mergedSystemLog.push(...turnUnlocks.map((q) => `Quest Unlocked: ${q.name}`));
@@ -2455,10 +2519,14 @@ In <system-log>, only emit LitRPG/RPG progression lines (XP, loot, HP change as 
           ? 'core'
           : 'minimal';
 
+      const deadEncounter = workingState.activeEncounter ?? liveCurrent.activeEncounter;
       const memorableDecision = decideClassicMemorable(
         {
           settings: settingsRef.current,
-          state: liveCurrent,
+          state: {
+            ...liveCurrent,
+            activeDungeon: areaMap ?? workingState.activeDungeon ?? liveCurrent.activeDungeon,
+          },
           turn: nextTurn,
           storyText: cleanText,
           writerTag: writerMilestone,
@@ -2473,6 +2541,11 @@ In <system-log>, only emit LitRPG/RPG progression lines (XP, loot, HP change as 
               .filter((e) => e.type === 'item-gain' && e.name)
               .map((e) => ({ name: e.name!, rarity: e.rarity })),
           ],
+          defeatedEnemyName: ledgerRound?.enemyDead
+            ? ledgerRound.enemyName
+            : deadEncounter && deadEncounter.hp <= 0
+              ? deadEncounter.name
+              : null,
         },
         canSpend('memorable')
       );
@@ -2528,7 +2601,7 @@ In <system-log>, only emit LitRPG/RPG progression lines (XP, loot, HP change as 
         lorebook: mergedLorebook,
         turn: nextTurn,
         pendingImagePrompt: result.imagePrompt,
-        choices: mode === 'kid' ? finalChoices.map((c) => sanitizeInput(c, 'kid')) : finalChoices,
+        choices: mode === 'kid' ? finalChoices.map((c) => filterKidModeText(c)) : finalChoices,
         gold: Math.max(0, (workingState.gold ?? liveCurrent.gold ?? 0) + extraWeekGold),
         worldLedger,
         ...(turnFrame ? { turnFrameTheme: turnFrame } : {}),
@@ -2608,7 +2681,7 @@ In <system-log>, only emit LitRPG/RPG progression lines (XP, loot, HP change as 
           intent,
           narrative: cleanText,
           systemLog: mergedSystemLog,
-          choices: mode === 'kid' ? finalChoices.map((c) => sanitizeInput(c, 'kid')) : finalChoices,
+          choices: mode === 'kid' ? finalChoices.map((c) => filterKidModeText(c)) : finalChoices,
           wardenNotes: warden.notes,
           proposedState: mergedState,
           hpDelta,
@@ -2902,6 +2975,9 @@ In <system-log>, only emit LitRPG/RPG progression lines (XP, loot, HP change as 
       openingText = applyProseWarden(
         enforcePerspective(openingText, settingsRef.current, newState.character.name)
       );
+      if (settingsRef.current.contentMode === 'kid') {
+        openingText = filterKidModeText(openingText);
+      }
       const openingChoices = extractChoicesFromText(openingText, newState);
       const cleanOpening = stripChoiceList(openingText);
       const openingBible = getCampaignBibleById(newState.campaignBibleId ?? '');
@@ -3060,7 +3136,29 @@ In <system-log>, only emit LitRPG/RPG progression lines (XP, loot, HP change as 
         narrativeText = result.summary;
       }
 
+      narrativeText = postFilterGmOutput(narrativeText, settingsRef.current);
+      if (settingsRef.current.contentMode === 'kid') {
+        narrativeText = filterKidModeText(narrativeText);
+      }
+
       const newTurn = liveCurrent.turn + 1;
+      const autoEvents = parseActionTags(narrativeText);
+      const autoMemorable = decideClassicMemorable(
+        {
+          settings: settingsRef.current,
+          state: liveCurrent,
+          turn: newTurn,
+          storyText: narrativeText,
+          writerTag: eventsToMilestone(autoEvents),
+          events: autoEvents,
+          lootVideo: eventsToLootVideo(autoEvents),
+          characterHp: result.finalPlayerHp,
+          characterConditions: liveCurrent.character.conditions ?? [],
+          gainedItems: result.loot.map((item) => ({ name: item.name, rarity: item.rarity })),
+          defeatedEnemyName: result.victory ? enemy.name : null,
+        },
+        canSpend('memorable')
+      );
       const playerEntry: LogEntry = {
         id: uid(),
         turn: newTurn,
@@ -3084,6 +3182,7 @@ In <system-log>, only emit LitRPG/RPG progression lines (XP, loot, HP change as 
           `Gold Gained: ${result.goldGained}`,
           ...(result.loot.length > 0 ? [`Loot: ${result.loot.map(l => `[${l.rarity}] ${l.name}`).join(', ')}`] : []),
         ],
+        ...memorableLogFields(autoMemorable),
       };
 
       const updatedCharacter = { ...liveCurrent.character, hp: result.finalPlayerHp, mp: result.finalPlayerMp };
@@ -3110,6 +3209,7 @@ In <system-log>, only emit LitRPG/RPG progression lines (XP, loot, HP change as 
         gold: liveCurrent.gold + result.goldGained,
         activeEncounter: null,
         turn: newTurn,
+        memorableMoments: autoMemorable.nextState,
         log: [...liveCurrent.log, playerEntry, gmEntry],
         lastUpdated: Date.now(),
       };
@@ -3119,6 +3219,20 @@ In <system-log>, only emit LitRPG/RPG progression lines (XP, loot, HP change as 
       setState(updated);
       stateRef.current = updated;
       await persist(updated);
+      if (
+        autoMemorable.request
+        && storyHasBody(narrativeText)
+        && allowsImageGeneration(settingsRef.current, 'milestone-illustration')
+      ) {
+        enqueueImageGen({
+          kind: 'turn',
+          entryId: gmEntry.id,
+          prompts: [autoMemorable.request.imagePrompt],
+          promptKind: 'milestone-illustration',
+          visualContext: buildVisualConsistencyBlock(updated, []),
+          isMilestone: true,
+        });
+      }
     } catch (err: any) {
       setError(err?.message ?? 'Auto-fight failed.');
     } finally {
@@ -3221,6 +3335,21 @@ In <system-log>, only emit LitRPG/RPG progression lines (XP, loot, HP change as 
       addToast('This sitting’s splash limit is used. Death can still illustrate; other moments wait.', 'info');
       return;
     }
+    let offerPrompt = current.log.find((item) => item.id === entryId)?.beautyOffer?.imagePrompt ?? '';
+    if (settingsRef.current.contentMode === 'kid' && offerPrompt) {
+      const prepared = prepareKidSafeImagePrompt(offerPrompt, { skipIfUnsalvageable: true });
+      if (prepared.skip) {
+        addToast('That picture would not be kid-safe. The story continues without it.', 'info');
+        const dismissed = applyDismissedBeautyOffer(current, entryId);
+        if (dismissed) {
+          stateRef.current = dismissed;
+          setState(dismissed);
+          void persist(dismissed);
+        }
+        return;
+      }
+      offerPrompt = prepared.prompt;
+    }
     const applied = applyAcceptedBeautyOffer(current, entryId);
     if (!applied) return;
     stateRef.current = applied.next;
@@ -3230,7 +3359,7 @@ In <system-log>, only emit LitRPG/RPG progression lines (XP, loot, HP change as 
       enqueueImageGen({
         kind: 'turn',
         entryId,
-        prompts: [applied.prompt],
+        prompts: [offerPrompt || applied.prompt],
         promptKind: 'milestone-illustration',
         visualContext: buildVisualConsistencyBlock(applied.next, []),
         isMilestone: true,
@@ -3461,6 +3590,8 @@ In <system-log>, only emit LitRPG/RPG progression lines (XP, loot, HP change as 
     saveStatus, showSettings, setShowSettings, showApiSetup, setShowApiSetup, showNewGame, setShowNewGame,
     showRolls, setShowRolls, showMapModal, setShowMapModal, leftOpen, setLeftOpen, rightOpen, setRightOpen,
     showWelcome, setShowWelcome, showCharacterWindow, setShowCharacterWindow, showMerchantWindow, setShowMerchantWindow, unlockedQuests, dismissUnlockedQuests: () => setUnlockedQuests([]), syncPhase, toasts, dismissToast, addToast, cloudSlot, cloudSlots, localSlot,
+    outOfTurnsAdOffer,
+    dismissOutOfTurnsAdOffer: () => setOutOfTurnsAdOffer(false),
     sendAction,
     cancelTurn: () => {
       turnAbortRef.current?.abort();
@@ -3504,6 +3635,13 @@ In <system-log>, only emit LitRPG/RPG progression lines (XP, loot, HP change as 
         saveSettings(updated);
         return updated;
       });
+      if (mode === 'adult') {
+        try {
+          sessionStorage.removeItem('synapticgm-parent-purchase-ok-until');
+        } catch {
+          /* ignore */
+        }
+      }
     },
     verifyContentPin: (pin) => settingsRef.current.contentPin === pin,
     rewindOneTurn: () => {

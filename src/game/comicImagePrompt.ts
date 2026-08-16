@@ -42,6 +42,9 @@ const CLASSIC_ILLUSTRATION_DIRECTIVE =
 const MILESTONE_ILLUSTRATION_DIRECTIVE =
   'Full-page milestone illustration: epic, high-detail single splash image marking a major story beat. Dramatic composition, cinematic lighting, worthy of a two-page spread in a printed book — NOT a comic panel grid or multi-cell layout.';
 
+const KID_MILESTONE_BEAT_DIRECTIVE =
+  'KID-SAFE MILESTONE (Google Play Families): If a foe is down, show them asleep, slumped, or fading — never blood, gore, or a corpse close-up. Victory is a triumphant pose. A death beat is a quiet book-closing rest with no injury shown. Everyone fully clothed, non-suggestive. No alcohol, drugs, needles, smoking, or gambling. Skip graphic injury entirely.';
+
 const COMIC_COMPOSITION_DIRECTIVE =
   'Single comic panel illustration with clean, well-balanced framing and a strong focal composition.';
 
@@ -93,7 +96,7 @@ export function getEffectiveComicPreset(preset: ArtStylePreset): Exclude<ArtStyl
 
 function contentTone(mode: 'kid' | 'adult' | 'unrestricted'): string {
   if (mode === 'kid') {
-    return `STRICTLY FAMILY-FRIENDLY: bright colors, soft lighting, cartoonish tone, suitable for all ages. ${kidSafeArtDirective()}`;
+    return `STRICTLY FAMILY-FRIENDLY (Google Play Families bar): bright colors, soft lighting, cartoonish tone, suitable for all ages. ${kidSafeArtDirective()} No alcohol, drugs, smoking, gambling, or suggestive poses.`;
   }
   if (mode === 'unrestricted') {
     return 'Mature fantasy tone: dramatic lighting, gritty texture, intense action allowed.';
@@ -159,9 +162,10 @@ export function buildMilestoneIllustrationPrompt(
   return [
     withDeterministicContext(scenePrompt, context),
     MILESTONE_ILLUSTRATION_DIRECTIVE,
+    mode === 'kid' ? KID_MILESTONE_BEAT_DIRECTIVE : '',
     PURE_ART_DIRECTIVE,
     contentTone(mode),
-  ].join('\n\n');
+  ].filter(Boolean).join('\n\n');
 }
 
 const ITEM_ICON_DIRECTIVE =

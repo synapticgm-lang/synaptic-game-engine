@@ -4,6 +4,9 @@ import { GoogleOAuthProvider } from '@react-oauth/google';
 import App from './App.tsx';
 import './index.css';
 import { ErrorBoundary } from './components/ErrorBoundary';
+import { LegalPage } from './components/LegalPage';
+import { CreditsPage } from './components/CreditsPage';
+import { isCreditsPath, legalPathToId } from './legal/legalDocs';
 import { logger } from './game/logger';
 
 const GOOGLE_CLIENT_ID_FALLBACK = '947440674973-8k1p2f3q4r5s6t7u8v9w0x1y2z3a4b5c.apps.googleusercontent.com';
@@ -13,12 +16,21 @@ logger.startConsoleCapture();
 logger.info('app', 'Synaptic AI Game starting up');
 logger.info('app', `Environment: ${import.meta.env.MODE}, Client ID present: ${!!clientId}`);
 
+const legalDocId = legalPathToId(window.location.pathname);
+const showCredits = isCreditsPath(window.location.pathname);
+
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <ErrorBoundary>
-      <GoogleOAuthProvider clientId={clientId}>
-        <App />
-      </GoogleOAuthProvider>
+      {showCredits ? (
+        <CreditsPage />
+      ) : legalDocId ? (
+        <LegalPage docId={legalDocId} />
+      ) : (
+        <GoogleOAuthProvider clientId={clientId}>
+          <App />
+        </GoogleOAuthProvider>
+      )}
     </ErrorBoundary>
   </StrictMode>
 );

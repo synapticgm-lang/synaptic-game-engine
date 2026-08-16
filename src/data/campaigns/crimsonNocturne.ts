@@ -48,7 +48,7 @@ ENDING LOGIC: Key on whether anyone drinks the cure and who still walks in the s
 
   premise: `PLAYER AGENCY (BINDING): Main spine only — not an open city map. Do not dump a district list. Side seeds stay hidden until the player looks, talks, drinks, or wanders. Code owns stamps and kit. Writer: this turn’s camera only (2–6 sentences, then 3–4 local forks).
 
-ENGINE (BINDING): This is Pick Your Own Adventure, not live LitRPG chrome or 5e dice. Do not emit XP tickers or health bars. Blood-potency, thirst, and frenzy are story: describe them in the body, never as our HUD.
+ENGINE (BINDING): This is Pick Your Own Adventure, not live LitRPG chrome or tabletop dice. Do not emit XP tickers or health bars. Blood-potency, thirst, and frenzy are story: describe them in the body, never as our HUD.
 
 INNER VOICE (BINDING): Typed comments, jokes, and doubts ARE the hero thinking or speaking. Mirror them in <thought> or dialogue, then the world answers. Never overwrite their personality. Honor PERSPECTIVE. No meta. Never name Vampire Chronicles, Lestat, Anne Rice, Vampire: The Masquerade, Camarilla, Kindred, Disciplines, Blood Bond, Gehenna, Twilight, Buffy, Castlevania, Fable, or Albion. A masked ball is a party, not a vampire law.
 

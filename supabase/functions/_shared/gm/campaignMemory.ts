@@ -88,6 +88,7 @@ export function extractLosslessFacts(
 
   // Promise / threat language → consequence threads
   next = extractPromisesFromProse(next, narrative, turn);
+  next = extractSilencedSpeechFromProse(next, narrative, turn);
   return next;
 }
 
@@ -115,6 +116,39 @@ export function extractPromisesFromProse(
       if (seen.has(key) || text.length < 12) continue;
       seen.add(key);
       next = addConsequence(next, `Open thread (T${turn}): ${text}`, turn);
+      if ((next.consequences ?? []).filter((c) => c.unresolved).length >= 12) return next;
+    }
+  }
+  return next;
+}
+
+const SILENCE_PATTERNS: RegExp[] = [
+  /\b(?:began|started|opens?|opened)\s+(?:to\s+)?(?:speak|say|talk)[^.!?\n]{0,90}(?:cut(?:\s+off)?|silenced|shut\s+down|stopped|interrupted|gesture[ds]?|hand\s+(?:up|raised))\b[^.!?\n]{0,40}/gi,
+  /\b(?:cut(?:s|ting)?\s+(?:him|her|them|the\s+\w+)\s+off|silenced|gesture[ds]?\s+for\s+silence|a\s+hand\s+(?:rose|lifted|cut))\b[^.!?\n]{0,80}/gi,
+];
+
+/** Someone began to speak and was shut down — keep the thread on the ledger. */
+export function extractSilencedSpeechFromProse(
+  memory: CampaignMemoryState,
+  narrative: string,
+  turn: number
+): CampaignMemoryState {
+  let next = memory;
+  const seen = new Set(
+    (memory.consequences ?? []).map((c) => c.text.toLowerCase().slice(0, 60))
+  );
+  for (const re of SILENCE_PATTERNS) {
+    const local = new RegExp(re.source, re.flags);
+    let m: RegExpExecArray | null;
+    while ((m = local.exec(narrative)) !== null) {
+      const text = compressLine(
+        `Spoken interruption (T${turn}): ${m[0]} — return to this thread.`,
+        180
+      );
+      const key = text.toLowerCase().slice(0, 60);
+      if (seen.has(key) || text.length < 20) continue;
+      seen.add(key);
+      next = addConsequence(next, text, turn);
       if ((next.consequences ?? []).filter((c) => c.unresolved).length >= 12) return next;
     }
   }
@@ -391,6 +425,7 @@ ${retrieved || '(none)'}
 === PLAYER / AUTO PINS ===
 ${pins || '(none)'}
 === UNRESOLVED CONSEQUENCES (MUST NOT FORGET) ===
+Spoken interruptions stay live: if someone was shut down, return to them or say why they stay silent.
 ${consequences || '(none)'}
 === NPC RELATIONSHIP SUMMARIES ===
 ${npcLines || '(none)'}

@@ -27,7 +27,7 @@ interface Props {
 }
 
 /**
- * One-time tip shown in every engine mode (LitRPG / D&D / story RPG)
+ * One-time tip shown in every engine mode (LitRPG / tabletop fantasy / story RPG)
  * once the player is in an active session.
  */
 export function AutoFightTipModal({ combatResolveMode, onEnableAuto, onDismiss }: Props) {
@@ -60,7 +60,7 @@ export function AutoFightTipModal({ combatResolveMode, onEnableAuto, onDismiss }
             <span className="font-medium text-slate-100">1–2 turns</span> instead.
           </p>
           <p className="text-xs text-slate-500">
-            Same dice, HP, and loot — you just spend fewer story turns. Works in LitRPG, D&amp;D, and story RPG.
+            Same dice, HP, and loot — you just spend fewer story turns. Works in LitRPG, tabletop fantasy, and story RPG.
             Change anytime in Settings → Mechanics.
           </p>
           {alreadyAuto && (

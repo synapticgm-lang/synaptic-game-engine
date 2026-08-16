@@ -14,9 +14,9 @@ export function LeftDrawer({ state, open, onClose }: Props) {
   return (
     <>
       {open && <div className="fixed inset-0 z-30 bg-black/50 lg:hidden" onClick={onClose} />}
-      <aside className={`fixed left-0 top-0 z-40 h-full w-72 transform overflow-y-auto border-r border-slate-800 bg-slate-950 transition-transform duration-300 lg:static lg:z-0 lg:w-72 lg:translate-x-0 ${open ? 'translate-x-0' : '-translate-x-full'}`}>
-        <div className="flex items-center justify-between border-b border-slate-800 px-4 py-3 lg:hidden">
-          <span className="font-serif text-slate-200">Journal</span>
+      <aside className={`sgm-info-panel fixed left-0 top-0 z-40 h-full w-72 transform overflow-y-auto border-r transition-transform duration-300 lg:static lg:z-0 lg:w-72 lg:translate-x-0 ${open ? 'translate-x-0' : '-translate-x-full'}`}>
+        <div className="flex items-center justify-between border-b border-slate-800/80 px-4 py-3 lg:hidden">
+          <span className="sgm-info-heading">Journal</span>
           <button onClick={onClose} className="text-slate-400 hover:text-slate-200"><X size={18} /></button>
         </div>
 
@@ -36,7 +36,7 @@ function WorldSection({ state }: { state: GameState }) {
   const deals = ledger.deals.filter((d) => d.active);
   return (
     <section>
-      <h3 className="mb-2 flex items-center gap-2 font-serif text-sm uppercase tracking-wider text-crimson-400">
+      <h3 className="sgm-info-heading mb-2 flex items-center gap-2 text-sm uppercase tracking-wider">
         <Globe2 size={14} /> World
       </h3>
       <p className="mb-2 text-xs text-slate-400">{clockLabel(ledger.clock)}</p>
@@ -76,7 +76,7 @@ function SquadSection({ state }: { state: GameState }) {
   const party = state.companions.filter(c => c.type === 'party');
   return (
     <section>
-      <h3 className="mb-2 flex items-center gap-2 font-serif text-sm uppercase tracking-wider text-crimson-400">
+      <h3 className="sgm-info-heading mb-2 flex items-center gap-2 text-sm uppercase tracking-wider">
         <Users size={14} /> Squad
       </h3>
       {party.length === 0 ? (
@@ -98,7 +98,7 @@ function SquadSection({ state }: { state: GameState }) {
 function QuestsSection({ state }: { state: GameState }) {
   return (
     <section>
-      <h3 className="mb-2 flex items-center gap-2 font-serif text-sm uppercase tracking-wider text-crimson-400">
+      <h3 className="sgm-info-heading mb-2 flex items-center gap-2 text-sm uppercase tracking-wider">
         <ScrollText size={14} /> Quests
       </h3>
       {(() => {
@@ -124,7 +124,7 @@ function QuestsSection({ state }: { state: GameState }) {
 function ShrinesSection({ state }: { state: GameState }) {
   return (
     <section>
-      <h3 className="mb-2 flex items-center gap-2 font-serif text-sm uppercase tracking-wider text-crimson-400">
+      <h3 className="sgm-info-heading mb-2 flex items-center gap-2 text-sm uppercase tracking-wider">
         <Landmark size={14} /> Shrines & Libraries
       </h3>
       {state.shrines.length === 0 ? (

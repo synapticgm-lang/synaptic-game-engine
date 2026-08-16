@@ -14,7 +14,7 @@ export function formatWorldCanonForPrompt(state: Pick<GameState, 'engineMode' | 
   const place = (state.currentLocation ?? '').trim() || 'unspecified place';
   if (era === 'medieval_fantasy') {
     return [
-      'WORLD CANON (TABLETOP / 5e-SAFE FANTASY — BINDING):',
+      'WORLD CANON (TABLETOP FANTASY — BINDING):',
       `- Place: ${place}. Tavern, road, keep, wood, or dungeon — not a modern city unless the scene already named one.`,
       '- People wear period clothes, cloaks, or armor from the sheet. No phones, cars, streetlights, jeans, or System panels in the picture.',
       '- Weapons match the equipped item name only. Do not swap a dagger for a greatsword.',
@@ -26,7 +26,7 @@ export function formatWorldCanonForPrompt(state: Pick<GameState, 'engineMode' | 
     return [
       'WORLD CANON (STORY RPG — BINDING):',
       `- Place: ${place}. Match the campaign premise and this scene only.`,
-      '- Do not add Integration System chrome, Wave events, or 5e dice notation to the picture.',
+      '- Do not add Integration System chrome, Wave events, or tabletop dice notation to the picture.',
       '- Weapons and clothes match the equipped / described kit only.',
       '- Anatomy: one person unless the scene lists more. Two arms, two legs, five fingers per hand.',
     ].join('\n');
@@ -41,15 +41,12 @@ export function formatWorldCanonForPrompt(state: Pick<GameState, 'engineMode' | 
   ].join('\n');
 }
 
-export function kidSafeArtDirective(): string {
-  return [
-    'KID-SAFE ART (ledger unchanged — enemies can still be downed):',
-    'No blood pools, sprays, gore, dismemberment, or graphic wounds.',
-    'Hits are motion blur, sparks, dust, or impact stars.',
-    'Downed foes slump or fade — not bloody corpses.',
-    'Everyone fully clothed. No nudity or sexualized poses.',
-  ].join(' ');
-}
+export {
+  kidSafeArtDirective,
+  stripKidUnsafeImageLexicon,
+  isUnsalvageableKidImagePrompt,
+  prepareKidSafeImagePrompt,
+} from './kidModeSafety';
 
 export type ImageFailureReason = 'rate_limited' | 'no_key' | 'moderation' | 'failed';
 

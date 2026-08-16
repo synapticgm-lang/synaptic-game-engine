@@ -30,6 +30,7 @@ const GMLibrary = lazy(() => import('@/components/GMLibrary').then(m => ({ defau
 const CharacterWindow = lazy(() => import('@/components/CharacterWindow').then(m => ({ default: m.CharacterWindow })));
 const MerchantWindow = lazy(() => import('@/components/MerchantWindow').then(m => ({ default: m.MerchantWindow })));
 const QuestUnlockModal = lazy(() => import('@/components/QuestUnlockModal').then(m => ({ default: m.QuestUnlockModal })));
+const OutOfTurnsAdOffer = lazy(() => import('@/components/OutOfTurnsAdOffer').then(m => ({ default: m.OutOfTurnsAdOffer })));
 
 export default function App() {
   const game = useGame();
@@ -527,8 +528,19 @@ export default function App() {
         </Suspense>
       )}
 
+      <Suspense fallback={null}>
+        <OutOfTurnsAdOffer
+          open={game.outOfTurnsAdOffer}
+          contentMode={game.settings.contentMode}
+          onClose={game.dismissOutOfTurnsAdOffer}
+          onGranted={(turns) => {
+            game.addToast(`+${turns} turns from ad — you’re good to keep playing.`, 'success');
+          }}
+        />
+      </Suspense>
+
       <ToastStack toasts={game.toasts} onDismiss={game.dismissToast} />
-      {/* Dice tray is D&D-only — never cover the action input in LitRPG / RPG / classic text. */}
+      {/* Dice tray is tabletop-fantasy-only — never cover the action input in LitRPG / RPG / classic text. */}
       {state.engineMode === 'dnd' && !isComicView && (
         <DiceTrayToolbar diceAnimation={game.settings.diceAnimation ?? 'normal'} />
       )}

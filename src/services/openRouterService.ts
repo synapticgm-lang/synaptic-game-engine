@@ -12,6 +12,7 @@ import {
   KID_MODE_STYLE_DIRECTIVE,
 } from '../styles/styleSpecs';
 import type { Settings } from '../game/types';
+import { prepareKidSafeImagePrompt } from '../game/visualCanon';
 import { generateFluxImage } from './fluxDirect';
 import { resolveFluxImageModel } from '../game/subscriptionTiers';
 import { canSpend, spendCapacity } from '../game/capacityLedger';
@@ -118,10 +119,21 @@ export const fetchComicPanel = async (
   imageModel?: string,
   options?: { useRawPrompt?: boolean; signal?: AbortSignal }
 ): Promise<string> => {
+  let workingBase = basePrompt;
+  if (mode === 'kid') {
+    const prepared = prepareKidSafeImagePrompt(basePrompt, { skipIfUnsalvageable: true });
+    if (prepared.skip) {
+      throw new ImageModerationError(
+        'Kid Mode skipped a Families-bar image before the API call.',
+        basePrompt,
+      );
+    }
+    workingBase = prepared.prompt;
+  }
 
   const resolvedApiKey = apiKey || OPENROUTER_API_KEY;
   const resolvedModel = imageModel
-    || (HERO_IMAGE_TRIGGER.test(basePrompt) ? HERO_IMAGE_MODEL : PRIMARY_IMAGE_MODEL);
+    || (HERO_IMAGE_TRIGGER.test(workingBase) ? HERO_IMAGE_MODEL : PRIMARY_IMAGE_MODEL);
 
   if (!resolvedApiKey) {
     debugLogger.record('ERROR', 'Image generation skipped — no OpenRouter API key available', {
@@ -133,8 +145,8 @@ export const fetchComicPanel = async (
 
   const style = COMIC_STYLES[styleKey] || COMIC_STYLES.western;
   const composedPrompt = options?.useRawPrompt
-    ? basePrompt
-    : `${basePrompt}, ${style.promptSuffix}`;
+    ? workingBase
+    : `${workingBase}, ${style.promptSuffix}`;
   let finalPrompt = withPureArtDirective(composedPrompt);
 
   if (!options?.useRawPrompt) {
@@ -592,11 +604,23 @@ export async function generateComicImage(
   const timeoutMs = options?.timeoutMs ?? DEFAULT_IMAGE_GEN_TIMEOUT_MS;
   const provider = settings.imageProvider || 'flux';
 
+  let workingPrompt = prompt;
+  if (mode === 'kid') {
+    const prepared = prepareKidSafeImagePrompt(prompt, {
+      skipIfUnsalvageable: true,
+    });
+    if (prepared.skip) {
+      console.log('[ImageService] Skipping kid-unsafe memorable prompt before API call.');
+      return null;
+    }
+    workingPrompt = prepared.prompt;
+  }
+
   const styleSpec = getStyleSpec(settings.artStylePreset);
   const effectiveNegativePrompt = getEffectiveNegativePrompt(styleSpec, mode);
   const kidDirective = mode === 'kid' ? `${KID_MODE_STYLE_DIRECTIVE}\n\n` : '';
   const colorVariantDirective = getColorVariantDirective(styleSpec, settings.colorVariant);
-  const visualPrompt = withPureArtDirective(prompt);
+  const visualPrompt = withPureArtDirective(workingPrompt);
   const styledPrompt = [
     `${kidDirective}${styleSpec.style_prefix}`,
     visualPrompt,

@@ -1,6 +1,8 @@
 import type { Settings } from './types';
 import { logger } from './logger';
 import { fetchComicPanel, ImageModerationError, generateComicImage } from '@/services/openRouterService';
+import { resolveContentFilterProfile } from './contentFilterProfile';
+import { prepareKidSafeImagePrompt } from './visualCanon';
 
 // Re-exported for backward compatibility — the class now lives in openRouterService.ts,
 // next to the detection logic that actually throws it (text-refusal detection in fetchComicPanel).
@@ -11,9 +13,7 @@ function buildFinalPrompt(prompt: string, modifier: string): string {
 }
 
 function modeFromSettings(settings: Settings): 'kid' | 'adult' | 'unrestricted' {
-  if (settings.contentMode === 'kid') return 'kid';
-  if (settings.contentMode === 'adult') return 'adult';
-  return 'unrestricted';
+  return resolveContentFilterProfile(settings).imageSafetyMode;
 }
 
 export async function generateImage(
@@ -26,13 +26,31 @@ export async function generateImage(
     return null;
   }
 
-  const finalPrompt = buildFinalPrompt(prompt, styleModifier);
-  logger.info('ai-image', `generateImage via generateComicImage pipeline`);
+  const profile = resolveContentFilterProfile(settings);
+  let scenePrompt = prompt;
+  if (profile.imageSafetyMode === 'kid') {
+    const prepared = prepareKidSafeImagePrompt(prompt, { skipIfUnsalvageable: true });
+    if (prepared.skip) {
+      logger.info('ai-image', 'Skipping kid-unsafe image before API call');
+      return null;
+    }
+    scenePrompt = prepared.prompt;
+  }
+  let finalPrompt = buildFinalPrompt(scenePrompt, styleModifier);
+  if (profile.softenImagePrompts) {
+    finalPrompt = softenPrompt(finalPrompt);
+  }
+
+  logger.info('ai-image', `generateImage via generateComicImage pipeline`, {
+    filterProfile: profile.id,
+    imageSafetyMode: profile.imageSafetyMode,
+  });
 
   try {
     return await generateComicImage(finalPrompt, modeFromSettings(settings), settings, {
       memorableMoment: settings.visualMode === 'classic' && settings.classicMemorableImages,
       useRawPrompt: true,
+      hero: false,
     });
   } catch (err) {
     if (err instanceof ImageModerationError) throw err;

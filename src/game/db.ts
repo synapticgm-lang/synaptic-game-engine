@@ -86,7 +86,11 @@ export function loadSettings(): Settings {
         // Prefer user-saved keys only — never bake VITE_* provider secrets into the client bundle path.
         openrouterApiKey: parsed.openrouterApiKey?.trim() ? parsed.openrouterApiKey : '',
         fluxApiKey: parsed.fluxApiKey?.trim() ? parsed.fluxApiKey : '',
-        subscriptionTier: parsed.subscriptionTier ?? 'free',
+        subscriptionTier: parsed.subscriptionTier === 'mid' || parsed.subscriptionTier === 'high' || parsed.subscriptionTier === 'admin'
+          ? parsed.subscriptionTier
+          : 'free',
+        byokModeEnabled: !!parsed.byokModeEnabled,
+        byokDisclaimerAccepted: !!parsed.byokDisclaimerAccepted,
         imageProvider: parsed.imageProvider ?? 'flux',
         classicMemorableImages:
           parsed.classicMemorableImages ?? createDefaultSettings().classicMemorableImages,

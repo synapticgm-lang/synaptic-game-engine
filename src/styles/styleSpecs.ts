@@ -360,7 +360,7 @@ export function getColorVariantDirective(spec: StyleSpec, variant: ColorVariant 
  * keeping their distinct art direction.
  */
 export const KID_MODE_NEGATIVE_PROMPT =
-  'gore, blood, graphic violence, weapons aimed at people, corpses, realistic injury, disturbing or scary imagery, horror, nudity, sexual or suggestive content, alcohol, drugs, smoking, profanity, grimdark tone';
+  'gore, blood, graphic violence, torture, weapons aimed at people, corpses, realistic injury, disturbing or scary imagery, horror, nudity, sexual or suggestive content, lingerie, alcohol, drugs, smoking, needles, syringes, gambling, casino, slot machines, hate symbols, profanity, grimdark tone';
 
 /**
  * PEGI-3 equivalent (suitable for all ages) visual-narrative constraint. Prepended to the
@@ -370,7 +370,7 @@ export const KID_MODE_NEGATIVE_PROMPT =
  * `useRawPrompt: true`.
  */
 export const KID_MODE_STYLE_DIRECTIVE =
-  'STRICTLY FAMILY-FRIENDLY (PEGI 3 equivalent, suitable for all ages): bright cheerful colors, soft lighting, gentle cartoonish/storybook tone. Absolutely no graphic violence, blood, gore, weapons harming anyone, or scary/disturbing imagery.';
+  'STRICTLY FAMILY-FRIENDLY (Google Play Families / PEGI 3 equivalent, suitable for all ages): bright cheerful colors, soft lighting, gentle cartoonish/storybook tone. Absolutely no graphic violence, blood, gore, weapons harming anyone, nudity, suggestive poses, alcohol, drugs, smoking, needles, gambling, hate symbols, or scary/disturbing imagery.';
 
 /**
  * Returns the active style's negative prompt, layered with the Kid Mode safety terms when

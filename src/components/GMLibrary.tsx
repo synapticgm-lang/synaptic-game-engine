@@ -288,17 +288,18 @@ export function GMLibrary({ open, contentMode, onClose, onSelectCampaign, onSele
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-2 sm:p-4">
       <div
-        className="relative flex h-full max-h-[96vh] w-full max-w-6xl flex-col overflow-hidden rounded-xl border border-slate-700/60 bg-slate-950 shadow-2xl"
+        className="sgm-turn-frame sgm-info-panel relative flex h-full max-h-[96vh] w-full max-w-6xl flex-col overflow-hidden rounded-xl border shadow-2xl"
         onClick={(e) => e.stopPropagation()}
       >
+        <div className="sgm-turn-frame-bar h-1 w-full shrink-0" />
         {/* Header */}
-        <div className="flex shrink-0 items-center justify-between border-b border-slate-800 bg-gradient-to-r from-slate-900 to-slate-950 px-4 py-3 sm:px-6">
+        <div className="flex shrink-0 items-center justify-between border-b border-slate-800/80 bg-black/20 px-4 py-3 sm:px-6">
           <div className="flex items-center gap-3">
-            <div className="flex h-9 w-9 items-center justify-center rounded-lg border border-crimson-500/30 bg-crimson-950/40 text-crimson-400">
+            <div className="sgm-info-tab-on flex h-9 w-9 items-center justify-center rounded-lg border">
               <BookOpen size={18} />
             </div>
             <div>
-              <h2 className="font-serif text-base font-bold tracking-wide text-slate-100 sm:text-lg">
+              <h2 className="sgm-info-heading text-base font-bold tracking-wide sm:text-lg">
                 GM Library
               </h2>
               <p className="hidden text-[11px] text-slate-500 sm:block">
@@ -384,7 +385,7 @@ function TabButton({ active, onClick, icon, label }: { active: boolean; onClick:
       onClick={onClick}
       className={`flex items-center gap-2 rounded-lg px-3 py-1.5 text-xs font-medium transition-all ${
         active
-          ? 'border border-crimson-500/40 bg-crimson-950/30 text-crimson-300'
+          ? 'sgm-info-tab-on border'
           : 'border border-transparent text-slate-400 hover:bg-slate-800/60 hover:text-slate-200'
       }`}
     >
@@ -485,7 +486,7 @@ function CampaignCarousel({
                 <div className="mt-auto flex items-center gap-1.5 pt-1">
                   <span className="rounded bg-slate-800/80 px-1.5 py-0.5 text-[9px] uppercase tracking-wide text-slate-500">
                     {c.engineMode === 'dnd'
-                      ? '5e Fantasy'
+                      ? 'Tabletop Fantasy'
                       : c.engineMode === 'pyoa'
                         ? 'Pick Your Own Adventure'
                         : c.engineMode === 'rpg'
@@ -531,13 +532,13 @@ function MapGallery({
               onClick={() => onSelect(m.id)}
               className={`group flex flex-col items-center gap-2 rounded-xl border p-4 text-center transition-all duration-200 ${
                 isSelected
-                  ? 'border-crimson-500 bg-crimson-950/30 shadow-lg'
+                  ? 'sgm-info-slot-on bg-black/20 shadow-lg'
                   : 'border-slate-700 bg-slate-900/50 hover:border-slate-600 hover:bg-slate-800/60'
               }`}
             >
               <div
                 className={`flex h-16 w-16 items-center justify-center rounded-lg border ${
-                  isSelected ? 'border-crimson-500/40 bg-crimson-950/40 text-crimson-400' : 'border-slate-700 bg-slate-800/60 text-slate-400 group-hover:text-slate-300'
+                  isSelected ? 'sgm-info-tab-on border' : 'border-slate-700 bg-slate-800/60 text-slate-400 group-hover:text-slate-300'
                 }`}
               >
                 <Icon size={28} strokeWidth={1.3} />
@@ -591,7 +592,7 @@ function InfoViewer({
                 onClick={() => onCategory(cat)}
                 className={`flex items-center gap-2 rounded-lg px-3 py-2 text-left text-xs font-medium transition-colors ${
                   isActive
-                    ? 'border border-crimson-500/40 bg-crimson-950/30 text-crimson-300'
+                    ? 'sgm-info-tab-on border'
                     : 'border border-transparent text-slate-400 hover:bg-slate-800/60 hover:text-slate-200'
                 }`}
               >
@@ -614,7 +615,7 @@ function InfoViewer({
               value={search}
               onChange={(e) => onSearch(e.target.value)}
               placeholder="Search lore, NPCs, rules..."
-              className="w-full rounded-lg border border-slate-700 bg-slate-900 py-2 pl-9 pr-3 text-xs text-slate-200 placeholder-slate-600 focus:border-crimson-500 focus:outline-none"
+              className="w-full rounded-lg border border-slate-700 bg-slate-900 py-2 pl-9 pr-3 text-xs text-slate-200 placeholder-slate-600 focus:border-[color:var(--sgm-accent,#ef4444)] focus:outline-none"
             />
           </div>
           {/* Mobile filter toggle */}
@@ -644,7 +645,7 @@ function InfoViewer({
                       }}
                       className={`flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-medium transition-colors ${
                         isActive
-                          ? 'border border-crimson-500/40 bg-crimson-950/30 text-crimson-300'
+                          ? 'sgm-info-tab-on border'
                           : 'border border-slate-700 bg-slate-800/40 text-slate-400'
                       }`}
                     >

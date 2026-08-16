@@ -254,10 +254,12 @@
   border-left: 2px solid var(--sgm-chip-accent);
   box-shadow: 1px 1px 0 color-mix(in srgb, var(--sgm-chip-accent) 35%, transparent);
 }
-.sgm-tex-plain {
+.sgm-tex-plain,
+html[data-sgm-texture='plain'] .sgm-info-panel {
   background-image: linear-gradient(180deg, var(--sgm-chip-panel), var(--sgm-chip-bg));
 }
-.sgm-tex-moss {
+.sgm-tex-moss,
+html[data-sgm-texture='moss'] .sgm-info-panel {
   background-image:
     radial-gradient(circle at 18% 28%, color-mix(in srgb, var(--sgm-chip-accent) 50%, transparent) 0 1.3px, transparent 1.7px),
     radial-gradient(circle at 72% 62%, #3f621266 0 2px, transparent 2.5px),
@@ -265,13 +267,15 @@
     repeating-linear-gradient(125deg, transparent 0 5px, #14532d28 5px 6px),
     linear-gradient(160deg, #14532d 0%, #0a1308 58%, #1a2e12 100%);
 }
-.sgm-tex-dusk {
+.sgm-tex-dusk,
+html[data-sgm-texture='dusk'] .sgm-info-panel {
   background-image:
     radial-gradient(circle at 20% 18%, #e9d5ff22 0 1px, transparent 1.4px),
     radial-gradient(circle at 78% 40%, #c084fc33 0 1.2px, transparent 1.6px),
     linear-gradient(155deg, #2e1065 0%, #0b0614 52%, #1e1b4b 100%);
 }
-.sgm-tex-soot {
+.sgm-tex-soot,
+html[data-sgm-texture='soot'] .sgm-info-panel {
   background-image:
     repeating-linear-gradient(90deg, transparent 0 10px, #d9770618 10px 11px),
     repeating-linear-gradient(0deg, transparent 0 10px, #d9770614 10px 11px),
@@ -279,49 +283,57 @@
     radial-gradient(circle at 70% 80%, #d9770633 0 8px, transparent 18px),
     linear-gradient(165deg, #44403c 0%, #1c1917 48%, #0c0a09 100%);
 }
-.sgm-tex-ivory {
+.sgm-tex-ivory,
+html[data-sgm-texture='ivory'] .sgm-info-panel {
   background-image:
     linear-gradient(115deg, transparent 40%, #fef3c722 42%, transparent 45%),
     linear-gradient(160deg, #1e3a5f 0%, #0c1222 55%, #fbbf2418 100%);
 }
-.sgm-tex-banner {
+.sgm-tex-banner,
+html[data-sgm-texture='banner'] .sgm-info-panel {
   background-image:
     repeating-linear-gradient(90deg, #365314 0 4px, #1a2e05 4px 8px),
     radial-gradient(circle at 12% 28%, #a3e63533 0 2px, transparent 2.5px),
     radial-gradient(circle at 88% 72%, #a3e63522 0 2px, transparent 2.5px),
     linear-gradient(180deg, #365314, #0f140a);
 }
-.sgm-tex-scale {
+.sgm-tex-scale,
+html[data-sgm-texture='scale'] .sgm-info-panel {
   background-image:
     radial-gradient(circle at 25% 30%, #eab30844 0 4px, transparent 5px),
     radial-gradient(circle at 60% 55%, #14532d88 0 5px, transparent 6px),
     radial-gradient(circle at 40% 80%, #854d0e66 0 4px, transparent 5px),
     linear-gradient(160deg, #14532d, #052e16);
 }
-.sgm-tex-ember {
+.sgm-tex-ember,
+html[data-sgm-texture='ember'] .sgm-info-panel {
   background-image:
     radial-gradient(circle at 50% 110%, #fb718566 0 18%, transparent 42%),
     linear-gradient(165deg, #7c2d12 0%, #1c0a00 58%, #431407 100%);
 }
-.sgm-tex-circuit {
+.sgm-tex-circuit,
+html[data-sgm-texture='circuit'] .sgm-info-panel {
   background-image:
     repeating-linear-gradient(0deg, transparent 0 7px, #22d3ee22 7px 8px),
     repeating-linear-gradient(90deg, transparent 0 7px, #22d3ee18 7px 8px),
     linear-gradient(135deg, #facc1528 0 7%, transparent 7% 14%, #facc1528 14% 21%, transparent 21%),
     linear-gradient(145deg, #27272a, #09090b);
 }
-.sgm-tex-halo {
+.sgm-tex-halo,
+html[data-sgm-texture='halo'] .sgm-info-panel {
   background-image:
     radial-gradient(circle at 50% 0%, #fde68a55 0 20%, transparent 55%),
     linear-gradient(180deg, #44403c, #1c1917);
 }
-.sgm-tex-sulfur {
+.sgm-tex-sulfur,
+html[data-sgm-texture='sulfur'] .sgm-info-panel {
   background-image:
     radial-gradient(circle at 82% 18%, #facc1544 0 10%, transparent 12%),
     linear-gradient(125deg, transparent 36%, #facc1522 40%, transparent 44%),
     linear-gradient(160deg, #450a0a, #1a0505 60%, #7f1d1d55);
 }
-.sgm-tex-bone {
+.sgm-tex-bone,
+html[data-sgm-texture='bone'] .sgm-info-panel {
   background-image:
     radial-gradient(ellipse 22px 9px at 18% 22%, #fafaf966 0 42%, transparent 44%),
     radial-gradient(ellipse 16px 7px at 78% 68%, #e7e5e455 0 40%, transparent 42%),
@@ -329,12 +341,14 @@
     radial-gradient(circle at 70% 70%, #2dd4bf22 0 1px, transparent 1.4px),
     linear-gradient(160deg, #18181b, #09090b);
 }
-.sgm-tex-glamour {
+.sgm-tex-glamour,
+html[data-sgm-texture='glamour'] .sgm-info-panel {
   background-image:
     linear-gradient(120deg, #e879f933 0%, transparent 40%, #67e8f933 100%),
     linear-gradient(160deg, #4a044e, #0f0520);
 }
-.sgm-tex-scrap {
+.sgm-tex-scrap,
+html[data-sgm-texture='scrap'] .sgm-info-panel {
   background-image:
     repeating-linear-gradient(-35deg, #facc1528 0 6px, transparent 6px 12px),
     radial-gradient(circle at 22% 35%, #facc15 1.6px, transparent 2px),
@@ -342,38 +356,45 @@
     radial-gradient(circle at 80% 22%, #facc15 1.2px, transparent 1.6px),
     linear-gradient(160deg, #3f6212, #1a1f0a);
 }
-.sgm-tex-tide {
+.sgm-tex-tide,
+html[data-sgm-texture='tide'] .sgm-info-panel {
   background-image:
     repeating-linear-gradient(180deg, transparent 0 6px, #2dd4bf22 6px 7px),
     linear-gradient(165deg, #134e4a 0%, #042f2e 55%, #99f6e418 100%);
 }
-.sgm-tex-velvet {
+.sgm-tex-velvet,
+html[data-sgm-texture='velvet'] .sgm-info-panel {
   background-image:
     radial-gradient(ellipse at 30% 20%, #fb718522 0 20%, transparent 45%),
     repeating-linear-gradient(0deg, transparent 0 3px, #88133728 3px 4px),
     linear-gradient(165deg, #3f0a1a, #0c0004);
 }
-.sgm-tex-parchment {
+.sgm-tex-parchment,
+html[data-sgm-texture='parchment'] .sgm-info-panel {
   background-image:
     repeating-linear-gradient(180deg, transparent 0 9px, #b4530918 9px 10px),
     linear-gradient(160deg, #2a2118, #1c1410);
 }
-.sgm-tex-phosphor {
+.sgm-tex-phosphor,
+html[data-sgm-texture='phosphor'] .sgm-info-panel {
   background-image:
     repeating-linear-gradient(180deg, transparent 0 2px, #4ade8014 2px 3px),
     linear-gradient(160deg, #052e16, #000);
 }
-.sgm-tex-neon {
+.sgm-tex-neon,
+html[data-sgm-texture='neon'] .sgm-info-panel {
   background-image:
     linear-gradient(90deg, #f0abfc33 0%, transparent 40%, #22d3ee33 100%),
     linear-gradient(160deg, #1a0b2e, #05010a);
 }
-.sgm-tex-glass {
+.sgm-tex-glass,
+html[data-sgm-texture='glass'] .sgm-info-panel {
   background-image:
     linear-gradient(125deg, #ede9fe33 0 18%, transparent 40%),
     linear-gradient(160deg, #1e1b4b, #0f0a1a);
 }
-.sgm-tex-noir {
+.sgm-tex-noir,
+html[data-sgm-texture='noir'] .sgm-info-panel {
   background-image:
     repeating-linear-gradient(135deg, transparent 0 3px, #dc262614 3px 4px),
     linear-gradient(160deg, #171717, #000);
@@ -810,4 +831,42 @@ html[data-sgm-frame='velvet'] .sgm-turn-frame::before,
 .sgm-dice-fx-frost,
 .sgm-dice-fx-default {
   filter: drop-shadow(0 0 7px var(--sgm-dice-accent, #22d3ee));
+}
+
+/* ===== INFO SURFACES (player card, sheet, journal, drawers) ===== */
+.sgm-info-panel {
+  --sgm-chip-accent: var(--sgm-accent, #22d3ee);
+  --sgm-chip-bg: var(--sgm-bg, #020617);
+  --sgm-chip-panel: var(--sgm-panel, #0f172a);
+  background-color: var(--sgm-chip-panel);
+  color: var(--sgm-text, #e2e8f0);
+  font-family: var(--sgm-font-ui, 'Inter', system-ui, sans-serif);
+  border-color: color-mix(in srgb, var(--sgm-accent, #64748b) 48%, #334155);
+}
+.sgm-info-heading {
+  font-family: var(--sgm-font-story, 'Cinzel', serif);
+  color: var(--sgm-accent, #ef4444);
+}
+.sgm-info-accent {
+  color: var(--sgm-accent, #ef4444);
+}
+.sgm-info-tab-on {
+  color: var(--sgm-accent, #ef4444);
+  border-color: var(--sgm-accent, #ef4444);
+  background-color: color-mix(in srgb, var(--sgm-accent, #ef4444) 14%, transparent);
+}
+.sgm-info-slot-on {
+  border-color: var(--sgm-accent, #f87171);
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--sgm-accent, #f87171) 55%, transparent);
+}
+.sgm-hud {
+  border-bottom-color: color-mix(in srgb, var(--sgm-accent, #1e293b) 40%, #1e293b);
+  background-color: color-mix(in srgb, var(--sgm-panel, #020617) 94%, transparent);
+}
+.sgm-hud-brand {
+  font-family: var(--sgm-font-story, 'Cinzel', serif);
+  color: var(--sgm-accent, #ef4444);
+}
+.sgm-info-fill {
+  background-color: var(--sgm-accent, #ef4444);
 }

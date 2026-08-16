@@ -3,10 +3,9 @@ import { makeBible } from './makeBible';
 /**
  * Additional premade worlds — ORIGINAL SynapticGM content.
  * Inspired by popular *genre tropes* and the spirit of free/CC TTRPG one-shots,
- * but NOT copied from closed IPs (no Forgotten Realms, no named LitRPG novels,
- * no Critical Role settings, no DM's Guild exclusive FR modules).
+ * but NOT copied from closed IPs (no named licensed settings, no named LitRPG novels).
  *
- * Safe rails the AI can follow: original premises + SRD-compatible fantasy language.
+ * Safe rails the AI can follow: original premises + generic tabletop fantasy language.
  */
 
 export const ascendingSpire = makeBible({
@@ -20,7 +19,7 @@ export const ascendingSpire = makeBible({
   shortDescription:
     'Ranked floors, floor bosses, and a System that only rewards ascent. Genre trope — original world.',
   licenseNote:
-    'Original SynapticGM setting. Uses common LitRPG “tower climb” tropes (not any specific novel). Rules language may reference SRD-compatible fantasy terms under CC-BY where applicable.',
+    'Original SynapticGM setting. Uses common LitRPG “tower climb” tropes (not any specific novel). Generic tabletop words only.',
   premise:
     'A black spire punched through the sky overnight. The System labeled it [Ascending Spire] and opened registration. Each floor is a sealed biome with its own rules, monsters, and a Floor Warden. Clear the floor to unlock the stair. Fail, and the Spire keeps your gear — and sometimes your name. Outside the Spire, cities pay climbers for floor maps and rare drops. Inside, only rank and resolve matter.',
   lore: [
@@ -231,9 +230,9 @@ export const millstoneRoad = makeBible({
   genreTag: 'Caravan',
   tagline: 'Wagons, weather, and whatever waits past the next hill.',
   shortDescription:
-    'Classic 5e-friendly caravan start: escort, tavern rumors, low-level threats. Original — not a published FR module.',
+    'Classic tabletop caravan start: escort, tavern rumors, low-level threats. Original SynapticGM — not a published module.',
   licenseNote:
-    'Original SynapticGM adventure spine. Compatible with SRD 5.1 / 5.2 fantasy rules (CC-BY attribution to WotC for SRD rules content where used). Not affiliated with Wizards of the Coast settings (Forgotten Realms, etc.).',
+    'Original SynapticGM adventure spine. Generic tabletop fantasy language. Not affiliated with other companies’ settings.',
   premise:
     'Merchant Lessa hired you to guard three wagons to Millstone Ford. The road is muddy, the cargo is sealed, and the last escort vanished near the old mill. Bandits are the easy rumor. The harder rumor is that the mill’s wheel turns when there is no water.',
   lore: [
@@ -302,7 +301,7 @@ export const brokenCrownKeep = makeBible({
   shortDescription:
     'Dungeon-site keep crawl with rival factions below. Original OSR-style site — not a licensed module text.',
   licenseNote:
-    'Original SynapticGM site. Tonally akin to free OSR “keep dungeon” adventures, but all text and names are original. SRD-compatible monsters/rules OK with CC-BY attribution.',
+    'Original SynapticGM site. Tonally akin to free keep-dungeon adventures, but all text and names are original.',
   premise:
     'The northern keep of Ernost fell years ago. Now orc and troll warbands fight in the cellars for a dwarf hostage who knows a vault cipher. Clans offer silver for a rescue. The keep’s upper floors are quiet. The undercroft is not.',
   lore: [
@@ -580,24 +579,24 @@ export const blankCanvas = makeBible({
 
 export const blankCanvasDnd = makeBible({
   id: 'blank-canvas-dnd',
-  title: 'Blank Canvas (5e Custom)',
+  title: 'Blank Canvas (Tabletop Custom)',
   archetype: 'ai_custom',
   engineMode: 'dnd',
   difficulty: 'Standard',
   genreTag: 'Custom world',
-  tagline: 'Build your own 5e-compatible world on open rails.',
+  tagline: 'Build your own tabletop fantasy world on open rails.',
   shortDescription:
-    'Empty 5e-friendly custom shell. Use SRD rules; avoid Forgotten Realms and other closed settings.',
+    'Empty custom shell for original tabletop fantasy. Use your Codex; invent original names.',
   licenseNote:
-    'Shell only. Prefer SRD 5.1/5.2 (CC-BY). Do not import closed WotC settings or novel text.',
+    'Shell only. Original SynapticGM rails. Do not import closed settings or novel text.',
   premise:
-    'A blank 5e-compatible campaign. Set your region, pantheon (original), and factions via Codex. The AI follows SRD-safe fantasy language and your sheets only.',
+    'A blank tabletop campaign. Set your region, pantheon (original), and factions via Codex. The AI follows generic fantasy language and your sheets only.',
   lore: [
     {
-      title: 'SRD-Safe Play',
+      title: 'Original Play',
       category: 'mechanic',
-      body: 'Use open fantasy rules language. Do not reference trademarked setting names. Player Codex overrides improvisation.',
-      tags: ['srd', 'custom', 'rules'],
+      body: 'Use generic fantasy rules language. Do not reference other companies’ setting names. Player Codex overrides improvisation.',
+      tags: ['custom', 'rules'],
     },
   ],
   npcs: [],

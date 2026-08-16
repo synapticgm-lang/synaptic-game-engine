@@ -45,14 +45,14 @@ const ENGINE_MODE_CARDS: Array<{
   },
   {
     value: 'dnd',
-    label: '5e Fantasy (SRD)',
-    description: 'Open fifth-edition–compatible fantasy rules (SRD CC-BY). Transparent checks & combat.',
+    label: 'Tabletop Fantasy',
+    description: 'Classic d20 fantasy with transparent checks and combat. Original SynapticGM rules — dice, armor class, spell slots.',
     icon: Dices,
   },
   {
     value: 'rpg',
     label: 'Story RPG',
-    description: 'Fiction-first narrative — relationships, mysteries, heists. No LitRPG HUDs, no 5e dice math.',
+    description: 'Fiction-first narrative — relationships, mysteries, heists. No LitRPG HUDs, no tabletop dice math.',
     icon: ScrollText,
   },
   {
@@ -460,7 +460,7 @@ export function NewGameModal({ contentMode, onStart, onClose }: Props) {
                   <span>
                     <span className="block font-medium text-slate-200">Memorable moment images</span>
                     <span className="mt-0.5 block text-[10px] leading-snug text-slate-500">
-                      Optional. Opening and death auto-illustrate; other book-worthy beats are a tap-yes on the fast model. Off until you check this.
+                      Optional. Opening, death, and the first dungeon’s final boss auto-illustrate; later dungeon bosses and other book-worthy beats are a tap-yes on the fast model. Off until you check this.
                     </span>
                   </span>
                 </label>

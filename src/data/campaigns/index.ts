@@ -1,5 +1,6 @@
 import type { CampaignBible } from './types';
 import type { ContentMode, EngineMode } from '@/game/types';
+import { allowsNsfwCatalog } from '@/game/distributionChannel';
 export type { CampaignBible, LoreSnippet, KeyNPC, StarterQuest, StarterItem, Difficulty, OpeningPrompt, MysteryCulprit } from './types';
 
 import { systemIntegration } from './systemIntegration';
@@ -125,7 +126,7 @@ export const ALL_CAMPAIGN_BIBLES: CampaignBible[] = [
   wayfarersMap,
   hearthwickTeas,
   blankCanvasRpg,
-  // 5e Fantasy (SRD)
+  // Tabletop fantasy
   cursedKeep,
   millstoneRoad,
   brokenCrownKeep,
@@ -162,13 +163,19 @@ export function isNsfwCampaign(bible: Pick<CampaignBible, 'nsfw'> | undefined): 
   return bible?.nsfw === true;
 }
 
-/** Kid Mode hides NSFW campaigns. Adult mode shows the NSFW chip. */
+/** Kid Mode hides NSFW campaigns. Adult mode shows the NSFW chip. Store builds hide NSFW entirely. */
 export function filterBiblesForContentMode(
   bibles: CampaignBible[],
   contentMode?: ContentMode,
 ): CampaignBible[] {
-  if (contentMode !== 'kid') return bibles;
-  return bibles.filter((b) => !isNsfwCampaign(b));
+  let pool = bibles;
+  if (!allowsNsfwCatalog()) {
+    pool = pool.filter((b) => !isNsfwCampaign(b));
+  }
+  if (contentMode === 'kid') {
+    pool = pool.filter((b) => !isNsfwCampaign(b));
+  }
+  return pool;
 }
 
 export function getCampaignBiblesByEngineMode(

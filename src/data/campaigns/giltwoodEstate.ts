@@ -17,6 +17,7 @@ export const giltwoodEstate: CampaignBible = {
   licenseNote:
     'Original SynapticGM locked-room mystery. Aristocratic blackmail and hidden passages as tropes. Not based on Clue/Cluedo, Knives Out, Fable, Albion, or any named series, film, or board game.',
   startingLocation: 'the Billiard Room of Giltwood Estate',
+  worldOutlineId: null,
   replaceDefaultLoadout: true,
   startingContainer: { id: 'ge-jacket', name: 'Smoking-jacket pockets', capacity: 12 },
 

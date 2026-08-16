@@ -395,6 +395,71 @@ export interface GameState {
   activeDungeon?: ActiveDungeonState | null;
   worldLedger?: WorldLedger;
   activeEncounter?: ActiveEncounter | null;
+  /**
+   * Premade world landmass outline + fogged regions (LitRPG/tabletop/RPG open worlds).
+   * null = closed story (typical PYOA) — no continent atlas.
+   */
+  worldAtlas?: WorldAtlasState | null;
+  /** Classic memorable-splash cadence. Absent on old saves = nothing fired yet. */
+  memorableMoments?: MemorableMomentState;
+}
+
+export type BeautyOfferStatus = 'pending' | 'accepted' | 'dismissed';
+export type MemorableOfferKind = 'beauty' | 'ruler-audience' | 'writer-tag';
+
+/** Player-offered splash (beauty, ruler audience, or writer milestone tag). */
+export interface BeautyMomentOffer {
+  kind?: MemorableOfferKind;
+  personKey?: string;
+  personLabel?: string;
+  imagePrompt: string;
+  status: BeautyOfferStatus;
+}
+
+/** Persisted flags so classic memorable art stays sparse and does not re-fire the opener. */
+export interface MemorableMomentState {
+  openingSplashFired?: boolean;
+  lastSplashTurn?: number;
+  sessionSplashCount?: number;
+  /** When this sitting's splash count started. Stale sittings reset the cap. */
+  sittingStartedAt?: number;
+  /** @deprecated First combat is never auto and is never offered on its own. */
+  firstCombatSplashFired?: boolean;
+  /** @deprecated Ordinary NPC meets no longer auto-splash. Kept for old saves. */
+  firstNpcSplashFired?: boolean;
+  legendarySplashFired?: boolean;
+  deathSplashFired?: boolean;
+  /**
+   * Blueprint id of the campaign’s first real dungeon graph (not street).
+   * Pinned on first entry so a later dungeon cannot be mistaken for the first.
+   */
+  firstDungeonBlueprintId?: string;
+  /** Once true, no later dungeon final-boss auto-splash — even if detection is messy. */
+  firstDungeonBossSplashFired?: boolean;
+  /** First-dungeon boss key that auto-splashed. Later dungeons must not auto. */
+  dungeonBossSplashKeys?: string[];
+  /** Normalized ruler keys already offered or given a first-audience splash. */
+  rulerNamesSplashed?: string[];
+  /** Normalized person keys already offered a beauty picture. */
+  beautyOfferedKeys?: string[];
+  lastBeautyOfferTurn?: number;
+}
+
+export interface WorldAtlasRegionState {
+  id: string;
+  name: string;
+  blurb: string;
+  connections: string[];
+  tags?: string[];
+  revealed: boolean;
+}
+
+export interface WorldAtlasState {
+  outlineId: string;
+  outlineName: string;
+  description: string;
+  currentRegionId: string;
+  regions: WorldAtlasRegionState[];
 }
 
 export interface SaveSlotInfo {
@@ -453,16 +518,18 @@ export interface LogEntry {
   videoUrl?: string | null;
   lootItemName?: string;
   lootItemRarity?: Rarity;
+  /** Quiet, skippable offer — only when Memorable is on and the turn describes noteworthy beauty. */
+  beautyOffer?: BeautyMomentOffer;
 }
 
-/** Distinct rule engines chosen at campaign setup. */
+/** Distinct rule engines chosen at campaign setup. `'dnd'` is tabletop fantasy (saved key). */
 export type EngineMode = 'litrpg' | 'dnd' | 'rpg' | 'pyoa';
 
-/** Story RPG and pick-your-own-adventure: no LitRPG HUD, no 5e dice. */
+/** Story RPG and pick-your-own-adventure: no LitRPG HUD, no tabletop dice. */
 export function isFictionEngine(mode: EngineMode | undefined): boolean {
   return mode === 'rpg' || mode === 'pyoa';
 }
-export type DiceAnimationMode = 'visual' | 'text';
+export type DiceAnimationMode = 'static' | 'normal' | 'excited';
 export type ContentMode = 'kid' | 'adult';
 export type GmStrictness = 'forgiving' | 'standard' | 'hardcore';
 export type StatDisplayMode = 'inline' | 'tapToReveal';
@@ -729,20 +796,41 @@ export interface Settings {
   substanceUse: boolean;
   darkThemes: 'none' | 'implied' | 'explored';
   /**
+   * Website only: player opted into Bring Your Own Key (own text/image APIs).
+   * Requires byokDisclaimerAccepted. Ignored on store builds and Kid Mode.
+   */
+  byokModeEnabled: boolean;
+  /** Player accepted the BYOK responsibility disclaimer. */
+  byokDisclaimerAccepted: boolean;
+  /**
    * When true, rating rewrites pause for diegetic confirm ("System interprets…").
    * When false, rewrite applies automatically with a System note.
    */
   confirmContentRewrites: boolean;
   geminiApiKey: string;
   openrouterApiKey: string;
+  /** Direct Black Forest Labs API key — optional; used only when imageProvider is `flux-direct`. */
+  fluxApiKey: string;
   aiProvider: AiProvider;
   customModelId: string;
   baseUrl: string;
-  imageProvider: 'gemini' | 'custom';
+  /**
+   * Image backend:
+   * - `flux` = Flux via OpenRouter (current launch path; same tier model map as direct)
+   * - `flux-direct` = BFL api.bfl.ai (later; needs fluxApiKey)
+   * - `custom` = self-host OpenAI-compat / A1111 / Comfy
+   * - `gemini` = legacy alias → OpenRouter Flux path
+   */
+  imageProvider: 'flux' | 'flux-direct' | 'gemini' | 'custom';
   imageBaseUrl: string;
   imageApiKey: string;
   imageEndpointType: 'openai' | 'automatic1111' | 'comfyui';
   imageModel: string;
+  /**
+   * Account subscription tier (free / mid / high).
+   * Local until billing; drives writer model + capacity caps.
+   */
+  subscriptionTier: 'free' | 'mid' | 'high' | 'admin';
   /** Pluggable video-generation backend for loot_video moments. 'none' until a provider is configured. */
   videoProvider: 'none' | 'custom';
   videoBaseUrl: string;
@@ -751,8 +839,9 @@ export interface Settings {
   postLoginBehavior: PostLoginBehavior;
   visualMode: 'comic' | 'classic';
   /**
-   * Classic Text mode only: when true, still generate clean splash art for memorable
-   * moments (milestones / first kills / legendary drops). Routine panels stay off.
+   * Classic Text mode only: when true, generate clean splash art for memorable
+   * moments (opening, death, and the first dungeon’s final boss auto; other
+   * book-worthy beats are tap-yes). Off until the player opts in. Routine panels stay off.
    */
   classicMemorableImages: boolean;
   /** Comic mode page packing vs vertical webtoon scroll. Locked for active sessions. */
@@ -788,10 +877,17 @@ export interface Settings {
   romanceSubplots: boolean;
   haremContent: boolean;
   statScreensEnabled: boolean;
+  /** Tabletop chat formatting (boxed read-aloud). Saved as `dndMode`. */
   dndMode: boolean;
   mapTriggerMode: MapTriggerMode;
   fogRevealThreshold: FogRevealThreshold;
   combatFrequency: number;
+  /**
+   * Combat pacing for turn economy (all engine modes):
+   * - `full` = round-by-round player control (more turns)
+   * - `auto` = Auto Fight resolves encounters in ~1–2 turns
+   */
+  combatResolveMode: 'full' | 'auto';
   socialRoleplay: number;
   worldBuilding: number;
   strictEncumbrance: boolean;

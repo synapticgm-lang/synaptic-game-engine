@@ -62,30 +62,31 @@ export const QuestLogModal: React.FC<QuestLogModalProps> = ({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
-      <div className="relative w-full max-w-4xl h-[80vh] bg-slate-950 border border-blue-500/40 rounded-xl shadow-2xl shadow-blue-950/40 flex flex-col overflow-hidden text-slate-100">
-        <div className="flex items-center justify-between px-6 py-4 border-b border-blue-500/30 bg-blue-950/40">
+      <div className="sgm-turn-frame sgm-info-panel relative w-full max-w-4xl h-[80vh] rounded-xl shadow-2xl flex flex-col overflow-hidden">
+        <div className="sgm-turn-frame-bar h-1 w-full shrink-0" />
+        <div className="flex items-center justify-between px-6 py-4 border-b border-slate-800/80 bg-black/20">
           <div className="flex items-center gap-3">
-            <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-blue-300">System</span>
-            <h2 className="text-xl font-bold tracking-wide text-blue-100 uppercase">
+            <span className="sgm-info-accent font-mono text-[10px] uppercase tracking-[0.2em]">System</span>
+            <h2 className="sgm-info-heading text-xl font-bold tracking-wide uppercase">
               Quest Journal
             </h2>
           </div>
           <button
             onClick={onClose}
-            className="p-2 text-blue-300 hover:text-white rounded-lg transition-colors"
+            className="p-2 text-slate-400 hover:text-white rounded-lg transition-colors"
           >
             ✕
           </button>
         </div>
 
-        <div className="flex border-b border-blue-900/60 bg-slate-950/80 px-6 gap-2 pt-2">
+        <div className="flex border-b border-slate-800/80 bg-black/10 px-6 gap-2 pt-2">
           {(['active', 'completed', 'failed', 'all'] as const).map((tab) => (
             <button
               key={tab}
               onClick={() => setFilter(tab)}
               className={`px-4 py-2 text-sm font-semibold capitalize border-b-2 transition-colors ${
                 filter === tab
-                  ? 'border-blue-400 text-blue-200'
+                  ? 'sgm-info-tab-on'
                   : 'border-transparent text-slate-400 hover:text-slate-200'
               }`}
             >
@@ -95,7 +96,7 @@ export const QuestLogModal: React.FC<QuestLogModalProps> = ({
         </div>
 
         <div className="flex-1 flex overflow-hidden">
-          <div className="w-1/3 border-r border-blue-900/40 overflow-y-auto p-4 space-y-2">
+          <div className="w-1/3 border-r border-slate-800/60 overflow-y-auto p-4 space-y-2">
             {filteredQuests.length === 0 ? (
               <div className="text-center py-8 text-slate-500 text-sm">
                 No quests found in this category.
@@ -109,8 +110,8 @@ export const QuestLogModal: React.FC<QuestLogModalProps> = ({
                     onClick={() => setSelectedQuestId(quest.id)}
                     className={`w-full text-left p-3 rounded-lg border transition-all ${
                       isSelected
-                        ? 'bg-blue-950/60 border-blue-400/50 shadow-md'
-                        : 'bg-slate-900/50 border-slate-800 hover:border-blue-800'
+                        ? 'sgm-info-tab-on border shadow-md'
+                        : 'bg-slate-900/50 border-slate-800 hover:border-slate-600'
                     }`}
                   >
                     <div className="flex items-center justify-between gap-2 mb-1">
@@ -142,7 +143,7 @@ export const QuestLogModal: React.FC<QuestLogModalProps> = ({
                     </span>
                     {getStatusBadge(selectedQuest.status)}
                   </div>
-                  <h3 className="text-2xl font-bold text-slate-100 mb-2">
+                  <h3 className="sgm-info-heading text-2xl font-bold mb-2">
                     {selectedQuest.name}
                   </h3>
                   <p className="text-slate-300 text-sm leading-relaxed">
@@ -180,8 +181,8 @@ export const QuestLogModal: React.FC<QuestLogModalProps> = ({
                 ) : null}
 
                 {formatQuestRewards(selectedQuest.rewards) && (
-                  <div className="p-4 rounded-lg bg-blue-950/20 border border-blue-800/30">
-                    <h4 className="text-xs font-bold uppercase tracking-wider text-blue-300 mb-1">
+                  <div className="sgm-info-tab-on p-4 rounded-lg border">
+                    <h4 className="sgm-info-heading text-xs font-bold uppercase tracking-wider mb-1">
                       Quest Rewards
                     </h4>
                     <p className="text-sm text-slate-300">{formatQuestRewards(selectedQuest.rewards)}</p>
@@ -190,7 +191,7 @@ export const QuestLogModal: React.FC<QuestLogModalProps> = ({
               </div>
             ) : (
               <div className="flex flex-col items-center justify-center h-full text-slate-500">
-                <p className="font-mono text-xs uppercase tracking-widest text-blue-400/70 mb-2">System</p>
+                <p className="sgm-info-accent font-mono text-xs uppercase tracking-widest mb-2 opacity-80">System</p>
                 <p>No quest on file yet. Survive. The System will ping you.</p>
               </div>
             )}

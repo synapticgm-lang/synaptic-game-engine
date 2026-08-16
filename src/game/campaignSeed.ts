@@ -5,6 +5,7 @@ import type { Character, Container, EngineMode, GameState, Item, LoreCard, LoreC
 import { isFictionEngine } from './types';
 import { syncContainerOccupancy } from './inventory';
 import { stampMysteryCulprit } from './mysteryCulprit';
+import { seedWorldAtlas } from './worldAtlas';
 
 function snippetType(category: string): LoreCardType {
   if (category === 'faction') return 'faction';
@@ -81,7 +82,7 @@ export function seedStateFromCampaignBible(
     'No opening quest yet — do not invent quest log entries. Guide Book hooks stay unspoken until the System reveals them.';
   const kitRail = formatKitRail(bible, loadout.inventory);
 
-  return syncContainerOccupancy({
+  const seeded = syncContainerOccupancy({
     ...state,
     character,
     campaignBibleId: bible.id,
@@ -105,6 +106,8 @@ export function seedStateFromCampaignBible(
       },
     ],
   });
+
+  return seedWorldAtlas(seeded, bible);
 }
 
 function inferStartingLocation(bible: CampaignBible): string {

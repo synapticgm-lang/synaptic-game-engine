@@ -49,7 +49,7 @@ export const LITRPG_ARCHETYPES: ArchetypeOption[] = [
 ];
 
 export const DND_OPENINGS: ArchetypeOption[] = [
-  { value: 'ai_custom', label: 'Custom 5e Fantasy Campaign', description: 'AI generates a custom opening based on class/background (SRD-safe)' },
+  { value: 'ai_custom', label: 'Custom Tabletop Campaign', description: 'AI generates a custom opening based on class and background' },
   { value: 'caravan_escort', label: 'Caravan Escort / Tavern Meeting', description: 'Classic low-level start guarding cargo or gathering info' },
   { value: 'prisoner_shipwrecked', label: 'Prisoner / Shipwrecked', description: 'Start stripped of gear; focus on escape and scavenging' },
   { value: 'patrons_quest', label: "Patron's Quest", description: 'Hired by a wealthy noble or wizard with specific objectives and starter gear' },
@@ -151,58 +151,58 @@ You have creative freedom to invent or blend LitRPG tropes. Design a unique open
 };
 
 const DND_RULES: Record<DndOpening, string> = {
-  ai_custom: `5e TTRPG OPENING: AI CUSTOM CAMPAIGN
+  ai_custom: `TABLETOP OPENING: AI CUSTOM CAMPAIGN
 Generate a custom opening scene tailored to the player's chosen class and background. Establish a hook, a starting location, and an immediate objective. Integrate the character's backstory organically.`,
-  caravan_escort: `5e TTRPG OPENING: CARAVAN ESCORT / TAVERN MEETING
+  caravan_escort: `TABLETOP OPENING: CARAVAN ESCORT / TAVERN MEETING
 - Classic low-level start: the party is guarding cargo or gathering information in a tavern.
 - Introduce 1-2 NPCs with hooks. Present a low-stakes social or combat encounter.
 - Starter gear is mundane; gold is scarce. Emphasize roleplay and investigation.`,
-  prisoner_shipwrecked: `5e TTRPG OPENING: PRISONER / SHIPWRECKED
+  prisoner_shipwrecked: `TABLETOP OPENING: PRISONER / SHIPWRECKED
 - The party starts stripped of gear; focus on escape and scavenging.
 - Survival mechanics (food, water, shelter) matter immediately.
 - Recover equipment gradually. The environment is the first enemy.
 - No starting gold; improvised weapons only.`,
-  patrons_quest: `5e TTRPG OPENING: PATRON'S QUEST
+  patrons_quest: `TABLETOP OPENING: PATRON'S QUEST
 - Hired by a wealthy noble or wizard with specific objectives and starter gear.
 - Provide a clear quest briefing, payment terms, and a deadline.
 - Starter gear is provided by the patron (basic weapons, armor, a healing potion).
 - The patron may have ulterior motives; loyalty has a price.`,
-  under_siege: `5e TTRPG OPENING: UNDER SIEGE
+  under_siege: `TABLETOP OPENING: UNDER SIEGE
 - Immediate action start: the party is defending a village or outpost from invaders.
 - Begin in media res with combat already underway. Initiative matters from turn one.
 - Civilians, resources, and structural integrity are at stake.
 - Victory conditions: repel the assault or evacuate survivors.`,
-  cursed_manor: `5e TTRPG OPENING: CURSED MANOR / DUNGEON CRAWL
+  cursed_manor: `TABLETOP OPENING: CURSED MANOR / DUNGEON CRAWL
 - Exploration, traps, and ancient secrets dominate.
 - The manor or dungeon is the primary setpiece; rooms gate progression.
 - Emphasize Investigation, Perception, and trap disarm checks.
 - Treasure is hidden behind puzzles and hazards.`,
-  wilderness_expedition: `5e TTRPG OPENING: WILDERNESS EXPEDITION
+  wilderness_expedition: `TABLETOP OPENING: WILDERNESS EXPEDITION
 - Survival, tracking, and hazard navigation in untamed lands.
 - Weather, terrain, and wildlife are constant threats.
 - Navigation checks (Survival, Nature) determine progress and avoid getting lost.
 - Resources deplete over travel days; long rests carry risk.`,
 };
 
-const DND_5E_CORE_RULES = `=== 5e TTRPG MODE CORE RULES (FIFTH EDITION COMPATIBLE / SRD 5.1) ===
-Mechanics operate under the System Reference Document 5.1 ("SRD 5.1") rules:
-- d20 Resolution & DCs: Resolve actions using d20 + Ability Modifier + Proficiency against standard DCs (Easy 10, Medium 15, Hard 20, Very Hard 25).
-- Action Economy: Enforce strict turn structure in combat: Movement, Action (Attack, Cast Spell, Dash, Disengage, Hide, Use Object), Bonus Action, and Reaction. Show AC, HP, and Initiative order in HUD.
-- Spell Slots & Cantrips: Cantrips are unlimited. Levelled spells strictly consume slots, restored only via Short Rests (1 hr) or Long Rests (8 hrs).
-- Advantage / Disadvantage: Roll 2d20 and take highest/lowest based on situational positioning or status effects.
-- Downed Mechanics: Reaching 0 HP triggers Death Saving Throws (3 successes to stabilize, 3 failures for character death).
-- Dice Roll Logging: Format narrative action logs with explicit tabletop rolls (e.g., "[Check: Perception] Roll: 14 + 3 = 17 vs DC 15 -> Success!").
+const TABLETOP_CORE_RULES = `=== TABLETOP FANTASY MODE — CORE RULES ===
+Original SynapticGM tabletop play. Use generic TTRPG language only:
+- d20 Resolution: Resolve actions using d20 + ability modifier + proficiency against difficulty (Easy 10, Medium 15, Hard 20, Very Hard 25).
+- Combat turns: Movement, Action (Attack, Cast Spell, Dash, Disengage, Hide, Use Object), Bonus Action, and Reaction. Show armor class, hit points, and initiative order.
+- Spell slots: Cantrips are unlimited. Leveled spells consume slots, restored on a short rest (1 hr) or long rest (8 hrs).
+- Advantage / Disadvantage: Roll 2d20 and take highest/lowest based on situation.
+- Downed: Reaching 0 HP triggers downed saves (3 successes to stabilize, 3 failures for character death).
+- Dice logging: Format action logs with explicit rolls (e.g., "[Check: Perception] Roll: 14 + 3 = 17 vs DC 15 -> Success!").
 
-TRADEMARK SAFETY (MANDATORY):
-- NEVER use the trademarked brand names "Dungeons & Dragons", "D&D", or "Dungeon Master" in any AI-generated narrative output, system status logs, or item descriptions.
-- Refer to mechanics using trademark-safe phrasing only: "5e Fantasy Rules", "Fifth Edition Compatible", or "TTRPG mechanics".
-- Refer to the game master role as "GM" (Game Master), never "DM" or "Dungeon Master".
-- Refer to rulebooks as "the SRD" or "Fifth Edition rules", never by trademarked product names.`;
+ORIGINAL CONTENT RAIL (MANDATORY):
+- You are the GM (Game Master / narrator).
+- Do not name other companies' tabletop RPG brands, their published settings, unique published monsters, or named spell brands.
+- Use original SynapticGM names and public-domain folklore only.
+- Invent original creatures. Do not paste published stat blocks.`;
 
 export function buildArchetypeRules(engineMode: EngineMode, archetype: CampaignArchetype): string {
   if (engineMode === 'dnd') {
     const opening = (DND_RULES as Record<string, string>)[archetype] ?? DND_RULES.ai_custom;
-    return `${DND_5E_CORE_RULES}\n\n${opening}`;
+    return `${TABLETOP_CORE_RULES}\n\n${opening}`;
   }
   const litrpgOpening = (LITRPG_RULES as Record<string, string>)[archetype] ?? LITRPG_RULES.ai_random;
   if (engineMode === 'rpg' || engineMode === 'pyoa') {
@@ -210,7 +210,7 @@ export function buildArchetypeRules(engineMode: EngineMode, archetype: CampaignA
 
 ${engineMode === 'pyoa' ? `PYOA NARRATIVE OVERRIDE:
 - This is a pick-your-own-adventure with a clear main spine and optional sides.
-- Strip LitRPG HUD language and 5e dice math.
+- Strip LitRPG HUD language and tabletop dice math.
 - Player comments are the hero's inner voice. Ally, betray, party, and solo stick.
 - Several endings exist; play toward one only when the spine is complete.` : `RPG NARRATIVE OVERRIDE:
 - Strip LitRPG HUD language from the opening and ongoing play.

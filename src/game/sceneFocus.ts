@@ -3,7 +3,7 @@ import type { PlayerIntent } from './intentParser';
 
 /**
  * Cross-mode scene focus: Guide Book / quests must not hijack the turn.
- * Applies to LitRPG, Story RPG, and 5e Fantasy alike.
+ * Applies to LitRPG, Story RPG, and tabletop fantasy alike.
  */
 
 const STOP = new Set([

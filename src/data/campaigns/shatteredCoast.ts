@@ -9,7 +9,7 @@ export const shatteredCoast: CampaignBible = {
   genreTag: 'City intrigue',
   tagline: 'Five guilds. One city. A dragon that should be dead.',
   shortDescription:
-    '5e-friendly coastal intrigue in Saltmar: guild politics, deep-sea secrets, and rumors of a dragon the histories say is dead.',
+    'Tabletop coastal intrigue in Saltmar: guild politics, deep-sea secrets, and rumors of a dragon the histories say is dead.',
   startingLocation: 'The harborside streets of Saltmar',
 
   premise:

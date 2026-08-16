@@ -33,11 +33,11 @@ export function CharacterProgression({ state }: Props) {
             onClick={() => setMode(m)}
             className={`flex-1 rounded-md px-3 py-2 text-center text-xs font-semibold transition-all ${
               mode === m
-                ? 'bg-crimson-500/15 text-crimson-300 border border-crimson-500/40'
+                ? 'sgm-info-tab-on border'
                 : 'text-slate-500 hover:text-slate-300 hover:bg-slate-800/50 border border-transparent'
             }`}
           >
-            {m === 'dnd' ? '5e Fantasy Mode' : m === 'rpg' ? 'Story RPG Mode' : 'LitRPG Mode'}
+            {m === 'dnd' ? 'Tabletop Fantasy' : m === 'rpg' ? 'Story RPG Mode' : 'LitRPG Mode'}
           </button>
         ))}
       </div>
@@ -49,7 +49,7 @@ export function CharacterProgression({ state }: Props) {
   );
 }
 
-/* ============ D&D MODE ============ */
+/* ============ TABLETOP FANTASY ============ */
 
 function DndMode({ state }: { state: GameState }) {
   const c = state.character;
@@ -68,7 +68,7 @@ function DndMode({ state }: { state: GameState }) {
     <div className="space-y-5">
       {/* Spell Slots */}
       <section>
-        <h3 className="mb-2 flex items-center gap-1.5 font-serif text-xs uppercase tracking-wider text-crimson-400">
+        <h3 className="sgm-info-heading mb-2 flex items-center gap-1.5 text-xs uppercase tracking-wider">
           <Sparkles size={13} />
           Spell Slots
         </h3>
@@ -99,7 +99,7 @@ function DndMode({ state }: { state: GameState }) {
 
       {/* Attunement */}
       <section>
-        <h3 className="mb-2 flex items-center gap-1.5 font-serif text-xs uppercase tracking-wider text-crimson-400">
+        <h3 className="sgm-info-heading mb-2 flex items-center gap-1.5 text-xs uppercase tracking-wider">
           <Shield size={13} />
           Attunement ({attunedItems.length}/3)
         </h3>
@@ -122,7 +122,7 @@ function DndMode({ state }: { state: GameState }) {
 
       {/* Character Class Info */}
       <section>
-        <h3 className="mb-2 flex items-center gap-1.5 font-serif text-xs uppercase tracking-wider text-crimson-400">
+        <h3 className="sgm-info-heading mb-2 flex items-center gap-1.5 text-xs uppercase tracking-wider">
           <ScrollText size={13} />
           Class Features
         </h3>
@@ -167,7 +167,7 @@ function LitRpgMode({ state }: { state: GameState }) {
     <div className="space-y-5">
       {/* Stat tracking */}
       <section>
-        <h3 className="mb-2 flex items-center gap-1.5 font-serif text-xs uppercase tracking-wider text-cyan-400">
+        <h3 className="sgm-info-heading mb-2 flex items-center gap-1.5 text-xs uppercase tracking-wider">
           <Zap size={13} />
           Stat Tracking
         </h3>
@@ -191,7 +191,7 @@ function LitRpgMode({ state }: { state: GameState }) {
 
       {/* Skill Tree */}
       <section>
-        <h3 className="mb-2 flex items-center gap-1.5 font-serif text-xs uppercase tracking-wider text-cyan-400">
+        <h3 className="sgm-info-heading mb-2 flex items-center gap-1.5 text-xs uppercase tracking-wider">
           <Sparkles size={13} />
           Skill Tree
         </h3>
@@ -224,7 +224,7 @@ function LitRpgMode({ state }: { state: GameState }) {
 
       {/* Rarity-coded Inventory Grid */}
       <section>
-        <h3 className="mb-2 flex items-center gap-1.5 font-serif text-xs uppercase tracking-wider text-cyan-400">
+        <h3 className="sgm-info-heading mb-2 flex items-center gap-1.5 text-xs uppercase tracking-wider">
           <Backpack size={13} />
           Loot Inventory
         </h3>

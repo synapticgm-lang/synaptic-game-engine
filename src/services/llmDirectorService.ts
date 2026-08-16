@@ -1,5 +1,7 @@
 import { debugLogger } from '../game/debugLogger';
 import { KID_MODE_RULES } from '../game/contentModeRules';
+import { resolveHardRailsPrompt } from '../game/universalHardRails';
+import { filterKidModeText, prepareKidSafeImagePrompt } from '../game/kidModeSafety';
 import {
   CAMERA_ANGLE_EXAMPLES,
   normalizeTextAnchor,
@@ -77,12 +79,14 @@ OUTPUT FORMAT — respond with ONLY a single JSON object (no markdown fences, no
 - Do not include any keys other than the ones shown above.`;
 
 function buildDirectorSystemPrompt(mode: 'kid' | 'adult' | 'unrestricted'): string {
+  const rails = `${resolveHardRailsPrompt()}\n\nAlso apply these rails to art_prompt, dialogue, caption, and sfx — never depict prohibited content for mode "${mode}".`;
   if (mode === 'kid') {
-    // Reuses the app's existing Kid Mode copy verbatim (from `game/systemPrompt.ts`) rather
-    // than maintaining a second, possibly-drifting copy of the safety rule text.
-    return `${DIRECTOR_BASE_SYSTEM_PROMPT}\n\n${KID_MODE_RULES}\n\nApply the above content mode to BOTH the "art_prompt" visuals and the "dialogue"/"caption" text. This is a PEGI-3 equivalent safety floor: no graphic violence, no blood/gore, no mature themes, no frightening/disturbing imagery, in any field.`;
+    return `${DIRECTOR_BASE_SYSTEM_PROMPT}\n\n${rails}\n\n${KID_MODE_RULES}\n\nApply the above content mode to BOTH the "art_prompt" visuals and the "dialogue"/"caption" text. Google Play Families bar: no graphic violence, blood/gore, nudity, drugs/alcohol/smoking glamor, gambling, hate, or frightening/disturbing imagery, in any field.`;
   }
-  return DIRECTOR_BASE_SYSTEM_PROMPT;
+  if (mode === 'unrestricted') {
+    return `${DIRECTOR_BASE_SYSTEM_PROMPT}\n\n${rails}\n\nBYOK / unrestricted art mode: CORE rails still apply (no minors, no non-consent, no non-sentient animal sex, no corpse sex). Provider filters may allow explicit adult art when the player requests it.`;
+  }
+  return `${DIRECTOR_BASE_SYSTEM_PROMPT}\n\n${rails}`;
 }
 
 function buildDirectorUserPrompt(playerAction: string, mathOutcome: unknown, infoCards: string[]): string {
@@ -194,6 +198,27 @@ function parseComicScriptContent(content: string): ComicScriptResponse {
   }
 
   return { panels };
+}
+
+function applyKidModeToDirectorScript(script: ComicScriptResponse): ComicScriptResponse {
+  return {
+    panels: script.panels.map((panel) => {
+      const prepared = prepareKidSafeImagePrompt(panel.art_prompt, { skipIfUnsalvageable: true });
+      return {
+        ...panel,
+        art_prompt: prepared.skip
+          ? 'Kid-safe storybook scene, everyone fully clothed, no blood, bright cheerful lighting.'
+          : prepared.prompt,
+        caption: panel.caption ? filterKidModeText(panel.caption) : panel.caption,
+        sfx: panel.sfx ? filterKidModeText(panel.sfx) : panel.sfx,
+        dialogue: panel.dialogue.map((line) => ({
+          ...line,
+          character: filterKidModeText(line.character),
+          text: filterKidModeText(line.text),
+        })),
+      };
+    }),
+  };
 }
 
 export interface GeneratePanelScriptOptions {
@@ -308,7 +333,9 @@ export async function generatePanelScript(
     throw new DirectorParseError('LLM Director response contained no message content.', '');
   }
 
-  const script = parseComicScriptContent(content);
+  const script = mode === 'kid'
+    ? applyKidModeToDirectorScript(parseComicScriptContent(content))
+    : parseComicScriptContent(content);
 
   debugLogger.record('API_RESPONSE', `LLM Director succeeded in ${latency}ms`, {
     latency,

@@ -8,6 +8,16 @@ import { bgList, bgDelete, type BgEntry } from '@/game/bgCache';
 import { SETTINGS_EVENT_NAME } from '@/game/useGame';
 import { exportSessionToPdf, downloadPdf } from '@/services/pdfExportService';
 import { exportSessionToCbz, downloadCbz } from '@/services/cbzExportService';
+import { distributionLabel, isStoreDistribution, canConfigurePlayerAiKeys } from '@/game/distributionChannel';
+import {
+  BYOK_DISCLAIMER_TEXT,
+  hasByokKeysConfigured,
+  resolveContentFilterProfile,
+} from '@/game/contentFilterProfile';
+import { KID_MODE_PIN_DISCLAIMER } from '@/game/parentPurchaseGate';
+import { TERMS_DOC, PRIVACY_DOC } from '@/legal/legalDocs';
+import { CREDITS_PATH } from '@/legal/credits';
+import { FeedbackPanel } from './FeedbackPanel';
 
 interface Props {
   settings: Settings;
@@ -74,9 +84,16 @@ export function SettingsModal({ settings, storyName, engineMode, gameState, onSa
   const [pinDraft, setPinDraft] = useState('');
   const [pinUnlock, setPinUnlock] = useState('');
   const [pinError, setPinError] = useState('');
+  const [pinDisclaimerAccepted, setPinDisclaimerAccepted] = useState(false);
 
   const update = <K extends keyof Settings>(key: K, value: Settings[K]) => {
-    setDraft((prev) => ({ ...prev, [key]: value }));
+    setDraft((prev) => {
+      const next = { ...prev, [key]: value };
+      if (key === 'contentMode' && value === 'kid') {
+        next.byokModeEnabled = false;
+      }
+      return next;
+    });
   };
 
   const runValidation = async (key: string) => {
@@ -104,6 +121,9 @@ export function SettingsModal({ settings, storyName, engineMode, gameState, onSa
   const handleToggleKidMode = () => {
     if (draft.kidModeLocked) return;
     if (draft.contentMode === 'adult') {
+      setPinDisclaimerAccepted(false);
+      setPinDraft('');
+      setPinError('');
       setShowPinSetup(true);
     } else {
       if (settings.contentPin) { setShowPinUnlock(true); }
@@ -112,10 +132,14 @@ export function SettingsModal({ settings, storyName, engineMode, gameState, onSa
   };
 
   const handlePinSetupConfirm = () => {
+    if (!pinDisclaimerAccepted) {
+      setPinError('Please read and accept the parent PIN notice.');
+      return;
+    }
     if (pinDraft.length < 4) { setPinError('PIN must be at least 4 digits.'); return; }
     update('contentMode', 'kid');
     onSetContentMode('kid', pinDraft);
-    setShowPinSetup(false); setPinDraft(''); setPinError('');
+    setShowPinSetup(false); setPinDraft(''); setPinError(''); setPinDisclaimerAccepted(false);
   };
 
   const handlePinUnlockConfirm = () => {
@@ -279,6 +303,13 @@ export function SettingsModal({ settings, storyName, engineMode, gameState, onSa
                 Kid Mode overrides these controls with non-violent, profanity-free output.
               </p>
             )}
+            <p className="rounded-lg border border-slate-700/60 bg-slate-900/50 p-2 text-[11px] text-slate-400">
+              Active filter:{' '}
+              <span className="text-slate-200">{resolveContentFilterProfile(draft).label}</span>
+              {' Â· '}
+              {distributionLabel()}
+              <span className="mt-1 block text-slate-500">{resolveContentFilterProfile(draft).summary}</span>
+            </p>
             <div>
               <label className="mb-2 block text-xs font-medium text-slate-400">Maturity Tier</label>
               <div className="grid grid-cols-2 gap-2">
@@ -287,14 +318,14 @@ export function SettingsModal({ settings, storyName, engineMode, gameState, onSa
                   sublabel="Default"
                   selected={(draft.maturityTier ?? 'pg13') === 'pg13'}
                   onClick={() => update('maturityTier', 'pg13')}
-                  disabled={isKidMode}
+                  disabled={isKidMode || isStoreDistribution()}
                 />
                 <ChoiceCard
                   label="Mature"
                   sublabel="Opt-in 18+"
                   selected={draft.maturityTier === 'mature'}
                   onClick={() => update('maturityTier', 'mature')}
-                  disabled={isKidMode}
+                  disabled={isKidMode || isStoreDistribution()}
                 />
               </div>
             </div>
@@ -339,10 +370,14 @@ export function SettingsModal({ settings, storyName, engineMode, gameState, onSa
             <ToggleRow
               icon={<Shield size={15} />}
               label="Sexual content (fade-to-black)"
-              description="Allow implied intimacy; still fades to black"
-              checked={!!draft.sexualContent}
+              description={
+                isStoreDistribution()
+                  ? 'Locked on store builds — intimacy stays fade-to-black / implication only'
+                  : 'Allow implied intimacy; still fades to black unless on an NSFW website campaign'
+              }
+              checked={!!draft.sexualContent && !isStoreDistribution()}
               onChange={(value) => update('sexualContent', value)}
-              disabled={isKidMode || draft.maturityTier !== 'mature'}
+              disabled={isKidMode || isStoreDistribution() || draft.maturityTier !== 'mature'}
             />
             <ToggleRow
               icon={<Shield size={15} />}
@@ -479,7 +514,7 @@ export function SettingsModal({ settings, storyName, engineMode, gameState, onSa
               <ToggleRow
                 icon={<Sparkles size={14} />}
                 label="Memorable Moment Images"
-                description="Generate clean splash art (no text/bubbles) for milestones, first kills, and legendary drops. Routine panels stay off."
+                description="When on, the opening scene (nicer model) and character death get splash art. The first dungeon’s final boss (First Blood) also auto-splashes on the fast model — later dungeon bosses do not. A royal audience, a striking first look, or a writer-flagged beat is offered — tap to generate on the fast model. First fights do not. Not every turn."
                 checked={draft.classicMemorableImages}
                 onChange={(v) => update('classicMemorableImages', v)}
               />
@@ -510,7 +545,7 @@ export function SettingsModal({ settings, storyName, engineMode, gameState, onSa
                     onChange={(e) => update('comicReadingDirection', e.target.value as ComicReadingDirection)}
                     className="w-full rounded-lg border border-slate-600 bg-slate-800 px-2 py-2 text-xs text-slate-100 disabled:opacity-60"
                   >
-                    <option value="ltr">LTR (left → right)</option>
+                    <option value="ltr">LTR (left â†’ right)</option>
                     <option value="rtl">RTL (manga)</option>
                   </select>
                 </div>
@@ -625,9 +660,9 @@ export function SettingsModal({ settings, storyName, engineMode, gameState, onSa
             <ToggleRow icon={<Mic size={15} />} label="Voice Input (STT)" description="Speak your actions" checked={draft.sttEnabled} onChange={(v) => update('sttEnabled', v)} />
           </Section>
 
-          {/* Dice Display (D&D only — LitRPG / story RPG don't use the dice tray) */}
+          {/* Dice display (tabletop fantasy only — LitRPG / story RPG don't use the dice tray) */}
           {isDnd && (
-            <Section icon={<Dice5 size={16} />} title="5e Dice display" visible={activeTab === 'mechanics'}>
+            <Section icon={<Dice5 size={16} />} title="Dice display" visible={activeTab === 'mechanics'}>
               <p className="mb-2 text-xs text-slate-500">
                 Static = instant. Normal = short roll. Excited = longer roll with theme FX from your equipped dice skin.
               </p>
@@ -655,7 +690,7 @@ export function SettingsModal({ settings, storyName, engineMode, gameState, onSa
 
           <Section icon={<Swords size={16} />} title="Combat pacing" visible={activeTab === 'mechanics'}>
             <p className="mb-2 text-xs text-slate-500">
-              Auto Fight resolves most encounters in about 1–2 turns (same dice and loot). Full control spends a turn per round — use it when you want every move.
+              Auto Fight resolves most encounters in about 1â€“2 turns (same dice and loot). Full control spends a turn per round — use it when you want every move.
             </p>
             <div className="grid grid-cols-2 gap-2">
               <ChoiceCard
@@ -668,7 +703,7 @@ export function SettingsModal({ settings, storyName, engineMode, gameState, onSa
               <ChoiceCard
                 icon={<Zap size={15} />}
                 label="Auto Fight"
-                sublabel="~1–2 turns per fight"
+                sublabel="~1â€“2 turns per fight"
                 selected={draft.combatResolveMode === 'auto'}
                 onClick={() => update('combatResolveMode', 'auto')}
               />
@@ -702,122 +737,199 @@ export function SettingsModal({ settings, storyName, engineMode, gameState, onSa
             </div>
           </Section>
 
-          {/* DnD Mode Formatting */}
-          <Section icon={<ScrollText size={16} />} title="DnD Mode Formatting" visible={activeTab === 'mechanics'}>
+          {/* Tabletop chat formatting */}
+          <Section icon={<ScrollText size={16} />} title="Tabletop Formatting" visible={activeTab === 'mechanics'}>
             <ToggleRow
               icon={<BookOpen size={16} />}
-              label="DnD Chat Formatting"
-              description="Formats the chat log in classic tabletop style — boxed read-aloud text, inline dice notation, and immersive second-person narration."
+              label="Tabletop Chat Formatting"
+              description="Formats the chat log in classic tabletop style — boxed read-aloud text, inline dice notation, and immersive narration."
               checked={draft.dndMode}
               onChange={(v) => update('dndMode', v)}
             />
           </Section>
 
-          {/* API Key */}
-          <Section icon={<KeyRound size={16} />} title={draft.aiProvider === 'gemini' ? 'Gemini API Key' : `${draft.aiProvider.charAt(0).toUpperCase() + draft.aiProvider.slice(1)} API Key`} visible={activeTab === 'general'}>
-            <div className="mb-1.5 flex items-center justify-between">
-              <span className="text-xs text-slate-400">API Key</span>
-              <KeyStatusBadge status={keyStatus} error={validationError} onTest={() => runValidation(draft.geminiApiKey)} />
-            </div>
-            <div className="relative">
-              <input
-                type={showApiKey ? 'text' : 'password'}
-                value={draft.geminiApiKey}
-                onChange={(e) => update('geminiApiKey', e.target.value)}
-                placeholder="AIza..."
-                className="w-full rounded-lg border border-slate-700 bg-slate-800 px-3 py-2 pr-10 text-sm text-slate-100 placeholder-slate-500 focus:border-crimson-500 focus:outline-none focus:ring-1 focus:ring-crimson-500"
-              />
-              <button type="button" onClick={() => setShowApiKey(!showApiKey)} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-300 transition-colors">
-                {showApiKey ? <EyeOff size={16} /> : <Eye size={16} />}
-              </button>
-            </div>
-            <p className="mt-1 text-[11px] text-slate-500">Stored locally on this device.</p>
-            <button onClick={() => setShowAdvancedApi(!showAdvancedApi)} className="mt-3 flex w-full items-center justify-between text-xs font-medium text-slate-400 hover:text-slate-200 transition-colors">
-              <span>Advanced / Custom Provider</span>
-              <ChevronDown size={14} className={`transition-transform ${showAdvancedApi ? 'rotate-180' : ''}`} />
-            </button>
-            {showAdvancedApi && (
-              <div className="mt-2 space-y-3 rounded-lg border border-slate-700 bg-slate-800/40 p-3">
+          {/* Player AI keys — Admin (BYOK) website tier only */}
+          <Section icon={<KeyRound size={16} />} title="AI Keys (Admin BYOK)" visible={activeTab === 'general'}>
+            {!canConfigurePlayerAiKeys(draft) ? (
+              <p className="text-[11px] leading-relaxed text-slate-400">
+                {isStoreDistribution()
+                  ? 'This store build uses SynapticGM-hosted AI only. Player API keys are not available (Google Play & App Store policy).'
+                  : isKidMode
+                    ? 'Kid Mode uses hosted family-safe AI. Admin BYOK keys are disabled.'
+                    : draft.subscriptionTier !== 'admin'
+                      ? 'Text and image AI are hosted by SynapticGM on Free / Mid / High. Only the Admin (BYOK) website tier can add personal keys.'
+                      : 'Admin BYOK is website-only.'}
+              </p>
+            ) : (
+              <div className="space-y-4">
+                <p className="text-[11px] leading-relaxed text-slate-400 whitespace-pre-wrap">
+                  {BYOK_DISCLAIMER_TEXT}
+                </p>
+                <label className="flex items-start gap-2 text-[11px] text-slate-300">
+                  <input
+                    type="checkbox"
+                    className="mt-0.5"
+                    checked={!!draft.byokDisclaimerAccepted}
+                    onChange={(e) => {
+                      const accepted = e.target.checked;
+                      update('byokDisclaimerAccepted', accepted);
+                      if (!accepted) update('byokModeEnabled', false);
+                    }}
+                  />
+                  <span>
+                    I am an adult and I accept this disclaimer. SynapticGM owners/makers take no
+                    responsibility for content generated with my keys.
+                  </span>
+                </label>
+
                 <div>
-                  <label className="mb-1 block text-xs font-medium text-slate-400">Provider</label>
-                  <select value={draft.aiProvider} onChange={(e) => { const p = e.target.value as AiProvider; update('aiProvider', p); setFetchedModels(getDefaultModels(p)); setSelectedModel(getDefaultModels(p)[0] ?? ''); }} className="w-full rounded-lg border border-slate-700 bg-slate-800 px-2 py-1.5 text-xs text-slate-100 focus:border-crimson-500 focus:outline-none">
-                    <option value="gemini">Google Gemini</option>
-                    <option value="openrouter">OpenRouter</option>
-                    <option value="openai">OpenAI</option>
-                    <option value="anthropic">Anthropic</option>
-                    <option value="groq">Groq</option>
-                    <option value="ollama">Ollama</option>
-                  </select>
-                </div>
-                {draft.aiProvider !== 'gemini' && (
-                  <div>
-                    <label className="mb-1 block text-xs font-medium text-slate-400">Base URL</label>
-                    <input value={draft.baseUrl} onChange={(e) => update('baseUrl', e.target.value)} placeholder="https://api.openai.com/v1" className="w-full rounded-lg border border-slate-700 bg-slate-800 px-2 py-1.5 text-xs text-slate-100 placeholder-slate-500 focus:border-crimson-500 focus:outline-none" />
+                  <div className="mb-1.5 flex items-center justify-between">
+                    <label className="text-xs font-medium text-slate-200">Text AI key</label>
+                    <KeyStatusBadge status={keyStatus} error={validationError} onTest={() => runValidation(draft.geminiApiKey)} />
                   </div>
-                )}
-                <div>
-                  <label className="mb-1 block text-xs font-medium text-slate-400">Model</label>
-                  <div className="flex gap-1.5">
-                    <select value={selectedModel} onChange={(e) => { setSelectedModel(e.target.value); update('customModelId', e.target.value); }} className="flex-1 rounded-lg border border-slate-700 bg-slate-800 px-2 py-1.5 text-xs text-slate-100 focus:border-crimson-500 focus:outline-none">
-                      {fetchedModels.map((m) => (<option key={m} value={m}>{m}</option>))}
-                    </select>
-                    <button type="button" onClick={handleFetchModels} disabled={fetchingModels} className="flex shrink-0 items-center gap-1 rounded-lg border border-slate-700 bg-slate-800 px-2 py-1.5 text-[11px] text-crimson-300 hover:bg-slate-700 disabled:opacity-40">
-                      {fetchingModels ? <Loader2 size={12} className="animate-spin" /> : <RefreshCw size={12} />}
-                      Fetch
+                  <p className="mb-1 text-[10px] text-slate-500">Used for the Game Master / story writer only.</p>
+                  <div className="relative">
+                    <input
+                      type={showApiKey ? 'text' : 'password'}
+                      value={draft.geminiApiKey}
+                      onChange={(e) => update('geminiApiKey', e.target.value)}
+                      placeholder="Text model API key"
+                      className="w-full rounded-lg border border-slate-700 bg-slate-800 px-3 py-2 pr-10 text-sm text-slate-100 placeholder-slate-500 focus:border-crimson-500 focus:outline-none focus:ring-1 focus:ring-crimson-500"
+                    />
+                    <button type="button" onClick={() => setShowApiKey(!showApiKey)} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-300 transition-colors">
+                      {showApiKey ? <EyeOff size={16} /> : <Eye size={16} />}
                     </button>
                   </div>
                 </div>
+
+                <div>
+                  <label className="mb-1 block text-xs font-medium text-slate-200">Image AI key</label>
+                  <p className="mb-1 text-[10px] text-slate-500">Used for comic / memorable art only — separate from the text key.</p>
+                  <input
+                    type={showApiKey ? 'text' : 'password'}
+                    value={draft.imageApiKey}
+                    onChange={(e) => {
+                      update('imageApiKey', e.target.value);
+                      if (e.target.value.trim()) update('imageProvider', 'custom');
+                    }}
+                    placeholder="Image model API key"
+                    className="w-full rounded-lg border border-slate-700 bg-slate-800 px-3 py-2 text-sm text-slate-100 placeholder-slate-500 focus:border-crimson-500 focus:outline-none focus:ring-1 focus:ring-crimson-500"
+                  />
+                  <input
+                    value={draft.imageBaseUrl}
+                    onChange={(e) => update('imageBaseUrl', e.target.value)}
+                    placeholder="Image API base URL (optional)"
+                    className="mt-2 w-full rounded-lg border border-slate-700 bg-slate-800 px-3 py-2 text-xs text-slate-100 placeholder-slate-500 focus:border-crimson-500 focus:outline-none"
+                  />
+                </div>
+
+                <button onClick={() => setShowAdvancedApi(!showAdvancedApi)} className="flex w-full items-center justify-between text-xs font-medium text-slate-400 hover:text-slate-200 transition-colors">
+                  <span>Text provider details</span>
+                  <ChevronDown size={14} className={`transition-transform ${showAdvancedApi ? 'rotate-180' : ''}`} />
+                </button>
+                {showAdvancedApi && (
+                  <div className="space-y-3 rounded-lg border border-slate-700 bg-slate-800/40 p-3">
+                    <div>
+                      <label className="mb-1 block text-xs font-medium text-slate-400">Text provider</label>
+                      <select value={draft.aiProvider} onChange={(e) => { const p = e.target.value as AiProvider; update('aiProvider', p); setFetchedModels(getDefaultModels(p)); setSelectedModel(getDefaultModels(p)[0] ?? ''); }} className="w-full rounded-lg border border-slate-700 bg-slate-800 px-2 py-1.5 text-xs text-slate-100 focus:border-crimson-500 focus:outline-none">
+                        <option value="gemini">Google Gemini</option>
+                        <option value="openrouter">OpenRouter</option>
+                        <option value="openai">OpenAI</option>
+                        <option value="anthropic">Anthropic</option>
+                        <option value="groq">Groq</option>
+                        <option value="ollama">Ollama</option>
+                      </select>
+                    </div>
+                    {draft.aiProvider !== 'gemini' && (
+                      <div>
+                        <label className="mb-1 block text-xs font-medium text-slate-400">Text base URL</label>
+                        <input value={draft.baseUrl} onChange={(e) => update('baseUrl', e.target.value)} placeholder="https://api.openai.com/v1" className="w-full rounded-lg border border-slate-700 bg-slate-800 px-2 py-1.5 text-xs text-slate-100 placeholder-slate-500 focus:border-crimson-500 focus:outline-none" />
+                      </div>
+                    )}
+                    <div>
+                      <label className="mb-1 block text-xs font-medium text-slate-400">Text model</label>
+                      <div className="flex gap-1.5">
+                        <select value={selectedModel} onChange={(e) => { setSelectedModel(e.target.value); update('customModelId', e.target.value); }} className="flex-1 rounded-lg border border-slate-700 bg-slate-800 px-2 py-1.5 text-xs text-slate-100 focus:border-crimson-500 focus:outline-none">
+                          {fetchedModels.map((m) => (<option key={m} value={m}>{m}</option>))}
+                        </select>
+                        <button type="button" onClick={handleFetchModels} disabled={fetchingModels} className="flex shrink-0 items-center gap-1 rounded-lg border border-slate-700 bg-slate-800 px-2 py-1.5 text-[11px] text-crimson-300 hover:bg-slate-700 disabled:opacity-40">
+                          {fetchingModels ? <Loader2 size={12} className="animate-spin" /> : <RefreshCw size={12} />}
+                          Fetch
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                <ToggleRow
+                  icon={<KeyRound size={15} />}
+                  label="Enable Admin BYOK mode"
+                  description={
+                    hasByokKeysConfigured(draft)
+                      ? 'Route story + art through your keys; CORE rails still apply'
+                      : 'Accept the disclaimer and enter Text + Image keys first'
+                  }
+                  checked={!!draft.byokModeEnabled && !!draft.byokDisclaimerAccepted}
+                  onChange={(value) => {
+                    if (value && !draft.byokDisclaimerAccepted) return;
+                    update('byokModeEnabled', value);
+                  }}
+                  disabled={!draft.byokDisclaimerAccepted || !hasByokKeysConfigured(draft)}
+                />
+                <p className="text-[10px] text-slate-500">Keys stay on this device only.</p>
               </div>
             )}
           </Section>
-
           {/* Image Generation Provider */}
           <Section icon={<ImageIcon size={16} />} title="Image Generation" visible={activeTab === 'visuals'}>
-            <button onClick={() => setShowImageSettings(!showImageSettings)} className="flex w-full items-center justify-between text-sm font-medium text-slate-300 hover:text-slate-100 transition-colors">
-              <span>Provider Settings</span>
-              <ChevronDown size={14} className={`transition-transform ${showImageSettings ? 'rotate-180' : ''}`} />
-            </button>
-            {showImageSettings && (
-              <div className="mt-3 space-y-3 rounded-lg border border-slate-700 bg-slate-800/40 p-3">
-                <div>
-                  <label className="mb-1 block text-xs font-medium text-slate-400">Image Provider</label>
-                  <select value={draft.imageProvider} onChange={(e) => update('imageProvider', e.target.value as 'gemini' | 'custom')} className="w-full rounded-lg border border-slate-700 bg-slate-800 px-2 py-1.5 text-xs text-slate-100 focus:border-crimson-500 focus:outline-none">
-                    <option value="gemini">Google Gemini (Imagen)</option>
-                    <option value="custom">Custom / Local Endpoint</option>
-                  </select>
-                </div>
-                {draft.imageProvider === 'custom' && (
-                  <>
+            {!canConfigurePlayerAiKeys(draft) ? (
+              <p className="text-[11px] leading-relaxed text-slate-400">
+                Memorable and comic art use SynapticGM-hosted image AI. Custom image keys are only on the Admin (BYOK) website tier (see General → AI Keys).
+              </p>
+            ) : (
+              <>
+                <p className="mb-2 text-[11px] text-slate-400">
+                  Prefer the labelled <span className="text-slate-200">Image AI key</span> under General → AI Keys. Advanced endpoint options below are optional.
+                </p>
+                <button onClick={() => setShowImageSettings(!showImageSettings)} className="flex w-full items-center justify-between text-sm font-medium text-slate-300 hover:text-slate-100 transition-colors">
+                  <span>Advanced image endpoint</span>
+                  <ChevronDown size={14} className={`transition-transform ${showImageSettings ? 'rotate-180' : ''}`} />
+                </button>
+                {showImageSettings && (
+                  <div className="mt-3 space-y-3 rounded-lg border border-slate-700 bg-slate-800/40 p-3">
                     <div>
-                      <label className="mb-1 block text-xs font-medium text-slate-400">Endpoint Type</label>
-                      <select value={draft.imageEndpointType} onChange={(e) => update('imageEndpointType', e.target.value as 'openai' | 'automatic1111' | 'comfyui')} className="w-full rounded-lg border border-slate-700 bg-slate-800 px-2 py-1.5 text-xs text-slate-100 focus:border-crimson-500 focus:outline-none">
-                        <option value="openai">OpenAI-compatible</option>
-                        <option value="automatic1111">Automatic1111</option>
-                        <option value="comfyui">ComfyUI</option>
+                      <label className="mb-1 block text-xs font-medium text-slate-400">Image Provider</label>
+                      <select value={draft.imageProvider} onChange={(e) => update('imageProvider', e.target.value as 'flux' | 'flux-direct' | 'gemini' | 'custom')} className="w-full rounded-lg border border-slate-700 bg-slate-800 px-2 py-1.5 text-xs text-slate-100 focus:border-crimson-500 focus:outline-none">
+                        <option value="flux">Flux (OpenRouter)</option>
+                        <option value="custom">Custom / Local Endpoint</option>
+                        <option value="flux-direct">Flux Direct (BFL)</option>
                       </select>
                     </div>
-                    <div>
-                      <label className="mb-1 block text-xs font-medium text-slate-400">Base URL</label>
-                      <input value={draft.imageBaseUrl} onChange={(e) => update('imageBaseUrl', e.target.value)} placeholder="http://localhost:7860" className="w-full rounded-lg border border-slate-700 bg-slate-800 px-2 py-1.5 text-xs text-slate-100 placeholder-slate-500 focus:border-crimson-500 focus:outline-none" />
-                    </div>
-                    {draft.imageEndpointType === 'openai' && (
+                    {draft.imageProvider === 'custom' && (
                       <>
                         <div>
-                          <label className="mb-1 block text-xs font-medium text-slate-400">API Key (optional)</label>
-                          <input type="password" value={draft.imageApiKey} onChange={(e) => update('imageApiKey', e.target.value)} placeholder="sk-..." className="w-full rounded-lg border border-slate-700 bg-slate-800 px-2 py-1.5 text-xs text-slate-100 placeholder-slate-500 focus:border-crimson-500 focus:outline-none" />
+                          <label className="mb-1 block text-xs font-medium text-slate-400">Endpoint Type</label>
+                          <select value={draft.imageEndpointType} onChange={(e) => update('imageEndpointType', e.target.value as 'openai' | 'automatic1111' | 'comfyui')} className="w-full rounded-lg border border-slate-700 bg-slate-800 px-2 py-1.5 text-xs text-slate-100 focus:border-crimson-500 focus:outline-none">
+                            <option value="openai">OpenAI-compatible</option>
+                            <option value="automatic1111">Automatic1111</option>
+                            <option value="comfyui">ComfyUI</option>
+                          </select>
                         </div>
                         <div>
-                          <label className="mb-1 block text-xs font-medium text-slate-400">Model</label>
+                          <label className="mb-1 block text-xs font-medium text-slate-400">Image base URL</label>
+                          <input value={draft.imageBaseUrl} onChange={(e) => update('imageBaseUrl', e.target.value)} placeholder="http://localhost:7860" className="w-full rounded-lg border border-slate-700 bg-slate-800 px-2 py-1.5 text-xs text-slate-100 placeholder-slate-500 focus:border-crimson-500 focus:outline-none" />
+                        </div>
+                        <div>
+                          <label className="mb-1 block text-xs font-medium text-slate-400">Image model</label>
                           <input value={draft.imageModel} onChange={(e) => update('imageModel', e.target.value)} placeholder="dall-e-3, sdxl, etc." className="w-full rounded-lg border border-slate-700 bg-slate-800 px-2 py-1.5 text-xs text-slate-100 placeholder-slate-500 focus:border-crimson-500 focus:outline-none" />
                         </div>
                       </>
                     )}
-                  </>
+                  </div>
                 )}
-              </div>
+              </>
             )}
           </Section>
-
           {/* Save File Management */}
           {(onExport || onImport || onDeleteSave) && (
             <Section icon={<Save size={16} />} title="Save File Management" visible={activeTab === 'general'}>
@@ -898,10 +1010,35 @@ export function SettingsModal({ settings, storyName, engineMode, gameState, onSa
             </div>
           </Section>
 
+          <Section icon={<MessageSquareMore size={16} />} title="Send feedback" visible={activeTab === 'general'}>
+            <FeedbackPanel
+              characterName={gameState?.character?.name ?? null}
+              campaign={storyNameDraft || storyName || gameState?.storyName || null}
+              engineMode={engineMode}
+              turn={gameState?.turn ?? null}
+            />
+          </Section>
+
           {/* Legal */}
           <Section icon={<Scale size={16} />} title="Legal & Licensing" visible={activeTab === 'general'}>
-            <div className="rounded-lg border border-slate-700 bg-slate-800/40 p-3 text-[11px] leading-relaxed text-slate-400">
-              <p>This work includes material from the SRD 5.1 by Wizards of the Coast LLC, licensed under CC BY 4.0.</p>
+            <div className="rounded-lg border border-slate-700 bg-slate-800/40 p-3 text-[11px] leading-relaxed text-slate-400 space-y-2">
+              <p>SynapticGM is original tabletop and LitRPG play. We are not affiliated with other companies’ tabletop RPGs. Generic words (dungeon, dragon, dice, d20) are used in their ordinary sense.</p>
+              <p>
+                Draft Terms of Service and Privacy Policy live in the project under{' '}
+                <span className="text-slate-300">docs/legal/</span> until published on the website.
+                Kid Mode PIN rules: parents are responsible for PIN security and any purchases made with that PIN.
+              </p>
+              <p className="flex flex-wrap gap-x-3 gap-y-1">
+                <a href={TERMS_DOC.path} target="_blank" rel="noopener noreferrer" className="text-cyan-400 hover:underline">
+                  Terms of Service
+                </a>
+                <a href={PRIVACY_DOC.path} target="_blank" rel="noopener noreferrer" className="text-cyan-400 hover:underline">
+                  Privacy Policy
+                </a>
+                <a href={CREDITS_PATH} target="_blank" rel="noopener noreferrer" className="text-cyan-400 hover:underline">
+                  Credits
+                </a>
+              </p>
             </div>
           </Section>
         </div>
@@ -919,7 +1056,23 @@ export function SettingsModal({ settings, storyName, engineMode, gameState, onSa
       </div>
 
       {showPinSetup && (
-        <PinDialog title="Set PIN for Kid Mode" subtitle="Enter a PIN to protect the switch back." value={pinDraft} onChange={setPinDraft} onConfirm={handlePinSetupConfirm} onCancel={() => { setShowPinSetup(false); setPinDraft(''); setPinError(''); }} error={pinError} />
+        <PinDialog
+          title="Set PIN for Kid Mode"
+          subtitle="Enter a PIN only a parent or guardian should know. It locks exiting Kid Mode and approves purchases."
+          value={pinDraft}
+          onChange={setPinDraft}
+          onConfirm={handlePinSetupConfirm}
+          onCancel={() => {
+            setShowPinSetup(false);
+            setPinDraft('');
+            setPinError('');
+            setPinDisclaimerAccepted(false);
+          }}
+          error={pinError}
+          showParentDisclaimer
+          disclaimerAccepted={pinDisclaimerAccepted}
+          onDisclaimerAcceptedChange={setPinDisclaimerAccepted}
+        />
       )}
       {showPinUnlock && (
         <PinDialog title="Enter PIN to Exit Kid Mode" subtitle="Enter your PIN to switch to Adult Mode." value={pinUnlock} onChange={setPinUnlock} onConfirm={handlePinUnlockConfirm} onCancel={() => { setShowPinUnlock(false); setPinUnlock(''); setPinError(''); }} error={pinError} />
@@ -999,7 +1152,7 @@ function SaveSlotsManager({
                   {isCurrent && <span className="ml-1.5 text-[10px] font-normal uppercase tracking-wide text-emerald-400">current</span>}
                 </div>
                 <div className="text-[11px] text-slate-500">
-                  {slot.characterName} · Lv.{slot.level} · Turn {slot.turn}
+                  {slot.characterName} Â· Lv.{slot.level} Â· Turn {slot.turn}
                 </div>
                 <div className="mt-0.5 flex flex-wrap gap-1">
                   {slot.sources.map((source) => (
@@ -1116,17 +1269,61 @@ function ChoiceCard({ icon, label, sublabel, selected, onClick, disabled }: { ic
   );
 }
 
-function PinDialog({ title, subtitle, value, onChange, onConfirm, onCancel, error }: { title: string; subtitle: string; value: string; onChange: (v: string) => void; onConfirm: () => void; onCancel: () => void; error: string }) {
+function PinDialog({
+  title,
+  subtitle,
+  value,
+  onChange,
+  onConfirm,
+  onCancel,
+  error,
+  showParentDisclaimer = false,
+  disclaimerAccepted = false,
+  onDisclaimerAcceptedChange,
+}: {
+  title: string;
+  subtitle: string;
+  value: string;
+  onChange: (v: string) => void;
+  onConfirm: () => void;
+  onCancel: () => void;
+  error: string;
+  showParentDisclaimer?: boolean;
+  disclaimerAccepted?: boolean;
+  onDisclaimerAcceptedChange?: (v: boolean) => void;
+}) {
   return (
-    <div className="absolute inset-0 z-20 flex items-center justify-center bg-slate-950/80 backdrop-blur-sm rounded-xl">
-      <div className="w-full max-w-xs rounded-lg border border-slate-700 bg-slate-900 p-5 shadow-2xl">
+    <div className="absolute inset-0 z-20 flex items-center justify-center bg-slate-950/80 backdrop-blur-sm rounded-xl p-3">
+      <div className="w-full max-w-sm rounded-lg border border-slate-700 bg-slate-900 p-5 shadow-2xl max-h-[90vh] overflow-y-auto">
         <div className="mb-1 flex items-center gap-2 text-sm font-medium text-slate-200"><Lock size={14} className="text-crimson-400" />{title}</div>
         <p className="mb-3 text-xs text-slate-500">{subtitle}</p>
-        <input type="password" inputMode="numeric" value={value} onChange={(e) => onChange(e.target.value.replace(/\D/g, '').slice(0, 8))} placeholder="Enter PIN..." className="w-full rounded-lg border border-slate-700 bg-slate-800 px-3 py-2 text-center text-lg tracking-widest text-slate-100 placeholder-slate-600 focus:border-crimson-500 focus:outline-none" autoFocus />
+        {showParentDisclaimer && (
+          <div className="mb-3 space-y-2 rounded-lg border border-amber-800/40 bg-amber-950/20 p-3">
+            <p className="text-[11px] leading-relaxed text-amber-100/90">
+              {KID_MODE_PIN_DISCLAIMER}
+            </p>
+            <label className="flex items-start gap-2 text-[11px] text-slate-300 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={disclaimerAccepted}
+                onChange={(e) => onDisclaimerAcceptedChange?.(e.target.checked)}
+                className="mt-0.5 rounded border-slate-600"
+              />
+              <span>I am a parent/guardian and I understand I am responsible for this PIN and any purchases made with it.</span>
+            </label>
+          </div>
+        )}
+        <input type="password" inputMode="numeric" value={value} onChange={(e) => onChange(e.target.value.replace(/\D/g, '').slice(0, 8))} placeholder="Enter PIN..." className="w-full rounded-lg border border-slate-700 bg-slate-800 px-3 py-2 text-center text-lg tracking-widest text-slate-100 placeholder-slate-600 focus:border-crimson-500 focus:outline-none" autoFocus={!showParentDisclaimer} />
         {error && <p className="mt-2 text-xs text-red-400">{error}</p>}
         <div className="mt-4 flex justify-end gap-2">
           <button onClick={onCancel} className="rounded-lg px-3 py-1.5 text-xs text-slate-400 hover:text-slate-200 transition-colors">Cancel</button>
-          <button onClick={onConfirm} className="rounded-lg bg-crimson-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-crimson-500 transition-colors">Confirm</button>
+          <button
+            onClick={onConfirm}
+            disabled={showParentDisclaimer && !disclaimerAccepted}
+            className="rounded-lg bg-crimson-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-crimson-500 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+          >
+            Confirm
+          </button>
         </div>
       </div>
     </div>

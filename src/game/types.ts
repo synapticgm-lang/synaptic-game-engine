@@ -396,7 +396,7 @@ export interface GameState {
   worldLedger?: WorldLedger;
   activeEncounter?: ActiveEncounter | null;
   /**
-   * Premade world landmass outline + fogged regions (LitRPG/D&D/RPG open worlds).
+   * Premade world landmass outline + fogged regions (LitRPG/tabletop/RPG open worlds).
    * null = closed story (typical PYOA) — no continent atlas.
    */
   worldAtlas?: WorldAtlasState | null;
@@ -429,6 +429,15 @@ export interface MemorableMomentState {
   firstNpcSplashFired?: boolean;
   legendarySplashFired?: boolean;
   deathSplashFired?: boolean;
+  /**
+   * Blueprint id of the campaign’s first real dungeon graph (not street).
+   * Pinned on first entry so a later dungeon cannot be mistaken for the first.
+   */
+  firstDungeonBlueprintId?: string;
+  /** Once true, no later dungeon final-boss auto-splash — even if detection is messy. */
+  firstDungeonBossSplashFired?: boolean;
+  /** First-dungeon boss key that auto-splashed. Later dungeons must not auto. */
+  dungeonBossSplashKeys?: string[];
   /** Normalized ruler keys already offered or given a first-audience splash. */
   rulerNamesSplashed?: string[];
   /** Normalized person keys already offered a beauty picture. */
@@ -513,10 +522,10 @@ export interface LogEntry {
   beautyOffer?: BeautyMomentOffer;
 }
 
-/** Distinct rule engines chosen at campaign setup. */
+/** Distinct rule engines chosen at campaign setup. `'dnd'` is tabletop fantasy (saved key). */
 export type EngineMode = 'litrpg' | 'dnd' | 'rpg' | 'pyoa';
 
-/** Story RPG and pick-your-own-adventure: no LitRPG HUD, no 5e dice. */
+/** Story RPG and pick-your-own-adventure: no LitRPG HUD, no tabletop dice. */
 export function isFictionEngine(mode: EngineMode | undefined): boolean {
   return mode === 'rpg' || mode === 'pyoa';
 }
@@ -831,8 +840,8 @@ export interface Settings {
   visualMode: 'comic' | 'classic';
   /**
    * Classic Text mode only: when true, generate clean splash art for memorable
-   * moments (opening scene and death auto; other book-worthy beats are tap-yes).
-   * Off until the player opts in. Routine panels stay off.
+   * moments (opening, death, and the first dungeon’s final boss auto; other
+   * book-worthy beats are tap-yes). Off until the player opts in. Routine panels stay off.
    */
   classicMemorableImages: boolean;
   /** Comic mode page packing vs vertical webtoon scroll. Locked for active sessions. */
@@ -868,6 +877,7 @@ export interface Settings {
   romanceSubplots: boolean;
   haremContent: boolean;
   statScreensEnabled: boolean;
+  /** Tabletop chat formatting (boxed read-aloud). Saved as `dndMode`. */
   dndMode: boolean;
   mapTriggerMode: MapTriggerMode;
   fogRevealThreshold: FogRevealThreshold;

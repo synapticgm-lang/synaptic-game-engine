@@ -27,7 +27,7 @@
 
 1. **LitRPG Mode** — The world operates under a visible "System" interface. Blue stat panels, skill trees, XP bars, and item rarities are part of the world's fabric. The narrative acknowledges the game mechanics as in-universe reality (think *Solo Leveling*, *Dungeon Crawler Carl*, or *The Primal Hunter*).
 
-2. **5e Fantasy Mode** — A traditional tabletop experience running on SRD 5.1-compatible mechanics: d20 resolution, difficulty classes, spell slots, death saving throws, advantage/disadvantage, and strict action economy. The AI GM enforces the rules while narrating the story.
+2. **Tabletop Fantasy** — Classic d20 fantasy with transparent checks and combat: armor class, spell slots, rests, and a dice tray. Original SynapticGM rules inspired by common tabletop practice — not a licensed system.
 
 You type what your character does. The AI Game Master responds with narrative text, structured system logs (stat changes, item drops, quest updates), dice roll results, and optional cinematic-scene image prompts. The app parses the GM's structured output and updates your character sheet, inventory, quest log, and encounter state automatically.
 
@@ -42,12 +42,12 @@ You type what your character does. The AI Game Master responds with narrative te
 - Each archetype enforces unique rules (permadeath, evolution trees, cosmic favor, thermal mechanics, etc.)
 - Comic-book visual mode with halftone overlays and multi-panel layouts
 
-### 5e Fantasy Mode
+### Tabletop Fantasy
 
-- SRD 5.1-compatible mechanics (trademark-safe — never uses "D&D" or "Dungeon Master" in output)
-- d20 resolution with standard DCs (Easy 10, Medium 15, Hard 20, Very Hard 25)
-- Spell slots, cantrips, short/long rests, death saving throws
-- Advantage/disadvantage system
+- Original SynapticGM tabletop rules using generic TTRPG language (d20, armor class, hit points)
+- Transparent checks and combat tallies; visual dice tray
+- Spell slots, cantrips, short/long rests, downed saves
+- Advantage/disadvantage as common tabletop practice
 - 7 opening archetypes: AI Custom, Caravan Escort, Prisoner/Shipwrecked, Patron's Quest, Under Siege, Cursed Manor, Wilderness Expedition
 
 ---
@@ -422,4 +422,4 @@ With four owner-scoped RLS policies (SELECT, INSERT, UPDATE, DELETE) using `auth
 
 ## License
 
-This project is proprietary. All campaign lore bibles, archetype rules, and narrative content are original IP. SRD 5.1 mechanics are used under the Open Gaming License v1.0a. No trademarked brand names ("Dungeons & Dragons", "D&D", "Dungeon Master") appear in AI-generated output.
+This project is proprietary. Campaign lore bibles, archetype rules, and narrative content are original SynapticGM writing. Tabletop mechanics use generic TTRPG language. Fonts, icons, and other free materials are listed on the in-game Credits page (`/credits`).

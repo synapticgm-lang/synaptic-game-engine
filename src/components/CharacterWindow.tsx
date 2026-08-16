@@ -104,7 +104,7 @@ function EquipSlot({
 }) {
   const meta = SLOT_META[slotKey];
   const rarity: Rarity = item?.rarity ?? 'Common';
-  const borderClass = selected ? 'border-crimson-400 ring-1 ring-crimson-400/60' : RARITY_GLOW[rarity];
+  const borderClass = selected ? 'sgm-info-slot-on border-2' : RARITY_GLOW[rarity];
   const bgClass = RARITY_BG[rarity];
   const rarityColor = RARITY_COLORS[rarity];
 
@@ -140,7 +140,7 @@ function ItemInspectCard({ item, slotLabel, onClose }: { item: Item; slotLabel: 
 
   return (
     <div
-      className="w-full max-w-sm rounded-lg border border-slate-600 bg-slate-950 p-3 shadow-2xl"
+      className="sgm-turn-frame sgm-info-panel w-full max-w-sm rounded-lg border p-3 shadow-2xl"
       onClick={(e) => e.stopPropagation()}
     >
       <div className="flex items-start justify-between gap-2">
@@ -215,7 +215,7 @@ function SidePanel({ state }: { state: GameState }) {
   return (
     <div className="h-full w-64 space-y-4 overflow-y-auto bg-slate-950/95 p-3 sm:w-56">
       <div>
-        <h3 className="mb-2 font-serif text-sm uppercase tracking-wider text-crimson-400">Vitals</h3>
+        <h3 className="sgm-info-heading mb-2 text-sm uppercase tracking-wider">Vitals</h3>
         <div className="space-y-2">
           <StatBar label="Health" current={c.hp} max={c.maxHp} color="bg-gradient-to-r from-rose-700 to-rose-500" icon={<Heart size={12} className="text-rose-400" />} />
           {(reveal !== 'minimal') && (
@@ -227,11 +227,11 @@ function SidePanel({ state }: { state: GameState }) {
         </div>
       </div>
       <div>
-        <h3 className="mb-2 font-serif text-sm uppercase tracking-wider text-crimson-400">Attributes</h3>
+        <h3 className="sgm-info-heading mb-2 text-sm uppercase tracking-wider">Attributes</h3>
         <AttributeGrid state={state} />
       </div>
       <div>
-        <h3 className="mb-2 font-serif text-sm uppercase tracking-wider text-crimson-400">Progress</h3>
+        <h3 className="sgm-info-heading mb-2 text-sm uppercase tracking-wider">Progress</h3>
         <div className="space-y-1 text-xs text-slate-300">
           <div className="flex justify-between"><span>Level</span><span className="font-mono font-bold text-amber-400">{c.level}</span></div>
           {reveal !== 'minimal' && (
@@ -243,7 +243,7 @@ function SidePanel({ state }: { state: GameState }) {
       </div>
       {c.conditions.length > 0 && (
         <div>
-          <h3 className="mb-2 font-serif text-sm uppercase tracking-wider text-crimson-400">Conditions</h3>
+          <h3 className="sgm-info-heading mb-2 text-sm uppercase tracking-wider">Conditions</h3>
           <div className="flex flex-wrap gap-1">
             {c.conditions.map((cond) => (
               <span key={cond} className="rounded border border-rose-500/30 bg-rose-500/15 px-1.5 py-0.5 text-[10px] text-rose-300">{cond}</span>
@@ -253,7 +253,7 @@ function SidePanel({ state }: { state: GameState }) {
       )}
       {reveal === 'full' && c.bio && (
         <div>
-          <h3 className="mb-2 font-serif text-sm uppercase tracking-wider text-crimson-400">Biography</h3>
+          <h3 className="sgm-info-heading mb-2 text-sm uppercase tracking-wider">Biography</h3>
           <p className="text-xs leading-relaxed text-slate-300">{c.bio}</p>
         </div>
       )}
@@ -429,10 +429,10 @@ function PaperDoll({
       </div>
 
       <div className="relative flex h-full min-h-0 min-w-0 flex-1 items-center justify-center">
-        <div className="relative h-full w-auto max-w-[min(100%,16rem)] overflow-hidden rounded-lg border-2 border-slate-600 bg-slate-800/40 aspect-[3/5] sm:max-w-[min(100%,20rem)]">
+        <div className="sgm-turn-frame relative h-full w-auto max-w-[min(100%,16rem)] overflow-hidden rounded-lg border-2 bg-slate-800/40 aspect-[3/5] sm:max-w-[min(100%,20rem)]">
           {drawing ? (
             <div className="absolute inset-0 z-10 flex flex-col items-center justify-center gap-2 bg-slate-900/70">
-              <Loader2 size={22} className="animate-spin text-crimson-400" />
+              <Loader2 size={22} className="sgm-info-accent animate-spin" />
               <span className="text-[10px] text-slate-400">Drawing you…</span>
             </div>
           ) : null}
@@ -533,7 +533,7 @@ export function CharacterWindow({ isOpen, onClose, state, settings, initialTab, 
   ];
 
   if (settings.dndMode || state.engineMode === 'dnd') {
-    tabs.push({ key: 'dnd', label: '5e Sheet', icon: <ScrollText size={14} /> });
+    tabs.push({ key: 'dnd', label: 'Tabletop Sheet', icon: <ScrollText size={14} /> });
   }
 
   const handleSelect = (item: Item | undefined, slotKey: EquipSlotKey) => {
@@ -552,11 +552,12 @@ export function CharacterWindow({ isOpen, onClose, state, settings, initialTab, 
 
   return (
     <div className="fixed inset-0 z-50 flex items-stretch justify-center bg-black/80 backdrop-blur-sm sm:items-center sm:p-4">
-      <div className="relative flex h-[100dvh] w-full max-w-3xl flex-col overflow-hidden border-slate-700 bg-slate-900 text-slate-100 shadow-2xl sm:h-[85vh] sm:max-h-[85vh] sm:rounded-xl sm:border">
+      <div className="sgm-turn-frame sgm-info-panel relative flex h-[100dvh] w-full max-w-3xl flex-col overflow-hidden text-slate-100 shadow-2xl sm:h-[85vh] sm:max-h-[85vh] sm:rounded-xl sm:border">
+        <div className="sgm-turn-frame-bar h-1 w-full shrink-0" />
 
-        <div className="flex shrink-0 items-center justify-between border-b border-slate-800 bg-slate-950/50 px-4 py-3">
+        <div className="flex shrink-0 items-center justify-between border-b border-slate-800/80 bg-black/20 px-4 py-3">
           <div className="flex items-center gap-3">
-            <h2 className="font-serif text-lg font-bold text-crimson-400">{c.name}</h2>
+            <h2 className="sgm-info-heading text-lg font-bold">{c.name}</h2>
             <span className="text-xs text-slate-500">Level {c.level}</span>
           </div>
           <div className="flex items-center gap-2">
@@ -567,7 +568,7 @@ export function CharacterWindow({ isOpen, onClose, state, settings, initialTab, 
                 aria-pressed={sidePanelOpen}
                 className={`rounded-md border px-2 py-1 text-[11px] font-medium ${
                   sidePanelOpen
-                    ? 'border-crimson-600/50 bg-crimson-950/40 text-crimson-300'
+                    ? 'sgm-info-tab-on'
                     : 'border-slate-700 bg-slate-800 text-slate-300'
                 }`}
               >
@@ -652,10 +653,10 @@ export function CharacterWindow({ isOpen, onClose, state, settings, initialTab, 
               key={tab.key}
               type="button"
               onClick={() => handleTab(tab.key)}
-              className={`flex min-w-[3.25rem] flex-1 flex-col items-center gap-1 px-1 py-2.5 text-xs transition-colors ${
+              className={`flex min-w-[3.25rem] flex-1 flex-col items-center gap-1 border-t-2 px-1 py-2.5 text-xs transition-colors ${
                 activeTab === tab.key
-                  ? 'text-crimson-400 bg-slate-800/50 border-t-2 border-crimson-500'
-                  : 'text-slate-500 hover:text-slate-300 hover:bg-slate-800/30'
+                  ? 'sgm-info-tab-on'
+                  : 'border-transparent text-slate-500 hover:text-slate-300 hover:bg-slate-800/30'
               }`}
             >
               {tab.icon}

@@ -90,7 +90,7 @@ function mapProvider(raw?: string | null): string {
 
 function mapEngineMode(raw?: string | null): string {
   const m = (raw || engineMode || 'litrpg').toLowerCase();
-  if (m === 'dnd' || m === '5e') return '5e';
+  if (m === 'dnd' || m === 'tabletop') return 'tabletop';
   if (m === 'pyoa') return 'PYOA';
   if (m === 'rpg') return 'RPG';
   return 'LitRPG';

@@ -4,7 +4,7 @@
  * Illustrated graphic-novel mode: caps reserved; launch is text + memorable Flux art.
  */
 
-export type SubscriptionTierId = 'free' | 'mid' | 'high';
+export type SubscriptionTierId = 'free' | 'mid' | 'high' | 'admin';
 
 export type TurnPackId =
   | 'text_15'
@@ -243,6 +243,29 @@ export const SUBSCRIPTION_TIERS: Record<SubscriptionTierId, TierDefinition> = {
     noAds: true,
     downloadGraphicNovel: true,
   },
+  /**
+   * Website-only: Bring Your Own Key. Same capacity floor as High;
+   * player supplies text + image API keys after disclaimer.
+   * Not sold on Google Play / App Store builds.
+   */
+  admin: {
+    id: 'admin',
+    name: 'Admin (BYOK)',
+    /** Platform access only — player pays their own API keys. Adult rail, not Stripe. */
+    priceGbp: 12.99,
+    writerOpenRouterId: 'anthropic/claude-sonnet-4.5',
+    writerGeminiId: 'gemini-3.5-flash',
+    textTurnsPerDay: 24,
+    memorableImagesPerWeek: 40,
+    illustratedImagesPerDay: 10,
+    illustratedTrialImages: 0,
+    maxPanelsPerTurn: 3,
+    fluxEndpoint: 'flux-2-pro',
+    fluxHeroEndpoint: 'flux-2-pro-preview',
+    adTextTurns: 0,
+    noAds: true,
+    downloadGraphicNovel: true,
+  },
 };
 
 const TIER_STORAGE_KEY = 'synapticgm-subscription-tier';
@@ -251,11 +274,15 @@ const TIER_STORAGE_KEY = 'synapticgm-subscription-tier';
 export function getActiveSubscriptionTier(): SubscriptionTierId {
   try {
     const raw = localStorage.getItem(TIER_STORAGE_KEY);
-    if (raw === 'mid' || raw === 'high' || raw === 'free') return raw;
+    if (raw === 'mid' || raw === 'high' || raw === 'free' || raw === 'admin') return raw;
   } catch {
     /* ignore */
   }
   return 'free';
+}
+
+export function isAdminSubscriptionTier(tier: SubscriptionTierId | string | null | undefined): boolean {
+  return tier === 'admin';
 }
 
 export function setActiveSubscriptionTier(tier: SubscriptionTierId): void {
@@ -268,15 +295,16 @@ export function getTierDefinition(tier: SubscriptionTierId = getActiveSubscripti
 
 /**
  * Resolve writer model for this session.
- * Hosted OpenRouter path uses tier catalog; DIY customModelId still wins if set (BYOK).
+ * Hosted path uses tier catalog. Custom model only when Admin BYOK is live.
  */
 export function resolveWriterModel(args: {
   aiProvider: string;
   customModelId?: string | null;
   tier?: SubscriptionTierId;
+  allowCustomModel?: boolean;
 }): string {
   const custom = args.customModelId?.trim();
-  if (custom) return custom;
+  if (custom && (args.allowCustomModel || args.tier === 'admin')) return custom;
   const def = getTierDefinition(args.tier ?? getActiveSubscriptionTier());
   if (args.aiProvider === 'gemini') return def.writerGeminiId;
   return def.writerOpenRouterId;

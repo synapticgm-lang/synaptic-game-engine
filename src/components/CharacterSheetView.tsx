@@ -42,7 +42,7 @@ export function CharacterSheetView({ state }: Props) {
 
 function LayoutToggle({ layout, onChange }: { layout: LayoutMode; onChange: (m: LayoutMode) => void }) {
   const tabs: { key: LayoutMode; label: string }[] = [
-    { key: 'dnd', label: '5e Dashboard' },
+    { key: 'dnd', label: 'Tabletop Dashboard' },
     { key: 'litrpg', label: 'LitRPG Status' },
     { key: 'cards', label: 'Pre-Made Cards' },
   ];
@@ -54,7 +54,7 @@ function LayoutToggle({ layout, onChange }: { layout: LayoutMode; onChange: (m: 
           onClick={() => onChange(tab.key)}
           className={`flex-1 rounded-md px-2 py-2 text-center text-[11px] font-medium transition-all sm:text-xs ${
             layout === tab.key
-              ? 'bg-crimson-500/15 text-crimson-300 border border-crimson-500/40 shadow-inner shadow-crimson-900/30'
+              ? 'sgm-info-tab-on border'
               : 'text-slate-500 hover:text-slate-300 hover:bg-slate-800/50 border border-transparent'
           }`}
         >
@@ -65,7 +65,7 @@ function LayoutToggle({ layout, onChange }: { layout: LayoutMode; onChange: (m: 
   );
 }
 
-/* ============ LAYOUT 1: D&D DASHBOARD ============ */
+/* ============ LAYOUT 1: TABLETOP DASHBOARD ============ */
 
 function DndDashboard({ state }: { state: GameState }) {
   const c = state.character;
@@ -82,7 +82,7 @@ function DndDashboard({ state }: { state: GameState }) {
     <div className="space-y-4">
       {/* Core Attributes */}
       <section>
-        <h3 className="mb-2 font-serif text-xs uppercase tracking-wider text-crimson-400">Core Attributes</h3>
+        <h3 className="sgm-info-heading mb-2 text-xs uppercase tracking-wider">Core Attributes</h3>
         <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
           {attrRows.map(([key, val]) => {
             const mod = MODIFIER(val);
@@ -107,7 +107,7 @@ function DndDashboard({ state }: { state: GameState }) {
 
       {/* Inventory Weight Bar */}
       <section>
-        <h3 className="mb-2 font-serif text-xs uppercase tracking-wider text-crimson-400">Inventory Weight</h3>
+        <h3 className="sgm-info-heading mb-2 text-xs uppercase tracking-wider">Inventory Weight</h3>
         <div className="rounded-md border border-slate-700 bg-slate-800/40 p-3">
           <div className="mb-1.5 flex items-center justify-between text-xs">
             <span className="flex items-center gap-1.5 text-slate-300">
@@ -132,7 +132,7 @@ function DndDashboard({ state }: { state: GameState }) {
 
       {/* Spellbook List */}
       <section>
-        <h3 className="mb-2 font-serif text-xs uppercase tracking-wider text-crimson-400">Spellbook</h3>
+        <h3 className="sgm-info-heading mb-2 text-xs uppercase tracking-wider">Spellbook</h3>
         <div className="rounded-md border border-slate-700 bg-slate-800/40 p-2">
           {spells.length === 0 ? (
             <div className="py-4 text-center text-xs italic text-slate-600">No spells learned yet.</div>
@@ -167,23 +167,23 @@ function LitRpgStatus({ state }: { state: GameState }) {
   return (
     <div className="mx-auto max-w-md space-y-5">
       {/* Level / XP Header */}
-      <div className="rounded-xl border border-cyan-500/30 bg-gradient-to-br from-slate-900/80 to-cyan-950/40 p-4 text-center shadow-lg shadow-cyan-900/20">
-        <div className="mb-1 text-[10px] uppercase tracking-[0.2em] text-cyan-400/70">Adventurer</div>
-        <div className="font-serif text-2xl font-bold text-cyan-100">{c.name}</div>
+      <div className="sgm-turn-frame sgm-info-panel rounded-xl border p-4 text-center shadow-lg">
+        <div className="sgm-info-accent mb-1 text-[10px] uppercase tracking-[0.2em] opacity-80">Adventurer</div>
+        <div className="font-serif text-2xl font-bold">{c.name}</div>
         <div className="my-2 flex items-center justify-center gap-2">
-          <span className="rounded-full border border-cyan-500/40 bg-cyan-500/10 px-3 py-0.5 text-xs font-bold text-cyan-300">
+          <span className="sgm-info-tab-on rounded-full border px-3 py-0.5 text-xs font-bold">
             LV {c.level}
           </span>
         </div>
         {/* XP Bar */}
         <div className="mt-3">
-          <div className="mb-1 flex justify-between text-[10px] text-cyan-300/70">
-            <span>EXP</span>
+          <div className="mb-1 flex justify-between text-[10px] opacity-80">
+            <span className="sgm-info-accent">EXP</span>
             <span className="font-mono">{c.xp} / {c.xpToNext}</span>
           </div>
-          <div className="h-2.5 overflow-hidden rounded-full border border-cyan-700/50 bg-slate-950">
+          <div className="h-2.5 overflow-hidden rounded-full border border-slate-700 bg-slate-950">
             <div
-              className="h-full rounded-full bg-gradient-to-r from-cyan-500 via-cyan-400 to-emerald-400 transition-all duration-500"
+              className="sgm-info-fill h-full rounded-full transition-all duration-500"
               style={{ width: `${xpPct}%` }}
             />
           </div>
@@ -299,7 +299,7 @@ function buildCards(state: GameState): CardData[] {
       class: state.campaignArchetype ?? 'Adventurer',
       level: c.level,
       rarity: 'You',
-      gradient: 'from-crimson-900 via-slate-900 to-slate-800',
+      gradient: 'from-slate-800 via-slate-900 to-slate-950',
     },
   ];
   const presets: CardData[] = [
@@ -348,7 +348,7 @@ function PreMadeCards({ state }: { state: GameState }) {
               key={card.id}
               className={`flex w-60 shrink-0 flex-col overflow-hidden rounded-xl border-2 transition-all ${
                 isSelected
-                  ? 'border-crimson-500 shadow-lg shadow-crimson-900/40 scale-[1.03]'
+                  ? 'sgm-info-slot-on scale-[1.03] shadow-lg'
                   : 'border-slate-700 hover:border-slate-500'
               }`}
             >
@@ -375,7 +375,7 @@ function PreMadeCards({ state }: { state: GameState }) {
                   onClick={() => setSelected(card.id)}
                   className={`mt-1 w-full rounded-md py-2 text-xs font-bold uppercase tracking-wider transition-all ${
                     isSelected
-                      ? 'bg-crimson-500 text-white shadow-md shadow-crimson-900/50'
+                      ? 'sgm-info-tab-on shadow-md'
                       : 'border border-slate-600 bg-slate-800 text-slate-300 hover:bg-slate-700'
                   }`}
                 >

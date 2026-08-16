@@ -28,10 +28,12 @@ import {
   themeTextureOf,
 } from '@/game/cosmeticCatalog';
 import { ensureTestCosmeticUnlock, isOwned } from '@/game/cosmeticEntitlements';
+import { LegalLinks } from './LegalLinks';
 import { applySettingsCosmetics, applyUiThemeToDocument, themeBySettingsId } from '@/game/uiTheme';
 import { previewVoiceLine } from '@/game/useVoice';
 import { DicePreview } from './DicePreview';
 import { CapacityPackShop } from './CapacityPackShop';
+import { ParentPurchaseGate, requestParentPurchaseApproval } from './ParentPurchaseGate';
 
 type HubTab = 'play' | 'themes' | 'shop';
 
@@ -96,13 +98,15 @@ export function MainMenu({
 
       <div className="relative z-10 flex w-full max-w-3xl flex-col items-center gap-6 pt-6">
         <div className="flex flex-col items-center gap-3 text-center">
-          <img
-            src="/assets/images/1785421156244~2 copy.png"
-            alt="SYNAPTIC DUNGEON MASTER"
-            className="w-full max-w-[220px] h-auto object-contain drop-shadow-[0_0_20px_rgba(220,38,38,0.35)] filter brightness-110"
-          />
+          <div className="w-full max-w-[220px] aspect-square overflow-hidden">
+            <img
+              src="/assets/images/1785421156244~2 copy.png"
+              alt="SYNAPTIC GM"
+              className="w-full h-auto object-cover object-top drop-shadow-[0_0_20px_rgba(220,38,38,0.35)] filter brightness-110"
+            />
+          </div>
           <h1 className="font-serif text-2xl font-bold tracking-tight sm:text-3xl" style={{ color: 'var(--sgm-text, #f1f5f9)' }}>
-            SYNAPTIC DUNGEON MASTER
+            SYNAPTIC GM
           </h1>
           <p className="text-sm" style={{ color: 'var(--sgm-muted, #64748b)' }}>
             A dark fantasy world awaits your decisions.
@@ -150,6 +154,8 @@ export function MainMenu({
           <ThemesTab settings={settings} onSave={onSaveCosmetics} />
         )}
         {tab === 'shop' && <ShopTab settings={settings} />}
+
+        <LegalLinks className="mt-2 pb-2" />
       </div>
     </div>
   );
@@ -597,7 +603,27 @@ function ShopTab({ settings }: { settings: Settings }) {
   const [packNote, setPackNote] = useState<string | null>(null);
   const [openSetId, setOpenSetId] = useState<string | null>(null);
   const [openExtra, setOpenExtra] = useState<CosmeticSlot | null>(null);
+  const [gateOpen, setGateOpen] = useState(false);
+  const [pendingBuy, setPendingBuy] = useState<null | (() => void)>(null);
   const activeShopJump = useSectionSpy(SHOP_JUMPS.map((j) => j.id));
+
+  const requestBuy = (label: string) => {
+    requestParentPurchaseApproval({
+      contentMode: settings.contentMode,
+      contentPin: settings.contentPin,
+      openGate: () => {
+        setPendingBuy(() => () => {
+          setPackNote(`${label} — parent approved (payments not live yet).`);
+          window.setTimeout(() => setPackNote(null), 4000);
+        });
+        setGateOpen(true);
+      },
+      action: () => {
+        setPackNote(`${label} — parent approved (payments not live yet).`);
+        window.setTimeout(() => setPackNote(null), 4000);
+      },
+    });
+  };
 
   const featuredSet = useMemo(
     () => RACE_THEME_ITEMS.find((item) => !item.free) ?? RACE_THEME_ITEMS[0],
@@ -641,9 +667,25 @@ function ShopTab({ settings }: { settings: Settings }) {
 
   return (
     <div className="flex w-full flex-col gap-6 pb-10">
+      <ParentPurchaseGate
+        contentMode={settings.contentMode}
+        contentPin={settings.contentPin}
+        verifyPin={(pin) => !!settings.contentPin && pin === settings.contentPin}
+        open={gateOpen}
+        onClose={() => {
+          setGateOpen(false);
+          setPendingBuy(null);
+        }}
+        onApproved={() => {
+          pendingBuy?.();
+          setPendingBuy(null);
+        }}
+      />
+
       <div className="rounded-lg border border-amber-800/40 bg-amber-950/20 px-3 py-2 text-center text-xs text-amber-200/90">
         Merchant preview — payments not live. All items unlocked for this test account.
         Active theme: {themeBySettingsId(settings.uiThemeId).name}
+        {settings.contentMode === 'kid' ? ' · Purchases need parent PIN' : ''}
       </div>
 
       {packNote && (
@@ -669,7 +711,12 @@ function ShopTab({ settings }: { settings: Settings }) {
       )}
 
       <div id="shop-packs" className="scroll-mt-14">
-        <CapacityPackShop onGranted={setPackNote} />
+        <CapacityPackShop
+          onGranted={setPackNote}
+          contentMode={settings.contentMode}
+          contentPin={settings.contentPin}
+          verifyPin={(pin) => !!settings.contentPin && pin === settings.contentPin}
+        />
       </div>
 
       <Section
@@ -694,6 +741,7 @@ function ShopTab({ settings }: { settings: Settings }) {
                   compact
                   expanded={expanded}
                   onClick={() => setOpenSetId((id) => (id === item.id ? null : item.id))}
+                  onBuy={() => requestBuy(item.name)}
                 />
               </div>
             );
@@ -708,7 +756,7 @@ function ShopTab({ settings }: { settings: Settings }) {
       >
         <div className="grid grid-cols-2 gap-2">
           {bundles.map((item) => (
-            <ShopCard key={item.id} item={item} />
+            <ShopCard key={item.id} item={item} onBuy={() => requestBuy(item.name)} />
           ))}
         </div>
       </Section>
@@ -729,7 +777,7 @@ function ShopTab({ settings }: { settings: Settings }) {
             >
               <div className="grid gap-2 sm:grid-cols-2">
                 {items.map((item) => (
-                  <ShopCard key={item.id} item={item} />
+                  <ShopCard key={item.id} item={item} onBuy={() => requestBuy(item.name)} />
                 ))}
               </div>
             </CustomizeSlot>
@@ -825,7 +873,7 @@ function FeaturedSetBanner({
   );
 }
 
-function ShopCard({ item }: { item: ShopItem }) {
+function ShopCard({ item, onBuy }: { item: ShopItem; onBuy?: () => void }) {
   const owned = isOwned(item.id);
   const texture = themeTextureOf(item);
   return (
@@ -880,6 +928,10 @@ function ShopCard({ item }: { item: ShopItem }) {
         <button
           type="button"
           disabled={owned}
+          onClick={() => {
+            if (owned || item.free) return;
+            onBuy?.();
+          }}
           className={`rounded-lg border px-3 py-1.5 text-xs font-medium transition ${
             owned
               ? 'border-emerald-800/50 bg-emerald-950/40 text-emerald-300 cursor-default'
@@ -997,6 +1049,7 @@ function SetCard({
   selected,
   owned,
   onClick,
+  onBuy,
   shop,
   compact,
   expanded,
@@ -1005,6 +1058,7 @@ function SetCard({
   selected: boolean;
   owned: boolean;
   onClick?: () => void;
+  onBuy?: () => void;
   shop?: boolean;
   compact?: boolean;
   expanded?: boolean;
@@ -1100,9 +1154,22 @@ function SetCard({
         )}
       </div>
       {shop && (
-        <span className="shrink-0 rounded-lg border border-emerald-800/50 bg-emerald-950/40 px-3 py-1.5 text-xs font-medium text-emerald-300">
-          {owned ? (theme.free ? 'Included' : 'Owned') : 'Buy (soon)'}
-        </span>
+        owned || theme.free ? (
+          <span className="shrink-0 rounded-lg border border-emerald-800/50 bg-emerald-950/40 px-3 py-1.5 text-xs font-medium text-emerald-300">
+            {theme.free ? 'Included' : 'Owned'}
+          </span>
+        ) : (
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              onBuy?.();
+            }}
+            className="shrink-0 rounded-lg border border-slate-600 bg-slate-800 px-3 py-1.5 text-xs font-medium text-slate-200 hover:border-cyan-600"
+          >
+            Buy (soon)
+          </button>
+        )
       )}
     </div>
   ) : null;
