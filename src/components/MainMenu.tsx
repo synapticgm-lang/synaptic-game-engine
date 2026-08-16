@@ -12,6 +12,7 @@ import {
   Check,
   ChevronDown,
   ChevronUp,
+  Volume2,
 } from 'lucide-react';
 import type { SaveSlotInfo, Settings } from '@/game/types';
 import {
@@ -24,9 +25,11 @@ import {
   shopItemById,
   themeKitItems,
   isRaceKitPart,
+  themeTextureOf,
 } from '@/game/cosmeticCatalog';
 import { ensureTestCosmeticUnlock, isOwned } from '@/game/cosmeticEntitlements';
 import { applySettingsCosmetics, applyUiThemeToDocument, themeBySettingsId } from '@/game/uiTheme';
+import { previewVoiceLine } from '@/game/useVoice';
 import { DicePreview } from './DicePreview';
 
 type HubTab = 'play' | 'themes' | 'shop';
@@ -331,9 +334,9 @@ function ThemesTab({
                   selected={draftTheme === item.id}
                   title={item.name}
                   subtitle={item.blurb}
-                  swatch={item.preview?.accent}
                   owned={isOwned(item.id)}
                   onClick={() => setDraftTheme(item.id)}
+                  themeItem={item}
                 />
               ))}
             </div>
@@ -391,9 +394,13 @@ function ThemesTab({
                 key={item.id}
                 selected={draftVoice === item.id}
                 title={item.name}
-                subtitle={item.blurb}
+                subtitle={item.flavour ?? item.blurb}
                 owned={isOwned(item.id)}
-                onClick={() => setDraftVoice(item.id)}
+                onClick={() => {
+                  setDraftVoice(item.id);
+                  previewVoiceLine(item);
+                }}
+                voiceItem={item}
               />
             ))}
           </CustomizeSlot>
@@ -411,6 +418,7 @@ function ThemesTab({
                 subtitle={item.blurb}
                 owned={isOwned(item.id)}
                 onClick={() => setDraftFrame(item.id)}
+                frameItem={item}
               />
             ))}
           </CustomizeSlot>
@@ -449,18 +457,24 @@ function ThemePreviewBar({
   const dice = shopItemById(diceId);
   const voice = shopItemById(voiceId);
   const frame = shopItemById(frameId);
+  const texture = themeTextureOf(theme);
   return (
     <div
-      className="sticky top-0 z-20 overflow-hidden rounded-xl border shadow-lg backdrop-blur-md"
+      className={`sgm-theme-preview sgm-tex-${texture} sticky top-0 z-20 overflow-hidden rounded-xl border shadow-lg backdrop-blur-md`}
+      data-sgm-frame={frame?.frameSkin?.style ?? 'plain'}
       style={{
         borderColor: p?.accent ?? '#334155',
-        background: `${p?.panel ?? '#0f172a'}ee`,
         color: p?.text ?? '#e2e8f0',
+        ['--sgm-chip-accent' as string]: p?.accent ?? '#22d3ee',
+        ['--sgm-chip-bg' as string]: p?.bg ?? '#020617',
+        ['--sgm-chip-panel' as string]: p?.panel ?? '#0f172a',
       }}
     >
       <div className="h-1.5 w-full" style={{ background: p?.accent ?? '#22d3ee' }} />
       <div className="flex items-center gap-3 px-3 py-2.5">
+        <ThemeChip item={theme} size={36} />
         {dice ? <DicePreview item={dice} size={32} /> : null}
+        {frame ? <FrameChip item={frame} /> : null}
         <div className="min-w-0 flex-1">
           <div className="text-[10px] font-semibold uppercase tracking-[0.16em] text-slate-400">
             {theme.name}
@@ -475,6 +489,16 @@ function ThemePreviewBar({
             {[font?.name, dice?.name, voice?.name, frame?.name].filter(Boolean).join(' · ')}
           </div>
         </div>
+        {voice ? (
+          <button
+            type="button"
+            onClick={() => previewVoiceLine(voice)}
+            className="shrink-0 rounded-md border border-white/10 bg-black/30 p-1.5 text-slate-300 hover:text-white"
+            title="Hear voice"
+          >
+            <Volume2 size={14} />
+          </button>
+        ) : null}
       </div>
     </div>
   );
@@ -539,14 +563,19 @@ function ShopTab({ settings }: { settings: Settings }) {
 
 function ShopCard({ item }: { item: ShopItem }) {
   const owned = isOwned(item.id);
+  const texture = themeTextureOf(item);
   return (
     <div
-      className="rounded-xl border border-slate-800 bg-slate-900/60 p-3"
+      className={`rounded-xl border border-slate-800 bg-slate-900/60 p-3${
+        item.preview ? ` sgm-theme-preview sgm-tex-${texture}` : ''
+      }`}
       style={
         item.preview
           ? {
               borderColor: `${item.preview.accent}55`,
-              background: `linear-gradient(145deg, ${item.preview.panel}cc, #020617aa)`,
+              ['--sgm-chip-accent' as string]: item.preview.accent,
+              ['--sgm-chip-bg' as string]: item.preview.bg,
+              ['--sgm-chip-panel' as string]: item.preview.panel,
             }
           : undefined
       }
@@ -556,18 +585,20 @@ function ShopCard({ item }: { item: ShopItem }) {
           <div className="text-sm font-semibold text-slate-100">{item.name}</div>
           {item.slot === 'font' ? (
             <FontDescriptionBox item={item} blurb={item.blurb} />
+          ) : item.slot === 'voice' ? (
+            <VoiceFlavour item={item} />
           ) : (
             <div className="mt-1 text-[11px] leading-snug text-slate-400">{item.blurb}</div>
           )}
         </div>
         {item.slot === 'dice' ? (
           <DicePreview item={item} />
+        ) : item.slot === 'frame' ? (
+          <FrameChip item={item} />
+        ) : item.slot === 'theme' && item.preview ? (
+          <ThemeChip item={item} size={32} />
         ) : item.preview?.accent ? (
-          <span
-            className="mt-0.5 h-8 w-8 shrink-0 rounded-full border border-white/10"
-            style={{ background: item.preview.accent }}
-            title="Accent"
-          />
+          <ThemeChip item={item} size={32} />
         ) : null}
       </div>
       {item.includes && (
@@ -576,8 +607,11 @@ function ShopCard({ item }: { item: ShopItem }) {
         </div>
       )}
       <div className="mt-3 flex items-center justify-between gap-2">
-        <div className="text-sm font-medium text-cyan-300">
-          {item.free ? 'Free' : `${item.priceGbp} · ${item.priceUsd}`}
+        <div className="flex items-center gap-2">
+          <div className="text-sm font-medium text-cyan-300">
+            {item.free ? 'Free' : `${item.priceGbp} · ${item.priceUsd}`}
+          </div>
+          {item.slot === 'voice' && <HearButton item={item} />}
         </div>
         <button
           type="button"
@@ -609,6 +643,59 @@ function FontDescriptionBox({ item, blurb }: { item: ShopItem; blurb: string }) 
       <p>{blurb}</p>
       <p className="mt-1 text-[13px] text-slate-300">The tale opens here.</p>
     </div>
+  );
+}
+
+function ThemeChip({ item, size = 32 }: { item: ShopItem; size?: number }) {
+  const p = item.preview;
+  const texture = themeTextureOf(item);
+  return (
+    <span
+      className={`sgm-theme-chip sgm-tex-${texture}${item.free ? ' sgm-theme-chip-free' : ''}`}
+      style={{
+        width: size,
+        height: size,
+        ['--sgm-chip-accent' as string]: p?.accent ?? '#22d3ee',
+        ['--sgm-chip-bg' as string]: p?.bg ?? '#020617',
+        ['--sgm-chip-panel' as string]: p?.panel ?? '#0f172a',
+      }}
+      aria-hidden
+    />
+  );
+}
+
+function FrameChip({ item }: { item: ShopItem }) {
+  return (
+    <span
+      className="sgm-frame-chip"
+      data-sgm-frame={item.frameSkin?.style ?? 'plain'}
+      title={item.name}
+      aria-hidden
+    />
+  );
+}
+
+function VoiceFlavour({ item }: { item: ShopItem }) {
+  return (
+    <div className="mt-1 text-[11px] leading-snug text-slate-400">
+      <p>{item.blurb}</p>
+      {item.flavour && (
+        <p className="mt-1 italic text-slate-300">“{item.flavour}”</p>
+      )}
+    </div>
+  );
+}
+
+function HearButton({ item }: { item: ShopItem }) {
+  return (
+    <button
+      type="button"
+      onClick={() => previewVoiceLine(item)}
+      className="inline-flex items-center gap-1 rounded-md border border-slate-600 bg-slate-800 px-2 py-1 text-[10px] font-medium text-slate-200 hover:border-cyan-600"
+    >
+      <Volume2 size={12} />
+      Hear
+    </button>
   );
 }
 
@@ -663,12 +750,7 @@ function SetCard({
   const inner = (
     <>
       <div className="flex items-center gap-3">
-        {p?.accent && (
-          <span
-            className="h-8 w-8 shrink-0 rounded-md border border-white/10"
-            style={{ background: p.accent }}
-          />
-        )}
+        {p && <ThemeChip item={theme} size={32} />}
         {dicePart && <DicePreview item={dicePart} size={28} />}
         <div className="min-w-0 flex-1">
           <div className="text-sm font-semibold text-slate-100">{theme.name}</div>
@@ -698,6 +780,12 @@ function SetCard({
                     {item.slot === 'dice' ? `${label} · ${item.name}` : item.name}
                   </div>
                   {item.slot === 'font' && <FontDescriptionBox item={item} blurb={item.blurb} />}
+                  {item.slot === 'voice' && <VoiceFlavour item={item} />}
+                  {item.slot === 'frame' && (
+                    <div className="mt-1">
+                      <FrameChip item={item} />
+                    </div>
+                  )}
                 </div>
               </div>
             ))}
@@ -718,10 +806,13 @@ function SetCard({
     </>
   );
 
+  const texture = themeTextureOf(theme);
   const style = p
     ? {
         borderColor: selected ? `${p.accent}99` : `${p.accent}44`,
-        background: `linear-gradient(145deg, ${p.panel}cc, #020617aa)`,
+        ['--sgm-chip-accent' as string]: p.accent,
+        ['--sgm-chip-bg' as string]: p.bg,
+        ['--sgm-chip-panel' as string]: p.panel,
       }
     : undefined;
 
@@ -731,7 +822,7 @@ function SetCard({
         type="button"
         onClick={onClick}
         disabled={!owned}
-        className={`w-full rounded-xl border p-3 text-left transition ${
+        className={`sgm-theme-preview sgm-tex-${texture} w-full rounded-xl border p-3 text-left transition ${
           selected ? 'ring-1 ring-cyan-400/40' : ''
         } ${!owned ? 'cursor-not-allowed opacity-40' : 'hover:border-slate-500'}`}
         style={style}
@@ -741,7 +832,7 @@ function SetCard({
     );
   }
   return (
-    <div className="rounded-xl border p-3" style={style}>
+    <div className={`sgm-theme-preview sgm-tex-${texture} rounded-xl border p-3`} style={style}>
       {inner}
     </div>
   );
@@ -765,6 +856,9 @@ function SelectCard({
   onClick,
   fontSample,
   diceItem,
+  themeItem,
+  frameItem,
+  voiceItem,
 }: {
   selected: boolean;
   title: string;
@@ -774,6 +868,9 @@ function SelectCard({
   onClick: () => void;
   fontSample?: ShopItem;
   diceItem?: ShopItem;
+  themeItem?: ShopItem;
+  frameItem?: ShopItem;
+  voiceItem?: ShopItem;
 }) {
   return (
     <button
@@ -788,6 +885,10 @@ function SelectCard({
     >
       {diceItem ? (
         <DicePreview item={diceItem} />
+      ) : themeItem ? (
+        <ThemeChip item={themeItem} size={28} />
+      ) : frameItem ? (
+        <FrameChip item={frameItem} />
       ) : swatch ? (
         <span className="mt-0.5 h-7 w-7 shrink-0 rounded-md border border-white/10" style={{ background: swatch }} />
       ) : null}

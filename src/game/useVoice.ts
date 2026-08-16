@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { shopItemById } from './cosmeticCatalog';
+import { shopItemById, type ShopItem } from './cosmeticCatalog';
 
 type SpeechRecognitionType = typeof window & {
   SpeechRecognition?: new () => SpeechRecognitionInstance;
@@ -183,4 +183,23 @@ export function useVoice(ttsEnabled: boolean, voicePackId?: string) {
     ttsSupported, sttSupported,
     speak, speakSequence, stopSpeaking, startListening, stopListening,
   };
+}
+
+/** Shop / locker sample — uses the existing browser TTS stack, ignores the in-play mute. */
+export function previewVoiceLine(item: ShopItem): void {
+  if (typeof window === 'undefined' || !('speechSynthesis' in window)) return;
+  window.speechSynthesis.cancel();
+  const line = (item.flavour ?? item.blurb).trim();
+  if (!line) return;
+  const u = new SpeechSynthesisUtterance(line);
+  if (item.tts) {
+    u.rate = item.tts.rate;
+    u.pitch = item.tts.pitch;
+    const hint = item.tts.voiceHint.toLowerCase();
+    const match = window.speechSynthesis.getVoices().find(
+      (v) => v.lang.toLowerCase().startsWith('en') && v.name.toLowerCase().includes(hint),
+    );
+    if (match) u.voice = match;
+  }
+  window.speechSynthesis.speak(u);
 }

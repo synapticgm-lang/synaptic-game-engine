@@ -130,6 +130,7 @@ export const SHOP_CATALOG: ShopItem[] = [
       muted: '#a78bfa',
       fontUi: 'ui-sans-serif, system-ui, sans-serif',
       fontStory: 'ui-sans-serif, system-ui, sans-serif',
+      texture: 'neon',
     },
   },
   {
@@ -147,7 +148,8 @@ export const SHOP_CATALOG: ShopItem[] = [
       text: '#f5e6d3',
       muted: '#a8a29e',
       fontUi: 'ui-sans-serif, system-ui, sans-serif',
-      fontStory: 'Georgia, "Times New Roman", serif',
+      fontStory: '"Libre Baskerville", Georgia, "Times New Roman", serif',
+      texture: 'parchment',
     },
   },
   {
@@ -165,7 +167,8 @@ export const SHOP_CATALOG: ShopItem[] = [
       text: '#e7e5e4',
       muted: '#78716c',
       fontUi: 'ui-sans-serif, system-ui, sans-serif',
-      fontStory: 'Georgia, serif',
+      fontStory: '"Crimson Pro", Georgia, serif',
+      texture: 'bone',
     },
   },
   {
@@ -184,6 +187,7 @@ export const SHOP_CATALOG: ShopItem[] = [
       muted: '#166534',
       fontUi: 'ui-monospace, SFMono-Regular, Menlo, monospace',
       fontStory: 'ui-monospace, SFMono-Regular, Menlo, monospace',
+      texture: 'phosphor',
     },
   },
   {
@@ -201,7 +205,8 @@ export const SHOP_CATALOG: ShopItem[] = [
       text: '#fafafa',
       muted: '#737373',
       fontUi: 'ui-sans-serif, system-ui, sans-serif',
-      fontStory: 'Georgia, serif',
+      fontStory: '"Playfair Display", Georgia, serif',
+      texture: 'noir',
     },
   },
   {
@@ -219,7 +224,8 @@ export const SHOP_CATALOG: ShopItem[] = [
       text: '#ede9fe',
       muted: '#8b5cf6',
       fontUi: 'ui-sans-serif, system-ui, sans-serif',
-      fontStory: 'ui-serif, Georgia, serif',
+      fontStory: '"Cormorant Garamond", Georgia, serif',
+      texture: 'glass',
     },
   },
   {
@@ -237,7 +243,8 @@ export const SHOP_CATALOG: ShopItem[] = [
       text: '#ffedd5',
       muted: '#a8a29e',
       fontUi: 'ui-sans-serif, system-ui, sans-serif',
-      fontStory: 'Georgia, serif',
+      fontStory: '"Playfair Display", Georgia, serif',
+      texture: 'ember',
     },
   },
 
@@ -557,6 +564,7 @@ export const SHOP_CATALOG: ShopItem[] = [
     slot: 'voice',
     name: 'Cold Registrar',
     blurb: 'Flat, precise System / Auditor voice.',
+    flavour: 'Name. Designation. The record is open.',
     priceGbp: '£4.99',
     priceUsd: '$4.99',
     tts: { rate: 0.95, pitch: 0.85, voiceHint: 'david' },
@@ -566,6 +574,7 @@ export const SHOP_CATALOG: ShopItem[] = [
     slot: 'voice',
     name: 'Street Chronicler',
     blurb: 'Gritty urban Integration narrator.',
+    flavour: 'The street keeps its own ledger.',
     priceGbp: '£4.99',
     priceUsd: '$4.99',
     tts: { rate: 1.02, pitch: 0.92, voiceHint: 'mark' },
@@ -575,6 +584,7 @@ export const SHOP_CATALOG: ShopItem[] = [
     slot: 'voice',
     name: 'Grizzled Mentor',
     blurb: 'Older advisor tone, dry humour.',
+    flavour: 'You will live longer if you listen first.',
     priceGbp: '£4.99',
     priceUsd: '$4.99',
     tts: { rate: 0.88, pitch: 0.78, voiceHint: 'daniel' },
@@ -867,8 +877,10 @@ const RACE_THEME_KITS: RaceKitDef[] = [
     diceAccent: '#22d3ee',
     diceFace: '#155e75',
     diceMaterial: 'circuit',
+    texture: 'circuit',
     voiceName: 'Chassis Synth',
     voiceBlurb: 'Flat, slightly fast augmented tone.',
+    voiceFlavour: 'Signal locked. Proceed.',
     tts: { rate: 1.06, pitch: 0.88, voiceHint: 'google' },
   },
   {
@@ -883,8 +895,10 @@ const RACE_THEME_KITS: RaceKitDef[] = [
     diceAccent: '#fde68a',
     diceFace: '#ca8a04',
     diceMaterial: 'marble',
+    texture: 'halo',
     voiceName: 'Radiance',
     voiceBlurb: 'Soft, lifted celestial diction.',
+    voiceFlavour: 'Light does not ask permission.',
     tts: { rate: 0.93, pitch: 1.12, voiceHint: 'samantha' },
   },
   {
@@ -893,14 +907,16 @@ const RACE_THEME_KITS: RaceKitDef[] = [
     fontName: 'Sulfur Serif',
     fontBlurb: 'Heat-stained serif for sealed contracts.',
     fontUi: 'ui-sans-serif, system-ui, sans-serif',
-    fontStory: 'Georgia, "Times New Roman", serif',
+    fontStory: '"Crimson Pro", Georgia, serif',
     diceName: 'Sulfur Bone',
     diceBlurb: 'Bone faces, sulfur-red rims. Odds unchanged.',
     diceAccent: '#ef4444',
     diceFace: '#7f1d1d',
     diceMaterial: 'sulfur',
+    texture: 'sulfur',
     voiceName: 'Pact Heat',
     voiceBlurb: 'Low, slow sealed-contract voice.',
+    voiceFlavour: 'The seal is warm. It is listening.',
     tts: { rate: 0.86, pitch: 0.74, voiceHint: 'david' },
   },
   {
@@ -915,8 +931,10 @@ const RACE_THEME_KITS: RaceKitDef[] = [
     diceAccent: '#2dd4bf',
     diceFace: '#115e59',
     diceMaterial: 'bone',
+    texture: 'bone',
     voiceName: 'Ossuary',
     voiceBlurb: 'Whispered, low crypt tone.',
+    voiceFlavour: 'The quiet here is not empty.',
     tts: { rate: 0.82, pitch: 0.7, voiceHint: 'hazel' },
   },
   {
@@ -931,8 +949,10 @@ const RACE_THEME_KITS: RaceKitDef[] = [
     diceAccent: '#e879f9',
     diceFace: '#a21caf',
     diceMaterial: 'iridescent',
+    texture: 'glamour',
     voiceName: 'Glamour',
     voiceBlurb: 'Playful, slightly lifted twilight voice.',
+    voiceFlavour: 'Pretty things bite.',
     tts: { rate: 1.04, pitch: 1.14, voiceHint: 'zira' },
   },
   {
@@ -947,8 +967,10 @@ const RACE_THEME_KITS: RaceKitDef[] = [
     diceAccent: '#facc15',
     diceFace: '#854d0e',
     diceMaterial: 'scrap',
+    texture: 'scrap',
     voiceName: 'Scrap Cackle',
     voiceBlurb: 'Faster, brighter workshop bark.',
+    voiceFlavour: 'If it sparks, it works.',
     tts: { rate: 1.1, pitch: 1.16, voiceHint: 'zira' },
   },
   {
@@ -957,14 +979,16 @@ const RACE_THEME_KITS: RaceKitDef[] = [
     fontName: 'Tide Serif',
     fontBlurb: 'Pearl serif under pressure.',
     fontUi: 'ui-sans-serif, system-ui, sans-serif',
-    fontStory: 'Georgia, Palatino, serif',
+    fontStory: 'Spectral, Palatino, serif',
     diceName: 'Pearl Teal',
     diceBlurb: 'Tide-glass dice. Odds unchanged.',
     diceAccent: '#2dd4bf',
     diceFace: '#115e59',
     diceMaterial: 'tide',
+    texture: 'tide',
     voiceName: 'Abyss Tide',
     voiceBlurb: 'Slow, resonant deep-water diction.',
+    voiceFlavour: 'Pressure is a kind of prayer.',
     tts: { rate: 0.86, pitch: 0.8, voiceHint: 'daniel' },
   },
   {
@@ -973,14 +997,16 @@ const RACE_THEME_KITS: RaceKitDef[] = [
     fontName: 'Velvet Serif',
     fontBlurb: 'Wine-dark Times for aristocratic night.',
     fontUi: 'ui-sans-serif, system-ui, sans-serif',
-    fontStory: '"Times New Roman", Georgia, serif',
+    fontStory: '"Playfair Display", "Times New Roman", serif',
     diceName: 'Wine Obsidian',
     diceBlurb: 'Black velvet dice, wine-red rims. Odds unchanged.',
     diceAccent: '#be123c',
     diceFace: '#881337',
     diceMaterial: 'velvet',
+    texture: 'velvet',
     voiceName: 'Nocturne',
     voiceBlurb: 'Low, measured night-court voice.',
+    voiceFlavour: 'Night has better manners than day.',
     tts: { rate: 0.87, pitch: 0.76, voiceHint: 'david' },
   },
 ];
@@ -1014,6 +1040,7 @@ function attachRaceThemeKits(): void {
     if (theme?.preview) {
       theme.preview.fontUi = def.fontUi;
       theme.preview.fontStory = def.fontStory;
+      theme.preview.texture = def.texture;
       theme.kit = { fontId, diceId, voiceId, frameId };
       theme.includes = [fontId, diceId, voiceId, frameId];
       theme.blurb = `${theme.blurb} Includes matching font, dice, voice, and turn frame.`;
@@ -1050,6 +1077,7 @@ function attachRaceThemeKits(): void {
         slot: 'voice',
         name: def.voiceName,
         blurb: def.voiceBlurb,
+        flavour: def.voiceFlavour,
         priceGbp: '£4.99',
         priceUsd: '$4.99',
         tts: def.tts,
@@ -1085,6 +1113,10 @@ export const SLOT_LABELS: Record<CosmeticSlot, string> = {
 
 export function shopItemById(id: string): ShopItem | undefined {
   return SHOP_CATALOG.find((i) => i.id === id);
+}
+
+export function themeTextureOf(item: ShopItem | undefined): ThemeTexture {
+  return item?.preview?.texture ?? 'plain';
 }
 
 export function themeKitItems(theme: ShopItem): { label: string; item: ShopItem }[] {

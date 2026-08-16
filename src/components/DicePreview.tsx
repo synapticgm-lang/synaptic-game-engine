@@ -1,6 +1,8 @@
 import { useId } from 'react';
 import type { DiceMaterial, ShopItem } from '@/game/cosmeticCatalog';
 
+export type DieSides = 4 | 6 | 8 | 10 | 12 | 20;
+
 /** Faceted d20 vertices (viewBox 0 0 36 40). */
 const T = '18,2';
 const UL = '8,12';
@@ -13,6 +15,45 @@ const LR = '28,31';
 const B = '18,38';
 
 const SILHOUETTE = `${T} ${UL} ${ML} ${LL} ${B} ${LR} ${MR} ${UR}`;
+
+const DIE_SILHOUETTE: Record<DieSides, string> = {
+  4: '18,4 33,36 3,36',
+  6: '7,7 29,7 29,33 7,33',
+  8: '18,3 33,20 18,37 3,20',
+  10: '18,3 33,14 27,37 9,37 3,14',
+  12: '18,3 32,11 32,29 18,37 4,29 4,11',
+  20: SILHOUETTE,
+};
+
+export function liveDiceItem(): ShopItem {
+  if (typeof document === 'undefined') {
+    return {
+      id: 'dice.live',
+      slot: 'dice',
+      name: 'Live',
+      blurb: '',
+      priceGbp: '',
+      priceUsd: '',
+      diceSkin: { accent: '#64748b', face: '#1e293b' },
+    };
+  }
+  const root = document.documentElement;
+  const cs = getComputedStyle(root);
+  const material = root.dataset.sgmDice as DiceMaterial | undefined;
+  return {
+    id: 'dice.live',
+    slot: 'dice',
+    name: 'Live',
+    blurb: '',
+    priceGbp: '',
+    priceUsd: '',
+    diceSkin: {
+      accent: cs.getPropertyValue('--sgm-dice-accent').trim() || '#64748b',
+      face: cs.getPropertyValue('--sgm-dice-face').trim() || '#1e293b',
+      material: material || undefined,
+    },
+  };
+}
 
 const FACES: { pts: string; shade: number }[] = [
   { pts: `${T} ${UL} ${UR}`, shade: 0.22 },
@@ -314,12 +355,22 @@ function MaterialFill({
   );
 }
 
-export function DicePreview({ item, size = 36 }: { item: ShopItem; size?: number }) {
+export function DicePreview({
+  item,
+  size = 36,
+  die = 20,
+}: {
+  item?: ShopItem;
+  size?: number;
+  die?: DieSides;
+}) {
   const rawId = useId().replace(/:/g, '');
   const uid = `d20-${rawId}`;
-  const accent = item.diceSkin?.accent ?? item.preview?.accent ?? '#94a3b8';
-  const face = item.diceSkin?.face ?? item.preview?.panel ?? '#1e293b';
-  const material = item.diceSkin?.material ?? MATERIAL_BY_ID[item.id];
+  const skin = item ?? liveDiceItem();
+  const accent = skin.diceSkin?.accent ?? skin.preview?.accent ?? '#94a3b8';
+  const face = skin.diceSkin?.face ?? skin.preview?.panel ?? '#1e293b';
+  const material = skin.diceSkin?.material ?? MATERIAL_BY_ID[skin.id];
+  const silhouette = DIE_SILHOUETTE[die];
   const p = paletteFor(material, face, accent);
   const glow = material === 'ember' || material === 'neon' || material === 'holo';
 
@@ -360,7 +411,7 @@ export function DicePreview({ item, size = 36 }: { item: ShopItem; size?: number
           <stop offset="100%" stopColor="#1c0a0a" stopOpacity="0" />
         </radialGradient>
         <clipPath id={`${uid}-clip`}>
-          <polygon points={SILHOUETTE} />
+          <polygon points={silhouette} />
         </clipPath>
         {glow && (
           <filter id={`${uid}-glow`} x="-30%" y="-30%" width="160%" height="160%">
@@ -375,7 +426,7 @@ export function DicePreview({ item, size = 36 }: { item: ShopItem; size?: number
 
       {glow && (
         <polygon
-          points={SILHOUETTE}
+          points={silhouette}
           fill={p.rim}
           opacity="0.45"
           filter={`url(#${uid}-glow)`}
@@ -395,13 +446,13 @@ export function DicePreview({ item, size = 36 }: { item: ShopItem; size?: number
       </g>
 
       <polygon
-        points={SILHOUETTE}
+        points={silhouette}
         fill="none"
         stroke={material === 'neon' ? p.shine : p.rim}
         strokeWidth={material === 'neon' ? 1.8 : 1.15}
         strokeLinejoin="round"
       />
-      {EDGES.map((pts, i) => (
+      {die === 20 && EDGES.map((pts, i) => (
         <polyline
           key={i}
           points={pts}
@@ -413,14 +464,14 @@ export function DicePreview({ item, size = 36 }: { item: ShopItem; size?: number
       ))}
       <text
         x="18"
-        y="13.6"
+        y={die === 20 ? 13.6 : 22}
         textAnchor="middle"
         fill={material === 'ivory' || material === 'bone' || material === 'marble' ? p.grain : p.shine}
         fontSize="5.4"
         fontWeight="800"
         fontFamily="ui-sans-serif, system-ui, sans-serif"
       >
-        20
+        {die}
       </text>
     </svg>
   );

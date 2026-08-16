@@ -24,6 +24,9 @@ export function applyUiThemeToDocument(
     root.style.removeProperty('--sgm-dice-accent');
     root.style.removeProperty('--sgm-dice-face');
     delete root.dataset.sgmFrame;
+    delete root.dataset.sgmDice;
+    delete root.dataset.sgmTexture;
+    delete root.dataset.sgmTheme;
     return;
   }
   root.style.setProperty('--sgm-accent', p.accent);
@@ -41,6 +44,10 @@ export function applyUiThemeToDocument(
   root.style.setProperty('--sgm-dice-face', diceFace);
   root.dataset.sgmTheme = theme?.themeKey ?? 'integration-blue';
   root.dataset.sgmFrame = extras?.frame?.frameSkin?.style ?? 'plain';
+  root.dataset.sgmTexture = p.texture ?? 'plain';
+  const diceMaterial = extras?.dice?.diceSkin?.material;
+  if (diceMaterial) root.dataset.sgmDice = diceMaterial;
+  else delete root.dataset.sgmDice;
 }
 
 export function applySettingsCosmetics(settings: {

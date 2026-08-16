@@ -3,6 +3,7 @@ import {
   ChevronUp, ChevronDown, Trash2, Sparkles, Dices, Zap,
 } from 'lucide-react';
 import { DiceFormulaBuilder, type RollResult } from './DiceFormulaBuilder';
+import { DicePreview } from '../DicePreview';
 
 type DieType = 4 | 6 | 8 | 10 | 12 | 20;
 type Modifier = 'none' | '+1' | '+2' | 'adv' | 'dis';
@@ -55,17 +56,6 @@ function computeOutcome(die: DieType, raw: number, mod: Modifier): { total: numb
     outcome = total >= Math.ceil(die * 0.7) ? 'Success' : 'Failure';
   }
   return { total, outcome };
-}
-
-function dieShape(die: DieType): string {
-  switch (die) {
-    case 4:  return 'M12 3 L21 19 L3 19 Z';
-    case 6:  return 'M5 5 H19 V19 H5 Z';
-    case 8:  return 'M12 3 L21 12 L12 21 L3 12 Z';
-    case 10: return 'M12 3 L20 9 L17 19 L7 19 L4 9 Z';
-    case 12: return 'M12 3 L19 7 L19 17 L12 21 L5 17 L5 7 Z';
-    case 20: return 'M12 2 L21 8 L18 19 L6 19 L3 8 Z';
-  }
 }
 
 export function DiceTrayToolbar() {
@@ -259,16 +249,9 @@ export function DiceTrayToolbar() {
                   color: 'var(--sgm-dice-accent, #e2e8f0)',
                 }}
               >
-                <svg
-                  viewBox="0 0 24 24"
-                  className={`h-6 w-6 transition-transform group-hover:scale-110 sm:h-7 sm:w-7 ${rolling === d.die ? 'animate-spin' : ''}`}
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth={1.5}
-                  strokeLinejoin="round"
-                >
-                  <path d={dieShape(d.die)} />
-                </svg>
+                <span className={`transition-transform group-hover:scale-110 ${rolling === d.die ? 'animate-spin' : ''}`}>
+                  <DicePreview die={d.die} size={26} />
+                </span>
                 <span className="text-[10px] font-bold tracking-wide sm:text-xs">{d.label}</span>
               </button>
             ))}
