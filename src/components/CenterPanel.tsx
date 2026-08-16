@@ -74,9 +74,11 @@ interface Props {
   onOpenCharacter: () => void;
   onRetryPanelImage?: (entryId: string, panelIndex: number) => void;
   onUpdatePanelOverlay?: (entryId: string, panelIndex: number, edit: ComicOverlayEdit) => void;
+  restoreDraft?: string | null;
+  onRestoreDraftConsumed?: () => void;
 }
 
-export function CenterPanel({ state, busy, error, errorKind, currentImage, bgImage, bgOpacity, showRolls, engineMode, diceAnimation, statVerbosity, voice, comicMode, narrativeMode, artStylePreset, comicLayout = 'paged', comicReadingDirection = 'ltr', imagesGenerating = 0, canRewind, onSend, onToggleRolls, onStartListening, onStopListening, onStopSpeaking, onRetry, onOpenApiSettings, onRewind, onAcceptPendingTurn, onDiscardPendingTurn, onRerollPendingTurn, onEditPendingNarrative, onToggleComicMode, sessionPresentationLocked = false, onAutoFight, onOpenCharacter, onRetryPanelImage, onUpdatePanelOverlay }: Props) {
+export function CenterPanel({ state, busy, error, errorKind, currentImage, bgImage, bgOpacity, showRolls, engineMode, diceAnimation, statVerbosity, voice, comicMode, narrativeMode, artStylePreset, comicLayout = 'paged', comicReadingDirection = 'ltr', imagesGenerating = 0, canRewind, onSend, onToggleRolls, onStartListening, onStopListening, onStopSpeaking, onRetry, onOpenApiSettings, onRewind, onAcceptPendingTurn, onDiscardPendingTurn, onRerollPendingTurn, onEditPendingNarrative, onToggleComicMode, sessionPresentationLocked = false, onAutoFight, onOpenCharacter, onRetryPanelImage, onUpdatePanelOverlay, restoreDraft, onRestoreDraftConsumed }: Props) {
   const [input, setInput] = useState('');
   const [diceRoll, setDiceRoll] = useState<string | null>(null);
   const [hideOptions, setHideOptions] = useState(() => readBoolPref(HIDE_OPTIONS_KEY));
@@ -105,6 +107,12 @@ export function CenterPanel({ state, busy, error, errorKind, currentImage, bgIma
   useEffect(() => {
     if (voice.transcript) setInput(voice.transcript);
   }, [voice.transcript]);
+
+  useEffect(() => {
+    if (!restoreDraft) return;
+    setInput(restoreDraft);
+    onRestoreDraftConsumed?.();
+  }, [restoreDraft, onRestoreDraftConsumed]);
 
   useEffect(() => {
     logRef.current?.scrollTo({ top: logRef.current.scrollHeight, behavior: 'smooth' });

@@ -72,7 +72,7 @@ const LOOK_OR_PHYSICAL =
   /\b(look around|look towards?|look at|look for|scout|search|inspect|enter|sneak|attack|go to|walk to|head to|approach|circle|survey|what'?s?\s+(?:is\s+)?around|around me|surroundings)\b/i;
 
 const SPEECH_OR_PROTEST =
-  /\b(who'?s in charge|who is in charge|didn'?t agree|don'?t agree|are you joking|are you (?:serious|kidding)|i didn'?t (?:sign(?:\s+up)?|ask for|agree)|not agreeing|good luck\b|who'?s responsible|who (?:runs|controls) this|this is (?:a joke|ridiculous)|i didn'?t (?:ask|want) (?:for )?this)\b/i;
+  /\b(who'?s in charge|who is in charge|didn'?t agree|don'?t agree|are you joking|are you (?:serious|kidding)|i didn'?t (?:sign(?:\s+up)?|ask for|agree)|not agreeing|good luck\b|who'?s responsible|who (?:runs|controls) this|this is (?:a joke|ridiculous)|i didn'?t (?:ask|want) (?:for )?this|bend the knee|why should i|not much use|what(?:'s| is) (?:in )?it for me|don'?t (?:tell me|order me|make me)|who (?:are you|do you think)|i(?:'| a)?m not (?:your|here to)|i just (?:bend|kneel|obey|agree))\b/i;
 
 /**
  * Joke, objection, refusal, or "who's in charge" — dialogue, not a physical action.
@@ -87,6 +87,13 @@ export function isSpeechOrProtest(action: string): boolean {
   if (
     /^(i (?:don't|dont|do not|think|feel|hate|like|trust|won't|will not)|ugh|wow|yeah|no way)\b/i.test(t)
     && t.split(/\s+/).length <= 24
+  ) {
+    return true;
+  }
+  if (
+    !/\b(search|loot|attack|run|walk|go|enter|grab|draw|swing|look around)\b/i.test(t)
+    && (/\b(i|i'm|i'd|we|you can'?t|not if|not much)\b/i.test(t) || /^["'“]/.test(t))
+    && t.split(/\s+/).length <= 40
   ) {
     return true;
   }

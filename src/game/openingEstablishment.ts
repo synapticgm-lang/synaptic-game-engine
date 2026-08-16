@@ -245,7 +245,7 @@ export function resolveOpeningMode(
 const BIBLE_INWORLD: Record<string, Partial<Record<OpeningPromptKind, string>>> = {
   'summoned-pact': {
     name: 'A robed figure leans over the circle. “A name. What do we call you?”',
-    location: 'The stone is cold under your back. Before the light took you — which Earth place were you in? A city, a street, a home. Not a place in this cathedral.',
+    location: 'The stone is cold under your back. Before the light took you — which Earth place were you in? A city, a street, a home.',
     appearance: 'You look down. You are still wearing what the circle stole you in. What is it?',
     kit: 'Pockets, bag, whatever rode with you. What is actually on you? Nothing invented for a fight.',
   },
@@ -966,21 +966,13 @@ export async function applyOpeningAnswer(
     : pickPlaceForCampaign(nextState);
   answers.where = lockedWhere;
 
-  const lockLine = est.sceneWritten
-    ? [aside, cheatLine, 'The particulars settle. The scene does not pause for a form.'].filter(Boolean).join(' ')
+  const continueNotes = est.sceneWritten
+    ? 'CONTINUE the already-written scene. Locked look and kit are visible facts in this beat — do not restart, do not print a form lock line. Code owns the ledger.'
     : '';
-  const lockEntry = lockLine
-    ? [{
-        id: crypto.randomUUID(),
-        turn: nextState.turn,
-        role: 'gm' as const,
-        content: lockLine,
-        timestamp: Date.now(),
-      }]
-    : [];
+  const writerNotes = [aside, cheatLine, continueNotes].filter(Boolean).join(' ');
 
   return {
-    generateOpening: !est.sceneWritten,
+    generateOpening: true,
     state: {
       ...nextState,
       currentLocation: lockedWhere,
@@ -998,12 +990,12 @@ export async function applyOpeningAnswer(
         nextState.quests ?? [],
         getCampaignBibleById(nextState.campaignBibleId ?? '')?.starterQuests ?? []
       ),
-      pendingGeneratedOpening: !est.sceneWritten,
+      pendingGeneratedOpening: false,
       choices: est.sceneWritten ? nextState.choices : [],
-      log: lockEntry.length && playerAlreadyLogged ? [...nextState.log, ...lockEntry] : nextState.log,
+      log: nextState.log,
       lastUpdated: Date.now(),
     },
-    openingNotes,
+    openingNotes: writerNotes || openingNotes,
   };
 }
 
@@ -1051,6 +1043,17 @@ export function buildOpeningSceneMandate(state: GameState, notes?: string): stri
   const hook = bible?.openingHook?.trim()
     ? `Hook ingredients (rewrite — do not reprint as a script):\n${bible.openingHook.trim()}\n`
     : '';
+  if (state.openingEstablishment?.sceneWritten) {
+    return `=== OPENING CONTINUE (BINDING) ===
+${canon}
+${extra}
+The opening scene is ALREADY written. Do not restart. Do not reprint a registration form. Do not write "The particulars settle" or any form-lock line.
+Continue THIS scene (same place, same people) in 3–6 sentences.
+Show the locked look and kit as visible facts in the camera — code already owns the ledger.
+Honor the configured PERSPECTIVE for the entire beat. Spoken lines must be grammatical. Never emit "a figure" as a name, "the a", or "unlock someone".
+Then 3–4 local choices grounded in the continued beat.
+================================================`;
+  }
   return `=== OPENING (BINDING) ===
 ${canon}
 ${extra}
@@ -1060,14 +1063,15 @@ Write THIS run's first page from the campaign bible and its game rules. Unique c
 Genre practice (honor the story type):
 - CYOA / Choice of Games / PYOA: drop into the crisis. No name form.
 - LitRPG / System apocalypse: ordinary street first, then the panel as a moment. Earth is NOT being ingested.
-- Isekai summon: arrive in the circle; people talk; clothes are a look-down, origin is "where the light took you from".
+- Isekai summon: arrive in the circle; people talk; clothes are a look-down, origin is "where the light took you from". Do not add "not a place in this cathedral" — the scene already shows that.
 - Mystery / romance / space horror: body, door, or bulkhead already in motion.
 
-1) 4–7 sentences of second-person story in the seeded place.
+1) 4–7 sentences of story in the seeded place. Honor the configured PERSPECTIVE for the entire beat.
 2) Never print Confirm designation / Visual profile / Location logged / Setup complete.
 3) ${coverLine}
 4) Do not grant weapons or rare items. Only kit already on the sheet.
-5) Then 3–4 local choices grounded in THAT opening.
+5) Spoken lines must be grammatical. Never emit "a figure" as a name, "the a", or "unlock someone".
+6) Then 3–4 local choices grounded in THAT opening.
 ================================================`;
 }
 

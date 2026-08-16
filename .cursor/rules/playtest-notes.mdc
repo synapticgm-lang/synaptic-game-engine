@@ -17,6 +17,17 @@ John is playtesting live. Collect issues here. Do not implement until he asks fo
 
 ## Done (already shipped)
 
+- Themes Customize / Shop font cards: description box renders in the pack’s story typeface (14px, readable contrast); Canopy / Umbrance / Ivory / Rune Stone / War Banner stacks no longer collapse to the same Georgia (`2026-08-16b`)
+- Origin ask drops the obvious “Not a place in this cathedral” clause; Earth-origin ask stays (`2026-08-16a`)
+- After weave covers, writer continues the already-written scene with locked look + kit — no thin “particulars settle” lock line (`2026-08-16a`)
+- Prose warden: `the a` / `a the` article collisions; spoken-line grammar rail (`2026-08-16a`)
+- Quest Unlocked toast only after `openingEstablishment.complete` and the starter is journal-visible (`2026-08-16a`)
+- **P0 — lost send:** cancel / timeout / abort / GM fail keeps the player bubble and puts the text back in the box (`2026-08-16a`)
+- Stopped emitting bare “a figure” as a name-slot (was `narrativeScrub` default); scrub leftover “the a figure” / “glowing a figure” (`2026-08-16a`)
+- Perspective warden honors `settings.perspective` for the whole turn; mid-beat 2nd→3rd slips (his phone / watches him) rewritten (`2026-08-16a`)
+- Talk / protest gate fires on challenges (“bend the knee”); honor the typed line as dialogue (`2026-08-16a`)
+- Silenced-speaker interruptions stay on the unresolved consequence ledger; “unlock someone” banned as in-world speech (`2026-08-16a`)
+- Admin Flagged Narrative Review: joined JSON/CSV export (reports + full ai_traffic + telemetry) (`2026-08-16a`)
 - Pack 11 memory / anti-hallucination (SP): claim-grounding + Warden invent scrub; 5-turn / location micro-summaries; lossless pins; unresolved consequence ledger — atmosphere stays free
 - Themes locker: sticky preview, expand-only selected set, Customize accordion (`2026-08-15aa`)
 - Shop and Themes group race sets with font samples, dice previews, and a bundle price (`2026-08-15z`)

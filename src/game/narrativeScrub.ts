@@ -55,33 +55,50 @@ export function scrubInventedProperNouns(
 
   for (const name of Array.from(new Set(found))) {
     stripped.push(name);
-    text = text.replace(new RegExp(escapeReg(name), 'g'), guessGenericReplacement(name));
+    text = replaceUngroundedName(text, name, guessGenericReplacement(name));
   }
 
   for (const claim of interactionClaims) {
     if (claim.length < 3) continue;
     const generic = /\b(chest|door|crate|cache|altar|console)\b/i.test(claim)
-      ? 'something nearby'
+      ? { afterThe: 'something nearby', afterA: 'something nearby', bare: 'something nearby' }
       : /\b(creature|beast|enemy|foe|hatchling|mob)\b/i.test(claim)
-        ? 'a nearby threat'
-        : 'someone nearby';
-    text = text.replace(new RegExp(`\\b${escapeReg(claim)}\\b`, 'gi'), generic);
+        ? { afterThe: 'a nearby threat', afterA: 'a nearby threat', bare: 'a nearby threat' }
+        : { afterThe: 'someone nearby', afterA: 'someone nearby', bare: 'someone nearby' };
+    text = replaceUngroundedName(text, claim, generic);
   }
 
   return { text, stripped: Array.from(new Set(stripped)) };
 }
 
-function guessGenericReplacement(name: string): string {
+type GenericSlot = { afterThe: string; afterA: string; bare: string };
+
+/** Never emit "a figure" — that slot leaked as a spoken name ("the a figure"). */
+function guessGenericReplacement(name: string): GenericSlot {
   if (/\b(keep|tower|fort|castle|hall|manor|estate|temple|cathedral)\b/i.test(name)) {
-    return 'a nearby building';
+    return { afterThe: 'the nearby building', afterA: 'a nearby building', bare: 'a nearby building' };
   }
   if (/\b(street|road|avenue|lane|alley|plaza)\b/i.test(name)) {
-    return 'a nearby street';
+    return { afterThe: 'the nearby street', afterA: 'a nearby street', bare: 'a nearby street' };
   }
   if (/\b(blade|sword|gun|rifle|staff|wand|armor|relic|artifact)\b/i.test(name)) {
-    return 'a piece of gear';
+    return { afterThe: 'the piece of gear', afterA: 'a piece of gear', bare: 'a piece of gear' };
   }
-  return 'a figure';
+  if (/\b(blessing|mark|brand|sigil|seal|pact)\b/i.test(name)) {
+    return { afterThe: 'the mark', afterA: 'a mark', bare: 'the mark' };
+  }
+  if (/\b(court|order|covenant|compact|faction|guild|circle|keepers?)\b/i.test(name)) {
+    return { afterThe: 'the court', afterA: 'a court', bare: 'the court' };
+  }
+  return { afterThe: 'someone nearby', afterA: 'someone nearby', bare: 'someone nearby' };
+}
+
+function replaceUngroundedName(text: string, name: string, slot: GenericSlot): string {
+  const e = escapeReg(name);
+  return text
+    .replace(new RegExp(`\\bthe\\s+${e}\\b`, 'gi'), slot.afterThe)
+    .replace(new RegExp(`\\b(?:a|an)\\s+${e}\\b`, 'gi'), slot.afterA)
+    .replace(new RegExp(`\\b${e}\\b`, 'g'), slot.bare);
 }
 
 function escapeReg(s: string): string {

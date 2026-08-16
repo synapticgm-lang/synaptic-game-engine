@@ -20,6 +20,7 @@ import type { EnemyStats } from './combat';
 import { isAutoFightWarningDismissed } from '@/components/AutoFightWarningModal';
 import { generateComicImage, generateVideo, VideoProviderNotConfiguredError } from '@/services/openRouterService';
 import { enforcePerspective } from './perspectiveWarden';
+import { applyProseWarden } from './proseWarden';
 import { applyLocalityWarden } from './locality';
 import {
   bindSessionImageCache,
@@ -68,7 +69,7 @@ import { dropInsultGear } from './wornGear';
 import { needsPortraitRefresh, paperDollPrompt, portraitCacheKey } from './inventoryArt';
 import { formatCampaignStoryName, getCampaignBibleById, isNsfwCampaign } from '@/data/campaigns';
 import { applyAccusationFromInput } from './mysteryCulprit';
-import { parsePlayerIntent, groundPlayerAction } from './intentParser';
+import { parsePlayerIntent, groundPlayerAction, isSpeechOrProtest } from './intentParser';
 import { interpretPlayerUtterance, isJunkSetupValue } from './playerUtterance';
 import { runPlayerCheck } from './checkMath';
 import { buildOutcomeToken, formatOutcomeTokenForPrompt } from './outcomeToken';
@@ -371,6 +372,8 @@ export function useGame() {
   const [showLoadingOverlay, setShowLoadingOverlay] = useState(false);
   const [retryStatus, setRetryStatus] = useState<string | null>(null);
   const [lastInput, setLastInput] = useState('');
+  const lastInputRef = useRef('');
+  const [restoreDraft, setRestoreDraft] = useState<string | null>(null);
   const [currentImages, setCurrentImages] = useState<string[]>([]);
   const [showSettings, setShowSettings] = useState(false);
   const [showApiSetup, setShowApiSetup] = useState(false);
@@ -618,6 +621,31 @@ export function useGame() {
     setSaveStatus('saved');
     if (saveTimerRef.current) clearTimeout(saveTimerRef.current);
     saveTimerRef.current = setTimeout(() => { setSaveStatus('idle'); }, 2500);
+  });
+
+  const keepSentLineOnFail = useCallbackRef((line: string) => {
+    const sent = line.trim();
+    const live = stateRef.current;
+    const snap = snapshotRef.current;
+    if (live?.log.some((e) => e.role === 'player' && e.content === sent)) {
+      const kept = { ...live, pendingTurn: null };
+      stateRef.current = kept;
+      setState(kept);
+      void persist(kept);
+    } else if (snap && sent) {
+      const playerEntry: LogEntry = {
+        id: uid(),
+        turn: snap.turn,
+        role: 'player',
+        content: sent,
+        timestamp: Date.now(),
+      };
+      const kept = { ...snap, log: [...snap.log, playerEntry], pendingTurn: null };
+      stateRef.current = kept;
+      setState(kept);
+      void persist(kept);
+    }
+    if (sent) setRestoreDraft(sent);
   });
 
   const fetchPanelImage = useCallbackRef(async (
@@ -1280,14 +1308,11 @@ export function useGame() {
       if (e.role === 'gm') return hasRealGmStory(e);
       return false;
     });
-    if (
-      !error
-      && lastVisible?.role === 'player'
+    const sameAsLastPlayer =
+      lastVisible?.role === 'player'
       && lastVisible.content.replace(/\s+/g, ' ').trim().toLowerCase()
-        === input.replace(/\s+/g, ' ').trim().toLowerCase()
-    ) {
-      return;
-    }
+        === input.replace(/\s+/g, ' ').trim().toLowerCase();
+    const unansweredRetry = sameAsLastPlayer;
     turnInFlightRef.current = true;
     let loadingTimer: ReturnType<typeof setTimeout> | undefined;
     let sanitizedInput = '';
@@ -1302,6 +1327,7 @@ export function useGame() {
     const mediated = mediatePlayerInput(input);
     if (mediated.action === 'block') {
       addToast(mediated.playerMessage ?? "That action isn't available.", 'info');
+      setRestoreDraft(input);
       turnInFlightRef.current = false;
       return;
     }
@@ -1318,6 +1344,7 @@ export function useGame() {
       } else if (/^(cancel|no|nope|nevermind|try\s+else)\b/i.test(mediated.text.trim())) {
         setState((s) => (s ? { ...s, pendingContentRewrite: null } : s));
         addToast('System clears the interpretation. Try another action.', 'info');
+        setRestoreDraft(input);
         turnInFlightRef.current = false;
         return;
       } else {
@@ -1389,6 +1416,7 @@ export function useGame() {
     setBusy(true);
     setError(null);
     setErrorKind(null);
+    lastInputRef.current = input;
     setLastInput(input);
 
     const lastGmText = lastGmForGround;
@@ -1427,12 +1455,15 @@ export function useGame() {
       const stripped = stripChoiceList(entry.content);
       return stripped === entry.content ? entry : { ...entry, content: stripped };
     });
-    const optimisticState: GameState = {
-      ...current,
-      log: [...priorLog, playerEntry],
-    };
+    const optimisticState: GameState = unansweredRetry
+      ? { ...current, pendingTurn: null }
+      : {
+          ...current,
+          log: [...priorLog, playerEntry],
+        };
     stateRef.current = optimisticState;
     setState(optimisticState);
+    void persist(optimisticState);
     hydratePlayFromLog({ persist: false });
 
       let liveCurrent = stateRef.current;
@@ -1466,7 +1497,11 @@ export function useGame() {
         try {
           const openingResult = await callGm(
             openingState,
-            `${buildOpeningSceneMandate(openingState, stepped.openingNotes)}\n\nWrite the opening scene now.`,
+            `${buildOpeningSceneMandate(openingState, stepped.openingNotes)}\n\n${
+              openingState.openingEstablishment?.sceneWritten
+                ? 'Continue the opening scene now — do not restart.'
+                : 'Write the opening scene now.'
+            }`,
             settingsRef.current,
             [],
             (attempt, delayMs) => {
@@ -1482,14 +1517,22 @@ export function useGame() {
           openingText = synthesizeOpeningScene(openingState);
         }
         openingText = ensureSystemReceipt(openingState, sanitizeOpeningNarration(openingText));
+        openingText = applyProseWarden(
+          enforcePerspective(openingText, settingsRef.current, openingState.character.name)
+        );
         const openingChoices = extractChoicesFromText(openingText, openingState);
         const cleanOpening = stripChoiceList(openingText);
         const openingBible = getCampaignBibleById(openingState.campaignBibleId ?? '');
-        const questsAfterScene = revealLocalStarterQuest(
-          openingState.quests ?? [],
-          openingBible?.starterQuests ?? []
-        );
-        const openingUnlocks = newlyRevealedQuests(questsAtTurnStart, questsAfterScene);
+        const journalReady = !questsLockedDuringOpening(openingState);
+        const questsAfterScene = journalReady
+          ? revealLocalStarterQuest(
+              openingState.quests ?? [],
+              openingBible?.starterQuests ?? []
+            )
+          : openingState.quests ?? [];
+        const openingUnlocks = journalReady
+          ? newlyRevealedQuests(questsAtTurnStart, questsAfterScene)
+          : [];
         const openingGm: LogEntry = {
           id: uid(),
           turn: openingState.turn,
@@ -1593,8 +1636,8 @@ export function useGame() {
       const codeResolutionText = check.codeResolutionText;
       const narrativeOutcomeLabel = check.narrativeOutcomeLabel;
       const refuseGate =
-        intentForMandate.kind === 'refuse'
-          ? `\n[REFUSE / PROTEST GATE]: Player is refusing / did not agree. Narrate the System's cold acknowledgment in-fiction. Do not break character. Do not say "choose an action to continue." If in combat, the enemy may press the advantage (outcome token still applies).`
+        intentForMandate.kind === 'refuse' || intentForMandate.kind === 'talk' || isSpeechOrProtest(typedAction)
+          ? `\n[SPEECH / PROTEST GATE]: The player spoke or protested. Honor their typed line as dialogue. Someone in the scene answers THAT line. Do not replace it with a pocket-search, kit recap, or physical follow-through. Do not skip their words. If they are refusing / did not agree, narrate the System's cold acknowledgment in-fiction. Do not say "choose an action to continue."`
           : '';
 
       logRollResults([
@@ -2121,11 +2164,7 @@ In <system-log>, only emit LitRPG/RPG progression lines (XP, loot, HP change as 
         debugLogger.record('WARN', 'Refusing System-only turn — no story body', {
           turn: liveCurrent.turn,
         });
-        const snap = snapshotRef.current;
-        if (snap) {
-          stateRef.current = snap;
-          setState(snap);
-        }
+        keepSentLineOnFail(sanitizedInput || lastInputRef.current);
         setError('The story did not come through. Try that action again.');
         return;
       }
@@ -2164,6 +2203,7 @@ In <system-log>, only emit LitRPG/RPG progression lines (XP, loot, HP change as 
       );
       cleanText = applyLocalityWarden(cleanText, workingState.currentLocation ?? liveCurrent.currentLocation, hasFirearm);
       cleanText = enforcePerspective(cleanText, settingsRef.current, liveCurrent.character.name);
+      cleanText = applyProseWarden(cleanText);
 
       if (mode === 'kid') {
         const kidTalk = (s: string) => sanitizeInput(s, 'kid');
@@ -2535,7 +2575,8 @@ In <system-log>, only emit LitRPG/RPG progression lines (XP, loot, HP change as 
       }
     } catch (e) {
       if (turnAbortRef.current?.signal.aborted) {
-        debugLogger.record('WARN', 'sendAction aborted — last committed scene kept');
+        debugLogger.record('WARN', 'sendAction aborted — player line kept');
+        keepSentLineOnFail(sanitizedInput || lastInputRef.current || input);
         return;
       }
       const errMsg = e instanceof Error ? e.message : 'Unknown error';
@@ -2557,6 +2598,7 @@ In <system-log>, only emit LitRPG/RPG progression lines (XP, loot, HP change as 
         failed: true,
         stack,
       });
+      keepSentLineOnFail(sanitizedInput || lastInputRef.current || input);
       setError(errMsg);
     } finally {
       if (loadingTimer !== undefined) clearTimeout(loadingTimer);
@@ -2769,14 +2811,22 @@ In <system-log>, only emit LitRPG/RPG progression lines (XP, loot, HP change as 
         openingText = synthesizeOpeningScene(newState);
       }
       openingText = ensureSystemReceipt(newState, sanitizeOpeningNarration(openingText));
+      openingText = applyProseWarden(
+        enforcePerspective(openingText, settingsRef.current, newState.character.name)
+      );
       const openingChoices = extractChoicesFromText(openingText, newState);
       const cleanOpening = stripChoiceList(openingText);
       const openingBible = getCampaignBibleById(newState.campaignBibleId ?? '');
-      const questsAfterScene = revealLocalStarterQuest(
-        newState.quests ?? [],
-        openingBible?.starterQuests ?? []
-      );
-      const openingUnlocks = newlyRevealedQuests(newState.quests ?? [], questsAfterScene);
+      const journalReady = !questsLockedDuringOpening(newState);
+      const questsAfterScene = journalReady
+        ? revealLocalStarterQuest(
+            newState.quests ?? [],
+            openingBible?.starterQuests ?? []
+          )
+        : newState.quests ?? [];
+      const openingUnlocks = journalReady
+        ? newlyRevealedQuests(newState.quests ?? [], questsAfterScene)
+        : [];
       const openingGm: LogEntry = {
         id: uid(),
         turn: newState.turn,
@@ -3237,18 +3287,20 @@ In <system-log>, only emit LitRPG/RPG progression lines (XP, loot, HP change as 
     showWelcome, setShowWelcome, showCharacterWindow, setShowCharacterWindow, showMerchantWindow, setShowMerchantWindow, unlockedQuests, dismissUnlockedQuests: () => setUnlockedQuests([]), syncPhase, toasts, dismissToast, addToast, cloudSlot, cloudSlots, localSlot,
     sendAction,
     cancelTurn: () => {
-      const snap = snapshotRef.current;
       turnAbortRef.current?.abort();
-      if (snap) {
-        stateRef.current = snap;
-        setState(snap);
-      }
+      const line =
+        lastInputRef.current.trim()
+        || [...(stateRef.current?.log ?? [])].reverse().find((e) => e.role === 'player')?.content
+        || '';
+      keepSentLineOnFail(line);
       setShowLoadingOverlay(false);
       setRetryStatus(null);
       turnInFlightRef.current = false;
       setBusy(false);
-      addToast('Turn cancelled. Last committed scene kept.', 'info');
+      addToast('Turn cancelled. Your line is still here.', 'info');
     },
+    restoreDraft,
+    clearRestoreDraft: () => setRestoreDraft(null),
     lastSavedTurn,
     retryAction: () => { if (lastInput.trim()) sendAction(lastInput); },
     retryPanelImage,

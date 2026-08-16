@@ -12,6 +12,7 @@ import { detectSceneContradiction } from './sceneFacts';
 import { detectFactLockViolations } from './factLocks';
 import { resolveSeededRarity } from './dungeonSeed';
 import { scrubInventedProperNouns } from './narrativeScrub';
+import { applyProseWarden } from './proseWarden';
 
 export interface WardenResult {
   /** Events allowed after sheet checks. */
@@ -209,6 +210,7 @@ export function runWarden(
   }
 
   const scrub = scrubInventedProperNouns(narrativeText, state, '');
+  const polished = applyProseWarden(scrub.text);
   if (scrub.stripped.length) {
     for (const name of scrub.stripped.slice(0, 6)) {
       notes.push(`Claim-ground scrub: ${name}`);
@@ -221,16 +223,16 @@ export function runWarden(
   }
 
   const resolvedIntent = intent ?? { kind: 'other' as const, label: 'Free action', targets: [] };
-  if (isUnresolvedActionNarrative(playerInput, scrub.text, resolvedIntent)) {
+  if (isUnresolvedActionNarrative(playerInput, polished, resolvedIntent)) {
     notes.push('Narrative does not resolve the player action');
   }
 
-  const factLocks = detectFactLockViolations(state, scrub.text, playerInput);
+  const factLocks = detectFactLockViolations(state, polished, playerInput);
   for (const lock of factLocks) {
     notes.push(`Fact lock: ${lock.reason}`);
   }
   const continuityBreak =
-    factLocks[0]?.reason ?? detectSceneContradiction(state.sceneFacts, scrub.text) ?? undefined;
+    factLocks[0]?.reason ?? detectSceneContradiction(state.sceneFacts, polished) ?? undefined;
   if (continuityBreak && !factLocks.length) {
     notes.push(`Continuity break: ${continuityBreak}`);
   }
@@ -257,7 +259,7 @@ export function runWarden(
     systemLogExtra,
     deferredEvents: deferred,
     continuityBreak,
-    scrubbedNarrative: scrub.text !== narrativeText ? scrub.text : undefined,
+    scrubbedNarrative: polished !== narrativeText ? polished : undefined,
   };
 }
 

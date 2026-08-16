@@ -1,0 +1,62 @@
+/**
+ * Cheap post-writer English / UI-leak pass. Not a second model.
+ * Fixes article collisions, bare "a figure" name-slots, and leaked quest verbs.
+ */
+
+const ARTICLE_COLLISION =
+  /\b(?:the\s+a|the\s+an|a\s+the|an\s+the|a\s+an|an\s+a|the\s+the|a\s+a)\b/gi;
+
+/** Collapse doubled articles the writer (or a name-scrub) stacked. */
+export function scrubArticleCollisions(text: string): string {
+  if (!text) return text;
+  let next = text;
+  for (let i = 0; i < 4; i += 1) {
+    const cleaned = next.replace(ARTICLE_COLLISION, (hit) => {
+      const low = hit.toLowerCase().replace(/\s+/g, ' ');
+      if (low.startsWith('the ')) return 'the';
+      if (low === 'a an' || low === 'an a') return low.endsWith('an') ? 'an' : 'a';
+      if (low.startsWith('a ') || low.startsWith('an ')) {
+        return low.includes('the') ? 'the' : low.startsWith('an') ? 'an' : 'a';
+      }
+      return 'the';
+    });
+    if (cleaned === next) break;
+    next = cleaned;
+  }
+  return next;
+}
+
+/**
+ * "a figure" was the default invented-name replacement and leaked as a proper noun
+ * ("the a figure", "glowing a figure", "You carry the a figure").
+ */
+export function scrubFigurePlaceholder(text: string): string {
+  if (!text) return text;
+  return text
+    .replace(/\bthe\s+glowing\s+a\s+figure\b/gi, 'the glowing mark')
+    .replace(/\bglowing\s+a\s+figure\b/gi, 'glowing mark')
+    .replace(/\bthe\s+war\s+with\s+(?:the\s+)?a\s+figure\b/gi, 'the war')
+    .replace(/\b(?:you\s+carry|carries)\s+the\s+a\s+figure\b/gi, 'you carry the mark')
+    .replace(/\ba\s+figure\s+is\s+not\b/gi, 'that mark is not')
+    .replace(/\bthe\s+a\s+figure\b/gi, 'someone nearby')
+    .replace(/\b(?:the\s+)?(?:glowing\s+)?a figure\b/gi, (hit) =>
+      /glowing/i.test(hit) ? 'the glowing mark' : 'someone nearby'
+    );
+}
+
+/** UI / journal verbs must not be spoken in-world. */
+export function scrubUiQuestVerbs(text: string): string {
+  if (!text) return text;
+  return text
+    .replace(/\bunlock(?:s|ed|ing)?\s+someone(?:\s+nearby)?\b/gi, 'look to someone nearby')
+    .replace(/\bunlock\s+(?:a|the)\s+(?:quest|journal|starter|guide\s*book)\b/gi, 'take the next step')
+    .replace(/\bquest\s+unlocked\b/gi, 'a task comes into focus');
+}
+
+export function applyProseWarden(text: string): string {
+  if (!text) return text;
+  let next = scrubFigurePlaceholder(text);
+  next = scrubUiQuestVerbs(next);
+  next = scrubArticleCollisions(next);
+  return next;
+}

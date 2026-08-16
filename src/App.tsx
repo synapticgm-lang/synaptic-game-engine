@@ -309,6 +309,8 @@ export default function App() {
             onRetryPanelImage={game.retryPanelImage}
             onUpdatePanelOverlay={game.updatePanelOverlay}
             onSend={game.sendAction}
+            restoreDraft={game.restoreDraft}
+            onRestoreDraftConsumed={game.clearRestoreDraft}
             onToggleRolls={() => game.setShowRolls(!game.showRolls)}
             onStartListening={game.voice.startListening}
             onStopListening={game.voice.stopListening}
