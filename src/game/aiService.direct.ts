@@ -55,18 +55,16 @@ function logError(provider: string, err: unknown) {
 }
 
 function normalizeProvider(settings: Settings): { provider: string; apiKey: string; model?: string } {
-  let provider = settings.aiProvider ?? 'openrouter';
-  let apiKey = provider === 'openrouter' ? settings.openrouterApiKey : settings.geminiApiKey;
-  if ((provider === 'gemini' || !apiKey) && settings.openrouterApiKey) {
-    provider = 'openrouter';
-    apiKey = settings.openrouterApiKey;
+  const apiKey = (settings.openrouterApiKey || settings.geminiApiKey || '').trim();
+  if (settings.subscriptionTier === 'admin' && settings.contentMode !== 'kid' && !apiKey) {
+    throw new Error('Admin BYOK needs an OpenRouter text key in Settings. Hosted AI is not included on this tier.');
   }
   const model = resolveWriterModel({
-    aiProvider: provider,
+    aiProvider: 'openrouter',
     customModelId: settings.customModelId,
     tier: settings.subscriptionTier,
   });
-  return { provider, apiKey, model };
+  return { provider: 'openrouter', apiKey, model };
 }
 
 async function callGoogle(prompt: string, systemPrompt: string, apiKey: string, model?: string): Promise<string> {

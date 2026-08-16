@@ -370,3 +370,47 @@ No shop SKUs in this pass. No WOF. No live code.
 | CoG game art (optional, not DLC) | https://forum.choiceofgames.com/t/game-art-in-hosted-games/93880 |
 | Heart’s Choice bonus *stories* $0.99 | https://www.choiceofgames.com/2021/11/new-dawnfall-bonus-stories/ |
 | Otome pass vs gacha CGs | https://otome.com/2025/06/21/gacha-or-season-pass-monetisation-model-value/ |
+
+---
+
+## 11) How many schnell extras for 99p and still profit? (16 Aug 2026, later)
+
+**Question (John):** happy to add illustration as a small pack people can buy — how many for 99p with profit still?
+
+**Answer: sell 3.** API would allow a dump; do not. No shop SKU shipped this pass.
+
+### Assumptions
+
+| Input | Value used |
+|-------|------------|
+| Pack price | **£0.99** |
+| FX | **GBP/USD 1.35** (spot ~1.353, 16 Aug 2026). User’s 1.27 would make API ~6% dearer; N does not change. |
+| Schnell | **$0.003** → **£0.00222** |
+| Waste | **+20%** (failed gen still bills; 15–25% band, or one soften-retry sometimes) → **£0.0027 / splash** |
+| Extras model | **schnell only**. Live opener is the only `heroImage` (`useGame.ts`); High’s default Flux is `flux-dev` / later pro — extras must not inherit that. |
+| Payments | Not live. Web = Stripe first ([launch-payments](./launch-payments-beta-plan-2026-08-16.md)); Apple/Google IAP later. |
+| Caps | Weekly memorable **5 / 20 / 40**. Free +1 ad already local (`+1/day`, `+3/week`, schnell). |
+
+Stripe UK on £0.99: **1.5% + 20p = £0.215** (the 20p alone is 20% of the SKU). US-style **2.9% + 30p = £0.329** if that account is used. IAP **15% / 30%** of face. Table below is **store cut only** (no VAT). If Stripe Tax / Apple MoR take UK VAT 20% inside the 99p, web take-home falls to **~£0.61** — N=3 still ~99% leftover.
+
+### Table (schnell extras, buffered £0.0027)
+
+| Channel | Take-home from 99p | Cost per splash (buffered) | Max N still in profit | Comfortable N (margin ≥40% or ≥£0.30 leftover) |
+|---------|-------------------:|---------------------------:|----------------------:|-----------------------------------------------:|
+| Web Stripe UK (1.5%+20p) | **£0.775** | £0.0027 | **~287** | **3** (API ceiling ~175; do not sell that) |
+| Web Stripe US-style (2.9%+30p) | **£0.661** | £0.0027 | **~245** | **3** (API ceiling ~134) |
+| Mobile IAP 15% (SBP) | **£0.842** | £0.0027 | **~311** | **3** (API ceiling ~200) |
+| Mobile IAP 30% | **£0.693** | £0.0027 | **~256** | **3** (API ceiling ~145) |
+
+At **N=3**, leftover is **~£0.65–£0.83** (well above 40% and £0.30). At **N=5** still fat on API. The cap is product, not Flux.
+
+### Recommend
+
+- **One number at 99p: 3 schnell plates.** Pack, not a one-shot souvenir. Not 20. Not High-week sized.
+- **99p is too cheap as a shelf price.** Spark is already **£1.99 / 15 text**. Stripe’s 20p makes 99p the worst fee ratio in the catalogue. Healthier: **£1.99 / 5** (matches Spark) or the earlier **£2.99 / 5**.
+- **Cap-hit-only**, after the weekly 5/20/40 (and after Free’s ad +1 if they still want more). Always-on-shelf lets High pre-buy a dump onto John’s bill.
+- **Never-expire** (same as text packs). Weekly-reset extras convert worse.
+- **Pin schnell in code** if this ever ships. If extras follow High’s `flux-dev` / pro path (~$0.01–0.03, buffered ~£0.01–£0.028), 99p still “profits” up to ~24–70 gens — that is the dump. Do not sell it.
+- Sensitivity: if OpenRouter has remapped `flux-schnell` toward Klein 4B (~$0.014/MP), buffered ~£0.012; N=3 still ~98% leftover. Still sell 3, not 20.
+
+No shop implementation. No WOF.

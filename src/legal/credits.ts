@@ -215,6 +215,13 @@ export const CREDIT_SECTIONS: CreditSection[] = [
         usedFor:
           'Checks, combat, loot, and System panels. Inspired by common tabletop practice (d20, GM, turns, armor class, hit points) — not a licensed rulebook.',
       },
+      {
+        work: 'Custom tabletop rules (player paste)',
+        source: 'The player',
+        license: 'Player-supplied',
+        usedFor:
+          'Optional house rules you paste or attach for one campaign. SynapticGM does not provide that document; it is yours. Kid Mode still filters GM output.',
+      },
     ],
   },
   {

@@ -13,6 +13,7 @@ interface Props {
   log: LogEntry[];
   busy?: boolean;
   engineMode?: EngineMode;
+  contentMode?: string | null;
   onAcceptBeautyOffer?: (entryId: string) => void;
   onDismissBeautyOffer?: (entryId: string) => void;
 }
@@ -64,7 +65,7 @@ function extractActions(log: LogEntry[], engineMode: EngineMode = 'litrpg'): Act
   return cards.slice(-20).reverse();
 }
 
-export function NarrativeView({ log, busy, engineMode = 'litrpg', onAcceptBeautyOffer, onDismissBeautyOffer }: Props) {
+export function NarrativeView({ log, busy, engineMode = 'litrpg', contentMode, onAcceptBeautyOffer, onDismissBeautyOffer }: Props) {
   const [streamOpen, setStreamOpen] = useState(true);
   const actionCards = useMemo(() => extractActions(log, engineMode), [log, engineMode]);
 
@@ -82,6 +83,7 @@ export function NarrativeView({ log, busy, engineMode = 'litrpg', onAcceptBeauty
                 showTurnAsk={shouldShowTurnAsk(log, index, !!busy)}
                 onAcceptBeautyOffer={onAcceptBeautyOffer}
                 onDismissBeautyOffer={onDismissBeautyOffer}
+                contentMode={contentMode}
               />
             )
           ))}
@@ -106,7 +108,7 @@ export function NarrativeView({ log, busy, engineMode = 'litrpg', onAcceptBeauty
 
 /* ============ NARRATIVE ENTRY DISPATCHER ============ */
 
-function NarrativeEntry({ entry, engineMode, showTurnAsk, onAcceptBeautyOffer, onDismissBeautyOffer }: { entry: LogEntry; engineMode: EngineMode; showTurnAsk: boolean; onAcceptBeautyOffer?: (entryId: string) => void; onDismissBeautyOffer?: (entryId: string) => void }) {
+function NarrativeEntry({ entry, engineMode, showTurnAsk, onAcceptBeautyOffer, onDismissBeautyOffer, contentMode }: { entry: LogEntry; engineMode: EngineMode; showTurnAsk: boolean; onAcceptBeautyOffer?: (entryId: string) => void; onDismissBeautyOffer?: (entryId: string) => void; contentMode?: string | null }) {
   if (entry.role === 'player') return <PlayerBubble entry={entry} />;
   if (entry.role === 'system') return <SystemMessage entry={entry} />;
   if (!hasRealGmStory(entry) && !showTurnAsk) {
@@ -119,13 +121,14 @@ function NarrativeEntry({ entry, engineMode, showTurnAsk, onAcceptBeautyOffer, o
       showTurnAsk={showTurnAsk}
       onAcceptBeautyOffer={onAcceptBeautyOffer}
       onDismissBeautyOffer={onDismissBeautyOffer}
+      contentMode={contentMode}
     />
   );
 }
 
 /* ============ 1. AI DM NARRATION PANEL ============ */
 
-function DmNarration({ entry, engineMode, showTurnAsk, onAcceptBeautyOffer, onDismissBeautyOffer }: { entry: LogEntry; engineMode: EngineMode; showTurnAsk: boolean; onAcceptBeautyOffer?: (entryId: string) => void; onDismissBeautyOffer?: (entryId: string) => void }) {
+function DmNarration({ entry, engineMode, showTurnAsk, onAcceptBeautyOffer, onDismissBeautyOffer, contentMode }: { entry: LogEntry; engineMode: EngineMode; showTurnAsk: boolean; onAcceptBeautyOffer?: (entryId: string) => void; onDismissBeautyOffer?: (entryId: string) => void; contentMode?: string | null }) {
   const segments = useMemo(() => parseSegments(stripTurnCloser(entry.content)), [entry.content]);
   const systemLines = useMemo(
     () => filterSystemLogForEngine(entry.systemLog ?? [], engineMode),
@@ -182,6 +185,7 @@ function DmNarration({ entry, engineMode, showTurnAsk, onAcceptBeautyOffer, onDi
       </div>
       <BeautyMomentOfferLink
         offer={entry.beautyOffer}
+        contentMode={contentMode}
         onAccept={onAcceptBeautyOffer ? () => onAcceptBeautyOffer(entry.id) : undefined}
         onDismiss={onDismissBeautyOffer ? () => onDismissBeautyOffer(entry.id) : undefined}
       />

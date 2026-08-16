@@ -16,6 +16,14 @@ import { prepareKidSafeImagePrompt } from '../game/visualCanon';
 import { generateFluxImage } from './fluxDirect';
 import { resolveFluxImageModel } from '../game/subscriptionTiers';
 import { canSpend, spendCapacity } from '../game/capacityLedger';
+import {
+  BYOK_IMAGE_KEY_REQUIRED,
+  canConfigurePlayerAiKeys,
+  isByokTierWithoutHostedKeys,
+  resolveByokImageSpendKey,
+  resolveClientImageApiKey,
+  resolveClientTextApiKey,
+} from '../game/distributionChannel';
 
 const OPENROUTER_API_KEY = ''; // Provider keys must come from Settings / edge secrets — never VITE_*.
 const BASE_URL = 'https://openrouter.ai/api/v1';
@@ -653,7 +661,7 @@ export async function generateComicImage(
   };
 
   // Optional later path — same tier map, BFL transport
-  const fluxKey = settings.fluxApiKey?.trim() || settings.imageApiKey?.trim();
+  const fluxKey = canConfigurePlayerAiKeys(settings) ? resolveClientImageApiKey(settings) : '';
   if (provider === 'flux-direct' && fluxKey) {
     const label = `Flux direct (${fluxModels.bflEndpoint})`;
     const url = await withAbortTimeout(
@@ -702,7 +710,13 @@ export async function generateComicImage(
 
   // Default launch path: Flux via OpenRouter (tier-mapped schnell/dev)
   const openRouterPrompt = `${styledPrompt}\n\nAvoid depicting: ${effectiveNegativePrompt}.`;
-  const apiKey = settings.openrouterApiKey || settings.geminiApiKey || undefined;
+  if (isByokTierWithoutHostedKeys(settings) && !resolveByokImageSpendKey(settings)) {
+    console.log('[ImageService]', BYOK_IMAGE_KEY_REQUIRED);
+    return null;
+  }
+  const apiKey = isByokTierWithoutHostedKeys(settings)
+    ? resolveByokImageSpendKey(settings)
+    : undefined;
   const routedModel =
     settings.imageModel?.trim() ||
     fluxModels.openRouterId ||

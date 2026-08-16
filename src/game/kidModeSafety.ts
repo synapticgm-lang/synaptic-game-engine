@@ -158,3 +158,35 @@ export function filterKidModeVisibleList(
   if (!isKidMode(settings)) return items;
   return items.map(filterKidModeText);
 }
+
+function matchesUnsafe(re: RegExp, text: string): boolean {
+  const flags = re.flags.replace('g', '');
+  return new RegExp(re.source, flags).test(text);
+}
+
+/**
+ * Drop pasted-rules paragraphs that are sexual, gore, drug, gambling, hate, or crime how-to
+ * instruction blocks. Kid Mode GM output still goes through the Families bar either way.
+ */
+export function skipKidUnsafeInstructionBlocks(text: string): string {
+  if (!text.trim()) return '';
+  return text
+    .split(/\n{2,}/)
+    .filter((block) => {
+      const t = block.trim();
+      if (!t) return false;
+      if (matchesUnsafe(KID_SEX_AS_SUBJECT, t)) return false;
+      if (matchesUnsafe(KID_GORE_AS_SUBJECT, t)) return false;
+      if (matchesUnsafe(KID_DRUG_AS_SUBJECT, t)) return false;
+      if (matchesUnsafe(KID_GAMBLE_AS_SUBJECT, t)) return false;
+      if (matchesUnsafe(KID_HATE_AS_SUBJECT, t)) return false;
+      if (matchesUnsafe(KID_CRIME_HOWTO, t)) return false;
+      if (matchesUnsafe(EXPLICIT_SEX_PROSE, t)) return false;
+      if (matchesUnsafe(GORE_PROSE, t)) return false;
+      if (matchesUnsafe(SUBSTANCE_GLAMOR_PROSE, t)) return false;
+      if (matchesUnsafe(GAMBLE_PROSE, t)) return false;
+      return true;
+    })
+    .join('\n\n')
+    .trim();
+}

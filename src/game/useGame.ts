@@ -94,12 +94,10 @@ import {
   advanceCampaignMemory,
   upsertNpcRelationshipSummary,
 } from './campaignMemory';
-import {
-  canSpend,
-  spendCapacity,
-  capacityStatusMessage,
-} from './capacityLedger';
+import { canSpend, spendCapacity, capacityStatusMessage } from './capacityLedger';
 import { setActiveSubscriptionTier } from './subscriptionTiers';
+import { canOfferRewardedMemorable } from './rewardedAds';
+import { clipCustomTabletopRules } from './customTabletopRules';
 import { touchPlaceVisit, upsertPlaceFromSheet } from './places';
 import { normalizeSheetAuthority } from './placeAuthority';
 import {
@@ -404,6 +402,7 @@ export function useGame() {
   const [syncPhase, setSyncPhase] = useState<SyncPhase>('idle');
   const [toasts, setToasts] = useState<Toast[]>([]);
   const [outOfTurnsAdOffer, setOutOfTurnsAdOffer] = useState(false);
+  const [outOfMemorableAdOffer, setOutOfMemorableAdOffer] = useState(false);
   const [cloudSlot, setCloudSlot] = useState<SaveSlotInfo | null>(null);
   const [cloudSlots, setCloudSlots] = useState<SaveSlotInfo[]>([]);
   const [localSlot, setLocalSlot] = useState<SaveSlotInfo | null>(null);
@@ -515,6 +514,7 @@ export function useGame() {
 
     const meta = session.user.user_metadata ?? {};
     const nextUser: GoogleUser = {
+      id: session.user.id,
       credential: session.access_token,
       name: (meta.full_name as string | undefined) ?? (meta.name as string | undefined),
       email: session.user.email ?? undefined,
@@ -603,6 +603,12 @@ export function useGame() {
   const addToast = useCallback((message: string, type: Toast['type'] = 'info') => {
     const id = uid();
     setToasts((prev) => [...prev, { id, message, type }]);
+  }, []);
+
+  const offerMemorableAdIfCapHit = useCallback((skippedForCapacity?: boolean) => {
+    if (skippedForCapacity && canOfferRewardedMemorable(settingsRef.current.contentMode)) {
+      setOutOfMemorableAdOffer(true);
+    }
   }, []);
 
   const notifyImageFailure = useCallback((error: unknown) => {
@@ -1621,6 +1627,7 @@ export function useGame() {
           },
           canSpend('memorable')
         );
+        offerMemorableAdIfCapHit(openingMemorable.skippedForCapacity);
         const openingGm: LogEntry = {
           id: uid(),
           turn: openingState.turn,
@@ -2549,6 +2556,7 @@ In <system-log>, only emit LitRPG/RPG progression lines (XP, loot, HP change as 
         },
         canSpend('memorable')
       );
+      offerMemorableAdIfCapHit(memorableDecision.skippedForCapacity);
       const milestoneReq = memorableDecision.request;
 
       const mergedStateDraft: GameState = {
@@ -2851,6 +2859,7 @@ In <system-log>, only emit LitRPG/RPG progression lines (XP, loot, HP change as 
     comicLayout?: Settings['comicLayout'],
     comicReadingDirection?: Settings['comicReadingDirection'],
     bibleId?: string,
+    customTabletopRules?: string,
   ) => {
     if (
       selectedVisualMode ||
@@ -2930,6 +2939,8 @@ In <system-log>, only emit LitRPG/RPG progression lines (XP, loot, HP change as 
         sceneWritten: false,
         mode: openingMode,
       },
+      customTabletopRules:
+        engineMode === 'dnd' ? clipCustomTabletopRules(customTabletopRules).text || undefined : undefined,
     });
     setState(newState);
     stateRef.current = newState;
@@ -3009,6 +3020,7 @@ In <system-log>, only emit LitRPG/RPG progression lines (XP, loot, HP change as 
         },
         canSpend('memorable')
       );
+      offerMemorableAdIfCapHit(openingMemorable.skippedForCapacity);
       const openingGm: LogEntry = {
         id: uid(),
         turn: newState.turn,
@@ -3159,6 +3171,7 @@ In <system-log>, only emit LitRPG/RPG progression lines (XP, loot, HP change as 
         },
         canSpend('memorable')
       );
+      offerMemorableAdIfCapHit(autoMemorable.skippedForCapacity);
       const playerEntry: LogEntry = {
         id: uid(),
         turn: newTurn,
@@ -3328,7 +3341,11 @@ In <system-log>, only emit LitRPG/RPG progression lines (XP, loot, HP change as 
     if (!current) return;
     if (!isClassicMemorableEnabled(settingsRef.current)) return;
     if (!canSpend('memorable')) {
-      addToast(capacityStatusMessage('memorable'), 'info');
+      if (canOfferRewardedMemorable(settingsRef.current.contentMode)) {
+        setOutOfMemorableAdOffer(true);
+      } else {
+        addToast(capacityStatusMessage('memorable'), 'info');
+      }
       return;
     }
     if (isSittingHardBlocked(current.memorableMoments ?? {}, current.turn)) {
@@ -3592,6 +3609,8 @@ In <system-log>, only emit LitRPG/RPG progression lines (XP, loot, HP change as 
     showWelcome, setShowWelcome, showCharacterWindow, setShowCharacterWindow, showMerchantWindow, setShowMerchantWindow, unlockedQuests, dismissUnlockedQuests: () => setUnlockedQuests([]), syncPhase, toasts, dismissToast, addToast, cloudSlot, cloudSlots, localSlot,
     outOfTurnsAdOffer,
     dismissOutOfTurnsAdOffer: () => setOutOfTurnsAdOffer(false),
+    outOfMemorableAdOffer,
+    dismissOutOfMemorableAdOffer: () => setOutOfMemorableAdOffer(false),
     sendAction,
     cancelTurn: () => {
       turnAbortRef.current?.abort();
@@ -3618,7 +3637,20 @@ In <system-log>, only emit LitRPG/RPG progression lines (XP, loot, HP change as 
     updatePanelOverlay,
     clearError: () => setError(null),
     autoFight, autoFightWarning, cancelAutoFightWarning: () => setAutoFightWarning(null),
-    startNewGame, updateSettings: (s) => { setSettings(s); settingsRef.current = s; saveSettings(s); },
+    startNewGame, updateSettings: (s: Settings) => { setSettings(s); settingsRef.current = s; saveSettings(s); },
+    updateCustomTabletopRules: async (text: string) => {
+      const s = stateRef.current;
+      if (!s) return;
+      const clipped = clipCustomTabletopRules(text).text;
+      const updated = {
+        ...s,
+        customTabletopRules: clipped || undefined,
+        lastUpdated: Date.now(),
+      };
+      setState(updated);
+      stateRef.current = updated;
+      await persist(updated);
+    },
     handleExport, handleImport, deleteSavedGame, deleteExtraSaves, deleteAllSaves,
     updateStoryName: async (name) => {
       const s = stateRef.current;
@@ -3761,11 +3793,11 @@ In <system-log>, only emit LitRPG/RPG progression lines (XP, loot, HP change as 
         setSyncPhase('idle');
       }
     },
-    handleSetupComplete: async (contentMode, apiKey, provider, model, baseUrl) => {
-      const newSettings = { ...settingsRef.current, contentMode, geminiApiKey: apiKey, aiProvider: provider, customModelId: model, baseUrl } as Settings;
+    handleSetupComplete: async (contentMode, _apiKey, _provider, _model, _baseUrl) => {
+      const newSettings = { ...settingsRef.current, contentMode, aiProvider: 'openrouter' as const } as Settings;
       setSettings(newSettings);
       saveSettings(newSettings);
-      setTelemetryContext({ aiProvider: provider });
+      setTelemetryContext({ aiProvider: 'openrouter' });
       isHydratedRef.current = true;
       setBootPhase('hub');
     },

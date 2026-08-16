@@ -5,22 +5,27 @@ import {
   type TurnPackArtId,
   textShopPacks,
   illustratedShopPacks,
+  memorableShopPacks,
 } from '@/game/subscriptionTiers';
 import { grantTurnPack, loadCapacityLedger, type CapacityLedger } from '@/game/capacityLedger';
 import {
   canOfferRewardedTurns,
+  canOfferRewardedMemorable,
   canWatchRewardedAdNow,
   rewardedAdsRemainingToday,
   rewardedTurnsPerAd,
   watchRewardedAdForTurns,
+  watchRewardedAdForMemorable,
   ADULT_MAX_REWARDED_ADS_PER_DAY,
 } from '@/game/rewardedAds';
+import { MAX_MEMORABLE_ADS_PER_DAY, MAX_MEMORABLE_ADS_PER_WEEK } from '@/game/capacityLedger';
 import { ParentPurchaseGate, requestParentPurchaseApproval } from './ParentPurchaseGate';
 
 function packBalances(ledger: CapacityLedger) {
   return {
     text: ledger.textPackBalance ?? 0,
     illustrated: ledger.illustratedPackBalance ?? 0,
+    memorable: ledger.memorablePackBalance ?? 0,
   };
 }
 
@@ -37,11 +42,13 @@ export function CapacityPackShop({
 }) {
   const [ledger, setLedger] = useState(() => loadCapacityLedger());
   const [adBusy, setAdBusy] = useState(false);
+  const [memorableAdBusy, setMemorableAdBusy] = useState(false);
   const [adError, setAdError] = useState<string | null>(null);
   const [gateOpen, setGateOpen] = useState(false);
   const [pendingPack, setPendingPack] = useState<TurnPackDefinition | null>(null);
   const bal = packBalances(ledger);
   const showEarn = canOfferRewardedTurns(contentMode);
+  const showMemorableAd = canOfferRewardedMemorable(contentMode);
   const adTurns = rewardedTurnsPerAd(contentMode);
   const adsLeft = rewardedAdsRemainingToday(contentMode, ledger);
   const canWatch = canWatchRewardedAdNow(contentMode);
@@ -54,7 +61,9 @@ export function CapacityPackShop({
     const gained =
       pack.kind === 'text'
         ? `+${pack.textTurns} text turns`
-        : `+${pack.illustratedTurns} illustrated turns`;
+        : pack.kind === 'memorable'
+          ? `+${pack.memorablePlates} memorable pictures`
+          : `+${pack.illustratedTurns} illustrated turns`;
     onGranted?.(`${pack.name} added — ${gained} (preview grant; payments not live).`);
   };
 
@@ -86,6 +95,19 @@ export function CapacityPackShop({
     );
   };
 
+  const watchMemorableAd = async () => {
+    setMemorableAdBusy(true);
+    setAdError(null);
+    const result = await watchRewardedAdForMemorable({ contentMode });
+    setMemorableAdBusy(false);
+    if (!result.ok) {
+      setAdError(result.error ?? 'Ad failed');
+      return;
+    }
+    setLedger(result.ledger);
+    onGranted?.('Ad complete — +1 memorable picture this week (fast model). Does not reset your weekly count.');
+  };
+
   return (
     <div className="flex flex-col gap-6">
       <ParentPurchaseGate
@@ -106,6 +128,8 @@ export function CapacityPackShop({
       <div className="rounded-lg border border-slate-700/60 bg-slate-900/50 px-3 py-2 text-[11px] text-slate-400">
         Pack balance:{' '}
         <span className="text-cyan-300">{bal.text} text</span>
+        {' · '}
+        <span className="text-amber-300">{bal.memorable} pictures</span>
         {' · '}
         <span className="text-rose-300">{bal.illustrated} illustrated</span>
         <span className="text-slate-600"> — packs never expire</span>
@@ -150,6 +174,27 @@ export function CapacityPackShop({
         </section>
       )}
 
+      {showMemorableAd && (
+        <section>
+          <h2 className="mb-2 text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">
+            Extra memorable picture
+          </h2>
+          <p className="mb-3 text-[11px] leading-snug text-slate-500">
+            This week’s memorable pictures are used. Watch an ad for +1 fast-model splash
+            ({MAX_MEMORABLE_ADS_PER_DAY}/day, {MAX_MEMORABLE_ADS_PER_WEEK}/week). Does not reset the weekly count.
+          </p>
+          <button
+            type="button"
+            disabled={memorableAdBusy}
+            onClick={() => void watchMemorableAd()}
+            className="flex w-full items-center justify-center gap-2 rounded-xl border border-amber-700/50 bg-amber-950/40 px-4 py-3 text-sm font-medium text-amber-100 hover:bg-amber-900/50 disabled:opacity-50"
+          >
+            {memorableAdBusy ? <Loader2 size={18} className="animate-spin" /> : <Tv size={18} />}
+            Watch an ad for +1 memorable picture
+          </button>
+        </section>
+      )}
+
       <section>
         <h2 className="mb-2 text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">
           Turn packs
@@ -159,6 +204,20 @@ export function CapacityPackShop({
         </p>
         <div className="grid gap-3 sm:grid-cols-3">
           {textShopPacks().map((pack) => (
+            <CapacityPackCard key={pack.id} pack={pack} onBuy={() => buy(pack)} />
+          ))}
+        </div>
+      </section>
+
+      <section>
+        <h2 className="mb-2 text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">
+          Memorable picture packs
+        </h2>
+        <p className="mb-3 text-[11px] leading-snug text-slate-500">
+          Extra story plates after this week’s cap. Fast model only. Never expire. Weekly allowance spends first.
+        </p>
+        <div className="grid gap-3 sm:grid-cols-3">
+          {memorableShopPacks().map((pack) => (
             <CapacityPackCard key={pack.id} pack={pack} onBuy={() => buy(pack)} />
           ))}
         </div>
@@ -353,6 +412,33 @@ function PackGlyph({ art, accent }: { art: TurnPackArtId; accent: string }) {
           <rect x="40" y="10" width="14" height="50" rx="1.5" fill={`${accent}44`} stroke={stroke} strokeWidth="1.2" />
           <path d="M43 22h8M43 28h8M43 34h6" stroke="#fce7f3" strokeWidth="1" opacity="0.6" />
           <path d="M19 20h4M31 22h4" stroke="#0f172a" strokeWidth="1.2" opacity="0.5" />
+        </svg>
+      );
+    case 'snap':
+      return (
+        <svg {...common} className="drop-shadow-lg">
+          <rect x="16" y="18" width="40" height="32" rx="3" fill={`${accent}55`} stroke={stroke} strokeWidth="1.5" />
+          <circle cx="36" cy="34" r="8" fill={`${accent}99`} stroke={stroke} />
+          <circle cx="36" cy="34" r="3.5" fill="#fff7ed" />
+          <path d="M26 18 l4-6 h12 l4 6" stroke={stroke} strokeWidth="1.4" fill={`${accent}33`} />
+        </svg>
+      );
+    case 'album':
+      return (
+        <svg {...common} className="drop-shadow-lg">
+          <rect x="18" y="22" width="36" height="28" rx="2" fill={`${accent}33`} stroke={stroke} strokeWidth="1.2" transform="rotate(-8 36 36)" />
+          <rect x="16" y="18" width="36" height="28" rx="2" fill={`${accent}66`} stroke={stroke} strokeWidth="1.4" />
+          <path d="M22 28h20M22 34h16" stroke="#fef3c7" strokeWidth="1.1" opacity="0.6" />
+        </svg>
+      );
+    case 'gallery':
+      return (
+        <svg {...common} className="drop-shadow-lg">
+          <rect x="10" y="16" width="20" height="16" rx="1.5" fill={`${accent}55`} stroke={stroke} strokeWidth="1.2" />
+          <rect x="34" y="16" width="28" height="16" rx="1.5" fill={`${accent}77`} stroke={stroke} strokeWidth="1.2" />
+          <rect x="10" y="36" width="28" height="20" rx="1.5" fill={`${accent}88`} stroke={stroke} strokeWidth="1.2" />
+          <rect x="42" y="36" width="20" height="20" rx="1.5" fill={`${accent}44`} stroke={stroke} strokeWidth="1.2" />
+          <circle cx="20" cy="23" r="2.5" fill="#fef3c7" />
         </svg>
       );
   }

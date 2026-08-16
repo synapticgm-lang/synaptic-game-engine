@@ -101,7 +101,7 @@ const MEANINGFUL_PROSE_MIN = 90;
 /** Strip residual mechanic XML the model left in player-facing prose. */
 export function stripResidualMechanicTags(text: string): string {
   return text
-    .replace(/<\/?(?:enemy|damage|heal|item-gain|item-use|system-log|quest-[\w-]+|encounter-end|milestone-event|loot-video|visual-update|turn-frame|dungeon-[\w-]+|map-floor-change|hex-move|lore-card|world-deal|world-holding|world-order|world-clock|world-actor|time-pass)[^>]*>/gi, '')
+    .replace(/<\/?(?:enemy|damage|heal|item-gain|item-use|system-log|quest-[\w-]+|encounter-end|milestone-event|campaign-ending|loot-video|visual-update|turn-frame|dungeon-[\w-]+|map-floor-change|hex-move|lore-card|world-deal|world-holding|world-order|world-clock|world-actor|time-pass)[^>]*>/gi, '')
     .replace(/^[ \t]*(?:_>\s*)?SYSTEM LOG\s*$/gim, '')
     .replace(/\n{3,}/g, '\n\n')
     .trim();

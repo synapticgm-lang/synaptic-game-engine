@@ -113,3 +113,40 @@ export async function fetchModelsForProvider(
   const models: string[] = (data.data ?? []).map((m: { id: string }) => m.id);
   return models.length > 0 ? models : getDefaultModels(provider);
 }
+
+export interface OpenRouterCatalogModel {
+  id: string;
+  name: string;
+}
+
+/**
+ * OpenRouter `/models` catalog for the admin type-ahead picker.
+ * Listing is public; a Bearer token is optional (admin BYOK or hosted).
+ * Any key string is accepted — we do not require an `sk-or-` prefix.
+ */
+export async function fetchOpenRouterModelCatalog(apiKey?: string): Promise<OpenRouterCatalogModel[]> {
+  const headers: Record<string, string> = { Accept: 'application/json' };
+  const trimmed = apiKey?.trim();
+  if (trimmed) headers.Authorization = `Bearer ${trimmed}`;
+
+  const res = await fetch('https://openrouter.ai/api/v1/models', { headers });
+  if (!res.ok) throw new Error(`HTTP ${res.status}`);
+  const data = await res.json();
+  const rows: OpenRouterCatalogModel[] = [];
+  for (const raw of data.data ?? []) {
+    const id = typeof raw?.id === 'string' ? raw.id.trim() : '';
+    if (!id) continue;
+    const outputs: string[] = Array.isArray(raw?.architecture?.output_modalities)
+      ? raw.architecture.output_modalities.map((m: unknown) => String(m).toLowerCase())
+      : [];
+    // Keep text writers; skip image-only / video-only endpoints.
+    if (outputs.length > 0 && !outputs.includes('text')) continue;
+    const name = typeof raw?.name === 'string' && raw.name.trim() ? raw.name.trim() : id;
+    rows.push({ id, name });
+  }
+  if (rows.length === 0) {
+    return getDefaultModels('openrouter').map((id) => ({ id, name: id }));
+  }
+  rows.sort((a, b) => a.name.localeCompare(b.name) || a.id.localeCompare(b.id));
+  return rows;
+}

@@ -84,14 +84,18 @@ export function loadSettings(): Settings {
         ...createDefaultSettings(),
         ...parsed,
         // Prefer user-saved keys only — never bake VITE_* provider secrets into the client bundle path.
-        openrouterApiKey: parsed.openrouterApiKey?.trim() ? parsed.openrouterApiKey : '',
-        fluxApiKey: parsed.fluxApiKey?.trim() ? parsed.fluxApiKey : '',
+        // Legacy text slot was geminiApiKey; migrate into openrouterApiKey.
+        openrouterApiKey: parsed.openrouterApiKey?.trim() || parsed.geminiApiKey?.trim() || '',
+        geminiApiKey: '',
+        fluxApiKey: parsed.fluxApiKey?.trim() || parsed.imageApiKey?.trim() || '',
+        imageApiKey: parsed.fluxApiKey?.trim() || parsed.imageApiKey?.trim() || '',
+        aiProvider: 'openrouter',
         subscriptionTier: parsed.subscriptionTier === 'mid' || parsed.subscriptionTier === 'high' || parsed.subscriptionTier === 'admin'
           ? parsed.subscriptionTier
           : 'free',
         byokModeEnabled: !!parsed.byokModeEnabled,
         byokDisclaimerAccepted: !!parsed.byokDisclaimerAccepted,
-        imageProvider: parsed.imageProvider ?? 'flux',
+        imageProvider: parsed.imageProvider === 'flux-direct' ? 'flux-direct' : 'flux',
         classicMemorableImages:
           parsed.classicMemorableImages ?? createDefaultSettings().classicMemorableImages,
         combatResolveMode:

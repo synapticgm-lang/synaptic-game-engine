@@ -58,7 +58,7 @@ export const TERMS_DOC: LegalDoc = {
       paragraphs: [
         'The Free tier includes limited daily turns and other caps shown in-product. Paid plans unlock higher capacity and benefits described at purchase. Subscriptions renew until cancelled; cancel via the payment provider portal or in-app controls when available.',
         'Turn packs and cosmetics are digital goods. Unless law requires otherwise, packs and cosmetics do not expire once granted, and cancelling a subscription does not remove already-purchased packs or cosmetics.',
-        'Adult Free may use optional rewarded ads subject to a daily cap. Kid Mode may offer rewarded ads without that adult cap, using family-appropriate ad settings where available. Rewards are granted only after a completed rewarded view.',
+        'Adult Free may use optional rewarded ads subject to a daily cap. Kid Mode may offer rewarded ads without that adult cap, using family-appropriate ad settings where available. Rewards (extra turns, or +1 cheap memorable picture on Free after the weekly splash cap) are granted only after a completed rewarded view.',
         'Admin (BYOK), where offered, means you supply your own AI keys and pay those providers; hard safety rails may still apply. Prices may include tax. Payment processors’ terms also apply.',
         'Digital content is generally non-refundable once delivered except where consumer law requires otherwise. If a paid unlock fails after successful payment, contact support with your email and payment reference.',
       ],

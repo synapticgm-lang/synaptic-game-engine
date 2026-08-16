@@ -166,6 +166,9 @@ class DebugLogger {
             ...currentSettings,
             openrouterApiKey: currentSettings.openrouterApiKey ? '[redacted]' : '',
             geminiApiKey: currentSettings.geminiApiKey ? '[redacted]' : '',
+            fluxApiKey: currentSettings.fluxApiKey ? '[redacted]' : '',
+            imageApiKey: currentSettings.imageApiKey ? '[redacted]' : '',
+            videoApiKey: currentSettings.videoApiKey ? '[redacted]' : '',
           }
         : null,
       character: currentState?.character || null,

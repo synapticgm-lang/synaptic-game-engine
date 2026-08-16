@@ -199,9 +199,14 @@ ORIGINAL CONTENT RAIL (MANDATORY):
 - Use original SynapticGM names and public-domain folklore only.
 - Invent original creatures. Do not paste published stat blocks.`;
 
-export function buildArchetypeRules(engineMode: EngineMode, archetype: CampaignArchetype): string {
+export function buildArchetypeRules(
+  engineMode: EngineMode,
+  archetype: CampaignArchetype,
+  opts?: { skipTabletopCore?: boolean },
+): string {
   if (engineMode === 'dnd') {
     const opening = (DND_RULES as Record<string, string>)[archetype] ?? DND_RULES.ai_custom;
+    if (opts?.skipTabletopCore) return opening;
     return `${TABLETOP_CORE_RULES}\n\n${opening}`;
   }
   const litrpgOpening = (LITRPG_RULES as Record<string, string>)[archetype] ?? LITRPG_RULES.ai_random;

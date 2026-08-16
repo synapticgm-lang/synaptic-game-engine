@@ -9,6 +9,8 @@ import {
   getCampaignBlurb,
   type CampaignBible,
 } from '@/data/campaigns';
+import { CustomTabletopRulesField } from './CustomTabletopRulesField';
+import { memorableWeeklyCapLabel } from '@/game/capacityLedger';
 
 interface Props {
   contentMode?: ContentMode;
@@ -24,6 +26,7 @@ interface Props {
     comicLayout?: ComicLayoutMode,
     comicReadingDirection?: ComicReadingDirection,
     bibleId?: string,
+    customTabletopRules?: string,
   ) => void;
   onClose: () => void;
 }
@@ -80,6 +83,7 @@ export function NewGameModal({ contentMode, onStart, onClose }: Props) {
   const [visualMode, setVisualMode] = useState<'comic' | 'classic'>('classic');
   const [artStylePreset, setArtStylePreset] = useState<ArtStylePreset>('manga-screentone');
   const [classicMemorableImages, setClassicMemorableImages] = useState(false);
+  const [customTabletopRules, setCustomTabletopRules] = useState('');
   const [comicLayout, setComicLayout] = useState<ComicLayoutMode>('paged');
   const [comicReadingDirection, setComicReadingDirection] = useState<ComicReadingDirection>('ltr');
 
@@ -166,6 +170,7 @@ export function NewGameModal({ contentMode, onStart, onClose }: Props) {
       comicLayout,
       comicReadingDirection,
       bibleId,
+      engineMode === 'dnd' ? customTabletopRules : undefined,
     );
   };
 
@@ -182,6 +187,7 @@ export function NewGameModal({ contentMode, onStart, onClose }: Props) {
       comicLayout,
       comicReadingDirection,
       undefined,
+      engineMode === 'dnd' ? customTabletopRules : undefined,
     );
   };
 
@@ -381,6 +387,17 @@ export function NewGameModal({ contentMode, onStart, onClose }: Props) {
                 </div>
               )}
 
+              {engineMode === 'dnd' && (
+                <div className="rounded-lg border border-slate-700 bg-slate-800/40 p-3">
+                  <CustomTabletopRulesField
+                    value={customTabletopRules}
+                    onChange={setCustomTabletopRules}
+                    kidMode={contentMode === 'kid'}
+                    compact
+                  />
+                </div>
+              )}
+
               {path === 'custom' && (
                 <div>
                   <label className="mb-1 block font-medium text-slate-300">GM Strictness</label>
@@ -461,6 +478,8 @@ export function NewGameModal({ contentMode, onStart, onClose }: Props) {
                     <span className="block font-medium text-slate-200">Memorable moment images</span>
                     <span className="mt-0.5 block text-[10px] leading-snug text-slate-500">
                       Optional. Opening, death, and the first dungeon’s final boss auto-illustrate; later dungeon bosses and other book-worthy beats are a tap-yes on the fast model. Off until you check this.
+                      {' '}
+                      <span className="text-amber-200/80">{memorableWeeklyCapLabel()}</span>
                     </span>
                   </span>
                 </label>

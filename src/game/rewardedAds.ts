@@ -1,8 +1,9 @@
 /**
- * Rewarded ads → extra text turns.
+ * Rewarded ads → extra text turns, and Free-tier +1 memorable after the weekly cap.
  *
  * Soft offer when out of turns; Shop → Earn turns anytime if eligible.
- * Kid Mode: unlimited completed ads (family AdMob when live).
+ * Memorable: Free only, schnell, +1/day and +3/week extra (does not dump weekly spend).
+ * Kid Mode: unlimited completed ads for turns (family AdMob when live); memorable extras still capped.
  * Adult Free: hard daily ad cap; then packs / sub.
  * Providers: stub now; AppLixir (adult) + AdMob kids later.
  */
@@ -13,7 +14,12 @@ import {
 } from './subscriptionTiers';
 import {
   grantAdBonusTurns,
+  grantAdMemorableBonus,
   loadCapacityLedger,
+  memorableAdExtrasRemaining,
+  memorableWeeklySubRemaining,
+  MAX_MEMORABLE_ADS_PER_DAY,
+  MAX_MEMORABLE_ADS_PER_WEEK,
   type CapacityLedger,
 } from './capacityLedger';
 
@@ -129,6 +135,84 @@ export async function watchRewardedAdForTurns(args: {
 
   const ledger = grantAdBonusTurns(turns);
   return { ok: true, ledger, turnsGranted: turns, provider };
+}
+
+export interface WatchMemorableAdResult {
+  ok: boolean;
+  ledger: CapacityLedger;
+  granted: number;
+  provider: RewardedAdProviderId;
+  error?: string;
+}
+
+/**
+ * Free only, after the weekly memorable cap: +1 schnell splash that does not dump the week.
+ * Extra cap: +1/day and +3/week. Kid Mode uses the family ad rail when live.
+ */
+export function canOfferRewardedMemorable(contentMode?: string | null): boolean {
+  const tier = getActiveSubscriptionTier();
+  if (tier !== 'free') return false;
+  if (memorableWeeklySubRemaining() > 0) return false;
+  const extras = memorableAdExtrasRemaining();
+  if (extras.today <= 0 || extras.week <= 0) return false;
+  return canWatchRewardedAdNow(contentMode);
+}
+
+export async function watchRewardedAdForMemorable(args: {
+  contentMode?: string | null;
+}): Promise<WatchMemorableAdResult> {
+  const profile = resolveRewardedAdProfile(args.contentMode);
+  const provider = preferredRewardedProvider(profile);
+  const ledgerNow = loadCapacityLedger();
+
+  if (getActiveSubscriptionTier() !== 'free') {
+    return { ok: false, ledger: ledgerNow, granted: 0, provider, error: 'Extra memorable ads are Free-tier only.' };
+  }
+  if (memorableWeeklySubRemaining() > 0) {
+    return { ok: false, ledger: ledgerNow, granted: 0, provider, error: 'Weekly memorable pictures are still available.' };
+  }
+  const extras = memorableAdExtrasRemaining();
+  if (extras.today <= 0) {
+    return {
+      ok: false,
+      ledger: ledgerNow,
+      granted: 0,
+      provider,
+      error: `Extra memorable pictures are +${MAX_MEMORABLE_ADS_PER_DAY}/day. Try again tomorrow.`,
+    };
+  }
+  if (extras.week <= 0) {
+    return {
+      ok: false,
+      ledger: ledgerNow,
+      granted: 0,
+      provider,
+      error: `Extra memorable pictures are +${MAX_MEMORABLE_ADS_PER_WEEK}/week from ads.`,
+    };
+  }
+  if (!canWatchRewardedAdNow(args.contentMode)) {
+    return {
+      ok: false,
+      ledger: ledgerNow,
+      granted: 0,
+      provider,
+      error: `Daily ad limit reached (${ADULT_MAX_REWARDED_ADS_PER_DAY}). Try again tomorrow.`,
+    };
+  }
+
+  const completed = await playRewardedProvider(provider, profile);
+  if (!completed.ok) {
+    return {
+      ok: false,
+      ledger: loadCapacityLedger(),
+      granted: 0,
+      provider,
+      error: completed.error ?? 'Ad did not complete — no picture granted.',
+    };
+  }
+
+  const ledger = grantAdMemorableBonus();
+  return { ok: true, ledger, granted: 1, provider };
 }
 
 async function playRewardedProvider(

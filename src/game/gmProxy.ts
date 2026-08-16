@@ -3,6 +3,12 @@ import { isSupabaseConfigured, supabase } from '@/lib/supabase';
 import { RateLimitError, withRetry } from './aiServiceShared';
 import { logger } from './logger';
 import { resolveWriterModel } from './subscriptionTiers';
+import {
+  BYOK_TEXT_KEY_REQUIRED,
+  canConfigurePlayerAiKeys,
+  isByokTierWithoutHostedKeys,
+  resolveClientTextApiKey,
+} from './distributionChannel';
 
 export type GmProxyMode = 'turn' | 'auto-fight';
 
@@ -26,10 +32,9 @@ function gmProxyUrl(): string {
 }
 
 function pickClientApiKey(settings: Settings): string | undefined {
-  const provider = settings.aiProvider ?? 'gemini';
-  if (provider === 'openrouter') return settings.openrouterApiKey || undefined;
-  if (settings.geminiApiKey) return settings.geminiApiKey;
-  return settings.openrouterApiKey || undefined;
+  if (!canConfigurePlayerAiKeys(settings)) return undefined;
+  const key = resolveClientTextApiKey(settings);
+  return key || undefined;
 }
 
 const GM_PROXY_TIMEOUT_MS = 30_000;
@@ -67,14 +72,12 @@ export async function invokeGmProxy(params: {
       settings: {
         contentMode: params.settings.contentMode,
         mapTriggerMode: params.settings.mapTriggerMode,
-        aiProvider: params.settings.aiProvider,
-        customModelId:
-          params.settings.customModelId?.trim() ||
-          resolveWriterModel({
-            aiProvider: params.settings.aiProvider,
-            customModelId: params.settings.customModelId,
-            tier: params.settings.subscriptionTier,
-          }),
+        aiProvider: 'openrouter',
+        customModelId: resolveWriterModel({
+          aiProvider: 'openrouter',
+          customModelId: params.settings.customModelId,
+          tier: params.settings.subscriptionTier,
+        }),
         subscriptionTier: params.settings.subscriptionTier,
         baseUrl: params.settings.baseUrl,
         diceAnimation: params.settings.diceAnimation,
@@ -87,9 +90,13 @@ export async function invokeGmProxy(params: {
       clientApiKey: pickClientApiKey(params.settings) || undefined,
     };
 
+    if (isByokTierWithoutHostedKeys(params.settings) && !body.clientApiKey) {
+      throw new Error(BYOK_TEXT_KEY_REQUIRED);
+    }
+
     logger.info('ai-proxy', `gm-turn ${params.mode}`, {
       turn: params.state.turn,
-      provider: params.settings.aiProvider,
+      provider: 'openrouter',
       hasClientKey: !!body.clientApiKey,
     });
 

@@ -64,8 +64,12 @@ function resolveCredentials(body: GmRequestBody): {
   const serverOpenRouter = Deno.env.get('OPENROUTER_API_KEY')?.trim() || '';
   const serverGemini = Deno.env.get('GEMINI_API_KEY')?.trim() || '';
 
+  const tier = String(settings.subscriptionTier ?? '').toLowerCase();
+  const kidMode = String(settings.contentMode ?? '') === 'kid';
+  const byokNoHosted = tier === 'admin' && !kidMode;
+
   let apiKey = clientKey;
-  if (!apiKey) {
+  if (!apiKey && !byokNoHosted) {
     if (provider === 'gemini' && serverGemini) apiKey = serverGemini;
     else if (serverOpenRouter) {
       provider = 'openrouter';
@@ -74,7 +78,7 @@ function resolveCredentials(body: GmRequestBody): {
       provider = 'gemini';
       apiKey = serverGemini;
     }
-  } else if ((provider === 'gemini' || !apiKey) && !clientKey && serverOpenRouter) {
+  } else if (!byokNoHosted && (provider === 'gemini' || !apiKey) && !clientKey && serverOpenRouter) {
     provider = 'openrouter';
     apiKey = serverOpenRouter;
   }
@@ -218,7 +222,10 @@ Deno.serve(async (req) => {
     return jsonResponse(
       {
         error:
-          'No API key available. Pass clientApiKey or set OPENROUTER_API_KEY / GEMINI_API_KEY on the edge function.',
+          String(settings.subscriptionTier ?? '').toLowerCase() === 'admin'
+            && String(settings.contentMode ?? '') !== 'kid'
+            ? 'Admin BYOK needs an OpenRouter text key. Hosted AI is not included on this tier.'
+            : 'No API key available. Pass clientApiKey or set OPENROUTER_API_KEY on the edge function.',
       },
       400
     );

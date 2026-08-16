@@ -1,14 +1,43 @@
 import { Swords, MessageSquareHeart, Map as MapIcon, Package, EyeOff, Zap, Users } from 'lucide-react';
-import type { Settings } from '@/game/types';
+import type { EngineMode, Settings } from '@/game/types';
+import { CustomTabletopRulesField } from './CustomTabletopRulesField';
 
 interface Props {
   settings: Settings;
   onChange: <K extends keyof Settings>(key: K, value: Settings[K]) => void;
+  engineMode?: EngineMode;
+  customTabletopRules?: string;
+  onCustomTabletopRulesChange?: (text: string) => void;
+  kidMode?: boolean;
 }
 
-export function CampaignSettings({ settings, onChange }: Props) {
+export function CampaignSettings({
+  settings,
+  onChange,
+  engineMode,
+  customTabletopRules,
+  onCustomTabletopRulesChange,
+  kidMode,
+}: Props) {
   return (
     <div className="space-y-8">
+      {engineMode === 'dnd' && onCustomTabletopRulesChange && (
+        <section>
+          <div className="mb-4 flex items-center gap-2">
+            <div className="flex h-7 w-7 items-center justify-center rounded-md border border-crimson-500/40 bg-crimson-950/40">
+              <Swords size={15} className="text-crimson-400" />
+            </div>
+            <h3 className="font-serif text-sm uppercase tracking-wider text-slate-200">Custom tabletop rules</h3>
+          </div>
+          <div className="rounded-lg border border-slate-700/60 bg-slate-800/40 p-4">
+            <CustomTabletopRulesField
+              value={customTabletopRules ?? ''}
+              onChange={onCustomTabletopRulesChange}
+              kidMode={kidMode}
+            />
+          </div>
+        </section>
+      )}
       <PillarsSection settings={settings} onChange={onChange} />
       <HouseRulesSection settings={settings} onChange={onChange} />
     </div>

@@ -6,7 +6,7 @@
  * 4. adult_byok_web — Adult website + Bring Your Own Key (explicit + own image/text AIs)
  */
 
-import { getDistributionChannel, canConfigurePlayerAiKeys, type DistributionChannel } from './distributionChannel';
+import { getDistributionChannel, canConfigurePlayerAiKeys, resolveClientTextApiKey, resolveClientImageApiKey, type DistributionChannel } from './distributionChannel';
 import type { Settings } from './types';
 import {
   CORE_HARD_RAILS,
@@ -159,8 +159,8 @@ export function resolveContentFilterProfile(settings: Settings): ContentFilterPr
 /** True when the player has supplied a key the game can treat as BYOK. */
 export function hasByokKeysConfigured(settings: Settings): boolean {
   if (!canConfigurePlayerAiKeys(settings)) return false;
-  const textKey = settings.geminiApiKey.trim() || settings.openrouterApiKey.trim();
-  const imageKey = settings.imageApiKey.trim() || settings.fluxApiKey.trim();
+  const textKey = resolveClientTextApiKey(settings);
+  const imageKey = resolveClientImageApiKey(settings);
   return !!(textKey && imageKey);
 }
 

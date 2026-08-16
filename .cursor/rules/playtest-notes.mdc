@@ -17,6 +17,13 @@ John is playtesting live. Collect issues here. Do not implement until he asks fo
 
 ## Done (already shipped)
 
+- Admin BYOK does not include hosted text or image keys — OpenRouter text key required; pictures use that key or Flux Direct (`2026-08-16t`)
+- Memorable picture packs: Snap +10 / 99p, Album +20 / £1.99, Gallery +50 / £3.99 (schnell, never expire, weekly cap spends first) (`2026-08-16s`)
+- PYOA true-ending memorable plate (Classic + Memorable on; `<campaign-ending />` only; schnell; once; Kid Mode rewrite) (`2026-08-16r`)
+- Custom tabletop rules paste (campaign-level; player-supplied; Kid Mode still filters) (`2026-08-16q`)
+- Free +1 memorable via rewarded ad after weekly cap (schnell; +1/day, +3/week) (`2026-08-16q`)
+- Memorable on: remaining “N of 5 left this week” next to toggle; mid-campaign toast; opener still auto (`2026-08-16q`)
+- Admin-only OpenRouter text key + Flux image key; searchable OpenRouter model picker; hosted path unchanged for players (`2026-08-16p`)
 - Equipped theme kits restyle player card, sheet, journal, inventory, drawers, map chrome, salvage, and System windows (`2026-08-16o`)
 - Player copy no longer names D&D / WotC / SRD; tabletop fantasy label + Credits page (`2026-08-16n`)
 - Kid Mode uses one Google Play Families bar on prose, choices, system text, quests, TTS source, and all image prompts; skip unsalvageable sex/gore/drugs/gambling before API spend (`2026-08-16m`)

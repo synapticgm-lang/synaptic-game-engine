@@ -3,6 +3,7 @@ import { logger } from './logger';
 import { fetchComicPanel, ImageModerationError, generateComicImage } from '@/services/openRouterService';
 import { resolveContentFilterProfile } from './contentFilterProfile';
 import { prepareKidSafeImagePrompt } from './visualCanon';
+import { canConfigurePlayerAiKeys, resolveClientTextApiKey } from './distributionChannel';
 
 // Re-exported for backward compatibility — the class now lives in openRouterService.ts,
 // next to the detection logic that actually throws it (text-refusal detection in fetchComicPanel).
@@ -54,7 +55,7 @@ export async function generateImage(
     });
   } catch (err) {
     if (err instanceof ImageModerationError) throw err;
-    const apiKey = settings.openrouterApiKey || settings.geminiApiKey;
+    const apiKey = canConfigurePlayerAiKeys(settings) ? resolveClientTextApiKey(settings) : '';
     if (!apiKey) throw err;
     logger.warn('ai-image', `generateComicImage failed; trying OpenRouter chat image`, {
       error: err instanceof Error ? err.message : String(err),

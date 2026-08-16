@@ -36,7 +36,7 @@ export function ApiSetupModal({ settings, onSave, onSetContentMode, onClose }: P
 
         <p className="mb-4 text-[11px] leading-relaxed text-slate-400">
           {adminKeys
-            ? 'AI keys for Admin BYOK are under Settings → General → AI Keys (Text AI key and Image AI key). This panel only switches Kid / Adult mode.'
+            ? 'AI keys for Admin BYOK are under Settings → General → AI Keys (OpenRouter text key and Flux image key). This panel only switches Kid / Adult mode.'
             : 'SynapticGM hosts the AI on this account. Player API keys are not available here (store builds and Free/Mid/High never collect keys).'}
         </p>
 

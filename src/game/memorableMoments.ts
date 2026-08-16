@@ -13,19 +13,22 @@ import { isUnsalvageableKidImagePrompt, prepareKidSafeImagePrompt, stripKidUnsaf
 
 /** Skip this many story turns after a splash (death/ending ignore it). */
 export const MEMORABLE_COOLDOWN_TURNS = 3;
-/** Opener + at most one more in the first sitting. Death and first-dungeon-boss kills may exceed. */
+/** Opener + at most one more in the first sitting. Death, first-dungeon-boss, and PYOA ending may exceed. */
 export const FIRST_SESSION_HARD_CAP = 2;
 export const FIRST_SESSION_SOFT_CAP = FIRST_SESSION_HARD_CAP;
 export const FIRST_SESSION_TURN_HORIZON = 16;
-/** Later sittings (after ~16 turns, or a new night). Death and first-dungeon-boss kills may exceed. */
+/** Later sittings (after ~16 turns, or a new night). Death, first-dungeon-boss, and PYOA ending may exceed. */
 export const SESSION_HARD_CAP = 3;
 export const SESSION_SOFT_CAP = SESSION_HARD_CAP;
+/** PYOA rails forbid ending in the opening hour — refuse a writer tag before this turn. */
+export const PYOA_ENDING_MIN_TURN = 8;
 /** Treat a gap this long as a new night / sitting. */
 export const SITTING_STALE_MS = 8 * 60 * 60 * 1000;
 
 export type MemorableBeatKind =
   | 'opening'
   | 'death'
+  | 'ending'
   | 'legendary'
   | 'dungeon-boss'
   | 'writer-tag'
@@ -65,6 +68,8 @@ export interface MemorableDecision {
   skipImageForLootVideo?: boolean;
   /** Player choice only — never auto-enqueued. */
   beautyOffer?: DetectedBeautyOffer | null;
+  /** A book-worthy beat was detected but weekly quota blocked the spend. */
+  skippedForCapacity?: boolean;
 }
 
 export function isClassicMemorableEnabled(
@@ -167,6 +172,12 @@ export function synthesizeMemorablePrompt(opts: {
       ? `Kid-safe storybook close: the hero at rest after a hard journey, lights dimming like a book ending. No injury shown, no blood, no corpse. ${excerpt}`
       : `The fatal moment. ${excerpt}`;
   }
+  if (opts.beat === 'ending') {
+    const at = place ? ` at ${place}` : '';
+    return kid
+      ? `Kid-safe closing plate: the storybook last page${at}, everyone fully clothed, no blood, no corpse, no frightening imagery. ${excerpt}`
+      : `The campaign's closing plate${at}. ${excerpt}`;
+  }
   if (opts.beat === 'dungeon-boss') {
     if (kid) {
       const foe = extra || "the first dungeon's final foe";
@@ -237,6 +248,7 @@ function stamp(
   const next: MemorableMomentState = nextSplashStamp(prev, turn);
   if (beat === 'opening') next.openingSplashFired = true;
   if (beat === 'death') next.deathSplashFired = true;
+  if (beat === 'ending') next.endingSplashFired = true;
   if (beat === 'legendary') next.legendarySplashFired = true;
   if (beat === 'dungeon-boss') {
     next.firstDungeonBossSplashFired = true;
@@ -612,8 +624,29 @@ export function detectNoteworthyBeauty(
 }
 
 /**
+ * Writer-declared PYOA close only. No prose guess, no LitRPG / tabletop / Story RPG,
+ * no opening-hour tag, no mid-route "you could stop here".
+ */
+export function detectPyoaCampaignEnding(
+  input: Pick<
+    ResolveMemorableInput,
+    'state' | 'turn' | 'events' | 'isOpeningSceneTurn' | 'storyText'
+  >,
+  prev: MemorableMomentState
+): boolean {
+  if (prev.endingSplashFired) return false;
+  if (input.state.engineMode !== 'pyoa') return false;
+  if (input.isOpeningSceneTurn) return false;
+  const est = input.state.openingEstablishment;
+  if (est && !est.complete) return false;
+  if (input.turn < PYOA_ENDING_MIN_TURN) return false;
+  if (!storyHasBody(input.storyText)) return false;
+  return input.events.some((event) => event.type === 'campaign-ending');
+}
+
+/**
  * Classic memorable only. Comic mode is untouched.
- * Auto: opening + death + the campaign’s first dungeon final-boss defeat only.
+ * Auto: opening + death + first-dungeon final-boss + PYOA true ending only.
  * Later dungeon bosses never auto — writer tag can still become a tap-yes offer.
  * Legendary is loot-video only (no second still). First combat / trash / boss reveal never auto.
  */
@@ -676,6 +709,21 @@ export function resolveMemorableMoment(input: ResolveMemorableInput): MemorableD
         }
       );
     }
+  }
+
+  if (detectPyoaCampaignEnding(input, prev)) {
+    return fire(
+      'ending',
+      input,
+      prev,
+      synthesizeMemorablePrompt({
+        beat: 'ending',
+        storyText: input.storyText,
+        location: input.state.currentLocation,
+        kidMode: kidModeOn(input.settings),
+      }),
+      { skipImageForLootVideo: Boolean(input.lootVideo) }
+    );
   }
 
   const legendaryItem =
@@ -806,6 +854,7 @@ export function decideClassicMemorable(
       return {
         request: null,
         beat: null,
+        skippedForCapacity: true,
         nextState: {
           ...prev,
           firstDungeonBlueprintId:
@@ -815,10 +864,22 @@ export function decideClassicMemorable(
         },
       };
     }
+    if (decision.beat === 'ending') {
+      return {
+        request: null,
+        beat: null,
+        skippedForCapacity: true,
+        nextState: {
+          ...prev,
+          endingSplashFired: true,
+        },
+      };
+    }
     return {
       request: null,
       nextState: prev,
       beat: null,
+      skippedForCapacity: true,
     };
   }
   return decision;

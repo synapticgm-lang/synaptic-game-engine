@@ -420,9 +420,9 @@ export async function callSmallModel(
   systemPrompt: string,
   userPrompt: string
 ): Promise<string> {
-  let provider = settings.aiProvider ?? 'gemini';
-  let apiKey = provider === 'openrouter' ? settings.openrouterApiKey : settings.geminiApiKey;
-  if ((provider === 'gemini' || !apiKey) && settings.openrouterApiKey) {
+  let provider: string = 'openrouter';
+  let apiKey = settings.openrouterApiKey || settings.geminiApiKey;
+  if ((settings.aiProvider === 'gemini' || !apiKey) && settings.openrouterApiKey) {
     provider = 'openrouter';
     apiKey = settings.openrouterApiKey;
   }
@@ -430,7 +430,8 @@ export async function callSmallModel(
     settings.customModelId?.trim() ||
     // Choices always use Free-tier cheap/fast model — never burn Mid/High writer on buttons
     getTierDefinition('free').writerOpenRouterId;
-  if (provider === 'gemini') {
+  if (settings.aiProvider === 'gemini' && !settings.openrouterApiKey) {
+    provider = 'gemini';
     model = settings.customModelId?.trim() || getTierDefinition('free').writerGeminiId;
   }
   if (!apiKey) throw new Error('No API key configured for choice regeneration.');

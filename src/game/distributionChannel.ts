@@ -59,3 +59,43 @@ export function canConfigurePlayerAiKeys(settings: {
     && settings.contentMode !== 'kid'
   );
 }
+
+/** Admin BYOK never includes SynapticGM-hosted keys (Kid Mode still uses hosted family AI). */
+export function isByokTierWithoutHostedKeys(settings: {
+  subscriptionTier?: string;
+  contentMode?: string;
+}): boolean {
+  return settings.subscriptionTier === 'admin' && settings.contentMode !== 'kid';
+}
+
+export const BYOK_TEXT_KEY_REQUIRED =
+  'Admin BYOK needs an OpenRouter text key in Settings. Hosted AI is not included on this tier.';
+
+export const BYOK_IMAGE_KEY_REQUIRED =
+  'Admin BYOK needs your OpenRouter text key (or a Flux image key) for pictures. Hosted art is not included on this tier.';
+
+/** Admin text key (OpenRouter). Legacy geminiApiKey slot is accepted as a fallback. */
+export function resolveClientTextApiKey(settings: {
+  openrouterApiKey?: string;
+  geminiApiKey?: string;
+}): string {
+  return (settings.openrouterApiKey ?? '').trim() || (settings.geminiApiKey ?? '').trim();
+}
+
+/** Admin image key (Flux / BFL). Legacy imageApiKey slot is accepted as a fallback. */
+export function resolveClientImageApiKey(settings: {
+  fluxApiKey?: string;
+  imageApiKey?: string;
+}): string {
+  return (settings.fluxApiKey ?? '').trim() || (settings.imageApiKey ?? '').trim();
+}
+
+/** Pictures on BYOK: Flux key, else their OpenRouter text key (they pay). Never hosted. */
+export function resolveByokImageSpendKey(settings: {
+  fluxApiKey?: string;
+  imageApiKey?: string;
+  openrouterApiKey?: string;
+  geminiApiKey?: string;
+}): string {
+  return resolveClientImageApiKey(settings) || resolveClientTextApiKey(settings);
+}

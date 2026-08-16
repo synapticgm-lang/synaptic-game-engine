@@ -31,6 +31,7 @@ const CharacterWindow = lazy(() => import('@/components/CharacterWindow').then(m
 const MerchantWindow = lazy(() => import('@/components/MerchantWindow').then(m => ({ default: m.MerchantWindow })));
 const QuestUnlockModal = lazy(() => import('@/components/QuestUnlockModal').then(m => ({ default: m.QuestUnlockModal })));
 const OutOfTurnsAdOffer = lazy(() => import('@/components/OutOfTurnsAdOffer').then(m => ({ default: m.OutOfTurnsAdOffer })));
+const OutOfMemorableAdOffer = lazy(() => import('@/components/OutOfMemorableAdOffer').then(m => ({ default: m.OutOfMemorableAdOffer })));
 
 export default function App() {
   const game = useGame();
@@ -148,10 +149,19 @@ export default function App() {
               storyName={game.localSlot?.storyName ?? ''}
               engineMode={'litrpg'}
               onSave={game.updateSettings}
+            onSaveCustomTabletopRules={game.updateCustomTabletopRules}
+            onMemorableEnabledMidCampaign={() => {
+              game.addToast(
+                'Memorable pictures on. The next book-worthy beat uses 1 of your weekly splashes.',
+                'info',
+              );
+            }}
               onStoryNameChange={game.updateStoryName}
               onSetContentMode={game.setContentMode}
               onVerifyPin={game.verifyContentPin}
               {...saveManagement}
+              supportUserId={game.googleUser && !game.googleUser.isGuest ? game.googleUser.id ?? null : null}
+              googleSignedIn={!!game.googleUser && !game.googleUser.isGuest}
               onClose={() => game.setShowSettings(false)}
             />
           </Suspense>
@@ -227,10 +237,19 @@ export default function App() {
               storyName={game.localSlot?.storyName ?? ''}
               engineMode={'litrpg'}
               onSave={game.updateSettings}
+            onSaveCustomTabletopRules={game.updateCustomTabletopRules}
+            onMemorableEnabledMidCampaign={() => {
+              game.addToast(
+                'Memorable pictures on. The next book-worthy beat uses 1 of your weekly splashes.',
+                'info',
+              );
+            }}
               onStoryNameChange={game.updateStoryName}
               onSetContentMode={game.setContentMode}
               onVerifyPin={game.verifyContentPin}
               {...saveManagement}
+              supportUserId={game.googleUser && !game.googleUser.isGuest ? game.googleUser.id ?? null : null}
+              googleSignedIn={!!game.googleUser && !game.googleUser.isGuest}
               onClose={() => game.setShowSettings(false)}
             />
           </Suspense>
@@ -320,6 +339,7 @@ export default function App() {
             onRetryPanelImage={game.retryPanelImage}
             onAcceptBeautyOffer={game.acceptBeautyOffer}
             onDismissBeautyOffer={game.dismissBeautyOffer}
+            contentMode={game.settings.contentMode}
             onUpdatePanelOverlay={game.updatePanelOverlay}
             onSend={game.sendAction}
             restoreDraft={game.restoreDraft}
@@ -370,10 +390,19 @@ export default function App() {
             engineMode={state.engineMode}
             gameState={state}
             onSave={game.updateSettings}
+            onSaveCustomTabletopRules={game.updateCustomTabletopRules}
+            onMemorableEnabledMidCampaign={() => {
+              game.addToast(
+                'Memorable pictures on. The next book-worthy beat uses 1 of your weekly splashes.',
+                'info',
+              );
+            }}
             onStoryNameChange={game.updateStoryName}
             onSetContentMode={game.setContentMode}
             onVerifyPin={game.verifyContentPin}
             {...saveManagement}
+            supportUserId={game.googleUser && !game.googleUser.isGuest ? game.googleUser.id ?? null : null}
+            googleSignedIn={!!game.googleUser && !game.googleUser.isGuest}
             onClose={() => game.setShowSettings(false)}
             currentBgUrl={bgImage.url}
           />
@@ -535,6 +564,14 @@ export default function App() {
           onClose={game.dismissOutOfTurnsAdOffer}
           onGranted={(turns) => {
             game.addToast(`+${turns} turns from ad — you’re good to keep playing.`, 'success');
+          }}
+        />
+        <OutOfMemorableAdOffer
+          open={game.outOfMemorableAdOffer}
+          contentMode={game.settings.contentMode}
+          onClose={game.dismissOutOfMemorableAdOffer}
+          onGranted={() => {
+            game.addToast('+1 memorable picture from ad — the next book-worthy beat can splash.', 'success');
           }}
         />
       </Suspense>

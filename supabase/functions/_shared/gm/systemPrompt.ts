@@ -10,6 +10,9 @@ import { formatClaimGroundingDirective } from './claimGrounding.ts';
 import { formatTimelineForPrompt } from './timelineFormat.ts';
 import { playerFacingLocation } from './locationName.ts';
 import { formatMaturityRules } from './maturity.ts';
+import {
+  formatCustomTabletopRulesForPrompt,
+} from './customTabletopRules.ts';
 
 // Re-exports for legacy imports (prefer contentModeRules / imagePromptModifier directly).
 
@@ -180,6 +183,7 @@ You are running a main-spine story with forks, not an open sandbox and not a Lit
 - MAIN SPINE: Follow the campaign bible's numbered road. Side seeds only when the player looks, talks, or wanders — never dump the list.
 - GOOD / EVIL: There is no alignment meter speech. Mercy, cruelty, honesty, and lies have social cost. Both are playable.
 - ENDINGS: Honor ENDING LOGIC in the style rail. Do not force deliver/keep/sell/burn/forge if this story keys endings on accusation, who is on the pod, or who you still love. Never name endings. Never end in the opening hour.
+- When you play a REAL ending (spine complete; one ENDING LOGIC resolve — not "you could stop here", not mid-route), emit exactly one <campaign-ending /> and stop offering spine forks. Never emit <milestone-event> for that plate — code owns it. Never emit <campaign-ending /> on LitRPG, tabletop, or Story RPG.
 - ACCUSATION: If the player names a suspect ("it was X", "I accuse"), treat it as a locked theory. Honor HIDDEN ACCUSED.
 - NO SYSTEM POPUPS, NO DICE MATH, NO XP TICKERS.
 - Stay inside this engineMode.`;
@@ -281,9 +285,17 @@ function engineModeRules(engineMode: GameState['engineMode']): string {
 
 export function buildSystemPrompt(state: GameState, settings: Settings, activeLoreCards: LoreCard[] = []): string {
   const nsfw = isNsfwCampaign(getCampaignBibleById(state.campaignBibleId ?? ''));
+  const kidMode = settings.contentMode === 'kid';
+  const playerRules = state.engineMode === 'dnd'
+    ? formatCustomTabletopRulesForPrompt(state.customTabletopRules, kidMode)
+    : '';
   const modeRules = engineModeRules(state.engineMode);
-  const archetypeRules = buildArchetypeRules(state.engineMode, state.campaignArchetype ?? getDefaultArchetype(state.engineMode));
-  const contentRules = settings.contentMode === 'kid'
+  const archetypeRules = buildArchetypeRules(
+    state.engineMode,
+    state.campaignArchetype ?? getDefaultArchetype(state.engineMode),
+    { skipTabletopCore: Boolean(playerRules) },
+  );
+  const contentRules = kidMode
     ? KID_MODE_RULES
     : nsfw
       ? NSFW_CAMPAIGN_RULES
@@ -308,7 +320,7 @@ export function buildSystemPrompt(state: GameState, settings: Settings, activeLo
   const multiPanel = buildMultiPanelInstructions(resolvePanelBudget(settings), state.engineMode);
   const publishingEngine = buildPublishingEngineInstructions(settings);
 
-  return `${BASE_PROMPT}\n\n${modeRules}\n\n${archetypeRules}\n\n${strictnessRules}\n\n${contentRules}\n\n${narrativePreferenceRules}\n\n${diceNote}\n\n${statRules}\n\n${dndModeRules}\n\n${ledger}\n\n${claimGrounding}\n\n${memoryBlock}\n\n${loreContext}\n\n${actionTags}\n\n${turnFrame}\n\n${multiPanel}\n\n${publishingEngine}`.trim();
+  return `${BASE_PROMPT}\n\n${modeRules}\n\n${playerRules}\n\n${archetypeRules}\n\n${strictnessRules}\n\n${contentRules}\n\n${narrativePreferenceRules}\n\n${diceNote}\n\n${statRules}\n\n${dndModeRules}\n\n${ledger}\n\n${claimGrounding}\n\n${memoryBlock}\n\n${loreContext}\n\n${actionTags}\n\n${turnFrame}\n\n${multiPanel}\n\n${publishingEngine}`.trim();
 }
 
 function buildGroundTruthLedger(state: GameState): string {
@@ -479,11 +491,11 @@ ${engineMode === 'dnd'
 function buildPublishingEngineInstructions(settings: Settings): string {
   const memorableOn = settings.visualMode === 'classic' && settings.classicMemorableImages;
   const milestoneBlock = memorableOn
-    ? `MILESTONE EVENTS (Classic Text, Memorable Moment Images ON): The engine already illustrates the opening scene, character death, and the campaign's first dungeon final-boss defeat (First Blood / Corrupted Stockboy) — do not tag those.
+    ? `MILESTONE EVENTS (Classic Text, Memorable Moment Images ON): The engine already illustrates the opening scene, character death, the campaign's first dungeon final-boss defeat (First Blood / Corrupted Stockboy), and a Pick Your Own Adventure true ending — do not tag those.
 A <milestone-event> is a player offer, not an automatic spend. Emit at most ONE self-closing tag on a truly book-worthy beat:
 <milestone-event prompt="A vivid, wordless visual description of the moment" />
 Use this rarely — not every turn, not every NPC, not every fight. Good moments: a first royal audience (named king, queen, emperor, empress, or equivalent realm ruler in a throne/audience scene — not every noble), a boss reveal (not the kill), a later dungeon's final-boss fall (not First Blood — code owns that one splash), a LitRPG Integration or Wave, a new significant place, a quest completed, a confession or reveal.
-Do not tag ordinary NPC meetings (shopkeepers, guards, companions, random named people). Do not tag a first fight unless it is a named boss reveal (not the fall). Do not tag the Corrupted Stockboy or the first dungeon's final-boss kill. A later dungeon boss fall may be tagged as an offer. Do not tag someone being beautiful or handsome — the player may be offered a picture for that; never spam the tag.
+Do not tag ordinary NPC meetings (shopkeepers, guards, companions, random named people). Do not tag a first fight unless it is a named boss reveal (not the fall). Do not tag the Corrupted Stockboy or the first dungeon's final-boss kill. Do not tag a Pick Your Own Adventure campaign ending — emit <campaign-ending /> instead; code owns that plate. A later dungeon boss fall may be tagged as an offer. Do not tag someone being beautiful or handsome — the player may be offered a picture for that; never spam the tag.
 Do not tag routine travel, rest, chatter, or ordinary loot. The prompt must be visual only — no words, letters, UI, or speech bubbles.`
     : `MILESTONE EVENTS: Memorable splash art is off. Do not emit <milestone-event> tags.`;
 

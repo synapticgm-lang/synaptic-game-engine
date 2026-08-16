@@ -21,6 +21,7 @@ export interface GameEvent {
     | 'enemy-appear'
     | 'encounter-end'
     | 'milestone-event'
+    | 'campaign-ending'
     | 'loot-video'
     | 'visual-update'
     | 'world-deal'
@@ -423,6 +424,19 @@ const TAG_PATTERNS: Array<{ type: GameEvent['type']; re: RegExp; parse: (m: RegE
     }),
   },
   {
+    type: 'campaign-ending',
+    re: /<campaign-ending\b([^>]*)\/?>/gi,
+    parse: (m) => {
+      const attrs = Object.fromEntries(
+        [...String(m[1] ?? '').matchAll(/(\w+)="([^"]*)"/g)].map((x) => [x[1].toLowerCase(), x[2]])
+      );
+      return {
+        type: 'campaign-ending' as const,
+        id: attrs.id?.trim() || undefined,
+      };
+    },
+  },
+  {
     type: 'loot-video',
     re: /<loot-video\s+item="([^"]*)"\s+rarity="([^"]*)"\s+prompt="([^"]*)"\s*\/>/gi,
     parse: (m) => ({
@@ -572,6 +586,7 @@ export function stripActionTags(text: string): string {
     .replace(/<enemy\b[^>]*\/?>/gi, '')
     .replace(/<encounter-end\s*\/?>/gi, '')
     .replace(/<milestone-event\b[^>]*\/?>/gi, '')
+    .replace(/<campaign-ending\b[^>]*\/?>/gi, '')
     .replace(/<loot-video\b[^>]*\/?>/gi, '')
     .replace(/<visual-update\b[^>]*\/?>/gi, '')
     .replace(/<world-deal\b[^>]*\/?>/gi, '')

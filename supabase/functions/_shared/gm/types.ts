@@ -402,6 +402,11 @@ export interface GameState {
   worldAtlas?: WorldAtlasState | null;
   /** Classic memorable-splash cadence. Absent on old saves = nothing fired yet. */
   memorableMoments?: MemorableMomentState;
+  /**
+   * Player-supplied tabletop rules for this campaign only.
+   * Empty / absent = SynapticGM Tabletop Fantasy core. Never a licensed rulebook we ship.
+   */
+  customTabletopRules?: string;
 }
 
 export type BeautyOfferStatus = 'pending' | 'accepted' | 'dismissed';
@@ -429,6 +434,8 @@ export interface MemorableMomentState {
   firstNpcSplashFired?: boolean;
   legendarySplashFired?: boolean;
   deathSplashFired?: boolean;
+  /** PYOA true ending plate — once per campaign. Never LitRPG / tabletop / Story RPG. */
+  endingSplashFired?: boolean;
   /**
    * Blueprint id of the campaign’s first real dungeon graph (not street).
    * Pinned on first entry so a later dungeon cannot be mistaken for the first.
@@ -807,9 +814,11 @@ export interface Settings {
    * When false, rewrite applies automatically with a System note.
    */
   confirmContentRewrites: boolean;
+  /** Legacy unused slot — text keys live on openrouterApiKey. Kept so old saves merge cleanly. */
   geminiApiKey: string;
+  /** Admin BYOK OpenRouter (or compatible) text key. Empty = hosted server key. */
   openrouterApiKey: string;
-  /** Direct Black Forest Labs API key — optional; used only when imageProvider is `flux-direct`. */
+  /** Admin BYOK Flux / BFL image key. Used when imageProvider is `flux-direct`. */
   fluxApiKey: string;
   aiProvider: AiProvider;
   customModelId: string;
@@ -908,6 +917,8 @@ export const DEFAULT_TURN_FRAME: TurnFrameTheme = {
 };
 
 export interface GoogleUser {
+  /** Supabase auth user id — quote this as Support ID when emailing support. */
+  id?: string;
   credential: string;
   name?: string;
   email?: string;

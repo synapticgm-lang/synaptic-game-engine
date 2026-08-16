@@ -12,9 +12,12 @@ export type TurnPackId =
   | 'text_80'
   | 'illustrated_10'
   | 'illustrated_20'
-  | 'illustrated_30';
+  | 'illustrated_30'
+  | 'memorable_10'
+  | 'memorable_20'
+  | 'memorable_50';
 
-export type CapacityPackKind = 'text' | 'illustrated';
+export type CapacityPackKind = 'text' | 'illustrated' | 'memorable';
 
 /** Shop card artwork keys — CSS/SVG faces in MainMenu. */
 export type TurnPackArtId =
@@ -23,7 +26,10 @@ export type TurnPackArtId =
   | 'saga'
   | 'panels'
   | 'arc'
-  | 'volume';
+  | 'volume'
+  | 'snap'
+  | 'album'
+  | 'gallery';
 
 export interface TurnPackDefinition {
   id: TurnPackId;
@@ -37,6 +43,8 @@ export interface TurnPackDefinition {
   textTurns: number;
   /** Illustrated turns (each burns maxPanels for that tier when mode is live). */
   illustratedTurns: number;
+  /** Memorable splash plates (schnell). Never expire. */
+  memorablePlates: number;
   /** false = purchase disabled until Illustrated ships (still shown in shop). */
   shopLive: boolean;
   /** Larger packs = better £ per unit (shown in UI as “best value”) */
@@ -48,9 +56,8 @@ export interface TurnPackDefinition {
 }
 
 /**
- * Consumable packs — text (and later Illustrated) only.
- * Memorable moment art is NOT sold: it fires as part of a normal turn when a milestone hits.
- * Priced mid-low value vs rivals; High-tier worst case after ~30% store cut still ≫ 4× API cost.
+ * Consumable packs — text, memorable plates, and later Illustrated.
+ * Memorable extras are schnell only (never the opener’s nicer model).
  * Pack turns always use the player’s current subscription tier writer (no model upgrade).
  */
 export const TURN_PACKS: Record<TurnPackId, TurnPackDefinition> = {
@@ -64,6 +71,7 @@ export const TURN_PACKS: Record<TurnPackId, TurnPackDefinition> = {
     priceUsd: 1.99,
     textTurns: 15,
     illustratedTurns: 0,
+    memorablePlates: 0,
     shopLive: true,
     art: 'spark',
     accent: '#f59e0b',
@@ -79,6 +87,7 @@ export const TURN_PACKS: Record<TurnPackId, TurnPackDefinition> = {
     priceUsd: 3.99,
     textTurns: 35,
     illustratedTurns: 0,
+    memorablePlates: 0,
     shopLive: true,
     art: 'chapter',
     accent: '#38bdf8',
@@ -94,6 +103,7 @@ export const TURN_PACKS: Record<TurnPackId, TurnPackDefinition> = {
     priceUsd: 7.99,
     textTurns: 80,
     illustratedTurns: 0,
+    memorablePlates: 0,
     shopLive: true,
     bestValue: true,
     art: 'saga',
@@ -110,6 +120,7 @@ export const TURN_PACKS: Record<TurnPackId, TurnPackDefinition> = {
     priceUsd: 4.99,
     textTurns: 0,
     illustratedTurns: 10,
+    memorablePlates: 0,
     shopLive: false,
     art: 'panels',
     accent: '#fb7185',
@@ -125,6 +136,7 @@ export const TURN_PACKS: Record<TurnPackId, TurnPackDefinition> = {
     priceUsd: 7.99,
     textTurns: 0,
     illustratedTurns: 20,
+    memorablePlates: 0,
     shopLive: false,
     art: 'arc',
     accent: '#34d399',
@@ -140,11 +152,61 @@ export const TURN_PACKS: Record<TurnPackId, TurnPackDefinition> = {
     priceUsd: 12.99,
     textTurns: 0,
     illustratedTurns: 30,
+    memorablePlates: 0,
     shopLive: false,
     bestValue: true,
     art: 'volume',
     accent: '#f472b6',
     accentSoft: '#831843',
+  },
+  memorable_10: {
+    id: 'memorable_10',
+    name: 'Snap',
+    label: '+10 memorable pictures',
+    blurb: 'Ten story plates when the weekly cap is empty. Fast model. Packs never expire.',
+    kind: 'memorable',
+    priceGbp: 0.99,
+    priceUsd: 0.99,
+    textTurns: 0,
+    illustratedTurns: 0,
+    memorablePlates: 10,
+    shopLive: true,
+    art: 'snap',
+    accent: '#fbbf24',
+    accentSoft: '#78350f',
+  },
+  memorable_20: {
+    id: 'memorable_20',
+    name: 'Album',
+    label: '+20 memorable pictures',
+    blurb: 'Twenty story plates — a Mid week of extras. Fast model. Packs never expire.',
+    kind: 'memorable',
+    priceGbp: 1.99,
+    priceUsd: 1.99,
+    textTurns: 0,
+    illustratedTurns: 0,
+    memorablePlates: 20,
+    shopLive: true,
+    art: 'album',
+    accent: '#fb923c',
+    accentSoft: '#7c2d12',
+  },
+  memorable_50: {
+    id: 'memorable_50',
+    name: 'Gallery',
+    label: '+50 memorable pictures',
+    blurb: 'Best £ per picture — fifty story plates. Fast model. Packs never expire.',
+    kind: 'memorable',
+    priceGbp: 3.99,
+    priceUsd: 3.99,
+    textTurns: 0,
+    illustratedTurns: 0,
+    memorablePlates: 50,
+    shopLive: true,
+    bestValue: true,
+    art: 'gallery',
+    accent: '#f59e0b',
+    accentSoft: '#451a03',
   },
 };
 
@@ -164,6 +226,10 @@ export function textShopPacks(): TurnPackDefinition[] {
 
 export function illustratedShopPacks(): TurnPackDefinition[] {
   return allShopPacks().filter((p) => p.kind === 'illustrated');
+}
+
+export function memorableShopPacks(): TurnPackDefinition[] {
+  return allShopPacks().filter((p) => p.kind === 'memorable');
 }
 
 /** BFL direct endpoint path segment under https://api.bfl.ai/v1/ */

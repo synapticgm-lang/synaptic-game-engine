@@ -1,9 +1,10 @@
 import { useState, useRef, useEffect } from 'react';
-import { X, Save, BookText, Volume2, Mic, Dice5, Shield, Lock, Baby, Gauge, Download, Upload, KeyRound, Eye, EyeOff, RefreshCw, Check, Loader2, ChevronDown, Image as ImageIcon, Trash2, ZoomIn, Scale, Home, Zap, CircleSlash, Sparkles, Grid3x3, MessageSquareMore, Palette, Layers, Dot, MessageCircle, Map as MapIcon, Eye as EyeIcon, BarChart3, Clock, ScrollText, BookOpen, Swords } from 'lucide-react';
-import type { Settings, DiceAnimationMode, ContentMode, GmStrictness, AiProvider, KeyStatus, PostLoginBehavior, BgMode, ColorVariant, PanelFrequency, PanelBorderIntensity, MapTriggerMode, FogRevealThreshold, StatVerbosity, StatFrequency, GameState, NarrativePerspective, ViolenceLevel, CursingLevel, ComicLayoutMode, ComicReadingDirection, SaveSlotInfo, EngineMode } from '@/game/types';
+import { X, Save, BookText, Volume2, Mic, Dice5, Shield, Lock, Baby, Gauge, Download, Upload, KeyRound, Eye, EyeOff, RefreshCw, Check, Loader2, Image as ImageIcon, Trash2, ZoomIn, Scale, Home, Zap, CircleSlash, Sparkles, Grid3x3, MessageSquareMore, Palette, Layers, Dot, MessageCircle, Map as MapIcon, Eye as EyeIcon, BarChart3, Clock, ScrollText, BookOpen, Swords, Mail } from 'lucide-react';
+import type { Settings, DiceAnimationMode, ContentMode, GmStrictness, KeyStatus, PostLoginBehavior, BgMode, ColorVariant, PanelFrequency, PanelBorderIntensity, MapTriggerMode, FogRevealThreshold, StatVerbosity, StatFrequency, GameState, NarrativePerspective, ViolenceLevel, CursingLevel, ComicLayoutMode, ComicReadingDirection, SaveSlotInfo, EngineMode } from '@/game/types';
 import { ART_STYLE_PRESETS } from '@/game/types';
-import { validateApiKey, fetchModelsForProvider, getDefaultModels } from '@/game/apiValidation';
+import { validateApiKey } from '@/game/apiValidation';
 import { CampaignSettings } from './CampaignSettings';
+import { OpenRouterModelPicker } from './OpenRouterModelPicker';
 import { bgList, bgDelete, type BgEntry } from '@/game/bgCache';
 import { SETTINGS_EVENT_NAME } from '@/game/useGame';
 import { exportSessionToPdf, downloadPdf } from '@/services/pdfExportService';
@@ -18,6 +19,8 @@ import { KID_MODE_PIN_DISCLAIMER } from '@/game/parentPurchaseGate';
 import { TERMS_DOC, PRIVACY_DOC } from '@/legal/legalDocs';
 import { CREDITS_PATH } from '@/legal/credits';
 import { FeedbackPanel } from './FeedbackPanel';
+import { SupportAccountPanel } from './SupportAccountPanel';
+import { memorableWeeklyCapLabel } from '@/game/capacityLedger';
 
 interface Props {
   settings: Settings;
@@ -25,6 +28,8 @@ interface Props {
   engineMode: EngineMode;
   gameState?: GameState | null; // Added to check if story has started
   onSave: (s: Settings) => void;
+  onSaveCustomTabletopRules?: (text: string) => void;
+  onMemorableEnabledMidCampaign?: () => void;
   onStoryNameChange: (name: string) => void;
   onSetContentMode: (mode: ContentMode, pin?: string) => void;
   onVerifyPin: (pin: string) => boolean;
@@ -38,6 +43,9 @@ interface Props {
   onDeleteAllSaves?: () => Promise<void>;
   onClose: () => void;
   currentBgUrl?: string | null;
+  /** Auth UUID for support tickets + in-game mail. */
+  supportUserId?: string | null;
+  googleSignedIn?: boolean;
 }
 
 type SettingsTab = 'general' | 'narrative' | 'mechanics' | 'visuals';
@@ -49,18 +57,15 @@ const SETTINGS_TABS: Array<{ id: SettingsTab; label: string }> = [
   { id: 'visuals', label: 'Visuals' },
 ];
 
-export function SettingsModal({ settings, storyName, engineMode, gameState, onSave, onStoryNameChange, onSetContentMode, onVerifyPin, onExport, onImport, localSlot, cloudSlots, currentSaveId, onDeleteSave, onDeleteExtraSaves, onDeleteAllSaves, onClose, currentBgUrl }: Props) {
+export function SettingsModal({ settings, storyName, engineMode, gameState, onSave, onSaveCustomTabletopRules, onMemorableEnabledMidCampaign, onStoryNameChange, onSetContentMode, onVerifyPin, onExport, onImport, localSlot, cloudSlots, currentSaveId, onDeleteSave, onDeleteExtraSaves, onDeleteAllSaves, onClose, currentBgUrl, supportUserId = null, googleSignedIn = false }: Props) {
   const [draft, setDraft] = useState<Settings>(settings);
+  const [customRulesDraft, setCustomRulesDraft] = useState(gameState?.customTabletopRules ?? '');
   const [activeTab, setActiveTab] = useState<SettingsTab>('general');
   const [storyNameDraft, setStoryNameDraft] = useState(storyName);
-  const [showApiKey, setShowApiKey] = useState(false);
+  const [showTextKey, setShowTextKey] = useState(false);
+  const [showImageKey, setShowImageKey] = useState(false);
   const [keyStatus, setKeyStatus] = useState<KeyStatus>('untested');
   const [validationError, setValidationError] = useState<string | null>(null);
-  const [fetchingModels, setFetchingModels] = useState(false);
-  const [fetchedModels, setFetchedModels] = useState<string[]>(getDefaultModels(settings.aiProvider ?? 'gemini'));
-  const [selectedModel, setSelectedModel] = useState(settings.customModelId ?? getDefaultModels(settings.aiProvider ?? 'gemini')[0] ?? '');
-  const [showAdvancedApi, setShowAdvancedApi] = useState(false);
-  const [showImageSettings, setShowImageSettings] = useState(false);
   const [pdfExporting, setPdfExporting] = useState(false);
   const [pdfError, setPdfError] = useState<string | null>(null);
   const [cbzExporting, setCbzExporting] = useState(false);
@@ -99,23 +104,9 @@ export function SettingsModal({ settings, storyName, engineMode, gameState, onSa
   const runValidation = async (key: string) => {
     if (!key || key.trim().length < 5) { setKeyStatus('untested'); setValidationError(null); return; }
     setKeyStatus('validating');
-    const result = await validateApiKey(draft.aiProvider, key.trim(), draft.baseUrl.trim() || undefined);
+    const result = await validateApiKey('openrouter', key.trim());
     if (result.ok) { setKeyStatus('valid'); setValidationError(null); }
     else { setKeyStatus('invalid'); setValidationError(result.error ?? 'Unknown error'); }
-  };
-
-  const handleFetchModels = async () => {
-    if (!draft.geminiApiKey || draft.geminiApiKey.trim().length < 5) return;
-    setFetchingModels(true);
-    try {
-      const models = await fetchModelsForProvider(draft.aiProvider, draft.geminiApiKey.trim(), draft.baseUrl.trim() || undefined);
-      setFetchedModels(models);
-      if (models.length > 0 && !draft.customModelId) setSelectedModel(models[0]);
-    } catch {
-      setFetchedModels(getDefaultModels(draft.aiProvider));
-    } finally {
-      setFetchingModels(false);
-    }
   };
 
   const handleToggleKidMode = () => {
@@ -152,9 +143,28 @@ export function SettingsModal({ settings, storyName, engineMode, gameState, onSa
 
   const handleSave = () => {
     if (storyNameDraft.trim() && storyNameDraft.trim() !== storyName) onStoryNameChange(storyNameDraft.trim());
-    onSave(draft);
+    const toSave: Settings = {
+      ...draft,
+      aiProvider: 'openrouter',
+      geminiApiKey: '',
+      imageApiKey: draft.fluxApiKey,
+    };
+    if (!toSave.fluxApiKey.trim() && toSave.imageProvider === 'flux-direct') {
+      toSave.imageProvider = 'flux';
+    }
+    onSave(toSave);
+    if (engineMode === 'dnd') {
+      onSaveCustomTabletopRules?.(customRulesDraft);
+    }
+    if (
+      isStoryActive
+      && !settings.classicMemorableImages
+      && toSave.classicMemorableImages
+    ) {
+      onMemorableEnabledMidCampaign?.();
+    }
     window.dispatchEvent(
-      new CustomEvent(SETTINGS_EVENT_NAME, { detail: draft })
+      new CustomEvent(SETTINGS_EVENT_NAME, { detail: toSave })
     );
     onClose();
   };
@@ -513,8 +523,8 @@ export function SettingsModal({ settings, storyName, engineMode, gameState, onSa
             {draft.visualMode === 'classic' && (
               <ToggleRow
                 icon={<Sparkles size={14} />}
-                label="Memorable Moment Images"
-                description="When on, the opening scene (nicer model) and character death get splash art. The first dungeon’s final boss (First Blood) also auto-splashes on the fast model — later dungeon bosses do not. A royal audience, a striking first look, or a writer-flagged beat is offered — tap to generate on the fast model. First fights do not. Not every turn."
+                label={`Memorable Moment Images · ${memorableWeeklyCapLabel()}`}
+                description="When on, the opening scene (nicer model) and character death get splash art. The first dungeon’s final boss (First Blood) also auto-splashes on the fast model — later dungeon bosses do not. A royal audience, a striking first look, or a writer-flagged beat is offered — tap to generate on the fast model. First fights do not. Not every turn. The toggle is consent — autos fire without a second Yes."
                 checked={draft.classicMemorableImages}
                 onChange={(v) => update('classicMemorableImages', v)}
               />
@@ -685,7 +695,14 @@ export function SettingsModal({ settings, storyName, engineMode, gameState, onSa
 
           {/* Campaign Settings: Pillars & House Rules */}
           <Section icon={<Swords size={16} />} title="Campaign Settings" visible={activeTab === 'mechanics'}>
-            <CampaignSettings settings={draft} onChange={update} />
+            <CampaignSettings
+              settings={draft}
+              onChange={update}
+              engineMode={engineMode}
+              customTabletopRules={customRulesDraft}
+              onCustomTabletopRulesChange={setCustomRulesDraft}
+              kidMode={isKidMode}
+            />
           </Section>
 
           <Section icon={<Swords size={16} />} title="Combat pacing" visible={activeTab === 'mechanics'}>
@@ -755,7 +772,7 @@ export function SettingsModal({ settings, storyName, engineMode, gameState, onSa
                 {isStoreDistribution()
                   ? 'This store build uses SynapticGM-hosted AI only. Player API keys are not available (Google Play & App Store policy).'
                   : isKidMode
-                    ? 'Kid Mode uses hosted family-safe AI. Admin BYOK keys are disabled.'
+                    ? 'Kid Mode uses hosted family-safe AI. Admin keys are disabled.'
                     : draft.subscriptionTier !== 'admin'
                       ? 'Text and image AI are hosted by SynapticGM on Free / Mid / High. Only the Admin (BYOK) website tier can add personal keys.'
                       : 'Admin BYOK is website-only.'}
@@ -784,82 +801,73 @@ export function SettingsModal({ settings, storyName, engineMode, gameState, onSa
 
                 <div>
                   <div className="mb-1.5 flex items-center justify-between">
-                    <label className="text-xs font-medium text-slate-200">Text AI key</label>
-                    <KeyStatusBadge status={keyStatus} error={validationError} onTest={() => runValidation(draft.geminiApiKey)} />
+                    <label className="text-xs font-medium text-slate-200">Text key (OpenRouter)</label>
+                    <KeyStatusBadge status={keyStatus} error={validationError} onTest={() => runValidation(draft.openrouterApiKey)} />
                   </div>
-                  <p className="mb-1 text-[10px] text-slate-500">Used for the Game Master / story writer only.</p>
+                  <p className="mb-1 text-[10px] text-slate-500">Required. Admin BYOK does not include a hosted text key — you pay OpenRouter.</p>
                   <div className="relative">
                     <input
-                      type={showApiKey ? 'text' : 'password'}
-                      value={draft.geminiApiKey}
-                      onChange={(e) => update('geminiApiKey', e.target.value)}
-                      placeholder="Text model API key"
+                      type={showTextKey ? 'text' : 'password'}
+                      value={draft.openrouterApiKey}
+                      onChange={(e) => {
+                        update('openrouterApiKey', e.target.value);
+                        update('aiProvider', 'openrouter');
+                        setKeyStatus('untested');
+                      }}
+                      autoComplete="off"
+                      spellCheck={false}
+                      placeholder="Paste OpenRouter (or compatible) key"
                       className="w-full rounded-lg border border-slate-700 bg-slate-800 px-3 py-2 pr-10 text-sm text-slate-100 placeholder-slate-500 focus:border-crimson-500 focus:outline-none focus:ring-1 focus:ring-crimson-500"
                     />
-                    <button type="button" onClick={() => setShowApiKey(!showApiKey)} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-300 transition-colors">
-                      {showApiKey ? <EyeOff size={16} /> : <Eye size={16} />}
+                    <button type="button" onClick={() => setShowTextKey(!showTextKey)} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-300 transition-colors">
+                      {showTextKey ? <EyeOff size={16} /> : <Eye size={16} />}
                     </button>
                   </div>
                 </div>
 
-                <div>
-                  <label className="mb-1 block text-xs font-medium text-slate-200">Image AI key</label>
-                  <p className="mb-1 text-[10px] text-slate-500">Used for comic / memorable art only — separate from the text key.</p>
-                  <input
-                    type={showApiKey ? 'text' : 'password'}
-                    value={draft.imageApiKey}
-                    onChange={(e) => {
-                      update('imageApiKey', e.target.value);
-                      if (e.target.value.trim()) update('imageProvider', 'custom');
-                    }}
-                    placeholder="Image model API key"
-                    className="w-full rounded-lg border border-slate-700 bg-slate-800 px-3 py-2 text-sm text-slate-100 placeholder-slate-500 focus:border-crimson-500 focus:outline-none focus:ring-1 focus:ring-crimson-500"
-                  />
-                  <input
-                    value={draft.imageBaseUrl}
-                    onChange={(e) => update('imageBaseUrl', e.target.value)}
-                    placeholder="Image API base URL (optional)"
-                    className="mt-2 w-full rounded-lg border border-slate-700 bg-slate-800 px-3 py-2 text-xs text-slate-100 placeholder-slate-500 focus:border-crimson-500 focus:outline-none"
-                  />
-                </div>
+                <OpenRouterModelPicker
+                  selectedId={draft.customModelId}
+                  onSelect={(id) => update('customModelId', id)}
+                />
 
-                <button onClick={() => setShowAdvancedApi(!showAdvancedApi)} className="flex w-full items-center justify-between text-xs font-medium text-slate-400 hover:text-slate-200 transition-colors">
-                  <span>Text provider details</span>
-                  <ChevronDown size={14} className={`transition-transform ${showAdvancedApi ? 'rotate-180' : ''}`} />
-                </button>
-                {showAdvancedApi && (
-                  <div className="space-y-3 rounded-lg border border-slate-700 bg-slate-800/40 p-3">
-                    <div>
-                      <label className="mb-1 block text-xs font-medium text-slate-400">Text provider</label>
-                      <select value={draft.aiProvider} onChange={(e) => { const p = e.target.value as AiProvider; update('aiProvider', p); setFetchedModels(getDefaultModels(p)); setSelectedModel(getDefaultModels(p)[0] ?? ''); }} className="w-full rounded-lg border border-slate-700 bg-slate-800 px-2 py-1.5 text-xs text-slate-100 focus:border-crimson-500 focus:outline-none">
-                        <option value="gemini">Google Gemini</option>
-                        <option value="openrouter">OpenRouter</option>
-                        <option value="openai">OpenAI</option>
-                        <option value="anthropic">Anthropic</option>
-                        <option value="groq">Groq</option>
-                        <option value="ollama">Ollama</option>
-                      </select>
-                    </div>
-                    {draft.aiProvider !== 'gemini' && (
-                      <div>
-                        <label className="mb-1 block text-xs font-medium text-slate-400">Text base URL</label>
-                        <input value={draft.baseUrl} onChange={(e) => update('baseUrl', e.target.value)} placeholder="https://api.openai.com/v1" className="w-full rounded-lg border border-slate-700 bg-slate-800 px-2 py-1.5 text-xs text-slate-100 placeholder-slate-500 focus:border-crimson-500 focus:outline-none" />
-                      </div>
-                    )}
-                    <div>
-                      <label className="mb-1 block text-xs font-medium text-slate-400">Text model</label>
-                      <div className="flex gap-1.5">
-                        <select value={selectedModel} onChange={(e) => { setSelectedModel(e.target.value); update('customModelId', e.target.value); }} className="flex-1 rounded-lg border border-slate-700 bg-slate-800 px-2 py-1.5 text-xs text-slate-100 focus:border-crimson-500 focus:outline-none">
-                          {fetchedModels.map((m) => (<option key={m} value={m}>{m}</option>))}
-                        </select>
-                        <button type="button" onClick={handleFetchModels} disabled={fetchingModels} className="flex shrink-0 items-center gap-1 rounded-lg border border-slate-700 bg-slate-800 px-2 py-1.5 text-[11px] text-crimson-300 hover:bg-slate-700 disabled:opacity-40">
-                          {fetchingModels ? <Loader2 size={12} className="animate-spin" /> : <RefreshCw size={12} />}
-                          Fetch
-                        </button>
-                      </div>
-                    </div>
+                <div>
+                  <label className="mb-1 block text-xs font-medium text-slate-200">Image key (Flux)</label>
+                  <p className="mb-1 text-[10px] text-slate-500">
+                    Optional until you want BFL Direct. Pictures use your OpenRouter text key until you paste a Flux key and turn Direct on. No hosted art on this tier.
+                  </p>
+                  <div className="relative">
+                    <input
+                      type={showImageKey ? 'text' : 'password'}
+                      value={draft.fluxApiKey}
+                      onChange={(e) => {
+                        const value = e.target.value;
+                        setDraft((prev) => ({
+                          ...prev,
+                          fluxApiKey: value,
+                          imageApiKey: value,
+                          imageProvider: value.trim() ? prev.imageProvider : 'flux',
+                        }));
+                      }}
+                      autoComplete="off"
+                      spellCheck={false}
+                      placeholder="Paste Flux / BFL key (optional)"
+                      className="w-full rounded-lg border border-slate-700 bg-slate-800 px-3 py-2 pr-10 text-sm text-slate-100 placeholder-slate-500 focus:border-crimson-500 focus:outline-none focus:ring-1 focus:ring-crimson-500"
+                    />
+                    <button type="button" onClick={() => setShowImageKey(!showImageKey)} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-300 transition-colors">
+                      {showImageKey ? <EyeOff size={16} /> : <Eye size={16} />}
+                    </button>
                   </div>
-                )}
+                  <label className={`mt-2 flex items-start gap-2 text-[11px] ${draft.fluxApiKey.trim() ? 'text-slate-300' : 'text-slate-500'}`}>
+                    <input
+                      type="checkbox"
+                      className="mt-0.5"
+                      checked={draft.imageProvider === 'flux-direct'}
+                      disabled={!draft.fluxApiKey.trim()}
+                      onChange={(e) => update('imageProvider', e.target.checked ? 'flux-direct' : 'flux')}
+                    />
+                    <span>Use Flux Direct (BFL) with this image key. Off = OpenRouter Flux on your text key.</span>
+                  </label>
+                </div>
 
                 <ToggleRow
                   icon={<KeyRound size={15} />}
@@ -876,59 +884,17 @@ export function SettingsModal({ settings, storyName, engineMode, gameState, onSa
                   }}
                   disabled={!draft.byokDisclaimerAccepted || !hasByokKeysConfigured(draft)}
                 />
-                <p className="text-[10px] text-slate-500">Keys stay on this device only.</p>
+                <p className="text-[10px] text-slate-500">Keys stay on this device only. Never logged or committed.</p>
               </div>
             )}
           </Section>
           {/* Image Generation Provider */}
           <Section icon={<ImageIcon size={16} />} title="Image Generation" visible={activeTab === 'visuals'}>
-            {!canConfigurePlayerAiKeys(draft) ? (
-              <p className="text-[11px] leading-relaxed text-slate-400">
-                Memorable and comic art use SynapticGM-hosted image AI. Custom image keys are only on the Admin (BYOK) website tier (see General → AI Keys).
-              </p>
-            ) : (
-              <>
-                <p className="mb-2 text-[11px] text-slate-400">
-                  Prefer the labelled <span className="text-slate-200">Image AI key</span> under General → AI Keys. Advanced endpoint options below are optional.
-                </p>
-                <button onClick={() => setShowImageSettings(!showImageSettings)} className="flex w-full items-center justify-between text-sm font-medium text-slate-300 hover:text-slate-100 transition-colors">
-                  <span>Advanced image endpoint</span>
-                  <ChevronDown size={14} className={`transition-transform ${showImageSettings ? 'rotate-180' : ''}`} />
-                </button>
-                {showImageSettings && (
-                  <div className="mt-3 space-y-3 rounded-lg border border-slate-700 bg-slate-800/40 p-3">
-                    <div>
-                      <label className="mb-1 block text-xs font-medium text-slate-400">Image Provider</label>
-                      <select value={draft.imageProvider} onChange={(e) => update('imageProvider', e.target.value as 'flux' | 'flux-direct' | 'gemini' | 'custom')} className="w-full rounded-lg border border-slate-700 bg-slate-800 px-2 py-1.5 text-xs text-slate-100 focus:border-crimson-500 focus:outline-none">
-                        <option value="flux">Flux (OpenRouter)</option>
-                        <option value="custom">Custom / Local Endpoint</option>
-                        <option value="flux-direct">Flux Direct (BFL)</option>
-                      </select>
-                    </div>
-                    {draft.imageProvider === 'custom' && (
-                      <>
-                        <div>
-                          <label className="mb-1 block text-xs font-medium text-slate-400">Endpoint Type</label>
-                          <select value={draft.imageEndpointType} onChange={(e) => update('imageEndpointType', e.target.value as 'openai' | 'automatic1111' | 'comfyui')} className="w-full rounded-lg border border-slate-700 bg-slate-800 px-2 py-1.5 text-xs text-slate-100 focus:border-crimson-500 focus:outline-none">
-                            <option value="openai">OpenAI-compatible</option>
-                            <option value="automatic1111">Automatic1111</option>
-                            <option value="comfyui">ComfyUI</option>
-                          </select>
-                        </div>
-                        <div>
-                          <label className="mb-1 block text-xs font-medium text-slate-400">Image base URL</label>
-                          <input value={draft.imageBaseUrl} onChange={(e) => update('imageBaseUrl', e.target.value)} placeholder="http://localhost:7860" className="w-full rounded-lg border border-slate-700 bg-slate-800 px-2 py-1.5 text-xs text-slate-100 placeholder-slate-500 focus:border-crimson-500 focus:outline-none" />
-                        </div>
-                        <div>
-                          <label className="mb-1 block text-xs font-medium text-slate-400">Image model</label>
-                          <input value={draft.imageModel} onChange={(e) => update('imageModel', e.target.value)} placeholder="dall-e-3, sdxl, etc." className="w-full rounded-lg border border-slate-700 bg-slate-800 px-2 py-1.5 text-xs text-slate-100 placeholder-slate-500 focus:border-crimson-500 focus:outline-none" />
-                        </div>
-                      </>
-                    )}
-                  </div>
-                )}
-              </>
-            )}
+            <p className="text-[11px] leading-relaxed text-slate-400">
+              {canConfigurePlayerAiKeys(draft)
+                ? 'Admin BYOK: pictures use your OpenRouter text key, or Flux Direct if you pasted an image key. No hosted art.'
+                : 'Memorable and comic art use SynapticGM-hosted image AI. Custom image keys are only on the Admin (BYOK) website tier (see General → AI Keys).'}
+            </p>
           </Section>
           {/* Save File Management */}
           {(onExport || onImport || onDeleteSave) && (
@@ -1010,8 +976,13 @@ export function SettingsModal({ settings, storyName, engineMode, gameState, onSa
             </div>
           </Section>
 
+          <Section icon={<Mail size={16} />} title="Support & messages" visible={activeTab === 'general'}>
+            <SupportAccountPanel supportUserId={supportUserId} signedIn={googleSignedIn} />
+          </Section>
+
           <Section icon={<MessageSquareMore size={16} />} title="Send feedback" visible={activeTab === 'general'}>
             <FeedbackPanel
+              playerId={supportUserId}
               characterName={gameState?.character?.name ?? null}
               campaign={storyNameDraft || storyName || gameState?.storyName || null}
               engineMode={engineMode}
@@ -1024,9 +995,7 @@ export function SettingsModal({ settings, storyName, engineMode, gameState, onSa
             <div className="rounded-lg border border-slate-700 bg-slate-800/40 p-3 text-[11px] leading-relaxed text-slate-400 space-y-2">
               <p>SynapticGM is original tabletop and LitRPG play. We are not affiliated with other companies’ tabletop RPGs. Generic words (dungeon, dragon, dice, d20) are used in their ordinary sense.</p>
               <p>
-                Draft Terms of Service and Privacy Policy live in the project under{' '}
-                <span className="text-slate-300">docs/legal/</span> until published on the website.
-                Kid Mode PIN rules: parents are responsible for PIN security and any purchases made with that PIN.
+                Kid Mode PIN: parents are responsible for PIN security and any purchases made with that PIN.
               </p>
               <p className="flex flex-wrap gap-x-3 gap-y-1">
                 <a href={TERMS_DOC.path} target="_blank" rel="noopener noreferrer" className="text-cyan-400 hover:underline">
