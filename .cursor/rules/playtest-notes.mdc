@@ -17,6 +17,7 @@ John is playtesting live. Collect issues here. Do not implement until he asks fo
 
 ## Done (already shipped)
 
+- Themes + Shop locker layout: sticky section chips, compact 2-col set grid, one expanded kit, featured set, owned/equipped badges (`2026-08-16f`)
 - Shop hub: Packs / Sets / Bundles / Extras sections with sticky jump nav; race kits collapsed until tapped; leftover slots folded by type (`2026-08-16e`)
 - Paid kits look like materials not recolors: theme panel textures, distinct typefaces, material dice in shop and tray, filigree frames, voice flavour + Hear (`2026-08-16d`)
 - Themes/Shop dice previews are faceted d20s with material textures (wood, brass, obsidian, etc.) — not flat hex fills (`2026-08-16c`)

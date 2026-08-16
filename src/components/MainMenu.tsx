@@ -237,6 +237,66 @@ function PlayTab({
   );
 }
 
+function jumpToSection(id: string) {
+  document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function useSectionSpy(ids: readonly string[]) {
+  const [activeId, setActiveId] = useState(ids[0] ?? '');
+  const key = ids.join('|');
+  useEffect(() => {
+    const list = key.split('|').filter(Boolean);
+    const nodes = list
+      .map((id) => document.getElementById(id))
+      .filter((n): n is HTMLElement => !!n);
+    if (!nodes.length) return;
+    const io = new IntersectionObserver(
+      (entries) => {
+        const hit = entries
+          .filter((e) => e.isIntersecting)
+          .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
+        if (hit?.target.id) setActiveId(hit.target.id);
+      },
+      { rootMargin: '-22% 0px -58% 0px', threshold: [0.12, 0.35, 0.6] },
+    );
+    nodes.forEach((n) => io.observe(n));
+    return () => io.disconnect();
+  }, [key]);
+  return activeId;
+}
+
+function HubJumpNav({
+  items,
+  activeId,
+  onJump,
+}: {
+  items: readonly { id: string; label: string }[];
+  activeId: string;
+  onJump: (id: string) => void;
+}) {
+  return (
+    <nav className="flex gap-1 overflow-x-auto">
+      {items.map(({ id, label }) => {
+        const on = activeId === id;
+        return (
+          <button
+            key={id}
+            type="button"
+            onClick={() => onJump(id)}
+            className={`shrink-0 rounded-full border px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.14em] transition ${
+              on
+                ? 'border-cyan-500/70 bg-cyan-950/60 text-cyan-100'
+                : 'border-slate-700 bg-slate-900/80 text-slate-300 hover:border-cyan-700 hover:text-cyan-100'
+            }`}
+          >
+            {label}
+          </button>
+        );
+      })}
+    </nav>
+  );
+}
+
 function ThemesTab({
   settings,
   onSave,
@@ -280,6 +340,17 @@ function ThemesTab({
     }
   };
 
+  const themeJumps = useMemo(() => {
+    const items = [
+      { id: 'themes-sets', label: 'Sets' },
+      { id: 'themes-customize', label: 'Customize' },
+    ];
+    if (OTHER_THEME_ITEMS.length > 0) items.splice(1, 0, { id: 'themes-more', label: 'More' });
+    return items;
+  }, []);
+  const themeJumpIds = useMemo(() => themeJumps.map((j) => j.id), [themeJumps]);
+  const activeThemeJump = useSectionSpy(themeJumpIds);
+
   const handleSave = () => {
     onSave({
       uiThemeId: draftTheme,
@@ -294,31 +365,42 @@ function ThemesTab({
 
   return (
     <div className="flex w-full flex-col gap-4 pb-8">
-      <ThemePreviewBar
-        theme={selectedTheme}
-        fontId={draftFont}
-        diceId={draftDice}
-        voiceId={draftVoice}
-        frameId={draftFrame}
-      />
+      <div className="sticky top-0 z-20 -mx-1 space-y-2 border-b border-slate-800 bg-slate-950/95 px-1 pb-2 backdrop-blur">
+        <ThemePreviewBar
+          theme={selectedTheme}
+          fontId={draftFont}
+          diceId={draftDice}
+          voiceId={draftVoice}
+          frameId={draftFrame}
+        />
+        <HubJumpNav items={themeJumps} activeId={activeThemeJump} onJump={jumpToSection} />
+      </div>
 
-      <Section title="Pick a set">
-        <div className="grid gap-2">
-          {RACE_THEME_ITEMS.map((item) => (
-            <SetCard
-              key={item.id}
-              theme={item}
-              selected={draftTheme === item.id}
-              owned={isOwned(item.id)}
-              compact
-              onClick={() => applySet(item)}
-            />
-          ))}
+      <Section id="themes-sets" title="Sets" blurb="Tap a tile. Only the equipped set opens." tallSticky>
+        <div className="grid grid-cols-2 gap-2">
+          {RACE_THEME_ITEMS.map((item) => {
+            const selected = draftTheme === item.id;
+            return (
+              <div
+                key={item.id}
+                id={`theme-set-${item.id}`}
+                className={`scroll-mt-40 ${selected ? 'col-span-2' : ''}`}
+              >
+                <SetCard
+                  theme={item}
+                  selected={selected}
+                  owned={isOwned(item.id)}
+                  compact
+                  onClick={() => applySet(item)}
+                />
+              </div>
+            );
+          })}
         </div>
       </Section>
 
       {OTHER_THEME_ITEMS.length > 0 && (
-        <div>
+        <div id="themes-more" className="scroll-mt-40">
           <button
             type="button"
             onClick={() => setMoreLooks((v) => !v)}
@@ -328,7 +410,7 @@ function ThemesTab({
             {moreLooks ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
           </button>
           {moreLooks && (
-            <div className="mt-2 grid gap-2 sm:grid-cols-2">
+            <div className="mt-2 grid grid-cols-2 gap-2">
               {OTHER_THEME_ITEMS.map((item) => (
                 <SelectCard
                   key={item.id}
@@ -345,8 +427,7 @@ function ThemesTab({
         </div>
       )}
 
-      <Section title="Customize">
-        <p className="mb-2 text-[11px] text-slate-500">Optional. Mix a slot after you pick a set.</p>
+      <Section id="themes-customize" title="Customize" blurb="Optional. Mix one slot after you pick a set." tallSticky>
         <div className="space-y-2">
           <CustomizeSlot
             label="Font"
@@ -461,7 +542,7 @@ function ThemePreviewBar({
   const texture = themeTextureOf(theme);
   return (
     <div
-      className={`sgm-theme-preview sgm-tex-${texture} sticky top-0 z-20 overflow-hidden rounded-xl border shadow-lg backdrop-blur-md`}
+      className={`sgm-theme-preview sgm-tex-${texture} overflow-hidden rounded-xl border shadow-lg`}
       data-sgm-frame={frame?.frameSkin?.style ?? 'plain'}
       style={{
         borderColor: p?.accent ?? '#334155',
@@ -505,10 +586,23 @@ function ThemePreviewBar({
   );
 }
 
+const SHOP_JUMPS = [
+  { id: 'shop-packs', label: 'Packs' },
+  { id: 'shop-sets', label: 'Sets' },
+  { id: 'shop-bundles', label: 'Bundles' },
+  { id: 'shop-extras', label: 'Extras' },
+] as const;
+
 function ShopTab({ settings }: { settings: Settings }) {
   const [packNote, setPackNote] = useState<string | null>(null);
   const [openSetId, setOpenSetId] = useState<string | null>(null);
   const [openExtra, setOpenExtra] = useState<CosmeticSlot | null>(null);
+  const activeShopJump = useSectionSpy(SHOP_JUMPS.map((j) => j.id));
+
+  const featuredSet = useMemo(
+    () => RACE_THEME_ITEMS.find((item) => !item.free) ?? RACE_THEME_ITEMS[0],
+    [],
+  );
 
   const bundles = useMemo(
     () => SHOP_CATALOG.filter((item) => item.slot === 'bundle'),
@@ -539,8 +633,10 @@ function ShopTab({ settings }: { settings: Settings }) {
       .filter((row) => row.items.length > 0);
   }, []);
 
-  const jumpTo = (id: string) => {
-    document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  const openFeatured = () => {
+    if (!featuredSet) return;
+    setOpenSetId(featuredSet.id);
+    window.requestAnimationFrame(() => jumpToSection(`shop-set-${featuredSet.id}`));
   };
 
   return (
@@ -556,25 +652,21 @@ function ShopTab({ settings }: { settings: Settings }) {
         </div>
       )}
 
-      <nav className="sticky top-0 z-20 -mx-1 flex gap-1 overflow-x-auto border-b border-slate-800 bg-slate-950/95 px-1 py-2 backdrop-blur">
-        {(
-          [
-            ['shop-packs', 'Packs'],
-            ['shop-sets', 'Sets'],
-            ['shop-bundles', 'Bundles'],
-            ['shop-extras', 'Extras'],
-          ] as const
-        ).map(([id, label]) => (
-          <button
-            key={id}
-            type="button"
-            onClick={() => jumpTo(id)}
-            className="shrink-0 rounded-full border border-slate-700 bg-slate-900/80 px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.14em] text-slate-300 hover:border-cyan-700 hover:text-cyan-100"
-          >
-            {label}
-          </button>
-        ))}
-      </nav>
+      <div className="sticky top-0 z-20 -mx-1 border-b border-slate-800 bg-slate-950/95 px-1 py-2 backdrop-blur">
+        <HubJumpNav
+          items={SHOP_JUMPS}
+          activeId={activeShopJump}
+          onJump={jumpToSection}
+        />
+      </div>
+
+      {featuredSet && (
+        <FeaturedSetBanner
+          theme={featuredSet}
+          owned={isOwned(featuredSet.id)}
+          onOpen={openFeatured}
+        />
+      )}
 
       <div id="shop-packs" className="scroll-mt-14">
         <CapacityPackShop onGranted={setPackNote} />
@@ -583,21 +675,29 @@ function ShopTab({ settings }: { settings: Settings }) {
       <Section
         id="shop-sets"
         title="Theme sets"
-        blurb="Race and archetype kits — one theme plus matching font, dice, voice, and frame. Tap a row for the kit."
+        blurb="Race and archetype kits. Tap a tile — only one kit opens."
       >
-        <div className="grid gap-2">
-          {RACE_THEME_ITEMS.map((item) => (
-            <SetCard
-              key={item.id}
-              theme={item}
-              selected={false}
-              owned={isOwned(item.id)}
-              shop
-              compact
-              expanded={openSetId === item.id}
-              onClick={() => setOpenSetId((id) => (id === item.id ? null : item.id))}
-            />
-          ))}
+        <div className="grid grid-cols-2 gap-2">
+          {RACE_THEME_ITEMS.map((item) => {
+            const expanded = openSetId === item.id;
+            return (
+              <div
+                key={item.id}
+                id={`shop-set-${item.id}`}
+                className={`scroll-mt-16 ${expanded ? 'col-span-2' : ''}`}
+              >
+                <SetCard
+                  theme={item}
+                  selected={false}
+                  owned={isOwned(item.id)}
+                  shop
+                  compact
+                  expanded={expanded}
+                  onClick={() => setOpenSetId((id) => (id === item.id ? null : item.id))}
+                />
+              </div>
+            );
+          })}
         </div>
       </Section>
 
@@ -606,7 +706,7 @@ function ShopTab({ settings }: { settings: Settings }) {
         title="Bundles"
         blurb="Multi-theme packs at a set price — Ancestry Sampler, Integration Starter, Ledger Scholar."
       >
-        <div className="grid gap-2 sm:grid-cols-2">
+        <div className="grid grid-cols-2 gap-2">
           {bundles.map((item) => (
             <ShopCard key={item.id} item={item} />
           ))}
@@ -637,6 +737,91 @@ function ShopTab({ settings }: { settings: Settings }) {
         </div>
       </Section>
     </div>
+  );
+}
+
+function SetStatusPill({
+  owned,
+  selected,
+  shop,
+  free,
+}: {
+  owned: boolean;
+  selected?: boolean;
+  shop?: boolean;
+  free?: boolean;
+}) {
+  const label = shop
+    ? owned
+      ? free
+        ? 'Included'
+        : 'Owned'
+      : 'Shop'
+    : selected
+      ? 'Equipped'
+      : owned
+        ? 'Owned'
+        : 'Locked';
+  const tone = shop
+    ? owned
+      ? 'border-emerald-800/50 bg-emerald-950/40 text-emerald-300'
+      : 'border-slate-600 bg-slate-800 text-slate-300'
+    : selected
+      ? 'border-cyan-700/50 bg-cyan-950/50 text-cyan-200'
+      : owned
+        ? 'border-emerald-800/50 bg-emerald-950/40 text-emerald-300'
+        : 'border-slate-700 bg-slate-900 text-slate-500';
+  return (
+    <span className={`shrink-0 rounded-md border px-1.5 py-0.5 text-[10px] font-semibold ${tone}`}>
+      {label}
+    </span>
+  );
+}
+
+function FeaturedSetBanner({
+  theme,
+  owned,
+  onOpen,
+}: {
+  theme: ShopItem;
+  owned: boolean;
+  onOpen: () => void;
+}) {
+  const p = theme.preview;
+  const texture = themeTextureOf(theme);
+  const dice = themeKitItems(theme).find((row) => row.item.slot === 'dice')?.item;
+  return (
+    <button
+      type="button"
+      onClick={onOpen}
+      className={`sgm-theme-preview sgm-tex-${texture} w-full overflow-hidden rounded-xl border text-left`}
+      style={
+        p
+          ? {
+              borderColor: `${p.accent}88`,
+              ['--sgm-chip-accent' as string]: p.accent,
+              ['--sgm-chip-bg' as string]: p.bg,
+              ['--sgm-chip-panel' as string]: p.panel,
+            }
+          : undefined
+      }
+    >
+      <div className="flex items-center justify-between gap-2 px-3 py-1.5 text-[10px] font-semibold uppercase tracking-[0.16em] text-amber-200/90">
+        <span>Featured set</span>
+        <span>{owned ? (theme.free ? 'Included' : 'Owned') : `${theme.priceGbp} · ${theme.priceUsd}`}</span>
+      </div>
+      <div className="flex items-center gap-3 px-3 py-2.5">
+        {p && <ThemeChip item={theme} size={40} />}
+        {dice && <DicePreview item={dice} size={32} />}
+        <div className="min-w-0 flex-1">
+          <div className="text-sm font-semibold text-slate-100">{theme.name}</div>
+          <p className="truncate text-[11px] text-slate-400">{theme.blurb}</p>
+        </div>
+        <span className="shrink-0 text-[11px] font-medium text-cyan-200">
+          {owned ? 'View kit' : 'See kit'}
+        </span>
+      </div>
+    </button>
   );
 }
 
@@ -829,18 +1014,30 @@ function SetCard({
   const dicePart = parts.find((row) => row.item.slot === 'dice')?.item;
   const showParts = shop ? !!expanded : !compact || selected;
   const highlight = shop ? !!expanded : selected;
+  const tile = compact && !showParts;
 
   const header = (
-    <div className="flex items-center gap-3">
-      {p && <ThemeChip item={theme} size={32} />}
-      {dicePart && <DicePreview item={dicePart} size={28} />}
+    <div className={`flex items-center ${tile ? 'gap-2' : 'gap-3'}`}>
+      {p && <ThemeChip item={theme} size={tile ? 28 : 32} />}
+      {dicePart && <DicePreview item={dicePart} size={tile ? 24 : 28} />}
       <div className="min-w-0 flex-1">
-        <div className="text-sm font-semibold text-slate-100">{theme.name}</div>
-        {(shop ? showParts : !compact) && (
-          <div className="mt-0.5 text-[11px] leading-snug text-slate-400">{theme.blurb}</div>
+        <div className={`font-semibold text-slate-100 ${tile ? 'truncate text-[13px]' : 'text-sm'}`}>
+          {theme.name}
+        </div>
+        {tile ? (
+          <div className="mt-1 flex flex-wrap items-center gap-1.5">
+            {shop && !theme.free && (
+              <span className="text-[10px] text-cyan-300">{theme.priceGbp}</span>
+            )}
+            <SetStatusPill owned={owned} selected={selected} shop={shop} free={theme.free} />
+          </div>
+        ) : (
+          (shop ? showParts : !compact) && (
+            <div className="mt-0.5 text-[11px] leading-snug text-slate-400">{theme.blurb}</div>
+          )
         )}
       </div>
-      {selected && !shop && <Check size={16} className="shrink-0 text-cyan-400" />}
+      {selected && !shop && !tile && <Check size={16} className="shrink-0 text-cyan-400" />}
       {shop &&
         (expanded ? (
           <ChevronUp size={16} className="shrink-0 text-slate-500" />
@@ -919,9 +1116,9 @@ function SetCard({
         ['--sgm-chip-panel' as string]: p.panel,
       }
     : undefined;
-  const cardClass = `sgm-theme-preview sgm-tex-${texture} rounded-xl border p-3${
-    highlight ? ' ring-1 ring-cyan-400/40' : ''
-  }`;
+  const cardClass = `sgm-theme-preview sgm-tex-${texture} rounded-xl border ${
+    tile ? 'p-2.5' : 'p-3'
+  }${highlight ? ' ring-1 ring-cyan-400/40' : ''}`;
 
   if (shop) {
     return (
@@ -949,7 +1146,9 @@ function SetCard({
         type="button"
         onClick={onClick}
         disabled={!owned}
-        className={`sgm-theme-preview sgm-tex-${texture} w-full rounded-xl border p-3 text-left transition ${
+        className={`sgm-theme-preview sgm-tex-${texture} w-full rounded-xl border ${
+          tile ? 'p-2.5' : 'p-3'
+        } text-left transition ${
           selected ? 'ring-1 ring-cyan-400/40' : ''
         } ${!owned ? 'cursor-not-allowed opacity-40' : 'hover:border-slate-500'}`}
         style={style}
@@ -970,14 +1169,16 @@ function Section({
   title,
   blurb,
   children,
+  tallSticky,
 }: {
   id?: string;
   title: string;
   blurb?: string;
   children: React.ReactNode;
+  tallSticky?: boolean;
 }) {
   return (
-    <section id={id} className="w-full scroll-mt-14">
+    <section id={id} className={`w-full ${tallSticky ? 'scroll-mt-40' : 'scroll-mt-14'}`}>
       <h2 className="mb-2 text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">{title}</h2>
       {blurb && <p className="mb-3 text-[11px] leading-snug text-slate-500">{blurb}</p>}
       {children}

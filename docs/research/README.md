@@ -17,6 +17,7 @@ All competitor + design packs for SynapticGM. Do not treat as live tickets until
 | [pack-11-live-gameplay-dump-2026-08-15.md](./pack-11-live-gameplay-dump-2026-08-15.md) | After First Blood, combat feel, street map, fail/protest, salvage loop, choices, street NPC, phone chrome |
 | [pack-11-long-memory-antihallucination-sp-mp-2026-08-gemini.md](./pack-11-long-memory-antihallucination-sp-mp-2026-08-gemini.md) | Gemini companion: long memory + anti-hallucination |
 | [pack-11-long-memory-antihallucination-sp-mp-2026-08.md](./pack-11-long-memory-antihallucination-sp-mp-2026-08.md) | Primary Pack 11: truth stack, Warden pipeline, SP/MP memory (capture only) |
+| [themes-shop-layout-2026-08-16.md](./themes-shop-layout-2026-08-16.md) | Theme locker + cosmetic shop layout: chips, featured, compact grid, expand-one |
 | [HOLD-long-memory-pack11.md](./HOLD-long-memory-pack11.md) | Both dumps in; no memory wave until next update ask |
 | [RESEARCH-PROMPT-visual-tabletop-bolt.md](./RESEARCH-PROMPT-visual-tabletop-bolt.md) | Bolt prompt: comic/illustration on every engine + D&D/tabletop |
 | [pack-12-visual-tabletop-dump-2026-08-15.md](./pack-12-visual-tabletop-dump-2026-08-15.md) | Comic/illustration on every engine; D&D table feel; story RPG; empty-turn / a11y |
