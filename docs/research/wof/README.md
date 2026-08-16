@@ -46,4 +46,4 @@ WOF is a later-release authored faction world: original races/places, quest line
 
 Rule: `.cursor/rules/wof-sandbox.mdc`
 
-Live SynapticGM packs stay in `docs/research/` (packs 1–7, 9 monetization + master plan).
+Live SynapticGM packs stay in `docs/research/` (packs 1–7, 9 monetization, 11 memory, **12 subscription tiers/models**).

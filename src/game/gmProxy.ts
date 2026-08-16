@@ -2,6 +2,7 @@ import type { GameState, LoreCard, Settings } from './types';
 import { isSupabaseConfigured, supabase } from '@/lib/supabase';
 import { RateLimitError, withRetry } from './aiServiceShared';
 import { logger } from './logger';
+import { resolveWriterModel } from './subscriptionTiers';
 
 export type GmProxyMode = 'turn' | 'auto-fight';
 
@@ -67,7 +68,14 @@ export async function invokeGmProxy(params: {
         contentMode: params.settings.contentMode,
         mapTriggerMode: params.settings.mapTriggerMode,
         aiProvider: params.settings.aiProvider,
-        customModelId: params.settings.customModelId,
+        customModelId:
+          params.settings.customModelId?.trim() ||
+          resolveWriterModel({
+            aiProvider: params.settings.aiProvider,
+            customModelId: params.settings.customModelId,
+            tier: params.settings.subscriptionTier,
+          }),
+        subscriptionTier: params.settings.subscriptionTier,
         baseUrl: params.settings.baseUrl,
         diceAnimation: params.settings.diceAnimation,
         panelFrequency: params.settings.panelFrequency,

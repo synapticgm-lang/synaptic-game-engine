@@ -259,14 +259,20 @@ function MaterialFill({
       )}
       {material === 'circuit' && (
         <>
-          <path d="M8 12 H18 V20 H28" fill="none" stroke={p.shine} strokeWidth="0.85" />
-          <path d="M10 28 H16 V18" fill="none" stroke={p.shine} strokeWidth="0.75" />
-          <path d="M22 10 V16 H30" fill="none" stroke={p.rim} strokeWidth="0.7" />
-          <path d="M12 32 H24 V26" fill="none" stroke={p.shine} strokeWidth="0.65" />
+          {/* Logo cue: energy-thread d20 with skull inside (cyan + amber). */}
+          <path d="M8 12 H18 V20 H28" fill="none" stroke={p.shine} strokeWidth="0.7" opacity="0.7" />
+          <path d="M10 28 H16 V18" fill="none" stroke="#fbbf24" strokeWidth="0.65" opacity="0.65" />
+          <path d="M22 10 V16 H30" fill="none" stroke={p.rim} strokeWidth="0.65" />
+          {/* Skull: orbits + nasal + teeth */}
+          <ellipse cx="18" cy="17" rx="6.2" ry="7.2" fill="#020617" opacity="0.55" stroke={p.shine} strokeWidth="0.55" />
+          <ellipse cx="15.2" cy="16" rx="1.7" ry="2.1" fill={p.shine} opacity="0.95" />
+          <ellipse cx="20.8" cy="16" rx="1.7" ry="2.1" fill={p.shine} opacity="0.95" />
+          <path d="M18 18.2 L16.6 21.5 L19.4 21.5 Z" fill="#fbbf24" opacity="0.85" />
+          <path d="M14.5 23.5 H21.5 M15.2 25 H20.8 M15.8 26.4 H20.2" fill="none" stroke={p.shine} strokeWidth="0.55" opacity="0.8" />
           {[
             [8, 12], [18, 20], [28, 20], [16, 18], [22, 10], [24, 26],
           ].map(([cx, cy], i) => (
-            <circle key={i} cx={cx} cy={cy} r="1.05" fill={p.shine} />
+            <circle key={i} cx={cx} cy={cy} r="0.9" fill={i % 2 ? '#fbbf24' : p.shine} />
           ))}
         </>
       )}

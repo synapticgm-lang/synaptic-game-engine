@@ -7,6 +7,7 @@ import {
   isSuggestionValidForState,
 } from './suggestionValidation';
 import { logger } from './logger';
+import { getTierDefinition } from './subscriptionTiers';
 
 /**
  * 4-tier narrative pipeline (authoritative ordering for choice generation):
@@ -425,8 +426,13 @@ export async function callSmallModel(
     provider = 'openrouter';
     apiKey = settings.openrouterApiKey;
   }
-  let model = settings.customModelId || undefined;
-  if (provider === 'openrouter' && !model) model = 'deepseek/deepseek-chat';
+  let model =
+    settings.customModelId?.trim() ||
+    // Choices always use Free-tier cheap/fast model — never burn Mid/High writer on buttons
+    getTierDefinition('free').writerOpenRouterId;
+  if (provider === 'gemini') {
+    model = settings.customModelId?.trim() || getTierDefinition('free').writerGeminiId;
+  }
   if (!apiKey) throw new Error('No API key configured for choice regeneration.');
 
   if (provider === 'gemini') {

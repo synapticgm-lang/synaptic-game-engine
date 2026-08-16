@@ -462,7 +462,7 @@ export type EngineMode = 'litrpg' | 'dnd' | 'rpg' | 'pyoa';
 export function isFictionEngine(mode: EngineMode | undefined): boolean {
   return mode === 'rpg' || mode === 'pyoa';
 }
-export type DiceAnimationMode = 'visual' | 'text';
+export type DiceAnimationMode = 'static' | 'normal' | 'excited';
 export type ContentMode = 'kid' | 'adult';
 export type GmStrictness = 'forgiving' | 'standard' | 'hardcore';
 export type StatDisplayMode = 'inline' | 'tapToReveal';
@@ -735,14 +735,28 @@ export interface Settings {
   confirmContentRewrites: boolean;
   geminiApiKey: string;
   openrouterApiKey: string;
+  /** Direct Black Forest Labs API key — optional; used only when imageProvider is `flux-direct`. */
+  fluxApiKey: string;
   aiProvider: AiProvider;
   customModelId: string;
   baseUrl: string;
-  imageProvider: 'gemini' | 'custom';
+  /**
+   * Image backend:
+   * - `flux` = Flux via OpenRouter (current launch path; same tier model map as direct)
+   * - `flux-direct` = BFL api.bfl.ai (later; needs fluxApiKey)
+   * - `custom` = self-host OpenAI-compat / A1111 / Comfy
+   * - `gemini` = legacy alias → OpenRouter Flux path
+   */
+  imageProvider: 'flux' | 'flux-direct' | 'gemini' | 'custom';
   imageBaseUrl: string;
   imageApiKey: string;
   imageEndpointType: 'openai' | 'automatic1111' | 'comfyui';
   imageModel: string;
+  /**
+   * Account subscription tier (free / mid / high).
+   * Local until billing; drives writer model + capacity caps.
+   */
+  subscriptionTier: 'free' | 'mid' | 'high';
   /** Pluggable video-generation backend for loot_video moments. 'none' until a provider is configured. */
   videoProvider: 'none' | 'custom';
   videoBaseUrl: string;
@@ -792,6 +806,12 @@ export interface Settings {
   mapTriggerMode: MapTriggerMode;
   fogRevealThreshold: FogRevealThreshold;
   combatFrequency: number;
+  /**
+   * Combat pacing for turn economy (all engine modes):
+   * - `full` = round-by-round player control (more turns)
+   * - `auto` = Auto Fight resolves encounters in ~1–2 turns
+   */
+  combatResolveMode: 'full' | 'auto';
   socialRoleplay: number;
   worldBuilding: number;
   strictEncumbrance: boolean;

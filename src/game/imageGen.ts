@@ -1,6 +1,6 @@
 import type { Settings } from './types';
 import { logger } from './logger';
-import { fetchComicPanel, ImageModerationError } from '@/services/openRouterService';
+import { fetchComicPanel, ImageModerationError, generateComicImage } from '@/services/openRouterService';
 
 // Re-exported for backward compatibility — the class now lives in openRouterService.ts,
 // next to the detection logic that actually throws it (text-refusal detection in fetchComicPanel).
@@ -27,26 +27,27 @@ export async function generateImage(
   }
 
   const finalPrompt = buildFinalPrompt(prompt, styleModifier);
-  const apiKey = settings.openrouterApiKey || settings.geminiApiKey;
-  if (!apiKey) throw new Error('No OpenRouter API key configured for image generation.');
-
-  logger.info('ai-image', `generateImage via OpenRouter pipeline`);
+  logger.info('ai-image', `generateImage via generateComicImage pipeline`);
 
   try {
-    const imageUrl = await fetchComicPanel(
+    return await generateComicImage(finalPrompt, modeFromSettings(settings), settings, {
+      memorableMoment: settings.visualMode === 'classic' && settings.classicMemorableImages,
+      useRawPrompt: true,
+    });
+  } catch (err) {
+    if (err instanceof ImageModerationError) throw err;
+    const apiKey = settings.openrouterApiKey || settings.geminiApiKey;
+    if (!apiKey) throw err;
+    logger.warn('ai-image', `generateComicImage failed; trying OpenRouter chat image`, {
+      error: err instanceof Error ? err.message : String(err),
+    });
+    return fetchComicPanel(
       finalPrompt,
       modeFromSettings(settings),
       settings.artStylePreset ?? 'western',
       apiKey,
       settings.imageModel?.trim() || undefined
     );
-    return imageUrl;
-  } catch (err) {
-    if (err instanceof ImageModerationError) throw err;
-    logger.error('ai-image', `OpenRouter image generation failed`, {
-      error: err instanceof Error ? err.message : String(err)
-    });
-    throw err;
   }
 }
 

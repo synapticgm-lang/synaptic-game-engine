@@ -2,8 +2,10 @@ import { useCallback, useMemo, useState } from 'react';
 import {
   ChevronUp, ChevronDown, Trash2, Sparkles, Dices, Zap,
 } from 'lucide-react';
+import type { DiceAnimationMode } from '@/game/types';
+import type { DiceMaterial } from '@/game/cosmeticCatalog';
 import { DiceFormulaBuilder, type RollResult } from './DiceFormulaBuilder';
-import { DicePreview } from '../DicePreview';
+import { DicePreview, liveDiceItem } from '../DicePreview';
 
 type DieType = 4 | 6 | 8 | 10 | 12 | 20;
 type Modifier = 'none' | '+1' | '+2' | 'adv' | 'dis';
@@ -35,6 +37,12 @@ const MOD_LABELS: Record<Modifier, string> = {
   dis: 'Dis',
 };
 
+const ROLL_MS: Record<DiceAnimationMode, number> = {
+  static: 0,
+  normal: 450,
+  excited: 1100,
+};
+
 function rollDie(sides: DieType): number {
   return Math.floor(Math.random() * sides) + 1;
 }
@@ -58,14 +66,43 @@ function computeOutcome(die: DieType, raw: number, mod: Modifier): { total: numb
   return { total, outcome };
 }
 
-export function DiceTrayToolbar() {
+function activeDiceMaterial(): DiceMaterial | undefined {
+  try {
+    return liveDiceItem().diceSkin?.material;
+  } catch {
+    return undefined;
+  }
+}
+
+function excitedFxClass(material: DiceMaterial | undefined): string {
+  if (!material) return 'sgm-dice-fx-default';
+  return `sgm-dice-fx-${material}`;
+}
+
+export function DiceTrayToolbar({
+  diceAnimation = 'normal',
+}: {
+  diceAnimation?: DiceAnimationMode;
+}) {
   const [rolls, setRolls] = useState<RollEntry[]>([]);
   const [modifier, setModifier] = useState<Modifier>('none');
   const [logOpen, setLogOpen] = useState(false);
   const [rolling, setRolling] = useState<DieType | null>(null);
   const [formulaOpen, setFormulaOpen] = useState(false);
+  const material = activeDiceMaterial();
 
   const handleRoll = useCallback((die: DieType) => {
+    const delay = ROLL_MS[diceAnimation] ?? 450;
+    if (delay <= 0) {
+      const raw = rollDie(die);
+      const { total, outcome } = computeOutcome(die, raw, modifier);
+      setRolls((prev) => [{
+        id: `${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
+        die, raw, modifier, total, outcome,
+        timestamp: Date.now(),
+      }, ...prev].slice(0, 30));
+      return;
+    }
     setRolling(die);
     setTimeout(() => {
       const raw = rollDie(die);
@@ -77,8 +114,8 @@ export function DiceTrayToolbar() {
       };
       setRolls((prev) => [entry, ...prev].slice(0, 30));
       setRolling(null);
-    }, 450);
-  }, [modifier]);
+    }, delay);
+  }, [modifier, diceAnimation]);
 
   const clearLog = useCallback(() => setRolls([]), []);
 
@@ -249,7 +286,15 @@ export function DiceTrayToolbar() {
                   color: 'var(--sgm-dice-accent, #e2e8f0)',
                 }}
               >
-                <span className={`transition-transform group-hover:scale-110 ${rolling === d.die ? 'animate-spin' : ''}`}>
+                <span
+                  className={`relative transition-transform group-hover:scale-110 ${
+                    rolling === d.die
+                      ? diceAnimation === 'excited'
+                        ? `sgm-dice-roll-excited ${excitedFxClass(material)}`
+                        : 'animate-spin'
+                      : ''
+                  }`}
+                >
                   <DicePreview die={d.die} size={26} />
                 </span>
                 <span className="text-[10px] font-bold tracking-wide sm:text-xs">{d.label}</span>

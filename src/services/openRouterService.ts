@@ -12,6 +12,9 @@ import {
   KID_MODE_STYLE_DIRECTIVE,
 } from '../styles/styleSpecs';
 import type { Settings } from '../game/types';
+import { generateFluxImage } from './fluxDirect';
+import { resolveFluxImageModel } from '../game/subscriptionTiers';
+import { canSpend, spendCapacity } from '../game/capacityLedger';
 
 const OPENROUTER_API_KEY = ''; // Provider keys must come from Settings / edge secrets — never VITE_*.
 const BASE_URL = 'https://openrouter.ai/api/v1';
@@ -559,11 +562,9 @@ export interface GenerateComicImageOptions {
 }
 
 /**
- * Dedicated image generation entry point (Option B). Routes to a standard image-generation
- * payload/endpoint when `settings.imageProvider === 'custom'` is configured (OpenAI-compatible
- * /images/generations, Automatic1111, or ComfyUI), otherwise falls back to the OpenRouter
- * multimodal chat-completions pipeline. Every branch is wrapped in a real, cancelling timeout
- * so a slow or unresponsive backend can never hang the panel image queue.
+ * Dedicated image generation entry point.
+ * Default: Flux via OpenRouter (tier → model map). Later: set imageProvider to
+ * `flux-direct` + fluxApiKey to hit BFL with the same tier endpoints — callers unchanged.
  */
 export async function generateComicImage(
   prompt: string,
@@ -571,30 +572,26 @@ export async function generateComicImage(
   settings: Settings,
   options?: GenerateComicImageOptions
 ): Promise<string | null> {
-  // Classic text mode is prose-only unless memorable-moment splashes are explicitly enabled.
   if (settings.visualMode === 'classic') {
     const allowMemorable = Boolean(options?.memorableMoment && settings.classicMemorableImages);
     if (!allowMemorable) {
       console.log('[ImageService] Skipping image generation for classic text mode.');
       return null;
     }
+    if (!canSpend('memorable')) {
+      console.log('[ImageService] Memorable image quota exhausted.');
+      return null;
+    }
+  } else if (settings.visualMode === 'comic') {
+    if (!canSpend('illustrated')) {
+      console.log('[ImageService] Illustrated image quota exhausted.');
+      return null;
+    }
   }
 
   const timeoutMs = options?.timeoutMs ?? DEFAULT_IMAGE_GEN_TIMEOUT_MS;
-  const provider = settings.imageProvider || 'gemini';
-  // Prefer the configured OpenRouter image model; default stays Flux Schnell.
-  const imageModel = settings.imageModel?.trim() || PRIMARY_IMAGE_MODEL;
+  const provider = settings.imageProvider || 'flux';
 
-  // Style Spec Configuration: every image request — whatever backend it ends up routed to —
-  // funnels through this one client entry point, so the active style's prefix/suffix/negative
-  // prompt are attached here automatically. Callers (comicImagePrompt.ts, etc.) only need to
-  // describe the SCENE; they don't need to remember to append style keywords themselves.
-  //
-  // Kid Mode hook: this reuses the existing `Settings.contentMode` toggle (`mode` param below
-  // is derived from it upstream, see `useGame.getContentMode` / `imageGen.modeFromSettings`).
-  // When active, a PEGI-3 style directive is prepended to the prompt — ahead of the style's
-  // own prefix, so it applies uniformly across every backend below, including the raw-prompt
-  // OpenRouter path — and the style's negative prompt is layered with kid-safe exclusion terms.
   const styleSpec = getStyleSpec(settings.artStylePreset);
   const effectiveNegativePrompt = getEffectiveNegativePrompt(styleSpec, mode);
   const kidDirective = mode === 'kid' ? `${KID_MODE_STYLE_DIRECTIVE}\n\n` : '';
@@ -610,46 +607,84 @@ export async function generateComicImage(
     WORLD_GENRE_PRESERVATION_DIRECTIVE,
   ].filter(Boolean).join('\n\n').trim();
 
+  const useHeroModel = options?.hero === true || HERO_IMAGE_TRIGGER.test(prompt);
+  const fluxModels = resolveFluxImageModel({
+    tier: settings.subscriptionTier,
+    hero: useHeroModel,
+    via: provider === 'flux-direct' ? 'direct' : 'openrouter',
+  });
+
+  const recordSpend = () => {
+    if (settings.visualMode === 'classic') spendCapacity('memorable');
+    else if (settings.visualMode === 'comic') spendCapacity('illustrated');
+  };
+
+  // Optional later path — same tier map, BFL transport
+  const fluxKey = settings.fluxApiKey?.trim() || settings.imageApiKey?.trim();
+  if (provider === 'flux-direct' && fluxKey) {
+    const label = `Flux direct (${fluxModels.bflEndpoint})`;
+    const url = await withAbortTimeout(
+      (signal) =>
+        generateFluxImage({
+          apiKey: fluxKey,
+          endpoint: fluxModels.bflEndpoint,
+          prompt: `${styledPrompt}\n\nAvoid depicting: ${effectiveNegativePrompt}.`,
+          signal,
+        }),
+      timeoutMs,
+      label
+    );
+    if (url) recordSpend();
+    return url;
+  }
+
   if (provider === 'custom' && settings.imageBaseUrl?.trim()) {
     const endpointType = settings.imageEndpointType || 'openai';
     const label = `Dedicated ${endpointType} image generation`;
-
+    let url: string | null = null;
     switch (endpointType) {
       case 'openai':
-        return withAbortTimeout((signal) => fetchOpenAIImage(styledPrompt, settings, signal), timeoutMs, label);
+        url = await withAbortTimeout((signal) => fetchOpenAIImage(styledPrompt, settings, signal), timeoutMs, label);
+        break;
       case 'automatic1111':
-        return withAbortTimeout(
+        url = await withAbortTimeout(
           (signal) => fetchAutomatic1111Image(styledPrompt, settings, signal, effectiveNegativePrompt),
           timeoutMs,
           label
         );
+        break;
       case 'comfyui':
-        return withAbortTimeout(
+        url = await withAbortTimeout(
           (signal) => fetchComfyUIImage(styledPrompt, settings, signal, effectiveNegativePrompt),
           timeoutMs,
           label
         );
+        break;
       default:
         break;
     }
+    if (url) recordSpend();
+    return url;
   }
 
-  // OpenRouter's chat-completions image endpoint has no dedicated negative-prompt field,
-  // so fold it into the prompt text as an explicit "avoid" clause instead.
+  // Default launch path: Flux via OpenRouter (tier-mapped schnell/dev)
   const openRouterPrompt = `${styledPrompt}\n\nAvoid depicting: ${effectiveNegativePrompt}.`;
   const apiKey = settings.openrouterApiKey || settings.geminiApiKey || undefined;
-  const useHeroModel = options?.hero === true || HERO_IMAGE_TRIGGER.test(prompt);
-  // Hero/milestone shots can still upgrade to Flux Dev; otherwise honor settings.imageModel.
-  const routedModel = useHeroModel ? HERO_IMAGE_MODEL : imageModel;
-  return withAbortTimeout(
+  const routedModel =
+    settings.imageModel?.trim() ||
+    fluxModels.openRouterId ||
+    (useHeroModel ? HERO_IMAGE_MODEL : PRIMARY_IMAGE_MODEL);
+  const url = await withAbortTimeout(
     (signal) =>
       fetchComicPanel(openRouterPrompt, mode, 'western', apiKey, routedModel, {
-        useRawPrompt: true, // the style spec above already fully composes the prompt
+        useRawPrompt: true,
         signal,
       }),
     timeoutMs,
-    'OpenRouter image generation'
+    'OpenRouter Flux image generation'
   );
+  if (url) recordSpend();
+  return url;
 }
 
 /** Thrown when loot-video generation is requested but no video provider has been configured yet. */

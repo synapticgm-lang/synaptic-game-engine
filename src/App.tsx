@@ -17,6 +17,7 @@ import { LoadingOverlay, ErrorModal } from '@/components/EngineOverlay';
 import { BootSplash, AuthOverlay, WelcomeSplash } from '@/components/BootScreens';
 import { AutoSaveIndicator } from '@/components/AutoSaveIndicator';
 import { AutoFightWarningModal } from '@/components/AutoFightWarningModal';
+import { AutoFightTipModal, isAutoFightTipDismissed } from '@/components/AutoFightTipModal';
 import { DiceTrayToolbar } from '@/components/qol/DiceTrayToolbar';
 
 const SettingsModal = lazy(() => import('@/components/SettingsModal').then(m => ({ default: m.SettingsModal })));
@@ -40,6 +41,7 @@ export default function App() {
   const [showMapModal, setShowMapModal] = useState(false);
   const [showDebug, setShowDebug] = useState(false);
   const [showGMLibrary, setShowGMLibrary] = useState(false);
+  const [showAutoFightTip, setShowAutoFightTip] = useState(false);
 
   useEffect(() => {
     if (!game.showLoadingOverlay) { setElapsed(0); return; }
@@ -55,6 +57,14 @@ export default function App() {
   useEffect(() => {
     applySettingsCosmetics(game.settings);
   }, [game.settings.uiThemeId, game.settings.fontPackId, game.settings.diceCosmeticId, game.settings.turnFrameCosmeticId]);
+
+  // Tip once per device when any engine mode session is on screen.
+  useEffect(() => {
+    if (!userInGame || !game.state) return;
+    if (isAutoFightTipDismissed()) return;
+    const t = window.setTimeout(() => setShowAutoFightTip(true), 600);
+    return () => window.clearTimeout(t);
+  }, [userInGame, game.state?.saveId, game.state?.engineMode]);
 
   const hasSave = !!game.localSlot || !!game.cloudSlot;
   const shouldAutoResume = game.settings.postLoginBehavior === 'AUTO_RESUME' && hasSave;
@@ -517,7 +527,9 @@ export default function App() {
 
       <ToastStack toasts={game.toasts} onDismiss={game.dismissToast} />
       {/* Dice tray is D&D-only — never cover the action input in LitRPG / RPG / classic text. */}
-      {state.engineMode === 'dnd' && !isComicView && <DiceTrayToolbar />}
+      {state.engineMode === 'dnd' && !isComicView && (
+        <DiceTrayToolbar diceAnimation={game.settings.diceAnimation ?? 'normal'} />
+      )}
       <AutoSaveIndicator status={game.saveStatus || 'idle'} />
 
       {game.autoFightWarning && (
@@ -527,6 +539,19 @@ export default function App() {
           playerLevel={state.character.level}
           onProceed={() => game.autoFightWarning.resolve(true)}
           onCancel={() => game.autoFightWarning.resolve(false)}
+        />
+      )}
+
+      {showAutoFightTip && !game.autoFightWarning && (
+        <AutoFightTipModal
+          combatResolveMode={game.settings.combatResolveMode ?? 'full'}
+          onEnableAuto={() => {
+            game.updateSettings({
+              ...game.settings,
+              combatResolveMode: 'auto',
+            });
+          }}
+          onDismiss={() => setShowAutoFightTip(false)}
         />
       )}
     </div>

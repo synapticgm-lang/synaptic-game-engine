@@ -1,6 +1,7 @@
 import type { GameState, Settings } from './types';
 import { createDefaultSettings, isPlayableSave } from './defaults';
 import { syncContainerOccupancy } from './inventory';
+import { setActiveSubscriptionTier } from './subscriptionTiers';
 
 const DB_NAME = 'tactical-litrpg';
 const DB_VERSION = 1;
@@ -66,31 +67,61 @@ export async function deleteGame(): Promise<void> {
 
 const SETTINGS_KEY = 'tactical-litrpg-settings';
 
+/** Older saves used visual/text — map to static/normal/excited. */
+function migrateDiceAnimation(raw: unknown): Settings['diceAnimation'] {
+  if (raw === 'static' || raw === 'normal' || raw === 'excited') return raw;
+  if (raw === 'text') return 'static';
+  if (raw === 'visual') return 'normal';
+  return createDefaultSettings().diceAnimation;
+}
+
 export function loadSettings(): Settings {
   try {
     const raw = localStorage.getItem(SETTINGS_KEY);
     if (raw) {
       const parsed = JSON.parse(raw) as Partial<Settings>;
-      return { 
-        ...createDefaultSettings(), 
+      const merged: Settings = {
+        ...createDefaultSettings(),
         ...parsed,
         // Prefer user-saved keys only — never bake VITE_* provider secrets into the client bundle path.
         openrouterApiKey: parsed.openrouterApiKey?.trim() ? parsed.openrouterApiKey : '',
+        fluxApiKey: parsed.fluxApiKey?.trim() ? parsed.fluxApiKey : '',
+        subscriptionTier: parsed.subscriptionTier ?? 'free',
+        imageProvider: parsed.imageProvider ?? 'flux',
+        classicMemorableImages:
+          parsed.classicMemorableImages ?? createDefaultSettings().classicMemorableImages,
+        combatResolveMode:
+          parsed.combatResolveMode === 'auto' || parsed.combatResolveMode === 'full'
+            ? parsed.combatResolveMode
+            : createDefaultSettings().combatResolveMode,
+        diceAnimation: migrateDiceAnimation(parsed.diceAnimation),
       };
+      try {
+        setActiveSubscriptionTier(merged.subscriptionTier);
+      } catch {
+        /* ignore */
+      }
+      return merged;
     }
   } catch {
     /* ignore */
   }
-  
+
   // Default for first-time load
   return {
     ...createDefaultSettings(),
     openrouterApiKey: '',
+    fluxApiKey: '',
   };
 }
 
 export function saveSettings(settings: Settings): void {
   localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
+  try {
+    setActiveSubscriptionTier(settings.subscriptionTier ?? 'free');
+  } catch {
+    /* ignore */
+  }
 }
 
 export function exportSave(state: GameState): void {

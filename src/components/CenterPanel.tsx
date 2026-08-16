@@ -119,7 +119,7 @@ export function CenterPanel({ state, busy, error, errorKind, currentImage, bgIma
   }, [state.log, state.pendingTurn, busy]);
 
   useEffect(() => {
-    if (!isDnd || diceAnimation !== 'visual' || !busy) return;
+    if (!isDnd || diceAnimation === 'static' || !busy) return;
     const rolls = ['d20', 'd12', 'd10', 'd8', 'd6', 'd4'];
     const pick = rolls[Math.floor(Math.random() * rolls.length)];
     setDiceRoll(pick);

@@ -292,7 +292,7 @@ export function buildSystemPrompt(state: GameState, settings: Settings, activeLo
       : ADULT_MODE_RULES;
   const strictnessRules = STRICTNESS_RULES[state.gmStrictness ?? 'standard'];
   const diceNote = state.engineMode === 'dnd'
-    ? settings.diceAnimation === 'visual'
+    ? settings.diceAnimation !== 'static'
       ? 'DICE DISPLAY: Visual dice animation enabled.'
       : 'DICE DISPLAY: Text-only mode.'
     : '';

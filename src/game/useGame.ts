@@ -93,6 +93,12 @@ import {
   advanceCampaignMemory,
   upsertNpcRelationshipSummary,
 } from './campaignMemory';
+import {
+  canSpend,
+  spendCapacity,
+  capacityStatusMessage,
+} from './capacityLedger';
+import { setActiveSubscriptionTier } from './subscriptionTiers';
 import { touchPlaceVisit, upsertPlaceFromSheet } from './places';
 import { normalizeSheetAuthority } from './placeAuthority';
 import {
@@ -436,6 +442,7 @@ export function useGame() {
   comicModeRef.current = comicMode;
   const narrativeModeRef = useRef(narrativeMode);
   narrativeModeRef.current = narrativeMode;
+  const lastAutoResolvedEncounterRef = useRef<string | null>(null);
 
   useEffect(() => {
     window.history.pushState({ page: 'game' }, '');
@@ -1331,6 +1338,16 @@ export function useGame() {
       turnInFlightRef.current = false;
       return;
     }
+
+    // Sync tier + spend a text turn from the capacity ledger (Free/Mid/High caps).
+    setActiveSubscriptionTier(settingsRef.current.subscriptionTier ?? 'free');
+    if (!canSpend('text')) {
+      addToast(capacityStatusMessage('text'), 'info');
+      setRestoreDraft(input);
+      turnInFlightRef.current = false;
+      return;
+    }
+    spendCapacity('text');
 
     // Diegetic content rewrite confirm (Pack 7)
     const pendingRewrite = current.pendingContentRewrite;
@@ -2905,16 +2922,16 @@ In <system-log>, only emit LitRPG/RPG progression lines (XP, loot, HP change as 
     if (needsWarning) {
       const dismissed = isAutoFightWarningDismissed();
       if (!dismissed) {
-        return new Promise<void>((resolve) => {
+        const proceed = await new Promise<boolean>((resolve) => {
           setAutoFightWarning({
             enemy,
-            resolve: (proceed: boolean) => {
+            resolve: (ok: boolean) => {
               setAutoFightWarning(null);
-              if (!proceed) { resolve(); return; }
-              resolve();
+              resolve(ok);
             },
           });
-        }).then(() => runAutoFight(enemy, liveCurrent));
+        });
+        if (!proceed) return;
       }
     }
 
@@ -3002,6 +3019,20 @@ In <system-log>, only emit LitRPG/RPG progression lines (XP, loot, HP change as 
       setBusy(false);
     }
   });
+
+  // Preferred Auto Fight mode: resolve new encounters without round-by-round turns.
+  useEffect(() => {
+    const encounter = state?.activeEncounter;
+    if (!encounter) {
+      lastAutoResolvedEncounterRef.current = null;
+      return;
+    }
+    if (settings.combatResolveMode !== 'auto' || busy) return;
+    const key = `${encounter.name}:${encounter.maxHp}:${encounter.level}`;
+    if (lastAutoResolvedEncounterRef.current === key) return;
+    lastAutoResolvedEncounterRef.current = key;
+    void autoFight();
+  }, [state?.activeEncounter?.name, state?.activeEncounter?.maxHp, state?.activeEncounter?.level, settings.combatResolveMode, busy, autoFight]);
 
   const generateInventoryArt = useCallbackRef(async (
     prompt: string,

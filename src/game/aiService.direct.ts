@@ -7,6 +7,7 @@ import type { GameState, Settings, LoreCard } from './types';
 import { logger } from './logger';
 import type { GmResult } from './aiServiceShared';
 import { RateLimitError, withRetry, processGmCompletion } from './aiServiceShared';
+import { resolveWriterModel } from './subscriptionTiers';
 
 const AI_REQUEST_TIMEOUT_MS = 45_000;
 const AI_MAX_OUTPUT_TOKENS = 4_096;
@@ -54,14 +55,17 @@ function logError(provider: string, err: unknown) {
 }
 
 function normalizeProvider(settings: Settings): { provider: string; apiKey: string; model?: string } {
-  let provider = settings.aiProvider ?? 'gemini';
+  let provider = settings.aiProvider ?? 'openrouter';
   let apiKey = provider === 'openrouter' ? settings.openrouterApiKey : settings.geminiApiKey;
   if ((provider === 'gemini' || !apiKey) && settings.openrouterApiKey) {
     provider = 'openrouter';
     apiKey = settings.openrouterApiKey;
   }
-  let model = settings.customModelId || undefined;
-  if (provider === 'openrouter' && !model) model = 'deepseek/deepseek-chat';
+  const model = resolveWriterModel({
+    aiProvider: provider,
+    customModelId: settings.customModelId,
+    tier: settings.subscriptionTier,
+  });
   return { provider, apiKey, model };
 }
 

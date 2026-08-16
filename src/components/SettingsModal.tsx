@@ -625,12 +625,16 @@ export function SettingsModal({ settings, storyName, engineMode, gameState, onSa
             <ToggleRow icon={<Mic size={15} />} label="Voice Input (STT)" description="Speak your actions" checked={draft.sttEnabled} onChange={(v) => update('sttEnabled', v)} />
           </Section>
 
-          {/* Dice Display (DnD only) */}
+          {/* Dice Display (D&D only — LitRPG / story RPG don't use the dice tray) */}
           {isDnd && (
-            <Section icon={<Dice5 size={16} />} title="5e Dice Display" visible={activeTab === 'mechanics'}>
-              <div className="grid grid-cols-2 gap-2">
-                <ChoiceCard icon={<Dice5 size={15} />} label="3D / Visual" sublabel="Animated" selected={draft.diceAnimation === 'visual'} onClick={() => update('diceAnimation', 'visual' as DiceAnimationMode)} />
-                <ChoiceCard icon={<BookText size={15} />} label="Text Only" sublabel="Instant" selected={draft.diceAnimation === 'text'} onClick={() => update('diceAnimation', 'text' as DiceAnimationMode)} />
+            <Section icon={<Dice5 size={16} />} title="5e Dice display" visible={activeTab === 'mechanics'}>
+              <p className="mb-2 text-xs text-slate-500">
+                Static = instant. Normal = short roll. Excited = longer roll with theme FX from your equipped dice skin.
+              </p>
+              <div className="grid grid-cols-3 gap-2">
+                <ChoiceCard icon={<BookText size={15} />} label="Static" sublabel="Instant" selected={draft.diceAnimation === 'static'} onClick={() => update('diceAnimation', 'static' as DiceAnimationMode)} />
+                <ChoiceCard icon={<Dice5 size={15} />} label="Normal" sublabel="Short roll" selected={draft.diceAnimation === 'normal'} onClick={() => update('diceAnimation', 'normal' as DiceAnimationMode)} />
+                <ChoiceCard icon={<Zap size={15} />} label="Excited" sublabel="Theme FX" selected={draft.diceAnimation === 'excited'} onClick={() => update('diceAnimation', 'excited' as DiceAnimationMode)} />
               </div>
             </Section>
           )}
@@ -647,6 +651,28 @@ export function SettingsModal({ settings, storyName, engineMode, gameState, onSa
           {/* Campaign Settings: Pillars & House Rules */}
           <Section icon={<Swords size={16} />} title="Campaign Settings" visible={activeTab === 'mechanics'}>
             <CampaignSettings settings={draft} onChange={update} />
+          </Section>
+
+          <Section icon={<Swords size={16} />} title="Combat pacing" visible={activeTab === 'mechanics'}>
+            <p className="mb-2 text-xs text-slate-500">
+              Auto Fight resolves most encounters in about 1–2 turns (same dice and loot). Full control spends a turn per round — use it when you want every move.
+            </p>
+            <div className="grid grid-cols-2 gap-2">
+              <ChoiceCard
+                icon={<Swords size={15} />}
+                label="Full control"
+                sublabel="Round-by-round (more turns)"
+                selected={draft.combatResolveMode === 'full'}
+                onClick={() => update('combatResolveMode', 'full')}
+              />
+              <ChoiceCard
+                icon={<Zap size={15} />}
+                label="Auto Fight"
+                sublabel="~1–2 turns per fight"
+                selected={draft.combatResolveMode === 'auto'}
+                onClick={() => update('combatResolveMode', 'auto')}
+              />
+            </div>
           </Section>
 
           {/* Stat Block Verbosity */}

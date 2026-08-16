@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Cinzel+Decorative:wght@700&family=Cormorant+Garamond:wght@400;600&family=Crimson+Pro:wght@400;600&family=Inter:wght@400;500;600&family=Libre+Baskerville:wght@400;700&family=Playfair+Display:wght@400;600&family=Spectral:wght@400;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Cinzel+Decorative:wght@700&family=Cormorant+Garamond:wght@400;600&family=Crimson+Pro:wght@400;600&family=Grenze+Gotisch:wght@400;600&family=Inter:wght@400;500;600&family=Libre+Baskerville:wght@400;700&family=MedievalSharp&family=Orbitron:wght@500;700&family=Playfair+Display:wght@400;600&family=Special+Elite&family=Spectral:wght@400;600&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -273,6 +273,8 @@
 }
 .sgm-tex-soot {
   background-image:
+    repeating-linear-gradient(90deg, transparent 0 10px, #d9770618 10px 11px),
+    repeating-linear-gradient(0deg, transparent 0 10px, #d9770614 10px 11px),
     repeating-linear-gradient(18deg, transparent 0 7px, #00000033 7px 8px),
     radial-gradient(circle at 70% 80%, #d9770633 0 8px, transparent 18px),
     linear-gradient(165deg, #44403c 0%, #1c1917 48%, #0c0a09 100%);
@@ -285,6 +287,8 @@
 .sgm-tex-banner {
   background-image:
     repeating-linear-gradient(90deg, #365314 0 4px, #1a2e05 4px 8px),
+    radial-gradient(circle at 12% 28%, #a3e63533 0 2px, transparent 2.5px),
+    radial-gradient(circle at 88% 72%, #a3e63522 0 2px, transparent 2.5px),
     linear-gradient(180deg, #365314, #0f140a);
 }
 .sgm-tex-scale {
@@ -303,6 +307,7 @@
   background-image:
     repeating-linear-gradient(0deg, transparent 0 7px, #22d3ee22 7px 8px),
     repeating-linear-gradient(90deg, transparent 0 7px, #22d3ee18 7px 8px),
+    linear-gradient(135deg, #facc1528 0 7%, transparent 7% 14%, #facc1528 14% 21%, transparent 21%),
     linear-gradient(145deg, #27272a, #09090b);
 }
 .sgm-tex-halo {
@@ -312,11 +317,14 @@
 }
 .sgm-tex-sulfur {
   background-image:
+    radial-gradient(circle at 82% 18%, #facc1544 0 10%, transparent 12%),
     linear-gradient(125deg, transparent 36%, #facc1522 40%, transparent 44%),
     linear-gradient(160deg, #450a0a, #1a0505 60%, #7f1d1d55);
 }
 .sgm-tex-bone {
   background-image:
+    radial-gradient(ellipse 22px 9px at 18% 22%, #fafaf966 0 42%, transparent 44%),
+    radial-gradient(ellipse 16px 7px at 78% 68%, #e7e5e455 0 40%, transparent 42%),
     radial-gradient(circle at 30% 40%, #e7e5e422 0 1.2px, transparent 1.6px),
     radial-gradient(circle at 70% 70%, #2dd4bf22 0 1px, transparent 1.4px),
     linear-gradient(160deg, #18181b, #09090b);
@@ -329,6 +337,9 @@
 .sgm-tex-scrap {
   background-image:
     repeating-linear-gradient(-35deg, #facc1528 0 6px, transparent 6px 12px),
+    radial-gradient(circle at 22% 35%, #facc15 1.6px, transparent 2px),
+    radial-gradient(circle at 68% 58%, #a16207 1.6px, transparent 2px),
+    radial-gradient(circle at 80% 22%, #facc15 1.2px, transparent 1.6px),
     linear-gradient(160deg, #3f6212, #1a1f0a);
 }
 .sgm-tex-tide {
@@ -339,6 +350,7 @@
 .sgm-tex-velvet {
   background-image:
     radial-gradient(ellipse at 30% 20%, #fb718522 0 20%, transparent 45%),
+    repeating-linear-gradient(0deg, transparent 0 3px, #88133728 3px 4px),
     linear-gradient(165deg, #3f0a1a, #0c0004);
 }
 .sgm-tex-parchment {
@@ -365,6 +377,17 @@
   background-image:
     repeating-linear-gradient(135deg, transparent 0 3px, #dc262614 3px 4px),
     linear-gradient(160deg, #171717, #000);
+}
+
+/* ===== CAPACITY PACK SHOP CARDS ===== */
+.sgm-pack-card {
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
+}
+.sgm-pack-card:hover {
+  transform: translateY(-2px);
+}
+.sgm-pack-art {
+  isolation: isolate;
 }
 
 /* ===== TURN FRAMES (cosmetic; no gameplay) ===== */
@@ -458,13 +481,26 @@ html[data-sgm-frame='brass'] .sgm-turn-frame::before,
 html[data-sgm-frame='rune'] .sgm-turn-frame::before,
 .sgm-frame-chip[data-sgm-frame='brass']::before,
 .sgm-frame-chip[data-sgm-frame='rune']::before {
-  width: 22px;
-  height: 22px;
+  width: 26px;
+  height: 26px;
   border: none;
   background:
-    radial-gradient(circle at 4px 4px, #fde68a 1.6px, #b45309 2px, transparent 2.3px),
-    linear-gradient(#d97706, #d97706) top left / 16px 3px no-repeat,
-    linear-gradient(#d97706, #d97706) top left / 3px 16px no-repeat;
+    /* hammer head */
+    linear-gradient(#fde68a, #fde68a) 2px 4px / 14px 7px no-repeat,
+    linear-gradient(#b45309, #b45309) 7px 10px / 4px 14px no-repeat,
+    /* rune dots */
+    radial-gradient(circle at 20px 4px, #fde68a 1.5px, transparent 1.8px),
+    radial-gradient(circle at 4px 20px, #fbbf24 1.4px, transparent 1.7px);
+}
+
+html[data-sgm-frame='rune'] .sgm-turn-frame,
+.sgm-turn-frame[data-sgm-frame='rune'],
+.sgm-frame-chip[data-sgm-frame='rune'] {
+  border-image: none;
+  background-image:
+    repeating-linear-gradient(90deg, transparent 0 9px, #d9770622 9px 10px),
+    repeating-linear-gradient(0deg, transparent 0 9px, #d9770618 9px 10px);
+  background-origin: border-box;
 }
 
 html[data-sgm-frame='vine'] .sgm-turn-frame,
@@ -533,11 +569,14 @@ html[data-sgm-frame='iron'] .sgm-turn-frame,
 }
 html[data-sgm-frame='iron'] .sgm-turn-frame::before,
 .sgm-frame-chip[data-sgm-frame='iron']::before {
-  width: 16px;
-  height: 16px;
-  border-width: 3px 0 0 3px;
-  border-color: #a3e635;
-  clip-path: polygon(0 0, 100% 0, 70% 30%, 30% 30%, 30% 70%, 0 100%);
+  width: 20px;
+  height: 20px;
+  border: none;
+  background:
+    linear-gradient(#a3e635, #a3e635) 0 0 / 6px 18px no-repeat,
+    linear-gradient(#65a30d, #65a30d) 6px 0 / 12px 5px no-repeat,
+    linear-gradient(#a3e635, #a3e635) 8px 5px / 4px 12px no-repeat;
+  clip-path: polygon(0 0, 100% 0, 100% 28%, 55% 28%, 55% 100%, 0 100%);
 }
 
 html[data-sgm-frame='scale'] .sgm-turn-frame,
@@ -549,12 +588,15 @@ html[data-sgm-frame='scale'] .sgm-turn-frame,
 }
 html[data-sgm-frame='scale'] .sgm-turn-frame::before,
 .sgm-frame-chip[data-sgm-frame='scale']::before {
-  width: 24px;
-  height: 16px;
+  width: 28px;
+  height: 20px;
   border: none;
   background:
-    radial-gradient(circle at 6px 10px, #eab308 4px, transparent 4.3px),
-    radial-gradient(circle at 14px 10px, #854d0e 4px, transparent 4.3px);
+    radial-gradient(circle at 6px 12px, #eab308 4.2px, transparent 4.5px),
+    radial-gradient(circle at 14px 12px, #854d0e 4.2px, transparent 4.5px),
+    radial-gradient(circle at 22px 12px, #eab308 4.2px, transparent 4.5px),
+    radial-gradient(circle at 10px 6px, #facc15 3.2px, transparent 3.5px),
+    radial-gradient(circle at 18px 6px, #a16207 3.2px, transparent 3.5px);
 }
 
 html[data-sgm-frame='ember'] .sgm-turn-frame,
@@ -566,13 +608,14 @@ html[data-sgm-frame='ember'] .sgm-turn-frame,
 }
 html[data-sgm-frame='ember'] .sgm-turn-frame::before,
 .sgm-frame-chip[data-sgm-frame='ember']::before {
-  width: 18px;
-  height: 18px;
+  width: 24px;
+  height: 22px;
   border: none;
   background:
-    radial-gradient(circle at 4px 4px, #fb923c 2px, transparent 2.4px),
-    linear-gradient(#fb7185, #fb7185) top left / 14px 2px no-repeat,
-    linear-gradient(#fb7185, #fb7185) top left / 2px 14px no-repeat;
+    radial-gradient(ellipse 70% 40% at 30% 70%, #fb7185 0 40%, transparent 42%),
+    radial-gradient(ellipse 50% 35% at 70% 55%, #fb923c 0 35%, transparent 38%),
+    linear-gradient(#fb7185, #fb7185) top left / 16px 2px no-repeat,
+    linear-gradient(#fb923c, #fb923c) top left / 2px 14px no-repeat;
 }
 
 html[data-sgm-frame='circuit'] .sgm-turn-frame,
@@ -619,26 +662,34 @@ html[data-sgm-frame='sulfur'] .sgm-turn-frame,
 }
 html[data-sgm-frame='sulfur'] .sgm-turn-frame::before,
 .sgm-frame-chip[data-sgm-frame='sulfur']::before {
-  width: 18px;
-  height: 18px;
-  border-width: 3px 0 0 3px;
-  border-color: #facc15;
+  width: 22px;
+  height: 22px;
+  border: none;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 50% 50%, #450a0a 0 35%, #facc15 36% 48%, transparent 50%),
+    conic-gradient(from 20deg, #ef4444, #facc15, #ef4444);
+  box-shadow: 0 0 0 2px #7f1d1d88;
 }
 
 html[data-sgm-frame='bone'] .sgm-turn-frame,
 .sgm-turn-frame[data-sgm-frame='bone'],
 .sgm-frame-chip[data-sgm-frame='bone'] {
-  border-width: 2px;
+  border-width: 3px;
   border-color: #e7e5e4;
   box-shadow: inset 0 0 0 2px #2dd4bf55, 0 0 12px #115e5944;
 }
 html[data-sgm-frame='bone'] .sgm-turn-frame::before,
 .sgm-frame-chip[data-sgm-frame='bone']::before {
-  width: 16px;
-  height: 16px;
-  border-width: 3px 0 0 3px;
-  border-color: #fafaf9;
-  box-shadow: 2px 2px 0 #2dd4bf66;
+  width: 28px;
+  height: 14px;
+  border: none;
+  border-radius: 8px;
+  background:
+    radial-gradient(circle at 4px 7px, #fafaf9 3.2px, transparent 3.4px),
+    radial-gradient(circle at 24px 7px, #fafaf9 3.2px, transparent 3.4px),
+    linear-gradient(#e7e5e4, #e7e5e4) 6px 4px / 16px 6px no-repeat;
+  box-shadow: 0 1px 0 #2dd4bf66;
 }
 
 html[data-sgm-frame='twilight'] .sgm-turn-frame,
@@ -667,11 +718,13 @@ html[data-sgm-frame='scrap'] .sgm-turn-frame,
 }
 html[data-sgm-frame='scrap'] .sgm-turn-frame::before,
 .sgm-frame-chip[data-sgm-frame='scrap']::before {
-  width: 14px;
-  height: 14px;
+  width: 18px;
+  height: 18px;
   border: none;
-  background: #facc15;
-  clip-path: polygon(0 0, 100% 0, 100% 35%, 35% 35%, 35% 100%, 0 100%);
+  background:
+    radial-gradient(circle at 50% 50%, #1c1917 0 28%, #facc15 30% 48%, #854d0e 50% 62%, transparent 64%),
+    #facc15;
+  border-radius: 2px;
 }
 
 html[data-sgm-frame='tide'] .sgm-turn-frame,
@@ -699,9 +752,62 @@ html[data-sgm-frame='velvet'] .sgm-turn-frame,
 }
 html[data-sgm-frame='velvet'] .sgm-turn-frame::before,
 .sgm-frame-chip[data-sgm-frame='velvet']::before {
-  width: 20px;
-  height: 20px;
-  border-width: 3px 0 0 3px;
-  border-radius: 8px 0 0 0;
-  border-color: #fb7185;
+  width: 22px;
+  height: 26px;
+  border: none;
+  background:
+    linear-gradient(#be123c, #be123c) 9px 0 / 4px 10px no-repeat,
+    radial-gradient(ellipse 100% 70% at 50% 100%, transparent 54%, #fb7185 56% 70%, transparent 72%);
+  clip-path: polygon(50% 0, 100% 18%, 82% 100%, 18% 100%, 0 18%);
+}
+
+/* ===== EXCITED DICE THEME FX ===== */
+@keyframes sgm-dice-spin-xl {
+  0% { transform: rotate(0deg) scale(1); }
+  40% { transform: rotate(280deg) scale(1.18); }
+  100% { transform: rotate(720deg) scale(1); }
+}
+.sgm-dice-roll-excited {
+  animation: sgm-dice-spin-xl 1.05s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+.sgm-dice-fx-circuit {
+  filter: drop-shadow(0 0 6px #22d3ee) drop-shadow(0 0 10px #fbbf2488);
+}
+.sgm-dice-fx-ember,
+.sgm-dice-fx-sulfur {
+  filter: drop-shadow(0 0 8px #fb7185) drop-shadow(0 0 14px #f97316aa);
+}
+.sgm-dice-fx-bone {
+  filter: drop-shadow(0 0 6px #e7e5e4) drop-shadow(0 0 10px #2dd4bf66);
+}
+.sgm-dice-fx-scale {
+  filter: drop-shadow(0 0 8px #eab308) drop-shadow(0 0 12px #14532d88);
+}
+.sgm-dice-fx-brass,
+.sgm-dice-fx-iron {
+  filter: drop-shadow(0 0 6px #d97706) drop-shadow(0 0 10px #fde68a55);
+}
+.sgm-dice-fx-velvet {
+  filter: drop-shadow(0 0 8px #be123c) drop-shadow(0 0 14px #fb718566);
+}
+.sgm-dice-fx-tide,
+.sgm-dice-fx-iridescent {
+  filter: drop-shadow(0 0 8px #2dd4bf) drop-shadow(0 0 12px #e879f966);
+}
+.sgm-dice-fx-wood {
+  filter: drop-shadow(0 0 6px #84cc16);
+}
+.sgm-dice-fx-obsidian,
+.sgm-dice-fx-marble,
+.sgm-dice-fx-ivory {
+  filter: drop-shadow(0 0 7px #e9d5ff88);
+}
+.sgm-dice-fx-scrap {
+  filter: drop-shadow(0 0 6px #facc15) drop-shadow(0 0 10px #65a30d66);
+}
+.sgm-dice-fx-holo,
+.sgm-dice-fx-neon,
+.sgm-dice-fx-frost,
+.sgm-dice-fx-default {
+  filter: drop-shadow(0 0 7px var(--sgm-dice-accent, #22d3ee));
 }
