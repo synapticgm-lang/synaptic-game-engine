@@ -31,6 +31,7 @@ import { ensureTestCosmeticUnlock, isOwned } from '@/game/cosmeticEntitlements';
 import { applySettingsCosmetics, applyUiThemeToDocument, themeBySettingsId } from '@/game/uiTheme';
 import { previewVoiceLine } from '@/game/useVoice';
 import { DicePreview } from './DicePreview';
+import { CapacityPackShop } from './CapacityPackShop';
 
 type HubTab = 'play' | 'themes' | 'shop';
 
@@ -505,9 +506,17 @@ function ThemePreviewBar({
 }
 
 function ShopTab({ settings }: { settings: Settings }) {
+  const [packNote, setPackNote] = useState<string | null>(null);
+  const [openSetId, setOpenSetId] = useState<string | null>(null);
+  const [openExtra, setOpenExtra] = useState<CosmeticSlot | null>(null);
+
+  const bundles = useMemo(
+    () => SHOP_CATALOG.filter((item) => item.slot === 'bundle'),
+    [],
+  );
+
   const extras = useMemo(() => {
     const order: CosmeticSlot[] = [
-      'bundle',
       'theme',
       'font',
       'dice',
@@ -517,16 +526,22 @@ function ShopTab({ settings }: { settings: Settings }) {
       'sfx',
       'badge',
     ];
-    return order.map((slot) => ({
-      slot,
-      items: SHOP_CATALOG.filter((item) => {
-        if (item.slot !== slot) return false;
-        if (item.kit) return false;
-        if (isRaceKitPart(item.id)) return false;
-        return true;
-      }),
-    }));
+    return order
+      .map((slot) => ({
+        slot,
+        items: SHOP_CATALOG.filter((item) => {
+          if (item.slot !== slot) return false;
+          if (item.kit) return false;
+          if (isRaceKitPart(item.id)) return false;
+          return true;
+        }),
+      }))
+      .filter((row) => row.items.length > 0);
   }, []);
+
+  const jumpTo = (id: string) => {
+    document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  };
 
   return (
     <div className="flex w-full flex-col gap-6 pb-10">
@@ -535,28 +550,92 @@ function ShopTab({ settings }: { settings: Settings }) {
         Active theme: {themeBySettingsId(settings.uiThemeId).name}
       </div>
 
-      <Section title="Race style sets">
-        <p className="mb-3 text-[11px] leading-snug text-slate-500">
-          Each set is one theme plus its matching font, dice, voice, and turn frame. Buy the set as a bundle.
-        </p>
-        <div className="grid gap-3">
+      {packNote && (
+        <div className="rounded-lg border border-emerald-800/40 bg-emerald-950/30 px-3 py-2 text-center text-xs text-emerald-200">
+          {packNote}
+        </div>
+      )}
+
+      <nav className="sticky top-0 z-20 -mx-1 flex gap-1 overflow-x-auto border-b border-slate-800 bg-slate-950/95 px-1 py-2 backdrop-blur">
+        {(
+          [
+            ['shop-packs', 'Packs'],
+            ['shop-sets', 'Sets'],
+            ['shop-bundles', 'Bundles'],
+            ['shop-extras', 'Extras'],
+          ] as const
+        ).map(([id, label]) => (
+          <button
+            key={id}
+            type="button"
+            onClick={() => jumpTo(id)}
+            className="shrink-0 rounded-full border border-slate-700 bg-slate-900/80 px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.14em] text-slate-300 hover:border-cyan-700 hover:text-cyan-100"
+          >
+            {label}
+          </button>
+        ))}
+      </nav>
+
+      <div id="shop-packs" className="scroll-mt-14">
+        <CapacityPackShop onGranted={setPackNote} />
+      </div>
+
+      <Section
+        id="shop-sets"
+        title="Theme sets"
+        blurb="Race and archetype kits — one theme plus matching font, dice, voice, and frame. Tap a row for the kit."
+      >
+        <div className="grid gap-2">
           {RACE_THEME_ITEMS.map((item) => (
-            <SetCard key={item.id} theme={item} selected={false} owned={isOwned(item.id)} shop />
+            <SetCard
+              key={item.id}
+              theme={item}
+              selected={false}
+              owned={isOwned(item.id)}
+              shop
+              compact
+              expanded={openSetId === item.id}
+              onClick={() => setOpenSetId((id) => (id === item.id ? null : item.id))}
+            />
           ))}
         </div>
       </Section>
 
-      {extras.map(({ slot, items }) =>
-        items.length ? (
-          <Section key={slot} title={SLOT_LABELS[slot]}>
-            <div className="grid gap-2 sm:grid-cols-2">
-              {items.map((item) => (
-                <ShopCard key={item.id} item={item} />
-              ))}
-            </div>
-          </Section>
-        ) : null
-      )}
+      <Section
+        id="shop-bundles"
+        title="Bundles"
+        blurb="Multi-theme packs at a set price — Ancestry Sampler, Integration Starter, Ledger Scholar."
+      >
+        <div className="grid gap-2 sm:grid-cols-2">
+          {bundles.map((item) => (
+            <ShopCard key={item.id} item={item} />
+          ))}
+        </div>
+      </Section>
+
+      <Section
+        id="shop-extras"
+        title="Mix extras"
+        blurb="Leftover fonts, dice, voices, frames, and other slots that are not inside a race kit."
+      >
+        <div className="space-y-2">
+          {extras.map(({ slot, items }) => (
+            <CustomizeSlot
+              key={slot}
+              label={SLOT_LABELS[slot]}
+              current={`${items.length}`}
+              open={openExtra === slot}
+              onToggle={() => setOpenExtra(openExtra === slot ? null : slot)}
+            >
+              <div className="grid gap-2 sm:grid-cols-2">
+                {items.map((item) => (
+                  <ShopCard key={item.id} item={item} />
+                ))}
+              </div>
+            </CustomizeSlot>
+          ))}
+        </div>
+      </Section>
     </div>
   );
 }
@@ -735,6 +814,7 @@ function SetCard({
   onClick,
   shop,
   compact,
+  expanded,
 }: {
   theme: ShopItem;
   selected: boolean;
@@ -742,79 +822,126 @@ function SetCard({
   onClick?: () => void;
   shop?: boolean;
   compact?: boolean;
+  expanded?: boolean;
 }) {
   const parts = themeKitItems(theme);
   const p = theme.preview;
   const dicePart = parts.find((row) => row.item.slot === 'dice')?.item;
-  const showParts = shop || !compact || selected;
-  const inner = (
-    <>
-      <div className="flex items-center gap-3">
-        {p && <ThemeChip item={theme} size={32} />}
-        {dicePart && <DicePreview item={dicePart} size={28} />}
-        <div className="min-w-0 flex-1">
-          <div className="text-sm font-semibold text-slate-100">{theme.name}</div>
-          {!compact && (
-            <div className="mt-0.5 text-[11px] leading-snug text-slate-400">{theme.blurb}</div>
-          )}
-        </div>
-        {selected && <Check size={16} className="shrink-0 text-cyan-400" />}
+  const showParts = shop ? !!expanded : !compact || selected;
+  const highlight = shop ? !!expanded : selected;
+
+  const header = (
+    <div className="flex items-center gap-3">
+      {p && <ThemeChip item={theme} size={32} />}
+      {dicePart && <DicePreview item={dicePart} size={28} />}
+      <div className="min-w-0 flex-1">
+        <div className="text-sm font-semibold text-slate-100">{theme.name}</div>
+        {(shop ? showParts : !compact) && (
+          <div className="mt-0.5 text-[11px] leading-snug text-slate-400">{theme.blurb}</div>
+        )}
       </div>
-      {showParts && (
-        <>
-          <div className="mt-3 space-y-2 border-t border-white/5 pt-3">
-            {parts.map(({ label, item }) => (
-              <div key={item.id} className="flex items-start gap-2">
-                {item.slot === 'dice' ? (
-                  <DicePreview item={item} size={28} />
-                ) : (
-                  <span className="w-10 shrink-0 pt-0.5 text-[10px] font-semibold uppercase tracking-wide text-slate-500">
-                    {label}
-                  </span>
-                )}
-                <div className="min-w-0 flex-1">
-                  {item.slot !== 'dice' && (
-                    <div className="text-[10px] font-semibold uppercase tracking-wide text-slate-500">{label}</div>
-                  )}
-                  <div className="text-xs font-medium text-slate-200">
-                    {item.slot === 'dice' ? `${label} · ${item.name}` : item.name}
-                  </div>
-                  {item.slot === 'font' && <FontDescriptionBox item={item} blurb={item.blurb} />}
-                  {item.slot === 'voice' && <VoiceFlavour item={item} />}
-                  {item.slot === 'frame' && (
-                    <div className="mt-1">
-                      <FrameChip item={item} />
-                    </div>
-                  )}
-                </div>
-              </div>
-            ))}
-          </div>
-          <div className="mt-3 border-t border-white/5 pt-2 text-xs text-cyan-300">
-            {theme.free ? 'Free set' : `Set bundle ${theme.priceGbp} · ${theme.priceUsd}`}
-            <span className="ml-1 text-slate-500">— theme, font, dice, voice, and frame</span>
-          </div>
-        </>
-      )}
-      {shop && (
-        <div className="mt-2 text-right">
-          <span className="rounded-lg border border-emerald-800/50 bg-emerald-950/40 px-3 py-1.5 text-xs font-medium text-emerald-300">
-            {owned ? (theme.free ? 'Included' : 'Owned') : 'Buy (soon)'}
-          </span>
-        </div>
-      )}
-    </>
+      {selected && !shop && <Check size={16} className="shrink-0 text-cyan-400" />}
+      {shop &&
+        (expanded ? (
+          <ChevronUp size={16} className="shrink-0 text-slate-500" />
+        ) : (
+          <ChevronDown size={16} className="shrink-0 text-slate-500" />
+        ))}
+    </div>
   );
+
+  const kitParts = showParts ? (
+    <div className="mt-3 space-y-2 border-t border-white/5 pt-3">
+      {parts.map(({ label, item }) => (
+        <div key={item.id} className="flex items-start gap-2">
+          {item.slot === 'dice' ? (
+            <DicePreview item={item} size={28} />
+          ) : (
+            <span className="w-10 shrink-0 pt-0.5 text-[10px] font-semibold uppercase tracking-wide text-slate-500">
+              {label}
+            </span>
+          )}
+          <div className="min-w-0 flex-1">
+            {item.slot !== 'dice' && (
+              <div className="text-[10px] font-semibold uppercase tracking-wide text-slate-500">{label}</div>
+            )}
+            <div className="text-xs font-medium text-slate-200">
+              {item.slot === 'dice' ? `${label} · ${item.name}` : item.name}
+            </div>
+            {item.slot === 'font' && <FontDescriptionBox item={item} blurb={item.blurb} />}
+            {item.slot === 'voice' && (
+              <div>
+                <VoiceFlavour item={item} />
+                {shop && (
+                  <div className="mt-1">
+                    <HearButton item={item} />
+                  </div>
+                )}
+              </div>
+            )}
+            {item.slot === 'frame' && (
+              <div className="mt-1">
+                <FrameChip item={item} />
+              </div>
+            )}
+          </div>
+        </div>
+      ))}
+    </div>
+  ) : null;
+
+  const priceRow = shop || showParts ? (
+    <div className={`flex items-center justify-between gap-2 ${showParts ? 'mt-3 border-t border-white/5 pt-2' : 'mt-2'}`}>
+      <div className="text-xs text-cyan-300">
+        {theme.free
+          ? 'Free set'
+          : showParts
+            ? `Set bundle ${theme.priceGbp} · ${theme.priceUsd}`
+            : `${theme.priceGbp} · ${theme.priceUsd}`}
+        {showParts && (
+          <span className="ml-1 text-slate-500">— theme, font, dice, voice, and frame</span>
+        )}
+      </div>
+      {shop && (
+        <span className="shrink-0 rounded-lg border border-emerald-800/50 bg-emerald-950/40 px-3 py-1.5 text-xs font-medium text-emerald-300">
+          {owned ? (theme.free ? 'Included' : 'Owned') : 'Buy (soon)'}
+        </span>
+      )}
+    </div>
+  ) : null;
 
   const texture = themeTextureOf(theme);
   const style = p
     ? {
-        borderColor: selected ? `${p.accent}99` : `${p.accent}44`,
+        borderColor: highlight ? `${p.accent}99` : `${p.accent}44`,
         ['--sgm-chip-accent' as string]: p.accent,
         ['--sgm-chip-bg' as string]: p.bg,
         ['--sgm-chip-panel' as string]: p.panel,
       }
     : undefined;
+  const cardClass = `sgm-theme-preview sgm-tex-${texture} rounded-xl border p-3${
+    highlight ? ' ring-1 ring-cyan-400/40' : ''
+  }`;
+
+  if (shop) {
+    return (
+      <div className={cardClass} style={style}>
+        <button type="button" onClick={onClick} className="w-full text-left">
+          {header}
+          {priceRow}
+        </button>
+        {kitParts}
+      </div>
+    );
+  }
+
+  const inner = (
+    <>
+      {header}
+      {kitParts}
+      {priceRow}
+    </>
+  );
 
   if (onClick) {
     return (
@@ -838,10 +965,21 @@ function SetCard({
   );
 }
 
-function Section({ title, children }: { title: string; children: React.ReactNode }) {
+function Section({
+  id,
+  title,
+  blurb,
+  children,
+}: {
+  id?: string;
+  title: string;
+  blurb?: string;
+  children: React.ReactNode;
+}) {
   return (
-    <section className="w-full">
+    <section id={id} className="w-full scroll-mt-14">
       <h2 className="mb-2 text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">{title}</h2>
+      {blurb && <p className="mb-3 text-[11px] leading-snug text-slate-500">{blurb}</p>}
       {children}
     </section>
   );

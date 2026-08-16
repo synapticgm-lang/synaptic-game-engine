@@ -17,6 +17,7 @@ John is playtesting live. Collect issues here. Do not implement until he asks fo
 
 ## Done (already shipped)
 
+- Shop hub: Packs / Sets / Bundles / Extras sections with sticky jump nav; race kits collapsed until tapped; leftover slots folded by type (`2026-08-16e`)
 - Paid kits look like materials not recolors: theme panel textures, distinct typefaces, material dice in shop and tray, filigree frames, voice flavour + Hear (`2026-08-16d`)
 - Themes/Shop dice previews are faceted d20s with material textures (wood, brass, obsidian, etc.) — not flat hex fills (`2026-08-16c`)
 - Themes Customize / Shop font cards: description box renders in the pack’s story typeface (14px, readable contrast); Canopy / Umbrance / Ivory / Rune Stone / War Banner stacks no longer collapse to the same Georgia (`2026-08-16b`)
