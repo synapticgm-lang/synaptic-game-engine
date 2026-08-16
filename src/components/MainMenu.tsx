@@ -29,7 +29,7 @@ import {
 } from '@/game/cosmeticCatalog';
 import { ensureTestCosmeticUnlock, isOwned } from '@/game/cosmeticEntitlements';
 import { LegalLinks } from './LegalLinks';
-import { applySettingsCosmetics, applyUiThemeToDocument, themeBySettingsId } from '@/game/uiTheme';
+import { applySettingsCosmetics, applyUiThemeToDocument, ensureCatalogPreviewFonts, themeBySettingsId } from '@/game/uiTheme';
 import { previewVoiceLine } from '@/game/useVoice';
 import { DicePreview } from './DicePreview';
 import { CapacityPackShop } from './CapacityPackShop';
@@ -75,6 +75,10 @@ export function MainMenu({
   useEffect(() => {
     applySettingsCosmetics(settings);
   }, [settings.uiThemeId, settings.fontPackId, settings.diceCosmeticId, settings.turnFrameCosmeticId]);
+
+  useEffect(() => {
+    if (tab === 'themes' || tab === 'shop') ensureCatalogPreviewFonts();
+  }, [tab]);
 
   return (
     <div
@@ -1317,6 +1321,8 @@ function BackgroundFx() {
       <img
         src="/backgrounds/bg-landscape.png"
         alt=""
+        fetchPriority="high"
+        decoding="async"
         className="h-full w-full object-cover opacity-40"
       />
       <div className="absolute inset-0 bg-gradient-to-b from-slate-950/60 via-slate-950/50 to-slate-950/85" />

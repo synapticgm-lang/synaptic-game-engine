@@ -1,5 +1,55 @@
 import type { ShopItem } from './cosmeticCatalog';
-import { THEME_ITEMS, shopItemById } from './cosmeticCatalog';
+import { SHOP_CATALOG, THEME_ITEMS, shopItemById } from './cosmeticCatalog';
+
+const GOOGLE_FONT_QUERY: Record<string, string> = {
+  Inter: 'Inter:wght@400;500;600',
+  Cinzel: 'Cinzel:wght@400;600;700',
+  'Cinzel Decorative': 'Cinzel+Decorative:wght@700',
+  'Cormorant Garamond': 'Cormorant+Garamond:wght@400;600',
+  'Crimson Pro': 'Crimson+Pro:wght@400;600',
+  'Grenze Gotisch': 'Grenze+Gotisch:wght@400;600',
+  'Libre Baskerville': 'Libre+Baskerville:wght@400;700',
+  MedievalSharp: 'MedievalSharp',
+  Orbitron: 'Orbitron:wght@500;700',
+  'Playfair Display': 'Playfair+Display:wght@400;600',
+  'Special Elite': 'Special+Elite',
+  Spectral: 'Spectral:wght@400;600',
+};
+
+const loadedGoogleFonts = new Set<string>(['Inter', 'Cinzel']);
+
+function fontNamesFromStack(stack: string | undefined): string[] {
+  if (!stack) return [];
+  return [...stack.matchAll(/"([^"]+)"/g)].map((m) => m[1]);
+}
+
+export function ensureGoogleFonts(...stacks: (string | undefined)[]): void {
+  if (typeof document === 'undefined') return;
+  const pending = new Set<string>();
+  for (const stack of stacks) {
+    for (const name of fontNamesFromStack(stack)) {
+      if (GOOGLE_FONT_QUERY[name] && !loadedGoogleFonts.has(name)) pending.add(name);
+    }
+  }
+  if (pending.size === 0) return;
+  const families = [...pending];
+  for (const name of families) loadedGoogleFonts.add(name);
+  const href = `https://fonts.googleapis.com/css2?${families.map((n) => `family=${GOOGLE_FONT_QUERY[n]}`).join('&')}&display=swap`;
+  const link = document.createElement('link');
+  link.rel = 'stylesheet';
+  link.href = href;
+  document.head.appendChild(link);
+}
+
+/** Shop / Themes previews — load catalog typefaces only when that hub is open. */
+export function ensureCatalogPreviewFonts(): void {
+  const stacks: string[] = [];
+  for (const item of SHOP_CATALOG) {
+    if (item.preview?.fontUi) stacks.push(item.preview.fontUi);
+    if (item.preview?.fontStory) stacks.push(item.preview.fontStory);
+  }
+  ensureGoogleFonts(...stacks);
+}
 
 export function themeBySettingsId(uiThemeId: string | undefined): ShopItem {
   const id = uiThemeId?.startsWith('theme.') ? uiThemeId : `theme.${uiThemeId ?? 'integration-blue'}`;
@@ -36,6 +86,7 @@ export function applyUiThemeToDocument(
   root.style.setProperty('--sgm-muted', p.muted);
   const fontUi = extras?.font?.preview?.fontUi ?? p.fontUi;
   const fontStory = extras?.font?.preview?.fontStory ?? p.fontStory;
+  ensureGoogleFonts(fontUi, fontStory);
   if (fontUi) root.style.setProperty('--sgm-font-ui', fontUi);
   if (fontStory) root.style.setProperty('--sgm-font-story', fontStory);
   const diceAccent = extras?.dice?.diceSkin?.accent ?? p.accent;

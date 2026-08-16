@@ -17,6 +17,7 @@ John is playtesting live. Collect issues here. Do not implement until he asks fo
 
 ## Done (already shipped)
 
+- Boot loads Inter + Cinzel only; theme fonts load when equipped or Themes/Shop opens. Title art compressed (~2MB → ~220KB) (`2026-08-16u`)
 - Admin BYOK does not include hosted text or image keys — OpenRouter text key required; pictures use that key or Flux Direct (`2026-08-16t`)
 - Memorable picture packs: Snap +10 / 99p, Album +20 / £1.99, Gallery +50 / £3.99 (schnell, never expire, weekly cap spends first) (`2026-08-16s`)
 - PYOA true-ending memorable plate (Classic + Memorable on; `<campaign-ending />` only; schnell; once; Kid Mode rewrite) (`2026-08-16r`)

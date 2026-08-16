@@ -18,6 +18,8 @@ export function WelcomeSplash({ onTap }: { onTap: () => void }) {
       <img
         src="/backgrounds/bg-landscape.png"
         alt=""
+        fetchPriority="high"
+        decoding="async"
         className="pointer-events-none absolute inset-0 h-full w-full object-cover opacity-50 transition-transform duration-[3000ms] ease-out group-hover:scale-105"
       />
       <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-slate-950/70 via-slate-950/50 to-slate-950/90" />
@@ -101,6 +103,7 @@ export function AuthOverlay({ onSignIn, onGuest }: AuthProps) {
         <img
           src="/backgrounds/bg-portrait.png"
           alt=""
+          decoding="async"
           className="pointer-events-none absolute inset-0 h-full w-full object-cover opacity-25"
         />
         <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-slate-950/60 via-slate-950/70 to-slate-950/90" />
