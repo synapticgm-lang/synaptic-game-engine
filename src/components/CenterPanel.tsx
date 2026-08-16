@@ -13,6 +13,7 @@ import { ActionBar } from './qol/ActionBar';
 import { RewindBar } from './qol/RewindBar';
 import { TurnConfirmBar } from './qol/TurnConfirmBar';
 import { shouldShowTurnAsk, TURN_ASK, hasRealGmStory, shouldSkipDuplicatePlayerBubble } from '@/game/turnAsk';
+import { BeautyMomentOfferLink } from './BeautyMomentOffer';
 
 const HIDE_OPTIONS_KEY = 'synapticgm-hide-options';
 const HIDE_TEXT_KEY = 'synapticgm-hide-text';
@@ -76,9 +77,11 @@ interface Props {
   onUpdatePanelOverlay?: (entryId: string, panelIndex: number, edit: ComicOverlayEdit) => void;
   restoreDraft?: string | null;
   onRestoreDraftConsumed?: () => void;
+  onAcceptBeautyOffer?: (entryId: string) => void;
+  onDismissBeautyOffer?: (entryId: string) => void;
 }
 
-export function CenterPanel({ state, busy, error, errorKind, currentImage, bgImage, bgOpacity, showRolls, engineMode, diceAnimation, statVerbosity, voice, comicMode, narrativeMode, artStylePreset, comicLayout = 'paged', comicReadingDirection = 'ltr', imagesGenerating = 0, canRewind, onSend, onToggleRolls, onStartListening, onStopListening, onStopSpeaking, onRetry, onOpenApiSettings, onRewind, onAcceptPendingTurn, onDiscardPendingTurn, onRerollPendingTurn, onEditPendingNarrative, onToggleComicMode, sessionPresentationLocked = false, onAutoFight, onOpenCharacter, onRetryPanelImage, onUpdatePanelOverlay, restoreDraft, onRestoreDraftConsumed }: Props) {
+export function CenterPanel({ state, busy, error, errorKind, currentImage, bgImage, bgOpacity, showRolls, engineMode, diceAnimation, statVerbosity, voice, comicMode, narrativeMode, artStylePreset, comicLayout = 'paged', comicReadingDirection = 'ltr', imagesGenerating = 0, canRewind, onSend, onToggleRolls, onStartListening, onStopListening, onStopSpeaking, onRetry, onOpenApiSettings, onRewind, onAcceptPendingTurn, onDiscardPendingTurn, onRerollPendingTurn, onEditPendingNarrative, onToggleComicMode, sessionPresentationLocked = false, onAutoFight, onOpenCharacter, onRetryPanelImage, onUpdatePanelOverlay, restoreDraft, onRestoreDraftConsumed, onAcceptBeautyOffer, onDismissBeautyOffer }: Props) {
   const [input, setInput] = useState('');
   const [diceRoll, setDiceRoll] = useState<string | null>(null);
   const [hideOptions, setHideOptions] = useState(() => readBoolPref(HIDE_OPTIONS_KEY));
@@ -162,7 +165,13 @@ export function CenterPanel({ state, busy, error, errorKind, currentImage, bgIma
         </div>
       ) : narrativeMode ? (
         <div className="relative z-10 min-h-0 flex-1 overflow-hidden">
-          <NarrativeView log={state.log} busy={busy} engineMode={engineMode} />
+          <NarrativeView
+            log={state.log}
+            busy={busy}
+            engineMode={engineMode}
+            onAcceptBeautyOffer={onAcceptBeautyOffer}
+            onDismissBeautyOffer={onDismissBeautyOffer}
+          />
         </div>
       ) : (
         <div ref={logRef} className="relative z-10 min-h-0 flex-1 overflow-y-auto px-3 py-4 sm:px-6">
@@ -177,6 +186,8 @@ export function CenterPanel({ state, busy, error, errorKind, currentImage, bgIma
                   statVerbosity={statVerbosity}
                   engineMode={engineMode}
                   showTurnAsk={shouldShowTurnAsk(state.log, index, busy)}
+                  onAcceptBeautyOffer={onAcceptBeautyOffer}
+                  onDismissBeautyOffer={onDismissBeautyOffer}
                 />
               )
             ))}
@@ -434,7 +445,7 @@ export function CenterPanel({ state, busy, error, errorKind, currentImage, bgIma
   );
 }
 
-function LogRow({ entry, lorebook, showSystemLog, statVerbosity, engineMode, showTurnAsk }: { entry: LogEntry; lorebook?: LoreCard[]; showSystemLog: boolean; statVerbosity: StatVerbosity; engineMode: EngineMode; showTurnAsk: boolean }) {
+function LogRow({ entry, lorebook, showSystemLog, statVerbosity, engineMode, showTurnAsk, onAcceptBeautyOffer, onDismissBeautyOffer }: { entry: LogEntry; lorebook?: LoreCard[]; showSystemLog: boolean; statVerbosity: StatVerbosity; engineMode: EngineMode; showTurnAsk: boolean; onAcceptBeautyOffer?: (entryId: string) => void; onDismissBeautyOffer?: (entryId: string) => void }) {
   // Text/Milestone Mode: a rare, GM-flagged full-page illustration — rendered large and
   // distinct from the routine text log, instead of only surfacing via the small image strip.
   if (entry.entryKind === 'milestone') {
@@ -515,6 +526,11 @@ function LogRow({ entry, lorebook, showSystemLog, statVerbosity, engineMode, sho
           verbosity={statVerbosity}
         />
       )}
+      <BeautyMomentOfferLink
+        offer={entry.beautyOffer}
+        onAccept={onAcceptBeautyOffer ? () => onAcceptBeautyOffer(entry.id) : undefined}
+        onDismiss={onDismissBeautyOffer ? () => onDismissBeautyOffer(entry.id) : undefined}
+      />
       {showTurnAsk && <TurnAskLine />}
     </div>
   );

@@ -308,7 +308,7 @@ export function buildSystemPrompt(state: GameState, settings: Settings, activeLo
   const actionTags = ACTION_TAG_INSTRUCTIONS;
   const turnFrame = TURN_FRAME_INSTRUCTIONS;
   const multiPanel = buildMultiPanelInstructions(resolvePanelBudget(settings), state.engineMode);
-  const publishingEngine = PUBLISHING_ENGINE_INSTRUCTIONS;
+  const publishingEngine = buildPublishingEngineInstructions(settings);
 
   return `${BASE_PROMPT}\n\n${modeRules}\n\n${archetypeRules}\n\n${strictnessRules}\n\n${contentRules}\n\n${narrativePreferenceRules}\n\n${diceNote}\n\n${statRules}\n\n${dndModeRules}\n\n${ledger}\n\n${claimGrounding}\n\n${memoryBlock}\n\n${loreContext}\n\n${actionTags}\n\n${turnFrame}\n\n${multiPanel}\n\n${publishingEngine}`.trim();
 }
@@ -478,12 +478,21 @@ ${engineMode === 'dnd'
 - NEVER put the numbered/lettered choice list inside a panel's <narrative> block. Choices always belong in your normal response text, after all <panel> blocks have closed.`;
 }
 
-const PUBLISHING_ENGINE_INSTRUCTIONS = `
+function buildPublishingEngineInstructions(settings: Settings): string {
+  const memorableOn = settings.visualMode === 'classic' && settings.classicMemorableImages;
+  const milestoneBlock = memorableOn
+    ? `MILESTONE EVENTS (Classic Text, Memorable Moment Images ON): The engine already illustrates the opening scene and character death — do not tag those.
+A <milestone-event> is a player offer, not an automatic spend. Emit at most ONE self-closing tag on a truly book-worthy beat:
+<milestone-event prompt="A vivid, wordless visual description of the moment" />
+Use this rarely — not every turn, not every NPC, not every fight. Good moments: a first royal audience (named king, queen, emperor, empress, or equivalent realm ruler in a throne/audience scene — not every noble), a boss reveal or fall (not both), a LitRPG Integration or Wave, a new significant place, a quest completed, a confession or reveal.
+Do not tag ordinary NPC meetings (shopkeepers, guards, companions, random named people). Do not tag a first fight unless it is a named boss or similarly book-worthy. Do not tag someone being beautiful or handsome — the player may be offered a picture for that; never spam the tag.
+Do not tag routine travel, rest, chatter, or ordinary loot. The prompt must be visual only — no words, letters, UI, or speech bubbles.`
+    : `MILESTONE EVENTS: Memorable splash art is off. Do not emit <milestone-event> tags.`;
+
+  return `
 PUBLISHING ENGINE PROTOCOLS (MANDATORY):
 
-MILESTONE EVENTS (Text/Milestone Mode): When operating in primarily-text mode and a turn represents a major, book-worthy story beat (a boss reveal, a huge discovery, a turning point), emit exactly ONE self-closing tag instead of routine panels:
-<milestone-event prompt="A vivid, wordless visual description of the epic moment" />
-Use this rarely — reserve it for genuinely significant moments, not every turn.
+${milestoneBlock}
 
 LEGENDARY LOOT VIDEOS: When the player receives a Legendary (or higher) item that deserves a cinematic reveal, emit:
 <loot-video item="Exact Item Name" rarity="Legendary" prompt="A vivid, wordless visual description of the item appearing/glowing" />
@@ -496,7 +505,8 @@ This update applies to THIS turn's own panels — the transformation must be vis
 
 RADICAL FORM CHANGES (species/base-body transformation, e.g. human -> reptilian creature, polymorph, shapeshift): add form-change="true":
 <visual-update description="A small reptilian creature with iridescent green scales, slitted yellow eyes, and a low sinuous body — no visible clothing or gear" form-change="true" />
-This tells the image pipeline to STOP depicting the player's previous equipped gear (human clothes, armor, weapons) on the new body, since it would be an absurd hybrid. Only omit form-change (or set it "false") for cosmetic changes (new armor, injury, disguise) where the body plan stays human/humanoid and existing gear still visually makes sense.`;
+This tells the image pipeline to STOP depicting the player's previous equipped gear (human clothes, armor, weapons) on the new body, since it would be an absurd hybrid. Only omit form-change (or set it "false") for cosmetic changes (new armor, injury, disguise) where the body plan stays human/humanoid and existing gear still visually makes sense.`.trim();
+}
 
 export function buildContextPrompt(
   state: GameState,

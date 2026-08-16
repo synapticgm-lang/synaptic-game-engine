@@ -395,6 +395,62 @@ export interface GameState {
   activeDungeon?: ActiveDungeonState | null;
   worldLedger?: WorldLedger;
   activeEncounter?: ActiveEncounter | null;
+  /**
+   * Premade world landmass outline + fogged regions (LitRPG/D&D/RPG open worlds).
+   * null = closed story (typical PYOA) — no continent atlas.
+   */
+  worldAtlas?: WorldAtlasState | null;
+  /** Classic memorable-splash cadence. Absent on old saves = nothing fired yet. */
+  memorableMoments?: MemorableMomentState;
+}
+
+export type BeautyOfferStatus = 'pending' | 'accepted' | 'dismissed';
+export type MemorableOfferKind = 'beauty' | 'ruler-audience' | 'writer-tag';
+
+/** Player-offered splash (beauty, ruler audience, or writer milestone tag). */
+export interface BeautyMomentOffer {
+  kind?: MemorableOfferKind;
+  personKey?: string;
+  personLabel?: string;
+  imagePrompt: string;
+  status: BeautyOfferStatus;
+}
+
+/** Persisted flags so classic memorable art stays sparse and does not re-fire the opener. */
+export interface MemorableMomentState {
+  openingSplashFired?: boolean;
+  lastSplashTurn?: number;
+  sessionSplashCount?: number;
+  /** When this sitting's splash count started. Stale sittings reset the cap. */
+  sittingStartedAt?: number;
+  /** @deprecated First combat is never auto and is never offered on its own. */
+  firstCombatSplashFired?: boolean;
+  /** @deprecated Ordinary NPC meets no longer auto-splash. Kept for old saves. */
+  firstNpcSplashFired?: boolean;
+  legendarySplashFired?: boolean;
+  deathSplashFired?: boolean;
+  /** Normalized ruler keys already offered or given a first-audience splash. */
+  rulerNamesSplashed?: string[];
+  /** Normalized person keys already offered a beauty picture. */
+  beautyOfferedKeys?: string[];
+  lastBeautyOfferTurn?: number;
+}
+
+export interface WorldAtlasRegionState {
+  id: string;
+  name: string;
+  blurb: string;
+  connections: string[];
+  tags?: string[];
+  revealed: boolean;
+}
+
+export interface WorldAtlasState {
+  outlineId: string;
+  outlineName: string;
+  description: string;
+  currentRegionId: string;
+  regions: WorldAtlasRegionState[];
 }
 
 export interface SaveSlotInfo {
@@ -453,6 +509,8 @@ export interface LogEntry {
   videoUrl?: string | null;
   lootItemName?: string;
   lootItemRarity?: Rarity;
+  /** Quiet, skippable offer — only when Memorable is on and the turn describes noteworthy beauty. */
+  beautyOffer?: BeautyMomentOffer;
 }
 
 /** Distinct rule engines chosen at campaign setup. */
@@ -729,6 +787,13 @@ export interface Settings {
   substanceUse: boolean;
   darkThemes: 'none' | 'implied' | 'explored';
   /**
+   * Website only: player opted into Bring Your Own Key (own text/image APIs).
+   * Requires byokDisclaimerAccepted. Ignored on store builds and Kid Mode.
+   */
+  byokModeEnabled: boolean;
+  /** Player accepted the BYOK responsibility disclaimer. */
+  byokDisclaimerAccepted: boolean;
+  /**
    * When true, rating rewrites pause for diegetic confirm ("System interprets…").
    * When false, rewrite applies automatically with a System note.
    */
@@ -756,7 +821,7 @@ export interface Settings {
    * Account subscription tier (free / mid / high).
    * Local until billing; drives writer model + capacity caps.
    */
-  subscriptionTier: 'free' | 'mid' | 'high';
+  subscriptionTier: 'free' | 'mid' | 'high' | 'admin';
   /** Pluggable video-generation backend for loot_video moments. 'none' until a provider is configured. */
   videoProvider: 'none' | 'custom';
   videoBaseUrl: string;
@@ -765,8 +830,9 @@ export interface Settings {
   postLoginBehavior: PostLoginBehavior;
   visualMode: 'comic' | 'classic';
   /**
-   * Classic Text mode only: when true, still generate clean splash art for memorable
-   * moments (milestones / first kills / legendary drops). Routine panels stay off.
+   * Classic Text mode only: when true, generate clean splash art for memorable
+   * moments (opening scene and death auto; other book-worthy beats are tap-yes).
+   * Off until the player opts in. Routine panels stay off.
    */
   classicMemorableImages: boolean;
   /** Comic mode page packing vs vertical webtoon scroll. Locked for active sessions. */

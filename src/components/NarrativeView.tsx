@@ -3,6 +3,7 @@ import type { LogEntry } from '@/types';
 import type { EngineMode } from '@/game/types';
 import { filterSystemLogForEngine } from '@/game/systemLog';
 import { shouldShowTurnAsk, stripTurnCloser, TURN_ASK, hasRealGmStory, shouldSkipDuplicatePlayerBubble } from '@/game/turnAsk';
+import { BeautyMomentOfferLink } from './BeautyMomentOffer';
 import {
   ChevronRight, ChevronDown, Zap, Sword, Shield, Sparkles,
   TrendingUp, Skull, Heart, Dice5, Eye, EyeOff, Terminal,
@@ -12,6 +13,8 @@ interface Props {
   log: LogEntry[];
   busy?: boolean;
   engineMode?: EngineMode;
+  onAcceptBeautyOffer?: (entryId: string) => void;
+  onDismissBeautyOffer?: (entryId: string) => void;
 }
 
 type ActionKind = 'crit' | 'damage' | 'heal' | 'skill' | 'defeat' | 'miss';
@@ -61,7 +64,7 @@ function extractActions(log: LogEntry[], engineMode: EngineMode = 'litrpg'): Act
   return cards.slice(-20).reverse();
 }
 
-export function NarrativeView({ log, busy, engineMode = 'litrpg' }: Props) {
+export function NarrativeView({ log, busy, engineMode = 'litrpg', onAcceptBeautyOffer, onDismissBeautyOffer }: Props) {
   const [streamOpen, setStreamOpen] = useState(true);
   const actionCards = useMemo(() => extractActions(log, engineMode), [log, engineMode]);
 
@@ -77,6 +80,8 @@ export function NarrativeView({ log, busy, engineMode = 'litrpg' }: Props) {
                 entry={entry}
                 engineMode={engineMode}
                 showTurnAsk={shouldShowTurnAsk(log, index, !!busy)}
+                onAcceptBeautyOffer={onAcceptBeautyOffer}
+                onDismissBeautyOffer={onDismissBeautyOffer}
               />
             )
           ))}
@@ -101,18 +106,26 @@ export function NarrativeView({ log, busy, engineMode = 'litrpg' }: Props) {
 
 /* ============ NARRATIVE ENTRY DISPATCHER ============ */
 
-function NarrativeEntry({ entry, engineMode, showTurnAsk }: { entry: LogEntry; engineMode: EngineMode; showTurnAsk: boolean }) {
+function NarrativeEntry({ entry, engineMode, showTurnAsk, onAcceptBeautyOffer, onDismissBeautyOffer }: { entry: LogEntry; engineMode: EngineMode; showTurnAsk: boolean; onAcceptBeautyOffer?: (entryId: string) => void; onDismissBeautyOffer?: (entryId: string) => void }) {
   if (entry.role === 'player') return <PlayerBubble entry={entry} />;
   if (entry.role === 'system') return <SystemMessage entry={entry} />;
   if (!hasRealGmStory(entry) && !showTurnAsk) {
     return null;
   }
-  return <DmNarration entry={entry} engineMode={engineMode} showTurnAsk={showTurnAsk} />;
+  return (
+    <DmNarration
+      entry={entry}
+      engineMode={engineMode}
+      showTurnAsk={showTurnAsk}
+      onAcceptBeautyOffer={onAcceptBeautyOffer}
+      onDismissBeautyOffer={onDismissBeautyOffer}
+    />
+  );
 }
 
 /* ============ 1. AI DM NARRATION PANEL ============ */
 
-function DmNarration({ entry, engineMode, showTurnAsk }: { entry: LogEntry; engineMode: EngineMode; showTurnAsk: boolean }) {
+function DmNarration({ entry, engineMode, showTurnAsk, onAcceptBeautyOffer, onDismissBeautyOffer }: { entry: LogEntry; engineMode: EngineMode; showTurnAsk: boolean; onAcceptBeautyOffer?: (entryId: string) => void; onDismissBeautyOffer?: (entryId: string) => void }) {
   const segments = useMemo(() => parseSegments(stripTurnCloser(entry.content)), [entry.content]);
   const systemLines = useMemo(
     () => filterSystemLogForEngine(entry.systemLog ?? [], engineMode),
@@ -167,6 +180,11 @@ function DmNarration({ entry, engineMode, showTurnAsk }: { entry: LogEntry; engi
           </div>
         )}
       </div>
+      <BeautyMomentOfferLink
+        offer={entry.beautyOffer}
+        onAccept={onAcceptBeautyOffer ? () => onAcceptBeautyOffer(entry.id) : undefined}
+        onDismiss={onDismissBeautyOffer ? () => onDismissBeautyOffer(entry.id) : undefined}
+      />
       {showTurnAsk && (
         <p className="px-1 text-sm font-medium text-slate-200">{TURN_ASK}</p>
       )}

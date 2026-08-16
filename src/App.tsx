@@ -317,6 +317,8 @@ export default function App() {
             imagesGenerating={game.imagesGenerating}
             canRewind={game.canRewind}
             onRetryPanelImage={game.retryPanelImage}
+            onAcceptBeautyOffer={game.acceptBeautyOffer}
+            onDismissBeautyOffer={game.dismissBeautyOffer}
             onUpdatePanelOverlay={game.updatePanelOverlay}
             onSend={game.sendAction}
             restoreDraft={game.restoreDraft}

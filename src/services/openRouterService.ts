@@ -607,12 +607,21 @@ export async function generateComicImage(
     WORLD_GENRE_PRESERVATION_DIRECTIVE,
   ].filter(Boolean).join('\n\n').trim();
 
-  const useHeroModel = options?.hero === true || HERO_IMAGE_TRIGGER.test(prompt);
-  const fluxModels = resolveFluxImageModel({
+  const classicMemorable = settings.visualMode === 'classic' && Boolean(options?.memorableMoment);
+  const useHeroModel = classicMemorable
+    ? options?.hero === true
+    : options?.hero === true || HERO_IMAGE_TRIGGER.test(prompt);
+  let fluxModels = resolveFluxImageModel({
     tier: settings.subscriptionTier,
     hero: useHeroModel,
     via: provider === 'flux-direct' ? 'direct' : 'openrouter',
   });
+  if (classicMemorable && !useHeroModel && fluxModels.openRouterId === HERO_IMAGE_MODEL) {
+    fluxModels = {
+      openRouterId: PRIMARY_IMAGE_MODEL,
+      bflEndpoint: 'flux-2-klein-9b',
+    };
+  }
 
   const recordSpend = () => {
     if (settings.visualMode === 'classic') spendCapacity('memorable');

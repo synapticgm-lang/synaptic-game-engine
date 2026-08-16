@@ -460,7 +460,7 @@ export function NewGameModal({ contentMode, onStart, onClose }: Props) {
                   <span>
                     <span className="block font-medium text-slate-200">Memorable moment images</span>
                     <span className="mt-0.5 block text-[10px] leading-snug text-slate-500">
-                      Optional clean splash art for milestones, first kills, and legendary drops — no text, words, or speech bubbles in the image.
+                      Optional. Opening and death auto-illustrate; other book-worthy beats are a tap-yes on the fast model. Off until you check this.
                     </span>
                   </span>
                 </label>

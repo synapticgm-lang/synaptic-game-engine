@@ -17,6 +17,9 @@ John is playtesting live. Collect issues here. Do not implement until he asks fo
 
 ## Done (already shipped)
 
+- Memorable stays cheap: opener + death auto; ruler/beauty/writer-tag are tap-yes on schnell; first fight never auto (`2026-08-16i`)
+- Memorable: no auto pic for ordinary NPC meets; first king/ruler audience may splash; stunning/beautiful is a player offer (`2026-08-16h`)
+- Memorable Moment Images stay off by default; when on, code fires the opening splash and other book-worthy beats (`2026-08-16g`)
 - Themes + Shop locker layout: sticky section chips, compact 2-col set grid, one expanded kit, featured set, owned/equipped badges (`2026-08-16f`)
 - Shop hub: Packs / Sets / Bundles / Extras sections with sticky jump nav; race kits collapsed until tapped; leftover slots folded by type (`2026-08-16e`)
 - Paid kits look like materials not recolors: theme panel textures, distinct typefaces, material dice in shop and tray, filigree frames, voice flavour + Hear (`2026-08-16d`)

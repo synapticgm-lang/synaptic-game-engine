@@ -120,6 +120,14 @@ import {
   isUnresolvedActionNarrative,
 } from './actionResolution';
 import { mergeNpcMemoriesFromTurn } from './npcMemory';
+import {
+  applyAcceptedBeautyOffer,
+  applyDismissedBeautyOffer,
+  decideClassicMemorable,
+  isClassicMemorableEnabled,
+  isSittingHardBlocked,
+  memorableLogFields,
+} from './memorableMoments';
 import { buildPendingProposal, getProposedState, withEditedNarrative, touchLocationSheet, ensureLocationSheet } from './pendingTurn';
 import { extractUpdates, extractNewItems, parseActionTags, stripActionTags, matchLoreCards, eventsToLoreCards, parseTurnFrame, eventsToQuestUpdates, eventsToEncounterUpdate, parsePanels, eventsToMilestone, eventsToLootVideo, eventsToVisualUpdate, stripChoiceList, extractChoiceLines, stripTurnCloser, storyHasBody } from './parser';
 import { hasRealGmStory } from './turnAsk';
@@ -229,7 +237,7 @@ function yieldToMainThread(): Promise<void> {
 type ImageGenJob =
   | { kind: 'panels'; entryId: string; prompts: string[]; promptKind: ImagePromptKind; visualContext: string; playerActionContext?: string }
   | { kind: 'panel-retry'; entryId: string; panelIndex: number; prompt: string; promptKind: ImagePromptKind; visualContext: string; playerActionContext?: string }
-  | { kind: 'turn'; entryId: string; prompts: string[]; promptKind: ImagePromptKind; visualContext: string; isMilestone?: boolean }
+  | { kind: 'turn'; entryId: string; prompts: string[]; promptKind: ImagePromptKind; visualContext: string; isMilestone?: boolean; heroImage?: boolean }
   | { kind: 'intro'; prompt: string; promptKind: ImagePromptKind; visualContext: string };
 
 interface VideoGenJob {
@@ -659,7 +667,8 @@ export function useGame() {
     prompt: string,
     settings: Settings,
     promptKind: ImagePromptKind,
-    context?: ImagePromptContext
+    context?: ImagePromptContext,
+    hero?: boolean
   ): Promise<string | null> => {
     // Classic text: skip routine art; optional memorable-moment splashes still allowed.
     if (!allowsImageGeneration(settings, promptKind)) {
@@ -704,7 +713,7 @@ export function useGame() {
     const requestImage = (finalPrompt: string) =>
       generateComicImage(finalPrompt, mode, settings, {
         useRawPrompt: true,
-        hero: promptKind === 'milestone-illustration',
+        hero: hero === true,
         memorableMoment: promptKind === 'milestone-illustration',
       });
 
@@ -969,7 +978,7 @@ export function useGame() {
             const urls: string[] = [];
             for (const prompt of job.prompts) {
               try {
-                const imageUrl = await fetchPanelImage(prompt, settingsRef.current, job.promptKind, sceneImageContext(job.visualContext));
+                const imageUrl = await fetchPanelImage(prompt, settingsRef.current, job.promptKind, sceneImageContext(job.visualContext), job.heroImage === true);
                 if (imageUrl) urls.push(imageUrl);
               } catch (err) {
                 debugLogger.record('ERROR', 'Unexpected turn image job failure', {
@@ -1511,6 +1520,7 @@ export function useGame() {
 
         const openingState = { ...stepped.state, pendingGeneratedOpening: false };
         let openingText = '';
+        let openingRaw = '';
         try {
           const openingResult = await callGm(
             openingState,
@@ -1526,6 +1536,7 @@ export function useGame() {
             },
             turnAbort.signal,
           );
+          openingRaw = openingResult.text;
           openingText = stripChoiceList(stripActionTags(openingResult.text));
         } catch {
           openingText = '';
@@ -1550,6 +1561,24 @@ export function useGame() {
         const openingUnlocks = journalReady
           ? newlyRevealedQuests(questsAtTurnStart, questsAfterScene)
           : [];
+        const openingTurn = openingState.turn + 1;
+        const openingEvents = parseActionTags(openingRaw || openingText);
+        const openingMemorable = decideClassicMemorable(
+          {
+            settings: settingsRef.current,
+            state: openingState,
+            turn: openingTurn,
+            storyText: cleanOpening,
+            writerTag: eventsToMilestone(openingEvents),
+            events: openingEvents,
+            lootVideo: eventsToLootVideo(openingEvents),
+            isOpeningSceneTurn: !openingState.openingEstablishment?.sceneWritten,
+            characterHp: openingState.character.hp,
+            characterConditions: openingState.character.conditions ?? [],
+            gainedItems: [],
+          },
+          canSpend('memorable')
+        );
         const openingGm: LogEntry = {
           id: uid(),
           turn: openingState.turn,
@@ -1557,8 +1586,8 @@ export function useGame() {
           content: cleanOpening,
           timestamp: Date.now(),
           systemLog: openingUnlocks.map((q) => `Quest Unlocked: ${q.name}`),
+          ...memorableLogFields(openingMemorable),
         };
-        const openingTurn = openingState.turn + 1;
         const seeded = seedOpeningSceneFacts({ ...openingState, turn: openingTurn });
         const sceneFacts = applyCommittedNarrative(
           { ...openingState, sceneFacts: seeded, turn: openingTurn },
@@ -1575,12 +1604,27 @@ export function useGame() {
           openingEstablishment: openingState.openingEstablishment
             ? { ...openingState.openingEstablishment, sceneWritten: true }
             : openingState.openingEstablishment,
+          memorableMoments: openingMemorable.nextState,
           lastUpdated: Date.now(),
         };
         stateRef.current = committed;
         setState(committed);
         void persist(committed);
         if (openingUnlocks.length) setUnlockedQuests(openingUnlocks);
+        if (
+          openingMemorable.request
+          && allowsImageGeneration(settingsRef.current, 'milestone-illustration')
+        ) {
+          enqueueImageGen({
+            kind: 'turn',
+            entryId: openingGm.id,
+            prompts: [openingMemorable.request.imagePrompt],
+            promptKind: 'milestone-illustration',
+            visualContext: buildVisualConsistencyBlock(committed, []),
+            isMilestone: true,
+            heroImage: openingMemorable.beat === 'opening',
+          });
+        }
         return;
       }
 
@@ -1890,7 +1934,7 @@ In <system-log>, only emit LitRPG/RPG progression lines (XP, loot, HP change as 
         }
         worldNotes.push(...postTick.weekSummaries.slice(0, 6));
       }
-      const milestoneReq = eventsToMilestone(events);
+      const writerMilestone = eventsToMilestone(events);
       const lootVideoReq = eventsToLootVideo(events);
       const visualUpdate = eventsToVisualUpdate(events);
 
@@ -2411,7 +2455,30 @@ In <system-log>, only emit LitRPG/RPG progression lines (XP, loot, HP change as 
           ? 'core'
           : 'minimal';
 
-      const mergedState: GameState = {
+      const memorableDecision = decideClassicMemorable(
+        {
+          settings: settingsRef.current,
+          state: liveCurrent,
+          turn: nextTurn,
+          storyText: cleanText,
+          writerTag: writerMilestone,
+          events,
+          lootVideo: lootVideoReq,
+          characterHp: baseChar.hp ?? liveCurrent.character.hp,
+          characterConditions: baseChar.conditions ?? liveCurrent.character.conditions ?? [],
+          gainedItems: [
+            ...structural.gainedItems,
+            ...newInventoryItems,
+            ...events
+              .filter((e) => e.type === 'item-gain' && e.name)
+              .map((e) => ({ name: e.name!, rarity: e.rarity })),
+          ],
+        },
+        canSpend('memorable')
+      );
+      const milestoneReq = memorableDecision.request;
+
+      const mergedStateDraft: GameState = {
         ...workingState,
         ...updates,
         character: baseChar,
@@ -2433,6 +2500,7 @@ In <system-log>, only emit LitRPG/RPG progression lines (XP, loot, HP change as 
         campaignPremise: workingState.campaignPremise ?? liveCurrent.campaignPremise,
         campaignBibleId: workingState.campaignBibleId ?? liveCurrent.campaignBibleId,
         pendingTurn: null,
+        memorableMoments: memorableDecision.nextState,
         log: [
           ...liveCurrent.log,
           {
@@ -2451,7 +2519,7 @@ In <system-log>, only emit LitRPG/RPG progression lines (XP, loot, HP change as 
               : result.imagePrompt?.length
                 ? { imageStatus: 'pending' as const }
                 : {}),
-            ...(milestoneReq ? { entryKind: 'milestone' as const, imageStatus: 'pending' as const } : {}),
+            ...memorableLogFields(memorableDecision),
           },
           ...(lootVideoEntry ? [lootVideoEntry] : []),
         ],
@@ -2466,7 +2534,7 @@ In <system-log>, only emit LitRPG/RPG progression lines (XP, loot, HP change as 
         ...(turnFrame ? { turnFrameTheme: turnFrame } : {}),
       };
 
-      // Prepare work descriptors before committing, but do not dispatch anything yet.
+      const mergedState: GameState = mergedStateDraft;
       const postCommitImageJobs: ImageGenJob[] = [];
       const allowSceneArt = storyHasBody(cleanText);
       if (!allowSceneArt) {
@@ -2509,6 +2577,7 @@ In <system-log>, only emit LitRPG/RPG progression lines (XP, loot, HP change as 
           promptKind: 'milestone-illustration',
           visualContext,
           isMilestone: true,
+          heroImage: memorableDecision.beat === 'opening',
         });
       }
       const postCommitVideoJob: VideoGenJob | null = lootVideoReq && lootVideoEntry
@@ -2809,6 +2878,7 @@ In <system-log>, only emit LitRPG/RPG progression lines (XP, loot, HP change as 
     const openingTimer = setTimeout(() => setShowLoadingOverlay(true), 800);
     try {
       let openingText = '';
+      let openingRaw = '';
       try {
         const openingResult = await callGm(
           newState,
@@ -2820,6 +2890,7 @@ In <system-log>, only emit LitRPG/RPG progression lines (XP, loot, HP change as 
           },
           openingAbort.signal,
         );
+        openingRaw = openingResult.text;
         openingText = stripChoiceList(stripActionTags(openingResult.text));
       } catch {
         openingText = '';
@@ -2844,6 +2915,24 @@ In <system-log>, only emit LitRPG/RPG progression lines (XP, loot, HP change as 
       const openingUnlocks = journalReady
         ? newlyRevealedQuests(newState.quests ?? [], questsAfterScene)
         : [];
+      const openingTurn = newState.turn + 1;
+      const openingEvents = parseActionTags(openingRaw || openingText);
+      const openingMemorable = decideClassicMemorable(
+        {
+          settings: settingsRef.current,
+          state: newState,
+          turn: openingTurn,
+          storyText: cleanOpening,
+          writerTag: eventsToMilestone(openingEvents),
+          events: openingEvents,
+          lootVideo: eventsToLootVideo(openingEvents),
+          isOpeningSceneTurn: true,
+          characterHp: newState.character.hp,
+          characterConditions: newState.character.conditions ?? [],
+          gainedItems: [],
+        },
+        canSpend('memorable')
+      );
       const openingGm: LogEntry = {
         id: uid(),
         turn: newState.turn,
@@ -2851,8 +2940,8 @@ In <system-log>, only emit LitRPG/RPG progression lines (XP, loot, HP change as 
         content: cleanOpening,
         timestamp: Date.now(),
         systemLog: openingUnlocks.map((q) => `Quest Unlocked: ${q.name}`),
+        ...memorableLogFields(openingMemorable),
       };
-      const openingTurn = newState.turn + 1;
       const seeded = seedOpeningSceneFacts({ ...newState, turn: openingTurn });
       const sceneFacts = applyCommittedNarrative(
         { ...newState, sceneFacts: seeded, turn: openingTurn },
@@ -2875,12 +2964,27 @@ In <system-log>, only emit LitRPG/RPG progression lines (XP, loot, HP change as 
           ...newState.openingEstablishment!,
           sceneWritten: true,
         },
+        memorableMoments: openingMemorable.nextState,
         lastUpdated: Date.now(),
       };
       stateRef.current = committed;
       setState(committed);
       void persist(committed);
       if (openingUnlocks.length) setUnlockedQuests(openingUnlocks);
+      if (
+        openingMemorable.request
+        && allowsImageGeneration(settingsRef.current, 'milestone-illustration')
+      ) {
+        enqueueImageGen({
+          kind: 'turn',
+          entryId: openingGm.id,
+          prompts: [openingMemorable.request.imagePrompt],
+          promptKind: 'milestone-illustration',
+          visualContext: buildVisualConsistencyBlock(committed, []),
+          isMilestone: true,
+          heroImage: openingMemorable.beat === 'opening',
+        });
+      }
     } finally {
       clearTimeout(openingTimer);
       setBusy(false);
@@ -2893,12 +2997,14 @@ In <system-log>, only emit LitRPG/RPG progression lines (XP, loot, HP change as 
       comicModeRef.current,
       narrativeModeRef.current
     );
-    enqueueImageGen({
-      kind: 'intro',
-      prompt: introContent.slice(0, 200),
-      promptKind: introIsComic ? 'comic-panel' : 'classic-illustration',
-      visualContext: buildVisualConsistencyBlock(stateRef.current ?? newState, []),
-    });
+    if (introIsComic) {
+      enqueueImageGen({
+        kind: 'intro',
+        prompt: introContent.slice(0, 200),
+        promptKind: 'comic-panel',
+        visualContext: buildVisualConsistencyBlock(stateRef.current ?? newState, []),
+      });
+    }
   });
 
   const autoFight = useCallbackRef(async () => {
@@ -3102,6 +3208,45 @@ In <system-log>, only emit LitRPG/RPG progression lines (XP, loot, HP change as 
     generateInventoryArt,
     commitInventoryArt,
   ]);
+
+  const acceptBeautyOffer = useCallbackRef((entryId: string) => {
+    const current = stateRef.current;
+    if (!current) return;
+    if (!isClassicMemorableEnabled(settingsRef.current)) return;
+    if (!canSpend('memorable')) {
+      addToast(capacityStatusMessage('memorable'), 'info');
+      return;
+    }
+    if (isSittingHardBlocked(current.memorableMoments ?? {}, current.turn)) {
+      addToast('This sitting’s splash limit is used. Death can still illustrate; other moments wait.', 'info');
+      return;
+    }
+    const applied = applyAcceptedBeautyOffer(current, entryId);
+    if (!applied) return;
+    stateRef.current = applied.next;
+    setState(applied.next);
+    void persist(applied.next);
+    if (allowsImageGeneration(settingsRef.current, 'milestone-illustration')) {
+      enqueueImageGen({
+        kind: 'turn',
+        entryId,
+        prompts: [applied.prompt],
+        promptKind: 'milestone-illustration',
+        visualContext: buildVisualConsistencyBlock(applied.next, []),
+        isMilestone: true,
+      });
+    }
+  });
+
+  const dismissBeautyOffer = useCallbackRef((entryId: string) => {
+    const current = stateRef.current;
+    if (!current) return;
+    const next = applyDismissedBeautyOffer(current, entryId);
+    if (!next) return;
+    stateRef.current = next;
+    setState(next);
+    void persist(next);
+  });
 
   const retryPanelImage = useCallbackRef((entryId: string, panelIndex: number) => {
     const current = stateRef.current;
@@ -3335,6 +3480,8 @@ In <system-log>, only emit LitRPG/RPG progression lines (XP, loot, HP change as 
     lastSavedTurn,
     retryAction: () => { if (lastInput.trim()) sendAction(lastInput); },
     retryPanelImage,
+    acceptBeautyOffer,
+    dismissBeautyOffer,
     generateInventoryArt,
     commitInventoryArt,
     updatePanelOverlay,
