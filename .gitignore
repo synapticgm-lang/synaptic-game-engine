@@ -22,3 +22,4 @@ dist-ssr
 *.sw?
 .env
 supabase/.temp/
+docs/research/pasted/gemini-activity*.txt
