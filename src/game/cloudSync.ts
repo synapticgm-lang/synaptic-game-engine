@@ -1,6 +1,18 @@
-import type { ArtStylePreset, GameState, SaveSlotInfo, Settings } from './types';
+import type { ArtStylePreset, GameState, LogEntry, SaveSlotInfo, Settings } from './types';
 import { isPlayableSave } from './defaults';
 import { supabase, isSupabaseConfigured } from '@/lib/supabase';
+import { flushPlaytimeToProfile } from './playtime';
+
+function lastPlayerLine(state: GameState): string | null {
+  const log = Array.isArray(state.log) ? state.log : [];
+  for (let i = log.length - 1; i >= 0; i--) {
+    const entry = log[i] as LogEntry | undefined;
+    if (entry?.role === 'player' && typeof entry.content === 'string' && entry.content.trim()) {
+      return entry.content.replace(/\s+/g, ' ').trim().slice(0, 400);
+    }
+  }
+  return null;
+}
 
 export type CloudSaveBundle = {
   state: GameState;
@@ -250,6 +262,7 @@ export async function syncGameToCloud(
     engine_mode: state.engineMode ?? 'litrpg',
     ai_status: 'Active',
     game_state: state,
+    last_prompt: lastPlayerLine(state),
     save_id: saveId,
     updated_at: new Date().toISOString(),
     last_turn_at: new Date().toISOString(),
@@ -266,6 +279,8 @@ export async function syncGameToCloud(
   } else {
     await supabase.from('game_sessions').insert(sessionPayload);
   }
+
+  void flushPlaytimeToProfile(userId);
 
   return { ok: true };
 }
