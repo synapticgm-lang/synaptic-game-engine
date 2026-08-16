@@ -22,6 +22,29 @@ export type DiceMaterial =
   | 'frost'
   | 'neon';
 
+export type ThemeTexture =
+  | 'plain'
+  | 'moss'
+  | 'dusk'
+  | 'soot'
+  | 'ivory'
+  | 'banner'
+  | 'scale'
+  | 'ember'
+  | 'circuit'
+  | 'halo'
+  | 'sulfur'
+  | 'bone'
+  | 'glamour'
+  | 'scrap'
+  | 'tide'
+  | 'velvet'
+  | 'parchment'
+  | 'phosphor'
+  | 'neon'
+  | 'glass'
+  | 'noir';
+
 export type CosmeticSlot =
   | 'theme'
   | 'font'
@@ -54,6 +77,8 @@ export interface ShopItem {
   diceSkin?: { accent: string; face: string; material?: DiceMaterial };
   /** Turn-card border style id (CSS `data-sgm-frame`). */
   frameSkin?: { style: string };
+  /** Spoken one-liner for voice cards (browser TTS preview). */
+  flavour?: string;
   preview?: {
     accent: string;
     bg: string;
@@ -62,6 +87,8 @@ export interface ShopItem {
     muted: string;
     fontUi?: string;
     fontStory?: string;
+    /** Panel material for shop / locker chips. Free default stays `plain`. */
+    texture?: ThemeTexture;
   };
 }
 
@@ -694,8 +721,10 @@ type RaceKitDef = {
   diceAccent: string;
   diceFace: string;
   diceMaterial: DiceMaterial;
+  texture: ThemeTexture;
   voiceName: string;
   voiceBlurb: string;
+  voiceFlavour: string;
   tts: { rate: number; pitch: number; voiceHint: string };
 };
 
@@ -712,8 +741,10 @@ const RACE_THEME_KITS: RaceKitDef[] = [
     diceAccent: '#84cc16',
     diceFace: '#3f6212',
     diceMaterial: 'wood',
+    texture: 'moss',
     voiceName: 'Grove Whisper',
     voiceBlurb: 'Soft canopy narrator — unhurried, close.',
+    voiceFlavour: 'The canopy remembers every footfall.',
     tts: { rate: 0.92, pitch: 1.08, voiceHint: 'zira' },
   },
   {
@@ -728,8 +759,10 @@ const RACE_THEME_KITS: RaceKitDef[] = [
     diceAccent: '#c084fc',
     diceFace: '#6b21a8',
     diceMaterial: 'obsidian',
+    texture: 'dusk',
     voiceName: 'Under-Realm',
     voiceBlurb: 'Low, measured dusk voice.',
+    voiceFlavour: 'Dusk keeps its own counsel.',
     tts: { rate: 0.88, pitch: 0.82, voiceHint: 'hazel' },
   },
   {
@@ -744,8 +777,10 @@ const RACE_THEME_KITS: RaceKitDef[] = [
     diceAccent: '#fbbf24',
     diceFace: '#b45309',
     diceMaterial: 'ivory',
+    texture: 'ivory',
     voiceName: 'Lofty Court',
     voiceBlurb: 'Precise, slightly lifted court diction.',
+    voiceFlavour: 'The court has already heard your name.',
     tts: { rate: 0.96, pitch: 1.05, voiceHint: 'samantha' },
   },
   {
@@ -760,8 +795,10 @@ const RACE_THEME_KITS: RaceKitDef[] = [
     diceAccent: '#d97706',
     diceFace: '#78350f',
     diceMaterial: 'brass',
+    texture: 'soot',
     voiceName: 'Forge Deep',
     voiceBlurb: 'Low hall voice, unhurried.',
+    voiceFlavour: 'Stone remembers the hammer.',
     tts: { rate: 0.84, pitch: 0.72, voiceHint: 'david' },
   },
   {
@@ -776,8 +813,10 @@ const RACE_THEME_KITS: RaceKitDef[] = [
     diceAccent: '#65a30d',
     diceFace: '#3f6212',
     diceMaterial: 'iron',
+    texture: 'banner',
     voiceName: 'Warcamp',
     voiceBlurb: 'Rough, short-breathed camp bark.',
+    voiceFlavour: 'Banners first. Then the rest.',
     tts: { rate: 1.02, pitch: 0.76, voiceHint: 'mark' },
   },
   {
@@ -786,14 +825,16 @@ const RACE_THEME_KITS: RaceKitDef[] = [
     fontName: 'Wyrm Gold',
     fontBlurb: 'Gilded serif for lair ledgers.',
     fontUi: 'ui-sans-serif, system-ui, sans-serif',
-    fontStory: 'Georgia, "Times New Roman", serif',
+    fontStory: '"Cinzel Decorative", Cinzel, serif',
     diceName: 'Molten Scale',
     diceBlurb: 'Scale-green faces, gold pips. Odds unchanged.',
     diceAccent: '#eab308',
     diceFace: '#854d0e',
     diceMaterial: 'scale',
+    texture: 'scale',
     voiceName: 'Hoard Rumble',
     voiceBlurb: 'Deep, slow wyrm diction.',
+    voiceFlavour: 'The hoard does not sleep.',
     tts: { rate: 0.8, pitch: 0.68, voiceHint: 'daniel' },
   },
   {
@@ -802,14 +843,16 @@ const RACE_THEME_KITS: RaceKitDef[] = [
     fontName: 'Ember Script',
     fontBlurb: 'Warm serif through rose-gold flame.',
     fontUi: 'ui-sans-serif, system-ui, sans-serif',
-    fontStory: 'Georgia, Palatino, serif',
+    fontStory: '"Playfair Display", Palatino, serif',
     diceName: 'Ash Flame',
     diceBlurb: 'Char faces, ember rims. Odds unchanged.',
     diceAccent: '#fb7185',
     diceFace: '#9f1239',
     diceMaterial: 'ember',
+    texture: 'ember',
     voiceName: 'Ashrise',
     voiceBlurb: 'Warm mid voice, a little brighter.',
+    voiceFlavour: 'Ash is only the first name of fire.',
     tts: { rate: 0.97, pitch: 1.06, voiceHint: 'zira' },
   },
   {
