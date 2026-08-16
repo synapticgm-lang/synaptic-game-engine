@@ -27,6 +27,7 @@ import {
 } from '@/game/cosmeticCatalog';
 import { ensureTestCosmeticUnlock, isOwned } from '@/game/cosmeticEntitlements';
 import { applySettingsCosmetics, applyUiThemeToDocument, themeBySettingsId } from '@/game/uiTheme';
+import { DicePreview } from './DicePreview';
 
 type HubTab = 'play' | 'themes' | 'shop';
 
@@ -553,8 +554,11 @@ function ShopCard({ item }: { item: ShopItem }) {
       <div className="flex items-start justify-between gap-2">
         <div className="min-w-0 flex-1">
           <div className="text-sm font-semibold text-slate-100">{item.name}</div>
-          <div className="mt-1 text-[11px] leading-snug text-slate-400">{item.blurb}</div>
-          {item.slot === 'font' && <FontSample item={item} />}
+          {item.slot === 'font' ? (
+            <FontDescriptionBox item={item} blurb={item.blurb} />
+          ) : (
+            <div className="mt-1 text-[11px] leading-snug text-slate-400">{item.blurb}</div>
+          )}
         </div>
         {item.slot === 'dice' ? (
           <DicePreview item={item} />
@@ -591,38 +595,20 @@ function ShopCard({ item }: { item: ShopItem }) {
   );
 }
 
-function FontSample({ item }: { item: ShopItem }) {
-  const family = item.preview?.fontStory ?? item.preview?.fontUi;
-  if (!family) return null;
-  return (
-    <p className="mt-1.5 text-[13px] leading-snug text-slate-200" style={{ fontFamily: family }}>
-      The tale opens here.
-    </p>
-  );
+function storyFontFamily(item: ShopItem): string | undefined {
+  return item.preview?.fontStory ?? item.preview?.fontUi;
 }
 
-function DicePreview({ item, size = 36 }: { item: ShopItem; size?: number }) {
-  const accent = item.diceSkin?.accent ?? item.preview?.accent ?? '#94a3b8';
-  const face = item.diceSkin?.face ?? item.preview?.panel ?? '#1e293b';
+function FontDescriptionBox({ item, blurb }: { item: ShopItem; blurb: string }) {
+  const family = storyFontFamily(item);
   return (
-    <svg
-      viewBox="0 0 32 32"
-      width={size}
-      height={size}
-      className="shrink-0"
-      aria-hidden
+    <div
+      className="mt-1.5 rounded-md border border-white/10 bg-black/30 px-2.5 py-2 text-[14px] leading-snug text-slate-200"
+      style={family ? { fontFamily: family } : undefined}
     >
-      <polygon
-        points="16,2 28,10 28,22 16,30 4,22 4,10"
-        fill={face}
-        stroke={accent}
-        strokeWidth="1.6"
-      />
-      <circle cx="16" cy="15" r="3.2" fill={accent} />
-      <text x="16" y="25" textAnchor="middle" fill={accent} fontSize="6" fontWeight="700">
-        d20
-      </text>
-    </svg>
+      <p>{blurb}</p>
+      <p className="mt-1 text-[13px] text-slate-300">The tale opens here.</p>
+    </div>
   );
 }
 
@@ -711,7 +697,7 @@ function SetCard({
                   <div className="text-xs font-medium text-slate-200">
                     {item.slot === 'dice' ? `${label} · ${item.name}` : item.name}
                   </div>
-                  {item.slot === 'font' && <FontSample item={item} />}
+                  {item.slot === 'font' && <FontDescriptionBox item={item} blurb={item.blurb} />}
                 </div>
               </div>
             ))}
@@ -807,8 +793,11 @@ function SelectCard({
       ) : null}
       <span className="min-w-0 flex-1">
         <span className="block text-sm font-medium text-slate-100">{title}</span>
-        <span className="mt-0.5 block text-[11px] leading-snug text-slate-500">{subtitle}</span>
-        {fontSample && <FontSample item={fontSample} />}
+        {fontSample ? (
+          <FontDescriptionBox item={fontSample} blurb={subtitle} />
+        ) : (
+          <span className="mt-0.5 block text-[11px] leading-snug text-slate-500">{subtitle}</span>
+        )}
       </span>
       {selected && <Check size={16} className="mt-0.5 shrink-0 text-cyan-400" />}
     </button>

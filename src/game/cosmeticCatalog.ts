@@ -2,6 +2,26 @@
  * Sellable cosmetic catalog (Pack 10). Display / entitlements only — never touches dice math.
  */
 
+export type DiceMaterial =
+  | 'wood'
+  | 'obsidian'
+  | 'ivory'
+  | 'brass'
+  | 'iron'
+  | 'scale'
+  | 'ember'
+  | 'circuit'
+  | 'marble'
+  | 'sulfur'
+  | 'bone'
+  | 'iridescent'
+  | 'scrap'
+  | 'tide'
+  | 'velvet'
+  | 'holo'
+  | 'frost'
+  | 'neon';
+
 export type CosmeticSlot =
   | 'theme'
   | 'font'
@@ -30,8 +50,8 @@ export interface ShopItem {
   kit?: { fontId: string; diceId: string; voiceId: string; frameId: string };
   /** TTS flavour — pitch/rate always apply; voiceHint matches a browser voice name if present. */
   tts?: { rate: number; pitch: number; voiceHint: string };
-  /** Dice tray tint. Cosmetic only — odds unchanged. */
-  diceSkin?: { accent: string; face: string };
+  /** Dice tray tint + preview material. Cosmetic only — odds unchanged. */
+  diceSkin?: { accent: string; face: string; material?: DiceMaterial };
   /** Turn-card border style id (CSS `data-sgm-frame`). */
   frameSkin?: { style: string };
   preview?: {
@@ -64,6 +84,7 @@ export const SHOP_CATALOG: ShopItem[] = [
       muted: '#64748b',
       fontUi: 'ui-sans-serif, system-ui, sans-serif',
       fontStory: 'ui-serif, Georgia, serif',
+      texture: 'plain',
     },
   },
   {
@@ -473,7 +494,7 @@ export const SHOP_CATALOG: ShopItem[] = [
     blurb: 'Cyan holographic etch. Cosmetic only — odds unchanged.',
     priceGbp: '£2.99',
     priceUsd: '$2.99',
-    diceSkin: { accent: '#22d3ee', face: '#0e7490' },
+    diceSkin: { accent: '#22d3ee', face: '#0e7490', material: 'holo' },
   },
   {
     id: 'dice.bone-iron',
@@ -482,7 +503,7 @@ export const SHOP_CATALOG: ShopItem[] = [
     blurb: 'Weathered bone faces, iron numerals.',
     priceGbp: '£2.99',
     priceUsd: '$2.99',
-    diceSkin: { accent: '#d6d3d1', face: '#78716c' },
+    diceSkin: { accent: '#d6d3d1', face: '#78716c', material: 'bone' },
   },
   {
     id: 'dice.frost-crystal',
@@ -491,7 +512,7 @@ export const SHOP_CATALOG: ShopItem[] = [
     blurb: 'Clear frosted glass polyhedral set.',
     priceGbp: '£3.99',
     priceUsd: '$3.99',
-    diceSkin: { accent: '#7dd3fc', face: '#0369a1' },
+    diceSkin: { accent: '#7dd3fc', face: '#0369a1', material: 'frost' },
   },
   {
     id: 'dice.neon-edge',
@@ -500,7 +521,7 @@ export const SHOP_CATALOG: ShopItem[] = [
     blurb: 'Black dice with neon rim light.',
     priceGbp: '£2.99',
     priceUsd: '$2.99',
-    diceSkin: { accent: '#f0abfc', face: '#a21caf' },
+    diceSkin: { accent: '#f0abfc', face: '#a21caf', material: 'neon' },
   },
 
   // --- Voices ---
@@ -672,6 +693,7 @@ type RaceKitDef = {
   diceBlurb: string;
   diceAccent: string;
   diceFace: string;
+  diceMaterial: DiceMaterial;
   voiceName: string;
   voiceBlurb: string;
   tts: { rate: number; pitch: number; voiceHint: string };
@@ -684,11 +706,12 @@ const RACE_THEME_KITS: RaceKitDef[] = [
     fontName: 'Canopy Serif',
     fontBlurb: 'Leaf-gold story serif with a soft UI sans.',
     fontUi: 'ui-sans-serif, system-ui, sans-serif',
-    fontStory: 'Georgia, "Palatino Linotype", Palatino, serif',
+    fontStory: '"Libre Baskerville", Georgia, serif',
     diceName: 'Amber Leaf',
     diceBlurb: 'Moss-and-amber polyhedrals. Odds unchanged.',
     diceAccent: '#84cc16',
     diceFace: '#3f6212',
+    diceMaterial: 'wood',
     voiceName: 'Grove Whisper',
     voiceBlurb: 'Soft canopy narrator — unhurried, close.',
     tts: { rate: 0.92, pitch: 1.08, voiceHint: 'zira' },
@@ -699,11 +722,12 @@ const RACE_THEME_KITS: RaceKitDef[] = [
     fontName: 'Umbrance Serif',
     fontBlurb: 'Pale court serif on dusk panels.',
     fontUi: 'ui-sans-serif, system-ui, sans-serif',
-    fontStory: '"Palatino Linotype", Palatino, Georgia, serif',
+    fontStory: '"Cormorant Garamond", "Palatino Linotype", Palatino, serif',
     diceName: 'Violet Obsidian',
     diceBlurb: 'Dark glass with violet rims. Odds unchanged.',
     diceAccent: '#c084fc',
     diceFace: '#6b21a8',
+    diceMaterial: 'obsidian',
     voiceName: 'Under-Realm',
     voiceBlurb: 'Low, measured dusk voice.',
     tts: { rate: 0.88, pitch: 0.82, voiceHint: 'hazel' },
@@ -712,13 +736,14 @@ const RACE_THEME_KITS: RaceKitDef[] = [
     themeId: 'theme.high-elf-spire',
     slug: 'spire',
     fontName: 'Ivory Court',
-    fontBlurb: 'Formal Times pair for lofty chrome.',
+    fontBlurb: 'Inscriptional Cinzel for lofty chrome.',
     fontUi: 'ui-sans-serif, system-ui, sans-serif',
-    fontStory: '"Times New Roman", Times, Georgia, serif',
+    fontStory: 'Cinzel, "Times New Roman", Times, serif',
     diceName: 'Sky Gold',
     diceBlurb: 'Ivory faces, gold numerals. Odds unchanged.',
     diceAccent: '#fbbf24',
     diceFace: '#b45309',
+    diceMaterial: 'ivory',
     voiceName: 'Lofty Court',
     voiceBlurb: 'Precise, slightly lifted court diction.',
     tts: { rate: 0.96, pitch: 1.05, voiceHint: 'samantha' },
@@ -728,12 +753,13 @@ const RACE_THEME_KITS: RaceKitDef[] = [
     slug: 'forgehall',
     fontName: 'Rune Stone',
     fontBlurb: 'Heavy serif for mountain holds.',
-    fontUi: 'Georgia, "Palatino Linotype", serif',
-    fontStory: 'Georgia, "Palatino Linotype", serif',
+    fontUi: 'Cambria, Georgia, "Palatino Linotype", serif',
+    fontStory: 'Cambria, Georgia, "Palatino Linotype", serif',
     diceName: 'Hammered Brass',
     diceBlurb: 'Brass faces, soot numerals. Odds unchanged.',
     diceAccent: '#d97706',
     diceFace: '#78350f',
+    diceMaterial: 'brass',
     voiceName: 'Forge Deep',
     voiceBlurb: 'Low hall voice, unhurried.',
     tts: { rate: 0.84, pitch: 0.72, voiceHint: 'david' },
@@ -744,11 +770,12 @@ const RACE_THEME_KITS: RaceKitDef[] = [
     fontName: 'War Banner',
     fontBlurb: 'Hard sans for camp orders.',
     fontUi: 'Arial Black, Impact, sans-serif',
-    fontStory: 'ui-sans-serif, system-ui, sans-serif',
+    fontStory: 'Impact, "Arial Black", sans-serif',
     diceName: 'Blood Iron',
     diceBlurb: 'Pitted iron, rust-green rims. Odds unchanged.',
     diceAccent: '#65a30d',
     diceFace: '#3f6212',
+    diceMaterial: 'iron',
     voiceName: 'Warcamp',
     voiceBlurb: 'Rough, short-breathed camp bark.',
     tts: { rate: 1.02, pitch: 0.76, voiceHint: 'mark' },
@@ -764,6 +791,7 @@ const RACE_THEME_KITS: RaceKitDef[] = [
     diceBlurb: 'Scale-green faces, gold pips. Odds unchanged.',
     diceAccent: '#eab308',
     diceFace: '#854d0e',
+    diceMaterial: 'scale',
     voiceName: 'Hoard Rumble',
     voiceBlurb: 'Deep, slow wyrm diction.',
     tts: { rate: 0.8, pitch: 0.68, voiceHint: 'daniel' },
@@ -779,6 +807,7 @@ const RACE_THEME_KITS: RaceKitDef[] = [
     diceBlurb: 'Char faces, ember rims. Odds unchanged.',
     diceAccent: '#fb7185',
     diceFace: '#9f1239',
+    diceMaterial: 'ember',
     voiceName: 'Ashrise',
     voiceBlurb: 'Warm mid voice, a little brighter.',
     tts: { rate: 0.97, pitch: 1.06, voiceHint: 'zira' },
@@ -794,6 +823,7 @@ const RACE_THEME_KITS: RaceKitDef[] = [
     diceBlurb: 'Gunmetal dice, optic-cyan edge. Odds unchanged.',
     diceAccent: '#22d3ee',
     diceFace: '#155e75',
+    diceMaterial: 'circuit',
     voiceName: 'Chassis Synth',
     voiceBlurb: 'Flat, slightly fast augmented tone.',
     tts: { rate: 1.06, pitch: 0.88, voiceHint: 'google' },
@@ -804,11 +834,12 @@ const RACE_THEME_KITS: RaceKitDef[] = [
     fontName: 'Marble Serif',
     fontBlurb: 'Garamond-like calm for marble panels.',
     fontUi: 'ui-sans-serif, system-ui, sans-serif',
-    fontStory: 'Georgia, Garamond, "Times New Roman", serif',
+    fontStory: '"Cormorant Garamond", Garamond, Georgia, serif',
     diceName: 'Halo Gold',
     diceBlurb: 'Pale gold polyhedrals. Odds unchanged.',
     diceAccent: '#fde68a',
     diceFace: '#ca8a04',
+    diceMaterial: 'marble',
     voiceName: 'Radiance',
     voiceBlurb: 'Soft, lifted celestial diction.',
     tts: { rate: 0.93, pitch: 1.12, voiceHint: 'samantha' },
@@ -824,6 +855,7 @@ const RACE_THEME_KITS: RaceKitDef[] = [
     diceBlurb: 'Bone faces, sulfur-red rims. Odds unchanged.',
     diceAccent: '#ef4444',
     diceFace: '#7f1d1d',
+    diceMaterial: 'sulfur',
     voiceName: 'Pact Heat',
     voiceBlurb: 'Low, slow sealed-contract voice.',
     tts: { rate: 0.86, pitch: 0.74, voiceHint: 'david' },
@@ -839,6 +871,7 @@ const RACE_THEME_KITS: RaceKitDef[] = [
     diceBlurb: 'Ivory dice, crypt-teal edge. Odds unchanged.',
     diceAccent: '#2dd4bf',
     diceFace: '#115e59',
+    diceMaterial: 'bone',
     voiceName: 'Ossuary',
     voiceBlurb: 'Whispered, low crypt tone.',
     tts: { rate: 0.82, pitch: 0.7, voiceHint: 'hazel' },
@@ -854,6 +887,7 @@ const RACE_THEME_KITS: RaceKitDef[] = [
     diceBlurb: 'Pink-teal shimmer faces. Odds unchanged.',
     diceAccent: '#e879f9',
     diceFace: '#a21caf',
+    diceMaterial: 'iridescent',
     voiceName: 'Glamour',
     voiceBlurb: 'Playful, slightly lifted twilight voice.',
     tts: { rate: 1.04, pitch: 1.14, voiceHint: 'zira' },
@@ -869,6 +903,7 @@ const RACE_THEME_KITS: RaceKitDef[] = [
     diceBlurb: 'Rusty olive dice, scrap-yellow pips. Odds unchanged.',
     diceAccent: '#facc15',
     diceFace: '#854d0e',
+    diceMaterial: 'scrap',
     voiceName: 'Scrap Cackle',
     voiceBlurb: 'Faster, brighter workshop bark.',
     tts: { rate: 1.1, pitch: 1.16, voiceHint: 'zira' },
@@ -884,6 +919,7 @@ const RACE_THEME_KITS: RaceKitDef[] = [
     diceBlurb: 'Tide-glass dice. Odds unchanged.',
     diceAccent: '#2dd4bf',
     diceFace: '#115e59',
+    diceMaterial: 'tide',
     voiceName: 'Abyss Tide',
     voiceBlurb: 'Slow, resonant deep-water diction.',
     tts: { rate: 0.86, pitch: 0.8, voiceHint: 'daniel' },
@@ -899,6 +935,7 @@ const RACE_THEME_KITS: RaceKitDef[] = [
     diceBlurb: 'Black velvet dice, wine-red rims. Odds unchanged.',
     diceAccent: '#be123c',
     diceFace: '#881337',
+    diceMaterial: 'velvet',
     voiceName: 'Nocturne',
     voiceBlurb: 'Low, measured night-court voice.',
     tts: { rate: 0.87, pitch: 0.76, voiceHint: 'david' },
@@ -963,7 +1000,7 @@ function attachRaceThemeKits(): void {
         blurb: def.diceBlurb,
         priceGbp: '£2.99',
         priceUsd: '$2.99',
-        diceSkin: { accent: def.diceAccent, face: def.diceFace },
+        diceSkin: { accent: def.diceAccent, face: def.diceFace, material: def.diceMaterial },
       },
       {
         id: voiceId,

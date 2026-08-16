@@ -17,6 +17,7 @@ John is playtesting live. Collect issues here. Do not implement until he asks fo
 
 ## Done (already shipped)
 
+- Themes/Shop dice previews are faceted d20s with material textures (wood, brass, obsidian, etc.) — not flat hex fills (`2026-08-16c`)
 - Themes Customize / Shop font cards: description box renders in the pack’s story typeface (14px, readable contrast); Canopy / Umbrance / Ivory / Rune Stone / War Banner stacks no longer collapse to the same Georgia (`2026-08-16b`)
 - Origin ask drops the obvious “Not a place in this cathedral” clause; Earth-origin ask stays (`2026-08-16a`)
 - After weave covers, writer continues the already-written scene with locked look + kit — no thin “particulars settle” lock line (`2026-08-16a`)
