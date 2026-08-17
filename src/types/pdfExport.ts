@@ -73,6 +73,7 @@ export interface BookPagePanel {
   overlayEdits?: import('@/game/types').ComicOverlayEdit[];
   lootItemName?: string;
   lootItemRarity?: import('@/game/types').Rarity;
+  splashTitle?: string;
 }
 
 /**

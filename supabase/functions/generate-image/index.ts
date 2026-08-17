@@ -39,7 +39,7 @@ Deno.serve(async (req) => {
 
     if (!prompt) return jsonResponse({ error: 'Missing prompt' }, 400);
     if (!apiKey) {
-      return jsonResponse({ error: 'No OpenRouter API key configured for image generation.' }, 503);
+      return jsonResponse({ error: 'Hosted image service is unavailable.' }, 503);
     }
 
     const res = await fetch(OPENROUTER_URL, {

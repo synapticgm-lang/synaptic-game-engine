@@ -712,8 +712,7 @@ export async function generateComicImage(
   // Default launch path: Flux via OpenRouter (tier-mapped schnell/dev)
   const openRouterPrompt = `${styledPrompt}\n\nAvoid depicting: ${effectiveNegativePrompt}.`;
   if (isByokTierWithoutHostedKeys(settings) && !resolveByokImageSpendKey(settings)) {
-    console.log('[ImageService]', BYOK_IMAGE_KEY_REQUIRED);
-    return null;
+    throw new Error(BYOK_IMAGE_KEY_REQUIRED);
   }
   const apiKey = isByokTierWithoutHostedKeys(settings)
     ? resolveByokImageSpendKey(settings)
@@ -744,7 +743,7 @@ export async function generateComicImage(
       debugLogger.record('WARN', 'Hosted image proxy failed — soft-skip', {
         error: proxyErr instanceof Error ? proxyErr.message : String(proxyErr),
       });
-      return null;
+      throw new Error('Hosted image service is unavailable.');
     }
     // Proxy unavailable / empty — soft-skip rather than blaming Settings on Free.
     debugLogger.record('WARN', 'Image generation skipped — no hosted image key path', {

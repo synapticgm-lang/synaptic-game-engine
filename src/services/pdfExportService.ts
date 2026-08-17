@@ -287,6 +287,7 @@ function packPagesForPrint(manifest: ManifestPage[], panelsPerPage: PanelsPerPag
             narrativeText: entry.text,
             lootItemName: entry.meta?.lootItemName,
             lootItemRarity: entry.meta?.lootItemRarity,
+            splashTitle: entry.meta?.splashTitle,
           },
         ],
       });
@@ -505,7 +506,7 @@ async function renderFullBleedFeaturePage(doc: jsPDF, page: BookPage, pageRect: 
   if (artDataUrl) {
     doc.addImage(artDataUrl, 'JPEG', pageRect.x, pageRect.y, pageRect.w, pageRect.h);
   } else {
-    drawPlaceholderArt(doc, pageRect, theme, panel.lootItemName ? 'Legendary Drop' : 'Milestone Illustration');
+    drawPlaceholderArt(doc, pageRect, theme, panel.lootItemName ? 'Legendary Drop' : (panel.splashTitle || 'A moment worth keeping'));
   }
 
   // Banner along the bottom of the safe area with the milestone/loot caption.
@@ -521,8 +522,8 @@ async function renderFullBleedFeaturePage(doc: jsPDF, page: BookPage, pageRect: 
   doc.setTextColor(accent.r, accent.g, accent.b);
   doc.setFontSize(11);
   const title = panel.lootItemName
-    ? `\u2726 LEGENDARY DROP: ${panel.lootItemName.toUpperCase()} \u2726`
-    : '\u2726 MILESTONE \u2726';
+    ? `Legendary drop: ${panel.lootItemName}`
+    : (panel.splashTitle || 'A moment worth keeping');
   doc.text(title, safeArea.x + safeArea.w / 2, bannerY + 0.22, { align: 'center' });
 
   doc.setFont(mapFontFamily(theme.captionFontFamily), 'normal');

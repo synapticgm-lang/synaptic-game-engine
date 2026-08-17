@@ -14,6 +14,7 @@ import { RewindBar } from './qol/RewindBar';
 import { TurnConfirmBar } from './qol/TurnConfirmBar';
 import { shouldShowTurnAsk, TURN_ASK, hasRealGmStory, shouldSkipDuplicatePlayerBubble } from '@/game/turnAsk';
 import { BeautyMomentOfferLink } from './BeautyMomentOffer';
+import { splashPlateLabel } from '@/game/memorableMoments';
 
 const HIDE_OPTIONS_KEY = 'synapticgm-hide-options';
 const HIDE_TEXT_KEY = 'synapticgm-hide-text';
@@ -453,19 +454,20 @@ function LogRow({ entry, lorebook, showSystemLog, statVerbosity, engineMode, sho
   // distinct from the routine text log, instead of only surfacing via the small image strip.
   if (entry.entryKind === 'milestone') {
     const image = entry.imageUrls?.[0];
+    const plate = splashPlateLabel(entry);
     return (
       <div data-entry-id={entry.id} data-turn={entry.turn} data-panel-kind="milestone" className="space-y-2">
         <div className="flex justify-center">
-          <span className="rounded-full border border-amber-500/60 bg-amber-950/40 px-3 py-1 text-[10px] font-black uppercase tracking-widest text-amber-300">
-            ✦ Milestone ✦
+          <span className="rounded-full border border-amber-500/50 bg-amber-950/40 px-3 py-1 text-[11px] font-semibold tracking-wide text-amber-200">
+            {plate}
           </span>
         </div>
         <div className="overflow-hidden rounded-xl border-2 border-amber-600/50 bg-slate-950 shadow-2xl shadow-black/60">
           {image ? (
-            <img src={image} alt="Milestone illustration" className="block max-h-[70vh] w-full object-contain" />
+            <img src={image} alt={plate} className="block max-h-[70vh] w-full object-contain" />
           ) : (
             <div className="flex min-h-[240px] items-center justify-center text-xs text-slate-500">
-              {entry.imageStatus === 'error' ? 'Milestone image unavailable' : 'Rendering milestone illustration…'}
+              {entry.imageStatus === 'error' ? 'Picture unavailable — the story continues.' : 'Painting this moment…'}
             </div>
           )}
         </div>

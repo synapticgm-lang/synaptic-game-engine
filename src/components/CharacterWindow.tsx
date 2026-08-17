@@ -267,6 +267,29 @@ function EmptyTabContent({ message }: { message: string }) {
   );
 }
 
+function StoryPlatesTab({ state }: { state: GameState }) {
+  const plates = state.memorableMoments?.storyPlates ?? [];
+  if (plates.length === 0) {
+    return (
+      <EmptyTabContent message="No moments unlocked yet. Memorable pictures become achievements here." />
+    );
+  }
+  return (
+    <div className="space-y-2">
+      <p className="text-[11px] uppercase tracking-wider text-slate-500">Moments unlocked</p>
+      {plates.map((plate) => (
+        <div
+          key={plate.id}
+          className="rounded-lg border border-amber-900/40 bg-slate-900/60 px-3 py-2"
+        >
+          <p className="text-sm font-medium text-amber-200">{plate.title}</p>
+          <p className="text-[11px] text-slate-500">Turn {plate.turn}</p>
+        </div>
+      ))}
+    </div>
+  );
+}
+
 function DndSheet({ state }: { state: GameState }) {
   const c = state.character;
   const attrs = c.attributes ?? ({} as Record<AttributeKey, number>);
@@ -610,7 +633,7 @@ export function CharacterWindow({ isOpen, onClose, state, settings, initialTab, 
               {activeTab === 'spells' && <EmptyTabContent message="No spells learned yet." />}
               {activeTab === 'professions' && <EmptyTabContent message="No professions acquired." />}
               {activeTab === 'pets' && <EmptyTabContent message="No pets or summons bonded." />}
-              {activeTab === 'titles' && <EmptyTabContent message="No titles or achievements earned." />}
+              {activeTab === 'titles' && <StoryPlatesTab state={state} />}
               {activeTab === 'dnd' && <DndSheet state={state} />}
               {activeTab === 'sheet' && <CharacterSheetView state={state} />}
               {activeTab === 'portrait' && <UploadImport />}

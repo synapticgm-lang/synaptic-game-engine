@@ -5,6 +5,7 @@ import type {
   MemorableMomentState,
   MemorableOfferKind,
   Settings,
+  StoryPlate,
 } from './types';
 import type { ActiveDungeonState } from './mapEngine';
 import type { GameEvent, LootVideoRequest, MilestoneRequest } from './parser';
@@ -80,6 +81,45 @@ export function isClassicMemorableEnabled(
 
 export function emptyMemorableState(): MemorableMomentState {
   return {};
+}
+
+/** Caption on the plate — tied to why the picture fired, never the word Milestone. */
+export function plateCopyForBeat(
+  beat: MemorableBeatKind | MemorableOfferKind,
+  opts?: { kid?: boolean }
+): { title: string; toast: string } {
+  const kid = opts?.kid === true;
+  const title =
+    beat === 'opening'
+      ? 'Chapter One'
+      : beat === 'death'
+        ? kid
+          ? 'A quiet rest'
+          : 'The book closes'
+        : beat === 'ending'
+          ? 'The last page'
+          : beat === 'dungeon-boss'
+            ? kid
+              ? 'The first victory'
+              : 'First Blood'
+            : beat === 'legendary'
+              ? 'A legendary find'
+              : beat === 'ruler-audience'
+                ? 'An audience granted'
+                : beat === 'beauty'
+                  ? 'A sight to remember'
+                  : 'A moment worth keeping';
+  return {
+    title,
+    toast:
+      beat === 'opening'
+        ? 'Achievement unlocked — So it begins'
+        : `Achievement unlocked — ${title}`,
+  };
+}
+
+export function splashPlateLabel(entry: Pick<LogEntry, 'splashTitle'>): string {
+  return entry.splashTitle?.trim() || 'A moment worth keeping';
 }
 
 function priorStoryBody(log: LogEntry[] | undefined): boolean {
@@ -239,11 +279,24 @@ function nextSplashStamp(prev: MemorableMomentState, turn: number): MemorableMom
   };
 }
 
+function appendStoryPlate(
+  prev: MemorableMomentState,
+  beat: MemorableBeatKind | MemorableOfferKind,
+  turn: number,
+  kid?: boolean
+): StoryPlate[] {
+  const title = plateCopyForBeat(beat, { kid }).title;
+  const plate: StoryPlate = { id: `${beat}-${turn}`, beat, title, turn };
+  const list = prev.storyPlates ?? [];
+  if (list.some((p) => p.id === plate.id)) return list;
+  return [...list, plate];
+}
+
 function stamp(
   prev: MemorableMomentState,
   turn: number,
   beat: MemorableBeatKind,
-  extra?: { rulerKey?: string; dungeonBossKey?: string }
+  extra?: { rulerKey?: string; dungeonBossKey?: string; kid?: boolean }
 ): MemorableMomentState {
   const next: MemorableMomentState = nextSplashStamp(prev, turn);
   if (beat === 'opening') next.openingSplashFired = true;
@@ -259,6 +312,7 @@ function stamp(
   if (beat === 'ruler-audience' && extra?.rulerKey) {
     next.rulerNamesSplashed = uniqueKeys(prev.rulerNamesSplashed, extra.rulerKey);
   }
+  next.storyPlates = appendStoryPlate(prev, beat, turn, extra?.kid);
   return next;
 }
 
@@ -295,6 +349,7 @@ function fire(
   const stamped = stamp(prev, input.turn, beat, {
     rulerKey: extras?.rulerKey,
     dungeonBossKey: extras?.dungeonBossKey,
+    kid: kidModeOn(input.settings),
   });
   const idleStamp: MemorableDecision = {
     request: null,
@@ -886,8 +941,16 @@ export function decideClassicMemorable(
 }
 
 export function memorableLogFields(decision: MemorableDecision): Partial<LogEntry> {
+  const copy = decision.beat && decision.request ? plateCopyForBeat(decision.beat) : null;
   return {
-    ...(decision.request ? { entryKind: 'milestone' as const, imageStatus: 'pending' as const } : {}),
+    ...(decision.request
+      ? {
+          entryKind: 'milestone' as const,
+          imageStatus: 'pending' as const,
+          splashTitle: copy?.title,
+          splashToast: copy?.toast,
+        }
+      : {}),
     ...(decision.beautyOffer
       ? {
           beautyOffer: {
@@ -914,11 +977,14 @@ export function applyAcceptedBeautyOffer(
   if (isSittingHardBlocked(mem, entry.turn)) return null;
 
   const splash = nextSplashStamp(mem, entry.turn);
+  const offerBeat = offer.kind ?? 'beauty';
+  const copy = plateCopyForBeat(offerBeat);
   const next: GameState = {
     ...state,
     memorableMoments: {
       ...splash,
       lastBeautyOfferTurn: entry.turn,
+      storyPlates: appendStoryPlate(splash, offerBeat, entry.turn),
       ...(offer.personKey
         ? { beautyOfferedKeys: uniqueKeys(mem.beautyOfferedKeys, offer.personKey) }
         : {}),
@@ -932,6 +998,8 @@ export function applyAcceptedBeautyOffer(
             ...item,
             entryKind: 'milestone' as const,
             imageStatus: 'pending' as const,
+            splashTitle: copy.title,
+            splashToast: copy.toast,
             beautyOffer: { ...offer, status: 'accepted' as const },
           }
         : item

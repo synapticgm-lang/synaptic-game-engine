@@ -128,6 +128,7 @@ import {
   isClassicMemorableEnabled,
   isSittingHardBlocked,
   memorableLogFields,
+  splashPlateLabel,
 } from './memorableMoments';
 import { buildPendingProposal, getProposedState, withEditedNarrative, touchLocationSheet, ensureLocationSheet } from './pendingTurn';
 import { extractUpdates, extractNewItems, parseActionTags, stripActionTags, matchLoreCards, eventsToLoreCards, parseTurnFrame, eventsToQuestUpdates, eventsToEncounterUpdate, parsePanels, eventsToMilestone, eventsToLootVideo, eventsToVisualUpdate, stripChoiceList, extractChoiceLines, stripTurnCloser, storyHasBody } from './parser';
@@ -867,6 +868,10 @@ export function useGame() {
         promptKind: job.promptKind,
       });
       return;
+    }
+    if (job.isMilestone) {
+      const entry = stateRef.current?.log.find((e) => e.id === job.entryId);
+      addToast(entry?.splashToast?.trim() || `Achievement unlocked — ${splashPlateLabel(entry ?? {})}`, 'success');
     }
     imageGenJobsRef.current.push(job);
     setImageGenEpoch((epoch) => epoch + 1);

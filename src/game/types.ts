@@ -424,6 +424,14 @@ export interface GameState {
 export type BeautyOfferStatus = 'pending' | 'accepted' | 'dismissed';
 export type MemorableOfferKind = 'beauty' | 'ruler-audience' | 'writer-tag';
 
+/** One unlocked memorable plate (Audible-style “you earned this moment”). */
+export interface StoryPlate {
+  id: string;
+  beat: string;
+  title: string;
+  turn: number;
+}
+
 /** Player-offered splash (beauty, ruler audience, or writer milestone tag). */
 export interface BeautyMomentOffer {
   kind?: MemorableOfferKind;
@@ -462,6 +470,8 @@ export interface MemorableMomentState {
   /** Normalized person keys already offered a beauty picture. */
   beautyOfferedKeys?: string[];
   lastBeautyOfferTurn?: number;
+  /** Unlocked memorable plates — shown on the character Titles tab. */
+  storyPlates?: StoryPlate[];
 }
 
 export interface WorldAtlasRegionState {
@@ -539,6 +549,10 @@ export interface LogEntry {
   lootItemRarity?: Rarity;
   /** Quiet, skippable offer — only when Memorable is on and the turn describes noteworthy beauty. */
   beautyOffer?: BeautyMomentOffer;
+  /** Player-facing plate title for memorable art (not the word Milestone). */
+  splashTitle?: string;
+  /** Toast line when the plate unlocks (e.g. Achievement unlocked — So it begins). */
+  splashToast?: string;
 }
 
 /** Distinct rule engines chosen at campaign setup. `'dnd'` is tabletop fantasy (saved key). */

@@ -11,6 +11,7 @@ import { useState, useEffect, useMemo, useRef, type CSSProperties, type PointerE
 import { debugLogger } from '@/game/debugLogger';
 import { useZoomGesture } from './useZoomGesture';
 import { findQuietQuadrant } from '@/utils/smartPlacement';
+import { splashPlateLabel } from '@/game/memorableMoments';
 
 interface ComicGridProps {
   log: LogEntry[];
@@ -574,6 +575,7 @@ function MilestonePanel({
 }) {
   const images = entry.imageUrls ?? [];
   const status: PanelImageStatus = images.length > 0 ? 'ready' : entry.imageStatus ?? 'pending';
+  const plate = splashPlateLabel(entry);
 
   return (
     <article
@@ -583,14 +585,14 @@ function MilestonePanel({
       className="comic-panel-cell milestone-panel w-full shrink-0"
     >
       <div className="mb-2 flex items-center justify-center">
-        <span className="rounded-full border border-amber-500/60 bg-amber-950/40 px-3 py-1 text-[10px] font-black uppercase tracking-widest text-amber-300">
-          ✦ Milestone ✦
+        <span className="rounded-full border border-amber-500/50 bg-amber-950/40 px-3 py-1 text-[11px] font-semibold tracking-wide text-amber-200">
+          {plate}
         </span>
       </div>
       <div
         className={`relative aspect-video w-full overflow-hidden rounded-xl border-2 border-amber-600/50 bg-slate-950 shadow-2xl shadow-black/60 ${isScreentone ? 'manga-screentone-panel' : ''}`}
       >
-        <PanelImageSlot src={images[0]} alt="Milestone illustration" status={status} isScreentone={isScreentone} framed />
+        <PanelImageSlot src={images[0]} alt={plate} status={status} isScreentone={isScreentone} framed />
       </div>
       <div className="comic-panel-caption mt-3 px-1">
         <FormattedText content={entry.content} lorebook={lorebook} />

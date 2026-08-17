@@ -15,7 +15,7 @@ export interface BookPage {
   forcedBreakBefore?: boolean;
   textAnchor?: ComicTextAnchor;
   overlayEdits?: ComicOverlayEdit[];
-  meta?: { panelIndex?: number; lootItemName?: string; lootItemRarity?: Rarity };
+  meta?: { panelIndex?: number; lootItemName?: string; lootItemRarity?: Rarity; splashTitle?: string };
 }
 
 /**
@@ -43,6 +43,7 @@ export function buildBookManifest(state: GameState): BookPage[] {
         text: entry.content,
         imageUrl: entry.imageUrls?.[0] ?? null,
         forcedBreakBefore: true,
+        meta: { splashTitle: entry.splashTitle },
       });
       continue;
     }
