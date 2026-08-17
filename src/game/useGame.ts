@@ -65,7 +65,7 @@ import {
   seedCoverAnswers,
   synthesizeOpeningScene,
 } from './openingEstablishment';
-import { applyCommittedNarrative, extractSceneFacts, seedOpeningSceneFacts } from './sceneFacts';
+import { applyCommittedNarrative, extractSceneFacts, seedOpeningSceneFacts, rewriteContinuityBreak, detectSceneContradiction } from './sceneFacts';
 import { applyFactLocks, detectFactLockViolations } from './factLocks';
 import { dropInsultGear } from './wornGear';
 import { needsPortraitRefresh, paperDollPrompt, portraitCacheKey } from './inventoryArt';
@@ -2312,6 +2312,10 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
       );
       cleanText = ensureXpNarration(cleanText, mergedSystemLog);
       cleanText = applyFactLocks(liveCurrent, cleanText, sanitizedInput);
+      if (warden.continuityBreak || detectSceneContradiction(liveCurrent.sceneFacts, cleanText)) {
+        cleanText = rewriteContinuityBreak(liveCurrent, sanitizedInput, cleanText);
+        warden.notes.push('Continuity break rewritten locally (crowd/noise kept).');
+      }
       cleanText = stripUnearnedXpProse(cleanText);
       if (!storyHasBody(cleanText) && storyHasBody(storyBeforeCuts)) {
         cleanText = storyBeforeCuts;

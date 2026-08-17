@@ -484,11 +484,9 @@ ${consequences || '(none)'}
 ${npcLines || '(none)'}
 `;
 
-  // Prune order if over budget: retrieved → pins → npc → previous already inside situation
+  // Prune retrieved memory only. Pins and unresolved consequences stay — they are lossless.
   if (body.length > MEMORY_CHAR_BUDGET) {
-    body = body
-      .replace(/=== RETRIEVED MEMORY[\s\S]*?(?==== )/m, '=== RETRIEVED MEMORY ===\n(pruned)\n')
-      .replace(/=== PLAYER \/ AUTO PINS[\s\S]*?(?==== )/m, '=== PLAYER \/ AUTO PINS ===\n(pruned)\n');
+    body = body.replace(/=== RETRIEVED MEMORY[\s\S]*?(?==== )/m, '=== RETRIEVED MEMORY ===\n(pruned)\n');
   }
   if (body.length > MEMORY_CHAR_BUDGET) {
     body = body.replace(

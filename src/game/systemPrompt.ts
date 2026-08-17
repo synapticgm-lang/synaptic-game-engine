@@ -5,7 +5,7 @@ import { resolvePanelBudget } from './panelBudget';
 import { CHOICE_TIER_PROMPT_RULES } from './choiceTierRules';
 import { ADULT_MODE_RULES, KID_MODE_RULES, NSFW_CAMPAIGN_RULES } from './contentModeRules';
 import { getCampaignBibleById, isNsfwCampaign } from '@/data/campaigns';
-import { formatFullMemoryBlock, formatCampaignRails } from './situationPacket';
+import { formatFullMemoryBlock } from './situationPacket';
 import { formatClaimGroundingDirective } from './claimGrounding';
 import { formatTimelineForPrompt } from './timelineFormat';
 import { playerFacingLocation } from './locationName';
@@ -568,7 +568,6 @@ export function buildContextPrompt(
     tier4MacroSection += `[Scene Initialization]\n`;
   }
 
-  const rails = formatCampaignRails(state);
   const timeline = formatTimelineForPrompt(state.timeline, 20);
   const dungeon = state.activeDungeon;
   const node = dungeon?.nodes.find((n) => n.id === dungeon.currentNodeId);
@@ -577,7 +576,6 @@ export function buildContextPrompt(
     : 'Dungeon: none';
 
   return `
-${rails ? `${rails}\n` : ''}
 === TIER 1: GROUND-TRUTH STATE (AUTHORITATIVE) ===
 Name: ${c.name} | Level: ${c.level} | XP: ${c.xp}/${c.xpToNext}
 HP: ${c.hp}/${c.maxHp} | MP: ${c.mp}/${c.maxMp} | SP: ${c.sp}/${c.maxSp} | Gold: ${state.gold ?? 0}

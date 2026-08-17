@@ -17,6 +17,8 @@ John is playtesting live. Collect issues here. Do not implement until he asks fo
 
 ## Done (already shipped)
 
+- **2026-08-17a fluidity:** local continuity rewrite (crowd/noise); talk/observe grounds uninvented names to people who are here; situation rails de-duped from context prompt; memory pins never pruned; choice fallback “a bystander” not “someone nearby”
+
 - **Simple + Expert Custom** New Game: Blank Canvas seed (no silent System Integration); Expert accordion (premise/lore/NPCs/quests/opening/kit/PC) with per-section Randomize; player bible snapshot — `docs/research/custom-simple-vs-expert-2026-08-17.md` (`2026-08-17`)
 - **Hero Awakening** LitRPG premade (`hero-awakening`): any folk / any world-shape (not Earth-locked, not a summon); seed-picked `openingHooks` deck; Wake Ledger rails — not Solo Leveling / My Vampire System (`2026-08-17`)
 - **2026-08-17 playtest batch:** refund text turns on empty/abort/fail; casual dialogue skips Social DC; System jargon filtered; `someone nearby` → role slots; open-ask pins + anti-recycle talk; HUD turns left; memorable soft-skip + `generate-image` proxy; ops `012_ops_schema_repair.sql`

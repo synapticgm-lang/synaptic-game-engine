@@ -14,6 +14,12 @@ const CLOCK_SKIP =
 const SILENCE_ONLY =
   /\b(eerie(?:ly)?\s+silence|eerily silent|unnervingly quiet|replaced by an? (?:eerie )?silence|world feels frozen|holding its breath)\b/i;
 
+const EMPTY_STREET =
+  /\b(empty (?:street|buildings|road)|no one (?:is )?(?:here|around|responds)|deserted|abandoned street)\b/i;
+
+const CROWD_STILL_HERE =
+  /\b(people|crowd|bystanders?|passers?[- ]?by|shouting|scream(?:ing)?|yelling)\b/i;
+
 const SHOUTING = /\b(shout(?:ing)?|scream(?:ing)?|yell(?:ing)?|scramble|panic|crying out)\b/i;
 
 const KIT_RECAP =
@@ -64,6 +70,16 @@ export function detectFactLockViolations(
     found.push({
       kind: 'silence',
       reason: 'People are still shouting. Do not write eerie silence in the same beat.',
+    });
+  }
+  if (
+    state.sceneFacts?.crowd === 'present' &&
+    EMPTY_STREET.test(prose) &&
+    !CROWD_STILL_HERE.test(prose)
+  ) {
+    found.push({
+      kind: 'silence',
+      reason: 'A crowd is still here. Do not empty or desert the street without time passing.',
     });
   }
   if (!playerAskedKit(playerAction) && KIT_RECAP.test(prose)) {
@@ -117,6 +133,13 @@ function lockSentence(state: GameState, sentence: string, playerAction: string, 
       .replace(/\beerly silent\b/gi, 'without working electronics')
       .replace(/\bunnervingly quiet\b/gi, 'without the usual traffic noise');
     if (SILENCE_ONLY.test(next) && !SHOUTING.test(next)) return null;
+  }
+  if (
+    state.sceneFacts?.crowd === 'present' &&
+    EMPTY_STREET.test(next) &&
+    !CROWD_STILL_HERE.test(next)
+  ) {
+    return null;
   }
   return next.trim() || null;
 }

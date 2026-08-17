@@ -89,7 +89,42 @@ export function extractLosslessFacts(
   // Promise / threat language → consequence threads
   next = extractPromisesFromProse(next, narrative, turn);
   next = extractSilencedSpeechFromProse(next, narrative, turn);
+  next = pinOpenPlayerAsk(next, playerAction, turn);
   return next;
+}
+
+/** Pin clarifying questions so the next beat must answer them. */
+export function pinOpenPlayerAsk(
+  memory: CampaignMemoryState,
+  playerAction: string,
+  turn: number
+): CampaignMemoryState {
+  const action = playerAction.replace(/\s+/g, ' ').trim();
+  if (action.length < 12) return memory;
+  const looksAsk =
+    /\?/.test(action)
+    || /\b(what|how|why|where|who|when|can i|could i|would you|tell me|explain|details|if i (?:agree|refuse|don'?t)|prove|worth)\b/i.test(
+      action
+    );
+  if (!looksAsk) return memory;
+  // Skip pure commands that happen to include "how"
+  if (/^(?:go|run|attack|strike|loot|move|flee|rest)\b/i.test(action) && !/\?/.test(action)) {
+    return memory;
+  }
+  const text = compressLine(`Open ask (T${turn}): ${action}`, 160);
+  const key = text.toLowerCase().slice(0, 60);
+  const seen = new Set((memory.consequences ?? []).map((c) => c.text.toLowerCase().slice(0, 60)));
+  if (seen.has(key)) return memory;
+  // Dedupe near-identical asks (player resend)
+  const stem = action.toLowerCase().replace(/[^a-z0-9\s]/g, '').slice(0, 40);
+  if (
+    (memory.consequences ?? []).some(
+      (c) => c.unresolved && c.text.toLowerCase().includes(stem) && /open ask/i.test(c.text)
+    )
+  ) {
+    return memory;
+  }
+  return addConsequence(memory, text, turn);
 }
 
 const PROMISE_PATTERNS: RegExp[] = [
@@ -179,6 +214,24 @@ export function resolveConsequences(
         t.split(/\W+/).filter((w) => w.length > 4).some((w) => hay.includes(w))
       ) {
         return { ...c, unresolved: false };
+      }
+      // Open ask answered when several content words from the ask appear in the reply.
+      if (/^open ask\b/i.test(c.text)) {
+        const askBody = c.text.replace(/^open ask\s*\(t\d+\):\s*/i, '');
+        const words = askBody
+          .toLowerCase()
+          .split(/\W+/)
+          .filter((w) => w.length > 3)
+          .filter(
+            (w) =>
+              !/^(with|from|that|this|have|what|when|where|which|would|could|should|please|more|some|give|tell|does|dont|might|before|after|than|them|they|will|just|only|also|been|were|very|into|your|their|about)$/.test(
+                w
+              )
+          );
+        const hits = words.filter((w) => hay.includes(w)).length;
+        if (hits >= Math.min(2, Math.max(1, words.length)) && hay.length > 80) {
+          return { ...c, unresolved: false };
+        }
       }
       return c;
     }),
@@ -431,11 +484,9 @@ ${consequences || '(none)'}
 ${npcLines || '(none)'}
 `;
 
-  // Prune order if over budget: retrieved → pins → npc → previous already inside situation
+  // Prune retrieved memory only. Pins and unresolved consequences stay — they are lossless.
   if (body.length > MEMORY_CHAR_BUDGET) {
-    body = body
-      .replace(/=== RETRIEVED MEMORY[\s\S]*?(?==== )/m, '=== RETRIEVED MEMORY ===\n(pruned)\n')
-      .replace(/=== PLAYER \/ AUTO PINS[\s\S]*?(?==== )/m, '=== PLAYER \/ AUTO PINS ===\n(pruned)\n');
+    body = body.replace(/=== RETRIEVED MEMORY[\s\S]*?(?==== )/m, '=== RETRIEVED MEMORY ===\n(pruned)\n');
   }
   if (body.length > MEMORY_CHAR_BUDGET) {
     body = body.replace(

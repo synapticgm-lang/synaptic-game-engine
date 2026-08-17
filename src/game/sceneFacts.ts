@@ -136,7 +136,14 @@ export function rewriteContinuityBreak(
   playerAction: string,
   brokenNarrative: string
 ): string {
-  return applyFactLocks(state, brokenNarrative, playerAction);
+  const next = applyFactLocks(state, brokenNarrative, playerAction);
+  if (!detectSceneContradiction(state.sceneFacts, next)) return next;
+  const beat = (state.sceneFacts?.lastBeat ?? '').trim();
+  if (!beat) return next;
+  const needle = beat.slice(0, Math.min(24, beat.length)).toLowerCase();
+  if (needle && next.toLowerCase().includes(needle)) return next;
+  const clause = /[.!?]$/.test(beat) ? beat : `${beat}.`;
+  return `${next} ${clause}`.replace(/\s+/g, ' ').trim();
 }
 
 export function applyCommittedNarrative(

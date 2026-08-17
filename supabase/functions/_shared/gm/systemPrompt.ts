@@ -5,7 +5,7 @@ import { resolvePanelBudget } from './panelBudget.ts';
 import { CHOICE_TIER_PROMPT_RULES } from './choiceTierRules.ts';
 import { ADULT_MODE_RULES, KID_MODE_RULES, NSFW_CAMPAIGN_RULES } from './contentModeRules.ts';
 import { getCampaignBibleById, isNsfwCampaign } from '@/data/campaigns';
-import { formatFullMemoryBlock, formatCampaignRails } from './situationPacket.ts';
+import { formatFullMemoryBlock } from './situationPacket.ts';
 import { formatClaimGroundingDirective } from './claimGrounding.ts';
 import { formatTimelineForPrompt } from './timelineFormat.ts';
 import { playerFacingLocation } from './locationName.ts';
@@ -317,7 +317,11 @@ export function buildSystemPrompt(state: GameState, settings: Settings, activeLo
   const loreContext = activeLoreCards.length > 0 ? buildLoreContext(activeLoreCards) : '';
   const actionTags = ACTION_TAG_INSTRUCTIONS;
   const turnFrame = TURN_FRAME_INSTRUCTIONS;
-  const multiPanel = buildMultiPanelInstructions(resolvePanelBudget(settings), state.engineMode);
+  const multiPanel = buildMultiPanelInstructions(
+    resolvePanelBudget(settings),
+    state.engineMode,
+    state.campaignBibleId,
+  );
   const publishingEngine = buildPublishingEngineInstructions(settings);
 
   return `${BASE_PROMPT}\n\n${modeRules}\n\n${playerRules}\n\n${archetypeRules}\n\n${strictnessRules}\n\n${contentRules}\n\n${narrativePreferenceRules}\n\n${diceNote}\n\n${statRules}\n\n${dndModeRules}\n\n${ledger}\n\n${claimGrounding}\n\n${memoryBlock}\n\n${loreContext}\n\n${actionTags}\n\n${turnFrame}\n\n${multiPanel}\n\n${publishingEngine}`.trim();
@@ -442,14 +446,20 @@ const TURN_FRAME_INSTRUCTIONS = `
 TURN FRAME THEME PROTOCOL:
 Emit <turn-frame icon="EMOJI" accentColor="TAILWIND_COLOR" frameStyle="STYLE_ID" /> once early in the opening narrative.`;
 
-function buildMultiPanelInstructions(panelBudget: number, engineMode?: GameState['engineMode']): string {
+function buildMultiPanelInstructions(
+  panelBudget: number,
+  engineMode?: GameState['engineMode'],
+  campaignBibleId?: string | null,
+): string {
   const aftermathExample = engineMode === 'dnd'
     ? 'an NPC\'s response, a door giving way, or the room after the swing'
     : engineMode === 'rpg' || engineMode === 'pyoa'
       ? 'an NPC\'s response, a reveal, or the emotional aftermath'
       : 'an NPC\'s response, a system/level-up notification, loot appearing, etc.';
-  const eraRule = engineMode === 'dnd'
-    ? '- WORLD CANON: <image-prompt> is medieval fantasy (tavern, road, keep, wood, dungeon). No phones, cars, streetlights, jeans, or System UI in the picture description.'
+  const eraRule = engineMode === 'dnd' || campaignBibleId === 'hero-awakening'
+    ? campaignBibleId === 'hero-awakening'
+      ? '- WORLD CANON: <image-prompt> matches player opening canon (folk, place, tech level). Fantasy, modern, or other — never force Earth jeans/phones or Integration chrome unless the player chose that world.'
+      : '- WORLD CANON: <image-prompt> is medieval fantasy (tavern, road, keep, wood, dungeon). No phones, cars, streetlights, jeans, or System UI in the picture description.'
     : engineMode === 'rpg' || engineMode === 'pyoa'
       ? '- WORLD CANON: <image-prompt> matches the campaign premise and this scene only. No Integration System chrome in the picture description.'
       : '- WORLD CANON: <image-prompt> is modern Integration Earth unless the scene is inside a seeded store/dungeon. Knife stays a knife. No medieval plate unless the ledger lists it.';
@@ -556,7 +566,6 @@ export function buildContextPrompt(
     tier4MacroSection += `[Scene Initialization]\n`;
   }
 
-  const rails = formatCampaignRails(state);
   const timeline = formatTimelineForPrompt(state.timeline, 20);
   const dungeon = state.activeDungeon;
   const node = dungeon?.nodes.find((n) => n.id === dungeon.currentNodeId);
@@ -565,7 +574,6 @@ export function buildContextPrompt(
     : 'Dungeon: none';
 
   return `
-${rails ? `${rails}\n` : ''}
 === TIER 1: GROUND-TRUTH STATE (AUTHORITATIVE) ===
 Name: ${c.name} | Level: ${c.level} | XP: ${c.xp}/${c.xpToNext}
 HP: ${c.hp}/${c.maxHp} | MP: ${c.mp}/${c.maxMp} | SP: ${c.sp}/${c.maxSp} | Gold: ${state.gold ?? 0}

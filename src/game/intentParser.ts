@@ -161,6 +161,17 @@ function sceneHasThreat(state: GameState, storyProse: string): boolean {
   return THREAT_PRESENT.test(storyProse);
 }
 
+function sceneSpeaker(state: GameState): string {
+  const present = state.sceneFacts?.present ?? [];
+  if (present.some((p) => /bystander/i.test(p))) return 'a bystander';
+  const named = present.find((p) => !/blue panel|cracked street/i.test(p));
+  if (named?.trim()) return named.trim();
+  if (state.sceneFacts?.crowd === 'present') return 'the people who are still here';
+  const npc = state.npcMemories?.[0]?.npcName?.trim();
+  if (npc) return npc;
+  return 'whoever is actually in this scene';
+}
+
 /**
  * Soft-ground free-typed actions before they hit the GM.
  * Rewrites unowned items, absent companions, and attacks on missing foes into
@@ -209,11 +220,17 @@ export function groundPlayerAction(
 
   const ungrounded = findUngroundedNamedClaims(trimmed, state, storyProse);
   if (ungrounded.length && intent.kind !== 'other') {
-    // Only soft-rewrite when the claim is central (attack/search/use), not every Proper noun.
+    // Soft-rewrite when the claim is central (attack/search/use/talk), not every Proper noun.
     if (intent.kind === 'attack' || intent.kind === 'search' || intent.kind === 'use_item') {
       notes.push(`Ungrounded target(s): ${ungrounded.join(', ')}`);
       parts.push(
         `I focus on what is actually here instead of assuming "${ungrounded[0]}" exists — ${fallbackSuggestionForState(state).toLowerCase()}.`
+      );
+    } else if (intent.kind === 'talk' || intent.kind === 'refuse' || intent.kind === 'observe') {
+      notes.push(`Ungrounded talk target(s): ${ungrounded.join(', ')}`);
+      const who = sceneSpeaker(state);
+      parts.push(
+        `I address ${who} who is actually here, not "${ungrounded[0]}". My words stay: ${trimmed}`
       );
     }
   }

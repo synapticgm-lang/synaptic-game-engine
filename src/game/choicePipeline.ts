@@ -522,7 +522,7 @@ export function sceneSafeFallbacks(
     options.push('Search the vehicle more carefully');
   }
   if (/\b(people|crowd|someone|scream|shout)\b/i.test(storyProse)) {
-    options.push('Call out to someone nearby');
+    options.push('Call out to a bystander');
   }
   if (/\b(panel|system)\b/i.test(storyProse)) {
     options.push('Read the System panel more closely');
