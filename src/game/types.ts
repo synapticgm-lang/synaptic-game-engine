@@ -364,6 +364,11 @@ export interface GameState {
   hiddenStamps?: Record<string, string>;
   /** Genre-native PYOA fork/spine/ending rails. Writer-only. */
   campaignStyleRail?: string | null;
+  /**
+   * Extra text turns granted once at New Game (hook honeymoon). Spend before daily/pack.
+   * Opening covers do not consume these or the daily ledger.
+   */
+  storyStartTextTurnsRemaining?: number;
   /** Campaign-start interview (where / clothes / folk). Undefined on old saves = already playing. */
   openingEstablishment?: OpeningEstablishment;
   /** After the last establishment answer, generate the real opening scene once. */

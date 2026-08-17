@@ -32,8 +32,16 @@ export function Hud({ state, settings, onSettings, onOpenMap, onOpenQuestLog, on
   const ledger = loadCapacityLedger();
   const tier = (settings.subscriptionTier ?? ledger.tier) as SubscriptionTierId;
   const dailyCap = getTierDefinition(tier).textTurnsPerDay;
+  const storyStartLeft = Math.max(0, state.storyStartTextTurnsRemaining ?? 0);
   const turnsLeft =
-    Math.max(0, dailyCap + ledger.textAdBonusToday - ledger.textDailySpent) + ledger.textPackBalance;
+    Math.max(0, dailyCap + ledger.textAdBonusToday - ledger.textDailySpent)
+    + ledger.textPackBalance
+    + storyStartLeft;
+  const turnsTitle =
+    storyStartLeft > 0
+      ? `Turns left: daily cap ${dailyCap}/day on this tier, plus packs, plus ${storyStartLeft} story-start bonus. Opening setup answers are free.`
+      : `Daily text turns remaining (cap ${dailyCap}/day on this tier, plus packs). Opening setup answers are free.`;
+
 
   // Adaptive Secondary Resource Check (Supports MP, SP, Power, Rage, etc.)
   const secondaryCurrent = c?.mp ?? c?.sp ?? 12;
@@ -60,9 +68,12 @@ export function Hud({ state, settings, onSettings, onOpenMap, onOpenQuestLog, on
         )}
         <span
           className="font-mono text-[10px] sm:text-[11px] text-amber-200/90 whitespace-nowrap"
-          title={`Daily text turns remaining (cap ${dailyCap}/day on this tier, plus packs)`}
+          title={turnsTitle}
         >
           {turnsLeft} turn{turnsLeft === 1 ? '' : 's'}
+          {storyStartLeft > 0 ? (
+            <span className="text-amber-200/60"> · {storyStartLeft} start</span>
+          ) : null}
         </span>
       </div>
 

@@ -104,6 +104,7 @@ export function createInitialState(storyName?: string, engineMode: EngineMode = 
     campaignBibleId: null,
     campaignBibleSnapshot: null,
     campaignPremise: null,
+    storyStartTextTurnsRemaining: 0,
     npcMemories: [],
     locationSheet: null,
     previousLocationSheet: null,

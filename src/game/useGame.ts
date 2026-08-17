@@ -96,7 +96,7 @@ import {
   advanceCampaignMemory,
   upsertNpcRelationshipSummary,
 } from './campaignMemory';
-import { canSpend, spendCapacity, refundCapacity, capacityStatusMessage } from './capacityLedger';
+import { canSpend, spendCapacity, refundCapacity, capacityStatusMessage, storyStartTextTurnsForTier } from './capacityLedger';
 import { setActiveSubscriptionTier } from './subscriptionTiers';
 import { canOfferRewardedMemorable } from './rewardedAds';
 import { clipCustomTabletopRules } from './customTabletopRules';
@@ -1379,10 +1379,24 @@ export function useGame() {
     let loadingTimer: ReturnType<typeof setTimeout> | undefined;
     let sanitizedInput = '';
     let textTurnSpent = false;
+    let honeymoonSpent = false;
     const refundSpentTextTurn = () => {
-      if (!textTurnSpent) return;
-      textTurnSpent = false;
-      refundCapacity('text');
+      if (textTurnSpent) {
+        textTurnSpent = false;
+        refundCapacity('text');
+      }
+      if (honeymoonSpent) {
+        honeymoonSpent = false;
+        const s = stateRef.current;
+        if (s) {
+          const restored = {
+            ...s,
+            storyStartTextTurnsRemaining: (s.storyStartTextTurnsRemaining ?? 0) + 1,
+          };
+          stateRef.current = restored;
+          setState(restored);
+        }
+      }
     };
     try {
     debugLogger.record('TURN_START', 'sendAction invoked', {
@@ -1400,17 +1414,27 @@ export function useGame() {
       return;
     }
 
-    // Sync tier + spend a text turn from the capacity ledger (Free/Mid/High caps).
+    // Opening covers + establishment generation are free (hook the player before the meter bites).
+    const freeOpeningTurn =
+      isOpeningEstablishmentPending(current) || !!current.pendingGeneratedOpening;
+    const honeymoonLeft = Math.max(0, current.storyStartTextTurnsRemaining ?? 0);
+
+    // Sync tier + spend a text turn from story-start bonus, then capacity ledger.
     setActiveSubscriptionTier(settingsRef.current.subscriptionTier ?? 'free');
-    if (!canSpend('text')) {
-      addToast(capacityStatusMessage('text'), 'info');
-      setOutOfTurnsAdOffer(true);
-      setRestoreDraft(input);
-      turnInFlightRef.current = false;
-      return;
+    if (!freeOpeningTurn) {
+      if (honeymoonLeft > 0) {
+        honeymoonSpent = true;
+      } else if (!canSpend('text')) {
+        addToast(capacityStatusMessage('text'), 'info');
+        setOutOfTurnsAdOffer(true);
+        setRestoreDraft(input);
+        turnInFlightRef.current = false;
+        return;
+      } else {
+        spendCapacity('text');
+        textTurnSpent = true;
+      }
     }
-    spendCapacity('text');
-    textTurnSpent = true;
 
     // Diegetic content rewrite confirm (Pack 7)
     const pendingRewrite = current.pendingContentRewrite;
@@ -1537,10 +1561,15 @@ export function useGame() {
       const stripped = stripChoiceList(entry.content);
       return stripped === entry.content ? entry : { ...entry, content: stripped };
     });
+    const nextStoryStart = Math.max(
+      0,
+      (current.storyStartTextTurnsRemaining ?? 0) - (honeymoonSpent ? 1 : 0)
+    );
     const optimisticState: GameState = unansweredRetry
-      ? { ...current, pendingTurn: null }
+      ? { ...current, pendingTurn: null, storyStartTextTurnsRemaining: nextStoryStart }
       : {
           ...current,
+          storyStartTextTurnsRemaining: nextStoryStart,
           log: [...priorLog, playerEntry],
         };
     stateRef.current = optimisticState;
@@ -1568,6 +1597,7 @@ export function useGame() {
           : { state: { ...liveCurrent, pendingGeneratedOpening: false }, generateOpening: true };
 
         if (!stepped.generateOpening) {
+          refundSpentTextTurn();
           stateRef.current = stepped.state;
           setState(stepped.state);
           void persist(stepped.state);
@@ -2797,6 +2827,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
         setPostCommitTurnEpoch((epoch) => epoch + 1);
       }
       textTurnSpent = false;
+      honeymoonSpent = false;
     } catch (e) {
       if (turnAbortRef.current?.signal.aborted) {
         debugLogger.record('WARN', 'sendAction aborted — player line kept');
@@ -2982,6 +3013,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
     const pendingCovers = pendingRequiredCovers(openingPrompts, mergedCharacter, openingMode);
     const seededWhere = coverAnswers.where || bible?.startingLocation || namedSeeded.currentLocation;
     const pickedHook = resolveOpeningHook(bible, namedSeeded.seed);
+    const honeymoon = storyStartTextTurnsForTier(settingsRef.current.subscriptionTier ?? 'free');
     const newState: GameState = clampLeakedOpeningQuests({
       ...namedSeeded,
       gmStrictness,
@@ -2992,6 +3024,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
       log: [],
       worldLedger: emptyWorldLedger(),
       pendingGeneratedOpening: true,
+      storyStartTextTurnsRemaining: honeymoon,
       openingEstablishment: {
         pending: pendingCovers,
         answers: coverAnswers,
@@ -3008,6 +3041,12 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
     stateRef.current = newState;
     bindSessionImageCache(newState.saveId);
     isHydratedRef.current = true;
+    if (honeymoon > 0) {
+      addToast(
+        `Story start: +${honeymoon} turns to get hooked. Opening setup answers are free.`,
+        'success'
+      );
+    }
     debugLogger.record('STATE_UPDATE', 'New game state created and hydrated', {
       turn: newState.turn,
       storyName: newState.storyName,

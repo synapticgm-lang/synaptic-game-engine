@@ -400,3 +400,18 @@ export function capacityStatusMessage(kind: CapacitySpendKind): string {
   }
   return 'You’re out of illustrations for this graphic novel. Upgrade for more daily art, or buy an illustrated pack (packs never expire) — your place is saved.';
 }
+
+/** Once-per-save hook grant so the first chapter can land before the daily cliff. */
+export function storyStartTextTurnsForTier(tier: SubscriptionTierId = getActiveSubscriptionTier()): number {
+  if (tier === 'free') return 8;
+  if (tier === 'mid') return 5;
+  return 3;
+}
+
+/** Text turns the player can still spend: daily + ad + packs + this save’s story-start bonus. */
+export function textTurnsRemainingWithStoryStart(
+  storyStartRemaining: number,
+  ledger = loadCapacityLedger()
+): number {
+  return textTurnsRemaining(ledger) + Math.max(0, storyStartRemaining);
+}

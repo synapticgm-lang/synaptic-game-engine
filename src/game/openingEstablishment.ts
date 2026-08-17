@@ -1085,7 +1085,7 @@ The opening scene is ALREADY written. Do not restart. Do not reprint a registrat
 Continue THIS scene (same place, same people) in 3–6 sentences.
 Show the locked look and kit as visible facts in the camera — code already owns the ledger.
 Honor the configured PERSPECTIVE for the entire beat. Spoken lines must be grammatical. Never emit "a figure" as a name, "the a", or "unlock someone".
-Then 3–4 local choices grounded in the continued beat.
+Then 3–4 local choices grounded in the continued beat. At least one must change the situation — not three flavours of look around.
 ================================================`;
   }
   return `=== OPENING (BINDING) ===
@@ -1105,7 +1105,7 @@ Genre practice (honor the story type):
 3) ${coverLine}
 4) Do not grant weapons or rare items. Only kit already on the sheet.
 5) Spoken lines must be grammatical. Never emit "a figure" as a name, "the a", or "unlock someone".
-6) Then 3–4 local choices grounded in THAT opening.
+6) Then 3–4 local choices grounded in THAT opening. At least one choice must change the situation (act, speak a stake, or refuse) — not three flavours of look around / wait.
 ================================================`;
 }
 
