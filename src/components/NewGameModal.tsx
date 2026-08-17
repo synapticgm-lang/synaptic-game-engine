@@ -10,7 +10,17 @@ import {
   type CampaignBible,
 } from '@/data/campaigns';
 import { CustomTabletopRulesField } from './CustomTabletopRulesField';
+import { ExpertCustomPanel } from './ExpertCustomPanel';
 import { memorableWeeklyCapLabel } from '@/game/capacityLedger';
+import { blankBibleIdForMode } from '@/game/customBlank';
+import {
+  buildPlayerCampaignBible,
+  emptyExpertDraft,
+  expertDraftReady,
+  randomizePcFields,
+  randomizeSimplePitch,
+  type ExpertCustomDraft,
+} from '@/game/customExpertDraft';
 
 interface Props {
   contentMode?: ContentMode;
@@ -27,12 +37,14 @@ interface Props {
     comicReadingDirection?: ComicReadingDirection,
     bibleId?: string,
     customTabletopRules?: string,
+    playerBible?: CampaignBible,
   ) => void;
   onClose: () => void;
 }
 
 type PathKind = 'premade' | 'custom';
-type WizardStep = 'path' | 'system' | 'presentation' | 'character';
+type CustomDepth = 'simple' | 'expert';
+type WizardStep = 'path' | 'customDepth' | 'system' | 'presentation' | 'character';
 
 const ENGINE_MODE_CARDS: Array<{
   value: EngineMode;
@@ -68,13 +80,15 @@ const ENGINE_MODE_CARDS: Array<{
 
 const STEP_LABELS: Record<WizardStep, string> = {
   path: 'Begin New Journey',
+  customDepth: 'Custom Setup',
   system: '1 · Game System',
   presentation: '2 · Presentation',
-  character: '3 · Character',
+  character: '3 · Character / World',
 };
 
 export function NewGameModal({ contentMode, onStart, onClose }: Props) {
   const [path, setPath] = useState<PathKind | null>(null);
+  const [customDepth, setCustomDepth] = useState<CustomDepth>('simple');
   const [step, setStep] = useState<WizardStep>('path');
 
   const [storyName, setStoryName] = useState(formatCampaignStoryName('New Campaign'));
@@ -94,6 +108,10 @@ export function NewGameModal({ contentMode, onStart, onClose }: Props) {
   const [engineMode, setEngineMode] = useState<EngineMode>('litrpg');
   const [gmStrictness, setGmStrictness] = useState<GmStrictness>('standard');
   const [customArchetype, setCustomArchetype] = useState<CampaignArchetype>(getDefaultArchetype('litrpg'));
+  const [simplePitch, setSimplePitch] = useState('');
+  const [expertDraft, setExpertDraft] = useState<ExpertCustomDraft>(emptyExpertDraft);
+  const [askNameLater, setAskNameLater] = useState(false);
+  const [readyHint, setReadyHint] = useState<string | undefined>();
 
   const archetypeOptions = getArchetypeOptions(engineMode);
   const selectedArchetype = archetypeOptions.find((o) =>
@@ -120,26 +138,34 @@ export function NewGameModal({ contentMode, onStart, onClose }: Props) {
     if (path === 'premade' && first) {
       selectPremade(first);
     } else {
-      setStoryName(formatCampaignStoryName('New Campaign'));
+      setStoryName(formatCampaignStoryName(path === 'custom' ? 'Custom Campaign' : 'New Campaign'));
     }
   };
 
   const choosePath = (kind: PathKind) => {
     setPath(kind);
-    setStep('system');
     if (kind === 'premade') {
+      setStep('system');
       const first = getCampaignBiblesByEngineMode(engineMode, contentMode)[0];
       if (first) selectPremade(first);
     } else {
+      setStep('customDepth');
       setBibleId(undefined);
       setStoryName(formatCampaignStoryName('Custom Campaign'));
+      setCustomDepth('simple');
     }
   };
 
   const goBack = () => {
-    if (step === 'system') {
+    if (step === 'customDepth') {
       setStep('path');
       setPath(null);
+    } else if (step === 'system') {
+      if (path === 'custom') setStep('customDepth');
+      else {
+        setStep('path');
+        setPath(null);
+      }
     } else if (step === 'presentation') {
       setStep('system');
     } else if (step === 'character') {
@@ -148,7 +174,9 @@ export function NewGameModal({ contentMode, onStart, onClose }: Props) {
   };
 
   const goNext = () => {
-    if (step === 'system') setStep('presentation');
+    setReadyHint(undefined);
+    if (step === 'customDepth') setStep('system');
+    else if (step === 'system') setStep('presentation');
     else if (step === 'presentation') {
       if (path === 'custom') setStep('character');
       else beginPremade();
@@ -175,9 +203,51 @@ export function NewGameModal({ contentMode, onStart, onClose }: Props) {
   };
 
   const beginCustom = () => {
+    if (customDepth === 'expert') {
+      const check = expertDraftReady(expertDraft, charName, askNameLater);
+      if (!check.ok) {
+        setReadyHint(check.reason);
+        return;
+      }
+    }
+
+    const draftForBuild: ExpertCustomDraft =
+      customDepth === 'expert'
+        ? { ...expertDraft, title: expertDraft.title.trim() || storyName.replace(/\s+—.*$/, '').trim() || 'Custom Campaign' }
+        : {
+            ...emptyExpertDraft(),
+            title: storyName.replace(/\s+—.*$/, '').trim() || 'Custom Campaign',
+            premise: simplePitch.trim(),
+            fillGaps: true,
+            folk: '',
+          };
+
+    const playerBible = buildPlayerCampaignBible({
+      engineMode,
+      archetype: customArchetype,
+      draft: draftForBuild,
+      simplePitch: customDepth === 'simple' ? simplePitch : undefined,
+    });
+
+    const name = askNameLater && customDepth === 'expert'
+      ? 'Survivor'
+      : charName.trim() || 'Survivor';
+
+    const folk = customDepth === 'expert' ? expertDraft.folk.trim() : '';
+    const bioParts = [
+      folk ? `Folk: ${folk}.` : '',
+      backstory.trim(),
+    ].filter(Boolean);
+
     onStart(
-      { name: charName.trim() || 'Survivor', classTitle: className.trim() || 'Wanderer', bio: backstory, appearance },
-      storyName.trim() || undefined,
+      {
+        name,
+        classTitle: className.trim() || 'Wanderer',
+        bio: bioParts.join(' '),
+        appearance,
+      },
+      (customDepth === 'expert' ? expertDraft.title.trim() : storyName.trim())
+        || formatCampaignStoryName(playerBible.title),
       engineMode,
       gmStrictness,
       customArchetype,
@@ -186,8 +256,9 @@ export function NewGameModal({ contentMode, onStart, onClose }: Props) {
       classicMemorableImages,
       comicLayout,
       comicReadingDirection,
-      undefined,
+      blankBibleIdForMode(engineMode),
       engineMode === 'dnd' ? customTabletopRules : undefined,
+      playerBible,
     );
   };
 
@@ -198,10 +269,19 @@ export function NewGameModal({ contentMode, onStart, onClose }: Props) {
         ? 'Begin Journey'
         : 'Continue';
 
+  const progressSteps: WizardStep[] =
+    path === 'custom'
+      ? ['system', 'presentation', 'character']
+      : ['system', 'presentation'];
+
+  const wideModal = path === 'custom' && step === 'character' && customDepth === 'expert';
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 backdrop-blur-sm p-3" onClick={onClose}>
       <div
-        className="relative flex max-h-[92vh] w-full max-w-lg flex-col overflow-hidden rounded-xl border border-crimson-700/50 bg-slate-900 shadow-2xl"
+        className={`relative flex max-h-[92vh] w-full flex-col overflow-hidden rounded-xl border border-crimson-700/50 bg-slate-900 shadow-2xl ${
+          wideModal ? 'max-w-2xl' : 'max-w-lg'
+        }`}
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex shrink-0 items-center justify-between border-b border-slate-800 bg-slate-950 px-4 py-3">
@@ -214,13 +294,10 @@ export function NewGameModal({ contentMode, onStart, onClose }: Props) {
           </button>
         </div>
 
-        {step !== 'path' && (
+        {step !== 'path' && step !== 'customDepth' && (
           <div className="flex shrink-0 gap-1 border-b border-slate-800/80 bg-slate-950/80 px-4 py-2">
-            {(['system', 'presentation', ...(path === 'custom' ? (['character'] as const) : [])] as WizardStep[]).map((s, i) => {
-              const order: WizardStep[] = path === 'custom'
-                ? ['system', 'presentation', 'character']
-                : ['system', 'presentation'];
-              const activeIdx = order.indexOf(step);
+            {progressSteps.map((s, i) => {
+              const activeIdx = progressSteps.indexOf(step);
               const done = i < activeIdx;
               const current = s === step;
               return (
@@ -254,7 +331,7 @@ export function NewGameModal({ contentMode, onStart, onClose }: Props) {
                     <ChevronRight size={16} className="text-slate-500 group-hover:text-crimson-400" />
                   </div>
                   <p className="mt-0.5 text-[11px] text-slate-400">
-                    System → Presentation, then jump in with a preset archetype.
+                    System → Presentation, then jump in with a preset world.
                   </p>
                 </div>
               </button>
@@ -269,11 +346,67 @@ export function NewGameModal({ contentMode, onStart, onClose }: Props) {
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center justify-between">
-                    <h3 className="font-semibold text-slate-100 group-hover:text-sky-300">Full Custom Setup</h3>
+                    <h3 className="font-semibold text-slate-100 group-hover:text-sky-300">Custom Setup</h3>
                     <ChevronRight size={16} className="text-slate-500 group-hover:text-sky-400" />
                   </div>
                   <p className="mt-0.5 text-[11px] text-slate-400">
-                    System → Presentation → Character, with bio and GM strictness.
+                    Simple (fast) or Expert (lore, NPCs, randomize per section).
+                  </p>
+                </div>
+              </button>
+            </div>
+          )}
+
+          {step === 'customDepth' && (
+            <div className="space-y-3">
+              <p className="text-[11px] text-slate-400">
+                Both paths seed a Blank Canvas for your mode — never a silent premade world.
+              </p>
+              <button
+                type="button"
+                onClick={() => {
+                  setCustomDepth('simple');
+                  setStep('system');
+                }}
+                className="group flex w-full items-center gap-3 rounded-xl border border-slate-700 bg-slate-800/50 p-3 text-left transition-all hover:border-sky-500 hover:bg-slate-800"
+              >
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-sky-500/30 bg-sky-950/40 text-sky-400">
+                  <Sparkles size={20} />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center justify-between">
+                    <h3 className="font-semibold text-slate-100">Simple Custom</h3>
+                    <ChevronRight size={16} className="text-slate-500" />
+                  </div>
+                  <p className="mt-0.5 text-[11px] text-slate-400">
+                    Mode, archetype, optional pitch — opening weave fills the rest. About five minutes.
+                  </p>
+                </div>
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setCustomDepth('expert');
+                  setExpertDraft((d) => ({
+                    ...d,
+                    title: d.title === 'Custom Campaign'
+                      ? storyName.replace(/\s+—.*$/, '').trim() || 'Custom Campaign'
+                      : d.title,
+                  }));
+                  setStep('system');
+                }}
+                className="group flex w-full items-center gap-3 rounded-xl border border-slate-700 bg-slate-800/50 p-3 text-left transition-all hover:border-violet-500 hover:bg-slate-800"
+              >
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-violet-500/30 bg-violet-950/40 text-violet-300">
+                  <Dices size={20} />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center justify-between">
+                    <h3 className="font-semibold text-slate-100">Expert Custom</h3>
+                    <ChevronRight size={16} className="text-slate-500" />
+                  </div>
+                  <p className="mt-0.5 text-[11px] text-slate-400">
+                    Premise, lore, NPCs, quests, kit, opening — Randomize each section until you like it.
                   </p>
                 </div>
               </button>
@@ -287,7 +420,15 @@ export function NewGameModal({ contentMode, onStart, onClose }: Props) {
                 <input
                   type="text"
                   value={storyName}
-                  onChange={(e) => setStoryName(e.target.value)}
+                  onChange={(e) => {
+                    setStoryName(e.target.value);
+                    if (path === 'custom' && customDepth === 'expert') {
+                      setExpertDraft((d) => ({
+                        ...d,
+                        title: e.target.value.replace(/\s+—.*$/, '').trim() || d.title,
+                      }));
+                    }
+                  }}
                   className="w-full rounded-lg border border-slate-700 bg-slate-800 px-3 py-1.5 text-xs text-slate-100 focus:border-crimson-500 focus:outline-none"
                 />
               </div>
@@ -383,6 +524,8 @@ export function NewGameModal({ contentMode, onStart, onClose }: Props) {
                   </select>
                   <p className="mt-1.5 text-[10px] leading-snug text-slate-500">
                     {selectedArchetype?.description ?? 'Choose an opening seed that matches your preferred tone.'}
+                    {' '}
+                    Custom always starts on Blank Canvas rails — the archetype steers tone, not a silent premade dump.
                   </p>
                 </div>
               )}
@@ -561,8 +704,26 @@ export function NewGameModal({ contentMode, onStart, onClose }: Props) {
             </div>
           )}
 
-          {step === 'character' && (
+          {step === 'character' && path === 'custom' && customDepth === 'simple' && (
             <div className="space-y-3">
+              <div className="flex items-center justify-between gap-2">
+                <label className="font-medium text-slate-300">One-line pitch (optional)</label>
+                <button
+                  type="button"
+                  onClick={() => setSimplePitch(randomizeSimplePitch())}
+                  className="inline-flex items-center gap-1 rounded-md border border-slate-600 bg-slate-800 px-2 py-1 text-[10px] font-medium text-sky-300 hover:border-sky-500"
+                >
+                  <Dices size={12} /> Surprise pitch
+                </button>
+              </div>
+              <input
+                type="text"
+                value={simplePitch}
+                onChange={(e) => setSimplePitch(e.target.value)}
+                placeholder="vampire academy heist, quiet fishing village…"
+                className="w-full rounded-lg border border-slate-700 bg-slate-800 px-3 py-1.5 text-xs text-slate-100 focus:border-crimson-500 focus:outline-none"
+              />
+
               <div className="grid grid-cols-2 gap-2">
                 <div>
                   <label className="mb-1 block font-medium text-slate-300">Character Name</label>
@@ -607,6 +768,37 @@ export function NewGameModal({ contentMode, onStart, onClose }: Props) {
               </div>
             </div>
           )}
+
+          {step === 'character' && path === 'custom' && customDepth === 'expert' && (
+            <ExpertCustomPanel
+              draft={expertDraft}
+              onChange={setExpertDraft}
+              charName={charName}
+              setCharName={setCharName}
+              className={className}
+              setClassName={setClassName}
+              appearance={appearance}
+              setAppearance={setAppearance}
+              backstory={backstory}
+              setBackstory={setBackstory}
+              askNameLater={askNameLater}
+              setAskNameLater={setAskNameLater}
+              onRandomizePc={() => {
+                const pc = randomizePcFields();
+                setCharName(pc.name);
+                setClassName(pc.classTitle);
+                setAppearance(pc.appearance);
+                setBackstory(pc.bio);
+                setExpertDraft((d) => ({ ...d, folk: pc.folk }));
+              }}
+            />
+          )}
+
+          {readyHint ? (
+            <p className="rounded-lg border border-rose-700/50 bg-rose-950/30 px-3 py-2 text-[11px] text-rose-200">
+              {readyHint}
+            </p>
+          ) : null}
         </div>
 
         <div className="flex shrink-0 items-center justify-between border-t border-slate-800 bg-slate-950 px-4 py-3">
@@ -630,7 +822,7 @@ export function NewGameModal({ contentMode, onStart, onClose }: Props) {
             >
               Cancel
             </button>
-            {step !== 'path' && (
+            {step !== 'path' && step !== 'customDepth' && (
               <button
                 type="button"
                 onClick={goNext}

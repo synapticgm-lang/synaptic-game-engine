@@ -6,6 +6,7 @@ import { isFictionEngine } from './types';
 import { syncContainerOccupancy } from './inventory';
 import { stampMysteryCulprit } from './mysteryCulprit';
 import { seedWorldAtlas } from './worldAtlas';
+import { archetypePrefersBlankCanvas, blankBibleIdForMode } from './customBlank';
 
 function snippetType(category: string): LoreCardType {
   if (category === 'faction') return 'faction';
@@ -21,9 +22,13 @@ export function findBibleForArchetype(
 ): CampaignBible | undefined {
   // Never silently seed an NSFW bible from an archetype fallback.
   const catalog = ALL_CAMPAIGN_BIBLES.filter((b) => !b.nsfw);
-  if (!archetype || archetype === 'ai_random') {
-    return catalog.find((b) => b.engineMode === engineMode)
-      ?? catalog.find((b) => isFictionEngine(engineMode) && isFictionEngine(b.engineMode));
+  if (archetypePrefersBlankCanvas(archetype)) {
+    const blank = catalog.find((b) => b.id === blankBibleIdForMode(engineMode));
+    if (blank) return blank;
+    return (
+      catalog.find((b) => b.engineMode === engineMode)
+      ?? catalog.find((b) => isFictionEngine(engineMode) && isFictionEngine(b.engineMode))
+    );
   }
   const exact = catalog.find(
     (b) => b.archetype === archetype && b.engineMode === engineMode
@@ -86,6 +91,7 @@ export function seedStateFromCampaignBible(
     ...state,
     character,
     campaignBibleId: bible.id,
+    campaignBibleSnapshot: bible.id.startsWith('player-custom') ? bible : state.campaignBibleSnapshot ?? null,
     campaignPremise: `${bible.title}: ${bible.premise}\n\n${kitRail}\n\n${questRail}`.slice(0, 2200),
     hiddenStamps: stampMysteryCulprit(state, bible),
     campaignStyleRail: bible.styleRail?.trim() || state.campaignStyleRail || null,
@@ -108,6 +114,21 @@ export function seedStateFromCampaignBible(
   });
 
   return seedWorldAtlas(seeded, bible);
+}
+
+/** Resolve catalog bible or player-authored snapshot. */
+export function resolveActiveCampaignBible(state: GameState): CampaignBible | undefined {
+  if (
+    state.campaignBibleSnapshot
+    && state.campaignBibleId
+    && state.campaignBibleSnapshot.id === state.campaignBibleId
+  ) {
+    return state.campaignBibleSnapshot;
+  }
+  if (state.campaignBibleId) {
+    return ALL_CAMPAIGN_BIBLES.find((b) => b.id === state.campaignBibleId);
+  }
+  return findBibleForArchetype(state.engineMode, state.campaignArchetype);
 }
 
 function inferStartingLocation(bible: CampaignBible): string {
@@ -248,9 +269,7 @@ function buildCampaignLoadout(
  * that declared its own opening loadout (e.g. System Integration).
  */
 export function reconcileCampaignLoadout(state: GameState): GameState {
-  const bible = state.campaignBibleId
-    ? ALL_CAMPAIGN_BIBLES.find((b) => b.id === state.campaignBibleId)
-    : findBibleForArchetype(state.engineMode, state.campaignArchetype);
+  const bible = resolveActiveCampaignBible(state);
   let stamped = state;
   if (bible?.mysteryCulprits?.length && !state.hiddenStamps?.culpritId) {
     stamped = { ...stamped, hiddenStamps: stampMysteryCulprit(stamped, bible) };

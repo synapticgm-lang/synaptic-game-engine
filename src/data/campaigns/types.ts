@@ -111,6 +111,12 @@ export interface CampaignBible {
   startingContainer?: { id: string; name: string; capacity: number };
   /** Hook ingredients for the generated opening. Not a script to reprint. */
   openingHook?: string;
+  /**
+   * Optional starter deck. Code picks one per New Game (seed).
+   * Writer rewrites with artistic license — ingredients, not a script.
+   * Falls back to `openingHook` when empty.
+   */
+  openingHooks?: string[];
   openingRegistrar?: OpeningRegistrar;
   openingPrompts?: OpeningPrompt[];
   /**

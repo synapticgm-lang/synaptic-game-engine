@@ -10,6 +10,7 @@ import { fabledLegacy } from './fabledLegacy';
 import { shatteredCoast } from './shatteredCoast';
 import { cursedKeep } from './cursedKeep';
 import { summonedPact } from './summonedPact';
+import { heroAwakening } from './heroAwakening';
 import { thornferryRoad } from './thornferryRoad';
 import { vesperGlassCipher } from './vesperGlassCipher';
 import { erebusNine } from './erebusNine';
@@ -54,6 +55,7 @@ export {
   shatteredCoast,
   cursedKeep,
   summonedPact,
+  heroAwakening,
   thornferryRoad,
   vesperGlassCipher,
   erebusNine,
@@ -93,6 +95,7 @@ export const ALL_CAMPAIGN_BIBLES: CampaignBible[] = [
   // LitRPG
   systemIntegration,
   summonedPact,
+  heroAwakening,
   gatebreakWard,
   ascendingSpire,
   inkboundAcademy,

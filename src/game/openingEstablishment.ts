@@ -1,5 +1,5 @@
 import type { CampaignBible, OpeningMode, OpeningPrompt, OpeningPromptKind, OpeningRegistrar } from '@/data/campaigns/types';
-import { getCampaignBibleById } from '@/data/campaigns';
+import { resolveActiveCampaignBible } from './campaignSeed';
 import type { CampaignArchetype } from './archetypes';
 import type { EngineMode, GameState, Item, OpeningEstablishment, Settings } from './types';
 import { extractSystemRename, interpretPlayerUtterance, isJunkSetupValue, isSetupRefusal, utteranceIsMessy } from './playerUtterance';
@@ -37,7 +37,7 @@ export function isRandomPlaceRequest(raw: string): boolean {
 }
 
 export function pickPlaceForCampaign(state: GameState): string {
-  const bible = getCampaignBibleById(state.campaignBibleId ?? '');
+  const bible = resolveActiveCampaignBible(state);
   if (bible?.startingLocation?.trim()) return bible.startingLocation.trim();
   if (bible?.engineMode === 'rpg' || bible?.engineMode === 'pyoa' || bible?.engineMode === 'dnd') {
     return 'where this tale opens';
@@ -58,7 +58,7 @@ function isUnusablePlace(place: string, state: GameState): boolean {
     || ''
   ).trim();
   if (name && p.toLowerCase() === name.toLowerCase()) return true;
-  const bible = getCampaignBibleById(state.campaignBibleId ?? '');
+  const bible = resolveActiveCampaignBible(state);
   if (bible && p.toLowerCase() === bible.title.toLowerCase()) return true;
   return false;
 }
@@ -242,6 +242,26 @@ export function resolveOpeningMode(
   return 'weave';
 }
 
+function hashOpenerSeed(input: string): number {
+  let h = 2166136261;
+  for (let i = 0; i < input.length; i++) {
+    h ^= input.charCodeAt(i);
+    h = Math.imul(h, 16777619);
+  }
+  return h >>> 0;
+}
+
+/** Pick a stable opener from `openingHooks` (or fall back to `openingHook`). */
+export function resolveOpeningHook(bible: CampaignBible | undefined, seed?: string): string | undefined {
+  const deck = (bible?.openingHooks ?? []).map((h) => h.trim()).filter(Boolean);
+  if (deck.length > 0) {
+    const idx = hashOpenerSeed(`${seed ?? '0'}|${bible?.id ?? 'bible'}|opener`) % deck.length;
+    return deck[idx];
+  }
+  const single = bible?.openingHook?.trim();
+  return single || undefined;
+}
+
 const BIBLE_INWORLD: Record<string, Partial<Record<OpeningPromptKind, string>>> = {
   'summoned-pact': {
     name: 'A robed figure leans over the circle. “A name. What do we call you?”',
@@ -254,6 +274,13 @@ const BIBLE_INWORLD: Record<string, Partial<Record<OpeningPromptKind, string>>> 
     location: 'The street has not moved. Where are you standing — which city, which pavement or room?',
     appearance: 'You look down. You are still wearing this morning’s clothes. What are they?',
     kit: 'Phone, keys, bag — what is actually on you? Combat-grade inventions will not appear.',
+  },
+  'hero-awakening': {
+    name: 'The private panel waits on a name this world already uses for you. What is it?',
+    location: 'Where are you — which world-shape and place? Fantasy city, frontier, sky-port, modern street, ship, wilds — your call.',
+    appearance: 'You look down. What folk-body and clothes are you wearing in this place?',
+    kit: 'Pockets, bag, belt — what is actually on you that fits this world? Combat-grade inventions will not appear.',
+    species: 'What folk or body are you in this world?',
   },
 };
 
@@ -372,13 +399,14 @@ export function buildEstablishmentIntro(
   prompts: OpeningPrompt[],
   bible?: CampaignBible,
   registrar?: OpeningRegistrar,
-  characterName?: string
+  characterName?: string,
+  seed?: string
 ): { text: string; choices: string[] } {
   if (!prompts.length) {
     return { text: archetypeIntro, choices: [] };
   }
   const voice = registrar ?? resolveOpeningRegistrar(bible, bible?.engineMode ?? 'litrpg', bible?.archetype);
-  const hook = (bible?.openingHook?.trim() || softenAssumedPlace(archetypeIntro)).replace(/\s*What do you do\??\s*$/i, '').trim();
+  const hook = (resolveOpeningHook(bible, seed) || softenAssumedPlace(archetypeIntro)).replace(/\s*What do you do\??\s*$/i, '').trim();
   const first = prompts[0];
   const designation = characterName?.trim() && !GENERIC_NAMES.test(characterName.trim())
     ? `Current designation: ${characterName}`
@@ -745,6 +773,8 @@ function registrarAside(
       bits.push('The voices over the circle are waiting. They pulled you from Earth. They want a name.');
     } else if (bibleId === 'system-integration') {
       bits.push('The panel is here, in this life. It is not eating the planet. It wants a name you already use.');
+    } else if (bibleId === 'hero-awakening') {
+      bits.push('The Wake Ledger is private. This is still your world — they need a name you already use here.');
     } else {
       bits.push(
         registrar.voice === 'system'
@@ -758,6 +788,8 @@ function registrarAside(
       bits.push('You were taken from Earth. This world is not writing Earth into a System.');
     } else if (bibleId === 'system-integration') {
       bits.push('Integration is a panel over this Earth, already in progress — not Earth being ingested.');
+    } else if (bibleId === 'hero-awakening') {
+      bits.push('You were not summoned. You awaken where you already live — any folk, any world-shape the opening locked.');
     } else {
       bits.push('The opening has begun. The story will take the next particular in the scene, not as a form.');
     }
@@ -988,7 +1020,7 @@ export async function applyOpeningAnswer(
       },
       quests: seedLocalStarterQuest(
         nextState.quests ?? [],
-        getCampaignBibleById(nextState.campaignBibleId ?? '')?.starterQuests ?? []
+        resolveActiveCampaignBible(nextState)?.starterQuests ?? []
       ),
       pendingGeneratedOpening: false,
       choices: est.sceneWritten ? nextState.choices : [],
@@ -1035,13 +1067,15 @@ export function ensureSystemReceipt(state: GameState, narrative: string): string
 export function buildOpeningSceneMandate(state: GameState, notes?: string): string {
   const canon = formatPlayerCanon(state) || 'Use the campaign bible. Do not invent a different premise.';
   const extra = notes?.trim() ? `\nPlayer just said/asked: ${notes.trim()}\n` : '';
-  const bible = getCampaignBibleById(state.campaignBibleId ?? '');
+  const bible = resolveActiveCampaignBible(state);
   const cover = state.openingEstablishment?.pending[0];
   const coverLine = cover
     ? `End by weaving this ONE in-world question into the scene (not a form, not [ SYSTEM ] unless the bible is a System-panel moment): ${cover.question}`
     : 'Do not ask chargen questions. The first page is playable.';
-  const hook = bible?.openingHook?.trim()
-    ? `Hook ingredients (rewrite — do not reprint as a script):\n${bible.openingHook.trim()}\n`
+  const hookText = state.openingEstablishment?.pickedHook?.trim()
+    || resolveOpeningHook(bible, state.seed);
+  const hook = hookText
+    ? `Hook ingredients (rewrite with artistic license — do not reprint as a script):\n${hookText}\n`
     : '';
   if (state.openingEstablishment?.sceneWritten) {
     return `=== OPENING CONTINUE (BINDING) ===
@@ -1090,8 +1124,9 @@ export function synthesizeOpeningScene(state: GameState): string {
   const where = a.where || state.currentLocation || 'where you already were';
   const folk = a.folk || a.form || '';
   const folkBit = folk ? ` You are ${folk}.` : '';
-  const bible = getCampaignBibleById(state.campaignBibleId ?? '');
-  const hook = bible?.openingHook?.trim();
+  const bible = resolveActiveCampaignBible(state);
+  const hook = state.openingEstablishment?.pickedHook?.trim()
+    || resolveOpeningHook(bible, state.seed);
   const scene = hook
     || (/system integration|every human on earth/i.test(state.campaignPremise ?? '')
       ? `You are still in ${where} — same morning, same life — while the sky stays torn and a blue panel hangs at eye level.${folkBit} People nearby are shouting.`

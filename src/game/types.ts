@@ -318,6 +318,8 @@ export interface OpeningEstablishment {
   /** First page already written — do not run a second registrar opening. */
   sceneWritten?: boolean;
   mode?: 'scene' | 'weave';
+  /** Seed-picked opener from bible.openingHooks (stable for the run). */
+  pickedHook?: string;
 }
 
 export interface GameState {
@@ -348,6 +350,11 @@ export interface GameState {
   timeline?: TimelineFact[];
   /** Campaign bible id when seeded from GM Library / archetype match. */
   campaignBibleId?: string | null;
+  /**
+   * Full bible snapshot for player-authored custom campaigns (id `player-custom-*`).
+   * Catalog lookup cannot find these; opening quests and reconcile use this.
+   */
+  campaignBibleSnapshot?: import('@/data/campaigns/types').CampaignBible | null;
   /** Short premise injected every turn as Guide Book rails. */
   campaignPremise?: string | null;
   /**

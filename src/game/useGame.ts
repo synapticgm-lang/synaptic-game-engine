@@ -47,7 +47,8 @@ import { sanitizeNarrativeMechanics, ensureTurnProse, ensureDamageNarration, ens
 import { runWarden, sanitizeExtractedCharacterUpdates } from './warden';
 import { applyStructuralEvents } from './structuralEvents';
 import { collectTurnTimelineFacts, mergeTimeline } from './timeline';
-import { applyCampaignCharacter, reconcileCampaignLoadout, seedStateFromArchetype, seedStateFromCampaignBible } from './campaignSeed';
+import { applyCampaignCharacter, reconcileCampaignLoadout, resolveActiveCampaignBible, seedStateFromArchetype, seedStateFromCampaignBible } from './campaignSeed';
+import type { CampaignBible } from '@/data/campaigns/types';
 import {
   applyOpeningAnswer,
   applySystemRename,
@@ -60,6 +61,7 @@ import {
   resolveOpeningMode,
   resolveOpeningPrompts,
   resolveOpeningRegistrar,
+  resolveOpeningHook,
   seedCoverAnswers,
   synthesizeOpeningScene,
 } from './openingEstablishment';
@@ -2913,6 +2915,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
     comicReadingDirection?: Settings['comicReadingDirection'],
     bibleId?: string,
     customTabletopRules?: string,
+    playerBible?: CampaignBible,
   ) => {
     if (
       selectedVisualMode ||
@@ -2936,7 +2939,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
       setNarrativeMode(false);
     }
 
-    const bible = bibleId ? getCampaignBibleById(bibleId) : undefined;
+    const bible = playerBible ?? (bibleId ? getCampaignBibleById(bibleId) : undefined);
     if (bible && isNsfwCampaign(bible) && settingsRef.current.contentMode === 'kid') {
       addToast('This adventure is NSFW. Exit Kid Mode (PIN) to play it.', 'error');
       return;
@@ -2974,6 +2977,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
     const coverAnswers = seedCoverAnswers(bible, mergedCharacter);
     const pendingCovers = pendingRequiredCovers(openingPrompts, mergedCharacter, openingMode);
     const seededWhere = coverAnswers.where || bible?.startingLocation || namedSeeded.currentLocation;
+    const pickedHook = resolveOpeningHook(bible, namedSeeded.seed);
     const newState: GameState = clampLeakedOpeningQuests({
       ...namedSeeded,
       gmStrictness,
@@ -2991,6 +2995,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
         registrar,
         sceneWritten: false,
         mode: openingMode,
+        pickedHook,
       },
       customTabletopRules:
         engineMode === 'dnd' ? clipCustomTabletopRules(customTabletopRules).text || undefined : undefined,
@@ -3044,7 +3049,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
       }
       const openingChoices = extractChoicesFromText(openingText, newState);
       const cleanOpening = stripChoiceList(openingText);
-      const openingBible = getCampaignBibleById(newState.campaignBibleId ?? '');
+      const openingBible = resolveActiveCampaignBible(newState) ?? getCampaignBibleById(newState.campaignBibleId ?? '');
       const journalReady = !questsLockedDuringOpening(newState);
       const questsAfterScene = journalReady
         ? revealLocalStarterQuest(
