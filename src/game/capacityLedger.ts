@@ -43,6 +43,8 @@ export interface CapacityLedger {
   memorableAdBonusThisWeek: number;
   /** Memorable-for-ad grants today (Free +1/day extra cap). */
   memorableAdsGrantedToday: number;
+  /** Last staff daily-limit reset applied from pack_balances.capacity_reset_at. */
+  lastStaffDailyResetAt: string | null;
 }
 
 function dayUtc(d = new Date()): string {
@@ -75,6 +77,7 @@ export function emptyCapacityLedger(tier: SubscriptionTierId = getActiveSubscrip
     adsWatchedToday: 0,
     memorableAdBonusThisWeek: 0,
     memorableAdsGrantedToday: 0,
+    lastStaffDailyResetAt: null,
   };
 }
 
@@ -132,6 +135,31 @@ export function loadCapacityLedger(): CapacityLedger {
 
 export function saveCapacityLedger(ledger: CapacityLedger): void {
   localStorage.setItem(LEDGER_KEY, JSON.stringify(ledger));
+}
+
+/**
+ * Apply a staff daily-limit refresh from the cloud flag.
+ * Zeros today's sub text/image spend (not pack balances, not weekly memorable).
+ */
+export function applyStaffDailyReset(
+  resetAtIso: string,
+  ledger = loadCapacityLedger()
+): CapacityLedger {
+  const incoming = Date.parse(resetAtIso);
+  if (!resetAtIso || Number.isNaN(incoming)) return ledger;
+  const prev = ledger.lastStaffDailyResetAt ? Date.parse(ledger.lastStaffDailyResetAt) : 0;
+  if (!Number.isNaN(prev) && prev >= incoming) return ledger;
+  const next: CapacityLedger = {
+    ...ledger,
+    textDailySpent: 0,
+    textAdBonusToday: 0,
+    illustratedDailySpent: 0,
+    adsWatchedToday: 0,
+    memorableAdsGrantedToday: 0,
+    lastStaffDailyResetAt: resetAtIso,
+  };
+  saveCapacityLedger(next);
+  return next;
 }
 
 function textSubRemainingToday(ledger: CapacityLedger): number {

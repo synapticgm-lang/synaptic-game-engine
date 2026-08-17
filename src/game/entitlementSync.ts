@@ -8,7 +8,7 @@ import {
   setActiveSubscriptionTier,
   type SubscriptionTierId,
 } from '@/game/subscriptionTiers';
-import { loadCapacityLedger, saveCapacityLedger } from '@/game/capacityLedger';
+import { applyStaffDailyReset, loadCapacityLedger, saveCapacityLedger } from '@/game/capacityLedger';
 import { loadSettings, saveSettings } from '@/game/db';
 import { unlockCosmetic } from '@/game/cosmeticEntitlements';
 
@@ -32,6 +32,20 @@ function parsePlanId(raw: unknown): SubscriptionTierId {
   if (v === 'hero') return 'mid';
   if (v === 'system master' || v === 'system_master') return 'high';
   return 'free';
+}
+
+/** Honor `current_period_end` so a 1-month complimentary Mid/High does not last forever. Null = lasting. */
+function planIdFromSubscriptionRow(row: {
+  plan_id?: string;
+  tier?: string;
+  current_period_end?: string | null;
+} | null): SubscriptionTierId {
+  const parsed = parsePlanId(row?.plan_id ?? row?.tier ?? 'free');
+  const endRaw = row?.current_period_end;
+  if (!endRaw) return parsed;
+  const end = Date.parse(String(endRaw));
+  if (!Number.isNaN(end) && end <= Date.now()) return 'free';
+  return parsed;
 }
 
 function emitSettings(settings: ReturnType<typeof loadSettings>): void {
@@ -75,7 +89,7 @@ export async function syncEntitlementsFromServer(): Promise<EntitlementSyncResul
 
   const userId = authData.user.id;
 
-  const [subRes, packRes, cosRes] = await Promise.all([
+  const [subRes, packResRaw, cosRes] = await Promise.all([
     supabase
       .from('subscriptions')
       .select('plan_id, tier, status, current_period_end, provider')
@@ -83,7 +97,7 @@ export async function syncEntitlementsFromServer(): Promise<EntitlementSyncResul
       .maybeSingle(),
     supabase
       .from('pack_balances')
-      .select('text_balance, illustrated_balance')
+      .select('text_balance, illustrated_balance, capacity_reset_at')
       .eq('user_id', userId)
       .maybeSingle(),
     supabase
@@ -92,15 +106,26 @@ export async function syncEntitlementsFromServer(): Promise<EntitlementSyncResul
       .eq('user_id', userId),
   ]);
 
+  let packRes = packResRaw;
+  if (packRes.error && /capacity_reset_at|column/i.test(packRes.error.message)) {
+    packRes = await supabase
+      .from('pack_balances')
+      .select('text_balance, illustrated_balance')
+      .eq('user_id', userId)
+      .maybeSingle();
+  }
+
   if (subRes.error && !subRes.data) {
     // plan_id column may not exist until migration 009 is applied
     console.warn('[entitlements] subscriptions read failed', subRes.error.message);
   }
 
-  const planId = parsePlanId(
-    (subRes.data as { plan_id?: string; tier?: string } | null)?.plan_id
-      ?? (subRes.data as { tier?: string } | null)?.tier
-      ?? 'free'
+  const planId = planIdFromSubscriptionRow(
+    (subRes.data as {
+      plan_id?: string;
+      tier?: string;
+      current_period_end?: string | null;
+    } | null) ?? null
   );
 
   setActiveSubscriptionTier(planId);
@@ -127,8 +152,10 @@ export async function syncEntitlementsFromServer(): Promise<EntitlementSyncResul
       illustratedPackBalance: Math.max(ledger.illustratedPackBalance, serverIllus),
     };
     saveCapacityLedger(next);
-    textPackBalance = next.textPackBalance;
-    illustratedPackBalance = next.illustratedPackBalance;
+    const resetAt = (packRes.data as { capacity_reset_at?: string | null }).capacity_reset_at;
+    const afterReset = resetAt ? applyStaffDailyReset(String(resetAt), next) : next;
+    textPackBalance = afterReset.textPackBalance;
+    illustratedPackBalance = afterReset.illustratedPackBalance;
   } else {
     const ledger = loadCapacityLedger();
     if (ledger.tier !== planId) {
