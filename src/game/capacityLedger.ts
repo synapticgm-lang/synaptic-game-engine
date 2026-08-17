@@ -250,6 +250,47 @@ export function spendCapacity(
   return { ok: true, ledger: next, fromPack };
 }
 
+/**
+ * Refund a spent text/memorable/illustrated slot when the turn aborted or never committed.
+ * Reverses daily spend first, then pack balance (best-effort mirror of spend order).
+ */
+export function refundCapacity(
+  kind: CapacitySpendKind,
+  amount = 1,
+  ledger = loadCapacityLedger()
+): CapacityLedger {
+  if (amount <= 0) return ledger;
+  const next = { ...ledger };
+  let left = amount;
+
+  if (kind === 'text') {
+    const fromDaily = Math.min(left, next.textDailySpent);
+    next.textDailySpent = Math.max(0, next.textDailySpent - fromDaily);
+    left -= fromDaily;
+    if (left > 0) next.textPackBalance += left;
+  } else if (kind === 'memorable') {
+    const fromWeekly = Math.min(left, next.memorableSpent);
+    next.memorableSpent = Math.max(0, next.memorableSpent - fromWeekly);
+    left -= fromWeekly;
+    if (left > 0) {
+      next.memorablePackBalance = (next.memorablePackBalance ?? 0) + left;
+    }
+  } else {
+    const def = getTierDefinition(next.tier);
+    if (def.illustratedImagesPerDay <= 0) {
+      next.illustratedTrialRemaining += left;
+    } else {
+      const fromDaily = Math.min(left, next.illustratedDailySpent);
+      next.illustratedDailySpent = Math.max(0, next.illustratedDailySpent - fromDaily);
+      left -= fromDaily;
+      if (left > 0) next.illustratedPackBalance += left;
+    }
+  }
+
+  saveCapacityLedger(next);
+  return next;
+}
+
 /** Opt-in rewarded ad — extra text turns for today only (use-it-or-lose-it with the day). */
 export function grantAdReward(ledger = loadCapacityLedger()): CapacityLedger {
   const def = getTierDefinition(ledger.tier);

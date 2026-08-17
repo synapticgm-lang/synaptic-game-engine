@@ -94,7 +94,7 @@ import {
   advanceCampaignMemory,
   upsertNpcRelationshipSummary,
 } from './campaignMemory';
-import { canSpend, spendCapacity, capacityStatusMessage } from './capacityLedger';
+import { canSpend, spendCapacity, refundCapacity, capacityStatusMessage } from './capacityLedger';
 import { setActiveSubscriptionTier } from './subscriptionTiers';
 import { canOfferRewardedMemorable } from './rewardedAds';
 import { clipCustomTabletopRules } from './customTabletopRules';
@@ -1376,6 +1376,12 @@ export function useGame() {
     turnInFlightRef.current = true;
     let loadingTimer: ReturnType<typeof setTimeout> | undefined;
     let sanitizedInput = '';
+    let textTurnSpent = false;
+    const refundSpentTextTurn = () => {
+      if (!textTurnSpent) return;
+      textTurnSpent = false;
+      refundCapacity('text');
+    };
     try {
     debugLogger.record('TURN_START', 'sendAction invoked', {
       input: input.slice(0, 100),
@@ -1402,6 +1408,7 @@ export function useGame() {
       return;
     }
     spendCapacity('text');
+    textTurnSpent = true;
 
     // Diegetic content rewrite confirm (Pack 7)
     const pendingRewrite = current.pendingContentRewrite;
@@ -1415,6 +1422,7 @@ export function useGame() {
       } else if (/^(cancel|no|nope|nevermind|try\s+else)\b/i.test(mediated.text.trim())) {
         setState((s) => (s ? { ...s, pendingContentRewrite: null } : s));
         addToast('System clears the interpretation. Try another action.', 'info');
+        refundSpentTextTurn();
         setRestoreDraft(input);
         turnInFlightRef.current = false;
         return;
@@ -1452,6 +1460,7 @@ export function useGame() {
               : s
           );
           addToast(soft.diegeticMessage, 'info');
+          refundSpentTextTurn();
           turnInFlightRef.current = false;
           return;
         }
@@ -1747,14 +1756,16 @@ export function useGame() {
       const narrativeOutcomeLabel = check.narrativeOutcomeLabel;
       const refuseGate =
         intentForMandate.kind === 'refuse' || intentForMandate.kind === 'talk' || isSpeechOrProtest(typedAction)
-          ? `\n[SPEECH / PROTEST GATE]: The player spoke or protested. Honor their typed line as dialogue. Someone in the scene answers THAT line. Do not replace it with a pocket-search, kit recap, or physical follow-through. Do not skip their words. If they are refusing / did not agree, narrate the System's cold acknowledgment in-fiction. Do not say "choose an action to continue."`
+          ? `\n[SPEECH / PROTEST GATE]: The player spoke or protested. Honor their typed line as dialogue. Someone in the scene answers THAT line. Do not replace it with a pocket-search, kit recap, or physical follow-through. Do not skip their words. If they asked a clarifying question, answer with concrete terms — never stall with "awaits your response" or soft-reset the ask. If they are refusing / did not agree, narrate the System's cold acknowledgment in-fiction. Do not say "choose an action to continue." Never call anyone "someone nearby" as a name.`
           : '';
 
       logRollResults([
         {
           label: 'action_check',
           total: outcome.totalScore,
-          detail: `d20=${d20Roll} mod=${strMod} dc=${difficultyClass} ${check.label} ${outcome.isSuccess ? 'SUCCESS' : 'FAILURE'}`,
+          detail: check.skippedRoll
+            ? `Dialogue — no contested check`
+            : `d20=${d20Roll} mod=${strMod} dc=${difficultyClass} ${check.label} ${outcome.isSuccess ? 'SUCCESS' : 'FAILURE'}`,
         },
       ]);
 
@@ -1809,13 +1820,16 @@ export function useGame() {
       const outcomeBlock = formatOutcomeTokenForPrompt(outcomeToken, !isDndEngine);
 
       // LitRPG/RPG: keep dice math out of the model-facing story cue so it is less likely to echo into prose.
+      const outcomeCue = check.skippedRoll
+        ? `DIALOGUE TURN (no contested check): Answer the player's spoken line / question directly. Do not invent a Social failure, soft-reset the ask, stall with "awaits your response", or paste a prior paragraph.`
+        : `OUTCOME FOR THIS ACTION: ${isDndEngine ? codeResolutionText : narrativeOutcomeLabel}`;
       const deterministicStateBlock = isDndEngine
         ? `
 --- DETERMINISTIC GAME ENGINE STATE (MANDATORY) ---
 Character: ${liveCurrent.character.name} (Lvl ${liveCurrent.character.level})
 HP: ${liveCurrent.character.hp}/${liveCurrent.character.maxHp}
 Gold: ${liveCurrent.gold ?? 0}
-CODE ENFORCED OUTCOME FOR THIS ACTION: ${codeResolutionText}
+${outcomeCue}
 ${outcomeBlock}${hiddenSimUpdate}${actionGates}
 -------------------------------------------------
 `
@@ -1824,11 +1838,11 @@ ${outcomeBlock}${hiddenSimUpdate}${actionGates}
 Character: ${liveCurrent.character.name} (Lvl ${liveCurrent.character.level})
 HP: ${liveCurrent.character.hp}/${liveCurrent.character.maxHp}
 Gold: ${liveCurrent.gold ?? 0}
-CODE ENFORCED OUTCOME FOR THIS ACTION: ${narrativeOutcomeLabel}
+${outcomeCue}
 ${outcomeBlock}
-CODE OUTCOME (HIDDEN): ${narrativeOutcomeLabel}. Narrate story consequences only.
-Do NOT print dice notation, d20 lines, modifiers, DCs, "Strength Check:", or Action Check math anywhere — not in narrative, not in <narrative> panels, and not in <system-log>.
-In <system-log>, only emit LitRPG/RPG progression lines (XP, loot, HP change as story system text) with zero dice formulas. Never emit XP Gained: 0. Story beat first, then System chrome — never System-only.${hiddenSimUpdate}${actionGates}
+${check.skippedRoll ? '' : `HIDDEN LEDGER OUTCOME: ${narrativeOutcomeLabel}. Narrate story consequences only.`}
+Do NOT print dice notation, d20 lines, modifiers, DCs, "Strength Check:", "Action Check", "Action Resolved", or "CODE ENFORCED" anywhere — not in narrative, not in <narrative> panels, and not in <system-log>.
+In <system-log>, only emit LitRPG/RPG progression lines when something actually changed (XP gain, loot, HP change). Never emit XP Gained: 0 or bare XP:0/300 / HP dumps. Story beat first, then System chrome — never System-only.${hiddenSimUpdate}${actionGates}
 -------------------------------------------------
 `;
 
@@ -1887,6 +1901,14 @@ In <system-log>, only emit LitRPG/RPG progression lines (XP, loot, HP change as 
             empty: !storyHasBody(probeText),
             factLocks: probeLocks.map((v) => v.kind),
           });
+          const firstResult = result;
+          const firstProbe = probeText;
+          const firstUnresolved = isUnresolvedActionNarrative(
+            sanitizedInput,
+            firstProbe,
+            intentForMandate,
+            previousGm
+          );
           setRetryStatus('Refining story resolution…');
           result = await callGm(
             liveCurrent,
@@ -1907,6 +1929,23 @@ In <system-log>, only emit LitRPG/RPG progression lines (XP, loot, HP change as 
             turnAbort.signal,
           );
           probeText = probeOf(result.text);
+          const retryUnresolved = isUnresolvedActionNarrative(
+            sanitizedInput,
+            probeText,
+            intentForMandate,
+            previousGm
+          );
+          const firstOk = storyHasBody(firstProbe) && !firstUnresolved;
+          const retryOk = storyHasBody(probeText) && !retryUnresolved;
+          // Prefer a real first beat over a thinner / recycled retry.
+          if (
+            (firstOk && !retryOk)
+            || (!retryOk && storyHasBody(firstProbe) && !storyHasBody(probeText))
+            || (!firstOk && !retryOk && storyHasBody(firstProbe) && firstProbe.length >= (probeText?.length ?? 0))
+          ) {
+            result = firstResult;
+            probeText = firstProbe;
+          }
         } else if (probeLocks.length) {
           debugLogger.record('STATE_UPDATE', 'Fact-lock slips will be cut locally — skipping GM retry', {
             turn: liveCurrent.turn,
@@ -1940,9 +1979,10 @@ In <system-log>, only emit LitRPG/RPG progression lines (XP, loot, HP change as 
       }
 
       // Dice math belongs in the player-facing system log only for tabletop fantasy.
-      const codeSystemLogLine = isDndEngine
-        ? `Action Check: d20(${d20Roll}) + Mod(${strMod}) = ${outcome.totalScore} vs DC ${difficultyClass} — ${narrativeOutcomeLabel}`
-        : null;
+      const codeSystemLogLine =
+        isDndEngine && !check.skippedRoll
+          ? `Action Check: d20(${d20Roll}) + Mod(${strMod}) = ${outcome.totalScore} vs DC ${difficultyClass} — ${narrativeOutcomeLabel}`
+          : null;
       const rawSystemLog = [
         ...(result.systemLog ?? []),
         ...(codeSystemLogLine ? [codeSystemLogLine] : []),
@@ -1962,7 +2002,16 @@ In <system-log>, only emit LitRPG/RPG progression lines (XP, loot, HP change as 
       // "Cannot access before initialization" crash in the job runner.
       const rawEvents = parseActionTags(result.text);
       const intent = intentForMandate;
-      const warden = runWarden(liveCurrent, rawEvents, result.text, sanitizedInput, intent);
+      const establishedProseForScrub =
+        [...liveCurrent.log].reverse().find((e) => e.role === 'gm')?.content ?? '';
+      const warden = runWarden(
+        liveCurrent,
+        rawEvents,
+        result.text,
+        sanitizedInput,
+        intent,
+        establishedProseForScrub
+      );
       const events = warden.events;
       // Prefer claim-ground scrubbed prose for player-facing story (tags still from raw).
       const narrativeSource = warden.scrubbedNarrative ?? result.text;
@@ -2274,8 +2323,9 @@ In <system-log>, only emit LitRPG/RPG progression lines (XP, loot, HP change as 
         debugLogger.record('WARN', 'Refusing System-only turn — no story body', {
           turn: liveCurrent.turn,
         });
+        refundSpentTextTurn();
         keepSentLineOnFail(sanitizedInput || lastInputRef.current);
-        setError('The story did not come through. Try that action again.');
+        setError('The story did not come through. Try that action again — this attempt was not charged.');
         return;
       }
 
@@ -2740,9 +2790,11 @@ In <system-log>, only emit LitRPG/RPG progression lines (XP, loot, HP change as 
         postCommitTurnEffectsRef.current.push(effectsPayload);
         setPostCommitTurnEpoch((epoch) => epoch + 1);
       }
+      textTurnSpent = false;
     } catch (e) {
       if (turnAbortRef.current?.signal.aborted) {
         debugLogger.record('WARN', 'sendAction aborted — player line kept');
+        refundSpentTextTurn();
         keepSentLineOnFail(sanitizedInput || lastInputRef.current || input);
         return;
       }
@@ -2765,6 +2817,7 @@ In <system-log>, only emit LitRPG/RPG progression lines (XP, loot, HP change as 
         failed: true,
         stack,
       });
+      refundSpentTextTurn();
       keepSentLineOnFail(sanitizedInput || lastInputRef.current || input);
       setError(errMsg);
     } finally {

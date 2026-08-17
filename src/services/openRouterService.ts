@@ -24,6 +24,7 @@ import {
   resolveClientImageApiKey,
   resolveClientTextApiKey,
 } from '../game/distributionChannel';
+import { invokeImageProxy } from '../game/gmProxy';
 
 const OPENROUTER_API_KEY = ''; // Provider keys must come from Settings / edge secrets — never VITE_*.
 const BASE_URL = 'https://openrouter.ai/api/v1';
@@ -721,6 +722,38 @@ export async function generateComicImage(
     settings.imageModel?.trim() ||
     fluxModels.openRouterId ||
     (useHeroModel ? HERO_IMAGE_MODEL : PRIMARY_IMAGE_MODEL);
+
+  // Hosted Free/Mid/High: prefer edge proxy (server key) so memorable art works without BYOK.
+  if (!apiKey) {
+    try {
+      const proxied = await withAbortTimeout(
+        (signal) =>
+          invokeImageProxy({
+            prompt: openRouterPrompt,
+            model: routedModel,
+            signal,
+          }),
+        timeoutMs,
+        'Hosted Flux image generation'
+      );
+      if (proxied) {
+        recordSpend();
+        return proxied;
+      }
+    } catch (proxyErr) {
+      debugLogger.record('WARN', 'Hosted image proxy failed — soft-skip', {
+        error: proxyErr instanceof Error ? proxyErr.message : String(proxyErr),
+      });
+      return null;
+    }
+    // Proxy unavailable / empty — soft-skip rather than blaming Settings on Free.
+    debugLogger.record('WARN', 'Image generation skipped — no hosted image key path', {
+      envKey: false,
+      byokKey: false,
+    });
+    return null;
+  }
+
   const url = await withAbortTimeout(
     (signal) =>
       fetchComicPanel(openRouterPrompt, mode, 'western', apiKey, routedModel, {

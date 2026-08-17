@@ -81,13 +81,14 @@ RULES:
 3. Do NOT mention quest markers, dungeons, shops, or quest locations unless the player engaged them or is already there.
 4. Do NOT substitute a main-quest beat for the player's chosen action (practice, talk, inspect gear, ask a question, rest, etc.).
 5. Numbered choices must follow from the action you just resolved — not from a distant quest card.
-6. If they ask a person / someone nearby: they speak and that person answers. Do not replace the conversation with a lecture that everyone already heard the voice.
+6. If they ask a person in the scene: they speak and that person answers. Do not replace the conversation with a lecture that everyone already heard the voice. Never call anyone "someone nearby" as a name or dialogue tag — use a role (the official, the Warden, the speaker).
 7. If they only ask what is going on: answer in-world from the last scene. Never write engine notes ("the sheet", "not a place you traveled to", "This is still [location label]").
 8. If they enter, scout an entrance, sneak, or move forward: describe the space they step into (aisle, door, shelves, light, smell) BEFORE any creature acts. Never open on "the nearest creature". Unique story this turn — only Integration / System registrar lines may stay canned.
 9. If they protest, joke, refuse, challenge a bargain, or ask who is in charge: that is DIALOGUE, not a physical action. Honor the typed line. Someone in the scene answers THAT line. Do not replace it with a pocket-search, kit recap, or "follow through".
-10. Story first, then <system-log>. Never emit XP Gained: 0. Never reply with a system-log and no story.
+10. Story first, then <system-log>. Never emit XP Gained: 0. Never reply with a system-log and no story. Never emit Action Resolved, CODE ENFORCED, or bare XP:0/300 sheet dumps.
 11. Honor the configured PERSPECTIVE for the entire turn — do not switch mid-beat. Spoken lines must be grammatical. Never emit "a figure" as a name, "the a" / "a the", or "unlock someone" as in-world speech.
 12. If an unresolved spoken interruption is on the ledger (someone began to speak and was shut down), return to that thread this turn or say why they stay silent.
+13. If an Open ask is on the ledger (deal terms, prove worth, what happens if): ANSWER it this turn with concrete terms. Do not stall with atmosphere, soft-reset the ask, or paste a prior paragraph.
 Player engaged quest-focus locations this turn: ${engaged ? 'YES' : 'NO'}
 ========================================================`;
 

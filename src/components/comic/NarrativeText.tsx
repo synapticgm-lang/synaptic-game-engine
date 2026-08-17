@@ -103,7 +103,10 @@ export function NarrativeSegmentBlock({ segment }: { segment: Exclude<NarrativeS
   }
   if (segment.type === 'system') {
     return (
-      <div className="comic-overlay-scrollbar mb-4 h-fit min-h-min w-fit max-h-[45vh] max-w-[90%] shrink-0 overflow-y-auto whitespace-pre-wrap break-words rounded border border-blue-500/50 bg-blue-950/50 p-3 font-mono text-sm text-blue-200 shadow-inner shadow-blue-900/50">
+      <div className="comic-overlay-scrollbar mb-4 h-fit min-h-min w-fit max-h-[45vh] max-w-[90%] shrink-0 overflow-y-auto whitespace-pre-wrap break-words rounded border border-sky-500/50 bg-sky-950/50 p-3 font-mono text-sm text-sky-100 shadow-inner shadow-sky-900/50">
+        <div className="mb-1 text-[9px] font-bold uppercase tracking-[0.2em] text-sky-400/90">
+          In-world System
+        </div>
         {segment.text}
       </div>
     );

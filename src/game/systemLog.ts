@@ -23,12 +23,31 @@ function isInventedStreetDangerLine(line: string): boolean {
     || /^(?:tier\s*[1-4]\s*urban\s+ruin)$/i.test(line);
 }
 
+/** Player-facing Status panel — strip internal jargon and idle sheet dumps. */
+export function isNoisySystemLogLine(line: string): boolean {
+  return (
+    /CODE\s*ENFORCED/i.test(line)
+    || /^action\s+resolved:/i.test(line)
+    || /^action\s+failed:\s*social\b/i.test(line)
+    || /warden'?s?\s+expectation/i.test(line)
+    || /^check\s+type:/i.test(line)
+    || /^outcome:\s*(?:success|failure)\s*$/i.test(line)
+    || /^xp:\s*\d+\s*\/\s*\d+\s*$/i.test(line)
+    || /^(?:hp|mp|sp|gold):\s*\d+(?:\s*\/\s*\d+)?\s*$/i.test(line)
+    || /^social\s+check:\s*(?:success|failure)(?:\s*\(.*\))?\s*$/i.test(line)
+    || /\[?\s*system\s+roll/i.test(line)
+    || /\bd20\b.*\b(?:mod|dc)\b/i.test(line)
+  );
+}
+
 export function filterSystemLogForEngine(lines: string[], engineMode: EngineMode): string[] {
   const cleaned = lines
     .map((l) => l.replace(/^[ \t]*_>\s*/, '').trim())
+    .map((l) => l.replace(/\s*\(CODE\s*ENFORCED\)\s*/gi, ' ').replace(/\s{2,}/g, ' ').trim())
     .map(scrubLocationDangerTier)
     .filter(Boolean)
     .filter((l) => !isInventedStreetDangerLine(l))
+    .filter((l) => !isNoisySystemLogLine(l))
     .filter((l) => !/^no xp gained\.?$/i.test(l))
     .filter((l) => !/^xp gained:\s*0\b/i.test(l))
     .filter((l) => !/^(?:_>\s*)?SYSTEM LOG$/i.test(l))

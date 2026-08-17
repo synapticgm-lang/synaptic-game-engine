@@ -151,3 +151,63 @@ export async function invokeGmProxy(params: {
 
   return withRetry(run, params.onRetry);
 }
+
+function imageProxyUrl(): string {
+  const base = (import.meta.env.VITE_SUPABASE_URL as string).replace(/\/$/, '');
+  return `${base}/functions/v1/generate-image`;
+}
+
+/**
+ * Hosted memorable art via edge proxy (server OpenRouter key).
+ * Returns null when proxy is unavailable so callers can fall back / soft-skip.
+ */
+export async function invokeImageProxy(params: {
+  prompt: string;
+  model?: string;
+  clientApiKey?: string;
+  signal?: AbortSignal;
+}): Promise<string | null> {
+  if (!isGmProxyAvailable()) return null;
+
+  const headers: Record<string, string> = {
+    'Content-Type': 'application/json',
+    apikey: import.meta.env.VITE_SUPABASE_ANON_KEY as string,
+  };
+  const session = supabase ? (await supabase.auth.getSession()).data.session : null;
+  if (session?.access_token) {
+    headers.Authorization = `Bearer ${session.access_token}`;
+  } else {
+    headers.Authorization = `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`;
+  }
+
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), 45_000);
+  const onExternalAbort = () => controller.abort();
+  if (params.signal) {
+    if (params.signal.aborted) controller.abort();
+    else params.signal.addEventListener('abort', onExternalAbort);
+  }
+
+  try {
+    const res = await fetch(imageProxyUrl(), {
+      method: 'POST',
+      headers,
+      body: JSON.stringify({
+        prompt: params.prompt,
+        model: params.model,
+        clientApiKey: params.clientApiKey,
+      }),
+      signal: controller.signal,
+    });
+    const payload = await res.json().catch(() => ({}));
+    if (!res.ok) {
+      const msg = typeof payload?.error === 'string' ? payload.error : `Image proxy error ${res.status}`;
+      throw new Error(msg);
+    }
+    const url = typeof payload?.url === 'string' ? payload.url : '';
+    return url || null;
+  } finally {
+    clearTimeout(timer);
+    if (params.signal) params.signal.removeEventListener('abort', onExternalAbort);
+  }
+}

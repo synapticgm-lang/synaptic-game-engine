@@ -57,7 +57,8 @@ export function runWarden(
   events: GameEvent[],
   narrativeText: string,
   playerInput: string,
-  intent?: PlayerIntent
+  intent?: PlayerIntent,
+  establishedProse = ''
 ): WardenResult {
   const notes: string[] = [];
   const systemLogExtra: string[] = [];
@@ -197,7 +198,7 @@ export function runWarden(
   }
 
   // Flag prose that names major entities not present in sheets/timeline (confirm UI surfaces these).
-  const inventedInProse = findUngroundedNamedClaims(narrativeText, state, '');
+  const inventedInProse = findUngroundedNamedClaims(narrativeText, state, establishedProse);
   for (const claim of inventedInProse.slice(0, 4)) {
     if (
       /\b(dragon|lich|demon|artifact|relic|portal|kingdom|empire|ancient|legendary|boss)\b/i.test(
@@ -209,7 +210,7 @@ export function runWarden(
     }
   }
 
-  const scrub = scrubInventedProperNouns(narrativeText, state, '');
+  const scrub = scrubInventedProperNouns(narrativeText, state, establishedProse);
   const polished = applyProseWarden(scrub.text);
   if (scrub.stripped.length) {
     for (const name of scrub.stripped.slice(0, 6)) {

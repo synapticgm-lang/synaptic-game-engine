@@ -38,10 +38,13 @@ function parseBlocks(text: string): Block[] {
 
     const rollMatch = chunk.match(/\[ ?SYSTEM ROLL:[\s\S]*?Outcome: ?[^\]]+\]/i);
     if (rollMatch) {
+      // Dice/check chrome must not appear in player-facing story — strip, keep surrounding prose.
       const idx = chunk.indexOf(rollMatch[0]);
-      if (idx > 0) blocks.push({ type: 'prose', text: chunk.slice(0, idx) });
-      blocks.push({ type: 'roll', text: rollMatch[0] });
-      if (idx + rollMatch[0].length < chunk.length) blocks.push({ type: 'prose', text: chunk.slice(idx + rollMatch[0].length) });
+      const without =
+        (idx > 0 ? chunk.slice(0, idx) : '') +
+        (idx + rollMatch[0].length < chunk.length ? chunk.slice(idx + rollMatch[0].length) : '');
+      const cleaned = without.replace(/\s{2,}/g, ' ').trim();
+      if (cleaned) blocks.push({ type: 'prose', text: cleaned });
       return;
     }
 

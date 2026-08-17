@@ -89,7 +89,11 @@ export function isUnresolvedActionNarrative(
 
   const speech = intent.kind === 'talk' || isSpeechOrProtest(playerAction);
   if (speech) {
-    return !(proseResolvesSpeech(prose) || proseTracksPremise(prose));
+    if (!proseResolvesSpeech(prose)) return true;
+    if (isRecycledTalkBeat(prose, previousNarrative)) return true;
+    if (isPlayerQuestion(playerAction) && !proseAnswersPlayerAsk(playerAction, prose)) return true;
+    // Atmosphere / premise keywords alone must not count as answering dialogue.
+    return false;
   }
 
   const worldAsk = isWorldSituationQuestion(playerAction);
@@ -135,13 +139,74 @@ REQUIRED:
 4. If they enter, scout an entrance, sneak, or move forward: describe the space in front of them (aisle, door, shelves, light, smell) BEFORE any creature acts. Never open on "the nearest creature".
 5. If they practice/test gear: describe feel, balance, sound — not a quest redirect. Use ONLY equipped/inventory gear.
 6. If they protest, joke, refuse, or ask who is in charge: that is DIALOGUE. Answer in System/registrar or narrator voice. Do NOT narrate a physical follow-through, knife-grip, or step forward.
-7. If they ask a person / someone nearby: they MUST speak and that person MUST answer. Do not replace the conversation with a Guide Book lecture that "everyone heard it."
+7. If they ask a person in the scene: they MUST speak and that person MUST answer. Do not replace the conversation with a Guide Book lecture that "everyone heard it." Never call anyone "someone nearby" as a name or dialogue tag.
 8. If they only ask what is going on / what the screen is: answer in-world from the last scene (blue panel, street, Integration). Never write engine notes ("not a place you traveled to", "not a list of what you are carrying", "the sheet", "This is still [location]").
 9. Do NOT reply with "you follow through", "you commit to the action", "the result lands in [category]", "main approach", "ordinary wreckage", "green crystals still split the concrete", or "the System panel still hangs".
-10. Story first, then <system-log>. Never emit XP Gained: 0. Never reply with a system-log and no story.
+10. Story first, then <system-log>. Never emit XP Gained: 0. Never reply with a system-log and no story. Never emit Action Resolved / CODE ENFORCED / bare XP:0/300 lines.
 11. Do NOT echo the location label as a sentence. Do NOT invent loot or named enemies without tags.
+12. If they asked a clarifying question (terms, worth, what happens if): ANSWER it with concrete terms. Do not stall with "awaits your response", soft-reset the ask, or paste a prior paragraph.
 Then give 3–4 choices grounded in what you just described — not objects you never narrated.
 ===========================================================`;
+}
+
+export function isPlayerQuestion(action: string): boolean {
+  const t = action.replace(/\s+/g, ' ').trim();
+  if (/\?/.test(t)) return true;
+  return /\b(what|how|why|where|who|when|can i|could i|would you|tell me|explain|details|if i (?:agree|refuse|don'?t)|what (?:do|does|happens|if)|how (?:might|do|can)|prove)\b/i.test(
+    t
+  );
+}
+
+function askKeywordTokens(action: string): string[] {
+  return (action.toLowerCase().match(/[a-z]{4,}/g) ?? []).filter(
+    (t) =>
+      !/^(with|from|that|this|have|into|your|their|about|would|could|should|please|more|some|what|when|where|which|think|make|give|tell|does|dont|nakes|might|before|after|than|them|they|will|just|only|also|been|were|very|into)$/.test(
+        t
+      )
+  );
+}
+
+/** Concrete answer cues for open questions — not atmosphere-only. */
+function proseAnswersPlayerAsk(action: string, prose: string): boolean {
+  if (!proseResolvesSpeech(prose) && !proseResolvesTalk(prose)) return false;
+  const tokens = askKeywordTokens(action);
+  const hay = prose.toLowerCase();
+  if (tokens.length === 0) return true;
+  const hits = tokens.filter((t) => hay.includes(t)).length;
+  if (hits >= Math.min(2, tokens.length)) return true;
+  // Stake / bargain answers
+  if (
+    /\b(if you (?:agree|refuse)|should you (?:agree|refuse)|in return|sanctuary|protection|resources|pact|oath|terms)\b/i.test(
+      prose
+    )
+  ) {
+    return true;
+  }
+  // Worth / prove answers
+  if (
+    /\b(prove|worth|cleanse|ward|task|demonstrate|resolve|action|sacrifice)\b/i.test(prose)
+    && /\b(prove|worth|how|worthy)\b/i.test(action)
+  ) {
+    return true;
+  }
+  // Stall / recycle patterns never count
+  if (/\bawaits?\s+(?:your|a)\s+response\b|\bawaiting\s+(?:your|a)\s+decision\b/i.test(prose)) {
+    return false;
+  }
+  return hits >= 1 && prose.length >= 160 && proseResolvesTalk(prose);
+}
+
+function isRecycledTalkBeat(prose: string, previous: string): boolean {
+  const prior = proseOnly(previous).toLowerCase();
+  if (prior.length < 80) return false;
+  const sentences = prose
+    .toLowerCase()
+    .split(/[.!?]+/)
+    .map((s) => s.trim())
+    .filter((s) => s.length > 28);
+  if (sentences.length === 0) return true;
+  const recycled = sentences.filter((s) => prior.includes(s.slice(0, 42))).length;
+  return recycled >= Math.ceil(sentences.length * 0.55);
 }
 
 /** Named thing the player is trying to search, inspect, or move to. */

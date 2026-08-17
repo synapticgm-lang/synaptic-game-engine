@@ -64,16 +64,19 @@ export function scrubInventedProperNouns(
       ? { afterThe: 'something nearby', afterA: 'something nearby', bare: 'something nearby' }
       : /\b(creature|beast|enemy|foe|hatchling|mob)\b/i.test(claim)
         ? { afterThe: 'a nearby threat', afterA: 'a nearby threat', bare: 'a nearby threat' }
-        : { afterThe: 'someone nearby', afterA: 'someone nearby', bare: 'someone nearby' };
+        : { afterThe: 'the speaker', afterA: 'a speaker', bare: 'the speaker' };
     text = replaceUngroundedName(text, claim, generic);
   }
+
+  // Never leave the soft placeholder as a dialogue subject / possessive actor.
+  text = scrubSomeoneNearbyActor(text);
 
   return { text, stripped: Array.from(new Set(stripped)) };
 }
 
 type GenericSlot = { afterThe: string; afterA: string; bare: string };
 
-/** Never emit "a figure" — that slot leaked as a spoken name ("the a figure"). */
+/** Prefer role slots — never "someone nearby" as a spoken name. */
 function guessGenericReplacement(name: string): GenericSlot {
   if (/\b(keep|tower|fort|castle|hall|manor|estate|temple|cathedral)\b/i.test(name)) {
     return { afterThe: 'the nearby building', afterA: 'a nearby building', bare: 'a nearby building' };
@@ -87,10 +90,22 @@ function guessGenericReplacement(name: string): GenericSlot {
   if (/\b(blessing|mark|brand|sigil|seal|pact)\b/i.test(name)) {
     return { afterThe: 'the mark', afterA: 'a mark', bare: 'the mark' };
   }
-  if (/\b(court|order|covenant|compact|faction|guild|circle|keepers?)\b/i.test(name)) {
+  if (/\b(court|order|covenant|compact|faction|guild|circle|keepers?|warden)\b/i.test(name)) {
     return { afterThe: 'the court', afterA: 'a court', bare: 'the court' };
   }
-  return { afterThe: 'someone nearby', afterA: 'someone nearby', bare: 'someone nearby' };
+  if (/\b(official|registrar|speaker|figure|robed)\b/i.test(name)) {
+    return { afterThe: 'the official', afterA: 'an official', bare: 'the official' };
+  }
+  return { afterThe: 'the speaker', afterA: 'a speaker', bare: 'the speaker' };
+}
+
+/** Rewrite leftover placeholder actors into role language. */
+export function scrubSomeoneNearbyActor(text: string): string {
+  if (!text || !/someone nearby/i.test(text)) return text;
+  return text
+    .replace(/\bsomeone nearby(?:'s|’s)\b/gi, "the speaker's")
+    .replace(/\bsomeone nearby\s+(does|doesn't|does not|did|said|states?|turns?|inclines?|remains?|stands?|listens?|regards?|gestures?|speaks?|asks?|replies?|nods?)\b/gi, 'the speaker $1')
+    .replace(/\b(?:the\s+)?someone nearby\b/gi, 'the speaker');
 }
 
 function replaceUngroundedName(text: string, name: string, slot: GenericSlot): string {

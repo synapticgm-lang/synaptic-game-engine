@@ -709,7 +709,10 @@ function OverlayChip({
   }
   if (segment.type === 'system') {
     return (
-      <div className="comic-overlay-scrollbar h-fit min-h-min w-fit max-h-[45vh] max-w-[90%] shrink-0 overflow-y-auto whitespace-pre-wrap break-words rounded border border-blue-500/50 bg-blue-950/95 p-3 font-mono text-[10px] text-blue-100 shadow-2xl backdrop-blur-sm">
+      <div className="comic-overlay-scrollbar h-fit min-h-min w-fit max-h-[45vh] max-w-[90%] shrink-0 overflow-y-auto whitespace-pre-wrap break-words rounded border border-sky-500/50 bg-sky-950/95 p-3 font-mono text-[10px] text-sky-100 shadow-2xl backdrop-blur-sm">
+        <div className="mb-1 text-[8px] font-bold uppercase tracking-[0.2em] text-sky-400/90">
+          In-world System
+        </div>
         {segment.text}
       </div>
     );

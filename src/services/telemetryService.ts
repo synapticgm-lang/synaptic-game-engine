@@ -117,6 +117,15 @@ export async function logTelemetryEvent(
 
   const { error } = await supabase.from('telemetry_logs').insert(row);
   if (error) {
+    const missingCol = /action_target|schema cache/i.test(error.message);
+    if (missingCol) {
+      const { action_target: _drop, ...legacy } = row;
+      const retry = await supabase.from('telemetry_logs').insert(legacy);
+      if (retry.error) {
+        console.warn('[telemetry] telemetry_logs insert failed', retry.error.message);
+      }
+      return;
+    }
     // Avoid recursive debugLogger → telemetry loops; console only.
     console.warn('[telemetry] telemetry_logs insert failed', error.message);
   }

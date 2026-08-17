@@ -559,9 +559,12 @@ function SystemLogPanel({ lines, verbosity }: { lines: string[]; verbosity: Stat
 
   return (
     <div className="ml-4 mt-2 max-w-lg rounded-lg border border-blue-500/50 border-l-4 border-l-sky-400 bg-blue-950/50 px-3 py-2 shadow-inner shadow-blue-900/40">
-      <div className="mb-1 flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.18em] text-blue-300">
-        <Terminal size={10} /> System
+      <div className="mb-0.5 flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.18em] text-blue-300">
+        <Terminal size={10} /> Status
       </div>
+      <p className="mb-1 text-[10px] leading-snug text-blue-400/70">
+        Turn results (XP, quests, loot) — not the in-world System voice
+      </p>
       <div className="space-y-0.5">
         {filtered.map((line, i) => (
           <div key={i} className="font-mono text-[11px] text-blue-100/90">{line}</div>

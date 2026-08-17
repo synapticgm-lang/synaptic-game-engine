@@ -93,11 +93,15 @@ export function formatOutcomeTokenForPrompt(token: OutcomeToken, litRpgHideMath:
     ? `combat_round: hit with ${token.combat.weaponName} for ${token.combat.dealt}; ${token.combat.enemyName} HP ${token.combat.enemyHpBefore}→${token.combat.enemyHpAfter}; ${token.combat.enemyActReason} Player HP now ${token.combat.playerHpAfter}. Narrate THIS blow and the return (or why there is none). Do not invent another weapon.\n`
     : '';
   if (litRpgHideMath) {
+    const dialogueNote =
+      token.narration_hooks.label === 'Dialogue'
+        ? 'This is informational dialogue — answer the player; do not invent a Social failure or "Action Resolved" chrome.\n'
+        : '';
     return `OUTCOME TOKEN (LEDGER TRUTH — narrate; do not invert, soften into the opposite, or invent a different result):
 result=${token.summary}
 action_type=${token.action_type}
-${kit}${remain}${combat}${hooks}
-Do NOT print d20/DC/mod numbers in prose or <system-log>. Story beat first, then System chrome.`;
+${dialogueNote}${kit}${remain}${combat}${hooks}
+Do NOT print d20/DC/mod numbers, "Action Resolved", or "CODE ENFORCED" in prose or <system-log>. Story beat first, then System chrome.`;
   }
   return `OUTCOME TOKEN (LEDGER TRUTH — narrate; do not invert):
 ${JSON.stringify(token.resolution)}

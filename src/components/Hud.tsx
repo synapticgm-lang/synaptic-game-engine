@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import type { GameState, GoogleUser, Settings as GameSettings } from '../game/types';
 import { Bug, ChevronDown, ChevronUp, Settings, Map, Compass, Recycle, Backpack } from 'lucide-react';
+import { loadCapacityLedger } from '../game/capacityLedger';
+import { getTierDefinition, type SubscriptionTierId } from '../game/subscriptionTiers';
 
 interface Props {
   state: GameState;
@@ -22,11 +24,16 @@ interface Props {
   lastSavedTurn?: number | null;
 }
 
-export function Hud({ state, onSettings, onOpenMap, onOpenQuestLog, onOpenCharacter, onOpenMerchant, onOpenDebug, lastSavedTurn }: Props) {
+export function Hud({ state, settings, onSettings, onOpenMap, onOpenQuestLog, onOpenCharacter, onOpenMerchant, onOpenDebug, lastSavedTurn }: Props) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const c = state?.character;
   const hpPercent = c && c.maxHp > 0 ? Math.round((c.hp / c.maxHp) * 100) : 100;
+  const ledger = loadCapacityLedger();
+  const tier = (settings.subscriptionTier ?? ledger.tier) as SubscriptionTierId;
+  const dailyCap = getTierDefinition(tier).textTurnsPerDay;
+  const turnsLeft =
+    Math.max(0, dailyCap + ledger.textAdBonusToday - ledger.textDailySpent) + ledger.textPackBalance;
 
   // Adaptive Secondary Resource Check (Supports MP, SP, Power, Rage, etc.)
   const secondaryCurrent = c?.mp ?? c?.sp ?? 12;
@@ -51,6 +58,12 @@ export function Hud({ state, onSettings, onOpenMap, onOpenQuestLog, onOpenCharac
             T{lastSavedTurn} saved
           </span>
         )}
+        <span
+          className="font-mono text-[10px] sm:text-[11px] text-amber-200/90 whitespace-nowrap"
+          title={`Daily text turns remaining (cap ${dailyCap}/day on this tier, plus packs)`}
+        >
+          {turnsLeft} turn{turnsLeft === 1 ? '' : 's'}
+        </span>
       </div>
 
       {/* DEAD CENTER: Permanent Health & Mana/Resource Bars */}

@@ -38,9 +38,9 @@ export function scrubFigurePlaceholder(text: string): string {
     .replace(/\bthe\s+war\s+with\s+(?:the\s+)?a\s+figure\b/gi, 'the war')
     .replace(/\b(?:you\s+carry|carries)\s+the\s+a\s+figure\b/gi, 'you carry the mark')
     .replace(/\ba\s+figure\s+is\s+not\b/gi, 'that mark is not')
-    .replace(/\bthe\s+a\s+figure\b/gi, 'someone nearby')
+    .replace(/\bthe\s+a\s+figure\b/gi, 'the speaker')
     .replace(/\b(?:the\s+)?(?:glowing\s+)?a figure\b/gi, (hit) =>
-      /glowing/i.test(hit) ? 'the glowing mark' : 'someone nearby'
+      /glowing/i.test(hit) ? 'the glowing mark' : 'the speaker'
     );
 }
 
@@ -48,14 +48,24 @@ export function scrubFigurePlaceholder(text: string): string {
 export function scrubUiQuestVerbs(text: string): string {
   if (!text) return text;
   return text
-    .replace(/\bunlock(?:s|ed|ing)?\s+someone(?:\s+nearby)?\b/gi, 'look to someone nearby')
+    .replace(/\bunlock(?:s|ed|ing)?\s+someone(?:\s+nearby)?\b/gi, 'look to the speaker')
     .replace(/\bunlock\s+(?:a|the)\s+(?:quest|journal|starter|guide\s*book)\b/gi, 'take the next step')
     .replace(/\bquest\s+unlocked\b/gi, 'a task comes into focus');
+}
+
+/** Soft name-slot must not act as a dialogue subject. */
+export function scrubSomeoneNearbyPlaceholder(text: string): string {
+  if (!text || !/someone nearby/i.test(text)) return text;
+  return text
+    .replace(/\bsomeone nearby(?:'s|’s)\b/gi, "the speaker's")
+    .replace(/\bsomeone nearby\s+(does|doesn't|does not|did|said|states?|turns?|inclines?|remains?|stands?|listens?|regards?|gestures?|speaks?|asks?|replies?|nods?)\b/gi, 'the speaker $1')
+    .replace(/\b(?:the\s+)?someone nearby\b/gi, 'the speaker');
 }
 
 export function applyProseWarden(text: string): string {
   if (!text) return text;
   let next = scrubFigurePlaceholder(text);
+  next = scrubSomeoneNearbyPlaceholder(next);
   next = scrubUiQuestVerbs(next);
   next = scrubArticleCollisions(next);
   return next;

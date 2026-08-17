@@ -21,6 +21,8 @@ export interface CheckContext {
   dc: number;
   /** Optional sticky cost on crit fail when fiction warrants (trap room, combat). */
   critFailHpRisk: number;
+  /** Informational dialogue — no contested stake; do not roll. */
+  autoSucceed?: boolean;
 }
 
 export interface PlayerCheckResult extends RollOutcome {
@@ -32,6 +34,26 @@ export interface PlayerCheckResult extends RollOutcome {
   skill?: CheckSkill;
   codeResolutionText: string;
   narrativeOutcomeLabel: 'SUCCESS' | 'FAILURE';
+  /** True when casual talk skipped the Social d20. */
+  skippedRoll?: boolean;
+}
+
+const CONTESTED_SOCIAL =
+  /\b(persuade|negotiate|intimidate|convince|bargain|bribe|lie|deceive|bluff|threaten|coerce|demand|force\s+(?:them|him|her|it)|bend\s+the\s+knee|swear|oath|pact|contract|bind)\b/i;
+
+const MATERIAL_AID_ASK =
+  /\b(currency|gold|coin|coins|money|pay|lend|hire|guide|escort|gear|weapon|supplies|ration|rations)\b/i;
+
+/** Contested Social stakes only — not every spoken line. */
+export function isContestedSocialAction(intent: PlayerIntent, actionText: string): boolean {
+  if (intent.kind === 'refuse') return true;
+  const t = actionText.toLowerCase();
+  if (CONTESTED_SOCIAL.test(t)) return true;
+  // Asking for material aid / personnel is contested; clarifying questions are not.
+  if (MATERIAL_AID_ASK.test(t) && /\b(give|can you|could you|would you|please|ask|request|need|want)\b/i.test(t)) {
+    return true;
+  }
+  return false;
 }
 
 function attrScore(state: GameState, key: AttributeKey): number {
@@ -111,7 +133,17 @@ export function resolveCheckContext(
     };
   }
 
-  if (intent.kind === 'talk' || intent.kind === 'refuse' || /\b(persuade|negotiate|intimidate|convince)\b/i.test(t)) {
+  if (intent.kind === 'talk' || intent.kind === 'refuse' || CONTESTED_SOCIAL.test(t)) {
+    if (!isContestedSocialAction(intent, actionText)) {
+      return {
+        label: 'Dialogue',
+        attr: 'CHA',
+        skill: 'persuasion',
+        dc: 0,
+        critFailHpRisk: 0,
+        autoSucceed: true,
+      };
+    }
     return {
       label: intent.kind === 'refuse' ? 'Refuse / protest' : 'Social',
       attr: 'CHA',
@@ -198,6 +230,24 @@ export function runPlayerCheck(
   d20Roll?: number
 ): PlayerCheckResult {
   const ctx = resolveCheckContext(state, intent, actionText);
+  if (ctx.autoSucceed || ctx.dc <= 0) {
+    return {
+      d20: 20,
+      modifier: 0,
+      totalScore: 20,
+      margin: 20,
+      dc: 0,
+      isSuccess: true,
+      isCriticalSuccess: false,
+      isCriticalFailure: false,
+      label: ctx.label,
+      attr: ctx.attr,
+      skill: ctx.skill,
+      codeResolutionText: 'SUCCESS (Dialogue — no contested check)',
+      narrativeOutcomeLabel: 'SUCCESS',
+      skippedRoll: true,
+    };
+  }
   const d20 = d20Roll ?? Math.floor(Math.random() * 20) + 1;
   const modifier =
     attrMod(attrScore(state, ctx.attr)) +
@@ -220,5 +270,6 @@ export function runPlayerCheck(
     skill: ctx.skill,
     codeResolutionText,
     narrativeOutcomeLabel,
+    skippedRoll: false,
   };
 }

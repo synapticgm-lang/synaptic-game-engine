@@ -63,7 +63,7 @@ export function classifyImageGenFailure(error: unknown): ImageFailureReason {
 
 export function diegeticImageFailureMessage(reason: ImageFailureReason): string {
   if (reason === 'rate_limited') return "Your mind's eye blurs for a moment. The scene will return.";
-  if (reason === 'no_key') return 'Art mode needs an image key in Settings. The story continues.';
+  if (reason === 'no_key') return 'Picture skipped — the story continues.';
   if (reason === 'moderation') return 'The scene was too vivid to render. Continue with the prose.';
-  return 'The image could not be rendered. The story continues.';
+  return 'Picture skipped — the story continues.';
 }
