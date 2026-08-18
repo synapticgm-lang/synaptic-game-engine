@@ -13,6 +13,8 @@ import { detectFactLockViolations } from './factLocks';
 import { resolveSeededRarity } from './dungeonSeed';
 import { scrubInventedProperNouns } from './narrativeScrub';
 import { applyProseWarden } from './proseWarden';
+import { findManifestInventions } from './sceneManifest';
+import { continuityStrict } from './opsKillSwitches';
 
 export interface WardenResult {
   /** Events allowed after sheet checks. */
@@ -218,6 +220,20 @@ export function runWarden(
     }
   }
 
+  // Strict mode: remaining multi-word invents vs Scene Manifest become a continuity break
+  // so the turn can retry / cut rather than silently invent a cast.
+  let manifestBreak: string | undefined;
+  if (continuityStrict()) {
+    const leftover = findManifestInventions(polished, state, playerInput);
+    for (const name of leftover.slice(0, 4)) {
+      notes.push(`Scene Manifest invent: ${name}`);
+    }
+    if (leftover.length >= 2) {
+      manifestBreak = 'prose invents entities outside Scene Manifest';
+      notes.push(`Continuity break: ${manifestBreak}`);
+    }
+  }
+
   const inputClaims = findUnsupportedItemClaims(playerInput, state);
   if (inputClaims.length) {
     notes.push(`Player claimed missing item(s): ${inputClaims.join(', ')}`);
@@ -233,8 +249,11 @@ export function runWarden(
     notes.push(`Fact lock: ${lock.reason}`);
   }
   const continuityBreak =
-    factLocks[0]?.reason ?? detectSceneContradiction(state.sceneFacts, polished) ?? undefined;
-  if (continuityBreak && !factLocks.length) {
+    factLocks[0]?.reason
+    ?? manifestBreak
+    ?? detectSceneContradiction(state.sceneFacts, polished)
+    ?? undefined;
+  if (continuityBreak && !factLocks.length && continuityBreak !== manifestBreak) {
     notes.push(`Continuity break: ${continuityBreak}`);
   }
 

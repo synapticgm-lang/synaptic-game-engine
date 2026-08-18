@@ -13,4 +13,11 @@ Choices are Tier-3 outputs and MUST be generated ONLY after the turn's story pro
 * If they ask where gear came from, answer from item provenance and equipped slots. Do not say the question is "opaque" when the sheet already knows.
 * NEVER mention a spatial pouch or fancy container unless that exact name is in Containers.
 * Info/lore cards constrain identity and world facts — they do NOT authorize inventing a new crisis mid-choice-list.
-* Prefer 3–4 immediate, scene-local actions. Always emit 3 or 4 options. Prefer scene-safe fallbacks over ungrounded creativity.`;
+* Prefer 3–4 immediate, scene-local actions. Always emit 3 or 4 options. Prefer scene-safe fallbacks over ungrounded creativity.
+* STANCE DENSITY (non-lethal beats, all sandbox modes): Typical story beats MUST offer real stance, not three flavours of look-around / wait / inspect surroundings. Include when the scene allows:
+  - Kind / help / honest
+  - Hard / selfish / threat / refuse
+  - Curious / talk / ask / bargain / hang out
+  - Walk away / ignore / go another direction — unless combat is locking them in
+  Combat-locked turns stay fight moves. Opening cover questions stay covers. PYOA stays authored forks (talk/refuse/walk still count; do not invent a fake sandbox).
+  There is NO numeric karma or alignment meter. Named people remember how they were treated.`;

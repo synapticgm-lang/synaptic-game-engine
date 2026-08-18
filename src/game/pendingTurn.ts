@@ -46,6 +46,7 @@ export function buildPendingProposal(params: {
   comicPanels?: ComicPanel[];
   imagePrompt?: string[] | null;
   turnFrame?: TurnFrameTheme | null;
+  expectedRevision?: number;
 }): PendingTurnProposal {
   const { proposedState } = params;
   // Strip nested pending to avoid recursion / bloat
@@ -72,6 +73,10 @@ export function buildPendingProposal(params: {
     imagePrompt: params.imagePrompt,
     turnFrame: params.turnFrame ?? undefined,
     createdAt: Date.now(),
+    expectedRevision:
+      params.expectedRevision
+      ?? proposedState.ledgerRevision
+      ?? 0,
     proposedState: cleanProposed,
   };
 }

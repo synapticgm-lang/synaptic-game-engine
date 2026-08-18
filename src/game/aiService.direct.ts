@@ -8,6 +8,7 @@ import { logger } from './logger';
 import type { GmResult } from './aiServiceShared';
 import { RateLimitError, withRetry, processGmCompletion } from './aiServiceShared';
 import { resolveWriterModel } from './subscriptionTiers';
+import { effectiveWriterTier, isTestLabEnabled } from './testLab';
 
 const AI_REQUEST_TIMEOUT_MS = 45_000;
 const AI_MAX_OUTPUT_TOKENS = 4_096;
@@ -61,8 +62,8 @@ function normalizeProvider(settings: Settings): { provider: string; apiKey: stri
   }
   const model = resolveWriterModel({
     aiProvider: 'openrouter',
-    customModelId: settings.customModelId,
-    tier: settings.subscriptionTier,
+    customModelId: isTestLabEnabled() ? null : settings.customModelId,
+    tier: effectiveWriterTier(settings.subscriptionTier),
   });
   return { provider: 'openrouter', apiKey, model };
 }

@@ -72,6 +72,10 @@ import { needsPortraitRefresh, paperDollPrompt, portraitCacheKey } from './inven
 import { formatCampaignStoryName, getCampaignBibleById, isNsfwCampaign } from '@/data/campaigns';
 import { applyAccusationFromInput } from './mysteryCulprit';
 import { parsePlayerIntent, groundPlayerAction, isSpeechOrProtest } from './intentParser';
+import {
+  checkObligationCoverage,
+  buildObligationRetryBlock,
+} from './intentContract';
 import { interpretPlayerUtterance, isJunkSetupValue } from './playerUtterance';
 import { runPlayerCheck } from './checkMath';
 import { buildOutcomeToken, formatOutcomeTokenForPrompt } from './outcomeToken';
@@ -98,6 +102,7 @@ import {
 } from './campaignMemory';
 import { canSpend, spendCapacity, refundCapacity, capacityStatusMessage, storyStartTextTurnsForTier } from './capacityLedger';
 import { setActiveSubscriptionTier } from './subscriptionTiers';
+import { effectiveWriterTier, isTestLabEnabled } from './testLab';
 import { canOfferRewardedMemorable } from './rewardedAds';
 import { clipCustomTabletopRules } from './customTabletopRules';
 import { touchPlaceVisit, upsertPlaceFromSheet } from './places';
@@ -120,7 +125,8 @@ import {
   isGenericBridgeNarrative,
   isUnresolvedActionNarrative,
 } from './actionResolution';
-import { mergeNpcMemoriesFromTurn } from './npcMemory';
+import { mergeNpcMemoriesFromTurn, recordNpcTreatmentFromAction } from './npcMemory';
+import { resolveTabletopGmPersonality, type GmPersonalityId } from './gmVoiceProfile';
 import {
   applyAcceptedBeautyOffer,
   applyDismissedBeautyOffer,
@@ -131,6 +137,24 @@ import {
   splashPlateLabel,
 } from './memorableMoments';
 import { buildPendingProposal, getProposedState, withEditedNarrative, touchLocationSheet, ensureLocationSheet } from './pendingTurn';
+import {
+  acceptProposedState,
+  appendSpeculativeTake,
+  currentLedgerRevision,
+  nextLedgerRevision,
+} from './ledgerRevision';
+import { imagesKilled, signupsPaused } from './opsKillSwitches';
+import { appendStateTxDiff } from './stateTx';
+import { ensureCampaignContract, mergeCampaignDivergences } from './campaignContract';
+import { canSoftOffer, withUpdatedHookArc } from './hookArc';
+import {
+  beatFingerprint,
+  isSameBeat,
+  buildBeatNoveltyRetryBlock,
+} from './beatFingerprint';
+import { formatCombatReceipt } from './combatReceipt';
+import { scanAndScrubLeaks } from './leakScanner';
+import { enrichQuests } from './questJournalEnrich';
 import { extractUpdates, extractNewItems, parseActionTags, stripActionTags, matchLoreCards, eventsToLoreCards, parseTurnFrame, eventsToQuestUpdates, eventsToEncounterUpdate, parsePanels, eventsToMilestone, eventsToLootVideo, eventsToVisualUpdate, stripChoiceList, extractChoiceLines, stripTurnCloser, storyHasBody } from './parser';
 import { hasRealGmStory } from './turnAsk';
 import { encounterOriginPlace } from './locationName';
@@ -155,6 +179,7 @@ import { logger } from './logger';
 import { debugLogger } from './debugLogger';
 import { supabase, signInWithGoogleOAuth, signOutSupabase, isSupabaseConfigured } from '@/lib/supabase';
 import { syncEntitlementsFromServer } from './entitlementSync';
+import { ingestCampaignPlates, pullPlayerProfileFromCloud, recordStoryStarted } from './playerProfile';
 import {
   installTelemetryDebugBridge,
   setTelemetryContext,
@@ -486,6 +511,7 @@ export function useGame() {
     try {
       const local = await loadGame();
       setLocalSlot(gameStateToLocalSlot(local));
+      if (local) ingestCampaignPlates(local);
       const allCloud = await fetchAllCloudSaveSlots();
       setCloudSlots(allCloud);
       setCloudSlot(allCloud[0] ?? null);
@@ -548,6 +574,7 @@ export function useGame() {
         error: result.error,
       });
     });
+    void pullPlayerProfileFromCloud();
   });
 
   useEffect(() => {
@@ -609,7 +636,11 @@ export function useGame() {
   }, []);
 
   const offerMemorableAdIfCapHit = useCallback((skippedForCapacity?: boolean) => {
-    if (skippedForCapacity && canOfferRewardedMemorable(settingsRef.current.contentMode)) {
+    if (
+      skippedForCapacity
+      && canOfferRewardedMemorable(settingsRef.current.contentMode)
+      && canSoftOffer(stateRef.current, { contentMode: settingsRef.current.contentMode })
+    ) {
       setOutOfMemorableAdOffer(true);
     }
   }, []);
@@ -648,6 +679,7 @@ export function useGame() {
     });
     setSaveStatus('saving');
     await saveGame(s);
+    ingestCampaignPlates(s);
     setLastSavedTurn(s.turn);
     localStorage.setItem(LOCAL_UPDATED_KEY, String(Date.now()));
     // Best-effort cloud SSOT for signed-in players (IndexedDB stays primary offline cache).
@@ -693,6 +725,10 @@ export function useGame() {
     context?: ImagePromptContext,
     hero?: boolean
   ): Promise<string | null> => {
+    if (imagesKilled()) {
+      debugLogger.record('SYSTEM', 'Ops kill switch: images off');
+      return null;
+    }
     // Classic text: skip routine art; optional memorable-moment splashes still allowed.
     if (!allowsImageGeneration(settings, promptKind)) {
       debugLogger.record('SYSTEM', 'Skipping image generation for classic text mode', { promptKind });
@@ -1425,13 +1461,20 @@ export function useGame() {
     const honeymoonLeft = Math.max(0, current.storyStartTextTurnsRemaining ?? 0);
 
     // Sync tier + spend a text turn from story-start bonus, then capacity ledger.
-    setActiveSubscriptionTier(settingsRef.current.subscriptionTier ?? 'free');
+    // Test Lab: route writer/image catalog via Free/Mid/High preview without burning caps.
+    setActiveSubscriptionTier(
+      isTestLabEnabled()
+        ? effectiveWriterTier(settingsRef.current.subscriptionTier)
+        : (settingsRef.current.subscriptionTier ?? 'free')
+    );
     if (!freeOpeningTurn) {
       if (honeymoonLeft > 0) {
         honeymoonSpent = true;
       } else if (!canSpend('text')) {
         addToast(capacityStatusMessage('text'), 'info');
-        setOutOfTurnsAdOffer(true);
+        if (canSoftOffer(current, { contentMode: settingsRef.current.contentMode })) {
+          setOutOfTurnsAdOffer(true);
+        }
         setRestoreDraft(input);
         turnInFlightRef.current = false;
         return;
@@ -1925,9 +1968,13 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
         const probeLocks = detectFactLockViolations(liveCurrent, probeText, sanitizedInput);
         const previousGm =
           [...liveCurrent.log].reverse().find((e) => e.role === 'gm')?.content ?? '';
+        const obligationCoverage = checkObligationCoverage(turnMandate.intentContract, probeText);
+        const sameBeat = isSameBeat(probeText, liveCurrent.recentBeatFingerprints ?? []);
         const needsStoryRetry =
           !storyHasBody(probeText)
           || isUnresolvedActionNarrative(sanitizedInput, probeText, intentForMandate, previousGm)
+          || !obligationCoverage.ok
+          || sameBeat
           || probeLocks.some((l) => l.kind === 'weapon' || l.kind === 'cleared');
         // Fact-lock slips are cut locally after this. Only burn extra GM calls when
         // the turn did not resolve the player's action at all, or returned no story.
@@ -1937,6 +1984,8 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
             intent: intentForMandate.kind,
             empty: !storyHasBody(probeText),
             factLocks: probeLocks.map((v) => v.kind),
+            obligationMissing: obligationCoverage.missing.map((o) => o.kind),
+            sameBeat,
           });
           const firstResult = result;
           const firstProbe = probeText;
@@ -1946,6 +1995,18 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
             intentForMandate,
             previousGm
           );
+          const firstObligations = checkObligationCoverage(turnMandate.intentContract, firstProbe);
+          const firstSameBeat = isSameBeat(firstProbe, liveCurrent.recentBeatFingerprints ?? []);
+          const extraBlocks = [
+            !firstObligations.ok
+              ? buildObligationRetryBlock(turnMandate.intentContract, firstObligations)
+              : '',
+            firstSameBeat
+              ? buildBeatNoveltyRetryBlock(liveCurrent.recentBeatFingerprints ?? [])
+              : '',
+          ]
+            .filter(Boolean)
+            .join('\n\n');
           setRetryStatus('Refining story resolution…');
           result = await callGm(
             liveCurrent,
@@ -1956,6 +2017,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
               retry: true,
               intent: intentForMandate,
               factLocks: probeLocks,
+              extraRetryBlock: extraBlocks || undefined,
             }),
             settingsRef.current,
             activeLoreCards,
@@ -1972,16 +2034,36 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
             intentForMandate,
             previousGm
           );
-          const firstOk = storyHasBody(firstProbe) && !firstUnresolved;
-          const retryOk = storyHasBody(probeText) && !retryUnresolved;
+          const retryObligations = checkObligationCoverage(turnMandate.intentContract, probeText);
+          const retrySameBeat = isSameBeat(probeText, liveCurrent.recentBeatFingerprints ?? []);
+          const firstOk =
+            storyHasBody(firstProbe) && !firstUnresolved && firstObligations.ok && !firstSameBeat;
+          const retryOk =
+            storyHasBody(probeText) && !retryUnresolved && retryObligations.ok && !retrySameBeat;
           // Prefer a real first beat over a thinner / recycled retry.
+          let discardedNarrative: string | null = null;
           if (
             (firstOk && !retryOk)
             || (!retryOk && storyHasBody(firstProbe) && !storyHasBody(probeText))
             || (!firstOk && !retryOk && storyHasBody(firstProbe) && firstProbe.length >= (probeText?.length ?? 0))
           ) {
+            discardedNarrative = probeOf(result.text);
             result = firstResult;
             probeText = firstProbe;
+          } else if (storyHasBody(firstProbe) && result !== firstResult) {
+            discardedNarrative = firstProbe;
+          }
+          if (discardedNarrative) {
+            liveCurrent = appendSpeculativeTake(liveCurrent, {
+              turnPlanned: liveCurrent.turn + 1,
+              expectedRevision: currentLedgerRevision(liveCurrent),
+              playerAction: sanitizedInput,
+              narrative: discardedNarrative.slice(0, 4000),
+              reason: !firstObligations.ok || !retryObligations.ok
+                ? 'obligation-retry-discarded'
+                : 'resolution-retry-discarded',
+            });
+            stateRef.current = liveCurrent;
           }
         } else if (probeLocks.length) {
           debugLogger.record('STATE_UPDATE', 'Fact-lock slips will be cut locally — skipping GM retry', {
@@ -2336,7 +2418,8 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
             ...worldNotes,
             ...(ledgerRound
               ? [
-                  `Damage Dealt: ${ledgerRound.dealt} (${ledgerRound.enemyName} HP ${ledgerRound.enemyHpBefore} -> ${ledgerRound.enemyHpAfter})`,
+                  formatCombatReceipt({ combat: ledgerRound }) ||
+                    `Damage Dealt: ${ledgerRound.dealt} (${ledgerRound.enemyName} HP ${ledgerRound.enemyHpBefore} -> ${ledgerRound.enemyHpAfter})`,
                   ...(ledgerRound.received ? [`Damage Received: ${ledgerRound.received}`] : []),
                   ...(ledgerRound.xp ? [`XP Gained: ${ledgerRound.xp}`] : []),
                 ]
@@ -2405,6 +2488,13 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
       cleanText = applyLocalityWarden(cleanText, workingState.currentLocation ?? liveCurrent.currentLocation, hasFirearm);
       cleanText = enforcePerspective(cleanText, settingsRef.current, liveCurrent.character.name);
       cleanText = applyProseWarden(cleanText);
+      {
+        const leak = scanAndScrubLeaks(cleanText);
+        if (leak.notes.length) {
+          debugLogger.record('WARN', 'Leak scanner scrubbed engine notes', { notes: leak.notes.slice(0, 4) });
+          cleanText = leak.clean;
+        }
+      }
 
       if (mode === 'kid') {
         const kidTalk = (s: string) => filterKidModeText(s);
@@ -2518,11 +2608,21 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
         sceneBeat: applyCommittedNarrative(liveCurrent, cleanText, nextTurn).lastBeat,
       });
       const mergedTimeline = mergeTimeline(workingState.timeline, turnFacts);
-      const npcMemories = mergeNpcMemoriesFromTurn(
-        workingState,
-        events,
-        turnFacts,
-        nextTurn
+      const npcMemories = recordNpcTreatmentFromAction(
+        mergeNpcMemoriesFromTurn(
+          workingState,
+          events,
+          turnFacts,
+          nextTurn
+        ),
+        sanitizedInput,
+        nextTurn,
+        [
+          ...(workingState.companions ?? []).map((c) => c.name).filter((n): n is string => Boolean(n)),
+          ...(workingState.sceneFacts?.present ?? []).filter(
+            (n) => n.trim().length > 1 && !/^(bystanders|blue panel|cracked street)$/i.test(n)
+          ),
+        ]
       );
       const resolvedLocation =
         workingState.currentLocation ??
@@ -2654,7 +2754,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
         ...workingState,
         ...updates,
         character: baseChar,
-        quests: updatedQuests,
+        quests: enrichQuests(updatedQuests),
         activeEncounter: updatedEncounter,
         currentLocation: finalLocationName,
         activeDungeon: areaMap,
@@ -2672,6 +2772,8 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
         campaignPremise: workingState.campaignPremise ?? liveCurrent.campaignPremise,
         campaignBibleId: workingState.campaignBibleId ?? liveCurrent.campaignBibleId,
         pendingTurn: null,
+        ledgerRevision: nextLedgerRevision(liveCurrent),
+        speculativeTakes: liveCurrent.speculativeTakes,
         memorableMoments: memorableDecision.nextState,
         log: [
           ...liveCurrent.log,
@@ -2706,10 +2808,46 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
         ...(turnFrame ? { turnFrameTheme: turnFrame } : {}),
       };
 
-      const mergedState: GameState = mergedStateDraft;
+      const combatSummary = ledgerRound
+        ? formatCombatReceipt({ combat: ledgerRound }) ?? undefined
+        : undefined;
+      let mergedState: GameState = appendStateTxDiff(liveCurrent, mergedStateDraft, {
+        combatSummary,
+        why: `Player: ${sanitizedInput.slice(0, 120)}`,
+      });
+      // Material state receipts — player-visible ledger lines for this turn (vibe P0).
+      {
+        const turnReceipts = (mergedState.stateTxLog ?? [])
+          .filter((t) => t.turn === nextTurn)
+          .map((t) => `Ledger: ${t.summary}`);
+        if (turnReceipts.length) {
+          mergedState = {
+            ...mergedState,
+            log: mergedState.log.map((entry) =>
+              entry.id === gmEntry.id
+                ? {
+                    ...entry,
+                    systemLog: Array.from(
+                      new Set([...(entry.systemLog ?? []), ...turnReceipts])
+                    ),
+                  }
+                : entry
+            ),
+          };
+        }
+      }
+      mergedState = withUpdatedHookArc(mergedState);
+      mergedState = mergeCampaignDivergences(mergedState);
+      const fp = beatFingerprint(cleanText);
+      mergedState = {
+        ...mergedState,
+        recentBeatFingerprints: [...(liveCurrent.recentBeatFingerprints ?? []), fp].slice(-12),
+      };
       const postCommitImageJobs: ImageGenJob[] = [];
-      const allowSceneArt = storyHasBody(cleanText);
-      if (!allowSceneArt) {
+      const allowSceneArt = storyHasBody(cleanText) && !imagesKilled();
+      if (imagesKilled()) {
+        debugLogger.record('SYSTEM', 'Ops kill switch: images off — skipping scene art');
+      } else if (!allowSceneArt) {
         debugLogger.record('SYSTEM', 'Skipping scene images — no story body this turn');
       } else if (isComicView && comicPanelsForLog.length > 0) {
         postCommitImageJobs.push({
@@ -2879,7 +3017,16 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
       addToast('Pending turn data missing — discard and retry', 'error');
       return;
     }
-    const committed: GameState = { ...proposed, pendingTurn: null };
+    const accepted = acceptProposedState(
+      previous,
+      proposed,
+      previous.pendingTurn.expectedRevision
+    );
+    if (!accepted.ok) {
+      addToast(accepted.reason, 'error');
+      return;
+    }
+    const committed = accepted.committed;
     stateRef.current = committed;
     setState(committed);
     void persist(committed);
@@ -2956,6 +3103,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
     bibleId?: string,
     customTabletopRules?: string,
     playerBible?: CampaignBible,
+    gmPersonality?: GmPersonalityId,
   ) => {
     if (
       selectedVisualMode ||
@@ -3019,7 +3167,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
     const seededWhere = coverAnswers.where || bible?.startingLocation || namedSeeded.currentLocation;
     const pickedHook = resolveOpeningHook(bible, namedSeeded.seed);
     const honeymoon = storyStartTextTurnsForTier(settingsRef.current.subscriptionTier ?? 'free');
-    const newState: GameState = clampLeakedOpeningQuests({
+    const rawNewState: GameState = clampLeakedOpeningQuests({
       ...namedSeeded,
       gmStrictness,
       character: mergedCharacter,
@@ -3041,7 +3189,20 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
       },
       customTabletopRules:
         engineMode === 'dnd' ? clipCustomTabletopRules(customTabletopRules).text || undefined : undefined,
+      gmPersonality:
+        engineMode === 'dnd' ? resolveTabletopGmPersonality(gmPersonality) : undefined,
     });
+    const newState = withUpdatedHookArc(
+      ensureCampaignContract(
+        {
+          ...rawNewState,
+          quests: enrichQuests(rawNewState.quests ?? []),
+          recentBeatFingerprints: [],
+          stateTxLog: [],
+        },
+        bible
+      )
+    );
     setState(newState);
     stateRef.current = newState;
     bindSessionImageCache(newState.saveId);
@@ -3059,6 +3220,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
       logEntries: newState.log.length
     });
     persist(newState);
+    recordStoryStarted();
     setShowNewGame(false);
 
     setBusy(true);
@@ -3446,8 +3608,15 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
     const current = stateRef.current;
     if (!current) return;
     if (!isClassicMemorableEnabled(settingsRef.current)) return;
+    if (!canSoftOffer(current, { contentMode: settingsRef.current.contentMode, midCombat: !!current.activeEncounter })) {
+      addToast('Splash offers unlock after your first identity, choice, and consequence.', 'info');
+      return;
+    }
     if (!canSpend('memorable')) {
-      if (canOfferRewardedMemorable(settingsRef.current.contentMode)) {
+      if (
+        canOfferRewardedMemorable(settingsRef.current.contentMode)
+        && canSoftOffer(current, { contentMode: settingsRef.current.contentMode })
+      ) {
         setOutOfMemorableAdOffer(true);
       } else {
         addToast(capacityStatusMessage('memorable'), 'info');
@@ -3913,6 +4082,10 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
       setBootPhase('auth');
     },
     handleBootSignIn: async () => {
+      if (signupsPaused()) {
+        addToast('New sign-ins are temporarily paused. Try again later.', 'error');
+        return;
+      }
       if (!isSupabaseConfigured) {
         addToast('Supabase is not configured. Add VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY.', 'error');
         return;
@@ -3925,6 +4098,10 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
     },
     handleWelcomeTap: () => setBootPhase('auth'),
     handleGoogleSignIn: async () => {
+      if (signupsPaused()) {
+        addToast('New sign-ins are temporarily paused. Try again later.', 'error');
+        return;
+      }
       const { error } = await signInWithGoogleOAuth();
       if (error) {
         addToast(error.message, 'error');

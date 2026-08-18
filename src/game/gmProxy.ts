@@ -2,7 +2,9 @@ import type { GameState, LoreCard, Settings } from './types';
 import { isSupabaseConfigured, supabase } from '@/lib/supabase';
 import { RateLimitError, withRetry } from './aiServiceShared';
 import { logger } from './logger';
-import { resolveWriterModel } from './subscriptionTiers';
+import { resolveWriterModel, getTierDefinition } from './subscriptionTiers';
+import { forceFreeModel } from './opsKillSwitches';
+import { effectiveWriterTier, isTestLabEnabled } from './testLab';
 import {
   BYOK_TEXT_KEY_REQUIRED,
   canConfigurePlayerAiKeys,
@@ -73,12 +75,17 @@ export async function invokeGmProxy(params: {
         contentMode: params.settings.contentMode,
         mapTriggerMode: params.settings.mapTriggerMode,
         aiProvider: 'openrouter',
-        customModelId: resolveWriterModel({
-          aiProvider: 'openrouter',
-          customModelId: params.settings.customModelId,
-          tier: params.settings.subscriptionTier,
-        }),
-        subscriptionTier: params.settings.subscriptionTier,
+        customModelId: forceFreeModel()
+          ? getTierDefinition('free').writerOpenRouterId
+          : resolveWriterModel({
+              aiProvider: 'openrouter',
+              // Test Lab exercises hosted Free/Mid/High — ignore Admin custom model ids.
+              customModelId: isTestLabEnabled() ? null : params.settings.customModelId,
+              tier: effectiveWriterTier(params.settings.subscriptionTier),
+            }),
+        subscriptionTier: forceFreeModel()
+          ? 'free'
+          : effectiveWriterTier(params.settings.subscriptionTier),
         baseUrl: params.settings.baseUrl,
         diceAnimation: params.settings.diceAnimation,
         panelFrequency: params.settings.panelFrequency,

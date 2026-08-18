@@ -271,12 +271,15 @@ function StoryPlatesTab({ state }: { state: GameState }) {
   const plates = state.memorableMoments?.storyPlates ?? [];
   if (plates.length === 0) {
     return (
-      <EmptyTabContent message="No moments unlocked yet. Memorable pictures become achievements here." />
+      <EmptyTabContent message="No moments unlocked in this story yet. Lifetime tallies live on your Profile." />
     );
   }
   return (
     <div className="space-y-2">
-      <p className="text-[11px] uppercase tracking-wider text-slate-500">Moments unlocked</p>
+      <p className="text-[11px] uppercase tracking-wider text-slate-500">This story only</p>
+      <p className="text-[11px] text-slate-500">
+        Moments from this save. Counts across every campaign are on your Profile.
+      </p>
       {plates.map((plate) => (
         <div
           key={plate.id}

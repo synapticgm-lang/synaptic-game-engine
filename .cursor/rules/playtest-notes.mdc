@@ -9,14 +9,22 @@ John is playtesting live. Collect issues here. Do not implement until he asks fo
 
 ## Open
 
-(none — 2026-08-17 morning playtest batch shipped in code; deploy + run migration 012 + `generate-image` function)
+(none — 2026-08-18 Test Lab + vibe receipt wedge in code; deploy when ready)
 
 ## Waiting (research — not tickets yet)
 
-- Story personality picker (sarcastic System, army/jester/chilled GM) — starter decks begun (`openingHooks` on Hero Awakening); other premades + New Game UI still open — `docs/research/starter-personality-research-2026-08-17.md` (`2026-08-17`)
+- Opening-hook decks on premades beyond Hero Awakening + LitRPG sarcastic System New Game picker — `docs/research/starter-personality-research-2026-08-17.md` (tabletop GM personality shipped 2026-08-17d; Settings still has System/narrator voice)
+- Server capacity / Stripe live secrets / counsel legal pack / Kid Mode public gate — ops, not playtest tickets
+- Full a11y release gate, Expert author tools, audio lite, full comic — deliberate later / No-Go near-term
+- Manus optional only: Snapshot+screenshots E1/E2 refresh, content banks, counsel outline — architecture/vibe research is build-complete
 
 ## Done (already shipped)
 
+- **2026-08-18 Test Lab + vibe wedge:** Settings → Test Lab marks account/device for unlimited capacity; switch hosted Free/Mid/High AI; Ledger: receipts on turn commit; stronger GM voice semantic firewall (`2026-08-18`)
+
+- **2026-08-17d stance + tabletop GM:** Non-lethal beats offer kind / hard / talk / walk-away (prompt rails + choice warden; no karma meter; named NPCs remember treatment). Tabletop Fantasy New Game picks GM personality (chilled / dry sarcastic / theatrical / army / fireside) on the save (`2026-08-17d`)
+
+- **2026-08-17 night continuity + feel:** IntentContract obligations + retry; IntroductionPermit; StateTx log; CampaignContract; beatFingerprint novelty; HookArc soft-offer guard; quest what-next/Why; combat receipt; leak scanner; GM voice profiles (`2026-08-17`)
 - **Story-start hook capacity:** Free +8 / Mid +5 / High +3 text turns once per New Game; opening setup answers free; opening choices must include a stake; HUD shows “N start” (`2026-08-17`)
 - **2026-08-17b memorable plates:** drop the Milestone badge; opening is Chapter One (toast: So it begins); First Blood / last page / book closes; Titles tab lists unlocked moments; Free picture fails no longer blame Settings
 - **Simple + Expert Custom** New Game: Blank Canvas seed (no silent System Integration); Expert accordion (premise/lore/NPCs/quests/opening/kit/PC) with per-section Randomize; player bible snapshot — `docs/research/custom-simple-vs-expert-2026-08-17.md` (`2026-08-17`)

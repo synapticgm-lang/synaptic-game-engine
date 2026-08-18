@@ -8,6 +8,7 @@ import {
 } from './suggestionValidation';
 import { logger } from './logger';
 import { getTierDefinition } from './subscriptionTiers';
+import { applyStanceDensity, isCombatLockedTurn } from './stanceDensity';
 
 /**
  * 4-tier narrative pipeline (authoritative ordering for choice generation):
@@ -409,7 +410,8 @@ STRICT RULES:
 7. NEVER offer locked or level-gated System features. If something is greyed out, it is not a choice.
 8. NEVER name cities, hubs, outposts, or survivor camps the player has not visited.
 9. Choices must be actionable and scene-local (observe, talk, move carefully, use carried gear, react to the last beat).
-10. Output ONLY a numbered list like:
+10. STANCE DENSITY: On non-lethal beats, do NOT emit three look-around / wait / inspect-surroundings options. Prefer a mix of kind/help, hard/refuse, talk/ask, and walk-away when combat is not locking them in. Combat-locked turns stay fight moves.
+11. Output ONLY a numbered list like:
 1. ...
 2. ...
 3. ...
@@ -539,6 +541,16 @@ export function sceneSafeFallbacks(
   } else if (/\b(corpse|dead|collapsed)\b/i.test(storyProse)) {
     options.push('Check your wounds');
     options.push('Look for the next room or exit');
+  } else if (!isCombatLockedTurn(state)) {
+    if (/\b(he says|she says|they say|asks you|merchant|guard|innkeep|someone|crowd|people)\b/i.test(storyProse)
+      || (state.companions ?? []).length > 0
+      || (state.npcMemories ?? []).some((m) => (state.turn - (m.lastSeenTurn ?? 0)) <= 4)) {
+      options.push('Ask what is going on');
+      options.push('Refuse and keep your own counsel');
+    }
+    if ((state.locationSheet?.exits ?? []).length > 0 || !state.activeDungeon) {
+      options.push('Walk away / go another direction');
+    }
   }
   if (/\b(door|gate|path|corridor|alley)\b/i.test(storyProse)) {
     options.push('Approach cautiously');
@@ -564,12 +576,12 @@ export function padChoicesToCount(
   if (isLookAroundChoice(lastPlayerAction)) {
     merged = merged.filter((c) => !isLookAroundChoice(c));
   }
-  if (merged.length >= min) return merged.slice(0, 4);
+  if (merged.length >= min) return applyStanceDensity(merged.slice(0, 4), state, storyProse);
   for (const extra of sceneSafeFallbacks(state, storyProse, lastPlayerAction)) {
     if (merged.length >= min) break;
     if (!merged.some((c) => c.toLowerCase() === extra.toLowerCase())) merged.push(extra);
   }
-  return merged.slice(0, 4);
+  return applyStanceDensity(merged.slice(0, 4), state, storyProse);
 }
 
 export interface ChoicePipelineResult {

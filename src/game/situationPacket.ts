@@ -2,6 +2,8 @@ import type { GameState, SituationPacket, WorldLedger } from './types';
 import { formatTimelineForPrompt } from './timelineFormat';
 import { playerFacingLocation } from './locationName';
 import { formatSceneFactsForPrompt } from './sceneFacts';
+import { formatSceneManifestForPrompt } from './sceneManifest';
+import { formatCampaignContractForPrompt } from './campaignContract';
 import { formatHiddenRoomLedger } from './dungeonSeed';
 import { dangerTierLabel, mapScaleLabel, resolveDangerTier, resolveMapScale } from './placeAuthority';
 import { formatPlacesForPrompt } from './places';
@@ -73,6 +75,7 @@ export function formatSituationForPrompt(state: GameState): string {
     .map((m) => `${m.npcName}[${m.disposition}]: ${m.facts.slice(-2).join('; ') || '—'}`)
     .join('\n');
   const sceneBlock = formatSceneFactsForPrompt(state.sceneFacts);
+  const manifestBlock = formatSceneManifestForPrompt(state);
   const currentSheet = state.locationSheet;
   const prevSheet = state.previousLocationSheet;
   const danger = resolveDangerTier(state);
@@ -96,8 +99,11 @@ export function formatSituationForPrompt(state: GameState): string {
   const hiddenLedger = formatHiddenRoomLedger(state.activeDungeon);
   const placeRegistry = formatPlacesForPrompt(state.places, currentSheet?.name ?? s.location);
   const tutorialMandate = formatTutorialBeatMandate(state);
+  const contractBlock = formatCampaignContractForPrompt(state);
   const none = '(none)';
   const lines = [
+    manifestBlock,
+    contractBlock,
     currentLine,
     previousLine,
     placeRegistry ? `PLACE REGISTRY (authority for name/tier/arc):\n${placeRegistry}` : '',
@@ -106,7 +112,7 @@ export function formatSituationForPrompt(state: GameState): string {
     `Dungeon: ${s.dungeon}`,
     `Present entities: ${s.presentEntities.join(' | ')}`,
     `Active quests (revealed only — never mention hidden Guide Book hooks): ${s.activeQuests.join(' | ')}`,
-    'NPC memories:',
+    'NPC memories (how they were treated sticks — no karma meter):',
     npcBlock || none,
     'Place-scoped facts (current + last location):',
     placeFacts.length ? placeFacts.join('\n') : none,
@@ -115,7 +121,7 @@ export function formatSituationForPrompt(state: GameState): string {
     hiddenLedger || '',
     tutorialMandate || '',
     formatLocalityForPrompt(state) || '',
-    'RAILS: Packet facts + SCENE FACTS + timeline override improvisation. Do not invent named threats, loot, NPCs, or interactables absent above. Do not invent a dungeon danger tier outdoors. Do not empty a present crowd or silence shouting without time passing.',
+    'RAILS: SCENE MANIFEST + packet facts + SCENE FACTS + timeline override improvisation. Do not invent named threats, loot, NPCs, or interactables absent above. Do not invent a dungeon danger tier outdoors. Do not empty a present crowd or silence shouting without time passing.',
     'HIDDEN QUESTS: Never spoil quests with status hidden or revealed=false.',
     formatWorldLedgerBlock(state.worldLedger),
   ];

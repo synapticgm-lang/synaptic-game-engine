@@ -162,6 +162,7 @@ export default function App() {
               {...saveManagement}
               supportUserId={game.googleUser && !game.googleUser.isGuest ? game.googleUser.id ?? null : null}
               googleSignedIn={!!game.googleUser && !game.googleUser.isGuest}
+              accountEmail={game.googleUser && !game.googleUser.isGuest ? game.googleUser.email ?? null : null}
               onClose={() => game.setShowSettings(false)}
             />
           </Suspense>
@@ -250,6 +251,7 @@ export default function App() {
               {...saveManagement}
               supportUserId={game.googleUser && !game.googleUser.isGuest ? game.googleUser.id ?? null : null}
               googleSignedIn={!!game.googleUser && !game.googleUser.isGuest}
+              accountEmail={game.googleUser && !game.googleUser.isGuest ? game.googleUser.email ?? null : null}
               onClose={() => game.setShowSettings(false)}
             />
           </Suspense>
@@ -403,6 +405,7 @@ export default function App() {
             {...saveManagement}
             supportUserId={game.googleUser && !game.googleUser.isGuest ? game.googleUser.id ?? null : null}
             googleSignedIn={!!game.googleUser && !game.googleUser.isGuest}
+            accountEmail={game.googleUser && !game.googleUser.isGuest ? game.googleUser.email ?? null : null}
             onClose={() => game.setShowSettings(false)}
             currentBgUrl={bgImage.url}
           />

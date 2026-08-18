@@ -1,5 +1,10 @@
 import type { GameState, Quest } from './types';
 import type { PlayerIntent } from './intentParser';
+import {
+  buildIntentContract,
+  formatIntentContractForPrompt,
+  type IntentContract,
+} from './intentContract';
 
 /**
  * Cross-mode scene focus: Guide Book / quests must not hijack the turn.
@@ -52,6 +57,7 @@ export interface TurnMandate {
   intentLabel: string;
   focusKeywords: string[];
   playerEngagedQuestFocus: boolean;
+  intentContract: IntentContract;
 }
 
 /**
@@ -72,6 +78,14 @@ export function buildTurnMandate(
       ? `Player typed: "${typed}"\nEngine reading (resolve THIS): "${action}"`
       : `Player action to resolve THIS turn: "${action}"`;
 
+  const intentContract = buildIntentContract({
+    typed: typed || action,
+    resolvedText: action,
+    intent,
+    state,
+  });
+  const contractBlock = formatIntentContractForPrompt(intentContract);
+
   const block = `=== TURN MANDATE (BINDING — ALL ENGINE MODES) ===
 ${actionLine}
 Parsed intent: ${intent.label} (${intent.kind})
@@ -90,13 +104,15 @@ RULES:
 12. If an unresolved spoken interruption is on the ledger (someone began to speak and was shut down), return to that thread this turn or say why they stay silent.
 13. If an Open ask is on the ledger (deal terms, prove worth, what happens if): ANSWER it this turn with concrete terms. Do not stall with atmosphere, soft-reset the ask, or paste a prior paragraph.
 Player engaged quest-focus locations this turn: ${engaged ? 'YES' : 'NO'}
-========================================================`;
+========================================================
+${contractBlock}`;
 
   return {
     block,
     intentLabel: intent.label,
     focusKeywords,
     playerEngagedQuestFocus: engaged,
+    intentContract,
   };
 }
 

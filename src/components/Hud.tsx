@@ -3,6 +3,8 @@ import type { GameState, GoogleUser, Settings as GameSettings } from '../game/ty
 import { Bug, ChevronDown, ChevronUp, Settings, Map, Compass, Recycle, Backpack } from 'lucide-react';
 import { loadCapacityLedger } from '../game/capacityLedger';
 import { getTierDefinition, type SubscriptionTierId } from '../game/subscriptionTiers';
+import { explainWhy, recentStateTxReceipts } from '../game/stateTx';
+import { effectiveWriterTier, isTestLabEnabled } from '../game/testLab';
 
 interface Props {
   state: GameState;
@@ -30,15 +32,24 @@ export function Hud({ state, settings, onSettings, onOpenMap, onOpenQuestLog, on
   const c = state?.character;
   const hpPercent = c && c.maxHp > 0 ? Math.round((c.hp / c.maxHp) * 100) : 100;
   const ledger = loadCapacityLedger();
-  const tier = (settings.subscriptionTier ?? ledger.tier) as SubscriptionTierId;
+  const testLab = isTestLabEnabled();
+  const tier = (
+    testLab
+      ? effectiveWriterTier(settings.subscriptionTier)
+      : (settings.subscriptionTier ?? ledger.tier)
+  ) as SubscriptionTierId;
   const dailyCap = getTierDefinition(tier).textTurnsPerDay;
   const storyStartLeft = Math.max(0, state.storyStartTextTurnsRemaining ?? 0);
-  const turnsLeft =
-    Math.max(0, dailyCap + ledger.textAdBonusToday - ledger.textDailySpent)
-    + ledger.textPackBalance
-    + storyStartLeft;
-  const turnsTitle =
-    storyStartLeft > 0
+  const turnsLeft = testLab
+    ? '∞'
+    : String(
+        Math.max(0, dailyCap + ledger.textAdBonusToday - ledger.textDailySpent)
+          + ledger.textPackBalance
+          + storyStartLeft
+      );
+  const turnsTitle = testLab
+    ? `Test Lab on — unlimited capacity. AI catalog: ${tier.toUpperCase()}.`
+    : storyStartLeft > 0
       ? `Turns left: daily cap ${dailyCap}/day on this tier, plus packs, plus ${storyStartLeft} story-start bonus. Opening setup answers are free.`
       : `Daily text turns remaining (cap ${dailyCap}/day on this tier, plus packs). Opening setup answers are free.`;
 
@@ -70,11 +81,29 @@ export function Hud({ state, settings, onSettings, onOpenMap, onOpenQuestLog, on
           className="font-mono text-[10px] sm:text-[11px] text-amber-200/90 whitespace-nowrap"
           title={turnsTitle}
         >
-          {turnsLeft} turn{turnsLeft === 1 ? '' : 's'}
-          {storyStartLeft > 0 ? (
-            <span className="text-amber-200/60"> · {storyStartLeft} start</span>
-          ) : null}
+          {testLab ? (
+            <>∞ turns · {tier}</>
+          ) : (
+            <>
+              {turnsLeft} turn{turnsLeft === '1' ? '' : 's'}
+              {storyStartLeft > 0 ? (
+                <span className="text-amber-200/60"> · {storyStartLeft} start</span>
+              ) : null}
+            </>
+          )}
         </span>
+        {(state.stateTxLog?.length ?? 0) > 0 ? (
+          <button
+            type="button"
+            className="hidden sm:inline font-mono text-[10px] text-slate-500 hover:text-cyan-300 underline-offset-2 hover:underline"
+            title={recentStateTxReceipts(state, 3).join(' · ') || 'Ledger'}
+            onClick={() => {
+              window.alert(explainWhy(state));
+            }}
+          >
+            Why?
+          </button>
+        ) : null}
       </div>
 
       {/* DEAD CENTER: Permanent Health & Mana/Resource Bars */}
@@ -105,7 +134,7 @@ export function Hud({ state, settings, onSettings, onOpenMap, onOpenQuestLog, on
         <div className="flex items-center gap-1 md:hidden">
           <button
             onClick={handleBugClick}
-            title={`Debug 2026-08-17b — memorable plate titles + achievements${lastSavedTurn != null ? ` · last saved T${lastSavedTurn}` : ''}`}
+            title={`Debug 2026-08-17d — stance density + tabletop GM personality${lastSavedTurn != null ? ` · last saved T${lastSavedTurn}` : ''}`}
             className="p-1 sm:p-1.5 bg-rose-950/60 border border-rose-800 text-rose-400 rounded hover:bg-rose-900 transition-colors"
           >
             <Bug size={14} />
@@ -123,7 +152,7 @@ export function Hud({ state, settings, onSettings, onOpenMap, onOpenQuestLog, on
         <div className="hidden md:flex items-center gap-2">
           <button
             onClick={handleBugClick}
-            title={`Debug 2026-08-17b — memorable plate titles + achievements${lastSavedTurn != null ? ` · last saved T${lastSavedTurn}` : ''}`}
+            title={`Debug 2026-08-17d — stance density + tabletop GM personality${lastSavedTurn != null ? ` · last saved T${lastSavedTurn}` : ''}`}
             className="p-2 bg-rose-950/60 border border-rose-800 text-rose-400 rounded hover:bg-rose-900 transition-colors flex items-center gap-1 text-[11px]"
           >
             <Bug size={14} /> Debug

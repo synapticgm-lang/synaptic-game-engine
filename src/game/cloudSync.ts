@@ -2,6 +2,7 @@ import type { ArtStylePreset, GameState, LogEntry, SaveSlotInfo, Settings } from
 import { isPlayableSave } from './defaults';
 import { supabase, isSupabaseConfigured } from '@/lib/supabase';
 import { flushPlaytimeToProfile } from './playtime';
+import { ingestCampaignPlatesMany } from './playerProfile';
 
 function lastPlayerLine(state: GameState): string | null {
   const log = Array.isArray(state.log) ? state.log : [];
@@ -116,9 +117,9 @@ export async function fetchAllCloudSaveSlots(): Promise<SaveSlotInfo[]> {
 
   if (error || !data?.length) return [];
 
-  return data
-    .filter((row) => row.save_id && isPlayableSave(row.game_state as GameState))
-    .map((row) => slotFromCloudRow(row));
+  const playable = data.filter((row) => row.save_id && isPlayableSave(row.game_state as GameState));
+  ingestCampaignPlatesMany(playable.map((row) => row.game_state as GameState));
+  return playable.map((row) => slotFromCloudRow(row));
 }
 
 export async function deleteCloudSave(saveId: string): Promise<{ ok: boolean; error?: string }> {

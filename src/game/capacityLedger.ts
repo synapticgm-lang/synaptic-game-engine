@@ -17,6 +17,7 @@ import {
   type TurnPackId,
   TURN_PACKS,
 } from './subscriptionTiers';
+import { isTestLabEnabled } from './testLab';
 
 const LEDGER_KEY = 'synapticgm-capacity-ledger';
 
@@ -206,6 +207,7 @@ export function illustratedRemaining(ledger = loadCapacityLedger()): number {
 export type CapacitySpendKind = 'text' | 'memorable' | 'illustrated';
 
 export function canSpend(kind: CapacitySpendKind, amount = 1, ledger = loadCapacityLedger()): boolean {
+  if (isTestLabEnabled()) return true;
   if (kind === 'text') return textTurnsRemaining(ledger) >= amount;
   if (kind === 'memorable') return memorableRemaining(ledger) >= amount;
   return illustratedRemaining(ledger) >= amount;
@@ -213,12 +215,16 @@ export function canSpend(kind: CapacitySpendKind, amount = 1, ledger = loadCapac
 
 /**
  * Spend capacity. Sub/ad pool first (use-it-or-lose-it), then non-expiring packs.
+ * Test Lab: no-op spend (unlimited QA capacity).
  */
 export function spendCapacity(
   kind: CapacitySpendKind,
   amount = 1,
   ledger = loadCapacityLedger()
 ): { ok: boolean; ledger: CapacityLedger; reason?: string; fromPack?: boolean } {
+  if (isTestLabEnabled()) {
+    return { ok: true, ledger };
+  }
   if (!canSpend(kind, amount, ledger)) {
     return {
       ok: false,

@@ -15,6 +15,7 @@ import type { Settings } from '../game/types';
 import { prepareKidSafeImagePrompt } from '../game/visualCanon';
 import { generateFluxImage } from './fluxDirect';
 import { resolveFluxImageModel } from '../game/subscriptionTiers';
+import { effectiveWriterTier } from '../game/testLab';
 import { canSpend, spendCapacity } from '../game/capacityLedger';
 import {
   BYOK_IMAGE_KEY_REQUIRED,
@@ -645,7 +646,7 @@ export async function generateComicImage(
     ? options?.hero === true
     : options?.hero === true || HERO_IMAGE_TRIGGER.test(prompt);
   let fluxModels = resolveFluxImageModel({
-    tier: settings.subscriptionTier,
+    tier: effectiveWriterTier(settings.subscriptionTier),
     hero: useHeroModel,
     via: provider === 'flux-direct' ? 'direct' : 'openrouter',
   });

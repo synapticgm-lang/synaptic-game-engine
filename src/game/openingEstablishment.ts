@@ -332,6 +332,7 @@ export function seedCoverAnswers(
   const answers: Record<string, string> = {};
   if (bible?.startingLocation?.trim()) answers.where = bible.startingLocation.trim();
   if (character.name?.trim() && !GENERIC_NAMES.test(character.name.trim())) answers.name = character.name.trim();
+  if (character.gender?.trim()) answers.gender = character.gender.trim();
   if (character.appearance?.trim() && !isJunkSetupValue(character.appearance)) {
     answers.wear = character.appearance.trim();
     answers.look = character.appearance.trim();
@@ -387,8 +388,18 @@ export function formatPlayerCanon(state: GameState): string {
   const answers = state.openingEstablishment?.answers;
   if (!answers || !Object.keys(answers).length) return '';
   const lines = Object.entries(answers).map(([id, text]) => `- ${id}: ${text}`);
+  const lockedName = answers.name?.trim();
+  const lockedGender = answers.gender?.trim() || state.character.gender?.trim();
+  const identityLock =
+    lockedName || lockedGender
+      ? `Name and gender already locked`
+        + (lockedName ? ` (name: ${lockedName})` : '')
+        + (lockedGender ? ` (gender: ${lockedGender})` : '')
+        + `. Do not ask. Honor matching pronouns.\n`
+      : '';
   return (
     `PLAYER CANON (facts only — rewrite in System/narrator voice, never quote I/my chat):\n${lines.join('\n')}\n`
+    + identityLock
     + `Inventory and equipped gear on the sheet are the only items they have. `
     + `Rejected chargen claims (legendary weapons, best armor, endgame gear) stay rejected.`
   );
@@ -1085,7 +1096,7 @@ The opening scene is ALREADY written. Do not restart. Do not reprint a registrat
 Continue THIS scene (same place, same people) in 3–6 sentences.
 Show the locked look and kit as visible facts in the camera — code already owns the ledger.
 Honor the configured PERSPECTIVE for the entire beat. Spoken lines must be grammatical. Never emit "a figure" as a name, "the a", or "unlock someone".
-Then 3–4 local choices grounded in the continued beat. At least one must change the situation — not three flavours of look around.
+Then 3–4 local choices grounded in the continued beat. At least one must change the situation — kind/help, hard/refuse, talk/ask, or walk away — not three flavours of look around.
 ================================================`;
   }
   return `=== OPENING (BINDING) ===
@@ -1105,7 +1116,7 @@ Genre practice (honor the story type):
 3) ${coverLine}
 4) Do not grant weapons or rare items. Only kit already on the sheet.
 5) Spoken lines must be grammatical. Never emit "a figure" as a name, "the a", or "unlock someone".
-6) Then 3–4 local choices grounded in THAT opening. At least one choice must change the situation (act, speak a stake, or refuse) — not three flavours of look around / wait.
+6) Then 3–4 local choices grounded in THAT opening. At least one choice must change the situation (kind/help, hard/refuse, talk a stake, or walk away) — not three flavours of look around / wait.
 ================================================`;
 }
 

@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { X, Sparkles, Wand2, BookOpen, Palette, ChevronRight, ChevronLeft, Dices, ScrollText, Cpu, GitFork } from 'lucide-react';
+import { X, Sparkles, Wand2, BookOpen, Palette, ChevronRight, ChevronLeft, Dices, ScrollText, Cpu, GitFork, UserRound } from 'lucide-react';
 import type { ContentMode, EngineMode, GmStrictness, ArtStylePreset, ComicLayoutMode, ComicReadingDirection } from '@/game/types';
 import { ART_STYLE_PRESETS } from '@/game/types';
 import { getArchetypeOptions, getDefaultArchetype, type CampaignArchetype } from '@/game/archetypes';
@@ -21,6 +21,16 @@ import {
   randomizeSimplePitch,
   type ExpertCustomDraft,
 } from '@/game/customExpertDraft';
+import {
+  applyUsualSelfToCharacter,
+  hasPersonaPrefs,
+  loadPlayerProfile,
+} from '@/game/playerProfile';
+import {
+  DEFAULT_TABLETOP_GM_PERSONALITY,
+  TABLETOP_GM_PERSONALITIES,
+  type GmPersonalityId,
+} from '@/game/gmVoiceProfile';
 
 interface Props {
   contentMode?: ContentMode;
@@ -38,13 +48,14 @@ interface Props {
     bibleId?: string,
     customTabletopRules?: string,
     playerBible?: CampaignBible,
+    gmPersonality?: GmPersonalityId,
   ) => void;
   onClose: () => void;
 }
 
 type PathKind = 'premade' | 'custom';
 type CustomDepth = 'simple' | 'expert';
-type WizardStep = 'path' | 'customDepth' | 'system' | 'presentation' | 'character';
+type WizardStep = 'path' | 'customDepth' | 'system' | 'presentation' | 'character' | 'persona';
 
 const ENGINE_MODE_CARDS: Array<{
   value: EngineMode;
@@ -84,6 +95,7 @@ const STEP_LABELS: Record<WizardStep, string> = {
   system: '1 · Game System',
   presentation: '2 · Presentation',
   character: '3 · Character / World',
+  persona: 'Use usual self?',
 };
 
 export function NewGameModal({ contentMode, onStart, onClose }: Props) {
@@ -107,11 +119,14 @@ export function NewGameModal({ contentMode, onStart, onClose }: Props) {
   const [appearance, setAppearance] = useState('');
   const [engineMode, setEngineMode] = useState<EngineMode>('litrpg');
   const [gmStrictness, setGmStrictness] = useState<GmStrictness>('standard');
+  const [gmPersonality, setGmPersonality] = useState<GmPersonalityId>(DEFAULT_TABLETOP_GM_PERSONALITY);
   const [customArchetype, setCustomArchetype] = useState<CampaignArchetype>(getDefaultArchetype('litrpg'));
   const [simplePitch, setSimplePitch] = useState('');
   const [expertDraft, setExpertDraft] = useState<ExpertCustomDraft>(emptyExpertDraft);
   const [askNameLater, setAskNameLater] = useState(false);
   const [readyHint, setReadyHint] = useState<string | undefined>();
+  const personaReady = hasPersonaPrefs();
+  const persona = personaReady ? loadPlayerProfile() : null;
 
   const archetypeOptions = getArchetypeOptions(engineMode);
   const selectedArchetype = archetypeOptions.find((o) =>
@@ -170,6 +185,9 @@ export function NewGameModal({ contentMode, onStart, onClose }: Props) {
       setStep('system');
     } else if (step === 'character') {
       setStep('presentation');
+    } else if (step === 'persona') {
+      if (path === 'custom') setStep('character');
+      else setStep('presentation');
     }
   };
 
@@ -179,15 +197,18 @@ export function NewGameModal({ contentMode, onStart, onClose }: Props) {
     else if (step === 'system') setStep('presentation');
     else if (step === 'presentation') {
       if (path === 'custom') setStep('character');
-      else beginPremade();
+      else if (personaReady) setStep('persona');
+      else beginPremade(false);
     } else if (step === 'character') {
-      beginCustom();
+      if (personaReady) setStep('persona');
+      else beginCustom(false);
     }
   };
 
-  const beginPremade = () => {
+  const beginPremade = (useUsual: boolean) => {
+    const base = { name: 'Adventurer', classTitle: 'Hero' };
     onStart(
-      { name: 'Adventurer', classTitle: 'Hero' },
+      useUsual ? applyUsualSelfToCharacter(base) : base,
       storyName.trim() || undefined,
       engineMode,
       'standard',
@@ -199,10 +220,12 @@ export function NewGameModal({ contentMode, onStart, onClose }: Props) {
       comicReadingDirection,
       bibleId,
       engineMode === 'dnd' ? customTabletopRules : undefined,
+      undefined,
+      engineMode === 'dnd' ? gmPersonality : undefined,
     );
   };
 
-  const beginCustom = () => {
+  const beginCustom = (useUsual: boolean) => {
     if (customDepth === 'expert') {
       const check = expertDraftReady(expertDraft, charName, askNameLater);
       if (!check.ok) {
@@ -239,13 +262,15 @@ export function NewGameModal({ contentMode, onStart, onClose }: Props) {
       backstory.trim(),
     ].filter(Boolean);
 
+    const character = {
+      name,
+      classTitle: className.trim() || 'Wanderer',
+      bio: bioParts.join(' '),
+      appearance,
+    };
+
     onStart(
-      {
-        name,
-        classTitle: className.trim() || 'Wanderer',
-        bio: bioParts.join(' '),
-        appearance,
-      },
+      useUsual ? applyUsualSelfToCharacter(character) : character,
       (customDepth === 'expert' ? expertDraft.title.trim() : storyName.trim())
         || formatCampaignStoryName(playerBible.title),
       engineMode,
@@ -259,20 +284,25 @@ export function NewGameModal({ contentMode, onStart, onClose }: Props) {
       blankBibleIdForMode(engineMode),
       engineMode === 'dnd' ? customTabletopRules : undefined,
       playerBible,
+      engineMode === 'dnd' ? gmPersonality : undefined,
     );
   };
 
   const nextLabel =
-    step === 'presentation' && path === 'premade'
+    step === 'presentation' && path === 'premade' && !personaReady
       ? 'Begin Journey'
-      : step === 'character'
+      : step === 'character' && !personaReady
         ? 'Begin Journey'
         : 'Continue';
 
   const progressSteps: WizardStep[] =
     path === 'custom'
-      ? ['system', 'presentation', 'character']
-      : ['system', 'presentation'];
+      ? personaReady
+        ? ['system', 'presentation', 'character', 'persona']
+        : ['system', 'presentation', 'character']
+      : personaReady
+        ? ['system', 'presentation', 'persona']
+        : ['system', 'presentation'];
 
   const wideModal = path === 'custom' && step === 'character' && customDepth === 'expert';
 
@@ -531,14 +561,42 @@ export function NewGameModal({ contentMode, onStart, onClose }: Props) {
               )}
 
               {engineMode === 'dnd' && (
-                <div className="rounded-lg border border-slate-700 bg-slate-800/40 p-3">
-                  <CustomTabletopRulesField
-                    value={customTabletopRules}
-                    onChange={setCustomTabletopRules}
-                    kidMode={contentMode === 'kid'}
-                    compact
-                  />
-                </div>
+                <>
+                  <div className="rounded-lg border border-slate-700 bg-slate-800/40 p-3">
+                    <CustomTabletopRulesField
+                      value={customTabletopRules}
+                      onChange={setCustomTabletopRules}
+                      kidMode={contentMode === 'kid'}
+                      compact
+                    />
+                  </div>
+                  <div>
+                    <label className="mb-1 block font-medium text-slate-300">GM personality</label>
+                    <p className="mb-1.5 text-[10px] leading-snug text-slate-500">
+                      How your Game Master talks at the table. Rules tightness is separate
+                      {path === 'custom' ? ' (Strictness below)' : ''}. Sticks with this campaign.
+                    </p>
+                    <div className="grid grid-cols-1 gap-1.5 sm:grid-cols-2">
+                      {TABLETOP_GM_PERSONALITIES.map((p) => (
+                        <button
+                          key={p.id}
+                          type="button"
+                          onClick={() => setGmPersonality(p.id as GmPersonalityId)}
+                          className={`rounded-lg border px-2 py-1.5 text-left transition-all ${
+                            gmPersonality === p.id
+                              ? 'border-crimson-500 bg-crimson-950/30 text-crimson-200'
+                              : 'border-slate-700 bg-slate-800/40 text-slate-400 hover:bg-slate-800'
+                          }`}
+                        >
+                          <div className="text-xs font-semibold text-slate-200">{p.label}</div>
+                          <div className="text-[9px] font-normal leading-tight text-slate-500">
+                            {p.tabletopTip ?? p.blurb}
+                          </div>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                </>
               )}
 
               {path === 'custom' && (
@@ -794,6 +852,45 @@ export function NewGameModal({ contentMode, onStart, onClose }: Props) {
             />
           )}
 
+          {step === 'persona' && persona && (
+            <div className="space-y-3">
+              <p className="text-slate-400 text-xs leading-relaxed">
+                You have a usual self on your Profile. Use it for this story, or start someone new (the opening may ask name and gender).
+              </p>
+              <button
+                type="button"
+                onClick={() => (path === 'custom' ? beginCustom(true) : beginPremade(true))}
+                className="flex w-full items-center gap-3 rounded-xl border border-crimson-500 bg-crimson-950/35 p-3 text-left hover:bg-crimson-950/50 transition-colors"
+              >
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-crimson-500/30 bg-crimson-950/40 text-crimson-300">
+                  <UserRound size={20} />
+                </div>
+                <div className="min-w-0">
+                  <h3 className="font-semibold text-slate-100">Use my usual self</h3>
+                  <p className="mt-0.5 text-[11px] text-slate-400">
+                    {[persona.preferredName, persona.preferredGender].filter(Boolean).join(' · ') || 'Saved preferences'}
+                    {' — skip those opening asks'}
+                  </p>
+                </div>
+              </button>
+              <button
+                type="button"
+                onClick={() => (path === 'custom' ? beginCustom(false) : beginPremade(false))}
+                className="flex w-full items-center gap-3 rounded-xl border border-slate-700 bg-slate-800/50 p-3 text-left hover:border-slate-500 hover:bg-slate-800 transition-colors"
+              >
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-slate-600 bg-slate-900 text-slate-400">
+                  <Sparkles size={20} />
+                </div>
+                <div className="min-w-0">
+                  <h3 className="font-semibold text-slate-100">Someone new this time</h3>
+                  <p className="mt-0.5 text-[11px] text-slate-400">
+                    This story asks as usual. Your Profile stays unchanged.
+                  </p>
+                </div>
+              </button>
+            </div>
+          )}
+
           {readyHint ? (
             <p className="rounded-lg border border-rose-700/50 bg-rose-950/30 px-3 py-2 text-[11px] text-rose-200">
               {readyHint}
@@ -822,7 +919,7 @@ export function NewGameModal({ contentMode, onStart, onClose }: Props) {
             >
               Cancel
             </button>
-            {step !== 'path' && step !== 'customDepth' && (
+            {step !== 'path' && step !== 'customDepth' && step !== 'persona' && (
               <button
                 type="button"
                 onClick={goNext}

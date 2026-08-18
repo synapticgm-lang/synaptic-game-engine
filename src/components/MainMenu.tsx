@@ -29,13 +29,14 @@ import {
 } from '@/game/cosmeticCatalog';
 import { ensureTestCosmeticUnlock, isOwned } from '@/game/cosmeticEntitlements';
 import { LegalLinks } from './LegalLinks';
+import { PlayerProfilePanel } from './PlayerProfilePanel';
 import { applySettingsCosmetics, applyUiThemeToDocument, ensureCatalogPreviewFonts, themeBySettingsId } from '@/game/uiTheme';
 import { previewVoiceLine } from '@/game/useVoice';
 import { DicePreview } from './DicePreview';
 import { CapacityPackShop } from './CapacityPackShop';
 import { ParentPurchaseGate, requestParentPurchaseApproval } from './ParentPurchaseGate';
 
-type HubTab = 'play' | 'themes' | 'shop';
+type HubTab = 'play' | 'profile' | 'themes' | 'shop';
 
 interface MainMenuProps {
   hasSave: boolean;
@@ -121,6 +122,7 @@ export function MainMenu({
           {(
             [
               ['play', 'Play', Play],
+              ['profile', 'Profile', UserRound],
               ['themes', 'Themes', Palette],
               ['shop', 'Shop', Store],
             ] as const
@@ -129,7 +131,7 @@ export function MainMenu({
               key={id}
               type="button"
               onClick={() => setTab(id)}
-              className={`flex flex-1 items-center justify-center gap-2 rounded-lg px-3 py-2.5 text-sm font-medium transition ${
+              className={`flex flex-1 items-center justify-center gap-1.5 rounded-lg px-2 py-2.5 text-xs font-medium sm:gap-2 sm:px-3 sm:text-sm transition ${
                 tab === id
                   ? 'bg-slate-800 text-white shadow'
                   : 'text-slate-400 hover:text-slate-200'
@@ -154,6 +156,7 @@ export function MainMenu({
             onOpenLibrary={onOpenLibrary}
           />
         )}
+        {tab === 'profile' && <PlayerProfilePanel />}
         {tab === 'themes' && (
           <ThemesTab settings={settings} onSave={onSaveCosmetics} />
         )}

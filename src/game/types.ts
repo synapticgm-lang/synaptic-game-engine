@@ -95,6 +95,8 @@ export interface Character {
   conditions: string[];
   bio: string;
   appearance: string;
+  /** This-run presentation (woman / man / non-binary / custom). Account default lives on player profile. */
+  gender?: string;
   /** Standing paper-doll portrait for the inventory screen. */
   portraitUrl?: string | null;
   /** Appearance + equipped gear key; regenerate portrait when this changes. */
@@ -169,6 +171,10 @@ export interface Quest {
     gold?: number;
     items?: string[];
   };
+  /** Plain-language why this quest exists / what to do next (player journal). */
+  whatNext?: string;
+  /** Provenance for Simple Why? (bible seed, story beat, System notice). */
+  provenance?: string;
 }
 
 export interface ShrineEntry {
@@ -377,6 +383,23 @@ export interface GameState {
   npcMemories?: NpcMemory[];
   /** Bound last-beat scene (crowd, noise, props). Authority over improvisation. */
   sceneFacts?: SceneFacts;
+  /**
+   * Monotonic campaign ledger revision. Bumped on every accepted turn commit.
+   * Pending proposals carry expectedRevision and must match this to accept.
+   */
+  ledgerRevision?: number;
+  /** Discarded retry drafts — never world truth; debug / Expert continuity only. */
+  speculativeTakes?: SpeculativeTake[];
+  /** Append-only high-impact world changes (inventory, presence, quests, combat). */
+  stateTxLog?: import('./stateTx').StateTx[];
+  /** Frozen opening invariants for this run. */
+  campaignContract?: import('./campaignContract').CampaignContract | null;
+  /** Soft drifts against campaignContract (Expert / continuity). */
+  campaignDivergences?: import('./campaignContract').CampaignDivergence[];
+  /** Soft-offer / retention stage (identity → choice → consequence). */
+  hookArc?: import('./hookArc').HookArcState;
+  /** Recent accepted prose fingerprints for retry novelty. */
+  recentBeatFingerprints?: string[];
   /** Current location sheet (interactables / exits). */
   locationSheet?: LocationSheet | null;
   /** Sheet for the place just left — injected with current for dual-location memory. */
@@ -419,6 +442,12 @@ export interface GameState {
    * Empty / absent = SynapticGM Tabletop Fantasy core. Never a licensed rulebook we ship.
    */
   customTabletopRules?: string;
+  /**
+   * Tabletop GM personality for this campaign (`engineMode === 'dnd'`).
+   * Prompt voice only — not rules tightness (`gmStrictness`) and not TTS.
+   * Persists on the save. Absent on old saves = chilled.
+   */
+  gmPersonality?: import('./gmVoiceProfile').GmPersonalityId;
 }
 
 export type BeautyOfferStatus = 'pending' | 'accepted' | 'dismissed';
@@ -761,9 +790,20 @@ export interface CampaignMemoryState {
 }
 
 /**
- * Propose → confirm → commit: AI output held here until the player accepts.
- * `proposedState` is the full next snapshot applied on Accept.
+ * Speculative GM drafts and pending turn proposals.
+ * `proposedState` is the full next snapshot applied on Accept when expectedRevision matches.
  */
+/** A GM draft that was generated but not accepted as world truth. */
+export interface SpeculativeTake {
+  id: string;
+  turnPlanned: number;
+  expectedRevision: number;
+  playerAction: string;
+  narrative: string;
+  reason: 'resolution-retry-discarded' | 'obligation-retry-discarded' | 'pending-discarded' | 'reroll-discarded';
+  createdAt: number;
+}
+
 export interface PendingTurnProposal {
   id: string;
   playerAction: string;
@@ -778,6 +818,8 @@ export interface PendingTurnProposal {
   imagePrompt?: string[] | null;
   turnFrame?: TurnFrameTheme;
   createdAt: number;
+  /** Ledger revision this proposal was planned against. */
+  expectedRevision?: number;
   /** Full next GameState if accepted (local-only; stripped from cloud if huge). */
   proposedState?: GameState;
 }
@@ -907,6 +949,8 @@ export interface Settings {
   statVerbosity: StatVerbosity;
   statFrequency: StatFrequency;
   perspective: NarrativePerspective;
+  /** GM/System narrative voice profile (prompt tone). Separate from TTS cosmetics. */
+  gmVoiceProfileId?: import('./gmVoiceProfile').GmVoiceProfileId;
   violenceLevel: ViolenceLevel;
   cursingLevel: CursingLevel;
   romanceSubplots: boolean;

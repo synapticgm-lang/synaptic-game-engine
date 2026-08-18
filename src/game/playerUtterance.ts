@@ -19,6 +19,7 @@ const INTENT_LABEL: Record<IntentKind, string> = {
   rest: 'Rest',
   search: 'Search / interact',
   flee: 'Flee / disengage',
+  refuse: 'Refuse / protest',
   other: 'Free action',
 };
 

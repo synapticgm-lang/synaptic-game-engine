@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
-import { X, Save, BookText, Volume2, Mic, Dice5, Shield, Lock, Baby, Gauge, Download, Upload, KeyRound, Eye, EyeOff, RefreshCw, Check, Loader2, Image as ImageIcon, Trash2, ZoomIn, Scale, Home, Zap, CircleSlash, Sparkles, Grid3x3, MessageSquareMore, Palette, Layers, Dot, MessageCircle, Map as MapIcon, Eye as EyeIcon, BarChart3, Clock, ScrollText, BookOpen, Swords, Mail } from 'lucide-react';
+import { X, Save, BookText, Volume2, Mic, Dice5, Shield, Lock, Baby, Gauge, Download, Upload, KeyRound, Eye, EyeOff, RefreshCw, Check, Loader2, Image as ImageIcon, Trash2, ZoomIn, Scale, Home, Zap, CircleSlash, Sparkles, Grid3x3, MessageSquareMore, Palette, Layers, Dot, MessageCircle, Map as MapIcon, Eye as EyeIcon, BarChart3, Clock, ScrollText, BookOpen, Swords, Mail, UserRound, FlaskConical } from 'lucide-react';
 import type { Settings, DiceAnimationMode, ContentMode, GmStrictness, KeyStatus, PostLoginBehavior, BgMode, ColorVariant, PanelFrequency, PanelBorderIntensity, MapTriggerMode, FogRevealThreshold, StatVerbosity, StatFrequency, GameState, NarrativePerspective, ViolenceLevel, CursingLevel, ComicLayoutMode, ComicReadingDirection, SaveSlotInfo, EngineMode } from '@/game/types';
 import { ART_STYLE_PRESETS } from '@/game/types';
 import { validateApiKey } from '@/game/apiValidation';
@@ -20,7 +20,20 @@ import { TERMS_DOC, PRIVACY_DOC } from '@/legal/legalDocs';
 import { CREDITS_PATH } from '@/legal/credits';
 import { FeedbackPanel } from './FeedbackPanel';
 import { SupportAccountPanel } from './SupportAccountPanel';
+import { PlayerProfilePanel } from './PlayerProfilePanel';
 import { memorableWeeklyCapLabel } from '@/game/capacityLedger';
+import { GM_VOICE_PROFILES } from '@/game/gmVoiceProfile';
+import {
+  canShowTestLabUi,
+  getTestLabAiTier,
+  isTestLabEnabled,
+  loadTestLab,
+  markTestAccountEmail,
+  setTestLabAiTier,
+  setTestLabEnabled,
+  type HostedAiTier,
+} from '@/game/testLab';
+import { setActiveSubscriptionTier } from '@/game/subscriptionTiers';
 
 interface Props {
   settings: Settings;
@@ -46,6 +59,8 @@ interface Props {
   /** Auth UUID for support tickets + in-game mail. */
   supportUserId?: string | null;
   googleSignedIn?: boolean;
+  /** Signed-in account email — used to mark Test Lab accounts. */
+  accountEmail?: string | null;
 }
 
 type SettingsTab = 'general' | 'narrative' | 'mechanics' | 'visuals';
@@ -57,7 +72,7 @@ const SETTINGS_TABS: Array<{ id: SettingsTab; label: string }> = [
   { id: 'visuals', label: 'Visuals' },
 ];
 
-export function SettingsModal({ settings, storyName, engineMode, gameState, onSave, onSaveCustomTabletopRules, onMemorableEnabledMidCampaign, onStoryNameChange, onSetContentMode, onVerifyPin, onExport, onImport, localSlot, cloudSlots, currentSaveId, onDeleteSave, onDeleteExtraSaves, onDeleteAllSaves, onClose, currentBgUrl, supportUserId = null, googleSignedIn = false }: Props) {
+export function SettingsModal({ settings, storyName, engineMode, gameState, onSave, onSaveCustomTabletopRules, onMemorableEnabledMidCampaign, onStoryNameChange, onSetContentMode, onVerifyPin, onExport, onImport, localSlot, cloudSlots, currentSaveId, onDeleteSave, onDeleteExtraSaves, onDeleteAllSaves, onClose, currentBgUrl, supportUserId = null, googleSignedIn = false, accountEmail = null }: Props) {
   const [draft, setDraft] = useState<Settings>(settings);
   const [customRulesDraft, setCustomRulesDraft] = useState(gameState?.customTabletopRules ?? '');
   const [activeTab, setActiveTab] = useState<SettingsTab>('general');
@@ -70,11 +85,17 @@ export function SettingsModal({ settings, storyName, engineMode, gameState, onSa
   const [pdfError, setPdfError] = useState<string | null>(null);
   const [cbzExporting, setCbzExporting] = useState(false);
   const [cbzError, setCbzError] = useState<string | null>(null);
+  const [testLabOn, setTestLabOn] = useState(() => isTestLabEnabled());
+  const [testLabAi, setTestLabAi] = useState<HostedAiTier>(() => getTestLabAiTier());
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const isDnd = engineMode === 'dnd';
   const isKidMode = draft.contentMode === 'kid';
   const canToggleKidMode = !draft.kidModeLocked;
+  const showTestLab = canShowTestLabUi({
+    email: accountEmail,
+    subscriptionTier: draft.subscriptionTier,
+  });
 
   // Check if a story/campaign is actively underway (turns > 0 or log exists)
   const isStoryActive = !!gameState && (gameState.turn > 0 || (gameState.log && gameState.log.length > 1));
@@ -304,6 +325,24 @@ export function SettingsModal({ settings, storyName, engineMode, gameState, onSa
                 selected={draft.perspective === 'third-person'}
                 onClick={() => update('perspective', 'third-person' as NarrativePerspective)}
               />
+            </div>
+          </Section>
+
+          <Section icon={<BookText size={16} />} title="GM / System voice" visible={activeTab === 'narrative'}>
+            <p className="mb-2 text-[11px] text-slate-500">
+              Prompt tone for LitRPG, Story RPG, and Pick Your Own Adventure — separate from Shop TTS voice kits.
+              Tabletop Fantasy uses the GM personality you pick at New Game (saved with that campaign).
+            </p>
+            <div className="grid grid-cols-2 gap-2">
+              {GM_VOICE_PROFILES.map((p) => (
+                <ChoiceCard
+                  key={p.id}
+                  label={p.label}
+                  sublabel={p.blurb}
+                  selected={(draft.gmVoiceProfileId ?? 'cold-system') === p.id}
+                  onClick={() => update('gmVoiceProfileId', p.id)}
+                />
+              ))}
             </div>
           </Section>
 
@@ -960,6 +999,87 @@ export function SettingsModal({ settings, storyName, engineMode, gameState, onSa
             {!gameState && <p className="mt-1.5 text-[11px] text-slate-600">Start a story to enable export.</p>}
           </Section>
 
+          {/* Test Lab — QA unlock + Free/Mid/High AI switch */}
+          {showTestLab && (
+            <Section icon={<FlaskConical size={16} />} title="Test Lab" visible={activeTab === 'general'}>
+              <p className="mb-2 text-[11px] leading-relaxed text-slate-500">
+                Marks this device{accountEmail ? ` / ${accountEmail}` : ''} as a test account: unlimited
+                text + memorable capacity, all shop cosmetics already unlocked, and hosted Free / Mid / High
+                AI quality you can switch live.
+              </p>
+              <ToggleRow
+                icon={<FlaskConical size={15} />}
+                label="Enable test account"
+                description={
+                  testLabOn
+                    ? `Unlimited capacity · AI catalog ${testLabAi.toUpperCase()}`
+                    : 'Off — normal subscription caps apply'
+                }
+                checked={testLabOn}
+                onChange={(on) => {
+                  setTestLabEnabled(on);
+                  setTestLabOn(on);
+                  if (on) {
+                    markTestAccountEmail(accountEmail);
+                    const tier = getTestLabAiTier();
+                    setTestLabAi(tier);
+                    setActiveSubscriptionTier(tier);
+                    const next: Settings = {
+                      ...draft,
+                      subscriptionTier: tier,
+                      classicMemorableImages: true,
+                      aiProvider: 'openrouter',
+                    };
+                    setDraft(next);
+                    onSave(next);
+                    window.dispatchEvent(new CustomEvent(SETTINGS_EVENT_NAME, { detail: next }));
+                    if (isStoryActive && !settings.classicMemorableImages) {
+                      onMemorableEnabledMidCampaign?.();
+                    }
+                  }
+                }}
+              />
+              {testLabOn && (
+                <div className="mt-3">
+                  <p className="mb-1.5 text-[11px] text-slate-400">Hosted AI quality (Free / Mid / High)</p>
+                  <div className="grid grid-cols-3 gap-2">
+                    {(['free', 'mid', 'high'] as HostedAiTier[]).map((tier) => (
+                      <ChoiceCard
+                        key={tier}
+                        label={tier === 'free' ? 'Free' : tier === 'mid' ? 'Mid' : 'High'}
+                        sublabel={
+                          tier === 'free'
+                            ? 'Launch writer'
+                            : tier === 'mid'
+                              ? 'Mid writer'
+                              : 'Best writer'
+                        }
+                        selected={testLabAi === tier}
+                        onClick={() => {
+                          setTestLabAiTier(tier);
+                          setTestLabAi(tier);
+                          setActiveSubscriptionTier(tier);
+                          const next: Settings = {
+                            ...draft,
+                            subscriptionTier: tier,
+                            aiProvider: 'openrouter',
+                          };
+                          setDraft(next);
+                          onSave(next);
+                          window.dispatchEvent(new CustomEvent(SETTINGS_EVENT_NAME, { detail: next }));
+                        }}
+                      />
+                    ))}
+                  </div>
+                  <p className="mt-2 text-[10px] text-slate-600">
+                    Marked emails on this device: {loadTestLab().markedEmails.join(', ') || 'none yet'}.
+                    Production allowlist: set VITE_TEST_ACCOUNT_EMAILS.
+                  </p>
+                </div>
+              )}
+            </Section>
+          )}
+
           {/* Content Mode */}
           <Section icon={<Shield size={16} />} title="Content Mode" visible={activeTab === 'general'}>
             <div className={`flex items-center gap-3 rounded-lg border px-3 py-2.5 transition-colors ${draft.kidModeLocked ? 'border-amber-700/50 bg-amber-950/20' : 'border-slate-700 bg-slate-800/40'}`}>
@@ -974,6 +1094,10 @@ export function SettingsModal({ settings, storyName, engineMode, gameState, onSa
                 </button>
               ) : (<Lock size={14} className="text-amber-500" />)}
             </div>
+          </Section>
+
+          <Section icon={<UserRound size={16} />} title="Player profile" visible={activeTab === 'general'}>
+            <PlayerProfilePanel compact />
           </Section>
 
           <Section icon={<Mail size={16} />} title="Support & messages" visible={activeTab === 'general'}>

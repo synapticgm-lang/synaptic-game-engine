@@ -22,6 +22,7 @@ import {
   MAX_MEMORABLE_ADS_PER_WEEK,
   type CapacityLedger,
 } from './capacityLedger';
+import { adsKilled } from './opsKillSwitches';
 
 export type RewardedAdProfile = 'kid' | 'adult';
 
@@ -56,6 +57,7 @@ export function rewardedTurnsPerAd(contentMode?: string | null): number {
  * Kid Mode: always (family path). Adult: Free only (noAds tiers blocked).
  */
 export function canOfferRewardedTurns(contentMode?: string | null): boolean {
+  if (adsKilled()) return false;
   return rewardedTurnsPerAd(contentMode) > 0 && (
     contentMode === 'kid'
     || !getTierDefinition(getActiveSubscriptionTier()).noAds

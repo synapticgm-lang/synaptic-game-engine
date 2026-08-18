@@ -180,6 +180,24 @@ export const QuestLogModal: React.FC<QuestLogModalProps> = ({
                   </div>
                 ) : null}
 
+                {selectedQuest.whatNext ? (
+                  <div className="sgm-info-tab-on p-4 rounded-lg border">
+                    <h4 className="sgm-info-heading text-xs font-bold uppercase tracking-wider mb-1">
+                      What next
+                    </h4>
+                    <p className="text-sm text-slate-300">{selectedQuest.whatNext}</p>
+                  </div>
+                ) : null}
+
+                {selectedQuest.provenance ? (
+                  <div className="p-3 rounded-lg border border-slate-800 bg-slate-900/40">
+                    <h4 className="text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">
+                      Why this is on file
+                    </h4>
+                    <p className="text-xs text-slate-400">{selectedQuest.provenance}</p>
+                  </div>
+                ) : null}
+
                 {formatQuestRewards(selectedQuest.rewards) && (
                   <div className="sgm-info-tab-on p-4 rounded-lg border">
                     <h4 className="sgm-info-heading text-xs font-bold uppercase tracking-wider mb-1">

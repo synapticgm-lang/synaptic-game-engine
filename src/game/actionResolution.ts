@@ -350,8 +350,11 @@ export function buildResolutionUserPayload(params: {
   retry: boolean;
   intent: PlayerIntent;
   factLocks?: FactLockViolation[];
+  /** Extra binding block (e.g. missed IntentContract obligations). */
+  extraRetryBlock?: string;
 }): string {
   const retry = params.retry ? `${buildResolutionRetryBlock(params.playerAction, params.intent)}\n\n` : '';
   const locks = params.factLocks?.length ? `${buildFactLockRetryBlock(params.factLocks)}\n\n` : '';
-  return `${params.mandateBlock}\n\n${retry}${locks}${params.playerAction}\n\n${params.deterministicBlock}`;
+  const extra = params.extraRetryBlock?.trim() ? `${params.extraRetryBlock.trim()}\n\n` : '';
+  return `${params.mandateBlock}\n\n${retry}${extra}${locks}${params.playerAction}\n\n${params.deterministicBlock}`;
 }
