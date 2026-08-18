@@ -166,7 +166,7 @@ function imageProxyUrl(): string {
 
 /**
  * Hosted memorable art via edge proxy (server OpenRouter key).
- * Returns null when proxy is unavailable so callers can fall back / soft-skip.
+ * Uses the same URL + JWT pattern as gm-turn (anon key for guests, session JWT when signed in).
  */
 export async function invokeImageProxy(params: {
   prompt: string;
@@ -174,7 +174,10 @@ export async function invokeImageProxy(params: {
   clientApiKey?: string;
   signal?: AbortSignal;
 }): Promise<string | null> {
-  if (!isGmProxyAvailable()) return null;
+  if (!isGmProxyAvailable()) {
+    logger.warn('ai-image', 'generate-image proxy unavailable — VITE_SUPABASE_URL / anon key missing');
+    return null;
+  }
 
   const headers: Record<string, string> = {
     'Content-Type': 'application/json',
@@ -187,6 +190,13 @@ export async function invokeImageProxy(params: {
     headers.Authorization = `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`;
   }
 
+  const url = imageProxyUrl();
+  logger.info('ai-image', 'generate-image proxy request', {
+    url,
+    model: params.model || 'black-forest-labs/flux-schnell',
+    hasSession: !!session?.access_token,
+  });
+
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), 45_000);
   const onExternalAbort = () => controller.abort();
@@ -196,7 +206,7 @@ export async function invokeImageProxy(params: {
   }
 
   try {
-    const res = await fetch(imageProxyUrl(), {
+    const res = await fetch(url, {
       method: 'POST',
       headers,
       body: JSON.stringify({
@@ -211,8 +221,8 @@ export async function invokeImageProxy(params: {
       const msg = typeof payload?.error === 'string' ? payload.error : `Image proxy error ${res.status}`;
       throw new Error(msg);
     }
-    const url = typeof payload?.url === 'string' ? payload.url : '';
-    return url || null;
+    const imageUrl = typeof payload?.url === 'string' ? payload.url : '';
+    return imageUrl || null;
   } finally {
     clearTimeout(timer);
     if (params.signal) params.signal.removeEventListener('abort', onExternalAbort);

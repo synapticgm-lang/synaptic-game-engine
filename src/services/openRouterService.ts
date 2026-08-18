@@ -23,7 +23,7 @@ import {
   isByokTierWithoutHostedKeys,
   resolveByokImageSpendKey,
   resolveClientImageApiKey,
-  resolveClientTextApiKey,
+  shouldUseHostedImageProxy,
 } from '../game/distributionChannel';
 import { invokeImageProxy } from '../game/gmProxy';
 
@@ -142,16 +142,10 @@ export const fetchComicPanel = async (
   }
 
   const resolvedApiKey = apiKey || OPENROUTER_API_KEY;
+  // Hosted (no client key): always schnell unless the caller passed an explicit model.
+  // Do not let the word "milestone" in a prompt upgrade Free players to flux-dev.
   const resolvedModel = imageModel
-    || (HERO_IMAGE_TRIGGER.test(workingBase) ? HERO_IMAGE_MODEL : PRIMARY_IMAGE_MODEL);
-
-  if (!resolvedApiKey) {
-    debugLogger.record('ERROR', 'Image generation skipped — no OpenRouter API key available', {
-      envKey: !!OPENROUTER_API_KEY,
-      byokKey: !!apiKey
-    });
-    throw new Error('No OpenRouter API key configured for image generation.');
-  }
+    || (resolvedApiKey && HERO_IMAGE_TRIGGER.test(workingBase) ? HERO_IMAGE_MODEL : PRIMARY_IMAGE_MODEL);
 
   const style = COMIC_STYLES[styleKey] || COMIC_STYLES.western;
   const composedPrompt = options?.useRawPrompt
@@ -166,6 +160,24 @@ export const fetchComicPanel = async (
       finalPrompt += ', detailed lighting, epic fantasy art';
     }
     finalPrompt += '. IMPORTANT: Do NOT include any text, words, letters, or speech bubbles in the image. The image must be purely visual with zero text.';
+  }
+
+  // Hosted Free/Mid/High: no browser OpenRouter key. Art goes through generate-image (server secret).
+  if (!resolvedApiKey) {
+    debugLogger.record('API_REQUEST', 'Image generation via hosted generate-image (no client OpenRouter key)', {
+      envKey: !!OPENROUTER_API_KEY,
+      byokKey: !!apiKey,
+      model: resolvedModel,
+    });
+    const proxied = await invokeImageProxy({
+      prompt: finalPrompt,
+      model: resolvedModel,
+      signal: options?.signal,
+    });
+    if (!proxied) {
+      throw new Error('Hosted image service is unavailable.');
+    }
+    return proxied;
   }
 
   const payload = {
@@ -612,7 +624,9 @@ export async function generateComicImage(
   }
 
   const timeoutMs = options?.timeoutMs ?? DEFAULT_IMAGE_GEN_TIMEOUT_MS;
-  const provider = settings.imageProvider || 'flux';
+  // Default settings.imageProvider is "flux" (OpenRouter schnell via generate-image).
+  // Only "flux-direct" + a player Flux key hits BFL. Never send hosted players to Flux Direct.
+  const provider = settings.imageProvider === 'flux-direct' ? 'flux-direct' : (settings.imageProvider || 'flux');
 
   let workingPrompt = prompt;
   if (mode === 'kid') {
@@ -663,7 +677,7 @@ export async function generateComicImage(
     else if (settings.visualMode === 'comic') spendCapacity('illustrated');
   };
 
-  // Optional later path — same tier map, BFL transport
+  // Optional later path — same tier map, BFL transport. Hosted `imageProvider: "flux"` never enters here.
   const fluxKey = canConfigurePlayerAiKeys(settings) ? resolveClientImageApiKey(settings) : '';
   if (provider === 'flux-direct' && fluxKey) {
     const label = `Flux direct (${fluxModels.bflEndpoint})`;
@@ -711,7 +725,7 @@ export async function generateComicImage(
     return url;
   }
 
-  // Default launch path: Flux via OpenRouter (tier-mapped schnell/dev)
+  // Default launch path: Flux schnell via generate-image for hosted players (no browser key).
   const openRouterPrompt = `${styledPrompt}\n\nAvoid depicting: ${effectiveNegativePrompt}.`;
   if (isByokTierWithoutHostedKeys(settings) && !resolveByokImageSpendKey(settings)) {
     throw new Error(BYOK_IMAGE_KEY_REQUIRED);
@@ -719,13 +733,16 @@ export async function generateComicImage(
   const apiKey = isByokTierWithoutHostedKeys(settings)
     ? resolveByokImageSpendKey(settings)
     : undefined;
-  const routedModel =
-    settings.imageModel?.trim() ||
-    fluxModels.openRouterId ||
-    (useHeroModel ? HERO_IMAGE_MODEL : PRIMARY_IMAGE_MODEL);
+  const routedModel = classicMemorable
+    ? PRIMARY_IMAGE_MODEL
+    : (
+      settings.imageModel?.trim() ||
+      fluxModels.openRouterId ||
+      (useHeroModel ? HERO_IMAGE_MODEL : PRIMARY_IMAGE_MODEL)
+    );
 
-  // Hosted Free/Mid/High: prefer edge proxy (server key) so memorable art works without BYOK.
-  if (!apiKey) {
+  // Hosted Free/Mid/High / Admin without BYOK: always generate-image. Never skip for a missing client key.
+  if (!apiKey || shouldUseHostedImageProxy(settings)) {
     try {
       const proxied = await withAbortTimeout(
         (signal) =>

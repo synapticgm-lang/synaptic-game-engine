@@ -118,10 +118,12 @@ export function plateCopyForBeat(
   };
 }
 
+const LEGACY_MILESTONE_LABEL = /^(?:✦\s*)?milestone(?:\s*✦)?$/i;
+
 export function splashPlateLabel(entry: Pick<LogEntry, 'splashTitle' | 'turn'>): string {
   const titled = entry.splashTitle?.trim();
-  if (titled) return titled;
   // Opening splash on old saves / live-behind builds had no splashTitle — never say Milestone.
+  if (titled && !LEGACY_MILESTONE_LABEL.test(titled)) return titled;
   if (typeof entry.turn === 'number' && entry.turn <= 1) return 'Chapter One';
   return 'A moment worth keeping';
 }
@@ -131,7 +133,7 @@ export function splashUnavailableLine(
   entry: Pick<LogEntry, 'splashTitle' | 'turn' | 'imageFailMessage'>
 ): string {
   const detail = entry.imageFailMessage?.trim();
-  if (detail) return detail;
+  if (detail && !/milestone/i.test(detail)) return detail;
   return `${splashPlateLabel(entry)} art unavailable — the story continues.`;
 }
 

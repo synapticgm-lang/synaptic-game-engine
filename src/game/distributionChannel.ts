@@ -64,8 +64,26 @@ export function canConfigurePlayerAiKeys(settings: {
 export function isByokTierWithoutHostedKeys(settings: {
   subscriptionTier?: string;
   contentMode?: string;
+  byokModeEnabled?: boolean;
 }): boolean {
-  return settings.subscriptionTier === 'admin' && settings.contentMode !== 'kid';
+  return (
+    settings.subscriptionTier === 'admin'
+    && settings.contentMode !== 'kid'
+    && settings.byokModeEnabled === true
+  );
+}
+
+/** Hosted Free/Mid/High (and Admin with BYOK off) pay via edge secrets — no browser OpenRouter/Flux key. */
+export function shouldUseHostedImageProxy(settings: {
+  subscriptionTier?: string;
+  contentMode?: string;
+  byokModeEnabled?: boolean;
+  imageProvider?: string;
+  imageBaseUrl?: string;
+}): boolean {
+  if (settings.imageProvider === 'custom' && settings.imageBaseUrl?.trim()) return false;
+  if (isByokTierWithoutHostedKeys(settings)) return false;
+  return true;
 }
 
 export const BYOK_TEXT_KEY_REQUIRED =

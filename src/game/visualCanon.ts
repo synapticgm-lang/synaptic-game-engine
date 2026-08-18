@@ -78,11 +78,15 @@ export function playerFacingImageFailLine(error: unknown): string {
     return 'Pictures on Admin BYOK use your own key in Settings. The story continues.';
   }
   if (reason === 'moderation') return 'The scene was too vivid to render. Continue with the prose.';
+  if (/milestone/i.test(msg)) {
+    return 'Picture skipped — the story continues.';
+  }
   if (
     /hosted image service is unavailable/i.test(msg)
     || /image proxy error (404|502|503)/i.test(msg)
     || /failed to fetch/i.test(msg)
     || /generate-image/i.test(msg)
+    || /no openrouter api key configured for image generation/i.test(msg)
   ) {
     return 'Hosted image service is unavailable.';
   }

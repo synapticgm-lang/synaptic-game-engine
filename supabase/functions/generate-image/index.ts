@@ -2,9 +2,11 @@
  * Hosted memorable / comic image proxy — uses server OPENROUTER_API_KEY
  * so Free players are not told to paste a key in Settings.
  *
- * Deploy (from repo root):
- *   supabase functions deploy generate-image
- *   supabase secrets set OPENROUTER_API_KEY=sk-or-v1-...
+ * Deploy (from repo root; JWT off so guests match gm-turn):
+ *   npx supabase functions deploy generate-image --no-verify-jwt
+ *   npx supabase secrets set OPENROUTER_API_KEY=sk-or-v1-...
+ *
+ * Hosted Free players never send an OpenRouter key; this function reads the edge secret.
  */
 const CORS_HEADERS: Record<string, string> = {
   'Access-Control-Allow-Origin': '*',
