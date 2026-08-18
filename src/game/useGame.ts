@@ -57,6 +57,7 @@ import {
   sanitizeOpeningNarration,
   buildOpeningSceneMandate,
   isOpeningEstablishmentPending,
+  isOpeningSetupChipLabel,
   pendingRequiredCovers,
   resolveOpeningMode,
   resolveOpeningPrompts,
@@ -1597,6 +1598,9 @@ export function useGame() {
 
     loadingTimer = setTimeout(() => setShowLoadingOverlay(true), 2500);
 
+    const hideChipSpeech =
+      isOpeningEstablishmentPending(current) && isOpeningSetupChipLabel(contentSanitized);
+
     const playerEntry: LogEntry = {
       id: uid(),
       turn: current.turn,
@@ -1637,7 +1641,7 @@ export function useGame() {
       : {
           ...current,
           storyStartTextTurnsRemaining: nextStoryStart,
-          log: [...priorLog, playerEntry],
+          log: hideChipSpeech ? priorLog : [...priorLog, playerEntry],
         };
     stateRef.current = optimisticState;
     setState(optimisticState);
@@ -1757,7 +1761,11 @@ export function useGame() {
           sceneFacts,
           quests: questsAfterScene,
           log: [...openingState.log, openingGm],
-          choices: openingChoices.length ? openingChoices : undefined,
+          choices: openingState.openingEstablishment?.pending?.length
+            ? establishmentChoices(openingState.openingEstablishment.pending)
+            : openingChoices.length
+              ? openingChoices
+              : undefined,
           openingEstablishment: openingState.openingEstablishment
             ? { ...openingState.openingEstablishment, sceneWritten: true }
             : openingState.openingEstablishment,
@@ -3329,10 +3337,10 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
         sceneFacts,
         quests: questsAfterScene,
         log: [openingGm],
-        choices: openingChoices.length
-          ? openingChoices
-          : pendingCovers.length
-            ? establishmentChoices(pendingCovers)
+        choices: pendingCovers.length
+          ? establishmentChoices(pendingCovers)
+          : openingChoices.length
+            ? openingChoices
             : undefined,
         pendingGeneratedOpening: false,
         openingEstablishment: {

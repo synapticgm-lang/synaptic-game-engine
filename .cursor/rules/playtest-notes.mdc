@@ -9,7 +9,7 @@ John is playtesting live. Collect issues here. Do not implement until he asks fo
 
 ## Open
 
-(none — 2026-08-17f hosted generate-image path shipped to main)
+(none — 2026-08-18a opening chips + Milestone plate shipped to main)
 
 ## Waiting (research — not tickets yet)
 
@@ -20,6 +20,7 @@ John is playtesting live. Collect issues here. Do not implement until he asks fo
 
 ## Done (already shipped)
 
+- **2026-08-18a opening covers + plate:** chips match only the current name/location ask; location-talk on a name cover is not the PC name; setup chip labels are not spoken on the book; gold Milestone fail plate killed; HUD stamp 18a
 - **2026-08-17f hosted art path:** Free/Mid/High never skip pictures for a missing browser OpenRouter key — `generate-image` + session/anon JWT; `imageProvider: flux` is hosted schnell not Flux Direct; leftover Milestone badge copy killed; HUD stamp 17f
 - **2026-08-17e Chapter One fail plate:** failed memorable art no longer shows a black Milestone slab — story stays, compact hosted copy (“Hosted image service is unavailable.”), opener pinned to schnell (`2026-08-17e`)
 

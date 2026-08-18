@@ -450,19 +450,21 @@ export function CenterPanel({ state, busy, error, errorKind, currentImage, bgIma
 }
 
 function LogRow({ entry, lorebook, showSystemLog, statVerbosity, engineMode, showTurnAsk, onAcceptBeautyOffer, onDismissBeautyOffer, contentMode }: { entry: LogEntry; lorebook?: LoreCard[]; showSystemLog: boolean; statVerbosity: StatVerbosity; engineMode: EngineMode; showTurnAsk: boolean; onAcceptBeautyOffer?: (entryId: string) => void; onDismissBeautyOffer?: (entryId: string) => void; contentMode?: string | null }) {
-  // Text/Milestone Mode: a rare, GM-flagged full-page illustration — rendered large and
+  // Classic memorable plate: a rare, GM-flagged full-page illustration — rendered large and
   // distinct from the routine text log, instead of only surfacing via the small image strip.
   if (entry.entryKind === 'milestone') {
     const image = entry.imageUrls?.[0];
     const plate = splashPlateLabel(entry);
     const failed = !image && (entry.imageStatus === 'error' || entry.imageStatus === 'failed');
     return (
-      <div data-entry-id={entry.id} data-turn={entry.turn} data-panel-kind="milestone" className="space-y-2">
-        <div className="flex justify-center">
-          <span className="rounded-full border border-amber-500/50 bg-amber-950/40 px-3 py-1 text-[11px] font-semibold tracking-wide text-amber-200">
-            {plate}
-          </span>
-        </div>
+      <div data-entry-id={entry.id} data-turn={entry.turn} data-panel-kind="memorable" className="space-y-2">
+        {failed ? null : (
+          <div className="flex justify-center">
+            <span className="px-1 text-[11px] font-medium tracking-wide text-slate-400">
+              {plate}
+            </span>
+          </div>
+        )}
         {image ? (
           <div className="overflow-hidden rounded-xl border-2 border-amber-600/50 bg-slate-950 shadow-2xl shadow-black/60">
             <img src={image} alt={plate} className="block max-h-[70vh] w-full object-contain" />

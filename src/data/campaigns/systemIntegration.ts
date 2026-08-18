@@ -230,7 +230,7 @@ export const systemIntegration: CampaignBible = {
       id: 'name',
       kind: 'name',
       question: 'Confirm designation.',
-      suggestions: ['Random designation', 'Random place'],
+      suggestions: ['Random designation'],
     },
     {
       id: 'where',

@@ -2,11 +2,14 @@
  * Hosted memorable / comic image proxy — uses server OPENROUTER_API_KEY
  * so Free players are not told to paste a key in Settings.
  *
- * Deploy (from repo root; JWT off so guests match gm-turn):
+ * Deploy (from repo root). config.toml already has verify_jwt = false so guests match gm-turn:
+ *   npx supabase functions deploy generate-image
+ * If the dashboard still verifies JWT, deploy with:
  *   npx supabase functions deploy generate-image --no-verify-jwt
  *   npx supabase secrets set OPENROUTER_API_KEY=sk-or-v1-...
  *
  * Hosted Free players never send an OpenRouter key; this function reads the edge secret.
+ * The browser sends the same session/anon JWT pattern as gm-turn and retries 401 with the anon key.
  */
 const CORS_HEADERS: Record<string, string> = {
   'Access-Control-Allow-Origin': '*',

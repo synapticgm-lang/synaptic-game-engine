@@ -12,7 +12,7 @@ const NAME_PROMPT: OpeningPrompt = {
   id: 'name',
   kind: 'name',
   question: 'Confirm designation.',
-  suggestions: ['Random designation', 'Random place'],
+  suggestions: ['Random designation'],
 };
 
 const RANDOM_NAMES = ['Jax', 'Ren', 'Sam', 'Morgan', 'Casey', 'Riley', 'Quinn', 'Avery', 'Jordan', 'Blake'];
@@ -30,14 +30,50 @@ function pickRandom(list: string[]): string {
 }
 
 const RANDOM_PLACE_REQUEST =
-  /\b(?:a\s+)?random\s+(?:place|location|city|town|spot)\b|\b(?:pick|choose|give)\s+(?:me\s+)?(?:a\s+)?random\b|\bi\s+can'?t\s+think\s+of\s+(?:a\s+)?(?:place|location|one)\b|\bthe\s+place\s+this\s+tale\s+names\b/i;
+  /\b(?:a\s+)?random\s+(?:earth\s+)?(?:place|location|city|town|spot)\b|\brandom\s+earth\s+city\b|\ba city i actually know\b|\bsomewhere\s+on\s+earth\b|\bon\s+earth\b|\ban?\s+(?:earth\s+)?city\b|\b(?:pick|choose|give)\s+(?:me\s+)?(?:a\s+)?random\b|\bi\s+can'?t\s+think\s+of\s+(?:a\s+)?(?:place|location|one)\b|\bthe\s+place\s+this\s+tale\s+names\b/i;
+
+const META_SETUP_CHIP =
+  /^(?:random\s+(?:designation|name|place|earth\s+city)|a city i actually know|the place this tale names|a street i invent|fate'?s pick|🎲?\s*let fate decide)$/i;
 
 export function isRandomPlaceRequest(raw: string): boolean {
   return RANDOM_PLACE_REQUEST.test(raw.replace(/\s+/g, ' ').trim());
 }
 
+/** Meta chip labels — never spoken dialogue on the book unless they typed a real line. */
+export function isOpeningSetupChipLabel(raw: string): boolean {
+  return META_SETUP_CHIP.test(raw.replace(/\s+/g, ' ').trim());
+}
+
+export function isLocationishOpeningUtterance(raw: string): boolean {
+  const t = raw.replace(/\s+/g, ' ').trim();
+  if (!t) return false;
+  if (isRandomPlaceRequest(t)) return true;
+  if (META_SETUP_CHIP.test(t) && !/^random\s+(?:designation|name)$/i.test(t)) return true;
+  if (/\b(?:somewhere\s+on\s+earth|on\s+earth|earth\s+city|random\s+place|i\s+was\s+at\s+home)\b/i.test(t)) {
+    return true;
+  }
+  return false;
+}
+
+export function pickEarthPlace(): string {
+  return pickRandom(RANDOM_PLACES);
+}
+
+function originCoverIsEarth(state: GameState): boolean {
+  if (state.campaignBibleId === 'summoned-pact') return true;
+  const bible = resolveActiveCampaignBible(state);
+  if (bible?.id === 'summoned-pact') return true;
+  const loc =
+    state.openingEstablishment?.pending.find((p) => p.kind === 'location')
+    ?? bible?.openingPrompts?.find((p) => p.kind === 'location');
+  if (loc && /\bearth\b/i.test(loc.question)) return true;
+  if ((loc?.suggestions ?? []).some((s) => /earth/i.test(s))) return true;
+  return false;
+}
+
 export function pickPlaceForCampaign(state: GameState): string {
   const bible = resolveActiveCampaignBible(state);
+  if (originCoverIsEarth(state)) return pickEarthPlace();
   if (bible?.startingLocation?.trim()) return bible.startingLocation.trim();
   if (bible?.engineMode === 'rpg' || bible?.engineMode === 'pyoa' || bible?.engineMode === 'dnd') {
     return 'where this tale opens';
@@ -51,6 +87,7 @@ function isUnusablePlace(place: string, state: GameState): boolean {
   if (NAME_STOP.has(p.toLowerCase())) return true;
   if (NOT_A_PLACE.test(p)) return true;
   if (isRandomPlaceRequest(p)) return true;
+  if (isOpeningSetupChipLabel(p)) return true;
   if (/^the opening of /i.test(p)) return true;
   const name = (
     state.openingEstablishment?.answers?.name
@@ -63,18 +100,41 @@ function isUnusablePlace(place: string, state: GameState): boolean {
   return false;
 }
 
+const PLACE_SUGGESTION =
+  /random\s+(?:earth\s+)?(?:place|location|city|town)|earth city|a city i actually know|a street i invent|the place this tale names/i;
+
+/** Chips for the question on screen only (`pending[0]`), never the whole cover queue. */
 export function establishmentChoices(pending: OpeningPrompt[]): string[] {
+  const current = pending[0];
+  if (!current) return [];
   const chips: string[] = [];
-  if (pending.some((p) => p.kind === 'name')) chips.push('Random designation');
-  if (pending.some((p) => p.kind === 'location')) chips.push('Random place');
-  for (const prompt of pending) {
-    for (const s of prompt.suggestions ?? []) {
-      if (!/random (designation|name|place|location)/i.test(s) && !chips.includes(s)) {
-        chips.push(s);
-      }
+  if (current.kind === 'name') {
+    chips.push('Random designation');
+    for (const s of current.suggestions ?? []) {
+      if (/random\s+(?:designation|name)/i.test(s) || PLACE_SUGGESTION.test(s)) continue;
+      if (!chips.includes(s)) chips.push(s);
+    }
+    for (const n of RANDOM_NAMES) {
+      if (chips.length >= 4) break;
+      if (!chips.includes(n)) chips.push(n);
+    }
+  } else if (current.kind === 'location') {
+    chips.push(originSuggestionIsEarth(current) ? 'Random Earth city' : 'Random place');
+    for (const s of current.suggestions ?? []) {
+      if (/^random\s+(?:place|earth\s+city)$/i.test(s) || /random\s+(?:designation|name)/i.test(s)) continue;
+      if (!chips.includes(s)) chips.push(s);
+    }
+  } else {
+    for (const s of current.suggestions ?? []) {
+      if (!chips.includes(s)) chips.push(s);
     }
   }
   return chips.slice(0, 4);
+}
+
+function originSuggestionIsEarth(prompt: OpeningPrompt): boolean {
+  if (/\bearth\b/i.test(prompt.question)) return true;
+  return (prompt.suggestions ?? []).some((s) => /earth/i.test(s));
 }
 
 const SI_PROMPTS: OpeningPrompt[] = [
@@ -614,8 +674,10 @@ function fieldForKind(kind: OpeningPrompt['kind'], harvest: ReturnType<typeof ha
 /** Current field takes a normal sentence if it is not only a meta question. */
 function acceptCurrentField(kind: OpeningPrompt['kind'], raw: string, state?: GameState): string | null {
   if (isMetaOnly(raw) || isSetupRefusal(raw)) return null;
+  if (kind === 'name' && isLocationishOpeningUtterance(raw) && !extractGivenName(raw)) return null;
   const harvested = fieldForKind(kind, harvestUtterance(raw));
   if (harvested) {
+    if (kind === 'name' && isLocationishOpeningUtterance(harvested) && !extractGivenName(harvested)) return null;
     if (kind === 'location' && state && isUnusablePlace(harvested, state)) return null;
     return harvested;
   }
@@ -851,7 +913,15 @@ export async function applyOpeningAnswer(
   if (/^random\s+(name|designation)\b/i.test(answer) || /^use a random (name|designation)\b/i.test(answer)) {
     harvest.name = harvest.name ?? pickRandom(RANDOM_NAMES);
   }
-  if (isRandomPlaceRequest(answer)) {
+  const currentKind = est.pending[0]?.kind;
+  const locationTalkOnName =
+    currentKind === 'name'
+    && isLocationishOpeningUtterance(answer)
+    && !extractGivenName(answer);
+  if (locationTalkOnName) {
+    harvest.name = null;
+  }
+  if (isRandomPlaceRequest(answer) || locationTalkOnName) {
     harvest.location = harvest.location && !isUnusablePlace(harvest.location, state)
       ? harvest.location
       : pickPlaceForCampaign(state);
@@ -860,34 +930,53 @@ export async function applyOpeningAnswer(
     harvest.location = null;
   }
   if (harvest.location && isUnusablePlace(harvest.location, state)) {
-    harvest.location = isRandomPlaceRequest(answer) ? pickPlaceForCampaign(state) : null;
+    harvest.location = isRandomPlaceRequest(answer) || locationTalkOnName
+      ? pickPlaceForCampaign(state)
+      : null;
   }
-  const currentKind = est.pending[0]?.kind;
-  if (currentKind && !fieldForKind(currentKind, harvest) && !isMetaOnly(answer)) {
+  if (currentKind === 'name' && harvest.name && isLocationishOpeningUtterance(harvest.name) && !extractGivenName(harvest.name)) {
+    harvest.name = null;
+  }
+  if (currentKind && !fieldForKind(currentKind, harvest) && !isMetaOnly(answer) && !locationTalkOnName) {
     const accepted = acceptCurrentField(currentKind, answer, state);
     if (accepted) {
-      if (currentKind === 'name') harvest.name = accepted;
+      if (currentKind === 'name') {
+        if (!isLocationishOpeningUtterance(accepted) || extractGivenName(accepted)) {
+          harvest.name = extractGivenName(accepted) ?? accepted;
+        }
+      }
       if (currentKind === 'location') harvest.location = accepted;
       if (currentKind === 'appearance') harvest.appearance = accepted;
       if (currentKind === 'kit') harvest.kit = accepted;
       if (currentKind === 'species' || currentKind === 'identity') harvest.species = accepted;
     }
   }
+  const skipModel =
+    locationTalkOnName
+    || isOpeningSetupChipLabel(answer)
+    || /^random\s+(name|designation)\b/i.test(answer);
   const needsRead =
     !!settings &&
+    !skipModel &&
     !isMetaOnly(answer) &&
     !isSetupRefusal(answer) &&
     (utteranceIsMessy(answer) || !!(currentKind && !fieldForKind(currentKind, harvest)));
   if (needsRead) {
+    const cover = est.pending[0];
     const read = await interpretPlayerUtterance({
       raw: answer,
       mode: 'opening',
-      pendingKinds: est.pending.map((p) => p.kind),
-      pendingQuestions: est.pending.map((p) => p.question),
+      pendingKinds: cover ? [cover.kind] : [],
+      pendingQuestions: cover ? [cover.question] : [],
       settings,
       forceModel: !!(currentKind && !fieldForKind(currentKind, harvest)),
     });
-    harvest.name = harvest.name ?? read.answers.name;
+    const readName = read.answers.name && extractGivenName(read.answers.name)
+      ? extractGivenName(read.answers.name)
+      : read.answers.name && !isLocationishOpeningUtterance(read.answers.name)
+        ? read.answers.name
+        : null;
+    harvest.name = harvest.name ?? readName;
     harvest.location = harvest.location ?? read.answers.location;
     harvest.appearance = harvest.appearance ?? read.answers.appearance;
     harvest.kit = harvest.kit ?? read.answers.kit;
@@ -895,8 +984,13 @@ export async function applyOpeningAnswer(
     harvest.askedWho = harvest.askedWho || read.askedWho;
     harvest.askedWhat = harvest.askedWhat || read.askedWhat;
     if (currentKind && !fieldForKind(currentKind, harvest) && read.meaning && !read.questionOnly && !isJunkSetupValue(read.meaning)) {
-      if (currentKind === 'name') harvest.name = harvest.name ?? read.meaning;
-      if (currentKind === 'location') harvest.location = harvest.location ?? read.meaning;
+      if (currentKind === 'name') {
+        const named = extractGivenName(read.meaning);
+        if (named) harvest.name = harvest.name ?? named;
+      }
+      if (currentKind === 'location' && !isOpeningSetupChipLabel(read.meaning)) {
+        harvest.location = harvest.location ?? read.meaning;
+      }
       if (currentKind === 'appearance') harvest.appearance = harvest.appearance ?? read.meaning;
       if (currentKind === 'kit') harvest.kit = harvest.kit ?? read.meaning;
       if (currentKind === 'species' || currentKind === 'identity') harvest.species = harvest.species ?? read.meaning;
@@ -904,8 +998,13 @@ export async function applyOpeningAnswer(
     if (harvest.appearance && isJunkSetupValue(harvest.appearance)) harvest.appearance = null;
     if (harvest.kit && isJunkSetupValue(harvest.kit)) harvest.kit = null;
     if (harvest.location && (isUnusablePlace(harvest.location, state) || harvest.location.toLowerCase() === (harvest.name ?? '').toLowerCase())) {
-      harvest.location = isRandomPlaceRequest(answer) ? pickPlaceForCampaign(state) : null;
+      harvest.location = isRandomPlaceRequest(answer) || locationTalkOnName
+        ? pickPlaceForCampaign(state)
+        : null;
     }
+  }
+  if (currentKind === 'name' && harvest.name && (isLocationishOpeningUtterance(harvest.name) || isOpeningSetupChipLabel(harvest.name))) {
+    harvest.name = extractGivenName(harvest.name);
   }
   const registrar = {
     ...(est.registrar ?? {
@@ -951,17 +1050,29 @@ export async function applyOpeningAnswer(
       stillPending.push(prompt);
       continue;
     }
-    nextState = applyKindToState(nextState, prompt, clean.text || value);
-    answers[prompt.id] = clean.text || value;
+    if (prompt.kind === 'location' && !clean.text) {
+      if (isRandomPlaceRequest(value) || isRandomPlaceRequest(answer) || isOpeningSetupChipLabel(value)) {
+        const place = pickPlaceForCampaign(nextState);
+        nextState = applyKindToState(nextState, prompt, place);
+        answers[prompt.id] = place;
+        continue;
+      }
+      stillPending.push(prompt);
+      continue;
+    }
+    const locked = clean.text || (prompt.kind === 'name' ? '' : value);
+    if (!locked) {
+      stillPending.push(prompt);
+      continue;
+    }
+    nextState = applyKindToState(nextState, prompt, locked);
+    answers[prompt.id] = locked;
   }
 
   const aside = registrarAside(registrar, harvest, nextState.campaignBibleId);
   const cheatLine = cheated
     ? 'That gear does not appear. Ordinary pockets only.'
     : '';
-  const playerAlreadyLogged = nextState.log.some(
-    (e) => e.role === 'player' && e.content === rawInput && e.turn === nextState.turn
-  );
 
   if (stillPending.length) {
     const next = stillPending[0];
@@ -993,7 +1104,7 @@ export async function applyOpeningAnswer(
           mode: est.mode,
         },
         choices: establishmentChoices(stillPending),
-        log: playerAlreadyLogged ? [...nextState.log, gmEntry] : nextState.log,
+        log: [...nextState.log, gmEntry],
         lastUpdated: Date.now(),
       },
     };

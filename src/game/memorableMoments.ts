@@ -118,7 +118,7 @@ export function plateCopyForBeat(
   };
 }
 
-const LEGACY_MILESTONE_LABEL = /^(?:✦\s*)?milestone(?:\s*✦)?$/i;
+const LEGACY_MILESTONE_LABEL = /milestone/i;
 
 export function splashPlateLabel(entry: Pick<LogEntry, 'splashTitle' | 'turn'>): string {
   const titled = entry.splashTitle?.trim();
@@ -133,8 +133,8 @@ export function splashUnavailableLine(
   entry: Pick<LogEntry, 'splashTitle' | 'turn' | 'imageFailMessage'>
 ): string {
   const detail = entry.imageFailMessage?.trim();
-  if (detail && !/milestone/i.test(detail)) return detail;
-  return `${splashPlateLabel(entry)} art unavailable — the story continues.`;
+  if (detail && !LEGACY_MILESTONE_LABEL.test(detail)) return detail;
+  return 'Hosted image service is unavailable.';
 }
 
 function priorStoryBody(log: LogEntry[] | undefined): boolean {

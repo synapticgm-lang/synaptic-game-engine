@@ -263,7 +263,7 @@ function LogEntryRenderer({
   const panelGridClass = isWebtoon
     ? 'flex flex-col gap-8 py-2'
     : `grid grid-cols-1 gap-4 py-2 sm:grid-cols-2 sm:gap-5 lg:grid-cols-3 ${comicReadingDirection === 'rtl' ? 'direction-rtl' : ''}`;
-  // Milestone/loot-video entries get a distinct full-page/cinematic treatment regardless of
+  // Memorable/loot-video entries get a distinct full-page/cinematic treatment regardless of
   // whatever else the turn contains — checked first so they always win layout priority.
   if (entry.entryKind === 'milestone') {
     return <MilestonePanel entry={entry} lorebook={lorebook} isScreentone={isScreentone} />;
@@ -586,14 +586,16 @@ function MilestonePanel({
     <article
       data-entry-id={entry.id}
       data-turn={entry.turn}
-      data-panel-kind="milestone"
+      data-panel-kind="memorable"
       className="comic-panel-cell milestone-panel w-full shrink-0"
     >
-      <div className="mb-2 flex items-center justify-center">
-        <span className="rounded-full border border-amber-500/50 bg-amber-950/40 px-3 py-1 text-[11px] font-semibold tracking-wide text-amber-200">
-          {plate}
-        </span>
-      </div>
+      {failed ? null : (
+        <div className="mb-2 flex items-center justify-center">
+          <span className="px-1 text-[11px] font-medium tracking-wide text-slate-400">
+            {plate}
+          </span>
+        </div>
+      )}
       {hasArt ? (
         <div
           className={`relative aspect-video w-full overflow-hidden rounded-xl border-2 border-amber-600/50 bg-slate-950 shadow-2xl shadow-black/60 ${isScreentone ? 'manga-screentone-panel' : ''}`}

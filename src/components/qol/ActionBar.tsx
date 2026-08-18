@@ -20,8 +20,7 @@ const FALLBACK_CHOICE = '🎲 Let Fate Decide';
  */
 function resolveActions(state: GameState): string[] {
   if (isOpeningEstablishmentPending(state)) {
-    const chips = (state.choices ?? []).filter((c) => c && c !== FALLBACK_CHOICE);
-    return (chips.length ? chips : establishmentChoices(state.openingEstablishment?.pending ?? [])).slice(0, 4);
+    return establishmentChoices(state.openingEstablishment?.pending ?? []).slice(0, 4);
   }
   const gmChoices = (state.choices ?? []).filter((c) => c && c !== FALLBACK_CHOICE);
   if (gmChoices.length >= 3) return gmChoices.slice(0, 4);
@@ -31,6 +30,7 @@ function resolveActions(state: GameState): string[] {
 export function ActionBar({ state, busy, onAction, engineMode, hidden = false }: ActionBarProps) {
   const actions = resolveActions(state);
   const isDnd = engineMode === 'dnd' || state.engineMode === 'dnd';
+  const openingCover = isOpeningEstablishmentPending(state);
 
   const handleFatesPick = () => {
     const pick = actions[Math.floor(Math.random() * actions.length)];
@@ -51,6 +51,7 @@ export function ActionBar({ state, busy, onAction, engineMode, hidden = false }:
           {action}
         </button>
       ))}
+      {openingCover ? null : (
       <button
         disabled={busy || actions.length === 0}
         onClick={handleFatesPick}
@@ -60,6 +61,7 @@ export function ActionBar({ state, busy, onAction, engineMode, hidden = false }:
         {isDnd ? <Dices size={11} /> : <Sparkles size={11} className="text-amber-400" />}
         Fate's Pick
       </button>
+      )}
     </div>
   );
 }

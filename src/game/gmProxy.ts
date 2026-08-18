@@ -205,10 +205,10 @@ export async function invokeImageProxy(params: {
     else params.signal.addEventListener('abort', onExternalAbort);
   }
 
-  try {
-    const res = await fetch(url, {
+  const post = (authorization: string) =>
+    fetch(url, {
       method: 'POST',
-      headers,
+      headers: { ...headers, Authorization: authorization },
       body: JSON.stringify({
         prompt: params.prompt,
         model: params.model,
@@ -216,6 +216,15 @@ export async function invokeImageProxy(params: {
       }),
       signal: controller.signal,
     });
+
+  try {
+    const anonBearer = `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`;
+    let res = await post(headers.Authorization);
+    // Stale session JWT can 401 while the anon key still matches gm-turn. Retry once; do not drop JWT by default.
+    if (res.status === 401 && session?.access_token) {
+      logger.warn('ai-image', 'generate-image 401 with session JWT — retrying with anon key');
+      res = await post(anonBearer);
+    }
     const payload = await res.json().catch(() => ({}));
     if (!res.ok) {
       const msg = typeof payload?.error === 'string' ? payload.error : `Image proxy error ${res.status}`;
