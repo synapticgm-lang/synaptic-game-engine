@@ -642,18 +642,19 @@ export async function generateComicImage(
   ].filter(Boolean).join('\n\n').trim();
 
   const classicMemorable = settings.visualMode === 'classic' && Boolean(options?.memorableMoment);
+  // Memorable plates stay schnell (cheap opener + extras). Never inherit High's flux-dev / hero path.
   const useHeroModel = classicMemorable
-    ? options?.hero === true
+    ? false
     : options?.hero === true || HERO_IMAGE_TRIGGER.test(prompt);
   let fluxModels = resolveFluxImageModel({
     tier: effectiveWriterTier(settings.subscriptionTier),
     hero: useHeroModel,
     via: provider === 'flux-direct' ? 'direct' : 'openrouter',
   });
-  if (classicMemorable && !useHeroModel && fluxModels.openRouterId === HERO_IMAGE_MODEL) {
+  if (classicMemorable) {
     fluxModels = {
       openRouterId: PRIMARY_IMAGE_MODEL,
-      bflEndpoint: 'flux-2-klein-9b',
+      bflEndpoint: 'flux-2-klein-4b',
     };
   }
 
@@ -746,12 +747,7 @@ export async function generateComicImage(
       });
       throw new Error('Hosted image service is unavailable.');
     }
-    // Proxy unavailable / empty — soft-skip rather than blaming Settings on Free.
-    debugLogger.record('WARN', 'Image generation skipped — no hosted image key path', {
-      envKey: false,
-      byokKey: false,
-    });
-    return null;
+    throw new Error('Hosted image service is unavailable.');
   }
 
   const url = await withAbortTimeout(

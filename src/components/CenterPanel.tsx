@@ -14,7 +14,7 @@ import { RewindBar } from './qol/RewindBar';
 import { TurnConfirmBar } from './qol/TurnConfirmBar';
 import { shouldShowTurnAsk, TURN_ASK, hasRealGmStory, shouldSkipDuplicatePlayerBubble } from '@/game/turnAsk';
 import { BeautyMomentOfferLink } from './BeautyMomentOffer';
-import { splashPlateLabel } from '@/game/memorableMoments';
+import { splashPlateLabel, splashUnavailableLine } from '@/game/memorableMoments';
 
 const HIDE_OPTIONS_KEY = 'synapticgm-hide-options';
 const HIDE_TEXT_KEY = 'synapticgm-hide-text';
@@ -455,6 +455,7 @@ function LogRow({ entry, lorebook, showSystemLog, statVerbosity, engineMode, sho
   if (entry.entryKind === 'milestone') {
     const image = entry.imageUrls?.[0];
     const plate = splashPlateLabel(entry);
+    const failed = !image && (entry.imageStatus === 'error' || entry.imageStatus === 'failed');
     return (
       <div data-entry-id={entry.id} data-turn={entry.turn} data-panel-kind="milestone" className="space-y-2">
         <div className="flex justify-center">
@@ -462,15 +463,17 @@ function LogRow({ entry, lorebook, showSystemLog, statVerbosity, engineMode, sho
             {plate}
           </span>
         </div>
-        <div className="overflow-hidden rounded-xl border-2 border-amber-600/50 bg-slate-950 shadow-2xl shadow-black/60">
-          {image ? (
+        {image ? (
+          <div className="overflow-hidden rounded-xl border-2 border-amber-600/50 bg-slate-950 shadow-2xl shadow-black/60">
             <img src={image} alt={plate} className="block max-h-[70vh] w-full object-contain" />
-          ) : (
-            <div className="flex min-h-[240px] items-center justify-center text-xs text-slate-500">
-              {entry.imageStatus === 'error' ? 'Picture unavailable — the story continues.' : 'Painting this moment…'}
-            </div>
-          )}
-        </div>
+          </div>
+        ) : failed ? (
+          <p className="px-1 text-center text-xs text-slate-500">{splashUnavailableLine(entry)}</p>
+        ) : (
+          <div className="flex min-h-[160px] items-center justify-center overflow-hidden rounded-xl border-2 border-amber-600/50 bg-slate-950 text-xs text-slate-500 shadow-2xl shadow-black/60">
+            Painting this moment…
+          </div>
+        )}
         <div className="rounded-lg border border-slate-800 bg-slate-900/50 px-4 py-3">
           <FormattedText content={entry.content} lorebook={lorebook} />
         </div>

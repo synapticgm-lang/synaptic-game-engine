@@ -118,8 +118,21 @@ export function plateCopyForBeat(
   };
 }
 
-export function splashPlateLabel(entry: Pick<LogEntry, 'splashTitle'>): string {
-  return entry.splashTitle?.trim() || 'A moment worth keeping';
+export function splashPlateLabel(entry: Pick<LogEntry, 'splashTitle' | 'turn'>): string {
+  const titled = entry.splashTitle?.trim();
+  if (titled) return titled;
+  // Opening splash on old saves / live-behind builds had no splashTitle — never say Milestone.
+  if (typeof entry.turn === 'number' && entry.turn <= 1) return 'Chapter One';
+  return 'A moment worth keeping';
+}
+
+/** Compact fail line under the plate title. Story stays; no black "Milestone" slab. */
+export function splashUnavailableLine(
+  entry: Pick<LogEntry, 'splashTitle' | 'turn' | 'imageFailMessage'>
+): string {
+  const detail = entry.imageFailMessage?.trim();
+  if (detail) return detail;
+  return `${splashPlateLabel(entry)} art unavailable — the story continues.`;
 }
 
 function priorStoryBody(log: LogEntry[] | undefined): boolean {

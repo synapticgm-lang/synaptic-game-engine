@@ -11,7 +11,7 @@ import { useState, useEffect, useMemo, useRef, type CSSProperties, type PointerE
 import { debugLogger } from '@/game/debugLogger';
 import { useZoomGesture } from './useZoomGesture';
 import { findQuietQuadrant } from '@/utils/smartPlacement';
-import { splashPlateLabel } from '@/game/memorableMoments';
+import { splashPlateLabel, splashUnavailableLine } from '@/game/memorableMoments';
 
 interface ComicGridProps {
   log: LogEntry[];
@@ -492,19 +492,23 @@ function PanelPlaceholder({
   isScreentone,
   framed = false,
   onRetry,
+  message,
 }: {
   status: PanelImageStatus;
   isScreentone: boolean;
   framed?: boolean;
   onRetry?: () => void;
+  message?: string;
 }) {
   const isError = status === 'error' || status === 'failed';
+  const label = message
+    ?? (isError ? 'Panel image unavailable' : 'Generating panel image...');
 
   return (
     <div
       className={`relative overflow-hidden ${framed ? 'h-full w-full' : `min-h-[240px] shrink-0 rounded-xl border border-dashed border-slate-700 bg-slate-900/50 shadow-inner ${isScreentone ? 'manga-screentone-panel' : ''}`}`}
       aria-busy={!isError}
-      aria-label={isError ? 'Panel image unavailable' : 'Panel image loading'}
+      aria-label={isError ? label : 'Panel image loading'}
     >
       <div className={`absolute inset-0 bg-gradient-to-br from-slate-900/20 via-slate-800/10 to-slate-900/30 ${isError ? '' : 'animate-pulse'}`} />
       <div className={`relative flex flex-col items-center justify-center gap-3 px-4 ${framed ? 'h-full min-h-[120px]' : 'min-h-[240px] py-8'}`}>
@@ -514,7 +518,7 @@ function PanelPlaceholder({
           <Loader2 size={28} className="animate-spin text-slate-500" />
         )}
         <span className="text-center text-xs font-mono text-slate-500">
-          {isError ? 'Panel image unavailable' : 'Generating panel image...'}
+          {label}
         </span>
         {isError && onRetry && (
           <button
@@ -574,8 +578,9 @@ function MilestonePanel({
   isScreentone: boolean;
 }) {
   const images = entry.imageUrls ?? [];
-  const status: PanelImageStatus = images.length > 0 ? 'ready' : entry.imageStatus ?? 'pending';
   const plate = splashPlateLabel(entry);
+  const hasArt = Boolean(images[0]);
+  const failed = !hasArt && (entry.imageStatus === 'error' || entry.imageStatus === 'failed');
 
   return (
     <article
@@ -589,11 +594,21 @@ function MilestonePanel({
           {plate}
         </span>
       </div>
-      <div
-        className={`relative aspect-video w-full overflow-hidden rounded-xl border-2 border-amber-600/50 bg-slate-950 shadow-2xl shadow-black/60 ${isScreentone ? 'manga-screentone-panel' : ''}`}
-      >
-        <PanelImageSlot src={images[0]} alt={plate} status={status} isScreentone={isScreentone} framed />
-      </div>
+      {hasArt ? (
+        <div
+          className={`relative aspect-video w-full overflow-hidden rounded-xl border-2 border-amber-600/50 bg-slate-950 shadow-2xl shadow-black/60 ${isScreentone ? 'manga-screentone-panel' : ''}`}
+        >
+          <PanelImageSlot src={images[0]} alt={plate} status="ready" isScreentone={isScreentone} framed />
+        </div>
+      ) : failed ? (
+        <p className="mb-2 px-1 text-center text-xs text-slate-500">{splashUnavailableLine(entry)}</p>
+      ) : (
+        <div
+          className={`relative aspect-video w-full overflow-hidden rounded-xl border-2 border-amber-600/50 bg-slate-950 shadow-2xl shadow-black/60 ${isScreentone ? 'manga-screentone-panel' : ''}`}
+        >
+          <PanelPlaceholder status="pending" isScreentone={isScreentone} framed message="Painting this moment…" />
+        </div>
+      )}
       <div className="comic-panel-caption mt-3 px-1">
         <FormattedText content={entry.content} lorebook={lorebook} />
       </div>

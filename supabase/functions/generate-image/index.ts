@@ -1,6 +1,10 @@
 /**
  * Hosted memorable / comic image proxy — uses server OPENROUTER_API_KEY
  * so Free players are not told to paste a key in Settings.
+ *
+ * Deploy (from repo root):
+ *   supabase functions deploy generate-image
+ *   supabase secrets set OPENROUTER_API_KEY=sk-or-v1-...
  */
 const CORS_HEADERS: Record<string, string> = {
   'Access-Control-Allow-Origin': '*',

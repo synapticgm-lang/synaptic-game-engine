@@ -57,10 +57,36 @@ export function classifyImageGenFailure(error: unknown): ImageFailureReason {
     return 'moderation';
   }
   if (/429|rate limit/i.test(msg)) return 'rate_limited';
-  // Hosted proxy missing a server key is not a player Settings problem.
-  if (/hosted image|not configured for image/i.test(msg)) return 'failed';
+  // Hosted proxy missing a server key / undeployed function is not a player Settings problem.
+  if (
+    /hosted image|not configured for image|image proxy error (404|502|503)|generate-image|failed to fetch/i.test(
+      msg
+    )
+  ) {
+    return 'failed';
+  }
   if (/no .*api key|no openrouter api key/i.test(msg)) return 'no_key';
   return 'failed';
+}
+
+/** Toast + plate copy. Hosted players never get "check Settings" or the word Milestone. */
+export function playerFacingImageFailLine(error: unknown): string {
+  const reason = classifyImageGenFailure(error);
+  const msg = error instanceof Error ? error.message : String(error);
+  if (reason === 'rate_limited') return "Your mind's eye blurs for a moment. The scene will return.";
+  if (reason === 'no_key') {
+    return 'Pictures on Admin BYOK use your own key in Settings. The story continues.';
+  }
+  if (reason === 'moderation') return 'The scene was too vivid to render. Continue with the prose.';
+  if (
+    /hosted image service is unavailable/i.test(msg)
+    || /image proxy error (404|502|503)/i.test(msg)
+    || /failed to fetch/i.test(msg)
+    || /generate-image/i.test(msg)
+  ) {
+    return 'Hosted image service is unavailable.';
+  }
+  return 'Picture skipped — the story continues.';
 }
 
 export function diegeticImageFailureMessage(reason: ImageFailureReason): string {

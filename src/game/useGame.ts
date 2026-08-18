@@ -40,7 +40,7 @@ import {
 } from './comicImagePrompt';
 import { resolvePanelBudget } from './panelBudget';
 import { buildVisualConsistencyBlock } from './visualConsistency';
-import { classifyImageGenFailure, diegeticImageFailureMessage, prepareKidSafeImagePrompt } from './visualCanon';
+import { playerFacingImageFailLine, prepareKidSafeImagePrompt } from './visualCanon';
 import { fallbackSuggestionForState, findUnsupportedItemClaims, isSuggestionValidForState } from './suggestionValidation';
 import { isChoiceGroundedInTurn, normalizeStoryCorpus, padChoicesToCount, resolvePipelineChoices, sceneSafeFallbacks } from './choicePipeline';
 import { sanitizeNarrativeMechanics, ensureTurnProse, ensureDamageNarration, ensureEncounterNarration, ensureXpNarration, stripUnearnedXpProse, stripResidualMechanicTags } from './narrativeSanitize';
@@ -649,7 +649,7 @@ export function useGame() {
     const now = Date.now();
     if (now - lastImageFailToastAtRef.current < 8000) return;
     lastImageFailToastAtRef.current = now;
-    addToast(diegeticImageFailureMessage(classifyImageGenFailure(error)), 'info');
+    addToast(playerFacingImageFailLine(error), 'info');
   }, [addToast]);
 
   const sceneImageContext = useCallback((
@@ -805,7 +805,6 @@ export function useGame() {
     try {
       const imageUrl = await requestImage(builtPrompt);
       if (!imageUrl) {
-        notifyImageFailure(new Error('Image provider returned an empty image URL.'));
         return null;
       }
       return await storeIfPossible(imageUrl);
@@ -813,15 +812,16 @@ export function useGame() {
       if (e instanceof ImageModerationError) {
         if (mode === 'kid') {
           notifyImageFailure(e);
-          return null;
+          throw e;
         }
         try {
           const softened = buildImagePromptForKind(softenPrompt(scenePrompt), settings, mode, promptKind, context);
           const imageUrl = await requestImage(softened);
-          return await storeIfPossible(imageUrl || null);
+          if (!imageUrl) return null;
+          return await storeIfPossible(imageUrl);
         } catch (retryErr) {
           notifyImageFailure(retryErr ?? e);
-          return null;
+          throw retryErr ?? e;
         }
       }
       debugLogger.record('ERROR', 'Panel image generation failed', {
@@ -831,7 +831,7 @@ export function useGame() {
         timedOut: e instanceof Error && e.message.includes('timed out'),
       });
       notifyImageFailure(e);
-      return null;
+      throw e;
     }
   });
 
@@ -1063,11 +1063,13 @@ export function useGame() {
           if (job.kind === 'turn') {
             setImagesGenerating(job.prompts.length);
             const urls: string[] = [];
+            let failMessage: string | undefined;
             for (const prompt of job.prompts) {
               try {
                 const imageUrl = await fetchPanelImage(prompt, settingsRef.current, job.promptKind, sceneImageContext(job.visualContext), job.heroImage === true);
                 if (imageUrl) urls.push(imageUrl);
               } catch (err) {
+                failMessage = playerFacingImageFailLine(err);
                 debugLogger.record('ERROR', 'Unexpected turn image job failure', {
                   entryId: job.entryId,
                   error: err instanceof Error ? err.message : String(err),
@@ -1078,15 +1080,32 @@ export function useGame() {
             }
 
             commitImageState((prev) => {
-              const log = prev.log.map((entry) =>
-                entry.id === job.entryId
-                  ? {
-                      ...entry,
-                      imageUrls: urls,
-                      imageStatus: urls.length > 0 ? ('ready' as const) : ('error' as const),
-                    }
-                  : entry
-              );
+              const log = prev.log.map((entry) => {
+                if (entry.id !== job.entryId) return entry;
+                if (urls.length > 0) {
+                  return {
+                    ...entry,
+                    imageUrls: urls,
+                    imageStatus: 'ready' as const,
+                    imageFailMessage: undefined,
+                  };
+                }
+                if (job.isMilestone && !failMessage) {
+                  return {
+                    ...entry,
+                    entryKind: entry.entryKind === 'milestone' ? undefined : entry.entryKind,
+                    imageStatus: undefined,
+                    imageUrls: undefined,
+                    imageFailMessage: undefined,
+                  };
+                }
+                return {
+                  ...entry,
+                  imageUrls: [],
+                  imageStatus: 'error' as const,
+                  imageFailMessage: failMessage,
+                };
+              });
               return { ...prev, log, lastUpdated: Date.now() };
             });
 
@@ -1760,7 +1779,7 @@ export function useGame() {
             promptKind: 'milestone-illustration',
             visualContext: buildVisualConsistencyBlock(committed, []),
             isMilestone: true,
-            heroImage: openingMemorable.beat === 'opening',
+            heroImage: false,
           });
         }
         return;
@@ -2887,7 +2906,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
           promptKind: 'milestone-illustration',
           visualContext,
           isMilestone: true,
-          heroImage: memorableDecision.beat === 'opening',
+          heroImage: false,
         });
       }
       const postCommitVideoJob: VideoGenJob | null = lootVideoReq && lootVideoEntry
@@ -3338,7 +3357,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
           promptKind: 'milestone-illustration',
           visualContext: buildVisualConsistencyBlock(committed, []),
           isMilestone: true,
-          heroImage: openingMemorable.beat === 'opening',
+          heroImage: false,
         });
       }
     } finally {

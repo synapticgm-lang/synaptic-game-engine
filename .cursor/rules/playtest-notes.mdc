@@ -20,6 +20,8 @@ John is playtesting live. Collect issues here. Do not implement until he asks fo
 
 ## Done (already shipped)
 
+- **2026-08-17e Chapter One fail plate:** failed memorable art no longer shows a black Milestone slab — story stays, compact hosted copy (“Hosted image service is unavailable.”), opener pinned to schnell. Live still needs `generate-image` deploy + `OPENROUTER_API_KEY` + Vercel (`2026-08-17e`)
+
 - **2026-08-18 Test Lab + vibe wedge:** Settings → Test Lab marks account/device for unlimited capacity; switch hosted Free/Mid/High AI; Ledger: receipts on turn commit; stronger GM voice semantic firewall (`2026-08-18`)
 
 - **2026-08-17d stance + tabletop GM:** Non-lethal beats offer kind / hard / talk / walk-away (prompt rails + choice warden; no karma meter; named NPCs remember treatment). Tabletop Fantasy New Game picks GM personality (chilled / dry sarcastic / theatrical / army / fireside) on the save (`2026-08-17d`)

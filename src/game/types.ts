@@ -582,6 +582,8 @@ export interface LogEntry {
   splashTitle?: string;
   /** Toast line when the plate unlocks (e.g. Achievement unlocked — So it begins). */
   splashToast?: string;
+  /** Compact player-facing reason when memorable art failed (never the word Milestone). */
+  imageFailMessage?: string;
 }
 
 /** Distinct rule engines chosen at campaign setup. `'dnd'` is tabletop fantasy (saved key). */

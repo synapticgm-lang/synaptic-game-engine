@@ -3,3 +3,6 @@ project_id = "synapticgm"
 
 [functions.gm-turn]
 verify_jwt = false
+
+[functions.generate-image]
+verify_jwt = false
