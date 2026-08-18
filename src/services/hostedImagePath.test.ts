@@ -58,4 +58,38 @@ describe('hosted memorable art — Free without browser keys', () => {
     expect(url).toBe('https://img.test/chapter-one.png');
     expect(logs.join('\n')).not.toMatch(/no OpenRouter API key available/i);
   });
+
+  it('still POSTs generate-image when leftover gemini imageProvider has empty keys', async () => {
+    const fetchMock = vi.fn(async (input: RequestInfo | URL) => {
+      const url = String(input);
+      expect(url).toMatch(/\/functions\/v1\/generate-image$/);
+      return new Response(JSON.stringify({ url: 'https://img.test/gemini-legacy.png' }), {
+        status: 200,
+        headers: { 'Content-Type': 'application/json' },
+      });
+    });
+    vi.stubGlobal('fetch', fetchMock);
+
+    const settings = {
+      ...createDefaultSettings(),
+      subscriptionTier: 'free' as const,
+      visualMode: 'classic' as const,
+      classicMemorableImages: true,
+      byokModeEnabled: false,
+      openrouterApiKey: '',
+      fluxApiKey: '',
+      imageApiKey: '',
+      geminiApiKey: '',
+      aiProvider: 'gemini' as const,
+      imageProvider: 'gemini' as const,
+    };
+
+    const url = await generateComicImage('Sevenfold Circle under a cathedral vault', 'adult', settings, {
+      memorableMoment: true,
+      useRawPrompt: true,
+    });
+
+    expect(fetchMock).toHaveBeenCalled();
+    expect(url).toBe('https://img.test/gemini-legacy.png');
+  });
 });

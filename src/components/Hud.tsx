@@ -6,6 +6,11 @@ import { getTierDefinition, type SubscriptionTierId } from '../game/subscription
 import { explainWhy, recentStateTxReceipts } from '../game/stateTx';
 import { effectiveWriterTier, isTestLabEnabled } from '../game/testLab';
 
+/** Visible after a hard refresh — if this is missing, Vercel is still serving the 16 Aug bundle. */
+export const HUD_BUILD_STAMP = '2026-08-18b';
+const HUD_BUILD_TITLE =
+  'Debug 2026-08-18b — force-deploy; hosted generate-image (empty Gemini/Flux keys still POST)';
+
 interface Props {
   state: GameState;
   googleUser: GoogleUser | null;
@@ -72,6 +77,12 @@ export function Hud({ state, settings, onSettings, onOpenMap, onOpenQuestLog, on
       {/* Left Spacer / Branding or status if needed */}
       <div className="flex items-center gap-1 w-auto sm:w-1/4 shrink">
         <span className="sgm-hud-brand font-bold hidden md:inline">Synaptic GM</span>
+        <span
+          className="font-mono text-[10px] sm:text-[11px] text-rose-300/90 whitespace-nowrap"
+          title={HUD_BUILD_TITLE}
+        >
+          {HUD_BUILD_STAMP}
+        </span>
         {lastSavedTurn != null && (
           <span className="hidden sm:inline font-mono text-[10px] text-slate-500" title="Last committed turn saved on this device">
             T{lastSavedTurn} saved
@@ -134,10 +145,10 @@ export function Hud({ state, settings, onSettings, onOpenMap, onOpenQuestLog, on
         <div className="flex items-center gap-1 md:hidden">
           <button
             onClick={handleBugClick}
-            title={`Debug 2026-08-18a — opening chips + hosted Chapter One art${lastSavedTurn != null ? ` · last saved T${lastSavedTurn}` : ''}`}
-            className="p-1 sm:p-1.5 bg-rose-950/60 border border-rose-800 text-rose-400 rounded hover:bg-rose-900 transition-colors"
+            title={`${HUD_BUILD_TITLE}${lastSavedTurn != null ? ` · last saved T${lastSavedTurn}` : ''}`}
+            className="p-1 sm:p-1.5 bg-rose-950/60 border border-rose-800 text-rose-400 rounded hover:bg-rose-900 transition-colors flex items-center gap-0.5 text-[10px] font-mono"
           >
-            <Bug size={14} />
+            <Bug size={14} /> {HUD_BUILD_STAMP}
           </button>
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
@@ -152,10 +163,10 @@ export function Hud({ state, settings, onSettings, onOpenMap, onOpenQuestLog, on
         <div className="hidden md:flex items-center gap-2">
           <button
             onClick={handleBugClick}
-            title={`Debug 2026-08-18a — opening chips + hosted Chapter One art${lastSavedTurn != null ? ` · last saved T${lastSavedTurn}` : ''}`}
-            className="p-2 bg-rose-950/60 border border-rose-800 text-rose-400 rounded hover:bg-rose-900 transition-colors flex items-center gap-1 text-[11px]"
+            title={`${HUD_BUILD_TITLE}${lastSavedTurn != null ? ` · last saved T${lastSavedTurn}` : ''}`}
+            className="p-2 bg-rose-950/60 border border-rose-800 text-rose-400 rounded hover:bg-rose-900 transition-colors flex items-center gap-1 text-[11px] font-mono"
           >
-            <Bug size={14} /> Debug
+            <Bug size={14} /> Debug {HUD_BUILD_STAMP}
           </button>
           <button onClick={onOpenMap} title="Map Engine" className="p-2 bg-slate-900 hover:bg-slate-800 border border-slate-800 rounded text-slate-300 transition-colors">
             <Map size={15} />
