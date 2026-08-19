@@ -1,0 +1,86 @@
+import type { GameState, PlayPhase } from './types';
+import {
+  CURRENT_SAVE_REPAIR_REVISION,
+  normalizeDungeonMobLedger,
+} from './dungeonMobLedger';
+import { debugLogger } from './debugLogger';
+
+export type SaveRepairSeverity = 'cosmetic' | 'semantic';
+
+export type SaveRepairResult = {
+  state: GameState;
+  dirty: boolean;
+  notes: string[];
+  severity: SaveRepairSeverity;
+  shouldNotify: boolean;
+};
+
+function defaultPlayPhase(state: GameState): { playPhase: PlayPhase; changed: boolean } {
+  if (state.playPhase != null) {
+    return { playPhase: state.playPhase, changed: false };
+  }
+  return { playPhase: 'live', changed: true };
+}
+
+/**
+ * Idempotent save normalization — run on every load/continue.
+ * Returns dirty only when fields were actually added or corrected.
+ */
+export function repairSaveSchema(state: GameState): SaveRepairResult {
+  if ((state.saveRepairRevision ?? 0) >= CURRENT_SAVE_REPAIR_REVISION) {
+    const shouldNotify =
+      (state.lastSeenSaveRepairRevision ?? 0) < CURRENT_SAVE_REPAIR_REVISION;
+    return { state, dirty: false, notes: [], severity: 'cosmetic', shouldNotify };
+  }
+
+  const notes: string[] = [];
+  let severity: SaveRepairSeverity = 'cosmetic';
+  let dirty = false;
+  let next = state;
+
+  const note = (msg: string, kind: SaveRepairSeverity = 'cosmetic') => {
+    notes.push(msg);
+    dirty = true;
+    if (kind === 'semantic') severity = 'semantic';
+  };
+
+  const phase = defaultPlayPhase(next);
+  if (phase.changed) {
+    next = { ...next, playPhase: phase.playPhase };
+    note('default playPhase live', 'cosmetic');
+  }
+
+  const mobLedger = normalizeDungeonMobLedger(next, (msg) => note(msg, 'semantic'));
+  if (mobLedger.changed) {
+    next = mobLedger.state;
+  }
+
+  if (dirty) {
+    next = {
+      ...next,
+      saveRepairRevision: CURRENT_SAVE_REPAIR_REVISION,
+    };
+  }
+
+  const shouldNotify =
+    severity === 'semantic'
+    && (next.lastSeenSaveRepairRevision ?? 0) < CURRENT_SAVE_REPAIR_REVISION;
+
+  return { state: next, dirty, notes, severity, shouldNotify };
+}
+
+export const SAVE_REPAIR_TOAST =
+  'Save updated for new hazard and quest rules.';
+
+/** Apply repair after load; optional persist is handled by caller. */
+export function applySaveRepair(state: GameState): SaveRepairResult {
+  const result = repairSaveSchema(state);
+  if (result.dirty) {
+    debugLogger.record('STATE_UPDATE', 'Save schema repaired', {
+      notes: result.notes,
+      severity: result.severity,
+      revision: CURRENT_SAVE_REPAIR_REVISION,
+    });
+  }
+  return result;
+}

@@ -47,6 +47,13 @@ export interface NodeHidden {
     level: number;
     role: MobRole;
     spawned: boolean;
+    defeated?: boolean;
+    hpRemaining?: number | null;
+  }>;
+  looseItems?: Array<{
+    id: string;
+    label: string;
+    inventoryItemId?: string;
   }>;
 }
 

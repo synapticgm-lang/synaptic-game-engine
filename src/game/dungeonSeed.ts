@@ -1,6 +1,7 @@
 import type { ActiveDungeonState, MapNode, NodeHidden } from './mapEngine';
 import type { LocationInteractable, LocationSheet, MapTier, Rarity } from './types';
 import { createHashRng } from './seededRng';
+import { mobCountsAsRemaining } from './dungeonMobLedger';
 
 export type { NodeHidden };
 export type MobRole = 'trash' | 'elite' | 'miniBoss' | 'boss';
@@ -300,9 +301,11 @@ export function formatHiddenRoomLedger(
       `- Mob ${mob.name} (${mob.role} L${mob.level}) id=${mob.id} spawned=${mob.spawned}`
     );
   }
-  const unspawned = dungeon.nodes.flatMap((n) => (n.hidden?.mobs ?? []).filter((m) => !m.spawned));
+  const remaining = dungeon.nodes.flatMap((n) =>
+    (n.hidden?.mobs ?? []).filter((m) => mobCountsAsRemaining(m))
+  );
   lines.push(
-    `DUNGEON CLEAR: ${unspawned.length} unfought mobs remain on the locked map. Do not declare the dungeon cleared.`
+    `DUNGEON CLEAR: ${remaining.length} unfought mobs remain on the locked map. Do not declare the dungeon cleared.`
   );
   if (lines.length <= 2 && !h.lootables.length && !h.mobs.length) return '';
   return lines.join('\n');

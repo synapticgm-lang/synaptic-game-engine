@@ -135,6 +135,8 @@ export interface Container {
   slot?: string;
 }
 
+export type PlayPhase = 'live' | 'down' | 'ended';
+
 export type QuestStatus = 'active' | 'completed' | 'failed' | 'hidden';
 export type QuestType = 'main' | 'side' | 'faction';
 
@@ -335,6 +337,12 @@ export interface OpeningEstablishment {
 export interface GameState {
   /** Save generation. Clients reject anything below CURRENT_SAVE_VERSION. */
   version: number;
+  /** Schema repair generation — independent of version gate. */
+  saveRepairRevision?: number;
+  /** Player was notified about saveRepairRevision (toast once per revision). */
+  lastSeenSaveRepairRevision?: number;
+  /** Forward play lock — default live; ended/down batches set on commit. */
+  playPhase?: PlayPhase;
   saveId: string;
   storyName: string;
   engineMode: EngineMode;

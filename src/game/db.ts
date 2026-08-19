@@ -1,6 +1,7 @@
 import type { GameState, Settings } from './types';
 import { createDefaultSettings, isPlayableSave } from './defaults';
 import { syncContainerOccupancy } from './inventory';
+import { applySaveRepair } from './saveMigration';
 import { setActiveSubscriptionTier } from './subscriptionTiers';
 
 const DB_NAME = 'tactical-litrpg';
@@ -29,17 +30,27 @@ export async function loadGame(): Promise<GameState | null> {
     const tx = db.transaction(STORE_GAME, 'readonly');
     const req = tx.objectStore(STORE_GAME).get('current');
     req.onsuccess = () => {
-      const raw = req.result ?? null;
-      if (!raw) {
-        resolve(null);
-        return;
-      }
-      const state = syncContainerOccupancy(raw);
-      if (!isPlayableSave(state)) {
-        resolve(null);
-        return;
-      }
-      resolve(state);
+      void (async () => {
+        try {
+          const raw = req.result ?? null;
+          if (!raw) {
+            resolve(null);
+            return;
+          }
+          const state = syncContainerOccupancy(raw);
+          if (!isPlayableSave(state)) {
+            resolve(null);
+            return;
+          }
+          const repaired = applySaveRepair(state);
+          if (repaired.dirty) {
+            await saveGame(repaired.state);
+          }
+          resolve(repaired.state);
+        } catch (e) {
+          reject(e);
+        }
+      })();
     };
     req.onerror = () => reject(req.error);
   });

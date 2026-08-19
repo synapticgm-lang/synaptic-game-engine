@@ -4,6 +4,8 @@ import type { GameState, Settings, LogEntry, RollRecord, Item, GoogleUser, SaveS
 import { createInitialState } from './defaults';
 import type { CampaignArchetype } from './archetypes';
 import { buildArchetypeIntro } from './archetypes';
+import { applySaveRepair, SAVE_REPAIR_TOAST } from './saveMigration';
+import { markDefeatedMobAtCurrentNode, CURRENT_SAVE_REPAIR_REVISION } from './dungeonMobLedger';
 import { loadGame, saveGame, deleteGame, loadSettings, saveSettings, exportSave, importSave } from './db';
 import {
   syncGameToCloud,
@@ -2977,7 +2979,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
       offerMemorableAdIfCapHit(memorableDecision.skippedForCapacity);
       const milestoneReq = memorableDecision.request;
 
-      const mergedStateDraft: GameState = {
+      let mergedStateDraft: GameState = {
         ...workingState,
         ...updates,
         character: baseChar,
@@ -3034,6 +3036,13 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
         worldLedger,
         ...(turnFrame ? { turnFrameTheme: turnFrame } : {}),
       };
+
+      if (ledgerRound?.enemyDead) {
+        mergedStateDraft = markDefeatedMobAtCurrentNode(
+          mergedStateDraft,
+          ledgerRound.enemyName
+        );
+      }
 
       const combatSummary = ledgerRound
         ? formatCombatReceipt({ combat: ledgerRound }) ?? undefined
@@ -3196,6 +3205,8 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
 
         postCommitTurnEffectsRef.current.push(effectsPayload);
         setPostCommitTurnEpoch((epoch) => epoch + 1);
+        snapshotRef.current = null;
+        setCanRewind(false);
 
         if (!settingsRef.current.preferFullResponse && storyHasBody(cleanText)) {
           startStreamingReveal(gmEntry.id, cleanText);
@@ -3275,6 +3286,8 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
       postCommitTurnEffectsRef.current.push({ ...effects, snapshot: committed });
       setPostCommitTurnEpoch((epoch) => epoch + 1);
     }
+    snapshotRef.current = null;
+    setCanRewind(false);
     addToast('Turn committed to World State Ledger', 'info');
   });
 
@@ -3751,6 +3764,8 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
       setState(updated);
       stateRef.current = updated;
       await persist(updated);
+      snapshotRef.current = null;
+      setCanRewind(false);
       if (
         autoMemorable.request
         && storyHasBody(narrativeText)
@@ -4009,9 +4024,16 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
   const handleImport = useCallbackRef(async (file: File) => {
     try {
       const imported = await importSave(file);
-      const recovered = clampLeakedOpeningQuests(
-        reconcileCampaignLoadout(settleOrphanedImageJobs(imported))
+      const repaired = applySaveRepair(
+        clampLeakedOpeningQuests(
+          reconcileCampaignLoadout(settleOrphanedImageJobs(imported))
+        )
       );
+      let recovered = repaired.state;
+      if (repaired.shouldNotify) {
+        addToast(SAVE_REPAIR_TOAST, 'info');
+        recovered = { ...recovered, lastSeenSaveRepairRevision: CURRENT_SAVE_REPAIR_REVISION };
+      }
       setState(recovered);
       stateRef.current = recovered;
       bindSessionImageCache(recovered.saveId);
@@ -4246,9 +4268,15 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
 
         // Image requests are intentionally not persisted/resumed. A saved `pending` status
         // therefore has no live promise behind it and must become a terminal fallback state.
-        const recovered = clampLeakedOpeningQuests(
+        const recoveredRaw = clampLeakedOpeningQuests(
           reconcileCampaignLoadout(settleOrphanedImageJobs(saved))
         );
+        const repaired = applySaveRepair(recoveredRaw);
+        let recovered = repaired.state;
+        if (repaired.shouldNotify) {
+          addToast(SAVE_REPAIR_TOAST, 'info');
+          recovered = { ...recovered, lastSeenSaveRepairRevision: CURRENT_SAVE_REPAIR_REVISION };
+        }
 
         if (useCloud && cloud) {
           // Restore locked presentation settings from the cloud row when present.
@@ -4283,7 +4311,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
         const slot = gameStateToLocalSlot(recovered);
         setLocalSlot(slot);
         if (useCloud && slot) setCloudSlot({ ...slot, source: 'cloud' });
-        if (recovered !== saved || useCloud) {
+        if (repaired.dirty || useCloud) {
           await persist(recovered);
         }
       } finally {

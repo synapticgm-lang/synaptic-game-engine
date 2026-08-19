@@ -47,6 +47,16 @@ export interface NodeHidden {
     level: number;
     role: MobRole;
     spawned: boolean;
+    /** True kill — ledger combat or legacy inferred on repair. */
+    defeated?: boolean;
+    /** Wounded parked blob; > 0 means the mob waits on this node (flee batch). */
+    hpRemaining?: number | null;
+  }>;
+  /** Real inventory projectiles on the floor — separate from lootables (post-playtest batch). */
+  looseItems?: Array<{
+    id: string;
+    label: string;
+    inventoryItemId?: string;
   }>;
 }
 

@@ -1,6 +1,7 @@
 import type { ActiveEncounter, GameState, Item } from './types';
 import type { PlayerCheckResult } from './checkMath';
 import { currentDungeonNode } from './dungeonSeed';
+import { restoreParkedEncounter } from './dungeonMobLedger';
 import { isExplorableDungeon } from './placeAuthority';
 
 export { remainingDungeonMobs } from './dungeonPresence';
@@ -32,12 +33,16 @@ export function equippedWeaponName(state: GameState): string {
 
 /** Spawn the first unspawned mob in this room as the live encounter. */
 export function spawnRoomEncounter(state: GameState): GameState {
+  const restored = restoreParkedEncounter(state);
+  if (restored.activeEncounter && restored.activeEncounter.hp > 0) {
+    return restored;
+  }
   if (state.activeEncounter && state.activeEncounter.hp > 0) return state;
-  const dungeon = state.activeDungeon;
-  if (!isExplorableDungeon(dungeon)) return state;
+  const dungeon = restored.activeDungeon;
+  if (!isExplorableDungeon(dungeon)) return restored;
   const node = currentDungeonNode(dungeon);
-  const mob = (node?.hidden?.mobs ?? []).find((m) => !m.spawned);
-  if (!mob) return state;
+  const mob = (node?.hidden?.mobs ?? []).find((m) => !m.spawned && !m.defeated);
+  if (!mob) return restored;
   const level = Math.max(1, mob.level);
   const maxHp = mob.role === 'boss' ? 28 : mob.role === 'miniBoss' ? 22 : 14 + level * 2;
   const encounter: ActiveEncounter = {
@@ -58,12 +63,14 @@ export function spawnRoomEncounter(state: GameState): GameState {
       ...n,
       hidden: {
         ...n.hidden,
-        mobs: n.hidden.mobs.map((m) => (m.id === mob.id ? { ...m, spawned: true } : m)),
+        mobs: n.hidden.mobs.map((m) =>
+          m.id === mob.id ? { ...m, spawned: true, defeated: false, hpRemaining: null } : m
+        ),
       },
     };
   });
   return {
-    ...state,
+    ...restored,
     activeEncounter: encounter,
     activeDungeon: { ...dungeon, nodes },
   };
