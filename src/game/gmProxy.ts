@@ -11,6 +11,7 @@ import {
   isByokTierWithoutHostedKeys,
   resolveClientTextApiKey,
 } from './distributionChannel';
+import { forceFreeModel } from './opsKillSwitches';
 
 export type GmProxyMode = 'turn' | 'auto-fight';
 
