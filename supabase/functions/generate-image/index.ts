@@ -10,29 +10,62 @@
  *
  * Hosted Free players never send an OpenRouter key; this function reads the edge secret.
  * The browser sends the same session/anon JWT pattern as gm-turn and retries 401 with the anon key.
+ *
+ * CORS: echo Origin (not `*`) so Authorization + apikey preflights succeed from
+ * synaptic-game-engine.vercel.app and synapticgm.com.
  */
-const CORS_HEADERS: Record<string, string> = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-  'Access-Control-Allow-Methods': 'POST, OPTIONS',
-};
+const ALLOWED_ORIGINS = new Set([
+  'https://synaptic-game-engine.vercel.app',
+  'https://www.synapticgm.com',
+  'https://synapticgm.com',
+  'http://localhost:5173',
+  'http://localhost:4173',
+  'http://127.0.0.1:5173',
+]);
+
+function isAllowedOrigin(origin: string): boolean {
+  if (ALLOWED_ORIGINS.has(origin)) return true;
+  try {
+    const host = new URL(origin).hostname;
+    if (host.endsWith('.vercel.app')) return true;
+    if (host === 'localhost' || host === '127.0.0.1') return true;
+  } catch {
+    /* ignore */
+  }
+  return false;
+}
+
+function corsHeaders(req: Request): Record<string, string> {
+  const origin = req.headers.get('Origin')?.trim() || '';
+  // Echo a concrete Origin when present — `*` + Authorization fails some browsers.
+  // Unknown preview hosts still echo (anon key is already in the web client).
+  const allowOrigin = origin && (isAllowedOrigin(origin) || origin.startsWith('http'))
+    ? origin
+    : '*';
+  return {
+    'Access-Control-Allow-Origin': allowOrigin,
+    'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+    'Access-Control-Allow-Methods': 'POST, OPTIONS',
+    Vary: 'Origin',
+  };
+}
 
 const OPENROUTER_URL = 'https://openrouter.ai/api/v1/chat/completions';
 const DEFAULT_MODEL = 'black-forest-labs/flux-schnell';
 
-function jsonResponse(body: Record<string, unknown>, status = 200) {
+function jsonResponse(req: Request, body: Record<string, unknown>, status = 200) {
   return new Response(JSON.stringify(body), {
     status,
-    headers: { 'Content-Type': 'application/json', ...CORS_HEADERS },
+    headers: { 'Content-Type': 'application/json', ...corsHeaders(req) },
   });
 }
 
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') {
-    return new Response('ok', { headers: CORS_HEADERS });
+    return new Response('ok', { headers: corsHeaders(req) });
   }
   if (req.method !== 'POST') {
-    return jsonResponse({ error: 'Method not allowed' }, 405);
+    return jsonResponse(req, { error: 'Method not allowed' }, 405);
   }
 
   try {
@@ -46,9 +79,9 @@ Deno.serve(async (req) => {
     const serverKey = Deno.env.get('OPENROUTER_API_KEY')?.trim() || '';
     const apiKey = clientKey || serverKey;
 
-    if (!prompt) return jsonResponse({ error: 'Missing prompt' }, 400);
+    if (!prompt) return jsonResponse(req, { error: 'Missing prompt' }, 400);
     if (!apiKey) {
-      return jsonResponse({ error: 'Hosted image service is unavailable.' }, 503);
+      return jsonResponse(req, { error: 'Hosted image service is unavailable.' }, 503);
     }
 
     const res = await fetch(OPENROUTER_URL, {
@@ -72,7 +105,7 @@ Deno.serve(async (req) => {
         typeof data?.error?.message === 'string'
           ? data.error.message
           : `Image API error ${res.status}`;
-      return jsonResponse({ error: msg }, res.status >= 400 ? res.status : 502);
+      return jsonResponse(req, { error: msg }, res.status >= 400 ? res.status : 502);
     }
 
     const message = data?.choices?.[0]?.message;
@@ -104,11 +137,11 @@ Deno.serve(async (req) => {
     }
 
     if (!url) {
-      return jsonResponse({ error: 'Image API returned no extractable image URL.' }, 502);
+      return jsonResponse(req, { error: 'Image API returned no extractable image URL.' }, 502);
     }
-    return jsonResponse({ url });
+    return jsonResponse(req, { url });
   } catch (err) {
     const msg = err instanceof Error ? err.message : String(err);
-    return jsonResponse({ error: msg }, 500);
+    return jsonResponse(req, { error: msg }, 500);
   }
 });

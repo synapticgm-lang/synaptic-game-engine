@@ -134,7 +134,9 @@ import {
   decideClassicMemorable,
   isClassicMemorableEnabled,
   isSittingHardBlocked,
+  memorableBypassesWeeklyCap,
   memorableLogFields,
+  openingSplashStillDue,
   splashPlateLabel,
 } from './memorableMoments';
 import { buildPendingProposal, getProposedState, withEditedNarrative, touchLocationSheet, ensureLocationSheet } from './pendingTurn';
@@ -265,7 +267,7 @@ function yieldToMainThread(): Promise<void> {
 type ImageGenJob =
   | { kind: 'panels'; entryId: string; prompts: string[]; promptKind: ImagePromptKind; visualContext: string; playerActionContext?: string }
   | { kind: 'panel-retry'; entryId: string; panelIndex: number; prompt: string; promptKind: ImagePromptKind; visualContext: string; playerActionContext?: string }
-  | { kind: 'turn'; entryId: string; prompts: string[]; promptKind: ImagePromptKind; visualContext: string; isMilestone?: boolean; heroImage?: boolean }
+  | { kind: 'turn'; entryId: string; prompts: string[]; promptKind: ImagePromptKind; visualContext: string; isMilestone?: boolean; heroImage?: boolean; bypassCapacity?: boolean; skipUnlockToast?: boolean }
   | { kind: 'intro'; prompt: string; promptKind: ImagePromptKind; visualContext: string };
 
 interface VideoGenJob {
@@ -724,10 +726,14 @@ export function useGame() {
     settings: Settings,
     promptKind: ImagePromptKind,
     context?: ImagePromptContext,
-    hero?: boolean
+    hero?: boolean,
+    bypassCapacity?: boolean
   ): Promise<string | null> => {
     if (imagesKilled()) {
       debugLogger.record('SYSTEM', 'Ops kill switch: images off');
+      if (promptKind === 'milestone-illustration') {
+        throw new Error('Hosted image service is unavailable.');
+      }
       return null;
     }
     // Classic text: skip routine art; optional memorable-moment splashes still allowed.
@@ -786,6 +792,7 @@ export function useGame() {
         useRawPrompt: true,
         hero: hero === true,
         memorableMoment: promptKind === 'milestone-illustration',
+        bypassCapacity: bypassCapacity === true,
       });
 
     const storeIfPossible = async (imageUrl: string | null) => {
@@ -806,6 +813,9 @@ export function useGame() {
     try {
       const imageUrl = await requestImage(builtPrompt);
       if (!imageUrl) {
+        if (promptKind === 'milestone-illustration') {
+          throw new Error('Hosted image service is unavailable.');
+        }
         return null;
       }
       return await storeIfPossible(imageUrl);
@@ -906,9 +916,9 @@ export function useGame() {
       });
       return;
     }
-    if (job.isMilestone) {
+    if (job.kind === 'turn' && job.isMilestone && !job.skipUnlockToast) {
       const entry = stateRef.current?.log.find((e) => e.id === job.entryId);
-      addToast(entry?.splashToast?.trim() || `Achievement unlocked — ${splashPlateLabel(entry ?? {})}`, 'success');
+      addToast(entry?.splashToast?.trim() || `Achievement unlocked — ${splashPlateLabel(entry ?? { turn: 0 })}`, 'success');
     }
     imageGenJobsRef.current.push(job);
     setImageGenEpoch((epoch) => epoch + 1);
@@ -1067,8 +1077,16 @@ export function useGame() {
             let failMessage: string | undefined;
             for (const prompt of job.prompts) {
               try {
-                const imageUrl = await fetchPanelImage(prompt, settingsRef.current, job.promptKind, sceneImageContext(job.visualContext), job.heroImage === true);
+                const imageUrl = await fetchPanelImage(
+                  prompt,
+                  settingsRef.current,
+                  job.promptKind,
+                  sceneImageContext(job.visualContext),
+                  job.heroImage === true,
+                  job.bypassCapacity === true
+                );
                 if (imageUrl) urls.push(imageUrl);
+                else failMessage = failMessage ?? 'Hosted image service is unavailable.';
               } catch (err) {
                 failMessage = playerFacingImageFailLine(err);
                 debugLogger.record('ERROR', 'Unexpected turn image job failure', {
@@ -1091,20 +1109,12 @@ export function useGame() {
                     imageFailMessage: undefined,
                   };
                 }
-                if (job.isMilestone && !failMessage) {
-                  return {
-                    ...entry,
-                    entryKind: entry.entryKind === 'milestone' ? undefined : entry.entryKind,
-                    imageStatus: undefined,
-                    imageUrls: undefined,
-                    imageFailMessage: undefined,
-                  };
-                }
                 return {
                   ...entry,
+                  entryKind: job.isMilestone ? ('milestone' as const) : entry.entryKind,
                   imageUrls: [],
                   imageStatus: 'error' as const,
-                  imageFailMessage: failMessage,
+                  imageFailMessage: failMessage || 'Hosted image service is unavailable.',
                 };
               });
               return { ...prev, log, lastUpdated: Date.now() };
@@ -1732,7 +1742,9 @@ export function useGame() {
             writerTag: eventsToMilestone(openingEvents),
             events: openingEvents,
             lootVideo: eventsToLootVideo(openingEvents),
-            isOpeningSceneTurn: !openingState.openingEstablishment?.sceneWritten,
+            isOpeningSceneTurn:
+              !openingState.openingEstablishment?.sceneWritten
+              || openingSplashStillDue(openingState),
             characterHp: openingState.character.hp,
             characterConditions: openingState.character.conditions ?? [],
             gainedItems: [],
@@ -1788,6 +1800,7 @@ export function useGame() {
             visualContext: buildVisualConsistencyBlock(committed, []),
             isMilestone: true,
             heroImage: false,
+            bypassCapacity: memorableBypassesWeeklyCap(openingMemorable.beat),
           });
         }
         return;
@@ -2915,6 +2928,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
           visualContext,
           isMilestone: true,
           heroImage: false,
+          bypassCapacity: memorableBypassesWeeklyCap(memorableDecision.beat),
         });
       }
       const postCommitVideoJob: VideoGenJob | null = lootVideoReq && lootVideoEntry
@@ -3366,6 +3380,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
           visualContext: buildVisualConsistencyBlock(committed, []),
           isMilestone: true,
           heroImage: false,
+          bypassCapacity: memorableBypassesWeeklyCap(openingMemorable.beat),
         });
       }
     } finally {
@@ -3539,6 +3554,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
           promptKind: 'milestone-illustration',
           visualContext: buildVisualConsistencyBlock(updated, []),
           isMilestone: true,
+          bypassCapacity: memorableBypassesWeeklyCap(autoMemorable.beat),
         });
       }
     } catch (err: any) {
@@ -3694,6 +3710,45 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
     stateRef.current = next;
     setState(next);
     void persist(next);
+  });
+
+  const retryMemorableImage = useCallbackRef((entryId: string) => {
+    const current = stateRef.current;
+    if (!current) return;
+    const entry = current.log.find((item) => item.id === entryId);
+    const prompt = entry?.splashImagePrompt?.trim();
+    if (!prompt) {
+      debugLogger.record('WARN', 'retryMemorableImage ignored — missing splash prompt', { entryId });
+      return;
+    }
+    if (!allowsImageGeneration(settingsRef.current, 'milestone-illustration')) return;
+
+    commitImageState((prev) => {
+      const log = prev.log.map((logEntry) =>
+        logEntry.id === entryId
+          ? {
+              ...logEntry,
+              entryKind: 'milestone' as const,
+              imageStatus: 'pending' as const,
+              imageUrls: undefined,
+              imageFailMessage: undefined,
+            }
+          : logEntry
+      );
+      return { ...prev, log, lastUpdated: Date.now() };
+    });
+
+    enqueueImageGen({
+      kind: 'turn',
+      entryId,
+      prompts: [prompt],
+      promptKind: 'milestone-illustration',
+      visualContext: buildVisualConsistencyBlock(current, []),
+      isMilestone: true,
+      heroImage: false,
+      bypassCapacity: true,
+      skipUnlockToast: true,
+    });
   });
 
   const retryPanelImage = useCallbackRef((entryId: string, panelIndex: number) => {
@@ -3932,6 +3987,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
     lastSavedTurn,
     retryAction: () => { if (lastInput.trim()) sendAction(lastInput); },
     retryPanelImage,
+    retryMemorableImage,
     acceptBeautyOffer,
     dismissBeautyOffer,
     generateInventoryArt,

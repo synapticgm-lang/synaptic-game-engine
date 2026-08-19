@@ -169,15 +169,11 @@ export const fetchComicPanel = async (
       byokKey: !!apiKey,
       model: resolvedModel,
     });
-    const proxied = await invokeImageProxy({
+    return invokeImageProxy({
       prompt: finalPrompt,
       model: resolvedModel,
       signal: options?.signal,
     });
-    if (!proxied) {
-      throw new Error('Hosted image service is unavailable.');
-    }
-    return proxied;
   }
 
   const payload = {
@@ -593,6 +589,8 @@ export interface GenerateComicImageOptions {
   hero?: boolean;
   /** When true, classic text mode may still generate a memorable-moment splash. */
   memorableMoment?: boolean;
+  /** Opening + death auto-splashes still POST even when the weekly cap is sitting at 0. */
+  bypassCapacity?: boolean;
 }
 
 /**
@@ -612,7 +610,7 @@ export async function generateComicImage(
       console.log('[ImageService] Skipping image generation for classic text mode.');
       return null;
     }
-    if (!canSpend('memorable')) {
+    if (!options?.bypassCapacity && !canSpend('memorable')) {
       console.log('[ImageService] Memorable image quota exhausted.');
       return null;
     }
@@ -623,7 +621,8 @@ export async function generateComicImage(
     }
   }
 
-  const timeoutMs = options?.timeoutMs ?? DEFAULT_IMAGE_GEN_TIMEOUT_MS;
+  const timeoutMs = options?.timeoutMs
+    ?? (shouldUseHostedImageProxy(settings) ? 45_000 : DEFAULT_IMAGE_GEN_TIMEOUT_MS);
   // Default settings.imageProvider is "flux" (OpenRouter schnell via generate-image).
   // Only "flux-direct" + a player Flux key hits BFL. Never send hosted players to Flux Direct.
   const provider = settings.imageProvider === 'flux-direct' ? 'flux-direct' : (settings.imageProvider || 'flux');
@@ -754,17 +753,15 @@ export async function generateComicImage(
         timeoutMs,
         'Hosted Flux image generation'
       );
-      if (proxied) {
-        recordSpend();
-        return proxied;
-      }
+      recordSpend();
+      return proxied;
     } catch (proxyErr) {
-      debugLogger.record('WARN', 'Hosted image proxy failed — soft-skip', {
+      debugLogger.record('WARN', 'Hosted image proxy failed', {
         error: proxyErr instanceof Error ? proxyErr.message : String(proxyErr),
       });
-      throw new Error('Hosted image service is unavailable.');
+      const msg = proxyErr instanceof Error ? proxyErr.message : String(proxyErr);
+      throw new Error(msg.trim() || 'Hosted image service is unavailable.');
     }
-    throw new Error('Hosted image service is unavailable.');
   }
 
   const url = await withAbortTimeout(

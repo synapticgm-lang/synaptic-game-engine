@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 vi.mock('@/lib/supabase', () => ({
   isSupabaseConfigured: true,
@@ -10,15 +10,21 @@ vi.mock('@/lib/supabase', () => ({
 }));
 
 vi.mock('@/game/capacityLedger', () => ({
-  canSpend: () => true,
-  spendCapacity: () => {},
+  canSpend: vi.fn(() => true),
+  spendCapacity: vi.fn(),
 }));
 
 import { generateComicImage } from './openRouterService';
 import { createDefaultSettings } from '@/game/defaults';
+import { canSpend } from '@/game/capacityLedger';
 
 describe('hosted memorable art — Free without browser keys', () => {
   beforeEach(() => {
+    vi.mocked(canSpend).mockReturnValue(true);
+  });
+
+  afterEach(() => {
+    vi.unstubAllGlobals();
     vi.restoreAllMocks();
   });
 
@@ -91,5 +97,63 @@ describe('hosted memorable art — Free without browser keys', () => {
 
     expect(fetchMock).toHaveBeenCalled();
     expect(url).toBe('https://img.test/gemini-legacy.png');
+  });
+
+  it('still POSTs generate-image for the opener when weekly cap is 0', async () => {
+    vi.mocked(canSpend).mockReturnValue(false);
+    const fetchMock = vi.fn(async (input: RequestInfo | URL, init?: RequestInit) => {
+      expect(String(input)).toMatch(/\/functions\/v1\/generate-image$/);
+      const body = JSON.parse(String(init?.body ?? '{}')) as { model?: string };
+      expect(body.model).toBe('black-forest-labs/flux-schnell');
+      return new Response(JSON.stringify({ url: 'https://img.test/opener.png' }), {
+        status: 200,
+        headers: { 'Content-Type': 'application/json' },
+      });
+    });
+    vi.stubGlobal('fetch', fetchMock);
+
+    const settings = {
+      ...createDefaultSettings(),
+      subscriptionTier: 'free' as const,
+      visualMode: 'classic' as const,
+      classicMemorableImages: true,
+      openrouterApiKey: '',
+      fluxApiKey: '',
+      imageApiKey: '',
+      imageProvider: 'flux' as const,
+    };
+
+    const url = await generateComicImage('Sevenfold Circle under a cathedral vault', 'adult', settings, {
+      memorableMoment: true,
+      bypassCapacity: true,
+      useRawPrompt: true,
+    });
+
+    expect(fetchMock).toHaveBeenCalled();
+    expect(url).toBe('https://img.test/opener.png');
+  });
+
+  it('throws a hosted error on generate-image 404 instead of returning null', async () => {
+    const fetchMock = vi.fn(async () => new Response(JSON.stringify({ error: 'Missing function' }), {
+      status: 404,
+      headers: { 'Content-Type': 'application/json' },
+    }));
+    vi.stubGlobal('fetch', fetchMock);
+
+    const settings = {
+      ...createDefaultSettings(),
+      subscriptionTier: 'free' as const,
+      visualMode: 'classic' as const,
+      classicMemorableImages: true,
+      openrouterApiKey: '',
+      imageProvider: 'flux' as const,
+    };
+
+    await expect(
+      generateComicImage('Sevenfold Circle under a cathedral vault', 'adult', settings, {
+        memorableMoment: true,
+        useRawPrompt: true,
+      })
+    ).rejects.toThrow(/image proxy error 404|hosted image service is unavailable/i);
   });
 });

@@ -584,6 +584,8 @@ export interface LogEntry {
   splashToast?: string;
   /** Compact player-facing reason when memorable art failed (never the word Milestone). */
   imageFailMessage?: string;
+  /** Prompt used for the memorable plate — kept so a failed opener can retry. */
+  splashImagePrompt?: string;
 }
 
 /** Distinct rule engines chosen at campaign setup. `'dnd'` is tabletop fantasy (saved key). */

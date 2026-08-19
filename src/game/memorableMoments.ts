@@ -912,13 +912,27 @@ export function resolveMemorableMoment(input: ResolveMemorableInput): MemorableD
   return idle;
 }
 
-/** Weekly memorable quota is the money gate — skip art and do not stamp cadence if it would spend. */
+/** Weekly memorable quota is the money gate — skip art and do not stamp cadence if it would spend.
+ * Opening + death still fire: the first New Game cathedral splash must not vanish when the
+ * sitting/weekly cap is already tight from earlier playtests.
+ */
+export function memorableBypassesWeeklyCap(beat: MemorableBeatKind | null | undefined): boolean {
+  return beat === 'opening' || beat === 'death';
+}
+
+export function openingSplashStillDue(state: Pick<GameState, 'memorableMoments'>): boolean {
+  return !state.memorableMoments?.openingSplashFired;
+}
+
 export function decideClassicMemorable(
   input: ResolveMemorableInput,
   canSpendMemorable: boolean
 ): MemorableDecision {
   const decision = resolveMemorableMoment(input);
   if (!canSpendMemorable && (decision.request || decision.beautyOffer)) {
+    if (memorableBypassesWeeklyCap(decision.beat) && decision.request) {
+      return decision;
+    }
     const prev = input.state.memorableMoments ?? emptyMemorableState();
     if (decision.beat === 'dungeon-boss') {
       return {
@@ -964,6 +978,7 @@ export function memorableLogFields(decision: MemorableDecision): Partial<LogEntr
           imageStatus: 'pending' as const,
           splashTitle: copy?.title,
           splashToast: copy?.toast,
+          splashImagePrompt: decision.request.imagePrompt,
         }
       : {}),
     ...(decision.beautyOffer
@@ -1015,6 +1030,7 @@ export function applyAcceptedBeautyOffer(
             imageStatus: 'pending' as const,
             splashTitle: copy.title,
             splashToast: copy.toast,
+            splashImagePrompt: offer.imagePrompt,
             beautyOffer: { ...offer, status: 'accepted' as const },
           }
         : item

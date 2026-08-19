@@ -75,6 +75,7 @@ interface Props {
   onAutoFight: () => void;
   onOpenCharacter: () => void;
   onRetryPanelImage?: (entryId: string, panelIndex: number) => void;
+  onRetryMemorableImage?: (entryId: string) => void;
   onUpdatePanelOverlay?: (entryId: string, panelIndex: number, edit: ComicOverlayEdit) => void;
   restoreDraft?: string | null;
   onRestoreDraftConsumed?: () => void;
@@ -83,7 +84,7 @@ interface Props {
   contentMode?: string | null;
 }
 
-export function CenterPanel({ state, busy, error, errorKind, currentImage, bgImage, bgOpacity, showRolls, engineMode, diceAnimation, statVerbosity, voice, comicMode, narrativeMode, artStylePreset, comicLayout = 'paged', comicReadingDirection = 'ltr', imagesGenerating = 0, canRewind, onSend, onToggleRolls, onStartListening, onStopListening, onStopSpeaking, onRetry, onOpenApiSettings, onRewind, onAcceptPendingTurn, onDiscardPendingTurn, onRerollPendingTurn, onEditPendingNarrative, onToggleComicMode, sessionPresentationLocked = false, onAutoFight, onOpenCharacter, onRetryPanelImage, onUpdatePanelOverlay, restoreDraft, onRestoreDraftConsumed, onAcceptBeautyOffer, onDismissBeautyOffer, contentMode }: Props) {
+export function CenterPanel({ state, busy, error, errorKind, currentImage, bgImage, bgOpacity, showRolls, engineMode, diceAnimation, statVerbosity, voice, comicMode, narrativeMode, artStylePreset, comicLayout = 'paged', comicReadingDirection = 'ltr', imagesGenerating = 0, canRewind, onSend, onToggleRolls, onStartListening, onStopListening, onStopSpeaking, onRetry, onOpenApiSettings, onRewind, onAcceptPendingTurn, onDiscardPendingTurn, onRerollPendingTurn, onEditPendingNarrative, onToggleComicMode, sessionPresentationLocked = false, onAutoFight, onOpenCharacter, onRetryPanelImage, onRetryMemorableImage, onUpdatePanelOverlay, restoreDraft, onRestoreDraftConsumed, onAcceptBeautyOffer, onDismissBeautyOffer, contentMode }: Props) {
   const [input, setInput] = useState('');
   const [diceRoll, setDiceRoll] = useState<string | null>(null);
   const [hideOptions, setHideOptions] = useState(() => readBoolPref(HIDE_OPTIONS_KEY));
@@ -162,6 +163,7 @@ export function CenterPanel({ state, busy, error, errorKind, currentImage, bgIma
             comicReadingDirection={comicReadingDirection}
             imagesGenerating={imagesGenerating}
             onRetryPanelImage={onRetryPanelImage}
+            onRetryMemorableImage={onRetryMemorableImage}
             onUpdatePanelOverlay={onUpdatePanelOverlay}
           />
         </div>
@@ -191,6 +193,7 @@ export function CenterPanel({ state, busy, error, errorKind, currentImage, bgIma
                   showTurnAsk={shouldShowTurnAsk(state.log, index, busy)}
                   onAcceptBeautyOffer={onAcceptBeautyOffer}
                   onDismissBeautyOffer={onDismissBeautyOffer}
+                  onRetryMemorableImage={onRetryMemorableImage}
                   contentMode={contentMode}
                 />
               )
@@ -449,7 +452,7 @@ export function CenterPanel({ state, busy, error, errorKind, currentImage, bgIma
   );
 }
 
-function LogRow({ entry, lorebook, showSystemLog, statVerbosity, engineMode, showTurnAsk, onAcceptBeautyOffer, onDismissBeautyOffer, contentMode }: { entry: LogEntry; lorebook?: LoreCard[]; showSystemLog: boolean; statVerbosity: StatVerbosity; engineMode: EngineMode; showTurnAsk: boolean; onAcceptBeautyOffer?: (entryId: string) => void; onDismissBeautyOffer?: (entryId: string) => void; contentMode?: string | null }) {
+function LogRow({ entry, lorebook, showSystemLog, statVerbosity, engineMode, showTurnAsk, onAcceptBeautyOffer, onDismissBeautyOffer, onRetryMemorableImage, contentMode }: { entry: LogEntry; lorebook?: LoreCard[]; showSystemLog: boolean; statVerbosity: StatVerbosity; engineMode: EngineMode; showTurnAsk: boolean; onAcceptBeautyOffer?: (entryId: string) => void; onDismissBeautyOffer?: (entryId: string) => void; onRetryMemorableImage?: (entryId: string) => void; contentMode?: string | null }) {
   // Classic memorable plate: a rare, GM-flagged full-page illustration — rendered large and
   // distinct from the routine text log, instead of only surfacing via the small image strip.
   if (entry.entryKind === 'milestone') {
@@ -458,19 +461,28 @@ function LogRow({ entry, lorebook, showSystemLog, statVerbosity, engineMode, sho
     const failed = !image && (entry.imageStatus === 'error' || entry.imageStatus === 'failed');
     return (
       <div data-entry-id={entry.id} data-turn={entry.turn} data-panel-kind="memorable" className="space-y-2">
-        {failed ? null : (
-          <div className="flex justify-center">
-            <span className="px-1 text-[11px] font-medium tracking-wide text-slate-400">
-              {plate}
-            </span>
-          </div>
-        )}
+        <div className="flex justify-center">
+          <span className="px-1 text-[11px] font-medium tracking-wide text-slate-400">
+            {plate}
+          </span>
+        </div>
         {image ? (
           <div className="overflow-hidden rounded-xl border-2 border-amber-600/50 bg-slate-950 shadow-2xl shadow-black/60">
             <img src={image} alt={plate} className="block max-h-[70vh] w-full object-contain" />
           </div>
         ) : failed ? (
-          <p className="px-1 text-center text-xs text-slate-500">{splashUnavailableLine(entry)}</p>
+          <div className="space-y-2 px-1 text-center">
+            <p className="text-xs text-slate-500">{splashUnavailableLine(entry)}</p>
+            {onRetryMemorableImage && entry.splashImagePrompt ? (
+              <button
+                type="button"
+                onClick={() => onRetryMemorableImage(entry.id)}
+                className="text-xs text-slate-400 underline decoration-slate-600 underline-offset-2 hover:text-slate-200"
+              >
+                Try picture again
+              </button>
+            ) : null}
+          </div>
         ) : (
           <div className="flex min-h-[160px] items-center justify-center overflow-hidden rounded-xl border-2 border-amber-600/50 bg-slate-950 text-xs text-slate-500 shadow-2xl shadow-black/60">
             Painting this moment…

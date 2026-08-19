@@ -25,6 +25,7 @@ interface ComicGridProps {
   comicReadingDirection?: ComicReadingDirection;
   imagesGenerating?: number;
   onRetryPanelImage?: (entryId: string, panelIndex: number) => void;
+  onRetryMemorableImage?: (entryId: string) => void;
   onUpdatePanelOverlay?: (entryId: string, panelIndex: number, edit: ComicOverlayEdit) => void;
 }
 
@@ -39,6 +40,7 @@ export function ComicGrid({
   comicReadingDirection = 'ltr',
   imagesGenerating = 0,
   onRetryPanelImage,
+  onRetryMemorableImage,
   onUpdatePanelOverlay,
 }: ComicGridProps) {
   const [actionEffect, setActionEffect] = useState<ActionEffect | null>(null);
@@ -179,6 +181,7 @@ export function ComicGrid({
               comicLayout={comicLayout}
               comicReadingDirection={comicReadingDirection}
               onRetryPanelImage={onRetryPanelImage}
+              onRetryMemorableImage={onRetryMemorableImage}
               onUpdatePanelOverlay={onUpdatePanelOverlay}
             />
           ))}
@@ -246,6 +249,7 @@ function LogEntryRenderer({
   comicLayout = 'paged',
   comicReadingDirection = 'ltr',
   onRetryPanelImage,
+  onRetryMemorableImage,
   onUpdatePanelOverlay,
 }: {
   entry: LogEntry;
@@ -257,6 +261,7 @@ function LogEntryRenderer({
   comicLayout?: ComicLayoutMode;
   comicReadingDirection?: ComicReadingDirection;
   onRetryPanelImage?: (entryId: string, panelIndex: number) => void;
+  onRetryMemorableImage?: (entryId: string) => void;
   onUpdatePanelOverlay?: (entryId: string, panelIndex: number, edit: ComicOverlayEdit) => void;
 }) {
   const isWebtoon = comicLayout === 'webtoon';
@@ -266,7 +271,7 @@ function LogEntryRenderer({
   // Memorable/loot-video entries get a distinct full-page/cinematic treatment regardless of
   // whatever else the turn contains — checked first so they always win layout priority.
   if (entry.entryKind === 'milestone') {
-    return <MilestonePanel entry={entry} lorebook={lorebook} isScreentone={isScreentone} />;
+    return <MilestonePanel entry={entry} lorebook={lorebook} isScreentone={isScreentone} onRetryMemorableImage={onRetryMemorableImage} />;
   }
 
   if (entry.mediaKind === 'video') {
@@ -572,10 +577,12 @@ function MilestonePanel({
   entry,
   lorebook,
   isScreentone,
+  onRetryMemorableImage,
 }: {
   entry: LogEntry;
   lorebook: LoreCard[];
   isScreentone: boolean;
+  onRetryMemorableImage?: (entryId: string) => void;
 }) {
   const images = entry.imageUrls ?? [];
   const plate = splashPlateLabel(entry);
@@ -589,13 +596,11 @@ function MilestonePanel({
       data-panel-kind="memorable"
       className="comic-panel-cell milestone-panel w-full shrink-0"
     >
-      {failed ? null : (
-        <div className="mb-2 flex items-center justify-center">
-          <span className="px-1 text-[11px] font-medium tracking-wide text-slate-400">
-            {plate}
-          </span>
-        </div>
-      )}
+      <div className="mb-2 flex items-center justify-center">
+        <span className="px-1 text-[11px] font-medium tracking-wide text-slate-400">
+          {plate}
+        </span>
+      </div>
       {hasArt ? (
         <div
           className={`relative aspect-video w-full overflow-hidden rounded-xl border-2 border-amber-600/50 bg-slate-950 shadow-2xl shadow-black/60 ${isScreentone ? 'manga-screentone-panel' : ''}`}
@@ -603,7 +608,18 @@ function MilestonePanel({
           <PanelImageSlot src={images[0]} alt={plate} status="ready" isScreentone={isScreentone} framed />
         </div>
       ) : failed ? (
-        <p className="mb-2 px-1 text-center text-xs text-slate-500">{splashUnavailableLine(entry)}</p>
+        <div className="mb-2 space-y-2 px-1 text-center">
+          <p className="text-xs text-slate-500">{splashUnavailableLine(entry)}</p>
+          {onRetryMemorableImage && entry.splashImagePrompt ? (
+            <button
+              type="button"
+              onClick={() => onRetryMemorableImage(entry.id)}
+              className="text-xs text-slate-400 underline decoration-slate-600 underline-offset-2 hover:text-slate-200"
+            >
+              Try picture again
+            </button>
+          ) : null}
+        </div>
       ) : (
         <div
           className={`relative aspect-video w-full overflow-hidden rounded-xl border-2 border-amber-600/50 bg-slate-950 shadow-2xl shadow-black/60 ${isScreentone ? 'manga-screentone-panel' : ''}`}

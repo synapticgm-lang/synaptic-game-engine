@@ -173,10 +173,10 @@ export async function invokeImageProxy(params: {
   model?: string;
   clientApiKey?: string;
   signal?: AbortSignal;
-}): Promise<string | null> {
+}): Promise<string> {
   if (!isGmProxyAvailable()) {
     logger.warn('ai-image', 'generate-image proxy unavailable — VITE_SUPABASE_URL / anon key missing');
-    return null;
+    throw new Error('Hosted image service is unavailable.');
   }
 
   const headers: Record<string, string> = {
@@ -219,19 +219,44 @@ export async function invokeImageProxy(params: {
 
   try {
     const anonBearer = `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`;
-    let res = await post(headers.Authorization);
+    let res: Response;
+    try {
+      res = await post(headers.Authorization);
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : String(err);
+      logger.warn('ai-image', 'generate-image fetch failed', { error: msg });
+      throw new Error(/failed to fetch|networkerror|load failed/i.test(msg)
+        ? 'Hosted image service is unavailable.'
+        : msg);
+    }
     // Stale session JWT can 401 while the anon key still matches gm-turn. Retry once; do not drop JWT by default.
     if (res.status === 401 && session?.access_token) {
       logger.warn('ai-image', 'generate-image 401 with session JWT — retrying with anon key');
-      res = await post(anonBearer);
+      try {
+        res = await post(anonBearer);
+      } catch (err) {
+        const msg = err instanceof Error ? err.message : String(err);
+        throw new Error(/failed to fetch|networkerror|load failed/i.test(msg)
+          ? 'Hosted image service is unavailable.'
+          : msg);
+      }
     }
     const payload = await res.json().catch(() => ({}));
+    logger.info('ai-image', 'generate-image proxy response', {
+      status: res.status,
+      hasUrl: typeof payload?.url === 'string',
+    });
     if (!res.ok) {
+      if (res.status === 401) throw new Error('Image proxy error 401');
+      if (res.status === 404) throw new Error('Image proxy error 404');
       const msg = typeof payload?.error === 'string' ? payload.error : `Image proxy error ${res.status}`;
       throw new Error(msg);
     }
     const imageUrl = typeof payload?.url === 'string' ? payload.url : '';
-    return imageUrl || null;
+    if (!imageUrl) {
+      throw new Error('Hosted image service is unavailable.');
+    }
+    return imageUrl;
   } finally {
     clearTimeout(timer);
     if (params.signal) params.signal.removeEventListener('abort', onExternalAbort);

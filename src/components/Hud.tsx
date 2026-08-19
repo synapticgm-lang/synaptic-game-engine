@@ -7,9 +7,9 @@ import { explainWhy, recentStateTxReceipts } from '../game/stateTx';
 import { effectiveWriterTier, isTestLabEnabled } from '../game/testLab';
 
 /** Visible after a hard refresh — if this is missing, Vercel is still serving the 16 Aug bundle. */
-export const HUD_BUILD_STAMP = '2026-08-19a';
+export const HUD_BUILD_STAMP = '2026-08-19b';
 const HUD_BUILD_TITLE =
-  'Debug 2026-08-19a — vite build fix: export distributionLabel so production deploys can finish';
+  'Debug 2026-08-19b — Chapter One opener always POSTs generate-image; fail shows retry not a blank hole';
 
 interface Props {
   state: GameState;
