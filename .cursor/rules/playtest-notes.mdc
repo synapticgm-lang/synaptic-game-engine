@@ -20,6 +20,7 @@ John is playtesting live. Collect issues here. Do not implement until he asks fo
 
 ## Done (already shipped)
 
+- **2026-08-19z LitRPG System picker copy:** New Game offers the four voices people shop for (Cold registrar, Sarcastic Patch, Army, Friendly System) with a short explanation on each card. Theatrical dropped from the shop list (still valid on old saves). HUD stamp 19z
 - **2026-08-19y LitRPG System personality on New Game:** LitRPG picks Cold registrar / Sarcastic Patch / Army / Theatrical / Chilled on the save (default Cold registrar). Prompt is in-world System chrome, not a table GM; firewall still blocks personality from changing facts/dice/kit. HUD stamp 19y
 - **2026-08-19x Memorable plates are book illustration:** Classic Text memorable splashes always use ink-and-watercolor storybook plates (not manga/comic grids), even if an older save had manga selected. New Game Classic defaults to Classic Book Illustration. HUD stamp 19x
 - **2026-08-19w Chapter One HERE + random premade openings:** Summoned Pact splash is the person on the floor in THIS room, not an Earth mall. LitRPG pictures no longer default to “modern street.” Seed-picked `openingHooks` on Summoned Pact (circle is one of ten) and the rest of the ready-made catalog. HUD stamp 19w

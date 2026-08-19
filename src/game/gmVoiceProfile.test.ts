@@ -15,14 +15,17 @@ describe('LitRPG System personality', () => {
     expect(resolveLitrpgSystemPersonality('not-a-voice')).toBe('cold-system');
   });
 
-  it('exposes five System cards and never names licensed series', () => {
+  it('offers four System cards with a short explanation and never names licensed series', () => {
     expect(LITRPG_SYSTEM_PERSONALITIES.map((p) => p.id)).toEqual([
       'cold-system',
       'dry-wit',
       'army-brief',
-      'theatrical-jester',
       'chilled-gm',
     ]);
+    for (const p of LITRPG_SYSTEM_PERSONALITIES) {
+      expect(p.litrpgLabel?.length, p.id).toBeGreaterThan(4);
+      expect(p.litrpgTip?.length, p.id).toBeGreaterThan(40);
+    }
     const copy = LITRPG_SYSTEM_PERSONALITIES.map((p) =>
       `${p.litrpgLabel} ${p.litrpgTip} ${p.litrpgPromptRail}`
     ).join('\n');

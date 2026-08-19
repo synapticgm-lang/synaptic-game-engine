@@ -51,7 +51,7 @@ export const GM_VOICE_PROFILES: GmVoiceProfile[] = [
     label: 'Cold System',
     blurb: 'Clinical registrar / Integration chrome. Short. Precise.',
     litrpgLabel: 'Cold registrar',
-    litrpgTip: 'Clinical panels — short, precise, no jokes',
+    litrpgTip: 'The System is a clerk. Short Status lines. No jokes. Classic LitRPG panel.',
     promptRail:
       'VOICE: Cold System registrar. Clinical, precise, minimal warmth. System notices stay diegetic. No jokes.',
     litrpgPromptRail:
@@ -62,8 +62,8 @@ export const GM_VOICE_PROFILES: GmVoiceProfile[] = [
     label: 'Chilled',
     blurb: 'Easygoing friend at the table. Clear stakes, no lecture.',
     tabletopTip: 'Easygoing — clear stakes, no lecture',
-    litrpgLabel: 'Chilled System',
-    litrpgTip: 'Readable and unhurried — still a panel, not a pal',
+    litrpgLabel: 'Friendly System',
+    litrpgTip: 'Warm enough to read easily. Still the System — not a pal running the table.',
     promptRail:
       'VOICE: Chilled / easygoing table GM. Warm, unhurried, still clear about stakes. Talk like a friend running a game, not a rulebook. Never lecture or pad with atmosphere-only.',
     litrpgPromptRail:
@@ -75,7 +75,7 @@ export const GM_VOICE_PROFILES: GmVoiceProfile[] = [
     blurb: 'Clipped sergeant. Situation first. No fluff.',
     tabletopTip: 'Clipped sergeant — situation, then options',
     litrpgLabel: 'Army quartermaster',
-    litrpgTip: 'Situation, then options — no fluff',
+    litrpgTip: 'Briefing voice. What is happening, then your options. No fluff.',
     promptRail:
       'VOICE: Army / clipped sergeant GM. Lead with situation and options. Tight sentences. Call checks like a briefing. No purple prose. Still human — not a robot.',
     litrpgPromptRail:
@@ -87,7 +87,7 @@ export const GM_VOICE_PROFILES: GmVoiceProfile[] = [
     blurb: 'Dry understatement. Never mean-spirited to the player.',
     tabletopTip: 'Dry sarcastic — sharp, never cruel',
     litrpgLabel: 'Sarcastic Patch',
-    litrpgTip: 'Dry diagnostics — one wry footnote, never cruel',
+    litrpgTip: 'Dry and wry. One joke in the margin. Never mean to you.',
     promptRail:
       'VOICE: Dry sarcastic GM. Understatement and one sharp observation max per beat. Deadpan asides when calling checks. Never mock the player. Never punch down at named NPCs the player is kind to. Still answer questions directly.',
     litrpgPromptRail:
@@ -130,7 +130,15 @@ const SYSTEM_PERSONALITY_IDS: SystemPersonalityId[] = [
   'chilled-gm',
 ];
 
-export const LITRPG_SYSTEM_PERSONALITIES: GmVoiceProfile[] = SYSTEM_PERSONALITY_IDS.map(
+/** New Game shop list — the four System voices players actually pick. Theatrical stays valid on old saves. */
+const LITRPG_NEW_GAME_IDS: SystemPersonalityId[] = [
+  'cold-system',
+  'dry-wit',
+  'army-brief',
+  'chilled-gm',
+];
+
+export const LITRPG_SYSTEM_PERSONALITIES: GmVoiceProfile[] = LITRPG_NEW_GAME_IDS.map(
   (id) => GM_VOICE_PROFILES.find((p) => p.id === id)!
 );
 

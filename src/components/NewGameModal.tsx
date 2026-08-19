@@ -610,8 +610,8 @@ export function NewGameModal({ contentMode, onStart, onClose }: Props) {
                 <div>
                   <label className="mb-1 block font-medium text-slate-300">System personality</label>
                   <p className="mb-1.5 text-[10px] leading-snug text-slate-500">
-                    How the in-world System talks — panels, notices, registration. Not a tabletop GM.
-                    Sticks with this campaign.
+                    How the in-world System talks in this campaign — Status panels and notices,
+                    not a person running the table. Sticks with this save.
                   </p>
                   <div className="grid grid-cols-1 gap-1.5 sm:grid-cols-2">
                     {LITRPG_SYSTEM_PERSONALITIES.map((p) => (
@@ -619,7 +619,7 @@ export function NewGameModal({ contentMode, onStart, onClose }: Props) {
                         key={p.id}
                         type="button"
                         onClick={() => setSystemPersonality(p.id as SystemPersonalityId)}
-                        className={`rounded-lg border px-2 py-1.5 text-left transition-all ${
+                        className={`rounded-lg border px-2.5 py-2 text-left transition-all ${
                           systemPersonality === p.id
                             ? 'border-crimson-500 bg-crimson-950/30 text-crimson-200'
                             : 'border-slate-700 bg-slate-800/40 text-slate-400 hover:bg-slate-800'
@@ -628,7 +628,7 @@ export function NewGameModal({ contentMode, onStart, onClose }: Props) {
                         <div className="text-xs font-semibold text-slate-200">
                           {p.litrpgLabel ?? p.label}
                         </div>
-                        <div className="text-[9px] font-normal leading-tight text-slate-500">
+                        <div className="mt-0.5 text-[11px] font-normal leading-snug text-slate-400">
                           {p.litrpgTip ?? p.blurb}
                         </div>
                       </button>
