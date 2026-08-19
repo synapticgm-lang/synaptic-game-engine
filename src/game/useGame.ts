@@ -76,6 +76,8 @@ import {
   resolveOpeningHookPick,
   seedCoverAnswers,
   synthesizeOpeningScene,
+  mergePreferredProfileIntoOpening,
+  characterNameIsGeneric,
 } from './openingEstablishment';
 import { applyCommittedNarrative, extractSceneFacts, seedOpeningSceneFacts, rewriteContinuityBreak, detectSceneContradiction } from './sceneFacts';
 import { applyFactLocks, detectFactLockViolations } from './factLocks';
@@ -214,7 +216,7 @@ import { logger } from './logger';
 import { debugLogger } from './debugLogger';
 import { supabase, signInWithGoogleOAuth, signOutSupabase, isSupabaseConfigured } from '@/lib/supabase';
 import { syncEntitlementsFromServer } from './entitlementSync';
-import { ingestCampaignPlates, pullPlayerProfileFromCloud, recordStoryStarted } from './playerProfile';
+import { ingestCampaignPlates, pullPlayerProfileFromCloud, recordStoryStarted, applyUsualSelfToCharacter, loadPlayerProfile } from './playerProfile';
 import {
   installTelemetryDebugBridge,
   setTelemetryContext,
@@ -1564,6 +1566,20 @@ export function useGame() {
         'info'
       );
       return;
+    }
+
+    if (
+      isOpeningEstablishmentPending(current)
+      && current.openingEstablishment?.pending[0]?.kind === 'name'
+    ) {
+      const profileFix = mergePreferredProfileIntoOpening(current);
+      if (profileFix.applied) {
+        current = profileFix.state;
+        stateRef.current = current;
+        setState(current);
+        void persist(current);
+        addToast(`Using your saved name (${current.character.name}).`, 'info');
+      }
     }
 
     let skipRepairDetection = false;
@@ -3531,6 +3547,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
     playerBible?: CampaignBible,
     gmPersonality?: GmPersonalityId,
     systemPersonality?: SystemPersonalityId,
+    useUsualSelf?: boolean,
   ) => {
     if (
       selectedVisualMode ||
@@ -3579,9 +3596,17 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
       resolvedArchetype ?? 'ai_random',
       character.name ?? 'Survivor',
     );
-    const mergedCharacter = bible
+    const mergedCharacterRaw = bible
       ? applyCampaignCharacter({ ...namedSeeded.character, ...character }, bible)
       : { ...namedSeeded.character, ...character };
+    const profile = loadPlayerProfile();
+    const applyProfile =
+      useUsualSelf !== false
+      && !!profile.preferredName.trim()
+      && (useUsualSelf === true || characterNameIsGeneric(mergedCharacterRaw.name));
+    const mergedCharacter = applyProfile
+      ? applyUsualSelfToCharacter(mergedCharacterRaw, profile)
+      : mergedCharacterRaw;
     const openingMode = resolveOpeningMode(bible, engineMode);
     const openingPrompts = resolveOpeningPrompts(
       bible,
@@ -4453,6 +4478,12 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
         if (repaired.shouldNotify) {
           addToast(SAVE_REPAIR_TOAST, 'info');
           recovered = { ...recovered, lastSeenSaveRepairRevision: CURRENT_SAVE_REPAIR_REVISION };
+        }
+
+        const profileMerged = mergePreferredProfileIntoOpening(recovered);
+        if (profileMerged.applied) {
+          recovered = profileMerged.state;
+          addToast(`Using your saved name (${profileMerged.state.character.name}).`, 'info');
         }
 
         if (useCloud && cloud) {

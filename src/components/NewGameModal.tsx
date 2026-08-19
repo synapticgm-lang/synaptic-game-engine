@@ -53,6 +53,7 @@ interface Props {
     playerBible?: CampaignBible,
     gmPersonality?: GmPersonalityId,
     systemPersonality?: SystemPersonalityId,
+    useUsualSelf?: boolean,
   ) => void;
   onClose: () => void;
 }
@@ -228,6 +229,7 @@ export function NewGameModal({ contentMode, onStart, onClose }: Props) {
       undefined,
       engineMode === 'dnd' ? gmPersonality : undefined,
       engineMode === 'litrpg' ? systemPersonality : undefined,
+      useUsual,
     );
   };
 
@@ -292,6 +294,7 @@ export function NewGameModal({ contentMode, onStart, onClose }: Props) {
       playerBible,
       engineMode === 'dnd' ? gmPersonality : undefined,
       engineMode === 'litrpg' ? systemPersonality : undefined,
+      useUsual,
     );
   };
 

@@ -8,6 +8,7 @@ import {
   harvestEarthOriginFromProse,
   isLocationishOpeningUtterance,
   isOpeningSetupChipLabel,
+  mergePreferredProfileIntoOpening,
 } from './openingEstablishment';
 import type { GameState } from './types';
 
@@ -98,5 +99,23 @@ describe('harvest Earth origin from opening prose', () => {
     );
     expect(next.pending.some((p) => p.kind === 'location')).toBe(false);
     expect(establishmentChoices(next.pending).join(' ')).not.toMatch(/Earth city|I was at home/i);
+  });
+});
+
+describe('mergePreferredProfileIntoOpening', () => {
+  it('skips name cover when profile has preferredName', () => {
+    const state = summonedNameCover();
+    const { state: next, applied } = mergePreferredProfileIntoOpening(state, {
+      preferredName: 'John',
+      preferredGender: '',
+      updatedAt: 0,
+      storiesStarted: 0,
+      plateEvents: [],
+      metaBadges: [],
+    });
+    expect(applied).toBe(true);
+    expect(next.character.name).toBe('John');
+    expect(next.openingEstablishment?.pending[0]?.kind).toBe('location');
+    expect(next.openingEstablishment?.answers?.name).toBe('John');
   });
 });

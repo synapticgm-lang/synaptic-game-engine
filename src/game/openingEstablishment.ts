@@ -6,8 +6,14 @@ import type { EngineMode, GameState, Item, OpeningEstablishment, Settings } from
 import { extractSystemRename, interpretPlayerUtterance, isJunkSetupValue, isSetupRefusal, utteranceIsMessy } from './playerUtterance';
 import { materializeWornClothes } from './wornGear';
 import { seedLocalStarterQuest } from './questPlay';
+import { applyUsualSelfToCharacter, loadPlayerProfile, type PlayerProfile } from './playerProfile';
 
 const GENERIC_NAMES = /^(adventurer|survivor|unknown survivor|hero|wanderer|unknown)$/i;
+
+export function characterNameIsGeneric(name?: string): boolean {
+  const n = name?.trim() ?? '';
+  return !n || GENERIC_NAMES.test(n);
+}
 
 const NAME_PROMPT: OpeningPrompt = {
   id: 'name',
@@ -461,7 +467,7 @@ export function seedCoverAnswers(
   const answers: Record<string, string> = {};
   const earthOrigin = (bible?.openingPrompts ?? []).some(isEarthOriginPrompt);
   if (bible?.startingLocation?.trim() && !earthOrigin) answers.where = bible.startingLocation.trim();
-  if (character.name?.trim() && !GENERIC_NAMES.test(character.name.trim())) answers.name = character.name.trim();
+  if (character.name?.trim() && !characterNameIsGeneric(character.name)) answers.name = character.name.trim();
   if (character.gender?.trim()) answers.gender = character.gender.trim();
   if (character.appearance?.trim() && !isJunkSetupValue(character.appearance)) {
     answers.wear = character.appearance.trim();
@@ -484,7 +490,7 @@ export function filterOpeningPrompts(
   character: GameState['character']
 ): OpeningPrompt[] {
   return prompts.filter((p) => {
-    if (p.kind === 'name' && character.name?.trim() && !GENERIC_NAMES.test(character.name.trim())) return false;
+    if (p.kind === 'name' && character.name?.trim() && !characterNameIsGeneric(character.name)) return false;
     if (p.kind === 'appearance' && character.appearance?.trim() && !isJunkSetupValue(character.appearance)) {
       return false;
     }
@@ -493,6 +499,48 @@ export function filterOpeningPrompts(
     }
     return true;
   });
+}
+
+/** Apply Settings → Profile preferred name/gender to a stuck opening (skip name cover). */
+export function mergePreferredProfileIntoOpening(
+  state: GameState,
+  profile: PlayerProfile = loadPlayerProfile()
+): { state: GameState; applied: boolean } {
+  const preferredName = profile.preferredName.trim();
+  if (!preferredName) return { state, applied: false };
+  const est = state.openingEstablishment;
+  if (!est || est.complete) return { state, applied: false };
+  const namePending = est.pending.some((p) => p.kind === 'name');
+  const answerName = est.answers?.name?.trim();
+  if (!namePending && answerName && !characterNameIsGeneric(answerName)) {
+    return { state, applied: false };
+  }
+  if (!namePending && !characterNameIsGeneric(state.character.name)) {
+    return { state, applied: false };
+  }
+
+  const character = applyUsualSelfToCharacter(state.character, profile);
+  const answers: Record<string, string> = {
+    ...(est.answers ?? {}),
+    name: preferredName,
+  };
+  if (profile.preferredGender.trim()) answers.gender = profile.preferredGender.trim();
+  const pending = filterOpeningPrompts(est.pending, character);
+
+  return {
+    applied: true,
+    state: {
+      ...state,
+      character,
+      openingEstablishment: {
+        ...est,
+        answers,
+        pending,
+        complete: pending.length === 0,
+      },
+      choices: pending.length ? establishmentChoices(pending) : state.choices,
+    },
+  };
 }
 
 export function applySystemRename(state: GameState, raw: string): GameState {
