@@ -7,9 +7,9 @@ import { explainWhy, recentStateTxReceipts } from '../game/stateTx';
 import { effectiveWriterTier, isTestLabEnabled } from '../game/testLab';
 
 /** Visible after a hard refresh — if this is missing, Vercel is still serving the 16 Aug bundle. */
-export const HUD_BUILD_STAMP = '2026-08-18b';
+export const HUD_BUILD_STAMP = '2026-08-19a';
 const HUD_BUILD_TITLE =
-  'Debug 2026-08-18b — force-deploy; hosted generate-image (empty Gemini/Flux keys still POST)';
+  'Debug 2026-08-19a — vite build fix: export distributionLabel so production deploys can finish';
 
 interface Props {
   state: GameState;

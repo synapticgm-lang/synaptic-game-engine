@@ -27,6 +27,13 @@ export function isWebDistribution(): boolean {
   return getDistributionChannel() === 'web';
 }
 
+/** Player-facing channel name in Settings (not a secret / not a model id). */
+export function distributionLabel(
+  channel: DistributionChannel = getDistributionChannel(),
+): string {
+  return channel === 'web' ? 'Website' : 'App Store / Google Play';
+}
+
 /** NSFW premades exist only on website builds (Kid Mode still hides them). */
 export function allowsNsfwCatalog(): boolean {
   return isWebDistribution();

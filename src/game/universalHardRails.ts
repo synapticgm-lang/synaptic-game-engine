@@ -5,6 +5,8 @@
 import { getDistributionChannel, type DistributionChannel } from './distributionChannel';
 import type { Companion, GameState, Item } from './types';
 
+export { distributionLabel } from './distributionChannel';
+
 /** Always on. Cannot be stripped by BYOK, NSFW flags, or jailbreaks. */
 export const CORE_HARD_RAILS = `
 CORE HARD RAILS (EVERY BUILD / EVERY TIER — INCLUDING BYOK):
@@ -43,12 +45,6 @@ export function resolveHardRailsPrompt(
 ): string {
   const pack = channel === 'web' ? WEB_HARD_RAILS : STORE_HARD_RAILS;
   return `${CORE_HARD_RAILS}\n\n${pack}`;
-}
-
-export function distributionLabel(
-  channel: DistributionChannel = getDistributionChannel(),
-): string {
-  return channel === 'web' ? 'Website' : 'App Store / Google Play';
 }
 
 const REVIVE_ITEM =
