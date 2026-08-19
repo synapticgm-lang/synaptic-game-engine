@@ -1,4 +1,5 @@
-import type { CampaignBible, OpeningMode, OpeningPrompt, OpeningPromptKind, OpeningRegistrar } from '@/data/campaigns/types';
+import type { CampaignBible, OpeningHookCard, OpeningMode, OpeningPrompt, OpeningPromptKind, OpeningRegistrar } from '@/data/campaigns/types';
+import { OPENING_HOOK_DECKS } from '@/data/campaigns/openingHookDecks';
 import { resolveActiveCampaignBible } from './campaignSeed';
 import type { CampaignArchetype } from './archetypes';
 import type { EngineMode, GameState, Item, OpeningEstablishment, Settings } from './types';
@@ -306,22 +307,43 @@ function hashOpenerSeed(input: string): number {
   return h >>> 0;
 }
 
-/** Pick a stable opener from `openingHooks` (or fall back to `openingHook`). */
-export function resolveOpeningHook(bible: CampaignBible | undefined, seed?: string): string | undefined {
-  const deck = (bible?.openingHooks ?? []).map((h) => h.trim()).filter(Boolean);
-  if (deck.length > 0) {
-    const idx = hashOpenerSeed(`${seed ?? '0'}|${bible?.id ?? 'bible'}|opener`) % deck.length;
-    return deck[idx];
-  }
+/** Pick a stable opener from `openingHooks` (or catalog decks, or `openingHook`). */
+export function normalizeOpeningHookCard(card: OpeningHookCard): { text: string; location?: string } {
+  if (typeof card === 'string') return { text: card.trim() };
+  return {
+    text: (card.text ?? '').trim(),
+    location: card.location?.trim() || undefined,
+  };
+}
+
+export function openingHookDeck(bible: CampaignBible | undefined): OpeningHookCard[] {
+  const fromBible = (bible?.openingHooks ?? []).filter((card) => normalizeOpeningHookCard(card).text);
+  if (fromBible.length > 0) return fromBible;
+  const fromCatalog = OPENING_HOOK_DECKS[bible?.id ?? ''] ?? [];
+  if (fromCatalog.length > 0) return fromCatalog;
   const single = bible?.openingHook?.trim();
-  return single || undefined;
+  return single ? [single] : [];
+}
+
+export function resolveOpeningHookPick(
+  bible: CampaignBible | undefined,
+  seed?: string
+): { text: string; location?: string } | undefined {
+  const deck = openingHookDeck(bible).map(normalizeOpeningHookCard).filter((h) => h.text);
+  if (deck.length === 0) return undefined;
+  const idx = hashOpenerSeed(`${seed ?? '0'}|${bible?.id ?? 'bible'}|opener`) % deck.length;
+  return deck[idx];
+}
+
+export function resolveOpeningHook(bible: CampaignBible | undefined, seed?: string): string | undefined {
+  return resolveOpeningHookPick(bible, seed)?.text;
 }
 
 const BIBLE_INWORLD: Record<string, Partial<Record<OpeningPromptKind, string>>> = {
   'summoned-pact': {
-    name: 'A robed figure leans over the circle. “A name. What do we call you?”',
-    location: 'The stone is cold under your back. Before the light took you — which Earth place were you in? A city, a street, a home.',
-    appearance: 'You look down. You are still wearing what the circle stole you in. What is it?',
+    name: 'Someone in the scene needs a name for you. What do they call you?',
+    location: 'Before the light took you — which Earth place were you in? A city, a street, a home.',
+    appearance: 'You look down. You are still wearing what the light stole you in. What is it?',
     kit: 'Pockets, bag, whatever rode with you. What is actually on you? Nothing invented for a fight.',
   },
   'system-integration': {
@@ -1272,7 +1294,7 @@ Write THIS run's first page from the campaign bible and its game rules. Unique c
 Genre practice (honor the story type):
 - CYOA / Choice of Games / PYOA: drop into the crisis. No name form.
 - LitRPG / System apocalypse: ordinary street first, then the panel as a moment. Earth is NOT being ingested.
-- Isekai summon: arrive in the circle; people talk; clothes are a look-down, origin is "where the light took you from". Do not add "not a place in this cathedral" — the scene already shows that.
+- Isekai summon: arrive in THIS run's picked hook (circle, camp, cell, arena, shrine, festival, or hall — not always the cathedral). People talk; clothes are a look-down; origin is the Earth place the light took you from. Camera is HERE, not Earth.
 - Mystery / romance / space horror: body, door, or bulkhead already in motion.
 
 1) 4–7 sentences of story in the seeded place. Honor the configured PERSPECTIVE for the entire beat.

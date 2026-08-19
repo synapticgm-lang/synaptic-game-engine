@@ -1,7 +1,7 @@
 import type { CampaignBible } from './types';
 import type { ContentMode, EngineMode } from '@/game/types';
 import { allowsNsfwCatalog } from '@/game/distributionChannel';
-export type { CampaignBible, LoreSnippet, KeyNPC, StarterQuest, StarterItem, Difficulty, OpeningPrompt, MysteryCulprit } from './types';
+export type { CampaignBible, LoreSnippet, KeyNPC, StarterQuest, StarterItem, Difficulty, OpeningPrompt, OpeningHookCard, MysteryCulprit } from './types';
 
 import { systemIntegration } from './systemIntegration';
 import { voidAudience } from './voidAudience';

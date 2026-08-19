@@ -1,17 +1,70 @@
 import type { EngineMode, GameState } from './types';
 
-export type WorldEra = 'modern_earth' | 'medieval_fantasy' | 'story_defined';
+export type WorldEra = 'modern_earth' | 'medieval_fantasy' | 'story_defined' | 'other_world_summon';
 
+export type WorldCanonState = Pick<
+  GameState,
+  'engineMode' | 'currentLocation' | 'campaignPremise'
+> & {
+  campaignArchetype?: GameState['campaignArchetype'];
+  campaignBibleId?: GameState['campaignBibleId'];
+};
+
+/** LitRPG is not always Earth. Summoned Pact is the other world; Integration is the street. */
 export function worldEraForEngine(engineMode: EngineMode | undefined): WorldEra {
   if (engineMode === 'dnd') return 'medieval_fantasy';
   if (engineMode === 'rpg' || engineMode === 'pyoa') return 'story_defined';
-  return 'modern_earth';
+  if (engineMode === 'litrpg') return 'story_defined';
+  return 'story_defined';
+}
+
+export function worldEraForState(state: WorldCanonState): WorldEra {
+  const mode = state.engineMode;
+  if (mode === 'dnd') return 'medieval_fantasy';
+  if (mode === 'rpg' || mode === 'pyoa') return 'story_defined';
+
+  const id = (state.campaignBibleId ?? '').toLowerCase();
+  const arch = String(state.campaignArchetype ?? '').toLowerCase();
+  const blob = `${id} ${arch} ${state.currentLocation ?? ''} ${state.campaignPremise ?? ''}`.toLowerCase();
+
+  if (
+    id === 'summoned-pact'
+    || arch === 'isekai'
+    || /valespire|sevenfold circle|pellane/.test(blob)
+  ) {
+    return 'other_world_summon';
+  }
+  if (
+    id === 'system-integration'
+    || id === 'gatebreak-ward'
+    || arch === 'system_apocalypse'
+  ) {
+    return 'modern_earth';
+  }
+  if (
+    /cathedral|summoning circle|keep|tavern|spire|dungeon|undercroft|mossford|greyhollow/.test(blob)
+    && !/cracked city street|ward 9|integration protocol/.test(blob)
+  ) {
+    return 'medieval_fantasy';
+  }
+  return worldEraForEngine(mode);
 }
 
 /** Code-owned picture contract. Art style may change ink — not era, kit, or chrome. */
-export function formatWorldCanonForPrompt(state: Pick<GameState, 'engineMode' | 'currentLocation' | 'campaignPremise'>): string {
-  const era = worldEraForEngine(state.engineMode);
+export function formatWorldCanonForPrompt(state: WorldCanonState): string {
+  const era = worldEraForState(state);
   const place = (state.currentLocation ?? '').trim() || 'unspecified place';
+  if (era === 'other_world_summon') {
+    return [
+      'WORLD CANON (OTHER-WORLD SUMMON — BINDING):',
+      `- Place: ${place}. This world's room — cathedral vault, camp, cell, arena, or shrine — not Earth.`,
+      '- Camera is HERE now. If they are on their back on stone, show that. Do not draw Earth streets, malls, train stations, shopping arcades, or a flashback to before the light.',
+      '- Ordinary Earth clothes (hoodie, jeans, sneakers) are garments on this body in THIS room only.',
+      "- Architecture is this world's stone, vaults, banners, robes, or armor. No Earth city crowds.",
+      '- No Integration street chrome, Salvage UI, or blue System boxes in the pixels.',
+      '- Anatomy: one person unless the scene lists more. Two arms, two legs, five fingers per hand.',
+    ].join('\n');
+  }
   if (era === 'medieval_fantasy') {
     return [
       'WORLD CANON (TABLETOP FANTASY — BINDING):',
@@ -25,7 +78,7 @@ export function formatWorldCanonForPrompt(state: Pick<GameState, 'engineMode' | 
   if (era === 'story_defined') {
     return [
       'WORLD CANON (STORY RPG — BINDING):',
-      `- Place: ${place}. Match the campaign premise and this scene only.`,
+      `- Place: ${place}. Match this scene and location only — not a flashback unless the beat is a flashback.`,
       '- Do not add Integration System chrome, Wave events, or tabletop dice notation to the picture.',
       '- Weapons and clothes match the equipped / described kit only.',
       '- Anatomy: one person unless the scene lists more. Two arms, two legs, five fingers per hand.',

@@ -646,7 +646,9 @@ export async function generateComicImage(
     workingPrompt = prepared.prompt;
   }
 
-  const styleSpec = getStyleSpec(settings.artStylePreset);
+  const styleSpec = getStyleSpec(
+    options?.memorableMoment ? 'classic-book' : settings.artStylePreset
+  );
   const effectiveNegativePrompt = getEffectiveNegativePrompt(styleSpec, mode);
   const kidDirective = mode === 'kid' ? `${KID_MODE_STYLE_DIRECTIVE}\n\n` : '';
   const colorVariantDirective = getColorVariantDirective(styleSpec, settings.colorVariant);

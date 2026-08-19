@@ -556,15 +556,23 @@ export function SettingsModal({ settings, storyName, engineMode, gameState, onSa
                 label="Comic / Illustrated"
                 sublabel="Multi-panel pages with speech bubbles"
                 selected={draft.visualMode === 'comic'}
-                onClick={() => { if (!isStoryActive) update('visualMode', 'comic' as 'comic' | 'classic'); }}
+                onClick={() => {
+                  if (isStoryActive) return;
+                  update('visualMode', 'comic' as 'comic' | 'classic');
+                  if (draft.artStylePreset === 'classic-book') update('artStylePreset', 'manga-screentone');
+                }}
                 disabled={isStoryActive}
               />
               <ChoiceCard
                 icon={<MessageSquareMore size={15} />}
                 label="Classic Text"
-                sublabel="Prose-first log; optional rare splash art"
+                sublabel="Prose-first; rare book-plate splash art"
                 selected={draft.visualMode === 'classic'}
-                onClick={() => { if (!isStoryActive) update('visualMode', 'classic' as 'comic' | 'classic'); }}
+                onClick={() => {
+                  if (isStoryActive) return;
+                  update('visualMode', 'classic' as 'comic' | 'classic');
+                  update('artStylePreset', 'classic-book');
+                }}
                 disabled={isStoryActive}
               />
             </div>
@@ -572,7 +580,7 @@ export function SettingsModal({ settings, storyName, engineMode, gameState, onSa
               <ToggleRow
                 icon={<Sparkles size={14} />}
                 label={`Memorable Moment Images · ${memorableWeeklyCapLabel()}`}
-                description="When on, the opening scene (nicer model) and character death get splash art. The first dungeon’s final boss (First Blood) also auto-splashes on the fast model — later dungeon bosses do not. A royal audience, a striking first look, or a writer-flagged beat is offered — tap to generate on the fast model. First fights do not. Not every turn. The toggle is consent — autos fire without a second Yes."
+                description="Rare book plates — ink and watercolor, one picture for a book-worthy beat, then back to prose. Opening, death, and the first dungeon’s final boss auto-illustrate. Later bosses, a royal audience, a striking first look, or a writer-flagged beat are tap-yes. First fights do not. The toggle is consent — autos fire without a second Yes."
                 checked={draft.classicMemorableImages}
                 onChange={(v) => update('classicMemorableImages', v)}
               />
@@ -609,6 +617,12 @@ export function SettingsModal({ settings, storyName, engineMode, gameState, onSa
                 </div>
               </div>
             )}
+            {draft.visualMode === 'classic' && (
+              <p className="mt-2 text-[11px] leading-snug text-slate-500">
+                Memorable plates always use Classic Book Illustration — ink line-art and watercolor, one picture facing the prose. Comic art styles apply only if you switch to Comic Book.
+              </p>
+            )}
+            {draft.visualMode === 'comic' && (
             <div>
               <label className="mb-2 block text-xs font-medium text-slate-400">
                 Art Style Preset (image generation only)
@@ -642,6 +656,7 @@ export function SettingsModal({ settings, storyName, engineMode, gameState, onSa
                 ))}
               </div>
             </div>
+            )}
             <div>
               <label htmlFor="color-variant" className="mb-2 block text-xs font-medium text-slate-300">
                 Color Variant

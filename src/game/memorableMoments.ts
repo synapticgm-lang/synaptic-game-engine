@@ -200,25 +200,60 @@ function kidModeOn(settings: Pick<Settings, 'contentMode'> | undefined): boolean
   return settings?.contentMode === 'kid';
 }
 
+const ORIGIN_ASK_SENTENCE =
+  /before the light took you|which earth place|origin lock|a city, a street, a home|name the earth place/i;
+
+const OPENING_HERE_RAILS =
+  'Camera is HERE in this room now. Single splash — not a comic panel grid, not a manga page of Earth daily life. '
+  + 'If the beat has the person on their back on stone, show them lying on the floor in this place. '
+  + 'Do not draw Earth streets, shopping arcades, malls, train stations, city crowds, or a flashback to before they arrived. '
+  + 'Earth clothes are garments on this body in THIS scene only.';
+
+/** Drop origin-ask / chip copy so Chapter One art is the written HERE beat. */
+export function pinOpeningHereScene(opts: {
+  storyText: string;
+  location?: string;
+  pickedHook?: string;
+}): string {
+  const place = opts.location?.trim();
+  const hook = opts.pickedHook?.trim();
+  const stripped = (opts.storyText ?? '')
+    .replace(/<[^>]+>/g, ' ')
+    .split(/(?<=[.!?])\s+/)
+    .map((s) => s.trim())
+    .filter((s) => s && !ORIGIN_ASK_SENTENCE.test(s))
+    .join(' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+  const hereBody = hook || stripped || excerptForImage(opts.storyText);
+  const floorBeat = /on (?:your|their) back|lying|summoning circle|cold stone/i.test(hereBody)
+    ? 'The person is lying on the floor in this room, looking up. '
+    : '';
+  const placeBit = place ? `HERE: ${place}. ` : 'HERE: the opening scene. ';
+  return `${placeBit}${floorBeat}${excerptForImage(hereBody)} ${OPENING_HERE_RAILS}`;
+}
+
 export function synthesizeMemorablePrompt(opts: {
   beat: MemorableBeatKind | 'beauty-offer';
   storyText: string;
   location?: string;
   extra?: string;
   kidMode?: boolean;
+  pickedHook?: string;
 }): string {
   const kid = opts.kidMode === true;
   const excerpt = kid
     ? (stripKidUnsafeImageLexicon(excerptForImage(opts.storyText)) || 'A bright storybook scene, no text.')
     : excerptForImage(opts.storyText);
-  const place = opts.location?.trim();
   const extra = kid
     ? stripKidUnsafeImageLexicon(opts.extra?.trim() ?? '')
     : opts.extra?.trim();
   if (opts.beat === 'opening') {
-    const shot = place
-      ? `Wide establishing shot of ${place}. ${excerpt}`
-      : `Wide establishing shot of the opening scene. ${excerpt}`;
+    const shot = pinOpeningHereScene({
+      storyText: opts.storyText,
+      location: opts.location,
+      pickedHook: opts.pickedHook,
+    });
     return kid
       ? `Kid-safe establishing shot, bright and welcoming, no frightening imagery. ${shot}`
       : shot;
@@ -500,6 +535,7 @@ function detectOpening(
       beat: 'opening',
       storyText: input.storyText,
       location: input.state.currentLocation,
+      pickedHook: input.state.openingEstablishment?.pickedHook,
       kidMode: kidModeOn(input.settings),
     });
   }
@@ -509,6 +545,7 @@ function detectOpening(
     beat: 'opening',
     storyText: input.storyText,
     location: input.state.currentLocation,
+    pickedHook: input.state.openingEstablishment?.pickedHook,
     kidMode: kidModeOn(input.settings),
   });
 }

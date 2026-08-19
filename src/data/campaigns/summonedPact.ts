@@ -29,6 +29,59 @@ export const summonedPact: CampaignBible = {
   },
   openingHook:
     'Light, then cold stone. You are on your back inside a seven-ring summoning circle under a cathedral vault. Robed figures freeze mid-chant. A blue panel hangs at eye level — private, yours. One of them whispers “Pactborn.” Another, quieter: “The Mark is wrong.” Nobody hands you a sword. Your Earth clothes are still on you. The System has not asked you to save anyone yet.',
+  /** Code picks one per New Game (seed). Circle is one option, not the only one. */
+  openingHooks: [
+    {
+      location: 'The Sevenfold Circle under Valespire Cathedral',
+      text:
+        'Light, then cold stone. You are on your back inside a seven-ring summoning circle under a cathedral vault. Robed figures freeze mid-chant. A blue panel hangs at eye level — private, yours. One of them whispers “Pactborn.” Another, quieter: “The Mark is wrong.” Nobody hands you a sword. Your Earth clothes are still on you.',
+    },
+    {
+      location: 'Pellane war camp beyond Valespire walls',
+      text:
+        'Light, then mud and banner-smoke. You are on your back in a war camp circle scraped into dirt outside Valespire’s walls. Armored handlers shout over horn-calls. A blue panel hangs at eye level. Someone wanted a hero yesterday. The Mark on you is already an argument.',
+    },
+    {
+      location: 'a barred undercroft cell beneath Valespire Cathedral',
+      text:
+        'Light, then iron bars. You are on a stone bench in a cell under the cathedral, not a welcome hall. A blue panel hangs in the dark. A handler on the other side of the grate calls you bait. Your Earth clothes are still on you.',
+    },
+    {
+      location: 'the blood-sand arena of Valespire',
+      text:
+        'Light, then sand and noise. You are on your back in an arena circle while a crowd already bets. Robes at the rail. A blue panel hangs private. Nobody asked if you wanted to be entertainment.',
+    },
+    {
+      location: 'a Lowmarket cellar shrine under Valespire',
+      text:
+        'Light, then candle-smoke in a cellar. Wrong gods, wrong chant. You are on your back in a cult circle the Crown will deny. A blue panel hangs. Someone upstairs will call this Pellane’s summon anyway.',
+    },
+    {
+      location: 'The Sevenfold Circle under bombardment',
+      text:
+        'Light, then a vault under fire. You are on your back in the seven-ring circle while dust and ash fall through the chant. A blue panel hangs. The Mark is wrong and the ceiling is already cracking.',
+    },
+    {
+      location: 'Valespire peace-festival square',
+      text:
+        'Light, then festival noise. You were not the name on the rite — you were in the crowd. You are on the stones of a public square while handlers freeze. A blue panel hangs. One whisper: “Wrong catch.”',
+    },
+    {
+      location: 'a wayside shrine on the Valespire road',
+      text:
+        'Light, then quiet rural stone. One priest, one mistake, no capital audience. You are on your back in a roadside shrine circle. A blue panel hangs. The road to Valespire is still miles of dust.',
+    },
+    {
+      location: 'an Ash-adjacent ritual hall',
+      text:
+        'Light, then a rival hall. You are on your back in a circle that is not Pellane’s. They will say the Crown summoned you. A blue panel hangs. Your Earth clothes are still on you.',
+    },
+    {
+      location: 'The Sevenfold Circle — four rings occupied',
+      text:
+        'Light, then three other bodies on neighboring rings. Mass summon. Politics in the first breath: who is Pactborn, who is Marked, who was extra. A blue panel hangs private. Nobody hands anyone a sword.',
+    },
+  ],
   openingPrompts: [
     { id: 'name', kind: 'name', question: 'Confirm designation.' },
     {
@@ -53,7 +106,7 @@ export const summonedPact: CampaignBible = {
 
   premise: `You were an ordinary person on Earth. A ritual in another world — the Sevenfold Circle, under Valespire Cathedral — pulled you through. The kingdom of Pellane summoned a [Pactborn] to end a war with the Ash Court. The System also rolled a second stamp: [Calamity Mark]. One summoned soul can carry either, or flicker between them. The court will call you Hero. The Ash Court will call you theirs. You do not have to answer either.
 
-LOCATION LANGUAGE (BINDING): Camera is HERE — the Sevenfold Circle under Valespire Cathedral unless Location has moved. Never call this interior "a nearby building." "The court" is Pellane's Crown / the people in this vault, not the enemy. The enemy polity is the Ash Court. Do not use "the court" as both current room and the enemy in the same beat.
+LOCATION LANGUAGE (BINDING): Camera is HERE — the seeded summon place for this run (cathedral circle, war camp, cell, arena, shrine, festival square, or rival hall). Do not teleport them to the Sevenfold Circle if Location is already somewhere else. Never call this interior "a nearby building." "The court" is Pellane's Crown / the people in this room, not the enemy. The enemy polity is the Ash Court. Do not use "the court" as both current room and the enemy in the same beat.
 
 ORIGINALITY (BINDING): Never name published novels, anime, or games in play. Never import unique skill names, distinctive places, or plots from any series. Inn, guild, and dungeon are generic hubs with SynapticGM names only.
 
@@ -67,7 +120,7 @@ GENRE PALETTE (ORIGINAL NAMES — use these):
 
 OPENING KIT (AUTHORITY): Worn clothes and pocket contents from Earth are the kit. Never invent an iron shortsword, traveler tunic, or healing draught unless the ledger already has it. The only System gift at registration is an unidentified [Circle Blessing] (glitched passive). Appraisal is required to name it.
 
-PLAYER AGENCY (BINDING): No forced allegiance. Protest, jokes, and “why should I save you” are dialogue. The first scene is the circle and the people in the vault — not a journal dump. Do not unlock or name Guide Book quests until they are spoken in play.
+PLAYER AGENCY (BINDING): No forced allegiance. Protest, jokes, and “why should I save you” are dialogue. The first scene is THIS arrival and the people in it — not a journal dump. Do not unlock or name Guide Book quests until they are spoken in play.
 
 HERO / VILLAIN FORK (CODE + WRITER):
 - [Pactborn]: the court wants a champion. Privileges, handlers, a leash.
@@ -76,7 +129,7 @@ HERO / VILLAIN FORK (CODE + WRITER):
 - There is always one other summoned person in this age — the opposite stamp. Do not introduce them until a side or special seed is earned.
 
 STORY SPINE (skeleton — unique each run; do not recap as a lecture):
-1. Circle. Names. Blessing unidentified. Court argument in front of you.
+1. Arrival (this run's picked hook). Names. Blessing unidentified. Argument in front of you.
 2. First free hour in Valespire (cathedral close, The Weighing Cup, Lowmarket, Contract Hall notice-board, or a locked guest wing) — ordinary people, not the war.
 3. A handler asks you to swear the Pact. Swearing is optional. Refusal has social cost, not instant prison unless they attack.
 4. First real threat is local (marked beast in the close, a sabotaged ward, a frightened crowd) — not the Ash King.
@@ -224,11 +277,11 @@ Do not name distant hubs, the Ash King, or the other summoned until the player a
     {
       id: 'sp-quest-1',
       title: 'The Circle’s Price',
-      description: 'You are on the Sevenfold Circle. Hear why Pellane summoned you. Swear the Pact, refuse it, or walk off the brass before anyone owns your name.',
+      description: 'You have just been summoned. Hear why Pellane wanted you. Swear the Pact, refuse it, or walk away before anyone owns your name.',
       recommendedLevel: 1,
       objectives: [
-        'Get off the floor and look at the vault',
-        'Hear the court’s reason (or demand it)',
+        'Get your bearings in this arrival (floor, cell, camp, or vault)',
+        'Hear their reason (or demand it)',
         'Choose: swear, refuse, or delay',
       ],
       rewards: 'Circle Blessing remains; reputation with Pellane or the street tilts',

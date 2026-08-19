@@ -35,6 +35,7 @@ import {
   buildImagePromptForKind,
   shouldUseComicGrid,
   allowsImageGeneration,
+  artStyleForImageKind,
   type ImagePromptKind,
   type ImagePromptContext,
 } from './comicImagePrompt';
@@ -64,7 +65,7 @@ import {
   resolveOpeningMode,
   resolveOpeningPrompts,
   resolveOpeningRegistrar,
-  resolveOpeningHook,
+  resolveOpeningHookPick,
   seedCoverAnswers,
   synthesizeOpeningScene,
 } from './openingEstablishment';
@@ -749,6 +750,8 @@ export function useGame() {
       engineMode: s?.engineMode,
       currentLocation: s?.locationSheet?.name || s?.currentLocation,
       campaignPremise: s?.campaignPremise ?? undefined,
+      campaignArchetype: s?.campaignArchetype,
+      campaignBibleId: s?.campaignBibleId,
     };
   }, []);
 
@@ -844,7 +847,7 @@ export function useGame() {
           saveId,
           promptKind,
           builtPrompt,
-          settings.artStylePreset,
+          artStyleForImageKind(settings, promptKind),
           settings.colorVariant,
           settings.imageModel,
           mode,
@@ -3343,7 +3346,11 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
     ) {
       const updated = { ...settingsRef.current } as Settings;
       if (selectedVisualMode) updated.visualMode = selectedVisualMode;
-      if (selectedArtStyle) updated.artStylePreset = selectedArtStyle;
+      if (selectedVisualMode === 'classic') {
+        updated.artStylePreset = 'classic-book';
+      } else if (selectedArtStyle) {
+        updated.artStylePreset = selectedArtStyle;
+      }
       if (typeof classicMemorableImages === 'boolean') {
         updated.classicMemorableImages = classicMemorableImages;
       }
@@ -3393,14 +3400,18 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
     );
     const coverAnswers = seedCoverAnswers(bible, mergedCharacter);
     const pendingCovers = pendingRequiredCovers(openingPrompts, mergedCharacter, openingMode);
-    const seededWhere = coverAnswers.where || bible?.startingLocation || namedSeeded.currentLocation;
-    const pickedHook = resolveOpeningHook(bible, namedSeeded.seed);
+    const picked = resolveOpeningHookPick(bible, namedSeeded.seed);
+    const pickedHook = picked?.text;
     const honeymoon = storyStartTextTurnsForTier(settingsRef.current.subscriptionTier ?? 'free');
     const rawNewState: GameState = clampLeakedOpeningQuests({
       ...namedSeeded,
       gmStrictness,
       character: mergedCharacter,
-      currentLocation: seededWhere || namedSeeded.currentLocation,
+      currentLocation:
+        picked?.location
+        || coverAnswers.where
+        || bible?.startingLocation
+        || namedSeeded.currentLocation,
       currentCoordinates: { q: 0, r: 0, tier: 2, z: 0 },
       choices: pendingCovers.length ? establishmentChoices(pendingCovers) : [],
       log: [],

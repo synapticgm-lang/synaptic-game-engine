@@ -304,9 +304,9 @@ export const STYLE_SPECS: Record<ArtStylePreset, StyleSpec> = {
     name: 'High Fantasy Storybook',
     description: 'Ink line-art with soft watercolor washes, painterly storybook illustration.',
     style_prefix:
-      'Classic European graphic novel style, vintage high fantasy illustration, intricate medieval armor details',
+      'Printed storybook plate, vintage ink-and-watercolor book illustration, single quiet scene as if bound opposite a page of prose',
     style_suffix:
-      'detailed ink line-art, soft muted watercolor washes, storybook vignette composition, painterly single-scene illustration.',
+      'detailed ink line-art, soft muted watercolor washes, parchment light, storybook vignette, painterly single-scene illustration, not manga, not a comic panel grid.',
     color_override:
       'Painterly watercolor textures, warm parchment tones, soft ambient lighting',
     monochrome_override:

@@ -1,4 +1,5 @@
 import type { ArtStylePreset, EngineMode, Settings } from './types';
+import type { CampaignArchetype } from './archetypes';
 import { formatWorldCanonForPrompt, kidSafeArtDirective } from './visualCanon';
 
 export type ImagePromptKind =
@@ -18,6 +19,8 @@ export interface ImagePromptContext {
   engineMode?: EngineMode;
   currentLocation?: string;
   campaignPremise?: string;
+  campaignArchetype?: CampaignArchetype;
+  campaignBibleId?: string | null;
 }
 
 /**
@@ -36,11 +39,15 @@ export const WORLD_GENRE_PRESERVATION_DIRECTIVE =
 export const NEGATIVE_ART_PROMPT =
   'text, words, letters, numbers, writing, speech bubble, thought bubble, caption, subtitle, watermark, signature, logo, UI, HUD, System panel, XP box, blurry, low quality, deformed, extra limbs, extra arms, extra legs, six fingers, mutated hands';
 
-const CLASSIC_ILLUSTRATION_DIRECTIVE =
+export const CLASSIC_ILLUSTRATION_DIRECTIVE =
   'Classic book illustration accent: detailed ink line-art, soft muted watercolor washes, storybook vignette composition, painterly single-scene illustration suitable for narrative prose — NOT a comic panel grid or multi-cell layout.';
 
-const MILESTONE_ILLUSTRATION_DIRECTIVE =
-  'Full-page milestone illustration: epic, high-detail single splash image marking a major story beat. Dramatic composition, cinematic lighting, worthy of a two-page spread in a printed book — NOT a comic panel grid or multi-cell layout.';
+/** Rare prose plates — mostly text, then one printed illustration of that beat. */
+export const MILESTONE_ILLUSTRATION_DIRECTIVE =
+  'Printed storybook plate: a single full-page illustration bound opposite a page of prose. Detailed ink line-art, soft muted watercolor washes, parchment-adjacent light, painterly vignette. Quiet and beautiful — one camera, one moment. NOT a comic panel grid, not manga screentone, not a triptych, not a cinematic movie still, not a graphic-novel splash page.';
+
+const BOOK_PLATE_TONE =
+  'Storybook illustration tone: ink and watercolor, warm paper, gentle contrast. Not anime, not manga, not cel-shaded comic coloring.';
 
 const KID_MILESTONE_BEAT_DIRECTIVE =
   'KID-SAFE MILESTONE (Google Play Families): If a foe is down, show them asleep, slumped, or fading — never blood, gore, or a corpse close-up. Victory is a triumphant pose. A death beat is a quiet book-closing rest with no injury shown. Everyone fully clothed, non-suggestive. No alcohol, drugs, needles, smoking, or gambling. Skip graphic injury entirely.';
@@ -94,6 +101,15 @@ export function getEffectiveComicPreset(preset: ArtStylePreset): Exclude<ArtStyl
   return preset;
 }
 
+/** Memorable plates always render as classic book illustration, even if comic/manga is selected. */
+export function artStyleForImageKind(
+  settings: Pick<Settings, 'artStylePreset'>,
+  kind?: ImagePromptKind
+): ArtStylePreset {
+  if (kind === 'milestone-illustration' || kind === 'classic-illustration') return 'classic-book';
+  return settings.artStylePreset;
+}
+
 function contentTone(mode: 'kid' | 'adult' | 'unrestricted'): string {
   if (mode === 'kid') {
     return `STRICTLY FAMILY-FRIENDLY (Google Play Families bar): bright colors, soft lighting, cartoonish tone, suitable for all ages. ${kidSafeArtDirective()} No alcohol, drugs, smoking, gambling, or suggestive poses.`;
@@ -112,6 +128,8 @@ function withDeterministicContext(scenePrompt: string, context?: ImagePromptCont
       engineMode: context.engineMode,
       currentLocation: context.currentLocation,
       campaignPremise: context.campaignPremise,
+      campaignArchetype: context.campaignArchetype,
+      campaignBibleId: context.campaignBibleId,
     }));
   }
   if (context?.playerActionContext?.trim()) {
@@ -162,9 +180,9 @@ export function buildMilestoneIllustrationPrompt(
   return [
     withDeterministicContext(scenePrompt, context),
     MILESTONE_ILLUSTRATION_DIRECTIVE,
-    mode === 'kid' ? KID_MILESTONE_BEAT_DIRECTIVE : '',
+    mode === 'kid' ? KID_MILESTONE_BEAT_DIRECTIVE : BOOK_PLATE_TONE,
     PURE_ART_DIRECTIVE,
-    contentTone(mode),
+    mode === 'kid' ? contentTone(mode) : '',
   ].filter(Boolean).join('\n\n');
 }
 
@@ -187,6 +205,8 @@ export function buildImagePromptForKind(
           engineMode: context.engineMode,
           currentLocation: context.currentLocation,
           campaignPremise: context.campaignPremise,
+          campaignArchetype: context.campaignArchetype,
+          campaignBibleId: context.campaignBibleId,
         })
       : '';
     return [canon, scenePrompt.trim(), ITEM_ICON_DIRECTIVE, PURE_ART_DIRECTIVE, contentTone(mode)]

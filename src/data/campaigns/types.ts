@@ -44,6 +44,9 @@ export type OpeningAskStyle = 'inworld' | 'system';
 /** scene = generate the first page from the bible; weave = same, then cover remaining facts in-world. */
 export type OpeningMode = 'scene' | 'weave';
 
+/** One New Game opener. Strings are ingredients; objects may also move the camera. */
+export type OpeningHookCard = string | { text: string; location?: string };
+
 /** Who asks the opening questions — The System, an Auditor, a clerk, the tale itself. */
 export interface OpeningRegistrar {
   voice: OpeningVoice;
@@ -114,9 +117,10 @@ export interface CampaignBible {
   /**
    * Optional starter deck. Code picks one per New Game (seed).
    * Writer rewrites with artistic license — ingredients, not a script.
-   * Falls back to `openingHook` when empty.
+   * Falls back to `openingHook` when empty. A card may pin `location` so the
+   * camera is not stuck on the bible's default room.
    */
-  openingHooks?: string[];
+  openingHooks?: OpeningHookCard[];
   openingRegistrar?: OpeningRegistrar;
   openingPrompts?: OpeningPrompt[];
   /**

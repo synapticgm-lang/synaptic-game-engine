@@ -5,6 +5,7 @@ import {
   memorableBypassesWeeklyCap,
   memorableLogFields,
   openingSplashStillDue,
+  pinOpeningHereScene,
 } from './memorableMoments';
 
 const CATHEDRAL =
@@ -54,6 +55,22 @@ describe('Chapter One opener vs weekly cap', () => {
     expect(fields.splashTitle).toBe('Chapter One');
     expect(fields.splashImagePrompt).toBeTruthy();
     expect(fields.imageStatus).toBe('pending');
+  });
+
+  it('pins Chapter One art to the floor beat and strips the Earth-origin ask', () => {
+    const originAsk =
+      'Light, then cold stone. You are on your back inside a seven-ring summoning circle under a cathedral vault. '
+      + 'The stone is cold under your back. Before the light took you — which Earth place were you in? A city, a street, a home.';
+    const prompt = pinOpeningHereScene({
+      storyText: originAsk,
+      location: 'The Sevenfold Circle under Valespire Cathedral',
+      pickedHook:
+        'Light, then cold stone. You are on your back inside a seven-ring summoning circle under a cathedral vault.',
+    });
+    expect(prompt).toMatch(/lying on the floor/i);
+    expect(prompt).toMatch(/Sevenfold Circle/i);
+    expect(prompt).not.toMatch(/which Earth place/i);
+    expect(prompt).toMatch(/not a manga page of Earth daily life/i);
   });
 
   it('still treats cover-complete as the opener if the splash never fired', () => {

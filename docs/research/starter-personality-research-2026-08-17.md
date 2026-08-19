@@ -87,6 +87,7 @@ Gothic PC (already PYOA); Earth awakening bloodline System; academy reincarnated
 3. Inject personality into `systemPrompt` / opening mandate
 4. Diversify `summoned-pact` starter deck (keep circle as *one* option)
 5. **Shipped (2026-08-17):** **Hero Awakening** (`hero-awakening`) — not Earth-locked / not a summon; opening asks folk + world-shape + look + kit; seed-picked `openingHooks` deck (8 shapes) with rewrite license. Vampire LitRPG still open if wanted (PYOA gothic forks are not that genre).
-6. Remaining: story personality enum + New Game UI; roll `openingHooks` out to Summoned Pact and others.
+6. Remaining: story personality enum + New Game UI.
+7. **Shipped (2026-08-19w):** `openingHooks` on **Summoned Pact** (10 shapes; circle is one option) plus catalog decks for the other ready-mades. Chapter One art pins HERE (person on the floor), not the Earth-origin ask.
 
 Source: codebase explore 2026-08-17 + public trope/series research (inspiration only).

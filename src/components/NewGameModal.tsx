@@ -107,7 +107,7 @@ export function NewGameModal({ contentMode, onStart, onClose }: Props) {
   const [archetype, setArchetype] = useState<CampaignArchetype>('ai_random');
   const [bibleId, setBibleId] = useState<string | undefined>(undefined);
   const [visualMode, setVisualMode] = useState<'comic' | 'classic'>('classic');
-  const [artStylePreset, setArtStylePreset] = useState<ArtStylePreset>('manga-screentone');
+  const [artStylePreset, setArtStylePreset] = useState<ArtStylePreset>('classic-book');
   const [classicMemorableImages, setClassicMemorableImages] = useState(false);
   const [customTabletopRules, setCustomTabletopRules] = useState('');
   const [comicLayout, setComicLayout] = useState<ComicLayoutMode>('paged');
@@ -639,7 +639,10 @@ export function NewGameModal({ contentMode, onStart, onClose }: Props) {
                 <div className="grid grid-cols-2 gap-2">
                   <button
                     type="button"
-                    onClick={() => setVisualMode('classic')}
+                    onClick={() => {
+                      setVisualMode('classic');
+                      setArtStylePreset('classic-book');
+                    }}
                     className={`flex items-center gap-2.5 rounded-lg border p-2.5 text-left transition-all ${
                       visualMode === 'classic' ? 'border-crimson-500 bg-crimson-950/30' : 'border-slate-700 bg-slate-800/40 hover:bg-slate-800'
                     }`}
@@ -647,13 +650,16 @@ export function NewGameModal({ contentMode, onStart, onClose }: Props) {
                     <BookOpen size={16} className={visualMode === 'classic' ? 'text-crimson-400' : 'text-slate-500'} />
                     <div className="min-w-0">
                       <div className="font-semibold text-slate-200">Classic Text</div>
-                      <div className="text-[9px] text-slate-400">Prose-first log; type freely each turn</div>
+                      <div className="text-[9px] text-slate-400">Mostly prose; rare book-plate pictures</div>
                     </div>
                   </button>
 
                   <button
                     type="button"
-                    onClick={() => setVisualMode('comic')}
+                    onClick={() => {
+                      setVisualMode('comic');
+                      setArtStylePreset((prev) => (prev === 'classic-book' ? 'manga-screentone' : prev));
+                    }}
                     className={`flex items-center gap-2.5 rounded-lg border p-2.5 text-left transition-all ${
                       visualMode === 'comic' ? 'border-crimson-500 bg-crimson-950/30' : 'border-slate-700 bg-slate-800/40 hover:bg-slate-800'
                     }`}
@@ -678,7 +684,7 @@ export function NewGameModal({ contentMode, onStart, onClose }: Props) {
                   <span>
                     <span className="block font-medium text-slate-200">Memorable moment images</span>
                     <span className="mt-0.5 block text-[10px] leading-snug text-slate-500">
-                      Optional. Opening, death, and the first dungeon’s final boss auto-illustrate; later dungeon bosses and other book-worthy beats are a tap-yes on the fast model. Off until you check this.
+                      Optional. Rare book plates — ink and watercolor, one picture for a book-worthy beat, then back to prose. Opening, death, and the first dungeon’s final boss auto-illustrate; later bosses and other beats are tap-yes. Off until you check this.
                       {' '}
                       <span className="text-amber-200/80">{memorableWeeklyCapLabel()}</span>
                     </span>

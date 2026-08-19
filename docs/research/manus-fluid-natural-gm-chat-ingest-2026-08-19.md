@@ -18,14 +18,13 @@
 | F5 speech acts | `speechActRails.ts` |
 | Folk gap (John ask) | `folkVoiceExpectations.ts` |
 | Anti “What do you do?” spam | Softened BASE_PROMPT / complete-response rules |
-| F9 streaming | Decision recorded: post-commit only — **not** shipping raw pre-commit stream this pass |
+| F6 repair CSV | `repairCopyBank.ts` + `repairEngine.ts` + CenterPanel banner + useGame hold/resolve |
+| F9 post-commit stream | `streamReveal.ts` — status chrome + sentence reveal after StateTx (no raw pre-commit tokens) |
+| F11 eval fixtures | `src/game/__fixtures__/fluidChatEvalFixtures.json` + `fluidChatEval.test.ts` (vitest) |
 
-## Not applied yet (needs more eng / playtest)
+## Settings
 
-- Full post-commit sentence streaming UI (F9)
-- Repair copy bank CSV → template picker
-- 44 eval fixtures as CI
-- Authority-trace render plan (P0 L)
+- **Show full GM reply at once** (`preferFullResponse`) — Settings → Narrative; skips sentence reveal.
 
 ## Key files in pack
 
