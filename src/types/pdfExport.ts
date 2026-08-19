@@ -33,6 +33,8 @@ export interface PdfExportOptions {
   author: string;
   /** Render a title cover page. Default true. */
   includeCover?: boolean;
+  /** When true (ended runs), append epilogue back matter instead of front stats. */
+  includeEpilogue?: boolean;
   /** Render a character sheet / lore recap page after the cover. Default true. */
   includeStatsPage?: boolean;
   /** Target raster resolution for embedded panel artwork, in pixels-per-inch. Default 300

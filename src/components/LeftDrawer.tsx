@@ -1,6 +1,6 @@
 import { X, ScrollText, Landmark, Users, Globe2 } from 'lucide-react';
 import type { GameState, EngineMode } from '@/game/types';
-import { visibleJournalQuests } from '@/game/questPlay';
+import { visibleJournalQuests, activeDrawerQuests } from '@/game/questPlay';
 import { clockLabel, normalizeWorldLedger } from '@/game/worldSim';
 
 interface Props {
@@ -102,9 +102,9 @@ function QuestsSection({ state }: { state: GameState }) {
         <ScrollText size={14} /> Quests
       </h3>
       {(() => {
-        const visible = visibleJournalQuests(state);
+        const visible = activeDrawerQuests(state);
         if (visible.length === 0) {
-          return <p className="text-xs text-slate-500">No revealed quests yet.</p>;
+          return <p className="text-xs text-slate-500">No active quests.</p>;
         }
         return (
           <ul className="space-y-1.5">

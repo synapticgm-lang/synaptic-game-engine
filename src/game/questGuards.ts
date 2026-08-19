@@ -59,3 +59,48 @@ export function applyQuestCompleteGuard(
   };
   return { quests, blocked: false };
 }
+
+export function applyQuestFailGuard(
+  state: GameState,
+  questId: string,
+  turn: number,
+  reason?: string,
+  objectiveId?: string
+): { quests: Quest[]; blocked: boolean; note?: string; failedQuest?: Quest } {
+  const quests = [...(state.quests ?? [])];
+  const idx = quests.findIndex((q) => q.id === questId);
+  if (idx < 0) return { quests, blocked: true, note: `unknown quest ${questId}` };
+  const q = quests[idx]!;
+  if (q.status === 'completed' || q.status === 'failed') {
+    return { quests, blocked: true, note: 'already closed' };
+  }
+  const objectives = (q.objectives ?? []).map((o) =>
+    objectiveId && o.id === objectiveId ? { ...o, completed: false } : o
+  );
+  const failed: Quest = {
+    ...q,
+    status: 'failed',
+    revealed: true,
+    objectives,
+    failReason: reason ?? q.failReason,
+    completedTurn: turn,
+  };
+  quests[idx] = failed;
+  return { quests, blocked: false, failedQuest: failed };
+}
+
+/** Permadeath sweep — run-scoped quests only. */
+export function failRunScopedQuests(state: GameState, turn: number): GameState {
+  const quests = (state.quests ?? []).map((q) => {
+    if (q.status !== 'active') return q;
+    if (!q.runScoped && !q.failOnDeath) return q;
+    return {
+      ...q,
+      status: 'failed' as QuestStatus,
+      revealed: true,
+      failReason: q.failReason ?? 'Run ended.',
+      completedTurn: turn,
+    };
+  });
+  return { ...state, quests };
+}

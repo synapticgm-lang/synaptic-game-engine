@@ -172,6 +172,12 @@ export interface Quest {
   minTurnsBeforeActive?: number;
   /** Min turns between active → completed (default 1). */
   minTurnsBeforeComplete?: number;
+  /** When true, quest fails if the run ends (permadeath). */
+  runScoped?: boolean;
+  /** Explicit fail-on-death flag; defaults with runScoped. */
+  failOnDeath?: boolean;
+  /** Fail reason when status is failed. */
+  failReason?: string;
   rewards?: {
     xp?: number;
     gold?: number;

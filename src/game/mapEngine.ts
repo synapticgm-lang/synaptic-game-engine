@@ -27,6 +27,7 @@ export interface NodeHidden {
     damage?: number;
     revealed: boolean;
     disarmed: boolean;
+    kind?: string;
   }>;
   lootables: Array<{
     id: string;

@@ -20,6 +20,8 @@ import { AutoSaveIndicator } from '@/components/AutoSaveIndicator';
 import { AutoFightWarningModal } from '@/components/AutoFightWarningModal';
 import { AutoFightTipModal, isAutoFightTipDismissed } from '@/components/AutoFightTipModal';
 import { DiceTrayToolbar } from '@/components/qol/DiceTrayToolbar';
+import { EpitaphBar } from '@/components/qol/EpitaphBar';
+import { exportSessionToPdf, downloadPdf } from '@/services/pdfExportService';
 
 const SettingsModal = lazy(() => import('@/components/SettingsModal').then(m => ({ default: m.SettingsModal })));
 const ApiSetupModal = lazy(() => import('@/components/ApiSetupModal').then(m => ({ default: m.ApiSetupModal })));
@@ -31,6 +33,7 @@ const GMLibrary = lazy(() => import('@/components/GMLibrary').then(m => ({ defau
 const CharacterWindow = lazy(() => import('@/components/CharacterWindow').then(m => ({ default: m.CharacterWindow })));
 const MerchantWindow = lazy(() => import('@/components/MerchantWindow').then(m => ({ default: m.MerchantWindow })));
 const QuestUnlockModal = lazy(() => import('@/components/QuestUnlockModal').then(m => ({ default: m.QuestUnlockModal })));
+const QuestFailModal = lazy(() => import('@/components/QuestFailModal').then(m => ({ default: m.QuestFailModal })));
 const OutOfTurnsAdOffer = lazy(() => import('@/components/OutOfTurnsAdOffer').then(m => ({ default: m.OutOfTurnsAdOffer })));
 const OutOfMemorableAdOffer = lazy(() => import('@/components/OutOfMemorableAdOffer').then(m => ({ default: m.OutOfMemorableAdOffer })));
 
@@ -318,7 +321,8 @@ export default function App() {
       <div className="flex flex-1 overflow-hidden">
         <LeftDrawer state={state} open={game.leftOpen} onClose={() => game.setLeftOpen(false)} engineMode={state.engineMode} />
 
-        <main className="flex-1 overflow-hidden">
+        <main className="flex flex-1 flex-col overflow-hidden">
+          <div className="min-h-0 flex-1 overflow-hidden">
           <CenterPanel
             state={state}
             busy={game.busy}
@@ -383,6 +387,36 @@ export default function App() {
             onAutoFight={() => game.autoFight()}
             onOpenCharacter={() => game.setShowCharacterWindow(true)}
           />
+          </div>
+          {state.playPhase === 'ended' && (
+            <EpitaphBar
+              storyName={state.storyName}
+              onNewGame={() => game.setShowNewGame(true)}
+              onExport={async () => {
+                try {
+                  const blob = await exportSessionToPdf(state, {
+                    format: 'us_trade',
+                    title: state.storyName || state.character.name || 'My Adventure',
+                    author: state.character.name || 'Anonymous Hero',
+                    artStylePreset: game.settings.artStylePreset,
+                    includeEpilogue: true,
+                    includeStatsPage: false,
+                    bakeOverlays: true,
+                  });
+                  const safeName = (state.storyName || state.character.name || 'story')
+                    .replace(/[^a-z0-9-_]+/gi, '_')
+                    .replace(/^_+|_+$/g, '') || 'story';
+                  downloadPdf(blob, `${safeName}-epilogue.pdf`);
+                  game.addToast('Story exported with epilogue.', 'success');
+                } catch (e) {
+                  game.addToast(e instanceof Error ? e.message : 'Export failed.', 'error');
+                }
+              }}
+              onMainMenu={() => {
+                game.unloadActiveCampaign?.(state.saveId);
+              }}
+            />
+          )}
         </main>
 
         <RightDrawer state={state} open={game.rightOpen} onClose={() => game.setRightOpen(false)} onUpdateLorebook={game.updateLorebook} uiThemeId={game.settings.uiThemeId} />
@@ -546,6 +580,19 @@ export default function App() {
             state={state}
             onStateChange={(newState) => game.updateGameState(newState)}
             onToast={game.addToast}
+          />
+        </Suspense>
+      )}
+
+      {game.failedQuests.length > 0 && (
+        <Suspense fallback={null}>
+          <QuestFailModal
+            quests={game.failedQuests}
+            onClose={game.dismissFailedQuests}
+            onOpenJournal={() => {
+              game.dismissFailedQuests();
+              setShowQuestLog(true);
+            }}
           />
         </Suspense>
       )}

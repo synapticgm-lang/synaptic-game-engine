@@ -252,6 +252,15 @@ export function interactablesFromNode(node: MapNode | null): LocationInteractabl
       revealed: true,
     });
   }
+  for (const loose of node.hidden.looseItems ?? []) {
+    out.push({
+      id: loose.id,
+      name: `Pick Up ${loose.label}`,
+      state: 'available',
+      kind: 'loose-item',
+      revealed: true,
+    });
+  }
   return out;
 }
 

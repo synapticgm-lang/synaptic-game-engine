@@ -60,8 +60,8 @@ Bump **`saveRepairRevision`** when repair rules change. Bump **`version`** only 
 |---|---|
 | P0 Codebase discovery | **Done** — this doc |
 | P1 State contract + repair | **Slice 0 shipped** (`fc5f272`) |
-| P2 Deterministic backlog | **Slices 1–2 shipped** (`2026-08-19af`); slices 3–5 waiting |
-| P3 UX failure/archive | Slice 5 |
+| P2 Deterministic backlog | **Slices 1–5 shipped** (`2026-08-19ag`) |
+| P3 UX failure/archive | **Slice 5 shipped** — epitaph bar + export epilogue |
 | P4 Entitlements staging | Foundation only — not launch-ready |
 | P5–P7 Image / economics / launch | Deferred |
 
@@ -118,23 +118,23 @@ Bump **`saveRepairRevision`** when repair rules change. Bump **`version`** only 
 
 | ID | Setup | Action | Expected | Status |
 |---|---|---|---|---|
-| T01 | Armed trap | Fail disarm | HP delta pre-GM; trap spent | ⏳ |
-| D01 | Armed trap + throw rock | Token D | 0 HP; no inventory consume | ⏳ |
-| L01 | Trap parks dagger | Pick up UI | Item in inventory | ⏳ |
+| T01 | Armed trap | Fail disarm | HP delta pre-GM; trap spent | ✅ |
+| D01 | Armed trap + throw rock | Token D | 0 HP; no inventory consume | ✅ |
+| L01 | Trap parks dagger | Pick up UI | Item in inventory | ✅ |
 
 ### 3.5 Quest fail (Slice 4)
 
 | ID | Setup | Action | Expected | Status |
 |---|---|---|---|---|
-| Q01 | Active run-scoped quest | `<quest-fail>` | Modal + Failed tab | ⏳ |
-| Q02 | Permadeath turn | HP→0 commit | Receipt only; quests failed | ⏳ |
+| Q01 | Active run-scoped quest | `<quest-fail>` | Modal + Failed tab | ✅ |
+| Q02 | Permadeath turn | HP→0 commit | Receipt only; quests failed | ✅ |
 
 ### 3.6 Death / archive (Slice 5)
 
 | ID | Setup | Action | Expected | Status |
 |---|---|---|---|---|
-| E01 | `playPhase:'ended'` | Type action | Input blocked; epitaph bar | ⏳ |
-| E02 | Ended run | Export PDF | Log + Epilogue; no front stats | ⏳ |
+| E01 | `playPhase:'ended'` | Type action | Input blocked; epitaph bar | ✅ |
+| E02 | Ended run | Export PDF | Log + Epilogue; no front stats | ✅ |
 
 ---
 
@@ -143,7 +143,8 @@ Bump **`saveRepairRevision`** when repair rules change. Bump **`version`** only 
 ```
 src/game/saveMigration.test.ts      — R01–R03
 src/game/dungeonMobLedger.test.ts   — M01–M04, F01, F03–F04
-src/game/ledgerFlee.test.ts         — F01, F03 (new)
+src/game/ledgerFlee.test.ts         — F01, F03
+src/game/ledgerSlice345.test.ts     — T01, D01, L01, Q01–Q02, E01
 ```
 
 Playtest script (manual): F02, F04, F05 on production build with HUD stamp.
@@ -152,11 +153,7 @@ Playtest script (manual): F02, F04, F05 on production build with HUD stamp.
 
 ## 5. Recommended build order (remaining)
 
-1. **Slice 2** — flee + map lock *(this batch)*  
-2. **Slice 3** — `resolveLedgerTrap`, Token D classifier spec + tests, `looseItems` UI  
-3. **Slice 4** — quest hooks, `<quest-fail>`, fail-loud modals  
-4. **Slice 5** — `playPhase` death UI, export epilogue  
-5. **P4** — Stripe staging, webhook idempotency, entitlement audit trail  
+1. **P4** — Stripe staging, webhook idempotency, entitlement audit trail  
 6. **P6** — telemetry: save repair, flee/trap/death funnel, paid-turn delivery  
 
 ---

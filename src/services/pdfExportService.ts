@@ -650,6 +650,53 @@ function renderStatsPage(doc: jsPDF, sessionData: GameState, safeArea: Rect, the
   }
 }
 
+function renderEpiloguePage(doc: jsPDF, sessionData: GameState, safeArea: Rect, theme: UiOverlayTheme) {
+  const font = mapFontFamily(theme.captionFontFamily);
+  const c = sessionData.character;
+  let y = safeArea.y + 0.1;
+  doc.setTextColor(20, 20, 24);
+  doc.setFont(font, 'bold');
+  doc.setFontSize(20);
+  doc.text('Epilogue', safeArea.x, y);
+  y += 0.35;
+  doc.setFont(font, 'normal');
+  doc.setFontSize(10.5);
+  doc.text(`${sessionData.storyName} — final record`, safeArea.x, y);
+  y += 0.28;
+  doc.text(`Level ${c.level}  |  HP ${c.hp}/${c.maxHp} at run end  |  Turn ${sessionData.turn}`, safeArea.x, y);
+  y += 0.32;
+
+  const completed = (sessionData.quests ?? []).filter((q) => q.status === 'completed');
+  const failed = (sessionData.quests ?? []).filter((q) => q.status === 'failed');
+  doc.setFont(font, 'bold');
+  doc.setFontSize(11);
+  doc.text('Completed quests', safeArea.x, y);
+  y += 0.2;
+  doc.setFont(font, 'normal');
+  doc.setFontSize(9.5);
+  if (!completed.length) {
+    doc.text('None', safeArea.x, y);
+    y += 0.16;
+  } else {
+    for (const q of completed) {
+      y += drawWrappedText(doc, q.name, safeArea.x, y, safeArea.w, 0.16) + 0.02;
+    }
+  }
+  y += 0.12;
+  doc.setFont(font, 'bold');
+  doc.setFontSize(11);
+  doc.text('Failed quests', safeArea.x, y);
+  y += 0.2;
+  doc.setFont(font, 'normal');
+  for (const q of failed) {
+    y += drawWrappedText(doc, `${q.name}${q.failReason ? ` — ${q.failReason}` : ''}`, safeArea.x, y, safeArea.w, 0.16) + 0.02;
+  }
+
+  const plates = sessionData.memorableMoments?.length ?? 0;
+  y += 0.14;
+  doc.text(`Memorable plates unlocked: ${plates}`, safeArea.x, y);
+}
+
 // ---------------------------------------------------------------------------
 // Public API
 // ---------------------------------------------------------------------------
@@ -667,7 +714,8 @@ export async function exportSessionToPdf(sessionData: GameState, options: PdfExp
   const bleed = options.bleedMarginInches ?? DEFAULT_BLEED_IN;
   const safeMargin = options.safeMarginInches ?? DEFAULT_SAFE_MARGIN_IN;
   const includeCover = options.includeCover ?? true;
-  const includeStatsPage = options.includeStatsPage ?? true;
+  const includeEpilogue = options.includeEpilogue ?? sessionData.playPhase === 'ended';
+  const includeStatsPage = includeEpilogue ? false : (options.includeStatsPage ?? true);
   const bakeOverlays = options.bakeOverlays ?? true;
   const theme = getStyleSpec(options.artStylePreset ?? 'classic-book').ui_overlay_theme;
 
@@ -684,7 +732,11 @@ export async function exportSessionToPdf(sessionData: GameState, options: PdfExp
   const manifest = buildBookManifest(sessionData);
   const printPages = packPagesForPrint(manifest, options.panelsPerPage);
 
-  const totalSteps = (includeCover ? 1 : 0) + (includeStatsPage ? 1 : 0) + printPages.length;
+  const totalSteps =
+    (includeCover ? 1 : 0)
+    + (includeStatsPage ? 1 : 0)
+    + (includeEpilogue ? 1 : 0)
+    + printPages.length;
   let step = 0;
   const reportProgress = (stage: string) => {
     step += 1;
@@ -738,6 +790,12 @@ export async function exportSessionToPdf(sessionData: GameState, options: PdfExp
     doc.text(String(page.pageNumber), pageRect.w / 2, pageH - bleed - 0.12, { align: 'center' });
 
     reportProgress(`page-${page.pageNumber}`);
+  }
+
+  if (includeEpilogue) {
+    ensurePage();
+    renderEpiloguePage(doc, sessionData, safeArea, theme);
+    reportProgress('epilogue');
   }
 
   return doc.output('blob');

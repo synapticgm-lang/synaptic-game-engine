@@ -6,6 +6,11 @@ import type { CampaignArchetype } from './archetypes';
 import { buildArchetypeIntro } from './archetypes';
 import { applySaveRepair, SAVE_REPAIR_TOAST } from './saveMigration';
 import { markDefeatedMobAtCurrentNode, CURRENT_SAVE_REPAIR_REVISION, isCombatLocked, DUNGEON_NEUTRALIZED_MILESTONE } from './dungeonMobLedger';
+import { resolveLedgerTrap, formatTrapReceipt } from './ledgerTrap';
+import { classifyRemoteThrow, resolveAmbientTrapBypass, resolveInventoryTrapThrow } from './tokenD';
+import { parseLooseItemPickup, pickUpLooseItem } from './looseItems';
+import { applyPlayPhaseAfterHp, deathQuestReceipt, isPlayInputLocked } from './playPhase';
+import { applyQuestHooksFromLedger } from './questHooks';
 import { loadGame, saveGame, deleteGame, loadSettings, saveSettings, exportSave, importSave } from './db';
 import {
   syncGameToCloud,
@@ -462,6 +467,7 @@ export function useGame() {
   const [showCharacterWindow, setShowCharacterWindow] = useState(false);
   const [showMerchantWindow, setShowMerchantWindow] = useState(false);
   const [unlockedQuests, setUnlockedQuests] = useState<Quest[]>([]);
+  const [failedQuests, setFailedQuests] = useState<Quest[]>([]);
   const [syncPhase, setSyncPhase] = useState<SyncPhase>('idle');
   const [toasts, setToasts] = useState<Toast[]>([]);
   const [outOfTurnsAdOffer, setOutOfTurnsAdOffer] = useState(false);
@@ -1550,6 +1556,15 @@ export function useGame() {
       addToast('Accept, edit, or discard the pending turn first.', 'info');
       return;
     }
+    if (isPlayInputLocked(current)) {
+      addToast(
+        current.playPhase === 'ended'
+          ? 'This run has ended — start a new game or export your story.'
+          : 'You are down — rest or recover before acting again.',
+        'info'
+      );
+      return;
+    }
 
     let skipRepairDetection = false;
     if (current.pendingRepair) {
@@ -2063,6 +2078,65 @@ export function useGame() {
       const strMod = check.modifier;
       const difficultyClass = check.dc;
       const outcome = check;
+
+      const pickupLabel = parseLooseItemPickup(sanitizedInput);
+      if (pickupLabel) {
+        const picked = pickUpLooseItem(liveCurrent, pickupLabel);
+        if (picked.item) {
+          const snap = snapshotRef.current ?? liveCurrent;
+          const nextTurn = liveCurrent.turn + 1;
+          const updated: GameState = {
+            ...picked.state,
+            turn: nextTurn,
+            log: [
+              ...snap.log,
+              { id: uid(), turn: liveCurrent.turn, role: 'player', content: sanitizedInput, timestamp: Date.now() },
+              {
+                id: uid(),
+                turn: nextTurn,
+                role: 'gm',
+                content: `You pick up ${picked.item.name}.`,
+                timestamp: Date.now(),
+                systemLog: [`Picked up ${picked.item.name}`],
+              },
+            ],
+            lastUpdated: Date.now(),
+          };
+          stateRef.current = updated;
+          setState(updated);
+          await persist(updated);
+          snapshotRef.current = null;
+          setCanRewind(false);
+          resetTurnUi();
+          turnInFlightRef.current = false;
+          setBusy(false);
+          addToast(`Picked up ${picked.item.name}.`, 'success');
+          return;
+        }
+      }
+
+      const tokenD = classifyRemoteThrow(liveCurrent, sanitizedInput);
+      if (tokenD.kind === 'ambient') {
+        liveCurrent = resolveAmbientTrapBypass(liveCurrent, tokenD.trapId);
+      } else if (tokenD.kind === 'inventory') {
+        liveCurrent = resolveInventoryTrapThrow(liveCurrent, tokenD);
+      }
+
+      let ledgerTrap: import('./ledgerTrap').LedgerTrapRound | null = null;
+      if (
+        tokenD.kind === 'none'
+        && (
+          /\b(disarm|disable\s+trap|pick\s+lock|lockpick|jimmy)\b/i.test(sanitizedInput)
+          || (intentForMandate.kind === 'search' && /\btrap|lock|chest|cache\b/i.test(sanitizedInput))
+        )
+      ) {
+        const trapResolved = resolveLedgerTrap(liveCurrent, check);
+        if (trapResolved) {
+          liveCurrent = trapResolved.state;
+          ledgerTrap = trapResolved.round;
+        }
+      }
+
       liveCurrent = maybeEnterInteriorDungeon(liveCurrent, sanitizedInput);
       if (
         intentForMandate.kind === 'attack'
@@ -2093,6 +2167,9 @@ export function useGame() {
         flee: ledgerFlee ?? undefined,
         dungeonRemaining: remainingDungeonMobs(liveCurrent),
       });
+      if (ledgerTrap) {
+        outcomeToken.summary = `${outcomeToken.summary} ${ledgerTrap.summary}`;
+      }
 
       const isDndEngine = liveCurrent.engineMode === 'dnd';
       const codeResolutionText = check.codeResolutionText;
@@ -2702,6 +2779,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
                 ]
               : []),
             ...(ledgerFlee ? [formatFleeReceipt({ flee: ledgerFlee })] : []),
+            ...(ledgerTrap ? [formatTrapReceipt(ledgerTrap)] : []),
             ...(isExplorableDungeon(liveCurrent.activeDungeon)
               && remainingDungeonMobs(liveCurrent).alive === 0
               && (ledgerRound?.enemyDead || ledgerFlee?.fled)
@@ -2761,6 +2839,8 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
         }
       } else if (ledgerFlee && !ledgerFlee.fled) {
         baseChar.hp = ledgerFlee.playerHpAfter;
+      } else if (ledgerTrap) {
+        baseChar.hp = ledgerTrap.playerHpAfter;
       } else if (hpDelta !== 0) {
         baseChar.hp = Math.max(0, Math.min(baseChar.maxHp, (baseChar.hp ?? 0) + hpDelta));
       }
@@ -2824,6 +2904,16 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
       updatedQuests = ensureTutorialQuest(
         { ...workingState, quests: updatedQuests },
         nextTurn
+      );
+      updatedQuests = applyQuestHooksFromLedger(
+        updatedQuests,
+        {
+          ...workingState,
+          quests: updatedQuests,
+          activeDungeon: workingState.activeDungeon ?? liveCurrent.activeDungeon,
+        },
+        nextTurn,
+        { combat: ledgerRound }
       );
       if (mode === 'kid') {
         updatedQuests = updatedQuests.map((q) => ({
@@ -3037,10 +3127,32 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
       offerMemorableAdIfCapHit(memorableDecision.skippedForCapacity);
       const milestoneReq = memorableDecision.request;
 
+      const phased = applyPlayPhaseAfterHp(
+        { ...workingState, character: baseChar, quests: updatedQuests },
+        baseChar.hp ?? 0,
+        nextTurn
+      );
+      updatedQuests = phased.quests ?? updatedQuests;
+      if ((baseChar.hp ?? 0) <= 0) {
+        const receipt = deathQuestReceipt(phased);
+        if (receipt && !mergedSystemLog.includes(receipt)) {
+          mergedSystemLog.push(receipt);
+        }
+      } else {
+        const failEvents = events.filter((e) => e.type === 'quest-fail' && e.id);
+        if (failEvents.length) {
+          const failed = failEvents
+            .map((e) => updatedQuests.find((q) => q.id === e.id))
+            .filter((q): q is Quest => !!q && q.status === 'failed');
+          if (failed.length) setFailedQuests(failed);
+        }
+      }
+
       let mergedStateDraft: GameState = {
         ...workingState,
         ...updates,
         character: baseChar,
+        playPhase: phased.playPhase ?? workingState.playPhase ?? liveCurrent.playPhase,
         quests: enrichQuests(updatedQuests),
         activeEncounter: updatedEncounter,
         currentLocation: finalLocationName,
@@ -3265,6 +3377,10 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
         setPostCommitTurnEpoch((epoch) => epoch + 1);
         snapshotRef.current = null;
         setCanRewind(false);
+
+        if (mergedState.playPhase === 'ended') {
+          await persist(mergedState);
+        }
 
         if (!settingsRef.current.preferFullResponse && storyHasBody(cleanText)) {
           startStreamingReveal(gmEntry.id, cleanText);
@@ -4183,7 +4299,10 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
     imagesGenerating, videosGenerating,
     saveStatus, showSettings, setShowSettings, showApiSetup, setShowApiSetup, showNewGame, setShowNewGame,
     showRolls, setShowRolls, showMapModal, setShowMapModal, leftOpen, setLeftOpen, rightOpen, setRightOpen,
-    showWelcome, setShowWelcome, showCharacterWindow, setShowCharacterWindow, showMerchantWindow, setShowMerchantWindow, unlockedQuests, dismissUnlockedQuests: () => setUnlockedQuests([]), syncPhase, toasts, dismissToast, addToast, cloudSlot, cloudSlots, localSlot,
+    showWelcome, setShowWelcome, showCharacterWindow, setShowCharacterWindow, showMerchantWindow, setShowMerchantWindow,
+    unlockedQuests, dismissUnlockedQuests: () => setUnlockedQuests([]),
+    failedQuests, dismissFailedQuests: () => setFailedQuests([]),
+    syncPhase, toasts, dismissToast, addToast, cloudSlot, cloudSlots, localSlot,
     outOfTurnsAdOffer,
     dismissOutOfTurnsAdOffer: () => setOutOfTurnsAdOffer(false),
     outOfMemorableAdOffer,
@@ -4228,7 +4347,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
       stateRef.current = updated;
       await persist(updated);
     },
-    handleExport, handleImport, deleteSavedGame, deleteExtraSaves, deleteAllSaves,
+    handleExport, handleImport, deleteSavedGame, deleteExtraSaves, deleteAllSaves, unloadActiveCampaign,
     updateStoryName: async (name) => {
       const s = stateRef.current;
       if (!s) return;

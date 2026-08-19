@@ -13,7 +13,6 @@ John is playtesting live. Collect issues here. Do not implement until he asks fo
 
 ## Waiting (research — not tickets yet)
 
-- **Post-playtest ledger batch (slices 3–5):** traps + Token D + `looseItems` UI; quest hooks/fail UI; `playPhase` death + export epilogue — full spec `docs/research/post-playtest-ledger-batch-2026-08-19.md`
 - Server capacity / Stripe live secrets / counsel legal pack / Kid Mode public gate — ops, not playtest tickets
 - Full a11y release gate, Expert author tools, audio lite, full comic — deliberate later / No-Go near-term
 - Manus optional: Snapshot+screenshots E1/E2; post-commit streaming UI; counsel outline
@@ -21,6 +20,7 @@ John is playtesting live. Collect issues here. Do not implement until he asks fo
 
 ## Done (already shipped)
 
+- **2026-08-19ag Slices 3–5 trap/quest/death:** `resolveLedgerTrap` + Token D + `looseItems` pickup (ledger-only, no GM); quest hooks + `<quest-fail>` modal; `playPhase` down/ended lock + `EpitaphBar` + PDF epilogue export. HUD stamp 19ag
 - **2026-08-19af Slice 2 flee + map lock:** `resolveLedgerFlee` parks wounded mob HP on node; Stealth check pre-GM; map movement blocked during live combat; flee-fail damage; dungeon-neutralized milestone receipt. HUD stamp 19af
 - **2026-08-19ae Slice 0+1 save repair + mob ledger:** `repairSaveSchema` / `saveRepairRevision` on load-import-continue; semantic repair toast once; legacy spawned mobs → `defeated`; `mobCountsAsRemaining` counter + parked restore stub; ledger kill marks mob defeated; rewind clears after commit. HUD stamp 19ae
 - **2026-08-19ad Cozy Brutal on LitRPG New Game:** `cozy-brutal` is a fifth System/story voice card (with Cold registrar / Sarcastic Patch / Army / Friendly). Save stamps `systemPersonality`; narrative diction rail keeps Status numbers honest. HUD stamp 19ad

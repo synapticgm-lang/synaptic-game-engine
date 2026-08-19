@@ -10,6 +10,7 @@ import { logger } from '@/game/logger';
 import { ComicGrid } from './comic/ComicGrid';
 import { NarrativeView } from './NarrativeView';
 import { ActionBar } from './qol/ActionBar';
+import { LooseItemsBar } from './qol/LooseItemsBar';
 import { RewindBar } from './qol/RewindBar';
 import { TurnConfirmBar } from './qol/TurnConfirmBar';
 import { shouldShowTurnAsk, TURN_ASK, hasRealGmStory, shouldSkipDuplicatePlayerBubble } from '@/game/turnAsk';
@@ -367,6 +368,9 @@ export function CenterPanel({ state, busy, turnPhase = 'idle', streamingReveal =
             )}
           </div>
 
+          <LooseItemsBar state={state} busy={busy || !!state.pendingTurn} onPickUp={onSend} />
+
+          {state.playPhase !== 'ended' && state.playPhase !== 'down' && (
           <ActionBar
             state={state}
             busy={busy || !!state.pendingTurn}
@@ -374,6 +378,12 @@ export function CenterPanel({ state, busy, turnPhase = 'idle', streamingReveal =
             engineMode={engineMode}
             hidden={hideOptions}
           />
+          )}
+          {state.playPhase === 'down' && (
+            <p className="mb-2 rounded-lg border border-rose-900/50 bg-rose-950/30 px-3 py-2 text-sm text-rose-200">
+              You are down. Rest, recover, or seek aid before acting again.
+            </p>
+          )}
           {!hideText && state.activeEncounter && (
             <div className="mb-2">
               <EnemyTargetFrame encounter={state.activeEncounter} />

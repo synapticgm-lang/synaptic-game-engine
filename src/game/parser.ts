@@ -13,6 +13,7 @@ export interface GameEvent {
     | 'quest-add' 
     | 'quest-update' 
     | 'quest-complete'
+    | 'quest-fail'
     | 'dungeon-load'
     | 'dungeon-move'
     | 'dungeon-exit'
@@ -52,6 +53,7 @@ export interface GameEvent {
   description?: string;
   objectiveId?: string;
   completed?: boolean;
+  reason?: string;
   // Spatial & Dungeon XML Attributes
   blueprintId?: string;
   dungeonName?: string;
@@ -400,6 +402,16 @@ const TAG_PATTERNS: Array<{ type: GameEvent['type']; re: RegExp; parse: (m: RegE
       id: m[1],
       objectiveId: m[2],
       completed: m[3] === 'true',
+    }),
+  },
+  {
+    type: 'quest-fail',
+    re: /<quest-fail\s+id="([^"]*)"(?:\s+objectiveId="([^"]*)")?(?:\s+reason="([^"]*)")?\s*\/>/gi,
+    parse: (m) => ({
+      type: 'quest-fail',
+      id: m[1],
+      objectiveId: m[2] || undefined,
+      reason: m[3] || undefined,
     }),
   },
   {
@@ -873,6 +885,25 @@ export function eventsToQuestUpdates(events: GameEvent[], currentQuests: Quest[]
           objectives: updatedObjs,
         };
       });
+    } else if (e.type === 'quest-fail' && e.id) {
+      const q = updatedQuests.find((x) => x.id === e.id);
+      if (!q || q.status === 'completed' || q.status === 'failed') continue;
+      updatedQuests = updatedQuests.map((quest) =>
+        quest.id === e.id
+          ? {
+              ...quest,
+              status: 'failed' as QuestStatus,
+              revealed: true,
+              failReason: e.reason ?? quest.failReason,
+              completedTurn: turn,
+              objectives: e.objectiveId
+                ? (quest.objectives ?? []).map((o) =>
+                    o.id === e.objectiveId ? { ...o, completed: false } : o
+                  )
+                : quest.objectives,
+            }
+          : quest
+      );
     } else if (e.type === 'quest-complete' && e.id) {
       const q = updatedQuests.find((x) => x.id === e.id);
       if (!q) continue;

@@ -171,6 +171,10 @@ export function visibleJournalQuests(state: GameState): Quest[] {
   return (state.quests ?? []).filter(isJournalQuest);
 }
 
+export function activeDrawerQuests(state: GameState): Quest[] {
+  return visibleJournalQuests(state).filter((q) => q.status === 'active');
+}
+
 /**
  * When the System names a quest in the log, or the player walks toward a place a
  * seeded quest already describes, show it in the journal. Campaign-agnostic.

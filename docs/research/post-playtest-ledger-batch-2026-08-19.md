@@ -1,7 +1,7 @@
 # Post-playtest ledger batch (next update)
 
-**Status:** Slice 0–2 shipped (`2026-08-19af`); slices 3–5 waiting.  
-**HUD stamp target:** `2026-08-19af` (Slice 2).
+**Status:** Slices 0–5 shipped (`2026-08-19ag`).
+**HUD stamp target:** `2026-08-19ag` (Slices 3–5).
 
 Ledger-first structural upgrade: code owns numbers; writer owns fiction parameters.
 
