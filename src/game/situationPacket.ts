@@ -182,8 +182,12 @@ export function formatCampaignRails(state: GameState): string {
     : '';
   const culpritRail = formatHiddenCulpritRail(state.hiddenStamps);
   const styleRail = state.campaignStyleRail?.trim();
+  const summonedPactPlace =
+    state.campaignBibleId === 'summoned-pact'
+      ? `\nLOCATION LANGUAGE (BINDING): Camera is HERE — Sevenfold Circle / Valespire Cathedral unless Location says otherwise. Never call this interior "a nearby building." "The court" is Pellane's Crown in this vault, not the enemy; the enemy polity is the Ash Court. Do not use "the court" as both current room and the enemy in the same beat.`
+      : '';
   return `=== CAMPAIGN GUIDE BOOK (RAILS — DO NOT CONTRADICT) ===
-${premise}${canon}${culpritRail ? `\n${culpritRail}` : ''}${styleRail ? `\n${styleRail}` : ''}
+${premise}${canon}${culpritRail ? `\n${culpritRail}` : ''}${styleRail ? `\n${styleRail}` : ''}${summonedPactPlace}
 Stay inside this premise. Side scenes, exploration, and side quests are allowed — they must still be THIS world, not a different genre.
 PREMISE CONTINUITY (BINDING): If the premise is modern Earth being Integrated, the player already lived here. They did not "arrive" as a fantasy traveler. Opening kit / worn clothes are authority. Never invent an iron shortsword or leather tunic that is not in Inventory.
 SITUATION QUESTIONS: "What's going on?" is answered from this premise + the last scene (street, crystals, people, System). Not from inventory labels. Not "the sheet".

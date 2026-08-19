@@ -20,6 +20,7 @@ John is playtesting live. Collect issues here. Do not implement until he asks fo
 
 ## Done (already shipped)
 
+- **2026-08-19e nearby-building tautology:** `proseWarden` strips “a nearby building/place/hall” used as the current room when the beat is already at a named interior (cathedral / circle / court / currentLocation). Prompt: camera is HERE; Summoned Pact honors Pellane’s court vs the Ash Court. HUD stamp 19e. Still no general “does this make sense” LLM critic.
 - **2026-08-19d Adventurer name + equipped set:** theme kit ring (`.sgm-turn-frame::before`) no longer covers the character name on the Adventurer card or paper-doll / sheet headers (`.sgm-frame-header`). Play chrome shows the Shop catalog name (`equipped set: Vampire Nocturne`). HUD stamp 19d
 - **2026-08-19c STATUS caption:** dropped the helper line “Turn results (XP, quests, loot) — not the in-world System voice”; Status header + result lines stay. HUD stamp 19c
 - **2026-08-19b Chapter One opener:** weekly cap no longer skips the first New Game splash; failed opener keeps Chapter One + compact hosted error + retry (no blank hole, no gold Milestone slab); generate-image CORS echoes Origin. HUD stamp 19b. Redeploy: `npx supabase functions deploy generate-image`

@@ -53,6 +53,8 @@ export const summonedPact: CampaignBible = {
 
   premise: `You were an ordinary person on Earth. A ritual in another world — the Sevenfold Circle, under Valespire Cathedral — pulled you through. The kingdom of Pellane summoned a [Pactborn] to end a war with the Ash Court. The System also rolled a second stamp: [Calamity Mark]. One summoned soul can carry either, or flicker between them. The court will call you Hero. The Ash Court will call you theirs. You do not have to answer either.
 
+LOCATION LANGUAGE (BINDING): Camera is HERE — the Sevenfold Circle under Valespire Cathedral unless Location has moved. Never call this interior "a nearby building." "The court" is Pellane's Crown / the people in this vault, not the enemy. The enemy polity is the Ash Court. Do not use "the court" as both current room and the enemy in the same beat.
+
 ORIGINALITY (BINDING): Never name published novels, anime, or games in play. Never import unique skill names, distinctive places, or plots from any series. Inn, guild, and dungeon are generic hubs with SynapticGM names only.
 
 GENRE PALETTE (ORIGINAL NAMES — use these):

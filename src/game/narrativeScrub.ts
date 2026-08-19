@@ -55,7 +55,7 @@ export function scrubInventedProperNouns(
 
   for (const name of Array.from(new Set(found))) {
     stripped.push(name);
-    text = replaceUngroundedName(text, name, guessGenericReplacement(name));
+    text = replaceUngroundedName(text, name, guessGenericReplacement(name, state));
   }
 
   for (const claim of interactionClaims) {
@@ -77,8 +77,19 @@ export function scrubInventedProperNouns(
 type GenericSlot = { afterThe: string; afterA: string; bare: string };
 
 /** Prefer role slots — never "someone nearby" as a spoken name. */
-function guessGenericReplacement(name: string): GenericSlot {
+function atNamedInterior(state: GameState): boolean {
+  const here = `${state.currentLocation ?? ''} ${state.locationSheet?.name ?? ''}`;
+  return /\b(cathedral|circle|court|vault|chapel|nave|undercroft|palace|temple|keep|castle|inn|hall|chamber)\b/i.test(
+    here
+  );
+}
+
+function guessGenericReplacement(name: string, state: GameState): GenericSlot {
   if (/\b(keep|tower|fort|castle|hall|manor|estate|temple|cathedral)\b/i.test(name)) {
+    // "Nearby" is for things that are not here — do not relocate the current interior.
+    if (atNamedInterior(state)) {
+      return { afterThe: 'this place', afterA: 'this place', bare: 'this place' };
+    }
     return { afterThe: 'the nearby building', afterA: 'a nearby building', bare: 'a nearby building' };
   }
   if (/\b(street|road|avenue|lane|alley|plaza)\b/i.test(name)) {

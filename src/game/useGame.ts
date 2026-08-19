@@ -1713,7 +1713,8 @@ export function useGame() {
         }
         openingText = ensureSystemReceipt(openingState, sanitizeOpeningNarration(openingText));
         openingText = applyProseWarden(
-          enforcePerspective(openingText, settingsRef.current, openingState.character.name)
+          enforcePerspective(openingText, settingsRef.current, openingState.character.name),
+          { currentLocation: openingState.currentLocation },
         );
         if (settingsRef.current.contentMode === 'kid') {
           openingText = filterKidModeText(openingText);
@@ -2527,7 +2528,9 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
       );
       cleanText = applyLocalityWarden(cleanText, workingState.currentLocation ?? liveCurrent.currentLocation, hasFirearm);
       cleanText = enforcePerspective(cleanText, settingsRef.current, liveCurrent.character.name);
-      cleanText = applyProseWarden(cleanText);
+      cleanText = applyProseWarden(cleanText, {
+        currentLocation: workingState.currentLocation ?? liveCurrent.currentLocation,
+      });
       {
         const leak = scanAndScrubLeaks(cleanText);
         if (leak.notes.length) {
@@ -3293,7 +3296,8 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
       }
       openingText = ensureSystemReceipt(newState, sanitizeOpeningNarration(openingText));
       openingText = applyProseWarden(
-        enforcePerspective(openingText, settingsRef.current, newState.character.name)
+        enforcePerspective(openingText, settingsRef.current, newState.character.name),
+        { currentLocation: newState.currentLocation },
       );
       if (settingsRef.current.contentMode === 'kid') {
         openingText = filterKidModeText(openingText);

@@ -213,7 +213,9 @@ export function runWarden(
   }
 
   const scrub = scrubInventedProperNouns(narrativeText, state, establishedProse);
-  const polished = applyProseWarden(scrub.text);
+  const polished = applyProseWarden(scrub.text, {
+    currentLocation: state.locationSheet?.name || state.currentLocation,
+  });
   if (scrub.stripped.length) {
     for (const name of scrub.stripped.slice(0, 6)) {
       notes.push(`Claim-ground scrub: ${name}`);

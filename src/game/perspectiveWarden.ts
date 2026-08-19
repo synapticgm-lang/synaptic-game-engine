@@ -1,7 +1,7 @@
 import type { Settings } from './types';
 
 const PLAYER_BODY_KIT =
-  'hand|hands|fingers|finger|phone|pockets|pocket|shoulders|shoulder|eyes|eye|grip|back|spine|boots|wallet|bag|backpack|clothes|outfit|arm|arms|wrist|chest|face|head|neck|knee|knees|leg|legs|foot|feet|palm|palms|thumb|thumbs|keys|leatherman';
+  'hand|hands|fingers|finger|phone|pockets|pocket|shoulders|shoulder|eyes|eye|grip|back|spine|boots|wallet|bag|backpack|clothes|outfit|hood|cloak|arm|arms|wrist|chest|face|head|neck|knee|knees|leg|legs|foot|feet|palm|palms|thumb|thumbs|keys|leatherman';
 
 const POV_VERBS =
   'steps|walks|runs|grabs|looks|turns|says|feels|thinks|reaches|crouches|freezes|edges|scans|grips|pauses|instinctively|watches|brushes|carries|holds|checks|pulls|opens|closes|stands|sits|kneels|answers|asks|speaks|waits|nods|lifts|drops|keeps|starts|stops|tries|searches|places|puts|draws|stares|listens|hears|knows|finds|takes|gives|shakes|raises|lowers';

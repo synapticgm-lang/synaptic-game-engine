@@ -8,9 +8,9 @@ import { effectiveWriterTier, isTestLabEnabled } from '../game/testLab';
 import { equippedSetLabel, equippedSetName } from '../game/uiTheme';
 
 /** Visible after a hard refresh — if this is missing, Vercel is still serving the 16 Aug bundle. */
-export const HUD_BUILD_STAMP = '2026-08-19d';
+export const HUD_BUILD_STAMP = '2026-08-19e';
 const HUD_BUILD_TITLE =
-  'Debug 2026-08-19d — Adventurer name clears kit ring; equipped set label in play chrome';
+  'Debug 2026-08-19e — nearby-building tautology rail; camera is HERE';
 
 interface Props {
   state: GameState;
