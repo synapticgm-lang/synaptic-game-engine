@@ -20,4 +20,6 @@ Choices are Tier-3 outputs and MUST be generated ONLY after the turn's story pro
   - Curious / talk / ask / bargain / hang out
   - Walk away / ignore / go another direction — unless combat is locking them in
   Combat-locked turns stay fight moves. Opening cover questions stay covers. PYOA stays authored forks (talk/refuse/walk still count; do not invent a fake sandbox).
-  There is NO numeric karma or alignment meter. Named people remember how they were treated.`;
+  There is NO numeric karma or alignment meter. Named people remember how they were treated.
+* HONOR THE LAST ASK: If the player asked a question, the story must answer it. "You could inquire about X" is not an answer. Numbered options and "Inquire about…" in the paragraph MUST appear as the bottom buttons (3–4, including a stake) and be stripped from the body.
+* CONVERSATION: While talking with a named person, do not replace the beat with "Inspect the immediate surroundings" as the only real chip. Continue the talk (ask/refuse) plus one walk-away.`;

@@ -158,7 +158,7 @@ import {
 import { formatCombatReceipt } from './combatReceipt';
 import { scanAndScrubLeaks } from './leakScanner';
 import { enrichQuests } from './questJournalEnrich';
-import { extractUpdates, extractNewItems, parseActionTags, stripActionTags, matchLoreCards, eventsToLoreCards, parseTurnFrame, eventsToQuestUpdates, eventsToEncounterUpdate, parsePanels, eventsToMilestone, eventsToLootVideo, eventsToVisualUpdate, stripChoiceList, extractChoiceLines, stripTurnCloser, storyHasBody } from './parser';
+import { extractUpdates, extractNewItems, parseActionTags, stripActionTags, matchLoreCards, eventsToLoreCards, parseTurnFrame, eventsToQuestUpdates, eventsToEncounterUpdate, parsePanels, eventsToMilestone, eventsToLootVideo, eventsToVisualUpdate, stripChoiceList, extractChoiceLines, stripTurnCloser, storyHasBody, looksLikeChoiceOffer } from './parser';
 import { hasRealGmStory } from './turnAsk';
 import { encounterOriginPlace } from './locationName';
 import { clampLeakedOpeningQuests, extractNamedPlaces, harvestPlayText, isGenericMapPlace, mapAnchorName, newlyRevealedQuests, questsLockedDuringOpening, revealLocalStarterQuest, syncQuestsFromPlay } from './questPlay';
@@ -2260,6 +2260,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
         state: suggestionState,
         loreCards: activeLoreCards,
         settings: settingsRef.current,
+        lastPlayerAction: sanitizedInput,
       });
       const habitAugmented = extractChoicesFromText(
         pipelineChoices.choices.map((c, i) => `${i + 1}. ${c}`).join('\n'),
@@ -2290,9 +2291,16 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
       const groundedAfterResolve = focusFiltered.filter((choice) =>
         isChoiceGroundedInTurn(choice, normalizeStoryCorpus(cleanText), suggestionState, activeLoreCards)
       );
+      const harvestedOffers = extractChoiceLines(narrativeSource).filter((c) => looksLikeChoiceOffer(c));
+      const withInProseOffers = [...groundedAfterResolve];
+      for (const offer of harvestedOffers) {
+        if (!withInProseOffers.some((c) => c.toLowerCase() === offer.toLowerCase())) {
+          withInProseOffers.unshift(offer);
+        }
+      }
       const finalChoices = padChoicesToCount(
-        groundedAfterResolve.length > 0
-          ? groundedAfterResolve
+        withInProseOffers.length > 0
+          ? withInProseOffers
           : sceneSafeFallbacks(suggestionState, normalizeStoryCorpus(cleanText), sanitizedInput),
         suggestionState,
         normalizeStoryCorpus(cleanText),

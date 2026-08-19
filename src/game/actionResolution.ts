@@ -75,6 +75,7 @@ export function isUnresolvedActionNarrative(
   if (asksIfEveryoneGotGear(playerAction) && !proseAnswersEveryoneGear(prose)) return true;
   if (isCreatureWithoutRoom(playerAction, prose)) return true;
   if (isHealQuestion(playerAction) && !proseAnswersHeal(prose)) return true;
+  if (isPlayerQuestion(playerAction) && !gmBeatAnswersPlayerAsk(playerAction, narrative)) return true;
   if (
     intent.kind === 'attack'
     && !/\b(strike|stab|cut|slash|hit|knife|blow|drive|wrench|claw|blood|miss|dodge|parry|shriek)\b/i.test(prose)
@@ -91,7 +92,6 @@ export function isUnresolvedActionNarrative(
   if (speech) {
     if (!proseResolvesSpeech(prose)) return true;
     if (isRecycledTalkBeat(prose, previousNarrative)) return true;
-    if (isPlayerQuestion(playerAction) && !proseAnswersPlayerAsk(playerAction, prose)) return true;
     // Atmosphere / premise keywords alone must not count as answering dialogue.
     return false;
   }
@@ -145,6 +145,7 @@ REQUIRED:
 10. Story first, then <system-log>. Never emit XP Gained: 0. Never reply with a system-log and no story. Never emit Action Resolved / CODE ENFORCED / bare XP:0/300 lines.
 11. Do NOT echo the location label as a sentence. Do NOT invent loot or named enemies without tags.
 12. If they asked a clarifying question (terms, worth, what happens if): ANSWER it with concrete terms. Do not stall with "awaits your response", soft-reset the ask, or paste a prior paragraph.
+13. Do NOT spend the turn on "you could inquire", "inquire about X", or "ask the elder to elaborate" instead of answering. Those are player buttons, not the story. The typed question must get an in-world answer this beat.
 Then give 3–4 choices grounded in what you just described — not objects you never narrated.
 ===========================================================`;
 }
@@ -155,6 +156,38 @@ export function isPlayerQuestion(action: string): boolean {
   return /\b(what|how|why|where|who|when|can i|could i|would you|tell me|explain|details|if i (?:agree|refuse|don'?t)|what (?:do|does|happens|if)|how (?:might|do|can)|prove)\b/i.test(
     t
   );
+}
+
+const OFFER_ONLY_ASK_RE =
+  /\b(?:you could (?:ask|inquire)|you might (?:ask|inquire)|perhaps (?:you )?(?:ask|inquire)|you may (?:wish to |want to )?(?:ask|inquire)|consider asking|inquire about|ask (?:the \w+|him|her|them) to (?:elaborate|explain))\b/i;
+
+/**
+ * GM spent the beat offering more questions / look-around instead of answering.
+ * "You could inquire about X" is not an answer.
+ */
+export function isOfferOnlyUnansweredBeat(narrative: string): boolean {
+  const prose = proseOnly(narrative);
+  if (!prose) return false;
+  if (!OFFER_ONLY_ASK_RE.test(prose)) return false;
+  const npcAnswered =
+    /["“][^"”]{12,}["”]/.test(prose)
+    && /\b(says?|said|replies|replied|answers?|answered|explains?|explained|means)\b/i.test(prose);
+  return !npcAnswered;
+}
+
+function hasQuotedAnswer(prose: string): boolean {
+  return /["“][^"”]{12,}["”]/.test(prose);
+}
+
+/** Last player line was a question: this beat must answer it in-world. */
+export function gmBeatAnswersPlayerAsk(playerAction: string, narrative: string): boolean {
+  if (!isPlayerQuestion(playerAction)) return true;
+  const prose = proseOnly(narrative);
+  if (isOfferOnlyUnansweredBeat(prose)) return false;
+  if (proseAnswersPlayerAsk(playerAction, prose)) return true;
+  const tokens = askKeywordTokens(playerAction);
+  const hits = tokens.filter((t) => prose.toLowerCase().includes(t)).length;
+  return hasQuotedAnswer(prose) && hits >= Math.min(2, Math.max(1, tokens.length));
 }
 
 function askKeywordTokens(action: string): string[] {

@@ -10,6 +10,7 @@ import {
   primaryActionClause,
   type PlayerIntent,
 } from './intentParser';
+import { isOfferOnlyUnansweredBeat } from './actionResolution';
 
 function isPlayerQuestion(action: string): boolean {
   const t = action.replace(/\s+/g, ' ').trim();
@@ -249,6 +250,11 @@ export function checkObligationCoverage(
         break;
       case 'answer':
       case 'open_ask': {
+        if (isOfferOnlyUnansweredBeat(prose)) {
+          covered = false;
+          notes.push(`Answer obligation skipped: beat only offers more questions (${o.kind})`);
+          break;
+        }
         const tokens = (o.source ?? o.must)
           .toLowerCase()
           .match(/[a-z]{4,}/g)

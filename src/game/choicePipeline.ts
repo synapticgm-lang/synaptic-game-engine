@@ -1,5 +1,5 @@
 import type { GameState, LoreCard, Settings } from './types';
-import { extractChoiceLines, stripChoiceList } from './parser';
+import { extractChoiceLines, stripChoiceList, looksLikeChoiceOffer } from './parser';
 import { playerFacingLocation } from './locationName';
 import {
   fallbackSuggestionForState,
@@ -8,7 +8,7 @@ import {
 } from './suggestionValidation';
 import { logger } from './logger';
 import { getTierDefinition } from './subscriptionTiers';
-import { applyStanceDensity, isCombatLockedTurn } from './stanceDensity';
+import { applyStanceDensity, classifyStance, isCombatLockedTurn } from './stanceDensity';
 
 /**
  * 4-tier narrative pipeline (authoritative ordering for choice generation):
@@ -349,6 +349,20 @@ export function filterChoicesToTurnFacts(
   return { kept, rejected };
 }
 
+/** In-prose numbered / inquire offers become chips even if grounding is fussy about role nouns. */
+function restoreHarvestedOffers(rawChoices: string[], kept: string[]): string[] {
+  const merged = [...kept];
+  for (const choice of rawChoices) {
+    const cleaned = stripChoiceDecorators(choice);
+    if (!looksLikeChoiceOffer(cleaned)) continue;
+    if (classifyStance(cleaned) === 'lookaround') continue;
+    if (!merged.some((c) => c.toLowerCase() === cleaned.toLowerCase())) {
+      merged.unshift(cleaned);
+    }
+  }
+  return merged;
+}
+
 function buildTierContext(state: GameState, loreCards: LoreCard[], storyProse: string): string {
   const t1 = [
     `Location: ${playerFacingLocation(state)}`,
@@ -411,7 +425,8 @@ STRICT RULES:
 8. NEVER name cities, hubs, outposts, or survivor camps the player has not visited.
 9. Choices must be actionable and scene-local (observe, talk, move carefully, use carried gear, react to the last beat).
 10. STANCE DENSITY: On non-lethal beats, do NOT emit three look-around / wait / inspect-surroundings options. Prefer a mix of kind/help, hard/refuse, talk/ask, and walk-away when combat is not locking them in. Combat-locked turns stay fight moves.
-11. Output ONLY a numbered list like:
+11. CONVERSATION: If the player is talking with a named person (elder, court, priest), choices MUST continue that conversation (ask/answer/refuse/walk away). Never emit "Inspect the immediate surroundings" as the only real option.
+12. Output ONLY a numbered list like:
 1. ...
 2. ...
 3. ...
@@ -576,12 +591,12 @@ export function padChoicesToCount(
   if (isLookAroundChoice(lastPlayerAction)) {
     merged = merged.filter((c) => !isLookAroundChoice(c));
   }
-  if (merged.length >= min) return applyStanceDensity(merged.slice(0, 4), state, storyProse);
+  if (merged.length >= min) return applyStanceDensity(merged.slice(0, 4), state, storyProse, lastPlayerAction);
   for (const extra of sceneSafeFallbacks(state, storyProse, lastPlayerAction)) {
     if (merged.length >= min) break;
     if (!merged.some((c) => c.toLowerCase() === extra.toLowerCase())) merged.push(extra);
   }
-  return applyStanceDensity(merged.slice(0, 4), state, storyProse);
+  return applyStanceDensity(merged.slice(0, 4), state, storyProse, lastPlayerAction);
 }
 
 export interface ChoicePipelineResult {
@@ -599,16 +614,19 @@ export async function resolvePipelineChoices(params: {
   state: GameState;
   loreCards: LoreCard[];
   settings: Settings;
+  lastPlayerAction?: string;
 }): Promise<ChoicePipelineResult> {
   const { gmText, state, loreCards, settings } = params;
+  const lastPlayerAction = params.lastPlayerAction ?? '';
   const storyProse = normalizeStoryCorpus(gmText);
   const rawChoices = extractChoiceLines(gmText);
 
   const firstPass = filterChoicesToTurnFacts(rawChoices, storyProse, state, loreCards);
+  const firstKept = restoreHarvestedOffers(rawChoices, firstPass.kept);
   // Two grounded options are enough — pad locally instead of another model call.
-  if (firstPass.kept.length >= 2) {
+  if (firstKept.length >= 2 || rawChoices.some((c) => looksLikeChoiceOffer(c))) {
     return {
-      choices: padChoicesToCount(firstPass.kept, state, storyProse),
+      choices: padChoicesToCount(firstKept, state, storyProse, 3, lastPlayerAction),
       regenerated: false,
       rejectedCount: firstPass.rejected.length,
     };
@@ -629,9 +647,14 @@ export async function resolvePipelineChoices(params: {
     const regenerated = await regenerateChoices(state, loreCards, storyProse, settings, rejectedSummary);
     const secondPass = filterChoicesToTurnFacts(regenerated, storyProse, state, loreCards);
     const merged = padChoicesToCount(
-      Array.from(new Set([...secondPass.kept, ...firstPass.kept])),
+      restoreHarvestedOffers(
+        rawChoices,
+        Array.from(new Set([...secondPass.kept, ...firstPass.kept]))
+      ),
       state,
-      storyProse
+      storyProse,
+      3,
+      lastPlayerAction
     );
     if (merged.length >= 2) {
       return {
@@ -646,8 +669,14 @@ export async function resolvePipelineChoices(params: {
     });
   }
 
-  const fallbacks = sceneSafeFallbacks(state, storyProse);
-  const merged = padChoicesToCount(Array.from(new Set([...firstPass.kept, ...fallbacks])), state, storyProse);
+  const fallbacks = sceneSafeFallbacks(state, storyProse, lastPlayerAction);
+  const merged = padChoicesToCount(
+    restoreHarvestedOffers(rawChoices, Array.from(new Set([...firstPass.kept, ...fallbacks]))),
+    state,
+    storyProse,
+    3,
+    lastPlayerAction
+  );
   return {
     choices: merged,
     regenerated: true,

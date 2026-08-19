@@ -9,6 +9,7 @@ const NAMED_INTERACTION =
 const GENERIC_SCENE_ROLES = new Set([
   'around', 'locals', 'guard', 'guards', 'merchant', 'innkeeper', 'bartender', 'villager',
   'villagers', 'stranger', 'prisoner', 'enemy', 'enemies', 'figure', 'silhouette', 'crowd',
+  'elder', 'priest', 'herald', 'courtier', 'acolyte', 'sage', 'attendant',
 ]);
 
 /** Soft interactable / invented object claims in choices or free text. */
@@ -294,6 +295,10 @@ export function isLockedProgressionChoice(choice: string, state: GameState): boo
 
 export function fallbackSuggestionForState(state: GameState): string {
   if (state.activeEncounter) return 'Assess the enemy and surroundings';
+  const recentNpc = (state.npcMemories ?? []).some(
+    (m) => m.npcName?.trim() && (state.turn - (m.lastSeenTurn ?? 0)) <= 10
+  );
+  if (recentNpc || (state.companions ?? []).length > 0) return 'Ask what is going on';
   if (state.activeDungeon || state.currentLocation) return 'Inspect the immediate surroundings';
   return 'Observe the environment carefully';
 }

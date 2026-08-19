@@ -75,9 +75,37 @@ function namedPeople(state: GameState): string[] {
 function someonePresent(state: GameState, storyProse: string): boolean {
   if (namedPeople(state).length > 0) return true;
   if ((state.sceneFacts?.crowd ?? 'unknown') === 'present') return true;
-  return /\b(he says|she says|they say|asks you|watches you|merchant|guard|innkeep|barkeep|clerk|someone|crowd|people)\b/i.test(
+  return /\b(he says|she says|they say|asks you|watches you|merchant|guard|innkeep|barkeep|clerk|someone|crowd|people|elder|priest)\b/i.test(
     storyProse
   );
+}
+
+function lastPlayerLine(state: GameState, override = ''): string {
+  if (override.trim()) return override;
+  const log = state.log ?? [];
+  for (let i = log.length - 1; i >= 0; i--) {
+    if (log[i]?.role === 'player') return log[i].content ?? '';
+  }
+  return '';
+}
+
+/** Talking with a named person — look-around must not be the only real chip. */
+export function isConversationBeat(
+  state: GameState,
+  storyProse: string,
+  lastPlayerAction = ''
+): boolean {
+  if (isCombatLockedTurn(state) || isOpeningCoverTurn(state)) return false;
+  const last = lastPlayerLine(state, lastPlayerAction);
+  const playerTalk =
+    /\?/.test(last)
+    || /\b(ask|tell|speak|talk|explain|what|why|how|who|where|inquire)\b/i.test(last);
+  const sceneTalk =
+    someonePresent(state, storyProse)
+    || /\b(elder|priest|herald|courtier|acolyte|sage|says?|said|asks?|asked|replies|replied)\b/i.test(
+      storyProse
+    );
+  return sceneTalk && (playerTalk || /\b(says?|said|asks?|asked|replies|elder)\b/i.test(storyProse));
 }
 
 function canWalkAway(state: GameState, storyProse: string): boolean {
@@ -106,19 +134,22 @@ function stanceFallbacks(state: GameState): Record<Exclude<StanceBucket, 'lookar
 export function applyStanceDensity(
   choices: string[],
   state: GameState,
-  storyProse = ''
+  storyProse = '',
+  lastPlayerAction = ''
 ): string[] {
   const cleaned = Array.from(new Set(choices.map((c) => c.trim()).filter(Boolean)));
   if (isOpeningCoverTurn(state)) return cleaned.slice(0, 4);
   if (isCombatLockedTurn(state)) return cleaned.slice(0, 4);
 
+  const conversation = isConversationBeat(state, storyProse, lastPlayerAction);
   let lookCount = 0;
-  const kept: string[] = [];
+  let kept: string[] = [];
   for (const choice of cleaned) {
     const bucket = classifyStance(choice);
     if (bucket === 'lookaround') {
       lookCount += 1;
       if (lookCount > 1) continue;
+      if (conversation) continue;
     }
     kept.push(choice);
   }
@@ -127,19 +158,25 @@ export function applyStanceDensity(
     return kept.slice(0, 4);
   }
 
-  const present = someonePresent(state, storyProse);
+  const present = someonePresent(state, storyProse) || conversation;
   const walkOk = canWalkAway(state, storyProse);
   const buckets = new Set(kept.map(classifyStance));
   const fallbacks = stanceFallbacks(state);
   const needed: Array<'kind' | 'hard' | 'curious' | 'walkaway'> = [];
-  if (present && !buckets.has('kind')) needed.push('kind');
-  if (present && !buckets.has('hard')) needed.push('hard');
-  if (present && !buckets.has('curious')) needed.push('curious');
-  if (walkOk && !buckets.has('walkaway')) needed.push('walkaway');
+  if (conversation) {
+    if (!buckets.has('curious')) needed.push('curious');
+    if (walkOk && !buckets.has('walkaway')) needed.push('walkaway');
+    if (present && !buckets.has('hard')) needed.push('hard');
+  } else {
+    if (present && !buckets.has('kind')) needed.push('kind');
+    if (present && !buckets.has('hard')) needed.push('hard');
+    if (present && !buckets.has('curious')) needed.push('curious');
+    if (walkOk && !buckets.has('walkaway')) needed.push('walkaway');
+  }
 
   // Typical non-lethal beat: at least two stance colours, not a look-around stack.
   const stanceCount = ['kind', 'hard', 'curious', 'walkaway'].filter((b) => buckets.has(b as StanceBucket)).length;
-  if (stanceCount >= 2 && needed.length === 0) return kept.slice(0, 4);
+  if (!conversation && stanceCount >= 2 && needed.length === 0) return kept.slice(0, 4);
 
   for (const key of needed) {
     if (kept.length >= 4) break;
@@ -148,6 +185,11 @@ export function applyStanceDensity(
       kept.push(extra);
       buckets.add(key);
     }
+  }
+
+  if (conversation) {
+    const nonLook = kept.filter((c) => classifyStance(c) !== 'lookaround');
+    if (nonLook.length >= 1) kept = nonLook;
   }
 
   return kept.slice(0, 4);

@@ -6,6 +6,7 @@ import type {
   NpcMemory,
   TurnSummary,
 } from './types';
+import { isOfferOnlyUnansweredBeat } from './actionResolution';
 
 const PLAYER_PIN_LIMIT = 10;
 /** Soft token budget for memory middle section (~4 chars/token). */
@@ -216,6 +217,10 @@ export function resolveConsequences(
         return { ...c, unresolved: false };
       }
       // Open ask answered when several content words from the ask appear in the reply.
+      // "You could inquire about X" is not an answer — keep the pin live.
+      if (/^open ask\b/i.test(c.text) && isOfferOnlyUnansweredBeat(narrative)) {
+        return c;
+      }
       if (/^open ask\b/i.test(c.text)) {
         const askBody = c.text.replace(/^open ask\s*\(t\d+\):\s*/i, '');
         const words = askBody

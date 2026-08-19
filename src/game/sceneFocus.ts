@@ -102,7 +102,8 @@ RULES:
 10. Story first, then <system-log>. Never emit XP Gained: 0. Never reply with a system-log and no story. Never emit Action Resolved, CODE ENFORCED, or bare XP:0/300 sheet dumps.
 11. Honor the configured PERSPECTIVE for the entire turn — do not switch mid-beat. Spoken lines must be grammatical. Never emit "a figure" as a name, "the a" / "a the", or "unlock someone" as in-world speech.
 12. If an unresolved spoken interruption is on the ledger (someone began to speak and was shut down), return to that thread this turn or say why they stay silent.
-13. If an Open ask is on the ledger (deal terms, prove worth, what happens if): ANSWER it this turn with concrete terms. Do not stall with atmosphere, soft-reset the ask, or paste a prior paragraph.
+13. If an Open ask is on the ledger (deal terms, prove worth, what happens if): ANSWER it this turn with concrete terms. Do not stall with atmosphere, "you could inquire", soft-reset the ask, or paste a prior paragraph.
+14. If the player's last line is a question: answer THAT question in-world. Do not spend the beat offering more questions as fake menu text. Numbered choices and "Inquire about…" belong as the 3–4 buttons at the end.
 Player engaged quest-focus locations this turn: ${engaged ? 'YES' : 'NO'}
 ========================================================
 ${contractBlock}`;

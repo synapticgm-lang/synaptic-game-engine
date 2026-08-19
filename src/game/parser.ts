@@ -88,6 +88,87 @@ const CHOICE_HEADER_REGEX = /(?:what do you do|options|choices|actions|what will
 // Supported forms include `1. Action`, `1) Action`, `Option 1: Action`, `[1] Action`,
 // `(1) Action`, and markdown-emphasized variants such as `**1.** Action`.
 const CHOICE_LINE_REGEX = /^\s*(?:\*\*|\*)?\s*(?:(?:Option\s+)?\d+[.):]|\[\d+\]|\(\d+\))\s*(?:\*\*|\*)?\s+(.+)$/i;
+const NUMBERED_CHOICE_PREFIX =
+  /(?:\*\*)?(?:(?:Option\s+)?\d+[.):]|\[\d+\]|\(\d+\))\s+(?:\*\*)?/i;
+const CHOICE_OFFER_VERBS =
+  /^(?:ask|inquire|inspect|examine|talk|speak|tell|approach|leave|walk away|refuse|offer|demand|listen|wait|search|look|follow|challenge|bow|kneel|accept|decline|press|probe|question|bargain|help|protect|thank|apologiz|observe|check|call|shout|whisper|confront|defy|agree)\b/i;
+const IN_PROSE_OFFER_SENTENCE =
+  /(?:^|[.!?]\s+)((?:Inquire about|Ask (?:the \w+|him|her|them)(?: to| about)|Ask about)\b[^.!?\n]{8,140})/gi;
+const MECHANIC_SYSTEM_BODY =
+  /\b(quest updated|level up|xp gained|input accepted|registration complete|action failed|hp\s*:|mp\s*:|setup complete|thank you)\b/i;
+
+function cleanChoiceText(raw: string): string {
+  return raw
+    .replace(/^\s*["']|["']\s*$/g, '')
+    .replace(/\*\*(.*?)\*\*/g, '$1')
+    .replace(/\*(.*?)\*/g, '$1')
+    .replace(/`([^`]+)`/g, '$1')
+    .replace(/<[^>]+>/g, '')
+    .trim();
+}
+
+/** True when a line is a fake in-prose menu option (should become a chip). */
+export function looksLikeChoiceOffer(raw: string): boolean {
+  const t = cleanChoiceText(raw.replace(/^[\s✨🎲⭐️•\-–—*]+/u, ''));
+  if (t.length < 8 || t.length > 160) return false;
+  if (/^what do you do\??$/i.test(t)) return false;
+  if (/^["“]/.test(t)) return false;
+  return CHOICE_OFFER_VERBS.test(t);
+}
+
+function harvestSystemChoiceOffers(text: string): string[] {
+  const out: string[] = [];
+  const re = /<system>([\s\S]*?)<\/system>/gi;
+  let m: RegExpExecArray | null;
+  while ((m = re.exec(text)) !== null) {
+    const body = cleanChoiceText(m[1] ?? '');
+    if (looksLikeChoiceOffer(body) && !MECHANIC_SYSTEM_BODY.test(body)) out.push(body);
+  }
+  return out;
+}
+
+function pushChoice(choices: string[], raw: string): void {
+  const clean = cleanChoiceText(raw);
+  if (
+    clean.length > 2
+    && clean.length < 160
+    && !/^what do you do\??$/i.test(clean)
+    && !choices.some((c) => c.toLowerCase() === clean.toLowerCase())
+  ) {
+    choices.push(clean);
+  }
+}
+
+function stripHarvestedChoiceOffers(text: string): string {
+  let next = text;
+  next = next.replace(/<system>([\s\S]*?)<\/system>/gi, (full, body) => {
+    const cleaned = cleanChoiceText(String(body ?? ''));
+    if (looksLikeChoiceOffer(cleaned) && !MECHANIC_SYSTEM_BODY.test(cleaned)) return '';
+    return full;
+  });
+  next = next
+    .split('\n')
+    .filter((line) => {
+      const match = line.match(CHOICE_LINE_REGEX);
+      if (match?.[1] && looksLikeChoiceOffer(match[1])) return false;
+      const trimmed = line.trim();
+      if (looksLikeChoiceOffer(trimmed) && /^(?:inquire about|ask (?:the |him |her |them |about ))/i.test(trimmed)) {
+        return false;
+      }
+      return true;
+    })
+    .join('\n');
+  next = next.replace(
+    new RegExp(`(?:^|\\s)${NUMBERED_CHOICE_PREFIX.source}([^\\n]+)`, 'gi'),
+    (full, body) => (looksLikeChoiceOffer(String(body ?? '')) ? '' : full)
+  );
+  next = next.replace(IN_PROSE_OFFER_SENTENCE, (full, body) => {
+    if (!looksLikeChoiceOffer(String(body ?? ''))) return full;
+    if (/^[.!?]\s/.test(full)) return full.charAt(0);
+    return '';
+  });
+  return next.replace(/\n{3,}/g, '\n\n').replace(/[ \t]+\n/g, '\n').trim();
+}
 
 /**
  * Removes the trailing GM-generated choice list (explicitly numbered options, with or
@@ -130,6 +211,8 @@ export function stripChoiceList(text: string): string {
     result = result.slice(0, inlineIdx).trim();
   }
   result = result.replace(/\s+\d+[.)]\s+what do you do\??\s*$/i, '').trim();
+  // Singleton numbered / "Inquire about…" lines left in the paragraph are fake menus.
+  result = stripHarvestedChoiceOffers(result);
   return stripTurnCloser(result);
 }
 
@@ -150,52 +233,44 @@ export function extractChoiceLines(text: string): string[] {
     targetText = headerMatch[1];
   }
 
-  const lines = targetText.split('\n');
   const choices: string[] = [];
 
-  for (const line of lines) {
+  for (const line of targetText.split('\n')) {
     const trimmed = line.trim();
     if (!trimmed) continue;
 
     const match = trimmed.match(CHOICE_LINE_REGEX);
-    if (match && match[1]) {
-      const clean = match[1]
-        .replace(/^\s*["']|["']\s*$/g, '')
-        .replace(/\*\*(.*?)\*\*/g, '$1')
-        .replace(/\*(.*?)\*/g, '$1')
-        .replace(/`([^`]+)`/g, '$1')
-        .replace(/<[^>]+>/g, '')
-        .trim();
-
-      if (
-        clean.length > 2
-        && clean.length < 160
-        && !/^what do you do\??$/i.test(clean)
-      ) {
-        choices.push(clean);
-      }
+    if (match?.[1]) {
+      pushChoice(choices, match[1]);
+      continue;
+    }
+    if (
+      looksLikeChoiceOffer(trimmed)
+      && /^(?:inquire about|ask (?:the |him |her |them |about ))/i.test(trimmed)
+    ) {
+      pushChoice(choices, trimmed);
     }
   }
 
-  if (choices.length < 2) {
-    const inline = targetText.match(/\d+[.)]\s+([^\n]+?)(?=\s+\d+[.)]|\s+what do you do|$)/gi) ?? [];
-    for (const raw of inline) {
-      const cleaned = raw
-        .replace(/^\s*\d+[.)]\s+/, '')
-        .replace(/<[^>]+>/g, '')
-        .replace(/\*\*(.*?)\*\*/g, '$1')
-        .trim();
-      if (
-        cleaned.length > 2
-        && cleaned.length < 160
-        && !/^what do you do\??$/i.test(cleaned)
-      ) {
-        choices.push(cleaned);
-      }
-    }
+  // Inline numbered options, including a singleton "1. Ask the elder…" jammed into a paragraph.
+  const inline =
+    targetText.match(
+      /\d+[.)]\s+([^\n]+?)(?=\s+\d+[.)]|\s+what do you do|$)/gi
+    ) ?? [];
+  for (const raw of inline) {
+    const cleaned = raw.replace(/^\s*\d+[.)]\s+/, '').trim();
+    if (looksLikeChoiceOffer(cleaned) || choices.length === 0) pushChoice(choices, cleaned);
   }
 
-  return Array.from(new Set(choices));
+  for (const offer of harvestSystemChoiceOffers(text)) pushChoice(choices, offer);
+
+  const offerRe = new RegExp(IN_PROSE_OFFER_SENTENCE.source, IN_PROSE_OFFER_SENTENCE.flags);
+  let m: RegExpExecArray | null;
+  while ((m = offerRe.exec(targetText)) !== null) {
+    if (looksLikeChoiceOffer(m[1] ?? '')) pushChoice(choices, m[1]);
+  }
+
+  return choices;
 }
 
 export function extractUpdates(state: GameState, gmText: string): Partial<GameState> {
