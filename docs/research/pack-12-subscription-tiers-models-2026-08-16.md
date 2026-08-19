@@ -1,10 +1,10 @@
 # Pack 12 — Subscription tiers, models & Flux (locked 16 Aug 2026)
 
-**Status:** Wired in code (`subscriptionTiers.ts`, `capacityLedger.ts`, `fluxDirect.ts`). Billing UI not live — tier stored locally.
+**Status:** Wired in code (`subscriptionTiers.ts`, `capacityLedger.ts`, `fluxDirect.ts`). Catalog refreshed **2026-08-19u** (Flash Lite / Haiku / Sonnet 4.6 + Klein 4B). Billing UI not live — tier stored locally.
 
 ## Flux routing
 
-**Now:** `imageProvider: 'flux'` → **OpenRouter** (`flux-schnell` / `flux-dev` by tier).  
+**Now:** `imageProvider: 'flux'` → **OpenRouter** (`flux.2-klein-4b` Free/Mid memorable; `flux.2-pro` High plates).  
 **Later:** flip to `imageProvider: 'flux-direct'` + `fluxApiKey` → same tier map hits BFL (`flux-2-klein-*` / `flux-2-pro`). Callers unchanged (`generateComicImage`).
 
 `fluxDirect.ts` stays ready; not used until you switch the provider flag.
@@ -13,7 +13,7 @@
 
 | | Free | Mid £14.99 | High £29.99 |
 |--|------|------------|-------------|
-| Writer (OpenRouter) | `google/gemini-2.5-flash-lite` | `google/gemini-3.5-flash` | `anthropic/claude-sonnet-4.5` |
+| Writer (OpenRouter) | `google/gemini-2.5-flash-lite` | `anthropic/claude-haiku-4.5` | `anthropic/claude-sonnet-4.6` |
 | Text turns/day | 12 | 20 | 24 |
 | Memorable/week | 5 | 20 | 40 |
 | Illustrated/day (later) | trial 10 once | 6 | 10 |

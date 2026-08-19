@@ -71,7 +71,6 @@ import {
 import { applyCommittedNarrative, extractSceneFacts, seedOpeningSceneFacts, rewriteContinuityBreak, detectSceneContradiction } from './sceneFacts';
 import { applyFactLocks, detectFactLockViolations } from './factLocks';
 import { dropInsultGear } from './wornGear';
-import { equippedItemsNeedingIcons, itemIconPrompt, needsPortraitRefresh, paperDollPrompt, portraitCacheKey } from './inventoryArt';
 import { formatCampaignStoryName, getCampaignBibleById, isNsfwCampaign } from '@/data/campaigns';
 import { applyAccusationFromInput } from './mysteryCulprit';
 import { parsePlayerIntent, groundPlayerAction, isSpeechOrProtest } from './intentParser';
@@ -3767,108 +3766,6 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
     void autoFight();
   }, [state?.activeEncounter?.name, state?.activeEncounter?.maxHp, state?.activeEncounter?.level, settings.combatResolveMode, busy, autoFight]);
 
-  const inventoryArtJobs = useRef(new Map<string, Promise<string | null>>());
-  const generateInventoryArt = useCallbackRef(async (
-    prompt: string,
-    kind: Extract<ImagePromptKind, 'item-icon' | 'character-portrait'>
-  ): Promise<string | null> => {
-    const current = stateRef.current;
-    if (!current) return null;
-    const jobKey = `${kind}:${prompt}`;
-    const existing = inventoryArtJobs.current.get(jobKey);
-    if (existing) return existing;
-    const job = (async () => {
-      try {
-        return await fetchPanelImage(
-          prompt,
-          settingsRef.current,
-          kind,
-          sceneImageContext(kind === 'character-portrait' ? buildVisualConsistencyBlock(current, []) : undefined)
-        );
-      } catch {
-        return null;
-      } finally {
-        inventoryArtJobs.current.delete(jobKey);
-      }
-    })();
-    inventoryArtJobs.current.set(jobKey, job);
-    return job;
-  });
-
-  const commitInventoryArt = useCallbackRef((patch: {
-    itemIcons?: Record<string, string>;
-    itemIconFails?: Record<string, true>;
-    portraitUrl?: string;
-    portraitKey?: string;
-    portraitFailed?: boolean;
-  }) => {
-    const current = stateRef.current;
-    if (!current) return;
-    const inventory = (patch.itemIcons || patch.itemIconFails)
-      ? current.inventory.map((item) => {
-          if (patch.itemIcons?.[item.id]) return { ...item, iconUrl: patch.itemIcons[item.id], iconFailed: false };
-          if (patch.itemIconFails?.[item.id]) return { ...item, iconFailed: true };
-          return item;
-        })
-      : current.inventory;
-    let character = current.character;
-    if (patch.portraitUrl) {
-      character = {
-        ...character,
-        portraitUrl: patch.portraitUrl,
-        portraitKey: patch.portraitKey,
-        portraitFailed: false,
-      };
-    } else if (patch.portraitFailed) {
-      character = { ...character, portraitKey: patch.portraitKey, portraitFailed: true };
-    }
-    const next = { ...current, inventory, character, lastUpdated: Date.now() };
-    stateRef.current = next;
-    setState(next);
-    void persist(next);
-  });
-
-  const portraitLock = useRef(false);
-  useEffect(() => {
-    const current = state;
-    if (!current || busy || showCharacterWindow || portraitLock.current) return;
-    if (equippedItemsNeedingIcons(current).length === 0 && !needsPortraitRefresh(current)) return;
-    portraitLock.current = true;
-    void (async () => {
-      try {
-        while (stateRef.current) {
-          const live = stateRef.current;
-          const nextIcon = equippedItemsNeedingIcons(live)[0];
-          if (nextIcon) {
-            const url = await generateInventoryArt(itemIconPrompt(nextIcon), 'item-icon');
-            if (url) commitInventoryArt({ itemIcons: { [nextIcon.id]: url } });
-            else commitInventoryArt({ itemIconFails: { [nextIcon.id]: true } });
-            continue;
-          }
-          if (needsPortraitRefresh(live)) {
-            const url = await generateInventoryArt(paperDollPrompt(live), 'character-portrait');
-            const key = portraitCacheKey(stateRef.current ?? live);
-            if (url) commitInventoryArt({ portraitUrl: url, portraitKey: key, portraitFailed: false });
-            else commitInventoryArt({ portraitFailed: true, portraitKey: key });
-          }
-          break;
-        }
-      } finally {
-        portraitLock.current = false;
-      }
-    })();
-  }, [
-    busy,
-    showCharacterWindow,
-    state?.character.appearance,
-    state?.character.portraitKey,
-    state?.character.portraitUrl,
-    state?.character.portraitFailed,
-    state?.inventory,
-    generateInventoryArt,
-    commitInventoryArt,
-  ]);
-
   const acceptBeautyOffer = useCallbackRef((entryId: string) => {
     const current = stateRef.current;
     if (!current) return;
@@ -4213,8 +4110,6 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
     retryMemorableImage,
     acceptBeautyOffer,
     dismissBeautyOffer,
-    generateInventoryArt,
-    commitInventoryArt,
     updatePanelOverlay,
     clearError: () => setError(null),
     autoFight, autoFightWarning, cancelAutoFightWarning: () => setAutoFightWarning(null),

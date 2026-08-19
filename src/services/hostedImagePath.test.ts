@@ -104,7 +104,7 @@ describe('hosted memorable art — Free without browser keys', () => {
     const fetchMock = vi.fn(async (input: RequestInfo | URL, init?: RequestInit) => {
       expect(String(input)).toMatch(/\/functions\/v1\/generate-image$/);
       const body = JSON.parse(String(init?.body ?? '{}')) as { model?: string };
-      expect(body.model).toBe('black-forest-labs/flux.2-flex');
+      expect(body.model).toBe('black-forest-labs/flux.2-klein-4b');
       return new Response(JSON.stringify({ url: 'https://img.test/opener.png' }), {
         status: 200,
         headers: { 'Content-Type': 'application/json' },
@@ -131,6 +131,37 @@ describe('hosted memorable art — Free without browser keys', () => {
 
     expect(fetchMock).toHaveBeenCalled();
     expect(url).toBe('https://img.test/opener.png');
+  });
+
+  it('POSTs High memorable plates as Flux.2 Pro, not Klein', async () => {
+    const fetchMock = vi.fn(async (input: RequestInfo | URL, init?: RequestInit) => {
+      expect(String(input)).toMatch(/\/functions\/v1\/generate-image$/);
+      const body = JSON.parse(String(init?.body ?? '{}')) as { model?: string };
+      expect(body.model).toBe('black-forest-labs/flux.2-pro');
+      return new Response(JSON.stringify({ url: 'https://img.test/high.png' }), {
+        status: 200,
+        headers: { 'Content-Type': 'application/json' },
+      });
+    });
+    vi.stubGlobal('fetch', fetchMock);
+
+    const settings = {
+      ...createDefaultSettings(),
+      subscriptionTier: 'high' as const,
+      visualMode: 'classic' as const,
+      classicMemorableImages: true,
+      openrouterApiKey: '',
+      fluxApiKey: '',
+      imageApiKey: '',
+      imageProvider: 'flux' as const,
+    };
+
+    const url = await generateComicImage('The book closes on the last page', 'adult', settings, {
+      memorableMoment: true,
+      useRawPrompt: true,
+    });
+
+    expect(url).toBe('https://img.test/high.png');
   });
 
   it('throws a hosted error on generate-image 404 instead of returning null', async () => {
@@ -187,7 +218,7 @@ describe('hosted inventory art — classic text, no memorable spend', () => {
     const fetchMock = vi.fn(async (input: RequestInfo | URL, init?: RequestInit) => {
       expect(String(input)).toMatch(/\/functions\/v1\/generate-image$/);
       const body = JSON.parse(String(init?.body ?? '{}')) as { model?: string };
-      expect(body.model).toBe('black-forest-labs/flux.2-flex');
+      expect(body.model).toBe('black-forest-labs/flux.2-klein-4b');
       return new Response(JSON.stringify({ url: 'https://img.test/jax-doll.png' }), {
         status: 200,
         headers: { 'Content-Type': 'application/json' },

@@ -260,12 +260,21 @@ html[data-sgm-texture='plain'] .sgm-info-panel {
 }
 .sgm-tex-velvet,
 html[data-sgm-texture='velvet'] .sgm-info-panel {
+  /* Near-black plum reading field + low-frequency flock; oxblood only as edge glint */
+  background-color: #171018;
   background-image:
-    radial-gradient(ellipse at 28% 12%, #fb718544 0 18%, transparent 48%),
-    radial-gradient(ellipse at 78% 88%, #88133766 0 22%, transparent 50%),
-    repeating-linear-gradient(0deg, transparent 0 3px, #88133744 3px 4px),
-    repeating-linear-gradient(90deg, transparent 0 14px, #be123c18 14px 15px),
-    linear-gradient(165deg, #4c0519 0%, #3f0a1a 40%, #0c0004 100%);
+    radial-gradient(ellipse 120% 80% at 50% -10%, #c8bfd722 0 18%, transparent 52%),
+    radial-gradient(ellipse at 18% 22%, #f4e9ec0f 0 1.2px, transparent 1.8px),
+    radial-gradient(ellipse at 62% 48%, #c9b5bb12 0 1px, transparent 1.6px),
+    radial-gradient(ellipse at 84% 76%, #f4e9ec0c 0 1.4px, transparent 2px),
+    radial-gradient(ellipse at 40% 88%, #8d274628 0 14%, transparent 38%),
+    repeating-linear-gradient(112deg, transparent 0 5px, #08060b33 5px 6px),
+    repeating-linear-gradient(22deg, transparent 0 9px, #22131f55 9px 10px),
+    linear-gradient(168deg, #22131f 0%, #1c1720 38%, #171018 68%, #0e0a10 100%);
+  border-color: color-mix(in srgb, #8d2746 42%, #c8bfd7);
+  box-shadow:
+    inset 0 0 0 1px color-mix(in srgb, #c8bfd7 22%, transparent),
+    inset 0 -28px 48px #08060b66;
 }
 .sgm-tex-moss,
 html[data-sgm-texture='moss'] .sgm-info-panel {
@@ -339,10 +348,15 @@ html[data-sgm-texture='halo'] .sgm-info-panel {
 }
 .sgm-tex-sulfur,
 html[data-sgm-texture='sulfur'] .sgm-info-panel {
+  /* Dry char + localized sulfur hotspot — not broad maroon */
+  background-color: #120808;
   background-image:
-    radial-gradient(circle at 82% 18%, #facc1544 0 10%, transparent 12%),
-    linear-gradient(125deg, transparent 36%, #facc1522 40%, transparent 44%),
-    linear-gradient(160deg, #450a0a, #1a0505 60%, #7f1d1d55);
+    radial-gradient(circle at 86% 14%, #facc1555 0 6%, transparent 14%),
+    radial-gradient(circle at 18% 78%, #7f1d1d33 0 12%, transparent 28%),
+    repeating-linear-gradient(98deg, transparent 0 11px, #00000055 11px 12px),
+    linear-gradient(125deg, transparent 34%, #f59e0b18 38%, transparent 44%),
+    linear-gradient(158deg, #1f0c0a 0%, #120808 55%, #2a1008 100%);
+  border-color: color-mix(in srgb, #f59e0b 40%, #7f1d1d);
 }
 .sgm-tex-bone,
 html[data-sgm-texture='bone'] .sgm-info-panel {
@@ -404,9 +418,15 @@ html[data-sgm-texture='glass'] .sgm-info-panel {
 }
 .sgm-tex-noir,
 html[data-sgm-texture='noir'] .sgm-info-panel {
+  /* Matte case-file charcoal; crimson is a thin interruption only */
+  background-color: #050505;
   background-image:
-    repeating-linear-gradient(135deg, transparent 0 3px, #dc262614 3px 4px),
-    linear-gradient(160deg, #171717, #000);
+    linear-gradient(90deg, #b91c1c 0 2px, transparent 2px),
+    repeating-linear-gradient(180deg, transparent 0 11px, #ffffff08 11px 12px),
+    repeating-linear-gradient(135deg, transparent 0 4px, #ffffff06 4px 5px),
+    linear-gradient(165deg, #171717 0%, #0a0a0a 48%, #000 100%);
+  border-color: #404040;
+  box-shadow: inset 0 0 0 1px #262626;
 }
 
 /* ===== CAPACITY PACK SHOP CARDS ===== */
@@ -782,9 +802,12 @@ html[data-sgm-frame='tide'] .sgm-turn-frame::before,
 html[data-sgm-frame='velvet'] .sgm-turn-frame,
 .sgm-turn-frame[data-sgm-frame='velvet'],
 .sgm-frame-chip[data-sgm-frame='velvet'] {
-  border-width: 3px;
-  border-color: #be123c;
-  box-shadow: inset 0 0 24px #88133766, 0 0 16px #be123c44;
+  border-width: 2px;
+  border-color: color-mix(in srgb, #8d2746 55%, #c8bfd7);
+  box-shadow:
+    inset 0 0 0 1px color-mix(in srgb, #c8bfd7 28%, transparent),
+    inset 0 0 22px #08060b88,
+    0 0 12px #8d274633;
 }
 html[data-sgm-frame='velvet'] .sgm-turn-frame::before,
 .sgm-frame-chip[data-sgm-frame='velvet']::before {
@@ -792,9 +815,21 @@ html[data-sgm-frame='velvet'] .sgm-turn-frame::before,
   height: 26px;
   border: none;
   background:
-    linear-gradient(#be123c, #be123c) 9px 0 / 4px 10px no-repeat,
-    radial-gradient(ellipse 100% 70% at 50% 100%, transparent 54%, #fb7185 56% 70%, transparent 72%);
+    linear-gradient(#c8bfd7, #c8bfd7) 9px 0 / 3px 9px no-repeat,
+    linear-gradient(#8d2746, #8d2746) 10px 1px / 2px 8px no-repeat,
+    radial-gradient(ellipse 100% 70% at 50% 100%, transparent 54%, #c8bfd7 56% 64%, #8d2746 66% 72%, transparent 74%);
   clip-path: polygon(50% 0, 100% 18%, 82% 100%, 18% 100%, 0 18%);
+  filter: drop-shadow(0 0 3px #c8bfd744);
+}
+
+/* Vampire Nocturne: Grenze titles only; cool moon rim token */
+html[data-sgm-theme='vampire-nocturne'] {
+  --sgm-edge-moon: #c8bfd7;
+}
+html[data-sgm-theme='vampire-nocturne'] .sgm-info-heading,
+html[data-sgm-theme='vampire-nocturne'] .sgm-hud-brand {
+  font-family: 'Grenze Gotisch', var(--sgm-font-story, 'Playfair Display', Georgia, serif);
+  letter-spacing: 0.02em;
 }
 
 /* ===== EXCITED DICE THEME FX ===== */
@@ -824,7 +859,7 @@ html[data-sgm-frame='velvet'] .sgm-turn-frame::before,
   filter: drop-shadow(0 0 6px #d97706) drop-shadow(0 0 10px #fde68a55);
 }
 .sgm-dice-fx-velvet {
-  filter: drop-shadow(0 0 8px #be123c) drop-shadow(0 0 14px #fb718566);
+  filter: drop-shadow(0 0 6px #8d2746aa) drop-shadow(0 0 10px #c8bfd744);
 }
 .sgm-dice-fx-tide,
 .sgm-dice-fx-iridescent {

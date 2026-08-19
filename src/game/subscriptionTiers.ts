@@ -1,7 +1,12 @@
 /**
- * Subscription tiers — capacity + model routing (Pack 12 lock).
+ * Subscription tiers — capacity + model routing (Pack 12 lock, 2026-08-19u catalog).
  * Payments not live yet; caps/models are enforced locally / ready for server auth.
  * Illustrated graphic-novel mode: caps reserved; launch is text + memorable Flux art.
+ *
+ * Hosted OpenRouter ladder vs AID Griffin / F&F “standard” / NovelAI in-house:
+ * Free = Gemini 2.5 Flash Lite (cheap named Google); Mid = Claude Haiku 4.5;
+ * High = Claude Sonnet 4.6. Memorable plates: Klein 4B Free/Mid, Pro on High.
+ * Inventory icons + paper-doll are bundled stock glyphs (no image API).
  */
 
 import { HOSTED_HERO_MODEL, HOSTED_SCHNELL_MODEL } from './hostedImageModel';
@@ -281,7 +286,7 @@ export const SUBSCRIPTION_TIERS: Record<SubscriptionTierId, TierDefinition> = {
     id: 'mid',
     name: 'Mid',
     priceGbp: 14.99,
-    writerOpenRouterId: 'google/gemini-3.5-flash',
+    writerOpenRouterId: 'anthropic/claude-haiku-4.5',
     writerGeminiId: 'gemini-3.5-flash',
     textTurnsPerDay: 20,
     memorableImagesPerWeek: 20,
@@ -298,7 +303,7 @@ export const SUBSCRIPTION_TIERS: Record<SubscriptionTierId, TierDefinition> = {
     id: 'high',
     name: 'High',
     priceGbp: 29.99,
-    writerOpenRouterId: 'anthropic/claude-sonnet-4.5',
+    writerOpenRouterId: 'anthropic/claude-sonnet-4.6',
     writerGeminiId: 'gemini-3.5-flash',
     textTurnsPerDay: 24,
     memorableImagesPerWeek: 40,
@@ -321,7 +326,7 @@ export const SUBSCRIPTION_TIERS: Record<SubscriptionTierId, TierDefinition> = {
     name: 'Admin (BYOK)',
     /** Platform access only — player pays their own API keys. Adult rail, not Stripe. */
     priceGbp: 12.99,
-    writerOpenRouterId: 'anthropic/claude-sonnet-4.5',
+    writerOpenRouterId: 'anthropic/claude-sonnet-4.6',
     writerGeminiId: 'gemini-3.5-flash',
     textTurnsPerDay: 24,
     memorableImagesPerWeek: 40,

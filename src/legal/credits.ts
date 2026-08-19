@@ -4,7 +4,7 @@
  */
 
 export const CREDITS_PATH = '/credits';
-export const CREDITS_LAST_UPDATED = '16 August 2026';
+export const CREDITS_LAST_UPDATED = '19 August 2026';
 
 export type CreditRow = {
   work: string;
@@ -124,6 +124,12 @@ export const CREDIT_SECTIONS: CreditSection[] = [
         license: 'ISC',
         usedFor: 'Buttons, HUD, settings, and menus',
         url: 'https://lucide.dev',
+      },
+      {
+        work: 'Inventory glyphs',
+        source: 'SynapticGM (original drawings)',
+        license: 'Original; bundled with the game',
+        usedFor: 'Item icons, armor/weapon glyphs, and the paper-doll silhouette',
       },
     ],
   },

@@ -1058,10 +1058,10 @@ export function SettingsModal({ settings, storyName, engineMode, gameState, onSa
                         label={tier === 'free' ? 'Free' : tier === 'mid' ? 'Mid' : 'High'}
                         sublabel={
                           tier === 'free'
-                            ? 'Launch writer'
+                            ? 'Gemini 2.5 Flash Lite'
                             : tier === 'mid'
-                              ? 'Mid writer'
-                              : 'Best writer'
+                              ? 'Claude Haiku 4.5'
+                              : 'Claude Sonnet 4.6'
                         }
                         selected={testLabAi === tier}
                         onClick={() => {

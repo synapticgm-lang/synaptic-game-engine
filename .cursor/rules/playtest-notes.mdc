@@ -17,10 +17,13 @@ John is playtesting live. Collect issues here. Do not implement until he asks fo
 - Server capacity / Stripe live secrets / counsel legal pack / Kid Mode public gate — ops, not playtest tickets
 - Full a11y release gate, Expert author tools, audio lite, full comic — deliberate later / No-Go near-term
 - Manus optional: Snapshot+screenshots E1/E2; post-commit streaming UI; counsel outline
-- **Premium themes still feel cheap after 19p** (Vampire Nocturne = generic dark maroon, not velvet/night-court material) — Manus maxextract prompt ready, do not implement CSS until research returns: `docs/research/RESEARCH-PROMPT-premium-themes-price-tiers-manus-2026-08-19.md`
+- Premium theme five-rater / Shop preview parity (Manus T8/T9 P0-04) — after playtest of `2026-08-19t` Vampire rescue; ingest `docs/research/manus-premium-themes-ingest-2026-08-19.md`
 
 ## Done (already shipped)
 
+- **2026-08-19v Free cost cut + stock kit art:** Free writer back to `google/gemini-2.5-flash-lite`. Memorable stays off by default. Paper-doll / item / armor / weapon pictures use bundled original glyphs — no Klein. Memorable plates still Klein when the player opts in. HUD stamp 19v
+- **2026-08-19u hosted AI catalog:** Free writer `google/gemini-3.5-flash-lite`; Mid `anthropic/claude-haiku-4.5` (cheaper than Gemini 3.5 Flash); High/Admin `anthropic/claude-sonnet-4.6`. Hosted art Klein 4B (`flux.2-klein-4b`, not Flex); High memorable plates Pro. Inventory icons stay Klein. Redeploy: `npx supabase functions deploy generate-image` (`2026-08-19u`)
+- **2026-08-19t Vampire Nocturne material rescue:** Manus premium-themes zip ingested; near-black plum + flock velvet + moonlit gothic frame; Grenze title-only / Playfair prose / Inter UI; Wine Obsidian dice; Infernal sulfur-amber + Noir case-file false-friend split; HUD stamp 19t — `docs/research/manus-premium-themes-ingest-2026-08-19.md`
 - **2026-08-19s hosted art model + origin harvest:** OpenRouter rejected `flux-schnell`; hosted path uses `flux.2-flex` (alias + generate-image fallback). Summoned Pact no longer asks Earth-city after the opener already named an apartment. LitRPG opener paints a Status registration ping. Redeploy: `npx supabase functions deploy generate-image` (`2026-08-19s`)
 - **2026-08-19r New Game toast:** dropped “+N turns to get hooked” popup; bonus still applies, HUD still shows “N start” (`2026-08-19r`)
 - **2026-08-19q folk NPC dialogue banks:** Manus folk-voice zip ingested; `folkVoiceExpectations` deepened to 18 peoples (incl. Ledgerborn/Mycelial/Ashkin/Glassborn/Tidebound/Woven), cross-folk cues, Kid Mode lines, anti-list rail; edge synced (`2026-08-19q`)

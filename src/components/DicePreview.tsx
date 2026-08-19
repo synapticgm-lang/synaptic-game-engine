@@ -148,12 +148,12 @@ const MATERIAL_BASE: Record<DiceMaterial, { body: string; grain: string; shine: 
   ember: { body: '#1c0a0a', grain: '#7f1d1d', shine: '#fb7185' },
   circuit: { body: '#0f172a', grain: '#155e75', shine: '#67e8f9' },
   marble: { body: '#f5e6c8', grain: '#a8a29e', shine: '#fffbeb' },
-  sulfur: { body: '#7f1d1d', grain: '#450a0a', shine: '#fca5a5' },
+  sulfur: { body: '#1f0c0a', grain: '#450a0a', shine: '#fde68a' },
   bone: { body: '#e7e5e4', grain: '#78716c', shine: '#fafaf9' },
   iridescent: { body: '#86198f', grain: '#0f766e', shine: '#f0abfc' },
   scrap: { body: '#713f12', grain: '#3f2a0c', shine: '#facc15' },
   tide: { body: '#115e59', grain: '#042f2e', shine: '#99f6e4' },
-  velvet: { body: '#4c0519', grain: '#1f0208', shine: '#fb7185' },
+  velvet: { body: '#1a1018', grain: '#08060b', shine: '#f4e9ec' },
   holo: { body: '#083344', grain: '#0e7490', shine: '#a5f3fc' },
   frost: { body: '#0c4a6e', grain: '#0369a1', shine: '#e0f2fe' },
   neon: { body: '#1a041f', grain: '#86198f', shine: '#f0abfc' },
@@ -327,8 +327,16 @@ function MaterialFill({
       )}
       {material === 'velvet' && (
         <>
-          <ellipse cx="16" cy="16" rx="8" ry="6" fill={p.shine} opacity="0.16" />
-          <ellipse cx="22" cy="26" rx="6" ry="5" fill="#000" opacity="0.25" />
+          {/* Flocked plum planes + thin wine-glass diagonal; rim stays on stroke */}
+          <path d="M6 10 L30 8" fill="none" stroke="#f4e9ec" strokeWidth="0.7" opacity="0.35" />
+          <path d="M8 28 L28 14" fill="none" stroke="#c8bfd7" strokeWidth="0.55" opacity="0.28" />
+          <ellipse cx="14" cy="15" rx="7" ry="5" fill="#f4e9ec" opacity="0.08" />
+          <ellipse cx="24" cy="27" rx="6" ry="5" fill="#000" opacity="0.35" />
+          {[
+            [11, 18], [17, 14], [22, 20], [13, 26], [20, 30],
+          ].map(([cx, cy], i) => (
+            <circle key={i} cx={cx} cy={cy} r={0.45} fill="#c9b5bb" opacity="0.35" />
+          ))}
         </>
       )}
       {material === 'holo' && (

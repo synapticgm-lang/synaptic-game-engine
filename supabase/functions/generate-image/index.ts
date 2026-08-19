@@ -52,13 +52,15 @@ function corsHeaders(req: Request): Record<string, string> {
 
 const OPENROUTER_CHAT = 'https://openrouter.ai/api/v1/chat/completions';
 const OPENROUTER_IMAGES = 'https://openrouter.ai/api/v1/images/generations';
-const DEFAULT_MODEL = 'black-forest-labs/flux.2-flex';
+const DEFAULT_MODEL = 'black-forest-labs/flux.2-klein-4b';
 const MODEL_ALIASES: Record<string, string> = {
-  'black-forest-labs/flux-schnell': 'black-forest-labs/flux.2-flex',
+  'black-forest-labs/flux-schnell': 'black-forest-labs/flux.2-klein-4b',
+  'black-forest-labs/flux.2-flex': 'black-forest-labs/flux.2-klein-4b',
+  'black-forest-labs/flux.2-klein-9b': 'black-forest-labs/flux.2-klein-4b',
   'black-forest-labs/flux-dev': 'black-forest-labs/flux.2-pro',
 };
 const FALLBACK_MODELS = [
-  'black-forest-labs/flux.2-flex',
+  'black-forest-labs/flux.2-klein-4b',
   'google/gemini-2.5-flash-image',
 ];
 

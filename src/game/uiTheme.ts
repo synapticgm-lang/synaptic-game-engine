@@ -144,7 +144,11 @@ export function applyUiThemeToDocument(
   root.style.setProperty('--sgm-muted', p.muted);
   const fontUi = extras?.font?.preview?.fontUi ?? p.fontUi;
   const fontStory = extras?.font?.preview?.fontStory ?? p.fontStory;
-  ensureGoogleFonts(fontUi, fontStory);
+  const displayStack =
+    theme?.themeKey === 'vampire-nocturne'
+      ? '"Grenze Gotisch", "Playfair Display", Georgia, serif'
+      : undefined;
+  ensureGoogleFonts(fontUi, fontStory, displayStack);
   if (fontUi) root.style.setProperty('--sgm-font-ui', fontUi);
   if (fontStory) root.style.setProperty('--sgm-font-story', fontStory);
   const diceAccent = extras?.dice?.diceSkin?.accent ?? p.accent;

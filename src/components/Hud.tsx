@@ -8,9 +8,9 @@ import { effectiveWriterTier, isTestLabEnabled } from '../game/testLab';
 import { equippedSetLabel, equippedSetName } from '../game/uiTheme';
 
 /** Visible after a hard refresh — if this is missing, Vercel is still serving the 16 Aug bundle. */
-export const HUD_BUILD_STAMP = '2026-08-19s';
+export const HUD_BUILD_STAMP = '2026-08-19v';
 const HUD_BUILD_TITLE =
-  'Debug 2026-08-19s — flux.2-flex hosted art, skip harvested Earth origin, LitRPG system ping';
+  'Debug 2026-08-19v — Free 2.5 Flash Lite + stock inventory glyphs';
 
 interface Props {
   state: GameState;

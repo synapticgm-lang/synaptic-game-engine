@@ -26,7 +26,7 @@ import {
   shouldUseHostedImageProxy,
 } from '../game/distributionChannel';
 import { invokeImageProxy } from '../game/gmProxy';
-import { HOSTED_HERO_MODEL, HOSTED_SCHNELL_MODEL } from '../game/hostedImageModel';
+import { HOSTED_HERO_MODEL, HOSTED_SCHNELL_MODEL, resolveHostedImageModel } from '../game/hostedImageModel';
 
 const OPENROUTER_API_KEY = ''; // Provider keys must come from Settings / edge secrets — never VITE_*.
 const BASE_URL = 'https://openrouter.ai/api/v1';
@@ -662,8 +662,8 @@ export async function generateComicImage(
   ].filter(Boolean).join('\n\n').trim();
 
   const classicMemorable = settings.visualMode === 'classic' && Boolean(options?.memorableMoment);
-  // Memorable plates and inventory art stay schnell (cheap). Never inherit High's flux-dev / hero path.
-  const useHeroModel = classicMemorable || inventoryArt
+  // Paper-doll / item icons stay Klein. Memorable plates follow the tier ladder (Klein Free/Mid, Pro on High).
+  const useHeroModel = inventoryArt || classicMemorable
     ? false
     : options?.hero === true || HERO_IMAGE_TRIGGER.test(prompt);
   let fluxModels = resolveFluxImageModel({
@@ -671,7 +671,7 @@ export async function generateComicImage(
     hero: useHeroModel,
     via: provider === 'flux-direct' ? 'direct' : 'openrouter',
   });
-  if (classicMemorable || inventoryArt) {
+  if (inventoryArt) {
     fluxModels = {
       openRouterId: PRIMARY_IMAGE_MODEL,
       bflEndpoint: 'flux-2-klein-4b',
@@ -740,13 +740,11 @@ export async function generateComicImage(
   const apiKey = isByokTierWithoutHostedKeys(settings)
     ? resolveByokImageSpendKey(settings)
     : undefined;
-  const routedModel = classicMemorable || inventoryArt
-    ? PRIMARY_IMAGE_MODEL
-    : (
-      settings.imageModel?.trim() ||
-      fluxModels.openRouterId ||
-      (useHeroModel ? HERO_IMAGE_MODEL : PRIMARY_IMAGE_MODEL)
-    );
+  const routedModel = resolveHostedImageModel(
+    inventoryArt
+      ? PRIMARY_IMAGE_MODEL
+      : (settings.imageModel?.trim() || fluxModels.openRouterId || PRIMARY_IMAGE_MODEL)
+  );
 
   // Hosted Free/Mid/High / Admin without BYOK: always generate-image. Never skip for a missing client key.
   if (!apiKey || shouldUseHostedImageProxy(settings)) {
