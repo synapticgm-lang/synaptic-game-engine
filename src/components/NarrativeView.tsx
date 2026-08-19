@@ -171,13 +171,10 @@ function DmNarration({ entry, engineMode, showTurnAsk, onAcceptBeautyOffer, onDi
 
         {hasSystemLog && hasRealGmStory(entry) && (
           <div className="border-t border-blue-500/40 bg-blue-950/40 px-4 py-2">
-            <div className="mb-0.5 flex items-center gap-1 font-mono text-[10px] uppercase tracking-[0.18em] text-blue-300">
+            <div className="mb-1 flex items-center gap-1 font-mono text-[10px] uppercase tracking-[0.18em] text-blue-300">
               <Terminal size={10} />
               Status
             </div>
-            <p className="mb-1 text-[10px] leading-snug text-blue-400/70">
-              Turn results — not the in-world System voice
-            </p>
             <div className="space-y-0.5">
               {systemLines.map((line, i) => (
                 <div key={i} className="font-mono text-[11px] text-blue-100/90">{line}</div>

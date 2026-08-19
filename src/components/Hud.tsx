@@ -7,9 +7,9 @@ import { explainWhy, recentStateTxReceipts } from '../game/stateTx';
 import { effectiveWriterTier, isTestLabEnabled } from '../game/testLab';
 
 /** Visible after a hard refresh — if this is missing, Vercel is still serving the 16 Aug bundle. */
-export const HUD_BUILD_STAMP = '2026-08-19b';
+export const HUD_BUILD_STAMP = '2026-08-19c';
 const HUD_BUILD_TITLE =
-  'Debug 2026-08-19b — Chapter One opener always POSTs generate-image; fail shows retry not a blank hole';
+  'Debug 2026-08-19c — STATUS box is header + results only; no explainer caption';
 
 interface Props {
   state: GameState;
