@@ -13,6 +13,7 @@ John is playtesting live. Collect issues here. Do not implement until he asks fo
 
 ## Waiting (research — not tickets yet)
 
+- **Post-playtest ledger batch (next code update):** traps + Token D + `looseItems` + flee/parked mobs + quest hooks/fail UI + `playPhase` death + export epilogue + `repairSaveSchema` — full spec `docs/research/post-playtest-ledger-batch-2026-08-19.md`
 - Server capacity / Stripe live secrets / counsel legal pack / Kid Mode public gate — ops, not playtest tickets
 - Full a11y release gate, Expert author tools, audio lite, full comic — deliberate later / No-Go near-term
 - Manus optional: Snapshot+screenshots E1/E2; post-commit streaming UI; counsel outline
