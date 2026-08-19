@@ -1,6 +1,7 @@
 import type { ActiveEncounter, GameState, Item } from './types';
 import type { PlayerCheckResult } from './checkMath';
 import { currentDungeonNode } from './dungeonSeed';
+import { isExplorableDungeon } from './placeAuthority';
 
 export interface LedgerCombatRound {
   weaponName: string;
@@ -29,7 +30,7 @@ export function equippedWeaponName(state: GameState): string {
 
 export function remainingDungeonMobs(state: GameState): { alive: number; names: string[] } {
   const dungeon = state.activeDungeon;
-  if (!dungeon || dungeon.blueprintId === 'local-area') {
+  if (!isExplorableDungeon(dungeon)) {
     const live = state.activeEncounter && state.activeEncounter.hp > 0 ? [state.activeEncounter.name] : [];
     return { alive: live.length, names: live };
   }
@@ -49,7 +50,7 @@ export function remainingDungeonMobs(state: GameState): { alive: number; names: 
 export function spawnRoomEncounter(state: GameState): GameState {
   if (state.activeEncounter && state.activeEncounter.hp > 0) return state;
   const dungeon = state.activeDungeon;
-  if (!dungeon || dungeon.blueprintId === 'local-area') return state;
+  if (!isExplorableDungeon(dungeon)) return state;
   const node = currentDungeonNode(dungeon);
   const mob = (node?.hidden?.mobs ?? []).find((m) => !m.spawned);
   if (!mob) return state;

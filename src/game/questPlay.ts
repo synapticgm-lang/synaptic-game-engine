@@ -28,13 +28,20 @@ const PLACE_STOP =
   /^(the|a|an|system|earth|info|what|dungeon|thing|this|that|your|their|here|there|england's|every|mind|survive)$/i;
 
 const JUNK_PLACE =
-  /^(every mind|every human|first blood|foundation core|integration protocol|the system|micro dungeon|micro-dungeon|side street|side st\.?|cover(?:\s*\/\s*doorway)?|cover|doorway|street|chaos|disbelief|your palm|parse designation|eye level|registration|designation|protocol|visual profile|palm|grip|knife|the air|the ground|the floor|the glint)$/i;
+  /^(every mind|every human|first blood|foundation core|integration protocol|the system|micro dungeon|micro-dungeon|side street|side st\.?|cover(?:\s*\/\s*doorway)?|cover|doorway|street|chaos|disbelief|your palm|parse designation|eye level|registration|designation|protocol|visual profile|palm|grip|knife|the air|the ground|the floor|the glint|random place|nearby place|physical object|anyone yet|perpetual twilight)$/i;
 
 const PIN_DENY =
-  /\b(palm|eye level|waist height|ground level|chaos|disbelief|fear|panic|registration|designation|parse|integration|system|protocol|visual profile|tutorial|quest|salvage|foundation|core|wave|first blood)\b/i;
+  /\b(palm|eye level|waist height|ground level|chaos|disbelief|fear|panic|registration|designation|parse|integration|system|protocol|visual profile|tutorial|quest|salvage|foundation|core|wave|first blood|anyone yet|physical object|desperate (?:struggle|war)|engulf our|look down)\b/i;
 
 const PLACE_TYPE_SUFFIX =
-  /\b(street|st|road|rd|lane|avenue|ave|drive|way|close|terrace|place|court|square|alley|boulevard|highway|motorway|station|hospital|school|church|pub|bar|inn|hotel|cafe|café|shop|store|market|supermarket|park|farm|bridge|building|centre|center|extra|express|superstore|tesco|sainsbury|co-op|coop)\b/i;
+  /\b(street|st|road|rd|lane|avenue|ave|drive|way|close|terrace|place|court|square|alley|boulevard|highway|motorway|station|hospital|school|church|pub|bar|inn|hotel|cafe|café|shop|store|market|supermarket|park|farm|bridge|building|centre|center|extra|express|superstore|tesco|sainsbury|co-op|coop|cathedral|circle|vault|nave|vestry|chapel|undercroft|crypt|hall|chamber|sanctuary|sanctum|steps|aisle|narthex|cloister|wing|keep|castle|palace|temple)\b/i;
+
+const INTERIOR_ROOM_PIN =
+  /\b(nave|vestry|vault|circle|chapel|crypt|undercroft|aisle|narthex|transept|choir|cloister|sacristy|steps|chamber|wing|sanctuary|sanctum|apse|gallery)\b/i;
+
+/** Incomplete noun phrases harvested from "to/in/at/from …" prose. */
+const PLACE_FRAGMENT =
+  /^(?:save anyone yet|any physical object|our desperate (?:struggle|war) against|engulf our lands|home you look down|perpetual twilight)$/i;
 
 const DUMMY_STREET_NODE =
   /^(street|side street|side st\.?|cover(?:\s*\/\s*doorway)?|cover|doorway)$/i;
@@ -50,14 +57,32 @@ function clipPlace(raw: string): string {
   return raw
     .replace(/\s*\([^)]*tier[^)]*\)/gi, '')
     .replace(/\s*\([^)]*urban\s+ruin[^)]*\)/gi, '')
-    .replace(/\s+\b(and|then|what|with|for|to|around|before|after|near)\b[\s\S]*$/i, '')
+    .replace(/\s+\b(and|then|what|with|for|to|around|before|after|near|against|yet|anyone|our|your|their)\b[\s\S]*$/i, '')
     .trim();
+}
+
+function isIncompletePlacePhrase(name: string): boolean {
+  const n = name.replace(/\s+/g, ' ').trim();
+  if (PLACE_FRAGMENT.test(n)) return true;
+  if (/\b(against|yet|from|into|onto|toward|towards|with|without|and|or|the|a|an|to|of|for|our|your|their|by|as)$/i.test(n)) {
+    return true;
+  }
+  if (/^(?:our|the|their|your)\s+\S+\s+(?:struggle|war|fight|battle)\b/i.test(n)) return true;
+  if (/\banyone yet\b/i.test(n) || /\bphysical object\b/i.test(n)) return true;
+  if (/\b(?:war|struggle) against\b/i.test(n)) return true;
+  if (/^(?:save|engulf|look|asked|hands?|end)\b/i.test(n) && !PLACE_TYPE_SUFFIX.test(n)) return true;
+  if (/\b(?:you|anyone|yet)\b/i.test(n) && !PLACE_TYPE_SUFFIX.test(n)) return true;
+  return false;
+}
+
+function looksLikePlaceName(name: string): boolean {
+  return PLACE_TYPE_SUFFIX.test(name) || INTERIOR_ROOM_PIN.test(name);
 }
 
 function pushPlace(found: string[], raw: string | undefined, opts?: { requirePlaceShape?: boolean }): void {
   const name = titleCasePlace(clipPlace(raw ?? ''));
-  if (!name || PLACE_STOP.test(name) || JUNK_PLACE.test(name) || PIN_DENY.test(name) || name.length < 3) return;
-  if (opts?.requirePlaceShape && !PLACE_TYPE_SUFFIX.test(name) && name.split(/\s+/).length < 2) return;
+  if (!name || PLACE_STOP.test(name) || isGenericMapPlace(name) || name.length < 3) return;
+  if (opts?.requirePlaceShape && !looksLikePlaceName(name)) return;
   if (found.some((p) => p.toLowerCase() === name.toLowerCase())) return;
   found.push(name);
 }
@@ -219,9 +244,19 @@ export function isGenericMapPlace(name: string | undefined): boolean {
   const n = (name ?? '').trim();
   if (!n) return true;
   if (COARSE_PLACE.test(n)) return true;
-  if (JUNK_PLACE.test(n) || PIN_DENY.test(n)) return true;
+  if (JUNK_PLACE.test(n) || PIN_DENY.test(n) || PLACE_FRAGMENT.test(n)) return true;
   if (DUMMY_STREET_NODE.test(n)) return true;
+  if (isIncompletePlacePhrase(n)) return true;
   return /^the opening of /i.test(n) || /^your surroundings$/i.test(n) || /^a cracked city street$/i.test(n);
+}
+
+/** Room-shaped pins for an indoor floor plan — nave, circle, vault, vestry, steps. */
+export function isInteriorRoomName(name: string | undefined): boolean {
+  const n = (name ?? '').replace(/\s+/g, ' ').trim();
+  if (!n || isGenericMapPlace(n)) return false;
+  if (INTERIOR_ROOM_PIN.test(n)) return true;
+  if (/\b(hall|court)\b/i.test(n) && /\b(valespire|pellane|cathedral|sevenfold|crown)\b/i.test(n)) return true;
+  return false;
 }
 
 export function newlyRevealedQuests(before: Quest[] | undefined, after: Quest[] | undefined): Quest[] {

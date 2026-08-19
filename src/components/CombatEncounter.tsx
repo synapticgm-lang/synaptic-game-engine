@@ -1,6 +1,7 @@
 import { useState, useMemo } from 'react';
 import type { Combatant, ActiveDungeonState, Location3D } from '@/types';
 import { mockEnemies } from '@/data/mockGameData';
+import { isExplorableDungeon } from '@/game/placeAuthority';
 import {
   Sword, Shield, Heart, Skull, Crown, User, Plus, ChevronUp,
   ChevronDown, Trash2, Map as MapIcon,
@@ -89,20 +90,22 @@ export function CombatEncounter({ activeDungeon, currentCoordinates, onMoveNode,
           </span>
           {activeDungeon && (
             <span className="text-[10px] text-slate-500">
-              {activeDungeon.blueprintId === 'local-area'
-                ? activeDungeon.dungeonName
-                : `${activeDungeon.dungeonName} · Floor ${activeDungeon.currentZLevel}`}
+              {isExplorableDungeon(activeDungeon)
+                ? `${activeDungeon.dungeonName} · Floor ${activeDungeon.currentZLevel}`
+                : activeDungeon.dungeonName}
             </span>
           )}
         </div>
         <div className="relative flex-1 overflow-auto bg-slate-950 p-2">
-          {activeDungeon?.blueprintId === 'local-area' ? (
+          {!isExplorableDungeon(activeDungeon) && activeDungeon ? (
             <div className="flex h-full min-h-[200px] items-center justify-center p-4 text-center">
               <div>
                 <MapIcon size={32} className="mx-auto mb-2 text-slate-700" />
                 <p className="text-sm text-slate-300">{activeDungeon.dungeonName}</p>
                 <p className="mt-1 text-xs text-slate-500">
-                  Street map — open Map for the local streets. This panel is for dungeon interiors.
+                  {activeDungeon.blueprintId === 'interior-plan'
+                    ? 'Interior floor plan — open Map for the hall. This panel is for dungeon interiors.'
+                    : 'Street map — open Map for the local streets. This panel is for dungeon interiors.'}
                 </p>
               </div>
             </div>

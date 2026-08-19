@@ -1,7 +1,8 @@
 import React, { useEffect, useMemo } from 'react';
 import type { ActiveDungeonState, MapNode } from '../game/mapEngine';
-import { buildLocalAreaMap, presentLocalAreaMap } from '../game/mapEngine';
+import { presentLocalAreaMap, resolvePlayAreaMap } from '../game/mapEngine';
 import { isGenericMapPlace } from '../game/questPlay';
+import { isInteriorMap, isInteriorPlace, isStreetMap } from '../game/placeAuthority';
 import type { Location3D } from '../game/types';
 
 interface DungeonMapModalProps {
@@ -42,10 +43,10 @@ export const DungeonMapModal: React.FC<DungeonMapModalProps> = ({
       if (activeDungeon) return activeDungeon;
       const place = currentLocation?.trim();
       if (!place || isGenericMapPlace(place)) return null;
-      return buildLocalAreaMap(place, [], currentCoordinates);
+      return resolvePlayAreaMap(null, place, [], currentCoordinates);
     })();
     if (!raw) return null;
-    if (raw.blueprintId === 'local-area') return presentLocalAreaMap(raw, currentLocation);
+    if (isStreetMap(raw)) return presentLocalAreaMap(raw, currentLocation);
     return raw;
   }, [activeDungeon, currentLocation, currentCoordinates]);
 
@@ -70,10 +71,14 @@ export const DungeonMapModal: React.FC<DungeonMapModalProps> = ({
           </div>
           <p className="mt-4 text-sm text-slate-300 leading-relaxed">
             You are in <span className="font-medium sgm-info-accent">{currentLocation?.trim() || 'an unmapped place'}</span>.
-            The System builds a street map from wherever you said you are — a Tesco Extra in England, a Kyoto alley, anywhere in the world.
+            {isInteriorPlace(currentLocation)
+              ? ' The System sketches a floor plan of this interior from rooms named in play.'
+              : ' The System builds a street map from wherever you said you are — a Tesco Extra in England, a Kyoto alley, anywhere in the world.'}
           </p>
           <p className="mt-3 text-xs sgm-info-accent font-mono uppercase tracking-wider opacity-80">
-            Name the street or store in play if this is still empty.
+            {isInteriorPlace(currentLocation)
+              ? 'Named rooms in the scene appear as you explore them.'
+              : 'Name the street or store in play if this is still empty.'}
           </p>
         </div>
       </div>
@@ -81,7 +86,8 @@ export const DungeonMapModal: React.FC<DungeonMapModalProps> = ({
   }
 
   const currentNode = displayDungeon.nodes.find((n) => n.id === displayDungeon.currentNodeId);
-  const isStreet = displayDungeon.blueprintId === 'local-area';
+  const isStreet = isStreetMap(displayDungeon);
+  const isHallPlan = isInteriorMap(displayDungeon);
 
   const mapScaleStreet = 'Local streets · ~1 km scale';
   const mapScaleInterior = 'Interior floor plan';
@@ -96,12 +102,12 @@ export const DungeonMapModal: React.FC<DungeonMapModalProps> = ({
           <div>
             <div className="sgm-info-accent flex items-center gap-2 text-xs font-semibold mb-1">
               <span>🗺️ {isStreet ? mapScaleStreet : mapScaleInterior}</span>
-              {!isStreet && displayDungeon.dangerTier != null && (
+              {!isStreet && !isHallPlan && displayDungeon.dangerTier != null && (
                 <span className="rounded bg-rose-950/60 px-2 py-0.5 text-rose-200 border border-rose-800/40">
                   Danger Tier {displayDungeon.dangerTier}
                 </span>
               )}
-              {currentCoordinates && !isStreet && (
+              {currentCoordinates && !isStreet && !isHallPlan && (
                 <span className="rounded bg-slate-800 px-2 py-0.5 text-slate-300">
                   q: {currentCoordinates.q}, r: {currentCoordinates.r} | Floor: {displayDungeon.currentZLevel}
                 </span>
@@ -144,6 +150,7 @@ export const DungeonMapModal: React.FC<DungeonMapModalProps> = ({
               dungeon={displayDungeon}
               currentNodeId={displayDungeon.currentNodeId}
               onMoveNode={onMoveNode}
+              organic={isHallPlan}
             />
           )}
         </div>
@@ -184,10 +191,12 @@ function InteriorFloorPlan({
   dungeon,
   currentNodeId,
   onMoveNode,
+  organic = false,
 }: {
   dungeon: ActiveDungeonState;
   currentNodeId: string;
   onMoveNode: (nodeId: string) => void;
+  organic?: boolean;
 }) {
   const nodes = dungeon.nodes;
   const xs = nodes.map((n) => n.coordinates?.x ?? 0);
@@ -196,9 +205,9 @@ function InteriorFloorPlan({
   const minY = Math.min(...ys, 0);
   const maxX = Math.max(...xs, 1);
   const maxY = Math.max(...ys, 1);
-  const cell = 108;
-  const gap = 10;
-  const pad = 28;
+  const cell = organic ? 148 : 108;
+  const gap = organic ? 28 : 10;
+  const pad = organic ? 40 : 28;
   const width = (maxX - minX + 1) * cell + pad * 2;
   const height = (maxY - minY + 1) * cell + pad * 2;
   const current = nodes.find((n) => n.id === currentNodeId);
@@ -206,18 +215,19 @@ function InteriorFloorPlan({
   const roomBox = (node: MapNode) => {
     const gx = node.coordinates?.x ?? 0;
     const gy = node.coordinates?.y ?? 0;
+    const here = (node.tags ?? []).includes('here');
     return {
       x: pad + (gx - minX) * cell,
       y: pad + (gy - minY) * cell,
-      w: cell - gap,
-      h: cell - gap,
+      w: cell - gap + (organic && here ? 36 : 0),
+      h: cell - gap + (organic && here ? 24 : 0),
     };
   };
 
   return (
     <div className="relative" style={{ minWidth: width, minHeight: height }}>
       <svg className="absolute inset-0" width={width} height={height} aria-hidden>
-        <rect width={width} height={height} fill="#0b1220" />
+        <rect width={width} height={height} fill={organic ? '#14110c' : '#0b1220'} />
         {nodes.map((node) =>
           node.connections.map((targetId) => {
             if (node.id >= targetId) return null;
@@ -251,9 +261,21 @@ function InteriorFloorPlan({
               y={box.y}
               width={box.w}
               height={box.h}
-              rx={8}
-              fill={isCurrent ? '#0e7490' : isVisited ? '#1e293b' : '#0f172a'}
-              stroke={isCurrent ? '#a5f3fc' : isVisited ? '#64748b' : '#334155'}
+              rx={organic ? 4 : 8}
+              fill={
+                isCurrent
+                  ? organic ? '#5c4a32' : '#0e7490'
+                  : isVisited
+                    ? organic ? '#2c2822' : '#1e293b'
+                    : organic ? '#161410' : '#0f172a'
+              }
+              stroke={
+                isCurrent
+                  ? organic ? '#e8d5a3' : '#a5f3fc'
+                  : isVisited
+                    ? organic ? '#8a7a5e' : '#64748b'
+                    : organic ? '#3d382f' : '#334155'
+              }
               strokeWidth={isCurrent ? 2.5 : 1.5}
               strokeDasharray={isVisited ? undefined : '5 4'}
               opacity={isVisited ? 1 : 0.55}
@@ -284,7 +306,7 @@ function InteriorFloorPlan({
                 {isCurrent && <span className="mt-0.5 text-[8px] uppercase tracking-wide text-cyan-100">You are here</span>}
               </>
             ) : (
-              <span className="text-[10px] text-slate-600"> </span>
+              <span className="text-[10px] text-slate-600">?</span>
             )}
           </button>
         );

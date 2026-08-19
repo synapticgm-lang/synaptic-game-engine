@@ -2,6 +2,7 @@ import type { GameState } from './types';
 import type { ActiveDungeonState, MapNode } from './mapEngine';
 import { initializeDungeon, moveToNode } from './mapEngine';
 import { seedDungeonState } from './dungeonSeed';
+import { isExplorableDungeon } from './placeAuthority';
 
 const ENTER_ACTION =
   /\b(enter|go in|step in|head in|inside|forward|sneak(?:ing)? in|move (?:in|forward)|scout(?:ing)?(?:\s+the)?\s+entrance|through the (?:door|doors))\b/i;
@@ -16,8 +17,7 @@ export function playerEntersInterior(action: string, state: GameState): boolean 
 }
 
 export function alreadyInSeededDungeon(state: GameState): boolean {
-  const d = state.activeDungeon;
-  return !!(d && d.blueprintId !== 'local-area');
+  return isExplorableDungeon(state.activeDungeon);
 }
 
 function storeNodes(): MapNode[] {

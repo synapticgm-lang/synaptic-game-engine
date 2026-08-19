@@ -1,5 +1,6 @@
 import { shouldUseComicGrid } from '@/game/comicImagePrompt';
 import { visibleJournalQuests } from '@/game/questPlay';
+import { isExplorableDungeon } from '@/game/placeAuthority';
 import { useGame } from '@/game/useGame';
 import { useBgImage } from '@/game/useBgImage';
 import { applySettingsCosmetics } from '@/game/uiTheme';
@@ -469,8 +470,8 @@ export default function App() {
             }
           }}
           onExitDungeon={() => {
-            const local = state.activeDungeon?.blueprintId === 'local-area';
-            if (!local && game.exitDungeon) {
+            const leaveDungeon = isExplorableDungeon(state.activeDungeon);
+            if (leaveDungeon && game.exitDungeon) {
               game.exitDungeon();
             }
             setShowMapModal(false);

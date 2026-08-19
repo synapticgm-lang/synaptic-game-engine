@@ -8,6 +8,7 @@ import type {
   StoryPlate,
 } from './types';
 import type { ActiveDungeonState } from './mapEngine';
+import { isExplorableDungeon } from './placeAuthority';
 import type { GameEvent, LootVideoRequest, MilestoneRequest } from './parser';
 import { storyHasBody } from './turnAsk';
 import { isUnsalvageableKidImagePrompt, prepareKidSafeImagePrompt, stripKidUnsafeImageLexicon } from './visualCanon';
@@ -429,7 +430,7 @@ function pinFirstDungeonGraph(
   dungeon: ActiveDungeonState | null | undefined
 ): MemorableMomentState {
   if (prev.firstDungeonBlueprintId) return prev;
-  if (!dungeon || dungeon.blueprintId === 'local-area') return prev;
+  if (!isExplorableDungeon(dungeon)) return prev;
   return { ...prev, firstDungeonBlueprintId: dungeon.blueprintId };
 }
 
@@ -449,7 +450,7 @@ export function isCampaignFirstDungeonGraph(
   mem?: MemorableMomentState,
   tutorialFirstBossDone?: boolean
 ): boolean {
-  if (!dungeon || dungeon.blueprintId === 'local-area') return false;
+  if (!isExplorableDungeon(dungeon)) return false;
   if (dungeon.blueprintId === FIRST_DUNGEON_BLUEPRINT_ID) return true;
   if (dungeonHasCorruptedStockboy(dungeon)) return true;
   if (tutorialFirstBossDone) return false;
@@ -468,7 +469,7 @@ export function detectDungeonFinalBossDefeat(
   alreadySplashed: string[] | undefined
 ): { key: string; label: string } | null {
   const name = defeatedEnemyName?.trim();
-  if (!name || !dungeon || dungeon.blueprintId === 'local-area') return null;
+  if (!name || !isExplorableDungeon(dungeon)) return null;
 
   const needle = normalizeMobLabel(name);
   const seen = alreadySplashed ?? [];
