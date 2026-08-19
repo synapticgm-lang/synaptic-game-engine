@@ -11,6 +11,7 @@ interface DungeonMapModalProps {
   activeDungeon: ActiveDungeonState | null;
   currentCoordinates?: Location3D;
   currentLocation?: string;
+  combatLocked?: boolean;
   onMoveNode: (nodeId: string) => void;
   onExitDungeon: () => void;
   onEnsureLocalMap?: () => void;
@@ -29,6 +30,7 @@ export const DungeonMapModal: React.FC<DungeonMapModalProps> = ({
   activeDungeon,
   currentCoordinates,
   currentLocation,
+  combatLocked = false,
   onMoveNode,
   onExitDungeon,
   onEnsureLocalMap,
@@ -120,6 +122,11 @@ export const DungeonMapModal: React.FC<DungeonMapModalProps> = ({
               {isStreet ? 'You are here: ' : 'Current room: '}
               <span className="text-amber-300 font-semibold">{currentNode?.name || 'Unknown'}</span>
             </p>
+            {combatLocked && (
+              <p className="mt-1 text-xs text-rose-300 font-medium">
+                Combat in progress — resolve the fight or flee before moving.
+              </p>
+            )}
           </div>
           <button
             onClick={onClose}
@@ -136,6 +143,7 @@ export const DungeonMapModal: React.FC<DungeonMapModalProps> = ({
               dungeon={displayDungeon}
               currentNodeId={displayDungeon.currentNodeId}
               onMoveNode={onMoveNode}
+              combatLocked={combatLocked}
               onEnterSite={
                 onLoadDungeon
                   ? (siteName) => {
@@ -151,6 +159,7 @@ export const DungeonMapModal: React.FC<DungeonMapModalProps> = ({
               currentNodeId={displayDungeon.currentNodeId}
               onMoveNode={onMoveNode}
               organic={isHallPlan}
+              combatLocked={combatLocked}
             />
           )}
         </div>
@@ -192,11 +201,13 @@ function InteriorFloorPlan({
   currentNodeId,
   onMoveNode,
   organic = false,
+  combatLocked = false,
 }: {
   dungeon: ActiveDungeonState;
   currentNodeId: string;
   onMoveNode: (nodeId: string) => void;
   organic?: boolean;
+  combatLocked?: boolean;
 }) {
   const nodes = dungeon.nodes;
   const xs = nodes.map((n) => n.coordinates?.x ?? 0);
@@ -287,13 +298,13 @@ function InteriorFloorPlan({
         const box = roomBox(node);
         const isVisited = dungeon.visitedNodeIds.includes(node.id);
         const isCurrent = node.id === currentNodeId;
-        const isReachable = !!current?.connections.includes(node.id);
+        const isReachable = !combatLocked && !!current?.connections.includes(node.id);
         return (
           <button
             key={node.id}
             type="button"
             onClick={() => isReachable && onMoveNode(node.id)}
-            disabled={!isReachable && !isCurrent}
+            disabled={(!isReachable && !isCurrent) || combatLocked}
             title={isVisited ? node.name : 'Unmapped room'}
             style={{ left: box.x, top: box.y, width: box.w, height: box.h }}
             className="absolute z-10 flex flex-col items-center justify-center px-1 text-center"
@@ -326,11 +337,13 @@ function StreetMapCanvas({
   currentNodeId,
   onMoveNode,
   onEnterSite,
+  combatLocked = false,
 }: {
   dungeon: ActiveDungeonState;
   currentNodeId: string;
   onMoveNode: (nodeId: string) => void;
   onEnterSite?: (siteName: string) => void;
+  combatLocked?: boolean;
 }) {
   const roads = [40, 160, 280, 400, 520];
   const size = 560;
@@ -394,7 +407,7 @@ function StreetMapCanvas({
       {dungeon.nodes.map((node) => {
         const { x, y } = streetPx(node);
         const isCurrent = node.id === currentNodeId;
-        const canMove = !!current?.connections.includes(node.id);
+        const canMove = !combatLocked && !!current?.connections.includes(node.id);
         const isEntrance = (node.tags ?? []).some(
           (t) => t === 'entrance' || t === 'micro_dungeon'
         );

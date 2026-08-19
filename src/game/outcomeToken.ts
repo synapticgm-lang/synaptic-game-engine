@@ -1,6 +1,6 @@
 import type { PlayerCheckResult } from './checkMath';
 import type { PlayerIntent } from './intentParser';
-import type { LedgerCombatRound } from './ledgerCombat';
+import type { LedgerCombatRound, LedgerFleeRound } from './ledgerCombat';
 
 /** Structured handoff: code truth → LLM narrates; must not invert. */
 export interface OutcomeToken {
@@ -26,6 +26,7 @@ export interface OutcomeToken {
   summary: string;
   kitWeapon?: string;
   combat?: LedgerCombatRound;
+  flee?: LedgerFleeRound;
   dungeonRemaining?: { alive: number; names: string[] };
 }
 
@@ -35,6 +36,7 @@ export function buildOutcomeToken(
   extras?: {
     kitWeapon?: string;
     combat?: LedgerCombatRound;
+    flee?: LedgerFleeRound;
     dungeonRemaining?: { alive: number; names: string[] };
   }
 ): OutcomeToken {
@@ -73,11 +75,14 @@ export function buildOutcomeToken(
       outcome_flavor: flavor,
       label: check.label,
     },
-    summary: extras?.combat
+    summary: extras?.flee
+      ? `${check.narrativeOutcomeLabel}. Flee: ${extras.flee.fled ? 'success' : 'failed'} vs ${extras.flee.enemyName} (${extras.flee.enemyHpBefore} HP). ${extras.flee.fleeReason}`
+      : extras?.combat
       ? `${check.narrativeOutcomeLabel}. Combat: ${extras.combat.weaponName} dealt ${extras.combat.dealt}; enemy ${extras.combat.enemyHpBefore}→${extras.combat.enemyHpAfter}. ${extras.combat.enemyActReason}`
       : check.narrativeOutcomeLabel,
     kitWeapon: extras?.kitWeapon,
     combat: extras?.combat,
+    flee: extras?.flee,
     dungeonRemaining: extras?.dungeonRemaining,
   };
 }
@@ -92,6 +97,9 @@ export function formatOutcomeTokenForPrompt(token: OutcomeToken, litRpgHideMath:
   const combat = token.combat
     ? `combat_round: hit with ${token.combat.weaponName} for ${token.combat.dealt}; ${token.combat.enemyName} HP ${token.combat.enemyHpBefore}→${token.combat.enemyHpAfter}; ${token.combat.enemyActReason} Player HP now ${token.combat.playerHpAfter}. Narrate THIS blow and the return (or why there is none). Do not invent another weapon.\n`
     : '';
+  const flee = token.flee
+    ? `flee_round: ${token.flee.fled ? 'SUCCESS' : 'FAILED'} vs ${token.flee.enemyName} (${token.flee.enemyHpBefore} HP)${token.flee.enemyHpParked != null ? `; parked ${token.flee.enemyHpParked} HP on node` : ''}. ${token.flee.fleeReason} Player HP now ${token.flee.playerHpAfter}. Emit <encounter-end /> when flee succeeds.\n`
+    : '';
   if (litRpgHideMath) {
     const dialogueNote =
       token.narration_hooks.label === 'Dialogue'
@@ -100,11 +108,11 @@ export function formatOutcomeTokenForPrompt(token: OutcomeToken, litRpgHideMath:
     return `OUTCOME TOKEN (LEDGER TRUTH — narrate; do not invert, soften into the opposite, or invent a different result):
 result=${token.summary}
 action_type=${token.action_type}
-${dialogueNote}${kit}${remain}${combat}${hooks}
+${dialogueNote}${kit}${remain}${combat}${flee}${hooks}
 Do NOT print d20/DC/mod numbers, "Action Resolved", or "CODE ENFORCED" in prose or <system-log>. Story beat first, then System chrome.`;
   }
   return `OUTCOME TOKEN (LEDGER TRUTH — narrate; do not invert):
 ${JSON.stringify(token.resolution)}
-${kit}${remain}${combat}${hooks}
+${kit}${remain}${combat}${flee}${hooks}
 summary=${token.summary}`;
 }

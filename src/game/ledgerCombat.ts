@@ -1,10 +1,20 @@
 import type { ActiveEncounter, GameState, Item } from './types';
 import type { PlayerCheckResult } from './checkMath';
 import { currentDungeonNode } from './dungeonSeed';
-import { restoreParkedEncounter } from './dungeonMobLedger';
+import { parkMobHpAtCurrentNode, restoreParkedEncounter } from './dungeonMobLedger';
 import { isExplorableDungeon } from './placeAuthority';
 
 export { remainingDungeonMobs } from './dungeonPresence';
+
+export interface LedgerFleeRound {
+  enemyName: string;
+  enemyHpBefore: number;
+  enemyHpParked: number | null;
+  fled: boolean;
+  received: number;
+  playerHpAfter: number;
+  fleeReason: string;
+}
 
 export interface LedgerCombatRound {
   weaponName: string;
@@ -73,6 +83,60 @@ export function spawnRoomEncounter(state: GameState): GameState {
     ...restored,
     activeEncounter: encounter,
     activeDungeon: { ...dungeon, nodes },
+  };
+}
+
+/** Stealth check during live combat — success parks mob HP on node and clears encounter. */
+export function resolveLedgerFlee(
+  state: GameState,
+  check: PlayerCheckResult
+): { state: GameState; round: LedgerFleeRound } | null {
+  const encounter = state.activeEncounter;
+  if (!encounter || encounter.hp <= 0) return null;
+
+  const enemyName = encounter.name;
+  const enemyHpBefore = encounter.hp;
+  const fled = check.isSuccess && !check.isCriticalFailure;
+
+  if (fled) {
+    const parked = parkMobHpAtCurrentNode(state, enemyName, enemyHpBefore);
+    const round: LedgerFleeRound = {
+      enemyName,
+      enemyHpBefore,
+      enemyHpParked: enemyHpBefore,
+      fled: true,
+      received: 0,
+      playerHpAfter: state.character.hp ?? 0,
+      fleeReason: check.isCriticalSuccess
+        ? 'You slip away clean — it loses your trail.'
+        : 'You break contact and disengage.',
+    };
+    return {
+      state: { ...parked, activeEncounter: null },
+      round,
+    };
+  }
+
+  const received = Math.max(1, 3 + Math.floor(encounter.level / 2));
+  const playerHpAfter = Math.max(1, (state.character.hp ?? 0) - received);
+  const round: LedgerFleeRound = {
+    enemyName,
+    enemyHpBefore,
+    enemyHpParked: null,
+    fled: false,
+    received,
+    playerHpAfter,
+    fleeReason: check.isCriticalFailure
+      ? 'You stumble — it closes the gap.'
+      : 'It cuts off your escape.',
+  };
+  return {
+    state: {
+      ...state,
+      character: { ...state.character, hp: playerHpAfter },
+      activeEncounter: encounter,
+    },
+    round,
   };
 }
 

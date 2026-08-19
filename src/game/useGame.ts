@@ -5,7 +5,7 @@ import { createInitialState } from './defaults';
 import type { CampaignArchetype } from './archetypes';
 import { buildArchetypeIntro } from './archetypes';
 import { applySaveRepair, SAVE_REPAIR_TOAST } from './saveMigration';
-import { markDefeatedMobAtCurrentNode, CURRENT_SAVE_REPAIR_REVISION } from './dungeonMobLedger';
+import { markDefeatedMobAtCurrentNode, CURRENT_SAVE_REPAIR_REVISION, isCombatLocked, DUNGEON_NEUTRALIZED_MILESTONE } from './dungeonMobLedger';
 import { loadGame, saveGame, deleteGame, loadSettings, saveSettings, exportSave, importSave } from './db';
 import {
   syncGameToCloud,
@@ -90,8 +90,10 @@ import {
   equippedWeaponName,
   remainingDungeonMobs,
   resolveLedgerCombat,
+  resolveLedgerFlee,
   spawnRoomEncounter,
   type LedgerCombatRound,
+  type LedgerFleeRound,
 } from './ledgerCombat';
 import { mediatePlayerInput } from './inputMediation';
 import { maybeRatingRewrite } from './maturity';
@@ -180,7 +182,7 @@ import {
   isSameBeat,
   buildBeatNoveltyRetryBlock,
 } from './beatFingerprint';
-import { formatCombatReceipt } from './combatReceipt';
+import { formatCombatReceipt, formatFleeReceipt } from './combatReceipt';
 import { scanAndScrubLeaks } from './leakScanner';
 import { enrichQuests } from './questJournalEnrich';
 import { extractUpdates, extractNewItems, parseActionTags, stripActionTags, matchLoreCards, eventsToLoreCards, parseTurnFrame, eventsToQuestUpdates, eventsToEncounterUpdate, parsePanels, eventsToMilestone, eventsToLootVideo, eventsToVisualUpdate, stripChoiceList, extractChoiceLines, stripTurnCloser, storyHasBody, looksLikeChoiceOffer } from './parser';
@@ -1474,6 +1476,10 @@ export function useGame() {
   const moveDungeonNode = useCallbackRef((targetNodeId: string) => {
     const previous = stateRef.current;
     if (!previous?.activeDungeon) return;
+    if (isCombatLocked(previous)) {
+      addToast('Combat in progress — resolve the fight or flee before moving.', 'error');
+      return;
+    }
     let updatedDungeon = moveToNode(previous.activeDungeon, targetNodeId);
     updatedDungeon = seedDungeonState(updatedDungeon, previous.seed || 'seed');
     const threshold = settingsRef.current.fogRevealThreshold ?? 'adjacent';
@@ -1510,6 +1516,10 @@ export function useGame() {
   const exitDungeon = useCallbackRef(() => {
     const previous = stateRef.current;
     if (!previous) return;
+    if (isCombatLocked(previous)) {
+      addToast('Combat in progress — resolve the fight or flee before leaving.', 'error');
+      return;
+    }
     const backName = previous.previousLocationSheet?.name || previous.currentLocation || 'Outside';
     const locMem = advanceLocationMemory(previous, backName);
     const updated = {
@@ -2017,6 +2027,30 @@ export function useGame() {
             ? grounded.intent
             : parsePlayerIntent(sanitizedInput, liveCurrent);
 
+      if (
+        isCombatLocked(liveCurrent)
+        && intentForMandate.kind === 'move'
+        && !/\b(flee|run away|retreat|escape|back away)\b/i.test(sanitizedInput)
+      ) {
+        const snap = snapshotRef.current;
+        if (snap) {
+          stateRef.current = snap;
+          setState(snap);
+          void persist(snap);
+        }
+        snapshotRef.current = null;
+        setCanRewind(false);
+        refundSpentTextTurn();
+        keepSentLineOnFail(sanitizedInput || lastInputRef.current || input);
+        resetTurnUi();
+        addToast('Combat in progress — fight, flee, or talk before moving.', 'error');
+        turnInFlightRef.current = false;
+        setBusy(false);
+        if (loadingTimer !== undefined) clearTimeout(loadingTimer);
+        setShowLoadingOverlay(false);
+        return;
+      }
+
       const accuseBible = getCampaignBibleById(liveCurrent.campaignBibleId ?? '');
       const accusedState = applyAccusationFromInput(liveCurrent, sanitizedInput, accuseBible);
       if (accusedState !== liveCurrent) {
@@ -2038,6 +2072,7 @@ export function useGame() {
         liveCurrent = spawnRoomEncounter(liveCurrent);
       }
       let ledgerRound: LedgerCombatRound | null = null;
+      let ledgerFlee: LedgerFleeRound | null = null;
       if (intentForMandate.kind === 'attack') {
         liveCurrent = spawnRoomEncounter(liveCurrent);
         const resolved = resolveLedgerCombat(liveCurrent, check);
@@ -2045,10 +2080,17 @@ export function useGame() {
           liveCurrent = resolved.state;
           ledgerRound = resolved.round;
         }
+      } else if (intentForMandate.kind === 'flee' && isCombatLocked(liveCurrent)) {
+        const resolved = resolveLedgerFlee(liveCurrent, check);
+        if (resolved) {
+          liveCurrent = resolved.state;
+          ledgerFlee = resolved.round;
+        }
       }
       const outcomeToken = buildOutcomeToken(check, intentForMandate, {
         kitWeapon: equippedWeaponName(liveCurrent),
         combat: ledgerRound ?? undefined,
+        flee: ledgerFlee ?? undefined,
         dungeonRemaining: remainingDungeonMobs(liveCurrent),
       });
 
@@ -2612,6 +2654,12 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
         for (const e of events) {
           if (e.type === 'heal' && e.amount) hpDelta += e.amount;
         }
+      } else if (ledgerFlee && !ledgerFlee.fled) {
+        playerDamageTaken = ledgerFlee.received;
+        hpDelta = 0;
+        for (const e of events) {
+          if (e.type === 'heal' && e.amount) hpDelta += e.amount;
+        }
       } else {
         for (const e of events) {
           if (e.type === 'heal' && e.amount) hpDelta += e.amount;
@@ -2652,6 +2700,12 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
                   ...(ledgerRound.received ? [`Damage Received: ${ledgerRound.received}`] : []),
                   ...(ledgerRound.xp ? [`XP Gained: ${ledgerRound.xp}`] : []),
                 ]
+              : []),
+            ...(ledgerFlee ? [formatFleeReceipt({ flee: ledgerFlee })] : []),
+            ...(isExplorableDungeon(liveCurrent.activeDungeon)
+              && remainingDungeonMobs(liveCurrent).alive === 0
+              && (ledgerRound?.enemyDead || ledgerFlee?.fled)
+              ? [DUNGEON_NEUTRALIZED_MILESTONE]
               : []),
           ])
         ),
@@ -2705,6 +2759,8 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
         if (ledgerRound.xp > 0) {
           baseChar.xp = (baseChar.xp ?? 0) + ledgerRound.xp;
         }
+      } else if (ledgerFlee && !ledgerFlee.fled) {
+        baseChar.hp = ledgerFlee.playerHpAfter;
       } else if (hpDelta !== 0) {
         baseChar.hp = Math.max(0, Math.min(baseChar.maxHp, (baseChar.hp ?? 0) + hpDelta));
       }
@@ -2815,7 +2871,9 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
       }
 
       let updatedEncounter = eventsToEncounterUpdate(events, workingState.activeEncounter ?? null);
-      if (ledgerRound) {
+      if (ledgerFlee?.fled) {
+        updatedEncounter = null;
+      } else if (ledgerRound) {
         updatedEncounter = ledgerRound.enemyDead ? null : (liveCurrent.activeEncounter ?? null);
       }
       const turnFacts = collectTurnTimelineFacts({

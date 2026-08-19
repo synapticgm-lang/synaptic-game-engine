@@ -9,6 +9,15 @@ export const CURRENT_SAVE_REPAIR_REVISION = 1;
 export type NodeMob = NonNullable<NodeHidden['mobs']>[number];
 export type LooseNodeItem = NonNullable<NodeHidden['looseItems']>[number];
 
+/** Narrative-only receipt when mob counter hits zero — no auto dungeon exit. */
+export const DUNGEON_NEUTRALIZED_MILESTONE =
+  '[MILESTONE: All dungeon threats neutralized]';
+
+/** True while a live encounter must be resolved before map movement. */
+export function isCombatLocked(state: GameState): boolean {
+  return !!(state.activeEncounter && state.activeEncounter.hp > 0);
+}
+
 export function mobCountsAsRemaining(mob: NodeMob): boolean {
   if (!mob.spawned) return true;
   if (mob.defeated) return false;
@@ -121,6 +130,32 @@ export function restoreParkedEncounter(state: GameState): GameState {
     goldReward: 0,
   };
   return { ...state, activeEncounter: encounter };
+}
+
+/** Park wounded mob HP on the current node after a successful flee. */
+export function parkMobHpAtCurrentNode(
+  state: GameState,
+  enemyName: string,
+  hpRemaining: number
+): GameState {
+  const dungeon = state.activeDungeon;
+  if (!isExplorableDungeon(dungeon)) return state;
+  const node = currentDungeonNode(dungeon);
+  if (!node?.hidden) return state;
+  const key = enemyName.trim().toLowerCase();
+  const hp = Math.max(1, hpRemaining);
+  let touched = false;
+  const mobs = node.hidden.mobs.map((mob) => {
+    if (touched) return mob;
+    if (mob.name.trim().toLowerCase() !== key) return mob;
+    touched = true;
+    return { ...mob, spawned: true, defeated: false, hpRemaining: hp };
+  });
+  if (!touched) return state;
+  const nodes = dungeon.nodes.map((n) =>
+    n.id === node.id ? { ...n, hidden: { ...n.hidden!, mobs } } : n
+  );
+  return { ...state, activeDungeon: { ...dungeon, nodes } };
 }
 
 /** Mark the current room mob defeated when ledger combat kills the active foe. */

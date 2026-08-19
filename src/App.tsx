@@ -457,6 +457,7 @@ export default function App() {
           activeDungeon={state.activeDungeon ?? null}
           currentLocation={state.currentLocation}
           currentCoordinates={state.currentCoordinates}
+          combatLocked={!!(state.activeEncounter && state.activeEncounter.hp > 0)}
           onEnsureLocalMap={game.hydratePlayFromLog}
           onLoadDungeon={(blueprintId, dungeonName, isProcedural, tier, nodeCount) => {
             if (game.loadDungeon) {

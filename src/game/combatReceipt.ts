@@ -3,7 +3,7 @@
  */
 
 import type { OutcomeToken } from './outcomeToken';
-import type { LedgerCombatRound } from './ledgerCombat';
+import type { LedgerCombatRound, LedgerFleeRound } from './ledgerCombat';
 
 /** Compact declared-threat + result line for Status / system log. */
 export function formatCombatReceipt(args: {
@@ -20,6 +20,15 @@ export function formatCombatReceipt(args: {
   const ret = c.enemyActReason?.trim() || 'No return blow';
   const you = `Your HP ${c.playerHpAfter}`;
   return `Combat: ${threat}. ${blow} → ${after}. ${ret}. ${you}.`;
+}
+
+/** Flee attempt receipt for Status / system log. */
+export function formatFleeReceipt(args: { flee: LedgerFleeRound }): string {
+  const f = args.flee;
+  if (f.fled) {
+    return `Flee: ${f.enemyName} (${f.enemyHpBefore} HP) left wounded on this node. ${f.fleeReason} Your HP ${f.playerHpAfter}.`;
+  }
+  return `Flee failed: ${f.enemyName} (${f.enemyHpBefore} HP) still engaged. ${f.fleeReason} Damage ${f.received}. Your HP ${f.playerHpAfter}.`;
 }
 
 /** Pre-writer telegraph one-liner (already in outcome token; keep for HUD chips). */
