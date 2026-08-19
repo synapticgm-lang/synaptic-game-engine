@@ -4,6 +4,7 @@
  */
 
 import type { EngineMode, GameState, PendingRepair } from './types';
+import { resolveVoiceIdForState } from './gmVoiceProfile';
 import { lookupRepairCopyRow } from './repairCopyBank';
 
 export type RepairSituation =
@@ -189,7 +190,5 @@ export function buildClarifiedInput(originalInput: string, pickedOption: string)
 }
 
 export function resolveRepairVoiceId(state: GameState, settingsVoiceId?: string | null): string {
-  return state.engineMode === 'dnd'
-    ? (state.gmPersonality ?? 'chilled-gm')
-    : (settingsVoiceId ?? 'cold-system');
+  return resolveVoiceIdForState(state, settingsVoiceId);
 }

@@ -13,7 +13,7 @@ import { formatMaturityRules } from './maturity.ts';
 import {
   formatCustomTabletopRulesForPrompt,
 } from './customTabletopRules.ts';
-import { formatGmVoiceForPrompt } from './gmVoiceProfile.ts';
+import { formatGmVoiceForPrompt, resolveVoiceIdForState } from './gmVoiceProfile.ts';
 import { formatFluidProseRailsForPrompt } from './fluidProseRails.ts';
 import { formatFolkVoiceForPrompt } from './folkVoiceExpectations.ts';
 import { formatSpeechActRailsForPrompt } from './speechActRails.ts';
@@ -341,7 +341,7 @@ export function buildSystemPrompt(state: GameState, settings: Settings, activeLo
   );
   const publishingEngine = buildPublishingEngineInstructions(settings);
   const voiceRail = formatGmVoiceForPrompt(
-    state.engineMode === 'dnd' ? (state.gmPersonality ?? 'chilled-gm') : settings.gmVoiceProfileId,
+    resolveVoiceIdForState(state, settings.gmVoiceProfileId),
     { engineMode: state.engineMode, kidMode },
   );
   const fluidRails = formatFluidProseRailsForPrompt(state.engineMode);

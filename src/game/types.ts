@@ -454,6 +454,12 @@ export interface GameState {
    * Persists on the save. Absent on old saves = chilled.
    */
   gmPersonality?: import('./gmVoiceProfile').GmPersonalityId;
+  /**
+   * LitRPG System personality for this campaign (`engineMode === 'litrpg'`).
+   * Prompt voice only — not TTS. Persists on the save.
+   * Absent on old saves = Settings `gmVoiceProfileId`, then cold registrar.
+   */
+  systemPersonality?: import('./gmVoiceProfile').SystemPersonalityId;
 }
 
 export type RepairSituation = import('./repairEngine').RepairSituation;

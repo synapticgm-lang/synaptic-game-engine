@@ -129,7 +129,12 @@ import {
   isUnresolvedActionNarrative,
 } from './actionResolution';
 import { mergeNpcMemoriesFromTurn, recordNpcTreatmentFromAction } from './npcMemory';
-import { resolveTabletopGmPersonality, type GmPersonalityId } from './gmVoiceProfile';
+import {
+  resolveLitrpgSystemPersonality,
+  resolveTabletopGmPersonality,
+  type GmPersonalityId,
+  type SystemPersonalityId,
+} from './gmVoiceProfile';
 import {
   buildClarifiedInput,
   detectRepairSituation,
@@ -3336,6 +3341,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
     customTabletopRules?: string,
     playerBible?: CampaignBible,
     gmPersonality?: GmPersonalityId,
+    systemPersonality?: SystemPersonalityId,
   ) => {
     if (
       selectedVisualMode ||
@@ -3431,6 +3437,8 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
         engineMode === 'dnd' ? clipCustomTabletopRules(customTabletopRules).text || undefined : undefined,
       gmPersonality:
         engineMode === 'dnd' ? resolveTabletopGmPersonality(gmPersonality) : undefined,
+      systemPersonality:
+        engineMode === 'litrpg' ? resolveLitrpgSystemPersonality(systemPersonality) : undefined,
     });
     const newState = withUpdatedHookArc(
       ensureCampaignContract(

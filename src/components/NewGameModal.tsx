@@ -27,9 +27,12 @@ import {
   loadPlayerProfile,
 } from '@/game/playerProfile';
 import {
+  DEFAULT_LITRPG_SYSTEM_PERSONALITY,
   DEFAULT_TABLETOP_GM_PERSONALITY,
+  LITRPG_SYSTEM_PERSONALITIES,
   TABLETOP_GM_PERSONALITIES,
   type GmPersonalityId,
+  type SystemPersonalityId,
 } from '@/game/gmVoiceProfile';
 
 interface Props {
@@ -49,6 +52,7 @@ interface Props {
     customTabletopRules?: string,
     playerBible?: CampaignBible,
     gmPersonality?: GmPersonalityId,
+    systemPersonality?: SystemPersonalityId,
   ) => void;
   onClose: () => void;
 }
@@ -120,6 +124,7 @@ export function NewGameModal({ contentMode, onStart, onClose }: Props) {
   const [engineMode, setEngineMode] = useState<EngineMode>('litrpg');
   const [gmStrictness, setGmStrictness] = useState<GmStrictness>('standard');
   const [gmPersonality, setGmPersonality] = useState<GmPersonalityId>(DEFAULT_TABLETOP_GM_PERSONALITY);
+  const [systemPersonality, setSystemPersonality] = useState<SystemPersonalityId>(DEFAULT_LITRPG_SYSTEM_PERSONALITY);
   const [customArchetype, setCustomArchetype] = useState<CampaignArchetype>(getDefaultArchetype('litrpg'));
   const [simplePitch, setSimplePitch] = useState('');
   const [expertDraft, setExpertDraft] = useState<ExpertCustomDraft>(emptyExpertDraft);
@@ -222,6 +227,7 @@ export function NewGameModal({ contentMode, onStart, onClose }: Props) {
       engineMode === 'dnd' ? customTabletopRules : undefined,
       undefined,
       engineMode === 'dnd' ? gmPersonality : undefined,
+      engineMode === 'litrpg' ? systemPersonality : undefined,
     );
   };
 
@@ -285,6 +291,7 @@ export function NewGameModal({ contentMode, onStart, onClose }: Props) {
       engineMode === 'dnd' ? customTabletopRules : undefined,
       playerBible,
       engineMode === 'dnd' ? gmPersonality : undefined,
+      engineMode === 'litrpg' ? systemPersonality : undefined,
     );
   };
 
@@ -597,6 +604,37 @@ export function NewGameModal({ contentMode, onStart, onClose }: Props) {
                     </div>
                   </div>
                 </>
+              )}
+
+              {engineMode === 'litrpg' && (
+                <div>
+                  <label className="mb-1 block font-medium text-slate-300">System personality</label>
+                  <p className="mb-1.5 text-[10px] leading-snug text-slate-500">
+                    How the in-world System talks — panels, notices, registration. Not a tabletop GM.
+                    Sticks with this campaign.
+                  </p>
+                  <div className="grid grid-cols-1 gap-1.5 sm:grid-cols-2">
+                    {LITRPG_SYSTEM_PERSONALITIES.map((p) => (
+                      <button
+                        key={p.id}
+                        type="button"
+                        onClick={() => setSystemPersonality(p.id as SystemPersonalityId)}
+                        className={`rounded-lg border px-2 py-1.5 text-left transition-all ${
+                          systemPersonality === p.id
+                            ? 'border-crimson-500 bg-crimson-950/30 text-crimson-200'
+                            : 'border-slate-700 bg-slate-800/40 text-slate-400 hover:bg-slate-800'
+                        }`}
+                      >
+                        <div className="text-xs font-semibold text-slate-200">
+                          {p.litrpgLabel ?? p.label}
+                        </div>
+                        <div className="text-[9px] font-normal leading-tight text-slate-500">
+                          {p.litrpgTip ?? p.blurb}
+                        </div>
+                      </button>
+                    ))}
+                  </div>
+                </div>
               )}
 
               {path === 'custom' && (
