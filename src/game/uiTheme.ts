@@ -56,6 +56,15 @@ export function themeBySettingsId(uiThemeId: string | undefined): ShopItem {
   return shopItemById(id) ?? THEME_ITEMS[0]!;
 }
 
+/** Shop catalog name for the equipped theme — same string in Shop, Themes, and play chrome. */
+export function equippedSetName(uiThemeId: string | undefined): string {
+  return themeBySettingsId(uiThemeId).name;
+}
+
+export function equippedSetLabel(uiThemeId: string | undefined): string {
+  return `equipped set: ${equippedSetName(uiThemeId)}`;
+}
+
 /** Apply theme + optional font/dice/frame kit CSS variables to :root. */
 export function applyUiThemeToDocument(
   theme: ShopItem | null | undefined,

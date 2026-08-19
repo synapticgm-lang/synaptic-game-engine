@@ -5,11 +5,12 @@ import { loadCapacityLedger } from '../game/capacityLedger';
 import { getTierDefinition, type SubscriptionTierId } from '../game/subscriptionTiers';
 import { explainWhy, recentStateTxReceipts } from '../game/stateTx';
 import { effectiveWriterTier, isTestLabEnabled } from '../game/testLab';
+import { equippedSetLabel, equippedSetName } from '../game/uiTheme';
 
 /** Visible after a hard refresh — if this is missing, Vercel is still serving the 16 Aug bundle. */
-export const HUD_BUILD_STAMP = '2026-08-19c';
+export const HUD_BUILD_STAMP = '2026-08-19d';
 const HUD_BUILD_TITLE =
-  'Debug 2026-08-19c — STATUS box is header + results only; no explainer caption';
+  'Debug 2026-08-19d — Adventurer name clears kit ring; equipped set label in play chrome';
 
 interface Props {
   state: GameState;
@@ -70,13 +71,19 @@ export function Hud({ state, settings, onSettings, onOpenMap, onOpenQuestLog, on
   };
 
   const showSalvage = state.engineMode !== 'dnd' && state.engineMode !== 'pyoa';
+  const setLabel = equippedSetLabel(settings.uiThemeId);
+  const setName = equippedSetName(settings.uiThemeId);
 
   return (
     <header className="sgm-hud border-b px-2 py-2 sm:px-4 sm:py-2.5 flex items-center justify-between text-xs text-slate-200 sticky top-0 z-40 backdrop-blur w-full">
       
       {/* Left Spacer / Branding or status if needed */}
-      <div className="flex items-center gap-1 w-auto sm:w-1/4 shrink">
-        <span className="sgm-hud-brand font-bold hidden md:inline">Synaptic GM</span>
+      <div className="flex items-center gap-1 w-auto sm:w-1/4 shrink min-w-0">
+        <div className="hidden md:flex min-w-0 max-w-[11rem] flex-col leading-tight mr-1">
+          <span className="sgm-hud-brand font-bold">Synaptic GM</span>
+          <span className="sgm-equipped-set truncate" title={setLabel}>{setLabel}</span>
+        </div>
+        <span className="md:hidden sgm-equipped-set truncate max-w-[7rem]" title={setLabel}>{setName}</span>
         <span
           className="font-mono text-[10px] sm:text-[11px] text-rose-300/90 whitespace-nowrap"
           title={HUD_BUILD_TITLE}

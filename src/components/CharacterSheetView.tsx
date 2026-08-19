@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react';
 import type { GameState, AttributeKey, Item } from '@/game/types';
+import { equippedSetLabel } from '@/game/uiTheme';
 import { RARITY_COLORS } from '@/game/types';
 import {
   Dices, Heart, Droplet, Zap, Star, Shield, Sword,
@@ -11,6 +12,7 @@ type LayoutMode = 'dnd' | 'litrpg' | 'cards';
 
 interface Props {
   state: GameState;
+  uiThemeId?: string;
 }
 
 const ATTR_META: Record<AttributeKey, { label: string; icon: string }> = {
@@ -25,15 +27,15 @@ const ATTR_META: Record<AttributeKey, { label: string; icon: string }> = {
 const MODIFIER = (val: number) => Math.floor((val - 10) / 2);
 const FMT_MOD = (m: number) => (m >= 0 ? `+${m}` : `${m}`);
 
-export function CharacterSheetView({ state }: Props) {
+export function CharacterSheetView({ state, uiThemeId }: Props) {
   const [layout, setLayout] = useState<LayoutMode>('dnd');
 
   return (
     <div className="flex h-full flex-col">
       <LayoutToggle layout={layout} onChange={setLayout} />
       <div className="flex-1 overflow-y-auto p-3 sm:p-4">
-        {layout === 'dnd' && <DndDashboard state={state} />}
-        {layout === 'litrpg' && <LitRpgStatus state={state} />}
+        {layout === 'dnd' && <DndDashboard state={state} uiThemeId={uiThemeId} />}
+        {layout === 'litrpg' && <LitRpgStatus state={state} uiThemeId={uiThemeId} />}
         {layout === 'cards' && <PreMadeCards state={state} />}
       </div>
     </div>
@@ -67,7 +69,7 @@ function LayoutToggle({ layout, onChange }: { layout: LayoutMode; onChange: (m: 
 
 /* ============ LAYOUT 1: TABLETOP DASHBOARD ============ */
 
-function DndDashboard({ state }: { state: GameState }) {
+function DndDashboard({ state, uiThemeId }: { state: GameState; uiThemeId?: string }) {
   const c = state.character;
   const attrs = c.attributes ?? ({} as Record<AttributeKey, number>);
   const attrRows: [AttributeKey, number][] = (['STR', 'DEX', 'CON', 'INT', 'WIS', 'CHA'] as AttributeKey[]).map((k) => [k, attrs[k] ?? 10]);
@@ -155,7 +157,7 @@ function DndDashboard({ state }: { state: GameState }) {
 
 /* ============ LAYOUT 2: LITRPG STATUS ============ */
 
-function LitRpgStatus({ state }: { state: GameState }) {
+function LitRpgStatus({ state, uiThemeId }: { state: GameState; uiThemeId?: string }) {
   const c = state.character;
   const hpPct = c.maxHp > 0 ? Math.min(100, (c.hp / c.maxHp) * 100) : 0;
   const mpPct = c.maxMp > 0 ? Math.min(100, (c.mp / c.maxMp) * 100) : 0;
@@ -167,9 +169,10 @@ function LitRpgStatus({ state }: { state: GameState }) {
   return (
     <div className="mx-auto max-w-md space-y-5">
       {/* Level / XP Header */}
-      <div className="sgm-turn-frame sgm-info-panel rounded-xl border p-4 text-center shadow-lg">
-        <div className="sgm-info-accent mb-1 text-[10px] uppercase tracking-[0.2em] opacity-80">Adventurer</div>
-        <div className="font-serif text-2xl font-bold">{c.name}</div>
+      <div className="sgm-turn-frame sgm-info-panel rounded-xl border px-9 py-4 text-center shadow-lg">
+        <div className="sgm-info-accent relative z-[3] mb-1 text-[10px] uppercase tracking-[0.2em] opacity-80">Adventurer</div>
+        <div className="relative z-[3] font-serif text-2xl font-bold">{c.name}</div>
+        <div className="sgm-equipped-set relative z-[3] mt-1 truncate">{equippedSetLabel(uiThemeId)}</div>
         <div className="my-2 flex items-center justify-center gap-2">
           <span className="sgm-info-tab-on rounded-full border px-3 py-0.5 text-xs font-bold">
             LV {c.level}

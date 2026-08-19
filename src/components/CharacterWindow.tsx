@@ -15,6 +15,7 @@ import { getItemsInContainer } from '@/game/inventory';
 import { findEquippedInSlot, type DisplayEquipSlot } from '@/game/wornGear';
 import { itemIconPrompt, paperDollPrompt, portraitCacheKey, type InventoryArtPatch } from '@/game/inventoryArt';
 import type { ImagePromptKind } from '@/game/comicImagePrompt';
+import { equippedSetLabel } from '@/game/uiTheme';
 
 type BottomTab = 'character' | 'inventory' | 'spells' | 'professions' | 'pets' | 'titles' | 'dnd' | 'sheet' | 'portrait' | 'progression' | 'combat';
 
@@ -143,7 +144,7 @@ function ItemInspectCard({ item, slotLabel, onClose }: { item: Item; slotLabel: 
       className="sgm-turn-frame sgm-info-panel w-full max-w-sm rounded-lg border p-3 shadow-2xl"
       onClick={(e) => e.stopPropagation()}
     >
-      <div className="flex items-start justify-between gap-2">
+      <div className="sgm-frame-header flex items-start justify-between gap-2">
         <div className="min-w-0">
           <h3 className="font-serif text-sm font-bold leading-tight" style={{ color: rarityColor }}>{item.name}</h3>
           <p className="mt-0.5 text-[11px] text-slate-400">
@@ -581,10 +582,15 @@ export function CharacterWindow({ isOpen, onClose, state, settings, initialTab, 
       <div className="sgm-turn-frame sgm-info-panel relative flex h-[100dvh] w-full max-w-3xl flex-col overflow-hidden text-slate-100 shadow-2xl sm:h-[85vh] sm:max-h-[85vh] sm:rounded-xl sm:border">
         <div className="sgm-turn-frame-bar h-1 w-full shrink-0" />
 
-        <div className="flex shrink-0 items-center justify-between border-b border-slate-800/80 bg-black/20 px-4 py-3">
-          <div className="flex items-center gap-3">
-            <h2 className="sgm-info-heading text-lg font-bold">{c.name}</h2>
-            <span className="text-xs text-slate-500">Level {c.level}</span>
+        <div className="sgm-frame-header flex shrink-0 items-center justify-between border-b border-slate-800/80 bg-black/20 py-3 pr-4">
+          <div className="flex min-w-0 flex-1 items-center gap-3 pr-2">
+            <div className="min-w-0">
+              <h2 className="sgm-info-heading relative z-[3] truncate text-lg font-bold">{c.name}</h2>
+              <span className="sgm-equipped-set relative z-[3] mt-0.5 block truncate" title={equippedSetLabel(settings.uiThemeId)}>
+                {equippedSetLabel(settings.uiThemeId)}
+              </span>
+            </div>
+            <span className="shrink-0 text-xs text-slate-500">Level {c.level}</span>
           </div>
           <div className="flex items-center gap-2">
             {onCharacter && (
@@ -638,7 +644,7 @@ export function CharacterWindow({ isOpen, onClose, state, settings, initialTab, 
               {activeTab === 'pets' && <EmptyTabContent message="No pets or summons bonded." />}
               {activeTab === 'titles' && <StoryPlatesTab state={state} />}
               {activeTab === 'dnd' && <DndSheet state={state} />}
-              {activeTab === 'sheet' && <CharacterSheetView state={state} />}
+              {activeTab === 'sheet' && <CharacterSheetView state={state} uiThemeId={settings.uiThemeId} />}
               {activeTab === 'portrait' && <UploadImport />}
               {activeTab === 'progression' && <CharacterProgression state={state} />}
               {activeTab === 'combat' && <CombatEncounter activeDungeon={state.activeDungeon} currentCoordinates={state.currentCoordinates} />}

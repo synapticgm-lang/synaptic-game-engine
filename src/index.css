@@ -446,10 +446,16 @@ html[data-sgm-texture='noir'] .sgm-info-panel {
 }
 .sgm-turn-frame::before,
 .sgm-frame-chip::before {
-  top: 4px;
-  left: 4px;
+  top: 2px;
+  left: 2px;
   border-top: 2px solid;
   border-left: 2px solid;
+}
+/* Kit rings sit in the corner; name + equipped-set label start after them. */
+.sgm-frame-header {
+  position: relative;
+  z-index: 3;
+  padding-left: 2.25rem;
 }
 .sgm-turn-frame::after,
 .sgm-frame-chip::after {
@@ -866,6 +872,12 @@ html[data-sgm-frame='velvet'] .sgm-turn-frame::before,
 .sgm-hud-brand {
   font-family: var(--sgm-font-story, 'Cinzel', serif);
   color: var(--sgm-accent, #ef4444);
+}
+.sgm-equipped-set {
+  color: var(--sgm-muted, #94a3b8);
+  font-size: 0.625rem;
+  line-height: 1.25;
+  font-weight: 500;
 }
 .sgm-info-fill {
   background-color: var(--sgm-accent, #ef4444);

@@ -4,23 +4,26 @@ import type { GameState, Rarity, LoreCard, LoreCardType } from '@/game/types';
 import { RARITY_COLORS } from '@/game/types';
 import { computeInventoryCapacity, getItemsInContainer } from '@/game/inventory';
 import { findEquippedInSlot, type DisplayEquipSlot } from '@/game/wornGear';
+import { equippedSetLabel } from '@/game/uiTheme';
 
 interface Props {
   state: GameState;
   open: boolean;
   onClose: () => void;
   onUpdateLorebook?: (cards: LoreCard[]) => void;
+  uiThemeId?: string;
 }
 
 const EQUIP_SLOTS: DisplayEquipSlot[] = ['Head', 'Chest', 'Main Hand', 'Off Hand', 'Legs', 'Feet'];
 
-export function RightDrawer({ state, open, onClose, onUpdateLorebook }: Props) {
+export function RightDrawer({ state, open, onClose, onUpdateLorebook, uiThemeId }: Props) {
   const [tab, setTab] = useState<'gear' | 'materials' | 'containers' | 'companions' | 'codex'>('gear');
   const [showProfile, setShowProfile] = useState(false);
   const [activeItemId, setActiveItemId] = useState<string | null>(null);
   const [expandedBagId, setExpandedBagId] = useState<string | null>(null);
 
   const c = state.character;
+  const setLabel = equippedSetLabel(uiThemeId);
 
   return (
     <>
@@ -34,11 +37,14 @@ export function RightDrawer({ state, open, onClose, onUpdateLorebook }: Props) {
         <div className="p-4 space-y-4">
           {/* Adventurer Summary Card */}
           <div className="sgm-turn-frame sgm-info-panel rounded-lg border p-3">
-            <div className="flex items-center justify-between mb-2">
-              <span className="font-serif text-sm">{c.name || 'Adventurer'}</span>
+            <div className="sgm-frame-header flex items-start justify-between gap-2 mb-2">
+              <div className="min-w-0 flex-1">
+                <span className="relative z-[3] font-serif text-sm block truncate">{c.name || 'Adventurer'}</span>
+                <span className="sgm-equipped-set relative z-[3] mt-0.5 block truncate" title={setLabel}>{setLabel}</span>
+              </div>
               <button
                 onClick={() => setShowProfile(!showProfile)}
-                className="sgm-info-tab-on text-[10px] px-2 py-0.5 rounded border transition"
+                className="sgm-info-tab-on shrink-0 text-[10px] px-2 py-0.5 rounded border transition"
               >
                 {showProfile ? 'Hide Profile' : 'Show Profile'}
               </button>

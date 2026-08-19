@@ -382,7 +382,7 @@ export default function App() {
           />
         </main>
 
-        <RightDrawer state={state} open={game.rightOpen} onClose={() => game.setRightOpen(false)} onUpdateLorebook={game.updateLorebook} />
+        <RightDrawer state={state} open={game.rightOpen} onClose={() => game.setRightOpen(false)} onUpdateLorebook={game.updateLorebook} uiThemeId={game.settings.uiThemeId} />
       </div>
 
       {game.showSettings && (
