@@ -8,9 +8,9 @@ import { effectiveWriterTier, isTestLabEnabled } from '../game/testLab';
 import { equippedSetLabel, equippedSetName } from '../game/uiTheme';
 
 /** Visible after a hard refresh — if this is missing, Vercel is still serving the 16 Aug bundle. */
-export const HUD_BUILD_STAMP = '2026-08-19p';
+export const HUD_BUILD_STAMP = '2026-08-19s';
 const HUD_BUILD_TITLE =
-  'Debug 2026-08-19p — premium theme materials (bone/moonlight Undead; kit fonts/frames)';
+  'Debug 2026-08-19s — flux.2-flex hosted art, skip harvested Earth origin, LitRPG system ping';
 
 interface Props {
   state: GameState;

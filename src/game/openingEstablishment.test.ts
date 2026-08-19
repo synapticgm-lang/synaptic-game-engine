@@ -2,8 +2,10 @@ import { describe, expect, it } from 'vitest';
 import type { OpeningPrompt } from '@/data/campaigns/types';
 import { createInitialState } from './defaults';
 import {
+  applyHarvestedOpeningCovers,
   applyOpeningAnswer,
   establishmentChoices,
+  harvestEarthOriginFromProse,
   isLocationishOpeningUtterance,
   isOpeningSetupChipLabel,
 } from './openingEstablishment';
@@ -75,5 +77,26 @@ describe('opening utterance — name cover vs location-talk', () => {
   it('still accepts a real given name on the name cover', async () => {
     const { state } = await applyOpeningAnswer(summonedNameCover(), 'Sam');
     expect(state.character.name).toBe('Sam');
+  });
+});
+
+describe('harvest Earth origin from opening prose', () => {
+  it('locks apartment origin and drops Earth-city chips', () => {
+    const prose =
+      'The cold stone of the Sevenfold Circle is a stark contrast to the last place Jax remembered: his small apartment in a bustling city.';
+    expect(harvestEarthOriginFromProse(prose)?.toLowerCase()).toMatch(/apartment/);
+    const next = applyHarvestedOpeningCovers(
+      {
+        pending: NAME_THEN_EARTH.slice(1),
+        answers: {},
+        complete: false,
+        registrar: { voice: 'inworld', label: 'THE CIRCLE', startLine: 'Light, then stone.' },
+        sceneWritten: true,
+        mode: 'weave',
+      },
+      prose
+    );
+    expect(next.pending.some((p) => p.kind === 'location')).toBe(false);
+    expect(establishmentChoices(next.pending).join(' ')).not.toMatch(/Earth city|I was at home/i);
   });
 });

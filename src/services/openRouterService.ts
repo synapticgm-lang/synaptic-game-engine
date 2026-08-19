@@ -26,12 +26,13 @@ import {
   shouldUseHostedImageProxy,
 } from '../game/distributionChannel';
 import { invokeImageProxy } from '../game/gmProxy';
+import { HOSTED_HERO_MODEL, HOSTED_SCHNELL_MODEL } from '../game/hostedImageModel';
 
 const OPENROUTER_API_KEY = ''; // Provider keys must come from Settings / edge secrets — never VITE_*.
 const BASE_URL = 'https://openrouter.ai/api/v1';
 
-export const PRIMARY_IMAGE_MODEL = 'black-forest-labs/flux-schnell';
-export const HERO_IMAGE_MODEL = 'black-forest-labs/flux-dev';
+export const PRIMARY_IMAGE_MODEL = HOSTED_SCHNELL_MODEL;
+export const HERO_IMAGE_MODEL = HOSTED_HERO_MODEL;
 const DEFAULT_IMAGE_GEN_TIMEOUT_MS = 25_000;
 const DEFAULT_VIDEO_GEN_TIMEOUT_MS = 90_000;
 const HERO_IMAGE_TRIGGER = /\b(?:milestone|splash(?:\s+page|\s+image)?|full[- ]page|boss(?:\s+(?:fight|battle|encounter))?|raid boss|final boss|world boss)\b/i;

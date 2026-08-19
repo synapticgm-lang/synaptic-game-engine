@@ -119,7 +119,7 @@ export function establishmentChoices(pending: OpeningPrompt[]): string[] {
       if (!chips.includes(n)) chips.push(n);
     }
   } else if (current.kind === 'location') {
-    chips.push(originSuggestionIsEarth(current) ? 'Random Earth city' : 'Random place');
+    chips.push(isEarthOriginPrompt(current) ? 'Random Earth city' : 'Random place');
     for (const s of current.suggestions ?? []) {
       if (/^random\s+(?:place|earth\s+city)$/i.test(s) || /random\s+(?:designation|name)/i.test(s)) continue;
       if (!chips.includes(s)) chips.push(s);
@@ -130,11 +130,6 @@ export function establishmentChoices(pending: OpeningPrompt[]): string[] {
     }
   }
   return chips.slice(0, 4);
-}
-
-function originSuggestionIsEarth(prompt: OpeningPrompt): boolean {
-  if (/\bearth\b/i.test(prompt.question)) return true;
-  return (prompt.suggestions ?? []).some((s) => /earth/i.test(s));
 }
 
 const SI_PROMPTS: OpeningPrompt[] = [
@@ -385,12 +380,65 @@ export function resolveOpeningPrompts(
   return styled.map((p) => ({ ...p, required: p.required !== false }));
 }
 
+export function isEarthOriginPrompt(prompt: OpeningPrompt): boolean {
+  if (/\bearth\b/i.test(prompt.question)) return true;
+  return (prompt.suggestions ?? []).some((s) => /earth/i.test(s));
+}
+
+/** Pull an already-written Earth origin out of the opening page so we do not ask again. */
+export function harvestEarthOriginFromProse(prose: string): string | null {
+  const text = prose.replace(/\s+/g, ' ').trim();
+  if (!text) return null;
+  const apartment = text.match(
+    /\b(?:his|her|your|my|the)\s+(?:small\s+)?(?:apartment|flat|house|studio)\b(?:\s+in\s+(?:a\s+)?[\w\s,]{2,40})?/i
+  );
+  if (apartment?.[0]) {
+    return apartment[0].replace(/^(?:his|her|your|my)\s+/i, 'a ').replace(/^the\s+/i, 'the ').trim();
+  }
+  if (/\b(?:was\s+at\s+home|at\s+home(?:\.|,)|\bin\s+(?:my|his|her|your)\s+(?:bedroom|kitchen|flat|house))\b/i.test(text)) {
+    return 'at home';
+  }
+  return null;
+}
+
+export function applyHarvestedOpeningCovers(
+  est: NonNullable<GameState['openingEstablishment']>,
+  prose: string
+): NonNullable<GameState['openingEstablishment']> {
+  const answers = { ...est.answers };
+  let pending = [...est.pending];
+  const origin = harvestEarthOriginFromProse(prose);
+  if (origin) {
+    answers.where = origin;
+    pending = pending.filter((p) => p.kind !== 'location' || !isEarthOriginPrompt(p));
+  }
+  return {
+    ...est,
+    answers,
+    pending,
+    complete: pending.length === 0,
+  };
+}
+
+export function litrpgOpeningSystemPing(state: GameState): string[] {
+  if (state.engineMode !== 'litrpg') return [];
+  if (state.campaignBibleId === 'summoned-pact') {
+    return [
+      'Registration incomplete',
+      'Stamp: Pactborn / Calamity Mark — unresolved',
+      'Gift: Circle Blessing [???] — unidentified',
+    ];
+  }
+  return ['Interface online', 'Awaiting designation'];
+}
+
 export function seedCoverAnswers(
   bible: CampaignBible | undefined,
   character: GameState['character']
 ): Record<string, string> {
   const answers: Record<string, string> = {};
-  if (bible?.startingLocation?.trim()) answers.where = bible.startingLocation.trim();
+  const earthOrigin = (bible?.openingPrompts ?? []).some(isEarthOriginPrompt);
+  if (bible?.startingLocation?.trim() && !earthOrigin) answers.where = bible.startingLocation.trim();
   if (character.name?.trim() && !GENERIC_NAMES.test(character.name.trim())) answers.name = character.name.trim();
   if (character.gender?.trim()) answers.gender = character.gender.trim();
   if (character.appearance?.trim() && !isJunkSetupValue(character.appearance)) {
@@ -1194,6 +1242,10 @@ export function buildOpeningSceneMandate(state: GameState, notes?: string): stri
   const coverLine = cover
     ? `End by weaving this ONE in-world question into the scene (not a form, not [ SYSTEM ] unless the bible is a System-panel moment): ${cover.question}`
     : 'Do not ask chargen questions. The first page is playable.';
+  const systemPing =
+    state.engineMode === 'litrpg'
+      ? 'LitRPG: emit one short <system> registration ping (readable lines, not “incomprehensible symbols”). Code also paints the Status window — glance at the panel, do not replace it with mysticism.'
+      : '';
   const hookText = state.openingEstablishment?.pickedHook?.trim()
     || resolveOpeningHook(bible, state.seed);
   const hook = hookText
@@ -1229,7 +1281,8 @@ Genre practice (honor the story type):
 4) Do not grant weapons or rare items. Only kit already on the sheet.
 5) Spoken lines must be grammatical. Never emit "a figure" as a name, "the a", or "unlock someone".
 6) The camera is HERE. Do not relocate the PC by calling this interior "a nearby building/place/hall." Nearby is for things that are not here.
-7) Then 3–4 local choices grounded in THAT opening. At least one choice must change the situation (kind/help, hard/refuse, talk a stake, or walk away) — not three flavours of look around / wait.
+7) ${systemPing}
+8) Then 3–4 local choices grounded in THAT opening. At least one choice must change the situation (kind/help, hard/refuse, talk a stake, or walk away) — not three flavours of look around / wait.
 ================================================`;
 }
 

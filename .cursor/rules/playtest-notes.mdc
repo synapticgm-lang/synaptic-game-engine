@@ -17,9 +17,12 @@ John is playtesting live. Collect issues here. Do not implement until he asks fo
 - Server capacity / Stripe live secrets / counsel legal pack / Kid Mode public gate — ops, not playtest tickets
 - Full a11y release gate, Expert author tools, audio lite, full comic — deliberate later / No-Go near-term
 - Manus optional: Snapshot+screenshots E1/E2; post-commit streaming UI; counsel outline
+- **Premium themes still feel cheap after 19p** (Vampire Nocturne = generic dark maroon, not velvet/night-court material) — Manus maxextract prompt ready, do not implement CSS until research returns: `docs/research/RESEARCH-PROMPT-premium-themes-price-tiers-manus-2026-08-19.md`
 
 ## Done (already shipped)
 
+- **2026-08-19s hosted art model + origin harvest:** OpenRouter rejected `flux-schnell`; hosted path uses `flux.2-flex` (alias + generate-image fallback). Summoned Pact no longer asks Earth-city after the opener already named an apartment. LitRPG opener paints a Status registration ping. Redeploy: `npx supabase functions deploy generate-image` (`2026-08-19s`)
+- **2026-08-19r New Game toast:** dropped “+N turns to get hooked” popup; bonus still applies, HUD still shows “N start” (`2026-08-19r`)
 - **2026-08-19q folk NPC dialogue banks:** Manus folk-voice zip ingested; `folkVoiceExpectations` deepened to 18 peoples (incl. Ledgerborn/Mycelial/Ashkin/Glassborn/Tidebound/Woven), cross-folk cues, Kid Mode lines, anti-list rail; edge synced (`2026-08-19q`)
 - **2026-08-19p premium themes:** kits read as materials not Integration recolors — Undead Ossuary bone/ash/moonlight (no teal); kit font/frame auto-heal; story prose uses theme typeface; HUD stamp 19p
 - **2026-08-19 fluid pipeline:** Post-commit sentence reveal + status chrome; repair CSV hold/resolve banner; fluid-chat eval fixtures in vitest (64 tests). Prefer full reply toggle in Settings → Narrative (`2026-08-19`)

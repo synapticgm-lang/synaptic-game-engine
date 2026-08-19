@@ -104,7 +104,7 @@ describe('hosted memorable art — Free without browser keys', () => {
     const fetchMock = vi.fn(async (input: RequestInfo | URL, init?: RequestInit) => {
       expect(String(input)).toMatch(/\/functions\/v1\/generate-image$/);
       const body = JSON.parse(String(init?.body ?? '{}')) as { model?: string };
-      expect(body.model).toBe('black-forest-labs/flux-schnell');
+      expect(body.model).toBe('black-forest-labs/flux.2-flex');
       return new Response(JSON.stringify({ url: 'https://img.test/opener.png' }), {
         status: 200,
         headers: { 'Content-Type': 'application/json' },
@@ -187,7 +187,7 @@ describe('hosted inventory art — classic text, no memorable spend', () => {
     const fetchMock = vi.fn(async (input: RequestInfo | URL, init?: RequestInit) => {
       expect(String(input)).toMatch(/\/functions\/v1\/generate-image$/);
       const body = JSON.parse(String(init?.body ?? '{}')) as { model?: string };
-      expect(body.model).toBe('black-forest-labs/flux-schnell');
+      expect(body.model).toBe('black-forest-labs/flux.2-flex');
       return new Response(JSON.stringify({ url: 'https://img.test/jax-doll.png' }), {
         status: 200,
         headers: { 'Content-Type': 'application/json' },

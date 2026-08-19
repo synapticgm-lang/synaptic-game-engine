@@ -50,10 +50,12 @@ import { collectTurnTimelineFacts, mergeTimeline } from './timeline';
 import { applyCampaignCharacter, reconcileCampaignLoadout, resolveActiveCampaignBible, seedStateFromArchetype, seedStateFromCampaignBible } from './campaignSeed';
 import type { CampaignBible } from '@/data/campaigns/types';
 import {
+  applyHarvestedOpeningCovers,
   applyOpeningAnswer,
   applySystemRename,
   ensureSystemReceipt,
   establishmentChoices,
+  litrpgOpeningSystemPing,
   sanitizeOpeningNarration,
   buildOpeningSceneMandate,
   isOpeningEstablishmentPending,
@@ -1914,13 +1916,19 @@ export function useGame() {
           canSpend('memorable')
         );
         offerMemorableAdIfCapHit(openingMemorable.skippedForCapacity);
+        const harvestedOpening = openingState.openingEstablishment
+          ? applyHarvestedOpeningCovers(openingState.openingEstablishment, cleanOpening)
+          : openingState.openingEstablishment;
         const openingGm: LogEntry = {
           id: uid(),
           turn: openingState.turn,
           role: 'gm',
           content: cleanOpening,
           timestamp: Date.now(),
-          systemLog: openingUnlocks.map((q) => `Quest Unlocked: ${q.name}`),
+          systemLog: [
+            ...litrpgOpeningSystemPing(openingState),
+            ...openingUnlocks.map((q) => `Quest Unlocked: ${q.name}`),
+          ],
           ...memorableLogFields(openingMemorable),
         };
         const seeded = seedOpeningSceneFacts({ ...openingState, turn: openingTurn });
@@ -1935,14 +1943,14 @@ export function useGame() {
           sceneFacts,
           quests: questsAfterScene,
           log: [...openingState.log, openingGm],
-          choices: openingState.openingEstablishment?.pending?.length
-            ? establishmentChoices(openingState.openingEstablishment.pending)
+          choices: harvestedOpening?.pending?.length
+            ? establishmentChoices(harvestedOpening.pending)
             : openingChoices.length
               ? openingChoices
               : undefined,
-          openingEstablishment: openingState.openingEstablishment
-            ? { ...openingState.openingEstablishment, sceneWritten: true }
-            : openingState.openingEstablishment,
+          openingEstablishment: harvestedOpening
+            ? { ...harvestedOpening, sceneWritten: true }
+            : harvestedOpening,
           memorableMoments: openingMemorable.nextState,
           lastUpdated: Date.now(),
         };
@@ -3429,12 +3437,6 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
     stateRef.current = newState;
     bindSessionImageCache(newState.saveId);
     isHydratedRef.current = true;
-    if (honeymoon > 0) {
-      addToast(
-        `Story start: +${honeymoon} turns to get hooked. Opening setup answers are free.`,
-        'success'
-      );
-    }
     debugLogger.record('STATE_UPDATE', 'New game state created and hydrated', {
       turn: newState.turn,
       storyName: newState.storyName,
@@ -3512,13 +3514,19 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
         canSpend('memorable')
       );
       offerMemorableAdIfCapHit(openingMemorable.skippedForCapacity);
+      const harvestedOpening = newState.openingEstablishment
+        ? applyHarvestedOpeningCovers(newState.openingEstablishment, cleanOpening)
+        : newState.openingEstablishment;
       const openingGm: LogEntry = {
         id: uid(),
         turn: newState.turn,
         role: 'gm',
         content: cleanOpening,
         timestamp: Date.now(),
-        systemLog: openingUnlocks.map((q) => `Quest Unlocked: ${q.name}`),
+        systemLog: [
+          ...litrpgOpeningSystemPing(newState),
+          ...openingUnlocks.map((q) => `Quest Unlocked: ${q.name}`),
+        ],
         ...memorableLogFields(openingMemorable),
       };
       const seeded = seedOpeningSceneFacts({ ...newState, turn: openingTurn });
@@ -3533,16 +3541,15 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
         sceneFacts,
         quests: questsAfterScene,
         log: [openingGm],
-        choices: pendingCovers.length
-          ? establishmentChoices(pendingCovers)
+        choices: harvestedOpening?.pending?.length
+          ? establishmentChoices(harvestedOpening.pending)
           : openingChoices.length
             ? openingChoices
             : undefined,
         pendingGeneratedOpening: false,
-        openingEstablishment: {
-          ...newState.openingEstablishment!,
-          sceneWritten: true,
-        },
+        openingEstablishment: harvestedOpening
+          ? { ...harvestedOpening, sceneWritten: true }
+          : harvestedOpening,
         memorableMoments: openingMemorable.nextState,
         lastUpdated: Date.now(),
       };

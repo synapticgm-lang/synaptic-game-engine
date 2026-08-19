@@ -4,6 +4,8 @@
  * Illustrated graphic-novel mode: caps reserved; launch is text + memorable Flux art.
  */
 
+import { HOSTED_HERO_MODEL, HOSTED_SCHNELL_MODEL } from './hostedImageModel';
+
 export type SubscriptionTierId = 'free' | 'mid' | 'high' | 'admin';
 
 export type TurnPackId =
@@ -389,14 +391,14 @@ export function resolveFluxEndpoint(args: {
 export function fluxEndpointToOpenRouterId(endpoint: FluxEndpointId): string {
   switch (endpoint) {
     case 'flux-2-klein-4b':
-      return 'black-forest-labs/flux-schnell';
+      return HOSTED_SCHNELL_MODEL;
     case 'flux-2-klein-9b':
-      return 'black-forest-labs/flux-schnell';
+      return HOSTED_SCHNELL_MODEL;
     case 'flux-2-pro':
     case 'flux-2-pro-preview':
-      return 'black-forest-labs/flux-dev';
+      return HOSTED_HERO_MODEL;
     default:
-      return 'black-forest-labs/flux-schnell';
+      return HOSTED_SCHNELL_MODEL;
   }
 }
 

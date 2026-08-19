@@ -3,7 +3,7 @@ import { isSupabaseConfigured, supabase } from '@/lib/supabase';
 import { RateLimitError, withRetry } from './aiServiceShared';
 import { logger } from './logger';
 import { resolveWriterModel, getTierDefinition } from './subscriptionTiers';
-import { forceFreeModel } from './opsKillSwitches';
+import { resolveHostedImageModel } from './hostedImageModel';
 import { effectiveWriterTier, isTestLabEnabled } from './testLab';
 import {
   BYOK_TEXT_KEY_REQUIRED,
@@ -190,10 +190,11 @@ export async function invokeImageProxy(params: {
     headers.Authorization = `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`;
   }
 
+  const model = resolveHostedImageModel(params.model);
   const url = imageProxyUrl();
   logger.info('ai-image', 'generate-image proxy request', {
     url,
-    model: params.model || 'black-forest-labs/flux-schnell',
+    model,
     hasSession: !!session?.access_token,
   });
 
@@ -211,7 +212,7 @@ export async function invokeImageProxy(params: {
       headers: { ...headers, Authorization: authorization },
       body: JSON.stringify({
         prompt: params.prompt,
-        model: params.model,
+        model,
         clientApiKey: params.clientApiKey,
       }),
       signal: controller.signal,
