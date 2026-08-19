@@ -364,7 +364,7 @@ export interface GameState {
    * Full bible snapshot for player-authored custom campaigns (id `player-custom-*`).
    * Catalog lookup cannot find these; opening quests and reconcile use this.
    */
-  campaignBibleSnapshot?: import('@/data/campaigns/types').CampaignBible | null;
+  campaignBibleSnapshot?: import('./campaignBibleTypes').CampaignBible | null;
   /** Short premise injected every turn as Guide Book rails. */
   campaignPremise?: string | null;
   /**

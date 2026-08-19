@@ -6,8 +6,10 @@ import {
 } from './intentParser';
 import { buildFactLockRetryBlock, type FactLockViolation } from './factLocks';
 import { stripChoiceList } from './parser';
+import { isOfferOnlyUnansweredBeat } from './offerOnlyAsk';
 
 export { playerFacingLocation } from './locationName';
+export { isOfferOnlyUnansweredBeat } from './offerOnlyAsk';
 
 /**
  * Cross-mode guarantee: every player action must receive a concrete narrative resolution.
@@ -156,23 +158,6 @@ export function isPlayerQuestion(action: string): boolean {
   return /\b(what|how|why|where|who|when|can i|could i|would you|tell me|explain|details|if i (?:agree|refuse|don'?t)|what (?:do|does|happens|if)|how (?:might|do|can)|prove)\b/i.test(
     t
   );
-}
-
-const OFFER_ONLY_ASK_RE =
-  /\b(?:you could (?:ask|inquire)|you might (?:ask|inquire)|perhaps (?:you )?(?:ask|inquire)|you may (?:wish to |want to )?(?:ask|inquire)|consider asking|inquire about|ask (?:the \w+|him|her|them) to (?:elaborate|explain))\b/i;
-
-/**
- * GM spent the beat offering more questions / look-around instead of answering.
- * "You could inquire about X" is not an answer.
- */
-export function isOfferOnlyUnansweredBeat(narrative: string): boolean {
-  const prose = proseOnly(narrative);
-  if (!prose) return false;
-  if (!OFFER_ONLY_ASK_RE.test(prose)) return false;
-  const npcAnswered =
-    /["“][^"”]{12,}["”]/.test(prose)
-    && /\b(says?|said|replies|replied|answers?|answered|explains?|explained|means)\b/i.test(prose);
-  return !npcAnswered;
 }
 
 function hasQuotedAnswer(prose: string): boolean {

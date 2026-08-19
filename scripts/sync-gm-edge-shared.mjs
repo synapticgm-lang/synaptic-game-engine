@@ -38,6 +38,17 @@ const FILES = [
   'claimGrounding.ts',
   'tutorialBeats.ts',
   'maturity.ts',
+  'customTabletopRules.ts',
+  'locality.ts',
+  'questPlay.ts',
+  'mysteryCulprit.ts',
+  'distributionChannel.ts',
+  'contentFilterProfile.ts',
+  'universalHardRails.ts',
+  'kidModeSafety.ts',
+  'offerOnlyAsk.ts',
+  'dungeonPresence.ts',
+  'campaignNsfw.ts',
 ];
 
 function rewriteImports(source, file) {
@@ -48,6 +59,12 @@ function rewriteImports(source, file) {
       "from './comicScript.ts'"
     );
   }
+  next = next
+    .replace(/from\s+['"]@\/data\/campaigns\/types['"]/g, "from './campaignBibleTypes.ts'")
+    .replace(/import\(['"]@\/data\/campaigns\/types['"]\)/g, "import('./campaignBibleTypes.ts')")
+    .replace(/from\s+['"]@\/utils\/filterLogic['"]/g, "from './filterLogic.ts'")
+    .replace(/from\s+['"]@\/game\/types['"]/g, "from './types.ts'")
+    .replace(/from\s+['"]@\/game\/archetypes['"]/g, "from './archetypes.ts'");
   return next.replace(/from\s+['"](\.\/[^'"]+)['"]/g, (_m, spec) => {
     const withExt = spec.endsWith('.ts') ? spec : `${spec}.ts`;
     return `from '${withExt}'`;
@@ -69,12 +86,25 @@ for (const file of FILES) {
   console.log('synced', file);
 }
 
-// comicScript lives outside game/ — copy beside types for edge imports
 {
   const srcPath = path.join(root, 'src', 'types', 'comicScript.ts');
   const raw = fs.readFileSync(srcPath, 'utf8');
   fs.writeFileSync(path.join(destDir, 'comicScript.ts'), rewriteImports(raw, 'comicScript.ts'), 'utf8');
   console.log('synced comicScript.ts');
+}
+
+{
+  const srcPath = path.join(root, 'src', 'data', 'campaigns', 'types.ts');
+  const raw = fs.readFileSync(srcPath, 'utf8');
+  fs.writeFileSync(path.join(destDir, 'campaignBibleTypes.ts'), rewriteImports(raw, 'campaignBibleTypes.ts'), 'utf8');
+  console.log('synced campaignBibleTypes.ts');
+}
+
+{
+  const srcPath = path.join(root, 'src', 'utils', 'filterLogic.ts');
+  const raw = fs.readFileSync(srcPath, 'utf8');
+  fs.writeFileSync(path.join(destDir, 'filterLogic.ts'), rewriteImports(raw, 'filterLogic.ts'), 'utf8');
+  console.log('synced filterLogic.ts');
 }
 
 fs.writeFileSync(

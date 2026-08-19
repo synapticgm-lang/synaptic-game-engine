@@ -94,3 +94,21 @@ ${gun}
 ${words.join(' ')}
 Do not invent branded chains the player did not name.`.trim();
 }
+
+/** Soft locality pass — never a second writer. */
+export function applyLocalityWarden(text: string, location?: string, hasFirearmInLedger = false): string {
+  const token = deriveLocalityToken(location);
+  if (token.country === 'GB') {
+    let next = text.replace(/\bsidewalks?\b/gi, 'pavement').replace(/\bcurbs?\b/gi, 'kerb');
+    if (token.firearmsNorm === 'no_civilian_carry' && !hasFirearmInLedger) {
+      next = next
+        .replace(/\bas (?:her|his|their) pistol jams mid-reload\b/gi, 'as they fumble a phone')
+        .replace(/\b(open[- ]carry|holstered (?:pistol|handgun))\b/gi, 'empty hands');
+    }
+    return next;
+  }
+  if (token.country === 'AU') {
+    return text.replace(/\bsidewalks?\b/gi, 'footpath');
+  }
+  return text;
+}

@@ -6,7 +6,7 @@ import type {
   NpcMemory,
   TurnSummary,
 } from './types.ts';
-import { isOfferOnlyUnansweredBeat } from './actionResolution.ts';
+import { isOfferOnlyUnansweredBeat } from './offerOnlyAsk.ts';
 
 const PLAYER_PIN_LIMIT = 10;
 /** Soft token budget for memory middle section (~4 chars/token). */

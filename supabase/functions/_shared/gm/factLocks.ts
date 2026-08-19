@@ -1,5 +1,5 @@
 import type { GameState } from './types.ts';
-import { remainingDungeonMobs } from './ledgerCombat.ts';
+import { remainingDungeonMobs } from './dungeonPresence.ts';
 
 export type FactLockKind = 'clock' | 'silence' | 'kit' | 'stub' | 'weapon' | 'cleared';
 

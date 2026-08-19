@@ -4,7 +4,7 @@
  */
 
 import type { GameState } from './types';
-import type { CampaignBible } from '@/data/campaigns/types';
+import type { CampaignBible } from './campaignBibleTypes';
 
 export interface CampaignContract {
   bibleId: string | null;

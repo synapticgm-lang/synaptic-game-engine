@@ -1,13 +1,12 @@
 /**
  * Player-supplied tabletop rules for one campaign.
  * Empty = SynapticGM Tabletop Fantasy core. We never ship a licensed rulebook.
- * Edge copy — keep in sync with src/game/customTabletopRules.ts
  */
 
-export const CUSTOM_TABLETOP_RULES_MAX_CHARS = 60_000;
+import { skipKidUnsafeInstructionBlocks } from './kidModeSafety.ts';
 
-const KID_UNSAFE_BLOCK =
-  /\b(nude|naked|erotic|sexual(?:ized)?|nsfw|topless|lingerie|porn|decapitat\w*|dismember\w*|eviscerat\w*|torture|severed\s+(?:head|limb)|pool of blood|guts?\s+spill|syringe|hypodermic|heroin|cocaine|slot machine|casino|how to (?:make|build|cook)\s+(?:a\s+)?(?:bomb|explosive|meth))\b/i;
+/** Prompt budget — large enough for a house-rules packet, small enough not to blow context. */
+export const CUSTOM_TABLETOP_RULES_MAX_CHARS = 60_000;
 
 export function clipCustomTabletopRules(raw: string | null | undefined): {
   text: string;
@@ -28,14 +27,10 @@ export function hasCustomTabletopRules(raw: string | null | undefined): boolean 
   return clipCustomTabletopRules(raw).text.length > 0;
 }
 
-function skipKidUnsafeInstructionBlocks(text: string): string {
-  return text
-    .split(/\n{2,}/)
-    .filter((block) => block.trim() && !KID_UNSAFE_BLOCK.test(block))
-    .join('\n\n')
-    .trim();
-}
-
+/**
+ * Inject into the GM prompt. Player document wins on conflict with SynapticGM tabletop core.
+ * Kid Mode: skip sexual/gore instruction blocks from the paste; output still goes through Families.
+ */
 export function formatCustomTabletopRulesForPrompt(
   raw: string | null | undefined,
   kidMode: boolean

@@ -4,7 +4,7 @@ import { computeInventoryCapacity } from './inventory.ts';
 import { resolvePanelBudget } from './panelBudget.ts';
 import { CHOICE_TIER_PROMPT_RULES } from './choiceTierRules.ts';
 import { ADULT_MODE_RULES, KID_MODE_RULES, NSFW_CAMPAIGN_RULES } from './contentModeRules.ts';
-import { getCampaignBibleById, isNsfwCampaign } from '@/data/campaigns';
+import { campaignIsNsfw } from './campaignNsfw.ts';
 import { formatFullMemoryBlock } from './situationPacket.ts';
 import { formatClaimGroundingDirective } from './claimGrounding.ts';
 import { formatTimelineForPrompt } from './timelineFormat.ts';
@@ -301,7 +301,7 @@ function engineModeRules(engineMode: GameState['engineMode']): string {
 }
 
 export function buildSystemPrompt(state: GameState, settings: Settings, activeLoreCards: LoreCard[] = []): string {
-  const nsfw = isNsfwCampaign(getCampaignBibleById(state.campaignBibleId ?? ''));
+  const nsfw = campaignIsNsfw(state);
   const kidMode = settings.contentMode === 'kid';
   const playerRules = state.engineMode === 'dnd'
     ? formatCustomTabletopRulesForPrompt(state.customTabletopRules, kidMode)

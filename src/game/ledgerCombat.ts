@@ -3,6 +3,8 @@ import type { PlayerCheckResult } from './checkMath';
 import { currentDungeonNode } from './dungeonSeed';
 import { isExplorableDungeon } from './placeAuthority';
 
+export { remainingDungeonMobs } from './dungeonPresence';
+
 export interface LedgerCombatRound {
   weaponName: string;
   dealt: number;
@@ -26,24 +28,6 @@ export function equippedWeaponName(state: GameState): string {
     /\b(knife|blade|sword|axe|club|bat|spear|staff|pistol|gun)\b/i.test(i.name)
   );
   return anyWeapon?.name ?? 'bare hands';
-}
-
-export function remainingDungeonMobs(state: GameState): { alive: number; names: string[] } {
-  const dungeon = state.activeDungeon;
-  if (!isExplorableDungeon(dungeon)) {
-    const live = state.activeEncounter && state.activeEncounter.hp > 0 ? [state.activeEncounter.name] : [];
-    return { alive: live.length, names: live };
-  }
-  const names: string[] = [];
-  for (const node of dungeon.nodes) {
-    for (const mob of node.hidden?.mobs ?? []) {
-      if (!mob.spawned) names.push(`${mob.name} (${node.name})`);
-    }
-  }
-  if (state.activeEncounter && state.activeEncounter.hp > 0) {
-    names.unshift(`${state.activeEncounter.name} (here)`);
-  }
-  return { alive: names.length, names };
 }
 
 /** Spawn the first unspawned mob in this room as the live encounter. */

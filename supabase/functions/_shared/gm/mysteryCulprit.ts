@@ -1,5 +1,5 @@
-import type { CampaignBible, MysteryCulprit } from './campaignBibleTypes';
-import type { GameState } from './types';
+import type { CampaignBible, MysteryCulprit } from './campaignBibleTypes.ts';
+import type { GameState } from './types.ts';
 
 function hashSeed(input: string): number {
   let h = 2166136261;

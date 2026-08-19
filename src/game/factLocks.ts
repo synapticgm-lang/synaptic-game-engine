@@ -1,5 +1,5 @@
 import type { GameState } from './types';
-import { remainingDungeonMobs } from './ledgerCombat';
+import { remainingDungeonMobs } from './dungeonPresence';
 
 export type FactLockKind = 'clock' | 'silence' | 'kit' | 'stub' | 'weapon' | 'cleared';
 
