@@ -5,7 +5,7 @@ export function buildImagePromptModifier(settings: Settings): string {
   const styleMap: Record<string, string> = {
     'manga-screentone': 'manga art style, detailed line art, dynamic shadows, monochrome ink, halftone screentone shading, japanese manga aesthetic',
     'manhwa-webtoon': 'full color manhwa webtoon style, clean digital line art, soft cel shading, vertical scroll comic aesthetic',
-    'classic-book': 'classic book illustration, detailed ink line-art, soft muted watercolor washes, storybook aesthetic',
+    'classic-book': 'ink-and-watercolor illustration, detailed ink line-art, soft muted watercolor washes, single scene filling the frame',
     'sin-city-noir': 'gritty graphic novel artwork, heavy shadows, high contrast black and white, noir aesthetic',
     'dark-fantasy-mignola': 'dark fantasy mignola style, heavy blocky shadows, muted gothic palette, comic book noir',
     'cyberpunk-cel': 'clean animated fantasy style, crisp cell shading, bright colorful adventure art, cyberpunk aesthetic',

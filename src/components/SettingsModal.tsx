@@ -567,7 +567,7 @@ export function SettingsModal({ settings, storyName, engineMode, gameState, onSa
               <ChoiceCard
                 icon={<MessageSquareMore size={15} />}
                 label="Classic Text"
-                sublabel="Prose-first; rare book-plate splash art"
+                sublabel="Prose-first; rare splash illustrations"
                 selected={draft.visualMode === 'classic'}
                 onClick={() => {
                   if (isStoryActive) return;
@@ -581,7 +581,7 @@ export function SettingsModal({ settings, storyName, engineMode, gameState, onSa
               <ToggleRow
                 icon={<Sparkles size={14} />}
                 label={`Memorable Moment Images · ${memorableWeeklyCapLabel()}`}
-                description="Rare book plates — ink and watercolor, one picture for a book-worthy beat, then back to prose. Opening, death, and the first dungeon’s final boss auto-illustrate. Later bosses, a royal audience, a striking first look, or a writer-flagged beat are tap-yes. First fights do not. The toggle is consent — autos fire without a second Yes."
+                description="Rare splash illustrations — ink and watercolor, one picture filling the frame for a book-worthy beat, then back to prose. Opening, death, and the first dungeon’s final boss auto-illustrate. Later bosses, a royal audience, a striking first look, or a writer-flagged beat are tap-yes. First fights do not. The toggle is consent — autos fire without a second Yes."
                 checked={draft.classicMemorableImages}
                 onChange={(v) => update('classicMemorableImages', v)}
               />
@@ -620,7 +620,7 @@ export function SettingsModal({ settings, storyName, engineMode, gameState, onSa
             )}
             {draft.visualMode === 'classic' && (
               <p className="mt-2 text-[11px] leading-snug text-slate-500">
-                Memorable plates always use Classic Book Illustration — ink line-art and watercolor, one picture facing the prose. Comic art styles apply only if you switch to Comic Book.
+                Memorable splashes always use ink-and-watercolor — one picture filling the frame, then back to prose. Comic art styles apply only if you switch to Comic Book.
               </p>
             )}
             {draft.visualMode === 'comic' && (

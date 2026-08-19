@@ -11,7 +11,9 @@ export type ImagePromptKind =
 
 /** Extra deterministic context threaded into a prompt build, independent of the GM's own narrative text. */
 export interface ImagePromptContext {
-  /** Player/NPC/gear/location descriptors from the Visual Consistency Manager. Injected verbatim, every request. */
+  /** Player/NPC look from the sheet — used to keep adult PCs adult in art. */
+  characterLook?: string;
+  /** Canonical visual continuity block from the live save (kit, faces, place). */
   visualConsistency?: string;
   /** Only set for the FIRST panel of a turn — guarantees the player's actual action is depicted, not just narrated. */
   playerActionContext?: string;
@@ -40,17 +42,43 @@ export const NEGATIVE_ART_PROMPT =
   'text, words, letters, numbers, writing, speech bubble, thought bubble, caption, subtitle, watermark, signature, logo, UI, HUD, System panel, XP box, blurry, low quality, deformed, extra limbs, extra arms, extra legs, six fingers, mutated hands';
 
 export const CLASSIC_ILLUSTRATION_DIRECTIVE =
-  'Classic book illustration accent: detailed ink line-art, soft muted watercolor washes, storybook vignette composition, painterly single-scene illustration suitable for narrative prose — NOT a comic panel grid or multi-cell layout.';
+  'Ink-and-watercolor illustration of ONE scene filling the whole frame. Detailed ink line-art, soft muted washes. Technique only — not a photograph of a book, not two pages, not a comic grid.';
 
-/** Rare prose plates — mostly text, then one printed illustration of that beat. */
+/** Rare prose splash — one picture, then back to text. “Book illustration” is paint style, not the subject. */
 export const MILESTONE_ILLUSTRATION_DIRECTIVE =
-  'Printed storybook plate: a single full-page illustration bound opposite a page of prose. Detailed ink line-art, soft muted watercolor washes, parchment-adjacent light, painterly vignette. Quiet and beautiful — one camera, one moment. NOT a comic panel grid, not manga screentone, not a triptych, not a cinematic movie still, not a graphic-novel splash page.';
+  'ONE rectangular illustration filling the entire image. Ink line-art with soft watercolor washes. Single camera, one moment, one person as described. NEVER draw a physical book, an open book, two facing pages, a second picture, fake writing, or a picture-book spread. Not manga, not a comic panel grid, not a triptych.';
 
 const BOOK_PLATE_TONE =
-  'Storybook illustration tone: ink and watercolor, warm paper, gentle contrast. Not anime, not manga, not cel-shaded comic coloring.';
+  'Ink-and-watercolor paint style: warm paper light, gentle contrast. Not anime, not manga, not cel-shaded comic coloring.';
+
+const MINOR_LOOK =
+  /\b(child|toddler|infant|baby|preteen|little (?:boy|girl)|school-?age|underage|(?:[1-9]|1[0-7]|one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|thirteen|fourteen|fifteen|sixteen|seventeen)\s*-?\s*year-?old)\b/i;
+
+/** True only when the sheet/look explicitly names a child — empty Adventurer is an adult. */
+export function viewpointLooksMinor(text?: string | null): boolean {
+  return MINOR_LOOK.test(text ?? '');
+}
+
+export function subjectAgeDirective(look?: string | null): string {
+  if (viewpointLooksMinor(look)) {
+    return 'VIEWPOINT CHARACTER: a child as the look/sheet describes. Still one scene filling the frame — not a children’s picture-book spread.';
+  }
+  return 'VIEWPOINT CHARACTER: an adult (18 or older). Do not draw a child, preteen, or toddler as the hero. Watercolor style is not a reason to make them a kid. A child in the background only if the scene names one.';
+}
+
+/** Appearance + bio for image prompts. Empty Adventurer is adult unless this names a child. */
+export function characterLookForArt(character?: {
+  appearance?: string | null;
+  bio?: string | null;
+} | null): string {
+  return [character?.appearance, character?.bio]
+    .map((s) => (s ?? '').trim())
+    .filter(Boolean)
+    .join('. ');
+}
 
 const KID_MILESTONE_BEAT_DIRECTIVE =
-  'KID-SAFE MILESTONE (Google Play Families): If a foe is down, show them asleep, slumped, or fading — never blood, gore, or a corpse close-up. Victory is a triumphant pose. A death beat is a quiet book-closing rest with no injury shown. Everyone fully clothed, non-suggestive. No alcohol, drugs, needles, smoking, or gambling. Skip graphic injury entirely.';
+  'KID-SAFE MILESTONE (Google Play Families): If a foe is down, show them asleep, slumped, or fading — never blood, gore, or a corpse close-up. Victory is a triumphant pose. A death beat is a quiet rest with no injury shown. Everyone fully clothed, non-suggestive. No alcohol, drugs, needles, smoking, or gambling. Skip graphic injury entirely. Still one scene filling the frame — never an open book or two pages.';
 
 const COMIC_COMPOSITION_DIRECTIVE =
   'Single comic panel illustration with clean, well-balanced framing and a strong focal composition.';
@@ -136,6 +164,9 @@ function withDeterministicContext(scenePrompt: string, context?: ImagePromptCont
     parts.push(`The scene must visually depict the player's action: "${context.playerActionContext.trim()}"`);
   }
   parts.push(scenePrompt.trim());
+  if (context?.characterLook?.trim()) {
+    parts.push(`LOOK: ${context.characterLook.trim()}`);
+  }
   if (context?.visualConsistency?.trim()) {
     parts.push(context.visualConsistency.trim());
   }
@@ -165,6 +196,7 @@ export function buildClassicIllustrationPrompt(
   return [
     withDeterministicContext(scenePrompt, context),
     CLASSIC_ILLUSTRATION_DIRECTIVE,
+    subjectAgeDirective(context?.characterLook),
     'Single illustration only — no comic cells, no panel grid.',
     PURE_ART_DIRECTIVE,
     contentTone(mode),
@@ -180,6 +212,7 @@ export function buildMilestoneIllustrationPrompt(
   return [
     withDeterministicContext(scenePrompt, context),
     MILESTONE_ILLUSTRATION_DIRECTIVE,
+    subjectAgeDirective(context?.characterLook),
     mode === 'kid' ? KID_MILESTONE_BEAT_DIRECTIVE : BOOK_PLATE_TONE,
     PURE_ART_DIRECTIVE,
     mode === 'kid' ? contentTone(mode) : '',

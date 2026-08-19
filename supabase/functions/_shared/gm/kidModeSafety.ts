@@ -109,9 +109,9 @@ export function prepareKidSafeImagePrompt(
   const stripped = stripKidUnsafeImageLexicon(prompt);
   const withMark = KID_SAFE_BEAT_MARK.test(stripped)
     ? stripped
-    : `Kid-safe storybook scene, everyone fully clothed, no blood. ${stripped}`;
+    : `Kid-safe illustration, everyone fully clothed, no blood. ${stripped}`;
   return {
-    prompt: withMark.trim() || 'A bright cheerful storybook scene, everyone fully clothed, no violence.',
+    prompt: withMark.trim() || 'A bright cheerful illustration, everyone fully clothed, no violence.',
     skip: false,
   };
 }

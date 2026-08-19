@@ -29,7 +29,7 @@ export function RightDrawer({ state, open, onClose, onUpdateLorebook, uiThemeId 
     <>
       {open && <div className="fixed inset-0 z-30 bg-black/50 lg:hidden" onClick={onClose} />}
       <aside className={`sgm-info-panel fixed right-0 top-0 z-40 h-full w-80 transform overflow-y-auto border-l transition-transform duration-300 lg:static lg:z-0 lg:w-80 lg:translate-x-0 ${open ? 'translate-x-0' : 'translate-x-full'}`}>
-        <div className="flex items-center justify-between border-b border-slate-800/80 px-4 py-3">
+        <div className="flex items-center justify-between border-b border-[color:color-mix(in_srgb,var(--sgm-accent,#64748b)_28%,#44403c)] px-4 py-3">
           <span className="sgm-info-heading">Adventurer Panel</span>
           <button onClick={onClose} className="text-slate-400 hover:text-slate-200"><X size={18} /></button>
         </div>
@@ -39,7 +39,7 @@ export function RightDrawer({ state, open, onClose, onUpdateLorebook, uiThemeId 
           <div className="sgm-turn-frame sgm-info-panel rounded-lg border p-3">
             <div className="sgm-frame-header flex items-start justify-between gap-2 mb-2">
               <div className="min-w-0 flex-1">
-                <span className="relative z-[3] font-serif text-sm block truncate">{c.name || 'Adventurer'}</span>
+                <span className="sgm-info-heading relative z-[3] text-sm block truncate">{c.name || 'Adventurer'}</span>
                 <span className="sgm-equipped-set relative z-[3] mt-0.5 block truncate" title={setLabel}>{setLabel}</span>
               </div>
               <button
@@ -56,7 +56,7 @@ export function RightDrawer({ state, open, onClose, onUpdateLorebook, uiThemeId 
               <span>SP {c.sp}/{c.maxSp}</span>
               <span>Lv {c.level}</span>
             </div>
-            <div className="mt-2 grid grid-cols-3 gap-1 text-[10px] text-slate-500 border-t border-slate-800 pt-2">
+            <div className="mt-2 grid grid-cols-3 gap-1 text-[10px] text-slate-500 border-t border-[color:color-mix(in_srgb,var(--sgm-accent,#64748b)_22%,#44403c)] pt-2">
               {Object.entries(c.attributes).map(([k, v]) => (
                 <span key={k}>{k} {v}</span>
               ))}

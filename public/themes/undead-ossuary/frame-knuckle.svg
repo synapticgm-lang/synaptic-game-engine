@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64">
+  <!-- Knuckle-bone corner ornament: stacked knuckle silhouette, moonlight edge -->
+  <defs>
+    <linearGradient id="bone" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#fafaf9"/>
+      <stop offset="45%" stop-color="#e7e5e4"/>
+      <stop offset="100%" stop-color="#a8a29e"/>
+    </linearGradient>
+  </defs>
+  <g fill="url(#bone)">
+    <ellipse cx="14" cy="18" rx="9" ry="7"/>
+    <ellipse cx="28" cy="14" rx="8" ry="6.5"/>
+    <ellipse cx="40" cy="18" rx="7.5" ry="6"/>
+    <rect x="10" y="18" width="34" height="8" rx="3"/>
+  </g>
+  <g fill="#0c0a09" fill-opacity="0.35">
+    <ellipse cx="14" cy="17" rx="2.2" ry="1.6"/>
+    <ellipse cx="28" cy="13" rx="2" ry="1.5"/>
+    <ellipse cx="40" cy="17" rx="1.8" ry="1.4"/>
+  </g>
+  <path d="M8 28h40" stroke="#d6d3d1" stroke-opacity="0.55" stroke-width="1.4"/>
+  <path d="M8 28v28" stroke="#d6d3d1" stroke-opacity="0.4" stroke-width="1.2"/>
+</svg>

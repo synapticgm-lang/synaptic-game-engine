@@ -207,7 +207,7 @@ function applyKidModeToDirectorScript(script: ComicScriptResponse): ComicScriptR
       return {
         ...panel,
         art_prompt: prepared.skip
-          ? 'Kid-safe storybook scene, everyone fully clothed, no blood, bright cheerful lighting.'
+          ? 'Kid-safe illustration, everyone fully clothed, no blood, bright cheerful lighting.'
           : prepared.prompt,
         caption: panel.caption ? filterKidModeText(panel.caption) : panel.caption,
         sfx: panel.sfx ? filterKidModeText(panel.sfx) : panel.sfx,

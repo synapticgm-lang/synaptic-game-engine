@@ -12,6 +12,7 @@ import { isExplorableDungeon } from './placeAuthority';
 import type { GameEvent, LootVideoRequest, MilestoneRequest } from './parser';
 import { storyHasBody } from './turnAsk';
 import { isUnsalvageableKidImagePrompt, prepareKidSafeImagePrompt, stripKidUnsafeImageLexicon } from './visualCanon';
+import { characterLookForArt, subjectAgeDirective } from './comicImagePrompt';
 
 /** Skip this many story turns after a splash (death/ending ignore it). */
 export const MEMORABLE_COOLDOWN_TURNS = 3;
@@ -204,7 +205,7 @@ const ORIGIN_ASK_SENTENCE =
   /before the light took you|which earth place|origin lock|a city, a street, a home|name the earth place/i;
 
 const OPENING_HERE_RAILS =
-  'Camera is HERE in this room now. Single splash — not a comic panel grid, not a manga page of Earth daily life. '
+  'Camera is HERE in this room now. ONE picture filling the frame — not an open book, not two pages, not fake writing, not a comic grid, not a manga page of Earth daily life. '
   + 'If the beat has the person on their back on stone, show them lying on the floor in this place. '
   + 'Do not draw Earth streets, shopping arcades, malls, train stations, city crowds, or a flashback to before they arrived. '
   + 'Earth clothes are garments on this body in THIS scene only.';
@@ -214,6 +215,7 @@ export function pinOpeningHereScene(opts: {
   storyText: string;
   location?: string;
   pickedHook?: string;
+  characterLook?: string;
 }): string {
   const place = opts.location?.trim();
   const hook = opts.pickedHook?.trim();
@@ -227,10 +229,12 @@ export function pinOpeningHereScene(opts: {
     .trim();
   const hereBody = hook || stripped || excerptForImage(opts.storyText);
   const floorBeat = /on (?:your|their) back|lying|summoning circle|cold stone/i.test(hereBody)
-    ? 'The person is lying on the floor in this room, looking up. '
+    ? 'The viewpoint character is lying on the floor in this room, looking up. '
     : '';
   const placeBit = place ? `HERE: ${place}. ` : 'HERE: the opening scene. ';
-  return `${placeBit}${floorBeat}${excerptForImage(hereBody)} ${OPENING_HERE_RAILS}`;
+  const look = opts.characterLook?.trim();
+  const lookBit = look ? `LOOK: ${look}. ` : '';
+  return `${placeBit}${lookBit}${floorBeat}${excerptForImage(hereBody)} ${OPENING_HERE_RAILS} ${subjectAgeDirective(look)}`;
 }
 
 export function synthesizeMemorablePrompt(opts: {
@@ -240,10 +244,11 @@ export function synthesizeMemorablePrompt(opts: {
   extra?: string;
   kidMode?: boolean;
   pickedHook?: string;
+  characterLook?: string;
 }): string {
   const kid = opts.kidMode === true;
   const excerpt = kid
-    ? (stripKidUnsafeImageLexicon(excerptForImage(opts.storyText)) || 'A bright storybook scene, no text.')
+    ? (stripKidUnsafeImageLexicon(excerptForImage(opts.storyText)) || 'A bright illustration, no text.')
     : excerptForImage(opts.storyText);
   const extra = kid
     ? stripKidUnsafeImageLexicon(opts.extra?.trim() ?? '')
@@ -253,6 +258,7 @@ export function synthesizeMemorablePrompt(opts: {
       storyText: opts.storyText,
       location: opts.location,
       pickedHook: opts.pickedHook,
+      characterLook: opts.characterLook,
     });
     return kid
       ? `Kid-safe establishing shot, bright and welcoming, no frightening imagery. ${shot}`
@@ -260,19 +266,19 @@ export function synthesizeMemorablePrompt(opts: {
   }
   if (opts.beat === 'death') {
     return kid
-      ? `Kid-safe storybook close: the hero at rest after a hard journey, lights dimming like a book ending. No injury shown, no blood, no corpse. ${excerpt}`
+      ? `Kid-safe close: the hero at rest after a hard journey. No injury shown, no blood, no corpse. ${excerpt}`
       : `The fatal moment. ${excerpt}`;
   }
   if (opts.beat === 'ending') {
     const at = place ? ` at ${place}` : '';
     return kid
-      ? `Kid-safe closing plate: the storybook last page${at}, everyone fully clothed, no blood, no corpse, no frightening imagery. ${excerpt}`
+      ? `Kid-safe closing illustration${at}, everyone fully clothed, no blood, no corpse, no frightening imagery. ${excerpt}`
       : `The campaign's closing plate${at}. ${excerpt}`;
   }
   if (opts.beat === 'dungeon-boss') {
     if (kid) {
       const foe = extra || "the first dungeon's final foe";
-      return `Storybook victory: ${foe} slumped asleep or knocked out on the floor, hero standing triumphant. No blood, no wounds, no corpse close-up. ${excerpt}`;
+      return `Victory: ${foe} slumped asleep or knocked out on the floor, hero standing triumphant. No blood, no wounds, no corpse close-up. ${excerpt}`;
     }
     return extra
       ? `The first dungeon's final foe falls: ${extra}. ${excerpt}`
@@ -297,10 +303,10 @@ export function synthesizeMemorablePrompt(opts: {
       ? `A striking first look at ${extra}. ${excerpt}`
       : `A striking first look at someone noteworthy. ${excerpt}`;
     return kid
-      ? `Kid-safe, tasteful, fully clothed, non-suggestive storybook portrait. ${look}`
+      ? `Kid-safe, tasteful, fully clothed, non-suggestive portrait. ${look}`
       : look;
   }
-  return kid ? `Kid-safe storybook moment, fully clothed, no blood. ${excerpt}` : excerpt;
+  return kid ? `Kid-safe moment, fully clothed, no blood. ${excerpt}` : excerpt;
 }
 
 function excerptForImage(text: string): string {
@@ -308,7 +314,7 @@ function excerptForImage(text: string): string {
     .replace(/<[^>]+>/g, ' ')
     .replace(/\s+/g, ' ')
     .trim();
-  if (!cleaned) return 'A dramatic storybook scene, no text.';
+  if (!cleaned) return 'A dramatic illustration of the scene, no text.';
   if (cleaned.length <= 280) return cleaned;
   const cut = cleaned.slice(0, 280);
   const sentence = cut.match(/^[\s\S]+?[.!?](?=\s|$)/);
@@ -524,6 +530,11 @@ export function detectDungeonFinalBossDefeat(
   return null;
 }
 
+function lookFromInput(input: ResolveMemorableInput): string | undefined {
+  const look = characterLookForArt(input.state.character);
+  return look || undefined;
+}
+
 function detectOpening(
   input: ResolveMemorableInput,
   prev: MemorableMomentState
@@ -536,6 +547,7 @@ function detectOpening(
       storyText: input.storyText,
       location: input.state.currentLocation,
       pickedHook: input.state.openingEstablishment?.pickedHook,
+      characterLook: lookFromInput(input),
       kidMode: kidModeOn(input.settings),
     });
   }
@@ -546,6 +558,7 @@ function detectOpening(
     storyText: input.storyText,
     location: input.state.currentLocation,
     pickedHook: input.state.openingEstablishment?.pickedHook,
+    characterLook: lookFromInput(input),
     kidMode: kidModeOn(input.settings),
   });
 }
@@ -890,7 +903,7 @@ export function resolveMemorableMoment(input: ResolveMemorableInput): MemorableD
     if (kidModeOn(input.settings)) {
       const prepared = prepareKidSafeImagePrompt(writerPrompt, { skipIfUnsalvageable: true });
       if (prepared.skip) return idle;
-      writerPrompt = `Kid-safe storybook moment, fully clothed, no blood. ${prepared.prompt}`;
+      writerPrompt = `Kid-safe illustration, fully clothed, no blood. ${prepared.prompt}`;
     }
     return offerDecision(prev, input.turn, {
       kind: 'writer-tag',

@@ -114,6 +114,21 @@ export function resolveThemeKitExtras(settings: {
   };
 }
 
+/** Hosted / script-generated panel bitmaps (PNG preferred; CSS keeps SVG fallback). */
+const PANEL_TEXTURE_URL: Partial<Record<string, string>> = {
+  bone: '/themes/undead-ossuary/panel-ash.png',
+};
+
+export function themePanelTextureUrl(texture: string | undefined): string | undefined {
+  if (!texture) return undefined;
+  return PANEL_TEXTURE_URL[texture];
+}
+
+export function themeAtmosphereUrl(texture: string | undefined): string | undefined {
+  if (texture === 'bone') return '/themes/undead-ossuary/atmosphere.png';
+  return undefined;
+}
+
 /** Apply theme + optional font/dice/frame kit CSS variables to :root. */
 export function applyUiThemeToDocument(
   theme: ShopItem | null | undefined,
@@ -131,6 +146,8 @@ export function applyUiThemeToDocument(
     root.style.removeProperty('--sgm-font-story');
     root.style.removeProperty('--sgm-dice-accent');
     root.style.removeProperty('--sgm-dice-face');
+    root.style.removeProperty('--sgm-panel-texture');
+    root.style.removeProperty('--sgm-atmosphere');
     delete root.dataset.sgmFrame;
     delete root.dataset.sgmDice;
     delete root.dataset.sgmTexture;
@@ -147,7 +164,17 @@ export function applyUiThemeToDocument(
   const displayStack =
     theme?.themeKey === 'vampire-nocturne'
       ? '"Grenze Gotisch", "Playfair Display", Georgia, serif'
-      : undefined;
+      : theme?.themeKey === 'high-elf-spire'
+        ? 'Cinzel, Georgia, serif'
+        : theme?.themeKey === 'dragon-hoard'
+          ? '"Cinzel Decorative", Cinzel, Georgia, serif'
+          : theme?.themeKey === 'dwarf-forgehall'
+            ? 'MedievalSharp, Georgia, serif'
+            : theme?.themeKey === 'undead-ossuary'
+              ? '"Special Elite", Georgia, serif'
+              : theme?.themeKey === 'cyborg-chassis'
+                ? 'Orbitron, ui-sans-serif, system-ui, sans-serif'
+                : undefined;
   ensureGoogleFonts(fontUi, fontStory, displayStack);
   if (fontUi) root.style.setProperty('--sgm-font-ui', fontUi);
   if (fontStory) root.style.setProperty('--sgm-font-story', fontStory);
@@ -159,6 +186,13 @@ export function applyUiThemeToDocument(
   root.dataset.sgmFrame =
     extras?.frame?.frameSkin?.style ?? p.frameStyle ?? 'plain';
   root.dataset.sgmTexture = p.texture ?? 'plain';
+  const textureKey = p.texture ?? 'plain';
+  const panelTex = themePanelTextureUrl(textureKey);
+  if (panelTex) root.style.setProperty('--sgm-panel-texture', `url('${panelTex}')`);
+  else root.style.removeProperty('--sgm-panel-texture');
+  const atmosphere = themeAtmosphereUrl(textureKey);
+  if (atmosphere) root.style.setProperty('--sgm-atmosphere', `url('${atmosphere}')`);
+  else root.style.removeProperty('--sgm-atmosphere');
   const diceMaterial = extras?.dice?.diceSkin?.material ?? p.diceMaterial;
   if (diceMaterial) root.dataset.sgmDice = diceMaterial;
   else delete root.dataset.sgmDice;

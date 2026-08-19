@@ -36,6 +36,7 @@ import {
   shouldUseComicGrid,
   allowsImageGeneration,
   artStyleForImageKind,
+  characterLookForArt,
   type ImagePromptKind,
   type ImagePromptContext,
 } from './comicImagePrompt';
@@ -752,6 +753,7 @@ export function useGame() {
     return {
       visualConsistency,
       playerActionContext,
+      characterLook: characterLookForArt(s?.character) || undefined,
       engineMode: s?.engineMode,
       currentLocation: s?.locationSheet?.name || s?.currentLocation,
       campaignPremise: s?.campaignPremise ?? undefined,

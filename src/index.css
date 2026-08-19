@@ -278,73 +278,143 @@ html[data-sgm-texture='velvet'] .sgm-info-panel {
 }
 .sgm-tex-moss,
 html[data-sgm-texture='moss'] .sgm-info-panel {
+  /* Living moss grain + leaf-shadow — not generic green fill */
+  background-color: #0a1008;
   background-image:
-    radial-gradient(circle at 18% 28%, color-mix(in srgb, var(--sgm-chip-accent) 55%, transparent) 0 1.5px, transparent 2px),
-    radial-gradient(circle at 72% 62%, #3f621288 0 2.4px, transparent 3px),
-    radial-gradient(circle at 40% 80%, #84cc1644 0 1.4px, transparent 1.8px),
-    radial-gradient(circle at 58% 22%, #16653466 0 3px, transparent 4px),
-    repeating-linear-gradient(125deg, transparent 0 5px, #14532d38 5px 6px),
-    linear-gradient(160deg, #14532d 0%, #0a1308 58%, #1a2e12 100%);
+    url('/themes/moss-grain.svg'),
+    radial-gradient(ellipse 90% 60% at 12% 8%, #1a2e1266 0 22%, transparent 48%),
+    radial-gradient(ellipse at 22% 30%, #9aaa4a33 0 1.4px, transparent 2px),
+    radial-gradient(ellipse at 68% 58%, #3f621266 0 2.2px, transparent 2.8px),
+    radial-gradient(ellipse at 44% 82%, #84cc1628 0 1.2px, transparent 1.6px),
+    radial-gradient(ellipse at 80% 18%, #16653444 0 3px, transparent 4px),
+    repeating-linear-gradient(118deg, transparent 0 6px, #0a100855 6px 7px),
+    linear-gradient(162deg, #121a10 0%, #0a1008 46%, #152016 100%);
+  border-color: color-mix(in srgb, #9aaa4a 38%, #1a2e12);
+  box-shadow:
+    inset 0 0 0 1px color-mix(in srgb, #9aaa4a 16%, transparent),
+    inset 0 -24px 40px #05080566;
 }
 .sgm-tex-dusk,
 html[data-sgm-texture='dusk'] .sgm-info-panel {
+  /* Dusk velvet textile + violet thread — not purple wash */
+  background-color: #0a0810;
   background-image:
-    radial-gradient(circle at 20% 18%, #e9d5ff44 0 1.4px, transparent 1.8px),
-    radial-gradient(circle at 78% 40%, #c084fc55 0 1.6px, transparent 2px),
-    radial-gradient(circle at 42% 72%, #a78bfa33 0 2px, transparent 2.5px),
-    linear-gradient(155deg, #2e1065 0%, #0b0614 52%, #1e1b4b 100%);
+    url('/themes/dusk-thread.svg'),
+    radial-gradient(ellipse 100% 70% at 50% -8%, #e9d5ff14 0 20%, transparent 50%),
+    radial-gradient(ellipse at 18% 22%, #e9d5ff28 0 1.2px, transparent 1.8px),
+    radial-gradient(ellipse at 74% 44%, #a78bc840 0 1.4px, transparent 2px),
+    radial-gradient(ellipse at 40% 78%, #6b21a822 0 2px, transparent 2.6px),
+    repeating-linear-gradient(128deg, transparent 0 7px, #12081c44 7px 8px),
+    linear-gradient(158deg, #14101c 0%, #0a0810 48%, #1a1028 100%);
+  border-color: color-mix(in srgb, #a78bc8 40%, #1e1b4b);
+  box-shadow:
+    inset 0 0 0 1px color-mix(in srgb, #e9d5ff 14%, transparent),
+    inset 0 -26px 44px #05040a77;
 }
 .sgm-tex-soot,
 html[data-sgm-texture='soot'] .sgm-info-panel {
+  /* Soot stone + stone-grid + forge spark — not brown-orange metal */
+  background-color: #12100e;
   background-image:
-    repeating-linear-gradient(90deg, transparent 0 10px, #d9770628 10px 11px),
-    repeating-linear-gradient(0deg, transparent 0 10px, #d9770620 10px 11px),
-    repeating-linear-gradient(18deg, transparent 0 7px, #00000044 7px 8px),
-    radial-gradient(circle at 70% 80%, #d9770644 0 10px, transparent 22px),
-    radial-gradient(circle at 20% 30%, #fbbf2422 0 8px, transparent 18px),
-    linear-gradient(165deg, #57534e 0%, #1c1917 48%, #0c0a09 100%);
+    url('/themes/soot-grid.svg'),
+    repeating-linear-gradient(90deg, transparent 0 11px, #c48a3a22 11px 12px),
+    repeating-linear-gradient(0deg, transparent 0 11px, #c48a3a18 11px 12px),
+    repeating-linear-gradient(18deg, transparent 0 8px, #00000055 8px 9px),
+    radial-gradient(circle at 78% 82%, #c48a3a44 0 8px, transparent 20px),
+    radial-gradient(circle at 16% 24%, #fde68a18 0 6px, transparent 16px),
+    linear-gradient(168deg, #2a2622 0%, #1e1a16 42%, #12100e 72%, #0c0a09 100%);
+  border-color: color-mix(in srgb, #c48a3a 42%, #44403c);
+  box-shadow:
+    inset 0 0 0 1px color-mix(in srgb, #fde68a 18%, transparent),
+    inset 0 -22px 36px #00000066;
 }
 .sgm-tex-circuit,
 html[data-sgm-texture='circuit'] .sgm-info-panel {
+  /* Brushed chassis + clipped optic — amber hazard, not Integration cyan flood */
+  background-color: #0a0b0d;
   background-image:
-    repeating-linear-gradient(0deg, transparent 0 7px, #38bdf822 7px 8px),
-    repeating-linear-gradient(90deg, transparent 0 7px, #38bdf818 7px 8px),
-    linear-gradient(135deg, #fbbf2440 0 7%, transparent 7% 14%, #fbbf2440 14% 21%, transparent 21%),
-    linear-gradient(145deg, #27272a, #09090b);
+    repeating-linear-gradient(0deg, transparent 0 8px, #5eb8e814 8px 9px),
+    repeating-linear-gradient(90deg, transparent 0 8px, #5eb8e810 8px 9px),
+    linear-gradient(135deg, #e0b04055 0 5%, transparent 5% 12%, #e0b04033 12% 16%, transparent 16%),
+    radial-gradient(circle at 88% 12%, #5eb8e833 0 4%, transparent 12%),
+    linear-gradient(148deg, #1c1e24 0%, #14161a 45%, #0a0b0d 100%);
+  border-color: color-mix(in srgb, #5eb8e8 36%, #e0b040);
+  box-shadow:
+    inset 0 0 0 1px color-mix(in srgb, #5eb8e8 14%, transparent),
+    inset 0 -20px 32px #00000077;
 }
 .sgm-tex-ivory,
 html[data-sgm-texture='ivory'] .sgm-info-panel {
+  /* Ivory stone + silver hairline — not sky-blue court fill */
+  background-color: #10141c;
   background-image:
-    linear-gradient(115deg, transparent 40%, #fef3c722 42%, transparent 45%),
-    linear-gradient(160deg, #1e3a5f 0%, #0c1222 55%, #fbbf2418 100%);
+    linear-gradient(112deg, transparent 38%, #f5f0e618 41%, transparent 44%),
+    linear-gradient(90deg, transparent 0, #c9b89622 1px, transparent 2px),
+    radial-gradient(ellipse at 70% 20%, #9aa8bc22 0 18%, transparent 40%),
+    linear-gradient(165deg, #1a2230 0%, #10141c 52%, #c9b89614 100%);
+  border-color: color-mix(in srgb, #c9b896 45%, #9aa8bc);
+  box-shadow:
+    inset 0 0 0 1px color-mix(in srgb, #f5f0e6 20%, transparent),
+    inset 0 -24px 40px #080a1088;
 }
 .sgm-tex-banner,
 html[data-sgm-texture='banner'] .sgm-info-panel {
+  /* Weathered canvas + iron studs — not goblin green wash */
+  background-color: #0e100c;
   background-image:
-    repeating-linear-gradient(90deg, #365314 0 4px, #1a2e05 4px 8px),
-    radial-gradient(circle at 12% 28%, #a3e63533 0 2px, transparent 2.5px),
-    radial-gradient(circle at 88% 72%, #a3e63522 0 2px, transparent 2.5px),
-    linear-gradient(180deg, #365314, #0f140a);
+    url('/themes/canvas-banner.svg'),
+    repeating-linear-gradient(90deg, #1a1c14 0 5px, #12140e 5px 10px),
+    radial-gradient(circle at 14% 26%, #a85a3a44 0 2px, transparent 2.6px),
+    radial-gradient(circle at 86% 70%, #8a907033 0 2px, transparent 2.6px),
+    radial-gradient(circle at 48% 88%, #a85a3a22 0 10%, transparent 28%),
+    linear-gradient(178deg, #1a1c14 0%, #0e100c 55%, #161810 100%);
+  border-color: color-mix(in srgb, #a85a3a 40%, #44403c);
+  box-shadow:
+    inset 0 0 0 1px color-mix(in srgb, #8a9070 18%, transparent),
+    inset 0 -22px 36px #05060577;
 }
 .sgm-tex-scale,
 html[data-sgm-texture='scale'] .sgm-info-panel {
+  /* Layered enamel arcs + aged gold — sparse, not wallpaper scales */
+  background-color: #0a120c;
   background-image:
-    radial-gradient(circle at 25% 30%, #eab30844 0 4px, transparent 5px),
-    radial-gradient(circle at 60% 55%, #14532d88 0 5px, transparent 6px),
-    radial-gradient(circle at 40% 80%, #854d0e66 0 4px, transparent 5px),
-    linear-gradient(160deg, #14532d, #052e16);
+    url('/themes/scale-enamel.svg'),
+    radial-gradient(ellipse 28px 14px at 22% 28%, #c9a22733 0 40%, transparent 44%),
+    radial-gradient(ellipse 26px 13px at 58% 52%, #142018aa 0 42%, transparent 46%),
+    radial-gradient(ellipse 24px 12px at 40% 78%, #42200666 0 40%, transparent 44%),
+    linear-gradient(162deg, #142018 0%, #0a120c 48%, #1a2818 100%);
+  border-color: color-mix(in srgb, #c9a227 48%, #422006);
+  box-shadow:
+    inset 0 0 0 1px color-mix(in srgb, #c9a227 22%, transparent),
+    inset 0 -24px 40px #04080677;
 }
 .sgm-tex-ember,
 html[data-sgm-texture='ember'] .sgm-info-panel {
+  /* Ash paper + one rose-gold fissure — not full-panel fire */
+  background-color: #120a08;
   background-image:
-    radial-gradient(circle at 50% 110%, #fb718566 0 18%, transparent 42%),
-    linear-gradient(165deg, #7c2d12 0%, #1c0a00 58%, #431407 100%);
+    radial-gradient(ellipse 40% 28% at 72% 108%, #e08a7066 0 22%, transparent 48%),
+    linear-gradient(108deg, transparent 46%, #e08a7028 50%, transparent 54%),
+    repeating-linear-gradient(14deg, transparent 0 9px, #00000044 9px 10px),
+    linear-gradient(168deg, #1c100c 0%, #120a08 52%, #2a140e 100%);
+  border-color: color-mix(in srgb, #e08a70 42%, #7c2d12);
+  box-shadow:
+    inset 0 0 0 1px color-mix(in srgb, #e08a70 16%, transparent),
+    inset 0 -26px 42px #08040477;
 }
 .sgm-tex-halo,
 html[data-sgm-texture='halo'] .sgm-info-panel {
+  /* Opaque pearl reading field + warm halo rim — contrast preserved */
+  background-color: #141210;
   background-image:
-    radial-gradient(circle at 50% 0%, #fde68a55 0 20%, transparent 55%),
-    linear-gradient(180deg, #44403c, #1c1917);
+    radial-gradient(ellipse 90% 55% at 50% -5%, #e8d5a055 0 18%, transparent 52%),
+    linear-gradient(115deg, transparent 42%, #faf6ee14 46%, transparent 50%),
+    repeating-linear-gradient(98deg, transparent 0 12px, #a8a29e14 12px 13px),
+    linear-gradient(180deg, #2a2620 0%, #1c1917 48%, #141210 100%);
+  border-color: color-mix(in srgb, #e8d5a0 44%, #a8a29e);
+  box-shadow:
+    inset 0 0 0 1px color-mix(in srgb, #faf6ee 18%, transparent),
+    inset 0 -20px 36px #0a090888;
 }
 .sgm-tex-sulfur,
 html[data-sgm-texture='sulfur'] .sgm-info-panel {
@@ -360,37 +430,76 @@ html[data-sgm-texture='sulfur'] .sgm-info-panel {
 }
 .sgm-tex-bone,
 html[data-sgm-texture='bone'] .sgm-info-panel {
+  /* Ossuary ash linen + AI panel bitmap — not flat charcoal / Integration slate */
+  background-color: #1c1917;
   background-image:
-    radial-gradient(ellipse 30px 12px at 14% 18%, #fafaf9cc 0 38%, transparent 42%),
-    radial-gradient(ellipse 22px 10px at 84% 70%, #e7e5e4bb 0 36%, transparent 40%),
-    radial-gradient(ellipse 18px 8px at 48% 88%, #d6d3d199 0 34%, transparent 38%),
-    radial-gradient(circle at 28% 42%, #fafaf9 0 1.6px, transparent 2px),
-    radial-gradient(circle at 66% 30%, #a8a29e 0 1.2px, transparent 1.6px),
-    radial-gradient(circle at 52% 58%, #e7e5e4 0 1px, transparent 1.4px),
-    repeating-linear-gradient(98deg, transparent 0 10px, #78716c22 10px 11px),
-    linear-gradient(158deg, #44403c 0%, #1c1917 42%, #0c0a09 72%, #292524 100%);
+    var(--sgm-panel-texture, url('/themes/undead-ossuary/panel-ash.png')),
+    url('/themes/undead-ossuary/panel-ash.svg'),
+    radial-gradient(ellipse 36px 14px at 12% 16%, #fafaf9aa 0 36%, transparent 42%),
+    radial-gradient(ellipse 28px 12px at 86% 72%, #e7e5e488 0 34%, transparent 40%),
+    radial-gradient(circle at 30% 44%, #fafaf9 0 1.4px, transparent 1.9px),
+    radial-gradient(circle at 64% 28%, #a8a29e 0 1.1px, transparent 1.5px),
+    repeating-linear-gradient(102deg, transparent 0 11px, #78716c28 11px 12px),
+    linear-gradient(158deg, #44403c 0%, #1c1917 40%, #0c0a09 70%, #292524 100%);
+  background-size:
+    cover,
+    96px 96px,
+    auto,
+    auto,
+    auto,
+    auto,
+    auto,
+    auto;
+  background-blend-mode: normal, soft-light, normal, normal, normal, normal, normal, normal;
+  border-color: color-mix(in srgb, #e7e5e4 52%, #78716c);
+  border-width: 2px;
+  box-shadow:
+    inset 0 0 0 2px color-mix(in srgb, #a8a29e 28%, transparent),
+    inset 0 -28px 48px #08070688,
+    0 0 18px #78716c33;
 }
 .sgm-tex-glamour,
 html[data-sgm-texture='glamour'] .sgm-info-panel {
+  /* Restrained prism veil — not rainbow noise */
+  background-color: #0c0814;
   background-image:
-    linear-gradient(120deg, #e879f933 0%, transparent 40%, #67e8f933 100%),
-    linear-gradient(160deg, #4a044e, #0f0520);
+    linear-gradient(118deg, #d4a0e022 0%, transparent 38%, #70b8c820 100%),
+    radial-gradient(ellipse at 30% 20%, #f0abfc18 0 12%, transparent 34%),
+    radial-gradient(ellipse at 78% 70%, #67e8f914 0 10%, transparent 30%),
+    repeating-linear-gradient(22deg, transparent 0 11px, #18102255 11px 12px),
+    linear-gradient(162deg, #181022 0%, #0c0814 50%, #1a1028 100%);
+  border-color: color-mix(in srgb, #d4a0e0 38%, #70b8c8);
+  box-shadow:
+    inset 0 0 0 1px color-mix(in srgb, #d4a0e0 14%, transparent),
+    inset 0 -24px 40px #06040c77;
 }
 .sgm-tex-scrap,
 html[data-sgm-texture='scrap'] .sgm-info-panel {
+  /* Dry scrap plates + rivets — not orc green */
+  background-color: #12140c;
   background-image:
-    repeating-linear-gradient(-35deg, #facc1528 0 6px, transparent 6px 12px),
-    radial-gradient(circle at 22% 35%, #facc15 1.6px, transparent 2px),
-    radial-gradient(circle at 68% 58%, #a16207 1.6px, transparent 2px),
-    radial-gradient(circle at 80% 22%, #facc15 1.2px, transparent 1.6px),
-    linear-gradient(160deg, #3f6212, #1a1f0a);
+    repeating-linear-gradient(-32deg, #d4b43a22 0 5px, transparent 5px 14px),
+    linear-gradient(90deg, #1e2210 0 42%, #2a3018 42% 58%, #1e2210 58%),
+    radial-gradient(circle at 20% 32%, #d4b43a 1.5px, transparent 1.9px),
+    radial-gradient(circle at 66% 56%, #854d0e 1.5px, transparent 1.9px),
+    radial-gradient(circle at 82% 18%, #d4b43a 1.1px, transparent 1.5px),
+    linear-gradient(160deg, #1e2210 0%, #12140c 55%, #1a1c10 100%);
+  border-color: color-mix(in srgb, #d4b43a 44%, #854d0e);
+  box-shadow: inset 0 0 0 2px #854d0e55;
 }
 .sgm-tex-tide,
 html[data-sgm-texture='tide'] .sgm-info-panel {
+  /* Deep tide + pearl — not Integration cyan */
+  background-color: #061412;
   background-image:
-    repeating-linear-gradient(180deg, transparent 0 6px, #5eead433 6px 7px),
-    radial-gradient(ellipse at 50% 0%, #99f6e422 0 30%, transparent 55%),
-    linear-gradient(165deg, #0f766e 0%, #021f1e 55%, #5eead422 100%);
+    repeating-linear-gradient(180deg, transparent 0 7px, #7eb8b022 7px 8px),
+    radial-gradient(ellipse at 50% -5%, #7eb8b028 0 28%, transparent 52%),
+    radial-gradient(ellipse at 70% 80%, #e8f4f012 0 8%, transparent 22%),
+    linear-gradient(168deg, #0c2420 0%, #061412 52%, #7eb8b018 100%);
+  border-color: color-mix(in srgb, #7eb8b0 42%, #0c2420);
+  box-shadow:
+    inset 0 0 0 1px color-mix(in srgb, #e8f4f0 14%, transparent),
+    inset 0 -24px 40px #020a0888;
 }
 .sgm-tex-parchment,
 html[data-sgm-texture='parchment'] .sgm-info-panel {
@@ -527,11 +636,11 @@ html[data-sgm-frame='rune'] .sgm-turn-frame,
 .sgm-frame-chip[data-sgm-frame='brass'],
 .sgm-frame-chip[data-sgm-frame='rune'] {
   border-width: 3px;
-  border-color: #b45309;
+  border-color: #c48a3a;
   box-shadow:
-    inset 0 0 0 1px #fbbf2488,
-    inset 0 0 0 3px #78350f66,
-    0 0 18px #b4530944;
+    inset 0 0 0 1px #fde68a77,
+    inset 0 0 0 3px #43140766,
+    0 0 18px #c48a3a33;
 }
 html[data-sgm-frame='brass'] .sgm-turn-frame::before,
 html[data-sgm-frame='rune'] .sgm-turn-frame::before,
@@ -543,10 +652,10 @@ html[data-sgm-frame='rune'] .sgm-turn-frame::before,
   background:
     /* hammer head */
     linear-gradient(#fde68a, #fde68a) 2px 4px / 14px 7px no-repeat,
-    linear-gradient(#b45309, #b45309) 7px 10px / 4px 14px no-repeat,
+    linear-gradient(#c48a3a, #c48a3a) 7px 10px / 4px 14px no-repeat,
     /* rune dots */
     radial-gradient(circle at 20px 4px, #fde68a 1.5px, transparent 1.8px),
-    radial-gradient(circle at 4px 20px, #fbbf24 1.4px, transparent 1.7px);
+    radial-gradient(circle at 4px 20px, #e8c070 1.4px, transparent 1.7px);
 }
 
 html[data-sgm-frame='rune'] .sgm-turn-frame,
@@ -554,8 +663,8 @@ html[data-sgm-frame='rune'] .sgm-turn-frame,
 .sgm-frame-chip[data-sgm-frame='rune'] {
   border-image: none;
   background-image:
-    repeating-linear-gradient(90deg, transparent 0 9px, #d9770622 9px 10px),
-    repeating-linear-gradient(0deg, transparent 0 9px, #d9770618 9px 10px);
+    repeating-linear-gradient(90deg, transparent 0 9px, #c48a3a22 9px 10px),
+    repeating-linear-gradient(0deg, transparent 0 9px, #c48a3a18 9px 10px);
   background-origin: border-box;
 }
 
@@ -565,7 +674,7 @@ html[data-sgm-frame='vine'] .sgm-turn-frame,
   border-width: 3px;
   border-style: double;
   border-color: #3f6212;
-  box-shadow: inset 0 0 28px #14532d33, 0 0 0 2px #84cc1633;
+  box-shadow: inset 0 0 28px #0a100855, 0 0 0 2px #9aaa4a33;
 }
 html[data-sgm-frame='vine'] .sgm-turn-frame::before,
 .sgm-frame-chip[data-sgm-frame='vine']::before {
@@ -573,22 +682,22 @@ html[data-sgm-frame='vine'] .sgm-turn-frame::before,
   height: 26px;
   border: none;
   background:
-    radial-gradient(circle at 5px 16px, #84cc16 2.1px, transparent 2.4px),
-    radial-gradient(circle at 16px 5px, #a3e635 2.2px, transparent 2.5px),
+    radial-gradient(circle at 5px 16px, #9aaa4a 2.1px, transparent 2.4px),
+    radial-gradient(circle at 16px 5px, #a3b56a 2.2px, transparent 2.5px),
     radial-gradient(circle at 12px 12px, #65a30d 1.4px, transparent 1.7px),
-    linear-gradient(#65a30d, #65a30d) top left / 18px 3px no-repeat,
-    linear-gradient(#65a30d, #65a30d) top left / 3px 18px no-repeat;
+    linear-gradient(#3f6212, #3f6212) top left / 18px 3px no-repeat,
+    linear-gradient(#3f6212, #3f6212) top left / 3px 18px no-repeat;
 }
 
 html[data-sgm-frame='filigree'] .sgm-turn-frame,
 .sgm-turn-frame[data-sgm-frame='filigree'],
 .sgm-frame-chip[data-sgm-frame='filigree'] {
   border-width: 2px;
-  border-color: #c084fc;
+  border-color: #a78bc8;
   box-shadow:
-    inset 0 0 0 1px #e9d5ff55,
-    inset 0 0 22px #6b21a844,
-    0 0 14px #c084fc33;
+    inset 0 0 0 1px #e9d5ff44,
+    inset 0 0 22px #12081c66,
+    0 0 14px #a78bc828;
 }
 html[data-sgm-frame='filigree'] .sgm-turn-frame::before,
 .sgm-frame-chip[data-sgm-frame='filigree']::before {
@@ -597,31 +706,36 @@ html[data-sgm-frame='filigree'] .sgm-turn-frame::before,
   border-width: 2px 0 0 2px;
   border-style: double;
   border-color: #e9d5ff;
-  box-shadow: 3px 3px 0 #c084fc66;
+  border-radius: 0 0 14px 0;
+  box-shadow: 3px 3px 0 #a78bc855;
 }
 
 html[data-sgm-frame='ivory'] .sgm-turn-frame,
 .sgm-turn-frame[data-sgm-frame='ivory'],
 .sgm-frame-chip[data-sgm-frame='ivory'] {
   border-width: 3px;
-  border-color: #fbbf24;
-  box-shadow: inset 0 0 0 1px #fef3c788, 0 0 16px #fbbf2433;
+  border-color: #c9b896;
+  box-shadow: inset 0 0 0 1px #f5f0e666, 0 0 16px #c9b89628;
 }
 html[data-sgm-frame='ivory'] .sgm-turn-frame::before,
 .sgm-frame-chip[data-sgm-frame='ivory']::before {
-  width: 20px;
-  height: 20px;
+  width: 18px;
+  height: 26px;
   border-width: 3px 0 0 3px;
-  border-radius: 0 0 10px 0;
-  border-color: #fde68a;
+  border-radius: 0;
+  border-color: #e8dcc0;
+  /* Tall stepped corner */
+  box-shadow:
+    6px 0 0 -1px #c9b89688,
+    0 6px 0 -1px #c9b89666;
 }
 
 html[data-sgm-frame='iron'] .sgm-turn-frame,
 .sgm-turn-frame[data-sgm-frame='iron'],
 .sgm-frame-chip[data-sgm-frame='iron'] {
   border-width: 3px;
-  border-color: #3f6212;
-  box-shadow: inset 0 0 0 2px #1a2e0588, 0 0 0 1px #65a30d44;
+  border-color: #6b7280;
+  box-shadow: inset 0 0 0 2px #1c191788, 0 0 0 1px #a85a3a55;
 }
 html[data-sgm-frame='iron'] .sgm-turn-frame::before,
 .sgm-frame-chip[data-sgm-frame='iron']::before {
@@ -629,9 +743,9 @@ html[data-sgm-frame='iron'] .sgm-turn-frame::before,
   height: 20px;
   border: none;
   background:
-    linear-gradient(#a3e635, #a3e635) 0 0 / 6px 18px no-repeat,
-    linear-gradient(#65a30d, #65a30d) 6px 0 / 12px 5px no-repeat,
-    linear-gradient(#a3e635, #a3e635) 8px 5px / 4px 12px no-repeat;
+    linear-gradient(#a85a3a, #a85a3a) 0 0 / 6px 18px no-repeat,
+    linear-gradient(#8a9070, #8a9070) 6px 0 / 12px 5px no-repeat,
+    linear-gradient(#a85a3a, #a85a3a) 8px 5px / 4px 12px no-repeat;
   clip-path: polygon(0 0, 100% 0, 100% 28%, 55% 28%, 55% 100%, 0 100%);
 }
 
@@ -639,8 +753,8 @@ html[data-sgm-frame='scale'] .sgm-turn-frame,
 .sgm-turn-frame[data-sgm-frame='scale'],
 .sgm-frame-chip[data-sgm-frame='scale'] {
   border-width: 3px;
-  border-color: #eab308;
-  box-shadow: inset 0 0 24px #14532d55, 0 0 14px #eab30844;
+  border-color: #c9a227;
+  box-shadow: inset 0 0 24px #0a120c66, 0 0 14px #c9a22733;
 }
 html[data-sgm-frame='scale'] .sgm-turn-frame::before,
 .sgm-frame-chip[data-sgm-frame='scale']::before {
@@ -648,19 +762,19 @@ html[data-sgm-frame='scale'] .sgm-turn-frame::before,
   height: 20px;
   border: none;
   background:
-    radial-gradient(circle at 6px 12px, #eab308 4.2px, transparent 4.5px),
-    radial-gradient(circle at 14px 12px, #854d0e 4.2px, transparent 4.5px),
-    radial-gradient(circle at 22px 12px, #eab308 4.2px, transparent 4.5px),
-    radial-gradient(circle at 10px 6px, #facc15 3.2px, transparent 3.5px),
-    radial-gradient(circle at 18px 6px, #a16207 3.2px, transparent 3.5px);
+    radial-gradient(circle at 6px 12px, #c9a227 4.2px, transparent 4.5px),
+    radial-gradient(circle at 14px 12px, #422006 4.2px, transparent 4.5px),
+    radial-gradient(circle at 22px 12px, #c9a227 4.2px, transparent 4.5px),
+    radial-gradient(circle at 10px 6px, #e8d48a 3.2px, transparent 3.5px),
+    radial-gradient(circle at 18px 6px, #854d0e 3.2px, transparent 3.5px);
 }
 
 html[data-sgm-frame='ember'] .sgm-turn-frame,
 .sgm-turn-frame[data-sgm-frame='ember'],
 .sgm-frame-chip[data-sgm-frame='ember'] {
   border-width: 2px;
-  border-color: #fb7185;
-  box-shadow: inset 0 0 28px #9f123944, 0 0 18px #fb718544;
+  border-color: #e08a70;
+  box-shadow: inset 0 0 28px #120a0855, 0 0 18px #e08a7033;
 }
 html[data-sgm-frame='ember'] .sgm-turn-frame::before,
 .sgm-frame-chip[data-sgm-frame='ember']::before {
@@ -668,9 +782,9 @@ html[data-sgm-frame='ember'] .sgm-turn-frame::before,
   height: 22px;
   border: none;
   background:
-    radial-gradient(ellipse 70% 40% at 30% 70%, #fb7185 0 40%, transparent 42%),
+    radial-gradient(ellipse 70% 40% at 30% 70%, #e08a70 0 40%, transparent 42%),
     radial-gradient(ellipse 50% 35% at 70% 55%, #fb923c 0 35%, transparent 38%),
-    linear-gradient(#fb7185, #fb7185) top left / 16px 2px no-repeat,
+    linear-gradient(#e08a70, #e08a70) top left / 16px 2px no-repeat,
     linear-gradient(#fb923c, #fb923c) top left / 2px 14px no-repeat;
 }
 
@@ -679,8 +793,8 @@ html[data-sgm-frame='circuit'] .sgm-turn-frame,
 .sgm-frame-chip[data-sgm-frame='circuit'] {
   border-style: double;
   border-width: 4px;
-  border-color: #22d3ee;
-  box-shadow: 0 0 14px #22d3ee44, inset 0 0 0 1px #083344;
+  border-color: #5eb8e8;
+  box-shadow: 0 0 14px #5eb8e833, inset 0 0 0 1px #0a0b0d, inset 2px 2px 0 #e0b04055;
 }
 html[data-sgm-frame='circuit'] .sgm-turn-frame::before,
 .sgm-frame-chip[data-sgm-frame='circuit']::before {
@@ -688,17 +802,18 @@ html[data-sgm-frame='circuit'] .sgm-turn-frame::before,
   height: 20px;
   border: none;
   background:
-    linear-gradient(#67e8f9, #67e8f9) 0 8px / 14px 2px no-repeat,
-    linear-gradient(#67e8f9, #67e8f9) 8px 0 / 2px 14px no-repeat,
-    radial-gradient(circle at 8px 8px, #22d3ee 2.2px, transparent 2.4px);
+    linear-gradient(#7dd3fc, #7dd3fc) 0 8px / 14px 2px no-repeat,
+    linear-gradient(#7dd3fc, #7dd3fc) 8px 0 / 2px 14px no-repeat,
+    radial-gradient(circle at 8px 8px, #5eb8e8 2.2px, transparent 2.4px),
+    linear-gradient(#e0b040, #e0b040) 14px 14px / 5px 5px no-repeat;
 }
 
 html[data-sgm-frame='halo'] .sgm-turn-frame,
 .sgm-turn-frame[data-sgm-frame='halo'],
 .sgm-frame-chip[data-sgm-frame='halo'] {
   border-width: 2px;
-  border-color: #fde68a;
-  box-shadow: 0 0 22px #fde68a55, inset 0 0 18px #fef3c722;
+  border-color: #e8d5a0;
+  box-shadow: 0 0 22px #e8d5a044, inset 0 0 18px #faf6ee18;
 }
 html[data-sgm-frame='halo'] .sgm-turn-frame::before,
 .sgm-frame-chip[data-sgm-frame='halo']::before {
@@ -706,7 +821,7 @@ html[data-sgm-frame='halo'] .sgm-turn-frame::before,
   height: 22px;
   border-width: 2px 0 0 2px;
   border-radius: 12px 0 0 0;
-  border-color: #fef3c7;
+  border-color: #faf6ee;
 }
 
 html[data-sgm-frame='sulfur'] .sgm-turn-frame,
@@ -731,29 +846,48 @@ html[data-sgm-frame='sulfur'] .sgm-turn-frame::before,
 html[data-sgm-frame='bone'] .sgm-turn-frame,
 .sgm-turn-frame[data-sgm-frame='bone'],
 .sgm-frame-chip[data-sgm-frame='bone'] {
-  border-width: 3px;
-  border-color: #e7e5e4;
-  box-shadow: inset 0 0 0 2px #a8a29e66, 0 0 14px #78716c55;
+  border-width: 4px;
+  border-style: solid;
+  border-color: #d6d3d1;
+  border-image: none;
+  box-shadow:
+    inset 0 0 0 3px #a8a29e55,
+    inset 0 0 0 6px #44403c88,
+    0 0 0 1px #78716c66,
+    0 0 20px #a8a29e44;
+}
+html[data-sgm-frame='bone'] .sgm-frame-chip[data-sgm-frame='bone'] {
+  background-image: url('/themes/undead-ossuary/frame-filigree.png');
+  background-size: cover;
+  background-position: center;
 }
 html[data-sgm-frame='bone'] .sgm-turn-frame::before,
 .sgm-frame-chip[data-sgm-frame='bone']::before {
-  width: 30px;
-  height: 15px;
+  width: 48px;
+  height: 30px;
   border: none;
-  border-radius: 8px;
-  background:
-    radial-gradient(circle at 5px 7px, #fafaf9 3.4px, transparent 3.6px),
-    radial-gradient(circle at 25px 7px, #fafaf9 3.4px, transparent 3.6px),
-    linear-gradient(#e7e5e4, #d6d3d1) 7px 4px / 16px 7px no-repeat;
-  box-shadow: 0 1px 0 #a8a29e88;
+  border-radius: 0;
+  background: url('/themes/undead-ossuary/frame-knuckle.svg') left top / 44px 28px no-repeat;
+  box-shadow: 0 2px 4px #0c0a0988;
+  filter: drop-shadow(0 0 3px #e7e5e466);
+}
+html[data-sgm-frame='bone'] .sgm-turn-frame::after,
+.sgm-frame-chip[data-sgm-frame='bone']::after {
+  width: 36px;
+  height: 28px;
+  border: none;
+  background: url('/themes/undead-ossuary/frame-knuckle.svg') right bottom / 32px 22px no-repeat;
+  transform: scaleX(-1) scaleY(-1);
+  opacity: 0.9;
 }
 
 html[data-sgm-frame='twilight'] .sgm-turn-frame,
 .sgm-turn-frame[data-sgm-frame='twilight'],
 .sgm-frame-chip[data-sgm-frame='twilight'] {
   border-width: 2px;
-  border-color: #e879f9;
-  box-shadow: inset 0 0 20px #a21caf33, 0 0 16px #2dd4bf33;
+  border-color: #d4a0e0;
+  border-radius: 0 14px 0 0;
+  box-shadow: inset 0 0 20px #18102244, 0 0 16px #70b8c828;
 }
 html[data-sgm-frame='twilight'] .sgm-turn-frame::before,
 .sgm-frame-chip[data-sgm-frame='twilight']::before {
@@ -761,7 +895,8 @@ html[data-sgm-frame='twilight'] .sgm-turn-frame::before,
   height: 22px;
   border-width: 2px 0 0 2px;
   border-style: double;
-  border-color: #67e8f9;
+  border-color: #70b8c8;
+  border-radius: 0 0 16px 0;
 }
 
 html[data-sgm-frame='scrap'] .sgm-turn-frame,
@@ -769,7 +904,7 @@ html[data-sgm-frame='scrap'] .sgm-turn-frame,
 .sgm-frame-chip[data-sgm-frame='scrap'] {
   border-style: outset;
   border-width: 3px;
-  border-color: #facc15;
+  border-color: #d4b43a;
   box-shadow: inset 0 0 0 2px #854d0e88;
 }
 html[data-sgm-frame='scrap'] .sgm-turn-frame::before,
@@ -778,8 +913,8 @@ html[data-sgm-frame='scrap'] .sgm-turn-frame::before,
   height: 18px;
   border: none;
   background:
-    radial-gradient(circle at 50% 50%, #1c1917 0 28%, #facc15 30% 48%, #854d0e 50% 62%, transparent 64%),
-    #facc15;
+    radial-gradient(circle at 50% 50%, #1c1917 0 28%, #d4b43a 30% 48%, #854d0e 50% 62%, transparent 64%),
+    #d4b43a;
   border-radius: 2px;
 }
 
@@ -787,8 +922,8 @@ html[data-sgm-frame='tide'] .sgm-turn-frame,
 .sgm-turn-frame[data-sgm-frame='tide'],
 .sgm-frame-chip[data-sgm-frame='tide'] {
   border-width: 3px;
-  border-color: #2dd4bf;
-  box-shadow: inset 0 0 26px #115e5944, 0 0 14px #2dd4bf44;
+  border-color: #7eb8b0;
+  box-shadow: inset 0 0 26px #06141255, 0 0 14px #7eb8b033;
 }
 html[data-sgm-frame='tide'] .sgm-turn-frame::before,
 .sgm-frame-chip[data-sgm-frame='tide']::before {
@@ -796,7 +931,7 @@ html[data-sgm-frame='tide'] .sgm-turn-frame::before,
   height: 12px;
   border: none;
   border-radius: 0 0 12px 0;
-  background: linear-gradient(90deg, #99f6e4, transparent);
+  background: linear-gradient(90deg, #e8f4f0aa, transparent);
 }
 
 html[data-sgm-frame='velvet'] .sgm-turn-frame,
@@ -822,7 +957,7 @@ html[data-sgm-frame='velvet'] .sgm-turn-frame::before,
   filter: drop-shadow(0 0 3px #c8bfd744);
 }
 
-/* Vampire Nocturne: Grenze titles only; cool moon rim token */
+/* Race / material kits: display face on titles + HUD brand only */
 html[data-sgm-theme='vampire-nocturne'] {
   --sgm-edge-moon: #c8bfd7;
 }
@@ -830,6 +965,126 @@ html[data-sgm-theme='vampire-nocturne'] .sgm-info-heading,
 html[data-sgm-theme='vampire-nocturne'] .sgm-hud-brand {
   font-family: 'Grenze Gotisch', var(--sgm-font-story, 'Playfair Display', Georgia, serif);
   letter-spacing: 0.02em;
+}
+html[data-sgm-theme='high-elf-spire'] .sgm-info-heading,
+html[data-sgm-theme='high-elf-spire'] .sgm-hud-brand {
+  font-family: Cinzel, Georgia, serif;
+  letter-spacing: 0.04em;
+}
+html[data-sgm-theme='dragon-hoard'] .sgm-info-heading,
+html[data-sgm-theme='dragon-hoard'] .sgm-hud-brand {
+  font-family: 'Cinzel Decorative', Cinzel, Georgia, serif;
+  letter-spacing: 0.03em;
+}
+html[data-sgm-theme='dwarf-forgehall'] .sgm-info-heading,
+html[data-sgm-theme='dwarf-forgehall'] .sgm-hud-brand {
+  font-family: MedievalSharp, Georgia, serif;
+}
+html[data-sgm-theme='undead-ossuary'] .sgm-info-heading,
+html[data-sgm-theme='undead-ossuary'] .sgm-hud-brand {
+  font-family: 'Special Elite', Georgia, serif;
+}
+/* Nested slate hardcodes were covering ossuary panels — retint toward bone/ash */
+html[data-sgm-theme='undead-ossuary'] .sgm-info-panel .bg-slate-900,
+html[data-sgm-theme='undead-ossuary'] .sgm-info-panel .bg-slate-800,
+html[data-sgm-theme='undead-ossuary'] .sgm-info-panel .bg-slate-950 {
+  background-color: color-mix(in srgb, var(--sgm-panel, #1c1917) 90%, #44403c) !important;
+}
+html[data-sgm-theme='undead-ossuary'] .sgm-info-panel .border-slate-800,
+html[data-sgm-theme='undead-ossuary'] .sgm-info-panel .border-slate-800\/80,
+html[data-sgm-theme='undead-ossuary'] .sgm-info-panel .border-slate-700,
+html[data-sgm-theme='undead-ossuary'] .sgm-info-panel .border-slate-700\/60 {
+  border-color: color-mix(in srgb, #e7e5e4 32%, #44403c) !important;
+}
+html[data-sgm-theme='undead-ossuary'] .sgm-hud {
+  background-color: color-mix(in srgb, var(--sgm-panel, #1c1917) 92%, transparent);
+  border-bottom-color: color-mix(in srgb, #e7e5e4 35%, #44403c);
+}
+html[data-sgm-theme='cyborg-chassis'] .sgm-info-heading,
+html[data-sgm-theme='cyborg-chassis'] .sgm-hud-brand {
+  font-family: Orbitron, ui-sans-serif, system-ui, sans-serif;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  font-size: 0.92em;
+}
+html[data-sgm-theme='orc-warcamp'] .sgm-info-heading,
+html[data-sgm-theme='orc-warcamp'] .sgm-hud-brand {
+  font-family: Impact, 'Arial Black', sans-serif;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  font-size: 0.95em;
+}
+
+/* Body atmosphere when a race material texture is equipped */
+html[data-sgm-texture='moss'] body {
+  background-image:
+    radial-gradient(ellipse 80% 50% at 10% 0%, #1a2e1233 0 30%, transparent 55%),
+    linear-gradient(180deg, #0a1008, #050805);
+}
+html[data-sgm-texture='dusk'] body {
+  background-image:
+    radial-gradient(ellipse 70% 40% at 90% 0%, #a78bc818 0 25%, transparent 50%),
+    linear-gradient(180deg, #0a0810, #05040a);
+}
+html[data-sgm-texture='soot'] body {
+  background-image:
+    radial-gradient(ellipse at 80% 100%, #c48a3a18 0 20%, transparent 45%),
+    linear-gradient(180deg, #12100e, #0a0908);
+}
+html[data-sgm-texture='banner'] body {
+  background-image: linear-gradient(180deg, #0e100c, #080a06);
+}
+html[data-sgm-texture='scale'] body {
+  background-image:
+    radial-gradient(ellipse at 50% 100%, #c9a22714 0 18%, transparent 42%),
+    linear-gradient(180deg, #0a120c, #050806);
+}
+html[data-sgm-texture='ivory'] body {
+  background-image: linear-gradient(180deg, #10141c, #080a10);
+}
+html[data-sgm-texture='ember'] body {
+  background-image:
+    radial-gradient(ellipse at 50% 110%, #e08a7022 0 20%, transparent 48%),
+    linear-gradient(180deg, #120a08, #080404);
+}
+html[data-sgm-texture='circuit'] body {
+  background-image: linear-gradient(180deg, #0a0b0d, #050506);
+}
+html[data-sgm-texture='halo'] body {
+  background-image:
+    radial-gradient(ellipse at 50% -10%, #e8d5a022 0 22%, transparent 50%),
+    linear-gradient(180deg, #141210, #0a0908);
+}
+html[data-sgm-texture='glamour'] body {
+  background-image: linear-gradient(180deg, #0c0814, #06040c);
+}
+html[data-sgm-texture='scrap'] body {
+  background-image: linear-gradient(180deg, #12140c, #0a0b06);
+}
+html[data-sgm-texture='tide'] body {
+  background-image:
+    radial-gradient(ellipse at 50% 0%, #7eb8b014 0 24%, transparent 50%),
+    linear-gradient(180deg, #061412, #030a08);
+}
+html[data-sgm-texture='velvet'] body {
+  background-image:
+    radial-gradient(ellipse at 50% -8%, #c8bfd714 0 18%, transparent 48%),
+    linear-gradient(180deg, #171018, #0e0a10);
+}
+html[data-sgm-texture='bone'] body {
+  background-color: #080706;
+  background-image:
+    var(--sgm-atmosphere, url('/themes/undead-ossuary/atmosphere.png')),
+    url('/themes/undead-ossuary/atmosphere.svg'),
+    radial-gradient(ellipse 70% 40% at 50% -5%, #e7e5e418 0 22%, transparent 52%),
+    linear-gradient(180deg, #0c0a09, #080706);
+  background-size: cover, cover, auto, auto;
+  background-attachment: fixed, fixed, scroll, scroll;
+}
+html[data-sgm-texture='sulfur'] body {
+  background-image:
+    radial-gradient(ellipse at 90% 0%, #f59e0b18 0 12%, transparent 32%),
+    linear-gradient(180deg, #120808, #080404);
 }
 
 /* ===== EXCITED DICE THEME FX ===== */

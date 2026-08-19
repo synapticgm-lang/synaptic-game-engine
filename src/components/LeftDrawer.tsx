@@ -15,7 +15,7 @@ export function LeftDrawer({ state, open, onClose }: Props) {
     <>
       {open && <div className="fixed inset-0 z-30 bg-black/50 lg:hidden" onClick={onClose} />}
       <aside className={`sgm-info-panel fixed left-0 top-0 z-40 h-full w-72 transform overflow-y-auto border-r transition-transform duration-300 lg:static lg:z-0 lg:w-72 lg:translate-x-0 ${open ? 'translate-x-0' : '-translate-x-full'}`}>
-        <div className="flex items-center justify-between border-b border-slate-800/80 px-4 py-3 lg:hidden">
+        <div className="flex items-center justify-between border-b border-[color:color-mix(in_srgb,var(--sgm-accent,#64748b)_28%,#44403c)] px-4 py-3 lg:hidden">
           <span className="sgm-info-heading">Journal</span>
           <button onClick={onClose} className="text-slate-400 hover:text-slate-200"><X size={18} /></button>
         </div>

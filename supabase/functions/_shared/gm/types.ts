@@ -873,7 +873,7 @@ export type ComicLayoutMode = 'paged' | 'webtoon';
 export type ComicReadingDirection = 'ltr' | 'rtl';
 
 export const ART_STYLE_PRESETS: Array<{ value: ArtStylePreset; label: string; description: string; keywords: string }> = [
-  { value: 'classic-book', label: 'Classic Book Illustration', description: 'Storybook ink & watercolor wash', keywords: 'classic book illustration, detailed ink line-art, soft muted watercolor washes, storybook aesthetic' },
+  { value: 'classic-book', label: 'Classic Book Illustration', description: 'Ink & watercolor, one scene (not a picture of a book)', keywords: 'ink-and-watercolor illustration, detailed ink line-art, soft muted watercolor washes, single scene filling the frame' },
   { value: 'sin-city-noir', label: 'Sin City Noir', description: 'Stark B&W with crimson accents', keywords: 'sin city noir, stark black and white, deep inks, crimson red accents, high contrast noir' },
   { value: 'manga-screentone', label: 'Manga / Screentone', description: 'Monochrome ink, speed lines, halftone', keywords: 'manga style, monochrome ink, speed lines, halftone screentone shading, japanese manga aesthetic' },
   { value: 'manhwa-webtoon', label: 'Manhwa / Webtoon Color', description: 'Full-color Korean webtoon look', keywords: 'full color manhwa webtoon, clean digital line art, soft cel shading, vertical scroll comic aesthetic' },

@@ -71,6 +71,27 @@ describe('Chapter One opener vs weekly cap', () => {
     expect(prompt).toMatch(/Sevenfold Circle/i);
     expect(prompt).not.toMatch(/which Earth place/i);
     expect(prompt).toMatch(/not a manga page of Earth daily life/i);
+    expect(prompt).toMatch(/not an open book/i);
+    expect(prompt).toMatch(/an adult \(18 or older\)/i);
+    expect(prompt).not.toMatch(/VIEWPOINT CHARACTER: a child/i);
+  });
+
+  it('draws a child only when the look or sheet names one', () => {
+    const adult = pinOpeningHereScene({
+      storyText: 'Light, then cold stone. You are on your back inside a seven-ring summoning circle.',
+      location: 'The Sevenfold Circle',
+      characterLook: 'gray hoodie, blue jeans',
+    });
+    expect(adult).toMatch(/LOOK: gray hoodie, blue jeans/i);
+    expect(adult).toMatch(/an adult \(18 or older\)/i);
+
+    const child = pinOpeningHereScene({
+      storyText: 'Light, then cold stone. You are on your back inside a seven-ring summoning circle.',
+      location: 'The Sevenfold Circle',
+      characterLook: 'a child in a gray hoodie',
+    });
+    expect(child).toMatch(/a child as the look/i);
+    expect(child).not.toMatch(/an adult \(18 or older\)/i);
   });
 
   it('still treats cover-complete as the opener if the splash never fired', () => {

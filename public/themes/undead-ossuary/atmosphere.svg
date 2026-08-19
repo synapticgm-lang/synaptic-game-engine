@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512" preserveAspectRatio="none">
+  <defs>
+    <radialGradient id="crypt" cx="50%" cy="18%" r="75%">
+      <stop offset="0%" stop-color="#44403c" stop-opacity="0.35"/>
+      <stop offset="35%" stop-color="#1c1917" stop-opacity="0.55"/>
+      <stop offset="100%" stop-color="#080706" stop-opacity="1"/>
+    </radialGradient>
+    <pattern id="dust" width="64" height="64" patternUnits="userSpaceOnUse">
+      <circle cx="10" cy="14" r="1.2" fill="#e7e5e4" fill-opacity="0.08"/>
+      <circle cx="38" cy="40" r="0.9" fill="#a8a29e" fill-opacity="0.1"/>
+      <circle cx="52" cy="18" r="0.7" fill="#fafaf9" fill-opacity="0.06"/>
+      <circle cx="22" cy="50" r="1" fill="#d6d3d1" fill-opacity="0.07"/>
+    </pattern>
+  </defs>
+  <rect width="512" height="512" fill="#0a0908"/>
+  <rect width="512" height="512" fill="url(#crypt)"/>
+  <rect width="512" height="512" fill="url(#dust)"/>
+  <g fill="#e7e5e4" fill-opacity="0.05">
+    <ellipse cx="80" cy="120" rx="48" ry="10" transform="rotate(-20 80 120)"/>
+    <ellipse cx="400" cy="200" rx="56" ry="12" transform="rotate(14 400 200)"/>
+    <ellipse cx="240" cy="420" rx="70" ry="14" transform="rotate(-6 240 420)"/>
+  </g>
+</svg>

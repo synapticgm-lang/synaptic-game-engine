@@ -4,7 +4,9 @@ import {
   equippedSetLabel,
   equippedSetName,
   resolveThemeKitExtras,
+  themeAtmosphereUrl,
   themeBySettingsId,
+  themePanelTextureUrl,
 } from './uiTheme';
 
 describe('equipped set live label', () => {
@@ -30,8 +32,18 @@ describe('premium kit tokens', () => {
     expect(theme.preview?.accent.toLowerCase()).not.toBe('#2dd4bf');
     expect(theme.preview?.texture).toBe('bone');
     expect(theme.preview?.frameStyle).toBe('bone');
-    expect(theme.preview?.fontUi).toMatch(/Special Elite/i);
+    expect(theme.preview?.fontUi).toMatch(/Inter/i);
+    expect(theme.preview?.fontUi).not.toMatch(/Special Elite/i);
+    expect(theme.preview?.fontStory).toMatch(/Georgia/i);
     expect(theme.kit?.frameId).toBe('frame.ossuary');
+    expect(theme.preview?.bg.toLowerCase()).toBe('#080706');
+    expect(theme.preview?.panel.toLowerCase()).toBe('#1c1917');
+    expect(themePanelTextureUrl(theme.preview?.texture)).toBe(
+      '/themes/undead-ossuary/panel-ash.png',
+    );
+    expect(themeAtmosphereUrl(theme.preview?.texture)).toBe(
+      '/themes/undead-ossuary/atmosphere.png',
+    );
   });
 
   it('heals Integration default font/frame when a race kit theme is equipped', () => {
@@ -98,5 +110,76 @@ describe('premium kit tokens', () => {
     expect(infernal.preview?.accent.toLowerCase()).toBe('#f59e0b');
     expect(noir.preview?.bg.toLowerCase()).toBe('#050505');
     expect(new Set([vampire.preview?.texture, infernal.preview?.texture, noir.preview?.texture]).size).toBe(3);
+  });
+
+  const RACE_KIT_IDS = [
+    'theme.wood-elf-grove',
+    'theme.dark-elf-umbrance',
+    'theme.high-elf-spire',
+    'theme.dwarf-forgehall',
+    'theme.orc-warcamp',
+    'theme.dragon-hoard',
+    'theme.phoenix-ashrise',
+    'theme.cyborg-chassis',
+    'theme.angelic-radiance',
+    'theme.infernal-pact',
+    'theme.undead-ossuary',
+    'theme.fae-glamour',
+    'theme.goblin-scrapheap',
+    'theme.merfolk-abyss',
+    'theme.vampire-nocturne',
+  ] as const;
+
+  it('every race kit is a material system, not Integration teal', () => {
+    const textures = new Set<string>();
+    const frames = new Set<string>();
+    for (const id of RACE_KIT_IDS) {
+      const theme = themeBySettingsId(id);
+      expect(theme.preview?.texture, id).toBeTruthy();
+      expect(theme.preview?.texture, id).not.toBe('plain');
+      expect(theme.preview?.frameStyle, id).toBeTruthy();
+      expect(theme.preview?.frameStyle, id).not.toBe('plain');
+      expect(theme.preview?.diceMaterial, id).toBeTruthy();
+      expect(theme.kit?.fontId, id).toBeTruthy();
+      expect(theme.kit?.diceId, id).toBeTruthy();
+      expect(theme.kit?.frameId, id).toBeTruthy();
+      expect(theme.preview?.accent.toLowerCase(), id).not.toBe('#22d3ee');
+      expect(theme.preview?.accent.toLowerCase(), id).not.toBe('#2dd4bf');
+      expect(theme.preview?.bg.toLowerCase(), id).not.toBe('#020617');
+      expect(theme.preview?.panel.toLowerCase(), id).not.toBe('#0f172a');
+      expect(theme.preview?.fontUi, id).toMatch(/Inter/i);
+      textures.add(theme.preview!.texture!);
+      frames.add(theme.preview!.frameStyle!);
+    }
+    expect(textures.size).toBe(RACE_KIT_IDS.length);
+    expect(frames.size).toBe(RACE_KIT_IDS.length);
+  });
+
+  it('false-friend race pairs stay material-distinct', () => {
+    const grove = themeBySettingsId('theme.wood-elf-grove');
+    const warcamp = themeBySettingsId('theme.orc-warcamp');
+    const scrap = themeBySettingsId('theme.goblin-scrapheap');
+    const abyss = themeBySettingsId('theme.merfolk-abyss');
+    const chassis = themeBySettingsId('theme.cyborg-chassis');
+    expect(grove.preview?.texture).toBe('moss');
+    expect(warcamp.preview?.texture).toBe('banner');
+    expect(scrap.preview?.texture).toBe('scrap');
+    expect(abyss.preview?.texture).toBe('tide');
+    expect(chassis.preview?.texture).toBe('circuit');
+    expect(warcamp.preview?.accent.toLowerCase()).not.toBe(scrap.preview?.accent.toLowerCase());
+    expect(abyss.preview?.accent.toLowerCase()).not.toBe('#22d3ee');
+    expect(chassis.preview?.accent.toLowerCase()).not.toBe('#22d3ee');
+    expect(grove.preview?.bg.toLowerCase()).not.toBe(warcamp.preview?.bg.toLowerCase());
+  });
+
+  it('High Elf / Dragon / Dwarf keep display faces out of UI stacks', () => {
+    const spire = themeBySettingsId('theme.high-elf-spire');
+    const hoard = themeBySettingsId('theme.dragon-hoard');
+    const dwarf = themeBySettingsId('theme.dwarf-forgehall');
+    expect(spire.preview?.fontUi).not.toMatch(/Cinzel/i);
+    expect(hoard.preview?.fontUi).not.toMatch(/Cinzel/i);
+    expect(dwarf.preview?.fontUi).not.toMatch(/MedievalSharp/i);
+    expect(spire.preview?.fontStory).not.toMatch(/Cinzel/i);
+    expect(hoard.preview?.fontStory).not.toMatch(/Cinzel Decorative/i);
   });
 });

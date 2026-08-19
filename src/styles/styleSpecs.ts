@@ -304,14 +304,14 @@ export const STYLE_SPECS: Record<ArtStylePreset, StyleSpec> = {
     name: 'High Fantasy Storybook',
     description: 'Ink line-art with soft watercolor washes, painterly storybook illustration.',
     style_prefix:
-      'Printed storybook plate, vintage ink-and-watercolor book illustration, single quiet scene as if bound opposite a page of prose',
+      'Ink-and-watercolor illustration of one scene filling the whole frame, detailed ink line-art, soft muted washes, painterly — technique only, not a photograph of a book',
     style_suffix:
-      'detailed ink line-art, soft muted watercolor washes, parchment light, storybook vignette, painterly single-scene illustration, not manga, not a comic panel grid.',
+      'single camera, one moment, full-bleed illustration, no physical book, no open pages, no second picture, no fake writing, not manga, not a comic panel grid.',
     color_override:
       'Painterly watercolor textures, warm parchment tones, soft ambient lighting',
     monochrome_override:
       'Vintage sepia ink sketch, classic pen and crosshatch illustration',
-    negative_prompt: `${BASE_NEGATIVE}, comic panel grid, halftone, cel shading`,
+    negative_prompt: `${BASE_NEGATIVE}, comic panel grid, halftone, cel shading, open book, two-page spread, facing pages, picture-book layout, fake body text`,
     ui_overlay_theme: {
       bubbleFontFamily: "'Cormorant Garamond', 'Georgia', serif",
       bubbleBackground: '#fffaf0',
@@ -370,7 +370,7 @@ export const KID_MODE_NEGATIVE_PROMPT =
  * `useRawPrompt: true`.
  */
 export const KID_MODE_STYLE_DIRECTIVE =
-  'STRICTLY FAMILY-FRIENDLY (Google Play Families / PEGI 3 equivalent, suitable for all ages): bright cheerful colors, soft lighting, gentle cartoonish/storybook tone. Absolutely no graphic violence, blood, gore, weapons harming anyone, nudity, suggestive poses, alcohol, drugs, smoking, needles, gambling, hate symbols, or scary/disturbing imagery.';
+  'STRICTLY FAMILY-FRIENDLY (Google Play Families / PEGI 3 equivalent, suitable for all ages): bright cheerful colors, soft lighting, gentle cartoonish tone. Absolutely no graphic violence, blood, gore, weapons harming anyone, nudity, suggestive poses, alcohol, drugs, smoking, needles, gambling, hate symbols, or scary/disturbing imagery.';
 
 /**
  * Returns the active style's negative prompt, layered with the Kid Mode safety terms when

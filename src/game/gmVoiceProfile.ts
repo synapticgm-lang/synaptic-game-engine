@@ -9,7 +9,8 @@ export type GmVoiceProfileId =
   | 'army-brief'
   | 'dry-wit'
   | 'theatrical-jester'
-  | 'fireside-innkeep';
+  | 'fireside-innkeep'
+  | 'cozy-brutal';
 
 /** Tabletop Fantasy campaign personality (persisted on the save). */
 export type GmPersonalityId =
@@ -19,13 +20,14 @@ export type GmPersonalityId =
   | 'army-brief'
   | 'fireside-innkeep';
 
-/** LitRPG System personality (persisted on the save). In-world chrome, not a table GM. */
+/** LitRPG System / narration personality (persisted on the save). Not a table GM. */
 export type SystemPersonalityId =
   | 'cold-system'
   | 'dry-wit'
   | 'army-brief'
   | 'theatrical-jester'
-  | 'chilled-gm';
+  | 'chilled-gm'
+  | 'cozy-brutal';
 
 export interface GmVoiceProfile {
   id: GmVoiceProfileId;
@@ -113,13 +115,26 @@ export const GM_VOICE_PROFILES: GmVoiceProfile[] = [
     promptRail:
       'VOICE: Warm innkeep / fireside GM. Hospitable, storyteller cadence. Invite the player in. Call checks like a tale-keeper pausing the yarn. Never saccharine; still let hard choices land.',
   },
+  {
+    id: 'cozy-brutal',
+    label: 'Cozy Brutal',
+    blurb:
+      'Punchy LitRPG: visceral fights, casual inner voice, then a meal and a laugh — not grimdark, not a comedy skit.',
+    litrpgLabel: 'Cozy Brutal',
+    litrpgTip:
+      'Punchy story voice: hard fights, casual inner monologue, then food and a laugh. Status numbers stay honest.',
+    promptRail:
+      'VOICE: Cozy Brutal (original SynapticGM diction — no licensed series). Honor the configured PERSPECTIVE for the whole turn: close POV on the protagonist; if second person, internal monologue and muttered self-talk use you/your; if third, keep thoughts close on them. Occasional brief cutaway to how the world reacts is fine, but never flip the PC\'s PERSPECTIVE mid-beat. Inner voice: modern, pragmatic, slightly sarcastic. TONE: cozy-brutal balance — not comedy-only, not grimdark. Combat is visceral, graphic, and high-stakes (broken bones, burning flesh, grueling endurance when filters allow). Protagonist attitude toward danger is nonchalant, optimistic, thrill-seeking — lethal scrapes like a hard workout or exciting hobby. After a fight, cut quickly into slice-of-life (food, drink, casual chat). PROSE: punchy active verbs; conversational dialogue with dry humor and occasional chuckling; no flowery poetic fantasy. PACING: tactile progression (new skills, testing magic, pushing limits); adapt fast — no brooding or mourning the premise; "well, time to punch some monsters" energy. Never name or claim to be any published novel.',
+  },
 ];
 
 export const DEFAULT_TABLETOP_GM_PERSONALITY: GmPersonalityId = 'chilled-gm';
 export const DEFAULT_LITRPG_SYSTEM_PERSONALITY: SystemPersonalityId = 'cold-system';
 
+/** Tabletop New Game only — exclude System chrome and story-narrator profiles. */
 export const TABLETOP_GM_PERSONALITIES: GmVoiceProfile[] = GM_VOICE_PROFILES.filter(
-  (p): p is GmVoiceProfile & { id: GmPersonalityId } => p.id !== 'cold-system'
+  (p): p is GmVoiceProfile & { id: GmPersonalityId } =>
+    p.id !== 'cold-system' && p.id !== 'cozy-brutal'
 );
 
 const SYSTEM_PERSONALITY_IDS: SystemPersonalityId[] = [
@@ -128,14 +143,16 @@ const SYSTEM_PERSONALITY_IDS: SystemPersonalityId[] = [
   'army-brief',
   'theatrical-jester',
   'chilled-gm',
+  'cozy-brutal',
 ];
 
-/** New Game shop list — the four System voices players actually pick. Theatrical stays valid on old saves. */
+/** New Game shop list — System / narration voices players pick. Theatrical stays valid on old saves. */
 const LITRPG_NEW_GAME_IDS: SystemPersonalityId[] = [
   'cold-system',
   'dry-wit',
   'army-brief',
   'chilled-gm',
+  'cozy-brutal',
 ];
 
 export const LITRPG_SYSTEM_PERSONALITIES: GmVoiceProfile[] = LITRPG_NEW_GAME_IDS.map(
@@ -211,12 +228,23 @@ export function formatGmVoiceForPrompt(
     );
   }
   if (litrpg) {
-    extra.push(
-      'You are the in-world System (panels, notices, registration), not a human GM at a table. Voice is how the System talks.'
-    );
+    if (p.id === 'cozy-brutal') {
+      extra.push(
+        'Cozy Brutal is narrative diction for this LitRPG campaign (close POV, combat texture, slice-of-life). System Status panels and notices stay diegetic and accurate — never change numbers, permits, or ledger facts for tone. You are not a human GM at a table.'
+      );
+    } else {
+      extra.push(
+        'You are the in-world System (panels, notices, registration), not a human GM at a table. Voice is how the System talks.'
+      );
+    }
   }
   if (opts?.kidMode) {
     extra.push('Kid Mode is on: no cruel mockery, no adult innuendo, no gore jokes — even in this voice.');
+    if (p.id === 'cozy-brutal') {
+      extra.push(
+        'Kid Mode Cozy Brutal: keep high-stakes thrills and workout-energy combat, but never describe broken bones, burning flesh, or graphic gore — impact and endurance without gore detail.'
+      );
+    }
   }
   return `=== GM VOICE PROFILE ===\n${rail}\n${extra.join(' ')}\n========================`;
 }

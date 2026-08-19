@@ -608,10 +608,10 @@ export function NewGameModal({ contentMode, onStart, onClose }: Props) {
 
               {engineMode === 'litrpg' && (
                 <div>
-                  <label className="mb-1 block font-medium text-slate-300">System personality</label>
+                  <label className="mb-1 block font-medium text-slate-300">System / story voice</label>
                   <p className="mb-1.5 text-[10px] leading-snug text-slate-500">
-                    How the in-world System talks in this campaign — Status panels and notices,
-                    not a person running the table. Sticks with this save.
+                    How this campaign sounds — registrar Status chrome, or Cozy Brutal punchy prose.
+                    Not a person running the table. Sticks with this save.
                   </p>
                   <div className="grid grid-cols-1 gap-1.5 sm:grid-cols-2">
                     {LITRPG_SYSTEM_PERSONALITIES.map((p) => (
@@ -688,7 +688,7 @@ export function NewGameModal({ contentMode, onStart, onClose }: Props) {
                     <BookOpen size={16} className={visualMode === 'classic' ? 'text-crimson-400' : 'text-slate-500'} />
                     <div className="min-w-0">
                       <div className="font-semibold text-slate-200">Classic Text</div>
-                      <div className="text-[9px] text-slate-400">Mostly prose; rare book-plate pictures</div>
+                      <div className="text-[9px] text-slate-400">Mostly prose; rare splash illustrations</div>
                     </div>
                   </button>
 
@@ -722,7 +722,7 @@ export function NewGameModal({ contentMode, onStart, onClose }: Props) {
                   <span>
                     <span className="block font-medium text-slate-200">Memorable moment images</span>
                     <span className="mt-0.5 block text-[10px] leading-snug text-slate-500">
-                      Optional. Rare book plates — ink and watercolor, one picture for a book-worthy beat, then back to prose. Opening, death, and the first dungeon’s final boss auto-illustrate; later bosses and other beats are tap-yes. Off until you check this.
+                      Optional. Rare splash illustrations — ink and watercolor, one picture filling the frame for a book-worthy beat, then back to prose. Opening, death, and the first dungeon’s final boss auto-illustrate; later bosses and other beats are tap-yes. Off until you check this.
                       {' '}
                       <span className="text-amber-200/80">{memorableWeeklyCapLabel()}</span>
                     </span>
