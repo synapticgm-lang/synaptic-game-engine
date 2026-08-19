@@ -1887,19 +1887,28 @@ export function useGame() {
         contentSanitized
       );
 
-      if (isOpeningEstablishmentPending(current) || liveCurrent.pendingGeneratedOpening) {
+      if (
+        isOpeningEstablishmentPending(current)
+        || (
+          !!liveCurrent.pendingGeneratedOpening
+          && liveCurrent.openingEstablishment?.complete !== true
+        )
+      ) {
         const stepped = isOpeningEstablishmentPending(current)
           ? await applyOpeningAnswer(liveCurrent, contentSanitized, settingsRef.current)
-          : { state: { ...liveCurrent, pendingGeneratedOpening: false }, generateOpening: true };
+          : { state: { ...liveCurrent, pendingGeneratedOpening: false }, generateOpening: true as const };
 
-        if (!stepped.generateOpening) {
+        if (stepped.deferToPlay) {
+          liveCurrent = stepped.state;
+          stateRef.current = liveCurrent;
+        } else if (!stepped.generateOpening) {
           refundSpentTextTurn();
           stateRef.current = stepped.state;
           setState(stepped.state);
           void persist(stepped.state);
+          setRestoreDraft(null);
           return;
-        }
-
+        } else {
         const openingState = { ...stepped.state, pendingGeneratedOpening: false };
         let openingText = '';
         let openingRaw = '';
@@ -2025,7 +2034,9 @@ export function useGame() {
             bypassCapacity: memorableBypassesWeeklyCap(openingMemorable.beat),
           });
         }
+        setRestoreDraft(null);
         return;
+        }
       }
 
       if (!liveCurrent.sceneFacts) {
@@ -3375,6 +3386,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
       } else {
         stateRef.current = mergedState;
         setState(mergedState);
+        setRestoreDraft(null);
         try {
           await persist(mergedState);
         } catch (persistError) {
@@ -3414,6 +3426,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
         resetTurnUi();
         refundSpentTextTurn();
         keepSentLineOnFail(sanitizedInput || lastInputRef.current || input);
+        addToast('Turn cancelled — your line is still in the box.', 'info');
         return;
       }
       const errMsg = e instanceof Error ? e.message : 'Unknown error';

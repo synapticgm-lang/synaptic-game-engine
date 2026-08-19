@@ -136,4 +136,27 @@ describe('opening player bubbles', () => {
       true
     );
   });
+
+  it('defers in-world questions to play while covers remain after sceneWritten', async () => {
+    const state = {
+      ...summonedNameCover(),
+      openingEstablishment: {
+        ...summonedNameCover().openingEstablishment!,
+        pending: [
+          {
+            id: 'pockets',
+            kind: 'kit' as const,
+            question: 'Pockets, bag, whatever rode with you. What is actually on you?',
+          },
+        ],
+        sceneWritten: true,
+      },
+    };
+    const result = await applyOpeningAnswer(
+      state,
+      "what's going on? what do you mean the mark is wrong"
+    );
+    expect(result.deferToPlay).toBe(true);
+    expect(result.generateOpening).toBe(false);
+  });
 });

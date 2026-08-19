@@ -7,6 +7,7 @@ import { extractSystemRename, interpretPlayerUtterance, isJunkSetupValue, isSetu
 import { materializeWornClothes } from './wornGear';
 import { seedLocalStarterQuest } from './questPlay';
 import { applyUsualSelfToCharacter, loadPlayerProfile, type PlayerProfile } from './playerProfile';
+import { isPlayerQuestion } from './actionResolution';
 
 const GENERIC_NAMES = /^(adventurer|survivor|unknown survivor|hero|wanderer|unknown)$/i;
 
@@ -1025,6 +1026,8 @@ export async function applyOpeningAnswer(
   state: GameState;
   generateOpening: boolean;
   openingNotes?: string;
+  /** Scene is live — route this line to the GM as play, not another cover prompt. */
+  deferToPlay?: boolean;
 }> {
   const est = state.openingEstablishment;
   if (!est || est.complete || !est.pending.length) {
@@ -1084,6 +1087,20 @@ export async function applyOpeningAnswer(
   if (currentKind === 'name' && harvest.name && isLocationishOpeningUtterance(harvest.name) && !extractGivenName(harvest.name)) {
     harvest.name = null;
   }
+
+  const acceptsCover =
+    !!(currentKind && fieldForKind(currentKind, harvest))
+    || isOpeningSetupChipLabel(answer)
+    || /^random\s/i.test(answer)
+    || !!(
+      currentKind
+      && !isPlayerQuestion(answer)
+      && acceptCurrentField(currentKind, answer, state)
+    );
+  if (est.sceneWritten && isPlayerQuestion(answer) && !acceptsCover && !locationTalkOnName) {
+    return { state, generateOpening: false, deferToPlay: true };
+  }
+
   if (currentKind && !fieldForKind(currentKind, harvest) && !isMetaOnly(answer) && !locationTalkOnName) {
     const accepted = acceptCurrentField(currentKind, answer, state);
     if (accepted) {

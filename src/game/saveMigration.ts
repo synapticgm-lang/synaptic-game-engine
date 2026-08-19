@@ -73,8 +73,36 @@ export const SAVE_REPAIR_TOAST =
   'Save updated for new hazard and quest rules.';
 
 /** Apply repair after load; optional persist is handled by caller. */
+export function repairOpeningPlayGate(state: GameState): { state: GameState; changed: boolean } {
+  const est = state.openingEstablishment;
+  if (!est) return { state, changed: false };
+  let next = state;
+  let changed = false;
+  if (est.complete && state.pendingGeneratedOpening) {
+    next = { ...next, pendingGeneratedOpening: false };
+    changed = true;
+  }
+  if (est.pending.length === 0 && est.complete !== true) {
+    next = {
+      ...next,
+      openingEstablishment: { ...est, complete: true },
+    };
+    changed = true;
+  }
+  return { state: next, changed };
+}
+
 export function applySaveRepair(state: GameState): SaveRepairResult {
-  const result = repairSaveSchema(state);
+  let result = repairSaveSchema(state);
+  const opening = repairOpeningPlayGate(result.state);
+  if (opening.changed) {
+    result = {
+      ...result,
+      state: opening.state,
+      dirty: true,
+      notes: [...result.notes, 'opening play gate normalized'],
+    };
+  }
   if (result.dirty) {
     debugLogger.record('STATE_UPDATE', 'Save schema repaired', {
       notes: result.notes,
