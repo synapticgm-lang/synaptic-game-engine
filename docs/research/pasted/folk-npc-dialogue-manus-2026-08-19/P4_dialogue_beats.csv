@@ -1,0 +1,81 @@
+id,folk,act,kid_mode_safe,dialogue_beat,individualizing_cue
+DB001,human,ask,true,"Could you show me which road stays open after dark? I would rather arrive late than guess.",Cautious traveler values clear directions
+DB002,human,refuse,true,"I cannot promise that for everyone, but I can tell you what I know.",Civic clerk limits authority honestly
+DB003,human,bargain,true,"I can bring two hands and a cart; you bring the rope and we call it even after the job.",Neighbor defines a practical contribution
+DB004,human,insult,true,"You heard the warning and chose applause over caution. That was careless.",Teacher criticizes a decision not identity
+DB005,human,thank,true,"You waited for my answer. That made the whole meeting easier.",Mediator values turn-taking
+DB006,elf,ask,true,"Before we cut it, may I see where the root has already carried the strain?",Gardener seeks a long-view fact
+DB007,elf,refuse,true,"No; a hurried repair will fail twice. Give me until morning, and I will give you a sound hinge.",Craftsperson refuses unsafe haste
+DB008,elf,bargain,true,"Keep the first harvest. Let me keep one cutting and a note of how it grew.",Botanist values continuity over money
+DB009,elf,insult,true,"Your plan has a bright beginning and no second page.",Planner delivers precise understatement
+DB010,elf,thank,true,"You remembered the quiet entrance. I noticed, and I am grateful.",Guest values a stated preference
+DB011,dwarf,ask,true,"What weight will this shelf carry on its worst day, not its best?",Builder asks for usable specifications
+DB012,dwarf,refuse,true,"I will not sign off on a seam I have not seen. That protects you as much as me.",Inspector prioritizes accountable work
+DB013,dwarf,bargain,true,"Bring the copper wire, and I will trade you the afternoon's repair.",Tinkerer states materials and labor plainly
+DB014,dwarf,insult,true,"You called it finished because you were tired. The door disagrees.",Mechanic targets premature work claims
+DB015,dwarf,thank,true,"You named my part in the work. That is payment enough for today.",Craftsperson values attribution
+DB016,orc,ask,true,"Say what you need: a witness, a guard, or room to think?",Guard offers clear choices
+DB017,orc,refuse,true,"I will not shout to make this sound important. The danger is real without that.",Captain rejects performative aggression
+DB018,orc,bargain,true,"I can take first watch if you take the dawn check. Put both names on the rota.",Patrolmate requests reciprocal duty
+DB019,orc,insult,true,"You hid the rule until it favored you. That is not clever; it is small.",Advocate condemns unfair procedure
+DB020,orc,thank,true,"You told me the hard part straight. I trust that more than easy praise.",Diplomat values candid feedback
+DB021,goblin,ask,true,"Before I answer, what do you mean by delivered: doorstep, dock, or inside the storeroom?",Merchant clarifies scope
+DB022,goblin,refuse,true,"I cannot take a mystery job, but I can price three clear versions of it.",Contractor rejects vagueness
+DB023,goblin,bargain,true,"Fast, cheap, or reversible; choose two, and I will write the trade-off plainly.",Maker offers transparent options
+DB024,goblin,insult,true,"That is not a bargain. It is a surprise wearing a hat.",Trader calls out hidden terms playfully
+DB025,goblin,thank,true,"You read the small line and asked a fair question. I like doing business that way.",Broker values informed consent
+DB026,beastfolk,ask,true,"Could we speak by the open window? The smoke is making it hard for me to focus.",Ranger states a sensory need
+DB027,beastfolk,refuse,true,"Please do not touch my tail. We can still talk.",Traveler sets a body boundary without apology
+DB028,beastfolk,bargain,true,"I can guide you through the reeds if we pause when the bells start. Loud sound disorients me.",Guide includes an access accommodation
+DB029,beastfolk,insult,true,"You asked about my body before my name. Try again.",Performer corrects objectification directly
+DB030,beastfolk,thank,true,"Thank you for asking first. That is a small kindness with a large effect.",Scholar acknowledges consent
+DB031,vampire,ask,true,"May I ask a private question here, or would you prefer the porch?",Clerk checks privacy before intimacy
+DB032,vampire,refuse,true,"No, I will not enter without your clear welcome. We can speak from the step.",Visitor respects a threshold boundary
+DB033,vampire,bargain,true,"I can take the late shift; you take the dawn report, and we both keep our sleep schedules.",Night worker negotiates time fairly
+DB034,vampire,insult,true,"An invitation is not a leash. Do not mistake courtesy for possession.",Host defends revocable consent
+DB035,vampire,thank,true,"You asked what I needed instead of guessing. That was gracious.",Neighbor appreciates practical respect
+DB036,merfolk,ask,true,"How long can your boat hold course before the current turns?",Pilot seeks navigation facts
+DB037,merfolk,refuse,true,"I will not sing a warning you can read on the tide chart. Listen to the chart.",Guard rejects performance expectation
+DB038,merfolk,bargain,true,"Share your dry dock for one hour, and I will mark the safe channel on your map.",Surveyor trades expertise transparently
+DB039,merfolk,insult,true,"You call it mystery because you did not check the weather.",Sailor criticizes avoidable negligence
+DB040,merfolk,thank,true,"You left the ramp clear. That made the visit possible.",Guest values water-access planning
+DB041,smallfolk,ask,true,"Would you lower the lantern a handspan? The glare hides the map lines.",Cartographer names an access need
+DB042,smallfolk,refuse,true,"No thank you; I do not need carrying. I need the stool moved two feet.",Traveler rejects infantilization with a concrete request
+DB043,smallfolk,bargain,true,"I will map the shortcut if you promise the council hears the ferry workers first.",Organizer seeks procedural fairness
+DB044,smallfolk,thank,true,"You made room at the table without making a fuss. I appreciate that.",Guest notices respectful inclusion
+DB045,dragonfolk,ask,true,"Is that question curiosity, or are you asking me to disclose something private?",Archivist separates interest from demand
+DB046,dragonfolk,refuse,true,"I do not display my scales for proof. My name and record will do.",Clerk rejects body spectacle
+DB047,dragonfolk,bargain,true,"I can lend the map for the journey if it returns dry and dated.",Collector sets a care condition
+DB048,dragonfolk,thank,true,"You kept the promise when no one was watching. I will remember that.",Neighbor values dependable conduct
+DB049,ghost_spirit,ask,true,"May we speak of today first? The past is not the only room I have.",Spirit redirects away from unwanted history
+DB050,ghost_spirit,refuse,true,"I will not reenact that night for visitors. Ask me about the garden instead.",Ghost protects a grief boundary
+DB051,ghost_spirit,bargain,true,"Bring the old bell to the window, and I will point out where the draft begins.",Watchman trades present help for a practical task
+DB052,ghost_spirit,thank,true,"You used the name I gave you. That matters more than you know.",Spirit values chosen naming
+DB053,troll,ask,true,"When you say soon, do you mean before sunset or before the rain?",Bridgekeeper requests exact timing
+DB054,troll,refuse,true,"The crossing is closed until the stones stop shifting. I will not trade safety for impatience.",Warden states a firm boundary
+DB055,troll,bargain,true,"Wait one hour, and I will guide the group over the shallow path at no charge.",Guide offers a fair alternative
+DB056,troll,thank,true,"You asked why the rule exists. That is better than pretending rules are magic.",Keeper values thoughtful questions
+DB057,ledgerborn,ask,true,"Which part needs remembering: the promise, the date, or the person who witnessed it?",Recorder asks for precise scope
+DB058,ledgerborn,refuse,true,"I can note your request, but I cannot approve it from this desk.",Guide distinguishes record from authority
+DB059,ledgerborn,bargain,true,"I will prepare the checklist if you review it with the people it affects.",Coordinator makes process collaborative
+DB060,ledgerborn,thank,true,"You corrected the record without blaming the clerk. Thank you for the care.",Archivist values fair correction
+DB061,mycelial,ask,true,"May I take a moment before answering? I want to separate my thought from the room's noise.",Diplomat values privacy and reflection
+DB062,mycelial,refuse,true,"That memory is mine to share or keep. Today I keep it.",Traveler sets an autonomy boundary
+DB063,mycelial,bargain,true,"Give the seedlings shade this week, and I will teach you how to save their seeds.",Gardener exchanges care knowledge
+DB064,mycelial,thank,true,"You let the silence finish its work. I am grateful.",Counselor values patient conversation
+DB065,ashkin,ask,true,"Could we move this talk somewhere cooler? I think better when the room is not pressing in.",Mediator requests temperature comfort
+DB066,ashkin,refuse,true,"I am too upset to decide well. Give me five quiet minutes, then ask again.",Worker uses self-regulation
+DB067,ashkin,bargain,true,"You handle the kiln schedule; I will take the late cleanup and leave both stations ready.",Potter divides tasks fairly
+DB068,ashkin,thank,true,"You gave me time to cool down without making it a spectacle. Thank you.",Performer values discreet support
+DB069,glassborn,ask,true,"Can we take turns speaking? The echo in here is blurring the details.",Scholar requests an acoustic accommodation
+DB070,glassborn,refuse,true,"Please do not call me delicate. I train for impact every week.",Boxer corrects objectification
+DB071,glassborn,bargain,true,"I can test the lens at dusk if you bring a second set of notes.",Engineer asks for shared verification
+DB072,glassborn,thank,true,"The softer lamp was thoughtful. I can see the page now.",Reader values reduced glare
+DB073,tidebound,ask,true,"Does this inn have a dry room with a clear floor route?",Judge states access requirements
+DB074,tidebound,refuse,true,"No fountain-side seat, please. I prefer the archive corner.",Visitor rejects body-based assumption
+DB075,tidebound,bargain,true,"I will scout the long route if you carry the water skins and keep the breaks regular.",Guide proposes a transparent division of labor
+DB076,tidebound,thank,true,"You asked instead of guessing what I needed. That saved us both time.",Traveler values direct accommodation
+DB077,woven,ask,true,"May I see the original pattern, not the copy? The seam tells a different story.",Historian requests a source with purpose
+DB078,woven,refuse,true,"Do not pull that thread. It is part of me, not a loose end for your hand.",Artisan sets a touch boundary
+DB079,woven,bargain,true,"I will mend the banner if the town posts every maker's name beside it.",Craftsperson asks for credit and fair terms
+DB080,woven,thank,true,"You returned the cloth clean and folded. Respect can be that simple.",Archivist acknowledges careful handling

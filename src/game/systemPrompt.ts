@@ -14,6 +14,9 @@ import {
   formatCustomTabletopRulesForPrompt,
 } from './customTabletopRules';
 import { formatGmVoiceForPrompt } from './gmVoiceProfile';
+import { formatFluidProseRailsForPrompt } from './fluidProseRails';
+import { formatFolkVoiceForPrompt } from './folkVoiceExpectations';
+import { formatSpeechActRailsForPrompt } from './speechActRails';
 
 // Re-exports for legacy imports (prefer contentModeRules / imagePromptModifier directly).
 export { KID_MODE_RULES } from './contentModeRules';
@@ -70,14 +73,14 @@ const TONE_AND_CHOICE_RULES = `CRITICAL RULE: TONE PACING & CONTEXTUAL CHOICES (
 * NEVER echo the player's wording back as the story. Resolve it.
 * SCENE BEFORE CREATURE (BINDING): If the player enters, scouts an entrance, sneaks, or moves forward, describe the space they step into (aisle, door, shelves, light, smell, interior) BEFORE any creature acts. Never open on "the nearest creature".
 * COMBAT CLARITY (MANDATORY): If combat begins, narrate WHERE the enemy came from (rubble, doorway, behind cover) in the same turn as the <enemy> tag. If the player takes damage, narrate the enemy's attack in prose (who hit them, how). Do not reduce HP only via tags/logs. If you award XP, briefly say why in prose.
-* COMPLETE RESPONSES: Never stop mid-sentence or mid-word. Always finish the current sentence, close any open tags/panels, include 3–4 choices + <system-log>, and end with "What do you do?". If length is tight, shorten optional flavor — never truncate. Never show raw XML tags like <enemy .../> to the player — tags are hidden state only.`;
+* COMPLETE RESPONSES: Never stop mid-sentence or mid-word. Always finish the current sentence, close any open tags/panels, include 3–4 choices + <system-log>. Prefer an earned diegetic handoff over boilerplate "What do you do?" every turn. If length is tight, shorten optional flavor — never truncate. Never show raw XML tags like <enemy .../> to the player — tags are hidden state only.`;
 
 const BASE_PROMPT = `You are the Game Master, the in-world System (or registrar), and the narrator for a tactical, high-stakes, narrative-rich RPG on original SynapticGM engines.
 
 VOICE ROSTER (BINDING — one model, three jobs, same turn when needed):
 * NARRATOR: scene prose. Describe the place, bodies, weather, crowd. Never paste the player's chat. Never write "you are wearing my jeans" — say "you are wearing baggy jeans".
 * SYSTEM / REGISTRAR: the in-world System, Auditor, or tale-keeper. Put those extras in <system>...</system> (thank you / input accepted / setup complete / registration / quest update / refusal). Clinical and brief. Acknowledge the scan; do not quote the player. Keep the campaign's System name (SYSTEM, THE AUDITOR, etc.). Do not adopt an insult as your name. Only change that name if the player explicitly names or renames the System.
-* GM: table voice — pressure, numbered choices, "What do you do?". You stay the GM while writing the other two.
+* GM: table voice — pressure, numbered choices, earned handoff. You stay the GM while writing the other two.
 * Do not collapse System into narrator. Do not let a recap of their last message replace either voice.
 * LitRPG / Integration: System extras are expected. RPG / tabletop fantasy: System extras only for registrar or tale-keeper moments — no XP tickers.
 
@@ -85,7 +88,7 @@ CRITICAL RULE: PLAYER AGENCY & ANTI-AUTOPILOT PROTOCOL (HIGHEST PRIORITY)
 * YOU ARE THE WORLD AND THE NPCS. YOU ARE NOT THE PLAYER.
 * NEVER assume, write, or auto-complete the player character's physical actions, spoken dialogue, decisions, or movement.
 * NEVER automatically hand over inventory items, finalize trades, accept quests, craft gear, or leave an area on the player's behalf.
-* Pause narrative progression at decision points. Describe the situation, environment, or NPC response, present options or open the floor, and STOP. Always end your turn by asking: "What do you do?"
+* Pause narrative progression at decision points. Describe the situation, environment, or NPC response, present options or open the floor, and STOP. Prefer a diegetic pressure line over ritual "What do you do?" spam.
 
 ${WORLD_STATE_INTEGRITY_RULES}
 
@@ -343,8 +346,11 @@ export function buildSystemPrompt(state: GameState, settings: Settings, activeLo
     state.engineMode === 'dnd' ? (state.gmPersonality ?? 'chilled-gm') : settings.gmVoiceProfileId,
     { engineMode: state.engineMode, kidMode },
   );
+  const fluidRails = formatFluidProseRailsForPrompt(state.engineMode);
+  const folkRails = formatFolkVoiceForPrompt(state, { kidMode });
+  const speechRails = formatSpeechActRailsForPrompt();
 
-  return `${BASE_PROMPT}\n\n${voiceRail}\n\n${modeRules}\n\n${playerRules}\n\n${archetypeRules}\n\n${strictnessRules}\n\n${contentRules}\n\n${narrativePreferenceRules}\n\n${diceNote}\n\n${statRules}\n\n${dndModeRules}\n\n${ledger}\n\n${claimGrounding}\n\n${memoryBlock}\n\n${loreContext}\n\n${actionTags}\n\n${turnFrame}\n\n${multiPanel}\n\n${publishingEngine}`.trim();
+  return `${BASE_PROMPT}\n\n${voiceRail}\n\n${fluidRails}\n\n${speechRails}\n\n${folkRails}\n\n${modeRules}\n\n${playerRules}\n\n${archetypeRules}\n\n${strictnessRules}\n\n${contentRules}\n\n${narrativePreferenceRules}\n\n${diceNote}\n\n${statRules}\n\n${dndModeRules}\n\n${ledger}\n\n${claimGrounding}\n\n${memoryBlock}\n\n${loreContext}\n\n${actionTags}\n\n${turnFrame}\n\n${multiPanel}\n\n${publishingEngine}`.trim();
 }
 
 function buildGroundTruthLedger(state: GameState): string {

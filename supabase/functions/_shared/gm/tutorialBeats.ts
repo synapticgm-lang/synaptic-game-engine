@@ -1,4 +1,5 @@
 import type { GameState, Quest, TutorialProgress } from './types.ts';
+import { isExplorableDungeon } from './placeAuthority.ts';
 
 /** First-session LitRPG beat sheet (Pack 3). */
 export type TutorialBeatId =
@@ -147,7 +148,7 @@ export function formatTutorialBeatMandate(state: GameState): string {
     );
   } else if (!progress.completed.firstRest && turn >= 10) {
     lines.push('- Optional: first rest / full status unlock when they camp or recover.');
-  } else if (!progress.completed.firstBoss && state.activeDungeon?.blueprintId !== 'local-area') {
+  } else if (!progress.completed.firstBoss && isExplorableDungeon(state.activeDungeon)) {
     lines.push('- Tutorial dungeon: boss remains at the seeded boss node — do not invent a second boss.');
   } else {
     return '';
@@ -181,7 +182,7 @@ export function ensureTutorialQuest(state: GameState, turn: number): Quest[] {
     activatedTurn: turn,
     dangerTier: 1,
     objectives: [
-      { id: 'enter', description: 'Enter the convenience store micro-dungeon', completed: !!(state.activeDungeon && state.activeDungeon.blueprintId !== 'local-area') },
+      { id: 'enter', description: 'Enter the convenience store micro-dungeon', completed: isExplorableDungeon(state.activeDungeon) },
       { id: 'mobs', description: 'Defeat the dungeon mobs (estimated 4-6 Tier 1 creatures)', completed: false },
       { id: 'boss', description: 'Defeat the mini-boss: [Corrupted Stockboy] (Level 3)', completed: false },
       { id: 'core', description: 'Claim the dungeon drop: [Foundation Core]', completed: false },

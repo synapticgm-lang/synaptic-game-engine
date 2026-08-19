@@ -216,5 +216,6 @@ export function createDefaultSettings(): Settings {
     secretDeathSaves: false,
     cleaveMechanics: false,
     flankingAdvantage: false,
+    preferFullResponse: false,
   };
 }

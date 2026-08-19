@@ -423,6 +423,8 @@ export interface GameState {
   statusReveal?: 'minimal' | 'core' | 'full';
   /** Diegetic content rewrite awaiting Proceed / cancel (Pack 7). */
   pendingContentRewrite?: { rewritten: string; message: string; original: string } | null;
+  /** Local repair banner — blocks GM until player picks a contrastive option. */
+  pendingRepair?: PendingRepair | null;
   /** AI turn awaiting player accept / edit / reroll. */
   pendingTurn?: PendingTurnProposal | null;
   gold: number;
@@ -452,6 +454,17 @@ export interface GameState {
    * Persists on the save. Absent on old saves = chilled.
    */
   gmPersonality?: import('./gmVoiceProfile').GmPersonalityId;
+}
+
+export type RepairSituation = import('./repairEngine').RepairSituation;
+
+export interface PendingRepair {
+  id: string;
+  situation: RepairSituation;
+  playerInput: string;
+  message: string;
+  options: string[];
+  createdAt: number;
 }
 
 export type BeautyOfferStatus = 'pending' | 'accepted' | 'dismissed';
@@ -986,6 +999,8 @@ export interface Settings {
   secretDeathSaves: boolean;
   cleaveMechanics: boolean;
   flankingAdvantage: boolean;
+  /** When true, skip post-commit sentence reveal and show full GM prose immediately. */
+  preferFullResponse?: boolean;
 }
 
 export const DEFAULT_TURN_FRAME: TurnFrameTheme = {

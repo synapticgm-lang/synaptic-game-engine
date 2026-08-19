@@ -1,5 +1,13 @@
 import type { Location3D, MapTier } from './types.ts';
-import { isDummyStreetNodeName, isGenericMapPlace } from './questPlay.ts';
+import {
+  INTERIOR_MAP_BLUEPRINT,
+  STREET_MAP_BLUEPRINT,
+  isExplorableDungeon,
+  isInteriorMap,
+  isInteriorPlace,
+  isStreetMap,
+} from './placeAuthority.ts';
+import { isDummyStreetNodeName, isGenericMapPlace, isInteriorRoomName } from './questPlay.ts';
 
 export type MobRole = 'trash' | 'elite' | 'miniBoss' | 'boss';
 
@@ -279,12 +287,12 @@ export function exitDungeon(): undefined {
   return undefined;
 }
 
-function uniqueNames(names: string[]): string[] {
+function uniqueNames(names: string[], usable: (name: string) => boolean = usableStreetLabel): string[] {
   const seen = new Set<string>();
   const out: string[] = [];
   for (const raw of names) {
     const name = raw.replace(/\s+/g, ' ').trim();
-    if (!name || !usableStreetLabel(name)) continue;
+    if (!name || !usable(name)) continue;
     const key = name.toLowerCase();
     if (seen.has(key)) continue;
     seen.add(key);
@@ -350,7 +358,7 @@ export function buildLocalAreaMap(
   });
 
   return {
-    blueprintId: 'local-area',
+    blueprintId: STREET_MAP_BLUEPRINT,
     dungeonName: here,
     tier: 3,
     // Street map: scale only — no dungeon dangerTier
@@ -376,7 +384,7 @@ export function presentLocalAreaMap(
   dungeon: ActiveDungeonState,
   fallbackPlace?: string
 ): ActiveDungeonState {
-  if (dungeon.blueprintId !== 'local-area') return dungeon;
+  if (!isStreetMap(dungeon)) return dungeon;
   const fallbackRaw = (fallbackPlace ?? '').replace(/\s+/g, ' ').trim();
   const fallback = usableStreetLabel(fallbackRaw)
     ? fallbackRaw
@@ -430,4 +438,193 @@ export function addLandmarkToLocalMap(dungeon: ActiveDungeonState, landmark: str
     nodes: [...nodes, node],
     visitedNodeIds: Array.from(new Set([...dungeon.visitedNodeIds, id])),
   };
+}
+
+function usableInteriorHere(name: string): boolean {
+  if (!name) return false;
+  if (isDummyStreetNodeName(name)) return false;
+  if (isGenericMapPlace(name)) return false;
+  return true;
+}
+
+function usableInteriorRoom(name: string): boolean {
+  return usableInteriorHere(name) && (isInteriorRoomName(name) || isInteriorPlace(name));
+}
+
+/** Adjacent room slots around a central hall — not a 3×3 city block grid. */
+const INTERIOR_SLOTS: Array<{ x: number; y: number }> = [
+  { x: 1, y: 1 },
+  { x: 1, y: 0 },
+  { x: 2, y: 1 },
+  { x: 1, y: 2 },
+  { x: 0, y: 1 },
+  { x: 2, y: 0 },
+  { x: 0, y: 2 },
+  { x: 0, y: 0 },
+];
+
+function nextInteriorSlot(dungeon: ActiveDungeonState): { x: number; y: number } {
+  const used = new Set(dungeon.nodes.map((n) => `${n.coordinates?.x ?? 0},${n.coordinates?.y ?? 0}`));
+  return INTERIOR_SLOTS.find((slot) => !used.has(`${slot.x},${slot.y}`)) ?? { x: 3, y: 1 };
+}
+
+/**
+ * Indoor floor plan of the current hall / cathedral / circle.
+ * Not a local-streets 1 km grid. Unnamed fog rooms stay off the pin list.
+ */
+export function buildInteriorFloorPlan(
+  place: string,
+  rooms: string[] = [],
+  parentCoords?: Location3D
+): ActiveDungeonState {
+  const rawHere = place.replace(/\s+/g, ' ').trim();
+  const extras = uniqueNames(
+    rooms.filter((n) => n.toLowerCase() !== rawHere.toLowerCase()),
+    usableInteriorRoom
+  );
+  const here = usableInteriorHere(rawHere) ? rawHere : extras[0] || 'Interior';
+  const names = uniqueNames(
+    [here, ...extras.filter((n) => n.toLowerCase() !== here.toLowerCase())],
+    (n) => (n.toLowerCase() === here.toLowerCase() ? usableInteriorHere(n) : usableInteriorRoom(n))
+  ).slice(0, 8);
+
+  const nodes: MapNode[] = names.map((name, i) => {
+    const neighbors: string[] = [];
+    if (i > 0) neighbors.push('room_0');
+    if (i === 0) {
+      for (let j = 1; j < names.length; j++) neighbors.push(`room_${j}`);
+    }
+    const slot = INTERIOR_SLOTS[i] ?? { x: i % 3, y: Math.floor(i / 3) };
+    return {
+      id: `room_${i}`,
+      name,
+      description: i === 0 ? `You are here: ${name}.` : `${name}, inside ${here}.`,
+      connections: neighbors,
+      coordinates: slot,
+      zLevel: 0,
+      tags: i === 0 ? ['here', 'entry', 'interior'] : ['interior', 'room'],
+    };
+  });
+
+  return {
+    blueprintId: INTERIOR_MAP_BLUEPRINT,
+    dungeonName: here,
+    tier: 4,
+    dangerTier: undefined,
+    parentCoordinates: parentCoords,
+    currentZLevel: 0,
+    currentNodeId: 'room_0',
+    visitedNodeIds: ['room_0'],
+    clearedNodeIds: [],
+    nodes,
+  };
+}
+
+export function presentInteriorMap(
+  dungeon: ActiveDungeonState,
+  fallbackPlace?: string
+): ActiveDungeonState {
+  if (!isInteriorMap(dungeon)) return dungeon;
+  const fallbackRaw = (fallbackPlace ?? '').replace(/\s+/g, ' ').trim();
+  const fallback = usableInteriorHere(fallbackRaw)
+    ? fallbackRaw
+    : usableInteriorHere(dungeon.dungeonName)
+      ? dungeon.dungeonName
+      : 'Interior';
+  const title = usableInteriorHere(dungeon.dungeonName) ? dungeon.dungeonName : fallback;
+
+  const keep: MapNode[] = [];
+  for (const n of dungeon.nodes) {
+    const isHere = n.id === dungeon.currentNodeId || n.id === 'room_0';
+    const junk = isHere ? !usableInteriorHere(n.name) : !usableInteriorRoom(n.name);
+    if (junk && !isHere) continue;
+    keep.push(junk ? { ...n, name: title, description: `You are here: ${title}.` } : n);
+  }
+  if (keep.length === 0) {
+    return buildInteriorFloorPlan(title, [], dungeon.parentCoordinates);
+  }
+  const ids = new Set(keep.map((n) => n.id));
+  return {
+    ...dungeon,
+    dungeonName: title,
+    nodes: keep.map((n) => ({ ...n, connections: n.connections.filter((c) => ids.has(c)) })),
+    visitedNodeIds: Array.from(new Set([...dungeon.visitedNodeIds.filter((id) => ids.has(id)), keep[0]!.id])),
+    currentNodeId: ids.has(dungeon.currentNodeId) ? dungeon.currentNodeId : keep[0]!.id,
+  };
+}
+
+export function addRoomToInteriorMap(dungeon: ActiveDungeonState, room: string): ActiveDungeonState {
+  dungeon = presentInteriorMap(dungeon);
+  const name = room.replace(/\s+/g, ' ').trim();
+  if (!usableInteriorRoom(name)) return dungeon;
+  if (dungeon.nodes.some((n) => n.name.toLowerCase() === name.toLowerCase())) return dungeon;
+  if (dungeon.nodes.length >= 8) return dungeon;
+  const id = `room_${dungeon.nodes.length}`;
+  const here = dungeon.nodes.find((n) => n.id === dungeon.currentNodeId) ?? dungeon.nodes[0];
+  const slot = nextInteriorSlot(dungeon);
+  const node: MapNode = {
+    id,
+    name,
+    description: `${name}, inside ${dungeon.dungeonName}.`,
+    connections: here ? [here.id] : [],
+    coordinates: slot,
+    zLevel: 0,
+    tags: ['interior', 'room'],
+  };
+  const nodes = dungeon.nodes.map((n) =>
+    n.id === here?.id ? { ...n, connections: [...n.connections, id] } : n
+  );
+  return {
+    ...dungeon,
+    nodes: [...nodes, node],
+    visitedNodeIds: dungeon.visitedNodeIds,
+  };
+}
+
+function sameAreaMap(a: ActiveDungeonState | null | undefined, b: ActiveDungeonState | null | undefined): boolean {
+  if (a === b) return true;
+  if (!a || !b) return false;
+  if (a.blueprintId !== b.blueprintId || a.dungeonName !== b.dungeonName || a.currentNodeId !== b.currentNodeId) {
+    return false;
+  }
+  if (a.nodes.length !== b.nodes.length) return false;
+  return a.nodes.every((n, i) => {
+    const o = b.nodes[i];
+    return !!o && n.id === o.id && n.name === o.name;
+  });
+}
+
+/**
+ * Street grid outdoors; floor-plan silhouette indoors.
+ * Replaces a wrongly built local-area cathedral map on the next Map open.
+ */
+export function resolvePlayAreaMap(
+  existing: ActiveDungeonState | null | undefined,
+  place: string,
+  landmarks: string[] = [],
+  parentCoords?: Location3D
+): ActiveDungeonState | null {
+  if (isExplorableDungeon(existing ?? null)) return existing ?? null;
+  const here = (place ?? '').replace(/\s+/g, ' ').trim();
+  let next: ActiveDungeonState | null = null;
+  if (isInteriorPlace(here)) {
+    const rooms = landmarks.filter((n) => n.toLowerCase() !== here.toLowerCase());
+    if (existing && isInteriorMap(existing)) {
+      next = presentInteriorMap(existing, here);
+      for (const room of rooms) next = addRoomToInteriorMap(next, room);
+    } else {
+      next = buildInteriorFloorPlan(here, rooms, parentCoords ?? existing?.parentCoordinates);
+    }
+  } else if (existing && isStreetMap(existing)) {
+    next = presentLocalAreaMap(existing, here || existing.dungeonName);
+    for (const named of landmarks) next = addLandmarkToLocalMap(next, named);
+  } else if (here || existing) {
+    next = buildLocalAreaMap(
+      here || existing?.dungeonName || 'Local streets',
+      landmarks,
+      parentCoords ?? existing?.parentCoordinates
+    );
+  }
+  if (existing && sameAreaMap(next, existing)) return existing;
+  return next;
 }

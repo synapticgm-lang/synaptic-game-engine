@@ -1,0 +1,556 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://synapticgm.example/schemas/folk-voice-profile-1.0.0.json",
+  "title": "SynapticGM FolkVoiceProfile",
+  "description": "A presentation-only folk voice profile. It can guide diction and social instinct but cannot alter authoritative game state. CampaignContract and named NPC memory override defaults.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "profileId",
+    "folkId",
+    "displayName",
+    "evidenceLabel",
+    "voiceDefaults",
+    "socialDefaults",
+    "interlocutorRegisters",
+    "kidMode",
+    "neverLines",
+    "detectionHints",
+    "individualOverrideExamples",
+    "precedence",
+    "stateIsolation"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "const": "1.0.0"
+    },
+    "profileId": {
+      "type": "string",
+      "pattern": "^synapticgm\\.folk_voice\\.[a-z0-9_]{2,48}\\.v1$",
+      "description": "Stable profile identifier."
+    },
+    "folkId": {
+      "type": "string",
+      "enum": [
+        "human",
+        "elf",
+        "dwarf",
+        "orc",
+        "goblin",
+        "smallfolk",
+        "beastfolk",
+        "dragonfolk",
+        "vampire",
+        "ghost_spirit",
+        "troll",
+        "merfolk",
+        "ledgerborn",
+        "mycelial",
+        "ashkin",
+        "glassborn",
+        "tidebound",
+        "woven"
+      ]
+    },
+    "displayName": {
+      "type": "string",
+      "minLength": 2,
+      "maxLength": 40
+    },
+    "evidenceLabel": {
+      "type": "string",
+      "enum": [
+        "SPECULATIVE_ORIGINAL",
+        "FOLKLORE_UMBRELLA_WITH_ORIGINAL_VOICE_GUIDANCE",
+        "GENERIC_BASELINE"
+      ],
+      "description": "Signals that voice guidance is a game-design default, not a claim of inherent personality."
+    },
+    "sourceNote": {
+      "type": "string",
+      "maxLength": 500,
+      "description": "Optional citation or scope note. Must not contain franchise setting lore."
+    },
+    "voiceDefaults": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "cadence",
+        "metaphorPalette",
+        "registerRange",
+        "accentPolicy"
+      ],
+      "properties": {
+        "cadence": {
+          "type": "string",
+          "minLength": 10,
+          "maxLength": 360,
+          "description": "Optional pacing and turn-taking guidance. Must not encode intelligence, morality, or an imitation accent."
+        },
+        "metaphorPalette": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 10,
+          "items": {
+            "type": "string",
+            "minLength": 2,
+            "maxLength": 48
+          },
+          "uniqueItems": true
+        },
+        "registerRange": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 6,
+          "items": {
+            "type": "string",
+            "enum": [
+              "plain",
+              "formal",
+              "warm",
+              "precise",
+              "playful",
+              "guarded",
+              "ceremonial",
+              "urgent",
+              "technical",
+              "lyrical"
+            ]
+          },
+          "uniqueItems": true
+        },
+        "accentPolicy": {
+          "const": "standard_orthography_no_comic_or_real_world_accent_imitation"
+        }
+      }
+    },
+    "socialDefaults": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "respect",
+        "insult",
+        "hospitality",
+        "fearResponse",
+        "confidenceLimit"
+      ],
+      "properties": {
+        "respect": {
+          "type": "string",
+          "minLength": 8,
+          "maxLength": 300
+        },
+        "insult": {
+          "type": "string",
+          "minLength": 8,
+          "maxLength": 300
+        },
+        "hospitality": {
+          "type": "string",
+          "minLength": 8,
+          "maxLength": 300
+        },
+        "fearResponse": {
+          "type": "string",
+          "minLength": 8,
+          "maxLength": 300
+        },
+        "confidenceLimit": {
+          "const": "optional_scene_heuristic_not_group_truth"
+        }
+      }
+    },
+    "interlocutorRegisters": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "toHumans",
+        "toSameFolk",
+        "toOtherFolks"
+      ],
+      "properties": {
+        "toHumans": {
+          "type": "string",
+          "minLength": 8,
+          "maxLength": 280
+        },
+        "toSameFolk": {
+          "type": "string",
+          "minLength": 8,
+          "maxLength": 280
+        },
+        "toOtherFolks": {
+          "type": "string",
+          "minLength": 8,
+          "maxLength": 280
+        }
+      }
+    },
+    "kidMode": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "enabledTransform",
+        "forbiddenThemes"
+      ],
+      "properties": {
+        "enabledTransform": {
+          "type": "string",
+          "minLength": 8,
+          "maxLength": 360
+        },
+        "forbiddenThemes": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 12,
+          "items": {
+            "type": "string",
+            "enum": [
+              "sexualized_predation",
+              "coercive_flirtation",
+              "adult_child_confusion",
+              "nonconsensual_touch",
+              "graphic_feeding",
+              "body_horror",
+              "threats_of_consumption",
+              "racial_caricature",
+              "intoxication_as_personality",
+              "gore",
+              "franchise_reference"
+            ]
+          },
+          "uniqueItems": true
+        }
+      }
+    },
+    "neverLines": {
+      "type": "array",
+      "minItems": 3,
+      "maxItems": 14,
+      "items": {
+        "type": "string",
+        "minLength": 6,
+        "maxLength": 200
+      },
+      "uniqueItems": true,
+      "description": "Forbidden generation patterns or content classes, not a list of literal dialogue to surface."
+    },
+    "detectionHints": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "aliases",
+        "keywords",
+        "negativeKeywords",
+        "sensitivityTriggers"
+      ],
+      "properties": {
+        "aliases": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 8,
+          "items": {
+            "type": "string",
+            "minLength": 2,
+            "maxLength": 32
+          },
+          "uniqueItems": true
+        },
+        "keywords": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 16,
+          "items": {
+            "type": "string",
+            "minLength": 2,
+            "maxLength": 48
+          },
+          "uniqueItems": true,
+          "description": "Context hints, never proof of identity."
+        },
+        "negativeKeywords": {
+          "type": "array",
+          "maxItems": 20,
+          "items": {
+            "type": "string",
+            "minLength": 2,
+            "maxLength": 64
+          },
+          "uniqueItems": true,
+          "description": "Terms that should suppress or flag a match because they are franchise-specific, stereotyped, or unsafe."
+        },
+        "sensitivityTriggers": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 12,
+          "items": {
+            "type": "string",
+            "enum": [
+              "consent",
+              "body_commentary",
+              "food_or_feeding",
+              "touch",
+              "private_space",
+              "memory_or_grief",
+              "sensory_access",
+              "violence",
+              "age_or_immortality",
+              "commerce_or_debt",
+              "public_humiliation",
+              "none"
+            ]
+          },
+          "uniqueItems": true
+        }
+      }
+    },
+    "individualOverrideExamples": {
+      "type": "array",
+      "minItems": 3,
+      "maxItems": 3,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "name",
+          "override",
+          "reason"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "pattern": "^[A-Za-z][A-Za-z '\\-]{1,48}$"
+          },
+          "override": {
+            "type": "string",
+            "minLength": 10,
+            "maxLength": 280
+          },
+          "reason": {
+            "type": "string",
+            "minLength": 10,
+            "maxLength": 280
+          }
+        }
+      }
+    },
+    "precedence": {
+      "type": "array",
+      "const": [
+        "CampaignContract",
+        "NamedNpcMemory",
+        "SceneFactsAndSafety",
+        "LocalCultureOrRole",
+        "IndividualOverride",
+        "FolkDefault",
+        "NoSpecialVoice"
+      ]
+    },
+    "stateIsolation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "mode",
+        "prohibitedAuthoritativeFields",
+        "permittedOutputEffects"
+      ],
+      "properties": {
+        "mode": {
+          "const": "presentation_only"
+        },
+        "prohibitedAuthoritativeFields": {
+          "type": "array",
+          "const": [
+            "ledgerFacts",
+            "stats",
+            "permits",
+            "kit",
+            "inventory",
+            "prices",
+            "questEligibility",
+            "accessPermissions",
+            "transactionCommit"
+          ]
+        },
+        "permittedOutputEffects": {
+          "type": "array",
+          "const": [
+            "diction",
+            "turnTaking",
+            "metaphorChoice",
+            "socialInstinct",
+            "consentCheck",
+            "hospitalityOffer",
+            "repairAttempt"
+          ]
+        }
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "folkId": {
+            "const": "vampire"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "detectionHints": {
+            "properties": {
+              "sensitivityTriggers": {
+                "contains": {
+                  "const": "consent"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "folkId": {
+            "const": "beastfolk"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "detectionHints": {
+            "properties": {
+              "sensitivityTriggers": {
+                "contains": {
+                  "const": "sensory_access"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  ],
+  "examples": [
+    {
+      "schemaVersion": "1.0.0",
+      "profileId": "synapticgm.folk_voice.elf.v1",
+      "folkId": "elf",
+      "displayName": "Elf",
+      "evidenceLabel": "FOLKLORE_UMBRELLA_WITH_ORIGINAL_VOICE_GUIDANCE",
+      "sourceNote": "Craft and moral ambiguity are narrow Norse-myth motifs; voice defaults are original SynapticGM guidance.",
+      "voiceDefaults": {
+        "cadence": "Measured and image-rich; pause before commitment, but simplify under urgency.",
+        "metaphorPalette": [
+          "seasons",
+          "light through leaves",
+          "craftwork",
+          "echoes"
+        ],
+        "registerRange": [
+          "plain",
+          "precise",
+          "lyrical"
+        ],
+        "accentPolicy": "standard_orthography_no_comic_or_real_world_accent_imitation"
+      },
+      "socialDefaults": {
+        "respect": "Remember stated preferences and complete a thought accurately.",
+        "insult": "Precise understatement may signal disapproval; target choices, not ancestry.",
+        "hospitality": "Offer attention, quiet, or shared observation without trapping the guest.",
+        "fearResponse": "Increase caution and name the risk rather than claiming superiority.",
+        "confidenceLimit": "optional_scene_heuristic_not_group_truth"
+      },
+      "interlocutorRegisters": {
+        "toHumans": "Explain long-view concerns plainly and without patronizing.",
+        "toSameFolk": "Use shared history only when it is named and useful to the scene.",
+        "toOtherFolks": "Ask rather than presume customs, access needs, or priorities."
+      },
+      "kidMode": {
+        "enabledTransform": "Make patience, curiosity, and repair visible; keep boundaries and feelings clear.",
+        "forbiddenThemes": [
+          "coercive_flirtation",
+          "racial_caricature",
+          "franchise_reference"
+        ]
+      },
+      "neverLines": [
+        "all elves are arrogant",
+        "use faux-archaic accent spelling",
+        "copy a franchise title, language, or location"
+      ],
+      "detectionHints": {
+        "aliases": [
+          "elf",
+          "elves"
+        ],
+        "keywords": [
+          "long memory",
+          "careful promise",
+          "season",
+          "craft"
+        ],
+        "negativeKeywords": [
+          "franchise language",
+          "real-world accent imitation"
+        ],
+        "sensitivityTriggers": [
+          "age_or_immortality",
+          "public_humiliation"
+        ]
+      },
+      "individualOverrideExamples": [
+        {
+          "name": "Sael Porrin",
+          "override": "Speaks fast because courier deadlines matter more than ceremony.",
+          "reason": "Occupation and current schedule override default cadence."
+        },
+        {
+          "name": "Mira Three-Summers",
+          "override": "Rejects metaphor and asks concrete questions.",
+          "reason": "Personal communication preference overrides metaphor palette."
+        },
+        {
+          "name": "Orren Vale",
+          "override": "Laughs first in tense negotiations to lower the room’s temperature.",
+          "reason": "Personal conflict-repair habit overrides guarded default."
+        }
+      ],
+      "precedence": [
+        "CampaignContract",
+        "NamedNpcMemory",
+        "SceneFactsAndSafety",
+        "LocalCultureOrRole",
+        "IndividualOverride",
+        "FolkDefault",
+        "NoSpecialVoice"
+      ],
+      "stateIsolation": {
+        "mode": "presentation_only",
+        "prohibitedAuthoritativeFields": [
+          "ledgerFacts",
+          "stats",
+          "permits",
+          "kit",
+          "inventory",
+          "prices",
+          "questEligibility",
+          "accessPermissions",
+          "transactionCommit"
+        ],
+        "permittedOutputEffects": [
+          "diction",
+          "turnTaking",
+          "metaphorChoice",
+          "socialInstinct",
+          "consentCheck",
+          "hospitalityOffer",
+          "repairAttempt"
+        ]
+      }
+    }
+  ]
+}

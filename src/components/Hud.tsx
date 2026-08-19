@@ -8,9 +8,9 @@ import { effectiveWriterTier, isTestLabEnabled } from '../game/testLab';
 import { equippedSetLabel, equippedSetName } from '../game/uiTheme';
 
 /** Visible after a hard refresh — if this is missing, Vercel is still serving the 16 Aug bundle. */
-export const HUD_BUILD_STAMP = '2026-08-19o';
+export const HUD_BUILD_STAMP = '2026-08-19p';
 const HUD_BUILD_TITLE =
-  'Debug 2026-08-19o — indoor floor-plan map; no sentence-fragment pins';
+  'Debug 2026-08-19p — premium theme materials (bone/moonlight Undead; kit fonts/frames)';
 
 interface Props {
   state: GameState;
@@ -200,7 +200,7 @@ export function Hud({ state, settings, onSettings, onOpenMap, onOpenQuestLog, on
       {mobileMenuOpen && (
         <div className="absolute top-full left-0 w-full bg-slate-950 border-b border-slate-800 flex md:hidden items-center justify-around py-3 z-50 shadow-xl animate-fadeIn">
           <button onClick={onOpenMap} className="flex flex-col items-center gap-1 text-slate-300 p-2">
-            <Map size={16} className="text-cyan-400" />
+            <Map size={16} className="sgm-info-accent" />
             <span className="text-[10px]">Map</span>
           </button>
           <button onClick={onOpenQuestLog} className="flex flex-col items-center gap-1 text-slate-300 p-2">
@@ -208,17 +208,17 @@ export function Hud({ state, settings, onSettings, onOpenMap, onOpenQuestLog, on
             <span className="text-[10px]">Quests</span>
           </button>
           <button onClick={onOpenCharacter} className="flex flex-col items-center gap-1 text-slate-300 p-2">
-            <Backpack size={16} className="text-cyan-400" />
+            <Backpack size={16} className="sgm-info-accent" />
             <span className="text-[10px]">Inventory</span>
           </button>
           {showSalvage && (
           <button onClick={onOpenMerchant} className="flex flex-col items-center gap-1 text-slate-300 p-2">
-            <Recycle size={16} className="text-sky-400" />
+            <Recycle size={16} className="sgm-info-accent" />
             <span className="text-[10px]">Salvage</span>
           </button>
           )}
           <button onClick={onSettings} className="flex flex-col items-center gap-1 text-slate-300 p-2">
-            <Settings size={16} className="text-purple-400" />
+            <Settings size={16} className="sgm-info-accent" />
             <span className="text-[10px]">Settings</span>
           </button>
         </div>

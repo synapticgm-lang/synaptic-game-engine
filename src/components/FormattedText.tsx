@@ -184,14 +184,14 @@ function ProseBlock({ text, lorebook }: { text: string; lorebook: LoreCard[] }) 
 
   // Fast path: no <dialogue>/<thought>/<system>/<effect> tags found, render as before.
   if (segments.length === 0 || (segments.length === 1 && segments[0].type === 'scene')) {
-    return <p className="mb-2 whitespace-pre-wrap">{renderRarityTags(text, lorebook)}</p>;
+    return <p className="mb-2 font-serif whitespace-pre-wrap">{renderRarityTags(text, lorebook)}</p>;
   }
 
   return (
     <>
       {segments.map((seg, i) =>
         seg.type === 'scene' ? (
-          <p key={i} className="mb-2 whitespace-pre-wrap">{renderRarityTags(seg.text, lorebook)}</p>
+          <p key={i} className="mb-2 font-serif whitespace-pre-wrap">{renderRarityTags(seg.text, lorebook)}</p>
         ) : (
           <NarrativeSegmentBlock key={i} segment={seg} />
         )

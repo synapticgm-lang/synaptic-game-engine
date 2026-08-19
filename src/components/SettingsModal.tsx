@@ -344,6 +344,15 @@ export function SettingsModal({ settings, storyName, engineMode, gameState, onSa
                 />
               ))}
             </div>
+            <div className="mt-3">
+              <ToggleRow
+                icon={<MessageSquareMore size={15} />}
+                label="Show full GM reply at once"
+                description="Skip sentence-by-sentence reveal after the turn commits"
+                checked={!!draft.preferFullResponse}
+                onChange={(v) => update('preferFullResponse', v)}
+              />
+            </div>
           </Section>
 
           <Section icon={<Shield size={16} />} title="Language & Violence" visible={activeTab === 'narrative'}>

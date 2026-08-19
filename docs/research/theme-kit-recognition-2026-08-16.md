@@ -1,6 +1,7 @@
 # Theme kit recognition — textures, fonts, frames, dice (16 Aug 2026)
 
-**Status:** Research + first pass shipped (CSS corners / textures / fonts). Cosmetics only — never touches dice odds.
+**Status:** Research + first pass shipped (CSS corners / textures / fonts). Cosmetics only — never touches dice odds.  
+**2026-08-19p premium pass:** Undead Ossuary moved off Integration teal to bone/ash/moonlight; kit fonts/frames auto-heal when Customize still sits on Integration defaults; Tailwind `font-serif`/`font-sans` bind to `--sgm-font-*`; race kits push distinctive UI+story typefaces.
 
 ## Rule
 

@@ -19,8 +19,9 @@ export default {
         },
       },
       fontFamily: {
-        serif: ['Cinzel', 'serif'],
-        sans: ['Inter', 'system-ui', 'sans-serif'],
+        // Theme kits own typefaces via --sgm-font-*; Cinzel/Inter remain Integration fallbacks.
+        serif: ['var(--sgm-font-story)', 'Cinzel', 'serif'],
+        sans: ['var(--sgm-font-ui)', 'Inter', 'system-ui', 'sans-serif'],
       },
     },
   },

@@ -129,6 +129,14 @@ import {
 import { mergeNpcMemoriesFromTurn, recordNpcTreatmentFromAction } from './npcMemory';
 import { resolveTabletopGmPersonality, type GmPersonalityId } from './gmVoiceProfile';
 import {
+  buildClarifiedInput,
+  detectRepairSituation,
+  extractRepairOptions,
+  matchRepairOption,
+  pickRepairCopy,
+  resolveRepairVoiceId,
+} from './repairEngine';
+import {
   applyAcceptedBeautyOffer,
   applyDismissedBeautyOffer,
   decideClassicMemorable,
@@ -148,6 +156,13 @@ import {
 } from './ledgerRevision';
 import { imagesKilled, signupsPaused } from './opsKillSwitches';
 import { appendStateTxDiff } from './stateTx';
+import {
+  buildRevealVisibleText,
+  revealDelayMs,
+  splitIntoRevealChunks,
+  type StreamingRevealState,
+  type TurnPhase,
+} from './streamReveal';
 import { ensureCampaignContract, mergeCampaignDivergences } from './campaignContract';
 import { canSoftOffer, withUpdatedHookArc } from './hookArc';
 import {
@@ -408,8 +423,13 @@ export function useGame() {
   const [googleUser, setGoogleUser] = useState<GoogleUser | null>(null);
   const [bootPhase, setBootPhase] = useState<BootPhase>('welcome');
   const [busy, setBusy] = useState(false);
+  const [turnPhase, setTurnPhase] = useState<TurnPhase>('idle');
+  const [streamingReveal, setStreamingReveal] = useState<StreamingRevealState | null>(null);
   const turnInFlightRef = useRef(false);
   const turnAbortRef = useRef<AbortController | null>(null);
+  const revealTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const revealRunRef = useRef(0);
+  const phaseTimersRef = useRef<{ reading?: ReturnType<typeof setTimeout>; resolving?: ReturnType<typeof setTimeout> }>({});
   const [lastSavedTurn, setLastSavedTurn] = useState<number | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [errorKind, setErrorKind] = useState<ErrorKind | null>(null);
@@ -468,6 +488,68 @@ export function useGame() {
   const postCommitTurnRunningRef = useRef(false);
 
   const voice = useVoice(settings.ttsEnabled, settings.voicePackId);
+
+  const clearRevealTimer = useCallback(() => {
+    if (revealTimerRef.current) {
+      clearTimeout(revealTimerRef.current);
+      revealTimerRef.current = null;
+    }
+  }, []);
+
+  const clearPhaseTimers = useCallback(() => {
+    if (phaseTimersRef.current.reading) clearTimeout(phaseTimersRef.current.reading);
+    if (phaseTimersRef.current.resolving) clearTimeout(phaseTimersRef.current.resolving);
+    phaseTimersRef.current = {};
+  }, []);
+
+  const resetTurnUi = useCallback(() => {
+    revealRunRef.current += 1;
+    clearRevealTimer();
+    clearPhaseTimers();
+    setTurnPhase('idle');
+    setStreamingReveal(null);
+  }, [clearPhaseTimers, clearRevealTimer]);
+
+  const startStreamingReveal = useCallbackRef((entryId: string, fullText: string) => {
+    const runId = ++revealRunRef.current;
+    clearRevealTimer();
+    clearPhaseTimers();
+
+    const chunks = splitIntoRevealChunks(fullText);
+    if (chunks.length <= 1) {
+      setStreamingReveal({ entryId, fullText, visibleText: fullText, done: true });
+      setTurnPhase('idle');
+      return;
+    }
+
+    setTurnPhase('revealing');
+    setStreamingReveal({ entryId, fullText, visibleText: chunks[0], done: false });
+
+    let index = 0;
+    const tick = () => {
+      if (revealRunRef.current !== runId) return;
+      index += 1;
+      if (index >= chunks.length) {
+        setStreamingReveal({ entryId, fullText, visibleText: fullText, done: true });
+        setTurnPhase('idle');
+        revealTimerRef.current = null;
+        return;
+      }
+      setStreamingReveal({
+        entryId,
+        fullText,
+        visibleText: buildRevealVisibleText(chunks, index),
+        done: false,
+      });
+      revealTimerRef.current = setTimeout(tick, revealDelayMs(index, chunks[index]));
+    };
+    revealTimerRef.current = setTimeout(tick, revealDelayMs(0, chunks[0]));
+  });
+
+  useEffect(() => () => {
+    clearRevealTimer();
+    clearPhaseTimers();
+  }, [clearPhaseTimers, clearRevealTimer]);
 
   const snapshotRef = useRef<GameState | null>(null);
   const isHydratedRef = useRef(false);
@@ -1432,11 +1514,34 @@ export function useGame() {
 
   const sendAction = useCallbackRef(async (input: string) => {
     if (!input.trim() || busy || turnInFlightRef.current) return;
-    const current = stateRef.current;
+    if (
+      turnPhase === 'reading'
+      || turnPhase === 'resolving'
+      || (turnPhase === 'revealing' && streamingReveal && !streamingReveal.done)
+    ) {
+      return;
+    }
+    let current = stateRef.current;
     if (!current) return;
     if (current.pendingTurn) {
       addToast('Accept, edit, or discard the pending turn first.', 'info');
       return;
+    }
+
+    let skipRepairDetection = false;
+    if (current.pendingRepair) {
+      const picked = matchRepairOption(input, current.pendingRepair);
+      if (!picked) {
+        addToast('Pick one of the repair options or tap a button below.', 'info');
+        setRestoreDraft(input);
+        return;
+      }
+      input = buildClarifiedInput(current.pendingRepair.playerInput, picked);
+      const cleared = { ...current, pendingRepair: null };
+      stateRef.current = cleared;
+      setState(cleared);
+      current = cleared;
+      skipRepairDetection = true;
     }
     const lastVisible = [...current.log].reverse().find((e) => {
       if (e.role === 'player') return !!e.content?.trim();
@@ -1490,6 +1595,53 @@ export function useGame() {
     // Opening covers + establishment generation are free (hook the player before the meter bites).
     const freeOpeningTurn =
       isOpeningEstablishmentPending(current) || !!current.pendingGeneratedOpening;
+
+    // Local repair — clarify before GM spend (conservative detectors; false negatives OK).
+    if (
+      !skipRepairDetection
+      && !current.pendingRepair
+      && !freeOpeningTurn
+      && !isOpeningEstablishmentPending(current)
+    ) {
+      const repairSituation = detectRepairSituation(mediated.text, current);
+      if (repairSituation) {
+        const voiceId = resolveRepairVoiceId(current, settingsRef.current.gmVoiceProfileId);
+        const copy = pickRepairCopy({
+          situation: repairSituation,
+          engineMode: current.engineMode,
+          voiceId,
+          kidMode: mode === 'kid',
+        });
+        const repairOptions = copy.options ?? extractRepairOptions(copy.message);
+        const repairPlayerEntry: LogEntry = {
+          id: uid(),
+          turn: current.turn,
+          role: 'player',
+          content: mediated.text,
+          timestamp: Date.now(),
+        };
+        setState((s) =>
+          s
+            ? {
+                ...s,
+                pendingRepair: {
+                  id: crypto.randomUUID(),
+                  situation: repairSituation,
+                  playerInput: mediated.text,
+                  message: copy.message,
+                  options: repairOptions,
+                  createdAt: Date.now(),
+                },
+                log: [...s.log, repairPlayerEntry],
+              }
+            : s
+        );
+        setRestoreDraft(mediated.text);
+        turnInFlightRef.current = false;
+        return;
+      }
+    }
+
     const honeymoonLeft = Math.max(0, current.storyStartTextTurnsRemaining ?? 0);
 
     // Sync tier + spend a text turn from story-start bonus, then capacity ledger.
@@ -1602,6 +1754,13 @@ export function useGame() {
     setBusy(true);
     setError(null);
     setErrorKind(null);
+    resetTurnUi();
+    phaseTimersRef.current.reading = setTimeout(() => {
+      if (turnInFlightRef.current) setTurnPhase('reading');
+    }, 300);
+    phaseTimersRef.current.resolving = setTimeout(() => {
+      if (turnInFlightRef.current) setTurnPhase('resolving');
+    }, 900);
     lastInputRef.current = input;
     setLastInput(input);
 
@@ -3020,12 +3179,21 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
 
         postCommitTurnEffectsRef.current.push(effectsPayload);
         setPostCommitTurnEpoch((epoch) => epoch + 1);
+
+        if (!settingsRef.current.preferFullResponse && storyHasBody(cleanText)) {
+          startStreamingReveal(gmEntry.id, cleanText);
+        } else {
+          clearPhaseTimers();
+          setTurnPhase('idle');
+          setStreamingReveal(null);
+        }
       }
       textTurnSpent = false;
       honeymoonSpent = false;
     } catch (e) {
       if (turnAbortRef.current?.signal.aborted) {
         debugLogger.record('WARN', 'sendAction aborted — player line kept');
+        resetTurnUi();
         refundSpentTextTurn();
         keepSentLineOnFail(sanitizedInput || lastInputRef.current || input);
         return;
@@ -3051,6 +3219,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
       });
       refundSpentTextTurn();
       keepSentLineOnFail(sanitizedInput || lastInputRef.current || input);
+      resetTurnUi();
       setError(errMsg);
     } finally {
       if (loadingTimer !== undefined) clearTimeout(loadingTimer);
@@ -3058,6 +3227,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
       setRetryStatus(null);
       turnInFlightRef.current = false;
       setBusy(false);
+      clearPhaseTimers();
     }
   });
 
@@ -4004,7 +4174,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
   });
 
   return {
-    state, settings, googleUser, bootPhase, busy, error, errorKind, showLoadingOverlay, retryStatus, currentImages, currentImage: currentImages[0] ?? null,
+    state, settings, googleUser, bootPhase, busy, turnPhase, streamingReveal, error, errorKind, showLoadingOverlay, retryStatus, currentImages, currentImage: currentImages[0] ?? null,
     imagesGenerating, videosGenerating,
     saveStatus, showSettings, setShowSettings, showApiSetup, setShowApiSetup, showNewGame, setShowNewGame,
     showRolls, setShowRolls, showMapModal, setShowMapModal, leftOpen, setLeftOpen, rightOpen, setRightOpen,
@@ -4016,6 +4186,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
     sendAction,
     cancelTurn: () => {
       turnAbortRef.current?.abort();
+      resetTurnUi();
       const line =
         lastInputRef.current.trim()
         || [...(stateRef.current?.log ?? [])].reverse().find((e) => e.role === 'player')?.content

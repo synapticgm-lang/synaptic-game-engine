@@ -16,11 +16,25 @@ const GOOGLE_FONT_QUERY: Record<string, string> = {
   Spectral: 'Spectral:wght@400;600',
 };
 
+/** Integration defaults — when a race kit theme is equipped, these mean "never customized". */
+export const INTEGRATION_COSMETIC_DEFAULTS = {
+  fontPackId: 'font.cold-registrar',
+  diceCosmeticId: 'dice.system-holo',
+  turnFrameCosmeticId: 'frame.glitch-static',
+  voicePackId: 'voice.cold-registrar',
+} as const;
+
 const loadedGoogleFonts = new Set<string>(['Inter', 'Cinzel']);
 
 function fontNamesFromStack(stack: string | undefined): string[] {
   if (!stack) return [];
-  return [...stack.matchAll(/"([^"]+)"/g)].map((m) => m[1]);
+  const names = new Set<string>();
+  for (const m of stack.matchAll(/"([^"]+)"/g)) names.add(m[1]);
+  for (const part of stack.split(',')) {
+    const bare = part.trim().replace(/^["']|["']$/g, '');
+    if (GOOGLE_FONT_QUERY[bare]) names.add(bare);
+  }
+  return [...names];
 }
 
 export function ensureGoogleFonts(...stacks: (string | undefined)[]): void {
@@ -65,6 +79,41 @@ export function equippedSetLabel(uiThemeId: string | undefined): string {
   return `equipped set: ${equippedSetName(uiThemeId)}`;
 }
 
+/**
+ * Prefer kit parts when a race/material set is equipped but Customize still sits on
+ * Integration defaults (theme-only equip / old saves). Explicit Customize picks still win.
+ */
+export function resolveThemeKitExtras(settings: {
+  uiThemeId?: string;
+  fontPackId?: string;
+  diceCosmeticId?: string;
+  turnFrameCosmeticId?: string;
+}): { font?: ShopItem | null; dice?: ShopItem | null; frame?: ShopItem | null } {
+  const theme = themeBySettingsId(settings.uiThemeId);
+  const kit = theme.kit;
+
+  const resolve = (
+    savedId: string | undefined,
+    kitId: string | undefined,
+    integrationDefault: string,
+  ): ShopItem | null | undefined => {
+    if (kit && kitId && (!savedId || savedId === integrationDefault || savedId === kitId)) {
+      return shopItemById(kitId);
+    }
+    return savedId ? shopItemById(savedId) : null;
+  };
+
+  return {
+    font: resolve(settings.fontPackId, kit?.fontId, INTEGRATION_COSMETIC_DEFAULTS.fontPackId),
+    dice: resolve(settings.diceCosmeticId, kit?.diceId, INTEGRATION_COSMETIC_DEFAULTS.diceCosmeticId),
+    frame: resolve(
+      settings.turnFrameCosmeticId,
+      kit?.frameId,
+      INTEGRATION_COSMETIC_DEFAULTS.turnFrameCosmeticId,
+    ),
+  };
+}
+
 /** Apply theme + optional font/dice/frame kit CSS variables to :root. */
 export function applyUiThemeToDocument(
   theme: ShopItem | null | undefined,
@@ -103,9 +152,10 @@ export function applyUiThemeToDocument(
   root.style.setProperty('--sgm-dice-accent', diceAccent);
   root.style.setProperty('--sgm-dice-face', diceFace);
   root.dataset.sgmTheme = theme?.themeKey ?? 'integration-blue';
-  root.dataset.sgmFrame = extras?.frame?.frameSkin?.style ?? 'plain';
+  root.dataset.sgmFrame =
+    extras?.frame?.frameSkin?.style ?? p.frameStyle ?? 'plain';
   root.dataset.sgmTexture = p.texture ?? 'plain';
-  const diceMaterial = extras?.dice?.diceSkin?.material;
+  const diceMaterial = extras?.dice?.diceSkin?.material ?? p.diceMaterial;
   if (diceMaterial) root.dataset.sgmDice = diceMaterial;
   else delete root.dataset.sgmDice;
 }
@@ -116,9 +166,5 @@ export function applySettingsCosmetics(settings: {
   diceCosmeticId?: string;
   turnFrameCosmeticId?: string;
 }): void {
-  applyUiThemeToDocument(themeBySettingsId(settings.uiThemeId), {
-    font: shopItemById(settings.fontPackId ?? ''),
-    dice: shopItemById(settings.diceCosmeticId ?? ''),
-    frame: shopItemById(settings.turnFrameCosmeticId ?? ''),
-  });
+  applyUiThemeToDocument(themeBySettingsId(settings.uiThemeId), resolveThemeKitExtras(settings));
 }

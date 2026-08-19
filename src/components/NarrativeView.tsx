@@ -3,6 +3,13 @@ import type { LogEntry } from '@/types';
 import type { EngineMode } from '@/game/types';
 import { filterSystemLogForEngine } from '@/game/systemLog';
 import { shouldShowTurnAsk, stripTurnCloser, TURN_ASK, hasRealGmStory, shouldSkipDuplicatePlayerBubble } from '@/game/turnAsk';
+import {
+  isTurnUiBlocked,
+  resolveRevealContent,
+  turnPhaseStatusMessage,
+  type StreamingRevealState,
+  type TurnPhase,
+} from '@/game/streamReveal';
 import { BeautyMomentOfferLink } from './BeautyMomentOffer';
 import {
   ChevronRight, ChevronDown, Zap, Sword, Shield, Sparkles,
@@ -12,6 +19,8 @@ import {
 interface Props {
   log: LogEntry[];
   busy?: boolean;
+  turnPhase?: TurnPhase;
+  streamingReveal?: StreamingRevealState | null;
   engineMode?: EngineMode;
   contentMode?: string | null;
   onAcceptBeautyOffer?: (entryId: string) => void;
@@ -65,9 +74,11 @@ function extractActions(log: LogEntry[], engineMode: EngineMode = 'litrpg'): Act
   return cards.slice(-20).reverse();
 }
 
-export function NarrativeView({ log, busy, engineMode = 'litrpg', contentMode, onAcceptBeautyOffer, onDismissBeautyOffer }: Props) {
+export function NarrativeView({ log, busy, turnPhase = 'idle', streamingReveal = null, engineMode = 'litrpg', contentMode, onAcceptBeautyOffer, onDismissBeautyOffer }: Props) {
   const [streamOpen, setStreamOpen] = useState(true);
   const actionCards = useMemo(() => extractActions(log, engineMode), [log, engineMode]);
+  const turnUiBlocked = isTurnUiBlocked(!!busy, turnPhase, streamingReveal);
+  const turnStatusMessage = busy ? turnPhaseStatusMessage(turnPhase) : null;
 
   return (
     <div className="relative flex h-full overflow-hidden">
@@ -80,14 +91,21 @@ export function NarrativeView({ log, busy, engineMode = 'litrpg', contentMode, o
                 key={entry.id}
                 entry={entry}
                 engineMode={engineMode}
-                showTurnAsk={shouldShowTurnAsk(log, index, !!busy)}
+                showTurnAsk={shouldShowTurnAsk(log, index, turnUiBlocked)}
+                streamingReveal={streamingReveal}
                 onAcceptBeautyOffer={onAcceptBeautyOffer}
                 onDismissBeautyOffer={onDismissBeautyOffer}
                 contentMode={contentMode}
               />
             )
           ))}
-          {busy && (
+          {turnStatusMessage && (
+            <div className="flex items-center gap-2 text-sm text-slate-500">
+              <span className="inline-block h-2 w-2 animate-pulse rounded-full bg-crimson-500" />
+              {turnStatusMessage}
+            </div>
+          )}
+          {busy && !turnStatusMessage && (
             <div className="flex items-center gap-2 text-sm text-slate-500">
               <span className="inline-block h-2 w-2 animate-pulse rounded-full bg-crimson-500" />
               The world responds...
@@ -108,7 +126,7 @@ export function NarrativeView({ log, busy, engineMode = 'litrpg', contentMode, o
 
 /* ============ NARRATIVE ENTRY DISPATCHER ============ */
 
-function NarrativeEntry({ entry, engineMode, showTurnAsk, onAcceptBeautyOffer, onDismissBeautyOffer, contentMode }: { entry: LogEntry; engineMode: EngineMode; showTurnAsk: boolean; onAcceptBeautyOffer?: (entryId: string) => void; onDismissBeautyOffer?: (entryId: string) => void; contentMode?: string | null }) {
+function NarrativeEntry({ entry, engineMode, showTurnAsk, streamingReveal, onAcceptBeautyOffer, onDismissBeautyOffer, contentMode }: { entry: LogEntry; engineMode: EngineMode; showTurnAsk: boolean; streamingReveal?: StreamingRevealState | null; onAcceptBeautyOffer?: (entryId: string) => void; onDismissBeautyOffer?: (entryId: string) => void; contentMode?: string | null }) {
   if (entry.role === 'player') return <PlayerBubble entry={entry} />;
   if (entry.role === 'system') return <SystemMessage entry={entry} />;
   if (!hasRealGmStory(entry) && !showTurnAsk) {
@@ -119,6 +137,7 @@ function NarrativeEntry({ entry, engineMode, showTurnAsk, onAcceptBeautyOffer, o
       entry={entry}
       engineMode={engineMode}
       showTurnAsk={showTurnAsk}
+      streamingReveal={streamingReveal}
       onAcceptBeautyOffer={onAcceptBeautyOffer}
       onDismissBeautyOffer={onDismissBeautyOffer}
       contentMode={contentMode}
@@ -128,8 +147,9 @@ function NarrativeEntry({ entry, engineMode, showTurnAsk, onAcceptBeautyOffer, o
 
 /* ============ 1. AI DM NARRATION PANEL ============ */
 
-function DmNarration({ entry, engineMode, showTurnAsk, onAcceptBeautyOffer, onDismissBeautyOffer, contentMode }: { entry: LogEntry; engineMode: EngineMode; showTurnAsk: boolean; onAcceptBeautyOffer?: (entryId: string) => void; onDismissBeautyOffer?: (entryId: string) => void; contentMode?: string | null }) {
-  const segments = useMemo(() => parseSegments(stripTurnCloser(entry.content)), [entry.content]);
+function DmNarration({ entry, engineMode, showTurnAsk, streamingReveal, onAcceptBeautyOffer, onDismissBeautyOffer, contentMode }: { entry: LogEntry; engineMode: EngineMode; showTurnAsk: boolean; streamingReveal?: StreamingRevealState | null; onAcceptBeautyOffer?: (entryId: string) => void; onDismissBeautyOffer?: (entryId: string) => void; contentMode?: string | null }) {
+  const { text: displayContent, isRevealing } = resolveRevealContent(entry.id, entry.content, streamingReveal);
+  const segments = useMemo(() => parseSegments(stripTurnCloser(displayContent)), [displayContent]);
   const systemLines = useMemo(
     () => filterSystemLogForEngine(entry.systemLog ?? [], engineMode),
     [entry.systemLog, engineMode],
@@ -161,9 +181,13 @@ function DmNarration({ entry, engineMode, showTurnAsk, onAcceptBeautyOffer, onDi
             if (seg.type === 'dialogue') return <NpcDialogue key={i} text={seg.text} />;
             if (seg.type === 'thought') return <ThoughtBlock key={i} text={seg.text} />;
             if (seg.type === 'system') return <InlineSystemTag key={i} text={seg.text} />;
+            const isLast = i === segments.length - 1;
             return (
-              <p key={i} className="mb-3 text-sm leading-relaxed text-slate-200 last:mb-0">
+              <p key={i} className="mb-3 font-serif text-sm leading-relaxed text-slate-200 last:mb-0">
                 {seg.text}
+                {isRevealing && isLast && (
+                  <span className="ml-0.5 inline-block h-3.5 w-0.5 animate-pulse bg-crimson-400/70 align-text-bottom" aria-hidden />
+                )}
               </p>
             );
           })}

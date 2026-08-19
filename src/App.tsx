@@ -322,6 +322,8 @@ export default function App() {
           <CenterPanel
             state={state}
             busy={game.busy}
+            turnPhase={game.turnPhase}
+            streamingReveal={game.streamingReveal}
             error={game.error}
             errorKind={game.errorKind}
             currentImage={game.currentImage}

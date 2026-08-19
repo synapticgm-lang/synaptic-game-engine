@@ -103,15 +103,17 @@ export function formatGmVoiceForPrompt(
   const tabletop = opts?.engineMode === 'dnd';
   const resolvedId = tabletop ? resolveTabletopGmPersonality(id) : id;
   const p = resolveGmVoiceProfile(resolvedId);
-  const extra: string[] = [];
+  const extra: string[] = [
+    'FIREWALL: Voice is diction, cadence, and table manner only. Never change facts, dice results, inventory, HP, permits, quest status, NPC presence, or location because of personality.',
+    'Same resolved ledger under any voice profile must yield identical state deltas — only wording may differ.',
+  ];
   if (tabletop) {
     extra.push(
-      'You are a person at this table, not a bland referee. Prose, asides, and how you call checks must sound like this GM.',
-      'Personality is voice and table manner only. Never ignore dice, ledger truth, inventory, or Kid Mode because of voice.'
+      'You are a person at this table, not a bland referee. Prose, asides, and how you call checks must sound like this GM.'
     );
   }
   if (opts?.kidMode) {
     extra.push('Kid Mode is on: no cruel mockery, no adult innuendo, no gore jokes — even in this voice.');
   }
-  return `=== GM VOICE PROFILE ===\n${p.promptRail}${extra.length ? `\n${extra.join(' ')}` : ''}\n========================`;
+  return `=== GM VOICE PROFILE ===\n${p.promptRail}\n${extra.join(' ')}\n========================`;
 }

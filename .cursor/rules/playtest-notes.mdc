@@ -16,11 +16,14 @@ John is playtesting live. Collect issues here. Do not implement until he asks fo
 - Opening-hook decks on premades beyond Hero Awakening + LitRPG sarcastic System New Game picker — `docs/research/starter-personality-research-2026-08-17.md` (tabletop GM personality shipped 2026-08-17d; Settings still has System/narrator voice)
 - Server capacity / Stripe live secrets / counsel legal pack / Kid Mode public gate — ops, not playtest tickets
 - Full a11y release gate, Expert author tools, audio lite, full comic — deliberate later / No-Go near-term
-- Manus optional only: Snapshot+screenshots E1/E2 refresh, content banks, counsel outline — architecture/vibe research is build-complete
+- Manus optional: Snapshot+screenshots E1/E2; post-commit streaming UI; counsel outline
 
 ## Done (already shipped)
 
-- **2026-08-19o indoor floor plan:** cathedral / circle / vault / hall / court interiors use a floor-plan silhouette (not the dashed-yellow 3×3 street grid). Sentence-fragment pins (`Save Anyone Yet`, `Any Physical Object`, `Our Desperate War Against`, …) are denied. HUD stamp 19o
+- **2026-08-19q folk NPC dialogue banks:** Manus folk-voice zip ingested; `folkVoiceExpectations` deepened to 18 peoples (incl. Ledgerborn/Mycelial/Ashkin/Glassborn/Tidebound/Woven), cross-folk cues, Kid Mode lines, anti-list rail; edge synced (`2026-08-19q`)
+- **2026-08-19p premium themes:** kits read as materials not Integration recolors — Undead Ossuary bone/ash/moonlight (no teal); kit font/frame auto-heal; story prose uses theme typeface; HUD stamp 19p
+- **2026-08-19 fluid pipeline:** Post-commit sentence reveal + status chrome; repair CSV hold/resolve banner; fluid-chat eval fixtures in vitest (64 tests). Prefer full reply toggle in Settings → Narrative (`2026-08-19`)
+- **2026-08-19 fluid chat + folk voice:** Answer-first / one-beat / agency / earned-handoff prose rails; speech-act rails; folk/peoples voice expectations (elf, dwarf, orc, …) so NPCs talk how readers expect — public-domain tropes only (`2026-08-19`)
 - **2026-08-19f paper-doll + item icons:** hosted Free/Mid/High POST `generate-image` (schnell) for character-portrait and item-icon — no Settings key, no memorable weekly spend. Portrait fires from any worn kit (not a clothes-name regex). Equip slots queue icons without opening Portrait. Compact fail if gen dies. HUD stamp 19f
 - **2026-08-19e nearby-building tautology:** `proseWarden` strips “a nearby building/place/hall” used as the current room when the beat is already at a named interior (cathedral / circle / court / currentLocation). Prompt: camera is HERE; Summoned Pact honors Pellane’s court vs the Ash Court. HUD stamp 19e. Still no general “does this make sense” LLM critic.
 - **2026-08-19d Adventurer name + equipped set:** theme kit ring (`.sgm-turn-frame::before`) no longer covers the character name on the Adventurer card or paper-doll / sheet headers (`.sgm-frame-header`). Play chrome shows the Shop catalog name (`equipped set: Vampire Nocturne`). HUD stamp 19d

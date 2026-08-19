@@ -13,8 +13,17 @@ import { ActionBar } from './qol/ActionBar';
 import { RewindBar } from './qol/RewindBar';
 import { TurnConfirmBar } from './qol/TurnConfirmBar';
 import { shouldShowTurnAsk, TURN_ASK, hasRealGmStory, shouldSkipDuplicatePlayerBubble } from '@/game/turnAsk';
+import {
+  isTurnUiBlocked,
+  resolveRevealContent,
+  turnPhaseStatusMessage,
+  type StreamingRevealState,
+  type TurnPhase,
+} from '@/game/streamReveal';
 import { BeautyMomentOfferLink } from './BeautyMomentOffer';
 import { splashPlateLabel, splashUnavailableLine } from '@/game/memorableMoments';
+import { stripRepairMarkdown } from '@/game/repairEngine';
+import type { PendingRepair } from '@/game/types';
 
 const HIDE_OPTIONS_KEY = 'synapticgm-hide-options';
 const HIDE_TEXT_KEY = 'synapticgm-hide-text';
@@ -40,6 +49,8 @@ function writeBoolPref(key: string, value: boolean): void {
 interface Props {
   state: GameState;
   busy: boolean;
+  turnPhase?: TurnPhase;
+  streamingReveal?: StreamingRevealState | null;
   error: string | null;
   errorKind: import('@/game/types').ErrorKind | null;
   currentImage: string | null;
@@ -84,7 +95,7 @@ interface Props {
   contentMode?: string | null;
 }
 
-export function CenterPanel({ state, busy, error, errorKind, currentImage, bgImage, bgOpacity, showRolls, engineMode, diceAnimation, statVerbosity, voice, comicMode, narrativeMode, artStylePreset, comicLayout = 'paged', comicReadingDirection = 'ltr', imagesGenerating = 0, canRewind, onSend, onToggleRolls, onStartListening, onStopListening, onStopSpeaking, onRetry, onOpenApiSettings, onRewind, onAcceptPendingTurn, onDiscardPendingTurn, onRerollPendingTurn, onEditPendingNarrative, onToggleComicMode, sessionPresentationLocked = false, onAutoFight, onOpenCharacter, onRetryPanelImage, onRetryMemorableImage, onUpdatePanelOverlay, restoreDraft, onRestoreDraftConsumed, onAcceptBeautyOffer, onDismissBeautyOffer, contentMode }: Props) {
+export function CenterPanel({ state, busy, turnPhase = 'idle', streamingReveal = null, error, errorKind, currentImage, bgImage, bgOpacity, showRolls, engineMode, diceAnimation, statVerbosity, voice, comicMode, narrativeMode, artStylePreset, comicLayout = 'paged', comicReadingDirection = 'ltr', imagesGenerating = 0, canRewind, onSend, onToggleRolls, onStartListening, onStopListening, onStopSpeaking, onRetry, onOpenApiSettings, onRewind, onAcceptPendingTurn, onDiscardPendingTurn, onRerollPendingTurn, onEditPendingNarrative, onToggleComicMode, sessionPresentationLocked = false, onAutoFight, onOpenCharacter, onRetryPanelImage, onRetryMemorableImage, onUpdatePanelOverlay, restoreDraft, onRestoreDraftConsumed, onAcceptBeautyOffer, onDismissBeautyOffer, contentMode }: Props) {
   const [input, setInput] = useState('');
   const [diceRoll, setDiceRoll] = useState<string | null>(null);
   const [hideOptions, setHideOptions] = useState(() => readBoolPref(HIDE_OPTIONS_KEY));
@@ -94,6 +105,8 @@ export function CenterPanel({ state, busy, error, errorKind, currentImage, bgIma
   const showRollsPanel = isDnd && showRolls && state.rolls.length > 0;
   const showSystemLog = statVerbosity !== 'minimal';
   const bothChromeHidden = hideOptions && hideText;
+  const turnUiBlocked = isTurnUiBlocked(busy, turnPhase, streamingReveal);
+  const turnStatusMessage = busy ? turnPhaseStatusMessage(turnPhase) : null;
 
   const toggleHideOptions = () => {
     setHideOptions((prev) => {
@@ -172,6 +185,8 @@ export function CenterPanel({ state, busy, error, errorKind, currentImage, bgIma
           <NarrativeView
             log={state.log}
             busy={busy}
+            turnPhase={turnPhase}
+            streamingReveal={streamingReveal}
             engineMode={engineMode}
             onAcceptBeautyOffer={onAcceptBeautyOffer}
             onDismissBeautyOffer={onDismissBeautyOffer}
@@ -190,7 +205,8 @@ export function CenterPanel({ state, busy, error, errorKind, currentImage, bgIma
                   showSystemLog={showSystemLog}
                   statVerbosity={statVerbosity}
                   engineMode={engineMode}
-                  showTurnAsk={shouldShowTurnAsk(state.log, index, busy)}
+                  showTurnAsk={shouldShowTurnAsk(state.log, index, turnUiBlocked)}
+                  streamingReveal={streamingReveal}
                   onAcceptBeautyOffer={onAcceptBeautyOffer}
                   onDismissBeautyOffer={onDismissBeautyOffer}
                   onRetryMemorableImage={onRetryMemorableImage}
@@ -198,7 +214,13 @@ export function CenterPanel({ state, busy, error, errorKind, currentImage, bgIma
                 />
               )
             ))}
-            {busy && (
+            {turnStatusMessage && (
+              <div className="flex items-center gap-2 text-sm text-slate-500">
+                <span className="inline-block h-2 w-2 animate-pulse rounded-full bg-crimson-500" />
+                {turnStatusMessage}
+              </div>
+            )}
+            {busy && !turnStatusMessage && (
               <div className="flex items-center gap-2 text-sm text-slate-500">
                 <span className="inline-block h-2 w-2 animate-pulse rounded-full bg-crimson-500" />
                 The world responds...
@@ -301,6 +323,10 @@ export function CenterPanel({ state, busy, error, errorKind, currentImage, bgIma
             />
           )}
 
+          {state.pendingRepair && (
+            <RepairBanner pending={state.pendingRepair} busy={busy} onPick={onSend} />
+          )}
+
           <div className="mb-1.5 flex items-center gap-1.5">
             <button
               type="button"
@@ -400,7 +426,7 @@ export function CenterPanel({ state, busy, error, errorKind, currentImage, bgIma
             {voice.sttSupported && (
               <button
                 onClick={voice.listening ? onStopListening : onStartListening}
-                disabled={busy}
+                disabled={turnUiBlocked}
                 title={voice.listening ? 'Stop listening' : 'Speak your action'}
                 className={`flex shrink-0 items-center justify-center rounded-lg border px-3 transition-all disabled:cursor-not-allowed disabled:opacity-40 ${
                   voice.listening
@@ -431,7 +457,7 @@ export function CenterPanel({ state, busy, error, errorKind, currentImage, bgIma
                   handleSend();
                 }
               }}
-              disabled={busy}
+              disabled={turnUiBlocked}
               placeholder={voice.listening ? 'Listening...' : 'What do you do?'}
               rows={2}
               aria-label="Player action input"
@@ -439,7 +465,7 @@ export function CenterPanel({ state, busy, error, errorKind, currentImage, bgIma
             />
             <button
               onClick={handleSend}
-              disabled={busy || !input.trim()}
+              disabled={turnUiBlocked || !input.trim()}
               className="flex shrink-0 items-center justify-center rounded-lg bg-crimson-600 px-4 text-white transition-colors hover:bg-crimson-500 disabled:cursor-not-allowed disabled:opacity-40"
             >
               <Send size={18} />
@@ -452,7 +478,8 @@ export function CenterPanel({ state, busy, error, errorKind, currentImage, bgIma
   );
 }
 
-function LogRow({ entry, lorebook, showSystemLog, statVerbosity, engineMode, showTurnAsk, onAcceptBeautyOffer, onDismissBeautyOffer, onRetryMemorableImage, contentMode }: { entry: LogEntry; lorebook?: LoreCard[]; showSystemLog: boolean; statVerbosity: StatVerbosity; engineMode: EngineMode; showTurnAsk: boolean; onAcceptBeautyOffer?: (entryId: string) => void; onDismissBeautyOffer?: (entryId: string) => void; onRetryMemorableImage?: (entryId: string) => void; contentMode?: string | null }) {
+function LogRow({ entry, lorebook, showSystemLog, statVerbosity, engineMode, showTurnAsk, streamingReveal, onAcceptBeautyOffer, onDismissBeautyOffer, onRetryMemorableImage, contentMode }: { entry: LogEntry; lorebook?: LoreCard[]; showSystemLog: boolean; statVerbosity: StatVerbosity; engineMode: EngineMode; showTurnAsk: boolean; streamingReveal?: StreamingRevealState | null; onAcceptBeautyOffer?: (entryId: string) => void; onDismissBeautyOffer?: (entryId: string) => void; onRetryMemorableImage?: (entryId: string) => void; contentMode?: string | null }) {
+  const { text: displayContent, isRevealing } = resolveRevealContent(entry.id, entry.content, streamingReveal);
   // Classic memorable plate: a rare, GM-flagged full-page illustration — rendered large and
   // distinct from the routine text log, instead of only surfacing via the small image strip.
   if (entry.entryKind === 'milestone') {
@@ -539,7 +566,10 @@ function LogRow({ entry, lorebook, showSystemLog, statVerbosity, engineMode, sho
     <div className="space-y-1.5">
       {hasRealGmStory(entry) && (
         <div className="rounded-lg border border-slate-800 bg-slate-900/50 px-4 py-3">
-          <FormattedText content={entry.content} lorebook={lorebook} />
+          <FormattedText content={displayContent} lorebook={lorebook} />
+          {isRevealing && (
+            <span className="ml-0.5 inline-block h-3.5 w-0.5 animate-pulse bg-crimson-400/70 align-text-bottom" aria-hidden />
+          )}
         </div>
       )}
       {hasRealGmStory(entry) && showSystemLog && entry.systemLog && entry.systemLog.length > 0 && (
@@ -562,6 +592,42 @@ function LogRow({ entry, lorebook, showSystemLog, statVerbosity, engineMode, sho
 function TurnAskLine() {
   return (
     <p className="px-1 pt-1 text-sm font-medium text-slate-200">{TURN_ASK}</p>
+  );
+}
+
+function RepairBanner({
+  pending,
+  busy,
+  onPick,
+}: {
+  pending: PendingRepair;
+  busy: boolean;
+  onPick: (input: string) => void;
+}) {
+  const options = pending.options.slice(0, 2);
+  return (
+    <div
+      className="mb-2 rounded-lg border border-amber-700/40 bg-amber-950/30 px-3 py-2.5"
+      role="region"
+      aria-label="Clarify your action"
+    >
+      <p className="text-xs leading-relaxed text-amber-100/90">{stripRepairMarkdown(pending.message)}</p>
+      {options.length >= 2 && (
+        <div className="mt-2 flex flex-wrap gap-2">
+          {options.map((opt) => (
+            <button
+              key={opt}
+              type="button"
+              disabled={busy}
+              onClick={() => onPick(opt)}
+              className="rounded-md border border-amber-600/50 bg-amber-900/40 px-3 py-1.5 text-[11px] font-medium text-amber-100 transition-colors hover:bg-amber-800/50 disabled:cursor-not-allowed disabled:opacity-40"
+            >
+              {opt}
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
   );
 }
 
