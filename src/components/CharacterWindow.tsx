@@ -96,11 +96,13 @@ function EquipSlot({
   slotKey,
   item,
   selected,
+  iconBusy,
   onSelect,
 }: {
   slotKey: EquipSlotKey;
   item?: Item;
   selected: boolean;
+  iconBusy?: boolean;
   onSelect: (item: Item | undefined, slotKey: EquipSlotKey) => void;
 }) {
   const meta = SLOT_META[slotKey];
@@ -120,6 +122,12 @@ function EquipSlot({
     >
       {item?.iconUrl ? (
         <img src={item.iconUrl} alt="" className="absolute inset-0 h-full w-full object-cover" />
+      ) : item?.iconFailed ? (
+        <span className="px-1 text-center text-[9px] leading-tight text-slate-300 line-clamp-3">
+          {item.name}
+        </span>
+      ) : item && iconBusy ? (
+        <Loader2 size={16} className="sgm-info-accent animate-spin" />
       ) : (
         <span className={item ? '' : 'text-slate-600'} style={item ? { color: rarityColor } : undefined}>
           {meta.icon}
@@ -403,6 +411,10 @@ function InventoryPanel({ state }: { state: GameState }) {
                 <div className="flex items-center justify-between gap-2">
                   {it.iconUrl ? (
                     <img src={it.iconUrl} alt="" className="h-8 w-8 shrink-0 rounded object-cover border border-slate-700" />
+                  ) : it.iconFailed ? (
+                    <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded border border-slate-700 bg-slate-800 px-0.5 text-center text-[8px] leading-tight text-slate-400">
+                      {it.name}
+                    </span>
                   ) : null}
                   <span className="text-xs font-medium text-slate-100 flex-1 truncate">{it.name}</span>
                   <span className="shrink-0 text-[10px] text-slate-500">
@@ -425,21 +437,19 @@ function InventoryPanel({ state }: { state: GameState }) {
 function PaperDoll({
   state,
   equipped,
-  artBusy,
   lookKey,
   inspect,
   onSelect,
 }: {
   state: GameState;
   equipped: Record<EquipSlotKey, Item | undefined>;
-  artBusy: boolean;
   lookKey: string;
   inspect: { item: Item; slotKey: EquipSlotKey } | null;
   onSelect: (item: Item | undefined, slotKey: EquipSlotKey) => void;
 }) {
   const c = state.character;
   const portraitReady = Boolean(c.portraitUrl);
-  const drawing = artBusy && (!c.portraitUrl || c.portraitKey !== lookKey);
+  const drawing = !c.portraitFailed && (!c.portraitUrl || c.portraitKey !== lookKey);
 
   return (
     <div className="relative flex h-full min-h-0 w-full items-center justify-center gap-2 px-2 py-3 sm:gap-3 sm:px-4">
@@ -450,6 +460,7 @@ function PaperDoll({
             slotKey={slotKey}
             item={equipped[slotKey]}
             selected={inspect?.slotKey === slotKey}
+            iconBusy={!equipped[slotKey]?.iconUrl && !equipped[slotKey]?.iconFailed}
             onSelect={onSelect}
           />
         ))}
@@ -468,7 +479,11 @@ function PaperDoll({
           ) : (
             <div className="flex h-full w-full flex-col items-center justify-center gap-2 p-3">
               <Users size={40} className="text-slate-600" />
-              {!drawing && <p className="text-[10px] text-slate-500 text-center">Portrait pending</p>}
+              {!drawing && (
+                <p className="text-center text-[10px] text-slate-500">
+                  {c.portraitFailed ? 'Portrait unavailable' : 'Portrait pending'}
+                </p>
+              )}
             </div>
           )}
         </div>
@@ -481,6 +496,7 @@ function PaperDoll({
             slotKey={slotKey}
             item={equipped[slotKey]}
             selected={inspect?.slotKey === slotKey}
+            iconBusy={!equipped[slotKey]?.iconUrl && !equipped[slotKey]?.iconFailed}
             onSelect={onSelect}
           />
         ))}
@@ -492,7 +508,6 @@ function PaperDoll({
 export function CharacterWindow({ isOpen, onClose, state, settings, initialTab, onGenerateArt, onCommitArt }: Props) {
   const [sidePanelOpen, setSidePanelOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<BottomTab>(initialTab ?? 'character');
-  const [artBusy, setArtBusy] = useState(false);
   const [inspect, setInspect] = useState<{ item: Item; slotKey: EquipSlotKey } | null>(null);
 
   const equipped = useMemo(() => {
@@ -515,27 +530,28 @@ export function CharacterWindow({ isOpen, onClose, state, settings, initialTab, 
   useEffect(() => {
     if (!isOpen || !onGenerateArt || !onCommitArt) return;
     let cancelled = false;
-    setArtBusy(true);
     void (async () => {
-      try {
-        const live = stateRef.current;
-        const missing = (live.inventory ?? [])
-          .filter((item) => !item.iconUrl)
-          .sort((a, b) => Number(!!b.equipped) - Number(!!a.equipped))
-          .slice(0, 8);
-        for (const item of missing) {
-          if (cancelled) return;
-          const url = await onGenerateArt(itemIconPrompt(item), 'item-icon');
-          if (url && !cancelled) onCommitArt({ itemIcons: { [item.id]: url } });
-        }
-        const after = stateRef.current;
-        const needPortrait = after.character.portraitKey !== lookKey || !after.character.portraitUrl;
-        if (!cancelled && needPortrait) {
-          const url = await onGenerateArt(paperDollPrompt(after), 'character-portrait');
-          if (url && !cancelled) onCommitArt({ portraitUrl: url, portraitKey: portraitCacheKey(stateRef.current) });
-        }
-      } finally {
-        if (!cancelled) setArtBusy(false);
+      const live = stateRef.current;
+      const missing = (live.inventory ?? [])
+        .filter((item) => !item.iconUrl && !item.iconFailed)
+        .sort((a, b) => Number(!!b.equipped) - Number(!!a.equipped))
+        .slice(0, 8);
+      for (const item of missing) {
+        if (cancelled) return;
+        const url = await onGenerateArt(itemIconPrompt(item), 'item-icon');
+        if (cancelled) return;
+        if (url) onCommitArt({ itemIcons: { [item.id]: url } });
+        else onCommitArt({ itemIconFails: { [item.id]: true } });
+      }
+      const after = stateRef.current;
+      const sameLookFailed = after.character.portraitFailed && after.character.portraitKey === lookKey;
+      const needPortrait = !sameLookFailed && (after.character.portraitKey !== lookKey || !after.character.portraitUrl);
+      if (!cancelled && needPortrait) {
+        const url = await onGenerateArt(paperDollPrompt(after), 'character-portrait');
+        if (cancelled) return;
+        const key = portraitCacheKey(stateRef.current);
+        if (url) onCommitArt({ portraitUrl: url, portraitKey: key, portraitFailed: false });
+        else onCommitArt({ portraitFailed: true, portraitKey: key });
       }
     })();
     return () => {
@@ -619,7 +635,6 @@ export function CharacterWindow({ isOpen, onClose, state, settings, initialTab, 
               <PaperDoll
                 state={state}
                 equipped={equipped}
-                artBusy={artBusy}
                 lookKey={lookKey}
                 inspect={inspect}
                 onSelect={handleSelect}

@@ -69,7 +69,7 @@ import {
 import { applyCommittedNarrative, extractSceneFacts, seedOpeningSceneFacts, rewriteContinuityBreak, detectSceneContradiction } from './sceneFacts';
 import { applyFactLocks, detectFactLockViolations } from './factLocks';
 import { dropInsultGear } from './wornGear';
-import { needsPortraitRefresh, paperDollPrompt, portraitCacheKey } from './inventoryArt';
+import { equippedItemsNeedingIcons, itemIconPrompt, needsPortraitRefresh, paperDollPrompt, portraitCacheKey } from './inventoryArt';
 import { formatCampaignStoryName, getCampaignBibleById, isNsfwCampaign } from '@/data/campaigns';
 import { applyAccusationFromInput } from './mysteryCulprit';
 import { parsePlayerIntent, groundPlayerAction, isSpeechOrProtest } from './intentParser';
@@ -107,7 +107,7 @@ import { effectiveWriterTier, isTestLabEnabled } from './testLab';
 import { canOfferRewardedMemorable } from './rewardedAds';
 import { clipCustomTabletopRules } from './customTabletopRules';
 import { touchPlaceVisit, upsertPlaceFromSheet } from './places';
-import { normalizeSheetAuthority } from './placeAuthority';
+import { isExplorableDungeon, normalizeSheetAuthority } from './placeAuthority';
 import {
   seedDungeonState,
   mergeSheetWithNode,
@@ -163,7 +163,7 @@ import { hasRealGmStory } from './turnAsk';
 import { encounterOriginPlace } from './locationName';
 import { clampLeakedOpeningQuests, extractNamedPlaces, harvestPlayText, isGenericMapPlace, mapAnchorName, newlyRevealedQuests, questsLockedDuringOpening, revealLocalStarterQuest, syncQuestsFromPlay } from './questPlay';
 import { inferItemType } from './salvage';
-import { initializeDungeon, moveToNode, exitDungeon as engineExitDungeon, buildLocalAreaMap, addLandmarkToLocalMap } from './mapEngine';
+import { initializeDungeon, moveToNode, exitDungeon as engineExitDungeon, resolvePlayAreaMap } from './mapEngine';
 import type { Toast } from '@/components/ToastStack';
 import {
   syncToDrive,
@@ -793,6 +793,7 @@ export function useGame() {
         hero: hero === true,
         memorableMoment: promptKind === 'milestone-illustration',
         bypassCapacity: bypassCapacity === true,
+        inventoryArt: promptKind === 'item-icon' || promptKind === 'character-portrait',
       });
 
     const storeIfPossible = async (imageUrl: string | null) => {
@@ -841,6 +842,9 @@ export function useGame() {
         promptKind,
         timedOut: e instanceof Error && e.message.includes('timed out'),
       });
+      if (promptKind === 'item-icon' || promptKind === 'character-portrait') {
+        return null;
+      }
       notifyImageFailure(e);
       throw e;
     }
@@ -1343,14 +1347,8 @@ export function useGame() {
       landmarks
     );
     let areaMap = previous.activeDungeon ?? null;
-    if (!areaMap && place) {
-      areaMap = buildLocalAreaMap(place, landmarks, previous.currentCoordinates);
-    } else if (areaMap?.blueprintId === 'local-area') {
-      if (place && !isGenericMapPlace(place) && isGenericMapPlace(areaMap.dungeonName)) {
-        areaMap = buildLocalAreaMap(place, landmarks, previous.currentCoordinates);
-      } else {
-        for (const named of landmarks) areaMap = addLandmarkToLocalMap(areaMap, named);
-      }
+    if (!isExplorableDungeon(areaMap)) {
+      areaMap = resolvePlayAreaMap(areaMap, place, landmarks, previous.currentCoordinates);
     }
     const nextLocation =
       isGenericMapPlace(previous.currentLocation) && place ? place : previous.currentLocation;
@@ -1358,11 +1356,15 @@ export function useGame() {
     const mapChanged = areaMap !== previous.activeDungeon;
     const locationChanged = nextLocation !== previous.currentLocation;
     if (!questsChanged && !mapChanged && !locationChanged) return;
+    const sheet = previous.locationSheet
+      ? normalizeSheetAuthority(previous.locationSheet, areaMap)
+      : previous.locationSheet;
     const updated: GameState = {
       ...previous,
       quests,
       activeDungeon: areaMap,
       currentLocation: nextLocation,
+      locationSheet: sheet ?? previous.locationSheet,
       lastUpdated: Date.now(),
     };
     stateRef.current = updated;
@@ -2601,7 +2603,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
       const leveledUp = (baseChar.level ?? 1) > (liveCurrent.character.level ?? 1);
       const bossCleared =
         events.some((e) => e.type === 'encounter-end') &&
-        !!(workingState.activeDungeon && workingState.activeDungeon.blueprintId !== 'local-area');
+        isExplorableDungeon(workingState.activeDungeon);
       const tutorialAdv = advanceTutorialBeats(
         { ...workingState, tutorialProgress: workingState.tutorialProgress ?? emptyTutorialProgress() },
         {
@@ -2688,11 +2690,11 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
       const finalLocationName =
         isGenericMapPlace(resolvedLocation) && mapName ? mapName : resolvedLocation;
 
-      if (workingState.activeDungeon && workingState.activeDungeon.blueprintId !== 'local-area') {
+      if (isExplorableDungeon(workingState.activeDungeon)) {
         workingState = {
           ...workingState,
           activeDungeon: seedDungeonState(
-            workingState.activeDungeon,
+            workingState.activeDungeon!,
             workingState.seed || liveCurrent.seed || 'seed'
           ),
         };
@@ -2708,17 +2710,15 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
         finalLocationName
       );
       let locationSheet = locMem.locationSheet ?? touchLocationSheet(workingState, finalLocationName);
-      if (workingState.activeDungeon?.blueprintId !== 'local-area') {
+      if (isExplorableDungeon(workingState.activeDungeon)) {
         locationSheet = mergeSheetWithNode(
           locationSheet,
           currentDungeonNode(workingState.activeDungeon)
         );
       }
       let areaMap = workingState.activeDungeon ?? liveCurrent.activeDungeon ?? null;
-      if (!areaMap && mapName) {
-        areaMap = buildLocalAreaMap(mapName, landmarks, liveCurrent.currentCoordinates);
-      } else if (areaMap?.blueprintId === 'local-area') {
-        for (const named of landmarks) areaMap = addLandmarkToLocalMap(areaMap, named);
+      if (!isExplorableDungeon(areaMap)) {
+        areaMap = resolvePlayAreaMap(areaMap, mapName, landmarks, liveCurrent.currentCoordinates);
       }
       locationSheet = normalizeSheetAuthority(locationSheet, areaMap);
 
@@ -2727,7 +2727,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
         locationSheet,
         {
           dungeonRef:
-            areaMap && areaMap.blueprintId !== 'local-area' ? areaMap.blueprintId : undefined,
+            isExplorableDungeon(areaMap) ? areaMap?.blueprintId : undefined,
         }
       );
 
@@ -3582,33 +3582,61 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
     void autoFight();
   }, [state?.activeEncounter?.name, state?.activeEncounter?.maxHp, state?.activeEncounter?.level, settings.combatResolveMode, busy, autoFight]);
 
+  const inventoryArtJobs = useRef(new Map<string, Promise<string | null>>());
   const generateInventoryArt = useCallbackRef(async (
     prompt: string,
     kind: Extract<ImagePromptKind, 'item-icon' | 'character-portrait'>
   ): Promise<string | null> => {
     const current = stateRef.current;
     if (!current) return null;
-    return fetchPanelImage(
-      prompt,
-      settingsRef.current,
-      kind,
-      sceneImageContext(kind === 'character-portrait' ? buildVisualConsistencyBlock(current, []) : undefined)
-    );
+    const jobKey = `${kind}:${prompt}`;
+    const existing = inventoryArtJobs.current.get(jobKey);
+    if (existing) return existing;
+    const job = (async () => {
+      try {
+        return await fetchPanelImage(
+          prompt,
+          settingsRef.current,
+          kind,
+          sceneImageContext(kind === 'character-portrait' ? buildVisualConsistencyBlock(current, []) : undefined)
+        );
+      } catch {
+        return null;
+      } finally {
+        inventoryArtJobs.current.delete(jobKey);
+      }
+    })();
+    inventoryArtJobs.current.set(jobKey, job);
+    return job;
   });
 
   const commitInventoryArt = useCallbackRef((patch: {
     itemIcons?: Record<string, string>;
+    itemIconFails?: Record<string, true>;
     portraitUrl?: string;
     portraitKey?: string;
+    portraitFailed?: boolean;
   }) => {
     const current = stateRef.current;
     if (!current) return;
-    const inventory = patch.itemIcons
-      ? current.inventory.map((item) => (patch.itemIcons?.[item.id] ? { ...item, iconUrl: patch.itemIcons[item.id] } : item))
+    const inventory = (patch.itemIcons || patch.itemIconFails)
+      ? current.inventory.map((item) => {
+          if (patch.itemIcons?.[item.id]) return { ...item, iconUrl: patch.itemIcons[item.id], iconFailed: false };
+          if (patch.itemIconFails?.[item.id]) return { ...item, iconFailed: true };
+          return item;
+        })
       : current.inventory;
-    const character = patch.portraitUrl
-      ? { ...current.character, portraitUrl: patch.portraitUrl, portraitKey: patch.portraitKey }
-      : current.character;
+    let character = current.character;
+    if (patch.portraitUrl) {
+      character = {
+        ...character,
+        portraitUrl: patch.portraitUrl,
+        portraitKey: patch.portraitKey,
+        portraitFailed: false,
+      };
+    } else if (patch.portraitFailed) {
+      character = { ...character, portraitKey: patch.portraitKey, portraitFailed: true };
+    }
     const next = { ...current, inventory, character, lastUpdated: Date.now() };
     stateRef.current = next;
     setState(next);
@@ -3619,33 +3647,38 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
   useEffect(() => {
     const current = state;
     if (!current || busy || showCharacterWindow || portraitLock.current) return;
-    if (!needsPortraitRefresh(current)) return;
-    let cancelled = false;
+    if (equippedItemsNeedingIcons(current).length === 0 && !needsPortraitRefresh(current)) return;
     portraitLock.current = true;
     void (async () => {
       try {
-        const live = stateRef.current ?? current;
-        const url = await generateInventoryArt(paperDollPrompt(live), 'character-portrait');
-        if (url && !cancelled) {
-          commitInventoryArt({
-            portraitUrl: url,
-            portraitKey: portraitCacheKey(stateRef.current ?? live),
-          });
+        while (stateRef.current) {
+          const live = stateRef.current;
+          const nextIcon = equippedItemsNeedingIcons(live)[0];
+          if (nextIcon) {
+            const url = await generateInventoryArt(itemIconPrompt(nextIcon), 'item-icon');
+            if (url) commitInventoryArt({ itemIcons: { [nextIcon.id]: url } });
+            else commitInventoryArt({ itemIconFails: { [nextIcon.id]: true } });
+            continue;
+          }
+          if (needsPortraitRefresh(live)) {
+            const url = await generateInventoryArt(paperDollPrompt(live), 'character-portrait');
+            const key = portraitCacheKey(stateRef.current ?? live);
+            if (url) commitInventoryArt({ portraitUrl: url, portraitKey: key, portraitFailed: false });
+            else commitInventoryArt({ portraitFailed: true, portraitKey: key });
+          }
+          break;
         }
       } finally {
         portraitLock.current = false;
       }
     })();
-    return () => {
-      cancelled = true;
-      portraitLock.current = false;
-    };
   }, [
     busy,
     showCharacterWindow,
     state?.character.appearance,
     state?.character.portraitKey,
     state?.character.portraitUrl,
+    state?.character.portraitFailed,
     state?.inventory,
     generateInventoryArt,
     commitInventoryArt,

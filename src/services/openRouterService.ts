@@ -591,6 +591,11 @@ export interface GenerateComicImageOptions {
   memorableMoment?: boolean;
   /** Opening + death auto-splashes still POST even when the weekly cap is sitting at 0. */
   bypassCapacity?: boolean;
+  /**
+   * Paper-doll portrait + inventory item icons. Hosted schnell, allowed in classic text,
+   * never spends memorable/illustrated weekly caps, no Settings key.
+   */
+  inventoryArt?: boolean;
 }
 
 /**
@@ -604,18 +609,19 @@ export async function generateComicImage(
   settings: Settings,
   options?: GenerateComicImageOptions
 ): Promise<string | null> {
+  const inventoryArt = Boolean(options?.inventoryArt);
   if (settings.visualMode === 'classic') {
     const allowMemorable = Boolean(options?.memorableMoment && settings.classicMemorableImages);
-    if (!allowMemorable) {
+    if (!allowMemorable && !inventoryArt) {
       console.log('[ImageService] Skipping image generation for classic text mode.');
       return null;
     }
-    if (!options?.bypassCapacity && !canSpend('memorable')) {
+    if (!inventoryArt && !options?.bypassCapacity && !canSpend('memorable')) {
       console.log('[ImageService] Memorable image quota exhausted.');
       return null;
     }
   } else if (settings.visualMode === 'comic') {
-    if (!canSpend('illustrated')) {
+    if (!inventoryArt && !canSpend('illustrated')) {
       console.log('[ImageService] Illustrated image quota exhausted.');
       return null;
     }
@@ -655,8 +661,8 @@ export async function generateComicImage(
   ].filter(Boolean).join('\n\n').trim();
 
   const classicMemorable = settings.visualMode === 'classic' && Boolean(options?.memorableMoment);
-  // Memorable plates stay schnell (cheap opener + extras). Never inherit High's flux-dev / hero path.
-  const useHeroModel = classicMemorable
+  // Memorable plates and inventory art stay schnell (cheap). Never inherit High's flux-dev / hero path.
+  const useHeroModel = classicMemorable || inventoryArt
     ? false
     : options?.hero === true || HERO_IMAGE_TRIGGER.test(prompt);
   let fluxModels = resolveFluxImageModel({
@@ -664,7 +670,7 @@ export async function generateComicImage(
     hero: useHeroModel,
     via: provider === 'flux-direct' ? 'direct' : 'openrouter',
   });
-  if (classicMemorable) {
+  if (classicMemorable || inventoryArt) {
     fluxModels = {
       openRouterId: PRIMARY_IMAGE_MODEL,
       bflEndpoint: 'flux-2-klein-4b',
@@ -672,6 +678,7 @@ export async function generateComicImage(
   }
 
   const recordSpend = () => {
+    if (inventoryArt) return;
     if (settings.visualMode === 'classic') spendCapacity('memorable');
     else if (settings.visualMode === 'comic') spendCapacity('illustrated');
   };
@@ -732,7 +739,7 @@ export async function generateComicImage(
   const apiKey = isByokTierWithoutHostedKeys(settings)
     ? resolveByokImageSpendKey(settings)
     : undefined;
-  const routedModel = classicMemorable
+  const routedModel = classicMemorable || inventoryArt
     ? PRIMARY_IMAGE_MODEL
     : (
       settings.imageModel?.trim() ||

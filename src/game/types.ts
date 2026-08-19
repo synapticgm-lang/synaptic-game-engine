@@ -23,6 +23,8 @@ export interface Item {
   baseValue?: number;
   /** Square inventory icon, WoW/BG3 style. */
   iconUrl?: string | null;
+  /** Hosted icon gen failed for this item — compact fail on the slot, do not retry-spam. */
+  iconFailed?: boolean;
 }
 
 export type ItemType = 'weapon' | 'armor' | 'consumable' | 'material' | 'container' | 'accessory' | 'quest';
@@ -101,6 +103,8 @@ export interface Character {
   portraitUrl?: string | null;
   /** Appearance + equipped gear key; regenerate portrait when this changes. */
   portraitKey?: string;
+  /** Last portrait attempt for portraitKey failed — compact fail, retry when the look/kit changes. */
+  portraitFailed?: boolean;
   armorClass?: number;
   entities?: SummonEntity[];
   summons?: SummonEntity[];

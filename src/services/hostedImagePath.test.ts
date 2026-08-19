@@ -16,7 +16,7 @@ vi.mock('@/game/capacityLedger', () => ({
 
 import { generateComicImage } from './openRouterService';
 import { createDefaultSettings } from '@/game/defaults';
-import { canSpend } from '@/game/capacityLedger';
+import { canSpend, spendCapacity } from '@/game/capacityLedger';
 
 describe('hosted memorable art — Free without browser keys', () => {
   beforeEach(() => {
@@ -155,5 +155,90 @@ describe('hosted memorable art — Free without browser keys', () => {
         useRawPrompt: true,
       })
     ).rejects.toThrow(/image proxy error 404|hosted image service is unavailable/i);
+  });
+});
+
+describe('hosted inventory art — classic text, no memorable spend', () => {
+  beforeEach(() => {
+    vi.mocked(canSpend).mockReturnValue(true);
+    vi.mocked(spendCapacity).mockClear();
+  });
+
+  afterEach(() => {
+    vi.unstubAllGlobals();
+    vi.restoreAllMocks();
+  });
+
+  function hostedClassic() {
+    return {
+      ...createDefaultSettings(),
+      subscriptionTier: 'free' as const,
+      visualMode: 'classic' as const,
+      classicMemorableImages: true,
+      openrouterApiKey: '',
+      fluxApiKey: '',
+      imageApiKey: '',
+      imageProvider: 'flux' as const,
+    };
+  }
+
+  it('still POSTs generate-image for paper-doll when memorable cap is 0', async () => {
+    vi.mocked(canSpend).mockReturnValue(false);
+    const fetchMock = vi.fn(async (input: RequestInfo | URL, init?: RequestInit) => {
+      expect(String(input)).toMatch(/\/functions\/v1\/generate-image$/);
+      const body = JSON.parse(String(init?.body ?? '{}')) as { model?: string };
+      expect(body.model).toBe('black-forest-labs/flux-schnell');
+      return new Response(JSON.stringify({ url: 'https://img.test/jax-doll.png' }), {
+        status: 200,
+        headers: { 'Content-Type': 'application/json' },
+      });
+    });
+    vi.stubGlobal('fetch', fetchMock);
+
+    const url = await generateComicImage('Jax standing in an inventory paper-doll pose', 'adult', hostedClassic(), {
+      inventoryArt: true,
+      useRawPrompt: true,
+    });
+
+    expect(fetchMock).toHaveBeenCalled();
+    expect(url).toBe('https://img.test/jax-doll.png');
+    expect(spendCapacity).not.toHaveBeenCalled();
+  });
+
+  it('still POSTs generate-image for an item icon with empty client keys', async () => {
+    vi.mocked(canSpend).mockReturnValue(true);
+    const fetchMock = vi.fn(async (input: RequestInfo | URL) => {
+      expect(String(input)).toMatch(/\/functions\/v1\/generate-image$/);
+      return new Response(JSON.stringify({ url: 'https://img.test/hat-icon.png' }), {
+        status: 200,
+        headers: { 'Content-Type': 'application/json' },
+      });
+    });
+    vi.stubGlobal('fetch', fetchMock);
+
+    const url = await generateComicImage('Inventory icon of Hat. Worn/held as Head.', 'adult', hostedClassic(), {
+      inventoryArt: true,
+      useRawPrompt: true,
+    });
+
+    expect(url).toBe('https://img.test/hat-icon.png');
+    expect(spendCapacity).not.toHaveBeenCalled();
+  });
+
+  it('still skips routine classic art when inventoryArt is not set', async () => {
+    const fetchMock = vi.fn();
+    vi.stubGlobal('fetch', fetchMock);
+    const logs: string[] = [];
+    vi.spyOn(console, 'log').mockImplementation((...args) => {
+      logs.push(args.map(String).join(' '));
+    });
+
+    const url = await generateComicImage('A street scene', 'adult', hostedClassic(), {
+      useRawPrompt: true,
+    });
+
+    expect(url).toBeNull();
+    expect(fetchMock).not.toHaveBeenCalled();
+    expect(logs.join('\n')).toMatch(/Skipping image generation for classic text mode/i);
   });
 });

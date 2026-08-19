@@ -2,8 +2,10 @@ import type { GameState, Item } from './types';
 
 export interface InventoryArtPatch {
   itemIcons?: Record<string, string>;
+  itemIconFails?: Record<string, true>;
   portraitUrl?: string;
   portraitKey?: string;
+  portraitFailed?: boolean;
 }
 
 export interface CharacterLikeness {
@@ -45,14 +47,20 @@ export function portraitCacheKey(state: GameState): string {
   return characterLikeness(state).key;
 }
 
+export function hasPortraitSeed(state: GameState): boolean {
+  if (state.character.appearance?.trim()) return true;
+  if (state.character.bio?.trim()) return true;
+  return (state.inventory ?? []).some((i) => i.equipped);
+}
+
+export function equippedItemsNeedingIcons(state: GameState): Item[] {
+  return (state.inventory ?? []).filter((item) => item.equipped && !item.iconUrl && !item.iconFailed);
+}
+
 export function needsPortraitRefresh(state: GameState): boolean {
-  const look = state.character.appearance?.trim();
-  const bio = state.character.bio?.trim();
-  const worn = (state.inventory ?? []).some(
-    (i) => i.equipped && /shirt|jeans|boots|hoodie|jacket|tee|trainers|sneakers|doc/i.test(i.name)
-  );
-  if (!look && !bio && !worn) return false;
+  if (!hasPortraitSeed(state)) return false;
   const key = portraitCacheKey(state);
+  if (state.character.portraitFailed && state.character.portraitKey === key) return false;
   return !state.character.portraitUrl || state.character.portraitKey !== key;
 }
 
