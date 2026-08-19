@@ -9,6 +9,7 @@ import {
   isLocationishOpeningUtterance,
   isOpeningSetupChipLabel,
   mergePreferredProfileIntoOpening,
+  openingAnswerDisplay,
 } from './openingEstablishment';
 import type { GameState } from './types';
 
@@ -117,5 +118,22 @@ describe('mergePreferredProfileIntoOpening', () => {
     expect(next.character.name).toBe('John');
     expect(next.openingEstablishment?.pending[0]?.kind).toBe('location');
     expect(next.openingEstablishment?.answers?.name).toBe('John');
+  });
+});
+
+describe('opening player bubbles', () => {
+  it('maps setup chips to locked canon in display text', () => {
+    expect(openingAnswerDisplay('Random Earth city', 'Peterborough UK')).toBe('Peterborough UK');
+    expect(openingAnswerDisplay('Travel clothes', 'Travel clothes')).toBe('Travel clothes');
+  });
+
+  it('logs resolved Earth place when Random Earth city chip is used', async () => {
+    let state = (await applyOpeningAnswer(summonedNameCover(), 'Sam')).state;
+    state = (await applyOpeningAnswer(state, 'Random Earth city')).state;
+    const playerLines = state.log.filter((e) => e.role === 'player').map((e) => e.content);
+    expect(playerLines).toContain('Sam');
+    expect(playerLines.some((l) => /peterborough|manchester|leeds|birmingham|sheffield|london/i.test(l))).toBe(
+      true
+    );
   });
 });

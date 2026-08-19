@@ -2,7 +2,7 @@ import type { CampaignBible, OpeningHookCard, OpeningMode, OpeningPrompt, Openin
 import { OPENING_HOOK_DECKS } from '@/data/campaigns/openingHookDecks';
 import { resolveActiveCampaignBible } from './campaignSeed';
 import type { CampaignArchetype } from './archetypes';
-import type { EngineMode, GameState, Item, OpeningEstablishment, Settings } from './types';
+import type { EngineMode, GameState, Item, LogEntry, OpeningEstablishment, Settings } from './types';
 import { extractSystemRename, interpretPlayerUtterance, isJunkSetupValue, isSetupRefusal, utteranceIsMessy } from './playerUtterance';
 import { materializeWornClothes } from './wornGear';
 import { seedLocalStarterQuest } from './questPlay';
@@ -49,6 +49,35 @@ export function isRandomPlaceRequest(raw: string): boolean {
 /** Meta chip labels — never spoken dialogue on the book unless they typed a real line. */
 export function isOpeningSetupChipLabel(raw: string): boolean {
   return META_SETUP_CHIP.test(raw.replace(/\s+/g, ' ').trim());
+}
+
+/** Player bubble text for opening covers — chip labels become the locked canon value. */
+export function openingAnswerDisplay(raw: string, locked: string): string {
+  const t = raw.replace(/\s+/g, ' ').trim();
+  if (!t) return locked;
+  if (isOpeningSetupChipLabel(t)) return locked;
+  if (/^random\s+(name|designation)\b/i.test(t)) return locked;
+  if (isRandomPlaceRequest(t)) return locked;
+  return t;
+}
+
+function appendOpeningPlayerBubble(log: LogEntry[], turn: number, display: string | null): LogEntry[] {
+  if (!display?.trim()) return log;
+  const normalized = display.replace(/\s+/g, ' ').trim();
+  const last = log[log.length - 1];
+  if (last?.role === 'player' && last.content.replace(/\s+/g, ' ').trim() === normalized) {
+    return log;
+  }
+  return [
+    ...log,
+    {
+      id: crypto.randomUUID(),
+      turn,
+      role: 'player',
+      content: normalized,
+      timestamp: Date.now(),
+    },
+  ];
 }
 
 export function isLocationishOpeningUtterance(raw: string): boolean {
@@ -1137,6 +1166,13 @@ export async function applyOpeningAnswer(
   const answers = { ...est.answers };
   const stillPending: OpeningPrompt[] = [];
   let cheated = false;
+  const coverId = est.pending[0]?.id;
+  let resolvedCoverDisplay: string | null = null;
+  const markCoverResolved = (prompt: OpeningPrompt, lockedValue: string) => {
+    if (prompt.id === coverId) {
+      resolvedCoverDisplay = openingAnswerDisplay(answer, lockedValue);
+    }
+  };
 
   for (const prompt of est.pending) {
     const harvested = fieldForKind(prompt.kind, harvest);
@@ -1173,6 +1209,7 @@ export async function applyOpeningAnswer(
         const place = pickPlaceForCampaign(nextState);
         nextState = applyKindToState(nextState, prompt, place);
         answers[prompt.id] = place;
+        markCoverResolved(prompt, place);
         continue;
       }
       stillPending.push(prompt);
@@ -1185,6 +1222,7 @@ export async function applyOpeningAnswer(
     }
     nextState = applyKindToState(nextState, prompt, locked);
     answers[prompt.id] = locked;
+    markCoverResolved(prompt, locked);
   }
 
   const aside = registrarAside(registrar, harvest, nextState.campaignBibleId);
@@ -1222,7 +1260,10 @@ export async function applyOpeningAnswer(
           mode: est.mode,
         },
         choices: establishmentChoices(stillPending),
-        log: [...nextState.log, gmEntry],
+        log: [
+          ...appendOpeningPlayerBubble(nextState.log, nextState.turn, resolvedCoverDisplay),
+          gmEntry,
+        ],
         lastUpdated: Date.now(),
       },
     };
@@ -1264,7 +1305,7 @@ export async function applyOpeningAnswer(
       ),
       pendingGeneratedOpening: false,
       choices: est.sceneWritten ? nextState.choices : [],
-      log: nextState.log,
+      log: appendOpeningPlayerBubble(nextState.log, nextState.turn, resolvedCoverDisplay),
       lastUpdated: Date.now(),
     },
     openingNotes: writerNotes || openingNotes,
