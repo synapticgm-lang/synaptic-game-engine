@@ -8,9 +8,9 @@ import { effectiveWriterTier, isTestLabEnabled } from '../game/testLab';
 import { equippedSetLabel, equippedSetName } from '../game/uiTheme';
 
 /** Visible after a hard refresh — if this is missing, Vercel is still serving the 16 Aug bundle. */
-export const HUD_BUILD_STAMP = '2026-08-20d';
+export const HUD_BUILD_STAMP = '2026-08-20e';
 const HUD_BUILD_TITLE =
-  'Debug 2026-08-20d — memorable paywall build fix';
+  'Debug 2026-08-20e — alone covers + quest + HUD';
 
 interface Props {
   state: GameState;
@@ -78,14 +78,14 @@ export function Hud({ state, settings, onSettings, onOpenMap, onOpenQuestLog, on
     <header className="sgm-hud border-b px-2 py-2 sm:px-4 sm:py-2.5 flex items-center justify-between text-xs text-slate-200 sticky top-0 z-40 backdrop-blur w-full">
       
       {/* Left Spacer / Branding or status if needed */}
-      <div className="flex items-center gap-1 w-auto sm:w-1/4 shrink min-w-0">
+      <div className="flex items-center gap-1 w-auto sm:w-1/4 shrink min-w-0 overflow-hidden">
         <div className="hidden md:flex min-w-0 max-w-[11rem] flex-col leading-tight mr-1">
           <span className="sgm-hud-brand font-bold">Synaptic GM</span>
           <span className="sgm-equipped-set truncate" title={setLabel}>{setLabel}</span>
         </div>
-        <span className="md:hidden sgm-equipped-set truncate max-w-[7rem]" title={setLabel}>{setName}</span>
+        <span className="md:hidden sgm-equipped-set truncate max-w-[4.5rem]" title={setLabel}>{setName}</span>
         <span
-          className="font-mono text-[10px] sm:text-[11px] text-rose-300/90 whitespace-nowrap"
+          className="hidden sm:inline font-mono text-[10px] sm:text-[11px] text-rose-300/90 whitespace-nowrap"
           title={HUD_BUILD_TITLE}
         >
           {HUD_BUILD_STAMP}
@@ -96,7 +96,7 @@ export function Hud({ state, settings, onSettings, onOpenMap, onOpenQuestLog, on
           </span>
         )}
         <span
-          className="font-mono text-[10px] sm:text-[11px] text-amber-200/90 whitespace-nowrap"
+          className="font-mono text-[10px] sm:text-[11px] text-amber-200/90 whitespace-nowrap shrink-0"
           title={turnsTitle}
         >
           {testLab ? (
@@ -105,7 +105,7 @@ export function Hud({ state, settings, onSettings, onOpenMap, onOpenQuestLog, on
             <>
               {turnsLeft} turn{turnsLeft === '1' ? '' : 's'}
               {storyStartLeft > 0 ? (
-                <span className="text-amber-200/60"> · {storyStartLeft} start</span>
+                <span className="hidden sm:inline text-amber-200/60"> · {storyStartLeft} start</span>
               ) : null}
             </>
           )}
@@ -149,18 +149,20 @@ export function Hud({ state, settings, onSettings, onOpenMap, onOpenQuestLog, on
       <div className="flex items-center justify-end gap-1 sm:gap-2 w-auto sm:w-1/4 shrink-0">
         
         {/* Mobile Dropdown & Bug Button */}
-        <div className="flex items-center gap-1 md:hidden">
+        <div className="flex items-center gap-1 md:hidden shrink-0">
           <button
             onClick={handleBugClick}
             title={`${HUD_BUILD_TITLE}${lastSavedTurn != null ? ` · last saved T${lastSavedTurn}` : ''}`}
-            className="p-1 sm:p-1.5 bg-rose-950/60 border border-rose-800 text-rose-400 rounded hover:bg-rose-900 transition-colors flex items-center gap-0.5 text-[10px] font-mono"
+            className="p-1.5 bg-rose-950/60 border border-rose-800 text-rose-400 rounded hover:bg-rose-900 transition-colors flex items-center justify-center"
+            aria-label={`Debug ${HUD_BUILD_STAMP}`}
           >
-            <Bug size={14} /> {HUD_BUILD_STAMP}
+            <Bug size={14} />
           </button>
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="p-1 sm:p-1.5 bg-slate-900 border border-slate-700 text-slate-300 rounded flex items-center justify-center"
+            className="p-1.5 bg-slate-900 border border-slate-700 text-slate-300 rounded flex items-center justify-center"
             title="Toggle Menu Icons"
+            aria-label="Toggle menu"
           >
             {mobileMenuOpen ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
           </button>

@@ -9,7 +9,7 @@ John is playtesting live. Collect issues here. Do not implement until he asks fo
 
 ## Open
 
-(none — 2026-08-18b HUD stamp to force a Vercel production deploy; 16 Aug CDN was still live)
+(none — alone-arrival name/quest/HUD batch shipping as 2026-08-20e)
 
 ## Waiting (research — not tickets yet)
 
@@ -20,6 +20,7 @@ John is playtesting live. Collect issues here. Do not implement until he asks fo
 
 ## Done (already shipped)
 
+- **2026-08-20e alone covers + quest + HUD:** Alone Summoned Pact uses panel name ask (not “someone in the scene”); Circle’s Price journal/unlock text adapts for alone arrival; mobile HUD drops duplicate stamp on bug button. HUD stamp 20e
 - **2026-08-20d memorable paywall build fix:** NewGameModal positional args (not object keys) so Vercel build passes; HUD stamp 20d
 - **2026-08-20c memorable paywall:** Free week-cap 0; Memorable toggle stays visible but grayed with Mid/High / pack CTA when no plates left; Mid+High memorable plates use Flux Pro; Free rewarded memorable ads paused. HUD stamp 20c
 - **2026-08-20b alone-arrival ruins:** Summoned Pact deck adds solo dumps into a random building at ruin levels from shabby-standing → damaged → half-collapsed → wall-shell → burnt husk → foundation outline only (no licensed inn). HUD stamp 20b

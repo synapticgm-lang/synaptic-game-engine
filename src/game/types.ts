@@ -340,6 +340,8 @@ export interface OpeningEstablishment {
   pickedHook?: string;
   /** Player-facing fallback if the writer call fails. */
   pickedHookFallback?: string;
+  /** True when this run’s opener has no summoners on page one. */
+  aloneArrival?: boolean;
 }
 
 export interface GameState {

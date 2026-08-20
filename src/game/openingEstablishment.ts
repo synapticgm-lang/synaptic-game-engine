@@ -422,6 +422,57 @@ const BIBLE_INWORLD: Record<string, Partial<Record<OpeningPromptKind, string>>> 
   },
 };
 
+/** Alone-arrival Summoned Pact — no NPC audience; the panel asks. */
+const SUMMONED_ALONE_COVERS: Partial<Record<OpeningPromptKind, string>> = {
+  name: 'Your blue panel waits on a designation. What name should it show?',
+  location: 'Before the light took you — which Earth place were you in? A city, a street, a home.',
+  appearance: 'You look down. You are still wearing what the light stole you in. What is it?',
+  kit: 'Pockets, bag, whatever rode with you. What is actually on you? Nothing invented for a fight.',
+};
+
+const ALONE_ARRIVAL_MARK =
+  /\balone\b|nobody here|no summoners|no handlers|outline of a building|foundation stones|burnt husk|wall-shell|half-collapsed ruin/i;
+
+/** Seed-picked alone dump (ruin with no summoners on page one). */
+export function isAloneArrivalPick(picked?: {
+  text?: string;
+  location?: string;
+  fallback?: string;
+} | null): boolean {
+  if (!picked) return false;
+  return ALONE_ARRIVAL_MARK.test(
+    `${picked.location ?? ''}\n${picked.text ?? ''}\n${picked.fallback ?? ''}`
+  );
+}
+
+export function isAloneArrivalOpening(state: GameState): boolean {
+  if (state.openingEstablishment?.aloneArrival === true) return true;
+  if (state.openingEstablishment?.aloneArrival === false) return false;
+  return isAloneArrivalPick({
+    text: state.openingEstablishment?.pickedHook,
+    location: state.currentLocation,
+    fallback: state.openingEstablishment?.pickedHookFallback,
+  });
+}
+
+/** Re-voice covers when the opener has no people in the room. */
+export function styleCoversForAloneArrival(
+  prompts: OpeningPrompt[],
+  bible: CampaignBible | undefined,
+  alone: boolean
+): OpeningPrompt[] {
+  if (!alone || bible?.id !== 'summoned-pact') return prompts;
+  return prompts.map((p) => {
+    const aloneQ = SUMMONED_ALONE_COVERS[p.kind];
+    if (!aloneQ) return p;
+    return {
+      ...p,
+      style: p.kind === 'name' ? 'system' : (p.style ?? 'inworld'),
+      question: aloneQ,
+    };
+  });
+}
+
 const DEFAULT_INWORLD: Record<OpeningPromptKind, string> = {
   name: 'Someone in the scene needs a name for you. What do they call you?',
   location: 'Where are you, exactly, as this opens?',
@@ -1301,6 +1352,9 @@ export async function applyOpeningAnswer(
           declinedFields: declined,
           sceneWritten: est.sceneWritten,
           mode: est.mode,
+          pickedHook: est.pickedHook,
+          pickedHookFallback: est.pickedHookFallback,
+          aloneArrival: est.aloneArrival,
         },
         choices: establishmentChoices(stillPending),
         log: [
@@ -1341,10 +1395,14 @@ export async function applyOpeningAnswer(
         declinedFields: declined,
         sceneWritten: est.sceneWritten,
         mode: est.mode,
+        pickedHook: est.pickedHook,
+        pickedHookFallback: est.pickedHookFallback,
+        aloneArrival: est.aloneArrival,
       },
       quests: seedLocalStarterQuest(
         nextState.quests ?? [],
-        resolveActiveCampaignBible(nextState)?.starterQuests ?? []
+        resolveActiveCampaignBible(nextState)?.starterQuests ?? [],
+        isAloneArrivalOpening(nextState)
       ),
       pendingGeneratedOpening: false,
       choices: est.sceneWritten ? nextState.choices : [],
@@ -1426,7 +1484,7 @@ Write THIS run's first page from the pointer card and the campaign bible. Unique
 Genre practice (honor the story type):
 - CYOA / Choice of Games / PYOA: drop into the crisis. No name form.
 - LitRPG / System apocalypse: ordinary street first, then the panel as a moment. Earth is NOT being ingested.
-- Isekai summon: arrive in THIS run's picked place (not always a cathedral circle — may be alone in a ruin with no summoners). People talk when people are present; clothes are a look-down; origin is the Earth place the light took you from. Camera is HERE, not Earth. If the pointer card includes an opening offer, someone in the scene can voice it — the player may refuse. Alone cards: no welcoming NPC on page one.
+- Isekai summon: arrive in THIS run's picked place (not always a cathedral circle — may be alone in a ruin with no summoners). People talk when people are present; clothes are a look-down; origin is the Earth place the light took you from. Camera is HERE, not Earth. If the pointer card includes an opening offer, someone in the scene can voice it — the player may refuse. Alone cards: no welcoming NPC on page one; name/look/kit covers come from the blue panel or a look-down, never “someone in the scene.”
 - Mystery / romance / space horror: body, door, or bulkhead already in motion.
 
 1) 4–7 sentences of story in the seeded place. Honor the configured PERSPECTIVE for the entire beat. Full grammatical English — no telegram fragments ("Mass summon. Politics in the first breath.").

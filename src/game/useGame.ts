@@ -75,6 +75,9 @@ import {
   resolveOpeningRegistrar,
   resolveOpeningHookPick,
   seedCoverAnswers,
+  styleCoversForAloneArrival,
+  isAloneArrivalPick,
+  isAloneArrivalOpening,
   synthesizeOpeningScene,
   mergePreferredProfileIntoOpening,
   characterNameIsGeneric,
@@ -1950,7 +1953,8 @@ export function useGame() {
         const questsAfterScene = journalReady
           ? revealLocalStarterQuest(
               openingState.quests ?? [],
-              openingBible?.starterQuests ?? []
+              openingBible?.starterQuests ?? [],
+              isAloneArrivalOpening(openingState)
             )
           : openingState.quests ?? [];
         const openingUnlocks = journalReady
@@ -3621,7 +3625,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
       ? applyUsualSelfToCharacter(mergedCharacterRaw, profile)
       : mergedCharacterRaw;
     const openingMode = resolveOpeningMode(bible, engineMode);
-    const openingPrompts = resolveOpeningPrompts(
+    const openingPromptsRaw = resolveOpeningPrompts(
       bible,
       engineMode,
       resolvedArchetype ?? namedSeeded.campaignArchetype
@@ -3632,8 +3636,10 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
       resolvedArchetype ?? namedSeeded.campaignArchetype
     );
     const coverAnswers = seedCoverAnswers(bible, mergedCharacter);
-    const pendingCovers = pendingRequiredCovers(openingPrompts, mergedCharacter, openingMode);
     const picked = resolveOpeningHookPick(bible, namedSeeded.seed);
+    const aloneArrival = isAloneArrivalPick(picked);
+    const openingPrompts = styleCoversForAloneArrival(openingPromptsRaw, bible, aloneArrival);
+    const pendingCovers = pendingRequiredCovers(openingPrompts, mergedCharacter, openingMode);
     const pickedHook = picked?.text;
     const pickedHookFallback = picked?.fallback;
     const honeymoon = storyStartTextTurnsForTier(settingsRef.current.subscriptionTier ?? 'free');
@@ -3661,6 +3667,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
         mode: openingMode,
         pickedHook,
         pickedHookFallback,
+        aloneArrival,
       },
       customTabletopRules:
         engineMode === 'dnd' ? clipCustomTabletopRules(customTabletopRules).text || undefined : undefined,
@@ -3736,7 +3743,8 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
       const questsAfterScene = journalReady
         ? revealLocalStarterQuest(
             newState.quests ?? [],
-            openingBible?.starterQuests ?? []
+            openingBible?.starterQuests ?? [],
+            isAloneArrivalOpening(newState)
           )
         : newState.quests ?? [];
       const openingUnlocks = journalReady
