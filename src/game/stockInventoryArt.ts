@@ -150,7 +150,10 @@ export function stockPortraitSrc(state: GameState): string {
   const helm = worn.some((i) => normalizeEquipSlot(i.slot) === 'Head') && /\bhelm|helmet|crown/.test(hay);
   const hat = worn.some((i) => normalizeEquipSlot(i.slot) === 'Head') && !helm;
   const armor = /\barmor|mail|plate|tunic/.test(hay) || worn.some((i) => i.itemType === 'armor');
-  const street = /\bhoodie|jeans|tee|shirt|clothes|jacket/.test(hay + look);
+  const street =
+    /\bhoodie|jeans|tee|shirt|clothes|jacket|earth|travel|everyday|street|what you had on|light took you\b/.test(
+      hay + ' ' + look
+    );
   const cloak = /\bcloak|cape|robe|hood/.test(hay);
   const staff = /\bstaff|wand|stave/.test(hay);
   const sword = worn.some((i) => normalizeEquipSlot(i.slot) === 'Main Hand') && !staff;

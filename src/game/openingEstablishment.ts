@@ -403,7 +403,6 @@ export function resolveOpeningHook(bible: CampaignBible | undefined, seed?: stri
 const BIBLE_INWORLD: Record<string, Partial<Record<OpeningPromptKind, string>>> = {
   'summoned-pact': {
     name: 'Someone in the scene needs a name for you. What do they call you?',
-    location: 'Before the light took you — which Earth place were you in? A city, a street, a home.',
     appearance: 'You look down. You are still wearing what the light stole you in. What is it?',
     kit: 'Pockets, bag, whatever rode with you. What is actually on you? Nothing invented for a fight.',
   },
@@ -425,7 +424,6 @@ const BIBLE_INWORLD: Record<string, Partial<Record<OpeningPromptKind, string>>> 
 /** Alone-arrival Summoned Pact — no NPC audience; the panel asks. */
 const SUMMONED_ALONE_COVERS: Partial<Record<OpeningPromptKind, string>> = {
   name: 'Your blue panel waits on a designation. What name should it show?',
-  location: 'Before the light took you — which Earth place were you in? A city, a street, a home.',
   appearance: 'You look down. You are still wearing what the light stole you in. What is it?',
   kit: 'Pockets, bag, whatever rode with you. What is actually on you? Nothing invented for a fight.',
 };
@@ -1506,27 +1504,4 @@ export function sanitizeOpeningNarration(text: string): string {
     .replace(/\b([Oo]n you:)\s*my\b/g, '$1')
     .replace(/\b([Ii]n your pockets:)\s*my\b/g, '$1')
     .replace(/\bmy (wallet|phone|headphones|keys|house keys|leatherman|jeans|boots|t-?shirt)\b/gi, '$1');
-}
-
-export function synthesizeOpeningScene(state: GameState): string {
-  const a = state.openingEstablishment?.answers ?? {};
-  const where = a.where || state.currentLocation || 'where you already were';
-  const folk = a.folk || a.form || '';
-  const folkBit = folk ? ` You are ${folk}.` : '';
-  const bible = resolveActiveCampaignBible(state);
-  const picked = resolveOpeningHookPick(bible, state.seed);
-  const hook = state.openingEstablishment?.pickedHookFallback?.trim()
-    || picked?.fallback
-    || state.openingEstablishment?.pickedHook?.trim()
-    || picked?.text;
-  const looksLikePointers = !!hook && /^(Place:|Who is here|Why this happened|Opening offer)/m.test(hook);
-  const scene = looksLikePointers
-    ? (picked?.fallback
-      || `You are in ${state.currentLocation || where}.${folkBit} People in the scene are already reacting.`)
-    : hook
-    || (/system integration|every human on earth/i.test(state.campaignPremise ?? '')
-      ? `You are still in ${where} — same morning, same life — while the sky stays torn and a blue panel hangs at eye level.${folkBit} People nearby are shouting.`
-      : `You are in ${where}.${folkBit} The scene that was already moving is still moving.`);
-  const cover = state.openingEstablishment?.pending[0]?.question;
-  return cover ? `${scene}\n\n${cover}` : scene;
 }

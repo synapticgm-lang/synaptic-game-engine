@@ -10,13 +10,11 @@ John is playtesting live. Collect issues here. Do not implement until he asks fo
 ## Open
 
 - **2026-08-20e HUD still squashed (mobile):** HP/MP values overlap on the top bar (e.g. “24/24” into “12/A”); name truncates; bug + chevron still tight. Stamp may already be 20e — needs a real narrow-viewport layout pass (not just hiding the stamp on the bug chip).
-- **2026-08-20e skip Earth-origin cover at start:** Do not always ask “which Earth place were you in?” right after name. Leave origin for story (player brings it up — “home where I lived in …”) or a later beat. Summoned Pact / isekai weave covers should drop or defer the location ask unless the opening genuinely needs it.
-- **2026-08-20e opening covers feel copy-pasted + burn turns:** Name → Earth place → clothes weave reads as the same templated prompt stack each New Game (“Someone in the scene…”, “Before the light took you…”, “You look down…”). Feels pasted, not authored. Opening setup answers should stay free / not spend story-start turns (or covers should collapse into the live scene so replies don’t look like turn bills).
-- **2026-08-20e no response after opening (“Where am I”):** First real turn after weave covers + quest unlock hung / failed. Event log: `sendAction failed` → “The System is still compiling. Try again, or cancel and keep the last scene.”; `[ai-proxy] GM proxy failed and client GM path is disabled`; retries exhausted. Later `Failed to fetch` on telemetry + session `_getUser`. Android Chrome, Free tier, bundle `index-BSjCzEzB.js`, session `7b4a0a2d-…`. Player bubble kept (“Where am I”) with no GM reply. Check proxy timeout / compile gate / DeepSeek Free path after openingEstablishment.complete.
+- **2026-08-20e no response after opening (“Where am I”):** First real turn after weave covers + quest unlock hung / failed. Event log: `sendAction failed` → “The System is still compiling…”. Partial: honest toast via Error Repair Warden; still need auto-retry / longer first post-open budget.
 
 ## Waiting (research — not tickets yet)
 
-- **Error Repair Warden (scaffolded 2026-08-20):** `docs/research/ERROR-FIX-LOG.md` + `src/game/errorRepairWarden.ts` — maps recurring bugs to classes A–H; auto-repairs alone quest on Continue; honest turn-fail toasts. Still to ship on next update: OpeningContract (Earth defer + cover banks), HudLayout @ 384px, proxy auto-retry / longer first post-open budget. Canvas: `error-fix-recurrence`
+- **Error Repair Warden:** auto-retry + longer first post-open budget still pending
 - Server capacity / Stripe live secrets / counsel legal pack / Kid Mode public gate — ops, not playtest tickets
 - Full a11y release gate, Expert author tools, audio lite, full comic — deliberate later / No-Go near-term
 - Manus optional: Snapshot+screenshots E1/E2; post-commit streaming UI; counsel outline
@@ -24,6 +22,7 @@ John is playtesting live. Collect issues here. Do not implement until he asks fo
 
 ## Done (already shipped)
 
+- **2026-08-20f instant opening stitch:** New Game paints page 1 from seed-picked card + sensory/pressure banks — no blocking `callGm`. Earth-origin cover deferred (story can bring it up). Cover asks vary by seed; alone = panel name. Starter look `everyday street clothes` so doll is not empty shoulders. After covers, local continue stitch (no GM wait). HUD stamp 20f — `openingStitch.ts`
 - **2026-08-20e alone covers + quest + HUD:** Alone Summoned Pact uses panel name ask (not “someone in the scene”); Circle’s Price journal/unlock text adapts for alone arrival; mobile HUD drops duplicate stamp on bug button. HUD stamp 20e
 - **2026-08-20d memorable paywall build fix:** NewGameModal positional args (not object keys) so Vercel build passes; HUD stamp 20d
 - **2026-08-20c memorable paywall:** Free week-cap 0; Memorable toggle stays visible but grayed with Mid/High / pack CTA when no plates left; Mid+High memorable plates use Flux Pro; Free rewarded memorable ads paused. HUD stamp 20c

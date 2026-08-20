@@ -1,8 +1,9 @@
 import { describe, expect, it } from 'vitest';
 import { ALL_CAMPAIGN_BIBLES } from '@/data/campaigns';
 import { summonedPact } from '@/data/campaigns/summonedPact';
-import { openingHookDeck, resolveOpeningHook, normalizeOpeningHookCard, isAloneArrivalPick, styleCoversForAloneArrival, resolveOpeningPrompts } from './openingEstablishment';
+import { openingHookDeck, resolveOpeningHook, normalizeOpeningHookCard, isAloneArrivalPick, resolveOpeningPrompts } from './openingEstablishment';
 import { adaptStarterQuestsForArrival } from './questPlay';
+import { applyOpeningContract } from './openingStitch';
 
 describe('ready-made opening hook decks', () => {
   it('gives Summoned Pact more than the cathedral circle', () => {
@@ -58,15 +59,17 @@ describe('ready-made opening hook decks', () => {
     expect(aloneCard).toBeTruthy();
     const picked = normalizeOpeningHookCard(aloneCard!);
     expect(isAloneArrivalPick(picked)).toBe(true);
-    const styled = styleCoversForAloneArrival(
+    const styled = applyOpeningContract(
       resolveOpeningPrompts(summonedPact, 'litrpg'),
       summonedPact,
-      true
+      true,
+      'alone-seed'
     );
     const name = styled.find((p) => p.kind === 'name');
     expect(name?.question).toMatch(/panel/i);
     expect(name?.question).not.toMatch(/someone in the scene/i);
     expect(name?.style).toBe('system');
+    expect(styled.some((p) => p.kind === 'location')).toBe(false);
   });
 
   it('adapts Circle’s Price when the arrival is alone', () => {

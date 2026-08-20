@@ -67,7 +67,6 @@ import {
   establishmentChoices,
   litrpgOpeningSystemPing,
   sanitizeOpeningNarration,
-  buildOpeningSceneMandate,
   isOpeningEstablishmentPending,
   isOpeningSetupChipLabel,
   pendingRequiredCovers,
@@ -76,13 +75,17 @@ import {
   resolveOpeningRegistrar,
   resolveOpeningHookPick,
   seedCoverAnswers,
-  styleCoversForAloneArrival,
   isAloneArrivalPick,
   isAloneArrivalOpening,
-  synthesizeOpeningScene,
   mergePreferredProfileIntoOpening,
   characterNameIsGeneric,
 } from './openingEstablishment';
+import {
+  applyOpeningContract,
+  ensureStarterLookCharacter,
+  stitchOpeningContinue,
+  stitchOpeningScene,
+} from './openingStitch';
 import { applyCommittedNarrative, extractSceneFacts, seedOpeningSceneFacts, rewriteContinuityBreak, detectSceneContradiction } from './sceneFacts';
 import { applyFactLocks, detectFactLockViolations } from './factLocks';
 import { dropInsultGear } from './wornGear';
@@ -141,7 +144,6 @@ import {
 } from './sceneFocus';
 import {
   buildResolutionUserPayload,
-  isGenericBridgeNarrative,
   isUnresolvedActionNarrative,
 } from './actionResolution';
 import { mergeNpcMemoriesFromTurn, recordNpcTreatmentFromAction } from './npcMemory';
@@ -1914,31 +1916,10 @@ export function useGame() {
           return;
         } else {
         const openingState = { ...stepped.state, pendingGeneratedOpening: false };
-        let openingText = '';
-        let openingRaw = '';
-        try {
-          const openingResult = await callGm(
-            openingState,
-            `${buildOpeningSceneMandate(openingState, stepped.openingNotes)}\n\n${
-              openingState.openingEstablishment?.sceneWritten
-                ? 'Continue the opening scene now — do not restart.'
-                : 'Write the opening scene now.'
-            }`,
-            settingsRef.current,
-            [],
-            (attempt, delayMs) => {
-              setRetryStatus(`Rate limited — retry ${attempt}/4 in ${Math.round(delayMs / 1000)}s…`);
-            },
-            turnAbort.signal,
-          );
-          openingRaw = openingResult.text;
-          openingText = stripChoiceList(stripActionTags(openingResult.text));
-        } catch {
-          openingText = '';
-        }
-        if (!openingText || openingText.length < 60 || isGenericBridgeNarrative(openingText)) {
-          openingText = synthesizeOpeningScene(openingState);
-        }
+        const openingRaw = '';
+        let openingText = openingState.openingEstablishment?.sceneWritten
+          ? stitchOpeningContinue(openingState)
+          : stitchOpeningScene(openingState);
         openingText = ensureSystemReceipt(openingState, sanitizeOpeningNarration(openingText));
         openingText = applyProseWarden(
           enforcePerspective(openingText, settingsRef.current, openingState.character.name),
@@ -3626,9 +3607,11 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
       useUsualSelf !== false
       && !!profile.preferredName.trim()
       && (useUsualSelf === true || characterNameIsGeneric(mergedCharacterRaw.name));
-    const mergedCharacter = applyProfile
-      ? applyUsualSelfToCharacter(mergedCharacterRaw, profile)
-      : mergedCharacterRaw;
+    const mergedCharacter = ensureStarterLookCharacter(
+      applyProfile
+        ? applyUsualSelfToCharacter(mergedCharacterRaw, profile)
+        : mergedCharacterRaw
+    );
     const openingMode = resolveOpeningMode(bible, engineMode);
     const openingPromptsRaw = resolveOpeningPrompts(
       bible,
@@ -3643,7 +3626,12 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
     const coverAnswers = seedCoverAnswers(bible, mergedCharacter);
     const picked = resolveOpeningHookPick(bible, namedSeeded.seed);
     const aloneArrival = isAloneArrivalPick(picked);
-    const openingPrompts = styleCoversForAloneArrival(openingPromptsRaw, bible, aloneArrival);
+    const openingPrompts = applyOpeningContract(
+      openingPromptsRaw,
+      bible,
+      aloneArrival,
+      namedSeeded.seed ?? namedSeeded.saveId ?? '0'
+    );
     const pendingCovers = pendingRequiredCovers(openingPrompts, mergedCharacter, openingMode);
     const pickedHook = picked?.text;
     const pickedHookFallback = picked?.fallback;
@@ -3708,31 +3696,9 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
 
     setBusy(true);
     setError(null);
-    const openingAbort = new AbortController();
-    turnAbortRef.current = openingAbort;
-    const openingTimer = setTimeout(() => setShowLoadingOverlay(true), 800);
     try {
-      let openingText = '';
-      let openingRaw = '';
-      try {
-        const openingResult = await callGm(
-          newState,
-          `${buildOpeningSceneMandate(newState)}\n\nWrite the opening scene now.`,
-          settingsRef.current,
-          [],
-          (attempt, delayMs) => {
-            setRetryStatus(`Rate limited — retry ${attempt}/4 in ${Math.round(delayMs / 1000)}s…`);
-          },
-          openingAbort.signal,
-        );
-        openingRaw = openingResult.text;
-        openingText = stripChoiceList(stripActionTags(openingResult.text));
-      } catch {
-        openingText = '';
-      }
-      if (!openingText || openingText.length < 60 || isGenericBridgeNarrative(openingText)) {
-        openingText = synthesizeOpeningScene(newState);
-      }
+      const openingRaw = '';
+      let openingText = stitchOpeningScene(newState);
       openingText = ensureSystemReceipt(newState, sanitizeOpeningNarration(openingText));
       openingText = applyProseWarden(
         enforcePerspective(openingText, settingsRef.current, newState.character.name),
@@ -3833,7 +3799,6 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
         });
       }
     } finally {
-      clearTimeout(openingTimer);
       setBusy(false);
       setShowLoadingOverlay(false);
       setRetryStatus(null);

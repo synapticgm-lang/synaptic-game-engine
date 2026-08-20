@@ -25,7 +25,7 @@ export const summonedPact: CampaignBible = {
   openingRegistrar: {
     voice: 'inworld',
     label: 'THE CIRCLE',
-    startLine: 'Light, then stone. They want a name. Then the Earth place the light took you from.',
+    startLine: 'Light, then stone. They want a name. Your Earth place can wait until you bring it up.',
   },
   openingHook:
     'You arrive mid-rite. A faction wanted a summoned soul. A blue panel hangs at eye level — private, yours. Your Earth clothes are still on you. Someone in the room already has an offer, and you can refuse it.',
@@ -326,12 +326,6 @@ export const summonedPact: CampaignBible = {
   ],
   openingPrompts: [
     { id: 'name', kind: 'name', question: 'Confirm designation.' },
-    {
-      id: 'where',
-      kind: 'location',
-      question: 'Origin lock. Name the Earth place you were in when the light took you (city, street, country). This is not a destination in Valespire.',
-      suggestions: ['A city I actually know', 'Random Earth city', 'I was at home'],
-    },
     {
       id: 'wear',
       kind: 'appearance',

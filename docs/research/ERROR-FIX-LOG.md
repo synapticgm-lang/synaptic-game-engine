@@ -12,8 +12,8 @@
 
 | Class | How it keeps coming back | Lasting owner | Status |
 |---|---|---|---|
-| **A. Turn / proxy** | Timeout → “still compiling”; empty GM; missing import after model swap; Free path dies on first post-open turn; bubble kept but no retry UX | `TurnRecovery` in Error Repair Warden + `gmProxy` contract | Partial (refund + restore draft). Need: classified errors, one auto-retry, honest toast, longer/adaptive timeout for first post-open turn |
-| **B. Opening contract** | Alone vs crowd copy; Earth-origin always asked; templated “Someone in the scene…”; covers feel pasted; turn meter confusion | `OpeningContract` (bible + arrival flags → covers, voice, free turns) | Partial (`aloneArrival`, `styleCoversForAloneArrival`). Need: drop/defer Earth ask; varied authored lines; never bill covers as story turns in UI |
+| **B. Opening contract** | Alone vs crowd copy; Earth-origin always asked; templated covers; turn meter confusion | `openingStitch.applyOpeningContract` + card decks | **Shipped 20f** — Earth deferred; seed-varied asks; instant stitch |
+| **A. Turn / proxy** | Timeout → “still compiling”; empty GM; Free path dies on first post-open turn | `TurnRecovery` + `gmProxy` | Partial (classify toast). Need auto-retry |
 | **C. Quest / journal** | Wave/First Blood leak before open complete; wrong starter text for alone; unlock on journal open | `questPlay` + save repair rules | Partial (lock during opening, alone quest adapt). Need: auto-repair mismatched starter on Continue |
 | **D. Continuity / prose** | Nearby-building tautology; perspective slips; canned stubs; invented kit; talk to absent NPCs | `runWarden` + `proseWarden` + ledger | Active; keep extending detectors, not one-off prompt lines |
 | **E. Chrome / HUD** | Stamp vs bug chip; HP/MP squash on ~384px; theme frame over name | `HudLayout` contract + viewport tests | Weak — cosmetic stamps keep “fixing” without layout ownership |
