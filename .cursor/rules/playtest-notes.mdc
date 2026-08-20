@@ -20,6 +20,7 @@ John is playtesting live. Collect issues here. Do not implement until he asks fo
 
 ## Done (already shipped)
 
+- **2026-08-20b alone-arrival ruins:** Summoned Pact deck adds solo dumps into a random building at ruin levels from shabby-standing → damaged → half-collapsed → wall-shell → burnt husk → foundation outline only (no licensed inn). HUD stamp 20b
 - **2026-08-20a opening beats + Free writer:** Summoned Pact opens from seed-picked pointer cards (place / faction / why / optional gear offer) so the writer builds a unique first page; NPCs may offer kit for a pact, ledger stays Earth-only until accepted. Hosted Free writer is `deepseek/deepseek-v4-flash-0731` (Mid Haiku / High Sonnet unchanged). HUD stamp 20a
 - **2026-08-19ak forceFreeModel:** missing import in `gmProxy.ts` crashed the first normal GM turn after opening. HUD stamp 19ak
 

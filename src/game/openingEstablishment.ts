@@ -1426,7 +1426,7 @@ Write THIS run's first page from the pointer card and the campaign bible. Unique
 Genre practice (honor the story type):
 - CYOA / Choice of Games / PYOA: drop into the crisis. No name form.
 - LitRPG / System apocalypse: ordinary street first, then the panel as a moment. Earth is NOT being ingested.
-- Isekai summon: arrive in THIS run's picked place (not always a cathedral circle). People talk; clothes are a look-down; origin is the Earth place the light took you from. Camera is HERE, not Earth. If the pointer card includes an opening offer, someone in the scene can voice it — the player may refuse.
+- Isekai summon: arrive in THIS run's picked place (not always a cathedral circle — may be alone in a ruin with no summoners). People talk when people are present; clothes are a look-down; origin is the Earth place the light took you from. Camera is HERE, not Earth. If the pointer card includes an opening offer, someone in the scene can voice it — the player may refuse. Alone cards: no welcoming NPC on page one.
 - Mystery / romance / space horror: body, door, or bulkhead already in motion.
 
 1) 4–7 sentences of story in the seeded place. Honor the configured PERSPECTIVE for the entire beat. Full grammatical English — no telegram fragments ("Mass summon. Politics in the first breath.").

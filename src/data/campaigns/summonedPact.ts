@@ -227,6 +227,102 @@ export const summonedPact: CampaignBible = {
       fallback:
         'Light, then linen and boiled iron. You are on your back on a circle chalked between infirmary cots. A blue panel hangs at eye level. The chirurgeons expected a healer. You still have Earth clothes.',
     },
+    {
+      location: 'alone in a shabby-but-standing building somewhere in Pellane country',
+      faction: 'Nobody here — the summoners are gone, delayed, or never came',
+      summonIntent:
+        'A rite dumped you alone. The building still stands with ordinary wear: drafts, sticky door, stained plaster. Writer picks what it was (cottage, barn, mill, shop, watch-post, chapel annex) — not a named series inn.',
+      openingOffer:
+        'No one offers kit. You may scavenge what is left inside, or walk out with only Earth clothes toward the next smoke or road.',
+      beats: [
+        'You are alone. No chant. No handlers. Cold floor or boards under you.',
+        'A blue panel hangs at eye level — private, yours. Wind through a gap.',
+        'Ruin level: standing, but with a few issues (loose shutter, damp corner, roof that complains).',
+        'Do not invent a welcoming NPC on turn one. Footsteps or a distant bell can be later.',
+      ],
+      fallback:
+        'Light, then quiet. You are alone on the floor of a shabby building that still has four walls and most of a roof. A blue panel hangs at eye level — private, yours. Nobody is here. Your Earth clothes are still on you.',
+    },
+    {
+      location: 'alone in a building with serious damage somewhere off the Valespire roads',
+      faction: 'Nobody here — the circle worked and the people did not stay',
+      summonIntent:
+        'Solo arrival. The structure is usable only if you are careful: cracked wall, rain through a hole, door off its hinges. Writer picks the building type at random (warehouse, farmhouse, toll-house, bathhouse shell).',
+      openingOffer:
+        'No issued kit. Salvage one useful thing from the mess if you search, or leave with Earth kit only.',
+      beats: [
+        'You are alone. Dust motes. A blue panel hangs.',
+        'Ruin level: still a building, but badly hurt — one room open to weather, floor soft in places.',
+        'No sword on a pedestal. Anything useful is salvage you choose to take.',
+        'The Mark / Pactborn argument is only on your panel for now — no audience.',
+      ],
+      fallback:
+        'Light, then dust and a draft. You are alone in a damaged building: one wall cracked, rain staining the floor, the door half off its hinges. A blue panel hangs at eye level. Nobody came to greet you.',
+    },
+    {
+      location: 'alone in a half-collapsed ruin on the edge of wild country',
+      faction: 'Nobody here — empty ruin, empty sky',
+      summonIntent:
+        'The rite left you with no witnesses. Half the roof is gone; rooms open to sky. Writer picks what the place once was (granary, tower stump, longhouse, storehouse).',
+      openingOffer:
+        'No bargain. Dig in the rubble for scrap, or walk toward distant smoke with only what you arrived in.',
+      beats: [
+        'You are alone under open sky and broken beams.',
+        'A blue panel hangs above uneven stone or ash.',
+        'Ruin level: half-collapsed — dangerous floors, bird nests, no furniture worth naming unless you search.',
+        'Do not spawn a quest-giver in the doorway on the first page.',
+      ],
+      fallback:
+        'Light, then sky through broken beams. You are alone in a half-collapsed ruin. A blue panel hangs at eye level. Wind moves ash across the floor. Your Earth clothes are still on you.',
+    },
+    {
+      location: 'alone in a wall-shell with no roof',
+      faction: 'Nobody here — only standing walls and empty window holes',
+      summonIntent:
+        'A failed or abandoned circle left you in a hollow building: walls and window gaps, no roof, weeds in the corners. Writer picks the footprint (chapel shell, manor wing, market hall, barracks).',
+      openingOffer:
+        'Nothing is offered. Search the corners for forgotten scrap, or leave the shell with Earth kit only.',
+      beats: [
+        'You are alone. Open sky. Four walls or fewer.',
+        'A blue panel hangs in daylight. Birds. Distant road noise or none.',
+        'Ruin level: shell only — no roof, no door, grass already claiming the floor.',
+        'Starting kit is Earth clothes. Salvage is a choice, not a gift.',
+      ],
+      fallback:
+        'Light, then open sky inside four ruined walls. There is no roof. Empty window holes look onto empty country. A blue panel hangs at eye level. You are alone. Your Earth clothes are still on you.',
+    },
+    {
+      location: 'alone on the stone outline of a building that is gone',
+      faction: 'Nobody here — only a footprint in the grass',
+      summonIntent:
+        'The worst end of ruin: foundation stones and a rectangle in the turf where a building once stood. No walls. Writer does not invent a standing inn or shop — only the outline, and whatever scrub grew since.',
+      openingOffer:
+        'No kit, no hosts. Follow a track, a river, or smoke on the horizon with only what you arrived in — or dig at the outline for nothing but dirt.',
+      beats: [
+        'You are alone on cold ground. Grass through old foundation stones.',
+        'A blue panel hangs over the outline of a building that is no longer there.',
+        'Ruin level: outline only — no walls, no roof, no door. The camera stays HERE.',
+        'Do not invent townspeople for the first page. The world can answer when you move.',
+      ],
+      fallback:
+        'Light, then grass and cold foundation stones. You are alone on the outline of a building that is gone — a rectangle in the turf, no walls left. A blue panel hangs at eye level. Your Earth clothes are still on you. The horizon is empty of people.',
+    },
+    {
+      location: 'alone in a burnt husk that still has a shape',
+      faction: 'Nobody here — ash, charcoal ribs, no living summons',
+      summonIntent:
+        'Fire took the place before or during the rite. Blackened posts and a floor that still remembers rooms. Writer picks the burnt type (cottage, barn, workshop, waystation) without naming licensed inns.',
+      openingOffer:
+        'No one is left to bargain. Rake ash for a nail or a buckle if you want, or walk away in Earth clothes.',
+      beats: [
+        'You are alone. Char smell. Soft ash under your hands.',
+        'A blue panel hangs in the smoke-haze of an empty day.',
+        'Ruin level: burnt husk — shape of a building, no safe roof, charcoal ribs.',
+        'Do not place a helper NPC in the doorway on turn one.',
+      ],
+      fallback:
+        'Light, then ash. You are alone in the burnt husk of a building — charcoal ribs, no roof, the shape of rooms still readable in the floor. A blue panel hangs at eye level. Nobody is here.',
+    },
   ],
   openingPrompts: [
     { id: 'name', kind: 'name', question: 'Confirm designation.' },
@@ -252,7 +348,7 @@ export const summonedPact: CampaignBible = {
 
   premise: `You were an ordinary person on Earth. A ritual in another world — the Sevenfold Circle, under Valespire Cathedral — pulled you through. The kingdom of Pellane summoned a [Pactborn] to end a war with the Ash Court. The System also rolled a second stamp: [Calamity Mark]. One summoned soul can carry either, or flicker between them. The court will call you Hero. The Ash Court will call you theirs. You do not have to answer either.
 
-LOCATION LANGUAGE (BINDING): Camera is HERE — the seeded summon place for this run (cathedral circle, war camp, cell, arena, shrine, festival square, rival hall, treaty tent, harbor hold, ruined west-wall circle, or infirmary). Do not teleport them to the Sevenfold Circle if Location is already somewhere else. Never call this interior "a nearby building." "The court" is Pellane's Crown / the people in this room, not the enemy. The enemy polity is the Ash Court. Do not use "the court" as both current room and the enemy in the same beat.
+LOCATION LANGUAGE (BINDING): Camera is HERE — the seeded summon place for this run (cathedral circle, war camp, cell, arena, shrine, festival square, rival hall, treaty tent, harbor hold, ruined west-wall circle, infirmary, or an alone-arrival ruin of a random building). Alone-arrival cards: no summoners on page one; the writer picks the building type; ruin level is fixed by the card (shabby-standing → damaged → half-collapsed → wall-shell → burnt husk → foundation outline only). Do not teleport them to the Sevenfold Circle if Location is already somewhere else. Never call this interior "a nearby building." "The court" is Pellane's Crown / the people in this room, not the enemy. The enemy polity is the Ash Court. Do not use "the court" as both current room and the enemy in the same beat.
 
 ORIGINALITY (BINDING): Never name published novels, anime, or games in play. Never import unique skill names, distinctive places, or plots from any series. Inn, guild, and dungeon are generic hubs with SynapticGM names only.
 

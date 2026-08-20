@@ -6,13 +6,27 @@ import { openingHookDeck, resolveOpeningHook, normalizeOpeningHookCard } from '.
 describe('ready-made opening hook decks', () => {
   it('gives Summoned Pact more than the cathedral circle', () => {
     const deck = openingHookDeck(summonedPact);
-    expect(deck.length).toBeGreaterThanOrEqual(12);
+    expect(deck.length).toBeGreaterThanOrEqual(18);
     const seen = new Set<string>();
-    for (let i = 0; i < 160; i++) {
+    for (let i = 0; i < 200; i++) {
       seen.add(resolveOpeningHook(summonedPact, `seed-${i}`) ?? '');
     }
-    expect(seen.size).toBeGreaterThan(5);
+    expect(seen.size).toBeGreaterThan(6);
     expect([...seen].some((h) => /war camp|arena|cell|shrine|festival|rival hall|treaty|harbor|infirmary|west wall/i.test(h))).toBe(true);
+    expect([...seen].some((h) => /alone|outline|burnt husk|wall-shell|half-collapsed|shabby/i.test(h))).toBe(true);
+  });
+
+  it('includes alone-arrival ruin cards across ruin severity', () => {
+    const alone = (summonedPact.openingHooks ?? []).filter(
+      (card) => typeof card !== 'string' && /alone/i.test(card.location ?? '')
+    );
+    expect(alone.length).toBeGreaterThanOrEqual(5);
+    const blob = alone.map((c) => JSON.stringify(c)).join('\n');
+    expect(blob).toMatch(/shabby|standing/i);
+    expect(blob).toMatch(/half-collapsed|half collapsed/i);
+    expect(blob).toMatch(/shell|outline|foundation/i);
+    expect(blob).toMatch(/burnt/i);
+    expect(blob).not.toMatch(/wandering inn|erin|liscor/i);
   });
 
   it('feeds Summoned Pact as pointer cards with optional gear offers, not a no-sword lecture', () => {
