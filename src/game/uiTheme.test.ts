@@ -7,6 +7,7 @@ import {
   resolveThemeKitExtras,
   themeAtmosphereUrl,
   themeBySettingsId,
+  themeCoinColor,
   themeFrameFiligreeUrl,
   themePanelTextureUrl,
 } from './uiTheme';
@@ -230,5 +231,14 @@ describe('premium kit tokens', () => {
       expect(themePanelTextureUrl(key)).toBe(`/themes/${key}/panel.png`);
     }
     expect(MATERIAL_THEME_KEYS).not.toContain('integration-blue');
+  });
+
+  it('themeCoinColor gives kit-weighted chrome; Free stays warm gold', () => {
+    expect(themeCoinColor('vampire-nocturne')).toBe('#c9a227');
+    expect(themeCoinColor('undead-ossuary')).toBe('#a8a29e');
+    expect(themeCoinColor('high-elf-spire')).toBe('#e8d48b');
+    expect(themeCoinColor('dwarf-forgehall')).toBe('#f59e0b');
+    expect(themeCoinColor('integration-blue')).toBe('#fbbf24');
+    expect(themeCoinColor(undefined)).toBe('#fbbf24');
   });
 });

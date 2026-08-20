@@ -223,7 +223,9 @@
   opacity: 0.5;
 }
 
-/* ===== THEME TEXTURES (paid panels; free stays plain) ===== */
+/* ===== THEME TEXTURES (paid panels; free stays plain) =====
+   Premium kits: multi-layer gradient materials — no repeating SVG grids as primary.
+   AI panel/atmosphere/filigree PNGs amplify via data-sgm-material (below). */
 
 .sgm-theme-chip,
 .sgm-theme-preview {
@@ -231,6 +233,7 @@
   --sgm-chip-bg: var(--sgm-bg, #020617);
   --sgm-chip-panel: var(--sgm-panel, #0f172a);
   position: relative;
+  isolation: isolate;
   background-color: var(--sgm-chip-panel);
   background-image: linear-gradient(180deg, var(--sgm-chip-panel), var(--sgm-chip-bg));
 }
@@ -249,302 +252,432 @@
   left: 3px;
   width: 9px;
   height: 9px;
+  z-index: 2;
   pointer-events: none;
   border-top: 2px solid var(--sgm-chip-accent);
   border-left: 2px solid var(--sgm-chip-accent);
   box-shadow: 1px 1px 0 color-mix(in srgb, var(--sgm-chip-accent) 35%, transparent);
 }
+/* Material kit chip: AI panel grain under the corner accent */
+.sgm-theme-chip-material::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  border-radius: inherit;
+  background: var(--sgm-panel-texture, none) center / cover no-repeat;
+  opacity: 0.62;
+  mix-blend-mode: soft-light;
+}
+
+/* —— Shop / Themes set cards (material-driven, not plain dark buttons) —— */
+.sgm-set-card {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  border-width: 2px;
+  border-radius: 0.85rem;
+  box-shadow:
+    inset 0 0 0 1px color-mix(in srgb, var(--sgm-chip-accent) 28%, transparent),
+    inset 0 -22px 40px color-mix(in srgb, var(--sgm-chip-bg) 55%, transparent),
+    inset 0 1px 0 color-mix(in srgb, #fff 8%, transparent),
+    0 0 0 1px color-mix(in srgb, var(--sgm-chip-accent) 18%, transparent),
+    0 8px 28px color-mix(in srgb, #000 45%, transparent);
+  transition: box-shadow 0.2s ease, transform 0.2s ease, border-color 0.2s ease;
+}
+.sgm-set-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  border-radius: inherit;
+  background:
+    radial-gradient(ellipse 90% 60% at 50% -20%, color-mix(in srgb, var(--sgm-chip-accent) 22%, transparent) 0 30%, transparent 58%),
+    var(--sgm-panel-texture, none);
+  background-size: auto, cover;
+  background-position: center, center;
+  background-repeat: no-repeat, no-repeat;
+  opacity: 0.42;
+  mix-blend-mode: soft-light;
+}
+.sgm-set-card > * {
+  position: relative;
+  z-index: 1;
+}
+.sgm-set-card:not(.sgm-set-card-free)::after {
+  content: '';
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  width: 14px;
+  height: 14px;
+  z-index: 2;
+  pointer-events: none;
+  border-top: 2px solid color-mix(in srgb, var(--sgm-chip-accent) 85%, #fff);
+  border-left: 2px solid color-mix(in srgb, var(--sgm-chip-accent) 85%, #fff);
+  box-shadow: 1px 1px 0 color-mix(in srgb, var(--sgm-chip-accent) 30%, transparent);
+}
+.sgm-set-card-active {
+  box-shadow:
+    inset 0 0 0 2px color-mix(in srgb, var(--sgm-chip-accent) 40%, transparent),
+    inset 0 -26px 48px color-mix(in srgb, var(--sgm-chip-bg) 50%, transparent),
+    0 0 0 1px color-mix(in srgb, var(--sgm-chip-accent) 55%, transparent),
+    0 0 28px color-mix(in srgb, var(--sgm-chip-accent) 28%, transparent),
+    0 10px 32px color-mix(in srgb, #000 50%, transparent);
+}
+.sgm-set-card-free {
+  border-width: 1px;
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--sgm-chip-accent) 12%, transparent);
+}
+.sgm-set-card-free::before,
+.sgm-set-card-free::after {
+  display: none;
+}
+.sgm-set-badge {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 0.35rem;
+  border-width: 1px;
+  padding: 0.15rem 0.45rem;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  box-shadow:
+    inset 0 0 0 1px color-mix(in srgb, currentColor 18%, transparent),
+    0 0 10px color-mix(in srgb, currentColor 12%, transparent);
+}
+
 .sgm-tex-plain,
 html[data-sgm-texture='plain'] .sgm-info-panel {
   background-image: linear-gradient(180deg, var(--sgm-chip-panel), var(--sgm-chip-bg));
 }
 .sgm-tex-velvet,
 html[data-sgm-texture='velvet'] .sgm-info-panel {
-  /* Near-black plum reading field + low-frequency flock; oxblood only as edge glint */
-  background-color: #171018;
+  /* Polished dark obsidian + crimson sheen (Vampire) */
+  background-color: #0e0a10;
   background-image:
-    radial-gradient(ellipse 120% 80% at 50% -10%, #c8bfd722 0 18%, transparent 52%),
-    radial-gradient(ellipse at 18% 22%, #f4e9ec0f 0 1.2px, transparent 1.8px),
-    radial-gradient(ellipse at 62% 48%, #c9b5bb12 0 1px, transparent 1.6px),
-    radial-gradient(ellipse at 84% 76%, #f4e9ec0c 0 1.4px, transparent 2px),
-    radial-gradient(ellipse at 40% 88%, #8d274628 0 14%, transparent 38%),
-    repeating-linear-gradient(112deg, transparent 0 5px, #08060b33 5px 6px),
-    repeating-linear-gradient(22deg, transparent 0 9px, #22131f55 9px 10px),
-    linear-gradient(168deg, #22131f 0%, #1c1720 38%, #171018 68%, #0e0a10 100%);
-  border-color: color-mix(in srgb, #8d2746 42%, #c8bfd7);
+    radial-gradient(ellipse 110% 70% at 50% -12%, #c8bfd728 0 16%, transparent 48%),
+    radial-gradient(ellipse 50% 40% at 88% 12%, #8d274638 0 18%, transparent 46%),
+    radial-gradient(ellipse 40% 35% at 12% 88%, #8d274622 0 20%, transparent 50%),
+    linear-gradient(145deg, transparent 42%, #f4e9ec10 48%, transparent 54%),
+    linear-gradient(168deg, #22131f 0%, #171018 36%, #0e0a10 68%, #08060b 100%);
+  border-color: color-mix(in srgb, #8d2746 48%, #c8bfd7);
   box-shadow:
-    inset 0 0 0 1px color-mix(in srgb, #c8bfd7 22%, transparent),
-    inset 0 -28px 48px #08060b66;
+    inset 0 0 0 1px color-mix(in srgb, #c8bfd7 26%, transparent),
+    inset 0 0 48px #08060b88,
+    inset 0 -32px 56px #8d274622,
+    0 0 20px #8d274633;
 }
 .sgm-tex-moss,
 html[data-sgm-texture='moss'] .sgm-info-panel {
-  /* Living moss grain + leaf-shadow — not generic green fill */
-  background-color: #0a1008;
+  /* Forest shadow + bark / organic grain (Wood Elf) — no SVG grid primary */
+  background-color: #070c06;
   background-image:
-    url('/themes/moss-grain.svg'),
-    radial-gradient(ellipse 90% 60% at 12% 8%, #1a2e1266 0 22%, transparent 48%),
-    radial-gradient(ellipse at 22% 30%, #9aaa4a33 0 1.4px, transparent 2px),
-    radial-gradient(ellipse at 68% 58%, #3f621266 0 2.2px, transparent 2.8px),
-    radial-gradient(ellipse at 44% 82%, #84cc1628 0 1.2px, transparent 1.6px),
-    radial-gradient(ellipse at 80% 18%, #16653444 0 3px, transparent 4px),
-    repeating-linear-gradient(118deg, transparent 0 6px, #0a100855 6px 7px),
-    linear-gradient(162deg, #121a10 0%, #0a1008 46%, #152016 100%);
-  border-color: color-mix(in srgb, #9aaa4a 38%, #1a2e12);
+    radial-gradient(ellipse 85% 55% at 8% 6%, #1a2e1277 0 24%, transparent 52%),
+    radial-gradient(ellipse 60% 50% at 92% 78%, #16653444 0 22%, transparent 48%),
+    radial-gradient(ellipse 70% 40% at 48% 100%, #3f621233 0 18%, transparent 44%),
+    linear-gradient(118deg, transparent 30%, #9aaa4a14 42%, transparent 58%),
+    linear-gradient(162deg, #152016 0%, #0a1008 42%, #070c06 72%, #121a10 100%);
+  border-color: color-mix(in srgb, #9aaa4a 42%, #1a2e12);
   box-shadow:
-    inset 0 0 0 1px color-mix(in srgb, #9aaa4a 16%, transparent),
-    inset 0 -24px 40px #05080566;
+    inset 0 0 0 1px color-mix(in srgb, #9aaa4a 20%, transparent),
+    inset 0 0 44px #05080599,
+    inset 0 -28px 48px #1a2e1244,
+    0 0 18px #3f621228;
 }
 .sgm-tex-dusk,
 html[data-sgm-texture='dusk'] .sgm-info-panel {
-  /* Dusk velvet textile + violet thread — not purple wash */
-  background-color: #0a0810;
+  /* Dusk velvet + violet thread (Dark Elf) — textile depth, not purple wash */
+  background-color: #07060c;
   background-image:
-    url('/themes/dusk-thread.svg'),
-    radial-gradient(ellipse 100% 70% at 50% -8%, #e9d5ff14 0 20%, transparent 50%),
-    radial-gradient(ellipse at 18% 22%, #e9d5ff28 0 1.2px, transparent 1.8px),
-    radial-gradient(ellipse at 74% 44%, #a78bc840 0 1.4px, transparent 2px),
-    radial-gradient(ellipse at 40% 78%, #6b21a822 0 2px, transparent 2.6px),
-    repeating-linear-gradient(128deg, transparent 0 7px, #12081c44 7px 8px),
-    linear-gradient(158deg, #14101c 0%, #0a0810 48%, #1a1028 100%);
-  border-color: color-mix(in srgb, #a78bc8 40%, #1e1b4b);
+    radial-gradient(ellipse 100% 65% at 50% -10%, #e9d5ff18 0 18%, transparent 48%),
+    radial-gradient(ellipse 45% 40% at 14% 70%, #6b21a828 0 22%, transparent 50%),
+    radial-gradient(ellipse 40% 35% at 86% 28%, #a78bc830 0 16%, transparent 44%),
+    linear-gradient(128deg, transparent 36%, #e9d5ff10 50%, transparent 64%),
+    linear-gradient(158deg, #14101c 0%, #0a0810 46%, #07060c 100%);
+  border-color: color-mix(in srgb, #a78bc8 44%, #1e1b4b);
   box-shadow:
-    inset 0 0 0 1px color-mix(in srgb, #e9d5ff 14%, transparent),
-    inset 0 -26px 44px #05040a77;
+    inset 0 0 0 1px color-mix(in srgb, #e9d5ff 16%, transparent),
+    inset 0 0 46px #05040a99,
+    inset 0 -28px 50px #6b21a822,
+    0 0 18px #a78bc828;
 }
 .sgm-tex-soot,
 html[data-sgm-texture='soot'] .sgm-info-panel {
-  /* Soot stone + stone-grid + forge spark — not brown-orange metal */
-  background-color: #12100e;
+  /* Forge-soot basalt + brass ember (Dwarf) — carved stone, not grid SVG */
+  background-color: #0c0a08;
   background-image:
-    url('/themes/soot-grid.svg'),
-    repeating-linear-gradient(90deg, transparent 0 11px, #c48a3a22 11px 12px),
-    repeating-linear-gradient(0deg, transparent 0 11px, #c48a3a18 11px 12px),
-    repeating-linear-gradient(18deg, transparent 0 8px, #00000055 8px 9px),
-    radial-gradient(circle at 78% 82%, #c48a3a44 0 8px, transparent 20px),
-    radial-gradient(circle at 16% 24%, #fde68a18 0 6px, transparent 16px),
-    linear-gradient(168deg, #2a2622 0%, #1e1a16 42%, #12100e 72%, #0c0a09 100%);
-  border-color: color-mix(in srgb, #c48a3a 42%, #44403c);
+    radial-gradient(ellipse 70% 50% at 82% 90%, #c48a3a44 0 16%, transparent 42%),
+    radial-gradient(ellipse 40% 35% at 14% 18%, #fde68a1c 0 14%, transparent 40%),
+    radial-gradient(ellipse 55% 40% at 48% 0%, #2a262255 0 20%, transparent 48%),
+    linear-gradient(18deg, transparent 40%, #00000066 52%, transparent 64%),
+    linear-gradient(168deg, #2a2622 0%, #1e1a16 38%, #12100e 70%, #0c0a08 100%);
+  border-color: color-mix(in srgb, #c48a3a 48%, #44403c);
   box-shadow:
-    inset 0 0 0 1px color-mix(in srgb, #fde68a 18%, transparent),
-    inset 0 -22px 36px #00000066;
+    inset 0 0 0 1px color-mix(in srgb, #fde68a 22%, transparent),
+    inset 0 0 40px #00000088,
+    inset 0 -24px 44px #c48a3a22,
+    0 0 16px #c48a3a28;
 }
 .sgm-tex-circuit,
 html[data-sgm-texture='circuit'] .sgm-info-panel {
-  /* Brushed chassis + clipped optic — amber hazard, not Integration cyan flood */
-  background-color: #0a0b0d;
+  /* Brushed chassis + optic sheen (Cyborg) — amber hazard, not Integration cyan */
+  background-color: #07080a;
   background-image:
-    repeating-linear-gradient(0deg, transparent 0 8px, #5eb8e814 8px 9px),
-    repeating-linear-gradient(90deg, transparent 0 8px, #5eb8e810 8px 9px),
-    linear-gradient(135deg, #e0b04055 0 5%, transparent 5% 12%, #e0b04033 12% 16%, transparent 16%),
-    radial-gradient(circle at 88% 12%, #5eb8e833 0 4%, transparent 12%),
-    linear-gradient(148deg, #1c1e24 0%, #14161a 45%, #0a0b0d 100%);
-  border-color: color-mix(in srgb, #5eb8e8 36%, #e0b040);
+    radial-gradient(circle at 90% 8%, #5eb8e844 0 5%, transparent 16%),
+    radial-gradient(ellipse 50% 30% at 20% 100%, #e0b04022 0 20%, transparent 48%),
+    linear-gradient(135deg, #e0b04044 0 4%, transparent 4% 11%, #e0b04028 11% 14%, transparent 14%),
+    linear-gradient(148deg, #1c1e24 0%, #14161a 42%, #07080a 100%);
+  border-color: color-mix(in srgb, #5eb8e8 40%, #e0b040);
   box-shadow:
-    inset 0 0 0 1px color-mix(in srgb, #5eb8e8 14%, transparent),
-    inset 0 -20px 32px #00000077;
+    inset 0 0 0 1px color-mix(in srgb, #5eb8e8 18%, transparent),
+    inset 0 0 36px #00000099,
+    0 0 16px #5eb8e822;
 }
 .sgm-tex-ivory,
 html[data-sgm-texture='ivory'] .sgm-info-panel {
-  /* Ivory stone + silver hairline — not sky-blue court fill */
-  background-color: #10141c;
+  /* Ivory spire stone + silver hairline (High Elf) */
+  background-color: #0c1018;
   background-image:
-    linear-gradient(112deg, transparent 38%, #f5f0e618 41%, transparent 44%),
-    linear-gradient(90deg, transparent 0, #c9b89622 1px, transparent 2px),
-    radial-gradient(ellipse at 70% 20%, #9aa8bc22 0 18%, transparent 40%),
-    linear-gradient(165deg, #1a2230 0%, #10141c 52%, #c9b89614 100%);
-  border-color: color-mix(in srgb, #c9b896 45%, #9aa8bc);
+    radial-gradient(ellipse 80% 50% at 70% 0%, #9aa8bc28 0 22%, transparent 50%),
+    linear-gradient(112deg, transparent 36%, #f5f0e61c 41%, transparent 46%),
+    linear-gradient(165deg, #1a2230 0%, #10141c 48%, #0c1018 78%, #c9b89612 100%);
+  border-color: color-mix(in srgb, #c9b896 48%, #9aa8bc);
   box-shadow:
-    inset 0 0 0 1px color-mix(in srgb, #f5f0e6 20%, transparent),
-    inset 0 -24px 40px #080a1088;
+    inset 0 0 0 1px color-mix(in srgb, #f5f0e6 24%, transparent),
+    inset 0 0 42px #080a1099,
+    inset 0 -26px 44px #c9b89618,
+    0 0 18px #9aa8bc22;
 }
 .sgm-tex-banner,
 html[data-sgm-texture='banner'] .sgm-info-panel {
-  /* Weathered canvas + iron studs — not goblin green wash */
-  background-color: #0e100c;
+  /* Weathered canvas + iron studs (Orc) — fabric folds, not SVG tile */
+  background-color: #0a0c08;
   background-image:
-    url('/themes/canvas-banner.svg'),
-    repeating-linear-gradient(90deg, #1a1c14 0 5px, #12140e 5px 10px),
-    radial-gradient(circle at 14% 26%, #a85a3a44 0 2px, transparent 2.6px),
-    radial-gradient(circle at 86% 70%, #8a907033 0 2px, transparent 2.6px),
-    radial-gradient(circle at 48% 88%, #a85a3a22 0 10%, transparent 28%),
-    linear-gradient(178deg, #1a1c14 0%, #0e100c 55%, #161810 100%);
-  border-color: color-mix(in srgb, #a85a3a 40%, #44403c);
+    radial-gradient(ellipse 55% 40% at 20% 30%, #a85a3a33 0 8%, transparent 28%),
+    radial-gradient(ellipse 40% 35% at 82% 72%, #8a907028 0 10%, transparent 30%),
+    radial-gradient(ellipse 70% 45% at 50% 110%, #a85a3a1c 0 18%, transparent 44%),
+    linear-gradient(92deg, #1a1c14 0%, #12140e 48%, #161810 100%),
+    linear-gradient(178deg, #1a1c14 0%, #0e100c 52%, #0a0c08 100%);
+  border-color: color-mix(in srgb, #a85a3a 44%, #44403c);
   box-shadow:
-    inset 0 0 0 1px color-mix(in srgb, #8a9070 18%, transparent),
-    inset 0 -22px 36px #05060577;
+    inset 0 0 0 1px color-mix(in srgb, #8a9070 22%, transparent),
+    inset 0 0 40px #05060599,
+    0 0 16px #a85a3a22;
 }
 .sgm-tex-scale,
 html[data-sgm-texture='scale'] .sgm-info-panel {
-  /* Layered enamel arcs + aged gold — sparse, not wallpaper scales */
-  background-color: #0a120c;
+  /* Layered enamel + aged gold (Dragon) — sparse arcs, not wallpaper SVG */
+  background-color: #060e08;
   background-image:
-    url('/themes/scale-enamel.svg'),
-    radial-gradient(ellipse 28px 14px at 22% 28%, #c9a22733 0 40%, transparent 44%),
-    radial-gradient(ellipse 26px 13px at 58% 52%, #142018aa 0 42%, transparent 46%),
-    radial-gradient(ellipse 24px 12px at 40% 78%, #42200666 0 40%, transparent 44%),
-    linear-gradient(162deg, #142018 0%, #0a120c 48%, #1a2818 100%);
-  border-color: color-mix(in srgb, #c9a227 48%, #422006);
+    radial-gradient(ellipse 36px 16px at 22% 26%, #c9a22738 0 38%, transparent 46%),
+    radial-gradient(ellipse 32px 14px at 62% 54%, #142018cc 0 40%, transparent 48%),
+    radial-gradient(ellipse 28px 12px at 40% 80%, #42200677 0 38%, transparent 46%),
+    radial-gradient(ellipse 50% 35% at 50% 100%, #c9a2271c 0 16%, transparent 42%),
+    linear-gradient(162deg, #142018 0%, #0a120c 46%, #060e08 100%);
+  border-color: color-mix(in srgb, #c9a227 52%, #422006);
   box-shadow:
-    inset 0 0 0 1px color-mix(in srgb, #c9a227 22%, transparent),
-    inset 0 -24px 40px #04080677;
+    inset 0 0 0 1px color-mix(in srgb, #c9a227 26%, transparent),
+    inset 0 0 44px #04080699,
+    0 0 20px #c9a22728;
 }
 .sgm-tex-ember,
 html[data-sgm-texture='ember'] .sgm-info-panel {
-  /* Ash paper + one rose-gold fissure — not full-panel fire */
-  background-color: #120a08;
+  /* Ash paper + rose-gold fissure (Phoenix / Ember Depths) */
+  background-color: #0e0705;
   background-image:
-    radial-gradient(ellipse 40% 28% at 72% 108%, #e08a7066 0 22%, transparent 48%),
-    linear-gradient(108deg, transparent 46%, #e08a7028 50%, transparent 54%),
-    repeating-linear-gradient(14deg, transparent 0 9px, #00000044 9px 10px),
-    linear-gradient(168deg, #1c100c 0%, #120a08 52%, #2a140e 100%);
-  border-color: color-mix(in srgb, #e08a70 42%, #7c2d12);
+    radial-gradient(ellipse 48% 32% at 74% 108%, #e08a7077 0 20%, transparent 48%),
+    radial-gradient(ellipse 35% 28% at 18% 12%, #e08a7022 0 14%, transparent 40%),
+    linear-gradient(108deg, transparent 44%, #e08a7030 50%, transparent 56%),
+    linear-gradient(168deg, #1c100c 0%, #120a08 48%, #0e0705 78%, #2a140e 100%);
+  border-color: color-mix(in srgb, #e08a70 46%, #7c2d12);
   box-shadow:
-    inset 0 0 0 1px color-mix(in srgb, #e08a70 16%, transparent),
-    inset 0 -26px 42px #08040477;
+    inset 0 0 0 1px color-mix(in srgb, #e08a70 20%, transparent),
+    inset 0 0 44px #08040499,
+    inset 0 -30px 50px #e08a7022,
+    0 0 18px #e08a7028;
 }
 .sgm-tex-halo,
 html[data-sgm-texture='halo'] .sgm-info-panel {
-  /* Opaque pearl reading field + warm halo rim — contrast preserved */
-  background-color: #141210;
+  /* Pearl field + warm halo rim (Angelic) */
+  background-color: #100e0c;
   background-image:
-    radial-gradient(ellipse 90% 55% at 50% -5%, #e8d5a055 0 18%, transparent 52%),
-    linear-gradient(115deg, transparent 42%, #faf6ee14 46%, transparent 50%),
-    repeating-linear-gradient(98deg, transparent 0 12px, #a8a29e14 12px 13px),
-    linear-gradient(180deg, #2a2620 0%, #1c1917 48%, #141210 100%);
-  border-color: color-mix(in srgb, #e8d5a0 44%, #a8a29e);
+    radial-gradient(ellipse 95% 55% at 50% -8%, #e8d5a066 0 16%, transparent 50%),
+    linear-gradient(115deg, transparent 40%, #faf6ee16 46%, transparent 52%),
+    linear-gradient(180deg, #2a2620 0%, #1c1917 44%, #100e0c 100%);
+  border-color: color-mix(in srgb, #e8d5a0 48%, #a8a29e);
   box-shadow:
-    inset 0 0 0 1px color-mix(in srgb, #faf6ee 18%, transparent),
-    inset 0 -20px 36px #0a090888;
+    inset 0 0 0 1px color-mix(in srgb, #faf6ee 22%, transparent),
+    inset 0 0 40px #0a090899,
+    0 0 22px #e8d5a028;
 }
 .sgm-tex-sulfur,
 html[data-sgm-texture='sulfur'] .sgm-info-panel {
-  /* Dry char + localized sulfur hotspot — not broad maroon */
-  background-color: #120808;
+  /* Dry char + sulfur hotspot (Infernal) */
+  background-color: #0e0606;
   background-image:
-    radial-gradient(circle at 86% 14%, #facc1555 0 6%, transparent 14%),
-    radial-gradient(circle at 18% 78%, #7f1d1d33 0 12%, transparent 28%),
-    repeating-linear-gradient(98deg, transparent 0 11px, #00000055 11px 12px),
-    linear-gradient(125deg, transparent 34%, #f59e0b18 38%, transparent 44%),
-    linear-gradient(158deg, #1f0c0a 0%, #120808 55%, #2a1008 100%);
-  border-color: color-mix(in srgb, #f59e0b 40%, #7f1d1d);
+    radial-gradient(circle at 88% 10%, #facc1566 0 5%, transparent 14%),
+    radial-gradient(circle at 16% 82%, #7f1d1d44 0 14%, transparent 32%),
+    linear-gradient(125deg, transparent 32%, #f59e0b1c 38%, transparent 46%),
+    linear-gradient(158deg, #1f0c0a 0%, #120808 52%, #0e0606 100%);
+  border-color: color-mix(in srgb, #f59e0b 44%, #7f1d1d);
+  box-shadow:
+    inset 0 0 0 1px color-mix(in srgb, #f59e0b 18%, transparent),
+    inset 0 0 42px #08040499,
+    0 0 18px #f59e0b22;
 }
 .sgm-tex-bone,
 html[data-sgm-texture='bone'] .sgm-info-panel {
-  /* Ossuary ash linen + CSS grain — AI panel bitmap via --sgm-panel-texture overlay */
-  background-color: #1c1917;
+  /* Bone-flecked charcoal stone (Ossuary / Bone Reliquary) — CSS base; AI PNG overlays */
+  background-color: #141210;
   background-image:
-    url('/themes/undead-ossuary/panel-ash.svg'),
-    radial-gradient(ellipse 36px 14px at 12% 16%, #fafaf9aa 0 36%, transparent 42%),
-    radial-gradient(ellipse 28px 12px at 86% 72%, #e7e5e488 0 34%, transparent 40%),
-    radial-gradient(circle at 30% 44%, #fafaf9 0 1.4px, transparent 1.9px),
-    radial-gradient(circle at 64% 28%, #a8a29e 0 1.1px, transparent 1.5px),
-    repeating-linear-gradient(102deg, transparent 0 11px, #78716c28 11px 12px),
-    linear-gradient(158deg, #44403c 0%, #1c1917 40%, #0c0a09 70%, #292524 100%);
-  background-size:
-    96px 96px,
-    auto,
-    auto,
-    auto,
-    auto,
-    auto,
-    auto;
-  background-blend-mode: soft-light, normal, normal, normal, normal, normal, normal;
+    radial-gradient(ellipse 40px 16px at 14% 18%, #fafaf988 0 34%, transparent 42%),
+    radial-gradient(ellipse 32px 14px at 84% 74%, #e7e5e466 0 32%, transparent 40%),
+    radial-gradient(ellipse 55% 40% at 50% -5%, #a8a29e22 0 18%, transparent 46%),
+    linear-gradient(158deg, #44403c 0%, #1c1917 38%, #0c0a09 68%, #292524 100%);
   border-color: color-mix(in srgb, #e7e5e4 52%, #78716c);
   border-width: 2px;
   box-shadow:
     inset 0 0 0 2px color-mix(in srgb, #a8a29e 28%, transparent),
-    inset 0 -28px 48px #08070688,
-    0 0 18px #78716c33;
+    inset 0 0 48px #08070699,
+    inset 0 -30px 52px #78716c22,
+    0 0 20px #78716c33;
 }
 .sgm-tex-glamour,
 html[data-sgm-texture='glamour'] .sgm-info-panel {
-  /* Restrained prism veil — not rainbow noise */
-  background-color: #0c0814;
+  /* Restrained prism veil (Fae) */
+  background-color: #080610;
   background-image:
-    linear-gradient(118deg, #d4a0e022 0%, transparent 38%, #70b8c820 100%),
-    radial-gradient(ellipse at 30% 20%, #f0abfc18 0 12%, transparent 34%),
-    radial-gradient(ellipse at 78% 70%, #67e8f914 0 10%, transparent 30%),
-    repeating-linear-gradient(22deg, transparent 0 11px, #18102255 11px 12px),
-    linear-gradient(162deg, #181022 0%, #0c0814 50%, #1a1028 100%);
-  border-color: color-mix(in srgb, #d4a0e0 38%, #70b8c8);
+    linear-gradient(118deg, #d4a0e028 0%, transparent 36%, #70b8c824 100%),
+    radial-gradient(ellipse at 28% 18%, #f0abfc1c 0 14%, transparent 36%),
+    radial-gradient(ellipse at 78% 72%, #67e8f918 0 12%, transparent 32%),
+    linear-gradient(162deg, #181022 0%, #0c0814 48%, #080610 100%);
+  border-color: color-mix(in srgb, #d4a0e0 42%, #70b8c8);
   box-shadow:
-    inset 0 0 0 1px color-mix(in srgb, #d4a0e0 14%, transparent),
-    inset 0 -24px 40px #06040c77;
+    inset 0 0 0 1px color-mix(in srgb, #d4a0e0 18%, transparent),
+    inset 0 0 42px #06040c99,
+    0 0 18px #d4a0e022;
 }
 .sgm-tex-scrap,
 html[data-sgm-texture='scrap'] .sgm-info-panel {
-  /* Dry scrap plates + rivets — not orc green */
-  background-color: #12140c;
+  /* Dry scrap plates + rivets (Goblin) */
+  background-color: #0e1008;
   background-image:
-    repeating-linear-gradient(-32deg, #d4b43a22 0 5px, transparent 5px 14px),
-    linear-gradient(90deg, #1e2210 0 42%, #2a3018 42% 58%, #1e2210 58%),
-    radial-gradient(circle at 20% 32%, #d4b43a 1.5px, transparent 1.9px),
-    radial-gradient(circle at 66% 56%, #854d0e 1.5px, transparent 1.9px),
-    radial-gradient(circle at 82% 18%, #d4b43a 1.1px, transparent 1.5px),
-    linear-gradient(160deg, #1e2210 0%, #12140c 55%, #1a1c10 100%);
-  border-color: color-mix(in srgb, #d4b43a 44%, #854d0e);
-  box-shadow: inset 0 0 0 2px #854d0e55;
+    linear-gradient(90deg, #1e2210 0 40%, #2a3018 40% 60%, #1e2210 60%),
+    radial-gradient(circle at 18% 30%, #d4b43a 1.6px, transparent 2px),
+    radial-gradient(circle at 68% 58%, #854d0e 1.6px, transparent 2px),
+    radial-gradient(circle at 84% 16%, #d4b43a 1.2px, transparent 1.6px),
+    linear-gradient(160deg, #1e2210 0%, #12140c 52%, #0e1008 100%);
+  border-color: color-mix(in srgb, #d4b43a 48%, #854d0e);
+  box-shadow:
+    inset 0 0 0 2px #854d0e55,
+    inset 0 0 36px #05060588,
+    0 0 14px #d4b43a22;
 }
 .sgm-tex-tide,
 html[data-sgm-texture='tide'] .sgm-info-panel {
-  /* Deep tide + pearl — not Integration cyan */
-  background-color: #061412;
+  /* Deep tide + pearl (Merfolk) — not Integration cyan */
+  background-color: #04100e;
   background-image:
-    repeating-linear-gradient(180deg, transparent 0 7px, #7eb8b022 7px 8px),
-    radial-gradient(ellipse at 50% -5%, #7eb8b028 0 28%, transparent 52%),
-    radial-gradient(ellipse at 70% 80%, #e8f4f012 0 8%, transparent 22%),
-    linear-gradient(168deg, #0c2420 0%, #061412 52%, #7eb8b018 100%);
-  border-color: color-mix(in srgb, #7eb8b0 42%, #0c2420);
+    radial-gradient(ellipse at 50% -8%, #7eb8b032 0 26%, transparent 52%),
+    radial-gradient(ellipse at 72% 82%, #e8f4f014 0 10%, transparent 26%),
+    linear-gradient(168deg, #0c2420 0%, #061412 48%, #04100e 78%, #7eb8b014 100%);
+  border-color: color-mix(in srgb, #7eb8b0 46%, #0c2420);
   box-shadow:
-    inset 0 0 0 1px color-mix(in srgb, #e8f4f0 14%, transparent),
-    inset 0 -24px 40px #020a0888;
+    inset 0 0 0 1px color-mix(in srgb, #e8f4f0 16%, transparent),
+    inset 0 0 44px #020a0899,
+    0 0 18px #7eb8b024;
 }
 .sgm-tex-parchment,
 html[data-sgm-texture='parchment'] .sgm-info-panel {
+  /* Aged ledger vellum (Parchment Ledger) */
+  background-color: #1a140e;
   background-image:
-    repeating-linear-gradient(180deg, transparent 0 9px, #b4530918 9px 10px),
-    linear-gradient(160deg, #2a2118, #1c1410);
+    radial-gradient(ellipse 80% 50% at 50% -5%, #b4530922 0 18%, transparent 46%),
+    linear-gradient(160deg, #3a2e22 0%, #2a2118 42%, #1c1410 78%, #140e0a 100%);
+  border-color: color-mix(in srgb, #b45309 40%, #78716c);
+  box-shadow:
+    inset 0 0 0 1px color-mix(in srgb, #d6b48a 18%, transparent),
+    inset 0 0 40px #0a080688,
+    0 0 14px #b4530922;
 }
 .sgm-tex-phosphor,
 html[data-sgm-texture='phosphor'] .sgm-info-panel {
+  /* CRT phosphor glass (Phosphor Terminal) */
+  background-color: #020805;
   background-image:
-    repeating-linear-gradient(180deg, transparent 0 2px, #4ade8014 2px 3px),
-    linear-gradient(160deg, #052e16, #000);
+    radial-gradient(ellipse 70% 45% at 50% 0%, #4ade8028 0 20%, transparent 48%),
+    linear-gradient(180deg, transparent 0%, #4ade8008 50%, transparent 100%),
+    linear-gradient(160deg, #0a3d1c 0%, #052e16 48%, #000 100%);
+  border-color: color-mix(in srgb, #4ade80 42%, #14532d);
+  box-shadow:
+    inset 0 0 0 1px color-mix(in srgb, #4ade80 22%, transparent),
+    inset 0 0 36px #000000aa,
+    0 0 16px #4ade8022;
 }
 .sgm-tex-neon,
 html[data-sgm-texture='neon'] .sgm-info-panel {
+  /* Nightglass + neon edge bleed (Neon Protocol) */
+  background-color: #05010a;
   background-image:
-    linear-gradient(90deg, #f0abfc33 0%, transparent 40%, #22d3ee33 100%),
-    linear-gradient(160deg, #1a0b2e, #05010a);
+    radial-gradient(ellipse 40% 50% at 0% 50%, #f0abfc33 0 20%, transparent 55%),
+    radial-gradient(ellipse 40% 50% at 100% 50%, #22d3ee33 0 20%, transparent 55%),
+    linear-gradient(160deg, #1a0b2e 0%, #0c0518 48%, #05010a 100%);
+  border-color: color-mix(in srgb, #f0abfc 36%, #22d3ee);
+  box-shadow:
+    inset 0 0 0 1px color-mix(in srgb, #22d3ee 20%, transparent),
+    inset 0 0 40px #00000099,
+    0 0 18px #f0abfc22;
 }
 .sgm-tex-glass,
 html[data-sgm-texture='glass'] .sgm-info-panel {
+  /* Frosted spire glass (Glass Spire) */
+  background-color: #0c0816;
   background-image:
-    linear-gradient(125deg, #ede9fe33 0 18%, transparent 40%),
-    linear-gradient(160deg, #1e1b4b, #0f0a1a);
+    linear-gradient(125deg, #ede9fe44 0 14%, transparent 38%),
+    radial-gradient(ellipse 60% 40% at 80% 20%, #c4b5fd22 0 22%, transparent 48%),
+    linear-gradient(160deg, #1e1b4b 0%, #140e28 48%, #0c0816 100%);
+  border-color: color-mix(in srgb, #c4b5fd 40%, #6366f1);
+  box-shadow:
+    inset 0 0 0 1px color-mix(in srgb, #ede9fe 22%, transparent),
+    inset 0 0 42px #08061099,
+    0 0 18px #c4b5fd22;
 }
 .sgm-tex-noir,
 html[data-sgm-texture='noir'] .sgm-info-panel {
-  /* Matte case-file charcoal; crimson is a thin interruption only */
+  /* Matte case-file charcoal; crimson thin interruption (Noir Crimson) */
   background-color: #050505;
   background-image:
     linear-gradient(90deg, #b91c1c 0 2px, transparent 2px),
-    repeating-linear-gradient(180deg, transparent 0 11px, #ffffff08 11px 12px),
-    repeating-linear-gradient(135deg, transparent 0 4px, #ffffff06 4px 5px),
+    radial-gradient(ellipse 50% 30% at 0% 0%, #b91c1c18 0 20%, transparent 50%),
     linear-gradient(165deg, #171717 0%, #0a0a0a 48%, #000 100%);
   border-color: #404040;
-  box-shadow: inset 0 0 0 1px #262626;
+  box-shadow:
+    inset 0 0 0 1px #262626,
+    inset 0 0 40px #000000aa,
+    0 0 14px #b91c1c22;
 }
 
 /* ===== AI MATERIAL BITMAPS (OpenRouter) — all non-basic kits ===== */
+html[data-sgm-material='1'] {
+  --sgm-mat-inset: color-mix(in srgb, var(--sgm-accent, #94a3b8) 30%, transparent);
+  --sgm-mat-glow: color-mix(in srgb, var(--sgm-accent, #64748b) 26%, transparent);
+}
 html[data-sgm-material='1'] .sgm-info-panel {
   position: relative;
   isolation: isolate;
   border-width: 2px;
+  border-radius: 0.65rem;
   box-shadow:
-    inset 0 0 0 2px color-mix(in srgb, var(--sgm-accent, #94a3b8) 24%, transparent),
-    inset 0 -26px 44px color-mix(in srgb, var(--sgm-bg, #020617) 60%, transparent),
-    0 0 16px color-mix(in srgb, var(--sgm-accent, #64748b) 20%, transparent);
+    inset 0 0 0 2px var(--sgm-mat-inset),
+    inset 0 0 56px color-mix(in srgb, var(--sgm-bg, #020617) 55%, transparent),
+    inset 0 -36px 64px color-mix(in srgb, var(--sgm-bg, #020617) 70%, transparent),
+    inset 0 1px 0 color-mix(in srgb, #fff 6%, transparent),
+    0 0 0 1px color-mix(in srgb, var(--sgm-accent, #64748b) 32%, transparent),
+    0 0 22px var(--sgm-mat-glow);
 }
 html[data-sgm-material='1'] .sgm-info-panel::before {
   content: '';
@@ -554,45 +687,264 @@ html[data-sgm-material='1'] .sgm-info-panel::before {
   pointer-events: none;
   border-radius: inherit;
   background: var(--sgm-panel-texture) center / cover no-repeat;
-  opacity: 0.48;
+  opacity: 0.58;
   mix-blend-mode: soft-light;
 }
 html[data-sgm-material='1'] .sgm-info-panel > * {
   position: relative;
   z-index: 1;
 }
-/* Atmosphere stays on body background only — never a fixed ::before overlay.
-   A full-viewport pseudo-element stacked wrong on some Android Chrome builds
-   and hid the story + input while the HUD stayed visible. */
-html[data-sgm-material='1'] body {
-  background-image:
-    linear-gradient(color-mix(in srgb, var(--sgm-bg, #020617) 72%, transparent), color-mix(in srgb, var(--sgm-bg, #020617) 72%, transparent)),
-    var(--sgm-atmosphere, none);
-  background-size: cover, cover;
-  background-position: center, center;
-  background-repeat: no-repeat, no-repeat;
-  background-attachment: scroll, scroll;
-}
-/* Stronger turn frames — not 1px Integration hairlines */
+/* Architectural turn frames — carved depth + filigree wash + elemental glow */
 html[data-sgm-material='1'] .sgm-turn-frame,
 html[data-sgm-material='1'] .sgm-frame-chip {
   border-width: 3px;
+  border-radius: 0.55rem;
   box-shadow:
-    inset 0 0 0 2px color-mix(in srgb, var(--sgm-accent, #94a3b8) 28%, transparent),
-    inset 0 0 22px color-mix(in srgb, var(--sgm-bg, #020617) 50%, transparent),
-    0 0 0 1px color-mix(in srgb, var(--sgm-accent, #64748b) 35%, transparent),
-    0 0 18px color-mix(in srgb, var(--sgm-accent, #64748b) 22%, transparent);
+    inset 0 0 0 2px color-mix(in srgb, var(--sgm-accent, #94a3b8) 34%, transparent),
+    inset 0 0 28px color-mix(in srgb, var(--sgm-bg, #020617) 55%, transparent),
+    inset 0 1px 0 color-mix(in srgb, #fff 8%, transparent),
+    0 0 0 1px color-mix(in srgb, var(--sgm-accent, #64748b) 40%, transparent),
+    0 0 24px color-mix(in srgb, var(--sgm-accent, #64748b) 28%, transparent);
 }
 html[data-sgm-material='1'] .sgm-frame-chip {
-  background-image: var(--sgm-frame-filigree);
-  background-size: cover;
-  background-position: center;
+  background-image:
+    linear-gradient(color-mix(in srgb, var(--sgm-panel, #0f172a) 55%, transparent), color-mix(in srgb, var(--sgm-panel, #0f172a) 55%, transparent)),
+    var(--sgm-frame-filigree);
+  background-size: cover, cover;
+  background-position: center, center;
+}
+html[data-sgm-material='1'] .sgm-turn-frame:not(.sgm-info-panel) {
+  background-image:
+    linear-gradient(180deg, color-mix(in srgb, var(--sgm-panel, #0f172a) 88%, transparent), color-mix(in srgb, var(--sgm-bg, #020617) 92%, transparent)),
+    var(--sgm-frame-filigree, none);
+  background-size: auto, 120% 120%;
+  background-position: center, center;
+  background-repeat: no-repeat, no-repeat;
+  background-blend-mode: normal, soft-light;
 }
 html[data-sgm-material='1'] .sgm-turn-frame::before,
 html[data-sgm-material='1'] .sgm-frame-chip::before {
-  width: 22px;
-  height: 22px;
+  width: 26px;
+  height: 26px;
   border-width: 3px 0 0 3px;
+  filter: drop-shadow(0 0 3px color-mix(in srgb, var(--sgm-accent, #94a3b8) 55%, transparent));
+}
+html[data-sgm-material='1'] .sgm-turn-frame::after,
+html[data-sgm-material='1'] .sgm-frame-chip::after {
+  width: 26px;
+  height: 26px;
+  border-width: 0 3px 3px 0;
+  filter: drop-shadow(0 0 3px color-mix(in srgb, var(--sgm-accent, #94a3b8) 55%, transparent));
+}
+/* Inventory slots, tabs, choice buttons under material kits */
+html[data-sgm-material='1'] .sgm-info-slot-on {
+  border-width: 2px;
+  box-shadow:
+    inset 0 0 0 1px color-mix(in srgb, var(--sgm-accent, #f87171) 40%, transparent),
+    0 0 12px color-mix(in srgb, var(--sgm-accent, #f87171) 28%, transparent);
+}
+html[data-sgm-material='1'] .sgm-info-tab-on {
+  box-shadow:
+    inset 0 -2px 0 var(--sgm-accent, #ef4444),
+    0 0 10px color-mix(in srgb, var(--sgm-accent, #ef4444) 22%, transparent);
+}
+html[data-sgm-material='1'] .sgm-info-heading {
+  text-shadow: 0 0 18px color-mix(in srgb, var(--sgm-accent, #ef4444) 28%, transparent);
+  letter-spacing: 0.03em;
+}
+html[data-sgm-material='1'] .font-serif {
+  letter-spacing: 0.01em;
+  text-shadow: 0 1px 0 color-mix(in srgb, var(--sgm-bg, #020617) 55%, transparent);
+}
+html[data-sgm-material='1'] .sgm-choice-btn {
+  border-color: color-mix(in srgb, var(--sgm-accent, #f59e0b) 55%, #78350f) !important;
+  background-color: color-mix(in srgb, var(--sgm-panel, #0f172a) 82%, #000) !important;
+  box-shadow:
+    inset 0 0 0 1px color-mix(in srgb, var(--sgm-accent, #f59e0b) 22%, transparent),
+    inset 0 -10px 20px color-mix(in srgb, var(--sgm-bg, #020617) 40%, transparent),
+    0 0 14px color-mix(in srgb, var(--sgm-accent, #f59e0b) 18%, transparent);
+}
+html[data-sgm-material='1'] .sgm-choice-btn:hover:not(:disabled) {
+  border-color: var(--sgm-accent, #f59e0b) !important;
+  box-shadow:
+    inset 0 0 0 1px color-mix(in srgb, var(--sgm-accent, #f59e0b) 35%, transparent),
+    0 0 20px color-mix(in srgb, var(--sgm-accent, #f59e0b) 32%, transparent);
+}
+html[data-sgm-material='1'] .sgm-hud {
+  box-shadow:
+    inset 0 -1px 0 color-mix(in srgb, var(--sgm-accent, #64748b) 28%, transparent),
+    0 8px 24px color-mix(in srgb, #000 35%, transparent);
+}
+
+/* —— Dice tray / formula / outcomes (material kits) —— */
+html[data-sgm-material='1'] .sgm-dice-tray {
+  position: relative;
+  isolation: isolate;
+  border-width: 2px !important;
+  border-color: color-mix(in srgb, var(--sgm-dice-accent, var(--sgm-accent, #64748b)) 48%, transparent) !important;
+  background:
+    linear-gradient(180deg, color-mix(in srgb, var(--sgm-dice-face, var(--sgm-panel, #0f172a)) 78%, transparent), color-mix(in srgb, var(--sgm-bg, #020617) 88%, transparent)),
+    var(--sgm-panel-texture, none) !important;
+  background-size: auto, cover !important;
+  background-position: center, center !important;
+  background-blend-mode: normal, soft-light !important;
+  box-shadow:
+    inset 0 0 0 2px color-mix(in srgb, var(--sgm-dice-accent, var(--sgm-accent, #94a3b8)) 30%, transparent),
+    inset 0 -28px 48px color-mix(in srgb, var(--sgm-bg, #020617) 55%, transparent),
+    inset 0 1px 0 color-mix(in srgb, #fff 7%, transparent),
+    0 0 0 1px color-mix(in srgb, var(--sgm-dice-accent, var(--sgm-accent, #64748b)) 28%, transparent),
+    0 10px 32px color-mix(in srgb, #000 45%, transparent) !important;
+  backdrop-filter: blur(12px);
+}
+html[data-sgm-material='1'] .sgm-dice-tray::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  border-radius: inherit;
+  background: var(--sgm-frame-filigree, none) center / cover no-repeat;
+  opacity: 0.22;
+  mix-blend-mode: soft-light;
+}
+html[data-sgm-material='1'] .sgm-dice-tray > * {
+  position: relative;
+  z-index: 1;
+}
+html[data-sgm-material='1'] .sgm-dice-panel {
+  border-color: color-mix(in srgb, var(--sgm-dice-accent, var(--sgm-accent, #64748b)) 40%, transparent) !important;
+  background:
+    linear-gradient(180deg, color-mix(in srgb, var(--sgm-panel, #0f172a) 70%, transparent), color-mix(in srgb, var(--sgm-bg, #020617) 85%, transparent)),
+    var(--sgm-panel-texture, none) !important;
+  background-size: auto, cover !important;
+  background-blend-mode: normal, soft-light !important;
+  box-shadow:
+    inset 0 0 0 1px color-mix(in srgb, var(--sgm-dice-accent, var(--sgm-accent, #94a3b8)) 22%, transparent),
+    inset 0 -16px 28px color-mix(in srgb, var(--sgm-bg, #020617) 45%, transparent),
+    0 0 14px color-mix(in srgb, var(--sgm-dice-accent, var(--sgm-accent, #64748b)) 16%, transparent);
+}
+html[data-sgm-material='1'] .sgm-dice-die-btn {
+  border-color: color-mix(in srgb, var(--sgm-dice-accent, var(--sgm-accent, #64748b)) 42%, transparent) !important;
+  background:
+    linear-gradient(160deg, color-mix(in srgb, var(--sgm-dice-face, var(--sgm-panel, #1e293b)) 70%, #fff 4%), color-mix(in srgb, var(--sgm-bg, #0f172a) 80%, #000)) !important;
+  box-shadow:
+    inset 0 0 0 1px color-mix(in srgb, var(--sgm-dice-accent, var(--sgm-accent, #94a3b8)) 24%, transparent),
+    inset 0 -8px 14px color-mix(in srgb, var(--sgm-bg, #020617) 40%, transparent),
+    0 0 10px color-mix(in srgb, var(--sgm-dice-accent, var(--sgm-accent, #64748b)) 18%, transparent);
+  color: var(--sgm-dice-accent, var(--sgm-text, #e2e8f0)) !important;
+}
+html[data-sgm-material='1'] .sgm-dice-die-btn:hover:not(:disabled) {
+  box-shadow:
+    inset 0 0 0 1px color-mix(in srgb, var(--sgm-dice-accent, var(--sgm-accent, #94a3b8)) 40%, transparent),
+    0 0 18px color-mix(in srgb, var(--sgm-dice-accent, var(--sgm-accent, #64748b)) 32%, transparent);
+}
+html[data-sgm-material='1'] .sgm-dice-outcome {
+  border-color: color-mix(in srgb, var(--sgm-dice-accent, var(--sgm-accent, #64748b)) 36%, transparent) !important;
+  background: color-mix(in srgb, var(--sgm-panel, #0f172a) 72%, transparent) !important;
+  box-shadow:
+    inset 0 0 0 1px color-mix(in srgb, var(--sgm-dice-accent, var(--sgm-accent, #94a3b8)) 18%, transparent),
+    inset 0 -10px 18px color-mix(in srgb, var(--sgm-bg, #020617) 35%, transparent);
+}
+
+/* —— Sheet insets + modal shells (material kits) —— */
+html[data-sgm-material='1'] .sgm-sheet-inset {
+  position: relative;
+  isolation: isolate;
+  border-color: color-mix(in srgb, var(--sgm-accent, #64748b) 34%, transparent) !important;
+  background:
+    linear-gradient(180deg, color-mix(in srgb, var(--sgm-panel, #0f172a) 82%, transparent), color-mix(in srgb, var(--sgm-bg, #020617) 90%, transparent)),
+    var(--sgm-panel-texture, none) !important;
+  background-size: auto, cover !important;
+  background-blend-mode: normal, soft-light !important;
+  box-shadow:
+    inset 0 0 0 1px color-mix(in srgb, var(--sgm-accent, #94a3b8) 22%, transparent),
+    inset 0 -18px 32px color-mix(in srgb, var(--sgm-bg, #020617) 50%, transparent),
+    inset 0 1px 0 color-mix(in srgb, #fff 5%, transparent);
+}
+html[data-sgm-material='1'] .sgm-sheet-inset > * {
+  position: relative;
+  z-index: 1;
+}
+html[data-sgm-material='1'] .sgm-modal-shell {
+  position: relative;
+  isolation: isolate;
+  border-width: 2px !important;
+  border-color: color-mix(in srgb, var(--sgm-accent, #64748b) 42%, transparent) !important;
+  background:
+    linear-gradient(180deg, color-mix(in srgb, var(--sgm-panel, #0f172a) 88%, transparent), color-mix(in srgb, var(--sgm-bg, #020617) 94%, transparent)),
+    var(--sgm-panel-texture, none) !important;
+  background-size: auto, cover !important;
+  background-blend-mode: normal, soft-light !important;
+  box-shadow:
+    inset 0 0 0 2px var(--sgm-mat-inset, color-mix(in srgb, var(--sgm-accent, #94a3b8) 28%, transparent)),
+    inset 0 -36px 56px color-mix(in srgb, var(--sgm-bg, #020617) 55%, transparent),
+    inset 0 1px 0 color-mix(in srgb, #fff 6%, transparent),
+    0 0 0 1px color-mix(in srgb, var(--sgm-accent, #64748b) 30%, transparent),
+    0 0 28px var(--sgm-mat-glow, color-mix(in srgb, var(--sgm-accent, #64748b) 22%, transparent)),
+    0 16px 40px color-mix(in srgb, #000 50%, transparent) !important;
+}
+html[data-sgm-material='1'] .sgm-modal-shell::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  border-radius: inherit;
+  background: var(--sgm-panel-texture, none) center / cover no-repeat;
+  opacity: 0.45;
+  mix-blend-mode: soft-light;
+}
+html[data-sgm-material='1'] .sgm-modal-shell > * {
+  position: relative;
+  z-index: 1;
+}
+/* Nested slate hardcodes inside material panels — retint toward kit panel */
+html[data-sgm-material='1'] .sgm-info-panel .bg-slate-900,
+html[data-sgm-material='1'] .sgm-info-panel .bg-slate-800,
+html[data-sgm-material='1'] .sgm-info-panel .bg-slate-950,
+html[data-sgm-material='1'] .sgm-modal-shell .bg-slate-900,
+html[data-sgm-material='1'] .sgm-modal-shell .bg-slate-800,
+html[data-sgm-material='1'] .sgm-modal-shell .bg-slate-950 {
+  background-color: color-mix(in srgb, var(--sgm-panel, #0f172a) 88%, #000) !important;
+}
+html[data-sgm-material='1'] .sgm-info-panel .border-slate-800,
+html[data-sgm-material='1'] .sgm-info-panel .border-slate-800\/80,
+html[data-sgm-material='1'] .sgm-info-panel .border-slate-700,
+html[data-sgm-material='1'] .sgm-info-panel .border-slate-700\/60,
+html[data-sgm-material='1'] .sgm-modal-shell .border-slate-800,
+html[data-sgm-material='1'] .sgm-modal-shell .border-slate-700 {
+  border-color: color-mix(in srgb, var(--sgm-accent, #64748b) 28%, #334155) !important;
+}
+
+/* —— Currency / coin chrome (theme-keyed weight) —— */
+.sgm-coin {
+  color: var(--sgm-coin, #fbbf24);
+  font-variant-numeric: tabular-nums;
+}
+.sgm-coin-icon {
+  color: var(--sgm-coin, #fbbf24);
+  filter: drop-shadow(0 0 3px color-mix(in srgb, var(--sgm-coin, #fbbf24) 45%, transparent));
+}
+html[data-sgm-material='1'] .sgm-coin {
+  text-shadow:
+    0 0 14px color-mix(in srgb, var(--sgm-coin, #fbbf24) 40%, transparent),
+    0 1px 0 color-mix(in srgb, var(--sgm-bg, #020617) 55%, transparent);
+  letter-spacing: 0.02em;
+}
+html[data-sgm-material='1'] .sgm-coin-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  border-radius: 0.4rem;
+  border: 1px solid color-mix(in srgb, var(--sgm-coin, #fbbf24) 42%, transparent);
+  background:
+    linear-gradient(145deg, color-mix(in srgb, var(--sgm-coin, #fbbf24) 18%, transparent), transparent 55%),
+    color-mix(in srgb, var(--sgm-panel, #0f172a) 75%, #000);
+  padding: 0.15rem 0.5rem;
+  box-shadow:
+    inset 0 0 0 1px color-mix(in srgb, var(--sgm-coin, #fbbf24) 16%, transparent),
+    inset 0 -8px 14px color-mix(in srgb, var(--sgm-bg, #020617) 35%, transparent),
+    0 0 10px color-mix(in srgb, var(--sgm-coin, #fbbf24) 14%, transparent);
 }
 
 /* ===== CAPACITY PACK SHOP CARDS ===== */
@@ -1025,26 +1377,26 @@ html[data-sgm-theme='vampire-nocturne'] {
 }
 html[data-sgm-theme='vampire-nocturne'] .sgm-info-heading,
 html[data-sgm-theme='vampire-nocturne'] .sgm-hud-brand {
-  font-family: 'Grenze Gotisch', var(--sgm-font-story, 'Playfair Display', Georgia, serif);
+  font-family: var(--sgm-font-display, 'Grenze Gotisch', var(--sgm-font-story, 'Playfair Display', Georgia, serif));
   letter-spacing: 0.02em;
 }
 html[data-sgm-theme='high-elf-spire'] .sgm-info-heading,
 html[data-sgm-theme='high-elf-spire'] .sgm-hud-brand {
-  font-family: Cinzel, Georgia, serif;
+  font-family: var(--sgm-font-display, Cinzel, Georgia, serif);
   letter-spacing: 0.04em;
 }
 html[data-sgm-theme='dragon-hoard'] .sgm-info-heading,
 html[data-sgm-theme='dragon-hoard'] .sgm-hud-brand {
-  font-family: 'Cinzel Decorative', Cinzel, Georgia, serif;
+  font-family: var(--sgm-font-display, 'Cinzel Decorative', Cinzel, Georgia, serif);
   letter-spacing: 0.03em;
 }
 html[data-sgm-theme='dwarf-forgehall'] .sgm-info-heading,
 html[data-sgm-theme='dwarf-forgehall'] .sgm-hud-brand {
-  font-family: MedievalSharp, Georgia, serif;
+  font-family: var(--sgm-font-display, MedievalSharp, Georgia, serif);
 }
 html[data-sgm-theme='undead-ossuary'] .sgm-info-heading,
 html[data-sgm-theme='undead-ossuary'] .sgm-hud-brand {
-  font-family: 'Special Elite', Georgia, serif;
+  font-family: var(--sgm-font-display, 'Special Elite', Georgia, serif);
 }
 /* Nested slate hardcodes were covering ossuary panels — retint toward bone/ash */
 html[data-sgm-theme='undead-ossuary'] .sgm-info-panel .bg-slate-900,
@@ -1064,7 +1416,7 @@ html[data-sgm-theme='undead-ossuary'] .sgm-hud {
 }
 html[data-sgm-theme='cyborg-chassis'] .sgm-info-heading,
 html[data-sgm-theme='cyborg-chassis'] .sgm-hud-brand {
-  font-family: Orbitron, ui-sans-serif, system-ui, sans-serif;
+  font-family: var(--sgm-font-display, Orbitron, ui-sans-serif, system-ui, sans-serif);
   letter-spacing: 0.06em;
   text-transform: uppercase;
   font-size: 0.92em;
@@ -1136,16 +1488,28 @@ html[data-sgm-texture='velvet'] body {
 html[data-sgm-texture='bone'] body {
   background-color: #080706;
   background-image:
-    url('/themes/undead-ossuary/atmosphere.svg'),
-    radial-gradient(ellipse 70% 40% at 50% -5%, #e7e5e418 0 22%, transparent 52%),
+    radial-gradient(ellipse 70% 40% at 50% -5%, #e7e5e422 0 22%, transparent 52%),
+    radial-gradient(ellipse 40% 30% at 80% 100%, #a8a29e14 0 18%, transparent 44%),
     linear-gradient(180deg, #0c0a09, #080706);
-  background-size: cover, auto, auto;
-  background-attachment: fixed, scroll, scroll;
 }
 html[data-sgm-texture='sulfur'] body {
   background-image:
     radial-gradient(ellipse at 90% 0%, #f59e0b18 0 12%, transparent 32%),
     linear-gradient(180deg, #120808, #080404);
+}
+
+/* Material kits: AI atmosphere.png on body only (never a fixed ::before overlay —
+   that hid story+input on some Android Chrome builds). Must follow texture-body
+   fallbacks so the PNG wins the cascade. */
+html[data-sgm-material='1'] body {
+  background-image:
+    radial-gradient(ellipse 90% 55% at 50% -10%, color-mix(in srgb, var(--sgm-accent, #64748b) 14%, transparent) 0 28%, transparent 58%),
+    linear-gradient(color-mix(in srgb, var(--sgm-bg, #020617) 68%, transparent), color-mix(in srgb, var(--sgm-bg, #020617) 78%, transparent)),
+    var(--sgm-atmosphere, none);
+  background-size: auto, cover, cover;
+  background-position: center, center, center;
+  background-repeat: no-repeat, no-repeat, no-repeat;
+  background-attachment: scroll, scroll, scroll;
 }
 
 /* ===== EXCITED DICE THEME FX ===== */

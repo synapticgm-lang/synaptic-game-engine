@@ -37,7 +37,8 @@ export function AutoFightWarningModal({ enemyName, enemyLevel, playerLevel, onPr
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm">
-      <div className="mx-4 w-full max-w-md overflow-hidden rounded-xl border border-amber-800/60 bg-slate-950 shadow-2xl shadow-amber-900/20">
+      <div className="sgm-modal-shell sgm-turn-frame sgm-info-panel mx-4 w-full max-w-md overflow-hidden rounded-xl border border-amber-800/60 bg-slate-950 shadow-2xl shadow-amber-900/20">
+        <div className="sgm-turn-frame-bar h-1 w-full" />
         <div className="flex items-center gap-3 border-b border-amber-900/40 bg-amber-950/30 px-5 py-4">
           <div className="flex h-10 w-10 items-center justify-center rounded-full border border-amber-700/50 bg-amber-900/30">
             <AlertTriangle size={20} className="text-amber-400" />

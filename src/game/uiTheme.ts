@@ -156,6 +156,43 @@ export function isMaterialThemeKey(themeKey: string | undefined): themeKey is Ma
   return !!themeKey && MATERIAL_THEME_KEY_SET.has(themeKey);
 }
 
+/**
+ * Theme-keyed coin / gold chrome — aesthetic weight only (no AI assets).
+ * Dark kits: tarnished silver / blood-gold; high fantasy: polished gold / mithril.
+ */
+const THEME_COIN_COLORS: Partial<Record<MaterialThemeKey, string>> = {
+  'vampire-nocturne': '#c9a227',
+  'undead-ossuary': '#a8a29e',
+  'bone-reliquary': '#b8a99a',
+  'infernal-pact': '#d97706',
+  'noir-crimson': '#b45309',
+  'ember-depths': '#e8a54b',
+  'high-elf-spire': '#e8d48b',
+  'wood-elf-grove': '#d4a574',
+  'dark-elf-umbrance': '#c4b5fd',
+  'dwarf-forgehall': '#f59e0b',
+  'angelic-radiance': '#fde68a',
+  'dragon-hoard': '#fbbf24',
+  'fae-glamour': '#f0abfc',
+  'orc-warcamp': '#ca8a04',
+  'goblin-scrapheap': '#a3e635',
+  'merfolk-abyss': '#67e8f9',
+  'phoenix-ashrise': '#fb923c',
+  'cyborg-chassis': '#67e8f9',
+  'neon-protocol': '#22d3ee',
+  'phosphor-terminal': '#86efac',
+  'glass-spire': '#e0f2fe',
+  'parchment-ledger': '#d6b56e',
+};
+
+/** Coin accent for currency counters — falls back to warm gold for Free / unknown. */
+export function themeCoinColor(themeKey: string | undefined): string {
+  if (themeKey && isMaterialThemeKey(themeKey) && THEME_COIN_COLORS[themeKey]) {
+    return THEME_COIN_COLORS[themeKey]!;
+  }
+  return '#fbbf24';
+}
+
 /** Hosted / script-generated panel bitmaps — keyed by themeKey (not shared texture token). */
 export function themePanelTextureUrl(
   themeKeyOrTexture: string | undefined,
@@ -195,8 +232,10 @@ export function applyUiThemeToDocument(
     root.style.removeProperty('--sgm-muted');
     root.style.removeProperty('--sgm-font-ui');
     root.style.removeProperty('--sgm-font-story');
+    root.style.removeProperty('--sgm-font-display');
     root.style.removeProperty('--sgm-dice-accent');
     root.style.removeProperty('--sgm-dice-face');
+    root.style.removeProperty('--sgm-coin');
     root.style.removeProperty('--sgm-panel-texture');
     root.style.removeProperty('--sgm-atmosphere');
     root.style.removeProperty('--sgm-frame-filigree');
@@ -231,11 +270,14 @@ export function applyUiThemeToDocument(
   ensureGoogleFonts(fontUi, fontStory, displayStack);
   if (fontUi) root.style.setProperty('--sgm-font-ui', fontUi);
   if (fontStory) root.style.setProperty('--sgm-font-story', fontStory);
+  if (displayStack) root.style.setProperty('--sgm-font-display', displayStack);
+  else root.style.removeProperty('--sgm-font-display');
   const diceAccent = extras?.dice?.diceSkin?.accent ?? p.accent;
   const diceFace = extras?.dice?.diceSkin?.face ?? p.panel;
   root.style.setProperty('--sgm-dice-accent', diceAccent);
   root.style.setProperty('--sgm-dice-face', diceFace);
   const themeKey = theme?.themeKey ?? 'integration-blue';
+  root.style.setProperty('--sgm-coin', themeCoinColor(themeKey));
   root.dataset.sgmTheme = themeKey;
   root.dataset.sgmFrame =
     extras?.frame?.frameSkin?.style ?? p.frameStyle ?? 'plain';

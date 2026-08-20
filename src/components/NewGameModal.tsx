@@ -319,15 +319,16 @@ export function NewGameModal({ contentMode, onStart, onClose }: Props) {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 backdrop-blur-sm p-3" onClick={onClose}>
       <div
-        className={`relative flex max-h-[92vh] w-full flex-col overflow-hidden rounded-xl border border-crimson-700/50 bg-slate-900 shadow-2xl ${
+        className={`sgm-modal-shell sgm-turn-frame sgm-info-panel relative flex max-h-[92vh] w-full flex-col overflow-hidden rounded-xl border border-crimson-700/50 bg-slate-900 shadow-2xl ${
           wideModal ? 'max-w-2xl' : 'max-w-lg'
         }`}
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="flex shrink-0 items-center justify-between border-b border-slate-800 bg-slate-950 px-4 py-3">
+        <div className="sgm-turn-frame-bar h-1 w-full shrink-0" />
+        <div className="sgm-frame-header flex shrink-0 items-center justify-between border-b border-slate-800 bg-slate-950 px-4 py-3">
           <div className="flex items-center gap-2">
             <Sparkles className="text-crimson-400" size={16} />
-            <h2 className="font-serif text-sm text-slate-100">{STEP_LABELS[step]}</h2>
+            <h2 className="sgm-info-heading font-serif text-sm text-slate-100">{STEP_LABELS[step]}</h2>
           </div>
           <button onClick={onClose} className="text-slate-400 hover:text-slate-200 transition-colors p-1">
             <X size={18} />

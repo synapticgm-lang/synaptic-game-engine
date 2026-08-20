@@ -178,7 +178,7 @@ export function DiceFormulaBuilder({ open, onClose, onRollComplete }: Props) {
   return (
     <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/50 backdrop-blur-sm sm:items-center sm:p-4" onClick={onClose}>
       <div
-        className="w-full max-w-lg overflow-hidden rounded-t-2xl border border-slate-700/60 bg-slate-950/90 shadow-2xl shadow-black/60 backdrop-blur-xl sm:rounded-2xl"
+        className="sgm-dice-tray sgm-turn-frame sgm-info-panel w-full max-w-lg overflow-hidden rounded-t-2xl border border-slate-700/60 bg-slate-950/90 shadow-2xl shadow-black/60 backdrop-blur-xl sm:rounded-2xl"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
@@ -194,7 +194,7 @@ export function DiceFormulaBuilder({ open, onClose, onRollComplete }: Props) {
 
         <div className="max-h-[80vh] overflow-y-auto p-4">
           {/* Formula display */}
-          <div className="mb-3 rounded-lg border border-slate-700/60 bg-slate-900/60 px-4 py-3">
+          <div className="sgm-dice-panel mb-3 rounded-lg border border-slate-700/60 bg-slate-900/60 px-4 py-3">
             <div className="mb-1 text-[10px] uppercase tracking-wider text-slate-600">Current Formula</div>
             <div className="font-mono text-lg font-bold text-slate-100">
               {formulaString}
@@ -215,7 +215,7 @@ export function DiceFormulaBuilder({ open, onClose, onRollComplete }: Props) {
                   key={d.die}
                   onClick={() => addDie(d.die)}
                   disabled={rolling}
-                  className={`group flex flex-col items-center gap-0.5 rounded-lg border border-slate-700/50 bg-slate-800/40 py-2 transition-all duration-200 hover:-translate-y-0.5 hover:border-slate-500 hover:bg-slate-700/40 hover:shadow-lg ${d.glow} disabled:opacity-50`}
+                  className={`sgm-dice-die-btn group flex flex-col items-center gap-0.5 rounded-lg border border-slate-700/50 bg-slate-800/40 py-2 transition-all duration-200 hover:-translate-y-0.5 hover:border-slate-500 hover:bg-slate-700/40 hover:shadow-lg ${d.glow} disabled:opacity-50`}
                 >
                   <svg
                     viewBox="0 0 24 24"
@@ -343,7 +343,7 @@ function ResultPanel({ result }: { result: RollResult }) {
   const isFumble = result.components.some((c) => c.token.type === 'dice' && c.token.die === 20 && c.rolls.includes(1));
 
   return (
-    <div className="mb-3 overflow-hidden rounded-xl border border-slate-700/50 bg-slate-900/60 backdrop-blur-md">
+    <div className="sgm-dice-outcome mb-3 overflow-hidden rounded-xl border border-slate-700/50 bg-slate-900/60 backdrop-blur-md">
       {/* Total header */}
       <div className={`flex items-center justify-between border-b border-slate-800 px-4 py-3 ${
         isCrit ? 'bg-emerald-950/30' : isFumble ? 'bg-rose-950/30' : 'bg-slate-950/40'

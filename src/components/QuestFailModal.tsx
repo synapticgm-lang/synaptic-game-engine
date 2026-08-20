@@ -11,7 +11,7 @@ export function QuestFailModal({ quests, onClose, onOpenJournal }: Props) {
   const multi = quests.length > 1;
   return (
     <div className="fixed inset-0 z-[65] flex items-center justify-center bg-black/70 p-4 backdrop-blur-sm">
-      <div className="sgm-turn-frame sgm-info-panel w-full max-w-md overflow-hidden rounded-xl border shadow-2xl">
+      <div className="sgm-modal-shell sgm-turn-frame sgm-info-panel w-full max-w-md overflow-hidden rounded-xl border shadow-2xl">
         <div className="sgm-turn-frame-bar h-1 w-full" />
         <div className="border-b border-slate-800/80 bg-black/20 px-5 py-3">
           <p className="sgm-info-accent font-mono text-[10px] uppercase tracking-[0.25em]">System</p>

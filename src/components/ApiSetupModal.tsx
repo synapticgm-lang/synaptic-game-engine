@@ -26,9 +26,9 @@ export function ApiSetupModal({ settings, onSave, onSetContentMode, onClose }: P
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4">
-      <div className="w-full max-w-md rounded-xl border border-slate-700 bg-slate-900 p-5 shadow-xl">
-        <div className="mb-4 flex items-center justify-between">
-          <h2 className="text-lg font-semibold text-slate-100">Content profile</h2>
+      <div className="sgm-modal-shell sgm-turn-frame sgm-info-panel w-full max-w-md rounded-xl border border-slate-700 bg-slate-900 p-5 shadow-xl">
+        <div className="sgm-frame-header mb-4 flex items-center justify-between">
+          <h2 className="sgm-info-heading text-lg font-semibold text-slate-100">Content profile</h2>
           <button type="button" onClick={onClose} className="text-slate-500 hover:text-slate-300">
             <X size={18} />
           </button>

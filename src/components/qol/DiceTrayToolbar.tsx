@@ -138,7 +138,7 @@ export function DiceTrayToolbar({
     <div className="pointer-events-none fixed inset-x-0 bottom-0 z-40 flex justify-center px-2 pb-2 sm:pb-3">
       <div className="pointer-events-auto w-full max-w-3xl">
         {/* Recent Rolls Log */}
-        <div className={`mx-auto mb-1.5 overflow-hidden rounded-xl border border-slate-700/60 bg-slate-950/80 backdrop-blur-md transition-all duration-300 ${
+        <div className={`sgm-dice-panel mx-auto mb-1.5 overflow-hidden rounded-xl border border-slate-700/60 bg-slate-950/80 backdrop-blur-md transition-all duration-300 ${
           logOpen ? 'max-h-64 opacity-100' : 'max-h-0 opacity-0 border-transparent'
         }`}>
           <div className="flex items-center justify-between border-b border-slate-800 px-3 py-2">
@@ -162,7 +162,7 @@ export function DiceTrayToolbar({
                 {recentRolls.map((r) => (
                   <li
                     key={r.id}
-                    className={`flex items-center justify-between rounded-md border px-2.5 py-1.5 text-xs ${
+                    className={`sgm-dice-outcome flex items-center justify-between rounded-md border px-2.5 py-1.5 text-xs ${
                       r.outcome === 'Crit!' ? 'border-emerald-500/40 bg-emerald-950/30'
                       : r.outcome === 'Fumble' ? 'border-rose-500/40 bg-rose-950/30'
                       : 'border-slate-800 bg-slate-900/40'
@@ -199,7 +199,7 @@ export function DiceTrayToolbar({
 
         {/* Toolbar */}
         <div
-          className="relative rounded-2xl border px-2 py-2 shadow-2xl shadow-black/50 backdrop-blur-xl sm:px-3"
+          className="sgm-dice-tray relative rounded-2xl border px-2 py-2 shadow-2xl shadow-black/50 backdrop-blur-xl sm:px-3"
           style={{
             borderColor: 'color-mix(in srgb, var(--sgm-dice-accent, #64748b) 45%, transparent)',
             background: 'color-mix(in srgb, var(--sgm-dice-face, #020617) 72%, #020617)',
@@ -279,7 +279,7 @@ export function DiceTrayToolbar({
                 key={d.die}
                 onClick={() => handleRoll(d.die)}
                 disabled={rolling !== null}
-                className={`group relative flex flex-1 flex-col items-center gap-0.5 rounded-lg border py-1.5 transition-all duration-200 hover:-translate-y-1 hover:shadow-lg ${d.glow} disabled:opacity-50 sm:py-2`}
+                className={`sgm-dice-die-btn group relative flex flex-1 flex-col items-center gap-0.5 rounded-lg border py-1.5 transition-all duration-200 hover:-translate-y-1 hover:shadow-lg ${d.glow} disabled:opacity-50 sm:py-2`}
                 style={{
                   borderColor: 'color-mix(in srgb, var(--sgm-dice-accent, #64748b) 40%, transparent)',
                   background: 'color-mix(in srgb, var(--sgm-dice-face, #1e293b) 55%, #0f172a)',

@@ -8,9 +8,9 @@ import { effectiveWriterTier, isTestLabEnabled } from '../game/testLab';
 import { equippedSetLabel, equippedSetName } from '../game/uiTheme';
 
 /** Visible after a hard refresh — if this is missing, Vercel is still serving the 16 Aug bundle. */
-export const HUD_BUILD_STAMP = '2026-08-20h';
+export const HUD_BUILD_STAMP = '2026-08-20j';
 const HUD_BUILD_TITLE =
-  'Debug 2026-08-20h — blank play UI (atmosphere / unlock / hide-text)';
+  'Debug 2026-08-20j — material parity for dice, sheets, modals, currency';
 
 interface Props {
   state: GameState;

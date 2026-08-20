@@ -245,8 +245,8 @@ export function CenterPanel({ state, busy, turnPhase = 'idle', streamingReveal =
             )}
             {diceRoll && (
               <div className="flex items-center justify-center py-4">
-                <div className="flex h-16 w-16 items-center justify-center rounded-lg border border-crimson-700/40 bg-crimson-950/30 shadow-[0_0_24px_rgba(220,38,38,0.2)]">
-                  <Dice5 size={36} className="animate-spin text-crimson-400" style={{ animationDuration: '0.6s' }} />
+                <div className="sgm-dice-outcome flex h-16 w-16 items-center justify-center rounded-lg border border-crimson-700/40 bg-crimson-950/30 shadow-[0_0_24px_rgba(220,38,38,0.2)]">
+                  <Dice5 size={36} className="animate-spin text-crimson-400" style={{ animationDuration: '0.6s', color: 'var(--sgm-dice-accent, #f87171)' }} />
                 </div>
               </div>
             )}

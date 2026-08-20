@@ -237,12 +237,13 @@ export function SettingsModal({ settings, storyName, engineMode, gameState, onSa
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4" onClick={onClose}>
       <div
-        className="relative flex max-h-[90vh] w-full max-w-md flex-col overflow-hidden rounded-xl border border-crimson-700/50 bg-slate-900 shadow-2xl shadow-crimson-900/20"
+        className="sgm-modal-shell sgm-turn-frame sgm-info-panel relative flex max-h-[90vh] w-full max-w-md flex-col overflow-hidden rounded-xl border border-crimson-700/50 bg-slate-900 shadow-2xl shadow-crimson-900/20"
         onClick={(e) => e.stopPropagation()}
       >
+        <div className="sgm-turn-frame-bar h-1 w-full shrink-0" />
         {/* Sticky Header */}
-        <div className="flex shrink-0 items-center justify-between border-b border-slate-700 bg-slate-900 px-5 py-4">
-          <h2 className="font-serif text-lg text-slate-100">Settings</h2>
+        <div className="sgm-frame-header flex shrink-0 items-center justify-between border-b border-slate-700 bg-slate-900 px-5 py-4">
+          <h2 className="sgm-info-heading font-serif text-lg text-slate-100">Settings</h2>
           <button onClick={onClose} className="text-slate-400 hover:text-slate-200 transition-colors">
             <X size={20} />
           </button>

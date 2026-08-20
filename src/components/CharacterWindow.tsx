@@ -211,7 +211,7 @@ function SidePanel({ state }: { state: GameState }) {
   const c = state.character;
   const reveal = state.statusReveal ?? (state.tutorialProgress?.fullStatusUnlocked ? 'full' : 'minimal');
   return (
-    <div className="h-full w-64 space-y-4 overflow-y-auto bg-slate-950/95 p-3 sm:w-56">
+    <div className="sgm-sheet-inset h-full w-64 space-y-4 overflow-y-auto border-l border-slate-800/60 bg-slate-950/95 p-3 sm:w-56">
       <div>
         <h3 className="sgm-info-heading mb-2 text-sm uppercase tracking-wider">Vitals</h3>
         <div className="space-y-2">
@@ -236,7 +236,10 @@ function SidePanel({ state }: { state: GameState }) {
             <div className="flex justify-between"><span>XP</span><span className="font-mono">{c.xp}/{c.xpToNext}</span></div>
           )}
           {reveal === 'full' && c.armorClass != null && <div className="flex justify-between"><span>Armor Class</span><span className="font-mono font-bold">{c.armorClass}</span></div>}
-          <div className="flex justify-between"><span>Gold</span><span className="font-mono text-amber-400">{state.gold ?? 0}</span></div>
+          <div className="flex justify-between items-center gap-2">
+            <span>Gold</span>
+            <span className="sgm-coin-chip sgm-coin font-mono font-bold">{state.gold ?? 0}</span>
+          </div>
         </div>
       </div>
       {c.conditions.length > 0 && (
@@ -281,7 +284,7 @@ function StoryPlatesTab({ state }: { state: GameState }) {
       {plates.map((plate) => (
         <div
           key={plate.id}
-          className="rounded-lg border border-amber-900/40 bg-slate-900/60 px-3 py-2"
+          className="sgm-sheet-inset rounded-lg border border-amber-900/40 bg-slate-900/60 px-3 py-2"
         >
           <p className="text-sm font-medium text-amber-200">{plate.title}</p>
           <p className="text-[11px] text-slate-500">Turn {plate.turn}</p>
@@ -445,7 +448,7 @@ function PaperDoll({
       </div>
 
       <div className="relative flex h-full min-h-0 min-w-0 flex-1 items-center justify-center">
-        <div className="sgm-turn-frame relative h-full w-auto max-w-[min(100%,16rem)] overflow-hidden rounded-lg border-2 bg-slate-800/40 aspect-[3/5] sm:max-w-[min(100%,20rem)]">
+        <div className="sgm-turn-frame sgm-info-panel relative h-full w-auto max-w-[min(100%,16rem)] overflow-hidden rounded-lg border-2 aspect-[3/5] sm:max-w-[min(100%,20rem)]">
           <img src={stockPortraitSrc(state)} alt={c.name} className="h-full w-full object-contain object-top" />
         </div>
       </div>

@@ -77,7 +77,10 @@ export function MerchantWindow({ isOpen, onClose, state, onStateChange, onToast 
               <h2 className="sgm-info-heading text-lg font-bold">Salvage</h2>
               <p className="text-[11px] text-slate-500 leading-snug">System conversion of surplus goods. Available anywhere. No vendor present.</p>
             </div>
-            <span className="text-sm text-slate-400 ml-2 shrink-0">Gold: <span className="font-mono font-bold text-amber-400">{state.gold ?? 0}</span></span>
+            <span className="sgm-coin-chip text-sm text-slate-400 ml-2 shrink-0">
+              <Coins size={14} className="sgm-coin-icon" />
+              <span className="sgm-coin font-mono font-bold">{state.gold ?? 0}</span>
+            </span>
           </div>
           <button onClick={onClose} className="p-1.5 rounded hover:bg-slate-800 text-slate-400 hover:text-slate-200 transition-colors" title="Close">
             <X size={18} />
@@ -117,13 +120,13 @@ export function MerchantWindow({ isOpen, onClose, state, onStateChange, onToast 
                       const price = getSellPrice(item);
                       const isConfirming = confirmSellId === item.id;
                       return (
-                        <div key={item.id} className="flex items-center justify-between rounded-lg border border-slate-700 bg-slate-800/40 p-2.5">
+                        <div key={item.id} className="sgm-sheet-inset flex items-center justify-between rounded-lg border border-slate-700 bg-slate-800/40 p-2.5">
                           <div className="flex-1 min-w-0">
                             <div className="text-sm font-medium truncate" style={{ color: RARITY_COLORS[item.rarity] }}>{item.name}</div>
                             <div className="text-xs text-slate-500">{item.rarity}{item.itemLevel ? ` · iLvl ${item.itemLevel}` : ''}</div>
                           </div>
                           <div className="flex items-center gap-2 ml-2">
-                            <span className="text-sm font-mono font-bold text-amber-400">{price}g</span>
+                            <span className="sgm-coin text-sm font-mono font-bold">{price}g</span>
                             {isConfirming ? (
                               <div className="flex gap-1">
                                 <button onClick={() => handleSell(item)} className="px-2 py-1 text-xs rounded bg-amber-600 hover:bg-amber-500 text-white transition-colors">Confirm</button>
@@ -150,13 +153,13 @@ export function MerchantWindow({ isOpen, onClose, state, onStateChange, onToast 
                     {state.materials.map((mat) => {
                       const price = getMaterialSellPrice({ rarity: mat.rarity, quantity: mat.quantity });
                       return (
-                        <div key={mat.id} className="flex items-center justify-between rounded-lg border border-slate-700 bg-slate-800/40 p-2.5">
+                        <div key={mat.id} className="sgm-sheet-inset flex items-center justify-between rounded-lg border border-slate-700 bg-slate-800/40 p-2.5">
                           <div className="flex-1 min-w-0">
                             <div className="text-sm font-medium truncate" style={{ color: RARITY_COLORS[mat.rarity] }}>{mat.name}</div>
                             <div className="text-xs text-slate-500">{mat.rarity} · x{mat.quantity}</div>
                           </div>
                           <div className="flex items-center gap-2 ml-2">
-                            <span className="text-sm font-mono font-bold text-amber-400">{price}g</span>
+                            <span className="sgm-coin text-sm font-mono font-bold">{price}g</span>
                             <button onClick={() => handleSellMaterial(mat)} className="px-2 py-1 text-xs rounded bg-slate-700 hover:bg-slate-600 text-slate-300 transition-colors">Sell</button>
                           </div>
                         </div>

@@ -89,7 +89,7 @@ function DndDashboard({ state, uiThemeId }: { state: GameState; uiThemeId?: stri
           {attrRows.map(([key, val]) => {
             const mod = MODIFIER(val);
             return (
-              <div key={key} className="flex items-center justify-between rounded-md border border-slate-700 bg-slate-800/60 px-3 py-2">
+              <div key={key} className="sgm-sheet-inset flex items-center justify-between rounded-md border border-slate-700 bg-slate-800/60 px-3 py-2">
                 <div className="flex items-center gap-2">
                   <span className="text-base">{ATTR_META[key].icon}</span>
                   <div>
@@ -110,7 +110,7 @@ function DndDashboard({ state, uiThemeId }: { state: GameState; uiThemeId?: stri
       {/* Inventory Weight Bar */}
       <section>
         <h3 className="sgm-info-heading mb-2 text-xs uppercase tracking-wider">Inventory Weight</h3>
-        <div className="rounded-md border border-slate-700 bg-slate-800/40 p-3">
+        <div className="sgm-sheet-inset rounded-md border border-slate-700 bg-slate-800/40 p-3">
           <div className="mb-1.5 flex items-center justify-between text-xs">
             <span className="flex items-center gap-1.5 text-slate-300">
               <Backpack size={13} className="text-slate-400" />
@@ -135,7 +135,7 @@ function DndDashboard({ state, uiThemeId }: { state: GameState; uiThemeId?: stri
       {/* Spellbook List */}
       <section>
         <h3 className="sgm-info-heading mb-2 text-xs uppercase tracking-wider">Spellbook</h3>
-        <div className="rounded-md border border-slate-700 bg-slate-800/40 p-2">
+        <div className="sgm-sheet-inset rounded-md border border-slate-700 bg-slate-800/40 p-2">
           {spells.length === 0 ? (
             <div className="py-4 text-center text-xs italic text-slate-600">No spells learned yet.</div>
           ) : (
@@ -218,9 +218,9 @@ function LitRpgStatus({ state, uiThemeId }: { state: GameState; uiThemeId?: stri
       </div>
 
       {/* Active Buffs */}
-      <div className="rounded-xl border border-slate-700/60 bg-slate-900/60 p-3">
+      <div className="sgm-sheet-inset rounded-xl border border-slate-700/60 bg-slate-900/60 p-3">
         <div className="mb-2 flex items-center gap-1.5 text-xs font-medium text-slate-300">
-          <Zap size={13} className="text-amber-400" />
+          <Zap size={13} className="sgm-info-accent" />
           Active Buffs
         </div>
         <div className="flex flex-wrap gap-1.5">
@@ -252,7 +252,7 @@ function HoloBar({
   icon: React.ReactNode; gradient: string; glow: string; border: string;
 }) {
   return (
-    <div className={`rounded-lg border ${border} bg-slate-900/60 p-3 shadow-inner ${glow}`}>
+    <div className={`sgm-sheet-inset rounded-lg border ${border} bg-slate-900/60 p-3 shadow-inner ${glow}`}>
       <div className="mb-1.5 flex items-center justify-between text-xs">
         <span className="flex items-center gap-1.5 font-medium text-slate-200">
           {icon}

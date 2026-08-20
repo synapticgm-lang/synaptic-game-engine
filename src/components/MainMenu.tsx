@@ -30,7 +30,13 @@ import {
 import { ensureTestCosmeticUnlock, isOwned } from '@/game/cosmeticEntitlements';
 import { LegalLinks } from './LegalLinks';
 import { PlayerProfilePanel } from './PlayerProfilePanel';
-import { applySettingsCosmetics, applyUiThemeToDocument, ensureCatalogPreviewFonts, themeBySettingsId } from '@/game/uiTheme';
+import {
+  applySettingsCosmetics,
+  applyUiThemeToDocument,
+  ensureCatalogPreviewFonts,
+  themeBySettingsId,
+  themePanelTextureUrl,
+} from '@/game/uiTheme';
 import { previewVoiceLine } from '@/game/useVoice';
 import { DicePreview } from './DicePreview';
 import { CapacityPackShop } from './CapacityPackShop';
@@ -553,9 +559,12 @@ function ThemePreviewBar({
   const voice = shopItemById(voiceId);
   const frame = shopItemById(frameId);
   const texture = themeTextureOf(theme);
+  const panelUrl = themePanelTextureUrl(theme.themeKey);
   return (
     <div
-      className={`sgm-theme-preview sgm-tex-${texture} overflow-hidden rounded-xl border shadow-lg`}
+      className={`sgm-set-card sgm-theme-preview sgm-tex-${texture} overflow-hidden rounded-xl border shadow-lg${
+        theme.free ? ' sgm-set-card-free' : ' sgm-set-card-active'
+      }`}
       data-sgm-frame={frame?.frameSkin?.style ?? 'plain'}
       style={{
         borderColor: p?.accent ?? '#334155',
@@ -563,6 +572,7 @@ function ThemePreviewBar({
         ['--sgm-chip-accent' as string]: p?.accent ?? '#22d3ee',
         ['--sgm-chip-bg' as string]: p?.bg ?? '#020617',
         ['--sgm-chip-panel' as string]: p?.panel ?? '#0f172a',
+        ...(panelUrl ? { ['--sgm-panel-texture' as string]: `url('${panelUrl}')` } : {}),
       }}
     >
       <div className="h-1.5 w-full" style={{ background: p?.accent ?? '#22d3ee' }} />
@@ -827,7 +837,7 @@ function SetStatusPill({
         ? 'border-emerald-800/50 bg-emerald-950/40 text-emerald-300'
         : 'border-slate-700 bg-slate-900 text-slate-500';
   return (
-    <span className={`shrink-0 rounded-md border px-1.5 py-0.5 text-[10px] font-semibold ${tone}`}>
+    <span className={`sgm-set-badge shrink-0 border px-1.5 py-0.5 text-[10px] font-semibold ${tone}`}>
       {label}
     </span>
   );
@@ -844,12 +854,15 @@ function FeaturedSetBanner({
 }) {
   const p = theme.preview;
   const texture = themeTextureOf(theme);
+  const panelUrl = themePanelTextureUrl(theme.themeKey);
   const dice = themeKitItems(theme).find((row) => row.item.slot === 'dice')?.item;
   return (
     <button
       type="button"
       onClick={onOpen}
-      className={`sgm-theme-preview sgm-tex-${texture} w-full overflow-hidden rounded-xl border text-left`}
+      className={`sgm-set-card sgm-theme-preview sgm-tex-${texture} w-full overflow-hidden rounded-xl border text-left${
+        theme.free ? ' sgm-set-card-free' : ' sgm-set-card-active'
+      }`}
       style={
         p
           ? {
@@ -857,6 +870,7 @@ function FeaturedSetBanner({
               ['--sgm-chip-accent' as string]: p.accent,
               ['--sgm-chip-bg' as string]: p.bg,
               ['--sgm-chip-panel' as string]: p.panel,
+              ...(panelUrl ? { ['--sgm-panel-texture' as string]: `url('${panelUrl}')` } : {}),
             }
           : undefined
       }
@@ -972,15 +986,19 @@ function FontDescriptionBox({ item, blurb }: { item: ShopItem; blurb: string }) 
 function ThemeChip({ item, size = 32 }: { item: ShopItem; size?: number }) {
   const p = item.preview;
   const texture = themeTextureOf(item);
+  const panelUrl = themePanelTextureUrl(item.themeKey);
   return (
     <span
-      className={`sgm-theme-chip sgm-tex-${texture}${item.free ? ' sgm-theme-chip-free' : ''}`}
+      className={`sgm-theme-chip sgm-tex-${texture}${item.free ? ' sgm-theme-chip-free' : ''}${
+        panelUrl ? ' sgm-theme-chip-material' : ''
+      }`}
       style={{
         width: size,
         height: size,
         ['--sgm-chip-accent' as string]: p?.accent ?? '#22d3ee',
         ['--sgm-chip-bg' as string]: p?.bg ?? '#020617',
         ['--sgm-chip-panel' as string]: p?.panel ?? '#0f172a',
+        ...(panelUrl ? { ['--sgm-panel-texture' as string]: `url('${panelUrl}')` } : {}),
       }}
       aria-hidden
     />
@@ -1182,17 +1200,19 @@ function SetCard({
   ) : null;
 
   const texture = themeTextureOf(theme);
+  const panelUrl = themePanelTextureUrl(theme.themeKey);
   const style = p
     ? {
         borderColor: highlight ? `${p.accent}99` : `${p.accent}44`,
         ['--sgm-chip-accent' as string]: p.accent,
         ['--sgm-chip-bg' as string]: p.bg,
         ['--sgm-chip-panel' as string]: p.panel,
+        ...(panelUrl ? { ['--sgm-panel-texture' as string]: `url('${panelUrl}')` } : {}),
       }
     : undefined;
-  const cardClass = `sgm-theme-preview sgm-tex-${texture} rounded-xl border ${
+  const cardClass = `sgm-set-card sgm-theme-preview sgm-tex-${texture} rounded-xl border ${
     tile ? 'p-2.5' : 'p-3'
-  }${highlight ? ' ring-1 ring-cyan-400/40' : ''}`;
+  }${theme.free ? ' sgm-set-card-free' : ''}${highlight ? ' sgm-set-card-active' : ''}`;
 
   if (shop) {
     return (
@@ -1220,10 +1240,10 @@ function SetCard({
         type="button"
         onClick={onClick}
         disabled={!owned}
-        className={`sgm-theme-preview sgm-tex-${texture} w-full rounded-xl border ${
+        className={`sgm-set-card sgm-theme-preview sgm-tex-${texture} w-full rounded-xl border ${
           tile ? 'p-2.5' : 'p-3'
-        } text-left transition ${
-          selected ? 'ring-1 ring-cyan-400/40' : ''
+        } text-left transition ${theme.free ? ' sgm-set-card-free' : ''}${
+          selected ? ' sgm-set-card-active' : ''
         } ${!owned ? 'cursor-not-allowed opacity-40' : 'hover:border-slate-500'}`}
         style={style}
       >
@@ -1232,7 +1252,7 @@ function SetCard({
     );
   }
   return (
-    <div className={`sgm-theme-preview sgm-tex-${texture} rounded-xl border p-3`} style={style}>
+    <div className={`sgm-set-card sgm-theme-preview sgm-tex-${texture} rounded-xl border p-3${theme.free ? ' sgm-set-card-free' : ''}`} style={style}>
       {inner}
     </div>
   );

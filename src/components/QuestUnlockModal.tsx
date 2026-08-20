@@ -18,10 +18,10 @@ export function QuestUnlockModal({ quests, onClose, onOpenJournal }: Props) {
       onClick={onClose}
     >
       <div
-        className="w-full max-w-md overflow-hidden rounded-xl border border-amber-700/50 bg-slate-950 shadow-2xl"
+        className="sgm-modal-shell sgm-turn-frame sgm-info-panel w-full max-w-md overflow-hidden rounded-xl border border-amber-700/50 bg-slate-950 shadow-2xl"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="h-1 w-full bg-gradient-to-r from-amber-500 to-transparent" />
+        <div className="sgm-turn-frame-bar h-1 w-full" />
         <div className="border-b border-slate-800 px-5 py-3">
           <p className="font-mono text-[10px] uppercase tracking-[0.25em] text-amber-400/90">System</p>
           <h2 id="quest-unlock-title" className="mt-1 text-lg font-bold uppercase tracking-wide text-amber-100">
