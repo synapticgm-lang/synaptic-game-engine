@@ -561,14 +561,17 @@ html[data-sgm-material='1'] .sgm-info-panel > * {
   position: relative;
   z-index: 1;
 }
-html[data-sgm-material='1'] body::before {
-  content: '';
-  position: fixed;
-  inset: 0;
-  z-index: -1;
-  pointer-events: none;
-  background: var(--sgm-atmosphere) center / cover no-repeat fixed;
-  opacity: 0.55;
+/* Atmosphere stays on body background only — never a fixed ::before overlay.
+   A full-viewport pseudo-element stacked wrong on some Android Chrome builds
+   and hid the story + input while the HUD stayed visible. */
+html[data-sgm-material='1'] body {
+  background-image:
+    linear-gradient(color-mix(in srgb, var(--sgm-bg, #020617) 72%, transparent), color-mix(in srgb, var(--sgm-bg, #020617) 72%, transparent)),
+    var(--sgm-atmosphere, none);
+  background-size: cover, cover;
+  background-position: center, center;
+  background-repeat: no-repeat, no-repeat;
+  background-attachment: scroll, scroll;
 }
 /* Stronger turn frames — not 1px Integration hairlines */
 html[data-sgm-material='1'] .sgm-turn-frame,

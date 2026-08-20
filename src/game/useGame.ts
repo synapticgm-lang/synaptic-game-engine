@@ -1931,7 +1931,9 @@ export function useGame() {
         const openingChoices = extractChoicesFromText(openingText, openingState);
         const cleanOpening = stripChoiceList(openingText);
         const openingBible = getCampaignBibleById(openingState.campaignBibleId ?? '');
-        const journalReady = !questsLockedDuringOpening(openingState);
+        const journalReady =
+          !questsLockedDuringOpening(openingState)
+          && openingState.openingEstablishment?.complete === true;
         const questsAfterScene = journalReady
           ? revealLocalStarterQuest(
               openingState.quests ?? [],
@@ -3693,6 +3695,8 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
     persist(newState);
     recordStoryStarted();
     setShowNewGame(false);
+    setUnlockedQuests([]);
+    setFailedQuests([]);
 
     setBusy(true);
     setError(null);
@@ -3710,7 +3714,10 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
       const openingChoices = extractChoicesFromText(openingText, newState);
       const cleanOpening = stripChoiceList(openingText);
       const openingBible = resolveActiveCampaignBible(newState) ?? getCampaignBibleById(newState.campaignBibleId ?? '');
-      const journalReady = !questsLockedDuringOpening(newState);
+      // Never unlock / modal during name-look covers — dim overlay blocked play on mobile.
+      const journalReady =
+        !questsLockedDuringOpening(newState)
+        && newState.openingEstablishment?.complete === true;
       const questsAfterScene = journalReady
         ? revealLocalStarterQuest(
             newState.quests ?? [],
@@ -3797,6 +3804,39 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
           heroImage: false,
           bypassCapacity: memorableBypassesWeeklyCap(openingMemorable.beat),
         });
+      }
+    } catch (err) {
+      logger.error('new-game', 'Opening stitch failed', { err: String(err) });
+      // Still land a playable first page — never leave HUD-only blank play.
+      try {
+        const fallbackText = stitchOpeningScene(newState);
+        const fallbackGm: LogEntry = {
+          id: uid(),
+          turn: newState.turn,
+          role: 'gm',
+          content: fallbackText,
+          timestamp: Date.now(),
+          systemLog: litrpgOpeningSystemPing(newState),
+        };
+        const fallback: GameState = {
+          ...newState,
+          turn: newState.turn + 1,
+          log: [fallbackGm],
+          choices: newState.openingEstablishment?.pending?.length
+            ? establishmentChoices(newState.openingEstablishment.pending)
+            : undefined,
+          pendingGeneratedOpening: false,
+          openingEstablishment: newState.openingEstablishment
+            ? { ...newState.openingEstablishment, sceneWritten: true }
+            : newState.openingEstablishment,
+          lastUpdated: Date.now(),
+        };
+        stateRef.current = fallback;
+        setState(fallback);
+        void persist(fallback);
+      } catch (fallbackErr) {
+        logger.error('new-game', 'Opening fallback failed', { err: String(fallbackErr) });
+        setError('Opening failed to paint. Try New Game again.');
       }
     } finally {
       setBusy(false);

@@ -64,13 +64,19 @@ export default function App() {
     applySettingsCosmetics(game.settings);
   }, [game.settings.uiThemeId, game.settings.fontPackId, game.settings.diceCosmeticId, game.settings.turnFrameCosmeticId]);
 
-  // Tip once per device when any engine mode session is on screen.
+  // Tip once per device after opening covers — never over the first name ask.
   useEffect(() => {
     if (!userInGame || !game.state) return;
     if (isAutoFightTipDismissed()) return;
+    if (game.state.openingEstablishment && !game.state.openingEstablishment.complete) return;
     const t = window.setTimeout(() => setShowAutoFightTip(true), 600);
     return () => window.clearTimeout(t);
-  }, [userInGame, game.state?.saveId, game.state?.engineMode]);
+  }, [
+    userInGame,
+    game.state?.saveId,
+    game.state?.engineMode,
+    game.state?.openingEstablishment?.complete,
+  ]);
 
   const hasSave = !!game.localSlot || !!game.cloudSlot;
   const shouldAutoResume = game.settings.postLoginBehavior === 'AUTO_RESUME' && hasSave;

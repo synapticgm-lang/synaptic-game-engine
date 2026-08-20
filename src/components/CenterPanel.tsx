@@ -124,6 +124,14 @@ export function CenterPanel({ state, busy, turnPhase = 'idle', streamingReveal =
     });
   };
 
+  // Opening covers need the input — never leave Hide text stuck on from a prior session.
+  useEffect(() => {
+    if (!state.openingEstablishment || state.openingEstablishment.complete) return;
+    if (!hideText) return;
+    setHideText(false);
+    writeBoolPref(HIDE_TEXT_KEY, false);
+  }, [state.openingEstablishment?.complete, state.openingEstablishment?.pending?.length, hideText]);
+
   useEffect(() => {
     if (voice.transcript) setInput(voice.transcript);
   }, [voice.transcript]);
@@ -157,14 +165,19 @@ export function CenterPanel({ state, busy, turnPhase = 'idle', streamingReveal =
     <div className="relative flex h-full flex-col">
       {bgImage && (
         <div
-          className="pointer-events-none fixed inset-0 z-0"
-          style={{ width: '100vw', height: '100dvh', minHeight: '100dvh', backgroundSize: 'cover', backgroundPosition: 'center', zIndex: -10 }}
+          className="pointer-events-none absolute inset-0 z-0 overflow-hidden"
+          aria-hidden
         >
-          <img src={bgImage} alt="" className="h-full w-full object-cover object-center" style={{ opacity: bgOpacity / 100 }} />
+          <img
+            src={bgImage}
+            alt=""
+            className="h-full w-full object-cover object-center"
+            style={{ opacity: bgOpacity / 100 }}
+          />
         </div>
       )}
       {comicMode ? (
-        <div className="relative z-10 min-h-0 flex-1 overflow-hidden">
+        <div className={`relative z-10 min-h-0 flex-1 overflow-hidden ${hideText ? 'invisible' : ''}`}>
           <ComicGrid
             log={state.log}
             lorebook={state.lorebook}
@@ -182,7 +195,7 @@ export function CenterPanel({ state, busy, turnPhase = 'idle', streamingReveal =
           />
         </div>
       ) : narrativeMode ? (
-        <div className="relative z-10 min-h-0 flex-1 overflow-hidden">
+        <div className={`relative z-10 min-h-0 flex-1 overflow-hidden ${hideText ? 'invisible' : ''}`}>
           <NarrativeView
             log={state.log}
             busy={busy}
@@ -195,7 +208,10 @@ export function CenterPanel({ state, busy, turnPhase = 'idle', streamingReveal =
           />
         </div>
       ) : (
-        <div ref={logRef} className="relative z-10 min-h-0 flex-1 overflow-y-auto px-3 py-4 sm:px-6">
+        <div
+          ref={logRef}
+          className={`relative z-10 min-h-0 flex-1 overflow-y-auto px-3 py-4 sm:px-6 ${hideText ? 'invisible' : ''}`}
+        >
           <div className="mx-auto max-w-2xl space-y-4">
             {state.log.map((entry, index) => (
               shouldSkipDuplicatePlayerBubble(state.log, index) ? null : (
@@ -389,7 +405,6 @@ export function CenterPanel({ state, busy, turnPhase = 'idle', streamingReveal =
               <EnemyTargetFrame encounter={state.activeEncounter} />
             </div>
           )}
-          {!hideText && (
           <div className="mb-2 flex flex-wrap items-center gap-1 text-slate-500">
             <button onClick={onOpenCharacter} title="Inventory & character" className="flex items-center gap-1 rounded-md px-2 py-1.5 text-[11px] transition-colors hover:bg-slate-800 hover:text-slate-300">
               <Backpack size={15} />
@@ -430,8 +445,6 @@ export function CenterPanel({ state, busy, turnPhase = 'idle', streamingReveal =
               </button>
             )}
           </div>
-          )}
-          {!hideText && (
           <div className="flex gap-2">
             {voice.sttSupported && (
               <button
@@ -481,7 +494,6 @@ export function CenterPanel({ state, busy, turnPhase = 'idle', streamingReveal =
               <Send size={18} />
             </button>
           </div>
-          )}
         </div>
       </div>
     </div>
