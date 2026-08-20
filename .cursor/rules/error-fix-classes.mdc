@@ -1,0 +1,25 @@
+---
+description: When fixing recurring playtest bugs, map to ERROR-FIX-LOG failure classes and extend Error Repair Warden / lasting owners — do not one-off stamp the same symptom.
+alwaysApply: true
+---
+
+# Error fix classes (recurring bugs)
+
+Before patching a playtest issue that looks familiar, read `docs/research/ERROR-FIX-LOG.md` and map it to a **failure class**.
+
+| Class | Owner |
+|---|---|
+| A Turn / proxy | `classifyTurnFailure` + `gmProxy` + refund/restore in `useGame` |
+| B Opening contract | `openingEstablishment` / alone covers / OpeningContract |
+| C Quest coherence | `questPlay` + `applyErrorRepairs` |
+| D Continuity prose | `runWarden` + `proseWarden` |
+| E Chrome / HUD | `Hud.tsx` layout (viewport), not stamp-only |
+| F Hosted art | `generate-image` + memorable policy |
+| G Save schema | `saveMigration.applySaveRepair` |
+| H Deploy / ops | stamp + edge redeploy checklist |
+
+**Code:** `src/game/errorRepairWarden.ts` — deterministic auto-repair on load/Continue; turn-fail classification for player toasts.
+
+**Do not** invent a new Continuity-Warden LLM path for these — Continuity Warden is classifier-only (see research spec). Prefer extending `applyErrorRepairs` / OpeningContract / HUD layout.
+
+Open playtest tickets still wait for John to call the next update batch unless he asks to ship now.

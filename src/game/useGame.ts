@@ -54,6 +54,7 @@ import { fallbackSuggestionForState, findUnsupportedItemClaims, isSuggestionVali
 import { isChoiceGroundedInTurn, normalizeStoryCorpus, padChoicesToCount, resolvePipelineChoices, sceneSafeFallbacks } from './choicePipeline';
 import { sanitizeNarrativeMechanics, ensureTurnProse, ensureDamageNarration, ensureEncounterNarration, ensureXpNarration, stripUnearnedXpProse, stripResidualMechanicTags } from './narrativeSanitize';
 import { runWarden, sanitizeExtractedCharacterUpdates } from './warden';
+import { classifyTurnFailure, turnFailPlayerMessage } from './errorRepairWarden';
 import { applyStructuralEvents } from './structuralEvents';
 import { collectTurnTimelineFacts, mergeTimeline } from './timeline';
 import { applyCampaignCharacter, reconcileCampaignLoadout, resolveActiveCampaignBible, seedStateFromArchetype, seedStateFromCampaignBible } from './campaignSeed';
@@ -3455,7 +3456,11 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
       refundSpentTextTurn();
       keepSentLineOnFail(sanitizedInput || lastInputRef.current || input);
       resetTurnUi();
-      setError(errMsg);
+      const failKind = classifyTurnFailure(e);
+      const playerMsg = turnFailPlayerMessage(failKind);
+      debugLogger.record('WARN', 'turn fail classified', { failKind, errMsg });
+      setError(playerMsg);
+      addToast(playerMsg, 'error');
     } finally {
       if (loadingTimer !== undefined) clearTimeout(loadingTimer);
       setShowLoadingOverlay(false);

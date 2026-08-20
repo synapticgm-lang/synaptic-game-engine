@@ -351,6 +351,8 @@ export interface GameState {
   saveRepairRevision?: number;
   /** Player was notified about saveRepairRevision (toast once per revision). */
   lastSeenSaveRepairRevision?: number;
+  /** Error Repair Warden revision — alone quest / arrival coherence on Continue. */
+  errorRepairRevision?: number;
   /** Forward play lock — default live; ended/down batches set on commit. */
   playPhase?: PlayPhase;
   saveId: string;

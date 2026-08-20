@@ -3,6 +3,7 @@ import {
   CURRENT_SAVE_REPAIR_REVISION,
   normalizeDungeonMobLedger,
 } from './dungeonMobLedger';
+import { applyErrorRepairs } from './errorRepairWarden';
 import { debugLogger } from './debugLogger';
 
 export type SaveRepairSeverity = 'cosmetic' | 'semantic';
@@ -103,11 +104,24 @@ export function applySaveRepair(state: GameState): SaveRepairResult {
       notes: [...result.notes, 'opening play gate normalized'],
     };
   }
+  const errors = applyErrorRepairs(result.state);
+  if (errors.dirty) {
+    result = {
+      ...result,
+      state: errors.state,
+      dirty: true,
+      notes: [...result.notes, ...errors.notes.map((n) => `${n.code}: ${n.detail}`)],
+      severity: errors.notes.some((n) => n.class === 'quest_coherence' || n.class === 'opening_contract')
+        ? 'semantic'
+        : result.severity,
+    };
+  }
   if (result.dirty) {
     debugLogger.record('STATE_UPDATE', 'Save schema repaired', {
       notes: result.notes,
       severity: result.severity,
       revision: CURRENT_SAVE_REPAIR_REVISION,
+      errorRepair: errors.notes,
     });
   }
   return result;
