@@ -566,11 +566,23 @@ export function litrpgOpeningSystemPing(state: GameState): string[] {
 
 export function seedCoverAnswers(
   bible: CampaignBible | undefined,
-  character: GameState['character']
+  character: GameState['character'],
+  pickedPlace?: string | null
 ): Record<string, string> {
   const answers: Record<string, string> = {};
   const earthOrigin = (bible?.openingPrompts ?? []).some(isEarthOriginPrompt);
-  if (bible?.startingLocation?.trim() && !earthOrigin) answers.where = bible.startingLocation.trim();
+  const cardPlace = pickedPlace?.trim();
+  // Opening-hook cards own the arrival place. Do not seed bible.startingLocation
+  // (e.g. Sevenfold Circle) or the continue stitch will teleport after covers.
+  if (cardPlace) {
+    answers.where = cardPlace;
+  } else if (
+    bible?.startingLocation?.trim()
+    && !earthOrigin
+    && openingHookDeck(bible).length === 0
+  ) {
+    answers.where = bible.startingLocation.trim();
+  }
   if (character.name?.trim() && !characterNameIsGeneric(character.name)) answers.name = character.name.trim();
   if (character.gender?.trim()) answers.gender = character.gender.trim();
   if (character.appearance?.trim() && !isJunkSetupValue(character.appearance)) {
@@ -578,6 +590,35 @@ export function seedCoverAnswers(
     answers.look = character.appearance.trim();
   }
   return answers;
+}
+
+/**
+ * After weave covers, keep the arrival place the opener already painted.
+ * Never collapse a seed-picked card place back to bible.startingLocation.
+ */
+export function resolveLockedOpeningPlace(
+  state: GameState,
+  answers: Record<string, string>
+): string {
+  const bible = resolveActiveCampaignBible(state);
+  const bibleStart = bible?.startingLocation?.trim() || '';
+  const fromState = state.currentLocation?.trim() || '';
+  const fromAnswers = answers.where?.trim() || '';
+  const picked = resolveOpeningHookPick(bible, state.seed)?.location?.trim() || '';
+
+  const usable = (place: string) => !!place && !isUnusablePlace(place, state);
+
+  // Card / live location wins when answers still hold the generic bible start.
+  if (usable(fromState) && (!fromAnswers || (bibleStart && fromAnswers === bibleStart && fromState !== bibleStart))) {
+    return fromState;
+  }
+  if (usable(fromAnswers) && !(bibleStart && fromAnswers === bibleStart && usable(picked) && picked !== bibleStart)) {
+    return fromAnswers;
+  }
+  if (usable(picked)) return picked;
+  if (usable(fromState)) return fromState;
+  if (usable(fromAnswers)) return fromAnswers;
+  return pickPlaceForCampaign(state);
 }
 
 export function pendingRequiredCovers(
@@ -933,6 +974,7 @@ const MUNDANE_STARTING: Array<{ re: RegExp; name: string; description: string }>
   { re: /\bwallets?\b/i, name: 'Wallet', description: 'Cards and a little cash. The System does not care about either yet.' },
   { re: /\bheadphones?\b/i, name: 'Headphones', description: 'The pair you had on you this morning.' },
   { re: /\b(?:leatherman|multi[-\s]?tool)\b/i, name: 'Leatherman', description: 'A pocket multi-tool. Ordinary steel. Not System-issue.' },
+  { re: /\bbags?\b|\beveryday\s+stuff\b/i, name: 'Bag', description: 'A bag with ordinary pocket stuff from Earth. Not System-issue gear.' },
 ];
 
 export function isPowerGameClaim(text: string): boolean {
@@ -1046,16 +1088,24 @@ function applyKindToState(state: GameState, prompt: OpeningPrompt, answer: strin
     };
   }
   if (prompt.kind === 'kit') {
-    const look = `${state.character.appearance ?? ''} ${clean.text}`.trim();
+    // Kit is pockets/bag — never concatenate onto appearance or the chest
+    // garment becomes "Everyday Street Clothes A Bag With Everyday Stuff".
     return {
       ...state,
-      inventory: materializeWornClothes(
-        grantMundaneStartingItems(state.inventory, clean.mundaneNames),
-        look
-      ),
+      inventory: grantMundaneStartingItems(state.inventory, [
+        ...clean.mundaneNames,
+        ...mundaneBagNamesFromKit(clean.text),
+      ]),
     };
   }
   return state;
+}
+
+/** Soft bag / pockets phrases from kit covers → sheet accessories. */
+function mundaneBagNamesFromKit(text: string): string[] {
+  const names: string[] = [];
+  if (/\bbags?\b|\bpockets?\b|\beveryday\s+stuff\b/i.test(text)) names.push('Bag');
+  return names;
 }
 
 function registrarAside(
@@ -1369,9 +1419,7 @@ export async function applyOpeningAnswer(
     ? `${nextState.campaignPremise}\n\nPLAYER CANON: ${canonLine}`.slice(0, 2400)
     : `PLAYER CANON: ${canonLine}`;
   const openingNotes = [aside, cheatLine].filter(Boolean).join(' ');
-  const lockedWhere = answers.where && !isUnusablePlace(answers.where, nextState)
-    ? answers.where
-    : pickPlaceForCampaign(nextState);
+  const lockedWhere = resolveLockedOpeningPlace(nextState, answers);
   answers.where = lockedWhere;
 
   const continueNotes = est.sceneWritten

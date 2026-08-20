@@ -83,7 +83,37 @@ describe('openingStitch', () => {
     const text = stitchOpeningContinue(state);
     expect(text).toMatch(/Jax/);
     expect(text).toMatch(/Travel clothes/);
+    expect(text).toMatch(/half-collapsed ruin/i);
+    expect(text).not.toMatch(/Sevenfold/i);
     expect(text).toMatch(/What do you do/i);
     expect(text).not.toMatch(/Pellane wanted you/i);
+  });
+
+  it('continue prefers answers.where over a stale cathedral currentLocation', () => {
+    const base = createInitialState('The Summoned Pact', 'litrpg');
+    const state = {
+      ...base,
+      seed: 'cont-2',
+      campaignBibleId: 'summoned-pact',
+      currentLocation: 'The Sevenfold Circle under Valespire Cathedral',
+      character: { ...base.character, name: 'Jax', appearance: 'everyday street clothes' },
+      openingEstablishment: {
+        pending: [],
+        answers: {
+          name: 'Jax',
+          where: 'Pellane war camp beyond Valespire walls',
+          wear: 'everyday street clothes',
+          pockets: 'A bag with everyday stuff',
+        },
+        complete: true,
+        registrar: { voice: 'inworld' as const, label: 'THE CIRCLE', startLine: 'Light.' },
+        sceneWritten: true,
+        mode: 'weave' as const,
+        aloneArrival: false,
+      },
+    };
+    const text = stitchOpeningContinue(state);
+    expect(text).toMatch(/war camp/i);
+    expect(text).not.toMatch(/Sevenfold/i);
   });
 });

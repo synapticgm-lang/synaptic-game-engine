@@ -78,6 +78,7 @@ function phraseInChunks(text: string, noun: RegExp): string | null {
 
 const BAG_EXTRAS: Array<{ re: RegExp; name: string; description: string }> = [
   { re: /\bbackpacks?\b/i, name: 'Backpack', description: 'The bag you had on you this morning.' },
+  { re: /\bbags?\b|\beveryday\s+stuff\b/i, name: 'Bag', description: 'A bag with ordinary pocket stuff from Earth.' },
   { re: /\b(?:mobile\s+)?phones?\b/i, name: 'Phone', description: 'The phone you already had. Reception is dying with the rest of the grid.' },
   { re: /\b(?:wireless\s+)?headphones?\b/i, name: 'Headphones', description: 'The pair you had on you this morning.' },
   { re: /\b(?:leatherman|multi[-\s]?tool)\b/i, name: 'Leatherman', description: 'A pocket multi-tool. Ordinary steel. Not System-issue.' },
@@ -111,7 +112,13 @@ export function parseWornPieces(appearance: string): WornPiece[] {
 
   if (!pieces.length) {
     if (/\b(gym clothes|work clothes|uniform|street clothes|slept in)\b/i.test(text)) {
-      take('Chest', titleGarment(text.split(/[,.]/)[0] ?? text) || 'Everyday clothes');
+      // Clothes-only — strip kit/bag tails so "street clothes a bag…" does not become one chest item.
+      const clothesOnly = text
+        .replace(/\b(?:a|an|the)?\s*bag\b[\s\S]*$/i, '')
+        .replace(/\bon you:.*/i, '')
+        .replace(/\bpockets?\b[\s\S]*$/i, '')
+        .trim();
+      take('Chest', titleGarment((clothesOnly.split(/[,.]/)[0] ?? clothesOnly).trim() || 'Everyday clothes'));
     }
   }
 

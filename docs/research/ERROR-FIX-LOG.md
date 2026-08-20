@@ -45,6 +45,8 @@
 | 19s | Earth city after apartment named | Skip leftover chips | Still always asks Earth by default |
 | 20b–20e | Alone + “someone in the scene” | Alone covers + quest adapt | Earth ask + template stack still open |
 | 20e open | Copy-paste covers + turn feel | *Noted* | No OpeningContract |
+| 20f | Instant stitch | Banks + cards | Continue still used bible `startingLocation` |
+| 20k | War camp → cathedral after covers; bag glued to clothes | `resolveLockedOpeningPlace` + kit not concat onto appearance | Class B place lock |
 
 ### Quest / journal (Class C)
 

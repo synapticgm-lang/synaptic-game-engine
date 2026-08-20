@@ -183,7 +183,7 @@ export function stitchOpeningContinue(state: GameState): string {
   const name = a.name || state.character.name;
   const look = a.wear || a.look || state.character.appearance || DEFAULT_LOOK;
   const kit = a.pockets || a.kit || '';
-  const place = state.currentLocation || 'here';
+  const place = a.where || state.currentLocation || 'here';
   const alone = isAloneArrivalOpening(state);
   const nameBit = name && !/unknown/i.test(name) ? ` The panel (and anyone listening) has you as ${name}.` : '';
   const lookBit = ` You are wearing ${look}.`;

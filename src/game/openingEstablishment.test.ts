@@ -10,8 +10,12 @@ import {
   isOpeningSetupChipLabel,
   mergePreferredProfileIntoOpening,
   openingAnswerDisplay,
+  resolveLockedOpeningPlace,
+  seedCoverAnswers,
 } from './openingEstablishment';
+import { summonedPact } from '@/data/campaigns/summonedPact';
 import type { GameState } from './types';
+import { materializeWornClothes } from './wornGear';
 
 const NAME_THEN_EARTH: OpeningPrompt[] = [
   { id: 'name', kind: 'name', question: 'A name. What do we call you?' },
@@ -158,5 +162,52 @@ describe('opening player bubbles', () => {
     );
     expect(result.deferToPlay).toBe(true);
     expect(result.generateOpening).toBe(false);
+  });
+});
+
+describe('opening place lock — card vs bible startingLocation', () => {
+  it('does not seed Sevenfold Circle when a hook card place exists', () => {
+    const answers = seedCoverAnswers(
+      summonedPact,
+      createInitialState('x', 'litrpg').character,
+      'Pellane war camp beyond Valespire walls'
+    );
+    expect(answers.where).toMatch(/war camp/i);
+    expect(answers.where).not.toMatch(/Sevenfold/i);
+  });
+
+  it('keeps war-camp currentLocation when answers still hold cathedral default', () => {
+    const base = createInitialState('The Summoned Pact', 'litrpg');
+    const state: GameState = {
+      ...base,
+      campaignBibleId: 'summoned-pact',
+      seed: 'war-camp-seed',
+      currentLocation: 'Pellane war camp beyond Valespire walls',
+      openingEstablishment: {
+        pending: [],
+        answers: { where: 'The Sevenfold Circle under Valespire Cathedral' },
+        complete: true,
+        registrar: { voice: 'inworld', label: 'THE CIRCLE', startLine: 'Light.' },
+        sceneWritten: true,
+        mode: 'weave',
+        pickedHookFallback:
+          'Light, then mud. You are on your back in a war-camp circle outside Valespire’s walls.',
+      },
+    };
+    const locked = resolveLockedOpeningPlace(state, {
+      where: 'The Sevenfold Circle under Valespire Cathedral',
+    });
+    expect(locked).toMatch(/war camp/i);
+    expect(locked).not.toMatch(/Sevenfold/i);
+  });
+});
+
+describe('opening kit vs clothes', () => {
+  it('does not glue bag kit onto street-clothes chest name', () => {
+    const look = 'everyday street clothes a bag with everyday stuff';
+    const inv = materializeWornClothes([], look);
+    const chest = inv.find((i) => i.slot === 'Chest' || i.slot === 'Body');
+    expect(chest?.name ?? '').not.toMatch(/bag/i);
+    expect(inv.some((i) => /bag/i.test(i.name))).toBe(true);
   });
 });

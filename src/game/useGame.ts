@@ -3625,8 +3625,8 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
       engineMode,
       resolvedArchetype ?? namedSeeded.campaignArchetype
     );
-    const coverAnswers = seedCoverAnswers(bible, mergedCharacter);
     const picked = resolveOpeningHookPick(bible, namedSeeded.seed);
+    const coverAnswers = seedCoverAnswers(bible, mergedCharacter, picked?.location);
     const aloneArrival = isAloneArrivalPick(picked);
     const openingPrompts = applyOpeningContract(
       openingPromptsRaw,
