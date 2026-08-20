@@ -114,19 +114,70 @@ export function resolveThemeKitExtras(settings: {
   };
 }
 
-/** Hosted / script-generated panel bitmaps (PNG preferred; CSS keeps SVG fallback). */
-const PANEL_TEXTURE_URL: Partial<Record<string, string>> = {
-  bone: '/themes/undead-ossuary/panel-ash.png',
-};
+/**
+ * Non-basic material kits that ship OpenRouter panel / frame / atmosphere PNGs
+ * under `public/themes/<themeKey>/`. Plain Integration stays CSS-only (price ladder).
+ */
+export const MATERIAL_THEME_KEYS = [
+  'wood-elf-grove',
+  'dark-elf-umbrance',
+  'high-elf-spire',
+  'dwarf-forgehall',
+  'orc-warcamp',
+  'dragon-hoard',
+  'phoenix-ashrise',
+  'cyborg-chassis',
+  'angelic-radiance',
+  'infernal-pact',
+  'undead-ossuary',
+  'fae-glamour',
+  'goblin-scrapheap',
+  'merfolk-abyss',
+  'vampire-nocturne',
+  'neon-protocol',
+  'parchment-ledger',
+  'bone-reliquary',
+  'phosphor-terminal',
+  'noir-crimson',
+  'glass-spire',
+  'ember-depths',
+] as const;
 
-export function themePanelTextureUrl(texture: string | undefined): string | undefined {
-  if (!texture) return undefined;
-  return PANEL_TEXTURE_URL[texture];
+export type MaterialThemeKey = (typeof MATERIAL_THEME_KEYS)[number];
+
+const MATERIAL_THEME_KEY_SET = new Set<string>(MATERIAL_THEME_KEYS);
+
+/** Undead keeps legacy panel-ash.png filename from the first AI pass. */
+function panelFileForTheme(themeKey: string): string {
+  return themeKey === 'undead-ossuary' ? 'panel-ash.png' : 'panel.png';
 }
 
-export function themeAtmosphereUrl(texture: string | undefined): string | undefined {
-  if (texture === 'bone') return '/themes/undead-ossuary/atmosphere.png';
-  return undefined;
+export function isMaterialThemeKey(themeKey: string | undefined): themeKey is MaterialThemeKey {
+  return !!themeKey && MATERIAL_THEME_KEY_SET.has(themeKey);
+}
+
+/** Hosted / script-generated panel bitmaps — keyed by themeKey (not shared texture token). */
+export function themePanelTextureUrl(
+  themeKeyOrTexture: string | undefined,
+  themeKey?: string | undefined,
+): string | undefined {
+  const key = themeKey ?? themeKeyOrTexture;
+  if (!isMaterialThemeKey(key)) return undefined;
+  return `/themes/${key}/${panelFileForTheme(key)}`;
+}
+
+export function themeAtmosphereUrl(
+  themeKeyOrTexture: string | undefined,
+  themeKey?: string | undefined,
+): string | undefined {
+  const key = themeKey ?? themeKeyOrTexture;
+  if (!isMaterialThemeKey(key)) return undefined;
+  return `/themes/${key}/atmosphere.png`;
+}
+
+export function themeFrameFiligreeUrl(themeKey: string | undefined): string | undefined {
+  if (!isMaterialThemeKey(themeKey)) return undefined;
+  return `/themes/${themeKey}/frame-filigree.png`;
 }
 
 /** Apply theme + optional font/dice/frame kit CSS variables to :root. */
@@ -148,10 +199,12 @@ export function applyUiThemeToDocument(
     root.style.removeProperty('--sgm-dice-face');
     root.style.removeProperty('--sgm-panel-texture');
     root.style.removeProperty('--sgm-atmosphere');
+    root.style.removeProperty('--sgm-frame-filigree');
     delete root.dataset.sgmFrame;
     delete root.dataset.sgmDice;
     delete root.dataset.sgmTexture;
     delete root.dataset.sgmTheme;
+    delete root.dataset.sgmMaterial;
     return;
   }
   root.style.setProperty('--sgm-accent', p.accent);
@@ -182,17 +235,22 @@ export function applyUiThemeToDocument(
   const diceFace = extras?.dice?.diceSkin?.face ?? p.panel;
   root.style.setProperty('--sgm-dice-accent', diceAccent);
   root.style.setProperty('--sgm-dice-face', diceFace);
-  root.dataset.sgmTheme = theme?.themeKey ?? 'integration-blue';
+  const themeKey = theme?.themeKey ?? 'integration-blue';
+  root.dataset.sgmTheme = themeKey;
   root.dataset.sgmFrame =
     extras?.frame?.frameSkin?.style ?? p.frameStyle ?? 'plain';
   root.dataset.sgmTexture = p.texture ?? 'plain';
-  const textureKey = p.texture ?? 'plain';
-  const panelTex = themePanelTextureUrl(textureKey);
+  if (isMaterialThemeKey(themeKey)) root.dataset.sgmMaterial = '1';
+  else delete root.dataset.sgmMaterial;
+  const panelTex = themePanelTextureUrl(themeKey);
   if (panelTex) root.style.setProperty('--sgm-panel-texture', `url('${panelTex}')`);
   else root.style.removeProperty('--sgm-panel-texture');
-  const atmosphere = themeAtmosphereUrl(textureKey);
+  const atmosphere = themeAtmosphereUrl(themeKey);
   if (atmosphere) root.style.setProperty('--sgm-atmosphere', `url('${atmosphere}')`);
   else root.style.removeProperty('--sgm-atmosphere');
+  const frameFiligree = themeFrameFiligreeUrl(themeKey);
+  if (frameFiligree) root.style.setProperty('--sgm-frame-filigree', `url('${frameFiligree}')`);
+  else root.style.removeProperty('--sgm-frame-filigree');
   const diceMaterial = extras?.dice?.diceSkin?.material ?? p.diceMaterial;
   if (diceMaterial) root.dataset.sgmDice = diceMaterial;
   else delete root.dataset.sgmDice;

@@ -430,10 +430,9 @@ html[data-sgm-texture='sulfur'] .sgm-info-panel {
 }
 .sgm-tex-bone,
 html[data-sgm-texture='bone'] .sgm-info-panel {
-  /* Ossuary ash linen + AI panel bitmap — not flat charcoal / Integration slate */
+  /* Ossuary ash linen + CSS grain — AI panel bitmap via --sgm-panel-texture overlay */
   background-color: #1c1917;
   background-image:
-    var(--sgm-panel-texture, url('/themes/undead-ossuary/panel-ash.png')),
     url('/themes/undead-ossuary/panel-ash.svg'),
     radial-gradient(ellipse 36px 14px at 12% 16%, #fafaf9aa 0 36%, transparent 42%),
     radial-gradient(ellipse 28px 12px at 86% 72%, #e7e5e488 0 34%, transparent 40%),
@@ -442,7 +441,6 @@ html[data-sgm-texture='bone'] .sgm-info-panel {
     repeating-linear-gradient(102deg, transparent 0 11px, #78716c28 11px 12px),
     linear-gradient(158deg, #44403c 0%, #1c1917 40%, #0c0a09 70%, #292524 100%);
   background-size:
-    cover,
     96px 96px,
     auto,
     auto,
@@ -450,7 +448,7 @@ html[data-sgm-texture='bone'] .sgm-info-panel {
     auto,
     auto,
     auto;
-  background-blend-mode: normal, soft-light, normal, normal, normal, normal, normal, normal;
+  background-blend-mode: soft-light, normal, normal, normal, normal, normal, normal;
   border-color: color-mix(in srgb, #e7e5e4 52%, #78716c);
   border-width: 2px;
   box-shadow:
@@ -536,6 +534,62 @@ html[data-sgm-texture='noir'] .sgm-info-panel {
     linear-gradient(165deg, #171717 0%, #0a0a0a 48%, #000 100%);
   border-color: #404040;
   box-shadow: inset 0 0 0 1px #262626;
+}
+
+/* ===== AI MATERIAL BITMAPS (OpenRouter) — all non-basic kits ===== */
+html[data-sgm-material='1'] .sgm-info-panel {
+  position: relative;
+  isolation: isolate;
+  border-width: 2px;
+  box-shadow:
+    inset 0 0 0 2px color-mix(in srgb, var(--sgm-accent, #94a3b8) 24%, transparent),
+    inset 0 -26px 44px color-mix(in srgb, var(--sgm-bg, #020617) 60%, transparent),
+    0 0 16px color-mix(in srgb, var(--sgm-accent, #64748b) 20%, transparent);
+}
+html[data-sgm-material='1'] .sgm-info-panel::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  border-radius: inherit;
+  background: var(--sgm-panel-texture) center / cover no-repeat;
+  opacity: 0.48;
+  mix-blend-mode: soft-light;
+}
+html[data-sgm-material='1'] .sgm-info-panel > * {
+  position: relative;
+  z-index: 1;
+}
+html[data-sgm-material='1'] body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background: var(--sgm-atmosphere) center / cover no-repeat fixed;
+  opacity: 0.55;
+}
+/* Stronger turn frames — not 1px Integration hairlines */
+html[data-sgm-material='1'] .sgm-turn-frame,
+html[data-sgm-material='1'] .sgm-frame-chip {
+  border-width: 3px;
+  box-shadow:
+    inset 0 0 0 2px color-mix(in srgb, var(--sgm-accent, #94a3b8) 28%, transparent),
+    inset 0 0 22px color-mix(in srgb, var(--sgm-bg, #020617) 50%, transparent),
+    0 0 0 1px color-mix(in srgb, var(--sgm-accent, #64748b) 35%, transparent),
+    0 0 18px color-mix(in srgb, var(--sgm-accent, #64748b) 22%, transparent);
+}
+html[data-sgm-material='1'] .sgm-frame-chip {
+  background-image: var(--sgm-frame-filigree);
+  background-size: cover;
+  background-position: center;
+}
+html[data-sgm-material='1'] .sgm-turn-frame::before,
+html[data-sgm-material='1'] .sgm-frame-chip::before {
+  width: 22px;
+  height: 22px;
+  border-width: 3px 0 0 3px;
 }
 
 /* ===== CAPACITY PACK SHOP CARDS ===== */
@@ -692,12 +746,13 @@ html[data-sgm-frame='vine'] .sgm-turn-frame::before,
 html[data-sgm-frame='filigree'] .sgm-turn-frame,
 .sgm-turn-frame[data-sgm-frame='filigree'],
 .sgm-frame-chip[data-sgm-frame='filigree'] {
-  border-width: 2px;
+  border-width: 3px;
   border-color: #a78bc8;
   box-shadow:
-    inset 0 0 0 1px #e9d5ff44,
+    inset 0 0 0 2px #e9d5ff44,
     inset 0 0 22px #12081c66,
-    0 0 14px #a78bc828;
+    0 0 0 1px #a78bc855,
+    0 0 16px #a78bc840;
 }
 html[data-sgm-frame='filigree'] .sgm-turn-frame::before,
 .sgm-frame-chip[data-sgm-frame='filigree']::before {
@@ -857,7 +912,7 @@ html[data-sgm-frame='bone'] .sgm-turn-frame,
     0 0 20px #a8a29e44;
 }
 html[data-sgm-frame='bone'] .sgm-frame-chip[data-sgm-frame='bone'] {
-  background-image: url('/themes/undead-ossuary/frame-filigree.png');
+  background-image: var(--sgm-frame-filigree, url('/themes/undead-ossuary/frame-filigree.png'));
   background-size: cover;
   background-position: center;
 }
@@ -884,10 +939,13 @@ html[data-sgm-frame='bone'] .sgm-turn-frame::after,
 html[data-sgm-frame='twilight'] .sgm-turn-frame,
 .sgm-turn-frame[data-sgm-frame='twilight'],
 .sgm-frame-chip[data-sgm-frame='twilight'] {
-  border-width: 2px;
+  border-width: 3px;
   border-color: #d4a0e0;
   border-radius: 0 14px 0 0;
-  box-shadow: inset 0 0 20px #18102244, 0 0 16px #70b8c828;
+  box-shadow:
+    inset 0 0 0 2px #70b8c844,
+    inset 0 0 20px #18102244,
+    0 0 16px #70b8c840;
 }
 html[data-sgm-frame='twilight'] .sgm-turn-frame::before,
 .sgm-frame-chip[data-sgm-frame='twilight']::before {
@@ -937,12 +995,13 @@ html[data-sgm-frame='tide'] .sgm-turn-frame::before,
 html[data-sgm-frame='velvet'] .sgm-turn-frame,
 .sgm-turn-frame[data-sgm-frame='velvet'],
 .sgm-frame-chip[data-sgm-frame='velvet'] {
-  border-width: 2px;
+  border-width: 3px;
   border-color: color-mix(in srgb, #8d2746 55%, #c8bfd7);
   box-shadow:
-    inset 0 0 0 1px color-mix(in srgb, #c8bfd7 28%, transparent),
+    inset 0 0 0 2px color-mix(in srgb, #c8bfd7 28%, transparent),
     inset 0 0 22px #08060b88,
-    0 0 12px #8d274633;
+    0 0 0 1px color-mix(in srgb, #8d2746 40%, transparent),
+    0 0 16px #8d274633;
 }
 html[data-sgm-frame='velvet'] .sgm-turn-frame::before,
 .sgm-frame-chip[data-sgm-frame='velvet']::before {
@@ -1074,12 +1133,11 @@ html[data-sgm-texture='velvet'] body {
 html[data-sgm-texture='bone'] body {
   background-color: #080706;
   background-image:
-    var(--sgm-atmosphere, url('/themes/undead-ossuary/atmosphere.png')),
     url('/themes/undead-ossuary/atmosphere.svg'),
     radial-gradient(ellipse 70% 40% at 50% -5%, #e7e5e418 0 22%, transparent 52%),
     linear-gradient(180deg, #0c0a09, #080706);
-  background-size: cover, cover, auto, auto;
-  background-attachment: fixed, fixed, scroll, scroll;
+  background-size: cover, auto, auto;
+  background-attachment: fixed, scroll, scroll;
 }
 html[data-sgm-texture='sulfur'] body {
   background-image:

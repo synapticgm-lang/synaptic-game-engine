@@ -3,9 +3,11 @@ import { shopItemById } from './cosmeticCatalog';
 import {
   equippedSetLabel,
   equippedSetName,
+  MATERIAL_THEME_KEYS,
   resolveThemeKitExtras,
   themeAtmosphereUrl,
   themeBySettingsId,
+  themeFrameFiligreeUrl,
   themePanelTextureUrl,
 } from './uiTheme';
 
@@ -38,11 +40,14 @@ describe('premium kit tokens', () => {
     expect(theme.kit?.frameId).toBe('frame.ossuary');
     expect(theme.preview?.bg.toLowerCase()).toBe('#080706');
     expect(theme.preview?.panel.toLowerCase()).toBe('#1c1917');
-    expect(themePanelTextureUrl(theme.preview?.texture)).toBe(
+    expect(themePanelTextureUrl(theme.themeKey)).toBe(
       '/themes/undead-ossuary/panel-ash.png',
     );
-    expect(themeAtmosphereUrl(theme.preview?.texture)).toBe(
+    expect(themeAtmosphereUrl(theme.themeKey)).toBe(
       '/themes/undead-ossuary/atmosphere.png',
+    );
+    expect(themeFrameFiligreeUrl(theme.themeKey)).toBe(
+      '/themes/undead-ossuary/frame-filigree.png',
     );
   });
 
@@ -181,5 +186,49 @@ describe('premium kit tokens', () => {
     expect(dwarf.preview?.fontUi).not.toMatch(/MedievalSharp/i);
     expect(spire.preview?.fontStory).not.toMatch(/Cinzel/i);
     expect(hoard.preview?.fontStory).not.toMatch(/Cinzel Decorative/i);
+  });
+
+  it('every race kit sets panel / atmosphere / frame AI texture URLs', () => {
+    for (const id of RACE_KIT_IDS) {
+      const theme = themeBySettingsId(id);
+      const key = theme.themeKey!;
+      const panel = themePanelTextureUrl(key);
+      const atmosphere = themeAtmosphereUrl(key);
+      const frame = themeFrameFiligreeUrl(key);
+      expect(panel, id).toMatch(new RegExp(`^/themes/${key}/`));
+      expect(atmosphere, id).toBe(`/themes/${key}/atmosphere.png`);
+      expect(frame, id).toBe(`/themes/${key}/frame-filigree.png`);
+      if (key === 'undead-ossuary') {
+        expect(panel).toBe('/themes/undead-ossuary/panel-ash.png');
+      } else {
+        expect(panel).toBe(`/themes/${key}/panel.png`);
+      }
+    }
+  });
+
+  it('plain Integration stays without AI material URLs', () => {
+    const plain = themeBySettingsId('theme.integration-blue');
+    expect(themePanelTextureUrl(plain.themeKey)).toBeUndefined();
+    expect(themeAtmosphereUrl(plain.themeKey)).toBeUndefined();
+    expect(themeFrameFiligreeUrl(plain.themeKey)).toBeUndefined();
+  });
+
+  it('MATERIAL_THEME_KEYS covers all race kits plus mid/high material shop themes', () => {
+    for (const id of RACE_KIT_IDS) {
+      expect(MATERIAL_THEME_KEYS).toContain(themeBySettingsId(id).themeKey);
+    }
+    for (const key of [
+      'neon-protocol',
+      'parchment-ledger',
+      'bone-reliquary',
+      'phosphor-terminal',
+      'noir-crimson',
+      'glass-spire',
+      'ember-depths',
+    ]) {
+      expect(MATERIAL_THEME_KEYS).toContain(key);
+      expect(themePanelTextureUrl(key)).toBe(`/themes/${key}/panel.png`);
+    }
+    expect(MATERIAL_THEME_KEYS).not.toContain('integration-blue');
   });
 });
