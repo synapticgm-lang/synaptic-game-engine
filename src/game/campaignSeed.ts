@@ -199,7 +199,7 @@ function starterToItem(si: StarterItem, bible: CampaignBible, containerId?: stri
 function formatKitRail(bible: CampaignBible, inventory: Item[]): string {
   const frame = isModernEarthPremise(bible)
     ? 'This is this Earth, already in progress. The player did not arrive from another world.'
-    : 'Use this kit. Do not invent extra starting gear.';
+    : 'Use this kit. Do not invent extra starting gear onto the sheet. NPCs may offer gear as a bargain; it is not inventory until the player accepts.';
   return (
     `OPENING KIT (AUTHORITY): The player's inventory and worn clothes ARE the kit below. ${frame} `
     + `Do not dress them as a fantasy traveler unless this premise is a fantasy arrival.\n`

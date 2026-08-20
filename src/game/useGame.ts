@@ -3635,6 +3635,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
     const pendingCovers = pendingRequiredCovers(openingPrompts, mergedCharacter, openingMode);
     const picked = resolveOpeningHookPick(bible, namedSeeded.seed);
     const pickedHook = picked?.text;
+    const pickedHookFallback = picked?.fallback;
     const honeymoon = storyStartTextTurnsForTier(settingsRef.current.subscriptionTier ?? 'free');
     const rawNewState: GameState = clampLeakedOpeningQuests({
       ...namedSeeded,
@@ -3659,6 +3660,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
         sceneWritten: false,
         mode: openingMode,
         pickedHook,
+        pickedHookFallback,
       },
       customTabletopRules:
         engineMode === 'dnd' ? clipCustomTabletopRules(customTabletopRules).text || undefined : undefined,

@@ -4,7 +4,7 @@
  * Illustrated graphic-novel mode: caps reserved; launch is text + memorable Flux art.
  *
  * Hosted OpenRouter ladder vs AID Griffin / F&F “standard” / NovelAI in-house:
- * Free = Gemini 2.5 Flash Lite (cheap named Google); Mid = Claude Haiku 4.5;
+ * Free = DeepSeek V4 Flash (best cheap narrative); Mid = Claude Haiku 4.5;
  * High = Claude Sonnet 4.6. Memorable plates: Klein 4B Free/Mid, Pro on High.
  * Inventory icons + paper-doll are bundled stock glyphs (no image API).
  */
@@ -270,7 +270,7 @@ export const SUBSCRIPTION_TIERS: Record<SubscriptionTierId, TierDefinition> = {
     id: 'free',
     name: 'Free',
     priceGbp: 0,
-    writerOpenRouterId: 'google/gemini-2.5-flash-lite',
+    writerOpenRouterId: 'deepseek/deepseek-v4-flash-0731',
     writerGeminiId: 'gemini-2.5-flash-lite',
     textTurnsPerDay: 12,
     memorableImagesPerWeek: 5,

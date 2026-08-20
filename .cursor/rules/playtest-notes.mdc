@@ -20,6 +20,9 @@ John is playtesting live. Collect issues here. Do not implement until he asks fo
 
 ## Done (already shipped)
 
+- **2026-08-20a opening beats + Free writer:** Summoned Pact opens from seed-picked pointer cards (place / faction / why / optional gear offer) so the writer builds a unique first page; NPCs may offer kit for a pact, ledger stays Earth-only until accepted. Hosted Free writer is `deepseek/deepseek-v4-flash-0731` (Mid Haiku / High Sonnet unchanged). HUD stamp 20a
+- **2026-08-19ak forceFreeModel:** missing import in `gmProxy.ts` crashed the first normal GM turn after opening. HUD stamp 19ak
+
 - **2026-08-19ag Slices 3–5 trap/quest/death:** `resolveLedgerTrap` + Token D + `looseItems` pickup (ledger-only, no GM); quest hooks + `<quest-fail>` modal; `playPhase` down/ended lock + `EpitaphBar` + PDF epilogue export. HUD stamp 19ag
 - **2026-08-19af Slice 2 flee + map lock:** `resolveLedgerFlee` parks wounded mob HP on node; Stealth check pre-GM; map movement blocked during live combat; flee-fail damage; dungeon-neutralized milestone receipt. HUD stamp 19af
 - **2026-08-19ae Slice 0+1 save repair + mob ledger:** `repairSaveSchema` / `saveRepairRevision` on load-import-continue; semantic repair toast once; legacy spawned mobs → `defeated`; `mobCountsAsRemaining` counter + parked restore stub; ledger kill marks mob defeated; rewind clears after commit. HUD stamp 19ae

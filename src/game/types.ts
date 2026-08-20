@@ -338,6 +338,8 @@ export interface OpeningEstablishment {
   mode?: 'scene' | 'weave';
   /** Seed-picked opener from bible.openingHooks (stable for the run). */
   pickedHook?: string;
+  /** Player-facing fallback if the writer call fails. */
+  pickedHookFallback?: string;
 }
 
 export interface GameState {

@@ -28,58 +28,204 @@ export const summonedPact: CampaignBible = {
     startLine: 'Light, then stone. They want a name. Then the Earth place the light took you from.',
   },
   openingHook:
-    'Light, then cold stone. You are on your back inside a seven-ring summoning circle under a cathedral vault. Robed figures freeze mid-chant. A blue panel hangs at eye level — private, yours. One of them whispers “Pactborn.” Another, quieter: “The Mark is wrong.” Nobody hands you a sword. Your Earth clothes are still on you. The System has not asked you to save anyone yet.',
-  /** Code picks one per New Game (seed). Circle is one option, not the only one. */
+    'You arrive mid-rite. A faction wanted a summoned soul. A blue panel hangs at eye level — private, yours. Your Earth clothes are still on you. Someone in the room already has an offer, and you can refuse it.',
+  /** Code picks one per New Game (seed). Pointers, not a script — writer builds the page. */
   openingHooks: [
     {
       location: 'The Sevenfold Circle under Valespire Cathedral',
-      text:
-        'Light, then cold stone. You are on your back inside a seven-ring summoning circle under a cathedral vault. Robed figures freeze mid-chant. A blue panel hangs at eye level — private, yours. One of them whispers “Pactborn.” Another, quieter: “The Mark is wrong.” Nobody hands you a sword. Your Earth clothes are still on you.',
+      faction: 'High Chanter Orel Vane and Crown handlers of Pellane',
+      summonIntent: 'They paid for a Pactborn champion to end the Ash Court war. The seventh ring stuttered; the Mark looks wrong.',
+      openingOffer:
+        'Swear the Pact and they will issue travel kit (a field blade, cloak, papers, a little coin). Refuse and you keep only what you arrived in.',
+      beats: [
+        'You are on your back inside a seven-ring circle under a cathedral vault. Robed figures freeze mid-chant.',
+        'A blue panel hangs at eye level — private, yours. One whisper: Pactborn. Another: the Mark is wrong.',
+        'Nobody has put a weapon in your hands yet. The offer is still in their mouths.',
+      ],
+      fallback:
+        'Light, then cold stone. You are on your back inside a seven-ring summoning circle under a cathedral vault. Robed figures freeze mid-chant. A blue panel hangs at eye level — private, yours. One of them whispers “Pactborn.” Another, quieter: “The Mark is wrong.” Your Earth clothes are still on you.',
     },
     {
       location: 'Pellane war camp beyond Valespire walls',
-      text:
-        'Light, then mud and banner-smoke. You are on your back in a war camp circle scraped into dirt outside Valespire’s walls. Armored handlers shout over horn-calls. A blue panel hangs at eye level. Someone wanted a hero yesterday. The Mark on you is already an argument.',
+      faction: 'Captain Sera Quill and camp handlers',
+      summonIntent: 'They needed a body on the line yesterday. The rite was scraped into dirt, not cathedral brass.',
+      openingOffer:
+        'Enlist and they will kit you from the quartermaster (a service blade, a coat, a ration chit). Walk away and you keep Earth kit only.',
+      beats: [
+        'Mud, banner-smoke, a war-camp circle. Horns. Armored handlers shouting.',
+        'A blue panel hangs at eye level. Someone wanted a hero. The Mark on you is already an argument.',
+        'A sergeant is already reaching toward a weapons crate — waiting on a yes.',
+      ],
+      fallback:
+        'Light, then mud and banner-smoke. You are on your back in a war-camp circle scraped into dirt outside Valespire’s walls. Armored handlers shout over horn-calls. A blue panel hangs at eye level. Someone wanted a hero yesterday. The Mark on you is already an argument.',
     },
     {
       location: 'a barred undercroft cell beneath Valespire Cathedral',
-      text:
+      faction: 'A handler on the far side of the grate, treating you as bait',
+      summonIntent: 'The rite succeeded in a cell, not a welcome hall. They summoned a lure, or they are hiding a failed Mark.',
+      openingOffer:
+        'Cooperate — name, oath, a walk above — and they will unbar the door and issue a traveler’s kit. Stay silent and you keep what is in your pockets.',
+      beats: [
+        'Stone bench, iron bars, a panel hanging in the dark.',
+        'Someone calls you bait. Your Earth clothes are still on you.',
+        'Keys jingle. The offer is release with strings, not a gift sword on the floor.',
+      ],
+      fallback:
         'Light, then iron bars. You are on a stone bench in a cell under the cathedral, not a welcome hall. A blue panel hangs in the dark. A handler on the other side of the grate calls you bait. Your Earth clothes are still on you.',
     },
     {
       location: 'the blood-sand arena of Valespire',
-      text:
+      faction: 'Arena masters and robes at the rail, with a crowd already betting',
+      summonIntent: 'Entertainment first, hero second. They summoned a body the city can watch die or win.',
+      openingOffer:
+        'Take the sand and they will throw you a weapon from the rack. Refuse the show and you leave with Earth kit — if they let you leave.',
+      beats: [
+        'Sand, noise, a circle while the crowd already bets.',
+        'A blue panel hangs private. Nobody asked if you wanted to be entertainment.',
+        'A blade is visible on a rack at the rail — offered, not in your hand.',
+      ],
+      fallback:
         'Light, then sand and noise. You are on your back in an arena circle while a crowd already bets. Robes at the rail. A blue panel hangs private. Nobody asked if you wanted to be entertainment.',
     },
     {
       location: 'a Lowmarket cellar shrine under Valespire',
-      text:
+      faction: 'A denied-god cult the Crown will not admit exists',
+      summonIntent: 'Wrong gods, wrong chant. They wanted a miracle. They got you. Someone upstairs will still call this Pellane’s summon.',
+      openingOffer:
+        'Join their small pact and they will press a relic-knife and a stained cloak into your hands. Walk out and you keep Earth kit — and their fear.',
+      beats: [
+        'Candle-smoke cellar. You are on your back in a cult circle.',
+        'A blue panel hangs. The people here are not the High Chanter.',
+        'A relic is wrapped in cloth on the altar — an offer, not starting loot.',
+      ],
+      fallback:
         'Light, then candle-smoke in a cellar. Wrong gods, wrong chant. You are on your back in a cult circle the Crown will deny. A blue panel hangs. Someone upstairs will call this Pellane’s summon anyway.',
     },
     {
       location: 'The Sevenfold Circle under bombardment',
-      text:
+      faction: 'Scattered Scale priests and a panicked handler, ceiling already cracking',
+      summonIntent: 'They finished the rite while the city was hit. There is no orderly welcome.',
+      openingOffer:
+        'Grab a fallen soldier’s kit if you help them hold the vault. Freeze or flee and you have only Earth clothes — the crate of issued blades is buried in dust.',
+      beats: [
+        'Vault under fire. Dust and ash falling through the chant.',
+        'A blue panel hangs. The Mark is wrong and the ceiling is already cracking.',
+        'Gear exists in the room as salvage or a shouted offer, not a gift placed in your hands.',
+      ],
+      fallback:
         'Light, then a vault under fire. You are on your back in the seven-ring circle while dust and ash fall through the chant. A blue panel hangs. The Mark is wrong and the ceiling is already cracking.',
     },
     {
       location: 'Valespire peace-festival square',
-      text:
+      faction: 'Festival crowd plus panicked handlers who caught the wrong person',
+      summonIntent: 'You were in the crowd. You were not the name on the rite.',
+      openingOffer:
+        'Play along as their summoned guest and they will smuggle you a cloak and a pass. Name yourself extra and they may try to hide you — or parade you — with nothing added to your pockets.',
+      beats: [
+        'Festival noise. Public stones. Handlers freeze.',
+        'A blue panel hangs. One whisper: wrong catch.',
+        'No ceremony kit unless you agree to wear their story.',
+      ],
+      fallback:
         'Light, then festival noise. You were not the name on the rite — you were in the crowd. You are on the stones of a public square while handlers freeze. A blue panel hangs. One whisper: “Wrong catch.”',
     },
     {
       location: 'a wayside shrine on the Valespire road',
-      text:
+      faction: 'One frightened priest, no capital audience',
+      summonIntent: 'One mistake on a rural circle. They did not mean to pull an Earth soul this far from the city.',
+      openingOffer:
+        'Walk with them to Valespire under a traveler’s staff and cloak they keep for pilgrims. Stay and they will beg you to leave with only what you arrived in.',
+      beats: [
+        'Quiet rural stone. One priest, one circle, miles of dust to the capital.',
+        'A blue panel hangs. The road to Valespire is still long.',
+        'A pilgrim staff leans by the door — offered if you take their road.',
+      ],
+      fallback:
         'Light, then quiet rural stone. One priest, one mistake, no capital audience. You are on your back in a roadside shrine circle. A blue panel hangs. The road to Valespire is still miles of dust.',
     },
     {
       location: 'an Ash-adjacent ritual hall',
-      text:
+      faction: 'Ash Court priests who will swear the Crown summoned you',
+      summonIntent: 'A rival hall. They want a Calamity Mark as proof the Scale rejected Pellane.',
+      openingOffer:
+        'Wear the Mark openly and they offer ember-ward kit and citizenship papers. Refuse and you keep Earth clothes — they may still try to keep you.',
+      beats: [
+        'You are on your back in a circle that is not Pellane’s.',
+        'A blue panel hangs. They will say the Crown summoned you.',
+        'A wrapped ember-blade sits on a side table — a deal, not yours yet.',
+      ],
+      fallback:
         'Light, then a rival hall. You are on your back in a circle that is not Pellane’s. They will say the Crown summoned you. A blue panel hangs. Your Earth clothes are still on you.',
     },
     {
       location: 'The Sevenfold Circle — four rings occupied',
-      text:
-        'Light, then three other bodies on neighboring rings. Mass summon. Politics in the first breath: who is Pactborn, who is Marked, who was extra. A blue panel hangs private. Nobody hands anyone a sword.',
+      faction: 'Crown ritual staff arguing over a mass summon',
+      summonIntent: 'Four bodies. Politics in the first breath: who is Pactborn, who is Marked, who was extra.',
+      openingOffer:
+        'The first to swear gets issued kit. The others wait. You can swear, refuse, or watch someone else take the blade.',
+      beats: [
+        'Three other living people on neighboring rings. Not a solo hero shot.',
+        'A blue panel hangs private — yours, not theirs.',
+        'A kit crate is open at the edge. Hands have not reached you unless you agree.',
+      ],
+      fallback:
+        'Light, then three other people on neighboring rings. A mass summon. The room is already arguing who is Pactborn, who is Marked, and who was extra. A blue panel hangs at eye level — private, yours. Your Earth clothes are still on you.',
+    },
+    {
+      location: 'a treaty tent on the Cinderflow road',
+      faction: 'Pellane and Ash Court envoys using you as a living token',
+      summonIntent: 'They summoned a soul to sign a pause in the war. Both sides want you named as theirs.',
+      openingOffer:
+        'Pick a banner and that side issues kit and a seat at the table. Pick neither and you keep Earth kit while both sides freeze.',
+      beats: [
+        'Canvas, maps, two seals on one table. You arrived between them.',
+        'A blue panel hangs. Nobody smiles.',
+        'Two kits sit on opposite chests — offered, not equipped.',
+      ],
+      fallback:
+        'Light, then canvas and lamp-smoke. You are on your back in a treaty tent on the Cinderflow road. Two sets of seals wait on one table. A blue panel hangs at eye level. Both sides already want your name on a banner.',
+    },
+    {
+      location: 'a harbor circle in the hold of a Valespire grain-ship',
+      faction: 'Smugglers who stole a Scale rite and panicked when it worked',
+      summonIntent: 'They wanted luck for a cargo run. They pulled an Earth soul. The Crown does not know yet.',
+      openingOffer:
+        'Keep their secret and they will kit you as crew (knife, oilskin, a bunk). Shout for the Crown and you keep Earth kit — and they may dump you at the quay.',
+      beats: [
+        'Timber, tar, a chalk circle in a ship’s hold. The boat is moving.',
+        'A blue panel hangs. Someone swears. Someone laughs once and stops.',
+        'A sailor’s knife is offered hilt-first if you nod.',
+      ],
+      fallback:
+        'Light, then timber and tar. You are on your back in a chalk circle in the hold of a grain-ship leaving Valespire. A blue panel hangs at eye level. The people here were not supposed to make this work.',
+    },
+    {
+      location: 'a ruined empty circle outside the west wall',
+      faction: 'No priests — scavengers and a militia patrol arriving late',
+      summonIntent: 'The rite already failed for someone else. You are leftover. The circle is cracked and cold.',
+      openingOffer:
+        'The patrol will issue a militia armband and a short blade if you come quietly. The scavengers will trade junk for whatever is in your pockets. You can take neither.',
+      beats: [
+        'Open sky, broken brass rings, no cathedral vault.',
+        'A blue panel hangs above cracked stone. Wind. Distant wall-horns.',
+        'Gear on offer is whoever gets to you first — not a Crown ceremony.',
+      ],
+      fallback:
+        'Light, then open sky. You are on cracked brass rings outside Valespire’s west wall. The circle is empty of priests. A blue panel hangs at eye level. Footsteps are already coming — scavengers, or the watch.',
+    },
+    {
+      location: 'the cathedral infirmary',
+      faction: 'Field chirurgeons who expected a healer-hero, not a stranger in Earth clothes',
+      summonIntent: 'The court paid for a Pactborn who could close wounds. The Mark on you does not match the order.',
+      openingOffer:
+        'Agree to work their cots and they will issue a chirurgeon’s kit (wraps, a knife, a tabard). Refuse the job and you keep Earth kit while they argue over the ledger.',
+      beats: [
+        'Linen, boiled iron, someone screaming two beds over. You arrived on a circle chalked between cots.',
+        'A blue panel hangs. A chirurgeon is already angry at the paperwork.',
+        'A kit tray is ready if you say yes to the work.',
+      ],
+      fallback:
+        'Light, then linen and boiled iron. You are on your back on a circle chalked between infirmary cots. A blue panel hangs at eye level. The chirurgeons expected a healer. You still have Earth clothes.',
     },
   ],
   openingPrompts: [
@@ -106,7 +252,7 @@ export const summonedPact: CampaignBible = {
 
   premise: `You were an ordinary person on Earth. A ritual in another world — the Sevenfold Circle, under Valespire Cathedral — pulled you through. The kingdom of Pellane summoned a [Pactborn] to end a war with the Ash Court. The System also rolled a second stamp: [Calamity Mark]. One summoned soul can carry either, or flicker between them. The court will call you Hero. The Ash Court will call you theirs. You do not have to answer either.
 
-LOCATION LANGUAGE (BINDING): Camera is HERE — the seeded summon place for this run (cathedral circle, war camp, cell, arena, shrine, festival square, or rival hall). Do not teleport them to the Sevenfold Circle if Location is already somewhere else. Never call this interior "a nearby building." "The court" is Pellane's Crown / the people in this room, not the enemy. The enemy polity is the Ash Court. Do not use "the court" as both current room and the enemy in the same beat.
+LOCATION LANGUAGE (BINDING): Camera is HERE — the seeded summon place for this run (cathedral circle, war camp, cell, arena, shrine, festival square, rival hall, treaty tent, harbor hold, ruined west-wall circle, or infirmary). Do not teleport them to the Sevenfold Circle if Location is already somewhere else. Never call this interior "a nearby building." "The court" is Pellane's Crown / the people in this room, not the enemy. The enemy polity is the Ash Court. Do not use "the court" as both current room and the enemy in the same beat.
 
 ORIGINALITY (BINDING): Never name published novels, anime, or games in play. Never import unique skill names, distinctive places, or plots from any series. Inn, guild, and dungeon are generic hubs with SynapticGM names only.
 
@@ -118,7 +264,7 @@ GENRE PALETTE (ORIGINAL NAMES — use these):
 - Guild hub: Valespire Contract Hall (posted jobs, rank boards, politics).
 - Dungeon: Cathedral Undercroft — numbered floors; fog on unvisited rooms. Street map stays outdoors.
 
-OPENING KIT (AUTHORITY): Worn clothes and pocket contents from Earth are the kit. Never invent an iron shortsword, traveler tunic, or healing draught unless the ledger already has it. The only System gift at registration is an unidentified [Circle Blessing] (glitched passive). Appraisal is required to name it.
+OPENING KIT (AUTHORITY): At the first breath, worn clothes and pocket contents from Earth are the kit. Never auto-invent an iron shortsword, traveler tunic, or healing draught onto the sheet. NPCs MAY OFFER gear (a blade, cloak, papers, coin) as a bargain for a pact, enlistment, or release — describe the offer; do not add it to inventory until the player accepts. Refuse and they keep only Earth kit. The only System gift at registration is an unidentified [Circle Blessing] (glitched passive). Appraisal is required to name it.
 
 PLAYER AGENCY (BINDING): No forced allegiance. Protest, jokes, and “why should I save you” are dialogue. The first scene is THIS arrival and the people in it — not a journal dump. Do not unlock or name Guide Book quests until they are spoken in play.
 
@@ -131,8 +277,8 @@ HERO / VILLAIN FORK (CODE + WRITER):
 STORY SPINE (skeleton — unique each run; do not recap as a lecture):
 1. Arrival (this run's picked hook). Names. Blessing unidentified. Argument in front of you.
 2. First free hour in Valespire (cathedral close, The Weighing Cup, Lowmarket, Contract Hall notice-board, or a locked guest wing) — ordinary people, not the war.
-3. A handler asks you to swear the Pact. Swearing is optional. Refusal has social cost, not instant prison unless they attack.
-4. First real threat is local (marked beast in the close, a sabotaged ward, a frightened crowd) — not the Ash King.
+3. A handler (or whoever summoned you) may offer a pact: swear/enlist/join and they issue travel kit; refuse and you keep only Earth kit. Refusal has social cost, not instant prison unless they attack.
+4. First real threat is local to THIS arrival (marked beast, sabotaged ward, frightened crowd, scavengers, a forced show) — not the Ash King.
 5. Proof the war story is incomplete (a letter, a prisoner, a cracked circle).
 6. Meet or hear of the other summoned (opposite stamp).
 7. Choose a side, a third path, or a lie that buys time.

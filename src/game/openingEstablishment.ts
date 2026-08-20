@@ -344,11 +344,36 @@ function hashOpenerSeed(input: string): number {
 }
 
 /** Pick a stable opener from `openingHooks` (or catalog decks, or `openingHook`). */
-export function normalizeOpeningHookCard(card: OpeningHookCard): { text: string; location?: string } {
-  if (typeof card === 'string') return { text: card.trim() };
+export function normalizeOpeningHookCard(card: OpeningHookCard): {
+  text: string;
+  location?: string;
+  fallback?: string;
+} {
+  if (typeof card === 'string') {
+    const text = card.trim();
+    return { text, fallback: text || undefined };
+  }
+  const lines: string[] = [];
+  const location = card.location?.trim() || undefined;
+  if (location) lines.push(`Place: ${location}`);
+  if (card.faction?.trim()) lines.push(`Who is here / who summoned: ${card.faction.trim()}`);
+  if (card.summonIntent?.trim()) lines.push(`Why this happened: ${card.summonIntent.trim()}`);
+  if (card.openingOffer?.trim()) {
+    lines.push(`Opening offer (optional — player may refuse): ${card.openingOffer.trim()}`);
+  }
+  for (const beat of card.beats ?? []) {
+    const b = beat.trim();
+    if (b) lines.push(`- ${b}`);
+  }
+  if (card.text?.trim()) lines.push(card.text.trim());
+  const fallback =
+    card.fallback?.trim()
+    || card.text?.trim()
+    || (location ? `You are in ${location}.` : '');
   return {
-    text: (card.text ?? '').trim(),
-    location: card.location?.trim() || undefined,
+    text: lines.join('\n'),
+    location,
+    fallback: fallback || undefined,
   };
 }
 
@@ -364,7 +389,7 @@ export function openingHookDeck(bible: CampaignBible | undefined): OpeningHookCa
 export function resolveOpeningHookPick(
   bible: CampaignBible | undefined,
   seed?: string
-): { text: string; location?: string } | undefined {
+): { text: string; location?: string; fallback?: string } | undefined {
   const deck = openingHookDeck(bible).map(normalizeOpeningHookCard).filter((h) => h.text);
   if (deck.length === 0) return undefined;
   const idx = hashOpenerSeed(`${seed ?? '0'}|${bible?.id ?? 'bible'}|opener`) % deck.length;
@@ -608,7 +633,7 @@ export function formatPlayerCanon(state: GameState): string {
   return (
     `PLAYER CANON (facts only — rewrite in System/narrator voice, never quote I/my chat):\n${lines.join('\n')}\n`
     + identityLock
-    + `Inventory and equipped gear on the sheet are the only items they have. `
+    +     `Inventory and equipped gear on the sheet are the only items they have until they accept an in-scene offer. `
     + `Rejected chargen claims (legendary weapons, best armor, endgame gear) stay rejected.`
   );
 }
@@ -625,7 +650,8 @@ export function buildEstablishmentIntro(
     return { text: archetypeIntro, choices: [] };
   }
   const voice = registrar ?? resolveOpeningRegistrar(bible, bible?.engineMode ?? 'litrpg', bible?.archetype);
-  const hook = (resolveOpeningHook(bible, seed) || softenAssumedPlace(archetypeIntro)).replace(/\s*What do you do\??\s*$/i, '').trim();
+  const pickedCard = resolveOpeningHookPick(bible, seed);
+  const hook = (pickedCard?.fallback || pickedCard?.text || softenAssumedPlace(archetypeIntro)).replace(/\s*What do you do\??\s*$/i, '').trim();
   const first = prompts[0];
   const designation = characterName?.trim() && !GENERIC_NAMES.test(characterName.trim())
     ? `Current designation: ${characterName}`
@@ -1377,7 +1403,7 @@ export function buildOpeningSceneMandate(state: GameState, notes?: string): stri
   const hookText = state.openingEstablishment?.pickedHook?.trim()
     || resolveOpeningHook(bible, state.seed);
   const hook = hookText
-    ? `Hook ingredients (rewrite with artistic license — do not reprint as a script):\n${hookText}\n`
+    ? `Hook POINTER CARD (expand into a unique first page — do not reprint as a script, do not lecture the player):\n${hookText}\n`
     : '';
   if (state.openingEstablishment?.sceneWritten) {
     return `=== OPENING CONTINUE (BINDING) ===
@@ -1395,18 +1421,18 @@ Then 3–4 local choices grounded in the continued beat. At least one must chang
 ${canon}
 ${extra}
 ${hook}
-Write THIS run's first page from the campaign bible and its game rules. Unique camera each New Game — not a template, not a registration form.
+Write THIS run's first page from the pointer card and the campaign bible. Unique camera each New Game — not a template, not a registration form, not a reprint of the pointers.
 
 Genre practice (honor the story type):
 - CYOA / Choice of Games / PYOA: drop into the crisis. No name form.
 - LitRPG / System apocalypse: ordinary street first, then the panel as a moment. Earth is NOT being ingested.
-- Isekai summon: arrive in THIS run's picked hook (circle, camp, cell, arena, shrine, festival, or hall — not always the cathedral). People talk; clothes are a look-down; origin is the Earth place the light took you from. Camera is HERE, not Earth.
+- Isekai summon: arrive in THIS run's picked place (not always a cathedral circle). People talk; clothes are a look-down; origin is the Earth place the light took you from. Camera is HERE, not Earth. If the pointer card includes an opening offer, someone in the scene can voice it — the player may refuse.
 - Mystery / romance / space horror: body, door, or bulkhead already in motion.
 
-1) 4–7 sentences of story in the seeded place. Honor the configured PERSPECTIVE for the entire beat.
+1) 4–7 sentences of story in the seeded place. Honor the configured PERSPECTIVE for the entire beat. Full grammatical English — no telegram fragments ("Mass summon. Politics in the first breath.").
 2) Never print Confirm designation / Visual profile / Location logged / Setup complete.
 3) ${coverLine}
-4) Do not grant weapons or rare items. Only kit already on the sheet.
+4) Do not add weapons or rare items to the sheet. NPCs may OFFER gear as a bargain (pact, enlistment, release). Describe the offer; do not invent it onto inventory until the player accepts. Until then, only kit already on the sheet exists. Do not lecture "nobody gets a sword."
 5) Spoken lines must be grammatical. Never emit "a figure" as a name, "the a", or "unlock someone".
 6) The camera is HERE. Do not relocate the PC by calling this interior "a nearby building/place/hall." Nearby is for things that are not here.
 7) ${systemPing}
@@ -1430,9 +1456,16 @@ export function synthesizeOpeningScene(state: GameState): string {
   const folk = a.folk || a.form || '';
   const folkBit = folk ? ` You are ${folk}.` : '';
   const bible = resolveActiveCampaignBible(state);
-  const hook = state.openingEstablishment?.pickedHook?.trim()
-    || resolveOpeningHook(bible, state.seed);
-  const scene = hook
+  const picked = resolveOpeningHookPick(bible, state.seed);
+  const hook = state.openingEstablishment?.pickedHookFallback?.trim()
+    || picked?.fallback
+    || state.openingEstablishment?.pickedHook?.trim()
+    || picked?.text;
+  const looksLikePointers = !!hook && /^(Place:|Who is here|Why this happened|Opening offer)/m.test(hook);
+  const scene = looksLikePointers
+    ? (picked?.fallback
+      || `You are in ${state.currentLocation || where}.${folkBit} People in the scene are already reacting.`)
+    : hook
     || (/system integration|every human on earth/i.test(state.campaignPremise ?? '')
       ? `You are still in ${where} — same morning, same life — while the sky stays torn and a blue panel hangs at eye level.${folkBit} People nearby are shouting.`
       : `You are in ${where}.${folkBit} The scene that was already moving is still moving.`);

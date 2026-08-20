@@ -44,8 +44,24 @@ export type OpeningAskStyle = 'inworld' | 'system';
 /** scene = generate the first page from the bible; weave = same, then cover remaining facts in-world. */
 export type OpeningMode = 'scene' | 'weave';
 
+/** Pointers the writer expands into a unique first page. Not a script to reprint. */
+export interface OpeningBeatCard {
+  location?: string;
+  /** Who summoned / who is in the room. */
+  faction?: string;
+  /** Why the rite happened. */
+  summonIntent?: string;
+  /** Optional bargain they may voice — player can refuse. Do not put offered gear on the sheet until accepted. */
+  openingOffer?: string;
+  beats?: string[];
+  /** Optional leftover ingredients. Prefer beats. */
+  text?: string;
+  /** Short grammatical scene if the writer call fails. */
+  fallback?: string;
+}
+
 /** One New Game opener. Strings are ingredients; objects may also move the camera. */
-export type OpeningHookCard = string | { text: string; location?: string };
+export type OpeningHookCard = string | OpeningBeatCard;
 
 /** Who asks the opening questions — The System, an Auditor, a clerk, the tale itself. */
 export interface OpeningRegistrar {
