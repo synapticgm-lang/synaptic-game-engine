@@ -148,16 +148,11 @@ export interface WatchMemorableAdResult {
 }
 
 /**
- * Free only, after the weekly memorable cap: +1 schnell splash that does not dump the week.
- * Extra cap: +1/day and +3/week. Kid Mode uses the family ad rail when live.
+ * Free memorable week-cap ads — paused while Free memorable is paywalled.
+ * Restore when revenue supports a Free allowance (+1/day after weekly cap).
  */
-export function canOfferRewardedMemorable(contentMode?: string | null): boolean {
-  const tier = getActiveSubscriptionTier();
-  if (tier !== 'free') return false;
-  if (memorableWeeklySubRemaining() > 0) return false;
-  const extras = memorableAdExtrasRemaining();
-  if (extras.today <= 0 || extras.week <= 0) return false;
-  return canWatchRewardedAdNow(contentMode);
+export function canOfferRewardedMemorable(_contentMode?: string | null): boolean {
+  return false;
 }
 
 export async function watchRewardedAdForMemorable(args: {

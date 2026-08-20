@@ -192,10 +192,27 @@ export function memorableRemaining(ledger = loadCapacityLedger()): number {
   return memorableSubRemaining(ledger) + Math.max(0, ledger.memorablePackBalance ?? 0);
 }
 
+/** True when the player can spend a memorable plate right now (or Test Lab). */
+export function memorablePlatesAvailable(ledger = loadCapacityLedger()): boolean {
+  if (isTestLabEnabled()) return true;
+  return memorableRemaining(ledger) > 0;
+}
+
+/**
+ * Memorable toggle / consent control.
+ * Visible always; grayed when no plates left (NovelAI-style meter, not a hidden Mid-only menu).
+ */
+export function memorableToggleEnabled(ledger = loadCapacityLedger()): boolean {
+  return memorablePlatesAvailable(ledger);
+}
+
 export function memorableWeeklyCapLabel(ledger = loadCapacityLedger()): string {
   const cap = getTierDefinition(ledger.tier).memorableImagesPerWeek;
   const pack = Math.max(0, ledger.memorablePackBalance ?? 0);
   const weekLeft = memorableSubRemaining(ledger);
+  if (cap <= 0 && pack <= 0 && weekLeft <= 0) {
+    return 'Mid / High · or buy a picture pack';
+  }
   if (pack > 0) return `${memorableRemaining(ledger)} left · ${weekLeft} of ${cap} this week + pack`;
   return `${weekLeft} of ${cap} left this week`;
 }
@@ -402,7 +419,7 @@ export function capacityStatusMessage(kind: CapacitySpendKind): string {
     return 'You’re out of turns for today. Upgrade for a higher daily allowance, buy a turn pack (packs never expire), or watch an ad for a few more turns today.';
   }
   if (kind === 'memorable') {
-    return 'You’ve hit this week’s memorable splash limit. Buy a picture pack (never expires), upgrade for a higher weekly cap, or watch an ad for +1 cheap splash if you’re on Free.';
+    return 'You’ve hit this week’s memorable splash limit. Buy a picture pack (never expires) or upgrade for a higher weekly cap — the story continues either way.';
   }
   return 'You’re out of illustrations for this graphic novel. Upgrade for more daily art, or buy an illustrated pack (packs never expire) — your place is saved.';
 }

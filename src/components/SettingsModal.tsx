@@ -21,7 +21,7 @@ import { CREDITS_PATH } from '@/legal/credits';
 import { FeedbackPanel } from './FeedbackPanel';
 import { SupportAccountPanel } from './SupportAccountPanel';
 import { PlayerProfilePanel } from './PlayerProfilePanel';
-import { memorableWeeklyCapLabel } from '@/game/capacityLedger';
+import { memorableToggleEnabled, memorableWeeklyCapLabel } from '@/game/capacityLedger';
 import { GM_VOICE_PROFILES } from '@/game/gmVoiceProfile';
 import {
   canShowTestLabUi,
@@ -169,6 +169,7 @@ export function SettingsModal({ settings, storyName, engineMode, gameState, onSa
       aiProvider: 'openrouter',
       geminiApiKey: '',
       imageApiKey: draft.fluxApiKey,
+      classicMemorableImages: memorableToggleEnabled() ? draft.classicMemorableImages : false,
     };
     if (!toSave.fluxApiKey.trim() && toSave.imageProvider === 'flux-direct') {
       toSave.imageProvider = 'flux';
@@ -581,9 +582,17 @@ export function SettingsModal({ settings, storyName, engineMode, gameState, onSa
               <ToggleRow
                 icon={<Sparkles size={14} />}
                 label={`Memorable Moment Images · ${memorableWeeklyCapLabel()}`}
-                description="Rare splash illustrations — ink and watercolor, one picture filling the frame for a book-worthy beat, then back to prose. Opening, death, and the first dungeon’s final boss auto-illustrate. Later bosses, a royal audience, a striking first look, or a writer-flagged beat are tap-yes. First fights do not. The toggle is consent — autos fire without a second Yes."
-                checked={draft.classicMemorableImages}
-                onChange={(v) => update('classicMemorableImages', v)}
+                description={
+                  memorableToggleEnabled()
+                    ? 'Rare splash illustrations — ink and watercolor, one picture filling the frame for a book-worthy beat, then back to prose. Opening, death, and the first dungeon’s final boss auto-illustrate. Later bosses, a royal audience, a striking first look, or a writer-flagged beat are tap-yes. First fights do not. Mid/High use Flux Pro. The toggle is consent — autos fire without a second Yes.'
+                    : 'Story plates are on Mid and High (Flux Pro), or buy a Snap / Album / Gallery pack anytime — packs never expire. Control stays visible; it unlocks when you have plates left. Story never waits on art.'
+                }
+                checked={memorableToggleEnabled() ? draft.classicMemorableImages : false}
+                disabled={!memorableToggleEnabled()}
+                onChange={(v) => {
+                  if (!memorableToggleEnabled()) return;
+                  update('classicMemorableImages', v);
+                }}
               />
             )}
             {draft.visualMode === 'comic' && (

@@ -664,10 +664,13 @@ export async function generateComicImage(
   ].filter(Boolean).join('\n\n').trim();
 
   const classicMemorable = settings.visualMode === 'classic' && Boolean(options?.memorableMoment);
-  // Paper-doll / item icons stay Klein. Memorable plates follow the tier ladder (Klein Free/Mid, Pro on High).
-  const useHeroModel = inventoryArt || classicMemorable
+  // Paper-doll / item icons stay Klein. Memorable plates: Mid/High/Admin use Flux Pro; Free packs stay Klein.
+  const tierId = effectiveWriterTier(settings.subscriptionTier);
+  const useHeroModel = inventoryArt
     ? false
-    : options?.hero === true || HERO_IMAGE_TRIGGER.test(prompt);
+    : classicMemorable
+      ? tierId !== 'free'
+      : options?.hero === true || HERO_IMAGE_TRIGGER.test(prompt);
   let fluxModels = resolveFluxImageModel({
     tier: effectiveWriterTier(settings.subscriptionTier),
     hero: useHeroModel,

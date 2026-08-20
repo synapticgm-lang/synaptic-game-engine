@@ -13,6 +13,14 @@ describe('hosted AI catalog', () => {
     expect(SUBSCRIPTION_TIERS.admin.writerOpenRouterId).toBe('anthropic/claude-sonnet-4.6');
   });
 
+  it('paywalls memorable week-cap on Free; Mid and High use Flux Pro', () => {
+    expect(SUBSCRIPTION_TIERS.free.memorableImagesPerWeek).toBe(0);
+    expect(SUBSCRIPTION_TIERS.mid.memorableImagesPerWeek).toBe(20);
+    expect(SUBSCRIPTION_TIERS.high.memorableImagesPerWeek).toBe(40);
+    expect(SUBSCRIPTION_TIERS.mid.fluxEndpoint).toBe('flux-2-pro');
+    expect(SUBSCRIPTION_TIERS.high.fluxEndpoint).toBe('flux-2-pro');
+  });
+
   it('maps OpenRouter art to Klein 4B except High/Pro hero', () => {
     expect(fluxEndpointToOpenRouterId('flux-2-klein-4b')).toBe(HOSTED_SCHNELL_MODEL);
     expect(fluxEndpointToOpenRouterId('flux-2-klein-9b')).toBe(HOSTED_SCHNELL_MODEL);

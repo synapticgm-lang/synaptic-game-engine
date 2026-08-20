@@ -5,8 +5,8 @@
  *
  * Hosted OpenRouter ladder vs AID Griffin / F&F “standard” / NovelAI in-house:
  * Free = DeepSeek V4 Flash (best cheap narrative); Mid = Claude Haiku 4.5;
- * High = Claude Sonnet 4.6. Memorable plates: Klein 4B Free/Mid, Pro on High.
- * Inventory icons + paper-doll are bundled stock glyphs (no image API).
+ * High = Claude Sonnet 4.6. Memorable plates: paywalled (Free week cap 0);
+ * Mid/High use Flux.2 Pro. Inventory icons stay Klein.
  */
 
 import { HOSTED_HERO_MODEL, HOSTED_SCHNELL_MODEL } from './hostedImageModel';
@@ -273,11 +273,12 @@ export const SUBSCRIPTION_TIERS: Record<SubscriptionTierId, TierDefinition> = {
     writerOpenRouterId: 'deepseek/deepseek-v4-flash-0731',
     writerGeminiId: 'gemini-2.5-flash-lite',
     textTurnsPerDay: 12,
-    memorableImagesPerWeek: 5,
+    memorableImagesPerWeek: 0,
     illustratedImagesPerDay: 0,
     illustratedTrialImages: 10,
     maxPanelsPerTurn: 1,
     fluxEndpoint: 'flux-2-klein-4b',
+    fluxHeroEndpoint: 'flux-2-pro',
     adTextTurns: 3,
     noAds: false,
     downloadGraphicNovel: false,
@@ -293,7 +294,7 @@ export const SUBSCRIPTION_TIERS: Record<SubscriptionTierId, TierDefinition> = {
     illustratedImagesPerDay: 6,
     illustratedTrialImages: 0,
     maxPanelsPerTurn: 2,
-    fluxEndpoint: 'flux-2-klein-9b',
+    fluxEndpoint: 'flux-2-pro',
     fluxHeroEndpoint: 'flux-2-pro',
     adTextTurns: 3,
     noAds: true,

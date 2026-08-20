@@ -11,7 +11,7 @@ import {
 } from '@/data/campaigns';
 import { CustomTabletopRulesField } from './CustomTabletopRulesField';
 import { ExpertCustomPanel } from './ExpertCustomPanel';
-import { memorableWeeklyCapLabel } from '@/game/capacityLedger';
+import { memorableToggleEnabled, memorableWeeklyCapLabel } from '@/game/capacityLedger';
 import { blankBibleIdForMode } from '@/game/customBlank';
 import {
   buildPlayerCampaignBible,
@@ -221,7 +221,7 @@ export function NewGameModal({ contentMode, onStart, onClose }: Props) {
       archetype,
       visualMode,
       artStylePreset,
-      classicMemorableImages,
+      classicMemorableImages: memorableToggleEnabled() ? classicMemorableImages : false,
       comicLayout,
       comicReadingDirection,
       bibleId,
@@ -286,7 +286,7 @@ export function NewGameModal({ contentMode, onStart, onClose }: Props) {
       customArchetype,
       visualMode,
       artStylePreset,
-      classicMemorableImages,
+      classicMemorableImages: memorableToggleEnabled() ? classicMemorableImages : false,
       comicLayout,
       comicReadingDirection,
       blankBibleIdForMode(engineMode),
@@ -715,17 +715,27 @@ export function NewGameModal({ contentMode, onStart, onClose }: Props) {
               </div>
 
               {visualMode === 'classic' && (
-                <label className="flex cursor-pointer items-start gap-2.5 rounded-lg border border-slate-700 bg-slate-800/40 px-3 py-2.5">
+                <label
+                  className={`flex items-start gap-2.5 rounded-lg border border-slate-700 bg-slate-800/40 px-3 py-2.5 ${
+                    memorableToggleEnabled() ? 'cursor-pointer' : 'cursor-not-allowed opacity-55'
+                  }`}
+                >
                   <input
                     type="checkbox"
-                    checked={classicMemorableImages}
-                    onChange={(e) => setClassicMemorableImages(e.target.checked)}
-                    className="mt-0.5 accent-crimson-500"
+                    checked={memorableToggleEnabled() ? classicMemorableImages : false}
+                    disabled={!memorableToggleEnabled()}
+                    onChange={(e) => {
+                      if (!memorableToggleEnabled()) return;
+                      setClassicMemorableImages(e.target.checked);
+                    }}
+                    className="mt-0.5 accent-crimson-500 disabled:cursor-not-allowed"
                   />
                   <span>
                     <span className="block font-medium text-slate-200">Memorable moment images</span>
                     <span className="mt-0.5 block text-[10px] leading-snug text-slate-500">
-                      Optional. Rare splash illustrations — ink and watercolor, one picture filling the frame for a book-worthy beat, then back to prose. Opening, death, and the first dungeon’s final boss auto-illustrate; later bosses and other beats are tap-yes. Off until you check this.
+                      {memorableToggleEnabled()
+                        ? 'Optional. Rare splash illustrations — ink and watercolor, one picture filling the frame for a book-worthy beat, then back to prose. Opening, death, and the first dungeon’s final boss auto-illustrate; later bosses and other beats are tap-yes. Mid/High use Flux Pro. Off until you check this.'
+                        : 'Included on Mid and High (Flux Pro), or buy a Snap / Album / Gallery pack — packs never expire. This control stays visible and unlocks when you have plates left. Story never waits on art.'}
                       {' '}
                       <span className="text-amber-200/80">{memorableWeeklyCapLabel()}</span>
                     </span>
