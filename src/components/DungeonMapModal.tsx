@@ -2,7 +2,7 @@ import React, { useEffect, useMemo } from 'react';
 import type { ActiveDungeonState, MapNode } from '../game/mapEngine';
 import { presentLocalAreaMap, resolvePlayAreaMap } from '../game/mapEngine';
 import { isGenericMapPlace } from '../game/questPlay';
-import { isInteriorMap, isInteriorPlace, isStreetMap } from '../game/placeAuthority';
+import { isInteriorMap, isInteriorPlace, isStreetMap, mapScaleLabel } from '../game/placeAuthority';
 import type { Location3D } from '../game/types';
 
 interface DungeonMapModalProps {
@@ -22,6 +22,36 @@ interface DungeonMapModalProps {
     tier: number,
     nodeCount: number
   ) => void;
+}
+
+/** Original player marker — not a licensed minimap icon. */
+function YouAreHereMarker({ size = 18 }: { size?: number }) {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      className="sgm-map-you-pulse shrink-0"
+      aria-hidden
+    >
+      <circle cx="12" cy="12" r="10" fill="rgba(217,119,6,0.25)" stroke="#fbbf24" strokeWidth="1.5" />
+      <polygon points="12,4 18,18 12,15 6,18" fill="#f59e0b" stroke="#78350f" strokeWidth="0.8" />
+    </svg>
+  );
+}
+
+function MapCompass({ x, y }: { x: number; y: number }) {
+  return (
+    <g transform={`translate(${x}, ${y})`} aria-hidden>
+      <circle cx="0" cy="0" r="22" fill="rgba(20,16,12,0.55)" stroke="#c9a227" strokeWidth="1.2" />
+      <circle cx="0" cy="0" r="16" fill="none" stroke="#8a7a5e" strokeWidth="0.6" opacity="0.7" />
+      <polygon points="0,-14 4,-2 0,0 -4,-2" fill="#e8d5a3" />
+      <polygon points="0,14 4,2 0,0 -4,2" fill="#5c4a32" />
+      <text x="0" y="-26" textAnchor="middle" fill="#e8d5a3" fontSize="10" fontFamily="Cinzel, serif">
+        N
+      </text>
+    </g>
+  );
 }
 
 export const DungeonMapModal: React.FC<DungeonMapModalProps> = ({
@@ -57,27 +87,27 @@ export const DungeonMapModal: React.FC<DungeonMapModalProps> = ({
   if (!displayDungeon) {
     return (
       <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
-        <div className="sgm-turn-frame sgm-info-panel relative w-full max-w-lg rounded-xl border shadow-2xl p-6">
+        <div className="sgm-turn-frame sgm-info-panel sgm-adventure-map-shell relative w-full max-w-lg rounded-xl border shadow-2xl p-6">
           <div className="sgm-turn-frame-bar h-1 w-full -mx-6 -mt-6 mb-4 rounded-t-xl" />
-          <div className="flex items-start justify-between gap-3 pb-4 border-b border-slate-800/80">
+          <div className="sgm-adventure-map-header flex items-start justify-between gap-3 pb-4 border-b border-slate-800/80">
             <div>
-              <p className="sgm-info-accent font-mono text-[10px] uppercase tracking-[0.2em] mb-1">System</p>
-              <h2 className="sgm-info-heading text-xl font-bold">Local map pending</h2>
+              <p className="sgm-adventure-map-scale text-[10px] mb-1">Adventure map</p>
+              <h2 className="sgm-info-heading sgm-adventure-map-title text-xl font-bold">Local map pending</h2>
             </div>
             <button
               onClick={onClose}
               className="px-3 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 text-sm transition"
             >
-              ✕ Close
+              Close
             </button>
           </div>
           <p className="mt-4 text-sm text-slate-300 leading-relaxed">
             You are in <span className="font-medium sgm-info-accent">{currentLocation?.trim() || 'an unmapped place'}</span>.
             {isInteriorPlace(currentLocation)
               ? ' The System sketches a floor plan of this interior from rooms named in play.'
-              : ' The System builds a street map from wherever you said you are — a Tesco Extra in England, a Kyoto alley, anywhere in the world.'}
+              : ' The System builds a local area map from wherever you said you are — a market square, a Kyoto alley, anywhere in the world.'}
           </p>
-          <p className="mt-3 text-xs sgm-info-accent font-mono uppercase tracking-wider opacity-80">
+          <p className="mt-3 text-xs sgm-adventure-map-scale opacity-80">
             {isInteriorPlace(currentLocation)
               ? 'Named rooms in the scene appear as you explore them.'
               : 'Name the street or store in play if this is still empty.'}
@@ -91,36 +121,38 @@ export const DungeonMapModal: React.FC<DungeonMapModalProps> = ({
   const isStreet = isStreetMap(displayDungeon);
   const isHallPlan = isInteriorMap(displayDungeon);
 
-  const mapScaleStreet = 'Local streets · ~1 km scale';
-  const mapScaleInterior = 'Interior floor plan';
+  const mapScaleStreet = mapScaleLabel('street');
+  const mapScaleInterior = isHallPlan ? mapScaleLabel('interior') : mapScaleLabel('dungeon');
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
-      <div className="sgm-turn-frame sgm-info-panel relative w-full max-w-4xl rounded-xl border p-6 shadow-2xl flex flex-col max-h-[90vh]">
+      <div className="sgm-turn-frame sgm-info-panel sgm-adventure-map-shell relative w-full max-w-4xl rounded-xl border p-6 shadow-2xl flex flex-col max-h-[90vh]">
         <div className="sgm-turn-frame-bar h-1 w-full -mx-6 -mt-6 mb-4 rounded-t-xl" />
-        
-        {/* Navigation Breadcrumbs & Header */}
-        <div className="flex justify-between items-center pb-4 border-b border-slate-700/80">
+
+        <div className="sgm-adventure-map-header flex justify-between items-center pb-4 border-b border-slate-700/80">
           <div>
-            <div className="sgm-info-accent flex items-center gap-2 text-xs font-semibold mb-1">
-              <span>🗺️ {isStreet ? mapScaleStreet : mapScaleInterior}</span>
+            <div className="sgm-adventure-map-scale flex items-center gap-2 text-[10px] font-semibold mb-1">
+              <span>{isStreet ? mapScaleStreet : mapScaleInterior}</span>
               {!isStreet && !isHallPlan && displayDungeon.dangerTier != null && (
-                <span className="rounded bg-rose-950/60 px-2 py-0.5 text-rose-200 border border-rose-800/40">
+                <span className="rounded bg-rose-950/60 px-2 py-0.5 text-rose-200 border border-rose-800/40 normal-case tracking-normal">
                   Danger Tier {displayDungeon.dangerTier}
                 </span>
               )}
               {currentCoordinates && !isStreet && !isHallPlan && (
-                <span className="rounded bg-slate-800 px-2 py-0.5 text-slate-300">
+                <span className="rounded bg-slate-800 px-2 py-0.5 text-slate-300 normal-case tracking-normal">
                   q: {currentCoordinates.q}, r: {currentCoordinates.r} | Floor: {displayDungeon.currentZLevel}
                 </span>
               )}
             </div>
-            <h2 className="sgm-info-heading text-xl font-bold flex items-center gap-2">
+            <h2 className="sgm-info-heading sgm-adventure-map-title text-xl font-bold flex items-center gap-2">
               {displayDungeon.dungeonName}
             </h2>
-            <p className="text-xs text-slate-400">
-              {isStreet ? 'You are here: ' : 'Current room: '}
-              <span className="text-amber-300 font-semibold">{currentNode?.name || 'Unknown'}</span>
+            <p className="text-xs text-slate-400 flex items-center gap-1.5 mt-0.5">
+              <YouAreHereMarker size={14} />
+              <span>
+                {isStreet ? 'You are here: ' : 'Current room: '}
+                <span className="text-amber-300 font-semibold">{currentNode?.name || 'Unknown'}</span>
+              </span>
             </p>
             {combatLocked && (
               <p className="mt-1 text-xs text-rose-300 font-medium">
@@ -132,12 +164,15 @@ export const DungeonMapModal: React.FC<DungeonMapModalProps> = ({
             onClick={onClose}
             className="px-3 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-600 text-sm transition"
           >
-            ✕ Close
+            Close
           </button>
         </div>
 
-        {/* Map Visualizer Canvas */}
-        <div className="relative flex-1 my-4 min-h-[360px] overflow-auto rounded-lg bg-slate-950 border border-slate-800 p-4">
+        <div
+          className={`relative flex-1 my-4 min-h-[360px] overflow-auto rounded-lg p-4 sgm-adventure-map-canvas ${
+            isStreet ? 'sgm-adventure-map-canvas--zone' : 'sgm-adventure-map-canvas--interior'
+          }`}
+        >
           {isStreet ? (
             <StreetMapCanvas
               dungeon={displayDungeon}
@@ -164,19 +199,18 @@ export const DungeonMapModal: React.FC<DungeonMapModalProps> = ({
           )}
         </div>
 
-        {/* Selected Node Details & Action Toolbar */}
-        <div className="bg-slate-800/80 border border-slate-700 rounded-lg p-3 text-sm">
+        <div className="sgm-adventure-map-footer border rounded-lg p-3 text-sm">
           <div className="flex justify-between items-start mb-1">
-            <p className="font-semibold text-cyan-300">{currentNode?.name}</p>
+            <p className="font-semibold text-amber-200/95 sgm-map-poi">{currentNode?.name}</p>
             {currentNode?.features?.primary && !isStreet && (
-              <span className="text-[10px] bg-slate-900 border border-slate-700 px-2 py-0.5 rounded text-amber-300">
+              <span className="text-[10px] bg-slate-900 border border-amber-900/40 px-2 py-0.5 rounded text-amber-300">
                 Primary: {currentNode.features.primary}
               </span>
             )}
           </div>
           <p className="text-slate-300 text-xs mb-3">{currentNode?.description}</p>
 
-          <div className="flex justify-between items-center pt-2 border-t border-slate-700/60">
+          <div className="flex justify-between items-center pt-2 border-t border-amber-900/25">
             <span className="text-xs text-slate-400">
               {isStreet
                 ? `Places: ${displayDungeon.nodes.length}`
@@ -190,7 +224,6 @@ export const DungeonMapModal: React.FC<DungeonMapModalProps> = ({
             </button>
           </div>
         </div>
-
       </div>
     </div>
   );
@@ -238,7 +271,17 @@ function InteriorFloorPlan({
   return (
     <div className="relative" style={{ minWidth: width, minHeight: height }}>
       <svg className="absolute inset-0" width={width} height={height} aria-hidden>
-        <rect width={width} height={height} fill={organic ? '#14110c' : '#0b1220'} />
+        <defs>
+          <pattern id="sgm-stone-hatch" width="8" height="8" patternUnits="userSpaceOnUse">
+            <path d="M0 8 L8 0" stroke="#3d3428" strokeWidth="0.6" opacity="0.35" />
+          </pattern>
+          <radialGradient id="sgm-room-fog" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stopColor="#0c0e12" stopOpacity="0.15" />
+            <stop offset="100%" stopColor="#0c0e12" stopOpacity="0.75" />
+          </radialGradient>
+        </defs>
+        <rect width={width} height={height} fill="#1a1510" opacity="0.35" />
+        <rect width={width} height={height} fill="url(#sgm-stone-hatch)" opacity="0.5" />
         {nodes.map((node) =>
           node.connections.map((targetId) => {
             if (node.id >= targetId) return null;
@@ -248,16 +291,28 @@ function InteriorFloorPlan({
             const b = roomBox(target);
             const visited = dungeon.visitedNodeIds.includes(node.id) || dungeon.visitedNodeIds.includes(targetId);
             return (
-              <line
-                key={`${node.id}-${targetId}`}
-                x1={a.x + a.w / 2}
-                y1={a.y + a.h / 2}
-                x2={b.x + b.w / 2}
-                y2={b.y + b.h / 2}
-                stroke={visited ? '#334155' : '#1e293b'}
-                strokeWidth={14}
-                opacity={visited ? 0.7 : 0.35}
-              />
+              <g key={`${node.id}-${targetId}`}>
+                <line
+                  x1={a.x + a.w / 2}
+                  y1={a.y + a.h / 2}
+                  x2={b.x + b.w / 2}
+                  y2={b.y + b.h / 2}
+                  stroke={visited ? '#4a3f32' : '#2a241c'}
+                  strokeWidth={organic ? 18 : 16}
+                  strokeLinecap="round"
+                  opacity={visited ? 0.85 : 0.4}
+                />
+                <line
+                  x1={a.x + a.w / 2}
+                  y1={a.y + a.h / 2}
+                  x2={b.x + b.w / 2}
+                  y2={b.y + b.h / 2}
+                  stroke={visited ? '#6b5a45' : '#3d352c'}
+                  strokeWidth={organic ? 8 : 7}
+                  strokeLinecap="round"
+                  opacity={visited ? 0.7 : 0.35}
+                />
+              </g>
             );
           })
         )}
@@ -266,33 +321,37 @@ function InteriorFloorPlan({
           const isVisited = dungeon.visitedNodeIds.includes(node.id);
           const isCurrent = node.id === currentNodeId;
           return (
-            <rect
-              key={`floor-${node.id}`}
-              x={box.x}
-              y={box.y}
-              width={box.w}
-              height={box.h}
-              rx={organic ? 4 : 8}
-              fill={
-                isCurrent
-                  ? organic ? '#5c4a32' : '#0e7490'
-                  : isVisited
-                    ? organic ? '#2c2822' : '#1e293b'
-                    : organic ? '#161410' : '#0f172a'
-              }
-              stroke={
-                isCurrent
-                  ? organic ? '#e8d5a3' : '#a5f3fc'
-                  : isVisited
-                    ? organic ? '#8a7a5e' : '#64748b'
-                    : organic ? '#3d382f' : '#334155'
-              }
-              strokeWidth={isCurrent ? 2.5 : 1.5}
-              strokeDasharray={isVisited ? undefined : '5 4'}
-              opacity={isVisited ? 1 : 0.55}
-            />
+            <g key={`floor-${node.id}`}>
+              <rect
+                x={box.x - 2}
+                y={box.y - 2}
+                width={box.w + 4}
+                height={box.h + 4}
+                rx={organic ? 3 : 4}
+                fill="none"
+                stroke={isCurrent ? '#c9a227' : isVisited ? '#6b5a45' : '#3d352c'}
+                strokeWidth={isCurrent ? 2 : 1}
+                opacity={isVisited ? 0.9 : 0.45}
+              />
+              <rect
+                x={box.x}
+                y={box.y}
+                width={box.w}
+                height={box.h}
+                rx={organic ? 2 : 3}
+                fill={isCurrent ? '#5c4a32' : isVisited ? '#2c2620' : '#161410'}
+                stroke={isCurrent ? '#e8d5a3' : isVisited ? '#8a7a5e' : '#3d382f'}
+                strokeWidth={isCurrent ? 2.2 : 1.4}
+                strokeDasharray={isVisited ? undefined : '5 4'}
+                opacity={isVisited ? 1 : 0.5}
+              />
+              {!isVisited && (
+                <rect x={box.x} y={box.y} width={box.w} height={box.h} rx={organic ? 2 : 3} fill="url(#sgm-room-fog)" />
+              )}
+            </g>
           );
         })}
+        <MapCompass x={width - 36} y={36} />
       </svg>
       {nodes.map((node) => {
         const box = roomBox(node);
@@ -311,13 +370,22 @@ function InteriorFloorPlan({
           >
             {isVisited ? (
               <>
-                <span className={`text-[11px] font-medium leading-tight ${isCurrent ? 'text-white' : 'text-slate-100'}`}>
+                <span
+                  className={`sgm-map-poi text-[11px] font-medium leading-tight ${
+                    isCurrent ? 'text-amber-50' : 'text-stone-100'
+                  }`}
+                >
                   {node.name}
                 </span>
-                {isCurrent && <span className="mt-0.5 text-[8px] uppercase tracking-wide text-cyan-100">You are here</span>}
+                {isCurrent && (
+                  <span className="mt-1 flex items-center gap-1 text-[8px] uppercase tracking-wide text-amber-200">
+                    <YouAreHereMarker size={12} />
+                    You are here
+                  </span>
+                )}
               </>
             ) : (
-              <span className="text-[10px] text-slate-600">?</span>
+              <span className="text-[12px] text-stone-600 font-serif">?</span>
             )}
           </button>
         );
@@ -330,6 +398,18 @@ function streetPx(node: MapNode) {
   const gx = node.coordinates?.x ?? 2;
   const gy = node.coordinates?.y ?? 2;
   return { x: 40 + gx * 120, y: 40 + gy * 120 };
+}
+
+/** Soft bezier between two points — region path, not CAD street centerline. */
+function pathBetween(ax: number, ay: number, bx: number, by: number) {
+  const mx = (ax + bx) / 2;
+  const my = (ay + by) / 2;
+  const dx = bx - ax;
+  const dy = by - ay;
+  const len = Math.hypot(dx, dy) || 1;
+  const ox = (-dy / len) * Math.min(28, len * 0.18);
+  const oy = (dx / len) * Math.min(28, len * 0.18);
+  return `M ${ax} ${ay} Q ${mx + ox} ${my + oy} ${bx} ${by}`;
 }
 
 function StreetMapCanvas({
@@ -345,72 +425,63 @@ function StreetMapCanvas({
   onEnterSite?: (siteName: string) => void;
   combatLocked?: boolean;
 }) {
-  const roads = [40, 160, 280, 400, 520];
   const size = 560;
   const current = dungeon.nodes.find((n) => n.id === currentNodeId);
+  const pathEdges: { key: string; d: string }[] = [];
+  const seen = new Set<string>();
+  for (const node of dungeon.nodes) {
+    for (const targetId of node.connections) {
+      const key = [node.id, targetId].sort().join('|');
+      if (seen.has(key)) continue;
+      seen.add(key);
+      const target = dungeon.nodes.find((n) => n.id === targetId);
+      if (!target) continue;
+      const a = streetPx(node);
+      const b = streetPx(target);
+      pathEdges.push({ key, d: pathBetween(a.x, a.y, b.x, b.y) });
+    }
+  }
 
   return (
     <div className="relative min-w-[560px] min-h-[560px]">
       <svg className="absolute inset-0 h-[560px] w-[560px]" viewBox={`0 0 ${size} ${size}`} aria-hidden>
-        <rect width={size} height={size} fill="#0b1220" />
-        {[0, 1, 2, 3].map((row) =>
-          [0, 1, 2, 3].map((col) => (
-            <rect
-              key={`${row}-${col}`}
-              x={roads[col]! + 18}
-              y={roads[row]! + 18}
-              width={roads[col + 1]! - roads[col]! - 36}
-              height={roads[row + 1]! - roads[row]! - 36}
-              rx={10}
-              fill={(row + col) % 2 === 0 ? '#1e293b' : '#172033'}
-              stroke="#334155"
-              strokeWidth={1}
-            />
-          ))
-        )}
-        {roads.map((p) => (
-          <g key={`road-${p}`}>
-            <rect x={p - 13} y={28} width={26} height={size - 56} fill="#475569" />
-            <rect x={28} y={p - 13} width={size - 56} height={26} fill="#475569" />
-            <line
-              x1={p}
-              y1={36}
-              x2={p}
-              y2={size - 36}
-              stroke="#eab308"
-              strokeWidth={1.2}
-              strokeDasharray="7 11"
-              opacity={0.4}
-            />
-            <line
-              x1={36}
-              y1={p}
-              x2={size - 36}
-              y2={p}
-              stroke="#eab308"
-              strokeWidth={1.2}
-              strokeDasharray="7 11"
-              opacity={0.4}
-            />
+        <defs>
+          <radialGradient id="sgm-zone-vignette" cx="50%" cy="45%" r="65%">
+            <stop offset="0%" stopColor="#243028" stopOpacity="0.15" />
+            <stop offset="100%" stopColor="#0c100e" stopOpacity="0.55" />
+          </radialGradient>
+        </defs>
+        <rect width={size} height={size} fill="#1a241c" opacity="0.25" />
+        <ellipse cx="140" cy="160" rx="90" ry="70" fill="#243428" opacity="0.45" />
+        <ellipse cx="400" cy="200" rx="110" ry="80" fill="#1e2c24" opacity="0.4" />
+        <ellipse cx="280" cy="400" rx="130" ry="70" fill="#223028" opacity="0.35" />
+        <ellipse cx="420" cy="420" rx="70" ry="55" fill="#2a3428" opacity="0.3" />
+        <ellipse cx="280" cy="280" rx="200" ry="160" fill="none" stroke="#3d4a40" strokeWidth="1" opacity="0.35" />
+        <ellipse cx="280" cy="280" rx="140" ry="110" fill="none" stroke="#3d4a40" strokeWidth="0.8" opacity="0.28" />
+        <ellipse cx="280" cy="280" rx="80" ry="60" fill="none" stroke="#3d4a40" strokeWidth="0.7" opacity="0.22" />
+        <rect width={size} height={size} fill="url(#sgm-zone-vignette)" />
+
+        {pathEdges.map(({ key, d }) => (
+          <g key={key}>
+            <path d={d} fill="none" stroke="#3d4a40" strokeWidth={14} strokeLinecap="round" opacity={0.55} />
+            <path d={d} fill="none" stroke="#6b7a68" strokeWidth={5} strokeLinecap="round" opacity={0.45} />
           </g>
         ))}
-        <text x={size - 52} y={22} fill="#64748b" fontSize="11" fontFamily="ui-sans-serif, system-ui" textAnchor="middle">
-          N
-        </text>
-        <polygon points={`${size - 52},6 ${size - 58},16 ${size - 46},16`} fill="#94a3b8" />
-        <rect x={36} y={size - 22} width={72} height={3} fill="#94a3b8" />
-        <text x={36} y={size - 8} fill="#64748b" fontSize="9" fontFamily="ui-sans-serif, system-ui">
-          ≈ 1 km
-        </text>
+
+        <MapCompass x={size - 40} y={40} />
+        <g transform={`translate(36, ${size - 28})`}>
+          <rect x="0" y="0" width="72" height="3" fill="#94a3b8" opacity="0.7" />
+          <text x="0" y="16" fill="#94a3b8" fontSize="9" fontFamily="ui-sans-serif, system-ui">
+            ~ 1 km
+          </text>
+        </g>
       </svg>
 
       {dungeon.nodes.map((node) => {
         const { x, y } = streetPx(node);
         const isCurrent = node.id === currentNodeId;
         const canMove = !combatLocked && !!current?.connections.includes(node.id);
-        const isEntrance = (node.tags ?? []).some(
-          (t) => t === 'entrance' || t === 'micro_dungeon'
-        );
+        const isEntrance = (node.tags ?? []).some((t) => t === 'entrance' || t === 'micro_dungeon');
         return (
           <button
             key={node.id}
@@ -424,18 +495,21 @@ function StreetMapCanvas({
             }}
             disabled={!canMove && !isCurrent}
             title={isEntrance ? `${node.name} (enter site)` : node.name}
-            style={{ left: `${x - 70}px`, top: `${y - 18}px` }}
-            className={`absolute z-10 w-[140px] rounded-md border px-2 py-1.5 text-center shadow-md ${
+            style={{ left: `${x - 70}px`, top: `${y - 28}px` }}
+            className={`sgm-map-poi absolute z-10 w-[140px] rounded border px-2 py-1.5 text-center transition ${
               isCurrent
-                ? 'border-cyan-200 bg-cyan-700/95 text-white'
+                ? 'sgm-map-poi--here border-amber-400/90 bg-[#2a2118]/95 text-amber-50'
                 : isEntrance
-                  ? 'border-amber-500/80 bg-slate-900/95 text-amber-50 hover:border-amber-300'
-                  : 'border-slate-500/80 bg-slate-900/90 text-slate-100 hover:border-cyan-400'
+                  ? 'border-amber-600/70 bg-[#1a241c]/92 text-amber-50 hover:border-amber-400'
+                  : 'border-stone-500/70 bg-[#152018]/90 text-stone-100 hover:border-amber-500/70'
             } ${canMove || (isEntrance && isCurrent) ? 'cursor-pointer' : ''}`}
           >
-            <span className="block text-[11px] font-medium leading-tight break-words">
-              {isEntrance ? '🚪 ' : ''}
-              {node.name}
+            <span className="flex items-center justify-center gap-1">
+              {isCurrent && <YouAreHereMarker size={14} />}
+              {isEntrance && !isCurrent && (
+                <span className="inline-block h-2 w-2 rounded-sm bg-amber-500/90" aria-hidden />
+              )}
+              <span className="block text-[11px] font-medium leading-tight break-words">{node.name}</span>
             </span>
             {isEntrance && (
               <span className="mt-0.5 block text-[8px] uppercase tracking-wide text-amber-200/90">
@@ -443,7 +517,7 @@ function StreetMapCanvas({
               </span>
             )}
             {isCurrent && !isEntrance && (
-              <span className="mt-0.5 block text-[8px] uppercase tracking-wide text-cyan-100">You are here</span>
+              <span className="mt-0.5 block text-[8px] uppercase tracking-wide text-amber-200/90">You are here</span>
             )}
           </button>
         );

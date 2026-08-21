@@ -105,7 +105,7 @@ export function CombatEncounter({ activeDungeon, currentCoordinates, onMoveNode,
                 <p className="mt-1 text-xs text-slate-500">
                   {activeDungeon.blueprintId === 'interior-plan'
                     ? 'Interior floor plan — open Map for the hall. This panel is for dungeon interiors.'
-                    : 'Street map — open Map for the local streets. This panel is for dungeon interiors.'}
+                    : 'Local area map — open Map for the region view. This panel is for dungeon interiors.'}
                 </p>
               </div>
             </div>

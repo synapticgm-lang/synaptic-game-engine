@@ -66,9 +66,9 @@ export function mapScaleLabel(scale: MapScale): string {
     case 'district':
       return 'District overview';
     case 'street':
-      return 'Local streets · ~1 km scale';
+      return 'Local area · ~1 km';
     case 'interior':
-      return 'Interior';
+      return 'Interior floor plan';
     case 'dungeon':
       return 'Tactical interior';
     default:

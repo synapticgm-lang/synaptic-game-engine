@@ -1606,3 +1606,72 @@ html[data-sgm-material='1'] body {
 .sgm-info-fill {
   background-color: var(--sgm-accent, #ef4444);
 }
+
+/* ===== ADVENTURE MAP (original fantasy chrome — not licensed MMO UI) ===== */
+.sgm-adventure-map-shell {
+  --sgm-map-ink: #2a2118;
+  --sgm-map-parchment: #d4c4a0;
+  --sgm-map-parchment-deep: #b8a47a;
+  --sgm-map-edge: #5c4a32;
+  --sgm-map-gold: #c9a227;
+  --sgm-map-here: #d97706;
+  --sgm-map-fog: rgba(12, 14, 18, 0.72);
+  border-color: color-mix(in srgb, var(--sgm-map-edge) 70%, var(--sgm-accent, #64748b)) !important;
+  box-shadow:
+    0 0 0 1px color-mix(in srgb, var(--sgm-map-gold) 35%, transparent),
+    0 18px 48px rgba(0, 0, 0, 0.55);
+}
+.sgm-adventure-map-header {
+  border-bottom-color: color-mix(in srgb, var(--sgm-map-edge, #5c4a32) 55%, #334155) !important;
+}
+.sgm-adventure-map-title {
+  font-family: var(--sgm-font-story, 'Cinzel', serif);
+  letter-spacing: 0.02em;
+}
+.sgm-adventure-map-scale {
+  font-family: var(--sgm-font-ui, 'Inter', system-ui, sans-serif);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: color-mix(in srgb, var(--sgm-map-gold, #c9a227) 80%, #fef3c7);
+}
+.sgm-adventure-map-canvas {
+  position: relative;
+  background-color: #1a241c;
+  background-image:
+    linear-gradient(180deg, rgba(20, 24, 18, 0.35), rgba(10, 12, 10, 0.15)),
+    url('/maps/topo-grain.svg');
+  background-size: auto, 256px 256px;
+  border: 2px solid color-mix(in srgb, var(--sgm-map-edge, #5c4a32) 80%, #1e293b);
+  box-shadow: inset 0 0 0 1px rgba(201, 162, 39, 0.22), inset 0 0 40px rgba(0, 0, 0, 0.35);
+}
+.sgm-adventure-map-canvas--interior {
+  background-color: #1c1812;
+  background-image:
+    linear-gradient(135deg, rgba(40, 32, 22, 0.45), rgba(12, 10, 8, 0.2)),
+    url('/maps/parchment.svg');
+  background-size: auto, 220px 220px;
+  background-blend-mode: multiply, normal;
+}
+.sgm-adventure-map-canvas--zone {
+  background-blend-mode: soft-light, normal;
+}
+.sgm-adventure-map-footer {
+  background: color-mix(in srgb, #1c1812 88%, var(--sgm-panel, #0f172a));
+  border-color: color-mix(in srgb, var(--sgm-map-edge, #5c4a32) 50%, #334155) !important;
+}
+.sgm-map-poi {
+  font-family: var(--sgm-font-story, 'Cinzel', serif);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.65);
+}
+.sgm-map-poi--here {
+  box-shadow:
+    0 0 0 2px rgba(217, 119, 6, 0.85),
+    0 0 14px rgba(217, 119, 6, 0.35);
+}
+.sgm-map-you-pulse {
+  animation: sgm-map-you-pulse 1.8s ease-in-out infinite;
+}
+@keyframes sgm-map-you-pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.75; transform: scale(1.08); }
+}

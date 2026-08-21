@@ -14,6 +14,8 @@ John is playtesting live. Collect issues here. Do not implement until he asks fo
 
 ## Waiting (research — not tickets yet)
 
+- **Outdoor zone map depth:** Visual pass shipped 20m (topo grain, paths, POI pins vs CAD streets). Still not a full MMO zone map (terrain art layers, fog-by-discovery outdoors, district zoom). Further outdoor depth stays Waiting.
+- **Alone-ruin / hall interior map:** `interior-plan` is a code silhouette (here + rooms harvested from play text, fog). No LLM pre-authors a full building plan as GM continuity authority. First Blood store enter locks a code graph (`first-blood-store`) — closer to “plan first,” still not AI. Optional next: AI/code-authored room graph as Tier-1 map authority for named buildings.
 - **Error Repair Warden:** auto-retry + longer first post-open budget still pending
 - Server capacity / Stripe live secrets / counsel legal pack / Kid Mode public gate — ops, not playtest tickets
 - Full a11y release gate, Expert author tools, audio lite, full comic — deliberate later / No-Go near-term
@@ -22,6 +24,7 @@ John is playtesting live. Collect issues here. Do not implement until he asks fo
 
 ## Done (already shipped)
 
+- **2026-08-20m adventure map chrome:** Copyright-safe fantasy adventure-map UX (parchment/topo textures under `public/maps/`, original you-are-here arrow + compass, dungeon floor-plan interiors, outdoor zone-feel paths instead of dashed street CAD). No Blizzard/WoW assets, trademarks, or zone names. AI-authored building graph still Waiting (separate from this visual pass). HUD stamp 20m
 - **2026-08-20l story↔options + alone ruin batch:** Numbered lists stay out of book prose (`stripChoiceList`); ActionBar pads from last GM story (not empty string); alone/empty scenes gate crowd/voices/speaker pads; choice labels strip “What do you do?”; `isInteriorPlace` lets building/ruin/chamber beat “roads” so Map is interior-plan not Local streets ~1 km; continue stitch grounds the room (no meta reset / anyone listening / anti-sword kit ask); PRESSURE_ALONE dropped shout-fail line; Circle Blessing unequipped accessory + Continue repair off Shoulders; quest journal hides generic provenance; STATUS dedupes Focus/Unlocked/Ledger same phrase; premature “secrets slowly” scrubbed. HUD stamp 20l
 - **2026-08-20k opening place + kit continuity:** Seed-picked arrival place no longer snaps back to bible `startingLocation` (Sevenfold Circle) after covers; kit bag stays a bag item, not glued onto street clothes. HUD stamp 20k
 - **2026-08-20h blank play UI:** Opening story was in the save/export but phone showed only dim title art + HUD. Causes: (1) material-theme `body::before` atmosphere full-screen layer; (2) quest-unlock modal could linger / theme-styled card hard to see; (3) Hide text used to hide the input. Fix: atmosphere on body background only; clear unlocks on New Game; no quest unlock until covers complete; Hide text hides log never input; Auto Fight tip waits for covers; fallback stitch if New Game throws. HUD stamp 20h
