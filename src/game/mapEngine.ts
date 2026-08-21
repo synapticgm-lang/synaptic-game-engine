@@ -501,6 +501,7 @@ const GENERIC_ROOM_LABELS = new Set(
     'cellar',
     'attic',
     'upper landing',
+    'upper hall',
     'storeroom',
     'storage',
     'back room',
@@ -508,6 +509,28 @@ const GENERIC_ROOM_LABELS = new Set(
     'collapse',
     'collapsed wing',
     'wall shell',
+    'main room',
+    'vault',
+    'crypt',
+    'ossuary',
+    'loft',
+    'gallery',
+    'narthex',
+    'nave',
+    'aisle',
+    'vestry',
+    'choir',
+    'sanctum',
+    'reliquary',
+    'belfry',
+    'foyer',
+    'salon',
+    'dining hall',
+    'study',
+    'wine cellar',
+    'bedroom',
+    'library',
+    'passage',
   ].map((s) => s.toLowerCase())
 );
 
@@ -575,10 +598,55 @@ function isAuthoredInterior(dungeon: ActiveDungeonState): boolean {
   return dungeon.nodes.some((n) => (n.tags ?? []).includes('authored'));
 }
 
-function needsAuthoredInteriorRebuild(dungeon: ActiveDungeonState): boolean {
+/** Tiny sheds stay one floor; ruined halls / mansions / cathedrals get 2–3. */
+export type InteriorBuildingScale = 'shed' | 'ruin' | 'grand';
+
+export function interiorBuildingScale(place: string): InteriorBuildingScale {
+  const n = (place ?? '').replace(/\s+/g, ' ').trim();
+  if (/\b(?:shed|shack|hut|hovel|booth|closet|lean-?to)\b/i.test(n)) return 'shed';
+  if (
+    /\b(?:cathedral|manor|mansion|palace|castle|keep|temple|guildhall|abbey|sanctum|circle)\b/i.test(n)
+  ) {
+    return 'grand';
+  }
+  return 'ruin';
+}
+
+/** RE-style floor tab label: B1 / 1F / 2F (original chrome — not licensed assets). */
+export function interiorFloorLabel(z: number): string {
+  if (z < 0) return `B${Math.abs(z)}`;
+  return `${z + 1}F`;
+}
+
+export function listInteriorZLevels(dungeon: ActiveDungeonState): number[] {
+  const zs = new Set(dungeon.nodes.map((n) => n.zLevel ?? 0));
+  return Array.from(zs).sort((a, b) => a - b);
+}
+
+export function nodesOnInteriorFloor(dungeon: ActiveDungeonState, z: number): MapNode[] {
+  return dungeon.nodes.filter((n) => (n.zLevel ?? 0) === z);
+}
+
+export function roomHasVerticalLink(dungeon: ActiveDungeonState, node: MapNode): boolean {
+  const z = node.zLevel ?? 0;
+  return node.connections.some((id) => {
+    const t = dungeon.nodes.find((n) => n.id === id);
+    return !!t && (t.zLevel ?? 0) !== z;
+  });
+}
+
+function needsAuthoredInteriorRebuild(dungeon: ActiveDungeonState, placeHint?: string): boolean {
   if (!isInteriorMap(dungeon)) return true;
   if (!isAuthoredInterior(dungeon)) return true;
-  return dungeon.nodes.filter((n) => !n.isSecret).length < 5;
+  const place = placeHint || dungeon.dungeonName || '';
+  const scale = interiorBuildingScale(place);
+  const openRooms = dungeon.nodes.filter((n) => !n.isSecret).length;
+  if (scale === 'shed') return openRooms < 2;
+  if (openRooms < 5) return true;
+  // Legacy 20n single-floor graphs: rebuild when the building wants multi-z.
+  const zs = listInteriorZLevels(dungeon);
+  if (zs.length < 2) return true;
+  return false;
 }
 
 /** Adjacent room slots for rare harvest add-ons — not a city block grid. */
@@ -595,8 +663,12 @@ const INTERIOR_SLOTS: Array<{ x: number; y: number }> = [
   { x: 2, y: 2 },
 ];
 
-function nextInteriorSlot(dungeon: ActiveDungeonState): { x: number; y: number } {
-  const used = new Set(dungeon.nodes.map((n) => `${n.coordinates?.x ?? 0},${n.coordinates?.y ?? 0}`));
+function nextInteriorSlot(dungeon: ActiveDungeonState, z = 0): { x: number; y: number } {
+  const used = new Set(
+    dungeon.nodes
+      .filter((n) => (n.zLevel ?? 0) === z)
+      .map((n) => `${n.coordinates?.x ?? 0},${n.coordinates?.y ?? 0}`)
+  );
   return INTERIOR_SLOTS.find((slot) => !used.has(`${slot.x},${slot.y}`)) ?? { x: 3, y: 2 };
 }
 
@@ -605,52 +677,112 @@ type InteriorRoomSpec = {
   label: string;
   x: number;
   y: number;
+  /** -1 = B1, 0 = 1F, 1 = 2F */
+  z: number;
   links: string[];
   isSecret?: boolean;
   entry?: boolean;
 };
 
-/** Seeded ruined-building footprints (original layouts — not licensed mansion geometry). */
-const INTERIOR_LAYOUTS: InteriorRoomSpec[][] = [
+/** Single-floor sheds / booths — not every dump needs a cellar. */
+const SHED_LAYOUTS: InteriorRoomSpec[][] = [
   [
-    { id: 'entry', label: 'Entry', x: 1, y: 2, links: ['corridor'], entry: true },
-    { id: 'corridor', label: 'Corridor', x: 1, y: 1, links: ['entry', 'hall', 'side'] },
-    { id: 'hall', label: 'Ruined hall', x: 1, y: 0, links: ['corridor', 'chamber', 'stairs'] },
-    { id: 'side', label: 'Side room', x: 0, y: 1, links: ['corridor', 'store'] },
-    { id: 'chamber', label: 'Chamber', x: 2, y: 0, links: ['hall'] },
-    { id: 'stairs', label: 'Stairs', x: 0, y: 0, links: ['hall', 'cellar'] },
-    { id: 'store', label: 'Storeroom', x: 0, y: 2, links: ['side'] },
-    { id: 'cellar', label: 'Cellar', x: 0, y: -1, links: ['stairs'], isSecret: true },
+    { id: 'entry', label: 'Entry', x: 1, y: 1, z: 0, links: ['main'], entry: true },
+    { id: 'main', label: 'Main room', x: 1, y: 0, z: 0, links: ['entry', 'back'] },
+    { id: 'back', label: 'Back room', x: 2, y: 0, z: 0, links: ['main'] },
   ],
   [
-    { id: 'entry', label: 'Entry', x: 0, y: 1, links: ['ante', 'yard'], entry: true },
-    { id: 'ante', label: 'Antechamber', x: 1, y: 1, links: ['entry', 'hall', 'passage'] },
-    { id: 'hall', label: 'Ruined hall', x: 2, y: 1, links: ['ante', 'east', 'north'] },
-    { id: 'passage', label: 'Passage', x: 1, y: 2, links: ['ante', 'store'] },
-    { id: 'east', label: 'Side chamber', x: 3, y: 1, links: ['hall'] },
-    { id: 'north', label: 'Back room', x: 2, y: 0, links: ['hall', 'attic'] },
-    { id: 'store', label: 'Storeroom', x: 1, y: 3, links: ['passage'] },
-    { id: 'attic', label: 'Upper landing', x: 3, y: 0, links: ['north'] },
-    { id: 'yard', label: 'Collapsed wing', x: 0, y: 0, links: ['entry', 'crypt'], isSecret: true },
-    { id: 'crypt', label: 'Cellar', x: 0, y: -1, links: ['yard'], isSecret: true },
+    { id: 'entry', label: 'Entry', x: 0, y: 1, z: 0, links: ['hall'], entry: true },
+    { id: 'hall', label: 'Hall', x: 1, y: 1, z: 0, links: ['entry', 'side', 'store'] },
+    { id: 'side', label: 'Side room', x: 1, y: 0, z: 0, links: ['hall'] },
+    { id: 'store', label: 'Storeroom', x: 2, y: 1, z: 0, links: ['hall'] },
+  ],
+];
+
+/**
+ * Seeded multi-floor footprints (original layouts — not licensed mansion geometry).
+ * Stairs link z-levels; secret cellars stay locked until revealed.
+ */
+const RUIN_LAYOUTS: InteriorRoomSpec[][] = [
+  [
+    { id: 'entry', label: 'Entry', x: 1, y: 2, z: 0, links: ['corridor'], entry: true },
+    { id: 'corridor', label: 'Corridor', x: 1, y: 1, z: 0, links: ['entry', 'hall', 'side'] },
+    { id: 'hall', label: 'Ruined hall', x: 1, y: 0, z: 0, links: ['corridor', 'chamber', 'stairs'] },
+    { id: 'side', label: 'Side room', x: 0, y: 1, z: 0, links: ['corridor', 'store'] },
+    { id: 'chamber', label: 'Chamber', x: 2, y: 0, z: 0, links: ['hall'] },
+    { id: 'stairs', label: 'Stairs', x: 0, y: 0, z: 0, links: ['hall', 'cellar', 'landing'] },
+    { id: 'store', label: 'Storeroom', x: 0, y: 2, z: 0, links: ['side'] },
+    { id: 'cellar', label: 'Cellar', x: 0, y: 0, z: -1, links: ['stairs', 'vault'], isSecret: true },
+    { id: 'vault', label: 'Vault', x: 1, y: 0, z: -1, links: ['cellar'], isSecret: true },
+    { id: 'landing', label: 'Upper landing', x: 0, y: 0, z: 1, links: ['stairs', 'attic'] },
+    { id: 'attic', label: 'Attic', x: 1, y: 0, z: 1, links: ['landing'] },
   ],
   [
-    { id: 'entry', label: 'First chamber', x: 1, y: 1, links: ['west', 'east', 'south'], entry: true },
-    { id: 'west', label: 'Corridor', x: 0, y: 1, links: ['entry', 'hall'] },
-    { id: 'east', label: 'Side room', x: 2, y: 1, links: ['entry', 'store'] },
-    { id: 'south', label: 'Passage', x: 1, y: 2, links: ['entry', 'stairs'] },
-    { id: 'hall', label: 'Ruined hall', x: 0, y: 0, links: ['west', 'chamber'] },
-    { id: 'chamber', label: 'Chamber', x: 1, y: 0, links: ['hall'] },
-    { id: 'store', label: 'Storeroom', x: 3, y: 1, links: ['east'] },
-    { id: 'stairs', label: 'Stairs', x: 1, y: 3, links: ['south', 'cellar'] },
-    { id: 'cellar', label: 'Cellar', x: 2, y: 3, links: ['stairs'], isSecret: true },
+    { id: 'entry', label: 'Entry', x: 0, y: 1, z: 0, links: ['ante', 'yard'], entry: true },
+    { id: 'ante', label: 'Antechamber', x: 1, y: 1, z: 0, links: ['entry', 'hall', 'passage'] },
+    { id: 'hall', label: 'Ruined hall', x: 2, y: 1, z: 0, links: ['ante', 'east', 'stairs'] },
+    { id: 'passage', label: 'Passage', x: 1, y: 2, z: 0, links: ['ante', 'store'] },
+    { id: 'east', label: 'Side chamber', x: 3, y: 1, z: 0, links: ['hall'] },
+    { id: 'store', label: 'Storeroom', x: 1, y: 3, z: 0, links: ['passage'] },
+    { id: 'stairs', label: 'Stairs', x: 2, y: 0, z: 0, links: ['hall', 'crypt', 'upper'] },
+    { id: 'yard', label: 'Collapsed wing', x: 0, y: 0, z: 0, links: ['entry'], isSecret: true },
+    { id: 'crypt', label: 'Crypt', x: 2, y: 0, z: -1, links: ['stairs', 'ossuary'] },
+    { id: 'ossuary', label: 'Ossuary', x: 1, y: 0, z: -1, links: ['crypt'], isSecret: true },
+    { id: 'upper', label: 'Upper hall', x: 2, y: 0, z: 1, links: ['stairs', 'gallery'] },
+    { id: 'gallery', label: 'Gallery', x: 3, y: 0, z: 1, links: ['upper'] },
+  ],
+  [
+    { id: 'entry', label: 'First chamber', x: 1, y: 1, z: 0, links: ['west', 'east', 'south'], entry: true },
+    { id: 'west', label: 'Corridor', x: 0, y: 1, z: 0, links: ['entry', 'hall'] },
+    { id: 'east', label: 'Side room', x: 2, y: 1, z: 0, links: ['entry', 'store'] },
+    { id: 'south', label: 'Passage', x: 1, y: 2, z: 0, links: ['entry', 'stairs'] },
+    { id: 'hall', label: 'Ruined hall', x: 0, y: 0, z: 0, links: ['west', 'chamber'] },
+    { id: 'chamber', label: 'Chamber', x: 1, y: 0, z: 0, links: ['hall'] },
+    { id: 'store', label: 'Storeroom', x: 3, y: 1, z: 0, links: ['east'] },
+    { id: 'stairs', label: 'Stairs', x: 1, y: 3, z: 0, links: ['south', 'cellar', 'landing'] },
+    { id: 'cellar', label: 'Cellar', x: 1, y: 1, z: -1, links: ['stairs'], isSecret: true },
+    { id: 'landing', label: 'Upper landing', x: 1, y: 1, z: 1, links: ['stairs', 'loft'] },
+    { id: 'loft', label: 'Loft', x: 2, y: 1, z: 1, links: ['landing'] },
+  ],
+];
+
+/** Larger footprints for cathedrals / manors / circles — still original geometry. */
+const GRAND_LAYOUTS: InteriorRoomSpec[][] = [
+  [
+    { id: 'entry', label: 'Narthex', x: 1, y: 2, z: 0, links: ['nave'], entry: true },
+    { id: 'nave', label: 'Nave', x: 1, y: 1, z: 0, links: ['entry', 'aisle', 'choir', 'stairs'] },
+    { id: 'aisle', label: 'Aisle', x: 0, y: 1, z: 0, links: ['nave', 'vestry'] },
+    { id: 'vestry', label: 'Vestry', x: 0, y: 0, z: 0, links: ['aisle'] },
+    { id: 'choir', label: 'Choir', x: 1, y: 0, z: 0, links: ['nave', 'sanctum'] },
+    { id: 'sanctum', label: 'Sanctum', x: 2, y: 0, z: 0, links: ['choir'] },
+    { id: 'stairs', label: 'Stairs', x: 2, y: 1, z: 0, links: ['nave', 'crypt', 'gallery'] },
+    { id: 'crypt', label: 'Crypt', x: 2, y: 1, z: -1, links: ['stairs', 'reliquary'] },
+    { id: 'reliquary', label: 'Reliquary', x: 1, y: 1, z: -1, links: ['crypt'], isSecret: true },
+    { id: 'gallery', label: 'Gallery', x: 2, y: 1, z: 1, links: ['stairs', 'belfry'] },
+    { id: 'belfry', label: 'Belfry', x: 3, y: 1, z: 1, links: ['gallery'] },
+  ],
+  [
+    { id: 'entry', label: 'Entry', x: 1, y: 2, z: 0, links: ['foyer'], entry: true },
+    { id: 'foyer', label: 'Foyer', x: 1, y: 1, z: 0, links: ['entry', 'salon', 'stairs', 'study'] },
+    { id: 'salon', label: 'Salon', x: 0, y: 1, z: 0, links: ['foyer', 'dining'] },
+    { id: 'dining', label: 'Dining hall', x: 0, y: 0, z: 0, links: ['salon'] },
+    { id: 'study', label: 'Study', x: 2, y: 1, z: 0, links: ['foyer'] },
+    { id: 'stairs', label: 'Stairs', x: 1, y: 0, z: 0, links: ['foyer', 'cellar', 'landing'] },
+    { id: 'cellar', label: 'Cellar', x: 1, y: 0, z: -1, links: ['stairs', 'wine'], isSecret: true },
+    { id: 'wine', label: 'Wine cellar', x: 0, y: 0, z: -1, links: ['cellar'] },
+    { id: 'landing', label: 'Upper landing', x: 1, y: 0, z: 1, links: ['stairs', 'bedroom', 'library'] },
+    { id: 'bedroom', label: 'Bedroom', x: 0, y: 0, z: 1, links: ['landing'] },
+    { id: 'library', label: 'Library', x: 2, y: 0, z: 1, links: ['landing'] },
   ],
 ];
 
 function pickInteriorLayout(seed: string, place: string): InteriorRoomSpec[] {
   const rng = createHashRng(seed || 'interior', place || 'place', 'floor-plan');
-  const idx = Math.min(INTERIOR_LAYOUTS.length - 1, Math.floor(rng() * INTERIOR_LAYOUTS.length));
-  return INTERIOR_LAYOUTS[idx]!.map((r) => ({ ...r, links: [...r.links] }));
+  const scale = interiorBuildingScale(place);
+  const pool =
+    scale === 'shed' ? SHED_LAYOUTS : scale === 'grand' ? GRAND_LAYOUTS : RUIN_LAYOUTS;
+  const idx = Math.min(pool.length - 1, Math.floor(rng() * pool.length));
+  return pool[idx]!.map((r) => ({ ...r, links: [...r.links], z: r.z }));
 }
 
 function applyHarvestedRoomNames(nodes: MapNode[], rooms: string[], building: string): MapNode[] {
@@ -791,7 +923,7 @@ export function buildInteriorFloorPlan(
         : `${spec.label}, inside ${building}.`,
       connections: [...spec.links],
       coordinates: { x: spec.x, y: spec.y },
-      zLevel: 0,
+      zLevel: spec.z,
       tags,
       isSecret: !!spec.isSecret,
       hidden,
@@ -806,7 +938,7 @@ export function buildInteriorFloorPlan(
     tier: 4,
     dangerTier: undefined,
     parentCoordinates: parentCoords,
-    currentZLevel: 0,
+    currentZLevel: entry.z,
     currentNodeId: entry.id,
     visitedNodeIds: [entry.id],
     clearedNodeIds: [],
@@ -828,19 +960,22 @@ export function presentInteriorMap(
       : 'Interior';
   const title = shortBuildingTitle(titleSource);
 
-  if (needsAuthoredInteriorRebuild(dungeon)) {
+  if (needsAuthoredInteriorRebuild(dungeon, fallbackRaw || title)) {
     const harvested = dungeon.nodes
       .filter((n) => !GENERIC_ROOM_LABELS.has(n.name.toLowerCase()))
       .map((n) => n.name);
     const rebuilt = buildInteriorFloorPlan(fallbackRaw || title, harvested, dungeon.parentCoordinates, seed);
+    const keepCurrent = rebuilt.nodes.some((n) => n.id === dungeon.currentNodeId)
+      ? dungeon.currentNodeId
+      : rebuilt.currentNodeId;
+    const keepNode = rebuilt.nodes.find((n) => n.id === keepCurrent);
     return {
       ...rebuilt,
       visitedNodeIds: Array.from(
         new Set([rebuilt.currentNodeId, ...dungeon.visitedNodeIds.filter((id) => rebuilt.nodes.some((n) => n.id === id))])
       ),
-      currentNodeId: rebuilt.nodes.some((n) => n.id === dungeon.currentNodeId)
-        ? dungeon.currentNodeId
-        : rebuilt.currentNodeId,
+      currentNodeId: keepCurrent,
+      currentZLevel: keepNode?.zLevel ?? rebuilt.currentZLevel,
     };
   }
 
@@ -862,6 +997,8 @@ export function presentInteriorMap(
   }
   const ids = new Set(keep.map((n) => n.id));
   const entryId = keep.find((n) => (n.tags ?? []).includes('entry'))?.id ?? keep[0]!.id;
+  const currentId = ids.has(dungeon.currentNodeId) ? dungeon.currentNodeId : entryId;
+  const currentKeep = keep.find((n) => n.id === currentId);
   return {
     ...dungeon,
     dungeonName: title,
@@ -869,7 +1006,8 @@ export function presentInteriorMap(
     visitedNodeIds: Array.from(
       new Set([...dungeon.visitedNodeIds.filter((id) => ids.has(id)), entryId])
     ),
-    currentNodeId: ids.has(dungeon.currentNodeId) ? dungeon.currentNodeId : entryId,
+    currentNodeId: currentId,
+    currentZLevel: currentKeep?.zLevel ?? dungeon.currentZLevel,
   };
 }
 
@@ -897,17 +1035,18 @@ export function addRoomToInteriorMap(dungeon: ActiveDungeonState, room: string):
     }
   }
 
-  if (dungeon.nodes.length >= 12) return dungeon;
+  if (dungeon.nodes.length >= 16) return dungeon;
   const id = `room_${dungeon.nodes.length}`;
   const here = dungeon.nodes.find((n) => n.id === dungeon.currentNodeId) ?? dungeon.nodes[0];
-  const slot = nextInteriorSlot(dungeon);
+  const z = here?.zLevel ?? dungeon.currentZLevel ?? 0;
+  const slot = nextInteriorSlot(dungeon, z);
   const node: MapNode = {
     id,
     name,
     description: `${name}, inside ${dungeon.dungeonName}.`,
     connections: here ? [here.id] : [],
     coordinates: slot,
-    zLevel: 0,
+    zLevel: z,
     tags: ['interior', 'room'],
   };
   const nodes = dungeon.nodes.map((n) =>
@@ -934,6 +1073,7 @@ function sameAreaMap(a: ActiveDungeonState | null | undefined, b: ActiveDungeonS
       n.id === o.id &&
       n.name === o.name &&
       !!n.isSecret === !!o.isSecret &&
+      (n.zLevel ?? 0) === (o.zLevel ?? 0) &&
       (n.tags ?? []).join() === (o.tags ?? []).join()
     );
   });
@@ -955,15 +1095,21 @@ export function resolvePlayAreaMap(
   let next: ActiveDungeonState | null = null;
   if (isInteriorPlace(here)) {
     const rooms = landmarks.filter((n) => n.toLowerCase() !== here.toLowerCase());
-    if (existing && isInteriorMap(existing) && !needsAuthoredInteriorRebuild(existing)) {
+    if (existing && isInteriorMap(existing) && !needsAuthoredInteriorRebuild(existing, here)) {
       next = presentInteriorMap(existing, here, seed);
       for (const room of rooms) next = addRoomToInteriorMap(next, room);
     } else {
       next = buildInteriorFloorPlan(here, rooms, parentCoords ?? existing?.parentCoordinates, seed);
       if (existing && isInteriorMap(existing)) {
         const keepVisited = existing.visitedNodeIds.filter((id) => next!.nodes.some((n) => n.id === id));
+        const keepCurrent = next.nodes.some((n) => n.id === existing.currentNodeId)
+          ? existing.currentNodeId
+          : next.currentNodeId;
+        const keepNode = next.nodes.find((n) => n.id === keepCurrent);
         next = {
           ...next,
+          currentNodeId: keepCurrent,
+          currentZLevel: keepNode?.zLevel ?? next.currentZLevel,
           visitedNodeIds: Array.from(new Set([next.currentNodeId, ...keepVisited])),
         };
       }

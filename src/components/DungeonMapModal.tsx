@@ -1,10 +1,14 @@
-import React, { useEffect, useMemo } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import type { ActiveDungeonState, MapNode } from '../game/mapEngine';
 import {
+  interiorFloorLabel,
   interiorRoomFillKind,
   isInteriorSecretUnlocked,
+  listInteriorZLevels,
+  nodesOnInteriorFloor,
   presentLocalAreaMap,
   resolvePlayAreaMap,
+  roomHasVerticalLink,
 } from '../game/mapEngine';
 import { isGenericMapPlace } from '../game/questPlay';
 import { isInteriorMap, isInteriorPlace, isStreetMap, mapScaleLabel } from '../game/placeAuthority';
@@ -87,6 +91,19 @@ export const DungeonMapModal: React.FC<DungeonMapModalProps> = ({
     return raw;
   }, [activeDungeon, currentLocation, currentCoordinates]);
 
+  const playerZ = displayDungeon?.currentZLevel ?? 0;
+  const floorLevels = useMemo(
+    () => (displayDungeon && isInteriorMap(displayDungeon) ? listInteriorZLevels(displayDungeon) : []),
+    [displayDungeon]
+  );
+  const [viewZ, setViewZ] = useState(playerZ);
+
+  useEffect(() => {
+    if (!isOpen || !displayDungeon || !isInteriorMap(displayDungeon)) return;
+    const z = displayDungeon.currentZLevel ?? 0;
+    setViewZ(floorLevels.includes(z) ? z : floorLevels[0] ?? 0);
+  }, [isOpen, displayDungeon?.currentNodeId, displayDungeon?.blueprintId, floorLevels.join(',')]);
+
   if (!isOpen) return null;
 
   if (!displayDungeon) {
@@ -157,6 +174,9 @@ export const DungeonMapModal: React.FC<DungeonMapModalProps> = ({
               <span>
                 {isStreet ? 'You are here: ' : 'Current room: '}
                 <span className="text-amber-300 font-semibold">{currentNode?.name || 'Unknown'}</span>
+                {isHallPlan && floorLevels.length > 1 && (
+                  <span className="text-slate-500"> · {interiorFloorLabel(playerZ)}</span>
+                )}
               </span>
             </p>
             {combatLocked && (
@@ -172,6 +192,40 @@ export const DungeonMapModal: React.FC<DungeonMapModalProps> = ({
             Close
           </button>
         </div>
+
+        {isHallPlan && floorLevels.length > 1 && (
+          <div
+            className="mt-3 flex flex-wrap items-center gap-2"
+            role="tablist"
+            aria-label="Building floors"
+          >
+            <span className="text-[10px] uppercase tracking-wide text-slate-500 mr-1">Floor</span>
+            {floorLevels.map((z) => {
+              const onPlayer = z === playerZ;
+              const selected = z === viewZ;
+              return (
+                <button
+                  key={z}
+                  type="button"
+                  role="tab"
+                  aria-selected={selected}
+                  onClick={() => setViewZ(z)}
+                  className={`px-2.5 py-1 rounded border text-xs font-semibold transition ${
+                    selected
+                      ? 'border-amber-500/80 bg-amber-950/50 text-amber-100'
+                      : 'border-slate-700 bg-slate-900/70 text-slate-300 hover:border-slate-500'
+                  }`}
+                >
+                  {interiorFloorLabel(z)}
+                  {onPlayer ? ' · you' : ''}
+                </button>
+              );
+            })}
+            {viewZ !== playerZ && (
+              <span className="text-[10px] text-slate-500">Inspecting — tap a connected stair to move</span>
+            )}
+          </div>
+        )}
 
         <div
           className={`relative flex-1 my-4 min-h-[360px] overflow-auto rounded-lg p-4 sgm-adventure-map-canvas ${
@@ -197,7 +251,12 @@ export const DungeonMapModal: React.FC<DungeonMapModalProps> = ({
             <InteriorFloorPlan
               dungeon={displayDungeon}
               currentNodeId={displayDungeon.currentNodeId}
-              onMoveNode={onMoveNode}
+              viewZ={isHallPlan ? viewZ : displayDungeon.currentZLevel}
+              onMoveNode={(nodeId) => {
+                onMoveNode(nodeId);
+                const dest = displayDungeon.nodes.find((n) => n.id === nodeId);
+                if (dest && typeof dest.zLevel === 'number') setViewZ(dest.zLevel);
+              }}
               organic={isHallPlan}
               combatLocked={combatLocked}
             />
@@ -219,9 +278,22 @@ export const DungeonMapModal: React.FC<DungeonMapModalProps> = ({
             <span className="text-xs text-slate-400">
               {isStreet
                 ? `Places: ${displayDungeon.nodes.length}`
-                : isHallPlan
-                  ? `Explored: ${displayDungeon.visitedNodeIds.length} / ${displayDungeon.nodes.length} rooms on this floor`
-                  : `Rooms: ${displayDungeon.visitedNodeIds.length} mapped / ${displayDungeon.nodes.length} on this floor`}
+                : (() => {
+                    const floorNodes = isHallPlan
+                      ? nodesOnInteriorFloor(displayDungeon, viewZ)
+                      : displayDungeon.nodes.filter(
+                          (n) => (n.zLevel ?? 0) === (displayDungeon.currentZLevel ?? 0)
+                        );
+                    const visitedOnFloor = floorNodes.filter((n) =>
+                      displayDungeon.visitedNodeIds.includes(n.id)
+                    ).length;
+                    const floorTag = isHallPlan && floorLevels.length > 1
+                      ? ` · ${interiorFloorLabel(viewZ)}`
+                      : '';
+                    return isHallPlan
+                      ? `Explored: ${visitedOnFloor} / ${floorNodes.length} rooms${floorTag}`
+                      : `Rooms: ${visitedOnFloor} mapped / ${floorNodes.length} on this floor`;
+                  })()}
             </span>
             <button
               onClick={onExitDungeon}
@@ -239,17 +311,19 @@ export const DungeonMapModal: React.FC<DungeonMapModalProps> = ({
 function InteriorFloorPlan({
   dungeon,
   currentNodeId,
+  viewZ,
   onMoveNode,
   organic = false,
   combatLocked = false,
 }: {
   dungeon: ActiveDungeonState;
   currentNodeId: string;
+  viewZ: number;
   onMoveNode: (nodeId: string) => void;
   organic?: boolean;
   combatLocked?: boolean;
 }) {
-  const nodes = dungeon.nodes;
+  const nodes = nodesOnInteriorFloor(dungeon, viewZ);
   const xs = nodes.map((n) => n.coordinates?.x ?? 0);
   const ys = nodes.map((n) => n.coordinates?.y ?? 0);
   const minX = Math.min(...xs, 0);
@@ -261,12 +335,13 @@ function InteriorFloorPlan({
   const pad = organic ? 36 : 28;
   const width = (maxX - minX + 1) * cell + pad * 2;
   const height = (maxY - minY + 1) * cell + pad * 2;
-  const current = nodes.find((n) => n.id === currentNodeId);
+  const current = dungeon.nodes.find((n) => n.id === currentNodeId);
+  const playerOnThisFloor = (current?.zLevel ?? 0) === viewZ;
 
   const roomBox = (node: MapNode) => {
     const gx = node.coordinates?.x ?? 0;
     const gy = node.coordinates?.y ?? 0;
-    const here = (node.tags ?? []).includes('here') || node.id === currentNodeId;
+    const here = (node.tags ?? []).includes('here') || (node.id === currentNodeId && playerOnThisFloor);
     return {
       x: pad + (gx - minX) * cell,
       y: pad + (gy - minY) * cell,
@@ -278,6 +353,28 @@ function InteriorFloorPlan({
   const edgeIsSecret = (a: MapNode, b: MapNode) =>
     !!(a.isSecret || b.isSecret) &&
     (!isInteriorSecretUnlocked(dungeon, a.id) || !isInteriorSecretUnlocked(dungeon, b.id));
+
+  const verticalHint = (node: MapNode) => {
+    if (!roomHasVerticalLink(dungeon, node)) return null;
+    const z = node.zLevel ?? 0;
+    const targets = node.connections
+      .map((id) => dungeon.nodes.find((n) => n.id === id))
+      .filter((t): t is MapNode => !!t && (t.zLevel ?? 0) !== z);
+    const up = targets.some((t) => (t.zLevel ?? 0) > z);
+    const down = targets.some((t) => (t.zLevel ?? 0) < z);
+    if (up && down) return '↕';
+    if (up) return '↑';
+    if (down) return '↓';
+    return '↕';
+  };
+
+  if (nodes.length === 0) {
+    return (
+      <p className="text-sm text-slate-400 py-8 text-center">
+        No rooms mapped on {interiorFloorLabel(viewZ)}.
+      </p>
+    );
+  }
 
   return (
     <div className="relative" style={{ minWidth: width, minHeight: height }}>
@@ -337,7 +434,7 @@ function InteriorFloorPlan({
         {nodes.map((node) => {
           const box = roomBox(node);
           const fill = interiorRoomFillKind(dungeon, node);
-          const isCurrent = node.id === currentNodeId;
+          const isCurrent = playerOnThisFloor && node.id === currentNodeId;
           const isVisited = fill === 'visited';
           const isSecret = fill === 'secret';
           return (
@@ -393,12 +490,13 @@ function InteriorFloorPlan({
         const fill = interiorRoomFillKind(dungeon, node);
         const isVisited = fill === 'visited';
         const isSecret = fill === 'secret';
-        const isCurrent = node.id === currentNodeId;
+        const isCurrent = playerOnThisFloor && node.id === currentNodeId;
         const secretOpen = isInteriorSecretUnlocked(dungeon, node.id);
         const isReachable =
           !combatLocked &&
           !!current?.connections.includes(node.id) &&
           (secretOpen || !node.isSecret);
+        const stair = verticalHint(node);
         return (
           <button
             key={node.id}
@@ -409,7 +507,9 @@ function InteriorFloorPlan({
               isSecret
                 ? 'Sealed passage — discover it in play'
                 : isVisited
-                  ? node.name
+                  ? stair
+                    ? `${node.name} (${stair} stairs)`
+                    : node.name
                   : 'Unexplored room'
             }
             style={{ left: box.x, top: box.y, width: box.w, height: box.h }}
@@ -424,6 +524,11 @@ function InteriorFloorPlan({
                 >
                   {node.name}
                 </span>
+                {stair && (
+                  <span className="mt-0.5 text-[9px] text-amber-200/80" aria-hidden>
+                    {stair}
+                  </span>
+                )}
                 {isCurrent && (
                   <span className="mt-1 flex items-center gap-1 text-[8px] uppercase tracking-wide text-amber-200">
                     <YouAreHereMarker size={12} />

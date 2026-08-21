@@ -1,11 +1,16 @@
 import { describe, expect, it } from 'vitest';
 import {
   buildInteriorFloorPlan,
+  interiorBuildingScale,
+  interiorFloorLabel,
   interiorRoomFillKind,
   isInteriorSecretUnlocked,
+  listInteriorZLevels,
   moveToNode,
+  nodesOnInteriorFloor,
   resolvePlayAreaMap,
   revealInteriorSecret,
+  roomHasVerticalLink,
   shortBuildingTitle,
   shortRoomLabel,
 } from './mapEngine';
@@ -14,7 +19,7 @@ import { INTERIOR_MAP_BLUEPRINT } from './placeAuthority';
 const ALONE_RUIN =
   'alone in a building with serious damage somewhere off the Valespire roads';
 
-describe('interior floor plan (20n RE-like)', () => {
+describe('interior floor plan (20o multi-floor)', () => {
   it('uses short room labels — never the full location essay', () => {
     expect(shortRoomLabel(ALONE_RUIN)).toBe('Entry');
     expect(shortRoomLabel('Second Chamber of a half-collapsed ruin')).toMatch(/Second Chamber/i);
@@ -32,6 +37,59 @@ describe('interior floor plan (20n RE-like)', () => {
     expect(map!.dungeonName).not.toMatch(/alone in a building/i);
     expect(map!.nodes.every((n) => n.name.length <= 28)).toBe(true);
     expect(map!.nodes.some((n) => (n.tags ?? []).includes('authored'))).toBe(true);
+  });
+
+  it('authors multi-z floors for ruins; sheds stay single-floor', () => {
+    expect(interiorBuildingScale(ALONE_RUIN)).toBe('ruin');
+    expect(interiorBuildingScale('a weathered shed by the gate')).toBe('shed');
+    expect(interiorBuildingScale('Sevenfold Circle cathedral')).toBe('grand');
+
+    const ruin = buildInteriorFloorPlan(ALONE_RUIN, [], undefined, 'multi-z-ruin');
+    const zs = listInteriorZLevels(ruin);
+    expect(zs.length).toBeGreaterThanOrEqual(2);
+    expect(zs).toContain(0);
+    expect(interiorFloorLabel(-1)).toBe('B1');
+    expect(interiorFloorLabel(0)).toBe('1F');
+    expect(interiorFloorLabel(1)).toBe('2F');
+
+    const stair = ruin.nodes.find((n) => roomHasVerticalLink(ruin, n));
+    expect(stair).toBeTruthy();
+    expect(stair!.connections.some((id) => {
+      const t = ruin.nodes.find((n) => n.id === id);
+      return t && (t.zLevel ?? 0) !== (stair!.zLevel ?? 0);
+    })).toBe(true);
+
+    const shed = buildInteriorFloorPlan('a weathered shed by the gate', [], undefined, 'shed-seed');
+    expect(listInteriorZLevels(shed)).toEqual([0]);
+    expect(shed.nodes.every((n) => (n.zLevel ?? 0) === 0)).toBe(true);
+  });
+
+  it('filters rooms by floor and preserves visited fog per floor', () => {
+    const map = buildInteriorFloorPlan(ALONE_RUIN, ['Second Chamber'], undefined, 'floor-filter');
+    const zs = listInteriorZLevels(map);
+    expect(zs.length).toBeGreaterThanOrEqual(2);
+
+    for (const z of zs) {
+      const onFloor = nodesOnInteriorFloor(map, z);
+      expect(onFloor.length).toBeGreaterThan(0);
+      expect(onFloor.every((n) => (n.zLevel ?? 0) === z)).toBe(true);
+    }
+
+    const ground = nodesOnInteriorFloor(map, 0);
+    const entry = ground.find((n) => (n.tags ?? []).includes('entry'))!;
+    expect(interiorRoomFillKind(map, entry)).toBe('visited');
+    const otherGround = ground.find((n) => n.id !== entry.id && !n.isSecret);
+    if (otherGround) {
+      expect(interiorRoomFillKind(map, otherGround)).toBe('unvisited');
+    }
+
+    const upperZ = zs.find((z) => z > 0);
+    if (upperZ != null) {
+      const upper = nodesOnInteriorFloor(map, upperZ);
+      expect(upper.every((n) => interiorRoomFillKind(map, n) !== 'visited' || n.id === entry.id)).toBe(
+        true
+      );
+    }
   });
 
   it('distinguishes visited vs unvisited fill; secrets stay locked until revealed', () => {
@@ -56,9 +114,29 @@ describe('interior floor plan (20n RE-like)', () => {
     expect(interiorRoomFillKind(opened, secret!)).toBe('unvisited');
     const entered = moveToNode({ ...opened, currentNodeId: from!.id }, secret!.id);
     expect(entered.currentNodeId).toBe(secret!.id);
+    expect(entered.currentZLevel).toBe(secret!.zLevel ?? 0);
     expect(interiorRoomFillKind(entered, entered.nodes.find((n) => n.id === secret!.id)!)).toBe(
       'visited'
     );
+  });
+
+  it('moves across floors via stairs and updates currentZLevel', () => {
+    const map = buildInteriorFloorPlan(ALONE_RUIN, [], undefined, 'stair-seed');
+    const stair = map.nodes.find((n) => /stairs/i.test(n.name) && roomHasVerticalLink(map, n));
+    expect(stair).toBeTruthy();
+    const otherFloor = stair!.connections
+      .map((id) => map.nodes.find((n) => n.id === id))
+      .find((n) => n && (n.zLevel ?? 0) !== (stair!.zLevel ?? 0) && !n.isSecret);
+    expect(otherFloor).toBeTruthy();
+
+    let at = { ...map, currentNodeId: stair!.id, currentZLevel: stair!.zLevel ?? 0 };
+    at = {
+      ...at,
+      visitedNodeIds: Array.from(new Set([...at.visitedNodeIds, stair!.id])),
+    };
+    const moved = moveToNode(at, otherFloor!.id);
+    expect(moved.currentNodeId).toBe(otherFloor!.id);
+    expect(moved.currentZLevel).toBe(otherFloor!.zLevel ?? 0);
   });
 
   it('harvests story room names onto the authored graph without collapsing to 2 nodes', () => {
