@@ -61,7 +61,7 @@ describe('openingStitch', () => {
     expect(c.appearance).toMatch(/everyday street clothes/i);
   });
 
-  it('continues after covers locally with locked look', () => {
+  it('continues after covers locally without rehashing locked name/look/kit', () => {
     const base = createInitialState('The Summoned Pact', 'litrpg');
     const state = {
       ...base,
@@ -81,12 +81,15 @@ describe('openingStitch', () => {
       },
     };
     const text = stitchOpeningContinue(state);
-    expect(text).toMatch(/Jax/);
-    expect(text).toMatch(/Travel clothes/);
     expect(text).toMatch(/half-collapsed ruin/i);
     expect(text).not.toMatch(/Sevenfold/i);
     expect(text).not.toMatch(/Nothing reset/i);
     expect(text).not.toMatch(/anyone listening/i);
+    expect(text).not.toMatch(/still HERE|same place, same light/i);
+    expect(text).not.toMatch(/panel has you as Jax/i);
+    expect(text).not.toMatch(/You are wearing Travel clothes/i);
+    expect(text).not.toMatch(/On you: A bag/i);
+    expect(text).not.toMatch(/quiet after the light is too clean|road, if there is one/i);
     expect(text).toMatch(/1\.\s*Get your bearings/i);
     expect(text).not.toMatch(/Pellane wanted you/i);
   });

@@ -117,8 +117,9 @@ What do you do?`;
     expect(text).not.toMatch(/light already happened/i);
     expect(text).not.toMatch(/anyone listening/i);
     expect(text).not.toMatch(/still in alone/i);
-    expect(text).toMatch(/Jax/);
-    expect(text).toMatch(/panel has you as Jax/i);
+    expect(text).not.toMatch(/still HERE|same place, same light/i);
+    expect(text).not.toMatch(/panel has you as Jax/i);
+    expect(text).not.toMatch(/You are wearing Travel clothes/i);
     expect(text).toMatch(/rubble|gap|doorway|debris|stone|arch/i);
     expect(text).not.toMatch(/Nobody answers if you call/i);
 

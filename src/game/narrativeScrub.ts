@@ -5,6 +5,7 @@
 
 import type { GameState } from './types';
 import { findUngroundedNamedClaims } from './suggestionValidation';
+import { isAloneArrivalOpening } from './openingEstablishment';
 
 const ALWAYS_ALLOW = new Set(
   [
@@ -58,18 +59,25 @@ export function scrubInventedProperNouns(
     text = replaceUngroundedName(text, name, guessGenericReplacement(name, state));
   }
 
+  const alone = isAloneArrivalOpening(state);
   for (const claim of interactionClaims) {
     if (claim.length < 3) continue;
-    const generic = /\b(chest|door|crate|cache|altar|console)\b/i.test(claim)
+    // Never scrub the grounded PC name into a role slot.
+    const pc = (state.character?.name ?? '').trim().toLowerCase();
+    if (pc && claim.toLowerCase() === pc) continue;
+    const generic = /\b(chest|door|crate|cache|altar|console|panel|window)\b/i.test(claim)
       ? { afterThe: 'something nearby', afterA: 'something nearby', bare: 'something nearby' }
       : /\b(creature|beast|enemy|foe|hatchling|mob)\b/i.test(claim)
         ? { afterThe: 'a nearby threat', afterA: 'a nearby threat', bare: 'a nearby threat' }
-        : { afterThe: 'the speaker', afterA: 'a speaker', bare: 'the speaker' };
+        : alone
+          ? { afterThe: 'the panel', afterA: 'a panel glow', bare: 'the panel' }
+          : { afterThe: 'the official', afterA: 'an official', bare: 'the official' };
     text = replaceUngroundedName(text, claim, generic);
   }
 
-  // Never leave the soft placeholder as a dialogue subject / possessive actor.
-  text = scrubSomeoneNearbyActor(text);
+  // Never leave soft placeholders as dialogue subjects / room furniture.
+  text = scrubSomeoneNearbyActor(text, alone);
+  text = scrubSpeakerLeak(text, state);
 
   return { text, stripped: Array.from(new Set(stripped)) };
 }
@@ -105,18 +113,56 @@ function guessGenericReplacement(name: string, state: GameState): GenericSlot {
     return { afterThe: 'the court', afterA: 'a court', bare: 'the court' };
   }
   if (/\b(official|registrar|speaker|figure|robed)\b/i.test(name)) {
+    if (isAloneArrivalOpening(state)) {
+      return { afterThe: 'the panel', afterA: 'a panel', bare: 'the panel' };
+    }
     return { afterThe: 'the official', afterA: 'an official', bare: 'the official' };
   }
-  return { afterThe: 'the speaker', afterA: 'a speaker', bare: 'the speaker' };
+  if (isAloneArrivalOpening(state)) {
+    return { afterThe: 'the panel', afterA: 'a panel', bare: 'the panel' };
+  }
+  return { afterThe: 'the official', afterA: 'an official', bare: 'the official' };
 }
 
 /** Rewrite leftover placeholder actors into role language. */
-export function scrubSomeoneNearbyActor(text: string): string {
+export function scrubSomeoneNearbyActor(text: string, alone = false): string {
   if (!text || !/someone nearby/i.test(text)) return text;
+  const role = alone ? 'the panel' : 'the official';
+  const rolePoss = alone ? "the panel's" : "the official's";
   return text
-    .replace(/\bsomeone nearby(?:'s|’s)\b/gi, "the speaker's")
-    .replace(/\bsomeone nearby\s+(does|doesn't|does not|did|said|states?|turns?|inclines?|remains?|stands?|listens?|regards?|gestures?|speaks?|asks?|replies?|nods?)\b/gi, 'the speaker $1')
-    .replace(/\b(?:the\s+)?someone nearby\b/gi, 'the speaker');
+    .replace(/\bsomeone nearby(?:'s|’s)\b/gi, rolePoss)
+    .replace(/\bsomeone nearby\s+(does|doesn't|does not|did|said|states?|turns?|inclines?|remains?|stands?|listens?|regards?|gestures?|speaks?|asks?|replies?|nods?)\b/gi, `${role} $1`)
+    .replace(/\b(?:the\s+)?someone nearby\b/gi, role);
+}
+
+/**
+ * Kill leaked "the speaker" in room furniture / System Name lines.
+ * Alone scenes must never invent a speaker as PC/System chrome.
+ */
+export function scrubSpeakerLeak(text: string, state: GameState): string {
+  if (!text || !/\bthe speaker\b/i.test(text)) return text;
+  const alone = isAloneArrivalOpening(state);
+  const pc = (state.character?.name ?? '').trim();
+  const nameForSystem =
+    pc && !/^(unknown|adventurer|hero)$/i.test(pc) ? pc : 'you';
+  let next = text;
+  // "gapes open the speaker" / "onto the speaker" furniture mangling
+  next = next.replace(/\bgapes?\s+open(?:\s+onto)?\s+the speaker\b/gi, 'gapes open');
+  next = next.replace(/\bopen(?:s|ed|ing)?\s+(?:onto\s+)?the speaker\b/gi, 'open');
+  if (alone || /<system[\s>]/i.test(text)) {
+    next = next.replace(
+      /((?:^|\n)\s*[—\-–]?\s*)the speaker(\s*[—\-–]?\s*(?:\n|$))/gi,
+      `$1${nameForSystem}$2`
+    );
+    next = next.replace(/\bName:\s*the speaker\b/gi, `Name: ${nameForSystem}`);
+    next = next.replace(/\[the speaker\]/gi, `[${nameForSystem}]`);
+    next = next.replace(/\bthe speaker:\s*/gi, `${nameForSystem}: `);
+  }
+  if (alone) {
+    next = next.replace(/\bthe speaker\b/gi, 'the panel');
+    next = next.replace(/\ba speaker\b/gi, 'a panel');
+  }
+  return next;
 }
 
 function replaceUngroundedName(text: string, name: string, slot: GenericSlot): string {

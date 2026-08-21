@@ -107,36 +107,56 @@ export function scrubArticleCollisions(text: string): string {
  * "a figure" was the default invented-name replacement and leaked as a proper noun
  * ("the a figure", "glowing a figure", "You carry the a figure").
  */
-export function scrubFigurePlaceholder(text: string): string {
+export function scrubFigurePlaceholder(text: string, alone = false): string {
   if (!text) return text;
+  const personSlot = alone ? 'the panel' : 'the official';
   return text
     .replace(/\bthe\s+glowing\s+a\s+figure\b/gi, 'the glowing mark')
     .replace(/\bglowing\s+a\s+figure\b/gi, 'glowing mark')
     .replace(/\bthe\s+war\s+with\s+(?:the\s+)?a\s+figure\b/gi, 'the war')
     .replace(/\b(?:you\s+carry|carries)\s+the\s+a\s+figure\b/gi, 'you carry the mark')
     .replace(/\ba\s+figure\s+is\s+not\b/gi, 'that mark is not')
-    .replace(/\bthe\s+a\s+figure\b/gi, 'the speaker')
+    .replace(/\bthe\s+a\s+figure\b/gi, personSlot)
     .replace(/\b(?:the\s+)?(?:glowing\s+)?a figure\b/gi, (hit) =>
-      /glowing/i.test(hit) ? 'the glowing mark' : 'the speaker'
+      /glowing/i.test(hit) ? 'the glowing mark' : personSlot
     );
 }
 
 /** UI / journal verbs must not be spoken in-world. */
-export function scrubUiQuestVerbs(text: string): string {
+export function scrubUiQuestVerbs(text: string, alone = false): string {
   if (!text) return text;
+  const look = alone ? 'look to the panel' : 'look to the official';
   return text
-    .replace(/\bunlock(?:s|ed|ing)?\s+someone(?:\s+nearby)?\b/gi, 'look to the speaker')
+    .replace(/\bunlock(?:s|ed|ing)?\s+someone(?:\s+nearby)?\b/gi, look)
     .replace(/\bunlock\s+(?:a|the)\s+(?:quest|journal|starter|guide\s*book)\b/gi, 'take the next step')
     .replace(/\bquest\s+unlocked\b/gi, 'a task comes into focus');
 }
 
 /** Soft name-slot must not act as a dialogue subject. */
-export function scrubSomeoneNearbyPlaceholder(text: string): string {
+export function scrubSomeoneNearbyPlaceholder(text: string, alone = false): string {
   if (!text || !/someone nearby/i.test(text)) return text;
+  const role = alone ? 'the panel' : 'the official';
+  const rolePoss = alone ? "the panel's" : "the official's";
   return text
-    .replace(/\bsomeone nearby(?:'s|’s)\b/gi, "the speaker's")
-    .replace(/\bsomeone nearby\s+(does|doesn't|does not|did|said|states?|turns?|inclines?|remains?|stands?|listens?|regards?|gestures?|speaks?|asks?|replies?|nods?)\b/gi, 'the speaker $1')
-    .replace(/\b(?:the\s+)?someone nearby\b/gi, 'the speaker');
+    .replace(/\bsomeone nearby(?:'s|’s)\b/gi, rolePoss)
+    .replace(/\bsomeone nearby\s+(does|doesn't|does not|did|said|states?|turns?|inclines?|remains?|stands?|listens?|regards?|gestures?|speaks?|asks?|replies?|nods?)\b/gi, `${role} $1`)
+    .replace(/\b(?:the\s+)?someone nearby\b/gi, role);
+}
+
+/** Kill "the speaker" furniture / alone System chrome leaks. */
+export function scrubSpeakerPlaceholder(text: string, alone = false): string {
+  if (!text || !/\b(?:the|a) speaker\b/i.test(text)) return text;
+  let next = text;
+  next = next.replace(/\bgapes?\s+open(?:\s+onto)?\s+the speaker\b/gi, 'gapes open');
+  next = next.replace(/\bopen(?:s|ed|ing)?\s+(?:onto\s+)?the speaker\b/gi, 'open');
+  if (alone) {
+    next = next.replace(/\bName:\s*the speaker\b/gi, 'Name: you');
+    next = next.replace(/\[the speaker\]/gi, '[Status]');
+    next = next.replace(/\bthe speaker:\s*/gi, '');
+    next = next.replace(/\bthe speaker\b/gi, 'the panel');
+    next = next.replace(/\ba speaker\b/gi, 'a panel');
+  }
+  return next;
 }
 
 /**
@@ -202,11 +222,13 @@ export function scrubInteriorOneRoomLie(
 
 export function applyProseWarden(text: string, ctx?: ProseWardenContext): string {
   if (!text) return text;
-  let next = scrubFigurePlaceholder(text);
-  next = scrubSomeoneNearbyPlaceholder(next);
-  next = scrubUiQuestVerbs(next);
+  const alone = ctx?.aloneArrival === true;
+  let next = scrubFigurePlaceholder(text, alone);
+  next = scrubSomeoneNearbyPlaceholder(next, alone);
+  next = scrubUiQuestVerbs(next, alone);
+  next = scrubSpeakerPlaceholder(next, alone);
   next = scrubPrematureSecrets(next);
-  next = scrubInventedAlonePresence(next, ctx?.aloneArrival === true);
+  next = scrubInventedAlonePresence(next, alone);
   next = scrubInteriorOneRoomLie(
     next,
     ctx?.hasMappedDoorExits === true,

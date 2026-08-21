@@ -28,7 +28,7 @@ function pickBank<T>(bank: readonly T[], seed: string, salt: string): T {
   return bank[idx]!;
 }
 
-/** Sensory / pressure spice so the same card still reads different each seed. */
+/** Sensory / pressure spice so the same card still reads different each seed. Plain concrete English — no meta road/quiet lines. */
 const SENSORY_BANK = [
   'Dust hangs in the light.',
   'Cold soaks through your clothes.',
@@ -37,7 +37,7 @@ const SENSORY_BANK = [
   'A draft finds the back of your neck.',
   'Your ears still ring from the pull.',
   'Ash or chalk grit sticks to your palms.',
-  'The quiet after the light is too clean.',
+  'Broken plaster crunches under your hand.',
 ] as const;
 
 const PRESSURE_CROWD = [
@@ -49,7 +49,7 @@ const PRESSURE_CROWD = [
 
 const PRESSURE_ALONE = [
   'The panel is the only thing that treats you as real.',
-  'The road, if there is one, is not in this room.',
+  'Nothing else moves in this room.',
   'Whatever pulled you here did not stay to explain.',
   'Dust and broken stone — no footsteps but yours.',
 ] as const;
@@ -79,9 +79,9 @@ const KIT_ASKS = [
 ] as const;
 
 const CONTINUE_BRIDGES = [
-  'The room is still the same room.',
-  'Look and kit stay as you named them.',
-  'You are still HERE — same place, same light.',
+  'The room holds still around you.',
+  'Dust settles. The blue panel waits.',
+  'Nothing else has entered the room.',
 ] as const;
 
 const ALONE_ROOM_GROUND = [
@@ -196,31 +196,20 @@ function cleanPlaceLabel(place: string): string {
 }
 
 /**
- * After weave covers — continue locally with locked look/kit. No network.
- * Ground the room (find/exit/hazard), not meta lock-lines.
+ * After weave covers — continue locally. No network.
+ * Advance room detail / agency only — do not rehash locked name/look/kit as a paragraph.
  */
 export function stitchOpeningContinue(state: GameState): string {
   const seed = state.seed ?? state.saveId ?? '0';
   const bridge = pickBank(CONTINUE_BRIDGES, seed, 'continue');
   const a = state.openingEstablishment?.answers ?? {};
-  const name = a.name || state.character.name;
-  const look = a.wear || a.look || state.character.appearance || DEFAULT_LOOK;
-  const kit = a.pockets || a.kit || '';
   const place = cleanPlaceLabel(resolveLockedOpeningPlace(state, a) || a.where || state.currentLocation || 'here');
   const alone = isAloneArrivalOpening(state);
-  const nameBit =
-    name && !/unknown/i.test(name)
-      ? alone
-        ? ` The panel has you as ${name}.`
-        : ` Your name here is ${name}.`
-      : '';
-  const lookBit = ` You are wearing ${look}.`;
-  const kitBit = kit ? ` On you: ${kit}.` : '';
   const ground = alone
     ? pickBank(ALONE_ROOM_GROUND, seed, 'continue-ground')
     : pickBank(CROWD_ROOM_GROUND, seed, 'continue-ground');
   const pressure = pickBank(alone ? PRESSURE_ALONE : PRESSURE_CROWD, seed, 'continue-pressure');
-  return `${bridge} You are still in ${place}.${nameBit}${lookBit}${kitBit} ${ground} ${pressure}
+  return `${bridge} You are in ${place}. ${ground} ${pressure}
 
 1. Get your bearings
 2. ${alone ? 'Search the ruin' : 'Speak to whoever is dealing with you'}

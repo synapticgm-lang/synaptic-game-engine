@@ -120,6 +120,10 @@ export function detectRepairSituation(playerInput: string, _state: GameState): R
   }
 
   if (text.length <= 120 && /\bor\b/i.test(text)) {
+    // Room-layout / explore "doors or windows" is not an ambiguous action — never fire window-vs-guard copy.
+    if (isExploreOrLayoutAsk(text)) {
+      return null;
+    }
     const parts = text.split(/\bor\b/i);
     if (parts.length === 2) {
       const left = parts[0].trim();
@@ -134,6 +138,24 @@ export function detectRepairSituation(playerInput: string, _state: GameState): R
   }
 
   return null;
+}
+
+/** Look-around / exits / windows — not a Yes/No repair hinge. */
+export function isExploreOrLayoutAsk(playerInput: string): boolean {
+  const t = playerInput.replace(/\s+/g, ' ').trim().toLowerCase();
+  if (!t) return false;
+  if (
+    /\b(door|doors|doorway|doorways|window|windows|exit|exits|way out|crawlspace|corridor|hallway|passage|rooms?)\b/.test(
+      t
+    )
+    && /\b(is there|are there|any other|other|see|check|look|find|spot|notice)\b/.test(t)
+  ) {
+    return true;
+  }
+  if (/\b(doors?|doorways?|windows?)\b/.test(t) && /\bor\b/.test(t) && /\b(room|here|around)\b/.test(t)) {
+    return true;
+  }
+  return false;
 }
 
 export function pickRepairCopy(args: {

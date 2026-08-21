@@ -8,9 +8,9 @@ import { effectiveWriterTier, isTestLabEnabled } from '../game/testLab';
 import { equippedSetLabel, equippedSetName } from '../game/uiTheme';
 
 /** Visible after a hard refresh — if this is missing, Vercel is still serving the 16 Aug bundle. */
-export const HUD_BUILD_STAMP = '2026-08-21a';
+export const HUD_BUILD_STAMP = '2026-08-21b';
 const HUD_BUILD_TITLE =
-  'Debug 2026-08-21a — classifyStance import fix (choice pipeline)';
+  'Debug 2026-08-21b — opening banks, repair/layout intent, speaker scrub, HUD, refine soft-skip';
 
 interface Props {
   state: GameState;
@@ -125,23 +125,39 @@ export function Hud({ state, settings, onSettings, onOpenMap, onOpenQuestLog, on
       </div>
 
       {/* DEAD CENTER: Permanent Health & Mana/Resource Bars */}
-      <div className="flex items-center justify-center gap-2 sm:gap-6 flex-1 max-w-sm sm:max-w-lg mx-auto min-w-0">
-        {/* HP Bar */}
-        <div className="flex items-center gap-1 sm:gap-2 flex-1 min-w-0">
-          <span className="text-[10px] sm:text-sm font-bold text-rose-400 font-mono shrink-0">HP</span>
-          <div className="flex-1 min-w-[60px] sm:min-w-[100px] w-16 sm:w-full bg-slate-900 h-4 sm:h-6 rounded-full overflow-hidden border border-rose-900/70 shadow-inner">
-            <div className="bg-gradient-to-r from-rose-700 to-rose-500 h-full rounded-full transition-all duration-300" style={{ width: `${hpPercent}%` }} />
+      <div className="flex items-center justify-center gap-1.5 sm:gap-6 flex-1 max-w-[11rem] xs:max-w-sm sm:max-w-lg mx-auto min-w-0">
+        {/* HP Bar — value above bar on narrow so numbers never collide */}
+        <div className="flex flex-col gap-0.5 flex-1 min-w-0 max-w-[5.5rem] sm:max-w-none">
+          <div className="flex items-center justify-between gap-1 sm:hidden">
+            <span className="text-[9px] font-bold text-rose-400 font-mono shrink-0">HP</span>
+            <span className="text-[9px] font-mono font-bold text-slate-100 whitespace-nowrap tabular-nums">
+              {c ? `${c.hp}/${c.maxHp}` : '24/24'}
+            </span>
           </div>
-          <span className="text-[10px] sm:text-sm font-mono font-bold text-slate-100 whitespace-nowrap shrink-0">{c ? `${c.hp}/${c.maxHp}` : '24/24'}</span>
+          <div className="flex items-center gap-1 sm:gap-2 min-w-0">
+            <span className="hidden sm:inline text-sm font-bold text-rose-400 font-mono shrink-0">HP</span>
+            <div className="flex-1 min-w-0 h-2.5 sm:h-6 bg-slate-900 rounded-full overflow-hidden border border-rose-900/70 shadow-inner">
+              <div className="bg-gradient-to-r from-rose-700 to-rose-500 h-full rounded-full transition-all duration-300" style={{ width: `${hpPercent}%` }} />
+            </div>
+            <span className="hidden sm:inline text-sm font-mono font-bold text-slate-100 whitespace-nowrap shrink-0">{c ? `${c.hp}/${c.maxHp}` : '24/24'}</span>
+          </div>
         </div>
 
         {/* Adaptive Resource Bar (MP / SP / Energy) */}
-        <div className="flex items-center gap-1 sm:gap-2 flex-1 min-w-0">
-          <span className="text-[10px] sm:text-sm font-bold text-sky-400 font-mono shrink-0">{secondaryLabel}</span>
-          <div className="flex-1 min-w-[60px] sm:min-w-[100px] w-16 sm:w-full bg-slate-900 h-4 sm:h-6 rounded-full overflow-hidden border border-sky-900/70 shadow-inner">
-            <div className="bg-gradient-to-r from-sky-600 to-sky-400 h-full rounded-full transition-all duration-300" style={{ width: `${secondaryPercent}%` }} />
+        <div className="flex flex-col gap-0.5 flex-1 min-w-0 max-w-[5.5rem] sm:max-w-none">
+          <div className="flex items-center justify-between gap-1 sm:hidden">
+            <span className="text-[9px] font-bold text-sky-400 font-mono shrink-0">{secondaryLabel}</span>
+            <span className="text-[9px] font-mono font-bold text-slate-100 whitespace-nowrap tabular-nums">
+              {c ? `${secondaryCurrent}/${secondaryMax}` : '12/12'}
+            </span>
           </div>
-          <span className="text-[10px] sm:text-sm font-mono font-bold text-slate-100 whitespace-nowrap shrink-0">{c ? `${secondaryCurrent}/${secondaryMax}` : '12/12'}</span>
+          <div className="flex items-center gap-1 sm:gap-2 min-w-0">
+            <span className="hidden sm:inline text-sm font-bold text-sky-400 font-mono shrink-0">{secondaryLabel}</span>
+            <div className="flex-1 min-w-0 h-2.5 sm:h-6 bg-slate-900 rounded-full overflow-hidden border border-sky-900/70 shadow-inner">
+              <div className="bg-gradient-to-r from-sky-600 to-sky-400 h-full rounded-full transition-all duration-300" style={{ width: `${secondaryPercent}%` }} />
+            </div>
+            <span className="hidden sm:inline text-sm font-mono font-bold text-slate-100 whitespace-nowrap shrink-0">{c ? `${secondaryCurrent}/${secondaryMax}` : '12/12'}</span>
+          </div>
         </div>
       </div>
 

@@ -133,6 +133,13 @@ describe('repairEngine', () => {
     expect(detectRepairSituation('the window or the door', base)).toBe('ambiguous_action');
     expect(detectRepairSituation('aside or through', base)).toBe('ambiguous_action');
   });
+
+  it('does not treat room-layout door/window asks as ambiguous_action', () => {
+    expect(
+      detectRepairSituation('is there any other door ways or windows in the room', base)
+    ).toBeNull();
+    expect(detectRepairSituation('any other doorways or windows around here', base)).toBeNull();
+  });
 });
 
 describe('repairCopyBank', () => {

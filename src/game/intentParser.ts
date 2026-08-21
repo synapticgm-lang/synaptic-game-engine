@@ -74,6 +74,24 @@ const LOOK_OR_PHYSICAL =
 const SPEECH_OR_PROTEST =
   /\b(who'?s in charge|who is in charge|didn'?t agree|don'?t agree|are you joking|are you (?:serious|kidding)|i didn'?t (?:sign(?:\s+up)?|ask for|agree)|not agreeing|good luck\b|who'?s responsible|who (?:runs|controls) this|this is (?:a joke|ridiculous)|i didn'?t (?:ask|want) (?:for )?this|bend the knee|why should i|not much use|what(?:'s| is) (?:in )?it for me|don'?t (?:tell me|order me|make me)|who (?:are you|do you think)|i(?:'| a)?m not (?:your|here to)|i just (?:bend|kneel|obey|agree))\b/i;
 
+/** Room exits / windows / layout — observe, never dialogue. */
+const ROOM_LAYOUT_ASK =
+  /\b(?:is there|are there|any other|other)\b[\s\S]{0,40}\b(?:doors?|doorways?|windows?|exits?|crawlspaces?|corridors?|hallways?|passages?)\b|\b(?:doors?|doorways?|windows?)\b[\s\S]{0,20}\bor\b[\s\S]{0,20}\b(?:doors?|doorways?|windows?)\b|\b(?:doorways?|windows?|exits?)\b[\s\S]{0,30}\bin (?:the |this )?room\b/i;
+
+/** Look / layout questions about the current room — Perception, not Talk. */
+export function isRoomLayoutExploreAsk(action: string): boolean {
+  const t = action.replace(/\s+/g, ' ').trim();
+  if (!t) return false;
+  if (ROOM_LAYOUT_ASK.test(t)) return true;
+  if (
+    /\b(door|doors|doorway|doorways|window|windows|exit|exits|crawlspace|corridor|hallway)\b/i.test(t)
+    && /\b(is there|are there|any other|other|in (?:the |this )?room|around)\b/i.test(t)
+  ) {
+    return true;
+  }
+  return false;
+}
+
 /**
  * Joke, objection, refusal, or "who's in charge" — dialogue, not a physical action.
  * Look-around / scout / enter still wins when mixed into the same line.
@@ -82,6 +100,7 @@ export function isSpeechOrProtest(action: string): boolean {
   const t = action.replace(/\s+/g, ' ').trim();
   if (!t) return false;
   if (LOOK_OR_PHYSICAL.test(t)) return false;
+  if (isRoomLayoutExploreAsk(t)) return false;
   if (SPEECH_OR_PROTEST.test(t)) return true;
   if (/^(?:who|what|why|how|where|wait|hey|excuse me)\b/i.test(t)) return true;
   if (
@@ -129,6 +148,9 @@ export function primaryActionClause(input: string): string {
  */
 export function parsePlayerIntent(input: string, _state?: GameState): PlayerIntent {
   const text = primaryActionClause(input);
+  if (isRoomLayoutExploreAsk(text) || isRoomLayoutExploreAsk(input)) {
+    return { kind: 'observe', label: 'Observe', targets: [] };
+  }
   if (isSpeechOrProtest(text) || isSpeechOrProtest(input)) {
     if (/\b(refuse|won'?t|didn'?t\s+agree|don'?t\s+agree|decline)\b/i.test(text + ' ' + input)) {
       return { kind: 'refuse', label: 'Refuse / protest', targets: [] };

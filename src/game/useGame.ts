@@ -100,7 +100,7 @@ import { applyFactLocks, detectFactLockViolations } from './factLocks';
 import { dropInsultGear } from './wornGear';
 import { formatCampaignStoryName, getCampaignBibleById, isNsfwCampaign } from '@/data/campaigns';
 import { applyAccusationFromInput } from './mysteryCulprit';
-import { parsePlayerIntent, groundPlayerAction, isSpeechOrProtest } from './intentParser';
+import { parsePlayerIntent, groundPlayerAction, isSpeechOrProtest, isRoomLayoutExploreAsk } from './intentParser';
 import {
   checkObligationCoverage,
   buildObligationRetryBlock,
@@ -2383,12 +2383,21 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
           [...liveCurrent.log].reverse().find((e) => e.role === 'gm')?.content ?? '';
         const obligationCoverage = checkObligationCoverage(turnMandate.intentContract, probeText);
         const sameBeat = isSameBeat(probeText, liveCurrent.recentBeatFingerprints ?? []);
+        const softLedgerOnly =
+          obligationCoverage.missing.length > 0
+          && obligationCoverage.missing.every((o) => o.kind === 'open_ask' || o.kind === 'silenced_thread')
+          && storyHasBody(probeText)
+          && !isUnresolvedActionNarrative(sanitizedInput, probeText, intentForMandate, previousGm)
+          && (intentForMandate.kind === 'observe'
+            || intentForMandate.kind === 'search'
+            || isRoomLayoutExploreAsk(sanitizedInput));
         const needsStoryRetry =
-          !storyHasBody(probeText)
-          || isUnresolvedActionNarrative(sanitizedInput, probeText, intentForMandate, previousGm)
-          || !obligationCoverage.ok
-          || sameBeat
-          || probeLocks.some((l) => l.kind === 'weapon' || l.kind === 'cleared');
+          !softLedgerOnly
+          && (!storyHasBody(probeText)
+            || isUnresolvedActionNarrative(sanitizedInput, probeText, intentForMandate, previousGm)
+            || !obligationCoverage.ok
+            || sameBeat
+            || probeLocks.some((l) => l.kind === 'weapon' || l.kind === 'cleared'));
         // Fact-lock slips are cut locally after this. Only burn extra GM calls when
         // the turn did not resolve the player's action at all, or returned no story.
         if (needsStoryRetry) {

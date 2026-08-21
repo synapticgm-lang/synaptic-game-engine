@@ -15,12 +15,12 @@ export interface RepairCopyRow {
 }
 
 const CSV_SOURCE = `engine,personality,situation,player_visible_copy,interaction_contract,kid_mode,receipt_mode
-litrpg,Cold System,ambiguous_action,"You mean the **window**, not the guard—right? State remains unchanged until you choose.",System stays silent until the interpretation is resolved.,apply Kid Mode overrides when enabled,none until resolved
-litrpg,Chilled,ambiguous_action,"You mean the **window**, not the guard—right? We can keep it simple from there.",System stays silent until the interpretation is resolved.,apply Kid Mode overrides when enabled,none until resolved
-litrpg,Army,ambiguous_action,"You mean the **window**, not the guard—right? Name the hinge and we move.",System stays silent until the interpretation is resolved.,apply Kid Mode overrides when enabled,none until resolved
-litrpg,Dry,ambiguous_action,"You mean the **window**, not the guard—right? The ambiguity has done enough damage already.",System stays silent until the interpretation is resolved.,apply Kid Mode overrides when enabled,none until resolved
-litrpg,Fireside,ambiguous_action,"You mean the **window**, not the guard—right? I will hold the scene right here.",System stays silent until the interpretation is resolved.,apply Kid Mode overrides when enabled,none until resolved
-litrpg,Theatrical,ambiguous_action,"You mean the **window**, not the guard—right? The scene waits on that one distinction.",System stays silent until the interpretation is resolved.,apply Kid Mode overrides when enabled,none until resolved
+litrpg,Cold System,ambiguous_action,"Do you mean **force the door** or **listen first**—right? State remains unchanged until you choose.",System stays silent until the interpretation is resolved.,apply Kid Mode overrides when enabled,none until resolved
+litrpg,Chilled,ambiguous_action,"Do you mean **force the door** or **listen first**—right? We can keep it simple from there.",System stays silent until the interpretation is resolved.,apply Kid Mode overrides when enabled,none until resolved
+litrpg,Army,ambiguous_action,"Do you mean **force the door** or **listen first**—right? Name the hinge and we move.",System stays silent until the interpretation is resolved.,apply Kid Mode overrides when enabled,none until resolved
+litrpg,Dry,ambiguous_action,"Do you mean **force the door** or **listen first**—right? The ambiguity has done enough damage already.",System stays silent until the interpretation is resolved.,apply Kid Mode overrides when enabled,none until resolved
+litrpg,Fireside,ambiguous_action,"Do you mean **force the door** or **listen first**—right? I will hold the scene right here.",System stays silent until the interpretation is resolved.,apply Kid Mode overrides when enabled,none until resolved
+litrpg,Theatrical,ambiguous_action,"Do you mean **force the door** or **listen first**—right? The scene waits on that one distinction.",System stays silent until the interpretation is resolved.,apply Kid Mode overrides when enabled,none until resolved
 story_rpg,Cold System,ambiguous_action,Do you shove the crate **aside** or **through** the door? State remains unchanged until you choose.,"Keep the current image, not a reset.",apply Kid Mode overrides when enabled,none until resolved
 story_rpg,Chilled,ambiguous_action,Do you shove the crate **aside** or **through** the door? We can keep it simple from there.,"Keep the current image, not a reset.",apply Kid Mode overrides when enabled,none until resolved
 story_rpg,Army,ambiguous_action,Do you shove the crate **aside** or **through** the door? Name the hinge and we move.,"Keep the current image, not a reset.",apply Kid Mode overrides when enabled,none until resolved
