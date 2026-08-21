@@ -21,7 +21,7 @@ import {
   gameStateToLocalSlot,
 } from './cloudSync';
 import { filterSystemLogForEngine } from './systemLog';
-import { callGm, callGmAutoFight } from './aiService';
+import { callGm, callGmAutoFight, type GmResult } from './aiService';
 import { simulateCombat, buildAutoFightPrompt } from './combat';
 import type { EnemyStats } from './combat';
 import { isAutoFightWarningDismissed } from '@/components/AutoFightWarningModal';
@@ -54,7 +54,16 @@ import { fallbackSuggestionForState, findUnsupportedItemClaims, isSuggestionVali
 import { isChoiceGroundedInTurn, normalizeStoryCorpus, padChoicesToCount, resolvePipelineChoices, sceneSafeFallbacks } from './choicePipeline';
 import { sanitizeNarrativeMechanics, ensureTurnProse, ensureDamageNarration, ensureEncounterNarration, ensureXpNarration, stripUnearnedXpProse, stripResidualMechanicTags } from './narrativeSanitize';
 import { runWarden, sanitizeExtractedCharacterUpdates } from './warden';
-import { classifyTurnFailure, turnFailPlayerMessage } from './errorRepairWarden';
+import {
+  classifyTurnFailure,
+  gmProxyTimeoutMsForState,
+  shouldAutoRetryTurn,
+  transportRetryBackoffMs,
+  turnFailExhaustedMessage,
+  turnFailPlayerMessage,
+  turnTransportRetryMessage,
+  TURN_TRANSPORT_MAX_AUTO_RETRIES,
+} from './errorRepairWarden';
 import { applyStructuralEvents } from './structuralEvents';
 import { collectTurnTimelineFacts, mergeTimeline } from './timeline';
 import { applyCampaignCharacter, reconcileCampaignLoadout, resolveActiveCampaignBible, seedStateFromArchetype, seedStateFromCampaignBible } from './campaignSeed';
@@ -1598,6 +1607,7 @@ export function useGame() {
     }
 
     let skipRepairDetection = false;
+    let transportRetriesUsed = 0;
     if (current.pendingRepair) {
       const picked = matchRepairOption(input, current.pendingRepair);
       if (!picked) {
@@ -2315,10 +2325,49 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
         hasApiKey: !!(settingsRef.current.geminiApiKey || settingsRef.current.openrouterApiKey)
       });
       const gmStartTime = performance.now();
-      let result = await callGm(liveCurrent, gmPlayerPayload, settingsRef.current, activeLoreCards, (attempt, delayMs) => {
+      const gmTimeoutMs = gmProxyTimeoutMsForState(liveCurrent);
+      const rateLimitStatus = (attempt: number, delayMs: number) => {
         debugLogger.record('WARN', `Rate limited — retry ${attempt}/4`, { delayMs });
         setRetryStatus(`Rate limited — retry ${attempt}/4 in ${Math.round(delayMs / 1000)}s…`);
-      }, turnAbort.signal);
+      };
+      const callGmDurable = async (payload: string): Promise<GmResult> => {
+        let lastErr: unknown;
+        for (let attempt = 0; attempt <= TURN_TRANSPORT_MAX_AUTO_RETRIES; attempt++) {
+          if (turnAbort.signal.aborted) {
+            throw lastErr instanceof Error ? lastErr : new Error('aborted');
+          }
+          try {
+            return await callGm(
+              liveCurrent,
+              payload,
+              settingsRef.current,
+              activeLoreCards,
+              rateLimitStatus,
+              turnAbort.signal,
+              gmTimeoutMs,
+            );
+          } catch (err) {
+            lastErr = err;
+            if (turnAbort.signal.aborted) throw err;
+            const kind = classifyTurnFailure(err);
+            if (!shouldAutoRetryTurn(kind) || attempt >= TURN_TRANSPORT_MAX_AUTO_RETRIES) {
+              throw err;
+            }
+            transportRetriesUsed = attempt + 1;
+            const retryMsg = turnTransportRetryMessage(attempt + 1, kind);
+            debugLogger.record('WARN', 'GM transport auto-retry', {
+              attempt: attempt + 1,
+              kind,
+              timeoutMs: gmTimeoutMs,
+            });
+            setRetryStatus(retryMsg);
+            addToast(retryMsg, 'info');
+            await new Promise((r) => setTimeout(r, transportRetryBackoffMs(attempt)));
+          }
+        }
+        throw lastErr instanceof Error ? lastErr : new Error('GM transport retries exhausted');
+      };
+      let result = await callGmDurable(gmPlayerPayload);
 
       // System-wide: if the model returned bridge-only / empty / no findings, regenerate.
       // Never swap a real GM beat for a local story template.
@@ -2372,8 +2421,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
             .filter(Boolean)
             .join('\n\n');
           setRetryStatus('Refining story resolution…');
-          result = await callGm(
-            liveCurrent,
+          result = await callGmDurable(
             buildResolutionUserPayload({
               mandateBlock: turnMandate.block,
               playerAction: sanitizedInput,
@@ -2383,13 +2431,6 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
               factLocks: probeLocks,
               extraRetryBlock: extraBlocks || undefined,
             }),
-            settingsRef.current,
-            activeLoreCards,
-            (attempt, delayMs) => {
-              debugLogger.record('WARN', `Rate limited — retry ${attempt}/4`, { delayMs });
-              setRetryStatus(`Rate limited — retry ${attempt}/4 in ${Math.round(delayMs / 1000)}s…`);
-            },
-            turnAbort.signal,
           );
           probeText = probeOf(result.text);
           const retryUnresolved = isUnresolvedActionNarrative(
@@ -3455,8 +3496,15 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
       keepSentLineOnFail(sanitizedInput || lastInputRef.current || input);
       resetTurnUi();
       const failKind = classifyTurnFailure(e);
-      const playerMsg = turnFailPlayerMessage(failKind);
-      debugLogger.record('WARN', 'turn fail classified', { failKind, errMsg });
+      const playerMsg =
+        transportRetriesUsed > 0
+          ? turnFailExhaustedMessage(failKind)
+          : turnFailPlayerMessage(failKind);
+      debugLogger.record('WARN', 'turn fail classified', {
+        failKind,
+        errMsg,
+        transportRetriesUsed,
+      });
       setError(playerMsg);
       addToast(playerMsg, 'error');
     } finally {

@@ -46,6 +46,32 @@ export type ErrorRepairResult = {
 const ALONE_QUEST_BAD =
   /Hear why Pellane wanted you|Swear the Pact, refuse it, or walk away before anyone owns your name/i;
 
+/** Default / early / first-post-open proxy budgets (Class A). */
+export const GM_PROXY_TIMEOUT_DEFAULT_MS = 30_000;
+export const GM_PROXY_TIMEOUT_EARLY_MS = 55_000;
+export const GM_PROXY_TIMEOUT_FIRST_POST_OPEN_MS = 75_000;
+
+/** Initial attempt + this many transport retries (timeout / network / empty). */
+export const TURN_TRANSPORT_MAX_AUTO_RETRIES = 2;
+export const TURN_TRANSPORT_RETRY_BACKOFF_MS = [700, 1800] as const;
+
+/**
+ * Longer budget for the first real GM turns after opening covers (and early honeymoon).
+ * Free/DeepSeek cold starts routinely exceed the old 30s hard abort.
+ */
+export function gmProxyTimeoutMsForState(
+  state: Pick<GameState, 'turn' | 'openingEstablishment' | 'storyStartTextTurnsRemaining'>
+): number {
+  const turn = state.turn ?? 0;
+  const est = state.openingEstablishment;
+  const honeymoon = state.storyStartTextTurnsRemaining ?? 0;
+  if (est?.complete === true && (honeymoon > 0 || turn <= 5)) {
+    return GM_PROXY_TIMEOUT_FIRST_POST_OPEN_MS;
+  }
+  if (turn <= 8) return GM_PROXY_TIMEOUT_EARLY_MS;
+  return GM_PROXY_TIMEOUT_DEFAULT_MS;
+}
+
 /** Map proxy / fetch errors to a stable class for toast + retry policy. */
 export function classifyTurnFailure(err: unknown): TurnFailKind {
   const msg = err instanceof Error ? err.message : String(err ?? '');
@@ -53,7 +79,11 @@ export function classifyTurnFailure(err: unknown): TurnFailKind {
   if (/still compiling|aborted|AbortError|timed?\s*out/i.test(msg) || name === 'AbortError') {
     return 'timeout';
   }
-  if (/Failed to fetch|NetworkError|network|ECONNRESET|ENOTFOUND/i.test(msg)) {
+  if (
+    /Failed to fetch|NetworkError|network|ECONNRESET|ENOTFOUND|Load failed|Network request failed/i.test(
+      msg
+    )
+  ) {
     return 'network';
   }
   if (/429|Rate limit/i.test(msg)) return 'rate_limit';
@@ -82,9 +112,33 @@ export function turnFailPlayerMessage(kind: TurnFailKind): string {
   }
 }
 
-/** Prefer one auto-retry for flaky transport; never for auth/client bugs. */
+/** After transport auto-retries are exhausted — still restores the draft. */
+export function turnFailExhaustedMessage(kind: TurnFailKind): string {
+  switch (kind) {
+    case 'timeout':
+      return 'Still timing out after retry. Your line is back in the box — tap send once more.';
+    case 'network':
+      return 'Still no connection after retry. Your line is back in the box — check signal and send again.';
+    case 'empty':
+      return 'Still empty after retry. Your line is back — try once more.';
+    default:
+      return turnFailPlayerMessage(kind);
+  }
+}
+
+export function turnTransportRetryMessage(attempt: number, kind: TurnFailKind): string {
+  if (kind === 'network') return `Connection glitch — retrying (${attempt})…`;
+  if (kind === 'timeout') return `GM still working — retrying (${attempt})…`;
+  return `Empty reply — retrying (${attempt})…`;
+}
+
+/** Prefer auto-retry for flaky transport; never for auth/client bugs. */
 export function shouldAutoRetryTurn(kind: TurnFailKind): boolean {
   return kind === 'timeout' || kind === 'network' || kind === 'empty';
+}
+
+export function transportRetryBackoffMs(retryIndex: number): number {
+  return TURN_TRANSPORT_RETRY_BACKOFF_MS[retryIndex] ?? 2000;
 }
 
 function stampAloneArrival(state: GameState, notes: ErrorRepairNote[]): GameState {

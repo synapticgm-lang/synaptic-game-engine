@@ -12,6 +12,7 @@ import {
   resolveClientTextApiKey,
 } from './distributionChannel';
 import { forceFreeModel } from './opsKillSwitches';
+import { GM_PROXY_TIMEOUT_DEFAULT_MS } from './errorRepairWarden';
 
 export type GmProxyMode = 'turn' | 'auto-fight';
 
@@ -40,8 +41,6 @@ function pickClientApiKey(settings: Settings): string | undefined {
   return key || undefined;
 }
 
-const GM_PROXY_TIMEOUT_MS = 30_000;
-
 export async function invokeGmProxy(params: {
   mode: GmProxyMode;
   state: GameState;
@@ -50,6 +49,8 @@ export async function invokeGmProxy(params: {
   activeLoreCards?: LoreCard[];
   onRetry?: (attempt: number, delayMs: number) => void;
   signal?: AbortSignal;
+  /** Per-call budget; early / first-post-open turns pass a longer value (Class A). */
+  timeoutMs?: number;
 }): Promise<string> {
   if (!isGmProxyAvailable()) {
     throw new Error('GM proxy unavailable — configure VITE_SUPABASE_URL / VITE_SUPABASE_ANON_KEY.');
@@ -108,8 +109,13 @@ export async function invokeGmProxy(params: {
       hasClientKey: !!body.clientApiKey,
     });
 
+    const timeoutMs = Math.max(5_000, params.timeoutMs ?? GM_PROXY_TIMEOUT_DEFAULT_MS);
     const controller = new AbortController();
-    const timer = setTimeout(() => controller.abort(), GM_PROXY_TIMEOUT_MS);
+    let timedOut = false;
+    const timer = setTimeout(() => {
+      timedOut = true;
+      controller.abort();
+    }, timeoutMs);
     const onExternalAbort = () => controller.abort();
     if (params.signal) {
       if (params.signal.aborted) controller.abort();
@@ -124,7 +130,11 @@ export async function invokeGmProxy(params: {
         signal: controller.signal,
       });
     } catch (err) {
-      if (controller.signal.aborted) {
+      const externalAborted = !!params.signal?.aborted;
+      if (externalAborted) {
+        throw err instanceof Error ? err : new Error(String(err));
+      }
+      if (timedOut || controller.signal.aborted) {
         throw new Error('The System is still compiling. Try again, or cancel and keep the last scene.');
       }
       throw err;

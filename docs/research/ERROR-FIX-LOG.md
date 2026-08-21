@@ -13,7 +13,7 @@
 | Class | How it keeps coming back | Lasting owner | Status |
 |---|---|---|---|
 | **B. Opening contract** | Alone vs crowd copy; Earth-origin always asked; templated covers; turn meter confusion | `openingStitch.applyOpeningContract` + card decks | **Shipped 20f–20l** — Earth deferred; seed-varied asks; instant stitch; continue grounds room; Circle Blessing unequipped |
-| **A. Turn / proxy** | Timeout → “still compiling”; empty GM; Free path dies on first post-open turn | `TurnRecovery` + `gmProxy` | Partial (classify toast). Need auto-retry |
+| **A. Turn / proxy** | Timeout → “still compiling”; empty GM; Free path dies on first post-open turn | `classifyTurnFailure` + `gmProxy` + `useGame` transport retry | **Shipped 20p** — auto-retry (2×) + longer first-post-open budget |
 | **C. Quest / journal** | Wave/First Blood leak before open complete; wrong starter text for alone; unlock on journal open | `questPlay` + save repair + `questJournalEnrich` / STATUS dedupe | Partial — alone quest adapt; generic provenance hidden (20l); Focus/Unlocked/Ledger echo collapsed |
 | **D. Continuity / prose** | Nearby-building tautology; perspective slips; canned stubs; invented kit; talk to absent NPCs; prose≠buttons | `runWarden` + `proseWarden` + `choicePipeline` alone grounding | Active — 20l: strip numbered lists; alone/empty presence gate; ActionBar pads from last GM prose |
 | **E. Chrome / HUD** | Stamp vs bug chip; HP/MP squash on ~384px; theme frame over name | `HudLayout` contract + viewport tests | Weak — cosmetic stamps keep “fixing” without layout ownership |
@@ -34,7 +34,8 @@
 | 17 playtest | Empty/abort burned capacity | Refund text turns | First post-open still dies |
 | 19ak | `forceFreeModel` missing import | Import fix | Model swaps without compile gate |
 | 20a | Free → DeepSeek | Catalog change | First real turn after open: compile timeout (20e log) |
-| 20e open | “Where am I” no reply | *Noted* | Class A not owned |
+| 20e open | “Where am I” / connection drop | Classify toast only | No auto-retry / 30s budget |
+| **20p** | Connection drop / first-post-open timeout | Auto-retry ×2 + 75s/55s budgets + exhausted toast | — |
 
 ### Opening (Class B)
 
@@ -93,11 +94,11 @@
    - Stamp `aloneArrival` from hook if missing
    - Rewrite alone-mismatched starter quest copy
    - Normalize opening gate (`pending` empty ⇒ complete)
-2. **On turn fail** — single path (to implement fully next ship):
+2. **On turn fail** — single path:
    - Classify: `timeout` | `network` | `empty` | `rate_limit` | `auth` | `client_bug`
    - Always: refund capacity, restore draft, clear in-flight
-   - Once: auto-retry on `timeout`/`network` (backoff)
-   - Toast: human class, not “still compiling”
+   - Up to 2×: auto-retry on `timeout`/`network`/`empty` (backoff; longer proxy budget for first post-open / honeymoon)
+   - Toast: human class on fail; “retrying…” during transport retry; exhausted copy if retries die
 3. **On New Game** — OpeningContract decides covers (no ad-hoc string patches in `useGame`)
 4. **Logging** — `debugLogger` + event-log codes `ERR_*` so playtest exports map to class
 
@@ -110,9 +111,9 @@ When a playtest ticket looks like a prior Done item, **extend the class owner** 
 | Open note | Class |
 |---|---|
 | HUD still squashed | E |
-| Skip Earth-origin at start | B |
-| Covers copy-pasted + burn turns | B (+ A UI for meter) |
-| No response after opening | A |
+| Skip Earth-origin at start | B (deferred by 20f; confirm in play) |
+| Covers copy-pasted + burn turns | B (mostly shipped 20f+) |
+| No response after opening / connection drop | A — **shipped 20p** |
 
 ---
 

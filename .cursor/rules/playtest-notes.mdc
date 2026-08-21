@@ -10,13 +10,11 @@ John is playtesting live. Collect issues here. Do not implement until he asks fo
 ## Open
 
 - **2026-08-20e HUD still squashed (mobile):** HP/MP values overlap on the top bar (e.g. “24/24” into “12/A”); name truncates; bug + chevron still tight. Stamp may already be 20e — needs a real narrow-viewport layout pass (not just hiding the stamp on the bug chip).
-- **2026-08-20e no response after opening (“Where am I”):** First real turn after weave covers + quest unlock hung / failed. Event log: `sendAction failed` → “The System is still compiling…”. Partial: honest toast via Error Repair Warden; still need auto-retry / longer first post-open budget.
 
 ## Waiting (research — not tickets yet)
 
 - **Outdoor zone map depth:** Visual pass shipped 20m (topo grain, paths, POI pins vs CAD streets). Still not a full MMO zone map (terrain art layers, fog-by-discovery outdoors, district zoom). Further outdoor depth stays Waiting.
-- **AI-authored building graph (optional):** Code now authors a multi-room interior floor plan on Map open (`interior-plan`, stamp 20n) — full outline + visited/unvisited fog + secret dashed paths. Still not an LLM pre-authoring a unique building as Tier-1 continuity. Optional next: AI/code hybrid room graph per named landmark.
-- **Error Repair Warden:** auto-retry + longer first post-open budget still pending
+- **AI-authored building graph (optional):** Code now authors a multi-room interior floor plan on Map open (`interior-plan`, stamp 20n+) — full outline + visited/unvisited fog + door marks / secret dashed paths + varied footprints (20q). Still not an LLM pre-authoring a unique building as Tier-1 continuity. Optional next: AI/code hybrid room graph per named landmark.
 - Server capacity / Stripe live secrets / counsel legal pack / Kid Mode public gate — ops, not playtest tickets
 - Full a11y release gate, Expert author tools, audio lite, full comic — deliberate later / No-Go near-term
 - Manus optional: Snapshot+screenshots E1/E2; post-commit streaming UI; counsel outline
@@ -24,6 +22,8 @@ John is playtesting live. Collect issues here. Do not implement until he asks fo
 
 ## Done (already shipped)
 
+- **2026-08-20q interior doors + varied footprints:** Normal room links render as door marks on walls (not thin crack lines); damaged/secret edges are dashed/broken only when typed; GM exit authority + alone opening/choice pads prefer doorway/corridor; seed-stable non-uniform room sizes (thin corridors, wider halls). HUD stamp 20q
+- **2026-08-20p Class A turn recovery:** Auto-retry up to 2× on timeout/network/empty GM turns; longer proxy budget for first post-open / honeymoon turns (75s) and early turns (55s); exhausted toast if still failing; player line + draft restore unchanged. HUD stamp 20p
 - **2026-08-20o multi-floor interiors:** Ruined buildings / halls / cathedrals / manors author 2–3 z-levels (B1 / 1F / 2F) with stair links; tiny sheds stay single-floor. Map UI floor picker filters draw per level (inspect other floors RE-style); visited/unvisited/secret fog per floor; short room labels. Copyright-safe original chrome. HUD stamp 20o
 - **2026-08-20n RE-like interior floor plan:** Short room labels (never the location essay as YOU ARE HERE); code-authored multi-room building graph on Map open (seeded 5–10 rooms); full footprint visible; visited = open fill, mapped-unvisited = shaded/?, secret = dashed/locked until skill/story reveal; GM rail locks layout to the graph. Copyright-safe original chrome (not Capcom/RE art). HUD stamp 20n
 - **2026-08-20m adventure map chrome:** Copyright-safe fantasy adventure-map UX (parchment/topo textures under `public/maps/`, original you-are-here arrow + compass, dungeon floor-plan interiors, outdoor zone-feel paths instead of dashed street CAD). No Blizzard/WoW assets, trademarks, or zone names. AI-authored building graph still Waiting (separate from this visual pass). HUD stamp 20m
