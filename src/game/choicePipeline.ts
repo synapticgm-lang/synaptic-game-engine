@@ -9,7 +9,7 @@ import {
 import { logger } from './logger';
 import { getTierDefinition } from './subscriptionTiers';
 import { CHOICE_TIER_PROMPT_RULES, formatChoiceTierModeDna } from './choiceTierRules';
-import { applyStanceDensity, classifyPath, isCombatLockedTurn } from './stanceDensity';
+import { applyStanceDensity, classifyPath, classifyStance, isCombatLockedTurn } from './stanceDensity';
 import { isAloneArrivalOpening } from './openingEstablishment';
 import { isInteriorMap } from './placeAuthority';
 import { listInteriorExitsFromHere } from './mapEngine';
