@@ -34,16 +34,39 @@ export function LeftDrawer({ state, open, onClose }: Props) {
 function WorldSection({ state }: { state: GameState }) {
   const ledger = normalizeWorldLedger(state.worldLedger);
   const deals = ledger.deals.filter((d) => d.active);
+  const factions = ledger.factionStandings ?? [];
+  const hasWork =
+    deals.length > 0 || ledger.holdings.length > 0 || ledger.hostiles.length > 0 || factions.length > 0;
+
+  const standingClass = (standing: string) => {
+    if (standing === 'friendly' || standing === 'allied') return 'bg-emerald-900/60 text-emerald-300';
+    if (standing === 'hostile' || standing === 'unfriendly') return 'bg-rose-900/60 text-rose-300';
+    return 'bg-zinc-800 text-zinc-300';
+  };
+
   return (
     <section>
       <h3 className="sgm-info-heading mb-2 flex items-center gap-2 text-sm uppercase tracking-wider">
         <Globe2 size={14} /> World
       </h3>
       <p className="mb-2 text-xs text-slate-400">{clockLabel(ledger.clock)}</p>
-      {deals.length === 0 && ledger.holdings.length === 0 && ledger.hostiles.length === 0 ? (
+      {!hasWork ? (
         <p className="text-xs text-slate-500">No off-screen deals or holdings yet.</p>
       ) : (
         <ul className="space-y-1.5">
+          {factions.map((f) => (
+            <li key={f.id} className="rounded-md bg-slate-900 px-2.5 py-1.5 text-xs">
+              <div className="flex items-center justify-between gap-2">
+                <span className="font-medium text-slate-200">{f.name}</span>
+                <span className={`rounded px-1.5 py-0.5 text-[10px] uppercase tracking-wide ${standingClass(f.standing)}`}>
+                  {f.standing}
+                </span>
+              </div>
+              {f.notes?.trim() ? (
+                <div className="mt-0.5 text-slate-500">{f.notes.trim()}</div>
+              ) : null}
+            </li>
+          ))}
           {deals.map((d) => (
             <li key={d.id} className="rounded-md bg-slate-900 px-2.5 py-1.5 text-xs">
               <div className="font-medium text-slate-200">{d.name}</div>

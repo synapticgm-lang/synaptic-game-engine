@@ -292,6 +292,25 @@ export interface WorldActor {
   lastSeenTurn: number;
 }
 
+/** Faction relationship on the living-world ledger (code-owned; writer narrates, does not invent standings). */
+export type FactionStandingLevel =
+  | 'hostile'
+  | 'unfriendly'
+  | 'neutral'
+  | 'friendly'
+  | 'allied';
+
+export interface FactionStanding {
+  id: string;
+  name: string;
+  standing: FactionStandingLevel;
+  influence?: number;
+  notes?: string;
+}
+
+/** How hard the sandbox hits — prompt tone only; numbers stay on the ledger. */
+export type PowerScaling = 'gritty' | 'balanced' | 'overpowered';
+
 export interface WorldLedger {
   clock: WorldClock;
   caravans: TradeCaravan[];
@@ -300,6 +319,8 @@ export interface WorldLedger {
   hostiles: WorldHostile[];
   actors: WorldActor[];
   pendingHiddenEvents: string[];
+  /** Named faction standings — empty until the campaign establishes them. */
+  factionStandings?: FactionStanding[];
 }
 
 export interface ActiveEncounter {
@@ -480,6 +501,16 @@ export interface GameState {
    * Absent on old saves = Settings `gmVoiceProfileId`, then cold registrar.
    */
   systemPersonality?: import('./gmVoiceProfile').SystemPersonalityId;
+  /**
+   * Simulationist sandbox power tone. Absent on old saves = balanced (repair hydrates).
+   * Prompt only — HP/XP/loot still come from code.
+   */
+  powerScaling?: PowerScaling;
+  /**
+   * Current-zone threat tier until the active place/sheet carries `threatTier`.
+   * Prefer `locationSheet.threatTier` / place record when set.
+   */
+  threatTier?: number;
 }
 
 export type RepairSituation = import('./repairEngine').RepairSituation;
@@ -759,6 +790,11 @@ export interface LocationSheet {
   timeOfDay?: string;
   /** Dungeon/site danger T1–T4 — single authority for System/journal (not map scale). */
   dangerTier?: MapTier;
+  /**
+   * Simulationist zone threat (vs player level). Prefer this over GameState.threatTier
+   * when the sheet knows the zone; falls back to dangerTier / GameState.threatTier in prompts.
+   */
+  threatTier?: number;
   /** Which map view this place uses. */
   mapScale?: MapScale;
   interactables: LocationInteractable[];
@@ -778,6 +814,8 @@ export interface PlaceRecord {
   loreName?: string;
   aliases?: string[];
   dangerTier?: MapTier;
+  /** Durable zone threat when the place registry owns it. */
+  threatTier?: number;
   mapScale?: MapScale;
   dungeonRef?: string | null;
   arcSummary?: string;

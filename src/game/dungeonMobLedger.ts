@@ -4,7 +4,7 @@ import { currentDungeonNode } from './dungeonSeed';
 import { isExplorableDungeon } from './placeAuthority';
 
 /** Bump when repair rules change — independent of CURRENT_SAVE_VERSION. */
-export const CURRENT_SAVE_REPAIR_REVISION = 1;
+export const CURRENT_SAVE_REPAIR_REVISION = 2;
 
 export type NodeMob = NonNullable<NodeHidden['mobs']>[number];
 export type LooseNodeItem = NonNullable<NodeHidden['looseItems']>[number];

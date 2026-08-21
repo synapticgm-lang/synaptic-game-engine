@@ -8,7 +8,8 @@ import {
 } from './suggestionValidation';
 import { logger } from './logger';
 import { getTierDefinition } from './subscriptionTiers';
-import { applyStanceDensity, classifyStance, isCombatLockedTurn } from './stanceDensity';
+import { CHOICE_TIER_PROMPT_RULES, formatChoiceTierModeDna } from './choiceTierRules';
+import { applyStanceDensity, classifyPath, isCombatLockedTurn } from './stanceDensity';
 import { isAloneArrivalOpening } from './openingEstablishment';
 import { isInteriorMap } from './placeAuthority';
 import { listInteriorExitsFromHere } from './mapEngine';
@@ -572,7 +573,11 @@ ${rejectedSummary || '(none)'}
 
 Generate 3-4 grounded choices now.`;
 
-  const raw = await callSmallModel(settings, CHOICE_TIER_SYSTEM, userPrompt);
+  const raw = await callSmallModel(
+    settings,
+    `${CHOICE_TIER_SYSTEM}\n\n${formatChoiceTierModeDna(state.engineMode)}\n\n${CHOICE_TIER_PROMPT_RULES}`,
+    userPrompt
+  );
   return extractChoiceLines(raw);
 }
 
@@ -586,20 +591,26 @@ export function sceneSafeFallbacks(
     || /\b(look around|surroundings|scout|circuit)\b/i.test(lastPlayerAction);
   const alone = isAloneOrEmptyScene(state, storyProse);
   const options: string[] = [];
+
+  // Path1 Direct / Physical
   if (!justLooked) options.push(fallbackSuggestionForState(state));
   if (/\b(car|van|vehicle|truck|wreck)\b/i.test(storyProse)) {
     options.push('Search the vehicle more carefully');
   }
+  if (/\b(door|gate|path|corridor|alley|gap|arch|rubble)\b/i.test(storyProse)) {
+    options.push('Force a path forward');
+  }
+
+  // Path2 Diplomatic / Trade / Faction — honor alone invent gate
   if (!alone && /\b(people|crowd|someone|scream|shout)\b/i.test(storyProse)) {
     options.push('Call out to a bystander');
   }
-  if (/\b(panel|system)\b/i.test(storyProse)) {
-    options.push('Read the System panel more closely');
-  }
-  if (/\b(crystal|crack)\b/i.test(storyProse) && !alone) {
+  if (!alone && /\b(crystal|crack)\b/i.test(storyProse)) {
     options.push('Inspect the crystals breaking the street');
   }
   if (/\b(alley)\b/i.test(storyProse) && !alone) options.push('Check the nearest alley');
+
+  // Path3 Solitary / Stealth
   if (alone) {
     options.push('Search the ruin carefully');
     options.push('Find a way out');
@@ -620,7 +631,16 @@ export function sceneSafeFallbacks(
     }
   }
   options.push('Wait and listen carefully');
-  if ((state.companions ?? []).length > 0) options.push('Check in with your companion');
+
+  const companion = (state.companions ?? []).find((c) => c.name?.trim());
+  if (companion?.name) {
+    options.push(`Check in with ${companion.name.trim()}`);
+    options.push('Scout ahead alone while they hold position');
+  }
+
+  if (/\b(panel|system)\b/i.test(storyProse)) {
+    options.push('Read the System panel more closely');
+  }
   if (state.activeEncounter && state.activeEncounter.hp > 0) {
     options.push('Strike with what you are holding');
     options.push('Guard and watch for the next opening');
@@ -651,7 +671,22 @@ export function sceneSafeFallbacks(
   if (!justLooked && options.length < 3) {
     options.push('Examine the immediate surroundings');
   }
-  return Array.from(new Set(options.map(sanitizeChoiceLabel).filter(Boolean))).slice(0, 4);
+
+  // Prefer a Direct / Diplomatic / Solitary spread when possible.
+  const unique = Array.from(new Set(options.map(sanitizeChoiceLabel).filter(Boolean)));
+  const byPath: Record<string, string[]> = { direct: [], diplomatic: [], solitary: [], other: [] };
+  for (const opt of unique) {
+    byPath[classifyPath(opt)].push(opt);
+  }
+  const ordered: string[] = [];
+  for (const key of ['direct', 'diplomatic', 'solitary', 'other'] as const) {
+    for (const opt of byPath[key]) {
+      if (ordered.length >= 4) break;
+      if (inventsPresenceOnEmptyScene(opt, state, storyProse)) continue;
+      ordered.push(opt);
+    }
+  }
+  return ordered.slice(0, 4);
 }
 
 export function padChoicesToCount(
@@ -776,4 +811,4 @@ export async function resolvePipelineChoices(params: {
   };
 }
 
-export { CHOICE_TIER_PROMPT_RULES } from './choiceTierRules';
+export { CHOICE_TIER_PROMPT_RULES, formatChoiceTierModeDna } from './choiceTierRules';

@@ -52,6 +52,34 @@ export function resolveDangerTier(state: GameState): MapTier | null {
   return null;
 }
 
+/**
+ * Simulationist zone threat vs player level.
+ * Prefer locationSheet.threatTier, then matching PlaceRecord.threatTier,
+ * then GameState.threatTier, then dungeon/sheet dangerTier.
+ */
+export function resolveThreatTier(state: GameState): number | null {
+  const sheetTier = state.locationSheet?.threatTier;
+  if (typeof sheetTier === 'number' && Number.isFinite(sheetTier)) return sheetTier;
+
+  const placeName = (state.locationSheet?.name ?? state.currentLocation ?? '').trim().toLowerCase();
+  if (placeName && state.places?.length) {
+    const match = state.places.find((p) => {
+      const names = [p.name, p.loreName, ...(p.aliases ?? [])].filter(Boolean) as string[];
+      return names.some((n) => n.trim().toLowerCase() === placeName) || p.id === placeName;
+    });
+    if (typeof match?.threatTier === 'number' && Number.isFinite(match.threatTier)) {
+      return match.threatTier;
+    }
+  }
+
+  if (typeof state.threatTier === 'number' && Number.isFinite(state.threatTier)) {
+    return state.threatTier;
+  }
+
+  const danger = resolveDangerTier(state);
+  return danger ?? null;
+}
+
 export function resolveMapScale(state: GameState): MapScale {
   const dungeon = state.activeDungeon;
   if (isInteriorMap(dungeon)) return 'interior';

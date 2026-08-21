@@ -1,11 +1,18 @@
-import type { GameState, SituationPacket, WorldLedger } from './types.ts';
+import type { FactionStanding, GameState, PowerScaling, SituationPacket, WorldLedger } from './types.ts';
 import { formatTimelineForPrompt } from './timelineFormat.ts';
 import { playerFacingLocation } from './locationName.ts';
 import { formatSceneFactsForPrompt } from './sceneFacts.ts';
 import { formatSceneManifestForPrompt } from './sceneManifest.ts';
 import { formatCampaignContractForPrompt } from './campaignContract.ts';
 import { formatHiddenRoomLedger } from './dungeonSeed.ts';
-import { dangerTierLabel, mapScaleLabel, resolveDangerTier, resolveMapScale, isInteriorMap } from './placeAuthority.ts';
+import {
+  dangerTierLabel,
+  mapScaleLabel,
+  resolveDangerTier,
+  resolveMapScale,
+  resolveThreatTier,
+  isInteriorMap,
+} from './placeAuthority.ts';
 import { formatPlacesForPrompt } from './places.ts';
 import { formatCampaignMemoryForPrompt } from './campaignMemory.ts';
 import { formatTutorialBeatMandate } from './tutorialBeats.ts';
@@ -13,6 +20,36 @@ import { formatLocalityForPrompt } from './locality.ts';
 import { formatHiddenCulpritRail } from './mysteryCulprit.ts';
 import { formatInteriorExploreAuthority } from './mapEngine.ts';
 
+export function effectivePowerScaling(state: GameState): PowerScaling {
+  return state.powerScaling ?? 'balanced';
+}
+
+function formatFactionMatrix(standings: FactionStanding[]): string {
+  if (!standings.length) return '';
+  const parts = standings.map((f) => {
+    const influence =
+      typeof f.influence === 'number' && Number.isFinite(f.influence)
+        ? ` influence=${f.influence}`
+        : '';
+    const notes = f.notes?.trim() ? ` — ${f.notes.trim()}` : '';
+    return `${f.name}=${f.standing}${influence}${notes}`;
+  });
+  return `[FACTION MATRIX: ${parts.join('; ')}]`;
+}
+
+function formatSimulationistBlocks(state: GameState): string[] {
+  const blocks: string[] = [];
+  const threat = resolveThreatTier(state);
+  const level = Math.max(1, state.character?.level ?? 1);
+  if (threat != null) {
+    blocks.push(`[ZONE THREAT: Tier ${threat} vs Player Level ${level}]`);
+  }
+  const factions = state.worldLedger?.factionStandings ?? [];
+  const matrix = formatFactionMatrix(factions);
+  if (matrix) blocks.push(matrix);
+  blocks.push(`[POWER SCALING: ${effectivePowerScaling(state)}]`);
+  return blocks;
+}
 /**
  * Rebuild the live Situation packet from structured state.
  * This is what the GM must treat as "where we are right now."
@@ -113,6 +150,7 @@ export function formatSituationForPrompt(state: GameState): string {
     state.activeDungeon && isInteriorMap(state.activeDungeon)
       ? formatInteriorExploreAuthority(state.activeDungeon)
       : '';
+  const simulationist = formatSimulationistBlocks(state);
   const none = '(none)';
   const lines = [
     manifestBlock,
@@ -120,6 +158,7 @@ export function formatSituationForPrompt(state: GameState): string {
     currentLine,
     previousLine,
     placeRegistry ? `PLACE REGISTRY (authority for name/tier/arc):\n${placeRegistry}` : '',
+    ...simulationist,
     sceneBlock || '',
     `Encounter: ${s.encounter}`,
     `Dungeon: ${s.dungeon}`,

@@ -5,6 +5,7 @@ import {
 } from './dungeonMobLedger';
 import { applyErrorRepairs } from './errorRepairWarden';
 import { debugLogger } from './debugLogger';
+import { emptyWorldLedger } from './worldSim';
 
 export type SaveRepairSeverity = 'cosmetic' | 'semantic';
 
@@ -54,6 +55,26 @@ export function repairSaveSchema(state: GameState): SaveRepairResult {
   const mobLedger = normalizeDungeonMobLedger(next, (msg) => note(msg, 'semantic'));
   if (mobLedger.changed) {
     next = mobLedger.state;
+  }
+
+  if (next.powerScaling == null) {
+    next = { ...next, powerScaling: 'balanced' };
+    note('default powerScaling balanced', 'cosmetic');
+  }
+
+  const ledger = next.worldLedger;
+  if (ledger && !Array.isArray(ledger.factionStandings)) {
+    next = {
+      ...next,
+      worldLedger: { ...ledger, factionStandings: [] },
+    };
+    note('hydrate worldLedger.factionStandings', 'cosmetic');
+  } else if (!ledger) {
+    next = {
+      ...next,
+      worldLedger: emptyWorldLedger(),
+    };
+    note('hydrate empty worldLedger with factionStandings', 'cosmetic');
   }
 
   if (dirty) {

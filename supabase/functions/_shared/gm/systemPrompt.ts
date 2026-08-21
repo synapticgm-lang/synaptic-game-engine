@@ -2,7 +2,7 @@ import type { GameState, Settings, LoreCard, GmStrictness } from './types.ts';
 import { buildArchetypeRules, getDefaultArchetype } from './archetypes.ts';
 import { computeInventoryCapacity } from './inventory.ts';
 import { resolvePanelBudget } from './panelBudget.ts';
-import { CHOICE_TIER_PROMPT_RULES } from './choiceTierRules.ts';
+import { CHOICE_TIER_PROMPT_RULES, formatChoiceTierModeDna } from './choiceTierRules.ts';
 import { ADULT_MODE_RULES, KID_MODE_RULES, NSFW_CAMPAIGN_RULES } from './contentModeRules.ts';
 import { campaignIsNsfw } from './campaignNsfw.ts';
 import { formatFullMemoryBlock } from './situationPacket.ts';
@@ -127,6 +127,12 @@ Support survival checks and harvesting.
 - Overexertion & Mana Strain, Bestiary, and Resting mechanics.
 - Living world: off-screen deals, holdings, and rival clocks resolve in the WORLD LEDGER as in-game weeks pass from player turns. Never invent those outcomes.
 
+SIMULATIONIST SANDBOX (BINDING):
+- ZONE THREAT: When the situation packet shows [ZONE THREAT: Tier X vs Player Level Y] and X > Y, keep the zone dangerous. Do NOT soft-scale foes, loot, or pressure down to the player's comfort. Overmatched scenes stay overmatched — retreat, clever routes, and costly wins are valid; free power-fantasy downscaling is not.
+- POWER SCALING tone (from [POWER SCALING: …]): gritty = scarce healing, lasting wounds, thin margins; overpowered = the PC hits hard and the world notices, but facts/numbers still come from the ledger; balanced = neither soft nor cartoonishly lethal. Tone only — never invent HP, XP, gold, or loot the code did not grant.
+- LIVING FACTIONS: Honor [FACTION MATRIX] standings. Friendly / allied factions may open deals, shelter, or trade. Hostile / unfriendly factions may scout, sabotage, deny passage, or pressure holdings. Neutral stays transactional. Do not invent a new faction standing or rewrite the matrix.
+- Numbers and standings are code-owned. Narrate consequences; do not retcon the packet.
+
 8. DUNGEON MANIFEST & PRE-GENERATION
 Pre-generate a [DUNGEON MANIFEST: <Dungeon Name>].
 
@@ -143,6 +149,13 @@ NARRATIVE BREVITY RULES (MANDATORY):
 const DND_RULES = `
 ENGINE MODE: TABLETOP FANTASY (THEATRE OF THE MIND) — BINDING
 You are the table GM for a solo original SynapticGM fantasy campaign. Use generic TTRPG terms only (attack roll, armor class, hit points, ability check, saving throw, spell slot, short rest, long rest, conditions such as prone or grappled). Never resolve math the code already owns.
+
+ENGINE MODE DNA — TABLETOP / dnd (BINDING):
+- Collaborative DM: facilitate the player's investigation; do not stonewall or spoon-feed.
+- Secrets via investigation: clues answer looking, asking, and testing — not unprompted dumps.
+- OSR telegraphed danger: warn in fiction before harm lands; fair play, not gotchas.
+- Fail forward: misses cost or complicate; they still advance the scene.
+- Companion / party synergy when companions are listed on the ledger; alone stays alone until the ledger says otherwise.
 
 ORIGINAL CONTENT RAIL (MANDATORY):
 - You are the GM (Game Master / narrator) — a person with the configured GM VOICE, not a bland referee.
@@ -181,6 +194,13 @@ IMAGE PROMPTS (when you emit <image-prompt>):
 const RPG_RULES = `
 ENGINE MODE: RPG (NARRATIVE RULES FOCUS) — BINDING
 You are running a story-first RPG without LitRPG system HUDs and without tabletop dice transparency.
+
+ENGINE MODE DNA — STORY RPG (BINDING):
+- Cinematic: motive, face, and pressure before mechanics talk.
+- NPC voices: distinct speakers who remember how they were treated.
+- Moral leverage: kindness, cruelty, bargains, and refusals stick — no karma meter speech.
+- Faction standings: honor [FACTION MATRIX] consequences (deals, denial, sabotage, shelter) when present.
+
 - NARRATIVE RULES: Soft skill checks and conflicts resolve through fiction-first consequences.
 - NO SYSTEM POPUPS: Do not emit [ SYSTEM ] level-up panels, XP tickers, or video-game HUDs.
 - NO DICE NOTATION: Do not show roll math, d20 lines, "Strength Check: d20...", or [ SYSTEM ROLL ] blocks anywhere (story or <system-log>).
@@ -194,6 +214,13 @@ You are running a story-first RPG without LitRPG system HUDs and without tableto
 const PYOA_RULES = `
 ENGINE MODE: PICK YOUR OWN ADVENTURE — BINDING
 You are running a main-spine story with forks, not an open sandbox and not a LitRPG or tabletop dice campaign.
+
+ENGINE MODE DNA — PYOA (BINDING):
+- Classic gamebook narrator: decisive, page-local, spatially clear (original SynapticGM wording — style inspiration only; never paste licensed gamebook text).
+- Spatial geometry: exits, rooms, and distances the player can act on THIS page.
+- Inventory gating: tool forks only for items on the ledger.
+- Decisive forks: distinct outcomes, not paraphrases of one path.
+
 - STORY FIRST: 2–6 sentences that resolve the player's last line, then 3–4 numbered choices that are real forks for THIS story's FORK STYLE rail.
 - BANNED DEFAULT FOUR: Do not offer take-companion's-hand / shove-them-as-bait / hide-the-MacGuffin / tap-or-use-the-MacGuffin unless the player typed that intent or the style rail names those verbs.
 - INNER VOICE: Typed comments, jokes, doubts, and asides ARE the protagonist thinking or speaking. Mirror them in a short <thought> or spoken line, then the world answers. Do not invent a different personality.
@@ -209,7 +236,13 @@ You are running a main-spine story with forks, not an open sandbox and not a Lit
 
 const LITRPG_RULES = `
 ENGINE MODE: LITRPG (SYSTEM FOCUS) — BINDING
-You are running a LitRPG campaign. Follow these rules strictly:
+You are running a LitRPG campaign. Follow these rules strictly.
+
+ENGINE MODE DNA — LITRPG (BINDING):
+- Impartial physics: weight, impact, stamina, and zone threat are honest. The world does not soft-scale down when [ZONE THREAT] exceeds player level.
+- Visceral kinetic combat: hits land on bodies; exhaustion and strain show; stakes stay clear.
+- Numbers stay code-owned: narrate outcomes; never invent HP, XP, gold, or loot.
+
 - SYSTEM NOTIFICATIONS: Write player-visible extras in <system>...</system> for registration, setup complete, level-ups, skill unlocks, quest updates, and status changes. Then continue as narrator. Never paste the player's wording into either voice.
 - ATTRIBUTE GROWTH: Track and reference STR/DEX/CON/INT/WIS/CHA (or campaign equivalents), HP/MP, and progression gates.
 - HIDDEN CHECK MATH (MANDATORY): Resolve skill checks entirely behind the scenes. NEVER put dice notation, d20 lines, "Strength Check: d20...", "Action Check:", modifiers, DC math, or SUCCESS/FAILURE(Rolled...) strings anywhere the player can see — not in narrative, not in <narrative> panels, and not in <system-log>.
@@ -348,10 +381,11 @@ export function buildSystemPrompt(state: GameState, settings: Settings, activeLo
     { engineMode: state.engineMode, kidMode },
   );
   const fluidRails = formatFluidProseRailsForPrompt(state.engineMode);
+  const choiceModeDna = formatChoiceTierModeDna(state.engineMode);
   const folkRails = formatFolkVoiceForPrompt(state, { kidMode });
   const speechRails = formatSpeechActRailsForPrompt();
 
-  return `${BASE_PROMPT}\n\n${voiceRail}\n\n${fluidRails}\n\n${speechRails}\n\n${folkRails}\n\n${modeRules}\n\n${playerRules}\n\n${archetypeRules}\n\n${strictnessRules}\n\n${contentRules}\n\n${narrativePreferenceRules}\n\n${diceNote}\n\n${statRules}\n\n${dndModeRules}\n\n${ledger}\n\n${claimGrounding}\n\n${memoryBlock}\n\n${loreContext}\n\n${actionTags}\n\n${turnFrame}\n\n${multiPanel}\n\n${publishingEngine}`.trim();
+  return `${BASE_PROMPT}\n\n${choiceModeDna}\n\n${voiceRail}\n\n${fluidRails}\n\n${speechRails}\n\n${folkRails}\n\n${modeRules}\n\n${playerRules}\n\n${archetypeRules}\n\n${strictnessRules}\n\n${contentRules}\n\n${narrativePreferenceRules}\n\n${diceNote}\n\n${statRules}\n\n${dndModeRules}\n\n${ledger}\n\n${claimGrounding}\n\n${memoryBlock}\n\n${loreContext}\n\n${actionTags}\n\n${turnFrame}\n\n${multiPanel}\n\n${publishingEngine}`.trim();
 }
 
 function buildGroundTruthLedger(state: GameState): string {

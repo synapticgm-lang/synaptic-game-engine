@@ -24,6 +24,7 @@ export function emptyWorldLedger(): WorldLedger {
     hostiles: [],
     actors: [],
     pendingHiddenEvents: [],
+    factionStandings: [],
   };
 }
 
@@ -41,6 +42,7 @@ export function normalizeWorldLedger(raw?: WorldLedger | null): WorldLedger {
     hostiles: raw.hostiles ?? [],
     actors: raw.actors ?? [],
     pendingHiddenEvents: raw.pendingHiddenEvents ?? [],
+    factionStandings: raw.factionStandings ?? [],
   };
 }
 
