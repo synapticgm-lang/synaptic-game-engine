@@ -77,10 +77,13 @@ describe('Simulationist Sandbox', () => {
       },
     });
     const text = formatSituationForPrompt(state);
+    expect(text).toMatch(/### SCENE STATE/);
+    expect(text).toMatch(/Zone Threat: Tier 5 vs Player Level 3/);
     expect(text).toMatch(/\[ZONE THREAT: Tier 5 vs Player Level 3\]/);
     expect(text).toMatch(/\[FACTION MATRIX:.*Ember Guild=friendly/);
     expect(text).toMatch(/Ash Compact=hostile/);
     expect(text).toMatch(/\[POWER SCALING: gritty\]/);
+    expect(text).toMatch(/Power Scaling: gritty/);
   });
 
   it('formatSituation always includes effective POWER SCALING (default balanced)', () => {

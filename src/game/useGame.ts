@@ -153,6 +153,7 @@ import {
 } from './sceneFocus';
 import {
   buildResolutionUserPayload,
+  buildThinStoryExpandBlock,
   isUnresolvedActionNarrative,
 } from './actionResolution';
 import { mergeNpcMemoriesFromTurn, recordNpcTreatmentFromAction } from './npcMemory';
@@ -207,7 +208,7 @@ import {
 import { formatCombatReceipt, formatFleeReceipt } from './combatReceipt';
 import { scanAndScrubLeaks } from './leakScanner';
 import { enrichQuests } from './questJournalEnrich';
-import { extractUpdates, extractNewItems, parseActionTags, stripActionTags, matchLoreCards, eventsToLoreCards, parseTurnFrame, eventsToQuestUpdates, eventsToEncounterUpdate, parsePanels, eventsToMilestone, eventsToLootVideo, eventsToVisualUpdate, stripChoiceList, extractChoiceLines, stripTurnCloser, storyHasBody, looksLikeChoiceOffer } from './parser';
+import { extractUpdates, extractNewItems, parseActionTags, stripActionTags, matchLoreCards, eventsToLoreCards, parseTurnFrame, eventsToQuestUpdates, eventsToEncounterUpdate, parsePanels, eventsToMilestone, eventsToLootVideo, eventsToVisualUpdate, stripChoiceList, extractChoiceLines, stripTurnCloser, storyHasBody, looksLikeChoiceOffer, isStoryTooThin, storyWordCount } from './parser';
 import { hasRealGmStory } from './turnAsk';
 import { encounterOriginPlace } from './locationName';
 import { clampLeakedOpeningQuests, extractNamedPlaces, harvestPlayText, isGenericMapPlace, mapAnchorName, newlyRevealedQuests, questsLockedDuringOpening, revealLocalStarterQuest, syncQuestsFromPlay } from './questPlay';
@@ -2484,6 +2485,37 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
             turn: liveCurrent.turn,
             factLocks: probeLocks.map((v) => v.kind),
           });
+        }
+
+        // Paid-turn value floor: skimpy 1–2 liners get one free expand (same turn charge).
+        probeText = probeOf(result.text);
+        if (storyHasBody(probeText) && isStoryTooThin(probeText)) {
+          const thinWords = storyWordCount(probeText);
+          debugLogger.record('WARN', 'Thin story beat — value expand', {
+            turn: liveCurrent.turn,
+            wordCount: thinWords,
+          });
+          const thinFirst = result;
+          const thinFirstProbe = probeText;
+          setRetryStatus('Expanding the beat for turn value…');
+          result = await callGmDurable(
+            buildResolutionUserPayload({
+              mandateBlock: turnMandate.block,
+              playerAction: sanitizedInput,
+              deterministicBlock: deterministicStateBlock,
+              retry: true,
+              intent: intentForMandate,
+              extraRetryBlock: buildThinStoryExpandBlock(sanitizedInput, thinWords),
+            }),
+          );
+          probeText = probeOf(result.text);
+          const expandedOk =
+            storyHasBody(probeText)
+            && storyWordCount(probeText) >= storyWordCount(thinFirstProbe);
+          if (!expandedOk) {
+            result = thinFirst;
+            probeText = thinFirstProbe;
+          }
         }
       }
 

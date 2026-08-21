@@ -115,6 +115,27 @@ export function buildSituationPacket(state: GameState): SituationPacket {
 
 export function formatSituationForPrompt(state: GameState): string {
   const s = buildSituationPacket(state);
+  const alone = state.openingEstablishment?.aloneArrival === true;
+  const threat = resolveThreatTier(state);
+  const level = Math.max(1, state.character?.level ?? 1);
+  const presence =
+    alone && !state.activeEncounter
+      ? 'Alone'
+      : s.presentEntities.length && s.presentEntities[0] !== 'none established'
+        ? s.presentEntities.slice(0, 6).join('; ')
+        : 'none established';
+  const sceneStateHeader = [
+    '### SCENE STATE',
+    `- Location: ${s.location}`,
+    threat != null
+      ? `- Zone Threat: Tier ${threat} vs Player Level ${level}`
+      : `- Zone Threat: none (street/outdoors or unset)`,
+    `- Immediate Presence: ${presence}`,
+    `- Encounter: ${s.encounter}`,
+    `- Active Quests (revealed): ${s.activeQuests.join('; ')}`,
+    `- Power Scaling: ${effectivePowerScaling(state)}`,
+  ].join('\n');
+
   const npcBlock = (state.npcMemories ?? [])
     .slice(0, 5)
     .map((m) => `${m.npcName}[${m.disposition}]: ${m.facts.slice(-2).join('; ') || '—'}`)
@@ -145,7 +166,6 @@ export function formatSituationForPrompt(state: GameState): string {
   const placeRegistry = formatPlacesForPrompt(state.places, currentSheet?.name ?? s.location);
   const tutorialMandate = formatTutorialBeatMandate(state);
   const contractBlock = formatCampaignContractForPrompt(state);
-  const alone = state.openingEstablishment?.aloneArrival === true;
   const interiorExplore =
     state.activeDungeon && isInteriorMap(state.activeDungeon)
       ? formatInteriorExploreAuthority(state.activeDungeon)
@@ -153,6 +173,8 @@ export function formatSituationForPrompt(state: GameState): string {
   const simulationist = formatSimulationistBlocks(state);
   const none = '(none)';
   const lines = [
+    sceneStateHeader,
+    '',
     manifestBlock,
     contractBlock,
     currentLine,
@@ -177,7 +199,7 @@ export function formatSituationForPrompt(state: GameState): string {
     alone
       ? 'ALONE ARRIVAL (BINDING): Empty ruin — no crowd, handlers, or "people who saw you arrive." Do not invent voices outside or watchers at the wall.'
       : '',
-    'RAILS: SCENE MANIFEST + packet facts + SCENE FACTS + timeline override improvisation. Do not invent named threats, loot, NPCs, or interactables absent above. Do not invent a dungeon danger tier outdoors. Do not empty a present crowd or silence shouting without time passing. Interior floor-plan Exits / EXPLORE AUTHORITY override "one room / only a gap" improvisation.',
+    'RAILS: SCENE STATE + SCENE MANIFEST + packet facts + SCENE FACTS + timeline override improvisation. Do not invent named threats, loot, NPCs, or interactables absent above. Do not invent a dungeon danger tier outdoors. Do not empty a present crowd or silence shouting without time passing. Interior floor-plan Exits / EXPLORE AUTHORITY override "one room / only a gap" improvisation.',
     'HIDDEN QUESTS: Never spoil quests with status hidden or revealed=false.',
     formatWorldLedgerBlock(state.worldLedger),
   ];

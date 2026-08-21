@@ -127,6 +127,21 @@ export function isUnresolvedActionNarrative(
   return false;
 }
 
+/** Extra user-message block when the beat resolved but was too short for a paid turn. */
+export function buildThinStoryExpandBlock(playerAction: string, wordCount: number): string {
+  const action = playerAction.replace(/\s+/g, ' ').trim().slice(0, 220);
+  return `=== VALUE EXPAND (BINDING — SAME TURN, NO EXTRA CHARGE) ===
+Your prior reply resolved the action but was too thin for a spent turn (~${wordCount} words).
+Player action: "${action}"
+REQUIRED:
+1. Keep the same facts, map geometry, alone/crowd truth, and outcome — do not invent new doors, people, or loot.
+2. Rewrite as a FULL standard beat: roughly two short paragraphs (~100–180 words) with natural rhythm.
+3. Include: answer/impact first, concrete sensory grounding (light, sound, weight, air), consequence, and a playable handoff.
+4. Vocabulary may be free and literary inside SCENE STATE — no telegram one-liners.
+5. Then 3–4 numbered choices grounded in what you just described.
+===========================================================`;
+}
+
 /** Extra user-message block for a single automatic regeneration. */
 export function buildResolutionRetryBlock(playerAction: string, intent: PlayerIntent): string {
   const action = playerAction.replace(/\s+/g, ' ').trim().slice(0, 220);

@@ -76,6 +76,28 @@ export function storyHasBody(text: string | undefined): boolean {
   return story.length >= 24 && /[a-z]/i.test(story);
 }
 
+/** Word count of story prose (tags / choice lists stripped). */
+export function storyWordCount(text: string | undefined): number {
+  const story = stripTurnCloser(text ?? '')
+    .replace(/<[^>]+>/g, ' ')
+    .replace(/^\s*\d+\.\s+.+$/gm, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+  if (!story) return 0;
+  return story.split(/\s+/).filter(Boolean).length;
+}
+
+/**
+ * Free/Mid paid turns should feel like a page, not a tweet.
+ * Default floor ~90 words (~two short paragraphs). Trivial confirms can pass slightly lower.
+ */
+export const STORY_VALUE_FLOOR_WORDS = 90;
+
+export function isStoryTooThin(text: string | undefined, floor = STORY_VALUE_FLOOR_WORDS): boolean {
+  if (!storyHasBody(text)) return true;
+  return storyWordCount(text) < floor;
+}
+
 /**
  * Show the ask only after a real GM beat that still has no player reply.
  * Never show it under a command they just sent, on an empty/closer-only GM row,

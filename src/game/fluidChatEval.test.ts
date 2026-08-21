@@ -103,9 +103,12 @@ describe('folkVoiceExpectations', () => {
 });
 
 describe('fluidProseRails', () => {
-  it('includes ANSWER FIRST in prompt block', () => {
+  it('includes ANSWER FIRST and positive fluency rails', () => {
     const rails = formatFluidProseRailsForPrompt('litrpg');
     expect(rails).toMatch(/ANSWER FIRST/i);
+    expect(rails).toMatch(/RHYTHM/i);
+    expect(rails).toMatch(/VALUE FLOOR/i);
+    expect(rails).toMatch(/MOMENTUM/i);
   });
 });
 
