@@ -12,10 +12,10 @@
 
 | Class | How it keeps coming back | Lasting owner | Status |
 |---|---|---|---|
-| **B. Opening contract** | Alone vs crowd copy; Earth-origin always asked; templated covers; turn meter confusion | `openingStitch.applyOpeningContract` + card decks | **Shipped 20f** — Earth deferred; seed-varied asks; instant stitch |
+| **B. Opening contract** | Alone vs crowd copy; Earth-origin always asked; templated covers; turn meter confusion | `openingStitch.applyOpeningContract` + card decks | **Shipped 20f–20l** — Earth deferred; seed-varied asks; instant stitch; continue grounds room; Circle Blessing unequipped |
 | **A. Turn / proxy** | Timeout → “still compiling”; empty GM; Free path dies on first post-open turn | `TurnRecovery` + `gmProxy` | Partial (classify toast). Need auto-retry |
-| **C. Quest / journal** | Wave/First Blood leak before open complete; wrong starter text for alone; unlock on journal open | `questPlay` + save repair rules | Partial (lock during opening, alone quest adapt). Need: auto-repair mismatched starter on Continue |
-| **D. Continuity / prose** | Nearby-building tautology; perspective slips; canned stubs; invented kit; talk to absent NPCs | `runWarden` + `proseWarden` + ledger | Active; keep extending detectors, not one-off prompt lines |
+| **C. Quest / journal** | Wave/First Blood leak before open complete; wrong starter text for alone; unlock on journal open | `questPlay` + save repair + `questJournalEnrich` / STATUS dedupe | Partial — alone quest adapt; generic provenance hidden (20l); Focus/Unlocked/Ledger echo collapsed |
+| **D. Continuity / prose** | Nearby-building tautology; perspective slips; canned stubs; invented kit; talk to absent NPCs; prose≠buttons | `runWarden` + `proseWarden` + `choicePipeline` alone grounding | Active — 20l: strip numbered lists; alone/empty presence gate; ActionBar pads from last GM prose |
 | **E. Chrome / HUD** | Stamp vs bug chip; HP/MP squash on ~384px; theme frame over name | `HudLayout` contract + viewport tests | Weak — cosmetic stamps keep “fixing” without layout ownership |
 | **F. Hosted art** | Model ID churn; Free blamed for missing key; Milestone fail slab; CORS | `generate-image` + memorable policy | Better; still fragile when OpenRouter renames models |
 | **G. Save schema drift** | New fields break old Continue | `repairSaveSchema` / revision bump | Good pattern — extend, don’t fork |
