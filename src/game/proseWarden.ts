@@ -133,11 +133,28 @@ export function scrubSomeoneNearbyPlaceholder(text: string): string {
     .replace(/\b(?:the\s+)?someone nearby\b/gi, 'the speaker');
 }
 
+/**
+ * Kill premature "secrets" framing on an empty first look (explore opener filler).
+ * Prefer sensory-only until the ledger has actual finds.
+ */
+export function scrubPrematureSecrets(text: string): string {
+  if (!text || !/secrets/i.test(text)) return text;
+  let next = text;
+  next = next.replace(
+    /\b(?:the\s+)?(?:ruin|building|chamber|room|place|house|hall)\s+gives?\s+up\s+(?:its|their)\s+secrets\s+slowly\.?\s*/gi,
+    ''
+  );
+  next = next.replace(/\bgives?\s+up\s+(?:its|their)\s+secrets\s+slowly\.?\s*/gi, '');
+  next = next.replace(/\b(?:reveals?|yields?)\s+(?:its|their)\s+secrets\s+(?:slowly|reluctantly)\.?\s*/gi, '');
+  return tidyClauses(next);
+}
+
 export function applyProseWarden(text: string, ctx?: ProseWardenContext): string {
   if (!text) return text;
   let next = scrubFigurePlaceholder(text);
   next = scrubSomeoneNearbyPlaceholder(next);
   next = scrubUiQuestVerbs(next);
+  next = scrubPrematureSecrets(next);
   next = scrubLocationTautology(next, ctx?.currentLocation);
   next = scrubSpokenQuoteStart(next);
   next = scrubArticleCollisions(next);

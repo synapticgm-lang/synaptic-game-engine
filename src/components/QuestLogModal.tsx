@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import type { Quest, QuestStatus } from '@/game/types';
 import { isJournalQuest } from '@/game/questPlay';
+import { isGenericQuestProvenance } from '@/game/questJournalEnrich';
 
 interface QuestLogModalProps {
   isOpen: boolean;
@@ -189,7 +190,8 @@ export const QuestLogModal: React.FC<QuestLogModalProps> = ({
                   </div>
                 ) : null}
 
-                {selectedQuest.provenance ? (
+                {selectedQuest.provenance
+                  && !isGenericQuestProvenance(selectedQuest.provenance) ? (
                   <div className="p-3 rounded-lg border border-slate-800 bg-slate-900/40">
                     <h4 className="text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">
                       Why this is on file

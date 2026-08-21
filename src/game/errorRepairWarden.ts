@@ -10,7 +10,7 @@ import { adaptStarterQuestsForArrival } from './questPlay';
 import { getCampaignBibleById } from '@/data/campaigns';
 
 /** Bump when adding load-time repairs that must re-run on old saves. */
-export const CURRENT_ERROR_REPAIR_REVISION = 1;
+export const CURRENT_ERROR_REPAIR_REVISION = 2;
 
 export type FailureClass =
   | 'turn_proxy'
@@ -149,6 +149,25 @@ function repairAloneStarterQuest(state: GameState, notes: ErrorRepairNote[]): Ga
   return { ...state, quests: nextQuests };
 }
 
+/** Circle Blessing is a glitched passive — never equipped Shoulders (reads as a cloak). */
+function repairCircleBlessingSlot(state: GameState, notes: ErrorRepairNote[]): GameState {
+  const inv = state.inventory ?? [];
+  let dirty = false;
+  const nextInv = inv.map((item) => {
+    if (!/circle blessing/i.test(item.name ?? '')) return item;
+    if (!item.equipped && item.slot !== 'Shoulders') return item;
+    dirty = true;
+    return { ...item, equipped: false, slot: undefined };
+  });
+  if (!dirty) return state;
+  notes.push({
+    class: 'opening_contract',
+    code: 'ERR_CIRCLE_BLESSING_SLOT',
+    detail: 'Circle Blessing unequipped from Shoulders (passive / bag)',
+  });
+  return { ...state, inventory: nextInv };
+}
+
 /**
  * Idempotent load/continue repairs for known recurrence classes.
  * Safe to call every Continue; only mutates when content is wrong.
@@ -157,6 +176,7 @@ export function applyErrorRepairs(state: GameState): ErrorRepairResult {
   const notes: ErrorRepairNote[] = [];
   let next = stampAloneArrival(state, notes);
   next = repairAloneStarterQuest(next, notes);
+  next = repairCircleBlessingSlot(next, notes);
   const needsRev = (next.errorRepairRevision ?? 0) < CURRENT_ERROR_REPAIR_REVISION;
   if (notes.length === 0 && !needsRev) {
     return { state, dirty: false, notes: [] };

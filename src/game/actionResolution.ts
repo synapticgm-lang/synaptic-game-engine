@@ -137,8 +137,8 @@ Intent: ${intent.label} (${intent.kind})
 REQUIRED:
 1. Write at least 3 full sentences of NEW story prose that resolve THIS action — the named object, person, or question — with concrete sensory results. Do not reuse prior sentences.
 2. If they search/inspect a specific thing (a car, alley, panel, body): go to THAT thing and say what is in/on it. Do NOT replace it with a general circuit of the street.
-3. If they look around / ask what is around them: write a unique sensory beat of the LAST scene (street, wrecks, people, power dying). Do NOT list inventory. Do NOT mention "the sheet". Do NOT paste a crystal/panel collage.
-4. If they enter, scout an entrance, sneak, or move forward: describe the space in front of them (aisle, door, shelves, light, smell) BEFORE any creature acts. Never open on "the nearest creature".
+3. If they look around / ask what is around them: write a unique sensory beat of the LAST scene (street, wrecks, people, power dying). Do NOT list inventory. Do NOT mention "the sheet". Do NOT paste a crystal/panel collage. On an empty first scout (alone ruin, nothing found yet): sensory-only — do NOT claim "secrets" or discoveries before anything was found.
+4. If they enter, scout an entrance, sneak, or move forward: describe the space in front of them (aisle, door, shelves, light, smell) BEFORE any creature acts. Never open on "the nearest creature". Never open with "the ruin gives up its secrets" on an empty first look.
 5. If they practice/test gear: describe feel, balance, sound — not a quest redirect. Use ONLY equipped/inventory gear.
 6. If they protest, joke, refuse, or ask who is in charge: that is DIALOGUE. Answer in System/registrar or narrator voice. Do NOT narrate a physical follow-through, knife-grip, or step forward.
 7. If they ask a person in the scene: they MUST speak and that person MUST answer. Do not replace the conversation with a Guide Book lecture that "everyone heard it." Never call anyone "someone nearby" as a name or dialogue tag.

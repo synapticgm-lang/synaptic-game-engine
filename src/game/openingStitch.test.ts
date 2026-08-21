@@ -85,7 +85,9 @@ describe('openingStitch', () => {
     expect(text).toMatch(/Travel clothes/);
     expect(text).toMatch(/half-collapsed ruin/i);
     expect(text).not.toMatch(/Sevenfold/i);
-    expect(text).toMatch(/What do you do/i);
+    expect(text).not.toMatch(/Nothing reset/i);
+    expect(text).not.toMatch(/anyone listening/i);
+    expect(text).toMatch(/1\.\s*Get your bearings/i);
     expect(text).not.toMatch(/Pellane wanted you/i);
   });
 

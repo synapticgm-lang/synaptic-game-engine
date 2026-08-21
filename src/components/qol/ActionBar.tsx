@@ -1,6 +1,11 @@
 import { Sparkles, Dices } from 'lucide-react';
 import type { EngineMode, GameState } from '@/game/types';
-import { padChoicesToCount } from '@/game/choicePipeline';
+import {
+  inventsPresenceOnEmptyScene,
+  normalizeStoryCorpus,
+  padChoicesToCount,
+  sanitizeChoiceLabel,
+} from '@/game/choicePipeline';
 import { establishmentChoices, isOpeningEstablishmentPending } from '@/game/openingEstablishment';
 
 interface ActionBarProps {
@@ -14,17 +19,32 @@ interface ActionBarProps {
 
 const FALLBACK_CHOICE = '🎲 Let Fate Decide';
 
+function lastGmStoryProse(state: GameState): string {
+  for (let i = (state.log ?? []).length - 1; i >= 0; i--) {
+    const entry = state.log[i];
+    if (entry?.role === 'gm' && entry.content) {
+      return normalizeStoryCorpus(entry.content);
+    }
+  }
+  return '';
+}
+
 /**
- * Trust pipeline-grounded state.choices. Do not re-filter here — that dropped
- * valid options so the numbered list and the buttons disagreed.
+ * Trust pipeline-grounded state.choices, but always sanitize labels and
+ * never pad with empty story prose (that recycled crowd/speaker fillers).
  */
 function resolveActions(state: GameState): string[] {
   if (isOpeningEstablishmentPending(state)) {
     return establishmentChoices(state.openingEstablishment?.pending ?? []).slice(0, 4);
   }
-  const gmChoices = (state.choices ?? []).filter((c) => c && c !== FALLBACK_CHOICE);
-  if (gmChoices.length >= 3) return gmChoices.slice(0, 4);
-  return padChoicesToCount(gmChoices, state, '', 3);
+  const storyProse = lastGmStoryProse(state);
+  const gmChoices = (state.choices ?? [])
+    .map((c) => sanitizeChoiceLabel(c))
+    .filter((c) => c && c !== FALLBACK_CHOICE)
+    .filter((c) => !inventsPresenceOnEmptyScene(c, state, storyProse));
+  const deduped = Array.from(new Set(gmChoices.map((c) => c.trim()).filter(Boolean)));
+  if (deduped.length >= 3) return deduped.slice(0, 4);
+  return padChoicesToCount(deduped, state, storyProse, 3);
 }
 
 export function ActionBar({ state, busy, onAction, engineMode, hidden = false }: ActionBarProps) {

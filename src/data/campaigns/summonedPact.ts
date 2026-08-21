@@ -574,10 +574,9 @@ Do not name distant hubs, the Ash King, or the other summoned until the player a
       rarity: 'Rare',
       itemType: 'accessory',
       itemLevel: 1,
-      equipped: true,
-      slot: 'Shoulders',
+      equipped: false,
       provenance: 'System gift at summoning — unidentified',
-      description: 'A glitched passive. Appraisal required to name it. Not a sword. Not a potion.',
+      description: 'A glitched passive System gift. Appraisal required to name it. Not armor, not a cloak — keep unequipped until identified.',
     },
   ],
 };

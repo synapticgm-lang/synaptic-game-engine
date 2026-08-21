@@ -40,6 +40,46 @@ export function isNoisySystemLogLine(line: string): boolean {
   );
 }
 
+/**
+ * Collapse Quest Focus / Quest Unlocked / Ledger lines that repeat the same phrase.
+ * Prefer Quest Unlocked > Quest Focus > Ledger for the surviving line.
+ */
+export function dedupeQuestStatusEcho(lines: string[]): string[] {
+  const phraseOf = (line: string): string | null => {
+    const m = line.match(/^(?:Quest Focus|Quest Unlocked|Ledger):\s*(.+)$/i);
+    if (!m?.[1]) return null;
+    return m[1].replace(/^Next:\s*/i, '').trim().toLowerCase();
+  };
+  const rank = (line: string): number => {
+    if (/^Quest Unlocked:/i.test(line)) return 0;
+    if (/^Quest Focus:/i.test(line)) return 1;
+    if (/^Ledger:/i.test(line)) return 2;
+    return 9;
+  };
+  const bestByPhrase = new Map<string, string>();
+  const order: string[] = [];
+  for (const line of lines) {
+    const phrase = phraseOf(line);
+    if (!phrase) {
+      order.push(line);
+      continue;
+    }
+    const prev = bestByPhrase.get(phrase);
+    if (!prev) {
+      bestByPhrase.set(phrase, line);
+      order.push(`__QUEST__:${phrase}`);
+      continue;
+    }
+    if (rank(line) < rank(prev)) bestByPhrase.set(phrase, line);
+  }
+  return order.map((token) => {
+    if (token.startsWith('__QUEST__:')) {
+      return bestByPhrase.get(token.slice('__QUEST__:'.length)) ?? token;
+    }
+    return token;
+  });
+}
+
 export function filterSystemLogForEngine(lines: string[], engineMode: EngineMode): string[] {
   const cleaned = lines
     .map((l) => l.replace(/^[ \t]*_>\s*/, '').trim())
@@ -52,10 +92,11 @@ export function filterSystemLogForEngine(lines: string[], engineMode: EngineMode
     .filter((l) => !/^xp gained:\s*0\b/i.test(l))
     .filter((l) => !/^(?:_>\s*)?SYSTEM LOG$/i.test(l))
     .filter((l) => !/^(?:what do you do(?:\s+next)?|what will you do)\s*[?:.]?$/i.test(l));
+  const deduped = dedupeQuestStatusEcho(cleaned);
   if (engineMode === 'dnd' || engineMode === 'pyoa') {
-    return cleaned.filter((l) => !isLitrpgChromeLine(l) && (engineMode === 'pyoa' ? !isDiceMechanicsLine(l) : true));
+    return deduped.filter((l) => !isLitrpgChromeLine(l) && (engineMode === 'pyoa' ? !isDiceMechanicsLine(l) : true));
   }
-  return cleaned.filter((l) => !isDiceMechanicsLine(l));
+  return deduped.filter((l) => !isDiceMechanicsLine(l));
 }
 
 /** LitRPG System lines must never leak into tabletop chrome. */

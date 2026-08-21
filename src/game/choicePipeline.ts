@@ -101,6 +101,45 @@ export function stripChoiceDecorators(choice: string): string {
   return choice.replace(/^[\s✨🎲⭐️•\-–—]+/u, '').trim();
 }
 
+/** Strip stray "What do you do?" glued onto button labels. */
+export function sanitizeChoiceLabel(choice: string): string {
+  return stripChoiceDecorators(choice)
+    .replace(/\s*[—–-]\s*what do you do\??\s*$/i, '')
+    .replace(/\s+what do you do\??\s*$/i, '')
+    .replace(/^\s*what do you do\??\s*$/i, '')
+    .replace(/\s{2,}/g, ' ')
+    .trim();
+}
+
+/** Alone arrival or empty-ruin prose — no crowd / voices / speaker inventions. */
+export function isAloneOrEmptyScene(state: GameState, storyProse = ''): boolean {
+  if (state.openingEstablishment?.aloneArrival === true) return true;
+  const hay = `${storyProse}\n${state.currentLocation ?? ''}`.toLowerCase();
+  if (/\b(nobody|no one|alone|empty|only (?:your|my) (?:own )?footprints|nothing moves)\b/i.test(hay)) {
+    if (!/\b(crowd|people (?:are|were|shout)|he says|she says|they say|voices?\s+outside)\b/i.test(hay)) {
+      return true;
+    }
+  }
+  return false;
+}
+
+const ALONE_FORBIDDEN_CHOICE =
+  /\b(crowd|bystander|voices?\s+outside|call out to (?:the )?(?:voices?|crowd|people)|inspect (?:the )?(?:speaker|emblem)|someone (?:nearby|listening)|ask (?:the )?(?:crowd|people|locals))\b/i;
+
+/** Choices that invent social presence on an empty/alone beat. */
+export function inventsPresenceOnEmptyScene(
+  choice: string,
+  state: GameState,
+  storyProse = ''
+): boolean {
+  if (!isAloneOrEmptyScene(state, storyProse)) return false;
+  const cleaned = sanitizeChoiceLabel(choice);
+  if (!ALONE_FORBIDDEN_CHOICE.test(cleaned)) return false;
+  // Allow if the turn prose actually established that presence.
+  if (ALONE_FORBIDDEN_CHOICE.test(storyProse)) return false;
+  return true;
+}
+
 function loreCorpus(cards: LoreCard[]): string {
   return cards
     .map((c) => `${c.name} ${c.summary} ${(c.keywords ?? []).join(' ')}`)
@@ -220,7 +259,7 @@ export function isChoiceGroundedInTurn(
   state: GameState,
   loreCards: LoreCard[] = []
 ): boolean {
-  const cleaned = stripChoiceDecorators(choice);
+  const cleaned = sanitizeChoiceLabel(choice);
   if (!cleaned) return false;
   // Named people/places/objects: prior ledger only (not this turn's invented prose).
   // Threat/environment checks below still use current turn prose.
@@ -229,6 +268,7 @@ export function isChoiceGroundedInTurn(
   // wording are not enough to invent a tire iron or a van the story never showed.
   if (!isSuggestionValidForState(cleaned, state, `${established}\n${storyProse}`)) return false;
   if (choiceNamesUnnarratedObject(cleaned, storyProse, state)) return false;
+  if (inventsPresenceOnEmptyScene(cleaned, state, storyProse)) return false;
 
   const envHits = environmentalEventViolations(cleaned, storyProse);
   if (envHits.length > 0) return false;
@@ -319,7 +359,11 @@ export function filterChoicesToTurnFacts(
   const rejected: { choice: string; reasons: string[] }[] = [];
 
   for (const choice of choices) {
-    const cleaned = stripChoiceDecorators(choice);
+    const cleaned = sanitizeChoiceLabel(choice);
+    if (!cleaned) {
+      rejected.push({ choice, reasons: ['empty after label sanitize'] });
+      continue;
+    }
     const reasons: string[] = [];
     const established = priorEstablishedProse(state, loreCards);
     if (!isSuggestionValidForState(cleaned, state, `${established}\n${storyProse}`)) {
@@ -327,6 +371,9 @@ export function filterChoicesToTurnFacts(
     }
     if (choiceNamesUnnarratedObject(cleaned, storyProse, state)) {
       reasons.push('names an object not in this turn\'s story');
+    }
+    if (inventsPresenceOnEmptyScene(cleaned, state, storyProse)) {
+      reasons.push('invents crowd/voices/speaker on alone or empty scene');
     }
     if (isLockedProgressionChoice(cleaned, state)) {
       reasons.push('locked or level-gated feature');
@@ -353,7 +400,7 @@ export function filterChoicesToTurnFacts(
 function restoreHarvestedOffers(rawChoices: string[], kept: string[]): string[] {
   const merged = [...kept];
   for (const choice of rawChoices) {
-    const cleaned = stripChoiceDecorators(choice);
+    const cleaned = sanitizeChoiceLabel(choice);
     if (!looksLikeChoiceOffer(cleaned)) continue;
     if (classifyStance(cleaned) === 'lookaround') continue;
     if (!merged.some((c) => c.toLowerCase() === cleaned.toLowerCase())) {
@@ -533,21 +580,29 @@ export function sceneSafeFallbacks(
 ): string[] {
   const justLooked = isLookAroundChoice(lastPlayerAction)
     || /\b(look around|surroundings|scout|circuit)\b/i.test(lastPlayerAction);
+  const alone = isAloneOrEmptyScene(state, storyProse);
   const options: string[] = [];
   if (!justLooked) options.push(fallbackSuggestionForState(state));
   if (/\b(car|van|vehicle|truck|wreck)\b/i.test(storyProse)) {
     options.push('Search the vehicle more carefully');
   }
-  if (/\b(people|crowd|someone|scream|shout)\b/i.test(storyProse)) {
+  if (!alone && /\b(people|crowd|someone|scream|shout)\b/i.test(storyProse)) {
     options.push('Call out to a bystander');
   }
   if (/\b(panel|system)\b/i.test(storyProse)) {
     options.push('Read the System panel more closely');
   }
-  if (/\b(crystal|crack)\b/i.test(storyProse)) {
+  if (/\b(crystal|crack)\b/i.test(storyProse) && !alone) {
     options.push('Inspect the crystals breaking the street');
   }
-  if (/\b(alley)\b/i.test(storyProse)) options.push('Check the nearest alley');
+  if (/\b(alley)\b/i.test(storyProse) && !alone) options.push('Check the nearest alley');
+  if (alone) {
+    options.push('Search the ruin carefully');
+    options.push('Find a way out');
+    if (/\b(gap|door|arch|doorway|rubble|debris|stone)\b/i.test(storyProse)) {
+      options.push('Approach the gap cautiously');
+    }
+  }
   options.push('Wait and listen carefully');
   if ((state.companions ?? []).length > 0) options.push('Check in with your companion');
   if (state.activeEncounter && state.activeEncounter.hp > 0) {
@@ -557,17 +612,20 @@ export function sceneSafeFallbacks(
     options.push('Check your wounds');
     options.push('Look for the next room or exit');
   } else if (!isCombatLockedTurn(state)) {
-    if (/\b(he says|she says|they say|asks you|merchant|guard|innkeep|someone|crowd|people)\b/i.test(storyProse)
-      || (state.companions ?? []).length > 0
-      || (state.npcMemories ?? []).some((m) => (state.turn - (m.lastSeenTurn ?? 0)) <= 4)) {
+    if (
+      !alone
+      && (/\b(he says|she says|they say|asks you|merchant|guard|innkeep|someone|crowd|people)\b/i.test(storyProse)
+        || (state.companions ?? []).length > 0
+        || (state.npcMemories ?? []).some((m) => (state.turn - (m.lastSeenTurn ?? 0)) <= 4))
+    ) {
       options.push('Ask what is going on');
       options.push('Refuse and keep your own counsel');
     }
     if ((state.locationSheet?.exits ?? []).length > 0 || !state.activeDungeon) {
-      options.push('Walk away / go another direction');
+      options.push(alone ? 'Find a way out' : 'Walk away / go another direction');
     }
   }
-  if (/\b(door|gate|path|corridor|alley)\b/i.test(storyProse)) {
+  if (/\b(door|gate|path|corridor|alley|gap|arch)\b/i.test(storyProse)) {
     options.push('Approach cautiously');
   }
   const interactables = state.locationSheet?.interactables ?? [];
@@ -577,7 +635,7 @@ export function sceneSafeFallbacks(
   if (!justLooked && options.length < 3) {
     options.push('Examine the immediate surroundings');
   }
-  return Array.from(new Set(options)).slice(0, 4);
+  return Array.from(new Set(options.map(sanitizeChoiceLabel).filter(Boolean))).slice(0, 4);
 }
 
 export function padChoicesToCount(
@@ -587,14 +645,32 @@ export function padChoicesToCount(
   min = 3,
   lastPlayerAction = ''
 ): string[] {
-  let merged = Array.from(new Set(choices.map((c) => c.trim()).filter(Boolean)));
+  let merged = Array.from(
+    new Set(
+      choices
+        .map((c) => sanitizeChoiceLabel(c))
+        .filter(Boolean)
+        .filter((c) => isChoiceGroundedInTurn(c, storyProse, state) || looksLikeChoiceOffer(c))
+    )
+  );
   if (isLookAroundChoice(lastPlayerAction)) {
     merged = merged.filter((c) => !isLookAroundChoice(c));
   }
-  if (merged.length >= min) return applyStanceDensity(merged.slice(0, 4), state, storyProse, lastPlayerAction);
+  if (merged.length >= min) {
+    return applyStanceDensity(merged.slice(0, 4), state, storyProse, lastPlayerAction);
+  }
   for (const extra of sceneSafeFallbacks(state, storyProse, lastPlayerAction)) {
     if (merged.length >= min) break;
+    if (!isChoiceGroundedInTurn(extra, storyProse, state)) continue;
     if (!merged.some((c) => c.toLowerCase() === extra.toLowerCase())) merged.push(extra);
+  }
+  // Last resort: still pad with grounded-or-generic alone-safe lines (never invent crowd).
+  if (merged.length < min) {
+    for (const extra of sceneSafeFallbacks(state, storyProse, lastPlayerAction)) {
+      if (merged.length >= min) break;
+      if (inventsPresenceOnEmptyScene(extra, state, storyProse)) continue;
+      if (!merged.some((c) => c.toLowerCase() === extra.toLowerCase())) merged.push(extra);
+    }
   }
   return applyStanceDensity(merged.slice(0, 4), state, storyProse, lastPlayerAction);
 }

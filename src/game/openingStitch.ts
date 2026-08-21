@@ -10,6 +10,7 @@ import { resolveActiveCampaignBible } from './campaignSeed';
 import {
   isAloneArrivalOpening,
   isEarthOriginPrompt,
+  resolveLockedOpeningPlace,
   resolveOpeningHookPick,
 } from './openingEstablishment';
 
@@ -47,10 +48,10 @@ const PRESSURE_CROWD = [
 ] as const;
 
 const PRESSURE_ALONE = [
-  'Nobody answers if you call.',
   'The panel is the only thing that treats you as real.',
   'The road, if there is one, is not in this room.',
   'Whatever pulled you here did not stay to explain.',
+  'Dust and broken stone — no footsteps but yours.',
 ] as const;
 
 const NAME_ASKS_CROWD = [
@@ -72,15 +73,27 @@ const LOOK_ASKS = [
 ] as const;
 
 const KIT_ASKS = [
-  'Pockets, bag, whatever rode with you. What is actually on you? Nothing invented for a fight.',
+  'Pockets, bag, whatever rode with you. What is actually on you?',
   'What stayed in your pockets and bag through the light? Everyday things only.',
-  'Pat yourself down. What is really on you — not a starter sword.',
+  'Pat yourself down. What is really on you?',
 ] as const;
 
 const CONTINUE_BRIDGES = [
-  'The room is still the same room. Your answers are locked in.',
-  'Nothing reset. The light already happened.',
-  'You are still here — look and kit as you named them.',
+  'The room is still the same room.',
+  'Look and kit stay as you named them.',
+  'You are still HERE — same place, same light.',
+] as const;
+
+const ALONE_ROOM_GROUND = [
+  'Broken stone under your hands. A gap in the wall lets in cold air. The blue panel waits at eye level.',
+  'Rubble piles against one wall. A dark doorway deeper in. Dust motes in the panel-light.',
+  'A half-collapsed arch, a scatter of debris, and that private blue glow — nothing else moves.',
+] as const;
+
+const CROWD_ROOM_GROUND = [
+  'The people who were dealing with you are still here, waiting on your next move.',
+  'Eyes stay on you. The offer — or the demand — has not left the room.',
+  'Whatever they wanted from you is still on the table.',
 ] as const;
 
 const DEFAULT_LOOK = 'everyday street clothes';
@@ -173,8 +186,18 @@ export function synthesizeOpeningScene(state: GameState): string {
   return stitchOpeningScene(state);
 }
 
+/** Strip leading "alone in …" meta from place labels so grammar stays clean. */
+function cleanPlaceLabel(place: string): string {
+  return place
+    .replace(/^\s*alone\s+in\s+/i, '')
+    .replace(/^\s*alone\s*,\s*/i, '')
+    .replace(/\s+/g, ' ')
+    .trim() || 'here';
+}
+
 /**
  * After weave covers — continue locally with locked look/kit. No network.
+ * Ground the room (find/exit/hazard), not meta lock-lines.
  */
 export function stitchOpeningContinue(state: GameState): string {
   const seed = state.seed ?? state.saveId ?? '0';
@@ -183,18 +206,22 @@ export function stitchOpeningContinue(state: GameState): string {
   const name = a.name || state.character.name;
   const look = a.wear || a.look || state.character.appearance || DEFAULT_LOOK;
   const kit = a.pockets || a.kit || '';
-  const place = a.where || state.currentLocation || 'here';
+  const place = cleanPlaceLabel(resolveLockedOpeningPlace(state, a) || a.where || state.currentLocation || 'here');
   const alone = isAloneArrivalOpening(state);
-  const nameBit = name && !/unknown/i.test(name) ? ` The panel (and anyone listening) has you as ${name}.` : '';
+  const nameBit =
+    name && !/unknown/i.test(name)
+      ? alone
+        ? ` The panel has you as ${name}.`
+        : ` Your name here is ${name}.`
+      : '';
   const lookBit = ` You are wearing ${look}.`;
   const kitBit = kit ? ` On you: ${kit}.` : '';
-  const aloneBit = alone
-    ? ' The ruin is still empty of people.'
-    : ' The people who were here are still dealing with you.';
+  const ground = alone
+    ? pickBank(ALONE_ROOM_GROUND, seed, 'continue-ground')
+    : pickBank(CROWD_ROOM_GROUND, seed, 'continue-ground');
   const pressure = pickBank(alone ? PRESSURE_ALONE : PRESSURE_CROWD, seed, 'continue-pressure');
-  return `${bridge} You are still in ${place}.${nameBit}${lookBit}${kitBit}${aloneBit} ${pressure}
+  return `${bridge} You are still in ${place}.${nameBit}${lookBit}${kitBit} ${ground} ${pressure}
 
-What do you do?
 1. Get your bearings
 2. ${alone ? 'Search the ruin' : 'Speak to whoever is dealing with you'}
 3. Check the blue panel
