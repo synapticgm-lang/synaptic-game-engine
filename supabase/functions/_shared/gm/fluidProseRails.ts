@@ -16,6 +16,8 @@ const GLOBAL_RAILS = `=== FLUID GM PROSE RAILS (BINDING) ===
 * EARNED HANDOFF: End with playable pressure, a diegetic opening, or one clear affordance. Do NOT spam boilerplate "What do you do?" every turn — especially not three turns in a row. Action buttons carry choices — do NOT leave numbered option lists in story prose.
 * NO MID-ACTION OFFERS: No soft quest/sales/help offers while action, repair, or combat is unresolved.
 * STORY NOT HELP-DESK: Write like a GM running a live scene, not a chatbot apologizing or summarizing the UI.
+* MAP EXPLORE: When an interior floor plan is LOCKED, answer look-around / "each room" from THIS room + named adjacent map exits — never invent "one open room / only a gap" against door links.
+* ALONE RUIN: When Crowd is none / alone arrival, do not invent watchers who saw the player arrive.
 =====================================`;
 
 const ENGINE_TEMPLATES: Record<EngineMode, string> = {

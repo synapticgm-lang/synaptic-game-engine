@@ -1011,23 +1011,56 @@ export function interiorFootprintsAreVaried(nodes: MapNode[]): boolean {
   return keys.size >= 2;
 }
 
-/** Prompt authority: exits from the current room with door vs gap language. */
-export function formatInteriorExitAuthority(dungeon: ActiveDungeonState): string {
+/** Visible (non-secret or unlocked) exits from the current interior node. */
+export function listInteriorExitsFromHere(dungeon: ActiveDungeonState): Array<{
+  name: string;
+  kind: InteriorEdgeKind;
+  noun: string;
+}> {
   const here = dungeon.nodes.find((n) => n.id === dungeon.currentNodeId);
-  if (!here) return '';
-  const exits = here.connections
+  if (!here) return [];
+  return here.connections
     .map((id) => dungeon.nodes.find((n) => n.id === id))
     .filter((n): n is MapNode => !!n)
     .filter((n) => !n.isSecret || isInteriorSecretUnlocked(dungeon, n.id) || dungeon.visitedNodeIds.includes(n.id))
     .map((n) => {
       const kind = resolveInteriorEdgeKind(here, n);
-      return `${interiorExitNoun(kind)}→${n.name}`;
+      return { name: n.name, kind, noun: interiorExitNoun(kind) };
     });
+}
+
+/** Prompt authority: exits from the current room with door vs gap language. */
+export function formatInteriorExitAuthority(dungeon: ActiveDungeonState): string {
+  const exits = listInteriorExitsFromHere(dungeon);
   if (exits.length === 0) return 'Exits from here: none mapped yet.';
   return (
-    `Exits from here: ${exits.join(', ')}. ` +
+    `Exits from here: ${exits.map((e) => `${e.noun}→${e.name}`).join(', ')}. ` +
     'Prefer door / doorway / corridor into mapped adjacent rooms. ' +
     'Use crack / gap / broken wall only for broken gap or sealed passage edges — never as the default first exit.'
+  );
+}
+
+/**
+ * Explore / look-around authority for multi-room interiors.
+ * Graph wins over "one room with a crack" improvisation.
+ */
+export function formatInteriorExploreAuthority(dungeon: ActiveDungeonState): string {
+  const here = dungeon.nodes.find((n) => n.id === dungeon.currentNodeId);
+  if (!here) return '';
+  const exits = listInteriorExitsFromHere(dungeon);
+  const doorish = exits.filter((e) => e.kind === 'door' || e.kind === 'stairs');
+  const adj = exits.map((e) => e.name).join(', ') || 'none mapped';
+  const roomCount = dungeon.nodes.filter((n) => !n.isSecret || dungeon.visitedNodeIds.includes(n.id)).length;
+  const exitAuth = formatInteriorExitAuthority(dungeon);
+  return (
+    `${exitAuth} ` +
+    `EXPLORE AUTHORITY (BINDING): You are in "${here.name}" inside a mapped ${roomCount}-room floor plan. ` +
+    `Answer look-around / "tell me about each room" / explore-more with (1) concrete contents of THIS room ` +
+    `(light, smell, debris, props from scene facts) then (2) named adjacent rooms via their mapped links (${adj}). ` +
+    (doorish.length > 0
+      ? `Do NOT claim this is one open room, that no doors remain intact, that there are no hallways, or that only a wall-gap exists — doorways/corridors are on the map. `
+      : '') +
+    `Damaged gaps only when an exit is typed broken gap. Unvisited mapped rooms stay fogged — name them from the graph, do not invent a contradictory layout.`
   );
 }
 

@@ -20,7 +20,7 @@ import {
   deleteCloudSavesExcept,
   gameStateToLocalSlot,
 } from './cloudSync';
-import { filterSystemLogForEngine } from './systemLog';
+import { filterSystemLogForEngine, suppressNoOpStatusEcho } from './systemLog';
 import { callGm, callGmAutoFight, type GmResult } from './aiService';
 import { simulateCombat, buildAutoFightPrompt } from './combat';
 import type { EnemyStats } from './combat';
@@ -212,7 +212,7 @@ import { hasRealGmStory } from './turnAsk';
 import { encounterOriginPlace } from './locationName';
 import { clampLeakedOpeningQuests, extractNamedPlaces, harvestPlayText, isGenericMapPlace, mapAnchorName, newlyRevealedQuests, questsLockedDuringOpening, revealLocalStarterQuest, syncQuestsFromPlay } from './questPlay';
 import { inferItemType } from './salvage';
-import { initializeDungeon, moveToNode, exitDungeon as engineExitDungeon, resolvePlayAreaMap } from './mapEngine';
+import { initializeDungeon, moveToNode, exitDungeon as engineExitDungeon, resolvePlayAreaMap, listInteriorExitsFromHere } from './mapEngine';
 import type { Toast } from '@/components/ToastStack';
 import {
   syncToDrive,
@@ -2854,6 +2854,20 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
         ),
         liveCurrent.engineMode
       );
+      {
+        const knownLoc =
+          liveCurrent.activeDungeon && isInteriorMap(liveCurrent.activeDungeon)
+            ? liveCurrent.activeDungeon.nodes.find((n) => n.id === liveCurrent.activeDungeon!.currentNodeId)
+                ?.name
+            : liveCurrent.locationSheet?.name || liveCurrent.currentLocation;
+        const knownQuest = (liveCurrent.quests ?? []).find(
+          (q) => q.status === 'active' && q.revealed !== false
+        )?.name;
+        mergedSystemLog = suppressNoOpStatusEcho(mergedSystemLog, {
+          location: knownLoc,
+          questFocus: knownQuest,
+        });
+      }
       cleanText = ensureXpNarration(cleanText, mergedSystemLog);
       cleanText = applyFactLocks(liveCurrent, cleanText, sanitizedInput);
       if (warden.continuityBreak || detectSceneContradiction(liveCurrent.sceneFacts, cleanText)) {
@@ -2917,9 +2931,18 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
       );
       cleanText = applyLocalityWarden(cleanText, workingState.currentLocation ?? liveCurrent.currentLocation, hasFirearm);
       cleanText = enforcePerspective(cleanText, settingsRef.current, liveCurrent.character.name);
-      cleanText = applyProseWarden(cleanText, {
-        currentLocation: workingState.currentLocation ?? liveCurrent.currentLocation,
-      });
+      {
+        const dungeon = workingState.activeDungeon ?? liveCurrent.activeDungeon;
+        const exits =
+          dungeon && isInteriorMap(dungeon) ? listInteriorExitsFromHere(dungeon) : [];
+        const doorish = exits.filter((e) => e.kind === 'door' || e.kind === 'stairs');
+        cleanText = applyProseWarden(cleanText, {
+          currentLocation: workingState.currentLocation ?? liveCurrent.currentLocation,
+          aloneArrival: isAloneArrivalOpening(workingState) || isAloneArrivalOpening(liveCurrent),
+          hasMappedDoorExits: doorish.length > 0,
+          adjacentRoomNames: exits.map((e) => e.name),
+        });
+      }
       {
         const leak = scanAndScrubLeaks(cleanText);
         if (leak.notes.length) {

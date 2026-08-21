@@ -5,12 +5,13 @@ import { formatSceneFactsForPrompt } from './sceneFacts.ts';
 import { formatSceneManifestForPrompt } from './sceneManifest.ts';
 import { formatCampaignContractForPrompt } from './campaignContract.ts';
 import { formatHiddenRoomLedger } from './dungeonSeed.ts';
-import { dangerTierLabel, mapScaleLabel, resolveDangerTier, resolveMapScale } from './placeAuthority.ts';
+import { dangerTierLabel, mapScaleLabel, resolveDangerTier, resolveMapScale, isInteriorMap } from './placeAuthority.ts';
 import { formatPlacesForPrompt } from './places.ts';
 import { formatCampaignMemoryForPrompt } from './campaignMemory.ts';
 import { formatTutorialBeatMandate } from './tutorialBeats.ts';
 import { formatLocalityForPrompt } from './locality.ts';
 import { formatHiddenCulpritRail } from './mysteryCulprit.ts';
+import { formatInteriorExploreAuthority } from './mapEngine.ts';
 
 /**
  * Rebuild the live Situation packet from structured state.
@@ -24,8 +25,11 @@ export function buildSituationPacket(state: GameState): SituationPacket {
     : 'none';
 
   const presentEntities: string[] = [];
-  for (const who of state.sceneFacts?.present ?? []) {
-    presentEntities.push(who);
+  const alone = state.openingEstablishment?.aloneArrival === true;
+  if (!alone) {
+    for (const who of state.sceneFacts?.present ?? []) {
+      presentEntities.push(who);
+    }
   }
   if (state.activeEncounter) {
     presentEntities.push(
@@ -36,12 +40,16 @@ export function buildSituationPacket(state: GameState): SituationPacket {
     presentEntities.push(`Companion: ${c.name}`);
   }
   // NPCs recently seen via lore cards tagged npc that appear in last timeline facts
-  const recentNpcMentions = (state.timeline ?? [])
-    .slice(-12)
-    .filter((f) => f.kind === 'npc' || /npc|met |spoke/i.test(f.text))
-    .map((f) => f.text)
-    .slice(-4);
-  presentEntities.push(...recentNpcMentions);
+  if (!alone) {
+    const recentNpcMentions = (state.timeline ?? [])
+      .slice(-12)
+      .filter((f) => f.kind === 'npc' || /npc|met |spoke/i.test(f.text))
+      .map((f) => f.text)
+      .slice(-4);
+    presentEntities.push(...recentNpcMentions);
+  } else {
+    presentEntities.push('alone — no established NPCs');
+  }
 
   // Revealed + active names only. Unrevealed quests stay out of the scene packet.
   const activeQuests = (state.quests ?? [])
@@ -100,6 +108,11 @@ export function formatSituationForPrompt(state: GameState): string {
   const placeRegistry = formatPlacesForPrompt(state.places, currentSheet?.name ?? s.location);
   const tutorialMandate = formatTutorialBeatMandate(state);
   const contractBlock = formatCampaignContractForPrompt(state);
+  const alone = state.openingEstablishment?.aloneArrival === true;
+  const interiorExplore =
+    state.activeDungeon && isInteriorMap(state.activeDungeon)
+      ? formatInteriorExploreAuthority(state.activeDungeon)
+      : '';
   const none = '(none)';
   const lines = [
     manifestBlock,
@@ -110,6 +123,7 @@ export function formatSituationForPrompt(state: GameState): string {
     sceneBlock || '',
     `Encounter: ${s.encounter}`,
     `Dungeon: ${s.dungeon}`,
+    interiorExplore || '',
     `Present entities: ${s.presentEntities.join(' | ')}`,
     `Active quests (revealed only — never mention hidden Guide Book hooks): ${s.activeQuests.join(' | ')}`,
     'NPC memories (how they were treated sticks — no karma meter):',
@@ -121,7 +135,10 @@ export function formatSituationForPrompt(state: GameState): string {
     hiddenLedger || '',
     tutorialMandate || '',
     formatLocalityForPrompt(state) || '',
-    'RAILS: SCENE MANIFEST + packet facts + SCENE FACTS + timeline override improvisation. Do not invent named threats, loot, NPCs, or interactables absent above. Do not invent a dungeon danger tier outdoors. Do not empty a present crowd or silence shouting without time passing.',
+    alone
+      ? 'ALONE ARRIVAL (BINDING): Empty ruin — no crowd, handlers, or "people who saw you arrive." Do not invent voices outside or watchers at the wall.'
+      : '',
+    'RAILS: SCENE MANIFEST + packet facts + SCENE FACTS + timeline override improvisation. Do not invent named threats, loot, NPCs, or interactables absent above. Do not invent a dungeon danger tier outdoors. Do not empty a present crowd or silence shouting without time passing. Interior floor-plan Exits / EXPLORE AUTHORITY override "one room / only a gap" improvisation.',
     'HIDDEN QUESTS: Never spoil quests with status hidden or revealed=false.',
     formatWorldLedgerBlock(state.worldLedger),
   ];
@@ -184,7 +201,7 @@ export function formatCampaignRails(state: GameState): string {
   const styleRail = state.campaignStyleRail?.trim();
   const summonedPactPlace =
     state.campaignBibleId === 'summoned-pact'
-      ? `\nLOCATION LANGUAGE (BINDING): Camera is HERE — Sevenfold Circle / Valespire Cathedral unless Location says otherwise. Never call this interior "a nearby building." "The court" is Pellane's Crown in this vault, not the enemy; the enemy polity is the Ash Court. Do not use "the court" as both current room and the enemy in the same beat.`
+      ? `\nLOCATION LANGUAGE (BINDING): Camera is HERE — the seeded summon place for this run (cathedral circle, war camp, cell, arena, shrine, festival square, rival hall, treaty tent, harbor hold, ruined west-wall circle, infirmary, or an alone-arrival ruin of a random building) unless Location says otherwise. Alone-arrival cards: no summoners, handlers, or watchers on page one or later explore beats until the ledger establishes presence. Never call this interior "a nearby building." "The court" is Pellane's Crown / the people in this room, not the enemy. The enemy polity is the Ash Court. Do not use "the court" as both current room and the enemy in the same beat.`
       : '';
   return `=== CAMPAIGN GUIDE BOOK (RAILS — DO NOT CONTRADICT) ===
 ${premise}${canon}${culpritRail ? `\n${culpritRail}` : ''}${styleRail ? `\n${styleRail}` : ''}${summonedPactPlace}

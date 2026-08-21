@@ -1,12 +1,18 @@
 /**
  * Cheap post-writer English / UI-leak pass. Not a second model.
  * Fixes article collisions, bare "a figure" name-slots, leaked quest verbs,
- * and location tautology ("in the court … of a nearby building").
+ * location tautology, alone crowd invents, and interior one-room map lies.
  * There is no general "does this make sense" critic — that would be a second LLM.
  */
 
 export type ProseWardenContext = {
   currentLocation?: string;
+  /** Summoned Pact alone ruin / empty arrival — never invent watchers. */
+  aloneArrival?: boolean;
+  /** Interior graph has normal door/stair links from here — scrub one-room lies. */
+  hasMappedDoorExits?: boolean;
+  /** Named adjacent rooms for soft rewrite anchors (optional). */
+  adjacentRoomNames?: string[];
 };
 
 /** Interiors that already name "here" — nearby is for things that are not here. */
@@ -149,12 +155,63 @@ export function scrubPrematureSecrets(text: string): string {
   return tidyClauses(next);
 }
 
+/** Sentence split that keeps closers — for alone / map scrub drops. */
+function splitSentences(text: string): string[] {
+  const parts = text.match(/[^.!?]+[.!?]+|[^.!?]+$/g);
+  return parts?.map((p) => p.trim()).filter(Boolean) ?? (text.trim() ? [text.trim()] : []);
+}
+
+/**
+ * Alone arrival / empty ruin — drop invent-crowd / "saw you arrive" watcher beats.
+ * Choices already gate pads; this catches prose that slipped the writer.
+ */
+const ALONE_CROWD_INVENT =
+  /\b(?:you(?:'re|’re| are) not alone|a handful of (?:people|figures|onlookers)|people have gathered|ones who saw you arrive|who saw you(?:r)? arrive|saw you arrive|watching (?:you |through )|crowd (?:of|has|have)|bystanders?\b|onlookers?\b|handlers?\b|voices?\s+(?:outside|beyond|from (?:the )?(?:street|road|gap))|someone (?:nearby|listening|watching))\b/i;
+
+export function scrubInventedAlonePresence(text: string, alone: boolean): string {
+  if (!alone || !text) return text;
+  if (!ALONE_CROWD_INVENT.test(text)) return text;
+  const kept = splitSentences(text).filter((s) => !ALONE_CROWD_INVENT.test(s));
+  if (kept.length === 0) {
+    return 'Nothing moves. Only your own footprints disturb the dust.';
+  }
+  return tidyClauses(kept.join(' '));
+}
+
+/**
+ * When the interior map has door/stair links, scrub "one open room / no doors / only a gap" lies.
+ */
+const ONE_ROOM_MAP_LIE =
+  /\b(?:only\s+(?:one|a\s+single)\s+(?:open\s+)?room|no\s+doors?\s+(?:intact|remain|left)|(?:there\s+are\s+)?no\s+hallways?|only\s+(?:a\s+)?(?:gap|crack)\s+in\s+the\s+(?:far\s+)?wall|nothing\s+but\s+(?:a\s+)?(?:gap|crack)\s+in\s+the\s+wall)\b/i;
+
+export function scrubInteriorOneRoomLie(
+  text: string,
+  hasMappedDoorExits: boolean,
+  adjacentRoomNames: string[] = []
+): string {
+  if (!hasMappedDoorExits || !text || !ONE_ROOM_MAP_LIE.test(text)) return text;
+  const adj =
+    adjacentRoomNames.length > 0
+      ? adjacentRoomNames.slice(0, 3).join(', ')
+      : 'mapped adjacent rooms';
+  const kept = splitSentences(text).filter((s) => !ONE_ROOM_MAP_LIE.test(s));
+  const bridge = `Doorways and corridors still link this floor to ${adj}.`;
+  if (kept.length === 0) return bridge;
+  return tidyClauses(`${kept.join(' ')} ${bridge}`);
+}
+
 export function applyProseWarden(text: string, ctx?: ProseWardenContext): string {
   if (!text) return text;
   let next = scrubFigurePlaceholder(text);
   next = scrubSomeoneNearbyPlaceholder(next);
   next = scrubUiQuestVerbs(next);
   next = scrubPrematureSecrets(next);
+  next = scrubInventedAlonePresence(next, ctx?.aloneArrival === true);
+  next = scrubInteriorOneRoomLie(
+    next,
+    ctx?.hasMappedDoorExits === true,
+    ctx?.adjacentRoomNames ?? []
+  );
   next = scrubLocationTautology(next, ctx?.currentLocation);
   next = scrubSpokenQuoteStart(next);
   next = scrubArticleCollisions(next);

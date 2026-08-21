@@ -80,6 +80,29 @@ export function dedupeQuestStatusEcho(lines: string[]): string[] {
   });
 }
 
+function normStatusValue(value: string): string {
+  return value.replace(/^Next:\s*/i, '').replace(/\s+/g, ' ').trim().toLowerCase();
+}
+
+/**
+ * Drop Location / Quest Focus lines that only restate known room + quest after an explore
+ * when nothing material changed. Keeps XP/loot/HP/quest-unlock lines.
+ */
+export function suppressNoOpStatusEcho(
+  lines: string[],
+  known: { location?: string; questFocus?: string }
+): string[] {
+  const knownLoc = known.location ? normStatusValue(known.location) : '';
+  const knownQuest = known.questFocus ? normStatusValue(known.questFocus) : '';
+  return lines.filter((line) => {
+    const loc = line.match(/^Location:\s*(.+)$/i);
+    if (loc?.[1] && knownLoc && normStatusValue(loc[1]) === knownLoc) return false;
+    const qf = line.match(/^Quest Focus:\s*(.+)$/i);
+    if (qf?.[1] && knownQuest && normStatusValue(qf[1]) === knownQuest) return false;
+    return true;
+  });
+}
+
 export function filterSystemLogForEngine(lines: string[], engineMode: EngineMode): string[] {
   const cleaned = lines
     .map((l) => l.replace(/^[ \t]*_>\s*/, '').trim())

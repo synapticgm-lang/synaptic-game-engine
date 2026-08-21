@@ -15,6 +15,9 @@ import { scrubInventedProperNouns } from './narrativeScrub';
 import { applyProseWarden } from './proseWarden';
 import { findManifestInventions } from './sceneManifest';
 import { continuityStrict } from './opsKillSwitches';
+import { isInteriorMap } from './placeAuthority';
+import { listInteriorExitsFromHere } from './mapEngine';
+import { isAloneArrivalOpening } from './openingEstablishment';
 
 export interface WardenResult {
   /** Events allowed after sheet checks. */
@@ -213,8 +216,16 @@ export function runWarden(
   }
 
   const scrub = scrubInventedProperNouns(narrativeText, state, establishedProse);
+  const exits =
+    state.activeDungeon && isInteriorMap(state.activeDungeon)
+      ? listInteriorExitsFromHere(state.activeDungeon)
+      : [];
+  const doorish = exits.filter((e) => e.kind === 'door' || e.kind === 'stairs');
   const polished = applyProseWarden(scrub.text, {
     currentLocation: state.locationSheet?.name || state.currentLocation,
+    aloneArrival: isAloneArrivalOpening(state),
+    hasMappedDoorExits: doorish.length > 0,
+    adjacentRoomNames: exits.map((e) => e.name),
   });
   if (scrub.stripped.length) {
     for (const name of scrub.stripped.slice(0, 6)) {

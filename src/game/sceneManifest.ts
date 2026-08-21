@@ -6,8 +6,13 @@
 
 import type { GameState, Item } from './types';
 import { playerFacingLocation } from './locationName';
-import { resolveDangerTier, resolveMapScale, dangerTierLabel, mapScaleLabel } from './placeAuthority';
+import { resolveDangerTier, resolveMapScale, dangerTierLabel, mapScaleLabel, isInteriorMap } from './placeAuthority';
 import { introductionPermitForName } from './introductionPermit';
+import { formatInteriorExploreAuthority, listInteriorExitsFromHere } from './mapEngine';
+
+function isAloneScene(state: GameState): boolean {
+  return state.openingEstablishment?.aloneArrival === true;
+}
 
 export interface SceneManifest {
   revision: number;
@@ -41,15 +46,20 @@ export function compileSceneManifest(state: GameState): SceneManifest {
 
   const roster = new Set<string>();
   roster.add(state.character?.name?.trim() || 'Player');
-  for (const who of state.sceneFacts?.present ?? []) {
-    if (who.trim()) roster.add(who.trim());
+  const alone = isAloneScene(state);
+  if (!alone) {
+    for (const who of state.sceneFacts?.present ?? []) {
+      if (who.trim()) roster.add(who.trim());
+    }
   }
   for (const c of state.companions ?? []) {
     if (c.name?.trim()) roster.add(c.name.trim());
   }
-  for (const m of (state.npcMemories ?? []).slice(0, 6)) {
-    if (m.npcName?.trim() && (state.turn - (m.lastSeenTurn ?? 0)) <= 8) {
-      roster.add(m.npcName.trim());
+  if (!alone) {
+    for (const m of (state.npcMemories ?? []).slice(0, 6)) {
+      if (m.npcName?.trim() && (state.turn - (m.lastSeenTurn ?? 0)) <= 8) {
+        roster.add(m.npcName.trim());
+      }
     }
   }
 
@@ -61,6 +71,11 @@ export function compileSceneManifest(state: GameState): SceneManifest {
   }
 
   const exits = (state.locationSheet?.exits ?? []).map((x) => x.label).filter(Boolean);
+  if (state.activeDungeon && isInteriorMap(state.activeDungeon)) {
+    for (const e of listInteriorExitsFromHere(state.activeDungeon)) {
+      exits.push(`${e.noun}→${e.name}`);
+    }
+  }
   const props = [
     ...(state.sceneFacts?.props ?? []),
     ...(state.locationSheet?.interactables ?? [])
@@ -79,6 +94,13 @@ export function compileSceneManifest(state: GameState): SceneManifest {
     }
   }
 
+  let crowd = state.sceneFacts?.crowd ?? 'unknown';
+  let noise = state.sceneFacts?.noise ?? 'unknown';
+  if (alone) {
+    crowd = 'none';
+    if (noise === 'voices' || noise === 'shouting' || noise === 'unknown') noise = 'quiet';
+  }
+
   return {
     revision: state.ledgerRevision ?? 0,
     turn: state.turn,
@@ -87,12 +109,12 @@ export function compileSceneManifest(state: GameState): SceneManifest {
     danger,
     roster: Array.from(roster).slice(0, 16),
     visibleKit: equippedNames(state),
-    exits: exits.slice(0, 10),
+    exits: Array.from(new Set(exits)).slice(0, 10),
     threats: threats.slice(0, 6),
     props: Array.from(new Set(props)).slice(0, 14),
     activeTalk: activeTalk.slice(0, 6),
-    crowd: state.sceneFacts?.crowd ?? 'unknown',
-    noise: state.sceneFacts?.noise ?? 'unknown',
+    crowd,
+    noise,
     lastBeat: state.sceneFacts?.lastBeat ?? '',
   };
 }
@@ -100,6 +122,14 @@ export function compileSceneManifest(state: GameState): SceneManifest {
 /** Reserved prompt slot — higher authority than supporting memory / summaries. */
 export function formatSceneManifestForPrompt(state: GameState): string {
   const m = compileSceneManifest(state);
+  const alone = isAloneScene(state);
+  const interiorAuth =
+    state.activeDungeon && isInteriorMap(state.activeDungeon)
+      ? `\n${formatInteriorExploreAuthority(state.activeDungeon)}`
+      : '';
+  const aloneRule = alone
+    ? ' ALONE ARRIVAL (BINDING): Player arrived alone into an empty ruin — Crowd is none. Do NOT invent people who saw them arrive, handlers, bystanders, voices outside, or a gathered handful watching through damage. Physical presence stays empty until the ledger/scene establishes someone.'
+    : '';
   return `=== SCENE MANIFEST (AUTHORITY — reserved; do not invent outside this list) ===
 Revision: ${m.revision} | Turn: ${m.turn}
 Place: ${m.place}
@@ -112,7 +142,7 @@ Props / interactables: ${m.props.join(', ') || 'none listed'}
 Active talk / open asks: ${m.activeTalk.join('; ') || 'none'}
 Crowd: ${m.crowd} | Noise: ${m.noise}
 Last beat: ${m.lastBeat || '—'}
-RULES: Do not introduce a new named person, place, faction, or major item unless the player named it this turn, the campaign bible/opening allows it, or an Introduction Permit applies. Atmosphere and unnamed roles ("a clerk", "someone in the crowd") are fine. Do not empty a present crowd without narrating time passing. Inventory/HP/quest truth comes from the ledger — do not contradict it.`;
+RULES: Do not introduce a new named person, place, faction, or major item unless the player named it this turn, the campaign bible/opening allows it, or an Introduction Permit applies.${alone ? '' : ' Atmosphere and unnamed roles ("a clerk", "someone in the crowd") are fine when Crowd is present.'} Do not empty a present crowd without narrating time passing. Inventory/HP/quest truth comes from the ledger — do not contradict it.${aloneRule}${interiorAuth}`;
 }
 
 /**

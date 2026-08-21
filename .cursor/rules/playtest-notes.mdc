@@ -22,6 +22,7 @@ John is playtesting live. Collect issues here. Do not implement until he asks fo
 
 ## Done (already shipped)
 
+- **2026-08-20r map-authority explore + alone presence + status dedupe:** Interior EXPLORE AUTHORITY binds look-around / “each room” to the floor-plan graph (THIS room + doorway→adjacent; no “one open room / only a gap” when doors exist). Alone arrival hard-gates invent-crowd prose + choices (“people who saw you arrive”); Scene Manifest Crowd=none; prose warden scrubs watcher slips. STATUS drops no-op Location + Quest Focus echoes when unchanged. HUD stamp 20r
 - **2026-08-20q interior doors + varied footprints:** Normal room links render as door marks on walls (not thin crack lines); damaged/secret edges are dashed/broken only when typed; GM exit authority + alone opening/choice pads prefer doorway/corridor; seed-stable non-uniform room sizes (thin corridors, wider halls). HUD stamp 20q
 - **2026-08-20p Class A turn recovery:** Auto-retry up to 2× on timeout/network/empty GM turns; longer proxy budget for first post-open / honeymoon turns (75s) and early turns (55s); exhausted toast if still failing; player line + draft restore unchanged. HUD stamp 20p
 - **2026-08-20o multi-floor interiors:** Ruined buildings / halls / cathedrals / manors author 2–3 z-levels (B1 / 1F / 2F) with stair links; tiny sheds stay single-floor. Map UI floor picker filters draw per level (inspect other floors RE-style); visited/unvisited/secret fog per floor; short room labels. Copyright-safe original chrome. HUD stamp 20o
