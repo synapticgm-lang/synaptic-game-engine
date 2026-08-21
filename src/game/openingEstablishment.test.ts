@@ -84,6 +84,19 @@ describe('opening utterance — name cover vs location-talk', () => {
     const { state } = await applyOpeningAnswer(summonedNameCover(), 'Sam');
     expect(state.character.name).toBe('Sam');
   });
+
+  it('name + who/where acknowledges Jax and never re-asks for a name', async () => {
+    const { state } = await applyOpeningAnswer(
+      summonedNameCover(),
+      'my name is Jax who are you where am i'
+    );
+    expect(state.character.name).toBe('Jax');
+    const gm = [...state.log].reverse().find((e) => e.role === 'gm')?.content ?? '';
+    expect(gm).toMatch(/Jax/i);
+    expect(gm).not.toMatch(/They want a name/i);
+    expect(gm).toMatch(/Earth|summon/i);
+    expect(gm).toMatch(/where|circle|floor|here/i);
+  });
 });
 
 describe('harvest Earth origin from opening prose', () => {

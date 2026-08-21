@@ -914,6 +914,7 @@ function harvestUtterance(raw: string): {
   species: string | null;
   askedWho: boolean;
   askedWhat: boolean;
+  askedWhere: boolean;
 } {
   return {
     name: extractGivenName(raw),
@@ -923,6 +924,7 @@ function harvestUtterance(raw: string): {
     species: extractSpecies(raw),
     askedWho: /\bwho\s+are\s+you\b/i.test(raw),
     askedWhat: /\bwhat(?:'s|\s+is)\s+going\s+on\b/i.test(raw) || /\bwhy\??\s*$/i.test(raw),
+    askedWhere: /\bwhere\s+am\s+i\b/i.test(raw) || /\bwhere\s+is\s+this\b/i.test(raw),
   };
 }
 
@@ -1111,11 +1113,40 @@ function mundaneBagNamesFromKit(text: string): string[] {
 function registrarAside(
   registrar: OpeningRegistrar,
   harvest: ReturnType<typeof harvestUtterance>,
-  bibleId?: string
+  bibleId?: string,
+  lockedName?: string | null,
+  lockedPlace?: string | null
 ): string {
   const bits: string[] = [];
+  const name =
+    (lockedName ?? harvest.name ?? '').trim()
+    && !/^(unknown|adventurer|hero)$/i.test((lockedName ?? harvest.name ?? '').trim())
+      ? (lockedName ?? harvest.name)!.trim()
+      : '';
+  const place = (lockedPlace ?? harvest.location ?? '').trim();
+
   if (harvest.askedWho) {
-    if (bibleId === 'summoned-pact') {
+    if (name) {
+      if (bibleId === 'summoned-pact') {
+        bits.push(
+          `${name}. The voices over the circle have it. They pulled you from Earth — summoners, not a System eating the planet.`
+        );
+      } else if (bibleId === 'system-integration') {
+        bits.push(
+          `${name}. The panel has it. It is here in this life — not a machine eating Earth.`
+        );
+      } else if (bibleId === 'hero-awakening') {
+        bits.push(
+          `${name}. The Wake Ledger has it. This is still your world — private registration, not a summon.`
+        );
+      } else {
+        bits.push(
+          registrar.voice === 'system'
+            ? `${name}. The System panel has your designation.`
+            : `${name}. They have your name. The scene keeps moving.`
+        );
+      }
+    } else if (bibleId === 'summoned-pact') {
       bits.push('The voices over the circle are waiting. They pulled you from Earth. They want a name.');
     } else if (bibleId === 'system-integration') {
       bits.push('The panel is here, in this life. It is not eating the planet. It wants a name you already use.');
@@ -1129,6 +1160,21 @@ function registrarAside(
       );
     }
   }
+
+  if (harvest.askedWhere) {
+    if (place) {
+      bits.push(`You are here: ${place}.`);
+    } else if (bibleId === 'summoned-pact') {
+      bits.push('You are on the floor of the summon circle in this world — not on Earth anymore.');
+    } else if (bibleId === 'system-integration') {
+      bits.push('You are still on this Earth — Integration is a panel over the life you already have.');
+    } else if (bibleId === 'hero-awakening') {
+      bits.push('You are where you already live — the Wake Ledger opened here, not a summoning.');
+    } else {
+      bits.push('You are in the opening scene — the next ask will lock the particulars.');
+    }
+  }
+
   if (harvest.askedWhat) {
     if (bibleId === 'summoned-pact') {
       bits.push('You were taken from Earth. This world is not writing Earth into a System.');
@@ -1367,7 +1413,23 @@ export async function applyOpeningAnswer(
     markCoverResolved(prompt, locked);
   }
 
-  const aside = registrarAside(registrar, harvest, nextState.campaignBibleId);
+  const lockedName =
+    answers.name?.trim()
+    || harvest.name?.trim()
+    || nextState.character.name?.trim()
+    || '';
+  const lockedPlace =
+    answers.where?.trim()
+    || harvest.location?.trim()
+    || nextState.currentLocation?.trim()
+    || '';
+  const aside = registrarAside(
+    registrar,
+    harvest,
+    nextState.campaignBibleId,
+    lockedName,
+    lockedPlace
+  );
   const cheatLine = cheated
     ? 'That gear does not appear. Ordinary pockets only.'
     : '';
