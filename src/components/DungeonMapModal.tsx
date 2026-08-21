@@ -1,6 +1,11 @@
 import React, { useEffect, useMemo } from 'react';
 import type { ActiveDungeonState, MapNode } from '../game/mapEngine';
-import { presentLocalAreaMap, resolvePlayAreaMap } from '../game/mapEngine';
+import {
+  interiorRoomFillKind,
+  isInteriorSecretUnlocked,
+  presentLocalAreaMap,
+  resolvePlayAreaMap,
+} from '../game/mapEngine';
 import { isGenericMapPlace } from '../game/questPlay';
 import { isInteriorMap, isInteriorPlace, isStreetMap, mapScaleLabel } from '../game/placeAuthority';
 import type { Location3D } from '../game/types';
@@ -104,12 +109,12 @@ export const DungeonMapModal: React.FC<DungeonMapModalProps> = ({
           <p className="mt-4 text-sm text-slate-300 leading-relaxed">
             You are in <span className="font-medium sgm-info-accent">{currentLocation?.trim() || 'an unmapped place'}</span>.
             {isInteriorPlace(currentLocation)
-              ? ' The System sketches a floor plan of this interior from rooms named in play.'
+              ? ' The System sketches a full floor plan for this interior. Visited rooms stay open; unvisited rooms stay shaded until you walk them.'
               : ' The System builds a local area map from wherever you said you are — a market square, a Kyoto alley, anywhere in the world.'}
           </p>
           <p className="mt-3 text-xs sgm-adventure-map-scale opacity-80">
             {isInteriorPlace(currentLocation)
-              ? 'Named rooms in the scene appear as you explore them.'
+              ? 'Secret passages may show as faint dashed lines — you still have to find them in play.'
               : 'Name the street or store in play if this is still empty.'}
           </p>
         </div>
@@ -214,7 +219,9 @@ export const DungeonMapModal: React.FC<DungeonMapModalProps> = ({
             <span className="text-xs text-slate-400">
               {isStreet
                 ? `Places: ${displayDungeon.nodes.length}`
-                : `Rooms: ${displayDungeon.visitedNodeIds.length} mapped / ${displayDungeon.nodes.length} on this floor`}
+                : isHallPlan
+                  ? `Explored: ${displayDungeon.visitedNodeIds.length} / ${displayDungeon.nodes.length} rooms on this floor`
+                  : `Rooms: ${displayDungeon.visitedNodeIds.length} mapped / ${displayDungeon.nodes.length} on this floor`}
             </span>
             <button
               onClick={onExitDungeon}
@@ -249,9 +256,9 @@ function InteriorFloorPlan({
   const minY = Math.min(...ys, 0);
   const maxX = Math.max(...xs, 1);
   const maxY = Math.max(...ys, 1);
-  const cell = organic ? 148 : 108;
-  const gap = organic ? 28 : 10;
-  const pad = organic ? 40 : 28;
+  const cell = organic ? 132 : 108;
+  const gap = organic ? 22 : 10;
+  const pad = organic ? 36 : 28;
   const width = (maxX - minX + 1) * cell + pad * 2;
   const height = (maxY - minY + 1) * cell + pad * 2;
   const current = nodes.find((n) => n.id === currentNodeId);
@@ -259,14 +266,18 @@ function InteriorFloorPlan({
   const roomBox = (node: MapNode) => {
     const gx = node.coordinates?.x ?? 0;
     const gy = node.coordinates?.y ?? 0;
-    const here = (node.tags ?? []).includes('here');
+    const here = (node.tags ?? []).includes('here') || node.id === currentNodeId;
     return {
       x: pad + (gx - minX) * cell,
       y: pad + (gy - minY) * cell,
-      w: cell - gap + (organic && here ? 36 : 0),
-      h: cell - gap + (organic && here ? 24 : 0),
+      w: cell - gap + (organic && here ? 20 : 0),
+      h: cell - gap + (organic && here ? 12 : 0),
     };
   };
+
+  const edgeIsSecret = (a: MapNode, b: MapNode) =>
+    !!(a.isSecret || b.isSecret) &&
+    (!isInteriorSecretUnlocked(dungeon, a.id) || !isInteriorSecretUnlocked(dungeon, b.id));
 
   return (
     <div className="relative" style={{ minWidth: width, minHeight: height }}>
@@ -275,9 +286,12 @@ function InteriorFloorPlan({
           <pattern id="sgm-stone-hatch" width="8" height="8" patternUnits="userSpaceOnUse">
             <path d="M0 8 L8 0" stroke="#3d3428" strokeWidth="0.6" opacity="0.35" />
           </pattern>
+          <pattern id="sgm-unvisited-hatch" width="6" height="6" patternUnits="userSpaceOnUse">
+            <path d="M0 6 L6 0" stroke="#1a1612" strokeWidth="1" opacity="0.55" />
+          </pattern>
           <radialGradient id="sgm-room-fog" cx="50%" cy="50%" r="50%">
-            <stop offset="0%" stopColor="#0c0e12" stopOpacity="0.15" />
-            <stop offset="100%" stopColor="#0c0e12" stopOpacity="0.75" />
+            <stop offset="0%" stopColor="#0c0e12" stopOpacity="0.2" />
+            <stop offset="100%" stopColor="#0c0e12" stopOpacity="0.82" />
           </radialGradient>
         </defs>
         <rect width={width} height={height} fill="#1a1510" opacity="0.35" />
@@ -289,7 +303,9 @@ function InteriorFloorPlan({
             if (!target) return null;
             const a = roomBox(node);
             const b = roomBox(target);
-            const visited = dungeon.visitedNodeIds.includes(node.id) || dungeon.visitedNodeIds.includes(targetId);
+            const secret = edgeIsSecret(node, target);
+            const eitherVisited =
+              dungeon.visitedNodeIds.includes(node.id) || dungeon.visitedNodeIds.includes(targetId);
             return (
               <g key={`${node.id}-${targetId}`}>
                 <line
@@ -297,20 +313,22 @@ function InteriorFloorPlan({
                   y1={a.y + a.h / 2}
                   x2={b.x + b.w / 2}
                   y2={b.y + b.h / 2}
-                  stroke={visited ? '#4a3f32' : '#2a241c'}
-                  strokeWidth={organic ? 18 : 16}
+                  stroke={secret ? '#4a4034' : eitherVisited ? '#4a3f32' : '#2f2922'}
+                  strokeWidth={organic ? 16 : 14}
                   strokeLinecap="round"
-                  opacity={visited ? 0.85 : 0.4}
+                  strokeDasharray={secret ? '6 8' : undefined}
+                  opacity={secret ? 0.45 : eitherVisited ? 0.85 : 0.55}
                 />
                 <line
                   x1={a.x + a.w / 2}
                   y1={a.y + a.h / 2}
                   x2={b.x + b.w / 2}
                   y2={b.y + b.h / 2}
-                  stroke={visited ? '#6b5a45' : '#3d352c'}
-                  strokeWidth={organic ? 8 : 7}
+                  stroke={secret ? '#6b5a45' : eitherVisited ? '#6b5a45' : '#3d352c'}
+                  strokeWidth={organic ? 7 : 6}
                   strokeLinecap="round"
-                  opacity={visited ? 0.7 : 0.35}
+                  strokeDasharray={secret ? '4 6' : undefined}
+                  opacity={secret ? 0.35 : eitherVisited ? 0.7 : 0.4}
                 />
               </g>
             );
@@ -318,8 +336,10 @@ function InteriorFloorPlan({
         )}
         {nodes.map((node) => {
           const box = roomBox(node);
-          const isVisited = dungeon.visitedNodeIds.includes(node.id);
+          const fill = interiorRoomFillKind(dungeon, node);
           const isCurrent = node.id === currentNodeId;
+          const isVisited = fill === 'visited';
+          const isSecret = fill === 'secret';
           return (
             <g key={`floor-${node.id}`}>
               <rect
@@ -329,9 +349,10 @@ function InteriorFloorPlan({
                 height={box.h + 4}
                 rx={organic ? 3 : 4}
                 fill="none"
-                stroke={isCurrent ? '#c9a227' : isVisited ? '#6b5a45' : '#3d352c'}
+                stroke={isCurrent ? '#c9a227' : isVisited ? '#8a7a5e' : isSecret ? '#3d352c' : '#4a4034'}
                 strokeWidth={isCurrent ? 2 : 1}
-                opacity={isVisited ? 0.9 : 0.45}
+                strokeDasharray={isSecret ? '4 5' : undefined}
+                opacity={isVisited ? 0.95 : isSecret ? 0.4 : 0.7}
               />
               <rect
                 x={box.x}
@@ -339,14 +360,28 @@ function InteriorFloorPlan({
                 width={box.w}
                 height={box.h}
                 rx={organic ? 2 : 3}
-                fill={isCurrent ? '#5c4a32' : isVisited ? '#2c2620' : '#161410'}
-                stroke={isCurrent ? '#e8d5a3' : isVisited ? '#8a7a5e' : '#3d382f'}
+                className={
+                  isVisited
+                    ? 'sgm-map-room--visited'
+                    : isSecret
+                      ? 'sgm-map-room--secret'
+                      : 'sgm-map-room--unvisited'
+                }
+                fill={isCurrent ? '#6b5638' : isVisited ? '#3d3428' : isSecret ? '#12100e' : '#1a1612'}
+                stroke={isCurrent ? '#e8d5a3' : isVisited ? '#c4b08a' : isSecret ? '#3d352c' : '#2a241c'}
                 strokeWidth={isCurrent ? 2.2 : 1.4}
-                strokeDasharray={isVisited ? undefined : '5 4'}
-                opacity={isVisited ? 1 : 0.5}
+                strokeDasharray={isSecret ? '5 4' : isVisited ? undefined : '3 3'}
+                opacity={isVisited ? 1 : isSecret ? 0.4 : 0.85}
               />
               {!isVisited && (
-                <rect x={box.x} y={box.y} width={box.w} height={box.h} rx={organic ? 2 : 3} fill="url(#sgm-room-fog)" />
+                <rect
+                  x={box.x}
+                  y={box.y}
+                  width={box.w}
+                  height={box.h}
+                  rx={organic ? 2 : 3}
+                  fill={isSecret ? 'url(#sgm-unvisited-hatch)' : 'url(#sgm-room-fog)'}
+                />
               )}
             </g>
           );
@@ -355,16 +390,28 @@ function InteriorFloorPlan({
       </svg>
       {nodes.map((node) => {
         const box = roomBox(node);
-        const isVisited = dungeon.visitedNodeIds.includes(node.id);
+        const fill = interiorRoomFillKind(dungeon, node);
+        const isVisited = fill === 'visited';
+        const isSecret = fill === 'secret';
         const isCurrent = node.id === currentNodeId;
-        const isReachable = !combatLocked && !!current?.connections.includes(node.id);
+        const secretOpen = isInteriorSecretUnlocked(dungeon, node.id);
+        const isReachable =
+          !combatLocked &&
+          !!current?.connections.includes(node.id) &&
+          (secretOpen || !node.isSecret);
         return (
           <button
             key={node.id}
             type="button"
             onClick={() => isReachable && onMoveNode(node.id)}
             disabled={(!isReachable && !isCurrent) || combatLocked}
-            title={isVisited ? node.name : 'Unmapped room'}
+            title={
+              isSecret
+                ? 'Sealed passage — discover it in play'
+                : isVisited
+                  ? node.name
+                  : 'Unexplored room'
+            }
             style={{ left: box.x, top: box.y, width: box.w, height: box.h }}
             className="absolute z-10 flex flex-col items-center justify-center px-1 text-center"
           >
@@ -384,8 +431,10 @@ function InteriorFloorPlan({
                   </span>
                 )}
               </>
+            ) : isSecret ? (
+              <span className="text-[10px] text-stone-700 font-serif opacity-60">···</span>
             ) : (
-              <span className="text-[12px] text-stone-600 font-serif">?</span>
+              <span className="text-[12px] text-stone-500 font-serif">?</span>
             )}
           </button>
         );

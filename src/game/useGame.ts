@@ -128,7 +128,7 @@ import { effectiveWriterTier, isTestLabEnabled } from './testLab';
 import { canOfferRewardedMemorable } from './rewardedAds';
 import { clipCustomTabletopRules } from './customTabletopRules';
 import { touchPlaceVisit, upsertPlaceFromSheet } from './places';
-import { isExplorableDungeon, normalizeSheetAuthority } from './placeAuthority';
+import { isExplorableDungeon, isInteriorMap, normalizeSheetAuthority } from './placeAuthority';
 import {
   seedDungeonState,
   mergeSheetWithNode,
@@ -1459,7 +1459,13 @@ export function useGame() {
     );
     let areaMap = previous.activeDungeon ?? null;
     if (!isExplorableDungeon(areaMap)) {
-      areaMap = resolvePlayAreaMap(areaMap, place, landmarks, previous.currentCoordinates);
+      areaMap = resolvePlayAreaMap(
+        areaMap,
+        place,
+        landmarks,
+        previous.currentCoordinates,
+        previous.seed || previous.saveId || 'interior'
+      );
     }
     const nextLocation =
       isGenericMapPlace(previous.currentLocation) && place ? place : previous.currentLocation;
@@ -1497,13 +1503,16 @@ export function useGame() {
     let updatedDungeon = moveToNode(previous.activeDungeon, targetNodeId);
     updatedDungeon = seedDungeonState(updatedDungeon, previous.seed || 'seed');
     const threshold = settingsRef.current.fogRevealThreshold ?? 'adjacent';
-    if (threshold === 'full') {
-      updatedDungeon.visitedNodeIds = updatedDungeon.nodes.map(n => n.id);
-    } else if (threshold === 'adjacent') {
-      const currentNode = updatedDungeon.nodes.find(n => n.id === targetNodeId);
-      if (currentNode) {
-        const visited = new Set([...updatedDungeon.visitedNodeIds, ...currentNode.connections]);
-        updatedDungeon.visitedNodeIds = Array.from(visited);
+    // Interior floor plans show the full building outline; only mark rooms the player entered.
+    if (!isInteriorMap(updatedDungeon)) {
+      if (threshold === 'full') {
+        updatedDungeon.visitedNodeIds = updatedDungeon.nodes.map(n => n.id);
+      } else if (threshold === 'adjacent') {
+        const currentNode = updatedDungeon.nodes.find(n => n.id === targetNodeId);
+        if (currentNode) {
+          const visited = new Set([...updatedDungeon.visitedNodeIds, ...currentNode.connections]);
+          updatedDungeon.visitedNodeIds = Array.from(visited);
+        }
       }
     }
     const node = currentDungeonNode(updatedDungeon);
@@ -3067,7 +3076,13 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
       }
       let areaMap = workingState.activeDungeon ?? liveCurrent.activeDungeon ?? null;
       if (!isExplorableDungeon(areaMap)) {
-        areaMap = resolvePlayAreaMap(areaMap, mapName, landmarks, liveCurrent.currentCoordinates);
+        areaMap = resolvePlayAreaMap(
+          areaMap,
+          mapName,
+          landmarks,
+          liveCurrent.currentCoordinates,
+          liveCurrent.seed || liveCurrent.saveId || 'interior'
+        );
       }
       locationSheet = normalizeSheetAuthority(locationSheet, areaMap);
 

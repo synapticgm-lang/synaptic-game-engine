@@ -1675,3 +1675,13 @@ html[data-sgm-material='1'] body {
   0%, 100% { opacity: 1; transform: scale(1); }
   50% { opacity: 0.75; transform: scale(1.08); }
 }
+/* RE-like interior fog: visited open, mapped-unvisited shaded, secret faint (original chrome) */
+.sgm-map-room--visited {
+  filter: brightness(1.08);
+}
+.sgm-map-room--unvisited {
+  filter: brightness(0.72);
+}
+.sgm-map-room--secret {
+  filter: brightness(0.45);
+}

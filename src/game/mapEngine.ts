@@ -8,6 +8,7 @@ import {
   isStreetMap,
 } from './placeAuthority';
 import { isDummyStreetNodeName, isGenericMapPlace, isInteriorRoomName } from './questPlay';
+import { createHashRng } from './seededRng';
 
 export type MobRole = 'trash' | 'elite' | 'miniBoss' | 'boss';
 
@@ -275,11 +276,28 @@ export function initializeDungeon(
   };
 }
 
+/** True when a secret room/passage is open for travel (skill/story reveal, or already entered). */
+export function isInteriorSecretUnlocked(
+  dungeon: ActiveDungeonState,
+  nodeId: string
+): boolean {
+  const node = dungeon.nodes.find((n) => n.id === nodeId);
+  if (!node?.isSecret) return true;
+  if (dungeon.visitedNodeIds.includes(nodeId)) return true;
+  if ((node.tags ?? []).includes('secret-unlocked')) return true;
+  return dungeon.nodes.some((n) =>
+    (n.hidden?.secrets ?? []).some((s) => s.unlocksNodeId === nodeId && s.revealed)
+  );
+}
+
 export function moveToNode(currentState: ActiveDungeonState, targetNodeId: string): ActiveDungeonState {
   const currentNode = currentState.nodes.find((n) => n.id === currentState.currentNodeId);
   const targetNode = currentState.nodes.find((n) => n.id === targetNodeId);
 
   if (!currentNode || !targetNode || !currentNode.connections.includes(targetNodeId)) {
+    return currentState;
+  }
+  if (isInteriorMap(currentState) && !isInteriorSecretUnlocked(currentState, targetNodeId)) {
     return currentState;
   }
 
@@ -462,7 +480,108 @@ function usableInteriorRoom(name: string): boolean {
   return usableInteriorHere(name) && (isInteriorRoomName(name) || isInteriorPlace(name));
 }
 
-/** Adjacent room slots around a central hall — not a 3×3 city block grid. */
+const MAX_ROOM_LABEL = 28;
+const MAX_BUILDING_TITLE = 44;
+
+const ROOM_PHRASE =
+  /\b((?:First|Second|Third|Upper|Lower|East|West|North|South)\s+)?(?:Chamber|Hall|Room|Vestry|Nave|Crypt|Cellar|Attic|Corridor|Passage|Stairs|Stairwell|Landing|Antechamber|Narthex|Choir|Cloister|Sanctum|Kitchen|Storeroom|Storage|Entry|Entrance)\b(?:\s+of\s+[A-Za-z][\w' -]{0,24})?/i;
+
+const GENERIC_ROOM_LABELS = new Set(
+  [
+    'entry',
+    'first chamber',
+    'chamber',
+    'corridor',
+    'ruined hall',
+    'hall',
+    'side room',
+    'side chamber',
+    'stairs',
+    'stairwell',
+    'cellar',
+    'attic',
+    'upper landing',
+    'storeroom',
+    'storage',
+    'back room',
+    'antechamber',
+    'collapse',
+    'collapsed wing',
+    'wall shell',
+  ].map((s) => s.toLowerCase())
+);
+
+/** Short room pin — never the full currentLocation essay. */
+export function shortRoomLabel(raw: string, fallback = 'Chamber'): string {
+  const n = (raw ?? '').replace(/\s+/g, ' ').trim();
+  if (!n) return fallback;
+  if (
+    n.length <= MAX_ROOM_LABEL &&
+    !/[—,]/.test(n) &&
+    !/\boff the\b|\bsomewhere\b|\balone in\b/i.test(n)
+  ) {
+    return n;
+  }
+  const phrase = n.match(ROOM_PHRASE);
+  if (phrase?.[0]) return phrase[0].replace(/\s+/g, ' ').trim().slice(0, MAX_ROOM_LABEL);
+  if (/\bbuilding\b|\bruin/i.test(n)) return 'Entry';
+  return fallback;
+}
+
+/** Building title for the map header — truncated place, not a room essay. */
+export function shortBuildingTitle(raw: string): string {
+  const n = (raw ?? '').replace(/\s+/g, ' ').trim();
+  if (!n) return 'Interior';
+  const essay =
+    /\balone in\b|\bsomewhere\b|\bserious damage\b/i.test(n) ||
+    (/\boff the\b/i.test(n) && /\b(?:roads?|building|ruin)/i.test(n)) ||
+    n.length > 56;
+  if (!essay && n.length <= MAX_BUILDING_TITLE) return n;
+  if (!essay) {
+    const compact = n.replace(/\s+under\s+/i, ' · ').replace(/\s+of\s+/i, ' · ');
+    if (compact.length <= MAX_BUILDING_TITLE) return compact;
+    return `${compact.slice(0, MAX_BUILDING_TITLE - 1).trimEnd()}…`;
+  }
+  const place = n.match(/\b(?:off|near|along|by|under)\s+the\s+([^,—.]+)/i);
+  const placeBit = (place?.[1] ?? '').replace(/\s+/g, ' ').trim().slice(0, 22);
+  let kind = 'Building';
+  if (/\bcathedral\b/i.test(n)) kind = 'Cathedral';
+  else if (/\bcircle\b/i.test(n)) kind = 'Circle';
+  else if (/\bmanor\b|\bhall\b/i.test(n)) kind = 'Hall';
+  else if (/\bruin/i.test(n)) kind = 'Ruin';
+  else if (/\bcourt\b/i.test(n)) kind = 'Court';
+  else if (/\btemple\b|\bchapel\b/i.test(n)) kind = 'Temple';
+  const damaged =
+    /\b(?:damaged|half-collapsed|collapsed|burnt|shabby|wall-shell|foundation|serious damage)\b/i.test(n);
+  const title = damaged ? `Damaged ${kind.toLowerCase()}` : kind;
+  const headed = title.charAt(0).toUpperCase() + title.slice(1);
+  if (placeBit) return `${headed} · ${placeBit}`.slice(0, MAX_BUILDING_TITLE);
+  return headed.slice(0, MAX_BUILDING_TITLE);
+}
+
+/** Visited = explored fill; unvisited = mapped fog; secret = locked passage. */
+export type InteriorFillKind = 'visited' | 'unvisited' | 'secret';
+
+export function interiorRoomFillKind(
+  dungeon: ActiveDungeonState,
+  node: MapNode
+): InteriorFillKind {
+  if (node.isSecret && !isInteriorSecretUnlocked(dungeon, node.id)) return 'secret';
+  if (dungeon.visitedNodeIds.includes(node.id)) return 'visited';
+  return 'unvisited';
+}
+
+function isAuthoredInterior(dungeon: ActiveDungeonState): boolean {
+  return dungeon.nodes.some((n) => (n.tags ?? []).includes('authored'));
+}
+
+function needsAuthoredInteriorRebuild(dungeon: ActiveDungeonState): boolean {
+  if (!isInteriorMap(dungeon)) return true;
+  if (!isAuthoredInterior(dungeon)) return true;
+  return dungeon.nodes.filter((n) => !n.isSecret).length < 5;
+}
+
+/** Adjacent room slots for rare harvest add-ons — not a city block grid. */
 const INTERIOR_SLOTS: Array<{ x: number; y: number }> = [
   { x: 1, y: 1 },
   { x: 1, y: 0 },
@@ -472,60 +591,224 @@ const INTERIOR_SLOTS: Array<{ x: number; y: number }> = [
   { x: 2, y: 0 },
   { x: 0, y: 2 },
   { x: 0, y: 0 },
+  { x: 3, y: 1 },
+  { x: 2, y: 2 },
 ];
 
 function nextInteriorSlot(dungeon: ActiveDungeonState): { x: number; y: number } {
   const used = new Set(dungeon.nodes.map((n) => `${n.coordinates?.x ?? 0},${n.coordinates?.y ?? 0}`));
-  return INTERIOR_SLOTS.find((slot) => !used.has(`${slot.x},${slot.y}`)) ?? { x: 3, y: 1 };
+  return INTERIOR_SLOTS.find((slot) => !used.has(`${slot.x},${slot.y}`)) ?? { x: 3, y: 2 };
+}
+
+type InteriorRoomSpec = {
+  id: string;
+  label: string;
+  x: number;
+  y: number;
+  links: string[];
+  isSecret?: boolean;
+  entry?: boolean;
+};
+
+/** Seeded ruined-building footprints (original layouts — not licensed mansion geometry). */
+const INTERIOR_LAYOUTS: InteriorRoomSpec[][] = [
+  [
+    { id: 'entry', label: 'Entry', x: 1, y: 2, links: ['corridor'], entry: true },
+    { id: 'corridor', label: 'Corridor', x: 1, y: 1, links: ['entry', 'hall', 'side'] },
+    { id: 'hall', label: 'Ruined hall', x: 1, y: 0, links: ['corridor', 'chamber', 'stairs'] },
+    { id: 'side', label: 'Side room', x: 0, y: 1, links: ['corridor', 'store'] },
+    { id: 'chamber', label: 'Chamber', x: 2, y: 0, links: ['hall'] },
+    { id: 'stairs', label: 'Stairs', x: 0, y: 0, links: ['hall', 'cellar'] },
+    { id: 'store', label: 'Storeroom', x: 0, y: 2, links: ['side'] },
+    { id: 'cellar', label: 'Cellar', x: 0, y: -1, links: ['stairs'], isSecret: true },
+  ],
+  [
+    { id: 'entry', label: 'Entry', x: 0, y: 1, links: ['ante', 'yard'], entry: true },
+    { id: 'ante', label: 'Antechamber', x: 1, y: 1, links: ['entry', 'hall', 'passage'] },
+    { id: 'hall', label: 'Ruined hall', x: 2, y: 1, links: ['ante', 'east', 'north'] },
+    { id: 'passage', label: 'Passage', x: 1, y: 2, links: ['ante', 'store'] },
+    { id: 'east', label: 'Side chamber', x: 3, y: 1, links: ['hall'] },
+    { id: 'north', label: 'Back room', x: 2, y: 0, links: ['hall', 'attic'] },
+    { id: 'store', label: 'Storeroom', x: 1, y: 3, links: ['passage'] },
+    { id: 'attic', label: 'Upper landing', x: 3, y: 0, links: ['north'] },
+    { id: 'yard', label: 'Collapsed wing', x: 0, y: 0, links: ['entry', 'crypt'], isSecret: true },
+    { id: 'crypt', label: 'Cellar', x: 0, y: -1, links: ['yard'], isSecret: true },
+  ],
+  [
+    { id: 'entry', label: 'First chamber', x: 1, y: 1, links: ['west', 'east', 'south'], entry: true },
+    { id: 'west', label: 'Corridor', x: 0, y: 1, links: ['entry', 'hall'] },
+    { id: 'east', label: 'Side room', x: 2, y: 1, links: ['entry', 'store'] },
+    { id: 'south', label: 'Passage', x: 1, y: 2, links: ['entry', 'stairs'] },
+    { id: 'hall', label: 'Ruined hall', x: 0, y: 0, links: ['west', 'chamber'] },
+    { id: 'chamber', label: 'Chamber', x: 1, y: 0, links: ['hall'] },
+    { id: 'store', label: 'Storeroom', x: 3, y: 1, links: ['east'] },
+    { id: 'stairs', label: 'Stairs', x: 1, y: 3, links: ['south', 'cellar'] },
+    { id: 'cellar', label: 'Cellar', x: 2, y: 3, links: ['stairs'], isSecret: true },
+  ],
+];
+
+function pickInteriorLayout(seed: string, place: string): InteriorRoomSpec[] {
+  const rng = createHashRng(seed || 'interior', place || 'place', 'floor-plan');
+  const idx = Math.min(INTERIOR_LAYOUTS.length - 1, Math.floor(rng() * INTERIOR_LAYOUTS.length));
+  return INTERIOR_LAYOUTS[idx]!.map((r) => ({ ...r, links: [...r.links] }));
+}
+
+function applyHarvestedRoomNames(nodes: MapNode[], rooms: string[], building: string): MapNode[] {
+  const extras = uniqueNames(
+    rooms.map((r) => shortRoomLabel(r)).filter((r) => r.length > 0),
+    (n) => usableInteriorRoom(n) || ROOM_PHRASE.test(n)
+  );
+  let next = nodes.map((n) => ({ ...n }));
+  for (const label of extras) {
+    if (next.some((n) => n.name.toLowerCase() === label.toLowerCase())) continue;
+    const target =
+      next.find(
+        (n) =>
+          !n.isSecret &&
+          GENERIC_ROOM_LABELS.has(n.name.toLowerCase()) &&
+          !(n.tags ?? []).includes('here') &&
+          !(n.tags ?? []).includes('renamed')
+      ) ??
+      next.find((n) => !n.isSecret && GENERIC_ROOM_LABELS.has(n.name.toLowerCase()) && !(n.tags ?? []).includes('renamed'));
+    if (target) {
+      next = next.map((n) =>
+        n.id === target.id
+          ? {
+              ...n,
+              name: label,
+              description: `${label}, inside ${building}.`,
+              tags: Array.from(new Set([...(n.tags ?? []), 'renamed'])),
+            }
+          : n
+      );
+      continue;
+    }
+    // Unlock a secret room when story names it.
+    const secret = next.find(
+      (n) => n.isSecret && GENERIC_ROOM_LABELS.has(n.name.toLowerCase()) && !(n.tags ?? []).includes('renamed')
+    );
+    if (secret && label.toLowerCase().includes(secret.name.toLowerCase().slice(0, 4))) {
+      next = unlockInteriorSecretOnNodes(next, secret.id).map((n) =>
+        n.id === secret.id
+          ? {
+              ...n,
+              name: label,
+              description: `${label}, inside ${building}.`,
+              tags: Array.from(new Set([...(n.tags ?? []), 'renamed', 'secret-unlocked'])),
+            }
+          : n
+      );
+    }
+  }
+  return next;
+}
+
+function unlockInteriorSecretOnNodes(nodes: MapNode[], secretId: string): MapNode[] {
+  return nodes.map((n) => {
+    let next = n;
+    if (n.id === secretId) {
+      next = {
+        ...n,
+        tags: Array.from(new Set([...(n.tags ?? []), 'secret-unlocked'])),
+      };
+    }
+    const secrets = next.hidden?.secrets;
+    if (!secrets?.length) return next;
+    let changed = false;
+    const updated = secrets.map((s) => {
+      if (s.unlocksNodeId === secretId && !s.revealed) {
+        changed = true;
+        return { ...s, revealed: true };
+      }
+      return s;
+    });
+    if (!changed) return next;
+    return {
+      ...next,
+      hidden: {
+        traps: next.hidden?.traps ?? [],
+        lootables: next.hidden?.lootables ?? [],
+        secrets: updated,
+        mobs: next.hidden?.mobs ?? [],
+        looseItems: next.hidden?.looseItems,
+      },
+    };
+  });
+}
+
+/** Mark a secret passage open (skill / story discovery). */
+export function revealInteriorSecret(
+  dungeon: ActiveDungeonState,
+  secretNodeId: string
+): ActiveDungeonState {
+  if (!isInteriorMap(dungeon)) return dungeon;
+  if (!dungeon.nodes.some((n) => n.id === secretNodeId && n.isSecret)) return dungeon;
+  return {
+    ...dungeon,
+    nodes: unlockInteriorSecretOnNodes(dungeon.nodes, secretNodeId),
+  };
 }
 
 /**
- * Indoor floor plan of the current hall / cathedral / circle.
- * Not a local-streets 1 km grid. Unnamed fog rooms stay off the pin list.
+ * Code-authored indoor floor plan (full building outline).
+ * Seeded multi-room graph — not hub-and-spoke harvest-only.
  */
 export function buildInteriorFloorPlan(
   place: string,
   rooms: string[] = [],
-  parentCoords?: Location3D
+  parentCoords?: Location3D,
+  seed = 'interior'
 ): ActiveDungeonState {
   const rawHere = place.replace(/\s+/g, ' ').trim();
-  const extras = uniqueNames(
-    rooms.filter((n) => n.toLowerCase() !== rawHere.toLowerCase()),
-    usableInteriorRoom
-  );
-  const here = usableInteriorHere(rawHere) ? rawHere : extras[0] || 'Interior';
-  const names = uniqueNames(
-    [here, ...extras.filter((n) => n.toLowerCase() !== here.toLowerCase())],
-    (n) => (n.toLowerCase() === here.toLowerCase() ? usableInteriorHere(n) : usableInteriorRoom(n))
-  ).slice(0, 8);
+  const building = shortBuildingTitle(usableInteriorHere(rawHere) ? rawHere : 'Interior');
+  const layout = pickInteriorLayout(seed, rawHere || building);
+  const entry = layout.find((r) => r.entry) ?? layout[0]!;
 
-  const nodes: MapNode[] = names.map((name, i) => {
-    const neighbors: string[] = [];
-    if (i > 0) neighbors.push('room_0');
-    if (i === 0) {
-      for (let j = 1; j < names.length; j++) neighbors.push(`room_${j}`);
-    }
-    const slot = INTERIOR_SLOTS[i] ?? { x: i % 3, y: Math.floor(i / 3) };
+  let nodes: MapNode[] = layout.map((spec) => {
+    const tags = ['interior', 'authored'];
+    if (spec.entry) tags.push('here', 'entry');
+    if (spec.isSecret) tags.push('secret');
+    const hidden = spec.isSecret
+      ? undefined
+      : {
+          traps: [] as NodeHidden['traps'],
+          lootables: [] as NodeHidden['lootables'],
+          secrets: layout
+            .filter((s) => s.isSecret && spec.links.includes(s.id))
+            .map((s) => ({
+              id: `${spec.id}_to_${s.id}`,
+              clue: 'A sealed passage — find the catch or force it with the right skill.',
+              revealed: false,
+              unlocksNodeId: s.id,
+            })),
+          mobs: [] as NodeHidden['mobs'],
+        };
     return {
-      id: `room_${i}`,
-      name,
-      description: i === 0 ? `You are here: ${name}.` : `${name}, inside ${here}.`,
-      connections: neighbors,
-      coordinates: slot,
+      id: spec.id,
+      name: spec.label,
+      description: spec.entry
+        ? `You are here: ${spec.label}.`
+        : `${spec.label}, inside ${building}.`,
+      connections: [...spec.links],
+      coordinates: { x: spec.x, y: spec.y },
       zLevel: 0,
-      tags: i === 0 ? ['here', 'entry', 'interior'] : ['interior', 'room'],
+      tags,
+      isSecret: !!spec.isSecret,
+      hidden,
     };
   });
 
+  nodes = applyHarvestedRoomNames(nodes, rooms, building);
+
   return {
     blueprintId: INTERIOR_MAP_BLUEPRINT,
-    dungeonName: here,
+    dungeonName: building,
     tier: 4,
     dangerTier: undefined,
     parentCoordinates: parentCoords,
     currentZLevel: 0,
-    currentNodeId: 'room_0',
-    visitedNodeIds: ['room_0'],
+    currentNodeId: entry.id,
+    visitedNodeIds: [entry.id],
     clearedNodeIds: [],
     nodes,
   };
@@ -533,43 +816,88 @@ export function buildInteriorFloorPlan(
 
 export function presentInteriorMap(
   dungeon: ActiveDungeonState,
-  fallbackPlace?: string
+  fallbackPlace?: string,
+  seed = 'interior'
 ): ActiveDungeonState {
   if (!isInteriorMap(dungeon)) return dungeon;
   const fallbackRaw = (fallbackPlace ?? '').replace(/\s+/g, ' ').trim();
-  const fallback = usableInteriorHere(fallbackRaw)
-    ? fallbackRaw
-    : usableInteriorHere(dungeon.dungeonName)
-      ? dungeon.dungeonName
+  const titleSource = usableInteriorHere(dungeon.dungeonName)
+    ? dungeon.dungeonName
+    : usableInteriorHere(fallbackRaw)
+      ? fallbackRaw
       : 'Interior';
-  const title = usableInteriorHere(dungeon.dungeonName) ? dungeon.dungeonName : fallback;
+  const title = shortBuildingTitle(titleSource);
+
+  if (needsAuthoredInteriorRebuild(dungeon)) {
+    const harvested = dungeon.nodes
+      .filter((n) => !GENERIC_ROOM_LABELS.has(n.name.toLowerCase()))
+      .map((n) => n.name);
+    const rebuilt = buildInteriorFloorPlan(fallbackRaw || title, harvested, dungeon.parentCoordinates, seed);
+    return {
+      ...rebuilt,
+      visitedNodeIds: Array.from(
+        new Set([rebuilt.currentNodeId, ...dungeon.visitedNodeIds.filter((id) => rebuilt.nodes.some((n) => n.id === id))])
+      ),
+      currentNodeId: rebuilt.nodes.some((n) => n.id === dungeon.currentNodeId)
+        ? dungeon.currentNodeId
+        : rebuilt.currentNodeId,
+    };
+  }
 
   const keep: MapNode[] = [];
   for (const n of dungeon.nodes) {
-    const isHere = n.id === dungeon.currentNodeId || n.id === 'room_0';
-    const junk = isHere ? !usableInteriorHere(n.name) : !usableInteriorRoom(n.name);
+    const isHere = n.id === dungeon.currentNodeId || (n.tags ?? []).includes('entry');
+    const label = shortRoomLabel(n.name, isHere ? 'Entry' : 'Chamber');
+    const junk = isHere ? !usableInteriorHere(n.name) && label === 'Chamber' && n.name.length > MAX_ROOM_LABEL : false;
     if (junk && !isHere) continue;
-    keep.push(junk ? { ...n, name: title, description: `You are here: ${title}.` } : n);
+    const essay = n.name.length > MAX_ROOM_LABEL || /\balone in\b|\boff the\b|\bsomewhere\b/i.test(n.name);
+    keep.push({
+      ...n,
+      name: essay || (isHere && n.name === dungeon.dungeonName) ? label : shortRoomLabel(n.name, n.name),
+      description: isHere ? `You are here: ${label}.` : n.description,
+    });
   }
   if (keep.length === 0) {
-    return buildInteriorFloorPlan(title, [], dungeon.parentCoordinates);
+    return buildInteriorFloorPlan(title, [], dungeon.parentCoordinates, seed);
   }
   const ids = new Set(keep.map((n) => n.id));
+  const entryId = keep.find((n) => (n.tags ?? []).includes('entry'))?.id ?? keep[0]!.id;
   return {
     ...dungeon,
     dungeonName: title,
     nodes: keep.map((n) => ({ ...n, connections: n.connections.filter((c) => ids.has(c)) })),
-    visitedNodeIds: Array.from(new Set([...dungeon.visitedNodeIds.filter((id) => ids.has(id)), keep[0]!.id])),
-    currentNodeId: ids.has(dungeon.currentNodeId) ? dungeon.currentNodeId : keep[0]!.id,
+    visitedNodeIds: Array.from(
+      new Set([...dungeon.visitedNodeIds.filter((id) => ids.has(id)), entryId])
+    ),
+    currentNodeId: ids.has(dungeon.currentNodeId) ? dungeon.currentNodeId : entryId,
   };
 }
 
 export function addRoomToInteriorMap(dungeon: ActiveDungeonState, room: string): ActiveDungeonState {
   dungeon = presentInteriorMap(dungeon);
-  const name = room.replace(/\s+/g, ' ').trim();
-  if (!usableInteriorRoom(name)) return dungeon;
+  const name = shortRoomLabel(room.replace(/\s+/g, ' ').trim());
+  if (!name || (!usableInteriorRoom(name) && !ROOM_PHRASE.test(name))) return dungeon;
   if (dungeon.nodes.some((n) => n.name.toLowerCase() === name.toLowerCase())) return dungeon;
-  if (dungeon.nodes.length >= 8) return dungeon;
+
+  if (isAuthoredInterior(dungeon)) {
+    const renamed = applyHarvestedRoomNames(dungeon.nodes, [name], dungeon.dungeonName);
+    if (renamed.some((n, i) => n.name !== dungeon.nodes[i]?.name || n.tags?.join() !== dungeon.nodes[i]?.tags?.join())) {
+      // Also unlock secrets when the harvested name matches a secret room label.
+      let nodes = renamed;
+      for (const n of nodes) {
+        if (
+          n.isSecret &&
+          !isInteriorSecretUnlocked({ ...dungeon, nodes }, n.id) &&
+          name.toLowerCase() === n.name.toLowerCase()
+        ) {
+          nodes = unlockInteriorSecretOnNodes(nodes, n.id);
+        }
+      }
+      return { ...dungeon, nodes };
+    }
+  }
+
+  if (dungeon.nodes.length >= 12) return dungeon;
   const id = `room_${dungeon.nodes.length}`;
   const here = dungeon.nodes.find((n) => n.id === dungeon.currentNodeId) ?? dungeon.nodes[0];
   const slot = nextInteriorSlot(dungeon);
@@ -601,30 +929,44 @@ function sameAreaMap(a: ActiveDungeonState | null | undefined, b: ActiveDungeonS
   if (a.nodes.length !== b.nodes.length) return false;
   return a.nodes.every((n, i) => {
     const o = b.nodes[i];
-    return !!o && n.id === o.id && n.name === o.name;
+    return (
+      !!o &&
+      n.id === o.id &&
+      n.name === o.name &&
+      !!n.isSecret === !!o.isSecret &&
+      (n.tags ?? []).join() === (o.tags ?? []).join()
+    );
   });
 }
 
 /**
- * Street grid outdoors; floor-plan silhouette indoors.
+ * Street grid outdoors; full building outline indoors (RE-like fog of exploration).
  * Replaces a wrongly built local-area cathedral map on the next Map open.
  */
 export function resolvePlayAreaMap(
   existing: ActiveDungeonState | null | undefined,
   place: string,
   landmarks: string[] = [],
-  parentCoords?: Location3D
+  parentCoords?: Location3D,
+  seed = 'interior'
 ): ActiveDungeonState | null {
   if (isExplorableDungeon(existing ?? null)) return existing ?? null;
   const here = (place ?? '').replace(/\s+/g, ' ').trim();
   let next: ActiveDungeonState | null = null;
   if (isInteriorPlace(here)) {
     const rooms = landmarks.filter((n) => n.toLowerCase() !== here.toLowerCase());
-    if (existing && isInteriorMap(existing)) {
-      next = presentInteriorMap(existing, here);
+    if (existing && isInteriorMap(existing) && !needsAuthoredInteriorRebuild(existing)) {
+      next = presentInteriorMap(existing, here, seed);
       for (const room of rooms) next = addRoomToInteriorMap(next, room);
     } else {
-      next = buildInteriorFloorPlan(here, rooms, parentCoords ?? existing?.parentCoordinates);
+      next = buildInteriorFloorPlan(here, rooms, parentCoords ?? existing?.parentCoordinates, seed);
+      if (existing && isInteriorMap(existing)) {
+        const keepVisited = existing.visitedNodeIds.filter((id) => next!.nodes.some((n) => n.id === id));
+        next = {
+          ...next,
+          visitedNodeIds: Array.from(new Set([next.currentNodeId, ...keepVisited])),
+        };
+      }
     }
   } else if (existing && isStreetMap(existing)) {
     next = presentLocalAreaMap(existing, here || existing.dungeonName);

@@ -17,6 +17,7 @@ import { formatGmVoiceForPrompt, resolveVoiceIdForState } from './gmVoiceProfile
 import { formatFluidProseRailsForPrompt } from './fluidProseRails';
 import { formatFolkVoiceForPrompt } from './folkVoiceExpectations';
 import { formatSpeechActRailsForPrompt } from './speechActRails';
+import { isInteriorMap } from './placeAuthority';
 
 // Re-exports for legacy imports (prefer contentModeRules / imagePromptModifier directly).
 export { KID_MODE_RULES } from './contentModeRules';
@@ -595,8 +596,17 @@ export function buildContextPrompt(
   const timeline = formatTimelineForPrompt(state.timeline, 20);
   const dungeon = state.activeDungeon;
   const node = dungeon?.nodes.find((n) => n.id === dungeon.currentNodeId);
+  const roomList =
+    dungeon && isInteriorMap(dungeon)
+      ? dungeon.nodes
+          .filter((n) => !n.isSecret || (n.tags ?? []).includes('secret-unlocked') || dungeon.visitedNodeIds.includes(n.id))
+          .map((n) => n.name)
+          .join(', ')
+      : '';
   const dungeonBlock = dungeon
-    ? `Dungeon: ${dungeon.dungeonName} | Node: ${node?.name ?? dungeon.currentNodeId} | Visited: ${dungeon.visitedNodeIds.length}/${dungeon.nodes.length}`
+    ? isInteriorMap(dungeon)
+      ? `Interior floor plan LOCKED: ${dungeon.dungeonName} | Here: ${node?.name ?? dungeon.currentNodeId} | Rooms on map: ${roomList}. Stay inside this graph — do not invent contradictory wings, floors, or exits. Secret/dashed rooms stay sealed until the player discovers them with skill or story.`
+      : `Dungeon: ${dungeon.dungeonName} | Node: ${node?.name ?? dungeon.currentNodeId} | Visited: ${dungeon.visitedNodeIds.length}/${dungeon.nodes.length}`
     : 'Dungeon: none';
 
   return `
