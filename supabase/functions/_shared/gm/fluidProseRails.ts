@@ -13,7 +13,7 @@ const GLOBAL_RAILS = `=== FLUID GM PROSE RAILS (BINDING) ===
 * SENSORY BUDGET: Concrete sensory detail only when it orients, raises pressure, or marks a consequence — not purple stacks.
 * DIALOGUE CLARITY: Attribute speakers when more than one NPC could be talking. Prefer "Name: \\"…\\"" over floating quotes.
 * SPEAKABLE: Keep raw stats, XP lines, and receipt chrome out of story sentences. Story body first; System/chrome after (unless the player asked the System a question).
-* EARNED HANDOFF: End with playable pressure, a diegetic opening, or one clear affordance. Do NOT spam boilerplate "What do you do?" every turn — especially not three turns in a row. Numbered choices still required.
+* EARNED HANDOFF: End with playable pressure, a diegetic opening, or one clear affordance. Do NOT spam boilerplate "What do you do?" every turn — especially not three turns in a row. Action buttons carry choices — do NOT leave numbered option lists in story prose.
 * NO MID-ACTION OFFERS: No soft quest/sales/help offers while action, repair, or combat is unresolved.
 * STORY NOT HELP-DESK: Write like a GM running a live scene, not a chatbot apologizing or summarizing the UI.
 =====================================`;

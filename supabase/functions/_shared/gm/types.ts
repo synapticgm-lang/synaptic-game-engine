@@ -135,6 +135,8 @@ export interface Container {
   slot?: string;
 }
 
+export type PlayPhase = 'live' | 'down' | 'ended';
+
 export type QuestStatus = 'active' | 'completed' | 'failed' | 'hidden';
 export type QuestType = 'main' | 'side' | 'faction';
 
@@ -170,6 +172,12 @@ export interface Quest {
   minTurnsBeforeActive?: number;
   /** Min turns between active → completed (default 1). */
   minTurnsBeforeComplete?: number;
+  /** When true, quest fails if the run ends (permadeath). */
+  runScoped?: boolean;
+  /** Explicit fail-on-death flag; defaults with runScoped. */
+  failOnDeath?: boolean;
+  /** Fail reason when status is failed. */
+  failReason?: string;
   rewards?: {
     xp?: number;
     gold?: number;
@@ -330,11 +338,23 @@ export interface OpeningEstablishment {
   mode?: 'scene' | 'weave';
   /** Seed-picked opener from bible.openingHooks (stable for the run). */
   pickedHook?: string;
+  /** Player-facing fallback if the writer call fails. */
+  pickedHookFallback?: string;
+  /** True when this run’s opener has no summoners on page one. */
+  aloneArrival?: boolean;
 }
 
 export interface GameState {
   /** Save generation. Clients reject anything below CURRENT_SAVE_VERSION. */
   version: number;
+  /** Schema repair generation — independent of version gate. */
+  saveRepairRevision?: number;
+  /** Player was notified about saveRepairRevision (toast once per revision). */
+  lastSeenSaveRepairRevision?: number;
+  /** Error Repair Warden revision — alone quest / arrival coherence on Continue. */
+  errorRepairRevision?: number;
+  /** Forward play lock — default live; ended/down batches set on commit. */
+  playPhase?: PlayPhase;
   saveId: string;
   storyName: string;
   engineMode: EngineMode;

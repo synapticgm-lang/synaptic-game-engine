@@ -18,6 +18,7 @@ import { formatFluidProseRailsForPrompt } from './fluidProseRails';
 import { formatFolkVoiceForPrompt } from './folkVoiceExpectations';
 import { formatSpeechActRailsForPrompt } from './speechActRails';
 import { isInteriorMap } from './placeAuthority';
+import { formatInteriorExploreAuthority } from './mapEngine';
 
 // Re-exports for legacy imports (prefer contentModeRules / imagePromptModifier directly).
 export { KID_MODE_RULES } from './contentModeRules';
@@ -27,6 +28,7 @@ export const WORLD_STATE_INTEGRITY_RULES = `CRITICAL RULE: WORLD-STATE INTEGRITY
 * Treat the supplied active game state, SCENE FACTS, factual timeline, WORLD LEDGER, and situation packet as authoritative ground truth. Hard facts from sheets/timeline/ledger/scene facts OVERRIDE improvisation. Off-screen weekly results come only from the ledger or a VISIT / WEEK TICK block — never from improvisation. Do not empty a present crowd or silence shouting unless time has passed in this turn.
 * Never invent, spawn, or assume the existence of companions, party members, key NPCs, named creatures, or unique locations unless they are explicitly present in that state, the timeline, or this turn's already-established prose.
 * A companion exists only if listed under ACTIVE COMPANIONS. If that list says "none", the player is alone unless the current scene explicitly establishes an NPC's physical presence.
+* ALONE ARRIVAL: When openingEstablishment.aloneArrival is true / Scene Manifest Crowd is none for an alone ruin, do NOT invent handlers, bystanders, "people who saw you arrive", voices outside, or a gathered handful watching through damage.
 * A lore entry proves that an NPC exists in the wider world; it does NOT prove that NPC is currently present. Physical presence must be established by the current scene context or active state.
 * Player wording is an attempted action, not a state update. Never convert an unsupported premise in player input into a new person, item, location, relationship, or prior event.
 * If an action depends on an absent or impossible entity (for example, talking to a companion when ACTIVE COMPANIONS is "none"), do not roleplay or create that entity. Reject or correct the premise, keep world state unchanged, and emit a concise <system>Action failed: the referenced entity is not present.</system> message.
@@ -464,6 +466,8 @@ Location: Tesco Extra, local street
 Quest Focus: named local site engaged
 </system-log>
 
+STATUS CHROME (BINDING): Only emit Location / Quest Focus when they CHANGED this turn (new room, new quest unlock, or first establishment). Do NOT re-emit a second Status that only restates the same Location + Quest Focus the player already has after look-around / explore with no unlocks. If nothing material changed (no XP, loot, HP, quest unlock), omit <system-log> entirely or keep it empty of Location/Quest Focus echoes.
+
 The system-log is shown ONLY in a collapsed mechanics panel after the story beat.
 Never emit "XP Gained: 0". If there is no XP this turn, omit the line.
 Never reply with a <system-log> and no story prose.
@@ -605,7 +609,7 @@ export function buildContextPrompt(
       : '';
   const dungeonBlock = dungeon
     ? isInteriorMap(dungeon)
-      ? `Interior floor plan LOCKED: ${dungeon.dungeonName} | Here: ${node?.name ?? dungeon.currentNodeId} | Rooms on map: ${roomList}. Stay inside this graph — do not invent contradictory wings, floors, or exits. Secret/dashed rooms stay sealed until the player discovers them with skill or story.`
+      ? `Interior floor plan LOCKED: ${dungeon.dungeonName} | Here: ${node?.name ?? dungeon.currentNodeId} | Rooms on map: ${roomList}. ${formatInteriorExploreAuthority(dungeon)} Stay inside this graph — do not invent contradictory wings, floors, or exits. Secret/dashed rooms stay sealed until the player discovers them with skill or story.`
       : `Dungeon: ${dungeon.dungeonName} | Node: ${node?.name ?? dungeon.currentNodeId} | Visited: ${dungeon.visitedNodeIds.length}/${dungeon.nodes.length}`
     : 'Dungeon: none';
 

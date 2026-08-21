@@ -18,6 +18,7 @@ import { formatFluidProseRailsForPrompt } from './fluidProseRails.ts';
 import { formatFolkVoiceForPrompt } from './folkVoiceExpectations.ts';
 import { formatSpeechActRailsForPrompt } from './speechActRails.ts';
 import { isInteriorMap } from './placeAuthority.ts';
+import { formatInteriorExitAuthority } from './mapEngine.ts';
 
 // Re-exports for legacy imports (prefer contentModeRules / imagePromptModifier directly).
 
@@ -603,7 +604,7 @@ export function buildContextPrompt(
       : '';
   const dungeonBlock = dungeon
     ? isInteriorMap(dungeon)
-      ? `Interior floor plan LOCKED: ${dungeon.dungeonName} | Here: ${node?.name ?? dungeon.currentNodeId} | Rooms on map: ${roomList}. Stay inside this graph — do not invent contradictory wings, floors, or exits. Secret/dashed rooms stay sealed until the player discovers them with skill or story.`
+      ? `Interior floor plan LOCKED: ${dungeon.dungeonName} | Here: ${node?.name ?? dungeon.currentNodeId} | Rooms on map: ${roomList}. ${formatInteriorExitAuthority(dungeon)} Stay inside this graph — do not invent contradictory wings, floors, or exits. Secret/dashed rooms stay sealed until the player discovers them with skill or story.`
       : `Dungeon: ${dungeon.dungeonName} | Node: ${node?.name ?? dungeon.currentNodeId} | Visited: ${dungeon.visitedNodeIds.length}/${dungeon.nodes.length}`
     : 'Dungeon: none';
 

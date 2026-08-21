@@ -1,13 +1,18 @@
 import { describe, expect, it } from 'vitest';
 import {
   buildInteriorFloorPlan,
+  formatInteriorExitAuthority,
   interiorBuildingScale,
+  interiorDoorAnchor,
+  interiorExitNoun,
   interiorFloorLabel,
+  interiorFootprintsAreVaried,
   interiorRoomFillKind,
   isInteriorSecretUnlocked,
   listInteriorZLevels,
   moveToNode,
   nodesOnInteriorFloor,
+  resolveInteriorEdgeKind,
   resolvePlayAreaMap,
   revealInteriorSecret,
   roomHasVerticalLink,
@@ -19,7 +24,7 @@ import { INTERIOR_MAP_BLUEPRINT } from './placeAuthority';
 const ALONE_RUIN =
   'alone in a building with serious damage somewhere off the Valespire roads';
 
-describe('interior floor plan (20o multi-floor)', () => {
+describe('interior floor plan (20q doors + varied footprints)', () => {
   it('uses short room labels — never the full location essay', () => {
     expect(shortRoomLabel(ALONE_RUIN)).toBe('Entry');
     expect(shortRoomLabel('Second Chamber of a half-collapsed ruin')).toMatch(/Second Chamber/i);
@@ -143,5 +148,51 @@ describe('interior floor plan (20o multi-floor)', () => {
     const map = resolvePlayAreaMap(null, ALONE_RUIN, ['Second Chamber'], undefined, 'harvest-seed');
     expect(map!.nodes.length).toBeGreaterThan(2);
     expect(map!.nodes.some((n) => /Second Chamber/i.test(n.name))).toBe(true);
+  });
+
+  it('marks normal links as doors; secret/damaged edges stay distinct', () => {
+    const map = buildInteriorFloorPlan(ALONE_RUIN, [], undefined, 'door-edge-seed');
+    const entry = map.nodes.find((n) => (n.tags ?? []).includes('entry'))!;
+    const first = entry.connections
+      .map((id) => map.nodes.find((n) => n.id === id)!)
+      .find((n) => (n.zLevel ?? 0) === (entry.zLevel ?? 0) && !n.isSecret)!;
+    expect(resolveInteriorEdgeKind(entry, first)).toBe('door');
+    expect(interiorExitNoun('door')).toBe('doorway');
+    expect(interiorExitNoun('damaged')).toMatch(/gap/i);
+    expect(interiorExitNoun('secret')).toMatch(/sealed/i);
+
+    const secret = map.nodes.find((n) => n.isSecret)!;
+    const from = map.nodes.find((n) => n.connections.includes(secret.id))!;
+    expect(resolveInteriorEdgeKind(from, secret)).toBe('secret');
+
+    const auth = formatInteriorExitAuthority(map);
+    expect(auth).toMatch(/doorway→/i);
+    const exitList = auth.split('.')[0] ?? '';
+    expect(exitList).not.toMatch(/crack|broken gap/i);
+    expect(auth).toMatch(/Prefer door/i);
+
+    const a = { x: 0, y: 0, w: 100, h: 80 };
+    const b = { x: 110, y: 10, w: 90, h: 70 };
+    const anchor = interiorDoorAnchor(a, b);
+    expect(anchor.orient).toBe('v');
+    expect(anchor.x).toBeGreaterThan(90);
+    expect(anchor.x).toBeLessThan(120);
+  });
+
+  it('authors non-uniform room footprints (not equal stamp squares)', () => {
+    const map = buildInteriorFloorPlan(ALONE_RUIN, [], undefined, 'footprint-seed');
+    expect(interiorFootprintsAreVaried(map.nodes)).toBe(true);
+    const sizes = map.nodes.map((n) => `${n.footprint!.w}x${n.footprint!.h}`);
+    expect(new Set(sizes).size).toBeGreaterThan(1);
+    const corridor = map.nodes.find((n) => /corridor|passage|aisle/i.test(n.name));
+    if (corridor?.footprint) {
+      expect(Math.min(corridor.footprint.w, corridor.footprint.h)).toBeLessThan(0.8);
+    }
+    const hall = map.nodes.find((n) => /hall|nave|foyer|chamber/i.test(n.name) && !/side/i.test(n.name));
+    if (hall?.footprint && corridor?.footprint) {
+      expect(hall.footprint.w * hall.footprint.h).toBeGreaterThan(
+        corridor.footprint.w * corridor.footprint.h
+      );
+    }
   });
 });

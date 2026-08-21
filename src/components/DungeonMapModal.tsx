@@ -1,15 +1,18 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import type { ActiveDungeonState, MapNode } from '../game/mapEngine';
 import {
+  interiorDoorAnchor,
   interiorFloorLabel,
   interiorRoomFillKind,
   isInteriorSecretUnlocked,
   listInteriorZLevels,
   nodesOnInteriorFloor,
   presentLocalAreaMap,
+  resolveInteriorEdgeKind,
   resolvePlayAreaMap,
   roomHasVerticalLink,
 } from '../game/mapEngine';
+import type { InteriorEdgeKind } from '../game/mapEngine';
 import { isGenericMapPlace } from '../game/questPlay';
 import { isInteriorMap, isInteriorPlace, isStreetMap, mapScaleLabel } from '../game/placeAuthority';
 import type { Location3D } from '../game/types';
@@ -131,7 +134,7 @@ export const DungeonMapModal: React.FC<DungeonMapModalProps> = ({
           </p>
           <p className="mt-3 text-xs sgm-adventure-map-scale opacity-80">
             {isInteriorPlace(currentLocation)
-              ? 'Secret passages may show as faint dashed lines — you still have to find them in play.'
+              ? ' Doors mark normal room links; dashed/broken marks are damaged gaps or sealed secrets — you still have to find secrets in play.'
               : 'Name the street or store in play if this is still empty.'}
           </p>
         </div>
@@ -324,35 +327,27 @@ function InteriorFloorPlan({
   combatLocked?: boolean;
 }) {
   const nodes = nodesOnInteriorFloor(dungeon, viewZ);
-  const xs = nodes.map((n) => n.coordinates?.x ?? 0);
-  const ys = nodes.map((n) => n.coordinates?.y ?? 0);
-  const minX = Math.min(...xs, 0);
-  const minY = Math.min(...ys, 0);
-  const maxX = Math.max(...xs, 1);
-  const maxY = Math.max(...ys, 1);
-  const cell = organic ? 132 : 108;
-  const gap = organic ? 22 : 10;
-  const pad = organic ? 36 : 28;
-  const width = (maxX - minX + 1) * cell + pad * 2;
-  const height = (maxY - minY + 1) * cell + pad * 2;
-  const current = dungeon.nodes.find((n) => n.id === currentNodeId);
-  const playerOnThisFloor = (current?.zLevel ?? 0) === viewZ;
-
+  const unit = organic ? 92 : 84;
+  const pad = organic ? 40 : 32;
   const roomBox = (node: MapNode) => {
     const gx = node.coordinates?.x ?? 0;
     const gy = node.coordinates?.y ?? 0;
-    const here = (node.tags ?? []).includes('here') || (node.id === currentNodeId && playerOnThisFloor);
+    const fw = node.footprint?.w ?? 1;
+    const fh = node.footprint?.h ?? 1;
     return {
-      x: pad + (gx - minX) * cell,
-      y: pad + (gy - minY) * cell,
-      w: cell - gap + (organic && here ? 20 : 0),
-      h: cell - gap + (organic && here ? 12 : 0),
+      x: pad + gx * unit,
+      y: pad + gy * unit,
+      w: Math.max(44, fw * unit - 6),
+      h: Math.max(40, fh * unit - 6),
     };
   };
-
-  const edgeIsSecret = (a: MapNode, b: MapNode) =>
-    !!(a.isSecret || b.isSecret) &&
-    (!isInteriorSecretUnlocked(dungeon, a.id) || !isInteriorSecretUnlocked(dungeon, b.id));
+  const boxes = nodes.map((n) => ({ id: n.id, box: roomBox(n) }));
+  const maxRight = Math.max(...boxes.map((b) => b.box.x + b.box.w), pad + unit);
+  const maxBottom = Math.max(...boxes.map((b) => b.box.y + b.box.h), pad + unit);
+  const width = maxRight + pad;
+  const height = maxBottom + pad;
+  const current = dungeon.nodes.find((n) => n.id === currentNodeId);
+  const playerOnThisFloor = (current?.zLevel ?? 0) === viewZ;
 
   const verticalHint = (node: MapNode) => {
     if (!roomHasVerticalLink(dungeon, node)) return null;
@@ -366,6 +361,102 @@ function InteriorFloorPlan({
     if (up) return '↑';
     if (down) return '↓';
     return '↕';
+  };
+
+  const drawConnection = (node: MapNode, target: MapNode, kind: InteriorEdgeKind) => {
+    const a = roomBox(node);
+    const b = roomBox(target);
+    const anchor = interiorDoorAnchor(a, b);
+    const eitherVisited =
+      dungeon.visitedNodeIds.includes(node.id) || dungeon.visitedNodeIds.includes(target.id);
+    const key = `${node.id}-${target.id}`;
+
+    if (kind === 'stairs') return null;
+
+    if (kind === 'door') {
+      const doorW = organic ? 14 : 12;
+      const doorD = organic ? 7 : 6;
+      const isV = anchor.orient === 'v';
+      return (
+        <g key={key} opacity={eitherVisited ? 1 : 0.7}>
+          {/* Wall jambs — clear doorway mark, not a thin crack line */}
+          {isV ? (
+            <>
+              <rect
+                x={anchor.x - doorD / 2}
+                y={anchor.y - doorW / 2}
+                width={doorD}
+                height={doorW}
+                fill={eitherVisited ? '#3d3428' : '#2a241c'}
+                stroke={eitherVisited ? '#c4b08a' : '#6b5a45'}
+                strokeWidth={1.4}
+                rx={1}
+              />
+              <line
+                x1={anchor.x}
+                y1={anchor.y - doorW / 2 + 2}
+                x2={anchor.x}
+                y2={anchor.y + doorW / 2 - 2}
+                stroke={eitherVisited ? '#e8d5a3' : '#8a7a5e'}
+                strokeWidth={1.2}
+              />
+            </>
+          ) : (
+            <>
+              <rect
+                x={anchor.x - doorW / 2}
+                y={anchor.y - doorD / 2}
+                width={doorW}
+                height={doorD}
+                fill={eitherVisited ? '#3d3428' : '#2a241c'}
+                stroke={eitherVisited ? '#c4b08a' : '#6b5a45'}
+                strokeWidth={1.4}
+                rx={1}
+              />
+              <line
+                x1={anchor.x - doorW / 2 + 2}
+                y1={anchor.y}
+                x2={anchor.x + doorW / 2 - 2}
+                y2={anchor.y}
+                stroke={eitherVisited ? '#e8d5a3' : '#8a7a5e'}
+                strokeWidth={1.2}
+              />
+            </>
+          )}
+        </g>
+      );
+    }
+
+    // Damaged gap or secret sealed edge — dashed / broken wall, never the default door look.
+    const len = organic ? 22 : 18;
+    const isV = anchor.orient === 'v';
+    const secret = kind === 'secret';
+    return (
+      <g key={key} opacity={secret ? 0.4 : eitherVisited ? 0.85 : 0.55}>
+        <line
+          x1={isV ? anchor.x : anchor.x - len / 2}
+          y1={isV ? anchor.y - len / 2 : anchor.y}
+          x2={isV ? anchor.x : anchor.x + len / 2}
+          y2={isV ? anchor.y + len / 2 : anchor.y}
+          stroke={secret ? '#4a4034' : '#6b5340'}
+          strokeWidth={secret ? 2.2 : 3}
+          strokeDasharray={secret ? '3 5' : '5 4 2 4'}
+          strokeLinecap="round"
+        />
+        {!secret && (
+          <line
+            x1={isV ? anchor.x - 3 : anchor.x - 2}
+            y1={isV ? anchor.y - 4 : anchor.y - 3}
+            x2={isV ? anchor.x + 3 : anchor.x + 2}
+            y2={isV ? anchor.y + 4 : anchor.y + 3}
+            stroke="#5c4a32"
+            strokeWidth={1.2}
+            strokeDasharray="2 3"
+            opacity={0.7}
+          />
+        )}
+      </g>
+    );
   };
 
   if (nodes.length === 0) {
@@ -398,37 +489,8 @@ function InteriorFloorPlan({
             if (node.id >= targetId) return null;
             const target = nodes.find((n) => n.id === targetId);
             if (!target) return null;
-            const a = roomBox(node);
-            const b = roomBox(target);
-            const secret = edgeIsSecret(node, target);
-            const eitherVisited =
-              dungeon.visitedNodeIds.includes(node.id) || dungeon.visitedNodeIds.includes(targetId);
-            return (
-              <g key={`${node.id}-${targetId}`}>
-                <line
-                  x1={a.x + a.w / 2}
-                  y1={a.y + a.h / 2}
-                  x2={b.x + b.w / 2}
-                  y2={b.y + b.h / 2}
-                  stroke={secret ? '#4a4034' : eitherVisited ? '#4a3f32' : '#2f2922'}
-                  strokeWidth={organic ? 16 : 14}
-                  strokeLinecap="round"
-                  strokeDasharray={secret ? '6 8' : undefined}
-                  opacity={secret ? 0.45 : eitherVisited ? 0.85 : 0.55}
-                />
-                <line
-                  x1={a.x + a.w / 2}
-                  y1={a.y + a.h / 2}
-                  x2={b.x + b.w / 2}
-                  y2={b.y + b.h / 2}
-                  stroke={secret ? '#6b5a45' : eitherVisited ? '#6b5a45' : '#3d352c'}
-                  strokeWidth={organic ? 7 : 6}
-                  strokeLinecap="round"
-                  strokeDasharray={secret ? '4 6' : undefined}
-                  opacity={secret ? 0.35 : eitherVisited ? 0.7 : 0.4}
-                />
-              </g>
-            );
+            const kind = resolveInteriorEdgeKind(node, target);
+            return drawConnection(node, target, kind);
           })
         )}
         {nodes.map((node) => {

@@ -1,6 +1,7 @@
 import type { ActiveDungeonState, MapNode, NodeHidden } from './mapEngine.ts';
 import type { LocationInteractable, LocationSheet, MapTier, Rarity } from './types.ts';
 import { createHashRng } from './seededRng.ts';
+import { mobCountsAsRemaining } from './dungeonMobLedger.ts';
 
 export type { NodeHidden };
 export type MobRole = 'trash' | 'elite' | 'miniBoss' | 'boss';
@@ -251,6 +252,15 @@ export function interactablesFromNode(node: MapNode | null): LocationInteractabl
       revealed: true,
     });
   }
+  for (const loose of node.hidden.looseItems ?? []) {
+    out.push({
+      id: loose.id,
+      name: `Pick Up ${loose.label}`,
+      state: 'available',
+      kind: 'loose-item',
+      revealed: true,
+    });
+  }
   return out;
 }
 
@@ -301,12 +311,7 @@ export function formatHiddenRoomLedger(
     );
   }
   const remaining = dungeon.nodes.flatMap((n) =>
-    (n.hidden?.mobs ?? []).filter((m) => {
-      if (!m.spawned) return true;
-      if (m.defeated) return false;
-      if (m.hpRemaining != null && m.hpRemaining > 0) return true;
-      return false;
-    })
+    (n.hidden?.mobs ?? []).filter((m) => mobCountsAsRemaining(m))
   );
   lines.push(
     `DUNGEON CLEAR: ${remaining.length} unfought mobs remain on the locked map. Do not declare the dungeon cleared.`

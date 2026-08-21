@@ -1,16 +1,6 @@
 import type { GameState } from './types.ts';
 import { isExplorableDungeon } from './placeAuthority.ts';
-
-type NodeMob = NonNullable<
-  NonNullable<NonNullable<GameState['activeDungeon']>['nodes'][number]['hidden']>['mobs']
->[number];
-
-function mobCountsAsRemaining(mob: NodeMob): boolean {
-  if (!mob.spawned) return true;
-  if (mob.defeated) return false;
-  if (mob.hpRemaining != null && mob.hpRemaining > 0) return true;
-  return false;
-}
+import { countRemainingMobsOnDungeon, mobCountsAsRemaining } from './dungeonMobLedger.ts';
 
 export function remainingDungeonMobs(state: GameState): { alive: number; names: string[] } {
   const dungeon = state.activeDungeon;
@@ -19,14 +9,7 @@ export function remainingDungeonMobs(state: GameState): { alive: number; names: 
     return { alive: live.length, names: live };
   }
 
-  const names: string[] = [];
-  for (const node of dungeon.nodes) {
-    for (const mob of node.hidden?.mobs ?? []) {
-      if (mobCountsAsRemaining(mob)) {
-        names.push(`${mob.name} (${node.name})`);
-      }
-    }
-  }
+  const names = countRemainingMobsOnDungeon(dungeon);
 
   if (state.activeEncounter && state.activeEncounter.hp > 0) {
     const here = state.activeEncounter.name.trim().toLowerCase();

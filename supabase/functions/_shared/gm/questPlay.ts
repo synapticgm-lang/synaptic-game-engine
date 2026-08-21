@@ -9,6 +9,30 @@ export type StarterQuestSeed = {
   rewards?: string;
 };
 
+/** Alone Summoned Pact starter — no handlers to hear yet. */
+const ALONE_CIRCLE_PRICE: StarterQuestSeed = {
+  id: 'sp-quest-1',
+  title: 'The Circle’s Price',
+  description:
+    'You arrived alone — no handlers, no welcome. Get your bearings. Find a way toward people or wait for them to find you. Learn who pulled you here and why before anyone owns your name.',
+  recommendedLevel: 1,
+  objectives: [
+    'Get your bearings in this ruin (what stands, what way out, what the panel shows)',
+    'Find a living trail — road, smoke, tracks — or wait for someone to find you',
+    'When you meet their world: hear why you were summoned, then swear, refuse, or delay',
+  ],
+  rewards: 'Circle Blessing remains; reputation tilts when you finally meet Pellane or the street',
+};
+
+/** Rewrite starter seeds so journal matches the arrival (alone vs summoned crowd). */
+export function adaptStarterQuestsForArrival(
+  seeds: StarterQuestSeed[],
+  alone: boolean
+): StarterQuestSeed[] {
+  if (!alone) return seeds;
+  return seeds.map((s) => (s.id === 'sp-quest-1' ? { ...ALONE_CIRCLE_PRICE } : s));
+}
+
 function slug(raw: string): string {
   return raw.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 40) || 'quest';
 }
@@ -171,6 +195,10 @@ export function visibleJournalQuests(state: GameState): Quest[] {
   return (state.quests ?? []).filter(isJournalQuest);
 }
 
+export function activeDrawerQuests(state: GameState): Quest[] {
+  return visibleJournalQuests(state).filter((q) => q.status === 'active');
+}
+
 /**
  * When the System names a quest in the log, or the player walks toward a place a
  * seeded quest already describes, show it in the journal. Campaign-agnostic.
@@ -285,26 +313,49 @@ function asSeededQuest(q: StarterQuestSeed): Quest {
 }
 
 /** After they finish name+place, seed the local starter hidden — never Wave/Riverside. */
-export function seedLocalStarterQuest(quests: Quest[], seeds: StarterQuestSeed[] = []): Quest[] {
-  const extra = seeds.filter((s) => !quests.some((q) => q.id === s.id)).map(asSeededQuest);
+export function seedLocalStarterQuest(
+  quests: Quest[],
+  seeds: StarterQuestSeed[] = [],
+  alone = false
+): Quest[] {
+  const adapted = adaptStarterQuestsForArrival(seeds, alone);
+  const extra = adapted.filter((s) => !quests.some((q) => q.id === s.id)).map(asSeededQuest);
   if (!extra.length) return quests;
   return [...quests, ...extra];
 }
 
 /** Reveal the first local starter after the opening scene exists. */
-export function revealLocalStarterQuest(quests: Quest[], seeds: StarterQuestSeed[] = []): Quest[] {
-  const extra = seeds.filter((s) => !quests.some((q) => q.id === s.id)).map(asSeededQuest);
+export function revealLocalStarterQuest(
+  quests: Quest[],
+  seeds: StarterQuestSeed[] = [],
+  alone = false
+): Quest[] {
+  const adapted = adaptStarterQuestsForArrival(seeds, alone);
+  const extra = adapted.filter((s) => !quests.some((q) => q.id === s.id)).map(asSeededQuest);
   const pool = [...quests, ...extra];
   const first =
     pool.find((q) => q.id === 'si-quest-1' || /first blood/i.test(q.name))
+    ?? pool.find((q) => q.id === 'sp-quest-1')
     ?? pool.find((q) => (q.recommendedLevel ?? 1) <= 1 && (q.type === 'main' || !q.type));
   if (!first) return quests;
+  const seed = adapted.find((s) => s.id === first.id);
   const withFirst = quests.some((q) => q.id === first.id) ? quests : [...quests, first];
-  return withFirst.map((q) =>
-    q.id === first.id
-      ? { ...q, status: 'active' as const, revealed: true }
-      : q
-  );
+  return withFirst.map((q) => {
+    if (q.id !== first.id) return q;
+    const fromSeed = seed
+      ? {
+          name: seed.title,
+          description: seed.description,
+          objectives: seed.objectives.map((desc, i) => ({
+            id: q.objectives?.[i]?.id ?? `${seed.id}-obj-${i + 1}`,
+            description: desc,
+            completed: q.objectives?.[i]?.completed ?? false,
+          })),
+          rewards: { items: seed.rewards ? [seed.rewards] : undefined },
+        }
+      : {};
+    return { ...q, ...fromSeed, status: 'active' as const, revealed: true };
+  });
 }
 
 export function mapAnchorName(currentLocation: string | undefined, landmarks: string[]): string {

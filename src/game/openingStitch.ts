@@ -85,9 +85,9 @@ const CONTINUE_BRIDGES = [
 ] as const;
 
 const ALONE_ROOM_GROUND = [
-  'Broken stone under your hands. A gap in the wall lets in cold air. The blue panel waits at eye level.',
-  'Rubble piles against one wall. A dark doorway deeper in. Dust motes in the panel-light.',
-  'A half-collapsed arch, a scatter of debris, and that private blue glow — nothing else moves.',
+  'Broken stone under your hands. A dark doorway opens into the next chamber. The blue panel waits at eye level.',
+  'Rubble piles against one wall. A doorway deeper in along the corridor. Dust motes in the panel-light.',
+  'A half-collapsed arch over a corridor threshold, a scatter of debris, and that private blue glow — nothing else moves.',
 ] as const;
 
 const CROWD_ROOM_GROUND = [

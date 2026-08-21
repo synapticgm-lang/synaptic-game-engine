@@ -62,6 +62,9 @@ export interface NodeHidden {
   }>;
 }
 
+/** How a room link reads on the floor plan and in explore prose. */
+export type InteriorEdgeKind = 'door' | 'damaged' | 'secret' | 'stairs';
+
 export interface MapNode {
   id: string;
   name: string;
@@ -71,6 +74,10 @@ export interface MapNode {
   isSecret?: boolean;
   coordinates?: { x: number; y: number };
   zLevel?: number;
+  /** Varied room size in layout units — not equal stamp squares. */
+  footprint?: { w: number; h: number };
+  /** Per-target edge style. Missing keys fall back via resolveInteriorEdgeKind. */
+  edgeKinds?: Record<string, InteriorEdgeKind>;
   features?: {
     primary: string;
     secondary: string[];
@@ -641,11 +648,17 @@ function needsAuthoredInteriorRebuild(dungeon: ActiveDungeonState, placeHint?: s
   const place = placeHint || dungeon.dungeonName || '';
   const scale = interiorBuildingScale(place);
   const openRooms = dungeon.nodes.filter((n) => !n.isSecret).length;
-  if (scale === 'shed') return openRooms < 2;
-  if (openRooms < 5) return true;
-  // Legacy 20n single-floor graphs: rebuild when the building wants multi-z.
-  const zs = listInteriorZLevels(dungeon);
-  if (zs.length < 2) return true;
+  if (scale === 'shed') {
+    if (openRooms < 2) return true;
+  } else {
+    if (openRooms < 5) return true;
+    // Legacy 20n single-floor graphs: rebuild when the building wants multi-z.
+    const zs = listInteriorZLevels(dungeon);
+    if (zs.length < 2) return true;
+  }
+  // Legacy equal-stamp rooms (pre-20q): rebuild for varied footprints + door edges.
+  if (!dungeon.nodes.every((n) => n.footprint && n.footprint.w > 0 && n.footprint.h > 0)) return true;
+  if (!dungeon.nodes.some((n) => (n.tags ?? []).includes('varied-footprint'))) return true;
   return false;
 }
 
@@ -675,11 +688,16 @@ function nextInteriorSlot(dungeon: ActiveDungeonState, z = 0): { x: number; y: n
 type InteriorRoomSpec = {
   id: string;
   label: string;
+  /** Top-left in continuous layout units (varied footprints — not a uniform grid stamp). */
   x: number;
   y: number;
   /** -1 = B1, 0 = 1F, 1 = 2F */
   z: number;
+  w: number;
+  h: number;
   links: string[];
+  /** Optional edge overrides (e.g. damaged gap). Defaults: door / stairs / secret. */
+  edgeKinds?: Record<string, InteriorEdgeKind>;
   isSecret?: boolean;
   entry?: boolean;
 };
@@ -687,92 +705,225 @@ type InteriorRoomSpec = {
 /** Single-floor sheds / booths — not every dump needs a cellar. */
 const SHED_LAYOUTS: InteriorRoomSpec[][] = [
   [
-    { id: 'entry', label: 'Entry', x: 1, y: 1, z: 0, links: ['main'], entry: true },
-    { id: 'main', label: 'Main room', x: 1, y: 0, z: 0, links: ['entry', 'back'] },
-    { id: 'back', label: 'Back room', x: 2, y: 0, z: 0, links: ['main'] },
+    { id: 'entry', label: 'Entry', x: 0.15, y: 1.4, z: 0, w: 1.2, h: 0.95, links: ['main'], entry: true },
+    { id: 'main', label: 'Main room', x: 0, y: 0, z: 0, w: 1.75, h: 1.3, links: ['entry', 'back'] },
+    { id: 'back', label: 'Back room', x: 1.9, y: 0.25, z: 0, w: 1.05, h: 0.9, links: ['main'] },
   ],
   [
-    { id: 'entry', label: 'Entry', x: 0, y: 1, z: 0, links: ['hall'], entry: true },
-    { id: 'hall', label: 'Hall', x: 1, y: 1, z: 0, links: ['entry', 'side', 'store'] },
-    { id: 'side', label: 'Side room', x: 1, y: 0, z: 0, links: ['hall'] },
-    { id: 'store', label: 'Storeroom', x: 2, y: 1, z: 0, links: ['hall'] },
+    { id: 'entry', label: 'Entry', x: 0, y: 1.35, z: 0, w: 1.05, h: 0.9, links: ['hall'], entry: true },
+    { id: 'hall', label: 'Hall', x: 1.15, y: 1.15, z: 0, w: 0.55, h: 1.25, links: ['entry', 'side', 'store'] },
+    { id: 'side', label: 'Side room', x: 1.0, y: 0, z: 0, w: 1.15, h: 1.05, links: ['hall'] },
+    { id: 'store', label: 'Storeroom', x: 1.85, y: 1.25, z: 0, w: 1.0, h: 0.85, links: ['hall'] },
   ],
 ];
 
 /**
  * Seeded multi-floor footprints (original layouts — not licensed mansion geometry).
  * Stairs link z-levels; secret cellars stay locked until revealed.
+ * Room sizes vary (corridors thin, halls wide) — not equal stamp squares.
  */
 const RUIN_LAYOUTS: InteriorRoomSpec[][] = [
   [
-    { id: 'entry', label: 'Entry', x: 1, y: 2, z: 0, links: ['corridor'], entry: true },
-    { id: 'corridor', label: 'Corridor', x: 1, y: 1, z: 0, links: ['entry', 'hall', 'side'] },
-    { id: 'hall', label: 'Ruined hall', x: 1, y: 0, z: 0, links: ['corridor', 'chamber', 'stairs'] },
-    { id: 'side', label: 'Side room', x: 0, y: 1, z: 0, links: ['corridor', 'store'] },
-    { id: 'chamber', label: 'Chamber', x: 2, y: 0, z: 0, links: ['hall'] },
-    { id: 'stairs', label: 'Stairs', x: 0, y: 0, z: 0, links: ['hall', 'cellar', 'landing'] },
-    { id: 'store', label: 'Storeroom', x: 0, y: 2, z: 0, links: ['side'] },
-    { id: 'cellar', label: 'Cellar', x: 0, y: 0, z: -1, links: ['stairs', 'vault'], isSecret: true },
-    { id: 'vault', label: 'Vault', x: 1, y: 0, z: -1, links: ['cellar'], isSecret: true },
-    { id: 'landing', label: 'Upper landing', x: 0, y: 0, z: 1, links: ['stairs', 'attic'] },
-    { id: 'attic', label: 'Attic', x: 1, y: 0, z: 1, links: ['landing'] },
+    { id: 'entry', label: 'Entry', x: 1.05, y: 2.45, z: 0, w: 1.15, h: 0.95, links: ['corridor'], entry: true },
+    {
+      id: 'corridor',
+      label: 'Corridor',
+      x: 1.25,
+      y: 1.2,
+      z: 0,
+      w: 0.55,
+      h: 1.2,
+      links: ['entry', 'hall', 'side'],
+    },
+    {
+      id: 'hall',
+      label: 'Ruined hall',
+      x: 0.55,
+      y: 0,
+      z: 0,
+      w: 1.85,
+      h: 1.15,
+      links: ['corridor', 'chamber', 'stairs'],
+    },
+    { id: 'side', label: 'Side room', x: 0, y: 1.25, z: 0, w: 1.1, h: 1.0, links: ['corridor', 'store'] },
+    { id: 'chamber', label: 'Chamber', x: 2.55, y: 0.1, z: 0, w: 1.2, h: 1.05, links: ['hall'] },
+    { id: 'stairs', label: 'Stairs', x: 0, y: 0.05, z: 0, w: 0.7, h: 0.85, links: ['hall', 'cellar', 'landing'] },
+    {
+      id: 'store',
+      label: 'Storeroom',
+      x: 0,
+      y: 2.4,
+      z: 0,
+      w: 0.95,
+      h: 0.85,
+      links: ['side'],
+      edgeKinds: { side: 'damaged' },
+    },
+    { id: 'cellar', label: 'Cellar', x: 0, y: 0, z: -1, w: 1.3, h: 1.1, links: ['stairs', 'vault'], isSecret: true },
+    { id: 'vault', label: 'Vault', x: 1.45, y: 0.15, z: -1, w: 1.05, h: 0.9, links: ['cellar'], isSecret: true },
+    { id: 'landing', label: 'Upper landing', x: 0, y: 0, z: 1, w: 1.1, h: 0.95, links: ['stairs', 'attic'] },
+    { id: 'attic', label: 'Attic', x: 1.25, y: 0.1, z: 1, w: 1.35, h: 1.05, links: ['landing'] },
   ],
   [
-    { id: 'entry', label: 'Entry', x: 0, y: 1, z: 0, links: ['ante', 'yard'], entry: true },
-    { id: 'ante', label: 'Antechamber', x: 1, y: 1, z: 0, links: ['entry', 'hall', 'passage'] },
-    { id: 'hall', label: 'Ruined hall', x: 2, y: 1, z: 0, links: ['ante', 'east', 'stairs'] },
-    { id: 'passage', label: 'Passage', x: 1, y: 2, z: 0, links: ['ante', 'store'] },
-    { id: 'east', label: 'Side chamber', x: 3, y: 1, z: 0, links: ['hall'] },
-    { id: 'store', label: 'Storeroom', x: 1, y: 3, z: 0, links: ['passage'] },
-    { id: 'stairs', label: 'Stairs', x: 2, y: 0, z: 0, links: ['hall', 'crypt', 'upper'] },
-    { id: 'yard', label: 'Collapsed wing', x: 0, y: 0, z: 0, links: ['entry'], isSecret: true },
-    { id: 'crypt', label: 'Crypt', x: 2, y: 0, z: -1, links: ['stairs', 'ossuary'] },
-    { id: 'ossuary', label: 'Ossuary', x: 1, y: 0, z: -1, links: ['crypt'], isSecret: true },
-    { id: 'upper', label: 'Upper hall', x: 2, y: 0, z: 1, links: ['stairs', 'gallery'] },
-    { id: 'gallery', label: 'Gallery', x: 3, y: 0, z: 1, links: ['upper'] },
+    { id: 'entry', label: 'Entry', x: 0, y: 1.2, z: 0, w: 1.1, h: 1.0, links: ['ante', 'yard'], entry: true },
+    {
+      id: 'ante',
+      label: 'Antechamber',
+      x: 1.25,
+      y: 1.1,
+      z: 0,
+      w: 1.25,
+      h: 1.15,
+      links: ['entry', 'hall', 'passage'],
+    },
+    {
+      id: 'hall',
+      label: 'Ruined hall',
+      x: 2.65,
+      y: 0.85,
+      z: 0,
+      w: 1.7,
+      h: 1.35,
+      links: ['ante', 'east', 'stairs'],
+    },
+    {
+      id: 'passage',
+      label: 'Passage',
+      x: 1.4,
+      y: 2.4,
+      z: 0,
+      w: 0.55,
+      h: 1.05,
+      links: ['ante', 'store'],
+    },
+    { id: 'east', label: 'Side chamber', x: 4.5, y: 1.05, z: 0, w: 1.15, h: 1.0, links: ['hall'] },
+    { id: 'store', label: 'Storeroom', x: 1.2, y: 3.55, z: 0, w: 1.05, h: 0.85, links: ['passage'] },
+    { id: 'stairs', label: 'Stairs', x: 3.0, y: 0, z: 0, w: 0.7, h: 0.75, links: ['hall', 'crypt', 'upper'] },
+    {
+      id: 'yard',
+      label: 'Collapsed wing',
+      x: 0,
+      y: 0,
+      z: 0,
+      w: 1.0,
+      h: 1.05,
+      links: ['entry'],
+      isSecret: true,
+      edgeKinds: { entry: 'damaged' },
+    },
+    { id: 'crypt', label: 'Crypt', x: 2.6, y: 0, z: -1, w: 1.4, h: 1.15, links: ['stairs', 'ossuary'] },
+    { id: 'ossuary', label: 'Ossuary', x: 1.15, y: 0.1, z: -1, w: 1.2, h: 1.0, links: ['crypt'], isSecret: true },
+    { id: 'upper', label: 'Upper hall', x: 2.5, y: 0, z: 1, w: 1.55, h: 1.2, links: ['stairs', 'gallery'] },
+    { id: 'gallery', label: 'Gallery', x: 4.2, y: 0.15, z: 1, w: 0.6, h: 1.3, links: ['upper'] },
   ],
   [
-    { id: 'entry', label: 'First chamber', x: 1, y: 1, z: 0, links: ['west', 'east', 'south'], entry: true },
-    { id: 'west', label: 'Corridor', x: 0, y: 1, z: 0, links: ['entry', 'hall'] },
-    { id: 'east', label: 'Side room', x: 2, y: 1, z: 0, links: ['entry', 'store'] },
-    { id: 'south', label: 'Passage', x: 1, y: 2, z: 0, links: ['entry', 'stairs'] },
-    { id: 'hall', label: 'Ruined hall', x: 0, y: 0, z: 0, links: ['west', 'chamber'] },
-    { id: 'chamber', label: 'Chamber', x: 1, y: 0, z: 0, links: ['hall'] },
-    { id: 'store', label: 'Storeroom', x: 3, y: 1, z: 0, links: ['east'] },
-    { id: 'stairs', label: 'Stairs', x: 1, y: 3, z: 0, links: ['south', 'cellar', 'landing'] },
-    { id: 'cellar', label: 'Cellar', x: 1, y: 1, z: -1, links: ['stairs'], isSecret: true },
-    { id: 'landing', label: 'Upper landing', x: 1, y: 1, z: 1, links: ['stairs', 'loft'] },
-    { id: 'loft', label: 'Loft', x: 2, y: 1, z: 1, links: ['landing'] },
+    {
+      id: 'entry',
+      label: 'First chamber',
+      x: 1.0,
+      y: 1.15,
+      z: 0,
+      w: 1.35,
+      h: 1.2,
+      links: ['west', 'east', 'south'],
+      entry: true,
+    },
+    { id: 'west', label: 'Corridor', x: 0, y: 1.25, z: 0, w: 0.9, h: 0.55, links: ['entry', 'hall'] },
+    { id: 'east', label: 'Side room', x: 2.5, y: 1.2, z: 0, w: 1.1, h: 1.0, links: ['entry', 'store'] },
+    {
+      id: 'south',
+      label: 'Passage',
+      x: 1.25,
+      y: 2.5,
+      z: 0,
+      w: 0.55,
+      h: 1.1,
+      links: ['entry', 'stairs'],
+    },
+    { id: 'hall', label: 'Ruined hall', x: 0, y: 0, z: 0, w: 1.55, h: 1.15, links: ['west', 'chamber'] },
+    { id: 'chamber', label: 'Chamber', x: 1.7, y: 0.05, z: 0, w: 1.15, h: 1.0, links: ['hall'] },
+    { id: 'store', label: 'Storeroom', x: 3.75, y: 1.25, z: 0, w: 0.95, h: 0.85, links: ['east'] },
+    { id: 'stairs', label: 'Stairs', x: 1.15, y: 3.7, z: 0, w: 0.75, h: 0.8, links: ['south', 'cellar', 'landing'] },
+    { id: 'cellar', label: 'Cellar', x: 1.1, y: 1.0, z: -1, w: 1.25, h: 1.1, links: ['stairs'], isSecret: true },
+    { id: 'landing', label: 'Upper landing', x: 1.05, y: 1.05, z: 1, w: 1.15, h: 1.0, links: ['stairs', 'loft'] },
+    { id: 'loft', label: 'Loft', x: 2.35, y: 1.0, z: 1, w: 1.3, h: 1.1, links: ['landing'] },
   ],
 ];
 
 /** Larger footprints for cathedrals / manors / circles — still original geometry. */
 const GRAND_LAYOUTS: InteriorRoomSpec[][] = [
   [
-    { id: 'entry', label: 'Narthex', x: 1, y: 2, z: 0, links: ['nave'], entry: true },
-    { id: 'nave', label: 'Nave', x: 1, y: 1, z: 0, links: ['entry', 'aisle', 'choir', 'stairs'] },
-    { id: 'aisle', label: 'Aisle', x: 0, y: 1, z: 0, links: ['nave', 'vestry'] },
-    { id: 'vestry', label: 'Vestry', x: 0, y: 0, z: 0, links: ['aisle'] },
-    { id: 'choir', label: 'Choir', x: 1, y: 0, z: 0, links: ['nave', 'sanctum'] },
-    { id: 'sanctum', label: 'Sanctum', x: 2, y: 0, z: 0, links: ['choir'] },
-    { id: 'stairs', label: 'Stairs', x: 2, y: 1, z: 0, links: ['nave', 'crypt', 'gallery'] },
-    { id: 'crypt', label: 'Crypt', x: 2, y: 1, z: -1, links: ['stairs', 'reliquary'] },
-    { id: 'reliquary', label: 'Reliquary', x: 1, y: 1, z: -1, links: ['crypt'], isSecret: true },
-    { id: 'gallery', label: 'Gallery', x: 2, y: 1, z: 1, links: ['stairs', 'belfry'] },
-    { id: 'belfry', label: 'Belfry', x: 3, y: 1, z: 1, links: ['gallery'] },
+    { id: 'entry', label: 'Narthex', x: 1.1, y: 2.55, z: 0, w: 1.3, h: 0.95, links: ['nave'], entry: true },
+    {
+      id: 'nave',
+      label: 'Nave',
+      x: 0.7,
+      y: 1.05,
+      z: 0,
+      w: 2.0,
+      h: 1.4,
+      links: ['entry', 'aisle', 'choir', 'stairs'],
+    },
+    { id: 'aisle', label: 'Aisle', x: 0, y: 1.15, z: 0, w: 0.6, h: 1.35, links: ['nave', 'vestry'] },
+    { id: 'vestry', label: 'Vestry', x: 0, y: 0, z: 0, w: 1.05, h: 1.0, links: ['aisle'] },
+    { id: 'choir', label: 'Choir', x: 1.0, y: 0, z: 0, w: 1.4, h: 0.95, links: ['nave', 'sanctum'] },
+    { id: 'sanctum', label: 'Sanctum', x: 2.55, y: 0, z: 0, w: 1.15, h: 1.05, links: ['choir'] },
+    { id: 'stairs', label: 'Stairs', x: 2.85, y: 1.2, z: 0, w: 0.7, h: 0.85, links: ['nave', 'crypt', 'gallery'] },
+    { id: 'crypt', label: 'Crypt', x: 2.6, y: 1.0, z: -1, w: 1.45, h: 1.2, links: ['stairs', 'reliquary'] },
+    {
+      id: 'reliquary',
+      label: 'Reliquary',
+      x: 1.15,
+      y: 1.1,
+      z: -1,
+      w: 1.2,
+      h: 1.0,
+      links: ['crypt'],
+      isSecret: true,
+    },
+    { id: 'gallery', label: 'Gallery', x: 2.7, y: 1.05, z: 1, w: 0.55, h: 1.35, links: ['stairs', 'belfry'] },
+    { id: 'belfry', label: 'Belfry', x: 3.4, y: 1.15, z: 1, w: 1.0, h: 1.0, links: ['gallery'] },
   ],
   [
-    { id: 'entry', label: 'Entry', x: 1, y: 2, z: 0, links: ['foyer'], entry: true },
-    { id: 'foyer', label: 'Foyer', x: 1, y: 1, z: 0, links: ['entry', 'salon', 'stairs', 'study'] },
-    { id: 'salon', label: 'Salon', x: 0, y: 1, z: 0, links: ['foyer', 'dining'] },
-    { id: 'dining', label: 'Dining hall', x: 0, y: 0, z: 0, links: ['salon'] },
-    { id: 'study', label: 'Study', x: 2, y: 1, z: 0, links: ['foyer'] },
-    { id: 'stairs', label: 'Stairs', x: 1, y: 0, z: 0, links: ['foyer', 'cellar', 'landing'] },
-    { id: 'cellar', label: 'Cellar', x: 1, y: 0, z: -1, links: ['stairs', 'wine'], isSecret: true },
-    { id: 'wine', label: 'Wine cellar', x: 0, y: 0, z: -1, links: ['cellar'] },
-    { id: 'landing', label: 'Upper landing', x: 1, y: 0, z: 1, links: ['stairs', 'bedroom', 'library'] },
-    { id: 'bedroom', label: 'Bedroom', x: 0, y: 0, z: 1, links: ['landing'] },
-    { id: 'library', label: 'Library', x: 2, y: 0, z: 1, links: ['landing'] },
+    { id: 'entry', label: 'Entry', x: 1.15, y: 2.5, z: 0, w: 1.15, h: 0.9, links: ['foyer'], entry: true },
+    {
+      id: 'foyer',
+      label: 'Foyer',
+      x: 0.95,
+      y: 1.2,
+      z: 0,
+      w: 1.5,
+      h: 1.2,
+      links: ['entry', 'salon', 'stairs', 'study'],
+    },
+    { id: 'salon', label: 'Salon', x: 0, y: 1.15, z: 0, w: 0.85, h: 1.25, links: ['foyer', 'dining'] },
+    { id: 'dining', label: 'Dining hall', x: 0, y: 0, z: 0, w: 1.55, h: 1.05, links: ['salon'] },
+    { id: 'study', label: 'Study', x: 2.6, y: 1.25, z: 0, w: 1.1, h: 1.0, links: ['foyer'] },
+    { id: 'stairs', label: 'Stairs', x: 1.25, y: 0, z: 0, w: 0.7, h: 1.05, links: ['foyer', 'cellar', 'landing'] },
+    {
+      id: 'cellar',
+      label: 'Cellar',
+      x: 1.15,
+      y: 0,
+      z: -1,
+      w: 1.3,
+      h: 1.1,
+      links: ['stairs', 'wine'],
+      isSecret: true,
+    },
+    { id: 'wine', label: 'Wine cellar', x: 0, y: 0.1, z: -1, w: 1.05, h: 0.95, links: ['cellar'] },
+    {
+      id: 'landing',
+      label: 'Upper landing',
+      x: 1.1,
+      y: 0,
+      z: 1,
+      w: 1.2,
+      h: 1.0,
+      links: ['stairs', 'bedroom', 'library'],
+    },
+    { id: 'bedroom', label: 'Bedroom', x: 0, y: 0.05, z: 1, w: 1.0, h: 0.95, links: ['landing'] },
+    { id: 'library', label: 'Library', x: 2.45, y: 0, z: 1, w: 1.35, h: 1.15, links: ['landing'] },
   ],
 ];
 
@@ -782,7 +933,124 @@ function pickInteriorLayout(seed: string, place: string): InteriorRoomSpec[] {
   const pool =
     scale === 'shed' ? SHED_LAYOUTS : scale === 'grand' ? GRAND_LAYOUTS : RUIN_LAYOUTS;
   const idx = Math.min(pool.length - 1, Math.floor(rng() * pool.length));
-  return pool[idx]!.map((r) => ({ ...r, links: [...r.links], z: r.z }));
+  return pool[idx]!.map((r) => ({
+    ...r,
+    links: [...r.links],
+    edgeKinds: r.edgeKinds ? { ...r.edgeKinds } : undefined,
+    z: r.z,
+    w: r.w,
+    h: r.h,
+  }));
+}
+
+/** Resolve door vs damaged/secret/stairs for a graph edge. */
+export function resolveInteriorEdgeKind(from: MapNode, to: MapNode): InteriorEdgeKind {
+  const tagged = from.edgeKinds?.[to.id] ?? to.edgeKinds?.[from.id];
+  if (tagged) return tagged;
+  // Secret wins over stairs so sealed cellars don't read as ordinary stairwells.
+  if (from.isSecret || to.isSecret) return 'secret';
+  if ((from.zLevel ?? 0) !== (to.zLevel ?? 0)) return 'stairs';
+  return 'door';
+}
+
+/** Player/GM wording for an edge — never default normal links to “crack”. */
+export function interiorExitNoun(kind: InteriorEdgeKind): string {
+  switch (kind) {
+    case 'damaged':
+      return 'broken gap';
+    case 'secret':
+      return 'sealed passage';
+    case 'stairs':
+      return 'stairs';
+    default:
+      return 'doorway';
+  }
+}
+
+export type InteriorRoomBox = { x: number; y: number; w: number; h: number };
+
+/** Anchor for a door / broken-wall mark between two room boxes (not a center-to-center crack line). */
+export function interiorDoorAnchor(
+  a: InteriorRoomBox,
+  b: InteriorRoomBox
+): { x: number; y: number; orient: 'h' | 'v' } {
+  const acx = a.x + a.w / 2;
+  const acy = a.y + a.h / 2;
+  const bcx = b.x + b.w / 2;
+  const bcy = b.y + b.h / 2;
+  const dx = bcx - acx;
+  const dy = bcy - acy;
+  if (Math.abs(dx) >= Math.abs(dy)) {
+    const fromRight = dx > 0;
+    const wallA = fromRight ? a.x + a.w : a.x;
+    const wallB = fromRight ? b.x : b.x + b.w;
+    const x = (wallA + wallB) / 2;
+    const y0 = Math.max(a.y, b.y);
+    const y1 = Math.min(a.y + a.h, b.y + b.h);
+    const y = y1 > y0 ? (y0 + y1) / 2 : (acy + bcy) / 2;
+    return { x, y, orient: 'v' };
+  }
+  const fromBelow = dy > 0;
+  const wallA = fromBelow ? a.y + a.h : a.y;
+  const wallB = fromBelow ? b.y : b.y + b.h;
+  const y = (wallA + wallB) / 2;
+  const x0 = Math.max(a.x, b.x);
+  const x1 = Math.min(a.x + a.w, b.x + b.w);
+  const x = x1 > x0 ? (x0 + x1) / 2 : (acx + bcx) / 2;
+  return { x, y, orient: 'h' };
+}
+
+/** True when authored rooms are not all the same stamp size. */
+export function interiorFootprintsAreVaried(nodes: MapNode[]): boolean {
+  const keys = new Set(
+    nodes
+      .map((n) => n.footprint)
+      .filter((f): f is { w: number; h: number } => !!f && f.w > 0 && f.h > 0)
+      .map((f) => `${f.w.toFixed(2)}x${f.h.toFixed(2)}`)
+  );
+  return keys.size >= 2;
+}
+
+/** Prompt authority: exits from the current room with door vs gap language. */
+export function formatInteriorExitAuthority(dungeon: ActiveDungeonState): string {
+  const here = dungeon.nodes.find((n) => n.id === dungeon.currentNodeId);
+  if (!here) return '';
+  const exits = here.connections
+    .map((id) => dungeon.nodes.find((n) => n.id === id))
+    .filter((n): n is MapNode => !!n)
+    .filter((n) => !n.isSecret || isInteriorSecretUnlocked(dungeon, n.id) || dungeon.visitedNodeIds.includes(n.id))
+    .map((n) => {
+      const kind = resolveInteriorEdgeKind(here, n);
+      return `${interiorExitNoun(kind)}→${n.name}`;
+    });
+  if (exits.length === 0) return 'Exits from here: none mapped yet.';
+  return (
+    `Exits from here: ${exits.join(', ')}. ` +
+    'Prefer door / doorway / corridor into mapped adjacent rooms. ' +
+    'Use crack / gap / broken wall only for broken gap or sealed passage edges — never as the default first exit.'
+  );
+}
+
+function buildEdgeKindsForSpec(
+  spec: InteriorRoomSpec,
+  layout: InteriorRoomSpec[]
+): Record<string, InteriorEdgeKind> {
+  const kinds: Record<string, InteriorEdgeKind> = { ...(spec.edgeKinds ?? {}) };
+  for (const linkId of spec.links) {
+    if (kinds[linkId]) continue;
+    const target = layout.find((r) => r.id === linkId);
+    if (!target) continue;
+    if (spec.isSecret || target.isSecret) kinds[linkId] = 'secret';
+    else if (spec.z !== target.z) kinds[linkId] = 'stairs';
+    else kinds[linkId] = 'door';
+  }
+  // Mirror explicit damaged/secret overrides onto reverse when present on peer.
+  for (const peer of layout) {
+    if (!spec.links.includes(peer.id)) continue;
+    const rev = peer.edgeKinds?.[spec.id];
+    if (rev && !spec.edgeKinds?.[peer.id]) kinds[peer.id] = rev;
+  }
+  return kinds;
 }
 
 function applyHarvestedRoomNames(nodes: MapNode[], rooms: string[], building: string): MapNode[] {
@@ -897,9 +1165,10 @@ export function buildInteriorFloorPlan(
   const entry = layout.find((r) => r.entry) ?? layout[0]!;
 
   let nodes: MapNode[] = layout.map((spec) => {
-    const tags = ['interior', 'authored'];
+    const tags = ['interior', 'authored', 'varied-footprint'];
     if (spec.entry) tags.push('here', 'entry');
     if (spec.isSecret) tags.push('secret');
+    const edgeKinds = buildEdgeKindsForSpec(spec, layout);
     const hidden = spec.isSecret
       ? undefined
       : {
@@ -923,6 +1192,8 @@ export function buildInteriorFloorPlan(
         : `${spec.label}, inside ${building}.`,
       connections: [...spec.links],
       coordinates: { x: spec.x, y: spec.y },
+      footprint: { w: spec.w, h: spec.h },
+      edgeKinds,
       zLevel: spec.z,
       tags,
       isSecret: !!spec.isSecret,
@@ -1047,10 +1318,18 @@ export function addRoomToInteriorMap(dungeon: ActiveDungeonState, room: string):
     connections: here ? [here.id] : [],
     coordinates: slot,
     zLevel: z,
-    tags: ['interior', 'room'],
+    footprint: { w: 1.05, h: 0.95 },
+    edgeKinds: here ? { [here.id]: 'door' } : undefined,
+    tags: ['interior', 'room', 'varied-footprint'],
   };
   const nodes = dungeon.nodes.map((n) =>
-    n.id === here?.id ? { ...n, connections: [...n.connections, id] } : n
+    n.id === here?.id
+      ? {
+          ...n,
+          connections: [...n.connections, id],
+          edgeKinds: { ...(n.edgeKinds ?? {}), [id]: 'door' },
+        }
+      : n
   );
   return {
     ...dungeon,

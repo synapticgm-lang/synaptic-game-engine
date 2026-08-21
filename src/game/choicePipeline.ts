@@ -9,6 +9,9 @@ import {
 import { logger } from './logger';
 import { getTierDefinition } from './subscriptionTiers';
 import { applyStanceDensity, classifyStance, isCombatLockedTurn } from './stanceDensity';
+import { isAloneArrivalOpening } from './openingEstablishment';
+import { isInteriorMap } from './placeAuthority';
+import { listInteriorExitsFromHere } from './mapEngine';
 
 /**
  * 4-tier narrative pipeline (authoritative ordering for choice generation):
@@ -113,6 +116,7 @@ export function sanitizeChoiceLabel(choice: string): string {
 
 /** Alone arrival or empty-ruin prose — no crowd / voices / speaker inventions. */
 export function isAloneOrEmptyScene(state: GameState, storyProse = ''): boolean {
+  if (isAloneArrivalOpening(state)) return true;
   if (state.openingEstablishment?.aloneArrival === true) return true;
   const hay = `${storyProse}\n${state.currentLocation ?? ''}`.toLowerCase();
   if (/\b(nobody|no one|alone|empty|only (?:your|my) (?:own )?footprints|nothing moves)\b/i.test(hay)) {
@@ -124,7 +128,7 @@ export function isAloneOrEmptyScene(state: GameState, storyProse = ''): boolean 
 }
 
 const ALONE_FORBIDDEN_CHOICE =
-  /\b(crowd|bystander|voices?\s+outside|call out to (?:the )?(?:voices?|crowd|people)|inspect (?:the )?(?:speaker|emblem)|someone (?:nearby|listening)|ask (?:the )?(?:crowd|people|locals))\b/i;
+  /\b(crowd|bystander|onlookers?|handlers?|voices?\s+(?:outside|beyond)|call out to (?:the )?(?:voices?|crowd|people)|inspect (?:the )?(?:speaker|emblem)|someone (?:nearby|listening|watching)|ask (?:the )?(?:crowd|people|locals)|people who saw|saw you arrive|you(?:'re| are) not alone)\b/i;
 
 /** Choices that invent social presence on an empty/alone beat. */
 export function inventsPresenceOnEmptyScene(
@@ -599,8 +603,20 @@ export function sceneSafeFallbacks(
   if (alone) {
     options.push('Search the ruin carefully');
     options.push('Find a way out');
-    if (/\b(gap|door|arch|doorway|rubble|debris|stone)\b/i.test(storyProse)) {
-      options.push('Approach the gap cautiously');
+    const dungeon = state.activeDungeon;
+    if (dungeon && isInteriorMap(dungeon)) {
+      const exits = listInteriorExitsFromHere(dungeon);
+      const door = exits.find((e) => e.kind === 'door' || e.kind === 'stairs');
+      if (door) {
+        options.push(`Approach the ${door.noun} to ${door.name}`);
+      } else if (exits[0]) {
+        options.push(`Approach the ${exits[0].noun} cautiously`);
+      }
+    }
+    if (/\b(gap|door|arch|doorway|rubble|debris|stone|corridor)\b/i.test(storyProse)) {
+      const preferGap =
+        /\b(gap|crack|broken wall)\b/i.test(storyProse) && !/\b(door|doorway|corridor)\b/i.test(storyProse);
+      options.push(preferGap ? 'Approach the gap cautiously' : 'Approach the doorway cautiously');
     }
   }
   options.push('Wait and listen carefully');
