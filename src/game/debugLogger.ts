@@ -1,5 +1,7 @@
 // src/game/debugLogger.ts
 
+import { hostedBackendDiagnostics } from './gmProxy';
+
 function generateUUID(): string {
   if (typeof crypto !== 'undefined' && crypto.randomUUID) {
     return crypto.randomUUID();
@@ -150,6 +152,7 @@ class DebugLogger {
         logType: 'error-log',
         exportTimestamp: now.toISOString(),
         ...telemetry,
+        hostedBackend: hostedBackendDiagnostics(),
         totalErrors: this.logs.filter(l => l.type === 'ERROR' || l.type === 'CRITICAL').length,
         errors: this.logs.filter(l => l.type === 'ERROR' || l.type === 'CRITICAL'),
         fullRecentBuffer: this.logs.slice(0, 50),
@@ -161,6 +164,7 @@ class DebugLogger {
       logType: 'event-log',
       exportTimestamp: now.toISOString(),
       ...telemetry,
+      hostedBackend: hostedBackendDiagnostics(),
       settings: currentSettings
         ? {
             ...currentSettings,

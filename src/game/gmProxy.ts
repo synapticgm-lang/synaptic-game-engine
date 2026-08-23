@@ -35,6 +35,30 @@ function gmProxyUrl(): string {
   return `${base}/functions/v1/gm-turn`;
 }
 
+/** Hostname for debug exports — no secrets. */
+export function gmProxyHost(): string | null {
+  if (!isGmProxyAvailable()) return null;
+  try {
+    return new URL(gmProxyUrl()).hostname;
+  } catch {
+    return null;
+  }
+}
+
+export function hostedBackendDiagnostics(): {
+  gmProxyConfigured: boolean;
+  gmProxyRequired: boolean;
+  gmProxyHost: string | null;
+  gmTurnPath: string;
+} {
+  return {
+    gmProxyConfigured: isGmProxyAvailable(),
+    gmProxyRequired: isGmProxyRequired(),
+    gmProxyHost: gmProxyHost(),
+    gmTurnPath: '/functions/v1/gm-turn',
+  };
+}
+
 function pickClientApiKey(settings: Settings): string | undefined {
   if (!canConfigurePlayerAiKeys(settings)) return undefined;
   const key = resolveClientTextApiKey(settings);
@@ -136,6 +160,13 @@ export async function invokeGmProxy(params: {
       }
       if (timedOut || controller.signal.aborted) {
         throw new Error('The System is still compiling. Try again, or cancel and keep the last scene.');
+      }
+      const errMsg = err instanceof Error ? err.message : String(err);
+      if (/Failed to fetch|NetworkError|Load failed/i.test(errMsg)) {
+        logger.error('ai-proxy', 'GM proxy network failure', {
+          host: gmProxyHost(),
+          path: '/functions/v1/gm-turn',
+        });
       }
       throw err;
     } finally {

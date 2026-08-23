@@ -8,9 +8,9 @@ import { effectiveWriterTier, isTestLabEnabled } from '../game/testLab';
 import { equippedSetLabel, equippedSetName } from '../game/uiTheme';
 
 /** Visible after a hard refresh — if this is missing, Vercel is still serving the 16 Aug bundle. */
-export const HUD_BUILD_STAMP = '2026-08-21e';
+export const HUD_BUILD_STAMP = '2026-08-21f';
 const HUD_BUILD_TITLE =
-  'Debug 2026-08-21e — mobile play shell svh + flex min-h-0 keeps story and input visible';
+  'Debug 2026-08-21f — debug export includes gm-turn host for Failed to fetch';
 
 interface Props {
   state: GameState;

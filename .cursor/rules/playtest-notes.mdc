@@ -9,7 +9,7 @@ John is playtesting live. Collect issues here. Do not implement until he asks fo
 
 ## Open
 
-- **Android Chrome blank play column (story + input off-screen):** `100dvh` + flex chain clipped the center panel below the visible viewport on narrow phones; fixed with `100svh`, `min-h-0` flex shell, safe-area input padding, stronger story panel contrast. HUD stamp 21e — verify on device after deploy.
+- **gm-turn Failed to fetch:** transport retries exhaust with instant network fail — verify Supabase project active, `VITE_SUPABASE_*` on Vercel, `npx supabase functions deploy gm-turn`, `OPENROUTER_API_KEY` secret. Debug export now includes `hostedBackend.gmProxyHost` (HUD 21f).
 
 ## Waiting (research — not tickets yet)
 
@@ -22,6 +22,7 @@ John is playtesting live. Collect issues here. Do not implement until he asks fo
 
 ## Done (already shipped)
 
+- **2026-08-21f gm-turn diagnostics:** Debug export adds `hostedBackend` (gm-turn host, configured/required flags); network fail logs host; exhausted toast mentions gm-turn deploy. HUD stamp 21f
 - **2026-08-21e mobile play shell:** Android Chrome showed HUD only — story + input clipped below fold (`100dvh` > visible viewport) and flex children could collapse without `min-h-0`. Play shell uses `100svh`, flex `min-h-0` chain, safe-area input padding, opening auto-clears Hide text/options, darker story panel on material bg. HUD stamp 21e
 - **2026-08-21d opening registrarAside name lock:** Mixed cover “my name is Jax who are you where am i” locked Jax on the sheet but prose still said “They want a name” — `registrarAside` answered askedWho with a canned demand even after harvest.name. Now acknowledges locked name, answers who/where briefly, never re-asks for a name when one is locked. HUD stamp 21d
 - **2026-08-21c fluency + Free value floor:** Positive fluid rails (rhythm/tone/vocabulary/momentum + VALUE FLOOR ~100–180 words); LitRPG systemPrompt “brevity” → value; `### SCENE STATE` header on situation packet; soft expand once when story &lt; ~90 words (same turn charge, status “Expanding the beat for turn value…”). Edge `fluidProseRails` synced. HUD stamp 21c

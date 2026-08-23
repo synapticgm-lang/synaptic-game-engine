@@ -118,7 +118,7 @@ export function turnFailExhaustedMessage(kind: TurnFailKind): string {
     case 'timeout':
       return 'Still timing out after retry. Your line is back in the box — tap send once more.';
     case 'network':
-      return 'Still no connection after retry. Your line is back in the box — check signal and send again.';
+      return 'Still no connection after retry. Your line is back in the box — check signal, gm-turn deploy, or try another network.';
     case 'empty':
       return 'Still empty after retry. Your line is back — try once more.';
     default:
