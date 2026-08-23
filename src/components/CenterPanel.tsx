@@ -124,13 +124,23 @@ export function CenterPanel({ state, busy, turnPhase = 'idle', streamingReveal =
     });
   };
 
-  // Opening covers need the input — never leave Hide text stuck on from a prior session.
+  // Opening covers need story + input — never leave Hide chrome stuck on from a prior session.
   useEffect(() => {
     if (!state.openingEstablishment || state.openingEstablishment.complete) return;
-    if (!hideText) return;
-    setHideText(false);
-    writeBoolPref(HIDE_TEXT_KEY, false);
-  }, [state.openingEstablishment?.complete, state.openingEstablishment?.pending?.length, hideText]);
+    if (hideText) {
+      setHideText(false);
+      writeBoolPref(HIDE_TEXT_KEY, false);
+    }
+    if (hideOptions) {
+      setHideOptions(false);
+      writeBoolPref(HIDE_OPTIONS_KEY, false);
+    }
+  }, [
+    state.openingEstablishment?.complete,
+    state.openingEstablishment?.pending?.length,
+    hideText,
+    hideOptions,
+  ]);
 
   useEffect(() => {
     if (voice.transcript) setInput(voice.transcript);
@@ -162,7 +172,7 @@ export function CenterPanel({ state, busy, turnPhase = 'idle', streamingReveal =
   };
 
   return (
-    <div className="relative flex h-full flex-col">
+    <div className="relative flex min-h-0 flex-1 flex-col">
       {bgImage && (
         <div
           className="pointer-events-none absolute inset-0 z-0 overflow-hidden"
@@ -327,7 +337,7 @@ export function CenterPanel({ state, busy, turnPhase = 'idle', streamingReveal =
         </div>
       )}
 
-      <div className="relative z-50 shrink-0 border-t border-slate-800 bg-slate-950/95 px-3 py-2 sm:px-6 sm:py-3">
+      <div className="relative z-50 shrink-0 border-t border-slate-800 bg-slate-950/95 px-3 py-2 pb-[max(0.5rem,env(safe-area-inset-bottom))] sm:px-6 sm:py-3">
         <div className="mx-auto max-w-2xl">
           {state.pendingTurn && onAcceptPendingTurn && onDiscardPendingTurn && onRerollPendingTurn && onEditPendingNarrative && (
             <TurnConfirmBar
@@ -587,7 +597,7 @@ function LogRow({ entry, lorebook, showSystemLog, statVerbosity, engineMode, sho
   return (
     <div className="space-y-1.5">
       {hasRealGmStory(entry) && (
-        <div className="rounded-lg border border-slate-800 bg-slate-900/50 px-4 py-3">
+        <div className="rounded-lg border border-slate-700/80 bg-slate-950/92 px-4 py-3 shadow-lg shadow-black/40 backdrop-blur-sm">
           <FormattedText content={displayContent} lorebook={lorebook} />
           {isRevealing && (
             <span className="ml-0.5 inline-block h-3.5 w-0.5 animate-pulse bg-crimson-400/70 align-text-bottom" aria-hidden />

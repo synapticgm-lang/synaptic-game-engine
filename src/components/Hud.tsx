@@ -8,9 +8,9 @@ import { effectiveWriterTier, isTestLabEnabled } from '../game/testLab';
 import { equippedSetLabel, equippedSetName } from '../game/uiTheme';
 
 /** Visible after a hard refresh — if this is missing, Vercel is still serving the 16 Aug bundle. */
-export const HUD_BUILD_STAMP = '2026-08-21d';
+export const HUD_BUILD_STAMP = '2026-08-21e';
 const HUD_BUILD_TITLE =
-  'Debug 2026-08-21d — opening registrarAside acknowledges locked name';
+  'Debug 2026-08-21e — mobile play shell svh + flex min-h-0 keeps story and input visible';
 
 interface Props {
   state: GameState;
@@ -75,7 +75,7 @@ export function Hud({ state, settings, onSettings, onOpenMap, onOpenQuestLog, on
   const setName = equippedSetName(settings.uiThemeId);
 
   return (
-    <header className="sgm-hud border-b px-2 py-2 sm:px-4 sm:py-2.5 flex items-center justify-between text-xs text-slate-200 sticky top-0 z-40 backdrop-blur w-full">
+    <header className="sgm-hud shrink-0 border-b px-2 py-2 sm:px-4 sm:py-2.5 flex items-center justify-between text-xs text-slate-200 sticky top-0 z-40 backdrop-blur w-full">
       
       {/* Left Spacer / Branding or status if needed */}
       <div className="flex items-center gap-1 w-auto sm:w-1/4 shrink min-w-0 overflow-hidden">

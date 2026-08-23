@@ -295,7 +295,7 @@ export default function App() {
   }
 
   return (
-    <div className="relative flex w-full max-w-full h-[100dvh] overflow-x-hidden flex-col bg-transparent text-slate-100">
+    <div className="relative flex h-[100svh] max-h-[100dvh] min-h-0 w-full max-w-full flex-col overflow-hidden bg-transparent text-slate-100">
       <Hud
         state={state}
         googleUser={game.googleUser}
@@ -324,11 +324,11 @@ export default function App() {
         lastSavedTurn={game.lastSavedTurn}
       />
 
-      <div className="flex flex-1 overflow-hidden">
+      <div className="flex min-h-0 flex-1 overflow-hidden w-full">
         <LeftDrawer state={state} open={game.leftOpen} onClose={() => game.setLeftOpen(false)} engineMode={state.engineMode} />
 
-        <main className="flex flex-1 flex-col overflow-hidden">
-          <div className="min-h-0 flex-1 overflow-hidden">
+        <main className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden w-full">
+          <div className="min-h-0 flex-1 overflow-hidden flex flex-col">
           <CenterPanel
             state={state}
             busy={game.busy}
