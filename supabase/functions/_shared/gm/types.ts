@@ -405,7 +405,7 @@ export interface GameState {
    * Full bible snapshot for player-authored custom campaigns (id `player-custom-*`).
    * Catalog lookup cannot find these; opening quests and reconcile use this.
    */
-  campaignBibleSnapshot?: import('./campaignBibleTypes').CampaignBible | null;
+  campaignBibleSnapshot?: import('./campaignBibleTypes.ts').CampaignBible | null;
   /** Short premise injected every turn as Guide Book rails. */
   campaignPremise?: string | null;
   /**
@@ -436,13 +436,13 @@ export interface GameState {
   /** Discarded retry drafts — never world truth; debug / Expert continuity only. */
   speculativeTakes?: SpeculativeTake[];
   /** Append-only high-impact world changes (inventory, presence, quests, combat). */
-  stateTxLog?: import('./stateTx').StateTx[];
+  stateTxLog?: import('./stateTx.ts').StateTx[];
   /** Frozen opening invariants for this run. */
-  campaignContract?: import('./campaignContract').CampaignContract | null;
+  campaignContract?: import('./campaignContract.ts').CampaignContract | null;
   /** Soft drifts against campaignContract (Expert / continuity). */
-  campaignDivergences?: import('./campaignContract').CampaignDivergence[];
+  campaignDivergences?: import('./campaignContract.ts').CampaignDivergence[];
   /** Soft-offer / retention stage (identity → choice → consequence). */
-  hookArc?: import('./hookArc').HookArcState;
+  hookArc?: import('./hookArc.ts').HookArcState;
   /** Recent accepted prose fingerprints for retry novelty. */
   recentBeatFingerprints?: string[];
   /** Current location sheet (interactables / exits). */
@@ -494,13 +494,13 @@ export interface GameState {
    * Prompt voice only — not rules tightness (`gmStrictness`) and not TTS.
    * Persists on the save. Absent on old saves = chilled.
    */
-  gmPersonality?: import('./gmVoiceProfile').GmPersonalityId;
+  gmPersonality?: import('./gmVoiceProfile.ts').GmPersonalityId;
   /**
    * LitRPG System personality for this campaign (`engineMode === 'litrpg'`).
    * Prompt voice only — not TTS. Persists on the save.
    * Absent on old saves = Settings `gmVoiceProfileId`, then cold registrar.
    */
-  systemPersonality?: import('./gmVoiceProfile').SystemPersonalityId;
+  systemPersonality?: import('./gmVoiceProfile.ts').SystemPersonalityId;
   /**
    * Simulationist sandbox power tone. Absent on old saves = balanced (repair hydrates).
    * Prompt only — HP/XP/loot still come from code.
@@ -513,7 +513,7 @@ export interface GameState {
   threatTier?: number;
 }
 
-export type RepairSituation = import('./repairEngine').RepairSituation;
+export type RepairSituation = import('./repairEngine.ts').RepairSituation;
 
 export interface PendingRepair {
   id: string;
@@ -1035,7 +1035,7 @@ export interface Settings {
   statFrequency: StatFrequency;
   perspective: NarrativePerspective;
   /** GM/System narrative voice profile (prompt tone). Separate from TTS cosmetics. */
-  gmVoiceProfileId?: import('./gmVoiceProfile').GmVoiceProfileId;
+  gmVoiceProfileId?: import('./gmVoiceProfile.ts').GmVoiceProfileId;
   violenceLevel: ViolenceLevel;
   cursingLevel: CursingLevel;
   romanceSubplots: boolean;

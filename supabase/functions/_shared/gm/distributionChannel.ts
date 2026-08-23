@@ -14,14 +14,8 @@ export type DistributionChannel = 'store' | 'web';
 
 export function getDistributionChannel(): DistributionChannel {
   const deno = (globalThis as { Deno?: { env?: { get?: (k: string) => string | undefined } } }).Deno;
-  if (deno) {
-    const raw = String(deno.env?.get?.('VITE_DISTRIBUTION_CHANNEL') ?? 'web').trim().toLowerCase();
-    return raw === 'store' ? 'store' : 'web';
-  }
-  const raw = String(import.meta.env.VITE_DISTRIBUTION_CHANNEL ?? 'store')
-    .trim()
-    .toLowerCase();
-  return raw === 'web' ? 'web' : 'store';
+  const raw = String(deno?.env?.get?.('VITE_DISTRIBUTION_CHANNEL') ?? 'web').trim().toLowerCase();
+  return raw === 'store' ? 'store' : 'web';
 }
 
 export function isStoreDistribution(): boolean {

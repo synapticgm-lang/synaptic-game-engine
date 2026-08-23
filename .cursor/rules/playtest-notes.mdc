@@ -9,8 +9,6 @@ John is playtesting live. Collect issues here. Do not implement until he asks fo
 
 ## Open
 
-- **gm-turn Failed to fetch:** transport retries exhaust with instant network fail — verify Supabase project active, `VITE_SUPABASE_*` on Vercel, `npx supabase functions deploy gm-turn`, `OPENROUTER_API_KEY` secret. Debug export now includes `hostedBackend.gmProxyHost` (HUD 21f).
-
 ## Waiting (research — not tickets yet)
 
 - **Outdoor zone map depth:** Visual pass shipped 20m (topo grain, paths, POI pins vs CAD streets). Still not a full MMO zone map (terrain art layers, fog-by-discovery outdoors, district zoom). Further outdoor depth stays Waiting.
@@ -22,6 +20,7 @@ John is playtesting live. Collect issues here. Do not implement until he asks fo
 
 ## Done (already shipped)
 
+- **2026-08-21h gm-turn BOOT_ERROR (Failed to fetch):** Edge gm-turn returned 503 BOOT_ERROR (browser: instant Failed to fetch). Fixed missing edge type stubs (stateTx, hookArc, repairEngine), Deno import('.ts') paths in types/mapEngine, dungeonMobLedger countRemainingMobsOnDungeon, edge distributionChannel Deno-only env. Redeploy: npx supabase functions deploy gm-turn. HUD stamp 21h
 - **2026-08-21g mobile play shell (follow-up):** Android Chrome still showed HUD-only void after 21e — fixed flex row stealing width from `main` (drawers `w-0` on mobile), `main` absolutely fills play slot below HUD (`sgm-play-main`), `flex-1 basis-0` height chain + `100vh` fallbacks, opaque `sgm-play-story-panel` on material kits (Phoenix Ashrise), sticky input footer, auto-clear Hide text when log has GM story, mobile-visible HUD stamp. HUD stamp 21g
 - **2026-08-21f gm-turn diagnostics:** Debug export adds `hostedBackend` (gm-turn host, configured/required flags); network fail logs host; exhausted toast mentions gm-turn deploy. HUD stamp 21f
 - **2026-08-21e mobile play shell:** Android Chrome showed HUD only — story + input clipped below fold (`100dvh` > visible viewport) and flex children could collapse without `min-h-0`. Play shell uses `100svh`, flex `min-h-0` chain, safe-area input padding, opening auto-clears Hide text/options, darker story panel on material bg. HUD stamp 21e

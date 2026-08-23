@@ -13,7 +13,7 @@ import { createHashRng } from './seededRng.ts';
 export type MobRole = 'trash' | 'elite' | 'miniBoss' | 'boss';
 
 export interface NodeHiddenLoot {
-  rarity: import('./types').Rarity;
+  rarity: import('./types.ts').Rarity;
   qty: number;
   gold?: number;
   itemHint?: string;
