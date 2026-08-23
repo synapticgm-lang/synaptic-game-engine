@@ -120,8 +120,8 @@ export function detectRepairSituation(playerInput: string, _state: GameState): R
   }
 
   if (text.length <= 120 && /\bor\b/i.test(text)) {
-    // Room-layout / explore "doors or windows" is not an ambiguous action — never fire window-vs-guard copy.
-    if (isExploreOrLayoutAsk(text)) {
+    // Explore / panel / "info or option" asks are not action hinges — never fire door/listen copy.
+    if (isExploreOrLayoutAsk(text) || isInformationalOrAsk(text)) {
       return null;
     }
     const parts = text.split(/\bor\b/i);
@@ -140,7 +140,34 @@ export function detectRepairSituation(playerInput: string, _state: GameState): R
   return null;
 }
 
-/** Look-around / exits / windows — not a Yes/No repair hinge. */
+/**
+ * "info or option", "menus or buttons" — noun alternatives in a question, not two competing moves.
+ * Also covers inspect/explore panel UI asks that happen to contain "or".
+ */
+export function isInformationalOrAsk(playerInput: string): boolean {
+  const t = playerInput.replace(/\s+/g, ' ').trim().toLowerCase();
+  if (!t) return false;
+  if (
+    /\b(info|information|option|options|menu|menus|button|buttons|readout|readouts|entry|entries|setting|settings)\b/.test(
+      t
+    )
+    && /\bor\b/.test(t)
+  ) {
+    return true;
+  }
+  if (
+    /\b(panel|system|status|screen|menu)\b/.test(t)
+    && /\b(explore|inspect|check|read|look|open|study|any|does|have|show|what)\b/.test(t)
+  ) {
+    return true;
+  }
+  if (/\b(does (?:that|it|this) have|is there|are there|any (?:info|option|menu))\b/.test(t)) {
+    return true;
+  }
+  return false;
+}
+
+/** Look-around / exits / windows / panel UI — not a Yes/No repair hinge. */
 export function isExploreOrLayoutAsk(playerInput: string): boolean {
   const t = playerInput.replace(/\s+/g, ' ').trim().toLowerCase();
   if (!t) return false;
@@ -153,6 +180,12 @@ export function isExploreOrLayoutAsk(playerInput: string): boolean {
     return true;
   }
   if (/\b(doors?|doorways?|windows?)\b/.test(t) && /\bor\b/.test(t) && /\b(room|here|around)\b/.test(t)) {
+    return true;
+  }
+  if (
+    /\b(panel|system panel|blue panel|status)\b/.test(t)
+    && /\b(explore|inspect|check|read|look|open|study|info|option|menu)\b/.test(t)
+  ) {
     return true;
   }
   return false;

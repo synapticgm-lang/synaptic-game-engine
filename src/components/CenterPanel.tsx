@@ -70,6 +70,7 @@ interface Props {
   imagesGenerating?: number;
   canRewind: boolean;
   onSend: (input: string) => void;
+  onDismissPendingRepair?: () => void;
   onToggleRolls: () => void;
   onRetry: () => void;
   onOpenApiSettings: () => void;
@@ -96,7 +97,7 @@ interface Props {
   contentMode?: string | null;
 }
 
-export function CenterPanel({ state, busy, turnPhase = 'idle', streamingReveal = null, error, errorKind, currentImage, bgImage, bgOpacity, showRolls, engineMode, diceAnimation, statVerbosity, voice, comicMode, narrativeMode, artStylePreset, comicLayout = 'paged', comicReadingDirection = 'ltr', imagesGenerating = 0, canRewind, onSend, onToggleRolls, onStartListening, onStopListening, onStopSpeaking, onRetry, onOpenApiSettings, onRewind, onAcceptPendingTurn, onDiscardPendingTurn, onRerollPendingTurn, onEditPendingNarrative, onToggleComicMode, sessionPresentationLocked = false, onAutoFight, onOpenCharacter, onRetryPanelImage, onRetryMemorableImage, onUpdatePanelOverlay, restoreDraft, onRestoreDraftConsumed, onAcceptBeautyOffer, onDismissBeautyOffer, contentMode }: Props) {
+export function CenterPanel({ state, busy, turnPhase = 'idle', streamingReveal = null, error, errorKind, currentImage, bgImage, bgOpacity, showRolls, engineMode, diceAnimation, statVerbosity, voice, comicMode, narrativeMode, artStylePreset, comicLayout = 'paged', comicReadingDirection = 'ltr', imagesGenerating = 0, canRewind, onSend, onDismissPendingRepair, onToggleRolls, onStartListening, onStopListening, onStopSpeaking, onRetry, onOpenApiSettings, onRewind, onAcceptPendingTurn, onDiscardPendingTurn, onRerollPendingTurn, onEditPendingNarrative, onToggleComicMode, sessionPresentationLocked = false, onAutoFight, onOpenCharacter, onRetryPanelImage, onRetryMemorableImage, onUpdatePanelOverlay, restoreDraft, onRestoreDraftConsumed, onAcceptBeautyOffer, onDismissBeautyOffer, contentMode }: Props) {
   const [input, setInput] = useState('');
   const [diceRoll, setDiceRoll] = useState<string | null>(null);
   const [hideOptions, setHideOptions] = useState(() => readBoolPref(HIDE_OPTIONS_KEY));
@@ -369,7 +370,12 @@ export function CenterPanel({ state, busy, turnPhase = 'idle', streamingReveal =
           )}
 
           {state.pendingRepair && (
-            <RepairBanner pending={state.pendingRepair} busy={busy} onPick={onSend} />
+            <RepairBanner
+              pending={state.pendingRepair}
+              busy={busy}
+              onPick={onSend}
+              onDismiss={onDismissPendingRepair}
+            />
           )}
 
           <div className="mb-1.5 flex items-center gap-1.5">
@@ -649,10 +655,12 @@ function RepairBanner({
   pending,
   busy,
   onPick,
+  onDismiss,
 }: {
   pending: PendingRepair;
   busy: boolean;
   onPick: (input: string) => void;
+  onDismiss?: () => void;
 }) {
   const options = pending.options.slice(0, 2);
   return (
@@ -662,9 +670,9 @@ function RepairBanner({
       aria-label="Clarify your action"
     >
       <p className="text-xs leading-relaxed text-amber-100/90">{stripRepairMarkdown(pending.message)}</p>
-      {options.length >= 2 && (
-        <div className="mt-2 flex flex-wrap gap-2">
-          {options.map((opt) => (
+      <div className="mt-2 flex flex-wrap gap-2">
+        {options.length >= 2
+          && options.map((opt) => (
             <button
               key={opt}
               type="button"
@@ -675,8 +683,17 @@ function RepairBanner({
               {opt}
             </button>
           ))}
-        </div>
-      )}
+        {onDismiss && (
+          <button
+            type="button"
+            disabled={busy}
+            onClick={onDismiss}
+            className="rounded-md border border-slate-600/60 bg-slate-900/50 px-3 py-1.5 text-[11px] font-medium text-slate-300 transition-colors hover:bg-slate-800 hover:text-slate-100 disabled:cursor-not-allowed disabled:opacity-40"
+          >
+            Cancel clarification
+          </button>
+        )}
+      </div>
     </div>
   );
 }

@@ -143,6 +143,16 @@ describe('repairEngine', () => {
     ).toBeNull();
     expect(detectRepairSituation('any other doorways or windows around here', base)).toBeNull();
   });
+
+  it('does not treat panel explore / info-or-option asks as ambiguous_action', () => {
+    expect(
+      detectRepairSituation(
+        'Explore the blue panel does that have any info or option in it?',
+        base
+      )
+    ).toBeNull();
+    expect(detectRepairSituation('check the panel for menus or buttons', base)).toBeNull();
+  });
 });
 
 describe('repairCopyBank', () => {

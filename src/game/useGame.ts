@@ -4566,6 +4566,27 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
       setCanRewind(false);
       persist(snapshot);
     },
+    /** Escape a stuck repair hold — clears pendingRepair and drops the orphaned player bubble. */
+    dismissPendingRepair: () => {
+      const s = stateRef.current;
+      if (!s?.pendingRepair) return;
+      const repairInput = s.pendingRepair.playerInput.replace(/\s+/g, ' ').trim().toLowerCase();
+      const log = [...s.log];
+      for (let i = log.length - 1; i >= 0; i--) {
+        const e = log[i];
+        if (e.role !== 'player') continue;
+        if (e.content.replace(/\s+/g, ' ').trim().toLowerCase() === repairInput) {
+          log.splice(i, 1);
+        }
+        break;
+      }
+      const next = { ...s, pendingRepair: null, log, lastUpdated: Date.now() };
+      stateRef.current = next;
+      setState(next);
+      setRestoreDraft(s.pendingRepair.playerInput);
+      void persist(next);
+      addToast('Clarification cancelled. Your line is back in the box — send again or rephrase.', 'info');
+    },
     acceptPendingTurn,
     discardPendingTurn,
     editPendingNarrative,

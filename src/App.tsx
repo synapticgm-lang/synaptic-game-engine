@@ -358,6 +358,7 @@ export default function App() {
             contentMode={game.settings.contentMode}
             onUpdatePanelOverlay={game.updatePanelOverlay}
             onSend={game.sendAction}
+            onDismissPendingRepair={game.dismissPendingRepair}
             restoreDraft={game.restoreDraft}
             onRestoreDraftConsumed={game.clearRestoreDraft}
             onToggleRolls={() => game.setShowRolls(!game.showRolls)}
