@@ -15,7 +15,7 @@ export function LeftDrawer({ state, open, onClose }: Props) {
     <>
       {open && <div className="fixed inset-0 z-30 bg-black/50 lg:hidden" onClick={onClose} />}
       <aside
-        className={`sgm-info-panel fixed left-0 top-0 z-40 h-[100svh] max-h-[100dvh] w-72 transform overflow-y-auto border-r transition-transform duration-300 max-lg:pointer-events-none lg:static lg:z-0 lg:h-full lg:w-72 lg:translate-x-0 lg:pointer-events-auto ${open ? 'translate-x-0 max-lg:pointer-events-auto' : '-translate-x-full lg:translate-x-0'}`}
+        className={`sgm-info-panel fixed left-0 top-0 z-40 h-[100svh] max-h-[100dvh] w-72 transform overflow-y-auto border-r transition-transform duration-300 max-lg:pointer-events-none max-lg:w-0 max-lg:min-w-0 max-lg:shrink-0 max-lg:overflow-visible lg:static lg:z-0 lg:h-full lg:w-72 lg:translate-x-0 lg:pointer-events-auto ${open ? 'translate-x-0 max-lg:pointer-events-auto max-lg:!w-72' : '-translate-x-full lg:translate-x-0'}`}
       >
         <div className="flex items-center justify-between border-b border-[color:color-mix(in_srgb,var(--sgm-accent,#64748b)_28%,#44403c)] px-4 py-3 lg:hidden">
           <span className="sgm-info-heading">Journal</span>

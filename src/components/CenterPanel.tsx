@@ -142,6 +142,15 @@ export function CenterPanel({ state, busy, turnPhase = 'idle', streamingReveal =
     hideOptions,
   ]);
 
+  // If story exists but Hide text was left on from sessionStorage, restore the log on load.
+  useEffect(() => {
+    if (!hideText) return;
+    const hasStory = state.log.some((e) => e.role === 'gm' && hasRealGmStory(e));
+    if (!hasStory) return;
+    setHideText(false);
+    writeBoolPref(HIDE_TEXT_KEY, false);
+  }, [state.log, hideText]);
+
   useEffect(() => {
     if (voice.transcript) setInput(voice.transcript);
   }, [voice.transcript]);
@@ -155,6 +164,15 @@ export function CenterPanel({ state, busy, turnPhase = 'idle', streamingReveal =
   useEffect(() => {
     logRef.current?.scrollTo({ top: logRef.current.scrollHeight, behavior: 'smooth' });
   }, [state.log, state.pendingTurn, busy]);
+
+  useEffect(() => {
+    const el = logRef.current;
+    if (!el || hideText) return;
+    const t = window.setTimeout(() => {
+      el.scrollIntoView({ block: 'end', behavior: 'smooth' });
+    }, 80);
+    return () => window.clearTimeout(t);
+  }, [state.log.length, hideText]);
 
   useEffect(() => {
     if (!isDnd || diceAnimation === 'static' || !busy) return;
@@ -172,7 +190,7 @@ export function CenterPanel({ state, busy, turnPhase = 'idle', streamingReveal =
   };
 
   return (
-    <div className="relative flex min-h-0 flex-1 flex-col">
+    <div className="sgm-play-center relative flex min-h-0 flex-1 flex-col">
       {bgImage && (
         <div
           className="pointer-events-none absolute inset-0 z-0 overflow-hidden"
@@ -220,7 +238,7 @@ export function CenterPanel({ state, busy, turnPhase = 'idle', streamingReveal =
       ) : (
         <div
           ref={logRef}
-          className={`relative z-10 min-h-0 flex-1 overflow-y-auto px-3 py-4 sm:px-6 ${hideText ? 'invisible' : ''}`}
+          className={`sgm-play-story-panel relative z-10 min-h-0 flex-1 overflow-y-auto overscroll-contain px-3 py-4 sm:px-6 ${hideText ? 'invisible' : ''}`}
         >
           <div className="mx-auto max-w-2xl space-y-4">
             {state.log.map((entry, index) => (
@@ -337,7 +355,7 @@ export function CenterPanel({ state, busy, turnPhase = 'idle', streamingReveal =
         </div>
       )}
 
-      <div className="relative z-50 shrink-0 border-t border-slate-800 bg-slate-950/95 px-3 py-2 pb-[max(0.5rem,env(safe-area-inset-bottom))] sm:px-6 sm:py-3">
+      <div className="sgm-play-input-footer relative z-50 shrink-0 px-3 py-2 pb-[max(0.5rem,env(safe-area-inset-bottom))] sm:px-6 sm:py-3">
         <div className="mx-auto max-w-2xl">
           {state.pendingTurn && onAcceptPendingTurn && onDiscardPendingTurn && onRerollPendingTurn && onEditPendingNarrative && (
             <TurnConfirmBar

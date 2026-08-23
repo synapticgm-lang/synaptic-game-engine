@@ -28,7 +28,7 @@ export function RightDrawer({ state, open, onClose, onUpdateLorebook, uiThemeId 
   return (
     <>
       {open && <div className="fixed inset-0 z-30 bg-black/50 lg:hidden" onClick={onClose} />}
-      <aside className={`sgm-info-panel fixed right-0 top-0 z-40 h-full w-80 transform overflow-y-auto border-l transition-transform duration-300 lg:static lg:z-0 lg:w-80 lg:translate-x-0 ${open ? 'translate-x-0' : 'translate-x-full'}`}>
+      <aside className={`sgm-info-panel fixed right-0 top-0 z-40 h-[100svh] max-h-[100dvh] w-80 transform overflow-y-auto border-l transition-transform duration-300 max-lg:pointer-events-none max-lg:w-0 max-lg:min-w-0 max-lg:shrink-0 max-lg:overflow-visible lg:static lg:z-0 lg:h-full lg:w-80 lg:translate-x-0 lg:pointer-events-auto ${open ? 'translate-x-0 max-lg:pointer-events-auto max-lg:!w-80' : 'translate-x-full'}`}>
         <div className="flex items-center justify-between border-b border-[color:color-mix(in_srgb,var(--sgm-accent,#64748b)_28%,#44403c)] px-4 py-3">
           <span className="sgm-info-heading">Adventurer Panel</span>
           <button onClick={onClose} className="text-slate-400 hover:text-slate-200"><X size={18} /></button>

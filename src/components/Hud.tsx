@@ -8,9 +8,9 @@ import { effectiveWriterTier, isTestLabEnabled } from '../game/testLab';
 import { equippedSetLabel, equippedSetName } from '../game/uiTheme';
 
 /** Visible after a hard refresh — if this is missing, Vercel is still serving the 16 Aug bundle. */
-export const HUD_BUILD_STAMP = '2026-08-21f';
+export const HUD_BUILD_STAMP = '2026-08-21g';
 const HUD_BUILD_TITLE =
-  'Debug 2026-08-21f — debug export includes gm-turn host for Failed to fetch';
+  'Debug 2026-08-21g — mobile play shell absolute main + material story panel';
 
 interface Props {
   state: GameState;
@@ -84,6 +84,9 @@ export function Hud({ state, settings, onSettings, onOpenMap, onOpenQuestLog, on
           <span className="sgm-equipped-set truncate" title={setLabel}>{setLabel}</span>
         </div>
         <span className="md:hidden sgm-equipped-set truncate max-w-[4.5rem]" title={setLabel}>{setName}</span>
+        <span className="font-mono text-[9px] text-rose-300/80 whitespace-nowrap sm:hidden" title={HUD_BUILD_TITLE}>
+          {HUD_BUILD_STAMP}
+        </span>
         <span
           className="hidden sm:inline font-mono text-[10px] sm:text-[11px] text-rose-300/90 whitespace-nowrap"
           title={HUD_BUILD_TITLE}
