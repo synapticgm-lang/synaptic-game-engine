@@ -1552,6 +1552,15 @@ html[data-sgm-material='1'] body {
     z-index: 1;
     width: 100%;
   }
+  /* Closed drawers must not paint over main — 21g w-0 broke translate (0% of 0 width). */
+  .sgm-mobile-drawer[data-open='false'] {
+    visibility: hidden;
+    pointer-events: none;
+  }
+  .sgm-mobile-drawer[data-open='true'] {
+    visibility: visible;
+    pointer-events: auto;
+  }
 }
 .sgm-play-center {
   display: flex;
