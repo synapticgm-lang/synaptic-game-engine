@@ -9,6 +9,8 @@ John is playtesting live. Collect issues here. Do not implement until he asks fo
 
 ## Open
 
+- **2026-08-24b smart choice filtering:** Choices now check story context before appearing — "walk away from their offer" only shows if an offer was mentioned; "respond to their question" only if a question was asked; "acknowledge their threat" only if a threat was made. Prevents invented-context buttons. HUD stamp 24b
+
 - **2026-08-24a quick-response buttons:** Seed-varied contextual button banks for opening kit/appearance/location questions; instant client-side handling (no GM wait); "✎ Other" for typed input. Urban/fantasy/sci-fi/dystopian button sets; hybrid system: 3-4 relevant options per question + fallback. HUD stamp 24a
 
 ## Waiting (research — not tickets yet)

@@ -42,7 +42,11 @@ function resolveActions(state: GameState): string[] {
     .map((c) => sanitizeChoiceLabel(c))
     .filter((c) => c && c !== FALLBACK_CHOICE)
     .filter((c) => !inventsPresenceOnEmptyScene(c, state, storyProse));
-  const deduped = Array.from(new Set(gmChoices.map((c) => c.trim()).filter(Boolean)));
+  
+  // Pack 12: Filter choices that reference non-existent context
+  const contextFiltered = filterInventedContextChoices(gmChoices, state);
+  
+  const deduped = Array.from(new Set(contextFiltered.map((c) => c.trim()).filter(Boolean)));
   if (deduped.length >= 3) return deduped.slice(0, 4);
   return padChoicesToCount(deduped, state, storyProse, 3);
 }
