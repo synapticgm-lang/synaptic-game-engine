@@ -198,13 +198,20 @@ export function NewGameModal({ contentMode, onStart, onClose }: Props) {
   };
 
   const goNext = () => {
+    console.log('[NewGame] goNext called', { step, path, personaReady });
     setReadyHint(undefined);
     if (step === 'customDepth') setStep('system');
     else if (step === 'system') setStep('presentation');
     else if (step === 'presentation') {
+      console.log('[NewGame] On presentation step, path:', path);
       if (path === 'custom') setStep('character');
-      else if (personaReady) setStep('persona');
-      else beginPremade(false);
+      else if (personaReady) {
+        console.log('[NewGame] Has persona, going to persona step');
+        setStep('persona');
+      } else {
+        console.log('[NewGame] Calling beginPremade');
+        beginPremade(false);
+      }
     } else if (step === 'character') {
       if (personaReady) setStep('persona');
       else beginCustom(false);
@@ -212,7 +219,9 @@ export function NewGameModal({ contentMode, onStart, onClose }: Props) {
   };
 
   const beginPremade = (useUsual: boolean) => {
+    console.log('[NewGame] beginPremade called', { useUsual, bibleId, archetype });
     const base = { name: 'Adventurer', classTitle: 'Hero' };
+    console.log('[NewGame] Calling onStart...');
     onStart(
       useUsual ? applyUsualSelfToCharacter(base) : base,
       storyName.trim() || undefined,
@@ -231,6 +240,7 @@ export function NewGameModal({ contentMode, onStart, onClose }: Props) {
       engineMode === 'litrpg' ? systemPersonality : undefined,
       useUsual,
     );
+    console.log('[NewGame] onStart completed');
   };
 
   const beginCustom = (useUsual: boolean) => {
