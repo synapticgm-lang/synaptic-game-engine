@@ -220,6 +220,51 @@ export function scrubInteriorOneRoomLie(
   return tidyClauses(`${kept.join(' ')} ${bridge}`);
 }
 
+/**
+ * Scrub anthropomorphized locations (e.g., "the hall answers your question").
+ * Locations are places, not speakers.
+ */
+const LOCATION_NOUNS =
+  /\b(?:hall|room|chamber|corridor|passage|doorway|archway|stairway|vault|cellar|undercroft|atrium|nave|transept|gallery|balcony|landing|foyer|vestibule|alcove|niche|street|alley|square|plaza|courtyard|garden|field|path|road|bridge)\b/i;
+
+const ANTHROPOMORPHIC_VERBS =
+  /\b(?:answers?|responds?|replies?|says?|speaks?|tells?|asks?|demands?|insists?|suggests?|offers?|promises?|warns?|threatens?|whispers?|murmurs?|shouts?|calls?)\b/i;
+
+export function scrubAnthropomorphizedLocation(text: string): string {
+  if (!text) return text;
+  
+  // Pattern: "the [location] [verb]" where verb is typically human
+  const anthropomorphicPattern = new RegExp(
+    `(?:^|\\s)(?:[Tt]he|[Aa])\\s+(${LOCATION_NOUNS.source})\\s+(${ANTHROPOMORPHIC_VERBS.source})`,
+    'g'
+  );
+  
+  if (!anthropomorphicPattern.test(text)) return text;
+  
+  // Common cases:
+  // "The hall answers your question" -> keep the descriptive part only
+  // "The room responds with..." -> "The room reveals..."
+  let next = text;
+  
+  // "The hall answers your question with..." -> strip the anthropomorphic phrasing
+  next = next.replace(
+    /\b[Tt]he\s+(\w+)\s+answers\s+your\s+question\s+with\s+its\s+(?:whole\s+)?(\w+)/gi,
+    'The $1 reveals its $2'
+  );
+  
+  // "The [location] answers" -> "The [location] is clear"
+  next = next.replace(
+    /\b[Tt]he\s+(\w+)\s+answers?(?:\s+(?:you|your\s+question|quickly|slowly|at\s+once))?(?:\.|\s*,|\s+with\b)/gi,
+    (match, loc) => {
+      if (/,$/.test(match)) return `The ${loc} shows you,`;
+      if (/with\b/i.test(match)) return `The ${loc} reveals `;
+      return `The ${loc} is clear.`;
+    }
+  );
+  
+  return tidyClauses(next);
+}
+
 export function applyProseWarden(text: string, ctx?: ProseWardenContext): string {
   if (!text) return text;
   const alone = ctx?.aloneArrival === true;
@@ -234,6 +279,7 @@ export function applyProseWarden(text: string, ctx?: ProseWardenContext): string
     ctx?.hasMappedDoorExits === true,
     ctx?.adjacentRoomNames ?? []
   );
+  next = scrubAnthropomorphizedLocation(next);
   next = scrubLocationTautology(next, ctx?.currentLocation);
   next = scrubSpokenQuoteStart(next);
   next = scrubArticleCollisions(next);
