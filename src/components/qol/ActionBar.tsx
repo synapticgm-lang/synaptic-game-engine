@@ -7,6 +7,7 @@ import {
   sanitizeChoiceLabel,
 } from '@/game/choicePipeline';
 import { establishmentChoices, isOpeningEstablishmentPending } from '@/game/openingEstablishment';
+import { filterInventedContextChoices } from '@/game/choiceWarden';
 
 interface ActionBarProps {
   state: GameState;
