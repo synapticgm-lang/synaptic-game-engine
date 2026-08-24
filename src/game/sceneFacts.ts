@@ -13,6 +13,30 @@ const DIALOGUE = /"[^"]{3,}"|<\s*dialogue\b/i;
 /** Narrated time that actually clears a crowd — not "hours ago" on turn one. */
 const TIME_PASSED = /\b(after (?:a |the )?crowd (?:left|fled|scattered)|street (?:cleared|emptied)|crowd (?:thins|disperses|moves on))\b/i;
 
+// Pack 12 Extended Pattern Detection
+const TIME_DAWN = /\b(dawn|daybreak|first light|sunrise begins)\b/i;
+const TIME_MORNING = /\b(morning|sunrise|early (?:day|light)|a\.?m\.?)\b/i;
+const TIME_MIDDAY = /\b(midday|noon|mid-day|high sun)\b/i;
+const TIME_AFTERNOON = /\b(afternoon|p\.?m\.?(?! 1[01]| [89]))\b/i;
+const TIME_DUSK = /\b(dusk|twilight|fading light)\b/i;
+const TIME_EVENING = /\b(evening|sundown|sunset)\b/i;
+const TIME_NIGHT = /\b(night(?:fall)?|darkness|moon(?:light)?|stars|midnight)\b/i;
+
+const WEATHER_RAIN = /\b(rain(?:ing)?|drizzle|downpour|wet|soaked)\b/i;
+const WEATHER_STORM = /\b(storm(?:ing)?|thunder|lightning|gale)\b/i;
+const WEATHER_SNOW = /\b(snow(?:ing)?|blizzard|frost|ice)\b/i;
+const WEATHER_FOG = /\b(fog(?:gy)?|mist(?:y)?|haze)\b/i;
+const WEATHER_CLOUDY = /\b(cloud(?:y|s)?|overcast|grey sky)\b/i;
+const WEATHER_CLEAR = /\b(clear|sunny|bright|blue sky)\b/i;
+
+const INDOOR_CUES = /\b(inside|indoors?|room|chamber|hall|building|ceiling|walls?\b(?! street)|floor|corridor)\b/i;
+const OUTDOOR_CUES = /\b(outside|outdoors?|street|road|sky|stars|sun|rain (?:on|soaks)|wind|field|open air)\b/i;
+
+const TENSION_COMBAT = /\b(attack(?:ing|s)?|combat|fighting|strike(?:s)?|dodge(?:s)?|parry)\b/i;
+const TENSION_DANGER = /\b(danger(?:ous)?|threat(?:en)?|hostile|menac(?:ing|e)|growl(?:s|ing)?)\b/i;
+const TENSION_TENSE = /\b(tense|wary|cautious|alert|ready|on guard)\b/i;
+const TENSION_CALM = /\b(calm|peaceful|quiet|safe|relax(?:ed|ing)?|at ease)\b/i;
+
 export function emptySceneFacts(turn = 0): SceneFacts {
   return {
     crowd: 'unknown',
@@ -21,6 +45,10 @@ export function emptySceneFacts(turn = 0): SceneFacts {
     props: [],
     lastBeat: '',
     updatedTurn: turn,
+    timeOfDay: 'unknown',
+    weather: 'unknown',
+    indoor: undefined,
+    tension: 'unknown',
   };
 }
 
@@ -49,10 +77,40 @@ export function extractSceneFacts(narrative: string, prev?: SceneFacts, turn = 0
   if (PANEL.test(text)) props.add('blue panel');
   if (CRACKS.test(text)) props.add('cracked street');
 
+  // Pack 12 Extended Extraction
+  let timeOfDay: SceneFacts['timeOfDay'] = prev?.timeOfDay ?? 'unknown';
+  if (TIME_DAWN.test(text)) timeOfDay = 'dawn';
+  else if (TIME_MORNING.test(text)) timeOfDay = 'morning';
+  else if (TIME_MIDDAY.test(text)) timeOfDay = 'midday';
+  else if (TIME_AFTERNOON.test(text)) timeOfDay = 'afternoon';
+  else if (TIME_DUSK.test(text)) timeOfDay = 'dusk';
+  else if (TIME_EVENING.test(text)) timeOfDay = 'evening';
+  else if (TIME_NIGHT.test(text)) timeOfDay = 'night';
+
+  let weather: SceneFacts['weather'] = prev?.weather ?? 'unknown';
+  if (WEATHER_STORM.test(text)) weather = 'storm';
+  else if (WEATHER_RAIN.test(text)) weather = 'rain';
+  else if (WEATHER_SNOW.test(text)) weather = 'snow';
+  else if (WEATHER_FOG.test(text)) weather = 'fog';
+  else if (WEATHER_CLOUDY.test(text)) weather = 'cloudy';
+  else if (WEATHER_CLEAR.test(text)) weather = 'clear';
+
+  let indoor: boolean | undefined = prev?.indoor;
+  if (INDOOR_CUES.test(text)) indoor = true;
+  else if (OUTDOOR_CUES.test(text)) indoor = false;
+
+  let tension: SceneFacts['tension'] = prev?.tension ?? 'unknown';
+  if (TENSION_COMBAT.test(text)) tension = 'combat';
+  else if (TENSION_DANGER.test(text)) tension = 'danger';
+  else if (TENSION_TENSE.test(text)) tension = 'tense';
+  else if (TENSION_CALM.test(text) && tension !== 'combat') tension = 'calm';
+
   const lastBeat = [
     crowd === 'present' ? 'people are present' : crowd === 'none' ? 'street empty' : '',
     noise === 'shouting' ? 'people are shouting' : noise === 'quiet' ? 'it is quiet' : '',
     PANEL.test(text) ? 'System panel is visible' : '',
+    timeOfDay && timeOfDay !== 'unknown' ? `${timeOfDay}` : '',
+    indoor !== undefined ? (indoor ? 'indoors' : 'outdoors') : '',
   ].filter(Boolean).join('; ');
 
   return {
@@ -62,6 +120,10 @@ export function extractSceneFacts(narrative: string, prev?: SceneFacts, turn = 0
     props: [...props],
     lastBeat: lastBeat || prev?.lastBeat || '',
     updatedTurn: turn,
+    timeOfDay,
+    weather,
+    indoor,
+    tension,
   };
 }
 
@@ -74,6 +136,10 @@ export function mergeSceneFacts(prev: SceneFacts | undefined, next: SceneFacts):
     props: Array.from(new Set([...prev.props, ...next.props])),
     lastBeat: next.lastBeat || prev.lastBeat,
     updatedTurn: next.updatedTurn,
+    timeOfDay: next.timeOfDay !== 'unknown' ? next.timeOfDay : prev.timeOfDay,
+    weather: next.weather !== 'unknown' ? next.weather : prev.weather,
+    indoor: next.indoor !== undefined ? next.indoor : prev.indoor,
+    tension: next.tension !== 'unknown' ? next.tension : prev.tension,
   };
 }
 
@@ -89,6 +155,10 @@ export function seedOpeningSceneFacts(state: GameState): SceneFacts {
       props: ['blue panel', 'cracked street'],
       lastBeat: 'Crowd on the street, shouting; System panel at eye level.',
       updatedTurn: state.turn,
+      timeOfDay: 'morning',
+      weather: 'clear',
+      indoor: false,
+      tension: 'tense',
     };
   }
   return extractSceneFacts(

@@ -134,6 +134,20 @@ export function formatSituationForPrompt(state: GameState): string {
     : crowdSize <= 15 ? `Modest crowd (~${crowdSize} people)`
     : `Large crowd (${crowdSize}+ people)`;
   
+  // Pack 12 Extended Scene Info
+  const timeLabel = state.sceneFacts?.timeOfDay && state.sceneFacts.timeOfDay !== 'unknown'
+    ? state.sceneFacts.timeOfDay
+    : 'not established';
+  const weatherLabel = state.sceneFacts?.weather && state.sceneFacts.weather !== 'unknown'
+    ? state.sceneFacts.weather
+    : 'not established';
+  const locationTypeLabel = state.sceneFacts?.indoor !== undefined
+    ? (state.sceneFacts.indoor ? 'Interior' : 'Exterior')
+    : 'not established';
+  const tensionLabel = state.sceneFacts?.tension && state.sceneFacts.tension !== 'unknown'
+    ? state.sceneFacts.tension
+    : 'not established';
+  
   const sceneStateHeader = [
     '### SCENE STATE',
     `- Location: ${s.location}`,
@@ -142,11 +156,17 @@ export function formatSituationForPrompt(state: GameState): string {
       : `- Zone Threat: none (street/outdoors or unset)`,
     `- Immediate Presence: ${presence}`,
     `- Crowd Size: ${crowdLabel}`,
+    `- Time of Day: ${timeLabel}`,
+    `- Weather: ${weatherLabel}`,
+    `- Location Type: ${locationTypeLabel}`,
+    `- Tension: ${tensionLabel}`,
     `- Encounter: ${s.encounter}`,
     `- Active Quests (revealed): ${s.activeQuests.join('; ')}`,
     `- Power Scaling: ${effectivePowerScaling(state)}`,
     '',
     '**BINDING**: Do not invent large crowds (50+, 100+) unless Crowd Size says Large. Respect tracked presence count.',
+    '**BINDING**: Do not skip time (hours later, next morning) unless Time of Day or World Ledger clock changed. Outdoor Weather persists.',
+    '**BINDING**: Interior locations stay interior unless the player exits. Do not write "you step outside" if Location Type is Interior and the player did not use an exit.',
   ].join('\n');
 
   const npcBlock = (state.npcMemories ?? [])

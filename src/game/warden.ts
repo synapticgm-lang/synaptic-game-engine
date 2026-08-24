@@ -221,12 +221,21 @@ export function runWarden(
       ? listInteriorExitsFromHere(state.activeDungeon)
       : [];
   const doorish = exits.filter((e) => e.kind === 'door' || e.kind === 'stairs');
+  
+  // Pack 12 Extended Warden Context
+  const prevFacts = state.previousSceneFacts;
   const polished = applyProseWarden(scrub.text, {
     currentLocation: state.locationSheet?.name || state.currentLocation,
     aloneArrival: isAloneArrivalOpening(state),
     hasMappedDoorExits: doorish.length > 0,
     adjacentRoomNames: exits.map((e) => e.name),
     crowdSize: calculateCrowdSize(state),
+    currentTimeOfDay: state.sceneFacts?.timeOfDay,
+    previousTimeOfDay: prevFacts?.timeOfDay,
+    isIndoor: state.sceneFacts?.indoor,
+    wasIndoor: prevFacts?.indoor,
+    currentTension: state.sceneFacts?.tension,
+    previousTension: prevFacts?.tension,
   });
   if (scrub.stripped.length) {
     for (const name of scrub.stripped.slice(0, 6)) {

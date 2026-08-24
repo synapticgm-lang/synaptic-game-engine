@@ -9,6 +9,16 @@ John is playtesting live. Collect issues here. Do not implement until he asks fo
 
 ## Open
 
+- **2026-08-24g Pack 12 Info Card Gaps:** All 7 gap fixes implemented:
+  1. **Time of Day** tracking — dawn/morning/midday/afternoon/dusk/evening/night extracted from narrative, validated against sudden time skips ("hours later" rewritten to "moments later" if time didn't advance).
+  2. **Weather** tracking — clear/rain/storm/snow/fog/cloudy extracted, persists across turns unless narrative changes it.
+  3. **Indoor/Outdoor** tracking — location type extracted, validated against invented exits ("you step outside" scrubbed if still interior, "you enter the building" scrubbed if still outdoors).
+  4. **Tension Level** tracking — calm/tense/danger/combat extracted, validated against sudden calm claims ("danger passes" scrubbed if tension still high, "danger emerges" scrubbed if still calm).
+  5. **NPC Mood** tracking — friendly/angry/scared/sad/cautious/neutral per NPC, tracked in `NpcMemory` for future mood validation.
+  6. **Quest Urgency** tracking — immediate/time-sensitive/flexible, tracked on Quest for future deadline validation.
+  7. **Scene State** extended prompt — AI now receives Time of Day, Weather, Location Type, Tension in `### SCENE STATE` with binding rails to prevent invented time skips, location changes, and tension shifts.
+  All extraction patterns added to `sceneFacts.ts`, all validation rules added to `proseWarden.ts`, all prompt lines added to `situationPacket.ts`, `previousSceneFacts` added to GameState for before/after comparison, edge functions synced. HUD stamp 24g. Refs: `docs/INFO-CARD-GAP-ANALYSIS.md`, `docs/WARDEN-ARCHITECTURE-REVIEW.md`
+
 - **2026-08-24c embedding error handling:** Pack 12 embeddings now gracefully degrade when HuggingFace unavailable; 30s model load timeout; silent failures never block gameplay; automatic fallback to keyword search; initialization failures logged but don't break turns. Fixes `SyntaxError: Unexpected token '<'` HTML-instead-of-JSON errors. HUD stamp 24c
 
 - **2026-08-24b smart choice filtering:** Choices now check story context before appearing — "walk away from their offer" only shows if an offer was mentioned; "respond to their question" only if a question was asked; "acknowledge their threat" only if a threat was made. Prevents invented-context buttons. HUD stamp 24b
@@ -26,6 +36,9 @@ John is playtesting live. Collect issues here. Do not implement until he asks fo
 
 ## Done (already shipped)
 
+- **2026-08-24f crowd size tracking:** Prevents + catches crowd inconsistencies. SCENE STATE now shows "Crowd Size: Small (~5 people)" with BINDING rail against inventing large crowds (50+, 100+). Prose warden scrubs "hundred people" → "several people" when tracked size is small. Tracks from sceneFacts.present + companions + encounter. Fixes user's "handful" → "hundred" continuity break. HUD stamp 24f
+- **2026-08-24e anthropomorphized locations:** AI was writing "the hall answers your question" / "the room responds" — locations are places, not speakers. Added `scrubAnthropomorphizedLocation` to prose warden; rewrites to descriptive phrasing ("the hall reveals"). Edge synced. HUD stamp 24e
+- **2026-08-24d missing import fix:** Pack 12 Smart Choice Filtering deployed without the `filterInventedContextChoices` import in `ActionBar.tsx`, causing a `ReferenceError` crash on load/save. Import added, build verified. HUD stamp 24d
 - **2026-08-21j repair cancel + info/or panel skip:** “info or option” / explore-blue-panel asks falsely fired `ambiguous_action` with canned force-door/listen copy and blocked all sends until a wrong button was picked. Detector skips informational/panel asks; RepairBanner has Cancel clarification (clears hold + restores draft). HUD stamp 21j
 - **2026-08-21i mobile drawer overlap (21g regression):** Android Chrome (&lt; lg) showed left/right drawer labels + inventory (“Show Profile”, Gear/Materials, “Pockets and bag from Earth”) stacked over narrative — 21g `max-lg:w-0` + `overflow-visible` made `translate-x-full` move 0px so fixed z-40 drawer content bled on top of `sgm-play-main` (z-1). Closed mobile drawers now keep full width, slide off-screen, `invisible` + `pointer-events-none` + CSS `data-open='false'` guard; open only via HUD toggles. HUD stamp 21i
 - **2026-08-21h gm-turn BOOT_ERROR (Failed to fetch):** Edge gm-turn returned 503 BOOT_ERROR (browser: instant Failed to fetch). Fixed missing edge type stubs (stateTx, hookArc, repairEngine), Deno import('.ts') paths in types/mapEngine, dungeonMobLedger countRemainingMobsOnDungeon, edge distributionChannel Deno-only env. Redeploy: npx supabase functions deploy gm-turn. HUD stamp 21h

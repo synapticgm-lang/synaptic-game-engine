@@ -139,6 +139,7 @@ export type PlayPhase = 'live' | 'down' | 'ended';
 
 export type QuestStatus = 'active' | 'completed' | 'failed' | 'hidden';
 export type QuestType = 'main' | 'side' | 'faction';
+export type QuestUrgency = 'immediate' | 'time-sensitive' | 'flexible' | 'unknown';
 
 export interface QuestObjective {
   id: string;
@@ -187,6 +188,10 @@ export interface Quest {
   whatNext?: string;
   /** Provenance for Simple Why? (bible seed, story beat, System notice). */
   provenance?: string;
+  
+  // Pack 12 Urgency Tracking
+  urgency?: QuestUrgency;
+  deadline?: number;  // turn number for urgent reminder
 }
 
 export interface ShrineEntry {
@@ -428,6 +433,7 @@ export interface GameState {
   npcMemories?: NpcMemory[];
   /** Bound last-beat scene (crowd, noise, props). Authority over improvisation. */
   sceneFacts?: SceneFacts;
+  previousSceneFacts?: SceneFacts;
   /**
    * Monotonic campaign ledger revision. Bumped on every accepted turn commit.
    * Pending proposals carry expectedRevision and must match this to accept.
@@ -723,6 +729,9 @@ export type TimelineFactKind =
 
 export type CrowdPresence = 'present' | 'sparse' | 'none' | 'unknown';
 export type SceneNoise = 'shouting' | 'voices' | 'quiet' | 'unknown';
+export type TimeOfDay = 'dawn' | 'morning' | 'midday' | 'afternoon' | 'dusk' | 'evening' | 'night' | 'unknown';
+export type Weather = 'clear' | 'rain' | 'storm' | 'snow' | 'fog' | 'cloudy' | 'unknown';
+export type TensionLevel = 'combat' | 'danger' | 'tense' | 'calm' | 'unknown';
 
 /** Bound last-beat facts. Prose cannot empty a present crowd without time passing. */
 export interface SceneFacts {
@@ -732,6 +741,12 @@ export interface SceneFacts {
   props: string[];
   lastBeat: string;
   updatedTurn: number;
+  
+  // Pack 12 Extended Tracking
+  timeOfDay?: TimeOfDay;
+  weather?: Weather;
+  indoor?: boolean;
+  tension?: TensionLevel;
 }
 
 export interface TimelineFact {
@@ -753,6 +768,8 @@ export interface SituationPacket {
   recentFacts: string[];
 }
 
+export type NpcMood = 'friendly' | 'angry' | 'scared' | 'sad' | 'cautious' | 'neutral' | 'unknown';
+
 /** Per-NPC memory so knowledge does not bleed across characters. */
 export interface NpcMemory {
   npcId: string;
@@ -762,6 +779,10 @@ export interface NpcMemory {
   lastSeenTurn: number;
   /** Pack 6 short relationship texture for prompts. */
   relationshipSummary?: string;
+  
+  // Pack 12 Mood Tracking
+  currentMood?: NpcMood;
+  lastMoodChange?: number;
 }
 
 /** Location sheet — spatial facts for the current zone. */

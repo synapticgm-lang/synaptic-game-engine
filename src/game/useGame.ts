@@ -3316,6 +3316,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
         campaignMemory,
         statusReveal,
         pendingContentRewrite: null,
+        previousSceneFacts: liveCurrent.sceneFacts,
         sceneFacts: applyCommittedNarrative(liveCurrent, cleanText, nextTurn),
         campaignPremise: workingState.campaignPremise ?? liveCurrent.campaignPremise,
         campaignBibleId: workingState.campaignBibleId ?? liveCurrent.campaignBibleId,

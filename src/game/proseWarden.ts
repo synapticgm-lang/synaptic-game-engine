@@ -31,6 +31,14 @@ export type ProseWardenContext = {
   adjacentRoomNames?: string[];
   /** Tracked crowd size for consistency (0 = alone, 1-3 = intimate, 4-8 = small, 9-15 = modest, 16+ = large). */
   crowdSize?: number;
+  
+  // Pack 12 Extended Context
+  currentTimeOfDay?: string;
+  previousTimeOfDay?: string;
+  isIndoor?: boolean;
+  wasIndoor?: boolean;
+  currentTension?: string;
+  previousTension?: string;
 };
 
 /** Interiors that already name "here" — nearby is for things that are not here. */
@@ -315,6 +323,79 @@ export function calculateCrowdSize(state: GameState): number {
   return Math.max(0, present.length + companions + encounter);
 }
 
+/**
+ * Pack 12 Extended Validation: Time Skip
+ * Scrubs "hours later" / "next morning" unless time of day actually changed.
+ */
+export function scrubInventedTimeSkip(text: string, currentTime?: string, prevTime?: string): string {
+  if (!text || !currentTime || currentTime === 'unknown') return text;
+  
+  const TIME_SKIP_PATTERNS = /\b(hours? (?:later|pass(?:es|ed)?|ago)|next (?:morning|day|evening)|(?:that|the) (?:evening|afternoon|night)|by (?:morning|evening|nightfall)|(?:much|some) (?:time|while) (?:later|passes))\b/i;
+  
+  if (!TIME_SKIP_PATTERNS.test(text)) return text;
+  
+  // Allow if time actually changed
+  if (prevTime && prevTime !== 'unknown' && currentTime !== prevTime) return text;
+  
+  // Scrub invented time skip
+  return text.replace(
+    /\b(hours? (?:later|pass(?:es|ed)?)|next (?:morning|day)|(?:that|the) (?:evening|afternoon))\b/gi,
+    'moments later'
+  ).replace(
+    /\b(much|some) (?:time|while) (?:later|passes)\b/gi,
+    'a moment later'
+  );
+}
+
+/**
+ * Pack 12 Extended Validation: Indoor/Outdoor
+ * Scrubs "you step outside" if location is marked interior and player didn't use an exit.
+ */
+export function scrubInventedLocationChange(text: string, isIndoor?: boolean, wasIndoor?: boolean): string {
+  if (!text || isIndoor === undefined) return text;
+  
+  const OUTDOOR_TRANSITIONS = /\b(you (?:step|walk|go|move|head) (?:outside|outdoors|into (?:the )?(?:street|open air|sunlight|rain))|(?:exit(?:ing)?|leav(?:e|ing)) (?:the )?(?:building|room|hall))\b/i;
+  const INDOOR_TRANSITIONS = /\b(you (?:step|walk|go|move|enter) (?:inside|indoors|into (?:the )?(?:building|room|hall)))\b/i;
+  
+  // Scrub outdoor transition if we're still indoors
+  if (isIndoor && OUTDOOR_TRANSITIONS.test(text)) {
+    return text.replace(OUTDOOR_TRANSITIONS, 'you move forward');
+  }
+  
+  // Scrub indoor transition if we're still outdoors
+  if (isIndoor === false && INDOOR_TRANSITIONS.test(text)) {
+    return text.replace(INDOOR_TRANSITIONS, 'you continue');
+  }
+  
+  return text;
+}
+
+/**
+ * Pack 12 Extended Validation: Tension
+ * Scrubs "calm settles" or "danger passes" if tension state didn't actually change.
+ */
+export function scrubInventedTensionChange(text: string, currentTension?: string, prevTension?: string): string {
+  if (!text || !currentTension || currentTension === 'unknown') return text;
+  
+  const CALM_CLAIMS = /\b((?:the )?(?:danger|threat|tension) (?:passes|fades|recedes|lifts)|calm (?:settles|returns)|(?:you|the room|the hall) relax(?:es)?)\b/i;
+  const DANGER_CLAIMS = /\b(danger (?:arrives|emerges|appears)|(?:the )?threat (?:materializes|looms|closes in)|tension (?:spikes|rises))\b/i;
+  
+  // Allow if tension actually changed
+  if (prevTension && prevTension !== 'unknown' && currentTension !== prevTension) return text;
+  
+  // Scrub calm claims if tension is still high
+  if ((currentTension === 'danger' || currentTension === 'combat') && CALM_CLAIMS.test(text)) {
+    return text.replace(CALM_CLAIMS, 'the moment holds');
+  }
+  
+  // Scrub danger claims if tension is still calm
+  if (currentTension === 'calm' && DANGER_CLAIMS.test(text)) {
+    return text.replace(DANGER_CLAIMS, 'something shifts');
+  }
+  
+  return text;
+}
+
 export function applyProseWarden(text: string, ctx?: ProseWardenContext): string {
   if (!text) return text;
   const alone = ctx?.aloneArrival === true;
@@ -331,6 +412,9 @@ export function applyProseWarden(text: string, ctx?: ProseWardenContext): string
   );
   next = scrubAnthropomorphizedLocation(next);
   next = scrubInventedCrowdSize(next, ctx?.crowdSize ?? 0);
+  next = scrubInventedTimeSkip(next, ctx?.currentTimeOfDay, ctx?.previousTimeOfDay);
+  next = scrubInventedLocationChange(next, ctx?.isIndoor, ctx?.wasIndoor);
+  next = scrubInventedTensionChange(next, ctx?.currentTension, ctx?.previousTension);
   next = scrubLocationTautology(next, ctx?.currentLocation);
   next = scrubSpokenQuoteStart(next);
   next = scrubArticleCollisions(next);
