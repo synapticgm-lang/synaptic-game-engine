@@ -2582,7 +2582,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
       const intent = intentForMandate;
       const establishedProseForScrub =
         [...liveCurrent.log].reverse().find((e) => e.role === 'gm')?.content ?? '';
-      const warden = runWarden(
+      const warden = await runWarden(
         liveCurrent,
         rawEvents,
         result.text,

@@ -39,6 +39,10 @@ export type ProseWardenContext = {
   wasIndoor?: boolean;
   currentTension?: string;
   previousTension?: string;
+  
+  // Pack 13 Grammar Quality
+  /** Enable LanguageTool grammar check (async, adds ~50-100ms). Default: true for High tier, false for Free/Mid. */
+  enableGrammarCheck?: boolean;
 };
 
 /** Interiors that already name "here" — nearby is for things that are not here. */
@@ -396,6 +400,10 @@ export function scrubInventedTensionChange(text: string, currentTension?: string
   return text;
 }
 
+/**
+ * Synchronous prose warden - fast regex-based fixes.
+ * Use this for immediate, in-memory corrections.
+ */
 export function applyProseWarden(text: string, ctx?: ProseWardenContext): string {
   if (!text) return text;
   const alone = ctx?.aloneArrival === true;
@@ -418,5 +426,27 @@ export function applyProseWarden(text: string, ctx?: ProseWardenContext): string
   next = scrubLocationTautology(next, ctx?.currentLocation);
   next = scrubSpokenQuoteStart(next);
   next = scrubArticleCollisions(next);
+  return next;
+}
+
+/**
+ * Async prose warden - includes grammar checking via LanguageTool.
+ * Use this for full quality pass (adds ~50-100ms).
+ */
+export async function applyProseWardenAsync(text: string, ctx?: ProseWardenContext): Promise<string> {
+  // First apply all fast regex rules
+  let next = applyProseWarden(text, ctx);
+  
+  // Then apply grammar check if enabled
+  if (ctx?.enableGrammarCheck !== false) {
+    try {
+      const { quickGrammarCheck } = await import('./grammarCheck');
+      next = await quickGrammarCheck(next);
+    } catch (error) {
+      console.error('[proseWarden] Grammar check failed:', error);
+      // Silent failure - return regex-fixed version
+    }
+  }
+  
   return next;
 }

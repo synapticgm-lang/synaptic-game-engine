@@ -9,6 +9,8 @@ John is playtesting live. Collect issues here. Do not implement until he asks fo
 
 ## Open
 
+- **2026-08-24h Pack 13 Grammar Quality:** LanguageTool integration for automatic English grammar/style fixing. High tier gets async grammar check (~50-100ms); Free/Mid use fast regex-only. Catches 2000+ error patterns (spelling, grammar, punctuation, style) without maintaining regex rules. Works with any AI model. New `grammarCheck.ts` module + `applyProseWardenAsync` for High tier. Grammar checking opt-in via `enableGrammarCheck` context flag. HUD stamp 24h. npm: `languagetool-api` added.
+
 - **2026-08-24g Pack 12 Info Card Gaps:** All 7 gap fixes implemented:
   1. **Time of Day** tracking — dawn/morning/midday/afternoon/dusk/evening/night extracted from narrative, validated against sudden time skips ("hours later" rewritten to "moments later" if time didn't advance).
   2. **Weather** tracking — clear/rain/storm/snow/fog/cloudy extracted, persists across turns unless narrative changes it.

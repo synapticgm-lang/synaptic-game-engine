@@ -12,7 +12,7 @@ import { detectSceneContradiction } from './sceneFacts';
 import { detectFactLockViolations } from './factLocks';
 import { resolveSeededRarity } from './dungeonSeed';
 import { scrubInventedProperNouns } from './narrativeScrub';
-import { applyProseWarden, calculateCrowdSize } from './proseWarden';
+import { applyProseWarden, applyProseWardenAsync, calculateCrowdSize } from './proseWarden';
 import { findManifestInventions } from './sceneManifest';
 import { continuityStrict } from './opsKillSwitches';
 import { isInteriorMap } from './placeAuthority';
@@ -56,15 +56,17 @@ function hasCombatContext(
 /**
  * Secondary validation pipeline: intercept structured GM claims against Fact Sheets
  * before they mutate state or reach the player as truth.
+ * 
+ * Pack 13: Now async to support optional LanguageTool grammar checking for High tier.
  */
-export function runWarden(
+export async function runWarden(
   state: GameState,
   events: GameEvent[],
   narrativeText: string,
   playerInput: string,
   intent?: PlayerIntent,
   establishedProse = ''
-): WardenResult {
+): Promise<WardenResult> {
   const notes: string[] = [];
   const systemLogExtra: string[] = [];
   const kept: GameEvent[] = [];
@@ -224,7 +226,11 @@ export function runWarden(
   
   // Pack 12 Extended Warden Context
   const prevFacts = state.previousSceneFacts;
-  const polished = applyProseWarden(scrub.text, {
+  
+  // Pack 13: Enable grammar check for High tier (capacityTier === 'high')
+  const enableGrammarCheck = (state.capacityTier ?? 'free') === 'high';
+  
+  const wardenCtx = {
     currentLocation: state.locationSheet?.name || state.currentLocation,
     aloneArrival: isAloneArrivalOpening(state),
     hasMappedDoorExits: doorish.length > 0,
@@ -236,7 +242,13 @@ export function runWarden(
     wasIndoor: prevFacts?.indoor,
     currentTension: state.sceneFacts?.tension,
     previousTension: prevFacts?.tension,
-  });
+    enableGrammarCheck,
+  };
+  
+  // Use async warden if grammar check enabled, otherwise sync
+  const polished = enableGrammarCheck
+    ? await applyProseWardenAsync(scrub.text, wardenCtx)
+    : applyProseWarden(scrub.text, wardenCtx);
   if (scrub.stripped.length) {
     for (const name of scrub.stripped.slice(0, 6)) {
       notes.push(`Claim-ground scrub: ${name}`);
