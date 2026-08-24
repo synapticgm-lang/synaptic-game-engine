@@ -81,41 +81,6 @@ export function tryHandleQuickResponseButton(
   };
 }
 
-/**
- * Apply opening answer to character state based on kind.
- */
-function applyKindToState(state: GameState, prompt: OpeningPrompt, value: string): GameState {
-  switch (prompt.kind) {
-    case 'kit': {
-      const items = materializeWornClothes(value);
-      return {
-        ...state,
-        character: {
-          ...state.character,
-          inventory: [...state.character.inventory, ...items],
-        },
-      };
-    }
-    case 'appearance': {
-      return {
-        ...state,
-        character: {
-          ...state.character,
-          appearance: value,
-        },
-      };
-    }
-    case 'location': {
-      return {
-        ...state,
-        currentLocation: value,
-      };
-    }
-    default:
-      return state;
-  }
-}
-
 export function characterNameIsGeneric(name?: string): boolean {
   const n = name?.trim() ?? '';
   return !n || GENERIC_NAMES.test(n);

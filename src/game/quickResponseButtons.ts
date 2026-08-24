@@ -8,7 +8,6 @@
 import type { GameState, OpeningPromptKind } from './types';
 import type { CampaignBible } from '@/data/campaigns/types';
 import { resolveActiveCampaignBible } from './campaignSeed';
-import { seedHash } from './seededRng';
 
 // ═══════════════════════════════════════════════════════════════════════════
 // KIT / INVENTORY BUTTON BANKS
@@ -246,8 +245,15 @@ export function pickQuickResponseButtons(
       return [];
   }
   
-  // Seed-stable selection
-  const hash = seedHash(`${seed}-${kind}-${context}`);
+  // Seed-stable selection using simple hash
+  const seedStr = `${seed}-${kind}-${context}`;
+  let hash = 0;
+  for (let i = 0; i < seedStr.length; i++) {
+    hash = ((hash << 5) - hash) + seedStr.charCodeAt(i);
+    hash = hash & hash; // Convert to 32bit integer
+  }
+  hash = Math.abs(hash);
+  
   const indices = new Set<number>();
   
   // Always include minimal option for kit
