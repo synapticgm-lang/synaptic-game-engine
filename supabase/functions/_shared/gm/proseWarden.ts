@@ -5,7 +5,7 @@
  * There is no general "does this make sense" critic — that would be a second LLM.
  */
 
-import type { GameState } from './types';
+import type { GameState } from './types.ts';
 
 /**
  * Calculate tracked crowd size from game state for consistency checking.

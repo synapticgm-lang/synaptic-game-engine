@@ -1,5 +1,5 @@
-import type { GameState, SceneFacts } from './types';
-import { applyFactLocks } from './factLocks';
+import type { GameState, SceneFacts } from './types.ts';
+import { applyFactLocks } from './factLocks.ts';
 
 const EMPTY_STREET =
   /\b(eerily silent|unnervingly quiet|empty (?:street|buildings|road)|no one (?:is )?(?:here|around|responds)|deserted|abandoned street|world feels frozen|holding its breath)\b/i;
