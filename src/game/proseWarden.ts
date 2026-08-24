@@ -31,6 +31,8 @@ export type ProseWardenContext = {
   adjacentRoomNames?: string[];
   /** Tracked crowd size for consistency (0 = alone, 1-3 = intimate, 4-8 = small, 9-15 = modest, 16+ = large). */
   crowdSize?: number;
+  /** Crowd is present in scene facts (prevents empty/no-crowd contradictions). */
+  crowdPresent?: boolean;
   
   // Pack 12 Extended Context
   currentTimeOfDay?: string;
@@ -298,9 +300,24 @@ export function scrubAnthropomorphizedLocation(text: string): string {
 /**
  * Scrub invented large crowd claims that contradict tracked presence.
  * Catches "hundred people", "fifty onlookers", etc. when scene has small group.
+ * Also catches contradictory "empty" / "no crowd" when crowd is tracked as present.
  */
-export function scrubInventedCrowdSize(text: string, trackedCrowdSize: number): string {
-  if (!text || trackedCrowdSize >= 20) return text; // Large crowds are allowed if tracked
+export function scrubInventedCrowdSize(text: string, trackedCrowdSize: number, crowdPresent?: boolean): string {
+  if (!text) return text;
+  
+  // If crowd is present, scrub contradictory "empty" / "no crowd" claims
+  if (crowdPresent) {
+    const EMPTY_CLAIMS = /\b((?:the )?(?:square|street|room|hall|place) is (?:empty|deserted)|no (?:one|people|crowd|voices)|(?:empty|deserted) (?:square|street|room|hall))\b/gi;
+    if (EMPTY_CLAIMS.test(text)) {
+      text = text.replace(EMPTY_CLAIMS, (match) => {
+        if (/no (?:one|people|crowd)/i.test(match)) return 'a few people still';
+        if (/no voices/i.test(match)) return 'quiet voices';
+        return 'a handful of people in the $1'.replace('$1', match.match(/(?:square|street|room|hall|place)/i)?.[0] || 'area');
+      });
+    }
+  }
+  
+  if (trackedCrowdSize >= 20) return text; // Large crowds are allowed if tracked
   
   // Pattern: number + crowd words
   const largeNumber = /\b(?:dozens?|scores?|hundreds?|fifty|sixty|seventy|eighty|ninety|hundred|two hundred|three hundred)\s+(?:of\s+)?(?:people|figures|onlookers|bystanders|watchers|voices|hands|faces|souls|bodies)\b/gi;
@@ -405,7 +422,7 @@ export function applyProseWarden(text: string, ctx?: ProseWardenContext): string
     ctx?.adjacentRoomNames ?? []
   );
   next = scrubAnthropomorphizedLocation(next);
-  next = scrubInventedCrowdSize(next, ctx?.crowdSize ?? 0);
+  next = scrubInventedCrowdSize(next, ctx?.crowdSize ?? 0, ctx?.crowdPresent);
   next = scrubInventedTimeSkip(next, ctx?.currentTimeOfDay, ctx?.previousTimeOfDay);
   next = scrubInventedLocationChange(next, ctx?.isIndoor, ctx?.wasIndoor);
   next = scrubInventedTensionChange(next, ctx?.currentTension, ctx?.previousTension);

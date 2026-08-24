@@ -11,7 +11,7 @@ const PANEL = /\b(blue panel|system panel|blue screen)\b/i;
 const CRACKS = /\b(crack(?:ing|s)?|crystal|concrete)\b/i;
 const DIALOGUE = /"[^"]{3,}"|<\s*dialogue\b/i;
 /** Narrated time that actually clears a crowd — not "hours ago" on turn one. */
-const TIME_PASSED = /\b(after (?:a |the )?crowd (?:left|fled|scattered)|street (?:cleared|emptied)|crowd (?:thins|disperses|moves on))\b/i;
+const TIME_PASSED = /\b(after (?:a |the )?crowd (?:left|fled|scattered)|street (?:cleared|emptied)|crowd (?:thins|disperses|moves on)|(?:was|were) not always (?:so|this way|empty)|festival (?:is |has )?(?:over|ended|concluded)|(?:once|earlier) (?:there (?:was|were)|crowded))\b/i;
 
 // Pack 12 Extended Pattern Detection
 const TIME_DAWN = /\b(dawn|daybreak|first light|sunrise begins)\b/i;
@@ -161,6 +161,24 @@ export function seedOpeningSceneFacts(state: GameState): SceneFacts {
       tension: 'tense',
     };
   }
+  
+  // Pack 12 Fix: Non-alone openings should start with crowd present
+  const alone = state.openingEstablishment?.aloneArrival === true;
+  if (!alone) {
+    return {
+      crowd: 'present',
+      noise: 'voices',
+      present: ['blue panel', 'handlers'],
+      props: ['blue panel'],
+      lastBeat: 'People are present; handlers dealing with arrival.',
+      updatedTurn: state.turn,
+      timeOfDay: 'unknown',
+      weather: 'unknown',
+      indoor: undefined,
+      tension: 'tense',
+    };
+  }
+  
   return extractSceneFacts(
     state.log.filter((e) => e.role === 'gm').slice(-1)[0]?.content ?? '',
     state.sceneFacts,

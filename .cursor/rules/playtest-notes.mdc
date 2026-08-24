@@ -9,6 +9,8 @@ John is playtesting live. Collect issues here. Do not implement until he asks fo
 
 ## Open
 
+- **2026-08-24j Crowd Consistency Fix:** Opening scenes with non-alone arrivals now properly initialize `sceneFacts.crowd = 'present'`. TIME_PASSED pattern expanded to catch retcon phrases ("was not always so", "festival is over"). `scrubInventedCrowdSize` now catches contradictory "empty" / "no crowd" claims when crowd is tracked as present, rewrites to "a few people still". Prose warden and edge functions synced. HUD stamp 24j.
+
 - **2026-08-24i Begin Journey TDZ:** Pack 12 quick-response chips passed `newState` into `establishmentChoices` before that const existed, so Chrome threw `Cannot access 'ut' before initialization` and Begin Journey did nothing. Now uses `namedSeeded`. HUD stamp 24i.
 
 - **2026-08-24h Pack 13 Grammar Quality:** LanguageTool integration for automatic English grammar/style fixing. High tier gets async grammar check (~50-100ms); Free/Mid use fast regex-only. Catches 2000+ error patterns (spelling, grammar, punctuation, style) without maintaining regex rules. Works with any AI model. New `grammarCheck.ts` module + `applyProseWardenAsync` for High tier. Grammar checking opt-in via `enableGrammarCheck` context flag. HUD stamp 24h. npm: `languagetool-api` added.

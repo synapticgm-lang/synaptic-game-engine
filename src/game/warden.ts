@@ -236,6 +236,7 @@ export async function runWarden(
     hasMappedDoorExits: doorish.length > 0,
     adjacentRoomNames: exits.map((e) => e.name),
     crowdSize: calculateCrowdSize(state),
+    crowdPresent: state.sceneFacts?.crowd === 'present',
     currentTimeOfDay: state.sceneFacts?.timeOfDay,
     previousTimeOfDay: prevFacts?.timeOfDay,
     isIndoor: state.sceneFacts?.indoor,
