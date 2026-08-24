@@ -1,5 +1,7 @@
 import type {
   CampaignMemoryState,
+  ChapterSummary,
+  ArcSummary,
   ConsequenceThread,
   GameState,
   MemoryPin,
@@ -7,25 +9,38 @@ import type {
   TurnSummary,
 } from './types';
 import { isOfferOnlyUnansweredBeat } from './offerOnlyAsk';
+import {
+  semanticSearchMemories,
+  hybridSearchMemories,
+  areEmbeddingsAvailable,
+  embedTurnSummary,
+} from './semanticMemory';
 
 const PLAYER_PIN_LIMIT = 10;
 /** Soft token budget for memory middle section (~4 chars/token). */
 const MEMORY_CHAR_BUDGET = 2000 * 4;
+/** Dynamic budget when larger context available. */
+const MEMORY_CHAR_BUDGET_EXTENDED = 8000 * 4;
 
 /** Pack 11: micro summaries every ~5 turns (was 15). */
 const MICRO_SUMMARY_EVERY = 5;
 /** Pack 11: campaign paragraph every ~50 turns. */
 const CAMPAIGN_SUMMARY_EVERY = 50;
+/** Chapter summaries every 20 turns (Pack 12). */
+const CHAPTER_SUMMARY_EVERY = 20;
 
 export function emptyCampaignMemory(): CampaignMemoryState {
   return {
     campaignSummary: null,
     personalitySummary: null,
     turnSummaries: [],
+    chapterSummaries: [],
+    arcSummaries: [],
     pins: [],
     consequences: [],
     lastCampaignSummaryTurn: 0,
     lastTurnSummaryTurn: 0,
+    lastChapterSummaryTurn: 0,
   };
 }
 
@@ -264,10 +279,13 @@ export function maybeAppendTurnSummary(
     bits.outcome ? bits.outcome : null,
     bits.quest ? bits.quest : null,
   ].filter(Boolean);
+  const text = compressLine(parts.join(' — ') || `Turn ${turn} elapsed.`, 400);
+  
   const summary: TurnSummary = {
     id: `ts_${turn}`,
     turn,
-    text: compressLine(parts.join(' — ') || `Turn ${turn} elapsed.`, 400),
+    text,
+    importance: 0.5, // Will be scored later by scoreMemoryImportance
   };
   return {
     ...memory,
@@ -405,7 +423,7 @@ export function addConsequence(
   };
 }
 
-/** Keyword retrieve of turn summaries + pins (no embedding vendor yet). */
+/** Keyword retrieve of turn summaries + pins (Pack 11 fallback when embeddings unavailable). */
 export function retrieveMemorySnippets(
   memory: CampaignMemoryState,
   query: string,
@@ -440,18 +458,54 @@ export function retrieveMemorySnippets(
 }
 
 /**
- * Ordered ~2k context memory block (Pack 6 primacy/recency).
- * Caller still prepends system rules separately.
+ * Smart memory retrieval (Pack 12):
+ * - Use hybrid semantic+keyword search if embeddings available
+ * - Fall back to keyword-only if not
+ */
+export async function retrieveMemoriesSmartly(
+  memory: CampaignMemoryState,
+  query: string,
+  limit = 4
+): Promise<TurnSummary[]> {
+  const summaries = memory.turnSummaries ?? [];
+  
+  if (summaries.length === 0) {
+    return [];
+  }
+  
+  // Use semantic search if available
+  if (areEmbeddingsAvailable()) {
+    try {
+      return await hybridSearchMemories(query, summaries, limit);
+    } catch (error) {
+      console.warn('[Memory] Semantic search failed, falling back to keyword:', error);
+      // Fall through to keyword search
+    }
+  }
+  
+  // Keyword fallback
+  const snippets = retrieveMemorySnippets(memory, query, limit);
+  return summaries.filter(s => 
+    snippets.some(snippet => snippet.includes(`T${s.turn}`))
+  );
+}
+
+/**
+ * Ordered memory block with hierarchical structure (Pack 12).
+ * Dynamically expands when more context budget available.
  */
 export function formatCampaignMemoryForPrompt(
   state: GameState,
   situationBlock: string,
-  queryForRetrieve: string
+  queryForRetrieve: string,
+  tokenBudget: number = 2000
 ): string {
   const memory = ensureCampaignMemory(state);
   const personality =
     memory.personalitySummary || derivePersonalitySummary(state) || `${state.character.name}`;
   const campaign = memory.campaignSummary || '(Campaign summary pending — early run.)';
+  
+  // Mandatory sections (always included)
   const pins = memory.pins
     .filter((p) => !p.archived && (p.kind === 'player' || p.kind === 'auto'))
     .slice(-8)
@@ -462,13 +516,68 @@ export function formatCampaignMemoryForPrompt(
     .slice(0, 5)
     .map((c) => `- ${c.text}`)
     .join('\n');
-  const retrieved = retrieveMemorySnippets(memory, queryForRetrieve, 4).join('\n');
-
+  
   const npcLines = (state.npcMemories ?? [])
     .filter((n) => n.relationshipSummary)
     .slice(0, 5)
     .map((n) => `- ${n.relationshipSummary}`)
     .join('\n');
+  
+  // Build hierarchical memory sections
+  let hierarchicalMemory = '';
+  let usedTokens = 0;
+  
+  // Level 0: Recent turns (last 15, full detail) - always included
+  const recentTurns = (memory.turnSummaries ?? []).slice(-15);
+  if (recentTurns.length > 0) {
+    const recentText = recentTurns.map(t => `T${t.turn}: ${t.text}`).join('\n');
+    hierarchicalMemory += `\n=== RECENT TURNS (last 15, full detail) ===\n${recentText}\n`;
+    usedTokens += Math.ceil(recentText.length / 4);
+  }
+  
+  // Level 1: Chapter summaries (20-turn blocks)
+  const chapters = memory.chapterSummaries ?? [];
+  if (chapters.length > 0 && usedTokens < tokenBudget * 0.6) {
+    const chapterText = chapters.slice(-5).map(ch => {
+      const events = ch.keyEvents.slice(0, 3).join('; ');
+      return `Ch T${ch.turnRange[0]}-T${ch.turnRange[1]}: ${events}`;
+    }).join('\n');
+    hierarchicalMemory += `\n=== CHAPTER SUMMARIES (last 5 × 20-turn blocks) ===\n${chapterText}\n`;
+    usedTokens += Math.ceil(chapterText.length / 4);
+  }
+  
+  // Level 2: Arc summaries (100-turn blocks)
+  const arcs = memory.arcSummaries ?? [];
+  if (arcs.length > 0 && usedTokens < tokenBudget * 0.7) {
+    const arcText = arcs.map(arc => `${arc.summary}`).join('\n');
+    hierarchicalMemory += `\n=== ARC SUMMARIES (100-turn blocks) ===\n${arcText}\n`;
+    usedTokens += Math.ceil(arcText.length / 4);
+  }
+  
+  // Level 3: Importance-weighted older memories (if budget allows)
+  if (usedTokens < tokenBudget * 0.8) {
+    const olderTurns = (memory.turnSummaries ?? [])
+      .filter(t => t.turn <= state.turn - 15); // Exclude recent (already included)
+    
+    if (olderTurns.length > 0) {
+      const remainingBudget = Math.floor(tokenBudget * 0.8 - usedTokens);
+      const important = selectImportantMemories(olderTurns, remainingBudget);
+      
+      if (important.length > 0) {
+        const importantText = important.map(t => 
+          `T${t.turn} [imp:${(t.importance ?? 0.5).toFixed(2)}]: ${t.text}`
+        ).join('\n');
+        hierarchicalMemory += `\n=== IMPORTANT OLDER MEMORIES (importance-weighted) ===\n${importantText}\n`;
+        usedTokens += Math.ceil(importantText.length / 4);
+      }
+    }
+  }
+  
+  // Legacy keyword retrieval (fallback if no hierarchical yet)
+  let retrieved = '';
+  if (!hierarchicalMemory.trim()) {
+    retrieved = retrieveMemorySnippets(memory, queryForRetrieve, 4).join('\n');
+  }
 
   let body = `=== CAMPAIGN SUMMARY (ALWAYS) ===
 ${campaign}
@@ -477,9 +586,7 @@ ${personality}
 === SITUATION (CURRENT + PREVIOUS) ===
 ${situationBlock}
 === ACTIVE CONDITIONS ===
-${state.character.conditions?.length ? state.character.conditions.join(', ') : 'none'}
-=== RETRIEVED MEMORY (MIDDLE — KEEP TIGHT) ===
-${retrieved || '(none)'}
+${state.character.conditions?.length ? state.character.conditions.join(', ') : 'none'}${hierarchicalMemory || `\n=== RETRIEVED MEMORY (MIDDLE — KEEP TIGHT) ===\n${retrieved || '(none)'}\n`}
 === PLAYER / AUTO PINS ===
 ${pins || '(none)'}
 === UNRESOLVED CONSEQUENCES (MUST NOT FORGET) ===
@@ -489,11 +596,14 @@ ${consequences || '(none)'}
 ${npcLines || '(none)'}
 `;
 
-  // Prune retrieved memory only. Pins and unresolved consequences stay — they are lossless.
-  if (body.length > MEMORY_CHAR_BUDGET) {
+  // Prune only if still exceeding budget
+  const charBudget = tokenBudget * 4;
+  if (body.length > charBudget) {
+    // Prune retrieved memory first
     body = body.replace(/=== RETRIEVED MEMORY[\s\S]*?(?==== )/m, '=== RETRIEVED MEMORY ===\n(pruned)\n');
   }
-  if (body.length > MEMORY_CHAR_BUDGET) {
+  if (body.length > charBudget) {
+    // Then prune NPC summaries
     body = body.replace(
       /=== NPC RELATIONSHIP SUMMARIES[\s\S]*$/m,
       '=== NPC RELATIONSHIP SUMMARIES ===\n(pruned)\n'
@@ -538,6 +648,33 @@ export function advanceCampaignMemory(
     },
     !!opts.locationChanged
   );
+  
+  // 2.5) Embed the new turn summary asynchronously (Pack 12)
+  if (memory.turnSummaries && memory.turnSummaries.length > 0) {
+    const latest = memory.turnSummaries[memory.turnSummaries.length - 1];
+    if (latest && !latest.embedding) {
+      // Fire-and-forget embedding (don't block turn commit)
+      embedTurnSummary(latest).then(embedded => {
+        // Store embedded version (will be persisted on next save)
+        const idx = memory.turnSummaries!.findIndex(t => t.id === embedded.id);
+        if (idx >= 0 && memory.turnSummaries) {
+          memory.turnSummaries[idx] = embedded;
+        }
+      }).catch(err => {
+        console.warn('[Memory] Failed to embed turn summary:', err);
+      });
+    }
+  }
+  
+  // 3) Score importance on all turn summaries (Pack 12)
+  memory = scoreAllMemoryImportance(memory, state);
+  
+  // 4) Chapter summaries every 20 turns (Pack 12)
+  memory = maybeCreateChapterSummary(memory, state, turn);
+  
+  // 5) Arc summaries every 100 turns (Pack 12)
+  memory = maybeCreateArcSummary(memory, state, turn);
+  
   memory = maybeRefreshCampaignSummary(memory, state, turn);
 
   if (opts.gainedLootRarity && /uncommon|rare|epic|legendary/i.test(opts.gainedLootRarity)) {
@@ -569,4 +706,287 @@ export function advanceCampaignMemory(
     });
   }
   return memory;
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// Pack 12: Importance Weighting & Hierarchical Summarization
+// ═══════════════════════════════════════════════════════════════════════════
+
+/**
+ * Score memory importance (0-1) based on content.
+ * Higher scores = more likely to be retained in context budget.
+ */
+export function scoreMemoryImportance(
+  memory: TurnSummary,
+  state: GameState
+): number {
+  let score = 0.5; // baseline
+  const text = memory.text.toLowerCase();
+  
+  // +0.3 if involves main quest
+  const mainQuestNames = (state.quests ?? [])
+    .filter(q => q.type === 'main')
+    .map(q => q.name.toLowerCase());
+  if (mainQuestNames.some(name => name.length >= 4 && text.includes(name))) {
+    score += 0.3;
+  }
+  
+  // +0.2 if involves named NPC
+  const npcNames = (state.npcMemories ?? []).map(n => n.npcName.toLowerCase());
+  if (npcNames.some(name => name.length >= 3 && text.includes(name))) {
+    score += 0.2;
+  }
+  
+  // +0.3 if loot/combat/death/milestone
+  if (/\b(rare|epic|legendary|defeated|died|hp.*0|level.*up|quest.*complete)\b/i.test(text)) {
+    score += 0.3;
+  }
+  
+  // +0.2 if promise/threat/relationship change
+  if (/\b(promise|oath|swear|threat|warn|betray|ally|enemy)\b/i.test(text)) {
+    score += 0.2;
+  }
+  
+  // +0.1 if location change
+  if (/\b(entered|arrived|reached|traveled|moved to)\b/i.test(text)) {
+    score += 0.1;
+  }
+  
+  // Recency decay: -0.1 per 10 turns
+  const age = state.turn - memory.turn;
+  const decayFactor = Math.max(0.3, 1 - (age / 100));
+  score *= decayFactor;
+  
+  return Math.min(1, Math.max(0, score));
+}
+
+/**
+ * Score importance on all turn summaries.
+ */
+export function scoreAllMemoryImportance(
+  memory: CampaignMemoryState,
+  state: GameState
+): CampaignMemoryState {
+  const scored = (memory.turnSummaries ?? []).map(t => ({
+    ...t,
+    importance: scoreMemoryImportance(t, state),
+  }));
+  return { ...memory, turnSummaries: scored };
+}
+
+/**
+ * Select most important memories within token budget.
+ */
+export function selectImportantMemories(
+  memories: TurnSummary[],
+  tokenBudget: number
+): TurnSummary[] {
+  // Sort by importance
+  const sorted = [...memories].sort((a, b) => (b.importance ?? 0.5) - (a.importance ?? 0.5));
+  
+  const selected: TurnSummary[] = [];
+  let usedTokens = 0;
+  
+  for (const mem of sorted) {
+    const memTokens = Math.ceil(mem.text.length / 4);
+    if (usedTokens + memTokens > tokenBudget) break;
+    selected.push(mem);
+    usedTokens += memTokens;
+  }
+  
+  // Re-sort chronologically for narrative flow
+  return selected.sort((a, b) => a.turn - b.turn);
+}
+
+/**
+ * Create chapter summary (20-turn block).
+ */
+export function createChapterSummary(
+  turns: TurnSummary[],
+  state: GameState
+): ChapterSummary {
+  if (!turns.length) {
+    return {
+      id: `ch_${state.turn}`,
+      turnRange: [state.turn, state.turn],
+      keyEvents: [],
+      questProgress: 'No activity',
+      npcsIntroduced: [],
+      locationsMapped: [],
+      createdTurn: state.turn,
+    };
+  }
+  
+  const first = turns[0]!;
+  const last = turns[turns.length - 1]!;
+  
+  // Extract key events via importance
+  const keyEvents = turns
+    .sort((a, b) => (b.importance ?? 0.5) - (a.importance ?? 0.5))
+    .slice(0, 5)
+    .map(t => compressLine(t.text, 120));
+  
+  // Extract quest progress
+  const questMentions = turns.filter(t => 
+    /\b(quest|mission|task|completed|failed)\b/i.test(t.text)
+  );
+  const questProgress = questMentions.length > 0
+    ? compressLine(`Quests: ${questMentions.slice(0, 2).map(t => t.text).join('; ')}`, 200)
+    : 'No quest activity';
+  
+  // Extract new NPCs
+  const npcMentions = new Set<string>();
+  for (const t of turns) {
+    const matches = t.text.match(/\b([A-Z][a-z]+(?:\s+[A-Z][a-z]+)?)\b/g);
+    if (matches) {
+      matches.forEach(name => {
+        if (name.length >= 3 && name.length <= 25) npcMentions.add(name);
+      });
+    }
+  }
+  const npcsIntroduced = Array.from(npcMentions).slice(0, 5);
+  
+  // Extract locations
+  const locationMentions = turns
+    .map(t => {
+      const match = t.text.match(/\b(?:at|in|entered|reached)\s+([A-Z][^,\.;]{3,30})/);
+      return match ? match[1]!.trim() : null;
+    })
+    .filter((loc): loc is string => loc !== null);
+  const locationsMapped = Array.from(new Set(locationMentions)).slice(0, 3);
+  
+  return {
+    id: `ch_${first.turn}_${last.turn}`,
+    turnRange: [first.turn, last.turn],
+    keyEvents,
+    questProgress,
+    npcsIntroduced,
+    locationsMapped,
+    createdTurn: state.turn,
+  };
+}
+
+/**
+ * Maybe create chapter summary every 20 turns.
+ */
+export function maybeCreateChapterSummary(
+  memory: CampaignMemoryState,
+  state: GameState,
+  turn: number
+): CampaignMemoryState {
+  const lastChapter = memory.lastChapterSummaryTurn ?? 0;
+  if (turn < CHAPTER_SUMMARY_EVERY || turn - lastChapter < CHAPTER_SUMMARY_EVERY) {
+    return memory;
+  }
+  
+  const recentTurns = (memory.turnSummaries ?? [])
+    .filter(t => t.turn > lastChapter && t.turn <= turn);
+  
+  if (recentTurns.length === 0) return memory;
+  
+  const chapter = createChapterSummary(recentTurns, state);
+  
+  return {
+    ...memory,
+    chapterSummaries: [...(memory.chapterSummaries ?? []), chapter].slice(-10),
+    lastChapterSummaryTurn: turn,
+  };
+}
+
+/**
+ * Create arc summary (100-turn block).
+ */
+export function createArcSummary(
+  chapters: ChapterSummary[],
+  state: GameState
+): ArcSummary {
+  if (!chapters.length) {
+    return {
+      id: `arc_${state.turn}`,
+      turnRange: [state.turn, state.turn],
+      summary: 'Arc summary pending',
+      majorMilestones: [],
+      createdTurn: state.turn,
+    };
+  }
+  
+  const first = chapters[0]!;
+  const last = chapters[chapters.length - 1]!;
+  
+  // Collect all key events from chapters
+  const allKeyEvents = chapters.flatMap(ch => ch.keyEvents);
+  const majorMilestones = allKeyEvents.slice(0, 8);
+  
+  // Build arc summary
+  const locations = Array.from(
+    new Set(chapters.flatMap(ch => ch.locationsMapped))
+  ).slice(0, 5);
+  
+  const npcs = Array.from(
+    new Set(chapters.flatMap(ch => ch.npcsIntroduced))
+  ).slice(0, 8);
+  
+  const summary = compressLine(
+    `Arc T${first.turnRange[0]}-T${last.turnRange[1]}. ` +
+    `Locations: ${locations.join(', ') || 'none'}. ` +
+    `NPCs: ${npcs.join(', ') || 'none'}. ` +
+    `Major events: ${majorMilestones.slice(0, 3).join('; ')}`,
+    400
+  );
+  
+  return {
+    id: `arc_${first.turnRange[0]}_${last.turnRange[1]}`,
+    turnRange: [first.turnRange[0], last.turnRange[1]],
+    summary,
+    majorMilestones,
+    createdTurn: state.turn,
+  };
+}
+
+/**
+ * Maybe create arc summary every 100 turns.
+ */
+export function maybeCreateArcSummary(
+  memory: CampaignMemoryState,
+  state: GameState,
+  turn: number
+): CampaignMemoryState {
+  const chapters = memory.chapterSummaries ?? [];
+  
+  // Need at least 5 chapters (100 turns) to create an arc
+  if (chapters.length < 5) return memory;
+  
+  // Check if we already have an arc covering these chapters
+  const lastArc = (memory.arcSummaries ?? []).slice(-1)[0];
+  if (lastArc && lastArc.turnRange[1] >= chapters[chapters.length - 5]!.turnRange[0]) {
+    return memory;
+  }
+  
+  // Create arc from last 5 chapters
+  const recentChapters = chapters.slice(-5);
+  const arc = createArcSummary(recentChapters, state);
+  
+  return {
+    ...memory,
+    arcSummaries: [...(memory.arcSummaries ?? []), arc].slice(-5),
+  };
+}
+
+/**
+ * Calculate dynamic memory budget based on available context.
+ */
+export function calculateMemoryBudget(
+  modelContext: number = 128000,
+  systemPromptTokens: number = 8000,
+  playerInputTokens: number = 200,
+  desiredOutputTokens: number = 4096
+): number {
+  const overhead = systemPromptTokens + playerInputTokens + desiredOutputTokens;
+  const available = modelContext - overhead;
+  
+  // Reserve 20% buffer
+  const usable = Math.floor(available * 0.8);
+  
+  // Clamp to reasonable range (2k min, 32k max)
+  return Math.max(2000, Math.min(usable, 32000));
 }

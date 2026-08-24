@@ -273,10 +273,11 @@ PLAYER ACTION FIDELITY (BINDING): Answer the player's last action first (e.g. se
 ===========================================================`;
 }
 
-export function formatFullMemoryBlock(state: GameState): string {
+export function formatFullMemoryBlock(state: GameState, tokenBudget?: number): string {
   const rails = formatCampaignRails(state);
   const situation = formatSituationForPrompt(state);
-  const memoryCore = formatCampaignMemoryForPrompt(state, situation, state.currentLocation ?? '');
+  const budget = tokenBudget ?? 2000; // Default 2k, can be increased dynamically
+  const memoryCore = formatCampaignMemoryForPrompt(state, situation, state.currentLocation ?? '', budget);
   const timeline = formatTimelineForPrompt(state.timeline, 12);
   return `${rails ? `${rails}\n\n` : ''}${memoryCore}
 

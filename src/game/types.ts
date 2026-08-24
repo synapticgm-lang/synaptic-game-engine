@@ -846,6 +846,10 @@ export interface TurnSummary {
   id: string;
   turn: number;
   text: string;
+  /** Importance score 0-1 (Pack 12 - memory weighting). */
+  importance?: number;
+  /** Semantic embedding for retrieval (Pack 12 - 384d vector). */
+  embedding?: number[];
 }
 
 export interface MemoryPin {
@@ -868,10 +872,34 @@ export interface CampaignMemoryState {
   campaignSummary?: string | null;
   personalitySummary?: string | null;
   turnSummaries?: TurnSummary[];
+  /** Chapter summaries (20-turn blocks, Pack 12). */
+  chapterSummaries?: ChapterSummary[];
+  /** Arc summaries (100-turn blocks, Pack 12). */
+  arcSummaries?: ArcSummary[];
   pins: MemoryPin[];
   consequences?: ConsequenceThread[];
   lastCampaignSummaryTurn?: number;
   lastTurnSummaryTurn?: number;
+  /** Last turn a chapter summary was created (Pack 12). */
+  lastChapterSummaryTurn?: number;
+}
+
+export interface ChapterSummary {
+  id: string;
+  turnRange: [number, number];
+  keyEvents: string[];
+  questProgress: string;
+  npcsIntroduced: string[];
+  locationsMapped: string[];
+  createdTurn: number;
+}
+
+export interface ArcSummary {
+  id: string;
+  turnRange: [number, number];
+  summary: string;
+  majorMilestones: string[];
+  createdTurn: number;
 }
 
 /**

@@ -8,7 +8,7 @@ import { padChoicesToCount, inventsPresenceOnEmptyScene } from './choicePipeline
 import { applyPathDensity, classifyPath } from './stanceDensity';
 import { formatChoiceTierModeDna } from './choiceTierRules';
 import { formatFluidProseRailsForPrompt } from './fluidProseRails';
-import { buildSystemPrompt } from './systemPrompt';
+import { buildSystemPrompt } from './masterPrompt';
 import type { GameState } from './types';
 
 function baseState(overrides: Partial<GameState> = {}): GameState {

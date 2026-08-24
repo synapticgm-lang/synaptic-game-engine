@@ -2,7 +2,8 @@
  * Client-side GM path (BYOK). Only loaded when the server proxy is disabled —
  * production builds with VITE_ALLOW_CLIENT_GM !== 'true' tree-shake this module out.
  */
-import { buildSystemPrompt, buildContextPrompt } from './systemPrompt';
+// Master Prompt v2.0 - Hierarchical architecture (docs/MASTER-PROMPT-ARCHITECTURE.md)
+import { buildSystemPrompt, buildContextPrompt } from './masterPrompt';
 import type { GameState, Settings, LoreCard } from './types';
 import { logger } from './logger';
 import type { GmResult } from './aiServiceShared';
