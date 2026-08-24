@@ -1,4 +1,4 @@
-import { buildSystemPrompt, buildContextPrompt } from '../_shared/gm/systemPrompt.ts';
+import { buildSystemPrompt, buildContextPrompt } from '../_shared/gm/masterPrompt.ts';
 
 const AI_MAX_OUTPUT_TOKENS = 4096;
 const CORS_HEADERS: Record<string, string> = {
