@@ -1,10 +1,10 @@
-import type { FactionStanding, GameState, PowerScaling, SituationPacket, WorldLedger } from './types';
-import { formatTimelineForPrompt } from './timelineFormat';
-import { playerFacingLocation } from './locationName';
-import { formatSceneFactsForPrompt } from './sceneFacts';
-import { formatSceneManifestForPrompt } from './sceneManifest';
-import { formatCampaignContractForPrompt } from './campaignContract';
-import { formatHiddenRoomLedger } from './dungeonSeed';
+import type { FactionStanding, GameState, PowerScaling, SituationPacket, WorldLedger } from './types.ts';
+import { formatTimelineForPrompt } from './timelineFormat.ts';
+import { playerFacingLocation } from './locationName.ts';
+import { formatSceneFactsForPrompt } from './sceneFacts.ts';
+import { formatSceneManifestForPrompt } from './sceneManifest.ts';
+import { formatCampaignContractForPrompt } from './campaignContract.ts';
+import { formatHiddenRoomLedger } from './dungeonSeed.ts';
 import {
   dangerTierLabel,
   mapScaleLabel,
@@ -12,13 +12,13 @@ import {
   resolveMapScale,
   resolveThreatTier,
   isInteriorMap,
-} from './placeAuthority';
-import { formatPlacesForPrompt } from './places';
-import { formatCampaignMemoryForPrompt } from './campaignMemory';
-import { formatTutorialBeatMandate } from './tutorialBeats';
-import { formatLocalityForPrompt } from './locality';
-import { formatHiddenCulpritRail } from './mysteryCulprit';
-import { formatInteriorExploreAuthority } from './mapEngine';
+} from './placeAuthority.ts';
+import { formatPlacesForPrompt } from './places.ts';
+import { formatCampaignMemoryForPrompt } from './campaignMemory.ts';
+import { formatTutorialBeatMandate } from './tutorialBeats.ts';
+import { formatLocalityForPrompt } from './locality.ts';
+import { formatHiddenCulpritRail } from './mysteryCulprit.ts';
+import { formatInteriorExploreAuthority } from './mapEngine.ts';
 
 export function effectivePowerScaling(state: GameState): PowerScaling {
   return state.powerScaling ?? 'balanced';
