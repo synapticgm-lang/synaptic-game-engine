@@ -12,13 +12,19 @@ import type { TurnSummary, MemoryPin } from './types';
 let embeddingPipeline: any = null;
 let isInitializing = false;
 let initPromise: Promise<void> | null = null;
+let initializationFailed = false;
 
 /**
  * Initialize the embedding model (lazy-loaded).
  * First call downloads ~10MB model, subsequent calls are instant.
+ * Fails gracefully with 30s timeout.
  */
 export async function initEmbeddings(): Promise<void> {
   if (embeddingPipeline) return;
+  if (initializationFailed) {
+    console.warn('[Embeddings] Previous initialization failed, skipping retry');
+    return;
+  }
   if (initPromise) return initPromise;
   
   isInitializing = true;
@@ -27,24 +33,31 @@ export async function initEmbeddings(): Promise<void> {
       // Dynamic import to avoid bundling in builds that don't use it
       const { pipeline } = await import('@xenova/transformers');
       
-      embeddingPipeline = await pipeline(
-        'feature-extraction',
-        'Xenova/all-MiniLM-L6-v2',
-        {
-          // Use quantized model for smaller download
-          quantized: true,
-          // Progress callback
-          progress_callback: (progress: any) => {
-            if (progress.status === 'progress') {
-              console.log(`[Embeddings] Loading: ${progress.file} ${Math.round((progress.loaded / progress.total) * 100)}%`);
-            }
-          },
-        }
-      );
+      // 30-second timeout to prevent hanging on HuggingFace errors
+      embeddingPipeline = await Promise.race([
+        pipeline(
+          'feature-extraction',
+          'Xenova/all-MiniLM-L6-v2',
+          {
+            // Use quantized model for smaller download
+            quantized: true,
+            // Progress callback
+            progress_callback: (progress: any) => {
+              if (progress.status === 'progress') {
+                console.log(`[Embeddings] Loading: ${progress.file} ${Math.round((progress.loaded / progress.total) * 100)}%`);
+              }
+            },
+          }
+        ),
+        new Promise((_, reject) => 
+          setTimeout(() => reject(new Error('Model load timeout after 30s')), 30000)
+        )
+      ]);
       
       console.log('[Embeddings] Model loaded successfully');
-    } catch (error) {
-      console.error('[Embeddings] Failed to load model:', error);
+    } catch (error: any) {
+      console.warn('[Embeddings] Failed to load model (will use keyword fallback):', error?.message || error);
+      initializationFailed = true;
       throw error;
     } finally {
       isInitializing = false;
@@ -56,21 +69,27 @@ export async function initEmbeddings(): Promise<void> {
 
 /**
  * Generate embedding for text (384-dimensional vector).
+ * Returns empty array on failure (graceful degradation).
  */
 export async function embedText(text: string): Promise<number[]> {
-  await initEmbeddings();
-  
-  if (!embeddingPipeline) {
-    throw new Error('Embedding pipeline not initialized');
+  try {
+    await initEmbeddings();
+    
+    if (!embeddingPipeline) {
+      return [];
+    }
+    
+    // Mean pooling + normalization
+    const output = await embeddingPipeline(text, {
+      pooling: 'mean',
+      normalize: true,
+    });
+    
+    return Array.from(output.data as Float32Array);
+  } catch (error) {
+    // Silent failure - embeddings are optional
+    return [];
   }
-  
-  // Mean pooling + normalization
-  const output = await embeddingPipeline(text, {
-    pooling: 'mean',
-    normalize: true,
-  });
-  
-  return Array.from(output.data as Float32Array);
 }
 
 /**
@@ -96,19 +115,27 @@ export function cosineSimilarity(a: number[], b: number[]): number {
 
 /**
  * Embed turn summary (if not already embedded).
+ * Fire-and-forget: never throws, never blocks gameplay.
  */
 export async function embedTurnSummary(summary: TurnSummary): Promise<TurnSummary> {
   if (summary.embedding && summary.embedding.length === 384) {
     return summary;
   }
   
-  try {
-    const embedding = await embedText(summary.text);
-    return { ...summary, embedding };
-  } catch (error) {
-    console.warn('[Embeddings] Failed to embed summary:', error);
+  if (initializationFailed) {
     return summary;
   }
+  
+  try {
+    const embedding = await embedText(summary.text);
+    if (embedding.length > 0) {
+      return { ...summary, embedding };
+    }
+  } catch (error) {
+    // Silent failure - embeddings are optional
+  }
+  
+  return summary;
 }
 
 /**
