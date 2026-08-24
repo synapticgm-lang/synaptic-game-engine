@@ -8,9 +8,9 @@ import { effectiveWriterTier, isTestLabEnabled } from '../game/testLab';
 import { equippedSetLabel, equippedSetName } from '../game/uiTheme';
 
 /** Visible after a hard refresh — if this is missing, Vercel is still serving the 16 Aug bundle. */
-export const HUD_BUILD_STAMP = '2026-08-24h';
+export const HUD_BUILD_STAMP = '2026-08-24i';
 const HUD_BUILD_TITLE =
-  'Pack 13 Grammar Quality (LanguageTool)';
+  'Begin Journey TDZ fix';
 
 interface Props {
   state: GameState;

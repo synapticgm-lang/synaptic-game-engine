@@ -3790,7 +3790,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
         || bible?.startingLocation
         || namedSeeded.currentLocation,
       currentCoordinates: { q: 0, r: 0, tier: 2, z: 0 },
-      choices: pendingCovers.length ? establishmentChoices(pendingCovers, newState) : [],
+      choices: pendingCovers.length ? establishmentChoices(pendingCovers, namedSeeded) : [],
       log: [],
       worldLedger: emptyWorldLedger(),
       pendingGeneratedOpening: true,
