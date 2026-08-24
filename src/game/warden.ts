@@ -12,7 +12,7 @@ import { detectSceneContradiction } from './sceneFacts';
 import { detectFactLockViolations } from './factLocks';
 import { resolveSeededRarity } from './dungeonSeed';
 import { scrubInventedProperNouns } from './narrativeScrub';
-import { applyProseWarden } from './proseWarden';
+import { applyProseWarden, calculateCrowdSize } from './proseWarden';
 import { findManifestInventions } from './sceneManifest';
 import { continuityStrict } from './opsKillSwitches';
 import { isInteriorMap } from './placeAuthority';
@@ -226,6 +226,7 @@ export function runWarden(
     aloneArrival: isAloneArrivalOpening(state),
     hasMappedDoorExits: doorish.length > 0,
     adjacentRoomNames: exits.map((e) => e.name),
+    crowdSize: calculateCrowdSize(state),
   });
   if (scrub.stripped.length) {
     for (const name of scrub.stripped.slice(0, 6)) {

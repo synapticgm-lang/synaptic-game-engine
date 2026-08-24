@@ -124,6 +124,16 @@ export function formatSituationForPrompt(state: GameState): string {
       : s.presentEntities.length && s.presentEntities[0] !== 'none established'
         ? s.presentEntities.slice(0, 6).join('; ')
         : 'none established';
+  
+  // Crowd count tracking for consistency
+  const crowdSize = alone ? 0 : Math.max(0, s.presentEntities.filter(e => e !== 'none established').length);
+  const crowdLabel = 
+    crowdSize === 0 ? 'Empty/Alone'
+    : crowdSize <= 3 ? `Intimate (~${crowdSize} people)`
+    : crowdSize <= 8 ? `Small group (~${crowdSize} people)`
+    : crowdSize <= 15 ? `Modest crowd (~${crowdSize} people)`
+    : `Large crowd (${crowdSize}+ people)`;
+  
   const sceneStateHeader = [
     '### SCENE STATE',
     `- Location: ${s.location}`,
@@ -131,9 +141,12 @@ export function formatSituationForPrompt(state: GameState): string {
       ? `- Zone Threat: Tier ${threat} vs Player Level ${level}`
       : `- Zone Threat: none (street/outdoors or unset)`,
     `- Immediate Presence: ${presence}`,
+    `- Crowd Size: ${crowdLabel}`,
     `- Encounter: ${s.encounter}`,
     `- Active Quests (revealed): ${s.activeQuests.join('; ')}`,
     `- Power Scaling: ${effectivePowerScaling(state)}`,
+    '',
+    '**BINDING**: Do not invent large crowds (50+, 100+) unless Crowd Size says Large. Respect tracked presence count.',
   ].join('\n');
 
   const npcBlock = (state.npcMemories ?? [])

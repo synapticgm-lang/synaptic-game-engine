@@ -5,6 +5,22 @@
  * There is no general "does this make sense" critic — that would be a second LLM.
  */
 
+import type { GameState } from './types';
+
+/**
+ * Calculate tracked crowd size from game state for consistency checking.
+ */
+export function calculateCrowdSize(state: GameState): number {
+  const alone = state.openingEstablishment?.aloneArrival === true;
+  if (alone && !state.activeEncounter) return 0;
+  
+  const present = state.sceneFacts?.present ?? [];
+  const companions = state.companions?.length ?? 0;
+  const encounter = state.activeEncounter ? 1 : 0;
+  
+  return Math.max(0, present.length + companions + encounter);
+}
+
 export type ProseWardenContext = {
   currentLocation?: string;
   /** Summoned Pact alone ruin / empty arrival — never invent watchers. */
@@ -13,6 +29,8 @@ export type ProseWardenContext = {
   hasMappedDoorExits?: boolean;
   /** Named adjacent rooms for soft rewrite anchors (optional). */
   adjacentRoomNames?: string[];
+  /** Tracked crowd size for consistency (0 = alone, 1-3 = intimate, 4-8 = small, 9-15 = modest, 16+ = large). */
+  crowdSize?: number;
 };
 
 /** Interiors that already name "here" — nearby is for things that are not here. */
@@ -265,6 +283,38 @@ export function scrubAnthropomorphizedLocation(text: string): string {
   return tidyClauses(next);
 }
 
+/**
+ * Scrub invented large crowd claims that contradict tracked presence.
+ * Catches "hundred people", "fifty onlookers", etc. when scene has small group.
+ */
+export function scrubInventedCrowdSize(text: string, trackedCrowdSize: number): string {
+  if (!text || trackedCrowdSize >= 20) return text; // Large crowds are allowed if tracked
+  
+  // Pattern: number + crowd words
+  const largeNumber = /\b(?:dozens?|scores?|hundreds?|fifty|sixty|seventy|eighty|ninety|hundred|two hundred|three hundred)\s+(?:of\s+)?(?:people|figures|onlookers|bystanders|watchers|voices|hands|faces|souls|bodies)\b/gi;
+  
+  if (!largeNumber.test(text)) return text;
+  
+  // If tracked crowd is small (<=8), rewrite large crowd mentions
+  const replacement = trackedCrowdSize <= 3 ? 'a few people' : 'several people';
+  
+  return text.replace(largeNumber, replacement);
+}
+
+/**
+ * Calculate tracked crowd size from game state for consistency checking.
+ */
+export function calculateCrowdSize(state: GameState): number {
+  const alone = state.openingEstablishment?.aloneArrival === true;
+  if (alone && !state.activeEncounter) return 0;
+  
+  const present = state.sceneFacts?.present ?? [];
+  const companions = state.companions?.length ?? 0;
+  const encounter = state.activeEncounter ? 1 : 0;
+  
+  return Math.max(0, present.length + companions + encounter);
+}
+
 export function applyProseWarden(text: string, ctx?: ProseWardenContext): string {
   if (!text) return text;
   const alone = ctx?.aloneArrival === true;
@@ -280,6 +330,7 @@ export function applyProseWarden(text: string, ctx?: ProseWardenContext): string
     ctx?.adjacentRoomNames ?? []
   );
   next = scrubAnthropomorphizedLocation(next);
+  next = scrubInventedCrowdSize(next, ctx?.crowdSize ?? 0);
   next = scrubLocationTautology(next, ctx?.currentLocation);
   next = scrubSpokenQuoteStart(next);
   next = scrubArticleCollisions(next);

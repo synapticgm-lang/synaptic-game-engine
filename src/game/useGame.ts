@@ -27,7 +27,7 @@ import type { EnemyStats } from './combat';
 import { isAutoFightWarningDismissed } from '@/components/AutoFightWarningModal';
 import { generateComicImage, generateVideo, VideoProviderNotConfiguredError } from '@/services/openRouterService';
 import { enforcePerspective } from './perspectiveWarden';
-import { applyProseWarden } from './proseWarden';
+import { applyProseWarden, calculateCrowdSize } from './proseWarden';
 import { applyLocalityWarden } from './locality';
 import {
   bindSessionImageCache,
@@ -2995,6 +2995,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
           aloneArrival: isAloneArrivalOpening(workingState) || isAloneArrivalOpening(liveCurrent),
           hasMappedDoorExits: doorish.length > 0,
           adjacentRoomNames: exits.map((e) => e.name),
+          crowdSize: calculateCrowdSize(workingState),
         });
       }
       {

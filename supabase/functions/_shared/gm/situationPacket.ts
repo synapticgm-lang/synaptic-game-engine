@@ -1,10 +1,10 @@
-import type { FactionStanding, GameState, PowerScaling, SituationPacket, WorldLedger } from './types.ts';
-import { formatTimelineForPrompt } from './timelineFormat.ts';
-import { playerFacingLocation } from './locationName.ts';
-import { formatSceneFactsForPrompt } from './sceneFacts.ts';
-import { formatSceneManifestForPrompt } from './sceneManifest.ts';
-import { formatCampaignContractForPrompt } from './campaignContract.ts';
-import { formatHiddenRoomLedger } from './dungeonSeed.ts';
+import type { FactionStanding, GameState, PowerScaling, SituationPacket, WorldLedger } from './types';
+import { formatTimelineForPrompt } from './timelineFormat';
+import { playerFacingLocation } from './locationName';
+import { formatSceneFactsForPrompt } from './sceneFacts';
+import { formatSceneManifestForPrompt } from './sceneManifest';
+import { formatCampaignContractForPrompt } from './campaignContract';
+import { formatHiddenRoomLedger } from './dungeonSeed';
 import {
   dangerTierLabel,
   mapScaleLabel,
@@ -12,13 +12,13 @@ import {
   resolveMapScale,
   resolveThreatTier,
   isInteriorMap,
-} from './placeAuthority.ts';
-import { formatPlacesForPrompt } from './places.ts';
-import { formatCampaignMemoryForPrompt } from './campaignMemory.ts';
-import { formatTutorialBeatMandate } from './tutorialBeats.ts';
-import { formatLocalityForPrompt } from './locality.ts';
-import { formatHiddenCulpritRail } from './mysteryCulprit.ts';
-import { formatInteriorExploreAuthority } from './mapEngine.ts';
+} from './placeAuthority';
+import { formatPlacesForPrompt } from './places';
+import { formatCampaignMemoryForPrompt } from './campaignMemory';
+import { formatTutorialBeatMandate } from './tutorialBeats';
+import { formatLocalityForPrompt } from './locality';
+import { formatHiddenCulpritRail } from './mysteryCulprit';
+import { formatInteriorExploreAuthority } from './mapEngine';
 
 export function effectivePowerScaling(state: GameState): PowerScaling {
   return state.powerScaling ?? 'balanced';
@@ -115,6 +115,40 @@ export function buildSituationPacket(state: GameState): SituationPacket {
 
 export function formatSituationForPrompt(state: GameState): string {
   const s = buildSituationPacket(state);
+  const alone = state.openingEstablishment?.aloneArrival === true;
+  const threat = resolveThreatTier(state);
+  const level = Math.max(1, state.character?.level ?? 1);
+  const presence =
+    alone && !state.activeEncounter
+      ? 'Alone'
+      : s.presentEntities.length && s.presentEntities[0] !== 'none established'
+        ? s.presentEntities.slice(0, 6).join('; ')
+        : 'none established';
+  
+  // Crowd count tracking for consistency
+  const crowdSize = alone ? 0 : Math.max(0, s.presentEntities.filter(e => e !== 'none established').length);
+  const crowdLabel = 
+    crowdSize === 0 ? 'Empty/Alone'
+    : crowdSize <= 3 ? `Intimate (~${crowdSize} people)`
+    : crowdSize <= 8 ? `Small group (~${crowdSize} people)`
+    : crowdSize <= 15 ? `Modest crowd (~${crowdSize} people)`
+    : `Large crowd (${crowdSize}+ people)`;
+  
+  const sceneStateHeader = [
+    '### SCENE STATE',
+    `- Location: ${s.location}`,
+    threat != null
+      ? `- Zone Threat: Tier ${threat} vs Player Level ${level}`
+      : `- Zone Threat: none (street/outdoors or unset)`,
+    `- Immediate Presence: ${presence}`,
+    `- Crowd Size: ${crowdLabel}`,
+    `- Encounter: ${s.encounter}`,
+    `- Active Quests (revealed): ${s.activeQuests.join('; ')}`,
+    `- Power Scaling: ${effectivePowerScaling(state)}`,
+    '',
+    '**BINDING**: Do not invent large crowds (50+, 100+) unless Crowd Size says Large. Respect tracked presence count.',
+  ].join('\n');
+
   const npcBlock = (state.npcMemories ?? [])
     .slice(0, 5)
     .map((m) => `${m.npcName}[${m.disposition}]: ${m.facts.slice(-2).join('; ') || '—'}`)
@@ -145,7 +179,6 @@ export function formatSituationForPrompt(state: GameState): string {
   const placeRegistry = formatPlacesForPrompt(state.places, currentSheet?.name ?? s.location);
   const tutorialMandate = formatTutorialBeatMandate(state);
   const contractBlock = formatCampaignContractForPrompt(state);
-  const alone = state.openingEstablishment?.aloneArrival === true;
   const interiorExplore =
     state.activeDungeon && isInteriorMap(state.activeDungeon)
       ? formatInteriorExploreAuthority(state.activeDungeon)
@@ -153,6 +186,8 @@ export function formatSituationForPrompt(state: GameState): string {
   const simulationist = formatSimulationistBlocks(state);
   const none = '(none)';
   const lines = [
+    sceneStateHeader,
+    '',
     manifestBlock,
     contractBlock,
     currentLine,
@@ -177,7 +212,7 @@ export function formatSituationForPrompt(state: GameState): string {
     alone
       ? 'ALONE ARRIVAL (BINDING): Empty ruin — no crowd, handlers, or "people who saw you arrive." Do not invent voices outside or watchers at the wall.'
       : '',
-    'RAILS: SCENE MANIFEST + packet facts + SCENE FACTS + timeline override improvisation. Do not invent named threats, loot, NPCs, or interactables absent above. Do not invent a dungeon danger tier outdoors. Do not empty a present crowd or silence shouting without time passing. Interior floor-plan Exits / EXPLORE AUTHORITY override "one room / only a gap" improvisation.',
+    'RAILS: SCENE STATE + SCENE MANIFEST + packet facts + SCENE FACTS + timeline override improvisation. Do not invent named threats, loot, NPCs, or interactables absent above. Do not invent a dungeon danger tier outdoors. Do not empty a present crowd or silence shouting without time passing. Interior floor-plan Exits / EXPLORE AUTHORITY override "one room / only a gap" improvisation.',
     'HIDDEN QUESTS: Never spoil quests with status hidden or revealed=false.',
     formatWorldLedgerBlock(state.worldLedger),
   ];
@@ -251,10 +286,11 @@ PLAYER ACTION FIDELITY (BINDING): Answer the player's last action first (e.g. se
 ===========================================================`;
 }
 
-export function formatFullMemoryBlock(state: GameState): string {
+export function formatFullMemoryBlock(state: GameState, tokenBudget?: number): string {
   const rails = formatCampaignRails(state);
   const situation = formatSituationForPrompt(state);
-  const memoryCore = formatCampaignMemoryForPrompt(state, situation, state.currentLocation ?? '');
+  const budget = tokenBudget ?? 2000; // Default 2k, can be increased dynamically
+  const memoryCore = formatCampaignMemoryForPrompt(state, situation, state.currentLocation ?? '', budget);
   const timeline = formatTimelineForPrompt(state.timeline, 12);
   return `${rails ? `${rails}\n\n` : ''}${memoryCore}
 
