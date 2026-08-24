@@ -314,20 +314,6 @@ export function scrubInventedCrowdSize(text: string, trackedCrowdSize: number): 
 }
 
 /**
- * Calculate tracked crowd size from game state for consistency checking.
- */
-export function calculateCrowdSize(state: GameState): number {
-  const alone = state.openingEstablishment?.aloneArrival === true;
-  if (alone && !state.activeEncounter) return 0;
-  
-  const present = state.sceneFacts?.present ?? [];
-  const companions = state.companions?.length ?? 0;
-  const encounter = state.activeEncounter ? 1 : 0;
-  
-  return Math.max(0, present.length + companions + encounter);
-}
-
-/**
  * Pack 12 Extended Validation: Time Skip
  * Scrubs "hours later" / "next morning" unless time of day actually changed.
  */
