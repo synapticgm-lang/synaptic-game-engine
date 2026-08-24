@@ -8,8 +8,113 @@ import { materializeWornClothes } from './wornGear';
 import { seedLocalStarterQuest } from './questPlay';
 import { applyUsualSelfToCharacter, loadPlayerProfile, type PlayerProfile } from './playerProfile';
 import { isPlayerQuestion } from './actionResolution';
+import { pickQuickResponseButtons, supportsQuickResponseButtons, generateQuickResponse } from './quickResponseButtons';
 
 const GENERIC_NAMES = /^(adventurer|survivor|unknown survivor|hero|wanderer|unknown)$/i;
+
+/**
+ * Pack 12: Handle instant quick-response button clicks.
+ * Returns state with instant response if button was handled, null otherwise.
+ */
+export function tryHandleQuickResponseButton(
+  state: GameState,
+  answer: string
+): GameState | null {
+  const est = state.openingEstablishment;
+  if (!est || est.complete) return null;
+  
+  const currentPrompt = est.pending[0];
+  if (!currentPrompt) return null;
+  
+  // Skip "✎ Other" - let user type
+  if (answer.trim() === '✎ Other' || answer.trim() === 'Other') return null;
+  
+  // Only handle quick-response kinds
+  if (!supportsQuickResponseButtons(currentPrompt.kind)) return null;
+  
+  // Check if this is one of our generated buttons
+  const quickButtons = pickQuickResponseButtons(state, currentPrompt.kind);
+  const isQuickButton = quickButtons.some(btn => 
+    btn.toLowerCase().trim() === answer.toLowerCase().trim()
+  );
+  
+  if (!isQuickButton) return null;
+  
+  // Generate instant response
+  const characterName = state.character.name || 'The designation';
+  const gmResponse = generateQuickResponse(currentPrompt.kind, answer, characterName);
+  
+  // Apply the answer to state
+  const answers = { ...est.answers, [currentPrompt.id]: answer };
+  const pending = est.pending.slice(1);
+  
+  const playerEntry: LogEntry = {
+    id: crypto.randomUUID(),
+    turn: state.turn,
+    role: 'player',
+    content: answer,
+    timestamp: Date.now(),
+  };
+  
+  const gmEntry: LogEntry = {
+    id: crypto.randomUUID(),
+    turn: state.turn,
+    role: 'gm',
+    content: gmResponse,
+    timestamp: Date.now(),
+  };
+  
+  // Apply answer to character state
+  let nextState = applyKindToState(state, currentPrompt, answer);
+  
+  return {
+    ...nextState,
+    openingEstablishment: {
+      ...est,
+      answers,
+      pending,
+      complete: pending.length === 0,
+    },
+    choices: pending.length ? establishmentChoices(pending, nextState) : nextState.choices,
+    log: [...nextState.log, playerEntry, gmEntry],
+    lastUpdated: Date.now(),
+  };
+}
+
+/**
+ * Apply opening answer to character state based on kind.
+ */
+function applyKindToState(state: GameState, prompt: OpeningPrompt, value: string): GameState {
+  switch (prompt.kind) {
+    case 'kit': {
+      const items = materializeWornClothes(value);
+      return {
+        ...state,
+        character: {
+          ...state.character,
+          inventory: [...state.character.inventory, ...items],
+        },
+      };
+    }
+    case 'appearance': {
+      return {
+        ...state,
+        character: {
+          ...state.character,
+          appearance: value,
+        },
+      };
+    }
+    case 'location': {
+      return {
+        ...state,
+        currentLocation: value,
+      };
+    }
+    default:
+      return state;
+  }
+}
 
 export function characterNameIsGeneric(name?: string): boolean {
   const n = name?.trim() ?? '';
@@ -141,9 +246,19 @@ const PLACE_SUGGESTION =
   /random\s+(?:earth\s+)?(?:place|location|city|town)|earth city|a city i actually know|a street i invent|the place this tale names/i;
 
 /** Chips for the question on screen only (`pending[0]`), never the whole cover queue. */
-export function establishmentChoices(pending: OpeningPrompt[]): string[] {
+export function establishmentChoices(pending: OpeningPrompt[], state?: GameState): string[] {
   const current = pending[0];
   if (!current) return [];
+  
+  // Pack 12: Use seed-varied quick-response buttons for kit/appearance/location
+  if (state && supportsQuickResponseButtons(current.kind)) {
+    const quickButtons = pickQuickResponseButtons(state, current.kind);
+    if (quickButtons.length > 0) {
+      return [...quickButtons, '✎ Other'];
+    }
+  }
+  
+  // Fallback to original chip logic
   const chips: string[] = [];
   if (current.kind === 'name') {
     chips.push('Random designation');
@@ -683,7 +798,7 @@ export function mergePreferredProfileIntoOpening(
         pending,
         complete: pending.length === 0,
       },
-      choices: pending.length ? establishmentChoices(pending) : state.choices,
+      choices: pending.length ? establishmentChoices(pending, state) : state.choices,
     },
   };
 }
@@ -1466,7 +1581,7 @@ export async function applyOpeningAnswer(
           pickedHookFallback: est.pickedHookFallback,
           aloneArrival: est.aloneArrival,
         },
-        choices: establishmentChoices(stillPending),
+        choices: establishmentChoices(stillPending, nextState),
         log: [
           ...appendOpeningPlayerBubble(nextState.log, nextState.turn, resolvedCoverDisplay),
           gmEntry,

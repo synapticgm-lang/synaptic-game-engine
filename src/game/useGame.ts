@@ -88,6 +88,7 @@ import {
   isAloneArrivalOpening,
   mergePreferredProfileIntoOpening,
   characterNameIsGeneric,
+  tryHandleQuickResponseButton,
 } from './openingEstablishment';
 import {
   applyOpeningContract,
@@ -1607,6 +1608,18 @@ export function useGame() {
       }
     }
 
+    // Pack 12: Handle instant quick-response buttons
+    if (isOpeningEstablishmentPending(current)) {
+      const quickResponse = tryHandleQuickResponseButton(current, input);
+      if (quickResponse) {
+        stateRef.current = quickResponse;
+        setState(quickResponse);
+        void persist(quickResponse);
+        turnInFlightRef.current = false;
+        return;
+      }
+    }
+
     let skipRepairDetection = false;
     let transportRetriesUsed = 0;
     if (current.pendingRepair) {
@@ -2013,7 +2026,7 @@ export function useGame() {
           quests: questsAfterScene,
           log: [...openingState.log, openingGm],
           choices: harvestedOpening?.pending?.length
-            ? establishmentChoices(harvestedOpening.pending)
+            ? establishmentChoices(harvestedOpening.pending, openingState)
             : openingChoices.length
               ? openingChoices
               : undefined,
@@ -3775,7 +3788,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
         || bible?.startingLocation
         || namedSeeded.currentLocation,
       currentCoordinates: { q: 0, r: 0, tier: 2, z: 0 },
-      choices: pendingCovers.length ? establishmentChoices(pendingCovers) : [],
+      choices: pendingCovers.length ? establishmentChoices(pendingCovers, newState) : [],
       log: [],
       worldLedger: emptyWorldLedger(),
       pendingGeneratedOpening: true,
@@ -3902,7 +3915,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
         quests: questsAfterScene,
         log: [openingGm],
         choices: harvestedOpening?.pending?.length
-          ? establishmentChoices(harvestedOpening.pending)
+          ? establishmentChoices(harvestedOpening.pending, committed)
           : openingChoices.length
             ? openingChoices
             : undefined,
@@ -3950,7 +3963,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
           turn: newState.turn + 1,
           log: [fallbackGm],
           choices: newState.openingEstablishment?.pending?.length
-            ? establishmentChoices(newState.openingEstablishment.pending)
+            ? establishmentChoices(newState.openingEstablishment.pending, newState)
             : undefined,
           pendingGeneratedOpening: false,
           openingEstablishment: newState.openingEstablishment

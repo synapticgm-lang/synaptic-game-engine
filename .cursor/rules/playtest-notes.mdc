@@ -9,6 +9,8 @@ John is playtesting live. Collect issues here. Do not implement until he asks fo
 
 ## Open
 
+- **2026-08-24a quick-response buttons:** Seed-varied contextual button banks for opening kit/appearance/location questions; instant client-side handling (no GM wait); "✎ Other" for typed input. Urban/fantasy/sci-fi/dystopian button sets; hybrid system: 3-4 relevant options per question + fallback. HUD stamp 24a
+
 ## Waiting (research — not tickets yet)
 
 - **Outdoor zone map depth:** Visual pass shipped 20m (topo grain, paths, POI pins vs CAD streets). Still not a full MMO zone map (terrain art layers, fog-by-discovery outdoors, district zoom). Further outdoor depth stays Waiting.

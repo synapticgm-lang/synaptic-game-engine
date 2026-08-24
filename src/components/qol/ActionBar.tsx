@@ -35,7 +35,7 @@ function lastGmStoryProse(state: GameState): string {
  */
 function resolveActions(state: GameState): string[] {
   if (isOpeningEstablishmentPending(state)) {
-    return establishmentChoices(state.openingEstablishment?.pending ?? []).slice(0, 4);
+    return establishmentChoices(state.openingEstablishment?.pending ?? [], state).slice(0, 4);
   }
   const storyProse = lastGmStoryProse(state);
   const gmChoices = (state.choices ?? [])
