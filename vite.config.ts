@@ -10,6 +10,9 @@ export default defineConfig({
       '@': fileURLToPath(new URL('./src', import.meta.url)),
     },
   },
+  optimizeDeps: {
+    exclude: ['@xenova/transformers'],
+  },
   test: {
     environment: 'node',
     include: ['src/**/*.test.ts'],
