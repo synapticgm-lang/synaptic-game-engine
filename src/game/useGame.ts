@@ -4070,7 +4070,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
         quests: questsAfterScene,
         log: [openingGm],
         choices: harvestedOpening?.pending?.length
-          ? establishmentChoices(harvestedOpening.pending, committed)
+          ? establishmentChoices(harvestedOpening.pending, newState)
           : openingChoices.length
             ? openingChoices
             : undefined,
