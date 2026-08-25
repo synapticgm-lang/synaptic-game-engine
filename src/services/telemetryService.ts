@@ -38,7 +38,7 @@ let saveId: string | null = null;
 let bridgeInstalled = false;
 
 /** High-signal debug types only — avoid flooding Ops with every click/state write. */
-const TELEMETRY_TYPES = new Set(['TURN_START', 'ERROR', 'CRITICAL']);
+const TELEMETRY_TYPES = new Set(['TURN_START', 'ERROR', 'CRITICAL', 'WARN', 'SESSION']);
 
 /** Bridge only retries/errors from debugLogger — successful callGm paths use `logApiLatency` directly. */
 const AI_TYPES = new Set(['API_RETRY']);
@@ -298,6 +298,8 @@ export function installTelemetryDebugBridge(): void {
       });
     }
 
+    // WARN + TURN_START (+ any other TELEMETRY_TYPES) → Ops so agent can "pull last session"
+    // without John pasting JSON. Schema: public.telemetry_logs (session_id / device_id).
     if (TELEMETRY_TYPES.has(upper) && upper !== 'ERROR' && upper !== 'CRITICAL') {
       void logTelemetryEvent({
         event_type: upper === 'USER_ACTION' ? 'BUTTON_CLICK' : upper,

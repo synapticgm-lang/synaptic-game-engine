@@ -3818,6 +3818,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
     systemPersonality?: SystemPersonalityId,
     useUsualSelf?: boolean,
   ) => {
+    debugLogger.beginPlaySession('new-game');
     if (
       selectedVisualMode ||
       selectedArtStyle ||
@@ -4796,6 +4797,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
       void refreshSaveSlots();
     },
     continueGame: async () => {
+      debugLogger.beginPlaySession('continue');
       debugLogger.record('SYSTEM', 'continueGame invoked — resolving local + Supabase cloud save');
       setSyncPhase('syncing');
       try {

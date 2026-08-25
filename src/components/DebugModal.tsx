@@ -1,5 +1,5 @@
-import { useState, useMemo, useEffect, useSyncExternalStore } from 'react';
-import { X, Copy, Download, Trash2, Bug, Cpu, Monitor, Smartphone, Fingerprint, Search } from 'lucide-react';
+import { useState, useMemo, useSyncExternalStore } from 'react';
+import { X, Copy, Download, Trash2, Bug, Cpu, Monitor, Smartphone, Fingerprint, Search, Hash } from 'lucide-react';
 import { debugLogger, type DebugLogEntry } from '../game/debugLogger';
 import type { GameState, Settings } from '../game/types';
 import type { Toast } from './ToastStack';
@@ -23,6 +23,7 @@ export function DebugModal({ state, settings, onClose, addToast }: Props) {
   const allLogs = debugLogger.getLogs();
   const telemetry = debugLogger.getTelemetry();
   const deviceId = debugLogger.getDeviceId();
+  const stats = debugLogger.getSessionStats();
 
   const filteredLogs = useMemo(() => {
     let logs = allLogs;
@@ -41,26 +42,45 @@ export function DebugModal({ state, settings, onClose, addToast }: Props) {
   const handleCopy = async () => {
     const success = await debugLogger.copyToClipboard(state, settings, filter === 'error' ? 'error' : 'event');
     if (success) {
-      addToast('Log copied to clipboard!', 'success');
+      addToast('Full session log copied', 'success');
     } else {
-      addToast('Clipboard blocked — using download instead', 'info');
+      addToast('Clipboard blocked — downloading instead', 'info');
       debugLogger.downloadUnifiedLog(state, settings, filter === 'error' ? 'error' : 'event');
     }
   };
 
   const handleDownload = () => {
     debugLogger.downloadUnifiedLog(state, settings, filter === 'error' ? 'error' : 'event');
-    addToast('Log downloaded', 'success');
+    addToast('Downloaded synaptic-debug-latest.json + session file', 'success');
   };
 
   const handleClear = () => {
-    debugLogger.record('DEBUG', 'User cleared debug log buffer');
-    // Force re-render
-    setTick(t => t + 1);
-    addToast('Debug log cleared', 'info');
+    debugLogger.clearSessionLogs();
+    addToast('Debug session log cleared', 'info');
   };
 
-  const errorCount = allLogs.filter(l => l.type === 'ERROR' || l.type === 'CRITICAL').length;
+  const handleCopySessionId = async () => {
+    const ok = await debugLogger.copySessionId();
+    if (ok) {
+      addToast(`Session id copied — tell Cursor: pull session ${stats.sessionId.slice(0, 8)}…`, 'success');
+    } else {
+      addToast(`Session id: ${stats.sessionId}`, 'info');
+    }
+  };
+
+  const handleToggleAutoDownload = () => {
+    const next = !stats.autoDownloadOnError;
+    debugLogger.setAutoDownloadOnError(next);
+    addToast(
+      next
+        ? 'Auto-download on ERROR on (writes synaptic-debug-latest.json)'
+        : 'Auto-download on ERROR off',
+      'info'
+    );
+  };
+
+  const errorCount = stats.errorCount;
+  const mb = (stats.estimatedBytes / (1024 * 1024)).toFixed(2);
 
   return (
     <div
@@ -94,7 +114,7 @@ export function DebugModal({ state, settings, onClose, addToast }: Props) {
           </button>
         </div>
 
-        {/* Device Info Bar */}
+        {/* Device / session info */}
         <div className="px-5 py-3 border-b border-slate-800 bg-slate-900/40 grid grid-cols-2 md:grid-cols-4 gap-3 text-[11px]">
           <div className="flex items-center gap-1.5">
             <Fingerprint size={14} className="text-amber-400 shrink-0" />
@@ -103,6 +123,20 @@ export function DebugModal({ state, settings, onClose, addToast }: Props) {
               <div className="text-slate-300 font-mono truncate" title={deviceId}>{deviceId.slice(0, 18)}…</div>
             </div>
           </div>
+          <button
+            type="button"
+            onClick={handleCopySessionId}
+            className="flex items-center gap-1.5 text-left min-w-0 rounded-md hover:bg-slate-800/60 -m-1 p-1"
+            title="Copy full session id for Cursor"
+          >
+            <Hash size={14} className="text-rose-400 shrink-0" />
+            <div className="min-w-0">
+              <div className="text-slate-500 font-mono">Session ID (tap copy)</div>
+              <div className="text-slate-300 font-mono truncate" title={stats.sessionId}>
+                {stats.sessionId.slice(0, 18)}…
+              </div>
+            </div>
+          </button>
           <div className="flex items-center gap-1.5">
             <Monitor size={14} className="text-cyan-400 shrink-0" />
             <div className="min-w-0">
@@ -119,11 +153,13 @@ export function DebugModal({ state, settings, onClose, addToast }: Props) {
               </div>
             </div>
           </div>
-          <div className="flex items-center gap-1.5">
+          <div className="flex items-center gap-1.5 col-span-2 md:col-span-4">
             <Smartphone size={14} className="text-violet-400 shrink-0" />
-            <div className="min-w-0">
-              <div className="text-slate-500 font-mono">Viewport</div>
-              <div className="text-slate-300 font-mono truncate">{String(telemetry.viewport)}</div>
+            <div className="min-w-0 flex-1">
+              <div className="text-slate-500 font-mono">Session log length</div>
+              <div className="text-slate-300 font-mono text-[10px] leading-snug">
+                Unlimited for ERROR/WARN (soft-trim INFO only if &gt;~8MB). Now: {stats.eventCount} events · ~{mb} MB · started {stats.sessionStartedAt.slice(11, 19)} UTC
+              </div>
             </div>
           </div>
         </div>
@@ -158,6 +194,19 @@ export function DebugModal({ state, settings, onClose, addToast }: Props) {
           </div>
 
           <button
+            type="button"
+            onClick={handleToggleAutoDownload}
+            className={`px-2.5 py-1.5 rounded-lg border text-[10px] font-medium transition-colors ${
+              stats.autoDownloadOnError
+                ? 'bg-amber-900/40 border-amber-700 text-amber-200'
+                : 'bg-slate-900 border-slate-700 text-slate-400 hover:text-slate-200'
+            }`}
+            title="When on, each ERROR (throttled) downloads synaptic-debug-latest.json"
+          >
+            Auto-DL ERROR {stats.autoDownloadOnError ? 'ON' : 'OFF'}
+          </button>
+
+          <button
             onClick={handleClear}
             className="p-1.5 rounded-lg bg-slate-900 border border-slate-700 text-slate-400 hover:text-rose-300 hover:border-rose-700 transition-colors"
             title="Clear logs"
@@ -187,13 +236,13 @@ export function DebugModal({ state, settings, onClose, addToast }: Props) {
             className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-emerald-700 hover:bg-emerald-600 text-white text-sm font-semibold transition-colors shadow-lg shadow-emerald-900/30"
           >
             <Copy size={16} />
-            Copy Diagnostics to Clipboard
+            Copy full session log
           </button>
           <button
             onClick={handleDownload}
             className="flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 text-sm font-medium transition-colors"
-            title="Download as file"
-            aria-label="Download diagnostics as file"
+            title="Download synaptic-debug-latest.json + session-named copy"
+            aria-label="Download full session diagnostics"
           >
             <Download size={16} />
           </button>
