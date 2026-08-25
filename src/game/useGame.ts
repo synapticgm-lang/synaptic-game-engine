@@ -2005,10 +2005,59 @@ export function useGame() {
           return;
         } else {
         const openingState = { ...stepped.state, pendingGeneratedOpening: false };
-        const openingRaw = '';
-        let openingText = openingState.openingEstablishment?.sceneWritten
-          ? stitchOpeningContinue(openingState)
-          : stitchOpeningScene(openingState);
+        
+        // GM-authored opening continue (silent fallback to stitch on fail)
+        let openingRaw = '';
+        let openingText = '';
+        let gmAuthored = false;
+        
+        if (openingState.openingEstablishment?.sceneWritten) {
+          // Continue path - try GM first
+          try {
+            const result = await callGm(
+              openingState,
+              contentSanitized || '', // Player's answer to cover question
+              settingsRef.current,
+              void 0,
+              freeCallRef
+            );
+            if (result.story?.trim()) {
+              openingRaw = result.story;
+              openingText = result.story;
+              gmAuthored = true;
+            }
+          } catch (gmError) {
+            // Silent fallback
+            logger.debug('Opening continue GM call failed, using stitch fallback', gmError);
+          }
+        } else {
+          // First page path - try GM first
+          try {
+            const result = await callGm(
+              openingState,
+              '', // no player action for first page
+              settingsRef.current,
+              void 0,
+              freeCallRef
+            );
+            if (result.story?.trim()) {
+              openingRaw = result.story;
+              openingText = result.story;
+              gmAuthored = true;
+            }
+          } catch (gmError) {
+            // Silent fallback
+            logger.debug('Opening GM call failed, using stitch fallback', gmError);
+          }
+        }
+        
+        // Fallback to stitch if GM failed
+        if (!gmAuthored) {
+          openingText = openingState.openingEstablishment?.sceneWritten
+            ? stitchOpeningContinue(openingState)
+            : stitchOpeningScene(openingState);
+        }
+        
         openingText = ensureSystemReceipt(openingState, sanitizeOpeningNarration(openingText));
         openingText = applyProseWarden(
           enforcePerspective(openingText, settingsRef.current, openingState.character.name),
@@ -3916,8 +3965,34 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
     setBusy(true);
     setError(null);
     try {
-      const openingRaw = '';
-      let openingText = stitchOpeningScene(newState);
+      // GM-authored opener (silent fallback to stitch on fail)
+      let openingRaw = '';
+      let openingText = '';
+      let gmAuthored = false;
+      
+      try {
+        const result = await callGm(
+          newState,
+          '', // no player action for opening
+          settingsRef.current,
+          void 0,
+          freeCallRef
+        );
+        if (result.story?.trim()) {
+          openingRaw = result.story;
+          openingText = result.story;
+          gmAuthored = true;
+        }
+      } catch (gmError) {
+        // Silent fallback — never toast "the book"
+        logger.debug('Opening GM call failed, using stitch fallback', gmError);
+      }
+      
+      // Fallback to stitch if GM failed
+      if (!gmAuthored) {
+        openingText = stitchOpeningScene(newState);
+      }
+      
       openingText = ensureSystemReceipt(newState, sanitizeOpeningNarration(openingText));
       openingText = applyProseWarden(
         enforcePerspective(openingText, settingsRef.current, newState.character.name),
