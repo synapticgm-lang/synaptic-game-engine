@@ -1,0 +1,51 @@
+id,sentence,why_naive_regex_fails,correct_expect,notes
+X001,"The wizard said, 'I might be inside the box, or I might not.'",hypothetical phrasing with 'box',allow,SPECULATIVE: quoted uncertainty doesn't mean the player is actually in a box
+X002,She was boxing the goblin with her bare hands.,'box' used as a verb,allow,EVIDENCED: verb usage does not indicate a container
+X003,The painted lunchbox on the poster has a red lid.,"compound word and depicted object, not an established scene container",allow,SPECULATIVE: a depiction must not become a prop
+X004,The map labels the balcony as the theatre box.,"seating-box label on a map, not an established container",allow,SPECULATIVE: box polysemy plus representation context
+X005,He stepped into the boxing ring.,'box' in 'boxing ring',allow,SPECULATIVE: boxing ring is an arena
+X006,Please check the box on the form.,'check box' on a form,allow,"SPECULATIVE: text/UI element, not physical"
+X007,The directory lists post-office box 19.,"address text, not a physical scene prop",allow,SPECULATIVE: directory text must not create a container
+X008,The sign read 'The Companion Dog'.,'companion' as a dog on a sign,allow,SPECULATIVE: mention of companion on a sign doesn't mean NPC is present
+X009,I read a book called 'A Companion to Magic'.,'companion' in a book title,allow,SPECULATIVE: book title does not imply actual companion
+X010,The software label said 'Companion App'.,'companion' on a label,allow,"SPECULATIVE: label text, no NPC"
+X011,I hope this spell will last.,'last' as a verb,allow,"SPECULATIVE: verb usage, not order"
+X012,"The portrait plaque reads “Aster Last, Founder.”","Last is a surname in depicted text, not a remaining-container modifier",allow,SPECULATIVE: surname context defeats a last-container regex
+X013,The bard sang about the doors of perception.,'doors' in a song,allow,SPECULATIVE: song lyrics don't indicate physical doors
+X014,He pointed at the windows on the map.,'windows' on a map,allow,"SPECULATIVE: drawing on a map, not real windows"
+X015,The painting showed a grand door.,'door' in a painting,allow,SPECULATIVE: depiction in art
+X016,The outside of the castle was cold.,'outside' as noun,allow,"SPECULATIVE: noun usage, player is not necessarily outside"
+X017,She had outside thoughts about the matter.,'outside' as adjective/thoughts,allow,SPECULATIVE: figurative thoughts
+X018,It will take hours to walk there.,'hours' as duration estimate,allow,"SPECULATIVE: estimate, not an actual time jump"
+X019,He locked the gold in the safe.,'safe' as a noun,allow,"SPECULATIVE: noun for strongbox, not adjective for safety"
+X020,The band 'Angry Crowd' played a song.,'crowd' as a title/album,allow,"SPECULATIVE: proper noun, not actual people"
+X021,The street seems to whisper beneath the wind.,explicit figurative marker “seems” prevents literal location speech,allow,EVIDENCED: metaphor is free; locations may not literally speak
+X022,The hall swallowed the torchlight like deep water.,"simile/personification is atmosphere, not a literal speaking location",allow,EVIDENCED: metaphor and sensory flair are free
+X023,I am as hungry as a wolf.,simile,allow,"SPECULATIVE: simile, no actual wolf present"
+X024,He is a pig when he eats.,metaphor,allow,"SPECULATIVE: metaphor, no actual pig"
+X025,"Mara says, “I have no key,” while the snapshot lists no key for her.","quoted NPC statement is character speech, not player inventory truth",allow,SPECULATIVE: quoted speech should not overwrite authoritative facts
+X026,I am not going to the dungeon.,negation,allow,SPECULATIVE: negation means the action isn't happening
+X027,"If I were a dragon, I would fly.",hypothetical,allow,SPECULATIVE: hypothetical state
+X028,Player jokes: 'Are we there yet?',player joke,allow,SPECULATIVE: out of character joke
+X029,I am literally dying of boredom.,hyperbole/metaphor,allow,SPECULATIVE: figurative dying
+X030,"The chest is a mimic, I just know it.",player speculation,allow,SPECULATIVE: unconfirmed player thought
+X031,A mural shows a porter putting shoes in the last box.,depicted narrative contains last box but does not establish a scene prop,allow,SPECULATIVE: representation context must not ground a real container
+X032,I will wait outside the door.,outside as preposition,allow,SPECULATIVE: relative position
+X033,The safe is not safe.,play on words,allow,SPECULATIVE: noun and adjective mix
+X034,A crowd of thoughts rushed in.,metaphor with 'crowd',allow,SPECULATIVE: not physical people
+X035,The last man standing wins.,'last' as adjective but in idiom,allow,SPECULATIVE: idiomatic expression
+X036,She opened the text box to read the scroll.,'text box',allow,SPECULATIVE: UI or document element
+X037,I will last longer than you.,'last' as verb,allow,SPECULATIVE: duration verb
+X038,He stared at the painted windows.,painted windows,allow,SPECULATIVE: not real windows
+X039,The dog on the sign looked fierce.,dog on sign,allow,"SPECULATIVE: art, not real dog"
+X040,I might go outside later.,hypothetical 'outside',allow,"SPECULATIVE: future intent, not current state"
+X041,The book 'Hours of Sorrow' was heavy.,'hours' in book title,allow,"SPECULATIVE: title, not time passage"
+X042,Look around the room.,real look prompt,skip,EVIDENCED: player is asking for info
+X043,What is my current inventory?,layout/info prompt,skip,EVIDENCED: asking for UI/info
+X044,Who is in the room with me?,info prompt,skip,EVIDENCED: asking for NPC info
+X045,Show me the map.,layout/info prompt,skip,EVIDENCED: asking for map display
+X046,"The market is empty, although the supplied snapshot says crowd=present and crowdSize=4.",a naive keyword regex may hit “empty” correctly but must require the explicit snapshot contradiction,scrub,EVIDENCED: crowd absence contradicts authoritative present crowd
+X047,"A hundred people cheer, although the supplied snapshot says crowdSize=3.",the number is only illegal because it contradicts the supplied small tracked count,scrub,EVIDENCED: invented large crowd size must be scrubbed
+X048,"You step outside, although the supplied snapshot remains indoor=true in the archive.",outside is a true transition contradiction only with authoritative indoor state,scrub,EVIDENCED: untracked indoor-to-outdoor transition must be scrubbed
+X049,"Hours later, dawn arrives, although timeOfDay remains evening.",hours is a true skip only because the tracked time did not advance,scrub,EVIDENCED: sudden untracked time skip must be scrubbed
+X050,The hall answers your question in a clear voice.,this is literal location speech rather than marked metaphor or echo,scrub,"EVIDENCED: locations are places, not speakers"

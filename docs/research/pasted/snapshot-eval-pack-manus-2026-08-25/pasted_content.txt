@@ -1,0 +1,146 @@
+NEW PROJECT. Unlimited run. Filename prefix: SynapticGM_snapshot_eval_pack_2026-08-25
+
+LIVE SynapticGM ONLY. Single-player hosted AI GM. No WOF. No MMO. No housing. No auction. No multiplayer. No hybrid climate. No patents. No licensed series (no D&D/WotC/SRD names, no Solo Leveling, no named isekai/VTuber IPs).
+
+Do NOT invent a Continuity-Warden LLM, critic model, fine-tune, Neo4j, or multi-agent. Warden = regex + deterministic code. You are writing EVAL FIXTURES, not architecture and not TypeScript.
+
+Bigger is better: complete markdown + CSV/JSON. Empty sections = failure. Label every non-obvious claim EVIDENCED (from this brief) or SPECULATIVE.
+
+============================================================
+PRODUCT LAW (treat as true — HUD stamp 2026-08-25b)
+============================================================
+
+Engine is source of truth. LLM is a read-only renderer.
+
+SNAPSHOT in the GM situation packet is AUTHORITY for:
+- current location
+- crowd (present | none | unknown) and approximate size when tracked
+- exits that exist (interior floor-plan doors/passages)
+- scene props / containers that have been established
+- who is present (named NPCs, companions, encounter)
+- inventory item names the player actually has
+- tracked time of day, weather, indoor/outdoor, tension when set
+
+Pre-GM HARD GATE (no API spend if blocked):
+- BLOCK: invented items the player tries to USE/DRAW/WIELD/possess; “the last/final/remaining box/crate/chest” when inventory + scene props + loose items do not support that container; absent companion; ungrounded Proper-Name talk (name not in present / companions / encounter).
+- ALLOW: talking to a Proper Name that appeared in the LAST GM story beat (even if not yet on the roster).
+- SKIP entirely: look-around / examine room; opening name-look-kit-location covers; room-layout questions (doors/windows); informational / “info or option” / panel asks.
+
+PROSE WARDEN (after GM, regex repair, do not block the whole turn):
+- Scrub “the last box / remaining crate / final chest” → a grounded rewrite (“the area” / “a box”) if SNAPSHOT has no such container.
+- Scrub invented crowd size (“hundred people”) when tracked size is small.
+- Scrub “empty / no crowd / all alone” when crowd is tracked present (rewrite toward “a few people still”).
+- Scrub “you step outside” if still indoor; “you enter the building” if still outdoor — unless SNAPSHOT says the location type changed.
+- Scrub sudden time skips (“hours later”, “festival is over”, “was not always so”) when time-of-day did not advance.
+- Scrub tension drops (“danger passes”) when tension is still high.
+- Locations are places, not speakers (“the hall answers” is illegal).
+- Atmosphere is FREE: smell, rust, cadence, metaphor, NPC mannerism, sensory flair. Do NOT flag texture adjectives as violations.
+- Factual details MUST match SNAPSHOT + ledger: stats, inventory, exits, who is here, HP/MP/XP, damage, quest facts.
+
+Hard-gate UI: repair banner, player draft restored, options like “Look around” / “Check what you carry”, Cancel allowed. No text-turn spend.
+
+============================================================
+MISSION
+============================================================
+
+Produce a pack Cursor will turn into vitest fixtures for:
+1) actionValidation / hard gate
+2) proseWarden scrubs
+3) SNAPSHOT authority (facts unchanged when they must stay unchanged)
+
+Do not write application code. Do write machine-checkable rows.
+
+============================================================
+DELIVERABLES (all required)
+============================================================
+
+1) README.md
+   - How to use the CSV
+   - Pass/fail rules
+   - What Cursor should map to which test file (names only: actionValidation.test.ts, proseWarden.test.ts)
+   - List of pattern_ids used in the CSV
+
+2) scenarios.csv
+   Minimum 80 rows. Columns EXACTLY:
+   id,
+   class,
+   setup_snapshot_json,
+   last_gm_story,
+   player_input,
+   expect_hard_gate,
+   expect_warden_scrub,
+   expect_facts_unchanged,
+   fail_symptom,
+   automated_assert,
+   notes
+
+   class enum: A-turn | B-opening | C-quest | D-prose | E-chrome
+   expect_hard_gate enum: block | allow | skip
+   expect_warden_scrub: none OR a pattern_id from your pattern list
+   expect_facts_unchanged: yes | no
+
+   setup_snapshot_json MUST be valid JSON with at least:
+   {
+     "location": "string",
+     "crowd": "present|none|unknown",
+     "crowdSize": 0,
+     "indoor": true,
+     "timeOfDay": "morning|afternoon|evening|night|unknown",
+     "tension": "calm|tense|danger|combat|unknown",
+     "exits": ["north door", "east passage"],
+     "props": ["oak pew"],
+     "present": ["Mara"],
+     "companions": [],
+     "inventory": ["travel bag", "phone"],
+     "openingCover": false,
+     "aloneArrival": false
+   }
+
+3) good_prose.csv
+   Minimum 20 rows that MUST NOT be over-scrubbed.
+   Columns: id, prose, snapshot_json, must_keep_phrases, must_not_invent, notes
+   Include musty oak, rusted hinge, metaphor, nervous mannerism, weather texture that does NOT change tracked weather.
+
+4) coverage.md
+   Explicit checklist that ALL of these exist in scenarios.csv (cite ids):
+   - last-box with empty inventory → hard gate BLOCK
+   - last-box in GM prose when props empty → warden scrub
+   - a box exists as a scene prop → ALLOW / no false scrub
+   - talk to named NPC from last GM line (name not yet in present) → ALLOW
+   - invent companion → BLOCK
+   - use/draw a sword not in inventory → BLOCK
+   - look-around → SKIP
+   - opening cover (name/look/kit) → SKIP
+   - layout ask “are there doors or windows” → SKIP
+   - “info or option” → SKIP
+   - “hundred people” when crowdSize is small → scrub
+   - empty/all-alone when crowd=present → scrub
+   - invent crowd when aloneArrival + crowd=none → scrub or gate as you specify
+   - “you step outside” when indoor=true → scrub
+   - “hours later” / festival-over retcon when time did not advance → scrub
+   - “the hall answers your question” → scrub anthropomorphized location
+   - extra invented door when exits whitelist has two → D-prose fail_symptom
+   - gold/stat number contradiction vs ledger → D-prose
+   - flair-only sentence with legal facts → good_prose, no scrub
+
+5) pattern_ids.md
+   For each expect_warden_scrub id: plain-English rewrite template, SNAPSHOT fields required, 2 fail examples, 2 leave-alone examples (flair).
+
+6) wiring_note.md
+   One page for Cursor. Map CSV columns → asserts. No TypeScript. Warn about false positives on poetry, NPC lies, player jokes.
+
+7) adversarial_almost_false.csv
+   Minimum 40 sentences a naive regex would wreck (metaphor, NPC lying, player joke, “box” meaning a seating box / theatre box, “companion” meaning a dog on a sign). Columns: id, sentence, why_naive_regex_fails, correct_expect (allow|scrub|skip), notes
+
+============================================================
+QUALITY BAR
+============================================================
+
+- Original English. No copyrighted setting names.
+- Kid-safe examples (no sexual content involving minors). Violence may be PG-13 fantasy.
+- Every BLOCK row must have a player_input a real player might type.
+- Every SKIP row must look like a real opening/layout/info ask.
+- Do not pad with near-duplicates; vary location (ruin hall, street, inn room) and system (LitRPG vs story RPG) in notes.
+- If unsure whether a case is gate vs warden, prefer: player CLAIMS a missing item → gate; GM INVENTED it in prose → warden.
+
+Start now. Return all files. Empty sections = failure.

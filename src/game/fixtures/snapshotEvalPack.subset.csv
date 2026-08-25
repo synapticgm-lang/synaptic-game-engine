@@ -1,0 +1,45 @@
+id,suite,expect,player_input
+A001,gate,block,I draw my silver sword and attack.
+A002,gate,block,I use the grappling hook to climb.
+A003,gate,block,I wield the heavy axe.
+A007,gate,block,I talk to King Alden.
+A009,gate,block,I open the last box.
+A010,gate,block,I search the remaining crate.
+B012,gate,block,I draw my glowing sword.
+B015,gate,block,I open the last box.
+C010,gate,block,I use the golden quest key to open it.
+E004,gate,block,I use the sword to cut the rope.
+E007,gate,block,I talk to Queen Ilyra.
+E015,gate,block,I tell my fox companion to scout.
+E016,gate,block,I open the remaining crate.
+A011,gate,allow,I draw my iron dagger.
+A013,gate,allow,I reply to Silas.
+A016,gate,allow,I ask Thorn how he is.
+A017,gate,allow,I open the wooden crate.
+B010,gate,allow,I ask Mara what she sees.
+E008,gate,allow,I say hello to Kael.
+E011,gate,allow,I open the chest.
+A018,gate,skip,I look around.
+A019,gate,skip,Who am I and what do I have?
+A020,gate,skip,Are there any doors or windows?
+B005,gate,skip,I look around.
+B008,gate,skip,Show my stats panel.
+E001,gate,skip,Look around the room
+E003,gate,skip,Are there doors or windows?
+D001,warden,scrub,You open the last chest.
+D002,warden,scrub,A hundred people cheer.
+D004,warden,scrub,Bystanders gather around you.
+D005,warden,scrub,You step outside into the rain.
+D007,warden,scrub,Hours later the sun sets.
+D010,warden,scrub,The danger passes.
+D011,warden,scrub,The hall answers your question.
+D019,flair,keep,You examine the box.
+D020,flair,keep,Rain-colored light lies across the floor.
+G001,flair,keep,The musty oak of the pew breathes its cellar smell into the archive.
+G002,flair,keep,Rust freckles the north door's hinge.
+G004,flair,keep,Mara wrings her hands a nervous mannerism.
+G012,flair,keep,Her apology arrives boxed in careful phrases.
+G015,flair,keep,Outside rain ticks against the glass while you remain safe indoors.
+G019,flair,keep,A safe is bolted beneath the desk though the danger remains high.
+G028,flair,keep,Your travel bag smells faintly of cedar.
+X021,flair,keep,The street seems to whisper beneath the wind.

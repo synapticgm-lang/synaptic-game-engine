@@ -1,0 +1,51 @@
+id,sentence,why_naive_regex_fails,correct_expect,notes
+X001,"The wizard said, 'I might be inside the box, or I might not.'",hypothetical phrasing with 'box',allow,SPECULATIVE: quoted uncertainty doesn't mean the player is actually in a box
+X002,She was boxing the goblin with her bare hands.,'box' used as a verb,allow,EVIDENCED: verb usage does not indicate a container
+X003,He opened his lunchbox to find a stale piece of bread.,'lunchbox' contains 'box' but is a specific item,allow,"SPECULATIVE: lunchbox is an item, not a room feature"
+X004,"The king sat in the theatre box, watching the play.",'box' as theatre seating,allow,SPECULATIVE: seating box is a location type but not a physical small container
+X005,He stepped into the boxing ring.,'box' in 'boxing ring',allow,SPECULATIVE: boxing ring is an arena
+X006,Please check the box on the form.,'check box' on a form,allow,"SPECULATIVE: text/UI element, not physical"
+X007,He left the letter in the post-office box.,'post-office box',allow,SPECULATIVE: PO box is a mail receptacle
+X008,The sign read 'The Companion Dog'.,'companion' as a dog on a sign,allow,SPECULATIVE: mention of companion on a sign doesn't mean NPC is present
+X009,I read a book called 'A Companion to Magic'.,'companion' in a book title,allow,SPECULATIVE: book title does not imply actual companion
+X010,The software label said 'Companion App'.,'companion' on a label,allow,"SPECULATIVE: label text, no NPC"
+X011,I hope this spell will last.,'last' as a verb,allow,"SPECULATIVE: verb usage, not order"
+X012,Mr. Last walked into the tavern.,'last' as a surname,allow,"SPECULATIVE: surname, not sequence"
+X013,The bard sang about the doors of perception.,'doors' in a song,allow,SPECULATIVE: song lyrics don't indicate physical doors
+X014,He pointed at the windows on the map.,'windows' on a map,allow,"SPECULATIVE: drawing on a map, not real windows"
+X015,The painting showed a grand door.,'door' in a painting,allow,SPECULATIVE: depiction in art
+X016,The outside of the castle was cold.,'outside' as noun,allow,"SPECULATIVE: noun usage, player is not necessarily outside"
+X017,She had outside thoughts about the matter.,'outside' as adjective/thoughts,allow,SPECULATIVE: figurative thoughts
+X018,It will take hours to walk there.,'hours' as duration estimate,allow,"SPECULATIVE: estimate, not an actual time jump"
+X019,He locked the gold in the safe.,'safe' as a noun,allow,"SPECULATIVE: noun for strongbox, not adjective for safety"
+X020,The band 'Angry Crowd' played a song.,'crowd' as a title/album,allow,"SPECULATIVE: proper noun, not actual people"
+X021,The street whispered secrets to him.,personification of 'street',allow,SPECULATIVE: figurative personification
+X022,The hall swallowed him whole.,personification of 'hall',allow,SPECULATIVE: metaphor for a dark hall
+X023,I am as hungry as a wolf.,simile,allow,"SPECULATIVE: simile, no actual wolf present"
+X024,He is a pig when he eats.,metaphor,allow,"SPECULATIVE: metaphor, no actual pig"
+X025,"The NPC lied, 'I have no key.'",NPC lie,allow,SPECULATIVE: false statement by NPC
+X026,I am not going to the dungeon.,negation,allow,SPECULATIVE: negation means the action isn't happening
+X027,"If I were a dragon, I would fly.",hypothetical,allow,SPECULATIVE: hypothetical state
+X028,Player jokes: 'Are we there yet?',player joke,allow,SPECULATIVE: out of character joke
+X029,I am literally dying of boredom.,hyperbole/metaphor,allow,SPECULATIVE: figurative dying
+X030,"The chest is a mimic, I just know it.",player speculation,allow,SPECULATIVE: unconfirmed player thought
+X031,He put his shoes in the box.,normal 'box' usage but not room,allow,SPECULATIVE: small container
+X032,I will wait outside the door.,outside as preposition,allow,SPECULATIVE: relative position
+X033,The safe is not safe.,play on words,allow,SPECULATIVE: noun and adjective mix
+X034,A crowd of thoughts rushed in.,metaphor with 'crowd',allow,SPECULATIVE: not physical people
+X035,The last man standing wins.,'last' as adjective but in idiom,allow,SPECULATIVE: idiomatic expression
+X036,She opened the text box to read the scroll.,'text box',allow,SPECULATIVE: UI or document element
+X037,I will last longer than you.,'last' as verb,allow,SPECULATIVE: duration verb
+X038,He stared at the painted windows.,painted windows,allow,SPECULATIVE: not real windows
+X039,The dog on the sign looked fierce.,dog on sign,allow,"SPECULATIVE: art, not real dog"
+X040,I might go outside later.,hypothetical 'outside',allow,"SPECULATIVE: future intent, not current state"
+X041,The book 'Hours of Sorrow' was heavy.,'hours' in book title,allow,"SPECULATIVE: title, not time passage"
+X042,Look around the room.,real look prompt,skip,EVIDENCED: player is asking for info
+X043,What is my current inventory?,layout/info prompt,skip,EVIDENCED: asking for UI/info
+X044,Who is in the room with me?,info prompt,skip,EVIDENCED: asking for NPC info
+X045,Show me the map.,layout/info prompt,skip,EVIDENCED: asking for map display
+X046,I am in two places at once.,true contradiction,scrub,EVIDENCED: physically impossible state
+X047,I have zero health but I am running.,true contradiction,scrub,EVIDENCED: contradictory state
+X048,The sun is shining at midnight.,true contradiction,scrub,EVIDENCED: contradictory environment
+X049,I jump over the moon.,true contradiction,scrub,EVIDENCED: impossible action
+X050,I kill the invincible god with a pebble.,true contradiction,scrub,EVIDENCED: impossible outcome

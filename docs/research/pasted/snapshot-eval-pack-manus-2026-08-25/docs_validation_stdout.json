@@ -1,0 +1,20 @@
+{
+  "status": "FAIL",
+  "required_files": [
+    "README.md",
+    "scenarios.csv",
+    "good_prose.csv",
+    "coverage.md",
+    "pattern_ids.md",
+    "wiring_note.md",
+    "adversarial_almost_false.csv"
+  ],
+  "scenario_ids_cited_in_coverage": 91,
+  "scenario_pattern_ids_used": 18,
+  "pattern_ids_documented": 18,
+  "readme_pattern_ids_listed": 18,
+  "coverage_pattern_ids_listed": 18,
+  "errors": [
+    "wiring_note missing caution/contract term: no text-turn spend"
+  ]
+}

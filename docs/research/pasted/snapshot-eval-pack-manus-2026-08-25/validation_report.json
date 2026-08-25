@@ -1,0 +1,133 @@
+{
+  "status": "PASS",
+  "counts": {
+    "scenarios": 100,
+    "good_prose": 30,
+    "adversarial_almost_false": 50
+  },
+  "class_counts": {
+    "A-turn": 22,
+    "B-opening": 18,
+    "C-quest": 16,
+    "D-prose": 28,
+    "E-chrome": 16
+  },
+  "hard_gate_counts": {
+    "allow": 51,
+    "block": 26,
+    "skip": 23
+  },
+  "distinct_locations": 55,
+  "system_note_counts": {
+    "LitRPG": 42,
+    "story RPG": 31
+  },
+  "pattern_counts": {
+    "PW_CROWD_ABSENCE_CONTRADICTION": 2,
+    "PW_CROWD_PRESENCE_INVENTION": 1,
+    "PW_CROWD_SIZE_OVERSTATE": 2,
+    "PW_ENTER_BUILDING_WHILE_OUTDOOR": 1,
+    "PW_EVENT_OVER_RETCON": 1,
+    "PW_EXIT_WHITELIST_VIOLATION": 2,
+    "PW_INVENTORY_FACT_CONTRADICTION": 2,
+    "PW_LAST_CONTAINER_UNGROUNDED": 2,
+    "PW_LEDGER_NUMBER_CONTRADICTION": 4,
+    "PW_LOCATION_AS_SPEAKER": 1,
+    "PW_LOCATION_FACT_CONTRADICTION": 1,
+    "PW_PRESENCE_ROSTER_CONTRADICTION": 1,
+    "PW_QUEST_FACT_CONTRADICTION": 5,
+    "PW_STEP_OUTSIDE_WHILE_INDOOR": 1,
+    "PW_TENSION_DROP_CONTRADICTION": 2,
+    "PW_UNGROUNDED_PAST_RETCON": 1,
+    "PW_UNTRACKED_TIME_SKIP": 2,
+    "PW_WEATHER_FACT_CONTRADICTION": 1
+  },
+  "adversarial_expect_counts": {
+    "allow": 41,
+    "scrub": 5,
+    "skip": 4
+  },
+  "coverage_hits": {
+    "grounded box allow": [
+      "A017",
+      "D019",
+      "E011"
+    ],
+    "info-option SKIP": [
+      "A021",
+      "B007",
+      "B008",
+      "C008",
+      "E010"
+    ],
+    "invent companion BLOCK": [
+      "A005",
+      "A006",
+      "B013",
+      "E006",
+      "E015"
+    ],
+    "last-box empty BLOCK": [
+      "A009"
+    ],
+    "last-box prose scrub": [
+      "D001"
+    ],
+    "last-story name allow": [
+      "A013",
+      "A014",
+      "B011",
+      "C004",
+      "E008"
+    ],
+    "layout SKIP": [
+      "A020",
+      "B004",
+      "E003"
+    ],
+    "look-around SKIP": [
+      "A018",
+      "A022",
+      "B005",
+      "B006",
+      "C015",
+      "E001"
+    ],
+    "missing weapon BLOCK": [
+      "A001",
+      "A002",
+      "A003",
+      "B012",
+      "E004",
+      "E012",
+      "E013"
+    ],
+    "opening cover SKIP": [
+      "A019",
+      "B001",
+      "B002",
+      "B003",
+      "E009"
+    ]
+  },
+  "warnings": [],
+  "errors": [],
+  "documentation_validation": {
+    "status": "PASS",
+    "required_files": [
+      "README.md",
+      "scenarios.csv",
+      "good_prose.csv",
+      "coverage.md",
+      "pattern_ids.md",
+      "wiring_note.md",
+      "adversarial_almost_false.csv"
+    ],
+    "scenario_ids_cited_in_coverage": 91,
+    "scenario_pattern_ids_used": 18,
+    "pattern_ids_documented": 18,
+    "readme_pattern_ids_listed": 18,
+    "coverage_pattern_ids_listed": 18,
+    "errors": []
+  }
+}
