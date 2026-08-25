@@ -90,6 +90,7 @@ import {
   mergePreferredProfileIntoOpening,
   characterNameIsGeneric,
   tryHandleQuickResponseButton,
+  ensureSealedOpeningBag,
 } from './openingEstablishment';
 import {
   applyOpeningContract,
@@ -3936,11 +3937,12 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
       systemPersonality:
         engineMode === 'litrpg' ? resolveLitrpgSystemPersonality(systemPersonality) : undefined,
     });
+    const sealedNewState = ensureSealedOpeningBag(rawNewState, openingPromptsRaw);
     const newState = withUpdatedHookArc(
       ensureCampaignContract(
         {
-          ...rawNewState,
-          quests: enrichQuests(rawNewState.quests ?? []),
+          ...sealedNewState,
+          quests: enrichQuests(sealedNewState.quests ?? []),
           recentBeatFingerprints: [],
           stateTxLog: [],
         },

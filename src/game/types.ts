@@ -1114,6 +1114,11 @@ export interface Settings {
   flankingAdvantage: boolean;
   /** When true, skip post-commit sentence reveal and show full GM prose immediately. */
   preferFullResponse?: boolean;
+  /**
+   * When true, show Pack 12 opening quick-response chip banks (name/look/kit/location).
+   * Default false — free-text opening; player types in the box.
+   */
+  fastSetupChips?: boolean;
 }
 
 export const DEFAULT_TURN_FRAME: TurnFrameTheme = {

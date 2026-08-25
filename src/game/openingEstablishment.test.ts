@@ -45,8 +45,15 @@ function summonedNameCover(): GameState {
 }
 
 describe('establishmentChoices — current cover only', () => {
+  const fast = { fastSetupChips: true } as import('./types').Settings;
+
+  it('default (fastSetupChips off) returns no chips', () => {
+    expect(establishmentChoices(NAME_THEN_EARTH)).toEqual([]);
+    expect(establishmentChoices(NAME_THEN_EARTH, undefined, { fastSetupChips: false } as import('./types').Settings)).toEqual([]);
+  });
+
   it('does not dump location/Earth-city chips onto a name ask', () => {
-    const chips = establishmentChoices(NAME_THEN_EARTH);
+    const chips = establishmentChoices(NAME_THEN_EARTH, undefined, fast);
     const blob = chips.join(' | ').toLowerCase();
     expect(blob).not.toMatch(/random place/);
     expect(blob).not.toMatch(/earth city/);
@@ -56,7 +63,7 @@ describe('establishmentChoices — current cover only', () => {
   });
 
   it('shows Earth-city chips only after the name cover is gone', () => {
-    const chips = establishmentChoices(NAME_THEN_EARTH.slice(1));
+    const chips = establishmentChoices(NAME_THEN_EARTH.slice(1), undefined, fast);
     const blob = chips.join(' | ').toLowerCase();
     expect(blob).toMatch(/earth city|random place/);
     expect(blob).not.toMatch(/designation/);
@@ -116,7 +123,7 @@ describe('harvest Earth origin from opening prose', () => {
       prose
     );
     expect(next.pending.some((p) => p.kind === 'location')).toBe(false);
-    expect(establishmentChoices(next.pending).join(' ')).not.toMatch(/Earth city|I was at home/i);
+    expect(establishmentChoices(next.pending, undefined, { fastSetupChips: true } as import('./types').Settings).join(' ')).not.toMatch(/Earth city|I was at home/i);
   });
 });
 
@@ -161,9 +168,9 @@ describe('opening player bubbles', () => {
         ...summonedNameCover().openingEstablishment!,
         pending: [
           {
-            id: 'pockets',
-            kind: 'kit' as const,
-            question: 'Pockets, bag, whatever rode with you. What is actually on you?',
+            id: 'wear',
+            kind: 'appearance' as const,
+            question: 'You look down. What are you wearing?',
           },
         ],
         sceneWritten: true,
@@ -175,6 +182,27 @@ describe('opening player bubbles', () => {
     );
     expect(result.deferToPlay).toBe(true);
     expect(result.generateOpening).toBe(false);
+  });
+
+  it('seals kit cover instead of blocking with a questionnaire', async () => {
+    const state = {
+      ...summonedNameCover(),
+      openingEstablishment: {
+        ...summonedNameCover().openingEstablishment!,
+        pending: [
+          {
+            id: 'pockets',
+            kind: 'kit' as const,
+            question: 'Pat yourself down. What is really on you?',
+          },
+        ],
+        sceneWritten: true,
+      },
+    };
+    const result = await applyOpeningAnswer(state, 'look around');
+    expect(result.generateOpening).toBe(true);
+    expect(result.state.openingEstablishment?.complete).toBe(true);
+    expect(result.state.inventory.some((i) => /^bag$/i.test(i.name))).toBe(true);
   });
 });
 

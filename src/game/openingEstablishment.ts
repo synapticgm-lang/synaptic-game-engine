@@ -9,6 +9,7 @@ import { seedLocalStarterQuest } from './questPlay';
 import { applyUsualSelfToCharacter, loadPlayerProfile, type PlayerProfile } from './playerProfile';
 import { isPlayerQuestion } from './actionResolution';
 import { pickQuickResponseButtons, supportsQuickResponseButtons, generateQuickResponse } from './quickResponseButtons';
+import { loadSettings } from './db';
 
 const GENERIC_NAMES = /^(adventurer|survivor|unknown survivor|hero|wanderer|unknown)$/i;
 
@@ -20,6 +21,7 @@ export function tryHandleQuickResponseButton(
   state: GameState,
   answer: string
 ): GameState | null {
+  if (!openingFastSetupChipsEnabled()) return null;
   const est = state.openingEstablishment;
   if (!est || est.complete) return null;
   
@@ -210,11 +212,28 @@ function isUnusablePlace(place: string, state: GameState): boolean {
 const PLACE_SUGGESTION =
   /random\s+(?:earth\s+)?(?:place|location|city|town)|earth city|a city i actually know|a street i invent|the place this tale names/i;
 
+/** True when Settings → fastSetupChips is on (Pack 12 opening chip banks). Default off. */
+export function openingFastSetupChipsEnabled(settings?: Settings | null): boolean {
+  if (settings && typeof settings.fastSetupChips === 'boolean') return settings.fastSetupChips;
+  try {
+    return !!loadSettings().fastSetupChips;
+  } catch {
+    return false;
+  }
+}
+
 /** Chips for the question on screen only (`pending[0]`), never the whole cover queue. */
-export function establishmentChoices(pending: OpeningPrompt[], state?: GameState): string[] {
+export function establishmentChoices(
+  pending: OpeningPrompt[],
+  state?: GameState,
+  settings?: Settings | null
+): string[] {
   const current = pending[0];
   if (!current) return [];
-  
+
+  // Product law: natural free-text opening by default — no phone/purse/backpack chip rows.
+  if (!openingFastSetupChipsEnabled(settings)) return [];
+
   // Pack 12: Use seed-varied quick-response buttons for kit/appearance/location
   if (state && supportsQuickResponseButtons(current.kind)) {
     const quickButtons = pickQuickResponseButtons(state, current.kind);
@@ -222,8 +241,8 @@ export function establishmentChoices(pending: OpeningPrompt[], state?: GameState
       return [...quickButtons, '✎ Other'];
     }
   }
-  
-  // Fallback to original chip logic
+
+  // Fallback to original chip logic (only when fastSetupChips is on)
   const chips: string[] = [];
   if (current.kind === 'name') {
     chips.push('Random designation');
@@ -715,6 +734,8 @@ export function filterOpeningPrompts(
   character: GameState['character']
 ): OpeningPrompt[] {
   return prompts.filter((p) => {
+    // Kit is sealed — bag exists undeclared; no questionnaire blocking play.
+    if (p.kind === 'kit') return false;
     if (p.kind === 'name' && character.name?.trim() && !characterNameIsGeneric(character.name)) return false;
     if (p.kind === 'appearance' && character.appearance?.trim() && !isJunkSetupValue(character.appearance)) {
       return false;
@@ -724,6 +745,60 @@ export function filterOpeningPrompts(
     }
     return true;
   });
+}
+
+const SEALED_BAG: Item = {
+  id: 'start-bag-sealed',
+  name: 'Bag',
+  rarity: 'Common',
+  quantity: 1,
+  itemType: 'accessory',
+  itemLevel: 1,
+  provenance: 'On you this morning',
+  description:
+    'A bag from before the pull. Contents sealed until you search, dump, or someone inventories them.',
+};
+
+/** Grant a sealed Earth bag (undeclared contents) when the campaign would have asked a kit cover. */
+export function ensureSealedOpeningBag(state: GameState, prompts?: OpeningPrompt[]): GameState {
+  const hadKitPrompt =
+    (prompts ?? state.openingEstablishment?.pending ?? []).some((p) => p.kind === 'kit')
+    || (resolveActiveCampaignBible(state)?.openingPrompts ?? []).some((p) => p.kind === 'kit')
+    || state.campaignBibleId === 'summoned-pact'
+    || state.engineMode === 'litrpg';
+  if (!hadKitPrompt) return state;
+  if (state.inventory.some((i) => /^bag$/i.test(i.name))) return state;
+  return { ...state, inventory: [...state.inventory, { ...SEALED_BAG, id: `start-bag-${state.saveId ?? '0'}` }] };
+}
+
+/**
+ * Drop kit covers from an in-progress opening and seal the bag.
+ * Mid-session saves that still have a kit questionnaire get unblocked.
+ */
+export function sealKitOpeningCovers(state: GameState): GameState {
+  const est = state.openingEstablishment;
+  if (!est || est.complete) return state;
+  if (!est.pending.some((p) => p.kind === 'kit')) {
+    return ensureSealedOpeningBag(state);
+  }
+  const pending = est.pending.filter((p) => p.kind !== 'kit');
+  const withBag = ensureSealedOpeningBag(
+    {
+      ...state,
+      openingEstablishment: {
+        ...est,
+        pending,
+        complete: pending.length === 0,
+        answers: {
+          ...est.answers,
+          pockets: est.answers?.pockets ?? 'sealed — undeclared until searched',
+        },
+      },
+      choices: pending.length ? establishmentChoices(pending, state) : state.choices,
+    },
+    [{ id: 'pockets', kind: 'kit', question: 'sealed' }]
+  );
+  return withBag;
 }
 
 /** Apply Settings → Profile preferred name/gender to a stuck opening (skip name cover). */
@@ -1280,6 +1355,24 @@ export async function applyOpeningAnswer(
   /** Scene is live — route this line to the GM as play, not another cover prompt. */
   deferToPlay?: boolean;
 }> {
+  const beforeSeal = state.openingEstablishment;
+  // Drop kit questionnaire; sealed bag — never block with chip banks / "Pat yourself down".
+  state = sealKitOpeningCovers(state);
+  const sealedFinishedOpening =
+    !!beforeSeal
+    && !beforeSeal.complete
+    && beforeSeal.pending.some((p) => p.kind === 'kit')
+    && state.openingEstablishment?.complete === true;
+
+  if (sealedFinishedOpening) {
+    return {
+      state,
+      generateOpening: true,
+      openingNotes:
+        'CONTINUE the already-written scene. Kit is a sealed bag — undeclared until the player searches or dumps it. Do not ask a kit form.',
+    };
+  }
+
   const est = state.openingEstablishment;
   if (!est || est.complete || !est.pending.length) {
     return { state, generateOpening: false };

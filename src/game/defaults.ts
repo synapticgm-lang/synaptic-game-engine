@@ -217,5 +217,6 @@ export function createDefaultSettings(): Settings {
     cleaveMechanics: false,
     flankingAdvantage: false,
     preferFullResponse: false,
+    fastSetupChips: false,
   };
 }

@@ -125,32 +125,20 @@ export function CenterPanel({ state, busy, turnPhase = 'idle', streamingReveal =
     });
   };
 
-  // Opening covers need story + input — never leave Hide chrome stuck on from a prior session.
+  // Once per New Game / save: clear stale Hide prefs so opening starts visible.
+  // Do NOT depend on hideText/hideOptions — those deps made every tap instantly undo.
+  const hideClearedForSaveRef = useRef<string | null>(null);
   useEffect(() => {
-    if (!state.openingEstablishment || state.openingEstablishment.complete) return;
-    if (hideText) {
-      setHideText(false);
-      writeBoolPref(HIDE_TEXT_KEY, false);
-    }
-    if (hideOptions) {
-      setHideOptions(false);
-      writeBoolPref(HIDE_OPTIONS_KEY, false);
-    }
-  }, [
-    state.openingEstablishment?.complete,
-    state.openingEstablishment?.pending?.length,
-    hideText,
-    hideOptions,
-  ]);
-
-  // If story exists but Hide text was left on from sessionStorage, restore the log on load.
-  useEffect(() => {
-    if (!hideText) return;
-    const hasStory = state.log.some((e) => e.role === 'gm' && hasRealGmStory(e));
-    if (!hasStory) return;
+    const est = state.openingEstablishment;
+    if (!est || est.complete) return;
+    const key = state.saveId ?? 'opening';
+    if (hideClearedForSaveRef.current === key) return;
+    hideClearedForSaveRef.current = key;
     setHideText(false);
+    setHideOptions(false);
     writeBoolPref(HIDE_TEXT_KEY, false);
-  }, [state.log, hideText]);
+    writeBoolPref(HIDE_OPTIONS_KEY, false);
+  }, [state.saveId, state.openingEstablishment?.complete]);
 
   useEffect(() => {
     if (voice.transcript) setInput(voice.transcript);

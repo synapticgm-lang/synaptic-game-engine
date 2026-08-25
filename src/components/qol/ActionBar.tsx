@@ -62,7 +62,7 @@ export function ActionBar({ state, busy, onAction, engineMode, hidden = false }:
     onAction(pick);
   };
 
-  if (hidden) return null;
+  if (hidden || actions.length === 0) return null;
 
   return (
     <div className="flex flex-col gap-1.5 pb-2 sm:flex-wrap sm:flex-row sm:items-stretch">

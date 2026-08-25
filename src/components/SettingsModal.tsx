@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
-import { X, Save, BookText, Volume2, Mic, Dice5, Shield, Lock, Baby, Gauge, Download, Upload, KeyRound, Eye, EyeOff, RefreshCw, Check, Loader2, Image as ImageIcon, Trash2, ZoomIn, Scale, Home, Zap, CircleSlash, Sparkles, Grid3x3, MessageSquareMore, Palette, Layers, Dot, MessageCircle, Map as MapIcon, Eye as EyeIcon, BarChart3, Clock, ScrollText, BookOpen, Swords, Mail, UserRound, FlaskConical } from 'lucide-react';
+import { X, Save, BookText, Volume2, Mic, Dice5, Shield, Lock, Baby, Gauge, Download, Upload, KeyRound, Eye, EyeOff, RefreshCw, Check, Loader2, Image as ImageIcon, Trash2, ZoomIn, Scale, Home, Zap, CircleSlash, Sparkles, Grid3x3, MessageSquareMore, Palette, Layers, Dot, MessageCircle, Map as MapIcon, Eye as EyeIcon, BarChart3, Clock, ScrollText, BookOpen, Swords, Mail, UserRound, FlaskConical, List } from 'lucide-react';
 import type { Settings, DiceAnimationMode, ContentMode, GmStrictness, KeyStatus, PostLoginBehavior, BgMode, ColorVariant, PanelFrequency, PanelBorderIntensity, MapTriggerMode, FogRevealThreshold, StatVerbosity, StatFrequency, GameState, NarrativePerspective, ViolenceLevel, CursingLevel, ComicLayoutMode, ComicReadingDirection, SaveSlotInfo, EngineMode } from '@/game/types';
 import { ART_STYLE_PRESETS } from '@/game/types';
 import { validateApiKey } from '@/game/apiValidation';
@@ -354,6 +354,15 @@ export function SettingsModal({ settings, storyName, engineMode, gameState, onSa
                 description="Skip sentence-by-sentence reveal after the turn commits"
                 checked={!!draft.preferFullResponse}
                 onChange={(v) => update('preferFullResponse', v)}
+              />
+            </div>
+            <div className="mt-3">
+              <ToggleRow
+                icon={<List size={15} />}
+                label="Fast setup chips"
+                description="Show ready-made name/look/kit buttons on New Game (off = type freely)"
+                checked={!!draft.fastSetupChips}
+                onChange={(v) => update('fastSetupChips', v)}
               />
             </div>
           </Section>
