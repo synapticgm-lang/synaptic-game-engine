@@ -1,6 +1,7 @@
 import { shouldUseComicGrid } from '@/game/comicImagePrompt';
 import { visibleJournalQuests } from '@/game/questPlay';
 import { isExplorableDungeon } from '@/game/placeAuthority';
+import { isAloneArrivalOpening } from '@/game/openingEstablishment';
 import { useGame } from '@/game/useGame';
 import { useBgImage } from '@/game/useBgImage';
 import { applySettingsCosmetics } from '@/game/uiTheme';
@@ -499,6 +500,7 @@ export default function App() {
           currentLocation={state.currentLocation}
           currentCoordinates={state.currentCoordinates}
           combatLocked={!!(state.activeEncounter && state.activeEncounter.hp > 0)}
+          aloneArrival={isAloneArrivalOpening(state)}
           onEnsureLocalMap={game.hydratePlayFromLog}
           onLoadDungeon={(blueprintId, dungeonName, isProcedural, tier, nodeCount) => {
             if (game.loadDungeon) {

@@ -24,6 +24,8 @@ interface DungeonMapModalProps {
   currentCoordinates?: Location3D;
   currentLocation?: string;
   combatLocked?: boolean;
+  /** Empty ruin / Summoned Pact alone arrival — pending copy must not invent crowds. */
+  aloneArrival?: boolean;
   onMoveNode: (nodeId: string) => void;
   onExitDungeon: () => void;
   onEnsureLocalMap?: () => void;
@@ -73,6 +75,7 @@ export const DungeonMapModal: React.FC<DungeonMapModalProps> = ({
   currentCoordinates,
   currentLocation,
   combatLocked = false,
+  aloneArrival = false,
   onMoveNode,
   onExitDungeon,
   onEnsureLocalMap,
@@ -128,12 +131,16 @@ export const DungeonMapModal: React.FC<DungeonMapModalProps> = ({
           </div>
           <p className="mt-4 text-sm text-slate-300 leading-relaxed">
             You are in <span className="font-medium sgm-info-accent">{currentLocation?.trim() || 'an unmapped place'}</span>.
-            {isInteriorPlace(currentLocation)
+            {aloneArrival
+              ? ' The System sketches this empty structure — no crowds, no people on the map until the ledger places someone here.'
+              : isInteriorPlace(currentLocation)
               ? ' The System sketches a full floor plan for this interior. Visited rooms stay open; unvisited rooms stay shaded until you walk them.'
               : ' The System builds a local area map from wherever you said you are — a market square, a Kyoto alley, anywhere in the world.'}
           </p>
           <p className="mt-3 text-xs sgm-adventure-map-scale opacity-80">
-            {isInteriorPlace(currentLocation)
+            {aloneArrival
+              ? ' Empty ruin: rooms and passages only. Names wait for you to walk them.'
+              : isInteriorPlace(currentLocation)
               ? ' Doors mark normal room links; dashed/broken marks are damaged gaps or sealed secrets — you still have to find secrets in play.'
               : 'Name the street or store in play if this is still empty.'}
           </p>

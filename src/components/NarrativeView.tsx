@@ -198,6 +198,7 @@ function DmNarration({ entry, engineMode, showTurnAsk, streamingReveal, onAccept
             <div className="mb-1 flex items-center gap-1 font-mono text-[10px] uppercase tracking-[0.18em] text-blue-300">
               <Terminal size={10} />
               Status
+              <span className="font-sans normal-case tracking-normal text-[9px] text-blue-300/70">Turn results</span>
             </div>
             <div className="space-y-0.5">
               {systemLines.map((line, i) => (

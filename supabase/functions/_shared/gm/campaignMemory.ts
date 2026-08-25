@@ -522,61 +522,30 @@ export function formatCampaignMemoryForPrompt(
     .slice(0, 5)
     .map((n) => `- ${n.relationshipSummary}`)
     .join('\n');
-  
-  // Build hierarchical memory sections
+
+  // Compact prompt memory: recent beats + keyword retrieve + one arc/chapter line.
+  // Keyword-only on the hosted prompt path (no embeddings / extra LLM).
   let hierarchicalMemory = '';
-  let usedTokens = 0;
-  
-  // Level 0: Recent turns (last 15, full detail) - always included
-  const recentTurns = (memory.turnSummaries ?? []).slice(-15);
+
+  const recentTurns = (memory.turnSummaries ?? []).slice(-4);
   if (recentTurns.length > 0) {
-    const recentText = recentTurns.map(t => `T${t.turn}: ${t.text}`).join('\n');
-    hierarchicalMemory += `\n=== RECENT TURNS (last 15, full detail) ===\n${recentText}\n`;
-    usedTokens += Math.ceil(recentText.length / 4);
+    const recentText = recentTurns.map((t) => `T${t.turn}: ${t.text}`).join('\n');
+    hierarchicalMemory += `\n=== RECENT BEATS ===\n${recentText}\n`;
   }
-  
-  // Level 1: Chapter summaries (20-turn blocks)
-  const chapters = memory.chapterSummaries ?? [];
-  if (chapters.length > 0 && usedTokens < tokenBudget * 0.6) {
-    const chapterText = chapters.slice(-5).map(ch => {
-      const events = ch.keyEvents.slice(0, 3).join('; ');
-      return `Ch T${ch.turnRange[0]}-T${ch.turnRange[1]}: ${events}`;
-    }).join('\n');
-    hierarchicalMemory += `\n=== CHAPTER SUMMARIES (last 5 × 20-turn blocks) ===\n${chapterText}\n`;
-    usedTokens += Math.ceil(chapterText.length / 4);
+
+  const retrieved = retrieveMemorySnippets(memory, queryForRetrieve, 4).join('\n');
+  if (retrieved) {
+    hierarchicalMemory += `\n=== RETRIEVED MEMORY (keyword) ===\n${retrieved}\n`;
   }
-  
-  // Level 2: Arc summaries (100-turn blocks)
-  const arcs = memory.arcSummaries ?? [];
-  if (arcs.length > 0 && usedTokens < tokenBudget * 0.7) {
-    const arcText = arcs.map(arc => `${arc.summary}`).join('\n');
-    hierarchicalMemory += `\n=== ARC SUMMARIES (100-turn blocks) ===\n${arcText}\n`;
-    usedTokens += Math.ceil(arcText.length / 4);
-  }
-  
-  // Level 3: Importance-weighted older memories (if budget allows)
-  if (usedTokens < tokenBudget * 0.8) {
-    const olderTurns = (memory.turnSummaries ?? [])
-      .filter(t => t.turn <= state.turn - 15); // Exclude recent (already included)
-    
-    if (olderTurns.length > 0) {
-      const remainingBudget = Math.floor(tokenBudget * 0.8 - usedTokens);
-      const important = selectImportantMemories(olderTurns, remainingBudget);
-      
-      if (important.length > 0) {
-        const importantText = important.map(t => 
-          `T${t.turn} [imp:${(t.importance ?? 0.5).toFixed(2)}]: ${t.text}`
-        ).join('\n');
-        hierarchicalMemory += `\n=== IMPORTANT OLDER MEMORIES (importance-weighted) ===\n${importantText}\n`;
-        usedTokens += Math.ceil(importantText.length / 4);
-      }
-    }
-  }
-  
-  // Legacy keyword retrieval (fallback if no hierarchical yet)
-  let retrieved = '';
-  if (!hierarchicalMemory.trim()) {
-    retrieved = retrieveMemorySnippets(memory, queryForRetrieve, 4).join('\n');
+
+  const latestArc = (memory.arcSummaries ?? []).slice(-1)[0];
+  const latestChapter = (memory.chapterSummaries ?? []).slice(-1)[0];
+  const arcLine = latestArc?.summary
+    ?? (latestChapter
+      ? `Ch T${latestChapter.turnRange[0]}-T${latestChapter.turnRange[1]}: ${latestChapter.keyEvents.slice(0, 3).join('; ')}`
+      : '');
+  if (arcLine) {
+    hierarchicalMemory += `\n=== ARC ===\n${arcLine}\n`;
   }
 
   let body = `=== CAMPAIGN SUMMARY (ALWAYS) ===
@@ -586,7 +555,7 @@ ${personality}
 === SITUATION (CURRENT + PREVIOUS) ===
 ${situationBlock}
 === ACTIVE CONDITIONS ===
-${state.character.conditions?.length ? state.character.conditions.join(', ') : 'none'}${hierarchicalMemory || `\n=== RETRIEVED MEMORY (MIDDLE — KEEP TIGHT) ===\n${retrieved || '(none)'}\n`}
+${state.character.conditions?.length ? state.character.conditions.join(', ') : 'none'}${hierarchicalMemory || '\n=== RETRIEVED MEMORY (MIDDLE — KEEP TIGHT) ===\n(none)\n'}
 === PLAYER / AUTO PINS ===
 ${pins || '(none)'}
 === UNRESOLVED CONSEQUENCES (MUST NOT FORGET) ===

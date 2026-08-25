@@ -22,12 +22,13 @@ import {
 } from './cloudSync';
 import { filterSystemLogForEngine, suppressNoOpStatusEcho } from './systemLog';
 import { callGm, callGmAutoFight, type GmResult } from './aiService';
+import { gmProxyHost } from './gmProxy';
 import { simulateCombat, buildAutoFightPrompt } from './combat';
 import type { EnemyStats } from './combat';
 import { isAutoFightWarningDismissed } from '@/components/AutoFightWarningModal';
 import { generateComicImage, generateVideo, VideoProviderNotConfiguredError } from '@/services/openRouterService';
 import { enforcePerspective } from './perspectiveWarden';
-import { applyProseWarden, calculateCrowdSize } from './proseWarden';
+import { applyProseWarden, calculateCrowdSize, collectSceneObjectNames } from './proseWarden';
 import { applyLocalityWarden } from './locality';
 import {
   bindSessionImageCache,
@@ -102,6 +103,7 @@ import { dropInsultGear } from './wornGear';
 import { formatCampaignStoryName, getCampaignBibleById, isNsfwCampaign } from '@/data/campaigns';
 import { applyAccusationFromInput } from './mysteryCulprit';
 import { parsePlayerIntent, groundPlayerAction, isSpeechOrProtest, isRoomLayoutExploreAsk } from './intentParser';
+import { validateActionHard } from './actionValidation';
 import {
   checkObligationCoverage,
   buildObligationRetryBlock,
@@ -168,6 +170,8 @@ import {
   buildClarifiedInput,
   detectRepairSituation,
   extractRepairOptions,
+  isExploreOrLayoutAsk,
+  isInformationalOrAsk,
   matchRepairOption,
   pickRepairCopy,
   resolveRepairVoiceId,
@@ -1629,7 +1633,9 @@ export function useGame() {
         setRestoreDraft(input);
         return;
       }
-      input = buildClarifiedInput(current.pendingRepair.playerInput, picked);
+      input = current.pendingRepair.situation === 'unsupported'
+        ? picked
+        : buildClarifiedInput(current.pendingRepair.playerInput, picked);
       const cleared = { ...current, pendingRepair: null };
       stateRef.current = cleared;
       setState(cleared);
@@ -1735,6 +1741,56 @@ export function useGame() {
       }
     }
 
+    let hardGateRewritten: string | undefined;
+    if (
+      !skipRepairDetection
+      && !freeOpeningTurn
+      && !isOpeningEstablishmentPending(current)
+      && !isRoomLayoutExploreAsk(mediated.text)
+      && !isInformationalOrAsk(mediated.text)
+      && !isExploreOrLayoutAsk(mediated.text)
+    ) {
+      const lastGmStory =
+        current.log.filter((e) => e.role === 'gm').slice(-1)[0]?.content ?? '';
+      const validation = validateActionHard(mediated.text, current, lastGmStory);
+      if (!validation.valid) {
+        const errorMessage = validation.violations.join(' ');
+        debugLogger.record('WARN', 'Hard gate blocked action', {
+          codes: validation.violations.slice(0, 3),
+          input: mediated.text.slice(0, 80),
+          turn: current.turn,
+        });
+        const repairPlayerEntry: LogEntry = {
+          id: uid(),
+          turn: current.turn,
+          role: 'player',
+          content: mediated.text,
+          timestamp: Date.now(),
+        };
+        setState((s) =>
+          s
+            ? {
+                ...s,
+                pendingRepair: {
+                  id: crypto.randomUUID(),
+                  situation: 'unsupported',
+                  playerInput: mediated.text,
+                  message: `Action blocked. ${errorMessage} Rephrase, pick **Look around**, or **Check what you carry**.`,
+                  options: ['Look around', 'Check what you carry'],
+                  createdAt: Date.now(),
+                },
+                log: [...s.log, repairPlayerEntry],
+              }
+            : s
+        );
+        setRestoreDraft(mediated.text);
+        addToast(errorMessage, 'info');
+        turnInFlightRef.current = false;
+        return;
+      }
+      if (validation.rewritten) hardGateRewritten = validation.rewritten;
+    }
+
     const honeymoonLeft = Math.max(0, current.storyStartTextTurnsRemaining ?? 0);
 
     // Sync tier + spend a text turn from story-start bonus, then capacity ledger.
@@ -1763,7 +1819,7 @@ export function useGame() {
 
     // Diegetic content rewrite confirm (Pack 7)
     const pendingRewrite = current.pendingContentRewrite;
-    let rewriteSource = mediated.text;
+    let rewriteSource = hardGateRewritten ?? mediated.text;
     if (pendingRewrite) {
       const proceed = /^(proceed|yes|y|ok|okay|confirm|continue)\b/i.test(mediated.text.trim())
         || mediated.text.trim().toLowerCase() === pendingRewrite.rewritten.toLowerCase();
@@ -1956,7 +2012,12 @@ export function useGame() {
         openingText = ensureSystemReceipt(openingState, sanitizeOpeningNarration(openingText));
         openingText = applyProseWarden(
           enforcePerspective(openingText, settingsRef.current, openingState.character.name),
-          { currentLocation: openingState.currentLocation },
+          {
+            currentLocation: openingState.currentLocation,
+            aloneArrival: isAloneArrivalOpening(openingState),
+            inventory: openingState.inventory,
+            sceneProps: collectSceneObjectNames(openingState),
+          },
         );
         if (settingsRef.current.contentMode === 'kid') {
           openingText = filterKidModeText(openingText);
@@ -2373,6 +2434,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
               attempt: attempt + 1,
               kind,
               timeoutMs: gmTimeoutMs,
+              host: gmProxyHost(),
             });
             setRetryStatus(retryMsg);
             addToast(retryMsg, 'info');
@@ -2996,6 +3058,15 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
           hasMappedDoorExits: doorish.length > 0,
           adjacentRoomNames: exits.map((e) => e.name),
           crowdSize: calculateCrowdSize(workingState),
+          crowdPresent: workingState.sceneFacts?.crowd === 'present',
+          currentTimeOfDay: workingState.sceneFacts?.timeOfDay,
+          previousTimeOfDay: workingState.previousSceneFacts?.timeOfDay,
+          isIndoor: workingState.sceneFacts?.indoor,
+          wasIndoor: workingState.previousSceneFacts?.indoor,
+          currentTension: workingState.sceneFacts?.tension,
+          previousTension: workingState.previousSceneFacts?.tension,
+          inventory: workingState.inventory ?? liveCurrent.inventory,
+          sceneProps: collectSceneObjectNames(workingState),
         });
       }
       {
@@ -3580,7 +3651,9 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
           ? turnFailExhaustedMessage(failKind)
           : turnFailPlayerMessage(failKind);
       debugLogger.record('WARN', 'turn fail classified', {
-        failKind,
+        kind: failKind,
+        attempt: transportRetriesUsed,
+        host: gmProxyHost(),
         errMsg,
         transportRetriesUsed,
       });
@@ -3848,7 +3921,12 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
       openingText = ensureSystemReceipt(newState, sanitizeOpeningNarration(openingText));
       openingText = applyProseWarden(
         enforcePerspective(openingText, settingsRef.current, newState.character.name),
-        { currentLocation: newState.currentLocation },
+        {
+          currentLocation: newState.currentLocation,
+          aloneArrival: isAloneArrivalOpening(newState),
+          inventory: newState.inventory,
+          sceneProps: collectSceneObjectNames(newState),
+        },
       );
       if (settingsRef.current.contentMode === 'kid') {
         openingText = filterKidModeText(openingText);

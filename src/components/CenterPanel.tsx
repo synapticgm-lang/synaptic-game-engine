@@ -713,6 +713,7 @@ function SystemLogPanel({ lines, verbosity }: { lines: string[]; verbosity: Stat
     <div className="ml-4 mt-2 max-w-lg rounded-lg border border-blue-500/50 border-l-4 border-l-sky-400 bg-blue-950/50 px-3 py-2 shadow-inner shadow-blue-900/40">
       <div className="mb-1 flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.18em] text-blue-300">
         <Terminal size={10} /> Status
+        <span className="font-sans normal-case tracking-normal text-[9px] text-blue-300/70">Turn results</span>
       </div>
       <div className="space-y-0.5">
         {filtered.map((line, i) => (

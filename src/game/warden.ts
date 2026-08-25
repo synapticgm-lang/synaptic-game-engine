@@ -12,12 +12,13 @@ import { detectSceneContradiction } from './sceneFacts';
 import { detectFactLockViolations } from './factLocks';
 import { resolveSeededRarity } from './dungeonSeed';
 import { scrubInventedProperNouns } from './narrativeScrub';
-import { applyProseWarden, applyProseWardenAsync, calculateCrowdSize } from './proseWarden';
+import { applyProseWarden, applyProseWardenAsync, calculateCrowdSize, collectSceneObjectNames } from './proseWarden';
 import { findManifestInventions } from './sceneManifest';
 import { continuityStrict } from './opsKillSwitches';
 import { isInteriorMap } from './placeAuthority';
 import { listInteriorExitsFromHere } from './mapEngine';
 import { isAloneArrivalOpening } from './openingEstablishment';
+import { buildBindingConstraints, detectConstraintViolations, repairConstraintViolations } from './bindingConstraints';
 
 export interface WardenResult {
   /** Events allowed after sheet checks. */
@@ -244,12 +245,23 @@ export async function runWarden(
     currentTension: state.sceneFacts?.tension,
     previousTension: prevFacts?.tension,
     enableGrammarCheck,
+    inventory: state.inventory,
+    sceneProps: collectSceneObjectNames(state),
   };
   
-  // Use async warden if grammar check enabled, otherwise sync
-  const polished = enableGrammarCheck
+  const polishedBase = enableGrammarCheck
     ? await applyProseWardenAsync(scrub.text, wardenCtx)
     : applyProseWarden(scrub.text, wardenCtx);
+  const constraints = buildBindingConstraints(state);
+  const constraintHits = detectConstraintViolations(polishedBase, constraints);
+  const polished = constraintHits.length
+    ? repairConstraintViolations(polishedBase, constraints)
+    : polishedBase;
+  if (constraintHits.length) {
+    for (const hit of constraintHits.slice(0, 4)) {
+      notes.push(`Constraint repair: ${hit}`);
+    }
+  }
   if (scrub.stripped.length) {
     for (const name of scrub.stripped.slice(0, 6)) {
       notes.push(`Claim-ground scrub: ${name}`);

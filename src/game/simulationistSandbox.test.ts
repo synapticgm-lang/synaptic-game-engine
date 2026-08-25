@@ -77,7 +77,7 @@ describe('Simulationist Sandbox', () => {
       },
     });
     const text = formatSituationForPrompt(state);
-    expect(text).toMatch(/### SCENE STATE/);
+    expect(text).toMatch(/### SNAPSHOT/);
     expect(text).toMatch(/Zone Threat: Tier 5 vs Player Level 3/);
     expect(text).toMatch(/\[ZONE THREAT: Tier 5 vs Player Level 3\]/);
     expect(text).toMatch(/\[FACTION MATRIX:.*Ember Guild=friendly/);

@@ -1,8 +1,6 @@
 import type { FactionStanding, GameState, PowerScaling, SituationPacket, WorldLedger } from './types';
 import { formatTimelineForPrompt } from './timelineFormat';
 import { playerFacingLocation } from './locationName';
-import { formatSceneFactsForPrompt } from './sceneFacts';
-import { formatSceneManifestForPrompt } from './sceneManifest';
 import { formatCampaignContractForPrompt } from './campaignContract';
 import { formatHiddenRoomLedger } from './dungeonSeed';
 import {
@@ -18,7 +16,7 @@ import { formatCampaignMemoryForPrompt } from './campaignMemory';
 import { formatTutorialBeatMandate } from './tutorialBeats';
 import { formatLocalityForPrompt } from './locality';
 import { formatHiddenCulpritRail } from './mysteryCulprit';
-import { formatInteriorExploreAuthority } from './mapEngine';
+import { formatInteriorExploreAuthority, listInteriorExitsFromHere } from './mapEngine';
 
 export function effectivePowerScaling(state: GameState): PowerScaling {
   return state.powerScaling ?? 'balanced';
@@ -113,77 +111,123 @@ export function buildSituationPacket(state: GameState): SituationPacket {
   };
 }
 
-export function formatSituationForPrompt(state: GameState): string {
+/**
+ * One compact truth block for the GM. Atmosphere is free; facts must match.
+ */
+export function formatSceneSnapshotForPrompt(state: GameState): string {
   const s = buildSituationPacket(state);
   const alone = state.openingEstablishment?.aloneArrival === true;
   const threat = resolveThreatTier(state);
   const level = Math.max(1, state.character?.level ?? 1);
   const presence =
     alone && !state.activeEncounter
-      ? 'Alone'
+      ? 'alone — no established NPCs'
       : s.presentEntities.length && s.presentEntities[0] !== 'none established'
         ? s.presentEntities.slice(0, 6).join('; ')
         : 'none established';
-  
-  // Crowd count tracking for consistency
-  const crowdSize = alone ? 0 : Math.max(0, s.presentEntities.filter(e => e !== 'none established').length);
-  const crowdLabel = 
-    crowdSize === 0 ? 'Empty/Alone'
-    : crowdSize <= 3 ? `Intimate (~${crowdSize} people)`
-    : crowdSize <= 8 ? `Small group (~${crowdSize} people)`
-    : crowdSize <= 15 ? `Modest crowd (~${crowdSize} people)`
-    : `Large crowd (${crowdSize}+ people)`;
-  
-  // Pack 12 Extended Scene Info
+
+  const crowdTracked = alone && !state.activeEncounter ? 'none' : (state.sceneFacts?.crowd ?? 'unknown');
+  const crowdSize = alone ? 0 : Math.max(0, s.presentEntities.filter((e) => e !== 'none established').length);
+  const crowdLabel =
+    crowdTracked === 'none' || (alone && !state.activeEncounter)
+      ? 'none'
+      : crowdTracked === 'present' || crowdSize > 0
+        ? crowdSize <= 3
+          ? `present / intimate (~${Math.max(crowdSize, 1)})`
+          : crowdSize <= 8
+            ? `present / small (~${crowdSize})`
+            : crowdSize <= 15
+              ? `present / modest (~${crowdSize})`
+              : `present / large (${crowdSize}+)`
+        : 'not established';
+
+  let exits = 'none established';
+  if (state.activeDungeon && isInteriorMap(state.activeDungeon)) {
+    const listed = listInteriorExitsFromHere(state.activeDungeon);
+    exits = listed.length
+      ? listed.map((e) => `${e.noun}→${e.name}`).join(', ')
+      : 'none mapped from this room';
+  } else {
+    const sheetExits = (state.locationSheet?.exits ?? []).map((e) => e.label).filter(Boolean);
+    if (sheetExits.length) exits = sheetExits.slice(0, 8).join(', ');
+  }
+
+  const props = Array.from(new Set([
+    ...(state.sceneFacts?.props ?? []),
+    ...(state.locationSheet?.interactables ?? []).map((i) => i.name).filter(Boolean),
+  ])).slice(0, 10);
+  const inventory = (state.inventory ?? []).map((i) => i.name).filter(Boolean);
+  const openAsks = (state.campaignMemory?.consequences ?? [])
+    .filter((t) => t.unresolved && t.text?.trim())
+    .slice(0, 4)
+    .map((t) => t.text.trim());
+
+  const scale = mapScaleLabel(resolveMapScale(state));
+  const danger = dangerTierLabel(resolveDangerTier(state));
   const timeLabel = state.sceneFacts?.timeOfDay && state.sceneFacts.timeOfDay !== 'unknown'
     ? state.sceneFacts.timeOfDay
-    : 'not established';
+    : undefined;
   const weatherLabel = state.sceneFacts?.weather && state.sceneFacts.weather !== 'unknown'
     ? state.sceneFacts.weather
-    : 'not established';
+    : undefined;
   const locationTypeLabel = state.sceneFacts?.indoor !== undefined
-    ? (state.sceneFacts.indoor ? 'Interior' : 'Exterior')
-    : 'not established';
+    ? (state.sceneFacts.indoor ? 'interior' : 'exterior')
+    : undefined;
   const tensionLabel = state.sceneFacts?.tension && state.sceneFacts.tension !== 'unknown'
     ? state.sceneFacts.tension
-    : 'not established';
-  
-  const sceneStateHeader = [
-    '### SCENE STATE',
+    : undefined;
+  const noiseLabel = state.sceneFacts?.noise && state.sceneFacts.noise !== 'unknown'
+    ? state.sceneFacts.noise
+    : undefined;
+
+  const lines = [
+    '### SNAPSHOT',
     `- Location: ${s.location}`,
     threat != null
       ? `- Zone Threat: Tier ${threat} vs Player Level ${level}`
       : `- Zone Threat: none (street/outdoors or unset)`,
-    `- Immediate Presence: ${presence}`,
-    `- Crowd Size: ${crowdLabel}`,
-    `- Time of Day: ${timeLabel}`,
-    `- Weather: ${weatherLabel}`,
-    `- Location Type: ${locationTypeLabel}`,
-    `- Tension: ${tensionLabel}`,
+    `- Crowd: ${crowdLabel}`,
+    `- Presence: ${presence}`,
+    `- Exits: ${exits}`,
+    `- Props: ${props.join(', ') || 'none established'}`,
+    `- Inventory: ${inventory.length ? inventory.slice(0, 10).join(', ') : 'none'}`,
     `- Encounter: ${s.encounter}`,
     `- Active Quests (revealed): ${s.activeQuests.join('; ')}`,
     `- Power Scaling: ${effectivePowerScaling(state)}`,
-    '',
-    '**BINDING**: Do not invent large crowds (50+, 100+) unless Crowd Size says Large. Respect tracked presence count.',
-    '**BINDING**: Do not skip time (hours later, next morning) unless Time of Day or World Ledger clock changed. Outdoor Weather persists.',
-    '**BINDING**: Interior locations stay interior unless the player exits. Do not write "you step outside" if Location Type is Interior and the player did not use an exit.',
-  ].join('\n');
+    `- Map: ${scale}${danger ? ` | ${danger}` : ''}`,
+  ];
+  if (timeLabel) lines.push(`- Time of Day: ${timeLabel}`);
+  if (weatherLabel) lines.push(`- Weather: ${weatherLabel}`);
+  if (locationTypeLabel) lines.push(`- Location Type: ${locationTypeLabel}`);
+  if (tensionLabel) lines.push(`- Tension: ${tensionLabel}`);
+  if (noiseLabel) lines.push(`- Noise: ${noiseLabel}`);
+  if (state.sceneFacts?.lastBeat) lines.push(`- Last beat: ${state.sceneFacts.lastBeat}`);
+  if (openAsks.length) lines.push(`- Open asks: ${openAsks.join('; ')}`);
+  lines.push('');
+  lines.push(
+    'AUTHORITY: Narrate richly — descriptive, engaging language and narrative flair are required. Atmosphere (smell, rust, cadence, metaphor, NPC mannerism) is free. Do not contradict these facts or the ledger. Do not invent items, doors, named people, or numeric results absent from this snapshot.'
+  );
+  return lines.join('\n');
+}
+
+export function formatSituationForPrompt(state: GameState): string {
+  const s = buildSituationPacket(state);
+  const alone = state.openingEstablishment?.aloneArrival === true;
+  const snapshot = formatSceneSnapshotForPrompt(state);
 
   const npcBlock = (state.npcMemories ?? [])
     .slice(0, 5)
     .map((m) => `${m.npcName}[${m.disposition}]: ${m.facts.slice(-2).join('; ') || '—'}`)
     .join('\n');
-  const sceneBlock = formatSceneFactsForPrompt(state.sceneFacts);
-  const manifestBlock = formatSceneManifestForPrompt(state);
   const currentSheet = state.locationSheet;
   const prevSheet = state.previousLocationSheet;
   const danger = resolveDangerTier(state);
   const scale = resolveMapScale(state);
   const dangerLine = dangerTierLabel(danger);
   const scaleLine = mapScaleLabel(scale);
-  const currentLine = `CURRENT LOCATION SHEET: ${currentSheet?.name ?? s.location} | mapScale: ${scaleLine}${dangerLine ? ` | ${dangerLine}` : ' | dangerTier: none (street/outdoors)'} | interactables: ${(currentSheet?.interactables ?? []).map((i) => `${i.name}:${i.state}`).join(', ') || 'none'} | exits: ${(currentSheet?.exits ?? []).map((e) => e.label).join(', ') || 'none'}`;
+  const currentLine = `CURRENT LOCATION SHEET: ${currentSheet?.name ?? s.location} | mapScale: ${scaleLine}${dangerLine ? ` | ${dangerLine}` : ' | dangerTier: none (street/outdoors)'} | interactables: ${(currentSheet?.interactables ?? []).map((i) => `${i.name}:${i.state}`).join(', ') || 'none'}`;
   const previousLine = prevSheet?.name
-    ? `PREVIOUS LOCATION SHEET: ${prevSheet.name} | interactables: ${(prevSheet.interactables ?? []).map((i) => `${i.name}:${i.state}`).join(', ') || 'none'} | exits: ${(prevSheet.exits ?? []).map((e) => e.label).join(', ') || 'none'}`
+    ? `PREVIOUS LOCATION SHEET: ${prevSheet.name} | interactables: ${(prevSheet.interactables ?? []).map((i) => `${i.name}:${i.state}`).join(', ') || 'none'}`
     : 'PREVIOUS LOCATION SHEET: none';
   const placeFacts = (state.timeline ?? [])
     .filter((f) => {
@@ -206,33 +250,26 @@ export function formatSituationForPrompt(state: GameState): string {
   const simulationist = formatSimulationistBlocks(state);
   const none = '(none)';
   const lines = [
-    sceneStateHeader,
+    snapshot,
     '',
-    manifestBlock,
     contractBlock,
     currentLine,
     previousLine,
     placeRegistry ? `PLACE REGISTRY (authority for name/tier/arc):\n${placeRegistry}` : '',
     ...simulationist,
-    sceneBlock || '',
-    `Encounter: ${s.encounter}`,
     `Dungeon: ${s.dungeon}`,
     interiorExplore || '',
-    `Present entities: ${s.presentEntities.join(' | ')}`,
-    `Active quests (revealed only — never mention hidden Guide Book hooks): ${s.activeQuests.join(' | ')}`,
     'NPC memories (how they were treated sticks — no karma meter):',
     npcBlock || none,
     'Place-scoped facts (current + last location):',
     placeFacts.length ? placeFacts.join('\n') : none,
-    'Recent facts:',
-    s.recentFacts.length ? s.recentFacts.join('\n') : none,
     hiddenLedger || '',
     tutorialMandate || '',
     formatLocalityForPrompt(state) || '',
     alone
-      ? 'ALONE ARRIVAL (BINDING): Empty ruin — no crowd, handlers, or "people who saw you arrive." Do not invent voices outside or watchers at the wall.'
+      ? 'ALONE ARRIVAL: Empty ruin — no handlers or "people who saw you arrive." Do not invent voices outside or watchers at the wall.'
       : '',
-    'RAILS: SCENE STATE + SCENE MANIFEST + packet facts + SCENE FACTS + timeline override improvisation. Do not invent named threats, loot, NPCs, or interactables absent above. Do not invent a dungeon danger tier outdoors. Do not empty a present crowd or silence shouting without time passing. Interior floor-plan Exits / EXPLORE AUTHORITY override "one room / only a gap" improvisation.',
+    'RAILS: SNAPSHOT + ledger are fact authority. Narrate richly; do not contradict them. Do not invent named threats, loot, NPCs, doors, or interactables absent above. Do not invent a dungeon danger tier outdoors. Interior floor-plan Exits / EXPLORE AUTHORITY override "one room / only a gap" improvisation.',
     'HIDDEN QUESTS: Never spoil quests with status hidden or revealed=false.',
     formatWorldLedgerBlock(state.worldLedger),
   ];
@@ -318,5 +355,5 @@ export function formatFullMemoryBlock(state: GameState, tokenBudget?: number): s
 ${timeline}
 =================================================
 OUTCOME TOKEN RECAP: Obey the structured outcome token supplied with this turn; never invert success/fail.
-FLUIDITY: Atmosphere and unnamed detail are free. Named people, unique places, unique gear, and quest titles must already be in the ledger / packets above — do not soft-invent them.`;
+FLUIDITY: Descriptive language and narrative flair are required. Atmosphere and unnamed detail are free. Factual details (stats, inventory, exits, who is here, damage) MUST match the SNAPSHOT / data sheets / ledger — do not invent items, doors, named NPCs, or numeric results.`;
 }

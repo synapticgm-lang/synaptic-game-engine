@@ -5,7 +5,7 @@
  * There is no general "does this make sense" critic — that would be a second LLM.
  */
 
-import type { GameState } from './types';
+import type { GameState, Item } from './types';
 
 /**
  * Calculate tracked crowd size from game state for consistency checking.
@@ -19,6 +19,19 @@ export function calculateCrowdSize(state: GameState): number {
   const encounter = state.activeEncounter ? 1 : 0;
   
   return Math.max(0, present.length + companions + encounter);
+}
+
+/** Names from scene props, containers, interactables, and floor loose items. */
+export function collectSceneObjectNames(state: GameState): string[] {
+  const names: string[] = [...(state.sceneFacts?.props ?? [])];
+  for (const bag of state.containers ?? []) names.push(bag.name);
+  for (const it of state.locationSheet?.interactables ?? []) {
+    if (it.name) names.push(it.name);
+  }
+  const dungeon = state.activeDungeon;
+  const node = dungeon?.nodes.find((n) => n.id === dungeon.currentNodeId);
+  for (const loose of node?.hidden?.looseItems ?? []) names.push(loose.label);
+  return names;
 }
 
 export type ProseWardenContext = {
@@ -45,6 +58,12 @@ export type ProseWardenContext = {
   // Pack 13 Grammar Quality
   /** Enable LanguageTool grammar check (async, adds ~50-100ms). Default: true for High tier, false for Free/Mid. */
   enableGrammarCheck?: boolean;
+  
+  // Phase 1: Deterministic State Architecture
+  /** Player inventory for invented container detection. */
+  inventory?: Item[];
+  /** Scene props / interactables / loose floor items — not inventory. */
+  sceneProps?: string[];
 };
 
 /** Interiors that already name "here" — nearby is for things that are not here. */
@@ -403,6 +422,65 @@ export function scrubInventedTensionChange(text: string, currentTension?: string
   return text;
 }
 
+const CONTAINER_KIND = /box|crate|chest|pouch|bag|sack|barrel|trunk/;
+
+function collectContainerTypes(inventory: Item[], extraNames: string[]): Set<string> {
+  const containerTypes = new Set<string>();
+  const addFrom = (name: string) => {
+    const n = name.toLowerCase();
+    if (/box/.test(n)) containerTypes.add('box');
+    if (/crate/.test(n)) containerTypes.add('crate');
+    if (/chest/.test(n)) containerTypes.add('chest');
+    if (/pouch/.test(n)) containerTypes.add('pouch');
+    if (/bag/.test(n)) containerTypes.add('bag');
+    if (/sack/.test(n)) containerTypes.add('sack');
+    if (/barrel/.test(n)) containerTypes.add('barrel');
+    if (/trunk/.test(n)) containerTypes.add('trunk');
+  };
+  for (const item of inventory) addFrom(item.name);
+  for (const extra of extraNames) addFrom(extra);
+  return containerTypes;
+}
+
+/**
+ * Phase 1: Scrub invented prior containers that don't exist in inventory/scene.
+ * Catches: "last box", "final crate", "remaining chest", etc.
+ */
+export function scrubInventedContainers(
+  text: string,
+  inventory: Item[] = [],
+  extraNames: string[] = [],
+): string {
+  if (!text || !CONTAINER_KIND.test(text)) return text;
+
+  const containerTypes = collectContainerTypes(inventory, extraNames);
+
+  if (containerTypes.size === 0) {
+    return text.replace(
+      /\b(?:the\s+)?(?:last|final|remaining|other|another)\s+(box(?:es)?|crate(?:s)?|chest(?:s)?|pouch(?:es)?|bag(?:s)?|sack(?:s)?|barrel(?:s)?|trunk(?:s)?)\b/gi,
+      'the area'
+    );
+  }
+
+  return text.replace(
+    /\b(last|final|remaining|other)\s+(box(?:es)?|crate(?:s)?|chest(?:s)?|pouch(?:es)?|bag(?:s)?|sack(?:s)?|barrel(?:s)?|trunk(?:s)?)\b/gi,
+    (match, modifier, container) => {
+      const singular = container.replace(/e?s$/, '').toLowerCase();
+      if (!containerTypes.has(singular)) {
+        return 'the area';
+      }
+      if (
+        modifier.toLowerCase() === 'remaining'
+        || modifier.toLowerCase() === 'last'
+        || modifier.toLowerCase() === 'final'
+      ) {
+        return `the ${singular}`;
+      }
+      return match;
+    }
+  );
+}
+
 /**
  * Synchronous prose warden - fast regex-based fixes.
  * Use this for immediate, in-memory corrections.
@@ -423,6 +501,7 @@ export function applyProseWarden(text: string, ctx?: ProseWardenContext): string
   );
   next = scrubAnthropomorphizedLocation(next);
   next = scrubInventedCrowdSize(next, ctx?.crowdSize ?? 0, ctx?.crowdPresent);
+  next = scrubInventedContainers(next, ctx?.inventory ?? [], ctx?.sceneProps ?? []);
   next = scrubInventedTimeSkip(next, ctx?.currentTimeOfDay, ctx?.previousTimeOfDay);
   next = scrubInventedLocationChange(next, ctx?.isIndoor, ctx?.wasIndoor);
   next = scrubInventedTensionChange(next, ctx?.currentTension, ctx?.previousTension);

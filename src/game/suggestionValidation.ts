@@ -199,6 +199,19 @@ export function findUnsupportedItemClaims(input: string, state: GameState): stri
   return Array.from(new Set(claims.map(normalize)));
 }
 
+/**
+ * Conservative item-use claims for the pre-GM hard gate.
+ * Omits scatter named-weapon mentions ("look at the sword on the wall") that are exploratory.
+ */
+export function findHardItemUseClaims(input: string, state: GameState): string[] {
+  const claims = collectUnsupportedClaims(input, state, [
+    ITEM_USE_CLAIM,
+    WEAPON_USE_CLAIM,
+    ITEM_POSSESSION_CLAIM,
+  ]);
+  return Array.from(new Set(claims.map(normalize)));
+}
+
 function isTokenGrounded(claimed: string, corpus: Set<string>): boolean {
   const needle = normalize(claimed);
   if (!needle) return true;

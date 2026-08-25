@@ -16,6 +16,7 @@ const FILES = [
   'inventory.ts',
   'panelBudget.ts',
   'situationPacket.ts',
+  'bindingConstraints.ts',
   'sceneFacts.ts',
   'sceneManifest.ts',
   'introductionPermit.ts',
