@@ -33,6 +33,23 @@ export function isNoOpCheckSuccessLine(line: string): boolean {
   );
 }
 
+/**
+ * Empty / zero-change STATUS filler (GM often writes this when nothing happened).
+ * When every remaining line matches, omit STATUS chrome entirely.
+ */
+export function isEmptyStatusNoiseLine(line: string): boolean {
+  const t = line.replace(/^[ \t]*_>\s*/, '').trim();
+  return (
+    /^no\s+xp\s+or\s+loot\s+changes?\s+this\s+turn\.?$/i.test(t)
+    || /^no\s+(?:xp|loot|mechanical|status)\s+changes?\s+this\s+turn\.?$/i.test(t)
+    || /^no\s+changes?\s+this\s+turn\.?$/i.test(t)
+    || /^nothing\s+(?:material\s+)?(?:changed|changes)\s+this\s+turn\.?$/i.test(t)
+    || /^no\s+xp\s+(?:or\s+loot\s+)?(?:gained|awarded)\.?$/i.test(t)
+    || /^xp\s+gained:\s*0\b/i.test(t)
+    || /^loot:\s*(?:none|nothing|n\/a)\.?$/i.test(t)
+  );
+}
+
 /** Player-facing Status panel — strip internal jargon and idle sheet dumps. */
 export function isNoisySystemLogLine(line: string): boolean {
   return (
@@ -122,6 +139,7 @@ export function filterSystemLogForEngine(lines: string[], engineMode: EngineMode
     .filter(Boolean)
     .filter((l) => !isInventedStreetDangerLine(l))
     .filter((l) => !isNoisySystemLogLine(l))
+    .filter((l) => !isEmptyStatusNoiseLine(l))
     .filter((l) => !/^no xp gained\.?$/i.test(l))
     .filter((l) => !/^xp gained:\s*0\b/i.test(l))
     .filter((l) => !/^(?:_>\s*)?SYSTEM LOG$/i.test(l))

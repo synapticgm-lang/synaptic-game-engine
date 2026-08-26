@@ -70,6 +70,14 @@
 | Many stamps | “Which build am I on?” | HUD + meta stamp |
 | 19d / 20e | Frame over name; stamp on bug | CSS hide / icon-only |
 | 20e open | HP/MP overlap @ 384px | *Still open* — needs layout owner |
+| **26f** | Debug open → “realm fractured” after deploy | Stale Vite `lazy()` chunk (`DebugModal-*.js` 404). `safeLazy` one-shot reload + modal `LazyChunkBoundary` |
+
+### Quest / STATUS (Class C)
+
+| When | Symptom | Patch |
+|---|---|---|
+| 20r / 19c / 26a | No-op Location/Quest Focus / Perception SUCCESS | `suppressNoOpStatusEcho` + filter |
+| **26f** | Empty STATUS “No XP or loot changes this turn” | `isEmptyStatusNoiseLine` — omit STATUS chrome when filter empties |
 
 ### Art (Class F)
 

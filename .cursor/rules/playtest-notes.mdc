@@ -9,7 +9,7 @@ John is playtesting live. Collect issues here. Do not implement until he asks fo
 
 ## Open
 
-_(none — 2026-08-26e shipped Download play transcript)_
+_(none — 2026-08-26f shipped empty STATUS hide + Debug chunk crash fix)_
 
 **Residual risk (26b):** Choices that invent props without `the/a/an` articles (e.g. "Inspect crystals on street") still need stronger token grounding; display filter uses last GM story only — GM can still emit bad pads that get stripped at ActionBar, leaving fewer buttons until pad fills.
 
@@ -18,6 +18,8 @@ _(none — 2026-08-26e shipped Download play transcript)_
 **Residual risk (26d):** Comic-lite likeness is prompt-lock only (no reference sheet); Free may rarely illustrate if illustrated trial/Klein caps exhausted — chrome + prose continue. Multi-panel strips / Director / portrait composite remain deferred.
 
 **Residual risk (26e):** Transcript Options section only for turns committed after 26e; older log entries omit it (by design). Display pad is snapshotted at commit — if ActionBar later diverged mid-session without a new commit, transcript matches commit-time pad.
+
+**Residual risk (26f):** After a deploy, first open of a lazy modal on a stale tab may still one-shot reload (by design). If reload already happened and chunk still missing (CDN edge), Debug closes with toast instead of white-screen — hard refresh still needed.
 
 ## Waiting (research — not tickets yet)
 
@@ -30,6 +32,8 @@ _(none — 2026-08-26e shipped Download play transcript)_
 - Premium theme five-rater / Shop preview parity (Manus T8/T9 P0-04) — after playtest of `2026-08-19t` Vampire rescue; ingest `docs/research/manus-premium-themes-ingest-2026-08-19.md`
 
 ## Done (already shipped)
+
+- **2026-08-26f Empty STATUS + Debug chunk crash:** Suppress STATUS chrome when only empty filler remains (`No XP or loot changes this turn` / zero-change lines) — keep STATUS when XP/loot/quest/HP etc. changed. Debug open no longer white-screens on stale Vite chunk after deploy: `safeLazy` one-shot reload + `LazyChunkBoundary` closes modal + toast; ErrorBoundary copy for chunk miss. Evidence: `docs/bugs/playtest-2026-08-26-debug-crash/`. HUD stamp 26f. Client-only.
 
 - **2026-08-26e Download play transcript:** Persist `offeredChoices` on GM `LogEntry` at commit (post-pipeline / ActionBar pad, plus opening chips). Settings → General → Download play transcript → chronological `.md` (GM → Options → player; systemLog lightly; old saves omit Options). HUD stamp 26e. Client-only.
 

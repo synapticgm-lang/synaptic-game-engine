@@ -600,12 +600,12 @@ function LogRow({ entry, lorebook, showSystemLog, statVerbosity, engineMode, sho
           )}
         </div>
       )}
-      {hasRealGmStory(entry) && showSystemLog && entry.systemLog && entry.systemLog.length > 0 && (
-        <SystemLogPanel
-          lines={filterSystemLogForEngine(entry.systemLog, engineMode)}
-          verbosity={statVerbosity}
-        />
-      )}
+      {hasRealGmStory(entry) && showSystemLog && (() => {
+        const lines = filterSystemLogForEngine(entry.systemLog ?? [], engineMode);
+        return lines.length > 0 ? (
+          <SystemLogPanel lines={lines} verbosity={statVerbosity} />
+        ) : null;
+      })()}
       <BeautyMomentOfferLink
         offer={entry.beautyOffer}
         contentMode={contentMode}

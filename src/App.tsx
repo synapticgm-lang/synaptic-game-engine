@@ -6,7 +6,7 @@ import { useGame } from '@/game/useGame';
 import { useBgImage } from '@/game/useBgImage';
 import { applySettingsCosmetics } from '@/game/uiTheme';
 import { ensureTestCosmeticUnlock } from '@/game/cosmeticEntitlements';
-import { lazy, Suspense, useEffect, useState } from 'react';
+import { Suspense, useEffect, useState } from 'react';
 import { Hud } from '@/components/Hud';
 import { LeftDrawer } from '@/components/LeftDrawer';
 import { RightDrawer } from '@/components/RightDrawer';
@@ -23,20 +23,21 @@ import { AutoFightTipModal, isAutoFightTipDismissed } from '@/components/AutoFig
 import { DiceTrayToolbar } from '@/components/qol/DiceTrayToolbar';
 import { EpitaphBar } from '@/components/qol/EpitaphBar';
 import { exportSessionToPdf, downloadPdf } from '@/services/pdfExportService';
+import { LazyChunkBoundary, isChunkLoadError, safeLazy } from '@/utils/safeLazy';
 
-const SettingsModal = lazy(() => import('@/components/SettingsModal').then(m => ({ default: m.SettingsModal })));
-const ApiSetupModal = lazy(() => import('@/components/ApiSetupModal').then(m => ({ default: m.ApiSetupModal })));
-const NewGameModal = lazy(() => import('@/components/NewGameModal').then(m => ({ default: m.NewGameModal })));
-const QuestLogModal = lazy(() => import('@/components/QuestLogModal').then(m => ({ default: m.QuestLogModal })));
-const DungeonMapModal = lazy(() => import('@/components/DungeonMapModal').then(m => ({ default: m.DungeonMapModal })));
-const DebugModal = lazy(() => import('@/components/DebugModal').then(m => ({ default: m.DebugModal })));
-const GMLibrary = lazy(() => import('@/components/GMLibrary').then(m => ({ default: m.GMLibrary })));
-const CharacterWindow = lazy(() => import('@/components/CharacterWindow').then(m => ({ default: m.CharacterWindow })));
-const MerchantWindow = lazy(() => import('@/components/MerchantWindow').then(m => ({ default: m.MerchantWindow })));
-const QuestUnlockModal = lazy(() => import('@/components/QuestUnlockModal').then(m => ({ default: m.QuestUnlockModal })));
-const QuestFailModal = lazy(() => import('@/components/QuestFailModal').then(m => ({ default: m.QuestFailModal })));
-const OutOfTurnsAdOffer = lazy(() => import('@/components/OutOfTurnsAdOffer').then(m => ({ default: m.OutOfTurnsAdOffer })));
-const OutOfMemorableAdOffer = lazy(() => import('@/components/OutOfMemorableAdOffer').then(m => ({ default: m.OutOfMemorableAdOffer })));
+const SettingsModal = safeLazy(() => import('@/components/SettingsModal').then(m => ({ default: m.SettingsModal })));
+const ApiSetupModal = safeLazy(() => import('@/components/ApiSetupModal').then(m => ({ default: m.ApiSetupModal })));
+const NewGameModal = safeLazy(() => import('@/components/NewGameModal').then(m => ({ default: m.NewGameModal })));
+const QuestLogModal = safeLazy(() => import('@/components/QuestLogModal').then(m => ({ default: m.QuestLogModal })));
+const DungeonMapModal = safeLazy(() => import('@/components/DungeonMapModal').then(m => ({ default: m.DungeonMapModal })));
+const DebugModal = safeLazy(() => import('@/components/DebugModal').then(m => ({ default: m.DebugModal })));
+const GMLibrary = safeLazy(() => import('@/components/GMLibrary').then(m => ({ default: m.GMLibrary })));
+const CharacterWindow = safeLazy(() => import('@/components/CharacterWindow').then(m => ({ default: m.CharacterWindow })));
+const MerchantWindow = safeLazy(() => import('@/components/MerchantWindow').then(m => ({ default: m.MerchantWindow })));
+const QuestUnlockModal = safeLazy(() => import('@/components/QuestUnlockModal').then(m => ({ default: m.QuestUnlockModal })));
+const QuestFailModal = safeLazy(() => import('@/components/QuestFailModal').then(m => ({ default: m.QuestFailModal })));
+const OutOfTurnsAdOffer = safeLazy(() => import('@/components/OutOfTurnsAdOffer').then(m => ({ default: m.OutOfTurnsAdOffer })));
+const OutOfMemorableAdOffer = safeLazy(() => import('@/components/OutOfMemorableAdOffer').then(m => ({ default: m.OutOfMemorableAdOffer })));
 
 export default function App() {
   const game = useGame();
@@ -548,14 +549,26 @@ export default function App() {
       )}
 
       {showDebug && (
-        <Suspense fallback={null}>
-          <DebugModal
-            state={state}
-            settings={game.settings}
-            onClose={() => setShowDebug(false)}
-            addToast={game.addToast}
-          />
-        </Suspense>
+        <LazyChunkBoundary
+          onFail={(err) => {
+            setShowDebug(false);
+            game.addToast(
+              isChunkLoadError(err)
+                ? 'Debug panel out of date after an update — hard-refresh, then try again.'
+                : 'Debug panel failed to open. Hard-refresh and try again.',
+              'error'
+            );
+          }}
+        >
+          <Suspense fallback={null}>
+            <DebugModal
+              state={state}
+              settings={game.settings}
+              onClose={() => setShowDebug(false)}
+              addToast={game.addToast}
+            />
+          </Suspense>
+        </LazyChunkBoundary>
       )}
 
       <Suspense fallback={null}>

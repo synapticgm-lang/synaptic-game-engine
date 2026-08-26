@@ -12,7 +12,7 @@ import {
   resolveInteriorEdgeKind,
 } from './mapEngine';
 import { inventsPresenceOnEmptyScene, sceneSafeFallbacks } from './choicePipeline';
-import { suppressNoOpStatusEcho, dedupeQuestStatusEcho } from './systemLog';
+import { suppressNoOpStatusEcho, dedupeQuestStatusEcho, filterSystemLogForEngine } from './systemLog';
 import { compileSceneManifest, formatSceneManifestForPrompt } from './sceneManifest';
 
 const ALONE_RUIN =
@@ -152,5 +152,17 @@ describe('20r map-authority explore + alone presence + status dedupe', () => {
       'Quest Unlocked: exploring the ruin',
     ]);
     expect(questLines).toHaveLength(1);
+  });
+
+  it('hides empty STATUS filler (no XP/loot noise)', () => {
+    expect(
+      filterSystemLogForEngine(['No XP or loot changes this turn.'], 'litrpg')
+    ).toEqual([]);
+    expect(
+      filterSystemLogForEngine(
+        ['No XP or loot changes this turn.', 'XP Gained: 12', 'Loot: iron nail'],
+        'litrpg'
+      )
+    ).toEqual(['XP Gained: 12', 'Loot: iron nail']);
   });
 });
