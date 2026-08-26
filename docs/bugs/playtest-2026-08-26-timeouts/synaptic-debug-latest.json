@@ -1,6 +1,6 @@
 {
-  "logType": "error-log",
-  "exportTimestamp": "2026-08-26T08:04:01.529Z",
+  "logType": "event-log",
+  "exportTimestamp": "2026-08-26T08:07:24.562Z",
   "deviceId": "03abe4c8-6f65-4c46-9c1b-f266f4305c6b",
   "sessionId": "aaabaae0-751b-4c9d-98cf-9e4de623bb5f",
   "sessionStartedAt": "2026-08-26T07:11:38.476Z",
@@ -20,856 +20,395 @@
   "sessionStats": {
     "sessionId": "aaabaae0-751b-4c9d-98cf-9e4de623bb5f",
     "sessionStartedAt": "2026-08-26T07:11:38.476Z",
-    "eventCount": 46,
-    "errorCount": 24,
-    "warnCount": 16,
-    "estimatedBytes": 31561,
+    "eventCount": 61,
+    "errorCount": 33,
+    "warnCount": 21,
+    "estimatedBytes": 42193,
     "softByteCap": 8388608,
     "softCapPolicy": "Unlimited for ERROR/WARN/CRITICAL/TURN_START/SESSION within session. Soft-trim oldest INFO/other only if buffer exceeds ~8MB. Absolute ceiling 50k entries.",
     "autoDownloadOnError": false
   },
   "softCapPolicy": "Unlimited for ERROR/WARN/CRITICAL/TURN_START/SESSION within session. Soft-trim oldest INFO/other only if buffer exceeds ~8MB. Absolute ceiling 50k entries.",
   "agentPullHint": "Give Cursor the sessionId + deviceId, or drop synaptic-debug-latest.json into the workspace. Hosted: query telemetry_logs WHERE session_id = <sessionId> (signed-in / Ops).",
-  "totalErrors": 24,
-  "totalWarns": 16,
-  "errors": [
+  "settings": {
+    "ttsEnabled": false,
+    "sttEnabled": false,
+    "diceAnimation": "normal",
+    "contentMode": "adult",
+    "kidModeLocked": false,
+    "contentPin": null,
+    "maturityTier": "mature",
+    "sexualContent": true,
+    "substanceUse": true,
+    "darkThemes": "implied",
+    "byokModeEnabled": false,
+    "byokDisclaimerAccepted": false,
+    "confirmContentRewrites": true,
+    "geminiApiKey": "",
+    "openrouterApiKey": "",
+    "fluxApiKey": "",
+    "aiProvider": "openrouter",
+    "customModelId": "",
+    "baseUrl": "",
+    "imageProvider": "flux",
+    "imageBaseUrl": "",
+    "imageApiKey": "",
+    "imageEndpointType": "openai",
+    "imageModel": "",
+    "subscriptionTier": "free",
+    "videoProvider": "none",
+    "videoBaseUrl": "",
+    "videoApiKey": "",
+    "videoModel": "",
+    "postLoginBehavior": "MAIN_MENU",
+    "visualMode": "classic",
+    "classicMemorableImages": false,
+    "comicLayout": "paged",
+    "comicReadingDirection": "ltr",
+    "bgMode": "static",
+    "bgOpacity": 40,
+    "artStylePreset": "classic-book",
+    "colorVariant": "default",
+    "uiThemeId": "theme.phoenix-ashrise",
+    "fontPackId": "font.ashrise",
+    "diceCosmeticId": "dice.ashrise",
+    "voicePackId": "voice.ashrise",
+    "turnFrameCosmeticId": "frame.ashrise",
+    "panelFrequency": "balanced",
+    "halftoneOverlay": true,
+    "sfxPopups": true,
+    "speechBubbles": true,
+    "panelBorderIntensity": "bold",
+    "gmStrictness": "standard",
+    "statDisplayMode": "inline",
+    "statVerbosity": "core",
+    "statFrequency": "every-5-turns",
+    "perspective": "second-person",
+    "gmVoiceProfileId": "cold-system",
+    "violenceLevel": "graphic",
+    "cursingLevel": "strong",
+    "romanceSubplots": true,
+    "haremContent": true,
+    "statScreensEnabled": true,
+    "dndMode": false,
+    "mapTriggerMode": "tactical",
+    "fogRevealThreshold": "adjacent",
+    "combatFrequency": 50,
+    "combatResolveMode": "auto",
+    "socialRoleplay": 50,
+    "worldBuilding": 50,
+    "strictEncumbrance": false,
+    "requireTurnConfirm": false,
+    "secretDeathSaves": false,
+    "cleaveMechanics": false,
+    "flankingAdvantage": false,
+    "preferFullResponse": false,
+    "fastSetupChips": false
+  },
+  "character": {
+    "hp": 24,
+    "mp": 12,
+    "sp": 20,
+    "xp": 0,
+    "bio": "Someone already living in this world when the story begins.",
+    "name": "Jax",
+    "level": 1,
+    "maxHp": 24,
+    "maxMp": 12,
+    "maxSp": 20,
+    "xpToNext": 300,
+    "appearance": "everyday street clothes",
+    "attributes": {
+      "CHA": 10,
+      "CON": 14,
+      "DEX": 12,
+      "INT": 12,
+      "STR": 14,
+      "WIS": 10
+    },
+    "classTitle": "Hero",
+    "conditions": []
+  },
+  "recentTurns": [
     {
-      "timestamp": "2026-08-26T07:14:19.526Z",
-      "type": "ERROR",
-      "message": "[ai-retry] retries exhausted or non-retryable",
-      "data": {
-        "name": "Error",
-        "message": "The System is still compiling. Try again, or cancel and keep the last scene."
-      },
-      "telemetry": {
-        "deviceId": "03abe4c8-6f65-4c46-9c1b-f266f4305c6b",
-        "sessionId": "aaabaae0-751b-4c9d-98cf-9e4de623bb5f",
-        "sessionStartedAt": "2026-08-26T07:11:38.476Z",
-        "platform": "Windows (Not=A?Brand, Google Chrome, Chromium)",
-        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36",
-        "screenResolution": "1322x826",
-        "viewport": "1322x674",
-        "pixelRatio": 1.9375,
-        "language": "en-GB",
-        "online": true
-      }
+      "id": "nh3rx83hb",
+      "role": "player",
+      "turn": 6,
+      "content": "What i want is to see what it is your asking me to side with. Let me explore and see the world you pulled me to. Let me decide. A person fighting for something they belive in will fight harder than a random mercenary",
+      "timestamp": 1787675408924
     },
     {
-      "timestamp": "2026-08-26T07:14:19.527Z",
-      "type": "ERROR",
-      "message": "[ai-proxy] GM proxy failed and client GM path is disabled",
-      "data": {
-        "message": "The System is still compiling. Try again, or cancel and keep the last scene."
-      },
-      "telemetry": {
-        "deviceId": "03abe4c8-6f65-4c46-9c1b-f266f4305c6b",
-        "sessionId": "aaabaae0-751b-4c9d-98cf-9e4de623bb5f",
-        "sessionStartedAt": "2026-08-26T07:11:38.476Z",
-        "platform": "Windows (Not=A?Brand, Google Chrome, Chromium)",
-        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36",
-        "screenResolution": "1322x826",
-        "viewport": "1322x674",
-        "pixelRatio": 1.9375,
-        "language": "en-GB",
-        "online": true
-      }
+      "id": "fk9ditj7h",
+      "role": "gm",
+      "turn": 7,
+      "content": "The chirurgeon holds your gaze for a long moment, then nods slowly—not approval, exactly, but acknowledgment. She sets the bandage cloth down on the cot beside you and stands, brush of dust from her apron. \"A person fighting for something they believe in. \" She repeats the words like she's weighing them. \"That's the first honest thing any summoned soul has said to me in three years. Most of them ask about the palace. The pay. The glory. \" A dry smile, barely a flicker. \"The ash court doesn't let its enemies choose. But you're asking to choose, and that earns you the right to see. \" She glances at the warden against the wall, a wordless exchange. Then back to you. \"Look, then. Leave the cathedral through the south doors and you'll hit the market quarter. Sun's up, trade's starting, and you'll see Pellane as it is right now—not the stories. \" She stands. \"Walk it for a day. A night. Let it impress you honestly, though—it's no paradise. We have a war, and the war has teeth. But there's good food, and the official will put you up in a room. the official runs tabs for the crown. When you've looked, come back and give me your answer. That's the terms. \" A knock at the infirmary door breaks the quiet. Three hard raps. The chirurgeon glances at it, jaw tightening, and mutters, \"Today, no. Go. Out through the side hall—I'll deal with whoever that is. \" She pulls a coin purse from her apron and presses three copper pieces into your palm—enough for a meal at the market. Signature of the crown. The door thumps again, a sharper knock.",
+      "systemLog": [
+        "Gold: +3"
+      ],
+      "timestamp": 1787675560329
     },
     {
-      "timestamp": "2026-08-26T07:14:51.528Z",
-      "type": "ERROR",
-      "message": "[ai-retry] retries exhausted or non-retryable",
-      "data": {
-        "name": "Error",
-        "message": "The System is still compiling. Try again, or cancel and keep the last scene."
-      },
-      "telemetry": {
-        "deviceId": "03abe4c8-6f65-4c46-9c1b-f266f4305c6b",
-        "sessionId": "aaabaae0-751b-4c9d-98cf-9e4de623bb5f",
-        "sessionStartedAt": "2026-08-26T07:11:38.476Z",
-        "platform": "Windows (Not=A?Brand, Google Chrome, Chromium)",
-        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36",
-        "screenResolution": "1322x826",
-        "viewport": "1322x674",
-        "pixelRatio": 1.9375,
-        "language": "en-GB",
-        "online": true
-      }
+      "id": "ef6goommy",
+      "role": "player",
+      "turn": 7,
+      "content": "Leave via the door they suggested and make your way to the street",
+      "timestamp": 1787676375685
     },
     {
-      "timestamp": "2026-08-26T07:14:51.528Z",
-      "type": "ERROR",
-      "message": "[ai-proxy] GM proxy failed and client GM path is disabled",
-      "data": {
-        "message": "The System is still compiling. Try again, or cancel and keep the last scene."
-      },
-      "telemetry": {
-        "deviceId": "03abe4c8-6f65-4c46-9c1b-f266f4305c6b",
-        "sessionId": "aaabaae0-751b-4c9d-98cf-9e4de623bb5f",
-        "sessionStartedAt": "2026-08-26T07:11:38.476Z",
-        "platform": "Windows (Not=A?Brand, Google Chrome, Chromium)",
-        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36",
-        "screenResolution": "1322x826",
-        "viewport": "1322x674",
-        "pixelRatio": 1.9375,
-        "language": "en-GB",
-        "online": true
-      }
+      "id": "f53oc1lx7",
+      "role": "gm",
+      "turn": 8,
+      "content": "The door swings on worn hinges, and you're out of the narthex. Stone echoes under your boots as the passage opens into a long, low-slung hall of cots and tallow lamps — the cathedral infirmary proper. Someone snores, deep and irregular, tucked under a blanket. Near the far end, the towering double doors: wood, iron, cold air seeping around the edges. \"Valespire, if you're wondering where the light dumped you. Cathedral of the official, holy ground bound to Pellane's crown. \" The chirurgeon's voice catches you at the threshold. \"The war's with the Ash Court — they've burned the bounds west of the river for three years. That's why they pulled you through. That's the whole of it. \" You have to lift the latch yourself — a few people still moves to stop you. The bar eases back, lock gives, and the night pours in, sharp and cold. But the sight that greets you is not open street. A wide yard, a lantern on a crate, and a heavy timber gate with a lean registrar perched on a stool, quill and ledger in hand. He eyes you. \"Summoned soul, ah? the official above — you've moved fast. The steal is decided. But the watch won't open that gate until you're signed. \" He pats the book. \"One name. That's all it takes. Or you turn back and stay warm under the infirmary roof. \" ---",
+      "systemLog": [],
+      "timestamp": 1787676398108
     },
     {
-      "timestamp": "2026-08-26T07:15:24.529Z",
-      "type": "ERROR",
-      "message": "[ai-retry] retries exhausted or non-retryable",
-      "data": {
-        "name": "Error",
-        "message": "The System is still compiling. Try again, or cancel and keep the last scene."
-      },
-      "telemetry": {
-        "deviceId": "03abe4c8-6f65-4c46-9c1b-f266f4305c6b",
-        "sessionId": "aaabaae0-751b-4c9d-98cf-9e4de623bb5f",
-        "sessionStartedAt": "2026-08-26T07:11:38.476Z",
-        "platform": "Windows (Not=A?Brand, Google Chrome, Chromium)",
-        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36",
-        "screenResolution": "1322x826",
-        "viewport": "1322x674",
-        "pixelRatio": 1.9375,
-        "language": "en-GB",
-        "online": true
-      }
+      "id": "5wncbenos",
+      "role": "player",
+      "turn": 8,
+      "content": "My name is jax is wish to leave please",
+      "timestamp": 1787676614560
     },
     {
-      "timestamp": "2026-08-26T07:15:24.529Z",
-      "type": "ERROR",
-      "message": "[ai-proxy] GM proxy failed and client GM path is disabled",
-      "data": {
-        "message": "The System is still compiling. Try again, or cancel and keep the last scene."
-      },
-      "telemetry": {
-        "deviceId": "03abe4c8-6f65-4c46-9c1b-f266f4305c6b",
-        "sessionId": "aaabaae0-751b-4c9d-98cf-9e4de623bb5f",
-        "sessionStartedAt": "2026-08-26T07:11:38.476Z",
-        "platform": "Windows (Not=A?Brand, Google Chrome, Chromium)",
-        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36",
-        "screenResolution": "1322x826",
-        "viewport": "1322x674",
-        "pixelRatio": 1.9375,
-        "language": "en-GB",
-        "online": true
-      }
+      "id": "j86k8ggtt",
+      "role": "gm",
+      "turn": 9,
+      "content": "The cot-bound sleeper never stirs. His breath saws the air as you pass by his bed, and the tall lamps throw your shadow ahead of you, long across the floor. When you get to the tall double doors at the end of the aisle, the cold is already curling through the seam between them—you can feel it before you ever touch the iron band. This is the door the chirurgeon pointed to. It's not barred. It's closed, but not sealed. A person with a firm grip and a straight spine can walk out of a cathedral if they want to. \"My name is Jax,\" you say—you give them your name, like one of your only true possessions. The chirurgeon's hands go still. She raises your face from the bandage cloth and looks at you with a calm, measuring gaze. \"Jax. Good. That's yours, then, and you can carry it with you. \" She does not rise from her seat at the table, but her voice carries. \"You're in Valespire, in the infirmary of the great cathedral bound to Pellane. You're a champion set against the Ash Court—the ritual went through, whether it was done properly or not, and that's what's happening here: a war that's been going on, and a summoning we were sending for. a few people still is going to hold you here. If you walk out that door, you walk out. The city is out there, and a few people still has to say 'please' to a door. \" As you put your hand to the iron band, the cold bites your palm. The door is solid, antique, and heavy. A thin passage of night air whistles through the notch. There is the smell of wet stone, and something far off like a harp, or a shout, or a mill. Beyond that iron, the city of a new world waits for you.",
+      "systemLog": [
+        "— no file. —"
+      ],
+      "timestamp": 1787676772455
     },
     {
-      "timestamp": "2026-08-26T07:15:24.531Z",
-      "type": "ERROR",
-      "message": "sendAction failed",
-      "data": {
-        "error": "The System is still compiling. Try again, or cancel and keep the last scene.",
-        "stack": "Error: The System is still compiling. Try again, or cancel and keep the last scene.\n    at https://synaptic-game-engine.vercel.app/assets/index-CTviDvbW.js:586:7909\n    at async E3 (https://synaptic-game-engine.vercel.app/assets/index-CTviDvbW.js:581:3077)\n    at async Qh (https://synaptic-game-engine.vercel.app/assets/index-CTviDvbW.js:842:11969)\n    at async Pd (https://synaptic-game-engine.vercel.app/assets/index-CTviDvbW.js:1165:758)\n    at async Object.<anonymous> (https://synaptic-game-engine.vercel.app/assets/index-CTviDvbW.js:1165:1159)"
-      },
-      "telemetry": {
-        "deviceId": "03abe4c8-6f65-4c46-9c1b-f266f4305c6b",
-        "sessionId": "aaabaae0-751b-4c9d-98cf-9e4de623bb5f",
-        "sessionStartedAt": "2026-08-26T07:11:38.476Z",
-        "platform": "Windows (Not=A?Brand, Google Chrome, Chromium)",
-        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36",
-        "screenResolution": "1322x826",
-        "viewport": "1322x674",
-        "pixelRatio": 1.9375,
-        "language": "en-GB",
-        "online": true
-      }
+      "id": "twx9o3r7i",
+      "role": "player",
+      "turn": 9,
+      "content": "Leave and explore",
+      "timestamp": 1787678510530
     },
     {
-      "timestamp": "2026-08-26T07:24:30.663Z",
-      "type": "ERROR",
-      "message": "[ai-retry] retries exhausted or non-retryable",
-      "data": {
-        "name": "Error",
-        "message": "The System is still compiling. Try again, or cancel and keep the last scene."
-      },
-      "telemetry": {
-        "deviceId": "03abe4c8-6f65-4c46-9c1b-f266f4305c6b",
-        "sessionId": "aaabaae0-751b-4c9d-98cf-9e4de623bb5f",
-        "sessionStartedAt": "2026-08-26T07:11:38.476Z",
-        "platform": "Windows (Not=A?Brand, Google Chrome, Chromium)",
-        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36",
-        "screenResolution": "1322x826",
-        "viewport": "1322x674",
-        "pixelRatio": 1.9375,
-        "language": "en-GB",
-        "online": true
-      }
+      "id": "wbk1vtlvc",
+      "role": "gm",
+      "turn": 10,
+      "content": "The iron band was cold and slick in your grip. You leaned into the door—once, twice—and it gave with a groan that rolled up through the vaulting above you. Night and rain hit your face in the same breath. Cobblestones glittered under the street lamps, each puddle a spilled mirror of a dark city. Behind you, the Warden's voice carried over the noise of the closing door: \"The world has teeth out there, Pactborn. The signing isn't going anywhere. \" The door shut with a soft thud. Winding around you: shouts—not close, but jagged, half-muffled ahead down a narrow lane where torches move in a ragged fire. To the right, the street widens toward a bridge, houses shuttered, smoke curling limp from chimney pots. The rain mists in layers, climbing the sides of the cathedral behind you like a slow tide. You're out. No bars, no chains, no eyes on you. Just the cold, the shouting, and the deep and unswerving whole of Valespire, still deciding what you will be.",
+      "systemLog": [],
+      "timestamp": 1787678539836
     },
     {
-      "timestamp": "2026-08-26T07:24:30.664Z",
-      "type": "ERROR",
-      "message": "[ai-proxy] GM proxy failed and client GM path is disabled",
-      "data": {
-        "message": "The System is still compiling. Try again, or cancel and keep the last scene."
-      },
-      "telemetry": {
-        "deviceId": "03abe4c8-6f65-4c46-9c1b-f266f4305c6b",
-        "sessionId": "aaabaae0-751b-4c9d-98cf-9e4de623bb5f",
-        "sessionStartedAt": "2026-08-26T07:11:38.476Z",
-        "platform": "Windows (Not=A?Brand, Google Chrome, Chromium)",
-        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36",
-        "screenResolution": "1322x826",
-        "viewport": "1322x674",
-        "pixelRatio": 1.9375,
-        "language": "en-GB",
-        "online": true
-      }
+      "id": "ubk98mfj9",
+      "role": "player",
+      "turn": 10,
+      "content": "Find a quiet space and give your self a moment then check the blue pannel that has followed. What is it and what info does it have inside it",
+      "timestamp": 1787678696631
     },
     {
-      "timestamp": "2026-08-26T07:27:10.854Z",
-      "type": "ERROR",
-      "message": "[ai-retry] retries exhausted or non-retryable",
-      "data": {
-        "name": "Error",
-        "message": "The System is still compiling. Try again, or cancel and keep the last scene."
-      },
-      "telemetry": {
-        "deviceId": "03abe4c8-6f65-4c46-9c1b-f266f4305c6b",
-        "sessionId": "aaabaae0-751b-4c9d-98cf-9e4de623bb5f",
-        "sessionStartedAt": "2026-08-26T07:11:38.476Z",
-        "platform": "Windows (Not=A?Brand, Google Chrome, Chromium)",
-        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36",
-        "screenResolution": "1322x826",
-        "viewport": "1322x674",
-        "pixelRatio": 1.9375,
-        "language": "en-GB",
-        "online": true
-      }
+      "id": "ytu5qkm5z",
+      "role": "gm",
+      "turn": 11,
+      "content": "The rain was already soaking through your shoulders before you found it — a recessed doorway between a shuttered cobbler's and a barbershop with a cracked sign, the awning overhead shedding water in a steady curtain. You pressed your back against the damp wood, let the shouting of the crowd fall behind you. Just you, the hiss of rain, and the glow. The blue panel had kept pace the whole time, hovering at the edge of your vision like a patient moth. Now, in the quiet, it brightened — a soft rectangle of light with no visible source, thin as glass, cool to look at. It waited. Then text knitted itself across its surface in crisp, clean lines. Below the vitals, a smaller line of text blinks once, twice — as if waiting for you to notice it. It reads: <system>Two stamps detected: [Pactborn] / [Calamity Mark]. Appraisal required for further detail.</system> The blue light casts a thin halo on the wet cobbles at your feet. It doesn't speak — it just waits for you to reach out, to touch, to ask. --- people are present; people are shouting; night; outdoors.",
+      "systemLog": [],
+      "timestamp": 1787678768255
     },
     {
-      "timestamp": "2026-08-26T07:27:10.854Z",
-      "type": "ERROR",
-      "message": "[ai-proxy] GM proxy failed and client GM path is disabled",
-      "data": {
-        "message": "The System is still compiling. Try again, or cancel and keep the last scene."
-      },
-      "telemetry": {
-        "deviceId": "03abe4c8-6f65-4c46-9c1b-f266f4305c6b",
-        "sessionId": "aaabaae0-751b-4c9d-98cf-9e4de623bb5f",
-        "sessionStartedAt": "2026-08-26T07:11:38.476Z",
-        "platform": "Windows (Not=A?Brand, Google Chrome, Chromium)",
-        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36",
-        "screenResolution": "1322x826",
-        "viewport": "1322x674",
-        "pixelRatio": 1.9375,
-        "language": "en-GB",
-        "online": true
-      }
+      "id": "rx9cj9op9",
+      "role": "player",
+      "turn": 11,
+      "content": "I'm not sure if this is normal round here. Walk round the streets take in your souroundings and listen to what people are talking about as you pass them",
+      "timestamp": 1787679354068
     },
     {
-      "timestamp": "2026-08-26T07:27:41.562Z",
-      "type": "ERROR",
-      "message": "[ai-retry] retries exhausted or non-retryable",
-      "data": {
-        "name": "Error",
-        "message": "The System is still compiling. Try again, or cancel and keep the last scene."
-      },
-      "telemetry": {
-        "deviceId": "03abe4c8-6f65-4c46-9c1b-f266f4305c6b",
-        "sessionId": "aaabaae0-751b-4c9d-98cf-9e4de623bb5f",
-        "sessionStartedAt": "2026-08-26T07:11:38.476Z",
-        "platform": "Windows (Not=A?Brand, Google Chrome, Chromium)",
-        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36",
-        "screenResolution": "1322x826",
-        "viewport": "1322x674",
-        "pixelRatio": 1.9375,
-        "language": "en-GB",
-        "online": true
-      }
+      "id": "251pvfgjh",
+      "role": "gm",
+      "turn": 12,
+      "content": "Rain slid off the awning in sheets as you stepped out of the doorway and onto the pavement. The crowd noise hit you before the cold did—a rolling murmur of voices under the drumming rain, punctuated by a cart horse's hooves and the creak of wheels. You moved with the flow, shoulders set, not fast, not slow, just another body under a limp collar and wet shoulders. Street by street, the voices came to you in fragments. \"—three notches on the wall, and mine still ain't paid—\" \"—say the ritual worked. Actually *worked*—\" \"—the official coin's worth less than the paper it's printed on, that's why—\" Through an open shutter: *\"—heard they summoned one. A real one. Old blood, like the war's worst year. \"* The voice goes quiet as you pass, replaced by a low whistle. Nothing there marks you as the topic—a few people still's leaning in your direction. To the street, you're just another stranger stepping through lamplight and rain. The blue panel hovers, patient, at the edge of your vision. The city's pulse is here if you want it: talk of war, coin, and someone new— The panel flickers, once, almost like it's waiting for you to ask again.",
+      "systemLog": [
+        "[Perception check: SUCCESS — no mechanical changes]"
+      ],
+      "timestamp": 1787679438556
     },
     {
-      "timestamp": "2026-08-26T07:27:41.562Z",
-      "type": "ERROR",
-      "message": "[ai-proxy] GM proxy failed and client GM path is disabled",
-      "data": {
-        "message": "The System is still compiling. Try again, or cancel and keep the last scene."
-      },
-      "telemetry": {
-        "deviceId": "03abe4c8-6f65-4c46-9c1b-f266f4305c6b",
-        "sessionId": "aaabaae0-751b-4c9d-98cf-9e4de623bb5f",
-        "sessionStartedAt": "2026-08-26T07:11:38.476Z",
-        "platform": "Windows (Not=A?Brand, Google Chrome, Chromium)",
-        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36",
-        "screenResolution": "1322x826",
-        "viewport": "1322x674",
-        "pixelRatio": 1.9375,
-        "language": "en-GB",
-        "online": true
-      }
+      "id": "whf705sjk",
+      "role": "player",
+      "turn": 12,
+      "content": "Have a look around and ask some one where you can get work. Explain your from a far away place and would like to earn a place to sleep",
+      "timestamp": 1787679673189
     },
     {
-      "timestamp": "2026-08-26T07:38:30.649Z",
-      "type": "ERROR",
-      "message": "[ai-retry] retries exhausted or non-retryable",
-      "data": {
-        "name": "Error",
-        "message": "The System is still compiling. Try again, or cancel and keep the last scene."
-      },
-      "telemetry": {
-        "deviceId": "03abe4c8-6f65-4c46-9c1b-f266f4305c6b",
-        "sessionId": "aaabaae0-751b-4c9d-98cf-9e4de623bb5f",
-        "sessionStartedAt": "2026-08-26T07:11:38.476Z",
-        "platform": "Windows (Not=A?Brand, Google Chrome, Chromium)",
-        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36",
-        "screenResolution": "1322x826",
-        "viewport": "1322x674",
-        "pixelRatio": 1.9375,
-        "language": "en-GB",
-        "online": true
-      }
+      "id": "legtyadub",
+      "role": "gm",
+      "turn": 13,
+      "content": "The store's lanterns cast a low, amber wash over shelves of folded bandages and clay jars. The shouting from the street has dulled to a murmur through the walls, and the rain keeps drumming against the shutters. A handler in a damp wool cloak is stacking linen rolls near the counter, and the chirurgeon who tended you earlier is still there, sorting a tray of needles with steady hands. You clear your throat and speak plainly — you're from a long way off, you need work, and you'd like somewhere to sleep. The handler pauses mid-stack, turns, and studies you with a tired but not unkind look. \"Work, is it? \" He sets the linen down and wipes your hands on his thighs. \"this place up by the cathedral square posts everything — courier runs, wall repairs, rat jobs in the Undercroft. They pay in coin or board, depending on the contract. If you want a bed tonight without signing anything, the official takes honest labor for a cot — they need a hand hauling barrels from the cellar. \" He glances at the chirurgeon, who nods once without looking up. \"Or you can stay here till the rain lets up. But the Hall's your best start if you mean to earn. \" The blue panel flickers at the edge of your vision, patient, waiting.",
+      "systemLog": [
+        "[No state change — dialogue only]"
+      ],
+      "timestamp": 1787683961081
     },
     {
-      "timestamp": "2026-08-26T07:38:30.649Z",
-      "type": "ERROR",
-      "message": "[ai-proxy] GM proxy failed and client GM path is disabled",
-      "data": {
-        "message": "The System is still compiling. Try again, or cancel and keep the last scene."
-      },
-      "telemetry": {
-        "deviceId": "03abe4c8-6f65-4c46-9c1b-f266f4305c6b",
-        "sessionId": "aaabaae0-751b-4c9d-98cf-9e4de623bb5f",
-        "sessionStartedAt": "2026-08-26T07:11:38.476Z",
-        "platform": "Windows (Not=A?Brand, Google Chrome, Chromium)",
-        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36",
-        "screenResolution": "1322x826",
-        "viewport": "1322x674",
-        "pixelRatio": 1.9375,
-        "language": "en-GB",
-        "online": true
-      }
+      "id": "9cjz4r4rw",
+      "role": "player",
+      "turn": 13,
+      "content": "Offer to Help with the barrels",
+      "timestamp": 1787684152641
     },
     {
-      "timestamp": "2026-08-26T07:39:01.357Z",
-      "type": "ERROR",
-      "message": "[ai-retry] retries exhausted or non-retryable",
-      "data": {
-        "name": "Error",
-        "message": "The System is still compiling. Try again, or cancel and keep the last scene."
-      },
-      "telemetry": {
-        "deviceId": "03abe4c8-6f65-4c46-9c1b-f266f4305c6b",
-        "sessionId": "aaabaae0-751b-4c9d-98cf-9e4de623bb5f",
-        "sessionStartedAt": "2026-08-26T07:11:38.476Z",
-        "platform": "Windows (Not=A?Brand, Google Chrome, Chromium)",
-        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36",
-        "screenResolution": "1322x826",
-        "viewport": "1322x674",
-        "pixelRatio": 1.9375,
-        "language": "en-GB",
-        "online": true
-      }
+      "id": "ht78porop",
+      "role": "gm",
+      "turn": 14,
+      "content": "The handler glances up from the linen stack, hand stilling on a folded sheet. \"The barrels? \" He nods toward the far corner, where three squat casks sit half-blocking a step down into the back storeroom. \"They're fresh from the courtyard — the rain's been getting in through the seams. We were waiting on the carters. \" He pushes a rag-wrapped handle toward you. \"If you've the back for it, we've got two dry racks in the back room. Give them a wipe before you stack them, or the salt keeps the damp and rusts the bands. \" You take the handle. The wood is cold and gritty from the rain, and the cask has real weight to it — the kind of weight that settles into your shoulders and makes you plant your feet before you move. The handler steps back to give you room, and the chirurgeon, still sorting needles, glances up. \"Steady,\" she says, not unkindly. \"They slosh. \" You heft the first cask, walk it toward the back room. The door is a slab of scarred oak with a simple iron latch. Beyond it, the storeroom is dim — just a single hanging lantern, and the smell of bandage linen and cool clay. ---",
+      "systemLog": [],
+      "timestamp": 1787684171217
     },
     {
-      "timestamp": "2026-08-26T07:39:01.357Z",
-      "type": "ERROR",
-      "message": "[ai-proxy] GM proxy failed and client GM path is disabled",
-      "data": {
-        "message": "The System is still compiling. Try again, or cancel and keep the last scene."
-      },
-      "telemetry": {
-        "deviceId": "03abe4c8-6f65-4c46-9c1b-f266f4305c6b",
-        "sessionId": "aaabaae0-751b-4c9d-98cf-9e4de623bb5f",
-        "sessionStartedAt": "2026-08-26T07:11:38.476Z",
-        "platform": "Windows (Not=A?Brand, Google Chrome, Chromium)",
-        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36",
-        "screenResolution": "1322x826",
-        "viewport": "1322x674",
-        "pixelRatio": 1.9375,
-        "language": "en-GB",
-        "online": true
-      }
+      "id": "ax9yvlwka",
+      "role": "player",
+      "turn": 14,
+      "content": "Help and move the barrels",
+      "timestamp": 1787684631875
     },
     {
-      "timestamp": "2026-08-26T08:02:24.157Z",
-      "type": "ERROR",
-      "message": "[ai-retry] retries exhausted or non-retryable",
-      "data": {
-        "name": "Error",
-        "message": "The System is still compiling. Try again, or cancel and keep the last scene."
-      },
-      "telemetry": {
-        "deviceId": "03abe4c8-6f65-4c46-9c1b-f266f4305c6b",
-        "sessionId": "aaabaae0-751b-4c9d-98cf-9e4de623bb5f",
-        "sessionStartedAt": "2026-08-26T07:11:38.476Z",
-        "platform": "Windows (Not=A?Brand, Google Chrome, Chromium)",
-        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36",
-        "screenResolution": "1322x826",
-        "viewport": "1322x674",
-        "pixelRatio": 1.9375,
-        "language": "en-GB",
-        "online": true
-      }
+      "id": "u5cd5mpf4",
+      "role": "gm",
+      "turn": 15,
+      "content": "The first barrel is heavier than it looks—salt-crusted, rainwater slicking the bands. You get your hands around the rim and lift, but your grip slips inside the first stride. The cask tilts, groans against your shin, and you take a half-step sideways to catch it—which is when the heel of your palm finds the wet edge of the step. The barrel leaves your hands with a graceless, deliberate sort of fall. It strikes the flagstone corner of the storeroom step with a wet crunch, salt water leaping out in a pale sheet. The second barrel goes next, knocked sideways by the first's teeter as it comes to rest, and it rolls across the floor with a slow, drumming *thock-thock-thock* before it slams into the wall and tips. The store-room door is now blocked by two barrels, one listing with a seeping crack, and a spreading lake of saltwater has soaked the hem of your trousers and the feet of the crate stacks. The handler has already set his rag down. He hasn't said a word, but he doesn't need to. One of the two storeroom racks is visibly collap— no, not collapsed. The cask hit the leg, the rack is leaning. The crowd noise from the courtyard presses at the walls like weather.",
+      "systemLog": [],
+      "timestamp": 1787684641080
     },
     {
-      "timestamp": "2026-08-26T08:02:24.157Z",
-      "type": "ERROR",
-      "message": "[ai-proxy] GM proxy failed and client GM path is disabled",
-      "data": {
-        "message": "The System is still compiling. Try again, or cancel and keep the last scene."
-      },
-      "telemetry": {
-        "deviceId": "03abe4c8-6f65-4c46-9c1b-f266f4305c6b",
-        "sessionId": "aaabaae0-751b-4c9d-98cf-9e4de623bb5f",
-        "sessionStartedAt": "2026-08-26T07:11:38.476Z",
-        "platform": "Windows (Not=A?Brand, Google Chrome, Chromium)",
-        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36",
-        "screenResolution": "1322x826",
-        "viewport": "1322x674",
-        "pixelRatio": 1.9375,
-        "language": "en-GB",
-        "online": true
-      }
+      "id": "qco4hbpmy",
+      "turn": 15,
+      "role": "player",
+      "content": "Try to wrestle the leaning rack upright before it picks up the rest of the shelves.",
+      "timestamp": 1787728428767
     },
     {
-      "timestamp": "2026-08-26T08:02:54.864Z",
-      "type": "ERROR",
-      "message": "[ai-retry] retries exhausted or non-retryable",
-      "data": {
-        "name": "Error",
-        "message": "The System is still compiling. Try again, or cancel and keep the last scene."
-      },
-      "telemetry": {
-        "deviceId": "03abe4c8-6f65-4c46-9c1b-f266f4305c6b",
-        "sessionId": "aaabaae0-751b-4c9d-98cf-9e4de623bb5f",
-        "sessionStartedAt": "2026-08-26T07:11:38.476Z",
-        "platform": "Windows (Not=A?Brand, Google Chrome, Chromium)",
-        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36",
-        "screenResolution": "1322x826",
-        "viewport": "1322x674",
-        "pixelRatio": 1.9375,
-        "language": "en-GB",
-        "online": true
-      }
+      "id": "2gu1ii31w",
+      "turn": 16,
+      "role": "gm",
+      "content": "The rack answers your weight before your hands even find the frame. It's a shelf unit of iron bands and wet wood, listing hard to the left, and the barrel that left your grip sent a shudder through the floor it stands on. You get your palms under the crossbeam and push — not a wrestle, a brace, legs planted, spine straight, the way you'd stop a door from swinging shut. The frame shudders, resists, then settles back onto its feet with a groan of strained joints. A jar of something pale and pickled rocks on its shelf, wobbles, and steadies. The shouting doesn't stop. It's coming from the front of the store, past the salt-soaked flags — two voices, one sharp and officious, one cracking with panic. The storeroom air is cold and wet, rain hammering the roof tin overhead. Your hands sting from the salt, and your shoulder complains where the barrel caught it.",
+      "timestamp": 1787729088268,
+      "systemLog": []
     },
     {
-      "timestamp": "2026-08-26T08:02:54.865Z",
-      "type": "ERROR",
-      "message": "[ai-proxy] GM proxy failed and client GM path is disabled",
-      "data": {
-        "message": "The System is still compiling. Try again, or cancel and keep the last scene."
-      },
-      "telemetry": {
-        "deviceId": "03abe4c8-6f65-4c46-9c1b-f266f4305c6b",
-        "sessionId": "aaabaae0-751b-4c9d-98cf-9e4de623bb5f",
-        "sessionStartedAt": "2026-08-26T07:11:38.476Z",
-        "platform": "Windows (Not=A?Brand, Google Chrome, Chromium)",
-        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36",
-        "screenResolution": "1322x826",
-        "viewport": "1322x674",
-        "pixelRatio": 1.9375,
-        "language": "en-GB",
-        "online": true
-      }
+      "id": "2nihukjdy",
+      "turn": 16,
+      "role": "player",
+      "content": "Kneel to right the fallen barrel before the salt water spreads further.",
+      "timestamp": 1787729200629
     },
     {
-      "timestamp": "2026-08-26T08:03:27.567Z",
-      "type": "ERROR",
-      "message": "[ai-retry] retries exhausted or non-retryable",
-      "data": {
-        "name": "Error",
-        "message": "The System is still compiling. Try again, or cancel and keep the last scene."
-      },
-      "telemetry": {
-        "deviceId": "03abe4c8-6f65-4c46-9c1b-f266f4305c6b",
-        "sessionId": "aaabaae0-751b-4c9d-98cf-9e4de623bb5f",
-        "sessionStartedAt": "2026-08-26T07:11:38.476Z",
-        "platform": "Windows (Not=A?Brand, Google Chrome, Chromium)",
-        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36",
-        "screenResolution": "1322x826",
-        "viewport": "1322x674",
-        "pixelRatio": 1.9375,
-        "language": "en-GB",
-        "online": true
-      }
+      "id": "9i2c1rwk5",
+      "turn": 17,
+      "role": "gm",
+      "content": "The brine has already fanned out across the flagstones, a dark tongue creeping toward the rack's wooden feet — the same feet you just braced. You go down on one knee and get your hands under the barrel's rim, rainwater-slick and salt-crusted, and lift with your thighs, not your back. It comes up with a wet suck of stone and a slosh that splashes your knuckles. You seat it back on its base; it rocks once, settles with a dull thud. The water keeps crawling anyway, a shallow film over the grit, but the barrel is upright now and the worst of the spread is stopped. A jar of something pale and pickled sits undisturbed on the shelf above, exactly where it was. Behind you, over the noise, a handler's voice cuts through: \"Good — get the next one before it goes the same way. \"",
+      "timestamp": 1787729290679,
+      "systemLog": []
     },
     {
-      "timestamp": "2026-08-26T08:03:27.567Z",
-      "type": "ERROR",
-      "message": "[ai-proxy] GM proxy failed and client GM path is disabled",
-      "data": {
-        "message": "The System is still compiling. Try again, or cancel and keep the last scene."
-      },
-      "telemetry": {
-        "deviceId": "03abe4c8-6f65-4c46-9c1b-f266f4305c6b",
-        "sessionId": "aaabaae0-751b-4c9d-98cf-9e4de623bb5f",
-        "sessionStartedAt": "2026-08-26T07:11:38.476Z",
-        "platform": "Windows (Not=A?Brand, Google Chrome, Chromium)",
-        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36",
-        "screenResolution": "1322x826",
-        "viewport": "1322x674",
-        "pixelRatio": 1.9375,
-        "language": "en-GB",
-        "online": true
-      }
+      "id": "sbw5mcpq8",
+      "turn": 17,
+      "role": "player",
+      "content": "Move on to the next barrel before it tips the same way.",
+      "timestamp": 1787729880422
     },
     {
-      "timestamp": "2026-08-26T08:03:27.568Z",
-      "type": "ERROR",
-      "message": "sendAction failed",
-      "data": {
-        "error": "The System is still compiling. Try again, or cancel and keep the last scene.",
-        "stack": "Error: The System is still compiling. Try again, or cancel and keep the last scene.\n    at https://synaptic-game-engine.vercel.app/assets/index-CTviDvbW.js:586:7909\n    at async E3 (https://synaptic-game-engine.vercel.app/assets/index-CTviDvbW.js:581:3077)\n    at async Qh (https://synaptic-game-engine.vercel.app/assets/index-CTviDvbW.js:842:11969)\n    at async Pd (https://synaptic-game-engine.vercel.app/assets/index-CTviDvbW.js:1165:758)\n    at async Object.<anonymous> (https://synaptic-game-engine.vercel.app/assets/index-CTviDvbW.js:1165:1159)"
-      },
-      "telemetry": {
-        "deviceId": "03abe4c8-6f65-4c46-9c1b-f266f4305c6b",
-        "sessionId": "aaabaae0-751b-4c9d-98cf-9e4de623bb5f",
-        "sessionStartedAt": "2026-08-26T07:11:38.476Z",
-        "platform": "Windows (Not=A?Brand, Google Chrome, Chromium)",
-        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36",
-        "screenResolution": "1322x826",
-        "viewport": "1322x674",
-        "pixelRatio": 1.9375,
-        "language": "en-GB",
-        "online": true
-      }
+      "id": "dpunbpb0x",
+      "turn": 18,
+      "role": "gm",
+      "content": "The brine film is treacherous — the same shallow tide you just sent crawling across the flagstones. You push off toward the next barrel, a step, a half-step, and your boot finds a patch of grit that rolls like a loose tooth. Your foot goes out from under you. The flagstone meets your elbow and shoulder in a hard, flat slap that drives the air out of your lungs in a ragged grunt. In the same breath, the next barrel rocks. You see it happen from the floor — a slow, stupid tilt, the salt-crusted rim passing the point of balance — and then it comes down on its side with a wet crack. Staves split. A dark surge spills out, wider and faster than the last one, washing over your knuckles and crawling for the wooden feet of the rack you just braced. The shouting in the room sharpens. Someone yells something you can't quite catch over the slosh. You're down, the water's spreading, and the rack is about to take another drink.",
+      "timestamp": 1787729951330,
+      "systemLog": []
+    },
+    {
+      "id": "p2lm0s6pn",
+      "turn": 18,
+      "role": "player",
+      "content": "think to your self 'i wish i was stronger, i need to clean this up' while trying to sort the mess i made listen to",
+      "timestamp": 1787731407570
     }
   ],
-  "warns": [
+  "recentRolls": [
     {
-      "timestamp": "2026-08-26T07:14:19.527Z",
-      "type": "WARN",
-      "message": "GM transport auto-retry",
-      "data": {
-        "attempt": 1,
-        "kind": "timeout",
-        "timeoutMs": 30000,
-        "host": "wzgsrpwhmgffcyohvtko.supabase.co"
-      },
-      "telemetry": {
-        "deviceId": "03abe4c8-6f65-4c46-9c1b-f266f4305c6b",
-        "sessionId": "aaabaae0-751b-4c9d-98cf-9e4de623bb5f",
-        "sessionStartedAt": "2026-08-26T07:11:38.476Z",
-        "platform": "Windows (Not=A?Brand, Google Chrome, Chromium)",
-        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36",
-        "screenResolution": "1322x826",
-        "viewport": "1322x674",
-        "pixelRatio": 1.9375,
-        "language": "en-GB",
-        "online": true
-      }
+      "id": "bmonjum3z",
+      "raw": "[Code RNG] SUCCESS (Dialogue — no contested check)",
+      "turn": 3
     },
     {
-      "timestamp": "2026-08-26T07:14:51.528Z",
-      "type": "WARN",
-      "message": "GM transport auto-retry",
-      "data": {
-        "attempt": 2,
-        "kind": "timeout",
-        "timeoutMs": 30000,
-        "host": "wzgsrpwhmgffcyohvtko.supabase.co"
-      },
-      "telemetry": {
-        "deviceId": "03abe4c8-6f65-4c46-9c1b-f266f4305c6b",
-        "sessionId": "aaabaae0-751b-4c9d-98cf-9e4de623bb5f",
-        "sessionStartedAt": "2026-08-26T07:11:38.476Z",
-        "platform": "Windows (Not=A?Brand, Google Chrome, Chromium)",
-        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36",
-        "screenResolution": "1322x826",
-        "viewport": "1322x674",
-        "pixelRatio": 1.9375,
-        "language": "en-GB",
-        "online": true
-      }
+      "id": "83t0yviyv",
+      "raw": "[Code RNG] SUCCESS (Dialogue — no contested check)",
+      "turn": 4
     },
     {
-      "timestamp": "2026-08-26T07:15:24.532Z",
-      "type": "WARN",
-      "message": "turn fail classified",
-      "data": {
-        "kind": "timeout",
-        "attempt": 2,
-        "host": "wzgsrpwhmgffcyohvtko.supabase.co",
-        "errMsg": "The System is still compiling. Try again, or cancel and keep the last scene.",
-        "transportRetriesUsed": 2
-      },
-      "telemetry": {
-        "deviceId": "03abe4c8-6f65-4c46-9c1b-f266f4305c6b",
-        "sessionId": "aaabaae0-751b-4c9d-98cf-9e4de623bb5f",
-        "sessionStartedAt": "2026-08-26T07:11:38.476Z",
-        "platform": "Windows (Not=A?Brand, Google Chrome, Chromium)",
-        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36",
-        "screenResolution": "1322x826",
-        "viewport": "1322x674",
-        "pixelRatio": 1.9375,
-        "language": "en-GB",
-        "online": true
-      }
+      "id": "hgn6rsja5",
+      "raw": "[Code RNG] SUCCESS (General check: d20 18 + mod 2 = 20 vs DC 12)",
+      "turn": 5
     },
     {
-      "timestamp": "2026-08-26T07:24:30.664Z",
-      "type": "WARN",
-      "message": "GM transport auto-retry",
-      "data": {
-        "attempt": 1,
-        "kind": "timeout",
-        "timeoutMs": 30000,
-        "host": "wzgsrpwhmgffcyohvtko.supabase.co"
-      },
-      "telemetry": {
-        "deviceId": "03abe4c8-6f65-4c46-9c1b-f266f4305c6b",
-        "sessionId": "aaabaae0-751b-4c9d-98cf-9e4de623bb5f",
-        "sessionStartedAt": "2026-08-26T07:11:38.476Z",
-        "platform": "Windows (Not=A?Brand, Google Chrome, Chromium)",
-        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36",
-        "screenResolution": "1322x826",
-        "viewport": "1322x674",
-        "pixelRatio": 1.9375,
-        "language": "en-GB",
-        "online": true
-      }
+      "id": "oiof2mkqu",
+      "raw": "[Code RNG] SUCCESS (Dialogue — no contested check)",
+      "turn": 6
     },
     {
-      "timestamp": "2026-08-26T07:24:49.045Z",
-      "type": "WARN",
-      "message": "[console] Unable to determine content-length from response headers. Will expand buffer when needed.",
-      "telemetry": {
-        "deviceId": "03abe4c8-6f65-4c46-9c1b-f266f4305c6b",
-        "sessionId": "aaabaae0-751b-4c9d-98cf-9e4de623bb5f",
-        "sessionStartedAt": "2026-08-26T07:11:38.476Z",
-        "platform": "Windows (Not=A?Brand, Google Chrome, Chromium)",
-        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36",
-        "screenResolution": "1322x826",
-        "viewport": "1322x674",
-        "pixelRatio": 1.9375,
-        "language": "en-GB",
-        "online": true
-      }
+      "id": "pm8yla0yf",
+      "raw": "[Code RNG] SUCCESS (Dialogue — no contested check)",
+      "turn": 7
     },
     {
-      "timestamp": "2026-08-26T07:24:49.046Z",
-      "type": "WARN",
-      "message": "[console] Unable to determine content-length from response headers. Will expand buffer when needed.",
-      "telemetry": {
-        "deviceId": "03abe4c8-6f65-4c46-9c1b-f266f4305c6b",
-        "sessionId": "aaabaae0-751b-4c9d-98cf-9e4de623bb5f",
-        "sessionStartedAt": "2026-08-26T07:11:38.476Z",
-        "platform": "Windows (Not=A?Brand, Google Chrome, Chromium)",
-        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36",
-        "screenResolution": "1322x826",
-        "viewport": "1322x674",
-        "pixelRatio": 1.9375,
-        "language": "en-GB",
-        "online": true
-      }
+      "id": "b4u7kuotz",
+      "raw": "[Code RNG] FAILURE (General check: d20 6 + mod 2 = 8 vs DC 12)",
+      "turn": 8
     },
     {
-      "timestamp": "2026-08-26T07:24:49.051Z",
-      "type": "WARN",
-      "message": "[console] [Embeddings] Failed to load model (will use keyword fallback): Unexpected token '<', \"<!doctype \"... is not valid JSON",
-      "telemetry": {
-        "deviceId": "03abe4c8-6f65-4c46-9c1b-f266f4305c6b",
-        "sessionId": "aaabaae0-751b-4c9d-98cf-9e4de623bb5f",
-        "sessionStartedAt": "2026-08-26T07:11:38.476Z",
-        "platform": "Windows (Not=A?Brand, Google Chrome, Chromium)",
-        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36",
-        "screenResolution": "1322x826",
-        "viewport": "1322x674",
-        "pixelRatio": 1.9375,
-        "language": "en-GB",
-        "online": true
-      }
+      "id": "mkyound6c",
+      "raw": "[Code RNG] SUCCESS (Athletics: d20 11 + mod 2 = 13 vs DC 12)",
+      "turn": 9
     },
     {
-      "timestamp": "2026-08-26T07:24:49.177Z",
-      "type": "WARN",
-      "message": "[console] Unable to determine content-length from response headers. Will expand buffer when needed.",
-      "telemetry": {
-        "deviceId": "03abe4c8-6f65-4c46-9c1b-f266f4305c6b",
-        "sessionId": "aaabaae0-751b-4c9d-98cf-9e4de623bb5f",
-        "sessionStartedAt": "2026-08-26T07:11:38.476Z",
-        "platform": "Windows (Not=A?Brand, Google Chrome, Chromium)",
-        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36",
-        "screenResolution": "1322x826",
-        "viewport": "1322x674",
-        "pixelRatio": 1.9375,
-        "language": "en-GB",
-        "online": true
-      }
+      "id": "8dxel4lga",
+      "raw": "[Code RNG] SUCCESS (Athletics: d20 16 + mod 2 = 18 vs DC 12)",
+      "turn": 10
     },
     {
-      "timestamp": "2026-08-26T07:27:10.854Z",
-      "type": "WARN",
-      "message": "GM transport auto-retry",
-      "data": {
-        "attempt": 1,
-        "kind": "timeout",
-        "timeoutMs": 30000,
-        "host": "wzgsrpwhmgffcyohvtko.supabase.co"
-      },
-      "telemetry": {
-        "deviceId": "03abe4c8-6f65-4c46-9c1b-f266f4305c6b",
-        "sessionId": "aaabaae0-751b-4c9d-98cf-9e4de623bb5f",
-        "sessionStartedAt": "2026-08-26T07:11:38.476Z",
-        "platform": "Windows (Not=A?Brand, Google Chrome, Chromium)",
-        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36",
-        "screenResolution": "1322x826",
-        "viewport": "1322x674",
-        "pixelRatio": 1.9375,
-        "language": "en-GB",
-        "online": true
-      }
+      "id": "f3jhx3p3a",
+      "raw": "[Code RNG] SUCCESS (Dialogue — no contested check)",
+      "turn": 11
     },
     {
-      "timestamp": "2026-08-26T07:27:41.562Z",
-      "type": "WARN",
-      "message": "GM transport auto-retry",
-      "data": {
-        "attempt": 2,
-        "kind": "timeout",
-        "timeoutMs": 30000,
-        "host": "wzgsrpwhmgffcyohvtko.supabase.co"
-      },
-      "telemetry": {
-        "deviceId": "03abe4c8-6f65-4c46-9c1b-f266f4305c6b",
-        "sessionId": "aaabaae0-751b-4c9d-98cf-9e4de623bb5f",
-        "sessionStartedAt": "2026-08-26T07:11:38.476Z",
-        "platform": "Windows (Not=A?Brand, Google Chrome, Chromium)",
-        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36",
-        "screenResolution": "1322x826",
-        "viewport": "1322x674",
-        "pixelRatio": 1.9375,
-        "language": "en-GB",
-        "online": true
-      }
+      "id": "pol2tvzet",
+      "raw": "[Code RNG] SUCCESS (Perception: d20 12 + mod 0 = 12 vs DC 12)",
+      "turn": 12
     },
     {
-      "timestamp": "2026-08-26T07:38:30.650Z",
-      "type": "WARN",
-      "message": "GM transport auto-retry",
-      "data": {
-        "attempt": 1,
-        "kind": "timeout",
-        "timeoutMs": 30000,
-        "host": "wzgsrpwhmgffcyohvtko.supabase.co"
-      },
-      "telemetry": {
-        "deviceId": "03abe4c8-6f65-4c46-9c1b-f266f4305c6b",
-        "sessionId": "aaabaae0-751b-4c9d-98cf-9e4de623bb5f",
-        "sessionStartedAt": "2026-08-26T07:11:38.476Z",
-        "platform": "Windows (Not=A?Brand, Google Chrome, Chromium)",
-        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36",
-        "screenResolution": "1322x826",
-        "viewport": "1322x674",
-        "pixelRatio": 1.9375,
-        "language": "en-GB",
-        "online": true
-      }
+      "id": "f0ur4rxdl",
+      "raw": "[Code RNG] SUCCESS (Dialogue — no contested check)",
+      "turn": 13
     },
     {
-      "timestamp": "2026-08-26T07:39:01.357Z",
-      "type": "WARN",
-      "message": "GM transport auto-retry",
-      "data": {
-        "attempt": 2,
-        "kind": "timeout",
-        "timeoutMs": 30000,
-        "host": "wzgsrpwhmgffcyohvtko.supabase.co"
-      },
-      "telemetry": {
-        "deviceId": "03abe4c8-6f65-4c46-9c1b-f266f4305c6b",
-        "sessionId": "aaabaae0-751b-4c9d-98cf-9e4de623bb5f",
-        "sessionStartedAt": "2026-08-26T07:11:38.476Z",
-        "platform": "Windows (Not=A?Brand, Google Chrome, Chromium)",
-        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36",
-        "screenResolution": "1322x826",
-        "viewport": "1322x674",
-        "pixelRatio": 1.9375,
-        "language": "en-GB",
-        "online": true
-      }
+      "id": "1g50czx4y",
+      "raw": "[Code RNG] SUCCESS (General check: d20 12 + mod 2 = 14 vs DC 12)",
+      "turn": 14
     },
     {
-      "timestamp": "2026-08-26T07:39:11.346Z",
-      "type": "WARN",
-      "message": "[choice-pipeline] Choice regeneration failed",
-      "telemetry": {
-        "deviceId": "03abe4c8-6f65-4c46-9c1b-f266f4305c6b",
-        "sessionId": "aaabaae0-751b-4c9d-98cf-9e4de623bb5f",
-        "sessionStartedAt": "2026-08-26T07:11:38.476Z",
-        "platform": "Windows (Not=A?Brand, Google Chrome, Chromium)",
-        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36",
-        "screenResolution": "1322x826",
-        "viewport": "1322x674",
-        "pixelRatio": 1.9375,
-        "language": "en-GB",
-        "online": true
-      }
+      "id": "kx97ejrer",
+      "raw": "[Code RNG] FAILURE (Athletics: d20 2 + mod 2 = 4 vs DC 12)",
+      "turn": 15
     },
     {
-      "timestamp": "2026-08-26T08:02:24.157Z",
-      "type": "WARN",
-      "message": "GM transport auto-retry",
-      "data": {
-        "attempt": 1,
-        "kind": "timeout",
-        "timeoutMs": 30000,
-        "host": "wzgsrpwhmgffcyohvtko.supabase.co"
-      },
-      "telemetry": {
-        "deviceId": "03abe4c8-6f65-4c46-9c1b-f266f4305c6b",
-        "sessionId": "aaabaae0-751b-4c9d-98cf-9e4de623bb5f",
-        "sessionStartedAt": "2026-08-26T07:11:38.476Z",
-        "platform": "Windows (Not=A?Brand, Google Chrome, Chromium)",
-        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36",
-        "screenResolution": "1322x826",
-        "viewport": "1322x674",
-        "pixelRatio": 1.9375,
-        "language": "en-GB",
-        "online": true
-      }
+      "id": "tmxgme5c8",
+      "turn": 16,
+      "raw": "[Code RNG] SUCCESS (Survival: d20 20 + mod 2 = 22 vs DC 10)"
     },
     {
-      "timestamp": "2026-08-26T08:02:54.865Z",
-      "type": "WARN",
-      "message": "GM transport auto-retry",
-      "data": {
-        "attempt": 2,
-        "kind": "timeout",
-        "timeoutMs": 30000,
-        "host": "wzgsrpwhmgffcyohvtko.supabase.co"
-      },
-      "telemetry": {
-        "deviceId": "03abe4c8-6f65-4c46-9c1b-f266f4305c6b",
-        "sessionId": "aaabaae0-751b-4c9d-98cf-9e4de623bb5f",
-        "sessionStartedAt": "2026-08-26T07:11:38.476Z",
-        "platform": "Windows (Not=A?Brand, Google Chrome, Chromium)",
-        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36",
-        "screenResolution": "1322x826",
-        "viewport": "1322x674",
-        "pixelRatio": 1.9375,
-        "language": "en-GB",
-        "online": true
-      }
+      "id": "9ojadbg9f",
+      "turn": 17,
+      "raw": "[Code RNG] SUCCESS (General check: d20 12 + mod 2 = 14 vs DC 12)"
     },
     {
-      "timestamp": "2026-08-26T08:03:27.570Z",
-      "type": "WARN",
-      "message": "turn fail classified",
-      "data": {
-        "kind": "timeout",
-        "attempt": 2,
-        "host": "wzgsrpwhmgffcyohvtko.supabase.co",
-        "errMsg": "The System is still compiling. Try again, or cancel and keep the last scene.",
-        "transportRetriesUsed": 2
-      },
-      "telemetry": {
-        "deviceId": "03abe4c8-6f65-4c46-9c1b-f266f4305c6b",
-        "sessionId": "aaabaae0-751b-4c9d-98cf-9e4de623bb5f",
-        "sessionStartedAt": "2026-08-26T07:11:38.476Z",
-        "platform": "Windows (Not=A?Brand, Google Chrome, Chromium)",
-        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36",
-        "screenResolution": "1322x826",
-        "viewport": "1322x674",
-        "pixelRatio": 1.9375,
-        "language": "en-GB",
-        "online": true
-      }
+      "id": "phvcv5g1x",
+      "turn": 18,
+      "raw": "[Code RNG] FAILURE (Athletics: d20 2 + mod 2 = 4 vs DC 12)"
     }
   ],
-  "fullSessionEventLog": [
+  "eventLog": [
     {
       "timestamp": "2026-08-26T07:11:38.476Z",
       "type": "SESSION",
@@ -1833,6 +1372,332 @@
         "language": "en-GB",
         "online": true
       }
+    },
+    {
+      "timestamp": "2026-08-26T08:04:49.968Z",
+      "type": "TURN_START",
+      "message": "sendAction invoked",
+      "data": {
+        "input": "think to your self 'i wish i was stronger, i need to clean this up' while trying to sort the mess i ",
+        "currentTurn": 18,
+        "busy": false
+      },
+      "telemetry": {
+        "deviceId": "03abe4c8-6f65-4c46-9c1b-f266f4305c6b",
+        "sessionId": "aaabaae0-751b-4c9d-98cf-9e4de623bb5f",
+        "sessionStartedAt": "2026-08-26T07:11:38.476Z",
+        "platform": "Windows (Not=A?Brand, Google Chrome, Chromium)",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36",
+        "screenResolution": "1322x826",
+        "viewport": "1322x674",
+        "pixelRatio": 1.9375,
+        "language": "en-GB",
+        "online": true
+      }
+    },
+    {
+      "timestamp": "2026-08-26T08:05:20.159Z",
+      "type": "ERROR",
+      "message": "[ai-retry] retries exhausted or non-retryable",
+      "data": {
+        "name": "Error",
+        "message": "The System is still compiling. Try again, or cancel and keep the last scene."
+      },
+      "telemetry": {
+        "deviceId": "03abe4c8-6f65-4c46-9c1b-f266f4305c6b",
+        "sessionId": "aaabaae0-751b-4c9d-98cf-9e4de623bb5f",
+        "sessionStartedAt": "2026-08-26T07:11:38.476Z",
+        "platform": "Windows (Not=A?Brand, Google Chrome, Chromium)",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36",
+        "screenResolution": "1322x826",
+        "viewport": "1322x674",
+        "pixelRatio": 1.9375,
+        "language": "en-GB",
+        "online": true
+      }
+    },
+    {
+      "timestamp": "2026-08-26T08:05:20.160Z",
+      "type": "ERROR",
+      "message": "[ai-proxy] GM proxy failed and client GM path is disabled",
+      "data": {
+        "message": "The System is still compiling. Try again, or cancel and keep the last scene."
+      },
+      "telemetry": {
+        "deviceId": "03abe4c8-6f65-4c46-9c1b-f266f4305c6b",
+        "sessionId": "aaabaae0-751b-4c9d-98cf-9e4de623bb5f",
+        "sessionStartedAt": "2026-08-26T07:11:38.476Z",
+        "platform": "Windows (Not=A?Brand, Google Chrome, Chromium)",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36",
+        "screenResolution": "1322x826",
+        "viewport": "1322x674",
+        "pixelRatio": 1.9375,
+        "language": "en-GB",
+        "online": true
+      }
+    },
+    {
+      "timestamp": "2026-08-26T08:05:20.160Z",
+      "type": "WARN",
+      "message": "GM transport auto-retry",
+      "data": {
+        "attempt": 1,
+        "kind": "timeout",
+        "timeoutMs": 30000,
+        "host": "wzgsrpwhmgffcyohvtko.supabase.co"
+      },
+      "telemetry": {
+        "deviceId": "03abe4c8-6f65-4c46-9c1b-f266f4305c6b",
+        "sessionId": "aaabaae0-751b-4c9d-98cf-9e4de623bb5f",
+        "sessionStartedAt": "2026-08-26T07:11:38.476Z",
+        "platform": "Windows (Not=A?Brand, Google Chrome, Chromium)",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36",
+        "screenResolution": "1322x826",
+        "viewport": "1322x674",
+        "pixelRatio": 1.9375,
+        "language": "en-GB",
+        "online": true
+      }
+    },
+    {
+      "timestamp": "2026-08-26T08:05:33.310Z",
+      "type": "WARN",
+      "message": "Unresolved or empty action narrative — resolution retry",
+      "data": {
+        "turn": 18,
+        "intent": "talk",
+        "empty": false,
+        "factLocks": [],
+        "obligationMissing": [],
+        "sameBeat": false
+      },
+      "telemetry": {
+        "deviceId": "03abe4c8-6f65-4c46-9c1b-f266f4305c6b",
+        "sessionId": "aaabaae0-751b-4c9d-98cf-9e4de623bb5f",
+        "sessionStartedAt": "2026-08-26T07:11:38.476Z",
+        "platform": "Windows (Not=A?Brand, Google Chrome, Chromium)",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36",
+        "screenResolution": "1322x826",
+        "viewport": "1322x674",
+        "pixelRatio": 1.9375,
+        "language": "en-GB",
+        "online": true
+      }
+    },
+    {
+      "timestamp": "2026-08-26T08:06:03.316Z",
+      "type": "ERROR",
+      "message": "[ai-retry] retries exhausted or non-retryable",
+      "data": {
+        "name": "Error",
+        "message": "The System is still compiling. Try again, or cancel and keep the last scene."
+      },
+      "telemetry": {
+        "deviceId": "03abe4c8-6f65-4c46-9c1b-f266f4305c6b",
+        "sessionId": "aaabaae0-751b-4c9d-98cf-9e4de623bb5f",
+        "sessionStartedAt": "2026-08-26T07:11:38.476Z",
+        "platform": "Windows (Not=A?Brand, Google Chrome, Chromium)",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36",
+        "screenResolution": "1322x826",
+        "viewport": "1322x674",
+        "pixelRatio": 1.9375,
+        "language": "en-GB",
+        "online": true
+      }
+    },
+    {
+      "timestamp": "2026-08-26T08:06:03.316Z",
+      "type": "ERROR",
+      "message": "[ai-proxy] GM proxy failed and client GM path is disabled",
+      "data": {
+        "message": "The System is still compiling. Try again, or cancel and keep the last scene."
+      },
+      "telemetry": {
+        "deviceId": "03abe4c8-6f65-4c46-9c1b-f266f4305c6b",
+        "sessionId": "aaabaae0-751b-4c9d-98cf-9e4de623bb5f",
+        "sessionStartedAt": "2026-08-26T07:11:38.476Z",
+        "platform": "Windows (Not=A?Brand, Google Chrome, Chromium)",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36",
+        "screenResolution": "1322x826",
+        "viewport": "1322x674",
+        "pixelRatio": 1.9375,
+        "language": "en-GB",
+        "online": true
+      }
+    },
+    {
+      "timestamp": "2026-08-26T08:06:03.317Z",
+      "type": "WARN",
+      "message": "GM transport auto-retry",
+      "data": {
+        "attempt": 1,
+        "kind": "timeout",
+        "timeoutMs": 30000,
+        "host": "wzgsrpwhmgffcyohvtko.supabase.co"
+      },
+      "telemetry": {
+        "deviceId": "03abe4c8-6f65-4c46-9c1b-f266f4305c6b",
+        "sessionId": "aaabaae0-751b-4c9d-98cf-9e4de623bb5f",
+        "sessionStartedAt": "2026-08-26T07:11:38.476Z",
+        "platform": "Windows (Not=A?Brand, Google Chrome, Chromium)",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36",
+        "screenResolution": "1322x826",
+        "viewport": "1322x674",
+        "pixelRatio": 1.9375,
+        "language": "en-GB",
+        "online": true
+      }
+    },
+    {
+      "timestamp": "2026-08-26T08:06:34.021Z",
+      "type": "ERROR",
+      "message": "[ai-retry] retries exhausted or non-retryable",
+      "data": {
+        "name": "Error",
+        "message": "The System is still compiling. Try again, or cancel and keep the last scene."
+      },
+      "telemetry": {
+        "deviceId": "03abe4c8-6f65-4c46-9c1b-f266f4305c6b",
+        "sessionId": "aaabaae0-751b-4c9d-98cf-9e4de623bb5f",
+        "sessionStartedAt": "2026-08-26T07:11:38.476Z",
+        "platform": "Windows (Not=A?Brand, Google Chrome, Chromium)",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36",
+        "screenResolution": "1322x826",
+        "viewport": "1322x674",
+        "pixelRatio": 1.9375,
+        "language": "en-GB",
+        "online": true
+      }
+    },
+    {
+      "timestamp": "2026-08-26T08:06:34.021Z",
+      "type": "ERROR",
+      "message": "[ai-proxy] GM proxy failed and client GM path is disabled",
+      "data": {
+        "message": "The System is still compiling. Try again, or cancel and keep the last scene."
+      },
+      "telemetry": {
+        "deviceId": "03abe4c8-6f65-4c46-9c1b-f266f4305c6b",
+        "sessionId": "aaabaae0-751b-4c9d-98cf-9e4de623bb5f",
+        "sessionStartedAt": "2026-08-26T07:11:38.476Z",
+        "platform": "Windows (Not=A?Brand, Google Chrome, Chromium)",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36",
+        "screenResolution": "1322x826",
+        "viewport": "1322x674",
+        "pixelRatio": 1.9375,
+        "language": "en-GB",
+        "online": true
+      }
+    },
+    {
+      "timestamp": "2026-08-26T08:06:34.022Z",
+      "type": "WARN",
+      "message": "GM transport auto-retry",
+      "data": {
+        "attempt": 2,
+        "kind": "timeout",
+        "timeoutMs": 30000,
+        "host": "wzgsrpwhmgffcyohvtko.supabase.co"
+      },
+      "telemetry": {
+        "deviceId": "03abe4c8-6f65-4c46-9c1b-f266f4305c6b",
+        "sessionId": "aaabaae0-751b-4c9d-98cf-9e4de623bb5f",
+        "sessionStartedAt": "2026-08-26T07:11:38.476Z",
+        "platform": "Windows (Not=A?Brand, Google Chrome, Chromium)",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36",
+        "screenResolution": "1322x826",
+        "viewport": "1322x674",
+        "pixelRatio": 1.9375,
+        "language": "en-GB",
+        "online": true
+      }
+    },
+    {
+      "timestamp": "2026-08-26T08:07:05.829Z",
+      "type": "ERROR",
+      "message": "[ai-retry] retries exhausted or non-retryable",
+      "data": {
+        "name": "Error",
+        "message": "The System is still compiling. Try again, or cancel and keep the last scene."
+      },
+      "telemetry": {
+        "deviceId": "03abe4c8-6f65-4c46-9c1b-f266f4305c6b",
+        "sessionId": "aaabaae0-751b-4c9d-98cf-9e4de623bb5f",
+        "sessionStartedAt": "2026-08-26T07:11:38.476Z",
+        "platform": "Windows (Not=A?Brand, Google Chrome, Chromium)",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36",
+        "screenResolution": "1322x826",
+        "viewport": "1322x674",
+        "pixelRatio": 1.9375,
+        "language": "en-GB",
+        "online": true
+      }
+    },
+    {
+      "timestamp": "2026-08-26T08:07:05.830Z",
+      "type": "ERROR",
+      "message": "[ai-proxy] GM proxy failed and client GM path is disabled",
+      "data": {
+        "message": "The System is still compiling. Try again, or cancel and keep the last scene."
+      },
+      "telemetry": {
+        "deviceId": "03abe4c8-6f65-4c46-9c1b-f266f4305c6b",
+        "sessionId": "aaabaae0-751b-4c9d-98cf-9e4de623bb5f",
+        "sessionStartedAt": "2026-08-26T07:11:38.476Z",
+        "platform": "Windows (Not=A?Brand, Google Chrome, Chromium)",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36",
+        "screenResolution": "1322x826",
+        "viewport": "1322x674",
+        "pixelRatio": 1.9375,
+        "language": "en-GB",
+        "online": true
+      }
+    },
+    {
+      "timestamp": "2026-08-26T08:07:05.830Z",
+      "type": "ERROR",
+      "message": "sendAction failed",
+      "data": {
+        "error": "The System is still compiling. Try again, or cancel and keep the last scene.",
+        "stack": "Error: The System is still compiling. Try again, or cancel and keep the last scene.\n    at https://synaptic-game-engine.vercel.app/assets/index-CTviDvbW.js:586:7909\n    at async E3 (https://synaptic-game-engine.vercel.app/assets/index-CTviDvbW.js:581:3077)\n    at async Qh (https://synaptic-game-engine.vercel.app/assets/index-CTviDvbW.js:842:11969)\n    at async Pd (https://synaptic-game-engine.vercel.app/assets/index-CTviDvbW.js:1165:758)\n    at async Object.<anonymous> (https://synaptic-game-engine.vercel.app/assets/index-CTviDvbW.js:1167:39)"
+      },
+      "telemetry": {
+        "deviceId": "03abe4c8-6f65-4c46-9c1b-f266f4305c6b",
+        "sessionId": "aaabaae0-751b-4c9d-98cf-9e4de623bb5f",
+        "sessionStartedAt": "2026-08-26T07:11:38.476Z",
+        "platform": "Windows (Not=A?Brand, Google Chrome, Chromium)",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36",
+        "screenResolution": "1322x826",
+        "viewport": "1322x674",
+        "pixelRatio": 1.9375,
+        "language": "en-GB",
+        "online": true
+      }
+    },
+    {
+      "timestamp": "2026-08-26T08:07:05.830Z",
+      "type": "WARN",
+      "message": "turn fail classified",
+      "data": {
+        "kind": "timeout",
+        "attempt": 2,
+        "host": "wzgsrpwhmgffcyohvtko.supabase.co",
+        "errMsg": "The System is still compiling. Try again, or cancel and keep the last scene.",
+        "transportRetriesUsed": 2
+      },
+      "telemetry": {
+        "deviceId": "03abe4c8-6f65-4c46-9c1b-f266f4305c6b",
+        "sessionId": "aaabaae0-751b-4c9d-98cf-9e4de623bb5f",
+        "sessionStartedAt": "2026-08-26T07:11:38.476Z",
+        "platform": "Windows (Not=A?Brand, Google Chrome, Chromium)",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36",
+        "screenResolution": "1322x826",
+        "viewport": "1322x674",
+        "pixelRatio": 1.9375,
+        "language": "en-GB",
+        "online": true
+      }
     }
-  ]
+  ],
+  "totalEvents": 61
 }
