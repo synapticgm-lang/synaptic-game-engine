@@ -227,10 +227,17 @@ import {
 import { formatCombatReceipt, formatFleeReceipt } from './combatReceipt';
 import { scanAndScrubLeaks } from './leakScanner';
 import { enrichQuests } from './questJournalEnrich';
+import {
+  mutateFactionOnQuestEvent,
+  mutateFactionOnStance,
+  seedWorldLedgerFactions,
+} from './factionStandings';
+import { seedOutdoorHubPlaces } from './outdoorHubs';
+import { applySandboxXpAwards } from './sandboxXp';
 import { extractUpdates, extractNewItems, parseActionTags, stripActionTags, matchLoreCards, eventsToLoreCards, parseTurnFrame, eventsToQuestUpdates, eventsToEncounterUpdate, parsePanels, eventsToMilestone, eventsToLootVideo, eventsToVisualUpdate, stripChoiceList, extractChoiceLines, stripTurnCloser, storyHasBody, looksLikeChoiceOffer, isStoryTooThin, storyWordCount } from './parser';
 import { hasRealGmStory } from './turnAsk';
 import { encounterOriginPlace } from './locationName';
-import { clampLeakedOpeningQuests, extractNamedPlaces, harvestPlayText, isGenericMapPlace, mapAnchorName, newlyRevealedQuests, questsLockedDuringOpening, revealLocalStarterQuest, syncQuestsFromPlay } from './questPlay';
+import { clampLeakedOpeningQuests, extractNamedPlaces, harvestPlayText, isGenericMapPlace, mapAnchorName, newlyRevealedQuests, questsLockedDuringOpening, revealLocalStarterQuest, resumeMainQuestFocus, syncQuestsFromPlay } from './questPlay';
 import { inferItemType } from './salvage';
 import { initializeDungeon, moveToNode, exitDungeon as engineExitDungeon, resolvePlayAreaMap, listInteriorExitsFromHere } from './mapEngine';
 import type { Toast } from '@/components/ToastStack';
@@ -3621,6 +3628,61 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
 
       const committedChoices =
         mode === 'kid' ? finalChoices.map((c) => filterKidModeText(c)) : finalChoices;
+      // Act-3: faction stance/quest deltas + off-spine XP banks
+      {
+        const presentNames = [
+          ...(workingState.companions ?? []).map((c) => c.name).filter((n): n is string => Boolean(n)),
+          ...(workingState.sceneFacts?.present ?? []).filter(
+            (n) => n.trim().length > 1 && !/^(bystanders|blue panel|cracked street)$/i.test(n)
+          ),
+        ];
+        let factions = mutateFactionOnStance(
+          worldLedger.factionStandings,
+          sanitizedInput,
+          presentNames
+        );
+        for (const e of events) {
+          if (e.type === 'quest-add' && e.id) {
+            factions = mutateFactionOnQuestEvent(factions, e.id, 'accept');
+          }
+          if (e.type === 'quest-complete' && e.id) {
+            factions = mutateFactionOnQuestEvent(factions, e.id, 'complete');
+          }
+          if (e.type === 'quest-fail' && e.id) {
+            factions = mutateFactionOnQuestEvent(factions, e.id, 'fail');
+          }
+        }
+        // Newly revealed sides count as soft accept
+        for (const q of turnUnlocks) {
+          factions = mutateFactionOnQuestEvent(factions, q.id, 'accept');
+        }
+        worldLedger = { ...worldLedger, factionStandings: factions };
+
+        const sandboxXp = applySandboxXpAwards(
+          { ...workingState, places, worldLedger, sandboxAwardKeys: workingState.sandboxAwardKeys ?? liveCurrent.sandboxAwardKeys },
+          {
+            playerAction: sanitizedInput,
+            locationName: finalLocationName,
+            questsBefore: questsAtTurnStart,
+            questsAfter: updatedQuests,
+            events,
+            encounterCleared: !!(ledgerRound?.enemyDead || ledgerFlee?.fled || (liveCurrent.activeEncounter && !updatedEncounter)),
+            enemyKilled: !!ledgerRound?.enemyDead,
+            turn: nextTurn,
+          }
+        );
+        if (sandboxXp.xp > 0) {
+          baseChar.xp = (baseChar.xp ?? 0) + sandboxXp.xp;
+          mergedSystemLog.push(...sandboxXp.notes);
+        }
+        places = sandboxXp.places ?? places;
+        workingState = {
+          ...workingState,
+          sandboxAwardKeys: sandboxXp.awardKeys,
+          places,
+        };
+      }
+
       const gmLogEntryBase: LogEntry = {
         ...gmEntry,
         content: cleanText,
@@ -3648,6 +3710,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
         openingEstablishment: liveCurrent.openingEstablishment,
         log: [...liveCurrent.log, gmLogEntryBase],
       });
+
       let mergedStateDraft: GameState = {
         ...workingState,
         ...updates,
@@ -3688,6 +3751,8 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
         choices: committedChoices,
         gold: Math.max(0, (workingState.gold ?? liveCurrent.gold ?? 0) + extraWeekGold),
         worldLedger,
+        sandboxAwardKeys: workingState.sandboxAwardKeys ?? liveCurrent.sandboxAwardKeys,
+        mapFocusPlace: workingState.mapFocusPlace ?? liveCurrent.mapFocusPlace ?? null,
         ...(turnFrame ? { turnFrameTheme: turnFrame } : {}),
       };
 
@@ -4128,7 +4193,10 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
       currentCoordinates: { q: 0, r: 0, tier: 2, z: 0 },
       choices: pendingCovers.length ? establishmentChoices(pendingCovers, namedSeeded) : [],
       log: [],
-      worldLedger: emptyWorldLedger(),
+      worldLedger: seedWorldLedgerFactions(emptyWorldLedger(), bible),
+      places: seedOutdoorHubPlaces([], bible),
+      sandboxAwardKeys: [],
+      mapFocusPlace: null,
       pendingGeneratedOpening: true,
       storyStartTextTurnsRemaining: honeymoon,
       openingEstablishment: {
@@ -4929,6 +4997,32 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
     updatePanelOverlay,
     clearError: () => setError(null),
     autoFight, autoFightWarning, cancelAutoFightWarning: () => setAutoFightWarning(null),
+    resumeMainQuest: () => {
+      const s = stateRef.current;
+      if (!s) return null as string | null;
+      const focus = resumeMainQuestFocus(s);
+      if (!focus.quest) {
+        addToast('No active main quest to resume.', 'info');
+        return null as string | null;
+      }
+      const pin = focus.placePin;
+      const updated = {
+        ...s,
+        mapFocusPlace: pin,
+        lastUpdated: Date.now(),
+      };
+      setState(updated);
+      stateRef.current = updated;
+      persist(updated);
+      const next = focus.nextObjective ? ` Next: ${focus.nextObjective}` : '';
+      addToast(
+        pin
+          ? `Main quest pinned: ${pin}.${next}`
+          : `Main quest refocused: ${focus.quest.name}.${next}`,
+        'info'
+      );
+      return pin;
+    },
     startNewGame, updateSettings: (s: Settings) => { setSettings(s); settingsRef.current = s; saveSettings(s); },
     updateCustomTabletopRules: async (text: string) => {
       const s = stateRef.current;

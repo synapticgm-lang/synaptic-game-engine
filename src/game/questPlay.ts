@@ -7,6 +7,115 @@ export type StarterQuestSeed = {
   recommendedLevel?: number;
   objectives: string[];
   rewards?: string;
+  location?: string;
+  type?: 'main' | 'side' | 'faction';
+};
+
+/**
+ * Code banks for L2+ side/special reveal — NPC name, place, or keyword in play text.
+ * Prefer these over GM invent; syncQuestsFromPlay still handles System labels.
+ */
+const QUEST_REVEAL_TRIGGERS: Array<{ questId: string; patterns: RegExp[] }> = [
+  {
+    questId: 'sp-quest-side-junk',
+    patterns: [
+      /\blowmarket\b/i,
+      /\bfence\b/i,
+      /\bearth\s+(?:object|junk|phone|shirt)\b/i,
+      /\botherworld\s+junk\b/i,
+      /\bsera\s+quill\b/i,
+      /\bthieves?\b/i,
+    ],
+  },
+  {
+    questId: 'sp-quest-side-child',
+    patterns: [
+      /\bmarked\s+child\b/i,
+      /\bbrother\s+tam\b/i,
+      /\bpanel\s+fragment\b/i,
+      /\bcathedral\s+close\b/i,
+      /\bchild\b.*\b(panel|blessing|mark)\b/i,
+    ],
+  },
+  {
+    questId: 'sp-quest-special-other',
+    patterns: [
+      /\bother\s+circle\b/i,
+      /\bsecond\s+(?:summon|circle|soul)\b/i,
+      /\bcinderflow\b/i,
+      /\bash\s+court\s+(?:letter|envoy)\b/i,
+      /\bcinder-ash\b/i,
+    ],
+  },
+  {
+    questId: 'sp-quest-special-ledger',
+    patterns: [
+      /\bqueen'?s?\s+private\s+ledger\b/i,
+      /\bpalace\b/i,
+      /\bwar\s+story\s+does\s+not\s+add\s+up\b/i,
+      /\bpellane\s+started\s+the\s+war\b/i,
+    ],
+  },
+  {
+    questId: 'ha-quest-2',
+    patterns: [
+      /\bashline\s+yard\b/i,
+      /\bmara\s+keene\b/i,
+      /\byard\s+share\b/i,
+      /\blocal\s+(?:threshold|clear)\b/i,
+      /\bjob\s+board\b/i,
+    ],
+  },
+  {
+    questId: 'ha-quest-side-fence',
+    patterns: [
+      /\bpax\b/i,
+      /\bpenny\b/i,
+      /\bscrap\s+fence\b/i,
+      /\bvesper\b/i,
+      /\bcurios?\b/i,
+    ],
+  },
+  {
+    questId: 'ha-quest-side-rival',
+    patterns: [
+      /\bjoss\s+vale\b/i,
+      /\bgrade-?safe\s+clear\b/i,
+      /\binvite\b.*\b(clear|job)\b/i,
+    ],
+  },
+  {
+    questId: 'ha-quest-special-name',
+    patterns: [
+      /\bledger\s+true\s+name\b/i,
+      /\bquiet\s+hands\b/i,
+      /\bapprais(?:e|al)\b/i,
+      /\bwake\s+residue\b/i,
+      /\bsable\b/i,
+    ],
+  },
+  {
+    questId: 'ha-quest-special-second',
+    patterns: [
+      /\bsecond\s+residue\b/i,
+      /\banother\s+(?:private\s+)?ledger\b/i,
+      /\bsecond\s+wake\b/i,
+    ],
+  },
+];
+
+const QUEST_SEED_LOCATIONS: Record<string, string> = {
+  'sp-quest-1': 'Cathedral Close',
+  'sp-quest-side-junk': 'Lowmarket',
+  'sp-quest-side-child': 'Cathedral Close',
+  'sp-quest-special-other': 'Cinderflow Road',
+  'sp-quest-special-ledger': 'Palace Approach',
+  'ha-quest-1': 'First Threshold Gate',
+  'ha-quest-2': 'Ashline Yard',
+  'ha-quest-side-fence': 'Scrap Fence Alley',
+  'ha-quest-side-rival': 'Ashline Yard',
+  'ha-quest-special-name': 'Quiet Archive',
+  'ha-quest-special-second': 'Lampmere Market',
 };
 
 /** Alone Summoned Pact starter — no handlers to hear yet. */
@@ -251,13 +360,40 @@ export function syncQuestsFromPlay(
   next = next.map((q) => {
     if (q.revealed || q.status === 'completed' || q.status === 'failed') return q;
     const recommended = q.recommendedLevel ?? 1;
-    if (recommended > 1) return q;
-    const hay = `${q.name} ${q.location ?? ''}`.toLowerCase();
-    const hit = places.some((p) => hay.includes(p.toLowerCase()) || overlap(q.name, p));
-    if (!hit) return q;
-    return { ...q, revealed: true, status: q.status === 'hidden' ? 'active' : q.status };
+    // L1: place-name walk toward still works.
+    if (recommended <= 1) {
+      const hay = `${q.name} ${q.location ?? ''}`.toLowerCase();
+      const hit = places.some((p) => hay.includes(p.toLowerCase()) || overlap(q.name, p));
+      if (!hit) return q;
+      return { ...q, revealed: true, status: q.status === 'hidden' ? 'active' : q.status };
+    }
+    return q;
   });
 
+  // L2+ sides: NPC / place / keyword banks (no GM invent required).
+  next = revealQuestsFromBanks(next, action);
+
+  return next;
+}
+
+/** Reveal hidden L2+ quests when play text matches code banks. */
+export function revealQuestsFromBanks(quests: Quest[], haystack: string): Quest[] {
+  const hay = haystack.replace(/\s+/g, ' ').trim();
+  if (!hay) return quests;
+  let next = quests;
+  for (const row of QUEST_REVEAL_TRIGGERS) {
+    if (!row.patterns.some((re) => re.test(hay))) continue;
+    next = next.map((q) => {
+      if (q.id !== row.questId) return q;
+      if (q.revealed || q.status === 'completed' || q.status === 'failed') return q;
+      return {
+        ...q,
+        revealed: true,
+        status: q.status === 'hidden' ? 'active' : q.status,
+        location: q.location ?? QUEST_SEED_LOCATIONS[q.id],
+      };
+    });
+  }
   return next;
 }
 
@@ -294,21 +430,69 @@ export function newlyRevealedQuests(before: Quest[] | undefined, after: Quest[] 
   return (after ?? []).filter((q) => q.revealed === true && !prior.has(q.id));
 }
 
+function seededQuestType(q: StarterQuestSeed): Quest['type'] {
+  if (q.type) return q.type;
+  if (/-side-|-special-/.test(q.id)) return 'side';
+  if ((q.recommendedLevel ?? 1) >= 2) return 'side';
+  return 'main';
+}
+
 function asSeededQuest(q: StarterQuestSeed): Quest {
+  const type = seededQuestType(q);
   return {
     id: q.id,
     name: q.title,
     description: q.description,
     status: 'hidden',
     revealed: false,
-    type: 'main',
+    type,
     recommendedLevel: q.recommendedLevel,
+    location: q.location ?? QUEST_SEED_LOCATIONS[q.id],
     objectives: q.objectives.map((desc, i) => ({
       id: `${q.id}-obj-${i + 1}`,
       description: desc,
       completed: false,
     })),
     rewards: { items: q.rewards ? [q.rewards] : undefined },
+  };
+}
+
+/** Active revealed main-spine quest (prefer L1 starter ids). */
+export function mainSpineQuest(state: GameState): Quest | null {
+  const visible = visibleJournalQuests(state).filter((q) => q.status === 'active');
+  if (!visible.length) return null;
+  return (
+    visible.find((q) => q.id === 'sp-quest-1' || q.id === 'ha-quest-1' || q.id === 'si-quest-1')
+    ?? visible.find((q) => q.type === 'main')
+    ?? visible[0]
+  );
+}
+
+export function nextMainObjective(quest: Quest | null | undefined): string | null {
+  if (!quest) return null;
+  const next = (quest.objectives ?? []).find((o) => !o.completed);
+  if (next?.description) return next.description;
+  if (quest.whatNext?.trim()) return quest.whatNext.trim();
+  return quest.description?.slice(0, 140) || null;
+}
+
+/** Last-known place pin for map / resume — from quest.location or seed bank. */
+export function mainQuestPlacePin(quest: Quest | null | undefined): string | null {
+  if (!quest) return null;
+  const loc = (quest.location ?? QUEST_SEED_LOCATIONS[quest.id] ?? '').trim();
+  return loc || null;
+}
+
+export function resumeMainQuestFocus(state: GameState): {
+  quest: Quest | null;
+  nextObjective: string | null;
+  placePin: string | null;
+} {
+  const quest = mainSpineQuest(state);
+  return {
+    quest,
+    nextObjective: nextMainObjective(quest),
+    placePin: mainQuestPlacePin(quest),
   };
 }
 

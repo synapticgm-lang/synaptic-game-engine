@@ -23,6 +23,7 @@ interface DungeonMapModalProps {
   activeDungeon: ActiveDungeonState | null;
   currentCoordinates?: Location3D;
   currentLocation?: string;
+  mapFocusPlace?: string | null;
   combatLocked?: boolean;
   /** Empty ruin / Summoned Pact alone arrival — pending copy must not invent crowds. */
   aloneArrival?: boolean;
@@ -74,6 +75,7 @@ export const DungeonMapModal: React.FC<DungeonMapModalProps> = ({
   activeDungeon,
   currentCoordinates,
   currentLocation,
+  mapFocusPlace,
   combatLocked = false,
   aloneArrival = false,
   onMoveNode,
@@ -131,6 +133,9 @@ export const DungeonMapModal: React.FC<DungeonMapModalProps> = ({
           </div>
           <p className="mt-4 text-sm text-slate-300 leading-relaxed">
             You are in <span className="font-medium sgm-info-accent">{currentLocation?.trim() || 'an unmapped place'}</span>.
+            {mapFocusPlace?.trim() ? (
+              <> Main quest pin: <span className="font-medium text-amber-300">{mapFocusPlace.trim()}</span>.</>
+            ) : null}
             {aloneArrival
               ? ' The System sketches this empty structure — no crowds, no people on the map until the ledger places someone here.'
               : isInteriorPlace(currentLocation)
@@ -184,6 +189,9 @@ export const DungeonMapModal: React.FC<DungeonMapModalProps> = ({
               <span>
                 {isStreet ? 'You are here: ' : 'Current room: '}
                 <span className="text-amber-300 font-semibold">{currentNode?.name || 'Unknown'}</span>
+                {mapFocusPlace?.trim() ? (
+                  <span className="text-slate-400"> · Main pin: <span className="text-amber-200">{mapFocusPlace.trim()}</span></span>
+                ) : null}
                 {isHallPlan && floorLevels.length > 1 && (
                   <span className="text-slate-500"> · {interiorFloorLabel(playerZ)}</span>
                 )}

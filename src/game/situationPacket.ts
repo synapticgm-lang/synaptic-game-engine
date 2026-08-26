@@ -17,6 +17,7 @@ import { formatTutorialBeatMandate } from './tutorialBeats';
 import { formatLocalityForPrompt } from './locality';
 import { formatHiddenCulpritRail } from './mysteryCulprit';
 import { formatInteriorExploreAuthority, listInteriorExitsFromHere } from './mapEngine';
+import { formatOutdoorHubsForPrompt } from './outdoorHubs';
 
 export function effectivePowerScaling(state: GameState): PowerScaling {
   return state.powerScaling ?? 'balanced';
@@ -262,6 +263,7 @@ export function formatSituationForPrompt(state: GameState): string {
     previousLine,
     placeRegistry ? `PLACE REGISTRY (authority for name/tier/arc):\n${placeRegistry}` : '',
     ...simulationist,
+    formatOutdoorHubsForPrompt(state),
     `Dungeon: ${s.dungeon}`,
     interiorExplore || '',
     'NPC memories (how they were treated sticks — no karma meter):',

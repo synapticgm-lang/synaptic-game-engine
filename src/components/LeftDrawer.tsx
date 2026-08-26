@@ -1,6 +1,6 @@
 import { X, ScrollText, Landmark, Users, Globe2 } from 'lucide-react';
 import type { GameState, EngineMode } from '@/game/types';
-import { visibleJournalQuests, activeDrawerQuests } from '@/game/questPlay';
+import { visibleJournalQuests, activeDrawerQuests, resumeMainQuestFocus } from '@/game/questPlay';
 import { clockLabel, normalizeWorldLedger } from '@/game/worldSim';
 
 interface Props {
@@ -8,9 +8,10 @@ interface Props {
   open: boolean;
   onClose: () => void;
   engineMode: EngineMode;
+  onResumeMain?: () => void;
 }
 
-export function LeftDrawer({ state, open, onClose }: Props) {
+export function LeftDrawer({ state, open, onClose, onResumeMain }: Props) {
   return (
     <>
       {open && <div className="fixed inset-0 z-30 bg-black/50 lg:hidden" onClick={onClose} />}
@@ -26,7 +27,7 @@ export function LeftDrawer({ state, open, onClose }: Props) {
         <div className="space-y-5 p-4">
           <WorldSection state={state} />
           <SquadSection state={state} />
-          <QuestsSection state={state} />
+          <QuestsSection state={state} onResumeMain={onResumeMain} />
           <ShrinesSection state={state} />
         </div>
       </aside>
@@ -121,7 +122,8 @@ function SquadSection({ state }: { state: GameState }) {
   );
 }
 
-function QuestsSection({ state }: { state: GameState }) {
+function QuestsSection({ state, onResumeMain }: { state: GameState; onResumeMain?: () => void }) {
+  const resume = resumeMainQuestFocus(state);
   return (
     <section>
       <h3 className="sgm-info-heading mb-2 flex items-center gap-2 text-sm uppercase tracking-wider">
@@ -134,15 +136,41 @@ function QuestsSection({ state }: { state: GameState }) {
         }
         return (
           <ul className="space-y-1.5">
-            {visible.map((q) => (
-              <li key={q.id} className="rounded-md bg-slate-900 px-2.5 py-1.5 text-xs">
-                <div className="font-medium text-slate-200">{q.name}</div>
-                <div className={`capitalize ${q.status === 'active' ? 'text-amber-400' : q.status === 'completed' ? 'text-emerald-400' : 'text-rose-400'}`}>{q.status}</div>
-              </li>
-            ))}
+            {visible.map((q) => {
+              const isMain = resume.quest?.id === q.id;
+              const next = isMain ? resume.nextObjective : null;
+              return (
+                <li key={q.id} className="rounded-md bg-slate-900 px-2.5 py-1.5 text-xs">
+                  <div className="flex items-center justify-between gap-2">
+                    <div className="font-medium text-slate-200">{q.name}</div>
+                    {isMain ? (
+                      <span className="rounded px-1.5 py-0.5 text-[10px] uppercase tracking-wide bg-amber-900/50 text-amber-300">
+                        Main
+                      </span>
+                    ) : null}
+                  </div>
+                  <div className={`capitalize ${q.status === 'active' ? 'text-amber-400' : q.status === 'completed' ? 'text-emerald-400' : 'text-rose-400'}`}>{q.status}</div>
+                  {next ? (
+                    <div className="mt-1 text-slate-400">Next: {next}</div>
+                  ) : null}
+                  {isMain && resume.placePin ? (
+                    <div className="mt-0.5 text-slate-500">Pin: {resume.placePin}</div>
+                  ) : null}
+                </li>
+              );
+            })}
           </ul>
         );
       })()}
+      {resume.quest && onResumeMain ? (
+        <button
+          type="button"
+          onClick={onResumeMain}
+          className="mt-2 w-full rounded-md border border-slate-700 bg-slate-900/80 px-2.5 py-1.5 text-left text-xs text-slate-200 hover:border-amber-700/60 hover:text-amber-200"
+        >
+          Resume main{resume.placePin ? ` — ${resume.placePin}` : ''}
+        </button>
+      ) : null}
     </section>
   );
 }

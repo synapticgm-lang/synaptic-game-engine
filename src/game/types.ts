@@ -482,6 +482,10 @@ export interface GameState {
   currentCoordinates?: Location3D;
   activeDungeon?: ActiveDungeonState | null;
   worldLedger?: WorldLedger;
+  /** Idempotent keys for off-spine XP banks (discover / quest / non-lethal). */
+  sandboxAwardKeys?: string[];
+  /** Journal Resume main pin — map chrome highlights this place name. */
+  mapFocusPlace?: string | null;
   activeEncounter?: ActiveEncounter | null;
   /**
    * Premade world landmass outline + fogged regions (LitRPG/tabletop/RPG open worlds).

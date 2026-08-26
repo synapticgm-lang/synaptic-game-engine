@@ -10,6 +10,7 @@ import { logger } from './logger';
 import { getTierDefinition } from './subscriptionTiers';
 import { CHOICE_TIER_PROMPT_RULES, formatChoiceTierModeDna } from './choiceTierRules';
 import { applyStanceDensity, classifyPath, classifyStance, isCombatLockedTurn } from './stanceDensity';
+import { outdoorHubTravelChoices } from './outdoorHubs';
 import { isAloneArrivalOpening } from './openingEstablishment';
 import { isInteriorMap } from './placeAuthority';
 import { listInteriorExitsFromHere } from './mapEngine';
@@ -718,6 +719,12 @@ export function padChoicesToCount(
   );
   if (isLookAroundChoice(lastPlayerAction)) {
     merged = merged.filter((c) => !isLookAroundChoice(c));
+  }
+  // Outdoor hub travel pads (Act-3) — light, alone-safe, no invent-crowd.
+  for (const hubChoice of outdoorHubTravelChoices(state, 2)) {
+    if (merged.length >= 4) break;
+    if (inventsPresenceOnEmptyScene(hubChoice, state, storyProse)) continue;
+    if (!merged.some((c) => c.toLowerCase() === hubChoice.toLowerCase())) merged.push(hubChoice);
   }
   if (merged.length >= min) {
     return applyStanceDensity(merged.slice(0, 4), state, storyProse, lastPlayerAction);

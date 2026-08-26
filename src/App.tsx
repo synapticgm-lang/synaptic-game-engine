@@ -328,7 +328,19 @@ export default function App() {
       />
 
       <div className="sgm-play-body flex min-h-0 flex-1 basis-0 overflow-hidden w-full lg:flex-row">
-        <LeftDrawer state={state} open={game.leftOpen} onClose={() => game.setLeftOpen(false)} engineMode={state.engineMode} />
+        <LeftDrawer
+          state={state}
+          open={game.leftOpen}
+          onClose={() => game.setLeftOpen(false)}
+          engineMode={state.engineMode}
+          onResumeMain={() => {
+            const pin = game.resumeMainQuest?.();
+            setShowMapModal(true);
+            if (pin) {
+              /* mapFocusPlace already set on state */
+            }
+          }}
+        />
 
         <main className="sgm-play-main">
           <div className="flex min-h-0 flex-1 basis-0 flex-col overflow-hidden">
@@ -500,6 +512,7 @@ export default function App() {
           onClose={() => setShowMapModal(false)}
           activeDungeon={state.activeDungeon ?? null}
           currentLocation={state.currentLocation}
+          mapFocusPlace={state.mapFocusPlace}
           currentCoordinates={state.currentCoordinates}
           combatLocked={!!(state.activeEncounter && state.activeEncounter.hp > 0)}
           aloneArrival={isAloneArrivalOpening(state)}
