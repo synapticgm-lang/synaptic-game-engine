@@ -27,6 +27,9 @@ import {
 } from './choicePipeline';
 import { postFilterGmOutput } from './contentPostFilter';
 import { createDefaultSettings, createInitialState } from './defaults';
+
+/** AI agent goal modes for guided autoplay. */
+export type AiAgentMode = 'default' | 'maxlevel' | 'storyfollower' | 'completionist';
 import {
   classifyTurnFailure,
   gmProxyTimeoutMsForState,
@@ -111,6 +114,7 @@ export type FateAutoplayCliOpts = {
   engineMode?: EngineMode;
   aiTier: HostedAiTier;
   mode: FateMode;
+  aiAgentMode?: AiAgentMode;
   dryRun: boolean;
   matrix: boolean;
   /** John's 40 plan: 10 LitRPG + 10 tabletop + 10 RPG + 10 PYOA. */
@@ -135,13 +139,19 @@ export type TurnTelemetry = {
   endedAt: string;
   durationMs: number;
   bibleId: string;
+  engineMode?: EngineMode;
   personalityId: string;
   seed: number;
   fatePick: string;
   offeredChoices: string[];
+  offeredChoiceIds: string[];
   playerInput: string;
   gmText: string;
   systemLog: string[];
+  questUnlocks: string[];
+  itemsEquipped: string[];
+  itemsUsed: string[];
+  loopFlags: { officialCount: number; atmosphereRepeat: boolean; strangerCount: number };
   error?: string;
   failKind?: string;
   transportRetries: number;
@@ -160,6 +170,7 @@ export type RunSummary = {
   completedTurns: number;
   dryRun: boolean;
   aiTier: HostedAiTier;
+  aiAgentMode?: AiAgentMode;
   startedAt: string;
   endedAt: string;
   errorCount: number;
@@ -514,6 +525,70 @@ function detectLoopFlags(gmText: string, state: GameState): {
   return { officialCount, atmosphereRepeat, strangerCount };
 }
 
+/** Smart choice picker based on AI agent goals. */
+function pickGoalOrientedChoice(
+  offered: string[],
+  state: GameState,
+  mode: AiAgentMode,
+  rng: Rng
+): string {
+  if (mode === 'default' || offered.length === 0) {
+    return pickFateChoice(offered, rng);
+  }
+
+  // Score each choice based on the agent's goal
+  const scored = offered.map((choice, index) => {
+    let score = 0;
+    const lower = choice.toLowerCase();
+
+    if (mode === 'maxlevel') {
+      // Prefer combat, explore, and quest actions
+      if (/\b(?:fight|attack|engage|battle|challenge)\b/i.test(choice)) score += 5;
+      if (/\b(?:explore|search|investigate|scout)\b/i.test(choice)) score += 3;
+      if (/\b(?:accept|take on|pursue).*quest/i.test(choice)) score += 4;
+      if (/\b(?:rest|wait|idle)\b/i.test(choice)) score -= 3;
+    } else if (mode === 'storyfollower') {
+      // Prefer main quest, dialogue, and story beats
+      if (/\b(?:main|primary|quest focus)\b/i.test(choice)) score += 5;
+      if (/\b(?:talk|speak|ask|tell)\b/i.test(choice)) score += 3;
+      if (/\b(?:continue|proceed|follow)\b/i.test(choice)) score += 2;
+      // Check if a quest name appears in the choice
+      const mainQuest = (state.quests ?? []).find(q => q.revealed && !q.sideQuest);
+      if (mainQuest && lower.includes(mainQuest.name.toLowerCase())) score += 4;
+    } else if (mode === 'completionist') {
+      // Prefer side quests, exploration, and collecting
+      if (/\bside\b.*\bquest\b/i.test(choice)) score += 5;
+      if (/\b(?:explore|search|investigate|scout|map)\b/i.test(choice)) score += 4;
+      if (/\b(?:collect|gather|loot|salvage)\b/i.test(choice)) score += 3;
+      if (/\b(?:travel to|visit)\b/i.test(choice)) score += 2;
+      // Prefer unvisited hubs
+      const isTravel = /\btravel to\b/i.test(choice);
+      if (isTravel) {
+        const visited = new Set((state.places ?? []).filter(p => p.visited).map(p => p.name.toLowerCase()));
+        const hubInChoice = (state.places ?? []).find(p => 
+          lower.includes(p.name.toLowerCase())
+        );
+        if (hubInChoice && !visited.has(hubInChoice.name.toLowerCase())) {
+          score += 3;
+        }
+      }
+    }
+
+    return { choice, index, score };
+  });
+
+  // Sort by score (descending), then shuffle tied scores
+  scored.sort((a, b) => {
+    if (b.score !== a.score) return b.score - a.score;
+    return rng() - 0.5;
+  });
+
+  // Pick from top 3 scored choices randomly (or all if fewer)
+  const topChoices = scored.slice(0, Math.min(3, scored.length));
+  const picked = topChoices[Math.floor(rng() * topChoices.length)];
+  return picked.choice;
+}
+
 async function callGmWithRetries(
   state: GameState,
   payload: string,
@@ -564,7 +639,7 @@ export async function headlessFateTurn(
   state: GameState,
   settings: Settings,
   rng: Rng,
-  meta: { bibleId: string; personalityId: string; seed: number; mode: FateMode; dryRun: boolean }
+  meta: { bibleId: string; personalityId: string; seed: number; mode: FateMode; aiAgentMode: AiAgentMode; dryRun: boolean }
 ): Promise<{ state: GameState; telemetry: TurnTelemetry }> {
   const started = Date.now();
   const startedAt = new Date(started).toISOString();
@@ -572,7 +647,7 @@ export async function headlessFateTurn(
   const fatePick =
     meta.mode === 'first-pad'
       ? offered[0] ?? 'Look around'
-      : pickFateChoice(offered, rng);
+      : pickGoalOrientedChoice(offered, state, meta.aiAgentMode, rng);
 
   let playerInput = fatePick;
   let repairNote: string | undefined;
@@ -865,6 +940,7 @@ export async function runFateAutoplay(opts: {
   engineMode?: EngineMode;
   aiTier: HostedAiTier;
   mode: FateMode;
+  aiAgentMode?: AiAgentMode;
   dryRun: boolean;
   outRoot: string;
   characterName: string;
@@ -906,6 +982,7 @@ export async function runFateAutoplay(opts: {
         personalityId,
         seed: opts.seed,
         mode: opts.mode,
+        aiAgentMode: opts.aiAgentMode ?? 'default',
         dryRun: opts.dryRun,
       });
       state = result.state;
@@ -937,6 +1014,7 @@ export async function runFateAutoplay(opts: {
     completedTurns: turns.length,
     dryRun: opts.dryRun,
     aiTier: opts.aiTier,
+    aiAgentMode: opts.aiAgentMode,
     startedAt,
     endedAt,
     errorCount: turns.filter((t) => t.error).length,
@@ -997,6 +1075,11 @@ export function parseFateArgs(argv: string[]): FateAutoplayCliOpts {
     } else if (a === '--pick-mode') {
       const m = next();
       out.mode = m === 'first-pad' ? 'first-pad' : 'fate';
+    } else if (a === '--ai-agent-mode') {
+      const m = next();
+      out.aiAgentMode = ['maxlevel', 'storyfollower', 'completionist'].includes(m) 
+        ? (m as AiAgentMode) 
+        : 'default';
     } else if (a === '--dry-run') out.dryRun = true;
     else if (a === '--matrix-40' || a === '--matrix40') out.matrix40 = true;
     else if (a === '--matrix') out.matrix = true;

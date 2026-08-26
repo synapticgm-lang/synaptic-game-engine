@@ -57,6 +57,7 @@ Options:
   --engine MODE        litrpg | dnd | rpg | pyoa
   --ai-tier free|mid|high
   --pick-mode fate|first-pad
+  --ai-agent-mode MODE default|maxlevel|storyfollower|completionist (goal-oriented AI)
   --matrix-40          John's 40 plan (10×4 modes; every premade once when ≤10)
   --matrix             Full Launch cartesian (mode × premade × narrator)
   --matrix-limit N     Cap matrix runs
@@ -144,6 +145,7 @@ async function main(): Promise<void> {
           engineMode: c.engineMode,
           aiTier: opts.aiTier,
           mode: opts.mode,
+          aiAgentMode: opts.aiAgentMode,
           dryRun: opts.dryRun,
           outRoot: opts.outRoot,
           characterName: opts.characterName,
@@ -175,6 +177,7 @@ async function main(): Promise<void> {
         engineMode: opts.engineMode,
         aiTier: opts.aiTier,
         mode: opts.mode,
+        aiAgentMode: opts.aiAgentMode,
         dryRun: opts.dryRun,
         outRoot: opts.outRoot,
         characterName: opts.characterName,
