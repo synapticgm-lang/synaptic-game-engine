@@ -38,6 +38,7 @@ const VOICE_TO_PERSONALITY: Record<string, string> = {
   'dry-wit': 'Dry',
   'theatrical-jester': 'Theatrical',
   'fireside-innkeep': 'Fireside',
+  'cozy-brutal': 'Cozy Brutal',
 };
 
 export function mapEngineModeToCsv(engineMode: EngineMode): string {

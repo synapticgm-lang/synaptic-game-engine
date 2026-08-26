@@ -1,0 +1,77 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://synapticgm.example/schemas/tone-eval-fixtures.schema.json",
+  "title": "SynapticGM Tone Evaluation Fixtures",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "fixture_count",
+    "rendering_count",
+    "contract",
+    "fixtures"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "string"
+    },
+    "fixture_count": {
+      "type": "integer",
+      "minimum": 24
+    },
+    "rendering_count": {
+      "type": "integer",
+      "minimum": 72
+    },
+    "contract": {
+      "type": "string"
+    },
+    "fixtures": {
+      "type": "array",
+      "minItems": 24,
+      "items": {
+        "type": "object",
+        "required": [
+          "fixture_id",
+          "kid_mode",
+          "authority_input",
+          "canonical_sha256",
+          "renderings",
+          "pass_criteria"
+        ],
+        "properties": {
+          "fixture_id": {
+            "type": "string",
+            "pattern": "^fx[0-9]{2}_"
+          },
+          "kid_mode": {
+            "type": "boolean"
+          },
+          "authority_input": {
+            "type": "object"
+          },
+          "canonical_sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "renderings": {
+            "type": "array",
+            "minItems": 3,
+            "items": {
+              "type": "object",
+              "required": [
+                "tone_id",
+                "text",
+                "expected_canonical_hash",
+                "tone_signals_required",
+                "kid_safe_required"
+              ]
+            }
+          },
+          "pass_criteria": {
+            "type": "object"
+          }
+        }
+      }
+    }
+  }
+}

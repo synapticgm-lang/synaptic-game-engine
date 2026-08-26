@@ -8,9 +8,9 @@ import { effectiveWriterTier, isTestLabEnabled } from '../game/testLab';
 import { equippedSetLabel, equippedSetName } from '../game/uiTheme';
 
 /** Visible after a hard refresh -- if this is missing, Vercel is still serving the 16 Aug bundle. */
-export const HUD_BUILD_STAMP = '2026-08-26l';
+export const HUD_BUILD_STAMP = '2026-08-26m';
 const HUD_BUILD_TITLE =
-  'Debug 2026-08-26l - Hide text/options persist; no title-art bleed';
+  'Debug 2026-08-26m - Launch narrator/System voices + tone rails';
 
 interface Props {
   state: GameState;

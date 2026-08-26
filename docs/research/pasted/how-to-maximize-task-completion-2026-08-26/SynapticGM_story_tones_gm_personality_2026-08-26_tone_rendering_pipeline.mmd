@@ -1,0 +1,38 @@
+flowchart LR
+    A[Player correction] --> B[Pinned canon]
+    B --> C[Authority resolver]
+    C --> D[Permitted outcome]
+    C --> E[StateTx]
+    C --> F[Evidence]
+    D --> G[SceneManifest and SNAPSHOT]
+    E --> G
+    F --> G
+    G --> H[Narrator and System chrome renderer]
+    I[systemPersonality or gmPersonality] --> H
+    J[fluidProseRails and tone additive rail] --> H
+    K[folkVoiceExpectations] --> H
+    L[Mode DNA and choiceTierRules] --> H
+    M[Perspective setting] --> H
+    H --> N[Deterministic proseWarden]
+    N --> O{Canonical projection unchanged?}
+    O -- No --> P[Deterministic repair or reject]
+    P --> H
+    O -- Yes --> Q[Text and overlay presentation]
+    Q --> R[Theme material tokens]
+    Q --> S{Art eligibility gates}
+    S -- Suppress --> T[Narration completes without art]
+    S -- Eligible --> U[Asynchronous art queue]
+    U --> V[Klein 4B or Flux Pro by tier config]
+    V --> W[Memorable plate or comic-lite pixels]
+    W --> X[HTML and SVG overlay lettering]
+    X --> Y[Presented scene]
+    R --> Y
+
+    classDef authority fill:#1f2937,color:#ffffff,stroke:#111827,stroke-width:2px;
+    classDef render fill:#e0f2fe,color:#0c4a6e,stroke:#0369a1;
+    classDef guard fill:#fef3c7,color:#78350f,stroke:#d97706;
+    classDef art fill:#ede9fe,color:#4c1d95,stroke:#7c3aed;
+    class A,B,C,D,E,F,G authority;
+    class H,I,J,K,L,M,Q render;
+    class N,O,P,S,T guard;
+    class R,U,V,W,X,Y art;

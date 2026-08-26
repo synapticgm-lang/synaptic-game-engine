@@ -1,0 +1,140 @@
+{
+  "schema_version": "1.0.0",
+  "engine": "classifier_regex_deterministic_only",
+  "second_llm_allowed": false,
+  "pipeline_order": [
+    "normalize",
+    "protected-token compare",
+    "entity whitelist compare",
+    "regex scrub",
+    "Kid gate",
+    "repair-template selection",
+    "emit diagnostics"
+  ],
+  "rules": [
+    {
+      "id": "PW001",
+      "class": "author_or_franchise_imitation",
+      "type": "regex",
+      "pattern": "(?i)\\b(write|sound|narrate|render)\\s+(exactly\\s+)?(like|in the style of)\\b",
+      "action": "reject_request_and_offer_technique_bucket",
+      "severity": "block"
+    },
+    {
+      "id": "PW002",
+      "class": "named_forbidden_ip",
+      "type": "regex",
+      "pattern": "(?i)\\b(Solo Leveling|Wandering Inn|Sword Art Online|Dungeon Crawler Carl|Omniscient Reader|Tower of God|Fable|Albion|Ghibli|Marvel|Dungeons?\\s*&\\s*Dragons)\\b",
+      "action": "reject_or_replace_with_original_generic_term",
+      "severity": "block"
+    },
+    {
+      "id": "PW003",
+      "class": "player_humiliation",
+      "type": "regex",
+      "pattern": "(?i)\\b(you idiot|stupid choice|your fault|pathetic move|what did you do|you broke it)\\b",
+      "action": "replace_with_nonjudgmental_consequence",
+      "severity": "block"
+    },
+    {
+      "id": "PW004",
+      "class": "hidden_timer",
+      "type": "regex",
+      "pattern": "(?i)\\b(only|just)\\s+\\d+\\s+(seconds?|minutes?|turns?)\\s+(remain|left)\\b",
+      "action": "require_timer_in_snapshot_else_remove",
+      "severity": "block"
+    },
+    {
+      "id": "PW005",
+      "class": "invented_presence",
+      "type": "validator",
+      "algorithm": "named_entity_subset(rendered_entities, scene_manifest.present_entity_ids)",
+      "action": "remove_or_rerender",
+      "severity": "block"
+    },
+    {
+      "id": "PW006",
+      "class": "location_drift",
+      "type": "validator",
+      "algorithm": "rendered_location_id == snapshot.location_id",
+      "action": "rerender_from_snapshot",
+      "severity": "block"
+    },
+    {
+      "id": "PW007",
+      "class": "numeric_drift",
+      "type": "validator",
+      "algorithm": "multiset(extracted_game_numbers) == multiset(authority_numbers_referenced_by_template)",
+      "action": "reject_and_restore_exact_values",
+      "severity": "block"
+    },
+    {
+      "id": "PW008",
+      "class": "inventory_drift",
+      "type": "validator",
+      "algorithm": "rendered_inventory_claims subset_of snapshot.inventory plus state_tx.inventory_delta",
+      "action": "reject_clause",
+      "severity": "block"
+    },
+    {
+      "id": "PW009",
+      "class": "choice_hallucination",
+      "type": "validator",
+      "algorithm": "all(choice.bindings in choiceTierRules.permitted_bindings)",
+      "action": "remove_choice",
+      "severity": "block"
+    },
+    {
+      "id": "PW010",
+      "class": "folk_accent_spam",
+      "type": "regex",
+      "pattern": "(?i)([a-z]’[a-z]){3,}|\\b(ye|yer|dinna|canna|innit)\\b(?:.*\\b\\1\\b){2,}",
+      "action": "normalize_to_plain_spelling_preserve_single_lexical_cue",
+      "severity": "repair"
+    },
+    {
+      "id": "PW011",
+      "class": "purple_stack",
+      "type": "classifier",
+      "features": [
+        "three_or_more_consecutive_metaphors",
+        "four_or_more_atmospheric_adjectives_before_noun",
+        "repeated_ineffable_claim"
+      ],
+      "action": "trim_to_one_noncausal_image",
+      "severity": "repair"
+    },
+    {
+      "id": "PW012",
+      "class": "kid_pressure",
+      "type": "regex",
+      "pattern": "(?i)\\b(now or never|choose before it is too late|don’t be a coward|prove yourself|no turning back)\\b",
+      "action": "replace_with_plain_noncoercive_choice",
+      "severity": "block_when_kid"
+    },
+    {
+      "id": "PW013",
+      "class": "baked_lettering_prompt",
+      "type": "regex",
+      "pattern": "(?i)\\b(render|include|show|paint|draw)\\b.{0,40}\\b(dialogue|caption|speech bubble|SFX|logo|watermark|HUD|UI text|readable text)\\b",
+      "action": "remove_and_append_global_negative",
+      "severity": "block"
+    },
+    {
+      "id": "PW014",
+      "class": "uncertainty_erasure",
+      "type": "validator",
+      "algorithm": "if evidence.confidence < confirmed then rendered_claim must preserve uncertainty marker",
+      "action": "repair_with_calibrated_uncertainty",
+      "severity": "block"
+    },
+    {
+      "id": "PW015",
+      "class": "repair_structure",
+      "type": "validator",
+      "algorithm": "repair_message contains STATUS and WHY and REPAIR slots",
+      "action": "use_approved_template",
+      "severity": "block"
+    }
+  ]
+}

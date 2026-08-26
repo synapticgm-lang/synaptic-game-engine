@@ -1,0 +1,180 @@
+{
+  "project": "SynapticGM story tones, GM personality, theme and image pairing",
+  "build_date": "2026-08-26",
+  "file_count": 28,
+  "files": [
+    {
+      "filename": "SynapticGM_story_tones_gm_personality_2026-08-26_OMNIBUS.md",
+      "bytes": 130709,
+      "sha256": "73c496ff135d696f89edc97b3790e3a7c2ddf24ae945a29f805f19a4f6559d51",
+      "extension": ".md"
+    },
+    {
+      "filename": "SynapticGM_story_tones_gm_personality_2026-08-26_Part_T1_tone_catalogue.md",
+      "bytes": 53015,
+      "sha256": "857b15b03f4ea1b84177939293cdc0ea62199fe750449beb05a7b3773d82c5c6",
+      "extension": ".md"
+    },
+    {
+      "filename": "SynapticGM_story_tones_gm_personality_2026-08-26_Part_T2_GM_application.md",
+      "bytes": 15214,
+      "sha256": "61ef3517f02418278b1f102c7f116e876bf5ace0051672ad3bb3645ab5fb093d",
+      "extension": ".md"
+    },
+    {
+      "filename": "SynapticGM_story_tones_gm_personality_2026-08-26_Part_T3_themes_images.md",
+      "bytes": 32711,
+      "sha256": "790a09c5a4c3677c8cb17ad524321e5daf2fdc638076b551192b7874d843c884",
+      "extension": ".md"
+    },
+    {
+      "filename": "SynapticGM_story_tones_gm_personality_2026-08-26_Part_T4_implementation_banks.md",
+      "bytes": 2398,
+      "sha256": "f493955f8798c8b2d39eb85c097e2a043c1951d94f3f8f4ef6d3dbc3c31f726c",
+      "extension": ".md"
+    },
+    {
+      "filename": "SynapticGM_story_tones_gm_personality_2026-08-26_Part_T5_implementation_plan.md",
+      "bytes": 683,
+      "sha256": "2cbd2f4a31733e2765d14014e56ac0264166abb8b04f4021dd0c7eaf0429ae82",
+      "extension": ".md"
+    },
+    {
+      "filename": "SynapticGM_story_tones_gm_personality_2026-08-26_Part_T6_scorecard_founder_decisions.md",
+      "bytes": 2996,
+      "sha256": "64ef4917626985e2f7540222388828a1c785404e05e3818d5b3ac325844a2c52",
+      "extension": ".md"
+    },
+    {
+      "filename": "SynapticGM_story_tones_gm_personality_2026-08-26_README.md",
+      "bytes": 5129,
+      "sha256": "052081c0d601ebd37377f1d0fb9b398327730b62ce9db4fa401d24ee565bd4f5",
+      "extension": ".md"
+    },
+    {
+      "filename": "SynapticGM_story_tones_gm_personality_2026-08-26_executive_scorecard.md",
+      "bytes": 3947,
+      "sha256": "05c5b0d570a9cd9be813980941059b9015b099c606ec9fcf9841cf42a5dd6095",
+      "extension": ".md"
+    },
+    {
+      "filename": "SynapticGM_story_tones_gm_personality_2026-08-26_p0_p1_p2_implementation_board.md",
+      "bytes": 5883,
+      "sha256": "99763c259f92a204241de20758b9fa038158e4923ad78a127e3e3bee736b63e5",
+      "extension": ".md"
+    },
+    {
+      "filename": "SynapticGM_story_tones_gm_personality_2026-08-26_sources_and_evidence.md",
+      "bytes": 2948,
+      "sha256": "ebe96840527d2affecce921d7a817ff9216a504f83d7503099b814306a5aab6e",
+      "extension": ".md"
+    },
+    {
+      "filename": "SynapticGM_story_tones_gm_personality_2026-08-26_tone_blind_taste_protocol.md",
+      "bytes": 7690,
+      "sha256": "8e426187c5a8e036215a63fea471472e9a1a6becedb4739964ea9d21a788eed9",
+      "extension": ".md"
+    },
+    {
+      "filename": "SynapticGM_story_tones_gm_personality_2026-08-26_tone_catalogue.csv",
+      "bytes": 36414,
+      "sha256": "ff2df729525ba19fd6d04381b033f2be58a46b43ac0f2cd5a835a6026cb4a69f",
+      "extension": ".csv"
+    },
+    {
+      "filename": "SynapticGM_story_tones_gm_personality_2026-08-26_tone_choice_pad_banks.json",
+      "bytes": 254332,
+      "sha256": "20d4cd8f57bb9f523979f31da00dd1438f122d5b51bea927b35c23da660747b2",
+      "extension": ".json"
+    },
+    {
+      "filename": "SynapticGM_story_tones_gm_personality_2026-08-26_tone_contract_reference.ts",
+      "bytes": 3425,
+      "sha256": "968f6dbc3d02bb4d01ff0119176a811b5d4013ce64388fd36d3ff453aa3b1eb6",
+      "extension": ".ts"
+    },
+    {
+      "filename": "SynapticGM_story_tones_gm_personality_2026-08-26_tone_eval_fixture.schema.json",
+      "bytes": 1760,
+      "sha256": "02a6ed7dea640756ffde51db170b6d0835e4ab1bbff273c3175e62ffd7650db3",
+      "extension": ".json"
+    },
+    {
+      "filename": "SynapticGM_story_tones_gm_personality_2026-08-26_tone_eval_fixtures.json",
+      "bytes": 70078,
+      "sha256": "8760af1ce033cc0899191b5fd8bd81016c3c3b355d9388abb1d35c9613de3375",
+      "extension": ".json"
+    },
+    {
+      "filename": "SynapticGM_story_tones_gm_personality_2026-08-26_tone_fluid_rail_snippets.md",
+      "bytes": 21439,
+      "sha256": "026429ead3353d1f3f1c6e751980b727417ed089c00e60f53e656bbe822087ba",
+      "extension": ".md"
+    },
+    {
+      "filename": "SynapticGM_story_tones_gm_personality_2026-08-26_tone_never_lines.csv",
+      "bytes": 65452,
+      "sha256": "9a0fa73c4f5985cb3917f90ad291ce3644fb285ae968a5f1dd0c63f94d555441",
+      "extension": ".csv"
+    },
+    {
+      "filename": "SynapticGM_story_tones_gm_personality_2026-08-26_tone_prose_warden_rules.json",
+      "bytes": 4600,
+      "sha256": "b41243c0b8adf98a6841988a5cd4293ec4e7db89b1ae13f2874ab34545136d7e",
+      "extension": ".json"
+    },
+    {
+      "filename": "SynapticGM_story_tones_gm_personality_2026-08-26_tone_rendering_pipeline.mmd",
+      "bytes": 1432,
+      "sha256": "3484424328749f0d5e69d036183ae8b6086a887356efc9b77101591d0afdc61c",
+      "extension": ".mmd"
+    },
+    {
+      "filename": "SynapticGM_story_tones_gm_personality_2026-08-26_tone_rendering_pipeline.png",
+      "bytes": 100411,
+      "sha256": "b28f0e1e1817dad530e824ef5c31499fd68a873275296b073d4955a055fa4f81",
+      "extension": ".png"
+    },
+    {
+      "filename": "SynapticGM_story_tones_gm_personality_2026-08-26_tone_status_chrome_templates.json",
+      "bytes": 41846,
+      "sha256": "748772448d9e5fc8a4c5429c5bf1901f480cf1dc4daa1fcd8874599867c9ee18",
+      "extension": ".json"
+    },
+    {
+      "filename": "SynapticGM_story_tones_gm_personality_2026-08-26_tone_theme_image_matrix.csv",
+      "bytes": 21600,
+      "sha256": "87dd19d7201c41f6a7c73f755910b1460d762b2ab8ae66108953032c4bd08633",
+      "extension": ".csv"
+    },
+    {
+      "filename": "SynapticGM_story_tones_gm_personality_2026-08-26_tone_to_gm_rails.csv",
+      "bytes": 13570,
+      "sha256": "a453c9d19313184abee285e1034352ca3b1274662105cd6900c5e9c3df9cd403",
+      "extension": ".csv"
+    },
+    {
+      "filename": "SynapticGM_story_tones_gm_personality_2026-08-26_unknowns_and_evidence_gaps.md",
+      "bytes": 4869,
+      "sha256": "d557f672ee7f843ce44d4b517e8fab6f96bc31332b9d217f7d3b45a97b6be096",
+      "extension": ".md"
+    },
+    {
+      "filename": "SynapticGM_story_tones_gm_personality_2026-08-26_validation_report.md",
+      "bytes": 3226,
+      "sha256": "8f05b815ddd35541e41df06cab1568cdac0720fe346fff50ea44484380d9c0e7",
+      "extension": ".md"
+    },
+    {
+      "filename": "SynapticGM_story_tones_gm_personality_2026-08-26_vitest_tone_contract_template.ts",
+      "bytes": 1508,
+      "sha256": "b98baf7c168bd8bb274626e67460a391de589da1b4bbfdf98de24dd079de7d89",
+      "extension": ".ts"
+    }
+  ],
+  "quality_summary": {
+    "checks": 38,
+    "passed": 38,
+    "failed": 0
+  }
+}

@@ -333,9 +333,10 @@ export function SettingsModal({ settings, storyName, engineMode, gameState, onSa
 
           <Section icon={<BookText size={16} />} title="GM / System voice" visible={activeTab === 'narrative'}>
             <p className="mb-2 text-[11px] text-slate-500">
-              Prompt tone for Story RPG and Pick Your Own Adventure — separate from Shop TTS voice kits.
-              LitRPG uses the System personality you pick at New Game (saved with that campaign).
-              Tabletop Fantasy uses the GM personality you pick at New Game. This list is the fallback for older LitRPG saves.
+              Prompt tone for Story RPG and Pick Your Own Adventure when a New Game narrator was not stamped —
+              separate from Shop TTS voice kits. LitRPG uses the System personality you pick at New Game.
+              Tabletop / Story RPG / PYOA use the narrator personality from New Game when stamped.
+              This list is the fallback for older saves. Theatrical stays available here for legacy preference.
             </p>
             <div className="grid grid-cols-2 gap-2">
               {GM_VOICE_PROFILES.map((p) => (

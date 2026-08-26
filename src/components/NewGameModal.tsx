@@ -28,9 +28,14 @@ import {
 } from '@/game/playerProfile';
 import {
   DEFAULT_LITRPG_SYSTEM_PERSONALITY,
+  DEFAULT_PYOA_GM_PERSONALITY,
+  DEFAULT_RPG_GM_PERSONALITY,
   DEFAULT_TABLETOP_GM_PERSONALITY,
+  LITRPG_FEATURED_SYSTEM_PERSONALITIES,
   LITRPG_SYSTEM_PERSONALITIES,
   TABLETOP_GM_PERSONALITIES,
+  TABLETOP_GM_PERSONALITIES_MORE,
+  suggestedThemeForVoice,
   type GmPersonalityId,
   type SystemPersonalityId,
 } from '@/game/gmVoiceProfile';
@@ -126,6 +131,7 @@ export function NewGameModal({ contentMode, onStart, onClose }: Props) {
   const [gmStrictness, setGmStrictness] = useState<GmStrictness>('standard');
   const [gmPersonality, setGmPersonality] = useState<GmPersonalityId>(DEFAULT_TABLETOP_GM_PERSONALITY);
   const [systemPersonality, setSystemPersonality] = useState<SystemPersonalityId>(DEFAULT_LITRPG_SYSTEM_PERSONALITY);
+  const [showMoreNarrators, setShowMoreNarrators] = useState(false);
   const [customArchetype, setCustomArchetype] = useState<CampaignArchetype>(getDefaultArchetype('litrpg'));
   const [simplePitch, setSimplePitch] = useState('');
   const [expertDraft, setExpertDraft] = useState<ExpertCustomDraft>(emptyExpertDraft);
@@ -155,12 +161,22 @@ export function NewGameModal({ contentMode, onStart, onClose }: Props) {
     setCustomArchetype(next);
     setArchetype(next);
     setBibleId(undefined);
+    setShowMoreNarrators(false);
+    if (mode === 'dnd') setGmPersonality(DEFAULT_TABLETOP_GM_PERSONALITY);
+    else if (mode === 'rpg') setGmPersonality(DEFAULT_RPG_GM_PERSONALITY);
+    else if (mode === 'pyoa') setGmPersonality(DEFAULT_PYOA_GM_PERSONALITY);
+    else if (mode === 'litrpg') setSystemPersonality(DEFAULT_LITRPG_SYSTEM_PERSONALITY);
     const first = getCampaignBiblesByEngineMode(mode, contentMode)[0];
     if (path === 'premade' && first) {
       selectPremade(first);
     } else {
       setStoryName(formatCampaignStoryName(path === 'custom' ? 'Custom Campaign' : 'New Campaign'));
     }
+  };
+
+  const resolveNarratorPersonality = (): GmPersonalityId | undefined => {
+    if (engineMode === 'dnd' || engineMode === 'rpg' || engineMode === 'pyoa') return gmPersonality;
+    return undefined;
   };
 
   const choosePath = (kind: PathKind) => {
@@ -227,7 +243,7 @@ export function NewGameModal({ contentMode, onStart, onClose }: Props) {
       bibleId,
       engineMode === 'dnd' ? customTabletopRules : undefined,
       undefined,
-      engineMode === 'dnd' ? gmPersonality : undefined,
+      resolveNarratorPersonality(),
       engineMode === 'litrpg' ? systemPersonality : undefined,
       useUsual,
     );
@@ -292,7 +308,7 @@ export function NewGameModal({ contentMode, onStart, onClose }: Props) {
       blankBibleIdForMode(engineMode),
       engineMode === 'dnd' ? customTabletopRules : undefined,
       playerBible,
-      engineMode === 'dnd' ? gmPersonality : undefined,
+      resolveNarratorPersonality(),
       engineMode === 'litrpg' ? systemPersonality : undefined,
       useUsual,
     );
@@ -571,21 +587,30 @@ export function NewGameModal({ contentMode, onStart, onClose }: Props) {
                 </div>
               )}
 
-              {engineMode === 'dnd' && (
+              {(engineMode === 'dnd' || engineMode === 'rpg' || engineMode === 'pyoa') && (
                 <>
-                  <div className="rounded-lg border border-slate-700 bg-slate-800/40 p-3">
-                    <CustomTabletopRulesField
-                      value={customTabletopRules}
-                      onChange={setCustomTabletopRules}
-                      kidMode={contentMode === 'kid'}
-                      compact
-                    />
-                  </div>
+                  {engineMode === 'dnd' && (
+                    <div className="rounded-lg border border-slate-700 bg-slate-800/40 p-3">
+                      <CustomTabletopRulesField
+                        value={customTabletopRules}
+                        onChange={setCustomTabletopRules}
+                        kidMode={contentMode === 'kid'}
+                        compact
+                      />
+                    </div>
+                  )}
                   <div>
-                    <label className="mb-1 block font-medium text-slate-300">GM personality</label>
+                    <label className="mb-1 block font-medium text-slate-300">
+                      {engineMode === 'pyoa' ? 'Narrator voice' : 'GM personality'}
+                    </label>
                     <p className="mb-1.5 text-[10px] leading-snug text-slate-500">
-                      How your Game Master talks at the table. Rules tightness is separate
-                      {path === 'custom' ? ' (Strictness below)' : ''}. Sticks with this campaign.
+                      {engineMode === 'pyoa'
+                        ? 'How the gamebook narrator talks. Branching Crisis defaults to Mission Lead. Sticks with this campaign.'
+                        : engineMode === 'rpg'
+                          ? 'How your story narrator talks. Popular, clear, never cruel. Sticks with this campaign.'
+                          : `How your Game Master talks at the table. Rules tightness is separate${
+                              path === 'custom' ? ' (Strictness below)' : ''
+                            }. Sticks with this campaign.`}
                     </p>
                     <div className="grid grid-cols-1 gap-1.5 sm:grid-cols-2">
                       {TABLETOP_GM_PERSONALITIES.map((p) => (
@@ -603,9 +628,42 @@ export function NewGameModal({ contentMode, onStart, onClose }: Props) {
                           <div className="text-[9px] font-normal leading-tight text-slate-500">
                             {p.tabletopTip ?? p.blurb}
                           </div>
+                          {suggestedThemeForVoice(p.id) && (
+                            <div className="mt-0.5 text-[9px] text-slate-600">
+                              Suggested set: {suggestedThemeForVoice(p.id)} (optional)
+                            </div>
+                          )}
                         </button>
                       ))}
                     </div>
+                    <button
+                      type="button"
+                      onClick={() => setShowMoreNarrators((v) => !v)}
+                      className="mt-1.5 text-[10px] text-slate-500 underline-offset-2 hover:text-slate-300 hover:underline"
+                    >
+                      {showMoreNarrators ? 'Hide more styles' : 'More styles'}
+                    </button>
+                    {showMoreNarrators && (
+                      <div className="mt-1.5 grid grid-cols-1 gap-1.5 sm:grid-cols-2">
+                        {TABLETOP_GM_PERSONALITIES_MORE.map((p) => (
+                          <button
+                            key={p.id}
+                            type="button"
+                            onClick={() => setGmPersonality(p.id as GmPersonalityId)}
+                            className={`rounded-lg border px-2 py-1.5 text-left transition-all ${
+                              gmPersonality === p.id
+                                ? 'border-crimson-500 bg-crimson-950/30 text-crimson-200'
+                                : 'border-slate-700 bg-slate-800/40 text-slate-400 hover:bg-slate-800'
+                            }`}
+                          >
+                            <div className="text-xs font-semibold text-slate-200">{p.label}</div>
+                            <div className="text-[9px] font-normal leading-tight text-slate-500">
+                              {p.tabletopTip ?? p.blurb}
+                            </div>
+                          </button>
+                        ))}
+                      </div>
+                    )}
                   </div>
                 </>
               )}
@@ -614,7 +672,7 @@ export function NewGameModal({ contentMode, onStart, onClose }: Props) {
                 <div>
                   <label className="mb-1 block font-medium text-slate-300">System / story voice</label>
                   <p className="mb-1.5 text-[10px] leading-snug text-slate-500">
-                    How this campaign sounds — registrar Status chrome, or Cozy Brutal punchy prose.
+                    How this campaign sounds — registrar Status chrome, or Featured Cozy Brutal punchy prose.
                     Not a person running the table. Sticks with this save.
                   </p>
                   <div className="grid grid-cols-1 gap-1.5 sm:grid-cols-2">
@@ -635,8 +693,44 @@ export function NewGameModal({ contentMode, onStart, onClose }: Props) {
                         <div className="mt-0.5 text-[11px] font-normal leading-snug text-slate-400">
                           {p.litrpgTip ?? p.blurb}
                         </div>
+                        {suggestedThemeForVoice(p.id) && (
+                          <div className="mt-0.5 text-[9px] text-slate-600">
+                            Suggested set: {suggestedThemeForVoice(p.id)} (optional)
+                          </div>
+                        )}
                       </button>
                     ))}
+                  </div>
+                  <div className="mt-2">
+                    <div className="mb-1 text-[10px] font-medium uppercase tracking-wide text-amber-600/90">
+                      Featured tone
+                    </div>
+                    <div className="grid grid-cols-1 gap-1.5 sm:grid-cols-2">
+                      {LITRPG_FEATURED_SYSTEM_PERSONALITIES.map((p) => (
+                        <button
+                          key={p.id}
+                          type="button"
+                          onClick={() => setSystemPersonality(p.id as SystemPersonalityId)}
+                          className={`rounded-lg border px-2.5 py-2 text-left transition-all ${
+                            systemPersonality === p.id
+                              ? 'border-amber-500 bg-amber-950/30 text-amber-100'
+                              : 'border-amber-900/60 bg-slate-800/40 text-slate-400 hover:bg-slate-800'
+                          }`}
+                        >
+                          <div className="text-xs font-semibold text-slate-200">
+                            {p.litrpgLabel ?? p.label}
+                          </div>
+                          <div className="mt-0.5 text-[11px] font-normal leading-snug text-slate-400">
+                            {p.litrpgTip ?? p.blurb}
+                          </div>
+                          {suggestedThemeForVoice(p.id) && (
+                            <div className="mt-0.5 text-[9px] text-slate-600">
+                              Suggested set: {suggestedThemeForVoice(p.id)} (optional)
+                            </div>
+                          )}
+                        </button>
+                      ))}
+                    </div>
                   </div>
                 </div>
               )}

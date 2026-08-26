@@ -1,0 +1,1552 @@
+{
+  "schema_version": "1.0.0",
+  "fixture_count": 24,
+  "rendering_count": 72,
+  "contract": "Every rendering is evaluated against the same authority_input. Tone distinction is required only after canonical equivalence passes.",
+  "fixtures": [
+    {
+      "fixture_id": "fx01_bridge_slip",
+      "kid_mode": false,
+      "authority_input": {
+        "location": "Old Stone Bridge",
+        "present_entities": [
+          "Mara"
+        ],
+        "exits": [
+          "north bank",
+          "south bank"
+        ],
+        "inventory": [
+          "rope",
+          "lantern"
+        ],
+        "hp": 17,
+        "state_delta": {
+          "hp": -3
+        },
+        "quest_status": "crossing_open",
+        "permit_status": "none",
+        "evidence": "The wet parapet and snapped rope",
+        "outcome_code": "failed_climb"
+      },
+      "canonical_sha256": "07a1ac76ad2afa18e2bdfa10d8cfbff0995dd39f5cd8a1f072be4c104278835b",
+      "renderings": [
+        {
+          "tone_id": "grimdark_bleak_consequence",
+          "text": "LOCATION: Old Stone Bridge. PRESENT: Mara. EXITS: north bank, south bank. INVENTORY: rope, lantern. HP: 17. OUTCOME: failed_climb. Rain falls; the rope has snapped. The detail lands without mercy, and nothing in the wording changes the cost.",
+          "expected_canonical_hash": "07a1ac76ad2afa18e2bdfa10d8cfbff0995dd39f5cd8a1f072be4c104278835b",
+          "tone_signals_required": [
+            "The detail lands without mercy, and nothing in the wording changes the cost."
+          ],
+          "kid_safe_required": false
+        },
+        {
+          "tone_id": "warm_chronicle",
+          "text": "LOCATION: Old Stone Bridge. PRESENT: Mara. EXITS: north bank, south bank. INVENTORY: rope, lantern. HP: 17. OUTCOME: failed_climb. Rain falls; the rope has snapped. The moment is set down with care, preserving both the cost and the company present.",
+          "expected_canonical_hash": "07a1ac76ad2afa18e2bdfa10d8cfbff0995dd39f5cd8a1f072be4c104278835b",
+          "tone_signals_required": [
+            "The moment is set down with care, preserving both the cost and the company present."
+          ],
+          "kid_safe_required": false
+        },
+        {
+          "tone_id": "clinical_auditor",
+          "text": "LOCATION: Old Stone Bridge. PRESENT: Mara. EXITS: north bank, south bank. INVENTORY: rope, lantern. HP: 17. OUTCOME: failed_climb. Rain falls; the rope has snapped. Observation, transaction, and evidence are separated; no additional cause is inferred.",
+          "expected_canonical_hash": "07a1ac76ad2afa18e2bdfa10d8cfbff0995dd39f5cd8a1f072be4c104278835b",
+          "tone_signals_required": [
+            "Observation, transaction, and evidence are separated; no additional cause is inferred."
+          ],
+          "kid_safe_required": false
+        }
+      ],
+      "pass_criteria": {
+        "render_count_min": 3,
+        "canonical_hash_equal": true,
+        "numbers_exact": true,
+        "rendered_entities_subset_of_present": true,
+        "rendered_exits_subset_of_exits": true,
+        "no_unearned_inventory_or_status": true,
+        "tone_distinct": true,
+        "kid_safe_if_tagged": false,
+        "no_forbidden_ip_or_style_clone": true
+      }
+    },
+    {
+      "fixture_id": "fx02_archive_door",
+      "kid_mode": true,
+      "authority_input": {
+        "location": "Civic Archive",
+        "present_entities": [
+          "Keeper Sol"
+        ],
+        "exits": [
+          "west stair"
+        ],
+        "inventory": [
+          "brass key"
+        ],
+        "hp": 20,
+        "state_delta": {},
+        "quest_status": "records_sealed",
+        "permit_status": "archive permit required",
+        "evidence": "The lock plate and posted seal",
+        "outcome_code": "blocked_entry"
+      },
+      "canonical_sha256": "332384aa63ddaa6356df40ba88a2dc7b3884fd364bc52516b11da912df681522",
+      "renderings": [
+        {
+          "tone_id": "gothic_moonlit_dread",
+          "text": "LOCATION: Civic Archive. PRESENT: Keeper Sol. EXITS: west stair. INVENTORY: brass key. HP: 20. OUTCOME: blocked_entry. Dust hangs in the lamp beam. Light and architecture carry the unease; no unseen presence is implied.",
+          "expected_canonical_hash": "332384aa63ddaa6356df40ba88a2dc7b3884fd364bc52516b11da912df681522",
+          "tone_signals_required": [
+            "Light and architecture carry the unease; no unseen presence is implied."
+          ],
+          "kid_safe_required": true
+        },
+        {
+          "tone_id": "dry_wit_deadpan",
+          "text": "LOCATION: Civic Archive. PRESENT: Keeper Sol. EXITS: west stair. INVENTORY: brass key. HP: 20. OUTCOME: blocked_entry. Dust hangs in the lamp beam. The situation has declined to become more convenient, but the record is clear.",
+          "expected_canonical_hash": "332384aa63ddaa6356df40ba88a2dc7b3884fd364bc52516b11da912df681522",
+          "tone_signals_required": [
+            "The situation has declined to become more convenient, but the record is clear."
+          ],
+          "kid_safe_required": true
+        },
+        {
+          "tone_id": "kid_plain_stakes",
+          "text": "LOCATION: Civic Archive. PRESENT: Keeper Sol. EXITS: west stair. INVENTORY: brass key. HP: 20. OUTCOME: blocked_entry. Dust hangs in the lamp beam. The result is clear, the words are simple, and the next step can be chosen without pressure.",
+          "expected_canonical_hash": "332384aa63ddaa6356df40ba88a2dc7b3884fd364bc52516b11da912df681522",
+          "tone_signals_required": [
+            "The result is clear, the words are simple, and the next step can be chosen without pressure."
+          ],
+          "kid_safe_required": true
+        }
+      ],
+      "pass_criteria": {
+        "render_count_min": 3,
+        "canonical_hash_equal": true,
+        "numbers_exact": true,
+        "rendered_entities_subset_of_present": true,
+        "rendered_exits_subset_of_exits": true,
+        "no_unearned_inventory_or_status": true,
+        "tone_distinct": true,
+        "kid_safe_if_tagged": true,
+        "no_forbidden_ip_or_style_clone": true
+      }
+    },
+    {
+      "fixture_id": "fx03_failed_bargain",
+      "kid_mode": false,
+      "authority_input": {
+        "location": "Glass Market",
+        "present_entities": [
+          "Ilyra",
+          "broker"
+        ],
+        "exits": [
+          "east arcade"
+        ],
+        "inventory": [
+          "sealed letter",
+          "12 coins"
+        ],
+        "hp": 20,
+        "state_delta": {
+          "coins": 0
+        },
+        "quest_status": "audience_pending",
+        "permit_status": "none",
+        "evidence": "The broker’s refusal",
+        "outcome_code": "offer_rejected"
+      },
+      "canonical_sha256": "070215a080e5a8757f4d16382dd237bc5b5b544a7f5743a70b70ef7ef8937a50",
+      "renderings": [
+        {
+          "tone_id": "fae_uncanny_tale",
+          "text": "LOCATION: Glass Market. PRESENT: Ilyra, broker. EXITS: east arcade. INVENTORY: sealed letter, 12 coins. HP: 20. OUTCOME: offer_rejected. Reflections cross the glass canopy. The pattern feels uncanny, while every cost and rule stays literal.",
+          "expected_canonical_hash": "070215a080e5a8757f4d16382dd237bc5b5b544a7f5743a70b70ef7ef8937a50",
+          "tone_signals_required": [
+            "The pattern feels uncanny, while every cost and rule stays literal."
+          ],
+          "kid_safe_required": false
+        },
+        {
+          "tone_id": "noir_case_file",
+          "text": "LOCATION: Glass Market. PRESENT: Ilyra, broker. EXITS: east arcade. INVENTORY: sealed letter, 12 coins. HP: 20. OUTCOME: offer_rejected. Reflections cross the glass canopy. The clue is what it is; suspicion does not become proof.",
+          "expected_canonical_hash": "070215a080e5a8757f4d16382dd237bc5b5b544a7f5743a70b70ef7ef8937a50",
+          "tone_signals_required": [
+            "The clue is what it is; suspicion does not become proof."
+          ],
+          "kid_safe_required": false
+        },
+        {
+          "tone_id": "military_procedural",
+          "text": "LOCATION: Glass Market. PRESENT: Ilyra, broker. EXITS: east arcade. INVENTORY: sealed letter, 12 coins. HP: 20. OUTCOME: offer_rejected. Reflections cross the glass canopy. Situation confirmed; constraints and available routes remain as listed.",
+          "expected_canonical_hash": "070215a080e5a8757f4d16382dd237bc5b5b544a7f5743a70b70ef7ef8937a50",
+          "tone_signals_required": [
+            "Situation confirmed; constraints and available routes remain as listed."
+          ],
+          "kid_safe_required": false
+        }
+      ],
+      "pass_criteria": {
+        "render_count_min": 3,
+        "canonical_hash_equal": true,
+        "numbers_exact": true,
+        "rendered_entities_subset_of_present": true,
+        "rendered_exits_subset_of_exits": true,
+        "no_unearned_inventory_or_status": true,
+        "tone_distinct": true,
+        "kid_safe_if_tagged": false,
+        "no_forbidden_ip_or_style_clone": true
+      }
+    },
+    {
+      "fixture_id": "fx04_ration_found",
+      "kid_mode": false,
+      "authority_input": {
+        "location": "Hill Shelter",
+        "present_entities": [
+          "Toma"
+        ],
+        "exits": [
+          "trail"
+        ],
+        "inventory": [
+          "flint",
+          "2 rations"
+        ],
+        "hp": 20,
+        "state_delta": {
+          "rations": 2
+        },
+        "quest_status": "shelter_checked",
+        "permit_status": "none",
+        "evidence": "The opened supply box",
+        "outcome_code": "item_found"
+      },
+      "canonical_sha256": "27cc0d605cca231170a4df5884785e73deb6038bcdc62490723c4c8520eb78e2",
+      "renderings": [
+        {
+          "tone_id": "cozy_low_stakes_comfort",
+          "text": "LOCATION: Hill Shelter. PRESENT: Toma. EXITS: trail. INVENTORY: flint, 2 rations. HP: 20. OUTCOME: item_found. Late sun reaches the doorway. A small practical comfort remains close at hand, even though the result is unchanged.",
+          "expected_canonical_hash": "27cc0d605cca231170a4df5884785e73deb6038bcdc62490723c4c8520eb78e2",
+          "tone_signals_required": [
+            "A small practical comfort remains close at hand, even though the result is unchanged."
+          ],
+          "kid_safe_required": false
+        },
+        {
+          "tone_id": "bright_field_guide",
+          "text": "LOCATION: Hill Shelter. PRESENT: Toma. EXITS: trail. INVENTORY: flint, 2 rations. HP: 20. OUTCOME: item_found. Late sun reaches the doorway. The observable detail suggests a question, not an unsupported answer.",
+          "expected_canonical_hash": "27cc0d605cca231170a4df5884785e73deb6038bcdc62490723c4c8520eb78e2",
+          "tone_signals_required": [
+            "The observable detail suggests a question, not an unsupported answer."
+          ],
+          "kid_safe_required": false
+        },
+        {
+          "tone_id": "litrpg_system_registrar",
+          "text": "LOCATION: Hill Shelter. PRESENT: Toma. EXITS: trail. INVENTORY: flint, 2 rations. HP: 20. OUTCOME: item_found. Late sun reaches the doorway. The event is registered exactly as the current state records it.",
+          "expected_canonical_hash": "27cc0d605cca231170a4df5884785e73deb6038bcdc62490723c4c8520eb78e2",
+          "tone_signals_required": [
+            "The event is registered exactly as the current state records it."
+          ],
+          "kid_safe_required": false
+        }
+      ],
+      "pass_criteria": {
+        "render_count_min": 3,
+        "canonical_hash_equal": true,
+        "numbers_exact": true,
+        "rendered_entities_subset_of_present": true,
+        "rendered_exits_subset_of_exits": true,
+        "no_unearned_inventory_or_status": true,
+        "tone_distinct": true,
+        "kid_safe_if_tagged": false,
+        "no_forbidden_ip_or_style_clone": true
+      }
+    },
+    {
+      "fixture_id": "fx05_torch_expires",
+      "kid_mode": false,
+      "authority_input": {
+        "location": "Lower Gallery",
+        "present_entities": [],
+        "exits": [
+          "up stair",
+          "iron gate"
+        ],
+        "inventory": [
+          "empty torch"
+        ],
+        "hp": 20,
+        "state_delta": {
+          "torch_lit": false
+        },
+        "quest_status": "gallery_unmapped",
+        "permit_status": "none",
+        "evidence": "The wick has gone dark",
+        "outcome_code": "light_lost"
+      },
+      "canonical_sha256": "898318949056addc9d3b9f49a35b93cee86316cb41ecd9bb24b9e4985315c62f",
+      "renderings": [
+        {
+          "tone_id": "ashen_archivist",
+          "text": "LOCATION: Lower Gallery. PRESENT: none. EXITS: up stair, iron gate. INVENTORY: empty torch. HP: 20. OUTCOME: light_lost. The stone remains cool and dry. The event enters the record without inventing what time has not supplied.",
+          "expected_canonical_hash": "898318949056addc9d3b9f49a35b93cee86316cb41ecd9bb24b9e4985315c62f",
+          "tone_signals_required": [
+            "The event enters the record without inventing what time has not supplied."
+          ],
+          "kid_safe_required": false
+        },
+        {
+          "tone_id": "hard_sf_terminal",
+          "text": "LOCATION: Lower Gallery. PRESENT: none. EXITS: up stair, iron gate. INVENTORY: empty torch. HP: 20. OUTCOME: light_lost. The stone remains cool and dry. Telemetry remains limited to supplied values; uncertainty is preserved.",
+          "expected_canonical_hash": "898318949056addc9d3b9f49a35b93cee86316cb41ecd9bb24b9e4985315c62f",
+          "tone_signals_required": [
+            "Telemetry remains limited to supplied values; uncertainty is preserved."
+          ],
+          "kid_safe_required": false
+        },
+        {
+          "tone_id": "pyoa_branching_crisis",
+          "text": "LOCATION: Lower Gallery. PRESENT: none. EXITS: up stair, iron gate. INVENTORY: empty torch. HP: 20. OUTCOME: light_lost. The stone remains cool and dry. The immediate hazard is clear, and only the listed physical choices are implied.",
+          "expected_canonical_hash": "898318949056addc9d3b9f49a35b93cee86316cb41ecd9bb24b9e4985315c62f",
+          "tone_signals_required": [
+            "The immediate hazard is clear, and only the listed physical choices are implied."
+          ],
+          "kid_safe_required": false
+        }
+      ],
+      "pass_criteria": {
+        "render_count_min": 3,
+        "canonical_hash_equal": true,
+        "numbers_exact": true,
+        "rendered_entities_subset_of_present": true,
+        "rendered_exits_subset_of_exits": true,
+        "no_unearned_inventory_or_status": true,
+        "tone_distinct": true,
+        "kid_safe_if_tagged": false,
+        "no_forbidden_ip_or_style_clone": true
+      }
+    },
+    {
+      "fixture_id": "fx06_scout_arrives",
+      "kid_mode": false,
+      "authority_input": {
+        "location": "North Watch",
+        "present_entities": [
+          "Eren",
+          "scout Nia"
+        ],
+        "exits": [
+          "yard",
+          "wall stair"
+        ],
+        "inventory": [
+          "signal whistle"
+        ],
+        "hp": 20,
+        "state_delta": {},
+        "quest_status": "warning_delivered",
+        "permit_status": "watch pass",
+        "evidence": "Nia is present with a torn blue sleeve",
+        "outcome_code": "npc_arrival"
+      },
+      "canonical_sha256": "efcf3555db5d3f0f21019b71123b749572923bf4dd3d6b2cf7be8f8f958438b5",
+      "renderings": [
+        {
+          "tone_id": "street_balladeer",
+          "text": "LOCATION: North Watch. PRESENT: Eren, scout Nia. EXITS: yard, wall stair. INVENTORY: signal whistle. HP: 20. OUTCOME: npc_arrival. Wind pulls at the watch flags. The beat is told cleanly, with the next true action left to the player.",
+          "expected_canonical_hash": "efcf3555db5d3f0f21019b71123b749572923bf4dd3d6b2cf7be8f8f958438b5",
+          "tone_signals_required": [
+            "The beat is told cleanly, with the next true action left to the player."
+          ],
+          "kid_safe_required": false
+        },
+        {
+          "tone_id": "mythic_portent",
+          "text": "LOCATION: North Watch. PRESENT: Eren, scout Nia. EXITS: yard, wall stair. INVENTORY: signal whistle. HP: 20. OUTCOME: npc_arrival. Wind pulls at the watch flags. The moment carries weight, but no prophecy is added to the fact.",
+          "expected_canonical_hash": "efcf3555db5d3f0f21019b71123b749572923bf4dd3d6b2cf7be8f8f958438b5",
+          "tone_signals_required": [
+            "The moment carries weight, but no prophecy is added to the fact."
+          ],
+          "kid_safe_required": false
+        },
+        {
+          "tone_id": "pulp_kinetic_adventure",
+          "text": "LOCATION: North Watch. PRESENT: Eren, scout Nia. EXITS: yard, wall stair. INVENTORY: signal whistle. HP: 20. OUTCOME: npc_arrival. Wind pulls at the watch flags. The frame leans into motion, then hands the next real move back to you.",
+          "expected_canonical_hash": "efcf3555db5d3f0f21019b71123b749572923bf4dd3d6b2cf7be8f8f958438b5",
+          "tone_signals_required": [
+            "The frame leans into motion, then hands the next real move back to you."
+          ],
+          "kid_safe_required": false
+        }
+      ],
+      "pass_criteria": {
+        "render_count_min": 3,
+        "canonical_hash_equal": true,
+        "numbers_exact": true,
+        "rendered_entities_subset_of_present": true,
+        "rendered_exits_subset_of_exits": true,
+        "no_unearned_inventory_or_status": true,
+        "tone_distinct": true,
+        "kid_safe_if_tagged": false,
+        "no_forbidden_ip_or_style_clone": true
+      }
+    },
+    {
+      "fixture_id": "fx07_bitter_water",
+      "kid_mode": true,
+      "authority_input": {
+        "location": "Reed Ford",
+        "present_entities": [
+          "boatman Oru"
+        ],
+        "exits": [
+          "west path",
+          "ferry"
+        ],
+        "inventory": [
+          "canteen"
+        ],
+        "hp": 18,
+        "state_delta": {
+          "hp": -2
+        },
+        "quest_status": "ford_uncertain",
+        "permit_status": "none",
+        "evidence": "The canteen water caused the confirmed HP loss",
+        "outcome_code": "hazard_effect"
+      },
+      "canonical_sha256": "814fa3fe4a0cecaa823083294a7e1f0de81e993c5e73f773fd3a461425dfd77a",
+      "renderings": [
+        {
+          "tone_id": "cozy_brutal",
+          "text": "LOCATION: Reed Ford. PRESENT: boatman Oru. EXITS: west path, ferry. INVENTORY: canteen. HP: 18. OUTCOME: hazard_effect. Reeds bend around the ferry rope. The hit is blunt; the human-scale detail beside it keeps the scene grounded.",
+          "expected_canonical_hash": "814fa3fe4a0cecaa823083294a7e1f0de81e993c5e73f773fd3a461425dfd77a",
+          "tone_signals_required": [
+            "The hit is blunt; the human-scale detail beside it keeps the scene grounded."
+          ],
+          "kid_safe_required": true
+        },
+        {
+          "tone_id": "clinical_auditor",
+          "text": "LOCATION: Reed Ford. PRESENT: boatman Oru. EXITS: west path, ferry. INVENTORY: canteen. HP: 18. OUTCOME: hazard_effect. Reeds bend around the ferry rope. Observation, transaction, and evidence are separated; no additional cause is inferred.",
+          "expected_canonical_hash": "814fa3fe4a0cecaa823083294a7e1f0de81e993c5e73f773fd3a461425dfd77a",
+          "tone_signals_required": [
+            "Observation, transaction, and evidence are separated; no additional cause is inferred."
+          ],
+          "kid_safe_required": true
+        },
+        {
+          "tone_id": "kid_plain_stakes",
+          "text": "LOCATION: Reed Ford. PRESENT: boatman Oru. EXITS: west path, ferry. INVENTORY: canteen. HP: 18. OUTCOME: hazard_effect. Reeds bend around the ferry rope. The result is clear, the words are simple, and the next step can be chosen without pressure.",
+          "expected_canonical_hash": "814fa3fe4a0cecaa823083294a7e1f0de81e993c5e73f773fd3a461425dfd77a",
+          "tone_signals_required": [
+            "The result is clear, the words are simple, and the next step can be chosen without pressure."
+          ],
+          "kid_safe_required": true
+        }
+      ],
+      "pass_criteria": {
+        "render_count_min": 3,
+        "canonical_hash_equal": true,
+        "numbers_exact": true,
+        "rendered_entities_subset_of_present": true,
+        "rendered_exits_subset_of_exits": true,
+        "no_unearned_inventory_or_status": true,
+        "tone_distinct": true,
+        "kid_safe_if_tagged": true,
+        "no_forbidden_ip_or_style_clone": true
+      }
+    },
+    {
+      "fixture_id": "fx08_storm_shelter",
+      "kid_mode": false,
+      "authority_input": {
+        "location": "Pine Ridge",
+        "present_entities": [
+          "Kess"
+        ],
+        "exits": [
+          "mine entrance",
+          "ridge path"
+        ],
+        "inventory": [
+          "blanket",
+          "map"
+        ],
+        "hp": 20,
+        "state_delta": {},
+        "quest_status": "storm_wait",
+        "permit_status": "none",
+        "evidence": "Lightning blocks the exposed ridge route",
+        "outcome_code": "route_blocked"
+      },
+      "canonical_sha256": "8173de565dcda968537a2abf4d8ea323f55bd2c38e55baa3a3ad6578d6571b20",
+      "renderings": [
+        {
+          "tone_id": "warm_chronicle",
+          "text": "LOCATION: Pine Ridge. PRESENT: Kess. EXITS: mine entrance, ridge path. INVENTORY: blanket, map. HP: 20. OUTCOME: route_blocked. Rain drums on the timber roof. The moment is set down with care, preserving both the cost and the company present.",
+          "expected_canonical_hash": "8173de565dcda968537a2abf4d8ea323f55bd2c38e55baa3a3ad6578d6571b20",
+          "tone_signals_required": [
+            "The moment is set down with care, preserving both the cost and the company present."
+          ],
+          "kid_safe_required": false
+        },
+        {
+          "tone_id": "military_procedural",
+          "text": "LOCATION: Pine Ridge. PRESENT: Kess. EXITS: mine entrance, ridge path. INVENTORY: blanket, map. HP: 20. OUTCOME: route_blocked. Rain drums on the timber roof. Situation confirmed; constraints and available routes remain as listed.",
+          "expected_canonical_hash": "8173de565dcda968537a2abf4d8ea323f55bd2c38e55baa3a3ad6578d6571b20",
+          "tone_signals_required": [
+            "Situation confirmed; constraints and available routes remain as listed."
+          ],
+          "kid_safe_required": false
+        },
+        {
+          "tone_id": "dry_wit_deadpan",
+          "text": "LOCATION: Pine Ridge. PRESENT: Kess. EXITS: mine entrance, ridge path. INVENTORY: blanket, map. HP: 20. OUTCOME: route_blocked. Rain drums on the timber roof. The situation has declined to become more convenient, but the record is clear.",
+          "expected_canonical_hash": "8173de565dcda968537a2abf4d8ea323f55bd2c38e55baa3a3ad6578d6571b20",
+          "tone_signals_required": [
+            "The situation has declined to become more convenient, but the record is clear."
+          ],
+          "kid_safe_required": false
+        }
+      ],
+      "pass_criteria": {
+        "render_count_min": 3,
+        "canonical_hash_equal": true,
+        "numbers_exact": true,
+        "rendered_entities_subset_of_present": true,
+        "rendered_exits_subset_of_exits": true,
+        "no_unearned_inventory_or_status": true,
+        "tone_distinct": true,
+        "kid_safe_if_tagged": false,
+        "no_forbidden_ip_or_style_clone": true
+      }
+    },
+    {
+      "fixture_id": "fx09_lift_jam",
+      "kid_mode": false,
+      "authority_input": {
+        "location": "Freight Lift",
+        "present_entities": [
+          "Unit Seven"
+        ],
+        "exits": [
+          "maintenance hatch"
+        ],
+        "inventory": [
+          "wrench"
+        ],
+        "hp": 20,
+        "state_delta": {},
+        "quest_status": "lift_stalled",
+        "permit_status": "maintenance badge required for control panel",
+        "evidence": "The stopped floor indicator",
+        "outcome_code": "mechanism_stalled"
+      },
+      "canonical_sha256": "a85c688c27f0e6b32e0b7798c300e6a1d072deaea96c8fb2f5ea27e143a10a74",
+      "renderings": [
+        {
+          "tone_id": "grimdark_bleak_consequence",
+          "text": "LOCATION: Freight Lift. PRESENT: Unit Seven. EXITS: maintenance hatch. INVENTORY: wrench. HP: 20. OUTCOME: mechanism_stalled. Emergency light washes the walls amber. The detail lands without mercy, and nothing in the wording changes the cost.",
+          "expected_canonical_hash": "a85c688c27f0e6b32e0b7798c300e6a1d072deaea96c8fb2f5ea27e143a10a74",
+          "tone_signals_required": [
+            "The detail lands without mercy, and nothing in the wording changes the cost."
+          ],
+          "kid_safe_required": false
+        },
+        {
+          "tone_id": "warm_chronicle",
+          "text": "LOCATION: Freight Lift. PRESENT: Unit Seven. EXITS: maintenance hatch. INVENTORY: wrench. HP: 20. OUTCOME: mechanism_stalled. Emergency light washes the walls amber. The moment is set down with care, preserving both the cost and the company present.",
+          "expected_canonical_hash": "a85c688c27f0e6b32e0b7798c300e6a1d072deaea96c8fb2f5ea27e143a10a74",
+          "tone_signals_required": [
+            "The moment is set down with care, preserving both the cost and the company present."
+          ],
+          "kid_safe_required": false
+        },
+        {
+          "tone_id": "clinical_auditor",
+          "text": "LOCATION: Freight Lift. PRESENT: Unit Seven. EXITS: maintenance hatch. INVENTORY: wrench. HP: 20. OUTCOME: mechanism_stalled. Emergency light washes the walls amber. Observation, transaction, and evidence are separated; no additional cause is inferred.",
+          "expected_canonical_hash": "a85c688c27f0e6b32e0b7798c300e6a1d072deaea96c8fb2f5ea27e143a10a74",
+          "tone_signals_required": [
+            "Observation, transaction, and evidence are separated; no additional cause is inferred."
+          ],
+          "kid_safe_required": false
+        }
+      ],
+      "pass_criteria": {
+        "render_count_min": 3,
+        "canonical_hash_equal": true,
+        "numbers_exact": true,
+        "rendered_entities_subset_of_present": true,
+        "rendered_exits_subset_of_exits": true,
+        "no_unearned_inventory_or_status": true,
+        "tone_distinct": true,
+        "kid_safe_if_tagged": false,
+        "no_forbidden_ip_or_style_clone": true
+      }
+    },
+    {
+      "fixture_id": "fx10_market_accusation",
+      "kid_mode": true,
+      "authority_input": {
+        "location": "Copper Square",
+        "present_entities": [
+          "vendor Pela",
+          "guard Rusk"
+        ],
+        "exits": [
+          "fountain lane",
+          "south alley"
+        ],
+        "inventory": [
+          "red scarf",
+          "9 coins"
+        ],
+        "hp": 20,
+        "state_delta": {},
+        "quest_status": "dispute_open",
+        "permit_status": "none",
+        "evidence": "Pela claims one missing apple; no proof is established",
+        "outcome_code": "social_conflict"
+      },
+      "canonical_sha256": "ba0694ddff38016f197df3210ff81eb599d2815c095b0eb6e7dbc1180bac1bd5",
+      "renderings": [
+        {
+          "tone_id": "gothic_moonlit_dread",
+          "text": "LOCATION: Copper Square. PRESENT: vendor Pela, guard Rusk. EXITS: fountain lane, south alley. INVENTORY: red scarf, 9 coins. HP: 20. OUTCOME: social_conflict. A bell rings above the produce stalls. Light and architecture carry the unease; no unseen presence is implied.",
+          "expected_canonical_hash": "ba0694ddff38016f197df3210ff81eb599d2815c095b0eb6e7dbc1180bac1bd5",
+          "tone_signals_required": [
+            "Light and architecture carry the unease; no unseen presence is implied."
+          ],
+          "kid_safe_required": true
+        },
+        {
+          "tone_id": "dry_wit_deadpan",
+          "text": "LOCATION: Copper Square. PRESENT: vendor Pela, guard Rusk. EXITS: fountain lane, south alley. INVENTORY: red scarf, 9 coins. HP: 20. OUTCOME: social_conflict. A bell rings above the produce stalls. The situation has declined to become more convenient, but the record is clear.",
+          "expected_canonical_hash": "ba0694ddff38016f197df3210ff81eb599d2815c095b0eb6e7dbc1180bac1bd5",
+          "tone_signals_required": [
+            "The situation has declined to become more convenient, but the record is clear."
+          ],
+          "kid_safe_required": true
+        },
+        {
+          "tone_id": "kid_plain_stakes",
+          "text": "LOCATION: Copper Square. PRESENT: vendor Pela, guard Rusk. EXITS: fountain lane, south alley. INVENTORY: red scarf, 9 coins. HP: 20. OUTCOME: social_conflict. A bell rings above the produce stalls. The result is clear, the words are simple, and the next step can be chosen without pressure.",
+          "expected_canonical_hash": "ba0694ddff38016f197df3210ff81eb599d2815c095b0eb6e7dbc1180bac1bd5",
+          "tone_signals_required": [
+            "The result is clear, the words are simple, and the next step can be chosen without pressure."
+          ],
+          "kid_safe_required": true
+        }
+      ],
+      "pass_criteria": {
+        "render_count_min": 3,
+        "canonical_hash_equal": true,
+        "numbers_exact": true,
+        "rendered_entities_subset_of_present": true,
+        "rendered_exits_subset_of_exits": true,
+        "no_unearned_inventory_or_status": true,
+        "tone_distinct": true,
+        "kid_safe_if_tagged": true,
+        "no_forbidden_ip_or_style_clone": true
+      }
+    },
+    {
+      "fixture_id": "fx11_broken_compass",
+      "kid_mode": false,
+      "authority_input": {
+        "location": "Salt Flats",
+        "present_entities": [],
+        "exits": [
+          "east markers",
+          "return track"
+        ],
+        "inventory": [
+          "broken compass",
+          "water flask"
+        ],
+        "hp": 20,
+        "state_delta": {},
+        "quest_status": "route_choice",
+        "permit_status": "none",
+        "evidence": "The needle does not move",
+        "outcome_code": "tool_broken"
+      },
+      "canonical_sha256": "6f062dbf8e0b2729bd68a1d9b17248ff299152edaa810dbebb790e300fef3cf4",
+      "renderings": [
+        {
+          "tone_id": "fae_uncanny_tale",
+          "text": "LOCATION: Salt Flats. PRESENT: none. EXITS: east markers, return track. INVENTORY: broken compass, water flask. HP: 20. OUTCOME: tool_broken. White salt throws back the noon light. The pattern feels uncanny, while every cost and rule stays literal.",
+          "expected_canonical_hash": "6f062dbf8e0b2729bd68a1d9b17248ff299152edaa810dbebb790e300fef3cf4",
+          "tone_signals_required": [
+            "The pattern feels uncanny, while every cost and rule stays literal."
+          ],
+          "kid_safe_required": false
+        },
+        {
+          "tone_id": "noir_case_file",
+          "text": "LOCATION: Salt Flats. PRESENT: none. EXITS: east markers, return track. INVENTORY: broken compass, water flask. HP: 20. OUTCOME: tool_broken. White salt throws back the noon light. The clue is what it is; suspicion does not become proof.",
+          "expected_canonical_hash": "6f062dbf8e0b2729bd68a1d9b17248ff299152edaa810dbebb790e300fef3cf4",
+          "tone_signals_required": [
+            "The clue is what it is; suspicion does not become proof."
+          ],
+          "kid_safe_required": false
+        },
+        {
+          "tone_id": "military_procedural",
+          "text": "LOCATION: Salt Flats. PRESENT: none. EXITS: east markers, return track. INVENTORY: broken compass, water flask. HP: 20. OUTCOME: tool_broken. White salt throws back the noon light. Situation confirmed; constraints and available routes remain as listed.",
+          "expected_canonical_hash": "6f062dbf8e0b2729bd68a1d9b17248ff299152edaa810dbebb790e300fef3cf4",
+          "tone_signals_required": [
+            "Situation confirmed; constraints and available routes remain as listed."
+          ],
+          "kid_safe_required": false
+        }
+      ],
+      "pass_criteria": {
+        "render_count_min": 3,
+        "canonical_hash_equal": true,
+        "numbers_exact": true,
+        "rendered_entities_subset_of_present": true,
+        "rendered_exits_subset_of_exits": true,
+        "no_unearned_inventory_or_status": true,
+        "tone_distinct": true,
+        "kid_safe_if_tagged": false,
+        "no_forbidden_ip_or_style_clone": true
+      }
+    },
+    {
+      "fixture_id": "fx12_flooded_tunnel",
+      "kid_mode": false,
+      "authority_input": {
+        "location": "Canal Tunnel",
+        "present_entities": [
+          "Mira"
+        ],
+        "exits": [
+          "service ladder"
+        ],
+        "inventory": [
+          "crowbar"
+        ],
+        "hp": 20,
+        "state_delta": {},
+        "quest_status": "tunnel_blocked",
+        "permit_status": "none",
+        "evidence": "Water covers the north passage",
+        "outcome_code": "path_flooded"
+      },
+      "canonical_sha256": "7eac7ccedb216edac421afcbbbda7fbbc4c8f0bcf125bec581b0a6c1843f3872",
+      "renderings": [
+        {
+          "tone_id": "cozy_low_stakes_comfort",
+          "text": "LOCATION: Canal Tunnel. PRESENT: Mira. EXITS: service ladder. INVENTORY: crowbar. HP: 20. OUTCOME: path_flooded. Ripples touch the brick ceiling. A small practical comfort remains close at hand, even though the result is unchanged.",
+          "expected_canonical_hash": "7eac7ccedb216edac421afcbbbda7fbbc4c8f0bcf125bec581b0a6c1843f3872",
+          "tone_signals_required": [
+            "A small practical comfort remains close at hand, even though the result is unchanged."
+          ],
+          "kid_safe_required": false
+        },
+        {
+          "tone_id": "bright_field_guide",
+          "text": "LOCATION: Canal Tunnel. PRESENT: Mira. EXITS: service ladder. INVENTORY: crowbar. HP: 20. OUTCOME: path_flooded. Ripples touch the brick ceiling. The observable detail suggests a question, not an unsupported answer.",
+          "expected_canonical_hash": "7eac7ccedb216edac421afcbbbda7fbbc4c8f0bcf125bec581b0a6c1843f3872",
+          "tone_signals_required": [
+            "The observable detail suggests a question, not an unsupported answer."
+          ],
+          "kid_safe_required": false
+        },
+        {
+          "tone_id": "litrpg_system_registrar",
+          "text": "LOCATION: Canal Tunnel. PRESENT: Mira. EXITS: service ladder. INVENTORY: crowbar. HP: 20. OUTCOME: path_flooded. Ripples touch the brick ceiling. The event is registered exactly as the current state records it.",
+          "expected_canonical_hash": "7eac7ccedb216edac421afcbbbda7fbbc4c8f0bcf125bec581b0a6c1843f3872",
+          "tone_signals_required": [
+            "The event is registered exactly as the current state records it."
+          ],
+          "kid_safe_required": false
+        }
+      ],
+      "pass_criteria": {
+        "render_count_min": 3,
+        "canonical_hash_equal": true,
+        "numbers_exact": true,
+        "rendered_entities_subset_of_present": true,
+        "rendered_exits_subset_of_exits": true,
+        "no_unearned_inventory_or_status": true,
+        "tone_distinct": true,
+        "kid_safe_if_tagged": false,
+        "no_forbidden_ip_or_style_clone": true
+      }
+    },
+    {
+      "fixture_id": "fx13_guardian_defeated",
+      "kid_mode": false,
+      "authority_input": {
+        "location": "Ash Courtyard",
+        "present_entities": [
+          "stone guardian"
+        ],
+        "exits": [
+          "bronze door"
+        ],
+        "inventory": [
+          "round shield"
+        ],
+        "hp": 11,
+        "state_delta": {
+          "hp": -4
+        },
+        "quest_status": "guardian_inactive",
+        "permit_status": "none",
+        "evidence": "The guardian is inactive; the bronze door remains closed",
+        "outcome_code": "combat_resolved"
+      },
+      "canonical_sha256": "63ea5fffbb80589b323d9d7c4bce5aebb6d13cd53411bc5a2cbc9ba1bda1f721",
+      "renderings": [
+        {
+          "tone_id": "ashen_archivist",
+          "text": "LOCATION: Ash Courtyard. PRESENT: stone guardian. EXITS: bronze door. INVENTORY: round shield. HP: 11. OUTCOME: combat_resolved. Ash settles over cracked tiles. The event enters the record without inventing what time has not supplied.",
+          "expected_canonical_hash": "63ea5fffbb80589b323d9d7c4bce5aebb6d13cd53411bc5a2cbc9ba1bda1f721",
+          "tone_signals_required": [
+            "The event enters the record without inventing what time has not supplied."
+          ],
+          "kid_safe_required": false
+        },
+        {
+          "tone_id": "hard_sf_terminal",
+          "text": "LOCATION: Ash Courtyard. PRESENT: stone guardian. EXITS: bronze door. INVENTORY: round shield. HP: 11. OUTCOME: combat_resolved. Ash settles over cracked tiles. Telemetry remains limited to supplied values; uncertainty is preserved.",
+          "expected_canonical_hash": "63ea5fffbb80589b323d9d7c4bce5aebb6d13cd53411bc5a2cbc9ba1bda1f721",
+          "tone_signals_required": [
+            "Telemetry remains limited to supplied values; uncertainty is preserved."
+          ],
+          "kid_safe_required": false
+        },
+        {
+          "tone_id": "pyoa_branching_crisis",
+          "text": "LOCATION: Ash Courtyard. PRESENT: stone guardian. EXITS: bronze door. INVENTORY: round shield. HP: 11. OUTCOME: combat_resolved. Ash settles over cracked tiles. The immediate hazard is clear, and only the listed physical choices are implied.",
+          "expected_canonical_hash": "63ea5fffbb80589b323d9d7c4bce5aebb6d13cd53411bc5a2cbc9ba1bda1f721",
+          "tone_signals_required": [
+            "The immediate hazard is clear, and only the listed physical choices are implied."
+          ],
+          "kid_safe_required": false
+        }
+      ],
+      "pass_criteria": {
+        "render_count_min": 3,
+        "canonical_hash_equal": true,
+        "numbers_exact": true,
+        "rendered_entities_subset_of_present": true,
+        "rendered_exits_subset_of_exits": true,
+        "no_unearned_inventory_or_status": true,
+        "tone_distinct": true,
+        "kid_safe_if_tagged": false,
+        "no_forbidden_ip_or_style_clone": true
+      }
+    },
+    {
+      "fixture_id": "fx14_ghost_clue",
+      "kid_mode": false,
+      "authority_input": {
+        "location": "Old Nursery",
+        "present_entities": [
+          "spirit Lume"
+        ],
+        "exits": [
+          "hall"
+        ],
+        "inventory": [
+          "silver comb"
+        ],
+        "hp": 20,
+        "state_delta": {},
+        "quest_status": "clue_recorded",
+        "permit_status": "none",
+        "evidence": "Lume points to the third floorboard",
+        "outcome_code": "clue_revealed"
+      },
+      "canonical_sha256": "b0c6325ee405e964110c152cd26672840a2e9bb714b11e6cf71f665b50fe64b7",
+      "renderings": [
+        {
+          "tone_id": "street_balladeer",
+          "text": "LOCATION: Old Nursery. PRESENT: spirit Lume. EXITS: hall. INVENTORY: silver comb. HP: 20. OUTCOME: clue_revealed. Moonlight lies across the empty cradle. The beat is told cleanly, with the next true action left to the player.",
+          "expected_canonical_hash": "b0c6325ee405e964110c152cd26672840a2e9bb714b11e6cf71f665b50fe64b7",
+          "tone_signals_required": [
+            "The beat is told cleanly, with the next true action left to the player."
+          ],
+          "kid_safe_required": false
+        },
+        {
+          "tone_id": "mythic_portent",
+          "text": "LOCATION: Old Nursery. PRESENT: spirit Lume. EXITS: hall. INVENTORY: silver comb. HP: 20. OUTCOME: clue_revealed. Moonlight lies across the empty cradle. The moment carries weight, but no prophecy is added to the fact.",
+          "expected_canonical_hash": "b0c6325ee405e964110c152cd26672840a2e9bb714b11e6cf71f665b50fe64b7",
+          "tone_signals_required": [
+            "The moment carries weight, but no prophecy is added to the fact."
+          ],
+          "kid_safe_required": false
+        },
+        {
+          "tone_id": "pulp_kinetic_adventure",
+          "text": "LOCATION: Old Nursery. PRESENT: spirit Lume. EXITS: hall. INVENTORY: silver comb. HP: 20. OUTCOME: clue_revealed. Moonlight lies across the empty cradle. The frame leans into motion, then hands the next real move back to you.",
+          "expected_canonical_hash": "b0c6325ee405e964110c152cd26672840a2e9bb714b11e6cf71f665b50fe64b7",
+          "tone_signals_required": [
+            "The frame leans into motion, then hands the next real move back to you."
+          ],
+          "kid_safe_required": false
+        }
+      ],
+      "pass_criteria": {
+        "render_count_min": 3,
+        "canonical_hash_equal": true,
+        "numbers_exact": true,
+        "rendered_entities_subset_of_present": true,
+        "rendered_exits_subset_of_exits": true,
+        "no_unearned_inventory_or_status": true,
+        "tone_distinct": true,
+        "kid_safe_if_tagged": false,
+        "no_forbidden_ip_or_style_clone": true
+      }
+    },
+    {
+      "fixture_id": "fx15_empty_cache",
+      "kid_mode": true,
+      "authority_input": {
+        "location": "Border Cache",
+        "present_entities": [
+          "Vey"
+        ],
+        "exits": [
+          "ravine path"
+        ],
+        "inventory": [
+          "3 bolts"
+        ],
+        "hp": 20,
+        "state_delta": {},
+        "quest_status": "cache_empty",
+        "permit_status": "none",
+        "evidence": "The supply chest is empty",
+        "outcome_code": "search_resolved"
+      },
+      "canonical_sha256": "4d1c160ff30d736fd4d98bdd95bbc1b869db18880f496c4b43d4e7695d3a2a86",
+      "renderings": [
+        {
+          "tone_id": "cozy_brutal",
+          "text": "LOCATION: Border Cache. PRESENT: Vey. EXITS: ravine path. INVENTORY: 3 bolts. HP: 20. OUTCOME: search_resolved. Sand has gathered inside the hinges. The hit is blunt; the human-scale detail beside it keeps the scene grounded.",
+          "expected_canonical_hash": "4d1c160ff30d736fd4d98bdd95bbc1b869db18880f496c4b43d4e7695d3a2a86",
+          "tone_signals_required": [
+            "The hit is blunt; the human-scale detail beside it keeps the scene grounded."
+          ],
+          "kid_safe_required": true
+        },
+        {
+          "tone_id": "clinical_auditor",
+          "text": "LOCATION: Border Cache. PRESENT: Vey. EXITS: ravine path. INVENTORY: 3 bolts. HP: 20. OUTCOME: search_resolved. Sand has gathered inside the hinges. Observation, transaction, and evidence are separated; no additional cause is inferred.",
+          "expected_canonical_hash": "4d1c160ff30d736fd4d98bdd95bbc1b869db18880f496c4b43d4e7695d3a2a86",
+          "tone_signals_required": [
+            "Observation, transaction, and evidence are separated; no additional cause is inferred."
+          ],
+          "kid_safe_required": true
+        },
+        {
+          "tone_id": "kid_plain_stakes",
+          "text": "LOCATION: Border Cache. PRESENT: Vey. EXITS: ravine path. INVENTORY: 3 bolts. HP: 20. OUTCOME: search_resolved. Sand has gathered inside the hinges. The result is clear, the words are simple, and the next step can be chosen without pressure.",
+          "expected_canonical_hash": "4d1c160ff30d736fd4d98bdd95bbc1b869db18880f496c4b43d4e7695d3a2a86",
+          "tone_signals_required": [
+            "The result is clear, the words are simple, and the next step can be chosen without pressure."
+          ],
+          "kid_safe_required": true
+        }
+      ],
+      "pass_criteria": {
+        "render_count_min": 3,
+        "canonical_hash_equal": true,
+        "numbers_exact": true,
+        "rendered_entities_subset_of_present": true,
+        "rendered_exits_subset_of_exits": true,
+        "no_unearned_inventory_or_status": true,
+        "tone_distinct": true,
+        "kid_safe_if_tagged": true,
+        "no_forbidden_ip_or_style_clone": true
+      }
+    },
+    {
+      "fixture_id": "fx16_ritual_interrupted",
+      "kid_mode": false,
+      "authority_input": {
+        "location": "Sunken Chapel",
+        "present_entities": [
+          "Aro",
+          "chanter Ves"
+        ],
+        "exits": [
+          "apse stairs"
+        ],
+        "inventory": [
+          "blue candle"
+        ],
+        "hp": 20,
+        "state_delta": {},
+        "quest_status": "ritual_paused",
+        "permit_status": "none",
+        "evidence": "The blue candle is unlit; the ritual has paused",
+        "outcome_code": "ritual_state"
+      },
+      "canonical_sha256": "59809114f3baf552efe918f17a831a4dcd194779f23ab55c7d5c18de30d96c89",
+      "renderings": [
+        {
+          "tone_id": "warm_chronicle",
+          "text": "LOCATION: Sunken Chapel. PRESENT: Aro, chanter Ves. EXITS: apse stairs. INVENTORY: blue candle. HP: 20. OUTCOME: ritual_state. Water reflects the ceiling ribs. The moment is set down with care, preserving both the cost and the company present.",
+          "expected_canonical_hash": "59809114f3baf552efe918f17a831a4dcd194779f23ab55c7d5c18de30d96c89",
+          "tone_signals_required": [
+            "The moment is set down with care, preserving both the cost and the company present."
+          ],
+          "kid_safe_required": false
+        },
+        {
+          "tone_id": "military_procedural",
+          "text": "LOCATION: Sunken Chapel. PRESENT: Aro, chanter Ves. EXITS: apse stairs. INVENTORY: blue candle. HP: 20. OUTCOME: ritual_state. Water reflects the ceiling ribs. Situation confirmed; constraints and available routes remain as listed.",
+          "expected_canonical_hash": "59809114f3baf552efe918f17a831a4dcd194779f23ab55c7d5c18de30d96c89",
+          "tone_signals_required": [
+            "Situation confirmed; constraints and available routes remain as listed."
+          ],
+          "kid_safe_required": false
+        },
+        {
+          "tone_id": "dry_wit_deadpan",
+          "text": "LOCATION: Sunken Chapel. PRESENT: Aro, chanter Ves. EXITS: apse stairs. INVENTORY: blue candle. HP: 20. OUTCOME: ritual_state. Water reflects the ceiling ribs. The situation has declined to become more convenient, but the record is clear.",
+          "expected_canonical_hash": "59809114f3baf552efe918f17a831a4dcd194779f23ab55c7d5c18de30d96c89",
+          "tone_signals_required": [
+            "The situation has declined to become more convenient, but the record is clear."
+          ],
+          "kid_safe_required": false
+        }
+      ],
+      "pass_criteria": {
+        "render_count_min": 3,
+        "canonical_hash_equal": true,
+        "numbers_exact": true,
+        "rendered_entities_subset_of_present": true,
+        "rendered_exits_subset_of_exits": true,
+        "no_unearned_inventory_or_status": true,
+        "tone_distinct": true,
+        "kid_safe_if_tagged": false,
+        "no_forbidden_ip_or_style_clone": true
+      }
+    },
+    {
+      "fixture_id": "fx17_airlock_locked",
+      "kid_mode": false,
+      "authority_input": {
+        "location": "Survey Vessel Keel",
+        "present_entities": [
+          "Engineer Pax"
+        ],
+        "exits": [
+          "aft corridor"
+        ],
+        "inventory": [
+          "seal kit"
+        ],
+        "hp": 20,
+        "state_delta": {},
+        "quest_status": "eva_blocked",
+        "permit_status": "EVA permit absent",
+        "evidence": "The airlock control denies opening",
+        "outcome_code": "permission_denied"
+      },
+      "canonical_sha256": "a54375639c0a4e3321d72551380192335995c924bbc0eb2b24bc607320bb32af",
+      "renderings": [
+        {
+          "tone_id": "grimdark_bleak_consequence",
+          "text": "LOCATION: Survey Vessel Keel. PRESENT: Engineer Pax. EXITS: aft corridor. INVENTORY: seal kit. HP: 20. OUTCOME: permission_denied. A green diagnostic lamp remains steady. The detail lands without mercy, and nothing in the wording changes the cost.",
+          "expected_canonical_hash": "a54375639c0a4e3321d72551380192335995c924bbc0eb2b24bc607320bb32af",
+          "tone_signals_required": [
+            "The detail lands without mercy, and nothing in the wording changes the cost."
+          ],
+          "kid_safe_required": false
+        },
+        {
+          "tone_id": "warm_chronicle",
+          "text": "LOCATION: Survey Vessel Keel. PRESENT: Engineer Pax. EXITS: aft corridor. INVENTORY: seal kit. HP: 20. OUTCOME: permission_denied. A green diagnostic lamp remains steady. The moment is set down with care, preserving both the cost and the company present.",
+          "expected_canonical_hash": "a54375639c0a4e3321d72551380192335995c924bbc0eb2b24bc607320bb32af",
+          "tone_signals_required": [
+            "The moment is set down with care, preserving both the cost and the company present."
+          ],
+          "kid_safe_required": false
+        },
+        {
+          "tone_id": "clinical_auditor",
+          "text": "LOCATION: Survey Vessel Keel. PRESENT: Engineer Pax. EXITS: aft corridor. INVENTORY: seal kit. HP: 20. OUTCOME: permission_denied. A green diagnostic lamp remains steady. Observation, transaction, and evidence are separated; no additional cause is inferred.",
+          "expected_canonical_hash": "a54375639c0a4e3321d72551380192335995c924bbc0eb2b24bc607320bb32af",
+          "tone_signals_required": [
+            "Observation, transaction, and evidence are separated; no additional cause is inferred."
+          ],
+          "kid_safe_required": false
+        }
+      ],
+      "pass_criteria": {
+        "render_count_min": 3,
+        "canonical_hash_equal": true,
+        "numbers_exact": true,
+        "rendered_entities_subset_of_present": true,
+        "rendered_exits_subset_of_exits": true,
+        "no_unearned_inventory_or_status": true,
+        "tone_distinct": true,
+        "kid_safe_if_tagged": false,
+        "no_forbidden_ip_or_style_clone": true
+      }
+    },
+    {
+      "fixture_id": "fx18_cave_collapse",
+      "kid_mode": true,
+      "authority_input": {
+        "location": "Quartz Cut",
+        "present_entities": [
+          "Demi"
+        ],
+        "exits": [
+          "upper crack",
+          "campward tunnel"
+        ],
+        "inventory": [
+          "pick",
+          "chalk"
+        ],
+        "hp": 16,
+        "state_delta": {
+          "hp": -4
+        },
+        "quest_status": "lower_route_closed",
+        "permit_status": "none",
+        "evidence": "Fallen stone blocks the lower route",
+        "outcome_code": "terrain_change"
+      },
+      "canonical_sha256": "0c700a10560a7c523acd947f9b16f4e3d6e97a0a6cbda371abf9fcd376e52984",
+      "renderings": [
+        {
+          "tone_id": "gothic_moonlit_dread",
+          "text": "LOCATION: Quartz Cut. PRESENT: Demi. EXITS: upper crack, campward tunnel. INVENTORY: pick, chalk. HP: 16. OUTCOME: terrain_change. Quartz dust glitters in lantern light. Light and architecture carry the unease; no unseen presence is implied.",
+          "expected_canonical_hash": "0c700a10560a7c523acd947f9b16f4e3d6e97a0a6cbda371abf9fcd376e52984",
+          "tone_signals_required": [
+            "Light and architecture carry the unease; no unseen presence is implied."
+          ],
+          "kid_safe_required": true
+        },
+        {
+          "tone_id": "dry_wit_deadpan",
+          "text": "LOCATION: Quartz Cut. PRESENT: Demi. EXITS: upper crack, campward tunnel. INVENTORY: pick, chalk. HP: 16. OUTCOME: terrain_change. Quartz dust glitters in lantern light. The situation has declined to become more convenient, but the record is clear.",
+          "expected_canonical_hash": "0c700a10560a7c523acd947f9b16f4e3d6e97a0a6cbda371abf9fcd376e52984",
+          "tone_signals_required": [
+            "The situation has declined to become more convenient, but the record is clear."
+          ],
+          "kid_safe_required": true
+        },
+        {
+          "tone_id": "kid_plain_stakes",
+          "text": "LOCATION: Quartz Cut. PRESENT: Demi. EXITS: upper crack, campward tunnel. INVENTORY: pick, chalk. HP: 16. OUTCOME: terrain_change. Quartz dust glitters in lantern light. The result is clear, the words are simple, and the next step can be chosen without pressure.",
+          "expected_canonical_hash": "0c700a10560a7c523acd947f9b16f4e3d6e97a0a6cbda371abf9fcd376e52984",
+          "tone_signals_required": [
+            "The result is clear, the words are simple, and the next step can be chosen without pressure."
+          ],
+          "kid_safe_required": true
+        }
+      ],
+      "pass_criteria": {
+        "render_count_min": 3,
+        "canonical_hash_equal": true,
+        "numbers_exact": true,
+        "rendered_entities_subset_of_present": true,
+        "rendered_exits_subset_of_exits": true,
+        "no_unearned_inventory_or_status": true,
+        "tone_distinct": true,
+        "kid_safe_if_tagged": true,
+        "no_forbidden_ip_or_style_clone": true
+      }
+    },
+    {
+      "fixture_id": "fx19_village_feast",
+      "kid_mode": false,
+      "authority_input": {
+        "location": "Willow Hall",
+        "present_entities": [
+          "Mayor En",
+          "cook Saba"
+        ],
+        "exits": [
+          "green",
+          "kitchen"
+        ],
+        "inventory": [
+          "festival token"
+        ],
+        "hp": 20,
+        "state_delta": {},
+        "quest_status": "welcome_complete",
+        "permit_status": "none",
+        "evidence": "A seat is reserved; no reward has been granted",
+        "outcome_code": "social_success"
+      },
+      "canonical_sha256": "62e0b96830666f4d8a9508beced3f52563b1cac14fcddeeca195649d59e446e8",
+      "renderings": [
+        {
+          "tone_id": "fae_uncanny_tale",
+          "text": "LOCATION: Willow Hall. PRESENT: Mayor En, cook Saba. EXITS: green, kitchen. INVENTORY: festival token. HP: 20. OUTCOME: social_success. Steam rises from the covered dishes. The pattern feels uncanny, while every cost and rule stays literal.",
+          "expected_canonical_hash": "62e0b96830666f4d8a9508beced3f52563b1cac14fcddeeca195649d59e446e8",
+          "tone_signals_required": [
+            "The pattern feels uncanny, while every cost and rule stays literal."
+          ],
+          "kid_safe_required": false
+        },
+        {
+          "tone_id": "noir_case_file",
+          "text": "LOCATION: Willow Hall. PRESENT: Mayor En, cook Saba. EXITS: green, kitchen. INVENTORY: festival token. HP: 20. OUTCOME: social_success. Steam rises from the covered dishes. The clue is what it is; suspicion does not become proof.",
+          "expected_canonical_hash": "62e0b96830666f4d8a9508beced3f52563b1cac14fcddeeca195649d59e446e8",
+          "tone_signals_required": [
+            "The clue is what it is; suspicion does not become proof."
+          ],
+          "kid_safe_required": false
+        },
+        {
+          "tone_id": "military_procedural",
+          "text": "LOCATION: Willow Hall. PRESENT: Mayor En, cook Saba. EXITS: green, kitchen. INVENTORY: festival token. HP: 20. OUTCOME: social_success. Steam rises from the covered dishes. Situation confirmed; constraints and available routes remain as listed.",
+          "expected_canonical_hash": "62e0b96830666f4d8a9508beced3f52563b1cac14fcddeeca195649d59e446e8",
+          "tone_signals_required": [
+            "Situation confirmed; constraints and available routes remain as listed."
+          ],
+          "kid_safe_required": false
+        }
+      ],
+      "pass_criteria": {
+        "render_count_min": 3,
+        "canonical_hash_equal": true,
+        "numbers_exact": true,
+        "rendered_entities_subset_of_present": true,
+        "rendered_exits_subset_of_exits": true,
+        "no_unearned_inventory_or_status": true,
+        "tone_distinct": true,
+        "kid_safe_if_tagged": false,
+        "no_forbidden_ip_or_style_clone": true
+      }
+    },
+    {
+      "fixture_id": "fx20_map_clue",
+      "kid_mode": false,
+      "authority_input": {
+        "location": "Tide Library",
+        "present_entities": [
+          "Archivist Fen"
+        ],
+        "exits": [
+          "map room",
+          "quay"
+        ],
+        "inventory": [
+          "torn chart"
+        ],
+        "hp": 20,
+        "state_delta": {},
+        "quest_status": "reef_marked",
+        "permit_status": "chart-room permit",
+        "evidence": "The chart marks a reef east of Bell Buoy",
+        "outcome_code": "clue_revealed"
+      },
+      "canonical_sha256": "deb1fadbd829f70c0dc80c71fbe665ff320e4eef81690415d254bfaae713a475",
+      "renderings": [
+        {
+          "tone_id": "cozy_low_stakes_comfort",
+          "text": "LOCATION: Tide Library. PRESENT: Archivist Fen. EXITS: map room, quay. INVENTORY: torn chart. HP: 20. OUTCOME: clue_revealed. Blue light moves across the table. A small practical comfort remains close at hand, even though the result is unchanged.",
+          "expected_canonical_hash": "deb1fadbd829f70c0dc80c71fbe665ff320e4eef81690415d254bfaae713a475",
+          "tone_signals_required": [
+            "A small practical comfort remains close at hand, even though the result is unchanged."
+          ],
+          "kid_safe_required": false
+        },
+        {
+          "tone_id": "bright_field_guide",
+          "text": "LOCATION: Tide Library. PRESENT: Archivist Fen. EXITS: map room, quay. INVENTORY: torn chart. HP: 20. OUTCOME: clue_revealed. Blue light moves across the table. The observable detail suggests a question, not an unsupported answer.",
+          "expected_canonical_hash": "deb1fadbd829f70c0dc80c71fbe665ff320e4eef81690415d254bfaae713a475",
+          "tone_signals_required": [
+            "The observable detail suggests a question, not an unsupported answer."
+          ],
+          "kid_safe_required": false
+        },
+        {
+          "tone_id": "litrpg_system_registrar",
+          "text": "LOCATION: Tide Library. PRESENT: Archivist Fen. EXITS: map room, quay. INVENTORY: torn chart. HP: 20. OUTCOME: clue_revealed. Blue light moves across the table. The event is registered exactly as the current state records it.",
+          "expected_canonical_hash": "deb1fadbd829f70c0dc80c71fbe665ff320e4eef81690415d254bfaae713a475",
+          "tone_signals_required": [
+            "The event is registered exactly as the current state records it."
+          ],
+          "kid_safe_required": false
+        }
+      ],
+      "pass_criteria": {
+        "render_count_min": 3,
+        "canonical_hash_equal": true,
+        "numbers_exact": true,
+        "rendered_entities_subset_of_present": true,
+        "rendered_exits_subset_of_exits": true,
+        "no_unearned_inventory_or_status": true,
+        "tone_distinct": true,
+        "kid_safe_if_tagged": false,
+        "no_forbidden_ip_or_style_clone": true
+      }
+    },
+    {
+      "fixture_id": "fx21_ferry_delayed",
+      "kid_mode": false,
+      "authority_input": {
+        "location": "Blackwater Jetty",
+        "present_entities": [
+          "ferrier Lom"
+        ],
+        "exits": [
+          "village road"
+        ],
+        "inventory": [
+          "ferry chit"
+        ],
+        "hp": 20,
+        "state_delta": {},
+        "quest_status": "departure_delayed",
+        "permit_status": "none",
+        "evidence": "The ferry cannot depart until fog lifts; no time is specified",
+        "outcome_code": "delay"
+      },
+      "canonical_sha256": "7fdc4152b45d4bf95dedb2934137151565d0617365f743d2983259854511f293",
+      "renderings": [
+        {
+          "tone_id": "ashen_archivist",
+          "text": "LOCATION: Blackwater Jetty. PRESENT: ferrier Lom. EXITS: village road. INVENTORY: ferry chit. HP: 20. OUTCOME: delay. The bell rope beads with mist. The event enters the record without inventing what time has not supplied.",
+          "expected_canonical_hash": "7fdc4152b45d4bf95dedb2934137151565d0617365f743d2983259854511f293",
+          "tone_signals_required": [
+            "The event enters the record without inventing what time has not supplied."
+          ],
+          "kid_safe_required": false
+        },
+        {
+          "tone_id": "hard_sf_terminal",
+          "text": "LOCATION: Blackwater Jetty. PRESENT: ferrier Lom. EXITS: village road. INVENTORY: ferry chit. HP: 20. OUTCOME: delay. The bell rope beads with mist. Telemetry remains limited to supplied values; uncertainty is preserved.",
+          "expected_canonical_hash": "7fdc4152b45d4bf95dedb2934137151565d0617365f743d2983259854511f293",
+          "tone_signals_required": [
+            "Telemetry remains limited to supplied values; uncertainty is preserved."
+          ],
+          "kid_safe_required": false
+        },
+        {
+          "tone_id": "pyoa_branching_crisis",
+          "text": "LOCATION: Blackwater Jetty. PRESENT: ferrier Lom. EXITS: village road. INVENTORY: ferry chit. HP: 20. OUTCOME: delay. The bell rope beads with mist. The immediate hazard is clear, and only the listed physical choices are implied.",
+          "expected_canonical_hash": "7fdc4152b45d4bf95dedb2934137151565d0617365f743d2983259854511f293",
+          "tone_signals_required": [
+            "The immediate hazard is clear, and only the listed physical choices are implied."
+          ],
+          "kid_safe_required": false
+        }
+      ],
+      "pass_criteria": {
+        "render_count_min": 3,
+        "canonical_hash_equal": true,
+        "numbers_exact": true,
+        "rendered_entities_subset_of_present": true,
+        "rendered_exits_subset_of_exits": true,
+        "no_unearned_inventory_or_status": true,
+        "tone_distinct": true,
+        "kid_safe_if_tagged": false,
+        "no_forbidden_ip_or_style_clone": true
+      }
+    },
+    {
+      "fixture_id": "fx22_injured_goblin",
+      "kid_mode": false,
+      "authority_input": {
+        "location": "Moss Ditch",
+        "present_entities": [
+          "goblin Scrip"
+        ],
+        "exits": [
+          "old road"
+        ],
+        "inventory": [
+          "bandage"
+        ],
+        "hp": 20,
+        "state_delta": {},
+        "quest_status": "aid_choice_open",
+        "permit_status": "none",
+        "evidence": "Scrip has a hurt ankle and is awake",
+        "outcome_code": "aid_opportunity"
+      },
+      "canonical_sha256": "5127818e911e8d19629ad79c811d288506eda0a0fd28744b287cc9aedda11f46",
+      "renderings": [
+        {
+          "tone_id": "street_balladeer",
+          "text": "LOCATION: Moss Ditch. PRESENT: goblin Scrip. EXITS: old road. INVENTORY: bandage. HP: 20. OUTCOME: aid_opportunity. Small white flowers grow along the ditch. The beat is told cleanly, with the next true action left to the player.",
+          "expected_canonical_hash": "5127818e911e8d19629ad79c811d288506eda0a0fd28744b287cc9aedda11f46",
+          "tone_signals_required": [
+            "The beat is told cleanly, with the next true action left to the player."
+          ],
+          "kid_safe_required": false
+        },
+        {
+          "tone_id": "mythic_portent",
+          "text": "LOCATION: Moss Ditch. PRESENT: goblin Scrip. EXITS: old road. INVENTORY: bandage. HP: 20. OUTCOME: aid_opportunity. Small white flowers grow along the ditch. The moment carries weight, but no prophecy is added to the fact.",
+          "expected_canonical_hash": "5127818e911e8d19629ad79c811d288506eda0a0fd28744b287cc9aedda11f46",
+          "tone_signals_required": [
+            "The moment carries weight, but no prophecy is added to the fact."
+          ],
+          "kid_safe_required": false
+        },
+        {
+          "tone_id": "pulp_kinetic_adventure",
+          "text": "LOCATION: Moss Ditch. PRESENT: goblin Scrip. EXITS: old road. INVENTORY: bandage. HP: 20. OUTCOME: aid_opportunity. Small white flowers grow along the ditch. The frame leans into motion, then hands the next real move back to you.",
+          "expected_canonical_hash": "5127818e911e8d19629ad79c811d288506eda0a0fd28744b287cc9aedda11f46",
+          "tone_signals_required": [
+            "The frame leans into motion, then hands the next real move back to you."
+          ],
+          "kid_safe_required": false
+        }
+      ],
+      "pass_criteria": {
+        "render_count_min": 3,
+        "canonical_hash_equal": true,
+        "numbers_exact": true,
+        "rendered_entities_subset_of_present": true,
+        "rendered_exits_subset_of_exits": true,
+        "no_unearned_inventory_or_status": true,
+        "tone_distinct": true,
+        "kid_safe_if_tagged": false,
+        "no_forbidden_ip_or_style_clone": true
+      }
+    },
+    {
+      "fixture_id": "fx23_permit_denied",
+      "kid_mode": true,
+      "authority_input": {
+        "location": "East Gate",
+        "present_entities": [
+          "clerk Osa"
+        ],
+        "exits": [
+          "market road"
+        ],
+        "inventory": [
+          "merchant badge"
+        ],
+        "hp": 20,
+        "state_delta": {},
+        "quest_status": "entry_blocked",
+        "permit_status": "night pass absent",
+        "evidence": "The gate stays closed because the night pass is absent",
+        "outcome_code": "permission_denied"
+      },
+      "canonical_sha256": "5af1fba11f6fc1631d8312a67bda66a64f6f0df60b85fccf2f77020fa1bf93be",
+      "renderings": [
+        {
+          "tone_id": "cozy_brutal",
+          "text": "LOCATION: East Gate. PRESENT: clerk Osa. EXITS: market road. INVENTORY: merchant badge. HP: 20. OUTCOME: permission_denied. Lanterns burn behind the bars. The hit is blunt; the human-scale detail beside it keeps the scene grounded.",
+          "expected_canonical_hash": "5af1fba11f6fc1631d8312a67bda66a64f6f0df60b85fccf2f77020fa1bf93be",
+          "tone_signals_required": [
+            "The hit is blunt; the human-scale detail beside it keeps the scene grounded."
+          ],
+          "kid_safe_required": true
+        },
+        {
+          "tone_id": "clinical_auditor",
+          "text": "LOCATION: East Gate. PRESENT: clerk Osa. EXITS: market road. INVENTORY: merchant badge. HP: 20. OUTCOME: permission_denied. Lanterns burn behind the bars. Observation, transaction, and evidence are separated; no additional cause is inferred.",
+          "expected_canonical_hash": "5af1fba11f6fc1631d8312a67bda66a64f6f0df60b85fccf2f77020fa1bf93be",
+          "tone_signals_required": [
+            "Observation, transaction, and evidence are separated; no additional cause is inferred."
+          ],
+          "kid_safe_required": true
+        },
+        {
+          "tone_id": "kid_plain_stakes",
+          "text": "LOCATION: East Gate. PRESENT: clerk Osa. EXITS: market road. INVENTORY: merchant badge. HP: 20. OUTCOME: permission_denied. Lanterns burn behind the bars. The result is clear, the words are simple, and the next step can be chosen without pressure.",
+          "expected_canonical_hash": "5af1fba11f6fc1631d8312a67bda66a64f6f0df60b85fccf2f77020fa1bf93be",
+          "tone_signals_required": [
+            "The result is clear, the words are simple, and the next step can be chosen without pressure."
+          ],
+          "kid_safe_required": true
+        }
+      ],
+      "pass_criteria": {
+        "render_count_min": 3,
+        "canonical_hash_equal": true,
+        "numbers_exact": true,
+        "rendered_entities_subset_of_present": true,
+        "rendered_exits_subset_of_exits": true,
+        "no_unearned_inventory_or_status": true,
+        "tone_distinct": true,
+        "kid_safe_if_tagged": true,
+        "no_forbidden_ip_or_style_clone": true
+      }
+    },
+    {
+      "fixture_id": "fx24_player_correction",
+      "kid_mode": false,
+      "authority_input": {
+        "location": "River Camp",
+        "present_entities": [
+          "Teren"
+        ],
+        "exits": [
+          "north trail"
+        ],
+        "inventory": [
+          "iron cup"
+        ],
+        "hp": 20,
+        "state_delta": {},
+        "quest_status": "canon_corrected",
+        "permit_status": "none",
+        "evidence": "Player correction: the cup is iron, not silver",
+        "outcome_code": "player_correction"
+      },
+      "canonical_sha256": "62099f98f290be8fb2e1663457d884abeedc6e209e044971acbe3e74d37dbe89",
+      "renderings": [
+        {
+          "tone_id": "warm_chronicle",
+          "text": "LOCATION: River Camp. PRESENT: Teren. EXITS: north trail. INVENTORY: iron cup. HP: 20. OUTCOME: player_correction. The river sounds beyond the tents. The moment is set down with care, preserving both the cost and the company present.",
+          "expected_canonical_hash": "62099f98f290be8fb2e1663457d884abeedc6e209e044971acbe3e74d37dbe89",
+          "tone_signals_required": [
+            "The moment is set down with care, preserving both the cost and the company present."
+          ],
+          "kid_safe_required": false
+        },
+        {
+          "tone_id": "military_procedural",
+          "text": "LOCATION: River Camp. PRESENT: Teren. EXITS: north trail. INVENTORY: iron cup. HP: 20. OUTCOME: player_correction. The river sounds beyond the tents. Situation confirmed; constraints and available routes remain as listed.",
+          "expected_canonical_hash": "62099f98f290be8fb2e1663457d884abeedc6e209e044971acbe3e74d37dbe89",
+          "tone_signals_required": [
+            "Situation confirmed; constraints and available routes remain as listed."
+          ],
+          "kid_safe_required": false
+        },
+        {
+          "tone_id": "dry_wit_deadpan",
+          "text": "LOCATION: River Camp. PRESENT: Teren. EXITS: north trail. INVENTORY: iron cup. HP: 20. OUTCOME: player_correction. The river sounds beyond the tents. The situation has declined to become more convenient, but the record is clear.",
+          "expected_canonical_hash": "62099f98f290be8fb2e1663457d884abeedc6e209e044971acbe3e74d37dbe89",
+          "tone_signals_required": [
+            "The situation has declined to become more convenient, but the record is clear."
+          ],
+          "kid_safe_required": false
+        }
+      ],
+      "pass_criteria": {
+        "render_count_min": 3,
+        "canonical_hash_equal": true,
+        "numbers_exact": true,
+        "rendered_entities_subset_of_present": true,
+        "rendered_exits_subset_of_exits": true,
+        "no_unearned_inventory_or_status": true,
+        "tone_distinct": true,
+        "kid_safe_if_tagged": false,
+        "no_forbidden_ip_or_style_clone": true
+      }
+    }
+  ]
+}

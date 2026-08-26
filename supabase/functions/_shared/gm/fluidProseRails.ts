@@ -7,6 +7,7 @@
 import type { EngineMode } from './types.ts';
 
 const GLOBAL_RAILS = `=== FLUID GM PROSE RAILS (BINDING) ===
+* RENDERER FIREWALL: Personality / tone is diction only — applied after authority, StateTx, evidence, and SNAPSHOT. Preserve every fact, number, permit, inventory item, HP, quest flag, presence, exit, and location. Never invent a result for tone.
 * RHYTHM: Vary sentence length. Mix short punches with one longer sensory line. Avoid telegram fragments and same-length stacks.
 * TONE: Match the configured System/GM voice and engine diction below — confident narrator, not a help desk or apologetic chatbot.
 * VOCABULARY: Full natural English. Prefer concrete nouns and verbs (light, weight, grit, draft, scrape) over abstract filler. Descriptive engaging language and narrative flair are required. Factual details (stats, inventory, exits, who is here, damage) MUST match the SNAPSHOT / data sheets / ledger. Do not invent items, doors, named NPCs, or numeric results.

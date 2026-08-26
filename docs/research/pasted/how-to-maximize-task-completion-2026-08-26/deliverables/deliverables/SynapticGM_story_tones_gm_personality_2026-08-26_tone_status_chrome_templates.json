@@ -1,0 +1,987 @@
+{
+  "schema_version": "1.0.0",
+  "required_slots": [
+    "STATUS",
+    "WHY",
+    "REPAIR"
+  ],
+  "global_rules": [
+    "Never alter or round source values.",
+    "Never add a cause not present in evidence.",
+    "Humor is disabled for repair, safety, consent, payment, data loss, death, and Kid Mode.",
+    "If no repair exists, say so plainly and expose a back or help action when available."
+  ],
+  "bank_ids": {
+    "grimdark_bleak_consequence": "status_grimdark_bleak_consequence_v1",
+    "cozy_low_stakes_comfort": "status_cozy_low_stakes_comfort_v1",
+    "cozy_brutal": "status_cozy_brutal_v1",
+    "pulp_kinetic_adventure": "status_pulp_kinetic_adventure_v1",
+    "gothic_moonlit_dread": "status_gothic_moonlit_dread_v1",
+    "litrpg_system_registrar": "status_litrpg_system_registrar_v1",
+    "military_procedural": "status_military_procedural_v1",
+    "dry_wit_deadpan": "status_dry_wit_deadpan_v1",
+    "warm_chronicle": "status_warm_chronicle_v1",
+    "clinical_auditor": "status_clinical_auditor_v1",
+    "mythic_portent": "status_mythic_portent_v1",
+    "street_balladeer": "status_street_balladeer_v1",
+    "ashen_archivist": "status_ashen_archivist_v1",
+    "bright_field_guide": "status_bright_field_guide_v1",
+    "noir_case_file": "status_noir_case_file_v1",
+    "fae_uncanny_tale": "status_fae_uncanny_tale_v1",
+    "hard_sf_terminal": "status_hard_sf_terminal_v1",
+    "pyoa_branching_crisis": "status_pyoa_branching_crisis_v1",
+    "kid_plain_stakes": "status_kid_plain_stakes_v1"
+  },
+  "templates": {
+    "grimdark_bleak_consequence": [
+      {
+        "template_id": "status_grimdark_bleak_consequence_state_v1",
+        "event": "state_change",
+        "critical": false,
+        "status": "RECKONING: {field} = {value}",
+        "why": "WHY: The record does not soften this. Source={authority_source}.",
+        "repair": "REPAIR: Choose from what remains. {permitted_next_step}"
+      },
+      {
+        "template_id": "status_grimdark_bleak_consequence_delta_v1",
+        "event": "numeric_delta",
+        "critical": false,
+        "status": "RECKONING: {resource} {signed_delta}; now {current_value}",
+        "why": "WHY: Applied from {state_tx_id}.",
+        "repair": "REPAIR: Review the transaction or continue with {permitted_next_step}."
+      },
+      {
+        "template_id": "status_grimdark_bleak_consequence_blocked_v1",
+        "event": "blocked_action",
+        "critical": true,
+        "status": "RECKONING: Action unavailable; state unchanged",
+        "why": "WHY: {blocking_rule}.",
+        "repair": "REPAIR: {permitted_next_step}"
+      },
+      {
+        "template_id": "status_grimdark_bleak_consequence_correction_v1",
+        "event": "player_correction",
+        "critical": true,
+        "status": "RECKONING: Player correction accepted; prior render superseded",
+        "why": "WHY: Player correction outranks prior narration.",
+        "repair": "REPAIR: Re-render from the corrected canon without changing unrelated state."
+      },
+      {
+        "template_id": "status_grimdark_bleak_consequence_canon_repair_v1",
+        "event": "continuity_repair",
+        "critical": true,
+        "status": "RECKONING: Continuity mismatch repaired; ledger unchanged",
+        "why": "WHY: Render conflicted with {authority_source}.",
+        "repair": "REPAIR: Use the corrected fact: {canonical_fact}."
+      },
+      {
+        "template_id": "status_grimdark_bleak_consequence_art_skip_v1",
+        "event": "art_suppressed",
+        "critical": false,
+        "status": "RECKONING: Illustration skipped; narration complete",
+        "why": "WHY: {art_gate_reason}.",
+        "repair": "REPAIR: No action needed. Continue play."
+      }
+    ],
+    "cozy_low_stakes_comfort": [
+      {
+        "template_id": "status_cozy_low_stakes_comfort_state_v1",
+        "event": "state_change",
+        "critical": false,
+        "status": "UPDATE: {field} = {value}",
+        "why": "WHY: Here is what changed. Source={authority_source}.",
+        "repair": "REPAIR: You can take the next step when ready. {permitted_next_step}"
+      },
+      {
+        "template_id": "status_cozy_low_stakes_comfort_delta_v1",
+        "event": "numeric_delta",
+        "critical": false,
+        "status": "UPDATE: {resource} {signed_delta}; now {current_value}",
+        "why": "WHY: Applied from {state_tx_id}.",
+        "repair": "REPAIR: Review the transaction or continue with {permitted_next_step}."
+      },
+      {
+        "template_id": "status_cozy_low_stakes_comfort_blocked_v1",
+        "event": "blocked_action",
+        "critical": true,
+        "status": "UPDATE: Action unavailable; state unchanged",
+        "why": "WHY: {blocking_rule}.",
+        "repair": "REPAIR: {permitted_next_step}"
+      },
+      {
+        "template_id": "status_cozy_low_stakes_comfort_correction_v1",
+        "event": "player_correction",
+        "critical": true,
+        "status": "UPDATE: Player correction accepted; prior render superseded",
+        "why": "WHY: Player correction outranks prior narration.",
+        "repair": "REPAIR: Re-render from the corrected canon without changing unrelated state."
+      },
+      {
+        "template_id": "status_cozy_low_stakes_comfort_canon_repair_v1",
+        "event": "continuity_repair",
+        "critical": true,
+        "status": "UPDATE: Continuity mismatch repaired; ledger unchanged",
+        "why": "WHY: Render conflicted with {authority_source}.",
+        "repair": "REPAIR: Use the corrected fact: {canonical_fact}."
+      },
+      {
+        "template_id": "status_cozy_low_stakes_comfort_art_skip_v1",
+        "event": "art_suppressed",
+        "critical": false,
+        "status": "UPDATE: Illustration skipped; narration complete",
+        "why": "WHY: {art_gate_reason}.",
+        "repair": "REPAIR: No action needed. Continue play."
+      }
+    ],
+    "cozy_brutal": [
+      {
+        "template_id": "status_cozy_brutal_state_v1",
+        "event": "state_change",
+        "critical": false,
+        "status": "STATUS: {field} = {value}",
+        "why": "WHY: Hard result. Clean numbers. Source={authority_source}.",
+        "repair": "REPAIR: Catch your breath, then choose. {permitted_next_step}"
+      },
+      {
+        "template_id": "status_cozy_brutal_delta_v1",
+        "event": "numeric_delta",
+        "critical": false,
+        "status": "STATUS: {resource} {signed_delta}; now {current_value}",
+        "why": "WHY: Applied from {state_tx_id}.",
+        "repair": "REPAIR: Review the transaction or continue with {permitted_next_step}."
+      },
+      {
+        "template_id": "status_cozy_brutal_blocked_v1",
+        "event": "blocked_action",
+        "critical": true,
+        "status": "STATUS: Action unavailable; state unchanged",
+        "why": "WHY: {blocking_rule}.",
+        "repair": "REPAIR: {permitted_next_step}"
+      },
+      {
+        "template_id": "status_cozy_brutal_correction_v1",
+        "event": "player_correction",
+        "critical": true,
+        "status": "STATUS: Player correction accepted; prior render superseded",
+        "why": "WHY: Player correction outranks prior narration.",
+        "repair": "REPAIR: Re-render from the corrected canon without changing unrelated state."
+      },
+      {
+        "template_id": "status_cozy_brutal_canon_repair_v1",
+        "event": "continuity_repair",
+        "critical": true,
+        "status": "STATUS: Continuity mismatch repaired; ledger unchanged",
+        "why": "WHY: Render conflicted with {authority_source}.",
+        "repair": "REPAIR: Use the corrected fact: {canonical_fact}."
+      },
+      {
+        "template_id": "status_cozy_brutal_art_skip_v1",
+        "event": "art_suppressed",
+        "critical": false,
+        "status": "STATUS: Illustration skipped; narration complete",
+        "why": "WHY: {art_gate_reason}.",
+        "repair": "REPAIR: No action needed. Continue play."
+      }
+    ],
+    "pulp_kinetic_adventure": [
+      {
+        "template_id": "status_pulp_kinetic_adventure_state_v1",
+        "event": "state_change",
+        "critical": false,
+        "status": "FLASH: {field} = {value}",
+        "why": "WHY: The action resolved exactly as shown. Source={authority_source}.",
+        "repair": "REPAIR: Pick the next move. {permitted_next_step}"
+      },
+      {
+        "template_id": "status_pulp_kinetic_adventure_delta_v1",
+        "event": "numeric_delta",
+        "critical": false,
+        "status": "FLASH: {resource} {signed_delta}; now {current_value}",
+        "why": "WHY: Applied from {state_tx_id}.",
+        "repair": "REPAIR: Review the transaction or continue with {permitted_next_step}."
+      },
+      {
+        "template_id": "status_pulp_kinetic_adventure_blocked_v1",
+        "event": "blocked_action",
+        "critical": true,
+        "status": "FLASH: Action unavailable; state unchanged",
+        "why": "WHY: {blocking_rule}.",
+        "repair": "REPAIR: {permitted_next_step}"
+      },
+      {
+        "template_id": "status_pulp_kinetic_adventure_correction_v1",
+        "event": "player_correction",
+        "critical": true,
+        "status": "FLASH: Player correction accepted; prior render superseded",
+        "why": "WHY: Player correction outranks prior narration.",
+        "repair": "REPAIR: Re-render from the corrected canon without changing unrelated state."
+      },
+      {
+        "template_id": "status_pulp_kinetic_adventure_canon_repair_v1",
+        "event": "continuity_repair",
+        "critical": true,
+        "status": "FLASH: Continuity mismatch repaired; ledger unchanged",
+        "why": "WHY: Render conflicted with {authority_source}.",
+        "repair": "REPAIR: Use the corrected fact: {canonical_fact}."
+      },
+      {
+        "template_id": "status_pulp_kinetic_adventure_art_skip_v1",
+        "event": "art_suppressed",
+        "critical": false,
+        "status": "FLASH: Illustration skipped; narration complete",
+        "why": "WHY: {art_gate_reason}.",
+        "repair": "REPAIR: No action needed. Continue play."
+      }
+    ],
+    "gothic_moonlit_dread": [
+      {
+        "template_id": "status_gothic_moonlit_dread_state_v1",
+        "event": "state_change",
+        "critical": false,
+        "status": "RECORD: {field} = {value}",
+        "why": "WHY: The dark changes nothing in the ledger. Source={authority_source}.",
+        "repair": "REPAIR: Choose a known path. {permitted_next_step}"
+      },
+      {
+        "template_id": "status_gothic_moonlit_dread_delta_v1",
+        "event": "numeric_delta",
+        "critical": false,
+        "status": "RECORD: {resource} {signed_delta}; now {current_value}",
+        "why": "WHY: Applied from {state_tx_id}.",
+        "repair": "REPAIR: Review the transaction or continue with {permitted_next_step}."
+      },
+      {
+        "template_id": "status_gothic_moonlit_dread_blocked_v1",
+        "event": "blocked_action",
+        "critical": true,
+        "status": "RECORD: Action unavailable; state unchanged",
+        "why": "WHY: {blocking_rule}.",
+        "repair": "REPAIR: {permitted_next_step}"
+      },
+      {
+        "template_id": "status_gothic_moonlit_dread_correction_v1",
+        "event": "player_correction",
+        "critical": true,
+        "status": "RECORD: Player correction accepted; prior render superseded",
+        "why": "WHY: Player correction outranks prior narration.",
+        "repair": "REPAIR: Re-render from the corrected canon without changing unrelated state."
+      },
+      {
+        "template_id": "status_gothic_moonlit_dread_canon_repair_v1",
+        "event": "continuity_repair",
+        "critical": true,
+        "status": "RECORD: Continuity mismatch repaired; ledger unchanged",
+        "why": "WHY: Render conflicted with {authority_source}.",
+        "repair": "REPAIR: Use the corrected fact: {canonical_fact}."
+      },
+      {
+        "template_id": "status_gothic_moonlit_dread_art_skip_v1",
+        "event": "art_suppressed",
+        "critical": false,
+        "status": "RECORD: Illustration skipped; narration complete",
+        "why": "WHY: {art_gate_reason}.",
+        "repair": "REPAIR: No action needed. Continue play."
+      }
+    ],
+    "litrpg_system_registrar": [
+      {
+        "template_id": "status_litrpg_system_registrar_state_v1",
+        "event": "state_change",
+        "critical": false,
+        "status": "STATUS: {field} = {value}",
+        "why": "WHY: Authority source registered. Source={authority_source}.",
+        "repair": "REPAIR: Select an available action. {permitted_next_step}"
+      },
+      {
+        "template_id": "status_litrpg_system_registrar_delta_v1",
+        "event": "numeric_delta",
+        "critical": false,
+        "status": "STATUS: {resource} {signed_delta}; now {current_value}",
+        "why": "WHY: Applied from {state_tx_id}.",
+        "repair": "REPAIR: Review the transaction or continue with {permitted_next_step}."
+      },
+      {
+        "template_id": "status_litrpg_system_registrar_blocked_v1",
+        "event": "blocked_action",
+        "critical": true,
+        "status": "STATUS: Action unavailable; state unchanged",
+        "why": "WHY: {blocking_rule}.",
+        "repair": "REPAIR: {permitted_next_step}"
+      },
+      {
+        "template_id": "status_litrpg_system_registrar_correction_v1",
+        "event": "player_correction",
+        "critical": true,
+        "status": "STATUS: Player correction accepted; prior render superseded",
+        "why": "WHY: Player correction outranks prior narration.",
+        "repair": "REPAIR: Re-render from the corrected canon without changing unrelated state."
+      },
+      {
+        "template_id": "status_litrpg_system_registrar_canon_repair_v1",
+        "event": "continuity_repair",
+        "critical": true,
+        "status": "STATUS: Continuity mismatch repaired; ledger unchanged",
+        "why": "WHY: Render conflicted with {authority_source}.",
+        "repair": "REPAIR: Use the corrected fact: {canonical_fact}."
+      },
+      {
+        "template_id": "status_litrpg_system_registrar_art_skip_v1",
+        "event": "art_suppressed",
+        "critical": false,
+        "status": "STATUS: Illustration skipped; narration complete",
+        "why": "WHY: {art_gate_reason}.",
+        "repair": "REPAIR: No action needed. Continue play."
+      }
+    ],
+    "military_procedural": [
+      {
+        "template_id": "status_military_procedural_state_v1",
+        "event": "state_change",
+        "critical": false,
+        "status": "SITREP: {field} = {value}",
+        "why": "WHY: Confirmed by the current operation record. Source={authority_source}.",
+        "repair": "REPAIR: Proceed with an available option. {permitted_next_step}"
+      },
+      {
+        "template_id": "status_military_procedural_delta_v1",
+        "event": "numeric_delta",
+        "critical": false,
+        "status": "SITREP: {resource} {signed_delta}; now {current_value}",
+        "why": "WHY: Applied from {state_tx_id}.",
+        "repair": "REPAIR: Review the transaction or continue with {permitted_next_step}."
+      },
+      {
+        "template_id": "status_military_procedural_blocked_v1",
+        "event": "blocked_action",
+        "critical": true,
+        "status": "SITREP: Action unavailable; state unchanged",
+        "why": "WHY: {blocking_rule}.",
+        "repair": "REPAIR: {permitted_next_step}"
+      },
+      {
+        "template_id": "status_military_procedural_correction_v1",
+        "event": "player_correction",
+        "critical": true,
+        "status": "SITREP: Player correction accepted; prior render superseded",
+        "why": "WHY: Player correction outranks prior narration.",
+        "repair": "REPAIR: Re-render from the corrected canon without changing unrelated state."
+      },
+      {
+        "template_id": "status_military_procedural_canon_repair_v1",
+        "event": "continuity_repair",
+        "critical": true,
+        "status": "SITREP: Continuity mismatch repaired; ledger unchanged",
+        "why": "WHY: Render conflicted with {authority_source}.",
+        "repair": "REPAIR: Use the corrected fact: {canonical_fact}."
+      },
+      {
+        "template_id": "status_military_procedural_art_skip_v1",
+        "event": "art_suppressed",
+        "critical": false,
+        "status": "SITREP: Illustration skipped; narration complete",
+        "why": "WHY: {art_gate_reason}.",
+        "repair": "REPAIR: No action needed. Continue play."
+      }
+    ],
+    "dry_wit_deadpan": [
+      {
+        "template_id": "status_dry_wit_deadpan_state_v1",
+        "event": "state_change",
+        "critical": false,
+        "status": "STATUS: {field} = {value}",
+        "why": "WHY: The numbers remain inconveniently literal. Source={authority_source}.",
+        "repair": "REPAIR: Choose an available response. {permitted_next_step}"
+      },
+      {
+        "template_id": "status_dry_wit_deadpan_delta_v1",
+        "event": "numeric_delta",
+        "critical": false,
+        "status": "STATUS: {resource} {signed_delta}; now {current_value}",
+        "why": "WHY: Applied from {state_tx_id}.",
+        "repair": "REPAIR: Review the transaction or continue with {permitted_next_step}."
+      },
+      {
+        "template_id": "status_dry_wit_deadpan_blocked_v1",
+        "event": "blocked_action",
+        "critical": true,
+        "status": "STATUS: Action unavailable; state unchanged",
+        "why": "WHY: {blocking_rule}.",
+        "repair": "REPAIR: {permitted_next_step}"
+      },
+      {
+        "template_id": "status_dry_wit_deadpan_correction_v1",
+        "event": "player_correction",
+        "critical": true,
+        "status": "STATUS: Player correction accepted; prior render superseded",
+        "why": "WHY: Player correction outranks prior narration.",
+        "repair": "REPAIR: Re-render from the corrected canon without changing unrelated state."
+      },
+      {
+        "template_id": "status_dry_wit_deadpan_canon_repair_v1",
+        "event": "continuity_repair",
+        "critical": true,
+        "status": "STATUS: Continuity mismatch repaired; ledger unchanged",
+        "why": "WHY: Render conflicted with {authority_source}.",
+        "repair": "REPAIR: Use the corrected fact: {canonical_fact}."
+      },
+      {
+        "template_id": "status_dry_wit_deadpan_art_skip_v1",
+        "event": "art_suppressed",
+        "critical": false,
+        "status": "STATUS: Illustration skipped; narration complete",
+        "why": "WHY: {art_gate_reason}.",
+        "repair": "REPAIR: No action needed. Continue play."
+      }
+    ],
+    "warm_chronicle": [
+      {
+        "template_id": "status_warm_chronicle_state_v1",
+        "event": "state_change",
+        "critical": false,
+        "status": "THE LEDGER RECORDS: {field} = {value}",
+        "why": "WHY: This is the confirmed change. Source={authority_source}.",
+        "repair": "REPAIR: The road remains yours to choose. {permitted_next_step}"
+      },
+      {
+        "template_id": "status_warm_chronicle_delta_v1",
+        "event": "numeric_delta",
+        "critical": false,
+        "status": "THE LEDGER RECORDS: {resource} {signed_delta}; now {current_value}",
+        "why": "WHY: Applied from {state_tx_id}.",
+        "repair": "REPAIR: Review the transaction or continue with {permitted_next_step}."
+      },
+      {
+        "template_id": "status_warm_chronicle_blocked_v1",
+        "event": "blocked_action",
+        "critical": true,
+        "status": "THE LEDGER RECORDS: Action unavailable; state unchanged",
+        "why": "WHY: {blocking_rule}.",
+        "repair": "REPAIR: {permitted_next_step}"
+      },
+      {
+        "template_id": "status_warm_chronicle_correction_v1",
+        "event": "player_correction",
+        "critical": true,
+        "status": "THE LEDGER RECORDS: Player correction accepted; prior render superseded",
+        "why": "WHY: Player correction outranks prior narration.",
+        "repair": "REPAIR: Re-render from the corrected canon without changing unrelated state."
+      },
+      {
+        "template_id": "status_warm_chronicle_canon_repair_v1",
+        "event": "continuity_repair",
+        "critical": true,
+        "status": "THE LEDGER RECORDS: Continuity mismatch repaired; ledger unchanged",
+        "why": "WHY: Render conflicted with {authority_source}.",
+        "repair": "REPAIR: Use the corrected fact: {canonical_fact}."
+      },
+      {
+        "template_id": "status_warm_chronicle_art_skip_v1",
+        "event": "art_suppressed",
+        "critical": false,
+        "status": "THE LEDGER RECORDS: Illustration skipped; narration complete",
+        "why": "WHY: {art_gate_reason}.",
+        "repair": "REPAIR: No action needed. Continue play."
+      }
+    ],
+    "clinical_auditor": [
+      {
+        "template_id": "status_clinical_auditor_state_v1",
+        "event": "state_change",
+        "critical": false,
+        "status": "AUDIT: {field} = {value}",
+        "why": "WHY: Evidence and transaction agree. Source={authority_source}.",
+        "repair": "REPAIR: Select a validated next action. {permitted_next_step}"
+      },
+      {
+        "template_id": "status_clinical_auditor_delta_v1",
+        "event": "numeric_delta",
+        "critical": false,
+        "status": "AUDIT: {resource} {signed_delta}; now {current_value}",
+        "why": "WHY: Applied from {state_tx_id}.",
+        "repair": "REPAIR: Review the transaction or continue with {permitted_next_step}."
+      },
+      {
+        "template_id": "status_clinical_auditor_blocked_v1",
+        "event": "blocked_action",
+        "critical": true,
+        "status": "AUDIT: Action unavailable; state unchanged",
+        "why": "WHY: {blocking_rule}.",
+        "repair": "REPAIR: {permitted_next_step}"
+      },
+      {
+        "template_id": "status_clinical_auditor_correction_v1",
+        "event": "player_correction",
+        "critical": true,
+        "status": "AUDIT: Player correction accepted; prior render superseded",
+        "why": "WHY: Player correction outranks prior narration.",
+        "repair": "REPAIR: Re-render from the corrected canon without changing unrelated state."
+      },
+      {
+        "template_id": "status_clinical_auditor_canon_repair_v1",
+        "event": "continuity_repair",
+        "critical": true,
+        "status": "AUDIT: Continuity mismatch repaired; ledger unchanged",
+        "why": "WHY: Render conflicted with {authority_source}.",
+        "repair": "REPAIR: Use the corrected fact: {canonical_fact}."
+      },
+      {
+        "template_id": "status_clinical_auditor_art_skip_v1",
+        "event": "art_suppressed",
+        "critical": false,
+        "status": "AUDIT: Illustration skipped; narration complete",
+        "why": "WHY: {art_gate_reason}.",
+        "repair": "REPAIR: No action needed. Continue play."
+      }
+    ],
+    "mythic_portent": [
+      {
+        "template_id": "status_mythic_portent_state_v1",
+        "event": "state_change",
+        "critical": false,
+        "status": "THE RECORD STANDS: {field} = {value}",
+        "why": "WHY: The omen is atmosphere; the ledger is fact. Source={authority_source}.",
+        "repair": "REPAIR: Choose among the paths that truly remain. {permitted_next_step}"
+      },
+      {
+        "template_id": "status_mythic_portent_delta_v1",
+        "event": "numeric_delta",
+        "critical": false,
+        "status": "THE RECORD STANDS: {resource} {signed_delta}; now {current_value}",
+        "why": "WHY: Applied from {state_tx_id}.",
+        "repair": "REPAIR: Review the transaction or continue with {permitted_next_step}."
+      },
+      {
+        "template_id": "status_mythic_portent_blocked_v1",
+        "event": "blocked_action",
+        "critical": true,
+        "status": "THE RECORD STANDS: Action unavailable; state unchanged",
+        "why": "WHY: {blocking_rule}.",
+        "repair": "REPAIR: {permitted_next_step}"
+      },
+      {
+        "template_id": "status_mythic_portent_correction_v1",
+        "event": "player_correction",
+        "critical": true,
+        "status": "THE RECORD STANDS: Player correction accepted; prior render superseded",
+        "why": "WHY: Player correction outranks prior narration.",
+        "repair": "REPAIR: Re-render from the corrected canon without changing unrelated state."
+      },
+      {
+        "template_id": "status_mythic_portent_canon_repair_v1",
+        "event": "continuity_repair",
+        "critical": true,
+        "status": "THE RECORD STANDS: Continuity mismatch repaired; ledger unchanged",
+        "why": "WHY: Render conflicted with {authority_source}.",
+        "repair": "REPAIR: Use the corrected fact: {canonical_fact}."
+      },
+      {
+        "template_id": "status_mythic_portent_art_skip_v1",
+        "event": "art_suppressed",
+        "critical": false,
+        "status": "THE RECORD STANDS: Illustration skipped; narration complete",
+        "why": "WHY: {art_gate_reason}.",
+        "repair": "REPAIR: No action needed. Continue play."
+      }
+    ],
+    "street_balladeer": [
+      {
+        "template_id": "status_street_balladeer_state_v1",
+        "event": "state_change",
+        "critical": false,
+        "status": "WORD ON THE STREET: {field} = {value}",
+        "why": "WHY: The tale follows the record. Source={authority_source}.",
+        "repair": "REPAIR: Take the next available beat. {permitted_next_step}"
+      },
+      {
+        "template_id": "status_street_balladeer_delta_v1",
+        "event": "numeric_delta",
+        "critical": false,
+        "status": "WORD ON THE STREET: {resource} {signed_delta}; now {current_value}",
+        "why": "WHY: Applied from {state_tx_id}.",
+        "repair": "REPAIR: Review the transaction or continue with {permitted_next_step}."
+      },
+      {
+        "template_id": "status_street_balladeer_blocked_v1",
+        "event": "blocked_action",
+        "critical": true,
+        "status": "WORD ON THE STREET: Action unavailable; state unchanged",
+        "why": "WHY: {blocking_rule}.",
+        "repair": "REPAIR: {permitted_next_step}"
+      },
+      {
+        "template_id": "status_street_balladeer_correction_v1",
+        "event": "player_correction",
+        "critical": true,
+        "status": "WORD ON THE STREET: Player correction accepted; prior render superseded",
+        "why": "WHY: Player correction outranks prior narration.",
+        "repair": "REPAIR: Re-render from the corrected canon without changing unrelated state."
+      },
+      {
+        "template_id": "status_street_balladeer_canon_repair_v1",
+        "event": "continuity_repair",
+        "critical": true,
+        "status": "WORD ON THE STREET: Continuity mismatch repaired; ledger unchanged",
+        "why": "WHY: Render conflicted with {authority_source}.",
+        "repair": "REPAIR: Use the corrected fact: {canonical_fact}."
+      },
+      {
+        "template_id": "status_street_balladeer_art_skip_v1",
+        "event": "art_suppressed",
+        "critical": false,
+        "status": "WORD ON THE STREET: Illustration skipped; narration complete",
+        "why": "WHY: {art_gate_reason}.",
+        "repair": "REPAIR: No action needed. Continue play."
+      }
+    ],
+    "ashen_archivist": [
+      {
+        "template_id": "status_ashen_archivist_state_v1",
+        "event": "state_change",
+        "critical": false,
+        "status": "ARCHIVE ENTRY: {field} = {value}",
+        "why": "WHY: The surviving record confirms it. Source={authority_source}.",
+        "repair": "REPAIR: Continue from the documented state. {permitted_next_step}"
+      },
+      {
+        "template_id": "status_ashen_archivist_delta_v1",
+        "event": "numeric_delta",
+        "critical": false,
+        "status": "ARCHIVE ENTRY: {resource} {signed_delta}; now {current_value}",
+        "why": "WHY: Applied from {state_tx_id}.",
+        "repair": "REPAIR: Review the transaction or continue with {permitted_next_step}."
+      },
+      {
+        "template_id": "status_ashen_archivist_blocked_v1",
+        "event": "blocked_action",
+        "critical": true,
+        "status": "ARCHIVE ENTRY: Action unavailable; state unchanged",
+        "why": "WHY: {blocking_rule}.",
+        "repair": "REPAIR: {permitted_next_step}"
+      },
+      {
+        "template_id": "status_ashen_archivist_correction_v1",
+        "event": "player_correction",
+        "critical": true,
+        "status": "ARCHIVE ENTRY: Player correction accepted; prior render superseded",
+        "why": "WHY: Player correction outranks prior narration.",
+        "repair": "REPAIR: Re-render from the corrected canon without changing unrelated state."
+      },
+      {
+        "template_id": "status_ashen_archivist_canon_repair_v1",
+        "event": "continuity_repair",
+        "critical": true,
+        "status": "ARCHIVE ENTRY: Continuity mismatch repaired; ledger unchanged",
+        "why": "WHY: Render conflicted with {authority_source}.",
+        "repair": "REPAIR: Use the corrected fact: {canonical_fact}."
+      },
+      {
+        "template_id": "status_ashen_archivist_art_skip_v1",
+        "event": "art_suppressed",
+        "critical": false,
+        "status": "ARCHIVE ENTRY: Illustration skipped; narration complete",
+        "why": "WHY: {art_gate_reason}.",
+        "repair": "REPAIR: No action needed. Continue play."
+      }
+    ],
+    "bright_field_guide": [
+      {
+        "template_id": "status_bright_field_guide_state_v1",
+        "event": "state_change",
+        "critical": false,
+        "status": "FIELD NOTE: {field} = {value}",
+        "why": "WHY: The observation is confirmed. Source={authority_source}.",
+        "repair": "REPAIR: Try one of the available next steps. {permitted_next_step}"
+      },
+      {
+        "template_id": "status_bright_field_guide_delta_v1",
+        "event": "numeric_delta",
+        "critical": false,
+        "status": "FIELD NOTE: {resource} {signed_delta}; now {current_value}",
+        "why": "WHY: Applied from {state_tx_id}.",
+        "repair": "REPAIR: Review the transaction or continue with {permitted_next_step}."
+      },
+      {
+        "template_id": "status_bright_field_guide_blocked_v1",
+        "event": "blocked_action",
+        "critical": true,
+        "status": "FIELD NOTE: Action unavailable; state unchanged",
+        "why": "WHY: {blocking_rule}.",
+        "repair": "REPAIR: {permitted_next_step}"
+      },
+      {
+        "template_id": "status_bright_field_guide_correction_v1",
+        "event": "player_correction",
+        "critical": true,
+        "status": "FIELD NOTE: Player correction accepted; prior render superseded",
+        "why": "WHY: Player correction outranks prior narration.",
+        "repair": "REPAIR: Re-render from the corrected canon without changing unrelated state."
+      },
+      {
+        "template_id": "status_bright_field_guide_canon_repair_v1",
+        "event": "continuity_repair",
+        "critical": true,
+        "status": "FIELD NOTE: Continuity mismatch repaired; ledger unchanged",
+        "why": "WHY: Render conflicted with {authority_source}.",
+        "repair": "REPAIR: Use the corrected fact: {canonical_fact}."
+      },
+      {
+        "template_id": "status_bright_field_guide_art_skip_v1",
+        "event": "art_suppressed",
+        "critical": false,
+        "status": "FIELD NOTE: Illustration skipped; narration complete",
+        "why": "WHY: {art_gate_reason}.",
+        "repair": "REPAIR: No action needed. Continue play."
+      }
+    ],
+    "noir_case_file": [
+      {
+        "template_id": "status_noir_case_file_state_v1",
+        "event": "state_change",
+        "critical": false,
+        "status": "CASE UPDATE: {field} = {value}",
+        "why": "WHY: The evidence fixes the fact. Source={authority_source}.",
+        "repair": "REPAIR: Follow an available lead. {permitted_next_step}"
+      },
+      {
+        "template_id": "status_noir_case_file_delta_v1",
+        "event": "numeric_delta",
+        "critical": false,
+        "status": "CASE UPDATE: {resource} {signed_delta}; now {current_value}",
+        "why": "WHY: Applied from {state_tx_id}.",
+        "repair": "REPAIR: Review the transaction or continue with {permitted_next_step}."
+      },
+      {
+        "template_id": "status_noir_case_file_blocked_v1",
+        "event": "blocked_action",
+        "critical": true,
+        "status": "CASE UPDATE: Action unavailable; state unchanged",
+        "why": "WHY: {blocking_rule}.",
+        "repair": "REPAIR: {permitted_next_step}"
+      },
+      {
+        "template_id": "status_noir_case_file_correction_v1",
+        "event": "player_correction",
+        "critical": true,
+        "status": "CASE UPDATE: Player correction accepted; prior render superseded",
+        "why": "WHY: Player correction outranks prior narration.",
+        "repair": "REPAIR: Re-render from the corrected canon without changing unrelated state."
+      },
+      {
+        "template_id": "status_noir_case_file_canon_repair_v1",
+        "event": "continuity_repair",
+        "critical": true,
+        "status": "CASE UPDATE: Continuity mismatch repaired; ledger unchanged",
+        "why": "WHY: Render conflicted with {authority_source}.",
+        "repair": "REPAIR: Use the corrected fact: {canonical_fact}."
+      },
+      {
+        "template_id": "status_noir_case_file_art_skip_v1",
+        "event": "art_suppressed",
+        "critical": false,
+        "status": "CASE UPDATE: Illustration skipped; narration complete",
+        "why": "WHY: {art_gate_reason}.",
+        "repair": "REPAIR: No action needed. Continue play."
+      }
+    ],
+    "fae_uncanny_tale": [
+      {
+        "template_id": "status_fae_uncanny_tale_state_v1",
+        "event": "state_change",
+        "critical": false,
+        "status": "PACT RECORD: {field} = {value}",
+        "why": "WHY: The wording is literal. Source={authority_source}.",
+        "repair": "REPAIR: Choose only from the stated terms. {permitted_next_step}"
+      },
+      {
+        "template_id": "status_fae_uncanny_tale_delta_v1",
+        "event": "numeric_delta",
+        "critical": false,
+        "status": "PACT RECORD: {resource} {signed_delta}; now {current_value}",
+        "why": "WHY: Applied from {state_tx_id}.",
+        "repair": "REPAIR: Review the transaction or continue with {permitted_next_step}."
+      },
+      {
+        "template_id": "status_fae_uncanny_tale_blocked_v1",
+        "event": "blocked_action",
+        "critical": true,
+        "status": "PACT RECORD: Action unavailable; state unchanged",
+        "why": "WHY: {blocking_rule}.",
+        "repair": "REPAIR: {permitted_next_step}"
+      },
+      {
+        "template_id": "status_fae_uncanny_tale_correction_v1",
+        "event": "player_correction",
+        "critical": true,
+        "status": "PACT RECORD: Player correction accepted; prior render superseded",
+        "why": "WHY: Player correction outranks prior narration.",
+        "repair": "REPAIR: Re-render from the corrected canon without changing unrelated state."
+      },
+      {
+        "template_id": "status_fae_uncanny_tale_canon_repair_v1",
+        "event": "continuity_repair",
+        "critical": true,
+        "status": "PACT RECORD: Continuity mismatch repaired; ledger unchanged",
+        "why": "WHY: Render conflicted with {authority_source}.",
+        "repair": "REPAIR: Use the corrected fact: {canonical_fact}."
+      },
+      {
+        "template_id": "status_fae_uncanny_tale_art_skip_v1",
+        "event": "art_suppressed",
+        "critical": false,
+        "status": "PACT RECORD: Illustration skipped; narration complete",
+        "why": "WHY: {art_gate_reason}.",
+        "repair": "REPAIR: No action needed. Continue play."
+      }
+    ],
+    "hard_sf_terminal": [
+      {
+        "template_id": "status_hard_sf_terminal_state_v1",
+        "event": "state_change",
+        "critical": false,
+        "status": "TELEMETRY: {field} = {value}",
+        "why": "WHY: Source integrity confirmed. Source={authority_source}.",
+        "repair": "REPAIR: Authorize an available operation. {permitted_next_step}"
+      },
+      {
+        "template_id": "status_hard_sf_terminal_delta_v1",
+        "event": "numeric_delta",
+        "critical": false,
+        "status": "TELEMETRY: {resource} {signed_delta}; now {current_value}",
+        "why": "WHY: Applied from {state_tx_id}.",
+        "repair": "REPAIR: Review the transaction or continue with {permitted_next_step}."
+      },
+      {
+        "template_id": "status_hard_sf_terminal_blocked_v1",
+        "event": "blocked_action",
+        "critical": true,
+        "status": "TELEMETRY: Action unavailable; state unchanged",
+        "why": "WHY: {blocking_rule}.",
+        "repair": "REPAIR: {permitted_next_step}"
+      },
+      {
+        "template_id": "status_hard_sf_terminal_correction_v1",
+        "event": "player_correction",
+        "critical": true,
+        "status": "TELEMETRY: Player correction accepted; prior render superseded",
+        "why": "WHY: Player correction outranks prior narration.",
+        "repair": "REPAIR: Re-render from the corrected canon without changing unrelated state."
+      },
+      {
+        "template_id": "status_hard_sf_terminal_canon_repair_v1",
+        "event": "continuity_repair",
+        "critical": true,
+        "status": "TELEMETRY: Continuity mismatch repaired; ledger unchanged",
+        "why": "WHY: Render conflicted with {authority_source}.",
+        "repair": "REPAIR: Use the corrected fact: {canonical_fact}."
+      },
+      {
+        "template_id": "status_hard_sf_terminal_art_skip_v1",
+        "event": "art_suppressed",
+        "critical": false,
+        "status": "TELEMETRY: Illustration skipped; narration complete",
+        "why": "WHY: {art_gate_reason}.",
+        "repair": "REPAIR: No action needed. Continue play."
+      }
+    ],
+    "pyoa_branching_crisis": [
+      {
+        "template_id": "status_pyoa_branching_crisis_state_v1",
+        "event": "state_change",
+        "critical": false,
+        "status": "NOW: {field} = {value}",
+        "why": "WHY: The immediate situation is confirmed. Source={authority_source}.",
+        "repair": "REPAIR: Choose one available action. {permitted_next_step}"
+      },
+      {
+        "template_id": "status_pyoa_branching_crisis_delta_v1",
+        "event": "numeric_delta",
+        "critical": false,
+        "status": "NOW: {resource} {signed_delta}; now {current_value}",
+        "why": "WHY: Applied from {state_tx_id}.",
+        "repair": "REPAIR: Review the transaction or continue with {permitted_next_step}."
+      },
+      {
+        "template_id": "status_pyoa_branching_crisis_blocked_v1",
+        "event": "blocked_action",
+        "critical": true,
+        "status": "NOW: Action unavailable; state unchanged",
+        "why": "WHY: {blocking_rule}.",
+        "repair": "REPAIR: {permitted_next_step}"
+      },
+      {
+        "template_id": "status_pyoa_branching_crisis_correction_v1",
+        "event": "player_correction",
+        "critical": true,
+        "status": "NOW: Player correction accepted; prior render superseded",
+        "why": "WHY: Player correction outranks prior narration.",
+        "repair": "REPAIR: Re-render from the corrected canon without changing unrelated state."
+      },
+      {
+        "template_id": "status_pyoa_branching_crisis_canon_repair_v1",
+        "event": "continuity_repair",
+        "critical": true,
+        "status": "NOW: Continuity mismatch repaired; ledger unchanged",
+        "why": "WHY: Render conflicted with {authority_source}.",
+        "repair": "REPAIR: Use the corrected fact: {canonical_fact}."
+      },
+      {
+        "template_id": "status_pyoa_branching_crisis_art_skip_v1",
+        "event": "art_suppressed",
+        "critical": false,
+        "status": "NOW: Illustration skipped; narration complete",
+        "why": "WHY: {art_gate_reason}.",
+        "repair": "REPAIR: No action needed. Continue play."
+      }
+    ],
+    "kid_plain_stakes": [
+      {
+        "template_id": "status_kid_plain_stakes_state_v1",
+        "event": "state_change",
+        "critical": false,
+        "status": "WHAT CHANGED: {field} = {value}",
+        "why": "WHY: This is the clear result. Source={authority_source}.",
+        "repair": "REPAIR: Pick a safe next step. {permitted_next_step}"
+      },
+      {
+        "template_id": "status_kid_plain_stakes_delta_v1",
+        "event": "numeric_delta",
+        "critical": false,
+        "status": "WHAT CHANGED: {resource} {signed_delta}; now {current_value}",
+        "why": "WHY: Applied from {state_tx_id}.",
+        "repair": "REPAIR: Review the transaction or continue with {permitted_next_step}."
+      },
+      {
+        "template_id": "status_kid_plain_stakes_blocked_v1",
+        "event": "blocked_action",
+        "critical": true,
+        "status": "WHAT CHANGED: Action unavailable; state unchanged",
+        "why": "WHY: {blocking_rule}.",
+        "repair": "REPAIR: {permitted_next_step}"
+      },
+      {
+        "template_id": "status_kid_plain_stakes_correction_v1",
+        "event": "player_correction",
+        "critical": true,
+        "status": "WHAT CHANGED: Player correction accepted; prior render superseded",
+        "why": "WHY: Player correction outranks prior narration.",
+        "repair": "REPAIR: Re-render from the corrected canon without changing unrelated state."
+      },
+      {
+        "template_id": "status_kid_plain_stakes_canon_repair_v1",
+        "event": "continuity_repair",
+        "critical": true,
+        "status": "WHAT CHANGED: Continuity mismatch repaired; ledger unchanged",
+        "why": "WHY: Render conflicted with {authority_source}.",
+        "repair": "REPAIR: Use the corrected fact: {canonical_fact}."
+      },
+      {
+        "template_id": "status_kid_plain_stakes_art_skip_v1",
+        "event": "art_suppressed",
+        "critical": false,
+        "status": "WHAT CHANGED: Illustration skipped; narration complete",
+        "why": "WHY: {art_gate_reason}.",
+        "repair": "REPAIR: No action needed. Continue play."
+      }
+    ]
+  }
+}

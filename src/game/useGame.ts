@@ -176,6 +176,8 @@ import {
 import { mergeNpcMemoriesFromTurn, recordNpcTreatmentFromAction } from './npcMemory';
 import {
   resolveLitrpgSystemPersonality,
+  resolvePyoaGmPersonality,
+  resolveRpgGmPersonality,
   resolveTabletopGmPersonality,
   type GmPersonalityId,
   type SystemPersonalityId,
@@ -4291,7 +4293,13 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
       customTabletopRules:
         engineMode === 'dnd' ? clipCustomTabletopRules(customTabletopRules).text || undefined : undefined,
       gmPersonality:
-        engineMode === 'dnd' ? resolveTabletopGmPersonality(gmPersonality) : undefined,
+        engineMode === 'dnd' || engineMode === 'rpg' || engineMode === 'pyoa'
+          ? engineMode === 'pyoa'
+            ? resolvePyoaGmPersonality(gmPersonality)
+            : engineMode === 'rpg'
+              ? resolveRpgGmPersonality(gmPersonality)
+              : resolveTabletopGmPersonality(gmPersonality)
+          : undefined,
       systemPersonality:
         engineMode === 'litrpg' ? resolveLitrpgSystemPersonality(systemPersonality) : undefined,
     });

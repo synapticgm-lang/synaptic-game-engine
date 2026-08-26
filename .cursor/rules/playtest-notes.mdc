@@ -9,7 +9,9 @@ John is playtesting live. Collect issues here. Do not implement until he asks fo
 
 ## Open
 
-_(none — 2026-08-26l shipped hide-toggle chrome)_
+_(none — 2026-08-26m shipped Launch narrator/System voices)_
+
+**Residual risk (26m):** Expert full tone catalogue (`tone_id` schema) and memorable template IDs deferred (P1 / INPUT REQUIRED). Theatrical remains only under More styles / old saves — players who want jester energy must open More. Theme suggestions are non-binding copy only (no auto-equip). STATUS chrome wording lives in voice rails; systemLog does not yet swap template banks per personality. Full never-line regex warden bank not wired into proseWarden (prompt NEVER-LINES only).
 
 **Residual risk (26k):** All LitRPG premades (except blank) now have ≥6 unique hubs + curated factions + arrival beats + contacts + quest/faction deltas. Honest FO3 feel ~35–40% (Full-floor densify) — still not MMO outdoor art, radiant quests, or FO3-scale encounter density. Cursed Keep + Salt Road stay thin flagship ports (unchanged depth). PYOA + blank intentionally empty. Alone invent-crowd still blocks until opening complete; mapped hubs then allow banked contacts. Side reveals need bible keywords in play. Outdoor hubs remain registry+copy, not zone art.
 
@@ -40,6 +42,8 @@ _(none — 2026-08-26l shipped hide-toggle chrome)_
 - Premium theme five-rater / Shop preview parity (Manus T8/T9 P0-04) — after playtest of `2026-08-19t` Vampire rescue; ingest `docs/research/manus-premium-themes-ingest-2026-08-19.md`
 
 ## Done (already shipped)
+
+- **2026-08-26m Launch narrator/System voices (Manus story-tones):** New Game Simple four narrators (Friendly Guide / Dry Wit / Mission Lead / Fireside Chronicler) + More styles Theatrical; LitRPG Simple four (Cold Registrar / Sarcastic Patch / Army Quartermaster / Friendly System) + Featured Cozy Brutal; Theatrical System off shop (old saves OK). RPG/PYOA stamp `gmPersonality` (defaults Friendly Guide / Mission Lead). Strengthened `gmVoiceProfile` rails (tone ADD, STATUS chrome hints, never-lines, Kid plain-stakes layer); fluidProseRails renderer firewall; non-binding theme suggestions. Vitest shop ids + rail presence. HUD stamp 26m. Ingest: `docs/research/manus-story-tones-maximize-ingest-2026-08-26.md`. Redeploy: `npx supabase functions deploy gm-turn` (edge voice + fluid rails).
 
 - **2026-08-26l Hide options/text chrome:** Class E. Hide text kept flex spacer via `invisible`, which punched static title bg through the story panel on mobile; 25f one-time clear lived only in a remount-resetting ref so opening remounts re-cleared prefs. Opaque `sgm-play-story-panel` spacer + omit log children when hidden (input stays); sessionStorage `synapticgm-hide-cleared-for` so remounts do not undo mid-play. HUD + index.html meta `2026-08-26l`. Evidence: `docs/bugs/playtest-2026-08-26-hide-toggles/`. Client-only.
 
