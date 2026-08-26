@@ -9,7 +9,9 @@ John is playtesting live. Collect issues here. Do not implement until he asks fo
 
 ## Open
 
-_(none — 2026-08-26m shipped Launch narrator/System voices)_
+_(none — 2026-08-26n shipped sealed kit / no pre-seeded Circle Blessing)_
+
+**Residual risk (26n):** Mid-campaign saves that already hold Circle Blessing keep it (opening complete + turn ≥ 1). Story must emit `<item-gain>` to grant the blessing after registration/Appraisal — no auto-grant on cover complete.
 
 **Residual risk (26m):** Expert full tone catalogue (`tone_id` schema) and memorable template IDs deferred (P1 / INPUT REQUIRED). Theatrical remains only under More styles / old saves — players who want jester energy must open More. Theme suggestions are non-binding copy only (no auto-equip). STATUS chrome wording lives in voice rails; systemLog does not yet swap template banks per personality. Full never-line regex warden bank not wired into proseWarden (prompt NEVER-LINES only).
 
@@ -42,6 +44,8 @@ _(none — 2026-08-26m shipped Launch narrator/System voices)_
 - Premium theme five-rater / Shop preview parity (Manus T8/T9 P0-04) — after playtest of `2026-08-19t` Vampire rescue; ingest `docs/research/manus-premium-themes-ingest-2026-08-19.md`
 
 ## Done (already shipped)
+
+- **2026-08-26n Sealed kit / no Circle Blessing seed:** Removed Circle Blessing from Summoned Pact `starterItems` (clothes only + sealed Bag via `ensureSealedOpeningBag`). OPENING KIT + lore say grant via `<item-gain>` on registration/Appraisal — never New Game pre-seed. System ping gift line softened. `applyErrorRepairs` strips orphan blessing on opening-incomplete / turn-0 saves; keeps mid-campaign. Vitest New Game inventory + orphan/mid-campaign. HUD + index.html `2026-08-26n`. Client-only.
 
 - **2026-08-26m Launch narrator/System voices (Manus story-tones):** New Game Simple four narrators (Friendly Guide / Dry Wit / Mission Lead / Fireside Chronicler) + More styles Theatrical; LitRPG Simple four (Cold Registrar / Sarcastic Patch / Army Quartermaster / Friendly System) + Featured Cozy Brutal; Theatrical System off shop (old saves OK). RPG/PYOA stamp `gmPersonality` (defaults Friendly Guide / Mission Lead). Strengthened `gmVoiceProfile` rails (tone ADD, STATUS chrome hints, never-lines, Kid plain-stakes layer); fluidProseRails renderer firewall; non-binding theme suggestions. Vitest shop ids + rail presence. HUD stamp 26m. Ingest: `docs/research/manus-story-tones-maximize-ingest-2026-08-26.md`. Redeploy: `npx supabase functions deploy gm-turn` (edge voice + fluid rails).
 

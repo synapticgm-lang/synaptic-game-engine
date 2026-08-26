@@ -10,7 +10,7 @@ import { adaptStarterQuestsForArrival } from './questPlay';
 import { getCampaignBibleById } from '@/data/campaigns';
 
 /** Bump when adding load-time repairs that must re-run on old saves. */
-export const CURRENT_ERROR_REPAIR_REVISION = 2;
+export const CURRENT_ERROR_REPAIR_REVISION = 3;
 
 export type FailureClass =
   | 'turn_proxy'
@@ -231,6 +231,26 @@ function repairCircleBlessingSlot(state: GameState, notes: ErrorRepairNote[]): G
 }
 
 /**
+ * Strip pre-seeded Circle Blessing from brand-new / opening-incomplete saves.
+ * Mid-campaign items (opening complete + turn ≥ 1) are kept — may be story-granted.
+ */
+function repairOrphanCircleBlessing(state: GameState, notes: ErrorRepairNote[]): GameState {
+  const inv = state.inventory ?? [];
+  if (!inv.some((i) => /circle blessing/i.test(i.name ?? ''))) return state;
+  const openingIncomplete = state.openingEstablishment?.complete === false;
+  const brandNew = (state.turn ?? 0) <= 0;
+  if (!openingIncomplete && !brandNew) return state;
+  const nextInv = inv.filter((i) => !/circle blessing/i.test(i.name ?? ''));
+  if (nextInv.length === inv.length) return state;
+  notes.push({
+    class: 'opening_contract',
+    code: 'ERR_ORPHAN_CIRCLE_BLESSING',
+    detail: 'stripped pre-seeded Circle Blessing (sealed kit until grant)',
+  });
+  return { ...state, inventory: nextInv };
+}
+
+/**
  * Idempotent load/continue repairs for known recurrence classes.
  * Safe to call every Continue; only mutates when content is wrong.
  */
@@ -238,6 +258,7 @@ export function applyErrorRepairs(state: GameState): ErrorRepairResult {
   const notes: ErrorRepairNote[] = [];
   let next = stampAloneArrival(state, notes);
   next = repairAloneStarterQuest(next, notes);
+  next = repairOrphanCircleBlessing(next, notes);
   next = repairCircleBlessingSlot(next, notes);
   const needsRev = (next.errorRepairRevision ?? 0) < CURRENT_ERROR_REPAIR_REVISION;
   if (notes.length === 0 && !needsRev) {

@@ -11,8 +11,9 @@ import { extractChoiceLines, stripChoiceList } from './parser';
 import { isInteriorPlace, INTERIOR_MAP_BLUEPRINT, STREET_MAP_BLUEPRINT } from './placeAuthority';
 import { resolvePlayAreaMap } from './mapEngine';
 import { stitchOpeningContinue, applyOpeningContract } from './openingStitch';
-import { resolveOpeningPrompts } from './openingEstablishment';
+import { resolveOpeningPrompts, ensureSealedOpeningBag } from './openingEstablishment';
 import { summonedPact } from '@/data/campaigns/summonedPact';
+import { seedStateFromCampaignBible } from './campaignSeed';
 import { dedupeQuestStatusEcho } from './systemLog';
 import { scrubPrematureSecrets } from './proseWarden';
 import { applyErrorRepairs } from './errorRepairWarden';
@@ -134,16 +135,79 @@ What do you do?`;
     expect(kitQ).not.toMatch(/not a starter/i);
   });
 
-  it('Circle Blessing is unequipped inventory, not Shoulders', () => {
-    const blessing = summonedPact.starterItems.find((i) => /circle blessing/i.test(i.name));
-    expect(blessing).toBeTruthy();
-    expect(blessing?.equipped).toBe(false);
-    expect(blessing?.slot).toBeUndefined();
+  it('Summoned Pact New Game has no Circle Blessing until grant', () => {
+    expect(summonedPact.starterItems.some((i) => /circle blessing/i.test(i.name))).toBe(false);
 
+    const base = createInitialState('The Summoned Pact', 'litrpg');
+    const seeded = ensureSealedOpeningBag(
+      seedStateFromCampaignBible(base, summonedPact),
+      summonedPact.openingPrompts
+    );
+    expect(seeded.inventory.some((i) => /circle blessing/i.test(i.name))).toBe(false);
+    expect(seeded.inventory.some((i) => /^bag$/i.test(i.name))).toBe(true);
+    expect(
+      seeded.inventory.some((i) => /clothes you had on when the light took you/i.test(i.name))
+    ).toBe(true);
+  });
+
+  it('strips orphan Circle Blessing on opening-incomplete saves; keeps mid-campaign', () => {
+    const base = createInitialState('The Summoned Pact', 'litrpg');
+    const blessing = {
+      id: 'sp-blessing',
+      name: 'Circle Blessing [???]',
+      rarity: 'Rare' as const,
+      quantity: 1,
+      itemType: 'accessory' as const,
+      itemLevel: 1,
+      equipped: false,
+      provenance: 'System gift at summoning — unidentified',
+    };
+    const opening = {
+      pending: [{ id: 'name', kind: 'name' as const, question: 'Name?' }],
+      answers: {},
+      complete: false,
+      registrar: { voice: 'inworld' as const, label: 'THE CIRCLE', startLine: 'Light.' },
+      sceneWritten: true,
+      mode: 'weave' as const,
+    };
+    const orphan = {
+      ...base,
+      campaignBibleId: 'summoned-pact',
+      turn: 0,
+      inventory: [blessing],
+      openingEstablishment: opening,
+      errorRepairRevision: 0,
+    };
+    const { state: stripped, notes } = applyErrorRepairs(orphan);
+    expect(stripped.inventory.some((i) => /circle blessing/i.test(i.name))).toBe(false);
+    expect(notes.some((n) => n.code === 'ERR_ORPHAN_CIRCLE_BLESSING')).toBe(true);
+
+    const mid = {
+      ...base,
+      campaignBibleId: 'summoned-pact',
+      turn: 12,
+      inventory: [blessing],
+      openingEstablishment: { ...opening, complete: true, pending: [], answers: { name: 'Jax' } },
+      errorRepairRevision: 0,
+    };
+    const { state: kept } = applyErrorRepairs(mid);
+    expect(kept.inventory.some((i) => /circle blessing/i.test(i.name))).toBe(true);
+  });
+
+  it('Circle Blessing mid-campaign is unequipped inventory, not Shoulders', () => {
     const base = createInitialState('The Summoned Pact', 'litrpg');
     const bad = {
       ...base,
       campaignBibleId: 'summoned-pact',
+      turn: 12,
+      openingEstablishment: {
+        pending: [],
+        answers: { name: 'Jax' },
+        complete: true,
+        registrar: { voice: 'inworld' as const, label: 'THE CIRCLE', startLine: 'Light.' },
+        sceneWritten: true,
+        mode: 'weave' as const,
+      },
       inventory: [
         {
           id: 'sp-blessing',

@@ -354,7 +354,7 @@ GENRE PALETTE (ORIGINAL NAMES — use these):
 - Guild hub: Valespire Contract Hall (posted jobs, rank boards, politics).
 - Dungeon: Cathedral Undercroft — numbered floors; fog on unvisited rooms. Street map stays outdoors.
 
-OPENING KIT (AUTHORITY): At the first breath, worn clothes and pocket contents from Earth are the kit. Never auto-invent an iron shortsword, traveler tunic, or healing draught onto the sheet. NPCs MAY OFFER gear (a blade, cloak, papers, coin) as a bargain for a pact, enlistment, or release — describe the offer; do not add it to inventory until the player accepts. Refuse and they keep only Earth kit. The only System gift at registration is an unidentified [Circle Blessing] (glitched passive). Appraisal is required to name it.
+OPENING KIT (AUTHORITY): At the first breath, worn clothes and a sealed Earth bag are the kit — bag contents undeclared until the player searches, dumps, or someone inventories them. Never auto-invent an iron shortsword, traveler tunic, healing draught, or [Circle Blessing] onto the sheet at New Game. NPCs MAY OFFER gear (a blade, cloak, papers, coin) as a bargain for a pact, enlistment, or release — describe the offer; do not add it to inventory until the player accepts. Refuse and they keep only Earth kit. When registration / Appraisal (or a clear System grant in play) awards the unidentified [Circle Blessing] glitched passive, emit <item-gain> then — never pre-seed it.
 
 PLAYER AGENCY (BINDING): No forced allegiance. Protest, jokes, and “why should I save you” are dialogue. The first scene is THIS arrival and the people in it — not a journal dump. Do not unlock or name Guide Book quests until they are spoken in play.
 
@@ -413,7 +413,7 @@ Do not name distant hubs, the Ash King, or the other summoned until the player a
       id: 'sp-lore-3',
       title: 'Circle Blessing (Unidentified)',
       category: 'mechanic',
-      body: 'At registration the System grants one glitched passive. Until Appraised it is [???]. Possible truths (pick one per campaign, do not list them in play): a once-per-day rewind of a single failed check; speech that people hear as the language they trust; a weapon that only exists while they are angry; a mark that beasts will not strike first; a leak that lets Ash Court scouts hear their location. Naming it without Appraisal is a lie. Power fantasy without a cost is forbidden — the glitch always has a tell.',
+      body: 'When registration completes or Appraisal fires in play, the System may grant one glitched passive via <item-gain> — never pre-seeded on New Game. Until Appraised it is [???]. Possible truths (pick one per campaign, do not list them in play): a once-per-day rewind of a single failed check; speech that people hear as the language they trust; a weapon that only exists while they are angry; a mark that beasts will not strike first; a leak that lets Ash Court scouts hear their location. Naming it without Appraisal is a lie. Power fantasy without a cost is forbidden — the glitch always has a tell.',
       tags: ['blessing', 'appraisal', 'cheat', 'cost'],
     },
     {
@@ -568,15 +568,6 @@ Do not name distant hubs, the Ash King, or the other summoned until the player a
       provenance: 'Earth — still on you after the circle',
       description: 'Whatever you were wearing on Earth. Not armor. Not a costume. Replace this card when the player names real garments.',
     },
-    {
-      id: 'sp-blessing',
-      name: 'Circle Blessing [???]',
-      rarity: 'Rare',
-      itemType: 'accessory',
-      itemLevel: 1,
-      equipped: false,
-      provenance: 'System gift at summoning — unidentified',
-      description: 'A glitched passive System gift. Appraisal required to name it. Not armor, not a cloak — keep unequipped until identified.',
-    },
+    // Circle Blessing is NOT starter kit — grant via <item-gain> when registration/Appraisal awards it in play.
   ],
 };

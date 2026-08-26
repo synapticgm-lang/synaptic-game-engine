@@ -659,7 +659,7 @@ export function litrpgOpeningSystemPing(state: GameState): string[] {
     return [
       'Registration incomplete',
       'Stamp: Pactborn / Calamity Mark — unresolved',
-      'Gift: Circle Blessing [???] — unidentified',
+      'Gift channel: unresolved — Appraisal names it',
     ];
   }
   return ['Interface online', 'Awaiting designation'];
