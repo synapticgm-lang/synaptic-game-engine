@@ -150,11 +150,20 @@ function QuestsSection({ state, onResumeMain }: { state: GameState; onResumeMain
                     ) : null}
                   </div>
                   <div className={`capitalize ${q.status === 'active' ? 'text-amber-400' : q.status === 'completed' ? 'text-emerald-400' : 'text-rose-400'}`}>{q.status}</div>
-                  {next ? (
+                  {isMain && resume.resumeCopy ? (
+                    <div className="mt-1 text-slate-400">{resume.resumeCopy}</div>
+                  ) : next ? (
                     <div className="mt-1 text-slate-400">Next: {next}</div>
                   ) : null}
                   {isMain && resume.placePin ? (
-                    <div className="mt-0.5 text-slate-500">Pin: {resume.placePin}</div>
+                    <div className="mt-0.5 text-slate-500">
+                      Pin: {resume.placePin}
+                      {resume.distanceHint === 'here'
+                        ? ' · here'
+                        : resume.distanceHint === 'elsewhere'
+                          ? ' · away'
+                          : ''}
+                    </div>
                   ) : null}
                 </li>
               );
@@ -168,7 +177,7 @@ function QuestsSection({ state, onResumeMain }: { state: GameState; onResumeMain
           onClick={onResumeMain}
           className="mt-2 w-full rounded-md border border-slate-700 bg-slate-900/80 px-2.5 py-1.5 text-left text-xs text-slate-200 hover:border-amber-700/60 hover:text-amber-200"
         >
-          Resume main{resume.placePin ? ` — ${resume.placePin}` : ''}
+          Resume main{resume.placePin ? ` — ${resume.placePin}` : ''}{resume.distanceHint === 'elsewhere' ? ' (away)' : ''}
         </button>
       ) : null}
     </section>

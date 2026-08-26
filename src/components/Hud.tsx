@@ -8,9 +8,9 @@ import { effectiveWriterTier, isTestLabEnabled } from '../game/testLab';
 import { equippedSetLabel, equippedSetName } from '../game/uiTheme';
 
 /** Visible after a hard refresh — if this is missing, Vercel is still serving the 16 Aug bundle. */
-export const HUD_BUILD_STAMP = '2026-08-26i';
+export const HUD_BUILD_STAMP = '2026-08-26j';
 const HUD_BUILD_TITLE =
-  'Debug 2026-08-26i — Free→Gemini Flash Lite + bare-noun choice grounding';
+  'Debug 2026-08-26j — Act-4 hub encounters + sandbox ports (LitRPG/CK/Salt Road)';
 
 interface Props {
   state: GameState;

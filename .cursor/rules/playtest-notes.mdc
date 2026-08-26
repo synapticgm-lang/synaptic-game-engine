@@ -9,7 +9,9 @@ John is playtesting live. Collect issues here. Do not implement until he asks fo
 
 ## Open
 
-_(none — 2026-08-26i shipped Free model swap + bare-noun grounding)_
+_(none — 2026-08-26j shipped Act-4 hub encounters + sandbox ports)_
+
+**Residual risk (26j):** Full hub→encounter banks only for Summoned Pact / Hero Awakening; other LitRPG + Cursed Keep + Salt Road are thin (6 hubs, sparse beats). Inkbound / Hollow Core / Void Audience / Dungeon Transport / remaining tabletop+RPG still faction-from-lore only (no hub graph). PYOA intentionally has no hubs. Alone invent-crowd still blocks until opening complete; mapped hubs then allow banked contacts. Generic lore faction seed for non-curated litrpg/dnd/rpg may yield thin matrices if bible has few `faction` loreSnippets.
 
 **Residual risk (26i):** Free is Gemini 2.5 Flash Lite (~3–4× DeepSeek token $); rare Google cold starts still possible. Bare-noun grounding covers inspect/examine/check… patterns — other invent verbs without articles may still slip; display filter still last-GM-only.
 
@@ -36,6 +38,8 @@ _(none — 2026-08-26i shipped Free model swap + bare-noun grounding)_
 - Premium theme five-rater / Shop preview parity (Manus T8/T9 P0-04) — after playtest of `2026-08-19t` Vampire rescue; ingest `docs/research/manus-premium-themes-ingest-2026-08-19.md`
 
 ## Done (already shipped)
+
+- **2026-08-26j Act-4 sandbox + mode ports:** Hub→encounter banks wired into travel/situation/choices/turn (STATUS hub note, contact presence, soft quest reveal). **Who gets sandbox:** Full — Summoned Pact + Hero Awakening. Thin hubs+factions+beats — System Integration, Gatebreak Ward, Ascending Spire, Fabled Legacy, Cursed Keep (tabletop flagship), Salt Road Heist (story-RPG flagship). Faction seed unlocked for litrpg/dnd/rpg from curated banks or lore `faction` snippets (not empty for non-litrpg); PYOA + blank canvases stay out. Resume-main pins + L2+ reveal banks extended. Alone invent-crowd intact until mapped hub after opening. Vitest covers seed + Gatebreak/CK hubs + Salt Road arrival. HUD stamp 26j. Client-only.
 
 - **2026-08-26i Playtest fire (Free latency + grounding):** Free hosted writer `deepseek/deepseek-v4-flash-0731` → `google/gemini-2.5-flash-lite` (John-approved; Mid Haiku / High Sonnet unchanged). Cost ~3× in / ~4× out vs DeepSeek; still the Pack-12 Free envelope. Bare-noun invented props (`Inspect crystals on street`) filtered via `choiceNamesUnnarratedObject` + ActionBar display path; vitest extends 26b. Bug dumps 25/26-timeouts/26-debug already ingested — no new Class A/E fixes. HUD stamp 26i. Client-only (gmProxy sends `customModelId`; no gm-turn redeploy).
 

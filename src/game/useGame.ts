@@ -232,12 +232,13 @@ import {
   mutateFactionOnStance,
   seedWorldLedgerFactions,
 } from './factionStandings';
-import { seedOutdoorHubPlaces } from './outdoorHubs';
+import { seedOutdoorHubPlaces, parseTravelDestination } from './outdoorHubs';
+import { hubBeatAwardKey, resolveHubArrival } from './hubEncounters';
 import { applySandboxXpAwards } from './sandboxXp';
 import { extractUpdates, extractNewItems, parseActionTags, stripActionTags, matchLoreCards, eventsToLoreCards, parseTurnFrame, eventsToQuestUpdates, eventsToEncounterUpdate, parsePanels, eventsToMilestone, eventsToLootVideo, eventsToVisualUpdate, stripChoiceList, extractChoiceLines, stripTurnCloser, storyHasBody, looksLikeChoiceOffer, isStoryTooThin, storyWordCount } from './parser';
 import { hasRealGmStory } from './turnAsk';
 import { encounterOriginPlace } from './locationName';
-import { clampLeakedOpeningQuests, extractNamedPlaces, harvestPlayText, isGenericMapPlace, mapAnchorName, newlyRevealedQuests, questsLockedDuringOpening, revealLocalStarterQuest, resumeMainQuestFocus, syncQuestsFromPlay } from './questPlay';
+import { clampLeakedOpeningQuests, extractNamedPlaces, harvestPlayText, isGenericMapPlace, mapAnchorName, newlyRevealedQuests, questsLockedDuringOpening, revealLocalStarterQuest, resumeMainQuestFocus, revealQuestsFromBanks, syncQuestsFromPlay } from './questPlay';
 import { inferItemType } from './salvage';
 import { initializeDungeon, moveToNode, exitDungeon as engineExitDungeon, resolvePlayAreaMap, listInteriorExitsFromHere } from './mapEngine';
 import type { Toast } from '@/components/ToastStack';
@@ -3493,8 +3494,15 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
         `${sanitizedInput}\n${cleanText}\n${mergedSystemLog.join('\n')}\n${resolvedLocation ?? ''}`
       );
       const mapName = mapAnchorName(resolvedLocation, landmarks);
-      const finalLocationName =
+      let finalLocationName =
         isGenericMapPlace(resolvedLocation) && mapName ? mapName : resolvedLocation;
+      // Act-4: Travel toward / Return to a known hub snaps location for banks + XP.
+      {
+        const travelHub = parseTravelDestination(sanitizedInput, workingState.campaignBibleId ?? liveCurrent.campaignBibleId);
+        if (travelHub && !workingState.activeDungeon && !liveCurrent.activeDungeon) {
+          finalLocationName = travelHub.name;
+        }
+      }
 
       if (isExplorableDungeon(workingState.activeDungeon)) {
         workingState = {
@@ -3657,6 +3665,76 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
           factions = mutateFactionOnQuestEvent(factions, q.id, 'accept');
         }
         worldLedger = { ...worldLedger, factionStandings: factions };
+
+        // Act-4: hub arrival beat — only on travel / location change
+        {
+          const traveled = !!parseTravelDestination(
+            sanitizedInput,
+            workingState.campaignBibleId ?? liveCurrent.campaignBibleId
+          );
+          const justArrived =
+            !!finalLocationName
+            && !!liveCurrent.currentLocation
+            && finalLocationName !== liveCurrent.currentLocation;
+          const arrival =
+            traveled || justArrived
+              ? resolveHubArrival(
+                  {
+                    ...workingState,
+                    places,
+                    sandboxAwardKeys: workingState.sandboxAwardKeys ?? liveCurrent.sandboxAwardKeys,
+                  },
+                  finalLocationName
+                )
+              : null;
+          if (arrival) {
+            const keys = [...(workingState.sandboxAwardKeys ?? liveCurrent.sandboxAwardKeys ?? [])];
+            // One STATUS note per arrival (visit index); beat rotates via hubVisitCount.
+            const visitIdx = keys.filter((k) => k.startsWith('hub-beat:' + arrival.hub.id + ':')).length;
+            const beatKey = hubBeatAwardKey(arrival.hub.id, 'v' + String(visitIdx), nextTurn);
+            if (!keys.includes(beatKey)) {
+              keys.push(beatKey);
+              mergedSystemLog.push(
+                'Hub: ' + arrival.hub.name + ' — ' + arrival.beat.kind + ': ' + arrival.beat.pressure
+              );
+              if (arrival.beat.contactName) {
+                const present = [...(workingState.sceneFacts?.present ?? [])];
+                if (!present.some((p) => p.toLowerCase() === arrival.beat.contactName!.toLowerCase())) {
+                  present.push(arrival.beat.contactName);
+                }
+                const baseFacts = workingState.sceneFacts ?? {
+                  props: [],
+                  present: [],
+                  crowd: 'unknown' as const,
+                  noise: 'unknown' as const,
+                  lastBeat: '',
+                  updatedTurn: nextTurn,
+                };
+                workingState = {
+                  ...workingState,
+                  sceneFacts: {
+                    ...baseFacts,
+                    present,
+                    crowd: baseFacts.crowd === 'none' ? 'present' : (baseFacts.crowd ?? 'present'),
+                  },
+                };
+                const presentNames2 = [
+                  ...present,
+                  ...(workingState.companions ?? []).map((c) => c.name).filter((n): n is string => Boolean(n)),
+                ];
+                factions = mutateFactionOnStance(factions, sanitizedInput, presentNames2);
+                worldLedger = { ...worldLedger, factionStandings: factions };
+              }
+              if (arrival.beat.revealQuestId) {
+                updatedQuests = revealQuestsFromBanks(
+                  updatedQuests,
+                  sanitizedInput + '\n' + arrival.beat.pressure + '\n' + (arrival.beat.contactName ?? '') + '\n' + arrival.hub.name
+                );
+              }
+              workingState = { ...workingState, sandboxAwardKeys: keys };
+            }
+          }
+        }
 
         const sandboxXp = applySandboxXpAwards(
           { ...workingState, places, worldLedger, sandboxAwardKeys: workingState.sandboxAwardKeys ?? liveCurrent.sandboxAwardKeys },
@@ -5005,7 +5083,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
         addToast('No active main quest to resume.', 'info');
         return null as string | null;
       }
-      const pin = focus.placePin;
+      const pin = focus.placePin ?? focus.quest.location ?? focus.quest.name;
       const updated = {
         ...s,
         mapFocusPlace: pin,
@@ -5014,13 +5092,14 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
       setState(updated);
       stateRef.current = updated;
       persist(updated);
+      const dist =
+        focus.distanceHint === 'here'
+          ? ' You are at the pin.'
+          : focus.distanceHint === 'elsewhere'
+            ? ' You are away from the pin.'
+            : '';
       const next = focus.nextObjective ? ` Next: ${focus.nextObjective}` : '';
-      addToast(
-        pin
-          ? `Main quest pinned: ${pin}.${next}`
-          : `Main quest refocused: ${focus.quest.name}.${next}`,
-        'info'
-      );
+      addToast(`Main quest pinned: ${pin}.${next}${dist}`, 'info');
       return pin;
     },
     startNewGame, updateSettings: (s: Settings) => { setSettings(s); settingsRef.current = s; saveSettings(s); },

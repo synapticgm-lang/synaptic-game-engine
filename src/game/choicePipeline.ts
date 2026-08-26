@@ -11,6 +11,8 @@ import { getTierDefinition } from './subscriptionTiers';
 import { CHOICE_TIER_PROMPT_RULES, formatChoiceTierModeDna } from './choiceTierRules';
 import { applyStanceDensity, classifyPath, classifyStance, isCombatLockedTurn } from './stanceDensity';
 import { outdoorHubTravelChoices } from './outdoorHubs';
+import { atMappedHubAfterOpening, hubArrivalChoicePads } from './hubEncounters';
+import { resumeMainTravelChoice } from './questPlay';
 import { isAloneArrivalOpening } from './openingEstablishment';
 import { isInteriorMap } from './placeAuthority';
 import { listInteriorExitsFromHere } from './mapEngine';
@@ -118,6 +120,8 @@ export function sanitizeChoiceLabel(choice: string): string {
 
 /** Alone arrival or empty-ruin prose — no crowd / voices / speaker inventions. */
 export function isAloneOrEmptyScene(state: GameState, storyProse = ''): boolean {
+  // Act-4: mapped outdoor hubs after opening allow city/yard presence (banked contacts).
+  if (atMappedHubAfterOpening(state)) return false;
   if (isAloneArrivalOpening(state)) return true;
   if (state.openingEstablishment?.aloneArrival === true) return true;
   const hay = `${storyProse}\n${state.currentLocation ?? ''}`.toLowerCase();
@@ -739,6 +743,19 @@ export function padChoicesToCount(
   );
   if (isLookAroundChoice(lastPlayerAction)) {
     merged = merged.filter((c) => !isLookAroundChoice(c));
+  }
+  // Act-4: resume main when off-spine
+  const resumeChoice = resumeMainTravelChoice(state);
+  if (resumeChoice && merged.length < 4) {
+    if (!inventsPresenceOnEmptyScene(resumeChoice, state, storyProse)) {
+      if (!merged.some((c) => c.toLowerCase() === resumeChoice.toLowerCase())) merged.push(resumeChoice);
+    }
+  }
+  // Act-4: hub arrival beat pads
+  for (const hubPad of hubArrivalChoicePads(state, 2)) {
+    if (merged.length >= 4) break;
+    if (inventsPresenceOnEmptyScene(hubPad, state, storyProse)) continue;
+    if (!merged.some((c) => c.toLowerCase() === hubPad.toLowerCase())) merged.push(hubPad);
   }
   // Outdoor hub travel pads (Act-3) — light, alone-safe, no invent-crowd.
   for (const hubChoice of outdoorHubTravelChoices(state, 2)) {

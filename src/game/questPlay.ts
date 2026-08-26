@@ -21,10 +21,15 @@ const QUEST_REVEAL_TRIGGERS: Array<{ questId: string; patterns: RegExp[] }> = [
     patterns: [
       /\blowmarket\b/i,
       /\bfence\b/i,
-      /\bearth\s+(?:object|junk|phone|shirt)\b/i,
+      /\bearth\s+(?:object|junk|phone|shirt|kit)\b/i,
       /\botherworld\s+junk\b/i,
       /\bsera\s+quill\b/i,
       /\bthieves?\b/i,
+      /\bweighing\s+cup\b/i,
+      /\bharbor\s+quay\b/i,
+      /\bquay\b.*\bjunk\b/i,
+      /\bsell\b.*\bearth\b/i,
+      /\bcontract\s+hall\b.*\bjunk\b/i,
     ],
   },
   {
@@ -35,6 +40,10 @@ const QUEST_REVEAL_TRIGGERS: Array<{ questId: string; patterns: RegExp[] }> = [
       /\bpanel\s+fragment\b/i,
       /\bcathedral\s+close\b/i,
       /\bchild\b.*\b(panel|blessing|mark)\b/i,
+      /\bkitchen\b.*\b(child|panel|saint)\b/i,
+      /\bkitchen\s+saint\b/i,
+      /\borel\s+vane\b.*\bchild\b/i,
+      /\bblessing\b.*\bchild\b/i,
     ],
   },
   {
@@ -45,6 +54,10 @@ const QUEST_REVEAL_TRIGGERS: Array<{ questId: string; patterns: RegExp[] }> = [
       /\bcinderflow\b/i,
       /\bash\s+court\s+(?:letter|envoy)\b/i,
       /\bcinder-ash\b/i,
+      /\benvoy\b.*\bash\b/i,
+      /\bwest\s+wall\b.*\b(ash|scout|east)\b/i,
+      /\bother\s+summoned\b/i,
+      /\brival\s+polity\b/i,
     ],
   },
   {
@@ -54,6 +67,10 @@ const QUEST_REVEAL_TRIGGERS: Array<{ questId: string; patterns: RegExp[] }> = [
       /\bpalace\b/i,
       /\bwar\s+story\s+does\s+not\s+add\s+up\b/i,
       /\bpellane\s+started\s+the\s+war\b/i,
+      /\bpalace\s+approach\b/i,
+      /\bledger\b.*\b(palace|queen|pellane|war)\b/i,
+      /\bpropaganda\b/i,
+      /\btrue\s+account\b/i,
     ],
   },
   {
@@ -64,6 +81,10 @@ const QUEST_REVEAL_TRIGGERS: Array<{ questId: string; patterns: RegExp[] }> = [
       /\byard\s+share\b/i,
       /\blocal\s+(?:threshold|clear)\b/i,
       /\bjob\s+board\b/i,
+      /\bmara\b/i,
+      /\bindependent\s+riftwards?\b/i,
+      /\bstaging\s+hub\b/i,
+      /\blow\s+watt\b/i,
     ],
   },
   {
@@ -74,6 +95,9 @@ const QUEST_REVEAL_TRIGGERS: Array<{ questId: string; patterns: RegExp[] }> = [
       /\bscrap\s+fence\b/i,
       /\bvesper\b/i,
       /\bcurios?\b/i,
+      /\bfake\s+(?:stamp|grade)\b/i,
+      /\bhush\s+pric/i,
+      /\bscrap\s+(?:alley|fence)\b/i,
     ],
   },
   {
@@ -82,6 +106,9 @@ const QUEST_REVEAL_TRIGGERS: Array<{ questId: string; patterns: RegExp[] }> = [
       /\bjoss\s+vale\b/i,
       /\bgrade-?safe\s+clear\b/i,
       /\binvite\b.*\b(clear|job)\b/i,
+      /\bjoss\b/i,
+      /\blicensed\s+riftward\b/i,
+      /\bprove\s+you\s+belong\b/i,
     ],
   },
   {
@@ -92,6 +119,9 @@ const QUEST_REVEAL_TRIGGERS: Array<{ questId: string; patterns: RegExp[] }> = [
       /\bapprais(?:e|al)\b/i,
       /\bwake\s+residue\b/i,
       /\bsable\b/i,
+      /\bquiet\s+archive\b/i,
+      /\bnamed?\s+residue\b/i,
+      /\bdr\.?\s*rhee\b.*\b(quiet|sample|hands)\b/i,
     ],
   },
   {
@@ -100,6 +130,69 @@ const QUEST_REVEAL_TRIGGERS: Array<{ questId: string; patterns: RegExp[] }> = [
       /\bsecond\s+residue\b/i,
       /\banother\s+(?:private\s+)?ledger\b/i,
       /\bsecond\s+wake\b/i,
+      /\blampmere\b/i,
+      /\bsecond\s+ledger\b/i,
+      /\banother\s+wake\b/i,
+    ],
+  },
+  // System Integration L2+
+  {
+    questId: 'si-quest-2',
+    patterns: [
+      /\briverside\b/i,
+      /\belise\s+cho\b/i,
+      /\bwarden\s+elise\b/i,
+      /\brecruit(?:ment|ed)?\b/i,
+      /\bsanctioned\s+operat/i,
+    ],
+  },
+  {
+    questId: 'si-quest-3',
+    patterns: [
+      /\bwave\s*(?:6|warning|is\s+coming)\b/i,
+      /\bwave\s+wall\b/i,
+      /\breinforced\s+plating\b/i,
+    ],
+  },
+  {
+    questId: 'si-quest-4',
+    patterns: [
+      /\bdead\s+zone\b/i,
+      /\bphase\s*2\b/i,
+      /\bmarcus\s+reyes\b/i,
+      /\btunnel\b.*\bguide\b/i,
+    ],
+  },
+  // Fabled Legacy
+  {
+    questId: 'fl-quest-3',
+    patterns: [
+      /\bmissing\s+map\b/i,
+      /\bmap\s+piece\b/i,
+      /\bgreentooth\b/i,
+      /\bhollow\s+cairn\b/i,
+      /\bhermit(?:'?s)?\s+cabin\b/i,
+      /\bcorvin\b.*\b(map|wound|hills)\b/i,
+    ],
+  },
+  // Cursed Keep
+  {
+    questId: 'ck-quest-2',
+    patterns: [
+      /\bfather\s+aldous\b/i,
+      /\baldous\b.*\bdream/i,
+      /\bgraveyard\b/i,
+      /\bbloodless\b/i,
+      /\bpriest'?s?\s+confession\b/i,
+    ],
+  },
+  {
+    questId: 'ck-quest-3',
+    patterns: [
+      /\bmira\b/i,
+      /\bapothecary\b/i,
+      /\bgreymark\s+journal/i,
+      /\bapothecary'?s?\s+secret\b/i,
     ],
   },
 ];
@@ -116,6 +209,19 @@ const QUEST_SEED_LOCATIONS: Record<string, string> = {
   'ha-quest-side-rival': 'Ashline Yard',
   'ha-quest-special-name': 'Quiet Archive',
   'ha-quest-special-second': 'Lampmere Market',
+  'si-quest-1': 'Convenience Store Dungeon',
+  'si-quest-2': 'Riverside Stronghold',
+  'si-quest-3': 'Wave Wall',
+  'si-quest-4': 'Dead Zone Border',
+  'gatebreak-ward-quest-1': 'Subway Gate',
+  'ascending-spire-quest-1': 'Spire Gate Plaza',
+  'fl-quest-1': 'The Crooked Beam',
+  'fl-quest-2': "Marta's Smithy",
+  'fl-quest-3': 'Greentooth Trailhead',
+  'ck-quest-1': 'Greyhollow Inn',
+  'ck-quest-2': 'Greyhollow Church',
+  'ck-quest-3': "Mira's Apothecary",
+  'salt-road-heist-quest-1': 'Salt Road Waystation',
 };
 
 /** Alone Summoned Pact starter — no handlers to hear yet. */
@@ -462,7 +568,17 @@ export function mainSpineQuest(state: GameState): Quest | null {
   const visible = visibleJournalQuests(state).filter((q) => q.status === 'active');
   if (!visible.length) return null;
   return (
-    visible.find((q) => q.id === 'sp-quest-1' || q.id === 'ha-quest-1' || q.id === 'si-quest-1')
+    visible.find(
+      (q) =>
+        q.id === 'sp-quest-1'
+        || q.id === 'ha-quest-1'
+        || q.id === 'si-quest-1'
+        || q.id === 'ck-quest-1'
+        || q.id === 'salt-road-heist-quest-1'
+        || q.id === 'gatebreak-ward-quest-1'
+        || q.id === 'ascending-spire-quest-1'
+        || q.id === 'fl-quest-1'
+    )
     ?? visible.find((q) => q.type === 'main')
     ?? visible[0]
   );
@@ -483,17 +599,52 @@ export function mainQuestPlacePin(quest: Quest | null | undefined): string | nul
   return loc || null;
 }
 
+function atPlacePin(state: GameState, placePin: string | null): boolean {
+  if (!placePin) return false;
+  const here = (state.currentLocation ?? '').toLowerCase();
+  const pin = placePin.toLowerCase();
+  if (!here) return false;
+  return here.includes(pin) || pin.includes(here) || here.split(/\s+/).some((w) => w.length > 3 && pin.includes(w));
+}
+
 export function resumeMainQuestFocus(state: GameState): {
   quest: Quest | null;
   nextObjective: string | null;
   placePin: string | null;
+  resumeCopy: string | null;
+  distanceHint: 'here' | 'nearby' | 'elsewhere' | null;
+  offSpine: boolean;
 } {
   const quest = mainSpineQuest(state);
+  const nextObjective = nextMainObjective(quest);
+  const placePin = mainQuestPlacePin(quest);
+  const offSpine = Boolean(placePin && !atPlacePin(state, placePin));
+  let distanceHint: 'here' | 'nearby' | 'elsewhere' | null = null;
+  if (placePin) {
+    distanceHint = atPlacePin(state, placePin) ? 'here' : offSpine ? 'elsewhere' : 'nearby';
+  }
+  const resumeCopy = quest
+    ? nextObjective
+      ? `Next: ${nextObjective}${placePin ? ` — pin ${placePin}` : ''}`
+      : `Resume: ${quest.name}${placePin ? ` — pin ${placePin}` : ''}`
+    : null;
   return {
     quest,
-    nextObjective: nextMainObjective(quest),
-    placePin: mainQuestPlacePin(quest),
+    nextObjective,
+    placePin,
+    resumeCopy,
+    distanceHint,
+    offSpine,
   };
+}
+
+/** Choice pad when the player is off the main-spine pin. */
+export function resumeMainTravelChoice(state: GameState): string | null {
+  if (state.openingEstablishment?.complete === false) return null;
+  if (state.activeDungeon || state.activeEncounter) return null;
+  const focus = resumeMainQuestFocus(state);
+  if (!focus.quest || !focus.placePin || !focus.offSpine) return null;
+  return `Return to ${focus.placePin}`;
 }
 
 /** After they finish name+place, seed the local starter hidden — never Wave/Riverside. */
