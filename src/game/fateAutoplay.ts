@@ -82,7 +82,7 @@ import { applyCharacterXpGain } from './characterXp';
 import { filterSystemLogForEngine, reconcileXpStatusLines } from './systemLog';
 import { beatFingerprint, isSameBeat, buildBeatNoveltyRetryBlock, beatSimilarity } from './beatFingerprint';
 import { enforcePerspective } from './perspectiveWarden';
-import { buildPlayTranscript, resolveOfferedChoices, withOfferedChoices } from './playTranscript';
+import { buildPlayTranscript, buildStoryReviewExport, resolveOfferedChoices, withOfferedChoices } from './playTranscript';
 import {
   applyProseWarden,
   calculateCrowdSize,
@@ -1106,6 +1106,14 @@ export async function runFateAutoplay(opts: {
   };
 
   writeFileSync(join(outDir, 'transcript.md'), buildPlayTranscript(state));
+  writeFileSync(
+    join(outDir, 'story-for-gemini.md'),
+    buildStoryReviewExport(state, {
+      personalityId,
+      aiAgentMode: opts.aiAgentMode,
+      seed: opts.seed,
+    })
+  );
   writeFileSync(join(outDir, 'turns.jsonl'), turns.map((t) => JSON.stringify(t)).join('\n') + '\n');
   writeFileSync(join(outDir, 'summary.json'), JSON.stringify(summary, null, 2) + '\n');
   writeFileSync(

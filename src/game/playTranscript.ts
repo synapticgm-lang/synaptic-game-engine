@@ -131,6 +131,78 @@ export function buildPlayTranscript(state: GameState): string {
   return lines.join('\n').trimEnd() + '\n';
 }
 
+/**
+ * Clean story-only export for external LLM review (Gemini etc.).
+ * Omits System/Warden chrome; keeps GM prose + player actions + options.
+ */
+export function buildStoryReviewExport(
+  state: GameState,
+  meta?: {
+    personalityId?: string;
+    aiAgentMode?: string;
+    seed?: number;
+    reviewPrompt?: string;
+  }
+): string {
+  const title = state.storyName?.trim() || state.character?.name?.trim() || 'Story review';
+  const lines: string[] = [
+    `# Story quality review pack — ${title}`,
+    '',
+    '## Meta',
+    '',
+    `- Bible / story: ${title}`,
+    `- Engine: ${state.engineMode || 'unknown'}`,
+    `- Personality: ${meta?.personalityId ?? state.systemPersonality ?? state.gmPersonality ?? '(default)'}`,
+    `- AI agent mode: ${meta?.aiAgentMode ?? 'n/a'}`,
+    `- Seed: ${meta?.seed ?? '(n/a)'}`,
+    `- Turns completed: ${state.turn ?? 0}`,
+    `- Character: ${state.character?.name ?? '?'} · Level ${state.character?.level ?? '?'} · XP ${state.character?.xp ?? 0}/${state.character?.xpToNext ?? '?'}`,
+    `- Exported: ${new Date().toISOString()}`,
+    '',
+    '## Reviewer brief (paste into Gemini)',
+    '',
+    meta?.reviewPrompt?.trim()
+      || [
+        'You are reviewing an AI game-master transcript for an original LitRPG session.',
+        'Score 1–10 and give short evidence for: (1) hook & stakes, (2) pace/chapter feel,',
+        '(3) option relevance to the last beat, (4) continuity (people/places/kit),',
+        '(5) voice consistency, (6) progression feel (quests/XP/travel), (7) would you keep playing?',
+        'List top 5 failure modes and top 5 strengths. Do not invent missing plot.',
+      ].join(' '),
+    '',
+    '---',
+    '',
+    '## Transcript',
+    '',
+  ];
+
+  for (const entry of state.log ?? []) {
+    if (!entry || typeof entry !== 'object') continue;
+    const role = entry.role;
+    const content = (entry.content ?? '').trim();
+    if (role === 'gm') {
+      lines.push(`### Turn ${entry.turn ?? '?'} — Narration`);
+      lines.push('');
+      lines.push(content || '_(empty)_');
+      lines.push('');
+      const offered = entry.offeredChoices;
+      if (Array.isArray(offered) && offered.length > 0) {
+        lines.push('**Options:**');
+        for (const choice of offered) {
+          const label = String(choice ?? '').trim();
+          if (label) lines.push(`- ${label}`);
+        }
+        lines.push('');
+      }
+    } else if (role === 'player') {
+      lines.push(`**Player:** ${content || '_(empty)_'}`);
+      lines.push('');
+    }
+  }
+
+  return lines.join('\n').trimEnd() + '\n';
+}
+
 export function downloadPlayTranscript(state: GameState): void {
   const markdown = buildPlayTranscript(state);
   const blob = new Blob([markdown], { type: 'text/markdown;charset=utf-8' });
