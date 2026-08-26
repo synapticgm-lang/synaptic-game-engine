@@ -8,9 +8,9 @@ import { effectiveWriterTier, isTestLabEnabled } from '../game/testLab';
 import { equippedSetLabel, equippedSetName } from '../game/uiTheme';
 
 /** Visible after a hard refresh -- if this is missing, Vercel is still serving the 16 Aug bundle. */
-export const HUD_BUILD_STAMP = '2026-08-26q';
+export const HUD_BUILD_STAMP = '2026-08-26r';
 const HUD_BUILD_TITLE =
-  'Debug 2026-08-26q - Fate autoplay harness + Test Lab process override';
+  'Debug 2026-08-26r - Empty GM retry + official scrub + travel lands';
 
 interface Props {
   state: GameState;

@@ -71,13 +71,14 @@ export function scrubInventedProperNouns(
         ? { afterThe: 'a nearby threat', afterA: 'a nearby threat', bare: 'a nearby threat' }
         : alone
           ? { afterThe: 'the panel', afterA: 'a panel glow', bare: 'the panel' }
-          : { afterThe: 'the official', afterA: 'an official', bare: 'the official' };
+          : personSlotFromScene(state);
     text = replaceUngroundedName(text, claim, generic);
   }
 
   // Never leave soft placeholders as dialogue subjects / room furniture.
   text = scrubSomeoneNearbyActor(text, alone);
   text = scrubSpeakerLeak(text, state);
+  text = scrubOfficialPlaceholder(text, state);
 
   return { text, stripped: Array.from(new Set(stripped)) };
 }
@@ -90,6 +91,20 @@ function atNamedInterior(state: GameState): boolean {
   return /\b(cathedral|circle|court|vault|chapel|nave|undercroft|palace|temple|keep|castle|inn|hall|chamber)\b/i.test(
     here
   );
+}
+
+/** Prefer a grounded present role over the old default "the official" (matrix-40 leak). */
+function personSlotFromScene(state: GameState): GenericSlot {
+  const present = (state.sceneFacts?.present ?? [])
+    .map((p) => (typeof p === 'string' ? p : (p as { name?: string })?.name ?? ''))
+    .map((s) => s.trim())
+    .filter((s) => s.length > 1 && !/^(you|pc|player|unknown)$/i.test(s));
+  if (present[0]) {
+    const n = present[0];
+    const bare = /^the\s+/i.test(n) ? n : `the ${n}`;
+    return { afterThe: bare, afterA: bare.replace(/^the\s+/i, 'a '), bare };
+  }
+  return { afterThe: 'the stranger', afterA: 'a stranger', bare: 'the stranger' };
 }
 
 function guessGenericReplacement(name: string, state: GameState): GenericSlot {
@@ -116,23 +131,57 @@ function guessGenericReplacement(name: string, state: GameState): GenericSlot {
     if (isAloneArrivalOpening(state)) {
       return { afterThe: 'the panel', afterA: 'a panel', bare: 'the panel' };
     }
-    return { afterThe: 'the official', afterA: 'an official', bare: 'the official' };
+    return personSlotFromScene(state);
   }
   if (isAloneArrivalOpening(state)) {
     return { afterThe: 'the panel', afterA: 'a panel', bare: 'the panel' };
   }
-  return { afterThe: 'the official', afterA: 'an official', bare: 'the official' };
+  return personSlotFromScene(state);
 }
 
 /** Rewrite leftover placeholder actors into role language. */
 export function scrubSomeoneNearbyActor(text: string, alone = false): string {
   if (!text || !/someone nearby/i.test(text)) return text;
-  const role = alone ? 'the panel' : 'the official';
-  const rolePoss = alone ? "the panel's" : "the official's";
+  const role = alone ? 'the panel' : 'the stranger';
+  const rolePoss = alone ? "the panel's" : "the stranger's";
   return text
     .replace(/\bsomeone nearby(?:'s|’s)\b/gi, rolePoss)
     .replace(/\bsomeone nearby\s+(does|doesn't|does not|did|said|states?|turns?|inclines?|remains?|stands?|listens?|regards?|gestures?|speaks?|asks?|replies?|nods?)\b/gi, `${role} $1`)
     .replace(/\b(?:the\s+)?someone nearby\b/gi, role);
+}
+
+/**
+ * "the official" was the default invented-name slot and leaked into prose + choice pads (~329 matrix hits).
+ * Keep it only when the scene already has an official/registrar; else → stranger / panel / grounded present.
+ */
+export function scrubOfficialPlaceholder(text: string, state: GameState): string {
+  if (!text || !/\bthe official\b|\ban official\b/i.test(text)) return text;
+  const grounded =
+    /\b(official|registrar|clerk|envoy|taxman|alderman)\b/i.test(
+      [
+        ...(state.sceneFacts?.present ?? []).map((p) =>
+          typeof p === 'string' ? p : (p as { name?: string })?.name ?? ''
+        ),
+        state.sceneFacts?.lastBeat ?? '',
+        ...(state.sceneFacts?.props ?? []),
+      ].join(' ')
+    );
+  if (grounded) return text;
+  const alone = isAloneArrivalOpening(state);
+  const slot = alone
+    ? { the: 'the panel', a: 'a panel', poss: "the panel's" }
+    : (() => {
+        const s = personSlotFromScene(state);
+        return {
+          the: s.afterThe,
+          a: s.afterA,
+          poss: s.afterThe.replace(/\bthe\b/i, "the") + "'s",
+        };
+      })();
+  return text
+    .replace(/\bthe official(?:'s|’s)\b/gi, slot.poss)
+    .replace(/\ban official\b/gi, slot.a)
+    .replace(/\bthe official\b/gi, slot.the);
 }
 
 /**

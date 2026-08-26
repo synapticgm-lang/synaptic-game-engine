@@ -95,7 +95,14 @@ export function classifyTurnFailure(err: unknown): TurnFailKind {
   }
   if (/429|Rate limit/i.test(msg)) return 'rate_limit';
   // Free writers sometimes return "The AI provider returned no content." — must be empty (retryable), not unknown.
-  if (/empty content|empty response|returned no content|\bno content\b/i.test(msg)) return 'empty';
+  // Also map provider/proxy soft-fails that matrix-40 logged as unknown into empty (retryable).
+  if (
+    /empty content|empty response|returned no content|\bno content\b|no text|blank response|provider.*fail|OpenRouter|upstream|502|503|504|500\b|BOOT_ERROR|Internal Server Error|invalid (?:json|response)|malformed/i.test(
+      msg
+    )
+  ) {
+    return 'empty';
+  }
   if (/auth|JWT|session|401|403/i.test(msg)) return 'auth';
   if (/is not defined|Cannot read|undefined is not/i.test(msg)) return 'client_bug';
   return 'unknown';
@@ -142,7 +149,8 @@ export function turnTransportRetryMessage(attempt: number, kind: TurnFailKind): 
 
 /** Prefer auto-retry for flaky transport; never for auth/client bugs. */
 export function shouldAutoRetryTurn(kind: TurnFailKind): boolean {
-  return kind === 'timeout' || kind === 'network' || kind === 'empty';
+  // unknown: matrix-40 PYOA bursts were often unclassified provider glitches — one retry is cheap vs dead runs.
+  return kind === 'timeout' || kind === 'network' || kind === 'empty' || kind === 'unknown';
 }
 
 export function transportRetryBackoffMs(retryIndex: number): number {

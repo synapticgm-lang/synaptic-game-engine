@@ -65,7 +65,7 @@ import {
   seedCoverAnswers,
 } from './openingEstablishment';
 import { applyOpeningContract, ensureStarterLookCharacter, stitchOpeningScene } from './openingStitch';
-import { seedOutdoorHubPlaces } from './outdoorHubs';
+import { seedOutdoorHubPlaces, parseTravelDestination, ensureTravelArrivalProse } from './outdoorHubs';
 import {
   extractUpdates,
   parseActionTags,
@@ -73,6 +73,8 @@ import {
   stripChoiceList,
   eventsToQuestUpdates,
 } from './parser';
+import { scrubOfficialPlaceholder } from './narrativeScrub';
+import { beatFingerprint, isSameBeat, buildBeatNoveltyRetryBlock } from './beatFingerprint';
 import { enforcePerspective } from './perspectiveWarden';
 import { buildPlayTranscript, resolveOfferedChoices, withOfferedChoices } from './playTranscript';
 import {
@@ -81,6 +83,7 @@ import {
   collectSceneObjectNames,
 } from './proseWarden';
 import { syncQuestsFromPlay, questsLockedDuringOpening } from './questPlay';
+import { touchPlaceVisit } from './places';
 import { buildTurnMandate } from './sceneFocus';
 import { groundedWeaponNames, listEmptySearchTargets } from './searchContinuity';
 import { applyStructuralEvents } from './structuralEvents';
@@ -95,6 +98,7 @@ import { runWarden } from './warden';
 import { emptyWorldLedger } from './worldSim';
 import { storyStartTextTurnsForTier } from './capacityLedger';
 import { setActiveSubscriptionTier } from './subscriptionTiers';
+import { storyHasBody } from './parser';
 
 export type FateMode = 'fate' | 'first-pad';
 
@@ -607,11 +611,40 @@ Do NOT print dice notation or CODE ENFORCED.
   const gmResult = await callGmWithRetries(state, payload, settings);
   let error: string | undefined;
   let gmText = gmResult.text;
+  let transportRetries = gmResult.transportRetries;
   if (!gmText.trim()) {
     error = gmResult.failKind
       ? `GM empty/fail (${gmResult.failKind})`
       : 'GM returned empty content';
     gmText = `(autoplay) The moment hangs — try again. [${error}]`;
+  }
+
+  // One novelty retry when Free recycles the same beat (matrix-40 repetition), especially on Travel.
+  const travelHubEarly = parseTravelDestination(playerInput, meta.bibleId);
+  if (
+    !error
+    && storyHasBody(gmText)
+    && isSameBeat(gmText, state.recentBeatFingerprints ?? [])
+    && transportRetries === 0
+  ) {
+    const novelty = buildBeatNoveltyRetryBlock(state.recentBeatFingerprints ?? []);
+    const retryPayload = buildResolutionUserPayload({
+      mandateBlock: turnMandate.block,
+      playerAction: playerInput,
+      deterministicBlock: `${deterministicBlock}\n${novelty}${
+        travelHubEarly
+          ? `\nTRAVEL AUTHORITY: Player is traveling to ${travelHubEarly.name}. Narrate arrival THERE — do not keep them in the previous room.`
+          : ''
+      }`,
+      retry: true,
+      intent,
+    });
+    const retry = await callGmWithRetries(state, retryPayload, settings);
+    transportRetries += retry.transportRetries + 1;
+    if (retry.text.trim() && (!isSameBeat(retry.text, state.recentBeatFingerprints ?? []) || travelHubEarly)) {
+      gmText = retry.text;
+      if (!error) error = undefined;
+    }
   }
 
   const rawEvents = parseActionTags(gmText);
@@ -643,6 +676,7 @@ Do NOT print dice notation or CODE ENFORCED.
     groundedWeapons: groundedWeaponNames(working),
     playerName: working.character?.name ?? state.character?.name,
   });
+  cleanText = scrubOfficialPlaceholder(cleanText, working);
   const leak = scanAndScrubLeaks(cleanText);
   if (leak.notes.length) cleanText = leak.clean;
 
@@ -655,6 +689,18 @@ Do NOT print dice notation or CODE ENFORCED.
   }
   if (updates.currentLocation) {
     working = { ...working, currentLocation: updates.currentLocation };
+  }
+
+  // Hard gate: Travel toward / Return to snaps location (was missing in headless → theater travel).
+  const fromLoc = state.currentLocation;
+  const travelHub = parseTravelDestination(playerInput, meta.bibleId);
+  if (travelHub && !working.activeDungeon && !state.activeDungeon) {
+    working = {
+      ...working,
+      currentLocation: travelHub.name,
+      places: touchPlaceVisit(working.places ?? state.places ?? [], travelHub.name, state.turn + 1),
+    };
+    cleanText = ensureTravelArrivalProse(cleanText, travelHub.name, fromLoc);
   }
 
   const pipeline = await resolvePipelineChoices({
@@ -686,6 +732,7 @@ Do NOT print dice notation or CODE ENFORCED.
     state.engineMode
   );
 
+  const fp = beatFingerprint(cleanText);
   const playerEntry: LogEntry = {
     id: uid(),
     turn: state.turn,
@@ -706,6 +753,7 @@ Do NOT print dice notation or CODE ENFORCED.
     turn: nextTurn,
     quests: updatedQuests,
     choices: finalChoices,
+    recentBeatFingerprints: [...(state.recentBeatFingerprints ?? []), fp].slice(-12),
     log: [...state.log, playerEntry, gmBase],
   };
   const gm = withOfferedChoices(gmBase, mid);
@@ -734,7 +782,7 @@ Do NOT print dice notation or CODE ENFORCED.
       systemLog: filteredSystemLog,
       error,
       failKind: gmResult.failKind,
-      transportRetries: gmResult.transportRetries,
+      transportRetries,
       repairNote,
     },
   };

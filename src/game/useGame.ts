@@ -244,7 +244,9 @@ import {
   parseTravelDestination,
   mergeHubLandmarks,
   visitedHubLandmarkNames,
+  ensureTravelArrivalProse,
 } from './outdoorHubs';
+import { scrubOfficialPlaceholder } from './narrativeScrub';
 import { hubBeatAwardKey, resolveHubArrival } from './hubEncounters';
 import { applySandboxXpAwards } from './sandboxXp';
 import { extractUpdates, extractNewItems, parseActionTags, stripActionTags, matchLoreCards, eventsToLoreCards, parseTurnFrame, eventsToQuestUpdates, eventsToEncounterUpdate, parsePanels, eventsToMilestone, eventsToLootVideo, eventsToVisualUpdate, stripChoiceList, extractChoiceLines, stripTurnCloser, storyHasBody, looksLikeChoiceOffer, isStoryTooThin, storyWordCount } from './parser';
@@ -2634,10 +2636,16 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
           && (intentForMandate.kind === 'observe'
             || intentForMandate.kind === 'search'
             || isRoomLayoutExploreAsk(sanitizedInput));
-        // Free: same-beat novelty alone is a soft issue — don't burn a second slow GM call.
+        // Free: same-beat novelty alone is a soft issue — don't burn a second slow GM call
+        // UNLESS the player Travel/Return action must land (matrix-40 theater travel).
+        const travelAction = !!parseTravelDestination(
+          sanitizedInput,
+          liveCurrent.campaignBibleId
+        );
         const freeSoftSameBeatOnly =
           effectiveWriterTier(settingsRef.current.subscriptionTier ?? 'free') === 'free'
           && sameBeat
+          && !travelAction
           && storyHasBody(probeText)
           && obligationCoverage.ok
           && !isUnresolvedActionNarrative(sanitizedInput, probeText, intentForMandate, previousGm)
@@ -3313,6 +3321,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
           groundedWeapons: groundedWeaponNames(workingState),
           playerName: workingState.character?.name ?? liveCurrent.character?.name,
         });
+        cleanText = scrubOfficialPlaceholder(cleanText, workingState);
       }
       {
         const leak = scanAndScrubLeaks(cleanText);
@@ -3521,7 +3530,9 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
       {
         const travelHub = parseTravelDestination(sanitizedInput, workingState.campaignBibleId ?? liveCurrent.campaignBibleId);
         if (travelHub && !workingState.activeDungeon && !liveCurrent.activeDungeon) {
+          const fromLoc = liveCurrent.currentLocation;
           finalLocationName = travelHub.name;
+          cleanText = ensureTravelArrivalProse(cleanText, travelHub.name, fromLoc);
         }
       }
       const landmarks = isInteriorPlace(mapName || finalLocationName)

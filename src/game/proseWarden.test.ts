@@ -39,7 +39,7 @@ describe('scrubLocationTautology — nearby is not here', () => {
     const raw = 'You are within the court. A nearby stall sells bread. Someone nearby shouts.';
     const cleaned = applyProseWarden(raw, { currentLocation: 'Valespire Cathedral' });
     expect(cleaned).toMatch(/A nearby stall sells bread/);
-    expect(cleaned).toMatch(/the official shouts/i);
+    expect(cleaned).toMatch(/the stranger shouts/i);
   });
 
   it('alone: strips speaker leak from window furniture + System name', () => {

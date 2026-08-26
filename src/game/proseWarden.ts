@@ -220,7 +220,7 @@ export function scrubArticleCollisions(text: string): string {
  */
 export function scrubFigurePlaceholder(text: string, alone = false): string {
   if (!text) return text;
-  const personSlot = alone ? 'the panel' : 'the official';
+  const personSlot = alone ? 'the panel' : 'the stranger';
   return text
     .replace(/\bthe\s+glowing\s+a\s+figure\b/gi, 'the glowing mark')
     .replace(/\bglowing\s+a\s+figure\b/gi, 'glowing mark')
@@ -236,7 +236,7 @@ export function scrubFigurePlaceholder(text: string, alone = false): string {
 /** UI / journal verbs must not be spoken in-world. */
 export function scrubUiQuestVerbs(text: string, alone = false): string {
   if (!text) return text;
-  const look = alone ? 'look to the panel' : 'look to the official';
+  const look = alone ? 'look to the panel' : 'look to the stranger';
   return text
     .replace(/\bunlock(?:s|ed|ing)?\s+someone(?:\s+nearby)?\b/gi, look)
     .replace(/\bunlock\s+(?:a|the)\s+(?:quest|journal|starter|guide\s*book)\b/gi, 'take the next step')
@@ -246,8 +246,8 @@ export function scrubUiQuestVerbs(text: string, alone = false): string {
 /** Soft name-slot must not act as a dialogue subject. */
 export function scrubSomeoneNearbyPlaceholder(text: string, alone = false): string {
   if (!text || !/someone nearby/i.test(text)) return text;
-  const role = alone ? 'the panel' : 'the official';
-  const rolePoss = alone ? "the panel's" : "the official's";
+  const role = alone ? 'the panel' : 'the stranger';
+  const rolePoss = alone ? "the panel's" : "the stranger's";
   return text
     .replace(/\bsomeone nearby(?:'s|’s)\b/gi, rolePoss)
     .replace(/\bsomeone nearby\s+(does|doesn't|does not|did|said|states?|turns?|inclines?|remains?|stands?|listens?|regards?|gestures?|speaks?|asks?|replies?|nods?)\b/gi, `${role} $1`)

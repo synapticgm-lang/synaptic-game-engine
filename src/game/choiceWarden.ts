@@ -128,6 +128,14 @@ export function filterInventedContextChoices(
       console.log(`[Choice Filter] Removed bare PC-name choice: "${choice}"`);
       return false;
     }
+    // Matrix-40: scrub damage turned NPCs into "the official" and polluted pads.
+    if (/\bthe official\b|\ban official\b/i.test(choice)) {
+      console.log(`[Choice Filter] Removed official-placeholder choice: "${choice}"`);
+      return false;
+    }
+    if (/\bthe official of the official\b|\bscan the official\b|\bapproach the official\b/i.test(choice)) {
+      return false;
+    }
     const emptyKeys = [
       ...(state.sceneFacts?.searchedEmpty ?? []),
       ...(state.sceneFacts?.emptyContainers ?? []),

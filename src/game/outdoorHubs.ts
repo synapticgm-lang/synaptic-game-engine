@@ -365,3 +365,32 @@ export function parseTravelDestination(
   const name = m[1].replace(/[.!?]+$/, '').trim();
   return matchHub(hubsForBibleId(bibleId), name);
 }
+
+/**
+ * When code snaps location to a hub but GM prose still narrates the old room,
+ * prepend a short arrival beat so Travel is not theater (matrix-40 Summoned Pact).
+ */
+export function ensureTravelArrivalProse(
+  prose: string,
+  hubName: string,
+  fromLocation?: string | null
+): string {
+  const text = (prose ?? '').trim();
+  const hub = hubName.trim();
+  if (!hub) return text;
+  const mentionsHub = new RegExp(hub.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i').test(text);
+  const from = (fromLocation ?? '').trim();
+  const stillAtFrom =
+    from.length > 3
+    && new RegExp(from.replace(/[.*+?^${}()|[\]\\]/g, '\\$&').slice(0, 40), 'i').test(text.slice(0, 280))
+    && !mentionsHub;
+  if (mentionsHub && !stillAtFrom) return text;
+  const leave = from
+    ? `You leave ${from} behind and reach ${hub}.`
+    : `You reach ${hub}.`;
+  if (!text) return leave;
+  if (stillAtFrom || !mentionsHub) {
+    return `${leave} ${text}`;
+  }
+  return text;
+}
