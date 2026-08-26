@@ -7,10 +7,10 @@ import { explainWhy, recentStateTxReceipts } from '../game/stateTx';
 import { effectiveWriterTier, isTestLabEnabled } from '../game/testLab';
 import { equippedSetLabel, equippedSetName } from '../game/uiTheme';
 
-/** Visible after a hard refresh — if this is missing, Vercel is still serving the 16 Aug bundle. */
-export const HUD_BUILD_STAMP = '2026-08-26k';
+/** Visible after a hard refresh -- if this is missing, Vercel is still serving the 16 Aug bundle. */
+export const HUD_BUILD_STAMP = '2026-08-26l';
 const HUD_BUILD_TITLE =
-  'Debug 2026-08-26k — All-LitRPG sandbox floor (unique hubs/factions per premade)';
+  'Debug 2026-08-26l - Hide text/options persist; no title-art bleed';
 
 interface Props {
   state: GameState;

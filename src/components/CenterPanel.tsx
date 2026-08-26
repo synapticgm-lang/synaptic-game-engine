@@ -29,6 +29,8 @@ import type { PendingRepair } from '@/game/types';
 
 const HIDE_OPTIONS_KEY = 'synapticgm-hide-options';
 const HIDE_TEXT_KEY = 'synapticgm-hide-text';
+/** Survives CenterPanel remount -- 25f one-time clear must not re-fire mid-opening. */
+const HIDE_CLEARED_FOR_KEY = 'synapticgm-hide-cleared-for';
 
 function readBoolPref(key: string, fallback = false): boolean {
   try {
@@ -43,6 +45,22 @@ function readBoolPref(key: string, fallback = false): boolean {
 function writeBoolPref(key: string, value: boolean): void {
   try {
     sessionStorage.setItem(key, value ? '1' : '0');
+  } catch {
+    /* ignore quota / private mode */
+  }
+}
+
+function readClearedForSave(): string | null {
+  try {
+    return sessionStorage.getItem(HIDE_CLEARED_FOR_KEY);
+  } catch {
+    return null;
+  }
+}
+
+function writeClearedForSave(saveKey: string): void {
+  try {
+    sessionStorage.setItem(HIDE_CLEARED_FOR_KEY, saveKey);
   } catch {
     /* ignore quota / private mode */
   }
@@ -127,14 +145,20 @@ export function CenterPanel({ state, busy, turnPhase = 'idle', streamingReveal =
   };
 
   // Once per New Game / save: clear stale Hide prefs so opening starts visible.
+  // Persist cleared-for key in sessionStorage — remount must not re-clear mid-opening (25f intent).
   // Do NOT depend on hideText/hideOptions — those deps made every tap instantly undo.
-  const hideClearedForSaveRef = useRef<string | null>(null);
+  const hideClearedForSaveRef = useRef<string | null>(readClearedForSave());
   useEffect(() => {
     const est = state.openingEstablishment;
     if (!est || est.complete) return;
     const key = state.saveId ?? 'opening';
-    if (hideClearedForSaveRef.current === key) return;
+    const already = hideClearedForSaveRef.current === key || readClearedForSave() === key;
+    if (already) {
+      hideClearedForSaveRef.current = key;
+      return;
+    }
     hideClearedForSaveRef.current = key;
+    writeClearedForSave(key);
     setHideText(false);
     setHideOptions(false);
     writeBoolPref(HIDE_TEXT_KEY, false);
@@ -195,41 +219,47 @@ export function CenterPanel({ state, busy, turnPhase = 'idle', streamingReveal =
         </div>
       )}
       {comicMode ? (
-        <div className={`relative z-10 min-h-0 flex-1 overflow-hidden ${hideText ? 'invisible' : ''}`}>
-          <ComicGrid
-            log={state.log}
-            lorebook={state.lorebook}
-            busy={busy}
-            diceAnimating={!!diceRoll}
-            currentImage={currentImage}
-            bgImage={bgImage}
-            artStylePreset={artStylePreset}
-            comicLayout={comicLayout}
-            comicReadingDirection={comicReadingDirection}
-            imagesGenerating={imagesGenerating}
-            onRetryPanelImage={onRetryPanelImage}
-            onRetryMemorableImage={onRetryMemorableImage}
-            onUpdatePanelOverlay={onUpdatePanelOverlay}
-          />
+        <div className="sgm-play-story-panel relative z-10 min-h-0 flex-1 overflow-hidden">
+          {!hideText && (
+            <ComicGrid
+              log={state.log}
+              lorebook={state.lorebook}
+              busy={busy}
+              diceAnimating={!!diceRoll}
+              currentImage={currentImage}
+              bgImage={bgImage}
+              artStylePreset={artStylePreset}
+              comicLayout={comicLayout}
+              comicReadingDirection={comicReadingDirection}
+              imagesGenerating={imagesGenerating}
+              onRetryPanelImage={onRetryPanelImage}
+              onRetryMemorableImage={onRetryMemorableImage}
+              onUpdatePanelOverlay={onUpdatePanelOverlay}
+            />
+          )}
         </div>
       ) : narrativeMode ? (
-        <div className={`relative z-10 min-h-0 flex-1 overflow-hidden ${hideText ? 'invisible' : ''}`}>
-          <NarrativeView
-            log={state.log}
-            busy={busy}
-            turnPhase={turnPhase}
-            streamingReveal={streamingReveal}
-            engineMode={engineMode}
-            onAcceptBeautyOffer={onAcceptBeautyOffer}
-            onDismissBeautyOffer={onDismissBeautyOffer}
-            contentMode={contentMode}
-          />
+        <div className="sgm-play-story-panel relative z-10 min-h-0 flex-1 overflow-hidden">
+          {!hideText && (
+            <NarrativeView
+              log={state.log}
+              busy={busy}
+              turnPhase={turnPhase}
+              streamingReveal={streamingReveal}
+              engineMode={engineMode}
+              onAcceptBeautyOffer={onAcceptBeautyOffer}
+              onDismissBeautyOffer={onDismissBeautyOffer}
+              contentMode={contentMode}
+            />
+          )}
         </div>
       ) : (
         <div
           ref={logRef}
-          className={`sgm-play-story-panel relative z-10 min-h-0 flex-1 overflow-y-auto overscroll-contain px-3 py-4 sm:px-6 ${hideText ? 'invisible' : ''}`}
+          className="sgm-play-story-panel relative z-10 min-h-0 flex-1 overflow-y-auto overscroll-contain px-3 py-4 sm:px-6"
+          aria-hidden={hideText}
         >
+          {!hideText && (
           <div className="mx-auto max-w-2xl space-y-4">
             {state.log.map((entry, index) => (
               shouldSkipDuplicatePlayerBubble(state.log, index) ? null : (
@@ -283,6 +313,7 @@ export function CenterPanel({ state, busy, turnPhase = 'idle', streamingReveal =
               </div>
             )}
           </div>
+          )}
         </div>
       )}
 

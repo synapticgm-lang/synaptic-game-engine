@@ -73,6 +73,7 @@
 | 19d / 20e | Frame over name; stamp on bug | CSS hide / icon-only |
 | 20e open | HP/MP overlap @ 384px | *Still open* — needs layout owner |
 | **26f** | Debug open → “realm fractured” after deploy | Stale Vite `lazy()` chunk (`DebugModal-*.js` 404). `safeLazy` one-shot reload + modal `LazyChunkBoundary` |
+| **26l** | Hide text shows title art; Hide toggles undo after remount | `invisible` punched static bg through story panel; 25f clear-ref reset on remount. Opaque flex spacer + sessionStorage cleared-for saveId |
 
 ### Quest / STATUS (Class C)
 
