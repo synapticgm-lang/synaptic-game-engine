@@ -6,6 +6,56 @@ const PLAYER_BODY_KIT =
 const POV_VERBS =
   'steps|walks|runs|grabs|looks|turns|says|feels|thinks|reaches|crouches|freezes|edges|scans|grips|pauses|instinctively|watches|brushes|carries|holds|checks|pulls|opens|closes|stands|sits|kneels|answers|asks|speaks|waits|nods|lifts|drops|keeps|starts|stops|tries|searches|places|puts|draws|stares|listens|hears|knows|finds|takes|gives|shakes|raises|lowers';
 
+const BODY_KIT_RE = new RegExp(`\\b([Hh]is|[Hh]er) (${PLAYER_BODY_KIT})\\b`, 'g');
+
+/**
+ * True when the clause before a his/her body part is clearly about a third-person NPC,
+ * not the player. Prevents "He shrugs… his shoulders" → "your shoulders".
+ */
+function clauseIsNpcSubject(clauseBefore: string, characterName?: string): boolean {
+  const clause = clauseBefore.trim();
+  if (!clause) return false;
+  // Player already in frame — his/her body is likely a POV slip (e.g. "watches you pick up his phone").
+  if (/\byou\b|\byour\b/i.test(clause)) return false;
+  const name = (characterName ?? '').trim();
+  if (name.length >= 2) {
+    const escaped = name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    if (new RegExp(`\\b${escaped}\\b`, 'i').test(clause)) return false;
+  }
+  // He/She/They acting, or "the handler/registrar/…" as subject.
+  if (
+    /(?:^|[;,:]\s*|\b(?:as|while|when|and|but)\s+)(?:he|she|they)\b/i.test(clause)
+    || /\b(?:he|she|they)\s+(?:\w+['’]?\w*\s+){0,3}(?:shrugs?|wipes?|tilts?|raises?|moves?|nods?|says?|asks?|looks?|stands?|sits?|gestures?|reaches?|holds?|picks?|takes?|puts?|brushes?|keeps?|turns?|watches?|speaks?|replies?|answers?)\b/i.test(
+      clause
+    )
+    || /\bthe\s+(?:\w+\s+){0,3}(?:handler|registrar|man|woman|guard|sleeper|chirurgeon|official|figure|attendant|clerk|nurse|priest|soldier|stranger|voice)\b/i.test(
+      clause
+    )
+  ) {
+    return true;
+  }
+  return false;
+}
+
+/**
+ * Rewrite his/her body kit → your only in player-referent clauses.
+ * NPC "his hands / his shoulders" stay third-person.
+ */
+export function rewritePlayerBodyPossessives(text: string, characterName?: string): string {
+  return text.replace(BODY_KIT_RE, (match, _poss: string, body: string, offset: number, full: string) => {
+    const before = full.slice(0, offset);
+    const breakAt = Math.max(
+      before.lastIndexOf('.'),
+      before.lastIndexOf('!'),
+      before.lastIndexOf('?'),
+      before.lastIndexOf('\n')
+    );
+    const clause = before.slice(breakAt + 1);
+    if (clauseIsNpcSubject(clause, characterName)) return match;
+    return `your ${body}`;
+  });
+}
+
 /** Code-owned perspective pass. Cheap regex — not a second writer. */
 export function enforcePerspective(
   text: string,
@@ -21,13 +71,13 @@ export function enforcePerspective(
     next = next.replace(subject, (_m, verb: string) => `You ${String(verb).toLowerCase()}`);
     next = next.replace(new RegExp(`\\b${escaped}'s\\b`, 'g'), 'Your');
   }
-  next = next.replace(new RegExp(`\\b[Hh]is (${PLAYER_BODY_KIT})\\b`, 'g'), 'your $1');
-  next = next.replace(new RegExp(`\\b[Hh]er (${PLAYER_BODY_KIT})\\b`, 'g'), 'your $1');
+  // Convert player-as-him slips first so scoped body rewrite sees "you" in the clause.
   next = next.replace(/\bwatches him\b/gi, 'watches you');
   next = next.replace(/\bwatches her\b/gi, 'watches you');
   next = next.replace(/\bwatching him\b/gi, 'watching you');
   next = next.replace(/\bwatching her\b/gi, 'watching you');
   next = next.replace(/\b(on|at|toward|towards|behind|beside)\s+him\b/gi, '$1 you');
   next = next.replace(/\b(on|at|toward|towards|behind|beside)\s+her\b/gi, '$1 you');
+  next = rewritePlayerBodyPossessives(next, name || undefined);
   return next;
 }

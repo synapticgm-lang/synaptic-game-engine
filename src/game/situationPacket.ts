@@ -207,6 +207,11 @@ export function formatSceneSnapshotForPrompt(state: GameState): string {
   lines.push(
     'AUTHORITY: Narrate richly — descriptive, engaging language and narrative flair are required. Atmosphere (smell, rust, cadence, metaphor, NPC mannerism) is free. Do not contradict these facts or the ledger. Do not invent items, doors, named people, or numeric results absent from this snapshot.'
   );
+  if (!alone || state.activeEncounter) {
+    lines.push(
+      'SPEAKER CONTINUITY: Named people in Presence who just spoke or attended stay awake and present this beat unless Time/Location changes. Do not open by treating them as a cot-bound sleeper who never stirs.'
+    );
+  }
   return lines.join('\n');
 }
 

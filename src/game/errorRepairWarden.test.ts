@@ -33,6 +33,14 @@ describe('errorRepairWarden', () => {
     expect(turnTransportRetryMessage(1, kind)).toMatch(/retrying/i);
   });
 
+  it('classifies provider "no content" as empty and auto-retries', () => {
+    const kind = classifyTurnFailure(new Error('The AI provider returned no content.'));
+    expect(kind).toBe('empty');
+    expect(shouldAutoRetryTurn(kind)).toBe(true);
+    expect(turnFailPlayerMessage(kind)).toMatch(/returned nothing/i);
+    expect(turnTransportRetryMessage(1, kind)).toMatch(/Empty reply/i);
+  });
+
   it('does not auto-retry auth or client bugs', () => {
     expect(shouldAutoRetryTurn(classifyTurnFailure(new Error('401 unauthorized JWT')))).toBe(false);
     expect(shouldAutoRetryTurn(classifyTurnFailure(new Error('forceFreeModel is not defined')))).toBe(

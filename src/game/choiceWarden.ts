@@ -46,22 +46,41 @@ const CONTEXT_REQUIREMENTS: Array<{
     requires: /\b(?:\?|ask|say|speak|tell|question|demand)\b/i,
     description: 'something to respond to',
   },
+  {
+    pattern: /\b(?:barrels?|casks?|crates?)\b/i,
+    requires: /\b(?:barrels?|casks?|crates?)\b/i,
+    description: 'barrels/casks/crates',
+  },
+  {
+    pattern: /\b(?:help|haul|carry|load|move)\b.+\b(?:barrels?|casks?|crates?|linens?|cargo)\b|\b(?:barrels?|casks?)\b.+\b(?:help|haul|carry|load)\b/i,
+    requires: /\b(?:barrels?|casks?|crates?|linens?|cargo|handlers?)\b/i,
+    description: 'unpaid chore props',
+  },
 ];
+
+/** Choice that is only the PC's name (not a real action). */
+export function isBarePcNameChoice(choice: string, characterName?: string): boolean {
+  const name = (characterName ?? '').trim();
+  if (!name || name.length < 2) return false;
+  const cleaned = choice.replace(/^[\s✨🎲⭐️•\-–—]+/u, '').trim();
+  return cleaned.toLowerCase() === name.toLowerCase();
+}
 
 /**
  * Check if a choice references context that doesn't exist in the story.
  */
 export function choiceInventsContext(
   choice: string,
-  recentStory: string
+  recentStory: string,
+  scenePropsCorpus = ''
 ): boolean {
   const choiceLower = choice.toLowerCase().trim();
-  const storyLower = recentStory.toLowerCase();
+  const grounded = `${recentStory}\n${scenePropsCorpus}`.toLowerCase();
   
   for (const rule of CONTEXT_REQUIREMENTS) {
     if (rule.pattern.test(choiceLower)) {
-      // Choice references this context - check if story has it
-      if (!rule.requires.test(storyLower)) {
+      // Choice references this context - check if story/props have it
+      if (!rule.requires.test(grounded)) {
         return true; // Context required but missing
       }
     }
@@ -84,11 +103,23 @@ export function filterInventedContextChoices(
     .map(e => e.content)
     .join(' ')
     .slice(-2000);
-  
-  if (!recentStory) return choices;
+
+  const scenePropsCorpus = [
+    ...(state.sceneFacts?.props ?? []),
+    ...(state.locationSheet?.interactables ?? []).map((i) => i.name),
+  ]
+    .filter(Boolean)
+    .join(' ');
+
+  const pcName = state.character?.name;
   
   return choices.filter(choice => {
-    const invents = choiceInventsContext(choice, recentStory);
+    if (isBarePcNameChoice(choice, pcName)) {
+      console.log(`[Choice Filter] Removed bare PC-name choice: "${choice}"`);
+      return false;
+    }
+    if (!recentStory && !scenePropsCorpus) return true;
+    const invents = choiceInventsContext(choice, recentStory, scenePropsCorpus);
     if (invents) {
       console.log(`[Choice Filter] Removed invented-context choice: "${choice}"`);
     }

@@ -701,6 +701,11 @@ export function padChoicesToCount(
       choices
         .map((c) => sanitizeChoiceLabel(c))
         .filter(Boolean)
+        .filter((c) => {
+          const name = (state.character?.name ?? '').trim();
+          if (name.length >= 2 && c.toLowerCase() === name.toLowerCase()) return false;
+          return true;
+        })
         .filter((c) => isChoiceGroundedInTurn(c, storyProse, state) || looksLikeChoiceOffer(c))
     )
   );

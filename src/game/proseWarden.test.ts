@@ -67,3 +67,38 @@ describe('spoken-line quote start + hood', () => {
     expect(cleaned).toBe('"Stay." Your eyes catch your hood.');
   });
 });
+
+describe('perspective — NPC body parts stay third-person', () => {
+  it('does not rewrite NPC his shoulders / his hands into your', () => {
+    const shrugs = enforcePerspective(
+      'He shrugs, the motion barely moving his shoulders.',
+      { perspective: 'second-person' },
+      'Jax'
+    );
+    expect(shrugs).toMatch(/his shoulders/i);
+    expect(shrugs).not.toMatch(/your shoulders/i);
+
+    const wipe = enforcePerspective(
+      'The handler wipes his hands on his thighs.',
+      { perspective: 'second-person' },
+      'Jax'
+    );
+    expect(wipe).toMatch(/his hands/i);
+    expect(wipe).not.toMatch(/your hands/i);
+  });
+
+  it('still fixes player-referent his phone after watches him → you', () => {
+    const fixed = enforcePerspective('She watches him pick up his phone.', {
+      perspective: 'second-person',
+    });
+    expect(fixed.toLowerCase()).toMatch(/watches you pick up your phone/);
+  });
+});
+
+describe('Free English slips', () => {
+  it('fixes half an moments', () => {
+    const cleaned = applyProseWarden('Half an moments later, the door opens.');
+    expect(cleaned.toLowerCase()).toMatch(/half a moment later/);
+    expect(cleaned.toLowerCase()).not.toMatch(/half an moments/);
+  });
+});

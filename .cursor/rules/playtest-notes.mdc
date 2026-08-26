@@ -9,10 +9,11 @@ John is playtesting live. Collect issues here. Do not implement until he asks fo
 
 ## Open
 
-_(none — Hide + opening chips shipped in 25f)_
+_(none — 2026-08-25/26 batch shipped in **2026-08-26a**)_
 
 ## Waiting (research — not tickets yet)
 
+- **Speed (Free):** More latency needs Mid/High writer or model swap (John must approve DeepSeek change). Safe levers shipped 26a: skip Free near-floor expand; skip Free same-beat-only quality retry; keep 75s/55s early budgets. SNAPSHOT stays compact (25b).
 - **Outdoor zone map depth:** Visual pass shipped 20m (topo grain, paths, POI pins vs CAD streets). Still not a full MMO zone map (terrain art layers, fog-by-discovery outdoors, district zoom). Further outdoor depth stays Waiting.
 - **AI-authored building graph (optional):** Code now authors a multi-room interior floor plan on Map open (`interior-plan`, stamp 20n+) — full outline + visited/unvisited fog + door marks / secret dashed paths + varied footprints (20q). Still not an LLM pre-authoring a unique building as Tier-1 continuity. Optional next: AI/code hybrid room graph per named landmark.
 - Server capacity / Stripe live secrets / counsel legal pack / Kid Mode public gate — ops, not playtest tickets
@@ -21,6 +22,8 @@ _(none — Hide + opening chips shipped in 25f)_
 - Premium theme five-rater / Shop preview parity (Manus T8/T9 P0-04) — after playtest of `2026-08-19t` Vampire rescue; ingest `docs/research/manus-premium-themes-ingest-2026-08-19.md`
 
 ## Done (already shipped)
+
+- **2026-08-26a Retry empty + perspective hands:** Containment from Jax Free playtest. Class A: `classifyTurnFailure` maps `"no content"` → `empty` so transport retries (×2) fire; player bubble + draft restore kept; kind/attempt/host still logged. Class D: `perspectiveWarden` scopes his/her body kit to PC clauses only (NPC hands/shoulders stay). Choice pad strips bare PC name + invented barrel chores (story/props ground). STATUS suppresses no-op Perception SUCCESS. Free English regex (`half an moments`). Speaker continuity SNAPSHOT rail + light cot-sleeper scrub. Speed: Free skip expand when ≥70 words; Free skip sameBeat-only quality retry; 75s/55s budgets confirmed. Evidence moved to `docs/bugs/playtest-2026-08-25/`. HUD stamp 26a. Redeploy: `npx supabase functions deploy gm-turn` (SNAPSHOT + edge prose sync).
 
 - **2026-08-25f Hide fix + no opening chips:** Hide options / Hide text no longer auto-cleared every tap (opening + story-exists useEffects fought the toggles). One-time clear per New Game save only. Opening quick-response chip banks default OFF (`fastSetupChips: false`; Settings → Narrative can re-enable). Kit cover dropped from blocking queue — sealed Bag on New Game; after name, GM continue instead of “Pat yourself down” + phone/purse chips. HUD stamp 25f.
 

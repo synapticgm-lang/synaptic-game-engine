@@ -247,6 +247,11 @@ export async function runWarden(
     enableGrammarCheck,
     inventory: state.inventory,
     sceneProps: collectSceneObjectNames(state),
+    lastGmProse:
+      [...(state.log ?? [])].reverse().find((e) => e.role === 'gm')?.content ?? '',
+    presentNames: (state.sceneFacts?.present ?? []).filter(
+      (n) => typeof n === 'string' && n.trim().length >= 2
+    ),
   };
   
   const polishedBase = enableGrammarCheck

@@ -1,0 +1,2055 @@
+{
+  "logType": "event-log",
+  "exportTimestamp": "2026-08-25T17:44:08.456Z",
+  "deviceId": "0d4efcbc-ad46-4ddc-917a-b9ef095b6f68",
+  "sessionId": "a81b65f0-8393-41f1-9b7d-efc70492046a",
+  "sessionStartedAt": "2026-08-25T16:07:46.613Z",
+  "platform": "Android (Not=A?Brand, Google Chrome, Chromium)",
+  "userAgent": "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Mobile Safari/537.36",
+  "screenResolution": "384x832",
+  "viewport": "384x693",
+  "pixelRatio": 2.8125,
+  "language": "en-GB",
+  "online": true,
+  "hostedBackend": {
+    "gmProxyConfigured": true,
+    "gmProxyRequired": true,
+    "gmProxyHost": "wzgsrpwhmgffcyohvtko.supabase.co",
+    "gmTurnPath": "/functions/v1/gm-turn"
+  },
+  "sessionStats": {
+    "sessionId": "a81b65f0-8393-41f1-9b7d-efc70492046a",
+    "sessionStartedAt": "2026-08-25T16:07:46.613Z",
+    "eventCount": 77,
+    "errorCount": 33,
+    "warnCount": 25,
+    "estimatedBytes": 53405,
+    "softByteCap": 8388608,
+    "softCapPolicy": "Unlimited for ERROR/WARN/CRITICAL/TURN_START/SESSION within session. Soft-trim oldest INFO/other only if buffer exceeds ~8MB. Absolute ceiling 50k entries.",
+    "autoDownloadOnError": false
+  },
+  "softCapPolicy": "Unlimited for ERROR/WARN/CRITICAL/TURN_START/SESSION within session. Soft-trim oldest INFO/other only if buffer exceeds ~8MB. Absolute ceiling 50k entries.",
+  "agentPullHint": "Give Cursor the sessionId + deviceId, or drop synaptic-debug-latest.json into the workspace. Hosted: query telemetry_logs WHERE session_id = <sessionId> (signed-in / Ops).",
+  "settings": {
+    "ttsEnabled": false,
+    "sttEnabled": false,
+    "diceAnimation": "normal",
+    "contentMode": "adult",
+    "kidModeLocked": false,
+    "contentPin": null,
+    "maturityTier": "pg13",
+    "sexualContent": false,
+    "substanceUse": true,
+    "darkThemes": "implied",
+    "byokModeEnabled": false,
+    "byokDisclaimerAccepted": false,
+    "confirmContentRewrites": true,
+    "geminiApiKey": "",
+    "openrouterApiKey": "",
+    "fluxApiKey": "",
+    "aiProvider": "openrouter",
+    "customModelId": "",
+    "baseUrl": "",
+    "imageProvider": "flux",
+    "imageBaseUrl": "",
+    "imageApiKey": "",
+    "imageEndpointType": "openai",
+    "imageModel": "",
+    "subscriptionTier": "free",
+    "videoProvider": "none",
+    "videoBaseUrl": "",
+    "videoApiKey": "",
+    "videoModel": "",
+    "postLoginBehavior": "MAIN_MENU",
+    "visualMode": "classic",
+    "classicMemorableImages": false,
+    "comicLayout": "paged",
+    "comicReadingDirection": "ltr",
+    "bgMode": "static",
+    "bgOpacity": 40,
+    "artStylePreset": "classic-book",
+    "colorVariant": "default",
+    "uiThemeId": "theme.phoenix-ashrise",
+    "fontPackId": "font.ashrise",
+    "diceCosmeticId": "dice.ashrise",
+    "voicePackId": "voice.ashrise",
+    "turnFrameCosmeticId": "frame.ashrise",
+    "panelFrequency": "balanced",
+    "halftoneOverlay": true,
+    "sfxPopups": true,
+    "speechBubbles": true,
+    "panelBorderIntensity": "bold",
+    "gmStrictness": "standard",
+    "statDisplayMode": "inline",
+    "statVerbosity": "core",
+    "statFrequency": "every-5-turns",
+    "perspective": "second-person",
+    "gmVoiceProfileId": "cold-system",
+    "violenceLevel": "mild",
+    "cursingLevel": "mild",
+    "romanceSubplots": false,
+    "haremContent": false,
+    "statScreensEnabled": true,
+    "dndMode": false,
+    "mapTriggerMode": "tactical",
+    "fogRevealThreshold": "adjacent",
+    "combatFrequency": 50,
+    "combatResolveMode": "auto",
+    "socialRoleplay": 50,
+    "worldBuilding": 50,
+    "strictEncumbrance": false,
+    "requireTurnConfirm": false,
+    "secretDeathSaves": false,
+    "cleaveMechanics": false,
+    "flankingAdvantage": false,
+    "preferFullResponse": false,
+    "fastSetupChips": false
+  },
+  "character": {
+    "name": "Jax",
+    "level": 1,
+    "xp": 0,
+    "xpToNext": 300,
+    "hp": 24,
+    "maxHp": 24,
+    "mp": 12,
+    "maxMp": 12,
+    "sp": 20,
+    "maxSp": 20,
+    "attributes": {
+      "STR": 14,
+      "DEX": 12,
+      "CON": 14,
+      "INT": 12,
+      "WIS": 10,
+      "CHA": 10
+    },
+    "conditions": [],
+    "bio": "Someone already living in this world when the story begins.",
+    "appearance": "everyday street clothes",
+    "classTitle": "Hero"
+  },
+  "recentTurns": [
+    {
+      "id": "a8rneq3zu",
+      "turn": 0,
+      "role": "gm",
+      "content": "Light, then linen and boiled iron. You are on your back on a circle chalked between infirmary cots. A blue panel hangs at eye level. The chirurgeons expected a healer. You still have Earth clothes. Ash or chalk grit sticks to your palms. The next word in this room will cost something.\n\nA handler waits on a name before they will speak plainly. What is it?",
+      "timestamp": 1787674066645,
+      "systemLog": [
+        "Registration incomplete",
+        "Stamp: Pactborn / Calamity Mark — unresolved",
+        "Gift: Circle Blessing [???] — unidentified"
+      ]
+    },
+    {
+      "id": "d1bpzee28",
+      "turn": 1,
+      "role": "player",
+      "content": "Jax",
+      "timestamp": 1787674102293
+    },
+    {
+      "id": "gkitcq41g",
+      "turn": 1,
+      "role": "gm",
+      "content": "Nothing else has entered the room. You are in the cathedral infirmary. The people who were dealing with you are still here, waiting on your next move. Someone is already deciding what you are worth.",
+      "timestamp": 1787674102333,
+      "systemLog": [
+        "Registration incomplete",
+        "Stamp: Pactborn / Calamity Mark — unresolved",
+        "Gift: Circle Blessing [???] — unidentified",
+        "Quest Unlocked: The Circle’s Price"
+      ]
+    },
+    {
+      "id": "dk8z8rqdg",
+      "turn": 2,
+      "role": "player",
+      "content": "Ask whats going on where am I?",
+      "timestamp": 1787674161290
+    },
+    {
+      "id": "wxyid2xku",
+      "turn": 3,
+      "role": "gm",
+      "content": "The answer comes from the woman in the chirurgeon's robes — the one who has been watching you since your eyes opened. She doesn't look away when you speak, and there's a thread of patience in her voice, like she's explained this to someone before. \"You're in the infirmary beneath this place, in the kingdom of Pellane. \" A pause, letting the words settle. \"You came through the court about half an moments later. A summoning rite — old magic, held in the crypt under the nave. It pulled someone through from another world. That someone is you. \" She gestures toward the blue panel still drifting at the edge of your vision. Another voice—a man in plain grey work-clothes, standing near the doorway—adds, \"That's the System. Registers what the pact made of you. Says you're a Pactborn. Whether you choose to answer that name…\" He shrugs, the motion barely moving your shoulders. \"That's your business, not the rite's. \" The chirurgeon steps closer. \"You're in the infirmary. You were alive and breathing when we carried you up from the crypt. That's where 'what's going on' starts. The rest is what you decide to do from here. \" The air smells of wax, and something sharp and clean — something that tells you your wounds—if you had any—have already been tended. Somewhere behind you, a tall thin man in a dark coat has not spoken yet. He is simply watching, the way you'd weigh a purchase.",
+      "timestamp": 1787674209301,
+      "systemLog": [
+        "New question resolved — background data unlocked."
+      ]
+    },
+    {
+      "id": "h6eh9xxcx",
+      "turn": 3,
+      "role": "player",
+      "content": "So you summoned me? Why for what reason? What do you expect from me",
+      "timestamp": 1787674457808
+    },
+    {
+      "id": "dazh9yqsv",
+      "turn": 4,
+      "role": "gm",
+      "content": "The chirurgeon's mouth tightens — not anger, more like a wince she's been holding back since you woke. She sets down the cloth she was holding and folds your hands in front of her, steady. \"Summoned — yes. Not by me personally, but by the rite. \" She gestures vaguely toward the floor, as if the crypt beneath your feet were a thing she could show you through stone. \"the court. Old magic. It was built to call a Pactborn — a soul strong enough to stand against the court. They've been pressing the border for three seasons. Our line's thinning. \" She lets that sit a moment, then continues, slower. \"What do we expect from you? Honestly? \" A short, humorless breath. \"To survive. To fight. To find some way of ending this that isn't burying more of our people under their walls. the court was supposed to give us a weapon. You arrived... instead. \" She doesn't finish the thought. It hangs there. You're unmarked, new, and — forgive me — you look like you'd drop in a stiff wind. So right now? We expect you to rest, to eat, to ask your questions. The war will keep. It always does. \" your eyes hold yours. She's being straight with you, for better or worse.",
+      "timestamp": 1787674498947,
+      "systemLog": []
+    },
+    {
+      "id": "9qf92y3zq",
+      "turn": 4,
+      "role": "player",
+      "content": "Erm you sure the ritual worked right? Some one to win your war?",
+      "timestamp": 1787674713048
+    },
+    {
+      "id": "njge92a9l",
+      "turn": 5,
+      "role": "gm",
+      "content": "The chirurgeon's hands pause mid-fold. Her gaze drops to the bandage cloth in her lap, and something shifts in her expression — a crack in that professional mask she's been wearing since you woke. \"You're not the first to ask that. \" She sets the cloth aside and looks at you properly, and for the first time you catch the weight behind your eyes. Not fear. Not pity. Something older — a woman who has watched too many prayers go unanswered. \"The rite is old. Precise. Every symbol chalked by hand, every syllable spoken thrice. \" She gestures toward the floor again, toward the crypt beneath. \"But precise doesn't mean *certain*. the court was built to call a Pactborn — a soul strong enough to stand against the court. \" A pause. Her voice dips lower, almost private. \"It is also built to call a mark. A soul the opposite of what we wanted. The line between them is paper-thin. \" She lets that settle before she continues, quieter still. \"You woke up on the stone with both stamps flickering over your chest. We don't know which one took root. \" Her jaw tightens. \"So no — I'm not sure the ritual worked right. I'm not sure it *ever* works right. \" She looks at you squarely. \"But you're here, and the war is real, and the sum of it is this: they wanted a weapon. They may have gotten something else entirely. \" She doesn't look away. She's not asking you to be comfortable. She's asking you to understand what she's trying to say.",
+      "timestamp": 1787674826012,
+      "systemLog": [
+        "No state changes."
+      ]
+    },
+    {
+      "id": "bkqbsnlie",
+      "turn": 5,
+      "role": "player",
+      "content": "I dont even know this world or the side im on right now. I will help if I can but I dont know what im fighting for nor do I have the knowledge or skills to help win a war",
+      "timestamp": 1787675021982
+    },
+    {
+      "id": "cq6d3d4jm",
+      "turn": 6,
+      "role": "gm",
+      "content": "The chirurgeon's hands still on the bandage cloth, and the air goes quiet enough to hear the candle smoke. She looks at you — properly, both eyes, no more tending to her work. \"The side you're on,\" she says, slow and careful, \"is Pellane. The kingdom that chalked the circle under this cathedral. We pulled you here to end a war with the court — a kingdom of smoke and iron that's been bleeding our border for three years. They summon their own. We summon ours. \" A pause. \"That's you. Or it was supposed to be. \" She sets the cloth down. \"You're right that you don't know this world. And you're right that you weren't given skills to fight a war. But you were given something else — a mark, on your soul, that the Court fears. That's why the ritual called you. Not because you're a soldier. Because you're a joker in a deck they thought they'd stacked. \" She tilts your head. \"What I expect isn't for you to win battles. It's for you to decide what you want, before they decide for you. \" The chirurgeon watches you, waiting — the question hanging in the candle-smoke between you as plainly as if she'd spoken it aloud: *What do you want? *",
+      "timestamp": 1787675091522,
+      "systemLog": []
+    },
+    {
+      "id": "nh3rx83hb",
+      "turn": 6,
+      "role": "player",
+      "content": "What i want is to see what it is your asking me to side with. Let me explore and see the world you pulled me to. Let me decide. A person fighting for something they belive in will fight harder than a random mercenary",
+      "timestamp": 1787675408924
+    },
+    {
+      "id": "fk9ditj7h",
+      "turn": 7,
+      "role": "gm",
+      "content": "The chirurgeon holds your gaze for a long moment, then nods slowly—not approval, exactly, but acknowledgment. She sets the bandage cloth down on the cot beside you and stands, brush of dust from her apron. \"A person fighting for something they believe in. \" She repeats the words like she's weighing them. \"That's the first honest thing any summoned soul has said to me in three years. Most of them ask about the palace. The pay. The glory. \" A dry smile, barely a flicker. \"The ash court doesn't let its enemies choose. But you're asking to choose, and that earns you the right to see. \" She glances at the warden against the wall, a wordless exchange. Then back to you. \"Look, then. Leave the cathedral through the south doors and you'll hit the market quarter. Sun's up, trade's starting, and you'll see Pellane as it is right now—not the stories. \" She stands. \"Walk it for a day. A night. Let it impress you honestly, though—it's no paradise. We have a war, and the war has teeth. But there's good food, and the official will put you up in a room. the official runs tabs for the crown. When you've looked, come back and give me your answer. That's the terms. \" A knock at the infirmary door breaks the quiet. Three hard raps. The chirurgeon glances at it, jaw tightening, and mutters, \"Today, no. Go. Out through the side hall—I'll deal with whoever that is. \" She pulls a coin purse from her apron and presses three copper pieces into your palm—enough for a meal at the market. Signature of the crown. The door thumps again, a sharper knock.",
+      "timestamp": 1787675560329,
+      "systemLog": [
+        "Gold: +3"
+      ]
+    },
+    {
+      "id": "ef6goommy",
+      "turn": 7,
+      "role": "player",
+      "content": "Leave via the door they suggested and make your way to the street",
+      "timestamp": 1787676375685
+    },
+    {
+      "id": "f53oc1lx7",
+      "turn": 8,
+      "role": "gm",
+      "content": "The door swings on worn hinges, and you're out of the narthex. Stone echoes under your boots as the passage opens into a long, low-slung hall of cots and tallow lamps — the cathedral infirmary proper. Someone snores, deep and irregular, tucked under a blanket. Near the far end, the towering double doors: wood, iron, cold air seeping around the edges. \"Valespire, if you're wondering where the light dumped you. Cathedral of the official, holy ground bound to Pellane's crown. \" The chirurgeon's voice catches you at the threshold. \"The war's with the Ash Court — they've burned the bounds west of the river for three years. That's why they pulled you through. That's the whole of it. \" You have to lift the latch yourself — a few people still moves to stop you. The bar eases back, lock gives, and the night pours in, sharp and cold. But the sight that greets you is not open street. A wide yard, a lantern on a crate, and a heavy timber gate with a lean registrar perched on a stool, quill and ledger in hand. He eyes you. \"Summoned soul, ah? the official above — you've moved fast. The steal is decided. But the watch won't open that gate until you're signed. \" He pats the book. \"One name. That's all it takes. Or you turn back and stay warm under the infirmary roof. \" ---",
+      "timestamp": 1787676398108,
+      "systemLog": []
+    },
+    {
+      "id": "5wncbenos",
+      "turn": 8,
+      "role": "player",
+      "content": "My name is jax is wish to leave please",
+      "timestamp": 1787676614560
+    },
+    {
+      "id": "j86k8ggtt",
+      "turn": 9,
+      "role": "gm",
+      "content": "The cot-bound sleeper never stirs. His breath saws the air as you pass by his bed, and the tall lamps throw your shadow ahead of you, long across the floor. When you get to the tall double doors at the end of the aisle, the cold is already curling through the seam between them—you can feel it before you ever touch the iron band. This is the door the chirurgeon pointed to. It's not barred. It's closed, but not sealed. A person with a firm grip and a straight spine can walk out of a cathedral if they want to. \"My name is Jax,\" you say—you give them your name, like one of your only true possessions. The chirurgeon's hands go still. She raises your face from the bandage cloth and looks at you with a calm, measuring gaze. \"Jax. Good. That's yours, then, and you can carry it with you. \" She does not rise from her seat at the table, but her voice carries. \"You're in Valespire, in the infirmary of the great cathedral bound to Pellane. You're a champion set against the Ash Court—the ritual went through, whether it was done properly or not, and that's what's happening here: a war that's been going on, and a summoning we were sending for. a few people still is going to hold you here. If you walk out that door, you walk out. The city is out there, and a few people still has to say 'please' to a door. \" As you put your hand to the iron band, the cold bites your palm. The door is solid, antique, and heavy. A thin passage of night air whistles through the notch. There is the smell of wet stone, and something far off like a harp, or a shout, or a mill. Beyond that iron, the city of a new world waits for you.",
+      "timestamp": 1787676772455,
+      "systemLog": [
+        "— no file. —"
+      ]
+    },
+    {
+      "id": "twx9o3r7i",
+      "turn": 9,
+      "role": "player",
+      "content": "Leave and explore",
+      "timestamp": 1787678510530
+    },
+    {
+      "id": "wbk1vtlvc",
+      "turn": 10,
+      "role": "gm",
+      "content": "The iron band was cold and slick in your grip. You leaned into the door—once, twice—and it gave with a groan that rolled up through the vaulting above you. Night and rain hit your face in the same breath. Cobblestones glittered under the street lamps, each puddle a spilled mirror of a dark city. Behind you, the Warden's voice carried over the noise of the closing door: \"The world has teeth out there, Pactborn. The signing isn't going anywhere. \" The door shut with a soft thud. Winding around you: shouts—not close, but jagged, half-muffled ahead down a narrow lane where torches move in a ragged fire. To the right, the street widens toward a bridge, houses shuttered, smoke curling limp from chimney pots. The rain mists in layers, climbing the sides of the cathedral behind you like a slow tide. You're out. No bars, no chains, no eyes on you. Just the cold, the shouting, and the deep and unswerving whole of Valespire, still deciding what you will be.",
+      "timestamp": 1787678539836,
+      "systemLog": []
+    },
+    {
+      "id": "ubk98mfj9",
+      "turn": 10,
+      "role": "player",
+      "content": "Find a quiet space and give your self a moment then check the blue pannel that has followed. What is it and what info does it have inside it",
+      "timestamp": 1787678696631
+    },
+    {
+      "id": "ytu5qkm5z",
+      "turn": 11,
+      "role": "gm",
+      "content": "The rain was already soaking through your shoulders before you found it — a recessed doorway between a shuttered cobbler's and a barbershop with a cracked sign, the awning overhead shedding water in a steady curtain. You pressed your back against the damp wood, let the shouting of the crowd fall behind you. Just you, the hiss of rain, and the glow. The blue panel had kept pace the whole time, hovering at the edge of your vision like a patient moth. Now, in the quiet, it brightened — a soft rectangle of light with no visible source, thin as glass, cool to look at. It waited. Then text knitted itself across its surface in crisp, clean lines. Below the vitals, a smaller line of text blinks once, twice — as if waiting for you to notice it. It reads: <system>Two stamps detected: [Pactborn] / [Calamity Mark]. Appraisal required for further detail.</system> The blue light casts a thin halo on the wet cobbles at your feet. It doesn't speak — it just waits for you to reach out, to touch, to ask. --- people are present; people are shouting; night; outdoors.",
+      "timestamp": 1787678768255,
+      "systemLog": []
+    },
+    {
+      "id": "rx9cj9op9",
+      "turn": 11,
+      "role": "player",
+      "content": "I'm not sure if this is normal round here. Walk round the streets take in your souroundings and listen to what people are talking about as you pass them",
+      "timestamp": 1787679354068
+    },
+    {
+      "id": "251pvfgjh",
+      "turn": 12,
+      "role": "gm",
+      "content": "Rain slid off the awning in sheets as you stepped out of the doorway and onto the pavement. The crowd noise hit you before the cold did—a rolling murmur of voices under the drumming rain, punctuated by a cart horse's hooves and the creak of wheels. You moved with the flow, shoulders set, not fast, not slow, just another body under a limp collar and wet shoulders. Street by street, the voices came to you in fragments. \"—three notches on the wall, and mine still ain't paid—\" \"—say the ritual worked. Actually *worked*—\" \"—the official coin's worth less than the paper it's printed on, that's why—\" Through an open shutter: *\"—heard they summoned one. A real one. Old blood, like the war's worst year. \"* The voice goes quiet as you pass, replaced by a low whistle. Nothing there marks you as the topic—a few people still's leaning in your direction. To the street, you're just another stranger stepping through lamplight and rain. The blue panel hovers, patient, at the edge of your vision. The city's pulse is here if you want it: talk of war, coin, and someone new— The panel flickers, once, almost like it's waiting for you to ask again.",
+      "timestamp": 1787679438556,
+      "systemLog": [
+        "[Perception check: SUCCESS — no mechanical changes]"
+      ]
+    },
+    {
+      "id": "whf705sjk",
+      "turn": 12,
+      "role": "player",
+      "content": "Have a look around and ask some one where you can get work. Explain your from a far away place and would like to earn a place to sleep",
+      "timestamp": 1787679673189
+    }
+  ],
+  "recentRolls": [
+    {
+      "id": "bmonjum3z",
+      "turn": 3,
+      "raw": "[Code RNG] SUCCESS (Dialogue — no contested check)"
+    },
+    {
+      "id": "83t0yviyv",
+      "turn": 4,
+      "raw": "[Code RNG] SUCCESS (Dialogue — no contested check)"
+    },
+    {
+      "id": "hgn6rsja5",
+      "turn": 5,
+      "raw": "[Code RNG] SUCCESS (General check: d20 18 + mod 2 = 20 vs DC 12)"
+    },
+    {
+      "id": "oiof2mkqu",
+      "turn": 6,
+      "raw": "[Code RNG] SUCCESS (Dialogue — no contested check)"
+    },
+    {
+      "id": "pm8yla0yf",
+      "turn": 7,
+      "raw": "[Code RNG] SUCCESS (Dialogue — no contested check)"
+    },
+    {
+      "id": "b4u7kuotz",
+      "turn": 8,
+      "raw": "[Code RNG] FAILURE (General check: d20 6 + mod 2 = 8 vs DC 12)"
+    },
+    {
+      "id": "mkyound6c",
+      "turn": 9,
+      "raw": "[Code RNG] SUCCESS (Athletics: d20 11 + mod 2 = 13 vs DC 12)"
+    },
+    {
+      "id": "8dxel4lga",
+      "turn": 10,
+      "raw": "[Code RNG] SUCCESS (Athletics: d20 16 + mod 2 = 18 vs DC 12)"
+    },
+    {
+      "id": "f3jhx3p3a",
+      "turn": 11,
+      "raw": "[Code RNG] SUCCESS (Dialogue — no contested check)"
+    },
+    {
+      "id": "pol2tvzet",
+      "turn": 12,
+      "raw": "[Code RNG] SUCCESS (Perception: d20 12 + mod 0 = 12 vs DC 12)"
+    }
+  ],
+  "eventLog": [
+    {
+      "timestamp": "2026-08-25T16:07:46.613Z",
+      "type": "SESSION",
+      "message": "Play session started (new-game)",
+      "data": {
+        "sessionId": "a81b65f0-8393-41f1-9b7d-efc70492046a",
+        "reason": "new-game"
+      },
+      "telemetry": {
+        "deviceId": "0d4efcbc-ad46-4ddc-917a-b9ef095b6f68",
+        "sessionId": "a81b65f0-8393-41f1-9b7d-efc70492046a",
+        "sessionStartedAt": "2026-08-25T16:07:46.613Z",
+        "platform": "Android (Not=A?Brand, Google Chrome, Chromium)",
+        "userAgent": "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Mobile Safari/537.36",
+        "screenResolution": "384x832",
+        "viewport": "384x693",
+        "pixelRatio": 2.8125,
+        "language": "en-GB",
+        "online": true
+      }
+    },
+    {
+      "timestamp": "2026-08-25T16:08:22.282Z",
+      "type": "TURN_START",
+      "message": "sendAction invoked",
+      "data": {
+        "input": "Jax",
+        "currentTurn": 1,
+        "busy": false
+      },
+      "telemetry": {
+        "deviceId": "0d4efcbc-ad46-4ddc-917a-b9ef095b6f68",
+        "sessionId": "a81b65f0-8393-41f1-9b7d-efc70492046a",
+        "sessionStartedAt": "2026-08-25T16:07:46.613Z",
+        "platform": "Android (Not=A?Brand, Google Chrome, Chromium)",
+        "userAgent": "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Mobile Safari/537.36",
+        "screenResolution": "384x832",
+        "viewport": "384x693",
+        "pixelRatio": 2.8125,
+        "language": "en-GB",
+        "online": true
+      }
+    },
+    {
+      "timestamp": "2026-08-25T16:09:21.273Z",
+      "type": "TURN_START",
+      "message": "sendAction invoked",
+      "data": {
+        "input": "Ask whats going on where am I?",
+        "currentTurn": 2,
+        "busy": false
+      },
+      "telemetry": {
+        "deviceId": "0d4efcbc-ad46-4ddc-917a-b9ef095b6f68",
+        "sessionId": "a81b65f0-8393-41f1-9b7d-efc70492046a",
+        "sessionStartedAt": "2026-08-25T16:07:46.613Z",
+        "platform": "Android (Not=A?Brand, Google Chrome, Chromium)",
+        "userAgent": "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Mobile Safari/537.36",
+        "screenResolution": "384x832",
+        "viewport": "384x693",
+        "pixelRatio": 2.8125,
+        "language": "en-GB",
+        "online": true
+      }
+    },
+    {
+      "timestamp": "2026-08-25T16:14:17.791Z",
+      "type": "TURN_START",
+      "message": "sendAction invoked",
+      "data": {
+        "input": "So you summoned me? Why for what reason? What do you expect from me",
+        "currentTurn": 3,
+        "busy": false
+      },
+      "telemetry": {
+        "deviceId": "0d4efcbc-ad46-4ddc-917a-b9ef095b6f68",
+        "sessionId": "a81b65f0-8393-41f1-9b7d-efc70492046a",
+        "sessionStartedAt": "2026-08-25T16:07:46.613Z",
+        "platform": "Android (Not=A?Brand, Google Chrome, Chromium)",
+        "userAgent": "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Mobile Safari/537.36",
+        "screenResolution": "384x832",
+        "viewport": "384x693",
+        "pixelRatio": 2.8125,
+        "language": "en-GB",
+        "online": true
+      }
+    },
+    {
+      "timestamp": "2026-08-25T16:14:49.011Z",
+      "type": "WARN",
+      "message": "Unresolved or empty action narrative — resolution retry",
+      "data": {
+        "turn": 3,
+        "intent": "talk",
+        "empty": false,
+        "factLocks": [
+          "weapon"
+        ],
+        "obligationMissing": [
+          "open_ask"
+        ],
+        "sameBeat": false
+      },
+      "telemetry": {
+        "deviceId": "0d4efcbc-ad46-4ddc-917a-b9ef095b6f68",
+        "sessionId": "a81b65f0-8393-41f1-9b7d-efc70492046a",
+        "sessionStartedAt": "2026-08-25T16:07:46.613Z",
+        "platform": "Android (Not=A?Brand, Google Chrome, Chromium)",
+        "userAgent": "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Mobile Safari/537.36",
+        "screenResolution": "384x832",
+        "viewport": "384x693",
+        "pixelRatio": 2.8125,
+        "language": "en-GB",
+        "online": true
+      }
+    },
+    {
+      "timestamp": "2026-08-25T16:18:33.023Z",
+      "type": "TURN_START",
+      "message": "sendAction invoked",
+      "data": {
+        "input": "Erm you sure the ritual worked right? Some one to win your war? ",
+        "currentTurn": 4,
+        "busy": false
+      },
+      "telemetry": {
+        "deviceId": "0d4efcbc-ad46-4ddc-917a-b9ef095b6f68",
+        "sessionId": "a81b65f0-8393-41f1-9b7d-efc70492046a",
+        "sessionStartedAt": "2026-08-25T16:07:46.613Z",
+        "platform": "Android (Not=A?Brand, Google Chrome, Chromium)",
+        "userAgent": "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Mobile Safari/537.36",
+        "screenResolution": "384x832",
+        "viewport": "384x693",
+        "pixelRatio": 2.8125,
+        "language": "en-GB",
+        "online": true
+      }
+    },
+    {
+      "timestamp": "2026-08-25T16:18:56.123Z",
+      "type": "WARN",
+      "message": "Unresolved or empty action narrative — resolution retry",
+      "data": {
+        "turn": 4,
+        "intent": "other",
+        "empty": false,
+        "factLocks": [
+          "weapon"
+        ],
+        "obligationMissing": [
+          "answer",
+          "open_ask"
+        ],
+        "sameBeat": false
+      },
+      "telemetry": {
+        "deviceId": "0d4efcbc-ad46-4ddc-917a-b9ef095b6f68",
+        "sessionId": "a81b65f0-8393-41f1-9b7d-efc70492046a",
+        "sessionStartedAt": "2026-08-25T16:07:46.613Z",
+        "platform": "Android (Not=A?Brand, Google Chrome, Chromium)",
+        "userAgent": "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Mobile Safari/537.36",
+        "screenResolution": "384x832",
+        "viewport": "384x693",
+        "pixelRatio": 2.8125,
+        "language": "en-GB",
+        "online": true
+      }
+    },
+    {
+      "timestamp": "2026-08-25T16:20:11.135Z",
+      "type": "ERROR",
+      "message": "[ai-retry] retries exhausted or non-retryable",
+      "data": {
+        "name": "Error",
+        "message": "The System is still compiling. Try again, or cancel and keep the last scene."
+      },
+      "telemetry": {
+        "deviceId": "0d4efcbc-ad46-4ddc-917a-b9ef095b6f68",
+        "sessionId": "a81b65f0-8393-41f1-9b7d-efc70492046a",
+        "sessionStartedAt": "2026-08-25T16:07:46.613Z",
+        "platform": "Android (Not=A?Brand, Google Chrome, Chromium)",
+        "userAgent": "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Mobile Safari/537.36",
+        "screenResolution": "384x832",
+        "viewport": "384x693",
+        "pixelRatio": 2.8125,
+        "language": "en-GB",
+        "online": true
+      }
+    },
+    {
+      "timestamp": "2026-08-25T16:20:11.137Z",
+      "type": "ERROR",
+      "message": "[ai-proxy] GM proxy failed and client GM path is disabled",
+      "data": {
+        "message": "The System is still compiling. Try again, or cancel and keep the last scene."
+      },
+      "telemetry": {
+        "deviceId": "0d4efcbc-ad46-4ddc-917a-b9ef095b6f68",
+        "sessionId": "a81b65f0-8393-41f1-9b7d-efc70492046a",
+        "sessionStartedAt": "2026-08-25T16:07:46.613Z",
+        "platform": "Android (Not=A?Brand, Google Chrome, Chromium)",
+        "userAgent": "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Mobile Safari/537.36",
+        "screenResolution": "384x832",
+        "viewport": "384x693",
+        "pixelRatio": 2.8125,
+        "language": "en-GB",
+        "online": true
+      }
+    },
+    {
+      "timestamp": "2026-08-25T16:20:11.139Z",
+      "type": "WARN",
+      "message": "GM transport auto-retry",
+      "data": {
+        "attempt": 1,
+        "kind": "timeout",
+        "timeoutMs": 75000,
+        "host": "wzgsrpwhmgffcyohvtko.supabase.co"
+      },
+      "telemetry": {
+        "deviceId": "0d4efcbc-ad46-4ddc-917a-b9ef095b6f68",
+        "sessionId": "a81b65f0-8393-41f1-9b7d-efc70492046a",
+        "sessionStartedAt": "2026-08-25T16:07:46.613Z",
+        "platform": "Android (Not=A?Brand, Google Chrome, Chromium)",
+        "userAgent": "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Mobile Safari/537.36",
+        "screenResolution": "384x832",
+        "viewport": "384x693",
+        "pixelRatio": 2.8125,
+        "language": "en-GB",
+        "online": true
+      }
+    },
+    {
+      "timestamp": "2026-08-25T16:20:26.880Z",
+      "type": "WARN",
+      "message": "[console] Unable to determine content-length from response headers. Will expand buffer when needed.",
+      "telemetry": {
+        "deviceId": "0d4efcbc-ad46-4ddc-917a-b9ef095b6f68",
+        "sessionId": "a81b65f0-8393-41f1-9b7d-efc70492046a",
+        "sessionStartedAt": "2026-08-25T16:07:46.613Z",
+        "platform": "Android (Not=A?Brand, Google Chrome, Chromium)",
+        "userAgent": "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Mobile Safari/537.36",
+        "screenResolution": "384x832",
+        "viewport": "384x693",
+        "pixelRatio": 2.8125,
+        "language": "en-GB",
+        "online": true
+      }
+    },
+    {
+      "timestamp": "2026-08-25T16:20:26.882Z",
+      "type": "WARN",
+      "message": "[console] Unable to determine content-length from response headers. Will expand buffer when needed.",
+      "telemetry": {
+        "deviceId": "0d4efcbc-ad46-4ddc-917a-b9ef095b6f68",
+        "sessionId": "a81b65f0-8393-41f1-9b7d-efc70492046a",
+        "sessionStartedAt": "2026-08-25T16:07:46.613Z",
+        "platform": "Android (Not=A?Brand, Google Chrome, Chromium)",
+        "userAgent": "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Mobile Safari/537.36",
+        "screenResolution": "384x832",
+        "viewport": "384x693",
+        "pixelRatio": 2.8125,
+        "language": "en-GB",
+        "online": true
+      }
+    },
+    {
+      "timestamp": "2026-08-25T16:20:26.882Z",
+      "type": "WARN",
+      "message": "[console] Unable to determine content-length from response headers. Will expand buffer when needed.",
+      "telemetry": {
+        "deviceId": "0d4efcbc-ad46-4ddc-917a-b9ef095b6f68",
+        "sessionId": "a81b65f0-8393-41f1-9b7d-efc70492046a",
+        "sessionStartedAt": "2026-08-25T16:07:46.613Z",
+        "platform": "Android (Not=A?Brand, Google Chrome, Chromium)",
+        "userAgent": "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Mobile Safari/537.36",
+        "screenResolution": "384x832",
+        "viewport": "384x693",
+        "pixelRatio": 2.8125,
+        "language": "en-GB",
+        "online": true
+      }
+    },
+    {
+      "timestamp": "2026-08-25T16:20:26.884Z",
+      "type": "WARN",
+      "message": "[console] [Embeddings] Failed to load model (will use keyword fallback): Unexpected token '<', \"<!doctype \"... is not valid JSON",
+      "telemetry": {
+        "deviceId": "0d4efcbc-ad46-4ddc-917a-b9ef095b6f68",
+        "sessionId": "a81b65f0-8393-41f1-9b7d-efc70492046a",
+        "sessionStartedAt": "2026-08-25T16:07:46.613Z",
+        "platform": "Android (Not=A?Brand, Google Chrome, Chromium)",
+        "userAgent": "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Mobile Safari/537.36",
+        "screenResolution": "384x832",
+        "viewport": "384x693",
+        "pixelRatio": 2.8125,
+        "language": "en-GB",
+        "online": true
+      }
+    },
+    {
+      "timestamp": "2026-08-25T16:23:41.966Z",
+      "type": "TURN_START",
+      "message": "sendAction invoked",
+      "data": {
+        "input": "I dont even know this world or the side im on right now. I will help if I can but I dont know what i",
+        "currentTurn": 5,
+        "busy": false
+      },
+      "telemetry": {
+        "deviceId": "0d4efcbc-ad46-4ddc-917a-b9ef095b6f68",
+        "sessionId": "a81b65f0-8393-41f1-9b7d-efc70492046a",
+        "sessionStartedAt": "2026-08-25T16:07:46.613Z",
+        "platform": "Android (Not=A?Brand, Google Chrome, Chromium)",
+        "userAgent": "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Mobile Safari/537.36",
+        "screenResolution": "384x832",
+        "viewport": "384x693",
+        "pixelRatio": 2.8125,
+        "language": "en-GB",
+        "online": true
+      }
+    },
+    {
+      "timestamp": "2026-08-25T16:24:11.777Z",
+      "type": "ERROR",
+      "message": "[ai-retry] retries exhausted or non-retryable",
+      "data": {
+        "name": "Error",
+        "message": "The AI provider returned no content."
+      },
+      "telemetry": {
+        "deviceId": "0d4efcbc-ad46-4ddc-917a-b9ef095b6f68",
+        "sessionId": "a81b65f0-8393-41f1-9b7d-efc70492046a",
+        "sessionStartedAt": "2026-08-25T16:07:46.613Z",
+        "platform": "Android (Not=A?Brand, Google Chrome, Chromium)",
+        "userAgent": "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Mobile Safari/537.36",
+        "screenResolution": "384x832",
+        "viewport": "384x693",
+        "pixelRatio": 2.8125,
+        "language": "en-GB",
+        "online": true
+      }
+    },
+    {
+      "timestamp": "2026-08-25T16:24:11.778Z",
+      "type": "ERROR",
+      "message": "[ai-proxy] GM proxy failed and client GM path is disabled",
+      "data": {
+        "message": "The AI provider returned no content."
+      },
+      "telemetry": {
+        "deviceId": "0d4efcbc-ad46-4ddc-917a-b9ef095b6f68",
+        "sessionId": "a81b65f0-8393-41f1-9b7d-efc70492046a",
+        "sessionStartedAt": "2026-08-25T16:07:46.613Z",
+        "platform": "Android (Not=A?Brand, Google Chrome, Chromium)",
+        "userAgent": "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Mobile Safari/537.36",
+        "screenResolution": "384x832",
+        "viewport": "384x693",
+        "pixelRatio": 2.8125,
+        "language": "en-GB",
+        "online": true
+      }
+    },
+    {
+      "timestamp": "2026-08-25T16:24:11.784Z",
+      "type": "ERROR",
+      "message": "sendAction failed",
+      "data": {
+        "error": "The AI provider returned no content.",
+        "stack": "Error: The AI provider returned no content.\n    at https://www.synapticgm.com/assets/index-DzwlyQPU.js:586:8502\n    at async E3 (https://www.synapticgm.com/assets/index-DzwlyQPU.js:581:2901)\n    at async Yh (https://www.synapticgm.com/assets/index-DzwlyQPU.js:842:11969)\n    at async Rd (https://www.synapticgm.com/assets/index-DzwlyQPU.js:1164:758)\n    at async Object.<anonymous> (https://www.synapticgm.com/assets/index-DzwlyQPU.js:1164:1159)"
+      },
+      "telemetry": {
+        "deviceId": "0d4efcbc-ad46-4ddc-917a-b9ef095b6f68",
+        "sessionId": "a81b65f0-8393-41f1-9b7d-efc70492046a",
+        "sessionStartedAt": "2026-08-25T16:07:46.613Z",
+        "platform": "Android (Not=A?Brand, Google Chrome, Chromium)",
+        "userAgent": "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Mobile Safari/537.36",
+        "screenResolution": "384x832",
+        "viewport": "384x693",
+        "pixelRatio": 2.8125,
+        "language": "en-GB",
+        "online": true
+      }
+    },
+    {
+      "timestamp": "2026-08-25T16:24:11.786Z",
+      "type": "WARN",
+      "message": "turn fail classified",
+      "data": {
+        "kind": "unknown",
+        "attempt": 0,
+        "host": "wzgsrpwhmgffcyohvtko.supabase.co",
+        "errMsg": "The AI provider returned no content.",
+        "transportRetriesUsed": 0
+      },
+      "telemetry": {
+        "deviceId": "0d4efcbc-ad46-4ddc-917a-b9ef095b6f68",
+        "sessionId": "a81b65f0-8393-41f1-9b7d-efc70492046a",
+        "sessionStartedAt": "2026-08-25T16:07:46.613Z",
+        "platform": "Android (Not=A?Brand, Google Chrome, Chromium)",
+        "userAgent": "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Mobile Safari/537.36",
+        "screenResolution": "384x832",
+        "viewport": "384x693",
+        "pixelRatio": 2.8125,
+        "language": "en-GB",
+        "online": true
+      }
+    },
+    {
+      "timestamp": "2026-08-25T16:24:19.606Z",
+      "type": "TURN_START",
+      "message": "sendAction invoked",
+      "data": {
+        "input": "I dont even know this world or the side im on right now. I will help if I can but I dont know what i",
+        "currentTurn": 5,
+        "busy": false
+      },
+      "telemetry": {
+        "deviceId": "0d4efcbc-ad46-4ddc-917a-b9ef095b6f68",
+        "sessionId": "a81b65f0-8393-41f1-9b7d-efc70492046a",
+        "sessionStartedAt": "2026-08-25T16:07:46.613Z",
+        "platform": "Android (Not=A?Brand, Google Chrome, Chromium)",
+        "userAgent": "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Mobile Safari/537.36",
+        "screenResolution": "384x832",
+        "viewport": "384x693",
+        "pixelRatio": 2.8125,
+        "language": "en-GB",
+        "online": true
+      }
+    },
+    {
+      "timestamp": "2026-08-25T16:24:41.596Z",
+      "type": "WARN",
+      "message": "Unresolved or empty action narrative — resolution retry",
+      "data": {
+        "turn": 5,
+        "intent": "talk",
+        "empty": false,
+        "factLocks": [],
+        "obligationMissing": [
+          "open_ask"
+        ],
+        "sameBeat": false
+      },
+      "telemetry": {
+        "deviceId": "0d4efcbc-ad46-4ddc-917a-b9ef095b6f68",
+        "sessionId": "a81b65f0-8393-41f1-9b7d-efc70492046a",
+        "sessionStartedAt": "2026-08-25T16:07:46.613Z",
+        "platform": "Android (Not=A?Brand, Google Chrome, Chromium)",
+        "userAgent": "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Mobile Safari/537.36",
+        "screenResolution": "384x832",
+        "viewport": "384x693",
+        "pixelRatio": 2.8125,
+        "language": "en-GB",
+        "online": true
+      }
+    },
+    {
+      "timestamp": "2026-08-25T16:30:08.909Z",
+      "type": "TURN_START",
+      "message": "sendAction invoked",
+      "data": {
+        "input": "What i want is to see what it is your asking me to side with. Let me explore and see the world you p",
+        "currentTurn": 6,
+        "busy": false
+      },
+      "telemetry": {
+        "deviceId": "0d4efcbc-ad46-4ddc-917a-b9ef095b6f68",
+        "sessionId": "a81b65f0-8393-41f1-9b7d-efc70492046a",
+        "sessionStartedAt": "2026-08-25T16:07:46.613Z",
+        "platform": "Android (Not=A?Brand, Google Chrome, Chromium)",
+        "userAgent": "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Mobile Safari/537.36",
+        "screenResolution": "384x832",
+        "viewport": "384x693",
+        "pixelRatio": 2.8125,
+        "language": "en-GB",
+        "online": true
+      }
+    },
+    {
+      "timestamp": "2026-08-25T16:31:24.547Z",
+      "type": "ERROR",
+      "message": "[ai-retry] retries exhausted or non-retryable",
+      "data": {
+        "name": "Error",
+        "message": "The System is still compiling. Try again, or cancel and keep the last scene."
+      },
+      "telemetry": {
+        "deviceId": "0d4efcbc-ad46-4ddc-917a-b9ef095b6f68",
+        "sessionId": "a81b65f0-8393-41f1-9b7d-efc70492046a",
+        "sessionStartedAt": "2026-08-25T16:07:46.613Z",
+        "platform": "Android (Not=A?Brand, Google Chrome, Chromium)",
+        "userAgent": "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Mobile Safari/537.36",
+        "screenResolution": "384x832",
+        "viewport": "384x693",
+        "pixelRatio": 2.8125,
+        "language": "en-GB",
+        "online": true
+      }
+    },
+    {
+      "timestamp": "2026-08-25T16:31:24.548Z",
+      "type": "ERROR",
+      "message": "[ai-proxy] GM proxy failed and client GM path is disabled",
+      "data": {
+        "message": "The System is still compiling. Try again, or cancel and keep the last scene."
+      },
+      "telemetry": {
+        "deviceId": "0d4efcbc-ad46-4ddc-917a-b9ef095b6f68",
+        "sessionId": "a81b65f0-8393-41f1-9b7d-efc70492046a",
+        "sessionStartedAt": "2026-08-25T16:07:46.613Z",
+        "platform": "Android (Not=A?Brand, Google Chrome, Chromium)",
+        "userAgent": "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Mobile Safari/537.36",
+        "screenResolution": "384x832",
+        "viewport": "384x693",
+        "pixelRatio": 2.8125,
+        "language": "en-GB",
+        "online": true
+      }
+    },
+    {
+      "timestamp": "2026-08-25T16:31:24.549Z",
+      "type": "WARN",
+      "message": "GM transport auto-retry",
+      "data": {
+        "attempt": 1,
+        "kind": "timeout",
+        "timeoutMs": 75000,
+        "host": "wzgsrpwhmgffcyohvtko.supabase.co"
+      },
+      "telemetry": {
+        "deviceId": "0d4efcbc-ad46-4ddc-917a-b9ef095b6f68",
+        "sessionId": "a81b65f0-8393-41f1-9b7d-efc70492046a",
+        "sessionStartedAt": "2026-08-25T16:07:46.613Z",
+        "platform": "Android (Not=A?Brand, Google Chrome, Chromium)",
+        "userAgent": "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Mobile Safari/537.36",
+        "screenResolution": "384x832",
+        "viewport": "384x693",
+        "pixelRatio": 2.8125,
+        "language": "en-GB",
+        "online": true
+      }
+    },
+    {
+      "timestamp": "2026-08-25T16:31:47.804Z",
+      "type": "WARN",
+      "message": "Unresolved or empty action narrative — resolution retry",
+      "data": {
+        "turn": 6,
+        "intent": "talk",
+        "empty": false,
+        "factLocks": [],
+        "obligationMissing": [
+          "open_ask"
+        ],
+        "sameBeat": false
+      },
+      "telemetry": {
+        "deviceId": "0d4efcbc-ad46-4ddc-917a-b9ef095b6f68",
+        "sessionId": "a81b65f0-8393-41f1-9b7d-efc70492046a",
+        "sessionStartedAt": "2026-08-25T16:07:46.613Z",
+        "platform": "Android (Not=A?Brand, Google Chrome, Chromium)",
+        "userAgent": "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Mobile Safari/537.36",
+        "screenResolution": "384x832",
+        "viewport": "384x693",
+        "pixelRatio": 2.8125,
+        "language": "en-GB",
+        "online": true
+      }
+    },
+    {
+      "timestamp": "2026-08-25T16:32:20.153Z",
+      "type": "ERROR",
+      "message": "[ai-retry] retries exhausted or non-retryable",
+      "data": {
+        "name": "Error",
+        "message": "The AI provider returned no content."
+      },
+      "telemetry": {
+        "deviceId": "0d4efcbc-ad46-4ddc-917a-b9ef095b6f68",
+        "sessionId": "a81b65f0-8393-41f1-9b7d-efc70492046a",
+        "sessionStartedAt": "2026-08-25T16:07:46.613Z",
+        "platform": "Android (Not=A?Brand, Google Chrome, Chromium)",
+        "userAgent": "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Mobile Safari/537.36",
+        "screenResolution": "384x832",
+        "viewport": "384x693",
+        "pixelRatio": 2.8125,
+        "language": "en-GB",
+        "online": true
+      }
+    },
+    {
+      "timestamp": "2026-08-25T16:32:20.154Z",
+      "type": "ERROR",
+      "message": "[ai-proxy] GM proxy failed and client GM path is disabled",
+      "data": {
+        "message": "The AI provider returned no content."
+      },
+      "telemetry": {
+        "deviceId": "0d4efcbc-ad46-4ddc-917a-b9ef095b6f68",
+        "sessionId": "a81b65f0-8393-41f1-9b7d-efc70492046a",
+        "sessionStartedAt": "2026-08-25T16:07:46.613Z",
+        "platform": "Android (Not=A?Brand, Google Chrome, Chromium)",
+        "userAgent": "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Mobile Safari/537.36",
+        "screenResolution": "384x832",
+        "viewport": "384x693",
+        "pixelRatio": 2.8125,
+        "language": "en-GB",
+        "online": true
+      }
+    },
+    {
+      "timestamp": "2026-08-25T16:32:20.155Z",
+      "type": "ERROR",
+      "message": "sendAction failed",
+      "data": {
+        "error": "The AI provider returned no content.",
+        "stack": "Error: The AI provider returned no content.\n    at https://www.synapticgm.com/assets/index-DzwlyQPU.js:586:8502\n    at async E3 (https://www.synapticgm.com/assets/index-DzwlyQPU.js:581:2901)\n    at async Yh (https://www.synapticgm.com/assets/index-DzwlyQPU.js:842:11969)\n    at async Rd (https://www.synapticgm.com/assets/index-DzwlyQPU.js:1164:758)\n    at async Object.<anonymous> (https://www.synapticgm.com/assets/index-DzwlyQPU.js:1166:39)"
+      },
+      "telemetry": {
+        "deviceId": "0d4efcbc-ad46-4ddc-917a-b9ef095b6f68",
+        "sessionId": "a81b65f0-8393-41f1-9b7d-efc70492046a",
+        "sessionStartedAt": "2026-08-25T16:07:46.613Z",
+        "platform": "Android (Not=A?Brand, Google Chrome, Chromium)",
+        "userAgent": "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Mobile Safari/537.36",
+        "screenResolution": "384x832",
+        "viewport": "384x693",
+        "pixelRatio": 2.8125,
+        "language": "en-GB",
+        "online": true
+      }
+    },
+    {
+      "timestamp": "2026-08-25T16:32:20.157Z",
+      "type": "WARN",
+      "message": "turn fail classified",
+      "data": {
+        "kind": "unknown",
+        "attempt": 1,
+        "host": "wzgsrpwhmgffcyohvtko.supabase.co",
+        "errMsg": "The AI provider returned no content.",
+        "transportRetriesUsed": 1
+      },
+      "telemetry": {
+        "deviceId": "0d4efcbc-ad46-4ddc-917a-b9ef095b6f68",
+        "sessionId": "a81b65f0-8393-41f1-9b7d-efc70492046a",
+        "sessionStartedAt": "2026-08-25T16:07:46.613Z",
+        "platform": "Android (Not=A?Brand, Google Chrome, Chromium)",
+        "userAgent": "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Mobile Safari/537.36",
+        "screenResolution": "384x832",
+        "viewport": "384x693",
+        "pixelRatio": 2.8125,
+        "language": "en-GB",
+        "online": true
+      }
+    },
+    {
+      "timestamp": "2026-08-25T16:32:32.604Z",
+      "type": "TURN_START",
+      "message": "sendAction invoked",
+      "data": {
+        "input": "What i want is to see what it is your asking me to side with. Let me explore and see the world you p",
+        "currentTurn": 6,
+        "busy": false
+      },
+      "telemetry": {
+        "deviceId": "0d4efcbc-ad46-4ddc-917a-b9ef095b6f68",
+        "sessionId": "a81b65f0-8393-41f1-9b7d-efc70492046a",
+        "sessionStartedAt": "2026-08-25T16:07:46.613Z",
+        "platform": "Android (Not=A?Brand, Google Chrome, Chromium)",
+        "userAgent": "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Mobile Safari/537.36",
+        "screenResolution": "384x832",
+        "viewport": "384x693",
+        "pixelRatio": 2.8125,
+        "language": "en-GB",
+        "online": true
+      }
+    },
+    {
+      "timestamp": "2026-08-25T16:46:15.676Z",
+      "type": "TURN_START",
+      "message": "sendAction invoked",
+      "data": {
+        "input": "Leave via the door they suggested and make your way to the street",
+        "currentTurn": 7,
+        "busy": false
+      },
+      "telemetry": {
+        "deviceId": "0d4efcbc-ad46-4ddc-917a-b9ef095b6f68",
+        "sessionId": "a81b65f0-8393-41f1-9b7d-efc70492046a",
+        "sessionStartedAt": "2026-08-25T16:07:46.613Z",
+        "platform": "Android (Not=A?Brand, Google Chrome, Chromium)",
+        "userAgent": "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Mobile Safari/537.36",
+        "screenResolution": "384x832",
+        "viewport": "384x693",
+        "pixelRatio": 2.8125,
+        "language": "en-GB",
+        "online": true
+      }
+    },
+    {
+      "timestamp": "2026-08-25T16:50:14.546Z",
+      "type": "TURN_START",
+      "message": "sendAction invoked",
+      "data": {
+        "input": "My name is jax is wish to leave please",
+        "currentTurn": 8,
+        "busy": false
+      },
+      "telemetry": {
+        "deviceId": "0d4efcbc-ad46-4ddc-917a-b9ef095b6f68",
+        "sessionId": "a81b65f0-8393-41f1-9b7d-efc70492046a",
+        "sessionStartedAt": "2026-08-25T16:07:46.613Z",
+        "platform": "Android (Not=A?Brand, Google Chrome, Chromium)",
+        "userAgent": "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Mobile Safari/537.36",
+        "screenResolution": "384x832",
+        "viewport": "384x693",
+        "pixelRatio": 2.8125,
+        "language": "en-GB",
+        "online": true
+      }
+    },
+    {
+      "timestamp": "2026-08-25T16:50:20.496Z",
+      "type": "ERROR",
+      "message": "[ai-retry] retries exhausted or non-retryable",
+      "data": {
+        "name": "Error",
+        "message": "The AI provider returned no content."
+      },
+      "telemetry": {
+        "deviceId": "0d4efcbc-ad46-4ddc-917a-b9ef095b6f68",
+        "sessionId": "a81b65f0-8393-41f1-9b7d-efc70492046a",
+        "sessionStartedAt": "2026-08-25T16:07:46.613Z",
+        "platform": "Android (Not=A?Brand, Google Chrome, Chromium)",
+        "userAgent": "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Mobile Safari/537.36",
+        "screenResolution": "384x832",
+        "viewport": "384x693",
+        "pixelRatio": 2.8125,
+        "language": "en-GB",
+        "online": true
+      }
+    },
+    {
+      "timestamp": "2026-08-25T16:50:20.497Z",
+      "type": "ERROR",
+      "message": "[ai-proxy] GM proxy failed and client GM path is disabled",
+      "data": {
+        "message": "The AI provider returned no content."
+      },
+      "telemetry": {
+        "deviceId": "0d4efcbc-ad46-4ddc-917a-b9ef095b6f68",
+        "sessionId": "a81b65f0-8393-41f1-9b7d-efc70492046a",
+        "sessionStartedAt": "2026-08-25T16:07:46.613Z",
+        "platform": "Android (Not=A?Brand, Google Chrome, Chromium)",
+        "userAgent": "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Mobile Safari/537.36",
+        "screenResolution": "384x832",
+        "viewport": "384x693",
+        "pixelRatio": 2.8125,
+        "language": "en-GB",
+        "online": true
+      }
+    },
+    {
+      "timestamp": "2026-08-25T16:50:20.499Z",
+      "type": "ERROR",
+      "message": "sendAction failed",
+      "data": {
+        "error": "The AI provider returned no content.",
+        "stack": "Error: The AI provider returned no content.\n    at https://www.synapticgm.com/assets/index-DzwlyQPU.js:586:8502\n    at async E3 (https://www.synapticgm.com/assets/index-DzwlyQPU.js:581:2901)\n    at async Yh (https://www.synapticgm.com/assets/index-DzwlyQPU.js:842:11969)\n    at async Rd (https://www.synapticgm.com/assets/index-DzwlyQPU.js:1164:758)\n    at async Object.<anonymous> (https://www.synapticgm.com/assets/index-DzwlyQPU.js:1164:1159)"
+      },
+      "telemetry": {
+        "deviceId": "0d4efcbc-ad46-4ddc-917a-b9ef095b6f68",
+        "sessionId": "a81b65f0-8393-41f1-9b7d-efc70492046a",
+        "sessionStartedAt": "2026-08-25T16:07:46.613Z",
+        "platform": "Android (Not=A?Brand, Google Chrome, Chromium)",
+        "userAgent": "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Mobile Safari/537.36",
+        "screenResolution": "384x832",
+        "viewport": "384x693",
+        "pixelRatio": 2.8125,
+        "language": "en-GB",
+        "online": true
+      }
+    },
+    {
+      "timestamp": "2026-08-25T16:50:20.501Z",
+      "type": "WARN",
+      "message": "turn fail classified",
+      "data": {
+        "kind": "unknown",
+        "attempt": 0,
+        "host": "wzgsrpwhmgffcyohvtko.supabase.co",
+        "errMsg": "The AI provider returned no content.",
+        "transportRetriesUsed": 0
+      },
+      "telemetry": {
+        "deviceId": "0d4efcbc-ad46-4ddc-917a-b9ef095b6f68",
+        "sessionId": "a81b65f0-8393-41f1-9b7d-efc70492046a",
+        "sessionStartedAt": "2026-08-25T16:07:46.613Z",
+        "platform": "Android (Not=A?Brand, Google Chrome, Chromium)",
+        "userAgent": "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Mobile Safari/537.36",
+        "screenResolution": "384x832",
+        "viewport": "384x693",
+        "pixelRatio": 2.8125,
+        "language": "en-GB",
+        "online": true
+      }
+    },
+    {
+      "timestamp": "2026-08-25T16:52:11.140Z",
+      "type": "TURN_START",
+      "message": "sendAction invoked",
+      "data": {
+        "input": "My name is jax is wish to leave please",
+        "currentTurn": 8,
+        "busy": false
+      },
+      "telemetry": {
+        "deviceId": "0d4efcbc-ad46-4ddc-917a-b9ef095b6f68",
+        "sessionId": "a81b65f0-8393-41f1-9b7d-efc70492046a",
+        "sessionStartedAt": "2026-08-25T16:07:46.613Z",
+        "platform": "Android (Not=A?Brand, Google Chrome, Chromium)",
+        "userAgent": "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Mobile Safari/537.36",
+        "screenResolution": "384x832",
+        "viewport": "384x693",
+        "pixelRatio": 2.8125,
+        "language": "en-GB",
+        "online": true
+      }
+    },
+    {
+      "timestamp": "2026-08-25T16:52:19.170Z",
+      "type": "WARN",
+      "message": "Unresolved or empty action narrative — resolution retry",
+      "data": {
+        "turn": 8,
+        "intent": "move",
+        "empty": false,
+        "factLocks": [],
+        "obligationMissing": [
+          "open_ask"
+        ],
+        "sameBeat": false
+      },
+      "telemetry": {
+        "deviceId": "0d4efcbc-ad46-4ddc-917a-b9ef095b6f68",
+        "sessionId": "a81b65f0-8393-41f1-9b7d-efc70492046a",
+        "sessionStartedAt": "2026-08-25T16:07:46.613Z",
+        "platform": "Android (Not=A?Brand, Google Chrome, Chromium)",
+        "userAgent": "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Mobile Safari/537.36",
+        "screenResolution": "384x832",
+        "viewport": "384x693",
+        "pixelRatio": 2.8125,
+        "language": "en-GB",
+        "online": true
+      }
+    },
+    {
+      "timestamp": "2026-08-25T17:21:50.517Z",
+      "type": "TURN_START",
+      "message": "sendAction invoked",
+      "data": {
+        "input": "Leave and explore",
+        "currentTurn": 9,
+        "busy": false
+      },
+      "telemetry": {
+        "deviceId": "0d4efcbc-ad46-4ddc-917a-b9ef095b6f68",
+        "sessionId": "a81b65f0-8393-41f1-9b7d-efc70492046a",
+        "sessionStartedAt": "2026-08-25T16:07:46.613Z",
+        "platform": "Android (Not=A?Brand, Google Chrome, Chromium)",
+        "userAgent": "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Mobile Safari/537.36",
+        "screenResolution": "384x832",
+        "viewport": "384x693",
+        "pixelRatio": 2.8125,
+        "language": "en-GB",
+        "online": true
+      }
+    },
+    {
+      "timestamp": "2026-08-25T17:21:54.710Z",
+      "type": "ERROR",
+      "message": "[ai-retry] retries exhausted or non-retryable",
+      "data": {
+        "name": "Error",
+        "message": "The AI provider returned no content."
+      },
+      "telemetry": {
+        "deviceId": "0d4efcbc-ad46-4ddc-917a-b9ef095b6f68",
+        "sessionId": "a81b65f0-8393-41f1-9b7d-efc70492046a",
+        "sessionStartedAt": "2026-08-25T16:07:46.613Z",
+        "platform": "Android (Not=A?Brand, Google Chrome, Chromium)",
+        "userAgent": "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Mobile Safari/537.36",
+        "screenResolution": "384x832",
+        "viewport": "384x693",
+        "pixelRatio": 2.8125,
+        "language": "en-GB",
+        "online": true
+      }
+    },
+    {
+      "timestamp": "2026-08-25T17:21:54.711Z",
+      "type": "ERROR",
+      "message": "[ai-proxy] GM proxy failed and client GM path is disabled",
+      "data": {
+        "message": "The AI provider returned no content."
+      },
+      "telemetry": {
+        "deviceId": "0d4efcbc-ad46-4ddc-917a-b9ef095b6f68",
+        "sessionId": "a81b65f0-8393-41f1-9b7d-efc70492046a",
+        "sessionStartedAt": "2026-08-25T16:07:46.613Z",
+        "platform": "Android (Not=A?Brand, Google Chrome, Chromium)",
+        "userAgent": "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Mobile Safari/537.36",
+        "screenResolution": "384x832",
+        "viewport": "384x693",
+        "pixelRatio": 2.8125,
+        "language": "en-GB",
+        "online": true
+      }
+    },
+    {
+      "timestamp": "2026-08-25T17:21:54.714Z",
+      "type": "ERROR",
+      "message": "sendAction failed",
+      "data": {
+        "error": "The AI provider returned no content.",
+        "stack": "Error: The AI provider returned no content.\n    at https://www.synapticgm.com/assets/index-DzwlyQPU.js:586:8502\n    at async E3 (https://www.synapticgm.com/assets/index-DzwlyQPU.js:581:2901)\n    at async Yh (https://www.synapticgm.com/assets/index-DzwlyQPU.js:842:11969)\n    at async Rd (https://www.synapticgm.com/assets/index-DzwlyQPU.js:1164:758)\n    at async Object.<anonymous> (https://www.synapticgm.com/assets/index-DzwlyQPU.js:1164:1159)"
+      },
+      "telemetry": {
+        "deviceId": "0d4efcbc-ad46-4ddc-917a-b9ef095b6f68",
+        "sessionId": "a81b65f0-8393-41f1-9b7d-efc70492046a",
+        "sessionStartedAt": "2026-08-25T16:07:46.613Z",
+        "platform": "Android (Not=A?Brand, Google Chrome, Chromium)",
+        "userAgent": "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Mobile Safari/537.36",
+        "screenResolution": "384x832",
+        "viewport": "384x693",
+        "pixelRatio": 2.8125,
+        "language": "en-GB",
+        "online": true
+      }
+    },
+    {
+      "timestamp": "2026-08-25T17:21:54.718Z",
+      "type": "WARN",
+      "message": "turn fail classified",
+      "data": {
+        "kind": "unknown",
+        "attempt": 0,
+        "host": "wzgsrpwhmgffcyohvtko.supabase.co",
+        "errMsg": "The AI provider returned no content.",
+        "transportRetriesUsed": 0
+      },
+      "telemetry": {
+        "deviceId": "0d4efcbc-ad46-4ddc-917a-b9ef095b6f68",
+        "sessionId": "a81b65f0-8393-41f1-9b7d-efc70492046a",
+        "sessionStartedAt": "2026-08-25T16:07:46.613Z",
+        "platform": "Android (Not=A?Brand, Google Chrome, Chromium)",
+        "userAgent": "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Mobile Safari/537.36",
+        "screenResolution": "384x832",
+        "viewport": "384x693",
+        "pixelRatio": 2.8125,
+        "language": "en-GB",
+        "online": true
+      }
+    },
+    {
+      "timestamp": "2026-08-25T17:22:00.303Z",
+      "type": "TURN_START",
+      "message": "sendAction invoked",
+      "data": {
+        "input": "Leave and explore",
+        "currentTurn": 9,
+        "busy": false
+      },
+      "telemetry": {
+        "deviceId": "0d4efcbc-ad46-4ddc-917a-b9ef095b6f68",
+        "sessionId": "a81b65f0-8393-41f1-9b7d-efc70492046a",
+        "sessionStartedAt": "2026-08-25T16:07:46.613Z",
+        "platform": "Android (Not=A?Brand, Google Chrome, Chromium)",
+        "userAgent": "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Mobile Safari/537.36",
+        "screenResolution": "384x832",
+        "viewport": "384x693",
+        "pixelRatio": 2.8125,
+        "language": "en-GB",
+        "online": true
+      }
+    },
+    {
+      "timestamp": "2026-08-25T17:22:19.862Z",
+      "type": "WARN",
+      "message": "[choice-pipeline] Choice regeneration failed",
+      "telemetry": {
+        "deviceId": "0d4efcbc-ad46-4ddc-917a-b9ef095b6f68",
+        "sessionId": "a81b65f0-8393-41f1-9b7d-efc70492046a",
+        "sessionStartedAt": "2026-08-25T16:07:46.613Z",
+        "platform": "Android (Not=A?Brand, Google Chrome, Chromium)",
+        "userAgent": "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Mobile Safari/537.36",
+        "screenResolution": "384x832",
+        "viewport": "384x693",
+        "pixelRatio": 2.8125,
+        "language": "en-GB",
+        "online": true
+      }
+    },
+    {
+      "timestamp": "2026-08-25T17:24:56.621Z",
+      "type": "TURN_START",
+      "message": "sendAction invoked",
+      "data": {
+        "input": "Find a quiet space and give your self a moment then check the blue pannel that has followed. What is",
+        "currentTurn": 10,
+        "busy": false
+      },
+      "telemetry": {
+        "deviceId": "0d4efcbc-ad46-4ddc-917a-b9ef095b6f68",
+        "sessionId": "a81b65f0-8393-41f1-9b7d-efc70492046a",
+        "sessionStartedAt": "2026-08-25T16:07:46.613Z",
+        "platform": "Android (Not=A?Brand, Google Chrome, Chromium)",
+        "userAgent": "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Mobile Safari/537.36",
+        "screenResolution": "384x832",
+        "viewport": "384x693",
+        "pixelRatio": 2.8125,
+        "language": "en-GB",
+        "online": true
+      }
+    },
+    {
+      "timestamp": "2026-08-25T17:25:27.332Z",
+      "type": "ERROR",
+      "message": "[ai-retry] retries exhausted or non-retryable",
+      "data": {
+        "name": "Error",
+        "message": "The System is still compiling. Try again, or cancel and keep the last scene."
+      },
+      "telemetry": {
+        "deviceId": "0d4efcbc-ad46-4ddc-917a-b9ef095b6f68",
+        "sessionId": "a81b65f0-8393-41f1-9b7d-efc70492046a",
+        "sessionStartedAt": "2026-08-25T16:07:46.613Z",
+        "platform": "Android (Not=A?Brand, Google Chrome, Chromium)",
+        "userAgent": "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Mobile Safari/537.36",
+        "screenResolution": "384x832",
+        "viewport": "384x693",
+        "pixelRatio": 2.8125,
+        "language": "en-GB",
+        "online": true
+      }
+    },
+    {
+      "timestamp": "2026-08-25T17:25:27.334Z",
+      "type": "ERROR",
+      "message": "[ai-proxy] GM proxy failed and client GM path is disabled",
+      "data": {
+        "message": "The System is still compiling. Try again, or cancel and keep the last scene."
+      },
+      "telemetry": {
+        "deviceId": "0d4efcbc-ad46-4ddc-917a-b9ef095b6f68",
+        "sessionId": "a81b65f0-8393-41f1-9b7d-efc70492046a",
+        "sessionStartedAt": "2026-08-25T16:07:46.613Z",
+        "platform": "Android (Not=A?Brand, Google Chrome, Chromium)",
+        "userAgent": "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Mobile Safari/537.36",
+        "screenResolution": "384x832",
+        "viewport": "384x693",
+        "pixelRatio": 2.8125,
+        "language": "en-GB",
+        "online": true
+      }
+    },
+    {
+      "timestamp": "2026-08-25T17:25:27.335Z",
+      "type": "WARN",
+      "message": "GM transport auto-retry",
+      "data": {
+        "attempt": 1,
+        "kind": "timeout",
+        "timeoutMs": 30000,
+        "host": "wzgsrpwhmgffcyohvtko.supabase.co"
+      },
+      "telemetry": {
+        "deviceId": "0d4efcbc-ad46-4ddc-917a-b9ef095b6f68",
+        "sessionId": "a81b65f0-8393-41f1-9b7d-efc70492046a",
+        "sessionStartedAt": "2026-08-25T16:07:46.613Z",
+        "platform": "Android (Not=A?Brand, Google Chrome, Chromium)",
+        "userAgent": "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Mobile Safari/537.36",
+        "screenResolution": "384x832",
+        "viewport": "384x693",
+        "pixelRatio": 2.8125,
+        "language": "en-GB",
+        "online": true
+      }
+    },
+    {
+      "timestamp": "2026-08-25T17:25:58.038Z",
+      "type": "ERROR",
+      "message": "[ai-retry] retries exhausted or non-retryable",
+      "data": {
+        "name": "Error",
+        "message": "The System is still compiling. Try again, or cancel and keep the last scene."
+      },
+      "telemetry": {
+        "deviceId": "0d4efcbc-ad46-4ddc-917a-b9ef095b6f68",
+        "sessionId": "a81b65f0-8393-41f1-9b7d-efc70492046a",
+        "sessionStartedAt": "2026-08-25T16:07:46.613Z",
+        "platform": "Android (Not=A?Brand, Google Chrome, Chromium)",
+        "userAgent": "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Mobile Safari/537.36",
+        "screenResolution": "384x832",
+        "viewport": "384x693",
+        "pixelRatio": 2.8125,
+        "language": "en-GB",
+        "online": true
+      }
+    },
+    {
+      "timestamp": "2026-08-25T17:25:58.039Z",
+      "type": "ERROR",
+      "message": "[ai-proxy] GM proxy failed and client GM path is disabled",
+      "data": {
+        "message": "The System is still compiling. Try again, or cancel and keep the last scene."
+      },
+      "telemetry": {
+        "deviceId": "0d4efcbc-ad46-4ddc-917a-b9ef095b6f68",
+        "sessionId": "a81b65f0-8393-41f1-9b7d-efc70492046a",
+        "sessionStartedAt": "2026-08-25T16:07:46.613Z",
+        "platform": "Android (Not=A?Brand, Google Chrome, Chromium)",
+        "userAgent": "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Mobile Safari/537.36",
+        "screenResolution": "384x832",
+        "viewport": "384x693",
+        "pixelRatio": 2.8125,
+        "language": "en-GB",
+        "online": true
+      }
+    },
+    {
+      "timestamp": "2026-08-25T17:25:58.040Z",
+      "type": "WARN",
+      "message": "GM transport auto-retry",
+      "data": {
+        "attempt": 2,
+        "kind": "timeout",
+        "timeoutMs": 30000,
+        "host": "wzgsrpwhmgffcyohvtko.supabase.co"
+      },
+      "telemetry": {
+        "deviceId": "0d4efcbc-ad46-4ddc-917a-b9ef095b6f68",
+        "sessionId": "a81b65f0-8393-41f1-9b7d-efc70492046a",
+        "sessionStartedAt": "2026-08-25T16:07:46.613Z",
+        "platform": "Android (Not=A?Brand, Google Chrome, Chromium)",
+        "userAgent": "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Mobile Safari/537.36",
+        "screenResolution": "384x832",
+        "viewport": "384x693",
+        "pixelRatio": 2.8125,
+        "language": "en-GB",
+        "online": true
+      }
+    },
+    {
+      "timestamp": "2026-08-25T17:26:08.290Z",
+      "type": "WARN",
+      "message": "Leak scanner scrubbed engine notes",
+      "data": {
+        "notes": [
+          "Leak scrub: --- <system> the official — the official: the official: the "
+        ]
+      },
+      "telemetry": {
+        "deviceId": "0d4efcbc-ad46-4ddc-917a-b9ef095b6f68",
+        "sessionId": "a81b65f0-8393-41f1-9b7d-efc70492046a",
+        "sessionStartedAt": "2026-08-25T16:07:46.613Z",
+        "platform": "Android (Not=A?Brand, Google Chrome, Chromium)",
+        "userAgent": "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Mobile Safari/537.36",
+        "screenResolution": "384x832",
+        "viewport": "384x693",
+        "pixelRatio": 2.8125,
+        "language": "en-GB",
+        "online": true
+      }
+    },
+    {
+      "timestamp": "2026-08-25T17:35:54.051Z",
+      "type": "TURN_START",
+      "message": "sendAction invoked",
+      "data": {
+        "input": "I'm not sure if this is normal round here.  Walk round the streets take in your souroundings and lis",
+        "currentTurn": 11,
+        "busy": false
+      },
+      "telemetry": {
+        "deviceId": "0d4efcbc-ad46-4ddc-917a-b9ef095b6f68",
+        "sessionId": "a81b65f0-8393-41f1-9b7d-efc70492046a",
+        "sessionStartedAt": "2026-08-25T16:07:46.613Z",
+        "platform": "Android (Not=A?Brand, Google Chrome, Chromium)",
+        "userAgent": "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Mobile Safari/537.36",
+        "screenResolution": "384x832",
+        "viewport": "384x693",
+        "pixelRatio": 2.8125,
+        "language": "en-GB",
+        "online": true
+      }
+    },
+    {
+      "timestamp": "2026-08-25T17:36:02.897Z",
+      "type": "ERROR",
+      "message": "[ai-retry] retries exhausted or non-retryable",
+      "data": {
+        "name": "Error",
+        "message": "The AI provider returned no content."
+      },
+      "telemetry": {
+        "deviceId": "0d4efcbc-ad46-4ddc-917a-b9ef095b6f68",
+        "sessionId": "a81b65f0-8393-41f1-9b7d-efc70492046a",
+        "sessionStartedAt": "2026-08-25T16:07:46.613Z",
+        "platform": "Android (Not=A?Brand, Google Chrome, Chromium)",
+        "userAgent": "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Mobile Safari/537.36",
+        "screenResolution": "384x832",
+        "viewport": "384x693",
+        "pixelRatio": 2.8125,
+        "language": "en-GB",
+        "online": true
+      }
+    },
+    {
+      "timestamp": "2026-08-25T17:36:02.897Z",
+      "type": "ERROR",
+      "message": "[ai-proxy] GM proxy failed and client GM path is disabled",
+      "data": {
+        "message": "The AI provider returned no content."
+      },
+      "telemetry": {
+        "deviceId": "0d4efcbc-ad46-4ddc-917a-b9ef095b6f68",
+        "sessionId": "a81b65f0-8393-41f1-9b7d-efc70492046a",
+        "sessionStartedAt": "2026-08-25T16:07:46.613Z",
+        "platform": "Android (Not=A?Brand, Google Chrome, Chromium)",
+        "userAgent": "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Mobile Safari/537.36",
+        "screenResolution": "384x832",
+        "viewport": "384x693",
+        "pixelRatio": 2.8125,
+        "language": "en-GB",
+        "online": true
+      }
+    },
+    {
+      "timestamp": "2026-08-25T17:36:02.898Z",
+      "type": "ERROR",
+      "message": "sendAction failed",
+      "data": {
+        "error": "The AI provider returned no content.",
+        "stack": "Error: The AI provider returned no content.\n    at https://www.synapticgm.com/assets/index-DzwlyQPU.js:586:8502\n    at async E3 (https://www.synapticgm.com/assets/index-DzwlyQPU.js:581:2901)\n    at async Yh (https://www.synapticgm.com/assets/index-DzwlyQPU.js:842:11969)\n    at async Rd (https://www.synapticgm.com/assets/index-DzwlyQPU.js:1164:758)\n    at async Object.<anonymous> (https://www.synapticgm.com/assets/index-DzwlyQPU.js:1164:1159)"
+      },
+      "telemetry": {
+        "deviceId": "0d4efcbc-ad46-4ddc-917a-b9ef095b6f68",
+        "sessionId": "a81b65f0-8393-41f1-9b7d-efc70492046a",
+        "sessionStartedAt": "2026-08-25T16:07:46.613Z",
+        "platform": "Android (Not=A?Brand, Google Chrome, Chromium)",
+        "userAgent": "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Mobile Safari/537.36",
+        "screenResolution": "384x832",
+        "viewport": "384x693",
+        "pixelRatio": 2.8125,
+        "language": "en-GB",
+        "online": true
+      }
+    },
+    {
+      "timestamp": "2026-08-25T17:36:02.898Z",
+      "type": "WARN",
+      "message": "turn fail classified",
+      "data": {
+        "kind": "unknown",
+        "attempt": 0,
+        "host": "wzgsrpwhmgffcyohvtko.supabase.co",
+        "errMsg": "The AI provider returned no content.",
+        "transportRetriesUsed": 0
+      },
+      "telemetry": {
+        "deviceId": "0d4efcbc-ad46-4ddc-917a-b9ef095b6f68",
+        "sessionId": "a81b65f0-8393-41f1-9b7d-efc70492046a",
+        "sessionStartedAt": "2026-08-25T16:07:46.613Z",
+        "platform": "Android (Not=A?Brand, Google Chrome, Chromium)",
+        "userAgent": "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Mobile Safari/537.36",
+        "screenResolution": "384x832",
+        "viewport": "384x693",
+        "pixelRatio": 2.8125,
+        "language": "en-GB",
+        "online": true
+      }
+    },
+    {
+      "timestamp": "2026-08-25T17:36:58.434Z",
+      "type": "TURN_START",
+      "message": "sendAction invoked",
+      "data": {
+        "input": "I'm not sure if this is normal round here. Walk round the streets take in your souroundings and list",
+        "currentTurn": 11,
+        "busy": false
+      },
+      "telemetry": {
+        "deviceId": "0d4efcbc-ad46-4ddc-917a-b9ef095b6f68",
+        "sessionId": "a81b65f0-8393-41f1-9b7d-efc70492046a",
+        "sessionStartedAt": "2026-08-25T16:07:46.613Z",
+        "platform": "Android (Not=A?Brand, Google Chrome, Chromium)",
+        "userAgent": "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Mobile Safari/537.36",
+        "screenResolution": "384x832",
+        "viewport": "384x693",
+        "pixelRatio": 2.8125,
+        "language": "en-GB",
+        "online": true
+      }
+    },
+    {
+      "timestamp": "2026-08-25T17:37:18.591Z",
+      "type": "WARN",
+      "message": "[choice-pipeline] Choice regeneration failed",
+      "telemetry": {
+        "deviceId": "0d4efcbc-ad46-4ddc-917a-b9ef095b6f68",
+        "sessionId": "a81b65f0-8393-41f1-9b7d-efc70492046a",
+        "sessionStartedAt": "2026-08-25T16:07:46.613Z",
+        "platform": "Android (Not=A?Brand, Google Chrome, Chromium)",
+        "userAgent": "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Mobile Safari/537.36",
+        "screenResolution": "384x832",
+        "viewport": "384x693",
+        "pixelRatio": 2.8125,
+        "language": "en-GB",
+        "online": true
+      }
+    },
+    {
+      "timestamp": "2026-08-25T17:41:13.179Z",
+      "type": "TURN_START",
+      "message": "sendAction invoked",
+      "data": {
+        "input": "Have a look around and ask some one where you can get work. Explain your from a far away place and w",
+        "currentTurn": 12,
+        "busy": false
+      },
+      "telemetry": {
+        "deviceId": "0d4efcbc-ad46-4ddc-917a-b9ef095b6f68",
+        "sessionId": "a81b65f0-8393-41f1-9b7d-efc70492046a",
+        "sessionStartedAt": "2026-08-25T16:07:46.613Z",
+        "platform": "Android (Not=A?Brand, Google Chrome, Chromium)",
+        "userAgent": "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Mobile Safari/537.36",
+        "screenResolution": "384x832",
+        "viewport": "384x693",
+        "pixelRatio": 2.8125,
+        "language": "en-GB",
+        "online": true
+      }
+    },
+    {
+      "timestamp": "2026-08-25T17:41:41.529Z",
+      "type": "ERROR",
+      "message": "[ai-retry] retries exhausted or non-retryable",
+      "data": {
+        "name": "Error",
+        "message": "The AI provider returned no content."
+      },
+      "telemetry": {
+        "deviceId": "0d4efcbc-ad46-4ddc-917a-b9ef095b6f68",
+        "sessionId": "a81b65f0-8393-41f1-9b7d-efc70492046a",
+        "sessionStartedAt": "2026-08-25T16:07:46.613Z",
+        "platform": "Android (Not=A?Brand, Google Chrome, Chromium)",
+        "userAgent": "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Mobile Safari/537.36",
+        "screenResolution": "384x832",
+        "viewport": "384x693",
+        "pixelRatio": 2.8125,
+        "language": "en-GB",
+        "online": true
+      }
+    },
+    {
+      "timestamp": "2026-08-25T17:41:41.530Z",
+      "type": "ERROR",
+      "message": "[ai-proxy] GM proxy failed and client GM path is disabled",
+      "data": {
+        "message": "The AI provider returned no content."
+      },
+      "telemetry": {
+        "deviceId": "0d4efcbc-ad46-4ddc-917a-b9ef095b6f68",
+        "sessionId": "a81b65f0-8393-41f1-9b7d-efc70492046a",
+        "sessionStartedAt": "2026-08-25T16:07:46.613Z",
+        "platform": "Android (Not=A?Brand, Google Chrome, Chromium)",
+        "userAgent": "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Mobile Safari/537.36",
+        "screenResolution": "384x832",
+        "viewport": "384x693",
+        "pixelRatio": 2.8125,
+        "language": "en-GB",
+        "online": true
+      }
+    },
+    {
+      "timestamp": "2026-08-25T17:41:41.532Z",
+      "type": "ERROR",
+      "message": "sendAction failed",
+      "data": {
+        "error": "The AI provider returned no content.",
+        "stack": "Error: The AI provider returned no content.\n    at https://www.synapticgm.com/assets/index-DzwlyQPU.js:586:8502\n    at async E3 (https://www.synapticgm.com/assets/index-DzwlyQPU.js:581:2901)\n    at async Yh (https://www.synapticgm.com/assets/index-DzwlyQPU.js:842:11969)\n    at async Rd (https://www.synapticgm.com/assets/index-DzwlyQPU.js:1164:758)\n    at async Object.<anonymous> (https://www.synapticgm.com/assets/index-DzwlyQPU.js:1164:1159)"
+      },
+      "telemetry": {
+        "deviceId": "0d4efcbc-ad46-4ddc-917a-b9ef095b6f68",
+        "sessionId": "a81b65f0-8393-41f1-9b7d-efc70492046a",
+        "sessionStartedAt": "2026-08-25T16:07:46.613Z",
+        "platform": "Android (Not=A?Brand, Google Chrome, Chromium)",
+        "userAgent": "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Mobile Safari/537.36",
+        "screenResolution": "384x832",
+        "viewport": "384x693",
+        "pixelRatio": 2.8125,
+        "language": "en-GB",
+        "online": true
+      }
+    },
+    {
+      "timestamp": "2026-08-25T17:41:41.533Z",
+      "type": "WARN",
+      "message": "turn fail classified",
+      "data": {
+        "kind": "unknown",
+        "attempt": 0,
+        "host": "wzgsrpwhmgffcyohvtko.supabase.co",
+        "errMsg": "The AI provider returned no content.",
+        "transportRetriesUsed": 0
+      },
+      "telemetry": {
+        "deviceId": "0d4efcbc-ad46-4ddc-917a-b9ef095b6f68",
+        "sessionId": "a81b65f0-8393-41f1-9b7d-efc70492046a",
+        "sessionStartedAt": "2026-08-25T16:07:46.613Z",
+        "platform": "Android (Not=A?Brand, Google Chrome, Chromium)",
+        "userAgent": "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Mobile Safari/537.36",
+        "screenResolution": "384x832",
+        "viewport": "384x693",
+        "pixelRatio": 2.8125,
+        "language": "en-GB",
+        "online": true
+      }
+    },
+    {
+      "timestamp": "2026-08-25T17:41:46.207Z",
+      "type": "TURN_START",
+      "message": "sendAction invoked",
+      "data": {
+        "input": "Have a look around and ask some one where you can get work. Explain your from a far away place and w",
+        "currentTurn": 12,
+        "busy": false
+      },
+      "telemetry": {
+        "deviceId": "0d4efcbc-ad46-4ddc-917a-b9ef095b6f68",
+        "sessionId": "a81b65f0-8393-41f1-9b7d-efc70492046a",
+        "sessionStartedAt": "2026-08-25T16:07:46.613Z",
+        "platform": "Android (Not=A?Brand, Google Chrome, Chromium)",
+        "userAgent": "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Mobile Safari/537.36",
+        "screenResolution": "384x832",
+        "viewport": "384x693",
+        "pixelRatio": 2.8125,
+        "language": "en-GB",
+        "online": true
+      }
+    },
+    {
+      "timestamp": "2026-08-25T17:42:16.390Z",
+      "type": "ERROR",
+      "message": "[ai-retry] retries exhausted or non-retryable",
+      "data": {
+        "name": "Error",
+        "message": "The System is still compiling. Try again, or cancel and keep the last scene."
+      },
+      "telemetry": {
+        "deviceId": "0d4efcbc-ad46-4ddc-917a-b9ef095b6f68",
+        "sessionId": "a81b65f0-8393-41f1-9b7d-efc70492046a",
+        "sessionStartedAt": "2026-08-25T16:07:46.613Z",
+        "platform": "Android (Not=A?Brand, Google Chrome, Chromium)",
+        "userAgent": "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Mobile Safari/537.36",
+        "screenResolution": "384x832",
+        "viewport": "384x693",
+        "pixelRatio": 2.8125,
+        "language": "en-GB",
+        "online": true
+      }
+    },
+    {
+      "timestamp": "2026-08-25T17:42:16.391Z",
+      "type": "ERROR",
+      "message": "[ai-proxy] GM proxy failed and client GM path is disabled",
+      "data": {
+        "message": "The System is still compiling. Try again, or cancel and keep the last scene."
+      },
+      "telemetry": {
+        "deviceId": "0d4efcbc-ad46-4ddc-917a-b9ef095b6f68",
+        "sessionId": "a81b65f0-8393-41f1-9b7d-efc70492046a",
+        "sessionStartedAt": "2026-08-25T16:07:46.613Z",
+        "platform": "Android (Not=A?Brand, Google Chrome, Chromium)",
+        "userAgent": "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Mobile Safari/537.36",
+        "screenResolution": "384x832",
+        "viewport": "384x693",
+        "pixelRatio": 2.8125,
+        "language": "en-GB",
+        "online": true
+      }
+    },
+    {
+      "timestamp": "2026-08-25T17:42:16.392Z",
+      "type": "WARN",
+      "message": "GM transport auto-retry",
+      "data": {
+        "attempt": 1,
+        "kind": "timeout",
+        "timeoutMs": 30000,
+        "host": "wzgsrpwhmgffcyohvtko.supabase.co"
+      },
+      "telemetry": {
+        "deviceId": "0d4efcbc-ad46-4ddc-917a-b9ef095b6f68",
+        "sessionId": "a81b65f0-8393-41f1-9b7d-efc70492046a",
+        "sessionStartedAt": "2026-08-25T16:07:46.613Z",
+        "platform": "Android (Not=A?Brand, Google Chrome, Chromium)",
+        "userAgent": "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Mobile Safari/537.36",
+        "screenResolution": "384x832",
+        "viewport": "384x693",
+        "pixelRatio": 2.8125,
+        "language": "en-GB",
+        "online": true
+      }
+    },
+    {
+      "timestamp": "2026-08-25T17:42:47.096Z",
+      "type": "ERROR",
+      "message": "[ai-retry] retries exhausted or non-retryable",
+      "data": {
+        "name": "Error",
+        "message": "The System is still compiling. Try again, or cancel and keep the last scene."
+      },
+      "telemetry": {
+        "deviceId": "0d4efcbc-ad46-4ddc-917a-b9ef095b6f68",
+        "sessionId": "a81b65f0-8393-41f1-9b7d-efc70492046a",
+        "sessionStartedAt": "2026-08-25T16:07:46.613Z",
+        "platform": "Android (Not=A?Brand, Google Chrome, Chromium)",
+        "userAgent": "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Mobile Safari/537.36",
+        "screenResolution": "384x832",
+        "viewport": "384x693",
+        "pixelRatio": 2.8125,
+        "language": "en-GB",
+        "online": true
+      }
+    },
+    {
+      "timestamp": "2026-08-25T17:42:47.098Z",
+      "type": "ERROR",
+      "message": "[ai-proxy] GM proxy failed and client GM path is disabled",
+      "data": {
+        "message": "The System is still compiling. Try again, or cancel and keep the last scene."
+      },
+      "telemetry": {
+        "deviceId": "0d4efcbc-ad46-4ddc-917a-b9ef095b6f68",
+        "sessionId": "a81b65f0-8393-41f1-9b7d-efc70492046a",
+        "sessionStartedAt": "2026-08-25T16:07:46.613Z",
+        "platform": "Android (Not=A?Brand, Google Chrome, Chromium)",
+        "userAgent": "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Mobile Safari/537.36",
+        "screenResolution": "384x832",
+        "viewport": "384x693",
+        "pixelRatio": 2.8125,
+        "language": "en-GB",
+        "online": true
+      }
+    },
+    {
+      "timestamp": "2026-08-25T17:42:47.099Z",
+      "type": "WARN",
+      "message": "GM transport auto-retry",
+      "data": {
+        "attempt": 2,
+        "kind": "timeout",
+        "timeoutMs": 30000,
+        "host": "wzgsrpwhmgffcyohvtko.supabase.co"
+      },
+      "telemetry": {
+        "deviceId": "0d4efcbc-ad46-4ddc-917a-b9ef095b6f68",
+        "sessionId": "a81b65f0-8393-41f1-9b7d-efc70492046a",
+        "sessionStartedAt": "2026-08-25T16:07:46.613Z",
+        "platform": "Android (Not=A?Brand, Google Chrome, Chromium)",
+        "userAgent": "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Mobile Safari/537.36",
+        "screenResolution": "384x832",
+        "viewport": "384x693",
+        "pixelRatio": 2.8125,
+        "language": "en-GB",
+        "online": true
+      }
+    },
+    {
+      "timestamp": "2026-08-25T17:43:18.903Z",
+      "type": "ERROR",
+      "message": "[ai-retry] retries exhausted or non-retryable",
+      "data": {
+        "name": "Error",
+        "message": "The System is still compiling. Try again, or cancel and keep the last scene."
+      },
+      "telemetry": {
+        "deviceId": "0d4efcbc-ad46-4ddc-917a-b9ef095b6f68",
+        "sessionId": "a81b65f0-8393-41f1-9b7d-efc70492046a",
+        "sessionStartedAt": "2026-08-25T16:07:46.613Z",
+        "platform": "Android (Not=A?Brand, Google Chrome, Chromium)",
+        "userAgent": "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Mobile Safari/537.36",
+        "screenResolution": "384x832",
+        "viewport": "384x693",
+        "pixelRatio": 2.8125,
+        "language": "en-GB",
+        "online": true
+      }
+    },
+    {
+      "timestamp": "2026-08-25T17:43:18.905Z",
+      "type": "ERROR",
+      "message": "[ai-proxy] GM proxy failed and client GM path is disabled",
+      "data": {
+        "message": "The System is still compiling. Try again, or cancel and keep the last scene."
+      },
+      "telemetry": {
+        "deviceId": "0d4efcbc-ad46-4ddc-917a-b9ef095b6f68",
+        "sessionId": "a81b65f0-8393-41f1-9b7d-efc70492046a",
+        "sessionStartedAt": "2026-08-25T16:07:46.613Z",
+        "platform": "Android (Not=A?Brand, Google Chrome, Chromium)",
+        "userAgent": "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Mobile Safari/537.36",
+        "screenResolution": "384x832",
+        "viewport": "384x693",
+        "pixelRatio": 2.8125,
+        "language": "en-GB",
+        "online": true
+      }
+    },
+    {
+      "timestamp": "2026-08-25T17:43:18.906Z",
+      "type": "ERROR",
+      "message": "sendAction failed",
+      "data": {
+        "error": "The System is still compiling. Try again, or cancel and keep the last scene.",
+        "stack": "Error: The System is still compiling. Try again, or cancel and keep the last scene.\n    at https://www.synapticgm.com/assets/index-DzwlyQPU.js:586:7874\n    at async E3 (https://www.synapticgm.com/assets/index-DzwlyQPU.js:581:2901)\n    at async Yh (https://www.synapticgm.com/assets/index-DzwlyQPU.js:842:11969)\n    at async Rd (https://www.synapticgm.com/assets/index-DzwlyQPU.js:1164:758)\n    at async Object.<anonymous> (https://www.synapticgm.com/assets/index-DzwlyQPU.js:1164:1159)"
+      },
+      "telemetry": {
+        "deviceId": "0d4efcbc-ad46-4ddc-917a-b9ef095b6f68",
+        "sessionId": "a81b65f0-8393-41f1-9b7d-efc70492046a",
+        "sessionStartedAt": "2026-08-25T16:07:46.613Z",
+        "platform": "Android (Not=A?Brand, Google Chrome, Chromium)",
+        "userAgent": "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Mobile Safari/537.36",
+        "screenResolution": "384x832",
+        "viewport": "384x693",
+        "pixelRatio": 2.8125,
+        "language": "en-GB",
+        "online": true
+      }
+    },
+    {
+      "timestamp": "2026-08-25T17:43:18.908Z",
+      "type": "WARN",
+      "message": "turn fail classified",
+      "data": {
+        "kind": "timeout",
+        "attempt": 2,
+        "host": "wzgsrpwhmgffcyohvtko.supabase.co",
+        "errMsg": "The System is still compiling. Try again, or cancel and keep the last scene.",
+        "transportRetriesUsed": 2
+      },
+      "telemetry": {
+        "deviceId": "0d4efcbc-ad46-4ddc-917a-b9ef095b6f68",
+        "sessionId": "a81b65f0-8393-41f1-9b7d-efc70492046a",
+        "sessionStartedAt": "2026-08-25T16:07:46.613Z",
+        "platform": "Android (Not=A?Brand, Google Chrome, Chromium)",
+        "userAgent": "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Mobile Safari/537.36",
+        "screenResolution": "384x832",
+        "viewport": "384x693",
+        "pixelRatio": 2.8125,
+        "language": "en-GB",
+        "online": true
+      }
+    }
+  ],
+  "totalEvents": 77
+}

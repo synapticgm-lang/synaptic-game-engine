@@ -2517,8 +2517,17 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
           && (intentForMandate.kind === 'observe'
             || intentForMandate.kind === 'search'
             || isRoomLayoutExploreAsk(sanitizedInput));
+        // Free: same-beat novelty alone is a soft issue — don't burn a second slow GM call.
+        const freeSoftSameBeatOnly =
+          effectiveWriterTier(settingsRef.current.subscriptionTier ?? 'free') === 'free'
+          && sameBeat
+          && storyHasBody(probeText)
+          && obligationCoverage.ok
+          && !isUnresolvedActionNarrative(sanitizedInput, probeText, intentForMandate, previousGm)
+          && !probeLocks.some((l) => l.kind === 'weapon' || l.kind === 'cleared');
         const needsStoryRetry =
           !softLedgerOnly
+          && !freeSoftSameBeatOnly
           && (!storyHasBody(probeText)
             || isUnresolvedActionNarrative(sanitizedInput, probeText, intentForMandate, previousGm)
             || !obligationCoverage.ok
@@ -2613,12 +2622,16 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
         }
 
         // Paid-turn value floor: skimpy 1–2 liners get one free expand (same turn charge).
+        // Free is already slow — skip expand when near the floor (≥70 words) to avoid a second call.
         probeText = probeOf(result.text);
-        if (storyHasBody(probeText) && isStoryTooThin(probeText)) {
-          const thinWords = storyWordCount(probeText);
+        const writerTier = effectiveWriterTier(settingsRef.current.subscriptionTier ?? 'free');
+        const thinWords = storyWordCount(probeText);
+        const skipFreeNearFloor = writerTier === 'free' && thinWords >= 70;
+        if (storyHasBody(probeText) && isStoryTooThin(probeText) && !skipFreeNearFloor) {
           debugLogger.record('WARN', 'Thin story beat — value expand', {
             turn: liveCurrent.turn,
             wordCount: thinWords,
+            writerTier,
           });
           const thinFirst = result;
           const thinFirstProbe = probeText;
@@ -2641,6 +2654,11 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
             result = thinFirst;
             probeText = thinFirstProbe;
           }
+        } else if (skipFreeNearFloor) {
+          debugLogger.record('INFO', 'Skip Free value expand — near floor', {
+            turn: liveCurrent.turn,
+            wordCount: thinWords,
+          });
         }
       }
 

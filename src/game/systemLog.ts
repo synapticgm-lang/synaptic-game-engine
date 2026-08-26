@@ -23,6 +23,16 @@ function isInventedStreetDangerLine(line: string): boolean {
     || /^(?:tier\s*[1-4]\s*urban\s+ruin)$/i.test(line);
 }
 
+/** No-op skill receipts with no dice / no sheet change — STATUS noise. */
+export function isNoOpCheckSuccessLine(line: string): boolean {
+  return (
+    /no mechanical changes/i.test(line)
+    || /\[\s*\w[\w\s]*\s*check:\s*SUCCESS\s*[–—\-].*(?:no (?:mechanical )?changes|nothing (?:changes|happens))/i.test(
+      line
+    )
+  );
+}
+
 /** Player-facing Status panel — strip internal jargon and idle sheet dumps. */
 export function isNoisySystemLogLine(line: string): boolean {
   return (
@@ -37,6 +47,7 @@ export function isNoisySystemLogLine(line: string): boolean {
     || /^social\s+check:\s*(?:success|failure)(?:\s*\(.*\))?\s*$/i.test(line)
     || /\[?\s*system\s+roll/i.test(line)
     || /\bd20\b.*\b(?:mod|dc)\b/i.test(line)
+    || isNoOpCheckSuccessLine(line)
   );
 }
 

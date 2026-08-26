@@ -87,7 +87,8 @@ export function classifyTurnFailure(err: unknown): TurnFailKind {
     return 'network';
   }
   if (/429|Rate limit/i.test(msg)) return 'rate_limit';
-  if (/empty content|empty response/i.test(msg)) return 'empty';
+  // Free/DeepSeek often returns "The AI provider returned no content." — must be empty (retryable), not unknown.
+  if (/empty content|empty response|returned no content|\bno content\b/i.test(msg)) return 'empty';
   if (/auth|JWT|session|401|403/i.test(msg)) return 'auth';
   if (/is not defined|Cannot read|undefined is not/i.test(msg)) return 'client_bug';
   return 'unknown';

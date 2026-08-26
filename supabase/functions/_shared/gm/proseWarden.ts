@@ -60,6 +60,10 @@ export type ProseWardenContext = {
   inventory?: Item[];
   /** Scene props / interactables / loose floor items — not inventory. */
   sceneProps?: string[];
+  /** Last GM beat — speaker continuity scrub. */
+  lastGmProse?: string;
+  /** Named present NPCs from SNAPSHOT / sceneFacts. */
+  presentNames?: string[];
 };
 
 /** Interiors that already name "here" — nearby is for things that are not here. */
@@ -129,6 +133,50 @@ export function scrubSpokenQuoteStart(text: string): string {
 
 const ARTICLE_COLLISION =
   /\b(?:the\s+a|the\s+an|a\s+the|an\s+the|a\s+an|an\s+a|the\s+the|a\s+a)\b/gi;
+
+/**
+ * Cheap Free-model English slips (no LanguageTool on Free).
+ * "half an moments later" → "half a moment later"
+ */
+export function scrubFreeEnglishSlips(text: string): string {
+  if (!text) return text;
+  return text
+    .replace(/\bhalf an moments\b/gi, 'half a moment')
+    .replace(/\bhalf an moment\b/gi, 'half a moment')
+    .replace(/\ba few people still['’]s\b/gi, 'a few people still')
+    .replace(/\ba few people still moves\b/gi, 'a few people still move');
+}
+
+/**
+ * High-confidence only: last beat had an awake named speaker / dialogue, but this
+ * beat opens on "cot-bound sleeper never stirs". Strip that orphan opener —
+ * do not over-scrub general sleep imagery.
+ */
+export function scrubAwakeSpeakerAsSleeper(
+  text: string,
+  ctx?: { lastGmProse?: string; presentNames?: string[] }
+): string {
+  if (!text || !/cot-bound\s+sleeper/i.test(text)) return text;
+  const last = (ctx?.lastGmProse ?? '').trim();
+  if (!last) return text;
+  const lastLower = last.toLowerCase();
+  const names = (ctx?.presentNames ?? []).map((n) => n.trim()).filter((n) => n.length >= 2);
+  const namedInLast = names.some((n) => lastLower.includes(n.toLowerCase()));
+  const hadSpeech =
+    /\b(?:says?|asks?|replies?|speaks?|demands?|wants a name|who are you|what(?:'s| is) your name)\b/i.test(
+      last
+    );
+  if (!namedInLast && !hadSpeech) return text;
+  return text
+    .replace(
+      /^(?:The\s+)?cot-bound\s+sleeper\s+never\s+stirs[^.?!]*[.?!]\s*/i,
+      ''
+    )
+    .replace(
+      /\b(?:The\s+)?cot-bound\s+sleeper\s+never\s+stirs\b/gi,
+      'the attendant stays near'
+    );
+}
 
 /** Collapse doubled articles the writer (or a name-scrub) stacked. */
 export function scrubArticleCollisions(text: string): string {
@@ -512,6 +560,11 @@ export function applyProseWarden(text: string, ctx?: ProseWardenContext): string
   next = scrubInventedLocationChange(next, ctx?.isIndoor, ctx?.wasIndoor);
   next = scrubInventedTensionChange(next, ctx?.currentTension, ctx?.previousTension);
   next = scrubLocationTautology(next, ctx?.currentLocation);
+  next = scrubAwakeSpeakerAsSleeper(next, {
+    lastGmProse: ctx?.lastGmProse,
+    presentNames: ctx?.presentNames,
+  });
+  next = scrubFreeEnglishSlips(next);
   next = scrubSpokenQuoteStart(next);
   next = scrubArticleCollisions(next);
   return next;
