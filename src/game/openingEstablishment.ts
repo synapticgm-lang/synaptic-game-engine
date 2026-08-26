@@ -58,12 +58,14 @@ export function tryHandleQuickResponseButton(
     timestamp: Date.now(),
   };
   
+  const nextChoices = pending.length ? establishmentChoices(pending, state) : state.choices;
   const gmEntry: LogEntry = {
     id: crypto.randomUUID(),
     turn: state.turn,
     role: 'gm',
     content: gmResponse,
     timestamp: Date.now(),
+    ...(nextChoices?.length ? { offeredChoices: nextChoices.slice(0, 4) } : {}),
   };
   
   // Apply answer to character state
@@ -77,7 +79,7 @@ export function tryHandleQuickResponseButton(
       pending,
       complete: pending.length === 0,
     },
-    choices: pending.length ? establishmentChoices(pending, nextState) : nextState.choices,
+    choices: nextChoices,
     log: [...nextState.log, playerEntry, gmEntry],
     lastUpdated: Date.now(),
   };
@@ -1613,6 +1615,7 @@ export async function applyOpeningAnswer(
     const parseFail = est.pending[0]?.kind === 'name' && !harvest.name
       ? 'They are still waiting for a name you will own.'
       : '';
+    const coverChoices = establishmentChoices(stillPending, nextState);
     const gmEntry = {
       id: crypto.randomUUID(),
       turn: nextState.turn,
@@ -1622,6 +1625,7 @@ export async function applyOpeningAnswer(
         style: next.style ?? 'inworld',
       }),
       timestamp: Date.now(),
+      ...(coverChoices.length ? { offeredChoices: coverChoices.slice(0, 4) } : {}),
     };
     return {
       generateOpening: false,
@@ -1639,7 +1643,7 @@ export async function applyOpeningAnswer(
           pickedHookFallback: est.pickedHookFallback,
           aloneArrival: est.aloneArrival,
         },
-        choices: establishmentChoices(stillPending, nextState),
+        choices: coverChoices,
         log: [
           ...appendOpeningPlayerBubble(nextState.log, nextState.turn, resolvedCoverDisplay),
           gmEntry,

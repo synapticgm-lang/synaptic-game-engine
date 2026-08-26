@@ -47,6 +47,7 @@ interface Props {
   onSetContentMode: (mode: ContentMode, pin?: string) => void;
   onVerifyPin: (pin: string) => boolean;
   onExport?: () => void;
+  onDownloadTranscript?: () => void;
   onImport?: (file: File) => void;
   localSlot?: SaveSlotInfo | null;
   cloudSlots?: SaveSlotInfo[];
@@ -72,7 +73,7 @@ const SETTINGS_TABS: Array<{ id: SettingsTab; label: string }> = [
   { id: 'visuals', label: 'Visuals' },
 ];
 
-export function SettingsModal({ settings, storyName, engineMode, gameState, onSave, onSaveCustomTabletopRules, onMemorableEnabledMidCampaign, onStoryNameChange, onSetContentMode, onVerifyPin, onExport, onImport, localSlot, cloudSlots, currentSaveId, onDeleteSave, onDeleteExtraSaves, onDeleteAllSaves, onClose, currentBgUrl, supportUserId = null, googleSignedIn = false, accountEmail = null }: Props) {
+export function SettingsModal({ settings, storyName, engineMode, gameState, onSave, onSaveCustomTabletopRules, onMemorableEnabledMidCampaign, onStoryNameChange, onSetContentMode, onVerifyPin, onExport, onDownloadTranscript, onImport, localSlot, cloudSlots, currentSaveId, onDeleteSave, onDeleteExtraSaves, onDeleteAllSaves, onClose, currentBgUrl, supportUserId = null, googleSignedIn = false, accountEmail = null }: Props) {
   const [draft, setDraft] = useState<Settings>(settings);
   const [customRulesDraft, setCustomRulesDraft] = useState(gameState?.customTabletopRules ?? '');
   const [activeTab, setActiveTab] = useState<SettingsTab>('general');
@@ -985,7 +986,7 @@ export function SettingsModal({ settings, storyName, engineMode, gameState, onSa
             </p>
           </Section>
           {/* Save File Management */}
-          {(onExport || onImport || onDeleteSave) && (
+          {(onExport || onDownloadTranscript || onImport || onDeleteSave) && (
             <Section icon={<Save size={16} />} title="Save File Management" visible={activeTab === 'general'}>
               <p className="mb-2 text-xs text-slate-500">
                 Import, export, and delete saved games here — leftover cloud campaigns stay until you remove them.
@@ -1005,6 +1006,15 @@ export function SettingsModal({ settings, storyName, engineMode, gameState, onSa
                   </>
                 )}
               </div>
+              {onDownloadTranscript && (
+                <button
+                  type="button"
+                  onClick={onDownloadTranscript}
+                  className="mt-2 flex w-full items-center justify-center gap-2 rounded-lg border border-slate-700 bg-slate-800/40 px-3 py-2 text-sm text-slate-200 hover:bg-slate-800/70 transition-colors"
+                >
+                  <ScrollText size={15} /> Download play transcript
+                </button>
+              )}
               {onDeleteSave && (
                 <SaveSlotsManager
                   localSlot={localSlot ?? null}

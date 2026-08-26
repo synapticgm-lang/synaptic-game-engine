@@ -9,13 +9,15 @@ John is playtesting live. Collect issues here. Do not implement until he asks fo
 
 ## Open
 
-_(none — 2026-08-26d shipped Comic-lite illustration mode)_
+_(none — 2026-08-26e shipped Download play transcript)_
 
 **Residual risk (26b):** Choices that invent props without `the/a/an` articles (e.g. "Inspect crystals on street") still need stronger token grounding; display filter uses last GM story only — GM can still emit bad pads that get stripped at ActionBar, leaving fewer buttons until pad fills.
 
 **Residual risk (26c):** Rare Free/DeepSeek cold starts can still exceed 60s mid-game → one visible transport retry. Model swap (John-approved) is the next lever.
 
 **Residual risk (26d):** Comic-lite likeness is prompt-lock only (no reference sheet); Free may rarely illustrate if illustrated trial/Klein caps exhausted — chrome + prose continue. Multi-panel strips / Director / portrait composite remain deferred.
+
+**Residual risk (26e):** Transcript Options section only for turns committed after 26e; older log entries omit it (by design). Display pad is snapshotted at commit — if ActionBar later diverged mid-session without a new commit, transcript matches commit-time pad.
 
 ## Waiting (research — not tickets yet)
 
@@ -28,6 +30,8 @@ _(none — 2026-08-26d shipped Comic-lite illustration mode)_
 - Premium theme five-rater / Shop preview parity (Manus T8/T9 P0-04) — after playtest of `2026-08-19t` Vampire rescue; ingest `docs/research/manus-premium-themes-ingest-2026-08-19.md`
 
 ## Done (already shipped)
+
+- **2026-08-26e Download play transcript:** Persist `offeredChoices` on GM `LogEntry` at commit (post-pipeline / ActionBar pad, plus opening chips). Settings → General → Download play transcript → chronological `.md` (GM → Options → player; systemLog lightly; old saves omit Options). HUD stamp 26e. Client-only.
 
 - **2026-08-26d Comic-lite illustration mode:** P0 Maximizer thin wedge — Memorable plate chrome (border/gutter/caption/zoom/receipt) without Classic mounting ComicGrid; deterministic BeatSpec + GM `<panel>` precedence (ledger-safe only); sparse Free ~20% one-Klein comic-lite after skips; non-blocking jobs with revision/idempotency keys; overlay speaker bind + contrast scrim; kit/roster/place prompt locks; Kid skip before capacity; remote comic kill + Klein caps (6/8/32 Free); fixture pack F vitest. Director stays off. HUD stamp 26d. Client-only (no generate-image redeploy).
 

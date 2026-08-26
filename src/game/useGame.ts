@@ -12,6 +12,7 @@ import { parseLooseItemPickup, pickUpLooseItem } from './looseItems';
 import { applyPlayPhaseAfterHp, deathQuestReceipt, isPlayInputLocked } from './playPhase';
 import { applyQuestHooksFromLedger } from './questHooks';
 import { loadGame, saveGame, deleteGame, loadSettings, saveSettings, exportSave, importSave } from './db';
+import { downloadPlayTranscript, withOfferedChoices } from './playTranscript';
 import {
   syncGameToCloud,
   fetchLatestCloudSave,
@@ -2184,7 +2185,15 @@ export function useGame() {
         const harvestedOpening = openingState.openingEstablishment
           ? applyHarvestedOpeningCovers(openingState.openingEstablishment, cleanOpening)
           : openingState.openingEstablishment;
-        const openingGm: LogEntry = {
+        const openingChoicesForPad = harvestedOpening?.pending?.length
+          ? establishmentChoices(harvestedOpening.pending, openingState)
+          : openingChoices.length
+            ? openingChoices
+            : undefined;
+        const openingEstForPad = harvestedOpening
+          ? { ...harvestedOpening, sceneWritten: true }
+          : harvestedOpening;
+        const openingGmBase: LogEntry = {
           id: uid(),
           turn: openingState.turn,
           role: 'gm',
@@ -2196,6 +2205,12 @@ export function useGame() {
           ],
           ...memorableLogFields(openingMemorable),
         };
+        const openingGm = withOfferedChoices(openingGmBase, {
+          ...openingState,
+          choices: openingChoicesForPad,
+          openingEstablishment: openingEstForPad,
+          log: [...openingState.log, openingGmBase],
+        });
         const seeded = seedOpeningSceneFacts({ ...openingState, turn: openingTurn });
         const sceneFacts = applyCommittedNarrative(
           { ...openingState, sceneFacts: seeded, turn: openingTurn },
@@ -2208,14 +2223,8 @@ export function useGame() {
           sceneFacts,
           quests: questsAfterScene,
           log: [...openingState.log, openingGm],
-          choices: harvestedOpening?.pending?.length
-            ? establishmentChoices(harvestedOpening.pending, openingState)
-            : openingChoices.length
-              ? openingChoices
-              : undefined,
-          openingEstablishment: harvestedOpening
-            ? { ...harvestedOpening, sceneWritten: true }
-            : harvestedOpening,
+          choices: openingChoicesForPad,
+          openingEstablishment: openingEstForPad,
           memorableMoments: openingMemorable.nextState,
           lastUpdated: Date.now(),
         };
@@ -3610,6 +3619,35 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
         }
       }
 
+      const committedChoices =
+        mode === 'kid' ? finalChoices.map((c) => filterKidModeText(c)) : finalChoices;
+      const gmLogEntryBase: LogEntry = {
+        ...gmEntry,
+        content: cleanText,
+        systemLog: mergedSystemLog,
+        ...(comicPanelsForLog.length > 0
+          ? {
+              panels: comicPanelsForLog.map((panel) => ({
+                ...panel,
+                imageUrl: null,
+                imageStatus: 'pending' as const,
+              })),
+              imageStatus: 'pending' as const,
+            }
+          : result.imagePrompt?.length
+            ? { imageStatus: 'pending' as const }
+            : {}),
+        ...memorableLogFields(memorableDecision),
+      };
+      const gmLogEntry = withOfferedChoices(gmLogEntryBase, {
+        ...workingState,
+        ...updates,
+        character: baseChar,
+        sceneFacts: applyCommittedNarrative(liveCurrent, cleanText, nextTurn),
+        choices: committedChoices,
+        openingEstablishment: liveCurrent.openingEstablishment,
+        log: [...liveCurrent.log, gmLogEntryBase],
+      });
       let mergedStateDraft: GameState = {
         ...workingState,
         ...updates,
@@ -3639,24 +3677,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
         memorableMoments: memorableDecision.nextState,
         log: [
           ...liveCurrent.log,
-          {
-            ...gmEntry,
-            content: cleanText,
-            systemLog: mergedSystemLog,
-            ...(comicPanelsForLog.length > 0
-              ? {
-                  panels: comicPanelsForLog.map((panel) => ({
-                    ...panel,
-                    imageUrl: null,
-                    imageStatus: 'pending' as const,
-                  })),
-                  imageStatus: 'pending' as const,
-                }
-              : result.imagePrompt?.length
-                ? { imageStatus: 'pending' as const }
-                : {}),
-            ...memorableLogFields(memorableDecision),
-          },
+          gmLogEntry,
           ...(lootVideoEntry ? [lootVideoEntry] : []),
         ],
         rolls: [...liveCurrent.rolls, ...newRolls],
@@ -3664,7 +3685,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
         lorebook: mergedLorebook,
         turn: nextTurn,
         pendingImagePrompt: result.imagePrompt,
-        choices: mode === 'kid' ? finalChoices.map((c) => filterKidModeText(c)) : finalChoices,
+        choices: committedChoices,
         gold: Math.max(0, (workingState.gold ?? liveCurrent.gold ?? 0) + extraWeekGold),
         worldLedger,
         ...(turnFrame ? { turnFrameTheme: turnFrame } : {}),
@@ -4239,7 +4260,15 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
       const harvestedOpening = newState.openingEstablishment
         ? applyHarvestedOpeningCovers(newState.openingEstablishment, cleanOpening)
         : newState.openingEstablishment;
-      const openingGm: LogEntry = {
+      const openingChoicesForPad = harvestedOpening?.pending?.length
+        ? establishmentChoices(harvestedOpening.pending, newState)
+        : openingChoices.length
+          ? openingChoices
+          : undefined;
+      const openingEstForPad = harvestedOpening
+        ? { ...harvestedOpening, sceneWritten: true }
+        : harvestedOpening;
+      const openingGmBase: LogEntry = {
         id: uid(),
         turn: newState.turn,
         role: 'gm',
@@ -4251,6 +4280,12 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
         ],
         ...memorableLogFields(openingMemorable),
       };
+      const openingGm = withOfferedChoices(openingGmBase, {
+        ...newState,
+        choices: openingChoicesForPad,
+        openingEstablishment: openingEstForPad,
+        log: [openingGmBase],
+      });
       const seeded = seedOpeningSceneFacts({ ...newState, turn: openingTurn });
       const sceneFacts = applyCommittedNarrative(
         { ...newState, sceneFacts: seeded, turn: openingTurn },
@@ -4263,15 +4298,9 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
         sceneFacts,
         quests: questsAfterScene,
         log: [openingGm],
-        choices: harvestedOpening?.pending?.length
-          ? establishmentChoices(harvestedOpening.pending, newState)
-          : openingChoices.length
-            ? openingChoices
-            : undefined,
+        choices: openingChoicesForPad,
         pendingGeneratedOpening: false,
-        openingEstablishment: harvestedOpening
-          ? { ...harvestedOpening, sceneWritten: true }
-          : harvestedOpening,
+        openingEstablishment: openingEstForPad,
         memorableMoments: openingMemorable.nextState,
         lastUpdated: Date.now(),
       };
@@ -4299,7 +4328,13 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
       // Still land a playable first page — never leave HUD-only blank play.
       try {
         const fallbackText = stitchOpeningScene(newState);
-        const fallbackGm: LogEntry = {
+        const fallbackChoices = newState.openingEstablishment?.pending?.length
+          ? establishmentChoices(newState.openingEstablishment.pending, newState)
+          : undefined;
+        const fallbackEst = newState.openingEstablishment
+          ? { ...newState.openingEstablishment, sceneWritten: true }
+          : newState.openingEstablishment;
+        const fallbackGmBase: LogEntry = {
           id: uid(),
           turn: newState.turn,
           role: 'gm',
@@ -4307,17 +4342,19 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
           timestamp: Date.now(),
           systemLog: litrpgOpeningSystemPing(newState),
         };
+        const fallbackGm = withOfferedChoices(fallbackGmBase, {
+          ...newState,
+          choices: fallbackChoices,
+          openingEstablishment: fallbackEst,
+          log: [fallbackGmBase],
+        });
         const fallback: GameState = {
           ...newState,
           turn: newState.turn + 1,
           log: [fallbackGm],
-          choices: newState.openingEstablishment?.pending?.length
-            ? establishmentChoices(newState.openingEstablishment.pending, newState)
-            : undefined,
+          choices: fallbackChoices,
           pendingGeneratedOpening: false,
-          openingEstablishment: newState.openingEstablishment
-            ? { ...newState.openingEstablishment, sceneWritten: true }
-            : newState.openingEstablishment,
+          openingEstablishment: fallbackEst,
           lastUpdated: Date.now(),
         };
         stateRef.current = fallback;
@@ -4742,6 +4779,18 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
     });
   });
 
+  const handleDownloadTranscript = useCallbackRef(() => {
+    const current = stateRef.current;
+    if (current?.log?.length) {
+      downloadPlayTranscript(current);
+      return;
+    }
+    void loadGame().then((local) => {
+      if (local?.log?.length) downloadPlayTranscript(local);
+      else addToast('No play log to download.', 'error');
+    });
+  });
+
   const handleImport = useCallbackRef(async (file: File) => {
     try {
       const imported = await importSave(file);
@@ -4894,7 +4943,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
       stateRef.current = updated;
       await persist(updated);
     },
-    handleExport, handleImport, deleteSavedGame, deleteExtraSaves, deleteAllSaves, unloadActiveCampaign,
+    handleExport, handleDownloadTranscript, handleImport, deleteSavedGame, deleteExtraSaves, deleteAllSaves, unloadActiveCampaign,
     updateStoryName: async (name) => {
       const s = stateRef.current;
       if (!s) return;

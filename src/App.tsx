@@ -89,6 +89,7 @@ export default function App() {
     onDeleteExtraSaves: game.deleteExtraSaves,
     onDeleteAllSaves: game.deleteAllSaves,
     onExport: game.handleExport,
+    onDownloadTranscript: game.handleDownloadTranscript,
     onImport: game.handleImport,
   };
 

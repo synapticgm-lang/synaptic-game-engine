@@ -1,13 +1,7 @@
 import { Sparkles, Dices } from 'lucide-react';
 import type { EngineMode, GameState } from '@/game/types';
-import {
-  inventsPresenceOnEmptyScene,
-  normalizeStoryCorpus,
-  padChoicesToCount,
-  sanitizeChoiceLabel,
-} from '@/game/choicePipeline';
-import { establishmentChoices, isOpeningEstablishmentPending } from '@/game/openingEstablishment';
-import { filterInventedContextChoices } from '@/game/choiceWarden';
+import { isOpeningEstablishmentPending } from '@/game/openingEstablishment';
+import { resolveOfferedChoices } from '@/game/playTranscript';
 
 interface ActionBarProps {
   state: GameState;
@@ -18,42 +12,8 @@ interface ActionBarProps {
   hidden?: boolean;
 }
 
-const FALLBACK_CHOICE = '🎲 Let Fate Decide';
-
-function lastGmStoryProse(state: GameState): string {
-  for (let i = (state.log ?? []).length - 1; i >= 0; i--) {
-    const entry = state.log[i];
-    if (entry?.role === 'gm' && entry.content) {
-      return normalizeStoryCorpus(entry.content);
-    }
-  }
-  return '';
-}
-
-/**
- * Trust pipeline-grounded state.choices, but always sanitize labels and
- * never pad with empty story prose (that recycled crowd/speaker fillers).
- */
-function resolveActions(state: GameState): string[] {
-  if (isOpeningEstablishmentPending(state)) {
-    return establishmentChoices(state.openingEstablishment?.pending ?? [], state).slice(0, 4);
-  }
-  const storyProse = lastGmStoryProse(state);
-  const gmChoices = (state.choices ?? [])
-    .map((c) => sanitizeChoiceLabel(c))
-    .filter((c) => c && c !== FALLBACK_CHOICE)
-    .filter((c) => !inventsPresenceOnEmptyScene(c, state, storyProse));
-  
-  // Pack 12: Filter choices that reference non-existent context
-  const contextFiltered = filterInventedContextChoices(gmChoices, state);
-  
-  const deduped = Array.from(new Set(contextFiltered.map((c) => c.trim()).filter(Boolean)));
-  if (deduped.length >= 3) return deduped.slice(0, 4);
-  return padChoicesToCount(deduped, state, storyProse, 3);
-}
-
 export function ActionBar({ state, busy, onAction, engineMode, hidden = false }: ActionBarProps) {
-  const actions = resolveActions(state);
+  const actions = resolveOfferedChoices(state);
   const isDnd = engineMode === 'dnd' || state.engineMode === 'dnd';
   const openingCover = isOpeningEstablishmentPending(state);
 
