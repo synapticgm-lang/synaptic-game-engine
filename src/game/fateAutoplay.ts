@@ -121,6 +121,11 @@ export type FateAutoplayCliOpts = {
   matrix40: boolean;
   /** Cap matrix combos (0 = no cap). */
   matrixLimit: number;
+  /**
+   * 7h StoryForge night: 3×100 AI-agent spines (maxlevel/storyfollower/completionist)
+   * then matrix-40 capped at 6×20 for breadth. ~420 turns, ~$0.50–0.80 Flash Lite.
+   */
+  nightStoryforge: boolean;
   outRoot: string;
   characterName: string;
 };
@@ -1057,6 +1062,7 @@ export function parseFateArgs(argv: string[]): FateAutoplayCliOpts {
     matrix: false,
     matrix40: false,
     matrixLimit: 0,
+    nightStoryforge: false,
     outRoot: join(process.cwd(), 'scripts', 'fate-autoplay', 'runs'),
     characterName: 'Jax',
   };
@@ -1084,6 +1090,7 @@ export function parseFateArgs(argv: string[]): FateAutoplayCliOpts {
     else if (a === '--matrix-40' || a === '--matrix40') out.matrix40 = true;
     else if (a === '--matrix') out.matrix = true;
     else if (a === '--matrix-limit') out.matrixLimit = Math.max(0, Number(next()) || 0);
+    else if (a === '--night-storyforge' || a === '--night-sf') out.nightStoryforge = true;
     else if (a === '--out') out.outRoot = next();
     else if (a === '--name') out.characterName = next();
     else if (a === '--help' || a === '-h') {
