@@ -9,7 +9,9 @@ John is playtesting live. Collect issues here. Do not implement until he asks fo
 
 ## Open
 
-_(none — 2026-08-26p shipped empty-search lock + grounded weapons)_
+_(none — 2026-08-26q shipped Fate autoplay harness)_
+
+**Residual risk (26q):** Headless Fate path is Ship A (callGm + wardens + structural + choice pad) — not a full React `sendAction` clone (no comic/memorable/UI repair banner). Matrix-40 defers 2 RPG premades when capping at 10/mode. Concurrent play OK if separate saves; autoplay Test Lab is process-local only.
 
 **Residual risk (26p):** Empty-search keys are coarse (`here` / `debris` / `exterior` / `bag`) — a truly new room after travel should use a new location key; mid-save without `searchedEmpty` only gains the stamp after the next empty search. Weapon scrub is PC-attributed (Name's dagger / your knife / you draw…) — ambient scene weapons still need prop/loot tags. Auto-fight still LLM-narrated; scrub is post-hoc.
 
@@ -48,6 +50,8 @@ _(none — 2026-08-26p shipped empty-search lock + grounded weapons)_
 - Premium theme five-rater / Shop preview parity (Manus T8/T9 P0-04) — after playtest of `2026-08-19t` Vampire rescue; ingest `docs/research/manus-premium-themes-ingest-2026-08-19.md`
 
 ## Done (already shipped)
+
+- **2026-08-26q Fate autoplay harness:** `scripts/fate-autoplay/` headless Fate's Pick (seedable) + callGm/wardens path; process-local Test Lab unlimited for autoplay only; `--matrix-40` (10×4 modes); JSONL+transcript+summary; ActionBar uses shared `pickFateChoice`. HUD + index.html `2026-08-26q`. Run: `npm run fate-autoplay -- --matrix-40 --turns 20`.
 
 - **2026-08-26p Empty search lock + grounded weapons:** Class D. Transcript `91848bcd…` — empty ruin searches (T5–9) then auto-fight invents “crude dagger” with sealed kit (clothes + Bag only). Track `sceneFacts.searchedEmpty` / `emptyContainers`; SNAPSHOT + binding rails; prose scrub invent-loot on re-search; auto-fight weapon authority + `scrubInventedWeapons` (PC-attributed). Choice pad drops “hidden compartments” invites when empty. Vitest `playtest26pSearchDagger`. HUD + index.html `2026-08-26p`. Evidence: `docs/bugs/playtest-2026-08-26-search-dagger/`. Redeploy: `npx supabase functions deploy gm-turn` (SNAPSHOT + binding).
 

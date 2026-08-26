@@ -2,6 +2,7 @@ import { Sparkles, Dices } from 'lucide-react';
 import type { EngineMode, GameState } from '@/game/types';
 import { isOpeningEstablishmentPending } from '@/game/openingEstablishment';
 import { resolveOfferedChoices } from '@/game/playTranscript';
+import { pickFateChoice } from '@/game/fatePick';
 
 interface ActionBarProps {
   state: GameState;
@@ -18,8 +19,7 @@ export function ActionBar({ state, busy, onAction, engineMode, hidden = false }:
   const openingCover = isOpeningEstablishmentPending(state);
 
   const handleFatesPick = () => {
-    const pick = actions[Math.floor(Math.random() * actions.length)];
-    onAction(pick);
+    onAction(pickFateChoice(actions));
   };
 
   if (hidden || actions.length === 0) return null;

@@ -11,7 +11,8 @@
     "test": "vitest run",
     "typecheck": "tsc --noEmit -p tsconfig.app.json",
     "wof:check": "tsc --noEmit -p wof/tsconfig.json && tsc -p wof/tsconfig.json && node wof/dist/selftest.js",
-    "sync:gm-edge": "node scripts/sync-gm-edge-shared.mjs"
+    "sync:gm-edge": "node scripts/sync-gm-edge-shared.mjs",
+    "fate-autoplay": "npx vite-node --config vite.config.ts scripts/fate-autoplay/run.ts --"
   },
   "dependencies": {
     "@react-oauth/google": "^0.13.5",

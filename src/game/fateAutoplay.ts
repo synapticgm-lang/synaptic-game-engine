@@ -1,0 +1,896 @@
+/**
+ * Headless Fate autoplay — Seedable Fate's Pick + GM path with wardens.
+ * Ship A: mirrors client commit (callGm → runWarden → structural → choices → prose)
+ * without React UI / memorable art / comic jobs.
+ *
+ * Capacity: enableAutoplayTestLab() so Free week-cap never stops the run.
+ */
+
+import { mkdirSync, writeFileSync } from 'node:fs';
+import { join } from 'node:path';
+import {
+  getCampaignBibleById,
+  getCampaignBiblesByEngineMode,
+  formatCampaignStoryName,
+  isNsfwCampaign,
+  type CampaignBible,
+} from '@/data/campaigns';
+import { callGm } from './aiService';
+import { buildResolutionUserPayload } from './actionResolution';
+import { validateActionHard } from './actionValidation';
+import { seedStateFromCampaignBible, applyCampaignCharacter } from './campaignSeed';
+import { ensureCampaignContract } from './campaignContract';
+import {
+  padChoicesToCount,
+  resolvePipelineChoices,
+  normalizeStoryCorpus,
+} from './choicePipeline';
+import { postFilterGmOutput } from './contentPostFilter';
+import { createDefaultSettings, createInitialState } from './defaults';
+import {
+  classifyTurnFailure,
+  gmProxyTimeoutMsForState,
+  shouldAutoRetryTurn,
+  TURN_TRANSPORT_MAX_AUTO_RETRIES,
+  transportRetryBackoffMs,
+} from './errorRepairWarden';
+import { applyFactLocks } from './factLocks';
+import { mulberry32, pickFateChoice, type Rng } from './fatePick';
+import { seedWorldLedgerFactions } from './factionStandings';
+import {
+  LAUNCH_GM_PERSONALITY_IDS,
+  LAUNCH_LITRPG_SYSTEM_PERSONALITY_IDS,
+  isGmVoiceProfileId,
+  resolveLitrpgSystemPersonality,
+  resolvePyoaGmPersonality,
+  resolveRpgGmPersonality,
+  resolveTabletopGmPersonality,
+  type GmPersonalityId,
+  type SystemPersonalityId,
+} from './gmVoiceProfile';
+import { withUpdatedHookArc } from './hookArc';
+import { mediatePlayerInput } from './inputMediation';
+import { parsePlayerIntent } from './intentParser';
+import { scanAndScrubLeaks } from './leakScanner';
+import { ensureTurnProse, stripResidualMechanicTags } from './narrativeSanitize';
+import {
+  ensureSealedOpeningBag,
+  isAloneArrivalOpening,
+  isAloneArrivalPick,
+  pendingRequiredCovers,
+  resolveOpeningHookPick,
+  resolveOpeningMode,
+  resolveOpeningPrompts,
+  resolveOpeningRegistrar,
+  seedCoverAnswers,
+} from './openingEstablishment';
+import { applyOpeningContract, ensureStarterLookCharacter, stitchOpeningScene } from './openingStitch';
+import { seedOutdoorHubPlaces } from './outdoorHubs';
+import {
+  extractUpdates,
+  parseActionTags,
+  stripActionTags,
+  stripChoiceList,
+  eventsToQuestUpdates,
+} from './parser';
+import { enforcePerspective } from './perspectiveWarden';
+import { buildPlayTranscript, resolveOfferedChoices, withOfferedChoices } from './playTranscript';
+import {
+  applyProseWarden,
+  calculateCrowdSize,
+  collectSceneObjectNames,
+} from './proseWarden';
+import { syncQuestsFromPlay, questsLockedDuringOpening } from './questPlay';
+import { buildTurnMandate } from './sceneFocus';
+import { groundedWeaponNames, listEmptySearchTargets } from './searchContinuity';
+import { applyStructuralEvents } from './structuralEvents';
+import { filterSystemLogForEngine } from './systemLog';
+import {
+  disableAutoplayTestLab,
+  enableAutoplayTestLab,
+  type HostedAiTier,
+} from './testLab';
+import type { EngineMode, GameState, LogEntry, Settings } from './types';
+import { runWarden } from './warden';
+import { emptyWorldLedger } from './worldSim';
+import { storyStartTextTurnsForTier } from './capacityLedger';
+import { setActiveSubscriptionTier } from './subscriptionTiers';
+
+export type FateMode = 'fate' | 'first-pad';
+
+export type FateAutoplayCliOpts = {
+  turns: number;
+  seed: number;
+  bibleId: string;
+  /** LitRPG systemPersonality or gmPersonality for other modes. */
+  personality: string;
+  engineMode?: EngineMode;
+  aiTier: HostedAiTier;
+  mode: FateMode;
+  dryRun: boolean;
+  matrix: boolean;
+  /** John's 40 plan: 10 LitRPG + 10 tabletop + 10 RPG + 10 PYOA. */
+  matrix40: boolean;
+  /** Cap matrix combos (0 = no cap). */
+  matrixLimit: number;
+  outRoot: string;
+  characterName: string;
+};
+
+export type MatrixCombo = {
+  engineMode: EngineMode;
+  bibleId: string;
+  bibleTitle: string;
+  personalityId: string;
+  seed: number;
+};
+
+export type TurnTelemetry = {
+  turn: number;
+  startedAt: string;
+  endedAt: string;
+  durationMs: number;
+  bibleId: string;
+  personalityId: string;
+  seed: number;
+  fatePick: string;
+  offeredChoices: string[];
+  playerInput: string;
+  gmText: string;
+  systemLog: string[];
+  error?: string;
+  failKind?: string;
+  transportRetries: number;
+  repairNote?: string;
+  dryRun?: boolean;
+};
+
+export type RunSummary = {
+  runId: string;
+  bibleId: string;
+  bibleTitle: string;
+  engineMode: EngineMode;
+  personalityId: string;
+  seed: number;
+  requestedTurns: number;
+  completedTurns: number;
+  dryRun: boolean;
+  aiTier: HostedAiTier;
+  startedAt: string;
+  endedAt: string;
+  errorCount: number;
+  timeoutCount: number;
+  transportRetryCount: number;
+  latencyMs: { p50: number; p95: number; mean: number };
+  issueTurns: Array<{ turn: number; error?: string; failKind?: string }>;
+  outDir: string;
+};
+
+function uid(): string {
+  return globalThis.crypto?.randomUUID?.() ?? `t-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
+}
+
+function percentile(sorted: number[], p: number): number {
+  if (!sorted.length) return 0;
+  const idx = Math.min(sorted.length - 1, Math.max(0, Math.ceil((p / 100) * sorted.length) - 1));
+  return sorted[idx] ?? 0;
+}
+
+function latencyStats(ms: number[]): { p50: number; p95: number; mean: number } {
+  if (!ms.length) return { p50: 0, p95: 0, mean: 0 };
+  const sorted = [...ms].sort((a, b) => a - b);
+  const mean = Math.round(ms.reduce((a, b) => a + b, 0) / ms.length);
+  return { p50: percentile(sorted, 50), p95: percentile(sorted, 95), mean };
+}
+
+export function isBlankCanvasBible(id: string): boolean {
+  return id.startsWith('blank-canvas');
+}
+
+/** Launch matrix: mode × ready premade (skip blank) × Launch narrator (full cartesian). */
+export function enumerateLaunchMatrix(baseSeed = 1): MatrixCombo[] {
+  const combos: MatrixCombo[] = [];
+  const modes: EngineMode[] = ['litrpg', 'dnd', 'rpg', 'pyoa'];
+  let i = 0;
+  for (const engineMode of modes) {
+    const bibles = getCampaignBiblesByEngineMode(engineMode).filter((b) => !isBlankCanvasBible(b.id));
+    const personalities =
+      engineMode === 'litrpg'
+        ? LAUNCH_LITRPG_SYSTEM_PERSONALITY_IDS
+        : LAUNCH_GM_PERSONALITY_IDS;
+    for (const bible of bibles) {
+      for (const personalityId of personalities) {
+        combos.push({
+          engineMode,
+          bibleId: bible.id,
+          bibleTitle: bible.title,
+          personalityId,
+          seed: baseSeed + i,
+        });
+        i += 1;
+      }
+    }
+  }
+  return combos;
+}
+
+/**
+ * John's 40 plan: 10 LitRPG + 10 tabletop + 10 RPG + 10 PYOA.
+ * Every premade at least once when count ≤ 10; extras cycle narrator + seed.
+ * RPG has 12 ready premades → first 10 included; 2 deferred (listed in notes).
+ */
+export function buildBalancedMatrix40(baseSeed = 1): {
+  combos: MatrixCombo[];
+  deferred: Array<{ engineMode: EngineMode; bibleId: string; bibleTitle: string }>;
+  notes: string[];
+} {
+  const modes: EngineMode[] = ['litrpg', 'dnd', 'rpg', 'pyoa'];
+  const perMode = 10;
+  const combos: MatrixCombo[] = [];
+  const deferred: Array<{ engineMode: EngineMode; bibleId: string; bibleTitle: string }> = [];
+  const notes: string[] = [];
+  let slot = 0;
+
+  for (const engineMode of modes) {
+    const all = getCampaignBiblesByEngineMode(engineMode).filter((b) => !isBlankCanvasBible(b.id));
+    const personalities =
+      engineMode === 'litrpg'
+        ? LAUNCH_LITRPG_SYSTEM_PERSONALITY_IDS
+        : LAUNCH_GM_PERSONALITY_IDS;
+
+    let chosen = all;
+    if (all.length > perMode) {
+      chosen = all.slice(0, perMode);
+      for (const b of all.slice(perMode)) {
+        deferred.push({ engineMode, bibleId: b.id, bibleTitle: b.title });
+      }
+      notes.push(
+        `${engineMode}: ${all.length} premades → using first ${perMode}; deferred: ${deferred
+          .filter((d) => d.engineMode === engineMode)
+          .map((d) => d.bibleId)
+          .join(', ')}`
+      );
+    }
+
+    for (let i = 0; i < perMode; i++) {
+      const bible = chosen[i % chosen.length]!;
+      const personalityId = personalities[i % personalities.length]!;
+      combos.push({
+        engineMode,
+        bibleId: bible.id,
+        bibleTitle: bible.title,
+        personalityId,
+        seed: baseSeed + slot,
+      });
+      slot += 1;
+    }
+
+    if (all.length < perMode) {
+      notes.push(
+        `${engineMode}: ${all.length} premades → ${perMode} runs (extras cycle narrator/seed on repeated premades)`
+      );
+    } else if (all.length === perMode) {
+      notes.push(`${engineMode}: ${all.length} premades × cycled narrators = ${perMode} runs`);
+    }
+  }
+
+  return { combos, deferred, notes };
+}
+
+export function matrixBudgetLines(turnsPerRun: number, comboCount?: number): string[] {
+  const full = enumerateLaunchMatrix();
+  const n = comboCount ?? full.length;
+  const byMode = new Map<EngineMode, number>();
+  for (const c of full) {
+    byMode.set(c.engineMode, (byMode.get(c.engineMode) ?? 0) + 1);
+  }
+  const minMin = Math.round((n * turnsPerRun * 45) / 60);
+  const maxMin = Math.round((n * turnsPerRun * 75) / 60);
+  const runs12hOptimistic = Math.floor((12 * 60) / Math.max(1, (turnsPerRun * 45) / 60));
+  const runs12hPessimistic = Math.floor((12 * 60) / Math.max(1, (turnsPerRun * 75) / 60));
+  const m40 = buildBalancedMatrix40();
+  const m40Min = Math.round((40 * turnsPerRun * 45) / 60);
+  const m40Max = Math.round((40 * turnsPerRun * 75) / 60);
+  return [
+    `Full Launch cartesian: ${full.length} combos (mode × premade × narrator; blank skipped).`,
+    ...[...byMode.entries()].map(([m, c]) => `  - ${m}: ${c}`),
+    `At N=${turnsPerRun}: full cartesian ≈ ${Math.round((full.length * turnsPerRun * 45) / 60)}–${Math.round((full.length * turnsPerRun * 75) / 60)} min.`,
+    `Balanced matrix-40: ${m40.combos.length} runs → ≈ ${m40Min}–${m40Max} min (~${(m40Min / 60).toFixed(1)}–${(m40Max / 60).toFixed(1)} h) at 45–75s/turn.`,
+    `12h sequential ≈ ${runs12hPessimistic}–${runs12hOptimistic} runs of N=${turnsPerRun}.`,
+    ...m40.notes.map((line) => `  note: ${line}`),
+  ];
+}
+
+function resolvePersonalities(
+  engineMode: EngineMode,
+  personalityRaw: string
+): { systemPersonality?: SystemPersonalityId; gmPersonality?: GmPersonalityId; personalityId: string } {
+  if (engineMode === 'litrpg') {
+    const id = resolveLitrpgSystemPersonality(personalityRaw);
+    return { systemPersonality: id, personalityId: id };
+  }
+  if (engineMode === 'dnd') {
+    const id = resolveTabletopGmPersonality(personalityRaw);
+    return { gmPersonality: id, personalityId: id };
+  }
+  if (engineMode === 'rpg') {
+    const id = resolveRpgGmPersonality(personalityRaw);
+    return { gmPersonality: id, personalityId: id };
+  }
+  const id = resolvePyoaGmPersonality(personalityRaw);
+  return { gmPersonality: id, personalityId: id };
+}
+
+export function buildNewGameState(opts: {
+  bibleId: string;
+  characterName: string;
+  seed: number;
+  personality: string;
+  engineMode?: EngineMode;
+}): { state: GameState; bible: CampaignBible; personalityId: string } {
+  const bible = getCampaignBibleById(opts.bibleId);
+  if (!bible) throw new Error(`Unknown bible id: ${opts.bibleId}`);
+  if (isBlankCanvasBible(bible.id)) {
+    throw new Error(`Blank canvas ${bible.id} is skipped for autoplay — pick a ready premade.`);
+  }
+  const engineMode = opts.engineMode ?? bible.engineMode;
+  const voices = resolvePersonalities(engineMode, opts.personality);
+  const storyName = formatCampaignStoryName(bible.title);
+  const base = createInitialState(storyName, engineMode, bible.archetype);
+  // Force deterministic seed string for opening hook pick
+  const seededBase: GameState = {
+    ...base,
+    seed: String(opts.seed),
+    saveId: `fate-${opts.seed}-${bible.id}-${Date.now()}`,
+  };
+  const seeded = seedStateFromCampaignBible(seededBase, bible);
+  const namedSeeded = { ...seeded, storyName };
+  const mergedCharacter = ensureStarterLookCharacter(
+    applyCampaignCharacter(
+      { ...namedSeeded.character, name: opts.characterName || 'Jax' },
+      bible
+    )
+  );
+  const openingMode = resolveOpeningMode(bible, engineMode);
+  const openingPromptsRaw = resolveOpeningPrompts(bible, engineMode, bible.archetype);
+  const registrar = resolveOpeningRegistrar(bible, engineMode, bible.archetype);
+  const picked = resolveOpeningHookPick(bible, namedSeeded.seed);
+  const coverAnswers = {
+    ...seedCoverAnswers(bible, mergedCharacter, picked?.location),
+    name: mergedCharacter.name,
+  };
+  const aloneArrival = isAloneArrivalPick(picked);
+  const openingPrompts = applyOpeningContract(
+    openingPromptsRaw,
+    bible,
+    aloneArrival,
+    namedSeeded.seed ?? namedSeeded.saveId ?? '0'
+  );
+  // Auto-complete covers so Fate is never blocked on name/look chips.
+  const pendingCovers = pendingRequiredCovers(openingPrompts, mergedCharacter, openingMode);
+  for (const p of pendingCovers) {
+    if (p.kind === 'name') coverAnswers.name = mergedCharacter.name;
+    if (p.kind === 'location') {
+      coverAnswers.where = coverAnswers.where || picked?.location || bible.startingLocation || 'Here';
+    }
+    if (p.kind === 'appearance') {
+      coverAnswers.look = coverAnswers.look || 'everyday street clothes, tired eyes';
+      coverAnswers.wear = coverAnswers.wear || coverAnswers.look;
+    }
+    if (p.kind === 'kit') {
+      coverAnswers.kit = coverAnswers.kit || 'street clothes';
+    }
+  }
+  const honeymoon = storyStartTextTurnsForTier('free');
+  const rawNewState: GameState = {
+    ...namedSeeded,
+    character: mergedCharacter,
+    currentLocation:
+      picked?.location
+      || coverAnswers.where
+      || bible.startingLocation
+      || namedSeeded.currentLocation,
+    currentCoordinates: { q: 0, r: 0, tier: 2, z: 0 },
+    choices: [],
+    log: [],
+    worldLedger: seedWorldLedgerFactions(emptyWorldLedger(), bible),
+    places: seedOutdoorHubPlaces([], bible),
+    sandboxAwardKeys: [],
+    mapFocusPlace: null,
+    pendingGeneratedOpening: false,
+    storyStartTextTurnsRemaining: honeymoon,
+    openingEstablishment: {
+      pending: [],
+      answers: coverAnswers,
+      complete: true,
+      registrar,
+      sceneWritten: true,
+      mode: openingMode,
+      pickedHook: picked?.text,
+      pickedHookFallback: picked?.fallback,
+      aloneArrival,
+    },
+    gmPersonality: voices.gmPersonality,
+    systemPersonality: voices.systemPersonality,
+  };
+  const sealed = ensureSealedOpeningBag(rawNewState, openingPromptsRaw);
+  const state = withUpdatedHookArc(
+    ensureCampaignContract(
+      {
+        ...sealed,
+        quests: sealed.quests ?? [],
+        recentBeatFingerprints: [],
+        stateTxLog: [],
+      },
+      bible
+    )
+  );
+  return { state, bible, personalityId: voices.personalityId };
+}
+
+function stampOpening(state: GameState): GameState {
+  const text = stitchOpeningScene(state);
+  const gmBase: LogEntry = {
+    id: uid(),
+    turn: 0,
+    role: 'gm',
+    content: text,
+    timestamp: Date.now(),
+    systemLog: [],
+  };
+  const withChoices = {
+    ...state,
+    turn: 0,
+    log: [gmBase],
+    choices: [],
+  };
+  const gm = withOfferedChoices(gmBase, withChoices);
+  const next: GameState = {
+    ...withChoices,
+    log: [gm],
+    choices: gm.offeredChoices ?? resolveOfferedChoices(withChoices),
+  };
+  return next;
+}
+
+async function callGmWithRetries(
+  state: GameState,
+  payload: string,
+  settings: Settings
+): Promise<{ text: string; systemLog: string[]; transportRetries: number; failKind?: string }> {
+  let lastErr: unknown;
+  let transportRetries = 0;
+  const timeoutMs = gmProxyTimeoutMsForState(state, {
+    writerTier: settings.subscriptionTier === 'mid' || settings.subscriptionTier === 'high'
+      ? settings.subscriptionTier
+      : 'free',
+  });
+  for (let attempt = 0; attempt <= TURN_TRANSPORT_MAX_AUTO_RETRIES; attempt++) {
+    try {
+      const result = await callGm(state, payload, settings, [], undefined, undefined, timeoutMs);
+      return {
+        text: result.text ?? '',
+        systemLog: result.systemLog ?? [],
+        transportRetries,
+      };
+    } catch (err) {
+      lastErr = err;
+      const kind = classifyTurnFailure(err);
+      if (!shouldAutoRetryTurn(kind) || attempt >= TURN_TRANSPORT_MAX_AUTO_RETRIES) {
+        return {
+          text: '',
+          systemLog: [],
+          transportRetries,
+          failKind: kind,
+        };
+      }
+      transportRetries = attempt + 1;
+      await new Promise((r) => setTimeout(r, transportRetryBackoffMs(attempt)));
+    }
+  }
+  return {
+    text: '',
+    systemLog: [],
+    transportRetries,
+    failKind: classifyTurnFailure(lastErr),
+  };
+}
+
+/**
+ * One headless turn: Fate pick → callGm → runWarden → structural → choice pad → prose wardens.
+ */
+export async function headlessFateTurn(
+  state: GameState,
+  settings: Settings,
+  rng: Rng,
+  meta: { bibleId: string; personalityId: string; seed: number; mode: FateMode; dryRun: boolean }
+): Promise<{ state: GameState; telemetry: TurnTelemetry }> {
+  const started = Date.now();
+  const startedAt = new Date(started).toISOString();
+  const offered = resolveOfferedChoices(state);
+  const fatePick =
+    meta.mode === 'first-pad'
+      ? offered[0] ?? 'Look around'
+      : pickFateChoice(offered, rng);
+
+  let playerInput = fatePick;
+  let repairNote: string | undefined;
+  const mediated = mediatePlayerInput(playerInput);
+  if (mediated.action === 'block') {
+    playerInput = 'Look around';
+    repairNote = 'input_blocked→Look around';
+  } else {
+    playerInput = mediated.text;
+  }
+
+  const lastGm = [...state.log].reverse().find((e) => e.role === 'gm')?.content ?? '';
+  const hard = validateActionHard(playerInput, state, lastGm);
+  if (!hard.valid) {
+    playerInput = hard.rewritten || 'Look around';
+    repairNote = (repairNote ? `${repairNote}; ` : '') + `hard_gate→${playerInput}`;
+  } else if (hard.rewritten) {
+    playerInput = hard.rewritten;
+    repairNote = (repairNote ? `${repairNote}; ` : '') + 'hard_gate_rewrite';
+  }
+
+  if (meta.dryRun) {
+    const stubGm = `(dry-run) Fate picked: ${fatePick}. Offered: ${offered.join(' | ')}`;
+    const playerEntry: LogEntry = {
+      id: uid(),
+      turn: state.turn,
+      role: 'player',
+      content: playerInput,
+      timestamp: Date.now(),
+    };
+    const gmBase: LogEntry = {
+      id: uid(),
+      turn: state.turn + 1,
+      role: 'gm',
+      content: stubGm,
+      timestamp: Date.now(),
+      systemLog: ['Dry run — no GM call'],
+    };
+    const mid: GameState = {
+      ...state,
+      turn: state.turn + 1,
+      log: [...state.log, playerEntry, gmBase],
+      choices: offered.length ? offered : ['Look around', 'Wait', 'Check what you carry'],
+    };
+    const gm = withOfferedChoices(gmBase, mid);
+    const next: GameState = {
+      ...mid,
+      log: [...state.log, playerEntry, gm],
+      choices: gm.offeredChoices ?? mid.choices,
+    };
+    const ended = Date.now();
+    return {
+      state: next,
+      telemetry: {
+        turn: next.turn,
+        startedAt,
+        endedAt: new Date(ended).toISOString(),
+        durationMs: ended - started,
+        bibleId: meta.bibleId,
+        personalityId: meta.personalityId,
+        seed: meta.seed,
+        fatePick,
+        offeredChoices: offered,
+        playerInput,
+        gmText: stubGm,
+        systemLog: gm.systemLog ?? [],
+        transportRetries: 0,
+        repairNote,
+        dryRun: true,
+      },
+    };
+  }
+
+  const intent = parsePlayerIntent(playerInput, state);
+  const turnMandate = buildTurnMandate(playerInput, intent, state, playerInput);
+  const deterministicBlock = `
+--- DETERMINISTIC GAME ENGINE STATE (MANDATORY) ---
+Character: ${state.character.name} (Lvl ${state.character.level})
+HP: ${state.character.hp}/${state.character.maxHp}
+Location: ${state.currentLocation}
+OUTCOME FOR THIS ACTION: Narrate consequences of the player action. Story first.
+Do NOT print dice notation or CODE ENFORCED.
+-------------------------------------------------
+`;
+  const payload = buildResolutionUserPayload({
+    mandateBlock: turnMandate.block,
+    playerAction: playerInput,
+    deterministicBlock,
+    retry: false,
+    intent,
+  });
+
+  const gmResult = await callGmWithRetries(state, payload, settings);
+  let error: string | undefined;
+  let gmText = gmResult.text;
+  if (!gmText.trim()) {
+    error = gmResult.failKind
+      ? `GM empty/fail (${gmResult.failKind})`
+      : 'GM returned empty content';
+    gmText = `(autoplay) The moment hangs — try again. [${error}]`;
+  }
+
+  const rawEvents = parseActionTags(gmText);
+  const warden = await runWarden(state, rawEvents, gmText, playerInput, intent, lastGm);
+  const events = warden.events;
+  const narrativeSource = warden.scrubbedNarrative ?? gmText;
+
+  const structural = applyStructuralEvents(state, events, {
+    strictEncumbrance: settings.strictEncumbrance === true,
+  });
+  let working = structural.state;
+
+  let cleanText = stripResidualMechanicTags(stripChoiceList(stripActionTags(narrativeSource)));
+  cleanText = postFilterGmOutput(cleanText, settings, {
+    nsfw: isNsfwCampaign(getCampaignBibleById(meta.bibleId)),
+  });
+  cleanText = ensureTurnProse(cleanText, playerInput);
+  cleanText = applyFactLocks(state, cleanText, playerInput);
+  cleanText = enforcePerspective(cleanText, settings, state.character.name);
+  cleanText = applyProseWarden(cleanText, {
+    currentLocation: working.currentLocation ?? state.currentLocation,
+    aloneArrival: isAloneArrivalOpening(working) || isAloneArrivalOpening(state),
+    crowdSize: calculateCrowdSize(working),
+    crowdPresent: working.sceneFacts?.crowd === 'present',
+    inventory: working.inventory ?? state.inventory,
+    sceneProps: collectSceneObjectNames(working),
+    searchedEmpty: listEmptySearchTargets(working.sceneFacts ?? state.sceneFacts),
+    playerInput,
+    groundedWeapons: groundedWeaponNames(working),
+    playerName: working.character?.name ?? state.character?.name,
+  });
+  const leak = scanAndScrubLeaks(cleanText);
+  if (leak.notes.length) cleanText = leak.clean;
+
+  const updates = extractUpdates(working, narrativeSource);
+  if (updates.character) {
+    working = {
+      ...working,
+      character: { ...working.character, ...updates.character },
+    };
+  }
+  if (updates.currentLocation) {
+    working = { ...working, currentLocation: updates.currentLocation };
+  }
+
+  const pipeline = await resolvePipelineChoices({
+    gmText: narrativeSource,
+    state: working,
+    loreCards: [],
+    settings,
+    lastPlayerAction: playerInput,
+  });
+  const storyProse = normalizeStoryCorpus(cleanText);
+  const finalChoices = padChoicesToCount(
+    pipeline.choices.length ? pipeline.choices : [],
+    working,
+    storyProse,
+    3,
+    playerInput
+  );
+
+  const nextTurn = state.turn + 1;
+  let updatedQuests = syncQuestsFromPlay(
+    eventsToQuestUpdates(events, working.quests ?? [], nextTurn),
+    gmResult.systemLog,
+    `${playerInput}\n${cleanText}`,
+    { locked: questsLockedDuringOpening(state) }
+  );
+
+  const filteredSystemLog = filterSystemLogForEngine(
+    [...(gmResult.systemLog ?? []), ...(warden.notes.length ? [`Warden: ${warden.notes.slice(0, 3).join('; ')}`] : [])],
+    state.engineMode
+  );
+
+  const playerEntry: LogEntry = {
+    id: uid(),
+    turn: state.turn,
+    role: 'player',
+    content: playerInput,
+    timestamp: Date.now(),
+  };
+  const gmBase: LogEntry = {
+    id: uid(),
+    turn: nextTurn,
+    role: 'gm',
+    content: cleanText,
+    timestamp: Date.now(),
+    systemLog: filteredSystemLog,
+  };
+  const mid: GameState = {
+    ...working,
+    turn: nextTurn,
+    quests: updatedQuests,
+    choices: finalChoices,
+    log: [...state.log, playerEntry, gmBase],
+  };
+  const gm = withOfferedChoices(gmBase, mid);
+  const next: GameState = {
+    ...mid,
+    log: [...state.log, playerEntry, gm],
+    choices: gm.offeredChoices ?? finalChoices,
+    lastUpdated: Date.now(),
+  };
+
+  const ended = Date.now();
+  return {
+    state: next,
+    telemetry: {
+      turn: nextTurn,
+      startedAt,
+      endedAt: new Date(ended).toISOString(),
+      durationMs: ended - started,
+      bibleId: meta.bibleId,
+      personalityId: meta.personalityId,
+      seed: meta.seed,
+      fatePick,
+      offeredChoices: offered,
+      playerInput,
+      gmText: cleanText,
+      systemLog: filteredSystemLog,
+      error,
+      failKind: gmResult.failKind,
+      transportRetries: gmResult.transportRetries,
+      repairNote,
+    },
+  };
+}
+
+export async function runFateAutoplay(opts: {
+  turns: number;
+  seed: number;
+  bibleId: string;
+  personality: string;
+  engineMode?: EngineMode;
+  aiTier: HostedAiTier;
+  mode: FateMode;
+  dryRun: boolean;
+  outRoot: string;
+  characterName: string;
+}): Promise<RunSummary> {
+  enableAutoplayTestLab(opts.aiTier);
+  setActiveSubscriptionTier(opts.aiTier);
+
+  const settings: Settings = {
+    ...createDefaultSettings(),
+    subscriptionTier: opts.aiTier,
+    classicMemorableImages: false,
+    visualMode: 'classic',
+    gmVoiceProfileId: isGmVoiceProfileId(opts.personality) ? opts.personality : 'cold-system',
+  };
+
+  const { state: raw, bible, personalityId } = buildNewGameState({
+    bibleId: opts.bibleId,
+    characterName: opts.characterName,
+    seed: opts.seed,
+    personality: opts.personality,
+    engineMode: opts.engineMode,
+  });
+  let state = stampOpening(raw);
+  const rng = mulberry32(opts.seed);
+
+  const runId = new Date().toISOString().replace(/[:.]/g, '-');
+  const slug = `${bible.id}_${personalityId}_s${opts.seed}`;
+  const outDir = join(opts.outRoot, `${runId}_${slug}`);
+  mkdirSync(outDir, { recursive: true });
+
+  const turns: TurnTelemetry[] = [];
+  const startedAt = new Date().toISOString();
+  let fatal: string | undefined;
+
+  try {
+    for (let i = 0; i < opts.turns; i++) {
+      const result = await headlessFateTurn(state, settings, rng, {
+        bibleId: bible.id,
+        personalityId,
+        seed: opts.seed,
+        mode: opts.mode,
+        dryRun: opts.dryRun,
+      });
+      state = result.state;
+      turns.push(result.telemetry);
+      writeFileSync(join(outDir, 'turns.jsonl'), turns.map((t) => JSON.stringify(t)).join('\n') + '\n');
+      if (result.telemetry.error && result.telemetry.failKind === 'auth') {
+        fatal = result.telemetry.error;
+        break;
+      }
+    }
+  } finally {
+    // Keep Test Lab override for matrix multi-run; caller clears at process end.
+  }
+
+  const endedAt = new Date().toISOString();
+  const durations = turns.map((t) => t.durationMs);
+  const issueTurns = turns
+    .filter((t) => t.error || t.failKind)
+    .map((t) => ({ turn: t.turn, error: t.error, failKind: t.failKind }));
+
+  const summary: RunSummary = {
+    runId,
+    bibleId: bible.id,
+    bibleTitle: bible.title,
+    engineMode: state.engineMode,
+    personalityId,
+    seed: opts.seed,
+    requestedTurns: opts.turns,
+    completedTurns: turns.length,
+    dryRun: opts.dryRun,
+    aiTier: opts.aiTier,
+    startedAt,
+    endedAt,
+    errorCount: turns.filter((t) => t.error).length,
+    timeoutCount: turns.filter((t) => t.failKind === 'timeout').length,
+    transportRetryCount: turns.reduce((n, t) => n + (t.transportRetries || 0), 0),
+    latencyMs: latencyStats(durations),
+    issueTurns,
+    outDir,
+  };
+
+  writeFileSync(join(outDir, 'transcript.md'), buildPlayTranscript(state));
+  writeFileSync(join(outDir, 'turns.jsonl'), turns.map((t) => JSON.stringify(t)).join('\n') + '\n');
+  writeFileSync(join(outDir, 'summary.json'), JSON.stringify(summary, null, 2) + '\n');
+  writeFileSync(
+    join(outDir, 'meta.json'),
+    JSON.stringify(
+      {
+        ...summary,
+        fatal,
+        capacity: 'autoplay Test Lab override (unlimited text/memorable for this process only)',
+        note: 'For review + optional StoryForge/SFT ingest. Not auto-trained into live GM.',
+      },
+      null,
+      2
+    ) + '\n'
+  );
+
+  return summary;
+}
+
+export function parseFateArgs(argv: string[]): FateAutoplayCliOpts {
+  const defaults: FateAutoplayCliOpts = {
+    turns: 20,
+    seed: 1,
+    bibleId: 'summoned-pact',
+    personality: 'cold-system',
+    aiTier: 'free',
+    mode: 'fate',
+    dryRun: false,
+    matrix: false,
+    matrix40: false,
+    matrixLimit: 0,
+    outRoot: join(process.cwd(), 'scripts', 'fate-autoplay', 'runs'),
+    characterName: 'Jax',
+  };
+  const out = { ...defaults };
+  for (let i = 0; i < argv.length; i++) {
+    const a = argv[i];
+    const next = () => argv[++i] ?? '';
+    if (a === '--turns') out.turns = Math.max(1, Number(next()) || 20);
+    else if (a === '--seed') out.seed = Number(next()) || 1;
+    else if (a === '--bible') out.bibleId = next();
+    else if (a === '--personality') out.personality = next();
+    else if (a === '--engine' || a === '--mode-engine') out.engineMode = next() as EngineMode;
+    else if (a === '--ai-tier') {
+      const t = next();
+      out.aiTier = t === 'mid' || t === 'high' ? t : 'free';
+    } else if (a === '--pick-mode') {
+      const m = next();
+      out.mode = m === 'first-pad' ? 'first-pad' : 'fate';
+    } else if (a === '--dry-run') out.dryRun = true;
+    else if (a === '--matrix-40' || a === '--matrix40') out.matrix40 = true;
+    else if (a === '--matrix') out.matrix = true;
+    else if (a === '--matrix-limit') out.matrixLimit = Math.max(0, Number(next()) || 0);
+    else if (a === '--out') out.outRoot = next();
+    else if (a === '--name') out.characterName = next();
+    else if (a === '--help' || a === '-h') {
+      out.turns = -1;
+    }
+  }
+  return out;
+}
+
+export { disableAutoplayTestLab, enableAutoplayTestLab };

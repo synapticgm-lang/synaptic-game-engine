@@ -64,11 +64,36 @@ export function saveTestLab(config: TestLabConfig): void {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(config));
 }
 
+/**
+ * Process-local override for headless Fate autoplay / QA scripts.
+ * Does NOT write localStorage and does NOT affect normal players.
+ * Cleared when the Node process exits (or via disableAutoplayTestLab).
+ */
+let autoplayUnlimitedSession = false;
+let autoplayAiTier: HostedAiTier = 'free';
+
+/** Enable unlimited capacity for this process only (scripts/fate-autoplay). */
+export function enableAutoplayTestLab(aiTier: HostedAiTier = 'free'): void {
+  autoplayUnlimitedSession = true;
+  autoplayAiTier = aiTier === 'mid' || aiTier === 'high' ? aiTier : 'free';
+}
+
+export function disableAutoplayTestLab(): void {
+  autoplayUnlimitedSession = false;
+  autoplayAiTier = 'free';
+}
+
+export function isAutoplayTestLabSession(): boolean {
+  return autoplayUnlimitedSession;
+}
+
 export function isTestLabEnabled(): boolean {
+  if (autoplayUnlimitedSession) return true;
   return loadTestLab().enabled;
 }
 
 export function getTestLabAiTier(): HostedAiTier {
+  if (autoplayUnlimitedSession) return autoplayAiTier;
   return loadTestLab().aiPreviewTier;
 }
 
