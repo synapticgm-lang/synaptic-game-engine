@@ -271,6 +271,60 @@ export function scrubSpeakerPlaceholder(text: string, alone = false): string {
 }
 
 /**
+ * "the stranger" is a scrub artifact that replaced person/role slots.
+ * Fix it with contextual replacements — use present names, roles, or environment.
+ */
+export function scrubStrangerArtifact(
+  text: string,
+  presentNames: string[] = [],
+  alone = false
+): string {
+  if (!text || !/\bthe stranger\b/i.test(text)) return text;
+  
+  // Collect context clues for replacement
+  const namedPerson = presentNames.find(n => 
+    n.length >= 2 && !/\b(?:you|your|panel|system|status)\b/i.test(n)
+  );
+  
+  // Determine contextual replacement
+  const replacement = (() => {
+    if (namedPerson) return namedPerson.toLowerCase();
+    if (alone) return 'the panel';
+    // Scene-based fallback
+    if (/\b(?:merchant|shopkeeper|clerk|vendor)\b/i.test(text)) return 'the merchant';
+    if (/\b(?:guard|sentry|watch|soldier)\b/i.test(text)) return 'the guard';
+    if (/\b(?:innkeeper|bartender|server)\b/i.test(text)) return 'the innkeeper';
+    if (/\b(?:priest|chanter|cleric)\b/i.test(text)) return 'the priest';
+    if (/\b(?:captain|sergeant|officer)\b/i.test(text)) return 'the officer';
+    // Generic fallback
+    return 'them';
+  })();
+  
+  let next = text;
+  
+  // Fix possessive: "the stranger's" → "their" or named possessive
+  const possessiveRepl = namedPerson 
+    ? `${namedPerson.toLowerCase()}'s` 
+    : (replacement === 'them' ? 'their' : `${replacement}'s`);
+  next = next.replace(/\bthe stranger(?:'s|'s)\b/gi, possessiveRepl);
+  
+  // Fix subject usage: "the stranger X" where X is verb
+  if (replacement !== 'them') {
+    next = next.replace(/\bthe stranger\b/gi, replacement);
+  } else {
+    // "the stranger" → "them" requires rephrasing to avoid grammar break
+    next = next.replace(/\bthe stranger\s+(is|was|seems?|appears?|stands?|sits?|waits?|watches?)\b/gi, 'they $1');
+    next = next.replace(/\bthe stranger\b/gi, 'them');
+  }
+  
+  // Fix article collisions that may have been created
+  next = next.replace(/\b(?:a|an)\s+them\b/gi, 'them');
+  next = next.replace(/\bthe\s+them\b/gi, 'them');
+  
+  return next;
+}
+
+/**
  * Kill premature "secrets" framing on an empty first look (explore opener filler).
  * Prefer sensory-only until the ledger has actual finds.
  */
@@ -552,6 +606,7 @@ export function applyProseWarden(text: string, ctx?: ProseWardenContext): string
   next = scrubSomeoneNearbyPlaceholder(next, alone);
   next = scrubUiQuestVerbs(next, alone);
   next = scrubSpeakerPlaceholder(next, alone);
+  next = scrubStrangerArtifact(next, ctx?.presentNames ?? [], alone);
   next = scrubPrematureSecrets(next);
   next = scrubInventedAlonePresence(next, alone);
   next = scrubInteriorOneRoomLie(

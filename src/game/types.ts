@@ -451,6 +451,8 @@ export interface GameState {
   hookArc?: import('./hookArc').HookArcState;
   /** Recent accepted prose fingerprints for retry novelty. */
   recentBeatFingerprints?: string[];
+  /** Recent offered choices for deduplication across turns (sliding window). */
+  recentChoices?: Array<{ turn: number; choices: string[] }>;
   /** Current location sheet (interactables / exits). */
   locationSheet?: LocationSheet | null;
   /** Sheet for the place just left — injected with current for dual-location memory. */

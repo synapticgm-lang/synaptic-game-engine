@@ -192,6 +192,39 @@ export function buildIntentContract(args: {
   };
 }
 
+/**
+ * Check if there are unresolved obligations that should block new beat openings.
+ * Returns a blocking constraint if the last beat had obligations that weren't resolved.
+ */
+export function checkUnresolvedObligations(state: GameState): {
+  blocked: boolean;
+  constraint?: string;
+} {
+  // Check for open ask threads (most common unresolved obligation)
+  const openAsks = openAskThreads(state);
+  const silenced = silencedThreads(state);
+  
+  if (openAsks.length > 0) {
+    return {
+      blocked: true,
+      constraint: `ANSWER THE PLAYER'S LAST REQUEST BEFORE OPENING A NEW BEAT.
+Unresolved ask: "${openAsks[0].slice(0, 200)}"
+Do not reopen atmosphere or reset the scene until this ask is answered with concrete terms.`
+    };
+  }
+  
+  if (silenced.length > 0) {
+    return {
+      blocked: true,
+      constraint: `RESOLVE THE INTERRUPTED SPEAKER THREAD BEFORE OPENING A NEW BEAT.
+Silenced thread: "${silenced[0].slice(0, 200)}"
+Return to this thread or explain in-fiction why they stay silent.`
+    };
+  }
+  
+  return { blocked: false };
+}
+
 /** Inject into TURN MANDATE / user payload. */
 export function formatIntentContractForPrompt(contract: IntentContract): string {
   if (!contract.obligations.length) return '';

@@ -3684,6 +3684,11 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
 
       const committedChoices =
         mode === 'kid' ? finalChoices.map((c) => filterKidModeText(c)) : finalChoices;
+      // Track recent choices for deduplication
+      const updatedRecentChoices = [
+        ...(liveCurrent.recentChoices ?? []),
+        { turn: nextTurn, choices: committedChoices }
+      ].slice(-10); // Keep last 10 turns
       // Act-3: faction stance/quest deltas + off-spine XP banks
       {
         const presentNames = [
@@ -3877,6 +3882,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
         turn: nextTurn,
         pendingImagePrompt: result.imagePrompt,
         choices: committedChoices,
+        recentChoices: updatedRecentChoices,
         gold: Math.max(0, (workingState.gold ?? liveCurrent.gold ?? 0) + extraWeekGold),
         worldLedger,
         sandboxAwardKeys: workingState.sandboxAwardKeys ?? liveCurrent.sandboxAwardKeys,

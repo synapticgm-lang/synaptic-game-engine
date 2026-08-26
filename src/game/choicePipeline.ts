@@ -721,7 +721,42 @@ export function sceneSafeFallbacks(
   return ordered.slice(0, 4);
 }
 
-export function padChoicesToCount(
+export /**
+ * Deduplicate choices against recent turns (sliding 5-turn window).
+ * Travel / hub-specific choices and opening chips are exempt.
+ */
+function deduplicateChoicesAcrossRecentTurns(
+  choices: string[],
+  state: GameState
+): string[] {
+  if (!state.recentChoices || state.recentChoices.length === 0) return choices;
+  
+  // Build set of recently offered choices (last 5 turns)
+  const recentWindow = state.recentChoices.slice(-5);
+  const recentOffered = new Set<string>();
+  for (const entry of recentWindow) {
+    for (const choice of entry.choices) {
+      recentOffered.add(choice.toLowerCase().trim());
+    }
+  }
+  
+  // Filter out recently offered choices (with exemptions)
+  return choices.filter(choice => {
+    const normalized = choice.toLowerCase().trim();
+    
+    // Exempt Travel / hub-specific choices (always allow)
+    if (/\btravel to\b/i.test(choice)) return true;
+    if (/\b(?:contract hall|weighing cup|west wall|lowmarket|harbor|undercroft)\b/i.test(choice)) return true;
+    
+    // Exempt opening establishment chips (can appear early)
+    if (/\b(?:clothes|phone|purse|bag|kit)\b/i.test(choice) && state.turn <= 5) return true;
+    
+    // Filter if recently offered
+    return !recentOffered.has(normalized);
+  });
+}
+
+function padChoicesToCount(
   choices: string[],
   state: GameState,
   storyProse = '',
@@ -806,10 +841,12 @@ export async function resolvePipelineChoices(params: {
 
   const firstPass = filterChoicesToTurnFacts(rawChoices, storyProse, state, loreCards);
   const firstKept = restoreHarvestedOffers(rawChoices, firstPass.kept);
+  // Apply choice deduplication
+  const dedupedFirstKept = deduplicateChoicesAcrossRecentTurns(firstKept, state);
   // Two grounded options are enough — pad locally instead of another model call.
-  if (firstKept.length >= 2 || rawChoices.some((c) => looksLikeChoiceOffer(c))) {
+  if (dedupedFirstKept.length >= 2 || rawChoices.some((c) => looksLikeChoiceOffer(c))) {
     return {
-      choices: padChoicesToCount(firstKept, state, storyProse, 3, lastPlayerAction),
+      choices: padChoicesToCount(dedupedFirstKept, state, storyProse, 3, lastPlayerAction),
       regenerated: false,
       rejectedCount: firstPass.rejected.length,
     };

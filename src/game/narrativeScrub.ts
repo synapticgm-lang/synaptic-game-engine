@@ -253,6 +253,20 @@ function buildLooseGroundSet(state: GameState, prose: string): Set<string> {
   for (const node of state.activeDungeon?.nodes ?? []) {
     if (state.activeDungeon?.visitedNodeIds?.includes(node.id)) add(node.name);
   }
+  // P1-6: Hub authority whitelist — never scrub known hub names
+  // (Import at top of file needed for hubsForBibleId)
+  if (state.campaignBibleId) {
+    try {
+      const { hubsForBibleId } = require('./outdoorHubs');
+      const hubs = hubsForBibleId(state.campaignBibleId);
+      for (const hub of hubs) {
+        add(hub.name);
+        for (const alias of hub.aliases ?? []) add(alias);
+      }
+    } catch {
+      // hubsForBibleId may not be available in all contexts
+    }
+  }
   const blob = `${prose}\n${(state.timeline ?? [])
     .slice(-20)
     .map((t) => t.text)

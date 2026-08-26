@@ -8,9 +8,9 @@ import { effectiveWriterTier, isTestLabEnabled } from '../game/testLab';
 import { equippedSetLabel, equippedSetName } from '../game/uiTheme';
 
 /** Visible after a hard refresh -- if this is missing, Vercel is still serving the 16 Aug bundle. */
-export const HUD_BUILD_STAMP = '2026-08-26r';
+export const HUD_BUILD_STAMP = '2026-08-26s';
 const HUD_BUILD_TITLE =
-  'Debug 2026-08-26r - Empty GM retry + official scrub + travel lands';
+  'Debug 2026-08-26s - Quality fixes: stranger scrub + choice dedup + obligation blocking + hub whitelist + loot gate';
 
 interface Props {
   state: GameState;

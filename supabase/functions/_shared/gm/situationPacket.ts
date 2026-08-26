@@ -293,6 +293,7 @@ export function formatSituationForPrompt(state: GameState): string {
       ? 'ALONE ARRIVAL: Empty ruin — no handlers or "people who saw you arrive." Do not invent voices outside or watchers at the wall.'
       : '',
     'RAILS: SNAPSHOT + ledger are fact authority. Narrate richly; do not contradict them. Do not invent named threats, loot, NPCs, doors, or interactables absent above. Do not invent a dungeon danger tier outdoors. Interior floor-plan Exits / EXPLORE AUTHORITY override "one room / only a gap" improvisation.',
+    'LOOT AUTHORITY (BINDING): Only items from ledger / sceneFacts.props / containers / HIDDEN ROOM LEDGER may be found. Generic debris (splinters, ash, rubble) = OK to describe. Named loot (lockets, datapads, crystals, weapons) MUST exist in Inventory, containers, locationSheet.interactables, or loose floor items before narration. NEVER invent named items into the scene.',
     'HIDDEN QUESTS: Never spoil quests with status hidden or revealed=false.',
     formatWorldLedgerBlock(state.worldLedger),
   ];
