@@ -9,7 +9,9 @@ John is playtesting live. Collect issues here. Do not implement until he asks fo
 
 ## Open
 
-_(none — 2026-08-25/26 batch shipped in **2026-08-26a**)_
+_(none — 2026-08-26b shipped choice grounding)_
+
+**Residual risk (26b):** Choices that invent props without `the/a/an` articles (e.g. "Inspect crystals on street") still need stronger token grounding; display filter uses last GM story only — GM can still emit bad pads that get stripped at ActionBar, leaving fewer buttons until pad fills.
 
 ## Waiting (research — not tickets yet)
 
@@ -22,6 +24,8 @@ _(none — 2026-08-25/26 batch shipped in **2026-08-26a**)_
 - Premium theme five-rater / Shop preview parity (Manus T8/T9 P0-04) — after playtest of `2026-08-19t` Vampire rescue; ingest `docs/research/manus-premium-themes-ingest-2026-08-19.md`
 
 ## Done (already shipped)
+
+- **2026-08-26b Choice grounding crystals:** Classic invented-context pad — "Inspect the crystals breaking the street" while last GM story was indoor barrels/flagstones/brine. Root: `choiceNamesUnnarratedObject` early-exited any short `Inspect…` as generic lookaround. Fix: pure-generic allowlist only; concrete `the/a/an` nouns must appear in last GM story / sceneFacts.props / kit / location; `street` no longer auto-skipped; ActionBar `filterInventedContextChoices` grounds against last GM only (not older outdoor turns). Vitest: barrels indoors → reject crystals/street; keep Wait/Ask generics. HUD stamp 26b.
 
 - **2026-08-26a Retry empty + perspective hands:** Containment from Jax Free playtest. Class A: `classifyTurnFailure` maps `"no content"` → `empty` so transport retries (×2) fire; player bubble + draft restore kept; kind/attempt/host still logged. Class D: `perspectiveWarden` scopes his/her body kit to PC clauses only (NPC hands/shoulders stay). Choice pad strips bare PC name + invented barrel chores (story/props ground). STATUS suppresses no-op Perception SUCCESS. Free English regex (`half an moments`). Speaker continuity SNAPSHOT rail + light cot-sleeper scrub. Speed: Free skip expand when ≥70 words; Free skip sameBeat-only quality retry; 75s/55s budgets confirmed. Evidence moved to `docs/bugs/playtest-2026-08-25/`. HUD stamp 26a. Redeploy: `npx supabase functions deploy gm-turn` (SNAPSHOT + edge prose sync).
 

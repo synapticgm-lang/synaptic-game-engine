@@ -1,11 +1,12 @@
 /**
  * PACK 12: SMART CHOICE FILTERING
- * 
+ *
  * Filters out choices that reference non-existent story context.
- * Prevents "respond to their offer" when no offer was made, etc.
+ * Prevents "respond to their offer" when no offer was made, invented props, etc.
  */
 
 import type { GameState } from './types';
+import { choiceNamesUnnarratedObject } from './choicePipeline';
 
 /**
  * References that require story context to exist.
@@ -66,17 +67,26 @@ export function isBarePcNameChoice(choice: string, characterName?: string): bool
   return cleaned.toLowerCase() === name.toLowerCase();
 }
 
+function lastGmStory(state: GameState): string {
+  for (let i = (state.log ?? []).length - 1; i >= 0; i--) {
+    const entry = state.log[i];
+    if (entry?.role === 'gm' && entry.content) return entry.content;
+  }
+  return '';
+}
+
 /**
  * Check if a choice references context that doesn't exist in the story.
  */
 export function choiceInventsContext(
   choice: string,
   recentStory: string,
-  scenePropsCorpus = ''
+  scenePropsCorpus = '',
+  state?: GameState
 ): boolean {
   const choiceLower = choice.toLowerCase().trim();
   const grounded = `${recentStory}\n${scenePropsCorpus}`.toLowerCase();
-  
+
   for (const rule of CONTEXT_REQUIREMENTS) {
     if (rule.pattern.test(choiceLower)) {
       // Choice references this context - check if story/props have it
@@ -85,24 +95,24 @@ export function choiceInventsContext(
       }
     }
   }
-  
+
+  // Concrete "the/a/an <noun>" must appear in last story / props / kit / location.
+  if (state && choiceNamesUnnarratedObject(choice, recentStory, state)) {
+    return true;
+  }
+
   return false;
 }
 
 /**
  * Filter out choices that invent non-existent context.
+ * Grounds against the last GM story + sceneFacts.props (not older log turns).
  */
 export function filterInventedContextChoices(
   choices: string[],
   state: GameState
 ): string[] {
-  // Get last 3 GM story entries for context
-  const recentStory = state.log
-    .slice(-6)
-    .filter(e => e.role === 'gm')
-    .map(e => e.content)
-    .join(' ')
-    .slice(-2000);
+  const recentStory = lastGmStory(state);
 
   const scenePropsCorpus = [
     ...(state.sceneFacts?.props ?? []),
@@ -112,14 +122,14 @@ export function filterInventedContextChoices(
     .join(' ');
 
   const pcName = state.character?.name;
-  
-  return choices.filter(choice => {
+
+  return choices.filter((choice) => {
     if (isBarePcNameChoice(choice, pcName)) {
       console.log(`[Choice Filter] Removed bare PC-name choice: "${choice}"`);
       return false;
     }
     if (!recentStory && !scenePropsCorpus) return true;
-    const invents = choiceInventsContext(choice, recentStory, scenePropsCorpus);
+    const invents = choiceInventsContext(choice, recentStory, scenePropsCorpus, state);
     if (invents) {
       console.log(`[Choice Filter] Removed invented-context choice: "${choice}"`);
     }

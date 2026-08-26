@@ -5,7 +5,11 @@ import {
   filterInventedContextChoices,
   isBarePcNameChoice,
 } from './choiceWarden';
+import { choiceNamesUnnarratedObject } from './choicePipeline';
 import { isNoOpCheckSuccessLine, isNoisySystemLogLine } from './systemLog';
+
+const BARREL_INDOOR =
+  'Brine film on the flagstones. You slip near the barrels and a rack. A barrel tips — dark surge across the floor. The shouting in the room sharpens.';
 
 describe('choiceWarden — PC name + invented chores', () => {
   it('strips bare PC name choices', () => {
@@ -45,6 +49,88 @@ describe('choiceWarden — PC name + invented chores', () => {
     expect(
       choiceInventsContext('Offer to Help with the barrels', 'Quiet street.', 'oak barrels')
     ).toBe(false);
+  });
+
+  it('rejects invented crystals/street when last story is barrels indoors', () => {
+    const state = createInitialState('The Summoned Pact', 'litrpg');
+    state.sceneFacts = {
+      crowd: 'sparse',
+      noise: 'shouting',
+      present: [],
+      props: ['barrels', 'rack', 'flagstones'],
+      lastBeat: 'barrel spill',
+      updatedTurn: 2,
+      indoor: true,
+    };
+    state.log = [
+      {
+        id: 'g-old',
+        turn: 1,
+        role: 'gm',
+        content: 'Crystals crack the street outside the guild.',
+        timestamp: Date.now() - 1000,
+      },
+      {
+        id: 'g-now',
+        turn: 2,
+        role: 'gm',
+        content: BARREL_INDOOR,
+        timestamp: Date.now(),
+      },
+    ];
+
+    expect(
+      choiceNamesUnnarratedObject(
+        'Inspect the crystals breaking the street',
+        BARREL_INDOOR,
+        state
+      )
+    ).toBe(true);
+
+    const filtered = filterInventedContextChoices(
+      [
+        'Ask what is going on',
+        'Wait and listen carefully',
+        'Inspect the crystals breaking the street',
+        'Inspect the barrels',
+        'Offer handlers honest help',
+      ],
+      state
+    );
+
+    expect(filtered).not.toContain('Inspect the crystals breaking the street');
+    expect(filtered).toContain('Ask what is going on');
+    expect(filtered).toContain('Wait and listen carefully');
+    expect(filtered).toContain('Inspect the barrels');
+  });
+
+  it('keeps crystal inspect when last story names crystals', () => {
+    const state = createInitialState('The Summoned Pact', 'litrpg');
+    const story = 'Violet crystals break through the cobbled street.';
+    state.sceneFacts = {
+      crowd: 'none',
+      noise: 'quiet',
+      present: [],
+      props: ['crystals', 'street'],
+      lastBeat: 'street crystals',
+      updatedTurn: 1,
+      indoor: false,
+    };
+    state.log = [
+      {
+        id: 'g1',
+        turn: 1,
+        role: 'gm',
+        content: story,
+        timestamp: Date.now(),
+      },
+    ];
+    const filtered = filterInventedContextChoices(
+      ['Inspect the crystals breaking the street', 'Wait and listen carefully'],
+      state
+    );
+    expect(filtered).toContain('Inspect the crystals breaking the street');
+    expect(filtered).toContain('Wait and listen carefully');
   });
 });
 

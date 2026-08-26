@@ -302,18 +302,24 @@ export function isChoiceGroundedInTurn(
   return true;
 }
 
-const GENERIC_LOOKAROUND =
-  /^(examine|inspect|observe|look around|wait|listen|ask|rest|hide|approach cautiously|check (?:your |my )?(?:gear|inventory|wounds)|inspect the immediate surroundings|observe the environment carefully)\b/i;
+/** Pure generic pads — no concrete "the/a/an <prop>" beyond surroundings/room. */
+const PURE_GENERIC_PAD =
+  /^(wait(?:\s+and\s+listen(?:\s+carefully)?)?|listen(?:\s+carefully)?|ask what is going on|rest|hide|look around|approach cautiously|check (?:your |my )?(?:gear|inventory|wounds)|inspect the immediate surroundings|observe the environment carefully|examine the (?:surroundings|environment|area|scene|room)|inspect the (?:surroundings|environment|area|scene|room))\b/i;
 
-/** Concrete props in a choice must appear in this turn's story, inventory, or the location sheet. */
+/** Concrete props in a choice must appear in this turn's story, scene props, inventory, or the location sheet. */
 export function choiceNamesUnnarratedObject(
   choice: string,
   storyProse: string,
   state: GameState
 ): boolean {
-  if (GENERIC_LOOKAROUND.test(choice.trim()) && choice.length < 56) return false;
+  const trimmed = choice.trim();
+  // Allow short pure generics (Wait / Ask what… / Inspect the surroundings).
+  // Do NOT early-exit every "Inspect …" — that let "Inspect the crystals breaking the street" through.
+  if (PURE_GENERIC_PAD.test(trimmed) && trimmed.length < 56) return false;
+
   const hay = [
     storyProse,
+    ...(state.sceneFacts?.props ?? []),
     ...(state.inventory ?? []).map((i) => i.name),
     ...(state.containers ?? []).map((c) => c.name),
     state.locationSheet?.name ?? '',
@@ -329,12 +335,13 @@ export function choiceNamesUnnarratedObject(
   ].map((m) => (m[1] ?? '').toLowerCase());
 
   const skip = /^(immediate|nearest|nearby|other|another|few|some|your|my|old|new|next|last|same)$/;
+  // Generic place-holders only — not "street" (must be narrated when named).
+  const genericPlace =
+    /^(surroundings|environment|area|room|scene|ground|air|cover|gear|inventory|wounds?)$/;
   for (const obj of objects) {
     const core = obj.replace(/^(nearest|nearby|other|another|immediate|overturned|parked|open|ajar|distant)\s+/, '');
     if (!core || skip.test(core)) continue;
-    if (/^(surroundings|environment|area|street|room|scene|ground|air|cover|gear|inventory|wounds?)$/.test(core)) {
-      continue;
-    }
+    if (genericPlace.test(core)) continue;
     if (hay.includes(core) || core.split(/\s+/).some((w) => w.length >= 4 && hay.includes(w))) {
       continue;
     }
