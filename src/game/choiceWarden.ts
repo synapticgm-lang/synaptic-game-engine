@@ -128,6 +128,18 @@ export function filterInventedContextChoices(
       console.log(`[Choice Filter] Removed bare PC-name choice: "${choice}"`);
       return false;
     }
+    const emptyKeys = [
+      ...(state.sceneFacts?.searchedEmpty ?? []),
+      ...(state.sceneFacts?.emptyContainers ?? []),
+    ];
+    if (
+      emptyKeys.length > 0
+      && /\b(hidden compartment|search(?:ing)? (?:again|the ruin|carefully)|anything missed|for anything)\b/i.test(choice)
+      && !/\b(bag|backpack|light|torch|basement|different room|break|pry)\b/i.test(choice)
+    ) {
+      console.log(`[Choice Filter] Removed empty-research loot invite: "${choice}"`);
+      return false;
+    }
     if (!recentStory && !scenePropsCorpus) return true;
     const invents = choiceInventsContext(choice, recentStory, scenePropsCorpus, state);
     if (invents) {

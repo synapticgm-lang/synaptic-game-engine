@@ -135,6 +135,11 @@ import {
   type LedgerCombatRound,
   type LedgerFleeRound,
 } from './ledgerCombat';
+import {
+  groundedWeaponNames,
+  listEmptySearchTargets,
+  scrubInventedWeapons,
+} from './searchContinuity';
 import { mediatePlayerInput } from './inputMediation';
 import { maybeRatingRewrite } from './maturity';
 import { postFilterGmOutput } from './contentPostFilter';
@@ -3303,6 +3308,10 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
           previousTension: workingState.previousSceneFacts?.tension,
           inventory: workingState.inventory ?? liveCurrent.inventory,
           sceneProps: collectSceneObjectNames(workingState),
+          searchedEmpty: listEmptySearchTargets(workingState.sceneFacts ?? liveCurrent.sceneFacts),
+          playerInput: sanitizedInput,
+          groundedWeapons: groundedWeaponNames(workingState),
+          playerName: workingState.character?.name ?? liveCurrent.character?.name,
         });
       }
       {
@@ -3469,7 +3478,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
           ...newInventoryItems.map((i) => i.name),
         ],
         wardenNotes: warden.notes,
-        sceneBeat: applyCommittedNarrative(liveCurrent, cleanText, nextTurn).lastBeat,
+        sceneBeat: applyCommittedNarrative(liveCurrent, cleanText, nextTurn, sanitizedInput).lastBeat,
       });
       const mergedTimeline = mergeTimeline(workingState.timeline, turnFacts);
       const npcMemories = recordNpcTreatmentFromAction(
@@ -3813,7 +3822,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
         ...workingState,
         ...updates,
         character: baseChar,
-        sceneFacts: applyCommittedNarrative(liveCurrent, cleanText, nextTurn),
+        sceneFacts: applyCommittedNarrative(liveCurrent, cleanText, nextTurn, sanitizedInput),
         choices: committedChoices,
         openingEstablishment: liveCurrent.openingEstablishment,
         log: [...liveCurrent.log, gmLogEntryBase],
@@ -3839,7 +3848,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
         statusReveal,
         pendingContentRewrite: null,
         previousSceneFacts: liveCurrent.sceneFacts,
-        sceneFacts: applyCommittedNarrative(liveCurrent, cleanText, nextTurn),
+        sceneFacts: applyCommittedNarrative(liveCurrent, cleanText, nextTurn, sanitizedInput),
         campaignPremise: workingState.campaignPremise ?? liveCurrent.campaignPremise,
         campaignBibleId: workingState.campaignBibleId ?? liveCurrent.campaignBibleId,
         pendingTurn: null,
@@ -4624,6 +4633,12 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
       if (settingsRef.current.contentMode === 'kid') {
         narrativeText = filterKidModeText(narrativeText);
       }
+      narrativeText = scrubInventedWeapons(
+        narrativeText,
+        groundedWeaponNames(liveCurrent),
+        'bare hands',
+        liveCurrent.character?.name
+      );
 
       const newTurn = liveCurrent.turn + 1;
       const autoEvents = parseActionTags(narrativeText);

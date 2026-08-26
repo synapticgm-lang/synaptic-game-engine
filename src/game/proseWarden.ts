@@ -6,6 +6,10 @@
  */
 
 import type { GameState, Item } from './types';
+import {
+  scrubInventedEmptySearchLoot,
+  scrubInventedWeapons,
+} from './searchContinuity';
 
 /**
  * Calculate tracked crowd size from game state for consistency checking.
@@ -68,6 +72,14 @@ export type ProseWardenContext = {
   lastGmProse?: string;
   /** Named present NPCs from SNAPSHOT / sceneFacts. */
   presentNames?: string[];
+  /** Empty-search targets — scrub invent loot on re-search. */
+  searchedEmpty?: string[];
+  /** Player input this turn (search continuity). */
+  playerInput?: string;
+  /** Grounded weapon names from inventory/props — scrub invent weapons. */
+  groundedWeapons?: string[];
+  /** PC name for possessive weapon scrub (Jax's dagger). */
+  playerName?: string;
 };
 
 /** Interiors that already name "here" — nearby is for things that are not here. */
@@ -550,6 +562,8 @@ export function applyProseWarden(text: string, ctx?: ProseWardenContext): string
   next = scrubAnthropomorphizedLocation(next);
   next = scrubInventedCrowdSize(next, ctx?.crowdSize ?? 0, ctx?.crowdPresent);
   next = scrubInventedContainers(next, ctx?.inventory ?? [], ctx?.sceneProps ?? []);
+  next = scrubInventedEmptySearchLoot(next, ctx?.searchedEmpty ?? [], ctx?.playerInput);
+  next = scrubInventedWeapons(next, ctx?.groundedWeapons ?? [], 'bare hands', ctx?.playerName);
   next = scrubInventedTimeSkip(next, ctx?.currentTimeOfDay, ctx?.previousTimeOfDay);
   next = scrubInventedLocationChange(next, ctx?.isIndoor, ctx?.wasIndoor);
   next = scrubInventedTensionChange(next, ctx?.currentTension, ctx?.previousTension);

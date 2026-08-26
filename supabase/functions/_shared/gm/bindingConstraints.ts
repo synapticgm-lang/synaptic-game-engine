@@ -46,6 +46,29 @@ export function buildBindingConstraints(state: GameState): BindingConstraint[] {
     constraints.push(...buildInventoryConstraints(state.inventory));
   }
 
+  const emptyKeys = [
+    ...(state.sceneFacts?.searchedEmpty ?? []),
+    ...(state.sceneFacts?.emptyContainers ?? []),
+  ];
+  if (emptyKeys.length) {
+    constraints.push({
+      category: 'inventory',
+      rule: `EMPTY SEARCHED: ${Array.from(new Set(emptyKeys)).join(', ')} — re-search stays empty unless new circumstance; do not invent loot`,
+      authority: 'sceneFacts.searchedEmpty',
+    });
+  }
+
+  const hasDeclaredWeapon = (state.inventory ?? []).some((i) =>
+    /\b(knife|blade|sword|dagger|axe|club|bat|spear|staff|pistol|gun|bow|mace|weapon)\b/i.test(i.name)
+  );
+  if (!hasDeclaredWeapon && (state.inventory?.length ?? 0) > 0) {
+    constraints.push({
+      category: 'inventory',
+      rule: 'Player has no declared weapon — narrate fists / bare hands / improvised debris only; never invent a dagger or sword in their grip',
+      authority: 'inventory.weapon',
+    });
+  }
+
   const clock = state.worldLedger?.clock;
   if (clock && Number(clock.day || 0) < 0.4 && Number(clock.week || 0) < 1) {
     constraints.push({

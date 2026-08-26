@@ -19,6 +19,7 @@ import { formatHiddenCulpritRail } from './mysteryCulprit';
 import { formatInteriorExploreAuthority, listInteriorExitsFromHere } from './mapEngine';
 import { formatOutdoorHubsForPrompt } from './outdoorHubs';
 import { formatHubArrivalForPrompt } from './hubEncounters';
+import { emptySearchAuthorityLine, weaponAuthorityLine } from './searchContinuity';
 
 export function effectivePowerScaling(state: GameState): PowerScaling {
   return state.powerScaling ?? 'balanced';
@@ -205,6 +206,9 @@ export function formatSceneSnapshotForPrompt(state: GameState): string {
   if (noiseLabel) lines.push(`- Noise: ${noiseLabel}`);
   if (state.sceneFacts?.lastBeat) lines.push(`- Last beat: ${state.sceneFacts.lastBeat}`);
   if (openAsks.length) lines.push(`- Open asks: ${openAsks.join('; ')}`);
+  const emptySearch = emptySearchAuthorityLine(state.sceneFacts);
+  if (emptySearch) lines.push(`- ${emptySearch}`);
+  lines.push(`- ${weaponAuthorityLine(state)}`);
   lines.push('');
   lines.push(
     'AUTHORITY: Narrate richly — descriptive, engaging language and narrative flair are required. Atmosphere (smell, rust, cadence, metaphor, NPC mannerism) is free. Do not contradict these facts or the ledger. Do not invent items, doors, named people, or numeric results absent from this snapshot.'

@@ -10,6 +10,8 @@ import type { GameState, SceneFacts, Item } from './types';
 import { listInteriorExitsFromHere } from './mapEngine';
 import { isInteriorMap } from './placeAuthority';
 import { currentDungeonNode } from './dungeonSeed';
+import { emptySearchAuthorityLine } from './searchContinuity';
+import { equippedWeaponName } from './ledgerCombat';
 
 export interface BindingConstraint {
   category: 'scene' | 'inventory' | 'location' | 'time' | 'npc' | 'quest';
@@ -43,7 +45,16 @@ export function buildBindingConstraints(state: GameState): BindingConstraint[] {
   constraints.push(...buildPresenceConstraints(state));
 
   if (state.inventory) {
-    constraints.push(...buildInventoryConstraints(state.inventory));
+    constraints.push(...buildInventoryConstraints(state.inventory, state));
+  }
+
+  const emptyLine = emptySearchAuthorityLine(state.sceneFacts);
+  if (emptyLine) {
+    constraints.push({
+      category: 'inventory',
+      rule: emptyLine,
+      authority: 'sceneFacts.searchedEmpty',
+    });
   }
 
   const clock = state.worldLedger?.clock;
@@ -214,7 +225,7 @@ function buildSceneConstraints(facts: SceneFacts, state: GameState): BindingCons
 /**
  * Build inventory constraints (equipped items, lack of items).
  */
-function buildInventoryConstraints(inventory: Item[]): BindingConstraint[] {
+function buildInventoryConstraints(inventory: Item[], state?: GameState): BindingConstraint[] {
   const constraints: BindingConstraint[] = [];
 
   const equipped = inventory.filter((i) => i.equipped);
@@ -222,17 +233,23 @@ function buildInventoryConstraints(inventory: Item[]): BindingConstraint[] {
     const names = equipped.map((i) => i.name).slice(0, 5);
     constraints.push({
       category: 'inventory',
-      rule: `Player has equipped: ${names.join(', ')} — do not claim they lack these items or describe them as unarmed/unequipped`,
+      rule: `Player has equipped: ${names.join(', ')} — do not claim they lack these items`,
       authority: 'inventory',
     });
   }
 
-  const hasWeapon = equipped.some((i) => /weapon|sword|blade|bow|staff|gun|axe/i.test(i.name));
-  if (!hasWeapon && inventory.length > 0) {
+  const weapon = state ? equippedWeaponName(state) : 'bare hands';
+  if (weapon === 'bare hands') {
     constraints.push({
       category: 'inventory',
-      rule: `Player has no weapon equipped — do not describe them drawing or swinging a weapon unless they explicitly equip one first`,
-      authority: 'inventory',
+      rule: 'Player has no declared weapon (sealed bag undeclared) — narrate fists / bare hands / improvised debris only; never invent a dagger, sword, or knife in their grip',
+      authority: 'inventory.weapon',
+    });
+  } else {
+    constraints.push({
+      category: 'inventory',
+      rule: `Player weapon authority: ${weapon} — do not invent a different weapon`,
+      authority: 'inventory.weapon',
     });
   }
 

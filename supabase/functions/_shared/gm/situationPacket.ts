@@ -203,6 +203,24 @@ export function formatSceneSnapshotForPrompt(state: GameState): string {
   if (noiseLabel) lines.push(`- Noise: ${noiseLabel}`);
   if (state.sceneFacts?.lastBeat) lines.push(`- Last beat: ${state.sceneFacts.lastBeat}`);
   if (openAsks.length) lines.push(`- Open asks: ${openAsks.join('; ')}`);
+  const emptyKeys = [
+    ...(state.sceneFacts?.searchedEmpty ?? []),
+    ...(state.sceneFacts?.emptyContainers ?? []),
+  ];
+  if (emptyKeys.length) {
+    lines.push(
+      `- EMPTY SEARCHED (AUTHORITY): ${Array.from(new Set(emptyKeys)).join(', ')} — already searched and empty. Re-search stays empty unless the player brings a new circumstance (light, break floor, different room). Do not invent loot.`
+    );
+  }
+  const invNames = (state.inventory ?? []).map((i) => i.name);
+  const hasWeapon = invNames.some((n) =>
+    /\b(knife|blade|sword|dagger|axe|club|bat|spear|staff|pistol|gun|bow|mace|weapon)\b/i.test(n)
+  );
+  if (!hasWeapon) {
+    lines.push(
+      '- WEAPON AUTHORITY: Player has no declared weapon (sealed bag contents undeclared). Narrate unarmed / fists / improvised debris only — never invent a dagger, sword, or knife.'
+    );
+  }
   lines.push('');
   lines.push(
     'AUTHORITY: Narrate richly — descriptive, engaging language and narrative flair are required. Atmosphere (smell, rust, cadence, metaphor, NPC mannerism) is free. Do not contradict these facts or the ledger. Do not invent items, doors, named people, or numeric results absent from this snapshot.'

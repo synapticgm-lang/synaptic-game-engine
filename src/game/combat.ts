@@ -1,4 +1,6 @@
 import type { GameState, Item, Rarity } from './types';
+import { equippedWeaponName } from './ledgerCombat';
+import { groundedWeaponNames, weaponAuthorityLine } from './searchContinuity';
 
 export interface EnemyStats {
   name: string;
@@ -156,6 +158,8 @@ export function simulateCombat(state: GameState, enemy: EnemyStats): CombatResul
 
 export function buildAutoFightPrompt(state: GameState, enemy: EnemyStats, result: CombatResult): string {
   const player = state.character;
+  const weapon = equippedWeaponName(state);
+  const grounded = groundedWeaponNames(state);
   const lines: string[] = [
     `=== AUTO-RESOLVED COMBAT DATA ===`,
     `Player: ${player.name} (Level ${player.level})`,
@@ -166,6 +170,7 @@ export function buildAutoFightPrompt(state: GameState, enemy: EnemyStats, result
     `Total Damage Dealt: ${result.damageDealt}`,
     `Total Damage Received: ${result.damageReceived}`,
     `Outcome: ${result.victory ? 'VICTORY' : 'DEFEAT'}`,
+    `Player weapon: ${weapon}${grounded.length ? ` (legal: ${grounded.join(', ')})` : ' — UNARMED; fists / bare hands / improvised debris only'}`,
   ];
 
   if (result.victory) {
@@ -185,5 +190,5 @@ export function buildAutoFightPrompt(state: GameState, enemy: EnemyStats, result
     }
   }
 
-  return `Here is the raw data of an auto-resolved fight. Write a single, fast-paced, visceral LitRPG paragraph describing this combat summary. Do not include action tags, system logs, or image prompts — just the narrative paragraph.\n\n${lines.join('\n')}`;
+  return `Here is the raw data of an auto-resolved fight. Write a single, fast-paced, visceral LitRPG paragraph describing this combat summary. Do not include action tags, system logs, or image prompts — just the narrative paragraph.\n\n${weaponAuthorityLine(state)}\nDo not invent a dagger, sword, or knife unless listed above.\n\n${lines.join('\n')}`;
 }

@@ -732,6 +732,14 @@ export interface SceneFacts {
   props: string[];
   lastBeat: string;
   updatedTurn: number;
+  timeOfDay?: string;
+  weather?: string;
+  indoor?: boolean;
+  tension?: string;
+  /** Targets already searched and established empty. */
+  searchedEmpty?: string[];
+  /** Named containers established empty. */
+  emptyContainers?: string[];
 }
 
 export interface TimelineFact {

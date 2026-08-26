@@ -760,6 +760,11 @@ export interface SceneFacts {
   weather?: Weather;
   indoor?: boolean;
   tension?: TensionLevel;
+
+  /** Targets already searched and established empty (here / debris / exterior / loc:…). */
+  searchedEmpty?: string[];
+  /** Named containers established empty (box / crate / bag when declared empty). */
+  emptyContainers?: string[];
 }
 
 export interface TimelineFact {

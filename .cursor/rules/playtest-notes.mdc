@@ -9,7 +9,9 @@ John is playtesting live. Collect issues here. Do not implement until he asks fo
 
 ## Open
 
-_(none — 2026-08-26o shipped map hub pins + XP reasons)_
+_(none — 2026-08-26p shipped empty-search lock + grounded weapons)_
+
+**Residual risk (26p):** Empty-search keys are coarse (`here` / `debris` / `exterior` / `bag`) — a truly new room after travel should use a new location key; mid-save without `searchedEmpty` only gains the stamp after the next empty search. Weapon scrub is PC-attributed (Name's dagger / your knife / you draw…) — ambient scene weapons still need prop/loot tags. Auto-fight still LLM-narrated; scrub is post-hoc.
 
 **Residual risk (26o):** Alone burnt husk now opens as interior floor plan (short room labels). Act-3 hub pins appear on outdoor/street Local maps (fogged until visited) — not drawn inside the ruin floor plan. Mid-campaign saves rebuild map on next Map open. Look-around no longer awards quest-tick/discover XP; bare GM `XP Gained: N` is stripped from STATUS unless a code reason exists. Combat XP shows `(combat)`.
 
@@ -46,6 +48,8 @@ _(none — 2026-08-26o shipped map hub pins + XP reasons)_
 - Premium theme five-rater / Shop preview parity (Manus T8/T9 P0-04) — after playtest of `2026-08-19t` Vampire rescue; ingest `docs/research/manus-premium-themes-ingest-2026-08-19.md`
 
 ## Done (already shipped)
+
+- **2026-08-26p Empty search lock + grounded weapons:** Class D. Transcript `91848bcd…` — empty ruin searches (T5–9) then auto-fight invents “crude dagger” with sealed kit (clothes + Bag only). Track `sceneFacts.searchedEmpty` / `emptyContainers`; SNAPSHOT + binding rails; prose scrub invent-loot on re-search; auto-fight weapon authority + `scrubInventedWeapons` (PC-attributed). Choice pad drops “hidden compartments” invites when empty. Vitest `playtest26pSearchDagger`. HUD + index.html `2026-08-26p`. Evidence: `docs/bugs/playtest-2026-08-26-search-dagger/`. Redeploy: `npx supabase functions deploy gm-turn` (SNAPSHOT + binding).
 
 - **2026-08-26o Map hub pins + XP reasons:** Alone burnt husk / husk/shell/foundation cues → interior floor plan (short YOU ARE HERE). Act-3 outdoor hubs merged onto street Local maps as fogged pins from New Game places seed (not only after Travel). STATUS XP: strip bare GM invent; code awards always reasoned; look-around suppresses quest-tick + hub-discover. Vitest `playtest26oMapXp`. HUD + index.html `2026-08-26o`. Client-only (placeAuthority cues also synced on edge copy).
 
