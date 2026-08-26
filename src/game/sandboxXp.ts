@@ -1,6 +1,7 @@
 ﻿/**
- * Off-spine XP banks — modest code awards (discover / clear / quest / non-lethal).
+ * Off-spine XP banks — modest code awards (discover / clear / quest / meet / non-lethal).
  * Free-economy safe. STATUS shows real XP when awarded — always with a reason.
+ * FO3/Fable spirit: travel, NPC meets, side progress, and clears all drip XP.
  */
 
 import type { GameEvent } from './parser';
@@ -10,12 +11,18 @@ import { hubsForBibleId, matchHub } from './outdoorHubs';
 import { placeIdFromName } from './places';
 
 export const SANDBOX_XP = {
-  discoverHub: 8,
-  clearIncidental: 12,
-  questTick: 10,
-  questCompleteSide: 25,
-  questCompleteMain: 40,
-  nonLethalResolve: 15,
+  discoverHub: 12,
+  clearIncidental: 15,
+  questTick: 12,
+  questCompleteSide: 30,
+  questCompleteMain: 45,
+  nonLethalResolve: 18,
+  /** First real talk/ask with a named present NPC. */
+  npcMeet: 8,
+  /** First vendor / fence browse at a hub. */
+  vendorBrowse: 6,
+  /** First examine of a named landmark / prop (not generic look-around). */
+  landmarkInspect: 5,
 } as const;
 
 export interface SandboxXpResult {
@@ -33,17 +40,35 @@ function questTypeXp(q: Quest): number {
   return q.type === 'main' ? SANDBOX_XP.questCompleteMain : SANDBOX_XP.questCompleteSide;
 }
 
-/** Look-around / same-place re-scout — no explore/discover/quest-tick XP. */
+/**
+ * True look-around / same-place re-scout — no explore/discover/quest-tick XP.
+ * Specific examine/inspect/listen of a named target is NOT look-around (FO3 inspect reward).
+ */
 export function isLookAroundAction(action: string): boolean {
   const a = (action ?? '').replace(/\s+/g, ' ').trim().toLowerCase();
   if (!a) return false;
   if (/^(?:travel\s+toward|return\s+to)\b/.test(a)) return false;
+  // Named-target inspect/examine/search/listen → not a generic re-scout.
+  if (
+    /\b(?:inspect|examine|search|check|study|listen(?:\s+(?:at|to|from))?|ask|talk|speak|tell|browse|buy|sell|fight|attack|engage|map|travel|walk\s+the|watch\s+the)\b/i.test(
+      a
+    )
+    && !/^(?:look\s+around|have\s+a\s+look|looking\s+around|whats?\s+near|what'?s\s+nearby|scout\s+the\s+(?:area|room|ruin)|examine\s+the\s+(?:area|room|surroundings)|inspect\s+the\s+immediate|search\s+the\s+ruin\s+carefully|wait\s+and\s+listen|wait|observe)\b/i.test(
+      a
+    )
+  ) {
+    return false;
+  }
   return (
     /\b(?:look\s+around|have\s+a\s+look|looking\s+around|whats?\s+near|what'?s\s+nearby|inspect\s+the\s+immediate|scout\s+the\s+(?:area|room|ruin)|examine\s+the\s+(?:area|room|surroundings)|search\s+the\s+ruin\s+carefully|wait\s+and\s+listen)\b/i.test(
       a
     )
-    || /^(?:look|listen|wait|observe|examine|inspect|search)\b/.test(a)
+    || /^(?:look|wait|observe)\b/.test(a)
   );
+}
+
+function normalizeNpcKey(name: string): string {
+  return name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 48);
 }
 
 /**
@@ -75,6 +100,7 @@ export function applySandboxXpAwards(
   const lookAround = isLookAroundAction(opts.playerAction);
   const hubs = hubsForBibleId(state.campaignBibleId);
   const hub = matchHub(hubs, loc);
+  const action = (opts.playerAction ?? '').trim();
 
   // Hub discover: once per hub id, only when arriving at / traveling to that hub — not re-look in a ruin.
   if (hub && !lookAround) {
@@ -86,7 +112,7 @@ export function applySandboxXpAwards(
     const firstVisit = !existing || existing.lastVisitedTurn == null;
     const arrived =
       locationChanged
-      || /^(?:travel\s+toward|return\s+to)\b/i.test(opts.playerAction.trim());
+      || /^(?:travel\s+toward|return\s+to)\b/i.test(action);
     if (firstVisit && arrived && !hasAward(awardKeys, key)) {
       xp += SANDBOX_XP.discoverHub;
       notes.push(`XP Gained: ${SANDBOX_XP.discoverHub} (discovered ${hub.name})`);
@@ -135,6 +161,61 @@ export function applySandboxXpAwards(
       xp += SANDBOX_XP.clearIncidental;
       notes.push(`XP Gained: ${SANDBOX_XP.clearIncidental} (cleared incidental threat)`);
       awardKeys.push(key);
+    }
+  }
+
+  // NPC meet — first talk/ask with a named present person (FO3/Fable social XP drip).
+  if (/\b(?:ask|talk|speak|tell|greet|approach|inquire)\b/i.test(action)) {
+    const present = [
+      ...(state.sceneFacts?.present ?? []),
+      ...(state.companions ?? []).map((c) => c.name).filter(Boolean),
+    ];
+    for (const raw of present) {
+      const name = (raw ?? '').trim();
+      if (name.length < 2) continue;
+      if (/^(?:you|your|panel|system|status|crowd|people|someone|stranger|figure)$/i.test(name)) continue;
+      const key = `npc-meet:${normalizeNpcKey(name)}`;
+      if (hasAward(awardKeys, key)) continue;
+      // Prefer names that appear in the action, else first unmet present.
+      const namedInAction = action.toLowerCase().includes(name.toLowerCase());
+      if (!namedInAction && present.length > 1) continue;
+      xp += SANDBOX_XP.npcMeet;
+      notes.push(`XP Gained: ${SANDBOX_XP.npcMeet} (met ${name})`);
+      awardKeys.push(key);
+      break;
+    }
+  }
+
+  // Vendor / fence browse at a hub.
+  if (
+    hub
+    && /\b(?:browse|ask about.*(?:price|junk|wares|goods)|fence|buy|sell|vendor|stall|merchant)\b/i.test(action)
+  ) {
+    const key = `vendor-browse:${hub.id}`;
+    if (!hasAward(awardKeys, key)) {
+      xp += SANDBOX_XP.vendorBrowse;
+      notes.push(`XP Gained: ${SANDBOX_XP.vendorBrowse} (checked ${hub.name} wares)`);
+      awardKeys.push(key);
+    }
+  }
+
+  // Landmark / named prop inspect (once per place+target).
+  if (!lookAround) {
+    const m = action.match(
+      /\b(?:inspect|examine|check|study|map|search)\s+(?:the\s+)?([\w\s'’\-.]{3,48}?)(?:\s+more\s+closely)?[.?!]?$/i
+    );
+    const target = (m?.[1] ?? '').replace(/\s+/g, ' ').trim();
+    if (
+      target
+      && !/^(?:area|room|surroundings|immediate|ruin|vicinity|place|scene)$/i.test(target)
+    ) {
+      const placeSlug = normalizeNpcKey(locKey || 'here');
+      const key = `landmark:${placeSlug}:${normalizeNpcKey(target)}`;
+      if (!hasAward(awardKeys, key)) {
+        xp += SANDBOX_XP.landmarkInspect;
+        notes.push(`XP Gained: ${SANDBOX_XP.landmarkInspect} (studied ${target.slice(0, 40)})`);
+        awardKeys.push(key);
+      }
     }
   }
 

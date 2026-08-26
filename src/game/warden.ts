@@ -353,6 +353,9 @@ export function sanitizeExtractedCharacterUpdates(
     delete next.mp;
     delete next.maxMp;
   }
-  // If nothing remains beyond empty object keys we already deleted, still return XP etc.
+  // Progression is code-owned (sandbox / combat / applyCharacterXpGain) — never GM invent.
+  delete next.xp;
+  delete next.xpToNext;
+  delete next.level;
   return next;
 }

@@ -77,6 +77,9 @@ import {
   eventsToQuestUpdates,
 } from './parser';
 import { scrubOfficialPlaceholder } from './narrativeScrub';
+import { applySandboxXpAwards } from './sandboxXp';
+import { applyCharacterXpGain } from './characterXp';
+import { filterSystemLogForEngine, reconcileXpStatusLines } from './systemLog';
 import { beatFingerprint, isSameBeat, buildBeatNoveltyRetryBlock, beatSimilarity } from './beatFingerprint';
 import { enforcePerspective } from './perspectiveWarden';
 import { buildPlayTranscript, resolveOfferedChoices, withOfferedChoices } from './playTranscript';
@@ -90,7 +93,6 @@ import { touchPlaceVisit } from './places';
 import { buildTurnMandate } from './sceneFocus';
 import { groundedWeaponNames, listEmptySearchTargets } from './searchContinuity';
 import { applyStructuralEvents } from './structuralEvents';
-import { filterSystemLogForEngine } from './systemLog';
 import {
   disableAutoplayTestLab,
   enableAutoplayTestLab,
@@ -156,6 +158,10 @@ export type TurnTelemetry = {
   questUnlocks: string[];
   itemsEquipped: string[];
   itemsUsed: string[];
+  xpGained?: number;
+  level?: number;
+  characterXp?: number;
+  xpToNext?: number;
   loopFlags: { officialCount: number; atmosphereRepeat: boolean; strangerCount: number };
   error?: string;
   failKind?: string;
@@ -544,27 +550,35 @@ function pickGoalOrientedChoice(
     const lower = choice.toLowerCase();
 
     if (mode === 'maxlevel') {
-      // Prefer combat, explore, and quest actions
-      if (/\b(?:fight|attack|engage|battle|challenge)\b/i.test(choice)) score += 5;
-      if (/\b(?:explore|search|investigate|scout)\b/i.test(choice)) score += 3;
-      if (/\b(?:accept|take on|pursue).*quest/i.test(choice)) score += 4;
-      if (/\b(?:rest|wait|idle)\b/i.test(choice)) score -= 3;
+      // Prefer combat, explore, quest, travel (XP drip), vendor
+      if (/\b(?:fight|attack|engage|battle|challenge|strike|defend)\b/i.test(choice)) score += 8;
+      if (/\b(?:accept|take on|pursue|resume).*quest|quest focus|pact work\b/i.test(choice)) score += 6;
+      if (/\b(?:travel toward|travel to|return to)\b/i.test(choice)) score += 5;
+      if (/\b(?:explore|search|investigate|scout|map)\b/i.test(choice)) score += 4;
+      if (/\b(?:ask|talk|speak|inquire)\b/i.test(choice)) score += 3;
+      if (/\b(?:browse|prices|wares|junk|fence|vendor|stall)\b/i.test(choice)) score += 3;
+      if (/\b(?:walk the battlement|listen from a corner|watch the gate queue)\b/i.test(choice)) score -= 4;
+      if (/\b(?:rest|wait|idle|look around)\b/i.test(choice)) score -= 5;
     } else if (mode === 'storyfollower') {
       // Prefer main quest, dialogue, and story beats
-      if (/\b(?:main|primary|quest focus)\b/i.test(choice)) score += 5;
-      if (/\b(?:talk|speak|ask|tell)\b/i.test(choice)) score += 3;
-      if (/\b(?:continue|proceed|follow)\b/i.test(choice)) score += 2;
-      // Check if a quest name appears in the choice
+      if (/\b(?:main|primary|quest focus|pact|resume)\b/i.test(choice)) score += 7;
+      if (/\b(?:talk|speak|ask|tell|inquire)\b/i.test(choice)) score += 5;
+      if (/\b(?:continue|proceed|follow|accept)\b/i.test(choice)) score += 3;
+      if (/\b(?:travel toward|travel to)\b/i.test(choice)) score += 2;
+      if (/\b(?:walk the battlement|browse the nearest stall)\b/i.test(choice)) score -= 3;
       const mainQuest = (state.quests ?? []).find((q) => q.revealed && q.type === 'main');
-      if (mainQuest && lower.includes(mainQuest.name.toLowerCase())) score += 4;
+      if (mainQuest && lower.includes(mainQuest.name.toLowerCase())) score += 6;
+      const side = (state.quests ?? []).find((q) => q.revealed && q.type === 'side' && q.status === 'active');
+      if (side && lower.includes(side.name.toLowerCase())) score += 4;
     } else if (mode === 'completionist') {
       // Prefer side quests, exploration, and collecting
-      if (/\bside\b.*\bquest\b/i.test(choice)) score += 5;
-      if (/\b(?:explore|search|investigate|scout|map)\b/i.test(choice)) score += 4;
-      if (/\b(?:collect|gather|loot|salvage)\b/i.test(choice)) score += 3;
-      if (/\b(?:travel to|visit)\b/i.test(choice)) score += 2;
-      // Prefer unvisited hubs
-      const isTravel = /\btravel to\b/i.test(choice);
+      if (/\bside\b.*\bquest\b|\botherworld junk\b|\bfence\b/i.test(choice)) score += 7;
+      if (/\b(?:explore|search|investigate|scout|map)\b/i.test(choice)) score += 5;
+      if (/\b(?:collect|gather|loot|salvage|browse)\b/i.test(choice)) score += 4;
+      if (/\b(?:travel toward|travel to|visit)\b/i.test(choice)) score += 4;
+      if (/\b(?:ask|talk|inquire)\b/i.test(choice)) score += 3;
+      if (/\b(?:listen from a corner|walk the battlement)\b/i.test(choice)) score -= 4;
+      const isTravel = /\btravel (?:to|toward)\b/i.test(choice);
       if (isTravel) {
         const visited = new Set(
           (state.places ?? [])
@@ -573,10 +587,14 @@ function pickGoalOrientedChoice(
         );
         const hubInChoice = (state.places ?? []).find((p) => lower.includes(p.name.toLowerCase()));
         if (hubInChoice && !visited.has(hubInChoice.name.toLowerCase())) {
-          score += 3;
+          score += 5;
         }
       }
     }
+
+    // Shared: penalize recently offered identical labels (from recentChoices)
+    const recent = (state.recentChoices ?? []).slice(-5).flatMap((e) => e.choices.map((c) => c.toLowerCase().trim()));
+    if (recent.filter((c) => c === lower).length >= 2) score -= 6;
 
     return { choice, index, score };
   });
@@ -824,9 +842,11 @@ Do NOT print dice notation or CODE ENFORCED.
 
   const updates = extractUpdates(working, narrativeSource);
   if (updates.character) {
+    const { xp: _x, xpToNext: _n, level: _l, hp: _h, maxHp: _mh, ...safeChar } = updates.character as Record<string, unknown>;
+    void _x; void _n; void _l; void _h; void _mh;
     working = {
       ...working,
-      character: { ...working.character, ...updates.character },
+      character: { ...working.character, ...safeChar } as typeof working.character,
     };
   }
   if (updates.currentLocation) {
@@ -862,6 +882,7 @@ Do NOT print dice notation or CODE ENFORCED.
   );
 
   const nextTurn = state.turn + 1;
+  const questsBefore = [...(state.quests ?? [])];
   let updatedQuests = syncQuestsFromPlay(
     eventsToQuestUpdates(events, working.quests ?? [], nextTurn),
     gmResult.systemLog,
@@ -869,10 +890,60 @@ Do NOT print dice notation or CODE ENFORCED.
     { locked: questsLockedDuringOpening(state) }
   );
 
-  const filteredSystemLog = filterSystemLogForEngine(
+  // Code-owned sandbox XP (hub discover / NPC meet / landmark / quest) — was missing in headless.
+  const sandboxXp = applySandboxXpAwards(
+    {
+      ...working,
+      sandboxAwardKeys: working.sandboxAwardKeys ?? state.sandboxAwardKeys,
+    },
+    {
+      playerAction: playerInput,
+      locationName: working.currentLocation,
+      previousLocationName: state.currentLocation,
+      questsBefore,
+      questsAfter: updatedQuests,
+      events,
+      encounterCleared: !!(state.activeEncounter && !working.activeEncounter),
+      enemyKilled: false,
+      turn: nextTurn,
+    }
+  );
+  let character = working.character;
+  let levelNotes: string[] = [];
+  if (sandboxXp.xp > 0) {
+    const leveled = applyCharacterXpGain(character, sandboxXp.xp);
+    character = leveled.character;
+    levelNotes = leveled.notes;
+  }
+  working = {
+    ...working,
+    character,
+    places: sandboxXp.places ?? working.places,
+    sandboxAwardKeys: sandboxXp.awardKeys,
+    quests: updatedQuests,
+  };
+
+  // Track recent choices for live-style dedupe (agent + pipeline).
+  const recentChoices = [
+    ...(state.recentChoices ?? []),
+    { turn: nextTurn, choices: finalChoices },
+  ].slice(-10);
+
+  let filteredSystemLog = filterSystemLogForEngine(
     [...(gmResult.systemLog ?? []), ...(warden.notes.length ? [`Warden: ${warden.notes.slice(0, 3).join('; ')}`] : [])],
     state.engineMode
   );
+  filteredSystemLog = reconcileXpStatusLines(filteredSystemLog, [
+    ...sandboxXp.notes,
+    ...levelNotes,
+  ]);
+
+  const questUnlocks = updatedQuests
+    .filter((q) => {
+      const before = questsBefore.find((b) => b.id === q.id);
+      return q.revealed === true && before?.revealed !== true;
+    })
+    .map((q) => q.name);
 
   const fp = beatFingerprint(cleanText);
   const playerEntry: LogEntry = {
@@ -895,6 +966,7 @@ Do NOT print dice notation or CODE ENFORCED.
     turn: nextTurn,
     quests: updatedQuests,
     choices: finalChoices,
+    recentChoices,
     recentBeatFingerprints: [...(state.recentBeatFingerprints ?? []), fp].slice(-12),
     log: [...state.log, playerEntry, gmBase],
   };
@@ -924,9 +996,13 @@ Do NOT print dice notation or CODE ENFORCED.
       playerInput,
       gmText: cleanText,
       systemLog: filteredSystemLog,
-      questUnlocks: extractQuestUnlocksFromTurn(state, next),
+      questUnlocks,
       itemsEquipped: extractEquippedItems(state, next),
       itemsUsed: extractUsedItems(state, next),
+      xpGained: sandboxXp.xp,
+      level: next.character?.level,
+      characterXp: next.character?.xp,
+      xpToNext: next.character?.xpToNext,
       loopFlags: detectLoopFlags(cleanText, state),
       error,
       failKind: gmResult.failKind,

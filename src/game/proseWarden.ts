@@ -320,7 +320,24 @@ export function scrubStrangerArtifact(
   // Fix article collisions that may have been created
   next = next.replace(/\b(?:a|an)\s+them\b/gi, 'them');
   next = next.replace(/\bthe\s+them\b/gi, 'them');
+  // Subject-verb after figure→them scrub
+  next = next.replace(/\bthem\s+(feels?|seems?|appears?|looks?|stands?|sits?|waits?)\b/gi, 'they $1');
+  next = next.replace(/\bthem\s+(is|was)\b/gi, 'they $1');
   
+  return next;
+}
+
+/** Fix mid-sentence lowercase "your eyes" NPC slips and orphan "them" subjects. */
+export function scrubPronounSubjectSlips(text: string): string {
+  if (!text) return text;
+  let next = text;
+  next = next.replace(/([.!?]\s+)your eyes\b/g, '$1Their eyes');
+  next = next.replace(/\bthem feels\b/gi, 'it feels');
+  next = next.replace(/\bthem emerges\b/gi, 'they emerge');
+  next = next.replace(/\bthem emerge\b/gi, 'they emerge');
+  next = next.replace(/\bAsk about them\b/gi, 'Ask about it');
+  next = next.replace(/\bExamine them\b(?!\s+\w)/gi, 'Examine it');
+  next = next.replace(/\bFocus on them\b/gi, 'Focus on it');
   return next;
 }
 
@@ -630,6 +647,7 @@ export function applyProseWarden(text: string, ctx?: ProseWardenContext): string
   next = scrubFreeEnglishSlips(next);
   next = scrubSpokenQuoteStart(next);
   next = scrubArticleCollisions(next);
+  next = scrubPronounSubjectSlips(next);
   return next;
 }
 

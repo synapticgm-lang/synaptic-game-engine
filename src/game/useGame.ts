@@ -249,6 +249,7 @@ import {
 import { scrubOfficialPlaceholder } from './narrativeScrub';
 import { hubBeatAwardKey, resolveHubArrival } from './hubEncounters';
 import { applySandboxXpAwards } from './sandboxXp';
+import { applyCharacterXpGain } from './characterXp';
 import { extractUpdates, extractNewItems, parseActionTags, stripActionTags, matchLoreCards, eventsToLoreCards, parseTurnFrame, eventsToQuestUpdates, eventsToEncounterUpdate, parsePanels, eventsToMilestone, eventsToLootVideo, eventsToVisualUpdate, stripChoiceList, extractChoiceLines, stripTurnCloser, storyHasBody, looksLikeChoiceOffer, isStoryTooThin, storyWordCount } from './parser';
 import { hasRealGmStory } from './turnAsk';
 import { encounterOriginPlace } from './locationName';
@@ -3814,6 +3815,19 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
           sandboxAwardKeys: sandboxXp.awardKeys,
           places,
         };
+      }
+
+      // Cascade level-ups for ledger + sandbox XP this turn (code-owned progression).
+      {
+        const xpBefore = liveCurrent.character?.xp ?? 0;
+        const gained = Math.max(0, (baseChar.xp ?? 0) - xpBefore);
+        if (gained > 0) {
+          const leveled = applyCharacterXpGain({ ...baseChar, xp: xpBefore }, gained);
+          Object.assign(baseChar, leveled.character);
+          if (leveled.notes.length) {
+            mergedSystemLog = [...mergedSystemLog, ...leveled.notes];
+          }
+        }
       }
 
       const gmLogEntryBase: LogEntry = {
