@@ -16,7 +16,8 @@ import { prepareKidSafeImagePrompt } from '../game/visualCanon';
 import { generateFluxImage } from './fluxDirect';
 import { resolveFluxImageModel } from '../game/subscriptionTiers';
 import { effectiveWriterTier } from '../game/testLab';
-import { canSpend, spendCapacity } from '../game/capacityLedger';
+import { canSpend, spendCapacity, spendComicKleinUnit } from '../game/capacityLedger';
+import { spendComicKleinUnit } from '../game/capacityLedger';
 import {
   BYOK_IMAGE_KEY_REQUIRED,
   canConfigurePlayerAiKeys,
@@ -686,7 +687,10 @@ export async function generateComicImage(
   const recordSpend = () => {
     if (inventoryArt) return;
     if (settings.visualMode === 'classic') spendCapacity('memorable');
-    else if (settings.visualMode === 'comic') spendCapacity('illustrated');
+    else if (settings.visualMode === 'comic') {
+      spendCapacity('illustrated');
+      spendComicKleinUnit(1);
+    }
   };
 
   // Optional later path — same tier map, BFL transport. Hosted `imageProvider: "flux"` never enters here.

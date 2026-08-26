@@ -638,6 +638,9 @@ export interface ComicPanel {
   textAnchor?: ComicTextAnchor;
   /** User-adjusted bubble positions/text from the pre-export Comic Page Editor. */
   overlayEdits?: ComicOverlayEdit[];
+  /** Revision-scoped job key — stale attaches discarded when mismatched. */
+  artJobKey?: string;
+  beatRevision?: number;
 }
 
 export interface LogEntry {
@@ -666,6 +669,12 @@ export interface LogEntry {
   imageFailMessage?: string;
   /** Prompt used for the memorable plate — kept so a failed opener can retry. */
   splashImagePrompt?: string;
+  /**
+   * Post-pipeline choice labels the player actually saw after this GM beat
+   * (ActionBar pad: filterInventedContextChoices / padChoicesToCount / opening chips).
+   * Absent on older saves — transcript omits the Options section.
+   */
+  offeredChoices?: string[];
 }
 
 /** Distinct rule engines chosen at campaign setup. `'dnd'` is tabletop fantasy (saved key). */

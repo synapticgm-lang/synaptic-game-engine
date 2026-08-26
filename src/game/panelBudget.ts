@@ -5,6 +5,9 @@ import type { PanelFrequency, Settings } from './types';
  * This is NOT a suggestion to the GM model — `sendAction` slices the parsed panel
  * list to this length before any image job is ever enqueued, so a model that ignores
  * the prompt instructions (which it will, eventually) can never blow the API budget.
+ *
+ * P0 comic-lite additionally clamps live generation to 1 panel via `resolveP0PanelCeiling`
+ * in comicBeatSpec — frequency/eligibility further sparsifies Free (~20% after skips).
  */
 export const PANEL_BUDGET_BY_FREQUENCY: Record<PanelFrequency, number> = {
   minimal: 1,

@@ -566,7 +566,7 @@ export function SettingsModal({ settings, storyName, engineMode, gameState, onSa
               <ChoiceCard
                 icon={<Grid3x3 size={15} />}
                 label="Comic / Illustrated"
-                sublabel="Multi-panel pages with speech bubbles"
+                sublabel="Sparse illustrated beats + lettering overlays"
                 selected={draft.visualMode === 'comic'}
                 onClick={() => {
                   if (isStoryActive) return;
@@ -588,6 +588,11 @@ export function SettingsModal({ settings, storyName, engineMode, gameState, onSa
                 disabled={isStoryActive}
               />
             </div>
+            {draft.visualMode === 'comic' && (
+              <p className="mt-2 text-[11px] leading-relaxed text-slate-400">
+                Comic-lite: about one illustration on selected story beats (not every turn), with HTML speech bubbles and captions. Free uses Klein units with session/day caps. Story and choices never wait on art. Memorable plates keep shared chrome without becoming a multi-panel page.
+              </p>
+            )}
             {draft.visualMode === 'classic' && (
               <ToggleRow
                 icon={<Sparkles size={14} />}
@@ -698,9 +703,9 @@ export function SettingsModal({ settings, storyName, engineMode, gameState, onSa
             <div>
               <label className="mb-2 block text-xs font-medium text-slate-400">Inline Panel Frequency</label>
               <div className="grid grid-cols-3 gap-2">
-                <ChoiceCard icon={<CircleSlash size={14} />} label="Minimal" sublabel="Scene shifts only" selected={draft.panelFrequency === 'minimal'} onClick={() => update('panelFrequency', 'minimal' as PanelFrequency)} />
-                <ChoiceCard icon={<Sparkles size={14} />} label="Balanced" sublabel="Major beats" selected={draft.panelFrequency === 'balanced'} onClick={() => update('panelFrequency', 'balanced' as PanelFrequency)} />
-                <ChoiceCard icon={<Layers size={14} />} label="High" sublabel="Frequent panels" selected={draft.panelFrequency === 'high'} onClick={() => update('panelFrequency', 'high' as PanelFrequency)} />
+                <ChoiceCard icon={<CircleSlash size={14} />} label="Minimal" sublabel="Fewer illustrated beats" selected={draft.panelFrequency === 'minimal'} onClick={() => update('panelFrequency', 'minimal' as PanelFrequency)} />
+                <ChoiceCard icon={<Sparkles size={14} />} label="Balanced" sublabel="Selected major beats" selected={draft.panelFrequency === 'balanced'} onClick={() => update('panelFrequency', 'balanced' as PanelFrequency)} />
+                <ChoiceCard icon={<Layers size={14} />} label="High" sublabel="More often (still not every turn)" selected={draft.panelFrequency === 'high'} onClick={() => update('panelFrequency', 'high' as PanelFrequency)} />
               </div>
             </div>
           </Section>

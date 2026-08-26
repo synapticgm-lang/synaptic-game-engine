@@ -38,6 +38,18 @@ import {
   putSessionCachedImage,
 } from '@/services/sessionImageCache';
 import { comicPanelScriptToPanel, buildComicSpeechQueue } from './comicScriptAdapter';
+import { resolveComicPanelPlan, resolveP0PanelCeiling } from './comicBeatSpec';
+import {
+  evaluateComicEligibility,
+  buildComicBeatDedupeKey,
+} from './comicEligibility';
+import {
+  buildComicJobKey,
+  reserveComicJobKey,
+  markComicJobSpent,
+  releaseComicJobKey,
+  shouldAttachComicResult,
+} from './comicJobKeys';
 import { ImageModerationError, softenPrompt } from './imageGen';
 import {
   buildImagePromptForKind,
@@ -321,8 +333,27 @@ function yieldToMainThread(): Promise<void> {
 }
 
 type ImageGenJob =
-  | { kind: 'panels'; entryId: string; prompts: string[]; promptKind: ImagePromptKind; visualContext: string; playerActionContext?: string }
-  | { kind: 'panel-retry'; entryId: string; panelIndex: number; prompt: string; promptKind: ImagePromptKind; visualContext: string; playerActionContext?: string }
+  | {
+      kind: 'panels';
+      entryId: string;
+      prompts: string[];
+      promptKind: ImagePromptKind;
+      visualContext: string;
+      playerActionContext?: string;
+      beatRevision?: number;
+      jobKeys?: string[];
+    }
+  | {
+      kind: 'panel-retry';
+      entryId: string;
+      panelIndex: number;
+      prompt: string;
+      promptKind: ImagePromptKind;
+      visualContext: string;
+      playerActionContext?: string;
+      beatRevision?: number;
+      jobKey?: string;
+    }
   | { kind: 'turn'; entryId: string; prompts: string[]; promptKind: ImagePromptKind; visualContext: string; isMilestone?: boolean; heroImage?: boolean; bypassCapacity?: boolean; skipUnlockToast?: boolean }
   | { kind: 'intro'; prompt: string; promptKind: ImagePromptKind; visualContext: string };
 
@@ -513,6 +544,8 @@ export function useGame() {
   const [imageGenEpoch, setImageGenEpoch] = useState(0);
   const imageGenRunningRef = useRef(false);
   const lastImageFailToastAtRef = useRef(0);
+  /** Last comic-lite spend beat key — duplicate suppression across consecutive turns. */
+  const lastComicBeatKeyRef = useRef<string | null>(null);
 
   // Loot-video jobs run on a fully separate queue/effect so a slow (30s-2min+) video
   // request can never block the image panel queue for subsequent turns.
@@ -1091,25 +1124,64 @@ export function useGame() {
             for (const [panelIndex, prompt] of job.prompts.entries()) {
 
               const commitPanelResult = (imageUrl: string | null, imageStatus: 'ready' | 'failed') => {
+                const jobKey = job.jobKeys?.[panelIndex];
                 commitPanelImageReady((prev) => {
-                  const log = prev.log.map((entry) => {
-                    if (entry.id !== job.entryId || !entry.panels?.[panelIndex]) return entry;
-                    const panels = entry.panels.map((panel, idx) =>
+                  const entry = prev.log.find((e) => e.id === job.entryId);
+                  const panel = entry?.panels?.[panelIndex];
+                  if (!panel) {
+                    if (jobKey) releaseComicJobKey(jobKey);
+                    return prev;
+                  }
+                  if (
+                    jobKey
+                    && panel.artJobKey
+                    && panel.artJobKey !== jobKey
+                  ) {
+                    debugLogger.record('WARN', 'Discarding stale comic panel attach (job key mismatch)', {
+                      entryId: job.entryId,
+                      panelIndex,
+                      jobKey,
+                      panelArtJobKey: panel.artJobKey,
+                    });
+                    releaseComicJobKey(jobKey);
+                    return prev;
+                  }
+                  if (
+                    typeof job.beatRevision === 'number'
+                    && typeof panel.beatRevision === 'number'
+                    && !shouldAttachComicResult({
+                      jobBeatRevision: job.beatRevision,
+                      currentBeatRevision: panel.beatRevision,
+                    })
+                  ) {
+                    debugLogger.record('WARN', 'Discarding stale comic panel attach', {
+                      entryId: job.entryId,
+                      panelIndex,
+                      jobBeatRevision: job.beatRevision,
+                      panelBeatRevision: panel.beatRevision,
+                    });
+                    if (jobKey) releaseComicJobKey(jobKey);
+                    return prev;
+                  }
+                  if (imageUrl && jobKey) markComicJobSpent(jobKey);
+                  const log = prev.log.map((logEntry) => {
+                    if (logEntry.id !== job.entryId || !logEntry.panels?.[panelIndex]) return logEntry;
+                    const panels = logEntry.panels.map((p, idx) =>
                       idx === panelIndex
-                        ? { ...panel, imageUrl, imageStatus }
-                        : panel
+                        ? { ...p, imageUrl, imageStatus }
+                        : p
                     );
                     const allSettled = panels.every(
-                      (panel) =>
-                        panel.imageStatus === 'ready'
-                        || panel.imageStatus === 'error'
-                        || panel.imageStatus === 'failed'
+                      (p) =>
+                        p.imageStatus === 'ready'
+                        || p.imageStatus === 'error'
+                        || p.imageStatus === 'failed'
                     );
                     return {
-                      ...entry,
+                      ...logEntry,
                       panels,
                       imageStatus: allSettled
-                        ? (panels.some((panel) => panel.imageUrl) ? ('ready' as const) : ('error' as const))
+                        ? (panels.some((p) => p.imageUrl) ? ('ready' as const) : ('error' as const))
                         : ('pending' as const),
                     };
                   });
@@ -2899,7 +2971,10 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
 
       // STRICT PANEL BUDGET: code-enforced ceiling, independent of whether the model honors
       // the prompt instruction. This is the actual cost-safety guarantee, not a request.
-      const panelBudget = resolvePanelBudget(settingsRef.current);
+      const panelBudget = Math.min(
+        resolvePanelBudget(settingsRef.current),
+        resolveP0PanelCeiling(settingsRef.current)
+      );
       const budgetedPanels = parsedPanels.slice(0, panelBudget);
       // Defensive: the GM sometimes runs the trailing choice list directly into the last
       // panel's <narrative> block instead of the top-level response text. Strip it there
@@ -2911,7 +2986,40 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
         narrative = sanitizeNarrativeMechanics(narrative, liveCurrent.engineMode).text;
         return { ...panel, narrative };
       });
-      let comicPanelsForLog = isComicView ? sanitizedPanels : [];
+
+      // P0 comic-lite: deterministic BeatSpec + source precedence (Director stays disabled).
+      // Classic never reaches this branch (isComicView false → empty panels).
+      const panelPlan = resolveComicPanelPlan({
+        isComicView,
+        gmPanels: sanitizedPanels,
+        state: liveCurrent,
+        storyText: cleanText,
+        playerAction: sanitizedInput,
+        settings: settingsRef.current,
+        liveCeiling: panelBudget,
+      });
+      const eligibility = evaluateComicEligibility({
+        settings: settingsRef.current,
+        state: liveCurrent,
+        storyText: cleanText,
+        playerAction: sanitizedInput,
+        lastComicBeatKey: lastComicBeatKeyRef.current,
+        proposedArtPrompt: panelPlan.panels[0]?.imagePrompt,
+      });
+      let comicPanelsForLog =
+        isComicView && eligibility.eligible && panelPlan.panels.length > 0
+          ? panelPlan.panels.slice(0, panelBudget)
+          : [];
+      if (isComicView) {
+        debugLogger.record('STATE_UPDATE', 'Comic-lite plan', {
+          source: panelPlan.source,
+          rejectReason: panelPlan.rejectReason ?? null,
+          eligible: eligibility.eligible,
+          skipReason: eligibility.skipReason,
+          targetRate: eligibility.targetRate,
+          panelCount: comicPanelsForLog.length,
+        });
+      }
 
       // Visual Consistency Manager: deterministic block built from canonical state
       // (character.appearance, equipped gear, active lore-card visual anchors), injected
@@ -3196,6 +3304,41 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
         }
         if (result.imagePrompt?.length) {
           result.imagePrompt = result.imagePrompt.map(kidTalk);
+        }
+      }
+
+      // Stamp comic-lite job keys onto panels before they enter the committed log (idempotency).
+      let comicPanelJobKeys: string[] = [];
+      let comicBeatRevision = 0;
+      if (isComicView && comicPanelsForLog.length > 0 && eligibility.eligible) {
+        comicBeatRevision = nextLedgerRevision(liveCurrent);
+        const stamped: typeof comicPanelsForLog = [];
+        comicPanelsForLog.forEach((panel, panelIndex) => {
+          const key = buildComicJobKey({
+            gameId: liveCurrent.saveId || 'save',
+            turnId: gmEntry.id,
+            beatRevision: comicBeatRevision,
+            panelIndex,
+            attemptClass: 'initial',
+          });
+          const reserved = reserveComicJobKey(key);
+          if (!reserved.ok) {
+            debugLogger.record('WARN', 'Comic job key already reserved — skipping duplicate debit', {
+              key,
+            });
+            return;
+          }
+          comicPanelJobKeys.push(key);
+          stamped.push({
+            ...panel,
+            artJobKey: key,
+            beatRevision: comicBeatRevision,
+            imageStatus: 'pending',
+          });
+        });
+        comicPanelsForLog = stamped;
+        if (stamped.length > 0) {
+          lastComicBeatKeyRef.current = buildComicBeatDedupeKey(liveCurrent);
         }
       }
 
@@ -3575,7 +3718,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
         debugLogger.record('SYSTEM', 'Ops kill switch: images off — skipping scene art');
       } else if (!allowSceneArt) {
         debugLogger.record('SYSTEM', 'Skipping scene images — no story body this turn');
-      } else if (isComicView && comicPanelsForLog.length > 0) {
+      } else if (isComicView && comicPanelsForLog.length > 0 && comicPanelJobKeys.length > 0) {
         postCommitImageJobs.push({
           kind: 'panels',
           entryId: gmEntry.id,
@@ -3583,14 +3726,8 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
           promptKind: 'comic-panel',
           visualContext,
           playerActionContext: sanitizedInput,
-        });
-      } else if (isComicView && result.imagePrompt?.length) {
-        postCommitImageJobs.push({
-          kind: 'turn',
-          entryId: gmEntry.id,
-          prompts: result.imagePrompt,
-          promptKind: 'comic-panel',
-          visualContext,
+          beatRevision: comicBeatRevision,
+          jobKeys: comicPanelJobKeys,
         });
       } else if (
         !isComicView &&

@@ -34,6 +34,18 @@ export interface ImagePromptContext {
 export const PURE_ART_DIRECTIVE =
   'Clean background, environmental focus or character pose, no text, no speech bubbles, no UI elements, sharp framing, high detail.';
 
+/** Franchise / living-artist style targets never reach the hosted model. */
+const FRANCHISE_STYLE_LEAK =
+  /\b(marvel|dc comics|image comics|dark horse|webtoon originals|shonen jump|viz media|studio ghibli|miyazaki|kim jung gi|jim lee|greg capullo|frank miller|make it like\s+[\w\-]+)/gi;
+
+export function scrubFranchiseStyleLeak(text: string): string {
+  if (!text) return text;
+  return text
+    .replace(FRANCHISE_STYLE_LEAK, 'original technique')
+    .replace(/\s{2,}/g, ' ')
+    .trim();
+}
+
 export const WORLD_GENRE_PRESERVATION_DIRECTIVE =
   'WORLD CANON OVERRIDES ART STYLE: Treat the scene description and VISUAL CONTINUITY block as authoritative for setting, era, characters, equipment, architecture, and technology. The selected art preset controls rendering technique, linework, lighting, and palette only. Never add sci-fi technology, cybernetic implants, neon city infrastructure, holograms, firearms, modern clothing, or futuristic props to a medieval/fantasy scene unless those elements are explicitly present in the canonical scene description. Blend the visual treatment onto the existing world; do not replace the world with the preset genre.';
 
@@ -163,7 +175,7 @@ function withDeterministicContext(scenePrompt: string, context?: ImagePromptCont
   if (context?.playerActionContext?.trim()) {
     parts.push(`The scene must visually depict the player's action: "${context.playerActionContext.trim()}"`);
   }
-  parts.push(scenePrompt.trim());
+  parts.push(scrubFranchiseStyleLeak(scenePrompt.trim()));
   if (context?.characterLook?.trim()) {
     parts.push(`LOOK: ${context.characterLook.trim()}`);
   }

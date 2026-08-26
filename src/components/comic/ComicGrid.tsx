@@ -12,6 +12,8 @@ import { debugLogger } from '@/game/debugLogger';
 import { useZoomGesture } from './useZoomGesture';
 import { findQuietQuadrant } from '@/utils/smartPlacement';
 import { splashPlateLabel, splashUnavailableLine } from '@/game/memorableMoments';
+import { MemorablePlateChrome } from './MemorablePlateChrome';
+import { fallbackOverlayAnchor } from '@/game/comicOverlayBind';
 
 interface ComicGridProps {
   log: LogEntry[];
@@ -590,47 +592,22 @@ function MilestonePanel({
   const failed = !hasArt && (entry.imageStatus === 'error' || entry.imageStatus === 'failed');
 
   return (
-    <article
-      data-entry-id={entry.id}
-      data-turn={entry.turn}
-      data-panel-kind="memorable"
-      className="comic-panel-cell milestone-panel w-full shrink-0"
-    >
-      <div className="mb-2 flex items-center justify-center">
-        <span className="px-1 text-[11px] font-medium tracking-wide text-slate-400">
-          {plate}
-        </span>
-      </div>
-      {hasArt ? (
-        <div
-          className={`relative aspect-video w-full overflow-hidden rounded-xl border-2 border-amber-600/50 bg-slate-950 shadow-2xl shadow-black/60 ${isScreentone ? 'manga-screentone-panel' : ''}`}
-        >
-          <PanelImageSlot src={images[0]} alt={plate} status="ready" isScreentone={isScreentone} framed />
-        </div>
-      ) : failed ? (
-        <div className="mb-2 space-y-2 px-1 text-center">
-          <p className="text-xs text-slate-500">{splashUnavailableLine(entry)}</p>
-          {onRetryMemorableImage && entry.splashImagePrompt ? (
-            <button
-              type="button"
-              onClick={() => onRetryMemorableImage(entry.id)}
-              className="text-xs text-slate-400 underline decoration-slate-600 underline-offset-2 hover:text-slate-200"
-            >
-              Try picture again
-            </button>
-          ) : null}
-        </div>
-      ) : (
-        <div
-          className={`relative aspect-video w-full overflow-hidden rounded-xl border-2 border-amber-600/50 bg-slate-950 shadow-2xl shadow-black/60 ${isScreentone ? 'manga-screentone-panel' : ''}`}
-        >
-          <PanelPlaceholder status="pending" isScreentone={isScreentone} framed message="Painting this moment…" />
-        </div>
-      )}
-      <div className="comic-panel-caption mt-3 px-1">
-        <FormattedText content={entry.content} lorebook={lorebook} />
-      </div>
-    </article>
+    <MemorablePlateChrome
+      entryId={entry.id}
+      turn={entry.turn}
+      title={plate}
+      imageUrl={images[0]}
+      status={failed ? 'failed' : hasArt ? 'ready' : (entry.imageStatus ?? 'pending')}
+      failMessage={splashUnavailableLine(entry)}
+      enableZoom
+      className={`comic-panel-cell milestone-panel w-full shrink-0 ${isScreentone ? 'manga-screentone-panel' : ''}`}
+      onRetry={
+        onRetryMemorableImage && entry.splashImagePrompt
+          ? () => onRetryMemorableImage(entry.id)
+          : undefined
+      }
+      caption={<FormattedText content={entry.content} lorebook={lorebook} />}
+    />
   );
 }
 
@@ -953,7 +930,7 @@ function ComicPanelCell({
   // Prefer the Director/LLM text_anchor payload. Only fall back to a deterministic stagger
   // when the script omitted an anchor entirely.
   const directorAnchor = panel.textAnchor
-    ? normalizeTextAnchor(panel.textAnchor)
+    ? fallbackOverlayAnchor(panel.textAnchor)
     : null;
   const staggeredFallback: ComicTextAnchor = (
     ['top-left', 'top-right', 'bottom-left', 'bottom-right'] as const

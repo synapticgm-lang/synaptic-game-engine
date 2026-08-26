@@ -23,6 +23,7 @@ import {
 } from '@/game/streamReveal';
 import { BeautyMomentOfferLink } from './BeautyMomentOffer';
 import { splashPlateLabel, splashUnavailableLine } from '@/game/memorableMoments';
+import { MemorablePlateChrome } from './comic/MemorablePlateChrome';
 import { stripRepairMarkdown } from '@/game/repairEngine';
 import type { PendingRepair } from '@/game/types';
 
@@ -531,38 +532,21 @@ function LogRow({ entry, lorebook, showSystemLog, statVerbosity, engineMode, sho
     const plate = splashPlateLabel(entry);
     const failed = !image && (entry.imageStatus === 'error' || entry.imageStatus === 'failed');
     return (
-      <div data-entry-id={entry.id} data-turn={entry.turn} data-panel-kind="memorable" className="space-y-2">
-        <div className="flex justify-center">
-          <span className="px-1 text-[11px] font-medium tracking-wide text-slate-400">
-            {plate}
-          </span>
-        </div>
-        {image ? (
-          <div className="overflow-hidden rounded-xl border-2 border-amber-600/50 bg-slate-950 shadow-2xl shadow-black/60">
-            <img src={image} alt={plate} className="block max-h-[70vh] w-full object-contain" />
-          </div>
-        ) : failed ? (
-          <div className="space-y-2 px-1 text-center">
-            <p className="text-xs text-slate-500">{splashUnavailableLine(entry)}</p>
-            {onRetryMemorableImage && entry.splashImagePrompt ? (
-              <button
-                type="button"
-                onClick={() => onRetryMemorableImage(entry.id)}
-                className="text-xs text-slate-400 underline decoration-slate-600 underline-offset-2 hover:text-slate-200"
-              >
-                Try picture again
-              </button>
-            ) : null}
-          </div>
-        ) : (
-          <div className="flex min-h-[160px] items-center justify-center overflow-hidden rounded-xl border-2 border-amber-600/50 bg-slate-950 text-xs text-slate-500 shadow-2xl shadow-black/60">
-            Painting this moment…
-          </div>
-        )}
-        <div className="rounded-lg border border-slate-800 bg-slate-900/50 px-4 py-3">
-          <FormattedText content={entry.content} lorebook={lorebook} />
-        </div>
-      </div>
+      <MemorablePlateChrome
+        entryId={entry.id}
+        turn={entry.turn}
+        title={plate}
+        imageUrl={image}
+        status={failed ? 'failed' : image ? 'ready' : (entry.imageStatus ?? 'pending')}
+        failMessage={splashUnavailableLine(entry)}
+        enableZoom
+        onRetry={
+          onRetryMemorableImage && entry.splashImagePrompt
+            ? () => onRetryMemorableImage(entry.id)
+            : undefined
+        }
+        caption={<FormattedText content={entry.content} lorebook={lorebook} />}
+      />
     );
   }
 

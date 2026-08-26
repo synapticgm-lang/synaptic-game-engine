@@ -46,6 +46,10 @@ export interface CapacityLedger {
   memorableAdsGrantedToday: number;
   /** Last staff daily-limit reset applied from pack_balances.capacity_reset_at. */
   lastStaffDailyResetAt: string | null;
+  /** Comic-lite Klein-equivalent units spent today (resets with dayUtc). */
+  comicKleinDaySpent: number;
+  /** Comic-lite Klein-equivalent units spent this week (resets with weekUtc). */
+  comicKleinWeekSpent: number;
 }
 
 function dayUtc(d = new Date()): string {
@@ -79,6 +83,8 @@ export function emptyCapacityLedger(tier: SubscriptionTierId = getActiveSubscrip
     memorableAdBonusThisWeek: 0,
     memorableAdsGrantedToday: 0,
     lastStaffDailyResetAt: null,
+    comicKleinDaySpent: 0,
+    comicKleinWeekSpent: 0,
   };
 }
 
@@ -117,6 +123,7 @@ export function loadCapacityLedger(): CapacityLedger {
         illustratedDailySpent: 0,
         adsWatchedToday: 0,
         memorableAdsGrantedToday: 0,
+        comicKleinDaySpent: 0,
         // pack balances intentionally kept
       };
     }
@@ -126,9 +133,14 @@ export function loadCapacityLedger(): CapacityLedger {
         weekUtc: weekUtc(),
         memorableSpent: 0,
         memorableAdBonusThisWeek: 0,
+        comicKleinWeekSpent: 0,
       };
     }
-    return next;
+    return {
+      ...next,
+      comicKleinDaySpent: Number(next.comicKleinDaySpent ?? 0),
+      comicKleinWeekSpent: Number(next.comicKleinWeekSpent ?? 0),
+    };
   } catch {
     return emptyCapacityLedger(tier);
   }
@@ -422,6 +434,64 @@ export function capacityStatusMessage(kind: CapacitySpendKind): string {
     return 'You’ve hit this week’s memorable splash limit. Buy a picture pack (never expires) or upgrade for a higher weekly cap — the story continues either way.';
   }
   return 'You’re out of illustrations for this graphic novel. Upgrade for more daily art, or buy an illustrated pack (packs never expire) — your place is saved.';
+}
+
+/**
+ * Comic-lite Klein-equivalent unit caps (pack E.5).
+ * Free: 6 session / 8 day / 32 week. Mid/High: higher guardrails.
+ * Session = this browser tab lifetime (resets on reload).
+ */
+export const COMIC_KLEIN_CAPS: Record<
+  SubscriptionTierId,
+  { session: number; day: number; week: number }
+> = {
+  free: { session: 6, day: 8, week: 32 },
+  mid: { session: 18, day: 24, week: 120 },
+  high: { session: 40, day: 60, week: 300 },
+  admin: { session: 40, day: 60, week: 300 },
+};
+
+let comicKleinSessionSpent = 0;
+
+export function getComicKleinSessionSpent(): number {
+  return comicKleinSessionSpent;
+}
+
+/** Test-only. */
+export function __resetComicKleinSessionForTests(): void {
+  comicKleinSessionSpent = 0;
+}
+
+export function canSpendComicKleinUnit(
+  amount = 1,
+  ledger = loadCapacityLedger()
+): boolean {
+  if (isTestLabEnabled()) return true;
+  const caps = COMIC_KLEIN_CAPS[ledger.tier] ?? COMIC_KLEIN_CAPS.free;
+  if (comicKleinSessionSpent + amount > caps.session) return false;
+  if ((ledger.comicKleinDaySpent ?? 0) + amount > caps.day) return false;
+  if ((ledger.comicKleinWeekSpent ?? 0) + amount > caps.week) return false;
+  return true;
+}
+
+export function spendComicKleinUnit(
+  amount = 1,
+  ledger = loadCapacityLedger()
+): { ok: boolean; ledger: CapacityLedger } {
+  if (isTestLabEnabled()) {
+    return { ok: true, ledger };
+  }
+  if (!canSpendComicKleinUnit(amount, ledger)) {
+    return { ok: false, ledger };
+  }
+  comicKleinSessionSpent += amount;
+  const next: CapacityLedger = {
+    ...ledger,
+    comicKleinDaySpent: (ledger.comicKleinDaySpent ?? 0) + amount,
+    comicKleinWeekSpent: (ledger.comicKleinWeekSpent ?? 0) + amount,
+  };
+  saveCapacityLedger(next);
+  return { ok: true, ledger: next };
 }
 
 /** Once-per-save hook grant so the first chapter can land before the daily cliff. */

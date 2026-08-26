@@ -50,17 +50,37 @@ export function buildVisualConsistencyBlock(
     ? 'New form only — do not keep the old clothes or weapons unless the description names them.'
     : (likeness.gear || likeness.look);
 
+  // Ordered prompt locks (Comic Maximizer C.2): roster → kit → place → beat boundary cues.
+  const companions = (state.companions ?? [])
+    .map((c) => c.name?.trim())
+    .filter(Boolean)
+    .slice(0, 1); // omit secondary rather than invent a crowd
+  const present = (state.sceneFacts?.present ?? [])
+    .map((p) => p.trim())
+    .filter(Boolean)
+    .slice(0, 2);
+  const rosterCount = 1 + companions.length;
+  lines.push(
+    `ROSTER LOCK (exact count ${rosterCount}): focal PC only${companions[0] ? ` + ${companions[0]}` : ''}. Do not add unnamed extras.`
+  );
   lines.push(`Player Character (SAME PERSON in every image, including inventory portrait): ${likeness.look}`);
-  lines.push(`Current outfit / held gear for THIS image: ${outfit}`);
+  if (present.length) {
+    lines.push(`Scene presence (only if already committed): ${present.join(', ')}`);
+  }
+  lines.push(`KIT LOCK — Current outfit / held gear for THIS image: ${outfit}`);
   const weapon = equippedWeaponName(state);
-  lines.push(`EQUIPPED WEAPON (draw this exact tool, never a substitute): ${weapon}`);
+  lines.push(`EQUIPPED WEAPON (draw this exact tool, never a substitute; ignore unequipped inventory): ${weapon}`);
   const place = state.locationSheet?.name || state.currentLocation;
   if (place?.trim()) {
-    lines.push(`LOCATION (same place every panel this turn): ${place.trim()}`);
+    const props = (state.sceneFacts?.props ?? []).slice(0, 5).filter(Boolean);
+    lines.push(`PLACE LOCK (same place every panel this turn): ${place.trim()}`);
+    if (props.length) {
+      lines.push(`Place anchors: ${props.join('; ')}`);
+    }
   }
   lines.push(formatWorldCanonForPrompt(state));
   lines.push(
-    'LIKENESS LOCK: Keep the same face, hair, skin, body type, and age they described. Do not redesign them. Only clothing, armor, and held items change when Current outfit changes. If they described street clothes, draw those clothes — never a generic adventurer kit, cloak, or sword unless listed in Current outfit. If they are a creature or non-human, do not draw a human. Only depict people and items named in this block or the scene — do not invent extra characters or loot.'
+    'LIKENESS LOCK: Keep the same face, hair, skin, body type, and age they described. Do not redesign them. Only clothing, armor, and held items change when Current outfit changes. If they described street clothes, draw those clothes — never a generic adventurer kit, cloak, or sword unless listed in Current outfit. If they are a creature or non-human, do not draw a human. Only depict people and items named in this block or the scene — do not invent extra characters or loot. Prefer omitting a secondary person over inventing one.'
   );
 
   if (options.formChange) {
