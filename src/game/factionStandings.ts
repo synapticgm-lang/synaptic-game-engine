@@ -134,6 +134,29 @@ export const FACTION_CONTACTS: FactionContact[] = [
   { name: 'Greta', aliases: ['greta', 'greta the hunter'], factionId: 'greyhollow-town', weight: 1.5, hubIds: ['ck-hub-treeline', 'ck-hub-gate'] },
   // Salt Road Heist
   { name: 'Vessa', aliases: ['vessa'], factionId: 'vessa-crew', weight: 1.75, hubIds: ['sr-hub-safehouse', 'sr-hub-waystation'] },
+  // System Integration (densify)
+  { name: 'Yusuf Okafor', aliases: ['yusuf okafor', 'yusuf', 'okafor', 'dr okafor'], factionId: 'system-researchers', weight: 1.5, hubIds: ['si-hub-okafor'] },
+  { name: 'The Broker', aliases: ['the broker', 'broker'], factionId: 'broker-network', weight: 1.5, hubIds: ['si-hub-broker'] },
+  // Gatebreak densify
+  { name: 'Shelter Lead', aliases: ['shelter lead', 'shelter hand'], factionId: 'ward-9-militia', weight: 1.25, hubIds: ['gw-hub-shelter'] },
+  // Ascending densify already has Kade/Nyra
+  // Fabled densify
+  { name: 'Fen', aliases: ['fen', 'fen the baker'], factionId: 'mossford-village', weight: 1.25, hubIds: ['fl-hub-bakery', 'fl-hub-inn', 'fl-hub-square'] },
+  // Inkbound Academy
+  { name: 'Dean Solenne', aliases: ['dean solenne', 'dean'], factionId: 'inkbound-faculty', weight: 1.75, hubIds: ['ia-hub-dean'] },
+  { name: 'Jori Ashquill', aliases: ['jori ashquill', 'jori', 'ashquill'], factionId: 'house-rivals', weight: 1.5, hubIds: ['ia-hub-dorm', 'ia-hub-atelier', 'ia-hub-quad', 'ia-hub-refectory'] },
+  // Void Audience
+  { name: 'The Auditor', aliases: ['the auditor', 'auditor'], factionId: 'void-audience', weight: 1.5, hubIds: ['va-hub-auditor'] },
+  { name: 'Pellara Vohn', aliases: ['pellara vohn', 'pellara'], factionId: 'threshold-village', weight: 1.75, hubIds: ['va-hub-inn'] },
+  { name: 'Caster Drenn', aliases: ['caster drenn', 'drenn'], factionId: 'threshold-village', weight: 1.5, hubIds: ['va-hub-node'] },
+  { name: 'Kael the Unfinished', aliases: ['kael the unfinished', 'kael'], factionId: 'other-reborn', weight: 1.5, hubIds: ['va-hub-reborn'] },
+  { name: 'Magistra Solenne', aliases: ['magistra solenne'], factionId: 'resonance-academy', weight: 1.5, hubIds: ['va-hub-scout'] },
+  // Hollow Core
+  { name: 'Whisper-Mite', aliases: ['whisper-mite', 'whisper mite', 'mite'], factionId: 'core-kin', weight: 1.5, hubIds: ['hc-hub-chamber', 'hc-hub-nursery', 'hc-hub-heart'] },
+  { name: 'Captain Bren Holtz', aliases: ['bren holtz', 'captain bren', 'bren', 'holtz'], factionId: 'core-hunters', weight: 1.75, hubIds: ['hc-hub-bargain', 'hc-hub-hunter'] },
+  // Dungeon Transport
+  { name: 'The Wandering Merchant', aliases: ['wandering merchant', 'the merchant'], factionId: 'spire-merchants', weight: 1.25, hubIds: ['dt-hub-merchant', 'dt-hub-safe'] },
+  { name: 'Scratch', aliases: ['scratch', 'cave imp'], factionId: 'floor-residents', weight: 1.75, hubIds: ['dt-hub-scratch', 'dt-hub-f2'] },
 ];
 
 export function matchFactionContact(haystack: string): FactionContact | null {
@@ -172,6 +195,18 @@ const NPC_TO_FACTION: Array<{ re: RegExp; factionId: string }> = [
   { re: /\b(oskar|aldous|mira|greta|greyhollow|helga)\b/i, factionId: 'greyhollow-town' },
   { re: /\b(vessa|crew\s+fixer)\b/i, factionId: 'vessa-crew' },
   { re: /\b(consul|caravan\s+guard|salt\s+tax)\b/i, factionId: 'consul-road' },
+  { re: /\b(yusuf|okafor|probe\s+lab)\b/i, factionId: 'system-researchers' },
+  { re: /\b(the\s+broker|broker\s+alley)\b/i, factionId: 'broker-network' },
+  { re: /\b(dean\s+solenne|inkbound\s+faculty)\b/i, factionId: 'inkbound-faculty' },
+  { re: /\b(jori|ashquill|house\s+rival|ink\s+points|house\s+ledger)\b/i, factionId: 'house-rivals' },
+  { re: /\b(auditor|void\s+audience|cosmic\s+favor)\b/i, factionId: 'void-audience' },
+  { re: /\b(pellara|drenn|threshold\s+(?:inn|village|node))\b/i, factionId: 'threshold-village' },
+  { re: /\b(kael|other\s+reborn|trial\s*#?\s*\d+)\b/i, factionId: 'other-reborn' },
+  { re: /\b(magistra\s+solenne|resonance\s+academy)\b/i, factionId: 'resonance-academy' },
+  { re: /\b(whisper-?mite|core\s+kin|hollow\s+heart)\b/i, factionId: 'core-kin' },
+  { re: /\b(bren|holtz|core\s+hunter)\b/i, factionId: 'core-hunters' },
+  { re: /\b(wandering\s+merchant|spire\s+merchant)\b/i, factionId: 'spire-merchants' },
+  { re: /\b(scratch|cave\s+imp|floor\s+resident)\b/i, factionId: 'floor-residents' },
 ];
 
 export type StanceTreatment = 'kind' | 'hard' | 'curious' | 'walkaway';
@@ -211,21 +246,51 @@ function contactWeight(action: string, presentNames: string[]): number {
 export const SYSTEM_INTEGRATION_FACTIONS: FactionStanding[] = [
   { id: 'riverside-stronghold', name: 'Riverside Stronghold', standing: 'neutral', influence: 0, notes: 'Sanctioned hub — Wave duty for housing.' },
   { id: 'tunnel-network', name: 'Tunnel Network', standing: 'neutral', influence: 0, notes: 'Guides who work dead zones for a price.' },
+  { id: 'system-researchers', name: 'System Researchers', standing: 'neutral', influence: 0, notes: 'Probe labs and Null Core theories — indifferent System.' },
+  { id: 'broker-network', name: 'Broker Network', standing: 'neutral', influence: 0, notes: 'Anonymous intel for Mana Crystal fragments.' },
 ];
 
 export const GATEBREAK_WARD_FACTIONS: FactionStanding[] = [
   { id: 'ward-9-militia', name: 'Ward 9 Militia', standing: 'friendly', influence: 6, notes: 'Protect civilians first; licenses later.' },
   { id: 'licensed-hunters', name: 'Licensed Hunters', standing: 'unfriendly', influence: -6, notes: 'Guild cut of gate loot — smiles like a contract.' },
+  { id: 'ward-civilians', name: 'Ward 9 Civilians', standing: 'friendly', influence: 4, notes: 'Shelter bunks and scrap beds under the district.' },
 ];
 
 export const ASCENDING_SPIRE_FACTIONS: FactionStanding[] = [
   { id: 'spire-gate', name: 'Spire Gate Authority', standing: 'neutral', influence: 0, notes: 'Permits, intel buyers, Ranking Board.' },
   { id: 'rival-climbers', name: 'Rival Climbers', standing: 'neutral', influence: 0, notes: 'May ally — or steal your clear credit.' },
+  { id: 'floor-wardens', name: 'Floor Wardens', standing: 'unfriendly', influence: -4, notes: 'Sealed biomes — clear or be forgotten.' },
 ];
 
 export const FABLED_LEGACY_FACTIONS: FactionStanding[] = [
   { id: 'mossford-village', name: 'Mossford Village', standing: 'friendly', influence: 5, notes: 'Quiet valley people who prefer to stay forgotten.' },
   { id: 'aelmark-crown', name: 'Kingdom of Aelmark', standing: 'neutral', influence: 0, notes: 'Distant crown — suddenly interested in the hills.' },
+  { id: 'old-faith', name: 'Old Faith Keepers', standing: 'neutral', influence: 2, notes: 'Menhir, Weave, and Hollow Cairn geas.' },
+];
+
+export const INKBOUND_ACADEMY_FACTIONS: FactionStanding[] = [
+  { id: 'inkbound-faculty', name: 'Inkbound Faculty', standing: 'neutral', influence: 0, notes: 'Dean Solenne — polite, terrifying, red pen.' },
+  { id: 'house-rivals', name: 'House Rivalries', standing: 'neutral', influence: 0, notes: 'Ink Points board — sabotage if not caught.' },
+  { id: 'restricted-stack', name: 'Restricted Stack Keepers', standing: 'unfriendly', influence: -4, notes: 'Basement curriculum that rearranges itself.' },
+];
+
+export const VOID_AUDIENCE_FACTIONS: FactionStanding[] = [
+  { id: 'void-audience', name: 'Void Audience', standing: 'neutral', influence: 0, notes: 'Cosmic Favor — entertain or be withdrawn.' },
+  { id: 'threshold-village', name: 'Threshold Village', standing: 'friendly', influence: 6, notes: 'Pellara and Drenn — grounding after rebirth.' },
+  { id: 'other-reborn', name: 'Other Reborn', standing: 'neutral', influence: 0, notes: 'Active trials — cooperate or compete for CF.' },
+  { id: 'resonance-academy', name: 'Resonance Academy', standing: 'neutral', influence: 0, notes: 'Solenne studies anomalous mana signatures.' },
+];
+
+export const HOLLOW_CORE_FACTIONS: FactionStanding[] = [
+  { id: 'core-kin', name: 'Core Kin', standing: 'friendly', influence: 8, notes: 'Whisper-Mite and spawn — grow with you.' },
+  { id: 'core-hunters', name: 'Core Hunters Guild', standing: 'hostile', influence: -12, notes: 'Bren Holtz — capture for bounty preferred.' },
+  { id: 'rival-cores', name: 'Rival Cores', standing: 'unfriendly', influence: -6, notes: 'Other hollows press your territory seams.' },
+];
+
+export const DUNGEON_TRANSPORT_FACTIONS: FactionStanding[] = [
+  { id: 'spire-merchants', name: 'Spire Merchants', standing: 'neutral', influence: 0, notes: 'Silent inflated prices between floors.' },
+  { id: 'floor-residents', name: 'Floor Residents', standing: 'neutral', influence: 2, notes: 'Scratch and ecology — trade or steal.' },
+  { id: 'descent-delvers', name: 'Descent Delvers', standing: 'friendly', influence: 4, notes: 'Kira\'s logs — human voice in the stone.' },
 ];
 
 export const CURSED_KEEP_FACTIONS: FactionStanding[] = [
@@ -244,6 +309,10 @@ const CURATED_FACTIONS: Record<string, FactionStanding[]> = {
   'gatebreak-ward': GATEBREAK_WARD_FACTIONS,
   'ascending-spire': ASCENDING_SPIRE_FACTIONS,
   'fabled-legacy': FABLED_LEGACY_FACTIONS,
+  'inkbound-academy': INKBOUND_ACADEMY_FACTIONS,
+  'void-audience': VOID_AUDIENCE_FACTIONS,
+  'hollow-core': HOLLOW_CORE_FACTIONS,
+  'dungeon-transport': DUNGEON_TRANSPORT_FACTIONS,
   'cursed-keep': CURSED_KEEP_FACTIONS,
   'salt-road-heist': SALT_ROAD_FACTIONS,
 };
@@ -404,6 +473,89 @@ const QUEST_FACTION_DELTAS: Record<
   },
   'ha-quest-special-second': {
     complete: [{ id: 'quiet-hands', delta: 6 }, { id: 'mca', delta: -4 }],
+  },
+  'si-quest-1': {
+    accept: [{ id: 'riverside-stronghold', delta: 2 }],
+    complete: [{ id: 'riverside-stronghold', delta: 6 }],
+    fail: [{ id: 'riverside-stronghold', delta: -4 }],
+  },
+  'si-quest-2': {
+    accept: [{ id: 'riverside-stronghold', delta: 5 }],
+    complete: [{ id: 'riverside-stronghold', delta: 10 }],
+    fail: [{ id: 'riverside-stronghold', delta: -6 }],
+  },
+  'si-quest-3': {
+    complete: [{ id: 'riverside-stronghold', delta: 8 }, { id: 'tunnel-network', delta: 2 }],
+  },
+  'si-quest-4': {
+    accept: [{ id: 'tunnel-network', delta: 4 }],
+    complete: [{ id: 'tunnel-network', delta: 8 }, { id: 'system-researchers', delta: 4 }],
+    fail: [{ id: 'tunnel-network', delta: -4 }],
+  },
+  'gatebreak-ward-quest-1': {
+    accept: [{ id: 'ward-9-militia', delta: 4 }, { id: 'ward-civilians', delta: 3 }],
+    complete: [{ id: 'ward-9-militia', delta: 10 }, { id: 'licensed-hunters', delta: -2 }],
+    fail: [{ id: 'ward-9-militia', delta: -6 }, { id: 'ward-civilians', delta: -4 }],
+  },
+  'ascending-spire-quest-1': {
+    accept: [{ id: 'spire-gate', delta: 3 }],
+    complete: [{ id: 'spire-gate', delta: 8 }, { id: 'floor-wardens', delta: -4 }],
+    fail: [{ id: 'spire-gate', delta: -4 }, { id: 'rival-climbers', delta: 2 }],
+  },
+  'fl-quest-1': {
+    accept: [{ id: 'mossford-village', delta: 4 }],
+    complete: [{ id: 'mossford-village', delta: 8 }],
+    fail: [{ id: 'mossford-village', delta: -4 }],
+  },
+  'fl-quest-2': {
+    complete: [{ id: 'mossford-village', delta: 6 }],
+  },
+  'fl-quest-3': {
+    accept: [{ id: 'old-faith', delta: 3 }, { id: 'aelmark-crown', delta: 2 }],
+    complete: [{ id: 'old-faith', delta: 6 }, { id: 'aelmark-crown', delta: 4 }],
+  },
+  'fl-quest-4': {
+    complete: [{ id: 'old-faith', delta: 8 }, { id: 'aelmark-crown', delta: -2 }],
+    fail: [{ id: 'old-faith', delta: -6 }],
+  },
+  'inkbound-academy-quest-1': {
+    accept: [{ id: 'inkbound-faculty', delta: 3 }, { id: 'house-rivals', delta: 2 }],
+    complete: [{ id: 'inkbound-faculty', delta: 8 }, { id: 'house-rivals', delta: 4 }],
+    fail: [{ id: 'inkbound-faculty', delta: -6 }, { id: 'restricted-stack', delta: 2 }],
+  },
+  'va-quest-1': {
+    complete: [{ id: 'void-audience', delta: 4 }],
+  },
+  'va-quest-2': {
+    accept: [{ id: 'threshold-village', delta: 4 }],
+    complete: [{ id: 'threshold-village', delta: 10 }, { id: 'void-audience', delta: 2 }],
+    fail: [{ id: 'threshold-village', delta: -5 }],
+  },
+  'va-quest-3': {
+    accept: [{ id: 'threshold-village', delta: 2 }, { id: 'other-reborn', delta: 2 }],
+    complete: [{ id: 'threshold-village', delta: 6 }, { id: 'other-reborn', delta: 4 }, { id: 'resonance-academy', delta: 2 }],
+    fail: [{ id: 'threshold-village', delta: -4 }],
+  },
+  'hollow-core-quest-1': {
+    accept: [{ id: 'core-kin', delta: 4 }],
+    complete: [{ id: 'core-kin', delta: 10 }, { id: 'core-hunters', delta: -4 }],
+    fail: [{ id: 'core-kin', delta: -6 }, { id: 'core-hunters', delta: 4 }],
+  },
+  'dt-quest-1': {
+    accept: [{ id: 'descent-delvers', delta: 2 }],
+    complete: [{ id: 'descent-delvers', delta: 6 }],
+    fail: [{ id: 'descent-delvers', delta: -3 }],
+  },
+  'dt-quest-2': {
+    accept: [{ id: 'floor-residents', delta: 4 }],
+    complete: [{ id: 'floor-residents', delta: 8 }, { id: 'descent-delvers', delta: 2 }],
+    fail: [{ id: 'floor-residents', delta: -4 }],
+  },
+  'dt-quest-3': {
+    complete: [{ id: 'spire-merchants', delta: 4 }, { id: 'descent-delvers', delta: 4 }],
+  },
+  'dt-quest-4': {
+    complete: [{ id: 'descent-delvers', delta: 8 }, { id: 'spire-merchants', delta: -2 }],
   },
 };
 

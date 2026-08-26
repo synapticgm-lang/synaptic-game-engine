@@ -9,9 +9,11 @@ John is playtesting live. Collect issues here. Do not implement until he asks fo
 
 ## Open
 
-_(none — 2026-08-26j shipped Act-4 hub encounters + sandbox ports)_
+_(none — 2026-08-26k shipped all-LitRPG sandbox floor)_
 
-**Residual risk (26j):** Full hub→encounter banks only for Summoned Pact / Hero Awakening; other LitRPG + Cursed Keep + Salt Road are thin (6 hubs, sparse beats). Inkbound / Hollow Core / Void Audience / Dungeon Transport / remaining tabletop+RPG still faction-from-lore only (no hub graph). PYOA intentionally has no hubs. Alone invent-crowd still blocks until opening complete; mapped hubs then allow banked contacts. Generic lore faction seed for non-curated litrpg/dnd/rpg may yield thin matrices if bible has few `faction` loreSnippets.
+**Residual risk (26k):** All LitRPG premades (except blank) now have ≥6 unique hubs + curated factions + arrival beats + contacts + quest/faction deltas. Honest FO3 feel ~35–40% (Full-floor densify) — still not MMO outdoor art, radiant quests, or FO3-scale encounter density. Cursed Keep + Salt Road stay thin flagship ports (unchanged depth). PYOA + blank intentionally empty. Alone invent-crowd still blocks until opening complete; mapped hubs then allow banked contacts. Side reveals need bible keywords in play. Outdoor hubs remain registry+copy, not zone art.
+
+**Residual risk (26j):** Partially closed by 26k for LitRPG zeros/thins; CK/Salt Road residual above.
 
 **Residual risk (26i):** Free is Gemini 2.5 Flash Lite (~3–4× DeepSeek token $); rare Google cold starts still possible. Bare-noun grounding covers inspect/examine/check… patterns — other invent verbs without articles may still slip; display filter still last-GM-only.
 
@@ -23,7 +25,7 @@ _(none — 2026-08-26j shipped Act-4 hub encounters + sandbox ports)_
 
 **Residual risk (26e):** Transcript Options section only for turns committed after 26e; older log entries omit it (by design). Display pad is snapshotted at commit — if ActionBar later diverged mid-session without a new commit, transcript matches commit-time pad.
 
-**Residual risk (26g):** Hub travel pads only when opening complete and outdoors — alone first beats stay empty of invent-crowd. Faction deltas are small and NPC-name matched; unnamed crowd scenes may not move the matrix. Side reveals need bank keywords in play (Lowmarket / Mara / Pax etc.) — GM invent of new side titles still filtered by syncQuestsFromPlay. Outdoor hubs are registry+copy, not full MMO zone art (still Waiting).
+**Residual risk (26g):** Hub travel pads only when opening complete and outdoors — alone first beats stay empty of invent-crowd. Faction deltas are small and NPC-name matched; unnamed crowd scenes may not move the matrix. Side reveals need bank keywords in play — GM invent of new side titles still filtered by syncQuestsFromPlay. Outdoor hubs are registry+copy, not full MMO zone art (still Waiting).
 
 **Residual risk (26f):** After a deploy, first open of a lazy modal on a stale tab may still one-shot reload (by design). If reload already happened and chunk still missing (CDN edge), Debug closes with toast instead of white-screen — hard refresh still needed.
 
@@ -38,6 +40,22 @@ _(none — 2026-08-26j shipped Act-4 hub encounters + sandbox ports)_
 - Premium theme five-rater / Shop preview parity (Manus T8/T9 P0-04) — after playtest of `2026-08-19t` Vampire rescue; ingest `docs/research/manus-premium-themes-ingest-2026-08-19.md`
 
 ## Done (already shipped)
+
+- **2026-08-26k All-LitRPG sandbox floor (Fable/FO3 wedge):** Floored Inkbound / Void Audience / Hollow Core / Dungeon Transport (8–9 unique hubs each + factions + contacts + beats + reveals + resume pins). Densified SI / Gatebreak / Ascending / Fabled toward Full; deepened SP/HA (+1 hub each). Per-bible uniqueness (campus / spectacle / hollow / transit — not Lowmarket renames). Quest accept/complete/fail → bible faction deltas. Vitest: every LitRPG id ≥6 hubs + faction seed; Inkbound ≠ Lowmarket. Honest FO3 ~35–40%. HUD stamp 26k. Client-only.
+
+| Bible | Hubs | Factions | Coverage |
+|---|---|---|---|
+| summoned-pact | 11 | 3 | Full+ |
+| hero-awakening | 10 | 4 | Full+ |
+| system-integration | 9 | 4 | Densified |
+| gatebreak-ward | 8 | 3 | Densified |
+| ascending-spire | 8 | 3 | Densified |
+| fabled-legacy | 8 | 3 | Densified |
+| inkbound-academy | 8 | 3 | Floored |
+| void-audience | 8 | 4 | Floored |
+| hollow-core | 8 | 3 | Floored |
+| dungeon-transport | 9 | 3 | Floored |
+| blank-canvas | 0 | 0 | Skip |
 
 - **2026-08-26j Act-4 sandbox + mode ports:** Hub→encounter banks wired into travel/situation/choices/turn (STATUS hub note, contact presence, soft quest reveal). **Who gets sandbox:** Full — Summoned Pact + Hero Awakening. Thin hubs+factions+beats — System Integration, Gatebreak Ward, Ascending Spire, Fabled Legacy, Cursed Keep (tabletop flagship), Salt Road Heist (story-RPG flagship). Faction seed unlocked for litrpg/dnd/rpg from curated banks or lore `faction` snippets (not empty for non-litrpg); PYOA + blank canvases stay out. Resume-main pins + L2+ reveal banks extended. Alone invent-crowd intact until mapped hub after opening. Vitest covers seed + Gatebreak/CK hubs + Salt Road arrival. HUD stamp 26j. Client-only.
 

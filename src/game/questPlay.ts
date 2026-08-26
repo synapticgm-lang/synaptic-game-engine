@@ -165,6 +165,15 @@ const QUEST_REVEAL_TRIGGERS: Array<{ questId: string; patterns: RegExp[] }> = [
   },
   // Fabled Legacy
   {
+    questId: 'fl-quest-2',
+    patterns: [
+      /\bmarta\b/i,
+      /\bsmithy\b/i,
+      /\bceremonial\s+sickle\b/i,
+      /\bforge\b.*\b(marta|sickle|help)\b/i,
+    ],
+  },
+  {
     questId: 'fl-quest-3',
     patterns: [
       /\bmissing\s+map\b/i,
@@ -173,6 +182,124 @@ const QUEST_REVEAL_TRIGGERS: Array<{ questId: string; patterns: RegExp[] }> = [
       /\bhollow\s+cairn\b/i,
       /\bhermit(?:'?s)?\s+cabin\b/i,
       /\bcorvin\b.*\b(map|wound|hills)\b/i,
+      /\btrailhead\b/i,
+    ],
+  },
+  {
+    questId: 'fl-quest-4',
+    patterns: [
+      /\bhollow\s+cairn\b/i,
+      /\bgeas-?cut\b/i,
+      /\bfirst\s+kings?\b/i,
+      /\bopen\s+(?:the\s+)?cairn\b/i,
+      /\bseal\s+(?:the\s+)?cairn\b/i,
+    ],
+  },
+  // Gatebreak / Ascending densify
+  {
+    questId: 'gatebreak-ward-quest-1',
+    patterns: [
+      /\bsubway\s+gate\b/i,
+      /\bb-?gate\b/i,
+      /\bsergeant\s+rill\b/i,
+      /\bward\s*9\b/i,
+      /\bhold\s+ward\b/i,
+    ],
+  },
+  {
+    questId: 'ascending-spire-quest-1',
+    patterns: [
+      /\bspire\s+gate\b/i,
+      /\bfloor\s*1\b/i,
+      /\branking\s+board\b/i,
+      /\bfirst\s+ascent\b/i,
+      /\bfloor\s+warden\b/i,
+      /\bfloor\s+law\b/i,
+    ],
+  },
+  // Inkbound Academy
+  {
+    questId: 'inkbound-academy-quest-1',
+    patterns: [
+      /\borientation\s+trial\b/i,
+      /\bclass\s+codex\b/i,
+      /\bcourtyard\s+duel\b/i,
+      /\bchoose\s+a\s+house\b/i,
+      /\bjori\s+ashquill\b/i,
+      /\bdean\s+solenne\b/i,
+      /\bhouse\s+ledger\b/i,
+      /\bquill\s+dorm/i,
+    ],
+  },
+  // Void Audience
+  {
+    questId: 'va-quest-2',
+    patterns: [
+      /\bthreshold\s+inn\b/i,
+      /\bpellara\b/i,
+      /\binn\s+chores?\b/i,
+      /\barrival\s+at\s+threshold\b/i,
+    ],
+  },
+  {
+    questId: 'va-quest-3',
+    patterns: [
+      /\bsoul\s+shimmer\b/i,
+      /\bcaster\s+drenn\b/i,
+      /\bkael\b/i,
+      /\bnode\s+calibration\b/i,
+      /\bthreshold\s+node\b/i,
+    ],
+  },
+  {
+    questId: 'va-quest-4',
+    patterns: [
+      /\bcosmic\s+favor\b/i,
+      /\bvoid\s+audience\b/i,
+      /\bmocker'?s?\s+voice\b/i,
+      /\bgallery\s+viewing\b/i,
+    ],
+  },
+  // Hollow Core
+  {
+    questId: 'hollow-core-quest-1',
+    patterns: [
+      /\bclaim\s+the\s+hollow\b/i,
+      /\bcore\s+chamber\b/i,
+      /\bwhisper-?mite\b/i,
+      /\bexpand\s+to\s+3\s+rooms\b/i,
+      /\bcaptain\s+bren\b/i,
+      /\btheme\s+binding\b/i,
+    ],
+  },
+  // Dungeon Transport
+  {
+    questId: 'dt-quest-2',
+    patterns: [
+      /\bscratch\b/i,
+      /\bcave\s+imp\b/i,
+      /\bflooded\s+(?:cavern|platform)\b/i,
+      /\bdrowned\s+maw\b/i,
+      /\bfloor\s*2\b/i,
+    ],
+  },
+  {
+    questId: 'dt-quest-3',
+    patterns: [
+      /\bsafe\s+room\b/i,
+      /\brest\s+shrine\b/i,
+      /\bwandering\s+merchant\b/i,
+      /\bstorage\s+cache\b/i,
+    ],
+  },
+  {
+    questId: 'dt-quest-4',
+    patterns: [
+      /\bseam\s+crawlspace\b/i,
+      /\bway\s+up\b/i,
+      /\bkira\b/i,
+      /\bmaintenance\s+space\b/i,
+      /\bdescent\s+log\b/i,
     ],
   },
   // Cursed Keep
@@ -218,6 +345,17 @@ const QUEST_SEED_LOCATIONS: Record<string, string> = {
   'fl-quest-1': 'The Crooked Beam',
   'fl-quest-2': "Marta's Smithy",
   'fl-quest-3': 'Greentooth Trailhead',
+  'fl-quest-4': 'Hollow Cairn Approach',
+  'inkbound-academy-quest-1': 'Lecture Courtyard',
+  'va-quest-1': "Auditor's Desk",
+  'va-quest-2': 'Threshold Inn',
+  'va-quest-3': 'Threshold Node Plaza',
+  'va-quest-4': 'Resonance Stage',
+  'hollow-core-quest-1': 'Core Chamber',
+  'dt-quest-1': 'Floor 1 Stone Corridor',
+  'dt-quest-2': 'Floor 2 Flooded Platform',
+  'dt-quest-3': 'Safe Room Rest Shrine',
+  'dt-quest-4': 'Seam Crawlspace',
   'ck-quest-1': 'Greyhollow Inn',
   'ck-quest-2': 'Greyhollow Church',
   'ck-quest-3': "Mira's Apothecary",
@@ -578,6 +716,11 @@ export function mainSpineQuest(state: GameState): Quest | null {
         || q.id === 'gatebreak-ward-quest-1'
         || q.id === 'ascending-spire-quest-1'
         || q.id === 'fl-quest-1'
+        || q.id === 'inkbound-academy-quest-1'
+        || q.id === 'va-quest-1'
+        || q.id === 'va-quest-2'
+        || q.id === 'hollow-core-quest-1'
+        || q.id === 'dt-quest-1'
     )
     ?? visible.find((q) => q.type === 'main')
     ?? visible[0]
