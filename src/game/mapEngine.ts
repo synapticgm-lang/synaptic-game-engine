@@ -364,16 +364,30 @@ function nextStreetSlot(dungeon: ActiveDungeonState): { x: number; y: number } {
 /**
  * Street-scale map of wherever the player said they are — Tesco Extra, a Kyoto alley, anywhere.
  * `tier: 3` is map SCALE (local ~1 km), not dungeon danger.
+ * Extra landmarks (Act-3 hubs) stay fogged until listed in visitedLandmarkNames.
  */
 export function buildLocalAreaMap(
   place: string,
   landmarks: string[] = [],
-  parentCoords?: Location3D
+  parentCoords?: Location3D,
+  opts?: { visitedLandmarkNames?: string[] }
 ): ActiveDungeonState {
   const rawHere = place.replace(/\s+/g, ' ').trim();
   const extras = uniqueNames(landmarks.filter((n) => n.toLowerCase() !== rawHere.toLowerCase()));
-  const here = usableStreetLabel(rawHere) ? rawHere : extras[0] || 'Local streets';
-  const names = uniqueNames([here, ...extras.filter((n) => n.toLowerCase() !== here.toLowerCase())]).slice(0, 8);
+  const rawLabel = usableStreetLabel(rawHere) ? rawHere : extras[0] || 'Local streets';
+  const essayHere =
+    rawLabel.length > 28
+    || /\balone in\b|\boff the\b|\bsomewhere\b|\bburnt husk\b|\bhalf-collapsed\b/i.test(rawLabel);
+  const here = essayHere ? shortBuildingTitle(rawLabel) : rawLabel;
+  const names = uniqueNames([
+    here,
+    ...extras.filter(
+      (n) => n.toLowerCase() !== here.toLowerCase() && n.toLowerCase() !== rawLabel.toLowerCase()
+    ),
+  ]).slice(0, 8);
+  const visitedExtra = new Set(
+    (opts?.visitedLandmarkNames ?? []).map((n) => n.trim().toLowerCase()).filter(Boolean)
+  );
 
   const nodes: MapNode[] = names.map((name, i) => {
     const neighbors: string[] = [];
@@ -393,16 +407,20 @@ export function buildLocalAreaMap(
     };
   });
 
+  const visitedNodeIds = nodes
+    .filter((n, i) => i === 0 || visitedExtra.has(n.name.toLowerCase()))
+    .map((n) => n.id);
+
   return {
     blueprintId: STREET_MAP_BLUEPRINT,
     dungeonName: here,
     tier: 3,
-    // Street map: scale only — no dungeon dangerTier
+    // Street map: scale only — no dungeon danger tier
     dangerTier: undefined,
     parentCoordinates: parentCoords,
     currentZLevel: 0,
     currentNodeId: 'local_0',
-    visitedNodeIds: names.map((_, i) => `local_${i}`),
+    visitedNodeIds: visitedNodeIds.length ? visitedNodeIds : ['local_0'],
     clearedNodeIds: [],
     nodes,
   };
@@ -427,13 +445,27 @@ export function presentLocalAreaMap(
     : usableStreetLabel(dungeon.dungeonName)
       ? dungeon.dungeonName
       : 'Local streets';
-  const title = usableStreetLabel(dungeon.dungeonName) ? dungeon.dungeonName : fallback;
+  const rawTitle = usableStreetLabel(dungeon.dungeonName) ? dungeon.dungeonName : fallback;
+  const essayTitle =
+    rawTitle.length > MAX_ROOM_LABEL
+    || /\balone in\b|\boff the\b|\bsomewhere\b|\bburnt husk\b/i.test(rawTitle);
+  const title = essayTitle ? shortBuildingTitle(rawTitle) : rawTitle;
 
   const keep: MapNode[] = [];
   for (const n of dungeon.nodes) {
     const junk = !usableStreetLabel(n.name);
+    const nodeEssay =
+      n.name.length > MAX_ROOM_LABEL
+      || /\balone in\b|\boff the\b|\bsomewhere\b|\bburnt husk\b/i.test(n.name);
     if (junk && n.id !== dungeon.currentNodeId && n.id !== 'local_0') continue;
-    keep.push(junk ? { ...n, name: title, description: `You are here: ${title}.` } : n);
+    const name = junk || (nodeEssay && (n.id === dungeon.currentNodeId || n.id === 'local_0'))
+      ? title
+      : n.name;
+    keep.push(
+      junk || name !== n.name
+        ? { ...n, name, description: `You are here: ${name}.` }
+        : n
+    );
   }
   if (keep.length === 0) {
     return buildLocalAreaMap(title, [], dungeon.parentCoordinates);
@@ -554,7 +586,7 @@ export function shortRoomLabel(raw: string, fallback = 'Chamber'): string {
   }
   const phrase = n.match(ROOM_PHRASE);
   if (phrase?.[0]) return phrase[0].replace(/\s+/g, ' ').trim().slice(0, MAX_ROOM_LABEL);
-  if (/\bbuilding\b|\bruin/i.test(n)) return 'Entry';
+  if (/\bbuilding\b|\bruin|\bhusk\b|\bshell\b/i.test(n)) return 'Entry';
   return fallback;
 }
 
@@ -578,11 +610,11 @@ export function shortBuildingTitle(raw: string): string {
   if (/\bcathedral\b/i.test(n)) kind = 'Cathedral';
   else if (/\bcircle\b/i.test(n)) kind = 'Circle';
   else if (/\bmanor\b|\bhall\b/i.test(n)) kind = 'Hall';
-  else if (/\bruin/i.test(n)) kind = 'Ruin';
+  else if (/\bruin|\bhusk\b|\bshell\b/i.test(n)) kind = 'Ruin';
   else if (/\bcourt\b/i.test(n)) kind = 'Court';
   else if (/\btemple\b|\bchapel\b/i.test(n)) kind = 'Temple';
   const damaged =
-    /\b(?:damaged|half-collapsed|collapsed|burnt|shabby|wall-shell|foundation|serious damage)\b/i.test(n);
+    /\b(?:damaged|half-collapsed|collapsed|burnt|charred|shabby|wall-shell|foundation|serious damage)\b/i.test(n);
   const title = damaged ? `Damaged ${kind.toLowerCase()}` : kind;
   const headed = title.charAt(0).toUpperCase() + title.slice(1);
   if (placeBit) return `${headed} · ${placeBit}`.slice(0, MAX_BUILDING_TITLE);
@@ -1400,7 +1432,8 @@ export function resolvePlayAreaMap(
   place: string,
   landmarks: string[] = [],
   parentCoords?: Location3D,
-  seed = 'interior'
+  seed = 'interior',
+  opts?: { visitedLandmarkNames?: string[] }
 ): ActiveDungeonState | null {
   if (isExplorableDungeon(existing ?? null)) return existing ?? null;
   const here = (place ?? '').replace(/\s+/g, ' ').trim();
@@ -1429,11 +1462,28 @@ export function resolvePlayAreaMap(
   } else if (existing && isStreetMap(existing)) {
     next = presentLocalAreaMap(existing, here || existing.dungeonName);
     for (const named of landmarks) next = addLandmarkToLocalMap(next, named);
+    // Fog hub pins until visited (keep here + prior non-hub visits + visited hubs).
+    if (opts?.visitedLandmarkNames) {
+      const visitedExtra = new Set(opts.visitedLandmarkNames.map((n) => n.trim().toLowerCase()));
+      const hubKeys = new Set(landmarks.map((n) => n.trim().toLowerCase()).filter(Boolean));
+      next = {
+        ...next,
+        visitedNodeIds: next.nodes
+          .filter((n) => {
+            if (n.id === next!.currentNodeId || (n.tags ?? []).includes('here')) return true;
+            if (visitedExtra.has(n.name.toLowerCase())) return true;
+            if (hubKeys.has(n.name.toLowerCase())) return false;
+            return next!.visitedNodeIds.includes(n.id);
+          })
+          .map((n) => n.id),
+      };
+    }
   } else if (here || existing) {
     next = buildLocalAreaMap(
       here || existing?.dungeonName || 'Local streets',
       landmarks,
-      parentCoords ?? existing?.parentCoordinates
+      parentCoords ?? existing?.parentCoordinates,
+      { visitedLandmarkNames: opts?.visitedLandmarkNames }
     );
   }
   if (existing && sameAreaMap(next, existing)) return existing;

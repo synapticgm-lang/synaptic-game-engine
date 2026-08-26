@@ -1,6 +1,6 @@
 ﻿/**
  * Off-spine XP banks — modest code awards (discover / clear / quest / non-lethal).
- * Free-economy safe. STATUS shows real XP when awarded.
+ * Free-economy safe. STATUS shows real XP when awarded — always with a reason.
  */
 
 import type { GameEvent } from './parser';
@@ -33,6 +33,19 @@ function questTypeXp(q: Quest): number {
   return q.type === 'main' ? SANDBOX_XP.questCompleteMain : SANDBOX_XP.questCompleteSide;
 }
 
+/** Look-around / same-place re-scout — no explore/discover/quest-tick XP. */
+export function isLookAroundAction(action: string): boolean {
+  const a = (action ?? '').replace(/\s+/g, ' ').trim().toLowerCase();
+  if (!a) return false;
+  if (/^(?:travel\s+toward|return\s+to)\b/.test(a)) return false;
+  return (
+    /\b(?:look\s+around|have\s+a\s+look|looking\s+around|whats?\s+near|what'?s\s+nearby|inspect\s+the\s+immediate|scout\s+the\s+(?:area|room|ruin)|examine\s+the\s+(?:area|room|surroundings)|search\s+the\s+ruin\s+carefully|wait\s+and\s+listen)\b/i.test(
+      a
+    )
+    || /^(?:look|listen|wait|observe|examine|inspect|search)\b/.test(a)
+  );
+}
+
 /**
  * Apply one turn of off-spine XP. Idempotent via sandboxAwardKeys.
  */
@@ -41,6 +54,7 @@ export function applySandboxXpAwards(
   opts: {
     playerAction: string;
     locationName?: string;
+    previousLocationName?: string;
     questsBefore: Quest[];
     questsAfter: Quest[];
     events: GameEvent[];
@@ -55,16 +69,25 @@ export function applySandboxXpAwards(
   let places = [...(state.places ?? [])];
 
   const loc = opts.locationName ?? state.currentLocation;
+  const prevLoc = (opts.previousLocationName ?? '').trim().toLowerCase();
+  const locKey = (loc ?? '').trim().toLowerCase();
+  const locationChanged = !!locKey && !!prevLoc && locKey !== prevLoc;
+  const lookAround = isLookAroundAction(opts.playerAction);
   const hubs = hubsForBibleId(state.campaignBibleId);
   const hub = matchHub(hubs, loc);
-  if (hub) {
+
+  // Hub discover: once per hub id, only when arriving at / traveling to that hub — not re-look in a ruin.
+  if (hub && !lookAround) {
     const key = `discover-hub:${hub.id}`;
     const placeId = placeIdFromName(hub.name);
     const existing = places.find(
       (p) => p.id === placeId || p.name.toLowerCase() === hub.name.toLowerCase()
     );
     const firstVisit = !existing || existing.lastVisitedTurn == null;
-    if (firstVisit && !hasAward(awardKeys, key)) {
+    const arrived =
+      locationChanged
+      || /^(?:travel\s+toward|return\s+to)\b/i.test(opts.playerAction.trim());
+    if (firstVisit && arrived && !hasAward(awardKeys, key)) {
       xp += SANDBOX_XP.discoverHub;
       notes.push(`XP Gained: ${SANDBOX_XP.discoverHub} (discovered ${hub.name})`);
       awardKeys.push(key);
@@ -73,7 +96,7 @@ export function applySandboxXpAwards(
       places = places.map((p) =>
         p.id === existing.id ? { ...p, lastVisitedTurn: opts.turn, arcStatus: p.arcStatus ?? 'visited' } : p
       );
-    } else {
+    } else if (arrived) {
       places.push({
         id: placeId,
         name: hub.name,
@@ -83,6 +106,17 @@ export function applySandboxXpAwards(
         arcStatus: 'visited',
         lastVisitedTurn: opts.turn,
       });
+    }
+  } else if (hub && lookAround) {
+    // Re-look at a known hub: stamp visit without XP.
+    const placeId = placeIdFromName(hub.name);
+    const existing = places.find(
+      (p) => p.id === placeId || p.name.toLowerCase() === hub.name.toLowerCase()
+    );
+    if (existing && existing.lastVisitedTurn != null) {
+      places = places.map((p) =>
+        p.id === existing.id ? { ...p, lastVisitedTurn: opts.turn } : p
+      );
     }
   }
 
@@ -109,14 +143,19 @@ export function applySandboxXpAwards(
     const before = beforeById.get(after.id);
     if (!before) continue;
 
-    const beforeDone = new Set((before.objectives ?? []).filter((o) => o.completed).map((o) => o.id));
-    for (const obj of after.objectives ?? []) {
-      if (!obj.completed || beforeDone.has(obj.id)) continue;
-      const key = `quest-tick:${after.id}:${obj.id}`;
-      if (hasAward(awardKeys, key)) continue;
-      xp += SANDBOX_XP.questTick;
-      notes.push(`XP Gained: ${SANDBOX_XP.questTick} (quest objective)`);
-      awardKeys.push(key);
+    // Look-around must not farm quest-tick XP from GM falsely completing bearings objectives.
+    if (!lookAround) {
+      const beforeDone = new Set((before.objectives ?? []).filter((o) => o.completed).map((o) => o.id));
+      for (const obj of after.objectives ?? []) {
+        if (!obj.completed || beforeDone.has(obj.id)) continue;
+        const key = `quest-tick:${after.id}:${obj.id}`;
+        if (hasAward(awardKeys, key)) continue;
+        xp += SANDBOX_XP.questTick;
+        notes.push(
+          `XP Gained: ${SANDBOX_XP.questTick} (quest progress: ${obj.description.slice(0, 48)})`
+        );
+        awardKeys.push(key);
+      }
     }
 
     if (after.status === 'completed' && before.status !== 'completed') {

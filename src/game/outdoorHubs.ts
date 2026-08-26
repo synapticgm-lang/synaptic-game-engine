@@ -236,6 +236,59 @@ export function seedOutdoorHubPlaces(
   return next;
 }
 
+/** Hub names for Local map pins (fogged until visited). Prefer bible bank; fall back to places. */
+export function hubLandmarkNames(state: {
+  campaignBibleId?: string | null;
+  places?: PlaceRecord[];
+}): string[] {
+  const fromBible = hubsForBibleId(state.campaignBibleId).map((h) => h.name);
+  if (fromBible.length) return fromBible;
+  return (state.places ?? [])
+    .filter((p) => p.mapScale === 'street' || p.mapScale === 'region' || typeof p.threatTier === 'number')
+    .map((p) => p.name)
+    .filter(Boolean);
+}
+
+/** Visited hub names (lastVisitedTurn set) — stay open on the street map. */
+export function visitedHubLandmarkNames(state: {
+  campaignBibleId?: string | null;
+  places?: PlaceRecord[];
+}): string[] {
+  const hubs = hubsForBibleId(state.campaignBibleId);
+  const hubKeys = new Set(
+    hubs.flatMap((h) => [h.name.toLowerCase(), ...(h.aliases ?? []).map((a) => a.toLowerCase())])
+  );
+  return (state.places ?? [])
+    .filter((p) => {
+      if (typeof p.lastVisitedTurn !== 'number') return false;
+      if (!hubs.length) return true;
+      const key = p.name.toLowerCase();
+      return hubKeys.has(key) || hubs.some((h) => placeIdFromName(h.name) === p.id);
+    })
+    .map((p) => p.name);
+}
+
+/** Merge hub pins into outdoor landmarks without duplicating here / harvested names. */
+export function mergeHubLandmarks(
+  landmarks: string[],
+  state: { campaignBibleId?: string | null; places?: PlaceRecord[] },
+  here?: string
+): string[] {
+  const hereKey = (here ?? '').trim().toLowerCase();
+  const seen = new Set(
+    landmarks.map((n) => n.trim().toLowerCase()).filter(Boolean)
+  );
+  const out = [...landmarks];
+  for (const name of hubLandmarkNames(state)) {
+    const key = name.trim().toLowerCase();
+    if (!key || key === hereKey || seen.has(key)) continue;
+    if (hereKey && hereKey.includes(key)) continue;
+    seen.add(key);
+    out.push(name);
+  }
+  return out;
+}
+
 export function matchHub(
   hubs: OutdoorHub[],
   placeName: string | undefined

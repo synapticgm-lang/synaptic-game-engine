@@ -131,6 +131,40 @@ export function suppressNoOpStatusEcho(
   });
 }
 
+/** Positive XP Gained line (any amount > 0). */
+export function isXpGainedLine(line: string): boolean {
+  const t = line.replace(/^[ \t]*_>\s*/, '').trim();
+  if (/xp\s+gained:\s*0\b/i.test(t)) return false;
+  return /^xp\s+gained:\s*\d+/i.test(t);
+}
+
+/** Code awards always include a parenthetical reason. */
+export function isReasonedXpLine(line: string): boolean {
+  return isXpGainedLine(line) && /\(\s*[^)]+\s*\)\s*$/.test(line.trim());
+}
+
+/**
+ * Drop bare GM "XP Gained: N" lines. Keep code-awarded lines that include a reason,
+ * or replace bare amounts when a reasoned code note for the same amount exists.
+ */
+export function reconcileXpStatusLines(lines: string[], codeXpNotes: string[] = []): string[] {
+  const reasoned = codeXpNotes.filter(isReasonedXpLine);
+  const withoutBareGm = lines.filter((l) => {
+    if (!isXpGainedLine(l)) return true;
+    return isReasonedXpLine(l);
+  });
+  // Prefer code notes; avoid duplicate amounts.
+  const seen = new Set<string>();
+  const out: string[] = [];
+  for (const line of [...withoutBareGm, ...reasoned]) {
+    const key = line.replace(/\s+/g, ' ').trim().toLowerCase();
+    if (seen.has(key)) continue;
+    seen.add(key);
+    out.push(line);
+  }
+  return out;
+}
+
 export function filterSystemLogForEngine(lines: string[], engineMode: EngineMode): string[] {
   const cleaned = lines
     .map((l) => l.replace(/^[ \t]*_>\s*/, '').trim())

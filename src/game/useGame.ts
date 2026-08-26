@@ -21,7 +21,7 @@ import {
   deleteCloudSavesExcept,
   gameStateToLocalSlot,
 } from './cloudSync';
-import { filterSystemLogForEngine, suppressNoOpStatusEcho } from './systemLog';
+import { filterSystemLogForEngine, suppressNoOpStatusEcho, reconcileXpStatusLines } from './systemLog';
 import { callGm, callGmAutoFight, type GmResult } from './aiService';
 import { gmProxyHost } from './gmProxy';
 import { simulateCombat, buildAutoFightPrompt } from './combat';
@@ -154,7 +154,7 @@ import { effectiveWriterTier, isTestLabEnabled } from './testLab';
 import { canOfferRewardedMemorable } from './rewardedAds';
 import { clipCustomTabletopRules } from './customTabletopRules';
 import { touchPlaceVisit, upsertPlaceFromSheet } from './places';
-import { isExplorableDungeon, isInteriorMap, normalizeSheetAuthority } from './placeAuthority';
+import { isExplorableDungeon, isInteriorMap, isInteriorPlace, normalizeSheetAuthority } from './placeAuthority';
 import {
   seedDungeonState,
   mergeSheetWithNode,
@@ -234,7 +234,12 @@ import {
   mutateFactionOnStance,
   seedWorldLedgerFactions,
 } from './factionStandings';
-import { seedOutdoorHubPlaces, parseTravelDestination } from './outdoorHubs';
+import {
+  seedOutdoorHubPlaces,
+  parseTravelDestination,
+  mergeHubLandmarks,
+  visitedHubLandmarkNames,
+} from './outdoorHubs';
 import { hubBeatAwardKey, resolveHubArrival } from './hubEncounters';
 import { applySandboxXpAwards } from './sandboxXp';
 import { extractUpdates, extractNewItems, parseActionTags, stripActionTags, matchLoreCards, eventsToLoreCards, parseTurnFrame, eventsToQuestUpdates, eventsToEncounterUpdate, parsePanels, eventsToMilestone, eventsToLootVideo, eventsToVisualUpdate, stripChoiceList, extractChoiceLines, stripTurnCloser, storyHasBody, looksLikeChoiceOffer, isStoryTooThin, storyWordCount } from './parser';
@@ -1551,11 +1556,15 @@ export function useGame() {
     ]);
     const clamped = clampLeakedOpeningQuests(previous);
     const quests = clamped.quests ?? [];
-    const landmarks = extractNamedPlaces(blob);
+    const harvested = extractNamedPlaces(blob);
     const place = mapAnchorName(
       previous.currentLocation || previous.locationSheet?.name,
-      landmarks
+      harvested
     );
+    // Interior floor plans: harvested rooms only. Street maps: also seed Act-3 hub pins.
+    const landmarks = isInteriorPlace(place)
+      ? harvested
+      : mergeHubLandmarks(harvested, previous, place);
     let areaMap = previous.activeDungeon ?? null;
     if (!isExplorableDungeon(areaMap)) {
       areaMap = resolvePlayAreaMap(
@@ -1563,7 +1572,8 @@ export function useGame() {
         place,
         landmarks,
         previous.currentCoordinates,
-        previous.seed || previous.saveId || 'interior'
+        previous.seed || previous.saveId || 'interior',
+        { visitedLandmarkNames: visitedHubLandmarkNames(previous) }
       );
     }
     const nextLocation =
@@ -3182,7 +3192,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
                   formatCombatReceipt({ combat: ledgerRound }) ||
                     `Damage Dealt: ${ledgerRound.dealt} (${ledgerRound.enemyName} HP ${ledgerRound.enemyHpBefore} -> ${ledgerRound.enemyHpAfter})`,
                   ...(ledgerRound.received ? [`Damage Received: ${ledgerRound.received}`] : []),
-                  ...(ledgerRound.xp ? [`XP Gained: ${ledgerRound.xp}`] : []),
+                  ...(ledgerRound.xp ? [`XP Gained: ${ledgerRound.xp} (combat)`] : []),
                 ]
               : []),
             ...(ledgerFlee ? [formatFleeReceipt({ flee: ledgerFlee })] : []),
@@ -3492,10 +3502,10 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
         if (e.type === 'quest-complete') questChangeNotes.push(`Quest complete: ${e.id}`);
       }
 
-      const landmarks = extractNamedPlaces(
+      const harvested = extractNamedPlaces(
         `${sanitizedInput}\n${cleanText}\n${mergedSystemLog.join('\n')}\n${resolvedLocation ?? ''}`
       );
-      const mapName = mapAnchorName(resolvedLocation, landmarks);
+      const mapName = mapAnchorName(resolvedLocation, harvested);
       let finalLocationName =
         isGenericMapPlace(resolvedLocation) && mapName ? mapName : resolvedLocation;
       // Act-4: Travel toward / Return to a known hub snaps location for banks + XP.
@@ -3505,6 +3515,16 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
           finalLocationName = travelHub.name;
         }
       }
+      const landmarks = isInteriorPlace(mapName || finalLocationName)
+        ? harvested
+        : mergeHubLandmarks(
+            harvested,
+            {
+              campaignBibleId: workingState.campaignBibleId ?? liveCurrent.campaignBibleId,
+              places: workingState.places ?? liveCurrent.places,
+            },
+            mapName || finalLocationName
+          );
 
       if (isExplorableDungeon(workingState.activeDungeon)) {
         workingState = {
@@ -3539,7 +3559,13 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
           mapName,
           landmarks,
           liveCurrent.currentCoordinates,
-          liveCurrent.seed || liveCurrent.saveId || 'interior'
+          liveCurrent.seed || liveCurrent.saveId || 'interior',
+          {
+            visitedLandmarkNames: visitedHubLandmarkNames({
+              campaignBibleId: workingState.campaignBibleId ?? liveCurrent.campaignBibleId,
+              places: workingState.places ?? liveCurrent.places,
+            }),
+          }
         );
       }
       locationSheet = normalizeSheetAuthority(locationSheet, areaMap);
@@ -3743,6 +3769,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
           {
             playerAction: sanitizedInput,
             locationName: finalLocationName,
+            previousLocationName: liveCurrent.currentLocation,
             questsBefore: questsAtTurnStart,
             questsAfter: updatedQuests,
             events,
@@ -3753,8 +3780,9 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
         );
         if (sandboxXp.xp > 0) {
           baseChar.xp = (baseChar.xp ?? 0) + sandboxXp.xp;
-          mergedSystemLog.push(...sandboxXp.notes);
         }
+        // STATUS XP: only code-awarded lines with reasons (strip bare GM invent).
+        mergedSystemLog = reconcileXpStatusLines(mergedSystemLog, sandboxXp.notes);
         places = sandboxXp.places ?? places;
         workingState = {
           ...workingState,
@@ -4635,7 +4663,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
           `Damage Dealt: ${result.damageDealt}`,
           `Damage Received: ${result.damageReceived}`,
           `Player HP: ${liveCurrent.character.hp} -> ${result.finalPlayerHp}`,
-          `XP Gained: ${result.xpGained}`,
+          `XP Gained: ${result.xpGained} (combat)`,
           `Gold Gained: ${result.goldGained}`,
           ...(result.loot.length > 0 ? [`Loot: ${result.loot.map(l => `[${l.rarity}] ${l.name}`).join(', ')}`] : []),
         ],

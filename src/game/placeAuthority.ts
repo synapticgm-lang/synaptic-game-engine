@@ -4,16 +4,16 @@ import type { GameState, LocationSheet, MapScale, MapTier } from './types';
 export const STREET_MAP_BLUEPRINT = 'local-area';
 export const INTERIOR_MAP_BLUEPRINT = 'interior-plan';
 
-/** Named interiors: cathedral, circle, vault, hall, court, building/ruin — not outdoor streets. */
+/** Named interiors: cathedral, circle, vault, hall, court, building/ruin/husk — not outdoor streets. */
 const INTERIOR_PLACE_CUES =
-  /\b(?:cathedral|nave|vestry|undercroft|crypt|chapel|sanctuary|sanctum|vault|circle|court|hall|guildhall|chamber|keep|castle|palace|temple|inn|tavern|manor|wing|aisle|narthex|transept|choir|cloister|sacristy|apse|building|ruin|ruins|room|rooms|basement|attic|tower|warehouse|apartment|interior|floor[- ]?plan)\b/i;
+  /\b(?:cathedral|nave|vestry|undercroft|crypt|chapel|sanctuary|sanctum|vault|circle|court|hall|guildhall|chamber|keep|castle|palace|temple|inn|tavern|manor|wing|aisle|narthex|transept|choir|cloister|sacristy|apse|building|ruin|ruins|husk|shell|foundation|rubble|burnt|charred|collapsed|room|rooms|basement|attic|tower|warehouse|apartment|interior|floor[- ]?plan)\b/i;
 
 const OUTDOOR_OVERRIDE =
   /\b(?:street|road|roads|lane|alley|square|market|plaza|yard|wall|gate|bridge|park|close|harbour|harbor|docks?)\b/i;
 
 /** Interior cues that win even when the label also names roads/streets nearby (alone ruin dumps). */
 const OUTDOOR_STILL_INSIDE =
-  /\b(?:circle|nave|vault|vestry|chapel|undercroft|crypt|hall|court|chamber|aisle|sanctum|building|ruin|ruins|room|rooms|basement|attic|interior|inside)\b/i;
+  /\b(?:circle|nave|vault|vestry|chapel|undercroft|crypt|hall|court|chamber|aisle|sanctum|building|ruin|ruins|husk|shell|foundation|rubble|burnt|charred|collapsed|room|rooms|basement|attic|interior|inside)\b/i;
 
 export function isStreetMap(dungeon: { blueprintId?: string } | null | undefined): boolean {
   return dungeon?.blueprintId === STREET_MAP_BLUEPRINT;
