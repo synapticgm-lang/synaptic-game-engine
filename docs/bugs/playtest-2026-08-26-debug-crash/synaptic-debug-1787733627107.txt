@@ -1,0 +1,53 @@
+========================================
+  SYNAPTIC AI GAME - DEBUG LOG EXPORT
+  Generated: 2026-08-26T08:40:27.106Z
+  Entries: 24
+========================================
+
+[2026-08-26T08:14:18.579Z] [ERROR] [ai-retry] retries exhausted or non-retryable
+  data: {"name":"Error","message":"The System is still compiling. Try again, or cancel and keep the last scene."}
+[2026-08-26T08:14:18.579Z] [ERROR] [ai-proxy] GM proxy failed and client GM path is disabled
+  data: {"message":"The System is still compiling. Try again, or cancel and keep the last scene."}
+[2026-08-26T08:15:20.580Z] [ERROR] [ai-retry] retries exhausted or non-retryable
+  data: {"name":"Error","message":"The System is still compiling. Try again, or cancel and keep the last scene."}
+[2026-08-26T08:15:20.580Z] [ERROR] [ai-proxy] GM proxy failed and client GM path is disabled
+  data: {"message":"The System is still compiling. Try again, or cancel and keep the last scene."}
+[2026-08-26T08:16:08.838Z] [WARN] [console] Unable to determine content-length from response headers. Will expand buffer when needed.
+[2026-08-26T08:16:08.840Z] [WARN] [console] Unable to determine content-length from response headers. Will expand buffer when needed.
+[2026-08-26T08:16:08.840Z] [WARN] [console] Unable to determine content-length from response headers. Will expand buffer when needed.
+[2026-08-26T08:16:08.841Z] [WARN] [console] [Embeddings] Failed to load model (will use keyword fallback): Unexpected token '<', "<!doctype "... is not valid JSON
+[2026-08-26T08:19:33.582Z] [WARN] [choice-pipeline] Choice regeneration failed
+[2026-08-26T08:23:17.352Z] [ERROR] [ai-retry] retries exhausted or non-retryable
+  data: {"name":"Error","message":"The System is still compiling. Try again, or cancel and keep the last scene."}
+[2026-08-26T08:23:17.352Z] [ERROR] [ai-proxy] GM proxy failed and client GM path is disabled
+  data: {"message":"The System is still compiling. Try again, or cancel and keep the last scene."}
+[2026-08-26T08:24:18.059Z] [ERROR] [ai-retry] retries exhausted or non-retryable
+  data: {"name":"Error","message":"The System is still compiling. Try again, or cancel and keep the last scene."}
+[2026-08-26T08:24:18.059Z] [ERROR] [ai-proxy] GM proxy failed and client GM path is disabled
+  data: {"message":"The System is still compiling. Try again, or cancel and keep the last scene."}
+[2026-08-26T08:25:19.867Z] [ERROR] [ai-retry] retries exhausted or non-retryable
+  data: {"name":"Error","message":"The System is still compiling. Try again, or cancel and keep the last scene."}
+[2026-08-26T08:25:19.867Z] [ERROR] [ai-proxy] GM proxy failed and client GM path is disabled
+  data: {"message":"The System is still compiling. Try again, or cancel and keep the last scene."}
+[2026-08-26T08:36:33.699Z] [ERROR] [ai-retry] retries exhausted or non-retryable
+  data: {"name":"Error","message":"The System is still compiling. Try again, or cancel and keep the last scene."}
+[2026-08-26T08:36:33.700Z] [ERROR] [ai-proxy] GM proxy failed and client GM path is disabled
+  data: {"message":"The System is still compiling. Try again, or cancel and keep the last scene."}
+[2026-08-26T08:37:34.407Z] [ERROR] [ai-retry] retries exhausted or non-retryable
+  data: {"name":"Error","message":"The System is still compiling. Try again, or cancel and keep the last scene."}
+[2026-08-26T08:37:34.407Z] [ERROR] [ai-proxy] GM proxy failed and client GM path is disabled
+  data: {"message":"The System is still compiling. Try again, or cancel and keep the last scene."}
+[2026-08-26T08:38:36.211Z] [ERROR] [ai-retry] retries exhausted or non-retryable
+  data: {"name":"Error","message":"The System is still compiling. Try again, or cancel and keep the last scene."}
+[2026-08-26T08:38:36.212Z] [ERROR] [ai-proxy] GM proxy failed and client GM path is disabled
+  data: {"message":"The System is still compiling. Try again, or cancel and keep the last scene."}
+[2026-08-26T08:40:25.079Z] [ERROR] [error-boundary] Uncaught React error: Failed to fetch dynamically imported module: https://synaptic-game-engine.vercel.app/assets/DebugModal-kg_OhUya.js
+  data: {"name":"TypeError","message":"Failed to fetch dynamically imported module: https://synaptic-game-engine.vercel.app/assets/DebugModal-kg_OhUya.js","stack":"TypeError: Failed to fetch dynamically imported module: https://synaptic-game-engine.vercel.app/assets/DebugModal-kg_OhUya.js"}
+[2026-08-26T08:40:25.080Z] [ERROR] [error-boundary] Uncaught React error: Failed to fetch dynamically imported module: https://synaptic-game-engine.vercel.app/assets/DebugModal-kg_OhUya.js
+  data: {"name":"TypeError","message":"Failed to fetch dynamically imported module: https://synaptic-game-engine.vercel.app/assets/DebugModal-kg_OhUya.js","stack":"TypeError: Failed to fetch dynamically imported module: https://synaptic-game-engine.vercel.app/assets/DebugModal-kg_OhUya.js"}
+[2026-08-26T08:40:25.081Z] [ERROR] [console] TypeError: Failed to fetch dynamically imported module: https://synaptic-game-engine.vercel.app/assets/DebugModal-kg_OhUya.js
+TypeError: Failed to fetch dynamically imported module: https://synaptic-game-engine.vercel.app/assets/DebugModal-kg_OhUya.js
+
+========================================
+  END OF LOG
+========================================
