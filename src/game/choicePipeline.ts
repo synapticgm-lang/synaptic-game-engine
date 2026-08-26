@@ -307,6 +307,29 @@ export function isChoiceGroundedInTurn(
 const PURE_GENERIC_PAD =
   /^(wait(?:\s+and\s+listen(?:\s+carefully)?)?|listen(?:\s+carefully)?|ask what is going on|rest|hide|look around|approach cautiously|check (?:your |my )?(?:gear|inventory|wounds)|inspect the immediate surroundings|observe the environment carefully|examine the (?:surroundings|environment|area|scene|room)|inspect the (?:surroundings|environment|area|scene|room))\b/i;
 
+/**
+ * Inspect/examine/check… targets without articles, plus optional place after on/in/at…
+ * e.g. "Inspect crystals on street" → crystals, street.
+ */
+const BARE_PROP_AFTER_VERB =
+  /\b(?:inspect|examine|check|study|search|scout|approach|climb|touch|open|close|grab|use|look\s+at|peer\s+at|focus\s+on|pick\s+up|take)\s+(?!the\b|a\b|an\b|your\b|my\b)([a-z][\w'-]*(?:\s+[a-z][\w'-]*){0,2}?)(?:\s+(?:on|in|at|near|by|from|under|over|behind|beside|along|across|into|onto)\s+(?!the\b|a\b|an\b|your\b|my\b)([a-z][\w'-]*(?:\s+[a-z][\w'-]*){0,2}))?/gi;
+
+/** Article + bare-noun prop phrases named by a choice (lowercased). */
+export function extractChoiceObjectPhrases(choice: string): string[] {
+  const out: string[] = [];
+  for (const m of choice.matchAll(/\b(?:the|a|an)\s+([a-z][\w'-]*(?:\s+[a-z][\w'-]*){0,2})\b/gi)) {
+    const phrase = (m[1] ?? '').toLowerCase().trim();
+    if (phrase) out.push(phrase);
+  }
+  for (const m of choice.matchAll(BARE_PROP_AFTER_VERB)) {
+    const head = (m[1] ?? '').toLowerCase().trim();
+    const place = (m[2] ?? '').toLowerCase().trim();
+    if (head) out.push(head);
+    if (place) out.push(place);
+  }
+  return out;
+}
+
 /** Concrete props in a choice must appear in this turn's story, scene props, inventory, or the location sheet. */
 export function choiceNamesUnnarratedObject(
   choice: string,
@@ -323,17 +346,14 @@ export function choiceNamesUnnarratedObject(
     ...(state.sceneFacts?.props ?? []),
     ...(state.inventory ?? []).map((i) => i.name),
     ...(state.containers ?? []).map((c) => c.name),
+    state.currentLocation ?? '',
     state.locationSheet?.name ?? '',
     ...(state.locationSheet?.interactables ?? []).map((i) => i.name),
     ...(state.locationSheet?.exits ?? []).map((e) => e.label),
     state.activeEncounter?.name ?? '',
   ].join(' ').toLowerCase();
 
-  const objects = [
-    ...choice.matchAll(
-      /\b(?:the|a|an)\s+([a-z][\w'-]*(?:\s+[a-z][\w'-]*){0,2})\b/gi
-    ),
-  ].map((m) => (m[1] ?? '').toLowerCase());
+  const objects = extractChoiceObjectPhrases(choice);
 
   const skip = /^(immediate|nearest|nearby|other|another|few|some|your|my|old|new|next|last|same)$/;
   // Generic place-holders only — not "street" (must be narrated when named).

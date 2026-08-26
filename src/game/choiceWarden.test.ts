@@ -86,12 +86,16 @@ describe('choiceWarden — PC name + invented chores', () => {
         state
       )
     ).toBe(true);
+    expect(
+      choiceNamesUnnarratedObject('Inspect crystals on street', BARREL_INDOOR, state)
+    ).toBe(true);
 
     const filtered = filterInventedContextChoices(
       [
         'Ask what is going on',
         'Wait and listen carefully',
         'Inspect the crystals breaking the street',
+        'Inspect crystals on street',
         'Inspect the barrels',
         'Offer handlers honest help',
       ],
@@ -99,9 +103,65 @@ describe('choiceWarden — PC name + invented chores', () => {
     );
 
     expect(filtered).not.toContain('Inspect the crystals breaking the street');
+    expect(filtered).not.toContain('Inspect crystals on street');
     expect(filtered).toContain('Ask what is going on');
     expect(filtered).toContain('Wait and listen carefully');
     expect(filtered).toContain('Inspect the barrels');
+  });
+
+  it('rejects bare-noun invents; keeps when story names them', () => {
+    const indoor = createInitialState('The Summoned Pact', 'litrpg');
+    indoor.sceneFacts = {
+      crowd: 'none',
+      noise: 'quiet',
+      present: [],
+      props: ['barrels', 'rack'],
+      lastBeat: 'indoor',
+      updatedTurn: 1,
+      indoor: true,
+    };
+    indoor.log = [
+      {
+        id: 'g1',
+        turn: 1,
+        role: 'gm',
+        content: BARREL_INDOOR,
+        timestamp: Date.now(),
+      },
+    ];
+    expect(
+      filterInventedContextChoices(
+        ['Inspect crystals on street', 'Wait and listen carefully', 'Ask what is going on'],
+        indoor
+      )
+    ).toEqual(['Wait and listen carefully', 'Ask what is going on']);
+
+    const outdoor = createInitialState('The Summoned Pact', 'litrpg');
+    const story = 'Violet crystals break through the cobbled street.';
+    outdoor.sceneFacts = {
+      crowd: 'none',
+      noise: 'quiet',
+      present: [],
+      props: ['crystals', 'street'],
+      lastBeat: 'street crystals',
+      updatedTurn: 1,
+      indoor: false,
+    };
+    outdoor.log = [
+      {
+        id: 'g1',
+        turn: 1,
+        role: 'gm',
+        content: story,
+        timestamp: Date.now(),
+      },
+    ];
+    const kept = filterInventedContextChoices(
+      ['Inspect crystals on street', 'Wait and listen carefully'],
+      outdoor
+    );
+    expect(kept).toContain('Inspect crystals on street');
+    expect(kept).toContain('Wait and listen carefully');
   });
 
   it('keeps crystal inspect when last story names crystals', () => {

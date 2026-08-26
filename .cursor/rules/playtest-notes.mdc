@@ -9,11 +9,13 @@ John is playtesting live. Collect issues here. Do not implement until he asks fo
 
 ## Open
 
-_(none — 2026-08-26g shipped Act-3 LitRPG sandbox levers)_
+_(none — 2026-08-26i shipped Free model swap + bare-noun grounding)_
 
-**Residual risk (26b):** Choices that invent props without `the/a/an` articles (e.g. "Inspect crystals on street") still need stronger token grounding; display filter uses last GM story only — GM can still emit bad pads that get stripped at ActionBar, leaving fewer buttons until pad fills.
+**Residual risk (26i):** Free is Gemini 2.5 Flash Lite (~3–4× DeepSeek token $); rare Google cold starts still possible. Bare-noun grounding covers inspect/examine/check… patterns — other invent verbs without articles may still slip; display filter still last-GM-only.
 
-**Residual risk (26c):** Rare Free/DeepSeek cold starts can still exceed 60s mid-game → one visible transport retry. Model swap (John-approved) is the next lever.
+**Residual risk (26b):** Partially closed by 26i bare-noun path; residual above.
+
+**Residual risk (26c):** Partially closed by 26i model swap; timeout budgets from 26c kept. Residual: rare cold starts → one visible transport retry.
 
 **Residual risk (26d):** Comic-lite likeness is prompt-lock only (no reference sheet); Free may rarely illustrate if illustrated trial/Klein caps exhausted — chrome + prose continue. Multi-panel strips / Director / portrait composite remain deferred.
 
@@ -25,7 +27,7 @@ _(none — 2026-08-26g shipped Act-3 LitRPG sandbox levers)_
 
 ## Waiting (research — not tickets yet)
 
-- **Speed (Free):** More latency needs Mid/High writer or model swap (John must approve DeepSeek change). Safe levers shipped 26c: mid-game Free 60s / default 55s (was 30s); skip expand+quality after transport retry; timeout busy copy. 26a: skip Free near-floor expand; skip Free same-beat-only quality retry; 75s/55s early. SNAPSHOT stays compact (25b).
+- **Speed (Free):** Model swap shipped 26i (Gemini 2.5 Flash Lite). Budgets from 26c remain: mid-game Free 60s / default 55s; skip expand+quality after transport retry; 75s/55s early. SNAPSHOT stays compact (25b). Further Mid/High writer for Free needs John approval.
 - **Outdoor zone map depth:** Visual pass shipped 20m (topo grain, paths, POI pins vs CAD streets). Still not a full MMO zone map (terrain art layers, fog-by-discovery outdoors, district zoom). Further outdoor depth stays Waiting.
 - **AI-authored building graph (optional):** Code now authors a multi-room interior floor plan on Map open (`interior-plan`, stamp 20n+) — full outline + visited/unvisited fog + door marks / secret dashed paths + varied footprints (20q). Still not an LLM pre-authoring a unique building as Tier-1 continuity. Optional next: AI/code hybrid room graph per named landmark.
 - Server capacity / Stripe live secrets / counsel legal pack / Kid Mode public gate — ops, not playtest tickets
@@ -34,6 +36,8 @@ _(none — 2026-08-26g shipped Act-3 LitRPG sandbox levers)_
 - Premium theme five-rater / Shop preview parity (Manus T8/T9 P0-04) — after playtest of `2026-08-19t` Vampire rescue; ingest `docs/research/manus-premium-themes-ingest-2026-08-19.md`
 
 ## Done (already shipped)
+
+- **2026-08-26i Playtest fire (Free latency + grounding):** Free hosted writer `deepseek/deepseek-v4-flash-0731` → `google/gemini-2.5-flash-lite` (John-approved; Mid Haiku / High Sonnet unchanged). Cost ~3× in / ~4× out vs DeepSeek; still the Pack-12 Free envelope. Bare-noun invented props (`Inspect crystals on street`) filtered via `choiceNamesUnnarratedObject` + ActionBar display path; vitest extends 26b. Bug dumps 25/26-timeouts/26-debug already ingested — no new Class A/E fixes. HUD stamp 26i. Client-only (gmProxy sends `customModelId`; no gm-turn redeploy).
 
 - **2026-08-26g Act-3 LitRPG sandbox:** Seed+mutate `factionStandings` (Summoned Pact / Hero Awakening); L2+ side-quest reveal banks (NPC/place/keyword); outdoor hub graph (6–12 travel targets) in places + situation packet + travel pads; off-spine XP banks (discover hub / incidental clear / quest tick-complete / non-lethal); journal Resume main (next objective + map pin). Alone invent-crowd gates unchanged. HUD stamp 26g. Client-only.
 

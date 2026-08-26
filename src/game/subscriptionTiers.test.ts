@@ -6,8 +6,8 @@ import {
 import { HOSTED_HERO_MODEL, HOSTED_SCHNELL_MODEL } from './hostedImageModel';
 
 describe('hosted AI catalog', () => {
-  it('gives Free DeepSeek V4 Flash, Mid Claude Haiku, High Claude Sonnet 4.6', () => {
-    expect(SUBSCRIPTION_TIERS.free.writerOpenRouterId).toBe('deepseek/deepseek-v4-flash-0731');
+  it('gives Free Gemini 2.5 Flash Lite, Mid Claude Haiku, High Claude Sonnet 4.6', () => {
+    expect(SUBSCRIPTION_TIERS.free.writerOpenRouterId).toBe('google/gemini-2.5-flash-lite');
     expect(SUBSCRIPTION_TIERS.mid.writerOpenRouterId).toBe('anthropic/claude-haiku-4.5');
     expect(SUBSCRIPTION_TIERS.high.writerOpenRouterId).toBe('anthropic/claude-sonnet-4.6');
     expect(SUBSCRIPTION_TIERS.admin.writerOpenRouterId).toBe('anthropic/claude-sonnet-4.6');

@@ -96,7 +96,7 @@ export function choiceInventsContext(
     }
   }
 
-  // Concrete "the/a/an <noun>" must appear in last story / props / kit / location.
+  // Concrete props (article or bare after inspect verbs) must appear in last story / props / kit / location.
   if (state && choiceNamesUnnarratedObject(choice, recentStory, state)) {
     return true;
   }

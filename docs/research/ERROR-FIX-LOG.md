@@ -36,6 +36,8 @@
 | 20a | Free → DeepSeek | Catalog change | First real turn after open: compile timeout (20e log) |
 | 20e open | “Where am I” / connection drop | Classify toast only | No auto-retry / 30s budget |
 | **20p** | Connection drop / first-post-open timeout | Auto-retry ×2 + 75s/55s budgets + exhausted toast | — |
+| **26c** | Mid-game Free still timing out at 30s | Default 55s / Free hosted 60s / busy retry copy | DeepSeek cold starts |
+| **26i** | Free/DeepSeek cold-start latency | Free writer → `google/gemini-2.5-flash-lite` (John-approved) | Rare Google cold starts remain |
 
 ### Opening (Class B)
 

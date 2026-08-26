@@ -1,12 +1,12 @@
 /**
- * Subscription tiers — capacity + model routing (Pack 12 lock, 2026-08-19u catalog).
+ * Subscription tiers — capacity + model routing (Pack 12 lock; Free writer 26i).
  * Payments not live yet; caps/models are enforced locally / ready for server auth.
  * Illustrated graphic-novel mode: caps reserved; launch is text + memorable Flux art.
  *
  * Hosted OpenRouter ladder vs AID Griffin / F&F “standard” / NovelAI in-house:
- * Free = DeepSeek V4 Flash (best cheap narrative); Mid = Claude Haiku 4.5;
- * High = Claude Sonnet 4.6. Memorable plates: paywalled (Free week cap 0);
- * Mid/High use Flux.2 Pro. Inventory icons stay Klein.
+ * Free = Gemini 2.5 Flash Lite (latency-stable; was DeepSeek V4 Flash through 26g);
+ * Mid = Claude Haiku 4.5; High = Claude Sonnet 4.6. Memorable plates: paywalled
+ * (Free week cap 0); Mid/High use Flux.2 Pro. Inventory icons stay Klein.
  */
 
 import { HOSTED_HERO_MODEL, HOSTED_SCHNELL_MODEL } from './hostedImageModel';
@@ -270,7 +270,7 @@ export const SUBSCRIPTION_TIERS: Record<SubscriptionTierId, TierDefinition> = {
     id: 'free',
     name: 'Free',
     priceGbp: 0,
-    writerOpenRouterId: 'deepseek/deepseek-v4-flash-0731',
+    writerOpenRouterId: 'google/gemini-2.5-flash-lite',
     writerGeminiId: 'gemini-2.5-flash-lite',
     textTurnsPerDay: 12,
     memorableImagesPerWeek: 0,

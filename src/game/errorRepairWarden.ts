@@ -48,7 +48,7 @@ const ALONE_QUEST_BAD =
 
 /**
  * Default / early / first-post-open proxy budgets (Class A).
- * Mid-game Free/DeepSeek routinely exceeds 30s (session aaabaae0 turns 15–18).
+ * Mid-game Free writer routinely exceeds 30s (session aaabaae0 turns 15–18).
  * Base default is 55s; hosted Free mid-game gets 60s.
  */
 export const GM_PROXY_TIMEOUT_DEFAULT_MS = 55_000;
@@ -62,7 +62,7 @@ export const TURN_TRANSPORT_RETRY_BACKOFF_MS = [700, 1800] as const;
 
 /**
  * Longer budget for the first real GM turns after opening covers (and early honeymoon).
- * Free/DeepSeek cold starts routinely exceed a short hard abort — mid-game Free also needs ≥55–60s.
+ * Free cold starts routinely exceed a short hard abort — mid-game Free also needs ≥55–60s.
  */
 export function gmProxyTimeoutMsForState(
   state: Pick<GameState, 'turn' | 'openingEstablishment' | 'storyStartTextTurnsRemaining'>,
@@ -94,7 +94,7 @@ export function classifyTurnFailure(err: unknown): TurnFailKind {
     return 'network';
   }
   if (/429|Rate limit/i.test(msg)) return 'rate_limit';
-  // Free/DeepSeek often returns "The AI provider returned no content." — must be empty (retryable), not unknown.
+  // Free writers sometimes return "The AI provider returned no content." — must be empty (retryable), not unknown.
   if (/empty content|empty response|returned no content|\bno content\b/i.test(msg)) return 'empty';
   if (/auth|JWT|session|401|403/i.test(msg)) return 'auth';
   if (/is not defined|Cannot read|undefined is not/i.test(msg)) return 'client_bug';

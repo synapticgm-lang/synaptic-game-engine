@@ -1108,7 +1108,7 @@ export function SettingsModal({ settings, storyName, engineMode, gameState, onSa
                         label={tier === 'free' ? 'Free' : tier === 'mid' ? 'Mid' : 'High'}
                         sublabel={
                           tier === 'free'
-                            ? 'DeepSeek V4 Flash'
+                            ? 'Gemini 2.5 Flash Lite'
                             : tier === 'mid'
                               ? 'Claude Haiku 4.5'
                               : 'Claude Sonnet 4.6'
