@@ -721,7 +721,7 @@ export function sceneSafeFallbacks(
   return ordered.slice(0, 4);
 }
 
-export /**
+/**
  * Deduplicate choices against recent turns (sliding 5-turn window).
  * Travel / hub-specific choices and opening chips are exempt.
  */
@@ -756,7 +756,7 @@ function deduplicateChoicesAcrossRecentTurns(
   });
 }
 
-function padChoicesToCount(
+export function padChoicesToCount(
   choices: string[],
   state: GameState,
   storyProse = '',
