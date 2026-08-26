@@ -77,7 +77,7 @@ import {
   eventsToQuestUpdates,
 } from './parser';
 import { scrubOfficialPlaceholder } from './narrativeScrub';
-import { beatFingerprint, isSameBeat, buildBeatNoveltyRetryBlock } from './beatFingerprint';
+import { beatFingerprint, isSameBeat, buildBeatNoveltyRetryBlock, beatSimilarity } from './beatFingerprint';
 import { enforcePerspective } from './perspectiveWarden';
 import { buildPlayTranscript, resolveOfferedChoices, withOfferedChoices } from './playTranscript';
 import {
@@ -523,10 +523,7 @@ function detectLoopFlags(gmText: string, state: GameState): {
   const strangerCount = (gmText.match(/\bthe stranger\b/gi) || []).length;
   const recent = state.recentBeatFingerprints ?? [];
   const fp = beatFingerprint(gmText);
-  const atmosphereRepeat = recent.length > 0 && recent.slice(-3).some(r => {
-    const sim = require('./beatFingerprint').beatSimilarity(fp, r);
-    return sim >= 0.72;
-  });
+  const atmosphereRepeat = recent.length > 0 && recent.slice(-3).some((r) => beatSimilarity(fp, r) >= 0.72);
   return { officialCount, atmosphereRepeat, strangerCount };
 }
 
@@ -558,7 +555,7 @@ function pickGoalOrientedChoice(
       if (/\b(?:talk|speak|ask|tell)\b/i.test(choice)) score += 3;
       if (/\b(?:continue|proceed|follow)\b/i.test(choice)) score += 2;
       // Check if a quest name appears in the choice
-      const mainQuest = (state.quests ?? []).find(q => q.revealed && !q.sideQuest);
+      const mainQuest = (state.quests ?? []).find((q) => q.revealed && q.type === 'main');
       if (mainQuest && lower.includes(mainQuest.name.toLowerCase())) score += 4;
     } else if (mode === 'completionist') {
       // Prefer side quests, exploration, and collecting
@@ -569,10 +566,12 @@ function pickGoalOrientedChoice(
       // Prefer unvisited hubs
       const isTravel = /\btravel to\b/i.test(choice);
       if (isTravel) {
-        const visited = new Set((state.places ?? []).filter(p => p.visited).map(p => p.name.toLowerCase()));
-        const hubInChoice = (state.places ?? []).find(p => 
-          lower.includes(p.name.toLowerCase())
+        const visited = new Set(
+          (state.places ?? [])
+            .filter((p) => (p.lastVisitedTurn != null && p.lastVisitedTurn >= 0) || p.arcStatus === 'visited' || p.arcStatus === 'cleared')
+            .map((p) => p.name.toLowerCase())
         );
+        const hubInChoice = (state.places ?? []).find((p) => lower.includes(p.name.toLowerCase()));
         if (hubInChoice && !visited.has(hubInChoice.name.toLowerCase())) {
           score += 3;
         }
@@ -925,9 +924,9 @@ Do NOT print dice notation or CODE ENFORCED.
       playerInput,
       gmText: cleanText,
       systemLog: filteredSystemLog,
-      questUnlocks: extractQuestUnlocksFromTurn(prev, next),
-      itemsEquipped: extractEquippedItems(prev, next),
-      itemsUsed: extractUsedItems(prev, next),
+      questUnlocks: extractQuestUnlocksFromTurn(state, next),
+      itemsEquipped: extractEquippedItems(state, next),
+      itemsUsed: extractUsedItems(state, next),
       loopFlags: detectLoopFlags(cleanText, state),
       error,
       failKind: gmResult.failKind,
