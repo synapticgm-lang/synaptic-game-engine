@@ -5,6 +5,7 @@ import {
   classifyTurnFailure,
   gmProxyTimeoutMsForState,
   GM_PROXY_TIMEOUT_DEFAULT_MS,
+  GM_PROXY_TIMEOUT_FREE_DEFAULT_MS,
   GM_PROXY_TIMEOUT_EARLY_MS,
   GM_PROXY_TIMEOUT_FIRST_POST_OPEN_MS,
   shouldAutoRetryTurn,
@@ -41,6 +42,10 @@ describe('errorRepairWarden', () => {
     expect(turnTransportRetryMessage(1, kind)).toMatch(/Empty reply/i);
   });
 
+  it('uses Timed out copy for timeout transport retries', () => {
+    expect(turnTransportRetryMessage(2, 'timeout')).toBe('Timed out — retrying (2)…');
+  });
+
   it('does not auto-retry auth or client bugs', () => {
     expect(shouldAutoRetryTurn(classifyTurnFailure(new Error('401 unauthorized JWT')))).toBe(false);
     expect(shouldAutoRetryTurn(classifyTurnFailure(new Error('forceFreeModel is not defined')))).toBe(
@@ -64,9 +69,18 @@ describe('errorRepairWarden', () => {
       },
     };
     expect(gmProxyTimeoutMsForState(afterOpen)).toBe(GM_PROXY_TIMEOUT_FIRST_POST_OPEN_MS);
-    expect(gmProxyTimeoutMsForState({ ...afterOpen, turn: 12, storyStartTextTurnsRemaining: 0 })).toBe(
+    // Mid-campaign Continue (turn 15+) was stuck on 30s — now ≥55s; Free gets 60s.
+    expect(gmProxyTimeoutMsForState({ ...afterOpen, turn: 15, storyStartTextTurnsRemaining: 0 })).toBe(
       GM_PROXY_TIMEOUT_DEFAULT_MS
     );
+    expect(
+      gmProxyTimeoutMsForState(
+        { ...afterOpen, turn: 15, storyStartTextTurnsRemaining: 0 },
+        { writerTier: 'free' }
+      )
+    ).toBe(GM_PROXY_TIMEOUT_FREE_DEFAULT_MS);
+    expect(GM_PROXY_TIMEOUT_DEFAULT_MS).toBeGreaterThanOrEqual(55_000);
+    expect(GM_PROXY_TIMEOUT_FREE_DEFAULT_MS).toBe(60_000);
     expect(gmProxyTimeoutMsForState({ ...base, turn: 3 })).toBe(GM_PROXY_TIMEOUT_EARLY_MS);
   });
 

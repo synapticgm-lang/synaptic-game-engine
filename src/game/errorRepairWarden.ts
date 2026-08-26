@@ -46,8 +46,13 @@ export type ErrorRepairResult = {
 const ALONE_QUEST_BAD =
   /Hear why Pellane wanted you|Swear the Pact, refuse it, or walk away before anyone owns your name/i;
 
-/** Default / early / first-post-open proxy budgets (Class A). */
-export const GM_PROXY_TIMEOUT_DEFAULT_MS = 30_000;
+/**
+ * Default / early / first-post-open proxy budgets (Class A).
+ * Mid-game Free/DeepSeek routinely exceeds 30s (session aaabaae0 turns 15–18).
+ * Base default is 55s; hosted Free mid-game gets 60s.
+ */
+export const GM_PROXY_TIMEOUT_DEFAULT_MS = 55_000;
+export const GM_PROXY_TIMEOUT_FREE_DEFAULT_MS = 60_000;
 export const GM_PROXY_TIMEOUT_EARLY_MS = 55_000;
 export const GM_PROXY_TIMEOUT_FIRST_POST_OPEN_MS = 75_000;
 
@@ -57,19 +62,21 @@ export const TURN_TRANSPORT_RETRY_BACKOFF_MS = [700, 1800] as const;
 
 /**
  * Longer budget for the first real GM turns after opening covers (and early honeymoon).
- * Free/DeepSeek cold starts routinely exceed the old 30s hard abort.
+ * Free/DeepSeek cold starts routinely exceed a short hard abort — mid-game Free also needs ≥55–60s.
  */
 export function gmProxyTimeoutMsForState(
-  state: Pick<GameState, 'turn' | 'openingEstablishment' | 'storyStartTextTurnsRemaining'>
+  state: Pick<GameState, 'turn' | 'openingEstablishment' | 'storyStartTextTurnsRemaining'>,
+  opts?: { writerTier?: string | null }
 ): number {
   const turn = state.turn ?? 0;
   const est = state.openingEstablishment;
   const honeymoon = state.storyStartTextTurnsRemaining ?? 0;
+  const freeWriter = (opts?.writerTier ?? '').toLowerCase() === 'free';
   if (est?.complete === true && (honeymoon > 0 || turn <= 5)) {
     return GM_PROXY_TIMEOUT_FIRST_POST_OPEN_MS;
   }
   if (turn <= 8) return GM_PROXY_TIMEOUT_EARLY_MS;
-  return GM_PROXY_TIMEOUT_DEFAULT_MS;
+  return freeWriter ? GM_PROXY_TIMEOUT_FREE_DEFAULT_MS : GM_PROXY_TIMEOUT_DEFAULT_MS;
 }
 
 /** Map proxy / fetch errors to a stable class for toast + retry policy. */
@@ -129,7 +136,7 @@ export function turnFailExhaustedMessage(kind: TurnFailKind): string {
 
 export function turnTransportRetryMessage(attempt: number, kind: TurnFailKind): string {
   if (kind === 'network') return `Connection glitch — retrying (${attempt})…`;
-  if (kind === 'timeout') return `GM still working — retrying (${attempt})…`;
+  if (kind === 'timeout') return `Timed out — retrying (${attempt})…`;
   return `Empty reply — retrying (${attempt})…`;
 }
 

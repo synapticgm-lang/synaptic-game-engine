@@ -2450,7 +2450,15 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
         hasApiKey: !!(settingsRef.current.geminiApiKey || settingsRef.current.openrouterApiKey)
       });
       const gmStartTime = performance.now();
-      const gmTimeoutMs = gmProxyTimeoutMsForState(liveCurrent);
+      const writerTierForBudget = effectiveWriterTier(settingsRef.current.subscriptionTier ?? 'free');
+      const gmTimeoutMs = gmProxyTimeoutMsForState(liveCurrent, { writerTier: writerTierForBudget });
+      debugLogger.record('INFO', 'GM proxy budget', {
+        turn: liveCurrent.turn,
+        timeoutMs: gmTimeoutMs,
+        writerTier: writerTierForBudget,
+        honeymoon: liveCurrent.storyStartTextTurnsRemaining ?? 0,
+        openingComplete: liveCurrent.openingEstablishment?.complete === true,
+      });
       const rateLimitStatus = (attempt: number, delayMs: number) => {
         debugLogger.record('WARN', `Rate limited — retry ${attempt}/4`, { delayMs });
         setRetryStatus(`Rate limited — retry ${attempt}/4 in ${Math.round(delayMs / 1000)}s…`);
@@ -2484,7 +2492,10 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
               attempt: attempt + 1,
               kind,
               timeoutMs: gmTimeoutMs,
+              writerTier: writerTierForBudget,
+              turn: liveCurrent.turn,
               host: gmProxyHost(),
+              errMsg: err instanceof Error ? err.message : String(err ?? ''),
             });
             setRetryStatus(retryMsg);
             addToast(retryMsg, 'info');
@@ -2535,7 +2546,15 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
             || probeLocks.some((l) => l.kind === 'weapon' || l.kind === 'cleared'));
         // Fact-lock slips are cut locally after this. Only burn extra GM calls when
         // the turn did not resolve the player's action at all, or returned no story.
-        if (needsStoryRetry) {
+        // After a transport retry, skip quality/expand — don't stack another full GM wait.
+        const skipStackedGmAfterTransport = transportRetriesUsed > 0;
+        if (needsStoryRetry && skipStackedGmAfterTransport) {
+          debugLogger.record('INFO', 'Skip resolution retry — already used transport retry this turn', {
+            turn: liveCurrent.turn,
+            transportRetriesUsed,
+            intent: intentForMandate.kind,
+          });
+        } else if (needsStoryRetry) {
           debugLogger.record('WARN', 'Unresolved or empty action narrative — resolution retry', {
             turn: liveCurrent.turn,
             intent: intentForMandate.kind,
@@ -2623,11 +2642,17 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
 
         // Paid-turn value floor: skimpy 1–2 liners get one free expand (same turn charge).
         // Free is already slow — skip expand when near the floor (≥70 words) to avoid a second call.
+        // Also skip after transport retry so the player is not stacked into another long wait.
         probeText = probeOf(result.text);
         const writerTier = effectiveWriterTier(settingsRef.current.subscriptionTier ?? 'free');
         const thinWords = storyWordCount(probeText);
         const skipFreeNearFloor = writerTier === 'free' && thinWords >= 70;
-        if (storyHasBody(probeText) && isStoryTooThin(probeText) && !skipFreeNearFloor) {
+        if (
+          storyHasBody(probeText)
+          && isStoryTooThin(probeText)
+          && !skipFreeNearFloor
+          && !skipStackedGmAfterTransport
+        ) {
           debugLogger.record('WARN', 'Thin story beat — value expand', {
             turn: liveCurrent.turn,
             wordCount: thinWords,
@@ -2654,6 +2679,12 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
             result = thinFirst;
             probeText = thinFirstProbe;
           }
+        } else if (skipStackedGmAfterTransport && storyHasBody(probeText) && isStoryTooThin(probeText)) {
+          debugLogger.record('INFO', 'Skip value expand — already used transport retry this turn', {
+            turn: liveCurrent.turn,
+            wordCount: thinWords,
+            transportRetriesUsed,
+          });
         } else if (skipFreeNearFloor) {
           debugLogger.record('INFO', 'Skip Free value expand — near floor', {
             turn: liveCurrent.turn,
@@ -3724,6 +3755,11 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
         host: gmProxyHost(),
         errMsg,
         transportRetriesUsed,
+        timeoutMs: gmProxyTimeoutMsForState(current, {
+          writerTier: effectiveWriterTier(settingsRef.current.subscriptionTier ?? 'free'),
+        }),
+        writerTier: effectiveWriterTier(settingsRef.current.subscriptionTier ?? 'free'),
+        turn: current.turn,
       });
       setError(playerMsg);
       addToast(playerMsg, 'error');

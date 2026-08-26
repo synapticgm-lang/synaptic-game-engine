@@ -1,0 +1,1838 @@
+{
+  "logType": "error-log",
+  "exportTimestamp": "2026-08-26T08:04:01.529Z",
+  "deviceId": "03abe4c8-6f65-4c46-9c1b-f266f4305c6b",
+  "sessionId": "aaabaae0-751b-4c9d-98cf-9e4de623bb5f",
+  "sessionStartedAt": "2026-08-26T07:11:38.476Z",
+  "platform": "Windows (Not=A?Brand, Google Chrome, Chromium)",
+  "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36",
+  "screenResolution": "1322x826",
+  "viewport": "1322x674",
+  "pixelRatio": 1.9375,
+  "language": "en-GB",
+  "online": true,
+  "hostedBackend": {
+    "gmProxyConfigured": true,
+    "gmProxyRequired": true,
+    "gmProxyHost": "wzgsrpwhmgffcyohvtko.supabase.co",
+    "gmTurnPath": "/functions/v1/gm-turn"
+  },
+  "sessionStats": {
+    "sessionId": "aaabaae0-751b-4c9d-98cf-9e4de623bb5f",
+    "sessionStartedAt": "2026-08-26T07:11:38.476Z",
+    "eventCount": 46,
+    "errorCount": 24,
+    "warnCount": 16,
+    "estimatedBytes": 31561,
+    "softByteCap": 8388608,
+    "softCapPolicy": "Unlimited for ERROR/WARN/CRITICAL/TURN_START/SESSION within session. Soft-trim oldest INFO/other only if buffer exceeds ~8MB. Absolute ceiling 50k entries.",
+    "autoDownloadOnError": false
+  },
+  "softCapPolicy": "Unlimited for ERROR/WARN/CRITICAL/TURN_START/SESSION within session. Soft-trim oldest INFO/other only if buffer exceeds ~8MB. Absolute ceiling 50k entries.",
+  "agentPullHint": "Give Cursor the sessionId + deviceId, or drop synaptic-debug-latest.json into the workspace. Hosted: query telemetry_logs WHERE session_id = <sessionId> (signed-in / Ops).",
+  "totalErrors": 24,
+  "totalWarns": 16,
+  "errors": [
+    {
+      "timestamp": "2026-08-26T07:14:19.526Z",
+      "type": "ERROR",
+      "message": "[ai-retry] retries exhausted or non-retryable",
+      "data": {
+        "name": "Error",
+        "message": "The System is still compiling. Try again, or cancel and keep the last scene."
+      },
+      "telemetry": {
+        "deviceId": "03abe4c8-6f65-4c46-9c1b-f266f4305c6b",
+        "sessionId": "aaabaae0-751b-4c9d-98cf-9e4de623bb5f",
+        "sessionStartedAt": "2026-08-26T07:11:38.476Z",
+        "platform": "Windows (Not=A?Brand, Google Chrome, Chromium)",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36",
+        "screenResolution": "1322x826",
+        "viewport": "1322x674",
+        "pixelRatio": 1.9375,
+        "language": "en-GB",
+        "online": true
+      }
+    },
+    {
+      "timestamp": "2026-08-26T07:14:19.527Z",
+      "type": "ERROR",
+      "message": "[ai-proxy] GM proxy failed and client GM path is disabled",
+      "data": {
+        "message": "The System is still compiling. Try again, or cancel and keep the last scene."
+      },
+      "telemetry": {
+        "deviceId": "03abe4c8-6f65-4c46-9c1b-f266f4305c6b",
+        "sessionId": "aaabaae0-751b-4c9d-98cf-9e4de623bb5f",
+        "sessionStartedAt": "2026-08-26T07:11:38.476Z",
+        "platform": "Windows (Not=A?Brand, Google Chrome, Chromium)",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36",
+        "screenResolution": "1322x826",
+        "viewport": "1322x674",
+        "pixelRatio": 1.9375,
+        "language": "en-GB",
+        "online": true
+      }
+    },
+    {
+      "timestamp": "2026-08-26T07:14:51.528Z",
+      "type": "ERROR",
+      "message": "[ai-retry] retries exhausted or non-retryable",
+      "data": {
+        "name": "Error",
+        "message": "The System is still compiling. Try again, or cancel and keep the last scene."
+      },
+      "telemetry": {
+        "deviceId": "03abe4c8-6f65-4c46-9c1b-f266f4305c6b",
+        "sessionId": "aaabaae0-751b-4c9d-98cf-9e4de623bb5f",
+        "sessionStartedAt": "2026-08-26T07:11:38.476Z",
+        "platform": "Windows (Not=A?Brand, Google Chrome, Chromium)",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36",
+        "screenResolution": "1322x826",
+        "viewport": "1322x674",
+        "pixelRatio": 1.9375,
+        "language": "en-GB",
+        "online": true
+      }
+    },
+    {
+      "timestamp": "2026-08-26T07:14:51.528Z",
+      "type": "ERROR",
+      "message": "[ai-proxy] GM proxy failed and client GM path is disabled",
+      "data": {
+        "message": "The System is still compiling. Try again, or cancel and keep the last scene."
+      },
+      "telemetry": {
+        "deviceId": "03abe4c8-6f65-4c46-9c1b-f266f4305c6b",
+        "sessionId": "aaabaae0-751b-4c9d-98cf-9e4de623bb5f",
+        "sessionStartedAt": "2026-08-26T07:11:38.476Z",
+        "platform": "Windows (Not=A?Brand, Google Chrome, Chromium)",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36",
+        "screenResolution": "1322x826",
+        "viewport": "1322x674",
+        "pixelRatio": 1.9375,
+        "language": "en-GB",
+        "online": true
+      }
+    },
+    {
+      "timestamp": "2026-08-26T07:15:24.529Z",
+      "type": "ERROR",
+      "message": "[ai-retry] retries exhausted or non-retryable",
+      "data": {
+        "name": "Error",
+        "message": "The System is still compiling. Try again, or cancel and keep the last scene."
+      },
+      "telemetry": {
+        "deviceId": "03abe4c8-6f65-4c46-9c1b-f266f4305c6b",
+        "sessionId": "aaabaae0-751b-4c9d-98cf-9e4de623bb5f",
+        "sessionStartedAt": "2026-08-26T07:11:38.476Z",
+        "platform": "Windows (Not=A?Brand, Google Chrome, Chromium)",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36",
+        "screenResolution": "1322x826",
+        "viewport": "1322x674",
+        "pixelRatio": 1.9375,
+        "language": "en-GB",
+        "online": true
+      }
+    },
+    {
+      "timestamp": "2026-08-26T07:15:24.529Z",
+      "type": "ERROR",
+      "message": "[ai-proxy] GM proxy failed and client GM path is disabled",
+      "data": {
+        "message": "The System is still compiling. Try again, or cancel and keep the last scene."
+      },
+      "telemetry": {
+        "deviceId": "03abe4c8-6f65-4c46-9c1b-f266f4305c6b",
+        "sessionId": "aaabaae0-751b-4c9d-98cf-9e4de623bb5f",
+        "sessionStartedAt": "2026-08-26T07:11:38.476Z",
+        "platform": "Windows (Not=A?Brand, Google Chrome, Chromium)",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36",
+        "screenResolution": "1322x826",
+        "viewport": "1322x674",
+        "pixelRatio": 1.9375,
+        "language": "en-GB",
+        "online": true
+      }
+    },
+    {
+      "timestamp": "2026-08-26T07:15:24.531Z",
+      "type": "ERROR",
+      "message": "sendAction failed",
+      "data": {
+        "error": "The System is still compiling. Try again, or cancel and keep the last scene.",
+        "stack": "Error: The System is still compiling. Try again, or cancel and keep the last scene.\n    at https://synaptic-game-engine.vercel.app/assets/index-CTviDvbW.js:586:7909\n    at async E3 (https://synaptic-game-engine.vercel.app/assets/index-CTviDvbW.js:581:3077)\n    at async Qh (https://synaptic-game-engine.vercel.app/assets/index-CTviDvbW.js:842:11969)\n    at async Pd (https://synaptic-game-engine.vercel.app/assets/index-CTviDvbW.js:1165:758)\n    at async Object.<anonymous> (https://synaptic-game-engine.vercel.app/assets/index-CTviDvbW.js:1165:1159)"
+      },
+      "telemetry": {
+        "deviceId": "03abe4c8-6f65-4c46-9c1b-f266f4305c6b",
+        "sessionId": "aaabaae0-751b-4c9d-98cf-9e4de623bb5f",
+        "sessionStartedAt": "2026-08-26T07:11:38.476Z",
+        "platform": "Windows (Not=A?Brand, Google Chrome, Chromium)",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36",
+        "screenResolution": "1322x826",
+        "viewport": "1322x674",
+        "pixelRatio": 1.9375,
+        "language": "en-GB",
+        "online": true
+      }
+    },
+    {
+      "timestamp": "2026-08-26T07:24:30.663Z",
+      "type": "ERROR",
+      "message": "[ai-retry] retries exhausted or non-retryable",
+      "data": {
+        "name": "Error",
+        "message": "The System is still compiling. Try again, or cancel and keep the last scene."
+      },
+      "telemetry": {
+        "deviceId": "03abe4c8-6f65-4c46-9c1b-f266f4305c6b",
+        "sessionId": "aaabaae0-751b-4c9d-98cf-9e4de623bb5f",
+        "sessionStartedAt": "2026-08-26T07:11:38.476Z",
+        "platform": "Windows (Not=A?Brand, Google Chrome, Chromium)",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36",
+        "screenResolution": "1322x826",
+        "viewport": "1322x674",
+        "pixelRatio": 1.9375,
+        "language": "en-GB",
+        "online": true
+      }
+    },
+    {
+      "timestamp": "2026-08-26T07:24:30.664Z",
+      "type": "ERROR",
+      "message": "[ai-proxy] GM proxy failed and client GM path is disabled",
+      "data": {
+        "message": "The System is still compiling. Try again, or cancel and keep the last scene."
+      },
+      "telemetry": {
+        "deviceId": "03abe4c8-6f65-4c46-9c1b-f266f4305c6b",
+        "sessionId": "aaabaae0-751b-4c9d-98cf-9e4de623bb5f",
+        "sessionStartedAt": "2026-08-26T07:11:38.476Z",
+        "platform": "Windows (Not=A?Brand, Google Chrome, Chromium)",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36",
+        "screenResolution": "1322x826",
+        "viewport": "1322x674",
+        "pixelRatio": 1.9375,
+        "language": "en-GB",
+        "online": true
+      }
+    },
+    {
+      "timestamp": "2026-08-26T07:27:10.854Z",
+      "type": "ERROR",
+      "message": "[ai-retry] retries exhausted or non-retryable",
+      "data": {
+        "name": "Error",
+        "message": "The System is still compiling. Try again, or cancel and keep the last scene."
+      },
+      "telemetry": {
+        "deviceId": "03abe4c8-6f65-4c46-9c1b-f266f4305c6b",
+        "sessionId": "aaabaae0-751b-4c9d-98cf-9e4de623bb5f",
+        "sessionStartedAt": "2026-08-26T07:11:38.476Z",
+        "platform": "Windows (Not=A?Brand, Google Chrome, Chromium)",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36",
+        "screenResolution": "1322x826",
+        "viewport": "1322x674",
+        "pixelRatio": 1.9375,
+        "language": "en-GB",
+        "online": true
+      }
+    },
+    {
+      "timestamp": "2026-08-26T07:27:10.854Z",
+      "type": "ERROR",
+      "message": "[ai-proxy] GM proxy failed and client GM path is disabled",
+      "data": {
+        "message": "The System is still compiling. Try again, or cancel and keep the last scene."
+      },
+      "telemetry": {
+        "deviceId": "03abe4c8-6f65-4c46-9c1b-f266f4305c6b",
+        "sessionId": "aaabaae0-751b-4c9d-98cf-9e4de623bb5f",
+        "sessionStartedAt": "2026-08-26T07:11:38.476Z",
+        "platform": "Windows (Not=A?Brand, Google Chrome, Chromium)",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36",
+        "screenResolution": "1322x826",
+        "viewport": "1322x674",
+        "pixelRatio": 1.9375,
+        "language": "en-GB",
+        "online": true
+      }
+    },
+    {
+      "timestamp": "2026-08-26T07:27:41.562Z",
+      "type": "ERROR",
+      "message": "[ai-retry] retries exhausted or non-retryable",
+      "data": {
+        "name": "Error",
+        "message": "The System is still compiling. Try again, or cancel and keep the last scene."
+      },
+      "telemetry": {
+        "deviceId": "03abe4c8-6f65-4c46-9c1b-f266f4305c6b",
+        "sessionId": "aaabaae0-751b-4c9d-98cf-9e4de623bb5f",
+        "sessionStartedAt": "2026-08-26T07:11:38.476Z",
+        "platform": "Windows (Not=A?Brand, Google Chrome, Chromium)",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36",
+        "screenResolution": "1322x826",
+        "viewport": "1322x674",
+        "pixelRatio": 1.9375,
+        "language": "en-GB",
+        "online": true
+      }
+    },
+    {
+      "timestamp": "2026-08-26T07:27:41.562Z",
+      "type": "ERROR",
+      "message": "[ai-proxy] GM proxy failed and client GM path is disabled",
+      "data": {
+        "message": "The System is still compiling. Try again, or cancel and keep the last scene."
+      },
+      "telemetry": {
+        "deviceId": "03abe4c8-6f65-4c46-9c1b-f266f4305c6b",
+        "sessionId": "aaabaae0-751b-4c9d-98cf-9e4de623bb5f",
+        "sessionStartedAt": "2026-08-26T07:11:38.476Z",
+        "platform": "Windows (Not=A?Brand, Google Chrome, Chromium)",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36",
+        "screenResolution": "1322x826",
+        "viewport": "1322x674",
+        "pixelRatio": 1.9375,
+        "language": "en-GB",
+        "online": true
+      }
+    },
+    {
+      "timestamp": "2026-08-26T07:38:30.649Z",
+      "type": "ERROR",
+      "message": "[ai-retry] retries exhausted or non-retryable",
+      "data": {
+        "name": "Error",
+        "message": "The System is still compiling. Try again, or cancel and keep the last scene."
+      },
+      "telemetry": {
+        "deviceId": "03abe4c8-6f65-4c46-9c1b-f266f4305c6b",
+        "sessionId": "aaabaae0-751b-4c9d-98cf-9e4de623bb5f",
+        "sessionStartedAt": "2026-08-26T07:11:38.476Z",
+        "platform": "Windows (Not=A?Brand, Google Chrome, Chromium)",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36",
+        "screenResolution": "1322x826",
+        "viewport": "1322x674",
+        "pixelRatio": 1.9375,
+        "language": "en-GB",
+        "online": true
+      }
+    },
+    {
+      "timestamp": "2026-08-26T07:38:30.649Z",
+      "type": "ERROR",
+      "message": "[ai-proxy] GM proxy failed and client GM path is disabled",
+      "data": {
+        "message": "The System is still compiling. Try again, or cancel and keep the last scene."
+      },
+      "telemetry": {
+        "deviceId": "03abe4c8-6f65-4c46-9c1b-f266f4305c6b",
+        "sessionId": "aaabaae0-751b-4c9d-98cf-9e4de623bb5f",
+        "sessionStartedAt": "2026-08-26T07:11:38.476Z",
+        "platform": "Windows (Not=A?Brand, Google Chrome, Chromium)",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36",
+        "screenResolution": "1322x826",
+        "viewport": "1322x674",
+        "pixelRatio": 1.9375,
+        "language": "en-GB",
+        "online": true
+      }
+    },
+    {
+      "timestamp": "2026-08-26T07:39:01.357Z",
+      "type": "ERROR",
+      "message": "[ai-retry] retries exhausted or non-retryable",
+      "data": {
+        "name": "Error",
+        "message": "The System is still compiling. Try again, or cancel and keep the last scene."
+      },
+      "telemetry": {
+        "deviceId": "03abe4c8-6f65-4c46-9c1b-f266f4305c6b",
+        "sessionId": "aaabaae0-751b-4c9d-98cf-9e4de623bb5f",
+        "sessionStartedAt": "2026-08-26T07:11:38.476Z",
+        "platform": "Windows (Not=A?Brand, Google Chrome, Chromium)",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36",
+        "screenResolution": "1322x826",
+        "viewport": "1322x674",
+        "pixelRatio": 1.9375,
+        "language": "en-GB",
+        "online": true
+      }
+    },
+    {
+      "timestamp": "2026-08-26T07:39:01.357Z",
+      "type": "ERROR",
+      "message": "[ai-proxy] GM proxy failed and client GM path is disabled",
+      "data": {
+        "message": "The System is still compiling. Try again, or cancel and keep the last scene."
+      },
+      "telemetry": {
+        "deviceId": "03abe4c8-6f65-4c46-9c1b-f266f4305c6b",
+        "sessionId": "aaabaae0-751b-4c9d-98cf-9e4de623bb5f",
+        "sessionStartedAt": "2026-08-26T07:11:38.476Z",
+        "platform": "Windows (Not=A?Brand, Google Chrome, Chromium)",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36",
+        "screenResolution": "1322x826",
+        "viewport": "1322x674",
+        "pixelRatio": 1.9375,
+        "language": "en-GB",
+        "online": true
+      }
+    },
+    {
+      "timestamp": "2026-08-26T08:02:24.157Z",
+      "type": "ERROR",
+      "message": "[ai-retry] retries exhausted or non-retryable",
+      "data": {
+        "name": "Error",
+        "message": "The System is still compiling. Try again, or cancel and keep the last scene."
+      },
+      "telemetry": {
+        "deviceId": "03abe4c8-6f65-4c46-9c1b-f266f4305c6b",
+        "sessionId": "aaabaae0-751b-4c9d-98cf-9e4de623bb5f",
+        "sessionStartedAt": "2026-08-26T07:11:38.476Z",
+        "platform": "Windows (Not=A?Brand, Google Chrome, Chromium)",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36",
+        "screenResolution": "1322x826",
+        "viewport": "1322x674",
+        "pixelRatio": 1.9375,
+        "language": "en-GB",
+        "online": true
+      }
+    },
+    {
+      "timestamp": "2026-08-26T08:02:24.157Z",
+      "type": "ERROR",
+      "message": "[ai-proxy] GM proxy failed and client GM path is disabled",
+      "data": {
+        "message": "The System is still compiling. Try again, or cancel and keep the last scene."
+      },
+      "telemetry": {
+        "deviceId": "03abe4c8-6f65-4c46-9c1b-f266f4305c6b",
+        "sessionId": "aaabaae0-751b-4c9d-98cf-9e4de623bb5f",
+        "sessionStartedAt": "2026-08-26T07:11:38.476Z",
+        "platform": "Windows (Not=A?Brand, Google Chrome, Chromium)",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36",
+        "screenResolution": "1322x826",
+        "viewport": "1322x674",
+        "pixelRatio": 1.9375,
+        "language": "en-GB",
+        "online": true
+      }
+    },
+    {
+      "timestamp": "2026-08-26T08:02:54.864Z",
+      "type": "ERROR",
+      "message": "[ai-retry] retries exhausted or non-retryable",
+      "data": {
+        "name": "Error",
+        "message": "The System is still compiling. Try again, or cancel and keep the last scene."
+      },
+      "telemetry": {
+        "deviceId": "03abe4c8-6f65-4c46-9c1b-f266f4305c6b",
+        "sessionId": "aaabaae0-751b-4c9d-98cf-9e4de623bb5f",
+        "sessionStartedAt": "2026-08-26T07:11:38.476Z",
+        "platform": "Windows (Not=A?Brand, Google Chrome, Chromium)",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36",
+        "screenResolution": "1322x826",
+        "viewport": "1322x674",
+        "pixelRatio": 1.9375,
+        "language": "en-GB",
+        "online": true
+      }
+    },
+    {
+      "timestamp": "2026-08-26T08:02:54.865Z",
+      "type": "ERROR",
+      "message": "[ai-proxy] GM proxy failed and client GM path is disabled",
+      "data": {
+        "message": "The System is still compiling. Try again, or cancel and keep the last scene."
+      },
+      "telemetry": {
+        "deviceId": "03abe4c8-6f65-4c46-9c1b-f266f4305c6b",
+        "sessionId": "aaabaae0-751b-4c9d-98cf-9e4de623bb5f",
+        "sessionStartedAt": "2026-08-26T07:11:38.476Z",
+        "platform": "Windows (Not=A?Brand, Google Chrome, Chromium)",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36",
+        "screenResolution": "1322x826",
+        "viewport": "1322x674",
+        "pixelRatio": 1.9375,
+        "language": "en-GB",
+        "online": true
+      }
+    },
+    {
+      "timestamp": "2026-08-26T08:03:27.567Z",
+      "type": "ERROR",
+      "message": "[ai-retry] retries exhausted or non-retryable",
+      "data": {
+        "name": "Error",
+        "message": "The System is still compiling. Try again, or cancel and keep the last scene."
+      },
+      "telemetry": {
+        "deviceId": "03abe4c8-6f65-4c46-9c1b-f266f4305c6b",
+        "sessionId": "aaabaae0-751b-4c9d-98cf-9e4de623bb5f",
+        "sessionStartedAt": "2026-08-26T07:11:38.476Z",
+        "platform": "Windows (Not=A?Brand, Google Chrome, Chromium)",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36",
+        "screenResolution": "1322x826",
+        "viewport": "1322x674",
+        "pixelRatio": 1.9375,
+        "language": "en-GB",
+        "online": true
+      }
+    },
+    {
+      "timestamp": "2026-08-26T08:03:27.567Z",
+      "type": "ERROR",
+      "message": "[ai-proxy] GM proxy failed and client GM path is disabled",
+      "data": {
+        "message": "The System is still compiling. Try again, or cancel and keep the last scene."
+      },
+      "telemetry": {
+        "deviceId": "03abe4c8-6f65-4c46-9c1b-f266f4305c6b",
+        "sessionId": "aaabaae0-751b-4c9d-98cf-9e4de623bb5f",
+        "sessionStartedAt": "2026-08-26T07:11:38.476Z",
+        "platform": "Windows (Not=A?Brand, Google Chrome, Chromium)",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36",
+        "screenResolution": "1322x826",
+        "viewport": "1322x674",
+        "pixelRatio": 1.9375,
+        "language": "en-GB",
+        "online": true
+      }
+    },
+    {
+      "timestamp": "2026-08-26T08:03:27.568Z",
+      "type": "ERROR",
+      "message": "sendAction failed",
+      "data": {
+        "error": "The System is still compiling. Try again, or cancel and keep the last scene.",
+        "stack": "Error: The System is still compiling. Try again, or cancel and keep the last scene.\n    at https://synaptic-game-engine.vercel.app/assets/index-CTviDvbW.js:586:7909\n    at async E3 (https://synaptic-game-engine.vercel.app/assets/index-CTviDvbW.js:581:3077)\n    at async Qh (https://synaptic-game-engine.vercel.app/assets/index-CTviDvbW.js:842:11969)\n    at async Pd (https://synaptic-game-engine.vercel.app/assets/index-CTviDvbW.js:1165:758)\n    at async Object.<anonymous> (https://synaptic-game-engine.vercel.app/assets/index-CTviDvbW.js:1165:1159)"
+      },
+      "telemetry": {
+        "deviceId": "03abe4c8-6f65-4c46-9c1b-f266f4305c6b",
+        "sessionId": "aaabaae0-751b-4c9d-98cf-9e4de623bb5f",
+        "sessionStartedAt": "2026-08-26T07:11:38.476Z",
+        "platform": "Windows (Not=A?Brand, Google Chrome, Chromium)",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36",
+        "screenResolution": "1322x826",
+        "viewport": "1322x674",
+        "pixelRatio": 1.9375,
+        "language": "en-GB",
+        "online": true
+      }
+    }
+  ],
+  "warns": [
+    {
+      "timestamp": "2026-08-26T07:14:19.527Z",
+      "type": "WARN",
+      "message": "GM transport auto-retry",
+      "data": {
+        "attempt": 1,
+        "kind": "timeout",
+        "timeoutMs": 30000,
+        "host": "wzgsrpwhmgffcyohvtko.supabase.co"
+      },
+      "telemetry": {
+        "deviceId": "03abe4c8-6f65-4c46-9c1b-f266f4305c6b",
+        "sessionId": "aaabaae0-751b-4c9d-98cf-9e4de623bb5f",
+        "sessionStartedAt": "2026-08-26T07:11:38.476Z",
+        "platform": "Windows (Not=A?Brand, Google Chrome, Chromium)",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36",
+        "screenResolution": "1322x826",
+        "viewport": "1322x674",
+        "pixelRatio": 1.9375,
+        "language": "en-GB",
+        "online": true
+      }
+    },
+    {
+      "timestamp": "2026-08-26T07:14:51.528Z",
+      "type": "WARN",
+      "message": "GM transport auto-retry",
+      "data": {
+        "attempt": 2,
+        "kind": "timeout",
+        "timeoutMs": 30000,
+        "host": "wzgsrpwhmgffcyohvtko.supabase.co"
+      },
+      "telemetry": {
+        "deviceId": "03abe4c8-6f65-4c46-9c1b-f266f4305c6b",
+        "sessionId": "aaabaae0-751b-4c9d-98cf-9e4de623bb5f",
+        "sessionStartedAt": "2026-08-26T07:11:38.476Z",
+        "platform": "Windows (Not=A?Brand, Google Chrome, Chromium)",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36",
+        "screenResolution": "1322x826",
+        "viewport": "1322x674",
+        "pixelRatio": 1.9375,
+        "language": "en-GB",
+        "online": true
+      }
+    },
+    {
+      "timestamp": "2026-08-26T07:15:24.532Z",
+      "type": "WARN",
+      "message": "turn fail classified",
+      "data": {
+        "kind": "timeout",
+        "attempt": 2,
+        "host": "wzgsrpwhmgffcyohvtko.supabase.co",
+        "errMsg": "The System is still compiling. Try again, or cancel and keep the last scene.",
+        "transportRetriesUsed": 2
+      },
+      "telemetry": {
+        "deviceId": "03abe4c8-6f65-4c46-9c1b-f266f4305c6b",
+        "sessionId": "aaabaae0-751b-4c9d-98cf-9e4de623bb5f",
+        "sessionStartedAt": "2026-08-26T07:11:38.476Z",
+        "platform": "Windows (Not=A?Brand, Google Chrome, Chromium)",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36",
+        "screenResolution": "1322x826",
+        "viewport": "1322x674",
+        "pixelRatio": 1.9375,
+        "language": "en-GB",
+        "online": true
+      }
+    },
+    {
+      "timestamp": "2026-08-26T07:24:30.664Z",
+      "type": "WARN",
+      "message": "GM transport auto-retry",
+      "data": {
+        "attempt": 1,
+        "kind": "timeout",
+        "timeoutMs": 30000,
+        "host": "wzgsrpwhmgffcyohvtko.supabase.co"
+      },
+      "telemetry": {
+        "deviceId": "03abe4c8-6f65-4c46-9c1b-f266f4305c6b",
+        "sessionId": "aaabaae0-751b-4c9d-98cf-9e4de623bb5f",
+        "sessionStartedAt": "2026-08-26T07:11:38.476Z",
+        "platform": "Windows (Not=A?Brand, Google Chrome, Chromium)",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36",
+        "screenResolution": "1322x826",
+        "viewport": "1322x674",
+        "pixelRatio": 1.9375,
+        "language": "en-GB",
+        "online": true
+      }
+    },
+    {
+      "timestamp": "2026-08-26T07:24:49.045Z",
+      "type": "WARN",
+      "message": "[console] Unable to determine content-length from response headers. Will expand buffer when needed.",
+      "telemetry": {
+        "deviceId": "03abe4c8-6f65-4c46-9c1b-f266f4305c6b",
+        "sessionId": "aaabaae0-751b-4c9d-98cf-9e4de623bb5f",
+        "sessionStartedAt": "2026-08-26T07:11:38.476Z",
+        "platform": "Windows (Not=A?Brand, Google Chrome, Chromium)",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36",
+        "screenResolution": "1322x826",
+        "viewport": "1322x674",
+        "pixelRatio": 1.9375,
+        "language": "en-GB",
+        "online": true
+      }
+    },
+    {
+      "timestamp": "2026-08-26T07:24:49.046Z",
+      "type": "WARN",
+      "message": "[console] Unable to determine content-length from response headers. Will expand buffer when needed.",
+      "telemetry": {
+        "deviceId": "03abe4c8-6f65-4c46-9c1b-f266f4305c6b",
+        "sessionId": "aaabaae0-751b-4c9d-98cf-9e4de623bb5f",
+        "sessionStartedAt": "2026-08-26T07:11:38.476Z",
+        "platform": "Windows (Not=A?Brand, Google Chrome, Chromium)",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36",
+        "screenResolution": "1322x826",
+        "viewport": "1322x674",
+        "pixelRatio": 1.9375,
+        "language": "en-GB",
+        "online": true
+      }
+    },
+    {
+      "timestamp": "2026-08-26T07:24:49.051Z",
+      "type": "WARN",
+      "message": "[console] [Embeddings] Failed to load model (will use keyword fallback): Unexpected token '<', \"<!doctype \"... is not valid JSON",
+      "telemetry": {
+        "deviceId": "03abe4c8-6f65-4c46-9c1b-f266f4305c6b",
+        "sessionId": "aaabaae0-751b-4c9d-98cf-9e4de623bb5f",
+        "sessionStartedAt": "2026-08-26T07:11:38.476Z",
+        "platform": "Windows (Not=A?Brand, Google Chrome, Chromium)",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36",
+        "screenResolution": "1322x826",
+        "viewport": "1322x674",
+        "pixelRatio": 1.9375,
+        "language": "en-GB",
+        "online": true
+      }
+    },
+    {
+      "timestamp": "2026-08-26T07:24:49.177Z",
+      "type": "WARN",
+      "message": "[console] Unable to determine content-length from response headers. Will expand buffer when needed.",
+      "telemetry": {
+        "deviceId": "03abe4c8-6f65-4c46-9c1b-f266f4305c6b",
+        "sessionId": "aaabaae0-751b-4c9d-98cf-9e4de623bb5f",
+        "sessionStartedAt": "2026-08-26T07:11:38.476Z",
+        "platform": "Windows (Not=A?Brand, Google Chrome, Chromium)",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36",
+        "screenResolution": "1322x826",
+        "viewport": "1322x674",
+        "pixelRatio": 1.9375,
+        "language": "en-GB",
+        "online": true
+      }
+    },
+    {
+      "timestamp": "2026-08-26T07:27:10.854Z",
+      "type": "WARN",
+      "message": "GM transport auto-retry",
+      "data": {
+        "attempt": 1,
+        "kind": "timeout",
+        "timeoutMs": 30000,
+        "host": "wzgsrpwhmgffcyohvtko.supabase.co"
+      },
+      "telemetry": {
+        "deviceId": "03abe4c8-6f65-4c46-9c1b-f266f4305c6b",
+        "sessionId": "aaabaae0-751b-4c9d-98cf-9e4de623bb5f",
+        "sessionStartedAt": "2026-08-26T07:11:38.476Z",
+        "platform": "Windows (Not=A?Brand, Google Chrome, Chromium)",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36",
+        "screenResolution": "1322x826",
+        "viewport": "1322x674",
+        "pixelRatio": 1.9375,
+        "language": "en-GB",
+        "online": true
+      }
+    },
+    {
+      "timestamp": "2026-08-26T07:27:41.562Z",
+      "type": "WARN",
+      "message": "GM transport auto-retry",
+      "data": {
+        "attempt": 2,
+        "kind": "timeout",
+        "timeoutMs": 30000,
+        "host": "wzgsrpwhmgffcyohvtko.supabase.co"
+      },
+      "telemetry": {
+        "deviceId": "03abe4c8-6f65-4c46-9c1b-f266f4305c6b",
+        "sessionId": "aaabaae0-751b-4c9d-98cf-9e4de623bb5f",
+        "sessionStartedAt": "2026-08-26T07:11:38.476Z",
+        "platform": "Windows (Not=A?Brand, Google Chrome, Chromium)",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36",
+        "screenResolution": "1322x826",
+        "viewport": "1322x674",
+        "pixelRatio": 1.9375,
+        "language": "en-GB",
+        "online": true
+      }
+    },
+    {
+      "timestamp": "2026-08-26T07:38:30.650Z",
+      "type": "WARN",
+      "message": "GM transport auto-retry",
+      "data": {
+        "attempt": 1,
+        "kind": "timeout",
+        "timeoutMs": 30000,
+        "host": "wzgsrpwhmgffcyohvtko.supabase.co"
+      },
+      "telemetry": {
+        "deviceId": "03abe4c8-6f65-4c46-9c1b-f266f4305c6b",
+        "sessionId": "aaabaae0-751b-4c9d-98cf-9e4de623bb5f",
+        "sessionStartedAt": "2026-08-26T07:11:38.476Z",
+        "platform": "Windows (Not=A?Brand, Google Chrome, Chromium)",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36",
+        "screenResolution": "1322x826",
+        "viewport": "1322x674",
+        "pixelRatio": 1.9375,
+        "language": "en-GB",
+        "online": true
+      }
+    },
+    {
+      "timestamp": "2026-08-26T07:39:01.357Z",
+      "type": "WARN",
+      "message": "GM transport auto-retry",
+      "data": {
+        "attempt": 2,
+        "kind": "timeout",
+        "timeoutMs": 30000,
+        "host": "wzgsrpwhmgffcyohvtko.supabase.co"
+      },
+      "telemetry": {
+        "deviceId": "03abe4c8-6f65-4c46-9c1b-f266f4305c6b",
+        "sessionId": "aaabaae0-751b-4c9d-98cf-9e4de623bb5f",
+        "sessionStartedAt": "2026-08-26T07:11:38.476Z",
+        "platform": "Windows (Not=A?Brand, Google Chrome, Chromium)",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36",
+        "screenResolution": "1322x826",
+        "viewport": "1322x674",
+        "pixelRatio": 1.9375,
+        "language": "en-GB",
+        "online": true
+      }
+    },
+    {
+      "timestamp": "2026-08-26T07:39:11.346Z",
+      "type": "WARN",
+      "message": "[choice-pipeline] Choice regeneration failed",
+      "telemetry": {
+        "deviceId": "03abe4c8-6f65-4c46-9c1b-f266f4305c6b",
+        "sessionId": "aaabaae0-751b-4c9d-98cf-9e4de623bb5f",
+        "sessionStartedAt": "2026-08-26T07:11:38.476Z",
+        "platform": "Windows (Not=A?Brand, Google Chrome, Chromium)",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36",
+        "screenResolution": "1322x826",
+        "viewport": "1322x674",
+        "pixelRatio": 1.9375,
+        "language": "en-GB",
+        "online": true
+      }
+    },
+    {
+      "timestamp": "2026-08-26T08:02:24.157Z",
+      "type": "WARN",
+      "message": "GM transport auto-retry",
+      "data": {
+        "attempt": 1,
+        "kind": "timeout",
+        "timeoutMs": 30000,
+        "host": "wzgsrpwhmgffcyohvtko.supabase.co"
+      },
+      "telemetry": {
+        "deviceId": "03abe4c8-6f65-4c46-9c1b-f266f4305c6b",
+        "sessionId": "aaabaae0-751b-4c9d-98cf-9e4de623bb5f",
+        "sessionStartedAt": "2026-08-26T07:11:38.476Z",
+        "platform": "Windows (Not=A?Brand, Google Chrome, Chromium)",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36",
+        "screenResolution": "1322x826",
+        "viewport": "1322x674",
+        "pixelRatio": 1.9375,
+        "language": "en-GB",
+        "online": true
+      }
+    },
+    {
+      "timestamp": "2026-08-26T08:02:54.865Z",
+      "type": "WARN",
+      "message": "GM transport auto-retry",
+      "data": {
+        "attempt": 2,
+        "kind": "timeout",
+        "timeoutMs": 30000,
+        "host": "wzgsrpwhmgffcyohvtko.supabase.co"
+      },
+      "telemetry": {
+        "deviceId": "03abe4c8-6f65-4c46-9c1b-f266f4305c6b",
+        "sessionId": "aaabaae0-751b-4c9d-98cf-9e4de623bb5f",
+        "sessionStartedAt": "2026-08-26T07:11:38.476Z",
+        "platform": "Windows (Not=A?Brand, Google Chrome, Chromium)",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36",
+        "screenResolution": "1322x826",
+        "viewport": "1322x674",
+        "pixelRatio": 1.9375,
+        "language": "en-GB",
+        "online": true
+      }
+    },
+    {
+      "timestamp": "2026-08-26T08:03:27.570Z",
+      "type": "WARN",
+      "message": "turn fail classified",
+      "data": {
+        "kind": "timeout",
+        "attempt": 2,
+        "host": "wzgsrpwhmgffcyohvtko.supabase.co",
+        "errMsg": "The System is still compiling. Try again, or cancel and keep the last scene.",
+        "transportRetriesUsed": 2
+      },
+      "telemetry": {
+        "deviceId": "03abe4c8-6f65-4c46-9c1b-f266f4305c6b",
+        "sessionId": "aaabaae0-751b-4c9d-98cf-9e4de623bb5f",
+        "sessionStartedAt": "2026-08-26T07:11:38.476Z",
+        "platform": "Windows (Not=A?Brand, Google Chrome, Chromium)",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36",
+        "screenResolution": "1322x826",
+        "viewport": "1322x674",
+        "pixelRatio": 1.9375,
+        "language": "en-GB",
+        "online": true
+      }
+    }
+  ],
+  "fullSessionEventLog": [
+    {
+      "timestamp": "2026-08-26T07:11:38.476Z",
+      "type": "SESSION",
+      "message": "Play session started (continue)",
+      "data": {
+        "sessionId": "aaabaae0-751b-4c9d-98cf-9e4de623bb5f",
+        "reason": "continue"
+      },
+      "telemetry": {
+        "deviceId": "03abe4c8-6f65-4c46-9c1b-f266f4305c6b",
+        "sessionId": "aaabaae0-751b-4c9d-98cf-9e4de623bb5f",
+        "sessionStartedAt": "2026-08-26T07:11:38.476Z",
+        "platform": "Windows (Not=A?Brand, Google Chrome, Chromium)",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36",
+        "screenResolution": "1322x826",
+        "viewport": "1322x674",
+        "pixelRatio": 1.9375,
+        "language": "en-GB",
+        "online": true
+      }
+    },
+    {
+      "timestamp": "2026-08-26T07:13:48.759Z",
+      "type": "TURN_START",
+      "message": "sendAction invoked",
+      "data": {
+        "input": "Try to wrestle the leaning rack upright before it picks up the rest of the shelves.",
+        "currentTurn": 15,
+        "busy": false
+      },
+      "telemetry": {
+        "deviceId": "03abe4c8-6f65-4c46-9c1b-f266f4305c6b",
+        "sessionId": "aaabaae0-751b-4c9d-98cf-9e4de623bb5f",
+        "sessionStartedAt": "2026-08-26T07:11:38.476Z",
+        "platform": "Windows (Not=A?Brand, Google Chrome, Chromium)",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36",
+        "screenResolution": "1322x826",
+        "viewport": "1322x674",
+        "pixelRatio": 1.9375,
+        "language": "en-GB",
+        "online": true
+      }
+    },
+    {
+      "timestamp": "2026-08-26T07:14:19.526Z",
+      "type": "ERROR",
+      "message": "[ai-retry] retries exhausted or non-retryable",
+      "data": {
+        "name": "Error",
+        "message": "The System is still compiling. Try again, or cancel and keep the last scene."
+      },
+      "telemetry": {
+        "deviceId": "03abe4c8-6f65-4c46-9c1b-f266f4305c6b",
+        "sessionId": "aaabaae0-751b-4c9d-98cf-9e4de623bb5f",
+        "sessionStartedAt": "2026-08-26T07:11:38.476Z",
+        "platform": "Windows (Not=A?Brand, Google Chrome, Chromium)",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36",
+        "screenResolution": "1322x826",
+        "viewport": "1322x674",
+        "pixelRatio": 1.9375,
+        "language": "en-GB",
+        "online": true
+      }
+    },
+    {
+      "timestamp": "2026-08-26T07:14:19.527Z",
+      "type": "ERROR",
+      "message": "[ai-proxy] GM proxy failed and client GM path is disabled",
+      "data": {
+        "message": "The System is still compiling. Try again, or cancel and keep the last scene."
+      },
+      "telemetry": {
+        "deviceId": "03abe4c8-6f65-4c46-9c1b-f266f4305c6b",
+        "sessionId": "aaabaae0-751b-4c9d-98cf-9e4de623bb5f",
+        "sessionStartedAt": "2026-08-26T07:11:38.476Z",
+        "platform": "Windows (Not=A?Brand, Google Chrome, Chromium)",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36",
+        "screenResolution": "1322x826",
+        "viewport": "1322x674",
+        "pixelRatio": 1.9375,
+        "language": "en-GB",
+        "online": true
+      }
+    },
+    {
+      "timestamp": "2026-08-26T07:14:19.527Z",
+      "type": "WARN",
+      "message": "GM transport auto-retry",
+      "data": {
+        "attempt": 1,
+        "kind": "timeout",
+        "timeoutMs": 30000,
+        "host": "wzgsrpwhmgffcyohvtko.supabase.co"
+      },
+      "telemetry": {
+        "deviceId": "03abe4c8-6f65-4c46-9c1b-f266f4305c6b",
+        "sessionId": "aaabaae0-751b-4c9d-98cf-9e4de623bb5f",
+        "sessionStartedAt": "2026-08-26T07:11:38.476Z",
+        "platform": "Windows (Not=A?Brand, Google Chrome, Chromium)",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36",
+        "screenResolution": "1322x826",
+        "viewport": "1322x674",
+        "pixelRatio": 1.9375,
+        "language": "en-GB",
+        "online": true
+      }
+    },
+    {
+      "timestamp": "2026-08-26T07:14:51.528Z",
+      "type": "ERROR",
+      "message": "[ai-retry] retries exhausted or non-retryable",
+      "data": {
+        "name": "Error",
+        "message": "The System is still compiling. Try again, or cancel and keep the last scene."
+      },
+      "telemetry": {
+        "deviceId": "03abe4c8-6f65-4c46-9c1b-f266f4305c6b",
+        "sessionId": "aaabaae0-751b-4c9d-98cf-9e4de623bb5f",
+        "sessionStartedAt": "2026-08-26T07:11:38.476Z",
+        "platform": "Windows (Not=A?Brand, Google Chrome, Chromium)",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36",
+        "screenResolution": "1322x826",
+        "viewport": "1322x674",
+        "pixelRatio": 1.9375,
+        "language": "en-GB",
+        "online": true
+      }
+    },
+    {
+      "timestamp": "2026-08-26T07:14:51.528Z",
+      "type": "ERROR",
+      "message": "[ai-proxy] GM proxy failed and client GM path is disabled",
+      "data": {
+        "message": "The System is still compiling. Try again, or cancel and keep the last scene."
+      },
+      "telemetry": {
+        "deviceId": "03abe4c8-6f65-4c46-9c1b-f266f4305c6b",
+        "sessionId": "aaabaae0-751b-4c9d-98cf-9e4de623bb5f",
+        "sessionStartedAt": "2026-08-26T07:11:38.476Z",
+        "platform": "Windows (Not=A?Brand, Google Chrome, Chromium)",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36",
+        "screenResolution": "1322x826",
+        "viewport": "1322x674",
+        "pixelRatio": 1.9375,
+        "language": "en-GB",
+        "online": true
+      }
+    },
+    {
+      "timestamp": "2026-08-26T07:14:51.528Z",
+      "type": "WARN",
+      "message": "GM transport auto-retry",
+      "data": {
+        "attempt": 2,
+        "kind": "timeout",
+        "timeoutMs": 30000,
+        "host": "wzgsrpwhmgffcyohvtko.supabase.co"
+      },
+      "telemetry": {
+        "deviceId": "03abe4c8-6f65-4c46-9c1b-f266f4305c6b",
+        "sessionId": "aaabaae0-751b-4c9d-98cf-9e4de623bb5f",
+        "sessionStartedAt": "2026-08-26T07:11:38.476Z",
+        "platform": "Windows (Not=A?Brand, Google Chrome, Chromium)",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36",
+        "screenResolution": "1322x826",
+        "viewport": "1322x674",
+        "pixelRatio": 1.9375,
+        "language": "en-GB",
+        "online": true
+      }
+    },
+    {
+      "timestamp": "2026-08-26T07:15:24.529Z",
+      "type": "ERROR",
+      "message": "[ai-retry] retries exhausted or non-retryable",
+      "data": {
+        "name": "Error",
+        "message": "The System is still compiling. Try again, or cancel and keep the last scene."
+      },
+      "telemetry": {
+        "deviceId": "03abe4c8-6f65-4c46-9c1b-f266f4305c6b",
+        "sessionId": "aaabaae0-751b-4c9d-98cf-9e4de623bb5f",
+        "sessionStartedAt": "2026-08-26T07:11:38.476Z",
+        "platform": "Windows (Not=A?Brand, Google Chrome, Chromium)",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36",
+        "screenResolution": "1322x826",
+        "viewport": "1322x674",
+        "pixelRatio": 1.9375,
+        "language": "en-GB",
+        "online": true
+      }
+    },
+    {
+      "timestamp": "2026-08-26T07:15:24.529Z",
+      "type": "ERROR",
+      "message": "[ai-proxy] GM proxy failed and client GM path is disabled",
+      "data": {
+        "message": "The System is still compiling. Try again, or cancel and keep the last scene."
+      },
+      "telemetry": {
+        "deviceId": "03abe4c8-6f65-4c46-9c1b-f266f4305c6b",
+        "sessionId": "aaabaae0-751b-4c9d-98cf-9e4de623bb5f",
+        "sessionStartedAt": "2026-08-26T07:11:38.476Z",
+        "platform": "Windows (Not=A?Brand, Google Chrome, Chromium)",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36",
+        "screenResolution": "1322x826",
+        "viewport": "1322x674",
+        "pixelRatio": 1.9375,
+        "language": "en-GB",
+        "online": true
+      }
+    },
+    {
+      "timestamp": "2026-08-26T07:15:24.531Z",
+      "type": "ERROR",
+      "message": "sendAction failed",
+      "data": {
+        "error": "The System is still compiling. Try again, or cancel and keep the last scene.",
+        "stack": "Error: The System is still compiling. Try again, or cancel and keep the last scene.\n    at https://synaptic-game-engine.vercel.app/assets/index-CTviDvbW.js:586:7909\n    at async E3 (https://synaptic-game-engine.vercel.app/assets/index-CTviDvbW.js:581:3077)\n    at async Qh (https://synaptic-game-engine.vercel.app/assets/index-CTviDvbW.js:842:11969)\n    at async Pd (https://synaptic-game-engine.vercel.app/assets/index-CTviDvbW.js:1165:758)\n    at async Object.<anonymous> (https://synaptic-game-engine.vercel.app/assets/index-CTviDvbW.js:1165:1159)"
+      },
+      "telemetry": {
+        "deviceId": "03abe4c8-6f65-4c46-9c1b-f266f4305c6b",
+        "sessionId": "aaabaae0-751b-4c9d-98cf-9e4de623bb5f",
+        "sessionStartedAt": "2026-08-26T07:11:38.476Z",
+        "platform": "Windows (Not=A?Brand, Google Chrome, Chromium)",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36",
+        "screenResolution": "1322x826",
+        "viewport": "1322x674",
+        "pixelRatio": 1.9375,
+        "language": "en-GB",
+        "online": true
+      }
+    },
+    {
+      "timestamp": "2026-08-26T07:15:24.532Z",
+      "type": "WARN",
+      "message": "turn fail classified",
+      "data": {
+        "kind": "timeout",
+        "attempt": 2,
+        "host": "wzgsrpwhmgffcyohvtko.supabase.co",
+        "errMsg": "The System is still compiling. Try again, or cancel and keep the last scene.",
+        "transportRetriesUsed": 2
+      },
+      "telemetry": {
+        "deviceId": "03abe4c8-6f65-4c46-9c1b-f266f4305c6b",
+        "sessionId": "aaabaae0-751b-4c9d-98cf-9e4de623bb5f",
+        "sessionStartedAt": "2026-08-26T07:11:38.476Z",
+        "platform": "Windows (Not=A?Brand, Google Chrome, Chromium)",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36",
+        "screenResolution": "1322x826",
+        "viewport": "1322x674",
+        "pixelRatio": 1.9375,
+        "language": "en-GB",
+        "online": true
+      }
+    },
+    {
+      "timestamp": "2026-08-26T07:24:00.315Z",
+      "type": "TURN_START",
+      "message": "sendAction invoked",
+      "data": {
+        "input": "Try to wrestle the leaning rack upright before it picks up the rest of the shelves.",
+        "currentTurn": 15,
+        "busy": false
+      },
+      "telemetry": {
+        "deviceId": "03abe4c8-6f65-4c46-9c1b-f266f4305c6b",
+        "sessionId": "aaabaae0-751b-4c9d-98cf-9e4de623bb5f",
+        "sessionStartedAt": "2026-08-26T07:11:38.476Z",
+        "platform": "Windows (Not=A?Brand, Google Chrome, Chromium)",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36",
+        "screenResolution": "1322x826",
+        "viewport": "1322x674",
+        "pixelRatio": 1.9375,
+        "language": "en-GB",
+        "online": true
+      }
+    },
+    {
+      "timestamp": "2026-08-26T07:24:30.663Z",
+      "type": "ERROR",
+      "message": "[ai-retry] retries exhausted or non-retryable",
+      "data": {
+        "name": "Error",
+        "message": "The System is still compiling. Try again, or cancel and keep the last scene."
+      },
+      "telemetry": {
+        "deviceId": "03abe4c8-6f65-4c46-9c1b-f266f4305c6b",
+        "sessionId": "aaabaae0-751b-4c9d-98cf-9e4de623bb5f",
+        "sessionStartedAt": "2026-08-26T07:11:38.476Z",
+        "platform": "Windows (Not=A?Brand, Google Chrome, Chromium)",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36",
+        "screenResolution": "1322x826",
+        "viewport": "1322x674",
+        "pixelRatio": 1.9375,
+        "language": "en-GB",
+        "online": true
+      }
+    },
+    {
+      "timestamp": "2026-08-26T07:24:30.664Z",
+      "type": "ERROR",
+      "message": "[ai-proxy] GM proxy failed and client GM path is disabled",
+      "data": {
+        "message": "The System is still compiling. Try again, or cancel and keep the last scene."
+      },
+      "telemetry": {
+        "deviceId": "03abe4c8-6f65-4c46-9c1b-f266f4305c6b",
+        "sessionId": "aaabaae0-751b-4c9d-98cf-9e4de623bb5f",
+        "sessionStartedAt": "2026-08-26T07:11:38.476Z",
+        "platform": "Windows (Not=A?Brand, Google Chrome, Chromium)",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36",
+        "screenResolution": "1322x826",
+        "viewport": "1322x674",
+        "pixelRatio": 1.9375,
+        "language": "en-GB",
+        "online": true
+      }
+    },
+    {
+      "timestamp": "2026-08-26T07:24:30.664Z",
+      "type": "WARN",
+      "message": "GM transport auto-retry",
+      "data": {
+        "attempt": 1,
+        "kind": "timeout",
+        "timeoutMs": 30000,
+        "host": "wzgsrpwhmgffcyohvtko.supabase.co"
+      },
+      "telemetry": {
+        "deviceId": "03abe4c8-6f65-4c46-9c1b-f266f4305c6b",
+        "sessionId": "aaabaae0-751b-4c9d-98cf-9e4de623bb5f",
+        "sessionStartedAt": "2026-08-26T07:11:38.476Z",
+        "platform": "Windows (Not=A?Brand, Google Chrome, Chromium)",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36",
+        "screenResolution": "1322x826",
+        "viewport": "1322x674",
+        "pixelRatio": 1.9375,
+        "language": "en-GB",
+        "online": true
+      }
+    },
+    {
+      "timestamp": "2026-08-26T07:24:49.045Z",
+      "type": "WARN",
+      "message": "[console] Unable to determine content-length from response headers. Will expand buffer when needed.",
+      "telemetry": {
+        "deviceId": "03abe4c8-6f65-4c46-9c1b-f266f4305c6b",
+        "sessionId": "aaabaae0-751b-4c9d-98cf-9e4de623bb5f",
+        "sessionStartedAt": "2026-08-26T07:11:38.476Z",
+        "platform": "Windows (Not=A?Brand, Google Chrome, Chromium)",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36",
+        "screenResolution": "1322x826",
+        "viewport": "1322x674",
+        "pixelRatio": 1.9375,
+        "language": "en-GB",
+        "online": true
+      }
+    },
+    {
+      "timestamp": "2026-08-26T07:24:49.046Z",
+      "type": "WARN",
+      "message": "[console] Unable to determine content-length from response headers. Will expand buffer when needed.",
+      "telemetry": {
+        "deviceId": "03abe4c8-6f65-4c46-9c1b-f266f4305c6b",
+        "sessionId": "aaabaae0-751b-4c9d-98cf-9e4de623bb5f",
+        "sessionStartedAt": "2026-08-26T07:11:38.476Z",
+        "platform": "Windows (Not=A?Brand, Google Chrome, Chromium)",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36",
+        "screenResolution": "1322x826",
+        "viewport": "1322x674",
+        "pixelRatio": 1.9375,
+        "language": "en-GB",
+        "online": true
+      }
+    },
+    {
+      "timestamp": "2026-08-26T07:24:49.051Z",
+      "type": "WARN",
+      "message": "[console] [Embeddings] Failed to load model (will use keyword fallback): Unexpected token '<', \"<!doctype \"... is not valid JSON",
+      "telemetry": {
+        "deviceId": "03abe4c8-6f65-4c46-9c1b-f266f4305c6b",
+        "sessionId": "aaabaae0-751b-4c9d-98cf-9e4de623bb5f",
+        "sessionStartedAt": "2026-08-26T07:11:38.476Z",
+        "platform": "Windows (Not=A?Brand, Google Chrome, Chromium)",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36",
+        "screenResolution": "1322x826",
+        "viewport": "1322x674",
+        "pixelRatio": 1.9375,
+        "language": "en-GB",
+        "online": true
+      }
+    },
+    {
+      "timestamp": "2026-08-26T07:24:49.177Z",
+      "type": "WARN",
+      "message": "[console] Unable to determine content-length from response headers. Will expand buffer when needed.",
+      "telemetry": {
+        "deviceId": "03abe4c8-6f65-4c46-9c1b-f266f4305c6b",
+        "sessionId": "aaabaae0-751b-4c9d-98cf-9e4de623bb5f",
+        "sessionStartedAt": "2026-08-26T07:11:38.476Z",
+        "platform": "Windows (Not=A?Brand, Google Chrome, Chromium)",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36",
+        "screenResolution": "1322x826",
+        "viewport": "1322x674",
+        "pixelRatio": 1.9375,
+        "language": "en-GB",
+        "online": true
+      }
+    },
+    {
+      "timestamp": "2026-08-26T07:26:40.626Z",
+      "type": "TURN_START",
+      "message": "sendAction invoked",
+      "data": {
+        "input": "Kneel to right the fallen barrel before the salt water spreads further.",
+        "currentTurn": 16,
+        "busy": false
+      },
+      "telemetry": {
+        "deviceId": "03abe4c8-6f65-4c46-9c1b-f266f4305c6b",
+        "sessionId": "aaabaae0-751b-4c9d-98cf-9e4de623bb5f",
+        "sessionStartedAt": "2026-08-26T07:11:38.476Z",
+        "platform": "Windows (Not=A?Brand, Google Chrome, Chromium)",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36",
+        "screenResolution": "1322x826",
+        "viewport": "1322x674",
+        "pixelRatio": 1.9375,
+        "language": "en-GB",
+        "online": true
+      }
+    },
+    {
+      "timestamp": "2026-08-26T07:27:10.854Z",
+      "type": "ERROR",
+      "message": "[ai-retry] retries exhausted or non-retryable",
+      "data": {
+        "name": "Error",
+        "message": "The System is still compiling. Try again, or cancel and keep the last scene."
+      },
+      "telemetry": {
+        "deviceId": "03abe4c8-6f65-4c46-9c1b-f266f4305c6b",
+        "sessionId": "aaabaae0-751b-4c9d-98cf-9e4de623bb5f",
+        "sessionStartedAt": "2026-08-26T07:11:38.476Z",
+        "platform": "Windows (Not=A?Brand, Google Chrome, Chromium)",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36",
+        "screenResolution": "1322x826",
+        "viewport": "1322x674",
+        "pixelRatio": 1.9375,
+        "language": "en-GB",
+        "online": true
+      }
+    },
+    {
+      "timestamp": "2026-08-26T07:27:10.854Z",
+      "type": "ERROR",
+      "message": "[ai-proxy] GM proxy failed and client GM path is disabled",
+      "data": {
+        "message": "The System is still compiling. Try again, or cancel and keep the last scene."
+      },
+      "telemetry": {
+        "deviceId": "03abe4c8-6f65-4c46-9c1b-f266f4305c6b",
+        "sessionId": "aaabaae0-751b-4c9d-98cf-9e4de623bb5f",
+        "sessionStartedAt": "2026-08-26T07:11:38.476Z",
+        "platform": "Windows (Not=A?Brand, Google Chrome, Chromium)",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36",
+        "screenResolution": "1322x826",
+        "viewport": "1322x674",
+        "pixelRatio": 1.9375,
+        "language": "en-GB",
+        "online": true
+      }
+    },
+    {
+      "timestamp": "2026-08-26T07:27:10.854Z",
+      "type": "WARN",
+      "message": "GM transport auto-retry",
+      "data": {
+        "attempt": 1,
+        "kind": "timeout",
+        "timeoutMs": 30000,
+        "host": "wzgsrpwhmgffcyohvtko.supabase.co"
+      },
+      "telemetry": {
+        "deviceId": "03abe4c8-6f65-4c46-9c1b-f266f4305c6b",
+        "sessionId": "aaabaae0-751b-4c9d-98cf-9e4de623bb5f",
+        "sessionStartedAt": "2026-08-26T07:11:38.476Z",
+        "platform": "Windows (Not=A?Brand, Google Chrome, Chromium)",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36",
+        "screenResolution": "1322x826",
+        "viewport": "1322x674",
+        "pixelRatio": 1.9375,
+        "language": "en-GB",
+        "online": true
+      }
+    },
+    {
+      "timestamp": "2026-08-26T07:27:41.562Z",
+      "type": "ERROR",
+      "message": "[ai-retry] retries exhausted or non-retryable",
+      "data": {
+        "name": "Error",
+        "message": "The System is still compiling. Try again, or cancel and keep the last scene."
+      },
+      "telemetry": {
+        "deviceId": "03abe4c8-6f65-4c46-9c1b-f266f4305c6b",
+        "sessionId": "aaabaae0-751b-4c9d-98cf-9e4de623bb5f",
+        "sessionStartedAt": "2026-08-26T07:11:38.476Z",
+        "platform": "Windows (Not=A?Brand, Google Chrome, Chromium)",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36",
+        "screenResolution": "1322x826",
+        "viewport": "1322x674",
+        "pixelRatio": 1.9375,
+        "language": "en-GB",
+        "online": true
+      }
+    },
+    {
+      "timestamp": "2026-08-26T07:27:41.562Z",
+      "type": "ERROR",
+      "message": "[ai-proxy] GM proxy failed and client GM path is disabled",
+      "data": {
+        "message": "The System is still compiling. Try again, or cancel and keep the last scene."
+      },
+      "telemetry": {
+        "deviceId": "03abe4c8-6f65-4c46-9c1b-f266f4305c6b",
+        "sessionId": "aaabaae0-751b-4c9d-98cf-9e4de623bb5f",
+        "sessionStartedAt": "2026-08-26T07:11:38.476Z",
+        "platform": "Windows (Not=A?Brand, Google Chrome, Chromium)",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36",
+        "screenResolution": "1322x826",
+        "viewport": "1322x674",
+        "pixelRatio": 1.9375,
+        "language": "en-GB",
+        "online": true
+      }
+    },
+    {
+      "timestamp": "2026-08-26T07:27:41.562Z",
+      "type": "WARN",
+      "message": "GM transport auto-retry",
+      "data": {
+        "attempt": 2,
+        "kind": "timeout",
+        "timeoutMs": 30000,
+        "host": "wzgsrpwhmgffcyohvtko.supabase.co"
+      },
+      "telemetry": {
+        "deviceId": "03abe4c8-6f65-4c46-9c1b-f266f4305c6b",
+        "sessionId": "aaabaae0-751b-4c9d-98cf-9e4de623bb5f",
+        "sessionStartedAt": "2026-08-26T07:11:38.476Z",
+        "platform": "Windows (Not=A?Brand, Google Chrome, Chromium)",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36",
+        "screenResolution": "1322x826",
+        "viewport": "1322x674",
+        "pixelRatio": 1.9375,
+        "language": "en-GB",
+        "online": true
+      }
+    },
+    {
+      "timestamp": "2026-08-26T07:38:00.416Z",
+      "type": "TURN_START",
+      "message": "sendAction invoked",
+      "data": {
+        "input": "Move on to the next barrel before it tips the same way.",
+        "currentTurn": 17,
+        "busy": false
+      },
+      "telemetry": {
+        "deviceId": "03abe4c8-6f65-4c46-9c1b-f266f4305c6b",
+        "sessionId": "aaabaae0-751b-4c9d-98cf-9e4de623bb5f",
+        "sessionStartedAt": "2026-08-26T07:11:38.476Z",
+        "platform": "Windows (Not=A?Brand, Google Chrome, Chromium)",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36",
+        "screenResolution": "1322x826",
+        "viewport": "1322x674",
+        "pixelRatio": 1.9375,
+        "language": "en-GB",
+        "online": true
+      }
+    },
+    {
+      "timestamp": "2026-08-26T07:38:30.649Z",
+      "type": "ERROR",
+      "message": "[ai-retry] retries exhausted or non-retryable",
+      "data": {
+        "name": "Error",
+        "message": "The System is still compiling. Try again, or cancel and keep the last scene."
+      },
+      "telemetry": {
+        "deviceId": "03abe4c8-6f65-4c46-9c1b-f266f4305c6b",
+        "sessionId": "aaabaae0-751b-4c9d-98cf-9e4de623bb5f",
+        "sessionStartedAt": "2026-08-26T07:11:38.476Z",
+        "platform": "Windows (Not=A?Brand, Google Chrome, Chromium)",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36",
+        "screenResolution": "1322x826",
+        "viewport": "1322x674",
+        "pixelRatio": 1.9375,
+        "language": "en-GB",
+        "online": true
+      }
+    },
+    {
+      "timestamp": "2026-08-26T07:38:30.649Z",
+      "type": "ERROR",
+      "message": "[ai-proxy] GM proxy failed and client GM path is disabled",
+      "data": {
+        "message": "The System is still compiling. Try again, or cancel and keep the last scene."
+      },
+      "telemetry": {
+        "deviceId": "03abe4c8-6f65-4c46-9c1b-f266f4305c6b",
+        "sessionId": "aaabaae0-751b-4c9d-98cf-9e4de623bb5f",
+        "sessionStartedAt": "2026-08-26T07:11:38.476Z",
+        "platform": "Windows (Not=A?Brand, Google Chrome, Chromium)",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36",
+        "screenResolution": "1322x826",
+        "viewport": "1322x674",
+        "pixelRatio": 1.9375,
+        "language": "en-GB",
+        "online": true
+      }
+    },
+    {
+      "timestamp": "2026-08-26T07:38:30.650Z",
+      "type": "WARN",
+      "message": "GM transport auto-retry",
+      "data": {
+        "attempt": 1,
+        "kind": "timeout",
+        "timeoutMs": 30000,
+        "host": "wzgsrpwhmgffcyohvtko.supabase.co"
+      },
+      "telemetry": {
+        "deviceId": "03abe4c8-6f65-4c46-9c1b-f266f4305c6b",
+        "sessionId": "aaabaae0-751b-4c9d-98cf-9e4de623bb5f",
+        "sessionStartedAt": "2026-08-26T07:11:38.476Z",
+        "platform": "Windows (Not=A?Brand, Google Chrome, Chromium)",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36",
+        "screenResolution": "1322x826",
+        "viewport": "1322x674",
+        "pixelRatio": 1.9375,
+        "language": "en-GB",
+        "online": true
+      }
+    },
+    {
+      "timestamp": "2026-08-26T07:39:01.357Z",
+      "type": "ERROR",
+      "message": "[ai-retry] retries exhausted or non-retryable",
+      "data": {
+        "name": "Error",
+        "message": "The System is still compiling. Try again, or cancel and keep the last scene."
+      },
+      "telemetry": {
+        "deviceId": "03abe4c8-6f65-4c46-9c1b-f266f4305c6b",
+        "sessionId": "aaabaae0-751b-4c9d-98cf-9e4de623bb5f",
+        "sessionStartedAt": "2026-08-26T07:11:38.476Z",
+        "platform": "Windows (Not=A?Brand, Google Chrome, Chromium)",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36",
+        "screenResolution": "1322x826",
+        "viewport": "1322x674",
+        "pixelRatio": 1.9375,
+        "language": "en-GB",
+        "online": true
+      }
+    },
+    {
+      "timestamp": "2026-08-26T07:39:01.357Z",
+      "type": "ERROR",
+      "message": "[ai-proxy] GM proxy failed and client GM path is disabled",
+      "data": {
+        "message": "The System is still compiling. Try again, or cancel and keep the last scene."
+      },
+      "telemetry": {
+        "deviceId": "03abe4c8-6f65-4c46-9c1b-f266f4305c6b",
+        "sessionId": "aaabaae0-751b-4c9d-98cf-9e4de623bb5f",
+        "sessionStartedAt": "2026-08-26T07:11:38.476Z",
+        "platform": "Windows (Not=A?Brand, Google Chrome, Chromium)",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36",
+        "screenResolution": "1322x826",
+        "viewport": "1322x674",
+        "pixelRatio": 1.9375,
+        "language": "en-GB",
+        "online": true
+      }
+    },
+    {
+      "timestamp": "2026-08-26T07:39:01.357Z",
+      "type": "WARN",
+      "message": "GM transport auto-retry",
+      "data": {
+        "attempt": 2,
+        "kind": "timeout",
+        "timeoutMs": 30000,
+        "host": "wzgsrpwhmgffcyohvtko.supabase.co"
+      },
+      "telemetry": {
+        "deviceId": "03abe4c8-6f65-4c46-9c1b-f266f4305c6b",
+        "sessionId": "aaabaae0-751b-4c9d-98cf-9e4de623bb5f",
+        "sessionStartedAt": "2026-08-26T07:11:38.476Z",
+        "platform": "Windows (Not=A?Brand, Google Chrome, Chromium)",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36",
+        "screenResolution": "1322x826",
+        "viewport": "1322x674",
+        "pixelRatio": 1.9375,
+        "language": "en-GB",
+        "online": true
+      }
+    },
+    {
+      "timestamp": "2026-08-26T07:39:11.346Z",
+      "type": "WARN",
+      "message": "[choice-pipeline] Choice regeneration failed",
+      "telemetry": {
+        "deviceId": "03abe4c8-6f65-4c46-9c1b-f266f4305c6b",
+        "sessionId": "aaabaae0-751b-4c9d-98cf-9e4de623bb5f",
+        "sessionStartedAt": "2026-08-26T07:11:38.476Z",
+        "platform": "Windows (Not=A?Brand, Google Chrome, Chromium)",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36",
+        "screenResolution": "1322x826",
+        "viewport": "1322x674",
+        "pixelRatio": 1.9375,
+        "language": "en-GB",
+        "online": true
+      }
+    },
+    {
+      "timestamp": "2026-08-26T08:01:54.021Z",
+      "type": "TURN_START",
+      "message": "sendAction invoked",
+      "data": {
+        "input": "think to your self 'i wish i was stronger, i need to clean this up'   while trying to sort the mess ",
+        "currentTurn": 18,
+        "busy": false
+      },
+      "telemetry": {
+        "deviceId": "03abe4c8-6f65-4c46-9c1b-f266f4305c6b",
+        "sessionId": "aaabaae0-751b-4c9d-98cf-9e4de623bb5f",
+        "sessionStartedAt": "2026-08-26T07:11:38.476Z",
+        "platform": "Windows (Not=A?Brand, Google Chrome, Chromium)",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36",
+        "screenResolution": "1322x826",
+        "viewport": "1322x674",
+        "pixelRatio": 1.9375,
+        "language": "en-GB",
+        "online": true
+      }
+    },
+    {
+      "timestamp": "2026-08-26T08:02:24.157Z",
+      "type": "ERROR",
+      "message": "[ai-retry] retries exhausted or non-retryable",
+      "data": {
+        "name": "Error",
+        "message": "The System is still compiling. Try again, or cancel and keep the last scene."
+      },
+      "telemetry": {
+        "deviceId": "03abe4c8-6f65-4c46-9c1b-f266f4305c6b",
+        "sessionId": "aaabaae0-751b-4c9d-98cf-9e4de623bb5f",
+        "sessionStartedAt": "2026-08-26T07:11:38.476Z",
+        "platform": "Windows (Not=A?Brand, Google Chrome, Chromium)",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36",
+        "screenResolution": "1322x826",
+        "viewport": "1322x674",
+        "pixelRatio": 1.9375,
+        "language": "en-GB",
+        "online": true
+      }
+    },
+    {
+      "timestamp": "2026-08-26T08:02:24.157Z",
+      "type": "ERROR",
+      "message": "[ai-proxy] GM proxy failed and client GM path is disabled",
+      "data": {
+        "message": "The System is still compiling. Try again, or cancel and keep the last scene."
+      },
+      "telemetry": {
+        "deviceId": "03abe4c8-6f65-4c46-9c1b-f266f4305c6b",
+        "sessionId": "aaabaae0-751b-4c9d-98cf-9e4de623bb5f",
+        "sessionStartedAt": "2026-08-26T07:11:38.476Z",
+        "platform": "Windows (Not=A?Brand, Google Chrome, Chromium)",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36",
+        "screenResolution": "1322x826",
+        "viewport": "1322x674",
+        "pixelRatio": 1.9375,
+        "language": "en-GB",
+        "online": true
+      }
+    },
+    {
+      "timestamp": "2026-08-26T08:02:24.157Z",
+      "type": "WARN",
+      "message": "GM transport auto-retry",
+      "data": {
+        "attempt": 1,
+        "kind": "timeout",
+        "timeoutMs": 30000,
+        "host": "wzgsrpwhmgffcyohvtko.supabase.co"
+      },
+      "telemetry": {
+        "deviceId": "03abe4c8-6f65-4c46-9c1b-f266f4305c6b",
+        "sessionId": "aaabaae0-751b-4c9d-98cf-9e4de623bb5f",
+        "sessionStartedAt": "2026-08-26T07:11:38.476Z",
+        "platform": "Windows (Not=A?Brand, Google Chrome, Chromium)",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36",
+        "screenResolution": "1322x826",
+        "viewport": "1322x674",
+        "pixelRatio": 1.9375,
+        "language": "en-GB",
+        "online": true
+      }
+    },
+    {
+      "timestamp": "2026-08-26T08:02:54.864Z",
+      "type": "ERROR",
+      "message": "[ai-retry] retries exhausted or non-retryable",
+      "data": {
+        "name": "Error",
+        "message": "The System is still compiling. Try again, or cancel and keep the last scene."
+      },
+      "telemetry": {
+        "deviceId": "03abe4c8-6f65-4c46-9c1b-f266f4305c6b",
+        "sessionId": "aaabaae0-751b-4c9d-98cf-9e4de623bb5f",
+        "sessionStartedAt": "2026-08-26T07:11:38.476Z",
+        "platform": "Windows (Not=A?Brand, Google Chrome, Chromium)",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36",
+        "screenResolution": "1322x826",
+        "viewport": "1322x674",
+        "pixelRatio": 1.9375,
+        "language": "en-GB",
+        "online": true
+      }
+    },
+    {
+      "timestamp": "2026-08-26T08:02:54.865Z",
+      "type": "ERROR",
+      "message": "[ai-proxy] GM proxy failed and client GM path is disabled",
+      "data": {
+        "message": "The System is still compiling. Try again, or cancel and keep the last scene."
+      },
+      "telemetry": {
+        "deviceId": "03abe4c8-6f65-4c46-9c1b-f266f4305c6b",
+        "sessionId": "aaabaae0-751b-4c9d-98cf-9e4de623bb5f",
+        "sessionStartedAt": "2026-08-26T07:11:38.476Z",
+        "platform": "Windows (Not=A?Brand, Google Chrome, Chromium)",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36",
+        "screenResolution": "1322x826",
+        "viewport": "1322x674",
+        "pixelRatio": 1.9375,
+        "language": "en-GB",
+        "online": true
+      }
+    },
+    {
+      "timestamp": "2026-08-26T08:02:54.865Z",
+      "type": "WARN",
+      "message": "GM transport auto-retry",
+      "data": {
+        "attempt": 2,
+        "kind": "timeout",
+        "timeoutMs": 30000,
+        "host": "wzgsrpwhmgffcyohvtko.supabase.co"
+      },
+      "telemetry": {
+        "deviceId": "03abe4c8-6f65-4c46-9c1b-f266f4305c6b",
+        "sessionId": "aaabaae0-751b-4c9d-98cf-9e4de623bb5f",
+        "sessionStartedAt": "2026-08-26T07:11:38.476Z",
+        "platform": "Windows (Not=A?Brand, Google Chrome, Chromium)",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36",
+        "screenResolution": "1322x826",
+        "viewport": "1322x674",
+        "pixelRatio": 1.9375,
+        "language": "en-GB",
+        "online": true
+      }
+    },
+    {
+      "timestamp": "2026-08-26T08:03:27.567Z",
+      "type": "ERROR",
+      "message": "[ai-retry] retries exhausted or non-retryable",
+      "data": {
+        "name": "Error",
+        "message": "The System is still compiling. Try again, or cancel and keep the last scene."
+      },
+      "telemetry": {
+        "deviceId": "03abe4c8-6f65-4c46-9c1b-f266f4305c6b",
+        "sessionId": "aaabaae0-751b-4c9d-98cf-9e4de623bb5f",
+        "sessionStartedAt": "2026-08-26T07:11:38.476Z",
+        "platform": "Windows (Not=A?Brand, Google Chrome, Chromium)",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36",
+        "screenResolution": "1322x826",
+        "viewport": "1322x674",
+        "pixelRatio": 1.9375,
+        "language": "en-GB",
+        "online": true
+      }
+    },
+    {
+      "timestamp": "2026-08-26T08:03:27.567Z",
+      "type": "ERROR",
+      "message": "[ai-proxy] GM proxy failed and client GM path is disabled",
+      "data": {
+        "message": "The System is still compiling. Try again, or cancel and keep the last scene."
+      },
+      "telemetry": {
+        "deviceId": "03abe4c8-6f65-4c46-9c1b-f266f4305c6b",
+        "sessionId": "aaabaae0-751b-4c9d-98cf-9e4de623bb5f",
+        "sessionStartedAt": "2026-08-26T07:11:38.476Z",
+        "platform": "Windows (Not=A?Brand, Google Chrome, Chromium)",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36",
+        "screenResolution": "1322x826",
+        "viewport": "1322x674",
+        "pixelRatio": 1.9375,
+        "language": "en-GB",
+        "online": true
+      }
+    },
+    {
+      "timestamp": "2026-08-26T08:03:27.568Z",
+      "type": "ERROR",
+      "message": "sendAction failed",
+      "data": {
+        "error": "The System is still compiling. Try again, or cancel and keep the last scene.",
+        "stack": "Error: The System is still compiling. Try again, or cancel and keep the last scene.\n    at https://synaptic-game-engine.vercel.app/assets/index-CTviDvbW.js:586:7909\n    at async E3 (https://synaptic-game-engine.vercel.app/assets/index-CTviDvbW.js:581:3077)\n    at async Qh (https://synaptic-game-engine.vercel.app/assets/index-CTviDvbW.js:842:11969)\n    at async Pd (https://synaptic-game-engine.vercel.app/assets/index-CTviDvbW.js:1165:758)\n    at async Object.<anonymous> (https://synaptic-game-engine.vercel.app/assets/index-CTviDvbW.js:1165:1159)"
+      },
+      "telemetry": {
+        "deviceId": "03abe4c8-6f65-4c46-9c1b-f266f4305c6b",
+        "sessionId": "aaabaae0-751b-4c9d-98cf-9e4de623bb5f",
+        "sessionStartedAt": "2026-08-26T07:11:38.476Z",
+        "platform": "Windows (Not=A?Brand, Google Chrome, Chromium)",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36",
+        "screenResolution": "1322x826",
+        "viewport": "1322x674",
+        "pixelRatio": 1.9375,
+        "language": "en-GB",
+        "online": true
+      }
+    },
+    {
+      "timestamp": "2026-08-26T08:03:27.570Z",
+      "type": "WARN",
+      "message": "turn fail classified",
+      "data": {
+        "kind": "timeout",
+        "attempt": 2,
+        "host": "wzgsrpwhmgffcyohvtko.supabase.co",
+        "errMsg": "The System is still compiling. Try again, or cancel and keep the last scene.",
+        "transportRetriesUsed": 2
+      },
+      "telemetry": {
+        "deviceId": "03abe4c8-6f65-4c46-9c1b-f266f4305c6b",
+        "sessionId": "aaabaae0-751b-4c9d-98cf-9e4de623bb5f",
+        "sessionStartedAt": "2026-08-26T07:11:38.476Z",
+        "platform": "Windows (Not=A?Brand, Google Chrome, Chromium)",
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36",
+        "screenResolution": "1322x826",
+        "viewport": "1322x674",
+        "pixelRatio": 1.9375,
+        "language": "en-GB",
+        "online": true
+      }
+    }
+  ]
+}

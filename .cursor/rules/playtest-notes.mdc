@@ -9,13 +9,15 @@ John is playtesting live. Collect issues here. Do not implement until he asks fo
 
 ## Open
 
-_(none — 2026-08-26b shipped choice grounding)_
+_(none — 2026-08-26c shipped Faster Free GM waits)_
 
 **Residual risk (26b):** Choices that invent props without `the/a/an` articles (e.g. "Inspect crystals on street") still need stronger token grounding; display filter uses last GM story only — GM can still emit bad pads that get stripped at ActionBar, leaving fewer buttons until pad fills.
 
+**Residual risk (26c):** Rare Free/DeepSeek cold starts can still exceed 60s mid-game → one visible transport retry. Model swap (John-approved) is the next lever.
+
 ## Waiting (research — not tickets yet)
 
-- **Speed (Free):** More latency needs Mid/High writer or model swap (John must approve DeepSeek change). Safe levers shipped 26a: skip Free near-floor expand; skip Free same-beat-only quality retry; keep 75s/55s early budgets. SNAPSHOT stays compact (25b).
+- **Speed (Free):** More latency needs Mid/High writer or model swap (John must approve DeepSeek change). Safe levers shipped 26c: mid-game Free 60s / default 55s (was 30s); skip expand+quality after transport retry; timeout busy copy. 26a: skip Free near-floor expand; skip Free same-beat-only quality retry; 75s/55s early. SNAPSHOT stays compact (25b).
 - **Outdoor zone map depth:** Visual pass shipped 20m (topo grain, paths, POI pins vs CAD streets). Still not a full MMO zone map (terrain art layers, fog-by-discovery outdoors, district zoom). Further outdoor depth stays Waiting.
 - **AI-authored building graph (optional):** Code now authors a multi-room interior floor plan on Map open (`interior-plan`, stamp 20n+) — full outline + visited/unvisited fog + door marks / secret dashed paths + varied footprints (20q). Still not an LLM pre-authoring a unique building as Tier-1 continuity. Optional next: AI/code hybrid room graph per named landmark.
 - Server capacity / Stripe live secrets / counsel legal pack / Kid Mode public gate — ops, not playtest tickets
@@ -24,6 +26,8 @@ _(none — 2026-08-26b shipped choice grounding)_
 - Premium theme five-rater / Shop preview parity (Manus T8/T9 P0-04) — after playtest of `2026-08-19t` Vampire rescue; ingest `docs/research/manus-premium-themes-ingest-2026-08-19.md`
 
 ## Done (already shipped)
+
+- **2026-08-26c Faster Free GM waits:** Session aaabaae0 — every fail `kind:timeout` + `timeoutMs:30000` on turns 15–18 Continue. Mid-game default 30s→55s; Free hosted mid-game 60s; keep 75s first-post-open / 55s early. Busy copy `Timed out — retrying…`; skip expand + quality-retry after transport retry same turn; clearer kind/timeoutMs/writerTier telemetry. Evidence: `docs/bugs/playtest-2026-08-26-timeouts/`. HUD stamp 26c. Client-only (no gm-turn redeploy).
 
 - **2026-08-26b Choice grounding crystals:** Classic invented-context pad — "Inspect the crystals breaking the street" while last GM story was indoor barrels/flagstones/brine. Root: `choiceNamesUnnarratedObject` early-exited any short `Inspect…` as generic lookaround. Fix: pure-generic allowlist only; concrete `the/a/an` nouns must appear in last GM story / sceneFacts.props / kit / location; `street` no longer auto-skipped; ActionBar `filterInventedContextChoices` grounds against last GM only (not older outdoor turns). Vitest: barrels indoors → reject crystals/street; keep Wait/Ask generics. HUD stamp 26b.
 
