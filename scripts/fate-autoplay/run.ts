@@ -61,7 +61,7 @@ Options:
   --ai-tier free|mid|high
   --pick-mode fate|first-pad
   --ai-agent-mode MODE default|maxlevel|storyfollower|completionist (goal-oriented AI)
-  --night-storyforge   7h StoryForge batch: 3×100 AI spines + matrix-40×6×20 (~420 turns, ≤~$1 Free)
+  --night-storyforge   ~7h batch @ observed ~1.6s/turn: 3×500 AI spines + 3× matrix-40×100 (~13.5k turns)
   --matrix-40          John's 40 plan (10×4 modes; every premade once when ≤10)
   --matrix             Full Launch cartesian (mode × premade × narrator)
   --matrix-limit N     Cap matrix runs
@@ -82,25 +82,40 @@ async function runNightStoryforge(
   batchStarted: string,
   progressLog: string
 ): Promise<void> {
+  /**
+   * Timing calibrated from live matrix-40×100 (2026-08-26):
+   * 4000 turns in ~1h56m, p50 ~1.6s/turn → ~2070 turns/hour.
+   * 7h budget ≈ 14,500 turns. This plan ≈ 13,500 (~6.5h) with buffer.
+   */
   const bibleId = opts.bibleId || 'summoned-pact';
   const seed = opts.seed || 42;
+  const aiSpineTurns = 500;
+  const matrixTurns = 100;
+  const matrixRounds = 3;
   const spines: Array<{ mode: AiAgentMode; label: string }> = [
     { mode: 'maxlevel', label: 'maxlevel' },
     { mode: 'storyfollower', label: 'storyfollower' },
     { mode: 'completionist', label: 'completionist' },
   ];
+  const totalTurns =
+    spines.length * aiSpineTurns + matrixRounds * 40 * matrixTurns;
 
   const plan = {
     batchStarted,
     kind: 'night-storyforge',
-    budgetNote: '~420 turns · ETA 6–7.5h · OpenRouter Flash Lite ≤~$1',
+    calibratedFrom: 'matrix-40×100 wall ~1h56m / 4000 turns / p50~1.6s (2026-08-26)',
+    budgetNote: `~${totalTurns} turns · ETA ~6.5h @ observed pace · Flash Lite text-only (cost scales with turns, not wall clock — expect several $ not ≤$1)`,
     blockA: spines.map((s) => ({
-      turns: 100,
+      turns: aiSpineTurns,
       seed,
       bibleId,
       aiAgentMode: s.mode,
     })),
-    blockB: { matrix40: true, matrixLimit: 6, turns: 20, seed: 1 },
+    blockB: Array.from({ length: matrixRounds }, (_, i) => ({
+      matrix40: true,
+      turns: matrixTurns,
+      seed: 1 + i * 1000,
+    })),
     progressLog,
   };
   writeFileSync(
@@ -109,18 +124,19 @@ async function runNightStoryforge(
   );
 
   log(
-    `Starting night-storyforge — Block A: 3×100 AI spines (${bibleId}, seed=${seed}) then Block B: matrix-40 limit 6 × 20`
+    `Starting night-storyforge — Block A: 3×${aiSpineTurns} AI spines (${bibleId}, seed=${seed}) then Block B: ${matrixRounds}× matrix-40×${matrixTurns}`
   );
-  log(`ETA ≈ 6–7.5 h · cost target ≤ $1 (Free Flash Lite, memorable off)`);
-  log(`Progress log: ${progressLog}`);
+  log(
+    `Calibrated ETA ≈ 6.5 h (~${totalTurns} turns @ ~1.6s p50 from earlier 40×100). Progress: ${progressLog}`
+  );
 
   const summaries = [];
 
   for (let i = 0; i < spines.length; i++) {
     const s = spines[i]!;
-    log(`[A ${i + 1}/3] ${bibleId} ai-agent=${s.label} turns=100 seed=${seed}`);
+    log(`[A ${i + 1}/3] ${bibleId} ai-agent=${s.label} turns=${aiSpineTurns} seed=${seed}`);
     const summary = await runFateAutoplay({
-      turns: 100,
+      turns: aiSpineTurns,
       seed,
       bibleId,
       personality: opts.personality,
@@ -147,37 +163,47 @@ async function runNightStoryforge(
     }
   }
 
-  log('[B] matrix-40 limit 6 × 20 turns (breadth fill)');
-  const { combos: balanced, deferred, notes } = buildBalancedMatrix40(1);
-  const combos = balanced.slice(0, 6);
-  for (const n of notes) log(`note: ${n}`);
-  if (deferred.length) {
-    log(`Deferred premades (RPG overflow): ${deferred.map((d) => d.bibleId).join(', ')}`);
-  }
+  for (let round = 0; round < matrixRounds; round++) {
+    const roundSeed = 1 + round * 1000;
+    log(`[B${round + 1}/${matrixRounds}] matrix-40 × ${matrixTurns} turns (seed base=${roundSeed})`);
+    const { combos: balanced, deferred, notes } = buildBalancedMatrix40(roundSeed);
+    const combos = balanced;
+    for (const n of notes) log(`note: ${n}`);
+    if (deferred.length) {
+      log(`Deferred premades (RPG overflow): ${deferred.map((d) => d.bibleId).join(', ')}`);
+    }
 
-  for (let i = 0; i < combos.length; i++) {
-    const c = combos[i]!;
-    log(`[B ${i + 1}/${combos.length}] ${c.engineMode} ${c.bibleId} ${c.personalityId} seed=${c.seed}`);
-    const summary = await runFateAutoplay({
-      turns: 20,
-      seed: c.seed,
-      bibleId: c.bibleId,
-      personality: c.personalityId,
-      engineMode: c.engineMode,
-      aiTier: opts.aiTier,
-      mode: opts.mode,
-      aiAgentMode: 'default',
-      dryRun: opts.dryRun,
-      outRoot: opts.outRoot,
-      characterName: opts.characterName,
-    });
-    summaries.push({ block: 'B', aiAgentMode: 'default', ...summary });
-    log(
-      `  → done turns=${summary.completedTurns} errors=${summary.errorCount} timeouts=${summary.timeoutCount} p50=${summary.latencyMs.p50}ms dir=${summary.outDir}`
-    );
-    if (summary.errorCount && summary.issueTurns.some((t) => t.failKind === 'auth')) {
-      log('AUTH failure — stopping night-storyforge early. Check Supabase / session.');
-      break;
+    for (let i = 0; i < combos.length; i++) {
+      const c = combos[i]!;
+      log(
+        `[B${round + 1} ${i + 1}/${combos.length}] ${c.engineMode} ${c.bibleId} ${c.personalityId} seed=${c.seed}`
+      );
+      const summary = await runFateAutoplay({
+        turns: matrixTurns,
+        seed: c.seed,
+        bibleId: c.bibleId,
+        personality: c.personalityId,
+        engineMode: c.engineMode,
+        aiTier: opts.aiTier,
+        mode: opts.mode,
+        aiAgentMode: 'default',
+        dryRun: opts.dryRun,
+        outRoot: opts.outRoot,
+        characterName: opts.characterName,
+      });
+      summaries.push({ block: `B${round + 1}`, aiAgentMode: 'default', ...summary });
+      log(
+        `  → done turns=${summary.completedTurns} errors=${summary.errorCount} timeouts=${summary.timeoutCount} p50=${summary.latencyMs.p50}ms dir=${summary.outDir}`
+      );
+      if (summary.errorCount && summary.issueTurns.some((t) => t.failKind === 'auth')) {
+        log('AUTH failure — stopping night-storyforge early. Check Supabase / session.');
+        writeFileSync(
+          join(opts.outRoot, `night-storyforge-batch-${batchStarted.replace(/[:.]/g, '-')}.json`),
+          JSON.stringify({ batchStarted, endedAt: new Date().toISOString(), stopped: 'auth', summaries }, null, 2) +
+            '\n'
+        );
+        return;
+      }
     }
   }
 
@@ -185,7 +211,7 @@ async function runNightStoryforge(
     join(opts.outRoot, `night-storyforge-batch-${batchStarted.replace(/[:.]/g, '-')}.json`),
     JSON.stringify({ batchStarted, endedAt: new Date().toISOString(), summaries }, null, 2) + '\n'
   );
-  log(`Night-storyforge complete — ${summaries.length} runs logged`);
+  log(`Night-storyforge complete — ${summaries.length} runs logged (~${totalTurns} turns planned)`);
 }
 
 async function main(): Promise<void> {

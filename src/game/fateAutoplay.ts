@@ -122,8 +122,8 @@ export type FateAutoplayCliOpts = {
   /** Cap matrix combos (0 = no cap). */
   matrixLimit: number;
   /**
-   * 7h StoryForge night: 3×100 AI-agent spines (maxlevel/storyfollower/completionist)
-   * then matrix-40 capped at 6×20 for breadth. ~420 turns, ~$0.50–0.80 Flash Lite.
+   * ~7h StoryForge night @ observed matrix-40×100 pace (~1.6s p50, ~2070 turns/h):
+   * 3×500 AI-agent spines + 3× matrix-40×100 ≈ 13,500 turns (~6.5h).
    */
   nightStoryforge: boolean;
   outRoot: string;
