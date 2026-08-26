@@ -457,6 +457,63 @@ function stampOpening(state: GameState): GameState {
   return next;
 }
 
+/** Extract quest unlocks from this turn by comparing quest arrays. */
+function extractQuestUnlocksFromTurn(prev: GameState, next: GameState): string[] {
+  const prevIds = new Set((prev.quests ?? []).filter(q => q.revealed).map(q => q.id));
+  const unlocked = (next.quests ?? [])
+    .filter(q => q.revealed && !prevIds.has(q.id))
+    .map(q => q.name);
+  return unlocked;
+}
+
+/** Extract items equipped this turn by comparing equipped slots. */
+function extractEquippedItems(prev: GameState, next: GameState): string[] {
+  const prevEquipped = new Set(
+    (prev.inventory ?? []).filter(i => i.equipped).map(i => i.name)
+  );
+  const equipped = (next.inventory ?? [])
+    .filter(i => i.equipped && !prevEquipped.has(i.name))
+    .map(i => i.name);
+  return equipped;
+}
+
+/** Extract items used/consumed this turn by comparing inventory counts. */
+function extractUsedItems(prev: GameState, next: GameState): string[] {
+  const prevCounts = new Map<string, number>();
+  for (const item of prev.inventory ?? []) {
+    prevCounts.set(item.name, (prevCounts.get(item.name) ?? 0) + (item.quantity ?? 1));
+  }
+  const used: string[] = [];
+  const nextCounts = new Map<string, number>();
+  for (const item of next.inventory ?? []) {
+    nextCounts.set(item.name, (nextCounts.get(item.name) ?? 0) + (item.quantity ?? 1));
+  }
+  for (const [name, prevCount] of prevCounts) {
+    const nextCount = nextCounts.get(name) ?? 0;
+    if (nextCount < prevCount) {
+      used.push(name);
+    }
+  }
+  return used;
+}
+
+/** Detect loop/stuck patterns for StoryForge filtering. */
+function detectLoopFlags(gmText: string, state: GameState): {
+  officialCount: number;
+  atmosphereRepeat: boolean;
+  strangerCount: number;
+} {
+  const officialCount = (gmText.match(/\bthe official\b/gi) || []).length;
+  const strangerCount = (gmText.match(/\bthe stranger\b/gi) || []).length;
+  const recent = state.recentBeatFingerprints ?? [];
+  const fp = beatFingerprint(gmText);
+  const atmosphereRepeat = recent.length > 0 && recent.slice(-3).some(r => {
+    const sim = require('./beatFingerprint').beatSimilarity(fp, r);
+    return sim >= 0.72;
+  });
+  return { officialCount, atmosphereRepeat, strangerCount };
+}
+
 async function callGmWithRetries(
   state: GameState,
   payload: string,
@@ -575,13 +632,19 @@ export async function headlessFateTurn(
         endedAt: new Date(ended).toISOString(),
         durationMs: ended - started,
         bibleId: meta.bibleId,
+        engineMode: state.engineMode,
         personalityId: meta.personalityId,
         seed: meta.seed,
         fatePick,
         offeredChoices: offered,
+        offeredChoiceIds: offered.map((_, i) => `choice-${next.turn}-${i}`),
         playerInput,
         gmText: stubGm,
         systemLog: gm.systemLog ?? [],
+        questUnlocks: [],
+        itemsEquipped: [],
+        itemsUsed: [],
+        loopFlags: { officialCount: 0, atmosphereRepeat: false, strangerCount: 0 },
         transportRetries: 0,
         repairNote,
         dryRun: true,
@@ -773,13 +836,19 @@ Do NOT print dice notation or CODE ENFORCED.
       endedAt: new Date(ended).toISOString(),
       durationMs: ended - started,
       bibleId: meta.bibleId,
+      engineMode: state.engineMode,
       personalityId: meta.personalityId,
       seed: meta.seed,
       fatePick,
       offeredChoices: offered,
+      offeredChoiceIds: offered.map((_, i) => `choice-${nextTurn}-${i}`),
       playerInput,
       gmText: cleanText,
       systemLog: filteredSystemLog,
+      questUnlocks: extractQuestUnlocksFromTurn(prev, next),
+      itemsEquipped: extractEquippedItems(prev, next),
+      itemsUsed: extractUsedItems(prev, next),
+      loopFlags: detectLoopFlags(cleanText, state),
       error,
       failKind: gmResult.failKind,
       transportRetries,
