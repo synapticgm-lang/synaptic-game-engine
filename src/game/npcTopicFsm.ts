@@ -78,3 +78,41 @@ export function shouldForceNpcStageAdvance(state: GameState, npc: string): boole
   const used = state.arcDirector?.npcTopics?.[npcKey(npc)] ?? [];
   return used.length >= 3;
 }
+
+/** B022–B023 — full topic exhaustion → quest stage advance or close branch. */
+export function advanceNpcTopicExhaustion(
+  state: GameState,
+  npc: string
+): { state: GameState; mandate?: string } {
+  const key = npcKey(npc);
+  const used = state.arcDirector?.npcTopics?.[key] ?? [];
+  if (used.length < 2) return { state };
+
+  let next = state;
+  let mandate: string | undefined;
+
+  const quests = next.quests ?? [];
+  const activeMain = quests.find(
+    (q) => q.status === 'active' && q.type === 'main' && (q.objectives ?? []).some((o) => !o.completed)
+  );
+  if (activeMain?.objectives?.length) {
+    const idx = activeMain.objectives.findIndex((o) => !o.completed);
+    if (idx >= 0 && used.length >= 3) {
+      const objectives = [...activeMain.objectives];
+      objectives[idx] = { ...objectives[idx], completed: true };
+      next = {
+        ...next,
+        quests: quests.map((q) =>
+          q.id === activeMain.id ? { ...q, objectives, status: 'active' } : q
+        ),
+      };
+      mandate = `NPC TOPIC SUITE (${npc}): Dialogue basin exhausted — quest stage advanced locally.`;
+    }
+  }
+
+  if (!mandate) {
+    mandate = `NPC TOPIC SUITE (${npc}): Topics exhausted — close dialogue branch with consequence, not repeat lines.`;
+  }
+
+  return { state: next, mandate };
+}

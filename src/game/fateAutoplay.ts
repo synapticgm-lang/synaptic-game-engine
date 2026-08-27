@@ -93,7 +93,17 @@ import {
   formatArcDirectorMandateBlock,
   formatArcStatusReceipts,
   preserveArcQuestProgress,
+  type ArcDirectorResult,
 } from './arcDirector';
+import {
+  attachSealedManifest,
+  buildSealedManifest,
+  formatSealedManifestBlock,
+  applyRenderFallback,
+  type RenderFallbackReason,
+} from './sealedManifest';
+import { recordReplayHash, hashCanonicalState } from './replayHash';
+import { validateEvalRun, type EvalHarnessResult } from './evalHarness';
 import { playerInputGateBlock } from './choiceCompiler';
 import { filterSystemLogForEngine, reconcileXpStatusLines } from './systemLog';
 import { beatFingerprint, isSameBeat, isNearClone, buildBeatNoveltyRetryBlock, beatSimilarity } from './beatFingerprint';
@@ -198,6 +208,9 @@ export type TurnTelemetry = {
   dryRun?: boolean;
   receiptCounts?: ReceiptCounts;
   arcStatusReceipts?: string[];
+  sealedManifestHash?: string;
+  replayHash?: string;
+  renderFallbackUsed?: boolean;
 };
 
 export type RunSummary = {
@@ -222,6 +235,8 @@ export type RunSummary = {
   outDir: string;
   runManifest?: RunManifest;
   receiptTotals?: ReceiptCounts;
+  evalHarness?: EvalHarnessResult;
+  finalReplayHash?: string;
 };
 
 function uid(): string {
@@ -730,11 +745,17 @@ export async function headlessFateTurn(
   arcState = gate.state;
   let arcBlock = '';
   let arcStatusReceipts: string[] = [];
+  let arcResult: ArcDirectorResult | undefined;
+  let sealedManifestBlock = '';
   if (arcState.openingEstablishment?.complete) {
     const arc = runArcDirectorBeforeGm(arcState, playerInput);
+    arcResult = arc;
     arcState = arc.state;
     arcBlock = formatArcDirectorMandateBlock(arc);
     arcStatusReceipts = formatArcStatusReceipts(arc);
+    const manifest = buildSealedManifest(arcState, playerInput, arc);
+    arcState = attachSealedManifest(arcState, manifest);
+    sealedManifestBlock = formatSealedManifestBlock(manifest);
     if (arc.xpAwards.length) {
       let char = arcState.character;
       for (const award of arc.xpAwards) {
@@ -816,7 +837,7 @@ Do NOT print dice notation or CODE ENFORCED.
 -------------------------------------------------
 `;
   const payload = buildResolutionUserPayload({
-    mandateBlock: turnMandate.block + arcBlock,
+    mandateBlock: turnMandate.block + arcBlock + sealedManifestBlock,
     playerAction: playerInput,
     deterministicBlock,
     retry: false,
@@ -826,15 +847,24 @@ Do NOT print dice notation or CODE ENFORCED.
   const gmResult = await callGmWithRetries(arcState, payload, settings);
   let error: string | undefined;
   let gmText = gmResult.text;
+  let gmSystemLog = gmResult.systemLog ?? [];
   let transportRetries = gmResult.transportRetries;
+  let renderFallbackUsed = false;
   if (!gmText.trim()) {
     error = gmResult.failKind
       ? `GM empty/fail (${gmResult.failKind})`
       : 'GM returned empty content';
-    const loc = state.currentLocation?.trim() || 'this stretch of street';
-    gmText =
-      `(autoplay) The beat stalls at ${loc}. Something shifts — a footstep, a call, a door — ` +
-      `forcing the moment forward. [${error}]`;
+    const manifest = arcState.sealedManifest ?? buildSealedManifest(arcState, playerInput, arcResult);
+    const reason: RenderFallbackReason =
+      gmResult.failKind === 'timeout'
+        ? 'timeout'
+        : gmResult.failKind
+          ? 'fail'
+          : 'empty';
+    const fallback = applyRenderFallback(manifest, arcState, reason);
+    gmText = fallback.prose;
+    gmSystemLog = [...gmSystemLog, ...fallback.systemLog];
+    renderFallbackUsed = true;
   }
 
   // Novelty retry on same-beat OR near-verbatim clone (merchant ×20 loops).
@@ -961,7 +991,7 @@ Do NOT print dice notation or CODE ENFORCED.
     arcState.quests,
     syncQuestsFromPlay(
       eventsToQuestUpdates(events, working.quests ?? [], nextTurn),
-      gmResult.systemLog,
+      gmSystemLog,
       `${playerInput}\n${cleanText}`,
       { locked: questsLockedDuringOpening(state) }
     )
@@ -1023,7 +1053,7 @@ Do NOT print dice notation or CODE ENFORCED.
   ].slice(-10);
 
   let filteredSystemLog = filterSystemLogForEngine(
-    [...(gmResult.systemLog ?? []), ...(warden.notes.length ? [`Warden: ${warden.notes.slice(0, 3).join('; ')}`] : [])],
+    [...gmSystemLog, ...(warden.notes.length ? [`Warden: ${warden.notes.slice(0, 3).join('; ')}`] : [])],
     state.engineMode
   );
   filteredSystemLog = reconcileXpStatusLines(filteredSystemLog, [
@@ -1081,6 +1111,7 @@ Do NOT print dice notation or CODE ENFORCED.
       governed = { ...governed, character: leveled.character };
     }
   }
+  governed = recordReplayHash(governed);
 
   const ended = Date.now();
   const receiptCounts = countTurnReceipts(governed, nextTurn);
@@ -1115,6 +1146,9 @@ Do NOT print dice notation or CODE ENFORCED.
       repairNote,
       receiptCounts,
       arcStatusReceipts,
+      sealedManifestHash: arcState.sealedManifest?.beatEffectsHash,
+      replayHash: hashCanonicalState(governed),
+      renderFallbackUsed,
     },
   };
 }
@@ -1269,7 +1303,9 @@ export async function runFateAutoplay(opts: {
     outDir,
     runManifest: state.runManifest,
     receiptTotals: countRunReceipts(state),
+    finalReplayHash: hashCanonicalState(state),
   };
+  summary.evalHarness = validateEvalRun(state, summary, turns);
 
   writeFileSync(join(outDir, 'transcript.md'), buildPlayTranscript(state));
   if (state.runManifest) {
@@ -1290,6 +1326,7 @@ export async function runFateAutoplay(opts: {
   );
   writeFileSync(join(outDir, 'turns.jsonl'), turns.map((t) => JSON.stringify(t)).join('\n') + '\n');
   writeFileSync(join(outDir, 'summary.json'), JSON.stringify(summary, null, 2) + '\n');
+  writeFileSync(join(outDir, 'eval.json'), JSON.stringify(summary.evalHarness, null, 2) + '\n');
   writeFileSync(
     join(outDir, 'meta.json'),
     JSON.stringify(

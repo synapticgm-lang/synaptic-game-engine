@@ -6,7 +6,10 @@
 import type { ActiveEncounter, GameState, Quest } from './types';
 import {
   type BeatContract,
+  contractById,
+  engineAllowsCombat,
   forcedEncounterBeat,
+  resolveBiblePrefix,
   selectDueBeat,
 } from './beatContract';
 import { updateChoiceFingerprints } from './choiceCompiler';
@@ -16,7 +19,9 @@ import {
   formatNpcTopicMandate,
   recordNpcTopic,
   shouldForceNpcStageAdvance,
+  advanceNpcTopicExhaustion,
 } from './npcTopicFsm';
+import { recordPyoaBranchChoice, formatPyoaBranchMandate } from './pyoaBranchLedger';
 import {
   applySocialMilestone,
   detectSocialMilestone,
@@ -77,6 +82,48 @@ function completeQuestObjective(
     objectives[objectiveIndex] = { ...objectives[objectiveIndex], completed: true };
     return { ...q, objectives, status: q.status === 'available' ? 'active' : q.status };
   });
+}
+
+function hasCombatReceipt(state: GameState): boolean {
+  if (state.activeEncounter) return true;
+  return (state.stateTxLog ?? []).some(
+    (t) => t.kind === 'combat' || /^Encounter:/i.test(t.summary)
+  );
+}
+
+function hasCrisisReceipt(state: GameState): boolean {
+  const committed = state.arcDirector?.committedBeatIds ?? [];
+  if (committed.some((id) => id.includes('crisis'))) return true;
+  return (state.stateTxLog ?? []).some((t) => /crisis|fork|branch lock/i.test(t.summary));
+}
+
+/** B043 — enforce combat/crisis receipts by T8/T15/T12 (not just telemetry). */
+export function forceLivenessBeat(
+  state: GameState,
+  committed: Set<string>
+): BeatContract | null {
+  const turn = state.turn;
+  const mode = state.engineMode;
+
+  if (mode === 'pyoa' && turn >= 12 && !hasCrisisReceipt(state) && !committed.has('pyoa-beat-crisis')) {
+    return contractById('pyoa-beat-crisis') ?? null;
+  }
+
+  if (!engineAllowsCombat(state) || hasCombatReceipt(state)) return null;
+
+  const prefix = resolveBiblePrefix(state);
+  const skirmishId =
+    prefix === 'summoned-pact'
+      ? 'sp-beat-skirmish'
+      : prefix === 'cursed-keep'
+        ? 'ck-beat-hostility'
+        : null;
+
+  if (turn >= 8 && turn < 15 && skirmishId && !committed.has(skirmishId)) {
+    return contractById(skirmishId) ?? null;
+  }
+
+  return null;
 }
 
 function shouldCommitBeat(
@@ -185,12 +232,21 @@ export function runArcDirectorBeforeGm(
   let beatCommitted = false;
   let beatId: string | undefined;
 
+  working = recordPyoaBranchChoice(working, playerInput);
+  const pyoaMandate = formatPyoaBranchMandate(working);
+  if (pyoaMandate) mandates.push(pyoaMandate);
+
   const topicResult = recordNpcTopic(working, playerInput);
   working = topicResult.state;
   const topicMandate = topicResult.npc
     ? formatNpcTopicMandate(topicResult.npc, topicResult.topic ?? '', topicResult.exhausted)
     : null;
   if (topicMandate) mandates.push(topicMandate);
+  if (topicResult.exhausted && topicResult.npc) {
+    const advanced = advanceNpcTopicExhaustion(working, topicResult.npc);
+    working = advanced.state;
+    if (advanced.mandate) mandates.push(advanced.mandate);
+  }
   if (topicResult.npc && shouldForceNpcStageAdvance(working, topicResult.npc)) {
     mandates.push(
       `NPC STAGE ADVANCE (${topicResult.npc}): Topics exhausted — move quest stage or end scene with consequence.`
@@ -207,9 +263,18 @@ export function runArcDirectorBeforeGm(
   const committed = committedSet(working);
   const turnsSinceCombat = working.arcDirector?.turnsSinceCombatReceipt ?? working.turn;
 
-  let contract =
-    forcedEncounterBeat(working, turnsSinceCombat, committed) ??
-    selectDueBeat(working, committed);
+  let contract = selectDueBeat(working, committed);
+  if (!contract || contract.kind === 'pressure') {
+    contract =
+      forceLivenessBeat(working, committed) ??
+      forcedEncounterBeat(working, turnsSinceCombat, committed) ??
+      contract;
+  } else if (!hasCombatReceipt(working) && working.turn >= 15) {
+    contract =
+      forcedEncounterBeat(working, turnsSinceCombat, committed) ??
+      forceLivenessBeat(working, committed) ??
+      contract;
+  }
 
   if (contract && (!contract.once || !committed.has(contract.id)) && shouldCommitBeat(contract, working, playerInput)) {
     const { seq, state: seqState } = nextEventSeq(working);

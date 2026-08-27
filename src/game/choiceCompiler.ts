@@ -7,6 +7,7 @@ import { canonicalizeIntent } from './semanticLoopDetector';
 import { filterCooldownChoices, type OptionCooldown } from './optionDiversityContract';
 import { isTopicExhausted } from './npcTopicFsm';
 import { hubsForBibleId, matchHub } from './outdoorHubs';
+import { enumerateLegalEdges, edgesToChoiceLabels } from './choiceEdge';
 
 export type ChoiceFingerprintFamily =
   | 'walk_away'
@@ -97,7 +98,10 @@ function gateTravelTarget(input: string): string | null {
   return m?.[1]?.trim().slice(0, 60) ?? null;
 }
 
-/** Gate disposition for rejected hub travel — consume cooldown instead of gate-queue loop. */
+const GATE_TARGET_PATTERNS =
+  /\b(gate|queue|circle|registrar|registration|sevenfold|palace approach|contract hall)\b/i;
+
+/** Gate disposition matrix (B024) — reject/transform hub gate travel loops. */
 export function checkGateDisposition(
   state: GameState,
   playerInput: string
@@ -105,7 +109,7 @@ export function checkGateDisposition(
   const target = gateTravelTarget(playerInput);
   if (!target) return null;
   const lower = target.toLowerCase();
-  if (!/\b(gate|queue|circle|registrar|registration|sevenfold)\b/.test(lower)) return null;
+  if (!GATE_TARGET_PATTERNS.test(lower)) return null;
 
   const gates = state.arcDirector?.gateDispositions ?? {};
   const key = lower.replace(/[^a-z0-9]+/g, '-').slice(0, 40);
@@ -116,6 +120,14 @@ export function checkGateDisposition(
       cooldownUntilTurn: until,
       kind: 'reject',
       message: `Gate queue cooling down — try a different route or talk to someone present (until T${until}).`,
+    };
+  }
+  if (hubBeatExhausted(state, `Travel toward ${target}`)) {
+    return {
+      target,
+      cooldownUntilTurn: state.turn + 8,
+      kind: 'transform',
+      message: `Hub beats exhausted at this location — pick a crisis fork or talk path instead of ${target}.`,
     };
   }
   return null;
@@ -160,6 +172,8 @@ export function compileChoices(
   const turn = state.turn;
   const fingerprints = state.arcDirector?.choiceFingerprints ?? [];
   const cooldownMap = new Map(Object.entries(optionCooldowns ?? state.qualityGovernance?.optionCooldowns ?? {}));
+  const legalEdges = enumerateLegalEdges(state);
+  const edgeLabels = edgesToChoiceLabels(legalEdges);
 
   let filtered = choices.filter((c) => {
     const family = classifyChoiceFamily(c);
@@ -190,18 +204,32 @@ export function compileChoices(
     notes.push(`Pad cooldown removed ${cooldownResult.removed.length}`);
   }
 
-  // Supplement with beat-legal edges when pad is thin
-  if (filtered.length < 3) {
+  // B018–B021 — pad primarily from legal beat edges when available
+  if (legalEdges.length >= 3) {
+    for (const label of edgeLabels) {
+      if (filtered.some((f) => f.toLowerCase() === label.toLowerCase())) continue;
+      filtered.push(label);
+      if (filtered.length >= 6) break;
+    }
+    notes.push(`Legal edges: ${legalEdges.length}`);
+  } else if (filtered.length < 3) {
     const supplements: string[] = [];
-    const mandate = state.arcDirector?.lastMandate ?? '';
-    if (state.activeEncounter) {
-      supplements.push('Press the attack', 'Try to flee', 'Parley');
-    } else if (mandate.includes('crisis') || state.engineMode === 'pyoa') {
-      supplements.push('Choose the risky fork', 'Buy time', 'Call for help');
-    } else if (state.engineMode === 'litrpg') {
-      supplements.push('Check Status', 'Ask what they want', 'Scout the exit');
-    } else {
-      supplements.push('Ask a direct question', 'Change position', 'Wait and watch');
+    for (const label of edgeLabels) {
+      if (!filtered.some((f) => f.toLowerCase() === label.toLowerCase())) {
+        supplements.push(label);
+      }
+    }
+    if (!supplements.length) {
+      const mandate = state.arcDirector?.lastMandate ?? '';
+      if (state.activeEncounter) {
+        supplements.push('Press the attack', 'Try to flee', 'Parley');
+      } else if (mandate.includes('crisis') || state.engineMode === 'pyoa') {
+        supplements.push('Choose the risky fork', 'Buy time', 'Call for help');
+      } else if (state.engineMode === 'litrpg') {
+        supplements.push('Check Status', 'Ask what they want', 'Scout the exit');
+      } else {
+        supplements.push('Ask a direct question', 'Change position', 'Wait and watch');
+      }
     }
     for (const s of supplements) {
       if (!filtered.some((f) => f.toLowerCase() === s.toLowerCase())) {
@@ -209,11 +237,11 @@ export function compileChoices(
       }
       if (filtered.length >= 3) break;
     }
-    notes.push('Supplemented legal beat edges');
+    notes.push(supplements.length ? 'Supplemented from edges/fallback' : 'Supplemented legal beat edges');
   }
 
   return {
-    choices: filtered.length ? filtered.slice(0, 6) : choices.slice(0, 3),
+    choices: filtered.length ? filtered.slice(0, 6) : edgeLabels.slice(0, 3),
     notes,
   };
 }

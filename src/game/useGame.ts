@@ -265,6 +265,13 @@ import {
   formatArcStatusReceipts,
   preserveArcQuestProgress,
 } from './arcDirector';
+import {
+  attachSealedManifest,
+  buildSealedManifest,
+  formatSealedManifestBlock,
+  applyRenderFallback,
+} from './sealedManifest';
+import { recordReplayHash } from './replayHash';
 import { playerInputGateBlock } from './choiceCompiler';
 import { extractUpdates, extractNewItems, parseActionTags, stripActionTags, matchLoreCards, eventsToLoreCards, parseTurnFrame, eventsToQuestUpdates, eventsToEncounterUpdate, parsePanels, eventsToMilestone, eventsToLootVideo, eventsToVisualUpdate, stripChoiceList, extractChoiceLines, stripTurnCloser, storyHasBody, looksLikeChoiceOffer, isStoryTooThin, storyWordCount } from './parser';
 import { hasRealGmStory } from './turnAsk';
@@ -2531,10 +2538,14 @@ export function useGame() {
 
       let arcMandateBlock = '';
       let arcReceiptLine = '';
+      let sealedManifestBlock = '';
       let pendingArcStatusReceipts: string[] = [];
       if (!freeOpeningTurn && liveCurrent.openingEstablishment?.complete) {
         const arc = runArcDirectorBeforeGm(liveCurrent, sanitizedInput);
         liveCurrent = arc.state;
+        const manifest = buildSealedManifest(liveCurrent, sanitizedInput, arc);
+        liveCurrent = attachSealedManifest(liveCurrent, manifest);
+        sealedManifestBlock = formatSealedManifestBlock(manifest);
         arcMandateBlock = formatArcDirectorMandateBlock(arc);
         pendingArcStatusReceipts = formatArcStatusReceipts(arc);
         if (arc.xpAwards.length) {
@@ -2563,7 +2574,7 @@ export function useGame() {
       const groundingGate = grounded.notes.length
         ? `\n[SCENE GROUNDING GATE]: Player input was soft-corrected for: ${grounded.notes.join('; ')}. Stay inside Situation Packet + Inventory + Timeline. Do not invent the rejected premise.`
         : '';
-      const actionGates = `${inventoryGate}${groundingGate}${refuseGate}${arcMandateBlock}${arcReceiptLine}`;
+      const actionGates = `${inventoryGate}${groundingGate}${refuseGate}${arcMandateBlock}${sealedManifestBlock}${arcReceiptLine}`;
       const outcomeBlock = formatOutcomeTokenForPrompt(outcomeToken, !isDndEngine);
 
       // LitRPG/RPG: keep dice math out of the model-facing story cue so it is less likely to echo into prose.
@@ -3322,13 +3333,23 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
         );
       }
       if (!storyHasBody(cleanText)) {
-        debugLogger.record('WARN', 'Refusing System-only turn — no story body', {
-          turn: liveCurrent.turn,
-        });
-        refundSpentTextTurn();
-        keepSentLineOnFail(sanitizedInput || lastInputRef.current);
-        setError('The story did not come through. Try that action again — this attempt was not charged.');
-        return;
+        const manifest = liveCurrent.sealedManifest;
+        if (manifest) {
+          const fallback = applyRenderFallback(manifest, liveCurrent, 'empty');
+          cleanText = fallback.prose;
+          debugLogger.record('WARN', 'GM empty — deterministic fallback from sealed manifest', {
+            turn: liveCurrent.turn,
+            hash: manifest.beatEffectsHash,
+          });
+        } else {
+          debugLogger.record('WARN', 'Refusing System-only turn — no story body', {
+            turn: liveCurrent.turn,
+          });
+          refundSpentTextTurn();
+          keepSentLineOnFail(sanitizedInput || lastInputRef.current);
+          setError('The story did not come through. Try that action again — this attempt was not charged.');
+          return;
+        }
       }
 
       debugLogger.record('STATE_UPDATE', 'Merging GM response into game state', {
@@ -4098,6 +4119,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
           }
         }
       }
+      mergedState = recordReplayHash(mergedState);
       const postCommitImageJobs: ImageGenJob[] = [];
       const allowSceneArt = storyHasBody(cleanText) && !imagesKilled();
       if (imagesKilled()) {

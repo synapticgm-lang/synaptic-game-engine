@@ -39,6 +39,7 @@ import {
 import {
   buildVoiceCadence,
   buildVoiceAsides,
+  buildAuthorityVoiceHint,
   formatVoiceCadenceDirective,
   shouldSuppressTone,
   type VoicePersonality,
@@ -165,7 +166,8 @@ export function buildGovernanceSnapshotLines(state: GameState): string[] {
   const asides = buildVoiceAsides(personality);
   const lastGm = [...(state.log ?? [])].reverse().find((e) => e.role === 'gm')?.content ?? '';
   const suppression = shouldSuppressTone(state, lastGm);
-  lines.push(formatVoiceCadenceDirective(cadence, suppression, asides));
+  const authorityHint = buildAuthorityVoiceHint(state, personality);
+  lines.push(formatVoiceCadenceDirective(cadence, suppression, asides, authorityHint));
 
   return lines;
 }

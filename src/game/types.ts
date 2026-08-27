@@ -451,6 +451,12 @@ export interface GameState {
   arcDirector?: import('./arcDirector').ArcDirectorState;
   /** Immutable run manifest for eval/replay binding. */
   runManifest?: import('./runManifest').RunManifest;
+  /** B026 sealed manifest snapshot (pre-GM). */
+  sealedManifest?: import('./sealedManifest').SceneManifest;
+  /** B007 replay hash chain for eval verifier. */
+  replayHashes?: import('./replayHash').ReplayHashRecord[];
+  /** B025 PYOA branch ledger — Millstone Charter paths. */
+  pyoaBranchLedger?: import('./pyoaBranchLedger').PyoaBranchLedger;
   /** Frozen opening invariants for this run. */
   campaignContract?: import('./campaignContract').CampaignContract | null;
   /** Soft drifts against campaignContract (Expert / continuity). */

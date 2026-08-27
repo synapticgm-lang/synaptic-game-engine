@@ -386,12 +386,36 @@ export function updateAsideCooldowns(
 }
 
 /**
+ * Wave 5 — authority-layer voice hints (post-ArcDirector, no Mid writer).
+ */
+export function buildAuthorityVoiceHint(state: GameState, personality: VoicePersonality): string {
+  const beat = state.arcDirector?.activeBeatId;
+  const enc = state.activeEncounter?.name;
+  const parts: string[] = [];
+  if (beat) parts.push(`Active beat ${beat} — voice colors receipt, never rewrites it.`);
+  if (enc) parts.push(`Combat live (${enc}) — keep ${personality} diction under tension.`);
+  if (state.sealedManifest?.gist) {
+    parts.push(`Seal gist: ${state.sealedManifest.gist.slice(0, 80)}`);
+  }
+  const modeHint: Partial<Record<VoicePersonality, string>> = {
+    'cold-registrar': 'STATUS-adjacent clauses OK; story stays clinical.',
+    'dry-wit': 'One dry aside per hub change minimum when not suppressed.',
+    'sarcastic-patch': 'Undercut mush with System snark, not new facts.',
+    'army-quartermaster': 'Tactical brevity on encounter beats.',
+    'friendly-guide': 'Warm framing on crisis forks — stakes stay honest.',
+  };
+  if (modeHint[personality]) parts.push(modeHint[personality]!);
+  return parts.length ? `AUTHORITY VOICE: ${parts.join(' ')}` : '';
+}
+
+/**
  * Format voice cadence directive for GM prompt.
  */
 export function formatVoiceCadenceDirective(
   cadence: VoiceCadence,
   suppression: ToneSuppression | null,
-  availableAsides: VoiceAsideTrigger[]
+  availableAsides: VoiceAsideTrigger[],
+  authorityHint?: string
 ): string {
   if (suppression) {
     return `VOICE: Suppress personality for ${suppression.situation} scene. ${suppression.reason}. Use plain, respectful narration.`;
@@ -421,7 +445,7 @@ export function formatVoiceCadenceDirective(
 - Compression: ${compressionGuide[cadence.compression]}
 - Attitude: ${attitudeGuide[cadence.attitude]}
 - Framing: Present events through ${cadence.framing} lens
-
+${authorityHint ? `- ${authorityHint}\n` : ''}
 Do not repeat catchphrases. Vary word choice while maintaining personality.`;
 }
 
