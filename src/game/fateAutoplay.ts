@@ -160,6 +160,8 @@ export type FateAutoplayCliOpts = {
   modesAgents300: boolean;
   /** Run only the 27w worst cell per mode (4 runs under --modes-agents-300). */
   worstCellsOnly?: boolean;
+  /** Run only the 29b alternate-flagship cell per mode (4 runs under --modes-agents-300). */
+  altCellsOnly?: boolean;
   /** Regenerate mode Gemini packs from an existing batch (no re-run). */
   splitModesGemini?: boolean;
   /** Also write optional combined 12-run Gemini file (default off). */
@@ -1394,6 +1396,7 @@ export function parseFateArgs(argv: string[]): FateAutoplayCliOpts {
     else if (a === '--night-storyforge' || a === '--night-sf') out.nightStoryforge = true;
     else if (a === '--modes-agents-300' || a === '--modes-agents') out.modesAgents300 = true;
     else if (a === '--worst-cells-only' || a === '--worst-cells') out.worstCellsOnly = true;
+    else if (a === '--alt-cells-only' || a === '--alt-cells') out.altCellsOnly = true;
     else if (a === '--split-modes-gemini') out.splitModesGemini = true;
     else if (a === '--combined-gemini') out.combinedGemini = true;
     else if (a === '--resume-dir') out.resumeDir = next();

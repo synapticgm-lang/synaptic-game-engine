@@ -65,6 +65,53 @@ export const WORST_CELLS_27W: Cell[] = [
   },
 ];
 
+/**
+ * Alternate flagship premades (≠ worst-cells bibles) for cross-premade coverage on 29b.
+ * Agent: storyfollower consistently (cleaner cross-mode premade compare vs mixed worst-cells).
+ */
+export const ALT_CELLS_29B: Cell[] = [
+  {
+    engineMode: 'litrpg',
+    bibleId: 'hero-awakening',
+    personality: 'cold-system',
+    agent: 'storyfollower',
+    seed: 401,
+  },
+  {
+    engineMode: 'dnd',
+    bibleId: 'shattered-coast',
+    personality: 'dry-wit',
+    agent: 'storyfollower',
+    seed: 418,
+  },
+  {
+    engineMode: 'rpg',
+    bibleId: 'salt-road-heist',
+    personality: 'chilled-gm',
+    agent: 'storyfollower',
+    seed: 435,
+  },
+  {
+    engineMode: 'pyoa',
+    bibleId: 'vesper-glass-cipher',
+    personality: 'army-brief',
+    agent: 'storyfollower',
+    seed: 452,
+  },
+];
+
+function resolveGrid(opts: { worstCellsOnly?: boolean; altCellsOnly?: boolean; seed: number }): Cell[] {
+  if (opts.altCellsOnly) return ALT_CELLS_29B;
+  if (opts.worstCellsOnly) return WORST_CELLS_27W;
+  return buildGrid(opts.seed);
+}
+
+function batchPrefixFor(opts: { worstCellsOnly?: boolean; altCellsOnly?: boolean }): string {
+  if (opts.altCellsOnly) return 'alt-cells';
+  if (opts.worstCellsOnly) return 'worst-cells';
+  return 'modes-agents';
+}
+
 function installNodeShims(): void {
   const store = new Map<string, string>();
   const localStorage = {
@@ -208,6 +255,8 @@ export async function runModesAgentsBatch(opts: {
   buildStamp?: string;
   /** Run only the 27w worst cell per mode (4 runs total). */
   worstCellsOnly?: boolean;
+  /** Run only the 29b alternate-flagship cell per mode (4 runs total). */
+  altCellsOnly?: boolean;
 }): Promise<{
   batchDir: string;
   telemetryPath: string;
@@ -216,15 +265,23 @@ export async function runModesAgentsBatch(opts: {
   combinedGemini?: string;
 }> {
   installNodeShims();
+  if (opts.worstCellsOnly && opts.altCellsOnly) {
+    throw new Error('Pass only one of --worst-cells-only or --alt-cells-only');
+  }
   const batchId = opts.resumeDir
-    ? opts.resumeDir.replace(/\\/g, '/').split('/').pop()!.replace(/^modes-agents-\d+t-/, '')
+    ? opts.resumeDir
+        .replace(/\\/g, '/')
+        .split('/')
+        .pop()!
+        .replace(/^(modes-agents|worst-cells|alt-cells)-\d+t-/, '')
     : new Date().toISOString().replace(/[:.]/g, '-');
-  const batchPrefix = opts.worstCellsOnly ? 'worst-cells' : 'modes-agents';
+  const batchPrefix = batchPrefixFor(opts);
   const batchDir = opts.resumeDir
     ? opts.resumeDir
     : join(opts.outRoot, `${batchPrefix}-${opts.turns}t-${batchId}`);
   mkdirSync(batchDir, { recursive: true });
   writeFileSync(join(batchDir, 'batch.pid'), String(process.pid) + '\n');
+  const grid = resolveGrid(opts);
   if (!opts.resumeDir) {
     writeFileSync(
       join(batchDir, 'batch-manifest.json'),
@@ -234,11 +291,15 @@ export async function runModesAgentsBatch(opts: {
           buildStamp: opts.buildStamp ?? MODES_AGENTS_BUILD_STAMP,
           turns: opts.turns,
           baseSeed: opts.seed,
-          grid: opts.worstCellsOnly ? WORST_CELLS_27W : buildGrid(opts.seed),
+          grid,
           worstCellsOnly: opts.worstCellsOnly === true,
+          altCellsOnly: opts.altCellsOnly === true,
+          agentPolicy: opts.altCellsOnly ? 'storyfollower-consistent' : undefined,
           sourceBatch: opts.worstCellsOnly
             ? 'modes-agents-300t-2026-08-27T12-07-17-166Z'
-            : undefined,
+            : opts.altCellsOnly
+              ? 'alt-premades-29b (≠ worst-cells bibles)'
+              : undefined,
           startedAt: new Date().toISOString(),
         },
         null,
@@ -275,9 +336,13 @@ export async function runModesAgentsBatch(opts: {
     }
   }
 
-  const grid = opts.worstCellsOnly ? WORST_CELLS_27W : buildGrid(opts.seed);
+  const batchKind = opts.altCellsOnly
+    ? 'Alt-cells'
+    : opts.worstCellsOnly
+      ? 'Worst-cells'
+      : 'Modes×agents';
   log(
-    `${opts.worstCellsOnly ? 'Worst-cells' : 'Modes×agents'} batch ${opts.resumeDir ? 'RESUME' : 'start'}: ${grid.length} runs × ${opts.turns} turns (~${grid.length * opts.turns} total)`
+    `${batchKind} batch ${opts.resumeDir ? 'RESUME' : 'start'}: ${grid.length} runs × ${opts.turns} turns (~${grid.length * opts.turns} total)`
   );
   log(`ETA ~${Math.round((grid.length * opts.turns * 1.7) / 3600)}h at ~1.7s/turn`);
   if (opts.resumeDir) log(`Resume dir: ${batchDir}`);
@@ -483,8 +548,18 @@ async function main(): Promise<void> {
   const resumeDir = resumeIdx >= 0 ? argv[resumeIdx + 1] : undefined;
   const includeCombined = argv.includes('--combined-gemini');
   const worstCellsOnly = argv.includes('--worst-cells-only');
+  const altCellsOnly = argv.includes('--alt-cells-only') || argv.includes('--alt-cells');
   const outRoot = join(process.cwd(), 'scripts', 'fate-autoplay', 'runs');
-  await runModesAgentsBatch({ turns, seed, outRoot, dryRun: dry, resumeDir, includeCombined, worstCellsOnly });
+  await runModesAgentsBatch({
+    turns,
+    seed,
+    outRoot,
+    dryRun: dry,
+    resumeDir,
+    includeCombined,
+    worstCellsOnly,
+    altCellsOnly,
+  });
 }
 
 const isDirect =
