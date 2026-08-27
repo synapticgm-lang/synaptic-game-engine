@@ -20,6 +20,7 @@ import { formatInteriorExploreAuthority, listInteriorExitsFromHere } from './map
 import { formatOutdoorHubsForPrompt } from './outdoorHubs';
 import { formatHubArrivalForPrompt } from './hubEncounters';
 import { emptySearchAuthorityLine, weaponAuthorityLine } from './searchContinuity';
+import { countPlayerIntentStreak } from './beatFingerprint';
 
 export function effectivePowerScaling(state: GameState): PowerScaling {
   return state.powerScaling ?? 'balanced';
@@ -199,6 +200,24 @@ export function formatSceneSnapshotForPrompt(state: GameState): string {
     `- Power Scaling: ${effectivePowerScaling(state)}`,
     `- Map: ${scale}${danger ? ` | ${danger}` : ''}`,
   ];
+  const mainQuest = (state.quests ?? []).find(
+    (q) => (q.status === 'active' || q.status === 'available') && q.type === 'main'
+  ) ?? (state.quests ?? []).find((q) => q.status === 'active' || q.status === 'available');
+  if (mainQuest?.name) {
+    const nextObj =
+      (mainQuest.objectives ?? []).find((o) => !o.completed)?.description
+      || mainQuest.description
+      || '';
+    lines.push(
+      `- Quest focus: ${mainQuest.name}${nextObj ? ` — ${String(nextObj).slice(0, 120)}` : ''}`
+    );
+  }
+  const streak = countPlayerIntentStreak(state);
+  if (streak.count >= 3 && streak.key !== 'empty') {
+    lines.push(
+      `- Stagnation: player repeated "${streak.key}" ×${streak.count} — FORCE a concrete interrupt this beat (arrival, danger, offer change, or quest-relevant beat). Do not clone prior paragraphs.`
+    );
+  }
   if (timeLabel) lines.push(`- Time of Day: ${timeLabel}`);
   if (weatherLabel) lines.push(`- Weather: ${weatherLabel}`);
   if (locationTypeLabel) lines.push(`- Location Type: ${locationTypeLabel}`);
@@ -213,6 +232,21 @@ export function formatSceneSnapshotForPrompt(state: GameState): string {
   lines.push(
     'AUTHORITY: Narrate richly — descriptive, engaging language and narrative flair are required. Atmosphere (smell, rust, cadence, metaphor, NPC mannerism) is free. Do not contradict these facts or the ledger. Do not invent items, doors, named people, or numeric results absent from this snapshot.'
   );
+  if (mainQuest?.name) {
+    lines.push(
+      'QUEST PRESSURE: Unless mid-combat or mid-opening covers, include one concrete reminder or option tied to Quest focus this beat.'
+    );
+  }
+  if (streak.count >= 3) {
+    lines.push(
+      'STAGNATION INTERRUPT: The player is looping. Advance the world — do not answer with the same stall dialogue.'
+    );
+  }
+  if (state.systemPersonality === 'dry-wit' || state.gmPersonality === 'dry-wit') {
+    lines.push(
+      'VOICE CHECK (Sarcastic Patch / Dry Wit): At most one dry aside when STATUS changes; never mock the player; numbers stay literal.'
+    );
+  }
   if (!alone || state.activeEncounter) {
     lines.push(
       'SPEAKER CONTINUITY: Named people in Presence who just spoke or attended stay awake and present this beat unless Time/Location changes. Do not open by treating them as a cot-bound sleeper who never stirs.'

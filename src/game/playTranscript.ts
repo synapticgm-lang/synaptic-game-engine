@@ -132,8 +132,8 @@ export function buildPlayTranscript(state: GameState): string {
 }
 
 /**
- * Clean story-only export for external LLM review (Gemini etc.).
- * Omits System/Warden chrome; keeps GM prose + player actions + options.
+ * Clean story export for external LLM review (Gemini etc.).
+ * Keeps GM prose + player + options + reasoned STATUS/XP lines (no full Warden dumps).
  */
 export function buildStoryReviewExport(
   state: GameState,
@@ -167,6 +167,7 @@ export function buildStoryReviewExport(
         'Score 1–10 and give short evidence for: (1) hook & stakes, (2) pace/chapter feel,',
         '(3) option relevance to the last beat, (4) continuity (people/places/kit),',
         '(5) voice consistency, (6) progression feel (quests/XP/travel), (7) would you keep playing?',
+        'STATUS/XP lines are included under each turn when present — use them for LitRPG scoring.',
         'List top 5 failure modes and top 5 strengths. Do not invent missing plot.',
       ].join(' '),
     '',
@@ -193,6 +194,22 @@ export function buildStoryReviewExport(
           if (label) lines.push(`- ${label}`);
         }
         lines.push('');
+      }
+      const sys = entry.systemLog;
+      if (Array.isArray(sys) && sys.length > 0) {
+        const useful = sys
+          .map((s) => String(s ?? '').trim())
+          .filter(Boolean)
+          .filter((s) =>
+            /XP Gained|Level|STATUS|Quest|item|loot|HP|MP|faction|discover|combat/i.test(s)
+            && !/^Warden:/i.test(s)
+          )
+          .slice(0, 16);
+        if (useful.length) {
+          lines.push('**STATUS / System:**');
+          for (const s of useful) lines.push(`- ${s}`);
+          lines.push('');
+        }
       }
     } else if (role === 'player') {
       lines.push(`**Player:** ${content || '_(empty)_'}`);

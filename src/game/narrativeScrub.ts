@@ -109,9 +109,14 @@ function personSlotFromScene(state: GameState): GenericSlot {
 
 function guessGenericReplacement(name: string, state: GameState): GenericSlot {
   if (/\b(keep|tower|fort|castle|hall|manor|estate|temple|cathedral)\b/i.test(name)) {
-    // "Nearby" is for things that are not here — do not relocate the current interior.
+    // Prefer the live location name over opaque "this place".
     if (atNamedInterior(state)) {
-      return { afterThe: 'this place', afterA: 'this place', bare: 'this place' };
+      const loc = (state.currentLocation ?? '').trim();
+      if (loc.length >= 2) {
+        const bare = /^the\s+/i.test(loc) ? loc : `the ${loc}`;
+        return { afterThe: bare, afterA: bare.replace(/^the\s+/i, 'a '), bare };
+      }
+      return { afterThe: 'the building', afterA: 'a building', bare: 'the building' };
     }
     return { afterThe: 'the nearby building', afterA: 'a nearby building', bare: 'a nearby building' };
   }

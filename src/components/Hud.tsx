@@ -8,9 +8,9 @@ import { effectiveWriterTier, isTestLabEnabled } from '../game/testLab';
 import { equippedSetLabel, equippedSetName } from '../game/uiTheme';
 
 /** Visible after a hard refresh -- if this is missing, Vercel is still serving the 16 Aug bundle. */
-export const HUD_BUILD_STAMP = '2026-08-26t';
+export const HUD_BUILD_STAMP = '2026-08-26u';
 const HUD_BUILD_TITLE =
-  'Debug 2026-08-26t - XP progression: code level-ups + FO3 sandbox drip (hub/meet/landmark) + headless XP parity';
+  'Debug 2026-08-26u - Gemini P0: them/this-place scrub, NPC your→his, clone+stagnation interrupts, quest pressure, STATUS in Gemini export';
 
 interface Props {
   state: GameState;

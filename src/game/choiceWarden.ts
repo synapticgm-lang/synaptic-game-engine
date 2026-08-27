@@ -6,7 +6,7 @@
  */
 
 import type { GameState } from './types';
-import { choiceNamesUnnarratedObject } from './choicePipeline';
+import { choiceNamesUnnarratedObject, isBrokenChoiceLabel } from './choicePipeline';
 
 /**
  * References that require story context to exist.
@@ -126,6 +126,10 @@ export function filterInventedContextChoices(
   return choices.filter((choice) => {
     if (isBarePcNameChoice(choice, pcName)) {
       console.log(`[Choice Filter] Removed bare PC-name choice: "${choice}"`);
+      return false;
+    }
+    if (isBrokenChoiceLabel(choice)) {
+      console.log(`[Choice Filter] Removed broken-label choice: "${choice}"`);
       return false;
     }
     // Matrix-40: scrub damage turned NPCs into "the official" and polluted pads.

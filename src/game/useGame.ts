@@ -229,6 +229,7 @@ import { canSoftOffer, withUpdatedHookArc } from './hookArc';
 import {
   beatFingerprint,
   isSameBeat,
+  isNearClone,
   buildBeatNoveltyRetryBlock,
 } from './beatFingerprint';
 import { formatCombatReceipt, formatFleeReceipt } from './combatReceipt';
@@ -2637,15 +2638,17 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
           && (intentForMandate.kind === 'observe'
             || intentForMandate.kind === 'search'
             || isRoomLayoutExploreAsk(sanitizedInput));
-        // Free: same-beat novelty alone is a soft issue — don't burn a second slow GM call
-        // UNLESS the player Travel/Return action must land (matrix-40 theater travel).
+        // Free: moderate same-beat alone is soft — don't burn a second slow GM call
+        // UNLESS Travel lands OR near-verbatim clone (≥0.85) which must retry.
         const travelAction = !!parseTravelDestination(
           sanitizedInput,
           liveCurrent.campaignBibleId
         );
+        const nearClone = isNearClone(probeText, liveCurrent.recentBeatFingerprints ?? []);
         const freeSoftSameBeatOnly =
           effectiveWriterTier(settingsRef.current.subscriptionTier ?? 'free') === 'free'
           && sameBeat
+          && !nearClone
           && !travelAction
           && storyHasBody(probeText)
           && obligationCoverage.ok
@@ -2658,6 +2661,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
             || isUnresolvedActionNarrative(sanitizedInput, probeText, intentForMandate, previousGm)
             || !obligationCoverage.ok
             || sameBeat
+            || nearClone
             || probeLocks.some((l) => l.kind === 'weapon' || l.kind === 'cleared'));
         // Fact-lock slips are cut locally after this. Only burn extra GM calls when
         // the turn did not resolve the player's action at all, or returned no story.
@@ -3321,6 +3325,11 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
           playerInput: sanitizedInput,
           groundedWeapons: groundedWeaponNames(workingState),
           playerName: workingState.character?.name ?? liveCurrent.character?.name,
+          presentNames: [
+            ...(workingState.sceneFacts?.present ?? []),
+            ...(liveCurrent.sceneFacts?.present ?? []),
+            ...((workingState.npcMemories ?? liveCurrent.npcMemories ?? []).map((n) => n.npcName)),
+          ].filter(Boolean),
         });
         cleanText = scrubOfficialPlaceholder(cleanText, workingState);
       }

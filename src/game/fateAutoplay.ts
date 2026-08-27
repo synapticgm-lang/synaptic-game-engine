@@ -80,7 +80,7 @@ import { scrubOfficialPlaceholder } from './narrativeScrub';
 import { applySandboxXpAwards } from './sandboxXp';
 import { applyCharacterXpGain } from './characterXp';
 import { filterSystemLogForEngine, reconcileXpStatusLines } from './systemLog';
-import { beatFingerprint, isSameBeat, buildBeatNoveltyRetryBlock, beatSimilarity } from './beatFingerprint';
+import { beatFingerprint, isSameBeat, isNearClone, buildBeatNoveltyRetryBlock, beatSimilarity } from './beatFingerprint';
 import { enforcePerspective } from './perspectiveWarden';
 import { buildPlayTranscript, buildStoryReviewExport, resolveOfferedChoices, withOfferedChoices } from './playTranscript';
 import {
@@ -776,18 +776,22 @@ Do NOT print dice notation or CODE ENFORCED.
     error = gmResult.failKind
       ? `GM empty/fail (${gmResult.failKind})`
       : 'GM returned empty content';
-    gmText = `(autoplay) The moment hangs — try again. [${error}]`;
+    const loc = state.currentLocation?.trim() || 'this stretch of street';
+    gmText =
+      `(autoplay) The beat stalls at ${loc}. Something shifts — a footstep, a call, a door — ` +
+      `forcing the moment forward. [${error}]`;
   }
 
-  // One novelty retry when Free recycles the same beat (matrix-40 repetition), especially on Travel.
+  // Novelty retry on same-beat OR near-verbatim clone (merchant ×20 loops).
   const travelHubEarly = parseTravelDestination(playerInput, meta.bibleId);
+  const fps = state.recentBeatFingerprints ?? [];
   if (
     !error
     && storyHasBody(gmText)
-    && isSameBeat(gmText, state.recentBeatFingerprints ?? [])
+    && (isSameBeat(gmText, fps) || isNearClone(gmText, fps))
     && transportRetries === 0
   ) {
-    const novelty = buildBeatNoveltyRetryBlock(state.recentBeatFingerprints ?? []);
+    const novelty = buildBeatNoveltyRetryBlock(fps);
     const retryPayload = buildResolutionUserPayload({
       mandateBlock: turnMandate.block,
       playerAction: playerInput,
@@ -801,7 +805,7 @@ Do NOT print dice notation or CODE ENFORCED.
     });
     const retry = await callGmWithRetries(state, retryPayload, settings);
     transportRetries += retry.transportRetries + 1;
-    if (retry.text.trim() && (!isSameBeat(retry.text, state.recentBeatFingerprints ?? []) || travelHubEarly)) {
+    if (retry.text.trim() && (!isSameBeat(retry.text, fps) || travelHubEarly)) {
       gmText = retry.text;
       if (!error) error = undefined;
     }
@@ -835,6 +839,11 @@ Do NOT print dice notation or CODE ENFORCED.
     playerInput,
     groundedWeapons: groundedWeaponNames(working),
     playerName: working.character?.name ?? state.character?.name,
+    presentNames: [
+      ...(working.sceneFacts?.present ?? []),
+      ...(state.sceneFacts?.present ?? []),
+      ...((working.npcMemories ?? state.npcMemories ?? []).map((n) => n.npcName)),
+    ].filter(Boolean),
   });
   cleanText = scrubOfficialPlaceholder(cleanText, working);
   const leak = scanAndScrubLeaks(cleanText);

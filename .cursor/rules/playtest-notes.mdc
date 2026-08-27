@@ -9,9 +9,13 @@ John is playtesting live. Collect issues here. Do not implement until he asks fo
 
 ## Open
 
-_(none — 2026-08-26r shipped empty-GM retry + official scrub + travel lands)_
+_(none — 2026-08-26u shipped Gemini P0 quality gates)_
 
-**Residual risk (26r):** Unknown provider errors now auto-retry once (same as empty/timeout/network) — auth/client_bug still never retry. Travel arrival prepends a leave/reach line when GM stays in the old room; deeper hub encounter banks still thin. “the official” scrub keeps the word when sceneFacts already name an official/registrar. Free same-beat novelty retry still skipped except on Travel actions. Matrix-40×100 verification run is the next quality gate.
+**Residual risk (26u):** Near-clone retry (≥0.85) still burns one extra Free GM call when merchant loops — cost vs quality trade. Stagnation interrupt is prompt-rail only (no guaranteed combat spawn). Quest pressure needs a revealed/active quest in save. `them` scrub covers common orphans — novel mush may still slip. Gemini packs now include STATUS XP but not full Warden dumps. Programmatic ambush / threat-decay timers deferred (P2). Inventory LLM invent still post-hoc scrub, not hard bag lock.
+
+**Residual risk (26t):** XP drip amounts are FO3-lite — long storyfollower loiter can still under-level vs combat-heavy play. Headless uses sandbox XP; live path also levels after sandbox. Matrix verification of 26t XP still pending.
+
+**Residual risk (26r):** Unknown provider errors now auto-retry once (same as empty/timeout/network) — auth/client_bug still never retry. Travel arrival prepends a leave/reach line when GM stays in the old room; deeper hub encounter banks still thin. “the official” scrub keeps the word when sceneFacts already name an official/registrar. Free same-beat soft-skip still applies for moderate similarity only — near-clones retry (26u). Matrix-40×100 verification run is the next quality gate.
 
 **Residual risk (26q):** Headless Fate path is Ship A (callGm + wardens + structural + choice pad) — not a full React `sendAction` clone (no comic/memorable/UI repair banner). Matrix-40 defers 2 RPG premades when capping at 10/mode. Concurrent play OK if separate saves; autoplay Test Lab is process-local only.
 
@@ -53,7 +57,9 @@ _(none — 2026-08-26r shipped empty-GM retry + official scrub + travel lands)_
 
 ## Done (already shipped)
 
-- **2026-08-26r Empty GM retry + official scrub + travel lands:** Matrix-40 quality review P0. Expand `classifyTurnFailure` (5xx/OpenRouter/upstream → empty); auto-retry `unknown` once; scrub “the official” → stranger/panel (scene-grounded); filter official-placeholder choice pads; `ensureTravelArrivalProse` + headless hub snap (was theater-only in autoplay); Free same-beat novelty retry still fires on Travel. Vitest `playtest26rQualityRepair`. HUD + index.html `2026-08-26r`. Client-only. Next: matrix-40 × 100 verification.
+- **2026-08-26u Gemini P0 quality gates:** Stop stranger→them; scrub `this place`/`presence of them`; NPC `your head/eyes` reverse; reject broken choice labels; choice spam ≤1 in 8 turns; near-clone (≥0.85) forces novelty retry even on Free; SNAPSHOT quest focus + stagnation interrupt + dry-wit voice check; Gemini export includes STATUS/XP; headless empty-GM pushes scene forward; presentNames passed into prose warden. Vitest `playtest26uQualityGates`. HUD + index.html `2026-08-26u`. Client-only (gm-turn SNAPSHOT via client packet).
+
+- **2026-08-26t XP progression:** Code level-ups after sandbox XP; FO3 drip (hub/meet/landmark); headless XP parity; strip GM invent XP/level. HUD stamp 26t.
 
 - **2026-08-26q Fate autoplay harness:** `scripts/fate-autoplay/` headless Fate's Pick (seedable) + callGm/wardens path; process-local Test Lab unlimited for autoplay only; `--matrix-40` (10×4 modes); JSONL+transcript+summary; ActionBar uses shared `pickFateChoice`. HUD + index.html `2026-08-26q`. Run: `npm run fate-autoplay -- --matrix-40 --turns 20`.
 

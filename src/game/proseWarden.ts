@@ -286,7 +286,7 @@ export function scrubStrangerArtifact(
     n.length >= 2 && !/\b(?:you|your|panel|system|status)\b/i.test(n)
   );
   
-  // Determine contextual replacement
+  // Determine contextual replacement — NEVER bare "them" (breaks options + immersion).
   const replacement = (() => {
     if (namedPerson) return namedPerson.toLowerCase();
     if (alone) return 'the panel';
@@ -296,34 +296,53 @@ export function scrubStrangerArtifact(
     if (/\b(?:innkeeper|bartender|server)\b/i.test(text)) return 'the innkeeper';
     if (/\b(?:priest|chanter|cleric)\b/i.test(text)) return 'the priest';
     if (/\b(?:captain|sergeant|officer)\b/i.test(text)) return 'the officer';
-    // Generic fallback
-    return 'them';
+    // Keep "the stranger" — better English than pronoun mush.
+    return 'the stranger';
   })();
-  
+
   let next = text;
-  
-  // Fix possessive: "the stranger's" → "their" or named possessive
-  const possessiveRepl = namedPerson 
-    ? `${namedPerson.toLowerCase()}'s` 
-    : (replacement === 'them' ? 'their' : `${replacement}'s`);
-  next = next.replace(/\bthe stranger(?:'s|'s)\b/gi, possessiveRepl);
-  
-  // Fix subject usage: "the stranger X" where X is verb
-  if (replacement !== 'them') {
-    next = next.replace(/\bthe stranger\b/gi, replacement);
-  } else {
-    // "the stranger" → "them" requires rephrasing to avoid grammar break
-    next = next.replace(/\bthe stranger\s+(is|was|seems?|appears?|stands?|sits?|waits?|watches?)\b/gi, 'they $1');
-    next = next.replace(/\bthe stranger\b/gi, 'them');
-  }
-  
-  // Fix article collisions that may have been created
-  next = next.replace(/\b(?:a|an)\s+them\b/gi, 'them');
-  next = next.replace(/\bthe\s+them\b/gi, 'them');
-  // Subject-verb after figure→them scrub
-  next = next.replace(/\bthem\s+(feels?|seems?|appears?|looks?|stands?|sits?|waits?)\b/gi, 'they $1');
-  next = next.replace(/\bthem\s+(is|was)\b/gi, 'they $1');
-  
+
+  const possessiveRepl = namedPerson
+    ? `${namedPerson.toLowerCase()}'s`
+    : `${replacement}'s`;
+  next = next.replace(/\bthe stranger(?:'s|’s)\b/gi, possessiveRepl);
+  next = next.replace(/\bthe stranger\b/gi, replacement);
+
+  return next;
+}
+
+/**
+ * Kill unresolved placeholder nouns left by claim-scrub / bad generation
+ * ("this place", orphan "them", "imposing this place").
+ */
+export function scrubPlaceholderNouns(text: string, currentLocation?: string): string {
+  if (!text) return text;
+  const loc = (currentLocation ?? '').trim();
+  const locShort = loc
+    ? loc.replace(/^(the\s+)/i, '').split(/[,—–-]/)[0]!.trim().slice(0, 48)
+    : '';
+  const place = locShort ? `the ${locShort}` : 'the building';
+  let next = text;
+  next = next.replace(/\bthe imposing this place\b/gi, `the imposing mass of ${place}`);
+  next = next.replace(/\bstructure of this place\b/gi, `structure of ${place}`);
+  next = next.replace(/\bspires of this place\b/gi, `spires of ${place}`);
+  next = next.replace(/\bedifice of this place\b/gi, `edifice of ${place}`);
+  next = next.replace(/\bgrand entrance of this place\b/gi, `grand entrance of ${place}`);
+  next = next.replace(/\bApproach this place\b/gi, `Approach ${place}`);
+  next = next.replace(/\btowards? this place\b/gi, `toward ${place}`);
+  next = next.replace(/\bback towards? this place\b/gi, `back toward ${place}`);
+  // Orphan object "them" (not "ask them" / "tell them" / "with them").
+  next = next.replace(/\bpresence of them\b/gi, 'presence ahead');
+  next = next.replace(/\bopen them\b/gi, 'the open way');
+  next = next.replace(/\bassume is them\b/gi, 'assume lies ahead');
+  next = next.replace(/\brumored them\b/gi, 'rumored place');
+  next = next.replace(/\bcluster of them\b/gi, 'cluster of debris');
+  next = next.replace(/\bsurfaces of them\b/gi, 'surfaces of the items');
+  next = next.replace(/\btwo them\b/gi, 'two items');
+  next = next.replace(/\ba few them\b/gi, 'a few items');
+  next = next.replace(/\bof them in your (bag|pack|pockets?)\b/gi, 'of your items in your $1');
+  next = next.replace(/\bthe them\b/gi, 'them');
+  next = next.replace(/\b(?:a|an)\s+them\b/gi, 'someone');
   return next;
 }
 
@@ -332,6 +351,20 @@ export function scrubPronounSubjectSlips(text: string): string {
   if (!text) return text;
   let next = text;
   next = next.replace(/([.!?]\s+)your eyes\b/g, '$1Their eyes');
+  // NPC agent + your body kit (perspective over-rewrite).
+  next = next.replace(
+    /\b(He|She)\s+((?:[^.]|\.(?!\s)){0,120}?)\byour (head|eyes|face|hand|hands|shoulders?|gaze)\b/gi,
+    (_m, who: string, mid: string, body: string) => {
+      const poss = String(who).toLowerCase() === 'she' ? 'her' : 'his';
+      return `${who} ${mid}${poss} ${body}`;
+    }
+  );
+  next = next.replace(
+    /\b(They)\s+((?:[^.]|\.(?!\s)){0,120}?)\byour (head|eyes|face|hand|hands|shoulders?|gaze)\b/gi,
+    (_m, who: string, mid: string, body: string) => `${who} ${mid}their ${body}`
+  );
+  next = next.replace(/\btilted your head\b/gi, 'tilted their head');
+  next = next.replace(/\binclines? your head\b/gi, 'inclines their head');
   next = next.replace(/\bthem feels\b/gi, 'it feels');
   next = next.replace(/\bthem emerges\b/gi, 'they emerge');
   next = next.replace(/\bthem emerge\b/gi, 'they emerge');
@@ -624,6 +657,7 @@ export function applyProseWarden(text: string, ctx?: ProseWardenContext): string
   next = scrubUiQuestVerbs(next, alone);
   next = scrubSpeakerPlaceholder(next, alone);
   next = scrubStrangerArtifact(next, ctx?.presentNames ?? [], alone);
+  next = scrubPlaceholderNouns(next, ctx?.currentLocation);
   next = scrubPrematureSecrets(next);
   next = scrubInventedAlonePresence(next, alone);
   next = scrubInteriorOneRoomLie(

@@ -108,14 +108,37 @@ export function stripChoiceDecorators(choice: string): string {
   return choice.replace(/^[\s✨🎲⭐️•\-–—]+/u, '').trim();
 }
 
-/** Strip stray "What do you do?" glued onto button labels. */
+/** Strip stray "What do you do?" glued onto button labels; fix article mash. */
 export function sanitizeChoiceLabel(choice: string): string {
   return stripChoiceDecorators(choice)
     .replace(/\s*[—–-]\s*what do you do\??\s*$/i, '')
     .replace(/\s+what do you do\??\s*$/i, '')
     .replace(/^\s*what do you do\??\s*$/i, '')
+    .replace(/\byour the\b/gi, 'the')
+    .replace(/\bthe the\b/gi, 'the')
+    .replace(/\byour a\b/gi, 'a')
     .replace(/\s{2,}/g, ' ')
     .trim();
+}
+
+/**
+ * Broken English / unresolved scrub placeholders that must never be offered.
+ * Allows natural "ask them" / "follow them" when "them" is a real pronoun object.
+ */
+export function isBrokenChoiceLabel(choice: string): boolean {
+  const c = choice.trim();
+  if (!c) return true;
+  if (/\bthis place\b/i.test(c)) return true;
+  if (/\bCheck your the\b|\byour the\b|\bthe the\b/i.test(c)) return true;
+  if (/\bthe merchant,?\s+(dark|opaque|flour|berries|junk)\b/i.test(c)) return true;
+  if (/\b(presence of them|open them|assume is them|rumored them|cluster of them|surfaces of them|two them|a few them)\b/i.test(c)) {
+    return true;
+  }
+  // Orphan "them" as a noun (not "ask/tell/join/follow/help/warn them").
+  if (/\bthem\b/i.test(c) && !/\b(?:ask|tell|join|follow|help|warn|thank|stop|ignore|watch|leave)\s+them\b/i.test(c)) {
+    return true;
+  }
+  return false;
 }
 
 /** Alone arrival or empty-ruin prose — no crowd / voices / speaker inventions. */
@@ -730,29 +753,30 @@ function deduplicateChoicesAcrossRecentTurns(
   state: GameState
 ): string[] {
   if (!state.recentChoices || state.recentChoices.length === 0) return choices;
-  
-  // Build set of recently offered choices (last 5 turns)
-  const recentWindow = state.recentChoices.slice(-5);
-  const recentOffered = new Set<string>();
+
+  // Count labels across last 8 turns — block spam after 2 offers.
+  const recentWindow = state.recentChoices.slice(-8);
+  const recentCounts = new Map<string, number>();
   for (const entry of recentWindow) {
     for (const choice of entry.choices) {
-      recentOffered.add(choice.toLowerCase().trim());
+      const key = choice.toLowerCase().trim();
+      recentCounts.set(key, (recentCounts.get(key) ?? 0) + 1);
     }
   }
-  
-  // Filter out recently offered choices (with exemptions)
-  return choices.filter(choice => {
+
+  return choices.filter((choice) => {
     const normalized = choice.toLowerCase().trim();
-    
+
     // Exempt Travel / hub-specific choices (always allow)
-    if (/\btravel to\b/i.test(choice)) return true;
-    if (/\b(?:contract hall|weighing cup|west wall|lowmarket|harbor|undercroft)\b/i.test(choice)) return true;
-    
+    if (/\btravel (?:to|toward|towards)\b/i.test(choice)) return true;
+    if (/\b(?:contract hall|weighing cup|west wall|lowmarket|harbor|undercroft)\b/i.test(choice)) {
+      return true;
+    }
+
     // Exempt opening establishment chips (can appear early)
-    if (/\b(?:clothes|phone|purse|bag|kit)\b/i.test(choice) && state.turn <= 5) return true;
-    
-    // Filter if recently offered
-    return !recentOffered.has(normalized);
+    if (/\b(?:clothes|phone|purse|bag|kit)\b/i.test(choice) && (state.turn ?? 0) <= 5) return true;
+
+    return (recentCounts.get(normalized) ?? 0) < 2;
   });
 }
 
