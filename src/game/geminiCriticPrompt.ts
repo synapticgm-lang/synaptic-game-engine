@@ -150,6 +150,7 @@ These mistakes appeared in prior reviews — do **not** repeat them:
 5. **Blame only the agent** — If the player repeats "Walk the battlement" 30× and the GM never interrupts, that is **also** an engine pacing failure.
 6. **Wrong genre bar** — Do not judge a ${engine.label} run with a different mode's scorecard (e.g. failing PYOA for missing XP panels).
 7. **One seed ≠ all modes** — This file is one bible × one voice × one agent × one engine mode. Say what generalizes vs what might be agent-specific.
+8. **Turn bounds** — When Meta says **${turns}** turns, cite only **Turn 1…${turns}**. Impossible turn numbers invalidate the finding.
 
 ## Competitive bar
 

@@ -1,9 +1,10 @@
 /**
  * 4 engine modes × 3 AI agent modes × N turns.
- * Writes progress log + combined Gemini critic pack + improvement telemetry.
+ * Writes progress log + **4 mode-specific Gemini packs** (primary) + improvement telemetry.
+ * Combined 12-run file is optional (--combined-gemini, default off).
  *
  *   npm run fate-autoplay -- --modes-agents-300
- *   (or invoke this file via vite-node)
+ *   npm run fate-autoplay -- --split-modes-gemini --batch-dir scripts/fate-autoplay/runs/modes-agents-300t-...
  */
 import { appendFileSync, existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
@@ -13,7 +14,7 @@ import {
   type AiAgentMode,
   type EngineMode,
 } from '../../src/game/fateAutoplay';
-import { buildGeminiCriticPrompt } from '../../src/game/geminiCriticPrompt';
+import { MODES_AGENTS_BUILD_STAMP, writeModeGeminiPacks } from './buildModeGeminiPacks';
 
 type Cell = {
   engineMode: EngineMode;
@@ -70,13 +71,6 @@ function buildGrid(baseSeed: number): Cell[] {
     }
   }
   return cells;
-}
-
-function extractTranscriptBody(storyPath: string): string {
-  const raw = readFileSync(storyPath, 'utf8');
-  const idx = raw.search(/^## Transcript\s*$/m);
-  if (idx < 0) return raw;
-  return raw.slice(idx).replace(/^## Transcript\s*\n+/, '');
 }
 
 function summarizeRun(outDir: string, summaryPath: string): Record<string, unknown> {
@@ -176,7 +170,17 @@ export async function runModesAgentsBatch(opts: {
   dryRun?: boolean;
   /** Resume into an existing batch folder (skip completed cells). */
   resumeDir?: string;
-}): Promise<{ batchDir: string; combinedGemini: string; telemetryPath: string }> {
+  /** Optional combined 12-run Gemini file (default off — use per-mode packs). */
+  includeCombined?: boolean;
+  /** HUD / quality-governance stamp written into Gemini manifests. */
+  buildStamp?: string;
+}): Promise<{
+  batchDir: string;
+  telemetryPath: string;
+  indexPath: string;
+  modeFiles: Array<{ mode: string; feedCopy: string }>;
+  combinedGemini?: string;
+}> {
   installNodeShims();
   const batchId = opts.resumeDir
     ? opts.resumeDir.replace(/\\/g, '/').split('/').pop()!.replace(/^modes-agents-\d+t-/, '')
@@ -186,6 +190,23 @@ export async function runModesAgentsBatch(opts: {
     : join(opts.outRoot, `modes-agents-${opts.turns}t-${batchId}`);
   mkdirSync(batchDir, { recursive: true });
   writeFileSync(join(batchDir, 'batch.pid'), String(process.pid) + '\n');
+  if (!opts.resumeDir) {
+    writeFileSync(
+      join(batchDir, 'batch-manifest.json'),
+      JSON.stringify(
+        {
+          batchId,
+          buildStamp: opts.buildStamp ?? MODES_AGENTS_BUILD_STAMP,
+          turns: opts.turns,
+          baseSeed: opts.seed,
+          grid: buildGrid(opts.seed),
+          startedAt: new Date().toISOString(),
+        },
+        null,
+        2
+      ) + '\n'
+    );
+  }
   const progressLog = join(batchDir, 'progress.log');
   const log = (msg: string) => {
     const line = `[${new Date().toISOString()}] ${msg}`;
@@ -250,15 +271,16 @@ export async function runModesAgentsBatch(opts: {
       if (existing) {
         runDirs[i] = existing;
         if (!telemetryRows[i]) {
-          telemetryRows[i] = {
-            index: i + 1,
-            engineMode: cell.engineMode,
-            bibleId: cell.bibleId,
-            personality: cell.personality,
-            agent: cell.agent,
-            seed: cell.seed,
-            ...summarizeRun(existing, join(existing, 'summary.json')),
-          };
+        telemetryRows[i] = {
+          index: i + 1,
+          engineMode: cell.engineMode,
+          bibleId: cell.bibleId,
+          personality: cell.personality,
+          agent: cell.agent,
+          seed: cell.seed,
+          outDir: existing,
+          ...summarizeRun(existing, join(existing, 'summary.json')),
+        };
         }
         log(`[${label}] SKIP completed → ${existing}`);
         continue;
@@ -301,6 +323,7 @@ export async function runModesAgentsBatch(opts: {
           personality: cell.personality,
           agent: cell.agent,
           seed: cell.seed,
+          outDir: summary.outDir,
           ...row,
         };
         const tel = row.telemetry as Record<string, unknown>;
@@ -332,94 +355,13 @@ export async function runModesAgentsBatch(opts: {
     disableAutoplayTestLab();
   }
 
-  // Combined Gemini pack
-  const combinedParts: string[] = [];
-  combinedParts.push(`# SynapticGM combined critic pack — ${grid.length} runs × ${opts.turns} turns`);
-  combinedParts.push('');
-  combinedParts.push('## Batch meta');
-  combinedParts.push('');
-  combinedParts.push(`- Batch id: ${batchId}`);
-  combinedParts.push(`- Grid: 4 engine modes × 3 AI agents × ${opts.turns} turns = ${grid.length} runs`);
-  combinedParts.push(`- Code baseline: 2026-08-26v+ (client at batch start)`);
-  combinedParts.push(`- Flagships: litrpg/summoned-pact, dnd/cursed-keep, rpg/cape-district-vigil, pyoa/thornferry-road`);
-  combinedParts.push(`- Exported: ${new Date().toISOString()}`);
-  combinedParts.push('');
-  combinedParts.push('## Critic prompt (apply to EVERY run below)');
-  combinedParts.push('');
-  combinedParts.push(
-    buildGeminiCriticPrompt({
-      bibleTitle: 'Combined 12-run modes×agents matrix',
-      engineMode: 'litrpg',
-      personalityId: 'cold-system',
-      aiAgentMode: 'storyfollower',
-      turns: opts.turns,
-      seed: opts.seed,
-      level: 'see each run Meta',
-      xpLine: 'see each run Meta',
-      codeBaseline: '2026-08-26v+; compare across modes/agents in this file',
-      errorNote: 'Per-run errors in each section Meta / telemetry JSON',
-    })
-  );
-  combinedParts.push('');
-  combinedParts.push(
-    [
-      '### Extra instructions for this COMBINED file',
-      '',
-      '1. Score **each of the 12 runs separately** (short scorecard table per run), then one cross-run synthesis.',
-      '2. Always name **Game mode** + **agent mode** in each run verdict.',
-      '3. Compare agents within the same engine mode (maxlevel vs storyfollower vs completionist).',
-      '4. Compare engine modes on shared failure classes (them-mush, loops, XP chrome, combat pressure).',
-      '5. End with: top 12 fixes ranked for the next engineering batch, tagged by which modes/agents they hit.',
-      '6. End with `REVIEW_COMPLETE`.',
-      '',
-    ].join('\n')
-  );
-
   const denseTelemetry = telemetryRows.filter(Boolean);
-  for (let i = 0; i < grid.length; i++) {
-    const cell = grid[i]!;
-    const dir = runDirs[i];
-    if (!dir) continue;
-    const storyPath = join(dir, 'story-for-gemini.md');
-    const body = existsSync(storyPath)
-      ? extractTranscriptBody(storyPath)
-      : '_(missing story-for-gemini.md)_';
-    const row = (telemetryRows[i] ?? denseTelemetry.find((r) => Number(r.index) === i + 1)) as
-      | Record<string, unknown>
-      | undefined;
-    const tel = (row?.telemetry ?? {}) as Record<string, unknown>;
-    combinedParts.push('---');
-    combinedParts.push('');
-    combinedParts.push(
-      `## Run ${String(i + 1).padStart(2, '0')} — ${cell.engineMode} / ${cell.bibleId} / ${cell.agent}`
-    );
-    combinedParts.push('');
-    combinedParts.push('### Run meta');
-    combinedParts.push('');
-    combinedParts.push(`- Game mode: **${cell.engineMode}**`);
-    combinedParts.push(`- Bible: ${cell.bibleId}`);
-    combinedParts.push(`- Personality: ${cell.personality}`);
-    combinedParts.push(`- AI agent mode: **${cell.agent}**`);
-    combinedParts.push(`- Seed: ${cell.seed}`);
-    combinedParts.push(`- Turns: ${opts.turns}`);
-    combinedParts.push(`- End Level/XP: ${tel.levelEnd ?? '?'} / ${tel.xpEnd ?? '?'}`);
-    combinedParts.push(
-      `- Telemetry: STATUS blocks=${tel.statusBlocks ?? 0}, them≈${tel.themWordHits ?? 0}, this-place≈${tel.thisPlaceHits ?? 0}, [Uncommon] them=${tel.uncommonThemHits ?? 0}, gate-queue opts≈${tel.gateQueueOptionHits ?? 0}, Earth-junk opts≈${tel.earthJunkOptionHits ?? 0}, max intent streak=${tel.maxPlayerIntentStreak ?? 0}, errors=${row?.errorCount ?? '?'}`
-    );
-    combinedParts.push(`- Source dir: \`${dir}\``);
-    combinedParts.push('');
-    combinedParts.push('### Transcript');
-    combinedParts.push('');
-    combinedParts.push(body.trimEnd());
-    combinedParts.push('');
-  }
-
-  const combinedGemini = join(batchDir, 'gemini-COMBINED-12x' + opts.turns + 't.md');
-  writeFileSync(combinedGemini, combinedParts.join('\n').trimEnd() + '\n');
+  const buildStamp = opts.buildStamp ?? MODES_AGENTS_BUILD_STAMP;
 
   const telemetryPath = join(batchDir, 'improvement-telemetry.json');
   const improvementNotes = {
     batchId,
+    buildStamp,
     turnsPerRun: opts.turns,
     runCount: grid.length,
     generatedAt: new Date().toISOString(),
@@ -459,143 +401,35 @@ export async function runModesAgentsBatch(opts: {
   };
   writeFileSync(telemetryPath, JSON.stringify(improvementNotes, null, 2) + '\n');
 
-  // Convenience copy at runs root
-  const feedCopy = join(opts.outRoot, `gemini-COMBINED-modes-agents-${opts.turns}t-LATEST.md`);
-  writeFileSync(feedCopy, readFileSync(combinedGemini));
+  // Primary: 4 mode-specific Gemini packs + GEMINI-FEED-INDEX.md
+  const telRows = denseTelemetry.map((r) => ({
+    ...r,
+    outDir: (r.outDir as string | undefined) ?? runDirs[Number(r.index) - 1],
+  })) as import('./buildModeGeminiPacks').TelRow[];
 
-  // Also write 4 mode-only packs (smaller Gemini uploads; correct genre bar per file).
-  const modePackLines: string[] = [
-    '# Gemini feed queue — mode-split + combined',
-    '',
-    `Batch: \`${batchId}\` · ${opts.turns} turns × 3 agents per mode`,
-    '',
-    '| Mode | Feed file |',
-    '|---|---|',
-  ];
-  for (const mode of ['litrpg', 'dnd', 'rpg', 'pyoa'] as EngineMode[]) {
-    const modeRows = denseTelemetry.filter((r) => r.engineMode === mode) as Array<{
-      index: number;
-      engineMode: EngineMode;
-      bibleId: string;
-      personality: string;
-      agent: string;
-      seed: number;
-      outDir?: string;
-      errorCount?: number;
-      telemetry?: Record<string, unknown>;
-    }>;
-    if (!modeRows.length) continue;
-    const first = modeRows[0]!;
-    const modeParts: string[] = [];
-    const modeLabel =
-      mode === 'litrpg'
-        ? 'LitRPG'
-        : mode === 'dnd'
-          ? 'Tabletop Fantasy'
-          : mode === 'rpg'
-            ? 'Story RPG'
-            : 'Pick Your Own Adventure';
-    modeParts.push(
-      `# SynapticGM critic pack — ${modeLabel} only (${modeRows.length} agents × ${opts.turns} turns)`
-    );
-    modeParts.push('');
-    modeParts.push('## Batch meta');
-    modeParts.push('');
-    modeParts.push(`- Batch id: ${batchId}`);
-    modeParts.push(`- **This file = one engine mode only:** **${modeLabel}** (\`${mode}\`)`);
-    modeParts.push(`- Agents: ${modeRows.map((r) => r.agent).join(', ')}`);
-    modeParts.push(`- Flagship bible: ${first.bibleId}`);
-    modeParts.push(`- Personality: ${first.personality}`);
-    modeParts.push(`- Code baseline: 2026-08-26v+`);
-    modeParts.push(`- Exported: ${new Date().toISOString()}`);
-    modeParts.push('');
-    modeParts.push('## Critic prompt (apply to EVERY run below)');
-    modeParts.push('');
-    modeParts.push(
-      buildGeminiCriticPrompt({
-        bibleTitle: `${modeLabel} — ${first.bibleId} (3-agent mode pack)`,
-        engineMode: mode,
-        personalityId: first.personality,
-        aiAgentMode: 'storyfollower',
-        turns: opts.turns,
-        seed: 'see each run Meta',
-        level: 'see each run Meta',
-        xpLine: 'see each run Meta',
-        codeBaseline: `2026-08-26v+; THIS FILE IS ${mode} ONLY`,
-        errorNote: 'Per-run errors in each section Meta',
-      })
-    );
-    modeParts.push('');
-    modeParts.push(
-      [
-        `### Extra instructions for this **${modeLabel}-only** file`,
-        '',
-        `1. Score each of the ${modeRows.length} agent runs separately, then one within-mode synthesis.`,
-        `2. Always name Game mode = ${modeLabel} + agent mode.`,
-        '3. Compare maxlevel vs storyfollower vs completionist.',
-        `4. Judge ${modeLabel} expectations only.`,
-        '5. Cite only turn numbers that exist (300 turns/run — no T400+).',
-        '6. End with top 8 fixes for this mode + `REVIEW_COMPLETE`.',
-        '',
-      ].join('\n')
-    );
-    for (let mi = 0; mi < modeRows.length; mi++) {
-      const row = modeRows[mi]!;
-      const dir = (row.outDir as string) || runDirs[Number(row.index) - 1];
-      const storyPath = dir ? join(dir, 'story-for-gemini.md') : '';
-      const body =
-        dir && existsSync(storyPath)
-          ? extractTranscriptBody(storyPath)
-          : '_(missing story-for-gemini.md)_';
-      const tel = (row.telemetry ?? {}) as Record<string, unknown>;
-      modeParts.push('---');
-      modeParts.push('');
-      modeParts.push(
-        `## Run ${String(mi + 1).padStart(2, '0')} of ${modeRows.length} — ${row.engineMode} / ${row.bibleId} / ${row.agent}`
-      );
-      modeParts.push('');
-      modeParts.push('### Run meta');
-      modeParts.push('');
-      modeParts.push(`- Game mode: **${row.engineMode}**`);
-      modeParts.push(`- Bible: ${row.bibleId}`);
-      modeParts.push(`- Personality: ${row.personality}`);
-      modeParts.push(`- AI agent mode: **${row.agent}**`);
-      modeParts.push(`- Seed: ${row.seed}`);
-      modeParts.push(`- Turns: ${opts.turns}`);
-      modeParts.push(`- End Level/XP: ${tel.levelEnd ?? '?'} / ${tel.xpEnd ?? '?'}`);
-      modeParts.push(
-        `- Telemetry: STATUS=${tel.statusBlocks ?? 0}, them≈${tel.themWordHits ?? 0}, this-place≈${tel.thisPlaceHits ?? 0}, streak=${tel.maxPlayerIntentStreak ?? 0}, errors=${row.errorCount ?? '?'}`
-      );
-      modeParts.push(`- Source dir: \`${dir ?? '?'}\``);
-      modeParts.push('');
-      modeParts.push('### Transcript');
-      modeParts.push('');
-      modeParts.push(body.trimEnd());
-      modeParts.push('');
-    }
-    const modeFile = join(batchDir, `gemini-${mode}-3x${opts.turns}t.md`);
-    const modeText = modeParts.join('\n').trimEnd() + '\n';
-    writeFileSync(modeFile, modeText);
-    const modeFeed = join(opts.outRoot, `gemini-${mode}-modes-agents-${opts.turns}t-LATEST.md`);
-    writeFileSync(modeFeed, modeText);
-    modePackLines.push(`| **${mode}** | \`gemini-${mode}-modes-agents-${opts.turns}t-LATEST.md\` |`);
-    log(`Mode Gemini (${mode}): ${modeFeed}`);
-  }
-  modePackLines.push('');
-  modePackLines.push(
-    `**Combined 12-run:** \`gemini-COMBINED-modes-agents-${opts.turns}t-LATEST.md\``
-  );
-  modePackLines.push('');
-  modePackLines.push('Upload **one mode file per Gemini chat**.');
-  modePackLines.push('');
-  writeFileSync(join(opts.outRoot, 'GEMINI-FEED-INDEX.md'), modePackLines.join('\n'));
+  const { modeFiles, indexPath, combinedGemini } = writeModeGeminiPacks({
+    batchId,
+    batchDir,
+    outRoot: opts.outRoot,
+    turns: opts.turns,
+    rows: telRows,
+    grid,
+    buildStamp,
+    baseSeed: opts.seed,
+    includeCombined: opts.includeCombined === true,
+    log,
+  });
 
-  log(`Combined Gemini: ${combinedGemini}`);
-  log(`Feed copy: ${feedCopy}`);
   log(`Telemetry: ${telemetryPath}`);
-  log('Modes×agents batch complete');
+  log('Modes×agents batch complete — upload one mode file per Gemini chat (see GEMINI-FEED-INDEX.md)');
 
-  return { batchDir, combinedGemini, telemetryPath };
+  return {
+    batchDir,
+    telemetryPath,
+    indexPath,
+    modeFiles: modeFiles.map((f) => ({ mode: f.mode, feedCopy: f.feedCopy })),
+    combinedGemini,
+  };
 }
 
 /** CLI entry when executed directly */
@@ -608,8 +442,9 @@ async function main(): Promise<void> {
   const dry = argv.includes('--dry-run');
   const resumeIdx = argv.indexOf('--resume-dir');
   const resumeDir = resumeIdx >= 0 ? argv[resumeIdx + 1] : undefined;
+  const includeCombined = argv.includes('--combined-gemini');
   const outRoot = join(process.cwd(), 'scripts', 'fate-autoplay', 'runs');
-  await runModesAgentsBatch({ turns, seed, outRoot, dryRun: dry, resumeDir });
+  await runModesAgentsBatch({ turns, seed, outRoot, dryRun: dry, resumeDir, includeCombined });
 }
 
 const isDirect =

@@ -21,6 +21,7 @@ import {
   type FateAutoplayCliOpts,
 } from '../../src/game/fateAutoplay';
 import { runModesAgentsBatch } from './modesAgents300';
+import { regenerateModeGeminiPacks } from './splitModesGemini';
 
 /** Minimal localStorage for Node (Test Lab / capacity / settings never touch John's browser). */
 function installNodeShims(): void {
@@ -62,7 +63,10 @@ Options:
   --ai-tier free|mid|high
   --pick-mode fate|first-pad
   --ai-agent-mode MODE default|maxlevel|storyfollower|completionist (goal-oriented AI)
-  --modes-agents-300   4 modes × 3 AI agents × 300 turns → combined Gemini + telemetry
+  --modes-agents-300   4 modes × 3 AI agents × 300 turns → 4 mode Gemini packs + telemetry
+  --split-modes-gemini Regenerate mode Gemini packs from --batch-dir (no re-run)
+  --batch-dir PATH     Batch folder for --split-modes-gemini
+  --combined-gemini    Also write optional combined 12-run file (default off)
   --resume-dir PATH    Resume modes-agents batch (skip completed cells)
   --night-storyforge   ~7h batch @ observed ~1.6s/turn: 3×500 AI spines + 3× matrix-40×100 (~13.5k turns)
   --matrix-40          John's 40 plan (10×4 modes; every premade once when ≤10)
@@ -270,6 +274,17 @@ async function main(): Promise<void> {
         outRoot: opts.outRoot,
         dryRun: opts.dryRun,
         resumeDir: opts.resumeDir,
+        includeCombined: opts.combinedGemini,
+      });
+    } else if (opts.splitModesGemini) {
+      const batchDir =
+        opts.batchDir ??
+        opts.resumeDir ??
+        join(opts.outRoot, 'modes-agents-300t-2026-08-27T12-07-17-166Z');
+      await regenerateModeGeminiPacks({
+        batchDir,
+        outRoot: opts.outRoot,
+        includeCombined: opts.combinedGemini,
       });
     } else if (opts.nightStoryforge) {
       await runNightStoryforge(opts, log, batchStarted, progressLog);

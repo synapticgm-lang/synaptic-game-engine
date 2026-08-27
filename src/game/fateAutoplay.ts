@@ -136,10 +136,16 @@ export type FateAutoplayCliOpts = {
    * 3×500 AI-agent spines + 3× matrix-40×100 ≈ 13,500 turns (~6.5h).
    */
   nightStoryforge: boolean;
-  /** 4 engine modes × 3 AI agents × turns (default 300) → combined Gemini + telemetry. */
+  /** 4 engine modes × 3 AI agents × turns (default 300) → 4 mode Gemini packs + telemetry. */
   modesAgents300: boolean;
+  /** Regenerate mode Gemini packs from an existing batch (no re-run). */
+  splitModesGemini?: boolean;
+  /** Also write optional combined 12-run Gemini file (default off). */
+  combinedGemini?: boolean;
   /** Resume an existing modes-agents batch folder (skip completed cells). */
   resumeDir?: string;
+  /** Batch folder for --split-modes-gemini. */
+  batchDir?: string;
   outRoot: string;
   characterName: string;
 };
@@ -1281,7 +1287,10 @@ export function parseFateArgs(argv: string[]): FateAutoplayCliOpts {
     else if (a === '--matrix-limit') out.matrixLimit = Math.max(0, Number(next()) || 0);
     else if (a === '--night-storyforge' || a === '--night-sf') out.nightStoryforge = true;
     else if (a === '--modes-agents-300' || a === '--modes-agents') out.modesAgents300 = true;
+    else if (a === '--split-modes-gemini') out.splitModesGemini = true;
+    else if (a === '--combined-gemini') out.combinedGemini = true;
     else if (a === '--resume-dir') out.resumeDir = next();
+    else if (a === '--batch-dir') out.batchDir = next();
     else if (a === '--out') out.outRoot = next();
     else if (a === '--name') out.characterName = next();
     else if (a === '--help' || a === '-h') {
