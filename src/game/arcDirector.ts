@@ -27,6 +27,15 @@ import {
   detectSocialMilestone,
 } from './socialMilestoneLedger';
 import { pushBeatStateTx, type BeatStateTxExtras } from './stateTx';
+import {
+  initEncounterTerminal,
+  tickEncounterTerminal,
+  forceClearIfStale,
+} from './encounterTerminalFsm';
+import {
+  lockPyoaBranchOnCrisis,
+  exhaustDelayPads,
+} from './pyoaBranchLedger';
 
 export interface ArcDirectorState {
   committedBeatIds?: string[];
@@ -35,9 +44,13 @@ export interface ArcDirectorState {
   turnsSinceCombatReceipt?: number;
   pressureClock?: PressureClockState;
   npcTopics?: Record<string, string[]>;
+  /** 29a — topic id → committed branch label */
+  topicCommits?: Record<string, string>;
   socialMilestones?: string[];
   gateDispositions?: Record<string, number>;
   choiceFingerprints?: import('./choiceCompiler').ChoiceFingerprintRecord[];
+  /** 29a — paired encounterCleared receipts */
+  encounterClearedReceipts?: import('./encounterTerminalFsm').EncounterClearedReceipt[];
 }
 
 export interface ArcDirectorResult {
@@ -56,18 +69,23 @@ function committedSet(state: GameState): Set<string> {
 function hubSkirmishEncounter(state: GameState): ActiveEncounter {
   const lvl = state.character?.level ?? 1;
   const hp = 12 + lvl * 4;
-  return {
-    name: state.engineMode === 'litrpg' ? 'Pact-Hunter Skirmisher' : 'Keep Wraith',
-    level: lvl,
-    hp,
-    maxHp: hp,
-    armorClass: 11 + lvl,
-    strength: 12,
-    dexterity: 12,
-    constitution: 12,
-    xpReward: 25 + lvl * 5,
-    goldReward: 5 + lvl * 2,
-  };
+  const name = state.engineMode === 'litrpg' ? 'Pact-Hunter Skirmisher' : 'Keep Wraith';
+  return initEncounterTerminal(
+    {
+      name,
+      level: lvl,
+      hp,
+      maxHp: hp,
+      armorClass: 11 + lvl,
+      strength: 12,
+      dexterity: 12,
+      constitution: 12,
+      xpReward: 25 + lvl * 5,
+      goldReward: 5 + lvl * 2,
+    },
+    state,
+    { forcedSpawnKey: name, source: 'arcDirector' }
+  );
 }
 
 function completeQuestObjective(
@@ -212,6 +230,8 @@ export function formatArcStatusReceipts(result: ArcDirectorResult): string[] {
       else lines.push(r);
     } else if (r.startsWith('Encounter:')) {
       lines.push(r);
+    } else if (r.startsWith('Encounter cleared:')) {
+      lines.push(r);
     } else if (r.startsWith('Social:')) {
       const m = r.match(/Social: \+(\d+) XP \((.+)\)/);
       if (m) lines.push(`XP Gained: ${m[1]} (${m[2]})`);
@@ -232,7 +252,25 @@ export function runArcDirectorBeforeGm(
   let beatCommitted = false;
   let beatId: string | undefined;
 
+  // 29a — tick / force-clear active encounter before new beat commits
+  if (working.activeEncounter) {
+    const tick = tickEncounterTerminal(working, playerInput);
+    working = tick.state;
+    systemReceipts.push(...tick.receipts);
+    if (!working.activeEncounter) {
+      mandates.push('ENCOUNTER TERMINAL: Threat cleared — unlock travel and ordinary pads next beat.');
+    }
+  } else {
+    const stale = forceClearIfStale(working, 50);
+    if (stale.forcedTerminal) {
+      working = stale.state;
+      systemReceipts.push(...stale.receipts);
+    }
+  }
+
   working = recordPyoaBranchChoice(working, playerInput);
+  working = lockPyoaBranchOnCrisis(working);
+  working = exhaustDelayPads(working, playerInput);
   const pyoaMandate = formatPyoaBranchMandate(working);
   if (pyoaMandate) mandates.push(pyoaMandate);
 

@@ -1,0 +1,64 @@
+{
+  "results": [
+    {
+      "input": "Encounter Terminal FSM for LitRPG and DnD, including idle→engaged→resolving→terminal, failed flee/parley and engaged-turn caps, terminal code commits, encounterSpawn/encounterCleared receipts, ArcDirector forced-spawn interaction, deterministic fallback, T50 gate, lifecycle invariants, idempotency, precedence, and test cases.",
+      "output": {
+        "confidence": 0.95,
+        "draft_file": "https://private-us-east-1.manuscdn.com/sessionFile/5WP8AMRY6MjJ3pDWRsK2hR/sandbox/8oNRX3pfKwM8Ph8rWjwrYg_1787851593919_na1fn_L2hvbWUvdWJ1bnR1L2VuY291bnRlcl90ZXJtaW5hbF9mc21fcGFja2V0.md?Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly9wcml2YXRlLXVzLWVhc3QtMS5tYW51c2Nkbi5jb20vc2Vzc2lvbkZpbGUvNVdQOEFNUlk2TWpKM3BEV1JzSzJoUi9zYW5kYm94LzhvTlJYM3BmS3dNOFBoOHJXandyWWdfMTc4Nzg1MTU5MzkxOV9uYTFmbl9MMmh2YldVdmRXSjFiblIxTDJWdVkyOTFiblJsY2w5MFpYSnRhVzVoYkY5bWMyMWZjR0ZqYTJWMC5tZCIsIkNvbmRpdGlvbiI6eyJEYXRlTGVzc1RoYW4iOnsiQVdTOkVwb2NoVGltZSI6MTc4OTQzMDQwMH19fV19\u0026Key-Pair-Id=K2QY5QTL8JSY6C\u0026Signature=MEYCIQDV6bxbQ8dKZWRYCMqmrJmfOYfx9efs6ZfomO-oLEQiVgIhALnN4u9Les6SBJe6t0DVE-ykEM2UFUrGTcqYs~XePfv1",
+        "key_decisions": "Implement 4-state FSM (idle, engaged, resolving, terminal); Enforce hard caps on flee, parley, and max turns; Require encounterCleared receipt alongside encounterSpawn; Implement deterministic fallback for GM failures; Enforce T50 evaluation gate for combat modes",
+        "packet_title": "Encounter Terminal FSM Architecture Spec"
+      },
+      "error": ""
+    },
+    {
+      "input": "Entity scrub-scope constitution plus STATUS prompt-leak firewall, including root-cause hypotheses constrained by evidence, semantic-role allowlists, protected registries, pre/post-GM order with typedEntityValidator and proseWarden, collateral-token zero targets, debug-only retention, player-safe fallbacks, leak tag pattern policy, Unicode/case/spacing normalization, and tests.",
+      "output": {
+        "confidence": 0.95,
+        "draft_file": "https://private-us-east-1.manuscdn.com/sessionFile/VMhjrebT9te3u4wCSPgw5B/sandbox/ZzhEDw0tEaykLMUCNlX7Xm_1787851591274_na1fn_L2hvbWUvdWJ1bnR1L2FyY2hpdGVjdHVyZV9wYWNrZXQ.md?Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly9wcml2YXRlLXVzLWVhc3QtMS5tYW51c2Nkbi5jb20vc2Vzc2lvbkZpbGUvVk1oanJlYlQ5dGUzdTR3Q1NQZ3c1Qi9zYW5kYm94L1p6aEVEdzB0RWF5a0xNVUNObFg3WG1fMTc4Nzg1MTU5MTI3NF9uYTFmbl9MMmh2YldVdmRXSjFiblIxTDJGeVkyaHBkR1ZqZEhWeVpWOXdZV05yWlhRLm1kIiwiQ29uZGl0aW9uIjp7IkRhdGVMZXNzVGhhbiI6eyJBV1M6RXBvY2hUaW1lIjoxNzg5NDMwNDAwfX19XX0_\u0026Key-Pair-Id=K2QY5QTL8JSY6C\u0026Signature=MEUCIQCGNFunRxOEVODRaz2Vox8NqzUfMcEBnwyl~ZgSGIou1AIgcptvHhVEn7fTbPVMp7kt-cE~U1WRxoHlvLt96W0j1cI_",
+        "key_decisions": "Implement typedEntityValidator for pre-GM entity tagging; Implement proseWarden for post-GM context-aware scrubbing; Enforce zero-tolerance policy for collateral token hits; Retain stripped tags in turns.jsonl only",
+        "packet_title": "Entity Scrub-Scope Constitution \u0026 STATUS Leak Firewall"
+      },
+      "error": ""
+    },
+    {
+      "input": "Encounter-aware ChoiceCompiler, including forbidden pad families during active encounters, action-family legality, flee/parley exhaustion, mode-specific legal edges from BeatContract registry, minimum meaningful choice behavior, fallback precedence, terminal synchronization, CSV-ready edge-matrix fields, and tests.",
+      "output": {
+        "confidence": 0.95,
+        "draft_file": "https://private-us-east-1.manuscdn.com/sessionFile/Tqy3CiOpTqshW0yGFh8fSY/sandbox/vy1fIU9IalUWxRPH8Uenwa_1787851593835_na1fn_L2hvbWUvdWJ1bnR1L0VuY291bnRlci1hd2FyZV9DaG9pY2VDb21waWxlcg.md?Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly9wcml2YXRlLXVzLWVhc3QtMS5tYW51c2Nkbi5jb20vc2Vzc2lvbkZpbGUvVHF5M0NpT3BUcXNoVzB5R0ZoOGZTWS9zYW5kYm94L3Z5MWZJVTlJYWxVV3hSUEg4VWVud2FfMTc4Nzg1MTU5MzgzNV9uYTFmbl9MMmh2YldVdmRXSjFiblIxTDBWdVkyOTFiblJsY2kxaGQyRnlaVjlEYUc5cFkyVkRiMjF3YVd4bGNnLm1kIiwiQ29uZGl0aW9uIjp7IkRhdGVMZXNzVGhhbiI6eyJBV1M6RXBvY2hUaW1lIjoxNzg5NDMwNDAwfX19XX0_\u0026Key-Pair-Id=K2QY5QTL8JSY6C\u0026Signature=MEQCIH2B9RQtJHyKhvRhwxZ5LnwqC~xYui9m9U5yrSfZ1J6xAiAhpkz8UPtKFwv0RQXEBYPABXBLgHpn8V9hCoWfIssvrw__",
+        "key_decisions": "Pad families forbidden under activeEncounter;Remove flee/parley after threshold;Mode-specific legal combat edges from beat registry;Deterministic fallback when GM fails mid-encounter;Sync with Encounter Terminal FSM for encounterCleared receipt",
+        "packet_title": "Encounter-aware ChoiceCompiler Architecture Packet"
+      },
+      "error": ""
+    },
+    {
+      "input": "NPC topic exhaustion to committed branch plus PYOA Thornferry ledger enforcement, including fresh→engaged→exhausted→committed branch, Cape District leverage/feeds commits, Aldous/Oskar non-reversion after combat terminal, crisis→branchLocked semantics, Millstone Charter item use, Buy time/Call for help exhaustion, overseer escalation, receipt structures, and T30 tests.",
+      "output": {
+        "confidence": 0.95,
+        "draft_file": "https://private-us-east-1.manuscdn.com/sessionFile/ebSAQHMznFhH33lql884Ya/sandbox/QGE3lA5OJu3agZXMLRm56a_1787851587857_na1fn_L2hvbWUvdWJ1bnR1L3BhY2tldA.md?Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly9wcml2YXRlLXVzLWVhc3QtMS5tYW51c2Nkbi5jb20vc2Vzc2lvbkZpbGUvZWJTQVFITXpuRmhIMzNscWw4ODRZYS9zYW5kYm94L1FHRTNsQTVPSnUzYWdaWE1MUm01NmFfMTc4Nzg1MTU4Nzg1N19uYTFmbl9MMmh2YldVdmRXSjFiblIxTDNCaFkydGxkQS5tZCIsIkNvbmRpdGlvbiI6eyJEYXRlTGVzc1RoYW4iOnsiQVdTOkVwb2NoVGltZSI6MTc4OTQzMDQwMH19fV19\u0026Key-Pair-Id=K2QY5QTL8JSY6C\u0026Signature=MEUCIDcMyapB9lxn9I2mCX2SGHR6lYupan-E7KxkuTRY71ebAiEAwa2tHvnHLtcmUSxmZUHGGTy-fq9c5YWVW29MdJV~rnY_",
+        "key_decisions": "Topic exhaustion follows fresh -\u003e engaged -\u003e exhausted -\u003e committed branch FSM; Cape District leverage commits concrete stages; Aldous/Oskar encounters enforce non-reversion after combat terminal; Crisis receipt must lock mutually exclusive branch; Millstone Charter item use commits branch stage; Exhausted Buy time / Call for help forces fork or overseer escalation",
+        "packet_title": "NPC Topic Exhaustion and PYOA Ledger Enforcement"
+      },
+      "error": ""
+    },
+    {
+      "input": "Free 12-turn hook contract and honest score-ceiling model, including one-of success receipts by T12, spawn-only purgatory failure by T15, per-mode pointer-card beat scripts for LitRPG/DnD/RPG/PYOA, success/fail examples, 29a vs 29b vs three-batch portfolio ranges, assumptions, and why 8/10 is not a one-batch promise.",
+      "output": {
+        "confidence": 0.95,
+        "draft_file": "https://private-us-east-1.manuscdn.com/sessionFile/JIonD0OuENFDh1ynebKPUZ/sandbox/hBaq0K6djg2nBnhdHU1Qyw_1787851593959_na1fn_L2hvbWUvdWJ1bnR1L1N5bmFwdGljR01fc2NvcmVfYm9vc3RfcG9zdF8yOGNfMjAyNi0wOC0yN19UN19UOV9wYWNrZXQ.md?Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly9wcml2YXRlLXVzLWVhc3QtMS5tYW51c2Nkbi5jb20vc2Vzc2lvbkZpbGUvSklvbkQwT3VFTkZEaDF5bmViS1BVWi9zYW5kYm94L2hCYXEwSzZkamcybkJuaGRIVTFReXdfMTc4Nzg1MTU5Mzk1OV9uYTFmbl9MMmh2YldVdmRXSjFiblIxTDFONWJtRndkR2xqUjAxZmMyTnZjbVZmWW05dmMzUmZjRzl6ZEY4eU9HTmZNakF5Tmkwd09DMHlOMTlVTjE5VU9WOXdZV05yWlhRLm1kIiwiQ29uZGl0aW9uIjp7IkRhdGVMZXNzVGhhbiI6eyJBV1M6RXBvY2hUaW1lIjoxNzg5NDMwNDAwfX19XX0_\u0026Key-Pair-Id=K2QY5QTL8JSY6C\u0026Signature=MEYCIQDwfMQQTloRk8sSVAMIBzYoZ63wwFILAoyqG1qP5B1hEAIhAL~DFDUP3IE2j3HqZUxB5i31EEPGPA7J4DKwPUyni-df",
+        "key_decisions": "No scrub-only batch; No prompt-only interrupt; No random ambush; No second LLM critic path; Retain ArcDirector spawn, beat commits, sealed manifest fallback, replay hash, and eval quarantine from 28c",
+        "packet_title": "Hook Contract and Score Model Packet"
+      },
+      "error": ""
+    },
+    {
+      "input": "Ranked implementation backlog and evaluation-harness gate additions, including IDs, P0/P1, provisional owner-file responsibilities without inventing repository paths, dependencies, test names, rollback/observability notes, JSON Schema design for resolution/branch/hook gates, quarantine compatibility, replay-hash requirements, cross-run bleed detection, and explicit non-goals.",
+      "output": {
+        "confidence": 0.95,
+        "draft_file": "https://private-us-east-1.manuscdn.com/sessionFile/8lK160n0UzItRYIilow2Gk/sandbox/XDIrVj5jfZg6yLl7cV5R9b_1787851599784_na1fn_L2hvbWUvdWJ1bnR1L1N5bmFwdGljR01fc2NvcmVfYm9vc3RfcG9zdF8yOGNfMjAyNi0wOC0yNy9hcmNoaXRlY3R1cmVfcGFja2V0.md?Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly9wcml2YXRlLXVzLWVhc3QtMS5tYW51c2Nkbi5jb20vc2Vzc2lvbkZpbGUvOGxLMTYwbjBVekl0UllJaWxvdzJHay9zYW5kYm94L1hESXJWajVqZlpnNnlMbDdjVjVSOWJfMTc4Nzg1MTU5OTc4NF9uYTFmbl9MMmh2YldVdmRXSjFiblIxTDFONWJtRndkR2xqUjAxZmMyTnZjbVZmWW05dmMzUmZjRzl6ZEY4eU9HTmZNakF5Tmkwd09DMHlOeTloY21Ob2FYUmxZM1IxY21WZmNHRmphMlYwLm1kIiwiQ29uZGl0aW9uIjp7IkRhdGVMZXNzVGhhbiI6eyJBV1M6RXBvY2hUaW1lIjoxNzg5NDMwNDAwfX19XX0_\u0026Key-Pair-Id=K2QY5QTL8JSY6C\u0026Signature=MEUCIQDKL8fzHUTIuIwMpr70KAK3j5bvAsl2biODqVUFiVuEQgIgNbz9CBE0NCQOEkF-pIu3PZQVfMpUPTK9KOQTjr2DLO4_",
+        "key_decisions": "Implement Encounter Terminal FSM with hard caps; Make ChoiceCompiler encounter-aware; Enforce PYOA branch ledger locks; Implement NPC topic exhaustion to branch commit; Implement STATUS prompt leak firewall; Implement entity scrub scope allowlist; Implement Free 12-turn hook contract",
+        "packet_title": "Ranked Backlog and Eval Gates"
+      },
+      "error": ""
+    }
+  ]
+}

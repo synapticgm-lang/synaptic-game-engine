@@ -339,6 +339,19 @@ export interface ActiveEncounter {
   constitution: number;
   xpReward: number;
   goldReward: number;
+  /** 29a Encounter Terminal FSM */
+  encounterId?: string;
+  phase?: 'engaged' | 'resolving' | 'terminal';
+  startedTurn?: number;
+  engagedTurnCount?: number;
+  failedFleeCount?: number;
+  failedParleyCount?: number;
+  maxEngagedTurns?: number;
+  maxFailedFlee?: number;
+  maxFailedParley?: number;
+  terminalOutcome?: 'escape' | 'victory' | 'defeat' | 'capture' | 'parleyResolved';
+  source?: string;
+  forcedSpawnKey?: string;
 }
 
 export interface OpeningEstablishment {

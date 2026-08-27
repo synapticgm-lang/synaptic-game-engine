@@ -8,6 +8,7 @@ import { filterCooldownChoices, type OptionCooldown } from './optionDiversityCon
 import { isTopicExhausted } from './npcTopicFsm';
 import { hubsForBibleId, matchHub } from './outdoorHubs';
 import { enumerateLegalEdges, edgesToChoiceLabels } from './choiceEdge';
+import { isEncounterEngaged, fleeAvailable, parleyAvailable } from './encounterTerminalFsm';
 
 export type ChoiceFingerprintFamily =
   | 'walk_away'
@@ -175,7 +176,28 @@ export function compileChoices(
   const legalEdges = enumerateLegalEdges(state);
   const edgeLabels = edgesToChoiceLabels(legalEdges);
 
+  const engaged = isEncounterEngaged(state);
   let filtered = choices.filter((c) => {
+    const lower = c.toLowerCase();
+    if (engaged) {
+      // 29a combat pad lock — no travel / merchant / Earth junk / generic hub inspect
+      if (/\b(travel toward|go to|head to|browse|merchant|shop|earth junk|phone|headphones|leatherman|keys from earth)\b/.test(lower)) {
+        notes.push(`Encounter lock: ${c.slice(0, 32)}`);
+        return false;
+      }
+      if (/\b(inspect|examine|check|study)\b/.test(lower) && !/\b(enemy|threat|wraith|hunter|wound|blade|guard)\b/.test(lower)) {
+        notes.push(`Encounter lock inspect: ${c.slice(0, 32)}`);
+        return false;
+      }
+      if (/\b(flee|run away|escape|retreat)\b/.test(lower) && !fleeAvailable(state.activeEncounter)) {
+        notes.push('Flee exhausted');
+        return false;
+      }
+      if (/\b(parley|negotiate)\b/.test(lower) && !parleyAvailable(state.activeEncounter)) {
+        notes.push('Parley exhausted');
+        return false;
+      }
+    }
     const family = classifyChoiceFamily(c);
     if (family !== 'generic' && familyOnCooldown(fingerprints, family, turn)) {
       notes.push(`Cooldown family: ${family}`);
@@ -222,7 +244,9 @@ export function compileChoices(
     if (!supplements.length) {
       const mandate = state.arcDirector?.lastMandate ?? '';
       if (state.activeEncounter) {
-        supplements.push('Press the attack', 'Try to flee', 'Parley');
+        supplements.push('Press the attack');
+        if (fleeAvailable(state.activeEncounter)) supplements.push('Try to flee');
+        if (parleyAvailable(state.activeEncounter)) supplements.push('Parley');
       } else if (mandate.includes('crisis') || state.engineMode === 'pyoa') {
         supplements.push('Choose the risky fork', 'Buy time', 'Call for help');
       } else if (state.engineMode === 'litrpg') {

@@ -107,7 +107,53 @@ function personSlotFromScene(state: GameState): GenericSlot {
   return { afterThe: 'the stranger', afterA: 'a stranger', bare: 'the stranger' };
 }
 
+
+/** 29a — names that must never be replaced with mark/panel/building generics. */
+export function buildProtectedEntityNames(state: GameState): Set<string> {
+  const names: string[] = [];
+  if (state.activeEncounter?.name) names.push(state.activeEncounter.name);
+  for (const n of state.sceneFacts?.present ?? []) {
+    if (typeof n === 'string') names.push(n);
+  }
+  for (const c of state.companions ?? []) {
+    if (c?.name) names.push(c.name);
+  }
+  for (const i of state.inventory ?? []) {
+    if (i?.name) names.push(i.name);
+  }
+  if (state.currentLocation) names.push(state.currentLocation);
+  if (state.locationSheet?.name) names.push(state.locationSheet.name);
+  for (const q of state.quests ?? []) {
+    if (q?.name) names.push(q.name);
+    for (const o of q?.objectives ?? []) {
+      if (o?.description) names.push(o.description);
+    }
+  }
+  names.push('Millstone Charter', 'Mask Scarf', 'Pact-Hunter', 'Keep Wraith', 'Circle Blessing');
+  const set = new Set<string>();
+  for (const n of names) {
+    const t = (n || '').trim();
+    if (t.length >= 2) set.add(t.toLowerCase());
+  }
+  return set;
+}
+
+function isProtectedName(name: string, protectedNames: Set<string>): boolean {
+  const lower = name.toLowerCase().trim();
+  if (protectedNames.has(lower)) return true;
+  for (const p of protectedNames) {
+    if (p.length >= 3 && (lower.includes(p) || p.includes(lower))) return true;
+  }
+  return false;
+}
+
 function guessGenericReplacement(name: string, state: GameState): GenericSlot {
+  const protectedNames = buildProtectedEntityNames(state);
+  if (isProtectedName(name, protectedNames)) {
+    const bare = /^the\s+/i.test(name.trim()) ? name.trim() : `the ${name.trim()}`;
+    return { afterThe: bare, afterA: bare.replace(/^the\s+/i, 'a '), bare };
+  }
+
   if (/\b(keep|tower|fort|castle|hall|manor|estate|temple|cathedral)\b/i.test(name)) {
     // Prefer the live location name over opaque "this place".
     if (atNamedInterior(state)) {
@@ -118,7 +164,14 @@ function guessGenericReplacement(name: string, state: GameState): GenericSlot {
       }
       return { afterThe: 'the building', afterA: 'a building', bare: 'the building' };
     }
-    return { afterThe: 'the nearby building', afterA: 'a nearby building', bare: 'a nearby building' };
+    {
+      const loc = (state.currentLocation ?? '').trim();
+      if (loc.length >= 2) {
+        const bare = /^the\s+/i.test(loc) ? loc : `the ${loc}`;
+        return { afterThe: bare, afterA: bare.replace(/^the\s+/i, 'a '), bare };
+      }
+      return { afterThe: 'the building', afterA: 'a building', bare: 'the building' };
+    }
   }
   if (/\b(street|road|avenue|lane|alley|plaza)\b/i.test(name)) {
     return { afterThe: 'the nearby street', afterA: 'a nearby street', bare: 'a nearby street' };
@@ -127,7 +180,9 @@ function guessGenericReplacement(name: string, state: GameState): GenericSlot {
     return { afterThe: 'the piece of gear', afterA: 'a piece of gear', bare: 'a piece of gear' };
   }
   if (/\b(blessing|mark|brand|sigil|seal|pact)\b/i.test(name)) {
-    return { afterThe: 'the mark', afterA: 'a mark', bare: 'the mark' };
+    {
+      return { afterThe: 'the sign', afterA: 'a sign', bare: 'the sign' };
+    }
   }
   if (/\b(court|order|covenant|compact|faction|guild|circle|keepers?|warden)\b/i.test(name)) {
     return { afterThe: 'the court', afterA: 'a court', bare: 'the court' };

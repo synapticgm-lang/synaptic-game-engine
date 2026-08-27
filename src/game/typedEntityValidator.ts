@@ -14,6 +14,14 @@
  */
 
 import type { GameState } from './types';
+import { buildProtectedEntityNames } from './narrativeScrub';
+
+/** Never emit these as automatic scrub replacements (29a constitution). */
+export const FORBIDDEN_SCRUB_REPLACEMENTS = [
+  'stranger', 'the stranger', 'building', 'nearby building', 'the nearby building',
+  'mark', 'the mark', 'panel', 'the panel', 'someone', 'something',
+] as const;
+
 
 export interface EntityReference {
   /** The pronoun or vague reference used */
@@ -236,36 +244,60 @@ export function rewriteInvalidReferences(
   report: InvalidReferenceReport
 ): string {
   let rewritten = prose;
-  
-  // Replace "them" with explicit name when there's a single NPC
-  if (report.themCount > 0 && context.presentNpcs.length === 1) {
-    const npc = context.presentNpcs[0];
-    rewritten = rewritten.replace(/\bthey\b/gi, npc);
-    rewritten = rewritten.replace(/\bthem\b/gi, npc);
-    rewritten = rewritten.replace(/\btheir\b/gi, `${npc}'s`);
-  } else if (report.themCount > 0 && context.lastSpeaker) {
-    const npc = context.lastSpeaker;
-    rewritten = rewritten.replace(/\bthey\b/gi, npc);
-    rewritten = rewritten.replace(/\bthem\b/gi, npc);
-    rewritten = rewritten.replace(/\btheir\b/gi, `${npc}'s`);
+  const preferred =
+    context.encounterName ||
+    context.presentNpcs[0] ||
+    context.lastSpeaker ||
+    context.inventoryItems[0] ||
+    context.locationName;
+
+  // Prefer canonical names — never introduce forbidden generics
+  if (report.themCount > 0 && preferred) {
+    rewritten = rewritten.replace(/\bthey\b/gi, preferred);
+    rewritten = rewritten.replace(/\bthem\b/gi, preferred);
+    rewritten = rewritten.replace(/\btheir\b/gi, `${preferred}'s`);
   }
-  
-  // Replace "this place" with location name
+
   if (report.thisPlaceCount > 0 && context.locationName) {
     rewritten = rewritten.replace(/\bthis place\b/gi, context.locationName);
     rewritten = rewritten.replace(/\bthe place\b/gi, context.locationName);
   }
-  
-  // Replace "the stranger" with explicit name
-  if (report.strangerCount > 0 && context.presentNpcs.length > 0) {
-    const npc = context.presentNpcs[0];
-    rewritten = rewritten.replace(/\bthe stranger\b/gi, npc);
-    rewritten = rewritten.replace(/\ba stranger\b/gi, npc);
-    rewritten = rewritten.replace(/\bthe figure\b/gi, npc);
-    rewritten = rewritten.replace(/\ba figure\b/gi, npc);
+
+  if (report.strangerCount > 0) {
+    const npc = context.encounterName || context.presentNpcs[0] || preferred;
+    if (npc && !FORBIDDEN_SCRUB_REPLACEMENTS.includes(npc.toLowerCase() as never)) {
+      rewritten = rewritten.replace(/\bthe stranger\b/gi, npc);
+      rewritten = rewritten.replace(/\ba stranger\b/gi, npc);
+      rewritten = rewritten.replace(/\bthe figure\b/gi, npc);
+      rewritten = rewritten.replace(/\ba figure\b/gi, npc);
+    }
   }
-  
+
+  // 29a — revert scrub collateral tokens when we have a bound entity
+  if (preferred) {
+    rewritten = rewritten.replace(/\bthe mark\b/gi, preferred);
+    rewritten = rewritten.replace(/\ba nearby building\b/gi, context.locationName || preferred);
+    rewritten = rewritten.replace(/\bthe nearby building\b/gi, context.locationName || preferred);
+    rewritten = rewritten.replace(/\bthe panel\b/gi, preferred);
+  }
+
   return rewritten;
+}
+
+/** Assert protected names still appear after scrub (telemetry helper). */
+export function assertProtectedEntitiesSurvived(
+  original: string,
+  scrubbed: string,
+  state: GameState
+): { ok: boolean; missing: string[] } {
+  const protectedNames = [...buildProtectedEntityNames(state)];
+  const missing: string[] = [];
+  for (const name of protectedNames) {
+    if (name.length < 4) continue;
+    const re = new RegExp(name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i');
+    if (re.test(original) && !re.test(scrubbed)) missing.push(name);
+  }
+  return { ok: missing.length === 0, missing };
 }
 
 /**

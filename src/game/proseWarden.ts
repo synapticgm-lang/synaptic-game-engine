@@ -225,11 +225,11 @@ export function scrubFigurePlaceholder(text: string, alone = false): string {
     .replace(/\bthe\s+glowing\s+a\s+figure\b/gi, 'the glowing mark')
     .replace(/\bglowing\s+a\s+figure\b/gi, 'glowing mark')
     .replace(/\bthe\s+war\s+with\s+(?:the\s+)?a\s+figure\b/gi, 'the war')
-    .replace(/\b(?:you\s+carry|carries)\s+the\s+a\s+figure\b/gi, 'you carry the mark')
+    .replace(/\b(?:you\s+carry|carries)\s+the\s+a\s+figure\b/gi, alone ? 'you carry the sealed bag' : 'you carry the sign')
     .replace(/\ba\s+figure\s+is\s+not\b/gi, 'that mark is not')
     .replace(/\bthe\s+a\s+figure\b/gi, personSlot)
     .replace(/\b(?:the\s+)?(?:glowing\s+)?a figure\b/gi, (hit) =>
-      /glowing/i.test(hit) ? 'the glowing mark' : personSlot
+      /glowing/i.test(hit) ? (alone ? 'the glowing panel' : personSlot) : personSlot
     );
 }
 

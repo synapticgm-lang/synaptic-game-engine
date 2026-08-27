@@ -110,6 +110,27 @@ export function advanceNpcTopicExhaustion(
     }
   }
 
+  // 29a — monotonic topic commit (no reopen)
+  const commitKey = key;
+  const commits = { ...(next.arcDirector?.topicCommits ?? {}) };
+  if (!commits[commitKey] && used.length >= 2) {
+    commits[commitKey] = mandate?.includes('quest stage')
+      ? 'questStageAdvanced'
+      : used.some((t) => /leverage|feed/i.test(t))
+        ? 'leverageAccepted'
+        : 'refusalFinal';
+    next = {
+      ...next,
+      arcDirector: {
+        ...next.arcDirector,
+        topicCommits: commits,
+      },
+    };
+    if (!mandate) {
+      mandate = `NPC TOPIC COMMIT (${npc}): ${commits[commitKey]} — do not reopen this dialogue basin.`;
+    }
+  }
+
   if (!mandate) {
     mandate = `NPC TOPIC SUITE (${npc}): Topics exhausted — close dialogue branch with consequence, not repeat lines.`;
   }

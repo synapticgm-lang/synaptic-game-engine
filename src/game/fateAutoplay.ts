@@ -1043,7 +1043,11 @@ Do NOT print dice notation or CODE ENFORCED.
     places: sandboxXp.places ?? working.places,
     sandboxAwardKeys: sandboxKeys,
     quests: updatedQuests,
-    activeEncounter: working.activeEncounter ?? arcState.activeEncounter ?? null,
+    // 29a — prefer working (may be null after terminal clear); only fall back if working omitted encounter
+    activeEncounter:
+      'activeEncounter' in working
+        ? (working.activeEncounter ?? null)
+        : (arcState.activeEncounter ?? null),
     arcDirector: arcState.arcDirector,
     runManifest: arcState.runManifest,
   };

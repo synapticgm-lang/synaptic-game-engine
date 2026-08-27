@@ -1,0 +1,106 @@
+NEW PROJECT. Unlimited run. Prefer complete markdown + CSV/JSON deliverables over chat summary.
+Filename prefix: SynapticGM_score_boost_post_28c_2026-08-27
+LIVE SynapticGM consumer app ONLY. No WOF. No licensed series. No second LLM critic path.
+
+# SynapticGM — POST-28c SCORE BOOST RESEARCH
+
+## Context you must accept as ground truth
+
+We shipped **Path A (2026-08-28c)**: ArcDirector pre-GM commits, BeatContract registry, ChoiceCompiler, npcTopicFsm, pyoaBranchLedger, eval harness liveness gates, sealed manifest fallback.
+
+**Worst-cell re-run (same seeds as 27w)** shows telemetry wins but **Gemini scores still ~1/10**:
+
+| Mode | 28c telemetry win | Gemini still ~1/10 because |
+|------|-------------------|----------------------------|
+| LitRPG s18 | them 28→9, combat receipt, arc XP T5 | Combat purgatory T9–300; `the mark` scrub ~173 hits |
+| DnD s69 | L2 235 XP, combat receipt, STATUS×110 | Wraith flee/parley loop; `nearby building` scrub |
+| RPG s137 | L3, crisis receipt | them 26→52 regression; leverage dialogue loop; prompt leaks |
+| PYOA s188 | crisis×3, XP 5→35 | Branch not locked; Buy time / Call for help loop |
+
+**Diagnosis:** Path A achieved **spawn liveness**, not **terminal authority**. Eval gates pass on `combat receipt=1` but players/readers need **encounter cleared**, **branch locked**, **bound nouns intact**, **Free T12 resolved delta**.
+
+## Your mission
+
+Design the **minimum next architectural batch (29a)** that moves external Gemini-style scores from **~1/10 toward 4.5–6.5/10** on worst cells — **not scrub-only**, not prompt-only.
+
+Deliver engineering-ready specs for:
+
+### A. Encounter Terminal FSM (LitRPG + DnD priority)
+
+- State machine: idle → engaged → resolving → terminal
+- Hard caps: failed flee, failed parley, max engaged turns
+- Terminal outcomes: escape / victory / defeat / capture / parleyResolved — **code commits**, GM narrates
+- Receipt types: `encounterSpawn` (existing) + **`encounterCleared`** (missing)
+- Interaction with ArcDirector forced spawns (Pact-Hunter, Keep Wraith)
+- Deterministic fallback when GM fails mid-encounter
+- Eval gate: fail spawn without clear by T50 on combat modes
+
+### B. Entity scrub scope (collateral fix)
+
+- Root cause analysis: why 28c created `the mark`, `nearby building`, `the panel`, RPG them regression
+- Allowlist policy: active mobs, inventory items, quest props, named NPCs, location titles — **never** replace with stranger/building/mark/panel
+- Integration with typedEntityValidator + proseWarden — pre/post GM order
+- Acceptance metrics per worst cell (target hits → 0 for collateral tokens)
+
+### C. Encounter-aware ChoiceCompiler
+
+- Pad families forbidden under activeEncounter (travel, merchant, Earth junk, generic inspect)
+- Pair with FSM: remove flee/parley after threshold
+- Mode-specific legal combat edges from beat registry
+
+### D. STATUS prompt leak firewall
+
+- Tag patterns to strip from player-facing STATUS ([GM_VOICE], [PYOA], [RenderFallbackUsed], [Campaign Contract], etc.)
+- Debug-only retention in turns.jsonl
+- Player-safe fallback copy spec
+
+### E. NPC topic exhaustion → branch commit (RPG + DnD)
+
+- FSM stages: fresh → engaged → exhausted → **committed branch**
+- Cape District leverage/feeds topic — concrete stage commits
+- DnD Aldous/Oskar — ensure combat terminal doesn't revert to dialogue purgatory
+
+### F. PYOA branch ledger enforcement (Thornferry)
+
+- Crisis receipt must **lock** mutually exclusive branch
+- Millstone Charter item-use → branch stage, not narrative-only
+- Exhaust Buy time / Call for help → forced fork or overseer escalation
+- Eval gate: crisis without branchLocked by T30 = fail
+
+### G. Free 12-turn hook contract
+
+- Define success for Free retention study: by turn 12 player must have **one** of:
+  - level tick OR quest stage-2 receipt OR resolved encounter OR PYOA branch lock
+- Explicit **failure** case: spawn-only combat that enters purgatory by T15 = hook NO
+- Per-mode T1–12 beat scripts (pointer cards, not prose scripts)
+
+## Required deliverables
+
+| ID | Deliverable | Format |
+|----|-------------|--------|
+| T1 | Executive summary — why 28c didn't move Gemini | md |
+| T2 | Encounter Terminal FSM spec (states, transitions, receipts, edge cases) | md + mermaid |
+| T3 | Entity allowlist / scrub scope constitution | md |
+| T4 | ChoiceCompiler encounter lock rules per mode | md + csv edge matrix |
+| T5 | STATUS leak firewall pattern list | md |
+| T6 | NPC topic + PYOA branch enforcement specs | md |
+| T7 | Free T12 hook contract + per-mode success/fail examples | md |
+| T8 | Ranked implementation backlog (IDs, owner files, P0/P1, test names) | csv + md |
+| T9 | Honest score ceiling model — 29a / 29b / three-batch | md (table) |
+| T10 | Eval harness gate additions (resolution + branch) | json schema |
+| T11 | Unknowns + evidence requests | md |
+| T12 | What NOT to do (explicit rejects) | md |
+
+## Constraints
+
+- **Reject:** scrub-only batch, prompt-only interrupt, random ambush, second LLM critic, default stronger Free model, stagnation Mid writer before terminal FSM
+- **Retain from 28c:** ArcDirector spawn, beat commits, sealed manifest fallback, replay hash, eval quarantine
+- **Honest ceiling:** state clearly whether 6/10 portfolio average is achievable in one batch vs 8/10
+- Cite evidence from attached worst-cell transcripts — flag Gemini cross-run bleed
+
+## Success criteria for this research
+
+John can hand T2 + T8 to engineering and ship **29a** without another architecture debate.
+If research concludes engineering draft (`score-boost-plan-post-28c-2026-08-27.md`) is sufficient, say so explicitly and list only the gaps to close.
+
+Empty sections = failure. Deliver bundle zip manifest.

@@ -11,6 +11,8 @@ export interface PyoaBranchLedger {
   committedPaths?: string[];
   charterUses?: number;
   branchClosed?: boolean;
+  /** 29a mutually exclusive lock id */
+  branchLocked?: string | false;
 }
 
 export function initPyoaBranchLedger(): PyoaBranchLedger {
@@ -39,8 +41,10 @@ export function recordPyoaBranchChoice(state: GameState, playerInput: string): G
       ...ledger,
       activeBranch: 'millstone-charter',
       charterUses: uses,
-      branchClosed: uses >= 3,
-      committedPaths: [...(ledger.committedPaths ?? []), path].slice(-24),
+      // 29a — charter use commits branch lock (idempotent)
+      branchLocked: ledger.branchLocked || 'millstone-commit',
+      branchClosed: true,
+      committedPaths: [...(ledger.committedPaths ?? []), path, 'locked:millstone-commit'].slice(-24),
     };
   } else if (/\bbetray\b/.test(lower)) {
     ledger = {
@@ -76,3 +80,74 @@ export function formatPyoaBranchMandate(state: GameState): string | null {
   }
   return null;
 }
+
+export type PyoaLockedBranchId =
+  | 'help-overseer'
+  | 'burn-charter'
+  | 'sell-to-pell'
+  | 'millstone-commit'
+  | 'ally-path'
+  | 'solo-road';
+
+/** 29a — crisis activity must lock one mutually exclusive branch. */
+export function lockPyoaBranchOnCrisis(state: GameState): GameState {
+  if (state.engineMode !== 'pyoa') return state;
+  let ledger = state.pyoaBranchLedger ?? initPyoaBranchLedger();
+  if (ledger.branchLocked) return state;
+
+  const crisisBeats = (state.arcDirector?.committedBeatIds ?? []).filter((id) =>
+    /crisis|branch/i.test(id)
+  );
+  const crisisCount = crisisBeats.length + (ledger.charterUses ?? 0);
+  if (crisisCount < 1 && state.turn < 12) return state;
+
+  // Prefer charter commitment; else force help-overseer by T12 crisis pressure
+  let locked: PyoaLockedBranchId = 'help-overseer';
+  if ((ledger.charterUses ?? 0) >= 1 || ledger.activeBranch === 'millstone-charter') {
+    locked = 'millstone-commit';
+  } else if (ledger.activeBranch === 'ally-path') {
+    locked = 'ally-path';
+  } else if (ledger.activeBranch === 'solo-road') {
+    locked = 'solo-road';
+  } else if (state.turn >= 12 || crisisCount >= 2) {
+    locked = 'help-overseer';
+  } else {
+    return state;
+  }
+
+  ledger = {
+    ...ledger,
+    branchLocked: locked,
+    branchClosed: true,
+    activeBranch: locked === 'millstone-commit' ? 'millstone-charter' : ledger.activeBranch,
+    committedPaths: [...(ledger.committedPaths ?? []), `locked:${locked}`].slice(-24),
+  };
+  return { ...state, pyoaBranchLedger: ledger };
+}
+
+/** Exhaust Buy time / Call for help into forced fork (29a). */
+export function exhaustDelayPads(state: GameState, playerInput: string): GameState {
+  if (state.engineMode !== 'pyoa') return state;
+  const lower = (playerInput || '').toLowerCase();
+  if (!/\b(buy time|call for help|wait)\b/.test(lower)) return state;
+  let ledger = state.pyoaBranchLedger ?? initPyoaBranchLedger();
+  const delays = (ledger.committedPaths ?? []).filter((p) => p.startsWith('delay:')).length + 1;
+  ledger = {
+    ...ledger,
+    committedPaths: [...(ledger.committedPaths ?? []), `delay:${delays}`].slice(-24),
+  };
+  if (delays >= 3 && !ledger.branchLocked) {
+    ledger = {
+      ...ledger,
+      branchLocked: 'help-overseer',
+      branchClosed: true,
+      committedPaths: [...(ledger.committedPaths ?? []), 'locked:help-overseer'].slice(-24),
+    };
+  }
+  return { ...state, pyoaBranchLedger: ledger };
+}
+
+export function isPyoaBranchLocked(state: GameState): boolean {
+  return !!(state.pyoaBranchLedger?.branchLocked || state.pyoaBranchLedger?.branchClosed);
+}
+

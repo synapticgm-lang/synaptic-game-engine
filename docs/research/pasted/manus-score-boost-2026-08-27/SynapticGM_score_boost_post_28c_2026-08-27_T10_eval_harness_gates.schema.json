@@ -1,0 +1,747 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://synapticgm.example/schemas/eval-harness-gates-29a.schema.json",
+  "title": "SynapticGM 29a Evaluation Harness Gate Result",
+  "description": "Validates the structure and minimum evidence for terminal resolution, branch lock, Free T12 hook, replay, and cross-run contamination gate results. Cross-record causality and hash recomputation remain evaluator responsibilities.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "run",
+    "resolutionGate",
+    "branchGate",
+    "hookGate",
+    "replayGate",
+    "contaminationGate",
+    "overallStatus"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "const": "29a-1"
+    },
+    "run": {
+      "$ref": "#/$defs/runIdentity"
+    },
+    "resolutionGate": {
+      "$ref": "#/$defs/resolutionGate"
+    },
+    "branchGate": {
+      "$ref": "#/$defs/branchGate"
+    },
+    "hookGate": {
+      "$ref": "#/$defs/hookGate"
+    },
+    "replayGate": {
+      "$ref": "#/$defs/replayGate"
+    },
+    "contaminationGate": {
+      "$ref": "#/$defs/contaminationGate"
+    },
+    "overallStatus": {
+      "enum": ["pass", "fail", "invalid", "incomplete"]
+    },
+    "quarantineReasons": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/violation"
+      },
+      "uniqueItems": true,
+      "default": []
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "overallStatus": {
+            "const": "pass"
+          }
+        },
+        "required": ["overallStatus"]
+      },
+      "then": {
+        "properties": {
+          "resolutionGate": {
+            "properties": {
+              "status": {
+                "enum": ["pass", "notApplicable"]
+              }
+            }
+          },
+          "branchGate": {
+            "properties": {
+              "status": {
+                "enum": ["pass", "notApplicable"]
+              }
+            }
+          },
+          "hookGate": {
+            "properties": {
+              "status": {
+                "const": "pass"
+              }
+            }
+          },
+          "replayGate": {
+            "properties": {
+              "status": {
+                "const": "pass"
+              }
+            }
+          },
+          "contaminationGate": {
+            "properties": {
+              "status": {
+                "const": "pass"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "contaminationGate": {
+            "properties": {
+              "status": {
+                "const": "fail"
+              }
+            },
+            "required": ["status"]
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "overallStatus": {
+            "const": "invalid"
+          }
+        }
+      }
+    }
+  ],
+  "$defs": {
+    "nonEmptyId": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 256
+    },
+    "sha256": {
+      "type": "string",
+      "pattern": "^sha256:[A-Fa-f0-9]{64}$"
+    },
+    "turn": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "gateStatus": {
+      "enum": ["pass", "fail", "invalid", "notApplicable", "incomplete"]
+    },
+    "terminalOutcome": {
+      "enum": ["escape", "victory", "defeat", "capture", "parleyResolved"]
+    },
+    "runIdentity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "runId",
+        "seed",
+        "mode",
+        "registryVersion",
+        "runtimeVersion",
+        "evaluatorContextId",
+        "turnsArtifactHash"
+      ],
+      "properties": {
+        "runId": {
+          "$ref": "#/$defs/nonEmptyId"
+        },
+        "seed": {
+          "$ref": "#/$defs/nonEmptyId"
+        },
+        "mode": {
+          "enum": ["LitRPG", "DnD", "RPG", "PYOA"]
+        },
+        "registryVersion": {
+          "$ref": "#/$defs/nonEmptyId"
+        },
+        "runtimeVersion": {
+          "$ref": "#/$defs/nonEmptyId"
+        },
+        "evaluatorContextId": {
+          "$ref": "#/$defs/nonEmptyId"
+        },
+        "turnsArtifactHash": {
+          "$ref": "#/$defs/sha256"
+        }
+      }
+    },
+    "violation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["code", "message"],
+      "properties": {
+        "code": {
+          "type": "string",
+          "pattern": "^[A-Z][A-Z0-9_]{2,63}$"
+        },
+        "message": {
+          "type": "string",
+          "minLength": 1
+        },
+        "turn": {
+          "$ref": "#/$defs/turn"
+        },
+        "receiptId": {
+          "$ref": "#/$defs/nonEmptyId"
+        },
+        "encounterId": {
+          "$ref": "#/$defs/nonEmptyId"
+        },
+        "branchGroupId": {
+          "$ref": "#/$defs/nonEmptyId"
+        }
+      }
+    },
+    "encounterResult": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "encounterId",
+        "spawnReceiptId",
+        "spawnTurn",
+        "runId",
+        "seed",
+        "mode",
+        "replayHash"
+      ],
+      "properties": {
+        "encounterId": {
+          "$ref": "#/$defs/nonEmptyId"
+        },
+        "spawnReceiptId": {
+          "$ref": "#/$defs/nonEmptyId"
+        },
+        "spawnTurn": {
+          "$ref": "#/$defs/turn"
+        },
+        "clearReceiptId": {
+          "$ref": "#/$defs/nonEmptyId"
+        },
+        "clearTurn": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/turn"
+            },
+            {
+              "maximum": 50
+            }
+          ]
+        },
+        "outcome": {
+          "$ref": "#/$defs/terminalOutcome"
+        },
+        "committedDeltaHash": {
+          "$ref": "#/$defs/sha256"
+        },
+        "runId": {
+          "$ref": "#/$defs/nonEmptyId"
+        },
+        "seed": {
+          "$ref": "#/$defs/nonEmptyId"
+        },
+        "mode": {
+          "enum": ["LitRPG", "DnD"]
+        },
+        "replayHash": {
+          "$ref": "#/$defs/sha256"
+        }
+      }
+    },
+    "resolutionGate": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["applicable", "status", "deadlineTurn", "encounters", "violations"],
+      "properties": {
+        "applicable": {
+          "type": "boolean"
+        },
+        "status": {
+          "$ref": "#/$defs/gateStatus"
+        },
+        "deadlineTurn": {
+          "const": 50
+        },
+        "encounters": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/encounterResult"
+          }
+        },
+        "violations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/violation"
+          }
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "status": {
+                "const": "pass"
+              }
+            },
+            "required": ["status"]
+          },
+          "then": {
+            "properties": {
+              "applicable": {
+                "const": true
+              },
+              "encounters": {
+                "minItems": 1,
+                "items": {
+                  "required": ["clearReceiptId", "clearTurn", "outcome", "committedDeltaHash"]
+                }
+              },
+              "violations": {
+                "maxItems": 0
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "status": {
+                "const": "fail"
+              }
+            },
+            "required": ["status"]
+          },
+          "then": {
+            "properties": {
+              "violations": {
+                "minItems": 1
+              }
+            }
+          }
+        }
+      ]
+    },
+    "crisisResult": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "crisisReceiptId",
+        "crisisTurn",
+        "branchGroupId",
+        "runId",
+        "seed"
+      ],
+      "properties": {
+        "crisisReceiptId": {
+          "$ref": "#/$defs/nonEmptyId"
+        },
+        "crisisTurn": {
+          "$ref": "#/$defs/turn"
+        },
+        "branchGroupId": {
+          "$ref": "#/$defs/nonEmptyId"
+        },
+        "branchLockReceiptId": {
+          "$ref": "#/$defs/nonEmptyId"
+        },
+        "branchLockTurn": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/turn"
+            },
+            {
+              "maximum": 30
+            }
+          ]
+        },
+        "lockedBranchId": {
+          "$ref": "#/$defs/nonEmptyId"
+        },
+        "disabledBranchIds": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/nonEmptyId"
+          },
+          "uniqueItems": true
+        },
+        "committedDeltaHash": {
+          "$ref": "#/$defs/sha256"
+        },
+        "runId": {
+          "$ref": "#/$defs/nonEmptyId"
+        },
+        "seed": {
+          "$ref": "#/$defs/nonEmptyId"
+        }
+      }
+    },
+    "branchGate": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["applicable", "status", "deadlineTurn", "crises", "violations"],
+      "properties": {
+        "applicable": {
+          "type": "boolean"
+        },
+        "status": {
+          "$ref": "#/$defs/gateStatus"
+        },
+        "deadlineTurn": {
+          "const": 30
+        },
+        "crises": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/crisisResult"
+          }
+        },
+        "violations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/violation"
+          }
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "status": {
+                "const": "pass"
+              }
+            },
+            "required": ["status"]
+          },
+          "then": {
+            "properties": {
+              "applicable": {
+                "const": true
+              },
+              "crises": {
+                "minItems": 1,
+                "items": {
+                  "required": [
+                    "branchLockReceiptId",
+                    "branchLockTurn",
+                    "lockedBranchId",
+                    "disabledBranchIds",
+                    "committedDeltaHash"
+                  ]
+                }
+              },
+              "violations": {
+                "maxItems": 0
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "status": {
+                "const": "fail"
+              }
+            },
+            "required": ["status"]
+          },
+          "then": {
+            "properties": {
+              "violations": {
+                "minItems": 1
+              }
+            }
+          }
+        }
+      ]
+    },
+    "qualifyingHookReceipt": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["receiptType", "receiptId", "turn", "runId", "seed", "committedDeltaHash"],
+      "properties": {
+        "receiptType": {
+          "enum": ["levelTick", "questStageChanged", "encounterCleared", "branchLocked"]
+        },
+        "receiptId": {
+          "$ref": "#/$defs/nonEmptyId"
+        },
+        "turn": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/turn"
+            },
+            {
+              "maximum": 12
+            }
+          ]
+        },
+        "runId": {
+          "$ref": "#/$defs/nonEmptyId"
+        },
+        "seed": {
+          "$ref": "#/$defs/nonEmptyId"
+        },
+        "questToStage": {
+          "type": "integer",
+          "minimum": 2
+        },
+        "terminalOutcome": {
+          "$ref": "#/$defs/terminalOutcome"
+        },
+        "committedDeltaHash": {
+          "$ref": "#/$defs/sha256"
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "receiptType": {
+                "const": "questStageChanged"
+              }
+            },
+            "required": ["receiptType"]
+          },
+          "then": {
+            "required": ["questToStage"]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "receiptType": {
+                "const": "encounterCleared"
+              }
+            },
+            "required": ["receiptType"]
+          },
+          "then": {
+            "required": ["terminalOutcome"]
+          }
+        }
+      ]
+    },
+    "hookGate": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "status",
+        "successDeadlineTurn",
+        "purgatoryCheckTurn",
+        "activeEncounterAtT15",
+        "violations"
+      ],
+      "properties": {
+        "status": {
+          "$ref": "#/$defs/gateStatus"
+        },
+        "successDeadlineTurn": {
+          "const": 12
+        },
+        "purgatoryCheckTurn": {
+          "const": 15
+        },
+        "qualifyingReceipt": {
+          "$ref": "#/$defs/qualifyingHookReceipt"
+        },
+        "activeEncounterAtT15": {
+          "type": "boolean"
+        },
+        "violations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/violation"
+          }
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "status": {
+                "const": "pass"
+              }
+            },
+            "required": ["status"]
+          },
+          "then": {
+            "required": ["qualifyingReceipt"],
+            "properties": {
+              "activeEncounterAtT15": {
+                "const": false
+              },
+              "violations": {
+                "maxItems": 0
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "status": {
+                "const": "fail"
+              }
+            },
+            "required": ["status"]
+          },
+          "then": {
+            "properties": {
+              "violations": {
+                "minItems": 1
+              }
+            }
+          }
+        }
+      ]
+    },
+    "replayGate": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "status",
+        "originalReplayHash",
+        "rerunReplayHash",
+        "normalizedReceiptsHash",
+        "rerunNormalizedReceiptsHash",
+        "violations"
+      ],
+      "properties": {
+        "status": {
+          "$ref": "#/$defs/gateStatus"
+        },
+        "originalReplayHash": {
+          "$ref": "#/$defs/sha256"
+        },
+        "rerunReplayHash": {
+          "$ref": "#/$defs/sha256"
+        },
+        "normalizedReceiptsHash": {
+          "$ref": "#/$defs/sha256"
+        },
+        "rerunNormalizedReceiptsHash": {
+          "$ref": "#/$defs/sha256"
+        },
+        "violations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/violation"
+          }
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "status": {
+                "const": "pass"
+              }
+            },
+            "required": ["status"]
+          },
+          "then": {
+            "properties": {
+              "violations": {
+                "maxItems": 0
+              }
+            }
+          }
+        }
+      ]
+    },
+    "foreignArtifact": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["artifactType", "observedRunId", "observedSeed", "evidenceHash"],
+      "properties": {
+        "artifactType": {
+          "enum": ["entity", "receipt", "prompt", "status", "evaluatorComment", "modeState"]
+        },
+        "observedRunId": {
+          "$ref": "#/$defs/nonEmptyId"
+        },
+        "observedSeed": {
+          "$ref": "#/$defs/nonEmptyId"
+        },
+        "evidenceHash": {
+          "$ref": "#/$defs/sha256"
+        }
+      }
+    },
+    "contaminationGate": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "foreignArtifacts", "violations"],
+      "properties": {
+        "status": {
+          "$ref": "#/$defs/gateStatus"
+        },
+        "foreignArtifacts": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/foreignArtifact"
+          }
+        },
+        "violations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/violation"
+          }
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "status": {
+                "const": "pass"
+              }
+            },
+            "required": ["status"]
+          },
+          "then": {
+            "properties": {
+              "foreignArtifacts": {
+                "maxItems": 0
+              },
+              "violations": {
+                "maxItems": 0
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "status": {
+                "const": "fail"
+              }
+            },
+            "required": ["status"]
+          },
+          "then": {
+            "properties": {
+              "foreignArtifacts": {
+                "minItems": 1
+              },
+              "violations": {
+                "minItems": 1
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

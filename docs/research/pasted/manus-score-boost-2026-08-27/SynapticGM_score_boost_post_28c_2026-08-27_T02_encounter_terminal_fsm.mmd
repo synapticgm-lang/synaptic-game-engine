@@ -1,0 +1,38 @@
+stateDiagram-v2
+    [*] --> idle
+
+    idle --> engaged: valid spawn / emit encounterSpawn
+    idle --> idle: duplicate spawn key / return existing
+
+    engaged --> resolving: natural victory or defeat
+    engaged --> resolving: successful escape
+    engaged --> resolving: accepted surrender or capture
+    engaged --> resolving: registered parley terms satisfied
+    engaged --> resolving: failed flee reaches cap
+    engaged --> resolving: failed parley reaches cap
+    engaged --> resolving: max engaged turns reached
+    engaged --> engaged: legal nonterminal action / increment counters
+    engaged --> engaged: GM failure / deterministic legal fallback
+
+    resolving --> terminal: atomic outcome + delta commit\nemit encounterCleared
+    resolving --> terminal: GM render failure\ncommit + safe fallback copy
+    resolving --> terminal: delta validation failure\nminimal deterministic delta + quarantine
+
+    terminal --> idle: project next-turn state\nretain immutable terminal ledger
+
+    note right of engaged
+      ChoiceCompiler encounter lock
+      No travel / merchant / Earth junk / generic inspect
+      Flee and parley removed at thresholds
+    end note
+
+    note right of resolving
+      GM cannot choose, veto, or reopen outcome
+      New player choices are closed
+    end note
+
+    note right of terminal
+      Exactly one of:
+      escape, victory, defeat,
+      capture, parleyResolved
+    end note

@@ -1,4 +1,5 @@
 import type { EngineMode } from './types';
+import { applyStatusFirewall } from './statusFirewall';
 
 /** Dice / check-math lines must never surface in LitRPG or narrative RPG system logs. */
 export function isDiceMechanicsLine(line: string): boolean {
@@ -178,7 +179,8 @@ export function filterSystemLogForEngine(lines: string[], engineMode: EngineMode
     .filter((l) => !/^xp gained:\s*0\b/i.test(l))
     .filter((l) => !/^(?:_>\s*)?SYSTEM LOG$/i.test(l))
     .filter((l) => !/^(?:what do you do(?:\s+next)?|what will you do)\s*[?:.]?$/i.test(l));
-  const deduped = dedupeQuestStatusEcho(cleaned);
+  const firewalled = applyStatusFirewall(cleaned).lines;
+  const deduped = dedupeQuestStatusEcho(firewalled);
   if (engineMode === 'dnd' || engineMode === 'pyoa') {
     return deduped.filter((l) => !isLitrpgChromeLine(l) && (engineMode === 'pyoa' ? !isDiceMechanicsLine(l) : true));
   }

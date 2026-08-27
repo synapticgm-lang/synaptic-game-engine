@@ -35,17 +35,50 @@ export function checkReceiptLivenessGates(state: GameState): Record<string, bool
 
   if (mode === 'litrpg' || mode === 'dnd') {
     const combatCommitted = committed.some((id) => id.includes('skirmish') || id.includes('hostility'));
+    const cleared = (state.arcDirector?.encounterClearedReceipts ?? []).length;
     gates.combatByT8 = turn < 8 || receipts.combat >= 1 || combatCommitted || !!state.activeEncounter;
     gates.combatByT15 = turn < 15 || receipts.combat >= 1 || combatCommitted;
+    // 29a — spawn without clear by T50 fails; no active purgatory at T15 after early spawn
+    gates.encounterClearedByT50 =
+      turn < 50 ||
+      cleared >= 1 ||
+      (!(receipts.combat >= 1 || combatCommitted) && !state.activeEncounter);
+    gates.noEncounterPurgatoryAtT15 =
+      turn < 15 ||
+      !state.activeEncounter ||
+      cleared >= 1;
   }
   if (mode === 'pyoa') {
     gates.crisisByT12 =
       turn < 12 ||
       receipts.crisis >= 1 ||
       committed.some((id) => id.includes('crisis'));
+    gates.branchLockedByT30 =
+      turn < 30 ||
+      !!(state.pyoaBranchLedger?.branchLocked || state.pyoaBranchLedger?.branchClosed);
   }
   gates.beatCommitByT20 = turn < 20 || receipts.beatCommit >= 1;
+  // Free T12 hook: durable delta (level, quest stage, clear, or branch lock)
+  gates.freeT12DurableDelta =
+    turn < 12 ||
+    (state.character?.level ?? 1) >= 2 ||
+    clearedCount(state) >= 1 ||
+    !!(state.pyoaBranchLedger?.branchLocked) ||
+    hasQuestStage2(state) ||
+    Object.keys(state.arcDirector?.topicCommits ?? {}).length > 0;
   return gates;
+}
+
+function clearedCount(state: GameState): number {
+  return (state.arcDirector?.encounterClearedReceipts ?? []).length;
+}
+
+function hasQuestStage2(state: GameState): boolean {
+  for (const q of state.quests ?? []) {
+    const done = (q.objectives ?? []).filter((o) => o.completed).length;
+    if (done >= 1 && q.status === 'active') return true;
+  }
+  return false;
 }
 
 const CRITIC_BLEED_PATTERNS: Array<{ pattern: RegExp; allowedBibles: RegExp }> = [

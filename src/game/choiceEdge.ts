@@ -9,7 +9,8 @@ import {
   engineAllowsCombat,
 } from './beatContract';
 import { hubsForBibleId, matchHub } from './outdoorHubs';
-import { isPyoaBranchExhausted } from './pyoaBranchLedger';
+import { isPyoaBranchExhausted, isPyoaBranchLocked } from './pyoaBranchLedger';
+import { fleeAvailable, parleyAvailable } from './encounterTerminalFsm';
 
 export type ChoiceEdgeKind =
   | 'combat'
@@ -44,10 +45,16 @@ export function enumerateLegalEdges(state: GameState): ChoiceEdge[] {
 
   if (state.activeEncounter) {
     edges.push(
-      { id: 'enc-attack', label: 'Press the attack', kind: 'combat', risk: 'high' },
-      { id: 'enc-flee', label: 'Try to flee', kind: 'combat', risk: 'med' },
-      { id: 'enc-parley', label: 'Parley', kind: 'talk', risk: 'low' }
+      { id: 'enc-attack', label: 'Press the attack', kind: 'combat', risk: 'high' }
     );
+    if (fleeAvailable(state.activeEncounter)) {
+      edges.push({ id: 'enc-flee', label: 'Try to flee', kind: 'combat', risk: 'med' });
+    }
+    if (parleyAvailable(state.activeEncounter)) {
+      edges.push({ id: 'enc-parley', label: 'Parley', kind: 'talk', risk: 'low' });
+    }
+    // 29a — while engaged, only encounter edges (no travel/inspect padding below)
+    return dedupeEdges(edges);
   }
 
   if (contract) {
@@ -165,8 +172,18 @@ export function enumerateLegalEdges(state: GameState): ChoiceEdge[] {
     }
   }
 
-  edges.push({ id: 'wait', label: 'Wait and watch', kind: 'wait', risk: 'low' });
+  // Drop delay pads once PYOA branch locked
+  if (state.engineMode === 'pyoa' && isPyoaBranchLocked(state)) {
+    for (let i = edges.length - 1; i >= 0; i--) {
+      if (/buy time|call for help/i.test(edges[i].label)) edges.splice(i, 1);
+    }
+  }
 
+  edges.push({ id: 'wait', label: 'Wait and watch', kind: 'wait', risk: 'low' });
+  return dedupeEdges(edges);
+}
+
+function dedupeEdges(edges: ChoiceEdge[]): ChoiceEdge[] {
   const seen = new Set<string>();
   return edges.filter((e) => {
     const k = e.label.toLowerCase();
