@@ -144,13 +144,33 @@ function applyBeatEffects(
     extras.encounterName = next.activeEncounter!.name;
   }
 
-  next = pushBeatStateTx(next, contract.summary, extras);
+  next = pushBeatStateTx(next, contract.summary, extras, state.turn + 1);
 
   if (xp > 0) {
     receipts.push(`Arc XP: +${xp} (${contract.summary})`);
   }
 
   return { state: next, xp, receipts };
+}
+
+/** Player-visible STATUS lines for arc commits (T12 hook — quest stage + XP receipt). */
+export function formatArcStatusReceipts(result: ArcDirectorResult): string[] {
+  const lines: string[] = [];
+  for (const r of result.systemReceipts) {
+    if (r.startsWith('Quest stage:')) {
+      lines.push(`Quest: ${r.replace(/^Quest stage:\s*/, '')}`);
+    } else if (r.startsWith('Arc XP:')) {
+      const m = r.match(/Arc XP: \+(\d+) \((.+)\)/);
+      if (m) lines.push(`XP Gained: ${m[1]} (arc: ${m[2]})`);
+      else lines.push(r);
+    } else if (r.startsWith('Encounter:')) {
+      lines.push(r);
+    } else if (r.startsWith('Social:')) {
+      const m = r.match(/Social: \+(\d+) XP \((.+)\)/);
+      if (m) lines.push(`XP Gained: ${m[1]} (${m[2]})`);
+    }
+  }
+  return lines;
 }
 
 /** Run before GM — select beat, resolve mechanics stub, commit effects. */

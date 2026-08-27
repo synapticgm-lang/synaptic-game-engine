@@ -8,9 +8,9 @@ import { effectiveWriterTier, isTestLabEnabled } from '../game/testLab';
 import { equippedSetLabel, equippedSetName } from '../game/uiTheme';
 
 /** Visible after a hard refresh -- if this is missing, Vercel is still serving the 16 Aug bundle. */
-export const HUD_BUILD_STAMP = '2026-08-28a';
+export const HUD_BUILD_STAMP = '2026-08-28b';
 const HUD_BUILD_TITLE =
-  'Debug 2026-08-28a - Path A ArcDirector + BeatContract + ChoiceCompiler; LitRPG 200 XP L1→L2; inspect once-per-evidence; T15 encounter pressure';
+  'Debug 2026-08-28b - T12 hook STATUS receipts; B045 daily milestone; receipt telemetry; Mid writer NO locked';
 
 interface Props {
   state: GameState;

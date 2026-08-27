@@ -259,10 +259,12 @@ export function appendStateTxDiff(
 export function pushBeatStateTx(
   state: GameState,
   summary: string,
-  extras: BeatStateTxExtras
+  extras: BeatStateTxExtras,
+  /** GM response turn (defaults to state.turn + 1 when arc runs pre-commit). */
+  turnOverride?: number
 ): GameState {
   const rev = Math.max(0, state.ledgerRevision ?? 0);
-  const turn = state.turn;
+  const turn = turnOverride ?? state.turn + 1;
   let log = [...(state.stateTxLog ?? [])];
   log = pushTx(log, {
     rev,

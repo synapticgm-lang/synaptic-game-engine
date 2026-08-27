@@ -6,6 +6,7 @@ import type { GameState } from './types';
 import { canonicalizeIntent } from './semanticLoopDetector';
 import { filterCooldownChoices, type OptionCooldown } from './optionDiversityContract';
 import { isTopicExhausted } from './npcTopicFsm';
+import { hubsForBibleId, matchHub } from './outdoorHubs';
 
 export type ChoiceFingerprintFamily =
   | 'walk_away'
@@ -135,6 +136,20 @@ export function recordGateRejection(state: GameState, target: string): GameState
   };
 }
 
+function hubBeatExhausted(state: GameState, choice: string): boolean {
+  const hub = matchHub(hubsForBibleId(state.campaignBibleId), state.currentLocation);
+  if (!hub) return false;
+  const keys = state.sandboxAwardKeys ?? [];
+  const hubBeatKeys = keys.filter((k) => k.startsWith(`hub-beat:${hub.id}:`));
+  if (hubBeatKeys.length < 2) return false;
+  const lower = choice.toLowerCase();
+  // I10 — after two hub beats at this hub, drop repeat travel/queue pads.
+  if (/\b(gate|queue|registration|travel toward|return to)\b/.test(lower)) {
+    return true;
+  }
+  return false;
+}
+
 /** Filter/supplement choice pad from legal edges + fingerprint cooldown. */
 export function compileChoices(
   state: GameState,
@@ -161,6 +176,10 @@ export function compileChoices(
         notes.push(`Inspect exhausted: ${intent.target}`);
         return false;
       }
+    }
+    if (hubBeatExhausted(state, c)) {
+      notes.push(`Hub beat exhausted: ${c.slice(0, 32)}`);
+      return false;
     }
     return true;
   });

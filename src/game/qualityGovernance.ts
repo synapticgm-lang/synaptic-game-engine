@@ -54,6 +54,7 @@ import {
 import {
   calculateDiscoveryXp,
   updateDiscoveryLedger,
+  isDiscoveryExhausted,
   type DiscoveryRecord,
 } from './discoveryXpLedger';
 import { validateInventoryChanges, buildInventoryAuthority } from './inventoryConservation';
@@ -297,13 +298,23 @@ export function applyGovernanceCommit(
   const ledger = ledgerMap(previous);
   const discovery = calculateDiscoveryXp(playerInput, next, ledger);
   if (discovery && discovery.amount > 0) {
-    xpAward = { amount: discovery.amount, reason: discovery.reason };
-    const updatedLedger = updateDiscoveryLedger([discovery], next.turn, ledger);
-    qualityGovernance.discoveryLedger = Object.fromEntries(updatedLedger);
-    qualityGovernance.recentXpAwards = [
-      ...(prevQg.recentXpAwards ?? []).slice(-99),
-      { amount: discovery.amount, reason: discovery.reason, type: discovery.type, turn: next.turn },
-    ];
+    const [typePart, ctxPart] = (discovery.discoveryKey ?? '').split('@');
+    const [, target] = typePart.split(':');
+    const type = typePart.split(':')[0] as import('./discoveryXpLedger').DiscoveryType;
+    if (
+      discovery.discoveryKey
+      && isDiscoveryExhausted(target, type, ctxPart || 'unknown', ledger)
+    ) {
+      systemNotes.push(`Discovery blocked: ${discovery.reason} (evidence-id exhausted)`);
+    } else {
+      xpAward = { amount: discovery.amount, reason: discovery.reason };
+      const updatedLedger = updateDiscoveryLedger([discovery], next.turn, ledger);
+      qualityGovernance.discoveryLedger = Object.fromEntries(updatedLedger);
+      qualityGovernance.recentXpAwards = [
+        ...(prevQg.recentXpAwards ?? []).slice(-99),
+        { amount: discovery.amount, reason: discovery.reason, type: discovery.type, turn: next.turn },
+      ];
+    }
   }
 
   const invAuth = buildInventoryAuthority(previous);

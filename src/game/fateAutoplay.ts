@@ -77,6 +77,9 @@ import {
   eventsToQuestUpdates,
 } from './parser';
 import { scrubOfficialPlaceholder } from './narrativeScrub';
+import { applyDailyQuestMilestone } from './dailyMilestoneLedger';
+import { countTurnReceipts, countRunReceipts, type ReceiptCounts } from './receiptTelemetry';
+import type { RunManifest } from './runManifest';
 import { applySandboxXpAwards } from './sandboxXp';
 import { applyCharacterXpGain } from './characterXp';
 import {
@@ -88,6 +91,7 @@ import {
 import {
   runArcDirectorBeforeGm,
   formatArcDirectorMandateBlock,
+  formatArcStatusReceipts,
   preserveArcQuestProgress,
 } from './arcDirector';
 import { playerInputGateBlock } from './choiceCompiler';
@@ -192,6 +196,8 @@ export type TurnTelemetry = {
   transportRetries: number;
   repairNote?: string;
   dryRun?: boolean;
+  receiptCounts?: ReceiptCounts;
+  arcStatusReceipts?: string[];
 };
 
 export type RunSummary = {
@@ -214,6 +220,8 @@ export type RunSummary = {
   latencyMs: { p50: number; p95: number; mean: number };
   issueTurns: Array<{ turn: number; error?: string; failKind?: string }>;
   outDir: string;
+  runManifest?: RunManifest;
+  receiptTotals?: ReceiptCounts;
 };
 
 function uid(): string {
@@ -721,15 +729,18 @@ export async function headlessFateTurn(
   const gate = playerInputGateBlock(arcState, playerInput);
   arcState = gate.state;
   let arcBlock = '';
+  let arcStatusReceipts: string[] = [];
   if (arcState.openingEstablishment?.complete) {
     const arc = runArcDirectorBeforeGm(arcState, playerInput);
     arcState = arc.state;
     arcBlock = formatArcDirectorMandateBlock(arc);
+    arcStatusReceipts = formatArcStatusReceipts(arc);
     if (arc.xpAwards.length) {
       let char = arcState.character;
       for (const award of arc.xpAwards) {
         const leveled = applyCharacterXpGain(char, award.amount);
         char = leveled.character;
+        arcStatusReceipts.push(...leveled.notes);
       }
       arcState = { ...arcState, character: char };
     }
@@ -976,16 +987,29 @@ Do NOT print dice notation or CODE ENFORCED.
   );
   let character = working.character;
   let levelNotes: string[] = [];
+  let sandboxNotes = [...sandboxXp.notes];
+  let sandboxKeys = sandboxXp.awardKeys;
   if (sandboxXp.xp > 0) {
     const leveled = applyCharacterXpGain(character, sandboxXp.xp);
     character = leveled.character;
     levelNotes = leveled.notes;
   }
+  const dailyMilestone = applyDailyQuestMilestone(
+    { ...working, sandboxAwardKeys: sandboxKeys },
+    { questsBefore, questsAfter: updatedQuests }
+  );
+  if (dailyMilestone) {
+    sandboxNotes.push(dailyMilestone.note);
+    sandboxKeys = [...sandboxKeys, dailyMilestone.awardKey];
+    const leveled = applyCharacterXpGain(character, dailyMilestone.xp);
+    character = leveled.character;
+    levelNotes = [...levelNotes, ...leveled.notes];
+  }
   working = {
     ...working,
     character,
     places: sandboxXp.places ?? working.places,
-    sandboxAwardKeys: sandboxXp.awardKeys,
+    sandboxAwardKeys: sandboxKeys,
     quests: updatedQuests,
     activeEncounter: working.activeEncounter ?? arcState.activeEncounter ?? null,
     arcDirector: arcState.arcDirector,
@@ -1003,7 +1027,8 @@ Do NOT print dice notation or CODE ENFORCED.
     state.engineMode
   );
   filteredSystemLog = reconcileXpStatusLines(filteredSystemLog, [
-    ...sandboxXp.notes,
+    ...arcStatusReceipts,
+    ...sandboxNotes,
     ...levelNotes,
   ]);
 
@@ -1058,6 +1083,7 @@ Do NOT print dice notation or CODE ENFORCED.
   }
 
   const ended = Date.now();
+  const receiptCounts = countTurnReceipts(governed, nextTurn);
   return {
     state: governed,
     telemetry: {
@@ -1078,7 +1104,7 @@ Do NOT print dice notation or CODE ENFORCED.
       questUnlocks,
       itemsEquipped: extractEquippedItems(state, next),
       itemsUsed: extractUsedItems(state, next),
-      xpGained: sandboxXp.xp + (governed.character?.xp ?? 0) - (state.character?.xp ?? 0),
+      xpGained: sandboxXp.xp + (dailyMilestone?.xp ?? 0) + (governed.character?.xp ?? 0) - (state.character?.xp ?? 0),
       level: governed.character?.level,
       characterXp: governed.character?.xp,
       xpToNext: governed.character?.xpToNext,
@@ -1087,6 +1113,8 @@ Do NOT print dice notation or CODE ENFORCED.
       failKind: gmResult.failKind,
       transportRetries,
       repairNote,
+      receiptCounts,
+      arcStatusReceipts,
     },
   };
 }
@@ -1239,9 +1267,14 @@ export async function runFateAutoplay(opts: {
     latencyMs: latencyStats(durations),
     issueTurns,
     outDir,
+    runManifest: state.runManifest,
+    receiptTotals: countRunReceipts(state),
   };
 
   writeFileSync(join(outDir, 'transcript.md'), buildPlayTranscript(state));
+  if (state.runManifest) {
+    writeFileSync(join(outDir, 'manifest.json'), JSON.stringify(state.runManifest, null, 2) + '\n');
+  }
   writeFileSync(
     join(outDir, 'story-for-gemini.md'),
     buildStoryReviewExport(state, {

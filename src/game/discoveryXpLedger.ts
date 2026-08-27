@@ -65,6 +65,24 @@ export function buildDiscoveryKey(target: string, type: DiscoveryType, context: 
 }
 
 /**
+ * I07 — evidence-id uniqueness: block repeat awards when ledger shows exhaustion.
+ */
+export function isDiscoveryExhausted(
+  target: string,
+  type: DiscoveryType,
+  context: string,
+  ledger: Map<string, DiscoveryRecord>
+): boolean {
+  const key = buildDiscoveryKey(target, type, context);
+  const record = ledger.get(key);
+  if (!record) return false;
+  if (type === 'object' || type === 'location' || type === 'npc' || type === 'quest_clue') {
+    return record.inspectionCount >= 1;
+  }
+  return record.xpAwarded > 0;
+}
+
+/**
  * Check if a discovery has already been awarded XP.
  */
 export function hasDiscoveryBeenAwarded(
@@ -137,6 +155,7 @@ export function calculateDiscoveryXp(
     const locationMatch = lower.match(/(?:enter|arrive|travel to|reach)\s+(?:the\s+)?([a-z\s]+)/i);
     if (locationMatch) {
       const location = locationMatch[1].trim();
+      if (isDiscoveryExhausted(location, 'location', currentLocation, ledger)) return null;
       const check = hasDiscoveryBeenAwarded(location, 'location', currentLocation, ledger);
       
       if (!check.awarded) {
@@ -156,6 +175,7 @@ export function calculateDiscoveryXp(
     const objectMatch = lower.match(/(?:inspect|examine|check|look at|study)\s+(?:the\s+)?([a-z\s]+)/i);
     if (objectMatch) {
       const object = objectMatch[1].trim();
+      if (isDiscoveryExhausted(object, 'object', currentLocation, ledger)) return null;
       const check = hasDiscoveryBeenAwarded(object, 'object', currentLocation, ledger);
       
       if (!check.awarded) {
@@ -178,6 +198,7 @@ export function calculateDiscoveryXp(
     const npcMatch = lower.match(/(?:meet|talk to|speak with|greet)\s+([A-Z][a-z]+)/);
     if (npcMatch) {
       const npc = npcMatch[1];
+      if (isDiscoveryExhausted(npc, 'npc', currentLocation, ledger)) return null;
       const check = hasDiscoveryBeenAwarded(npc, 'npc', currentLocation, ledger);
       
       if (!check.awarded) {

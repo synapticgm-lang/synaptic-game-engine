@@ -156,6 +156,8 @@ import {
 import { canSpend, spendCapacity, refundCapacity, capacityStatusMessage, storyStartTextTurnsForTier } from './capacityLedger';
 import { setActiveSubscriptionTier } from './subscriptionTiers';
 import { effectiveWriterTier, isTestLabEnabled } from './testLab';
+import { resolveWriterTierForTurn } from './writerPolicy';
+import { applyDailyQuestMilestone } from './dailyMilestoneLedger';
 import { canOfferRewardedMemorable } from './rewardedAds';
 import { clipCustomTabletopRules } from './customTabletopRules';
 import { touchPlaceVisit, upsertPlaceFromSheet } from './places';
@@ -260,6 +262,7 @@ import {
 import {
   runArcDirectorBeforeGm,
   formatArcDirectorMandateBlock,
+  formatArcStatusReceipts,
   preserveArcQuestProgress,
 } from './arcDirector';
 import { playerInputGateBlock } from './choiceCompiler';
@@ -2528,16 +2531,23 @@ export function useGame() {
 
       let arcMandateBlock = '';
       let arcReceiptLine = '';
+      let pendingArcStatusReceipts: string[] = [];
       if (!freeOpeningTurn && liveCurrent.openingEstablishment?.complete) {
         const arc = runArcDirectorBeforeGm(liveCurrent, sanitizedInput);
         liveCurrent = arc.state;
         arcMandateBlock = formatArcDirectorMandateBlock(arc);
+        pendingArcStatusReceipts = formatArcStatusReceipts(arc);
         if (arc.xpAwards.length) {
           let char = liveCurrent.character;
+          const arcXpNotes: string[] = [];
           for (const award of arc.xpAwards) {
             const leveled = applyCharacterXpGain(char, award.amount);
             char = leveled.character;
+            arcXpNotes.push(...leveled.notes);
           }
+          pendingArcStatusReceipts = Array.from(
+            new Set([...pendingArcStatusReceipts, ...arcXpNotes])
+          );
           liveCurrent = { ...liveCurrent, character: char };
         }
         if (arc.systemReceipts.length) {
@@ -2608,7 +2618,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
         hasApiKey: !!(settingsRef.current.geminiApiKey || settingsRef.current.openrouterApiKey)
       });
       const gmStartTime = performance.now();
-      const writerTierForBudget = effectiveWriterTier(settingsRef.current.subscriptionTier ?? 'free');
+      const writerTierForBudget = resolveWriterTierForTurn(settingsRef.current.subscriptionTier ?? 'free');
       const gmTimeoutMs = gmProxyTimeoutMsForState(liveCurrent, { writerTier: writerTierForBudget });
       debugLogger.record('INFO', 'GM proxy budget', {
         turn: liveCurrent.turn,
@@ -3871,15 +3881,26 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
             turn: nextTurn,
           }
         );
+        let sandboxNotes = [...sandboxXp.notes];
+        let sandboxKeys = sandboxXp.awardKeys;
+        const dailyMilestone = applyDailyQuestMilestone(
+          { ...workingState, sandboxAwardKeys: sandboxKeys },
+          { questsBefore: questsAtTurnStart, questsAfter: updatedQuests }
+        );
+        if (dailyMilestone) {
+          sandboxNotes.push(dailyMilestone.note);
+          sandboxKeys = [...sandboxKeys, dailyMilestone.awardKey];
+          baseChar.xp = (baseChar.xp ?? 0) + dailyMilestone.xp;
+        }
         if (sandboxXp.xp > 0) {
           baseChar.xp = (baseChar.xp ?? 0) + sandboxXp.xp;
         }
         // STATUS XP: only code-awarded lines with reasons (strip bare GM invent).
-        mergedSystemLog = reconcileXpStatusLines(mergedSystemLog, sandboxXp.notes);
+        mergedSystemLog = reconcileXpStatusLines(mergedSystemLog, sandboxNotes);
         places = sandboxXp.places ?? places;
         workingState = {
           ...workingState,
-          sandboxAwardKeys: sandboxXp.awardKeys,
+          sandboxAwardKeys: sandboxKeys,
           places,
         };
       }
@@ -3992,7 +4013,9 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
         const turnReceipts = (mergedState.stateTxLog ?? [])
           .filter((t) => t.turn === nextTurn)
           .map((t) => `Ledger: ${t.summary}`);
-        if (turnReceipts.length) {
+        const arcReceipts = pendingArcStatusReceipts ?? [];
+        const allReceipts = [...arcReceipts, ...turnReceipts];
+        if (allReceipts.length) {
           mergedState = {
             ...mergedState,
             log: mergedState.log.map((entry) =>
@@ -4000,7 +4023,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
                 ? {
                     ...entry,
                     systemLog: Array.from(
-                      new Set([...(entry.systemLog ?? []), ...turnReceipts])
+                      new Set([...(entry.systemLog ?? []), ...allReceipts])
                     ),
                   }
                 : entry
