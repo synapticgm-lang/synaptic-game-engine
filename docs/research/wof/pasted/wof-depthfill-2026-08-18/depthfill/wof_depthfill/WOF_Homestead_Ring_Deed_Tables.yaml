@@ -1,0 +1,1085 @@
+packFormatVersion: 1
+worldId: homestead_ring
+plotPools:
+- placeId: homestead_ring_place_01
+  publicName: Ring Green
+  plotCount: 48
+  reservedCommunityPlots: 8
+- placeId: homestead_ring_place_02
+  publicName: Pebble Ward
+  plotCount: 64
+  reservedCommunityPlots: 10
+deeds:
+- id: homestead_ring_deed_01
+  placeId: homestead_ring_place_01
+  upkeepGoldPerWeek: 7
+  seizeAfterMissedWeeks: 6
+  guestRules:
+    friendsMayVisit: true
+    friendsMayBuild: false
+    friendsMayOpenPrivateChest: false
+    chestSteal: false
+- id: homestead_ring_deed_02
+  placeId: homestead_ring_place_01
+  upkeepGoldPerWeek: 8
+  seizeAfterMissedWeeks: 6
+  guestRules:
+    friendsMayVisit: true
+    friendsMayBuild: false
+    friendsMayOpenPrivateChest: false
+    chestSteal: false
+- id: homestead_ring_deed_03
+  placeId: homestead_ring_place_01
+  upkeepGoldPerWeek: 9
+  seizeAfterMissedWeeks: 6
+  guestRules:
+    friendsMayVisit: true
+    friendsMayBuild: false
+    friendsMayOpenPrivateChest: false
+    chestSteal: false
+- id: homestead_ring_deed_04
+  placeId: homestead_ring_place_01
+  upkeepGoldPerWeek: 6
+  seizeAfterMissedWeeks: 6
+  guestRules:
+    friendsMayVisit: true
+    friendsMayBuild: false
+    friendsMayOpenPrivateChest: false
+    chestSteal: false
+- id: homestead_ring_deed_05
+  placeId: homestead_ring_place_01
+  upkeepGoldPerWeek: 7
+  seizeAfterMissedWeeks: 6
+  guestRules:
+    friendsMayVisit: true
+    friendsMayBuild: false
+    friendsMayOpenPrivateChest: false
+    chestSteal: false
+- id: homestead_ring_deed_06
+  placeId: homestead_ring_place_01
+  upkeepGoldPerWeek: 8
+  seizeAfterMissedWeeks: 6
+  guestRules:
+    friendsMayVisit: true
+    friendsMayBuild: false
+    friendsMayOpenPrivateChest: false
+    chestSteal: false
+- id: homestead_ring_deed_07
+  placeId: homestead_ring_place_01
+  upkeepGoldPerWeek: 9
+  seizeAfterMissedWeeks: 6
+  guestRules:
+    friendsMayVisit: true
+    friendsMayBuild: false
+    friendsMayOpenPrivateChest: false
+    chestSteal: false
+- id: homestead_ring_deed_08
+  placeId: homestead_ring_place_01
+  upkeepGoldPerWeek: 6
+  seizeAfterMissedWeeks: 6
+  guestRules:
+    friendsMayVisit: true
+    friendsMayBuild: false
+    friendsMayOpenPrivateChest: false
+    chestSteal: false
+- id: homestead_ring_deed_09
+  placeId: homestead_ring_place_01
+  upkeepGoldPerWeek: 7
+  seizeAfterMissedWeeks: 6
+  guestRules:
+    friendsMayVisit: true
+    friendsMayBuild: false
+    friendsMayOpenPrivateChest: false
+    chestSteal: false
+- id: homestead_ring_deed_10
+  placeId: homestead_ring_place_01
+  upkeepGoldPerWeek: 8
+  seizeAfterMissedWeeks: 6
+  guestRules:
+    friendsMayVisit: true
+    friendsMayBuild: false
+    friendsMayOpenPrivateChest: false
+    chestSteal: false
+- id: homestead_ring_deed_11
+  placeId: homestead_ring_place_01
+  upkeepGoldPerWeek: 9
+  seizeAfterMissedWeeks: 6
+  guestRules:
+    friendsMayVisit: true
+    friendsMayBuild: false
+    friendsMayOpenPrivateChest: false
+    chestSteal: false
+- id: homestead_ring_deed_12
+  placeId: homestead_ring_place_01
+  upkeepGoldPerWeek: 6
+  seizeAfterMissedWeeks: 6
+  guestRules:
+    friendsMayVisit: true
+    friendsMayBuild: false
+    friendsMayOpenPrivateChest: false
+    chestSteal: false
+- id: homestead_ring_deed_13
+  placeId: homestead_ring_place_01
+  upkeepGoldPerWeek: 7
+  seizeAfterMissedWeeks: 6
+  guestRules:
+    friendsMayVisit: true
+    friendsMayBuild: false
+    friendsMayOpenPrivateChest: false
+    chestSteal: false
+- id: homestead_ring_deed_14
+  placeId: homestead_ring_place_01
+  upkeepGoldPerWeek: 8
+  seizeAfterMissedWeeks: 6
+  guestRules:
+    friendsMayVisit: true
+    friendsMayBuild: false
+    friendsMayOpenPrivateChest: false
+    chestSteal: false
+- id: homestead_ring_deed_15
+  placeId: homestead_ring_place_01
+  upkeepGoldPerWeek: 9
+  seizeAfterMissedWeeks: 6
+  guestRules:
+    friendsMayVisit: true
+    friendsMayBuild: false
+    friendsMayOpenPrivateChest: false
+    chestSteal: false
+- id: homestead_ring_deed_16
+  placeId: homestead_ring_place_01
+  upkeepGoldPerWeek: 6
+  seizeAfterMissedWeeks: 6
+  guestRules:
+    friendsMayVisit: true
+    friendsMayBuild: false
+    friendsMayOpenPrivateChest: false
+    chestSteal: false
+- id: homestead_ring_deed_17
+  placeId: homestead_ring_place_01
+  upkeepGoldPerWeek: 7
+  seizeAfterMissedWeeks: 6
+  guestRules:
+    friendsMayVisit: true
+    friendsMayBuild: false
+    friendsMayOpenPrivateChest: false
+    chestSteal: false
+- id: homestead_ring_deed_18
+  placeId: homestead_ring_place_01
+  upkeepGoldPerWeek: 8
+  seizeAfterMissedWeeks: 6
+  guestRules:
+    friendsMayVisit: true
+    friendsMayBuild: false
+    friendsMayOpenPrivateChest: false
+    chestSteal: false
+- id: homestead_ring_deed_19
+  placeId: homestead_ring_place_01
+  upkeepGoldPerWeek: 9
+  seizeAfterMissedWeeks: 6
+  guestRules:
+    friendsMayVisit: true
+    friendsMayBuild: false
+    friendsMayOpenPrivateChest: false
+    chestSteal: false
+- id: homestead_ring_deed_20
+  placeId: homestead_ring_place_01
+  upkeepGoldPerWeek: 6
+  seizeAfterMissedWeeks: 6
+  guestRules:
+    friendsMayVisit: true
+    friendsMayBuild: false
+    friendsMayOpenPrivateChest: false
+    chestSteal: false
+- id: homestead_ring_deed_21
+  placeId: homestead_ring_place_01
+  upkeepGoldPerWeek: 7
+  seizeAfterMissedWeeks: 6
+  guestRules:
+    friendsMayVisit: true
+    friendsMayBuild: false
+    friendsMayOpenPrivateChest: false
+    chestSteal: false
+- id: homestead_ring_deed_22
+  placeId: homestead_ring_place_01
+  upkeepGoldPerWeek: 8
+  seizeAfterMissedWeeks: 6
+  guestRules:
+    friendsMayVisit: true
+    friendsMayBuild: false
+    friendsMayOpenPrivateChest: false
+    chestSteal: false
+- id: homestead_ring_deed_23
+  placeId: homestead_ring_place_01
+  upkeepGoldPerWeek: 9
+  seizeAfterMissedWeeks: 6
+  guestRules:
+    friendsMayVisit: true
+    friendsMayBuild: false
+    friendsMayOpenPrivateChest: false
+    chestSteal: false
+- id: homestead_ring_deed_24
+  placeId: homestead_ring_place_01
+  upkeepGoldPerWeek: 6
+  seizeAfterMissedWeeks: 6
+  guestRules:
+    friendsMayVisit: true
+    friendsMayBuild: false
+    friendsMayOpenPrivateChest: false
+    chestSteal: false
+- id: homestead_ring_deed_25
+  placeId: homestead_ring_place_01
+  upkeepGoldPerWeek: 7
+  seizeAfterMissedWeeks: 6
+  guestRules:
+    friendsMayVisit: true
+    friendsMayBuild: false
+    friendsMayOpenPrivateChest: false
+    chestSteal: false
+- id: homestead_ring_deed_26
+  placeId: homestead_ring_place_01
+  upkeepGoldPerWeek: 8
+  seizeAfterMissedWeeks: 6
+  guestRules:
+    friendsMayVisit: true
+    friendsMayBuild: false
+    friendsMayOpenPrivateChest: false
+    chestSteal: false
+- id: homestead_ring_deed_27
+  placeId: homestead_ring_place_01
+  upkeepGoldPerWeek: 9
+  seizeAfterMissedWeeks: 6
+  guestRules:
+    friendsMayVisit: true
+    friendsMayBuild: false
+    friendsMayOpenPrivateChest: false
+    chestSteal: false
+- id: homestead_ring_deed_28
+  placeId: homestead_ring_place_01
+  upkeepGoldPerWeek: 6
+  seizeAfterMissedWeeks: 6
+  guestRules:
+    friendsMayVisit: true
+    friendsMayBuild: false
+    friendsMayOpenPrivateChest: false
+    chestSteal: false
+- id: homestead_ring_deed_29
+  placeId: homestead_ring_place_01
+  upkeepGoldPerWeek: 7
+  seizeAfterMissedWeeks: 6
+  guestRules:
+    friendsMayVisit: true
+    friendsMayBuild: false
+    friendsMayOpenPrivateChest: false
+    chestSteal: false
+- id: homestead_ring_deed_30
+  placeId: homestead_ring_place_01
+  upkeepGoldPerWeek: 8
+  seizeAfterMissedWeeks: 6
+  guestRules:
+    friendsMayVisit: true
+    friendsMayBuild: false
+    friendsMayOpenPrivateChest: false
+    chestSteal: false
+- id: homestead_ring_deed_31
+  placeId: homestead_ring_place_01
+  upkeepGoldPerWeek: 9
+  seizeAfterMissedWeeks: 6
+  guestRules:
+    friendsMayVisit: true
+    friendsMayBuild: false
+    friendsMayOpenPrivateChest: false
+    chestSteal: false
+- id: homestead_ring_deed_32
+  placeId: homestead_ring_place_01
+  upkeepGoldPerWeek: 6
+  seizeAfterMissedWeeks: 6
+  guestRules:
+    friendsMayVisit: true
+    friendsMayBuild: false
+    friendsMayOpenPrivateChest: false
+    chestSteal: false
+- id: homestead_ring_deed_33
+  placeId: homestead_ring_place_01
+  upkeepGoldPerWeek: 7
+  seizeAfterMissedWeeks: 6
+  guestRules:
+    friendsMayVisit: true
+    friendsMayBuild: false
+    friendsMayOpenPrivateChest: false
+    chestSteal: false
+- id: homestead_ring_deed_34
+  placeId: homestead_ring_place_01
+  upkeepGoldPerWeek: 8
+  seizeAfterMissedWeeks: 6
+  guestRules:
+    friendsMayVisit: true
+    friendsMayBuild: false
+    friendsMayOpenPrivateChest: false
+    chestSteal: false
+- id: homestead_ring_deed_35
+  placeId: homestead_ring_place_01
+  upkeepGoldPerWeek: 9
+  seizeAfterMissedWeeks: 6
+  guestRules:
+    friendsMayVisit: true
+    friendsMayBuild: false
+    friendsMayOpenPrivateChest: false
+    chestSteal: false
+- id: homestead_ring_deed_36
+  placeId: homestead_ring_place_01
+  upkeepGoldPerWeek: 6
+  seizeAfterMissedWeeks: 6
+  guestRules:
+    friendsMayVisit: true
+    friendsMayBuild: false
+    friendsMayOpenPrivateChest: false
+    chestSteal: false
+- id: homestead_ring_deed_37
+  placeId: homestead_ring_place_01
+  upkeepGoldPerWeek: 7
+  seizeAfterMissedWeeks: 6
+  guestRules:
+    friendsMayVisit: true
+    friendsMayBuild: false
+    friendsMayOpenPrivateChest: false
+    chestSteal: false
+- id: homestead_ring_deed_38
+  placeId: homestead_ring_place_01
+  upkeepGoldPerWeek: 8
+  seizeAfterMissedWeeks: 6
+  guestRules:
+    friendsMayVisit: true
+    friendsMayBuild: false
+    friendsMayOpenPrivateChest: false
+    chestSteal: false
+- id: homestead_ring_deed_39
+  placeId: homestead_ring_place_01
+  upkeepGoldPerWeek: 9
+  seizeAfterMissedWeeks: 6
+  guestRules:
+    friendsMayVisit: true
+    friendsMayBuild: false
+    friendsMayOpenPrivateChest: false
+    chestSteal: false
+- id: homestead_ring_deed_40
+  placeId: homestead_ring_place_01
+  upkeepGoldPerWeek: 6
+  seizeAfterMissedWeeks: 6
+  guestRules:
+    friendsMayVisit: true
+    friendsMayBuild: false
+    friendsMayOpenPrivateChest: false
+    chestSteal: false
+- id: homestead_ring_deed_41
+  placeId: homestead_ring_place_01
+  upkeepGoldPerWeek: 7
+  seizeAfterMissedWeeks: 6
+  guestRules:
+    friendsMayVisit: true
+    friendsMayBuild: false
+    friendsMayOpenPrivateChest: false
+    chestSteal: false
+- id: homestead_ring_deed_42
+  placeId: homestead_ring_place_01
+  upkeepGoldPerWeek: 8
+  seizeAfterMissedWeeks: 6
+  guestRules:
+    friendsMayVisit: true
+    friendsMayBuild: false
+    friendsMayOpenPrivateChest: false
+    chestSteal: false
+- id: homestead_ring_deed_43
+  placeId: homestead_ring_place_01
+  upkeepGoldPerWeek: 9
+  seizeAfterMissedWeeks: 6
+  guestRules:
+    friendsMayVisit: true
+    friendsMayBuild: false
+    friendsMayOpenPrivateChest: false
+    chestSteal: false
+- id: homestead_ring_deed_44
+  placeId: homestead_ring_place_01
+  upkeepGoldPerWeek: 6
+  seizeAfterMissedWeeks: 6
+  guestRules:
+    friendsMayVisit: true
+    friendsMayBuild: false
+    friendsMayOpenPrivateChest: false
+    chestSteal: false
+- id: homestead_ring_deed_45
+  placeId: homestead_ring_place_01
+  upkeepGoldPerWeek: 7
+  seizeAfterMissedWeeks: 6
+  guestRules:
+    friendsMayVisit: true
+    friendsMayBuild: false
+    friendsMayOpenPrivateChest: false
+    chestSteal: false
+- id: homestead_ring_deed_46
+  placeId: homestead_ring_place_01
+  upkeepGoldPerWeek: 8
+  seizeAfterMissedWeeks: 6
+  guestRules:
+    friendsMayVisit: true
+    friendsMayBuild: false
+    friendsMayOpenPrivateChest: false
+    chestSteal: false
+- id: homestead_ring_deed_47
+  placeId: homestead_ring_place_01
+  upkeepGoldPerWeek: 9
+  seizeAfterMissedWeeks: 6
+  guestRules:
+    friendsMayVisit: true
+    friendsMayBuild: false
+    friendsMayOpenPrivateChest: false
+    chestSteal: false
+- id: homestead_ring_deed_48
+  placeId: homestead_ring_place_01
+  upkeepGoldPerWeek: 6
+  seizeAfterMissedWeeks: 6
+  guestRules:
+    friendsMayVisit: true
+    friendsMayBuild: false
+    friendsMayOpenPrivateChest: false
+    chestSteal: false
+- id: homestead_ring_deed_49
+  placeId: homestead_ring_place_02
+  upkeepGoldPerWeek: 7
+  seizeAfterMissedWeeks: 6
+  guestRules:
+    friendsMayVisit: true
+    friendsMayBuild: false
+    friendsMayOpenPrivateChest: false
+    chestSteal: false
+- id: homestead_ring_deed_50
+  placeId: homestead_ring_place_02
+  upkeepGoldPerWeek: 8
+  seizeAfterMissedWeeks: 6
+  guestRules:
+    friendsMayVisit: true
+    friendsMayBuild: false
+    friendsMayOpenPrivateChest: false
+    chestSteal: false
+- id: homestead_ring_deed_51
+  placeId: homestead_ring_place_02
+  upkeepGoldPerWeek: 9
+  seizeAfterMissedWeeks: 6
+  guestRules:
+    friendsMayVisit: true
+    friendsMayBuild: false
+    friendsMayOpenPrivateChest: false
+    chestSteal: false
+- id: homestead_ring_deed_52
+  placeId: homestead_ring_place_02
+  upkeepGoldPerWeek: 6
+  seizeAfterMissedWeeks: 6
+  guestRules:
+    friendsMayVisit: true
+    friendsMayBuild: false
+    friendsMayOpenPrivateChest: false
+    chestSteal: false
+- id: homestead_ring_deed_53
+  placeId: homestead_ring_place_02
+  upkeepGoldPerWeek: 7
+  seizeAfterMissedWeeks: 6
+  guestRules:
+    friendsMayVisit: true
+    friendsMayBuild: false
+    friendsMayOpenPrivateChest: false
+    chestSteal: false
+- id: homestead_ring_deed_54
+  placeId: homestead_ring_place_02
+  upkeepGoldPerWeek: 8
+  seizeAfterMissedWeeks: 6
+  guestRules:
+    friendsMayVisit: true
+    friendsMayBuild: false
+    friendsMayOpenPrivateChest: false
+    chestSteal: false
+- id: homestead_ring_deed_55
+  placeId: homestead_ring_place_02
+  upkeepGoldPerWeek: 9
+  seizeAfterMissedWeeks: 6
+  guestRules:
+    friendsMayVisit: true
+    friendsMayBuild: false
+    friendsMayOpenPrivateChest: false
+    chestSteal: false
+- id: homestead_ring_deed_56
+  placeId: homestead_ring_place_02
+  upkeepGoldPerWeek: 6
+  seizeAfterMissedWeeks: 6
+  guestRules:
+    friendsMayVisit: true
+    friendsMayBuild: false
+    friendsMayOpenPrivateChest: false
+    chestSteal: false
+- id: homestead_ring_deed_57
+  placeId: homestead_ring_place_02
+  upkeepGoldPerWeek: 7
+  seizeAfterMissedWeeks: 6
+  guestRules:
+    friendsMayVisit: true
+    friendsMayBuild: false
+    friendsMayOpenPrivateChest: false
+    chestSteal: false
+- id: homestead_ring_deed_58
+  placeId: homestead_ring_place_02
+  upkeepGoldPerWeek: 8
+  seizeAfterMissedWeeks: 6
+  guestRules:
+    friendsMayVisit: true
+    friendsMayBuild: false
+    friendsMayOpenPrivateChest: false
+    chestSteal: false
+- id: homestead_ring_deed_59
+  placeId: homestead_ring_place_02
+  upkeepGoldPerWeek: 9
+  seizeAfterMissedWeeks: 6
+  guestRules:
+    friendsMayVisit: true
+    friendsMayBuild: false
+    friendsMayOpenPrivateChest: false
+    chestSteal: false
+- id: homestead_ring_deed_60
+  placeId: homestead_ring_place_02
+  upkeepGoldPerWeek: 6
+  seizeAfterMissedWeeks: 6
+  guestRules:
+    friendsMayVisit: true
+    friendsMayBuild: false
+    friendsMayOpenPrivateChest: false
+    chestSteal: false
+- id: homestead_ring_deed_61
+  placeId: homestead_ring_place_02
+  upkeepGoldPerWeek: 7
+  seizeAfterMissedWeeks: 6
+  guestRules:
+    friendsMayVisit: true
+    friendsMayBuild: false
+    friendsMayOpenPrivateChest: false
+    chestSteal: false
+- id: homestead_ring_deed_62
+  placeId: homestead_ring_place_02
+  upkeepGoldPerWeek: 8
+  seizeAfterMissedWeeks: 6
+  guestRules:
+    friendsMayVisit: true
+    friendsMayBuild: false
+    friendsMayOpenPrivateChest: false
+    chestSteal: false
+- id: homestead_ring_deed_63
+  placeId: homestead_ring_place_02
+  upkeepGoldPerWeek: 9
+  seizeAfterMissedWeeks: 6
+  guestRules:
+    friendsMayVisit: true
+    friendsMayBuild: false
+    friendsMayOpenPrivateChest: false
+    chestSteal: false
+- id: homestead_ring_deed_64
+  placeId: homestead_ring_place_02
+  upkeepGoldPerWeek: 6
+  seizeAfterMissedWeeks: 6
+  guestRules:
+    friendsMayVisit: true
+    friendsMayBuild: false
+    friendsMayOpenPrivateChest: false
+    chestSteal: false
+- id: homestead_ring_deed_65
+  placeId: homestead_ring_place_02
+  upkeepGoldPerWeek: 7
+  seizeAfterMissedWeeks: 6
+  guestRules:
+    friendsMayVisit: true
+    friendsMayBuild: false
+    friendsMayOpenPrivateChest: false
+    chestSteal: false
+- id: homestead_ring_deed_66
+  placeId: homestead_ring_place_02
+  upkeepGoldPerWeek: 8
+  seizeAfterMissedWeeks: 6
+  guestRules:
+    friendsMayVisit: true
+    friendsMayBuild: false
+    friendsMayOpenPrivateChest: false
+    chestSteal: false
+- id: homestead_ring_deed_67
+  placeId: homestead_ring_place_02
+  upkeepGoldPerWeek: 9
+  seizeAfterMissedWeeks: 6
+  guestRules:
+    friendsMayVisit: true
+    friendsMayBuild: false
+    friendsMayOpenPrivateChest: false
+    chestSteal: false
+- id: homestead_ring_deed_68
+  placeId: homestead_ring_place_02
+  upkeepGoldPerWeek: 6
+  seizeAfterMissedWeeks: 6
+  guestRules:
+    friendsMayVisit: true
+    friendsMayBuild: false
+    friendsMayOpenPrivateChest: false
+    chestSteal: false
+- id: homestead_ring_deed_69
+  placeId: homestead_ring_place_02
+  upkeepGoldPerWeek: 7
+  seizeAfterMissedWeeks: 6
+  guestRules:
+    friendsMayVisit: true
+    friendsMayBuild: false
+    friendsMayOpenPrivateChest: false
+    chestSteal: false
+- id: homestead_ring_deed_70
+  placeId: homestead_ring_place_02
+  upkeepGoldPerWeek: 8
+  seizeAfterMissedWeeks: 6
+  guestRules:
+    friendsMayVisit: true
+    friendsMayBuild: false
+    friendsMayOpenPrivateChest: false
+    chestSteal: false
+- id: homestead_ring_deed_71
+  placeId: homestead_ring_place_02
+  upkeepGoldPerWeek: 9
+  seizeAfterMissedWeeks: 6
+  guestRules:
+    friendsMayVisit: true
+    friendsMayBuild: false
+    friendsMayOpenPrivateChest: false
+    chestSteal: false
+- id: homestead_ring_deed_72
+  placeId: homestead_ring_place_02
+  upkeepGoldPerWeek: 6
+  seizeAfterMissedWeeks: 6
+  guestRules:
+    friendsMayVisit: true
+    friendsMayBuild: false
+    friendsMayOpenPrivateChest: false
+    chestSteal: false
+- id: homestead_ring_deed_73
+  placeId: homestead_ring_place_02
+  upkeepGoldPerWeek: 7
+  seizeAfterMissedWeeks: 6
+  guestRules:
+    friendsMayVisit: true
+    friendsMayBuild: false
+    friendsMayOpenPrivateChest: false
+    chestSteal: false
+- id: homestead_ring_deed_74
+  placeId: homestead_ring_place_02
+  upkeepGoldPerWeek: 8
+  seizeAfterMissedWeeks: 6
+  guestRules:
+    friendsMayVisit: true
+    friendsMayBuild: false
+    friendsMayOpenPrivateChest: false
+    chestSteal: false
+- id: homestead_ring_deed_75
+  placeId: homestead_ring_place_02
+  upkeepGoldPerWeek: 9
+  seizeAfterMissedWeeks: 6
+  guestRules:
+    friendsMayVisit: true
+    friendsMayBuild: false
+    friendsMayOpenPrivateChest: false
+    chestSteal: false
+- id: homestead_ring_deed_76
+  placeId: homestead_ring_place_02
+  upkeepGoldPerWeek: 6
+  seizeAfterMissedWeeks: 6
+  guestRules:
+    friendsMayVisit: true
+    friendsMayBuild: false
+    friendsMayOpenPrivateChest: false
+    chestSteal: false
+- id: homestead_ring_deed_77
+  placeId: homestead_ring_place_02
+  upkeepGoldPerWeek: 7
+  seizeAfterMissedWeeks: 6
+  guestRules:
+    friendsMayVisit: true
+    friendsMayBuild: false
+    friendsMayOpenPrivateChest: false
+    chestSteal: false
+- id: homestead_ring_deed_78
+  placeId: homestead_ring_place_02
+  upkeepGoldPerWeek: 8
+  seizeAfterMissedWeeks: 6
+  guestRules:
+    friendsMayVisit: true
+    friendsMayBuild: false
+    friendsMayOpenPrivateChest: false
+    chestSteal: false
+- id: homestead_ring_deed_79
+  placeId: homestead_ring_place_02
+  upkeepGoldPerWeek: 9
+  seizeAfterMissedWeeks: 6
+  guestRules:
+    friendsMayVisit: true
+    friendsMayBuild: false
+    friendsMayOpenPrivateChest: false
+    chestSteal: false
+- id: homestead_ring_deed_80
+  placeId: homestead_ring_place_02
+  upkeepGoldPerWeek: 6
+  seizeAfterMissedWeeks: 6
+  guestRules:
+    friendsMayVisit: true
+    friendsMayBuild: false
+    friendsMayOpenPrivateChest: false
+    chestSteal: false
+- id: homestead_ring_deed_81
+  placeId: homestead_ring_place_02
+  upkeepGoldPerWeek: 7
+  seizeAfterMissedWeeks: 6
+  guestRules:
+    friendsMayVisit: true
+    friendsMayBuild: false
+    friendsMayOpenPrivateChest: false
+    chestSteal: false
+- id: homestead_ring_deed_82
+  placeId: homestead_ring_place_02
+  upkeepGoldPerWeek: 8
+  seizeAfterMissedWeeks: 6
+  guestRules:
+    friendsMayVisit: true
+    friendsMayBuild: false
+    friendsMayOpenPrivateChest: false
+    chestSteal: false
+- id: homestead_ring_deed_83
+  placeId: homestead_ring_place_02
+  upkeepGoldPerWeek: 9
+  seizeAfterMissedWeeks: 6
+  guestRules:
+    friendsMayVisit: true
+    friendsMayBuild: false
+    friendsMayOpenPrivateChest: false
+    chestSteal: false
+- id: homestead_ring_deed_84
+  placeId: homestead_ring_place_02
+  upkeepGoldPerWeek: 6
+  seizeAfterMissedWeeks: 6
+  guestRules:
+    friendsMayVisit: true
+    friendsMayBuild: false
+    friendsMayOpenPrivateChest: false
+    chestSteal: false
+- id: homestead_ring_deed_85
+  placeId: homestead_ring_place_02
+  upkeepGoldPerWeek: 7
+  seizeAfterMissedWeeks: 6
+  guestRules:
+    friendsMayVisit: true
+    friendsMayBuild: false
+    friendsMayOpenPrivateChest: false
+    chestSteal: false
+- id: homestead_ring_deed_86
+  placeId: homestead_ring_place_02
+  upkeepGoldPerWeek: 8
+  seizeAfterMissedWeeks: 6
+  guestRules:
+    friendsMayVisit: true
+    friendsMayBuild: false
+    friendsMayOpenPrivateChest: false
+    chestSteal: false
+- id: homestead_ring_deed_87
+  placeId: homestead_ring_place_02
+  upkeepGoldPerWeek: 9
+  seizeAfterMissedWeeks: 6
+  guestRules:
+    friendsMayVisit: true
+    friendsMayBuild: false
+    friendsMayOpenPrivateChest: false
+    chestSteal: false
+- id: homestead_ring_deed_88
+  placeId: homestead_ring_place_02
+  upkeepGoldPerWeek: 6
+  seizeAfterMissedWeeks: 6
+  guestRules:
+    friendsMayVisit: true
+    friendsMayBuild: false
+    friendsMayOpenPrivateChest: false
+    chestSteal: false
+- id: homestead_ring_deed_89
+  placeId: homestead_ring_place_02
+  upkeepGoldPerWeek: 7
+  seizeAfterMissedWeeks: 6
+  guestRules:
+    friendsMayVisit: true
+    friendsMayBuild: false
+    friendsMayOpenPrivateChest: false
+    chestSteal: false
+- id: homestead_ring_deed_90
+  placeId: homestead_ring_place_02
+  upkeepGoldPerWeek: 8
+  seizeAfterMissedWeeks: 6
+  guestRules:
+    friendsMayVisit: true
+    friendsMayBuild: false
+    friendsMayOpenPrivateChest: false
+    chestSteal: false
+- id: homestead_ring_deed_91
+  placeId: homestead_ring_place_02
+  upkeepGoldPerWeek: 9
+  seizeAfterMissedWeeks: 6
+  guestRules:
+    friendsMayVisit: true
+    friendsMayBuild: false
+    friendsMayOpenPrivateChest: false
+    chestSteal: false
+- id: homestead_ring_deed_92
+  placeId: homestead_ring_place_02
+  upkeepGoldPerWeek: 6
+  seizeAfterMissedWeeks: 6
+  guestRules:
+    friendsMayVisit: true
+    friendsMayBuild: false
+    friendsMayOpenPrivateChest: false
+    chestSteal: false
+- id: homestead_ring_deed_93
+  placeId: homestead_ring_place_02
+  upkeepGoldPerWeek: 7
+  seizeAfterMissedWeeks: 6
+  guestRules:
+    friendsMayVisit: true
+    friendsMayBuild: false
+    friendsMayOpenPrivateChest: false
+    chestSteal: false
+- id: homestead_ring_deed_94
+  placeId: homestead_ring_place_02
+  upkeepGoldPerWeek: 8
+  seizeAfterMissedWeeks: 6
+  guestRules:
+    friendsMayVisit: true
+    friendsMayBuild: false
+    friendsMayOpenPrivateChest: false
+    chestSteal: false
+- id: homestead_ring_deed_95
+  placeId: homestead_ring_place_02
+  upkeepGoldPerWeek: 9
+  seizeAfterMissedWeeks: 6
+  guestRules:
+    friendsMayVisit: true
+    friendsMayBuild: false
+    friendsMayOpenPrivateChest: false
+    chestSteal: false
+- id: homestead_ring_deed_96
+  placeId: homestead_ring_place_02
+  upkeepGoldPerWeek: 6
+  seizeAfterMissedWeeks: 6
+  guestRules:
+    friendsMayVisit: true
+    friendsMayBuild: false
+    friendsMayOpenPrivateChest: false
+    chestSteal: false
+- id: homestead_ring_deed_97
+  placeId: homestead_ring_place_02
+  upkeepGoldPerWeek: 7
+  seizeAfterMissedWeeks: 6
+  guestRules:
+    friendsMayVisit: true
+    friendsMayBuild: false
+    friendsMayOpenPrivateChest: false
+    chestSteal: false
+- id: homestead_ring_deed_98
+  placeId: homestead_ring_place_02
+  upkeepGoldPerWeek: 8
+  seizeAfterMissedWeeks: 6
+  guestRules:
+    friendsMayVisit: true
+    friendsMayBuild: false
+    friendsMayOpenPrivateChest: false
+    chestSteal: false
+- id: homestead_ring_deed_99
+  placeId: homestead_ring_place_02
+  upkeepGoldPerWeek: 9
+  seizeAfterMissedWeeks: 6
+  guestRules:
+    friendsMayVisit: true
+    friendsMayBuild: false
+    friendsMayOpenPrivateChest: false
+    chestSteal: false
+- id: homestead_ring_deed_100
+  placeId: homestead_ring_place_02
+  upkeepGoldPerWeek: 6
+  seizeAfterMissedWeeks: 6
+  guestRules:
+    friendsMayVisit: true
+    friendsMayBuild: false
+    friendsMayOpenPrivateChest: false
+    chestSteal: false
+- id: homestead_ring_deed_101
+  placeId: homestead_ring_place_02
+  upkeepGoldPerWeek: 7
+  seizeAfterMissedWeeks: 6
+  guestRules:
+    friendsMayVisit: true
+    friendsMayBuild: false
+    friendsMayOpenPrivateChest: false
+    chestSteal: false
+- id: homestead_ring_deed_102
+  placeId: homestead_ring_place_02
+  upkeepGoldPerWeek: 8
+  seizeAfterMissedWeeks: 6
+  guestRules:
+    friendsMayVisit: true
+    friendsMayBuild: false
+    friendsMayOpenPrivateChest: false
+    chestSteal: false
+- id: homestead_ring_deed_103
+  placeId: homestead_ring_place_02
+  upkeepGoldPerWeek: 9
+  seizeAfterMissedWeeks: 6
+  guestRules:
+    friendsMayVisit: true
+    friendsMayBuild: false
+    friendsMayOpenPrivateChest: false
+    chestSteal: false
+- id: homestead_ring_deed_104
+  placeId: homestead_ring_place_02
+  upkeepGoldPerWeek: 6
+  seizeAfterMissedWeeks: 6
+  guestRules:
+    friendsMayVisit: true
+    friendsMayBuild: false
+    friendsMayOpenPrivateChest: false
+    chestSteal: false
+- id: homestead_ring_deed_105
+  placeId: homestead_ring_place_02
+  upkeepGoldPerWeek: 7
+  seizeAfterMissedWeeks: 6
+  guestRules:
+    friendsMayVisit: true
+    friendsMayBuild: false
+    friendsMayOpenPrivateChest: false
+    chestSteal: false
+- id: homestead_ring_deed_106
+  placeId: homestead_ring_place_02
+  upkeepGoldPerWeek: 8
+  seizeAfterMissedWeeks: 6
+  guestRules:
+    friendsMayVisit: true
+    friendsMayBuild: false
+    friendsMayOpenPrivateChest: false
+    chestSteal: false
+- id: homestead_ring_deed_107
+  placeId: homestead_ring_place_02
+  upkeepGoldPerWeek: 9
+  seizeAfterMissedWeeks: 6
+  guestRules:
+    friendsMayVisit: true
+    friendsMayBuild: false
+    friendsMayOpenPrivateChest: false
+    chestSteal: false
+- id: homestead_ring_deed_108
+  placeId: homestead_ring_place_02
+  upkeepGoldPerWeek: 6
+  seizeAfterMissedWeeks: 6
+  guestRules:
+    friendsMayVisit: true
+    friendsMayBuild: false
+    friendsMayOpenPrivateChest: false
+    chestSteal: false
+- id: homestead_ring_deed_109
+  placeId: homestead_ring_place_02
+  upkeepGoldPerWeek: 7
+  seizeAfterMissedWeeks: 6
+  guestRules:
+    friendsMayVisit: true
+    friendsMayBuild: false
+    friendsMayOpenPrivateChest: false
+    chestSteal: false
+- id: homestead_ring_deed_110
+  placeId: homestead_ring_place_02
+  upkeepGoldPerWeek: 8
+  seizeAfterMissedWeeks: 6
+  guestRules:
+    friendsMayVisit: true
+    friendsMayBuild: false
+    friendsMayOpenPrivateChest: false
+    chestSteal: false
+- id: homestead_ring_deed_111
+  placeId: homestead_ring_place_02
+  upkeepGoldPerWeek: 9
+  seizeAfterMissedWeeks: 6
+  guestRules:
+    friendsMayVisit: true
+    friendsMayBuild: false
+    friendsMayOpenPrivateChest: false
+    chestSteal: false
+- id: homestead_ring_deed_112
+  placeId: homestead_ring_place_02
+  upkeepGoldPerWeek: 6
+  seizeAfterMissedWeeks: 6
+  guestRules:
+    friendsMayVisit: true
+    friendsMayBuild: false
+    friendsMayOpenPrivateChest: false
+    chestSteal: false
+buildRecipes:
+- id: homestead_ring_recipe_01
+  publicName: Porch Bench
+  materials:
+    clay: 9
+    timber: 5
+    fibre: 3
+  clockWeeks: 2
+  power: false
+- id: homestead_ring_recipe_02
+  publicName: Canal Planter
+  materials:
+    clay: 10
+    timber: 6
+    fibre: 4
+  clockWeeks: 3
+  power: false
+- id: homestead_ring_recipe_03
+  publicName: Kiln Shelf
+  materials:
+    clay: 11
+    timber: 7
+    fibre: 5
+  clockWeeks: 4
+  power: false
+- id: homestead_ring_recipe_04
+  publicName: Bell Post
+  materials:
+    clay: 12
+    timber: 8
+    fibre: 6
+  clockWeeks: 1
+  power: false
+- id: homestead_ring_recipe_05
+  publicName: Orchard Trellis
+  materials:
+    clay: 13
+    timber: 9
+    fibre: 7
+  clockWeeks: 2
+  power: false
+- id: homestead_ring_recipe_06
+  publicName: Pebble Path
+  materials:
+    clay: 14
+    timber: 10
+    fibre: 8
+  clockWeeks: 3
+  power: false
+- id: homestead_ring_recipe_07
+  publicName: Shared Table
+  materials:
+    clay: 15
+    timber: 11
+    fibre: 9
+  clockWeeks: 4
+  power: false
+- id: homestead_ring_recipe_08
+  publicName: Rain Awning
+  materials:
+    clay: 16
+    timber: 12
+    fibre: 10
+  clockWeeks: 1
+  power: false

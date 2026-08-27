@@ -1,0 +1,137 @@
+# SynapticGM — MEGA RESEARCH PACK (assets + licenses + build gaps)
+
+NEW PROJECT. Unlimited run. Filename prefix: SynapticGM_mega_research_pack_2026-08-25
+
+You are doing founder research for SynapticGM, a COMMERCIAL hosted AI text RPG (live product). Deliver pasteable artifacts Cursor can use later. Do NOT write application TypeScript. Do NOT redesign the engine architecture.
+
+============================================================
+HARD PRODUCT LAW
+============================================================
+
+LIVE GAME ONLY. No WOF / World of Fantasy. Do not invent or include: Ash Compact, Tide Covenant, Hearthborn, Lanternfolk, Saltkin, Stonevein, Reedfen, Lampwood, Brinewatch, Granite Stair, or any WOF races/places.
+
+No Continuity-Warden LLM, critic model, fine-tune dataset, Neo4j, multi-agent turn path, or “put Claude on Free.”
+
+LIVE / GM-READY / PLAYER-FACING text must NEVER name or clone licensed series as “write like X”:
+Solo Leveling, Shield Hero, The Wandering Inn, My Vampire System, Sword Art Online, Dungeon Crawler Carl, Omniscient Reader, Tower of God, D&D, WotC, SRD product names, Marvel/DC, Disney/Ghibli titles, Fable/Albion, etc.
+Generic folklore tropes and ORIGINAL SynapticGM wording are required for anything that could be injected into prompts.
+
+Kid Mode: flag adult rows. Soften, don’t pornographize. No sexual content involving minors.
+
+Bigger is better. Empty sections = failure. Label claims EVIDENCED / PUBLICLY EVIDENCED / SPECULATIVE / INPUT REQUIRED.
+
+============================================================
+PART A — LICENSE-FIRST ASSET INDEX (icons, UI chrome, backgrounds, textures)
+============================================================
+
+GOAL: A commercial-safe INDEX of free-to-use sources. URLs + license facts. Do NOT zip pirated/scraped image files.
+
+BANS
+- Do not download/zip UI from WoW, AI Dungeon, NovelAI, or any commercial game.
+- Do not scrape Pinterest, ArtStation, DeviantArt, Google Images.
+- Humble Bundle / RPG Creator packs: EXCLUDE unless you quote EXACT per-file license text that clearly allows commercial use in a proprietary shipped game. If unclear → EXCLUDE.
+- Exclude CC-BY-NC, personal-use-only, “free for streamers”, “no commercial”.
+- CC-BY-SA: default EXCLUDE from YES-commercial list; if mentioned, put on a separate “counsel risk / share-alike” tab only.
+- OpenGameArt: verify EACH file; mixed packs = UNCLEAR, off the YES list.
+
+ALREADY IN LIVE GAME (do not re-invent as if missing)
+- Theme materials generated into public/themes/<key>/ via OpenRouter Klein (panel / frame / atmosphere).
+- Original inventory SVG glyphs (stockInventoryArt).
+- Lucide icons (ISC) — already credited.
+- Google Fonts (OFL) — already used.
+- Original map parchment/topo under public/maps/.
+
+INDEX CSV columns (one row per candidate file OR pack):
+asset_name, source_site, page_url, direct_file_url, license_spdx_or_name, commercial_use (YES|NO|UNCLEAR), attribution_required (YES|NO), attribution_text, share_alike (YES|NO), category (icon|UI-chrome|background|texture|font|sfx-optional), fits_synapticgm (YES/NO + why), retrieved_date, notes
+
+Prefer CC0 and verified public domain. Kenney only if page says CC0. Wikimedia only with clear PD/CC0 on the FILE page.
+
+Also deliver:
+- intake_checklist.md (founder steps before committing any third-party file)
+- DO_NOT_USE.md (Humble-without-proof, ArtStation, WoW UI, AID/NovelAI chrome, CC-BY-NC, SA-default dumps)
+
+============================================================
+PART B — ORIGINAL THEME / ICON / BACKGROUND PROMPT PACKS (we GENERATE these)
+============================================================
+
+This is the safe “massive library”: prompts for OUR generator, not scraped PNGs.
+
+For each live theme kit under public/themes/ (skip integration-blue):
+wood-elf-grove, dark-elf-umbrance, high-elf-spire, dwarf-forgehall, orc-warcamp, dragon-hoard, phoenix-ashrise, cyborg-chassis, angelic-radiance, infernal-pact, undead-ossuary, fae-glamour, goblin-scrapheap, merfolk-abyss, vampire-nocturne, neon-protocol, parchment-ledger, bone-reliquary, phosphor-terminal, noir-crimson, glass-spire, ember-depths
+
+Deliver theme_prompts.csv:
+kit_key, asset_role (panel_tile|frame_ornament|atmosphere_bg), prompt_text, negative_prompt, kid_ok, notes
+
+Constraints for every prompt:
+- Abstract seamless materials / ornaments / atmospheres
+- No people, faces, logos, readable text, licensed IP, sexualized forms
+- No gore-as-porn; undead/infernal stay material-mood not snuff
+- Public-domain visual tropes only; ORIGINAL SynapticGM look (materials not recolors)
+
+Also deliver:
+- item_icon_prompts.csv — 40 ORIGINAL prompts for generic fantasy/sci-fi/urban inventory icons (bag, phone, knife, vial, key, torch, book, etc.) kid-safe, no brand logos
+- memorable_plate_style_guide.md — ink-and-watercolor book illustration rules already used; 20 scene-prompt templates that stay ORIGINAL (no series titles), adult viewpoint unless bio says child
+- map_chrome_prompts.md — parchment, topo grain, compass rose, dungeon floor-plan fill — copyright-safe originals only
+
+============================================================
+PART C — RESEARCH GAPS THAT HELP BUILDING (not another architecture dump)
+============================================================
+
+Architecture for SNAPSHOT / hard gates / regex warden is ALREADY SHIPPED (HUD 2026-08-25b/c/e). Do NOT rewrite it. Do NOT propose a second critic LLM.
+
+Deliver only missing BUILDING fuel:
+
+C1) claim_pattern_bank.csv
+Claim types: object_in_hand, last_remaining_item, crowd_size, named_speaker_absent, exit_used, time_skip, weather_change, indoor_outdoor_shift, tension_drop, companion_present, location_as_speaker, invented_title_or_rank
+Per type: fail_examples, leave_flair_examples, regex_or_token_cues, rewrite_template_plain_english, snapshot_fields_required
+Plus 40 adversarial “almost false” sentences a naive regex would wreck.
+
+C2) visible_moat_copy.csv
+Player-facing strings only (no StateTx/RAG/warden jargon):
+- 30 STATUS “Changed” chips ≤8 words
+- 20 fair “Why?” one-liners after checks
+- Repair banner variants: invented item; absent companion; ungrounded talk; Cancel restore (5 each + Kid Mode variants)
+- 10 correction-confirmation lines
+- 12 quest provenance lines (accepted vs rumor vs soft offer)
+- 8 never-lines (menu-speak, ChatGPT apology, “as an AI”)
+
+C3) opener_pointer_examples.md (NOT player-facing canned cards)
+8–12 GOOD page-1 GM examples per family shape (isekai summon, late awaken, system apocalypse, tower, academy, dungeon-core, void, one PYOA crisis, one tabletop haunted keep).
+Label SNAPSHOT facts vs flair. Pointers as ingredients. No licensed titles. These train the WRITER, not chip UIs.
+
+C4) skill_growth_patterns.md (ORIGINAL SynapticGM product patterns — shapes only)
+Three engines to specify as product specs (no series names in GM-ready text):
+1) Bound-relic core (power through one identified object + cost/tell)
+2) Readable/codex learn (book/manual → named skill commit)
+3) Deed-offer-refuse (System offers skill from what you did; Accept/Decline persists)
+For each: GameState fields needed, UI affordances, never-lines, Kid Mode notes, 10 original example skill names per engine.
+Mark FOUNDER-ONLY if you mention real-world book/anime SHAPES — never inject titles into GM columns.
+
+C5) free_cost_envelope.csv (money / ops)
+LIVE catalog as of 2026-08-25 (do not use older Gemini-Flash-Lite-on-Free tables):
+- Free £0: writer deepseek/deepseek-v4-flash-0731; text ~12/day; memorable/week 0; Klein icons may still bill; opening setup free to player; failed turns refund player cap but may still bill API; hook +8 text once per New Game
+- Mid £14.99: haiku-4.5; High £29.99: sonnet-4.6
+- Memorable default OFF; ads optional overflow only; never Kid; never mid-action
+Deliver cost at 100 / 1k / 10k Free MAU × 20/40/80 turns; ranked levers that do NOT force ads or sell trust; player-facing cap copy; P0 trust list (what NOT to cut). Look up current OpenRouter prices; date the lookup.
+
+C6) counsel_outline.md (NOT legal advice)
+Questions for a solicitor: audience/age, retention/deletion of log+ledger, processors (Google, Stripe, OpenRouter, Supabase, optional ad SDK), refunds/VAT, UGC/moderation, marketing claim substantiation (never “remembers everything”), Kid Mode public-gate decision tree. Data-class table with placeholders. Claim register CSV: claim, allowed public wording, evidence required, ban-list wording.
+
+C7) screenshot_audit_protocol.md
+Exact 12 desktop+mobile shots for next E1/E2 pass (New Game, opening, hard-gate banner, STATUS, drawers, Vampire Adventurer, Shop kit). Filenames. What is UNVERIFIED without shots. Do not invent UI.
+
+============================================================
+PART D — PACKAGING
+============================================================
+
+Deliver:
+1) README.md — verdict order: generate-original art default; third-party only from YES-commercial CC0/PD rows; Parts C1–C4 feed Cursor banks/UI later; C5–C6 are ops/counsel; C7 needs John’s screenshots
+2) All CSVs + markdown above
+3) gaps.md — anything you could not honestly fill and why
+4) NO image zip unless every file is CC0/PD AND listed in the index with license URLs
+
+============================================================
+BEGIN
+============================================================
+
+Produce the full pack. Prefer completeness over brevity. If quota forces a cut, prioritize: Part A YES-commercial index → Part B theme+icon prompts → C1 claim bank → C3 opener examples → C4 skill patterns → C2 copy → C5 cost → C6 counsel → C7 protocol.

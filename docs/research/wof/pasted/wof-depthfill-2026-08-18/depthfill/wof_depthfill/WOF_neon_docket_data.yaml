@@ -1,0 +1,2293 @@
+packFormatVersion: 1
+worldId: neon_docket
+displayName: Neon Docket
+maturity: teen+
+rulesModuleId: heat_wanted
+themeKit: Neon Docket Theme Kit
+places:
+- id: neon_docket_place_01
+  publicName: Docket Row
+  zoneId: neon_docket_zone_01
+  role: shared hub
+  mapScale: street
+  dangerTier: safe
+  outdoor: true
+  exits:
+  - neon_docket_place_02
+  - neon_docket_place_04
+  npcIds:
+  - neon_docket_npc_01
+  - neon_docket_npc_05
+  - neon_docket_npc_09
+  dungeonId: null
+  interactableIds:
+  - neon_docket_interact_01
+  - neon_docket_interact_09
+- id: neon_docket_place_02
+  publicName: Night Clerk
+  zoneId: neon_docket_zone_01
+  role: start hub
+  mapScale: street
+  dangerTier: safe
+  outdoor: true
+  exits:
+  - neon_docket_place_01
+  - neon_docket_place_03
+  npcIds:
+  - neon_docket_npc_02
+  - neon_docket_npc_06
+  - neon_docket_npc_10
+  dungeonId: null
+  interactableIds:
+  - neon_docket_interact_02
+  - neon_docket_interact_10
+- id: neon_docket_place_03
+  publicName: Underbridge
+  zoneId: neon_docket_zone_01
+  role: street route
+  mapScale: street
+  dangerTier: safe
+  outdoor: true
+  exits:
+  - neon_docket_place_02
+  - neon_docket_place_04
+  npcIds:
+  - neon_docket_npc_03
+  - neon_docket_npc_07
+  dungeonId: null
+  interactableIds:
+  - neon_docket_interact_03
+  - neon_docket_interact_11
+- id: neon_docket_place_04
+  publicName: Casefile Court
+  zoneId: neon_docket_zone_02
+  role: mid join
+  mapScale: street
+  dangerTier: low
+  outdoor: true
+  exits:
+  - neon_docket_place_03
+  - neon_docket_place_05
+  - neon_docket_place_01
+  npcIds:
+  - neon_docket_npc_04
+  - neon_docket_npc_08
+  dungeonId: null
+  interactableIds:
+  - neon_docket_interact_04
+  - neon_docket_interact_12
+- id: neon_docket_place_05
+  publicName: Meter Alley
+  zoneId: neon_docket_zone_02
+  role: work district
+  mapScale: interior
+  dangerTier: low
+  outdoor: false
+  exits:
+  - neon_docket_place_04
+  - neon_docket_place_06
+  npcIds: []
+  dungeonId: null
+  interactableIds:
+  - neon_docket_interact_05
+- id: neon_docket_place_06
+  publicName: Quiet Garage
+  zoneId: neon_docket_zone_02
+  role: instance door
+  mapScale: dungeon
+  dangerTier: medium
+  outdoor: false
+  exits:
+  - neon_docket_place_05
+  - neon_docket_place_07
+  npcIds: []
+  dungeonId: neon_docket_dungeon_01
+  interactableIds:
+  - neon_docket_interact_06
+- id: neon_docket_place_07
+  publicName: Witness Steps
+  zoneId: neon_docket_zone_03
+  role: wild edge
+  mapScale: street
+  dangerTier: medium
+  outdoor: true
+  exits:
+  - neon_docket_place_06
+  - neon_docket_place_08
+  npcIds: []
+  dungeonId: null
+  interactableIds:
+  - neon_docket_interact_07
+- id: neon_docket_place_08
+  publicName: Glass Booth
+  zoneId: neon_docket_zone_03
+  role: housing approach
+  mapScale: interior
+  dangerTier: low
+  outdoor: false
+  exits:
+  - neon_docket_place_07
+  npcIds: []
+  dungeonId: null
+  interactableIds:
+  - neon_docket_interact_08
+npcs:
+- id: neon_docket_npc_01
+  name: Bryn Cress
+  placeId: neon_docket_place_01
+  role: quest
+  greet: Bryn Cress says, ‘Neon Docket keeps its promises in small places. Tell me which one you noticed.’
+- id: neon_docket_npc_02
+  name: Cato Silt
+  placeId: neon_docket_place_02
+  role: profession
+  greet: Cato Silt says, ‘Neon Docket keeps its promises in small places. Tell me which one you noticed.’
+- id: neon_docket_npc_03
+  name: Dessa Pryce
+  placeId: neon_docket_place_03
+  role: hub
+  greet: Dessa Pryce says, ‘Neon Docket keeps its promises in small places. Tell me which one you noticed.’
+- id: neon_docket_npc_04
+  name: Eris Vane
+  placeId: neon_docket_place_04
+  role: merchant
+  greet: Eris Vane says, ‘Neon Docket keeps its promises in small places. Tell me which one you noticed.’
+- id: neon_docket_npc_05
+  name: Fenn Quill
+  placeId: neon_docket_place_01
+  role: local
+  greet: Fenn Quill says, ‘Neon Docket keeps its promises in small places. Tell me which one you noticed.’
+- id: neon_docket_npc_06
+  name: Gala Vale
+  placeId: neon_docket_place_02
+  role: host
+  greet: Gala Vale says, ‘Neon Docket keeps its promises in small places. Tell me which one you noticed.’
+- id: neon_docket_npc_07
+  name: Holl Wren
+  placeId: neon_docket_place_03
+  role: quest
+  greet: Holl Wren says, ‘Neon Docket keeps its promises in small places. Tell me which one you noticed.’
+- id: neon_docket_npc_08
+  name: Ivo Morrow
+  placeId: neon_docket_place_04
+  role: profession
+  greet: Ivo Morrow says, ‘Neon Docket keeps its promises in small places. Tell me which one you noticed.’
+- id: neon_docket_npc_09
+  name: Jori Rowan
+  placeId: neon_docket_place_01
+  role: local
+  greet: Jori Rowan says, ‘Neon Docket keeps its promises in small places. Tell me which one you noticed.’
+- id: neon_docket_npc_10
+  name: Alden Nook
+  placeId: neon_docket_place_02
+  role: merchant
+  greet: Alden Nook says, ‘Neon Docket keeps its promises in small places. Tell me which one you noticed.’
+kits:
+- id: neon_docket_kit_01
+  publicName: Restitution Broker
+  look: restitution broker workwear
+  values: practice restitution broker
+  taboo: Never use restitution broker authority to remove another person’s choice.
+  speechTell: Use the local rhythm of Neon Docket and make every offer concrete.
+  starterClothes: restitution_broker mantle
+  starterTool: restitution_broker tool
+  starterMapItem: neon_docket_map_01
+  startingPlaceId: neon_docket_place_01
+  firstHourQuestId: neon_docket_q_01
+  abilityFlag: neon_docket_ability_01
+- id: neon_docket_kit_02
+  publicName: Case Runner
+  look: case runner workwear
+  values: practice case runner
+  taboo: Never use case runner authority to remove another person’s choice.
+  speechTell: Use the local rhythm of Neon Docket and make every offer concrete.
+  starterClothes: case_runner vest
+  starterTool: case_runner tool
+  starterMapItem: neon_docket_map_02
+  startingPlaceId: neon_docket_place_02
+  firstHourQuestId: neon_docket_q_02
+  abilityFlag: neon_docket_ability_02
+- id: neon_docket_kit_03
+  publicName: Witness Steward
+  look: witness steward workwear
+  values: practice witness steward
+  taboo: Never use witness steward authority to remove another person’s choice.
+  speechTell: Use the local rhythm of Neon Docket and make every offer concrete.
+  starterClothes: witness_steward jacket
+  starterTool: witness_steward tool
+  starterMapItem: neon_docket_map_03
+  startingPlaceId: neon_docket_place_01
+  firstHourQuestId: neon_docket_q_03
+  abilityFlag: neon_docket_ability_03
+- id: neon_docket_kit_04
+  publicName: Meter Auditor
+  look: meter auditor workwear
+  values: practice meter auditor
+  taboo: Never use meter auditor authority to remove another person’s choice.
+  speechTell: Use the local rhythm of Neon Docket and make every offer concrete.
+  starterClothes: meter_auditor sash
+  starterTool: meter_auditor tool
+  starterMapItem: neon_docket_map_04
+  startingPlaceId: neon_docket_place_02
+  firstHourQuestId: neon_docket_q_04
+  abilityFlag: neon_docket_ability_04
+quests:
+- id: neon_docket_q_01
+  title: 'Neon Docket: Name a Working Promise'
+  family: identity
+  hidden: false
+  unlocksQuestId: neon_docket_q_02
+  objectives:
+  - id: neon_docket_q_01_obj_01
+    kind: visit_place
+    targetId: neon_docket_place_01
+    count: 1
+  - id: neon_docket_q_01_obj_02
+    kind: deliver_item
+    targetId: neon_docket_deliver_item_01
+    count: 2
+  rewardGold: 12
+  rewardXp: 20
+- id: neon_docket_q_02
+  title: 'Neon Docket: Set the First Tool Aside'
+  family: identity
+  hidden: false
+  unlocksQuestId: neon_docket_q_03
+  objectives:
+  - id: neon_docket_q_02_obj_01
+    kind: ledger_kill
+    targetId: neon_docket_ledger_kill_02
+    count: 1
+  - id: neon_docket_q_02_obj_02
+    kind: talk_to_npc
+    targetId: neon_docket_npc_03
+    count: 2
+  rewardGold: 15
+  rewardXp: 25
+- id: neon_docket_q_03
+  title: 'Neon Docket: Carry the Right Record'
+  family: identity
+  hidden: false
+  unlocksQuestId: neon_docket_q_04
+  objectives:
+  - id: neon_docket_q_03_obj_01
+    kind: ledger_bond
+    targetId: neon_docket_ledger_bond_03
+    count: 1
+  - id: neon_docket_q_03_obj_02
+    kind: collect_item
+    targetId: neon_docket_collect_item_03
+    count: 2
+  rewardGold: 18
+  rewardXp: 30
+- id: neon_docket_q_04
+  title: 'Neon Docket: Find the Missing Measure'
+  family: identity
+  hidden: false
+  unlocksQuestId: neon_docket_q_05
+  objectives:
+  - id: neon_docket_q_04_obj_01
+    kind: deliver_item
+    targetId: neon_docket_deliver_item_04
+    count: 1
+  - id: neon_docket_q_04_obj_02
+    kind: interact
+    targetId: neon_docket_place_05
+    count: 2
+    verbId: cook
+  rewardGold: 21
+  rewardXp: 35
+- id: neon_docket_q_05
+  title: 'Neon Docket: Teach a Safer Shortcut'
+  family: identity
+  hidden: false
+  unlocksQuestId: neon_docket_q_06
+  objectives:
+  - id: neon_docket_q_05_obj_01
+    kind: talk_to_npc
+    targetId: neon_docket_npc_05
+    count: 1
+  - id: neon_docket_q_05_obj_02
+    kind: score_beat
+    targetId: neon_docket_score_beat_05
+    count: 2
+  rewardGold: 24
+  rewardXp: 40
+- id: neon_docket_q_06
+  title: 'Neon Docket: Read the Local Weather'
+  family: profession
+  hidden: false
+  unlocksQuestId: neon_docket_q_07
+  objectives:
+  - id: neon_docket_q_06_obj_01
+    kind: collect_item
+    targetId: neon_docket_collect_item_06
+    count: 1
+  - id: neon_docket_q_06_obj_02
+    kind: build_tick
+    targetId: neon_docket_build_tick_06
+    count: 2
+  rewardGold: 27
+  rewardXp: 45
+- id: neon_docket_q_07
+  title: 'Neon Docket: Repair a Shared Threshold'
+  family: profession
+  hidden: false
+  unlocksQuestId: neon_docket_q_08
+  objectives:
+  - id: neon_docket_q_07_obj_01
+    kind: interact
+    targetId: neon_docket_place_07
+    count: 1
+    verbId: inspect
+  - id: neon_docket_q_07_obj_02
+    kind: hospitality_tick
+    targetId: neon_docket_hospitality_tick_07
+    count: 2
+  rewardGold: 30
+  rewardXp: 50
+- id: neon_docket_q_08
+  title: 'Neon Docket: Return a Borrowed Sign'
+  family: profession
+  hidden: false
+  unlocksQuestId: neon_docket_q_09
+  objectives:
+  - id: neon_docket_q_08_obj_01
+    kind: score_beat
+    targetId: neon_docket_score_beat_08
+    count: 1
+  - id: neon_docket_q_08_obj_02
+    kind: lap_finish
+    targetId: neon_docket_lap_finish_08
+    count: 2
+  rewardGold: 33
+  rewardXp: 55
+- id: neon_docket_q_09
+  title: 'Neon Docket: Host the Small Welcome'
+  family: profession
+  hidden: false
+  unlocksQuestId: neon_docket_q_10
+  objectives:
+  - id: neon_docket_q_09_obj_01
+    kind: build_tick
+    targetId: neon_docket_build_tick_09
+    count: 1
+  - id: neon_docket_q_09_obj_02
+    kind: visit_place
+    targetId: neon_docket_place_02
+    count: 2
+  rewardGold: 36
+  rewardXp: 60
+- id: neon_docket_q_10
+  title: 'Neon Docket: Choose a Fair Order'
+  family: profession
+  hidden: false
+  unlocksQuestId: neon_docket_q_11
+  objectives:
+  - id: neon_docket_q_10_obj_01
+    kind: hospitality_tick
+    targetId: neon_docket_hospitality_tick_10
+    count: 1
+  - id: neon_docket_q_10_obj_02
+    kind: ledger_kill
+    targetId: neon_docket_ledger_kill_10
+    count: 2
+  rewardGold: 39
+  rewardXp: 65
+- id: neon_docket_q_11
+  title: 'Neon Docket: Map the Quiet Detour'
+  family: profession
+  hidden: false
+  unlocksQuestId: neon_docket_q_12
+  objectives:
+  - id: neon_docket_q_11_obj_01
+    kind: lap_finish
+    targetId: neon_docket_lap_finish_11
+    count: 1
+  - id: neon_docket_q_11_obj_02
+    kind: ledger_bond
+    targetId: neon_docket_ledger_bond_11
+    count: 2
+  rewardGold: 42
+  rewardXp: 70
+- id: neon_docket_q_12
+  title: 'Neon Docket: Bring a Useful Witness'
+  family: profession
+  hidden: false
+  unlocksQuestId: neon_docket_q_13
+  objectives:
+  - id: neon_docket_q_12_obj_01
+    kind: visit_place
+    targetId: neon_docket_place_04
+    count: 1
+  - id: neon_docket_q_12_obj_02
+    kind: deliver_item
+    targetId: neon_docket_deliver_item_12
+    count: 2
+  rewardGold: 45
+  rewardXp: 75
+- id: neon_docket_q_13
+  title: 'Neon Docket: Sort the Unclaimed Materials'
+  family: zone_story
+  hidden: false
+  unlocksQuestId: neon_docket_q_14
+  objectives:
+  - id: neon_docket_q_13_obj_01
+    kind: ledger_kill
+    targetId: neon_docket_ledger_kill_13
+    count: 1
+  - id: neon_docket_q_13_obj_02
+    kind: talk_to_npc
+    targetId: neon_docket_npc_04
+    count: 2
+  rewardGold: 48
+  rewardXp: 80
+- id: neon_docket_q_14
+  title: 'Neon Docket: Make Room for a Visitor'
+  family: zone_story
+  hidden: false
+  unlocksQuestId: neon_docket_q_15
+  objectives:
+  - id: neon_docket_q_14_obj_01
+    kind: ledger_bond
+    targetId: neon_docket_ledger_bond_14
+    count: 1
+  - id: neon_docket_q_14_obj_02
+    kind: collect_item
+    targetId: neon_docket_collect_item_14
+    count: 2
+  rewardGold: 51
+  rewardXp: 85
+- id: neon_docket_q_15
+  title: 'Neon Docket: Close the Day’s Ledger'
+  family: zone_story
+  hidden: false
+  unlocksQuestId: neon_docket_q_16
+  objectives:
+  - id: neon_docket_q_15_obj_01
+    kind: deliver_item
+    targetId: neon_docket_deliver_item_15
+    count: 1
+  - id: neon_docket_q_15_obj_02
+    kind: interact
+    targetId: neon_docket_place_08
+    count: 2
+    verbId: craft
+  rewardGold: 54
+  rewardXp: 90
+- id: neon_docket_q_16
+  title: 'Neon Docket: Follow the Midway Signal'
+  family: zone_story
+  hidden: false
+  unlocksQuestId: neon_docket_q_17
+  objectives:
+  - id: neon_docket_q_16_obj_01
+    kind: talk_to_npc
+    targetId: neon_docket_npc_06
+    count: 1
+  - id: neon_docket_q_16_obj_02
+    kind: score_beat
+    targetId: neon_docket_score_beat_16
+    count: 2
+  rewardGold: 57
+  rewardXp: 95
+- id: neon_docket_q_17
+  title: 'Neon Docket: Uncover the Door Note'
+  family: zone_story
+  hidden: true
+  unlocksQuestId: neon_docket_q_18
+  objectives:
+  - id: neon_docket_q_17_obj_01
+    kind: collect_item
+    targetId: neon_docket_collect_item_17
+    count: 1
+  - id: neon_docket_q_17_obj_02
+    kind: build_tick
+    targetId: neon_docket_build_tick_17
+    count: 2
+  rewardGold: 60
+  rewardXp: 100
+- id: neon_docket_q_18
+  title: 'Neon Docket: Prepare the Team Table'
+  family: zone_story
+  hidden: false
+  unlocksQuestId: neon_docket_q_19
+  objectives:
+  - id: neon_docket_q_18_obj_01
+    kind: interact
+    targetId: neon_docket_place_02
+    count: 1
+    verbId: bind_inn
+  - id: neon_docket_q_18_obj_02
+    kind: hospitality_tick
+    targetId: neon_docket_hospitality_tick_18
+    count: 2
+  rewardGold: 63
+  rewardXp: 105
+- id: neon_docket_q_19
+  title: 'Neon Docket: Test the Local Method'
+  family: zone_story
+  hidden: false
+  unlocksQuestId: neon_docket_q_20
+  objectives:
+  - id: neon_docket_q_19_obj_01
+    kind: score_beat
+    targetId: neon_docket_score_beat_19
+    count: 1
+  - id: neon_docket_q_19_obj_02
+    kind: lap_finish
+    targetId: neon_docket_lap_finish_19
+    count: 2
+  rewardGold: 66
+  rewardXp: 110
+- id: neon_docket_q_20
+  title: 'Neon Docket: Hold a Careful Boundary'
+  family: zone_story
+  hidden: false
+  unlocksQuestId: neon_docket_q_21
+  objectives:
+  - id: neon_docket_q_20_obj_01
+    kind: build_tick
+    targetId: neon_docket_build_tick_20
+    count: 1
+  - id: neon_docket_q_20_obj_02
+    kind: visit_place
+    targetId: neon_docket_place_05
+    count: 2
+  rewardGold: 69
+  rewardXp: 115
+- id: neon_docket_q_21
+  title: 'Neon Docket: Answer the Neighbour’s Call'
+  family: extra
+  hidden: false
+  unlocksQuestId: neon_docket_q_22
+  objectives:
+  - id: neon_docket_q_21_obj_01
+    kind: hospitality_tick
+    targetId: neon_docket_hospitality_tick_21
+    count: 1
+  - id: neon_docket_q_21_obj_02
+    kind: ledger_kill
+    targetId: neon_docket_ledger_kill_21
+    count: 2
+  rewardGold: 72
+  rewardXp: 120
+- id: neon_docket_q_22
+  title: 'Neon Docket: Finish the Side Route'
+  family: extra
+  hidden: false
+  unlocksQuestId: neon_docket_q_23
+  objectives:
+  - id: neon_docket_q_22_obj_01
+    kind: lap_finish
+    targetId: neon_docket_lap_finish_22
+    count: 1
+  - id: neon_docket_q_22_obj_02
+    kind: ledger_bond
+    targetId: neon_docket_ledger_bond_22
+    count: 2
+  rewardGold: 75
+  rewardXp: 125
+- id: neon_docket_q_23
+  title: 'Neon Docket: Earn a Trusted Introduction'
+  family: extra
+  hidden: true
+  unlocksQuestId: neon_docket_q_24
+  objectives:
+  - id: neon_docket_q_23_obj_01
+    kind: visit_place
+    targetId: neon_docket_place_07
+    count: 1
+  - id: neon_docket_q_23_obj_02
+    kind: deliver_item
+    targetId: neon_docket_deliver_item_23
+    count: 2
+  rewardGold: 78
+  rewardXp: 130
+- id: neon_docket_q_24
+  title: 'Neon Docket: Open the Instance Path'
+  family: extra
+  hidden: false
+  unlocksQuestId: neon_docket_q_25
+  objectives:
+  - id: neon_docket_q_24_obj_01
+    kind: ledger_kill
+    targetId: neon_docket_ledger_kill_24
+    count: 1
+  - id: neon_docket_q_24_obj_02
+    kind: talk_to_npc
+    targetId: neon_docket_npc_05
+    count: 2
+  rewardGold: 81
+  rewardXp: 135
+- id: neon_docket_q_25
+  title: 'Neon Docket: Complete the First Big Night'
+  family: extra
+  hidden: false
+  unlocksQuestId: null
+  objectives:
+  - id: neon_docket_q_25_obj_01
+    kind: ledger_bond
+    targetId: neon_docket_ledger_bond_25
+    count: 1
+  - id: neon_docket_q_25_obj_02
+    kind: collect_item
+    targetId: neon_docket_collect_item_25
+    count: 2
+  rewardGold: 84
+  rewardXp: 140
+species:
+- id: neon_docket_species_01
+  publicName: Alley Pigeon
+  kind: opponent
+  hp: 8
+  armor: 0
+  threat: 1
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: neon_docket_species_02
+  publicName: Receipt Ferret
+  kind: opponent
+  hp: 9
+  armor: 1
+  threat: 2
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: neon_docket_species_03
+  publicName: Lamp Gecko
+  kind: opponent
+  hp: 10
+  armor: 2
+  threat: 3
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: neon_docket_species_04
+  publicName: Archive Moth
+  kind: opponent
+  hp: 11
+  armor: 3
+  threat: 1
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: neon_docket_species_05
+  publicName: Neon Docket Field Type 5
+  kind: opponent
+  hp: 12
+  armor: 0
+  threat: 2
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: neon_docket_species_06
+  publicName: Neon Docket Field Type 6
+  kind: opponent
+  hp: 13
+  armor: 1
+  threat: 3
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: neon_docket_species_07
+  publicName: Neon Docket Field Type 7
+  kind: opponent
+  hp: 14
+  armor: 2
+  threat: 1
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: neon_docket_species_08
+  publicName: Neon Docket Field Type 8
+  kind: opponent
+  hp: 15
+  armor: 3
+  threat: 2
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: neon_docket_species_09
+  publicName: Neon Docket Field Type 9
+  kind: opponent
+  hp: 16
+  armor: 0
+  threat: 3
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: neon_docket_species_10
+  publicName: Neon Docket Field Type 10
+  kind: opponent
+  hp: 17
+  armor: 1
+  threat: 1
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: neon_docket_species_11
+  publicName: Neon Docket Field Type 11
+  kind: opponent
+  hp: 18
+  armor: 2
+  threat: 2
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: neon_docket_species_12
+  publicName: Neon Docket Field Type 12
+  kind: opponent
+  hp: 19
+  armor: 3
+  threat: 3
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: neon_docket_species_13
+  publicName: Neon Docket Field Type 13
+  kind: opponent
+  hp: 20
+  armor: 0
+  threat: 1
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: neon_docket_species_14
+  publicName: Neon Docket Field Type 14
+  kind: opponent
+  hp: 21
+  armor: 1
+  threat: 2
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: neon_docket_species_15
+  publicName: Neon Docket Field Type 15
+  kind: opponent
+  hp: 22
+  armor: 2
+  threat: 3
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: neon_docket_species_16
+  publicName: Neon Docket Field Type 16
+  kind: opponent
+  hp: 23
+  armor: 3
+  threat: 1
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: neon_docket_species_17
+  publicName: Neon Docket Field Type 17
+  kind: opponent
+  hp: 24
+  armor: 0
+  threat: 2
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: neon_docket_species_18
+  publicName: Neon Docket Field Type 18
+  kind: opponent
+  hp: 25
+  armor: 1
+  threat: 3
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+items:
+- id: neon_docket_item_01
+  publicName: Docket Row token
+  category: starter
+  power: false
+  sellGold: 3
+  description: A Neon Docket item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: neon_docket_item_02
+  publicName: Night Clerk tool
+  category: starter
+  power: false
+  sellGold: 5
+  description: A Neon Docket item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: neon_docket_item_03
+  publicName: Underbridge thread
+  category: profession
+  power: false
+  sellGold: 7
+  description: A Neon Docket item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: neon_docket_item_04
+  publicName: Casefile Court seal
+  category: profession
+  power: false
+  sellGold: 9
+  description: A Neon Docket item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: neon_docket_item_05
+  publicName: Meter Alley bundle
+  category: instance
+  power: false
+  sellGold: 11
+  description: A Neon Docket item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: neon_docket_item_06
+  publicName: Quiet Garage token
+  category: instance
+  power: false
+  sellGold: 13
+  description: A Neon Docket item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: neon_docket_item_07
+  publicName: Witness Steps tool
+  category: cosmetic
+  power: false
+  sellGold: 15
+  description: A Neon Docket item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: neon_docket_item_08
+  publicName: Glass Booth thread
+  category: cosmetic
+  power: false
+  sellGold: 17
+  description: A Neon Docket item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: neon_docket_item_09
+  publicName: Docket Row seal
+  category: material
+  power: false
+  sellGold: 19
+  description: A Neon Docket item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: neon_docket_item_10
+  publicName: Night Clerk bundle
+  category: material
+  power: false
+  sellGold: 21
+  description: A Neon Docket item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: neon_docket_item_11
+  publicName: Underbridge token
+  category: care
+  power: false
+  sellGold: 23
+  description: A Neon Docket item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: neon_docket_item_12
+  publicName: Casefile Court tool
+  category: care
+  power: false
+  sellGold: 25
+  description: A Neon Docket item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: neon_docket_item_13
+  publicName: Meter Alley thread
+  category: map
+  power: false
+  sellGold: 27
+  description: A Neon Docket item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: neon_docket_item_14
+  publicName: Quiet Garage seal
+  category: map
+  power: false
+  sellGold: 29
+  description: A Neon Docket item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: neon_docket_item_15
+  publicName: Witness Steps bundle
+  category: vendor
+  power: false
+  sellGold: 31
+  description: A Neon Docket item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: neon_docket_item_16
+  publicName: Glass Booth token
+  category: vendor
+  power: false
+  sellGold: 33
+  description: A Neon Docket item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: neon_docket_item_17
+  publicName: Docket Row tool
+  category: recipe
+  power: false
+  sellGold: 35
+  description: A Neon Docket item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: neon_docket_item_18
+  publicName: Night Clerk thread
+  category: recipe
+  power: false
+  sellGold: 37
+  description: A Neon Docket item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: neon_docket_item_19
+  publicName: Underbridge seal
+  category: keepsake
+  power: false
+  sellGold: 39
+  description: A Neon Docket item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: neon_docket_item_20
+  publicName: Casefile Court bundle
+  category: keepsake
+  power: false
+  sellGold: 41
+  description: A Neon Docket item used for a stated craft, route, display, or record; it never alters paid outcomes.
+dropTables:
+- id: neon_docket_drop_01
+  sourceId: neon_docket_species_01
+  personalLoot: true
+  entries:
+  - itemId: neon_docket_item_01
+    chancePct: 60
+    min: 1
+    max: 2
+  - itemId: neon_docket_item_08
+    chancePct: 20
+    min: 1
+    max: 1
+- id: neon_docket_drop_02
+  sourceId: neon_docket_species_02
+  personalLoot: true
+  entries:
+  - itemId: neon_docket_item_02
+    chancePct: 55
+    min: 1
+    max: 2
+  - itemId: neon_docket_item_09
+    chancePct: 25
+    min: 1
+    max: 1
+- id: neon_docket_drop_03
+  sourceId: neon_docket_species_03
+  personalLoot: true
+  entries:
+  - itemId: neon_docket_item_03
+    chancePct: 50
+    min: 1
+    max: 2
+  - itemId: neon_docket_item_10
+    chancePct: 30
+    min: 1
+    max: 1
+- id: neon_docket_drop_04
+  sourceId: neon_docket_species_04
+  personalLoot: true
+  entries:
+  - itemId: neon_docket_item_04
+    chancePct: 45
+    min: 1
+    max: 2
+  - itemId: neon_docket_item_11
+    chancePct: 20
+    min: 1
+    max: 1
+- id: neon_docket_drop_05
+  sourceId: neon_docket_species_05
+  personalLoot: true
+  entries:
+  - itemId: neon_docket_item_05
+    chancePct: 60
+    min: 1
+    max: 2
+  - itemId: neon_docket_item_12
+    chancePct: 25
+    min: 1
+    max: 1
+- id: neon_docket_drop_06
+  sourceId: neon_docket_species_06
+  personalLoot: true
+  entries:
+  - itemId: neon_docket_item_06
+    chancePct: 55
+    min: 1
+    max: 2
+  - itemId: neon_docket_item_13
+    chancePct: 30
+    min: 1
+    max: 1
+- id: neon_docket_drop_07
+  sourceId: neon_docket_species_07
+  personalLoot: true
+  entries:
+  - itemId: neon_docket_item_07
+    chancePct: 50
+    min: 1
+    max: 2
+  - itemId: neon_docket_item_14
+    chancePct: 20
+    min: 1
+    max: 1
+- id: neon_docket_drop_08
+  sourceId: neon_docket_species_08
+  personalLoot: true
+  entries:
+  - itemId: neon_docket_item_08
+    chancePct: 45
+    min: 1
+    max: 2
+  - itemId: neon_docket_item_15
+    chancePct: 25
+    min: 1
+    max: 1
+- id: neon_docket_drop_09
+  sourceId: neon_docket_species_09
+  personalLoot: true
+  entries:
+  - itemId: neon_docket_item_09
+    chancePct: 60
+    min: 1
+    max: 2
+  - itemId: neon_docket_item_16
+    chancePct: 30
+    min: 1
+    max: 1
+- id: neon_docket_drop_10
+  sourceId: neon_docket_species_10
+  personalLoot: true
+  entries:
+  - itemId: neon_docket_item_10
+    chancePct: 55
+    min: 1
+    max: 2
+  - itemId: neon_docket_item_17
+    chancePct: 20
+    min: 1
+    max: 1
+- id: neon_docket_drop_11
+  sourceId: neon_docket_species_11
+  personalLoot: true
+  entries:
+  - itemId: neon_docket_item_11
+    chancePct: 50
+    min: 1
+    max: 2
+  - itemId: neon_docket_item_18
+    chancePct: 25
+    min: 1
+    max: 1
+- id: neon_docket_drop_12
+  sourceId: neon_docket_species_12
+  personalLoot: true
+  entries:
+  - itemId: neon_docket_item_12
+    chancePct: 45
+    min: 1
+    max: 2
+  - itemId: neon_docket_item_19
+    chancePct: 30
+    min: 1
+    max: 1
+vendors:
+- id: neon_docket_vendor_01
+  publicName: Neon Docket Exchange
+  placeId: neon_docket_place_01
+  currencyGoldName: Docket Cash
+  items:
+  - itemId: neon_docket_item_01
+    priceGold: 8
+  - itemId: neon_docket_item_02
+    priceGold: 11
+  - itemId: neon_docket_item_03
+    priceGold: 14
+  - itemId: neon_docket_item_04
+    priceGold: 17
+  - itemId: neon_docket_item_05
+    priceGold: 20
+  - itemId: neon_docket_item_06
+    priceGold: 23
+  - itemId: neon_docket_item_07
+    priceGold: 26
+  - itemId: neon_docket_item_08
+    priceGold: 29
+  repairCostPerPoint: 0
+dungeons:
+- id: neon_docket_dungeon_01
+  publicName: The Closed Account
+  partyMin: 1
+  partyMax: 5
+  entrancePlaceId: neon_docket_place_06
+  rooms:
+  - id: neon_docket_dungeon_room_01
+    publicName: 'The Closed Account: Threshold Room'
+    describeBeforeCreature: Describe the material, sound, exits, and practical obstacle of Threshold Room before any species
+      is narrated.
+    trashSpeciesIds:
+    - neon_docket_species_01
+    - neon_docket_species_02
+    eliteSpeciesId: null
+    checkpoint: false
+    bossSpeciesId: null
+    exits:
+    - neon_docket_dungeon_room_02
+  - id: neon_docket_dungeon_room_02
+    publicName: 'The Closed Account: Workroom'
+    describeBeforeCreature: Describe the material, sound, exits, and practical obstacle of Workroom before any species is
+      narrated.
+    trashSpeciesIds:
+    - neon_docket_species_03
+    - neon_docket_species_04
+    eliteSpeciesId: null
+    checkpoint: false
+    bossSpeciesId: null
+    exits:
+    - neon_docket_dungeon_room_03
+  - id: neon_docket_dungeon_room_03
+    publicName: 'The Closed Account: Side Passage'
+    describeBeforeCreature: Describe the material, sound, exits, and practical obstacle of Side Passage before any species
+      is narrated.
+    trashSpeciesIds:
+    - neon_docket_species_05
+    - neon_docket_species_06
+    eliteSpeciesId: neon_docket_species_09
+    checkpoint: false
+    bossSpeciesId: null
+    exits:
+    - neon_docket_dungeon_room_04
+  - id: neon_docket_dungeon_room_04
+    publicName: 'The Closed Account: Checkpoint Alcove'
+    describeBeforeCreature: Describe the material, sound, exits, and practical obstacle of Checkpoint Alcove before any species
+      is narrated.
+    trashSpeciesIds:
+    - neon_docket_species_07
+    - neon_docket_species_08
+    eliteSpeciesId: null
+    checkpoint: true
+    bossSpeciesId: null
+    exits:
+    - neon_docket_dungeon_room_05
+  - id: neon_docket_dungeon_room_05
+    publicName: 'The Closed Account: Finale Chamber'
+    describeBeforeCreature: Describe the material, sound, exits, and practical obstacle of Finale Chamber before any species
+      is narrated.
+    trashSpeciesIds:
+    - neon_docket_species_09
+    - neon_docket_species_10
+    eliteSpeciesId: null
+    checkpoint: false
+    bossSpeciesId: neon_docket_species_14
+    exits: []
+  traps:
+  - id: neon_docket_trap_01
+    publicName: misread sign
+    interactableId: neon_docket_interact_01
+  - id: neon_docket_trap_02
+    publicName: jammed latch
+    interactableId: neon_docket_interact_02
+  - id: neon_docket_trap_03
+    publicName: wet threshold
+    interactableId: neon_docket_interact_03
+  - id: neon_docket_trap_04
+    publicName: false shelf
+    interactableId: neon_docket_interact_04
+  - id: neon_docket_trap_05
+    publicName: quiet bell
+    interactableId: neon_docket_interact_05
+  - id: neon_docket_trap_06
+    publicName: sealed drawer
+    interactableId: neon_docket_interact_06
+talkTrees:
+- npcId: neon_docket_npc_01
+  greet: Bryn Cress says, ‘Neon Docket keeps its promises in small places. Tell me which one you noticed.’
+  quest_offer: 'Bryn Cress offers a specific task at Docket Row: settle the practical mismatch before it costs someone a shift.'
+  quest_progress: Bryn Cress checks the record and asks for the one detail that would change the outcome.
+  quest_turnin: Bryn Cress marks the work complete, names who benefited, and hands over the recorded reward.
+  gossip:
+  - At Night Clerk, people are discussing a missing care tag.
+  - The safest route today is through Underbridge, not the obvious shortcut.
+  - Someone at Casefile Court is offering help but will not ask twice.
+  refusal: Bryn Cress says, ‘No. I can explain the rule, but I will not bend it for noise.’
+  player_rude: Bryn Cress says, ‘You may leave, lower your voice, or try a useful question. Choose one.’
+- npcId: neon_docket_npc_02
+  greet: Cato Silt says, ‘Neon Docket keeps its promises in small places. Tell me which one you noticed.’
+  quest_offer: 'Cato Silt offers a specific task at Night Clerk: settle the practical mismatch before it costs someone a shift.'
+  quest_progress: Cato Silt checks the record and asks for the one detail that would change the outcome.
+  quest_turnin: Cato Silt marks the work complete, names who benefited, and hands over the recorded reward.
+  gossip:
+  - At Underbridge, people are discussing a missing care tag.
+  - The safest route today is through Casefile Court, not the obvious shortcut.
+  - Someone at Meter Alley is offering help but will not ask twice.
+  refusal: Cato Silt says, ‘No. I can explain the rule, but I will not bend it for noise.’
+  player_rude: Cato Silt says, ‘You may leave, lower your voice, or try a useful question. Choose one.’
+- npcId: neon_docket_npc_03
+  greet: Dessa Pryce says, ‘Neon Docket keeps its promises in small places. Tell me which one you noticed.’
+  quest_offer: 'Dessa Pryce offers a specific task at Underbridge: settle the practical mismatch before it costs someone a
+    shift.'
+  quest_progress: Dessa Pryce checks the record and asks for the one detail that would change the outcome.
+  quest_turnin: Dessa Pryce marks the work complete, names who benefited, and hands over the recorded reward.
+  gossip:
+  - At Casefile Court, people are discussing a missing care tag.
+  - The safest route today is through Meter Alley, not the obvious shortcut.
+  - Someone at Quiet Garage is offering help but will not ask twice.
+  refusal: Dessa Pryce says, ‘No. I can explain the rule, but I will not bend it for noise.’
+  player_rude: Dessa Pryce says, ‘You may leave, lower your voice, or try a useful question. Choose one.’
+- npcId: neon_docket_npc_04
+  greet: Eris Vane says, ‘Neon Docket keeps its promises in small places. Tell me which one you noticed.’
+  quest_offer: 'Eris Vane offers a specific task at Casefile Court: settle the practical mismatch before it costs someone
+    a shift.'
+  quest_progress: Eris Vane checks the record and asks for the one detail that would change the outcome.
+  quest_turnin: Eris Vane marks the work complete, names who benefited, and hands over the recorded reward.
+  gossip:
+  - At Meter Alley, people are discussing a missing care tag.
+  - The safest route today is through Quiet Garage, not the obvious shortcut.
+  - Someone at Witness Steps is offering help but will not ask twice.
+  refusal: Eris Vane says, ‘No. I can explain the rule, but I will not bend it for noise.’
+  player_rude: Eris Vane says, ‘You may leave, lower your voice, or try a useful question. Choose one.’
+- npcId: neon_docket_npc_05
+  greet: Fenn Quill says, ‘Neon Docket keeps its promises in small places. Tell me which one you noticed.’
+  quest_offer: 'Fenn Quill offers a specific task at Docket Row: settle the practical mismatch before it costs someone a shift.'
+  quest_progress: Fenn Quill checks the record and asks for the one detail that would change the outcome.
+  quest_turnin: Fenn Quill marks the work complete, names who benefited, and hands over the recorded reward.
+  gossip:
+  - At Quiet Garage, people are discussing a missing care tag.
+  - The safest route today is through Witness Steps, not the obvious shortcut.
+  - Someone at Glass Booth is offering help but will not ask twice.
+  refusal: Fenn Quill says, ‘No. I can explain the rule, but I will not bend it for noise.’
+  player_rude: Fenn Quill says, ‘You may leave, lower your voice, or try a useful question. Choose one.’
+- npcId: neon_docket_npc_06
+  greet: Gala Vale says, ‘Neon Docket keeps its promises in small places. Tell me which one you noticed.’
+  quest_offer: 'Gala Vale offers a specific task at Night Clerk: settle the practical mismatch before it costs someone a shift.'
+  quest_progress: Gala Vale checks the record and asks for the one detail that would change the outcome.
+  quest_turnin: Gala Vale marks the work complete, names who benefited, and hands over the recorded reward.
+  gossip:
+  - At Witness Steps, people are discussing a missing care tag.
+  - The safest route today is through Glass Booth, not the obvious shortcut.
+  - Someone at Docket Row is offering help but will not ask twice.
+  refusal: Gala Vale says, ‘No. I can explain the rule, but I will not bend it for noise.’
+  player_rude: Gala Vale says, ‘You may leave, lower your voice, or try a useful question. Choose one.’
+- npcId: neon_docket_npc_07
+  greet: Holl Wren says, ‘Neon Docket keeps its promises in small places. Tell me which one you noticed.’
+  quest_offer: 'Holl Wren offers a specific task at Underbridge: settle the practical mismatch before it costs someone a shift.'
+  quest_progress: Holl Wren checks the record and asks for the one detail that would change the outcome.
+  quest_turnin: Holl Wren marks the work complete, names who benefited, and hands over the recorded reward.
+  gossip:
+  - At Glass Booth, people are discussing a missing care tag.
+  - The safest route today is through Docket Row, not the obvious shortcut.
+  - Someone at Night Clerk is offering help but will not ask twice.
+  refusal: Holl Wren says, ‘No. I can explain the rule, but I will not bend it for noise.’
+  player_rude: Holl Wren says, ‘You may leave, lower your voice, or try a useful question. Choose one.’
+- npcId: neon_docket_npc_08
+  greet: Ivo Morrow says, ‘Neon Docket keeps its promises in small places. Tell me which one you noticed.’
+  quest_offer: 'Ivo Morrow offers a specific task at Casefile Court: settle the practical mismatch before it costs someone
+    a shift.'
+  quest_progress: Ivo Morrow checks the record and asks for the one detail that would change the outcome.
+  quest_turnin: Ivo Morrow marks the work complete, names who benefited, and hands over the recorded reward.
+  gossip:
+  - At Docket Row, people are discussing a missing care tag.
+  - The safest route today is through Night Clerk, not the obvious shortcut.
+  - Someone at Underbridge is offering help but will not ask twice.
+  refusal: Ivo Morrow says, ‘No. I can explain the rule, but I will not bend it for noise.’
+  player_rude: Ivo Morrow says, ‘You may leave, lower your voice, or try a useful question. Choose one.’
+- npcId: neon_docket_npc_09
+  greet: Jori Rowan says, ‘Neon Docket keeps its promises in small places. Tell me which one you noticed.’
+  quest_offer: 'Jori Rowan offers a specific task at Docket Row: settle the practical mismatch before it costs someone a shift.'
+  quest_progress: Jori Rowan checks the record and asks for the one detail that would change the outcome.
+  quest_turnin: Jori Rowan marks the work complete, names who benefited, and hands over the recorded reward.
+  gossip:
+  - At Night Clerk, people are discussing a missing care tag.
+  - The safest route today is through Underbridge, not the obvious shortcut.
+  - Someone at Casefile Court is offering help but will not ask twice.
+  refusal: Jori Rowan says, ‘No. I can explain the rule, but I will not bend it for noise.’
+  player_rude: Jori Rowan says, ‘You may leave, lower your voice, or try a useful question. Choose one.’
+- npcId: neon_docket_npc_10
+  greet: Alden Nook says, ‘Neon Docket keeps its promises in small places. Tell me which one you noticed.’
+  quest_offer: 'Alden Nook offers a specific task at Night Clerk: settle the practical mismatch before it costs someone a
+    shift.'
+  quest_progress: Alden Nook checks the record and asks for the one detail that would change the outcome.
+  quest_turnin: Alden Nook marks the work complete, names who benefited, and hands over the recorded reward.
+  gossip:
+  - At Underbridge, people are discussing a missing care tag.
+  - The safest route today is through Casefile Court, not the obvious shortcut.
+  - Someone at Meter Alley is offering help but will not ask twice.
+  refusal: Alden Nook says, ‘No. I can explain the rule, but I will not bend it for noise.’
+  player_rude: Alden Nook says, ‘You may leave, lower your voice, or try a useful question. Choose one.’
+choiceButtons:
+- id: neon_docket_choice_01_01
+  placeId: neon_docket_place_01
+  label: Read the notice at Docket Row
+  requires: []
+  intentKind: talk
+  stake: one turn
+- id: neon_docket_choice_01_02
+  placeId: neon_docket_place_01
+  label: Ask for an introduction at Docket Row
+  requires: []
+  intentKind: talk
+  stake: one supply
+- id: neon_docket_choice_01_03
+  placeId: neon_docket_place_01
+  label: Check the tool tag at Docket Row
+  requires: []
+  intentKind: inspect
+  stake: a declined invitation
+- id: neon_docket_choice_01_04
+  placeId: neon_docket_place_01
+  label: Offer a hand at Docket Row
+  requires: []
+  intentKind: interact
+  stake: a public note
+- id: neon_docket_choice_01_05
+  placeId: neon_docket_place_01
+  label: Take the safer route at Docket Row
+  requires:
+  - neon_docket_item_05
+  intentKind: travel
+  stake: a short detour
+- id: neon_docket_choice_01_06
+  placeId: neon_docket_place_01
+  label: Open the local record at Docket Row
+  requires:
+  - neon_docket_item_06
+  intentKind: interact
+  stake: one turn
+- id: neon_docket_choice_01_07
+  placeId: neon_docket_place_01
+  label: Rest at the bench at Docket Row
+  requires:
+  - neon_docket_item_07
+  intentKind: rest
+  stake: one supply
+- id: neon_docket_choice_01_08
+  placeId: neon_docket_place_01
+  label: Repair the marker at Docket Row
+  requires:
+  - neon_docket_item_08
+  intentKind: interact
+  stake: a declined invitation
+- id: neon_docket_choice_01_09
+  placeId: neon_docket_place_01
+  label: Prepare a shared item at Docket Row
+  requires:
+  - neon_docket_item_09
+  intentKind: craft
+  stake: a public note
+- id: neon_docket_choice_01_10
+  placeId: neon_docket_place_01
+  label: Leave a kind note at Docket Row
+  requires:
+  - neon_docket_item_10
+  intentKind: talk
+  stake: a short detour
+- id: neon_docket_choice_02_01
+  placeId: neon_docket_place_02
+  label: Read the notice at Night Clerk
+  requires: []
+  intentKind: talk
+  stake: one turn
+- id: neon_docket_choice_02_02
+  placeId: neon_docket_place_02
+  label: Ask for an introduction at Night Clerk
+  requires: []
+  intentKind: talk
+  stake: one supply
+- id: neon_docket_choice_02_03
+  placeId: neon_docket_place_02
+  label: Check the tool tag at Night Clerk
+  requires: []
+  intentKind: inspect
+  stake: a declined invitation
+- id: neon_docket_choice_02_04
+  placeId: neon_docket_place_02
+  label: Offer a hand at Night Clerk
+  requires: []
+  intentKind: interact
+  stake: a public note
+- id: neon_docket_choice_02_05
+  placeId: neon_docket_place_02
+  label: Take the safer route at Night Clerk
+  requires:
+  - neon_docket_item_05
+  intentKind: travel
+  stake: a short detour
+- id: neon_docket_choice_02_06
+  placeId: neon_docket_place_02
+  label: Open the local record at Night Clerk
+  requires:
+  - neon_docket_item_06
+  intentKind: interact
+  stake: one turn
+- id: neon_docket_choice_02_07
+  placeId: neon_docket_place_02
+  label: Rest at the bench at Night Clerk
+  requires:
+  - neon_docket_item_07
+  intentKind: rest
+  stake: one supply
+- id: neon_docket_choice_02_08
+  placeId: neon_docket_place_02
+  label: Repair the marker at Night Clerk
+  requires:
+  - neon_docket_item_08
+  intentKind: interact
+  stake: a declined invitation
+- id: neon_docket_choice_02_09
+  placeId: neon_docket_place_02
+  label: Prepare a shared item at Night Clerk
+  requires:
+  - neon_docket_item_09
+  intentKind: craft
+  stake: a public note
+- id: neon_docket_choice_02_10
+  placeId: neon_docket_place_02
+  label: Leave a kind note at Night Clerk
+  requires:
+  - neon_docket_item_10
+  intentKind: talk
+  stake: a short detour
+- id: neon_docket_choice_03_01
+  placeId: neon_docket_place_03
+  label: Read the notice at Underbridge
+  requires: []
+  intentKind: talk
+  stake: one turn
+- id: neon_docket_choice_03_02
+  placeId: neon_docket_place_03
+  label: Ask for an introduction at Underbridge
+  requires: []
+  intentKind: talk
+  stake: one supply
+- id: neon_docket_choice_03_03
+  placeId: neon_docket_place_03
+  label: Check the tool tag at Underbridge
+  requires: []
+  intentKind: inspect
+  stake: a declined invitation
+- id: neon_docket_choice_03_04
+  placeId: neon_docket_place_03
+  label: Offer a hand at Underbridge
+  requires: []
+  intentKind: interact
+  stake: a public note
+- id: neon_docket_choice_03_05
+  placeId: neon_docket_place_03
+  label: Take the safer route at Underbridge
+  requires:
+  - neon_docket_item_05
+  intentKind: travel
+  stake: a short detour
+- id: neon_docket_choice_03_06
+  placeId: neon_docket_place_03
+  label: Open the local record at Underbridge
+  requires:
+  - neon_docket_item_06
+  intentKind: interact
+  stake: one turn
+- id: neon_docket_choice_03_07
+  placeId: neon_docket_place_03
+  label: Rest at the bench at Underbridge
+  requires:
+  - neon_docket_item_07
+  intentKind: rest
+  stake: one supply
+- id: neon_docket_choice_03_08
+  placeId: neon_docket_place_03
+  label: Repair the marker at Underbridge
+  requires:
+  - neon_docket_item_08
+  intentKind: interact
+  stake: a declined invitation
+- id: neon_docket_choice_03_09
+  placeId: neon_docket_place_03
+  label: Prepare a shared item at Underbridge
+  requires:
+  - neon_docket_item_09
+  intentKind: craft
+  stake: a public note
+- id: neon_docket_choice_03_10
+  placeId: neon_docket_place_03
+  label: Leave a kind note at Underbridge
+  requires:
+  - neon_docket_item_10
+  intentKind: talk
+  stake: a short detour
+- id: neon_docket_choice_04_01
+  placeId: neon_docket_place_04
+  label: Read the notice at Casefile Court
+  requires: []
+  intentKind: talk
+  stake: one turn
+- id: neon_docket_choice_04_02
+  placeId: neon_docket_place_04
+  label: Ask for an introduction at Casefile Court
+  requires: []
+  intentKind: talk
+  stake: one supply
+- id: neon_docket_choice_04_03
+  placeId: neon_docket_place_04
+  label: Check the tool tag at Casefile Court
+  requires: []
+  intentKind: inspect
+  stake: a declined invitation
+- id: neon_docket_choice_04_04
+  placeId: neon_docket_place_04
+  label: Offer a hand at Casefile Court
+  requires: []
+  intentKind: interact
+  stake: a public note
+- id: neon_docket_choice_04_05
+  placeId: neon_docket_place_04
+  label: Take the safer route at Casefile Court
+  requires:
+  - neon_docket_item_05
+  intentKind: travel
+  stake: a short detour
+- id: neon_docket_choice_04_06
+  placeId: neon_docket_place_04
+  label: Open the local record at Casefile Court
+  requires:
+  - neon_docket_item_06
+  intentKind: interact
+  stake: one turn
+- id: neon_docket_choice_04_07
+  placeId: neon_docket_place_04
+  label: Rest at the bench at Casefile Court
+  requires:
+  - neon_docket_item_07
+  intentKind: rest
+  stake: one supply
+- id: neon_docket_choice_04_08
+  placeId: neon_docket_place_04
+  label: Repair the marker at Casefile Court
+  requires:
+  - neon_docket_item_08
+  intentKind: interact
+  stake: a declined invitation
+- id: neon_docket_choice_04_09
+  placeId: neon_docket_place_04
+  label: Prepare a shared item at Casefile Court
+  requires:
+  - neon_docket_item_09
+  intentKind: craft
+  stake: a public note
+- id: neon_docket_choice_04_10
+  placeId: neon_docket_place_04
+  label: Leave a kind note at Casefile Court
+  requires:
+  - neon_docket_item_10
+  intentKind: talk
+  stake: a short detour
+- id: neon_docket_choice_05_01
+  placeId: neon_docket_place_05
+  label: Read the notice at Meter Alley
+  requires: []
+  intentKind: talk
+  stake: one turn
+- id: neon_docket_choice_05_02
+  placeId: neon_docket_place_05
+  label: Ask for an introduction at Meter Alley
+  requires: []
+  intentKind: talk
+  stake: one supply
+- id: neon_docket_choice_05_03
+  placeId: neon_docket_place_05
+  label: Check the tool tag at Meter Alley
+  requires: []
+  intentKind: inspect
+  stake: a declined invitation
+- id: neon_docket_choice_05_04
+  placeId: neon_docket_place_05
+  label: Offer a hand at Meter Alley
+  requires: []
+  intentKind: interact
+  stake: a public note
+- id: neon_docket_choice_05_05
+  placeId: neon_docket_place_05
+  label: Take the safer route at Meter Alley
+  requires:
+  - neon_docket_item_05
+  intentKind: travel
+  stake: a short detour
+- id: neon_docket_choice_05_06
+  placeId: neon_docket_place_05
+  label: Open the local record at Meter Alley
+  requires:
+  - neon_docket_item_06
+  intentKind: interact
+  stake: one turn
+- id: neon_docket_choice_05_07
+  placeId: neon_docket_place_05
+  label: Rest at the bench at Meter Alley
+  requires:
+  - neon_docket_item_07
+  intentKind: rest
+  stake: one supply
+- id: neon_docket_choice_05_08
+  placeId: neon_docket_place_05
+  label: Repair the marker at Meter Alley
+  requires:
+  - neon_docket_item_08
+  intentKind: interact
+  stake: a declined invitation
+- id: neon_docket_choice_05_09
+  placeId: neon_docket_place_05
+  label: Prepare a shared item at Meter Alley
+  requires:
+  - neon_docket_item_09
+  intentKind: craft
+  stake: a public note
+- id: neon_docket_choice_05_10
+  placeId: neon_docket_place_05
+  label: Leave a kind note at Meter Alley
+  requires:
+  - neon_docket_item_10
+  intentKind: talk
+  stake: a short detour
+- id: neon_docket_choice_06_01
+  placeId: neon_docket_place_06
+  label: Read the notice at Quiet Garage
+  requires: []
+  intentKind: talk
+  stake: one turn
+- id: neon_docket_choice_06_02
+  placeId: neon_docket_place_06
+  label: Ask for an introduction at Quiet Garage
+  requires: []
+  intentKind: talk
+  stake: one supply
+- id: neon_docket_choice_06_03
+  placeId: neon_docket_place_06
+  label: Check the tool tag at Quiet Garage
+  requires: []
+  intentKind: inspect
+  stake: a declined invitation
+- id: neon_docket_choice_06_04
+  placeId: neon_docket_place_06
+  label: Offer a hand at Quiet Garage
+  requires: []
+  intentKind: interact
+  stake: a public note
+- id: neon_docket_choice_06_05
+  placeId: neon_docket_place_06
+  label: Take the safer route at Quiet Garage
+  requires:
+  - neon_docket_item_05
+  intentKind: travel
+  stake: a short detour
+- id: neon_docket_choice_06_06
+  placeId: neon_docket_place_06
+  label: Open the local record at Quiet Garage
+  requires:
+  - neon_docket_item_06
+  intentKind: interact
+  stake: one turn
+- id: neon_docket_choice_06_07
+  placeId: neon_docket_place_06
+  label: Rest at the bench at Quiet Garage
+  requires:
+  - neon_docket_item_07
+  intentKind: rest
+  stake: one supply
+- id: neon_docket_choice_06_08
+  placeId: neon_docket_place_06
+  label: Repair the marker at Quiet Garage
+  requires:
+  - neon_docket_item_08
+  intentKind: interact
+  stake: a declined invitation
+- id: neon_docket_choice_06_09
+  placeId: neon_docket_place_06
+  label: Prepare a shared item at Quiet Garage
+  requires:
+  - neon_docket_item_09
+  intentKind: craft
+  stake: a public note
+- id: neon_docket_choice_06_10
+  placeId: neon_docket_place_06
+  label: Leave a kind note at Quiet Garage
+  requires:
+  - neon_docket_item_10
+  intentKind: talk
+  stake: a short detour
+- id: neon_docket_choice_07_01
+  placeId: neon_docket_place_07
+  label: Read the notice at Witness Steps
+  requires: []
+  intentKind: talk
+  stake: one turn
+- id: neon_docket_choice_07_02
+  placeId: neon_docket_place_07
+  label: Ask for an introduction at Witness Steps
+  requires: []
+  intentKind: talk
+  stake: one supply
+- id: neon_docket_choice_07_03
+  placeId: neon_docket_place_07
+  label: Check the tool tag at Witness Steps
+  requires: []
+  intentKind: inspect
+  stake: a declined invitation
+- id: neon_docket_choice_07_04
+  placeId: neon_docket_place_07
+  label: Offer a hand at Witness Steps
+  requires: []
+  intentKind: interact
+  stake: a public note
+- id: neon_docket_choice_07_05
+  placeId: neon_docket_place_07
+  label: Take the safer route at Witness Steps
+  requires:
+  - neon_docket_item_05
+  intentKind: travel
+  stake: a short detour
+- id: neon_docket_choice_07_06
+  placeId: neon_docket_place_07
+  label: Open the local record at Witness Steps
+  requires:
+  - neon_docket_item_06
+  intentKind: interact
+  stake: one turn
+- id: neon_docket_choice_07_07
+  placeId: neon_docket_place_07
+  label: Rest at the bench at Witness Steps
+  requires:
+  - neon_docket_item_07
+  intentKind: rest
+  stake: one supply
+- id: neon_docket_choice_07_08
+  placeId: neon_docket_place_07
+  label: Repair the marker at Witness Steps
+  requires:
+  - neon_docket_item_08
+  intentKind: interact
+  stake: a declined invitation
+- id: neon_docket_choice_07_09
+  placeId: neon_docket_place_07
+  label: Prepare a shared item at Witness Steps
+  requires:
+  - neon_docket_item_09
+  intentKind: craft
+  stake: a public note
+- id: neon_docket_choice_07_10
+  placeId: neon_docket_place_07
+  label: Leave a kind note at Witness Steps
+  requires:
+  - neon_docket_item_10
+  intentKind: talk
+  stake: a short detour
+- id: neon_docket_choice_08_01
+  placeId: neon_docket_place_08
+  label: Read the notice at Glass Booth
+  requires: []
+  intentKind: talk
+  stake: one turn
+- id: neon_docket_choice_08_02
+  placeId: neon_docket_place_08
+  label: Ask for an introduction at Glass Booth
+  requires: []
+  intentKind: talk
+  stake: one supply
+- id: neon_docket_choice_08_03
+  placeId: neon_docket_place_08
+  label: Check the tool tag at Glass Booth
+  requires: []
+  intentKind: inspect
+  stake: a declined invitation
+- id: neon_docket_choice_08_04
+  placeId: neon_docket_place_08
+  label: Offer a hand at Glass Booth
+  requires: []
+  intentKind: interact
+  stake: a public note
+- id: neon_docket_choice_08_05
+  placeId: neon_docket_place_08
+  label: Take the safer route at Glass Booth
+  requires:
+  - neon_docket_item_05
+  intentKind: travel
+  stake: a short detour
+- id: neon_docket_choice_08_06
+  placeId: neon_docket_place_08
+  label: Open the local record at Glass Booth
+  requires:
+  - neon_docket_item_06
+  intentKind: interact
+  stake: one turn
+- id: neon_docket_choice_08_07
+  placeId: neon_docket_place_08
+  label: Rest at the bench at Glass Booth
+  requires:
+  - neon_docket_item_07
+  intentKind: rest
+  stake: one supply
+- id: neon_docket_choice_08_08
+  placeId: neon_docket_place_08
+  label: Repair the marker at Glass Booth
+  requires:
+  - neon_docket_item_08
+  intentKind: interact
+  stake: a declined invitation
+- id: neon_docket_choice_08_09
+  placeId: neon_docket_place_08
+  label: Prepare a shared item at Glass Booth
+  requires:
+  - neon_docket_item_09
+  intentKind: craft
+  stake: a public note
+- id: neon_docket_choice_08_10
+  placeId: neon_docket_place_08
+  label: Leave a kind note at Glass Booth
+  requires:
+  - neon_docket_item_10
+  intentKind: talk
+  stake: a short detour
+interactables:
+- id: neon_docket_interact_01
+  verbId: rest
+  publicName: Docket Row bench
+  placeId: neon_docket_place_01
+  displayVerb: Rest here
+  stateKey: neon_docket_rest_01
+- id: neon_docket_interact_02
+  verbId: repair
+  publicName: Night Clerk cabinet
+  placeId: neon_docket_place_02
+  displayVerb: Repair here
+  stateKey: neon_docket_repair_02
+- id: neon_docket_interact_03
+  verbId: tend
+  publicName: Underbridge rack
+  placeId: neon_docket_place_03
+  displayVerb: Tend here
+  stateKey: neon_docket_tend_03
+- id: neon_docket_interact_04
+  verbId: craft
+  publicName: Casefile Court kettle
+  placeId: neon_docket_place_04
+  displayVerb: Craft here
+  stateKey: neon_docket_craft_04
+- id: neon_docket_interact_05
+  verbId: cook
+  publicName: Meter Alley ledger
+  placeId: neon_docket_place_05
+  displayVerb: Cook here
+  stateKey: neon_docket_cook_05
+- id: neon_docket_interact_06
+  verbId: bind_inn
+  publicName: Quiet Garage rail
+  placeId: neon_docket_place_06
+  displayVerb: Bind Inn here
+  stateKey: neon_docket_bind_inn_06
+- id: neon_docket_interact_07
+  verbId: inspect
+  publicName: Witness Steps bell
+  placeId: neon_docket_place_07
+  displayVerb: Inspect here
+  stateKey: neon_docket_inspect_07
+- id: neon_docket_interact_08
+  verbId: open
+  publicName: Glass Booth board
+  placeId: neon_docket_place_08
+  displayVerb: Open here
+  stateKey: neon_docket_open_08
+- id: neon_docket_interact_09
+  verbId: carry
+  publicName: Docket Row table
+  placeId: neon_docket_place_01
+  displayVerb: Carry here
+  stateKey: neon_docket_carry_09
+- id: neon_docket_interact_10
+  verbId: clean
+  publicName: Night Clerk lamp
+  placeId: neon_docket_place_02
+  displayVerb: Clean here
+  stateKey: neon_docket_clean_10
+- id: neon_docket_interact_11
+  verbId: signal
+  publicName: Underbridge gate
+  placeId: neon_docket_place_03
+  displayVerb: Signal here
+  stateKey: neon_docket_signal_11
+- id: neon_docket_interact_12
+  verbId: record
+  publicName: Casefile Court shelf
+  placeId: neon_docket_place_04
+  displayVerb: Record here
+  stateKey: neon_docket_record_12
+interiors:
+- id: neon_docket_interior_01
+  publicName: Neon Docket Home Interior
+  entrancePlaceId: neon_docket_place_08
+  rooms:
+  - id: neon_docket_home_room_01
+    publicName: Neon Docket Entry
+    mapScale: interior
+    exits:
+    - neon_docket_home_room_02
+    props:
+    - neon_docket_home_prop_01
+    - neon_docket_home_prop_08
+  - id: neon_docket_home_room_02
+    publicName: Neon Docket Main Room
+    mapScale: interior
+    exits:
+    - neon_docket_home_room_01
+    - neon_docket_home_room_03
+    props:
+    - neon_docket_home_prop_02
+    - neon_docket_home_prop_09
+  - id: neon_docket_home_room_03
+    publicName: Neon Docket Work Nook
+    mapScale: interior
+    exits:
+    - neon_docket_home_room_02
+    - neon_docket_home_room_04
+    props:
+    - neon_docket_home_prop_03
+    - neon_docket_home_prop_10
+  - id: neon_docket_home_room_04
+    publicName: Neon Docket Window Room
+    mapScale: interior
+    exits:
+    - neon_docket_home_room_03
+    - neon_docket_home_room_05
+    props:
+    - neon_docket_home_prop_04
+    - neon_docket_home_prop_11
+  - id: neon_docket_home_room_05
+    publicName: Neon Docket Quiet Room
+    mapScale: interior
+    exits:
+    - neon_docket_home_room_04
+    - neon_docket_home_room_06
+    props:
+    - neon_docket_home_prop_05
+    - neon_docket_home_prop_12
+  - id: neon_docket_home_room_06
+    publicName: Neon Docket Storage
+    mapScale: interior
+    exits:
+    - neon_docket_home_room_05
+    - neon_docket_home_room_07
+    props:
+    - neon_docket_home_prop_06
+    - neon_docket_home_prop_13
+  - id: neon_docket_home_room_07
+    publicName: Neon Docket Back Step
+    mapScale: interior
+    exits:
+    - neon_docket_home_room_06
+    props:
+    - neon_docket_home_prop_07
+    - neon_docket_home_prop_14
+talents:
+- id: neon_docket_talent_01
+  publicName: Neon Docket Local Ear
+  cost: 1
+  requires: []
+  effectFlags:
+  - neon_docket_effect_01
+  payToUnlock: false
+- id: neon_docket_talent_02
+  publicName: Neon Docket Careful Hand
+  cost: 2
+  requires: []
+  effectFlags:
+  - neon_docket_effect_02
+  payToUnlock: false
+- id: neon_docket_talent_03
+  publicName: Neon Docket Route Sense
+  cost: 3
+  requires: []
+  effectFlags:
+  - neon_docket_effect_03
+  payToUnlock: false
+- id: neon_docket_talent_04
+  publicName: Neon Docket Shared Measure
+  cost: 4
+  requires: []
+  effectFlags:
+  - neon_docket_effect_04
+  payToUnlock: false
+- id: neon_docket_talent_05
+  publicName: Neon Docket Quiet Craft
+  cost: 1
+  requires:
+  - neon_docket_talent_04
+  effectFlags:
+  - neon_docket_effect_05
+  payToUnlock: false
+- id: neon_docket_talent_06
+  publicName: Neon Docket Open Invitation
+  cost: 2
+  requires: []
+  effectFlags:
+  - neon_docket_effect_06
+  payToUnlock: false
+- id: neon_docket_talent_07
+  publicName: Neon Docket Safe Return
+  cost: 3
+  requires: []
+  effectFlags:
+  - neon_docket_effect_07
+  payToUnlock: false
+- id: neon_docket_talent_08
+  publicName: Neon Docket Field Note
+  cost: 4
+  requires: []
+  effectFlags:
+  - neon_docket_effect_08
+  payToUnlock: false
+- id: neon_docket_talent_09
+  publicName: Neon Docket Steady Pace
+  cost: 1
+  requires:
+  - neon_docket_talent_08
+  effectFlags:
+  - neon_docket_effect_09
+  payToUnlock: false
+- id: neon_docket_talent_10
+  publicName: Neon Docket Clear Signal
+  cost: 2
+  requires: []
+  effectFlags:
+  - neon_docket_effect_10
+  payToUnlock: false
+- id: neon_docket_talent_11
+  publicName: Neon Docket Warm Welcome
+  cost: 3
+  requires: []
+  effectFlags:
+  - neon_docket_effect_11
+  payToUnlock: false
+- id: neon_docket_talent_12
+  publicName: Neon Docket Small Courage
+  cost: 4
+  requires: []
+  effectFlags:
+  - neon_docket_effect_12
+  payToUnlock: false
+- id: neon_docket_talent_13
+  publicName: Neon Docket Repair Habit
+  cost: 1
+  requires:
+  - neon_docket_talent_12
+  effectFlags:
+  - neon_docket_effect_13
+  payToUnlock: false
+- id: neon_docket_talent_14
+  publicName: Neon Docket Trust Mark
+  cost: 2
+  requires: []
+  effectFlags:
+  - neon_docket_effect_14
+  payToUnlock: false
+- id: neon_docket_talent_15
+  publicName: Neon Docket Second Look
+  cost: 3
+  requires: []
+  effectFlags:
+  - neon_docket_effect_15
+  payToUnlock: false
+- id: neon_docket_talent_16
+  publicName: Neon Docket Closing Grace
+  cost: 4
+  requires: []
+  effectFlags:
+  - neon_docket_effect_16
+  payToUnlock: false
+evalProbes:
+- id: neon_docket_eval_01
+  given:
+    hp: 18
+    placeId: neon_docket_place_01
+    turn: 1
+  action:
+    verbId: rest
+    targetId: neon_docket_interact_01
+  expectedLedger:
+    turn: 2
+    lastAction: rest
+    placeId: neon_docket_place_01
+  forbiddenProse:
+  - do not claim an uncommitted numeric reward
+  - do not alter damage, gold, ownership, or a score outside expectedLedger
+- id: neon_docket_eval_02
+  given:
+    hp: 18
+    placeId: neon_docket_place_02
+    turn: 2
+  action:
+    verbId: repair
+    targetId: neon_docket_interact_02
+  expectedLedger:
+    turn: 3
+    lastAction: repair
+    placeId: neon_docket_place_02
+  forbiddenProse:
+  - do not claim an uncommitted numeric reward
+  - do not alter damage, gold, ownership, or a score outside expectedLedger
+- id: neon_docket_eval_03
+  given:
+    hp: 18
+    placeId: neon_docket_place_03
+    turn: 3
+  action:
+    verbId: tend
+    targetId: neon_docket_interact_03
+  expectedLedger:
+    turn: 4
+    lastAction: tend
+    placeId: neon_docket_place_03
+  forbiddenProse:
+  - do not claim an uncommitted numeric reward
+  - do not alter damage, gold, ownership, or a score outside expectedLedger
+- id: neon_docket_eval_04
+  given:
+    hp: 18
+    placeId: neon_docket_place_04
+    turn: 4
+  action:
+    verbId: craft
+    targetId: neon_docket_interact_04
+  expectedLedger:
+    turn: 5
+    lastAction: craft
+    placeId: neon_docket_place_04
+  forbiddenProse:
+  - do not claim an uncommitted numeric reward
+  - do not alter damage, gold, ownership, or a score outside expectedLedger
+- id: neon_docket_eval_05
+  given:
+    hp: 18
+    placeId: neon_docket_place_05
+    turn: 5
+  action:
+    verbId: cook
+    targetId: neon_docket_interact_05
+  expectedLedger:
+    turn: 6
+    lastAction: cook
+    placeId: neon_docket_place_05
+  forbiddenProse:
+  - do not claim an uncommitted numeric reward
+  - do not alter damage, gold, ownership, or a score outside expectedLedger
+- id: neon_docket_eval_06
+  given:
+    hp: 18
+    placeId: neon_docket_place_06
+    turn: 6
+  action:
+    verbId: bind_inn
+    targetId: neon_docket_interact_06
+  expectedLedger:
+    turn: 7
+    lastAction: bind_inn
+    placeId: neon_docket_place_06
+  forbiddenProse:
+  - do not claim an uncommitted numeric reward
+  - do not alter damage, gold, ownership, or a score outside expectedLedger
+- id: neon_docket_eval_07
+  given:
+    hp: 18
+    placeId: neon_docket_place_07
+    turn: 7
+  action:
+    verbId: inspect
+    targetId: neon_docket_interact_07
+  expectedLedger:
+    turn: 8
+    lastAction: inspect
+    placeId: neon_docket_place_07
+  forbiddenProse:
+  - do not claim an uncommitted numeric reward
+  - do not alter damage, gold, ownership, or a score outside expectedLedger
+- id: neon_docket_eval_08
+  given:
+    hp: 18
+    placeId: neon_docket_place_08
+    turn: 8
+  action:
+    verbId: open
+    targetId: neon_docket_interact_08
+  expectedLedger:
+    turn: 9
+    lastAction: open
+    placeId: neon_docket_place_08
+  forbiddenProse:
+  - do not claim an uncommitted numeric reward
+  - do not alter damage, gold, ownership, or a score outside expectedLedger
+- id: neon_docket_eval_09
+  given:
+    hp: 18
+    placeId: neon_docket_place_01
+    turn: 9
+  action:
+    verbId: carry
+    targetId: neon_docket_interact_09
+  expectedLedger:
+    turn: 10
+    lastAction: carry
+    placeId: neon_docket_place_01
+  forbiddenProse:
+  - do not claim an uncommitted numeric reward
+  - do not alter damage, gold, ownership, or a score outside expectedLedger
+- id: neon_docket_eval_10
+  given:
+    hp: 18
+    placeId: neon_docket_place_02
+    turn: 10
+  action:
+    verbId: clean
+    targetId: neon_docket_interact_10
+  expectedLedger:
+    turn: 11
+    lastAction: clean
+    placeId: neon_docket_place_02
+  forbiddenProse:
+  - do not claim an uncommitted numeric reward
+  - do not alter damage, gold, ownership, or a score outside expectedLedger
+- id: neon_docket_eval_11
+  given:
+    hp: 18
+    placeId: neon_docket_place_03
+    turn: 11
+  action:
+    verbId: signal
+    targetId: neon_docket_interact_11
+  expectedLedger:
+    turn: 12
+    lastAction: signal
+    placeId: neon_docket_place_03
+  forbiddenProse:
+  - do not claim an uncommitted numeric reward
+  - do not alter damage, gold, ownership, or a score outside expectedLedger
+- id: neon_docket_eval_12
+  given:
+    hp: 18
+    placeId: neon_docket_place_04
+    turn: 12
+  action:
+    verbId: record
+    targetId: neon_docket_interact_12
+  expectedLedger:
+    turn: 13
+    lastAction: record
+    placeId: neon_docket_place_04
+  forbiddenProse:
+  - do not claim an uncommitted numeric reward
+  - do not alter damage, gold, ownership, or a score outside expectedLedger
+- id: neon_docket_eval_13
+  given:
+    hp: 18
+    placeId: neon_docket_place_05
+    turn: 13
+  action:
+    verbId: rest
+    targetId: neon_docket_interact_01
+  expectedLedger:
+    turn: 14
+    lastAction: rest
+    placeId: neon_docket_place_05
+  forbiddenProse:
+  - do not claim an uncommitted numeric reward
+  - do not alter damage, gold, ownership, or a score outside expectedLedger
+- id: neon_docket_eval_14
+  given:
+    hp: 18
+    placeId: neon_docket_place_06
+    turn: 14
+  action:
+    verbId: repair
+    targetId: neon_docket_interact_02
+  expectedLedger:
+    turn: 15
+    lastAction: repair
+    placeId: neon_docket_place_06
+  forbiddenProse:
+  - do not claim an uncommitted numeric reward
+  - do not alter damage, gold, ownership, or a score outside expectedLedger
+- id: neon_docket_eval_15
+  given:
+    hp: 18
+    placeId: neon_docket_place_07
+    turn: 15
+  action:
+    verbId: tend
+    targetId: neon_docket_interact_03
+  expectedLedger:
+    turn: 16
+    lastAction: tend
+    placeId: neon_docket_place_07
+  forbiddenProse:
+  - do not claim an uncommitted numeric reward
+  - do not alter damage, gold, ownership, or a score outside expectedLedger
+wallets:
+  goldName: Docket Cash
+  cosmeticTokenName: Neon Tabs
+  noConversion: true
+  prohibited:
+  - outcomes
+  - lockout skips
+  - catch rate
+  - raid clears
+  - random power packs
+  - gacha
+  - loot boxes
+dailyCaps:
+  contractsPerDay: 3
+  goldFromRepeatables: 90
+  weeklyBossLockout: per-character per-boss
+divergenceRecords:
+- id: neon_docket_walkaway_01
+  choice: walk away from a local obligation
+  recordKey: neon_docket_divergence_01
+  effect: Alternate dialogue and a non-punitive follow-up route.
+- id: neon_docket_walkaway_02
+  choice: walk away from a local obligation
+  recordKey: neon_docket_divergence_02
+  effect: Alternate dialogue and a non-punitive follow-up route.
+- id: neon_docket_walkaway_03
+  choice: walk away from a local obligation
+  recordKey: neon_docket_divergence_03
+  effect: Alternate dialogue and a non-punitive follow-up route.

@@ -1,0 +1,244 @@
+{
+  "schema_version": "1.0",
+  "status": "SPECULATIVE runtime catalog; public grounding/recovery literature informs structure, not individual outcomes.",
+  "acts": [
+    {
+      "id": "ask",
+      "example": "“Who sent the letter?”",
+      "runtime_interpretation": {
+        "class": "ask",
+        "npc_reaction_constraints": "Answer known facts first; identify uncertainty; do not make an NPC omniscient.",
+        "state_tx_policy": "Record only if the question creates a promise, clock, or disclosure.",
+        "kid_mode_difference": "Offer plain answer or one contrastive question.",
+        "never_lines": [
+          "“I can tell you what is visible, not invent what she knows.”"
+        ]
+      },
+      "receipt_rule": "silent unless a material promise, relationship, boundary, threat, belief, clock, kit, roster, or quest change is accepted"
+    },
+    {
+      "id": "refuse",
+      "example": "“I won’t swear to your banner.”",
+      "runtime_interpretation": {
+        "class": "refuse",
+        "npc_reaction_constraints": "NPC may negotiate, accept, withdraw, or impose a permitted consequence; never railroad assent.",
+        "state_tx_policy": "Record refusal if it changes a pact, relationship, quest, or access.",
+        "kid_mode_difference": "No guilt or pressure; name a safe alternate course.",
+        "never_lines": [
+          "“You have to agree for the plot to continue.”"
+        ]
+      },
+      "receipt_rule": "silent unless a material promise, relationship, boundary, threat, belief, clock, kit, roster, or quest change is accepted"
+    },
+    {
+      "id": "correct",
+      "example": "“The lantern was green, not blue.”",
+      "runtime_interpretation": {
+        "class": "correct",
+        "npc_reaction_constraints": "Correction applies before render; NPC behavior follows corrected fact.",
+        "state_tx_policy": "Record canonical correction with provenance.",
+        "kid_mode_difference": "Use plain “You’re right” and continue locally.",
+        "never_lines": [
+          "“The summary says blue, so it stays blue.”"
+        ]
+      },
+      "receipt_rule": "silent unless a material promise, relationship, boundary, threat, belief, clock, kit, roster, or quest change is accepted"
+    },
+    {
+      "id": "protest",
+      "example": "“That roll should not have hit me.”",
+      "runtime_interpretation": {
+        "class": "protest",
+        "npc_reaction_constraints": "Paraphrase decisive interpretation/rule; offer receipt and correction route.",
+        "state_tx_policy": "No StateTx until dispute is resolved unless already accepted.",
+        "kid_mode_difference": "One contrastive question; no defensive ritual.",
+        "never_lines": [
+          "“I’m sorry you feel that way.”"
+        ]
+      },
+      "receipt_rule": "silent unless a material promise, relationship, boundary, threat, belief, clock, kit, roster, or quest change is accepted"
+    },
+    {
+      "id": "joke",
+      "example": "“My strategy is to negotiate with gravity.”",
+      "runtime_interpretation": {
+        "class": "joke",
+        "npc_reaction_constraints": "Allow amused, skeptical, or dry reaction; do not literalize unless action is declared.",
+        "state_tx_policy": "Usually none.",
+        "kid_mode_difference": "Keep playful but simple.",
+        "never_lines": [
+          "“Gravity accepts your proposal.”"
+        ]
+      },
+      "receipt_rule": "silent unless a material promise, relationship, boundary, threat, belief, clock, kit, roster, or quest change is accepted"
+    },
+    {
+      "id": "insult",
+      "example": "“Your crown looks borrowed.”",
+      "runtime_interpretation": {
+        "class": "insult",
+        "npc_reaction_constraints": "NPC may react according to temperament, stakes, and witnesses.",
+        "state_tx_policy": "Only record material reputation/trust/threat shift.",
+        "kid_mode_difference": "No escalation pressure.",
+        "never_lines": [
+          "“Insult score +1.”"
+        ]
+      },
+      "receipt_rule": "silent unless a material promise, relationship, boundary, threat, belief, clock, kit, roster, or quest change is accepted"
+    },
+    {
+      "id": "flirt",
+      "example": "“You clean up well for a smuggler.”",
+      "runtime_interpretation": {
+        "class": "flirt",
+        "npc_reaction_constraints": "Reciprocity requires adult-mode eligibility, consent, and NPC boundary; may redirect or ignore.",
+        "state_tx_policy": "Record only explicit material relationship/boundary change.",
+        "kid_mode_difference": "Kid Mode redirects to non-romantic warmth.",
+        "never_lines": [
+          "“She is secretly in love with you now.”"
+        ]
+      },
+      "receipt_rule": "silent unless a material promise, relationship, boundary, threat, belief, clock, kit, roster, or quest change is accepted"
+    },
+    {
+      "id": "bargain",
+      "example": "“Half the coins now; the rest at the gate.”",
+      "runtime_interpretation": {
+        "class": "bargain",
+        "npc_reaction_constraints": "Make terms, leverage, and unknowns legible; NPC can counteroffer.",
+        "state_tx_policy": "Record accepted terms/promises only.",
+        "kid_mode_difference": "Use fair, non-pressuring alternatives.",
+        "never_lines": [
+          "“Deal accepted” without terms."
+        ]
+      },
+      "receipt_rule": "silent unless a material promise, relationship, boundary, threat, belief, clock, kit, roster, or quest change is accepted"
+    },
+    {
+      "id": "threaten",
+      "example": "“Open the door or I break it.”",
+      "runtime_interpretation": {
+        "class": "threaten",
+        "npc_reaction_constraints": "Telegraph risk, response, and credible power; threat does not guarantee obedience.",
+        "state_tx_policy": "Record threat/reputation/clock only if material.",
+        "kid_mode_difference": "Kid Mode de-escalates and offers safer wording.",
+        "never_lines": [
+          "“NPC obeys because threat.”"
+        ]
+      },
+      "receipt_rule": "silent unless a material promise, relationship, boundary, threat, belief, clock, kit, roster, or quest change is accepted"
+    },
+    {
+      "id": "apologize",
+      "example": "“I was wrong to accuse you.”",
+      "runtime_interpretation": {
+        "class": "apologize",
+        "npc_reaction_constraints": "NPC can accept, reject, defer, or name repair condition; do not force forgiveness.",
+        "state_tx_policy": "Record a repaired promise or relationship change only when accepted.",
+        "kid_mode_difference": "Plain, no emotional blackmail.",
+        "never_lines": [
+          "“Apology automatically fixes trust.”"
+        ]
+      },
+      "receipt_rule": "silent unless a material promise, relationship, boundary, threat, belief, clock, kit, roster, or quest change is accepted"
+    },
+    {
+      "id": "thank",
+      "example": "“Thank you for staying.”",
+      "runtime_interpretation": {
+        "class": "thank",
+        "npc_reaction_constraints": "Allow modest acknowledgment; do not turn gratitude into debt.",
+        "state_tx_policy": "Usually none; record explicit promise/relationship only.",
+        "kid_mode_difference": "No sales or attachment pressure.",
+        "never_lines": [
+          "“I’m always here for you.”"
+        ]
+      },
+      "receipt_rule": "silent unless a material promise, relationship, boundary, threat, belief, clock, kit, roster, or quest change is accepted"
+    },
+    {
+      "id": "whisper",
+      "example": "“Keep your voice down—the watch is near.”",
+      "runtime_interpretation": {
+        "class": "whisper",
+        "npc_reaction_constraints": "Adjust audience and eavesdropping based on scene acoustics; do not guarantee secrecy.",
+        "state_tx_policy": "Record secret transfer only if factually exchanged.",
+        "kid_mode_difference": "Use plain risk note.",
+        "never_lines": [
+          "“Nobody can hear a whisper.”"
+        ]
+      },
+      "receipt_rule": "silent unless a material promise, relationship, boundary, threat, belief, clock, kit, roster, or quest change is accepted"
+    },
+    {
+      "id": "yell",
+      "example": "“Fire in the west hall!”",
+      "runtime_interpretation": {
+        "class": "yell",
+        "npc_reaction_constraints": "Adjust audience, alarm, and positional consequences; action can reveal location.",
+        "state_tx_policy": "Record alarm/clock/location only when material.",
+        "kid_mode_difference": "Kid Mode avoids panic wording.",
+        "never_lines": [
+          "“You yell, but nothing changes.”"
+        ]
+      },
+      "receipt_rule": "silent unless a material promise, relationship, boundary, threat, belief, clock, kit, roster, or quest change is accepted"
+    },
+    {
+      "id": "lie",
+      "example": "“The package is empty.”",
+      "runtime_interpretation": {
+        "class": "lie",
+        "npc_reaction_constraints": "NPC evaluates only available evidence, tells, and prior knowledge; narrator never labels a lie in body prose unless revealed.",
+        "state_tx_policy": "Record declared lie / cover story if it becomes a world fact.",
+        "kid_mode_difference": "Kid Mode favors low-stakes alternatives.",
+        "never_lines": [
+          "“The guard knows you are lying because the GM does.”"
+        ]
+      },
+      "receipt_rule": "silent unless a material promise, relationship, boundary, threat, belief, clock, kit, roster, or quest change is accepted"
+    },
+    {
+      "id": "bluff",
+      "example": "“There are twenty riders behind me.”",
+      "runtime_interpretation": {
+        "class": "bluff",
+        "npc_reaction_constraints": "Resolve credibility with evidence/check if needed; success changes belief, not truth.",
+        "state_tx_policy": "Record belief/reputation only, not false fact as canon.",
+        "kid_mode_difference": "Describe uncertainty safely.",
+        "never_lines": [
+          "“The twenty riders become real.”"
+        ]
+      },
+      "receipt_rule": "silent unless a material promise, relationship, boundary, threat, belief, clock, kit, roster, or quest change is accepted"
+    },
+    {
+      "id": "stay_silent",
+      "example": "[no reply]",
+      "runtime_interpretation": {
+        "class": "stay_silent",
+        "npc_reaction_constraints": "Let pause invite NPC action or scene pressure; silence is not consent.",
+        "state_tx_policy": "Record only if a deadline/relationship consequence actually changes.",
+        "kid_mode_difference": "Offer “take your time” where appropriate.",
+        "never_lines": [
+          "“You agree by staying silent.”"
+        ]
+      },
+      "receipt_rule": "silent unless a material promise, relationship, boundary, threat, belief, clock, kit, roster, or quest change is accepted"
+    },
+    {
+      "id": "ooc_safety",
+      "example": "“Make this less intense.”",
+      "runtime_interpretation": {
+        "class": "meta_safety",
+        "npc_reaction_constraints": "Apply safety contract before fiction; confirm adjustment plainly.",
+        "state_tx_policy": "Record boundary preference only with appropriate consent policy.",
+        "kid_mode_difference": "Kid Mode is default strict; offer fade/redirect.",
+        "never_lines": [
+          "“The story needs this intensity.”"
+        ]
+      },
+      "receipt_rule": "silent unless a material promise, relationship, boundary, threat, belief, clock, kit, roster, or quest change is accepted"
+    }
+  ]
+}

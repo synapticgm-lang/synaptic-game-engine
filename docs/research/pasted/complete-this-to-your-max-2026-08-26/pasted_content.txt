@@ -1,0 +1,200 @@
+# NEW PROJECT — SynapticGM Comic / Graphic Novel Mode Maximizer (LIVE app only)
+
+You are Manus. This is a NEW research project for SynapticGM (live consumer game).
+Deliver research, technique shapes, pipelines, cost models, eval fixtures, and a phased build board.
+Do NOT write production TypeScript. Do NOT ship code. Do NOT propose Continuity-Warden as an LLM critic.
+Do NOT treat Artistly (or similar consumer SaaS) as an integration API.
+Do NOT request or produce pirate zips, scraped assets, or franchise style clones.
+Do NOT design anything for World of Fantasy (WOF). LIVE SynapticGM only.
+
+────────────────────────────────────────────────────────────────────────
+## 0. PRODUCT LAW (non-negotiable)
+
+1. Art pixels ≠ lettering.
+ - Live turns: image model renders PURE SCENE art only (no dialogue, captions, SFX text, logos, UI).
+ - Lettering = HTML/SVG overlays (SpeechBubble / NarrativeText / ActionOverlay / ComicGrid anchors).
+ - PDF/export may bake overlays for print AFTER the fact; live play never depends on baked text in pixels.
+
+2. Hosted art path only for players: OpenRouter via edge `generate-image` (Klein 4B / Flux tier map).
+ Free/Mid/High must not require a browser image key. Admin BYOK is out of scope for this brief’s primary path.
+
+3. Kid Mode: rewrite or skip BEFORE spend. No sexualisation, gore glamour, or unsafe framing. No “watch ad to see the panel” for Kids.
+
+4. No licensed comics IP as style targets.
+ - Ban: “make it like Marvel / DC / [manga title] / [living artist name]”.
+ - Allow: original technique shapes (ink wash, screentone grain, high-contrast silhouette, cel shade, vertical scroll gutters) described without franchise names.
+
+5. Story truth is the text/ledger. Art never invents NPCs, props, outcomes, wounds, or places. Art failure must not block play.
+
+6. Overlay lettering stays (prior founder decision). Do not reopen “bake bubbles into Flux” for live turns.
+
+────────────────────────────────────────────────────────────────────────
+## 1. GOAL
+
+Make graphic novel / comic mode work end-to-end at the best ability within cost constraints (Free / Mid / High).
+
+Success is NOT “every turn is a 6-panel webtoon.” Success is:
+- Players who opt into comic / illustrated presentation get readable, continuous, delightful panels
+- Lettering is always legible (overlay)
+- Character/kit/place stay recognisable enough to trust
+- Cost and latency stay inside tier envelopes
+- Classic + Memorable players are not harmed
+- There is a clear P0 thin wedge that can ship THIS MONTH using existing modules
+
+────────────────────────────────────────────────────────────────────────
+## 2. LIVE STATE YOU MUST ASSUME (do not invent a greenfield)
+
+### Built
+- ComicGrid, SpeechBubble, NarrativeText, ActionOverlay, useZoomGesture
+- comicScript types + comicScriptAdapter (Director JSON → ComicPanel)
+- comicImagePrompt (PURE_ART_DIRECTIVE; classic-book never uses ComicGrid)
+- panelBudget hard ceiling (1/2/3; webtoon ≤2)
+- visualConsistency prompt block (appearance + kit + weapon + location + lore anchors)
+- generateComicImage → hosted generate-image
+- Settings: visualMode comic|classic, comicLayout paged|webtoon, panelFrequency
+- GM path may emit <panel><image-prompt>/<narrative></panel>; parsePanels → post-commit image jobs
+- comicPageCompositor for PDF bake only
+
+### Broken / gated
+- LLM Director is HARD-DISABLED in useGame (`if (false && …)`). Pipeline falls back to unreliable GM <panel> tags.
+- Playtest / research: full every-turn comic is No-Go near-term until thinner gates pass.
+- Consistency is text-in-prompt only (no reference sheet / LoRA yet).
+- Multi-panel every turn is expensive on Free.
+
+### Prior research to extend (do not redo from zero)
+- docs/research/comic-mode-thin-wedge-2026-08-17.md
+- docs/research/comic-module-map-gapfill-2026-08-17.md
+Preserve: thin wedge → strip → recap → full comic gating; HTML lettering; non-blocking image jobs; Kid rewrite/skip; no art-as-canon.
+
+────────────────────────────────────────────────────────────────────────
+## 3. DELIVERABLES (A–H) — produce ALL
+
+### A) Gap analysis vs industry comic generators (TECHNIQUE SHAPES ONLY)
+Compare SynapticGM’s live stack to public techniques from (examples, not an exhaustive list):
+- Webtoon-style vertical AI / creator tools (public docs & UX patterns only)
+- ComicAI / AI Comic Factory / Anifusion-class layout-first tools (public workflows)
+- Midjourney comic / character-ref / style-ref workflows (public docs)
+- Storyboarder.ai / script→panel pipelines
+- Academic / open panel papers (layout, reading order, closure) — cite openly
+- Visual novels / VTT layering as cheap “comic effect” analogues
+
+For each: Effect bought | Public method (no scrape of code/assets) | Cost/latency implication | Consistency failure mode | What SynapticGM should steal as a TECHNIQUE | What SynapticGM must NEVER copy (IP, assets, baked lettering for live, art overriding ledger).
+
+Output a table + short verdict: where we are behind, where we are ahead (ledger + overlay lettering), and the highest-leverage technique gaps for hosted Klein/Flux.
+
+### B) Recommended pipeline (end-to-end)
+Specify the player-facing and system pipeline:
+
+script / beat selection
+ → panel breakdown (deterministic templates + optional light planner — NOT a second Continuity-Warden LLM)
+ → art prompts (pure visual; compile from BeatSpec + visualConsistency + style technique tokens)
+ → generate via hosted generate-image
+ → overlay lettering (caption / dialogue / SFX / speaker) from accepted text only
+ → player UX (pending tile, fail holds story, retry/repair, vertical vs paged)
+
+Explicitly state:
+- When GM <panel> tags are source vs when a deterministic BeatSpec/layout bank is source
+- Whether Director should stay disabled, return as optional Mid/High only, or be replaced by code templates
+- How Classic Memorable plates reuse the same overlay chrome without becoming “comic mode”
+
+### C) Character consistency techniques that fit hosted OpenRouter Klein/Flux
+Rank practical methods for OUR stack (no local ComfyUI assumption for Free players):
+1. Prompt locks (current visualConsistency) — limits
+2. Seed storage — reproducibility vs identity myth
+3. Reference sheet / portrait reuse as image conditioning (what OpenRouter/Flux actually supports today; degradation modes)
+4. Costume / kit lock fields (equipped slots as hard prompt + future validator)
+5. LoRA / fine-tune LATER (Admin/high only; rights; storage) — mark as P2+
+6. Deterministic sprite/portrait composite as Free fallback
+
+Give a recommended stack for Free vs Mid vs High. Never promise pixel-perfect face lock.
+
+### D) Panel layout banks (original pointer cards)
+Design ORIGINAL pointer-card banks (no franchise layouts):
+- 2 / 3 / 4 / 6 panel page templates
+- Western LTR paged vs manga/webtoon vertical reading (rtl optional later)
+- Beat-type mapping: establishing / action / reaction / reveal / aftermath / dialogue / transition
+- Gutter size as time/emotion (compact / standard / pause)
+- Negative-space zones mapped to existing ComicTextAnchor vocabulary:
+ top-left | top-right | bottom-left | bottom-right | bottom-center
+
+Each card: id, panel count, reading order, camera suggestions, lettering zones, when to use, when NOT to use.
+These are code-selectable templates later — Manus outputs the card content only.
+
+### E) Cost model (Free / Mid / High)
+Build a concrete model:
+- panels per turn × model tier (Klein vs Pro if any) × failure/retry rate
+- When to generate 1 splash vs multi-panel strip vs skip
+- Skip rules: thin story, info-only turns, Kid skip, ops kill switch, capacity empty, same-beat duplicate, look-around spam
+- Caps: daily/weekly/session; packs vs included; never gate required story beats behind art
+- Compare COGS to Classic Memorable (opener + rare plates)
+
+Recommend default panelFrequency per tier and a “comic-lite” Free default.
+
+### F) Eval fixtures (20 good + fail cases)
+Produce a fixture pack Manus can hand to engineering:
+
+GOOD (at least 10): correct roster, kit, place, overlay speaker match, readable overlay, pending-nonblocking, Kid rewrite, webtoon 2-panel action/reaction, paged 3-beat, splash-only turn, recap reuse of Memorable plate, etc.
+
+FAIL / must-reject (at least 10): baked garbled text in pixels, wrong speaker on bubble, empty panel, invented NPC, wrong weapon, wrong place, Kid leak, Director inventing damage, art blocking input, double capacity debit, stale art after correction, franchise style prompt leak, etc.
+
+Each fixture: setup | expected hard outcome | which module owns the assert.
+
+### G) Phased build board (P0 this month → P1 → P2)
+Map work to EXISTING files only where possible:
+
+P0 — Make thin wedge WORK this month (shippable delight without every-turn webtoon):
+- Likely: comic chrome on Memorable + reliable single event plate OR comic-lite 1-panel+overlay
+- Wire/repair: SpeechBubble, ComicGrid, comicImagePrompt, generate-image, memorableMoments, panelBudget
+- Decision on Director: keep disabled vs replace with templates
+- Done-when metrics (latency, cost, repair rate, non-blocking)
+
+P1 — Validated 2–3 panel strips; layout banks; better consistency refs; repair UX
+P2 — Chapter recap comic; optional LoRA/ref advanced; full comic behind gates
+
+For each item: owner file(s), dependency, risk, kill criteria.
+Explicit No-Go list for near-term.
+
+### H) Alt techniques if full comic stays expensive
+Design first-class alternatives (not consolations buried in an appendix):
+1. Comic-lite: 1 illustration + caption/bubble overlay per eligible beat
+2. Kinetic typography on Classic (motion on prose without new images)
+3. Memorable-only + comic chrome (border/gutter/receipt) — zero extra model cost
+4. Sprite/portrait + background composite (deterministic)
+5. End-of-chapter async recap only
+6. Player-triggered “illustrate this beat” button (capacity-metered)
+
+Score each: Impact / Cost / Continuity-fit / Latency. Recommend Free default and Mid/High upgrade path.
+
+────────────────────────────────────────────────────────────────────────
+## 4. OUTPUT FORMAT
+
+Return ONE structured markdown package with sections A–H exactly.
+Start with a 10-line executive: best path for SynapticGM NOW + what NOT to build.
+Include citation links for public technique sources (docs, papers, help centers) — no scraped private assets.
+Keep all style language original / technique-only.
+Flag any open founder decisions as a short table at the end (max 8).
+
+────────────────────────────────────────────────────────────────────────
+## 5. BANS (hard)
+
+- No TypeScript implementation, PRs, or “drop-in patches”
+- No Continuity-Warden LLM / second critic model for comic truth
+- No Artistly (or similar) as production API
+- No pirate zips, torrents, or ripped comic pages as training/reference packs
+- No “make it look like [Marvel/DC/manga title/living artist]”
+- No WOF content, races, places, or multiplayer
+- No baking dialogue into live-turn images
+- No requiring ads to unlock core story visuals in Kid Mode
+- No claiming seed = identity lock
+
+────────────────────────────────────────────────────────────────────────
+## 6. SUCCESS CRITERIA FOR THIS MANUS RUN
+
+John can take your package and:
+1. Know exactly what to build this month (P0) vs later
+2. Know Free vs Mid/High panel economics
+3. Have layout banks + eval fixtures ready for engineering
+4. Have alt paths if multi-panel stays too expensive
+5. Stay inside product law (overlay lettering + hosted generate-image + Kid Mode + no licensed IP)
+
+Begin now. Produce A–H completely.

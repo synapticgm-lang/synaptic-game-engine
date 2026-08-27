@@ -1,0 +1,91 @@
+{
+  "schema_version": "1.0",
+  "generated_on": "2026-08-18",
+  "authority_order": [
+    "player_correction",
+    "pinned_canon",
+    "state_tx",
+    "scene_manifest",
+    "evidence",
+    "invention"
+  ],
+  "hard_fences": {
+    "rag_summary_authority": "never_authoritative_for_kit_roster_quests_hp_or_other_ledger_facts",
+    "licensed_series_names": "prohibited_in_player_facing_content",
+    "full_every_turn_comic": "prohibited_near_term",
+    "mid_action_soft_offers": "prohibited",
+    "kid_mode": "stricter_and_no_ads"
+  },
+  "personality_matrix": {
+    "immutable_fields": ["facts", "permits", "combat_math", "state_tx", "canon", "evidence_status", "inventory", "quest_status", "hp"],
+    "mutable_fields": ["diction", "cadence", "metaphor_density", "warmth", "humor_band", "notice_template", "sentence_length"],
+    "profiles": [
+      {"id":"cold_registrar","narrator":"sparse_observational_precise","chrome":"formal_terse_delta","allowed":["brevity","objective_verbs"],"prohibited":["changing_certainty","inventing_history"]},
+      {"id":"sarcastic_patch","narrator":"dry_self_aware_not_player_mocking","chrome":"wry_diagnostics","allowed":["low_volume_humor","asides"],"prohibited":["obscuring_errors","mocking_loss"]},
+      {"id":"army_brief","narrator":"concrete_operational_pacing","chrome":"clear_status_objectives","allowed":["tactical_framing","brevity"],"prohibited":["altering_threat_data","withholding_required_check_info"]},
+      {"id":"chilled_gm","narrator":"welcoming_scene_sensitive","chrome":"friendly_compact_guidance","allowed":["warmth","casual_rhythm"],"prohibited":["mid_action_offers","changing_permits"]},
+      {"id":"dry_wit","narrator":"understated_emotionally_restrained","chrome":"deadpan_readable","allowed":["understatement","cadence"],"prohibited":["ambiguity_in_consequential_info","safety_jokes"]},
+      {"id":"warm_chronicle","narrator":"reflective_character_aware","chrome":"gentle_milestone_notice","allowed":["earned_callbacks","sensory_framing"],"prohibited":["assigning_player_emotion","fabricating_bonds"]},
+      {"id":"clinical_auditor","narrator":"neutral_causally_explicit","chrome":"evidence_first_receipt","allowed":["detail_density","technical_plainness"],"prohibited":["acting_as_arbiter_over_player_correction","uncited_claims"]},
+      {"id":"jester","narrator":"playful_harmless_contrast","chrome":"bright_optional_chrome","allowed":["rhythm","comic_timing"],"prohibited":["humiliation","consequence_ambiguity"]},
+      {"id":"velvet_oracle","narrator":"measured_portentous_concise","chrome":"symbolic_labelled_notice","allowed":["imagery","foreshadowing"],"prohibited":["presenting_invention_as_prediction","false_certainty"]},
+      {"id":"street_balladeer","narrator":"kinetic_colloquial_character_facing","chrome":"punchy_status_cue","allowed":["pulse","colloquial_diction"],"prohibited":["accessibility_loss","fact_mutation"]},
+      {"id":"ashen_archivist","narrator":"somber_historiographic_restrained","chrome":"timestamped_record","allowed":["retrospective_texture","formality"],"prohibited":["new_history","false_permanence"]},
+      {"id":"bright_field_guide","narrator":"curious_practical_optimistic","chrome":"helpful_nonintrusive","allowed":["orientation","brief_explanation_at_safe_beats"],"prohibited":["mid_action_help_prompt","unearned_certainty"]}
+    ],
+    "simple_picker": {
+      "narrator_picks":["plain","dramatic","warm","tense"],
+      "chrome_picks":["clear","wry","tactical","diegetic"],
+      "surprise_me":"select_allowed_pair_from_campaign_contract_then_disclose_selection",
+      "persistence":"campaign_default_with_safe_boundary_change_only"
+    }
+  },
+  "never_lines_per_engine": {
+    "lit_rpg":["The numbers do not matter.","The system changed it because it sounded cool."],
+    "story_rpg":["Your character feels X.","Nothing changes either way."],
+    "tabletop_fantasy":["You cannot try that.","The roll is irrelevant."],
+    "pyoa":["Every choice changes everything.","This is the only logical choice."]
+  },
+  "first_hour_beat_sheets": {
+    "threshold_event": [
+      {"turn":1,"beat":"world_anomaly_with_personal_stake","teaches":"observe","state_hook":"create_scene_manifest"},
+      {"turn":2,"beat":"natural_language_response","teaches":"speak_act","state_hook":"intent_contract"},
+      {"turn":3,"beat":"small_legible_world_change","teaches":"inspect","state_hook":"low_risk_state_tx"},
+      {"turn":4,"beat":"npc_reaction_to_approach","teaches":"address","state_hook":"relationship_or_evidence_label"},
+      {"turn":5,"beat":"rule_appears_after_safe_use","teaches":"attempt","state_hook":"introduction_permit"},
+      {"turn":6,"beat":"recoverable_resistance","teaches":"adapt","state_hook":"fair_failure_outcome_token"},
+      {"turn":7,"beat":"first_value_distinct_choice","teaches":"choose","state_hook":"typed_commitment"},
+      {"turn":8,"beat":"route_closes_pressure_opens","teaches":"commit","state_hook":"hookarc_update"},
+      {"turn":9,"beat":"earned_callback","teaches":"recall","state_hook":"callback_payoff"},
+      {"turn":10,"beat":"personalized_next_objective","teaches":"continue","state_hook":"scene_boundary_and_optional_inspect"}
+    ],
+    "awakening_under_pressure": [
+      {"turn":1,"beat":"vulnerable_situation_human_anchor","teaches":"orient","state_hook":"manifest_threat_ally_exit_uncertainty"},
+      {"turn":2,"beat":"personal_response_not_build_choice","teaches":"declare","state_hook":"intent_contract"},
+      {"turn":3,"beat":"narrow_capacity_manifests","teaches":"use","state_hook":"campaign_contract_permitted_ability"},
+      {"turn":4,"beat":"capacity_has_cost_or_social_effect","teaches":"weigh","state_hook":"cost_state_tx"},
+      {"turn":5,"beat":"npc_tests_player_value","teaches":"answer","state_hook":"relationship_branch"},
+      {"turn":6,"beat":"first_challenge_telegraphed","teaches":"risk","state_hook":"check_or_combat_card"},
+      {"turn":7,"beat":"legible_success_or_failure","teaches":"recover","state_hook":"outcome_token_state_delta"},
+      {"turn":8,"beat":"choice_reveals_values","teaches":"define","state_hook":"commitment_tags"},
+      {"turn":9,"beat":"optional_memorable_splash","teaches":"mark","state_hook":"event_driven_milestone"},
+      {"turn":10,"beat":"future_pressure_named","teaches":"pursue","state_hook":"hookarc_open_or_branch"}
+    ]
+  },
+  "receipt_types": [
+    {"id":"correction","template":"Corrected · {object} · {new_value}","source":"player_correction"},
+    {"id":"state_change","template":"Changed · {object} · {delta}","source":"state_tx"},
+    {"id":"commitment","template":"Recorded · {promise} · {status}","source":"state_tx"},
+    {"id":"evidence","template":"Observed · {detail} · meaning unknown","source":"evidence"},
+    {"id":"fair_failure","template":"Attempt failed · {condition} · {next_safe_option}","source":"outcome_token"}
+  ],
+  "test_invariants": [
+    "player_correction_always_supersedes_lower_authority_conflict",
+    "profile_switch_preserves_render_equivalence_hash",
+    "rag_or_summary_cannot_create_or_mutate_authoritative_state",
+    "open_ask_does_not_mutate_state_without_valid_action_or_correction",
+    "kid_mode_uses_stricter_confirmation_and_no_ads",
+    "soft_offers_are_queued_until_safe_scene_boundary",
+    "memorable_splash_requires_real_event_threshold_and_is_skippable"
+  ]
+}

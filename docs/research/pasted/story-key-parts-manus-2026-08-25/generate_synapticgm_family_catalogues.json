@@ -1,0 +1,409 @@
+{
+  "results": [
+    {
+      "input": "LitRPG | fam-isekai-summon | The Summoned Pact",
+      "output": {
+        "csv_file": "https://private-us-east-1.manuscdn.com/sessionFile/4R6HG5quxU4E8kkyu8PEHa/sandbox/V9S59Fp3QHO8LB7WrjpWuJ_1787662950228_na1fn_L2hvbWUvdWJ1bnR1L2ZhbS1pc2VrYWktc3VtbW9uX3Ryb3Blcw.csv?Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly9wcml2YXRlLXVzLWVhc3QtMS5tYW51c2Nkbi5jb20vc2Vzc2lvbkZpbGUvNFI2SEc1cXV4VTRFOGtreXU4UEVIYS9zYW5kYm94L1Y5UzU5RnAzUUhPOExCN1dyanBXdUpfMTc4NzY2Mjk1MDIyOF9uYTFmbl9MMmh2YldVdmRXSjFiblIxTDJaaGJTMXBjMlZyWVdrdGMzVnRiVzl1WDNSeWIzQmxjdy5jc3YiLCJDb25kaXRpb24iOnsiRGF0ZUxlc3NUaGFuIjp7IkFXUzpFcG9jaFRpbWUiOjE3ODk0MzA0MDB9fX1dfQ__\u0026Key-Pair-Id=K2QY5QTL8JSY6C\u0026Signature=MEYCIQCCMJVfGVnAVsHguSn9Nwvm4Qik6m9pRynzHCz23HSpMAIhAIAqafrZUo8XBXbB8J3AJMd6MEbpxhpB8yqj6uiQrmZu",
+        "index_file": "https://private-us-east-1.manuscdn.com/sessionFile/4R6HG5quxU4E8kkyu8PEHa/sandbox/V9S59Fp3QHO8LB7WrjpWuJ_1787662950228_na1fn_L2hvbWUvdWJ1bnR1L2ZhbS1pc2VrYWktc3VtbW9uX2luZGV4.md?Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly9wcml2YXRlLXVzLWVhc3QtMS5tYW51c2Nkbi5jb20vc2Vzc2lvbkZpbGUvNFI2SEc1cXV4VTRFOGtreXU4UEVIYS9zYW5kYm94L1Y5UzU5RnAzUUhPOExCN1dyanBXdUpfMTc4NzY2Mjk1MDIyOF9uYTFmbl9MMmh2YldVdmRXSjFiblIxTDJaaGJTMXBjMlZyWVdrdGMzVnRiVzl1WDJsdVpHVjQubWQiLCJDb25kaXRpb24iOnsiRGF0ZUxlc3NUaGFuIjp7IkFXUzpFcG9jaFRpbWUiOjE3ODk0MzA0MDB9fX1dfQ__\u0026Key-Pair-Id=K2QY5QTL8JSY6C\u0026Signature=MEUCIQCsmJVz5tjYxXaD3obJrMaDQUeckSxOm4TvuH9ZX73hjgIgFZ9dSwj~Z6V54-FC85-OmKIUcWJt803ippD2S-Nv4dU_",
+        "issues": "No unresolved issues; 112 rows validated across 14 axes."
+      },
+      "error": ""
+    },
+    {
+      "input": "LitRPG | fam-null-pyoa-isekai | Null-Parameter Protocol",
+      "output": {
+        "csv_file": "https://private-us-east-1.manuscdn.com/sessionFile/o5dqdwZocFykuF3MQmWy79/sandbox/1IJoxdU8y6wsNPSFkzV1RU_1787662860285_na1fn_L2hvbWUvdWJ1bnR1L2ZhbS1udWxsLXB5b2EtaXNla2FpX3Ryb3Blcw.csv?Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly9wcml2YXRlLXVzLWVhc3QtMS5tYW51c2Nkbi5jb20vc2Vzc2lvbkZpbGUvbzVkcWR3Wm9jRnlrdUYzTVFtV3k3OS9zYW5kYm94LzFJSm94ZFU4eTZ3c05QU0ZrelYxUlVfMTc4NzY2Mjg2MDI4NV9uYTFmbl9MMmh2YldVdmRXSjFiblIxTDJaaGJTMXVkV3hzTFhCNWIyRXRhWE5sYTJGcFgzUnliM0JsY3cuY3N2IiwiQ29uZGl0aW9uIjp7IkRhdGVMZXNzVGhhbiI6eyJBV1M6RXBvY2hUaW1lIjoxNzg5NDMwNDAwfX19XX0_\u0026Key-Pair-Id=K2QY5QTL8JSY6C\u0026Signature=MEUCIDXD020rOCK~Vf-ntcNh-7O29h5bs0FUguSKgmnyBRklAiEArFEcdgzoG6RkoMAI6IlsJzS57oN19UWc4ivlZfvqs2Q_",
+        "index_file": "https://private-us-east-1.manuscdn.com/sessionFile/o5dqdwZocFykuF3MQmWy79/sandbox/1IJoxdU8y6wsNPSFkzV1RU_1787662860285_na1fn_L2hvbWUvdWJ1bnR1L2ZhbS1udWxsLXB5b2EtaXNla2FpX2luZGV4.md?Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly9wcml2YXRlLXVzLWVhc3QtMS5tYW51c2Nkbi5jb20vc2Vzc2lvbkZpbGUvbzVkcWR3Wm9jRnlrdUYzTVFtV3k3OS9zYW5kYm94LzFJSm94ZFU4eTZ3c05QU0ZrelYxUlVfMTc4NzY2Mjg2MDI4NV9uYTFmbl9MMmh2YldVdmRXSjFiblIxTDJaaGJTMXVkV3hzTFhCNWIyRXRhWE5sYTJGcFgybHVaR1Y0Lm1kIiwiQ29uZGl0aW9uIjp7IkRhdGVMZXNzVGhhbiI6eyJBV1M6RXBvY2hUaW1lIjoxNzg5NDMwNDAwfX19XX0_\u0026Key-Pair-Id=K2QY5QTL8JSY6C\u0026Signature=MEUCIF-XYR0jpSdfvAiMoOCQoWH8FfHhGs4YxtyJL3oTTMQRAiEA8~lzpde2cQirqU2svfJ5RNhY-kprsTzvUjMwIyEQ~ws_",
+        "issues": "No unresolved issues; 112 rows validated."
+      },
+      "error": ""
+    },
+    {
+      "input": "LitRPG | fam-sys-apocalypse | System Integration",
+      "output": {
+        "csv_file": "https://private-us-east-1.manuscdn.com/sessionFile/yE8juqGV2ChuKDmp1qZ3vR/sandbox/z5QbcP3NFdnpvGpmLLfiQB_1787662842610_na1fn_L2hvbWUvdWJ1bnR1L2ZhbS1zeXMtYXBvY2FseXBzZV90cm9wZXM.csv?Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly9wcml2YXRlLXVzLWVhc3QtMS5tYW51c2Nkbi5jb20vc2Vzc2lvbkZpbGUveUU4anVxR1YyQ2h1S0RtcDFxWjN2Ui9zYW5kYm94L3o1UWJjUDNORmRucHZHcG1MTGZpUUJfMTc4NzY2Mjg0MjYxMF9uYTFmbl9MMmh2YldVdmRXSjFiblIxTDJaaGJTMXplWE10WVhCdlkyRnNlWEJ6WlY5MGNtOXdaWE0uY3N2IiwiQ29uZGl0aW9uIjp7IkRhdGVMZXNzVGhhbiI6eyJBV1M6RXBvY2hUaW1lIjoxNzg5NDMwNDAwfX19XX0_\u0026Key-Pair-Id=K2QY5QTL8JSY6C\u0026Signature=MEQCIHOqkYC85tryCYqTNzH9YgaO6LLEL2UyCwYPXAHPLGnWAiBbilN-x9miolmslXBRykj9ZY0QVDBMZXaupkUgevC3CQ__",
+        "index_file": "https://private-us-east-1.manuscdn.com/sessionFile/yE8juqGV2ChuKDmp1qZ3vR/sandbox/z5QbcP3NFdnpvGpmLLfiQB_1787662842610_na1fn_L2hvbWUvdWJ1bnR1L2ZhbS1zeXMtYXBvY2FseXBzZV9pbmRleA.md?Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly9wcml2YXRlLXVzLWVhc3QtMS5tYW51c2Nkbi5jb20vc2Vzc2lvbkZpbGUveUU4anVxR1YyQ2h1S0RtcDFxWjN2Ui9zYW5kYm94L3o1UWJjUDNORmRucHZHcG1MTGZpUUJfMTc4NzY2Mjg0MjYxMF9uYTFmbl9MMmh2YldVdmRXSjFiblIxTDJaaGJTMXplWE10WVhCdlkyRnNlWEJ6WlY5cGJtUmxlQS5tZCIsIkNvbmRpdGlvbiI6eyJEYXRlTGVzc1RoYW4iOnsiQVdTOkVwb2NoVGltZSI6MTc4OTQzMDQwMH19fV19\u0026Key-Pair-Id=K2QY5QTL8JSY6C\u0026Signature=MEUCIQDEVgjRxtQ~HXKESB3Jd1CTpD~Q19KxINumj~W8DaBkGgIgD~LeHocLTwRz~vJ-vgZ6ZydgEJvf-pxakbLnYTWTqVY_",
+        "issues": "No unresolved issues; 112 rows validated."
+      },
+      "error": ""
+    },
+    {
+      "input": "LitRPG | fam-gate-city | Gatebreak Ward",
+      "output": {
+        "csv_file": "https://private-us-east-1.manuscdn.com/sessionFile/eQYmXwf2DGZFGeT5UBmFWl/sandbox/5CgBsppeEdVfJQXjvl07Cz_1787662843141_na1fn_L2hvbWUvdWJ1bnR1L2ZhbS1nYXRlLWNpdHlfdHJvcGVz.csv?Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly9wcml2YXRlLXVzLWVhc3QtMS5tYW51c2Nkbi5jb20vc2Vzc2lvbkZpbGUvZVFZbVh3ZjJER1pGR2VUNVVCbUZXbC9zYW5kYm94LzVDZ0JzcHBlRWRWZkpRWGp2bDA3Q3pfMTc4NzY2Mjg0MzE0MV9uYTFmbl9MMmh2YldVdmRXSjFiblIxTDJaaGJTMW5ZWFJsTFdOcGRIbGZkSEp2Y0dWei5jc3YiLCJDb25kaXRpb24iOnsiRGF0ZUxlc3NUaGFuIjp7IkFXUzpFcG9jaFRpbWUiOjE3ODk0MzA0MDB9fX1dfQ__\u0026Key-Pair-Id=K2QY5QTL8JSY6C\u0026Signature=MEUCIFK01uBVNhjfbKNwYVbMnUOJDvXS3PDCS9SgyHA8gSGyAiEAuSc3mKjxWq7IIL2l38xeTv7yjBp2ynPc4PkCmHIRyvc_",
+        "index_file": "https://private-us-east-1.manuscdn.com/sessionFile/eQYmXwf2DGZFGeT5UBmFWl/sandbox/5CgBsppeEdVfJQXjvl07Cz_1787662843141_na1fn_L2hvbWUvdWJ1bnR1L2ZhbS1nYXRlLWNpdHlfaW5kZXg.md?Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly9wcml2YXRlLXVzLWVhc3QtMS5tYW51c2Nkbi5jb20vc2Vzc2lvbkZpbGUvZVFZbVh3ZjJER1pGR2VUNVVCbUZXbC9zYW5kYm94LzVDZ0JzcHBlRWRWZkpRWGp2bDA3Q3pfMTc4NzY2Mjg0MzE0MV9uYTFmbl9MMmh2YldVdmRXSjFiblIxTDJaaGJTMW5ZWFJsTFdOcGRIbGZhVzVrWlhnLm1kIiwiQ29uZGl0aW9uIjp7IkRhdGVMZXNzVGhhbiI6eyJBV1M6RXBvY2hUaW1lIjoxNzg5NDMwNDAwfX19XX0_\u0026Key-Pair-Id=K2QY5QTL8JSY6C\u0026Signature=MEUCIFDGBk62vGbJlJbtmND9jF9XGAN9DsWX050QoSEsPPOgAiEAkWYNdWrgfdNDmuGJ9oxY3Vjb2UnWO0ePRPQCWqhj-BY_",
+        "issues": "No unresolved issues; 112 rows validated."
+      },
+      "error": ""
+    },
+    {
+      "input": "LitRPG | fam-late-awaken | Hero Awakening",
+      "output": {
+        "csv_file": "https://private-us-east-1.manuscdn.com/sessionFile/7PoPiOVUxV8izKykaSowRd/sandbox/lAj4KbrXCTiVBsyvvvgRs7_1787662851076_na1fn_L2hvbWUvdWJ1bnR1L2ZhbS1sYXRlLWF3YWtlbl90cm9wZXM.csv?Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly9wcml2YXRlLXVzLWVhc3QtMS5tYW51c2Nkbi5jb20vc2Vzc2lvbkZpbGUvN1BvUGlPVlV4Vjhpekt5a2FTb3dSZC9zYW5kYm94L2xBajRLYnJYQ1RpVkJzeXZ2dmdSczdfMTc4NzY2Mjg1MTA3Nl9uYTFmbl9MMmh2YldVdmRXSjFiblIxTDJaaGJTMXNZWFJsTFdGM1lXdGxibDkwY205d1pYTS5jc3YiLCJDb25kaXRpb24iOnsiRGF0ZUxlc3NUaGFuIjp7IkFXUzpFcG9jaFRpbWUiOjE3ODk0MzA0MDB9fX1dfQ__\u0026Key-Pair-Id=K2QY5QTL8JSY6C\u0026Signature=MEYCIQDsQW9mZiUoO-rPl75EY3Wyy8otl8YKFqVtTNaXlasLygIhAP9Nj9LP1~DvgP0sSh2qHOeA-ccmXyY0JEq3BII~~fJe",
+        "index_file": "https://private-us-east-1.manuscdn.com/sessionFile/7PoPiOVUxV8izKykaSowRd/sandbox/lAj4KbrXCTiVBsyvvvgRs7_1787662851076_na1fn_L2hvbWUvdWJ1bnR1L2ZhbS1sYXRlLWF3YWtlbl9pbmRleA.md?Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly9wcml2YXRlLXVzLWVhc3QtMS5tYW51c2Nkbi5jb20vc2Vzc2lvbkZpbGUvN1BvUGlPVlV4Vjhpekt5a2FTb3dSZC9zYW5kYm94L2xBajRLYnJYQ1RpVkJzeXZ2dmdSczdfMTc4NzY2Mjg1MTA3Nl9uYTFmbl9MMmh2YldVdmRXSjFiblIxTDJaaGJTMXNZWFJsTFdGM1lXdGxibDlwYm1SbGVBLm1kIiwiQ29uZGl0aW9uIjp7IkRhdGVMZXNzVGhhbiI6eyJBV1M6RXBvY2hUaW1lIjoxNzg5NDMwNDAwfX19XX0_\u0026Key-Pair-Id=K2QY5QTL8JSY6C\u0026Signature=MEUCIQDOUw5DVLJiT9sAbJdIfWvwTjMJdfxO7ExW1fSM0KricwIgZvQ0-xE74FTmF1xVTdAGMOXtiW~ei82mnXjZ0B7wwbY_",
+        "issues": "No unresolved issues; 112 rows validated."
+      },
+      "error": ""
+    },
+    {
+      "input": "LitRPG | fam-tower-climb | Ascending Spire",
+      "output": {
+        "csv_file": "https://private-us-east-1.manuscdn.com/sessionFile/loQ94FmM8WR7AzTpbby2Ha/sandbox/Hk2SMBp4CoppDIOm1AovvP_1787662879714_na1fn_L2hvbWUvdWJ1bnR1L2ZhbS10b3dlci1jbGltYl90cm9wZXM.csv?Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly9wcml2YXRlLXVzLWVhc3QtMS5tYW51c2Nkbi5jb20vc2Vzc2lvbkZpbGUvbG9ROTRGbU04V1I3QXpUcGJieTJIYS9zYW5kYm94L0hrMlNNQnA0Q29wcERJT20xQW92dlBfMTc4NzY2Mjg3OTcxNF9uYTFmbl9MMmh2YldVdmRXSjFiblIxTDJaaGJTMTBiM2RsY2kxamJHbHRZbDkwY205d1pYTS5jc3YiLCJDb25kaXRpb24iOnsiRGF0ZUxlc3NUaGFuIjp7IkFXUzpFcG9jaFRpbWUiOjE3ODk0MzA0MDB9fX1dfQ__\u0026Key-Pair-Id=K2QY5QTL8JSY6C\u0026Signature=MEQCIH~5RBTbLOdNcRKnURNNCDhbCXkPZEDtuh5qG61fBzoIAiAJqVZwxdML~nmO9deKiOck5AIV5Rz3JqWuWaG7serWeg__",
+        "index_file": "https://private-us-east-1.manuscdn.com/sessionFile/loQ94FmM8WR7AzTpbby2Ha/sandbox/Hk2SMBp4CoppDIOm1AovvP_1787662879714_na1fn_L2hvbWUvdWJ1bnR1L2ZhbS10b3dlci1jbGltYl9pbmRleA.md?Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly9wcml2YXRlLXVzLWVhc3QtMS5tYW51c2Nkbi5jb20vc2Vzc2lvbkZpbGUvbG9ROTRGbU04V1I3QXpUcGJieTJIYS9zYW5kYm94L0hrMlNNQnA0Q29wcERJT20xQW92dlBfMTc4NzY2Mjg3OTcxNF9uYTFmbl9MMmh2YldVdmRXSjFiblIxTDJaaGJTMTBiM2RsY2kxamJHbHRZbDlwYm1SbGVBLm1kIiwiQ29uZGl0aW9uIjp7IkRhdGVMZXNzVGhhbiI6eyJBV1M6RXBvY2hUaW1lIjoxNzg5NDMwNDAwfX19XX0_\u0026Key-Pair-Id=K2QY5QTL8JSY6C\u0026Signature=MEUCIQDyuQg27XRD2ocam33azU-FN8-dNj5lQOaQYOsw6z2KTgIgKxW0kgF1BhguKhMlYc22WrUaVRqfPC6fKftG8fRq8UA_",
+        "issues": "No unresolved issues; 112 rows validated."
+      },
+      "error": ""
+    },
+    {
+      "input": "LitRPG | fam-dungeon-drop | Dungeon Transport",
+      "output": {
+        "csv_file": "https://private-us-east-1.manuscdn.com/sessionFile/gsidoX2n9CUaVsizw8dWc4/sandbox/ECWApvsWQDVprRRJ557Lia_1787663034191_na1fn_L2hvbWUvdWJ1bnR1L2ZhbS1kdW5nZW9uLWRyb3BfdHJvcGVz.csv?Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly9wcml2YXRlLXVzLWVhc3QtMS5tYW51c2Nkbi5jb20vc2Vzc2lvbkZpbGUvZ3NpZG9YMm45Q1VhVnNpenc4ZFdjNC9zYW5kYm94L0VDV0FwdnNXUURWcHJSUko1NTdMaWFfMTc4NzY2MzAzNDE5MV9uYTFmbl9MMmh2YldVdmRXSjFiblIxTDJaaGJTMWtkVzVuWlc5dUxXUnliM0JmZEhKdmNHVnouY3N2IiwiQ29uZGl0aW9uIjp7IkRhdGVMZXNzVGhhbiI6eyJBV1M6RXBvY2hUaW1lIjoxNzg5NDMwNDAwfX19XX0_\u0026Key-Pair-Id=K2QY5QTL8JSY6C\u0026Signature=MEUCIQDJWcc6d3JHwX2khZC8mwbhwaVg5dNMl2EXDf4A0-DnwAIgRAGp98Da8rBRmPdLosgHf23r0A-B7DLfkR0lRFGphKg_",
+        "index_file": "https://private-us-east-1.manuscdn.com/sessionFile/gsidoX2n9CUaVsizw8dWc4/sandbox/ECWApvsWQDVprRRJ557Lia_1787663034191_na1fn_L2hvbWUvdWJ1bnR1L2ZhbS1kdW5nZW9uLWRyb3BfaW5kZXg.md?Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly9wcml2YXRlLXVzLWVhc3QtMS5tYW51c2Nkbi5jb20vc2Vzc2lvbkZpbGUvZ3NpZG9YMm45Q1VhVnNpenc4ZFdjNC9zYW5kYm94L0VDV0FwdnNXUURWcHJSUko1NTdMaWFfMTc4NzY2MzAzNDE5MV9uYTFmbl9MMmh2YldVdmRXSjFiblIxTDJaaGJTMWtkVzVuWlc5dUxXUnliM0JmYVc1a1pYZy5tZCIsIkNvbmRpdGlvbiI6eyJEYXRlTGVzc1RoYW4iOnsiQVdTOkVwb2NoVGltZSI6MTc4OTQzMDQwMH19fV19\u0026Key-Pair-Id=K2QY5QTL8JSY6C\u0026Signature=MEQCIFG-JRHdYPqvqFZ0cAMpzldjvuOuH4GLWVWBGM3h7ZkuAiATWveFv~NC1PVOAr4gyBv4XHWP3dj9dtROkcf3m8QZKA__",
+        "issues": "No unresolved issues; 112 rows validated."
+      },
+      "error": ""
+    },
+    {
+      "input": "LitRPG | fam-academy | Inkbound Academy",
+      "output": {
+        "csv_file": "https://private-us-east-1.manuscdn.com/sessionFile/lNodqvarO6wGRuoLM1iXeE/sandbox/BFZbxedwXrGYoxwoW65Cqz_1787662858161_na1fn_L2hvbWUvdWJ1bnR1L2ZhbS1hY2FkZW15X3Ryb3Blcw.csv?Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly9wcml2YXRlLXVzLWVhc3QtMS5tYW51c2Nkbi5jb20vc2Vzc2lvbkZpbGUvbE5vZHF2YXJPNndHUnVvTE0xaVhlRS9zYW5kYm94L0JGWmJ4ZWR3WHJHWW94d29XNjVDcXpfMTc4NzY2Mjg1ODE2MV9uYTFmbl9MMmh2YldVdmRXSjFiblIxTDJaaGJTMWhZMkZrWlcxNVgzUnliM0JsY3cuY3N2IiwiQ29uZGl0aW9uIjp7IkRhdGVMZXNzVGhhbiI6eyJBV1M6RXBvY2hUaW1lIjoxNzg5NDMwNDAwfX19XX0_\u0026Key-Pair-Id=K2QY5QTL8JSY6C\u0026Signature=MEUCIQD7glmCgt2LuukIkqlRyR3kQL0e4o8m~XYYs6jAExpEyAIgSYPzm0fhUcHHLiNhax4x9v-qtKR54Dc6H75OxmjPm3o_",
+        "index_file": "https://private-us-east-1.manuscdn.com/sessionFile/lNodqvarO6wGRuoLM1iXeE/sandbox/BFZbxedwXrGYoxwoW65Cqz_1787662858161_na1fn_L2hvbWUvdWJ1bnR1L2ZhbS1hY2FkZW15X2luZGV4.md?Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly9wcml2YXRlLXVzLWVhc3QtMS5tYW51c2Nkbi5jb20vc2Vzc2lvbkZpbGUvbE5vZHF2YXJPNndHUnVvTE0xaVhlRS9zYW5kYm94L0JGWmJ4ZWR3WHJHWW94d29XNjVDcXpfMTc4NzY2Mjg1ODE2MV9uYTFmbl9MMmh2YldVdmRXSjFiblIxTDJaaGJTMWhZMkZrWlcxNVgybHVaR1Y0Lm1kIiwiQ29uZGl0aW9uIjp7IkRhdGVMZXNzVGhhbiI6eyJBV1M6RXBvY2hUaW1lIjoxNzg5NDMwNDAwfX19XX0_\u0026Key-Pair-Id=K2QY5QTL8JSY6C\u0026Signature=MEUCIEGPsKGeVslCjqdHli9voZ8orZQDOg5b4Oq6sIHczMg7AiEAjilqF0kgSH3M0NNyo5GXJfN4by6JSJ0BbKTzH5-fwHY_",
+        "issues": "No unresolved issues; 112 rows validated with exactly 16 columns."
+      },
+      "error": ""
+    },
+    {
+      "input": "LitRPG | fam-dungeon-core | Hollow Core",
+      "output": {
+        "csv_file": "https://private-us-east-1.manuscdn.com/sessionFile/yzHijmeuPNf5MAQqclm7WT/sandbox/vJqCWNyakIFPHDeOJdg2XS_1787662830636_na1fn_L2hvbWUvdWJ1bnR1L2ZhbS1kdW5nZW9uLWNvcmVfdHJvcGVz.csv?Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly9wcml2YXRlLXVzLWVhc3QtMS5tYW51c2Nkbi5jb20vc2Vzc2lvbkZpbGUveXpIaWptZXVQTmY1TUFRcWNsbTdXVC9zYW5kYm94L3ZKcUNXTnlha0lGUEhEZU9KZGcyWFNfMTc4NzY2MjgzMDYzNl9uYTFmbl9MMmh2YldVdmRXSjFiblIxTDJaaGJTMWtkVzVuWlc5dUxXTnZjbVZmZEhKdmNHVnouY3N2IiwiQ29uZGl0aW9uIjp7IkRhdGVMZXNzVGhhbiI6eyJBV1M6RXBvY2hUaW1lIjoxNzg5NDMwNDAwfX19XX0_\u0026Key-Pair-Id=K2QY5QTL8JSY6C\u0026Signature=MEUCIE5OtPk3XieYQh2ISgd~GmTiFqOo4A4vFmqdgPDY6chDAiEAz-TcPATX1IsYu0lysY9Sk0kxLWZtITqklgkXtlfjwg4_",
+        "index_file": "https://private-us-east-1.manuscdn.com/sessionFile/yzHijmeuPNf5MAQqclm7WT/sandbox/vJqCWNyakIFPHDeOJdg2XS_1787662830636_na1fn_L2hvbWUvdWJ1bnR1L2ZhbS1kdW5nZW9uLWNvcmVfaW5kZXg.md?Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly9wcml2YXRlLXVzLWVhc3QtMS5tYW51c2Nkbi5jb20vc2Vzc2lvbkZpbGUveXpIaWptZXVQTmY1TUFRcWNsbTdXVC9zYW5kYm94L3ZKcUNXTnlha0lGUEhEZU9KZGcyWFNfMTc4NzY2MjgzMDYzNl9uYTFmbl9MMmh2YldVdmRXSjFiblIxTDJaaGJTMWtkVzVuWlc5dUxXTnZjbVZmYVc1a1pYZy5tZCIsIkNvbmRpdGlvbiI6eyJEYXRlTGVzc1RoYW4iOnsiQVdTOkVwb2NoVGltZSI6MTc4OTQzMDQwMH19fV19\u0026Key-Pair-Id=K2QY5QTL8JSY6C\u0026Signature=MEUCIHaKWKjwY7ASuGnFolmKnXKNTp~AWV7mOg1cVIBqUfOZAiEA7QshgR4q0XWBHzW5LBRxZ89~x6RtlAW3dz0XU1DRqoU_",
+        "issues": "No unresolved issues; 112 rows validated."
+      },
+      "error": ""
+    },
+    {
+      "input": "LitRPG | fam-void-bargain | Void Audience",
+      "output": {
+        "csv_file": "https://private-us-east-1.manuscdn.com/sessionFile/QjKfIeCjcAik1JFFACQ9Vk/sandbox/Qx6gyBfzuC2KkoxKap3aLj_1787662844559_na1fn_L2hvbWUvdWJ1bnR1L2ZhbS12b2lkLWJhcmdhaW5fdHJvcGVz.csv?Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly9wcml2YXRlLXVzLWVhc3QtMS5tYW51c2Nkbi5jb20vc2Vzc2lvbkZpbGUvUWpLZkllQ2pjQWlrMUpGRkFDUTlWay9zYW5kYm94L1F4Nmd5QmZ6dUMyS2tveEthcDNhTGpfMTc4NzY2Mjg0NDU1OV9uYTFmbl9MMmh2YldVdmRXSjFiblIxTDJaaGJTMTJiMmxrTFdKaGNtZGhhVzVmZEhKdmNHVnouY3N2IiwiQ29uZGl0aW9uIjp7IkRhdGVMZXNzVGhhbiI6eyJBV1M6RXBvY2hUaW1lIjoxNzg5NDMwNDAwfX19XX0_\u0026Key-Pair-Id=K2QY5QTL8JSY6C\u0026Signature=MEUCIQDa9L~~A1HR5yQhF7jGjrcz67wOal9vVjTL6NBlf-QCEQIgSoDvcLYqjnNbOdHzgl7rUBQvJ8Qs8KWWuqMWyzuXcOo_",
+        "index_file": "https://private-us-east-1.manuscdn.com/sessionFile/QjKfIeCjcAik1JFFACQ9Vk/sandbox/Qx6gyBfzuC2KkoxKap3aLj_1787662844559_na1fn_L2hvbWUvdWJ1bnR1L2ZhbS12b2lkLWJhcmdhaW5faW5kZXg.md?Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly9wcml2YXRlLXVzLWVhc3QtMS5tYW51c2Nkbi5jb20vc2Vzc2lvbkZpbGUvUWpLZkllQ2pjQWlrMUpGRkFDUTlWay9zYW5kYm94L1F4Nmd5QmZ6dUMyS2tveEthcDNhTGpfMTc4NzY2Mjg0NDU1OV9uYTFmbl9MMmh2YldVdmRXSjFiblIxTDJaaGJTMTJiMmxrTFdKaGNtZGhhVzVmYVc1a1pYZy5tZCIsIkNvbmRpdGlvbiI6eyJEYXRlTGVzc1RoYW4iOnsiQVdTOkVwb2NoVGltZSI6MTc4OTQzMDQwMH19fV19\u0026Key-Pair-Id=K2QY5QTL8JSY6C\u0026Signature=MEUCIQCQWPkAiXfZtvTFfW3ltqT7OPXyFuMEWS50fqJTTD-jhAIgRuuAnlgtgXVwnJluiOiNlBpmhMQTkHdq9YERvykMsRE_",
+        "issues": "No unresolved issues; 112 rows validated, 16 columns per record."
+      },
+      "error": ""
+    },
+    {
+      "input": "LitRPG | fam-village-soft | Fabled Legacy",
+      "output": {
+        "csv_file": "https://private-us-east-1.manuscdn.com/sessionFile/72SQQzbpmlCunKzBWFHTdo/sandbox/N9WBGsKj0dAA8I73TABxzW_1787662840705_na1fn_L2hvbWUvdWJ1bnR1L2ZhbS12aWxsYWdlLXNvZnRfdHJvcGVz.csv?Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly9wcml2YXRlLXVzLWVhc3QtMS5tYW51c2Nkbi5jb20vc2Vzc2lvbkZpbGUvNzJTUVF6YnBtbEN1bkt6QldGSFRkby9zYW5kYm94L045V0JHc0tqMGRBQThJNzNUQUJ4eldfMTc4NzY2Mjg0MDcwNV9uYTFmbl9MMmh2YldVdmRXSjFiblIxTDJaaGJTMTJhV3hzWVdkbExYTnZablJmZEhKdmNHVnouY3N2IiwiQ29uZGl0aW9uIjp7IkRhdGVMZXNzVGhhbiI6eyJBV1M6RXBvY2hUaW1lIjoxNzg5NDMwNDAwfX19XX0_\u0026Key-Pair-Id=K2QY5QTL8JSY6C\u0026Signature=MEYCIQCPnoFzcrGvbSpDVPp2khX3YFcUYKBk5SFheHviTdC5WgIhAKnaHf1sU2IcCJ4Ptv6tq3NaRI6W9c0AYAtvEii-R3IZ",
+        "index_file": "https://private-us-east-1.manuscdn.com/sessionFile/72SQQzbpmlCunKzBWFHTdo/sandbox/N9WBGsKj0dAA8I73TABxzW_1787662840705_na1fn_L2hvbWUvdWJ1bnR1L2ZhbS12aWxsYWdlLXNvZnRfaW5kZXg.md?Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly9wcml2YXRlLXVzLWVhc3QtMS5tYW51c2Nkbi5jb20vc2Vzc2lvbkZpbGUvNzJTUVF6YnBtbEN1bkt6QldGSFRkby9zYW5kYm94L045V0JHc0tqMGRBQThJNzNUQUJ4eldfMTc4NzY2Mjg0MDcwNV9uYTFmbl9MMmh2YldVdmRXSjFiblIxTDJaaGJTMTJhV3hzWVdkbExYTnZablJmYVc1a1pYZy5tZCIsIkNvbmRpdGlvbiI6eyJEYXRlTGVzc1RoYW4iOnsiQVdTOkVwb2NoVGltZSI6MTc4OTQzMDQwMH19fV19\u0026Key-Pair-Id=K2QY5QTL8JSY6C\u0026Signature=MEUCIQDtnwYNuFt-AcU4ir-xHN-10pSc8wY2Vqq8Qpl5KYisLAIgN7qFw6QSSMFdWP72NHq18UsdmLrnQ4HBsvwVCETnt-4_",
+        "issues": "No unresolved issues; 112 rows validated."
+      },
+      "error": ""
+    },
+    {
+      "input": "LitRPG | fam-litrpg-custom | Blank Canvas LitRPG",
+      "output": {
+        "csv_file": "https://private-us-east-1.manuscdn.com/sessionFile/3IGBCSqC5gOE4rjNAn7SCR/sandbox/7pbzKVb9wwzeDL9y2z7Ckh_1787662926843_na1fn_L2hvbWUvdWJ1bnR1L2ZhbS1saXRycGctY3VzdG9tX3Ryb3Blcw.csv?Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly9wcml2YXRlLXVzLWVhc3QtMS5tYW51c2Nkbi5jb20vc2Vzc2lvbkZpbGUvM0lHQkNTcUM1Z09FNHJqTkFuN1NDUi9zYW5kYm94LzdwYnpLVmI5d3d6ZURMOXkyejdDa2hfMTc4NzY2MjkyNjg0M19uYTFmbl9MMmh2YldVdmRXSjFiblIxTDJaaGJTMXNhWFJ5Y0djdFkzVnpkRzl0WDNSeWIzQmxjdy5jc3YiLCJDb25kaXRpb24iOnsiRGF0ZUxlc3NUaGFuIjp7IkFXUzpFcG9jaFRpbWUiOjE3ODk0MzA0MDB9fX1dfQ__\u0026Key-Pair-Id=K2QY5QTL8JSY6C\u0026Signature=MEYCIQC-UbCOhCZ1PC5kSFGqhxywWgsZnYBa8JpUkTok3hFZiQIhANRA7M1vY07VjzwE1-OB3pEFLpYtLyDl8yDocPOlGAB0",
+        "index_file": "/home/ubuntu/fam-litrpg-custom_tropes_index.md",
+        "issues": "No unresolved issues; 112 rows validated."
+      },
+      "error": ""
+    },
+    {
+      "input": "PYOA | fam-pyoa-road | Thornferry Road",
+      "output": {
+        "csv_file": "https://private-us-east-1.manuscdn.com/sessionFile/49Qtnlpg4BQy7ldn3D0tp4/sandbox/uQno1fmE0MS1moY5VNr3Py_1787662853733_na1fn_L2hvbWUvdWJ1bnR1L2ZhbS1weW9hLXJvYWRfdHJvcGVz.csv?Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly9wcml2YXRlLXVzLWVhc3QtMS5tYW51c2Nkbi5jb20vc2Vzc2lvbkZpbGUvNDlRdG5scGc0QlF5N2xkbjNEMHRwNC9zYW5kYm94L3VRbm8xZm1FME1TMW1vWTVWTnIzUHlfMTc4NzY2Mjg1MzczM19uYTFmbl9MMmh2YldVdmRXSjFiblIxTDJaaGJTMXdlVzloTFhKdllXUmZkSEp2Y0dWei5jc3YiLCJDb25kaXRpb24iOnsiRGF0ZUxlc3NUaGFuIjp7IkFXUzpFcG9jaFRpbWUiOjE3ODk0MzA0MDB9fX1dfQ__\u0026Key-Pair-Id=K2QY5QTL8JSY6C\u0026Signature=MEUCIQDR6xMMkqmU4AZ1upbR34gUaVLZf0aSV5D2l8RnYQPJEgIgJYluo-zL6YvUjq31ywkli4Iq8JVfYtTlowj0T9LNYCg_",
+        "index_file": "https://private-us-east-1.manuscdn.com/sessionFile/49Qtnlpg4BQy7ldn3D0tp4/sandbox/uQno1fmE0MS1moY5VNr3Py_1787662853733_na1fn_L2hvbWUvdWJ1bnR1L2ZhbS1weW9hLXJvYWRfaW5kZXg.md?Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly9wcml2YXRlLXVzLWVhc3QtMS5tYW51c2Nkbi5jb20vc2Vzc2lvbkZpbGUvNDlRdG5scGc0QlF5N2xkbjNEMHRwNC9zYW5kYm94L3VRbm8xZm1FME1TMW1vWTVWTnIzUHlfMTc4NzY2Mjg1MzczM19uYTFmbl9MMmh2YldVdmRXSjFiblIxTDJaaGJTMXdlVzloTFhKdllXUmZhVzVrWlhnLm1kIiwiQ29uZGl0aW9uIjp7IkRhdGVMZXNzVGhhbiI6eyJBV1M6RXBvY2hUaW1lIjoxNzg5NDMwNDAwfX19XX0_\u0026Key-Pair-Id=K2QY5QTL8JSY6C\u0026Signature=MEQCIB7670-y2vKMU8iwisnBYzJVrTKnKod8veqPfItQhNAoAiBBT0JxQOMlMfBgvHSthWLs-GSodXG8ppMf6pPJHhfPZg__",
+        "issues": "No unresolved issues; 112 rows validated."
+      },
+      "error": ""
+    },
+    {
+      "input": "PYOA | fam-pyoa-occult | Vesper-Glass Cipher",
+      "output": {
+        "csv_file": "https://private-us-east-1.manuscdn.com/sessionFile/OyDOgzNmd70ohraVQ3UulY/sandbox/KP2AXSS2ndqP0OhrMEh37t_1787662842809_na1fn_L2hvbWUvdWJ1bnR1L2ZhbS1weW9hLW9jY3VsdF90cm9wZXM.csv?Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly9wcml2YXRlLXVzLWVhc3QtMS5tYW51c2Nkbi5jb20vc2Vzc2lvbkZpbGUvT3lET2d6Tm1kNzBvaHJhVlEzVXVsWS9zYW5kYm94L0tQMkFYU1MybmRxUDBPaHJNRWgzN3RfMTc4NzY2Mjg0MjgwOV9uYTFmbl9MMmh2YldVdmRXSjFiblIxTDJaaGJTMXdlVzloTFc5alkzVnNkRjkwY205d1pYTS5jc3YiLCJDb25kaXRpb24iOnsiRGF0ZUxlc3NUaGFuIjp7IkFXUzpFcG9jaFRpbWUiOjE3ODk0MzA0MDB9fX1dfQ__\u0026Key-Pair-Id=K2QY5QTL8JSY6C\u0026Signature=MEYCIQDZA0b2jycuAJ0ntwm0px8Q-akuV6SlZLfIY28Vnga5MAIhAJjXxKx0bn0xmyPICUxTVg3v1YVJn4d1g6VjbmOLd9jH",
+        "index_file": "https://private-us-east-1.manuscdn.com/sessionFile/OyDOgzNmd70ohraVQ3UulY/sandbox/KP2AXSS2ndqP0OhrMEh37t_1787662842809_na1fn_L2hvbWUvdWJ1bnR1L2ZhbS1weW9hLW9jY3VsdF9pbmRleA.md?Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly9wcml2YXRlLXVzLWVhc3QtMS5tYW51c2Nkbi5jb20vc2Vzc2lvbkZpbGUvT3lET2d6Tm1kNzBvaHJhVlEzVXVsWS9zYW5kYm94L0tQMkFYU1MybmRxUDBPaHJNRWgzN3RfMTc4NzY2Mjg0MjgwOV9uYTFmbl9MMmh2YldVdmRXSjFiblIxTDJaaGJTMXdlVzloTFc5alkzVnNkRjlwYm1SbGVBLm1kIiwiQ29uZGl0aW9uIjp7IkRhdGVMZXNzVGhhbiI6eyJBV1M6RXBvY2hUaW1lIjoxNzg5NDMwNDAwfX19XX0_\u0026Key-Pair-Id=K2QY5QTL8JSY6C\u0026Signature=MEUCIQD8jfUSHxyH9HW1xGvmXhugT3lSc4o5NhTASaq14LDV~QIgf45M4M28H4bzOd7h4kxzhrTEcyNXBVfU21NME-UU~dk_",
+        "issues": "No unresolved issues; 112 rows validated."
+      },
+      "error": ""
+    },
+    {
+      "input": "PYOA | fam-pyoa-space | Erebus-9",
+      "output": {
+        "csv_file": "https://private-us-east-1.manuscdn.com/sessionFile/atEK1yXqqOyoiRLKVxwFYI/sandbox/SwWAkrI0PS504P4ylV4Ez5_1787662835554_na1fn_L2hvbWUvdWJ1bnR1L2ZhbS1weW9hLXNwYWNlX3Ryb3Blcw.csv?Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly9wcml2YXRlLXVzLWVhc3QtMS5tYW51c2Nkbi5jb20vc2Vzc2lvbkZpbGUvYXRFSzF5WHFxT3lvaVJMS1Z4d0ZZSS9zYW5kYm94L1N3V0FrckkwUFM1MDRQNHlsVjRFejVfMTc4NzY2MjgzNTU1NF9uYTFmbl9MMmh2YldVdmRXSjFiblIxTDJaaGJTMXdlVzloTFhOd1lXTmxYM1J5YjNCbGN3LmNzdiIsIkNvbmRpdGlvbiI6eyJEYXRlTGVzc1RoYW4iOnsiQVdTOkVwb2NoVGltZSI6MTc4OTQzMDQwMH19fV19\u0026Key-Pair-Id=K2QY5QTL8JSY6C\u0026Signature=MEYCIQDTFXIQPlDTtU1pNkVX3CViN7dao3kypEoXgnfXP3y5AAIhAKxrmwe-dOM8wXhTGBf8hAv20Td5KfMqaGZgVtIL6o27",
+        "index_file": "https://private-us-east-1.manuscdn.com/sessionFile/atEK1yXqqOyoiRLKVxwFYI/sandbox/SwWAkrI0PS504P4ylV4Ez5_1787662835554_na1fn_L2hvbWUvdWJ1bnR1L2ZhbS1weW9hLXNwYWNlX2luZGV4.md?Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly9wcml2YXRlLXVzLWVhc3QtMS5tYW51c2Nkbi5jb20vc2Vzc2lvbkZpbGUvYXRFSzF5WHFxT3lvaVJMS1Z4d0ZZSS9zYW5kYm94L1N3V0FrckkwUFM1MDRQNHlsVjRFejVfMTc4NzY2MjgzNTU1NF9uYTFmbl9MMmh2YldVdmRXSjFiblIxTDJaaGJTMXdlVzloTFhOd1lXTmxYMmx1WkdWNC5tZCIsIkNvbmRpdGlvbiI6eyJEYXRlTGVzc1RoYW4iOnsiQVdTOkVwb2NoVGltZSI6MTc4OTQzMDQwMH19fV19\u0026Key-Pair-Id=K2QY5QTL8JSY6C\u0026Signature=MEYCIQCBIRbBvmOlbS11un-qhgQMbizU0WDKrJGQ-BJ5gmv58AIhAMMqDqsTRF3UUWDjtYzR3M46m-zxZ84VMdzJSrJkNMgQ",
+        "issues": "No unresolved issues; 112 rows validated."
+      },
+      "error": ""
+    },
+    {
+      "input": "PYOA | fam-pyoa-romance-gala | Rose-Gold Ultimatum",
+      "output": {
+        "csv_file": "https://private-us-east-1.manuscdn.com/sessionFile/aanE2Lp3bh0L3qHt9cz0xn/sandbox/BbPcQNKhCxdSuIdeac0Haa_1787662829638_na1fn_L2hvbWUvdWJ1bnR1L2ZhbS1weW9hLXJvbWFuY2UtZ2FsYV90cm9wZXM.csv?Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly9wcml2YXRlLXVzLWVhc3QtMS5tYW51c2Nkbi5jb20vc2Vzc2lvbkZpbGUvYWFuRTJMcDNiaDBMM3FIdDljejB4bi9zYW5kYm94L0JiUGNRTktoQ3hkU3VJZGVhYzBIYWFfMTc4NzY2MjgyOTYzOF9uYTFmbl9MMmh2YldVdmRXSjFiblIxTDJaaGJTMXdlVzloTFhKdmJXRnVZMlV0WjJGc1lWOTBjbTl3WlhNLmNzdiIsIkNvbmRpdGlvbiI6eyJEYXRlTGVzc1RoYW4iOnsiQVdTOkVwb2NoVGltZSI6MTc4OTQzMDQwMH19fV19\u0026Key-Pair-Id=K2QY5QTL8JSY6C\u0026Signature=MEYCIQD4F~r~tMKBmL8IuS3aD71gbg1wR2gaJb8pzzRdHc51qgIhAPzkzUQnPZryTZu7ux194DAMUUExEeN5FkLLWJEaPJRi",
+        "index_file": "https://private-us-east-1.manuscdn.com/sessionFile/aanE2Lp3bh0L3qHt9cz0xn/sandbox/BbPcQNKhCxdSuIdeac0Haa_1787662829638_na1fn_L2hvbWUvdWJ1bnR1L2ZhbS1weW9hLXJvbWFuY2UtZ2FsYV9pbmRleA.md?Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly9wcml2YXRlLXVzLWVhc3QtMS5tYW51c2Nkbi5jb20vc2Vzc2lvbkZpbGUvYWFuRTJMcDNiaDBMM3FIdDljejB4bi9zYW5kYm94L0JiUGNRTktoQ3hkU3VJZGVhYzBIYWFfMTc4NzY2MjgyOTYzOF9uYTFmbl9MMmh2YldVdmRXSjFiblIxTDJaaGJTMXdlVzloTFhKdmJXRnVZMlV0WjJGc1lWOXBibVJsZUEubWQiLCJDb25kaXRpb24iOnsiRGF0ZUxlc3NUaGFuIjp7IkFXUzpFcG9jaFRpbWUiOjE3ODk0MzA0MDB9fX1dfQ__\u0026Key-Pair-Id=K2QY5QTL8JSY6C\u0026Signature=MEQCIGpexPIHevHav869ZJyjjouxd9CMa9XTFX8~9UNi0qECAiBSnpMuHFsGJ1E~59oefLYjor3QOwEItv31MrSZviC2BQ__",
+        "issues": "No unresolved issues; 112 rows validated."
+      },
+      "error": ""
+    },
+    {
+      "input": "PYOA | fam-pyoa-mystery | Giltwood Estate",
+      "output": {
+        "csv_file": "https://private-us-east-1.manuscdn.com/sessionFile/myKguowbkT2dhjo4HpHgIZ/sandbox/uCUFfNsCn2WUREHiHhNaEk_1787662935365_na1fn_L2hvbWUvdWJ1bnR1L2ZhbS1weW9hLW15c3RlcnlfdHJvcGVz.csv?Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly9wcml2YXRlLXVzLWVhc3QtMS5tYW51c2Nkbi5jb20vc2Vzc2lvbkZpbGUvbXlLZ3Vvd2JrVDJkaGpvNEhwSGdJWi9zYW5kYm94L3VDVUZmTnNDbjJXVVJFSGlIaE5hRWtfMTc4NzY2MjkzNTM2NV9uYTFmbl9MMmh2YldVdmRXSjFiblIxTDJaaGJTMXdlVzloTFcxNWMzUmxjbmxmZEhKdmNHVnouY3N2IiwiQ29uZGl0aW9uIjp7IkRhdGVMZXNzVGhhbiI6eyJBV1M6RXBvY2hUaW1lIjoxNzg5NDMwNDAwfX19XX0_\u0026Key-Pair-Id=K2QY5QTL8JSY6C\u0026Signature=MEUCIEUcoIeGrxbvOi0ZpBpHVbnOPX2kt4M4Tm9P0Kx9hDiKAiEAouj5H8xITnvHdP1rQ8zUIARAAZGvVsCPJNJ-v0XFsi4_",
+        "index_file": "https://private-us-east-1.manuscdn.com/sessionFile/myKguowbkT2dhjo4HpHgIZ/sandbox/uCUFfNsCn2WUREHiHhNaEk_1787662935365_na1fn_L2hvbWUvdWJ1bnR1L2ZhbS1weW9hLW15c3RlcnlfaW5kZXg.md?Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly9wcml2YXRlLXVzLWVhc3QtMS5tYW51c2Nkbi5jb20vc2Vzc2lvbkZpbGUvbXlLZ3Vvd2JrVDJkaGpvNEhwSGdJWi9zYW5kYm94L3VDVUZmTnNDbjJXVVJFSGlIaE5hRWtfMTc4NzY2MjkzNTM2NV9uYTFmbl9MMmh2YldVdmRXSjFiblIxTDJaaGJTMXdlVzloTFcxNWMzUmxjbmxmYVc1a1pYZy5tZCIsIkNvbmRpdGlvbiI6eyJEYXRlTGVzc1RoYW4iOnsiQVdTOkVwb2NoVGltZSI6MTc4OTQzMDQwMH19fV19\u0026Key-Pair-Id=K2QY5QTL8JSY6C\u0026Signature=MEUCIBUVmUaNwRfGMvDvMzWzygzbPgPyPZZ86FOTUc1lYH7pAiEAhsFhSuXpAJOX~FP7bb2LQOmIQqIdiq71rSOUHoZQV2E_",
+        "issues": "No unresolved issues; 112 rows validated."
+      },
+      "error": ""
+    },
+    {
+      "input": "PYOA | fam-pyoa-underwater | Resin Sonata",
+      "output": {
+        "csv_file": "https://private-us-east-1.manuscdn.com/sessionFile/vg9BrijzjC9MfBHJtvI5Fm/sandbox/WPGIWasVV5iwvjvIN30tmx_1787662824152_na1fn_L2hvbWUvdWJ1bnR1L2ZhbS1weW9hLXVuZGVyd2F0ZXJfdHJvcGVz.csv?Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly9wcml2YXRlLXVzLWVhc3QtMS5tYW51c2Nkbi5jb20vc2Vzc2lvbkZpbGUvdmc5QnJpanpqQzlNZkJISnR2STVGbS9zYW5kYm94L1dQR0lXYXNWVjVpd3ZqdklOMzB0bXhfMTc4NzY2MjgyNDE1Ml9uYTFmbl9MMmh2YldVdmRXSjFiblIxTDJaaGJTMXdlVzloTFhWdVpHVnlkMkYwWlhKZmRISnZjR1Z6LmNzdiIsIkNvbmRpdGlvbiI6eyJEYXRlTGVzc1RoYW4iOnsiQVdTOkVwb2NoVGltZSI6MTc4OTQzMDQwMH19fV19\u0026Key-Pair-Id=K2QY5QTL8JSY6C\u0026Signature=MEUCIQDW7oMhUOfqtNmwUejJCy6Pnz43BH4NwwDJWGaIjZDlnAIgJRCVHGOETT0eyapigoAFoOufp8uexdAybigosXKQdM4_",
+        "index_file": "https://private-us-east-1.manuscdn.com/sessionFile/vg9BrijzjC9MfBHJtvI5Fm/sandbox/WPGIWasVV5iwvjvIN30tmx_1787662824152_na1fn_L2hvbWUvdWJ1bnR1L2ZhbS1weW9hLXVuZGVyd2F0ZXJfaW5kZXg.md?Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly9wcml2YXRlLXVzLWVhc3QtMS5tYW51c2Nkbi5jb20vc2Vzc2lvbkZpbGUvdmc5QnJpanpqQzlNZkJISnR2STVGbS9zYW5kYm94L1dQR0lXYXNWVjVpd3ZqdklOMzB0bXhfMTc4NzY2MjgyNDE1Ml9uYTFmbl9MMmh2YldVdmRXSjFiblIxTDJaaGJTMXdlVzloTFhWdVpHVnlkMkYwWlhKZmFXNWtaWGcubWQiLCJDb25kaXRpb24iOnsiRGF0ZUxlc3NUaGFuIjp7IkFXUzpFcG9jaFRpbWUiOjE3ODk0MzA0MDB9fX1dfQ__\u0026Key-Pair-Id=K2QY5QTL8JSY6C\u0026Signature=MEUCIQDU-ySW83-UcHO6ZgXsUArGcZHHm6ZGBHVeu0V-wHlYmgIgXkkAkCOt5ZwA106SPgy1px8LWbKU1BwMSNw6lDosK5s_",
+        "issues": "No unresolved issues; 112 rows validated."
+      },
+      "error": ""
+    },
+    {
+      "input": "PYOA | fam-pyoa-assassin | Umbra Protocol",
+      "output": {
+        "csv_file": "https://private-us-east-1.manuscdn.com/sessionFile/n1Uug9d01n0PGXuBz5HmDM/sandbox/9Yi0xqQmBqN0mk0cyq1Gnw_1787663104782_na1fn_L2hvbWUvdWJ1bnR1L2ZhbS1weW9hLWFzc2Fzc2luX3Ryb3Blc19maXhlZA.csv?Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly9wcml2YXRlLXVzLWVhc3QtMS5tYW51c2Nkbi5jb20vc2Vzc2lvbkZpbGUvbjFVdWc5ZDAxbjBQR1h1Qno1SG1ETS9zYW5kYm94LzlZaTB4cVFtQnFOMG1rMGN5cTFHbndfMTc4NzY2MzEwNDc4Ml9uYTFmbl9MMmh2YldVdmRXSjFiblIxTDJaaGJTMXdlVzloTFdGemMyRnpjMmx1WDNSeWIzQmxjMTltYVhobFpBLmNzdiIsIkNvbmRpdGlvbiI6eyJEYXRlTGVzc1RoYW4iOnsiQVdTOkVwb2NoVGltZSI6MTc4OTQzMDQwMH19fV19\u0026Key-Pair-Id=K2QY5QTL8JSY6C\u0026Signature=MEYCIQCskSquFbyjw3A5NBzmr12FcW6Z6xnfZYczQLtagrCHdgIhANfiEgiHbNJubUJzesdayoyYPwOl6PkXeNsTSN80cesO",
+        "index_file": "https://private-us-east-1.manuscdn.com/sessionFile/n1Uug9d01n0PGXuBz5HmDM/sandbox/9Yi0xqQmBqN0mk0cyq1Gnw_1787663104782_na1fn_L2hvbWUvdWJ1bnR1L2ZhbS1weW9hLWFzc2Fzc2luX2luZGV4.md?Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly9wcml2YXRlLXVzLWVhc3QtMS5tYW51c2Nkbi5jb20vc2Vzc2lvbkZpbGUvbjFVdWc5ZDAxbjBQR1h1Qno1SG1ETS9zYW5kYm94LzlZaTB4cVFtQnFOMG1rMGN5cTFHbndfMTc4NzY2MzEwNDc4Ml9uYTFmbl9MMmh2YldVdmRXSjFiblIxTDJaaGJTMXdlVzloTFdGemMyRnpjMmx1WDJsdVpHVjQubWQiLCJDb25kaXRpb24iOnsiRGF0ZUxlc3NUaGFuIjp7IkFXUzpFcG9jaFRpbWUiOjE3ODk0MzA0MDB9fX1dfQ__\u0026Key-Pair-Id=K2QY5QTL8JSY6C\u0026Signature=MEYCIQCVLVroceeRMxRkHcmnKf2XSj9Nkqz3hENNIH6ZdhhFdQIhANPvUW0mkZDRYFE1m21B8NtYbB40P~cv0MPIfkb7gpvA",
+        "issues": "No unresolved issues; 112 rows validated and fully CSV-escaped."
+      },
+      "error": ""
+    },
+    {
+      "input": "PYOA | fam-pyoa-vampire | Crimson Nocturne",
+      "output": {
+        "csv_file": "https://private-us-east-1.manuscdn.com/sessionFile/kfl8jA53OYo5YLQWpe2HrJ/sandbox/YPURErOwvIllB3fYme6SVi_1787662842428_na1fn_L2hvbWUvdWJ1bnR1L2ZhbS1weW9hLXZhbXBpcmVfdHJvcGVz.csv?Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly9wcml2YXRlLXVzLWVhc3QtMS5tYW51c2Nkbi5jb20vc2Vzc2lvbkZpbGUva2ZsOGpBNTNPWW81WUxRV3BlMkhySi9zYW5kYm94L1lQVVJFck93dklsbEIzZlltZTZTVmlfMTc4NzY2Mjg0MjQyOF9uYTFmbl9MMmh2YldVdmRXSjFiblIxTDJaaGJTMXdlVzloTFhaaGJYQnBjbVZmZEhKdmNHVnouY3N2IiwiQ29uZGl0aW9uIjp7IkRhdGVMZXNzVGhhbiI6eyJBV1M6RXBvY2hUaW1lIjoxNzg5NDMwNDAwfX19XX0_\u0026Key-Pair-Id=K2QY5QTL8JSY6C\u0026Signature=MEQCIHm65H8aNZXIIfdMjIZUWJd5iR1Pw3a779Y5hadbXClZAiBEvy~a~NKwQZNlwSOcMN9VMM8BE3wk6DUh6gAIyoZu~g__",
+        "index_file": "https://private-us-east-1.manuscdn.com/sessionFile/kfl8jA53OYo5YLQWpe2HrJ/sandbox/YPURErOwvIllB3fYme6SVi_1787662842428_na1fn_L2hvbWUvdWJ1bnR1L2ZhbS1weW9hLXZhbXBpcmVfaW5kZXg.md?Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly9wcml2YXRlLXVzLWVhc3QtMS5tYW51c2Nkbi5jb20vc2Vzc2lvbkZpbGUva2ZsOGpBNTNPWW81WUxRV3BlMkhySi9zYW5kYm94L1lQVVJFck93dklsbEIzZlltZTZTVmlfMTc4NzY2Mjg0MjQyOF9uYTFmbl9MMmh2YldVdmRXSjFiblIxTDJaaGJTMXdlVzloTFhaaGJYQnBjbVZmYVc1a1pYZy5tZCIsIkNvbmRpdGlvbiI6eyJEYXRlTGVzc1RoYW4iOnsiQVdTOkVwb2NoVGltZSI6MTc4OTQzMDQwMH19fV19\u0026Key-Pair-Id=K2QY5QTL8JSY6C\u0026Signature=MEYCIQCtG1p2VtVekMbMzXjIThmej1tTwt0O6QBvlMBHwwArXAIhAM4ZxMZzX6eHR4Lh0Pu1uKiizCmo3-5~y-O04hWciIzx",
+        "issues": "No unresolved issues; 112 rows validated."
+      },
+      "error": ""
+    },
+    {
+      "input": "PYOA | fam-pyoa-dark-romance | Onyx Blood Covenant",
+      "output": {
+        "csv_file": "https://private-us-east-1.manuscdn.com/sessionFile/uJb4FQmRAXkBgqXu8R3rpq/sandbox/2MUB5PW9VWNIYMpCAWHQDz_1787662884855_na1fn_L2hvbWUvdWJ1bnR1L2ZhbS1weW9hLWRhcmstcm9tYW5jZV90cm9wZXM.csv?Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly9wcml2YXRlLXVzLWVhc3QtMS5tYW51c2Nkbi5jb20vc2Vzc2lvbkZpbGUvdUpiNEZRbVJBWGtCZ3FYdThSM3JwcS9zYW5kYm94LzJNVUI1UFc5VldOSVlNcENBV0hRRHpfMTc4NzY2Mjg4NDg1NV9uYTFmbl9MMmh2YldVdmRXSjFiblIxTDJaaGJTMXdlVzloTFdSaGNtc3RjbTl0WVc1alpWOTBjbTl3WlhNLmNzdiIsIkNvbmRpdGlvbiI6eyJEYXRlTGVzc1RoYW4iOnsiQVdTOkVwb2NoVGltZSI6MTc4OTQzMDQwMH19fV19\u0026Key-Pair-Id=K2QY5QTL8JSY6C\u0026Signature=MEUCIQDk0JE0dQdu39WD1eij0sNCPTNxUVTQGiGxx3UCJZWOpgIgcvC8e4lO9EaRMb6lrNm2ppSm4V10F8mkW0vSs-NAFD8_",
+        "index_file": "https://private-us-east-1.manuscdn.com/sessionFile/uJb4FQmRAXkBgqXu8R3rpq/sandbox/2MUB5PW9VWNIYMpCAWHQDz_1787662884855_na1fn_L2hvbWUvdWJ1bnR1L2ZhbS1weW9hLWRhcmstcm9tYW5jZV9pbmRleA.md?Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly9wcml2YXRlLXVzLWVhc3QtMS5tYW51c2Nkbi5jb20vc2Vzc2lvbkZpbGUvdUpiNEZRbVJBWGtCZ3FYdThSM3JwcS9zYW5kYm94LzJNVUI1UFc5VldOSVlNcENBV0hRRHpfMTc4NzY2Mjg4NDg1NV9uYTFmbl9MMmh2YldVdmRXSjFiblIxTDJaaGJTMXdlVzloTFdSaGNtc3RjbTl0WVc1alpWOXBibVJsZUEubWQiLCJDb25kaXRpb24iOnsiRGF0ZUxlc3NUaGFuIjp7IkFXUzpFcG9jaFRpbWUiOjE3ODk0MzA0MDB9fX1dfQ__\u0026Key-Pair-Id=K2QY5QTL8JSY6C\u0026Signature=MEQCIAqDGYpYt~NOhbW81-OlxdxYhndfti2ioNqXOh7xsNkcAiAIzo9tRjdY-GV4Pm~ro2If0IM6z7YwaMggzTr8Jc4Ebw__",
+        "issues": "No unresolved issues; 112 rows validated."
+      },
+      "error": ""
+    },
+    {
+      "input": "Story RPG | fam-rpg-heist | Salt Road Heist",
+      "output": {
+        "csv_file": "https://private-us-east-1.manuscdn.com/sessionFile/KAjUY8qDBIu5nrHUfpVvvC/sandbox/dxtBMzmuo5oADolyetpUSY_1787662872483_na1fn_L2hvbWUvdWJ1bnR1L2ZhbS1ycGctaGVpc3RfdHJvcGVz.csv?Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly9wcml2YXRlLXVzLWVhc3QtMS5tYW51c2Nkbi5jb20vc2Vzc2lvbkZpbGUvS0FqVVk4cURCSXU1bnJIVWZwVnZ2Qy9zYW5kYm94L2R4dEJNem11bzVvQURvbHlldHBVU1lfMTc4NzY2Mjg3MjQ4M19uYTFmbl9MMmh2YldVdmRXSjFiblIxTDJaaGJTMXljR2N0YUdWcGMzUmZkSEp2Y0dWei5jc3YiLCJDb25kaXRpb24iOnsiRGF0ZUxlc3NUaGFuIjp7IkFXUzpFcG9jaFRpbWUiOjE3ODk0MzA0MDB9fX1dfQ__\u0026Key-Pair-Id=K2QY5QTL8JSY6C\u0026Signature=MEYCIQD~91577YdNi3sv9KqQJg1kfucZHtngLca-e5sd2RfLgAIhAKlPmcod5mpEn5xv07r1tJjvVs0fo7wHP5btnvuc7uKP",
+        "index_file": "https://private-us-east-1.manuscdn.com/sessionFile/KAjUY8qDBIu5nrHUfpVvvC/sandbox/dxtBMzmuo5oADolyetpUSY_1787662872483_na1fn_L2hvbWUvdWJ1bnR1L2ZhbS1ycGctaGVpc3RfaW5kZXg.md?Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly9wcml2YXRlLXVzLWVhc3QtMS5tYW51c2Nkbi5jb20vc2Vzc2lvbkZpbGUvS0FqVVk4cURCSXU1bnJIVWZwVnZ2Qy9zYW5kYm94L2R4dEJNem11bzVvQURvbHlldHBVU1lfMTc4NzY2Mjg3MjQ4M19uYTFmbl9MMmh2YldVdmRXSjFiblIxTDJaaGJTMXljR2N0YUdWcGMzUmZhVzVrWlhnLm1kIiwiQ29uZGl0aW9uIjp7IkRhdGVMZXNzVGhhbiI6eyJBV1M6RXBvY2hUaW1lIjoxNzg5NDMwNDAwfX19XX0_\u0026Key-Pair-Id=K2QY5QTL8JSY6C\u0026Signature=MEQCIE1oEEemUo9UaDT~i50uodPN3nI8dlCP73YsDRKGKsN6AiBgDme25u34Aq0ddayF5Iy5Aa0PiLhzLaat5Q-8V6xBRQ__",
+        "issues": "No unresolved issues; 112 rows validated."
+      },
+      "error": ""
+    },
+    {
+      "input": "Story RPG | fam-rpg-letters | Glass Harbor Letters",
+      "output": {
+        "csv_file": "https://private-us-east-1.manuscdn.com/sessionFile/sbYbktMtNjsFN8VyjfHFnn/sandbox/YOlIifvYa0p4hnBC63FAx0_1787663008592_na1fn_L2hvbWUvdWJ1bnR1L2ZhbS1ycGctbGV0dGVyc190cm9wZXM.csv?Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly9wcml2YXRlLXVzLWVhc3QtMS5tYW51c2Nkbi5jb20vc2Vzc2lvbkZpbGUvc2JZYmt0TXROanNGTjhWeWpmSEZubi9zYW5kYm94L1lPbElpZnZZYTBwNGhuQkM2M0ZBeDBfMTc4NzY2MzAwODU5Ml9uYTFmbl9MMmh2YldVdmRXSjFiblIxTDJaaGJTMXljR2N0YkdWMGRHVnljMTkwY205d1pYTS5jc3YiLCJDb25kaXRpb24iOnsiRGF0ZUxlc3NUaGFuIjp7IkFXUzpFcG9jaFRpbWUiOjE3ODk0MzA0MDB9fX1dfQ__\u0026Key-Pair-Id=K2QY5QTL8JSY6C\u0026Signature=MEQCIFaEIhg9ZDongX9xpfpTCcqA9awTEEbzdI02CrOF1psjAiA0O0pP0CAdiO4qWWDA52Zf3D2yD86Ks83vsd8wB0PfXg__",
+        "index_file": "https://private-us-east-1.manuscdn.com/sessionFile/sbYbktMtNjsFN8VyjfHFnn/sandbox/YOlIifvYa0p4hnBC63FAx0_1787663008592_na1fn_L2hvbWUvdWJ1bnR1L2ZhbS1ycGctbGV0dGVyc19pbmRleA.md?Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly9wcml2YXRlLXVzLWVhc3QtMS5tYW51c2Nkbi5jb20vc2Vzc2lvbkZpbGUvc2JZYmt0TXROanNGTjhWeWpmSEZubi9zYW5kYm94L1lPbElpZnZZYTBwNGhuQkM2M0ZBeDBfMTc4NzY2MzAwODU5Ml9uYTFmbl9MMmh2YldVdmRXSjFiblIxTDJaaGJTMXljR2N0YkdWMGRHVnljMTlwYm1SbGVBLm1kIiwiQ29uZGl0aW9uIjp7IkRhdGVMZXNzVGhhbiI6eyJBV1M6RXBvY2hUaW1lIjoxNzg5NDMwNDAwfX19XX0_\u0026Key-Pair-Id=K2QY5QTL8JSY6C\u0026Signature=MEQCIColNgRMnRuNQ~bwB-wwX04k8XWhxuPa4L57D3rSORvqAiBq9ChmEEfc4yr2jEj-A9Rb7WqBnE41O6MF5A28NYlI4Q__",
+        "issues": "No unresolved issues; 112 rows validated."
+      },
+      "error": ""
+    },
+    {
+      "input": "Story RPG | fam-rpg-court | Embercourt Oath",
+      "output": {
+        "csv_file": "https://private-us-east-1.manuscdn.com/sessionFile/97nIoL7R9NEyfOznIJDpUa/sandbox/3pFA8BMflcUi557PQy1fgG_1787662876076_na1fn_L2hvbWUvdWJ1bnR1L2ZhbS1ycGctY291cnRfdHJvcGVz.csv?Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly9wcml2YXRlLXVzLWVhc3QtMS5tYW51c2Nkbi5jb20vc2Vzc2lvbkZpbGUvOTduSW9MN1I5TkV5Zk96bklKRHBVYS9zYW5kYm94LzNwRkE4Qk1mbGNVaTU1N1BReTFmZ0dfMTc4NzY2Mjg3NjA3Nl9uYTFmbl9MMmh2YldVdmRXSjFiblIxTDJaaGJTMXljR2N0WTI5MWNuUmZkSEp2Y0dWei5jc3YiLCJDb25kaXRpb24iOnsiRGF0ZUxlc3NUaGFuIjp7IkFXUzpFcG9jaFRpbWUiOjE3ODk0MzA0MDB9fX1dfQ__\u0026Key-Pair-Id=K2QY5QTL8JSY6C\u0026Signature=MEUCIHymwhX9iXp18xKKStJEwqVxvPMk2p~HtLPjP~kuMQsBAiEAu69PxyhzevIdHOUvTHF1BimSHPelNSm~iaS3XTLHYX4_",
+        "index_file": "https://private-us-east-1.manuscdn.com/sessionFile/97nIoL7R9NEyfOznIJDpUa/sandbox/3pFA8BMflcUi557PQy1fgG_1787662876076_na1fn_L2hvbWUvdWJ1bnR1L2ZhbS1ycGctY291cnRfaW5kZXg.md?Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly9wcml2YXRlLXVzLWVhc3QtMS5tYW51c2Nkbi5jb20vc2Vzc2lvbkZpbGUvOTduSW9MN1I5TkV5Zk96bklKRHBVYS9zYW5kYm94LzNwRkE4Qk1mbGNVaTU1N1BReTFmZ0dfMTc4NzY2Mjg3NjA3Nl9uYTFmbl9MMmh2YldVdmRXSjFiblIxTDJaaGJTMXljR2N0WTI5MWNuUmZhVzVrWlhnLm1kIiwiQ29uZGl0aW9uIjp7IkRhdGVMZXNzVGhhbiI6eyJBV1M6RXBvY2hUaW1lIjoxNzg5NDMwNDAwfX19XX0_\u0026Key-Pair-Id=K2QY5QTL8JSY6C\u0026Signature=MEYCIQDWH3iuMhlc-6awtEfWd9N6QoMD5VPmWPCo8PKi~dqZbwIhAMdcvhxZ2ow4d9OXaaRee3B8wj4KKA4ZOqeum5J~Os6Q",
+        "issues": "No unresolved issues; 112 rows validated."
+      },
+      "error": ""
+    },
+    {
+      "input": "Story RPG | fam-rpg-noir | Rainglass Case",
+      "output": {
+        "csv_file": "https://private-us-east-1.manuscdn.com/sessionFile/dCd9XORwGFGRNq3AZYJ0Ay/sandbox/6mTpCik5vcKbaixr8twMXQ_1787663589218_na1fn_L2hvbWUvdWJ1bnR1L2ZhbS1ycGctbm9pcl90cm9wZXM.csv?Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly9wcml2YXRlLXVzLWVhc3QtMS5tYW51c2Nkbi5jb20vc2Vzc2lvbkZpbGUvZENkOVhPUndHRkdSTnEzQVpZSjBBeS9zYW5kYm94LzZtVHBDaWs1dmNLYmFpeHI4dHdNWFFfMTc4NzY2MzU4OTIxOF9uYTFmbl9MMmh2YldVdmRXSjFiblIxTDJaaGJTMXljR2N0Ym05cGNsOTBjbTl3WlhNLmNzdiIsIkNvbmRpdGlvbiI6eyJEYXRlTGVzc1RoYW4iOnsiQVdTOkVwb2NoVGltZSI6MTc4OTQzMDQwMH19fV19\u0026Key-Pair-Id=K2QY5QTL8JSY6C\u0026Signature=MEQCIBl3FHwKP1dIDqCj1gvcvUJfWahK121a56T6PSuaXIcJAiAlpCQ~Yhr2IQEFpn9Y50Ca7m-~-wXTsQpcBMS28L7UhA__",
+        "index_file": "https://private-us-east-1.manuscdn.com/sessionFile/dCd9XORwGFGRNq3AZYJ0Ay/sandbox/6mTpCik5vcKbaixr8twMXQ_1787663589218_na1fn_L2hvbWUvdWJ1bnR1L2ZhbS1ycGctbm9pcl9pbmRleA.md?Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly9wcml2YXRlLXVzLWVhc3QtMS5tYW51c2Nkbi5jb20vc2Vzc2lvbkZpbGUvZENkOVhPUndHRkdSTnEzQVpZSjBBeS9zYW5kYm94LzZtVHBDaWs1dmNLYmFpeHI4dHdNWFFfMTc4NzY2MzU4OTIxOF9uYTFmbl9MMmh2YldVdmRXSjFiblIxTDJaaGJTMXljR2N0Ym05cGNsOXBibVJsZUEubWQiLCJDb25kaXRpb24iOnsiRGF0ZUxlc3NUaGFuIjp7IkFXUzpFcG9jaFRpbWUiOjE3ODk0MzA0MDB9fX1dfQ__\u0026Key-Pair-Id=K2QY5QTL8JSY6C\u0026Signature=MEUCIFmOucnawjfvaQl2FZTcWMVpn5-cYwUOwKKc46ZowvStAiEA6fItFbllmkUm7SCkLcQh9-JfXpntOJzBpQ407rdLXVY_",
+        "issues": "No unresolved issues; 112 rows validated across 14 axes with exactly 16 columns."
+      },
+      "error": ""
+    },
+    {
+      "input": "Story RPG | fam-rpg-isolation | Static House",
+      "output": {
+        "csv_file": "https://private-us-east-1.manuscdn.com/sessionFile/pu2zNxo0AUVypAab2gdRm3/sandbox/4tRW860lFjVqtGttD2OzyX_1787662889268_na1fn_L2hvbWUvdWJ1bnR1L2ZhbS1ycGctaXNvbGF0aW9uX3Ryb3Blcw.csv?Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly9wcml2YXRlLXVzLWVhc3QtMS5tYW51c2Nkbi5jb20vc2Vzc2lvbkZpbGUvcHUyek54bzBBVVZ5cEFhYjJnZFJtMy9zYW5kYm94LzR0Ulc4NjBsRmpWcXRHdHREMk96eVhfMTc4NzY2Mjg4OTI2OF9uYTFmbl9MMmh2YldVdmRXSjFiblIxTDJaaGJTMXljR2N0YVhOdmJHRjBhVzl1WDNSeWIzQmxjdy5jc3YiLCJDb25kaXRpb24iOnsiRGF0ZUxlc3NUaGFuIjp7IkFXUzpFcG9jaFRpbWUiOjE3ODk0MzA0MDB9fX1dfQ__\u0026Key-Pair-Id=K2QY5QTL8JSY6C\u0026Signature=MEQCIHO1EJaIgAybgj53uDwe5njFGYQwsGTEe5VCnUgGNtqSAiAqP1AdePlBe2QCW808uB7AnurpWuKzCip4mKK5WsSUjA__",
+        "index_file": "https://private-us-east-1.manuscdn.com/sessionFile/pu2zNxo0AUVypAab2gdRm3/sandbox/4tRW860lFjVqtGttD2OzyX_1787662889268_na1fn_L2hvbWUvdWJ1bnR1L2ZhbS1ycGctaXNvbGF0aW9uX2luZGV4.md?Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly9wcml2YXRlLXVzLWVhc3QtMS5tYW51c2Nkbi5jb20vc2Vzc2lvbkZpbGUvcHUyek54bzBBVVZ5cEFhYjJnZFJtMy9zYW5kYm94LzR0Ulc4NjBsRmpWcXRHdHREMk96eVhfMTc4NzY2Mjg4OTI2OF9uYTFmbl9MMmh2YldVdmRXSjFiblIxTDJaaGJTMXljR2N0YVhOdmJHRjBhVzl1WDJsdVpHVjQubWQiLCJDb25kaXRpb24iOnsiRGF0ZUxlc3NUaGFuIjp7IkFXUzpFcG9jaFRpbWUiOjE3ODk0MzA0MDB9fX1dfQ__\u0026Key-Pair-Id=K2QY5QTL8JSY6C\u0026Signature=MEQCIAiK-RaEf5ChNBtH2KltQyPKLecztYhu1~vzFKrQw0H0AiBxrJOmTewSVe7gkshtaW3CWNX8-I1X96tfd-ZJ4-pVsA__",
+        "issues": "No unresolved issues; 112 rows validated."
+      },
+      "error": ""
+    },
+    {
+      "input": "Story RPG | fam-rpg-crew | Driftwake Crew",
+      "output": {
+        "csv_file": "https://private-us-east-1.manuscdn.com/sessionFile/RuaaozJNDAvkQlooSpAlyV/sandbox/ZXaYn3sLZZle6kPH50mktc_1787662917197_na1fn_L2hvbWUvdWJ1bnR1L2ZhbS1ycGctY3Jld190cm9wZXM.csv?Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly9wcml2YXRlLXVzLWVhc3QtMS5tYW51c2Nkbi5jb20vc2Vzc2lvbkZpbGUvUnVhYW96Sk5EQXZrUWxvb1NwQWx5Vi9zYW5kYm94L1pYYVluM3NMWlpsZTZrUEg1MG1rdGNfMTc4NzY2MjkxNzE5N19uYTFmbl9MMmh2YldVdmRXSjFiblIxTDJaaGJTMXljR2N0WTNKbGQxOTBjbTl3WlhNLmNzdiIsIkNvbmRpdGlvbiI6eyJEYXRlTGVzc1RoYW4iOnsiQVdTOkVwb2NoVGltZSI6MTc4OTQzMDQwMH19fV19\u0026Key-Pair-Id=K2QY5QTL8JSY6C\u0026Signature=MEUCIQCcyVZG~ASVrQ7vENaVWqtl-QfD3Ebq-MAqUwsXtEugCwIgEkR4~9D6Y4YJwtF1fCcpn7tF5ITeZpUrbA5kxcex7vw_",
+        "index_file": "https://private-us-east-1.manuscdn.com/sessionFile/RuaaozJNDAvkQlooSpAlyV/sandbox/ZXaYn3sLZZle6kPH50mktc_1787662917197_na1fn_L2hvbWUvdWJ1bnR1L2ZhbS1ycGctY3Jld19pbmRleA.md?Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly9wcml2YXRlLXVzLWVhc3QtMS5tYW51c2Nkbi5jb20vc2Vzc2lvbkZpbGUvUnVhYW96Sk5EQXZrUWxvb1NwQWx5Vi9zYW5kYm94L1pYYVluM3NMWlpsZTZrUEg1MG1rdGNfMTc4NzY2MjkxNzE5N19uYTFmbl9MMmh2YldVdmRXSjFiblIxTDJaaGJTMXljR2N0WTNKbGQxOXBibVJsZUEubWQiLCJDb25kaXRpb24iOnsiRGF0ZUxlc3NUaGFuIjp7IkFXUzpFcG9jaFRpbWUiOjE3ODk0MzA0MDB9fX1dfQ__\u0026Key-Pair-Id=K2QY5QTL8JSY6C\u0026Signature=MEUCIFvQ0NF3CKyL3OE922l2tcJkhR44t2AGjEFm~tcCKBRXAiEAn6V5tUFhoO2XvyhyCfu6GJ2TFgGiU1yDE6L2zYYwWPY_",
+        "issues": "No unresolved issues; 112 rows validated."
+      },
+      "error": ""
+    },
+    {
+      "input": "Story RPG | fam-rpg-wasteland | Ashline Convoy",
+      "output": {
+        "csv_file": "https://private-us-east-1.manuscdn.com/sessionFile/I2j8zJSdTwbNVCYr8Hj24n/sandbox/PU4E4SEBKmqQ95Ls2S4wkQ_1787662887579_na1fn_L2hvbWUvdWJ1bnR1L2ZhbS1ycGctd2FzdGVsYW5kX3Ryb3Blcw.csv?Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly9wcml2YXRlLXVzLWVhc3QtMS5tYW51c2Nkbi5jb20vc2Vzc2lvbkZpbGUvSTJqOHpKU2RUd2JOVkNZcjhIajI0bi9zYW5kYm94L1BVNEU0U0VCS21xUTk1THMyUzR3a1FfMTc4NzY2Mjg4NzU3OV9uYTFmbl9MMmh2YldVdmRXSjFiblIxTDJaaGJTMXljR2N0ZDJGemRHVnNZVzVrWDNSeWIzQmxjdy5jc3YiLCJDb25kaXRpb24iOnsiRGF0ZUxlc3NUaGFuIjp7IkFXUzpFcG9jaFRpbWUiOjE3ODk0MzA0MDB9fX1dfQ__\u0026Key-Pair-Id=K2QY5QTL8JSY6C\u0026Signature=MEYCIQDr-n9oiT2t9JVm9Nf9TnGjvf9Wi6sAeybIf1R7uiRcXwIhAPVEiDRwGeb9sOhbV5sId1sXQi0i8p4c9BK7fio9Ho0T",
+        "index_file": "https://private-us-east-1.manuscdn.com/sessionFile/I2j8zJSdTwbNVCYr8Hj24n/sandbox/PU4E4SEBKmqQ95Ls2S4wkQ_1787662887579_na1fn_L2hvbWUvdWJ1bnR1L2ZhbS1ycGctd2FzdGVsYW5kX2luZGV4.md?Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly9wcml2YXRlLXVzLWVhc3QtMS5tYW51c2Nkbi5jb20vc2Vzc2lvbkZpbGUvSTJqOHpKU2RUd2JOVkNZcjhIajI0bi9zYW5kYm94L1BVNEU0U0VCS21xUTk1THMyUzR3a1FfMTc4NzY2Mjg4NzU3OV9uYTFmbl9MMmh2YldVdmRXSjFiblIxTDJaaGJTMXljR2N0ZDJGemRHVnNZVzVrWDJsdVpHVjQubWQiLCJDb25kaXRpb24iOnsiRGF0ZUxlc3NUaGFuIjp7IkFXUzpFcG9jaFRpbWUiOjE3ODk0MzA0MDB9fX1dfQ__\u0026Key-Pair-Id=K2QY5QTL8JSY6C\u0026Signature=MEUCIQD3~qw16kDxtYpBsZES7b4r~YanZCFMTsNd6e2DoefEJQIgfvt50wdXzhiZouVjmQLgj0RYBVRa5K8LqWV5i5LjzRM_",
+        "issues": "No unresolved issues; 112 rows validated."
+      },
+      "error": ""
+    },
+    {
+      "input": "Story RPG | fam-rpg-inn-romance | Twin Lanterns",
+      "output": {
+        "csv_file": "https://private-us-east-1.manuscdn.com/sessionFile/yzbCyPDsYybCjTAmVxIy63/sandbox/aWFcJFWt9BQxWdfTwLo2xv_1787662911048_na1fn_L2hvbWUvdWJ1bnR1L2ZhbS1ycGctaW5uLXJvbWFuY2VfdHJvcGVz.csv?Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly9wcml2YXRlLXVzLWVhc3QtMS5tYW51c2Nkbi5jb20vc2Vzc2lvbkZpbGUveXpiQ3lQRHNZeWJDalRBbVZ4SXk2My9zYW5kYm94L2FXRmNKRld0OUJReFdkZlR3TG8yeHZfMTc4NzY2MjkxMTA0OF9uYTFmbl9MMmh2YldVdmRXSjFiblIxTDJaaGJTMXljR2N0YVc1dUxYSnZiV0Z1WTJWZmRISnZjR1Z6LmNzdiIsIkNvbmRpdGlvbiI6eyJEYXRlTGVzc1RoYW4iOnsiQVdTOkVwb2NoVGltZSI6MTc4OTQzMDQwMH19fV19\u0026Key-Pair-Id=K2QY5QTL8JSY6C\u0026Signature=MEQCIDWtVQH33BOeFb71jeoueOBURdvEXTkR4XKkXPCfggPMAiBUx2AFZScopl0j4ST6~FW9-7Yyte0DYMYt0hZG5Uo16A__",
+        "index_file": "https://private-us-east-1.manuscdn.com/sessionFile/yzbCyPDsYybCjTAmVxIy63/sandbox/aWFcJFWt9BQxWdfTwLo2xv_1787662911048_na1fn_L2hvbWUvdWJ1bnR1L2ZhbS1ycGctaW5uLXJvbWFuY2VfaW5kZXg.md?Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly9wcml2YXRlLXVzLWVhc3QtMS5tYW51c2Nkbi5jb20vc2Vzc2lvbkZpbGUveXpiQ3lQRHNZeWJDalRBbVZ4SXk2My9zYW5kYm94L2FXRmNKRld0OUJReFdkZlR3TG8yeHZfMTc4NzY2MjkxMTA0OF9uYTFmbl9MMmh2YldVdmRXSjFiblIxTDJaaGJTMXljR2N0YVc1dUxYSnZiV0Z1WTJWZmFXNWtaWGcubWQiLCJDb25kaXRpb24iOnsiRGF0ZUxlc3NUaGFuIjp7IkFXUzpFcG9jaFRpbWUiOjE3ODk0MzA0MDB9fX1dfQ__\u0026Key-Pair-Id=K2QY5QTL8JSY6C\u0026Signature=MEYCIQCqOyBszBklZkmKgvfUNWoFuacP7zrwSA52jc7dOZU6UQIhAOXYGrBMpnUvE4GTfoLubNaoRcuoYPByjJwFaHAVfi6R",
+        "issues": "No unresolved issues; 112 rows validated."
+      },
+      "error": ""
+    },
+    {
+      "input": "Story RPG | fam-rpg-western | Redmesa Claim",
+      "output": {
+        "csv_file": "https://private-us-east-1.manuscdn.com/sessionFile/qk7rdZHtfpZriPb5D4D8Tg/sandbox/mTSU4MpgfOXIW8ln6glsAp_1787662884771_na1fn_L2hvbWUvdWJ1bnR1L2ZhbS1ycGctd2VzdGVybl90cm9wZXM.csv?Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly9wcml2YXRlLXVzLWVhc3QtMS5tYW51c2Nkbi5jb20vc2Vzc2lvbkZpbGUvcWs3cmRaSHRmcFpyaVBiNUQ0RDhUZy9zYW5kYm94L21UU1U0TXBnZk9YSVc4bG42Z2xzQXBfMTc4NzY2Mjg4NDc3MV9uYTFmbl9MMmh2YldVdmRXSjFiblIxTDJaaGJTMXljR2N0ZDJWemRHVnlibDkwY205d1pYTS5jc3YiLCJDb25kaXRpb24iOnsiRGF0ZUxlc3NUaGFuIjp7IkFXUzpFcG9jaFRpbWUiOjE3ODk0MzA0MDB9fX1dfQ__\u0026Key-Pair-Id=K2QY5QTL8JSY6C\u0026Signature=MEUCIQC6tHxFputY~g~I22GAn7zhSamHbGGgY3xK0p4U6Q~kHgIgB59DC~8W8vme~xXOedUaEVC02ZH58VN4SbWXgdlOpYM_",
+        "index_file": "https://private-us-east-1.manuscdn.com/sessionFile/qk7rdZHtfpZriPb5D4D8Tg/sandbox/mTSU4MpgfOXIW8ln6glsAp_1787662884771_na1fn_L2hvbWUvdWJ1bnR1L2ZhbS1ycGctd2VzdGVybl9pbmRleA.md?Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly9wcml2YXRlLXVzLWVhc3QtMS5tYW51c2Nkbi5jb20vc2Vzc2lvbkZpbGUvcWs3cmRaSHRmcFpyaVBiNUQ0RDhUZy9zYW5kYm94L21UU1U0TXBnZk9YSVc4bG42Z2xzQXBfMTc4NzY2Mjg4NDc3MV9uYTFmbl9MMmh2YldVdmRXSjFiblIxTDJaaGJTMXljR2N0ZDJWemRHVnlibDlwYm1SbGVBLm1kIiwiQ29uZGl0aW9uIjp7IkRhdGVMZXNzVGhhbiI6eyJBV1M6RXBvY2hUaW1lIjoxNzg5NDMwNDAwfX19XX0_\u0026Key-Pair-Id=K2QY5QTL8JSY6C\u0026Signature=MEYCIQCLIQ~m-cHkxlLee0soPRwunOxNPWTbP85yl5OZSclKGQIhAJwmfPIu7etlpai-SlPkXTEzK~CHt8u8oxZIH53f2HgB",
+        "issues": "No unresolved issues; 112 rows validated."
+      },
+      "error": ""
+    },
+    {
+      "input": "Story RPG | fam-rpg-street-heroes | Cape District Vigil",
+      "output": {
+        "csv_file": "https://private-us-east-1.manuscdn.com/sessionFile/q4G0ABKr0QkQkUQDuxgFW3/sandbox/m4LsHtu24pdL88uamdabx7_1787662906128_na1fn_L2hvbWUvdWJ1bnR1L2ZhbS1ycGctc3RyZWV0LWhlcm9lc190cm9wZXM.csv?Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly9wcml2YXRlLXVzLWVhc3QtMS5tYW51c2Nkbi5jb20vc2Vzc2lvbkZpbGUvcTRHMEFCS3IwUWtRa1VRRHV4Z0ZXMy9zYW5kYm94L200THNIdHUyNHBkTDg4dWFtZGFieDdfMTc4NzY2MjkwNjEyOF9uYTFmbl9MMmh2YldVdmRXSjFiblIxTDJaaGJTMXljR2N0YzNSeVpXVjBMV2hsY205bGMxOTBjbTl3WlhNLmNzdiIsIkNvbmRpdGlvbiI6eyJEYXRlTGVzc1RoYW4iOnsiQVdTOkVwb2NoVGltZSI6MTc4OTQzMDQwMH19fV19\u0026Key-Pair-Id=K2QY5QTL8JSY6C\u0026Signature=MEYCIQCjNCloli3h0qKECRieaCBbDTdT7oNurWhYuhaSeaEviQIhAOI~pejHCr0~9gSIAsAVZL5ainyAKlw7NNr8doNmoI96",
+        "index_file": "https://private-us-east-1.manuscdn.com/sessionFile/q4G0ABKr0QkQkUQDuxgFW3/sandbox/m4LsHtu24pdL88uamdabx7_1787662906128_na1fn_L2hvbWUvdWJ1bnR1L2ZhbS1ycGctc3RyZWV0LWhlcm9lc19pbmRleA.md?Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly9wcml2YXRlLXVzLWVhc3QtMS5tYW51c2Nkbi5jb20vc2Vzc2lvbkZpbGUvcTRHMEFCS3IwUWtRa1VRRHV4Z0ZXMy9zYW5kYm94L200THNIdHUyNHBkTDg4dWFtZGFieDdfMTc4NzY2MjkwNjEyOF9uYTFmbl9MMmh2YldVdmRXSjFiblIxTDJaaGJTMXljR2N0YzNSeVpXVjBMV2hsY205bGMxOXBibVJsZUEubWQiLCJDb25kaXRpb24iOnsiRGF0ZUxlc3NUaGFuIjp7IkFXUzpFcG9jaFRpbWUiOjE3ODk0MzA0MDB9fX1dfQ__\u0026Key-Pair-Id=K2QY5QTL8JSY6C\u0026Signature=MEUCIH~VoFHfNwTwI2tXeF5cgsRfajex5PJb9~70eukX~WFbAiEA0J6URP1QCDT-ehfdUANCxPXeymafLs-G2mVFPsaJoL8_",
+        "issues": "No unresolved issues; 112 rows validated."
+      },
+      "error": ""
+    },
+    {
+      "input": "Story RPG | fam-rpg-travelogue | Wayfarers' Map",
+      "output": {
+        "csv_file": "https://private-us-east-1.manuscdn.com/sessionFile/Uaf5H3bX8LrRloq7dcQKRQ/sandbox/Xd5n7JueaNf9P8NOAd8dnT_1787662912218_na1fn_L2hvbWUvdWJ1bnR1L2ZhbS1ycGctdHJhdmVsb2d1ZV90cm9wZXM.csv?Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly9wcml2YXRlLXVzLWVhc3QtMS5tYW51c2Nkbi5jb20vc2Vzc2lvbkZpbGUvVWFmNUgzYlg4THJSbG9xN2RjUUtSUS9zYW5kYm94L1hkNW43SnVlYU5mOVA4Tk9BZDhkblRfMTc4NzY2MjkxMjIxOF9uYTFmbl9MMmh2YldVdmRXSjFiblIxTDJaaGJTMXljR2N0ZEhKaGRtVnNiMmQxWlY5MGNtOXdaWE0uY3N2IiwiQ29uZGl0aW9uIjp7IkRhdGVMZXNzVGhhbiI6eyJBV1M6RXBvY2hUaW1lIjoxNzg5NDMwNDAwfX19XX0_\u0026Key-Pair-Id=K2QY5QTL8JSY6C\u0026Signature=MEUCIQDTVV0RQMI-5qWeo9s3kXuV3-pnkbG0ha4zzu856ubzjAIgMMTHZqz3k0Wg847jNGa0zf5Pq57oKWZb3AT2fw~J4ec_",
+        "index_file": "https://private-us-east-1.manuscdn.com/sessionFile/Uaf5H3bX8LrRloq7dcQKRQ/sandbox/Xd5n7JueaNf9P8NOAd8dnT_1787662912218_na1fn_L2hvbWUvdWJ1bnR1L2ZhbS1ycGctdHJhdmVsb2d1ZV9pbmRleA.md?Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly9wcml2YXRlLXVzLWVhc3QtMS5tYW51c2Nkbi5jb20vc2Vzc2lvbkZpbGUvVWFmNUgzYlg4THJSbG9xN2RjUUtSUS9zYW5kYm94L1hkNW43SnVlYU5mOVA4Tk9BZDhkblRfMTc4NzY2MjkxMjIxOF9uYTFmbl9MMmh2YldVdmRXSjFiblIxTDJaaGJTMXljR2N0ZEhKaGRtVnNiMmQxWlY5cGJtUmxlQS5tZCIsIkNvbmRpdGlvbiI6eyJEYXRlTGVzc1RoYW4iOnsiQVdTOkVwb2NoVGltZSI6MTc4OTQzMDQwMH19fV19\u0026Key-Pair-Id=K2QY5QTL8JSY6C\u0026Signature=MEUCIQC8EAhCj63NMH4Pbh0xt-IM8Yx8XtlxhVB2HD6Ad0VNeAIgKKVvMbgMsFifT0HOWDQDUFQmH-h8iKJ8iD4jy~RNHVg_",
+        "issues": "No unresolved issues; 112 rows validated."
+      },
+      "error": ""
+    },
+    {
+      "input": "Story RPG | fam-rpg-teashop | Hearthwick Teas",
+      "output": {
+        "csv_file": "https://private-us-east-1.manuscdn.com/sessionFile/AnGyRuASqlSepa32lIVIT4/sandbox/HandVuFqL1mz6JezTWmAIp_1787663255265_na1fn_L2hvbWUvdWJ1bnR1L2ZhbS1ycGctdGVhc2hvcF90cm9wZXM.csv?Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly9wcml2YXRlLXVzLWVhc3QtMS5tYW51c2Nkbi5jb20vc2Vzc2lvbkZpbGUvQW5HeVJ1QVNxbFNlcGEzMmxJVklUNC9zYW5kYm94L0hhbmRWdUZxTDFtejZKZXpUV21BSXBfMTc4NzY2MzI1NTI2NV9uYTFmbl9MMmh2YldVdmRXSjFiblIxTDJaaGJTMXljR2N0ZEdWaGMyaHZjRjkwY205d1pYTS5jc3YiLCJDb25kaXRpb24iOnsiRGF0ZUxlc3NUaGFuIjp7IkFXUzpFcG9jaFRpbWUiOjE3ODk0MzA0MDB9fX1dfQ__\u0026Key-Pair-Id=K2QY5QTL8JSY6C\u0026Signature=MEUCIQC1kAnVAaTo-FtKsQtmTeEfgUm735gpflHzkV82rPNxXAIgfoNTBs1xIyniC6H-cDqo28LO3BON7JxojLhDt~EQ5WY_",
+        "index_file": "https://private-us-east-1.manuscdn.com/sessionFile/AnGyRuASqlSepa32lIVIT4/sandbox/HandVuFqL1mz6JezTWmAIp_1787663255265_na1fn_L2hvbWUvdWJ1bnR1L2ZhbS1ycGctdGVhc2hvcF9pbmRleA.md?Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly9wcml2YXRlLXVzLWVhc3QtMS5tYW51c2Nkbi5jb20vc2Vzc2lvbkZpbGUvQW5HeVJ1QVNxbFNlcGEzMmxJVklUNC9zYW5kYm94L0hhbmRWdUZxTDFtejZKZXpUV21BSXBfMTc4NzY2MzI1NTI2NV9uYTFmbl9MMmh2YldVdmRXSjFiblIxTDJaaGJTMXljR2N0ZEdWaGMyaHZjRjlwYm1SbGVBLm1kIiwiQ29uZGl0aW9uIjp7IkRhdGVMZXNzVGhhbiI6eyJBV1M6RXBvY2hUaW1lIjoxNzg5NDMwNDAwfX19XX0_\u0026Key-Pair-Id=K2QY5QTL8JSY6C\u0026Signature=MEQCIC6fpWvv8Fz4F2ahEgjLU6q5WsOdnY1kGOUQk2nn3c2VAiA7Tf1QlPZxC8c~KkIVWXxUoFrvVx5-2JybFc8GIJcC1w__",
+        "issues": "No unresolved issues; 112 rows validated across 14 axes."
+      },
+      "error": ""
+    },
+    {
+      "input": "Story RPG | fam-rpg-custom | Blank Canvas Story RPG",
+      "output": {
+        "csv_file": "https://private-us-east-1.manuscdn.com/sessionFile/cAl0WjSk4wpVBadMvxknPt/sandbox/GGlX9GccFEG7wOuIKBgz38_1787663108439_na1fn_L2hvbWUvdWJ1bnR1L2ZhbS1ycGctY3VzdG9tX3Ryb3Blcw.csv?Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly9wcml2YXRlLXVzLWVhc3QtMS5tYW51c2Nkbi5jb20vc2Vzc2lvbkZpbGUvY0FsMFdqU2s0d3BWQmFkTXZ4a25QdC9zYW5kYm94L0dHbFg5R2NjRkVHN3dPdUlLQmd6MzhfMTc4NzY2MzEwODQzOV9uYTFmbl9MMmh2YldVdmRXSjFiblIxTDJaaGJTMXljR2N0WTNWemRHOXRYM1J5YjNCbGN3LmNzdiIsIkNvbmRpdGlvbiI6eyJEYXRlTGVzc1RoYW4iOnsiQVdTOkVwb2NoVGltZSI6MTc4OTQzMDQwMH19fV19\u0026Key-Pair-Id=K2QY5QTL8JSY6C\u0026Signature=MEYCIQCSSAmrzOUegbWjgbzE2Z1ClH0aGGu2TTihKA-BXjqXrQIhAJN7nlo9-7mYsIkzvQSVjc1t0jAAyqCr-C88fZRfKRVY",
+        "index_file": "https://private-us-east-1.manuscdn.com/sessionFile/cAl0WjSk4wpVBadMvxknPt/sandbox/GGlX9GccFEG7wOuIKBgz38_1787663108439_na1fn_L2hvbWUvdWJ1bnR1L2ZhbS1ycGctY3VzdG9tX2luZGV4.md?Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly9wcml2YXRlLXVzLWVhc3QtMS5tYW51c2Nkbi5jb20vc2Vzc2lvbkZpbGUvY0FsMFdqU2s0d3BWQmFkTXZ4a25QdC9zYW5kYm94L0dHbFg5R2NjRkVHN3dPdUlLQmd6MzhfMTc4NzY2MzEwODQzOV9uYTFmbl9MMmh2YldVdmRXSjFiblIxTDJaaGJTMXljR2N0WTNWemRHOXRYMmx1WkdWNC5tZCIsIkNvbmRpdGlvbiI6eyJEYXRlTGVzc1RoYW4iOnsiQVdTOkVwb2NoVGltZSI6MTc4OTQzMDQwMH19fV19\u0026Key-Pair-Id=K2QY5QTL8JSY6C\u0026Signature=MEYCIQC1AJxT0lNCTlVJfvo2Xh5NJx7h~-u~Ne9~NKTi2qP-MQIhAJqTZorPvgTItAizC1qXiWXM3QwUcsTZs4gte5K4zIfC",
+        "issues": "No unresolved issues; 112 rows validated."
+      },
+      "error": ""
+    },
+    {
+      "input": "Tabletop Fantasy | fam-tt-haunted | Cursed Keep / Greyhollow",
+      "output": {
+        "csv_file": "https://private-us-east-1.manuscdn.com/sessionFile/zwey7nnId9MWT5ZovjM7Rb/sandbox/oi1MuMQGogsPbzmifWwRa8_1787662912181_na1fn_L2hvbWUvdWJ1bnR1L2ZhbS10dC1oYXVudGVkX3Ryb3Blcw.csv?Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly9wcml2YXRlLXVzLWVhc3QtMS5tYW51c2Nkbi5jb20vc2Vzc2lvbkZpbGUvendleTdubklkOU1XVDVab3ZqTTdSYi9zYW5kYm94L29pMU11TVFHb2dzUGJ6bWlmV3dSYThfMTc4NzY2MjkxMjE4MV9uYTFmbl9MMmh2YldVdmRXSjFiblIxTDJaaGJTMTBkQzFvWVhWdWRHVmtYM1J5YjNCbGN3LmNzdiIsIkNvbmRpdGlvbiI6eyJEYXRlTGVzc1RoYW4iOnsiQVdTOkVwb2NoVGltZSI6MTc4OTQzMDQwMH19fV19\u0026Key-Pair-Id=K2QY5QTL8JSY6C\u0026Signature=MEUCIQDOZlSB41xTTlDSxQ9O9V4V9k4mAbyU3drBl-ro4hZxTAIgVo5ENvCrLJSf5qcZJ7Y66h0x9MaRy9Sz7W1hhjfn4Bs_",
+        "index_file": "https://private-us-east-1.manuscdn.com/sessionFile/zwey7nnId9MWT5ZovjM7Rb/sandbox/oi1MuMQGogsPbzmifWwRa8_1787662912181_na1fn_L2hvbWUvdWJ1bnR1L2ZhbS10dC1oYXVudGVkX2luZGV4.md?Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly9wcml2YXRlLXVzLWVhc3QtMS5tYW51c2Nkbi5jb20vc2Vzc2lvbkZpbGUvendleTdubklkOU1XVDVab3ZqTTdSYi9zYW5kYm94L29pMU11TVFHb2dzUGJ6bWlmV3dSYThfMTc4NzY2MjkxMjE4MV9uYTFmbl9MMmh2YldVdmRXSjFiblIxTDJaaGJTMTBkQzFvWVhWdWRHVmtYMmx1WkdWNC5tZCIsIkNvbmRpdGlvbiI6eyJEYXRlTGVzc1RoYW4iOnsiQVdTOkVwb2NoVGltZSI6MTc4OTQzMDQwMH19fV19\u0026Key-Pair-Id=K2QY5QTL8JSY6C\u0026Signature=MEQCID7drxfM~W2XCi283e3wqggkCGeO2ZfXnGrtDiazEDoGAiA05x1bpv7nyxaZD7PuullZLn1O9UmiRMula~szR~cbpw__",
+        "issues": "No unresolved issues; 112 rows validated."
+      },
+      "error": ""
+    },
+    {
+      "input": "Tabletop Fantasy | fam-tt-caravan | Millstone Road",
+      "output": {
+        "csv_file": "https://private-us-east-1.manuscdn.com/sessionFile/f0vPaGwnuYBLrMjXeJZ2Wn/sandbox/AEyb4JNSmkVEeJoLztup8x_1787662927529_na1fn_L2hvbWUvdWJ1bnR1L2ZhbS10dC1jYXJhdmFuX3Ryb3Blcw.csv?Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly9wcml2YXRlLXVzLWVhc3QtMS5tYW51c2Nkbi5jb20vc2Vzc2lvbkZpbGUvZjB2UGFHd251WUJMck1qWGVKWjJXbi9zYW5kYm94L0FFeWI0Sk5TbWtWRWVKb0x6dHVwOHhfMTc4NzY2MjkyNzUyOV9uYTFmbl9MMmh2YldVdmRXSjFiblIxTDJaaGJTMTBkQzFqWVhKaGRtRnVYM1J5YjNCbGN3LmNzdiIsIkNvbmRpdGlvbiI6eyJEYXRlTGVzc1RoYW4iOnsiQVdTOkVwb2NoVGltZSI6MTc4OTQzMDQwMH19fV19\u0026Key-Pair-Id=K2QY5QTL8JSY6C\u0026Signature=MEYCIQDMjlaO8XhkJWDgllZZlSV0Uv7vd-j6VRCGNuOHoKLh6gIhANX8C4UDSt1zF9NuJqMybQ~3e8SgTaAJvHyPHP9T~Oz9",
+        "index_file": "https://private-us-east-1.manuscdn.com/sessionFile/f0vPaGwnuYBLrMjXeJZ2Wn/sandbox/AEyb4JNSmkVEeJoLztup8x_1787662927529_na1fn_L2hvbWUvdWJ1bnR1L2ZhbS10dC1jYXJhdmFuX2luZGV4.md?Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly9wcml2YXRlLXVzLWVhc3QtMS5tYW51c2Nkbi5jb20vc2Vzc2lvbkZpbGUvZjB2UGFHd251WUJMck1qWGVKWjJXbi9zYW5kYm94L0FFeWI0Sk5TbWtWRWVKb0x6dHVwOHhfMTc4NzY2MjkyNzUyOV9uYTFmbl9MMmh2YldVdmRXSjFiblIxTDJaaGJTMTBkQzFqWVhKaGRtRnVYMmx1WkdWNC5tZCIsIkNvbmRpdGlvbiI6eyJEYXRlTGVzc1RoYW4iOnsiQVdTOkVwb2NoVGltZSI6MTc4OTQzMDQwMH19fV19\u0026Key-Pair-Id=K2QY5QTL8JSY6C\u0026Signature=MEUCIEjbDk8AMYOoHbgpElOz-J5MTT0TZmb7Jo3~v9tpjiFJAiEA8CrAlo0Sbh6q1yEo3nWyGCK-sGWSv17xy63RsSTydx4_",
+        "issues": "No unresolved issues; 112 rows validated."
+      },
+      "error": ""
+    },
+    {
+      "input": "Tabletop Fantasy | fam-tt-keep-war | Broken Crown Keep",
+      "output": {
+        "csv_file": "https://private-us-east-1.manuscdn.com/sessionFile/mqWnoncQ7Jl2HQzAV5oUSg/sandbox/gBwUAMsLLKquQXyAEFRVQe_1787662927540_na1fn_L2hvbWUvdWJ1bnR1L2ZhbS10dC1rZWVwLXdhcl90cm9wZXM.csv?Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly9wcml2YXRlLXVzLWVhc3QtMS5tYW51c2Nkbi5jb20vc2Vzc2lvbkZpbGUvbXFXbm9uY1E3SmwySFF6QVY1b1VTZy9zYW5kYm94L2dCd1VBTXNMTEtxdVFYeUFFRlJWUWVfMTc4NzY2MjkyNzU0MF9uYTFmbl9MMmh2YldVdmRXSjFiblIxTDJaaGJTMTBkQzFyWldWd0xYZGhjbDkwY205d1pYTS5jc3YiLCJDb25kaXRpb24iOnsiRGF0ZUxlc3NUaGFuIjp7IkFXUzpFcG9jaFRpbWUiOjE3ODk0MzA0MDB9fX1dfQ__\u0026Key-Pair-Id=K2QY5QTL8JSY6C\u0026Signature=MEQCIDw9hL92mKV5wnUVuvC0jLtBmay3MsDI9gcNUbo7R6GvAiBSIYy7FTtuNNf28A2GeOWbvJi3dLtsOM5hR5WkIypxbA__",
+        "index_file": "https://private-us-east-1.manuscdn.com/sessionFile/mqWnoncQ7Jl2HQzAV5oUSg/sandbox/gBwUAMsLLKquQXyAEFRVQe_1787662927540_na1fn_L2hvbWUvdWJ1bnR1L2ZhbS10dC1rZWVwLXdhcl9pbmRleA.md?Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly9wcml2YXRlLXVzLWVhc3QtMS5tYW51c2Nkbi5jb20vc2Vzc2lvbkZpbGUvbXFXbm9uY1E3SmwySFF6QVY1b1VTZy9zYW5kYm94L2dCd1VBTXNMTEtxdVFYeUFFRlJWUWVfMTc4NzY2MjkyNzU0MF9uYTFmbl9MMmh2YldVdmRXSjFiblIxTDJaaGJTMTBkQzFyWldWd0xYZGhjbDlwYm1SbGVBLm1kIiwiQ29uZGl0aW9uIjp7IkRhdGVMZXNzVGhhbiI6eyJBV1M6RXBvY2hUaW1lIjoxNzg5NDMwNDAwfX19XX0_\u0026Key-Pair-Id=K2QY5QTL8JSY6C\u0026Signature=MEYCIQD1JCqXMmm0ewk4E4eeDNc6u~kL4cX2jwn7WX8VSczO2AIhANyCwr~PvkUkS8wEuI3SEiA6rbf33X9OwwEoprYOOf12",
+        "issues": "No unresolved issues; 112 rows validated."
+      },
+      "error": ""
+    },
+    {
+      "input": "Tabletop Fantasy | fam-tt-blight | Verdant Blight",
+      "output": {
+        "csv_file": "https://private-us-east-1.manuscdn.com/sessionFile/NlCk3hky4guzSly8z1r0FM/sandbox/ut5ssRu1OXoZ6L52dtxolG_1787663091837_na1fn_L2hvbWUvdWJ1bnR1L2ZhbS10dC1ibGlnaHRfdHJvcGVz.csv?Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly9wcml2YXRlLXVzLWVhc3QtMS5tYW51c2Nkbi5jb20vc2Vzc2lvbkZpbGUvTmxDazNoa3k0Z3V6U2x5OHoxcjBGTS9zYW5kYm94L3V0NXNzUnUxT1hvWjZMNTJkdHhvbEdfMTc4NzY2MzA5MTgzN19uYTFmbl9MMmh2YldVdmRXSjFiblIxTDJaaGJTMTBkQzFpYkdsbmFIUmZkSEp2Y0dWei5jc3YiLCJDb25kaXRpb24iOnsiRGF0ZUxlc3NUaGFuIjp7IkFXUzpFcG9jaFRpbWUiOjE3ODk0MzA0MDB9fX1dfQ__\u0026Key-Pair-Id=K2QY5QTL8JSY6C\u0026Signature=MEYCIQCda56qZC3PYwipWfptaBqTGb1XMVOeA1WI7REO~SdH7wIhAOWu46AgVT1972VzvDToUAVvb5pTsLwArkAzJG1BBTek",
+        "index_file": "https://private-us-east-1.manuscdn.com/sessionFile/NlCk3hky4guzSly8z1r0FM/sandbox/ut5ssRu1OXoZ6L52dtxolG_1787663091837_na1fn_L2hvbWUvdWJ1bnR1L2ZhbS10dC1ibGlnaHRfaW5kZXg.md?Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly9wcml2YXRlLXVzLWVhc3QtMS5tYW51c2Nkbi5jb20vc2Vzc2lvbkZpbGUvTmxDazNoa3k0Z3V6U2x5OHoxcjBGTS9zYW5kYm94L3V0NXNzUnUxT1hvWjZMNTJkdHhvbEdfMTc4NzY2MzA5MTgzN19uYTFmbl9MMmh2YldVdmRXSjFiblIxTDJaaGJTMTBkQzFpYkdsbmFIUmZhVzVrWlhnLm1kIiwiQ29uZGl0aW9uIjp7IkRhdGVMZXNzVGhhbiI6eyJBV1M6RXBvY2hUaW1lIjoxNzg5NDMwNDAwfX19XX0_\u0026Key-Pair-Id=K2QY5QTL8JSY6C\u0026Signature=MEUCIQCGdtt2LR-DPokqN9L1BARVx1wESs1kola3y9FVbv2b2wIgNE32kCqd9JDGa8yN9NbNQ789YDF9BkXcM3CQyDMx3Lc_",
+        "issues": "No unresolved issues; 112 rows validated across 14 axes."
+      },
+      "error": ""
+    },
+    {
+      "input": "Tabletop Fantasy | fam-tt-veil | Stillroot Veil",
+      "output": {
+        "csv_file": "https://private-us-east-1.manuscdn.com/sessionFile/5cMOlvgKNBjd00Er6TcOKy/sandbox/8W9XX5X7A1NOPJv3Qa5ae0_1787662929278_na1fn_L2hvbWUvdWJ1bnR1L2ZhbS10dC12ZWlsX3Ryb3Blcw.csv?Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly9wcml2YXRlLXVzLWVhc3QtMS5tYW51c2Nkbi5jb20vc2Vzc2lvbkZpbGUvNWNNT2x2Z0tOQmpkMDBFcjZUY09LeS9zYW5kYm94LzhXOVhYNVg3QTFOT1BKdjNRYTVhZTBfMTc4NzY2MjkyOTI3OF9uYTFmbl9MMmh2YldVdmRXSjFiblIxTDJaaGJTMTBkQzEyWldsc1gzUnliM0JsY3cuY3N2IiwiQ29uZGl0aW9uIjp7IkRhdGVMZXNzVGhhbiI6eyJBV1M6RXBvY2hUaW1lIjoxNzg5NDMwNDAwfX19XX0_\u0026Key-Pair-Id=K2QY5QTL8JSY6C\u0026Signature=MEUCIQCn9uzc7zDSa85WgHv8Z5Dz1WaJwI82UuFw6DfFk7Jq8gIgSRAQOKO5hWPpvLsD2kHBleGN4--~1oUgzZJNJUe4K8U_",
+        "index_file": "https://private-us-east-1.manuscdn.com/sessionFile/5cMOlvgKNBjd00Er6TcOKy/sandbox/8W9XX5X7A1NOPJv3Qa5ae0_1787662929278_na1fn_L2hvbWUvdWJ1bnR1L2ZhbS10dC12ZWlsX2luZGV4.md?Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly9wcml2YXRlLXVzLWVhc3QtMS5tYW51c2Nkbi5jb20vc2Vzc2lvbkZpbGUvNWNNT2x2Z0tOQmpkMDBFcjZUY09LeS9zYW5kYm94LzhXOVhYNVg3QTFOT1BKdjNRYTVhZTBfMTc4NzY2MjkyOTI3OF9uYTFmbl9MMmh2YldVdmRXSjFiblIxTDJaaGJTMTBkQzEyWldsc1gybHVaR1Y0Lm1kIiwiQ29uZGl0aW9uIjp7IkRhdGVMZXNzVGhhbiI6eyJBV1M6RXBvY2hUaW1lIjoxNzg5NDMwNDAwfX19XX0_\u0026Key-Pair-Id=K2QY5QTL8JSY6C\u0026Signature=MEQCIAh~~f93KrUrPC9PVsw8NbcI1RzFjaKWJneqV5f9~HvNAiA1GzcVdU9GNDhD2KzxK210LuIVC9CrenaLXtzoqK~8rw__",
+        "issues": "No unresolved issues; 112 rows validated."
+      },
+      "error": ""
+    },
+    {
+      "input": "Tabletop Fantasy | fam-tt-city-guilds | Shattered Coast / Saltmar five guilds",
+      "output": {
+        "csv_file": "https://private-us-east-1.manuscdn.com/sessionFile/rSCk5vdhSk72ChN3uxxXT5/sandbox/YZ7zkbll9eIYg1JXYSDIhN_1787662928440_na1fn_L2hvbWUvdWJ1bnR1L2ZhbS10dC1jaXR5LWd1aWxkc190cm9wZXM.csv?Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly9wcml2YXRlLXVzLWVhc3QtMS5tYW51c2Nkbi5jb20vc2Vzc2lvbkZpbGUvclNDazV2ZGhTazcyQ2hOM3V4eFhUNS9zYW5kYm94L1laN3prYmxsOWVJWWcxSlhZU0RJaE5fMTc4NzY2MjkyODQ0MF9uYTFmbl9MMmh2YldVdmRXSjFiblIxTDJaaGJTMTBkQzFqYVhSNUxXZDFhV3hrYzE5MGNtOXdaWE0uY3N2IiwiQ29uZGl0aW9uIjp7IkRhdGVMZXNzVGhhbiI6eyJBV1M6RXBvY2hUaW1lIjoxNzg5NDMwNDAwfX19XX0_\u0026Key-Pair-Id=K2QY5QTL8JSY6C\u0026Signature=MEUCIBkTzyFcaoJzwxNCJpIqTa5tVvXC2eJ3h8oK6wnXLDSUAiEA49McFxBnw4Hl5i~IzqAUuThElFQ8FRhjfj7CKasO39U_",
+        "index_file": "https://private-us-east-1.manuscdn.com/sessionFile/rSCk5vdhSk72ChN3uxxXT5/sandbox/YZ7zkbll9eIYg1JXYSDIhN_1787662928440_na1fn_L2hvbWUvdWJ1bnR1L2ZhbS10dC1jaXR5LWd1aWxkc19pbmRleA.md?Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly9wcml2YXRlLXVzLWVhc3QtMS5tYW51c2Nkbi5jb20vc2Vzc2lvbkZpbGUvclNDazV2ZGhTazcyQ2hOM3V4eFhUNS9zYW5kYm94L1laN3prYmxsOWVJWWcxSlhZU0RJaE5fMTc4NzY2MjkyODQ0MF9uYTFmbl9MMmh2YldVdmRXSjFiblIxTDJaaGJTMTBkQzFqYVhSNUxXZDFhV3hrYzE5cGJtUmxlQS5tZCIsIkNvbmRpdGlvbiI6eyJEYXRlTGVzc1RoYW4iOnsiQVdTOkVwb2NoVGltZSI6MTc4OTQzMDQwMH19fV19\u0026Key-Pair-Id=K2QY5QTL8JSY6C\u0026Signature=MEQCIBWBpUNhxgSHKOihXjc49Y6pI7r7NbihNwhQo8gfrAz1AiBEK6fkMT6CCXXILA5KoXPiGoJzHhF9X0GfJzHz~~s7ow__",
+        "issues": "No unresolved issues; 112 rows validated."
+      },
+      "error": ""
+    },
+    {
+      "input": "Tabletop Fantasy | fam-tt-custom | Blank Canvas Tabletop",
+      "output": {
+        "csv_file": "https://private-us-east-1.manuscdn.com/sessionFile/Bk73qqrp5iQ7syZQOABwHR/sandbox/Yzm4TmJLbtlLT7SXg5qlBw_1787662931060_na1fn_L2hvbWUvdWJ1bnR1L2ZhbS10dC1jdXN0b21fdHJvcGVz.csv?Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly9wcml2YXRlLXVzLWVhc3QtMS5tYW51c2Nkbi5jb20vc2Vzc2lvbkZpbGUvQms3M3FxcnA1aVE3c3laUU9BQndIUi9zYW5kYm94L1l6bTRUbUpMYnRsTFQ3U1hnNXFsQndfMTc4NzY2MjkzMTA2MF9uYTFmbl9MMmh2YldVdmRXSjFiblIxTDJaaGJTMTBkQzFqZFhOMGIyMWZkSEp2Y0dWei5jc3YiLCJDb25kaXRpb24iOnsiRGF0ZUxlc3NUaGFuIjp7IkFXUzpFcG9jaFRpbWUiOjE3ODk0MzA0MDB9fX1dfQ__\u0026Key-Pair-Id=K2QY5QTL8JSY6C\u0026Signature=MEUCICp3UYixFhAgTLY4lzbi-Gbug9-dVOWxU~LJkq56ljb2AiEA7KRm0mD0NGBeZAOhDPS3qFbR1wuO3vwn3GF6BFoIOBY_",
+        "index_file": "https://private-us-east-1.manuscdn.com/sessionFile/Bk73qqrp5iQ7syZQOABwHR/sandbox/Yzm4TmJLbtlLT7SXg5qlBw_1787662931060_na1fn_L2hvbWUvdWJ1bnR1L2ZhbS10dC1jdXN0b21faW5kZXg.md?Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly9wcml2YXRlLXVzLWVhc3QtMS5tYW51c2Nkbi5jb20vc2Vzc2lvbkZpbGUvQms3M3FxcnA1aVE3c3laUU9BQndIUi9zYW5kYm94L1l6bTRUbUpMYnRsTFQ3U1hnNXFsQndfMTc4NzY2MjkzMTA2MF9uYTFmbl9MMmh2YldVdmRXSjFiblIxTDJaaGJTMTBkQzFqZFhOMGIyMWZhVzVrWlhnLm1kIiwiQ29uZGl0aW9uIjp7IkRhdGVMZXNzVGhhbiI6eyJBV1M6RXBvY2hUaW1lIjoxNzg5NDMwNDAwfX19XX0_\u0026Key-Pair-Id=K2QY5QTL8JSY6C\u0026Signature=MEQCIE8QahAGHPpM01xrrt4LyL~jkVGRVfODyUKbcfJ1t1xBAiA3l6m-QLz0McWRifxyeaXptDAO0Jeoss-G2xp0-V56Nw__",
+        "issues": "No unresolved issues; 112 rows validated."
+      },
+      "error": ""
+    },
+    {
+      "input": "Optional extra | fam-vrmmo-trap | Logged-in-for-real archetype",
+      "output": {
+        "csv_file": "https://private-us-east-1.manuscdn.com/sessionFile/LECKSwQOG4iSwaGyaWzK1e/sandbox/MNIeqqXBpIr5K1bV0BRshc_1787663322723_na1fn_L2hvbWUvdWJ1bnR1L2ZhbS12cm1tby10cmFwX3Ryb3Blcw.csv?Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly9wcml2YXRlLXVzLWVhc3QtMS5tYW51c2Nkbi5jb20vc2Vzc2lvbkZpbGUvTEVDS1N3UU9HNGlTd2FHeWFXeksxZS9zYW5kYm94L01OSWVxcVhCcElyNUsxYlYwQlJzaGNfMTc4NzY2MzMyMjcyM19uYTFmbl9MMmh2YldVdmRXSjFiblIxTDJaaGJTMTJjbTF0YnkxMGNtRndYM1J5YjNCbGN3LmNzdiIsIkNvbmRpdGlvbiI6eyJEYXRlTGVzc1RoYW4iOnsiQVdTOkVwb2NoVGltZSI6MTc4OTQzMDQwMH19fV19\u0026Key-Pair-Id=K2QY5QTL8JSY6C\u0026Signature=MEQCIHdl5K~vkSK59OnyzLsBW5nff9qjRxX04~FRJ~Z3pVWvAiAJ1mbtN2z0hJXqYQLO030pvutmqKGHP8FYbm3Ut1j6qg__",
+        "index_file": "https://private-us-east-1.manuscdn.com/sessionFile/LECKSwQOG4iSwaGyaWzK1e/sandbox/MNIeqqXBpIr5K1bV0BRshc_1787663322723_na1fn_L2hvbWUvdWJ1bnR1L2ZhbS12cm1tby10cmFwX2luZGV4.md?Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly9wcml2YXRlLXVzLWVhc3QtMS5tYW51c2Nkbi5jb20vc2Vzc2lvbkZpbGUvTEVDS1N3UU9HNGlTd2FHeWFXeksxZS9zYW5kYm94L01OSWVxcVhCcElyNUsxYlYwQlJzaGNfMTc4NzY2MzMyMjcyM19uYTFmbl9MMmh2YldVdmRXSjFiblIxTDJaaGJTMTJjbTF0YnkxMGNtRndYMmx1WkdWNC5tZCIsIkNvbmRpdGlvbiI6eyJEYXRlTGVzc1RoYW4iOnsiQVdTOkVwb2NoVGltZSI6MTc4OTQzMDQwMH19fV19\u0026Key-Pair-Id=K2QY5QTL8JSY6C\u0026Signature=MEQCIBe5Obpq1BhamyFXiKIpwdTZlrWUIPUOqhc5om50~zVEAiBJ~Vx12tzvEixsnpG09nQbWGKbclqNx9Uf6uUVsGJZEg__",
+        "issues": "No unresolved issues; 112 rows validated successfully with proper quoting and constraints met."
+      },
+      "error": ""
+    },
+    {
+      "input": "Optional extra | fam-regression | Foreknowledge regression archetype",
+      "output": {
+        "csv_file": "https://private-us-east-1.manuscdn.com/sessionFile/rEoFlpMDXWPdLOV4ZItgFm/sandbox/SIzaJPh6DKa0dcTTGECYqX_1787662952826_na1fn_L2hvbWUvdWJ1bnR1L2ZhbS1yZWdyZXNzaW9uX3Ryb3Blcw.csv?Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly9wcml2YXRlLXVzLWVhc3QtMS5tYW51c2Nkbi5jb20vc2Vzc2lvbkZpbGUvckVvRmxwTURYV1BkTE9WNFpJdGdGbS9zYW5kYm94L1NJemFKUGg2REthMGRjVFRHRUNZcVhfMTc4NzY2Mjk1MjgyNl9uYTFmbl9MMmh2YldVdmRXSjFiblIxTDJaaGJTMXlaV2R5WlhOemFXOXVYM1J5YjNCbGN3LmNzdiIsIkNvbmRpdGlvbiI6eyJEYXRlTGVzc1RoYW4iOnsiQVdTOkVwb2NoVGltZSI6MTc4OTQzMDQwMH19fV19\u0026Key-Pair-Id=K2QY5QTL8JSY6C\u0026Signature=MEUCIDBGSQrCcgRyUJXbIDngCg3OeJ8D8VZDyUfRm6HEfG6QAiEA6krG8PGOTCNA8dQqKj7vCAGuUPSSfX-PWEqcEbK-POQ_",
+        "index_file": "https://private-us-east-1.manuscdn.com/sessionFile/rEoFlpMDXWPdLOV4ZItgFm/sandbox/SIzaJPh6DKa0dcTTGECYqX_1787662952826_na1fn_L2hvbWUvdWJ1bnR1L2ZhbS1yZWdyZXNzaW9uX2luZGV4.md?Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly9wcml2YXRlLXVzLWVhc3QtMS5tYW51c2Nkbi5jb20vc2Vzc2lvbkZpbGUvckVvRmxwTURYV1BkTE9WNFpJdGdGbS9zYW5kYm94L1NJemFKUGg2REthMGRjVFRHRUNZcVhfMTc4NzY2Mjk1MjgyNl9uYTFmbl9MMmh2YldVdmRXSjFiblIxTDJaaGJTMXlaV2R5WlhOemFXOXVYMmx1WkdWNC5tZCIsIkNvbmRpdGlvbiI6eyJEYXRlTGVzc1RoYW4iOnsiQVdTOkVwb2NoVGltZSI6MTc4OTQzMDQwMH19fV19\u0026Key-Pair-Id=K2QY5QTL8JSY6C\u0026Signature=MEUCIQDuPDkGDXNK5NS0dY8rRnu4YAL7fseVfQ-FyrrlJd~ZnAIgdbpeDBROt53iRoR~t7Hdxhni2~ZTkhRmfbatyj8CXCs_",
+        "issues": "No unresolved issues; 112 rows validated."
+      },
+      "error": ""
+    },
+    {
+      "input": "Optional extra | fam-creature-rebirth | Creature rebirth archetype",
+      "output": {
+        "csv_file": "https://private-us-east-1.manuscdn.com/sessionFile/8W3EC9FfOHq9RR5QibrNBf/sandbox/7kQghRYiq9DhnwFEDjm4ie_1787662960632_na1fn_L2hvbWUvdWJ1bnR1L2ZhbS1jcmVhdHVyZS1yZWJpcnRoX3Ryb3Blcw.csv?Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly9wcml2YXRlLXVzLWVhc3QtMS5tYW51c2Nkbi5jb20vc2Vzc2lvbkZpbGUvOFczRUM5RmZPSHE5UlI1UWlick5CZi9zYW5kYm94LzdrUWdoUllpcTlEaG53RkVEam00aWVfMTc4NzY2Mjk2MDYzMl9uYTFmbl9MMmh2YldVdmRXSjFiblIxTDJaaGJTMWpjbVZoZEhWeVpTMXlaV0pwY25Sb1gzUnliM0JsY3cuY3N2IiwiQ29uZGl0aW9uIjp7IkRhdGVMZXNzVGhhbiI6eyJBV1M6RXBvY2hUaW1lIjoxNzg5NDMwNDAwfX19XX0_\u0026Key-Pair-Id=K2QY5QTL8JSY6C\u0026Signature=MEUCIQC1mc9ISI0oOzEFehQEBdkKhlYun7aKmWadIrkHfbbIAAIgFc4g2LBR~anRPqE~1vTB100Wrw7o3wxtCgLFN58-oHs_",
+        "index_file": "https://private-us-east-1.manuscdn.com/sessionFile/8W3EC9FfOHq9RR5QibrNBf/sandbox/7kQghRYiq9DhnwFEDjm4ie_1787662960632_na1fn_L2hvbWUvdWJ1bnR1L2ZhbS1jcmVhdHVyZS1yZWJpcnRoX2luZGV4.md?Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly9wcml2YXRlLXVzLWVhc3QtMS5tYW51c2Nkbi5jb20vc2Vzc2lvbkZpbGUvOFczRUM5RmZPSHE5UlI1UWlick5CZi9zYW5kYm94LzdrUWdoUllpcTlEaG53RkVEam00aWVfMTc4NzY2Mjk2MDYzMl9uYTFmbl9MMmh2YldVdmRXSjFiblIxTDJaaGJTMWpjbVZoZEhWeVpTMXlaV0pwY25Sb1gybHVaR1Y0Lm1kIiwiQ29uZGl0aW9uIjp7IkRhdGVMZXNzVGhhbiI6eyJBV1M6RXBvY2hUaW1lIjoxNzg5NDMwNDAwfX19XX0_\u0026Key-Pair-Id=K2QY5QTL8JSY6C\u0026Signature=MEUCIQCe0t-TttCDwvk0KithCJmMryPxJbBfZjN484p0WgfSpAIgXId7903V-aphPB15m3VsbpCm6INx5xsivF2lwpghbR0_",
+        "issues": "No unresolved issues; 112 rows validated."
+      },
+      "error": ""
+    },
+    {
+      "input": "Optional extra | fam-cyber-neural | Cyber-neural archetype",
+      "output": {
+        "csv_file": "https://private-us-east-1.manuscdn.com/sessionFile/guZyseq0lOjixs98oFTrIn/sandbox/7srBP5cyh3FinWcHqZFcnz_1787662963347_na1fn_L2hvbWUvdWJ1bnR1L2ZhbS1jeWJlci1uZXVyYWxfdHJvcGVz.csv?Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly9wcml2YXRlLXVzLWVhc3QtMS5tYW51c2Nkbi5jb20vc2Vzc2lvbkZpbGUvZ3VaeXNlcTBsT2ppeHM5OG9GVHJJbi9zYW5kYm94LzdzckJQNWN5aDNGaW5XY0hxWkZjbnpfMTc4NzY2Mjk2MzM0N19uYTFmbl9MMmh2YldVdmRXSjFiblIxTDJaaGJTMWplV0psY2kxdVpYVnlZV3hmZEhKdmNHVnouY3N2IiwiQ29uZGl0aW9uIjp7IkRhdGVMZXNzVGhhbiI6eyJBV1M6RXBvY2hUaW1lIjoxNzg5NDMwNDAwfX19XX0_\u0026Key-Pair-Id=K2QY5QTL8JSY6C\u0026Signature=MEUCIQDW0Gn0CQkoX1x-VzKuhA2n2OwM54sr0SuQqnacczFeqAIgamhIeMPr~63baQI9YdIEYEsSbTRJ1X6n0Dy7nWgH7JI_",
+        "index_file": "https://private-us-east-1.manuscdn.com/sessionFile/guZyseq0lOjixs98oFTrIn/sandbox/7srBP5cyh3FinWcHqZFcnz_1787662963347_na1fn_L2hvbWUvdWJ1bnR1L2ZhbS1jeWJlci1uZXVyYWxfaW5kZXg.md?Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly9wcml2YXRlLXVzLWVhc3QtMS5tYW51c2Nkbi5jb20vc2Vzc2lvbkZpbGUvZ3VaeXNlcTBsT2ppeHM5OG9GVHJJbi9zYW5kYm94LzdzckJQNWN5aDNGaW5XY0hxWkZjbnpfMTc4NzY2Mjk2MzM0N19uYTFmbl9MMmh2YldVdmRXSjFiblIxTDJaaGJTMWplV0psY2kxdVpYVnlZV3hmYVc1a1pYZy5tZCIsIkNvbmRpdGlvbiI6eyJEYXRlTGVzc1RoYW4iOnsiQVdTOkVwb2NoVGltZSI6MTc4OTQzMDQwMH19fV19\u0026Key-Pair-Id=K2QY5QTL8JSY6C\u0026Signature=MEUCIQD0fvLaA7BXg3BVgcIrWEgujGdzANaPZ-LVHgtzOCeaDwIgUY1KSmvWRwvh9Jx~tMuJU1kPIQyexNAjPIvYWumWW9s_",
+        "issues": "No unresolved issues; 112 rows validated."
+      },
+      "error": ""
+    }
+  ]
+}

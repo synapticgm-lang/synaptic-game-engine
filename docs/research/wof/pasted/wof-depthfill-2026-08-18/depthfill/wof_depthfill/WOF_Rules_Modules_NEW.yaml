@@ -1,0 +1,5301 @@
+packFormatVersion: 1
+newModules:
+  grit_wound:
+    ledgerFields:
+    - id: hp
+      startValue: 18
+      type: integer
+    - id: guard
+      startValue: 4
+      type: integer
+    - id: wound
+      startValue: 0
+      type: integer
+    - id: scar
+      startValue: 0
+      type: integer
+    - id: supplies
+      startValue: 3
+      type: integer
+    - id: favor
+      startValue: 0
+      type: integer
+    - id: oath
+      startValue: 1
+      type: integer
+    - id: caseHeat
+      startValue: 0
+      type: integer
+    roundResolve:
+    - validate action against committed ledger
+    - validate action cost and legal target
+    - roll or calculate only through CODE
+    - apply statuses and resource deltas
+    - commit ledger atomically
+    - narrate the committed result only
+    wipeCheckpoint:
+      wipe: return to last checkpoint
+      retain: personal loot and prior quest completion
+      clear: encounter-only state
+      permadeathV1: false
+    weeklyLockout:
+      scope: per-character per-boss
+      saleBypass: false
+    statuses:
+    - id: steady
+      durationTurns: 1
+      numericModifier: 1
+    - id: rattled
+      durationTurns: 2
+      numericModifier: -1
+    - id: focused
+      durationTurns: 3
+      numericModifier: 1
+    - id: exposed
+      durationTurns: 1
+      numericModifier: -1
+    - id: guarded
+      durationTurns: 2
+      numericModifier: 1
+    - id: slowed
+      durationTurns: 3
+      numericModifier: -1
+    - id: inspired
+      durationTurns: 1
+      numericModifier: 1
+    - id: spent
+      durationTurns: 2
+      numericModifier: -1
+    - id: anchored
+      durationTurns: 3
+      numericModifier: 1
+    - id: marked
+      durationTurns: 1
+      numericModifier: -1
+    - id: wary
+      durationTurns: 2
+      numericModifier: -1
+    - id: mended
+      durationTurns: 3
+      numericModifier: 1
+    verbs:
+    - id: brace
+      display: Brace
+      requiresCommit: true
+    - id: press
+      display: Press
+      requiresCommit: true
+    - id: bind
+      display: Bind
+      requiresCommit: true
+    - id: parley
+      display: Parley
+      requiresCommit: true
+    - id: measure
+      display: Measure
+      requiresCommit: true
+    - id: testify
+      display: Testify
+      requiresCommit: true
+    - id: barter
+      display: Barter
+      requiresCommit: true
+    - id: trail
+      display: Trail
+      requiresCommit: true
+    - id: withdraw
+      display: Withdraw
+      requiresCommit: true
+    - id: appeal
+      display: Appeal
+      requiresCommit: true
+    - id: search
+      display: Search
+      requiresCommit: true
+    - id: tend
+      display: Tend
+      requiresCommit: true
+    - id: mark
+      display: Mark
+      requiresCommit: true
+    - id: shelter
+      display: Shelter
+      requiresCommit: true
+    - id: swear
+      display: Swear
+      requiresCommit: true
+    - id: disarm
+      display: Disarm
+      requiresCommit: true
+    chromeTemplates:
+    - id: grit_wound_chrome_01
+      label: Ledger
+      template: '[Ledger] {{hp}} • turn {{turn}} • committed'
+    - id: grit_wound_chrome_02
+      label: Turn
+      template: '[Turn] {{guard}} • turn {{turn}} • committed'
+    - id: grit_wound_chrome_03
+      label: Status
+      template: '[Status] {{wound}} • turn {{turn}} • committed'
+    - id: grit_wound_chrome_04
+      label: Route
+      template: '[Route] {{scar}} • turn {{turn}} • committed'
+    - id: grit_wound_chrome_05
+      label: Party
+      template: '[Party] {{supplies}} • turn {{turn}} • committed'
+    - id: grit_wound_chrome_06
+      label: Checkpoint
+      template: '[Checkpoint] {{favor}} • turn {{turn}} • committed'
+    - id: grit_wound_chrome_07
+      label: Reward
+      template: '[Reward] {{oath}} • turn {{turn}} • committed'
+    - id: grit_wound_chrome_08
+      label: Safety
+      template: '[Safety] {{caseHeat}} • turn {{turn}} • committed'
+    evalProbes:
+    - id: grit_wound_eval_brace
+      given:
+        hp: 18
+        turn: 1
+      action:
+        verbId: brace
+        targetId: grit_wound_fixture_01
+      expectedLedger:
+        turn: 2
+        lastVerb: brace
+      forbiddenProse:
+      - no uncommitted damage
+      - no uncommitted gold
+      - no invented ownership
+      - no outcome guarantee
+    - id: grit_wound_eval_press
+      given:
+        guard: 4
+        turn: 2
+      action:
+        verbId: press
+        targetId: grit_wound_fixture_02
+      expectedLedger:
+        turn: 3
+        lastVerb: press
+      forbiddenProse:
+      - no uncommitted damage
+      - no uncommitted gold
+      - no invented ownership
+      - no outcome guarantee
+    - id: grit_wound_eval_bind
+      given:
+        wound: 0
+        turn: 3
+      action:
+        verbId: bind
+        targetId: grit_wound_fixture_03
+      expectedLedger:
+        turn: 4
+        lastVerb: bind
+      forbiddenProse:
+      - no uncommitted damage
+      - no uncommitted gold
+      - no invented ownership
+      - no outcome guarantee
+    - id: grit_wound_eval_parley
+      given:
+        scar: 0
+        turn: 4
+      action:
+        verbId: parley
+        targetId: grit_wound_fixture_04
+      expectedLedger:
+        turn: 5
+        lastVerb: parley
+      forbiddenProse:
+      - no uncommitted damage
+      - no uncommitted gold
+      - no invented ownership
+      - no outcome guarantee
+    - id: grit_wound_eval_measure
+      given:
+        supplies: 3
+        turn: 5
+      action:
+        verbId: measure
+        targetId: grit_wound_fixture_05
+      expectedLedger:
+        turn: 6
+        lastVerb: measure
+      forbiddenProse:
+      - no uncommitted damage
+      - no uncommitted gold
+      - no invented ownership
+      - no outcome guarantee
+    - id: grit_wound_eval_testify
+      given:
+        favor: 0
+        turn: 6
+      action:
+        verbId: testify
+        targetId: grit_wound_fixture_06
+      expectedLedger:
+        turn: 7
+        lastVerb: testify
+      forbiddenProse:
+      - no uncommitted damage
+      - no uncommitted gold
+      - no invented ownership
+      - no outcome guarantee
+    - id: grit_wound_eval_barter
+      given:
+        oath: 1
+        turn: 7
+      action:
+        verbId: barter
+        targetId: grit_wound_fixture_07
+      expectedLedger:
+        turn: 8
+        lastVerb: barter
+      forbiddenProse:
+      - no uncommitted damage
+      - no uncommitted gold
+      - no invented ownership
+      - no outcome guarantee
+    - id: grit_wound_eval_trail
+      given:
+        caseHeat: 0
+        turn: 8
+      action:
+        verbId: trail
+        targetId: grit_wound_fixture_08
+      expectedLedger:
+        turn: 9
+        lastVerb: trail
+      forbiddenProse:
+      - no uncommitted damage
+      - no uncommitted gold
+      - no invented ownership
+      - no outcome guarantee
+    - id: grit_wound_eval_withdraw
+      given:
+        hp: 18
+        turn: 9
+      action:
+        verbId: withdraw
+        targetId: grit_wound_fixture_09
+      expectedLedger:
+        turn: 10
+        lastVerb: withdraw
+      forbiddenProse:
+      - no uncommitted damage
+      - no uncommitted gold
+      - no invented ownership
+      - no outcome guarantee
+    - id: grit_wound_eval_appeal
+      given:
+        guard: 4
+        turn: 10
+      action:
+        verbId: appeal
+        targetId: grit_wound_fixture_10
+      expectedLedger:
+        turn: 11
+        lastVerb: appeal
+      forbiddenProse:
+      - no uncommitted damage
+      - no uncommitted gold
+      - no invented ownership
+      - no outcome guarantee
+    - id: grit_wound_eval_search
+      given:
+        wound: 0
+        turn: 11
+      action:
+        verbId: search
+        targetId: grit_wound_fixture_11
+      expectedLedger:
+        turn: 12
+        lastVerb: search
+      forbiddenProse:
+      - no uncommitted damage
+      - no uncommitted gold
+      - no invented ownership
+      - no outcome guarantee
+    - id: grit_wound_eval_tend
+      given:
+        scar: 0
+        turn: 12
+      action:
+        verbId: tend
+        targetId: grit_wound_fixture_12
+      expectedLedger:
+        turn: 13
+        lastVerb: tend
+      forbiddenProse:
+      - no uncommitted damage
+      - no uncommitted gold
+      - no invented ownership
+      - no outcome guarantee
+    - id: grit_wound_eval_mark
+      given:
+        supplies: 3
+        turn: 13
+      action:
+        verbId: mark
+        targetId: grit_wound_fixture_13
+      expectedLedger:
+        turn: 14
+        lastVerb: mark
+      forbiddenProse:
+      - no uncommitted damage
+      - no uncommitted gold
+      - no invented ownership
+      - no outcome guarantee
+    - id: grit_wound_eval_shelter
+      given:
+        favor: 0
+        turn: 14
+      action:
+        verbId: shelter
+        targetId: grit_wound_fixture_14
+      expectedLedger:
+        turn: 15
+        lastVerb: shelter
+      forbiddenProse:
+      - no uncommitted damage
+      - no uncommitted gold
+      - no invented ownership
+      - no outcome guarantee
+    - id: grit_wound_eval_swear
+      given:
+        oath: 1
+        turn: 15
+      action:
+        verbId: swear
+        targetId: grit_wound_fixture_15
+      expectedLedger:
+        turn: 16
+        lastVerb: swear
+      forbiddenProse:
+      - no uncommitted damage
+      - no uncommitted gold
+      - no invented ownership
+      - no outcome guarantee
+  civic_rep:
+    ledgerFields:
+    - id: energy
+      startValue: 8
+      type: integer
+    - id: civicRep
+      startValue: 0
+      type: integer
+    - id: leaseKey
+      startValue: 1
+      type: integer
+    - id: shiftClock
+      startValue: 0
+      type: integer
+    - id: clubMarks
+      startValue: 0
+      type: integer
+    - id: neighborFavor
+      startValue: 1
+      type: integer
+    - id: rentDue
+      startValue: 0
+      type: integer
+    - id: mood
+      startValue: 5
+      type: integer
+    roundResolve:
+    - validate action against committed ledger
+    - validate action cost and legal target
+    - roll or calculate only through CODE
+    - apply statuses and resource deltas
+    - commit ledger atomically
+    - narrate the committed result only
+    wipeCheckpoint:
+      wipe: return to last checkpoint
+      retain: personal loot and prior quest completion
+      clear: encounter-only state
+      permadeathV1: false
+    weeklyLockout:
+      scope: per-character per-boss
+      saleBypass: false
+    statuses:
+    - id: steady
+      durationTurns: 1
+      numericModifier: 1
+    - id: rattled
+      durationTurns: 2
+      numericModifier: -1
+    - id: focused
+      durationTurns: 3
+      numericModifier: 1
+    - id: exposed
+      durationTurns: 1
+      numericModifier: -1
+    - id: guarded
+      durationTurns: 2
+      numericModifier: 1
+    - id: slowed
+      durationTurns: 3
+      numericModifier: -1
+    - id: inspired
+      durationTurns: 1
+      numericModifier: 1
+    - id: spent
+      durationTurns: 2
+      numericModifier: -1
+    - id: anchored
+      durationTurns: 3
+      numericModifier: 1
+    - id: marked
+      durationTurns: 1
+      numericModifier: -1
+    - id: wary
+      durationTurns: 2
+      numericModifier: -1
+    - id: mended
+      durationTurns: 3
+      numericModifier: 1
+    verbs:
+    - id: greet
+      display: Greet
+      requiresCommit: true
+    - id: host
+      display: Host
+      requiresCommit: true
+    - id: visit
+      display: Visit
+      requiresCommit: true
+    - id: brew
+      display: Brew
+      requiresCommit: true
+    - id: volunteer
+      display: Volunteer
+      requiresCommit: true
+    - id: commute
+      display: Commute
+      requiresCommit: true
+    - id: introduce
+      display: Introduce
+      requiresCommit: true
+    - id: decorate
+      display: Decorate
+      requiresCommit: true
+    - id: mediate
+      display: Mediate
+      requiresCommit: true
+    - id: schedule
+      display: Schedule
+      requiresCommit: true
+    - id: repair
+      display: Repair
+      requiresCommit: true
+    - id: share
+      display: Share
+      requiresCommit: true
+    - id: listen
+      display: Listen
+      requiresCommit: true
+    - id: invite
+      display: Invite
+      requiresCommit: true
+    - id: decline
+      display: Decline
+      requiresCommit: true
+    - id: reflect
+      display: Reflect
+      requiresCommit: true
+    chromeTemplates:
+    - id: civic_rep_chrome_01
+      label: Ledger
+      template: '[Ledger] {{energy}} • turn {{turn}} • committed'
+    - id: civic_rep_chrome_02
+      label: Turn
+      template: '[Turn] {{civicRep}} • turn {{turn}} • committed'
+    - id: civic_rep_chrome_03
+      label: Status
+      template: '[Status] {{leaseKey}} • turn {{turn}} • committed'
+    - id: civic_rep_chrome_04
+      label: Route
+      template: '[Route] {{shiftClock}} • turn {{turn}} • committed'
+    - id: civic_rep_chrome_05
+      label: Party
+      template: '[Party] {{clubMarks}} • turn {{turn}} • committed'
+    - id: civic_rep_chrome_06
+      label: Checkpoint
+      template: '[Checkpoint] {{neighborFavor}} • turn {{turn}} • committed'
+    - id: civic_rep_chrome_07
+      label: Reward
+      template: '[Reward] {{rentDue}} • turn {{turn}} • committed'
+    - id: civic_rep_chrome_08
+      label: Safety
+      template: '[Safety] {{mood}} • turn {{turn}} • committed'
+    evalProbes:
+    - id: civic_rep_eval_greet
+      given:
+        energy: 8
+        turn: 1
+      action:
+        verbId: greet
+        targetId: civic_rep_fixture_01
+      expectedLedger:
+        turn: 2
+        lastVerb: greet
+      forbiddenProse:
+      - no uncommitted damage
+      - no uncommitted gold
+      - no invented ownership
+      - no outcome guarantee
+    - id: civic_rep_eval_host
+      given:
+        civicRep: 0
+        turn: 2
+      action:
+        verbId: host
+        targetId: civic_rep_fixture_02
+      expectedLedger:
+        turn: 3
+        lastVerb: host
+      forbiddenProse:
+      - no uncommitted damage
+      - no uncommitted gold
+      - no invented ownership
+      - no outcome guarantee
+    - id: civic_rep_eval_visit
+      given:
+        leaseKey: 1
+        turn: 3
+      action:
+        verbId: visit
+        targetId: civic_rep_fixture_03
+      expectedLedger:
+        turn: 4
+        lastVerb: visit
+      forbiddenProse:
+      - no uncommitted damage
+      - no uncommitted gold
+      - no invented ownership
+      - no outcome guarantee
+    - id: civic_rep_eval_brew
+      given:
+        shiftClock: 0
+        turn: 4
+      action:
+        verbId: brew
+        targetId: civic_rep_fixture_04
+      expectedLedger:
+        turn: 5
+        lastVerb: brew
+      forbiddenProse:
+      - no uncommitted damage
+      - no uncommitted gold
+      - no invented ownership
+      - no outcome guarantee
+    - id: civic_rep_eval_volunteer
+      given:
+        clubMarks: 0
+        turn: 5
+      action:
+        verbId: volunteer
+        targetId: civic_rep_fixture_05
+      expectedLedger:
+        turn: 6
+        lastVerb: volunteer
+      forbiddenProse:
+      - no uncommitted damage
+      - no uncommitted gold
+      - no invented ownership
+      - no outcome guarantee
+    - id: civic_rep_eval_commute
+      given:
+        neighborFavor: 1
+        turn: 6
+      action:
+        verbId: commute
+        targetId: civic_rep_fixture_06
+      expectedLedger:
+        turn: 7
+        lastVerb: commute
+      forbiddenProse:
+      - no uncommitted damage
+      - no uncommitted gold
+      - no invented ownership
+      - no outcome guarantee
+    - id: civic_rep_eval_introduce
+      given:
+        rentDue: 0
+        turn: 7
+      action:
+        verbId: introduce
+        targetId: civic_rep_fixture_07
+      expectedLedger:
+        turn: 8
+        lastVerb: introduce
+      forbiddenProse:
+      - no uncommitted damage
+      - no uncommitted gold
+      - no invented ownership
+      - no outcome guarantee
+    - id: civic_rep_eval_decorate
+      given:
+        mood: 5
+        turn: 8
+      action:
+        verbId: decorate
+        targetId: civic_rep_fixture_08
+      expectedLedger:
+        turn: 9
+        lastVerb: decorate
+      forbiddenProse:
+      - no uncommitted damage
+      - no uncommitted gold
+      - no invented ownership
+      - no outcome guarantee
+    - id: civic_rep_eval_mediate
+      given:
+        energy: 8
+        turn: 9
+      action:
+        verbId: mediate
+        targetId: civic_rep_fixture_09
+      expectedLedger:
+        turn: 10
+        lastVerb: mediate
+      forbiddenProse:
+      - no uncommitted damage
+      - no uncommitted gold
+      - no invented ownership
+      - no outcome guarantee
+    - id: civic_rep_eval_schedule
+      given:
+        civicRep: 0
+        turn: 10
+      action:
+        verbId: schedule
+        targetId: civic_rep_fixture_10
+      expectedLedger:
+        turn: 11
+        lastVerb: schedule
+      forbiddenProse:
+      - no uncommitted damage
+      - no uncommitted gold
+      - no invented ownership
+      - no outcome guarantee
+    - id: civic_rep_eval_repair
+      given:
+        leaseKey: 1
+        turn: 11
+      action:
+        verbId: repair
+        targetId: civic_rep_fixture_11
+      expectedLedger:
+        turn: 12
+        lastVerb: repair
+      forbiddenProse:
+      - no uncommitted damage
+      - no uncommitted gold
+      - no invented ownership
+      - no outcome guarantee
+    - id: civic_rep_eval_share
+      given:
+        shiftClock: 0
+        turn: 12
+      action:
+        verbId: share
+        targetId: civic_rep_fixture_12
+      expectedLedger:
+        turn: 13
+        lastVerb: share
+      forbiddenProse:
+      - no uncommitted damage
+      - no uncommitted gold
+      - no invented ownership
+      - no outcome guarantee
+    - id: civic_rep_eval_listen
+      given:
+        clubMarks: 0
+        turn: 13
+      action:
+        verbId: listen
+        targetId: civic_rep_fixture_13
+      expectedLedger:
+        turn: 14
+        lastVerb: listen
+      forbiddenProse:
+      - no uncommitted damage
+      - no uncommitted gold
+      - no invented ownership
+      - no outcome guarantee
+    - id: civic_rep_eval_invite
+      given:
+        neighborFavor: 1
+        turn: 14
+      action:
+        verbId: invite
+        targetId: civic_rep_fixture_14
+      expectedLedger:
+        turn: 15
+        lastVerb: invite
+      forbiddenProse:
+      - no uncommitted damage
+      - no uncommitted gold
+      - no invented ownership
+      - no outcome guarantee
+    - id: civic_rep_eval_decline
+      given:
+        rentDue: 0
+        turn: 15
+      action:
+        verbId: decline
+        targetId: civic_rep_fixture_15
+      expectedLedger:
+        turn: 16
+        lastVerb: decline
+      forbiddenProse:
+      - no uncommitted damage
+      - no uncommitted gold
+      - no invented ownership
+      - no outcome guarantee
+  build_tick:
+    ledgerFields:
+    - id: stamina
+      startValue: 8
+      type: integer
+    - id: plotId
+      startValue: null
+      type: string_or_null
+    - id: materials
+      startValue: 0
+      type: integer
+    - id: permitMarks
+      startValue: 1
+      type: integer
+    - id: wardTrust
+      startValue: 0
+      type: integer
+    - id: buildTick
+      startValue: 0
+      type: integer
+    - id: contribution
+      startValue: 0
+      type: integer
+    - id: weather
+      startValue: 0
+      type: integer
+    roundResolve:
+    - validate action against committed ledger
+    - validate action cost and legal target
+    - roll or calculate only through CODE
+    - apply statuses and resource deltas
+    - commit ledger atomically
+    - narrate the committed result only
+    wipeCheckpoint:
+      wipe: return to last checkpoint
+      retain: personal loot and prior quest completion
+      clear: encounter-only state
+      permadeathV1: false
+    weeklyLockout:
+      scope: per-character per-boss
+      saleBypass: false
+    statuses:
+    - id: steady
+      durationTurns: 1
+      numericModifier: 1
+    - id: rattled
+      durationTurns: 2
+      numericModifier: -1
+    - id: focused
+      durationTurns: 3
+      numericModifier: 1
+    - id: exposed
+      durationTurns: 1
+      numericModifier: -1
+    - id: guarded
+      durationTurns: 2
+      numericModifier: 1
+    - id: slowed
+      durationTurns: 3
+      numericModifier: -1
+    - id: inspired
+      durationTurns: 1
+      numericModifier: 1
+    - id: spent
+      durationTurns: 2
+      numericModifier: -1
+    - id: anchored
+      durationTurns: 3
+      numericModifier: 1
+    - id: marked
+      durationTurns: 1
+      numericModifier: -1
+    - id: wary
+      durationTurns: 2
+      numericModifier: -1
+    - id: mended
+      durationTurns: 3
+      numericModifier: 1
+    verbs:
+    - id: survey
+      display: Survey
+      requiresCommit: true
+    - id: place
+      display: Place
+      requiresCommit: true
+    - id: repair
+      display: Repair
+      requiresCommit: true
+    - id: plant
+      display: Plant
+      requiresCommit: true
+    - id: route
+      display: Route
+      requiresCommit: true
+    - id: vote
+      display: Vote
+      requiresCommit: true
+    - id: donate
+      display: Donate
+      requiresCommit: true
+    - id: craft
+      display: Craft
+      requiresCommit: true
+    - id: inspect
+      display: Inspect
+      requiresCommit: true
+    - id: share
+      display: Share
+      requiresCommit: true
+    - id: rest
+      display: Rest
+      requiresCommit: true
+    - id: celebrate
+      display: Celebrate
+      requiresCommit: true
+    - id: grade
+      display: Grade
+      requiresCommit: true
+    - id: water
+      display: Water
+      requiresCommit: true
+    - id: assemble
+      display: Assemble
+      requiresCommit: true
+    - id: record
+      display: Record
+      requiresCommit: true
+    chromeTemplates:
+    - id: build_tick_chrome_01
+      label: Ledger
+      template: '[Ledger] {{stamina}} • turn {{turn}} • committed'
+    - id: build_tick_chrome_02
+      label: Turn
+      template: '[Turn] {{plotId}} • turn {{turn}} • committed'
+    - id: build_tick_chrome_03
+      label: Status
+      template: '[Status] {{materials}} • turn {{turn}} • committed'
+    - id: build_tick_chrome_04
+      label: Route
+      template: '[Route] {{permitMarks}} • turn {{turn}} • committed'
+    - id: build_tick_chrome_05
+      label: Party
+      template: '[Party] {{wardTrust}} • turn {{turn}} • committed'
+    - id: build_tick_chrome_06
+      label: Checkpoint
+      template: '[Checkpoint] {{buildTick}} • turn {{turn}} • committed'
+    - id: build_tick_chrome_07
+      label: Reward
+      template: '[Reward] {{contribution}} • turn {{turn}} • committed'
+    - id: build_tick_chrome_08
+      label: Safety
+      template: '[Safety] {{weather}} • turn {{turn}} • committed'
+    evalProbes:
+    - id: build_tick_eval_survey
+      given:
+        stamina: 8
+        turn: 1
+      action:
+        verbId: survey
+        targetId: build_tick_fixture_01
+      expectedLedger:
+        turn: 2
+        lastVerb: survey
+      forbiddenProse:
+      - no uncommitted damage
+      - no uncommitted gold
+      - no invented ownership
+      - no outcome guarantee
+    - id: build_tick_eval_place
+      given:
+        plotId: null
+        turn: 2
+      action:
+        verbId: place
+        targetId: build_tick_fixture_02
+      expectedLedger:
+        turn: 3
+        lastVerb: place
+      forbiddenProse:
+      - no uncommitted damage
+      - no uncommitted gold
+      - no invented ownership
+      - no outcome guarantee
+    - id: build_tick_eval_repair
+      given:
+        materials: 0
+        turn: 3
+      action:
+        verbId: repair
+        targetId: build_tick_fixture_03
+      expectedLedger:
+        turn: 4
+        lastVerb: repair
+      forbiddenProse:
+      - no uncommitted damage
+      - no uncommitted gold
+      - no invented ownership
+      - no outcome guarantee
+    - id: build_tick_eval_plant
+      given:
+        permitMarks: 1
+        turn: 4
+      action:
+        verbId: plant
+        targetId: build_tick_fixture_04
+      expectedLedger:
+        turn: 5
+        lastVerb: plant
+      forbiddenProse:
+      - no uncommitted damage
+      - no uncommitted gold
+      - no invented ownership
+      - no outcome guarantee
+    - id: build_tick_eval_route
+      given:
+        wardTrust: 0
+        turn: 5
+      action:
+        verbId: route
+        targetId: build_tick_fixture_05
+      expectedLedger:
+        turn: 6
+        lastVerb: route
+      forbiddenProse:
+      - no uncommitted damage
+      - no uncommitted gold
+      - no invented ownership
+      - no outcome guarantee
+    - id: build_tick_eval_vote
+      given:
+        buildTick: 0
+        turn: 6
+      action:
+        verbId: vote
+        targetId: build_tick_fixture_06
+      expectedLedger:
+        turn: 7
+        lastVerb: vote
+      forbiddenProse:
+      - no uncommitted damage
+      - no uncommitted gold
+      - no invented ownership
+      - no outcome guarantee
+    - id: build_tick_eval_donate
+      given:
+        contribution: 0
+        turn: 7
+      action:
+        verbId: donate
+        targetId: build_tick_fixture_07
+      expectedLedger:
+        turn: 8
+        lastVerb: donate
+      forbiddenProse:
+      - no uncommitted damage
+      - no uncommitted gold
+      - no invented ownership
+      - no outcome guarantee
+    - id: build_tick_eval_craft
+      given:
+        weather: 0
+        turn: 8
+      action:
+        verbId: craft
+        targetId: build_tick_fixture_08
+      expectedLedger:
+        turn: 9
+        lastVerb: craft
+      forbiddenProse:
+      - no uncommitted damage
+      - no uncommitted gold
+      - no invented ownership
+      - no outcome guarantee
+    - id: build_tick_eval_inspect
+      given:
+        stamina: 8
+        turn: 9
+      action:
+        verbId: inspect
+        targetId: build_tick_fixture_09
+      expectedLedger:
+        turn: 10
+        lastVerb: inspect
+      forbiddenProse:
+      - no uncommitted damage
+      - no uncommitted gold
+      - no invented ownership
+      - no outcome guarantee
+    - id: build_tick_eval_share
+      given:
+        plotId: null
+        turn: 10
+      action:
+        verbId: share
+        targetId: build_tick_fixture_10
+      expectedLedger:
+        turn: 11
+        lastVerb: share
+      forbiddenProse:
+      - no uncommitted damage
+      - no uncommitted gold
+      - no invented ownership
+      - no outcome guarantee
+    - id: build_tick_eval_rest
+      given:
+        materials: 0
+        turn: 11
+      action:
+        verbId: rest
+        targetId: build_tick_fixture_11
+      expectedLedger:
+        turn: 12
+        lastVerb: rest
+      forbiddenProse:
+      - no uncommitted damage
+      - no uncommitted gold
+      - no invented ownership
+      - no outcome guarantee
+    - id: build_tick_eval_celebrate
+      given:
+        permitMarks: 1
+        turn: 12
+      action:
+        verbId: celebrate
+        targetId: build_tick_fixture_12
+      expectedLedger:
+        turn: 13
+        lastVerb: celebrate
+      forbiddenProse:
+      - no uncommitted damage
+      - no uncommitted gold
+      - no invented ownership
+      - no outcome guarantee
+    - id: build_tick_eval_grade
+      given:
+        wardTrust: 0
+        turn: 13
+      action:
+        verbId: grade
+        targetId: build_tick_fixture_13
+      expectedLedger:
+        turn: 14
+        lastVerb: grade
+      forbiddenProse:
+      - no uncommitted damage
+      - no uncommitted gold
+      - no invented ownership
+      - no outcome guarantee
+    - id: build_tick_eval_water
+      given:
+        buildTick: 0
+        turn: 14
+      action:
+        verbId: water
+        targetId: build_tick_fixture_14
+      expectedLedger:
+        turn: 15
+        lastVerb: water
+      forbiddenProse:
+      - no uncommitted damage
+      - no uncommitted gold
+      - no invented ownership
+      - no outcome guarantee
+    - id: build_tick_eval_assemble
+      given:
+        contribution: 0
+        turn: 15
+      action:
+        verbId: assemble
+        targetId: build_tick_fixture_15
+      expectedLedger:
+        turn: 16
+        lastVerb: assemble
+      forbiddenProse:
+      - no uncommitted damage
+      - no uncommitted gold
+      - no invented ownership
+      - no outcome guarantee
+  depth_gauge:
+    ledgerFields:
+    - id: hp
+      startValue: 16
+      type: integer
+    - id: air
+      startValue: 6
+      type: integer
+    - id: depth
+      startValue: 0
+      type: integer
+    - id: pressure
+      startValue: 0
+      type: integer
+    - id: current
+      startValue: 0
+      type: integer
+    - id: reefTrust
+      startValue: 0
+      type: integer
+    - id: tideToken
+      startValue: 1
+      type: integer
+    - id: salvage
+      startValue: 0
+      type: integer
+    roundResolve:
+    - validate action against committed ledger
+    - validate action cost and legal target
+    - roll or calculate only through CODE
+    - apply statuses and resource deltas
+    - commit ledger atomically
+    - narrate the committed result only
+    wipeCheckpoint:
+      wipe: return to last checkpoint
+      retain: personal loot and prior quest completion
+      clear: encounter-only state
+      permadeathV1: false
+    weeklyLockout:
+      scope: per-character per-boss
+      saleBypass: false
+    statuses:
+    - id: steady
+      durationTurns: 1
+      numericModifier: 1
+    - id: rattled
+      durationTurns: 2
+      numericModifier: -1
+    - id: focused
+      durationTurns: 3
+      numericModifier: 1
+    - id: exposed
+      durationTurns: 1
+      numericModifier: -1
+    - id: guarded
+      durationTurns: 2
+      numericModifier: 1
+    - id: slowed
+      durationTurns: 3
+      numericModifier: -1
+    - id: inspired
+      durationTurns: 1
+      numericModifier: 1
+    - id: spent
+      durationTurns: 2
+      numericModifier: -1
+    - id: anchored
+      durationTurns: 3
+      numericModifier: 1
+    - id: marked
+      durationTurns: 1
+      numericModifier: -1
+    - id: wary
+      durationTurns: 2
+      numericModifier: -1
+    - id: mended
+      durationTurns: 3
+      numericModifier: 1
+    verbs:
+    - id: swim
+      display: Swim
+      requiresCommit: true
+    - id: anchor
+      display: Anchor
+      requiresCommit: true
+    - id: glide
+      display: Glide
+      requiresCommit: true
+    - id: equalize
+      display: Equalize
+      requiresCommit: true
+    - id: mend
+      display: Mend
+      requiresCommit: true
+    - id: harvest
+      display: Harvest
+      requiresCommit: true
+    - id: signal
+      display: Signal
+      requiresCommit: true
+    - id: shelter
+      display: Shelter
+      requiresCommit: true
+    - id: scan
+      display: Scan
+      requiresCommit: true
+    - id: escort
+      display: Escort
+      requiresCommit: true
+    - id: surface
+      display: Surface
+      requiresCommit: true
+    - id: sing
+      display: Sing
+      requiresCommit: true
+    - id: weave
+      display: Weave
+      requiresCommit: true
+    - id: dive
+      display: Dive
+      requiresCommit: true
+    - id: drift
+      display: Drift
+      requiresCommit: true
+    - id: clear
+      display: Clear
+      requiresCommit: true
+    chromeTemplates:
+    - id: depth_gauge_chrome_01
+      label: Ledger
+      template: '[Ledger] {{hp}} • turn {{turn}} • committed'
+    - id: depth_gauge_chrome_02
+      label: Turn
+      template: '[Turn] {{air}} • turn {{turn}} • committed'
+    - id: depth_gauge_chrome_03
+      label: Status
+      template: '[Status] {{depth}} • turn {{turn}} • committed'
+    - id: depth_gauge_chrome_04
+      label: Route
+      template: '[Route] {{pressure}} • turn {{turn}} • committed'
+    - id: depth_gauge_chrome_05
+      label: Party
+      template: '[Party] {{current}} • turn {{turn}} • committed'
+    - id: depth_gauge_chrome_06
+      label: Checkpoint
+      template: '[Checkpoint] {{reefTrust}} • turn {{turn}} • committed'
+    - id: depth_gauge_chrome_07
+      label: Reward
+      template: '[Reward] {{tideToken}} • turn {{turn}} • committed'
+    - id: depth_gauge_chrome_08
+      label: Safety
+      template: '[Safety] {{salvage}} • turn {{turn}} • committed'
+    evalProbes:
+    - id: depth_gauge_eval_swim
+      given:
+        hp: 16
+        turn: 1
+      action:
+        verbId: swim
+        targetId: depth_gauge_fixture_01
+      expectedLedger:
+        turn: 2
+        lastVerb: swim
+      forbiddenProse:
+      - no uncommitted damage
+      - no uncommitted gold
+      - no invented ownership
+      - no outcome guarantee
+    - id: depth_gauge_eval_anchor
+      given:
+        air: 6
+        turn: 2
+      action:
+        verbId: anchor
+        targetId: depth_gauge_fixture_02
+      expectedLedger:
+        turn: 3
+        lastVerb: anchor
+      forbiddenProse:
+      - no uncommitted damage
+      - no uncommitted gold
+      - no invented ownership
+      - no outcome guarantee
+    - id: depth_gauge_eval_glide
+      given:
+        depth: 0
+        turn: 3
+      action:
+        verbId: glide
+        targetId: depth_gauge_fixture_03
+      expectedLedger:
+        turn: 4
+        lastVerb: glide
+      forbiddenProse:
+      - no uncommitted damage
+      - no uncommitted gold
+      - no invented ownership
+      - no outcome guarantee
+    - id: depth_gauge_eval_equalize
+      given:
+        pressure: 0
+        turn: 4
+      action:
+        verbId: equalize
+        targetId: depth_gauge_fixture_04
+      expectedLedger:
+        turn: 5
+        lastVerb: equalize
+      forbiddenProse:
+      - no uncommitted damage
+      - no uncommitted gold
+      - no invented ownership
+      - no outcome guarantee
+    - id: depth_gauge_eval_mend
+      given:
+        current: 0
+        turn: 5
+      action:
+        verbId: mend
+        targetId: depth_gauge_fixture_05
+      expectedLedger:
+        turn: 6
+        lastVerb: mend
+      forbiddenProse:
+      - no uncommitted damage
+      - no uncommitted gold
+      - no invented ownership
+      - no outcome guarantee
+    - id: depth_gauge_eval_harvest
+      given:
+        reefTrust: 0
+        turn: 6
+      action:
+        verbId: harvest
+        targetId: depth_gauge_fixture_06
+      expectedLedger:
+        turn: 7
+        lastVerb: harvest
+      forbiddenProse:
+      - no uncommitted damage
+      - no uncommitted gold
+      - no invented ownership
+      - no outcome guarantee
+    - id: depth_gauge_eval_signal
+      given:
+        tideToken: 1
+        turn: 7
+      action:
+        verbId: signal
+        targetId: depth_gauge_fixture_07
+      expectedLedger:
+        turn: 8
+        lastVerb: signal
+      forbiddenProse:
+      - no uncommitted damage
+      - no uncommitted gold
+      - no invented ownership
+      - no outcome guarantee
+    - id: depth_gauge_eval_shelter
+      given:
+        salvage: 0
+        turn: 8
+      action:
+        verbId: shelter
+        targetId: depth_gauge_fixture_08
+      expectedLedger:
+        turn: 9
+        lastVerb: shelter
+      forbiddenProse:
+      - no uncommitted damage
+      - no uncommitted gold
+      - no invented ownership
+      - no outcome guarantee
+    - id: depth_gauge_eval_scan
+      given:
+        hp: 16
+        turn: 9
+      action:
+        verbId: scan
+        targetId: depth_gauge_fixture_09
+      expectedLedger:
+        turn: 10
+        lastVerb: scan
+      forbiddenProse:
+      - no uncommitted damage
+      - no uncommitted gold
+      - no invented ownership
+      - no outcome guarantee
+    - id: depth_gauge_eval_escort
+      given:
+        air: 6
+        turn: 10
+      action:
+        verbId: escort
+        targetId: depth_gauge_fixture_10
+      expectedLedger:
+        turn: 11
+        lastVerb: escort
+      forbiddenProse:
+      - no uncommitted damage
+      - no uncommitted gold
+      - no invented ownership
+      - no outcome guarantee
+    - id: depth_gauge_eval_surface
+      given:
+        depth: 0
+        turn: 11
+      action:
+        verbId: surface
+        targetId: depth_gauge_fixture_11
+      expectedLedger:
+        turn: 12
+        lastVerb: surface
+      forbiddenProse:
+      - no uncommitted damage
+      - no uncommitted gold
+      - no invented ownership
+      - no outcome guarantee
+    - id: depth_gauge_eval_sing
+      given:
+        pressure: 0
+        turn: 12
+      action:
+        verbId: sing
+        targetId: depth_gauge_fixture_12
+      expectedLedger:
+        turn: 13
+        lastVerb: sing
+      forbiddenProse:
+      - no uncommitted damage
+      - no uncommitted gold
+      - no invented ownership
+      - no outcome guarantee
+    - id: depth_gauge_eval_weave
+      given:
+        current: 0
+        turn: 13
+      action:
+        verbId: weave
+        targetId: depth_gauge_fixture_13
+      expectedLedger:
+        turn: 14
+        lastVerb: weave
+      forbiddenProse:
+      - no uncommitted damage
+      - no uncommitted gold
+      - no invented ownership
+      - no outcome guarantee
+    - id: depth_gauge_eval_dive
+      given:
+        reefTrust: 0
+        turn: 14
+      action:
+        verbId: dive
+        targetId: depth_gauge_fixture_14
+      expectedLedger:
+        turn: 15
+        lastVerb: dive
+      forbiddenProse:
+      - no uncommitted damage
+      - no uncommitted gold
+      - no invented ownership
+      - no outcome guarantee
+    - id: depth_gauge_eval_drift
+      given:
+        tideToken: 1
+        turn: 15
+      action:
+        verbId: drift
+        targetId: depth_gauge_fixture_15
+      expectedLedger:
+        turn: 16
+        lastVerb: drift
+      forbiddenProse:
+      - no uncommitted damage
+      - no uncommitted gold
+      - no invented ownership
+      - no outcome guarantee
+  hide_voice:
+    ledgerFields:
+    - id: energy
+      startValue: 8
+      type: integer
+    - id: voice
+      startValue: 1
+      type: integer
+    - id: style
+      startValue: 1
+      type: integer
+    - id: boundaries
+      startValue: 3
+      type: integer
+    - id: clubRep
+      startValue: 0
+      type: integer
+    - id: invites
+      startValue: 1
+      type: integer
+    - id: craft
+      startValue: 0
+      type: integer
+    - id: comfort
+      startValue: 5
+      type: integer
+    roundResolve:
+    - validate action against committed ledger
+    - validate action cost and legal target
+    - roll or calculate only through CODE
+    - apply statuses and resource deltas
+    - commit ledger atomically
+    - narrate the committed result only
+    wipeCheckpoint:
+      wipe: return to last checkpoint
+      retain: personal loot and prior quest completion
+      clear: encounter-only state
+      permadeathV1: false
+    weeklyLockout:
+      scope: per-character per-boss
+      saleBypass: false
+    statuses:
+    - id: steady
+      durationTurns: 1
+      numericModifier: 1
+    - id: rattled
+      durationTurns: 2
+      numericModifier: -1
+    - id: focused
+      durationTurns: 3
+      numericModifier: 1
+    - id: exposed
+      durationTurns: 1
+      numericModifier: -1
+    - id: guarded
+      durationTurns: 2
+      numericModifier: 1
+    - id: slowed
+      durationTurns: 3
+      numericModifier: -1
+    - id: inspired
+      durationTurns: 1
+      numericModifier: 1
+    - id: spent
+      durationTurns: 2
+      numericModifier: -1
+    - id: anchored
+      durationTurns: 3
+      numericModifier: 1
+    - id: marked
+      durationTurns: 1
+      numericModifier: -1
+    - id: wary
+      durationTurns: 2
+      numericModifier: -1
+    - id: mended
+      durationTurns: 3
+      numericModifier: 1
+    verbs:
+    - id: introduce
+      display: Introduce
+      requiresCommit: true
+    - id: listen
+      display: Listen
+      requiresCommit: true
+    - id: style
+      display: Style
+      requiresCommit: true
+    - id: invite
+      display: Invite
+      requiresCommit: true
+    - id: decline
+      display: Decline
+      requiresCommit: true
+    - id: host
+      display: Host
+      requiresCommit: true
+    - id: create
+      display: Create
+      requiresCommit: true
+    - id: perform
+      display: Perform
+      requiresCommit: true
+    - id: trade
+      display: Trade
+      requiresCommit: true
+    - id: affirm
+      display: Affirm
+      requiresCommit: true
+    - id: rest
+      display: Rest
+      requiresCommit: true
+    - id: depart
+      display: Depart
+      requiresCommit: true
+    - id: caption
+      display: Caption
+      requiresCommit: true
+    - id: curate
+      display: Curate
+      requiresCommit: true
+    - id: pair
+      display: Pair
+      requiresCommit: true
+    - id: pause
+      display: Pause
+      requiresCommit: true
+    chromeTemplates:
+    - id: hide_voice_chrome_01
+      label: Ledger
+      template: '[Ledger] {{energy}} • turn {{turn}} • committed'
+    - id: hide_voice_chrome_02
+      label: Turn
+      template: '[Turn] {{voice}} • turn {{turn}} • committed'
+    - id: hide_voice_chrome_03
+      label: Status
+      template: '[Status] {{style}} • turn {{turn}} • committed'
+    - id: hide_voice_chrome_04
+      label: Route
+      template: '[Route] {{boundaries}} • turn {{turn}} • committed'
+    - id: hide_voice_chrome_05
+      label: Party
+      template: '[Party] {{clubRep}} • turn {{turn}} • committed'
+    - id: hide_voice_chrome_06
+      label: Checkpoint
+      template: '[Checkpoint] {{invites}} • turn {{turn}} • committed'
+    - id: hide_voice_chrome_07
+      label: Reward
+      template: '[Reward] {{craft}} • turn {{turn}} • committed'
+    - id: hide_voice_chrome_08
+      label: Safety
+      template: '[Safety] {{comfort}} • turn {{turn}} • committed'
+    evalProbes:
+    - id: hide_voice_eval_introduce
+      given:
+        energy: 8
+        turn: 1
+      action:
+        verbId: introduce
+        targetId: hide_voice_fixture_01
+      expectedLedger:
+        turn: 2
+        lastVerb: introduce
+      forbiddenProse:
+      - no uncommitted damage
+      - no uncommitted gold
+      - no invented ownership
+      - no outcome guarantee
+    - id: hide_voice_eval_listen
+      given:
+        voice: 1
+        turn: 2
+      action:
+        verbId: listen
+        targetId: hide_voice_fixture_02
+      expectedLedger:
+        turn: 3
+        lastVerb: listen
+      forbiddenProse:
+      - no uncommitted damage
+      - no uncommitted gold
+      - no invented ownership
+      - no outcome guarantee
+    - id: hide_voice_eval_style
+      given:
+        style: 1
+        turn: 3
+      action:
+        verbId: style
+        targetId: hide_voice_fixture_03
+      expectedLedger:
+        turn: 4
+        lastVerb: style
+      forbiddenProse:
+      - no uncommitted damage
+      - no uncommitted gold
+      - no invented ownership
+      - no outcome guarantee
+    - id: hide_voice_eval_invite
+      given:
+        boundaries: 3
+        turn: 4
+      action:
+        verbId: invite
+        targetId: hide_voice_fixture_04
+      expectedLedger:
+        turn: 5
+        lastVerb: invite
+      forbiddenProse:
+      - no uncommitted damage
+      - no uncommitted gold
+      - no invented ownership
+      - no outcome guarantee
+    - id: hide_voice_eval_decline
+      given:
+        clubRep: 0
+        turn: 5
+      action:
+        verbId: decline
+        targetId: hide_voice_fixture_05
+      expectedLedger:
+        turn: 6
+        lastVerb: decline
+      forbiddenProse:
+      - no uncommitted damage
+      - no uncommitted gold
+      - no invented ownership
+      - no outcome guarantee
+    - id: hide_voice_eval_host
+      given:
+        invites: 1
+        turn: 6
+      action:
+        verbId: host
+        targetId: hide_voice_fixture_06
+      expectedLedger:
+        turn: 7
+        lastVerb: host
+      forbiddenProse:
+      - no uncommitted damage
+      - no uncommitted gold
+      - no invented ownership
+      - no outcome guarantee
+    - id: hide_voice_eval_create
+      given:
+        craft: 0
+        turn: 7
+      action:
+        verbId: create
+        targetId: hide_voice_fixture_07
+      expectedLedger:
+        turn: 8
+        lastVerb: create
+      forbiddenProse:
+      - no uncommitted damage
+      - no uncommitted gold
+      - no invented ownership
+      - no outcome guarantee
+    - id: hide_voice_eval_perform
+      given:
+        comfort: 5
+        turn: 8
+      action:
+        verbId: perform
+        targetId: hide_voice_fixture_08
+      expectedLedger:
+        turn: 9
+        lastVerb: perform
+      forbiddenProse:
+      - no uncommitted damage
+      - no uncommitted gold
+      - no invented ownership
+      - no outcome guarantee
+    - id: hide_voice_eval_trade
+      given:
+        energy: 8
+        turn: 9
+      action:
+        verbId: trade
+        targetId: hide_voice_fixture_09
+      expectedLedger:
+        turn: 10
+        lastVerb: trade
+      forbiddenProse:
+      - no uncommitted damage
+      - no uncommitted gold
+      - no invented ownership
+      - no outcome guarantee
+    - id: hide_voice_eval_affirm
+      given:
+        voice: 1
+        turn: 10
+      action:
+        verbId: affirm
+        targetId: hide_voice_fixture_10
+      expectedLedger:
+        turn: 11
+        lastVerb: affirm
+      forbiddenProse:
+      - no uncommitted damage
+      - no uncommitted gold
+      - no invented ownership
+      - no outcome guarantee
+    - id: hide_voice_eval_rest
+      given:
+        style: 1
+        turn: 11
+      action:
+        verbId: rest
+        targetId: hide_voice_fixture_11
+      expectedLedger:
+        turn: 12
+        lastVerb: rest
+      forbiddenProse:
+      - no uncommitted damage
+      - no uncommitted gold
+      - no invented ownership
+      - no outcome guarantee
+    - id: hide_voice_eval_depart
+      given:
+        boundaries: 3
+        turn: 12
+      action:
+        verbId: depart
+        targetId: hide_voice_fixture_12
+      expectedLedger:
+        turn: 13
+        lastVerb: depart
+      forbiddenProse:
+      - no uncommitted damage
+      - no uncommitted gold
+      - no invented ownership
+      - no outcome guarantee
+    - id: hide_voice_eval_caption
+      given:
+        clubRep: 0
+        turn: 13
+      action:
+        verbId: caption
+        targetId: hide_voice_fixture_13
+      expectedLedger:
+        turn: 14
+        lastVerb: caption
+      forbiddenProse:
+      - no uncommitted damage
+      - no uncommitted gold
+      - no invented ownership
+      - no outcome guarantee
+    - id: hide_voice_eval_curate
+      given:
+        invites: 1
+        turn: 14
+      action:
+        verbId: curate
+        targetId: hide_voice_fixture_14
+      expectedLedger:
+        turn: 15
+        lastVerb: curate
+      forbiddenProse:
+      - no uncommitted damage
+      - no uncommitted gold
+      - no invented ownership
+      - no outcome guarantee
+    - id: hide_voice_eval_pair
+      given:
+        craft: 0
+        turn: 15
+      action:
+        verbId: pair
+        targetId: hide_voice_fixture_15
+      expectedLedger:
+        turn: 16
+        lastVerb: pair
+      forbiddenProse:
+      - no uncommitted damage
+      - no uncommitted gold
+      - no invented ownership
+      - no outcome guarantee
+  bond_mount:
+    ledgerFields:
+    - id: hp
+      startValue: 16
+      type: integer
+    - id: mountTrust
+      startValue: 1
+      type: integer
+    - id: wind
+      startValue: 4
+      type: integer
+    - id: altitude
+      startValue: 0
+      type: integer
+    - id: routeMarks
+      startValue: 0
+      type: integer
+    - id: care
+      startValue: 2
+      type: integer
+    - id: tack
+      startValue: 1
+      type: integer
+    - id: rescue
+      startValue: 0
+      type: integer
+    roundResolve:
+    - validate action against committed ledger
+    - validate action cost and legal target
+    - roll or calculate only through CODE
+    - apply statuses and resource deltas
+    - commit ledger atomically
+    - narrate the committed result only
+    wipeCheckpoint:
+      wipe: return to last checkpoint
+      retain: personal loot and prior quest completion
+      clear: encounter-only state
+      permadeathV1: false
+    weeklyLockout:
+      scope: per-character per-boss
+      saleBypass: false
+    statuses:
+    - id: steady
+      durationTurns: 1
+      numericModifier: 1
+    - id: rattled
+      durationTurns: 2
+      numericModifier: -1
+    - id: focused
+      durationTurns: 3
+      numericModifier: 1
+    - id: exposed
+      durationTurns: 1
+      numericModifier: -1
+    - id: guarded
+      durationTurns: 2
+      numericModifier: 1
+    - id: slowed
+      durationTurns: 3
+      numericModifier: -1
+    - id: inspired
+      durationTurns: 1
+      numericModifier: 1
+    - id: spent
+      durationTurns: 2
+      numericModifier: -1
+    - id: anchored
+      durationTurns: 3
+      numericModifier: 1
+    - id: marked
+      durationTurns: 1
+      numericModifier: -1
+    - id: wary
+      durationTurns: 2
+      numericModifier: -1
+    - id: mended
+      durationTurns: 3
+      numericModifier: 1
+    verbs:
+    - id: groom
+      display: Groom
+      requiresCommit: true
+    - id: feed
+      display: Feed
+      requiresCommit: true
+    - id: mount
+      display: Mount
+      requiresCommit: true
+    - id: bank
+      display: Bank
+      requiresCommit: true
+    - id: glide
+      display: Glide
+      requiresCommit: true
+    - id: signal
+      display: Signal
+      requiresCommit: true
+    - id: rescue
+      display: Rescue
+      requiresCommit: true
+    - id: rest
+      display: Rest
+      requiresCommit: true
+    - id: train
+      display: Train
+      requiresCommit: true
+    - id: scout
+      display: Scout
+      requiresCommit: true
+    - id: land
+      display: Land
+      requiresCommit: true
+    - id: bond
+      display: Bond
+      requiresCommit: true
+    - id: soothe
+      display: Soothe
+      requiresCommit: true
+    - id: climb
+      display: Climb
+      requiresCommit: true
+    - id: circle
+      display: Circle
+      requiresCommit: true
+    - id: veer
+      display: Veer
+      requiresCommit: true
+    chromeTemplates:
+    - id: bond_mount_chrome_01
+      label: Ledger
+      template: '[Ledger] {{hp}} • turn {{turn}} • committed'
+    - id: bond_mount_chrome_02
+      label: Turn
+      template: '[Turn] {{mountTrust}} • turn {{turn}} • committed'
+    - id: bond_mount_chrome_03
+      label: Status
+      template: '[Status] {{wind}} • turn {{turn}} • committed'
+    - id: bond_mount_chrome_04
+      label: Route
+      template: '[Route] {{altitude}} • turn {{turn}} • committed'
+    - id: bond_mount_chrome_05
+      label: Party
+      template: '[Party] {{routeMarks}} • turn {{turn}} • committed'
+    - id: bond_mount_chrome_06
+      label: Checkpoint
+      template: '[Checkpoint] {{care}} • turn {{turn}} • committed'
+    - id: bond_mount_chrome_07
+      label: Reward
+      template: '[Reward] {{tack}} • turn {{turn}} • committed'
+    - id: bond_mount_chrome_08
+      label: Safety
+      template: '[Safety] {{rescue}} • turn {{turn}} • committed'
+    evalProbes:
+    - id: bond_mount_eval_groom
+      given:
+        hp: 16
+        turn: 1
+      action:
+        verbId: groom
+        targetId: bond_mount_fixture_01
+      expectedLedger:
+        turn: 2
+        lastVerb: groom
+      forbiddenProse:
+      - no uncommitted damage
+      - no uncommitted gold
+      - no invented ownership
+      - no outcome guarantee
+    - id: bond_mount_eval_feed
+      given:
+        mountTrust: 1
+        turn: 2
+      action:
+        verbId: feed
+        targetId: bond_mount_fixture_02
+      expectedLedger:
+        turn: 3
+        lastVerb: feed
+      forbiddenProse:
+      - no uncommitted damage
+      - no uncommitted gold
+      - no invented ownership
+      - no outcome guarantee
+    - id: bond_mount_eval_mount
+      given:
+        wind: 4
+        turn: 3
+      action:
+        verbId: mount
+        targetId: bond_mount_fixture_03
+      expectedLedger:
+        turn: 4
+        lastVerb: mount
+      forbiddenProse:
+      - no uncommitted damage
+      - no uncommitted gold
+      - no invented ownership
+      - no outcome guarantee
+    - id: bond_mount_eval_bank
+      given:
+        altitude: 0
+        turn: 4
+      action:
+        verbId: bank
+        targetId: bond_mount_fixture_04
+      expectedLedger:
+        turn: 5
+        lastVerb: bank
+      forbiddenProse:
+      - no uncommitted damage
+      - no uncommitted gold
+      - no invented ownership
+      - no outcome guarantee
+    - id: bond_mount_eval_glide
+      given:
+        routeMarks: 0
+        turn: 5
+      action:
+        verbId: glide
+        targetId: bond_mount_fixture_05
+      expectedLedger:
+        turn: 6
+        lastVerb: glide
+      forbiddenProse:
+      - no uncommitted damage
+      - no uncommitted gold
+      - no invented ownership
+      - no outcome guarantee
+    - id: bond_mount_eval_signal
+      given:
+        care: 2
+        turn: 6
+      action:
+        verbId: signal
+        targetId: bond_mount_fixture_06
+      expectedLedger:
+        turn: 7
+        lastVerb: signal
+      forbiddenProse:
+      - no uncommitted damage
+      - no uncommitted gold
+      - no invented ownership
+      - no outcome guarantee
+    - id: bond_mount_eval_rescue
+      given:
+        tack: 1
+        turn: 7
+      action:
+        verbId: rescue
+        targetId: bond_mount_fixture_07
+      expectedLedger:
+        turn: 8
+        lastVerb: rescue
+      forbiddenProse:
+      - no uncommitted damage
+      - no uncommitted gold
+      - no invented ownership
+      - no outcome guarantee
+    - id: bond_mount_eval_rest
+      given:
+        rescue: 0
+        turn: 8
+      action:
+        verbId: rest
+        targetId: bond_mount_fixture_08
+      expectedLedger:
+        turn: 9
+        lastVerb: rest
+      forbiddenProse:
+      - no uncommitted damage
+      - no uncommitted gold
+      - no invented ownership
+      - no outcome guarantee
+    - id: bond_mount_eval_train
+      given:
+        hp: 16
+        turn: 9
+      action:
+        verbId: train
+        targetId: bond_mount_fixture_09
+      expectedLedger:
+        turn: 10
+        lastVerb: train
+      forbiddenProse:
+      - no uncommitted damage
+      - no uncommitted gold
+      - no invented ownership
+      - no outcome guarantee
+    - id: bond_mount_eval_scout
+      given:
+        mountTrust: 1
+        turn: 10
+      action:
+        verbId: scout
+        targetId: bond_mount_fixture_10
+      expectedLedger:
+        turn: 11
+        lastVerb: scout
+      forbiddenProse:
+      - no uncommitted damage
+      - no uncommitted gold
+      - no invented ownership
+      - no outcome guarantee
+    - id: bond_mount_eval_land
+      given:
+        wind: 4
+        turn: 11
+      action:
+        verbId: land
+        targetId: bond_mount_fixture_11
+      expectedLedger:
+        turn: 12
+        lastVerb: land
+      forbiddenProse:
+      - no uncommitted damage
+      - no uncommitted gold
+      - no invented ownership
+      - no outcome guarantee
+    - id: bond_mount_eval_bond
+      given:
+        altitude: 0
+        turn: 12
+      action:
+        verbId: bond
+        targetId: bond_mount_fixture_12
+      expectedLedger:
+        turn: 13
+        lastVerb: bond
+      forbiddenProse:
+      - no uncommitted damage
+      - no uncommitted gold
+      - no invented ownership
+      - no outcome guarantee
+    - id: bond_mount_eval_soothe
+      given:
+        routeMarks: 0
+        turn: 13
+      action:
+        verbId: soothe
+        targetId: bond_mount_fixture_13
+      expectedLedger:
+        turn: 14
+        lastVerb: soothe
+      forbiddenProse:
+      - no uncommitted damage
+      - no uncommitted gold
+      - no invented ownership
+      - no outcome guarantee
+    - id: bond_mount_eval_climb
+      given:
+        care: 2
+        turn: 14
+      action:
+        verbId: climb
+        targetId: bond_mount_fixture_14
+      expectedLedger:
+        turn: 15
+        lastVerb: climb
+      forbiddenProse:
+      - no uncommitted damage
+      - no uncommitted gold
+      - no invented ownership
+      - no outcome guarantee
+    - id: bond_mount_eval_circle
+      given:
+        tack: 1
+        turn: 15
+      action:
+        verbId: circle
+        targetId: bond_mount_fixture_15
+      expectedLedger:
+        turn: 16
+        lastVerb: circle
+      forbiddenProse:
+      - no uncommitted damage
+      - no uncommitted gold
+      - no invented ownership
+      - no outcome guarantee
+  colossus_part:
+    ledgerFields:
+    - id: hp
+      startValue: 20
+      type: integer
+    - id: partState
+      startValue: 0
+      type: integer
+    - id: stagger
+      startValue: 0
+      type: integer
+    - id: shelter
+      startValue: 2
+      type: integer
+    - id: supplies
+      startValue: 3
+      type: integer
+    - id: huntMarks
+      startValue: 0
+      type: integer
+    - id: lockout
+      startValue: 0
+      type: integer
+    - id: rescue
+      startValue: 0
+      type: integer
+    roundResolve:
+    - validate action against committed ledger
+    - validate action cost and legal target
+    - roll or calculate only through CODE
+    - apply statuses and resource deltas
+    - commit ledger atomically
+    - narrate the committed result only
+    wipeCheckpoint:
+      wipe: return to last checkpoint
+      retain: personal loot and prior quest completion
+      clear: encounter-only state
+      permadeathV1: false
+    weeklyLockout:
+      scope: per-character per-boss
+      saleBypass: false
+    statuses:
+    - id: steady
+      durationTurns: 1
+      numericModifier: 1
+    - id: rattled
+      durationTurns: 2
+      numericModifier: -1
+    - id: focused
+      durationTurns: 3
+      numericModifier: 1
+    - id: exposed
+      durationTurns: 1
+      numericModifier: -1
+    - id: guarded
+      durationTurns: 2
+      numericModifier: 1
+    - id: slowed
+      durationTurns: 3
+      numericModifier: -1
+    - id: inspired
+      durationTurns: 1
+      numericModifier: 1
+    - id: spent
+      durationTurns: 2
+      numericModifier: -1
+    - id: anchored
+      durationTurns: 3
+      numericModifier: 1
+    - id: marked
+      durationTurns: 1
+      numericModifier: -1
+    - id: wary
+      durationTurns: 2
+      numericModifier: -1
+    - id: mended
+      durationTurns: 3
+      numericModifier: 1
+    verbs:
+    - id: mark
+      display: Mark
+      requiresCommit: true
+    - id: climb
+      display: Climb
+      requiresCommit: true
+    - id: brace
+      display: Brace
+      requiresCommit: true
+    - id: sever
+      display: Sever
+      requiresCommit: true
+    - id: distract
+      display: Distract
+      requiresCommit: true
+    - id: shelter
+      display: Shelter
+      requiresCommit: true
+    - id: tend
+      display: Tend
+      requiresCommit: true
+    - id: harpoon
+      display: Harpoon
+      requiresCommit: true
+    - id: signal
+      display: Signal
+      requiresCommit: true
+    - id: retreat
+      display: Retreat
+      requiresCommit: true
+    - id: rally
+      display: Rally
+      requiresCommit: true
+    - id: claim
+      display: Claim
+      requiresCommit: true
+    - id: anchor
+      display: Anchor
+      requiresCommit: true
+    - id: feint
+      display: Feint
+      requiresCommit: true
+    - id: spot
+      display: Spot
+      requiresCommit: true
+    - id: salvage
+      display: Salvage
+      requiresCommit: true
+    chromeTemplates:
+    - id: colossus_part_chrome_01
+      label: Ledger
+      template: '[Ledger] {{hp}} • turn {{turn}} • committed'
+    - id: colossus_part_chrome_02
+      label: Turn
+      template: '[Turn] {{partState}} • turn {{turn}} • committed'
+    - id: colossus_part_chrome_03
+      label: Status
+      template: '[Status] {{stagger}} • turn {{turn}} • committed'
+    - id: colossus_part_chrome_04
+      label: Route
+      template: '[Route] {{shelter}} • turn {{turn}} • committed'
+    - id: colossus_part_chrome_05
+      label: Party
+      template: '[Party] {{supplies}} • turn {{turn}} • committed'
+    - id: colossus_part_chrome_06
+      label: Checkpoint
+      template: '[Checkpoint] {{huntMarks}} • turn {{turn}} • committed'
+    - id: colossus_part_chrome_07
+      label: Reward
+      template: '[Reward] {{lockout}} • turn {{turn}} • committed'
+    - id: colossus_part_chrome_08
+      label: Safety
+      template: '[Safety] {{rescue}} • turn {{turn}} • committed'
+    evalProbes:
+    - id: colossus_part_eval_mark
+      given:
+        hp: 20
+        turn: 1
+      action:
+        verbId: mark
+        targetId: colossus_part_fixture_01
+      expectedLedger:
+        turn: 2
+        lastVerb: mark
+      forbiddenProse:
+      - no uncommitted damage
+      - no uncommitted gold
+      - no invented ownership
+      - no outcome guarantee
+    - id: colossus_part_eval_climb
+      given:
+        partState: 0
+        turn: 2
+      action:
+        verbId: climb
+        targetId: colossus_part_fixture_02
+      expectedLedger:
+        turn: 3
+        lastVerb: climb
+      forbiddenProse:
+      - no uncommitted damage
+      - no uncommitted gold
+      - no invented ownership
+      - no outcome guarantee
+    - id: colossus_part_eval_brace
+      given:
+        stagger: 0
+        turn: 3
+      action:
+        verbId: brace
+        targetId: colossus_part_fixture_03
+      expectedLedger:
+        turn: 4
+        lastVerb: brace
+      forbiddenProse:
+      - no uncommitted damage
+      - no uncommitted gold
+      - no invented ownership
+      - no outcome guarantee
+    - id: colossus_part_eval_sever
+      given:
+        shelter: 2
+        turn: 4
+      action:
+        verbId: sever
+        targetId: colossus_part_fixture_04
+      expectedLedger:
+        turn: 5
+        lastVerb: sever
+      forbiddenProse:
+      - no uncommitted damage
+      - no uncommitted gold
+      - no invented ownership
+      - no outcome guarantee
+    - id: colossus_part_eval_distract
+      given:
+        supplies: 3
+        turn: 5
+      action:
+        verbId: distract
+        targetId: colossus_part_fixture_05
+      expectedLedger:
+        turn: 6
+        lastVerb: distract
+      forbiddenProse:
+      - no uncommitted damage
+      - no uncommitted gold
+      - no invented ownership
+      - no outcome guarantee
+    - id: colossus_part_eval_shelter
+      given:
+        huntMarks: 0
+        turn: 6
+      action:
+        verbId: shelter
+        targetId: colossus_part_fixture_06
+      expectedLedger:
+        turn: 7
+        lastVerb: shelter
+      forbiddenProse:
+      - no uncommitted damage
+      - no uncommitted gold
+      - no invented ownership
+      - no outcome guarantee
+    - id: colossus_part_eval_tend
+      given:
+        lockout: 0
+        turn: 7
+      action:
+        verbId: tend
+        targetId: colossus_part_fixture_07
+      expectedLedger:
+        turn: 8
+        lastVerb: tend
+      forbiddenProse:
+      - no uncommitted damage
+      - no uncommitted gold
+      - no invented ownership
+      - no outcome guarantee
+    - id: colossus_part_eval_harpoon
+      given:
+        rescue: 0
+        turn: 8
+      action:
+        verbId: harpoon
+        targetId: colossus_part_fixture_08
+      expectedLedger:
+        turn: 9
+        lastVerb: harpoon
+      forbiddenProse:
+      - no uncommitted damage
+      - no uncommitted gold
+      - no invented ownership
+      - no outcome guarantee
+    - id: colossus_part_eval_signal
+      given:
+        hp: 20
+        turn: 9
+      action:
+        verbId: signal
+        targetId: colossus_part_fixture_09
+      expectedLedger:
+        turn: 10
+        lastVerb: signal
+      forbiddenProse:
+      - no uncommitted damage
+      - no uncommitted gold
+      - no invented ownership
+      - no outcome guarantee
+    - id: colossus_part_eval_retreat
+      given:
+        partState: 0
+        turn: 10
+      action:
+        verbId: retreat
+        targetId: colossus_part_fixture_10
+      expectedLedger:
+        turn: 11
+        lastVerb: retreat
+      forbiddenProse:
+      - no uncommitted damage
+      - no uncommitted gold
+      - no invented ownership
+      - no outcome guarantee
+    - id: colossus_part_eval_rally
+      given:
+        stagger: 0
+        turn: 11
+      action:
+        verbId: rally
+        targetId: colossus_part_fixture_11
+      expectedLedger:
+        turn: 12
+        lastVerb: rally
+      forbiddenProse:
+      - no uncommitted damage
+      - no uncommitted gold
+      - no invented ownership
+      - no outcome guarantee
+    - id: colossus_part_eval_claim
+      given:
+        shelter: 2
+        turn: 12
+      action:
+        verbId: claim
+        targetId: colossus_part_fixture_12
+      expectedLedger:
+        turn: 13
+        lastVerb: claim
+      forbiddenProse:
+      - no uncommitted damage
+      - no uncommitted gold
+      - no invented ownership
+      - no outcome guarantee
+    - id: colossus_part_eval_anchor
+      given:
+        supplies: 3
+        turn: 13
+      action:
+        verbId: anchor
+        targetId: colossus_part_fixture_13
+      expectedLedger:
+        turn: 14
+        lastVerb: anchor
+      forbiddenProse:
+      - no uncommitted damage
+      - no uncommitted gold
+      - no invented ownership
+      - no outcome guarantee
+    - id: colossus_part_eval_feint
+      given:
+        huntMarks: 0
+        turn: 14
+      action:
+        verbId: feint
+        targetId: colossus_part_fixture_14
+      expectedLedger:
+        turn: 15
+        lastVerb: feint
+      forbiddenProse:
+      - no uncommitted damage
+      - no uncommitted gold
+      - no invented ownership
+      - no outcome guarantee
+    - id: colossus_part_eval_spot
+      given:
+        lockout: 0
+        turn: 15
+      action:
+        verbId: spot
+        targetId: colossus_part_fixture_15
+      expectedLedger:
+        turn: 16
+        lastVerb: spot
+      forbiddenProse:
+      - no uncommitted damage
+      - no uncommitted gold
+      - no invented ownership
+      - no outcome guarantee
+  show_pose:
+    ledgerFields:
+    - id: energy
+      startValue: 8
+      type: integer
+    - id: poseChain
+      startValue: 0
+      type: integer
+    - id: cue
+      startValue: 0
+      type: integer
+    - id: audienceJoy
+      startValue: 0
+      type: integer
+    - id: rescueMarks
+      startValue: 0
+      type: integer
+    - id: costume
+      startValue: 1
+      type: integer
+    - id: sceneClock
+      startValue: 0
+      type: integer
+    - id: bond
+      startValue: 1
+      type: integer
+    roundResolve:
+    - validate action against committed ledger
+    - validate action cost and legal target
+    - roll or calculate only through CODE
+    - apply statuses and resource deltas
+    - commit ledger atomically
+    - narrate the committed result only
+    wipeCheckpoint:
+      wipe: return to last checkpoint
+      retain: personal loot and prior quest completion
+      clear: encounter-only state
+      permadeathV1: false
+    weeklyLockout:
+      scope: per-character per-boss
+      saleBypass: false
+    statuses:
+    - id: steady
+      durationTurns: 1
+      numericModifier: 1
+    - id: rattled
+      durationTurns: 2
+      numericModifier: -1
+    - id: focused
+      durationTurns: 3
+      numericModifier: 1
+    - id: exposed
+      durationTurns: 1
+      numericModifier: -1
+    - id: guarded
+      durationTurns: 2
+      numericModifier: 1
+    - id: slowed
+      durationTurns: 3
+      numericModifier: -1
+    - id: inspired
+      durationTurns: 1
+      numericModifier: 1
+    - id: spent
+      durationTurns: 2
+      numericModifier: -1
+    - id: anchored
+      durationTurns: 3
+      numericModifier: 1
+    - id: marked
+      durationTurns: 1
+      numericModifier: -1
+    - id: wary
+      durationTurns: 2
+      numericModifier: -1
+    - id: mended
+      durationTurns: 3
+      numericModifier: 1
+    verbs:
+    - id: pose
+      display: Pose
+      requiresCommit: true
+    - id: cue
+      display: Cue
+      requiresCommit: true
+    - id: shield
+      display: Shield
+      requiresCommit: true
+    - id: cheer
+      display: Cheer
+      requiresCommit: true
+    - id: rehearse
+      display: Rehearse
+      requiresCommit: true
+    - id: rescue
+      display: Rescue
+      requiresCommit: true
+    - id: redirect
+      display: Redirect
+      requiresCommit: true
+    - id: shine
+      display: Shine
+      requiresCommit: true
+    - id: link
+      display: Link
+      requiresCommit: true
+    - id: rest
+      display: Rest
+      requiresCommit: true
+    - id: revise
+      display: Revise
+      requiresCommit: true
+    - id: bow
+      display: Bow
+      requiresCommit: true
+    - id: stage
+      display: Stage
+      requiresCommit: true
+    - id: tempo
+      display: Tempo
+      requiresCommit: true
+    - id: switch
+      display: Switch
+      requiresCommit: true
+    - id: encore
+      display: Encore
+      requiresCommit: true
+    chromeTemplates:
+    - id: show_pose_chrome_01
+      label: Ledger
+      template: '[Ledger] {{energy}} • turn {{turn}} • committed'
+    - id: show_pose_chrome_02
+      label: Turn
+      template: '[Turn] {{poseChain}} • turn {{turn}} • committed'
+    - id: show_pose_chrome_03
+      label: Status
+      template: '[Status] {{cue}} • turn {{turn}} • committed'
+    - id: show_pose_chrome_04
+      label: Route
+      template: '[Route] {{audienceJoy}} • turn {{turn}} • committed'
+    - id: show_pose_chrome_05
+      label: Party
+      template: '[Party] {{rescueMarks}} • turn {{turn}} • committed'
+    - id: show_pose_chrome_06
+      label: Checkpoint
+      template: '[Checkpoint] {{costume}} • turn {{turn}} • committed'
+    - id: show_pose_chrome_07
+      label: Reward
+      template: '[Reward] {{sceneClock}} • turn {{turn}} • committed'
+    - id: show_pose_chrome_08
+      label: Safety
+      template: '[Safety] {{bond}} • turn {{turn}} • committed'
+    evalProbes:
+    - id: show_pose_eval_pose
+      given:
+        energy: 8
+        turn: 1
+      action:
+        verbId: pose
+        targetId: show_pose_fixture_01
+      expectedLedger:
+        turn: 2
+        lastVerb: pose
+      forbiddenProse:
+      - no uncommitted damage
+      - no uncommitted gold
+      - no invented ownership
+      - no outcome guarantee
+    - id: show_pose_eval_cue
+      given:
+        poseChain: 0
+        turn: 2
+      action:
+        verbId: cue
+        targetId: show_pose_fixture_02
+      expectedLedger:
+        turn: 3
+        lastVerb: cue
+      forbiddenProse:
+      - no uncommitted damage
+      - no uncommitted gold
+      - no invented ownership
+      - no outcome guarantee
+    - id: show_pose_eval_shield
+      given:
+        cue: 0
+        turn: 3
+      action:
+        verbId: shield
+        targetId: show_pose_fixture_03
+      expectedLedger:
+        turn: 4
+        lastVerb: shield
+      forbiddenProse:
+      - no uncommitted damage
+      - no uncommitted gold
+      - no invented ownership
+      - no outcome guarantee
+    - id: show_pose_eval_cheer
+      given:
+        audienceJoy: 0
+        turn: 4
+      action:
+        verbId: cheer
+        targetId: show_pose_fixture_04
+      expectedLedger:
+        turn: 5
+        lastVerb: cheer
+      forbiddenProse:
+      - no uncommitted damage
+      - no uncommitted gold
+      - no invented ownership
+      - no outcome guarantee
+    - id: show_pose_eval_rehearse
+      given:
+        rescueMarks: 0
+        turn: 5
+      action:
+        verbId: rehearse
+        targetId: show_pose_fixture_05
+      expectedLedger:
+        turn: 6
+        lastVerb: rehearse
+      forbiddenProse:
+      - no uncommitted damage
+      - no uncommitted gold
+      - no invented ownership
+      - no outcome guarantee
+    - id: show_pose_eval_rescue
+      given:
+        costume: 1
+        turn: 6
+      action:
+        verbId: rescue
+        targetId: show_pose_fixture_06
+      expectedLedger:
+        turn: 7
+        lastVerb: rescue
+      forbiddenProse:
+      - no uncommitted damage
+      - no uncommitted gold
+      - no invented ownership
+      - no outcome guarantee
+    - id: show_pose_eval_redirect
+      given:
+        sceneClock: 0
+        turn: 7
+      action:
+        verbId: redirect
+        targetId: show_pose_fixture_07
+      expectedLedger:
+        turn: 8
+        lastVerb: redirect
+      forbiddenProse:
+      - no uncommitted damage
+      - no uncommitted gold
+      - no invented ownership
+      - no outcome guarantee
+    - id: show_pose_eval_shine
+      given:
+        bond: 1
+        turn: 8
+      action:
+        verbId: shine
+        targetId: show_pose_fixture_08
+      expectedLedger:
+        turn: 9
+        lastVerb: shine
+      forbiddenProse:
+      - no uncommitted damage
+      - no uncommitted gold
+      - no invented ownership
+      - no outcome guarantee
+    - id: show_pose_eval_link
+      given:
+        energy: 8
+        turn: 9
+      action:
+        verbId: link
+        targetId: show_pose_fixture_09
+      expectedLedger:
+        turn: 10
+        lastVerb: link
+      forbiddenProse:
+      - no uncommitted damage
+      - no uncommitted gold
+      - no invented ownership
+      - no outcome guarantee
+    - id: show_pose_eval_rest
+      given:
+        poseChain: 0
+        turn: 10
+      action:
+        verbId: rest
+        targetId: show_pose_fixture_10
+      expectedLedger:
+        turn: 11
+        lastVerb: rest
+      forbiddenProse:
+      - no uncommitted damage
+      - no uncommitted gold
+      - no invented ownership
+      - no outcome guarantee
+    - id: show_pose_eval_revise
+      given:
+        cue: 0
+        turn: 11
+      action:
+        verbId: revise
+        targetId: show_pose_fixture_11
+      expectedLedger:
+        turn: 12
+        lastVerb: revise
+      forbiddenProse:
+      - no uncommitted damage
+      - no uncommitted gold
+      - no invented ownership
+      - no outcome guarantee
+    - id: show_pose_eval_bow
+      given:
+        audienceJoy: 0
+        turn: 12
+      action:
+        verbId: bow
+        targetId: show_pose_fixture_12
+      expectedLedger:
+        turn: 13
+        lastVerb: bow
+      forbiddenProse:
+      - no uncommitted damage
+      - no uncommitted gold
+      - no invented ownership
+      - no outcome guarantee
+    - id: show_pose_eval_stage
+      given:
+        rescueMarks: 0
+        turn: 13
+      action:
+        verbId: stage
+        targetId: show_pose_fixture_13
+      expectedLedger:
+        turn: 14
+        lastVerb: stage
+      forbiddenProse:
+      - no uncommitted damage
+      - no uncommitted gold
+      - no invented ownership
+      - no outcome guarantee
+    - id: show_pose_eval_tempo
+      given:
+        costume: 1
+        turn: 14
+      action:
+        verbId: tempo
+        targetId: show_pose_fixture_14
+      expectedLedger:
+        turn: 15
+        lastVerb: tempo
+      forbiddenProse:
+      - no uncommitted damage
+      - no uncommitted gold
+      - no invented ownership
+      - no outcome guarantee
+    - id: show_pose_eval_switch
+      given:
+        sceneClock: 0
+        turn: 15
+      action:
+        verbId: switch
+        targetId: show_pose_fixture_15
+      expectedLedger:
+        turn: 16
+        lastVerb: switch
+      forbiddenProse:
+      - no uncommitted damage
+      - no uncommitted gold
+      - no invented ownership
+      - no outcome guarantee
+  heat_cover:
+    ledgerFields:
+    - id: hp
+      startValue: 14
+      type: integer
+    - id: cover
+      startValue: 5
+      type: integer
+    - id: heat
+      startValue: 0
+      type: integer
+    - id: evidence
+      startValue: 0
+      type: integer
+    - id: contacts
+      startValue: 1
+      type: integer
+    - id: caseClock
+      startValue: 0
+      type: integer
+    - id: gear
+      startValue: 1
+      type: integer
+    - id: trust
+      startValue: 1
+      type: integer
+    roundResolve:
+    - validate action against committed ledger
+    - validate action cost and legal target
+    - roll or calculate only through CODE
+    - apply statuses and resource deltas
+    - commit ledger atomically
+    - narrate the committed result only
+    wipeCheckpoint:
+      wipe: return to last checkpoint
+      retain: personal loot and prior quest completion
+      clear: encounter-only state
+      permadeathV1: false
+    weeklyLockout:
+      scope: per-character per-boss
+      saleBypass: false
+    statuses:
+    - id: steady
+      durationTurns: 1
+      numericModifier: 1
+    - id: rattled
+      durationTurns: 2
+      numericModifier: -1
+    - id: focused
+      durationTurns: 3
+      numericModifier: 1
+    - id: exposed
+      durationTurns: 1
+      numericModifier: -1
+    - id: guarded
+      durationTurns: 2
+      numericModifier: 1
+    - id: slowed
+      durationTurns: 3
+      numericModifier: -1
+    - id: inspired
+      durationTurns: 1
+      numericModifier: 1
+    - id: spent
+      durationTurns: 2
+      numericModifier: -1
+    - id: anchored
+      durationTurns: 3
+      numericModifier: 1
+    - id: marked
+      durationTurns: 1
+      numericModifier: -1
+    - id: wary
+      durationTurns: 2
+      numericModifier: -1
+    - id: mended
+      durationTurns: 3
+      numericModifier: 1
+    verbs:
+    - id: observe
+      display: Observe
+      requiresCommit: true
+    - id: tail
+      display: Tail
+      requiresCommit: true
+    - id: bluff
+      display: Bluff
+      requiresCommit: true
+    - id: signal
+      display: Signal
+      requiresCommit: true
+    - id: swap
+      display: Swap
+      requiresCommit: true
+    - id: hide
+      display: Hide
+      requiresCommit: true
+    - id: extract
+      display: Extract
+      requiresCommit: true
+    - id: decode
+      display: Decode
+      requiresCommit: true
+    - id: call
+      display: Call
+      requiresCommit: true
+    - id: retreat
+      display: Retreat
+      requiresCommit: true
+    - id: report
+      display: Report
+      requiresCommit: true
+    - id: shadow
+      display: Shadow
+      requiresCommit: true
+    - id: verify
+      display: Verify
+      requiresCommit: true
+    - id: wait
+      display: Wait
+      requiresCommit: true
+    - id: place
+      display: Place
+      requiresCommit: true
+    - id: leave
+      display: Leave
+      requiresCommit: true
+    chromeTemplates:
+    - id: heat_cover_chrome_01
+      label: Ledger
+      template: '[Ledger] {{hp}} • turn {{turn}} • committed'
+    - id: heat_cover_chrome_02
+      label: Turn
+      template: '[Turn] {{cover}} • turn {{turn}} • committed'
+    - id: heat_cover_chrome_03
+      label: Status
+      template: '[Status] {{heat}} • turn {{turn}} • committed'
+    - id: heat_cover_chrome_04
+      label: Route
+      template: '[Route] {{evidence}} • turn {{turn}} • committed'
+    - id: heat_cover_chrome_05
+      label: Party
+      template: '[Party] {{contacts}} • turn {{turn}} • committed'
+    - id: heat_cover_chrome_06
+      label: Checkpoint
+      template: '[Checkpoint] {{caseClock}} • turn {{turn}} • committed'
+    - id: heat_cover_chrome_07
+      label: Reward
+      template: '[Reward] {{gear}} • turn {{turn}} • committed'
+    - id: heat_cover_chrome_08
+      label: Safety
+      template: '[Safety] {{trust}} • turn {{turn}} • committed'
+    evalProbes:
+    - id: heat_cover_eval_observe
+      given:
+        hp: 14
+        turn: 1
+      action:
+        verbId: observe
+        targetId: heat_cover_fixture_01
+      expectedLedger:
+        turn: 2
+        lastVerb: observe
+      forbiddenProse:
+      - no uncommitted damage
+      - no uncommitted gold
+      - no invented ownership
+      - no outcome guarantee
+    - id: heat_cover_eval_tail
+      given:
+        cover: 5
+        turn: 2
+      action:
+        verbId: tail
+        targetId: heat_cover_fixture_02
+      expectedLedger:
+        turn: 3
+        lastVerb: tail
+      forbiddenProse:
+      - no uncommitted damage
+      - no uncommitted gold
+      - no invented ownership
+      - no outcome guarantee
+    - id: heat_cover_eval_bluff
+      given:
+        heat: 0
+        turn: 3
+      action:
+        verbId: bluff
+        targetId: heat_cover_fixture_03
+      expectedLedger:
+        turn: 4
+        lastVerb: bluff
+      forbiddenProse:
+      - no uncommitted damage
+      - no uncommitted gold
+      - no invented ownership
+      - no outcome guarantee
+    - id: heat_cover_eval_signal
+      given:
+        evidence: 0
+        turn: 4
+      action:
+        verbId: signal
+        targetId: heat_cover_fixture_04
+      expectedLedger:
+        turn: 5
+        lastVerb: signal
+      forbiddenProse:
+      - no uncommitted damage
+      - no uncommitted gold
+      - no invented ownership
+      - no outcome guarantee
+    - id: heat_cover_eval_swap
+      given:
+        contacts: 1
+        turn: 5
+      action:
+        verbId: swap
+        targetId: heat_cover_fixture_05
+      expectedLedger:
+        turn: 6
+        lastVerb: swap
+      forbiddenProse:
+      - no uncommitted damage
+      - no uncommitted gold
+      - no invented ownership
+      - no outcome guarantee
+    - id: heat_cover_eval_hide
+      given:
+        caseClock: 0
+        turn: 6
+      action:
+        verbId: hide
+        targetId: heat_cover_fixture_06
+      expectedLedger:
+        turn: 7
+        lastVerb: hide
+      forbiddenProse:
+      - no uncommitted damage
+      - no uncommitted gold
+      - no invented ownership
+      - no outcome guarantee
+    - id: heat_cover_eval_extract
+      given:
+        gear: 1
+        turn: 7
+      action:
+        verbId: extract
+        targetId: heat_cover_fixture_07
+      expectedLedger:
+        turn: 8
+        lastVerb: extract
+      forbiddenProse:
+      - no uncommitted damage
+      - no uncommitted gold
+      - no invented ownership
+      - no outcome guarantee
+    - id: heat_cover_eval_decode
+      given:
+        trust: 1
+        turn: 8
+      action:
+        verbId: decode
+        targetId: heat_cover_fixture_08
+      expectedLedger:
+        turn: 9
+        lastVerb: decode
+      forbiddenProse:
+      - no uncommitted damage
+      - no uncommitted gold
+      - no invented ownership
+      - no outcome guarantee
+    - id: heat_cover_eval_call
+      given:
+        hp: 14
+        turn: 9
+      action:
+        verbId: call
+        targetId: heat_cover_fixture_09
+      expectedLedger:
+        turn: 10
+        lastVerb: call
+      forbiddenProse:
+      - no uncommitted damage
+      - no uncommitted gold
+      - no invented ownership
+      - no outcome guarantee
+    - id: heat_cover_eval_retreat
+      given:
+        cover: 5
+        turn: 10
+      action:
+        verbId: retreat
+        targetId: heat_cover_fixture_10
+      expectedLedger:
+        turn: 11
+        lastVerb: retreat
+      forbiddenProse:
+      - no uncommitted damage
+      - no uncommitted gold
+      - no invented ownership
+      - no outcome guarantee
+    - id: heat_cover_eval_report
+      given:
+        heat: 0
+        turn: 11
+      action:
+        verbId: report
+        targetId: heat_cover_fixture_11
+      expectedLedger:
+        turn: 12
+        lastVerb: report
+      forbiddenProse:
+      - no uncommitted damage
+      - no uncommitted gold
+      - no invented ownership
+      - no outcome guarantee
+    - id: heat_cover_eval_shadow
+      given:
+        evidence: 0
+        turn: 12
+      action:
+        verbId: shadow
+        targetId: heat_cover_fixture_12
+      expectedLedger:
+        turn: 13
+        lastVerb: shadow
+      forbiddenProse:
+      - no uncommitted damage
+      - no uncommitted gold
+      - no invented ownership
+      - no outcome guarantee
+    - id: heat_cover_eval_verify
+      given:
+        contacts: 1
+        turn: 13
+      action:
+        verbId: verify
+        targetId: heat_cover_fixture_13
+      expectedLedger:
+        turn: 14
+        lastVerb: verify
+      forbiddenProse:
+      - no uncommitted damage
+      - no uncommitted gold
+      - no invented ownership
+      - no outcome guarantee
+    - id: heat_cover_eval_wait
+      given:
+        caseClock: 0
+        turn: 14
+      action:
+        verbId: wait
+        targetId: heat_cover_fixture_14
+      expectedLedger:
+        turn: 15
+        lastVerb: wait
+      forbiddenProse:
+      - no uncommitted damage
+      - no uncommitted gold
+      - no invented ownership
+      - no outcome guarantee
+    - id: heat_cover_eval_place
+      given:
+        gear: 1
+        turn: 15
+      action:
+        verbId: place
+        targetId: heat_cover_fixture_15
+      expectedLedger:
+        turn: 16
+        lastVerb: place
+      forbiddenProse:
+      - no uncommitted damage
+      - no uncommitted gold
+      - no invented ownership
+      - no outcome guarantee
+  lap_time:
+    ledgerFields:
+    - id: speed
+      startValue: 4
+      type: integer
+    - id: grip
+      startValue: 4
+      type: integer
+    - id: boost
+      startValue: 2
+      type: integer
+    - id: lapTimeMs
+      startValue: 0
+      type: integer
+    - id: sector
+      startValue: 1
+      type: integer
+    - id: cleanMarks
+      startValue: 0
+      type: integer
+    - id: tune
+      startValue: 1
+      type: integer
+    - id: focus
+      startValue: 5
+      type: integer
+    roundResolve:
+    - validate action against committed ledger
+    - validate action cost and legal target
+    - roll or calculate only through CODE
+    - apply statuses and resource deltas
+    - commit ledger atomically
+    - narrate the committed result only
+    wipeCheckpoint:
+      wipe: return to last checkpoint
+      retain: personal loot and prior quest completion
+      clear: encounter-only state
+      permadeathV1: false
+    weeklyLockout:
+      scope: per-character per-boss
+      saleBypass: false
+    statuses:
+    - id: steady
+      durationTurns: 1
+      numericModifier: 1
+    - id: rattled
+      durationTurns: 2
+      numericModifier: -1
+    - id: focused
+      durationTurns: 3
+      numericModifier: 1
+    - id: exposed
+      durationTurns: 1
+      numericModifier: -1
+    - id: guarded
+      durationTurns: 2
+      numericModifier: 1
+    - id: slowed
+      durationTurns: 3
+      numericModifier: -1
+    - id: inspired
+      durationTurns: 1
+      numericModifier: 1
+    - id: spent
+      durationTurns: 2
+      numericModifier: -1
+    - id: anchored
+      durationTurns: 3
+      numericModifier: 1
+    - id: marked
+      durationTurns: 1
+      numericModifier: -1
+    - id: wary
+      durationTurns: 2
+      numericModifier: -1
+    - id: mended
+      durationTurns: 3
+      numericModifier: 1
+    verbs:
+    - id: launch
+      display: Launch
+      requiresCommit: true
+    - id: brake
+      display: Brake
+      requiresCommit: true
+    - id: drift
+      display: Drift
+      requiresCommit: true
+    - id: draft
+      display: Draft
+      requiresCommit: true
+    - id: boost
+      display: Boost
+      requiresCommit: true
+    - id: tune
+      display: Tune
+      requiresCommit: true
+    - id: reset
+      display: Reset
+      requiresCommit: true
+    - id: scan
+      display: Scan
+      requiresCommit: true
+    - id: practice
+      display: Practice
+      requiresCommit: true
+    - id: relay
+      display: Relay
+      requiresCommit: true
+    - id: cool
+      display: Cool
+      requiresCommit: true
+    - id: finish
+      display: Finish
+      requiresCommit: true
+    - id: apex
+      display: Apex
+      requiresCommit: true
+    - id: feather
+      display: Feather
+      requiresCommit: true
+    - id: hold
+      display: Hold
+      requiresCommit: true
+    - id: recover
+      display: Recover
+      requiresCommit: true
+    chromeTemplates:
+    - id: lap_time_chrome_01
+      label: Ledger
+      template: '[Ledger] {{speed}} • turn {{turn}} • committed'
+    - id: lap_time_chrome_02
+      label: Turn
+      template: '[Turn] {{grip}} • turn {{turn}} • committed'
+    - id: lap_time_chrome_03
+      label: Status
+      template: '[Status] {{boost}} • turn {{turn}} • committed'
+    - id: lap_time_chrome_04
+      label: Route
+      template: '[Route] {{lapTimeMs}} • turn {{turn}} • committed'
+    - id: lap_time_chrome_05
+      label: Party
+      template: '[Party] {{sector}} • turn {{turn}} • committed'
+    - id: lap_time_chrome_06
+      label: Checkpoint
+      template: '[Checkpoint] {{cleanMarks}} • turn {{turn}} • committed'
+    - id: lap_time_chrome_07
+      label: Reward
+      template: '[Reward] {{tune}} • turn {{turn}} • committed'
+    - id: lap_time_chrome_08
+      label: Safety
+      template: '[Safety] {{focus}} • turn {{turn}} • committed'
+    evalProbes:
+    - id: lap_time_eval_launch
+      given:
+        speed: 4
+        turn: 1
+      action:
+        verbId: launch
+        targetId: lap_time_fixture_01
+      expectedLedger:
+        turn: 2
+        lastVerb: launch
+      forbiddenProse:
+      - no uncommitted damage
+      - no uncommitted gold
+      - no invented ownership
+      - no outcome guarantee
+    - id: lap_time_eval_brake
+      given:
+        grip: 4
+        turn: 2
+      action:
+        verbId: brake
+        targetId: lap_time_fixture_02
+      expectedLedger:
+        turn: 3
+        lastVerb: brake
+      forbiddenProse:
+      - no uncommitted damage
+      - no uncommitted gold
+      - no invented ownership
+      - no outcome guarantee
+    - id: lap_time_eval_drift
+      given:
+        boost: 2
+        turn: 3
+      action:
+        verbId: drift
+        targetId: lap_time_fixture_03
+      expectedLedger:
+        turn: 4
+        lastVerb: drift
+      forbiddenProse:
+      - no uncommitted damage
+      - no uncommitted gold
+      - no invented ownership
+      - no outcome guarantee
+    - id: lap_time_eval_draft
+      given:
+        lapTimeMs: 0
+        turn: 4
+      action:
+        verbId: draft
+        targetId: lap_time_fixture_04
+      expectedLedger:
+        turn: 5
+        lastVerb: draft
+      forbiddenProse:
+      - no uncommitted damage
+      - no uncommitted gold
+      - no invented ownership
+      - no outcome guarantee
+    - id: lap_time_eval_boost
+      given:
+        sector: 1
+        turn: 5
+      action:
+        verbId: boost
+        targetId: lap_time_fixture_05
+      expectedLedger:
+        turn: 6
+        lastVerb: boost
+      forbiddenProse:
+      - no uncommitted damage
+      - no uncommitted gold
+      - no invented ownership
+      - no outcome guarantee
+    - id: lap_time_eval_tune
+      given:
+        cleanMarks: 0
+        turn: 6
+      action:
+        verbId: tune
+        targetId: lap_time_fixture_06
+      expectedLedger:
+        turn: 7
+        lastVerb: tune
+      forbiddenProse:
+      - no uncommitted damage
+      - no uncommitted gold
+      - no invented ownership
+      - no outcome guarantee
+    - id: lap_time_eval_reset
+      given:
+        tune: 1
+        turn: 7
+      action:
+        verbId: reset
+        targetId: lap_time_fixture_07
+      expectedLedger:
+        turn: 8
+        lastVerb: reset
+      forbiddenProse:
+      - no uncommitted damage
+      - no uncommitted gold
+      - no invented ownership
+      - no outcome guarantee
+    - id: lap_time_eval_scan
+      given:
+        focus: 5
+        turn: 8
+      action:
+        verbId: scan
+        targetId: lap_time_fixture_08
+      expectedLedger:
+        turn: 9
+        lastVerb: scan
+      forbiddenProse:
+      - no uncommitted damage
+      - no uncommitted gold
+      - no invented ownership
+      - no outcome guarantee
+    - id: lap_time_eval_practice
+      given:
+        speed: 4
+        turn: 9
+      action:
+        verbId: practice
+        targetId: lap_time_fixture_09
+      expectedLedger:
+        turn: 10
+        lastVerb: practice
+      forbiddenProse:
+      - no uncommitted damage
+      - no uncommitted gold
+      - no invented ownership
+      - no outcome guarantee
+    - id: lap_time_eval_relay
+      given:
+        grip: 4
+        turn: 10
+      action:
+        verbId: relay
+        targetId: lap_time_fixture_10
+      expectedLedger:
+        turn: 11
+        lastVerb: relay
+      forbiddenProse:
+      - no uncommitted damage
+      - no uncommitted gold
+      - no invented ownership
+      - no outcome guarantee
+    - id: lap_time_eval_cool
+      given:
+        boost: 2
+        turn: 11
+      action:
+        verbId: cool
+        targetId: lap_time_fixture_11
+      expectedLedger:
+        turn: 12
+        lastVerb: cool
+      forbiddenProse:
+      - no uncommitted damage
+      - no uncommitted gold
+      - no invented ownership
+      - no outcome guarantee
+    - id: lap_time_eval_finish
+      given:
+        lapTimeMs: 0
+        turn: 12
+      action:
+        verbId: finish
+        targetId: lap_time_fixture_12
+      expectedLedger:
+        turn: 13
+        lastVerb: finish
+      forbiddenProse:
+      - no uncommitted damage
+      - no uncommitted gold
+      - no invented ownership
+      - no outcome guarantee
+    - id: lap_time_eval_apex
+      given:
+        sector: 1
+        turn: 13
+      action:
+        verbId: apex
+        targetId: lap_time_fixture_13
+      expectedLedger:
+        turn: 14
+        lastVerb: apex
+      forbiddenProse:
+      - no uncommitted damage
+      - no uncommitted gold
+      - no invented ownership
+      - no outcome guarantee
+    - id: lap_time_eval_feather
+      given:
+        cleanMarks: 0
+        turn: 14
+      action:
+        verbId: feather
+        targetId: lap_time_fixture_14
+      expectedLedger:
+        turn: 15
+        lastVerb: feather
+      forbiddenProse:
+      - no uncommitted damage
+      - no uncommitted gold
+      - no invented ownership
+      - no outcome guarantee
+    - id: lap_time_eval_hold
+      given:
+        tune: 1
+        turn: 15
+      action:
+        verbId: hold
+        targetId: lap_time_fixture_15
+      expectedLedger:
+        turn: 16
+        lastVerb: hold
+      forbiddenProse:
+      - no uncommitted damage
+      - no uncommitted gold
+      - no invented ownership
+      - no outcome guarantee
+  atelier_score:
+    ledgerFields:
+    - id: energy
+      startValue: 8
+      type: integer
+    - id: briefFit
+      startValue: 0
+      type: integer
+    - id: silhouette
+      startValue: 0
+      type: integer
+    - id: material
+      startValue: 1
+      type: integer
+    - id: craft
+      startValue: 1
+      type: integer
+    - id: audience
+      startValue: 0
+      type: integer
+    - id: lookbook
+      startValue: 0
+      type: integer
+    - id: reputation
+      startValue: 0
+      type: integer
+    roundResolve:
+    - validate action against committed ledger
+    - validate action cost and legal target
+    - roll or calculate only through CODE
+    - apply statuses and resource deltas
+    - commit ledger atomically
+    - narrate the committed result only
+    wipeCheckpoint:
+      wipe: return to last checkpoint
+      retain: personal loot and prior quest completion
+      clear: encounter-only state
+      permadeathV1: false
+    weeklyLockout:
+      scope: per-character per-boss
+      saleBypass: false
+    statuses:
+    - id: steady
+      durationTurns: 1
+      numericModifier: 1
+    - id: rattled
+      durationTurns: 2
+      numericModifier: -1
+    - id: focused
+      durationTurns: 3
+      numericModifier: 1
+    - id: exposed
+      durationTurns: 1
+      numericModifier: -1
+    - id: guarded
+      durationTurns: 2
+      numericModifier: 1
+    - id: slowed
+      durationTurns: 3
+      numericModifier: -1
+    - id: inspired
+      durationTurns: 1
+      numericModifier: 1
+    - id: spent
+      durationTurns: 2
+      numericModifier: -1
+    - id: anchored
+      durationTurns: 3
+      numericModifier: 1
+    - id: marked
+      durationTurns: 1
+      numericModifier: -1
+    - id: wary
+      durationTurns: 2
+      numericModifier: -1
+    - id: mended
+      durationTurns: 3
+      numericModifier: 1
+    verbs:
+    - id: sketch
+      display: Sketch
+      requiresCommit: true
+    - id: cut
+      display: Cut
+      requiresCommit: true
+    - id: drape
+      display: Drape
+      requiresCommit: true
+    - id: dye
+      display: Dye
+      requiresCommit: true
+    - id: style
+      display: Style
+      requiresCommit: true
+    - id: pose
+      display: Pose
+      requiresCommit: true
+    - id: review
+      display: Review
+      requiresCommit: true
+    - id: revise
+      display: Revise
+      requiresCommit: true
+    - id: accessorize
+      display: Accessorize
+      requiresCommit: true
+    - id: present
+      display: Present
+      requiresCommit: true
+    - id: rest
+      display: Rest
+      requiresCommit: true
+    - id: archive
+      display: Archive
+      requiresCommit: true
+    - id: pin
+      display: Pin
+      requiresCommit: true
+    - id: hem
+      display: Hem
+      requiresCommit: true
+    - id: press
+      display: Press
+      requiresCommit: true
+    - id: layer
+      display: Layer
+      requiresCommit: true
+    chromeTemplates:
+    - id: atelier_score_chrome_01
+      label: Ledger
+      template: '[Ledger] {{energy}} • turn {{turn}} • committed'
+    - id: atelier_score_chrome_02
+      label: Turn
+      template: '[Turn] {{briefFit}} • turn {{turn}} • committed'
+    - id: atelier_score_chrome_03
+      label: Status
+      template: '[Status] {{silhouette}} • turn {{turn}} • committed'
+    - id: atelier_score_chrome_04
+      label: Route
+      template: '[Route] {{material}} • turn {{turn}} • committed'
+    - id: atelier_score_chrome_05
+      label: Party
+      template: '[Party] {{craft}} • turn {{turn}} • committed'
+    - id: atelier_score_chrome_06
+      label: Checkpoint
+      template: '[Checkpoint] {{audience}} • turn {{turn}} • committed'
+    - id: atelier_score_chrome_07
+      label: Reward
+      template: '[Reward] {{lookbook}} • turn {{turn}} • committed'
+    - id: atelier_score_chrome_08
+      label: Safety
+      template: '[Safety] {{reputation}} • turn {{turn}} • committed'
+    evalProbes:
+    - id: atelier_score_eval_sketch
+      given:
+        energy: 8
+        turn: 1
+      action:
+        verbId: sketch
+        targetId: atelier_score_fixture_01
+      expectedLedger:
+        turn: 2
+        lastVerb: sketch
+      forbiddenProse:
+      - no uncommitted damage
+      - no uncommitted gold
+      - no invented ownership
+      - no outcome guarantee
+    - id: atelier_score_eval_cut
+      given:
+        briefFit: 0
+        turn: 2
+      action:
+        verbId: cut
+        targetId: atelier_score_fixture_02
+      expectedLedger:
+        turn: 3
+        lastVerb: cut
+      forbiddenProse:
+      - no uncommitted damage
+      - no uncommitted gold
+      - no invented ownership
+      - no outcome guarantee
+    - id: atelier_score_eval_drape
+      given:
+        silhouette: 0
+        turn: 3
+      action:
+        verbId: drape
+        targetId: atelier_score_fixture_03
+      expectedLedger:
+        turn: 4
+        lastVerb: drape
+      forbiddenProse:
+      - no uncommitted damage
+      - no uncommitted gold
+      - no invented ownership
+      - no outcome guarantee
+    - id: atelier_score_eval_dye
+      given:
+        material: 1
+        turn: 4
+      action:
+        verbId: dye
+        targetId: atelier_score_fixture_04
+      expectedLedger:
+        turn: 5
+        lastVerb: dye
+      forbiddenProse:
+      - no uncommitted damage
+      - no uncommitted gold
+      - no invented ownership
+      - no outcome guarantee
+    - id: atelier_score_eval_style
+      given:
+        craft: 1
+        turn: 5
+      action:
+        verbId: style
+        targetId: atelier_score_fixture_05
+      expectedLedger:
+        turn: 6
+        lastVerb: style
+      forbiddenProse:
+      - no uncommitted damage
+      - no uncommitted gold
+      - no invented ownership
+      - no outcome guarantee
+    - id: atelier_score_eval_pose
+      given:
+        audience: 0
+        turn: 6
+      action:
+        verbId: pose
+        targetId: atelier_score_fixture_06
+      expectedLedger:
+        turn: 7
+        lastVerb: pose
+      forbiddenProse:
+      - no uncommitted damage
+      - no uncommitted gold
+      - no invented ownership
+      - no outcome guarantee
+    - id: atelier_score_eval_review
+      given:
+        lookbook: 0
+        turn: 7
+      action:
+        verbId: review
+        targetId: atelier_score_fixture_07
+      expectedLedger:
+        turn: 8
+        lastVerb: review
+      forbiddenProse:
+      - no uncommitted damage
+      - no uncommitted gold
+      - no invented ownership
+      - no outcome guarantee
+    - id: atelier_score_eval_revise
+      given:
+        reputation: 0
+        turn: 8
+      action:
+        verbId: revise
+        targetId: atelier_score_fixture_08
+      expectedLedger:
+        turn: 9
+        lastVerb: revise
+      forbiddenProse:
+      - no uncommitted damage
+      - no uncommitted gold
+      - no invented ownership
+      - no outcome guarantee
+    - id: atelier_score_eval_accessorize
+      given:
+        energy: 8
+        turn: 9
+      action:
+        verbId: accessorize
+        targetId: atelier_score_fixture_09
+      expectedLedger:
+        turn: 10
+        lastVerb: accessorize
+      forbiddenProse:
+      - no uncommitted damage
+      - no uncommitted gold
+      - no invented ownership
+      - no outcome guarantee
+    - id: atelier_score_eval_present
+      given:
+        briefFit: 0
+        turn: 10
+      action:
+        verbId: present
+        targetId: atelier_score_fixture_10
+      expectedLedger:
+        turn: 11
+        lastVerb: present
+      forbiddenProse:
+      - no uncommitted damage
+      - no uncommitted gold
+      - no invented ownership
+      - no outcome guarantee
+    - id: atelier_score_eval_rest
+      given:
+        silhouette: 0
+        turn: 11
+      action:
+        verbId: rest
+        targetId: atelier_score_fixture_11
+      expectedLedger:
+        turn: 12
+        lastVerb: rest
+      forbiddenProse:
+      - no uncommitted damage
+      - no uncommitted gold
+      - no invented ownership
+      - no outcome guarantee
+    - id: atelier_score_eval_archive
+      given:
+        material: 1
+        turn: 12
+      action:
+        verbId: archive
+        targetId: atelier_score_fixture_12
+      expectedLedger:
+        turn: 13
+        lastVerb: archive
+      forbiddenProse:
+      - no uncommitted damage
+      - no uncommitted gold
+      - no invented ownership
+      - no outcome guarantee
+    - id: atelier_score_eval_pin
+      given:
+        craft: 1
+        turn: 13
+      action:
+        verbId: pin
+        targetId: atelier_score_fixture_13
+      expectedLedger:
+        turn: 14
+        lastVerb: pin
+      forbiddenProse:
+      - no uncommitted damage
+      - no uncommitted gold
+      - no invented ownership
+      - no outcome guarantee
+    - id: atelier_score_eval_hem
+      given:
+        audience: 0
+        turn: 14
+      action:
+        verbId: hem
+        targetId: atelier_score_fixture_14
+      expectedLedger:
+        turn: 15
+        lastVerb: hem
+      forbiddenProse:
+      - no uncommitted damage
+      - no uncommitted gold
+      - no invented ownership
+      - no outcome guarantee
+    - id: atelier_score_eval_press
+      given:
+        lookbook: 0
+        turn: 15
+      action:
+        verbId: press
+        targetId: atelier_score_fixture_15
+      expectedLedger:
+        turn: 16
+        lastVerb: press
+      forbiddenProse:
+      - no uncommitted damage
+      - no uncommitted gold
+      - no invented ownership
+      - no outcome guarantee
+  hospitality_tick:
+    ledgerFields:
+    - id: energy
+      startValue: 8
+      type: integer
+    - id: hospitality
+      startValue: 0
+      type: integer
+    - id: stock
+      startValue: 4
+      type: integer
+    - id: recipeNotes
+      startValue: 1
+      type: integer
+    - id: guestMood
+      startValue: 5
+      type: integer
+    - id: shiftTick
+      startValue: 0
+      type: integer
+    - id: regulars
+      startValue: 0
+      type: integer
+    - id: cleanliness
+      startValue: 5
+      type: integer
+    roundResolve:
+    - validate action against committed ledger
+    - validate action cost and legal target
+    - roll or calculate only through CODE
+    - apply statuses and resource deltas
+    - commit ledger atomically
+    - narrate the committed result only
+    wipeCheckpoint:
+      wipe: return to last checkpoint
+      retain: personal loot and prior quest completion
+      clear: encounter-only state
+      permadeathV1: false
+    weeklyLockout:
+      scope: per-character per-boss
+      saleBypass: false
+    statuses:
+    - id: steady
+      durationTurns: 1
+      numericModifier: 1
+    - id: rattled
+      durationTurns: 2
+      numericModifier: -1
+    - id: focused
+      durationTurns: 3
+      numericModifier: 1
+    - id: exposed
+      durationTurns: 1
+      numericModifier: -1
+    - id: guarded
+      durationTurns: 2
+      numericModifier: 1
+    - id: slowed
+      durationTurns: 3
+      numericModifier: -1
+    - id: inspired
+      durationTurns: 1
+      numericModifier: 1
+    - id: spent
+      durationTurns: 2
+      numericModifier: -1
+    - id: anchored
+      durationTurns: 3
+      numericModifier: 1
+    - id: marked
+      durationTurns: 1
+      numericModifier: -1
+    - id: wary
+      durationTurns: 2
+      numericModifier: -1
+    - id: mended
+      durationTurns: 3
+      numericModifier: 1
+    verbs:
+    - id: greet
+      display: Greet
+      requiresCommit: true
+    - id: seat
+      display: Seat
+      requiresCommit: true
+    - id: brew
+      display: Brew
+      requiresCommit: true
+    - id: plate
+      display: Plate
+      requiresCommit: true
+    - id: listen
+      display: Listen
+      requiresCommit: true
+    - id: clean
+      display: Clean
+      requiresCommit: true
+    - id: stock
+      display: Stock
+      requiresCommit: true
+    - id: recommend
+      display: Recommend
+      requiresCommit: true
+    - id: coordinate
+      display: Coordinate
+      requiresCommit: true
+    - id: close
+      display: Close
+      requiresCommit: true
+    - id: rest
+      display: Rest
+      requiresCommit: true
+    - id: thank
+      display: Thank
+      requiresCommit: true
+    - id: garnish
+      display: Garnish
+      requiresCommit: true
+    - id: steam
+      display: Steam
+      requiresCommit: true
+    - id: wipe
+      display: Wipe
+      requiresCommit: true
+    - id: welcome
+      display: Welcome
+      requiresCommit: true
+    chromeTemplates:
+    - id: hospitality_tick_chrome_01
+      label: Ledger
+      template: '[Ledger] {{energy}} • turn {{turn}} • committed'
+    - id: hospitality_tick_chrome_02
+      label: Turn
+      template: '[Turn] {{hospitality}} • turn {{turn}} • committed'
+    - id: hospitality_tick_chrome_03
+      label: Status
+      template: '[Status] {{stock}} • turn {{turn}} • committed'
+    - id: hospitality_tick_chrome_04
+      label: Route
+      template: '[Route] {{recipeNotes}} • turn {{turn}} • committed'
+    - id: hospitality_tick_chrome_05
+      label: Party
+      template: '[Party] {{guestMood}} • turn {{turn}} • committed'
+    - id: hospitality_tick_chrome_06
+      label: Checkpoint
+      template: '[Checkpoint] {{shiftTick}} • turn {{turn}} • committed'
+    - id: hospitality_tick_chrome_07
+      label: Reward
+      template: '[Reward] {{regulars}} • turn {{turn}} • committed'
+    - id: hospitality_tick_chrome_08
+      label: Safety
+      template: '[Safety] {{cleanliness}} • turn {{turn}} • committed'
+    evalProbes:
+    - id: hospitality_tick_eval_greet
+      given:
+        energy: 8
+        turn: 1
+      action:
+        verbId: greet
+        targetId: hospitality_tick_fixture_01
+      expectedLedger:
+        turn: 2
+        lastVerb: greet
+      forbiddenProse:
+      - no uncommitted damage
+      - no uncommitted gold
+      - no invented ownership
+      - no outcome guarantee
+    - id: hospitality_tick_eval_seat
+      given:
+        hospitality: 0
+        turn: 2
+      action:
+        verbId: seat
+        targetId: hospitality_tick_fixture_02
+      expectedLedger:
+        turn: 3
+        lastVerb: seat
+      forbiddenProse:
+      - no uncommitted damage
+      - no uncommitted gold
+      - no invented ownership
+      - no outcome guarantee
+    - id: hospitality_tick_eval_brew
+      given:
+        stock: 4
+        turn: 3
+      action:
+        verbId: brew
+        targetId: hospitality_tick_fixture_03
+      expectedLedger:
+        turn: 4
+        lastVerb: brew
+      forbiddenProse:
+      - no uncommitted damage
+      - no uncommitted gold
+      - no invented ownership
+      - no outcome guarantee
+    - id: hospitality_tick_eval_plate
+      given:
+        recipeNotes: 1
+        turn: 4
+      action:
+        verbId: plate
+        targetId: hospitality_tick_fixture_04
+      expectedLedger:
+        turn: 5
+        lastVerb: plate
+      forbiddenProse:
+      - no uncommitted damage
+      - no uncommitted gold
+      - no invented ownership
+      - no outcome guarantee
+    - id: hospitality_tick_eval_listen
+      given:
+        guestMood: 5
+        turn: 5
+      action:
+        verbId: listen
+        targetId: hospitality_tick_fixture_05
+      expectedLedger:
+        turn: 6
+        lastVerb: listen
+      forbiddenProse:
+      - no uncommitted damage
+      - no uncommitted gold
+      - no invented ownership
+      - no outcome guarantee
+    - id: hospitality_tick_eval_clean
+      given:
+        shiftTick: 0
+        turn: 6
+      action:
+        verbId: clean
+        targetId: hospitality_tick_fixture_06
+      expectedLedger:
+        turn: 7
+        lastVerb: clean
+      forbiddenProse:
+      - no uncommitted damage
+      - no uncommitted gold
+      - no invented ownership
+      - no outcome guarantee
+    - id: hospitality_tick_eval_stock
+      given:
+        regulars: 0
+        turn: 7
+      action:
+        verbId: stock
+        targetId: hospitality_tick_fixture_07
+      expectedLedger:
+        turn: 8
+        lastVerb: stock
+      forbiddenProse:
+      - no uncommitted damage
+      - no uncommitted gold
+      - no invented ownership
+      - no outcome guarantee
+    - id: hospitality_tick_eval_recommend
+      given:
+        cleanliness: 5
+        turn: 8
+      action:
+        verbId: recommend
+        targetId: hospitality_tick_fixture_08
+      expectedLedger:
+        turn: 9
+        lastVerb: recommend
+      forbiddenProse:
+      - no uncommitted damage
+      - no uncommitted gold
+      - no invented ownership
+      - no outcome guarantee
+    - id: hospitality_tick_eval_coordinate
+      given:
+        energy: 8
+        turn: 9
+      action:
+        verbId: coordinate
+        targetId: hospitality_tick_fixture_09
+      expectedLedger:
+        turn: 10
+        lastVerb: coordinate
+      forbiddenProse:
+      - no uncommitted damage
+      - no uncommitted gold
+      - no invented ownership
+      - no outcome guarantee
+    - id: hospitality_tick_eval_close
+      given:
+        hospitality: 0
+        turn: 10
+      action:
+        verbId: close
+        targetId: hospitality_tick_fixture_10
+      expectedLedger:
+        turn: 11
+        lastVerb: close
+      forbiddenProse:
+      - no uncommitted damage
+      - no uncommitted gold
+      - no invented ownership
+      - no outcome guarantee
+    - id: hospitality_tick_eval_rest
+      given:
+        stock: 4
+        turn: 11
+      action:
+        verbId: rest
+        targetId: hospitality_tick_fixture_11
+      expectedLedger:
+        turn: 12
+        lastVerb: rest
+      forbiddenProse:
+      - no uncommitted damage
+      - no uncommitted gold
+      - no invented ownership
+      - no outcome guarantee
+    - id: hospitality_tick_eval_thank
+      given:
+        recipeNotes: 1
+        turn: 12
+      action:
+        verbId: thank
+        targetId: hospitality_tick_fixture_12
+      expectedLedger:
+        turn: 13
+        lastVerb: thank
+      forbiddenProse:
+      - no uncommitted damage
+      - no uncommitted gold
+      - no invented ownership
+      - no outcome guarantee
+    - id: hospitality_tick_eval_garnish
+      given:
+        guestMood: 5
+        turn: 13
+      action:
+        verbId: garnish
+        targetId: hospitality_tick_fixture_13
+      expectedLedger:
+        turn: 14
+        lastVerb: garnish
+      forbiddenProse:
+      - no uncommitted damage
+      - no uncommitted gold
+      - no invented ownership
+      - no outcome guarantee
+    - id: hospitality_tick_eval_steam
+      given:
+        shiftTick: 0
+        turn: 14
+      action:
+        verbId: steam
+        targetId: hospitality_tick_fixture_14
+      expectedLedger:
+        turn: 15
+        lastVerb: steam
+      forbiddenProse:
+      - no uncommitted damage
+      - no uncommitted gold
+      - no invented ownership
+      - no outcome guarantee
+    - id: hospitality_tick_eval_wipe
+      given:
+        regulars: 0
+        turn: 15
+      action:
+        verbId: wipe
+        targetId: hospitality_tick_fixture_15
+      expectedLedger:
+        turn: 16
+        lastVerb: wipe
+      forbiddenProse:
+      - no uncommitted damage
+      - no uncommitted gold
+      - no invented ownership
+      - no outcome guarantee
+  veil_glamour:
+    ledgerFields:
+    - id: hp
+      startValue: 15
+      type: integer
+    - id: glamour
+      startValue: 2
+      type: integer
+    - id: promise
+      startValue: 0
+      type: integer
+    - id: favor
+      startValue: 1
+      type: integer
+    - id: thorn
+      startValue: 0
+      type: integer
+    - id: veil
+      startValue: 3
+      type: integer
+    - id: courtStanding
+      startValue: 0
+      type: integer
+    - id: memory
+      startValue: 1
+      type: integer
+    roundResolve:
+    - validate action against committed ledger
+    - validate action cost and legal target
+    - roll or calculate only through CODE
+    - apply statuses and resource deltas
+    - commit ledger atomically
+    - narrate the committed result only
+    wipeCheckpoint:
+      wipe: return to last checkpoint
+      retain: personal loot and prior quest completion
+      clear: encounter-only state
+      permadeathV1: false
+    weeklyLockout:
+      scope: per-character per-boss
+      saleBypass: false
+    statuses:
+    - id: steady
+      durationTurns: 1
+      numericModifier: 1
+    - id: rattled
+      durationTurns: 2
+      numericModifier: -1
+    - id: focused
+      durationTurns: 3
+      numericModifier: 1
+    - id: exposed
+      durationTurns: 1
+      numericModifier: -1
+    - id: guarded
+      durationTurns: 2
+      numericModifier: 1
+    - id: slowed
+      durationTurns: 3
+      numericModifier: -1
+    - id: inspired
+      durationTurns: 1
+      numericModifier: 1
+    - id: spent
+      durationTurns: 2
+      numericModifier: -1
+    - id: anchored
+      durationTurns: 3
+      numericModifier: 1
+    - id: marked
+      durationTurns: 1
+      numericModifier: -1
+    - id: wary
+      durationTurns: 2
+      numericModifier: -1
+    - id: mended
+      durationTurns: 3
+      numericModifier: 1
+    verbs:
+    - id: curtsy
+      display: Curtsy
+      requiresCommit: true
+    - id: bargain
+      display: Bargain
+      requiresCommit: true
+    - id: unmask
+      display: Unmask
+      requiresCommit: true
+    - id: weave
+      display: Weave
+      requiresCommit: true
+    - id: refuse
+      display: Refuse
+      requiresCommit: true
+    - id: gift
+      display: Gift
+      requiresCommit: true
+    - id: seek
+      display: Seek
+      requiresCommit: true
+    - id: hide
+      display: Hide
+      requiresCommit: true
+    - id: remember
+      display: Remember
+      requiresCommit: true
+    - id: appeal
+      display: Appeal
+      requiresCommit: true
+    - id: retreat
+      display: Retreat
+      requiresCommit: true
+    - id: seal
+      display: Seal
+      requiresCommit: true
+    - id: prune
+      display: Prune
+      requiresCommit: true
+    - id: mirror
+      display: Mirror
+      requiresCommit: true
+    - id: name
+      display: Name
+      requiresCommit: true
+    - id: listen
+      display: Listen
+      requiresCommit: true
+    chromeTemplates:
+    - id: veil_glamour_chrome_01
+      label: Ledger
+      template: '[Ledger] {{hp}} • turn {{turn}} • committed'
+    - id: veil_glamour_chrome_02
+      label: Turn
+      template: '[Turn] {{glamour}} • turn {{turn}} • committed'
+    - id: veil_glamour_chrome_03
+      label: Status
+      template: '[Status] {{promise}} • turn {{turn}} • committed'
+    - id: veil_glamour_chrome_04
+      label: Route
+      template: '[Route] {{favor}} • turn {{turn}} • committed'
+    - id: veil_glamour_chrome_05
+      label: Party
+      template: '[Party] {{thorn}} • turn {{turn}} • committed'
+    - id: veil_glamour_chrome_06
+      label: Checkpoint
+      template: '[Checkpoint] {{veil}} • turn {{turn}} • committed'
+    - id: veil_glamour_chrome_07
+      label: Reward
+      template: '[Reward] {{courtStanding}} • turn {{turn}} • committed'
+    - id: veil_glamour_chrome_08
+      label: Safety
+      template: '[Safety] {{memory}} • turn {{turn}} • committed'
+    evalProbes:
+    - id: veil_glamour_eval_curtsy
+      given:
+        hp: 15
+        turn: 1
+      action:
+        verbId: curtsy
+        targetId: veil_glamour_fixture_01
+      expectedLedger:
+        turn: 2
+        lastVerb: curtsy
+      forbiddenProse:
+      - no uncommitted damage
+      - no uncommitted gold
+      - no invented ownership
+      - no outcome guarantee
+    - id: veil_glamour_eval_bargain
+      given:
+        glamour: 2
+        turn: 2
+      action:
+        verbId: bargain
+        targetId: veil_glamour_fixture_02
+      expectedLedger:
+        turn: 3
+        lastVerb: bargain
+      forbiddenProse:
+      - no uncommitted damage
+      - no uncommitted gold
+      - no invented ownership
+      - no outcome guarantee
+    - id: veil_glamour_eval_unmask
+      given:
+        promise: 0
+        turn: 3
+      action:
+        verbId: unmask
+        targetId: veil_glamour_fixture_03
+      expectedLedger:
+        turn: 4
+        lastVerb: unmask
+      forbiddenProse:
+      - no uncommitted damage
+      - no uncommitted gold
+      - no invented ownership
+      - no outcome guarantee
+    - id: veil_glamour_eval_weave
+      given:
+        favor: 1
+        turn: 4
+      action:
+        verbId: weave
+        targetId: veil_glamour_fixture_04
+      expectedLedger:
+        turn: 5
+        lastVerb: weave
+      forbiddenProse:
+      - no uncommitted damage
+      - no uncommitted gold
+      - no invented ownership
+      - no outcome guarantee
+    - id: veil_glamour_eval_refuse
+      given:
+        thorn: 0
+        turn: 5
+      action:
+        verbId: refuse
+        targetId: veil_glamour_fixture_05
+      expectedLedger:
+        turn: 6
+        lastVerb: refuse
+      forbiddenProse:
+      - no uncommitted damage
+      - no uncommitted gold
+      - no invented ownership
+      - no outcome guarantee
+    - id: veil_glamour_eval_gift
+      given:
+        veil: 3
+        turn: 6
+      action:
+        verbId: gift
+        targetId: veil_glamour_fixture_06
+      expectedLedger:
+        turn: 7
+        lastVerb: gift
+      forbiddenProse:
+      - no uncommitted damage
+      - no uncommitted gold
+      - no invented ownership
+      - no outcome guarantee
+    - id: veil_glamour_eval_seek
+      given:
+        courtStanding: 0
+        turn: 7
+      action:
+        verbId: seek
+        targetId: veil_glamour_fixture_07
+      expectedLedger:
+        turn: 8
+        lastVerb: seek
+      forbiddenProse:
+      - no uncommitted damage
+      - no uncommitted gold
+      - no invented ownership
+      - no outcome guarantee
+    - id: veil_glamour_eval_hide
+      given:
+        memory: 1
+        turn: 8
+      action:
+        verbId: hide
+        targetId: veil_glamour_fixture_08
+      expectedLedger:
+        turn: 9
+        lastVerb: hide
+      forbiddenProse:
+      - no uncommitted damage
+      - no uncommitted gold
+      - no invented ownership
+      - no outcome guarantee
+    - id: veil_glamour_eval_remember
+      given:
+        hp: 15
+        turn: 9
+      action:
+        verbId: remember
+        targetId: veil_glamour_fixture_09
+      expectedLedger:
+        turn: 10
+        lastVerb: remember
+      forbiddenProse:
+      - no uncommitted damage
+      - no uncommitted gold
+      - no invented ownership
+      - no outcome guarantee
+    - id: veil_glamour_eval_appeal
+      given:
+        glamour: 2
+        turn: 10
+      action:
+        verbId: appeal
+        targetId: veil_glamour_fixture_10
+      expectedLedger:
+        turn: 11
+        lastVerb: appeal
+      forbiddenProse:
+      - no uncommitted damage
+      - no uncommitted gold
+      - no invented ownership
+      - no outcome guarantee
+    - id: veil_glamour_eval_retreat
+      given:
+        promise: 0
+        turn: 11
+      action:
+        verbId: retreat
+        targetId: veil_glamour_fixture_11
+      expectedLedger:
+        turn: 12
+        lastVerb: retreat
+      forbiddenProse:
+      - no uncommitted damage
+      - no uncommitted gold
+      - no invented ownership
+      - no outcome guarantee
+    - id: veil_glamour_eval_seal
+      given:
+        favor: 1
+        turn: 12
+      action:
+        verbId: seal
+        targetId: veil_glamour_fixture_12
+      expectedLedger:
+        turn: 13
+        lastVerb: seal
+      forbiddenProse:
+      - no uncommitted damage
+      - no uncommitted gold
+      - no invented ownership
+      - no outcome guarantee
+    - id: veil_glamour_eval_prune
+      given:
+        thorn: 0
+        turn: 13
+      action:
+        verbId: prune
+        targetId: veil_glamour_fixture_13
+      expectedLedger:
+        turn: 14
+        lastVerb: prune
+      forbiddenProse:
+      - no uncommitted damage
+      - no uncommitted gold
+      - no invented ownership
+      - no outcome guarantee
+    - id: veil_glamour_eval_mirror
+      given:
+        veil: 3
+        turn: 14
+      action:
+        verbId: mirror
+        targetId: veil_glamour_fixture_14
+      expectedLedger:
+        turn: 15
+        lastVerb: mirror
+      forbiddenProse:
+      - no uncommitted damage
+      - no uncommitted gold
+      - no invented ownership
+      - no outcome guarantee
+    - id: veil_glamour_eval_name
+      given:
+        courtStanding: 0
+        turn: 15
+      action:
+        verbId: name
+        targetId: veil_glamour_fixture_15
+      expectedLedger:
+        turn: 16
+        lastVerb: name
+      forbiddenProse:
+      - no uncommitted damage
+      - no uncommitted gold
+      - no invented ownership
+      - no outcome guarantee
+  liminal_steadfast:
+    ledgerFields:
+    - id: steadfast
+      startValue: 8
+      type: integer
+    - id: orientation
+      startValue: 4
+      type: integer
+    - id: clue
+      startValue: 0
+      type: integer
+    - id: roomShift
+      startValue: 0
+      type: integer
+    - id: comfort
+      startValue: 3
+      type: integer
+    - id: exitMarks
+      startValue: 0
+      type: integer
+    - id: battery
+      startValue: 4
+      type: integer
+    - id: anchor
+      startValue: 1
+      type: integer
+    roundResolve:
+    - validate action against committed ledger
+    - validate action cost and legal target
+    - roll or calculate only through CODE
+    - apply statuses and resource deltas
+    - commit ledger atomically
+    - narrate the committed result only
+    wipeCheckpoint:
+      wipe: return to last checkpoint
+      retain: personal loot and prior quest completion
+      clear: encounter-only state
+      permadeathV1: false
+    weeklyLockout:
+      scope: per-character per-boss
+      saleBypass: false
+    statuses:
+    - id: steady
+      durationTurns: 1
+      numericModifier: 1
+    - id: rattled
+      durationTurns: 2
+      numericModifier: -1
+    - id: focused
+      durationTurns: 3
+      numericModifier: 1
+    - id: exposed
+      durationTurns: 1
+      numericModifier: -1
+    - id: guarded
+      durationTurns: 2
+      numericModifier: 1
+    - id: slowed
+      durationTurns: 3
+      numericModifier: -1
+    - id: inspired
+      durationTurns: 1
+      numericModifier: 1
+    - id: spent
+      durationTurns: 2
+      numericModifier: -1
+    - id: anchored
+      durationTurns: 3
+      numericModifier: 1
+    - id: marked
+      durationTurns: 1
+      numericModifier: -1
+    - id: wary
+      durationTurns: 2
+      numericModifier: -1
+    - id: mended
+      durationTurns: 3
+      numericModifier: 1
+    verbs:
+    - id: ground
+      display: Ground
+      requiresCommit: true
+    - id: listen
+      display: Listen
+      requiresCommit: true
+    - id: map
+      display: Map
+      requiresCommit: true
+    - id: open
+      display: Open
+      requiresCommit: true
+    - id: close
+      display: Close
+      requiresCommit: true
+    - id: call
+      display: Call
+      requiresCommit: true
+    - id: anchor
+      display: Anchor
+      requiresCommit: true
+    - id: hide
+      display: Hide
+      requiresCommit: true
+    - id: test
+      display: Test
+      requiresCommit: true
+    - id: rest
+      display: Rest
+      requiresCommit: true
+    - id: return
+      display: Return
+      requiresCommit: true
+    - id: leave
+      display: Leave
+      requiresCommit: true
+    - id: count
+      display: Count
+      requiresCommit: true
+    - id: trace
+      display: Trace
+      requiresCommit: true
+    - id: breathe
+      display: Breathe
+      requiresCommit: true
+    - id: label
+      display: Label
+      requiresCommit: true
+    chromeTemplates:
+    - id: liminal_steadfast_chrome_01
+      label: Ledger
+      template: '[Ledger] {{steadfast}} • turn {{turn}} • committed'
+    - id: liminal_steadfast_chrome_02
+      label: Turn
+      template: '[Turn] {{orientation}} • turn {{turn}} • committed'
+    - id: liminal_steadfast_chrome_03
+      label: Status
+      template: '[Status] {{clue}} • turn {{turn}} • committed'
+    - id: liminal_steadfast_chrome_04
+      label: Route
+      template: '[Route] {{roomShift}} • turn {{turn}} • committed'
+    - id: liminal_steadfast_chrome_05
+      label: Party
+      template: '[Party] {{comfort}} • turn {{turn}} • committed'
+    - id: liminal_steadfast_chrome_06
+      label: Checkpoint
+      template: '[Checkpoint] {{exitMarks}} • turn {{turn}} • committed'
+    - id: liminal_steadfast_chrome_07
+      label: Reward
+      template: '[Reward] {{battery}} • turn {{turn}} • committed'
+    - id: liminal_steadfast_chrome_08
+      label: Safety
+      template: '[Safety] {{anchor}} • turn {{turn}} • committed'
+    evalProbes:
+    - id: liminal_steadfast_eval_ground
+      given:
+        steadfast: 8
+        turn: 1
+      action:
+        verbId: ground
+        targetId: liminal_steadfast_fixture_01
+      expectedLedger:
+        turn: 2
+        lastVerb: ground
+      forbiddenProse:
+      - no uncommitted damage
+      - no uncommitted gold
+      - no invented ownership
+      - no outcome guarantee
+    - id: liminal_steadfast_eval_listen
+      given:
+        orientation: 4
+        turn: 2
+      action:
+        verbId: listen
+        targetId: liminal_steadfast_fixture_02
+      expectedLedger:
+        turn: 3
+        lastVerb: listen
+      forbiddenProse:
+      - no uncommitted damage
+      - no uncommitted gold
+      - no invented ownership
+      - no outcome guarantee
+    - id: liminal_steadfast_eval_map
+      given:
+        clue: 0
+        turn: 3
+      action:
+        verbId: map
+        targetId: liminal_steadfast_fixture_03
+      expectedLedger:
+        turn: 4
+        lastVerb: map
+      forbiddenProse:
+      - no uncommitted damage
+      - no uncommitted gold
+      - no invented ownership
+      - no outcome guarantee
+    - id: liminal_steadfast_eval_open
+      given:
+        roomShift: 0
+        turn: 4
+      action:
+        verbId: open
+        targetId: liminal_steadfast_fixture_04
+      expectedLedger:
+        turn: 5
+        lastVerb: open
+      forbiddenProse:
+      - no uncommitted damage
+      - no uncommitted gold
+      - no invented ownership
+      - no outcome guarantee
+    - id: liminal_steadfast_eval_close
+      given:
+        comfort: 3
+        turn: 5
+      action:
+        verbId: close
+        targetId: liminal_steadfast_fixture_05
+      expectedLedger:
+        turn: 6
+        lastVerb: close
+      forbiddenProse:
+      - no uncommitted damage
+      - no uncommitted gold
+      - no invented ownership
+      - no outcome guarantee
+    - id: liminal_steadfast_eval_call
+      given:
+        exitMarks: 0
+        turn: 6
+      action:
+        verbId: call
+        targetId: liminal_steadfast_fixture_06
+      expectedLedger:
+        turn: 7
+        lastVerb: call
+      forbiddenProse:
+      - no uncommitted damage
+      - no uncommitted gold
+      - no invented ownership
+      - no outcome guarantee
+    - id: liminal_steadfast_eval_anchor
+      given:
+        battery: 4
+        turn: 7
+      action:
+        verbId: anchor
+        targetId: liminal_steadfast_fixture_07
+      expectedLedger:
+        turn: 8
+        lastVerb: anchor
+      forbiddenProse:
+      - no uncommitted damage
+      - no uncommitted gold
+      - no invented ownership
+      - no outcome guarantee
+    - id: liminal_steadfast_eval_hide
+      given:
+        anchor: 1
+        turn: 8
+      action:
+        verbId: hide
+        targetId: liminal_steadfast_fixture_08
+      expectedLedger:
+        turn: 9
+        lastVerb: hide
+      forbiddenProse:
+      - no uncommitted damage
+      - no uncommitted gold
+      - no invented ownership
+      - no outcome guarantee
+    - id: liminal_steadfast_eval_test
+      given:
+        steadfast: 8
+        turn: 9
+      action:
+        verbId: test
+        targetId: liminal_steadfast_fixture_09
+      expectedLedger:
+        turn: 10
+        lastVerb: test
+      forbiddenProse:
+      - no uncommitted damage
+      - no uncommitted gold
+      - no invented ownership
+      - no outcome guarantee
+    - id: liminal_steadfast_eval_rest
+      given:
+        orientation: 4
+        turn: 10
+      action:
+        verbId: rest
+        targetId: liminal_steadfast_fixture_10
+      expectedLedger:
+        turn: 11
+        lastVerb: rest
+      forbiddenProse:
+      - no uncommitted damage
+      - no uncommitted gold
+      - no invented ownership
+      - no outcome guarantee
+    - id: liminal_steadfast_eval_return
+      given:
+        clue: 0
+        turn: 11
+      action:
+        verbId: return
+        targetId: liminal_steadfast_fixture_11
+      expectedLedger:
+        turn: 12
+        lastVerb: return
+      forbiddenProse:
+      - no uncommitted damage
+      - no uncommitted gold
+      - no invented ownership
+      - no outcome guarantee
+    - id: liminal_steadfast_eval_leave
+      given:
+        roomShift: 0
+        turn: 12
+      action:
+        verbId: leave
+        targetId: liminal_steadfast_fixture_12
+      expectedLedger:
+        turn: 13
+        lastVerb: leave
+      forbiddenProse:
+      - no uncommitted damage
+      - no uncommitted gold
+      - no invented ownership
+      - no outcome guarantee
+    - id: liminal_steadfast_eval_count
+      given:
+        comfort: 3
+        turn: 13
+      action:
+        verbId: count
+        targetId: liminal_steadfast_fixture_13
+      expectedLedger:
+        turn: 14
+        lastVerb: count
+      forbiddenProse:
+      - no uncommitted damage
+      - no uncommitted gold
+      - no invented ownership
+      - no outcome guarantee
+    - id: liminal_steadfast_eval_trace
+      given:
+        exitMarks: 0
+        turn: 14
+      action:
+        verbId: trace
+        targetId: liminal_steadfast_fixture_14
+      expectedLedger:
+        turn: 15
+        lastVerb: trace
+      forbiddenProse:
+      - no uncommitted damage
+      - no uncommitted gold
+      - no invented ownership
+      - no outcome guarantee
+    - id: liminal_steadfast_eval_breathe
+      given:
+        battery: 4
+        turn: 15
+      action:
+        verbId: breathe
+        targetId: liminal_steadfast_fixture_15
+      expectedLedger:
+        turn: 16
+        lastVerb: breathe
+      forbiddenProse:
+      - no uncommitted damage
+      - no uncommitted gold
+      - no invented ownership
+      - no outcome guarantee
+reusedModules:
+  hp_check: 'Reference only: shared HP, guard, gold, lockout, checkpoint and party contract.'
+  cozy_tick: 'Reference only: shared energy, season, neighbor and authored-tick contract.'
+  hunt_part: 'Reference only: shared part-state, camp, tracking, supplies and personal-loot contract.'
+  steadfast: 'Reference only: shared steadfast, clue, ward and safety contract.'
+  heat_wanted: 'Reference only: shared heat, wanted, cache, cover and checkpoint contract.'
+  ship_board: 'Reference only: shared hull, crew, route, cargo, weather, berth and party contract.'

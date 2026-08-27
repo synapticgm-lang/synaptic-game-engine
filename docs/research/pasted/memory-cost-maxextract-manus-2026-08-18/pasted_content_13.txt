@@ -1,0 +1,69 @@
+Act as a Principal Mechatronics Engineer, Regulatory Compliance Specialist, and Grant Funding Strategist.
+
+Using the established architecture and parametric baseline for the "Hybrid SELV Micro-Climate Cassette" (75 mm plenum, 35° perimeter diffuser, 50 mm OD / 44 mm ID segregated mast, 24V/48V SELV bus, closed-loop PCM/chilled glycol loop, and ESP32 firmware), generate the final suite of production-grade engineering, regulatory, software, and grant funding assets.
+
+Format all deliverables cleanly for immediate export to Word (.docx) or PDF, with executable code blocks, structured markdown tables, and complete technical specifications.
+
+---
+
+### REQUIRED SECTIONS & DELIVERABLES
+
+#### 1. Parametric 3D CAD Expansion (OpenSCAD Scripts)
+Provide complete, executable OpenSCAD (.scad) source code for:
+1. Base Reservoir & Ballast Chassis (`base_reservoir_ballast_chassis.scad`): A modular, weighted base enclosure defining internal mounting compartments for a 40 kg insulated fluid reservoir, PCM thermal cartridges, 24V EC pump, LiFePO4 battery pack, and immersion heater port with integrated vibration isolation bosses.
+2. Sloped Condensate Drain Pan (`sloped_condensate_pan.scad`): A 3° conical/annular catchment tray with an integrated peripheral collection trough, anti-slosh baffles, low-point barbed drain nipple, and mounting bosses for the pan-level float switch.
+
+#### 2. Electrical Loom & Wiring Harness Specification
+Provide a complete, manufacturing-ready Pin-to-Pin Wiring Schedule table including:
+- Harness ID, Source Connector, Target Pinout, Wire Gauge (AWG/mm²), Insulation Type (Tefzel/XLPE), Color Coding, Terminal P/N (e.g., JST, Molex, Deutsch DT/Amphenol IP68), Shielding Requirements, and Maximum Continuous Current.
+- Detail the exact separation of the 24V/48V DC power conductors from the shielded analog sensor pairs inside the 50/44 mm mast bushing.
+
+#### 3. Computational Fluid Dynamics (CFD) Automation Script
+Provide a Python script (`setup_openfoam_plenum.py`) that generates the boundary condition dictionaries (`0/p`, `0/U`, `constant/transportProperties`, `system/blockMeshDict`, `system/controlDict`) for an OpenFOAM k-epsilon / SST k-omega turbulence simulation of the 75 mm plenum chamber and 35° radial diffuser slot at 0.16 m³/s airflow.
+
+#### 4. SPICE Circuit Simulation Netlist
+Provide an executable SPICE / LTspice netlist (`sensor_conditioning_afe.net`) simulating:
+- RTD (PT100/PT1000) bridge amplifier and 2nd-order low-pass Butterworth filter (cutoff 10 Hz).
+- TVS diode surge clamping (ESD / inductive kickback protection) on the 24V pump and fan PWM lines.
+- Dry-contact optocoupler isolation circuit for the auxiliary 1.5 kW IR permit signal.
+
+#### 5. Comprehensive Design FMEA (Failure Mode and Effects Analysis)
+Provide an exhaustive, tabular DFMEA covering at least 12 critical mechanical, thermal, electrical, and structural failure modes:
+- Columns: Subsystem, Failure Mode, Potential Cause, Effect on System, Severity (S 1-10), Occurrence (O 1-10), Detection (D 1-10), Initial RPN, Corrective Engineering Action, Target Residual RPN.
+- Must include: Pump dry-run, dew-point sensor drift, condensate drain clogging, high-wind gust breakaway failure, mast internal hose abrasion, LiFePO4 BMS communication loss, and generator overspeed in storm conditions.
+
+#### 6. UKCA / CE Technical Construction File (TCF) Outline & Compliance Matrix
+Draft a formal standards compliance and technical file matrix covering:
+- Supply of Machinery (Safety) Regulations 2008 / Machinery Directive (BS EN ISO 12100).
+- Electrical Equipment (Safety) Regulations 2016 / Low Voltage Directive (BS EN 60335-1 / BS EN 60335-2-40 where applicable).
+- Electromagnetic Compatibility (EMC) Regulations 2016 (BS EN 61000-6-1, BS EN 61000-6-3).
+- Radio Equipment Regulations 2017 (for onboard 2.4 GHz ESP32 telemetry).
+- Specify required test methods, notified body / accredited laboratory roles, and technical file retention rules.
+
+#### 7. User Operation, Installation & Winterization Manual
+Draft a comprehensive, illustrated-ready User Manual structured as:
+1. Product Safety Warnings & Wind Speed Operating Boundaries (18 mph curtain limit, 35 mph open limit).
+2. Step-by-Step Mechanical Assembly & Ground Anchor/Ballast Setup.
+3. Hydronic Fluid Charging & Air Bleeding Procedure (inhibited propylene glycol mix).
+4. Winter Mode Operation, IR Heating Permitting, and Storage/Winterization Protocol.
+5. Maintenance Schedule (filter cleaning, drain pan flush, slip-ring inspection).
+
+#### 8. Field Diagnostic Web App (Single-File HTML/CSS/JS)
+Provide a standalone, responsive HTML5 file (`microclimate_field_diagnostic.html`) utilizing the Web Bluetooth API (or Web Serial API) to connect to the ESP32 controller:
+- Visual UI Dashboard: Real-time gauges for Ambient Temp, RH, Calculated Dew Point, Coil Temp, Fluid Flow (L/min), Rotor RPM, and Bus Voltage.
+- Status Indicators: Leak sensor, Pan float, Wind gust alarm, State machine mode.
+- Manual Override Panel: Protected service buttons to toggle pump PWM, fan speed, dump load, and test the emergency feather/brake actuators.
+
+#### 9. Clean-Tech Grant Funding Proposal Draft (Innovate UK Smart Grants Model)
+Draft a high-impact R&D grant proposal narrative structured to official UK grant standards:
+1. Project Vision & Clean-Tech Innovation (energy-positive micro-climate zoning, waste-heat hydronic scavenging).
+2. Technical Feasibility & Prototyping Roadmap (Phase 0 PoC through Phase 2 Beta).
+3. Commercial Market Potential & Economic Impact (Hospitality decarbonization, extended outdoor dining revenue, architectural passive cooling).
+4. Project Risk Management & Financial Justification.
+
+---
+
+### EXECUTION REQUIREMENTS
+- Write out all code, netlists, and document sections in full without abbreviations or placeholders.
+- Maintain rigorous engineering, legal, and regulatory terminology throughout.
+- Format with structured Markdown headings and tables ready for export to Word or PDF.

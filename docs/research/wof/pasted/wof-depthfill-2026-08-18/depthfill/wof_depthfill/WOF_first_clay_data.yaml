@@ -1,0 +1,2293 @@
+packFormatVersion: 1
+worldId: first_clay
+displayName: First Clay
+maturity: teen
+rulesModuleId: hp_check
+themeKit: First Clay Theme Kit
+places:
+- id: first_clay_place_01
+  publicName: Clay Harbor
+  zoneId: first_clay_zone_01
+  role: shared hub
+  mapScale: street
+  dangerTier: safe
+  outdoor: true
+  exits:
+  - first_clay_place_02
+  - first_clay_place_04
+  npcIds:
+  - first_clay_npc_01
+  - first_clay_npc_05
+  - first_clay_npc_09
+  dungeonId: null
+  interactableIds:
+  - first_clay_interact_01
+  - first_clay_interact_09
+- id: first_clay_place_02
+  publicName: Sun Court
+  zoneId: first_clay_zone_01
+  role: start hub
+  mapScale: street
+  dangerTier: safe
+  outdoor: true
+  exits:
+  - first_clay_place_01
+  - first_clay_place_03
+  npcIds:
+  - first_clay_npc_02
+  - first_clay_npc_06
+  - first_clay_npc_10
+  dungeonId: null
+  interactableIds:
+  - first_clay_interact_02
+  - first_clay_interact_10
+- id: first_clay_place_03
+  publicName: Reed Archive
+  zoneId: first_clay_zone_01
+  role: street route
+  mapScale: street
+  dangerTier: safe
+  outdoor: true
+  exits:
+  - first_clay_place_02
+  - first_clay_place_04
+  npcIds:
+  - first_clay_npc_03
+  - first_clay_npc_07
+  dungeonId: null
+  interactableIds:
+  - first_clay_interact_03
+  - first_clay_interact_11
+- id: first_clay_place_04
+  publicName: Star Kiln
+  zoneId: first_clay_zone_02
+  role: mid join
+  mapScale: street
+  dangerTier: low
+  outdoor: true
+  exits:
+  - first_clay_place_03
+  - first_clay_place_05
+  - first_clay_place_01
+  npcIds:
+  - first_clay_npc_04
+  - first_clay_npc_08
+  dungeonId: null
+  interactableIds:
+  - first_clay_interact_04
+  - first_clay_interact_12
+- id: first_clay_place_05
+  publicName: Caravan Fold
+  zoneId: first_clay_zone_02
+  role: work district
+  mapScale: interior
+  dangerTier: low
+  outdoor: false
+  exits:
+  - first_clay_place_04
+  - first_clay_place_06
+  npcIds: []
+  dungeonId: null
+  interactableIds:
+  - first_clay_interact_05
+- id: first_clay_place_06
+  publicName: Hill Ladder
+  zoneId: first_clay_zone_02
+  role: instance door
+  mapScale: dungeon
+  dangerTier: medium
+  outdoor: false
+  exits:
+  - first_clay_place_05
+  - first_clay_place_07
+  npcIds: []
+  dungeonId: first_clay_dungeon_01
+  interactableIds:
+  - first_clay_interact_06
+- id: first_clay_place_07
+  publicName: River Mirror
+  zoneId: first_clay_zone_03
+  role: wild edge
+  mapScale: street
+  dangerTier: medium
+  outdoor: true
+  exits:
+  - first_clay_place_06
+  - first_clay_place_08
+  npcIds: []
+  dungeonId: null
+  interactableIds:
+  - first_clay_interact_07
+- id: first_clay_place_08
+  publicName: Night Granary
+  zoneId: first_clay_zone_03
+  role: housing approach
+  mapScale: interior
+  dangerTier: low
+  outdoor: false
+  exits:
+  - first_clay_place_07
+  npcIds: []
+  dungeonId: null
+  interactableIds:
+  - first_clay_interact_08
+npcs:
+- id: first_clay_npc_01
+  name: Alden Vane
+  placeId: first_clay_place_01
+  role: quest
+  greet: Alden Vane says, ‘First Clay keeps its promises in small places. Tell me which one you noticed.’
+- id: first_clay_npc_02
+  name: Bryn Quill
+  placeId: first_clay_place_02
+  role: profession
+  greet: Bryn Quill says, ‘First Clay keeps its promises in small places. Tell me which one you noticed.’
+- id: first_clay_npc_03
+  name: Cato Vale
+  placeId: first_clay_place_03
+  role: hub
+  greet: Cato Vale says, ‘First Clay keeps its promises in small places. Tell me which one you noticed.’
+- id: first_clay_npc_04
+  name: Dessa Wren
+  placeId: first_clay_place_04
+  role: merchant
+  greet: Dessa Wren says, ‘First Clay keeps its promises in small places. Tell me which one you noticed.’
+- id: first_clay_npc_05
+  name: Eris Morrow
+  placeId: first_clay_place_01
+  role: local
+  greet: Eris Morrow says, ‘First Clay keeps its promises in small places. Tell me which one you noticed.’
+- id: first_clay_npc_06
+  name: Fenn Rowan
+  placeId: first_clay_place_02
+  role: host
+  greet: Fenn Rowan says, ‘First Clay keeps its promises in small places. Tell me which one you noticed.’
+- id: first_clay_npc_07
+  name: Gala Nook
+  placeId: first_clay_place_03
+  role: quest
+  greet: Gala Nook says, ‘First Clay keeps its promises in small places. Tell me which one you noticed.’
+- id: first_clay_npc_08
+  name: Holl Cress
+  placeId: first_clay_place_04
+  role: profession
+  greet: Holl Cress says, ‘First Clay keeps its promises in small places. Tell me which one you noticed.’
+- id: first_clay_npc_09
+  name: Ivo Silt
+  placeId: first_clay_place_01
+  role: local
+  greet: Ivo Silt says, ‘First Clay keeps its promises in small places. Tell me which one you noticed.’
+- id: first_clay_npc_10
+  name: Jori Pryce
+  placeId: first_clay_place_02
+  role: merchant
+  greet: Jori Pryce says, ‘First Clay keeps its promises in small places. Tell me which one you noticed.’
+kits:
+- id: first_clay_kit_01
+  publicName: River Measure
+  look: river measure workwear
+  values: practice river measure
+  taboo: Never use river measure authority to remove another person’s choice.
+  speechTell: Use the local rhythm of First Clay and make every offer concrete.
+  starterClothes: river_measure mantle
+  starterTool: river_measure tool
+  starterMapItem: first_clay_map_01
+  startingPlaceId: first_clay_place_01
+  firstHourQuestId: first_clay_q_01
+  abilityFlag: first_clay_ability_01
+- id: first_clay_kit_02
+  publicName: Hill Envoy
+  look: hill envoy workwear
+  values: practice hill envoy
+  taboo: Never use hill envoy authority to remove another person’s choice.
+  speechTell: Use the local rhythm of First Clay and make every offer concrete.
+  starterClothes: hill_envoy vest
+  starterTool: hill_envoy tool
+  starterMapItem: first_clay_map_02
+  startingPlaceId: first_clay_place_02
+  firstHourQuestId: first_clay_q_02
+  abilityFlag: first_clay_ability_02
+- id: first_clay_kit_03
+  publicName: Star Kilnwright
+  look: star kilnwright workwear
+  values: practice star kilnwright
+  taboo: Never use star kilnwright authority to remove another person’s choice.
+  speechTell: Use the local rhythm of First Clay and make every offer concrete.
+  starterClothes: star_kilnwright jacket
+  starterTool: star_kilnwright tool
+  starterMapItem: first_clay_map_03
+  startingPlaceId: first_clay_place_01
+  firstHourQuestId: first_clay_q_03
+  abilityFlag: first_clay_ability_03
+- id: first_clay_kit_04
+  publicName: Caravan Listener
+  look: caravan listener workwear
+  values: practice caravan listener
+  taboo: Never use caravan listener authority to remove another person’s choice.
+  speechTell: Use the local rhythm of First Clay and make every offer concrete.
+  starterClothes: caravan_listener sash
+  starterTool: caravan_listener tool
+  starterMapItem: first_clay_map_04
+  startingPlaceId: first_clay_place_02
+  firstHourQuestId: first_clay_q_04
+  abilityFlag: first_clay_ability_04
+quests:
+- id: first_clay_q_01
+  title: 'First Clay: Name a Working Promise'
+  family: identity
+  hidden: false
+  unlocksQuestId: first_clay_q_02
+  objectives:
+  - id: first_clay_q_01_obj_01
+    kind: visit_place
+    targetId: first_clay_place_01
+    count: 1
+  - id: first_clay_q_01_obj_02
+    kind: deliver_item
+    targetId: first_clay_deliver_item_01
+    count: 2
+  rewardGold: 12
+  rewardXp: 20
+- id: first_clay_q_02
+  title: 'First Clay: Set the First Tool Aside'
+  family: identity
+  hidden: false
+  unlocksQuestId: first_clay_q_03
+  objectives:
+  - id: first_clay_q_02_obj_01
+    kind: ledger_kill
+    targetId: first_clay_ledger_kill_02
+    count: 1
+  - id: first_clay_q_02_obj_02
+    kind: talk_to_npc
+    targetId: first_clay_npc_03
+    count: 2
+  rewardGold: 15
+  rewardXp: 25
+- id: first_clay_q_03
+  title: 'First Clay: Carry the Right Record'
+  family: identity
+  hidden: false
+  unlocksQuestId: first_clay_q_04
+  objectives:
+  - id: first_clay_q_03_obj_01
+    kind: ledger_bond
+    targetId: first_clay_ledger_bond_03
+    count: 1
+  - id: first_clay_q_03_obj_02
+    kind: collect_item
+    targetId: first_clay_collect_item_03
+    count: 2
+  rewardGold: 18
+  rewardXp: 30
+- id: first_clay_q_04
+  title: 'First Clay: Find the Missing Measure'
+  family: identity
+  hidden: false
+  unlocksQuestId: first_clay_q_05
+  objectives:
+  - id: first_clay_q_04_obj_01
+    kind: deliver_item
+    targetId: first_clay_deliver_item_04
+    count: 1
+  - id: first_clay_q_04_obj_02
+    kind: interact
+    targetId: first_clay_place_05
+    count: 2
+    verbId: cook
+  rewardGold: 21
+  rewardXp: 35
+- id: first_clay_q_05
+  title: 'First Clay: Teach a Safer Shortcut'
+  family: identity
+  hidden: false
+  unlocksQuestId: first_clay_q_06
+  objectives:
+  - id: first_clay_q_05_obj_01
+    kind: talk_to_npc
+    targetId: first_clay_npc_05
+    count: 1
+  - id: first_clay_q_05_obj_02
+    kind: score_beat
+    targetId: first_clay_score_beat_05
+    count: 2
+  rewardGold: 24
+  rewardXp: 40
+- id: first_clay_q_06
+  title: 'First Clay: Read the Local Weather'
+  family: profession
+  hidden: false
+  unlocksQuestId: first_clay_q_07
+  objectives:
+  - id: first_clay_q_06_obj_01
+    kind: collect_item
+    targetId: first_clay_collect_item_06
+    count: 1
+  - id: first_clay_q_06_obj_02
+    kind: build_tick
+    targetId: first_clay_build_tick_06
+    count: 2
+  rewardGold: 27
+  rewardXp: 45
+- id: first_clay_q_07
+  title: 'First Clay: Repair a Shared Threshold'
+  family: profession
+  hidden: false
+  unlocksQuestId: first_clay_q_08
+  objectives:
+  - id: first_clay_q_07_obj_01
+    kind: interact
+    targetId: first_clay_place_07
+    count: 1
+    verbId: inspect
+  - id: first_clay_q_07_obj_02
+    kind: hospitality_tick
+    targetId: first_clay_hospitality_tick_07
+    count: 2
+  rewardGold: 30
+  rewardXp: 50
+- id: first_clay_q_08
+  title: 'First Clay: Return a Borrowed Sign'
+  family: profession
+  hidden: false
+  unlocksQuestId: first_clay_q_09
+  objectives:
+  - id: first_clay_q_08_obj_01
+    kind: score_beat
+    targetId: first_clay_score_beat_08
+    count: 1
+  - id: first_clay_q_08_obj_02
+    kind: lap_finish
+    targetId: first_clay_lap_finish_08
+    count: 2
+  rewardGold: 33
+  rewardXp: 55
+- id: first_clay_q_09
+  title: 'First Clay: Host the Small Welcome'
+  family: profession
+  hidden: false
+  unlocksQuestId: first_clay_q_10
+  objectives:
+  - id: first_clay_q_09_obj_01
+    kind: build_tick
+    targetId: first_clay_build_tick_09
+    count: 1
+  - id: first_clay_q_09_obj_02
+    kind: visit_place
+    targetId: first_clay_place_02
+    count: 2
+  rewardGold: 36
+  rewardXp: 60
+- id: first_clay_q_10
+  title: 'First Clay: Choose a Fair Order'
+  family: profession
+  hidden: false
+  unlocksQuestId: first_clay_q_11
+  objectives:
+  - id: first_clay_q_10_obj_01
+    kind: hospitality_tick
+    targetId: first_clay_hospitality_tick_10
+    count: 1
+  - id: first_clay_q_10_obj_02
+    kind: ledger_kill
+    targetId: first_clay_ledger_kill_10
+    count: 2
+  rewardGold: 39
+  rewardXp: 65
+- id: first_clay_q_11
+  title: 'First Clay: Map the Quiet Detour'
+  family: profession
+  hidden: false
+  unlocksQuestId: first_clay_q_12
+  objectives:
+  - id: first_clay_q_11_obj_01
+    kind: lap_finish
+    targetId: first_clay_lap_finish_11
+    count: 1
+  - id: first_clay_q_11_obj_02
+    kind: ledger_bond
+    targetId: first_clay_ledger_bond_11
+    count: 2
+  rewardGold: 42
+  rewardXp: 70
+- id: first_clay_q_12
+  title: 'First Clay: Bring a Useful Witness'
+  family: profession
+  hidden: false
+  unlocksQuestId: first_clay_q_13
+  objectives:
+  - id: first_clay_q_12_obj_01
+    kind: visit_place
+    targetId: first_clay_place_04
+    count: 1
+  - id: first_clay_q_12_obj_02
+    kind: deliver_item
+    targetId: first_clay_deliver_item_12
+    count: 2
+  rewardGold: 45
+  rewardXp: 75
+- id: first_clay_q_13
+  title: 'First Clay: Sort the Unclaimed Materials'
+  family: zone_story
+  hidden: false
+  unlocksQuestId: first_clay_q_14
+  objectives:
+  - id: first_clay_q_13_obj_01
+    kind: ledger_kill
+    targetId: first_clay_ledger_kill_13
+    count: 1
+  - id: first_clay_q_13_obj_02
+    kind: talk_to_npc
+    targetId: first_clay_npc_04
+    count: 2
+  rewardGold: 48
+  rewardXp: 80
+- id: first_clay_q_14
+  title: 'First Clay: Make Room for a Visitor'
+  family: zone_story
+  hidden: false
+  unlocksQuestId: first_clay_q_15
+  objectives:
+  - id: first_clay_q_14_obj_01
+    kind: ledger_bond
+    targetId: first_clay_ledger_bond_14
+    count: 1
+  - id: first_clay_q_14_obj_02
+    kind: collect_item
+    targetId: first_clay_collect_item_14
+    count: 2
+  rewardGold: 51
+  rewardXp: 85
+- id: first_clay_q_15
+  title: 'First Clay: Close the Day’s Ledger'
+  family: zone_story
+  hidden: false
+  unlocksQuestId: first_clay_q_16
+  objectives:
+  - id: first_clay_q_15_obj_01
+    kind: deliver_item
+    targetId: first_clay_deliver_item_15
+    count: 1
+  - id: first_clay_q_15_obj_02
+    kind: interact
+    targetId: first_clay_place_08
+    count: 2
+    verbId: craft
+  rewardGold: 54
+  rewardXp: 90
+- id: first_clay_q_16
+  title: 'First Clay: Follow the Midway Signal'
+  family: zone_story
+  hidden: false
+  unlocksQuestId: first_clay_q_17
+  objectives:
+  - id: first_clay_q_16_obj_01
+    kind: talk_to_npc
+    targetId: first_clay_npc_06
+    count: 1
+  - id: first_clay_q_16_obj_02
+    kind: score_beat
+    targetId: first_clay_score_beat_16
+    count: 2
+  rewardGold: 57
+  rewardXp: 95
+- id: first_clay_q_17
+  title: 'First Clay: Uncover the Door Note'
+  family: zone_story
+  hidden: true
+  unlocksQuestId: first_clay_q_18
+  objectives:
+  - id: first_clay_q_17_obj_01
+    kind: collect_item
+    targetId: first_clay_collect_item_17
+    count: 1
+  - id: first_clay_q_17_obj_02
+    kind: build_tick
+    targetId: first_clay_build_tick_17
+    count: 2
+  rewardGold: 60
+  rewardXp: 100
+- id: first_clay_q_18
+  title: 'First Clay: Prepare the Team Table'
+  family: zone_story
+  hidden: false
+  unlocksQuestId: first_clay_q_19
+  objectives:
+  - id: first_clay_q_18_obj_01
+    kind: interact
+    targetId: first_clay_place_02
+    count: 1
+    verbId: bind_inn
+  - id: first_clay_q_18_obj_02
+    kind: hospitality_tick
+    targetId: first_clay_hospitality_tick_18
+    count: 2
+  rewardGold: 63
+  rewardXp: 105
+- id: first_clay_q_19
+  title: 'First Clay: Test the Local Method'
+  family: zone_story
+  hidden: false
+  unlocksQuestId: first_clay_q_20
+  objectives:
+  - id: first_clay_q_19_obj_01
+    kind: score_beat
+    targetId: first_clay_score_beat_19
+    count: 1
+  - id: first_clay_q_19_obj_02
+    kind: lap_finish
+    targetId: first_clay_lap_finish_19
+    count: 2
+  rewardGold: 66
+  rewardXp: 110
+- id: first_clay_q_20
+  title: 'First Clay: Hold a Careful Boundary'
+  family: zone_story
+  hidden: false
+  unlocksQuestId: first_clay_q_21
+  objectives:
+  - id: first_clay_q_20_obj_01
+    kind: build_tick
+    targetId: first_clay_build_tick_20
+    count: 1
+  - id: first_clay_q_20_obj_02
+    kind: visit_place
+    targetId: first_clay_place_05
+    count: 2
+  rewardGold: 69
+  rewardXp: 115
+- id: first_clay_q_21
+  title: 'First Clay: Answer the Neighbour’s Call'
+  family: extra
+  hidden: false
+  unlocksQuestId: first_clay_q_22
+  objectives:
+  - id: first_clay_q_21_obj_01
+    kind: hospitality_tick
+    targetId: first_clay_hospitality_tick_21
+    count: 1
+  - id: first_clay_q_21_obj_02
+    kind: ledger_kill
+    targetId: first_clay_ledger_kill_21
+    count: 2
+  rewardGold: 72
+  rewardXp: 120
+- id: first_clay_q_22
+  title: 'First Clay: Finish the Side Route'
+  family: extra
+  hidden: false
+  unlocksQuestId: first_clay_q_23
+  objectives:
+  - id: first_clay_q_22_obj_01
+    kind: lap_finish
+    targetId: first_clay_lap_finish_22
+    count: 1
+  - id: first_clay_q_22_obj_02
+    kind: ledger_bond
+    targetId: first_clay_ledger_bond_22
+    count: 2
+  rewardGold: 75
+  rewardXp: 125
+- id: first_clay_q_23
+  title: 'First Clay: Earn a Trusted Introduction'
+  family: extra
+  hidden: true
+  unlocksQuestId: first_clay_q_24
+  objectives:
+  - id: first_clay_q_23_obj_01
+    kind: visit_place
+    targetId: first_clay_place_07
+    count: 1
+  - id: first_clay_q_23_obj_02
+    kind: deliver_item
+    targetId: first_clay_deliver_item_23
+    count: 2
+  rewardGold: 78
+  rewardXp: 130
+- id: first_clay_q_24
+  title: 'First Clay: Open the Instance Path'
+  family: extra
+  hidden: false
+  unlocksQuestId: first_clay_q_25
+  objectives:
+  - id: first_clay_q_24_obj_01
+    kind: ledger_kill
+    targetId: first_clay_ledger_kill_24
+    count: 1
+  - id: first_clay_q_24_obj_02
+    kind: talk_to_npc
+    targetId: first_clay_npc_05
+    count: 2
+  rewardGold: 81
+  rewardXp: 135
+- id: first_clay_q_25
+  title: 'First Clay: Complete the First Big Night'
+  family: extra
+  hidden: false
+  unlocksQuestId: null
+  objectives:
+  - id: first_clay_q_25_obj_01
+    kind: ledger_bond
+    targetId: first_clay_ledger_bond_25
+    count: 1
+  - id: first_clay_q_25_obj_02
+    kind: collect_item
+    targetId: first_clay_collect_item_25
+    count: 2
+  rewardGold: 84
+  rewardXp: 140
+species:
+- id: first_clay_species_01
+  publicName: Clay Ibis
+  kind: opponent
+  hp: 8
+  armor: 0
+  threat: 1
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: first_clay_species_02
+  publicName: Sun Ram
+  kind: opponent
+  hp: 9
+  armor: 1
+  threat: 2
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: first_clay_species_03
+  publicName: River Lion
+  kind: opponent
+  hp: 10
+  armor: 2
+  threat: 3
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: first_clay_species_04
+  publicName: Star Tortoise
+  kind: opponent
+  hp: 11
+  armor: 3
+  threat: 1
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: first_clay_species_05
+  publicName: First Clay Field Type 5
+  kind: opponent
+  hp: 12
+  armor: 0
+  threat: 2
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: first_clay_species_06
+  publicName: First Clay Field Type 6
+  kind: opponent
+  hp: 13
+  armor: 1
+  threat: 3
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: first_clay_species_07
+  publicName: First Clay Field Type 7
+  kind: opponent
+  hp: 14
+  armor: 2
+  threat: 1
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: first_clay_species_08
+  publicName: First Clay Field Type 8
+  kind: opponent
+  hp: 15
+  armor: 3
+  threat: 2
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: first_clay_species_09
+  publicName: First Clay Field Type 9
+  kind: opponent
+  hp: 16
+  armor: 0
+  threat: 3
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: first_clay_species_10
+  publicName: First Clay Field Type 10
+  kind: opponent
+  hp: 17
+  armor: 1
+  threat: 1
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: first_clay_species_11
+  publicName: First Clay Field Type 11
+  kind: opponent
+  hp: 18
+  armor: 2
+  threat: 2
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: first_clay_species_12
+  publicName: First Clay Field Type 12
+  kind: opponent
+  hp: 19
+  armor: 3
+  threat: 3
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: first_clay_species_13
+  publicName: First Clay Field Type 13
+  kind: opponent
+  hp: 20
+  armor: 0
+  threat: 1
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: first_clay_species_14
+  publicName: First Clay Field Type 14
+  kind: opponent
+  hp: 21
+  armor: 1
+  threat: 2
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: first_clay_species_15
+  publicName: First Clay Field Type 15
+  kind: opponent
+  hp: 22
+  armor: 2
+  threat: 3
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: first_clay_species_16
+  publicName: First Clay Field Type 16
+  kind: opponent
+  hp: 23
+  armor: 3
+  threat: 1
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: first_clay_species_17
+  publicName: First Clay Field Type 17
+  kind: opponent
+  hp: 24
+  armor: 0
+  threat: 2
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: first_clay_species_18
+  publicName: First Clay Field Type 18
+  kind: opponent
+  hp: 25
+  armor: 1
+  threat: 3
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+items:
+- id: first_clay_item_01
+  publicName: Clay Harbor token
+  category: starter
+  power: false
+  sellGold: 3
+  description: A First Clay item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: first_clay_item_02
+  publicName: Sun Court tool
+  category: starter
+  power: false
+  sellGold: 5
+  description: A First Clay item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: first_clay_item_03
+  publicName: Reed Archive thread
+  category: profession
+  power: false
+  sellGold: 7
+  description: A First Clay item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: first_clay_item_04
+  publicName: Star Kiln seal
+  category: profession
+  power: false
+  sellGold: 9
+  description: A First Clay item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: first_clay_item_05
+  publicName: Caravan Fold bundle
+  category: instance
+  power: false
+  sellGold: 11
+  description: A First Clay item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: first_clay_item_06
+  publicName: Hill Ladder token
+  category: instance
+  power: false
+  sellGold: 13
+  description: A First Clay item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: first_clay_item_07
+  publicName: River Mirror tool
+  category: cosmetic
+  power: false
+  sellGold: 15
+  description: A First Clay item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: first_clay_item_08
+  publicName: Night Granary thread
+  category: cosmetic
+  power: false
+  sellGold: 17
+  description: A First Clay item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: first_clay_item_09
+  publicName: Clay Harbor seal
+  category: material
+  power: false
+  sellGold: 19
+  description: A First Clay item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: first_clay_item_10
+  publicName: Sun Court bundle
+  category: material
+  power: false
+  sellGold: 21
+  description: A First Clay item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: first_clay_item_11
+  publicName: Reed Archive token
+  category: care
+  power: false
+  sellGold: 23
+  description: A First Clay item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: first_clay_item_12
+  publicName: Star Kiln tool
+  category: care
+  power: false
+  sellGold: 25
+  description: A First Clay item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: first_clay_item_13
+  publicName: Caravan Fold thread
+  category: map
+  power: false
+  sellGold: 27
+  description: A First Clay item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: first_clay_item_14
+  publicName: Hill Ladder seal
+  category: map
+  power: false
+  sellGold: 29
+  description: A First Clay item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: first_clay_item_15
+  publicName: River Mirror bundle
+  category: vendor
+  power: false
+  sellGold: 31
+  description: A First Clay item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: first_clay_item_16
+  publicName: Night Granary token
+  category: vendor
+  power: false
+  sellGold: 33
+  description: A First Clay item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: first_clay_item_17
+  publicName: Clay Harbor tool
+  category: recipe
+  power: false
+  sellGold: 35
+  description: A First Clay item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: first_clay_item_18
+  publicName: Sun Court thread
+  category: recipe
+  power: false
+  sellGold: 37
+  description: A First Clay item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: first_clay_item_19
+  publicName: Reed Archive seal
+  category: keepsake
+  power: false
+  sellGold: 39
+  description: A First Clay item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: first_clay_item_20
+  publicName: Star Kiln bundle
+  category: keepsake
+  power: false
+  sellGold: 41
+  description: A First Clay item used for a stated craft, route, display, or record; it never alters paid outcomes.
+dropTables:
+- id: first_clay_drop_01
+  sourceId: first_clay_species_01
+  personalLoot: true
+  entries:
+  - itemId: first_clay_item_01
+    chancePct: 60
+    min: 1
+    max: 2
+  - itemId: first_clay_item_08
+    chancePct: 20
+    min: 1
+    max: 1
+- id: first_clay_drop_02
+  sourceId: first_clay_species_02
+  personalLoot: true
+  entries:
+  - itemId: first_clay_item_02
+    chancePct: 55
+    min: 1
+    max: 2
+  - itemId: first_clay_item_09
+    chancePct: 25
+    min: 1
+    max: 1
+- id: first_clay_drop_03
+  sourceId: first_clay_species_03
+  personalLoot: true
+  entries:
+  - itemId: first_clay_item_03
+    chancePct: 50
+    min: 1
+    max: 2
+  - itemId: first_clay_item_10
+    chancePct: 30
+    min: 1
+    max: 1
+- id: first_clay_drop_04
+  sourceId: first_clay_species_04
+  personalLoot: true
+  entries:
+  - itemId: first_clay_item_04
+    chancePct: 45
+    min: 1
+    max: 2
+  - itemId: first_clay_item_11
+    chancePct: 20
+    min: 1
+    max: 1
+- id: first_clay_drop_05
+  sourceId: first_clay_species_05
+  personalLoot: true
+  entries:
+  - itemId: first_clay_item_05
+    chancePct: 60
+    min: 1
+    max: 2
+  - itemId: first_clay_item_12
+    chancePct: 25
+    min: 1
+    max: 1
+- id: first_clay_drop_06
+  sourceId: first_clay_species_06
+  personalLoot: true
+  entries:
+  - itemId: first_clay_item_06
+    chancePct: 55
+    min: 1
+    max: 2
+  - itemId: first_clay_item_13
+    chancePct: 30
+    min: 1
+    max: 1
+- id: first_clay_drop_07
+  sourceId: first_clay_species_07
+  personalLoot: true
+  entries:
+  - itemId: first_clay_item_07
+    chancePct: 50
+    min: 1
+    max: 2
+  - itemId: first_clay_item_14
+    chancePct: 20
+    min: 1
+    max: 1
+- id: first_clay_drop_08
+  sourceId: first_clay_species_08
+  personalLoot: true
+  entries:
+  - itemId: first_clay_item_08
+    chancePct: 45
+    min: 1
+    max: 2
+  - itemId: first_clay_item_15
+    chancePct: 25
+    min: 1
+    max: 1
+- id: first_clay_drop_09
+  sourceId: first_clay_species_09
+  personalLoot: true
+  entries:
+  - itemId: first_clay_item_09
+    chancePct: 60
+    min: 1
+    max: 2
+  - itemId: first_clay_item_16
+    chancePct: 30
+    min: 1
+    max: 1
+- id: first_clay_drop_10
+  sourceId: first_clay_species_10
+  personalLoot: true
+  entries:
+  - itemId: first_clay_item_10
+    chancePct: 55
+    min: 1
+    max: 2
+  - itemId: first_clay_item_17
+    chancePct: 20
+    min: 1
+    max: 1
+- id: first_clay_drop_11
+  sourceId: first_clay_species_11
+  personalLoot: true
+  entries:
+  - itemId: first_clay_item_11
+    chancePct: 50
+    min: 1
+    max: 2
+  - itemId: first_clay_item_18
+    chancePct: 25
+    min: 1
+    max: 1
+- id: first_clay_drop_12
+  sourceId: first_clay_species_12
+  personalLoot: true
+  entries:
+  - itemId: first_clay_item_12
+    chancePct: 45
+    min: 1
+    max: 2
+  - itemId: first_clay_item_19
+    chancePct: 30
+    min: 1
+    max: 1
+vendors:
+- id: first_clay_vendor_01
+  publicName: First Clay Exchange
+  placeId: first_clay_place_01
+  currencyGoldName: Clay Shells
+  items:
+  - itemId: first_clay_item_01
+    priceGold: 8
+  - itemId: first_clay_item_02
+    priceGold: 11
+  - itemId: first_clay_item_03
+    priceGold: 14
+  - itemId: first_clay_item_04
+    priceGold: 17
+  - itemId: first_clay_item_05
+    priceGold: 20
+  - itemId: first_clay_item_06
+    priceGold: 23
+  - itemId: first_clay_item_07
+    priceGold: 26
+  - itemId: first_clay_item_08
+    priceGold: 29
+  repairCostPerPoint: 2
+dungeons:
+- id: first_clay_dungeon_01
+  publicName: The Star Kiln Accord
+  partyMin: 1
+  partyMax: 5
+  entrancePlaceId: first_clay_place_06
+  rooms:
+  - id: first_clay_dungeon_room_01
+    publicName: 'The Star Kiln Accord: Threshold Room'
+    describeBeforeCreature: Describe the material, sound, exits, and practical obstacle of Threshold Room before any species
+      is narrated.
+    trashSpeciesIds:
+    - first_clay_species_01
+    - first_clay_species_02
+    eliteSpeciesId: null
+    checkpoint: false
+    bossSpeciesId: null
+    exits:
+    - first_clay_dungeon_room_02
+  - id: first_clay_dungeon_room_02
+    publicName: 'The Star Kiln Accord: Workroom'
+    describeBeforeCreature: Describe the material, sound, exits, and practical obstacle of Workroom before any species is
+      narrated.
+    trashSpeciesIds:
+    - first_clay_species_03
+    - first_clay_species_04
+    eliteSpeciesId: null
+    checkpoint: false
+    bossSpeciesId: null
+    exits:
+    - first_clay_dungeon_room_03
+  - id: first_clay_dungeon_room_03
+    publicName: 'The Star Kiln Accord: Side Passage'
+    describeBeforeCreature: Describe the material, sound, exits, and practical obstacle of Side Passage before any species
+      is narrated.
+    trashSpeciesIds:
+    - first_clay_species_05
+    - first_clay_species_06
+    eliteSpeciesId: first_clay_species_09
+    checkpoint: false
+    bossSpeciesId: null
+    exits:
+    - first_clay_dungeon_room_04
+  - id: first_clay_dungeon_room_04
+    publicName: 'The Star Kiln Accord: Checkpoint Alcove'
+    describeBeforeCreature: Describe the material, sound, exits, and practical obstacle of Checkpoint Alcove before any species
+      is narrated.
+    trashSpeciesIds:
+    - first_clay_species_07
+    - first_clay_species_08
+    eliteSpeciesId: null
+    checkpoint: true
+    bossSpeciesId: null
+    exits:
+    - first_clay_dungeon_room_05
+  - id: first_clay_dungeon_room_05
+    publicName: 'The Star Kiln Accord: Finale Chamber'
+    describeBeforeCreature: Describe the material, sound, exits, and practical obstacle of Finale Chamber before any species
+      is narrated.
+    trashSpeciesIds:
+    - first_clay_species_09
+    - first_clay_species_10
+    eliteSpeciesId: null
+    checkpoint: false
+    bossSpeciesId: first_clay_species_14
+    exits: []
+  traps:
+  - id: first_clay_trap_01
+    publicName: misread sign
+    interactableId: first_clay_interact_01
+  - id: first_clay_trap_02
+    publicName: jammed latch
+    interactableId: first_clay_interact_02
+  - id: first_clay_trap_03
+    publicName: wet threshold
+    interactableId: first_clay_interact_03
+  - id: first_clay_trap_04
+    publicName: false shelf
+    interactableId: first_clay_interact_04
+  - id: first_clay_trap_05
+    publicName: quiet bell
+    interactableId: first_clay_interact_05
+  - id: first_clay_trap_06
+    publicName: sealed drawer
+    interactableId: first_clay_interact_06
+talkTrees:
+- npcId: first_clay_npc_01
+  greet: Alden Vane says, ‘First Clay keeps its promises in small places. Tell me which one you noticed.’
+  quest_offer: 'Alden Vane offers a specific task at Clay Harbor: settle the practical mismatch before it costs someone a
+    shift.'
+  quest_progress: Alden Vane checks the record and asks for the one detail that would change the outcome.
+  quest_turnin: Alden Vane marks the work complete, names who benefited, and hands over the recorded reward.
+  gossip:
+  - At Sun Court, people are discussing a missing care tag.
+  - The safest route today is through Reed Archive, not the obvious shortcut.
+  - Someone at Star Kiln is offering help but will not ask twice.
+  refusal: Alden Vane says, ‘No. I can explain the rule, but I will not bend it for noise.’
+  player_rude: Alden Vane says, ‘You may leave, lower your voice, or try a useful question. Choose one.’
+- npcId: first_clay_npc_02
+  greet: Bryn Quill says, ‘First Clay keeps its promises in small places. Tell me which one you noticed.’
+  quest_offer: 'Bryn Quill offers a specific task at Sun Court: settle the practical mismatch before it costs someone a shift.'
+  quest_progress: Bryn Quill checks the record and asks for the one detail that would change the outcome.
+  quest_turnin: Bryn Quill marks the work complete, names who benefited, and hands over the recorded reward.
+  gossip:
+  - At Reed Archive, people are discussing a missing care tag.
+  - The safest route today is through Star Kiln, not the obvious shortcut.
+  - Someone at Caravan Fold is offering help but will not ask twice.
+  refusal: Bryn Quill says, ‘No. I can explain the rule, but I will not bend it for noise.’
+  player_rude: Bryn Quill says, ‘You may leave, lower your voice, or try a useful question. Choose one.’
+- npcId: first_clay_npc_03
+  greet: Cato Vale says, ‘First Clay keeps its promises in small places. Tell me which one you noticed.’
+  quest_offer: 'Cato Vale offers a specific task at Reed Archive: settle the practical mismatch before it costs someone a
+    shift.'
+  quest_progress: Cato Vale checks the record and asks for the one detail that would change the outcome.
+  quest_turnin: Cato Vale marks the work complete, names who benefited, and hands over the recorded reward.
+  gossip:
+  - At Star Kiln, people are discussing a missing care tag.
+  - The safest route today is through Caravan Fold, not the obvious shortcut.
+  - Someone at Hill Ladder is offering help but will not ask twice.
+  refusal: Cato Vale says, ‘No. I can explain the rule, but I will not bend it for noise.’
+  player_rude: Cato Vale says, ‘You may leave, lower your voice, or try a useful question. Choose one.’
+- npcId: first_clay_npc_04
+  greet: Dessa Wren says, ‘First Clay keeps its promises in small places. Tell me which one you noticed.’
+  quest_offer: 'Dessa Wren offers a specific task at Star Kiln: settle the practical mismatch before it costs someone a shift.'
+  quest_progress: Dessa Wren checks the record and asks for the one detail that would change the outcome.
+  quest_turnin: Dessa Wren marks the work complete, names who benefited, and hands over the recorded reward.
+  gossip:
+  - At Caravan Fold, people are discussing a missing care tag.
+  - The safest route today is through Hill Ladder, not the obvious shortcut.
+  - Someone at River Mirror is offering help but will not ask twice.
+  refusal: Dessa Wren says, ‘No. I can explain the rule, but I will not bend it for noise.’
+  player_rude: Dessa Wren says, ‘You may leave, lower your voice, or try a useful question. Choose one.’
+- npcId: first_clay_npc_05
+  greet: Eris Morrow says, ‘First Clay keeps its promises in small places. Tell me which one you noticed.’
+  quest_offer: 'Eris Morrow offers a specific task at Clay Harbor: settle the practical mismatch before it costs someone a
+    shift.'
+  quest_progress: Eris Morrow checks the record and asks for the one detail that would change the outcome.
+  quest_turnin: Eris Morrow marks the work complete, names who benefited, and hands over the recorded reward.
+  gossip:
+  - At Hill Ladder, people are discussing a missing care tag.
+  - The safest route today is through River Mirror, not the obvious shortcut.
+  - Someone at Night Granary is offering help but will not ask twice.
+  refusal: Eris Morrow says, ‘No. I can explain the rule, but I will not bend it for noise.’
+  player_rude: Eris Morrow says, ‘You may leave, lower your voice, or try a useful question. Choose one.’
+- npcId: first_clay_npc_06
+  greet: Fenn Rowan says, ‘First Clay keeps its promises in small places. Tell me which one you noticed.’
+  quest_offer: 'Fenn Rowan offers a specific task at Sun Court: settle the practical mismatch before it costs someone a shift.'
+  quest_progress: Fenn Rowan checks the record and asks for the one detail that would change the outcome.
+  quest_turnin: Fenn Rowan marks the work complete, names who benefited, and hands over the recorded reward.
+  gossip:
+  - At River Mirror, people are discussing a missing care tag.
+  - The safest route today is through Night Granary, not the obvious shortcut.
+  - Someone at Clay Harbor is offering help but will not ask twice.
+  refusal: Fenn Rowan says, ‘No. I can explain the rule, but I will not bend it for noise.’
+  player_rude: Fenn Rowan says, ‘You may leave, lower your voice, or try a useful question. Choose one.’
+- npcId: first_clay_npc_07
+  greet: Gala Nook says, ‘First Clay keeps its promises in small places. Tell me which one you noticed.’
+  quest_offer: 'Gala Nook offers a specific task at Reed Archive: settle the practical mismatch before it costs someone a
+    shift.'
+  quest_progress: Gala Nook checks the record and asks for the one detail that would change the outcome.
+  quest_turnin: Gala Nook marks the work complete, names who benefited, and hands over the recorded reward.
+  gossip:
+  - At Night Granary, people are discussing a missing care tag.
+  - The safest route today is through Clay Harbor, not the obvious shortcut.
+  - Someone at Sun Court is offering help but will not ask twice.
+  refusal: Gala Nook says, ‘No. I can explain the rule, but I will not bend it for noise.’
+  player_rude: Gala Nook says, ‘You may leave, lower your voice, or try a useful question. Choose one.’
+- npcId: first_clay_npc_08
+  greet: Holl Cress says, ‘First Clay keeps its promises in small places. Tell me which one you noticed.’
+  quest_offer: 'Holl Cress offers a specific task at Star Kiln: settle the practical mismatch before it costs someone a shift.'
+  quest_progress: Holl Cress checks the record and asks for the one detail that would change the outcome.
+  quest_turnin: Holl Cress marks the work complete, names who benefited, and hands over the recorded reward.
+  gossip:
+  - At Clay Harbor, people are discussing a missing care tag.
+  - The safest route today is through Sun Court, not the obvious shortcut.
+  - Someone at Reed Archive is offering help but will not ask twice.
+  refusal: Holl Cress says, ‘No. I can explain the rule, but I will not bend it for noise.’
+  player_rude: Holl Cress says, ‘You may leave, lower your voice, or try a useful question. Choose one.’
+- npcId: first_clay_npc_09
+  greet: Ivo Silt says, ‘First Clay keeps its promises in small places. Tell me which one you noticed.’
+  quest_offer: 'Ivo Silt offers a specific task at Clay Harbor: settle the practical mismatch before it costs someone a shift.'
+  quest_progress: Ivo Silt checks the record and asks for the one detail that would change the outcome.
+  quest_turnin: Ivo Silt marks the work complete, names who benefited, and hands over the recorded reward.
+  gossip:
+  - At Sun Court, people are discussing a missing care tag.
+  - The safest route today is through Reed Archive, not the obvious shortcut.
+  - Someone at Star Kiln is offering help but will not ask twice.
+  refusal: Ivo Silt says, ‘No. I can explain the rule, but I will not bend it for noise.’
+  player_rude: Ivo Silt says, ‘You may leave, lower your voice, or try a useful question. Choose one.’
+- npcId: first_clay_npc_10
+  greet: Jori Pryce says, ‘First Clay keeps its promises in small places. Tell me which one you noticed.’
+  quest_offer: 'Jori Pryce offers a specific task at Sun Court: settle the practical mismatch before it costs someone a shift.'
+  quest_progress: Jori Pryce checks the record and asks for the one detail that would change the outcome.
+  quest_turnin: Jori Pryce marks the work complete, names who benefited, and hands over the recorded reward.
+  gossip:
+  - At Reed Archive, people are discussing a missing care tag.
+  - The safest route today is through Star Kiln, not the obvious shortcut.
+  - Someone at Caravan Fold is offering help but will not ask twice.
+  refusal: Jori Pryce says, ‘No. I can explain the rule, but I will not bend it for noise.’
+  player_rude: Jori Pryce says, ‘You may leave, lower your voice, or try a useful question. Choose one.’
+choiceButtons:
+- id: first_clay_choice_01_01
+  placeId: first_clay_place_01
+  label: Read the notice at Clay Harbor
+  requires: []
+  intentKind: talk
+  stake: one turn
+- id: first_clay_choice_01_02
+  placeId: first_clay_place_01
+  label: Ask for an introduction at Clay Harbor
+  requires: []
+  intentKind: talk
+  stake: one supply
+- id: first_clay_choice_01_03
+  placeId: first_clay_place_01
+  label: Check the tool tag at Clay Harbor
+  requires: []
+  intentKind: inspect
+  stake: a declined invitation
+- id: first_clay_choice_01_04
+  placeId: first_clay_place_01
+  label: Offer a hand at Clay Harbor
+  requires: []
+  intentKind: interact
+  stake: a public note
+- id: first_clay_choice_01_05
+  placeId: first_clay_place_01
+  label: Take the safer route at Clay Harbor
+  requires:
+  - first_clay_item_05
+  intentKind: travel
+  stake: a short detour
+- id: first_clay_choice_01_06
+  placeId: first_clay_place_01
+  label: Open the local record at Clay Harbor
+  requires:
+  - first_clay_item_06
+  intentKind: interact
+  stake: one turn
+- id: first_clay_choice_01_07
+  placeId: first_clay_place_01
+  label: Rest at the bench at Clay Harbor
+  requires:
+  - first_clay_item_07
+  intentKind: rest
+  stake: one supply
+- id: first_clay_choice_01_08
+  placeId: first_clay_place_01
+  label: Repair the marker at Clay Harbor
+  requires:
+  - first_clay_item_08
+  intentKind: interact
+  stake: a declined invitation
+- id: first_clay_choice_01_09
+  placeId: first_clay_place_01
+  label: Prepare a shared item at Clay Harbor
+  requires:
+  - first_clay_item_09
+  intentKind: craft
+  stake: a public note
+- id: first_clay_choice_01_10
+  placeId: first_clay_place_01
+  label: Leave a kind note at Clay Harbor
+  requires:
+  - first_clay_item_10
+  intentKind: talk
+  stake: a short detour
+- id: first_clay_choice_02_01
+  placeId: first_clay_place_02
+  label: Read the notice at Sun Court
+  requires: []
+  intentKind: talk
+  stake: one turn
+- id: first_clay_choice_02_02
+  placeId: first_clay_place_02
+  label: Ask for an introduction at Sun Court
+  requires: []
+  intentKind: talk
+  stake: one supply
+- id: first_clay_choice_02_03
+  placeId: first_clay_place_02
+  label: Check the tool tag at Sun Court
+  requires: []
+  intentKind: inspect
+  stake: a declined invitation
+- id: first_clay_choice_02_04
+  placeId: first_clay_place_02
+  label: Offer a hand at Sun Court
+  requires: []
+  intentKind: interact
+  stake: a public note
+- id: first_clay_choice_02_05
+  placeId: first_clay_place_02
+  label: Take the safer route at Sun Court
+  requires:
+  - first_clay_item_05
+  intentKind: travel
+  stake: a short detour
+- id: first_clay_choice_02_06
+  placeId: first_clay_place_02
+  label: Open the local record at Sun Court
+  requires:
+  - first_clay_item_06
+  intentKind: interact
+  stake: one turn
+- id: first_clay_choice_02_07
+  placeId: first_clay_place_02
+  label: Rest at the bench at Sun Court
+  requires:
+  - first_clay_item_07
+  intentKind: rest
+  stake: one supply
+- id: first_clay_choice_02_08
+  placeId: first_clay_place_02
+  label: Repair the marker at Sun Court
+  requires:
+  - first_clay_item_08
+  intentKind: interact
+  stake: a declined invitation
+- id: first_clay_choice_02_09
+  placeId: first_clay_place_02
+  label: Prepare a shared item at Sun Court
+  requires:
+  - first_clay_item_09
+  intentKind: craft
+  stake: a public note
+- id: first_clay_choice_02_10
+  placeId: first_clay_place_02
+  label: Leave a kind note at Sun Court
+  requires:
+  - first_clay_item_10
+  intentKind: talk
+  stake: a short detour
+- id: first_clay_choice_03_01
+  placeId: first_clay_place_03
+  label: Read the notice at Reed Archive
+  requires: []
+  intentKind: talk
+  stake: one turn
+- id: first_clay_choice_03_02
+  placeId: first_clay_place_03
+  label: Ask for an introduction at Reed Archive
+  requires: []
+  intentKind: talk
+  stake: one supply
+- id: first_clay_choice_03_03
+  placeId: first_clay_place_03
+  label: Check the tool tag at Reed Archive
+  requires: []
+  intentKind: inspect
+  stake: a declined invitation
+- id: first_clay_choice_03_04
+  placeId: first_clay_place_03
+  label: Offer a hand at Reed Archive
+  requires: []
+  intentKind: interact
+  stake: a public note
+- id: first_clay_choice_03_05
+  placeId: first_clay_place_03
+  label: Take the safer route at Reed Archive
+  requires:
+  - first_clay_item_05
+  intentKind: travel
+  stake: a short detour
+- id: first_clay_choice_03_06
+  placeId: first_clay_place_03
+  label: Open the local record at Reed Archive
+  requires:
+  - first_clay_item_06
+  intentKind: interact
+  stake: one turn
+- id: first_clay_choice_03_07
+  placeId: first_clay_place_03
+  label: Rest at the bench at Reed Archive
+  requires:
+  - first_clay_item_07
+  intentKind: rest
+  stake: one supply
+- id: first_clay_choice_03_08
+  placeId: first_clay_place_03
+  label: Repair the marker at Reed Archive
+  requires:
+  - first_clay_item_08
+  intentKind: interact
+  stake: a declined invitation
+- id: first_clay_choice_03_09
+  placeId: first_clay_place_03
+  label: Prepare a shared item at Reed Archive
+  requires:
+  - first_clay_item_09
+  intentKind: craft
+  stake: a public note
+- id: first_clay_choice_03_10
+  placeId: first_clay_place_03
+  label: Leave a kind note at Reed Archive
+  requires:
+  - first_clay_item_10
+  intentKind: talk
+  stake: a short detour
+- id: first_clay_choice_04_01
+  placeId: first_clay_place_04
+  label: Read the notice at Star Kiln
+  requires: []
+  intentKind: talk
+  stake: one turn
+- id: first_clay_choice_04_02
+  placeId: first_clay_place_04
+  label: Ask for an introduction at Star Kiln
+  requires: []
+  intentKind: talk
+  stake: one supply
+- id: first_clay_choice_04_03
+  placeId: first_clay_place_04
+  label: Check the tool tag at Star Kiln
+  requires: []
+  intentKind: inspect
+  stake: a declined invitation
+- id: first_clay_choice_04_04
+  placeId: first_clay_place_04
+  label: Offer a hand at Star Kiln
+  requires: []
+  intentKind: interact
+  stake: a public note
+- id: first_clay_choice_04_05
+  placeId: first_clay_place_04
+  label: Take the safer route at Star Kiln
+  requires:
+  - first_clay_item_05
+  intentKind: travel
+  stake: a short detour
+- id: first_clay_choice_04_06
+  placeId: first_clay_place_04
+  label: Open the local record at Star Kiln
+  requires:
+  - first_clay_item_06
+  intentKind: interact
+  stake: one turn
+- id: first_clay_choice_04_07
+  placeId: first_clay_place_04
+  label: Rest at the bench at Star Kiln
+  requires:
+  - first_clay_item_07
+  intentKind: rest
+  stake: one supply
+- id: first_clay_choice_04_08
+  placeId: first_clay_place_04
+  label: Repair the marker at Star Kiln
+  requires:
+  - first_clay_item_08
+  intentKind: interact
+  stake: a declined invitation
+- id: first_clay_choice_04_09
+  placeId: first_clay_place_04
+  label: Prepare a shared item at Star Kiln
+  requires:
+  - first_clay_item_09
+  intentKind: craft
+  stake: a public note
+- id: first_clay_choice_04_10
+  placeId: first_clay_place_04
+  label: Leave a kind note at Star Kiln
+  requires:
+  - first_clay_item_10
+  intentKind: talk
+  stake: a short detour
+- id: first_clay_choice_05_01
+  placeId: first_clay_place_05
+  label: Read the notice at Caravan Fold
+  requires: []
+  intentKind: talk
+  stake: one turn
+- id: first_clay_choice_05_02
+  placeId: first_clay_place_05
+  label: Ask for an introduction at Caravan Fold
+  requires: []
+  intentKind: talk
+  stake: one supply
+- id: first_clay_choice_05_03
+  placeId: first_clay_place_05
+  label: Check the tool tag at Caravan Fold
+  requires: []
+  intentKind: inspect
+  stake: a declined invitation
+- id: first_clay_choice_05_04
+  placeId: first_clay_place_05
+  label: Offer a hand at Caravan Fold
+  requires: []
+  intentKind: interact
+  stake: a public note
+- id: first_clay_choice_05_05
+  placeId: first_clay_place_05
+  label: Take the safer route at Caravan Fold
+  requires:
+  - first_clay_item_05
+  intentKind: travel
+  stake: a short detour
+- id: first_clay_choice_05_06
+  placeId: first_clay_place_05
+  label: Open the local record at Caravan Fold
+  requires:
+  - first_clay_item_06
+  intentKind: interact
+  stake: one turn
+- id: first_clay_choice_05_07
+  placeId: first_clay_place_05
+  label: Rest at the bench at Caravan Fold
+  requires:
+  - first_clay_item_07
+  intentKind: rest
+  stake: one supply
+- id: first_clay_choice_05_08
+  placeId: first_clay_place_05
+  label: Repair the marker at Caravan Fold
+  requires:
+  - first_clay_item_08
+  intentKind: interact
+  stake: a declined invitation
+- id: first_clay_choice_05_09
+  placeId: first_clay_place_05
+  label: Prepare a shared item at Caravan Fold
+  requires:
+  - first_clay_item_09
+  intentKind: craft
+  stake: a public note
+- id: first_clay_choice_05_10
+  placeId: first_clay_place_05
+  label: Leave a kind note at Caravan Fold
+  requires:
+  - first_clay_item_10
+  intentKind: talk
+  stake: a short detour
+- id: first_clay_choice_06_01
+  placeId: first_clay_place_06
+  label: Read the notice at Hill Ladder
+  requires: []
+  intentKind: talk
+  stake: one turn
+- id: first_clay_choice_06_02
+  placeId: first_clay_place_06
+  label: Ask for an introduction at Hill Ladder
+  requires: []
+  intentKind: talk
+  stake: one supply
+- id: first_clay_choice_06_03
+  placeId: first_clay_place_06
+  label: Check the tool tag at Hill Ladder
+  requires: []
+  intentKind: inspect
+  stake: a declined invitation
+- id: first_clay_choice_06_04
+  placeId: first_clay_place_06
+  label: Offer a hand at Hill Ladder
+  requires: []
+  intentKind: interact
+  stake: a public note
+- id: first_clay_choice_06_05
+  placeId: first_clay_place_06
+  label: Take the safer route at Hill Ladder
+  requires:
+  - first_clay_item_05
+  intentKind: travel
+  stake: a short detour
+- id: first_clay_choice_06_06
+  placeId: first_clay_place_06
+  label: Open the local record at Hill Ladder
+  requires:
+  - first_clay_item_06
+  intentKind: interact
+  stake: one turn
+- id: first_clay_choice_06_07
+  placeId: first_clay_place_06
+  label: Rest at the bench at Hill Ladder
+  requires:
+  - first_clay_item_07
+  intentKind: rest
+  stake: one supply
+- id: first_clay_choice_06_08
+  placeId: first_clay_place_06
+  label: Repair the marker at Hill Ladder
+  requires:
+  - first_clay_item_08
+  intentKind: interact
+  stake: a declined invitation
+- id: first_clay_choice_06_09
+  placeId: first_clay_place_06
+  label: Prepare a shared item at Hill Ladder
+  requires:
+  - first_clay_item_09
+  intentKind: craft
+  stake: a public note
+- id: first_clay_choice_06_10
+  placeId: first_clay_place_06
+  label: Leave a kind note at Hill Ladder
+  requires:
+  - first_clay_item_10
+  intentKind: talk
+  stake: a short detour
+- id: first_clay_choice_07_01
+  placeId: first_clay_place_07
+  label: Read the notice at River Mirror
+  requires: []
+  intentKind: talk
+  stake: one turn
+- id: first_clay_choice_07_02
+  placeId: first_clay_place_07
+  label: Ask for an introduction at River Mirror
+  requires: []
+  intentKind: talk
+  stake: one supply
+- id: first_clay_choice_07_03
+  placeId: first_clay_place_07
+  label: Check the tool tag at River Mirror
+  requires: []
+  intentKind: inspect
+  stake: a declined invitation
+- id: first_clay_choice_07_04
+  placeId: first_clay_place_07
+  label: Offer a hand at River Mirror
+  requires: []
+  intentKind: interact
+  stake: a public note
+- id: first_clay_choice_07_05
+  placeId: first_clay_place_07
+  label: Take the safer route at River Mirror
+  requires:
+  - first_clay_item_05
+  intentKind: travel
+  stake: a short detour
+- id: first_clay_choice_07_06
+  placeId: first_clay_place_07
+  label: Open the local record at River Mirror
+  requires:
+  - first_clay_item_06
+  intentKind: interact
+  stake: one turn
+- id: first_clay_choice_07_07
+  placeId: first_clay_place_07
+  label: Rest at the bench at River Mirror
+  requires:
+  - first_clay_item_07
+  intentKind: rest
+  stake: one supply
+- id: first_clay_choice_07_08
+  placeId: first_clay_place_07
+  label: Repair the marker at River Mirror
+  requires:
+  - first_clay_item_08
+  intentKind: interact
+  stake: a declined invitation
+- id: first_clay_choice_07_09
+  placeId: first_clay_place_07
+  label: Prepare a shared item at River Mirror
+  requires:
+  - first_clay_item_09
+  intentKind: craft
+  stake: a public note
+- id: first_clay_choice_07_10
+  placeId: first_clay_place_07
+  label: Leave a kind note at River Mirror
+  requires:
+  - first_clay_item_10
+  intentKind: talk
+  stake: a short detour
+- id: first_clay_choice_08_01
+  placeId: first_clay_place_08
+  label: Read the notice at Night Granary
+  requires: []
+  intentKind: talk
+  stake: one turn
+- id: first_clay_choice_08_02
+  placeId: first_clay_place_08
+  label: Ask for an introduction at Night Granary
+  requires: []
+  intentKind: talk
+  stake: one supply
+- id: first_clay_choice_08_03
+  placeId: first_clay_place_08
+  label: Check the tool tag at Night Granary
+  requires: []
+  intentKind: inspect
+  stake: a declined invitation
+- id: first_clay_choice_08_04
+  placeId: first_clay_place_08
+  label: Offer a hand at Night Granary
+  requires: []
+  intentKind: interact
+  stake: a public note
+- id: first_clay_choice_08_05
+  placeId: first_clay_place_08
+  label: Take the safer route at Night Granary
+  requires:
+  - first_clay_item_05
+  intentKind: travel
+  stake: a short detour
+- id: first_clay_choice_08_06
+  placeId: first_clay_place_08
+  label: Open the local record at Night Granary
+  requires:
+  - first_clay_item_06
+  intentKind: interact
+  stake: one turn
+- id: first_clay_choice_08_07
+  placeId: first_clay_place_08
+  label: Rest at the bench at Night Granary
+  requires:
+  - first_clay_item_07
+  intentKind: rest
+  stake: one supply
+- id: first_clay_choice_08_08
+  placeId: first_clay_place_08
+  label: Repair the marker at Night Granary
+  requires:
+  - first_clay_item_08
+  intentKind: interact
+  stake: a declined invitation
+- id: first_clay_choice_08_09
+  placeId: first_clay_place_08
+  label: Prepare a shared item at Night Granary
+  requires:
+  - first_clay_item_09
+  intentKind: craft
+  stake: a public note
+- id: first_clay_choice_08_10
+  placeId: first_clay_place_08
+  label: Leave a kind note at Night Granary
+  requires:
+  - first_clay_item_10
+  intentKind: talk
+  stake: a short detour
+interactables:
+- id: first_clay_interact_01
+  verbId: rest
+  publicName: Clay Harbor bench
+  placeId: first_clay_place_01
+  displayVerb: Rest here
+  stateKey: first_clay_rest_01
+- id: first_clay_interact_02
+  verbId: repair
+  publicName: Sun Court cabinet
+  placeId: first_clay_place_02
+  displayVerb: Repair here
+  stateKey: first_clay_repair_02
+- id: first_clay_interact_03
+  verbId: tend
+  publicName: Reed Archive rack
+  placeId: first_clay_place_03
+  displayVerb: Tend here
+  stateKey: first_clay_tend_03
+- id: first_clay_interact_04
+  verbId: craft
+  publicName: Star Kiln kettle
+  placeId: first_clay_place_04
+  displayVerb: Craft here
+  stateKey: first_clay_craft_04
+- id: first_clay_interact_05
+  verbId: cook
+  publicName: Caravan Fold ledger
+  placeId: first_clay_place_05
+  displayVerb: Cook here
+  stateKey: first_clay_cook_05
+- id: first_clay_interact_06
+  verbId: bind_inn
+  publicName: Hill Ladder rail
+  placeId: first_clay_place_06
+  displayVerb: Bind Inn here
+  stateKey: first_clay_bind_inn_06
+- id: first_clay_interact_07
+  verbId: inspect
+  publicName: River Mirror bell
+  placeId: first_clay_place_07
+  displayVerb: Inspect here
+  stateKey: first_clay_inspect_07
+- id: first_clay_interact_08
+  verbId: open
+  publicName: Night Granary board
+  placeId: first_clay_place_08
+  displayVerb: Open here
+  stateKey: first_clay_open_08
+- id: first_clay_interact_09
+  verbId: carry
+  publicName: Clay Harbor table
+  placeId: first_clay_place_01
+  displayVerb: Carry here
+  stateKey: first_clay_carry_09
+- id: first_clay_interact_10
+  verbId: clean
+  publicName: Sun Court lamp
+  placeId: first_clay_place_02
+  displayVerb: Clean here
+  stateKey: first_clay_clean_10
+- id: first_clay_interact_11
+  verbId: signal
+  publicName: Reed Archive gate
+  placeId: first_clay_place_03
+  displayVerb: Signal here
+  stateKey: first_clay_signal_11
+- id: first_clay_interact_12
+  verbId: record
+  publicName: Star Kiln shelf
+  placeId: first_clay_place_04
+  displayVerb: Record here
+  stateKey: first_clay_record_12
+interiors:
+- id: first_clay_interior_01
+  publicName: First Clay Home Interior
+  entrancePlaceId: first_clay_place_08
+  rooms:
+  - id: first_clay_home_room_01
+    publicName: First Clay Entry
+    mapScale: interior
+    exits:
+    - first_clay_home_room_02
+    props:
+    - first_clay_home_prop_01
+    - first_clay_home_prop_08
+  - id: first_clay_home_room_02
+    publicName: First Clay Main Room
+    mapScale: interior
+    exits:
+    - first_clay_home_room_01
+    - first_clay_home_room_03
+    props:
+    - first_clay_home_prop_02
+    - first_clay_home_prop_09
+  - id: first_clay_home_room_03
+    publicName: First Clay Work Nook
+    mapScale: interior
+    exits:
+    - first_clay_home_room_02
+    - first_clay_home_room_04
+    props:
+    - first_clay_home_prop_03
+    - first_clay_home_prop_10
+  - id: first_clay_home_room_04
+    publicName: First Clay Window Room
+    mapScale: interior
+    exits:
+    - first_clay_home_room_03
+    - first_clay_home_room_05
+    props:
+    - first_clay_home_prop_04
+    - first_clay_home_prop_11
+  - id: first_clay_home_room_05
+    publicName: First Clay Quiet Room
+    mapScale: interior
+    exits:
+    - first_clay_home_room_04
+    - first_clay_home_room_06
+    props:
+    - first_clay_home_prop_05
+    - first_clay_home_prop_12
+  - id: first_clay_home_room_06
+    publicName: First Clay Storage
+    mapScale: interior
+    exits:
+    - first_clay_home_room_05
+    - first_clay_home_room_07
+    props:
+    - first_clay_home_prop_06
+    - first_clay_home_prop_13
+  - id: first_clay_home_room_07
+    publicName: First Clay Back Step
+    mapScale: interior
+    exits:
+    - first_clay_home_room_06
+    props:
+    - first_clay_home_prop_07
+    - first_clay_home_prop_14
+talents:
+- id: first_clay_talent_01
+  publicName: First Clay Local Ear
+  cost: 1
+  requires: []
+  effectFlags:
+  - first_clay_effect_01
+  payToUnlock: false
+- id: first_clay_talent_02
+  publicName: First Clay Careful Hand
+  cost: 2
+  requires: []
+  effectFlags:
+  - first_clay_effect_02
+  payToUnlock: false
+- id: first_clay_talent_03
+  publicName: First Clay Route Sense
+  cost: 3
+  requires: []
+  effectFlags:
+  - first_clay_effect_03
+  payToUnlock: false
+- id: first_clay_talent_04
+  publicName: First Clay Shared Measure
+  cost: 4
+  requires: []
+  effectFlags:
+  - first_clay_effect_04
+  payToUnlock: false
+- id: first_clay_talent_05
+  publicName: First Clay Quiet Craft
+  cost: 1
+  requires:
+  - first_clay_talent_04
+  effectFlags:
+  - first_clay_effect_05
+  payToUnlock: false
+- id: first_clay_talent_06
+  publicName: First Clay Open Invitation
+  cost: 2
+  requires: []
+  effectFlags:
+  - first_clay_effect_06
+  payToUnlock: false
+- id: first_clay_talent_07
+  publicName: First Clay Safe Return
+  cost: 3
+  requires: []
+  effectFlags:
+  - first_clay_effect_07
+  payToUnlock: false
+- id: first_clay_talent_08
+  publicName: First Clay Field Note
+  cost: 4
+  requires: []
+  effectFlags:
+  - first_clay_effect_08
+  payToUnlock: false
+- id: first_clay_talent_09
+  publicName: First Clay Steady Pace
+  cost: 1
+  requires:
+  - first_clay_talent_08
+  effectFlags:
+  - first_clay_effect_09
+  payToUnlock: false
+- id: first_clay_talent_10
+  publicName: First Clay Clear Signal
+  cost: 2
+  requires: []
+  effectFlags:
+  - first_clay_effect_10
+  payToUnlock: false
+- id: first_clay_talent_11
+  publicName: First Clay Warm Welcome
+  cost: 3
+  requires: []
+  effectFlags:
+  - first_clay_effect_11
+  payToUnlock: false
+- id: first_clay_talent_12
+  publicName: First Clay Small Courage
+  cost: 4
+  requires: []
+  effectFlags:
+  - first_clay_effect_12
+  payToUnlock: false
+- id: first_clay_talent_13
+  publicName: First Clay Repair Habit
+  cost: 1
+  requires:
+  - first_clay_talent_12
+  effectFlags:
+  - first_clay_effect_13
+  payToUnlock: false
+- id: first_clay_talent_14
+  publicName: First Clay Trust Mark
+  cost: 2
+  requires: []
+  effectFlags:
+  - first_clay_effect_14
+  payToUnlock: false
+- id: first_clay_talent_15
+  publicName: First Clay Second Look
+  cost: 3
+  requires: []
+  effectFlags:
+  - first_clay_effect_15
+  payToUnlock: false
+- id: first_clay_talent_16
+  publicName: First Clay Closing Grace
+  cost: 4
+  requires: []
+  effectFlags:
+  - first_clay_effect_16
+  payToUnlock: false
+evalProbes:
+- id: first_clay_eval_01
+  given:
+    hp: 18
+    placeId: first_clay_place_01
+    turn: 1
+  action:
+    verbId: rest
+    targetId: first_clay_interact_01
+  expectedLedger:
+    turn: 2
+    lastAction: rest
+    placeId: first_clay_place_01
+  forbiddenProse:
+  - do not claim an uncommitted numeric reward
+  - do not alter damage, gold, ownership, or a score outside expectedLedger
+- id: first_clay_eval_02
+  given:
+    hp: 18
+    placeId: first_clay_place_02
+    turn: 2
+  action:
+    verbId: repair
+    targetId: first_clay_interact_02
+  expectedLedger:
+    turn: 3
+    lastAction: repair
+    placeId: first_clay_place_02
+  forbiddenProse:
+  - do not claim an uncommitted numeric reward
+  - do not alter damage, gold, ownership, or a score outside expectedLedger
+- id: first_clay_eval_03
+  given:
+    hp: 18
+    placeId: first_clay_place_03
+    turn: 3
+  action:
+    verbId: tend
+    targetId: first_clay_interact_03
+  expectedLedger:
+    turn: 4
+    lastAction: tend
+    placeId: first_clay_place_03
+  forbiddenProse:
+  - do not claim an uncommitted numeric reward
+  - do not alter damage, gold, ownership, or a score outside expectedLedger
+- id: first_clay_eval_04
+  given:
+    hp: 18
+    placeId: first_clay_place_04
+    turn: 4
+  action:
+    verbId: craft
+    targetId: first_clay_interact_04
+  expectedLedger:
+    turn: 5
+    lastAction: craft
+    placeId: first_clay_place_04
+  forbiddenProse:
+  - do not claim an uncommitted numeric reward
+  - do not alter damage, gold, ownership, or a score outside expectedLedger
+- id: first_clay_eval_05
+  given:
+    hp: 18
+    placeId: first_clay_place_05
+    turn: 5
+  action:
+    verbId: cook
+    targetId: first_clay_interact_05
+  expectedLedger:
+    turn: 6
+    lastAction: cook
+    placeId: first_clay_place_05
+  forbiddenProse:
+  - do not claim an uncommitted numeric reward
+  - do not alter damage, gold, ownership, or a score outside expectedLedger
+- id: first_clay_eval_06
+  given:
+    hp: 18
+    placeId: first_clay_place_06
+    turn: 6
+  action:
+    verbId: bind_inn
+    targetId: first_clay_interact_06
+  expectedLedger:
+    turn: 7
+    lastAction: bind_inn
+    placeId: first_clay_place_06
+  forbiddenProse:
+  - do not claim an uncommitted numeric reward
+  - do not alter damage, gold, ownership, or a score outside expectedLedger
+- id: first_clay_eval_07
+  given:
+    hp: 18
+    placeId: first_clay_place_07
+    turn: 7
+  action:
+    verbId: inspect
+    targetId: first_clay_interact_07
+  expectedLedger:
+    turn: 8
+    lastAction: inspect
+    placeId: first_clay_place_07
+  forbiddenProse:
+  - do not claim an uncommitted numeric reward
+  - do not alter damage, gold, ownership, or a score outside expectedLedger
+- id: first_clay_eval_08
+  given:
+    hp: 18
+    placeId: first_clay_place_08
+    turn: 8
+  action:
+    verbId: open
+    targetId: first_clay_interact_08
+  expectedLedger:
+    turn: 9
+    lastAction: open
+    placeId: first_clay_place_08
+  forbiddenProse:
+  - do not claim an uncommitted numeric reward
+  - do not alter damage, gold, ownership, or a score outside expectedLedger
+- id: first_clay_eval_09
+  given:
+    hp: 18
+    placeId: first_clay_place_01
+    turn: 9
+  action:
+    verbId: carry
+    targetId: first_clay_interact_09
+  expectedLedger:
+    turn: 10
+    lastAction: carry
+    placeId: first_clay_place_01
+  forbiddenProse:
+  - do not claim an uncommitted numeric reward
+  - do not alter damage, gold, ownership, or a score outside expectedLedger
+- id: first_clay_eval_10
+  given:
+    hp: 18
+    placeId: first_clay_place_02
+    turn: 10
+  action:
+    verbId: clean
+    targetId: first_clay_interact_10
+  expectedLedger:
+    turn: 11
+    lastAction: clean
+    placeId: first_clay_place_02
+  forbiddenProse:
+  - do not claim an uncommitted numeric reward
+  - do not alter damage, gold, ownership, or a score outside expectedLedger
+- id: first_clay_eval_11
+  given:
+    hp: 18
+    placeId: first_clay_place_03
+    turn: 11
+  action:
+    verbId: signal
+    targetId: first_clay_interact_11
+  expectedLedger:
+    turn: 12
+    lastAction: signal
+    placeId: first_clay_place_03
+  forbiddenProse:
+  - do not claim an uncommitted numeric reward
+  - do not alter damage, gold, ownership, or a score outside expectedLedger
+- id: first_clay_eval_12
+  given:
+    hp: 18
+    placeId: first_clay_place_04
+    turn: 12
+  action:
+    verbId: record
+    targetId: first_clay_interact_12
+  expectedLedger:
+    turn: 13
+    lastAction: record
+    placeId: first_clay_place_04
+  forbiddenProse:
+  - do not claim an uncommitted numeric reward
+  - do not alter damage, gold, ownership, or a score outside expectedLedger
+- id: first_clay_eval_13
+  given:
+    hp: 18
+    placeId: first_clay_place_05
+    turn: 13
+  action:
+    verbId: rest
+    targetId: first_clay_interact_01
+  expectedLedger:
+    turn: 14
+    lastAction: rest
+    placeId: first_clay_place_05
+  forbiddenProse:
+  - do not claim an uncommitted numeric reward
+  - do not alter damage, gold, ownership, or a score outside expectedLedger
+- id: first_clay_eval_14
+  given:
+    hp: 18
+    placeId: first_clay_place_06
+    turn: 14
+  action:
+    verbId: repair
+    targetId: first_clay_interact_02
+  expectedLedger:
+    turn: 15
+    lastAction: repair
+    placeId: first_clay_place_06
+  forbiddenProse:
+  - do not claim an uncommitted numeric reward
+  - do not alter damage, gold, ownership, or a score outside expectedLedger
+- id: first_clay_eval_15
+  given:
+    hp: 18
+    placeId: first_clay_place_07
+    turn: 15
+  action:
+    verbId: tend
+    targetId: first_clay_interact_03
+  expectedLedger:
+    turn: 16
+    lastAction: tend
+    placeId: first_clay_place_07
+  forbiddenProse:
+  - do not claim an uncommitted numeric reward
+  - do not alter damage, gold, ownership, or a score outside expectedLedger
+wallets:
+  goldName: Clay Shells
+  cosmeticTokenName: Star Tesserae
+  noConversion: true
+  prohibited:
+  - outcomes
+  - lockout skips
+  - catch rate
+  - raid clears
+  - random power packs
+  - gacha
+  - loot boxes
+dailyCaps:
+  contractsPerDay: 3
+  goldFromRepeatables: 90
+  weeklyBossLockout: per-character per-boss
+divergenceRecords:
+- id: first_clay_walkaway_01
+  choice: walk away from a local obligation
+  recordKey: first_clay_divergence_01
+  effect: Alternate dialogue and a non-punitive follow-up route.
+- id: first_clay_walkaway_02
+  choice: walk away from a local obligation
+  recordKey: first_clay_divergence_02
+  effect: Alternate dialogue and a non-punitive follow-up route.
+- id: first_clay_walkaway_03
+  choice: walk away from a local obligation
+  recordKey: first_clay_divergence_03
+  effect: Alternate dialogue and a non-punitive follow-up route.

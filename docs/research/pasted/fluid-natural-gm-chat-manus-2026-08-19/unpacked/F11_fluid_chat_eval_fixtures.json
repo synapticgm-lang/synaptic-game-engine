@@ -1,0 +1,854 @@
+{
+  "schema_version": "1.0",
+  "status": "Executable-style semantic fixtures; assertions are product tests, not model prompts.",
+  "fixture_count": 44,
+  "fixtures": [
+    {
+      "id": "FC-01",
+      "name": "Direct fact answer first",
+      "category": "question_first",
+      "mode": "standard",
+      "setup": "Bell wired to north gate.",
+      "player_input": "Is the bell wired to the gate?",
+      "assertions": "First two sentences answer yes and identify north gate; no StateTx.",
+      "fail_conditions": [
+        "atmosphere before answer",
+        "invented risk"
+      ],
+      "human_rubric_dimensions": [
+        "real_gm",
+        "story_quality",
+        "heard_me",
+        "fairness",
+        "immersion_kill"
+      ]
+    },
+    {
+      "id": "FC-02",
+      "name": "Question with uncertainty",
+      "category": "question_first",
+      "mode": "standard",
+      "setup": "No evidence beyond hidden hands.",
+      "player_input": "Is the envoy lying?",
+      "assertions": "States unknown/uncertain and names visible evidence.",
+      "fail_conditions": [
+        "claims hidden motive as fact"
+      ],
+      "human_rubric_dimensions": [
+        "real_gm",
+        "story_quality",
+        "heard_me",
+        "fairness",
+        "immersion_kill"
+      ]
+    },
+    {
+      "id": "FC-03",
+      "name": "Compound question action speech",
+      "category": "coverage",
+      "mode": "standard",
+      "setup": "Seal unknown owner; Nessa present; seal pocketable.",
+      "player_input": "I ask who owns the seal, tell Nessa to run, and pocket it.",
+      "assertions": "Three material clauses each have disposition; question answered or qualified first.",
+      "fail_conditions": [
+        "drops speech",
+        "pockets without permit"
+      ],
+      "human_rubric_dimensions": [
+        "real_gm",
+        "story_quality",
+        "heard_me",
+        "fairness",
+        "immersion_kill"
+      ]
+    },
+    {
+      "id": "FC-04",
+      "name": "Correction overrides summary",
+      "category": "correction",
+      "mode": "standard",
+      "setup": "Summary says silver; player correction valid.",
+      "player_input": "No, the key is brass. I try it in the lock.",
+      "assertions": "Correction applied before action; key called brass.",
+      "fail_conditions": [
+        "defers to summary",
+        "scene reset"
+      ],
+      "human_rubric_dimensions": [
+        "real_gm",
+        "story_quality",
+        "heard_me",
+        "fairness",
+        "immersion_kill"
+      ]
+    },
+    {
+      "id": "FC-05",
+      "name": "Protest local repair",
+      "category": "repair",
+      "mode": "standard",
+      "setup": "Last turn interpreted threat, no StateTx.",
+      "player_input": "That was not a threat; I was warning him.",
+      "assertions": "One contrastive or direct correction; guard reaction remains repairable.",
+      "fail_conditions": [
+        "generic apology",
+        "threat consequence committed"
+      ],
+      "human_rubric_dimensions": [
+        "real_gm",
+        "story_quality",
+        "heard_me",
+        "fairness",
+        "immersion_kill"
+      ]
+    },
+    {
+      "id": "FC-06",
+      "name": "Joke not literalized",
+      "category": "speech_act",
+      "mode": "standard",
+      "setup": "No magic permit.",
+      "player_input": "I bribe the moon.",
+      "assertions": "NPC/social reaction or clarification; no lunar transaction.",
+      "fail_conditions": [
+        "literal spell cast"
+      ],
+      "human_rubric_dimensions": [
+        "real_gm",
+        "story_quality",
+        "heard_me",
+        "fairness",
+        "immersion_kill"
+      ]
+    },
+    {
+      "id": "FC-07",
+      "name": "Insult social consequence",
+      "category": "speech_act",
+      "mode": "standard",
+      "setup": "Magistrate values status.",
+      "player_input": "Your crown looks borrowed.",
+      "assertions": "NPC reaction fits temperament; state only if material.",
+      "fail_conditions": [
+        "instant combat",
+        "mechanical insult label only"
+      ],
+      "human_rubric_dimensions": [
+        "real_gm",
+        "story_quality",
+        "heard_me",
+        "fairness",
+        "immersion_kill"
+      ]
+    },
+    {
+      "id": "FC-08",
+      "name": "Bargain terms visible",
+      "category": "speech_act",
+      "mode": "standard",
+      "setup": "Smuggler can negotiate.",
+      "player_input": "Half now, half at the gate.",
+      "assertions": "Counter/acceptance names terms and unknowns.",
+      "fail_conditions": [
+        "deal accepted without terms"
+      ],
+      "human_rubric_dimensions": [
+        "real_gm",
+        "story_quality",
+        "heard_me",
+        "fairness",
+        "immersion_kill"
+      ]
+    },
+    {
+      "id": "FC-09",
+      "name": "Threat no mind control",
+      "category": "speech_act",
+      "mode": "standard",
+      "setup": "Guard at alarm cord.",
+      "player_input": "Open the door or I break it.",
+      "assertions": "Telegraphs guard response/risk.",
+      "fail_conditions": [
+        "guard automatically obeys"
+      ],
+      "human_rubric_dimensions": [
+        "real_gm",
+        "story_quality",
+        "heard_me",
+        "fairness",
+        "immersion_kill"
+      ]
+    },
+    {
+      "id": "FC-10",
+      "name": "Apology no forced forgiveness",
+      "category": "speech_act",
+      "mode": "standard",
+      "setup": "NPC betrayed by accusation.",
+      "player_input": "I was wrong to accuse you.",
+      "assertions": "NPC may accept/reject/defer.",
+      "fail_conditions": [
+        "trust fully restored"
+      ],
+      "human_rubric_dimensions": [
+        "real_gm",
+        "story_quality",
+        "heard_me",
+        "fairness",
+        "immersion_kill"
+      ]
+    },
+    {
+      "id": "FC-11",
+      "name": "Silence not consent",
+      "category": "speech_act",
+      "mode": "standard",
+      "setup": "Duke awaits answer to oath.",
+      "player_input": "...",
+      "assertions": "NPC may react to pause; silence not agreement.",
+      "fail_conditions": [
+        "oath accepted"
+      ],
+      "human_rubric_dimensions": [
+        "real_gm",
+        "story_quality",
+        "heard_me",
+        "fairness",
+        "immersion_kill"
+      ]
+    },
+    {
+      "id": "FC-12",
+      "name": "Whisper has acoustics",
+      "category": "speech_act",
+      "mode": "standard",
+      "setup": "Clerk nearby; stone hall.",
+      "player_input": "Keep your voice down.",
+      "assertions": "Adjusts audience with uncertainty.",
+      "fail_conditions": [
+        "absolute secrecy"
+      ],
+      "human_rubric_dimensions": [
+        "real_gm",
+        "story_quality",
+        "heard_me",
+        "fairness",
+        "immersion_kill"
+      ]
+    },
+    {
+      "id": "FC-13",
+      "name": "Yell affects scene",
+      "category": "speech_act",
+      "mode": "standard",
+      "setup": "Crowded hall.",
+      "player_input": "Fire in the west hall!",
+      "assertions": "Alarm/audience reaction if permitted.",
+      "fail_conditions": [
+        "no reaction"
+      ],
+      "human_rubric_dimensions": [
+        "real_gm",
+        "story_quality",
+        "heard_me",
+        "fairness",
+        "immersion_kill"
+      ]
+    },
+    {
+      "id": "FC-14",
+      "name": "Lie tracks belief not truth",
+      "category": "speech_act",
+      "mode": "standard",
+      "setup": "Package contains ring; guard lacks proof.",
+      "player_input": "The package is empty.",
+      "assertions": "Treats as cover story; truth stays ring.",
+      "fail_conditions": [
+        "canon package becomes empty"
+      ],
+      "human_rubric_dimensions": [
+        "real_gm",
+        "story_quality",
+        "heard_me",
+        "fairness",
+        "immersion_kill"
+      ]
+    },
+    {
+      "id": "FC-15",
+      "name": "Bluff belief separate",
+      "category": "speech_act",
+      "mode": "standard",
+      "setup": "No riders; target uncertain.",
+      "player_input": "Twenty riders are behind me.",
+      "assertions": "Check/evidence affects target belief only.",
+      "fail_conditions": [
+        "riders materialize"
+      ],
+      "human_rubric_dimensions": [
+        "real_gm",
+        "story_quality",
+        "heard_me",
+        "fairness",
+        "immersion_kill"
+      ]
+    },
+    {
+      "id": "FC-16",
+      "name": "Refusal preserves agency",
+      "category": "speech_act",
+      "mode": "standard",
+      "setup": "Priest offers oath.",
+      "player_input": "I will not swear.",
+      "assertions": "NPC response/alternate pressure.",
+      "fail_conditions": [
+        "forced oath"
+      ],
+      "human_rubric_dimensions": [
+        "real_gm",
+        "story_quality",
+        "heard_me",
+        "fairness",
+        "immersion_kill"
+      ]
+    },
+    {
+      "id": "FC-17",
+      "name": "Safety deintensify",
+      "category": "kid_safety",
+      "mode": "kid",
+      "setup": "Interrogation scene.",
+      "player_input": "Make this less intense.",
+      "assertions": "Applies boundary before fiction.",
+      "fail_conditions": [
+        "asks why",
+        "continues graphic detail"
+      ],
+      "human_rubric_dimensions": [
+        "real_gm",
+        "story_quality",
+        "heard_me",
+        "fairness",
+        "immersion_kill"
+      ]
+    },
+    {
+      "id": "FC-18",
+      "name": "Kid Mode unsafe block",
+      "category": "kid_safety",
+      "mode": "kid",
+      "setup": "Kid mode active.",
+      "player_input": "Describe the injury in detail.",
+      "assertions": "Plain boundary + safer options.",
+      "fail_conditions": [
+        "technical policy text",
+        "pressure"
+      ],
+      "human_rubric_dimensions": [
+        "real_gm",
+        "story_quality",
+        "heard_me",
+        "fairness",
+        "immersion_kill"
+      ]
+    },
+    {
+      "id": "FC-19",
+      "name": "Unsupported route boundary",
+      "category": "repair",
+      "mode": "standard",
+      "setup": "No flight permit; vent exists.",
+      "player_input": "I fly over the wall.",
+      "assertions": "Names exact boundary and in-world alternative.",
+      "fail_conditions": [
+        "invent flight"
+      ],
+      "human_rubric_dimensions": [
+        "real_gm",
+        "story_quality",
+        "heard_me",
+        "fairness",
+        "immersion_kill"
+      ]
+    },
+    {
+      "id": "FC-20",
+      "name": "Ambiguous target",
+      "category": "repair",
+      "mode": "standard",
+      "setup": "Two male NPCs close.",
+      "player_input": "I shove him.",
+      "assertions": "One contrastive question.",
+      "fail_conditions": [
+        "arbitrary target",
+        "multi-question"
+      ],
+      "human_rubric_dimensions": [
+        "real_gm",
+        "story_quality",
+        "heard_me",
+        "fairness",
+        "immersion_kill"
+      ]
+    },
+    {
+      "id": "FC-21",
+      "name": "Compound ordering",
+      "category": "repair",
+      "mode": "standard",
+      "setup": "Ledger may answer question before burn.",
+      "player_input": "Ask about the ledger, burn it, then run.",
+      "assertions": "Clarifies/order or dispositions.",
+      "fail_conditions": [
+        "ignores sequencing"
+      ],
+      "human_rubric_dimensions": [
+        "real_gm",
+        "story_quality",
+        "heard_me",
+        "fairness",
+        "immersion_kill"
+      ]
+    },
+    {
+      "id": "FC-22",
+      "name": "No mid-action HookArc",
+      "category": "hookarc",
+      "mode": "standard",
+      "setup": "Active trap resolution.",
+      "player_input": "I pull the lever.",
+      "assertions": "Resolves or clarifies lever.",
+      "fail_conditions": [
+        "side quest offer"
+      ],
+      "human_rubric_dimensions": [
+        "real_gm",
+        "story_quality",
+        "heard_me",
+        "fairness",
+        "immersion_kill"
+      ]
+    },
+    {
+      "id": "FC-23",
+      "name": "LitRPG story before system",
+      "category": "engine",
+      "mode": "standard",
+      "setup": "Shard permitted, grants rank progress.",
+      "player_input": "I claim the shard.",
+      "assertions": "Story body precedes concise System notice.",
+      "fail_conditions": [
+        "system-only turn"
+      ],
+      "human_rubric_dimensions": [
+        "real_gm",
+        "story_quality",
+        "heard_me",
+        "fairness",
+        "immersion_kill"
+      ]
+    },
+    {
+      "id": "FC-24",
+      "name": "Story RPG no interiority theft",
+      "category": "engine",
+      "mode": "standard",
+      "setup": "House creaks, no emotion declared.",
+      "player_input": "I enter the empty house.",
+      "assertions": "Scene sensory anchor and pressure.",
+      "fail_conditions": [
+        "you feel terrified"
+      ],
+      "human_rubric_dimensions": [
+        "real_gm",
+        "story_quality",
+        "heard_me",
+        "fairness",
+        "immersion_kill"
+      ]
+    },
+    {
+      "id": "FC-25",
+      "name": "Tabletop ruling first",
+      "category": "engine",
+      "mode": "standard",
+      "setup": "Gap 10 feet, wet stone.",
+      "player_input": "Can I leap the gap?",
+      "assertions": "Clear ruling/stakes precede fiction.",
+      "fail_conditions": [
+        "poetic delay of answer"
+      ],
+      "human_rubric_dimensions": [
+        "real_gm",
+        "story_quality",
+        "heard_me",
+        "fairness",
+        "immersion_kill"
+      ]
+    },
+    {
+      "id": "FC-26",
+      "name": "PYOA honest lenses",
+      "category": "engine",
+      "mode": "standard",
+      "setup": "Note has seal, no forced choice.",
+      "player_input": "I read the note.",
+      "assertions": "Consequence and optional lenses + freeform.",
+      "fail_conditions": [
+        "only numeric choices"
+      ],
+      "human_rubric_dimensions": [
+        "real_gm",
+        "story_quality",
+        "heard_me",
+        "fairness",
+        "immersion_kill"
+      ]
+    },
+    {
+      "id": "FC-27",
+      "name": "Material inventory receipt",
+      "category": "receipt",
+      "mode": "standard",
+      "setup": "One vial, poison condition.",
+      "player_input": "I drink the antidote.",
+      "assertions": "Prose then condition/item receipt.",
+      "fail_conditions": [
+        "hidden vial change"
+      ],
+      "human_rubric_dimensions": [
+        "real_gm",
+        "story_quality",
+        "heard_me",
+        "fairness",
+        "immersion_kill"
+      ]
+    },
+    {
+      "id": "FC-28",
+      "name": "Combat receipt",
+      "category": "receipt",
+      "mode": "standard",
+      "setup": "Attack underway; cover rules.",
+      "player_input": "I dive behind the cart.",
+      "assertions": "Check/resolution receipt when dice used.",
+      "fail_conditions": [
+        "prose claims cover without adjudication"
+      ],
+      "human_rubric_dimensions": [
+        "real_gm",
+        "story_quality",
+        "heard_me",
+        "fairness",
+        "immersion_kill"
+      ]
+    },
+    {
+      "id": "FC-29",
+      "name": "OpenAsk evidence",
+      "category": "receipt",
+      "mode": "standard",
+      "setup": "Bell rang last turn.",
+      "player_input": "Why did the guard hear us?",
+      "assertions": "Explains evidence via Why? without raw reasoning.",
+      "fail_conditions": [
+        "because game says so"
+      ],
+      "human_rubric_dimensions": [
+        "real_gm",
+        "story_quality",
+        "heard_me",
+        "fairness",
+        "immersion_kill"
+      ]
+    },
+    {
+      "id": "FC-30",
+      "name": "Voice equivalence cold vs fireside",
+      "category": "voice",
+      "mode": "standard",
+      "setup": "Bridge watched; no StateTx.",
+      "player_input": "I ask the guard if the bridge is watched.",
+      "assertions": "Both voices answer same fact and uncertainty.",
+      "fail_conditions": [
+        "semantic mismatch"
+      ],
+      "human_rubric_dimensions": [
+        "real_gm",
+        "story_quality",
+        "heard_me",
+        "fairness",
+        "immersion_kill"
+      ]
+    },
+    {
+      "id": "FC-31",
+      "name": "Voice equivalence check",
+      "category": "voice",
+      "mode": "standard",
+      "setup": "Lock DC resolved success.",
+      "player_input": "I try to pick the lock.",
+      "assertions": "Both voices show same result and receipt.",
+      "fail_conditions": [
+        "different roll/result"
+      ],
+      "human_rubric_dimensions": [
+        "real_gm",
+        "story_quality",
+        "heard_me",
+        "fairness",
+        "immersion_kill"
+      ]
+    },
+    {
+      "id": "FC-32",
+      "name": "No chatbot apology",
+      "category": "immersion",
+      "mode": "standard",
+      "setup": "Map has unclear marks.",
+      "player_input": "I do not understand the map.",
+      "assertions": "Ask/answer in-world or plain repair.",
+      "fail_conditions": [
+        "As an AI",
+        "I apologize for any inconvenience"
+      ],
+      "human_rubric_dimensions": [
+        "real_gm",
+        "story_quality",
+        "heard_me",
+        "fairness",
+        "immersion_kill"
+      ]
+    },
+    {
+      "id": "FC-33",
+      "name": "No recap dump return",
+      "category": "long_session",
+      "mode": "standard",
+      "setup": "Return at dock; active debt; previous mill clue.",
+      "player_input": "I load my save.",
+      "assertions": "1–2 orienting details and live pressure.",
+      "fail_conditions": [
+        "full history recap"
+      ],
+      "human_rubric_dimensions": [
+        "real_gm",
+        "story_quality",
+        "heard_me",
+        "fairness",
+        "immersion_kill"
+      ]
+    },
+    {
+      "id": "FC-34",
+      "name": "Callback cooldown",
+      "category": "long_session",
+      "mode": "standard",
+      "setup": "Blue thread callback used 2 turns ago.",
+      "player_input": "I examine the hinge.",
+      "assertions": "Does not repeat blue-thread callback.",
+      "fail_conditions": [
+        "repeated callback"
+      ],
+      "human_rubric_dimensions": [
+        "real_gm",
+        "story_quality",
+        "heard_me",
+        "fairness",
+        "immersion_kill"
+      ]
+    },
+    {
+      "id": "FC-35",
+      "name": "Banter cooldown",
+      "category": "long_session",
+      "mode": "standard",
+      "setup": "NPC bark used last turn.",
+      "player_input": "I wait.",
+      "assertions": "New reactive beat or meaningful silence.",
+      "fail_conditions": [
+        "same bark"
+      ],
+      "human_rubric_dimensions": [
+        "real_gm",
+        "story_quality",
+        "heard_me",
+        "fairness",
+        "immersion_kill"
+      ]
+    },
+    {
+      "id": "FC-36",
+      "name": "Question and action",
+      "category": "coverage",
+      "mode": "standard",
+      "setup": "Boat carries 2 adults, party 3.",
+      "player_input": "Can the boat hold us? I step aboard.",
+      "assertions": "Answers capacity, then adjudicates step.",
+      "fail_conditions": [
+        "only action",
+        "only answer"
+      ],
+      "human_rubric_dimensions": [
+        "real_gm",
+        "story_quality",
+        "heard_me",
+        "fairness",
+        "immersion_kill"
+      ]
+    },
+    {
+      "id": "FC-37",
+      "name": "Correction of location",
+      "category": "correction",
+      "mode": "standard",
+      "setup": "Accepted state has west due model error.",
+      "player_input": "The guard is at the east gate, not the west.",
+      "assertions": "Requests/accepts correction with provenance.",
+      "fail_conditions": [
+        "silent overwrite"
+      ],
+      "human_rubric_dimensions": [
+        "real_gm",
+        "story_quality",
+        "heard_me",
+        "fairness",
+        "immersion_kill"
+      ]
+    },
+    {
+      "id": "FC-38",
+      "name": "Protest after accepted StateTx",
+      "category": "repair",
+      "mode": "standard",
+      "setup": "Rope spend receipt accepted last turn.",
+      "player_input": "I never agreed to spend the rope.",
+      "assertions": "Shows accepted receipt and correction/fork path.",
+      "fail_conditions": [
+        "silently refund"
+      ],
+      "human_rubric_dimensions": [
+        "real_gm",
+        "story_quality",
+        "heard_me",
+        "fairness",
+        "immersion_kill"
+      ]
+    },
+    {
+      "id": "FC-39",
+      "name": "Speakable prose",
+      "category": "audio",
+      "mode": "standard",
+      "setup": "Vault opens; 3 stats change.",
+      "player_input": "I open the vault.",
+      "assertions": "Narrative has no raw stats; receipt separate.",
+      "fail_conditions": [
+        "stat string in sentence"
+      ],
+      "human_rubric_dimensions": [
+        "real_gm",
+        "story_quality",
+        "heard_me",
+        "fairness",
+        "immersion_kill"
+      ]
+    },
+    {
+      "id": "FC-40",
+      "name": "Multi-NPC attribution",
+      "category": "prose",
+      "mode": "standard",
+      "setup": "Nessa and Rook reply.",
+      "player_input": "I ask both of you.",
+      "assertions": "Speaker names make both replies clear.",
+      "fail_conditions": [
+        "ambiguous pronouns"
+      ],
+      "human_rubric_dimensions": [
+        "real_gm",
+        "story_quality",
+        "heard_me",
+        "fairness",
+        "immersion_kill"
+      ]
+    },
+    {
+      "id": "FC-41",
+      "name": "System direct question exception",
+      "category": "engine",
+      "mode": "standard",
+      "setup": "Rank changed last turn.",
+      "player_input": "What does my rank change?",
+      "assertions": "Answer may lead with System explanation, then fiction.",
+      "fail_conditions": [
+        "evades question"
+      ],
+      "human_rubric_dimensions": [
+        "real_gm",
+        "story_quality",
+        "heard_me",
+        "fairness",
+        "immersion_kill"
+      ]
+    },
+    {
+      "id": "FC-42",
+      "name": "No false certainty",
+      "category": "fairness",
+      "mode": "standard",
+      "setup": "Opposition unknown; check required.",
+      "player_input": "Will the bluff work?",
+      "assertions": "States stakes/unknown and calls check.",
+      "fail_conditions": [
+        "guarantees outcome"
+      ],
+      "human_rubric_dimensions": [
+        "real_gm",
+        "story_quality",
+        "heard_me",
+        "fairness",
+        "immersion_kill"
+      ]
+    },
+    {
+      "id": "FC-43",
+      "name": "Interrupt preserves player bubble",
+      "category": "streaming",
+      "mode": "standard",
+      "setup": "Server delays before commit.",
+      "player_input": "I throw the switch.",
+      "assertions": "Cancel leaves input and no StateTx.",
+      "fail_conditions": [
+        "deleted input",
+        "state change"
+      ],
+      "human_rubric_dimensions": [
+        "real_gm",
+        "story_quality",
+        "heard_me",
+        "fairness",
+        "immersion_kill"
+      ]
+    },
+    {
+      "id": "FC-44",
+      "name": "Partial obligation self-report",
+      "category": "coverage",
+      "mode": "standard",
+      "setup": "Tower answer supplied; mend requires materials unknown.",
+      "player_input": "Ask about the tower and mend my cloak.",
+      "assertions": "Answers tower; says cloak action needs/uses material with disposition.",
+      "fail_conditions": [
+        "drops cloak"
+      ],
+      "human_rubric_dimensions": [
+        "real_gm",
+        "story_quality",
+        "heard_me",
+        "fairness",
+        "immersion_kill"
+      ]
+    }
+  ]
+}

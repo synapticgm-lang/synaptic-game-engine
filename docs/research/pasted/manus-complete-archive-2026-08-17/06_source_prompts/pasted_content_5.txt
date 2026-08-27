@@ -1,0 +1,42 @@
+ROLE
+Gap-fill only for SynapticGM “Ads, Growth, and Pre-Release Readiness Brief.”
+Do NOT rewrite §§0–5. Assume those already exist and are accepted.
+
+PRODUCT TRUTH (do not reopen)
+- Launch: web adult Free first; Play later.
+- Kid Mode: ad-free at launch.
+- Mid/High: no ads.
+- AppLixir = primary web adult rewarded pilot AFTER written eligibility approval; house ads as fallback.
+- Rewarded start cap: 1 completed reward/day; never interrupt unresolved action; HookArc must complete before first soft offer.
+- Honeymoon turns = guaranteed floor; HookArc = offer fairness guard.
+- Server-authoritative entitlements only (no client-only grants).
+- Never: interstitials in core story, offerwalls at launch, fake installs, selling continuity/safety/refunds.
+
+FILL ONLY THESE MISSING SECTIONS
+
+6. Pre-release checklist — anything and everything
+Exhaustive checklist. Each row: Item | Owner (Founder / Code / Legal-verify / Ops) | Must / Should / Later | Done-when (one concrete exit criterion).
+Must cover at least:
+PRODUCT/UX — New Game paths, HookArc, soft offers, cancel/timeout/refund, empty GM fail, cloud save/Continue, Themes/Shop entitlements, feedback inbox
+AI/COST — hosted keys, rate limits, abuse controls, model routing by tier, spend alarms, logging/PII policy, memorable fail holds story
+PAYMENTS — Stripe Checkout + idempotent webhooks, packs/subs/cosmetics server truth, Customer Portal cancel, adult BYOK separate processor + age gate, UK VAT/tax, refund/chargeback runbook, creator comps
+ADS — AppLixir account + written AI-GM approval, live flag + stub path, RewardIntent S2S verification, Kid ad-free verified, Mid/High ad-free verified, privacy/consent (UMP/cookies if needed), no-ad fallback copy
+SAFETY/COMPLIANCE — Kid vs adult separation tests, hard blocks (CSAM/self-harm/threats), moderation + escalation SLA, age/parental gates, Privacy/ToS/Content/Refund/Cookie policies, account deletion/export, AI disclosure language, DPIA decision note
+STORE/BUILD/OPS — prod domain/HTTPS/backups, error monitoring, minimal privacy-aware analytics (install, HookArc, out-of-turns, ad complete, purchase, D1/D7), support email/SLA, status/known-issues, rollback, cost/load smoke test, Admin tools, kill switches (ads off / images off / force Free model / disable signups)
+CONTENT/IP/BRAND — original bible check, Credits, trailer/screenshots, press kit, creator disclosure templates
+BETA→LAUNCH — closed beta criteria, soft-launch channel/countries, go-live sign-off
+
+7. 30 / 60 / 90 day post-release ops plan
+Week-by-week or biweekly: what to measure, what to tune (ad caps, prices, creatives, capacity), support load, when to expand channels, kill/scale rules.
+Include a one-page “red alert” list (what triggers pause ads / pause signups / rollback).
+
+8. Open decisions for founder
+Short table: Decision | Recommendation | Alternative | Cost if wrong.
+Must include at least: web-only vs Play timing; AppLixir vs backup if denied; when to raise 1→2 ads/day; when to turn on paid UA; Discord (or other) login beside Google; memorable default; adult BYOK timing; Kid Mode public availability at launch.
+
+OUTPUT RULES
+- Use headings 6, 7, 8 exactly.
+- Tables over essays.
+- No preamble, no restating §§0–5, no new game design.
+- Mark legal/store items “verify with official policy / counsel” where needed, but still list them.
+- Stop when 6–8 are complete.

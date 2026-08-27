@@ -1,0 +1,3218 @@
+packFormatVersion: 1
+fileId: WOF_Rules_Modules
+scope: WOF-only typed data; content library quarantine; no production code; no live
+  SynapticGM import
+engineDefaults:
+  hubStoryTurnCost: 1
+  chatBrowseMailIdleTurnCost: 0
+  dungeonMode: 1 turn per player per round
+  raidMode: even-round billing; one shared spend every other round
+  midCombatFill: false
+  disconnect: last plan or Hold; fill only at checkpoint
+  death: downed; wipe to checkpoint; no permadeath
+  durability: wipe -10% equipped; combat -1% per round weapon and armor; broken items
+    have 0 stats and are repairable
+  innRest: free HP and stamina in hub for 1 turn; no repair
+  partySize: 2-5
+  raidSize: 10
+  loot: personal
+  lockstep: true
+  wallets:
+  - gold
+  - cosmetic_tokens
+  presence: nearbyPlayerCount plus race tags only
+  globalChatV1: false
+  weeklyLockout: per-character per-boss
+  proseOrder: CODE commits state before LLM narration
+renameTable:
+  hp_check_floor: hp_check_floor_flags
+  Gloam Court Siege: First-Song original instance name; never used as a WOF identifier
+  saltwind_keeper: Bonded Menagerie original keeper identifier; never reused as a
+    Saltkin race or fauna name
+  Ash Compact: faction, not region
+  Tide Covenant: faction, not race, region, or creature
+  The First Wick: rejected display-only alias for quest_lanternfolk_race_1; locked
+    title remains Keep the Path Lit
+modules:
+  hp_check:
+    moduleId: hp_check
+    purpose: HP, armor, initiative, damage, healing, defeat, room completion for instanced
+      cooperative combat.
+    ledgerFields:
+    - name: hp_current
+      type: integer
+      startValue: 60
+      ownedBy: CODE
+    - name: hp_max
+      type: integer
+      startValue: 60
+      ownedBy: CODE
+    - name: armor_class
+      type: integer
+      startValue: 0
+      ownedBy: CODE
+    - name: level
+      type: integer
+      startValue: 1
+      ownedBy: CODE
+    - name: status_flags
+      type: string_or_array_or_object
+      startValue: []
+      ownedBy: CODE
+    - name: checkpoint_id
+      type: string_or_array_or_object
+      startValue: start
+      ownedBy: CODE
+    - name: weekly_lockout_key
+      type: string_or_array_or_object
+      startValue: null
+      ownedBy: CODE
+    - name: gold
+      type: integer
+      startValue: 0
+      ownedBy: CODE
+    - name: cosmetic_tokens
+      type: integer
+      startValue: 0
+      ownedBy: CODE
+    - name: room_index
+      type: integer
+      startValue: 0
+      ownedBy: CODE
+    - name: party_size
+      type: integer
+      startValue: 1
+      ownedBy: CODE
+    roundResolution: CODE rolls initiative, validates declared target and verb, applies
+      damage or healing, ticks statuses, awards committed loot, advances room only
+      when encounter is resolved.
+    wipeCheckpoint: Set hp_current to 60% of hp_max, restore checkpoint_id, preserve
+      quest/objective progress and evidence, keep door available, no gold loss.
+    lockout: Per-character weekly boss lockout; Millstone Hollow phase-clear lockout;
+      ordinary party size 1-5 and raid size 10.
+    forbiddenProseInventions:
+    - damage numbers
+    - HP or status changes
+    - item ownership
+    - gold or cosmetic-token amounts
+    - kill counts
+    - boss defeat
+    - room or floor completion
+    - faction or bond standing
+    - lockout clearance
+    - teleport or travel completion
+    statusEffects:
+    - id: bleed
+      duration_rounds: 2
+      stack_cap: 3
+      apply: CODE-owned ledger delta
+      clear: CODE-owned expiry or named cleanse
+      llmMayNarrate: true
+    - id: slow
+      duration_rounds: 2
+      stack_cap: 3
+      apply: CODE-owned ledger delta
+      clear: CODE-owned expiry or named cleanse
+      llmMayNarrate: true
+    - id: light_ward
+      duration_rounds: 1
+      stack_cap: 3
+      apply: CODE-owned ledger delta
+      clear: CODE-owned expiry or named cleanse
+      llmMayNarrate: true
+    - id: heat
+      duration_rounds: 2
+      stack_cap: 3
+      apply: CODE-owned ledger delta
+      clear: CODE-owned expiry or named cleanse
+      llmMayNarrate: true
+    - id: hull_breach
+      duration_rounds: 2
+      stack_cap: 3
+      apply: CODE-owned ledger delta
+      clear: CODE-owned expiry or named cleanse
+      llmMayNarrate: true
+    - id: steadfast_break
+      duration_rounds: 1
+      stack_cap: 3
+      apply: CODE-owned ledger delta
+      clear: CODE-owned expiry or named cleanse
+      llmMayNarrate: true
+    - id: score_buff
+      duration_rounds: 1
+      stack_cap: 3
+      apply: CODE-owned ledger delta
+      clear: CODE-owned expiry or named cleanse
+      llmMayNarrate: true
+    - id: bond_scare
+      duration_rounds: 1
+      stack_cap: 3
+      apply: CODE-owned ledger delta
+      clear: CODE-owned expiry or named cleanse
+      llmMayNarrate: true
+    combatVerbs:
+    - id: strike
+      target: declared_target_or_self
+      turnCost: 1
+      requires:
+      - valid_round
+      - expected_revision
+      resolves: CODE validates and commits deterministic result
+      llmMayNarrate: true
+    - id: guard
+      target: declared_target_or_self
+      turnCost: 1
+      requires:
+      - valid_round
+      - expected_revision
+      resolves: CODE validates and commits deterministic result
+      llmMayNarrate: true
+    - id: assist
+      target: declared_target_or_self
+      turnCost: 1
+      requires:
+      - valid_round
+      - expected_revision
+      resolves: CODE validates and commits deterministic result
+      llmMayNarrate: true
+    - id: recover
+      target: declared_target_or_self
+      turnCost: 1
+      requires:
+      - valid_round
+      - expected_revision
+      resolves: CODE validates and commits deterministic result
+      llmMayNarrate: true
+    - id: mark_target
+      target: declared_target_or_self
+      turnCost: 1
+      requires:
+      - valid_round
+      - expected_revision
+      resolves: CODE validates and commits deterministic result
+      llmMayNarrate: true
+    - id: inspect
+      target: declared_target_or_self
+      turnCost: 1
+      requires:
+      - valid_round
+      - expected_revision
+      resolves: CODE validates and commits deterministic result
+      llmMayNarrate: true
+    - id: interact
+      target: declared_target_or_self
+      turnCost: 1
+      requires:
+      - valid_round
+      - expected_revision
+      resolves: CODE validates and commits deterministic result
+      llmMayNarrate: true
+    - id: retreat
+      target: declared_target_or_self
+      turnCost: 1
+      requires:
+      - valid_round
+      - expected_revision
+      resolves: CODE validates and commits deterministic result
+      llmMayNarrate: true
+    - id: hold
+      target: declared_target_or_self
+      turnCost: 1
+      requires:
+      - valid_round
+      - expected_revision
+      resolves: CODE validates and commits deterministic result
+      llmMayNarrate: true
+    - id: focus
+      target: declared_target_or_self
+      turnCost: 1
+      requires:
+      - valid_round
+      - expected_revision
+      resolves: CODE validates and commits deterministic result
+      llmMayNarrate: true
+    - id: disrupt
+      target: declared_target_or_self
+      turnCost: 1
+      requires:
+      - valid_round
+      - expected_revision
+      resolves: CODE validates and commits deterministic result
+      llmMayNarrate: true
+    - id: finish
+      target: declared_target_or_self
+      turnCost: 1
+      requires:
+      - valid_round
+      - expected_revision
+      resolves: CODE validates and commits deterministic result
+      llmMayNarrate: true
+    chromeUiTemplates:
+    - id: ledger
+      template: '[LEDGER] module={module_id} | revision={revision} | state={state}'
+      source: committed ledger only
+      llmMayNarrate: false
+    - id: status_strip
+      template: '[STATUS_STRIP] module={module_id} | revision={revision} | state={state}'
+      source: committed ledger only
+      llmMayNarrate: false
+    - id: checkpoint_banner
+      template: '[CHECKPOINT_BANNER] module={module_id} | revision={revision} | state={state}'
+      source: committed ledger only
+      llmMayNarrate: false
+    - id: round_receipt
+      template: '[ROUND_RECEIPT] module={module_id} | revision={revision} | state={state}'
+      source: committed ledger only
+      llmMayNarrate: false
+    - id: lockout_panel
+      template: '[LOCKOUT_PANEL] module={module_id} | revision={revision} | state={state}'
+      source: committed ledger only
+      llmMayNarrate: false
+    evalProbes:
+    - input: round with valid declared action
+      expected: one turn spent; one committed receipt; revision increments by 1
+    - input: round with stale expectedRevision
+      expected: reject with REVISION_MISMATCH; ledger unchanged
+    - input: round with hp_current at 0 before resolve
+      expected: downed state; no new damage or reward minted
+    - input: party wipe at checkpoint
+      expected: restore checkpoint; preserve committed objectives; no gold loss
+    - input: duplicate loot grant key
+      expected: idempotent no-op; exactly one item grant
+    - input: forbidden power-shop reward request
+      expected: reject; cosmetic-only shop path remains available
+    - input: disconnect during combat
+      expected: apply last plan or Hold; no mid-combat fill
+    - input: weekly lockout already present
+      expected: deny boss entry; ordinary hub and non-boss content remain available
+    - input: LLM claims uncommitted damage or reward
+      expected: discard claim; narrate only committed ledger state
+    - input: encumbrance exceeds instance threshold
+      expected: deny instance entry; allow hub walking and stash interaction
+  hp_check_floor_flags:
+    moduleId: hp_check_floor_flags
+    purpose: HP checks with floor flags controlling safe-floor hazards and progression
+      gates.
+    ledgerFields:
+    - name: hp_current
+      type: integer
+      startValue: 60
+      ownedBy: CODE
+    - name: hp_max
+      type: integer
+      startValue: 60
+      ownedBy: CODE
+    - name: armor_class
+      type: integer
+      startValue: 0
+      ownedBy: CODE
+    - name: floor_id
+      type: string_or_array_or_object
+      startValue: safe_floor_1
+      ownedBy: CODE
+    - name: floor_flags
+      type: string_or_array_or_object
+      startValue: {}
+      ownedBy: CODE
+    - name: status_flags
+      type: string_or_array_or_object
+      startValue: []
+      ownedBy: CODE
+    - name: checkpoint_id
+      type: string_or_array_or_object
+      startValue: floor_start
+      ownedBy: CODE
+    - name: weekly_lockout_key
+      type: string_or_array_or_object
+      startValue: null
+      ownedBy: CODE
+    - name: gold
+      type: integer
+      startValue: 0
+      ownedBy: CODE
+    - name: room_index
+      type: integer
+      startValue: 0
+      ownedBy: CODE
+    - name: party_size
+      type: integer
+      startValue: 1
+      ownedBy: CODE
+    roundResolution: CODE resolves HP, damage, floor hazard flags, objective flags,
+      and checkpoint transitions; prose cannot create or clear a floor flag.
+    wipeCheckpoint: Restore last checkpoint, set hp_current to 60% of hp_max, preserve
+      committed floor flags and objectives, no permadeath.
+    lockout: Weekly per-character boss lockout; floor flags persist only in the instance
+      token and are not imported from live SynapticGM.
+    forbiddenProseInventions:
+    - damage numbers
+    - HP or status changes
+    - item ownership
+    - gold or cosmetic-token amounts
+    - kill counts
+    - boss defeat
+    - room or floor completion
+    - faction or bond standing
+    - lockout clearance
+    - teleport or travel completion
+    statusEffects:
+    - id: bleed
+      duration_rounds: 2
+      stack_cap: 3
+      apply: CODE-owned ledger delta
+      clear: CODE-owned expiry or named cleanse
+      llmMayNarrate: true
+    - id: slow
+      duration_rounds: 2
+      stack_cap: 3
+      apply: CODE-owned ledger delta
+      clear: CODE-owned expiry or named cleanse
+      llmMayNarrate: true
+    - id: light_ward
+      duration_rounds: 1
+      stack_cap: 3
+      apply: CODE-owned ledger delta
+      clear: CODE-owned expiry or named cleanse
+      llmMayNarrate: true
+    - id: heat
+      duration_rounds: 2
+      stack_cap: 3
+      apply: CODE-owned ledger delta
+      clear: CODE-owned expiry or named cleanse
+      llmMayNarrate: true
+    - id: hull_breach
+      duration_rounds: 2
+      stack_cap: 3
+      apply: CODE-owned ledger delta
+      clear: CODE-owned expiry or named cleanse
+      llmMayNarrate: true
+    - id: steadfast_break
+      duration_rounds: 1
+      stack_cap: 3
+      apply: CODE-owned ledger delta
+      clear: CODE-owned expiry or named cleanse
+      llmMayNarrate: true
+    - id: score_buff
+      duration_rounds: 1
+      stack_cap: 3
+      apply: CODE-owned ledger delta
+      clear: CODE-owned expiry or named cleanse
+      llmMayNarrate: true
+    - id: bond_scare
+      duration_rounds: 1
+      stack_cap: 3
+      apply: CODE-owned ledger delta
+      clear: CODE-owned expiry or named cleanse
+      llmMayNarrate: true
+    combatVerbs:
+    - id: strike
+      target: declared_target_or_self
+      turnCost: 1
+      requires:
+      - valid_round
+      - expected_revision
+      resolves: CODE validates and commits deterministic result
+      llmMayNarrate: true
+    - id: guard
+      target: declared_target_or_self
+      turnCost: 1
+      requires:
+      - valid_round
+      - expected_revision
+      resolves: CODE validates and commits deterministic result
+      llmMayNarrate: true
+    - id: assist
+      target: declared_target_or_self
+      turnCost: 1
+      requires:
+      - valid_round
+      - expected_revision
+      resolves: CODE validates and commits deterministic result
+      llmMayNarrate: true
+    - id: recover
+      target: declared_target_or_self
+      turnCost: 1
+      requires:
+      - valid_round
+      - expected_revision
+      resolves: CODE validates and commits deterministic result
+      llmMayNarrate: true
+    - id: mark_target
+      target: declared_target_or_self
+      turnCost: 1
+      requires:
+      - valid_round
+      - expected_revision
+      resolves: CODE validates and commits deterministic result
+      llmMayNarrate: true
+    - id: inspect
+      target: declared_target_or_self
+      turnCost: 1
+      requires:
+      - valid_round
+      - expected_revision
+      resolves: CODE validates and commits deterministic result
+      llmMayNarrate: true
+    - id: interact
+      target: declared_target_or_self
+      turnCost: 1
+      requires:
+      - valid_round
+      - expected_revision
+      resolves: CODE validates and commits deterministic result
+      llmMayNarrate: true
+    - id: retreat
+      target: declared_target_or_self
+      turnCost: 1
+      requires:
+      - valid_round
+      - expected_revision
+      resolves: CODE validates and commits deterministic result
+      llmMayNarrate: true
+    - id: hold
+      target: declared_target_or_self
+      turnCost: 1
+      requires:
+      - valid_round
+      - expected_revision
+      resolves: CODE validates and commits deterministic result
+      llmMayNarrate: true
+    - id: focus
+      target: declared_target_or_self
+      turnCost: 1
+      requires:
+      - valid_round
+      - expected_revision
+      resolves: CODE validates and commits deterministic result
+      llmMayNarrate: true
+    - id: disrupt
+      target: declared_target_or_self
+      turnCost: 1
+      requires:
+      - valid_round
+      - expected_revision
+      resolves: CODE validates and commits deterministic result
+      llmMayNarrate: true
+    - id: finish
+      target: declared_target_or_self
+      turnCost: 1
+      requires:
+      - valid_round
+      - expected_revision
+      resolves: CODE validates and commits deterministic result
+      llmMayNarrate: true
+    chromeUiTemplates:
+    - id: ledger
+      template: '[LEDGER] module={module_id} | revision={revision} | state={state}'
+      source: committed ledger only
+      llmMayNarrate: false
+    - id: status_strip
+      template: '[STATUS_STRIP] module={module_id} | revision={revision} | state={state}'
+      source: committed ledger only
+      llmMayNarrate: false
+    - id: checkpoint_banner
+      template: '[CHECKPOINT_BANNER] module={module_id} | revision={revision} | state={state}'
+      source: committed ledger only
+      llmMayNarrate: false
+    - id: round_receipt
+      template: '[ROUND_RECEIPT] module={module_id} | revision={revision} | state={state}'
+      source: committed ledger only
+      llmMayNarrate: false
+    - id: lockout_panel
+      template: '[LOCKOUT_PANEL] module={module_id} | revision={revision} | state={state}'
+      source: committed ledger only
+      llmMayNarrate: false
+    evalProbes:
+    - input: round with valid declared action
+      expected: one turn spent; one committed receipt; revision increments by 1
+    - input: round with stale expectedRevision
+      expected: reject with REVISION_MISMATCH; ledger unchanged
+    - input: round with hp_current at 0 before resolve
+      expected: downed state; no new damage or reward minted
+    - input: party wipe at checkpoint
+      expected: restore checkpoint; preserve committed objectives; no gold loss
+    - input: duplicate loot grant key
+      expected: idempotent no-op; exactly one item grant
+    - input: forbidden power-shop reward request
+      expected: reject; cosmetic-only shop path remains available
+    - input: disconnect during combat
+      expected: apply last plan or Hold; no mid-combat fill
+    - input: weekly lockout already present
+      expected: deny boss entry; ordinary hub and non-boss content remain available
+    - input: LLM claims uncommitted damage or reward
+      expected: discard claim; narrate only committed ledger state
+    - input: encumbrance exceeds instance threshold
+      expected: deny instance entry; allow hub walking and stash interaction
+  bond_type:
+    moduleId: bond_type
+    purpose: Bonded Menagerie relationship type and cooperative trust ledger.
+    ledgerFields:
+    - name: bond_id
+      type: string_or_array_or_object
+      startValue: new
+      ownedBy: CODE
+    - name: bond_type
+      type: string_or_array_or_object
+      startValue: care
+      ownedBy: CODE
+    - name: trust
+      type: integer
+      startValue: 0
+      ownedBy: CODE
+    - name: stress
+      type: integer
+      startValue: 0
+      ownedBy: CODE
+    - name: bond_rank
+      type: integer
+      startValue: 0
+      ownedBy: CODE
+    - name: species_id
+      type: string_or_array_or_object
+      startValue: original_species
+      ownedBy: CODE
+    - name: bond_flags
+      type: string_or_array_or_object
+      startValue: []
+      ownedBy: CODE
+    - name: checkpoint_id
+      type: string_or_array_or_object
+      startValue: bond_start
+      ownedBy: CODE
+    - name: weekly_lockout_key
+      type: string_or_array_or_object
+      startValue: null
+      ownedBy: CODE
+    roundResolution: CODE resolves care action, trust delta, stress delta, fear checks,
+      and bond-rank thresholds before narration.
+    wipeCheckpoint: Return to checkpoint, retain committed trust and collected care
+      progress, reset transient stress to checkpoint value.
+    lockout: Weekly per-character encounter lockout; no catch-rate or outcome purchase.
+    forbiddenProseInventions:
+    - damage numbers
+    - HP or status changes
+    - item ownership
+    - gold or cosmetic-token amounts
+    - kill counts
+    - boss defeat
+    - room or floor completion
+    - faction or bond standing
+    - lockout clearance
+    - teleport or travel completion
+    statusEffects:
+    - id: bleed
+      duration_rounds: 2
+      stack_cap: 3
+      apply: CODE-owned ledger delta
+      clear: CODE-owned expiry or named cleanse
+      llmMayNarrate: true
+    - id: slow
+      duration_rounds: 2
+      stack_cap: 3
+      apply: CODE-owned ledger delta
+      clear: CODE-owned expiry or named cleanse
+      llmMayNarrate: true
+    - id: light_ward
+      duration_rounds: 1
+      stack_cap: 3
+      apply: CODE-owned ledger delta
+      clear: CODE-owned expiry or named cleanse
+      llmMayNarrate: true
+    - id: heat
+      duration_rounds: 2
+      stack_cap: 3
+      apply: CODE-owned ledger delta
+      clear: CODE-owned expiry or named cleanse
+      llmMayNarrate: true
+    - id: hull_breach
+      duration_rounds: 2
+      stack_cap: 3
+      apply: CODE-owned ledger delta
+      clear: CODE-owned expiry or named cleanse
+      llmMayNarrate: true
+    - id: steadfast_break
+      duration_rounds: 1
+      stack_cap: 3
+      apply: CODE-owned ledger delta
+      clear: CODE-owned expiry or named cleanse
+      llmMayNarrate: true
+    - id: score_buff
+      duration_rounds: 1
+      stack_cap: 3
+      apply: CODE-owned ledger delta
+      clear: CODE-owned expiry or named cleanse
+      llmMayNarrate: true
+    - id: bond_scare
+      duration_rounds: 1
+      stack_cap: 3
+      apply: CODE-owned ledger delta
+      clear: CODE-owned expiry or named cleanse
+      llmMayNarrate: true
+    combatVerbs:
+    - id: strike
+      target: declared_target_or_self
+      turnCost: 1
+      requires:
+      - valid_round
+      - expected_revision
+      resolves: CODE validates and commits deterministic result
+      llmMayNarrate: true
+    - id: guard
+      target: declared_target_or_self
+      turnCost: 1
+      requires:
+      - valid_round
+      - expected_revision
+      resolves: CODE validates and commits deterministic result
+      llmMayNarrate: true
+    - id: assist
+      target: declared_target_or_self
+      turnCost: 1
+      requires:
+      - valid_round
+      - expected_revision
+      resolves: CODE validates and commits deterministic result
+      llmMayNarrate: true
+    - id: recover
+      target: declared_target_or_self
+      turnCost: 1
+      requires:
+      - valid_round
+      - expected_revision
+      resolves: CODE validates and commits deterministic result
+      llmMayNarrate: true
+    - id: mark_target
+      target: declared_target_or_self
+      turnCost: 1
+      requires:
+      - valid_round
+      - expected_revision
+      resolves: CODE validates and commits deterministic result
+      llmMayNarrate: true
+    - id: inspect
+      target: declared_target_or_self
+      turnCost: 1
+      requires:
+      - valid_round
+      - expected_revision
+      resolves: CODE validates and commits deterministic result
+      llmMayNarrate: true
+    - id: interact
+      target: declared_target_or_self
+      turnCost: 1
+      requires:
+      - valid_round
+      - expected_revision
+      resolves: CODE validates and commits deterministic result
+      llmMayNarrate: true
+    - id: retreat
+      target: declared_target_or_self
+      turnCost: 1
+      requires:
+      - valid_round
+      - expected_revision
+      resolves: CODE validates and commits deterministic result
+      llmMayNarrate: true
+    - id: hold
+      target: declared_target_or_self
+      turnCost: 1
+      requires:
+      - valid_round
+      - expected_revision
+      resolves: CODE validates and commits deterministic result
+      llmMayNarrate: true
+    - id: focus
+      target: declared_target_or_self
+      turnCost: 1
+      requires:
+      - valid_round
+      - expected_revision
+      resolves: CODE validates and commits deterministic result
+      llmMayNarrate: true
+    - id: disrupt
+      target: declared_target_or_self
+      turnCost: 1
+      requires:
+      - valid_round
+      - expected_revision
+      resolves: CODE validates and commits deterministic result
+      llmMayNarrate: true
+    - id: finish
+      target: declared_target_or_self
+      turnCost: 1
+      requires:
+      - valid_round
+      - expected_revision
+      resolves: CODE validates and commits deterministic result
+      llmMayNarrate: true
+    chromeUiTemplates:
+    - id: ledger
+      template: '[LEDGER] module={module_id} | revision={revision} | state={state}'
+      source: committed ledger only
+      llmMayNarrate: false
+    - id: status_strip
+      template: '[STATUS_STRIP] module={module_id} | revision={revision} | state={state}'
+      source: committed ledger only
+      llmMayNarrate: false
+    - id: checkpoint_banner
+      template: '[CHECKPOINT_BANNER] module={module_id} | revision={revision} | state={state}'
+      source: committed ledger only
+      llmMayNarrate: false
+    - id: round_receipt
+      template: '[ROUND_RECEIPT] module={module_id} | revision={revision} | state={state}'
+      source: committed ledger only
+      llmMayNarrate: false
+    - id: lockout_panel
+      template: '[LOCKOUT_PANEL] module={module_id} | revision={revision} | state={state}'
+      source: committed ledger only
+      llmMayNarrate: false
+    evalProbes:
+    - input: round with valid declared action
+      expected: one turn spent; one committed receipt; revision increments by 1
+    - input: round with stale expectedRevision
+      expected: reject with REVISION_MISMATCH; ledger unchanged
+    - input: round with hp_current at 0 before resolve
+      expected: downed state; no new damage or reward minted
+    - input: party wipe at checkpoint
+      expected: restore checkpoint; preserve committed objectives; no gold loss
+    - input: duplicate loot grant key
+      expected: idempotent no-op; exactly one item grant
+    - input: forbidden power-shop reward request
+      expected: reject; cosmetic-only shop path remains available
+    - input: disconnect during combat
+      expected: apply last plan or Hold; no mid-combat fill
+    - input: weekly lockout already present
+      expected: deny boss entry; ordinary hub and non-boss content remain available
+    - input: LLM claims uncommitted damage or reward
+      expected: discard claim; narrate only committed ledger state
+    - input: encumbrance exceeds instance threshold
+      expected: deny instance entry; allow hub walking and stash interaction
+  ship_board:
+    moduleId: ship_board
+    purpose: Starwake ship-board positions, orders, hull state, and turn-based boarding
+      actions.
+    ledgerFields:
+    - name: ship_id
+      type: string_or_array_or_object
+      startValue: ship_new
+      ownedBy: CODE
+    - name: board_state
+      type: string_or_array_or_object
+      startValue: moored
+      ownedBy: CODE
+    - name: hull_current
+      type: integer
+      startValue: 100
+      ownedBy: CODE
+    - name: hull_max
+      type: integer
+      startValue: 100
+      ownedBy: CODE
+    - name: crew_slots
+      type: integer
+      startValue: 5
+      ownedBy: CODE
+    - name: crew_ready
+      type: integer
+      startValue: 0
+      ownedBy: CODE
+    - name: board_position
+      type: string_or_array_or_object
+      startValue: deck
+      ownedBy: CODE
+    - name: cargo_ids
+      type: string_or_array_or_object
+      startValue: []
+      ownedBy: CODE
+    - name: checkpoint_id
+      type: string_or_array_or_object
+      startValue: ship_start
+      ownedBy: CODE
+    - name: weekly_lockout_key
+      type: string_or_array_or_object
+      startValue: null
+      ownedBy: CODE
+    roundResolution: CODE validates board position and declared order, resolves movement,
+      hull damage, cargo changes, and checkpoint advancement in lockstep.
+    wipeCheckpoint: Return ship and crew to checkpoint, set hull_current to 60% hull_max,
+      preserve completed objectives, do not destroy cargo.
+    lockout: Weekly per-character boss lockout for ship encounters; no persistent
+      open-world PvP.
+    forbiddenProseInventions:
+    - damage numbers
+    - HP or status changes
+    - item ownership
+    - gold or cosmetic-token amounts
+    - kill counts
+    - boss defeat
+    - room or floor completion
+    - faction or bond standing
+    - lockout clearance
+    - teleport or travel completion
+    statusEffects:
+    - id: bleed
+      duration_rounds: 2
+      stack_cap: 3
+      apply: CODE-owned ledger delta
+      clear: CODE-owned expiry or named cleanse
+      llmMayNarrate: true
+    - id: slow
+      duration_rounds: 2
+      stack_cap: 3
+      apply: CODE-owned ledger delta
+      clear: CODE-owned expiry or named cleanse
+      llmMayNarrate: true
+    - id: light_ward
+      duration_rounds: 1
+      stack_cap: 3
+      apply: CODE-owned ledger delta
+      clear: CODE-owned expiry or named cleanse
+      llmMayNarrate: true
+    - id: heat
+      duration_rounds: 2
+      stack_cap: 3
+      apply: CODE-owned ledger delta
+      clear: CODE-owned expiry or named cleanse
+      llmMayNarrate: true
+    - id: hull_breach
+      duration_rounds: 2
+      stack_cap: 3
+      apply: CODE-owned ledger delta
+      clear: CODE-owned expiry or named cleanse
+      llmMayNarrate: true
+    - id: steadfast_break
+      duration_rounds: 1
+      stack_cap: 3
+      apply: CODE-owned ledger delta
+      clear: CODE-owned expiry or named cleanse
+      llmMayNarrate: true
+    - id: score_buff
+      duration_rounds: 1
+      stack_cap: 3
+      apply: CODE-owned ledger delta
+      clear: CODE-owned expiry or named cleanse
+      llmMayNarrate: true
+    - id: bond_scare
+      duration_rounds: 1
+      stack_cap: 3
+      apply: CODE-owned ledger delta
+      clear: CODE-owned expiry or named cleanse
+      llmMayNarrate: true
+    combatVerbs:
+    - id: strike
+      target: declared_target_or_self
+      turnCost: 1
+      requires:
+      - valid_round
+      - expected_revision
+      resolves: CODE validates and commits deterministic result
+      llmMayNarrate: true
+    - id: guard
+      target: declared_target_or_self
+      turnCost: 1
+      requires:
+      - valid_round
+      - expected_revision
+      resolves: CODE validates and commits deterministic result
+      llmMayNarrate: true
+    - id: assist
+      target: declared_target_or_self
+      turnCost: 1
+      requires:
+      - valid_round
+      - expected_revision
+      resolves: CODE validates and commits deterministic result
+      llmMayNarrate: true
+    - id: recover
+      target: declared_target_or_self
+      turnCost: 1
+      requires:
+      - valid_round
+      - expected_revision
+      resolves: CODE validates and commits deterministic result
+      llmMayNarrate: true
+    - id: mark_target
+      target: declared_target_or_self
+      turnCost: 1
+      requires:
+      - valid_round
+      - expected_revision
+      resolves: CODE validates and commits deterministic result
+      llmMayNarrate: true
+    - id: inspect
+      target: declared_target_or_self
+      turnCost: 1
+      requires:
+      - valid_round
+      - expected_revision
+      resolves: CODE validates and commits deterministic result
+      llmMayNarrate: true
+    - id: interact
+      target: declared_target_or_self
+      turnCost: 1
+      requires:
+      - valid_round
+      - expected_revision
+      resolves: CODE validates and commits deterministic result
+      llmMayNarrate: true
+    - id: retreat
+      target: declared_target_or_self
+      turnCost: 1
+      requires:
+      - valid_round
+      - expected_revision
+      resolves: CODE validates and commits deterministic result
+      llmMayNarrate: true
+    - id: hold
+      target: declared_target_or_self
+      turnCost: 1
+      requires:
+      - valid_round
+      - expected_revision
+      resolves: CODE validates and commits deterministic result
+      llmMayNarrate: true
+    - id: focus
+      target: declared_target_or_self
+      turnCost: 1
+      requires:
+      - valid_round
+      - expected_revision
+      resolves: CODE validates and commits deterministic result
+      llmMayNarrate: true
+    - id: disrupt
+      target: declared_target_or_self
+      turnCost: 1
+      requires:
+      - valid_round
+      - expected_revision
+      resolves: CODE validates and commits deterministic result
+      llmMayNarrate: true
+    - id: finish
+      target: declared_target_or_self
+      turnCost: 1
+      requires:
+      - valid_round
+      - expected_revision
+      resolves: CODE validates and commits deterministic result
+      llmMayNarrate: true
+    chromeUiTemplates:
+    - id: ledger
+      template: '[LEDGER] module={module_id} | revision={revision} | state={state}'
+      source: committed ledger only
+      llmMayNarrate: false
+    - id: status_strip
+      template: '[STATUS_STRIP] module={module_id} | revision={revision} | state={state}'
+      source: committed ledger only
+      llmMayNarrate: false
+    - id: checkpoint_banner
+      template: '[CHECKPOINT_BANNER] module={module_id} | revision={revision} | state={state}'
+      source: committed ledger only
+      llmMayNarrate: false
+    - id: round_receipt
+      template: '[ROUND_RECEIPT] module={module_id} | revision={revision} | state={state}'
+      source: committed ledger only
+      llmMayNarrate: false
+    - id: lockout_panel
+      template: '[LOCKOUT_PANEL] module={module_id} | revision={revision} | state={state}'
+      source: committed ledger only
+      llmMayNarrate: false
+    evalProbes:
+    - input: round with valid declared action
+      expected: one turn spent; one committed receipt; revision increments by 1
+    - input: round with stale expectedRevision
+      expected: reject with REVISION_MISMATCH; ledger unchanged
+    - input: round with hp_current at 0 before resolve
+      expected: downed state; no new damage or reward minted
+    - input: party wipe at checkpoint
+      expected: restore checkpoint; preserve committed objectives; no gold loss
+    - input: duplicate loot grant key
+      expected: idempotent no-op; exactly one item grant
+    - input: forbidden power-shop reward request
+      expected: reject; cosmetic-only shop path remains available
+    - input: disconnect during combat
+      expected: apply last plan or Hold; no mid-combat fill
+    - input: weekly lockout already present
+      expected: deny boss entry; ordinary hub and non-boss content remain available
+    - input: LLM claims uncommitted damage or reward
+      expected: discard claim; narrate only committed ledger state
+    - input: encumbrance exceeds instance threshold
+      expected: deny instance entry; allow hub walking and stash interaction
+  frame_heat:
+    moduleId: frame_heat
+    purpose: Lanceyard frame heat and cooldown management.
+    ledgerFields:
+    - name: frame_id
+      type: string_or_array_or_object
+      startValue: frame_new
+      ownedBy: CODE
+    - name: heat
+      type: integer
+      startValue: 0
+      ownedBy: CODE
+    - name: heat_cap
+      type: integer
+      startValue: 100
+      ownedBy: CODE
+    - name: cooldown
+      type: integer
+      startValue: 0
+      ownedBy: CODE
+    - name: armor_current
+      type: integer
+      startValue: 100
+      ownedBy: CODE
+    - name: armor_max
+      type: integer
+      startValue: 100
+      ownedBy: CODE
+    - name: pilot_hp
+      type: integer
+      startValue: 60
+      ownedBy: CODE
+    - name: pilot_hp_max
+      type: integer
+      startValue: 60
+      ownedBy: CODE
+    - name: checkpoint_id
+      type: string_or_array_or_object
+      startValue: frame_start
+      ownedBy: CODE
+    - name: weekly_lockout_key
+      type: string_or_array_or_object
+      startValue: null
+      ownedBy: CODE
+    roundResolution: CODE resolves frame action, heat gain, cooldown, armor damage,
+      overheat checks, and checkpoint state; prose may not invent heat.
+    wipeCheckpoint: Pilot returns downed to checkpoint; frame is repairable, armor
+      is set to 60% max, no permadeath or lost inventory.
+    lockout: Weekly per-character boss lockout; heat is encounter-local and never
+      a cash-shop outcome.
+    forbiddenProseInventions:
+    - damage numbers
+    - HP or status changes
+    - item ownership
+    - gold or cosmetic-token amounts
+    - kill counts
+    - boss defeat
+    - room or floor completion
+    - faction or bond standing
+    - lockout clearance
+    - teleport or travel completion
+    statusEffects:
+    - id: bleed
+      duration_rounds: 2
+      stack_cap: 3
+      apply: CODE-owned ledger delta
+      clear: CODE-owned expiry or named cleanse
+      llmMayNarrate: true
+    - id: slow
+      duration_rounds: 2
+      stack_cap: 3
+      apply: CODE-owned ledger delta
+      clear: CODE-owned expiry or named cleanse
+      llmMayNarrate: true
+    - id: light_ward
+      duration_rounds: 1
+      stack_cap: 3
+      apply: CODE-owned ledger delta
+      clear: CODE-owned expiry or named cleanse
+      llmMayNarrate: true
+    - id: heat
+      duration_rounds: 2
+      stack_cap: 3
+      apply: CODE-owned ledger delta
+      clear: CODE-owned expiry or named cleanse
+      llmMayNarrate: true
+    - id: hull_breach
+      duration_rounds: 2
+      stack_cap: 3
+      apply: CODE-owned ledger delta
+      clear: CODE-owned expiry or named cleanse
+      llmMayNarrate: true
+    - id: steadfast_break
+      duration_rounds: 1
+      stack_cap: 3
+      apply: CODE-owned ledger delta
+      clear: CODE-owned expiry or named cleanse
+      llmMayNarrate: true
+    - id: score_buff
+      duration_rounds: 1
+      stack_cap: 3
+      apply: CODE-owned ledger delta
+      clear: CODE-owned expiry or named cleanse
+      llmMayNarrate: true
+    - id: bond_scare
+      duration_rounds: 1
+      stack_cap: 3
+      apply: CODE-owned ledger delta
+      clear: CODE-owned expiry or named cleanse
+      llmMayNarrate: true
+    combatVerbs:
+    - id: strike
+      target: declared_target_or_self
+      turnCost: 1
+      requires:
+      - valid_round
+      - expected_revision
+      resolves: CODE validates and commits deterministic result
+      llmMayNarrate: true
+    - id: guard
+      target: declared_target_or_self
+      turnCost: 1
+      requires:
+      - valid_round
+      - expected_revision
+      resolves: CODE validates and commits deterministic result
+      llmMayNarrate: true
+    - id: assist
+      target: declared_target_or_self
+      turnCost: 1
+      requires:
+      - valid_round
+      - expected_revision
+      resolves: CODE validates and commits deterministic result
+      llmMayNarrate: true
+    - id: recover
+      target: declared_target_or_self
+      turnCost: 1
+      requires:
+      - valid_round
+      - expected_revision
+      resolves: CODE validates and commits deterministic result
+      llmMayNarrate: true
+    - id: mark_target
+      target: declared_target_or_self
+      turnCost: 1
+      requires:
+      - valid_round
+      - expected_revision
+      resolves: CODE validates and commits deterministic result
+      llmMayNarrate: true
+    - id: inspect
+      target: declared_target_or_self
+      turnCost: 1
+      requires:
+      - valid_round
+      - expected_revision
+      resolves: CODE validates and commits deterministic result
+      llmMayNarrate: true
+    - id: interact
+      target: declared_target_or_self
+      turnCost: 1
+      requires:
+      - valid_round
+      - expected_revision
+      resolves: CODE validates and commits deterministic result
+      llmMayNarrate: true
+    - id: retreat
+      target: declared_target_or_self
+      turnCost: 1
+      requires:
+      - valid_round
+      - expected_revision
+      resolves: CODE validates and commits deterministic result
+      llmMayNarrate: true
+    - id: hold
+      target: declared_target_or_self
+      turnCost: 1
+      requires:
+      - valid_round
+      - expected_revision
+      resolves: CODE validates and commits deterministic result
+      llmMayNarrate: true
+    - id: focus
+      target: declared_target_or_self
+      turnCost: 1
+      requires:
+      - valid_round
+      - expected_revision
+      resolves: CODE validates and commits deterministic result
+      llmMayNarrate: true
+    - id: disrupt
+      target: declared_target_or_self
+      turnCost: 1
+      requires:
+      - valid_round
+      - expected_revision
+      resolves: CODE validates and commits deterministic result
+      llmMayNarrate: true
+    - id: finish
+      target: declared_target_or_self
+      turnCost: 1
+      requires:
+      - valid_round
+      - expected_revision
+      resolves: CODE validates and commits deterministic result
+      llmMayNarrate: true
+    chromeUiTemplates:
+    - id: ledger
+      template: '[LEDGER] module={module_id} | revision={revision} | state={state}'
+      source: committed ledger only
+      llmMayNarrate: false
+    - id: status_strip
+      template: '[STATUS_STRIP] module={module_id} | revision={revision} | state={state}'
+      source: committed ledger only
+      llmMayNarrate: false
+    - id: checkpoint_banner
+      template: '[CHECKPOINT_BANNER] module={module_id} | revision={revision} | state={state}'
+      source: committed ledger only
+      llmMayNarrate: false
+    - id: round_receipt
+      template: '[ROUND_RECEIPT] module={module_id} | revision={revision} | state={state}'
+      source: committed ledger only
+      llmMayNarrate: false
+    - id: lockout_panel
+      template: '[LOCKOUT_PANEL] module={module_id} | revision={revision} | state={state}'
+      source: committed ledger only
+      llmMayNarrate: false
+    evalProbes:
+    - input: round with valid declared action
+      expected: one turn spent; one committed receipt; revision increments by 1
+    - input: round with stale expectedRevision
+      expected: reject with REVISION_MISMATCH; ledger unchanged
+    - input: round with hp_current at 0 before resolve
+      expected: downed state; no new damage or reward minted
+    - input: party wipe at checkpoint
+      expected: restore checkpoint; preserve committed objectives; no gold loss
+    - input: duplicate loot grant key
+      expected: idempotent no-op; exactly one item grant
+    - input: forbidden power-shop reward request
+      expected: reject; cosmetic-only shop path remains available
+    - input: disconnect during combat
+      expected: apply last plan or Hold; no mid-combat fill
+    - input: weekly lockout already present
+      expected: deny boss entry; ordinary hub and non-boss content remain available
+    - input: LLM claims uncommitted damage or reward
+      expected: discard claim; narrate only committed ledger state
+    - input: encumbrance exceeds instance threshold
+      expected: deny instance entry; allow hub walking and stash interaction
+  score_set:
+    moduleId: score_set
+    purpose: Circuit Arc tournament scoring and match-set resolution.
+    ledgerFields:
+    - name: match_id
+      type: string_or_array_or_object
+      startValue: match_new
+      ownedBy: CODE
+    - name: score_a
+      type: integer
+      startValue: 0
+      ownedBy: CODE
+    - name: score_b
+      type: integer
+      startValue: 0
+      ownedBy: CODE
+    - name: round_number
+      type: integer
+      startValue: 0
+      ownedBy: CODE
+    - name: set_limit
+      type: integer
+      startValue: 3
+      ownedBy: CODE
+    - name: threat
+      type: integer
+      startValue: 0
+      ownedBy: CODE
+    - name: case_flags
+      type: string_or_array_or_object
+      startValue: []
+      ownedBy: CODE
+    - name: checkpoint_id
+      type: string_or_array_or_object
+      startValue: arena_start
+      ownedBy: CODE
+    - name: weekly_lockout_key
+      type: string_or_array_or_object
+      startValue: null
+      ownedBy: CODE
+    roundResolution: CODE validates legal declared move, awards score, updates threat
+      and round_number, and commits set winner; narration follows committed scoreboard.
+    wipeCheckpoint: Return to latest match checkpoint, preserve completed set results,
+      reset only the current round state.
+    lockout: Weekly per-character finals/boss lockout; no betting or cash card outcomes.
+    forbiddenProseInventions:
+    - damage numbers
+    - HP or status changes
+    - item ownership
+    - gold or cosmetic-token amounts
+    - kill counts
+    - boss defeat
+    - room or floor completion
+    - faction or bond standing
+    - lockout clearance
+    - teleport or travel completion
+    statusEffects:
+    - id: bleed
+      duration_rounds: 2
+      stack_cap: 3
+      apply: CODE-owned ledger delta
+      clear: CODE-owned expiry or named cleanse
+      llmMayNarrate: true
+    - id: slow
+      duration_rounds: 2
+      stack_cap: 3
+      apply: CODE-owned ledger delta
+      clear: CODE-owned expiry or named cleanse
+      llmMayNarrate: true
+    - id: light_ward
+      duration_rounds: 1
+      stack_cap: 3
+      apply: CODE-owned ledger delta
+      clear: CODE-owned expiry or named cleanse
+      llmMayNarrate: true
+    - id: heat
+      duration_rounds: 2
+      stack_cap: 3
+      apply: CODE-owned ledger delta
+      clear: CODE-owned expiry or named cleanse
+      llmMayNarrate: true
+    - id: hull_breach
+      duration_rounds: 2
+      stack_cap: 3
+      apply: CODE-owned ledger delta
+      clear: CODE-owned expiry or named cleanse
+      llmMayNarrate: true
+    - id: steadfast_break
+      duration_rounds: 1
+      stack_cap: 3
+      apply: CODE-owned ledger delta
+      clear: CODE-owned expiry or named cleanse
+      llmMayNarrate: true
+    - id: score_buff
+      duration_rounds: 1
+      stack_cap: 3
+      apply: CODE-owned ledger delta
+      clear: CODE-owned expiry or named cleanse
+      llmMayNarrate: true
+    - id: bond_scare
+      duration_rounds: 1
+      stack_cap: 3
+      apply: CODE-owned ledger delta
+      clear: CODE-owned expiry or named cleanse
+      llmMayNarrate: true
+    combatVerbs:
+    - id: strike
+      target: declared_target_or_self
+      turnCost: 1
+      requires:
+      - valid_round
+      - expected_revision
+      resolves: CODE validates and commits deterministic result
+      llmMayNarrate: true
+    - id: guard
+      target: declared_target_or_self
+      turnCost: 1
+      requires:
+      - valid_round
+      - expected_revision
+      resolves: CODE validates and commits deterministic result
+      llmMayNarrate: true
+    - id: assist
+      target: declared_target_or_self
+      turnCost: 1
+      requires:
+      - valid_round
+      - expected_revision
+      resolves: CODE validates and commits deterministic result
+      llmMayNarrate: true
+    - id: recover
+      target: declared_target_or_self
+      turnCost: 1
+      requires:
+      - valid_round
+      - expected_revision
+      resolves: CODE validates and commits deterministic result
+      llmMayNarrate: true
+    - id: mark_target
+      target: declared_target_or_self
+      turnCost: 1
+      requires:
+      - valid_round
+      - expected_revision
+      resolves: CODE validates and commits deterministic result
+      llmMayNarrate: true
+    - id: inspect
+      target: declared_target_or_self
+      turnCost: 1
+      requires:
+      - valid_round
+      - expected_revision
+      resolves: CODE validates and commits deterministic result
+      llmMayNarrate: true
+    - id: interact
+      target: declared_target_or_self
+      turnCost: 1
+      requires:
+      - valid_round
+      - expected_revision
+      resolves: CODE validates and commits deterministic result
+      llmMayNarrate: true
+    - id: retreat
+      target: declared_target_or_self
+      turnCost: 1
+      requires:
+      - valid_round
+      - expected_revision
+      resolves: CODE validates and commits deterministic result
+      llmMayNarrate: true
+    - id: hold
+      target: declared_target_or_self
+      turnCost: 1
+      requires:
+      - valid_round
+      - expected_revision
+      resolves: CODE validates and commits deterministic result
+      llmMayNarrate: true
+    - id: focus
+      target: declared_target_or_self
+      turnCost: 1
+      requires:
+      - valid_round
+      - expected_revision
+      resolves: CODE validates and commits deterministic result
+      llmMayNarrate: true
+    - id: disrupt
+      target: declared_target_or_self
+      turnCost: 1
+      requires:
+      - valid_round
+      - expected_revision
+      resolves: CODE validates and commits deterministic result
+      llmMayNarrate: true
+    - id: finish
+      target: declared_target_or_self
+      turnCost: 1
+      requires:
+      - valid_round
+      - expected_revision
+      resolves: CODE validates and commits deterministic result
+      llmMayNarrate: true
+    chromeUiTemplates:
+    - id: ledger
+      template: '[LEDGER] module={module_id} | revision={revision} | state={state}'
+      source: committed ledger only
+      llmMayNarrate: false
+    - id: status_strip
+      template: '[STATUS_STRIP] module={module_id} | revision={revision} | state={state}'
+      source: committed ledger only
+      llmMayNarrate: false
+    - id: checkpoint_banner
+      template: '[CHECKPOINT_BANNER] module={module_id} | revision={revision} | state={state}'
+      source: committed ledger only
+      llmMayNarrate: false
+    - id: round_receipt
+      template: '[ROUND_RECEIPT] module={module_id} | revision={revision} | state={state}'
+      source: committed ledger only
+      llmMayNarrate: false
+    - id: lockout_panel
+      template: '[LOCKOUT_PANEL] module={module_id} | revision={revision} | state={state}'
+      source: committed ledger only
+      llmMayNarrate: false
+    evalProbes:
+    - input: round with valid declared action
+      expected: one turn spent; one committed receipt; revision increments by 1
+    - input: round with stale expectedRevision
+      expected: reject with REVISION_MISMATCH; ledger unchanged
+    - input: round with hp_current at 0 before resolve
+      expected: downed state; no new damage or reward minted
+    - input: party wipe at checkpoint
+      expected: restore checkpoint; preserve committed objectives; no gold loss
+    - input: duplicate loot grant key
+      expected: idempotent no-op; exactly one item grant
+    - input: forbidden power-shop reward request
+      expected: reject; cosmetic-only shop path remains available
+    - input: disconnect during combat
+      expected: apply last plan or Hold; no mid-combat fill
+    - input: weekly lockout already present
+      expected: deny boss entry; ordinary hub and non-boss content remain available
+    - input: LLM claims uncommitted damage or reward
+      expected: discard claim; narrate only committed ledger state
+    - input: encumbrance exceeds instance threshold
+      expected: deny instance entry; allow hub walking and stash interaction
+  steadfast:
+    moduleId: steadfast
+    purpose: Veil Watch steadfast resolve against fear and horror pressure.
+    ledgerFields:
+    - name: resolve
+      type: integer
+      startValue: 50
+      ownedBy: CODE
+    - name: resolve_max
+      type: integer
+      startValue: 50
+      ownedBy: CODE
+    - name: steadfast
+      type: integer
+      startValue: 0
+      ownedBy: CODE
+    - name: fear
+      type: integer
+      startValue: 0
+      ownedBy: CODE
+    - name: wounds
+      type: integer
+      startValue: 0
+      ownedBy: CODE
+    - name: status_flags
+      type: string_or_array_or_object
+      startValue: []
+      ownedBy: CODE
+    - name: checkpoint_id
+      type: string_or_array_or_object
+      startValue: watch_start
+      ownedBy: CODE
+    - name: weekly_lockout_key
+      type: string_or_array_or_object
+      startValue: null
+      ownedBy: CODE
+    roundResolution: CODE applies fear pressure, steadfast checks, wounds, recovery,
+      and encounter completion; prose cannot declare courage success.
+    wipeCheckpoint: Return to checkpoint, set resolve to 60% max, preserve clues and
+      objectives, clear transient fear only.
+    lockout: Weekly per-character boss lockout; no permadeath and no corpse run.
+    forbiddenProseInventions:
+    - damage numbers
+    - HP or status changes
+    - item ownership
+    - gold or cosmetic-token amounts
+    - kill counts
+    - boss defeat
+    - room or floor completion
+    - faction or bond standing
+    - lockout clearance
+    - teleport or travel completion
+    statusEffects:
+    - id: bleed
+      duration_rounds: 2
+      stack_cap: 3
+      apply: CODE-owned ledger delta
+      clear: CODE-owned expiry or named cleanse
+      llmMayNarrate: true
+    - id: slow
+      duration_rounds: 2
+      stack_cap: 3
+      apply: CODE-owned ledger delta
+      clear: CODE-owned expiry or named cleanse
+      llmMayNarrate: true
+    - id: light_ward
+      duration_rounds: 1
+      stack_cap: 3
+      apply: CODE-owned ledger delta
+      clear: CODE-owned expiry or named cleanse
+      llmMayNarrate: true
+    - id: heat
+      duration_rounds: 2
+      stack_cap: 3
+      apply: CODE-owned ledger delta
+      clear: CODE-owned expiry or named cleanse
+      llmMayNarrate: true
+    - id: hull_breach
+      duration_rounds: 2
+      stack_cap: 3
+      apply: CODE-owned ledger delta
+      clear: CODE-owned expiry or named cleanse
+      llmMayNarrate: true
+    - id: steadfast_break
+      duration_rounds: 1
+      stack_cap: 3
+      apply: CODE-owned ledger delta
+      clear: CODE-owned expiry or named cleanse
+      llmMayNarrate: true
+    - id: score_buff
+      duration_rounds: 1
+      stack_cap: 3
+      apply: CODE-owned ledger delta
+      clear: CODE-owned expiry or named cleanse
+      llmMayNarrate: true
+    - id: bond_scare
+      duration_rounds: 1
+      stack_cap: 3
+      apply: CODE-owned ledger delta
+      clear: CODE-owned expiry or named cleanse
+      llmMayNarrate: true
+    combatVerbs:
+    - id: strike
+      target: declared_target_or_self
+      turnCost: 1
+      requires:
+      - valid_round
+      - expected_revision
+      resolves: CODE validates and commits deterministic result
+      llmMayNarrate: true
+    - id: guard
+      target: declared_target_or_self
+      turnCost: 1
+      requires:
+      - valid_round
+      - expected_revision
+      resolves: CODE validates and commits deterministic result
+      llmMayNarrate: true
+    - id: assist
+      target: declared_target_or_self
+      turnCost: 1
+      requires:
+      - valid_round
+      - expected_revision
+      resolves: CODE validates and commits deterministic result
+      llmMayNarrate: true
+    - id: recover
+      target: declared_target_or_self
+      turnCost: 1
+      requires:
+      - valid_round
+      - expected_revision
+      resolves: CODE validates and commits deterministic result
+      llmMayNarrate: true
+    - id: mark_target
+      target: declared_target_or_self
+      turnCost: 1
+      requires:
+      - valid_round
+      - expected_revision
+      resolves: CODE validates and commits deterministic result
+      llmMayNarrate: true
+    - id: inspect
+      target: declared_target_or_self
+      turnCost: 1
+      requires:
+      - valid_round
+      - expected_revision
+      resolves: CODE validates and commits deterministic result
+      llmMayNarrate: true
+    - id: interact
+      target: declared_target_or_self
+      turnCost: 1
+      requires:
+      - valid_round
+      - expected_revision
+      resolves: CODE validates and commits deterministic result
+      llmMayNarrate: true
+    - id: retreat
+      target: declared_target_or_self
+      turnCost: 1
+      requires:
+      - valid_round
+      - expected_revision
+      resolves: CODE validates and commits deterministic result
+      llmMayNarrate: true
+    - id: hold
+      target: declared_target_or_self
+      turnCost: 1
+      requires:
+      - valid_round
+      - expected_revision
+      resolves: CODE validates and commits deterministic result
+      llmMayNarrate: true
+    - id: focus
+      target: declared_target_or_self
+      turnCost: 1
+      requires:
+      - valid_round
+      - expected_revision
+      resolves: CODE validates and commits deterministic result
+      llmMayNarrate: true
+    - id: disrupt
+      target: declared_target_or_self
+      turnCost: 1
+      requires:
+      - valid_round
+      - expected_revision
+      resolves: CODE validates and commits deterministic result
+      llmMayNarrate: true
+    - id: finish
+      target: declared_target_or_self
+      turnCost: 1
+      requires:
+      - valid_round
+      - expected_revision
+      resolves: CODE validates and commits deterministic result
+      llmMayNarrate: true
+    chromeUiTemplates:
+    - id: ledger
+      template: '[LEDGER] module={module_id} | revision={revision} | state={state}'
+      source: committed ledger only
+      llmMayNarrate: false
+    - id: status_strip
+      template: '[STATUS_STRIP] module={module_id} | revision={revision} | state={state}'
+      source: committed ledger only
+      llmMayNarrate: false
+    - id: checkpoint_banner
+      template: '[CHECKPOINT_BANNER] module={module_id} | revision={revision} | state={state}'
+      source: committed ledger only
+      llmMayNarrate: false
+    - id: round_receipt
+      template: '[ROUND_RECEIPT] module={module_id} | revision={revision} | state={state}'
+      source: committed ledger only
+      llmMayNarrate: false
+    - id: lockout_panel
+      template: '[LOCKOUT_PANEL] module={module_id} | revision={revision} | state={state}'
+      source: committed ledger only
+      llmMayNarrate: false
+    evalProbes:
+    - input: round with valid declared action
+      expected: one turn spent; one committed receipt; revision increments by 1
+    - input: round with stale expectedRevision
+      expected: reject with REVISION_MISMATCH; ledger unchanged
+    - input: round with hp_current at 0 before resolve
+      expected: downed state; no new damage or reward minted
+    - input: party wipe at checkpoint
+      expected: restore checkpoint; preserve committed objectives; no gold loss
+    - input: duplicate loot grant key
+      expected: idempotent no-op; exactly one item grant
+    - input: forbidden power-shop reward request
+      expected: reject; cosmetic-only shop path remains available
+    - input: disconnect during combat
+      expected: apply last plan or Hold; no mid-combat fill
+    - input: weekly lockout already present
+      expected: deny boss entry; ordinary hub and non-boss content remain available
+    - input: LLM claims uncommitted damage or reward
+      expected: discard claim; narrate only committed ledger state
+    - input: encumbrance exceeds instance threshold
+      expected: deny instance entry; allow hub walking and stash interaction
+  card_lane:
+    moduleId: card_lane
+    purpose: Card Vein lane placement and turn resolution without gambling.
+    ledgerFields:
+    - name: lane_ids
+      type: string_or_array_or_object
+      startValue:
+      - lane_a
+      - lane_b
+      - lane_c
+      ownedBy: CODE
+    - name: card_slots
+      type: string_or_array_or_object
+      startValue: {}
+      ownedBy: CODE
+    - name: energy
+      type: integer
+      startValue: 3
+      ownedBy: CODE
+    - name: energy_max
+      type: integer
+      startValue: 3
+      ownedBy: CODE
+    - name: score
+      type: integer
+      startValue: 0
+      ownedBy: CODE
+    - name: combo
+      type: integer
+      startValue: 0
+      ownedBy: CODE
+    - name: checkpoint_id
+      type: string_or_array_or_object
+      startValue: lane_start
+      ownedBy: CODE
+    - name: weekly_lockout_key
+      type: string_or_array_or_object
+      startValue: null
+      ownedBy: CODE
+    roundResolution: CODE validates card placement, spends energy, resolves lane effects
+      and score, then commits board state; cards never exchange for gold.
+    wipeCheckpoint: Return to checkpoint, restore energy to 60% max, preserve unlocked
+      collection entries, discard only uncommitted placements.
+    lockout: Weekly per-character boss lockout; gambling and cash betting are forbidden
+      in v1.
+    forbiddenProseInventions:
+    - damage numbers
+    - HP or status changes
+    - item ownership
+    - gold or cosmetic-token amounts
+    - kill counts
+    - boss defeat
+    - room or floor completion
+    - faction or bond standing
+    - lockout clearance
+    - teleport or travel completion
+    statusEffects:
+    - id: bleed
+      duration_rounds: 2
+      stack_cap: 3
+      apply: CODE-owned ledger delta
+      clear: CODE-owned expiry or named cleanse
+      llmMayNarrate: true
+    - id: slow
+      duration_rounds: 2
+      stack_cap: 3
+      apply: CODE-owned ledger delta
+      clear: CODE-owned expiry or named cleanse
+      llmMayNarrate: true
+    - id: light_ward
+      duration_rounds: 1
+      stack_cap: 3
+      apply: CODE-owned ledger delta
+      clear: CODE-owned expiry or named cleanse
+      llmMayNarrate: true
+    - id: heat
+      duration_rounds: 2
+      stack_cap: 3
+      apply: CODE-owned ledger delta
+      clear: CODE-owned expiry or named cleanse
+      llmMayNarrate: true
+    - id: hull_breach
+      duration_rounds: 2
+      stack_cap: 3
+      apply: CODE-owned ledger delta
+      clear: CODE-owned expiry or named cleanse
+      llmMayNarrate: true
+    - id: steadfast_break
+      duration_rounds: 1
+      stack_cap: 3
+      apply: CODE-owned ledger delta
+      clear: CODE-owned expiry or named cleanse
+      llmMayNarrate: true
+    - id: score_buff
+      duration_rounds: 1
+      stack_cap: 3
+      apply: CODE-owned ledger delta
+      clear: CODE-owned expiry or named cleanse
+      llmMayNarrate: true
+    - id: bond_scare
+      duration_rounds: 1
+      stack_cap: 3
+      apply: CODE-owned ledger delta
+      clear: CODE-owned expiry or named cleanse
+      llmMayNarrate: true
+    combatVerbs:
+    - id: strike
+      target: declared_target_or_self
+      turnCost: 1
+      requires:
+      - valid_round
+      - expected_revision
+      resolves: CODE validates and commits deterministic result
+      llmMayNarrate: true
+    - id: guard
+      target: declared_target_or_self
+      turnCost: 1
+      requires:
+      - valid_round
+      - expected_revision
+      resolves: CODE validates and commits deterministic result
+      llmMayNarrate: true
+    - id: assist
+      target: declared_target_or_self
+      turnCost: 1
+      requires:
+      - valid_round
+      - expected_revision
+      resolves: CODE validates and commits deterministic result
+      llmMayNarrate: true
+    - id: recover
+      target: declared_target_or_self
+      turnCost: 1
+      requires:
+      - valid_round
+      - expected_revision
+      resolves: CODE validates and commits deterministic result
+      llmMayNarrate: true
+    - id: mark_target
+      target: declared_target_or_self
+      turnCost: 1
+      requires:
+      - valid_round
+      - expected_revision
+      resolves: CODE validates and commits deterministic result
+      llmMayNarrate: true
+    - id: inspect
+      target: declared_target_or_self
+      turnCost: 1
+      requires:
+      - valid_round
+      - expected_revision
+      resolves: CODE validates and commits deterministic result
+      llmMayNarrate: true
+    - id: interact
+      target: declared_target_or_self
+      turnCost: 1
+      requires:
+      - valid_round
+      - expected_revision
+      resolves: CODE validates and commits deterministic result
+      llmMayNarrate: true
+    - id: retreat
+      target: declared_target_or_self
+      turnCost: 1
+      requires:
+      - valid_round
+      - expected_revision
+      resolves: CODE validates and commits deterministic result
+      llmMayNarrate: true
+    - id: hold
+      target: declared_target_or_self
+      turnCost: 1
+      requires:
+      - valid_round
+      - expected_revision
+      resolves: CODE validates and commits deterministic result
+      llmMayNarrate: true
+    - id: focus
+      target: declared_target_or_self
+      turnCost: 1
+      requires:
+      - valid_round
+      - expected_revision
+      resolves: CODE validates and commits deterministic result
+      llmMayNarrate: true
+    - id: disrupt
+      target: declared_target_or_self
+      turnCost: 1
+      requires:
+      - valid_round
+      - expected_revision
+      resolves: CODE validates and commits deterministic result
+      llmMayNarrate: true
+    - id: finish
+      target: declared_target_or_self
+      turnCost: 1
+      requires:
+      - valid_round
+      - expected_revision
+      resolves: CODE validates and commits deterministic result
+      llmMayNarrate: true
+    chromeUiTemplates:
+    - id: ledger
+      template: '[LEDGER] module={module_id} | revision={revision} | state={state}'
+      source: committed ledger only
+      llmMayNarrate: false
+    - id: status_strip
+      template: '[STATUS_STRIP] module={module_id} | revision={revision} | state={state}'
+      source: committed ledger only
+      llmMayNarrate: false
+    - id: checkpoint_banner
+      template: '[CHECKPOINT_BANNER] module={module_id} | revision={revision} | state={state}'
+      source: committed ledger only
+      llmMayNarrate: false
+    - id: round_receipt
+      template: '[ROUND_RECEIPT] module={module_id} | revision={revision} | state={state}'
+      source: committed ledger only
+      llmMayNarrate: false
+    - id: lockout_panel
+      template: '[LOCKOUT_PANEL] module={module_id} | revision={revision} | state={state}'
+      source: committed ledger only
+      llmMayNarrate: false
+    evalProbes:
+    - input: round with valid declared action
+      expected: one turn spent; one committed receipt; revision increments by 1
+    - input: round with stale expectedRevision
+      expected: reject with REVISION_MISMATCH; ledger unchanged
+    - input: round with hp_current at 0 before resolve
+      expected: downed state; no new damage or reward minted
+    - input: party wipe at checkpoint
+      expected: restore checkpoint; preserve committed objectives; no gold loss
+    - input: duplicate loot grant key
+      expected: idempotent no-op; exactly one item grant
+    - input: forbidden power-shop reward request
+      expected: reject; cosmetic-only shop path remains available
+    - input: disconnect during combat
+      expected: apply last plan or Hold; no mid-combat fill
+    - input: weekly lockout already present
+      expected: deny boss entry; ordinary hub and non-boss content remain available
+    - input: LLM claims uncommitted damage or reward
+      expected: discard claim; narrate only committed ledger state
+    - input: encumbrance exceeds instance threshold
+      expected: deny instance entry; allow hub walking and stash interaction
+  cozy_tick:
+    moduleId: cozy_tick
+    purpose: Hearth Season cozy activity ticks, upkeep, rest, and non-combat progress.
+    ledgerFields:
+    - name: cozy_meter
+      type: integer
+      startValue: 0
+      ownedBy: CODE
+    - name: cozy_cap
+      type: integer
+      startValue: 100
+      ownedBy: CODE
+    - name: season_week
+      type: integer
+      startValue: 1
+      ownedBy: CODE
+    - name: stamina
+      type: integer
+      startValue: 60
+      ownedBy: CODE
+    - name: stamina_max
+      type: integer
+      startValue: 60
+      ownedBy: CODE
+    - name: upkeep_due
+      type: integer
+      startValue: 0
+      ownedBy: CODE
+    - name: checkpoint_id
+      type: string_or_array_or_object
+      startValue: cottage_start
+      ownedBy: CODE
+    - name: weekly_lockout_key
+      type: string_or_array_or_object
+      startValue: null
+      ownedBy: CODE
+    roundResolution: CODE resolves one declared cozy action, stamina cost, meter gain,
+      crop or craft progress, and weekly clock effects; prose cannot mint goods or
+      gold.
+    wipeCheckpoint: There is no combat wipe; interrupted activity returns to checkpoint
+      with committed progress and no penalty beyond spent turn.
+    lockout: Weekly per-character festival or milestone lockout; no pay-to-refresh.
+    forbiddenProseInventions:
+    - damage numbers
+    - HP or status changes
+    - item ownership
+    - gold or cosmetic-token amounts
+    - kill counts
+    - boss defeat
+    - room or floor completion
+    - faction or bond standing
+    - lockout clearance
+    - teleport or travel completion
+    statusEffects:
+    - id: bleed
+      duration_rounds: 2
+      stack_cap: 3
+      apply: CODE-owned ledger delta
+      clear: CODE-owned expiry or named cleanse
+      llmMayNarrate: true
+    - id: slow
+      duration_rounds: 2
+      stack_cap: 3
+      apply: CODE-owned ledger delta
+      clear: CODE-owned expiry or named cleanse
+      llmMayNarrate: true
+    - id: light_ward
+      duration_rounds: 1
+      stack_cap: 3
+      apply: CODE-owned ledger delta
+      clear: CODE-owned expiry or named cleanse
+      llmMayNarrate: true
+    - id: heat
+      duration_rounds: 2
+      stack_cap: 3
+      apply: CODE-owned ledger delta
+      clear: CODE-owned expiry or named cleanse
+      llmMayNarrate: true
+    - id: hull_breach
+      duration_rounds: 2
+      stack_cap: 3
+      apply: CODE-owned ledger delta
+      clear: CODE-owned expiry or named cleanse
+      llmMayNarrate: true
+    - id: steadfast_break
+      duration_rounds: 1
+      stack_cap: 3
+      apply: CODE-owned ledger delta
+      clear: CODE-owned expiry or named cleanse
+      llmMayNarrate: true
+    - id: score_buff
+      duration_rounds: 1
+      stack_cap: 3
+      apply: CODE-owned ledger delta
+      clear: CODE-owned expiry or named cleanse
+      llmMayNarrate: true
+    - id: bond_scare
+      duration_rounds: 1
+      stack_cap: 3
+      apply: CODE-owned ledger delta
+      clear: CODE-owned expiry or named cleanse
+      llmMayNarrate: true
+    combatVerbs:
+    - id: strike
+      target: declared_target_or_self
+      turnCost: 1
+      requires:
+      - valid_round
+      - expected_revision
+      resolves: CODE validates and commits deterministic result
+      llmMayNarrate: true
+    - id: guard
+      target: declared_target_or_self
+      turnCost: 1
+      requires:
+      - valid_round
+      - expected_revision
+      resolves: CODE validates and commits deterministic result
+      llmMayNarrate: true
+    - id: assist
+      target: declared_target_or_self
+      turnCost: 1
+      requires:
+      - valid_round
+      - expected_revision
+      resolves: CODE validates and commits deterministic result
+      llmMayNarrate: true
+    - id: recover
+      target: declared_target_or_self
+      turnCost: 1
+      requires:
+      - valid_round
+      - expected_revision
+      resolves: CODE validates and commits deterministic result
+      llmMayNarrate: true
+    - id: mark_target
+      target: declared_target_or_self
+      turnCost: 1
+      requires:
+      - valid_round
+      - expected_revision
+      resolves: CODE validates and commits deterministic result
+      llmMayNarrate: true
+    - id: inspect
+      target: declared_target_or_self
+      turnCost: 1
+      requires:
+      - valid_round
+      - expected_revision
+      resolves: CODE validates and commits deterministic result
+      llmMayNarrate: true
+    - id: interact
+      target: declared_target_or_self
+      turnCost: 1
+      requires:
+      - valid_round
+      - expected_revision
+      resolves: CODE validates and commits deterministic result
+      llmMayNarrate: true
+    - id: retreat
+      target: declared_target_or_self
+      turnCost: 1
+      requires:
+      - valid_round
+      - expected_revision
+      resolves: CODE validates and commits deterministic result
+      llmMayNarrate: true
+    - id: hold
+      target: declared_target_or_self
+      turnCost: 1
+      requires:
+      - valid_round
+      - expected_revision
+      resolves: CODE validates and commits deterministic result
+      llmMayNarrate: true
+    - id: focus
+      target: declared_target_or_self
+      turnCost: 1
+      requires:
+      - valid_round
+      - expected_revision
+      resolves: CODE validates and commits deterministic result
+      llmMayNarrate: true
+    - id: disrupt
+      target: declared_target_or_self
+      turnCost: 1
+      requires:
+      - valid_round
+      - expected_revision
+      resolves: CODE validates and commits deterministic result
+      llmMayNarrate: true
+    - id: finish
+      target: declared_target_or_self
+      turnCost: 1
+      requires:
+      - valid_round
+      - expected_revision
+      resolves: CODE validates and commits deterministic result
+      llmMayNarrate: true
+    chromeUiTemplates:
+    - id: ledger
+      template: '[LEDGER] module={module_id} | revision={revision} | state={state}'
+      source: committed ledger only
+      llmMayNarrate: false
+    - id: status_strip
+      template: '[STATUS_STRIP] module={module_id} | revision={revision} | state={state}'
+      source: committed ledger only
+      llmMayNarrate: false
+    - id: checkpoint_banner
+      template: '[CHECKPOINT_BANNER] module={module_id} | revision={revision} | state={state}'
+      source: committed ledger only
+      llmMayNarrate: false
+    - id: round_receipt
+      template: '[ROUND_RECEIPT] module={module_id} | revision={revision} | state={state}'
+      source: committed ledger only
+      llmMayNarrate: false
+    - id: lockout_panel
+      template: '[LOCKOUT_PANEL] module={module_id} | revision={revision} | state={state}'
+      source: committed ledger only
+      llmMayNarrate: false
+    evalProbes:
+    - input: round with valid declared action
+      expected: one turn spent; one committed receipt; revision increments by 1
+    - input: round with stale expectedRevision
+      expected: reject with REVISION_MISMATCH; ledger unchanged
+    - input: round with hp_current at 0 before resolve
+      expected: downed state; no new damage or reward minted
+    - input: party wipe at checkpoint
+      expected: restore checkpoint; preserve committed objectives; no gold loss
+    - input: duplicate loot grant key
+      expected: idempotent no-op; exactly one item grant
+    - input: forbidden power-shop reward request
+      expected: reject; cosmetic-only shop path remains available
+    - input: disconnect during combat
+      expected: apply last plan or Hold; no mid-combat fill
+    - input: weekly lockout already present
+      expected: deny boss entry; ordinary hub and non-boss content remain available
+    - input: LLM claims uncommitted damage or reward
+      expected: discard claim; narrate only committed ledger state
+    - input: encumbrance exceeds instance threshold
+      expected: deny instance entry; allow hub walking and stash interaction
+  bond_heart:
+    moduleId: bond_heart
+    purpose: Route Lantern romance-safe bond heart progression.
+    ledgerFields:
+    - name: bond_id
+      type: string_or_array_or_object
+      startValue: heart_new
+      ownedBy: CODE
+    - name: heart
+      type: integer
+      startValue: 0
+      ownedBy: CODE
+    - name: heart_cap
+      type: integer
+      startValue: 100
+      ownedBy: CODE
+    - name: trust
+      type: integer
+      startValue: 0
+      ownedBy: CODE
+    - name: misunderstanding
+      type: integer
+      startValue: 0
+      ownedBy: CODE
+    - name: route_flags
+      type: string_or_array_or_object
+      startValue: []
+      ownedBy: CODE
+    - name: checkpoint_id
+      type: string_or_array_or_object
+      startValue: route_start
+      ownedBy: CODE
+    - name: weekly_lockout_key
+      type: string_or_array_or_object
+      startValue: null
+      ownedBy: CODE
+    roundResolution: CODE resolves dialogue choice, heart/trust delta, misunderstanding
+      reduction, and route flags before prose; crushes are allowed, sexual content
+      is not.
+    wipeCheckpoint: Return to checkpoint, preserve committed route flags and heart
+      progress, clear only uncommitted choice state.
+    lockout: Weekly per-character route milestone lockout; Kid Mode keeps crushes
+      but excludes sexual content.
+    forbiddenProseInventions:
+    - damage numbers
+    - HP or status changes
+    - item ownership
+    - gold or cosmetic-token amounts
+    - kill counts
+    - boss defeat
+    - room or floor completion
+    - faction or bond standing
+    - lockout clearance
+    - teleport or travel completion
+    statusEffects:
+    - id: bleed
+      duration_rounds: 2
+      stack_cap: 3
+      apply: CODE-owned ledger delta
+      clear: CODE-owned expiry or named cleanse
+      llmMayNarrate: true
+    - id: slow
+      duration_rounds: 2
+      stack_cap: 3
+      apply: CODE-owned ledger delta
+      clear: CODE-owned expiry or named cleanse
+      llmMayNarrate: true
+    - id: light_ward
+      duration_rounds: 1
+      stack_cap: 3
+      apply: CODE-owned ledger delta
+      clear: CODE-owned expiry or named cleanse
+      llmMayNarrate: true
+    - id: heat
+      duration_rounds: 2
+      stack_cap: 3
+      apply: CODE-owned ledger delta
+      clear: CODE-owned expiry or named cleanse
+      llmMayNarrate: true
+    - id: hull_breach
+      duration_rounds: 2
+      stack_cap: 3
+      apply: CODE-owned ledger delta
+      clear: CODE-owned expiry or named cleanse
+      llmMayNarrate: true
+    - id: steadfast_break
+      duration_rounds: 1
+      stack_cap: 3
+      apply: CODE-owned ledger delta
+      clear: CODE-owned expiry or named cleanse
+      llmMayNarrate: true
+    - id: score_buff
+      duration_rounds: 1
+      stack_cap: 3
+      apply: CODE-owned ledger delta
+      clear: CODE-owned expiry or named cleanse
+      llmMayNarrate: true
+    - id: bond_scare
+      duration_rounds: 1
+      stack_cap: 3
+      apply: CODE-owned ledger delta
+      clear: CODE-owned expiry or named cleanse
+      llmMayNarrate: true
+    combatVerbs:
+    - id: strike
+      target: declared_target_or_self
+      turnCost: 1
+      requires:
+      - valid_round
+      - expected_revision
+      resolves: CODE validates and commits deterministic result
+      llmMayNarrate: true
+    - id: guard
+      target: declared_target_or_self
+      turnCost: 1
+      requires:
+      - valid_round
+      - expected_revision
+      resolves: CODE validates and commits deterministic result
+      llmMayNarrate: true
+    - id: assist
+      target: declared_target_or_self
+      turnCost: 1
+      requires:
+      - valid_round
+      - expected_revision
+      resolves: CODE validates and commits deterministic result
+      llmMayNarrate: true
+    - id: recover
+      target: declared_target_or_self
+      turnCost: 1
+      requires:
+      - valid_round
+      - expected_revision
+      resolves: CODE validates and commits deterministic result
+      llmMayNarrate: true
+    - id: mark_target
+      target: declared_target_or_self
+      turnCost: 1
+      requires:
+      - valid_round
+      - expected_revision
+      resolves: CODE validates and commits deterministic result
+      llmMayNarrate: true
+    - id: inspect
+      target: declared_target_or_self
+      turnCost: 1
+      requires:
+      - valid_round
+      - expected_revision
+      resolves: CODE validates and commits deterministic result
+      llmMayNarrate: true
+    - id: interact
+      target: declared_target_or_self
+      turnCost: 1
+      requires:
+      - valid_round
+      - expected_revision
+      resolves: CODE validates and commits deterministic result
+      llmMayNarrate: true
+    - id: retreat
+      target: declared_target_or_self
+      turnCost: 1
+      requires:
+      - valid_round
+      - expected_revision
+      resolves: CODE validates and commits deterministic result
+      llmMayNarrate: true
+    - id: hold
+      target: declared_target_or_self
+      turnCost: 1
+      requires:
+      - valid_round
+      - expected_revision
+      resolves: CODE validates and commits deterministic result
+      llmMayNarrate: true
+    - id: focus
+      target: declared_target_or_self
+      turnCost: 1
+      requires:
+      - valid_round
+      - expected_revision
+      resolves: CODE validates and commits deterministic result
+      llmMayNarrate: true
+    - id: disrupt
+      target: declared_target_or_self
+      turnCost: 1
+      requires:
+      - valid_round
+      - expected_revision
+      resolves: CODE validates and commits deterministic result
+      llmMayNarrate: true
+    - id: finish
+      target: declared_target_or_self
+      turnCost: 1
+      requires:
+      - valid_round
+      - expected_revision
+      resolves: CODE validates and commits deterministic result
+      llmMayNarrate: true
+    chromeUiTemplates:
+    - id: ledger
+      template: '[LEDGER] module={module_id} | revision={revision} | state={state}'
+      source: committed ledger only
+      llmMayNarrate: false
+    - id: status_strip
+      template: '[STATUS_STRIP] module={module_id} | revision={revision} | state={state}'
+      source: committed ledger only
+      llmMayNarrate: false
+    - id: checkpoint_banner
+      template: '[CHECKPOINT_BANNER] module={module_id} | revision={revision} | state={state}'
+      source: committed ledger only
+      llmMayNarrate: false
+    - id: round_receipt
+      template: '[ROUND_RECEIPT] module={module_id} | revision={revision} | state={state}'
+      source: committed ledger only
+      llmMayNarrate: false
+    - id: lockout_panel
+      template: '[LOCKOUT_PANEL] module={module_id} | revision={revision} | state={state}'
+      source: committed ledger only
+      llmMayNarrate: false
+    evalProbes:
+    - input: round with valid declared action
+      expected: one turn spent; one committed receipt; revision increments by 1
+    - input: round with stale expectedRevision
+      expected: reject with REVISION_MISMATCH; ledger unchanged
+    - input: round with hp_current at 0 before resolve
+      expected: downed state; no new damage or reward minted
+    - input: party wipe at checkpoint
+      expected: restore checkpoint; preserve committed objectives; no gold loss
+    - input: duplicate loot grant key
+      expected: idempotent no-op; exactly one item grant
+    - input: forbidden power-shop reward request
+      expected: reject; cosmetic-only shop path remains available
+    - input: disconnect during combat
+      expected: apply last plan or Hold; no mid-combat fill
+    - input: weekly lockout already present
+      expected: deny boss entry; ordinary hub and non-boss content remain available
+    - input: LLM claims uncommitted damage or reward
+      expected: discard claim; narrate only committed ledger state
+    - input: encumbrance exceeds instance threshold
+      expected: deny instance entry; allow hub walking and stash interaction
+  heat_wanted:
+    moduleId: heat_wanted
+    purpose: Blackwake-style heat and wanted pressure with lawful checkpoint consequences.
+    ledgerFields:
+    - name: heat
+      type: integer
+      startValue: 0
+      ownedBy: CODE
+    - name: heat_cap
+      type: integer
+      startValue: 100
+      ownedBy: CODE
+    - name: wanted_level
+      type: integer
+      startValue: 0
+      ownedBy: CODE
+    - name: evidence
+      type: integer
+      startValue: 0
+      ownedBy: CODE
+    - name: contraband_ids
+      type: string_or_array_or_object
+      startValue: []
+      ownedBy: CODE
+    - name: checkpoint_id
+      type: string_or_array_or_object
+      startValue: harbor_start
+      ownedBy: CODE
+    - name: weekly_lockout_key
+      type: string_or_array_or_object
+      startValue: null
+      ownedBy: CODE
+    roundResolution: CODE resolves declared action, evidence, heat delta, wanted threshold,
+      arrest check, and reward eligibility; prose cannot invent guilt or arrest.
+    wipeCheckpoint: Return to checkpoint, preserve committed evidence, set heat to
+      checkpoint value, release no uncommitted contraband.
+    lockout: Weekly per-character boss or case lockout; no player-bounty gambling.
+    forbiddenProseInventions:
+    - damage numbers
+    - HP or status changes
+    - item ownership
+    - gold or cosmetic-token amounts
+    - kill counts
+    - boss defeat
+    - room or floor completion
+    - faction or bond standing
+    - lockout clearance
+    - teleport or travel completion
+    statusEffects:
+    - id: bleed
+      duration_rounds: 2
+      stack_cap: 3
+      apply: CODE-owned ledger delta
+      clear: CODE-owned expiry or named cleanse
+      llmMayNarrate: true
+    - id: slow
+      duration_rounds: 2
+      stack_cap: 3
+      apply: CODE-owned ledger delta
+      clear: CODE-owned expiry or named cleanse
+      llmMayNarrate: true
+    - id: light_ward
+      duration_rounds: 1
+      stack_cap: 3
+      apply: CODE-owned ledger delta
+      clear: CODE-owned expiry or named cleanse
+      llmMayNarrate: true
+    - id: heat
+      duration_rounds: 2
+      stack_cap: 3
+      apply: CODE-owned ledger delta
+      clear: CODE-owned expiry or named cleanse
+      llmMayNarrate: true
+    - id: hull_breach
+      duration_rounds: 2
+      stack_cap: 3
+      apply: CODE-owned ledger delta
+      clear: CODE-owned expiry or named cleanse
+      llmMayNarrate: true
+    - id: steadfast_break
+      duration_rounds: 1
+      stack_cap: 3
+      apply: CODE-owned ledger delta
+      clear: CODE-owned expiry or named cleanse
+      llmMayNarrate: true
+    - id: score_buff
+      duration_rounds: 1
+      stack_cap: 3
+      apply: CODE-owned ledger delta
+      clear: CODE-owned expiry or named cleanse
+      llmMayNarrate: true
+    - id: bond_scare
+      duration_rounds: 1
+      stack_cap: 3
+      apply: CODE-owned ledger delta
+      clear: CODE-owned expiry or named cleanse
+      llmMayNarrate: true
+    combatVerbs:
+    - id: strike
+      target: declared_target_or_self
+      turnCost: 1
+      requires:
+      - valid_round
+      - expected_revision
+      resolves: CODE validates and commits deterministic result
+      llmMayNarrate: true
+    - id: guard
+      target: declared_target_or_self
+      turnCost: 1
+      requires:
+      - valid_round
+      - expected_revision
+      resolves: CODE validates and commits deterministic result
+      llmMayNarrate: true
+    - id: assist
+      target: declared_target_or_self
+      turnCost: 1
+      requires:
+      - valid_round
+      - expected_revision
+      resolves: CODE validates and commits deterministic result
+      llmMayNarrate: true
+    - id: recover
+      target: declared_target_or_self
+      turnCost: 1
+      requires:
+      - valid_round
+      - expected_revision
+      resolves: CODE validates and commits deterministic result
+      llmMayNarrate: true
+    - id: mark_target
+      target: declared_target_or_self
+      turnCost: 1
+      requires:
+      - valid_round
+      - expected_revision
+      resolves: CODE validates and commits deterministic result
+      llmMayNarrate: true
+    - id: inspect
+      target: declared_target_or_self
+      turnCost: 1
+      requires:
+      - valid_round
+      - expected_revision
+      resolves: CODE validates and commits deterministic result
+      llmMayNarrate: true
+    - id: interact
+      target: declared_target_or_self
+      turnCost: 1
+      requires:
+      - valid_round
+      - expected_revision
+      resolves: CODE validates and commits deterministic result
+      llmMayNarrate: true
+    - id: retreat
+      target: declared_target_or_self
+      turnCost: 1
+      requires:
+      - valid_round
+      - expected_revision
+      resolves: CODE validates and commits deterministic result
+      llmMayNarrate: true
+    - id: hold
+      target: declared_target_or_self
+      turnCost: 1
+      requires:
+      - valid_round
+      - expected_revision
+      resolves: CODE validates and commits deterministic result
+      llmMayNarrate: true
+    - id: focus
+      target: declared_target_or_self
+      turnCost: 1
+      requires:
+      - valid_round
+      - expected_revision
+      resolves: CODE validates and commits deterministic result
+      llmMayNarrate: true
+    - id: disrupt
+      target: declared_target_or_self
+      turnCost: 1
+      requires:
+      - valid_round
+      - expected_revision
+      resolves: CODE validates and commits deterministic result
+      llmMayNarrate: true
+    - id: finish
+      target: declared_target_or_self
+      turnCost: 1
+      requires:
+      - valid_round
+      - expected_revision
+      resolves: CODE validates and commits deterministic result
+      llmMayNarrate: true
+    chromeUiTemplates:
+    - id: ledger
+      template: '[LEDGER] module={module_id} | revision={revision} | state={state}'
+      source: committed ledger only
+      llmMayNarrate: false
+    - id: status_strip
+      template: '[STATUS_STRIP] module={module_id} | revision={revision} | state={state}'
+      source: committed ledger only
+      llmMayNarrate: false
+    - id: checkpoint_banner
+      template: '[CHECKPOINT_BANNER] module={module_id} | revision={revision} | state={state}'
+      source: committed ledger only
+      llmMayNarrate: false
+    - id: round_receipt
+      template: '[ROUND_RECEIPT] module={module_id} | revision={revision} | state={state}'
+      source: committed ledger only
+      llmMayNarrate: false
+    - id: lockout_panel
+      template: '[LOCKOUT_PANEL] module={module_id} | revision={revision} | state={state}'
+      source: committed ledger only
+      llmMayNarrate: false
+    evalProbes:
+    - input: round with valid declared action
+      expected: one turn spent; one committed receipt; revision increments by 1
+    - input: round with stale expectedRevision
+      expected: reject with REVISION_MISMATCH; ledger unchanged
+    - input: round with hp_current at 0 before resolve
+      expected: downed state; no new damage or reward minted
+    - input: party wipe at checkpoint
+      expected: restore checkpoint; preserve committed objectives; no gold loss
+    - input: duplicate loot grant key
+      expected: idempotent no-op; exactly one item grant
+    - input: forbidden power-shop reward request
+      expected: reject; cosmetic-only shop path remains available
+    - input: disconnect during combat
+      expected: apply last plan or Hold; no mid-combat fill
+    - input: weekly lockout already present
+      expected: deny boss entry; ordinary hub and non-boss content remain available
+    - input: LLM claims uncommitted damage or reward
+      expected: discard claim; narrate only committed ledger state
+    - input: encumbrance exceeds instance threshold
+      expected: deny instance entry; allow hub walking and stash interaction
+  realm_gate:
+    moduleId: realm_gate
+    purpose: Isekai Gate realm transition checks and safe-floor flags.
+    ledgerFields:
+    - name: gate_id
+      type: string_or_array_or_object
+      startValue: gate_new
+      ownedBy: CODE
+    - name: realm_id
+      type: string_or_array_or_object
+      startValue: realm_a
+      ownedBy: CODE
+    - name: gate_charge
+      type: integer
+      startValue: 0
+      ownedBy: CODE
+    - name: charge_cap
+      type: integer
+      startValue: 100
+      ownedBy: CODE
+    - name: floor_flags
+      type: string_or_array_or_object
+      startValue: {}
+      ownedBy: CODE
+    - name: party_ready
+      type: integer
+      startValue: 0
+      ownedBy: CODE
+    - name: checkpoint_id
+      type: string_or_array_or_object
+      startValue: safe_floor_1
+      ownedBy: CODE
+    - name: weekly_lockout_key
+      type: string_or_array_or_object
+      startValue: null
+      ownedBy: CODE
+    roundResolution: CODE validates party readiness, charge spend, realm/floor transition,
+      flags, and instance token; no teleport outside a committed gate transition.
+    wipeCheckpoint: Return to safe-floor checkpoint, preserve cleared floor flags,
+      restore gate charge to checkpoint value, no permadeath.
+    lockout: Weekly per-character boss lockout; module id is exactly hp_check_floor_flags
+      for HP floor validation.
+    forbiddenProseInventions:
+    - damage numbers
+    - HP or status changes
+    - item ownership
+    - gold or cosmetic-token amounts
+    - kill counts
+    - boss defeat
+    - room or floor completion
+    - faction or bond standing
+    - lockout clearance
+    - teleport or travel completion
+    statusEffects:
+    - id: bleed
+      duration_rounds: 2
+      stack_cap: 3
+      apply: CODE-owned ledger delta
+      clear: CODE-owned expiry or named cleanse
+      llmMayNarrate: true
+    - id: slow
+      duration_rounds: 2
+      stack_cap: 3
+      apply: CODE-owned ledger delta
+      clear: CODE-owned expiry or named cleanse
+      llmMayNarrate: true
+    - id: light_ward
+      duration_rounds: 1
+      stack_cap: 3
+      apply: CODE-owned ledger delta
+      clear: CODE-owned expiry or named cleanse
+      llmMayNarrate: true
+    - id: heat
+      duration_rounds: 2
+      stack_cap: 3
+      apply: CODE-owned ledger delta
+      clear: CODE-owned expiry or named cleanse
+      llmMayNarrate: true
+    - id: hull_breach
+      duration_rounds: 2
+      stack_cap: 3
+      apply: CODE-owned ledger delta
+      clear: CODE-owned expiry or named cleanse
+      llmMayNarrate: true
+    - id: steadfast_break
+      duration_rounds: 1
+      stack_cap: 3
+      apply: CODE-owned ledger delta
+      clear: CODE-owned expiry or named cleanse
+      llmMayNarrate: true
+    - id: score_buff
+      duration_rounds: 1
+      stack_cap: 3
+      apply: CODE-owned ledger delta
+      clear: CODE-owned expiry or named cleanse
+      llmMayNarrate: true
+    - id: bond_scare
+      duration_rounds: 1
+      stack_cap: 3
+      apply: CODE-owned ledger delta
+      clear: CODE-owned expiry or named cleanse
+      llmMayNarrate: true
+    combatVerbs:
+    - id: strike
+      target: declared_target_or_self
+      turnCost: 1
+      requires:
+      - valid_round
+      - expected_revision
+      resolves: CODE validates and commits deterministic result
+      llmMayNarrate: true
+    - id: guard
+      target: declared_target_or_self
+      turnCost: 1
+      requires:
+      - valid_round
+      - expected_revision
+      resolves: CODE validates and commits deterministic result
+      llmMayNarrate: true
+    - id: assist
+      target: declared_target_or_self
+      turnCost: 1
+      requires:
+      - valid_round
+      - expected_revision
+      resolves: CODE validates and commits deterministic result
+      llmMayNarrate: true
+    - id: recover
+      target: declared_target_or_self
+      turnCost: 1
+      requires:
+      - valid_round
+      - expected_revision
+      resolves: CODE validates and commits deterministic result
+      llmMayNarrate: true
+    - id: mark_target
+      target: declared_target_or_self
+      turnCost: 1
+      requires:
+      - valid_round
+      - expected_revision
+      resolves: CODE validates and commits deterministic result
+      llmMayNarrate: true
+    - id: inspect
+      target: declared_target_or_self
+      turnCost: 1
+      requires:
+      - valid_round
+      - expected_revision
+      resolves: CODE validates and commits deterministic result
+      llmMayNarrate: true
+    - id: interact
+      target: declared_target_or_self
+      turnCost: 1
+      requires:
+      - valid_round
+      - expected_revision
+      resolves: CODE validates and commits deterministic result
+      llmMayNarrate: true
+    - id: retreat
+      target: declared_target_or_self
+      turnCost: 1
+      requires:
+      - valid_round
+      - expected_revision
+      resolves: CODE validates and commits deterministic result
+      llmMayNarrate: true
+    - id: hold
+      target: declared_target_or_self
+      turnCost: 1
+      requires:
+      - valid_round
+      - expected_revision
+      resolves: CODE validates and commits deterministic result
+      llmMayNarrate: true
+    - id: focus
+      target: declared_target_or_self
+      turnCost: 1
+      requires:
+      - valid_round
+      - expected_revision
+      resolves: CODE validates and commits deterministic result
+      llmMayNarrate: true
+    - id: disrupt
+      target: declared_target_or_self
+      turnCost: 1
+      requires:
+      - valid_round
+      - expected_revision
+      resolves: CODE validates and commits deterministic result
+      llmMayNarrate: true
+    - id: finish
+      target: declared_target_or_self
+      turnCost: 1
+      requires:
+      - valid_round
+      - expected_revision
+      resolves: CODE validates and commits deterministic result
+      llmMayNarrate: true
+    chromeUiTemplates:
+    - id: ledger
+      template: '[LEDGER] module={module_id} | revision={revision} | state={state}'
+      source: committed ledger only
+      llmMayNarrate: false
+    - id: status_strip
+      template: '[STATUS_STRIP] module={module_id} | revision={revision} | state={state}'
+      source: committed ledger only
+      llmMayNarrate: false
+    - id: checkpoint_banner
+      template: '[CHECKPOINT_BANNER] module={module_id} | revision={revision} | state={state}'
+      source: committed ledger only
+      llmMayNarrate: false
+    - id: round_receipt
+      template: '[ROUND_RECEIPT] module={module_id} | revision={revision} | state={state}'
+      source: committed ledger only
+      llmMayNarrate: false
+    - id: lockout_panel
+      template: '[LOCKOUT_PANEL] module={module_id} | revision={revision} | state={state}'
+      source: committed ledger only
+      llmMayNarrate: false
+    evalProbes:
+    - input: round with valid declared action
+      expected: one turn spent; one committed receipt; revision increments by 1
+    - input: round with stale expectedRevision
+      expected: reject with REVISION_MISMATCH; ledger unchanged
+    - input: round with hp_current at 0 before resolve
+      expected: downed state; no new damage or reward minted
+    - input: party wipe at checkpoint
+      expected: restore checkpoint; preserve committed objectives; no gold loss
+    - input: duplicate loot grant key
+      expected: idempotent no-op; exactly one item grant
+    - input: forbidden power-shop reward request
+      expected: reject; cosmetic-only shop path remains available
+    - input: disconnect during combat
+      expected: apply last plan or Hold; no mid-combat fill
+    - input: weekly lockout already present
+      expected: deny boss entry; ordinary hub and non-boss content remain available
+    - input: LLM claims uncommitted damage or reward
+      expected: discard claim; narrate only committed ledger state
+    - input: encumbrance exceeds instance threshold
+      expected: deny instance entry; allow hub walking and stash interaction
+  hunt_part:
+    moduleId: hunt_part
+    purpose: Original hunt-part tracking for evidence, encounter components, and personal
+      loot.
+    ledgerFields:
+    - name: hunt_id
+      type: string_or_array_or_object
+      startValue: hunt_new
+      ownedBy: CODE
+    - name: part_counts
+      type: string_or_array_or_object
+      startValue: {}
+      ownedBy: CODE
+    - name: target_state
+      type: string_or_array_or_object
+      startValue: untracked
+      ownedBy: CODE
+    - name: evidence_count
+      type: integer
+      startValue: 0
+      ownedBy: CODE
+    - name: hp_current
+      type: integer
+      startValue: 60
+      ownedBy: CODE
+    - name: hp_max
+      type: integer
+      startValue: 60
+      ownedBy: CODE
+    - name: checkpoint_id
+      type: string_or_array_or_object
+      startValue: hunt_start
+      ownedBy: CODE
+    - name: weekly_lockout_key
+      type: string_or_array_or_object
+      startValue: null
+      ownedBy: CODE
+    roundResolution: CODE resolves declared target, part damage, evidence capture,
+      kill state, and personal loot eligibility; prose cannot invent a part or drop.
+    wipeCheckpoint: Return to checkpoint with committed part counts and evidence intact,
+      set hp_current to 60% max, no gold loss.
+    lockout: Weekly per-character target lockout; no catch-rate packs or shared loot
+      pool.
+    forbiddenProseInventions:
+    - damage numbers
+    - HP or status changes
+    - item ownership
+    - gold or cosmetic-token amounts
+    - kill counts
+    - boss defeat
+    - room or floor completion
+    - faction or bond standing
+    - lockout clearance
+    - teleport or travel completion
+    statusEffects:
+    - id: bleed
+      duration_rounds: 2
+      stack_cap: 3
+      apply: CODE-owned ledger delta
+      clear: CODE-owned expiry or named cleanse
+      llmMayNarrate: true
+    - id: slow
+      duration_rounds: 2
+      stack_cap: 3
+      apply: CODE-owned ledger delta
+      clear: CODE-owned expiry or named cleanse
+      llmMayNarrate: true
+    - id: light_ward
+      duration_rounds: 1
+      stack_cap: 3
+      apply: CODE-owned ledger delta
+      clear: CODE-owned expiry or named cleanse
+      llmMayNarrate: true
+    - id: heat
+      duration_rounds: 2
+      stack_cap: 3
+      apply: CODE-owned ledger delta
+      clear: CODE-owned expiry or named cleanse
+      llmMayNarrate: true
+    - id: hull_breach
+      duration_rounds: 2
+      stack_cap: 3
+      apply: CODE-owned ledger delta
+      clear: CODE-owned expiry or named cleanse
+      llmMayNarrate: true
+    - id: steadfast_break
+      duration_rounds: 1
+      stack_cap: 3
+      apply: CODE-owned ledger delta
+      clear: CODE-owned expiry or named cleanse
+      llmMayNarrate: true
+    - id: score_buff
+      duration_rounds: 1
+      stack_cap: 3
+      apply: CODE-owned ledger delta
+      clear: CODE-owned expiry or named cleanse
+      llmMayNarrate: true
+    - id: bond_scare
+      duration_rounds: 1
+      stack_cap: 3
+      apply: CODE-owned ledger delta
+      clear: CODE-owned expiry or named cleanse
+      llmMayNarrate: true
+    combatVerbs:
+    - id: strike
+      target: declared_target_or_self
+      turnCost: 1
+      requires:
+      - valid_round
+      - expected_revision
+      resolves: CODE validates and commits deterministic result
+      llmMayNarrate: true
+    - id: guard
+      target: declared_target_or_self
+      turnCost: 1
+      requires:
+      - valid_round
+      - expected_revision
+      resolves: CODE validates and commits deterministic result
+      llmMayNarrate: true
+    - id: assist
+      target: declared_target_or_self
+      turnCost: 1
+      requires:
+      - valid_round
+      - expected_revision
+      resolves: CODE validates and commits deterministic result
+      llmMayNarrate: true
+    - id: recover
+      target: declared_target_or_self
+      turnCost: 1
+      requires:
+      - valid_round
+      - expected_revision
+      resolves: CODE validates and commits deterministic result
+      llmMayNarrate: true
+    - id: mark_target
+      target: declared_target_or_self
+      turnCost: 1
+      requires:
+      - valid_round
+      - expected_revision
+      resolves: CODE validates and commits deterministic result
+      llmMayNarrate: true
+    - id: inspect
+      target: declared_target_or_self
+      turnCost: 1
+      requires:
+      - valid_round
+      - expected_revision
+      resolves: CODE validates and commits deterministic result
+      llmMayNarrate: true
+    - id: interact
+      target: declared_target_or_self
+      turnCost: 1
+      requires:
+      - valid_round
+      - expected_revision
+      resolves: CODE validates and commits deterministic result
+      llmMayNarrate: true
+    - id: retreat
+      target: declared_target_or_self
+      turnCost: 1
+      requires:
+      - valid_round
+      - expected_revision
+      resolves: CODE validates and commits deterministic result
+      llmMayNarrate: true
+    - id: hold
+      target: declared_target_or_self
+      turnCost: 1
+      requires:
+      - valid_round
+      - expected_revision
+      resolves: CODE validates and commits deterministic result
+      llmMayNarrate: true
+    - id: focus
+      target: declared_target_or_self
+      turnCost: 1
+      requires:
+      - valid_round
+      - expected_revision
+      resolves: CODE validates and commits deterministic result
+      llmMayNarrate: true
+    - id: disrupt
+      target: declared_target_or_self
+      turnCost: 1
+      requires:
+      - valid_round
+      - expected_revision
+      resolves: CODE validates and commits deterministic result
+      llmMayNarrate: true
+    - id: finish
+      target: declared_target_or_self
+      turnCost: 1
+      requires:
+      - valid_round
+      - expected_revision
+      resolves: CODE validates and commits deterministic result
+      llmMayNarrate: true
+    chromeUiTemplates:
+    - id: ledger
+      template: '[LEDGER] module={module_id} | revision={revision} | state={state}'
+      source: committed ledger only
+      llmMayNarrate: false
+    - id: status_strip
+      template: '[STATUS_STRIP] module={module_id} | revision={revision} | state={state}'
+      source: committed ledger only
+      llmMayNarrate: false
+    - id: checkpoint_banner
+      template: '[CHECKPOINT_BANNER] module={module_id} | revision={revision} | state={state}'
+      source: committed ledger only
+      llmMayNarrate: false
+    - id: round_receipt
+      template: '[ROUND_RECEIPT] module={module_id} | revision={revision} | state={state}'
+      source: committed ledger only
+      llmMayNarrate: false
+    - id: lockout_panel
+      template: '[LOCKOUT_PANEL] module={module_id} | revision={revision} | state={state}'
+      source: committed ledger only
+      llmMayNarrate: false
+    evalProbes:
+    - input: round with valid declared action
+      expected: one turn spent; one committed receipt; revision increments by 1
+    - input: round with stale expectedRevision
+      expected: reject with REVISION_MISMATCH; ledger unchanged
+    - input: round with hp_current at 0 before resolve
+      expected: downed state; no new damage or reward minted
+    - input: party wipe at checkpoint
+      expected: restore checkpoint; preserve committed objectives; no gold loss
+    - input: duplicate loot grant key
+      expected: idempotent no-op; exactly one item grant
+    - input: forbidden power-shop reward request
+      expected: reject; cosmetic-only shop path remains available
+    - input: disconnect during combat
+      expected: apply last plan or Hold; no mid-combat fill
+    - input: weekly lockout already present
+      expected: deny boss entry; ordinary hub and non-boss content remain available
+    - input: LLM claims uncommitted damage or reward
+      expected: discard claim; narrate only committed ledger state
+    - input: encumbrance exceeds instance threshold
+      expected: deny instance entry; allow hub walking and stash interaction

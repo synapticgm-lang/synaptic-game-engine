@@ -1,0 +1,53 @@
+{
+  "status": "FAIL",
+  "metrics": {
+    "row_count": 5040,
+    "family_count": 45,
+    "axis_count": 14,
+    "variant_id_count": 5040,
+    "kid_ok_false": 112,
+    "nsfw_true": 56,
+    "inject_ok_true": 5040,
+    "founder_nonempty": 0,
+    "rows_by_category": {
+      "LitRPG": 1344,
+      "PYOA": 1008,
+      "Story RPG": 1456,
+      "Tabletop Fantasy": 784,
+      "Optional extra": 448
+    },
+    "rows_by_axis": {
+      "arrival": 360,
+      "name_ask": 360,
+      "kit_reveal": 360,
+      "power_source": 360,
+      "growth": 360,
+      "system_voice": 360,
+      "hub": 360,
+      "opposition": 360,
+      "first_proof": 360,
+      "crowd": 360,
+      "offer": 360,
+      "companion": 360,
+      "identity_lock": 360,
+      "ending_logic": 360
+    },
+    "missing_family_axis_pairs": 0,
+    "wrong_family_axis_counts": 0,
+    "error_count": 2,
+    "warning_count": 0
+  },
+  "errors": [
+    {
+      "code": "pin_phrase_missing",
+      "family_id": "fam-isekai-summon",
+      "detail": "no logout"
+    },
+    {
+      "code": "pin_phrase_missing",
+      "family_id": "fam-creature-rebirth",
+      "detail": "creature body"
+    }
+  ],
+  "warnings": []
+}

@@ -1,0 +1,173 @@
+{
+  "worldId": "wof.gloamwild",
+  "worldName": "Gloamwild",
+  "collectionRules": {
+    "meet": "Observe a creature in its habitat or encounter it through a region event.",
+    "bind": "Offer a prepared accord token after its Resolve is lowered or its trust condition is met.",
+    "refused": "A refusal grants a field note and temporarily raises local wariness; it is not a failed capture animation.",
+    "release": "Release returns the creature to a compatible recorded habitat and may yield a non-exclusive field material.",
+    "partyLimit": 4,
+    "reserveLimit": 48,
+    "bondRanks": [
+      "New Accord",
+      "Steady",
+      "Trusted",
+      "Kindred"
+    ],
+    "fatigue": "0\u2013100; high fatigue lowers FOC and blocks risky expeditions until rest.",
+    "wildBondedRival": "Wild follows habitat rules; bonded follows owner record; rival-bonded cannot be bound.",
+    "breeding": "Not in v1.",
+    "trading": "Not in single-player v1."
+  },
+  "types": [
+    "Ember",
+    "Tide",
+    "Gale",
+    "Root",
+    "Stone",
+    "Veil",
+    "Spark",
+    "Gloom",
+    "Gleam",
+    "Bloom"
+  ],
+  "advantages": {
+    "Ember": [
+      "Bloom",
+      "Root"
+    ],
+    "Tide": [
+      "Ember",
+      "Stone"
+    ],
+    "Gale": [
+      "Tide",
+      "Bloom"
+    ],
+    "Root": [
+      "Tide",
+      "Stone"
+    ],
+    "Stone": [
+      "Spark",
+      "Gloom"
+    ],
+    "Veil": [
+      "Root",
+      "Gale"
+    ],
+    "Spark": [
+      "Tide",
+      "Veil"
+    ],
+    "Gloom": [
+      "Gleam",
+      "Bloom"
+    ],
+    "Gleam": [
+      "Gloom",
+      "Veil"
+    ],
+    "Bloom": [
+      "Stone",
+      "Ember"
+    ]
+  },
+  "resists": {
+    "Ember": [
+      "Tide",
+      "Bloom"
+    ],
+    "Tide": [
+      "Gale",
+      "Root",
+      "Spark"
+    ],
+    "Gale": [
+      "Veil"
+    ],
+    "Root": [
+      "Ember",
+      "Veil"
+    ],
+    "Stone": [
+      "Tide",
+      "Root",
+      "Bloom"
+    ],
+    "Veil": [
+      "Spark",
+      "Gleam"
+    ],
+    "Spark": [
+      "Stone"
+    ],
+    "Gloom": [
+      "Stone",
+      "Gleam"
+    ],
+    "Gleam": [
+      "Gloom"
+    ],
+    "Bloom": [
+      "Ember",
+      "Gale",
+      "Gloom"
+    ]
+  },
+  "statuses": [
+    {
+      "id": "scorch",
+      "effect": "-10% DEF for 2 turns; refreshes, does not stack."
+    },
+    {
+      "id": "soak",
+      "effect": "Tide damage taken +15% for 2 turns."
+    },
+    {
+      "id": "gusted",
+      "effect": "SPD -12% for 2 turns."
+    },
+    {
+      "id": "rooted",
+      "effect": "Cannot swap voluntarily for 1 turn."
+    },
+    {
+      "id": "cracked",
+      "effect": "DEF -15% for 2 turns."
+    },
+    {
+      "id": "veiled",
+      "effect": "Next hostile move accuracy -20%."
+    },
+    {
+      "id": "charged",
+      "effect": "Next Spark strike gains +12 power, then clears."
+    },
+    {
+      "id": "fogblind",
+      "effect": "Accuracy -15% for 2 turns."
+    },
+    {
+      "id": "glimmered",
+      "effect": "FOC +12% for 2 turns."
+    },
+    {
+      "id": "spored",
+      "effect": "Heal received -20% for 2 turns."
+    }
+  ],
+  "stats": [
+    "HP",
+    "ATK",
+    "DEF",
+    "SPD",
+    "FOC"
+  ],
+  "progression": {
+    "rankCap": 30,
+    "bondSoftCap": 4,
+    "ultraRarePity": "No hard pity for power. Use rotating field-research milestones that reveal one eligible habitat clue after repeated valid exploration.",
+    "fairness": "No paid bind boosts; rarity is authored/seeded and auditably logged."
+  }
+}

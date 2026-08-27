@@ -1,0 +1,2294 @@
+packFormatVersion: 1
+worldId: atelier_row
+displayName: Atelier Row
+maturity: all-ages
+rulesModuleId: atelier_score
+themeKit: Atelier Row Theme Kit
+places:
+- id: atelier_row_place_01
+  publicName: Thread Square
+  zoneId: atelier_row_zone_01
+  role: shared hub
+  mapScale: street
+  dangerTier: safe
+  outdoor: true
+  exits:
+  - atelier_row_place_02
+  - atelier_row_place_04
+  npcIds:
+  - atelier_row_npc_01
+  - atelier_row_npc_05
+  - atelier_row_npc_09
+  dungeonId: null
+  interactableIds:
+  - atelier_row_interact_01
+  - atelier_row_interact_09
+- id: atelier_row_place_02
+  publicName: Drape Hall
+  zoneId: atelier_row_zone_01
+  role: start hub
+  mapScale: street
+  dangerTier: safe
+  outdoor: true
+  exits:
+  - atelier_row_place_01
+  - atelier_row_place_03
+  npcIds:
+  - atelier_row_npc_02
+  - atelier_row_npc_06
+  - atelier_row_npc_10
+  dungeonId: null
+  interactableIds:
+  - atelier_row_interact_02
+  - atelier_row_interact_10
+- id: atelier_row_place_03
+  publicName: Color Yard
+  zoneId: atelier_row_zone_01
+  role: street route
+  mapScale: street
+  dangerTier: safe
+  outdoor: true
+  exits:
+  - atelier_row_place_02
+  - atelier_row_place_04
+  npcIds:
+  - atelier_row_npc_03
+  - atelier_row_npc_07
+  dungeonId: null
+  interactableIds:
+  - atelier_row_interact_03
+  - atelier_row_interact_11
+- id: atelier_row_place_04
+  publicName: Runway Roof
+  zoneId: atelier_row_zone_02
+  role: mid join
+  mapScale: street
+  dangerTier: low
+  outdoor: true
+  exits:
+  - atelier_row_place_03
+  - atelier_row_place_05
+  - atelier_row_place_01
+  npcIds:
+  - atelier_row_npc_04
+  - atelier_row_npc_08
+  dungeonId: null
+  interactableIds:
+  - atelier_row_interact_04
+  - atelier_row_interact_12
+- id: atelier_row_place_05
+  publicName: Button Arcade
+  zoneId: atelier_row_zone_02
+  role: work district
+  mapScale: interior
+  dangerTier: low
+  outdoor: false
+  exits:
+  - atelier_row_place_04
+  - atelier_row_place_06
+  npcIds: []
+  dungeonId: null
+  interactableIds:
+  - atelier_row_interact_05
+- id: atelier_row_place_06
+  publicName: Hem Garden
+  zoneId: atelier_row_zone_02
+  role: instance door
+  mapScale: dungeon
+  dangerTier: medium
+  outdoor: false
+  exits:
+  - atelier_row_place_05
+  - atelier_row_place_07
+  npcIds: []
+  dungeonId: atelier_row_dungeon_01
+  interactableIds:
+  - atelier_row_interact_06
+- id: atelier_row_place_07
+  publicName: Pattern Vault
+  zoneId: atelier_row_zone_03
+  role: wild edge
+  mapScale: street
+  dangerTier: medium
+  outdoor: true
+  exits:
+  - atelier_row_place_06
+  - atelier_row_place_08
+  npcIds: []
+  dungeonId: null
+  interactableIds:
+  - atelier_row_interact_07
+- id: atelier_row_place_08
+  publicName: Lightwell Loft
+  zoneId: atelier_row_zone_03
+  role: housing approach
+  mapScale: interior
+  dangerTier: low
+  outdoor: false
+  exits:
+  - atelier_row_place_07
+  npcIds: []
+  dungeonId: null
+  interactableIds:
+  - atelier_row_interact_08
+npcs:
+- id: atelier_row_npc_01
+  name: Bryn Cress
+  placeId: atelier_row_place_01
+  role: quest
+  greet: Bryn Cress says, ‘Atelier Row keeps its promises in small places. Tell me which one you noticed.’
+- id: atelier_row_npc_02
+  name: Cato Silt
+  placeId: atelier_row_place_02
+  role: profession
+  greet: Cato Silt says, ‘Atelier Row keeps its promises in small places. Tell me which one you noticed.’
+- id: atelier_row_npc_03
+  name: Dessa Pryce
+  placeId: atelier_row_place_03
+  role: hub
+  greet: Dessa Pryce says, ‘Atelier Row keeps its promises in small places. Tell me which one you noticed.’
+- id: atelier_row_npc_04
+  name: Eris Vane
+  placeId: atelier_row_place_04
+  role: merchant
+  greet: Eris Vane says, ‘Atelier Row keeps its promises in small places. Tell me which one you noticed.’
+- id: atelier_row_npc_05
+  name: Fenn Quill
+  placeId: atelier_row_place_01
+  role: local
+  greet: Fenn Quill says, ‘Atelier Row keeps its promises in small places. Tell me which one you noticed.’
+- id: atelier_row_npc_06
+  name: Gala Vale
+  placeId: atelier_row_place_02
+  role: host
+  greet: Gala Vale says, ‘Atelier Row keeps its promises in small places. Tell me which one you noticed.’
+- id: atelier_row_npc_07
+  name: Holl Wren
+  placeId: atelier_row_place_03
+  role: quest
+  greet: Holl Wren says, ‘Atelier Row keeps its promises in small places. Tell me which one you noticed.’
+- id: atelier_row_npc_08
+  name: Ivo Morrow
+  placeId: atelier_row_place_04
+  role: profession
+  greet: Ivo Morrow says, ‘Atelier Row keeps its promises in small places. Tell me which one you noticed.’
+- id: atelier_row_npc_09
+  name: Jori Rowan
+  placeId: atelier_row_place_01
+  role: local
+  greet: Jori Rowan says, ‘Atelier Row keeps its promises in small places. Tell me which one you noticed.’
+- id: atelier_row_npc_10
+  name: Alden Nook
+  placeId: atelier_row_place_02
+  role: merchant
+  greet: Alden Nook says, ‘Atelier Row keeps its promises in small places. Tell me which one you noticed.’
+kits:
+- id: atelier_row_kit_01
+  publicName: Silhouette Cutter
+  look: silhouette cutter workwear
+  values: practice silhouette cutter
+  taboo: Never use silhouette cutter authority to remove another person’s choice.
+  speechTell: Use the local rhythm of Atelier Row and make every offer concrete.
+  starterClothes: silhouette_cutter mantle
+  starterTool: silhouette_cutter tool
+  starterMapItem: atelier_row_map_01
+  startingPlaceId: atelier_row_place_01
+  firstHourQuestId: atelier_row_q_01
+  abilityFlag: atelier_row_ability_01
+- id: atelier_row_kit_02
+  publicName: Dye Librarian
+  look: dye librarian workwear
+  values: practice dye librarian
+  taboo: Never use dye librarian authority to remove another person’s choice.
+  speechTell: Use the local rhythm of Atelier Row and make every offer concrete.
+  starterClothes: dye_librarian vest
+  starterTool: dye_librarian tool
+  starterMapItem: atelier_row_map_02
+  startingPlaceId: atelier_row_place_02
+  firstHourQuestId: atelier_row_q_02
+  abilityFlag: atelier_row_ability_02
+- id: atelier_row_kit_03
+  publicName: Hem Judge
+  look: hem judge workwear
+  values: practice hem judge
+  taboo: Never use hem judge authority to remove another person’s choice.
+  speechTell: Use the local rhythm of Atelier Row and make every offer concrete.
+  starterClothes: hem_judge jacket
+  starterTool: hem_judge tool
+  starterMapItem: atelier_row_map_03
+  startingPlaceId: atelier_row_place_01
+  firstHourQuestId: atelier_row_q_03
+  abilityFlag: atelier_row_ability_03
+- id: atelier_row_kit_04
+  publicName: Lookbook Curator
+  look: lookbook curator workwear
+  values: practice lookbook curator
+  taboo: Never use lookbook curator authority to remove another person’s choice.
+  speechTell: Use the local rhythm of Atelier Row and make every offer concrete.
+  starterClothes: lookbook_curator sash
+  starterTool: lookbook_curator tool
+  starterMapItem: atelier_row_map_04
+  startingPlaceId: atelier_row_place_02
+  firstHourQuestId: atelier_row_q_04
+  abilityFlag: atelier_row_ability_04
+quests:
+- id: atelier_row_q_01
+  title: 'Atelier Row: Name a Working Promise'
+  family: identity
+  hidden: false
+  unlocksQuestId: atelier_row_q_02
+  objectives:
+  - id: atelier_row_q_01_obj_01
+    kind: visit_place
+    targetId: atelier_row_place_01
+    count: 1
+  - id: atelier_row_q_01_obj_02
+    kind: deliver_item
+    targetId: atelier_row_deliver_item_01
+    count: 2
+  rewardGold: 12
+  rewardXp: 20
+- id: atelier_row_q_02
+  title: 'Atelier Row: Set the First Tool Aside'
+  family: identity
+  hidden: false
+  unlocksQuestId: atelier_row_q_03
+  objectives:
+  - id: atelier_row_q_02_obj_01
+    kind: ledger_kill
+    targetId: atelier_row_ledger_kill_02
+    count: 1
+  - id: atelier_row_q_02_obj_02
+    kind: talk_to_npc
+    targetId: atelier_row_npc_03
+    count: 2
+  rewardGold: 15
+  rewardXp: 25
+- id: atelier_row_q_03
+  title: 'Atelier Row: Carry the Right Record'
+  family: identity
+  hidden: false
+  unlocksQuestId: atelier_row_q_04
+  objectives:
+  - id: atelier_row_q_03_obj_01
+    kind: ledger_bond
+    targetId: atelier_row_ledger_bond_03
+    count: 1
+  - id: atelier_row_q_03_obj_02
+    kind: collect_item
+    targetId: atelier_row_collect_item_03
+    count: 2
+  rewardGold: 18
+  rewardXp: 30
+- id: atelier_row_q_04
+  title: 'Atelier Row: Find the Missing Measure'
+  family: identity
+  hidden: false
+  unlocksQuestId: atelier_row_q_05
+  objectives:
+  - id: atelier_row_q_04_obj_01
+    kind: deliver_item
+    targetId: atelier_row_deliver_item_04
+    count: 1
+  - id: atelier_row_q_04_obj_02
+    kind: interact
+    targetId: atelier_row_place_05
+    count: 2
+    verbId: cook
+  rewardGold: 21
+  rewardXp: 35
+- id: atelier_row_q_05
+  title: 'Atelier Row: Teach a Safer Shortcut'
+  family: identity
+  hidden: false
+  unlocksQuestId: atelier_row_q_06
+  objectives:
+  - id: atelier_row_q_05_obj_01
+    kind: talk_to_npc
+    targetId: atelier_row_npc_05
+    count: 1
+  - id: atelier_row_q_05_obj_02
+    kind: score_beat
+    targetId: atelier_row_score_beat_05
+    count: 2
+  rewardGold: 24
+  rewardXp: 40
+- id: atelier_row_q_06
+  title: 'Atelier Row: Read the Local Weather'
+  family: profession
+  hidden: false
+  unlocksQuestId: atelier_row_q_07
+  objectives:
+  - id: atelier_row_q_06_obj_01
+    kind: collect_item
+    targetId: atelier_row_collect_item_06
+    count: 1
+  - id: atelier_row_q_06_obj_02
+    kind: build_tick
+    targetId: atelier_row_build_tick_06
+    count: 2
+  rewardGold: 27
+  rewardXp: 45
+- id: atelier_row_q_07
+  title: 'Atelier Row: Repair a Shared Threshold'
+  family: profession
+  hidden: false
+  unlocksQuestId: atelier_row_q_08
+  objectives:
+  - id: atelier_row_q_07_obj_01
+    kind: interact
+    targetId: atelier_row_place_07
+    count: 1
+    verbId: inspect
+  - id: atelier_row_q_07_obj_02
+    kind: hospitality_tick
+    targetId: atelier_row_hospitality_tick_07
+    count: 2
+  rewardGold: 30
+  rewardXp: 50
+- id: atelier_row_q_08
+  title: 'Atelier Row: Return a Borrowed Sign'
+  family: profession
+  hidden: false
+  unlocksQuestId: atelier_row_q_09
+  objectives:
+  - id: atelier_row_q_08_obj_01
+    kind: score_beat
+    targetId: atelier_row_score_beat_08
+    count: 1
+  - id: atelier_row_q_08_obj_02
+    kind: lap_finish
+    targetId: atelier_row_lap_finish_08
+    count: 2
+  rewardGold: 33
+  rewardXp: 55
+- id: atelier_row_q_09
+  title: 'Atelier Row: Host the Small Welcome'
+  family: profession
+  hidden: false
+  unlocksQuestId: atelier_row_q_10
+  objectives:
+  - id: atelier_row_q_09_obj_01
+    kind: build_tick
+    targetId: atelier_row_build_tick_09
+    count: 1
+  - id: atelier_row_q_09_obj_02
+    kind: visit_place
+    targetId: atelier_row_place_02
+    count: 2
+  rewardGold: 36
+  rewardXp: 60
+- id: atelier_row_q_10
+  title: 'Atelier Row: Choose a Fair Order'
+  family: profession
+  hidden: false
+  unlocksQuestId: atelier_row_q_11
+  objectives:
+  - id: atelier_row_q_10_obj_01
+    kind: hospitality_tick
+    targetId: atelier_row_hospitality_tick_10
+    count: 1
+  - id: atelier_row_q_10_obj_02
+    kind: ledger_kill
+    targetId: atelier_row_ledger_kill_10
+    count: 2
+  rewardGold: 39
+  rewardXp: 65
+- id: atelier_row_q_11
+  title: 'Atelier Row: Map the Quiet Detour'
+  family: profession
+  hidden: false
+  unlocksQuestId: atelier_row_q_12
+  objectives:
+  - id: atelier_row_q_11_obj_01
+    kind: lap_finish
+    targetId: atelier_row_lap_finish_11
+    count: 1
+  - id: atelier_row_q_11_obj_02
+    kind: ledger_bond
+    targetId: atelier_row_ledger_bond_11
+    count: 2
+  rewardGold: 42
+  rewardXp: 70
+- id: atelier_row_q_12
+  title: 'Atelier Row: Bring a Useful Witness'
+  family: profession
+  hidden: false
+  unlocksQuestId: atelier_row_q_13
+  objectives:
+  - id: atelier_row_q_12_obj_01
+    kind: visit_place
+    targetId: atelier_row_place_04
+    count: 1
+  - id: atelier_row_q_12_obj_02
+    kind: deliver_item
+    targetId: atelier_row_deliver_item_12
+    count: 2
+  rewardGold: 45
+  rewardXp: 75
+- id: atelier_row_q_13
+  title: 'Atelier Row: Sort the Unclaimed Materials'
+  family: zone_story
+  hidden: false
+  unlocksQuestId: atelier_row_q_14
+  objectives:
+  - id: atelier_row_q_13_obj_01
+    kind: ledger_kill
+    targetId: atelier_row_ledger_kill_13
+    count: 1
+  - id: atelier_row_q_13_obj_02
+    kind: talk_to_npc
+    targetId: atelier_row_npc_04
+    count: 2
+  rewardGold: 48
+  rewardXp: 80
+- id: atelier_row_q_14
+  title: 'Atelier Row: Make Room for a Visitor'
+  family: zone_story
+  hidden: false
+  unlocksQuestId: atelier_row_q_15
+  objectives:
+  - id: atelier_row_q_14_obj_01
+    kind: ledger_bond
+    targetId: atelier_row_ledger_bond_14
+    count: 1
+  - id: atelier_row_q_14_obj_02
+    kind: collect_item
+    targetId: atelier_row_collect_item_14
+    count: 2
+  rewardGold: 51
+  rewardXp: 85
+- id: atelier_row_q_15
+  title: 'Atelier Row: Close the Day’s Ledger'
+  family: zone_story
+  hidden: false
+  unlocksQuestId: atelier_row_q_16
+  objectives:
+  - id: atelier_row_q_15_obj_01
+    kind: deliver_item
+    targetId: atelier_row_deliver_item_15
+    count: 1
+  - id: atelier_row_q_15_obj_02
+    kind: interact
+    targetId: atelier_row_place_08
+    count: 2
+    verbId: craft
+  rewardGold: 54
+  rewardXp: 90
+- id: atelier_row_q_16
+  title: 'Atelier Row: Follow the Midway Signal'
+  family: zone_story
+  hidden: false
+  unlocksQuestId: atelier_row_q_17
+  objectives:
+  - id: atelier_row_q_16_obj_01
+    kind: talk_to_npc
+    targetId: atelier_row_npc_06
+    count: 1
+  - id: atelier_row_q_16_obj_02
+    kind: score_beat
+    targetId: atelier_row_score_beat_16
+    count: 2
+  rewardGold: 57
+  rewardXp: 95
+- id: atelier_row_q_17
+  title: 'Atelier Row: Uncover the Door Note'
+  family: zone_story
+  hidden: true
+  unlocksQuestId: atelier_row_q_18
+  objectives:
+  - id: atelier_row_q_17_obj_01
+    kind: collect_item
+    targetId: atelier_row_collect_item_17
+    count: 1
+  - id: atelier_row_q_17_obj_02
+    kind: build_tick
+    targetId: atelier_row_build_tick_17
+    count: 2
+  rewardGold: 60
+  rewardXp: 100
+- id: atelier_row_q_18
+  title: 'Atelier Row: Prepare the Team Table'
+  family: zone_story
+  hidden: false
+  unlocksQuestId: atelier_row_q_19
+  objectives:
+  - id: atelier_row_q_18_obj_01
+    kind: interact
+    targetId: atelier_row_place_02
+    count: 1
+    verbId: bind_inn
+  - id: atelier_row_q_18_obj_02
+    kind: hospitality_tick
+    targetId: atelier_row_hospitality_tick_18
+    count: 2
+  rewardGold: 63
+  rewardXp: 105
+- id: atelier_row_q_19
+  title: 'Atelier Row: Test the Local Method'
+  family: zone_story
+  hidden: false
+  unlocksQuestId: atelier_row_q_20
+  objectives:
+  - id: atelier_row_q_19_obj_01
+    kind: score_beat
+    targetId: atelier_row_score_beat_19
+    count: 1
+  - id: atelier_row_q_19_obj_02
+    kind: lap_finish
+    targetId: atelier_row_lap_finish_19
+    count: 2
+  rewardGold: 66
+  rewardXp: 110
+- id: atelier_row_q_20
+  title: 'Atelier Row: Hold a Careful Boundary'
+  family: zone_story
+  hidden: false
+  unlocksQuestId: atelier_row_q_21
+  objectives:
+  - id: atelier_row_q_20_obj_01
+    kind: build_tick
+    targetId: atelier_row_build_tick_20
+    count: 1
+  - id: atelier_row_q_20_obj_02
+    kind: visit_place
+    targetId: atelier_row_place_05
+    count: 2
+  rewardGold: 69
+  rewardXp: 115
+- id: atelier_row_q_21
+  title: 'Atelier Row: Answer the Neighbour’s Call'
+  family: extra
+  hidden: false
+  unlocksQuestId: atelier_row_q_22
+  objectives:
+  - id: atelier_row_q_21_obj_01
+    kind: hospitality_tick
+    targetId: atelier_row_hospitality_tick_21
+    count: 1
+  - id: atelier_row_q_21_obj_02
+    kind: ledger_kill
+    targetId: atelier_row_ledger_kill_21
+    count: 2
+  rewardGold: 72
+  rewardXp: 120
+- id: atelier_row_q_22
+  title: 'Atelier Row: Finish the Side Route'
+  family: extra
+  hidden: false
+  unlocksQuestId: atelier_row_q_23
+  objectives:
+  - id: atelier_row_q_22_obj_01
+    kind: lap_finish
+    targetId: atelier_row_lap_finish_22
+    count: 1
+  - id: atelier_row_q_22_obj_02
+    kind: ledger_bond
+    targetId: atelier_row_ledger_bond_22
+    count: 2
+  rewardGold: 75
+  rewardXp: 125
+- id: atelier_row_q_23
+  title: 'Atelier Row: Earn a Trusted Introduction'
+  family: extra
+  hidden: true
+  unlocksQuestId: atelier_row_q_24
+  objectives:
+  - id: atelier_row_q_23_obj_01
+    kind: visit_place
+    targetId: atelier_row_place_07
+    count: 1
+  - id: atelier_row_q_23_obj_02
+    kind: deliver_item
+    targetId: atelier_row_deliver_item_23
+    count: 2
+  rewardGold: 78
+  rewardXp: 130
+- id: atelier_row_q_24
+  title: 'Atelier Row: Open the Instance Path'
+  family: extra
+  hidden: false
+  unlocksQuestId: atelier_row_q_25
+  objectives:
+  - id: atelier_row_q_24_obj_01
+    kind: ledger_kill
+    targetId: atelier_row_ledger_kill_24
+    count: 1
+  - id: atelier_row_q_24_obj_02
+    kind: talk_to_npc
+    targetId: atelier_row_npc_05
+    count: 2
+  rewardGold: 81
+  rewardXp: 135
+- id: atelier_row_q_25
+  title: 'Atelier Row: Complete the First Big Night'
+  family: extra
+  hidden: false
+  unlocksQuestId: null
+  objectives:
+  - id: atelier_row_q_25_obj_01
+    kind: ledger_bond
+    targetId: atelier_row_ledger_bond_25
+    count: 1
+  - id: atelier_row_q_25_obj_02
+    kind: collect_item
+    targetId: atelier_row_collect_item_25
+    count: 2
+  rewardGold: 84
+  rewardXp: 140
+species:
+- id: atelier_row_species_01
+  publicName: Silk Moth
+  kind: activity
+  hp: 0
+  armor: 0
+  threat: 1
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: atelier_row_species_02
+  publicName: Button Quail
+  kind: activity
+  hp: 0
+  armor: 1
+  threat: 2
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: atelier_row_species_03
+  publicName: Ribbon Cat
+  kind: activity
+  hp: 0
+  armor: 2
+  threat: 3
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: atelier_row_species_04
+  publicName: Dye Koi
+  kind: activity
+  hp: 0
+  armor: 3
+  threat: 1
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: atelier_row_species_05
+  publicName: Atelier Row Field Type 5
+  kind: activity
+  hp: 0
+  armor: 0
+  threat: 2
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: atelier_row_species_06
+  publicName: Atelier Row Field Type 6
+  kind: activity
+  hp: 0
+  armor: 1
+  threat: 3
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: atelier_row_species_07
+  publicName: Atelier Row Field Type 7
+  kind: activity
+  hp: 0
+  armor: 2
+  threat: 1
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: atelier_row_species_08
+  publicName: Atelier Row Field Type 8
+  kind: activity
+  hp: 0
+  armor: 3
+  threat: 2
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: atelier_row_species_09
+  publicName: Atelier Row Field Type 9
+  kind: activity
+  hp: 0
+  armor: 0
+  threat: 3
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: atelier_row_species_10
+  publicName: Atelier Row Field Type 10
+  kind: activity
+  hp: 0
+  armor: 1
+  threat: 1
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: atelier_row_species_11
+  publicName: Atelier Row Field Type 11
+  kind: activity
+  hp: 0
+  armor: 2
+  threat: 2
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: atelier_row_species_12
+  publicName: Atelier Row Field Type 12
+  kind: activity
+  hp: 0
+  armor: 3
+  threat: 3
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: atelier_row_species_13
+  publicName: Atelier Row Field Type 13
+  kind: activity
+  hp: 0
+  armor: 0
+  threat: 1
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: atelier_row_species_14
+  publicName: Atelier Row Field Type 14
+  kind: activity
+  hp: 0
+  armor: 1
+  threat: 2
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: atelier_row_species_15
+  publicName: Atelier Row Field Type 15
+  kind: activity
+  hp: 0
+  armor: 2
+  threat: 3
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: atelier_row_species_16
+  publicName: Atelier Row Field Type 16
+  kind: activity
+  hp: 0
+  armor: 3
+  threat: 1
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: atelier_row_species_17
+  publicName: Atelier Row Field Type 17
+  kind: activity
+  hp: 0
+  armor: 0
+  threat: 2
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: atelier_row_species_18
+  publicName: Atelier Row Field Type 18
+  kind: activity
+  hp: 0
+  armor: 1
+  threat: 3
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+items:
+- id: atelier_row_item_01
+  publicName: Thread Square token
+  category: starter
+  power: false
+  sellGold: 3
+  description: A Atelier Row item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: atelier_row_item_02
+  publicName: Drape Hall tool
+  category: starter
+  power: false
+  sellGold: 5
+  description: A Atelier Row item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: atelier_row_item_03
+  publicName: Color Yard thread
+  category: profession
+  power: false
+  sellGold: 7
+  description: A Atelier Row item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: atelier_row_item_04
+  publicName: Runway Roof seal
+  category: profession
+  power: false
+  sellGold: 9
+  description: A Atelier Row item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: atelier_row_item_05
+  publicName: Button Arcade bundle
+  category: instance
+  power: false
+  sellGold: 11
+  description: A Atelier Row item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: atelier_row_item_06
+  publicName: Hem Garden token
+  category: instance
+  power: false
+  sellGold: 13
+  description: A Atelier Row item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: atelier_row_item_07
+  publicName: Pattern Vault tool
+  category: cosmetic
+  power: false
+  sellGold: 15
+  description: A Atelier Row item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: atelier_row_item_08
+  publicName: Lightwell Loft thread
+  category: cosmetic
+  power: false
+  sellGold: 17
+  description: A Atelier Row item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: atelier_row_item_09
+  publicName: Thread Square seal
+  category: material
+  power: false
+  sellGold: 19
+  description: A Atelier Row item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: atelier_row_item_10
+  publicName: Drape Hall bundle
+  category: material
+  power: false
+  sellGold: 21
+  description: A Atelier Row item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: atelier_row_item_11
+  publicName: Color Yard token
+  category: care
+  power: false
+  sellGold: 23
+  description: A Atelier Row item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: atelier_row_item_12
+  publicName: Runway Roof tool
+  category: care
+  power: false
+  sellGold: 25
+  description: A Atelier Row item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: atelier_row_item_13
+  publicName: Button Arcade thread
+  category: map
+  power: false
+  sellGold: 27
+  description: A Atelier Row item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: atelier_row_item_14
+  publicName: Hem Garden seal
+  category: map
+  power: false
+  sellGold: 29
+  description: A Atelier Row item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: atelier_row_item_15
+  publicName: Pattern Vault bundle
+  category: vendor
+  power: false
+  sellGold: 31
+  description: A Atelier Row item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: atelier_row_item_16
+  publicName: Lightwell Loft token
+  category: vendor
+  power: false
+  sellGold: 33
+  description: A Atelier Row item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: atelier_row_item_17
+  publicName: Thread Square tool
+  category: recipe
+  power: false
+  sellGold: 35
+  description: A Atelier Row item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: atelier_row_item_18
+  publicName: Drape Hall thread
+  category: recipe
+  power: false
+  sellGold: 37
+  description: A Atelier Row item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: atelier_row_item_19
+  publicName: Color Yard seal
+  category: keepsake
+  power: false
+  sellGold: 39
+  description: A Atelier Row item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: atelier_row_item_20
+  publicName: Runway Roof bundle
+  category: keepsake
+  power: false
+  sellGold: 41
+  description: A Atelier Row item used for a stated craft, route, display, or record; it never alters paid outcomes.
+dropTables:
+- id: atelier_row_drop_01
+  sourceId: atelier_row_species_01
+  personalLoot: true
+  entries:
+  - itemId: atelier_row_item_01
+    chancePct: 60
+    min: 1
+    max: 2
+  - itemId: atelier_row_item_08
+    chancePct: 20
+    min: 1
+    max: 1
+- id: atelier_row_drop_02
+  sourceId: atelier_row_species_02
+  personalLoot: true
+  entries:
+  - itemId: atelier_row_item_02
+    chancePct: 55
+    min: 1
+    max: 2
+  - itemId: atelier_row_item_09
+    chancePct: 25
+    min: 1
+    max: 1
+- id: atelier_row_drop_03
+  sourceId: atelier_row_species_03
+  personalLoot: true
+  entries:
+  - itemId: atelier_row_item_03
+    chancePct: 50
+    min: 1
+    max: 2
+  - itemId: atelier_row_item_10
+    chancePct: 30
+    min: 1
+    max: 1
+- id: atelier_row_drop_04
+  sourceId: atelier_row_species_04
+  personalLoot: true
+  entries:
+  - itemId: atelier_row_item_04
+    chancePct: 45
+    min: 1
+    max: 2
+  - itemId: atelier_row_item_11
+    chancePct: 20
+    min: 1
+    max: 1
+- id: atelier_row_drop_05
+  sourceId: atelier_row_species_05
+  personalLoot: true
+  entries:
+  - itemId: atelier_row_item_05
+    chancePct: 60
+    min: 1
+    max: 2
+  - itemId: atelier_row_item_12
+    chancePct: 25
+    min: 1
+    max: 1
+- id: atelier_row_drop_06
+  sourceId: atelier_row_species_06
+  personalLoot: true
+  entries:
+  - itemId: atelier_row_item_06
+    chancePct: 55
+    min: 1
+    max: 2
+  - itemId: atelier_row_item_13
+    chancePct: 30
+    min: 1
+    max: 1
+- id: atelier_row_drop_07
+  sourceId: atelier_row_species_07
+  personalLoot: true
+  entries:
+  - itemId: atelier_row_item_07
+    chancePct: 50
+    min: 1
+    max: 2
+  - itemId: atelier_row_item_14
+    chancePct: 20
+    min: 1
+    max: 1
+- id: atelier_row_drop_08
+  sourceId: atelier_row_species_08
+  personalLoot: true
+  entries:
+  - itemId: atelier_row_item_08
+    chancePct: 45
+    min: 1
+    max: 2
+  - itemId: atelier_row_item_15
+    chancePct: 25
+    min: 1
+    max: 1
+- id: atelier_row_drop_09
+  sourceId: atelier_row_species_09
+  personalLoot: true
+  entries:
+  - itemId: atelier_row_item_09
+    chancePct: 60
+    min: 1
+    max: 2
+  - itemId: atelier_row_item_16
+    chancePct: 30
+    min: 1
+    max: 1
+- id: atelier_row_drop_10
+  sourceId: atelier_row_species_10
+  personalLoot: true
+  entries:
+  - itemId: atelier_row_item_10
+    chancePct: 55
+    min: 1
+    max: 2
+  - itemId: atelier_row_item_17
+    chancePct: 20
+    min: 1
+    max: 1
+- id: atelier_row_drop_11
+  sourceId: atelier_row_species_11
+  personalLoot: true
+  entries:
+  - itemId: atelier_row_item_11
+    chancePct: 50
+    min: 1
+    max: 2
+  - itemId: atelier_row_item_18
+    chancePct: 25
+    min: 1
+    max: 1
+- id: atelier_row_drop_12
+  sourceId: atelier_row_species_12
+  personalLoot: true
+  entries:
+  - itemId: atelier_row_item_12
+    chancePct: 45
+    min: 1
+    max: 2
+  - itemId: atelier_row_item_19
+    chancePct: 30
+    min: 1
+    max: 1
+vendors:
+- id: atelier_row_vendor_01
+  publicName: Atelier Row Exchange
+  placeId: atelier_row_place_01
+  currencyGoldName: Thread Notes
+  items:
+  - itemId: atelier_row_item_01
+    priceGold: 8
+  - itemId: atelier_row_item_02
+    priceGold: 11
+  - itemId: atelier_row_item_03
+    priceGold: 14
+  - itemId: atelier_row_item_04
+    priceGold: 17
+  - itemId: atelier_row_item_05
+    priceGold: 20
+  - itemId: atelier_row_item_06
+    priceGold: 23
+  - itemId: atelier_row_item_07
+    priceGold: 26
+  - itemId: atelier_row_item_08
+    priceGold: 29
+  repairCostPerPoint: 0
+dungeons:
+- id: atelier_row_dungeon_01
+  publicName: The Pattern Vault Reveal
+  partyMin: 1
+  partyMax: 5
+  entrancePlaceId: atelier_row_place_06
+  rooms:
+  - id: atelier_row_dungeon_room_01
+    publicName: 'The Pattern Vault Reveal: Threshold Room'
+    describeBeforeCreature: Describe the material, sound, exits, and practical obstacle of Threshold Room before any species
+      is narrated.
+    trashSpeciesIds:
+    - atelier_row_species_01
+    - atelier_row_species_02
+    eliteSpeciesId: null
+    checkpoint: false
+    bossSpeciesId: null
+    exits:
+    - atelier_row_dungeon_room_02
+  - id: atelier_row_dungeon_room_02
+    publicName: 'The Pattern Vault Reveal: Workroom'
+    describeBeforeCreature: Describe the material, sound, exits, and practical obstacle of Workroom before any species is
+      narrated.
+    trashSpeciesIds:
+    - atelier_row_species_03
+    - atelier_row_species_04
+    eliteSpeciesId: null
+    checkpoint: false
+    bossSpeciesId: null
+    exits:
+    - atelier_row_dungeon_room_03
+  - id: atelier_row_dungeon_room_03
+    publicName: 'The Pattern Vault Reveal: Side Passage'
+    describeBeforeCreature: Describe the material, sound, exits, and practical obstacle of Side Passage before any species
+      is narrated.
+    trashSpeciesIds:
+    - atelier_row_species_05
+    - atelier_row_species_06
+    eliteSpeciesId: atelier_row_species_09
+    checkpoint: false
+    bossSpeciesId: null
+    exits:
+    - atelier_row_dungeon_room_04
+  - id: atelier_row_dungeon_room_04
+    publicName: 'The Pattern Vault Reveal: Checkpoint Alcove'
+    describeBeforeCreature: Describe the material, sound, exits, and practical obstacle of Checkpoint Alcove before any species
+      is narrated.
+    trashSpeciesIds:
+    - atelier_row_species_07
+    - atelier_row_species_08
+    eliteSpeciesId: null
+    checkpoint: true
+    bossSpeciesId: null
+    exits:
+    - atelier_row_dungeon_room_05
+  - id: atelier_row_dungeon_room_05
+    publicName: 'The Pattern Vault Reveal: Finale Chamber'
+    describeBeforeCreature: Describe the material, sound, exits, and practical obstacle of Finale Chamber before any species
+      is narrated.
+    trashSpeciesIds:
+    - atelier_row_species_09
+    - atelier_row_species_10
+    eliteSpeciesId: null
+    checkpoint: false
+    bossSpeciesId: atelier_row_species_14
+    exits: []
+  traps:
+  - id: atelier_row_trap_01
+    publicName: misread sign
+    interactableId: atelier_row_interact_01
+  - id: atelier_row_trap_02
+    publicName: jammed latch
+    interactableId: atelier_row_interact_02
+  - id: atelier_row_trap_03
+    publicName: wet threshold
+    interactableId: atelier_row_interact_03
+  - id: atelier_row_trap_04
+    publicName: false shelf
+    interactableId: atelier_row_interact_04
+  - id: atelier_row_trap_05
+    publicName: quiet bell
+    interactableId: atelier_row_interact_05
+  - id: atelier_row_trap_06
+    publicName: sealed drawer
+    interactableId: atelier_row_interact_06
+talkTrees:
+- npcId: atelier_row_npc_01
+  greet: Bryn Cress says, ‘Atelier Row keeps its promises in small places. Tell me which one you noticed.’
+  quest_offer: 'Bryn Cress offers a specific task at Thread Square: settle the practical mismatch before it costs someone
+    a shift.'
+  quest_progress: Bryn Cress checks the record and asks for the one detail that would change the outcome.
+  quest_turnin: Bryn Cress marks the work complete, names who benefited, and hands over the recorded reward.
+  gossip:
+  - At Drape Hall, people are discussing a missing care tag.
+  - The safest route today is through Color Yard, not the obvious shortcut.
+  - Someone at Runway Roof is offering help but will not ask twice.
+  refusal: Bryn Cress says, ‘No. I can explain the rule, but I will not bend it for noise.’
+  player_rude: Bryn Cress says, ‘You may leave, lower your voice, or try a useful question. Choose one.’
+- npcId: atelier_row_npc_02
+  greet: Cato Silt says, ‘Atelier Row keeps its promises in small places. Tell me which one you noticed.’
+  quest_offer: 'Cato Silt offers a specific task at Drape Hall: settle the practical mismatch before it costs someone a shift.'
+  quest_progress: Cato Silt checks the record and asks for the one detail that would change the outcome.
+  quest_turnin: Cato Silt marks the work complete, names who benefited, and hands over the recorded reward.
+  gossip:
+  - At Color Yard, people are discussing a missing care tag.
+  - The safest route today is through Runway Roof, not the obvious shortcut.
+  - Someone at Button Arcade is offering help but will not ask twice.
+  refusal: Cato Silt says, ‘No. I can explain the rule, but I will not bend it for noise.’
+  player_rude: Cato Silt says, ‘You may leave, lower your voice, or try a useful question. Choose one.’
+- npcId: atelier_row_npc_03
+  greet: Dessa Pryce says, ‘Atelier Row keeps its promises in small places. Tell me which one you noticed.’
+  quest_offer: 'Dessa Pryce offers a specific task at Color Yard: settle the practical mismatch before it costs someone a
+    shift.'
+  quest_progress: Dessa Pryce checks the record and asks for the one detail that would change the outcome.
+  quest_turnin: Dessa Pryce marks the work complete, names who benefited, and hands over the recorded reward.
+  gossip:
+  - At Runway Roof, people are discussing a missing care tag.
+  - The safest route today is through Button Arcade, not the obvious shortcut.
+  - Someone at Hem Garden is offering help but will not ask twice.
+  refusal: Dessa Pryce says, ‘No. I can explain the rule, but I will not bend it for noise.’
+  player_rude: Dessa Pryce says, ‘You may leave, lower your voice, or try a useful question. Choose one.’
+- npcId: atelier_row_npc_04
+  greet: Eris Vane says, ‘Atelier Row keeps its promises in small places. Tell me which one you noticed.’
+  quest_offer: 'Eris Vane offers a specific task at Runway Roof: settle the practical mismatch before it costs someone a shift.'
+  quest_progress: Eris Vane checks the record and asks for the one detail that would change the outcome.
+  quest_turnin: Eris Vane marks the work complete, names who benefited, and hands over the recorded reward.
+  gossip:
+  - At Button Arcade, people are discussing a missing care tag.
+  - The safest route today is through Hem Garden, not the obvious shortcut.
+  - Someone at Pattern Vault is offering help but will not ask twice.
+  refusal: Eris Vane says, ‘No. I can explain the rule, but I will not bend it for noise.’
+  player_rude: Eris Vane says, ‘You may leave, lower your voice, or try a useful question. Choose one.’
+- npcId: atelier_row_npc_05
+  greet: Fenn Quill says, ‘Atelier Row keeps its promises in small places. Tell me which one you noticed.’
+  quest_offer: 'Fenn Quill offers a specific task at Thread Square: settle the practical mismatch before it costs someone
+    a shift.'
+  quest_progress: Fenn Quill checks the record and asks for the one detail that would change the outcome.
+  quest_turnin: Fenn Quill marks the work complete, names who benefited, and hands over the recorded reward.
+  gossip:
+  - At Hem Garden, people are discussing a missing care tag.
+  - The safest route today is through Pattern Vault, not the obvious shortcut.
+  - Someone at Lightwell Loft is offering help but will not ask twice.
+  refusal: Fenn Quill says, ‘No. I can explain the rule, but I will not bend it for noise.’
+  player_rude: Fenn Quill says, ‘You may leave, lower your voice, or try a useful question. Choose one.’
+- npcId: atelier_row_npc_06
+  greet: Gala Vale says, ‘Atelier Row keeps its promises in small places. Tell me which one you noticed.’
+  quest_offer: 'Gala Vale offers a specific task at Drape Hall: settle the practical mismatch before it costs someone a shift.'
+  quest_progress: Gala Vale checks the record and asks for the one detail that would change the outcome.
+  quest_turnin: Gala Vale marks the work complete, names who benefited, and hands over the recorded reward.
+  gossip:
+  - At Pattern Vault, people are discussing a missing care tag.
+  - The safest route today is through Lightwell Loft, not the obvious shortcut.
+  - Someone at Thread Square is offering help but will not ask twice.
+  refusal: Gala Vale says, ‘No. I can explain the rule, but I will not bend it for noise.’
+  player_rude: Gala Vale says, ‘You may leave, lower your voice, or try a useful question. Choose one.’
+- npcId: atelier_row_npc_07
+  greet: Holl Wren says, ‘Atelier Row keeps its promises in small places. Tell me which one you noticed.’
+  quest_offer: 'Holl Wren offers a specific task at Color Yard: settle the practical mismatch before it costs someone a shift.'
+  quest_progress: Holl Wren checks the record and asks for the one detail that would change the outcome.
+  quest_turnin: Holl Wren marks the work complete, names who benefited, and hands over the recorded reward.
+  gossip:
+  - At Lightwell Loft, people are discussing a missing care tag.
+  - The safest route today is through Thread Square, not the obvious shortcut.
+  - Someone at Drape Hall is offering help but will not ask twice.
+  refusal: Holl Wren says, ‘No. I can explain the rule, but I will not bend it for noise.’
+  player_rude: Holl Wren says, ‘You may leave, lower your voice, or try a useful question. Choose one.’
+- npcId: atelier_row_npc_08
+  greet: Ivo Morrow says, ‘Atelier Row keeps its promises in small places. Tell me which one you noticed.’
+  quest_offer: 'Ivo Morrow offers a specific task at Runway Roof: settle the practical mismatch before it costs someone a
+    shift.'
+  quest_progress: Ivo Morrow checks the record and asks for the one detail that would change the outcome.
+  quest_turnin: Ivo Morrow marks the work complete, names who benefited, and hands over the recorded reward.
+  gossip:
+  - At Thread Square, people are discussing a missing care tag.
+  - The safest route today is through Drape Hall, not the obvious shortcut.
+  - Someone at Color Yard is offering help but will not ask twice.
+  refusal: Ivo Morrow says, ‘No. I can explain the rule, but I will not bend it for noise.’
+  player_rude: Ivo Morrow says, ‘You may leave, lower your voice, or try a useful question. Choose one.’
+- npcId: atelier_row_npc_09
+  greet: Jori Rowan says, ‘Atelier Row keeps its promises in small places. Tell me which one you noticed.’
+  quest_offer: 'Jori Rowan offers a specific task at Thread Square: settle the practical mismatch before it costs someone
+    a shift.'
+  quest_progress: Jori Rowan checks the record and asks for the one detail that would change the outcome.
+  quest_turnin: Jori Rowan marks the work complete, names who benefited, and hands over the recorded reward.
+  gossip:
+  - At Drape Hall, people are discussing a missing care tag.
+  - The safest route today is through Color Yard, not the obvious shortcut.
+  - Someone at Runway Roof is offering help but will not ask twice.
+  refusal: Jori Rowan says, ‘No. I can explain the rule, but I will not bend it for noise.’
+  player_rude: Jori Rowan says, ‘You may leave, lower your voice, or try a useful question. Choose one.’
+- npcId: atelier_row_npc_10
+  greet: Alden Nook says, ‘Atelier Row keeps its promises in small places. Tell me which one you noticed.’
+  quest_offer: 'Alden Nook offers a specific task at Drape Hall: settle the practical mismatch before it costs someone a shift.'
+  quest_progress: Alden Nook checks the record and asks for the one detail that would change the outcome.
+  quest_turnin: Alden Nook marks the work complete, names who benefited, and hands over the recorded reward.
+  gossip:
+  - At Color Yard, people are discussing a missing care tag.
+  - The safest route today is through Runway Roof, not the obvious shortcut.
+  - Someone at Button Arcade is offering help but will not ask twice.
+  refusal: Alden Nook says, ‘No. I can explain the rule, but I will not bend it for noise.’
+  player_rude: Alden Nook says, ‘You may leave, lower your voice, or try a useful question. Choose one.’
+choiceButtons:
+- id: atelier_row_choice_01_01
+  placeId: atelier_row_place_01
+  label: Read the notice at Thread Square
+  requires: []
+  intentKind: talk
+  stake: one turn
+- id: atelier_row_choice_01_02
+  placeId: atelier_row_place_01
+  label: Ask for an introduction at Thread Square
+  requires: []
+  intentKind: talk
+  stake: one supply
+- id: atelier_row_choice_01_03
+  placeId: atelier_row_place_01
+  label: Check the tool tag at Thread Square
+  requires: []
+  intentKind: inspect
+  stake: a declined invitation
+- id: atelier_row_choice_01_04
+  placeId: atelier_row_place_01
+  label: Offer a hand at Thread Square
+  requires: []
+  intentKind: interact
+  stake: a public note
+- id: atelier_row_choice_01_05
+  placeId: atelier_row_place_01
+  label: Take the safer route at Thread Square
+  requires:
+  - atelier_row_item_05
+  intentKind: travel
+  stake: a short detour
+- id: atelier_row_choice_01_06
+  placeId: atelier_row_place_01
+  label: Open the local record at Thread Square
+  requires:
+  - atelier_row_item_06
+  intentKind: interact
+  stake: one turn
+- id: atelier_row_choice_01_07
+  placeId: atelier_row_place_01
+  label: Rest at the bench at Thread Square
+  requires:
+  - atelier_row_item_07
+  intentKind: rest
+  stake: one supply
+- id: atelier_row_choice_01_08
+  placeId: atelier_row_place_01
+  label: Repair the marker at Thread Square
+  requires:
+  - atelier_row_item_08
+  intentKind: interact
+  stake: a declined invitation
+- id: atelier_row_choice_01_09
+  placeId: atelier_row_place_01
+  label: Prepare a shared item at Thread Square
+  requires:
+  - atelier_row_item_09
+  intentKind: craft
+  stake: a public note
+- id: atelier_row_choice_01_10
+  placeId: atelier_row_place_01
+  label: Leave a kind note at Thread Square
+  requires:
+  - atelier_row_item_10
+  intentKind: talk
+  stake: a short detour
+- id: atelier_row_choice_02_01
+  placeId: atelier_row_place_02
+  label: Read the notice at Drape Hall
+  requires: []
+  intentKind: talk
+  stake: one turn
+- id: atelier_row_choice_02_02
+  placeId: atelier_row_place_02
+  label: Ask for an introduction at Drape Hall
+  requires: []
+  intentKind: talk
+  stake: one supply
+- id: atelier_row_choice_02_03
+  placeId: atelier_row_place_02
+  label: Check the tool tag at Drape Hall
+  requires: []
+  intentKind: inspect
+  stake: a declined invitation
+- id: atelier_row_choice_02_04
+  placeId: atelier_row_place_02
+  label: Offer a hand at Drape Hall
+  requires: []
+  intentKind: interact
+  stake: a public note
+- id: atelier_row_choice_02_05
+  placeId: atelier_row_place_02
+  label: Take the safer route at Drape Hall
+  requires:
+  - atelier_row_item_05
+  intentKind: travel
+  stake: a short detour
+- id: atelier_row_choice_02_06
+  placeId: atelier_row_place_02
+  label: Open the local record at Drape Hall
+  requires:
+  - atelier_row_item_06
+  intentKind: interact
+  stake: one turn
+- id: atelier_row_choice_02_07
+  placeId: atelier_row_place_02
+  label: Rest at the bench at Drape Hall
+  requires:
+  - atelier_row_item_07
+  intentKind: rest
+  stake: one supply
+- id: atelier_row_choice_02_08
+  placeId: atelier_row_place_02
+  label: Repair the marker at Drape Hall
+  requires:
+  - atelier_row_item_08
+  intentKind: interact
+  stake: a declined invitation
+- id: atelier_row_choice_02_09
+  placeId: atelier_row_place_02
+  label: Prepare a shared item at Drape Hall
+  requires:
+  - atelier_row_item_09
+  intentKind: craft
+  stake: a public note
+- id: atelier_row_choice_02_10
+  placeId: atelier_row_place_02
+  label: Leave a kind note at Drape Hall
+  requires:
+  - atelier_row_item_10
+  intentKind: talk
+  stake: a short detour
+- id: atelier_row_choice_03_01
+  placeId: atelier_row_place_03
+  label: Read the notice at Color Yard
+  requires: []
+  intentKind: talk
+  stake: one turn
+- id: atelier_row_choice_03_02
+  placeId: atelier_row_place_03
+  label: Ask for an introduction at Color Yard
+  requires: []
+  intentKind: talk
+  stake: one supply
+- id: atelier_row_choice_03_03
+  placeId: atelier_row_place_03
+  label: Check the tool tag at Color Yard
+  requires: []
+  intentKind: inspect
+  stake: a declined invitation
+- id: atelier_row_choice_03_04
+  placeId: atelier_row_place_03
+  label: Offer a hand at Color Yard
+  requires: []
+  intentKind: interact
+  stake: a public note
+- id: atelier_row_choice_03_05
+  placeId: atelier_row_place_03
+  label: Take the safer route at Color Yard
+  requires:
+  - atelier_row_item_05
+  intentKind: travel
+  stake: a short detour
+- id: atelier_row_choice_03_06
+  placeId: atelier_row_place_03
+  label: Open the local record at Color Yard
+  requires:
+  - atelier_row_item_06
+  intentKind: interact
+  stake: one turn
+- id: atelier_row_choice_03_07
+  placeId: atelier_row_place_03
+  label: Rest at the bench at Color Yard
+  requires:
+  - atelier_row_item_07
+  intentKind: rest
+  stake: one supply
+- id: atelier_row_choice_03_08
+  placeId: atelier_row_place_03
+  label: Repair the marker at Color Yard
+  requires:
+  - atelier_row_item_08
+  intentKind: interact
+  stake: a declined invitation
+- id: atelier_row_choice_03_09
+  placeId: atelier_row_place_03
+  label: Prepare a shared item at Color Yard
+  requires:
+  - atelier_row_item_09
+  intentKind: craft
+  stake: a public note
+- id: atelier_row_choice_03_10
+  placeId: atelier_row_place_03
+  label: Leave a kind note at Color Yard
+  requires:
+  - atelier_row_item_10
+  intentKind: talk
+  stake: a short detour
+- id: atelier_row_choice_04_01
+  placeId: atelier_row_place_04
+  label: Read the notice at Runway Roof
+  requires: []
+  intentKind: talk
+  stake: one turn
+- id: atelier_row_choice_04_02
+  placeId: atelier_row_place_04
+  label: Ask for an introduction at Runway Roof
+  requires: []
+  intentKind: talk
+  stake: one supply
+- id: atelier_row_choice_04_03
+  placeId: atelier_row_place_04
+  label: Check the tool tag at Runway Roof
+  requires: []
+  intentKind: inspect
+  stake: a declined invitation
+- id: atelier_row_choice_04_04
+  placeId: atelier_row_place_04
+  label: Offer a hand at Runway Roof
+  requires: []
+  intentKind: interact
+  stake: a public note
+- id: atelier_row_choice_04_05
+  placeId: atelier_row_place_04
+  label: Take the safer route at Runway Roof
+  requires:
+  - atelier_row_item_05
+  intentKind: travel
+  stake: a short detour
+- id: atelier_row_choice_04_06
+  placeId: atelier_row_place_04
+  label: Open the local record at Runway Roof
+  requires:
+  - atelier_row_item_06
+  intentKind: interact
+  stake: one turn
+- id: atelier_row_choice_04_07
+  placeId: atelier_row_place_04
+  label: Rest at the bench at Runway Roof
+  requires:
+  - atelier_row_item_07
+  intentKind: rest
+  stake: one supply
+- id: atelier_row_choice_04_08
+  placeId: atelier_row_place_04
+  label: Repair the marker at Runway Roof
+  requires:
+  - atelier_row_item_08
+  intentKind: interact
+  stake: a declined invitation
+- id: atelier_row_choice_04_09
+  placeId: atelier_row_place_04
+  label: Prepare a shared item at Runway Roof
+  requires:
+  - atelier_row_item_09
+  intentKind: craft
+  stake: a public note
+- id: atelier_row_choice_04_10
+  placeId: atelier_row_place_04
+  label: Leave a kind note at Runway Roof
+  requires:
+  - atelier_row_item_10
+  intentKind: talk
+  stake: a short detour
+- id: atelier_row_choice_05_01
+  placeId: atelier_row_place_05
+  label: Read the notice at Button Arcade
+  requires: []
+  intentKind: talk
+  stake: one turn
+- id: atelier_row_choice_05_02
+  placeId: atelier_row_place_05
+  label: Ask for an introduction at Button Arcade
+  requires: []
+  intentKind: talk
+  stake: one supply
+- id: atelier_row_choice_05_03
+  placeId: atelier_row_place_05
+  label: Check the tool tag at Button Arcade
+  requires: []
+  intentKind: inspect
+  stake: a declined invitation
+- id: atelier_row_choice_05_04
+  placeId: atelier_row_place_05
+  label: Offer a hand at Button Arcade
+  requires: []
+  intentKind: interact
+  stake: a public note
+- id: atelier_row_choice_05_05
+  placeId: atelier_row_place_05
+  label: Take the safer route at Button Arcade
+  requires:
+  - atelier_row_item_05
+  intentKind: travel
+  stake: a short detour
+- id: atelier_row_choice_05_06
+  placeId: atelier_row_place_05
+  label: Open the local record at Button Arcade
+  requires:
+  - atelier_row_item_06
+  intentKind: interact
+  stake: one turn
+- id: atelier_row_choice_05_07
+  placeId: atelier_row_place_05
+  label: Rest at the bench at Button Arcade
+  requires:
+  - atelier_row_item_07
+  intentKind: rest
+  stake: one supply
+- id: atelier_row_choice_05_08
+  placeId: atelier_row_place_05
+  label: Repair the marker at Button Arcade
+  requires:
+  - atelier_row_item_08
+  intentKind: interact
+  stake: a declined invitation
+- id: atelier_row_choice_05_09
+  placeId: atelier_row_place_05
+  label: Prepare a shared item at Button Arcade
+  requires:
+  - atelier_row_item_09
+  intentKind: craft
+  stake: a public note
+- id: atelier_row_choice_05_10
+  placeId: atelier_row_place_05
+  label: Leave a kind note at Button Arcade
+  requires:
+  - atelier_row_item_10
+  intentKind: talk
+  stake: a short detour
+- id: atelier_row_choice_06_01
+  placeId: atelier_row_place_06
+  label: Read the notice at Hem Garden
+  requires: []
+  intentKind: talk
+  stake: one turn
+- id: atelier_row_choice_06_02
+  placeId: atelier_row_place_06
+  label: Ask for an introduction at Hem Garden
+  requires: []
+  intentKind: talk
+  stake: one supply
+- id: atelier_row_choice_06_03
+  placeId: atelier_row_place_06
+  label: Check the tool tag at Hem Garden
+  requires: []
+  intentKind: inspect
+  stake: a declined invitation
+- id: atelier_row_choice_06_04
+  placeId: atelier_row_place_06
+  label: Offer a hand at Hem Garden
+  requires: []
+  intentKind: interact
+  stake: a public note
+- id: atelier_row_choice_06_05
+  placeId: atelier_row_place_06
+  label: Take the safer route at Hem Garden
+  requires:
+  - atelier_row_item_05
+  intentKind: travel
+  stake: a short detour
+- id: atelier_row_choice_06_06
+  placeId: atelier_row_place_06
+  label: Open the local record at Hem Garden
+  requires:
+  - atelier_row_item_06
+  intentKind: interact
+  stake: one turn
+- id: atelier_row_choice_06_07
+  placeId: atelier_row_place_06
+  label: Rest at the bench at Hem Garden
+  requires:
+  - atelier_row_item_07
+  intentKind: rest
+  stake: one supply
+- id: atelier_row_choice_06_08
+  placeId: atelier_row_place_06
+  label: Repair the marker at Hem Garden
+  requires:
+  - atelier_row_item_08
+  intentKind: interact
+  stake: a declined invitation
+- id: atelier_row_choice_06_09
+  placeId: atelier_row_place_06
+  label: Prepare a shared item at Hem Garden
+  requires:
+  - atelier_row_item_09
+  intentKind: craft
+  stake: a public note
+- id: atelier_row_choice_06_10
+  placeId: atelier_row_place_06
+  label: Leave a kind note at Hem Garden
+  requires:
+  - atelier_row_item_10
+  intentKind: talk
+  stake: a short detour
+- id: atelier_row_choice_07_01
+  placeId: atelier_row_place_07
+  label: Read the notice at Pattern Vault
+  requires: []
+  intentKind: talk
+  stake: one turn
+- id: atelier_row_choice_07_02
+  placeId: atelier_row_place_07
+  label: Ask for an introduction at Pattern Vault
+  requires: []
+  intentKind: talk
+  stake: one supply
+- id: atelier_row_choice_07_03
+  placeId: atelier_row_place_07
+  label: Check the tool tag at Pattern Vault
+  requires: []
+  intentKind: inspect
+  stake: a declined invitation
+- id: atelier_row_choice_07_04
+  placeId: atelier_row_place_07
+  label: Offer a hand at Pattern Vault
+  requires: []
+  intentKind: interact
+  stake: a public note
+- id: atelier_row_choice_07_05
+  placeId: atelier_row_place_07
+  label: Take the safer route at Pattern Vault
+  requires:
+  - atelier_row_item_05
+  intentKind: travel
+  stake: a short detour
+- id: atelier_row_choice_07_06
+  placeId: atelier_row_place_07
+  label: Open the local record at Pattern Vault
+  requires:
+  - atelier_row_item_06
+  intentKind: interact
+  stake: one turn
+- id: atelier_row_choice_07_07
+  placeId: atelier_row_place_07
+  label: Rest at the bench at Pattern Vault
+  requires:
+  - atelier_row_item_07
+  intentKind: rest
+  stake: one supply
+- id: atelier_row_choice_07_08
+  placeId: atelier_row_place_07
+  label: Repair the marker at Pattern Vault
+  requires:
+  - atelier_row_item_08
+  intentKind: interact
+  stake: a declined invitation
+- id: atelier_row_choice_07_09
+  placeId: atelier_row_place_07
+  label: Prepare a shared item at Pattern Vault
+  requires:
+  - atelier_row_item_09
+  intentKind: craft
+  stake: a public note
+- id: atelier_row_choice_07_10
+  placeId: atelier_row_place_07
+  label: Leave a kind note at Pattern Vault
+  requires:
+  - atelier_row_item_10
+  intentKind: talk
+  stake: a short detour
+- id: atelier_row_choice_08_01
+  placeId: atelier_row_place_08
+  label: Read the notice at Lightwell Loft
+  requires: []
+  intentKind: talk
+  stake: one turn
+- id: atelier_row_choice_08_02
+  placeId: atelier_row_place_08
+  label: Ask for an introduction at Lightwell Loft
+  requires: []
+  intentKind: talk
+  stake: one supply
+- id: atelier_row_choice_08_03
+  placeId: atelier_row_place_08
+  label: Check the tool tag at Lightwell Loft
+  requires: []
+  intentKind: inspect
+  stake: a declined invitation
+- id: atelier_row_choice_08_04
+  placeId: atelier_row_place_08
+  label: Offer a hand at Lightwell Loft
+  requires: []
+  intentKind: interact
+  stake: a public note
+- id: atelier_row_choice_08_05
+  placeId: atelier_row_place_08
+  label: Take the safer route at Lightwell Loft
+  requires:
+  - atelier_row_item_05
+  intentKind: travel
+  stake: a short detour
+- id: atelier_row_choice_08_06
+  placeId: atelier_row_place_08
+  label: Open the local record at Lightwell Loft
+  requires:
+  - atelier_row_item_06
+  intentKind: interact
+  stake: one turn
+- id: atelier_row_choice_08_07
+  placeId: atelier_row_place_08
+  label: Rest at the bench at Lightwell Loft
+  requires:
+  - atelier_row_item_07
+  intentKind: rest
+  stake: one supply
+- id: atelier_row_choice_08_08
+  placeId: atelier_row_place_08
+  label: Repair the marker at Lightwell Loft
+  requires:
+  - atelier_row_item_08
+  intentKind: interact
+  stake: a declined invitation
+- id: atelier_row_choice_08_09
+  placeId: atelier_row_place_08
+  label: Prepare a shared item at Lightwell Loft
+  requires:
+  - atelier_row_item_09
+  intentKind: craft
+  stake: a public note
+- id: atelier_row_choice_08_10
+  placeId: atelier_row_place_08
+  label: Leave a kind note at Lightwell Loft
+  requires:
+  - atelier_row_item_10
+  intentKind: talk
+  stake: a short detour
+interactables:
+- id: atelier_row_interact_01
+  verbId: rest
+  publicName: Thread Square bench
+  placeId: atelier_row_place_01
+  displayVerb: Rest here
+  stateKey: atelier_row_rest_01
+- id: atelier_row_interact_02
+  verbId: repair
+  publicName: Drape Hall cabinet
+  placeId: atelier_row_place_02
+  displayVerb: Repair here
+  stateKey: atelier_row_repair_02
+- id: atelier_row_interact_03
+  verbId: tend
+  publicName: Color Yard rack
+  placeId: atelier_row_place_03
+  displayVerb: Tend here
+  stateKey: atelier_row_tend_03
+- id: atelier_row_interact_04
+  verbId: craft
+  publicName: Runway Roof kettle
+  placeId: atelier_row_place_04
+  displayVerb: Craft here
+  stateKey: atelier_row_craft_04
+- id: atelier_row_interact_05
+  verbId: cook
+  publicName: Button Arcade ledger
+  placeId: atelier_row_place_05
+  displayVerb: Cook here
+  stateKey: atelier_row_cook_05
+- id: atelier_row_interact_06
+  verbId: bind_inn
+  publicName: Hem Garden rail
+  placeId: atelier_row_place_06
+  displayVerb: Bind Inn here
+  stateKey: atelier_row_bind_inn_06
+- id: atelier_row_interact_07
+  verbId: inspect
+  publicName: Pattern Vault bell
+  placeId: atelier_row_place_07
+  displayVerb: Inspect here
+  stateKey: atelier_row_inspect_07
+- id: atelier_row_interact_08
+  verbId: open
+  publicName: Lightwell Loft board
+  placeId: atelier_row_place_08
+  displayVerb: Open here
+  stateKey: atelier_row_open_08
+- id: atelier_row_interact_09
+  verbId: carry
+  publicName: Thread Square table
+  placeId: atelier_row_place_01
+  displayVerb: Carry here
+  stateKey: atelier_row_carry_09
+- id: atelier_row_interact_10
+  verbId: clean
+  publicName: Drape Hall lamp
+  placeId: atelier_row_place_02
+  displayVerb: Clean here
+  stateKey: atelier_row_clean_10
+- id: atelier_row_interact_11
+  verbId: signal
+  publicName: Color Yard gate
+  placeId: atelier_row_place_03
+  displayVerb: Signal here
+  stateKey: atelier_row_signal_11
+- id: atelier_row_interact_12
+  verbId: record
+  publicName: Runway Roof shelf
+  placeId: atelier_row_place_04
+  displayVerb: Record here
+  stateKey: atelier_row_record_12
+interiors:
+- id: atelier_row_interior_01
+  publicName: Atelier Row Home Interior
+  entrancePlaceId: atelier_row_place_08
+  rooms:
+  - id: atelier_row_home_room_01
+    publicName: Atelier Row Entry
+    mapScale: interior
+    exits:
+    - atelier_row_home_room_02
+    props:
+    - atelier_row_home_prop_01
+    - atelier_row_home_prop_08
+  - id: atelier_row_home_room_02
+    publicName: Atelier Row Main Room
+    mapScale: interior
+    exits:
+    - atelier_row_home_room_01
+    - atelier_row_home_room_03
+    props:
+    - atelier_row_home_prop_02
+    - atelier_row_home_prop_09
+  - id: atelier_row_home_room_03
+    publicName: Atelier Row Work Nook
+    mapScale: interior
+    exits:
+    - atelier_row_home_room_02
+    - atelier_row_home_room_04
+    props:
+    - atelier_row_home_prop_03
+    - atelier_row_home_prop_10
+  - id: atelier_row_home_room_04
+    publicName: Atelier Row Window Room
+    mapScale: interior
+    exits:
+    - atelier_row_home_room_03
+    - atelier_row_home_room_05
+    props:
+    - atelier_row_home_prop_04
+    - atelier_row_home_prop_11
+  - id: atelier_row_home_room_05
+    publicName: Atelier Row Quiet Room
+    mapScale: interior
+    exits:
+    - atelier_row_home_room_04
+    - atelier_row_home_room_06
+    props:
+    - atelier_row_home_prop_05
+    - atelier_row_home_prop_12
+  - id: atelier_row_home_room_06
+    publicName: Atelier Row Storage
+    mapScale: interior
+    exits:
+    - atelier_row_home_room_05
+    - atelier_row_home_room_07
+    props:
+    - atelier_row_home_prop_06
+    - atelier_row_home_prop_13
+  - id: atelier_row_home_room_07
+    publicName: Atelier Row Back Step
+    mapScale: interior
+    exits:
+    - atelier_row_home_room_06
+    props:
+    - atelier_row_home_prop_07
+    - atelier_row_home_prop_14
+talents:
+- id: atelier_row_talent_01
+  publicName: Atelier Row Local Ear
+  cost: 1
+  requires: []
+  effectFlags:
+  - atelier_row_effect_01
+  payToUnlock: false
+- id: atelier_row_talent_02
+  publicName: Atelier Row Careful Hand
+  cost: 2
+  requires: []
+  effectFlags:
+  - atelier_row_effect_02
+  payToUnlock: false
+- id: atelier_row_talent_03
+  publicName: Atelier Row Route Sense
+  cost: 3
+  requires: []
+  effectFlags:
+  - atelier_row_effect_03
+  payToUnlock: false
+- id: atelier_row_talent_04
+  publicName: Atelier Row Shared Measure
+  cost: 4
+  requires: []
+  effectFlags:
+  - atelier_row_effect_04
+  payToUnlock: false
+- id: atelier_row_talent_05
+  publicName: Atelier Row Quiet Craft
+  cost: 1
+  requires:
+  - atelier_row_talent_04
+  effectFlags:
+  - atelier_row_effect_05
+  payToUnlock: false
+- id: atelier_row_talent_06
+  publicName: Atelier Row Open Invitation
+  cost: 2
+  requires: []
+  effectFlags:
+  - atelier_row_effect_06
+  payToUnlock: false
+- id: atelier_row_talent_07
+  publicName: Atelier Row Safe Return
+  cost: 3
+  requires: []
+  effectFlags:
+  - atelier_row_effect_07
+  payToUnlock: false
+- id: atelier_row_talent_08
+  publicName: Atelier Row Field Note
+  cost: 4
+  requires: []
+  effectFlags:
+  - atelier_row_effect_08
+  payToUnlock: false
+- id: atelier_row_talent_09
+  publicName: Atelier Row Steady Pace
+  cost: 1
+  requires:
+  - atelier_row_talent_08
+  effectFlags:
+  - atelier_row_effect_09
+  payToUnlock: false
+- id: atelier_row_talent_10
+  publicName: Atelier Row Clear Signal
+  cost: 2
+  requires: []
+  effectFlags:
+  - atelier_row_effect_10
+  payToUnlock: false
+- id: atelier_row_talent_11
+  publicName: Atelier Row Warm Welcome
+  cost: 3
+  requires: []
+  effectFlags:
+  - atelier_row_effect_11
+  payToUnlock: false
+- id: atelier_row_talent_12
+  publicName: Atelier Row Small Courage
+  cost: 4
+  requires: []
+  effectFlags:
+  - atelier_row_effect_12
+  payToUnlock: false
+- id: atelier_row_talent_13
+  publicName: Atelier Row Repair Habit
+  cost: 1
+  requires:
+  - atelier_row_talent_12
+  effectFlags:
+  - atelier_row_effect_13
+  payToUnlock: false
+- id: atelier_row_talent_14
+  publicName: Atelier Row Trust Mark
+  cost: 2
+  requires: []
+  effectFlags:
+  - atelier_row_effect_14
+  payToUnlock: false
+- id: atelier_row_talent_15
+  publicName: Atelier Row Second Look
+  cost: 3
+  requires: []
+  effectFlags:
+  - atelier_row_effect_15
+  payToUnlock: false
+- id: atelier_row_talent_16
+  publicName: Atelier Row Closing Grace
+  cost: 4
+  requires: []
+  effectFlags:
+  - atelier_row_effect_16
+  payToUnlock: false
+evalProbes:
+- id: atelier_row_eval_01
+  given:
+    energy: 8
+    placeId: atelier_row_place_01
+    turn: 1
+  action:
+    verbId: rest
+    targetId: atelier_row_interact_01
+  expectedLedger:
+    turn: 2
+    lastAction: rest
+    placeId: atelier_row_place_01
+  forbiddenProse:
+  - do not claim an uncommitted numeric reward
+  - do not alter damage, gold, ownership, or a score outside expectedLedger
+- id: atelier_row_eval_02
+  given:
+    energy: 8
+    placeId: atelier_row_place_02
+    turn: 2
+  action:
+    verbId: repair
+    targetId: atelier_row_interact_02
+  expectedLedger:
+    turn: 3
+    lastAction: repair
+    placeId: atelier_row_place_02
+  forbiddenProse:
+  - do not claim an uncommitted numeric reward
+  - do not alter damage, gold, ownership, or a score outside expectedLedger
+- id: atelier_row_eval_03
+  given:
+    energy: 8
+    placeId: atelier_row_place_03
+    turn: 3
+  action:
+    verbId: tend
+    targetId: atelier_row_interact_03
+  expectedLedger:
+    turn: 4
+    lastAction: tend
+    placeId: atelier_row_place_03
+  forbiddenProse:
+  - do not claim an uncommitted numeric reward
+  - do not alter damage, gold, ownership, or a score outside expectedLedger
+- id: atelier_row_eval_04
+  given:
+    energy: 8
+    placeId: atelier_row_place_04
+    turn: 4
+  action:
+    verbId: craft
+    targetId: atelier_row_interact_04
+  expectedLedger:
+    turn: 5
+    lastAction: craft
+    placeId: atelier_row_place_04
+  forbiddenProse:
+  - do not claim an uncommitted numeric reward
+  - do not alter damage, gold, ownership, or a score outside expectedLedger
+- id: atelier_row_eval_05
+  given:
+    energy: 8
+    placeId: atelier_row_place_05
+    turn: 5
+  action:
+    verbId: cook
+    targetId: atelier_row_interact_05
+  expectedLedger:
+    turn: 6
+    lastAction: cook
+    placeId: atelier_row_place_05
+  forbiddenProse:
+  - do not claim an uncommitted numeric reward
+  - do not alter damage, gold, ownership, or a score outside expectedLedger
+- id: atelier_row_eval_06
+  given:
+    energy: 8
+    placeId: atelier_row_place_06
+    turn: 6
+  action:
+    verbId: bind_inn
+    targetId: atelier_row_interact_06
+  expectedLedger:
+    turn: 7
+    lastAction: bind_inn
+    placeId: atelier_row_place_06
+  forbiddenProse:
+  - do not claim an uncommitted numeric reward
+  - do not alter damage, gold, ownership, or a score outside expectedLedger
+- id: atelier_row_eval_07
+  given:
+    energy: 8
+    placeId: atelier_row_place_07
+    turn: 7
+  action:
+    verbId: inspect
+    targetId: atelier_row_interact_07
+  expectedLedger:
+    turn: 8
+    lastAction: inspect
+    placeId: atelier_row_place_07
+  forbiddenProse:
+  - do not claim an uncommitted numeric reward
+  - do not alter damage, gold, ownership, or a score outside expectedLedger
+- id: atelier_row_eval_08
+  given:
+    energy: 8
+    placeId: atelier_row_place_08
+    turn: 8
+  action:
+    verbId: open
+    targetId: atelier_row_interact_08
+  expectedLedger:
+    turn: 9
+    lastAction: open
+    placeId: atelier_row_place_08
+  forbiddenProse:
+  - do not claim an uncommitted numeric reward
+  - do not alter damage, gold, ownership, or a score outside expectedLedger
+- id: atelier_row_eval_09
+  given:
+    energy: 8
+    placeId: atelier_row_place_01
+    turn: 9
+  action:
+    verbId: carry
+    targetId: atelier_row_interact_09
+  expectedLedger:
+    turn: 10
+    lastAction: carry
+    placeId: atelier_row_place_01
+  forbiddenProse:
+  - do not claim an uncommitted numeric reward
+  - do not alter damage, gold, ownership, or a score outside expectedLedger
+- id: atelier_row_eval_10
+  given:
+    energy: 8
+    placeId: atelier_row_place_02
+    turn: 10
+  action:
+    verbId: clean
+    targetId: atelier_row_interact_10
+  expectedLedger:
+    turn: 11
+    lastAction: clean
+    placeId: atelier_row_place_02
+  forbiddenProse:
+  - do not claim an uncommitted numeric reward
+  - do not alter damage, gold, ownership, or a score outside expectedLedger
+- id: atelier_row_eval_11
+  given:
+    energy: 8
+    placeId: atelier_row_place_03
+    turn: 11
+  action:
+    verbId: signal
+    targetId: atelier_row_interact_11
+  expectedLedger:
+    turn: 12
+    lastAction: signal
+    placeId: atelier_row_place_03
+  forbiddenProse:
+  - do not claim an uncommitted numeric reward
+  - do not alter damage, gold, ownership, or a score outside expectedLedger
+- id: atelier_row_eval_12
+  given:
+    energy: 8
+    placeId: atelier_row_place_04
+    turn: 12
+  action:
+    verbId: record
+    targetId: atelier_row_interact_12
+  expectedLedger:
+    turn: 13
+    lastAction: record
+    placeId: atelier_row_place_04
+  forbiddenProse:
+  - do not claim an uncommitted numeric reward
+  - do not alter damage, gold, ownership, or a score outside expectedLedger
+- id: atelier_row_eval_13
+  given:
+    energy: 8
+    placeId: atelier_row_place_05
+    turn: 13
+  action:
+    verbId: rest
+    targetId: atelier_row_interact_01
+  expectedLedger:
+    turn: 14
+    lastAction: rest
+    placeId: atelier_row_place_05
+  forbiddenProse:
+  - do not claim an uncommitted numeric reward
+  - do not alter damage, gold, ownership, or a score outside expectedLedger
+- id: atelier_row_eval_14
+  given:
+    energy: 8
+    placeId: atelier_row_place_06
+    turn: 14
+  action:
+    verbId: repair
+    targetId: atelier_row_interact_02
+  expectedLedger:
+    turn: 15
+    lastAction: repair
+    placeId: atelier_row_place_06
+  forbiddenProse:
+  - do not claim an uncommitted numeric reward
+  - do not alter damage, gold, ownership, or a score outside expectedLedger
+- id: atelier_row_eval_15
+  given:
+    energy: 8
+    placeId: atelier_row_place_07
+    turn: 15
+  action:
+    verbId: tend
+    targetId: atelier_row_interact_03
+  expectedLedger:
+    turn: 16
+    lastAction: tend
+    placeId: atelier_row_place_07
+  forbiddenProse:
+  - do not claim an uncommitted numeric reward
+  - do not alter damage, gold, ownership, or a score outside expectedLedger
+wallets:
+  goldName: Thread Notes
+  cosmeticTokenName: Drape Flowers
+  noConversion: true
+  prohibited:
+  - outcomes
+  - lockout skips
+  - catch rate
+  - raid clears
+  - random power packs
+  - gacha
+  - loot boxes
+dailyCaps:
+  contractsPerDay: 3
+  goldFromRepeatables: 90
+  weeklyBossLockout: per-character per-boss
+divergenceRecords:
+- id: atelier_row_walkaway_01
+  choice: walk away from a local obligation
+  recordKey: atelier_row_divergence_01
+  effect: Alternate dialogue and a non-punitive follow-up route.
+- id: atelier_row_walkaway_02
+  choice: walk away from a local obligation
+  recordKey: atelier_row_divergence_02
+  effect: Alternate dialogue and a non-punitive follow-up route.
+- id: atelier_row_walkaway_03
+  choice: walk away from a local obligation
+  recordKey: atelier_row_divergence_03
+  effect: Alternate dialogue and a non-punitive follow-up route.

@@ -1,0 +1,2295 @@
+packFormatVersion: 1
+worldId: scale_era
+displayName: Scale Era
+maturity: teen
+rulesModuleId: hunt_part
+themeKit: Scale Era Theme Kit
+places:
+- id: scale_era_place_01
+  publicName: Basalt Shelter
+  zoneId: scale_era_zone_01
+  role: shared hub
+  mapScale: street
+  dangerTier: safe
+  outdoor: true
+  exits:
+  - scale_era_place_02
+  - scale_era_place_04
+  npcIds:
+  - scale_era_npc_01
+  - scale_era_npc_05
+  - scale_era_npc_09
+  dungeonId: null
+  interactableIds:
+  - scale_era_interact_01
+  - scale_era_interact_09
+- id: scale_era_place_02
+  publicName: Fern Basin
+  zoneId: scale_era_zone_01
+  role: start hub
+  mapScale: street
+  dangerTier: safe
+  outdoor: true
+  exits:
+  - scale_era_place_01
+  - scale_era_place_03
+  npcIds:
+  - scale_era_npc_02
+  - scale_era_npc_06
+  - scale_era_npc_10
+  dungeonId: null
+  interactableIds:
+  - scale_era_interact_02
+  - scale_era_interact_10
+- id: scale_era_place_03
+  publicName: Amber Crossing
+  zoneId: scale_era_zone_01
+  role: street route
+  mapScale: street
+  dangerTier: safe
+  outdoor: true
+  exits:
+  - scale_era_place_02
+  - scale_era_place_04
+  npcIds:
+  - scale_era_npc_03
+  - scale_era_npc_07
+  dungeonId: null
+  interactableIds:
+  - scale_era_interact_03
+  - scale_era_interact_11
+- id: scale_era_place_04
+  publicName: Thunderstep
+  zoneId: scale_era_zone_02
+  role: mid join
+  mapScale: street
+  dangerTier: low
+  outdoor: true
+  exits:
+  - scale_era_place_03
+  - scale_era_place_05
+  - scale_era_place_01
+  npcIds:
+  - scale_era_npc_04
+  - scale_era_npc_08
+  dungeonId: null
+  interactableIds:
+  - scale_era_interact_04
+  - scale_era_interact_12
+- id: scale_era_place_05
+  publicName: Boneglass Ravine
+  zoneId: scale_era_zone_02
+  role: work district
+  mapScale: interior
+  dangerTier: low
+  outdoor: false
+  exits:
+  - scale_era_place_04
+  - scale_era_place_06
+  npcIds: []
+  dungeonId: null
+  interactableIds:
+  - scale_era_interact_05
+- id: scale_era_place_06
+  publicName: Long Dawn Camp
+  zoneId: scale_era_zone_02
+  role: instance door
+  mapScale: dungeon
+  dangerTier: medium
+  outdoor: false
+  exits:
+  - scale_era_place_05
+  - scale_era_place_07
+  npcIds: []
+  dungeonId: scale_era_dungeon_01
+  interactableIds:
+  - scale_era_interact_06
+- id: scale_era_place_07
+  publicName: Pollen Shelf
+  zoneId: scale_era_zone_03
+  role: wild edge
+  mapScale: street
+  dangerTier: medium
+  outdoor: true
+  exits:
+  - scale_era_place_06
+  - scale_era_place_08
+  npcIds: []
+  dungeonId: null
+  interactableIds:
+  - scale_era_interact_07
+- id: scale_era_place_08
+  publicName: Rumbling Weir
+  zoneId: scale_era_zone_03
+  role: housing approach
+  mapScale: interior
+  dangerTier: low
+  outdoor: false
+  exits:
+  - scale_era_place_07
+  npcIds: []
+  dungeonId: null
+  interactableIds:
+  - scale_era_interact_08
+npcs:
+- id: scale_era_npc_01
+  name: Jori Wren
+  placeId: scale_era_place_01
+  role: quest
+  greet: Jori Wren says, ‘Scale Era keeps its promises in small places. Tell me which one you noticed.’
+- id: scale_era_npc_02
+  name: Alden Morrow
+  placeId: scale_era_place_02
+  role: profession
+  greet: Alden Morrow says, ‘Scale Era keeps its promises in small places. Tell me which one you noticed.’
+- id: scale_era_npc_03
+  name: Bryn Rowan
+  placeId: scale_era_place_03
+  role: hub
+  greet: Bryn Rowan says, ‘Scale Era keeps its promises in small places. Tell me which one you noticed.’
+- id: scale_era_npc_04
+  name: Cato Nook
+  placeId: scale_era_place_04
+  role: merchant
+  greet: Cato Nook says, ‘Scale Era keeps its promises in small places. Tell me which one you noticed.’
+- id: scale_era_npc_05
+  name: Dessa Cress
+  placeId: scale_era_place_01
+  role: local
+  greet: Dessa Cress says, ‘Scale Era keeps its promises in small places. Tell me which one you noticed.’
+- id: scale_era_npc_06
+  name: Eris Silt
+  placeId: scale_era_place_02
+  role: host
+  greet: Eris Silt says, ‘Scale Era keeps its promises in small places. Tell me which one you noticed.’
+- id: scale_era_npc_07
+  name: Fenn Pryce
+  placeId: scale_era_place_03
+  role: quest
+  greet: Fenn Pryce says, ‘Scale Era keeps its promises in small places. Tell me which one you noticed.’
+- id: scale_era_npc_08
+  name: Gala Vane
+  placeId: scale_era_place_04
+  role: profession
+  greet: Gala Vane says, ‘Scale Era keeps its promises in small places. Tell me which one you noticed.’
+- id: scale_era_npc_09
+  name: Holl Quill
+  placeId: scale_era_place_01
+  role: local
+  greet: Holl Quill says, ‘Scale Era keeps its promises in small places. Tell me which one you noticed.’
+- id: scale_era_npc_10
+  name: Ivo Vale
+  placeId: scale_era_place_02
+  role: merchant
+  greet: Ivo Vale says, ‘Scale Era keeps its promises in small places. Tell me which one you noticed.’
+kits:
+- id: scale_era_kit_01
+  publicName: Track Scribe
+  look: lichen field cape
+  values: log multi-day tracks
+  taboo: Never bait a nesting herd.
+  speechTell: Name terrain first, then hazard, then a careful option.
+  starterClothes: track_scribe mantle
+  starterTool: track_scribe tool
+  starterMapItem: scale_era_map_01
+  startingPlaceId: scale_era_place_01
+  firstHourQuestId: scale_era_q_01
+  abilityFlag: scale_era_ability_01
+- id: scale_era_kit_02
+  publicName: Shelter Reader
+  look: layered rain mantle
+  values: predict safe storm cover
+  taboo: Never claim a shelter before checking its old marks.
+  speechTell: Name terrain first, then hazard, then a careful option.
+  starterClothes: shelter_reader vest
+  starterTool: shelter_reader tool
+  starterMapItem: scale_era_map_02
+  startingPlaceId: scale_era_place_02
+  firstHourQuestId: scale_era_q_02
+  abilityFlag: scale_era_ability_02
+- id: scale_era_kit_03
+  publicName: Forage Marshal
+  look: reed-pack harness
+  values: provision field teams
+  taboo: Never take more forage than the camp count.
+  speechTell: Name terrain first, then hazard, then a careful option.
+  starterClothes: forage_marshal jacket
+  starterTool: forage_marshal tool
+  starterMapItem: scale_era_map_03
+  startingPlaceId: scale_era_place_01
+  firstHourQuestId: scale_era_q_03
+  abilityFlag: scale_era_ability_03
+- id: scale_era_kit_04
+  publicName: Boneglass Cutter
+  look: amber goggles
+  values: shape nonlethal specimen tools
+  taboo: Never cut a living scale ridge.
+  speechTell: Name terrain first, then hazard, then a careful option.
+  starterClothes: boneglass_cutter sash
+  starterTool: boneglass_cutter tool
+  starterMapItem: scale_era_map_04
+  startingPlaceId: scale_era_place_02
+  firstHourQuestId: scale_era_q_04
+  abilityFlag: scale_era_ability_04
+quests:
+- id: scale_era_q_01
+  title: 'Scale Era: Name a Working Promise'
+  family: identity
+  hidden: false
+  unlocksQuestId: scale_era_q_02
+  objectives:
+  - id: scale_era_q_01_obj_01
+    kind: visit_place
+    targetId: scale_era_place_01
+    count: 1
+  - id: scale_era_q_01_obj_02
+    kind: deliver_item
+    targetId: scale_era_deliver_item_01
+    count: 2
+  rewardGold: 12
+  rewardXp: 20
+- id: scale_era_q_02
+  title: 'Scale Era: Set the First Tool Aside'
+  family: identity
+  hidden: false
+  unlocksQuestId: scale_era_q_03
+  objectives:
+  - id: scale_era_q_02_obj_01
+    kind: ledger_kill
+    targetId: scale_era_ledger_kill_02
+    count: 1
+  - id: scale_era_q_02_obj_02
+    kind: talk_to_npc
+    targetId: scale_era_npc_03
+    count: 2
+  rewardGold: 15
+  rewardXp: 25
+- id: scale_era_q_03
+  title: 'Scale Era: Carry the Right Record'
+  family: identity
+  hidden: false
+  unlocksQuestId: scale_era_q_04
+  objectives:
+  - id: scale_era_q_03_obj_01
+    kind: ledger_bond
+    targetId: scale_era_ledger_bond_03
+    count: 1
+  - id: scale_era_q_03_obj_02
+    kind: collect_item
+    targetId: scale_era_collect_item_03
+    count: 2
+  rewardGold: 18
+  rewardXp: 30
+- id: scale_era_q_04
+  title: 'Scale Era: Find the Missing Measure'
+  family: identity
+  hidden: false
+  unlocksQuestId: scale_era_q_05
+  objectives:
+  - id: scale_era_q_04_obj_01
+    kind: deliver_item
+    targetId: scale_era_deliver_item_04
+    count: 1
+  - id: scale_era_q_04_obj_02
+    kind: interact
+    targetId: scale_era_place_05
+    count: 2
+    verbId: cook
+  rewardGold: 21
+  rewardXp: 35
+- id: scale_era_q_05
+  title: 'Scale Era: Teach a Safer Shortcut'
+  family: identity
+  hidden: false
+  unlocksQuestId: scale_era_q_06
+  objectives:
+  - id: scale_era_q_05_obj_01
+    kind: talk_to_npc
+    targetId: scale_era_npc_05
+    count: 1
+  - id: scale_era_q_05_obj_02
+    kind: score_beat
+    targetId: scale_era_score_beat_05
+    count: 2
+  rewardGold: 24
+  rewardXp: 40
+- id: scale_era_q_06
+  title: 'Scale Era: Read the Local Weather'
+  family: profession
+  hidden: false
+  unlocksQuestId: scale_era_q_07
+  objectives:
+  - id: scale_era_q_06_obj_01
+    kind: collect_item
+    targetId: scale_era_collect_item_06
+    count: 1
+  - id: scale_era_q_06_obj_02
+    kind: build_tick
+    targetId: scale_era_build_tick_06
+    count: 2
+  rewardGold: 27
+  rewardXp: 45
+- id: scale_era_q_07
+  title: 'Scale Era: Repair a Shared Threshold'
+  family: profession
+  hidden: false
+  unlocksQuestId: scale_era_q_08
+  objectives:
+  - id: scale_era_q_07_obj_01
+    kind: interact
+    targetId: scale_era_place_07
+    count: 1
+    verbId: inspect
+  - id: scale_era_q_07_obj_02
+    kind: hospitality_tick
+    targetId: scale_era_hospitality_tick_07
+    count: 2
+  rewardGold: 30
+  rewardXp: 50
+- id: scale_era_q_08
+  title: 'Scale Era: Return a Borrowed Sign'
+  family: profession
+  hidden: false
+  unlocksQuestId: scale_era_q_09
+  objectives:
+  - id: scale_era_q_08_obj_01
+    kind: score_beat
+    targetId: scale_era_score_beat_08
+    count: 1
+  - id: scale_era_q_08_obj_02
+    kind: lap_finish
+    targetId: scale_era_lap_finish_08
+    count: 2
+  rewardGold: 33
+  rewardXp: 55
+- id: scale_era_q_09
+  title: 'Scale Era: Host the Small Welcome'
+  family: profession
+  hidden: false
+  unlocksQuestId: scale_era_q_10
+  objectives:
+  - id: scale_era_q_09_obj_01
+    kind: build_tick
+    targetId: scale_era_build_tick_09
+    count: 1
+  - id: scale_era_q_09_obj_02
+    kind: visit_place
+    targetId: scale_era_place_02
+    count: 2
+  rewardGold: 36
+  rewardXp: 60
+- id: scale_era_q_10
+  title: 'Scale Era: Choose a Fair Order'
+  family: profession
+  hidden: false
+  unlocksQuestId: scale_era_q_11
+  objectives:
+  - id: scale_era_q_10_obj_01
+    kind: hospitality_tick
+    targetId: scale_era_hospitality_tick_10
+    count: 1
+  - id: scale_era_q_10_obj_02
+    kind: ledger_kill
+    targetId: scale_era_ledger_kill_10
+    count: 2
+  rewardGold: 39
+  rewardXp: 65
+- id: scale_era_q_11
+  title: 'Scale Era: Map the Quiet Detour'
+  family: profession
+  hidden: false
+  unlocksQuestId: scale_era_q_12
+  objectives:
+  - id: scale_era_q_11_obj_01
+    kind: lap_finish
+    targetId: scale_era_lap_finish_11
+    count: 1
+  - id: scale_era_q_11_obj_02
+    kind: ledger_bond
+    targetId: scale_era_ledger_bond_11
+    count: 2
+  rewardGold: 42
+  rewardXp: 70
+- id: scale_era_q_12
+  title: 'Scale Era: Bring a Useful Witness'
+  family: profession
+  hidden: false
+  unlocksQuestId: scale_era_q_13
+  objectives:
+  - id: scale_era_q_12_obj_01
+    kind: visit_place
+    targetId: scale_era_place_04
+    count: 1
+  - id: scale_era_q_12_obj_02
+    kind: deliver_item
+    targetId: scale_era_deliver_item_12
+    count: 2
+  rewardGold: 45
+  rewardXp: 75
+- id: scale_era_q_13
+  title: 'Scale Era: Sort the Unclaimed Materials'
+  family: zone_story
+  hidden: false
+  unlocksQuestId: scale_era_q_14
+  objectives:
+  - id: scale_era_q_13_obj_01
+    kind: ledger_kill
+    targetId: scale_era_ledger_kill_13
+    count: 1
+  - id: scale_era_q_13_obj_02
+    kind: talk_to_npc
+    targetId: scale_era_npc_04
+    count: 2
+  rewardGold: 48
+  rewardXp: 80
+- id: scale_era_q_14
+  title: 'Scale Era: Make Room for a Visitor'
+  family: zone_story
+  hidden: false
+  unlocksQuestId: scale_era_q_15
+  objectives:
+  - id: scale_era_q_14_obj_01
+    kind: ledger_bond
+    targetId: scale_era_ledger_bond_14
+    count: 1
+  - id: scale_era_q_14_obj_02
+    kind: collect_item
+    targetId: scale_era_collect_item_14
+    count: 2
+  rewardGold: 51
+  rewardXp: 85
+- id: scale_era_q_15
+  title: 'Scale Era: Close the Day’s Ledger'
+  family: zone_story
+  hidden: false
+  unlocksQuestId: scale_era_q_16
+  objectives:
+  - id: scale_era_q_15_obj_01
+    kind: deliver_item
+    targetId: scale_era_deliver_item_15
+    count: 1
+  - id: scale_era_q_15_obj_02
+    kind: interact
+    targetId: scale_era_place_08
+    count: 2
+    verbId: craft
+  rewardGold: 54
+  rewardXp: 90
+- id: scale_era_q_16
+  title: 'Scale Era: Follow the Midway Signal'
+  family: zone_story
+  hidden: false
+  unlocksQuestId: scale_era_q_17
+  objectives:
+  - id: scale_era_q_16_obj_01
+    kind: talk_to_npc
+    targetId: scale_era_npc_06
+    count: 1
+  - id: scale_era_q_16_obj_02
+    kind: score_beat
+    targetId: scale_era_score_beat_16
+    count: 2
+  rewardGold: 57
+  rewardXp: 95
+- id: scale_era_q_17
+  title: 'Scale Era: Uncover the Door Note'
+  family: zone_story
+  hidden: true
+  unlocksQuestId: scale_era_q_18
+  objectives:
+  - id: scale_era_q_17_obj_01
+    kind: collect_item
+    targetId: scale_era_collect_item_17
+    count: 1
+  - id: scale_era_q_17_obj_02
+    kind: build_tick
+    targetId: scale_era_build_tick_17
+    count: 2
+  rewardGold: 60
+  rewardXp: 100
+- id: scale_era_q_18
+  title: 'Scale Era: Prepare the Team Table'
+  family: zone_story
+  hidden: false
+  unlocksQuestId: scale_era_q_19
+  objectives:
+  - id: scale_era_q_18_obj_01
+    kind: interact
+    targetId: scale_era_place_02
+    count: 1
+    verbId: bind_inn
+  - id: scale_era_q_18_obj_02
+    kind: hospitality_tick
+    targetId: scale_era_hospitality_tick_18
+    count: 2
+  rewardGold: 63
+  rewardXp: 105
+- id: scale_era_q_19
+  title: 'Scale Era: Test the Local Method'
+  family: zone_story
+  hidden: false
+  unlocksQuestId: scale_era_q_20
+  objectives:
+  - id: scale_era_q_19_obj_01
+    kind: score_beat
+    targetId: scale_era_score_beat_19
+    count: 1
+  - id: scale_era_q_19_obj_02
+    kind: lap_finish
+    targetId: scale_era_lap_finish_19
+    count: 2
+  rewardGold: 66
+  rewardXp: 110
+- id: scale_era_q_20
+  title: 'Scale Era: Hold a Careful Boundary'
+  family: zone_story
+  hidden: false
+  unlocksQuestId: scale_era_q_21
+  objectives:
+  - id: scale_era_q_20_obj_01
+    kind: build_tick
+    targetId: scale_era_build_tick_20
+    count: 1
+  - id: scale_era_q_20_obj_02
+    kind: visit_place
+    targetId: scale_era_place_05
+    count: 2
+  rewardGold: 69
+  rewardXp: 115
+- id: scale_era_q_21
+  title: 'Scale Era: Answer the Neighbour’s Call'
+  family: extra
+  hidden: false
+  unlocksQuestId: scale_era_q_22
+  objectives:
+  - id: scale_era_q_21_obj_01
+    kind: hospitality_tick
+    targetId: scale_era_hospitality_tick_21
+    count: 1
+  - id: scale_era_q_21_obj_02
+    kind: ledger_kill
+    targetId: scale_era_ledger_kill_21
+    count: 2
+  rewardGold: 72
+  rewardXp: 120
+- id: scale_era_q_22
+  title: 'Scale Era: Finish the Side Route'
+  family: extra
+  hidden: false
+  unlocksQuestId: scale_era_q_23
+  objectives:
+  - id: scale_era_q_22_obj_01
+    kind: lap_finish
+    targetId: scale_era_lap_finish_22
+    count: 1
+  - id: scale_era_q_22_obj_02
+    kind: ledger_bond
+    targetId: scale_era_ledger_bond_22
+    count: 2
+  rewardGold: 75
+  rewardXp: 125
+- id: scale_era_q_23
+  title: 'Scale Era: Earn a Trusted Introduction'
+  family: extra
+  hidden: true
+  unlocksQuestId: scale_era_q_24
+  objectives:
+  - id: scale_era_q_23_obj_01
+    kind: visit_place
+    targetId: scale_era_place_07
+    count: 1
+  - id: scale_era_q_23_obj_02
+    kind: deliver_item
+    targetId: scale_era_deliver_item_23
+    count: 2
+  rewardGold: 78
+  rewardXp: 130
+- id: scale_era_q_24
+  title: 'Scale Era: Open the Instance Path'
+  family: extra
+  hidden: false
+  unlocksQuestId: scale_era_q_25
+  objectives:
+  - id: scale_era_q_24_obj_01
+    kind: ledger_kill
+    targetId: scale_era_ledger_kill_24
+    count: 1
+  - id: scale_era_q_24_obj_02
+    kind: talk_to_npc
+    targetId: scale_era_npc_05
+    count: 2
+  rewardGold: 81
+  rewardXp: 135
+- id: scale_era_q_25
+  title: 'Scale Era: Complete the First Big Night'
+  family: extra
+  hidden: false
+  unlocksQuestId: null
+  objectives:
+  - id: scale_era_q_25_obj_01
+    kind: ledger_bond
+    targetId: scale_era_ledger_bond_25
+    count: 1
+  - id: scale_era_q_25_obj_02
+    kind: collect_item
+    targetId: scale_era_collect_item_25
+    count: 2
+  rewardGold: 84
+  rewardXp: 140
+species:
+- id: scale_era_species_01
+  publicName: Ribbonback
+  kind: opponent
+  hp: 8
+  armor: 0
+  threat: 1
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: scale_era_species_02
+  publicName: Thunder Elk
+  kind: opponent
+  hp: 9
+  armor: 1
+  threat: 2
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: scale_era_species_03
+  publicName: Sailjaw
+  kind: opponent
+  hp: 10
+  armor: 2
+  threat: 3
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: scale_era_species_04
+  publicName: Mire Tusker
+  kind: opponent
+  hp: 11
+  armor: 3
+  threat: 1
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: scale_era_species_05
+  publicName: Fern Neck
+  kind: opponent
+  hp: 12
+  armor: 0
+  threat: 2
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: scale_era_species_06
+  publicName: Cinder Grazer
+  kind: opponent
+  hp: 13
+  armor: 1
+  threat: 3
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: scale_era_species_07
+  publicName: Amber Paw
+  kind: opponent
+  hp: 14
+  armor: 2
+  threat: 1
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: scale_era_species_08
+  publicName: Drumtail
+  kind: opponent
+  hp: 15
+  armor: 3
+  threat: 2
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: scale_era_species_09
+  publicName: Reed Runner
+  kind: opponent
+  hp: 16
+  armor: 0
+  threat: 3
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: scale_era_species_10
+  publicName: Cliff Snout
+  kind: opponent
+  hp: 17
+  armor: 1
+  threat: 1
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: scale_era_species_11
+  publicName: Glass Hide
+  kind: opponent
+  hp: 18
+  armor: 2
+  threat: 2
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: scale_era_species_12
+  publicName: Burrow Crest
+  kind: opponent
+  hp: 19
+  armor: 3
+  threat: 3
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: scale_era_species_13
+  publicName: Pollen Flier
+  kind: opponent
+  hp: 20
+  armor: 0
+  threat: 1
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: scale_era_species_14
+  publicName: Basalt Horn
+  kind: opponent
+  hp: 21
+  armor: 1
+  threat: 2
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: scale_era_species_15
+  publicName: Sun Frill
+  kind: opponent
+  hp: 22
+  armor: 2
+  threat: 3
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: scale_era_species_16
+  publicName: Mud Paddle
+  kind: opponent
+  hp: 23
+  armor: 3
+  threat: 1
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: scale_era_species_17
+  publicName: Long Stride
+  kind: opponent
+  hp: 24
+  armor: 0
+  threat: 2
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: scale_era_species_18
+  publicName: Slope Mouser
+  kind: opponent
+  hp: 25
+  armor: 1
+  threat: 3
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+items:
+- id: scale_era_item_01
+  publicName: Basalt Shelter token
+  category: starter
+  power: false
+  sellGold: 3
+  description: A Scale Era item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: scale_era_item_02
+  publicName: Fern Basin tool
+  category: starter
+  power: false
+  sellGold: 5
+  description: A Scale Era item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: scale_era_item_03
+  publicName: Amber Crossing thread
+  category: profession
+  power: false
+  sellGold: 7
+  description: A Scale Era item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: scale_era_item_04
+  publicName: Thunderstep seal
+  category: profession
+  power: false
+  sellGold: 9
+  description: A Scale Era item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: scale_era_item_05
+  publicName: Boneglass Ravine bundle
+  category: instance
+  power: false
+  sellGold: 11
+  description: A Scale Era item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: scale_era_item_06
+  publicName: Long Dawn Camp token
+  category: instance
+  power: false
+  sellGold: 13
+  description: A Scale Era item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: scale_era_item_07
+  publicName: Pollen Shelf tool
+  category: cosmetic
+  power: false
+  sellGold: 15
+  description: A Scale Era item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: scale_era_item_08
+  publicName: Rumbling Weir thread
+  category: cosmetic
+  power: false
+  sellGold: 17
+  description: A Scale Era item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: scale_era_item_09
+  publicName: Basalt Shelter seal
+  category: material
+  power: false
+  sellGold: 19
+  description: A Scale Era item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: scale_era_item_10
+  publicName: Fern Basin bundle
+  category: material
+  power: false
+  sellGold: 21
+  description: A Scale Era item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: scale_era_item_11
+  publicName: Amber Crossing token
+  category: care
+  power: false
+  sellGold: 23
+  description: A Scale Era item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: scale_era_item_12
+  publicName: Thunderstep tool
+  category: care
+  power: false
+  sellGold: 25
+  description: A Scale Era item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: scale_era_item_13
+  publicName: Boneglass Ravine thread
+  category: map
+  power: false
+  sellGold: 27
+  description: A Scale Era item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: scale_era_item_14
+  publicName: Long Dawn Camp seal
+  category: map
+  power: false
+  sellGold: 29
+  description: A Scale Era item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: scale_era_item_15
+  publicName: Pollen Shelf bundle
+  category: vendor
+  power: false
+  sellGold: 31
+  description: A Scale Era item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: scale_era_item_16
+  publicName: Rumbling Weir token
+  category: vendor
+  power: false
+  sellGold: 33
+  description: A Scale Era item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: scale_era_item_17
+  publicName: Basalt Shelter tool
+  category: recipe
+  power: false
+  sellGold: 35
+  description: A Scale Era item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: scale_era_item_18
+  publicName: Fern Basin thread
+  category: recipe
+  power: false
+  sellGold: 37
+  description: A Scale Era item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: scale_era_item_19
+  publicName: Amber Crossing seal
+  category: keepsake
+  power: false
+  sellGold: 39
+  description: A Scale Era item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: scale_era_item_20
+  publicName: Thunderstep bundle
+  category: keepsake
+  power: false
+  sellGold: 41
+  description: A Scale Era item used for a stated craft, route, display, or record; it never alters paid outcomes.
+dropTables:
+- id: scale_era_drop_01
+  sourceId: scale_era_species_01
+  personalLoot: true
+  entries:
+  - itemId: scale_era_item_01
+    chancePct: 60
+    min: 1
+    max: 2
+  - itemId: scale_era_item_08
+    chancePct: 20
+    min: 1
+    max: 1
+- id: scale_era_drop_02
+  sourceId: scale_era_species_02
+  personalLoot: true
+  entries:
+  - itemId: scale_era_item_02
+    chancePct: 55
+    min: 1
+    max: 2
+  - itemId: scale_era_item_09
+    chancePct: 25
+    min: 1
+    max: 1
+- id: scale_era_drop_03
+  sourceId: scale_era_species_03
+  personalLoot: true
+  entries:
+  - itemId: scale_era_item_03
+    chancePct: 50
+    min: 1
+    max: 2
+  - itemId: scale_era_item_10
+    chancePct: 30
+    min: 1
+    max: 1
+- id: scale_era_drop_04
+  sourceId: scale_era_species_04
+  personalLoot: true
+  entries:
+  - itemId: scale_era_item_04
+    chancePct: 45
+    min: 1
+    max: 2
+  - itemId: scale_era_item_11
+    chancePct: 20
+    min: 1
+    max: 1
+- id: scale_era_drop_05
+  sourceId: scale_era_species_05
+  personalLoot: true
+  entries:
+  - itemId: scale_era_item_05
+    chancePct: 60
+    min: 1
+    max: 2
+  - itemId: scale_era_item_12
+    chancePct: 25
+    min: 1
+    max: 1
+- id: scale_era_drop_06
+  sourceId: scale_era_species_06
+  personalLoot: true
+  entries:
+  - itemId: scale_era_item_06
+    chancePct: 55
+    min: 1
+    max: 2
+  - itemId: scale_era_item_13
+    chancePct: 30
+    min: 1
+    max: 1
+- id: scale_era_drop_07
+  sourceId: scale_era_species_07
+  personalLoot: true
+  entries:
+  - itemId: scale_era_item_07
+    chancePct: 50
+    min: 1
+    max: 2
+  - itemId: scale_era_item_14
+    chancePct: 20
+    min: 1
+    max: 1
+- id: scale_era_drop_08
+  sourceId: scale_era_species_08
+  personalLoot: true
+  entries:
+  - itemId: scale_era_item_08
+    chancePct: 45
+    min: 1
+    max: 2
+  - itemId: scale_era_item_15
+    chancePct: 25
+    min: 1
+    max: 1
+- id: scale_era_drop_09
+  sourceId: scale_era_species_09
+  personalLoot: true
+  entries:
+  - itemId: scale_era_item_09
+    chancePct: 60
+    min: 1
+    max: 2
+  - itemId: scale_era_item_16
+    chancePct: 30
+    min: 1
+    max: 1
+- id: scale_era_drop_10
+  sourceId: scale_era_species_10
+  personalLoot: true
+  entries:
+  - itemId: scale_era_item_10
+    chancePct: 55
+    min: 1
+    max: 2
+  - itemId: scale_era_item_17
+    chancePct: 20
+    min: 1
+    max: 1
+- id: scale_era_drop_11
+  sourceId: scale_era_species_11
+  personalLoot: true
+  entries:
+  - itemId: scale_era_item_11
+    chancePct: 50
+    min: 1
+    max: 2
+  - itemId: scale_era_item_18
+    chancePct: 25
+    min: 1
+    max: 1
+- id: scale_era_drop_12
+  sourceId: scale_era_species_12
+  personalLoot: true
+  entries:
+  - itemId: scale_era_item_12
+    chancePct: 45
+    min: 1
+    max: 2
+  - itemId: scale_era_item_19
+    chancePct: 30
+    min: 1
+    max: 1
+vendors:
+- id: scale_era_vendor_01
+  publicName: Scale Era Exchange
+  placeId: scale_era_place_01
+  currencyGoldName: Dawn Marks
+  items:
+  - itemId: scale_era_item_01
+    priceGold: 8
+  - itemId: scale_era_item_02
+    priceGold: 11
+  - itemId: scale_era_item_03
+    priceGold: 14
+  - itemId: scale_era_item_04
+    priceGold: 17
+  - itemId: scale_era_item_05
+    priceGold: 20
+  - itemId: scale_era_item_06
+    priceGold: 23
+  - itemId: scale_era_item_07
+    priceGold: 26
+  - itemId: scale_era_item_08
+    priceGold: 29
+  repairCostPerPoint: 2
+dungeons:
+- id: scale_era_dungeon_01
+  publicName: The Thunderstep Traverse
+  partyMin: 1
+  partyMax: 5
+  entrancePlaceId: scale_era_place_06
+  rooms:
+  - id: scale_era_dungeon_room_01
+    publicName: 'The Thunderstep Traverse: Threshold Room'
+    describeBeforeCreature: Describe the material, sound, exits, and practical obstacle of Threshold Room before any species
+      is narrated.
+    trashSpeciesIds:
+    - scale_era_species_01
+    - scale_era_species_02
+    eliteSpeciesId: null
+    checkpoint: false
+    bossSpeciesId: null
+    exits:
+    - scale_era_dungeon_room_02
+  - id: scale_era_dungeon_room_02
+    publicName: 'The Thunderstep Traverse: Workroom'
+    describeBeforeCreature: Describe the material, sound, exits, and practical obstacle of Workroom before any species is
+      narrated.
+    trashSpeciesIds:
+    - scale_era_species_03
+    - scale_era_species_04
+    eliteSpeciesId: null
+    checkpoint: false
+    bossSpeciesId: null
+    exits:
+    - scale_era_dungeon_room_03
+  - id: scale_era_dungeon_room_03
+    publicName: 'The Thunderstep Traverse: Side Passage'
+    describeBeforeCreature: Describe the material, sound, exits, and practical obstacle of Side Passage before any species
+      is narrated.
+    trashSpeciesIds:
+    - scale_era_species_05
+    - scale_era_species_06
+    eliteSpeciesId: scale_era_species_09
+    checkpoint: false
+    bossSpeciesId: null
+    exits:
+    - scale_era_dungeon_room_04
+  - id: scale_era_dungeon_room_04
+    publicName: 'The Thunderstep Traverse: Checkpoint Alcove'
+    describeBeforeCreature: Describe the material, sound, exits, and practical obstacle of Checkpoint Alcove before any species
+      is narrated.
+    trashSpeciesIds:
+    - scale_era_species_07
+    - scale_era_species_08
+    eliteSpeciesId: null
+    checkpoint: true
+    bossSpeciesId: null
+    exits:
+    - scale_era_dungeon_room_05
+  - id: scale_era_dungeon_room_05
+    publicName: 'The Thunderstep Traverse: Finale Chamber'
+    describeBeforeCreature: Describe the material, sound, exits, and practical obstacle of Finale Chamber before any species
+      is narrated.
+    trashSpeciesIds:
+    - scale_era_species_09
+    - scale_era_species_10
+    eliteSpeciesId: null
+    checkpoint: false
+    bossSpeciesId: scale_era_species_14
+    exits: []
+  traps:
+  - id: scale_era_trap_01
+    publicName: misread sign
+    interactableId: scale_era_interact_01
+  - id: scale_era_trap_02
+    publicName: jammed latch
+    interactableId: scale_era_interact_02
+  - id: scale_era_trap_03
+    publicName: wet threshold
+    interactableId: scale_era_interact_03
+  - id: scale_era_trap_04
+    publicName: false shelf
+    interactableId: scale_era_interact_04
+  - id: scale_era_trap_05
+    publicName: quiet bell
+    interactableId: scale_era_interact_05
+  - id: scale_era_trap_06
+    publicName: sealed drawer
+    interactableId: scale_era_interact_06
+talkTrees:
+- npcId: scale_era_npc_01
+  greet: Jori Wren says, ‘Scale Era keeps its promises in small places. Tell me which one you noticed.’
+  quest_offer: 'Jori Wren offers a specific task at Basalt Shelter: settle the practical mismatch before it costs someone
+    a shift.'
+  quest_progress: Jori Wren checks the record and asks for the one detail that would change the outcome.
+  quest_turnin: Jori Wren marks the work complete, names who benefited, and hands over the recorded reward.
+  gossip:
+  - At Fern Basin, people are discussing a missing care tag.
+  - The safest route today is through Amber Crossing, not the obvious shortcut.
+  - Someone at Thunderstep is offering help but will not ask twice.
+  refusal: Jori Wren says, ‘No. I can explain the rule, but I will not bend it for noise.’
+  player_rude: Jori Wren says, ‘You may leave, lower your voice, or try a useful question. Choose one.’
+- npcId: scale_era_npc_02
+  greet: Alden Morrow says, ‘Scale Era keeps its promises in small places. Tell me which one you noticed.’
+  quest_offer: 'Alden Morrow offers a specific task at Fern Basin: settle the practical mismatch before it costs someone a
+    shift.'
+  quest_progress: Alden Morrow checks the record and asks for the one detail that would change the outcome.
+  quest_turnin: Alden Morrow marks the work complete, names who benefited, and hands over the recorded reward.
+  gossip:
+  - At Amber Crossing, people are discussing a missing care tag.
+  - The safest route today is through Thunderstep, not the obvious shortcut.
+  - Someone at Boneglass Ravine is offering help but will not ask twice.
+  refusal: Alden Morrow says, ‘No. I can explain the rule, but I will not bend it for noise.’
+  player_rude: Alden Morrow says, ‘You may leave, lower your voice, or try a useful question. Choose one.’
+- npcId: scale_era_npc_03
+  greet: Bryn Rowan says, ‘Scale Era keeps its promises in small places. Tell me which one you noticed.’
+  quest_offer: 'Bryn Rowan offers a specific task at Amber Crossing: settle the practical mismatch before it costs someone
+    a shift.'
+  quest_progress: Bryn Rowan checks the record and asks for the one detail that would change the outcome.
+  quest_turnin: Bryn Rowan marks the work complete, names who benefited, and hands over the recorded reward.
+  gossip:
+  - At Thunderstep, people are discussing a missing care tag.
+  - The safest route today is through Boneglass Ravine, not the obvious shortcut.
+  - Someone at Long Dawn Camp is offering help but will not ask twice.
+  refusal: Bryn Rowan says, ‘No. I can explain the rule, but I will not bend it for noise.’
+  player_rude: Bryn Rowan says, ‘You may leave, lower your voice, or try a useful question. Choose one.’
+- npcId: scale_era_npc_04
+  greet: Cato Nook says, ‘Scale Era keeps its promises in small places. Tell me which one you noticed.’
+  quest_offer: 'Cato Nook offers a specific task at Thunderstep: settle the practical mismatch before it costs someone a shift.'
+  quest_progress: Cato Nook checks the record and asks for the one detail that would change the outcome.
+  quest_turnin: Cato Nook marks the work complete, names who benefited, and hands over the recorded reward.
+  gossip:
+  - At Boneglass Ravine, people are discussing a missing care tag.
+  - The safest route today is through Long Dawn Camp, not the obvious shortcut.
+  - Someone at Pollen Shelf is offering help but will not ask twice.
+  refusal: Cato Nook says, ‘No. I can explain the rule, but I will not bend it for noise.’
+  player_rude: Cato Nook says, ‘You may leave, lower your voice, or try a useful question. Choose one.’
+- npcId: scale_era_npc_05
+  greet: Dessa Cress says, ‘Scale Era keeps its promises in small places. Tell me which one you noticed.’
+  quest_offer: 'Dessa Cress offers a specific task at Basalt Shelter: settle the practical mismatch before it costs someone
+    a shift.'
+  quest_progress: Dessa Cress checks the record and asks for the one detail that would change the outcome.
+  quest_turnin: Dessa Cress marks the work complete, names who benefited, and hands over the recorded reward.
+  gossip:
+  - At Long Dawn Camp, people are discussing a missing care tag.
+  - The safest route today is through Pollen Shelf, not the obvious shortcut.
+  - Someone at Rumbling Weir is offering help but will not ask twice.
+  refusal: Dessa Cress says, ‘No. I can explain the rule, but I will not bend it for noise.’
+  player_rude: Dessa Cress says, ‘You may leave, lower your voice, or try a useful question. Choose one.’
+- npcId: scale_era_npc_06
+  greet: Eris Silt says, ‘Scale Era keeps its promises in small places. Tell me which one you noticed.’
+  quest_offer: 'Eris Silt offers a specific task at Fern Basin: settle the practical mismatch before it costs someone a shift.'
+  quest_progress: Eris Silt checks the record and asks for the one detail that would change the outcome.
+  quest_turnin: Eris Silt marks the work complete, names who benefited, and hands over the recorded reward.
+  gossip:
+  - At Pollen Shelf, people are discussing a missing care tag.
+  - The safest route today is through Rumbling Weir, not the obvious shortcut.
+  - Someone at Basalt Shelter is offering help but will not ask twice.
+  refusal: Eris Silt says, ‘No. I can explain the rule, but I will not bend it for noise.’
+  player_rude: Eris Silt says, ‘You may leave, lower your voice, or try a useful question. Choose one.’
+- npcId: scale_era_npc_07
+  greet: Fenn Pryce says, ‘Scale Era keeps its promises in small places. Tell me which one you noticed.’
+  quest_offer: 'Fenn Pryce offers a specific task at Amber Crossing: settle the practical mismatch before it costs someone
+    a shift.'
+  quest_progress: Fenn Pryce checks the record and asks for the one detail that would change the outcome.
+  quest_turnin: Fenn Pryce marks the work complete, names who benefited, and hands over the recorded reward.
+  gossip:
+  - At Rumbling Weir, people are discussing a missing care tag.
+  - The safest route today is through Basalt Shelter, not the obvious shortcut.
+  - Someone at Fern Basin is offering help but will not ask twice.
+  refusal: Fenn Pryce says, ‘No. I can explain the rule, but I will not bend it for noise.’
+  player_rude: Fenn Pryce says, ‘You may leave, lower your voice, or try a useful question. Choose one.’
+- npcId: scale_era_npc_08
+  greet: Gala Vane says, ‘Scale Era keeps its promises in small places. Tell me which one you noticed.’
+  quest_offer: 'Gala Vane offers a specific task at Thunderstep: settle the practical mismatch before it costs someone a shift.'
+  quest_progress: Gala Vane checks the record and asks for the one detail that would change the outcome.
+  quest_turnin: Gala Vane marks the work complete, names who benefited, and hands over the recorded reward.
+  gossip:
+  - At Basalt Shelter, people are discussing a missing care tag.
+  - The safest route today is through Fern Basin, not the obvious shortcut.
+  - Someone at Amber Crossing is offering help but will not ask twice.
+  refusal: Gala Vane says, ‘No. I can explain the rule, but I will not bend it for noise.’
+  player_rude: Gala Vane says, ‘You may leave, lower your voice, or try a useful question. Choose one.’
+- npcId: scale_era_npc_09
+  greet: Holl Quill says, ‘Scale Era keeps its promises in small places. Tell me which one you noticed.’
+  quest_offer: 'Holl Quill offers a specific task at Basalt Shelter: settle the practical mismatch before it costs someone
+    a shift.'
+  quest_progress: Holl Quill checks the record and asks for the one detail that would change the outcome.
+  quest_turnin: Holl Quill marks the work complete, names who benefited, and hands over the recorded reward.
+  gossip:
+  - At Fern Basin, people are discussing a missing care tag.
+  - The safest route today is through Amber Crossing, not the obvious shortcut.
+  - Someone at Thunderstep is offering help but will not ask twice.
+  refusal: Holl Quill says, ‘No. I can explain the rule, but I will not bend it for noise.’
+  player_rude: Holl Quill says, ‘You may leave, lower your voice, or try a useful question. Choose one.’
+- npcId: scale_era_npc_10
+  greet: Ivo Vale says, ‘Scale Era keeps its promises in small places. Tell me which one you noticed.’
+  quest_offer: 'Ivo Vale offers a specific task at Fern Basin: settle the practical mismatch before it costs someone a shift.'
+  quest_progress: Ivo Vale checks the record and asks for the one detail that would change the outcome.
+  quest_turnin: Ivo Vale marks the work complete, names who benefited, and hands over the recorded reward.
+  gossip:
+  - At Amber Crossing, people are discussing a missing care tag.
+  - The safest route today is through Thunderstep, not the obvious shortcut.
+  - Someone at Boneglass Ravine is offering help but will not ask twice.
+  refusal: Ivo Vale says, ‘No. I can explain the rule, but I will not bend it for noise.’
+  player_rude: Ivo Vale says, ‘You may leave, lower your voice, or try a useful question. Choose one.’
+choiceButtons:
+- id: scale_era_choice_01_01
+  placeId: scale_era_place_01
+  label: Read the notice at Basalt Shelter
+  requires: []
+  intentKind: talk
+  stake: one turn
+- id: scale_era_choice_01_02
+  placeId: scale_era_place_01
+  label: Ask for an introduction at Basalt Shelter
+  requires: []
+  intentKind: talk
+  stake: one supply
+- id: scale_era_choice_01_03
+  placeId: scale_era_place_01
+  label: Check the tool tag at Basalt Shelter
+  requires: []
+  intentKind: inspect
+  stake: a declined invitation
+- id: scale_era_choice_01_04
+  placeId: scale_era_place_01
+  label: Offer a hand at Basalt Shelter
+  requires: []
+  intentKind: interact
+  stake: a public note
+- id: scale_era_choice_01_05
+  placeId: scale_era_place_01
+  label: Take the safer route at Basalt Shelter
+  requires:
+  - scale_era_item_05
+  intentKind: travel
+  stake: a short detour
+- id: scale_era_choice_01_06
+  placeId: scale_era_place_01
+  label: Open the local record at Basalt Shelter
+  requires:
+  - scale_era_item_06
+  intentKind: interact
+  stake: one turn
+- id: scale_era_choice_01_07
+  placeId: scale_era_place_01
+  label: Rest at the bench at Basalt Shelter
+  requires:
+  - scale_era_item_07
+  intentKind: rest
+  stake: one supply
+- id: scale_era_choice_01_08
+  placeId: scale_era_place_01
+  label: Repair the marker at Basalt Shelter
+  requires:
+  - scale_era_item_08
+  intentKind: interact
+  stake: a declined invitation
+- id: scale_era_choice_01_09
+  placeId: scale_era_place_01
+  label: Prepare a shared item at Basalt Shelter
+  requires:
+  - scale_era_item_09
+  intentKind: craft
+  stake: a public note
+- id: scale_era_choice_01_10
+  placeId: scale_era_place_01
+  label: Leave a kind note at Basalt Shelter
+  requires:
+  - scale_era_item_10
+  intentKind: talk
+  stake: a short detour
+- id: scale_era_choice_02_01
+  placeId: scale_era_place_02
+  label: Read the notice at Fern Basin
+  requires: []
+  intentKind: talk
+  stake: one turn
+- id: scale_era_choice_02_02
+  placeId: scale_era_place_02
+  label: Ask for an introduction at Fern Basin
+  requires: []
+  intentKind: talk
+  stake: one supply
+- id: scale_era_choice_02_03
+  placeId: scale_era_place_02
+  label: Check the tool tag at Fern Basin
+  requires: []
+  intentKind: inspect
+  stake: a declined invitation
+- id: scale_era_choice_02_04
+  placeId: scale_era_place_02
+  label: Offer a hand at Fern Basin
+  requires: []
+  intentKind: interact
+  stake: a public note
+- id: scale_era_choice_02_05
+  placeId: scale_era_place_02
+  label: Take the safer route at Fern Basin
+  requires:
+  - scale_era_item_05
+  intentKind: travel
+  stake: a short detour
+- id: scale_era_choice_02_06
+  placeId: scale_era_place_02
+  label: Open the local record at Fern Basin
+  requires:
+  - scale_era_item_06
+  intentKind: interact
+  stake: one turn
+- id: scale_era_choice_02_07
+  placeId: scale_era_place_02
+  label: Rest at the bench at Fern Basin
+  requires:
+  - scale_era_item_07
+  intentKind: rest
+  stake: one supply
+- id: scale_era_choice_02_08
+  placeId: scale_era_place_02
+  label: Repair the marker at Fern Basin
+  requires:
+  - scale_era_item_08
+  intentKind: interact
+  stake: a declined invitation
+- id: scale_era_choice_02_09
+  placeId: scale_era_place_02
+  label: Prepare a shared item at Fern Basin
+  requires:
+  - scale_era_item_09
+  intentKind: craft
+  stake: a public note
+- id: scale_era_choice_02_10
+  placeId: scale_era_place_02
+  label: Leave a kind note at Fern Basin
+  requires:
+  - scale_era_item_10
+  intentKind: talk
+  stake: a short detour
+- id: scale_era_choice_03_01
+  placeId: scale_era_place_03
+  label: Read the notice at Amber Crossing
+  requires: []
+  intentKind: talk
+  stake: one turn
+- id: scale_era_choice_03_02
+  placeId: scale_era_place_03
+  label: Ask for an introduction at Amber Crossing
+  requires: []
+  intentKind: talk
+  stake: one supply
+- id: scale_era_choice_03_03
+  placeId: scale_era_place_03
+  label: Check the tool tag at Amber Crossing
+  requires: []
+  intentKind: inspect
+  stake: a declined invitation
+- id: scale_era_choice_03_04
+  placeId: scale_era_place_03
+  label: Offer a hand at Amber Crossing
+  requires: []
+  intentKind: interact
+  stake: a public note
+- id: scale_era_choice_03_05
+  placeId: scale_era_place_03
+  label: Take the safer route at Amber Crossing
+  requires:
+  - scale_era_item_05
+  intentKind: travel
+  stake: a short detour
+- id: scale_era_choice_03_06
+  placeId: scale_era_place_03
+  label: Open the local record at Amber Crossing
+  requires:
+  - scale_era_item_06
+  intentKind: interact
+  stake: one turn
+- id: scale_era_choice_03_07
+  placeId: scale_era_place_03
+  label: Rest at the bench at Amber Crossing
+  requires:
+  - scale_era_item_07
+  intentKind: rest
+  stake: one supply
+- id: scale_era_choice_03_08
+  placeId: scale_era_place_03
+  label: Repair the marker at Amber Crossing
+  requires:
+  - scale_era_item_08
+  intentKind: interact
+  stake: a declined invitation
+- id: scale_era_choice_03_09
+  placeId: scale_era_place_03
+  label: Prepare a shared item at Amber Crossing
+  requires:
+  - scale_era_item_09
+  intentKind: craft
+  stake: a public note
+- id: scale_era_choice_03_10
+  placeId: scale_era_place_03
+  label: Leave a kind note at Amber Crossing
+  requires:
+  - scale_era_item_10
+  intentKind: talk
+  stake: a short detour
+- id: scale_era_choice_04_01
+  placeId: scale_era_place_04
+  label: Read the notice at Thunderstep
+  requires: []
+  intentKind: talk
+  stake: one turn
+- id: scale_era_choice_04_02
+  placeId: scale_era_place_04
+  label: Ask for an introduction at Thunderstep
+  requires: []
+  intentKind: talk
+  stake: one supply
+- id: scale_era_choice_04_03
+  placeId: scale_era_place_04
+  label: Check the tool tag at Thunderstep
+  requires: []
+  intentKind: inspect
+  stake: a declined invitation
+- id: scale_era_choice_04_04
+  placeId: scale_era_place_04
+  label: Offer a hand at Thunderstep
+  requires: []
+  intentKind: interact
+  stake: a public note
+- id: scale_era_choice_04_05
+  placeId: scale_era_place_04
+  label: Take the safer route at Thunderstep
+  requires:
+  - scale_era_item_05
+  intentKind: travel
+  stake: a short detour
+- id: scale_era_choice_04_06
+  placeId: scale_era_place_04
+  label: Open the local record at Thunderstep
+  requires:
+  - scale_era_item_06
+  intentKind: interact
+  stake: one turn
+- id: scale_era_choice_04_07
+  placeId: scale_era_place_04
+  label: Rest at the bench at Thunderstep
+  requires:
+  - scale_era_item_07
+  intentKind: rest
+  stake: one supply
+- id: scale_era_choice_04_08
+  placeId: scale_era_place_04
+  label: Repair the marker at Thunderstep
+  requires:
+  - scale_era_item_08
+  intentKind: interact
+  stake: a declined invitation
+- id: scale_era_choice_04_09
+  placeId: scale_era_place_04
+  label: Prepare a shared item at Thunderstep
+  requires:
+  - scale_era_item_09
+  intentKind: craft
+  stake: a public note
+- id: scale_era_choice_04_10
+  placeId: scale_era_place_04
+  label: Leave a kind note at Thunderstep
+  requires:
+  - scale_era_item_10
+  intentKind: talk
+  stake: a short detour
+- id: scale_era_choice_05_01
+  placeId: scale_era_place_05
+  label: Read the notice at Boneglass Ravine
+  requires: []
+  intentKind: talk
+  stake: one turn
+- id: scale_era_choice_05_02
+  placeId: scale_era_place_05
+  label: Ask for an introduction at Boneglass Ravine
+  requires: []
+  intentKind: talk
+  stake: one supply
+- id: scale_era_choice_05_03
+  placeId: scale_era_place_05
+  label: Check the tool tag at Boneglass Ravine
+  requires: []
+  intentKind: inspect
+  stake: a declined invitation
+- id: scale_era_choice_05_04
+  placeId: scale_era_place_05
+  label: Offer a hand at Boneglass Ravine
+  requires: []
+  intentKind: interact
+  stake: a public note
+- id: scale_era_choice_05_05
+  placeId: scale_era_place_05
+  label: Take the safer route at Boneglass Ravine
+  requires:
+  - scale_era_item_05
+  intentKind: travel
+  stake: a short detour
+- id: scale_era_choice_05_06
+  placeId: scale_era_place_05
+  label: Open the local record at Boneglass Ravine
+  requires:
+  - scale_era_item_06
+  intentKind: interact
+  stake: one turn
+- id: scale_era_choice_05_07
+  placeId: scale_era_place_05
+  label: Rest at the bench at Boneglass Ravine
+  requires:
+  - scale_era_item_07
+  intentKind: rest
+  stake: one supply
+- id: scale_era_choice_05_08
+  placeId: scale_era_place_05
+  label: Repair the marker at Boneglass Ravine
+  requires:
+  - scale_era_item_08
+  intentKind: interact
+  stake: a declined invitation
+- id: scale_era_choice_05_09
+  placeId: scale_era_place_05
+  label: Prepare a shared item at Boneglass Ravine
+  requires:
+  - scale_era_item_09
+  intentKind: craft
+  stake: a public note
+- id: scale_era_choice_05_10
+  placeId: scale_era_place_05
+  label: Leave a kind note at Boneglass Ravine
+  requires:
+  - scale_era_item_10
+  intentKind: talk
+  stake: a short detour
+- id: scale_era_choice_06_01
+  placeId: scale_era_place_06
+  label: Read the notice at Long Dawn Camp
+  requires: []
+  intentKind: talk
+  stake: one turn
+- id: scale_era_choice_06_02
+  placeId: scale_era_place_06
+  label: Ask for an introduction at Long Dawn Camp
+  requires: []
+  intentKind: talk
+  stake: one supply
+- id: scale_era_choice_06_03
+  placeId: scale_era_place_06
+  label: Check the tool tag at Long Dawn Camp
+  requires: []
+  intentKind: inspect
+  stake: a declined invitation
+- id: scale_era_choice_06_04
+  placeId: scale_era_place_06
+  label: Offer a hand at Long Dawn Camp
+  requires: []
+  intentKind: interact
+  stake: a public note
+- id: scale_era_choice_06_05
+  placeId: scale_era_place_06
+  label: Take the safer route at Long Dawn Camp
+  requires:
+  - scale_era_item_05
+  intentKind: travel
+  stake: a short detour
+- id: scale_era_choice_06_06
+  placeId: scale_era_place_06
+  label: Open the local record at Long Dawn Camp
+  requires:
+  - scale_era_item_06
+  intentKind: interact
+  stake: one turn
+- id: scale_era_choice_06_07
+  placeId: scale_era_place_06
+  label: Rest at the bench at Long Dawn Camp
+  requires:
+  - scale_era_item_07
+  intentKind: rest
+  stake: one supply
+- id: scale_era_choice_06_08
+  placeId: scale_era_place_06
+  label: Repair the marker at Long Dawn Camp
+  requires:
+  - scale_era_item_08
+  intentKind: interact
+  stake: a declined invitation
+- id: scale_era_choice_06_09
+  placeId: scale_era_place_06
+  label: Prepare a shared item at Long Dawn Camp
+  requires:
+  - scale_era_item_09
+  intentKind: craft
+  stake: a public note
+- id: scale_era_choice_06_10
+  placeId: scale_era_place_06
+  label: Leave a kind note at Long Dawn Camp
+  requires:
+  - scale_era_item_10
+  intentKind: talk
+  stake: a short detour
+- id: scale_era_choice_07_01
+  placeId: scale_era_place_07
+  label: Read the notice at Pollen Shelf
+  requires: []
+  intentKind: talk
+  stake: one turn
+- id: scale_era_choice_07_02
+  placeId: scale_era_place_07
+  label: Ask for an introduction at Pollen Shelf
+  requires: []
+  intentKind: talk
+  stake: one supply
+- id: scale_era_choice_07_03
+  placeId: scale_era_place_07
+  label: Check the tool tag at Pollen Shelf
+  requires: []
+  intentKind: inspect
+  stake: a declined invitation
+- id: scale_era_choice_07_04
+  placeId: scale_era_place_07
+  label: Offer a hand at Pollen Shelf
+  requires: []
+  intentKind: interact
+  stake: a public note
+- id: scale_era_choice_07_05
+  placeId: scale_era_place_07
+  label: Take the safer route at Pollen Shelf
+  requires:
+  - scale_era_item_05
+  intentKind: travel
+  stake: a short detour
+- id: scale_era_choice_07_06
+  placeId: scale_era_place_07
+  label: Open the local record at Pollen Shelf
+  requires:
+  - scale_era_item_06
+  intentKind: interact
+  stake: one turn
+- id: scale_era_choice_07_07
+  placeId: scale_era_place_07
+  label: Rest at the bench at Pollen Shelf
+  requires:
+  - scale_era_item_07
+  intentKind: rest
+  stake: one supply
+- id: scale_era_choice_07_08
+  placeId: scale_era_place_07
+  label: Repair the marker at Pollen Shelf
+  requires:
+  - scale_era_item_08
+  intentKind: interact
+  stake: a declined invitation
+- id: scale_era_choice_07_09
+  placeId: scale_era_place_07
+  label: Prepare a shared item at Pollen Shelf
+  requires:
+  - scale_era_item_09
+  intentKind: craft
+  stake: a public note
+- id: scale_era_choice_07_10
+  placeId: scale_era_place_07
+  label: Leave a kind note at Pollen Shelf
+  requires:
+  - scale_era_item_10
+  intentKind: talk
+  stake: a short detour
+- id: scale_era_choice_08_01
+  placeId: scale_era_place_08
+  label: Read the notice at Rumbling Weir
+  requires: []
+  intentKind: talk
+  stake: one turn
+- id: scale_era_choice_08_02
+  placeId: scale_era_place_08
+  label: Ask for an introduction at Rumbling Weir
+  requires: []
+  intentKind: talk
+  stake: one supply
+- id: scale_era_choice_08_03
+  placeId: scale_era_place_08
+  label: Check the tool tag at Rumbling Weir
+  requires: []
+  intentKind: inspect
+  stake: a declined invitation
+- id: scale_era_choice_08_04
+  placeId: scale_era_place_08
+  label: Offer a hand at Rumbling Weir
+  requires: []
+  intentKind: interact
+  stake: a public note
+- id: scale_era_choice_08_05
+  placeId: scale_era_place_08
+  label: Take the safer route at Rumbling Weir
+  requires:
+  - scale_era_item_05
+  intentKind: travel
+  stake: a short detour
+- id: scale_era_choice_08_06
+  placeId: scale_era_place_08
+  label: Open the local record at Rumbling Weir
+  requires:
+  - scale_era_item_06
+  intentKind: interact
+  stake: one turn
+- id: scale_era_choice_08_07
+  placeId: scale_era_place_08
+  label: Rest at the bench at Rumbling Weir
+  requires:
+  - scale_era_item_07
+  intentKind: rest
+  stake: one supply
+- id: scale_era_choice_08_08
+  placeId: scale_era_place_08
+  label: Repair the marker at Rumbling Weir
+  requires:
+  - scale_era_item_08
+  intentKind: interact
+  stake: a declined invitation
+- id: scale_era_choice_08_09
+  placeId: scale_era_place_08
+  label: Prepare a shared item at Rumbling Weir
+  requires:
+  - scale_era_item_09
+  intentKind: craft
+  stake: a public note
+- id: scale_era_choice_08_10
+  placeId: scale_era_place_08
+  label: Leave a kind note at Rumbling Weir
+  requires:
+  - scale_era_item_10
+  intentKind: talk
+  stake: a short detour
+interactables:
+- id: scale_era_interact_01
+  verbId: rest
+  publicName: Basalt Shelter bench
+  placeId: scale_era_place_01
+  displayVerb: Rest here
+  stateKey: scale_era_rest_01
+- id: scale_era_interact_02
+  verbId: repair
+  publicName: Fern Basin cabinet
+  placeId: scale_era_place_02
+  displayVerb: Repair here
+  stateKey: scale_era_repair_02
+- id: scale_era_interact_03
+  verbId: tend
+  publicName: Amber Crossing rack
+  placeId: scale_era_place_03
+  displayVerb: Tend here
+  stateKey: scale_era_tend_03
+- id: scale_era_interact_04
+  verbId: craft
+  publicName: Thunderstep kettle
+  placeId: scale_era_place_04
+  displayVerb: Craft here
+  stateKey: scale_era_craft_04
+- id: scale_era_interact_05
+  verbId: cook
+  publicName: Boneglass Ravine ledger
+  placeId: scale_era_place_05
+  displayVerb: Cook here
+  stateKey: scale_era_cook_05
+- id: scale_era_interact_06
+  verbId: bind_inn
+  publicName: Long Dawn Camp rail
+  placeId: scale_era_place_06
+  displayVerb: Bind Inn here
+  stateKey: scale_era_bind_inn_06
+- id: scale_era_interact_07
+  verbId: inspect
+  publicName: Pollen Shelf bell
+  placeId: scale_era_place_07
+  displayVerb: Inspect here
+  stateKey: scale_era_inspect_07
+- id: scale_era_interact_08
+  verbId: open
+  publicName: Rumbling Weir board
+  placeId: scale_era_place_08
+  displayVerb: Open here
+  stateKey: scale_era_open_08
+- id: scale_era_interact_09
+  verbId: carry
+  publicName: Basalt Shelter table
+  placeId: scale_era_place_01
+  displayVerb: Carry here
+  stateKey: scale_era_carry_09
+- id: scale_era_interact_10
+  verbId: clean
+  publicName: Fern Basin lamp
+  placeId: scale_era_place_02
+  displayVerb: Clean here
+  stateKey: scale_era_clean_10
+- id: scale_era_interact_11
+  verbId: signal
+  publicName: Amber Crossing gate
+  placeId: scale_era_place_03
+  displayVerb: Signal here
+  stateKey: scale_era_signal_11
+- id: scale_era_interact_12
+  verbId: record
+  publicName: Thunderstep shelf
+  placeId: scale_era_place_04
+  displayVerb: Record here
+  stateKey: scale_era_record_12
+interiors:
+- id: scale_era_interior_01
+  publicName: Scale Era Home Interior
+  entrancePlaceId: scale_era_place_08
+  rooms:
+  - id: scale_era_home_room_01
+    publicName: Scale Era Entry
+    mapScale: interior
+    exits:
+    - scale_era_home_room_02
+    props:
+    - scale_era_home_prop_01
+    - scale_era_home_prop_08
+  - id: scale_era_home_room_02
+    publicName: Scale Era Main Room
+    mapScale: interior
+    exits:
+    - scale_era_home_room_01
+    - scale_era_home_room_03
+    props:
+    - scale_era_home_prop_02
+    - scale_era_home_prop_09
+  - id: scale_era_home_room_03
+    publicName: Scale Era Work Nook
+    mapScale: interior
+    exits:
+    - scale_era_home_room_02
+    - scale_era_home_room_04
+    props:
+    - scale_era_home_prop_03
+    - scale_era_home_prop_10
+  - id: scale_era_home_room_04
+    publicName: Scale Era Window Room
+    mapScale: interior
+    exits:
+    - scale_era_home_room_03
+    - scale_era_home_room_05
+    props:
+    - scale_era_home_prop_04
+    - scale_era_home_prop_11
+  - id: scale_era_home_room_05
+    publicName: Scale Era Quiet Room
+    mapScale: interior
+    exits:
+    - scale_era_home_room_04
+    - scale_era_home_room_06
+    props:
+    - scale_era_home_prop_05
+    - scale_era_home_prop_12
+  - id: scale_era_home_room_06
+    publicName: Scale Era Storage
+    mapScale: interior
+    exits:
+    - scale_era_home_room_05
+    - scale_era_home_room_07
+    props:
+    - scale_era_home_prop_06
+    - scale_era_home_prop_13
+  - id: scale_era_home_room_07
+    publicName: Scale Era Back Step
+    mapScale: interior
+    exits:
+    - scale_era_home_room_06
+    props:
+    - scale_era_home_prop_07
+    - scale_era_home_prop_14
+talents:
+- id: scale_era_talent_01
+  publicName: Scale Era Local Ear
+  cost: 1
+  requires: []
+  effectFlags:
+  - scale_era_effect_01
+  payToUnlock: false
+- id: scale_era_talent_02
+  publicName: Scale Era Careful Hand
+  cost: 2
+  requires: []
+  effectFlags:
+  - scale_era_effect_02
+  payToUnlock: false
+- id: scale_era_talent_03
+  publicName: Scale Era Route Sense
+  cost: 3
+  requires: []
+  effectFlags:
+  - scale_era_effect_03
+  payToUnlock: false
+- id: scale_era_talent_04
+  publicName: Scale Era Shared Measure
+  cost: 4
+  requires: []
+  effectFlags:
+  - scale_era_effect_04
+  payToUnlock: false
+- id: scale_era_talent_05
+  publicName: Scale Era Quiet Craft
+  cost: 1
+  requires:
+  - scale_era_talent_04
+  effectFlags:
+  - scale_era_effect_05
+  payToUnlock: false
+- id: scale_era_talent_06
+  publicName: Scale Era Open Invitation
+  cost: 2
+  requires: []
+  effectFlags:
+  - scale_era_effect_06
+  payToUnlock: false
+- id: scale_era_talent_07
+  publicName: Scale Era Safe Return
+  cost: 3
+  requires: []
+  effectFlags:
+  - scale_era_effect_07
+  payToUnlock: false
+- id: scale_era_talent_08
+  publicName: Scale Era Field Note
+  cost: 4
+  requires: []
+  effectFlags:
+  - scale_era_effect_08
+  payToUnlock: false
+- id: scale_era_talent_09
+  publicName: Scale Era Steady Pace
+  cost: 1
+  requires:
+  - scale_era_talent_08
+  effectFlags:
+  - scale_era_effect_09
+  payToUnlock: false
+- id: scale_era_talent_10
+  publicName: Scale Era Clear Signal
+  cost: 2
+  requires: []
+  effectFlags:
+  - scale_era_effect_10
+  payToUnlock: false
+- id: scale_era_talent_11
+  publicName: Scale Era Warm Welcome
+  cost: 3
+  requires: []
+  effectFlags:
+  - scale_era_effect_11
+  payToUnlock: false
+- id: scale_era_talent_12
+  publicName: Scale Era Small Courage
+  cost: 4
+  requires: []
+  effectFlags:
+  - scale_era_effect_12
+  payToUnlock: false
+- id: scale_era_talent_13
+  publicName: Scale Era Repair Habit
+  cost: 1
+  requires:
+  - scale_era_talent_12
+  effectFlags:
+  - scale_era_effect_13
+  payToUnlock: false
+- id: scale_era_talent_14
+  publicName: Scale Era Trust Mark
+  cost: 2
+  requires: []
+  effectFlags:
+  - scale_era_effect_14
+  payToUnlock: false
+- id: scale_era_talent_15
+  publicName: Scale Era Second Look
+  cost: 3
+  requires: []
+  effectFlags:
+  - scale_era_effect_15
+  payToUnlock: false
+- id: scale_era_talent_16
+  publicName: Scale Era Closing Grace
+  cost: 4
+  requires: []
+  effectFlags:
+  - scale_era_effect_16
+  payToUnlock: false
+evalProbes:
+- id: scale_era_eval_01
+  given:
+    hp: 18
+    placeId: scale_era_place_01
+    turn: 1
+  action:
+    verbId: rest
+    targetId: scale_era_interact_01
+  expectedLedger:
+    turn: 2
+    lastAction: rest
+    placeId: scale_era_place_01
+  forbiddenProse:
+  - do not claim an uncommitted numeric reward
+  - do not alter damage, gold, ownership, or a score outside expectedLedger
+- id: scale_era_eval_02
+  given:
+    hp: 18
+    placeId: scale_era_place_02
+    turn: 2
+  action:
+    verbId: repair
+    targetId: scale_era_interact_02
+  expectedLedger:
+    turn: 3
+    lastAction: repair
+    placeId: scale_era_place_02
+  forbiddenProse:
+  - do not claim an uncommitted numeric reward
+  - do not alter damage, gold, ownership, or a score outside expectedLedger
+- id: scale_era_eval_03
+  given:
+    hp: 18
+    placeId: scale_era_place_03
+    turn: 3
+  action:
+    verbId: tend
+    targetId: scale_era_interact_03
+  expectedLedger:
+    turn: 4
+    lastAction: tend
+    placeId: scale_era_place_03
+  forbiddenProse:
+  - do not claim an uncommitted numeric reward
+  - do not alter damage, gold, ownership, or a score outside expectedLedger
+- id: scale_era_eval_04
+  given:
+    hp: 18
+    placeId: scale_era_place_04
+    turn: 4
+  action:
+    verbId: craft
+    targetId: scale_era_interact_04
+  expectedLedger:
+    turn: 5
+    lastAction: craft
+    placeId: scale_era_place_04
+  forbiddenProse:
+  - do not claim an uncommitted numeric reward
+  - do not alter damage, gold, ownership, or a score outside expectedLedger
+- id: scale_era_eval_05
+  given:
+    hp: 18
+    placeId: scale_era_place_05
+    turn: 5
+  action:
+    verbId: cook
+    targetId: scale_era_interact_05
+  expectedLedger:
+    turn: 6
+    lastAction: cook
+    placeId: scale_era_place_05
+  forbiddenProse:
+  - do not claim an uncommitted numeric reward
+  - do not alter damage, gold, ownership, or a score outside expectedLedger
+- id: scale_era_eval_06
+  given:
+    hp: 18
+    placeId: scale_era_place_06
+    turn: 6
+  action:
+    verbId: bind_inn
+    targetId: scale_era_interact_06
+  expectedLedger:
+    turn: 7
+    lastAction: bind_inn
+    placeId: scale_era_place_06
+  forbiddenProse:
+  - do not claim an uncommitted numeric reward
+  - do not alter damage, gold, ownership, or a score outside expectedLedger
+- id: scale_era_eval_07
+  given:
+    hp: 18
+    placeId: scale_era_place_07
+    turn: 7
+  action:
+    verbId: inspect
+    targetId: scale_era_interact_07
+  expectedLedger:
+    turn: 8
+    lastAction: inspect
+    placeId: scale_era_place_07
+  forbiddenProse:
+  - do not claim an uncommitted numeric reward
+  - do not alter damage, gold, ownership, or a score outside expectedLedger
+- id: scale_era_eval_08
+  given:
+    hp: 18
+    placeId: scale_era_place_08
+    turn: 8
+  action:
+    verbId: open
+    targetId: scale_era_interact_08
+  expectedLedger:
+    turn: 9
+    lastAction: open
+    placeId: scale_era_place_08
+  forbiddenProse:
+  - do not claim an uncommitted numeric reward
+  - do not alter damage, gold, ownership, or a score outside expectedLedger
+- id: scale_era_eval_09
+  given:
+    hp: 18
+    placeId: scale_era_place_01
+    turn: 9
+  action:
+    verbId: carry
+    targetId: scale_era_interact_09
+  expectedLedger:
+    turn: 10
+    lastAction: carry
+    placeId: scale_era_place_01
+  forbiddenProse:
+  - do not claim an uncommitted numeric reward
+  - do not alter damage, gold, ownership, or a score outside expectedLedger
+- id: scale_era_eval_10
+  given:
+    hp: 18
+    placeId: scale_era_place_02
+    turn: 10
+  action:
+    verbId: clean
+    targetId: scale_era_interact_10
+  expectedLedger:
+    turn: 11
+    lastAction: clean
+    placeId: scale_era_place_02
+  forbiddenProse:
+  - do not claim an uncommitted numeric reward
+  - do not alter damage, gold, ownership, or a score outside expectedLedger
+- id: scale_era_eval_11
+  given:
+    hp: 18
+    placeId: scale_era_place_03
+    turn: 11
+  action:
+    verbId: signal
+    targetId: scale_era_interact_11
+  expectedLedger:
+    turn: 12
+    lastAction: signal
+    placeId: scale_era_place_03
+  forbiddenProse:
+  - do not claim an uncommitted numeric reward
+  - do not alter damage, gold, ownership, or a score outside expectedLedger
+- id: scale_era_eval_12
+  given:
+    hp: 18
+    placeId: scale_era_place_04
+    turn: 12
+  action:
+    verbId: record
+    targetId: scale_era_interact_12
+  expectedLedger:
+    turn: 13
+    lastAction: record
+    placeId: scale_era_place_04
+  forbiddenProse:
+  - do not claim an uncommitted numeric reward
+  - do not alter damage, gold, ownership, or a score outside expectedLedger
+- id: scale_era_eval_13
+  given:
+    hp: 18
+    placeId: scale_era_place_05
+    turn: 13
+  action:
+    verbId: rest
+    targetId: scale_era_interact_01
+  expectedLedger:
+    turn: 14
+    lastAction: rest
+    placeId: scale_era_place_05
+  forbiddenProse:
+  - do not claim an uncommitted numeric reward
+  - do not alter damage, gold, ownership, or a score outside expectedLedger
+- id: scale_era_eval_14
+  given:
+    hp: 18
+    placeId: scale_era_place_06
+    turn: 14
+  action:
+    verbId: repair
+    targetId: scale_era_interact_02
+  expectedLedger:
+    turn: 15
+    lastAction: repair
+    placeId: scale_era_place_06
+  forbiddenProse:
+  - do not claim an uncommitted numeric reward
+  - do not alter damage, gold, ownership, or a score outside expectedLedger
+- id: scale_era_eval_15
+  given:
+    hp: 18
+    placeId: scale_era_place_07
+    turn: 15
+  action:
+    verbId: tend
+    targetId: scale_era_interact_03
+  expectedLedger:
+    turn: 16
+    lastAction: tend
+    placeId: scale_era_place_07
+  forbiddenProse:
+  - do not claim an uncommitted numeric reward
+  - do not alter damage, gold, ownership, or a score outside expectedLedger
+wallets:
+  goldName: Dawn Marks
+  cosmeticTokenName: Fossil Flakes
+  noConversion: true
+  prohibited:
+  - outcomes
+  - lockout skips
+  - catch rate
+  - raid clears
+  - random power packs
+  - gacha
+  - loot boxes
+dailyCaps:
+  contractsPerDay: 3
+  goldFromRepeatables: 90
+  weeklyBossLockout: per-character per-boss
+divergenceRecords:
+- id: scale_era_walkaway_01
+  choice: walk away from a local obligation
+  recordKey: scale_era_divergence_01
+  effect: Alternate dialogue and a non-punitive follow-up route.
+- id: scale_era_walkaway_02
+  choice: walk away from a local obligation
+  recordKey: scale_era_divergence_02
+  effect: Alternate dialogue and a non-punitive follow-up route.
+- id: scale_era_walkaway_03
+  choice: walk away from a local obligation
+  recordKey: scale_era_divergence_03
+  effect: Alternate dialogue and a non-punitive follow-up route.

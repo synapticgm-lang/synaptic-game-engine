@@ -1,0 +1,70 @@
+Act as a Principal Systems Engineer, Computational Thermal-Fluids Specialist, and Senior Product Development Director.
+
+Conduct a rigorous simulation, optimization, and engineering problem-solving investigation to resolve the critical technical gaps identified in the "Hybrid Solar-Wind Hydronic Micro-Climate Parasol & Architectural Smart Roof Cowl" project. Generate a finalized, validated MVP production architecture, complete with parametric simulation data, mechanical schematics, and an end-to-end milestone timeline.
+
+Format the entire output cleanly for direct export to a Word or PDF document.
+
+---
+
+### CORE ENGINEERING GAPS & REQUIRED PROBLEM-SOLVING
+
+Address, mathematically model, and engineer complete physical solutions for the following four core failure modes and design conflicts:
+
+1. Mast Packaging & Drive System Conflict:
+   - Problem: Routing liquid lines (supply/return), high-draw electrical lines (IR heaters), and low-voltage sensor wiring through a ~50 mm mast alongside a high-speed rotating mechanical drive shaft creates catastrophic vibration, thermal, and snag risks.
+   - Task: Engineer a complete layout resolving this conflict. Evaluate a top-mounted direct-drive brushless hub motor inside the canopy cassette versus a concentric hollow-shaft mast design. Provide cross-sectional internal clearance dimensions, vibration dampening, and routing schematics.
+
+2. Thermal Endurance & Reservoir Optimization:
+   - Problem: A 40 kg chilled water reservoir provides under 25 minutes of 1 kW cooling before thermal saturation.
+   - Task: Model and solve the thermal deficit. Simulate and compare:
+     a) Integration of solid-liquid Phase Change Materials (PCMs) inside the base reservoir.
+     b) A low-power micro DC vapor-compression chiller unit integrated into the base ballast.
+     c) Continuous quick-connect hydronic hookup ports for external supply.
+     Provide fluid-loop flow rates (L/min), coefficient of performance (COP), and runtime curves (ambient 32°C–38°C reducing to 24°C–26°C at occupant level).
+
+3. Aerodynamic Drag, Overturning Moments & Enclosure Physics:
+   - Problem: A full vinyl enclosure at 45 mph wind speeds creates an overturning moment requiring over 1,000 kg of unanchored ballast.
+   - Task: Engineer an all-weather enclosure system with passive and active safety. Calculate overturning moments across wind speeds (10 to 45 mph) and establish:
+     a) Aerodynamic pressure-relief flap sizing and placement.
+     b) Magnetic/mechanical breakaway curtain seam thresholds (calibrated to release safely at 18–22 mph).
+     c) An automated high-wind gust detection and aerodynamic stow routine.
+     d) Ground-anchor specifications vs. portable base ballast mass tables.
+
+4. Modular Platform Unification (Parasol vs. Roof Cowl):
+   - Problem: Parallel development of two separate form factors doubles R&D capital and regulatory overhead.
+   - Task: Engineer a standardized "Universal Micro-Climate Cassette" (containing the fan, plenum chamber, hydronic heat exchanger, and diffuser ring) that functions as a self-contained core unit adaptable to either a portable parasol mast or an architectural roof-curb interface.
+
+---
+
+### REQUIRED DELIVERABLE STRUCTURE
+
+Generate an exhaustive, publication-grade Technical Resolution Dossier structured as follows:
+
+#### Section 1: 1D Mathematical Modeling & Simulation Results
+- Thermodynamic Simulation: Provide equations, Python simulation scripts (or worked mathematical matrices), and output tables modeling sensible cooling and heating capacities, fluid delta-T, and reservoir endurance across 1, 2, and 4-hour operational cycles.
+- Aerodynamic & Fluid Dynamics (CFD Profile): Calculate static pressure distribution inside the 2–4 inch plenum, pressure drop across the internal coil, velocity profiles through 30°–45° perimeter diffuser nozzles, and internal acoustic noise profiles (dBA).
+- Structural Mechanics: Complete moment-balance formulas, center of pressure ($h_{cp}$) calculations, shear stresses on the central mast, and tipping safety factors.
+
+#### Section 2: Finalized MVP System Architecture & Specifications
+- Comprehensive Sub-system Blueprints: Step-by-step mechanical, electrical, and plumbing (MEP) schematics for the unified cassette, mast routing, base ballast, and all-weather curtain assembly.
+- Closed-Loop Condensation Management: Sloped pan geometry, internal drainage routing, and overflow sensor fail-safe logic.
+- Complete Multi-State Control Logic: Formal state machine diagram and fail-safe truth table governing transitions between Solar Fan, Wind Generation, Dump Load Immersion Heating, Mains-Assisted Infrared Heating, and Emergency Storm Stow.
+
+#### Section 3: Final Production-Ready Bill of Materials (BOM)
+- Itemized BOM with commercial component selections, exact material grades (6061-T6 Aluminum, marine-grade 316 Stainless Steel, EPDM, UV-stabilized ASA/Polycarbonate), part numbers/distributor categories, and realistic target unit costs for low-volume (10–50 units) and scaled production (1,000+ units).
+
+#### Section 4: Phase-by-Phase Timeline & Adjustment Roadmap
+- A detailed, milestone-driven execution Gantt-style roadmap covering:
+  - Phase 0: Desktop PoC Build & Sensor Calibration (Weeks 1–6)
+  - Phase 1: Virtual CAD/CFD Optimization & UK IPO Priority Patent Filing (Weeks 7–14)
+  - Phase 2: Full-Scale Functional Rig Assembly & Dyno Testing (Weeks 15–26)
+  - Phase 3: Environmental Hardening, Wind Tunnel & Field Testing (Weeks 27–38)
+  - Phase 4: Production Tooling, Compliance Certification & Commercial Licensing Launch (Weeks 39–52)
+- Include specific "Stage-Gate Decision Criteria" defining exact performance metrics required before advancing to the next phase.
+
+---
+
+### OUTPUT INSTRUCTIONS
+- Use rigorous mechanical, thermodynamic, and electrical engineering terminology.
+- Include all underlying mathematical relationships, formulas, and data tables directly in the text.
+- Maintain a structured, plain-text markdown layout with clear headings and bulleted specifications suitable for immediate conversion to Word or PDF.

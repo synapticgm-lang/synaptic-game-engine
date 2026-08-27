@@ -1,0 +1,4 @@
+assumption_status,free_mau,new_games_per_mau,bonus_turns_per_new_game,incremental_billed_attempts,incremental_inference_usd,incremental_usd_with_prorata_platform_fee,incremental_gbp_with_prorata_platform_fee,notes
+SPECULATIVE uptake; EVIDENCED eight-turn allowance,100,1,8,840,0.2436,0.26,0.19,Planning-base token size. Excludes the $0.80 minimum because the main monthly credit purchase is already modeled; excludes tax and non-model costs.
+SPECULATIVE uptake; EVIDENCED eight-turn allowance,1000,1,8,8400,2.4360,2.57,1.89,Planning-base token size. Excludes the $0.80 minimum because the main monthly credit purchase is already modeled; excludes tax and non-model costs.
+SPECULATIVE uptake; EVIDENCED eight-turn allowance,10000,1,8,84000,24.3600,25.70,18.85,Planning-base token size. Excludes the $0.80 minimum because the main monthly credit purchase is already modeled; excludes tax and non-model costs.

@@ -1,0 +1,81 @@
+DOMAIN: A — Interacting AI / companion / chat products
+SOURCES:
+1. **Learn about conversation: The Cooperative Principle**, Google Assistant Conversation Design, Google. https://developers.google.com/assistant/conversation-design/learn-about-conversation. Accessed 2026-08-19.
+2. **Long Time No See! Open-Domain Conversation with Long-Term Persona Memory**, Xinchao Xu et al., Findings of ACL 2022, Association for Computational Linguistics. https://aclanthology.org/2022.findings-acl.207/. Accessed 2026-08-19.
+3. **What is Author’s Note?**, AI Dungeon Help, Latitude. https://help.aidungeon.com/faq/what-is-the-authors-note. Accessed 2026-08-19.
+4. **What is the Memory System?**, AI Dungeon Help, Latitude. https://help.aidungeon.com/faq/the-memory-system. Accessed 2026-08-19.
+5. **Streaming API responses**, OpenAI Developers. https://developers.openai.com/api/docs/guides/streaming-responses. Accessed 2026-08-19.
+6. **Frequently Asked Questions**, Hidden Door. https://www.hiddendoor.co/help/faq. Accessed 2026-08-19.
+7. **How is Friends & Fables different from ChatGPT, AI Dungeon, or NovelAI?**, Friends & Fables. https://fables.gg/blog/how-is-friends-and-fables-different-than-chatgpt-ai-dungeon-or-novelai. Accessed 2026-08-19.
+
+DOMAIN: B — Story writing and narrative craft for interactive prose
+SOURCES:
+1. Michael Mateas and Andrew Stern, “Structuring Content in the Façade Interactive Drama Architecture,” AAAI Conference on Artificial Intelligence and Interactive Digital Entertainment, 2005. https://ojs.aaai.org/index.php/AIIDE/article/view/18722. Accessed 2026-08-19.
+2. inkle, “Writing with ink,” ink open-source documentation. https://github.com/inkle/ink/blob/master/Documentation/WritingWithInk.md. Accessed 2026-08-19.
+3. inkle, “Writing web-based interactive fiction with ink,” inkle Studios. https://www.inklestudios.com/ink/web-tutorial/. Accessed 2026-08-19.
+4. Twine contributors, “Twine Cookbook,” Twine. https://twinery.org/cookbook/. Accessed 2026-08-19.
+5. Thomas Grip, “5 Core Elements Of Interactive Storytelling,” Frictional Games, 2013; updated 2023. https://frictionalgames.com/2013-08-5-core-elements-of-interactive-storytelling/. Accessed 2026-08-19.
+6. Mark Slabinski, “8 Key Principles of Writing Effective Game Dialogue,” Game Developer, 2013. https://www.gamedeveloper.com/game-platforms/8-key-principles-of-writing-effective-game-dialogue. Accessed 2026-08-19.
+
+DOMAIN: C — AI audiobooks, narration, and spoken story
+SOURCES:
+1. **Speech Synthesis Markup Language (SSML) Version 1.1** — W3C Voice Browser Working Group, W3C Recommendation. https://www.w3.org/TR/speech-synthesis11/ (Accessed 2026-08-19)
+2. **Customize voice and sound with SSML** — Microsoft, Azure Speech Service documentation. https://learn.microsoft.com/en-us/azure/ai-services/speech-service/speech-synthesis-markup-voice (Accessed 2026-08-19)
+3. **Speech Synthesis Markup Language (SSML)** — Google Cloud Text-to-Speech documentation. https://docs.cloud.google.com/text-to-speech/docs/ssml (Accessed 2026-08-19)
+4. **Prosody Analysis of Audiobooks** — Charuta Pethe, Yunting Yin, and Steven Skiena, arXiv:2310.06930. https://arxiv.org/html/2310.06930v1 (Accessed 2026-08-19)
+5. **ACX audio submission requirements** — Audiobook Creation Exchange/Audible Help Center. https://help.acx.com/s/article/what-are-the-acx-audio-submission-requirements (Accessed 2026-08-19)
+6. **File Management with Alex the Audio Scientist** — Scott Jacobi, ACX Blog. https://www.acx.com/mp/blog/file-management-with-alex-the-audio-scientist (Accessed 2026-08-19)
+
+DOMAIN: D — Interactive fiction, choice narrative, MUDs, and parser IF
+SOURCES:
+1. **Twine — Twine project maintainers / Interactive Fiction Technology Foundation.** “Twine / An open-source tool for telling interactive, nonlinear stories.” https://twinery.org/ (Accessed 2026-08-19)
+2. **Twine Cookbook — Twine contributors.** “Twine Cookbook.” https://twinery.org/cookbook/ (Accessed 2026-08-19)
+3. **inkle.** “Writing web-based interactive fiction with ink.” https://www.inklestudios.com/ink/web-tutorial/ (Accessed 2026-08-19)
+4. **inkle/ink contributors.** “Writing with ink.” GitHub documentation. https://github.com/inkle/ink/blob/master/Documentation/WritingWithInk.md (Accessed 2026-08-19)
+5. **Interactive Fiction Technology Foundation.** “Frequently Asked Questions About Interactive Fiction.” https://iftechfoundation.org/frequently-asked-questions/ (Accessed 2026-08-19)
+6. **Emily Short.** “So, Do We Need This Parser Thing Anyway?” *Emily Short’s Interactive Storytelling*, 2010. https://emshort.blog/2010/06/07/so-do-we-need-this-parser-thing-anyway/ (Accessed 2026-08-19)
+7. **Choice of Games.** “Author Interview: Abigail Trevor, ‘Heroes of Myth’.” https://www.choiceofgames.com/2019/07/author-interview-abigail-trevor-heroes-of-myth/ (Accessed 2026-08-19)
+
+DOMAIN: E — Tabletop GM practice: adjudication, intent, agency, spotlight, social scenes, cuts, danger telegraphing, improv, OOC repair, and pacing
+SOURCES:
+1. **Gamemastering**, Dungeon World SRD, Sage Kobold Productions / Open Gaming Network. https://www.dungeonworldsrd.com/gamemastering/ (Accessed 2026-08-19)
+2. **Defining Scenes**, Fate Core SRD, Evil Hat Productions. https://fate-srd.com/fate-core/defining-scenes (Accessed 2026-08-19)
+3. **Forged in the Dark games**, Blades in the Dark official site, One Seven Design / John Harper. https://bladesinthedark.com/forged-dark (Accessed 2026-08-19)
+4. **Apocalypse World: Second Edition Basic Refbook**, D. Vincent Baker and Meguey Baker. http://apocalypse-world.com/ApocalypseWorldBasicRefbook2ndEd.pdf (Accessed 2026-08-19)
+5. **Safety Tools**, Role-players Guild of Kansas City. https://www.rpgkc.org/resources/safety-tools (Accessed 2026-08-19)
+6. **Hand Queues**, Tayler Stokes, The Act Apart. https://the-act-apart.itch.io/hand-queues (Accessed 2026-08-19)
+
+DOMAIN: F — Conversation design, HCI, and linguistics: grounding, repair, clarification, confirmation, progressive disclosure, turn-taking, barge-in, adjacency pairs, and conversational UX
+SOURCES:
+1. **Grounding in Communication** — Herbert H. Clark and Susan E. Brennan, Stanford University publication page hosting the public paper PDF, https://web.stanford.edu/~clark/pubs.html (see “Grounding” section and Clark & Brennan 1991 PDF). Accessed 2026-08-19.
+2. **Progressivity for Voice Interface Design** — Joel E. Fischer, Stuart Reeves, Martin Porcheron, and Rein Ove Sikveland, ACM, *Proceedings of the 1st International Conference on Conversational User Interfaces* (2019), https://dl.acm.org/doi/10.1145/3342775.3342788. Accessed 2026-08-19.
+3. **Voice Agent Design Best Practices** — Google Cloud Dialogflow CX documentation, Google, https://docs.cloud.google.com/dialogflow/cx/docs/concept/voice-agent-design. Accessed 2026-08-19.
+4. **Errors** — Google Assistant Conversation Design documentation, Google, https://developers.google.com/assistant/conversation-design/errors. Accessed 2026-08-19.
+5. **Conversation Design: Speaking the Same Language** — Google Design, Google, https://design.google/library/speaking-the-same-language-vui. Accessed 2026-08-19.
+6. **New Alexa Features: Natural Turn-Taking** — Pradeep Natarajan, Arindam Mandal, and Nikko Ström, Amazon Science, https://www.amazon.science/blog/change-to-alexa-wake-word-process-adds-natural-turn-taking. Accessed 2026-08-19.
+7. **Design the Prompts for Your Skill** — Alexa Developer Documentation, Amazon, https://developer.amazon.com/en-US/docs/alexa/interaction-model-design/design-the-prompts-for-your-skill.html. Accessed 2026-08-19.
+
+DOMAIN: G — Rich NPC dialogue in games
+SOURCES:
+1. **“Functions and powers of barks in video games: reclaiming the margins of video games narrativity,” Hélène Sellier and Aurélie Huz, Proceedings of DiGRA 2023.** https://dl.digra.org/index.php/dl/article/download/1990/1989/1986 (Accessed 2026-08-19)
+
+2. **“Exploring the Design of Companions in Video Games,” Elizabeth Bouquet, Ville Mäkelä, and Albrecht Schmidt, ACM Academic Mindtrek 2021.** https://doi.org/10.1145/3464327.3464371 (Accessed 2026-08-19)
+
+3. **“Improving video game conversations with trope-informed design,” Stephanie Rennick and Seán G. Roberts, *Game Studies* 21(3), University of Glasgow repository.** https://eprints.gla.ac.uk/252546/ (Accessed 2026-08-19)
+
+4. **“How a character says hello: writing ‘barks’ for video games,” Sarah Beaulieu, narrative design guidance.** https://sarah-beaulieu.com/en/writing-barks-for-video-games (Accessed 2026-08-19)
+
+5. **“Conversation,” Emily Short, *Emily Short’s Interactive Storytelling*.** https://emshort.blog/how-to-play/writing-if/my-articles/conversation/ (Accessed 2026-08-19)
+
+6. **“Defining voice design in video games,” T. Holmes, Aalto University thesis.** https://aaltodoc.aalto.fi/server/api/core/bitstreams/24d92f92-3556-4edc-b8c7-3fd29583bc52/content (Accessed 2026-08-19)
+
+DOMAIN: H — Live storytelling, improv, and oral tradition
+SOURCES:
+1. **“Yes, and”: Acceptance, Resistance, and Change in Improv, Aikido, and Psychotherapy**, Earl Vickers, *Journal of Creativity in Mental Health* / public author copy, https://www.sfxmachine.com/docs/yes,_and.pdf — Accessed 2026-08-19.
+2. **Oral-Formulaic Method**, Edward Hirsch, Academy of American Poets, https://poets.org/glossary/oral-formulaic-method — Accessed 2026-08-19.
+3. **Activation and Preservation: The Interdependence of Text and Performance in an Oral Tradition**, Egbert J. Bakker, *Oral Tradition*, https://journal.oraltradition.org/wp-content/uploads/files/articles/8i/2_bakker.pdf — Accessed 2026-08-19.
+4. **Storytelling, Agency and Community-building through Playback Theatre in Palestine**, Irene Fernández Ramos, *The SOAS Journal of Postgraduate Research* 7 (2014), https://www.soas.ac.uk/sites/default/files/2022-06/03%20Storytelling%20Agency%20and%20Community%20building%20through%20Playback%20Theatre%20in%20Palestine%20file96761.pdf — Accessed 2026-08-19.
+5. **‘Honouring the storyteller’: The Potential of Playback Theatre in Health Policy and Systems Research**, Meena Putturaj and Radhika Jain, *Health Policy and Planning* 40(7), Oxford University Press, https://academic.oup.com/heapol/article/40/7/809/8173271 — Accessed 2026-08-19.
+6. **Universals and Cultural Variation in Turn-Taking in Conversation**, Tanya Stivers et al., *Proceedings of the National Academy of Sciences* 106(26), https://www.pnas.org/doi/10.1073/pnas.0903616106 — Accessed 2026-08-19.
+7. **The Intersection of Turn-Taking and Repair: The Timing of Other-Initiations of Repair in Conversation**, Kobin H. Kendrick, *Frontiers in Psychology* 6:250, https://pmc.ncbi.nlm.nih.gov/articles/PMC4357221/ — Accessed 2026-08-19.
+

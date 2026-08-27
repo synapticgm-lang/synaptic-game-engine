@@ -21,6 +21,12 @@ import { formatOutdoorHubsForPrompt } from './outdoorHubs';
 import { formatHubArrivalForPrompt } from './hubEncounters';
 import { emptySearchAuthorityLine, weaponAuthorityLine } from './searchContinuity';
 import { countPlayerIntentStreak } from './beatFingerprint';
+import {
+  checkProgressGovernor,
+  hasActiveObjectives,
+  initProgressGovernor,
+} from './forwardProgressGovernor';
+import { buildGovernanceSnapshotLines } from './qualityGovernance';
 
 export function effectivePowerScaling(state: GameState): PowerScaling {
   return state.powerScaling ?? 'balanced';
@@ -223,6 +229,19 @@ export function formatSceneSnapshotForPrompt(state: GameState): string {
       );
     }
   }
+  
+  // P0.0: Forward-Progress Governor
+  const governor = state.progressGovernor ?? initProgressGovernor();
+  const activeObjective = hasActiveObjectives(state);
+  const progressCheck = checkProgressGovernor(state, governor, activeObjective);
+  if (progressCheck.needsProgress && progressCheck.mandate) {
+    lines.push(`- ${progressCheck.mandate}`);
+  }
+
+  for (const mandate of buildGovernanceSnapshotLines(state)) {
+    if (mandate.trim()) lines.push(`- ${mandate.replace(/^-\s*/, '')}`);
+  }
+  
   if (timeLabel) lines.push(`- Time of Day: ${timeLabel}`);
   if (weatherLabel) lines.push(`- Weather: ${weatherLabel}`);
   if (locationTypeLabel) lines.push(`- Location Type: ${locationTypeLabel}`);

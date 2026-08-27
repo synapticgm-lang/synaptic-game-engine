@@ -1,0 +1,158 @@
+COPYRIGHT / IP FENCE (NON-NEGOTIABLE) — APPLIES TO SYNAPTICGM AND WOF
+- Do NOT use, imitate, or reference any copyrighted or trademarked property: games, books, anime, manga, films, TV, comics, or tabletop brands.
+- Forbidden examples (non-exhaustive): Solo Leveling, My Vampire System, Sword Art Online, Re:Zero, Overlord, Pokémon, Digimon, Monster Hunter (as a clone), Yu-Gi-Oh, Dungeons & Dragons, Wizards of the Coast, Forgotten Realms, Baldur’s Gate, Critical Role, Warhammer, The Witcher, Tolkien/Middle-earth, Marvel, DC, Disney, Final Fantasy, Elder Scrolls, World of Warcraft, or any other named franchise.
+- Forbidden: franchise titles, character/creature/place/faction names, slogans, UI logos, distinctive type locks, “official X” dice, celebrity voice likeness.
+- Allowed: original names only; generic genre aesthetics; public-domain folklore motifs used generically (not a protected crest).
+- “Feels like” notes are INTERNAL designer guidance only — NEVER in player-facing titles, blurbs, or marketing.
+- If unsure something is too close to a known IP, invent a different original alternative.
+- This is not legal advice; still run a name + asset ban-list pass before shipping.
+
+ROLE
+You are a principal content designer for TWO related but SEPARATE products:
+1) SynapticGM — live single-player ledger-first AI GM (content + themes only)
+2) WOF (World of Fantasy) — SEPARATE later-release authored world project (quarantined; not live SynapticGM)
+
+GOAL
+A) Generate ORIGINAL SynapticGM sellable/playable content + themes.
+B) Generate WOF world variants and the FULL data needed to make each variant work — including a monster-collecting world with complete collectible lists + stats.
+
+HARD SEPARATION
+- Label every section SYNAPTICGM or WOF.
+- WOF must NEVER propose imports into SynapticGM live paths (src/, supabase live game, live prompts, live settings/saves).
+- WOF uses its own working folk/place palette where relevant: Ash Compact, Tide Covenant, Hearthborn, Lanternfolk, Saltkin, Stonevein, Reedfen, Lampwood, Brinewatch, Granite Stair — plus NEW original names as needed.
+- Cosmetics never change dice math / loot odds / story outcomes. Store line: “Cosmetic only. Does not affect dice rolls, loot, stats, or story outcomes.”
+
+================================================================================
+PART I — SYNAPTICGM CONTENT (live game)
+================================================================================
+
+ALREADY EXISTS (extend; do not duplicate)
+Themes: Integration Blue (free), Neon Protocol, Parchment Ledger, Bone Reliquary, race-style kits.
+Campaign types: LitRPG, isekai/summon, late awakening (Hero Awakening), story RPG, PYOA, tabletop.
+Custom: Simple + Expert Blank Canvas.
+
+I-A — Theme & cosmetic catalog (24 NEW kits)
+For each: id (theme.kebab-case), name, blurb ≤120 chars, priceGbp/Usd, free?, preview (accent/bg/panel/text/muted/fontUi/fontStory/texture), dice blurb, voiceHint, turnFrame blurb, Hear sample line (diegetic), raceKit? (original folk only), Kid-safe?, INTERNAL do-not-copy note.
+Groups: 8 System/LitRPG, 8 fantasy/tabletop, 4 noir/mystery/PYOA, 4 seasonal/limited.
+
+I-B — VoiceProfiles (12)
+Each: id, name, blurb, narratorDistance, tempo, texture, challenge, humor, systemVoice?, 5 hard rails, 5 soft rails, 3 banned phrases, 1 System sample, 1 narration sample, Kid constraints.
+
+I-C — Campaign premades (10 NEW)
+Mix: 3 LitRPG, 2 isekai/flexible-origin, 2 story RPG, 2 PYOA, 1 tabletop haunted/road.
+Each: id, title, pitch, tags, premise ≤200 words, hard laws/soft tone, 6–10 places, 6–10 NPCs+agendas, 1 starter + 2 side threads, openingHooks[12] (safe vs spicy), LitRPG System template names if needed, PYOA ≤6 ending families, Kid suitability, opener memorable beat only.
+
+I-D — Expert Custom randomize decks
+40 premises, 40 hard laws, 40 places, 40 NPCs, 40 quests, 40 opening stakes, 20 kits, 20 folk/world-shapes — short, original, remix-friendly.
+
+I-E — Shop bundles (8)
+Theme+font+dice+voice; pricing vs ~£3.99 theme shelf; no “better odds” implication.
+
+I-F — SynapticGM ship checklist
+Free vs paid cosmetics; ban-list pass; Do-now: 6 themes + 2 campaigns + 4 voices.
+
+================================================================================
+PART II — WOF (quarantined later project)
+================================================================================
+
+CONTEXT
+WOF is a future authored-world release: original races/places, quest lines, optional later multiplayer (dungeons/raids) — NOT live SynapticGM.
+Generate multiple WORLD VARIANTS that can share a common WOF engine spine but have different fantasy “modes.”
+
+II-A — Common WOF engine spine (all variants)
+Define shared systems every WOF world needs:
+- WorldModel fields (regions, routes, hubs, factions, clocks)
+- Character progression skeleton (levels/ranks — original naming)
+- Inventory / collection bag rules
+- Combat encounter loop (ledger-first friendly)
+- Quest/journal authority
+- Travel / fog / map knowledge
+- Safety / Kid Mode hooks
+- Save schema version notes
+Do NOT invent SynapticGM live imports.
+
+II-B — World variants (generate ALL of these as distinct WOF settings)
+For EACH variant provide: id, title, one-line pitch, tone, hard laws, soft tone, 8–12 regions/places, 6 factions, 10 signature NPCs, starter arc (10 beats), endgame fantasy, Kid suitability, unique systems, content tables required.
+
+Variants required:
+1) Classic faction fantasy (Ash Compact vs Tide Covenant style politics — original)
+2) Monster-collecting wilderness (bonds/catch/raise/battle — ORIGINAL; NOT Pokémon)
+3) Dungeon-delver deep dark (floors, bosses, expedition returns)
+4) Coastal/salt trade intrigue (Saltkin / Brinewatch flavoured — original)
+5) Stone-and-stair mountain holds (Stonevein / Granite Stair flavoured — original)
+6) Lanternfolk night-road pilgrimage (light as resource — original)
+7) Hearthborn settlement-builder light (home/hearth defense — still adventure-first)
+8) Hybrid “Collector’s Compact” (monster bonds + faction war)
+
+II-C — Monster-collecting world — FULL DATA (mandatory depth)
+World name: original (e.g. not any franchise).
+Provide EVERYTHING needed to implement v1:
+
+1) Collection fantasy rules
+- How creatures are met, bound, refused, released (no “gotta catch” franchise phrasing)
+- Party limit, reserve/stable limit
+- Bond ranks / loyalty / fatigue
+- Wild vs bonded vs rival-bonded
+- Breeding? (default NO for v1 unless clean Kid-safe design — recommend NO)
+- Trading? (default NO for single-player v1)
+
+2) Type chart (original elements — 8 to 12 types max)
+- Name each type
+- Advantage / neutral / resist / immune matrix
+- Status effects list (burn, bind, fogblind, etc.) with durations
+
+3) Stat block schema
+For every creature:
+id, name, speciesFamily, stage (juvenile/adult/apex), types[1-2],
+stats: HP, ATK, DEF, SPD, FOC (or your 5–6 original stats),
+moves[4] with power/accuracy/type/effect,
+abilities[1-2], habitat, rarity (C/U/R/SR/UR),
+catch/bind difficulty, evolution path (if any — original terms),
+loot/materials on release/defeat (optional),
+Kid-safe flag, description ≤40 words
+
+4) FULL v1 bestiary — generate AT LEAST 120 creatures
+- Spread across all types and rarities
+- At least 20 evolution lines (2–3 stages) AND many single-stage creatures
+- Include: starters (3 lines), early route commons, mid bosses, regional legendaries (6), dungeon-only (15), water/coast set, mountain set, night/lantern set
+- NO franchise lookalike names or designs (“yellow mouse electric”, etc.)
+
+5) Moves library — AT LEAST 80 original moves
+id, name, type, category (strike/guard/support), power, accuracy, effects, learn levels guidance
+
+6) Wild encounter tables
+Per biome: 8 biomes × day/night tables with weights
+
+7) Trainer/rival NPC sets
+20 rival/collector NPCs with party themes and agenda seeds
+
+8) Progression economy
+How player power grows without breaking fairness; soft caps; pity for ultra-rares? (recommend NO hard pity that sells power)
+
+9) Multiplayer-ready notes (LATER only)
+What data is SP-safe now vs what would need quarantine for future MP — do not design full MP here.
+
+II-D — Other variants — content tables (lighter but complete enough to build)
+For variants 1 and 3–8: provide not full 120 bestiary, but:
+- 30 signature creatures OR enemies as appropriate
+- 20 materials/loot
+- 15 quest seeds
+- 10 dungeon/expedition seeds
+- faction clock examples (3)
+
+II-E — WOF theme/cosmetic skins (12) — separate from SynapticGM shop
+Original world skins for WOF UI; still cosmetic-only; Kid-safe flags.
+
+II-F — WOF implementation checklist
+- File/folder suggestions under wof/ only (never src/ live)
+- Data formats (JSON/TS interfaces)
+- Ship order: spine → monster-collecting v1 tables → one classic faction world → others
+- Ban-list pass summary
+
+================================================================================
+QUALITY / OUTPUT RULES
+================================================================================
+- Dense tables. Implementable IDs.
+- Every player-facing string must pass the IP fence.
+- If length-limited: finish SynapticGM I-A..I-C and WOF II-A..II-C (full 120 bestiary + moves) first; continue remaining as Part 2 without repeating.
+- No preamble. Start with PART I-A.

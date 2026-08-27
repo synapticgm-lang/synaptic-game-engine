@@ -1,0 +1,2062 @@
+packFormatVersion: 1
+fileId: WOF_Interactables_Buildings_Housing
+worldScope: shared_catalog_with_world_renames
+ipFence: Original WOF data only; no licensed names, meshes, production code, or live
+  SynapticGM integration.
+engineLocks:
+  hubStoryBeatTurns: 1
+  chatBrowseMailIdleTurns: 0
+  midCombatFill: false
+  housingGuests: friends-only
+  guestChestLoot: false
+  twoWallets:
+  - gold
+  - cosmetic_tokens
+  housingCombatPower: false
+  llmRole: narrate committed state only
+interactableVerbs:
+- id: verb_open
+  verb: open
+  requires: []
+  grants:
+  - interaction_log
+  turnCost: 0
+  llmMayNarrate: true
+- id: verb_close
+  verb: close
+  requires: []
+  grants:
+  - interaction_log
+  turnCost: 0
+  llmMayNarrate: true
+- id: verb_knock
+  verb: knock
+  requires: []
+  grants:
+  - interaction_log
+  turnCost: 0
+  llmMayNarrate: true
+- id: verb_rest
+  verb: rest
+  requires: []
+  grants:
+  - hp_sta_restored
+  turnCost: 1
+  llmMayNarrate: true
+- id: verb_repair
+  verb: repair
+  requires: []
+  grants:
+  - state_update
+  turnCost: 1
+  llmMayNarrate: false
+- id: verb_tend
+  verb: tend
+  requires: []
+  grants:
+  - state_update
+  turnCost: 0
+  llmMayNarrate: true
+- id: verb_mill
+  verb: mill
+  requires: []
+  grants:
+  - state_update
+  turnCost: 1
+  llmMayNarrate: true
+- id: verb_light_wick
+  verb: light_wick
+  requires: []
+  grants:
+  - state_update
+  turnCost: 0
+  llmMayNarrate: true
+- id: verb_dock_tie
+  verb: dock_tie
+  requires: []
+  grants:
+  - state_update
+  turnCost: 0
+  llmMayNarrate: true
+- id: verb_pump
+  verb: pump
+  requires: []
+  grants:
+  - state_update
+  turnCost: 0
+  llmMayNarrate: true
+- id: verb_forge
+  verb: forge
+  requires: []
+  grants:
+  - state_update
+  turnCost: 1
+  llmMayNarrate: true
+- id: verb_stall_open
+  verb: stall_open
+  requires: []
+  grants:
+  - state_update
+  turnCost: 0
+  llmMayNarrate: true
+- id: verb_list_ah
+  verb: list_ah
+  requires:
+  - authenticated_character
+  grants:
+  - ledger_transaction
+  turnCost: 0
+  llmMayNarrate: false
+- id: verb_mail_read
+  verb: mail_read
+  requires: []
+  grants:
+  - state_update
+  turnCost: 0
+  llmMayNarrate: true
+- id: verb_bind_inn
+  verb: bind_inn
+  requires: []
+  grants:
+  - hp_sta_restored
+  turnCost: 1
+  llmMayNarrate: true
+- id: verb_gather
+  verb: gather
+  requires: []
+  grants:
+  - state_update
+  turnCost: 1
+  llmMayNarrate: true
+- id: verb_craft
+  verb: craft
+  requires: []
+  grants:
+  - state_update
+  turnCost: 1
+  llmMayNarrate: true
+- id: verb_cook
+  verb: cook
+  requires: []
+  grants:
+  - state_update
+  turnCost: 1
+  llmMayNarrate: true
+- id: verb_plant
+  verb: plant
+  requires: []
+  grants:
+  - state_update
+  turnCost: 1
+  llmMayNarrate: true
+- id: verb_harvest
+  verb: harvest
+  requires: []
+  grants:
+  - state_update
+  turnCost: 1
+  llmMayNarrate: true
+- id: verb_feed
+  verb: feed
+  requires: []
+  grants:
+  - state_update
+  turnCost: 0
+  llmMayNarrate: true
+- id: verb_brush
+  verb: brush
+  requires: []
+  grants:
+  - state_update
+  turnCost: 0
+  llmMayNarrate: true
+- id: verb_berth
+  verb: berth
+  requires: []
+  grants:
+  - state_update
+  turnCost: 0
+  llmMayNarrate: true
+- id: verb_hangar
+  verb: hangar
+  requires: []
+  grants:
+  - state_update
+  turnCost: 0
+  llmMayNarrate: true
+- id: verb_exam_desk
+  verb: exam_desk
+  requires: []
+  grants:
+  - state_update
+  turnCost: 0
+  llmMayNarrate: true
+- id: verb_rehearsal
+  verb: rehearsal
+  requires: []
+  grants:
+  - state_update
+  turnCost: 1
+  llmMayNarrate: true
+- id: verb_scoreboard
+  verb: scoreboard
+  requires: []
+  grants:
+  - interaction_log
+  turnCost: 0
+  llmMayNarrate: true
+- id: verb_inspect
+  verb: inspect
+  requires: []
+  grants:
+  - interaction_log
+  turnCost: 0
+  llmMayNarrate: true
+- id: verb_read_note
+  verb: read_note
+  requires: []
+  grants:
+  - interaction_log
+  turnCost: 0
+  llmMayNarrate: true
+- id: verb_unlock
+  verb: unlock
+  requires: []
+  grants:
+  - state_update
+  turnCost: 0
+  llmMayNarrate: true
+- id: verb_bar
+  verb: bar
+  requires: []
+  grants:
+  - state_update
+  turnCost: 0
+  llmMayNarrate: true
+- id: verb_unbar
+  verb: unbar
+  requires: []
+  grants:
+  - state_update
+  turnCost: 0
+  llmMayNarrate: true
+- id: verb_pull_lever
+  verb: pull_lever
+  requires: []
+  grants:
+  - state_update
+  turnCost: 0
+  llmMayNarrate: true
+- id: verb_ring_bell
+  verb: ring_bell
+  requires: []
+  grants:
+  - state_update
+  turnCost: 0
+  llmMayNarrate: true
+- id: verb_queue
+  verb: queue
+  requires: []
+  grants:
+  - state_update
+  turnCost: 0
+  llmMayNarrate: true
+- id: verb_sit
+  verb: sit
+  requires: []
+  grants:
+  - interaction_log
+  turnCost: 0
+  llmMayNarrate: true
+- id: verb_emote
+  verb: emote
+  requires: []
+  grants:
+  - interaction_log
+  turnCost: 0
+  llmMayNarrate: true
+- id: verb_give_quest_item
+  verb: give_quest_item
+  requires: []
+  grants:
+  - state_update
+  turnCost: 0
+  llmMayNarrate: true
+- id: verb_turnin
+  verb: turnin
+  requires: []
+  grants:
+  - state_update
+  turnCost: 0
+  llmMayNarrate: true
+- id: verb_buy
+  verb: buy
+  requires:
+  - authenticated_character
+  grants:
+  - ledger_transaction
+  turnCost: 0
+  llmMayNarrate: false
+- id: verb_sell
+  verb: sell
+  requires:
+  - authenticated_character
+  grants:
+  - ledger_transaction
+  turnCost: 0
+  llmMayNarrate: false
+- id: verb_bank
+  verb: bank
+  requires: []
+  grants:
+  - personal_storage_update
+  turnCost: 0
+  llmMayNarrate: false
+- id: verb_stash
+  verb: stash
+  requires: []
+  grants:
+  - personal_storage_update
+  turnCost: 0
+  llmMayNarrate: false
+- id: verb_upgrade_cosmetic
+  verb: upgrade_cosmetic
+  requires: []
+  grants:
+  - cosmetic_state_update
+  turnCost: 0
+  llmMayNarrate: true
+- id: verb_dye
+  verb: dye
+  requires: []
+  grants:
+  - cosmetic_state_update
+  turnCost: 0
+  llmMayNarrate: true
+- id: verb_display_trophy
+  verb: display_trophy
+  requires: []
+  grants:
+  - cosmetic_state_update
+  turnCost: 0
+  llmMayNarrate: true
+- id: verb_claim_mail
+  verb: claim_mail
+  requires: []
+  grants:
+  - state_update
+  turnCost: 0
+  llmMayNarrate: true
+- id: verb_send_mail
+  verb: send_mail
+  requires:
+  - authenticated_character
+  grants:
+  - ledger_transaction
+  turnCost: 0
+  llmMayNarrate: false
+- id: verb_invite_guest
+  verb: invite_guest
+  requires: []
+  grants:
+  - state_update
+  turnCost: 0
+  llmMayNarrate: true
+- id: verb_kick_guest
+  verb: kick_guest
+  requires: []
+  grants:
+  - state_update
+  turnCost: 0
+  llmMayNarrate: true
+- id: verb_change_decor
+  verb: change_decor
+  requires: []
+  grants:
+  - cosmetic_state_update
+  turnCost: 0
+  llmMayNarrate: true
+- id: verb_place_furniture
+  verb: place_furniture
+  requires: []
+  grants:
+  - cosmetic_state_update
+  turnCost: 0
+  llmMayNarrate: true
+- id: verb_remove_furniture
+  verb: remove_furniture
+  requires: []
+  grants:
+  - cosmetic_state_update
+  turnCost: 0
+  llmMayNarrate: true
+- id: verb_rotate_furniture
+  verb: rotate_furniture
+  requires: []
+  grants:
+  - cosmetic_state_update
+  turnCost: 0
+  llmMayNarrate: true
+- id: verb_rename_deed
+  verb: rename_deed
+  requires: []
+  grants:
+  - cosmetic_state_update
+  turnCost: 0
+  llmMayNarrate: true
+- id: verb_pay_upkeep
+  verb: pay_upkeep
+  requires:
+  - authenticated_character
+  grants:
+  - ledger_transaction
+  turnCost: 0
+  llmMayNarrate: false
+- id: verb_view_deed
+  verb: view_deed
+  requires: []
+  grants:
+  - interaction_log
+  turnCost: 0
+  llmMayNarrate: true
+- id: verb_enter_instance
+  verb: enter_instance
+  requires: []
+  grants:
+  - state_update
+  turnCost: 0
+  llmMayNarrate: true
+- id: verb_leave_instance
+  verb: leave_instance
+  requires: []
+  grants:
+  - state_update
+  turnCost: 0
+  llmMayNarrate: true
+- id: verb_set_checkpoint
+  verb: set_checkpoint
+  requires: []
+  grants:
+  - state_update
+  turnCost: 0
+  llmMayNarrate: true
+- id: verb_use_notice_board
+  verb: use_notice_board
+  requires: []
+  grants:
+  - interaction_log
+  turnCost: 0
+  llmMayNarrate: true
+- id: verb_accept_contract
+  verb: accept_contract
+  requires: []
+  grants:
+  - state_update
+  turnCost: 0
+  llmMayNarrate: true
+- id: verb_complete_contract
+  verb: complete_contract
+  requires: []
+  grants:
+  - state_update
+  turnCost: 0
+  llmMayNarrate: true
+- id: verb_refill_lamp
+  verb: refill_lamp
+  requires: []
+  grants:
+  - state_update
+  turnCost: 0
+  llmMayNarrate: true
+- id: verb_sort_stock
+  verb: sort_stock
+  requires: []
+  grants:
+  - state_update
+  turnCost: 0
+  llmMayNarrate: true
+- id: verb_weigh_cargo
+  verb: weigh_cargo
+  requires: []
+  grants:
+  - state_update
+  turnCost: 0
+  llmMayNarrate: true
+- id: verb_tie_rope
+  verb: tie_rope
+  requires: []
+  grants:
+  - state_update
+  turnCost: 0
+  llmMayNarrate: true
+- id: verb_lower_ramp
+  verb: lower_ramp
+  requires: []
+  grants:
+  - state_update
+  turnCost: 0
+  llmMayNarrate: true
+- id: verb_raise_ramp
+  verb: raise_ramp
+  requires: []
+  grants:
+  - state_update
+  turnCost: 0
+  llmMayNarrate: true
+- id: verb_tune_frame
+  verb: tune_frame
+  requires: []
+  grants:
+  - state_update
+  turnCost: 1
+  llmMayNarrate: true
+- id: verb_check_heat
+  verb: check_heat
+  requires: []
+  grants:
+  - state_update
+  turnCost: 0
+  llmMayNarrate: true
+- id: verb_pin_score
+  verb: pin_score
+  requires: []
+  grants:
+  - state_update
+  turnCost: 0
+  llmMayNarrate: true
+- id: verb_practice
+  verb: practice
+  requires: []
+  grants:
+  - state_update
+  turnCost: 1
+  llmMayNarrate: true
+- id: verb_study
+  verb: study
+  requires: []
+  grants:
+  - state_update
+  turnCost: 1
+  llmMayNarrate: true
+- id: verb_change_clothes
+  verb: change_clothes
+  requires: []
+  grants:
+  - state_update
+  turnCost: 0
+  llmMayNarrate: true
+- id: verb_store_prop
+  verb: store_prop
+  requires: []
+  grants:
+  - state_update
+  turnCost: 0
+  llmMayNarrate: true
+- id: verb_retrieve_prop
+  verb: retrieve_prop
+  requires: []
+  grants:
+  - state_update
+  turnCost: 0
+  llmMayNarrate: true
+- id: verb_water_bed
+  verb: water_bed
+  requires: []
+  grants:
+  - state_update
+  turnCost: 1
+  llmMayNarrate: true
+- id: verb_weed_bed
+  verb: weed_bed
+  requires: []
+  grants:
+  - state_update
+  turnCost: 1
+  llmMayNarrate: true
+- id: verb_feed_ranch
+  verb: feed_ranch
+  requires: []
+  grants:
+  - state_update
+  turnCost: 1
+  llmMayNarrate: true
+- id: verb_clean_stall
+  verb: clean_stall
+  requires: []
+  grants:
+  - state_update
+  turnCost: 1
+  llmMayNarrate: true
+- id: verb_moor_ship
+  verb: moor_ship
+  requires: []
+  grants:
+  - state_update
+  turnCost: 0
+  llmMayNarrate: true
+- id: verb_launch_ship
+  verb: launch_ship
+  requires: []
+  grants:
+  - state_update
+  turnCost: 0
+  llmMayNarrate: true
+- id: verb_check_in
+  verb: check_in
+  requires: []
+  grants:
+  - state_update
+  turnCost: 1
+  llmMayNarrate: true
+- id: verb_check_out
+  verb: check_out
+  requires: []
+  grants:
+  - state_update
+  turnCost: 0
+  llmMayNarrate: true
+- id: verb_read_ledger
+  verb: read_ledger
+  requires: []
+  grants:
+  - state_update
+  turnCost: 0
+  llmMayNarrate: true
+- id: verb_deposit_gold
+  verb: deposit_gold
+  requires:
+  - authenticated_character
+  grants:
+  - personal_storage_update
+  turnCost: 0
+  llmMayNarrate: false
+- id: verb_withdraw_gold
+  verb: withdraw_gold
+  requires:
+  - authenticated_character
+  grants:
+  - personal_storage_update
+  turnCost: 0
+  llmMayNarrate: false
+- id: verb_repair_furniture
+  verb: repair_furniture
+  requires: []
+  grants:
+  - state_update
+  turnCost: 0
+  llmMayNarrate: true
+- id: verb_salvage_furniture
+  verb: salvage_furniture
+  requires: []
+  grants:
+  - state_update
+  turnCost: 0
+  llmMayNarrate: true
+- id: verb_preview_dye
+  verb: preview_dye
+  requires: []
+  grants:
+  - cosmetic_state_update
+  turnCost: 0
+  llmMayNarrate: true
+- id: verb_set_display
+  verb: set_display
+  requires: []
+  grants:
+  - cosmetic_state_update
+  turnCost: 0
+  llmMayNarrate: true
+propTemplates:
+- id: prop_door
+  placeKinds:
+  - street
+  - interior
+  mapScale: small
+  indoor: false
+- id: prop_personal_chest
+  placeKinds:
+  - street
+  - interior
+  mapScale: small
+  indoor: true
+- id: prop_mill_wheel
+  placeKinds:
+  - street
+  - interior
+  mapScale: small
+  indoor: true
+- id: prop_wick_post
+  placeKinds:
+  - street
+  - interior
+  mapScale: small
+  indoor: false
+- id: prop_dock_cleat
+  placeKinds:
+  - street
+  - interior
+  mapScale: small
+  indoor: false
+- id: prop_anvil
+  placeKinds:
+  - street
+  - interior
+  mapScale: small
+  indoor: true
+- id: prop_workbench
+  placeKinds:
+  - street
+  - interior
+  mapScale: small
+  indoor: true
+- id: prop_inn_bed
+  placeKinds:
+  - street
+  - interior
+  mapScale: small
+  indoor: true
+- id: prop_stove
+  placeKinds:
+  - street
+  - interior
+  mapScale: small
+  indoor: true
+- id: prop_window
+  placeKinds:
+  - street
+  - interior
+  mapScale: small
+  indoor: true
+- id: prop_fence
+  placeKinds:
+  - street
+  - interior
+  mapScale: small
+  indoor: false
+- id: prop_stall_counter
+  placeKinds:
+  - street
+  - interior
+  mapScale: small
+  indoor: true
+- id: prop_auction_board
+  placeKinds:
+  - street
+  - interior
+  mapScale: small
+  indoor: true
+- id: prop_notice_board
+  placeKinds:
+  - street
+  - interior
+  mapScale: small
+  indoor: true
+- id: prop_well
+  placeKinds:
+  - street
+  - interior
+  mapScale: small
+  indoor: false
+- id: prop_pump
+  placeKinds:
+  - street
+  - interior
+  mapScale: small
+  indoor: false
+- id: prop_ferry_bell
+  placeKinds:
+  - street
+  - interior
+  mapScale: small
+  indoor: false
+- id: prop_coach_post
+  placeKinds:
+  - street
+  - interior
+  mapScale: small
+  indoor: false
+- id: prop_lamp
+  placeKinds:
+  - street
+  - interior
+  mapScale: small
+  indoor: false
+- id: prop_torch_sconce
+  placeKinds:
+  - street
+  - interior
+  mapScale: small
+  indoor: false
+- id: prop_bookshelf
+  placeKinds:
+  - street
+  - interior
+  mapScale: small
+  indoor: true
+- id: prop_lore_plaque
+  placeKinds:
+  - street
+  - interior
+  mapScale: small
+  indoor: true
+- id: prop_locked_gate
+  placeKinds:
+  - street
+  - interior
+  mapScale: small
+  indoor: false
+- id: prop_trap_plate
+  placeKinds:
+  - street
+  - interior
+  mapScale: small
+  indoor: false
+- id: prop_secret_hatch
+  placeKinds:
+  - street
+  - interior
+  mapScale: small
+  indoor: true
+- id: prop_ranch_stall
+  placeKinds:
+  - street
+  - interior
+  mapScale: small
+  indoor: false
+- id: prop_garden_bed
+  placeKinds:
+  - street
+  - interior
+  mapScale: small
+  indoor: false
+- id: prop_ship_wheel
+  placeKinds:
+  - street
+  - interior
+  mapScale: small
+  indoor: true
+- id: prop_frame_cradle
+  placeKinds:
+  - street
+  - interior
+  mapScale: small
+  indoor: true
+- id: prop_exam_hall_desk
+  placeKinds:
+  - street
+  - interior
+  mapScale: small
+  indoor: true
+- id: prop_stage_mark
+  placeKinds:
+  - street
+  - interior
+  mapScale: small
+  indoor: false
+- id: prop_pitch_line
+  placeKinds:
+  - street
+  - interior
+  mapScale: small
+  indoor: false
+- id: prop_card_table
+  placeKinds:
+  - street
+  - interior
+  mapScale: small
+  indoor: true
+- id: prop_bench
+  placeKinds:
+  - street
+  - interior
+  mapScale: small
+  indoor: true
+- id: prop_grain_sack
+  placeKinds:
+  - street
+  - interior
+  mapScale: small
+  indoor: true
+- id: prop_drying_rack
+  placeKinds:
+  - street
+  - interior
+  mapScale: small
+  indoor: true
+- id: prop_rope_spool
+  placeKinds:
+  - street
+  - interior
+  mapScale: small
+  indoor: true
+- id: prop_tide_stake
+  placeKinds:
+  - street
+  - interior
+  mapScale: small
+  indoor: false
+- id: prop_ore_bin
+  placeKinds:
+  - street
+  - interior
+  mapScale: small
+  indoor: true
+- id: prop_kiln
+  placeKinds:
+  - street
+  - interior
+  mapScale: small
+  indoor: true
+- id: prop_ledger_desk
+  placeKinds:
+  - street
+  - interior
+  mapScale: small
+  indoor: true
+- id: prop_promise_board
+  placeKinds:
+  - street
+  - interior
+  mapScale: small
+  indoor: false
+- id: prop_mail_slot
+  placeKinds:
+  - street
+  - interior
+  mapScale: small
+  indoor: true
+- id: prop_repair_rack
+  placeKinds:
+  - street
+  - interior
+  mapScale: small
+  indoor: true
+- id: prop_deed_plaque
+  placeKinds:
+  - street
+  - interior
+  mapScale: small
+  indoor: true
+- id: prop_wardrobe
+  placeKinds:
+  - street
+  - interior
+  mapScale: small
+  indoor: true
+- id: prop_display_case
+  placeKinds:
+  - street
+  - interior
+  mapScale: small
+  indoor: true
+- id: prop_wall_hook
+  placeKinds:
+  - street
+  - interior
+  mapScale: small
+  indoor: true
+- id: prop_rug
+  placeKinds:
+  - street
+  - interior
+  mapScale: small
+  indoor: true
+- id: prop_curtain
+  placeKinds:
+  - street
+  - interior
+  mapScale: small
+  indoor: true
+- id: prop_table
+  placeKinds:
+  - street
+  - interior
+  mapScale: small
+  indoor: true
+- id: prop_chair
+  placeKinds:
+  - street
+  - interior
+  mapScale: small
+  indoor: true
+- id: prop_lantern_hook
+  placeKinds:
+  - street
+  - interior
+  mapScale: small
+  indoor: true
+- id: prop_water_barrel
+  placeKinds:
+  - street
+  - interior
+  mapScale: small
+  indoor: true
+- id: prop_feed_trough
+  placeKinds:
+  - street
+  - interior
+  mapScale: small
+  indoor: true
+- id: prop_brush_rack
+  placeKinds:
+  - street
+  - interior
+  mapScale: small
+  indoor: true
+- id: prop_saddle_rack
+  placeKinds:
+  - street
+  - interior
+  mapScale: small
+  indoor: true
+- id: prop_berth_mooring
+  placeKinds:
+  - street
+  - interior
+  mapScale: small
+  indoor: true
+- id: prop_cargo_crate
+  placeKinds:
+  - street
+  - interior
+  mapScale: small
+  indoor: true
+- id: prop_hull_lamp
+  placeKinds:
+  - street
+  - interior
+  mapScale: small
+  indoor: true
+- id: prop_heat_gauge
+  placeKinds:
+  - street
+  - interior
+  mapScale: small
+  indoor: true
+- id: prop_score_pylon
+  placeKinds:
+  - street
+  - interior
+  mapScale: small
+  indoor: true
+- id: prop_practice_dummy
+  placeKinds:
+  - street
+  - interior
+  mapScale: small
+  indoor: true
+- id: prop_rehearsal_mirror
+  placeKinds:
+  - street
+  - interior
+  mapScale: small
+  indoor: true
+- id: prop_costume_rack
+  placeKinds:
+  - street
+  - interior
+  mapScale: small
+  indoor: true
+- id: prop_locker
+  placeKinds:
+  - street
+  - interior
+  mapScale: small
+  indoor: true
+- id: prop_chalkboard
+  placeKinds:
+  - street
+  - interior
+  mapScale: small
+  indoor: true
+- id: prop_study_lamp
+  placeKinds:
+  - street
+  - interior
+  mapScale: small
+  indoor: true
+- id: prop_quiet_nook
+  placeKinds:
+  - street
+  - interior
+  mapScale: small
+  indoor: true
+- id: prop_chapel_bench
+  placeKinds:
+  - street
+  - interior
+  mapScale: small
+  indoor: true
+- id: prop_bell_rope
+  placeKinds:
+  - street
+  - interior
+  mapScale: small
+  indoor: false
+buildingTypes:
+  inn:
+    id: interior_inn
+    buildingType: inn
+    rooms:
+    - id: inn_entry
+      name: Entry
+      exits:
+      - inn_work
+      interactables:
+      - prop_door
+      - prop_notice_board
+    - id: inn_work
+      name: Work Room
+      exits:
+      - inn_entry
+      - inn_back
+      interactables:
+      - prop_workbench
+      - prop_ledger_desk
+    - id: inn_back
+      name: Back Room
+      exits:
+      - inn_work
+      - inn_quiet
+      interactables:
+      - prop_personal_chest
+      - prop_window
+    - id: inn_quiet
+      name: Quiet Room
+      exits:
+      - inn_back
+      interactables:
+      - prop_bench
+      - prop_lamp
+    outdoor: false
+  house:
+    id: interior_house
+    buildingType: house
+    rooms:
+    - id: house_entry
+      name: Entry
+      exits:
+      - house_work
+      interactables:
+      - prop_door
+      - prop_notice_board
+    - id: house_work
+      name: Work Room
+      exits:
+      - house_entry
+      - house_back
+      interactables:
+      - prop_workbench
+      - prop_ledger_desk
+    - id: house_back
+      name: Back Room
+      exits:
+      - house_work
+      - house_quiet
+      interactables:
+      - prop_personal_chest
+      - prop_window
+    - id: house_quiet
+      name: Quiet Room
+      exits:
+      - house_back
+      interactables:
+      - prop_bench
+      - prop_lamp
+    outdoor: false
+  shop:
+    id: interior_shop
+    buildingType: shop
+    rooms:
+    - id: shop_entry
+      name: Entry
+      exits:
+      - shop_work
+      interactables:
+      - prop_door
+      - prop_notice_board
+    - id: shop_work
+      name: Work Room
+      exits:
+      - shop_entry
+      - shop_back
+      interactables:
+      - prop_workbench
+      - prop_ledger_desk
+    - id: shop_back
+      name: Back Room
+      exits:
+      - shop_work
+      - shop_quiet
+      interactables:
+      - prop_personal_chest
+      - prop_window
+    - id: shop_quiet
+      name: Quiet Room
+      exits:
+      - shop_back
+      interactables:
+      - prop_bench
+      - prop_lamp
+    outdoor: false
+  mill:
+    id: interior_mill
+    buildingType: mill
+    rooms:
+    - id: mill_entry
+      name: Entry
+      exits:
+      - mill_work
+      interactables:
+      - prop_door
+      - prop_notice_board
+    - id: mill_work
+      name: Work Room
+      exits:
+      - mill_entry
+      - mill_back
+      interactables:
+      - prop_workbench
+      - prop_ledger_desk
+    - id: mill_back
+      name: Back Room
+      exits:
+      - mill_work
+      - mill_quiet
+      interactables:
+      - prop_personal_chest
+      - prop_window
+    - id: mill_quiet
+      name: Quiet Room
+      exits:
+      - mill_back
+      interactables:
+      - prop_bench
+      - prop_lamp
+    outdoor: false
+  hall:
+    id: interior_hall
+    buildingType: hall
+    rooms:
+    - id: hall_entry
+      name: Entry
+      exits:
+      - hall_work
+      interactables:
+      - prop_door
+      - prop_notice_board
+    - id: hall_work
+      name: Work Room
+      exits:
+      - hall_entry
+      - hall_back
+      interactables:
+      - prop_workbench
+      - prop_ledger_desk
+    - id: hall_back
+      name: Back Room
+      exits:
+      - hall_work
+      - hall_quiet
+      interactables:
+      - prop_personal_chest
+      - prop_window
+    - id: hall_quiet
+      name: Quiet Room
+      exits:
+      - hall_back
+      interactables:
+      - prop_bench
+      - prop_lamp
+    outdoor: false
+  dock:
+    id: interior_dock
+    buildingType: dock
+    rooms:
+    - id: dock_entry
+      name: Entry
+      exits:
+      - dock_work
+      interactables:
+      - prop_door
+      - prop_notice_board
+    - id: dock_work
+      name: Work Room
+      exits:
+      - dock_entry
+      - dock_back
+      interactables:
+      - prop_workbench
+      - prop_ledger_desk
+    - id: dock_back
+      name: Back Room
+      exits:
+      - dock_work
+      - dock_quiet
+      interactables:
+      - prop_personal_chest
+      - prop_window
+    - id: dock_quiet
+      name: Quiet Room
+      exits:
+      - dock_back
+      interactables:
+      - prop_bench
+      - prop_lamp
+    outdoor: false
+  smith:
+    id: interior_smith
+    buildingType: smith
+    rooms:
+    - id: smith_entry
+      name: Entry
+      exits:
+      - smith_work
+      interactables:
+      - prop_door
+      - prop_notice_board
+    - id: smith_work
+      name: Work Room
+      exits:
+      - smith_entry
+      - smith_back
+      interactables:
+      - prop_workbench
+      - prop_ledger_desk
+    - id: smith_back
+      name: Back Room
+      exits:
+      - smith_work
+      - smith_quiet
+      interactables:
+      - prop_personal_chest
+      - prop_window
+    - id: smith_quiet
+      name: Quiet Room
+      exits:
+      - smith_back
+      interactables:
+      - prop_bench
+      - prop_lamp
+    outdoor: false
+  ranch:
+    id: interior_ranch
+    buildingType: ranch
+    rooms:
+    - id: ranch_entry
+      name: Entry
+      exits:
+      - ranch_work
+      interactables:
+      - prop_door
+      - prop_notice_board
+    - id: ranch_work
+      name: Work Room
+      exits:
+      - ranch_entry
+      - ranch_back
+      interactables:
+      - prop_workbench
+      - prop_ledger_desk
+    - id: ranch_back
+      name: Back Room
+      exits:
+      - ranch_work
+      - ranch_quiet
+      interactables:
+      - prop_personal_chest
+      - prop_window
+    - id: ranch_quiet
+      name: Quiet Room
+      exits:
+      - ranch_back
+      interactables:
+      - prop_bench
+      - prop_lamp
+    outdoor: false
+  berth:
+    id: interior_berth
+    buildingType: berth
+    rooms:
+    - id: berth_entry
+      name: Entry
+      exits:
+      - berth_work
+      interactables:
+      - prop_door
+      - prop_notice_board
+    - id: berth_work
+      name: Work Room
+      exits:
+      - berth_entry
+      - berth_back
+      interactables:
+      - prop_workbench
+      - prop_ledger_desk
+    - id: berth_back
+      name: Back Room
+      exits:
+      - berth_work
+      - berth_quiet
+      interactables:
+      - prop_personal_chest
+      - prop_window
+    - id: berth_quiet
+      name: Quiet Room
+      exits:
+      - berth_back
+      interactables:
+      - prop_bench
+      - prop_lamp
+    outdoor: false
+  hangar:
+    id: interior_hangar
+    buildingType: hangar
+    rooms:
+    - id: hangar_entry
+      name: Entry
+      exits:
+      - hangar_work
+      interactables:
+      - prop_door
+      - prop_notice_board
+    - id: hangar_work
+      name: Work Room
+      exits:
+      - hangar_entry
+      - hangar_back
+      interactables:
+      - prop_workbench
+      - prop_ledger_desk
+    - id: hangar_back
+      name: Back Room
+      exits:
+      - hangar_work
+      - hangar_quiet
+      interactables:
+      - prop_personal_chest
+      - prop_window
+    - id: hangar_quiet
+      name: Quiet Room
+      exits:
+      - hangar_back
+      interactables:
+      - prop_bench
+      - prop_lamp
+    outdoor: false
+  school_dorm:
+    id: interior_school_dorm
+    buildingType: school_dorm
+    rooms:
+    - id: school_dorm_entry
+      name: Entry
+      exits:
+      - school_dorm_work
+      interactables:
+      - prop_door
+      - prop_notice_board
+    - id: school_dorm_work
+      name: Work Room
+      exits:
+      - school_dorm_entry
+      - school_dorm_back
+      interactables:
+      - prop_workbench
+      - prop_ledger_desk
+    - id: school_dorm_back
+      name: Back Room
+      exits:
+      - school_dorm_work
+      - school_dorm_quiet
+      interactables:
+      - prop_personal_chest
+      - prop_window
+    - id: school_dorm_quiet
+      name: Quiet Room
+      exits:
+      - school_dorm_back
+      interactables:
+      - prop_bench
+      - prop_lamp
+    outdoor: false
+  club_room:
+    id: interior_club_room
+    buildingType: club_room
+    rooms:
+    - id: club_room_entry
+      name: Entry
+      exits:
+      - club_room_work
+      interactables:
+      - prop_door
+      - prop_notice_board
+    - id: club_room_work
+      name: Work Room
+      exits:
+      - club_room_entry
+      - club_room_back
+      interactables:
+      - prop_workbench
+      - prop_ledger_desk
+    - id: club_room_back
+      name: Back Room
+      exits:
+      - club_room_work
+      - club_room_quiet
+      interactables:
+      - prop_personal_chest
+      - prop_window
+    - id: club_room_quiet
+      name: Quiet Room
+      exits:
+      - club_room_back
+      interactables:
+      - prop_bench
+      - prop_lamp
+    outdoor: false
+  concert_hall:
+    id: interior_concert_hall
+    buildingType: concert_hall
+    rooms:
+    - id: concert_hall_entry
+      name: Entry
+      exits:
+      - concert_hall_work
+      interactables:
+      - prop_door
+      - prop_notice_board
+    - id: concert_hall_work
+      name: Work Room
+      exits:
+      - concert_hall_entry
+      - concert_hall_back
+      interactables:
+      - prop_workbench
+      - prop_ledger_desk
+    - id: concert_hall_back
+      name: Back Room
+      exits:
+      - concert_hall_work
+      - concert_hall_quiet
+      interactables:
+      - prop_personal_chest
+      - prop_window
+    - id: concert_hall_quiet
+      name: Quiet Room
+      exits:
+      - concert_hall_back
+      interactables:
+      - prop_bench
+      - prop_lamp
+    outdoor: false
+  pitch:
+    id: interior_pitch
+    buildingType: pitch
+    rooms:
+    - id: pitch_entry
+      name: Entry
+      exits:
+      - pitch_work
+      interactables:
+      - prop_door
+      - prop_notice_board
+    - id: pitch_work
+      name: Work Room
+      exits:
+      - pitch_entry
+      - pitch_back
+      interactables:
+      - prop_workbench
+      - prop_ledger_desk
+    - id: pitch_back
+      name: Back Room
+      exits:
+      - pitch_work
+      - pitch_quiet
+      interactables:
+      - prop_personal_chest
+      - prop_window
+    - id: pitch_quiet
+      name: Quiet Room
+      exits:
+      - pitch_back
+      interactables:
+      - prop_bench
+      - prop_lamp
+    outdoor: false
+  court:
+    id: interior_court
+    buildingType: court
+    rooms:
+    - id: court_entry
+      name: Entry
+      exits:
+      - court_work
+      interactables:
+      - prop_door
+      - prop_notice_board
+    - id: court_work
+      name: Work Room
+      exits:
+      - court_entry
+      - court_back
+      interactables:
+      - prop_workbench
+      - prop_ledger_desk
+    - id: court_back
+      name: Back Room
+      exits:
+      - court_work
+      - court_quiet
+      interactables:
+      - prop_personal_chest
+      - prop_window
+    - id: court_quiet
+      name: Quiet Room
+      exits:
+      - court_back
+      interactables:
+      - prop_bench
+      - prop_lamp
+    outdoor: false
+  chapel:
+    id: interior_chapel
+    buildingType: chapel
+    rooms:
+    - id: chapel_entry
+      name: Entry
+      exits:
+      - chapel_work
+      interactables:
+      - prop_door
+      - prop_notice_board
+    - id: chapel_work
+      name: Work Room
+      exits:
+      - chapel_entry
+      - chapel_back
+      interactables:
+      - prop_workbench
+      - prop_ledger_desk
+    - id: chapel_back
+      name: Back Room
+      exits:
+      - chapel_work
+      - chapel_quiet
+      interactables:
+      - prop_personal_chest
+      - prop_window
+    - id: chapel_quiet
+      name: Quiet Room
+      exits:
+      - chapel_back
+      interactables:
+      - prop_bench
+      - prop_lamp
+    outdoor: false
+  bank:
+    id: interior_bank
+    buildingType: bank
+    rooms:
+    - id: bank_entry
+      name: Entry
+      exits:
+      - bank_work
+      interactables:
+      - prop_door
+      - prop_notice_board
+    - id: bank_work
+      name: Work Room
+      exits:
+      - bank_entry
+      - bank_back
+      interactables:
+      - prop_workbench
+      - prop_ledger_desk
+    - id: bank_back
+      name: Back Room
+      exits:
+      - bank_work
+      - bank_quiet
+      interactables:
+      - prop_personal_chest
+      - prop_window
+    - id: bank_quiet
+      name: Quiet Room
+      exits:
+      - bank_back
+      interactables:
+      - prop_bench
+      - prop_lamp
+    outdoor: false
+  ah_hall:
+    id: interior_ah_hall
+    buildingType: ah_hall
+    rooms:
+    - id: ah_hall_entry
+      name: Entry
+      exits:
+      - ah_hall_work
+      interactables:
+      - prop_door
+      - prop_notice_board
+    - id: ah_hall_work
+      name: Work Room
+      exits:
+      - ah_hall_entry
+      - ah_hall_back
+      interactables:
+      - prop_workbench
+      - prop_ledger_desk
+    - id: ah_hall_back
+      name: Back Room
+      exits:
+      - ah_hall_work
+      - ah_hall_quiet
+      interactables:
+      - prop_personal_chest
+      - prop_window
+    - id: ah_hall_quiet
+      name: Quiet Room
+      exits:
+      - ah_hall_back
+      interactables:
+      - prop_bench
+      - prop_lamp
+    outdoor: false
+  ferry:
+    id: interior_ferry
+    buildingType: ferry
+    rooms:
+    - id: ferry_entry
+      name: Entry
+      exits:
+      - ferry_work
+      interactables:
+      - prop_door
+      - prop_notice_board
+    - id: ferry_work
+      name: Work Room
+      exits:
+      - ferry_entry
+      - ferry_back
+      interactables:
+      - prop_workbench
+      - prop_ledger_desk
+    - id: ferry_back
+      name: Back Room
+      exits:
+      - ferry_work
+      - ferry_quiet
+      interactables:
+      - prop_personal_chest
+      - prop_window
+    - id: ferry_quiet
+      name: Quiet Room
+      exits:
+      - ferry_back
+      interactables:
+      - prop_bench
+      - prop_lamp
+    outdoor: false
+  coach:
+    id: interior_coach
+    buildingType: coach
+    rooms:
+    - id: coach_entry
+      name: Entry
+      exits:
+      - coach_work
+      interactables:
+      - prop_door
+      - prop_notice_board
+    - id: coach_work
+      name: Work Room
+      exits:
+      - coach_entry
+      - coach_back
+      interactables:
+      - prop_workbench
+      - prop_ledger_desk
+    - id: coach_back
+      name: Back Room
+      exits:
+      - coach_work
+      - coach_quiet
+      interactables:
+      - prop_personal_chest
+      - prop_window
+    - id: coach_quiet
+      name: Quiet Room
+      exits:
+      - coach_back
+      interactables:
+      - prop_bench
+      - prop_lamp
+    outdoor: false
+housing:
+  deedSchema:
+    id: deed_id
+    ownerCharacterId: character_id
+    worldId: world_id
+    hubPlaceId: place_id
+    plotKind: house|stall|inn
+    status: active|upkeep_lockout|seized
+    purchaseGold: integer >= 0
+    buildRecipeId: string|null
+    builtWeek: integer >= 0
+    lastPaidWeek: integer >= 0
+    lockoutUntilWeek: integer|null
+    guestCharacterIds: string[]
+    privateInstanceId: string
+    furnitureIds: string[]
+    cosmeticThemeId: string
+  rules:
+    guestAccess: friends-only
+    guestChestLoot: forbidden
+    ownerKick: allowed
+    instancePrivacy: private
+    clock: weekly_tick
+    unpaid: lockout for week 1; NPC seizure during week 3
+    llmAuthority: may narrate atmosphere only; CODE owns deed, rent, furniture, access
+      and inventory
+  hubScarcity:
+  - hubPlaceId: poi_millcross
+    publicName: Millcross
+    houses: 24
+    stalls: 8
+    inns: 2
+    upkeepGoldPerWeek: 35
+    purchaseGold: 900
+  - hubPlaceId: poi_wickhaven
+    publicName: Wickhaven
+    houses: 20
+    stalls: 6
+    inns: 2
+    upkeepGoldPerWeek: 40
+    purchaseGold: 1050
+  - hubPlaceId: poi_coil_pier
+    publicName: Coil Pier
+    houses: 18
+    stalls: 10
+    inns: 3
+    upkeepGoldPerWeek: 45
+    purchaseGold: 1200
+  - hubPlaceId: poi_anvil_gate
+    publicName: Anvil Gate
+    houses: 16
+    stalls: 6
+    inns: 2
+    upkeepGoldPerWeek: 50
+    purchaseGold: 1350
+  - hubPlaceId: poi_ash_seat
+    publicName: Ash Seat
+    houses: 12
+    stalls: 4
+    inns: 3
+    upkeepGoldPerWeek: 75
+    purchaseGold: 2200
+  - hubPlaceId: poi_tidehold
+    publicName: Tidehold
+    houses: 12
+    stalls: 5
+    inns: 3
+    upkeepGoldPerWeek: 80
+    purchaseGold: 2400
+  recipes:
+  - id: build_house_compact
+    kind: buy_or_build
+    materials:
+    - itemId: item_reed_bundle
+      qty: 30
+    - itemId: item_timber
+      qty: 20
+    - itemId: item_cool_rivet
+      qty: 8
+    clockWeeks: 2
+    goldFee: 300
+  - id: build_stall_compact
+    kind: buy_or_build
+    materials:
+    - itemId: item_timber
+      qty: 12
+    - itemId: item_canvas
+      qty: 6
+    clockWeeks: 1
+    goldFee: 150
+  - id: build_inn_compact
+    kind: buy_or_build
+    materials:
+    - itemId: item_timber
+      qty: 60
+    - itemId: item_reed_bundle
+      qty: 40
+    - itemId: item_slag_bloom
+      qty: 12
+    clockWeeks: 4
+    goldFee: 900
+  functionalFurniture:
+  - id: furniture_bed
+    verb: rest
+    turnCost: 1
+  - id: furniture_chest
+    verb: stash
+    turnCost: 0
+  - id: furniture_stove
+    verb: cook
+    turnCost: 1
+  - id: furniture_workbench
+    verb: craft
+    turnCost: 1
+  - id: furniture_ranch_stall
+    verb: feed_ranch
+    turnCost: 1
+  - id: furniture_ship_berth
+    verb: berth
+    turnCost: 1
+  - id: furniture_frame_cradle
+    verb: tune_frame
+    turnCost: 1
+  cosmeticFurnitureSets:
+  - id: furniture_set_reed_and_clay
+    items:
+    - furniture_reed_and_clay_01
+    - furniture_reed_and_clay_02
+    - furniture_reed_and_clay_03
+    - furniture_reed_and_clay_04
+    - furniture_reed_and_clay_05
+    - furniture_reed_and_clay_06
+    - furniture_reed_and_clay_07
+    - furniture_reed_and_clay_08
+    - furniture_reed_and_clay_09
+    - furniture_reed_and_clay_10
+    combatPower: 0
+    accountBound: true
+  - id: furniture_set_blue_wick
+    items:
+    - furniture_blue_wick_01
+    - furniture_blue_wick_02
+    - furniture_blue_wick_03
+    - furniture_blue_wick_04
+    - furniture_blue_wick_05
+    - furniture_blue_wick_06
+    - furniture_blue_wick_07
+    - furniture_blue_wick_08
+    - furniture_blue_wick_09
+    - furniture_blue_wick_10
+    combatPower: 0
+    accountBound: true
+  - id: furniture_set_salt_rope
+    items:
+    - furniture_salt_rope_01
+    - furniture_salt_rope_02
+    - furniture_salt_rope_03
+    - furniture_salt_rope_04
+    - furniture_salt_rope_05
+    - furniture_salt_rope_06
+    - furniture_salt_rope_07
+    - furniture_salt_rope_08
+    - furniture_salt_rope_09
+    - furniture_salt_rope_10
+    combatPower: 0
+    accountBound: true
+  - id: furniture_set_stone_joinery
+    items:
+    - furniture_stone_joinery_01
+    - furniture_stone_joinery_02
+    - furniture_stone_joinery_03
+    - furniture_stone_joinery_04
+    - furniture_stone_joinery_05
+    - furniture_stone_joinery_06
+    - furniture_stone_joinery_07
+    - furniture_stone_joinery_08
+    - furniture_stone_joinery_09
+    - furniture_stone_joinery_10
+    combatPower: 0
+    accountBound: true
+  - id: furniture_set_ash_seal
+    items:
+    - furniture_ash_seal_01
+    - furniture_ash_seal_02
+    - furniture_ash_seal_03
+    - furniture_ash_seal_04
+    - furniture_ash_seal_05
+    - furniture_ash_seal_06
+    - furniture_ash_seal_07
+    - furniture_ash_seal_08
+    - furniture_ash_seal_09
+    - furniture_ash_seal_10
+    combatPower: 0
+    accountBound: true
+  - id: furniture_set_tide_glass
+    items:
+    - furniture_tide_glass_01
+    - furniture_tide_glass_02
+    - furniture_tide_glass_03
+    - furniture_tide_glass_04
+    - furniture_tide_glass_05
+    - furniture_tide_glass_06
+    - furniture_tide_glass_07
+    - furniture_tide_glass_08
+    - furniture_tide_glass_09
+    - furniture_tide_glass_10
+    combatPower: 0
+    accountBound: true
+  - id: furniture_set_festival_bunting
+    items:
+    - furniture_festival_bunting_01
+    - furniture_festival_bunting_02
+    - furniture_festival_bunting_03
+    - furniture_festival_bunting_04
+    - furniture_festival_bunting_05
+    - furniture_festival_bunting_06
+    - furniture_festival_bunting_07
+    - furniture_festival_bunting_08
+    - furniture_festival_bunting_09
+    - furniture_festival_bunting_10
+    combatPower: 0
+    accountBound: true
+  - id: furniture_set_quiet_hearth
+    items:
+    - furniture_quiet_hearth_01
+    - furniture_quiet_hearth_02
+    - furniture_quiet_hearth_03
+    - furniture_quiet_hearth_04
+    - furniture_quiet_hearth_05
+    - furniture_quiet_hearth_06
+    - furniture_quiet_hearth_07
+    - furniture_quiet_hearth_08
+    - furniture_quiet_hearth_09
+    - furniture_quiet_hearth_10
+    combatPower: 0
+    accountBound: true
+perWorldRenameTable:
+- propId: prop_personal_chest
+  worldId: ash_compact
+  publicName: Household Chest
+- propId: prop_ranch_stall
+  worldId: bonded_menagerie
+  publicName: Companion Stall
+- propId: prop_ship_wheel
+  worldId: starwake
+  publicName: Ship Wheel
+- propId: prop_frame_cradle
+  worldId: lanceyard
+  publicName: Frame Cradle
+- propId: prop_inn_bed
+  worldId: hearth_season
+  publicName: Cottage Bed
+- propId: prop_costume_rack
+  worldId: stage_light
+  publicName: Dressing Rack
+- propId: prop_locker
+  worldId: pitch_league
+  publicName: Team Locker
+- propId: prop_quiet_nook
+  worldId: isekai_gate
+  publicName: Safe-Floor Apartment Nook
+integrity:
+  uniqueIdsWithinFile: true
+  noTeleport: Travel remains Place exits with CODE-owned gold and turn costs.
+  noPowerSale: Furniture and cosmetics grant no combat power.
+  personalStorage: Chests are owner-scoped and guests cannot loot them.

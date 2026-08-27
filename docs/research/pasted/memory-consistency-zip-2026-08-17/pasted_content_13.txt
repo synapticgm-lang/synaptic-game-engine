@@ -1,0 +1,129 @@
+ROLE
+You are a principal systems architect + living-world designer for SynapticGM, a ledger-first single-player AI game master (LitRPG / isekai / story RPG / PYOA / tabletop fantasy).
+
+GOAL
+Produce one massive “Whole Text World & Beyond-Rival Memory” brief that answers:
+1) Do we already have enough research to CODE a best-in-class smooth, fast, consistent SynapticGM — and what coding gaps remain?
+2) How do we maximize long-run memory/consistency BEYOND what AI RPG / chat-character rivals offer (without “more summary/RAG” as the main answer)?
+3) How do we support MASSIVE world-building (premade bibles + Simple/Expert custom) as a coherent text world?
+4) How do behind-the-scenes maths work so NPCs still level, villains still plot, factions still move, economies/threats advance WHILE the player is elsewhere — then surface honestly when the player returns?
+5) What is the full architecture for a “whole text world” that stays playable at turn 30 / 100 / 300 / 1000?
+
+NON-GOALS
+- Do NOT design WOF, multiplayer MMO, housing, auction house, shared live servers, or cross-player world state.
+- Do NOT reopen ads/Stripe/legal/comic strategy (already decided).
+- Do NOT invent a new chat product. Extend SynapticGM’s ledger-first design.
+- Do NOT put basic continuity behind a paywall.
+- Do NOT recommend dumping the full world into the prompt every turn.
+
+ALREADY DECIDED / ALREADY RESEARCHED (do not rewrite — reference only)
+Authority: player correction > pinned canon/opening invariant > accepted StateTx > SceneManifest > supporting evidence > draft invention.
+P0 continuity: SceneManifest, Entity+StateTx, IntentContract, IntroductionPermit, CampaignContract + divergence, claim gate, leak scanner, beatFingerprint, expected-revision, speculative retry, control accounts, Continuity Pager, provenance.
+Shipped/in code to extend: campaign bible, openingHooks, Simple/Expert custom, sceneFacts, campaignMemory, pins/consequences, ledger combat, quests/map/inventory, locality/perspective wardens, worldSim (exists — evaluate/extend), npcMemory, timeline, capacity, Memorable, Kill switches, cloud save.
+Research already done: Product OS manual, outsider memory, launch ops omnibus, remaining gameplay-feel systems, comic thin-wedge.
+If a topic is covered, say “already covered — coding task only” in one line and move on. Prefer NEW mechanisms for living-world + scale.
+
+PRODUCT FANTASY TO SUPPORT
+The player should feel they inhabit a whole text world: places keep existing, people have agendas, villains advance clocks, rivals train, towns change after absences, dungeons don’t freeze forever, custom lore becomes runnable law — while the game stays fast, cheap enough, and consistent.
+
+================================================================================
+REQUIRED OUTPUT STRUCTURE
+================================================================================
+
+PART 0 — Executive: are we research-complete to code?
+0.1 Verdict: Yes / Yes-with-gaps / No — for each pillar:
+- Turn smoothness & speed
+- Consistency/memory moat
+- Massive world-building authoring
+- Offscreen simulation (NPC level / villain plot)
+- Whole-text-world coherence at long run
+0.2 Coding backlog ranked Must / Should / Later that is NOT already in prior plans (only net-new or sharper)
+0.3 “Beyond rivals” one-pager: what SynapticGM can uniquely claim once built (demonstrable, not marketing fluff)
+0.4 Explicit do-not-build list for false living-world (fake omniscience, silent teleport NPCs, prompt-only time skip lies)
+
+PART 1 — Smooth, fast, consistent turn runtime (coding readiness)
+For each stage of the turn pipeline, list:
+- Already-researched fix
+- Remaining CODE gap
+- Performance budget (p50/p95 targets)
+- What to skip/cache/parallelize safely
+- Failure recovery that keeps the world consistent
+Include: cancel/timeout/refund, speculative retry, expected-revision races, context reservation under 8k/16k/32k, when NOT to call the writer.
+
+PART 2 — Memory moat beyond anyone else
+Assume SceneManifest/StateTx/etc. are known.
+Now specify the FULL long-horizon memory OS for a whole text world:
+2.1 Layer cake (working set / scene / region / campaign / legend) with hard caps
+2.2 What is truth vs evidence vs color at world scale
+2.3 Region/arc paging (enter/leave town, dungeon, continent)
+2.4 Legend/myth compression that never overwrites debts, injuries, vows, ownership
+2.5 Player-facing Simple “Here/Threads/Why” vs Expert inspector at world scale
+2.6 Evaluation: 100/300/1000-turn world continuity suite (oracles, not vibes)
+2.7 Comparison table: why this beats AID/NovelAI/ST/character-chat memory EVEN IF they get bigger context windows
+
+PART 3 — Massive world-building (authored + custom)
+3.1 World compiler: premise/lore/NPC/faction/place/quest/opening → typed WorldModel
+3.2 Scale ladders: room → building → street → district → city → region → realm (what is simulated vs sketched)
+3.3 Empty-space / permission policy (what may be invented at each scale)
+3.4 Expert Custom preflight for “world won’t contradict itself”
+3.5 Premade bible packs: minimum viable “whole world” kit vs thin adventure kit
+3.6 Import/export of player worlds (safe schema; no executable prompt injection)
+3.7 Anti-patterns: encyclopedia dump, 200 named NPCs with no clocks, lore without places
+
+PART 4 — Behind-the-scenes maths: living world simulation
+Design a deterministic (seeded) offscreen simulator the writer does NOT free-invent.
+Must cover:
+4.1 Time model (turn time vs travel time vs rest vs downtime; what advances the clock)
+4.2 NPC progression: level/skill/reputation/wealth/injury recovery — formulas + caps + visibility
+4.3 Villain/faction plot clocks: stages, pressure, triggers, failure modes, player interruption
+4.4 Rival training / arms race (LitRPG-appropriate, original — no licensed series)
+4.5 Economy/scarcity light sim (optional, bounded)
+4.6 Dungeon/restock / threat migration (bounded)
+4.7 Relationship decay/growth without creepy over-quantification
+4.8 “Since you left” return receipt: how offscreen results become StateTx + SceneManifest updates BEFORE prose
+4.9 What never advances offscreen (player inventory, unrevealed quest spoilers, Kid-unsafe escalations without gate)
+4.10 Writer contract: prose may narrate simulator outputs; may not invent conflicting offscreen victories
+
+Provide:
+- TypeScript interfaces: WorldClock, ActorSheet, PlotClock, FactionSim, OffscreenTick, ReturnReceipt
+- Tick algorithm pseudocode (what runs every N turns / on travel / on rest / on chapter close)
+- Budget: max actors ticked per tick; priority queue (nearby / quest-relevant / villain / dormant)
+- Fairness rules so the world feels alive without always punishing absence
+
+PART 5 — Whole text world coherence rules
+5.1 Causality: no teleport, no double-location, no item duplication across regions
+5.2 Knowledge: actor-known vs player-known vs GM-only (leak scanner at world scale)
+5.3 Travel & distance: locality tokens + travel costs + rumor lag
+5.4 Multi-thread quest/plot without softlocks
+5.5 Death/retirement/succession of NPCs/villains
+5.6 Custom laws becoming simulation constraints (not just prompt flavor)
+
+PART 6 — Module map to SynapticGM code
+Map every major component to existing areas with EXTEND / HARDEN / NEW FILE:
+worldSim, npcMemory, timeline, places, placeAuthority, mapEngine, dungeonSeed, campaignMemory, sceneManifest/sceneFacts, questPlay, ledgerCombat, openingEstablishment, customExpertDraft/campaignSeed, systemPrompt, capacityLedger
+One sentence each.
+
+PART 7 — 90-day living-world build plan (parallel-safe with continuity/Stripe)
+Week-by-week: shippable outcomes, metrics, kill criteria.
+Must start from extending worldSim — not a greenfield “AI town sim.”
+Define MVP living world (what players notice in first 20 turns away) vs v2 realm sim.
+
+PART 8 — Red-team & evaluation
+40 adversarial cases: time-skip lies, villain omniscience, NPC level-ups the player couldn’t have caused, fake “while you were gone” loot, region bleed, custom-world contradiction, etc.
+Automated oracles + playtest scripts.
+
+PART 9 — Open founder decisions
+Living-world aggression (gentle/standard/ruthless), how much absence can hurt, sim visibility Simple vs Expert, whether rivals level in Free tier, custom world sim caps, etc. Recommendation + alternative + cost-if-wrong.
+
+PART 10 — Master “ready to code a whole text world” definition
+Checklist of Must-green items before marketing “living world” claims.
+
+ALSO THROUGHOUT
+- Mechanisms over metaphors
+- Seeded determinism over LLM improvisation for offscreen facts
+- Player feels X because system did Y
+- Dense tables; schemas; do/don’t
+- If length-limited: finish PARTS 0–4 + 6 + 7 first; continue 5, 8–10 as Part 2 without repeating
+
+START NOW
+Begin with PART 0. No preamble.

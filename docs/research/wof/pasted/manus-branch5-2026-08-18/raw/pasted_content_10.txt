@@ -1,0 +1,63 @@
+ROLE
+Gap-fill only for SynapticGM comic/illustrated research.
+Do NOT rewrite the “thin wedge → full” brief. Assume it is accepted:
+- 90-day headline = Memorable + comic chrome, NOT full Comic Mode
+- Sequence: chrome → event-tied plate → sprite/BG composite → 2–3 panel spike → chapter recap spike → every-turn No-Go
+- HTML/SVG lettering overlays, not in-image balloons for core reading
+- Art never creates world truth; text/ledger commits first; fail holds story
+
+PRODUCT TRUTH (extend these — do not invent parallel systems)
+Existing code/surfaces:
+- memorableMoments.ts (opener, death, boss/First Blood, writer-offer, beauty offer, weekly caps, ad extras)
+- visualCanon.ts / prepareKidSafeImagePrompt / softenPrompt
+- comicScriptAdapter.ts / ComicTextAnchor / panel speech queue
+- ComicGrid / classic illustration path / generate-image edge proxy
+- SceneManifest + kit/inventory/portrait pipeline
+- Ops images kill switch; capacity memorable spend/refund
+
+FILL ONLY THESE GAPS
+
+1. SynapticGM module map
+For each wedge (chrome, event-tied plate, composite, 2-panel strip, recap, repair):
+map to files/modules above with verdict EXTEND | HARDEN | NEW FILE + one sentence.
+
+2. Copy-paste schemas (TypeScript interfaces, minimal)
+BeatSpec, SceneVisualManifest, VisualAnchor (entity/outfit/place), PanelReceipt, ComicChromeSpec, RepairSpec, RecapScript, ImageJob (status/pending/failed/attached).
+
+3. Fire contract table vs CURRENT memorable beats
+Rows: opening, first blood / dungeon final boss, death, writer-tag, beauty/stunning offer, ruler audience, chapter close, player-requested portrait, ending plate.
+Columns: fire now? | chrome only? | generate plate? | strip eligible later? | Kid rewrite/skip | capacity class | never-block-story rule.
+
+4. Prompt compiler recipes (Flux schnell / OpenRouter path)
+- Input: BeatSpec + SceneManifest slice + VisualAnchors + Kid/adult profile
+- Output: final image prompt + negative/avoid list
+- Hard bans: inventing roster/kit/place; in-image readable dialogue; licensed style clones
+- 6 example BeatSpecs → prompts (original names only)
+
+5. Lettering / overlay spec aligned to ComicTextAnchor
+- Where captions/speakers/gutters live in UI
+- Accessibility (screen reader, reduced motion)
+- Edit/repair of lettering without regenerating art
+- Mobile webtoon vs paged layout rules for wedge 1–3 only
+
+6. Failure + repair UX flows (step lists)
+- Pending while story continues
+- Failed / moderated / Kid-skip
+- “Restore jacket / face / prop / camera” repair vs full reroll
+- Stale art after correction/StateTx (invalidate vs keep with banner)
+
+7. Migration from today’s Comic toggle
+What players with comic view ON see in week 1 of wedge vs later.
+What Classic + Memorable-on players see.
+Feature flags / kill switch interaction (VITE_OPS_IMAGES_OFF).
+
+8. Fixture + QA pack
+20 visual regression cases (roster wrong, kit wrong, Kid leak, balloon invent, empty room invent, death plate after heal, etc.) with expected hard outcomes.
+Done-when for “chrome wedge ready” and “event-tied plate ready.”
+
+9. Open decisions only if new
+Do not repeat the parent brief’s founder table unless a gap forces a new decision.
+
+OUTPUT
+Headings 1–9 exactly. Tables. No preamble. No restating the parent executive path.
+Stop when gaps are filled.

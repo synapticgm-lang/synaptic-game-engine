@@ -1,0 +1,150 @@
+{
+  "schema_version": "1.0",
+  "status": "SPECULATIVE SynapticGM renderer/warden contract grounded in citations.md",
+  "authority_invariant": "Player correction > pinned canon/opening invariant > accepted StateTx > SceneManifest > supporting evidence > draft invention. Renderer may not introduce canonical facts.",
+  "global_rails": [
+    {
+      "id": "answer_first",
+      "rule": "When a player asks a direct question, answer, qualify, or state unknown in the first dramatic unit.",
+      "warden": "direct_question => first_2_sentences contain answer_or_boundary",
+      "severity": "error"
+    },
+    {
+      "id": "one_clear_beat",
+      "rule": "Default to one visible pressure change: advance, resistance, reveal, reversal, cost, or release.",
+      "warden": "beat_changes <= 1 unless compound_intent or declared_set_piece",
+      "severity": "warning"
+    },
+    {
+      "id": "agency",
+      "rule": "Never assign the player character a decision, emotion, belief, or speech.",
+      "warden": "reject phrases matching player_agency_blacklist unless quoted_player_input",
+      "severity": "error"
+    },
+    {
+      "id": "sensory_budget",
+      "rule": "Use concrete sensory detail only when it orients, raises pressure, or distinguishes a consequence.",
+      "warden": "sensory_noun_phrases <= 3 per standard paragraph",
+      "severity": "warning"
+    },
+    {
+      "id": "anti_purple",
+      "rule": "One controlling image per paragraph; no stacked similes or ornamental lore lists.",
+      "warden": "metaphor_density <= 1 per paragraph",
+      "severity": "warning"
+    },
+    {
+      "id": "dialogue_clarity",
+      "rule": "Attribute speakers when identity could be ambiguous; do not run more than two untagged speakers.",
+      "warden": "multi_npc_scene => attribution_present",
+      "severity": "error"
+    },
+    {
+      "id": "system_after_story",
+      "rule": "LitRPG System material follows story body except when a System question is the player’s direct request.",
+      "warden": "litrpg && non_question_system_notice => system_notice_after_body",
+      "severity": "warning"
+    },
+    {
+      "id": "no_sales",
+      "rule": "No HookArc soft offer during unresolved action, repair, safety, or adjudication.",
+      "warden": "forbid_hookarc_if scene_phase in active_action|repair|safety",
+      "severity": "error"
+    },
+    {
+      "id": "earned_handoff",
+      "rule": "Close with playable pressure, consequence, question, or observable opening; never boilerplate question spam.",
+      "warden": "reject generic_close when previous_3_turns contain generic_close",
+      "severity": "warning"
+    },
+    {
+      "id": "speakable",
+      "rule": "Separate state payload from prose; do not place raw stats in a sentence.",
+      "warden": "raw_receipt_tokens not in narrative_body",
+      "severity": "error"
+    }
+  ],
+  "engine_templates": {
+    "litrpg": {
+      "order": [
+        "answer_or_impact",
+        "embodied_scene",
+        "consequence",
+        "system_notice_if_material",
+        "playable_pressure"
+      ],
+      "length_words": {
+        "ack": "60-110",
+        "standard": "120-260",
+        "set_piece": "240-420"
+      },
+      "notes": "System prose is a characterful interface but never replaces scene body."
+    },
+    "story_rpg": {
+      "order": [
+        "answer_or_impact",
+        "sensory_anchor",
+        "character_response",
+        "pressure_or_opening"
+      ],
+      "length_words": {
+        "ack": "45-95",
+        "standard": "110-240",
+        "set_piece": "220-380"
+      },
+      "notes": "Literary continuity may imply atmosphere, never player interiority."
+    },
+    "tabletop": {
+      "order": [
+        "ruling_or_answer",
+        "concise_fiction",
+        "stakes_or_next_affordance",
+        "receipt_if_roll"
+      ],
+      "length_words": {
+        "ack": "35-80",
+        "standard": "70-180",
+        "set_piece": "140-280"
+      },
+      "notes": "Facilitation voice is clear first; boxed-text density is restrained."
+    },
+    "pyoa": {
+      "order": [
+        "consequence",
+        "authored_texture",
+        "honest_choice_lenses",
+        "freeform_opening"
+      ],
+      "length_words": {
+        "ack": "50-95",
+        "standard": "90-190",
+        "set_piece": "180-320"
+      },
+      "notes": "Choice lenses illuminate, never restrict the freeform input field."
+    }
+  },
+  "dialogue_rules": [
+    "One NPC speech act must have one immediate scene job: answer, resist, offer, warn, conceal, accuse, deflect, or reframe.",
+    "For three or more NPCs, use named attribution on every first line after a change of speaker and on every interruption.",
+    "An NPC may speak only within its permitted knowledge; an answer beyond knowledge becomes a guess, rumor, or refusal.",
+    "Jokes, insults, and flirtation are social acts. Record only material relationship, promise, threat, or boundary changes.",
+    "Do not use dialogue to smuggle a lore encyclopedia. Give the currently actionable fact and leave discovery alive."
+  ],
+  "endings": {
+    "allowed": [
+      "an actionable physical opening",
+      "an NPC’s concrete demand",
+      "a newly visible cost",
+      "a question earned by scene position",
+      "an unresolved but telegraphed threat",
+      "a choice lens following a safe beat"
+    ],
+    "avoid": [
+      "What do you do?",
+      "Your move.",
+      "Choose wisely.",
+      "Anything else?"
+    ],
+    "exception": "A generic question is acceptable only when it is itself a deliberate in-world voice choice and has not become a repeated template."
+  }
+}

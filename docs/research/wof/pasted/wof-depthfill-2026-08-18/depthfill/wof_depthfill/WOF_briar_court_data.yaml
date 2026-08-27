@@ -1,0 +1,2296 @@
+packFormatVersion: 1
+worldId: briar_court
+displayName: Briar Court
+maturity: teen
+rulesModuleId: veil_glamour
+themeKit: Briar Court Theme Kit
+places:
+- id: briar_court_place_01
+  publicName: Briar Gate
+  zoneId: briar_court_zone_01
+  role: shared hub
+  mapScale: street
+  dangerTier: safe
+  outdoor: true
+  exits:
+  - briar_court_place_02
+  - briar_court_place_04
+  npcIds:
+  - briar_court_npc_01
+  - briar_court_npc_05
+  - briar_court_npc_09
+  dungeonId: null
+  interactableIds:
+  - briar_court_interact_01
+  - briar_court_interact_09
+- id: briar_court_place_02
+  publicName: Thimble Hall
+  zoneId: briar_court_zone_01
+  role: start hub
+  mapScale: street
+  dangerTier: safe
+  outdoor: true
+  exits:
+  - briar_court_place_01
+  - briar_court_place_03
+  npcIds:
+  - briar_court_npc_02
+  - briar_court_npc_06
+  - briar_court_npc_10
+  dungeonId: null
+  interactableIds:
+  - briar_court_interact_02
+  - briar_court_interact_10
+- id: briar_court_place_03
+  publicName: Moon Orchard
+  zoneId: briar_court_zone_01
+  role: street route
+  mapScale: street
+  dangerTier: safe
+  outdoor: true
+  exits:
+  - briar_court_place_02
+  - briar_court_place_04
+  npcIds:
+  - briar_court_npc_03
+  - briar_court_npc_07
+  dungeonId: null
+  interactableIds:
+  - briar_court_interact_03
+  - briar_court_interact_11
+- id: briar_court_place_04
+  publicName: Hollow Mirror
+  zoneId: briar_court_zone_02
+  role: mid join
+  mapScale: street
+  dangerTier: low
+  outdoor: true
+  exits:
+  - briar_court_place_03
+  - briar_court_place_05
+  - briar_court_place_01
+  npcIds:
+  - briar_court_npc_04
+  - briar_court_npc_08
+  dungeonId: null
+  interactableIds:
+  - briar_court_interact_04
+  - briar_court_interact_12
+- id: briar_court_place_05
+  publicName: Mothwell
+  zoneId: briar_court_zone_02
+  role: work district
+  mapScale: interior
+  dangerTier: low
+  outdoor: false
+  exits:
+  - briar_court_place_04
+  - briar_court_place_06
+  npcIds: []
+  dungeonId: null
+  interactableIds:
+  - briar_court_interact_05
+- id: briar_court_place_06
+  publicName: Bramble Stair
+  zoneId: briar_court_zone_02
+  role: instance door
+  mapScale: dungeon
+  dangerTier: medium
+  outdoor: false
+  exits:
+  - briar_court_place_05
+  - briar_court_place_07
+  npcIds: []
+  dungeonId: briar_court_dungeon_01
+  interactableIds:
+  - briar_court_interact_06
+- id: briar_court_place_07
+  publicName: Candle Nook
+  zoneId: briar_court_zone_03
+  role: wild edge
+  mapScale: street
+  dangerTier: medium
+  outdoor: true
+  exits:
+  - briar_court_place_06
+  - briar_court_place_08
+  npcIds: []
+  dungeonId: null
+  interactableIds:
+  - briar_court_interact_07
+- id: briar_court_place_08
+  publicName: Thorn Choir
+  zoneId: briar_court_zone_03
+  role: housing approach
+  mapScale: interior
+  dangerTier: low
+  outdoor: false
+  exits:
+  - briar_court_place_07
+  npcIds: []
+  dungeonId: null
+  interactableIds:
+  - briar_court_interact_08
+npcs:
+- id: briar_court_npc_01
+  name: Bryn Cress
+  placeId: briar_court_place_01
+  role: quest
+  greet: Bryn Cress says, ‘Briar Court keeps its promises in small places. Tell me which one you noticed.’
+- id: briar_court_npc_02
+  name: Cato Silt
+  placeId: briar_court_place_02
+  role: profession
+  greet: Cato Silt says, ‘Briar Court keeps its promises in small places. Tell me which one you noticed.’
+- id: briar_court_npc_03
+  name: Dessa Pryce
+  placeId: briar_court_place_03
+  role: hub
+  greet: Dessa Pryce says, ‘Briar Court keeps its promises in small places. Tell me which one you noticed.’
+- id: briar_court_npc_04
+  name: Eris Vane
+  placeId: briar_court_place_04
+  role: merchant
+  greet: Eris Vane says, ‘Briar Court keeps its promises in small places. Tell me which one you noticed.’
+- id: briar_court_npc_05
+  name: Fenn Quill
+  placeId: briar_court_place_01
+  role: local
+  greet: Fenn Quill says, ‘Briar Court keeps its promises in small places. Tell me which one you noticed.’
+- id: briar_court_npc_06
+  name: Gala Vale
+  placeId: briar_court_place_02
+  role: host
+  greet: Gala Vale says, ‘Briar Court keeps its promises in small places. Tell me which one you noticed.’
+- id: briar_court_npc_07
+  name: Holl Wren
+  placeId: briar_court_place_03
+  role: quest
+  greet: Holl Wren says, ‘Briar Court keeps its promises in small places. Tell me which one you noticed.’
+- id: briar_court_npc_08
+  name: Ivo Morrow
+  placeId: briar_court_place_04
+  role: profession
+  greet: Ivo Morrow says, ‘Briar Court keeps its promises in small places. Tell me which one you noticed.’
+- id: briar_court_npc_09
+  name: Jori Rowan
+  placeId: briar_court_place_01
+  role: local
+  greet: Jori Rowan says, ‘Briar Court keeps its promises in small places. Tell me which one you noticed.’
+- id: briar_court_npc_10
+  name: Alden Nook
+  placeId: briar_court_place_02
+  role: merchant
+  greet: Alden Nook says, ‘Briar Court keeps its promises in small places. Tell me which one you noticed.’
+kits:
+- id: briar_court_kit_01
+  publicName: Bargain Gardener
+  look: bargain gardener workwear
+  values: practice bargain gardener
+  taboo: Never use bargain gardener authority to remove another person’s choice.
+  speechTell: Use the local rhythm of Briar Court and make every offer concrete.
+  starterClothes: bargain_gardener mantle
+  starterTool: bargain_gardener tool
+  starterMapItem: briar_court_map_01
+  startingPlaceId: briar_court_place_01
+  firstHourQuestId: briar_court_q_01
+  abilityFlag: briar_court_ability_01
+- id: briar_court_kit_02
+  publicName: Thimble Herald
+  look: thimble herald workwear
+  values: practice thimble herald
+  taboo: Never use thimble herald authority to remove another person’s choice.
+  speechTell: Use the local rhythm of Briar Court and make every offer concrete.
+  starterClothes: thimble_herald vest
+  starterTool: thimble_herald tool
+  starterMapItem: briar_court_map_02
+  startingPlaceId: briar_court_place_02
+  firstHourQuestId: briar_court_q_02
+  abilityFlag: briar_court_ability_02
+- id: briar_court_kit_03
+  publicName: Moon Orchardist
+  look: moon orchardist workwear
+  values: practice moon orchardist
+  taboo: Never use moon orchardist authority to remove another person’s choice.
+  speechTell: Use the local rhythm of Briar Court and make every offer concrete.
+  starterClothes: moon_orchardist jacket
+  starterTool: moon_orchardist tool
+  starterMapItem: briar_court_map_03
+  startingPlaceId: briar_court_place_01
+  firstHourQuestId: briar_court_q_03
+  abilityFlag: briar_court_ability_03
+- id: briar_court_kit_04
+  publicName: Mirror Scribe
+  look: mirror scribe workwear
+  values: practice mirror scribe
+  taboo: Never use mirror scribe authority to remove another person’s choice.
+  speechTell: Use the local rhythm of Briar Court and make every offer concrete.
+  starterClothes: mirror_scribe sash
+  starterTool: mirror_scribe tool
+  starterMapItem: briar_court_map_04
+  startingPlaceId: briar_court_place_02
+  firstHourQuestId: briar_court_q_04
+  abilityFlag: briar_court_ability_04
+quests:
+- id: briar_court_q_01
+  title: 'Briar Court: Name a Working Promise'
+  family: identity
+  hidden: false
+  unlocksQuestId: briar_court_q_02
+  objectives:
+  - id: briar_court_q_01_obj_01
+    kind: visit_place
+    targetId: briar_court_place_01
+    count: 1
+  - id: briar_court_q_01_obj_02
+    kind: deliver_item
+    targetId: briar_court_deliver_item_01
+    count: 2
+  rewardGold: 12
+  rewardXp: 20
+- id: briar_court_q_02
+  title: 'Briar Court: Set the First Tool Aside'
+  family: identity
+  hidden: false
+  unlocksQuestId: briar_court_q_03
+  objectives:
+  - id: briar_court_q_02_obj_01
+    kind: ledger_kill
+    targetId: briar_court_ledger_kill_02
+    count: 1
+  - id: briar_court_q_02_obj_02
+    kind: talk_to_npc
+    targetId: briar_court_npc_03
+    count: 2
+  rewardGold: 15
+  rewardXp: 25
+- id: briar_court_q_03
+  title: 'Briar Court: Carry the Right Record'
+  family: identity
+  hidden: false
+  unlocksQuestId: briar_court_q_04
+  objectives:
+  - id: briar_court_q_03_obj_01
+    kind: ledger_bond
+    targetId: briar_court_ledger_bond_03
+    count: 1
+  - id: briar_court_q_03_obj_02
+    kind: collect_item
+    targetId: briar_court_collect_item_03
+    count: 2
+  rewardGold: 18
+  rewardXp: 30
+- id: briar_court_q_04
+  title: 'Briar Court: Find the Missing Measure'
+  family: identity
+  hidden: false
+  unlocksQuestId: briar_court_q_05
+  objectives:
+  - id: briar_court_q_04_obj_01
+    kind: deliver_item
+    targetId: briar_court_deliver_item_04
+    count: 1
+  - id: briar_court_q_04_obj_02
+    kind: interact
+    targetId: briar_court_place_05
+    count: 2
+    verbId: cook
+  rewardGold: 21
+  rewardXp: 35
+- id: briar_court_q_05
+  title: 'Briar Court: Teach a Safer Shortcut'
+  family: identity
+  hidden: false
+  unlocksQuestId: briar_court_q_06
+  objectives:
+  - id: briar_court_q_05_obj_01
+    kind: talk_to_npc
+    targetId: briar_court_npc_05
+    count: 1
+  - id: briar_court_q_05_obj_02
+    kind: score_beat
+    targetId: briar_court_score_beat_05
+    count: 2
+  rewardGold: 24
+  rewardXp: 40
+- id: briar_court_q_06
+  title: 'Briar Court: Read the Local Weather'
+  family: profession
+  hidden: false
+  unlocksQuestId: briar_court_q_07
+  objectives:
+  - id: briar_court_q_06_obj_01
+    kind: collect_item
+    targetId: briar_court_collect_item_06
+    count: 1
+  - id: briar_court_q_06_obj_02
+    kind: build_tick
+    targetId: briar_court_build_tick_06
+    count: 2
+  rewardGold: 27
+  rewardXp: 45
+- id: briar_court_q_07
+  title: 'Briar Court: Repair a Shared Threshold'
+  family: profession
+  hidden: false
+  unlocksQuestId: briar_court_q_08
+  objectives:
+  - id: briar_court_q_07_obj_01
+    kind: interact
+    targetId: briar_court_place_07
+    count: 1
+    verbId: inspect
+  - id: briar_court_q_07_obj_02
+    kind: hospitality_tick
+    targetId: briar_court_hospitality_tick_07
+    count: 2
+  rewardGold: 30
+  rewardXp: 50
+- id: briar_court_q_08
+  title: 'Briar Court: Return a Borrowed Sign'
+  family: profession
+  hidden: false
+  unlocksQuestId: briar_court_q_09
+  objectives:
+  - id: briar_court_q_08_obj_01
+    kind: score_beat
+    targetId: briar_court_score_beat_08
+    count: 1
+  - id: briar_court_q_08_obj_02
+    kind: lap_finish
+    targetId: briar_court_lap_finish_08
+    count: 2
+  rewardGold: 33
+  rewardXp: 55
+- id: briar_court_q_09
+  title: 'Briar Court: Host the Small Welcome'
+  family: profession
+  hidden: false
+  unlocksQuestId: briar_court_q_10
+  objectives:
+  - id: briar_court_q_09_obj_01
+    kind: build_tick
+    targetId: briar_court_build_tick_09
+    count: 1
+  - id: briar_court_q_09_obj_02
+    kind: visit_place
+    targetId: briar_court_place_02
+    count: 2
+  rewardGold: 36
+  rewardXp: 60
+- id: briar_court_q_10
+  title: 'Briar Court: Choose a Fair Order'
+  family: profession
+  hidden: false
+  unlocksQuestId: briar_court_q_11
+  objectives:
+  - id: briar_court_q_10_obj_01
+    kind: hospitality_tick
+    targetId: briar_court_hospitality_tick_10
+    count: 1
+  - id: briar_court_q_10_obj_02
+    kind: ledger_kill
+    targetId: briar_court_ledger_kill_10
+    count: 2
+  rewardGold: 39
+  rewardXp: 65
+- id: briar_court_q_11
+  title: 'Briar Court: Map the Quiet Detour'
+  family: profession
+  hidden: false
+  unlocksQuestId: briar_court_q_12
+  objectives:
+  - id: briar_court_q_11_obj_01
+    kind: lap_finish
+    targetId: briar_court_lap_finish_11
+    count: 1
+  - id: briar_court_q_11_obj_02
+    kind: ledger_bond
+    targetId: briar_court_ledger_bond_11
+    count: 2
+  rewardGold: 42
+  rewardXp: 70
+- id: briar_court_q_12
+  title: 'Briar Court: Bring a Useful Witness'
+  family: profession
+  hidden: false
+  unlocksQuestId: briar_court_q_13
+  objectives:
+  - id: briar_court_q_12_obj_01
+    kind: visit_place
+    targetId: briar_court_place_04
+    count: 1
+  - id: briar_court_q_12_obj_02
+    kind: deliver_item
+    targetId: briar_court_deliver_item_12
+    count: 2
+  rewardGold: 45
+  rewardXp: 75
+- id: briar_court_q_13
+  title: 'Briar Court: Sort the Unclaimed Materials'
+  family: zone_story
+  hidden: false
+  unlocksQuestId: briar_court_q_14
+  objectives:
+  - id: briar_court_q_13_obj_01
+    kind: ledger_kill
+    targetId: briar_court_ledger_kill_13
+    count: 1
+  - id: briar_court_q_13_obj_02
+    kind: talk_to_npc
+    targetId: briar_court_npc_04
+    count: 2
+  rewardGold: 48
+  rewardXp: 80
+- id: briar_court_q_14
+  title: 'Briar Court: Make Room for a Visitor'
+  family: zone_story
+  hidden: false
+  unlocksQuestId: briar_court_q_15
+  objectives:
+  - id: briar_court_q_14_obj_01
+    kind: ledger_bond
+    targetId: briar_court_ledger_bond_14
+    count: 1
+  - id: briar_court_q_14_obj_02
+    kind: collect_item
+    targetId: briar_court_collect_item_14
+    count: 2
+  rewardGold: 51
+  rewardXp: 85
+- id: briar_court_q_15
+  title: 'Briar Court: Close the Day’s Ledger'
+  family: zone_story
+  hidden: false
+  unlocksQuestId: briar_court_q_16
+  objectives:
+  - id: briar_court_q_15_obj_01
+    kind: deliver_item
+    targetId: briar_court_deliver_item_15
+    count: 1
+  - id: briar_court_q_15_obj_02
+    kind: interact
+    targetId: briar_court_place_08
+    count: 2
+    verbId: craft
+  rewardGold: 54
+  rewardXp: 90
+- id: briar_court_q_16
+  title: 'Briar Court: Follow the Midway Signal'
+  family: zone_story
+  hidden: false
+  unlocksQuestId: briar_court_q_17
+  objectives:
+  - id: briar_court_q_16_obj_01
+    kind: talk_to_npc
+    targetId: briar_court_npc_06
+    count: 1
+  - id: briar_court_q_16_obj_02
+    kind: score_beat
+    targetId: briar_court_score_beat_16
+    count: 2
+  rewardGold: 57
+  rewardXp: 95
+- id: briar_court_q_17
+  title: 'Briar Court: Uncover the Door Note'
+  family: zone_story
+  hidden: true
+  unlocksQuestId: briar_court_q_18
+  objectives:
+  - id: briar_court_q_17_obj_01
+    kind: collect_item
+    targetId: briar_court_collect_item_17
+    count: 1
+  - id: briar_court_q_17_obj_02
+    kind: build_tick
+    targetId: briar_court_build_tick_17
+    count: 2
+  rewardGold: 60
+  rewardXp: 100
+- id: briar_court_q_18
+  title: 'Briar Court: Prepare the Team Table'
+  family: zone_story
+  hidden: false
+  unlocksQuestId: briar_court_q_19
+  objectives:
+  - id: briar_court_q_18_obj_01
+    kind: interact
+    targetId: briar_court_place_02
+    count: 1
+    verbId: bind_inn
+  - id: briar_court_q_18_obj_02
+    kind: hospitality_tick
+    targetId: briar_court_hospitality_tick_18
+    count: 2
+  rewardGold: 63
+  rewardXp: 105
+- id: briar_court_q_19
+  title: 'Briar Court: Test the Local Method'
+  family: zone_story
+  hidden: false
+  unlocksQuestId: briar_court_q_20
+  objectives:
+  - id: briar_court_q_19_obj_01
+    kind: score_beat
+    targetId: briar_court_score_beat_19
+    count: 1
+  - id: briar_court_q_19_obj_02
+    kind: lap_finish
+    targetId: briar_court_lap_finish_19
+    count: 2
+  rewardGold: 66
+  rewardXp: 110
+- id: briar_court_q_20
+  title: 'Briar Court: Hold a Careful Boundary'
+  family: zone_story
+  hidden: false
+  unlocksQuestId: briar_court_q_21
+  objectives:
+  - id: briar_court_q_20_obj_01
+    kind: build_tick
+    targetId: briar_court_build_tick_20
+    count: 1
+  - id: briar_court_q_20_obj_02
+    kind: visit_place
+    targetId: briar_court_place_05
+    count: 2
+  rewardGold: 69
+  rewardXp: 115
+- id: briar_court_q_21
+  title: 'Briar Court: Answer the Neighbour’s Call'
+  family: extra
+  hidden: false
+  unlocksQuestId: briar_court_q_22
+  objectives:
+  - id: briar_court_q_21_obj_01
+    kind: hospitality_tick
+    targetId: briar_court_hospitality_tick_21
+    count: 1
+  - id: briar_court_q_21_obj_02
+    kind: ledger_kill
+    targetId: briar_court_ledger_kill_21
+    count: 2
+  rewardGold: 72
+  rewardXp: 120
+- id: briar_court_q_22
+  title: 'Briar Court: Finish the Side Route'
+  family: extra
+  hidden: false
+  unlocksQuestId: briar_court_q_23
+  objectives:
+  - id: briar_court_q_22_obj_01
+    kind: lap_finish
+    targetId: briar_court_lap_finish_22
+    count: 1
+  - id: briar_court_q_22_obj_02
+    kind: ledger_bond
+    targetId: briar_court_ledger_bond_22
+    count: 2
+  rewardGold: 75
+  rewardXp: 125
+- id: briar_court_q_23
+  title: 'Briar Court: Earn a Trusted Introduction'
+  family: extra
+  hidden: true
+  unlocksQuestId: briar_court_q_24
+  objectives:
+  - id: briar_court_q_23_obj_01
+    kind: visit_place
+    targetId: briar_court_place_07
+    count: 1
+  - id: briar_court_q_23_obj_02
+    kind: deliver_item
+    targetId: briar_court_deliver_item_23
+    count: 2
+  rewardGold: 78
+  rewardXp: 130
+- id: briar_court_q_24
+  title: 'Briar Court: Open the Instance Path'
+  family: extra
+  hidden: false
+  unlocksQuestId: briar_court_q_25
+  objectives:
+  - id: briar_court_q_24_obj_01
+    kind: ledger_kill
+    targetId: briar_court_ledger_kill_24
+    count: 1
+  - id: briar_court_q_24_obj_02
+    kind: talk_to_npc
+    targetId: briar_court_npc_05
+    count: 2
+  rewardGold: 81
+  rewardXp: 135
+- id: briar_court_q_25
+  title: 'Briar Court: Complete the First Big Night'
+  family: extra
+  hidden: false
+  unlocksQuestId: null
+  objectives:
+  - id: briar_court_q_25_obj_01
+    kind: ledger_bond
+    targetId: briar_court_ledger_bond_25
+    count: 1
+  - id: briar_court_q_25_obj_02
+    kind: collect_item
+    targetId: briar_court_collect_item_25
+    count: 2
+  rewardGold: 84
+  rewardXp: 140
+species:
+- id: briar_court_species_01
+  publicName: Thistle Doe
+  kind: opponent
+  hp: 8
+  armor: 0
+  threat: 1
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: briar_court_species_02
+  publicName: Glass Wren
+  kind: opponent
+  hp: 9
+  armor: 1
+  threat: 2
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: briar_court_species_03
+  publicName: Moss Hare
+  kind: opponent
+  hp: 10
+  armor: 2
+  threat: 3
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: briar_court_species_04
+  publicName: Candle Toad
+  kind: opponent
+  hp: 11
+  armor: 3
+  threat: 1
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: briar_court_species_05
+  publicName: Briar Court Field Type 5
+  kind: opponent
+  hp: 12
+  armor: 0
+  threat: 2
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: briar_court_species_06
+  publicName: Briar Court Field Type 6
+  kind: opponent
+  hp: 13
+  armor: 1
+  threat: 3
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: briar_court_species_07
+  publicName: Briar Court Field Type 7
+  kind: opponent
+  hp: 14
+  armor: 2
+  threat: 1
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: briar_court_species_08
+  publicName: Briar Court Field Type 8
+  kind: opponent
+  hp: 15
+  armor: 3
+  threat: 2
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: briar_court_species_09
+  publicName: Briar Court Field Type 9
+  kind: opponent
+  hp: 16
+  armor: 0
+  threat: 3
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: briar_court_species_10
+  publicName: Briar Court Field Type 10
+  kind: opponent
+  hp: 17
+  armor: 1
+  threat: 1
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: briar_court_species_11
+  publicName: Briar Court Field Type 11
+  kind: opponent
+  hp: 18
+  armor: 2
+  threat: 2
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: briar_court_species_12
+  publicName: Briar Court Field Type 12
+  kind: opponent
+  hp: 19
+  armor: 3
+  threat: 3
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: briar_court_species_13
+  publicName: Briar Court Field Type 13
+  kind: opponent
+  hp: 20
+  armor: 0
+  threat: 1
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: briar_court_species_14
+  publicName: Briar Court Field Type 14
+  kind: opponent
+  hp: 21
+  armor: 1
+  threat: 2
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: briar_court_species_15
+  publicName: Briar Court Field Type 15
+  kind: opponent
+  hp: 22
+  armor: 2
+  threat: 3
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: briar_court_species_16
+  publicName: Briar Court Field Type 16
+  kind: opponent
+  hp: 23
+  armor: 3
+  threat: 1
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: briar_court_species_17
+  publicName: Briar Court Field Type 17
+  kind: opponent
+  hp: 24
+  armor: 0
+  threat: 2
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: briar_court_species_18
+  publicName: Briar Court Field Type 18
+  kind: opponent
+  hp: 25
+  armor: 1
+  threat: 3
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+items:
+- id: briar_court_item_01
+  publicName: Briar Gate token
+  category: starter
+  power: false
+  sellGold: 3
+  description: A Briar Court item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: briar_court_item_02
+  publicName: Thimble Hall tool
+  category: starter
+  power: false
+  sellGold: 5
+  description: A Briar Court item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: briar_court_item_03
+  publicName: Moon Orchard thread
+  category: profession
+  power: false
+  sellGold: 7
+  description: A Briar Court item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: briar_court_item_04
+  publicName: Hollow Mirror seal
+  category: profession
+  power: false
+  sellGold: 9
+  description: A Briar Court item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: briar_court_item_05
+  publicName: Mothwell bundle
+  category: instance
+  power: false
+  sellGold: 11
+  description: A Briar Court item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: briar_court_item_06
+  publicName: Bramble Stair token
+  category: instance
+  power: false
+  sellGold: 13
+  description: A Briar Court item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: briar_court_item_07
+  publicName: Candle Nook tool
+  category: cosmetic
+  power: false
+  sellGold: 15
+  description: A Briar Court item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: briar_court_item_08
+  publicName: Thorn Choir thread
+  category: cosmetic
+  power: false
+  sellGold: 17
+  description: A Briar Court item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: briar_court_item_09
+  publicName: Briar Gate seal
+  category: material
+  power: false
+  sellGold: 19
+  description: A Briar Court item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: briar_court_item_10
+  publicName: Thimble Hall bundle
+  category: material
+  power: false
+  sellGold: 21
+  description: A Briar Court item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: briar_court_item_11
+  publicName: Moon Orchard token
+  category: care
+  power: false
+  sellGold: 23
+  description: A Briar Court item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: briar_court_item_12
+  publicName: Hollow Mirror tool
+  category: care
+  power: false
+  sellGold: 25
+  description: A Briar Court item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: briar_court_item_13
+  publicName: Mothwell thread
+  category: map
+  power: false
+  sellGold: 27
+  description: A Briar Court item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: briar_court_item_14
+  publicName: Bramble Stair seal
+  category: map
+  power: false
+  sellGold: 29
+  description: A Briar Court item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: briar_court_item_15
+  publicName: Candle Nook bundle
+  category: vendor
+  power: false
+  sellGold: 31
+  description: A Briar Court item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: briar_court_item_16
+  publicName: Thorn Choir token
+  category: vendor
+  power: false
+  sellGold: 33
+  description: A Briar Court item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: briar_court_item_17
+  publicName: Briar Gate tool
+  category: recipe
+  power: false
+  sellGold: 35
+  description: A Briar Court item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: briar_court_item_18
+  publicName: Thimble Hall thread
+  category: recipe
+  power: false
+  sellGold: 37
+  description: A Briar Court item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: briar_court_item_19
+  publicName: Moon Orchard seal
+  category: keepsake
+  power: false
+  sellGold: 39
+  description: A Briar Court item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: briar_court_item_20
+  publicName: Hollow Mirror bundle
+  category: keepsake
+  power: false
+  sellGold: 41
+  description: A Briar Court item used for a stated craft, route, display, or record; it never alters paid outcomes.
+dropTables:
+- id: briar_court_drop_01
+  sourceId: briar_court_species_01
+  personalLoot: true
+  entries:
+  - itemId: briar_court_item_01
+    chancePct: 60
+    min: 1
+    max: 2
+  - itemId: briar_court_item_08
+    chancePct: 20
+    min: 1
+    max: 1
+- id: briar_court_drop_02
+  sourceId: briar_court_species_02
+  personalLoot: true
+  entries:
+  - itemId: briar_court_item_02
+    chancePct: 55
+    min: 1
+    max: 2
+  - itemId: briar_court_item_09
+    chancePct: 25
+    min: 1
+    max: 1
+- id: briar_court_drop_03
+  sourceId: briar_court_species_03
+  personalLoot: true
+  entries:
+  - itemId: briar_court_item_03
+    chancePct: 50
+    min: 1
+    max: 2
+  - itemId: briar_court_item_10
+    chancePct: 30
+    min: 1
+    max: 1
+- id: briar_court_drop_04
+  sourceId: briar_court_species_04
+  personalLoot: true
+  entries:
+  - itemId: briar_court_item_04
+    chancePct: 45
+    min: 1
+    max: 2
+  - itemId: briar_court_item_11
+    chancePct: 20
+    min: 1
+    max: 1
+- id: briar_court_drop_05
+  sourceId: briar_court_species_05
+  personalLoot: true
+  entries:
+  - itemId: briar_court_item_05
+    chancePct: 60
+    min: 1
+    max: 2
+  - itemId: briar_court_item_12
+    chancePct: 25
+    min: 1
+    max: 1
+- id: briar_court_drop_06
+  sourceId: briar_court_species_06
+  personalLoot: true
+  entries:
+  - itemId: briar_court_item_06
+    chancePct: 55
+    min: 1
+    max: 2
+  - itemId: briar_court_item_13
+    chancePct: 30
+    min: 1
+    max: 1
+- id: briar_court_drop_07
+  sourceId: briar_court_species_07
+  personalLoot: true
+  entries:
+  - itemId: briar_court_item_07
+    chancePct: 50
+    min: 1
+    max: 2
+  - itemId: briar_court_item_14
+    chancePct: 20
+    min: 1
+    max: 1
+- id: briar_court_drop_08
+  sourceId: briar_court_species_08
+  personalLoot: true
+  entries:
+  - itemId: briar_court_item_08
+    chancePct: 45
+    min: 1
+    max: 2
+  - itemId: briar_court_item_15
+    chancePct: 25
+    min: 1
+    max: 1
+- id: briar_court_drop_09
+  sourceId: briar_court_species_09
+  personalLoot: true
+  entries:
+  - itemId: briar_court_item_09
+    chancePct: 60
+    min: 1
+    max: 2
+  - itemId: briar_court_item_16
+    chancePct: 30
+    min: 1
+    max: 1
+- id: briar_court_drop_10
+  sourceId: briar_court_species_10
+  personalLoot: true
+  entries:
+  - itemId: briar_court_item_10
+    chancePct: 55
+    min: 1
+    max: 2
+  - itemId: briar_court_item_17
+    chancePct: 20
+    min: 1
+    max: 1
+- id: briar_court_drop_11
+  sourceId: briar_court_species_11
+  personalLoot: true
+  entries:
+  - itemId: briar_court_item_11
+    chancePct: 50
+    min: 1
+    max: 2
+  - itemId: briar_court_item_18
+    chancePct: 25
+    min: 1
+    max: 1
+- id: briar_court_drop_12
+  sourceId: briar_court_species_12
+  personalLoot: true
+  entries:
+  - itemId: briar_court_item_12
+    chancePct: 45
+    min: 1
+    max: 2
+  - itemId: briar_court_item_19
+    chancePct: 30
+    min: 1
+    max: 1
+vendors:
+- id: briar_court_vendor_01
+  publicName: Briar Court Exchange
+  placeId: briar_court_place_01
+  currencyGoldName: Briar Pennies
+  items:
+  - itemId: briar_court_item_01
+    priceGold: 8
+  - itemId: briar_court_item_02
+    priceGold: 11
+  - itemId: briar_court_item_03
+    priceGold: 14
+  - itemId: briar_court_item_04
+    priceGold: 17
+  - itemId: briar_court_item_05
+    priceGold: 20
+  - itemId: briar_court_item_06
+    priceGold: 23
+  - itemId: briar_court_item_07
+    priceGold: 26
+  - itemId: briar_court_item_08
+    priceGold: 29
+  repairCostPerPoint: 0
+dungeons:
+- id: briar_court_dungeon_01
+  publicName: The Hollow Mirror Wake
+  partyMin: 1
+  partyMax: 5
+  entrancePlaceId: briar_court_place_06
+  rooms:
+  - id: briar_court_dungeon_room_01
+    publicName: 'The Hollow Mirror Wake: Threshold Room'
+    describeBeforeCreature: Describe the material, sound, exits, and practical obstacle of Threshold Room before any species
+      is narrated.
+    trashSpeciesIds:
+    - briar_court_species_01
+    - briar_court_species_02
+    eliteSpeciesId: null
+    checkpoint: false
+    bossSpeciesId: null
+    exits:
+    - briar_court_dungeon_room_02
+  - id: briar_court_dungeon_room_02
+    publicName: 'The Hollow Mirror Wake: Workroom'
+    describeBeforeCreature: Describe the material, sound, exits, and practical obstacle of Workroom before any species is
+      narrated.
+    trashSpeciesIds:
+    - briar_court_species_03
+    - briar_court_species_04
+    eliteSpeciesId: null
+    checkpoint: false
+    bossSpeciesId: null
+    exits:
+    - briar_court_dungeon_room_03
+  - id: briar_court_dungeon_room_03
+    publicName: 'The Hollow Mirror Wake: Side Passage'
+    describeBeforeCreature: Describe the material, sound, exits, and practical obstacle of Side Passage before any species
+      is narrated.
+    trashSpeciesIds:
+    - briar_court_species_05
+    - briar_court_species_06
+    eliteSpeciesId: briar_court_species_09
+    checkpoint: false
+    bossSpeciesId: null
+    exits:
+    - briar_court_dungeon_room_04
+  - id: briar_court_dungeon_room_04
+    publicName: 'The Hollow Mirror Wake: Checkpoint Alcove'
+    describeBeforeCreature: Describe the material, sound, exits, and practical obstacle of Checkpoint Alcove before any species
+      is narrated.
+    trashSpeciesIds:
+    - briar_court_species_07
+    - briar_court_species_08
+    eliteSpeciesId: null
+    checkpoint: true
+    bossSpeciesId: null
+    exits:
+    - briar_court_dungeon_room_05
+  - id: briar_court_dungeon_room_05
+    publicName: 'The Hollow Mirror Wake: Finale Chamber'
+    describeBeforeCreature: Describe the material, sound, exits, and practical obstacle of Finale Chamber before any species
+      is narrated.
+    trashSpeciesIds:
+    - briar_court_species_09
+    - briar_court_species_10
+    eliteSpeciesId: null
+    checkpoint: false
+    bossSpeciesId: briar_court_species_14
+    exits: []
+  traps:
+  - id: briar_court_trap_01
+    publicName: misread sign
+    interactableId: briar_court_interact_01
+  - id: briar_court_trap_02
+    publicName: jammed latch
+    interactableId: briar_court_interact_02
+  - id: briar_court_trap_03
+    publicName: wet threshold
+    interactableId: briar_court_interact_03
+  - id: briar_court_trap_04
+    publicName: false shelf
+    interactableId: briar_court_interact_04
+  - id: briar_court_trap_05
+    publicName: quiet bell
+    interactableId: briar_court_interact_05
+  - id: briar_court_trap_06
+    publicName: sealed drawer
+    interactableId: briar_court_interact_06
+talkTrees:
+- npcId: briar_court_npc_01
+  greet: Bryn Cress says, ‘Briar Court keeps its promises in small places. Tell me which one you noticed.’
+  quest_offer: 'Bryn Cress offers a specific task at Briar Gate: settle the practical mismatch before it costs someone a shift.'
+  quest_progress: Bryn Cress checks the record and asks for the one detail that would change the outcome.
+  quest_turnin: Bryn Cress marks the work complete, names who benefited, and hands over the recorded reward.
+  gossip:
+  - At Thimble Hall, people are discussing a missing care tag.
+  - The safest route today is through Moon Orchard, not the obvious shortcut.
+  - Someone at Hollow Mirror is offering help but will not ask twice.
+  refusal: Bryn Cress says, ‘No. I can explain the rule, but I will not bend it for noise.’
+  player_rude: Bryn Cress says, ‘You may leave, lower your voice, or try a useful question. Choose one.’
+- npcId: briar_court_npc_02
+  greet: Cato Silt says, ‘Briar Court keeps its promises in small places. Tell me which one you noticed.’
+  quest_offer: 'Cato Silt offers a specific task at Thimble Hall: settle the practical mismatch before it costs someone a
+    shift.'
+  quest_progress: Cato Silt checks the record and asks for the one detail that would change the outcome.
+  quest_turnin: Cato Silt marks the work complete, names who benefited, and hands over the recorded reward.
+  gossip:
+  - At Moon Orchard, people are discussing a missing care tag.
+  - The safest route today is through Hollow Mirror, not the obvious shortcut.
+  - Someone at Mothwell is offering help but will not ask twice.
+  refusal: Cato Silt says, ‘No. I can explain the rule, but I will not bend it for noise.’
+  player_rude: Cato Silt says, ‘You may leave, lower your voice, or try a useful question. Choose one.’
+- npcId: briar_court_npc_03
+  greet: Dessa Pryce says, ‘Briar Court keeps its promises in small places. Tell me which one you noticed.’
+  quest_offer: 'Dessa Pryce offers a specific task at Moon Orchard: settle the practical mismatch before it costs someone
+    a shift.'
+  quest_progress: Dessa Pryce checks the record and asks for the one detail that would change the outcome.
+  quest_turnin: Dessa Pryce marks the work complete, names who benefited, and hands over the recorded reward.
+  gossip:
+  - At Hollow Mirror, people are discussing a missing care tag.
+  - The safest route today is through Mothwell, not the obvious shortcut.
+  - Someone at Bramble Stair is offering help but will not ask twice.
+  refusal: Dessa Pryce says, ‘No. I can explain the rule, but I will not bend it for noise.’
+  player_rude: Dessa Pryce says, ‘You may leave, lower your voice, or try a useful question. Choose one.’
+- npcId: briar_court_npc_04
+  greet: Eris Vane says, ‘Briar Court keeps its promises in small places. Tell me which one you noticed.’
+  quest_offer: 'Eris Vane offers a specific task at Hollow Mirror: settle the practical mismatch before it costs someone a
+    shift.'
+  quest_progress: Eris Vane checks the record and asks for the one detail that would change the outcome.
+  quest_turnin: Eris Vane marks the work complete, names who benefited, and hands over the recorded reward.
+  gossip:
+  - At Mothwell, people are discussing a missing care tag.
+  - The safest route today is through Bramble Stair, not the obvious shortcut.
+  - Someone at Candle Nook is offering help but will not ask twice.
+  refusal: Eris Vane says, ‘No. I can explain the rule, but I will not bend it for noise.’
+  player_rude: Eris Vane says, ‘You may leave, lower your voice, or try a useful question. Choose one.’
+- npcId: briar_court_npc_05
+  greet: Fenn Quill says, ‘Briar Court keeps its promises in small places. Tell me which one you noticed.’
+  quest_offer: 'Fenn Quill offers a specific task at Briar Gate: settle the practical mismatch before it costs someone a shift.'
+  quest_progress: Fenn Quill checks the record and asks for the one detail that would change the outcome.
+  quest_turnin: Fenn Quill marks the work complete, names who benefited, and hands over the recorded reward.
+  gossip:
+  - At Bramble Stair, people are discussing a missing care tag.
+  - The safest route today is through Candle Nook, not the obvious shortcut.
+  - Someone at Thorn Choir is offering help but will not ask twice.
+  refusal: Fenn Quill says, ‘No. I can explain the rule, but I will not bend it for noise.’
+  player_rude: Fenn Quill says, ‘You may leave, lower your voice, or try a useful question. Choose one.’
+- npcId: briar_court_npc_06
+  greet: Gala Vale says, ‘Briar Court keeps its promises in small places. Tell me which one you noticed.’
+  quest_offer: 'Gala Vale offers a specific task at Thimble Hall: settle the practical mismatch before it costs someone a
+    shift.'
+  quest_progress: Gala Vale checks the record and asks for the one detail that would change the outcome.
+  quest_turnin: Gala Vale marks the work complete, names who benefited, and hands over the recorded reward.
+  gossip:
+  - At Candle Nook, people are discussing a missing care tag.
+  - The safest route today is through Thorn Choir, not the obvious shortcut.
+  - Someone at Briar Gate is offering help but will not ask twice.
+  refusal: Gala Vale says, ‘No. I can explain the rule, but I will not bend it for noise.’
+  player_rude: Gala Vale says, ‘You may leave, lower your voice, or try a useful question. Choose one.’
+- npcId: briar_court_npc_07
+  greet: Holl Wren says, ‘Briar Court keeps its promises in small places. Tell me which one you noticed.’
+  quest_offer: 'Holl Wren offers a specific task at Moon Orchard: settle the practical mismatch before it costs someone a
+    shift.'
+  quest_progress: Holl Wren checks the record and asks for the one detail that would change the outcome.
+  quest_turnin: Holl Wren marks the work complete, names who benefited, and hands over the recorded reward.
+  gossip:
+  - At Thorn Choir, people are discussing a missing care tag.
+  - The safest route today is through Briar Gate, not the obvious shortcut.
+  - Someone at Thimble Hall is offering help but will not ask twice.
+  refusal: Holl Wren says, ‘No. I can explain the rule, but I will not bend it for noise.’
+  player_rude: Holl Wren says, ‘You may leave, lower your voice, or try a useful question. Choose one.’
+- npcId: briar_court_npc_08
+  greet: Ivo Morrow says, ‘Briar Court keeps its promises in small places. Tell me which one you noticed.’
+  quest_offer: 'Ivo Morrow offers a specific task at Hollow Mirror: settle the practical mismatch before it costs someone
+    a shift.'
+  quest_progress: Ivo Morrow checks the record and asks for the one detail that would change the outcome.
+  quest_turnin: Ivo Morrow marks the work complete, names who benefited, and hands over the recorded reward.
+  gossip:
+  - At Briar Gate, people are discussing a missing care tag.
+  - The safest route today is through Thimble Hall, not the obvious shortcut.
+  - Someone at Moon Orchard is offering help but will not ask twice.
+  refusal: Ivo Morrow says, ‘No. I can explain the rule, but I will not bend it for noise.’
+  player_rude: Ivo Morrow says, ‘You may leave, lower your voice, or try a useful question. Choose one.’
+- npcId: briar_court_npc_09
+  greet: Jori Rowan says, ‘Briar Court keeps its promises in small places. Tell me which one you noticed.’
+  quest_offer: 'Jori Rowan offers a specific task at Briar Gate: settle the practical mismatch before it costs someone a shift.'
+  quest_progress: Jori Rowan checks the record and asks for the one detail that would change the outcome.
+  quest_turnin: Jori Rowan marks the work complete, names who benefited, and hands over the recorded reward.
+  gossip:
+  - At Thimble Hall, people are discussing a missing care tag.
+  - The safest route today is through Moon Orchard, not the obvious shortcut.
+  - Someone at Hollow Mirror is offering help but will not ask twice.
+  refusal: Jori Rowan says, ‘No. I can explain the rule, but I will not bend it for noise.’
+  player_rude: Jori Rowan says, ‘You may leave, lower your voice, or try a useful question. Choose one.’
+- npcId: briar_court_npc_10
+  greet: Alden Nook says, ‘Briar Court keeps its promises in small places. Tell me which one you noticed.’
+  quest_offer: 'Alden Nook offers a specific task at Thimble Hall: settle the practical mismatch before it costs someone a
+    shift.'
+  quest_progress: Alden Nook checks the record and asks for the one detail that would change the outcome.
+  quest_turnin: Alden Nook marks the work complete, names who benefited, and hands over the recorded reward.
+  gossip:
+  - At Moon Orchard, people are discussing a missing care tag.
+  - The safest route today is through Hollow Mirror, not the obvious shortcut.
+  - Someone at Mothwell is offering help but will not ask twice.
+  refusal: Alden Nook says, ‘No. I can explain the rule, but I will not bend it for noise.’
+  player_rude: Alden Nook says, ‘You may leave, lower your voice, or try a useful question. Choose one.’
+choiceButtons:
+- id: briar_court_choice_01_01
+  placeId: briar_court_place_01
+  label: Read the notice at Briar Gate
+  requires: []
+  intentKind: talk
+  stake: one turn
+- id: briar_court_choice_01_02
+  placeId: briar_court_place_01
+  label: Ask for an introduction at Briar Gate
+  requires: []
+  intentKind: talk
+  stake: one supply
+- id: briar_court_choice_01_03
+  placeId: briar_court_place_01
+  label: Check the tool tag at Briar Gate
+  requires: []
+  intentKind: inspect
+  stake: a declined invitation
+- id: briar_court_choice_01_04
+  placeId: briar_court_place_01
+  label: Offer a hand at Briar Gate
+  requires: []
+  intentKind: interact
+  stake: a public note
+- id: briar_court_choice_01_05
+  placeId: briar_court_place_01
+  label: Take the safer route at Briar Gate
+  requires:
+  - briar_court_item_05
+  intentKind: travel
+  stake: a short detour
+- id: briar_court_choice_01_06
+  placeId: briar_court_place_01
+  label: Open the local record at Briar Gate
+  requires:
+  - briar_court_item_06
+  intentKind: interact
+  stake: one turn
+- id: briar_court_choice_01_07
+  placeId: briar_court_place_01
+  label: Rest at the bench at Briar Gate
+  requires:
+  - briar_court_item_07
+  intentKind: rest
+  stake: one supply
+- id: briar_court_choice_01_08
+  placeId: briar_court_place_01
+  label: Repair the marker at Briar Gate
+  requires:
+  - briar_court_item_08
+  intentKind: interact
+  stake: a declined invitation
+- id: briar_court_choice_01_09
+  placeId: briar_court_place_01
+  label: Prepare a shared item at Briar Gate
+  requires:
+  - briar_court_item_09
+  intentKind: craft
+  stake: a public note
+- id: briar_court_choice_01_10
+  placeId: briar_court_place_01
+  label: Leave a kind note at Briar Gate
+  requires:
+  - briar_court_item_10
+  intentKind: talk
+  stake: a short detour
+- id: briar_court_choice_02_01
+  placeId: briar_court_place_02
+  label: Read the notice at Thimble Hall
+  requires: []
+  intentKind: talk
+  stake: one turn
+- id: briar_court_choice_02_02
+  placeId: briar_court_place_02
+  label: Ask for an introduction at Thimble Hall
+  requires: []
+  intentKind: talk
+  stake: one supply
+- id: briar_court_choice_02_03
+  placeId: briar_court_place_02
+  label: Check the tool tag at Thimble Hall
+  requires: []
+  intentKind: inspect
+  stake: a declined invitation
+- id: briar_court_choice_02_04
+  placeId: briar_court_place_02
+  label: Offer a hand at Thimble Hall
+  requires: []
+  intentKind: interact
+  stake: a public note
+- id: briar_court_choice_02_05
+  placeId: briar_court_place_02
+  label: Take the safer route at Thimble Hall
+  requires:
+  - briar_court_item_05
+  intentKind: travel
+  stake: a short detour
+- id: briar_court_choice_02_06
+  placeId: briar_court_place_02
+  label: Open the local record at Thimble Hall
+  requires:
+  - briar_court_item_06
+  intentKind: interact
+  stake: one turn
+- id: briar_court_choice_02_07
+  placeId: briar_court_place_02
+  label: Rest at the bench at Thimble Hall
+  requires:
+  - briar_court_item_07
+  intentKind: rest
+  stake: one supply
+- id: briar_court_choice_02_08
+  placeId: briar_court_place_02
+  label: Repair the marker at Thimble Hall
+  requires:
+  - briar_court_item_08
+  intentKind: interact
+  stake: a declined invitation
+- id: briar_court_choice_02_09
+  placeId: briar_court_place_02
+  label: Prepare a shared item at Thimble Hall
+  requires:
+  - briar_court_item_09
+  intentKind: craft
+  stake: a public note
+- id: briar_court_choice_02_10
+  placeId: briar_court_place_02
+  label: Leave a kind note at Thimble Hall
+  requires:
+  - briar_court_item_10
+  intentKind: talk
+  stake: a short detour
+- id: briar_court_choice_03_01
+  placeId: briar_court_place_03
+  label: Read the notice at Moon Orchard
+  requires: []
+  intentKind: talk
+  stake: one turn
+- id: briar_court_choice_03_02
+  placeId: briar_court_place_03
+  label: Ask for an introduction at Moon Orchard
+  requires: []
+  intentKind: talk
+  stake: one supply
+- id: briar_court_choice_03_03
+  placeId: briar_court_place_03
+  label: Check the tool tag at Moon Orchard
+  requires: []
+  intentKind: inspect
+  stake: a declined invitation
+- id: briar_court_choice_03_04
+  placeId: briar_court_place_03
+  label: Offer a hand at Moon Orchard
+  requires: []
+  intentKind: interact
+  stake: a public note
+- id: briar_court_choice_03_05
+  placeId: briar_court_place_03
+  label: Take the safer route at Moon Orchard
+  requires:
+  - briar_court_item_05
+  intentKind: travel
+  stake: a short detour
+- id: briar_court_choice_03_06
+  placeId: briar_court_place_03
+  label: Open the local record at Moon Orchard
+  requires:
+  - briar_court_item_06
+  intentKind: interact
+  stake: one turn
+- id: briar_court_choice_03_07
+  placeId: briar_court_place_03
+  label: Rest at the bench at Moon Orchard
+  requires:
+  - briar_court_item_07
+  intentKind: rest
+  stake: one supply
+- id: briar_court_choice_03_08
+  placeId: briar_court_place_03
+  label: Repair the marker at Moon Orchard
+  requires:
+  - briar_court_item_08
+  intentKind: interact
+  stake: a declined invitation
+- id: briar_court_choice_03_09
+  placeId: briar_court_place_03
+  label: Prepare a shared item at Moon Orchard
+  requires:
+  - briar_court_item_09
+  intentKind: craft
+  stake: a public note
+- id: briar_court_choice_03_10
+  placeId: briar_court_place_03
+  label: Leave a kind note at Moon Orchard
+  requires:
+  - briar_court_item_10
+  intentKind: talk
+  stake: a short detour
+- id: briar_court_choice_04_01
+  placeId: briar_court_place_04
+  label: Read the notice at Hollow Mirror
+  requires: []
+  intentKind: talk
+  stake: one turn
+- id: briar_court_choice_04_02
+  placeId: briar_court_place_04
+  label: Ask for an introduction at Hollow Mirror
+  requires: []
+  intentKind: talk
+  stake: one supply
+- id: briar_court_choice_04_03
+  placeId: briar_court_place_04
+  label: Check the tool tag at Hollow Mirror
+  requires: []
+  intentKind: inspect
+  stake: a declined invitation
+- id: briar_court_choice_04_04
+  placeId: briar_court_place_04
+  label: Offer a hand at Hollow Mirror
+  requires: []
+  intentKind: interact
+  stake: a public note
+- id: briar_court_choice_04_05
+  placeId: briar_court_place_04
+  label: Take the safer route at Hollow Mirror
+  requires:
+  - briar_court_item_05
+  intentKind: travel
+  stake: a short detour
+- id: briar_court_choice_04_06
+  placeId: briar_court_place_04
+  label: Open the local record at Hollow Mirror
+  requires:
+  - briar_court_item_06
+  intentKind: interact
+  stake: one turn
+- id: briar_court_choice_04_07
+  placeId: briar_court_place_04
+  label: Rest at the bench at Hollow Mirror
+  requires:
+  - briar_court_item_07
+  intentKind: rest
+  stake: one supply
+- id: briar_court_choice_04_08
+  placeId: briar_court_place_04
+  label: Repair the marker at Hollow Mirror
+  requires:
+  - briar_court_item_08
+  intentKind: interact
+  stake: a declined invitation
+- id: briar_court_choice_04_09
+  placeId: briar_court_place_04
+  label: Prepare a shared item at Hollow Mirror
+  requires:
+  - briar_court_item_09
+  intentKind: craft
+  stake: a public note
+- id: briar_court_choice_04_10
+  placeId: briar_court_place_04
+  label: Leave a kind note at Hollow Mirror
+  requires:
+  - briar_court_item_10
+  intentKind: talk
+  stake: a short detour
+- id: briar_court_choice_05_01
+  placeId: briar_court_place_05
+  label: Read the notice at Mothwell
+  requires: []
+  intentKind: talk
+  stake: one turn
+- id: briar_court_choice_05_02
+  placeId: briar_court_place_05
+  label: Ask for an introduction at Mothwell
+  requires: []
+  intentKind: talk
+  stake: one supply
+- id: briar_court_choice_05_03
+  placeId: briar_court_place_05
+  label: Check the tool tag at Mothwell
+  requires: []
+  intentKind: inspect
+  stake: a declined invitation
+- id: briar_court_choice_05_04
+  placeId: briar_court_place_05
+  label: Offer a hand at Mothwell
+  requires: []
+  intentKind: interact
+  stake: a public note
+- id: briar_court_choice_05_05
+  placeId: briar_court_place_05
+  label: Take the safer route at Mothwell
+  requires:
+  - briar_court_item_05
+  intentKind: travel
+  stake: a short detour
+- id: briar_court_choice_05_06
+  placeId: briar_court_place_05
+  label: Open the local record at Mothwell
+  requires:
+  - briar_court_item_06
+  intentKind: interact
+  stake: one turn
+- id: briar_court_choice_05_07
+  placeId: briar_court_place_05
+  label: Rest at the bench at Mothwell
+  requires:
+  - briar_court_item_07
+  intentKind: rest
+  stake: one supply
+- id: briar_court_choice_05_08
+  placeId: briar_court_place_05
+  label: Repair the marker at Mothwell
+  requires:
+  - briar_court_item_08
+  intentKind: interact
+  stake: a declined invitation
+- id: briar_court_choice_05_09
+  placeId: briar_court_place_05
+  label: Prepare a shared item at Mothwell
+  requires:
+  - briar_court_item_09
+  intentKind: craft
+  stake: a public note
+- id: briar_court_choice_05_10
+  placeId: briar_court_place_05
+  label: Leave a kind note at Mothwell
+  requires:
+  - briar_court_item_10
+  intentKind: talk
+  stake: a short detour
+- id: briar_court_choice_06_01
+  placeId: briar_court_place_06
+  label: Read the notice at Bramble Stair
+  requires: []
+  intentKind: talk
+  stake: one turn
+- id: briar_court_choice_06_02
+  placeId: briar_court_place_06
+  label: Ask for an introduction at Bramble Stair
+  requires: []
+  intentKind: talk
+  stake: one supply
+- id: briar_court_choice_06_03
+  placeId: briar_court_place_06
+  label: Check the tool tag at Bramble Stair
+  requires: []
+  intentKind: inspect
+  stake: a declined invitation
+- id: briar_court_choice_06_04
+  placeId: briar_court_place_06
+  label: Offer a hand at Bramble Stair
+  requires: []
+  intentKind: interact
+  stake: a public note
+- id: briar_court_choice_06_05
+  placeId: briar_court_place_06
+  label: Take the safer route at Bramble Stair
+  requires:
+  - briar_court_item_05
+  intentKind: travel
+  stake: a short detour
+- id: briar_court_choice_06_06
+  placeId: briar_court_place_06
+  label: Open the local record at Bramble Stair
+  requires:
+  - briar_court_item_06
+  intentKind: interact
+  stake: one turn
+- id: briar_court_choice_06_07
+  placeId: briar_court_place_06
+  label: Rest at the bench at Bramble Stair
+  requires:
+  - briar_court_item_07
+  intentKind: rest
+  stake: one supply
+- id: briar_court_choice_06_08
+  placeId: briar_court_place_06
+  label: Repair the marker at Bramble Stair
+  requires:
+  - briar_court_item_08
+  intentKind: interact
+  stake: a declined invitation
+- id: briar_court_choice_06_09
+  placeId: briar_court_place_06
+  label: Prepare a shared item at Bramble Stair
+  requires:
+  - briar_court_item_09
+  intentKind: craft
+  stake: a public note
+- id: briar_court_choice_06_10
+  placeId: briar_court_place_06
+  label: Leave a kind note at Bramble Stair
+  requires:
+  - briar_court_item_10
+  intentKind: talk
+  stake: a short detour
+- id: briar_court_choice_07_01
+  placeId: briar_court_place_07
+  label: Read the notice at Candle Nook
+  requires: []
+  intentKind: talk
+  stake: one turn
+- id: briar_court_choice_07_02
+  placeId: briar_court_place_07
+  label: Ask for an introduction at Candle Nook
+  requires: []
+  intentKind: talk
+  stake: one supply
+- id: briar_court_choice_07_03
+  placeId: briar_court_place_07
+  label: Check the tool tag at Candle Nook
+  requires: []
+  intentKind: inspect
+  stake: a declined invitation
+- id: briar_court_choice_07_04
+  placeId: briar_court_place_07
+  label: Offer a hand at Candle Nook
+  requires: []
+  intentKind: interact
+  stake: a public note
+- id: briar_court_choice_07_05
+  placeId: briar_court_place_07
+  label: Take the safer route at Candle Nook
+  requires:
+  - briar_court_item_05
+  intentKind: travel
+  stake: a short detour
+- id: briar_court_choice_07_06
+  placeId: briar_court_place_07
+  label: Open the local record at Candle Nook
+  requires:
+  - briar_court_item_06
+  intentKind: interact
+  stake: one turn
+- id: briar_court_choice_07_07
+  placeId: briar_court_place_07
+  label: Rest at the bench at Candle Nook
+  requires:
+  - briar_court_item_07
+  intentKind: rest
+  stake: one supply
+- id: briar_court_choice_07_08
+  placeId: briar_court_place_07
+  label: Repair the marker at Candle Nook
+  requires:
+  - briar_court_item_08
+  intentKind: interact
+  stake: a declined invitation
+- id: briar_court_choice_07_09
+  placeId: briar_court_place_07
+  label: Prepare a shared item at Candle Nook
+  requires:
+  - briar_court_item_09
+  intentKind: craft
+  stake: a public note
+- id: briar_court_choice_07_10
+  placeId: briar_court_place_07
+  label: Leave a kind note at Candle Nook
+  requires:
+  - briar_court_item_10
+  intentKind: talk
+  stake: a short detour
+- id: briar_court_choice_08_01
+  placeId: briar_court_place_08
+  label: Read the notice at Thorn Choir
+  requires: []
+  intentKind: talk
+  stake: one turn
+- id: briar_court_choice_08_02
+  placeId: briar_court_place_08
+  label: Ask for an introduction at Thorn Choir
+  requires: []
+  intentKind: talk
+  stake: one supply
+- id: briar_court_choice_08_03
+  placeId: briar_court_place_08
+  label: Check the tool tag at Thorn Choir
+  requires: []
+  intentKind: inspect
+  stake: a declined invitation
+- id: briar_court_choice_08_04
+  placeId: briar_court_place_08
+  label: Offer a hand at Thorn Choir
+  requires: []
+  intentKind: interact
+  stake: a public note
+- id: briar_court_choice_08_05
+  placeId: briar_court_place_08
+  label: Take the safer route at Thorn Choir
+  requires:
+  - briar_court_item_05
+  intentKind: travel
+  stake: a short detour
+- id: briar_court_choice_08_06
+  placeId: briar_court_place_08
+  label: Open the local record at Thorn Choir
+  requires:
+  - briar_court_item_06
+  intentKind: interact
+  stake: one turn
+- id: briar_court_choice_08_07
+  placeId: briar_court_place_08
+  label: Rest at the bench at Thorn Choir
+  requires:
+  - briar_court_item_07
+  intentKind: rest
+  stake: one supply
+- id: briar_court_choice_08_08
+  placeId: briar_court_place_08
+  label: Repair the marker at Thorn Choir
+  requires:
+  - briar_court_item_08
+  intentKind: interact
+  stake: a declined invitation
+- id: briar_court_choice_08_09
+  placeId: briar_court_place_08
+  label: Prepare a shared item at Thorn Choir
+  requires:
+  - briar_court_item_09
+  intentKind: craft
+  stake: a public note
+- id: briar_court_choice_08_10
+  placeId: briar_court_place_08
+  label: Leave a kind note at Thorn Choir
+  requires:
+  - briar_court_item_10
+  intentKind: talk
+  stake: a short detour
+interactables:
+- id: briar_court_interact_01
+  verbId: rest
+  publicName: Briar Gate bench
+  placeId: briar_court_place_01
+  displayVerb: Rest here
+  stateKey: briar_court_rest_01
+- id: briar_court_interact_02
+  verbId: repair
+  publicName: Thimble Hall cabinet
+  placeId: briar_court_place_02
+  displayVerb: Repair here
+  stateKey: briar_court_repair_02
+- id: briar_court_interact_03
+  verbId: tend
+  publicName: Moon Orchard rack
+  placeId: briar_court_place_03
+  displayVerb: Tend here
+  stateKey: briar_court_tend_03
+- id: briar_court_interact_04
+  verbId: craft
+  publicName: Hollow Mirror kettle
+  placeId: briar_court_place_04
+  displayVerb: Craft here
+  stateKey: briar_court_craft_04
+- id: briar_court_interact_05
+  verbId: cook
+  publicName: Mothwell ledger
+  placeId: briar_court_place_05
+  displayVerb: Cook here
+  stateKey: briar_court_cook_05
+- id: briar_court_interact_06
+  verbId: bind_inn
+  publicName: Bramble Stair rail
+  placeId: briar_court_place_06
+  displayVerb: Bind Inn here
+  stateKey: briar_court_bind_inn_06
+- id: briar_court_interact_07
+  verbId: inspect
+  publicName: Candle Nook bell
+  placeId: briar_court_place_07
+  displayVerb: Inspect here
+  stateKey: briar_court_inspect_07
+- id: briar_court_interact_08
+  verbId: open
+  publicName: Thorn Choir board
+  placeId: briar_court_place_08
+  displayVerb: Open here
+  stateKey: briar_court_open_08
+- id: briar_court_interact_09
+  verbId: carry
+  publicName: Briar Gate table
+  placeId: briar_court_place_01
+  displayVerb: Carry here
+  stateKey: briar_court_carry_09
+- id: briar_court_interact_10
+  verbId: clean
+  publicName: Thimble Hall lamp
+  placeId: briar_court_place_02
+  displayVerb: Clean here
+  stateKey: briar_court_clean_10
+- id: briar_court_interact_11
+  verbId: signal
+  publicName: Moon Orchard gate
+  placeId: briar_court_place_03
+  displayVerb: Signal here
+  stateKey: briar_court_signal_11
+- id: briar_court_interact_12
+  verbId: record
+  publicName: Hollow Mirror shelf
+  placeId: briar_court_place_04
+  displayVerb: Record here
+  stateKey: briar_court_record_12
+interiors:
+- id: briar_court_interior_01
+  publicName: Briar Court Home Interior
+  entrancePlaceId: briar_court_place_08
+  rooms:
+  - id: briar_court_home_room_01
+    publicName: Briar Court Entry
+    mapScale: interior
+    exits:
+    - briar_court_home_room_02
+    props:
+    - briar_court_home_prop_01
+    - briar_court_home_prop_08
+  - id: briar_court_home_room_02
+    publicName: Briar Court Main Room
+    mapScale: interior
+    exits:
+    - briar_court_home_room_01
+    - briar_court_home_room_03
+    props:
+    - briar_court_home_prop_02
+    - briar_court_home_prop_09
+  - id: briar_court_home_room_03
+    publicName: Briar Court Work Nook
+    mapScale: interior
+    exits:
+    - briar_court_home_room_02
+    - briar_court_home_room_04
+    props:
+    - briar_court_home_prop_03
+    - briar_court_home_prop_10
+  - id: briar_court_home_room_04
+    publicName: Briar Court Window Room
+    mapScale: interior
+    exits:
+    - briar_court_home_room_03
+    - briar_court_home_room_05
+    props:
+    - briar_court_home_prop_04
+    - briar_court_home_prop_11
+  - id: briar_court_home_room_05
+    publicName: Briar Court Quiet Room
+    mapScale: interior
+    exits:
+    - briar_court_home_room_04
+    - briar_court_home_room_06
+    props:
+    - briar_court_home_prop_05
+    - briar_court_home_prop_12
+  - id: briar_court_home_room_06
+    publicName: Briar Court Storage
+    mapScale: interior
+    exits:
+    - briar_court_home_room_05
+    - briar_court_home_room_07
+    props:
+    - briar_court_home_prop_06
+    - briar_court_home_prop_13
+  - id: briar_court_home_room_07
+    publicName: Briar Court Back Step
+    mapScale: interior
+    exits:
+    - briar_court_home_room_06
+    props:
+    - briar_court_home_prop_07
+    - briar_court_home_prop_14
+talents:
+- id: briar_court_talent_01
+  publicName: Briar Court Local Ear
+  cost: 1
+  requires: []
+  effectFlags:
+  - briar_court_effect_01
+  payToUnlock: false
+- id: briar_court_talent_02
+  publicName: Briar Court Careful Hand
+  cost: 2
+  requires: []
+  effectFlags:
+  - briar_court_effect_02
+  payToUnlock: false
+- id: briar_court_talent_03
+  publicName: Briar Court Route Sense
+  cost: 3
+  requires: []
+  effectFlags:
+  - briar_court_effect_03
+  payToUnlock: false
+- id: briar_court_talent_04
+  publicName: Briar Court Shared Measure
+  cost: 4
+  requires: []
+  effectFlags:
+  - briar_court_effect_04
+  payToUnlock: false
+- id: briar_court_talent_05
+  publicName: Briar Court Quiet Craft
+  cost: 1
+  requires:
+  - briar_court_talent_04
+  effectFlags:
+  - briar_court_effect_05
+  payToUnlock: false
+- id: briar_court_talent_06
+  publicName: Briar Court Open Invitation
+  cost: 2
+  requires: []
+  effectFlags:
+  - briar_court_effect_06
+  payToUnlock: false
+- id: briar_court_talent_07
+  publicName: Briar Court Safe Return
+  cost: 3
+  requires: []
+  effectFlags:
+  - briar_court_effect_07
+  payToUnlock: false
+- id: briar_court_talent_08
+  publicName: Briar Court Field Note
+  cost: 4
+  requires: []
+  effectFlags:
+  - briar_court_effect_08
+  payToUnlock: false
+- id: briar_court_talent_09
+  publicName: Briar Court Steady Pace
+  cost: 1
+  requires:
+  - briar_court_talent_08
+  effectFlags:
+  - briar_court_effect_09
+  payToUnlock: false
+- id: briar_court_talent_10
+  publicName: Briar Court Clear Signal
+  cost: 2
+  requires: []
+  effectFlags:
+  - briar_court_effect_10
+  payToUnlock: false
+- id: briar_court_talent_11
+  publicName: Briar Court Warm Welcome
+  cost: 3
+  requires: []
+  effectFlags:
+  - briar_court_effect_11
+  payToUnlock: false
+- id: briar_court_talent_12
+  publicName: Briar Court Small Courage
+  cost: 4
+  requires: []
+  effectFlags:
+  - briar_court_effect_12
+  payToUnlock: false
+- id: briar_court_talent_13
+  publicName: Briar Court Repair Habit
+  cost: 1
+  requires:
+  - briar_court_talent_12
+  effectFlags:
+  - briar_court_effect_13
+  payToUnlock: false
+- id: briar_court_talent_14
+  publicName: Briar Court Trust Mark
+  cost: 2
+  requires: []
+  effectFlags:
+  - briar_court_effect_14
+  payToUnlock: false
+- id: briar_court_talent_15
+  publicName: Briar Court Second Look
+  cost: 3
+  requires: []
+  effectFlags:
+  - briar_court_effect_15
+  payToUnlock: false
+- id: briar_court_talent_16
+  publicName: Briar Court Closing Grace
+  cost: 4
+  requires: []
+  effectFlags:
+  - briar_court_effect_16
+  payToUnlock: false
+evalProbes:
+- id: briar_court_eval_01
+  given:
+    hp: 15
+    placeId: briar_court_place_01
+    turn: 1
+  action:
+    verbId: rest
+    targetId: briar_court_interact_01
+  expectedLedger:
+    turn: 2
+    lastAction: rest
+    placeId: briar_court_place_01
+  forbiddenProse:
+  - do not claim an uncommitted numeric reward
+  - do not alter damage, gold, ownership, or a score outside expectedLedger
+- id: briar_court_eval_02
+  given:
+    hp: 15
+    placeId: briar_court_place_02
+    turn: 2
+  action:
+    verbId: repair
+    targetId: briar_court_interact_02
+  expectedLedger:
+    turn: 3
+    lastAction: repair
+    placeId: briar_court_place_02
+  forbiddenProse:
+  - do not claim an uncommitted numeric reward
+  - do not alter damage, gold, ownership, or a score outside expectedLedger
+- id: briar_court_eval_03
+  given:
+    hp: 15
+    placeId: briar_court_place_03
+    turn: 3
+  action:
+    verbId: tend
+    targetId: briar_court_interact_03
+  expectedLedger:
+    turn: 4
+    lastAction: tend
+    placeId: briar_court_place_03
+  forbiddenProse:
+  - do not claim an uncommitted numeric reward
+  - do not alter damage, gold, ownership, or a score outside expectedLedger
+- id: briar_court_eval_04
+  given:
+    hp: 15
+    placeId: briar_court_place_04
+    turn: 4
+  action:
+    verbId: craft
+    targetId: briar_court_interact_04
+  expectedLedger:
+    turn: 5
+    lastAction: craft
+    placeId: briar_court_place_04
+  forbiddenProse:
+  - do not claim an uncommitted numeric reward
+  - do not alter damage, gold, ownership, or a score outside expectedLedger
+- id: briar_court_eval_05
+  given:
+    hp: 15
+    placeId: briar_court_place_05
+    turn: 5
+  action:
+    verbId: cook
+    targetId: briar_court_interact_05
+  expectedLedger:
+    turn: 6
+    lastAction: cook
+    placeId: briar_court_place_05
+  forbiddenProse:
+  - do not claim an uncommitted numeric reward
+  - do not alter damage, gold, ownership, or a score outside expectedLedger
+- id: briar_court_eval_06
+  given:
+    hp: 15
+    placeId: briar_court_place_06
+    turn: 6
+  action:
+    verbId: bind_inn
+    targetId: briar_court_interact_06
+  expectedLedger:
+    turn: 7
+    lastAction: bind_inn
+    placeId: briar_court_place_06
+  forbiddenProse:
+  - do not claim an uncommitted numeric reward
+  - do not alter damage, gold, ownership, or a score outside expectedLedger
+- id: briar_court_eval_07
+  given:
+    hp: 15
+    placeId: briar_court_place_07
+    turn: 7
+  action:
+    verbId: inspect
+    targetId: briar_court_interact_07
+  expectedLedger:
+    turn: 8
+    lastAction: inspect
+    placeId: briar_court_place_07
+  forbiddenProse:
+  - do not claim an uncommitted numeric reward
+  - do not alter damage, gold, ownership, or a score outside expectedLedger
+- id: briar_court_eval_08
+  given:
+    hp: 15
+    placeId: briar_court_place_08
+    turn: 8
+  action:
+    verbId: open
+    targetId: briar_court_interact_08
+  expectedLedger:
+    turn: 9
+    lastAction: open
+    placeId: briar_court_place_08
+  forbiddenProse:
+  - do not claim an uncommitted numeric reward
+  - do not alter damage, gold, ownership, or a score outside expectedLedger
+- id: briar_court_eval_09
+  given:
+    hp: 15
+    placeId: briar_court_place_01
+    turn: 9
+  action:
+    verbId: carry
+    targetId: briar_court_interact_09
+  expectedLedger:
+    turn: 10
+    lastAction: carry
+    placeId: briar_court_place_01
+  forbiddenProse:
+  - do not claim an uncommitted numeric reward
+  - do not alter damage, gold, ownership, or a score outside expectedLedger
+- id: briar_court_eval_10
+  given:
+    hp: 15
+    placeId: briar_court_place_02
+    turn: 10
+  action:
+    verbId: clean
+    targetId: briar_court_interact_10
+  expectedLedger:
+    turn: 11
+    lastAction: clean
+    placeId: briar_court_place_02
+  forbiddenProse:
+  - do not claim an uncommitted numeric reward
+  - do not alter damage, gold, ownership, or a score outside expectedLedger
+- id: briar_court_eval_11
+  given:
+    hp: 15
+    placeId: briar_court_place_03
+    turn: 11
+  action:
+    verbId: signal
+    targetId: briar_court_interact_11
+  expectedLedger:
+    turn: 12
+    lastAction: signal
+    placeId: briar_court_place_03
+  forbiddenProse:
+  - do not claim an uncommitted numeric reward
+  - do not alter damage, gold, ownership, or a score outside expectedLedger
+- id: briar_court_eval_12
+  given:
+    hp: 15
+    placeId: briar_court_place_04
+    turn: 12
+  action:
+    verbId: record
+    targetId: briar_court_interact_12
+  expectedLedger:
+    turn: 13
+    lastAction: record
+    placeId: briar_court_place_04
+  forbiddenProse:
+  - do not claim an uncommitted numeric reward
+  - do not alter damage, gold, ownership, or a score outside expectedLedger
+- id: briar_court_eval_13
+  given:
+    hp: 15
+    placeId: briar_court_place_05
+    turn: 13
+  action:
+    verbId: rest
+    targetId: briar_court_interact_01
+  expectedLedger:
+    turn: 14
+    lastAction: rest
+    placeId: briar_court_place_05
+  forbiddenProse:
+  - do not claim an uncommitted numeric reward
+  - do not alter damage, gold, ownership, or a score outside expectedLedger
+- id: briar_court_eval_14
+  given:
+    hp: 15
+    placeId: briar_court_place_06
+    turn: 14
+  action:
+    verbId: repair
+    targetId: briar_court_interact_02
+  expectedLedger:
+    turn: 15
+    lastAction: repair
+    placeId: briar_court_place_06
+  forbiddenProse:
+  - do not claim an uncommitted numeric reward
+  - do not alter damage, gold, ownership, or a score outside expectedLedger
+- id: briar_court_eval_15
+  given:
+    hp: 15
+    placeId: briar_court_place_07
+    turn: 15
+  action:
+    verbId: tend
+    targetId: briar_court_interact_03
+  expectedLedger:
+    turn: 16
+    lastAction: tend
+    placeId: briar_court_place_07
+  forbiddenProse:
+  - do not claim an uncommitted numeric reward
+  - do not alter damage, gold, ownership, or a score outside expectedLedger
+wallets:
+  goldName: Briar Pennies
+  cosmeticTokenName: Veil Petals
+  noConversion: true
+  prohibited:
+  - outcomes
+  - lockout skips
+  - catch rate
+  - raid clears
+  - random power packs
+  - gacha
+  - loot boxes
+dailyCaps:
+  contractsPerDay: 3
+  goldFromRepeatables: 90
+  weeklyBossLockout: per-character per-boss
+divergenceRecords:
+- id: briar_court_walkaway_01
+  choice: walk away from a local obligation
+  recordKey: briar_court_divergence_01
+  effect: Alternate dialogue and a non-punitive follow-up route.
+- id: briar_court_walkaway_02
+  choice: walk away from a local obligation
+  recordKey: briar_court_divergence_02
+  effect: Alternate dialogue and a non-punitive follow-up route.
+- id: briar_court_walkaway_03
+  choice: walk away from a local obligation
+  recordKey: briar_court_divergence_03
+  effect: Alternate dialogue and a non-punitive follow-up route.

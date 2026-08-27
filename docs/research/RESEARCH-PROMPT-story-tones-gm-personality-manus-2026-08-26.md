@@ -1,0 +1,347 @@
+# Manus mega prompt — Story tones × GM personality × themes/images (2026-08-26)
+
+**Why:** SynapticGM already has LitRPG System personalities, tabletop GM personalities, fluid prose rails, folk voice, Mode DNA, theme kits, Memorable plates, and comic-lite research. This job asks Manus to catalogue **story/novel tone archetypes** (technique-level), map them onto **existing GM levers**, and pair them with **theme/image recipes** from the last Manus packs — without inventing a second Continuity-Warden LLM or cloning living authors.
+
+**Run as:** NEW Manus project (never continue a contaminated branch).  
+**Filename prefix:** `SynapticGM_story_tones_gm_personality_2026-08-26`  
+**Wiring:** research only — John will attach the pasted packs listed below. No game code in this job.
+
+**John attach (concrete paths under the repo / zip John uploads):**
+
+| Pack | Canonical path / files to attach |
+|---|---|
+| Mega research | `docs/research/pasted/mega-research-pack-manus-2026-08-26/unpacked/SynapticGM_mega_research_pack_2026-08-25/` — especially `theme_prompts.csv`, `memorable_plate_style_guide.md`, `item_icon_prompts.csv`, `map_chrome_prompts.md`, `visible_moat_copy.csv`, `opener_pointer_examples.md`, `DO_NOT_USE.md`, `README.md` |
+| Comic maximizer | `docs/research/pasted/complete-this-to-your-max-2026-08-26/` — especially `SynapticGM Comic - Graphic Novel Mode Maximizer.md`, `validated_openrouter_image_api.md`, `validated_storyboard_and_layering_findings.md`, `cost_model_tier_scenarios.csv`, drafts A–H |
+| Premium themes | `docs/research/pasted/premium-themes-manus-2026-08-19/` + nested `…_DELIVERABLES_unpacked/` — especially `T1_premium_theme_constitution.md`, `T6` / Vampire Nocturne rescue, `T5_*` deep dives, `design_synthesis.md`, `T9_implementation_backlog.md` |
+| Prior vibe | Ingest notes + prior outputs: `docs/research/game-vibe-personality-system-2026-08-18.md`, `game-vibe-executive-scorecard-2026-08-18.md`, `manus-mega-research-ingest-2026-08-26.md`, `manus-complete-this-to-your-max-ingest-2026-08-26.md`, `manus-premium-themes-ingest-2026-08-19.md` |
+
+---
+
+## COPY START — paste everything inside the fence into Manus
+
+```text
+NEW PROJECT. Unlimited run. Prefer many complete markdown + CSV/JSON files over a short chat answer. Empty sections = failure.
+Filename prefix: SynapticGM_story_tones_gm_personality_2026-08-26
+LIVE SynapticGM consumer app ONLY. No WOF. No hybrid climate. No patent. No MMO. No licensed series banks. No “write like [living author]” style cloning.
+
+# SynapticGM — MEGA RESEARCH: Story / Novel Tones × GM Personality Application × Theme & Image Pairing
+
+You are a senior narrative-systems + UX researcher for an indie hosted AI RPG. Produce an implementation-ready omnibus that:
+
+1) Catalogues how different stories and novels use **tone / narrative personality** (technique-level archetypes).
+2) Shows **exactly how to apply those tones through SynapticGM’s existing GM levers** (not a new architecture).
+3) Reuses and extends **images + theme materials** from the attached Manus mega pack, premium themes pack, and comic maximizer pack.
+
+Bigger is better. Cite only attached research + public sources. Flag UNKNOWN / SPECULATIVE / COUNSEL. Do not invent live UI screenshots.
+
+================================================================================
+PRODUCT LAW (do not contradict)
+================================================================================
+
+Authority order: player correction → pinned canon → StateTx → SceneManifest → evidence → invention.
+
+Personality / tone is a **rendering contract**, not a game-state policy:
+  Authority resolver → permitted outcome + StateTx + evidence
+  → SceneManifest / SNAPSHOT
+  → narrator + System chrome renderer (tone lives HERE)
+  → presentation (themes, Memorable plates, comic-lite chrome)
+
+FIREWALL (shipped): Voice is diction, cadence, table manner, and chrome templates only.
+Never change facts, dice, inventory, HP, permits, quest status, NPC presence, or location because of personality.
+
+Continuity Warden = **classifier / regex / deterministic repair only**.
+DO NOT propose a second LLM “tone critic” or Continuity-Warden critic.
+Prefer banks, rails, never-lines, fixtures, and vitest-ready tables.
+
+Kid Mode stays stricter (plain language, no adult chrome, no pressure, safer confirmation).
+Full every-turn multi-panel comic = No-Go near-term. Memorable splash + comic-lite wedge OK.
+Art never becomes ledger truth. Overlay lettering stays HTML/SVG — images must not bake dialogue, captions, SFX glyphs, logos, UI, or watermarks.
+Themes are cosmetics (material systems): fonts, textures, frames, dice, voice flavour — never coupled to narrator semantics as authority.
+
+No licensed IP in player-facing banks (no Solo Leveling / Wandering Inn / SAO / DCC / ORV / ToG / Fable / Albion / Ghibli / Marvel / D&D product race names as content). Public-domain folklore + original SynapticGM naming only.
+No living-author voice cloning as product instruction (“write like Sanderson / Abercrombie / …”). Technique buckets + public-domain exemplars only; if you mention a living work, describe the *technique* without instructing imitation of that author’s prose.
+
+================================================================================
+WHAT IS ALREADY SHIPPED (extend — do not reinvent)
+================================================================================
+
+### LitRPG System personalities (New Game; persist as systemPersonality)
+IDs / shop labels:
+- cold-system → “Cold registrar” (clinical Status chrome)
+- dry-wit → “Sarcastic Patch” (wry diagnostics; never mean to player)
+- army-brief → “Army quartermaster” (situation then options)
+- chilled-gm → “Friendly System” (warm readable registrar — still System, not table pal)
+- cozy-brutal → “Cozy Brutal” (punchy visceral fights + casual slice-of-life; Status numbers stay honest)
+Theatrical System remains valid on old saves but is not the primary New Game shop list.
+
+### Tabletop Fantasy GM personalities (New Game; persist as gmPersonality)
+- chilled-gm, dry-wit, theatrical-jester, army-brief, fireside-innkeep
+(Default chilled-gm.)
+
+### Prior vibe research personality matrix (extend, reconcile with shipped IDs)
+From game-vibe-personality-system: Cold Registrar, Sarcastic Patch, Army Brief, Chilled GM, Dry Wit, Warm Chronicle, Clinical Auditor, Jester, Velvet Oracle, Street Balladeer, Ashen Archivist, Bright Field Guide.
+Map each research preset → shipped ID or “new Expert-only rail / deferred”.
+
+### Fluid prose rails + Mode DNA
+fluidProseRails: answer-first / one-beat / agency / earned-handoff; VALUE FLOOR ~100–180 words on paid turns; rhythm/tone/vocabulary/momentum.
+Mode DNA (engineMode):
+- litrpg: Direct / Diplomatic / Solitary choice flavour; System chrome diegetic
+- dnd (tabletop fantasy): investigate / position / party
+- rpg (story RPG): leverage / diplomatic / moral
+- pyoa: physical / tool / cautious; no open-sandbox hub invent
+
+### Folk voice
+folkVoiceExpectations peoples (public-domain tropes): human, elf, dwarf, orc, goblin, smallfolk, beastfolk, dragonfolk, vampire, ghost_spirit, troll, merfolk, ledgerborn, mycelial, ashkin, glassborn, tidebound, woven.
+Folk flavour = diction + social instinct only; named NPC memory overrides stereotypes.
+
+### Situation packet / SNAPSHOT AUTHORITY
+Compact SNAPSHOT (location, crowd, exits, props, presence, inventory, time/weather/indoor/tension) + AUTHORITY: narrate richly; facts must match snapshot + ledger.
+Flair is free for atmosphere; facts are not.
+
+### Themes / images already researched
+Mega pack Part B: theme_prompts.csv = **22 kits × 3 roles** (panel_tile / frame_ornament / atmosphere_bg); memorable_plate_style_guide.md (ink-and-watercolour book plates, Templates 01–20); item_icon_prompts.csv; map_chrome_prompts.md.
+Kit keys (use these exact keys):
+wood-elf-grove, dark-elf-umbrance, high-elf-spire, dwarf-forgehall, orc-warcamp, dragon-hoard, phoenix-ashrise, cyborg-chassis, angelic-radiance, infernal-pact, undead-ossuary, fae-glamour, goblin-scrapheap, merfolk-abyss, vampire-nocturne, neon-protocol, parchment-ledger, bone-reliquary, phosphor-terminal, noir-crimson, glass-spire, ember-depths.
+(Integration Blue skipped as material kit.)
+
+Premium themes: Vampire Nocturne material rescue (flock velvet + moonlit edge + Wine Obsidian dice; Grenze title-only; false friends vs Infernal / Ossuary / Noir). Constitution: cosmetics only; extend --sgm-* tokens.
+
+Comic maximizer: comic-lite (sparse Free ~20% eligible), deterministic BeatSpec, overlay lettering, Klein/Flux hosted path, Director stays off P0, no Continuity-Warden second LLM, Kid skip before capacity.
+
+Hosted image models (current product direction — confirm against attached validated_openrouter_image_api.md): Klein 4B for Free/comic-lite / icons; Flux Pro for Mid/High memorable plates when allowed. Never bake lettering into pixels.
+
+================================================================================
+ATTACHED RESEARCH YOU MUST INGEST FIRST
+================================================================================
+
+John will attach (or you must treat as provided) these concrete trees/files:
+
+MEGA (canonical nested unpack — ignore outer Manus SKILL.md / incomplete wrapper):
+- SynapticGM_mega_research_pack_2026-08-25/README.md
+- theme_prompts.csv
+- memorable_plate_style_guide.md
+- item_icon_prompts.csv
+- map_chrome_prompts.md
+- visible_moat_copy.csv
+- opener_pointer_examples.md
+- DO_NOT_USE.md
+- claim_pattern_bank.csv / adversarial_almost_false.csv (for never-lines discipline only)
+
+COMIC MAXIMIZER:
+- SynapticGM Comic - Graphic Novel Mode Maximizer.md
+- validated_openrouter_image_api.md
+- validated_storyboard_and_layering_findings.md
+- validated_deterministic_compositing_findings.md
+- cost_model_tier_scenarios.csv
+- draft_A_B.md … draft_H.md as needed
+
+PREMIUM THEMES:
+- T1_premium_theme_constitution.md
+- T6 Vampire Nocturne rescue (or equivalent)
+- T5 deep dives (vampire / undead / infernal / noir / race kits)
+- design_synthesis.md
+- T9_implementation_backlog.md
+- T14 unknowns (do not invent evidence Manus could not see)
+
+PRIOR VIBE:
+- game-vibe-personality-system-2026-08-18.md (V3 matrix)
+- game-vibe-executive-scorecard-2026-08-18.md
+
+If a file is missing, mark INPUT REQUIRED — do not hallucinate its contents.
+
+================================================================================
+PART T1 — Tone / narrative personality catalogue (stories & novels)
+================================================================================
+
+Build a readable catalogue of **story tone archetypes** used across novels, short fiction, serial fiction, and game-adjacent narrative forms.
+
+Minimum buckets (add justified extras if needed; merge duplicates):
+1. Grimdark / bleak consequence
+2. Cozy / low-stakes comfort
+3. Cozy-brutal / punchy visceral + slice-of-life (already shipped as cozy-brutal — refine as technique)
+4. Pulp / kinetic adventure
+5. Gothic / moonlit dread (romance-adjacent allowed as technique, not licensed franchise)
+6. LitRPG System-chrome / registrar diegesis
+7. Military briefing / procedural
+8. Dry wit / deadpan satire (never player-humiliation)
+9. Warm chronicle / reflective character-aware
+10. Clinical auditor / evidence-first
+11. Mythic portent / velvet oracle
+12. Street balladeer / colloquial kinetic
+13. Ashen archivist / historiographic
+14. Bright field guide / curious optimistic
+15. Noir / case-file urban
+16. Fairy-tale / fae glamour uncanny
+17. Hard SF terminal / phosphor procedural
+18. PYOA branching crisis voice (second-person agency)
+19. Kid Mode plain-stakes (cross-cutting constraint, not a genre)
+
+For EACH tone provide:
+| Field | Required content |
+| tone_id | snake_case |
+| readable_name | player-safe label |
+| one_line_thesis | |
+| NN/g-style dimensions | formal↔casual, serious↔funny, respectful↔irreverent, matter-of-fact↔enthusiastic |
+| diction | vocabulary band, metaphor scarcity/density, banned purple patterns |
+| rhythm | sentence length, paragraph shape, pause habits |
+| humor_dark_ratio | 0–100 humor vs severity; when humor is forbidden |
+| System_vs_prose_split | how Status/chrome differs from book prose |
+| NPC_voice_cues | how folkVoice should lean under this tone |
+| choice_pad_flavor | verbs / stance labels / never-pad-lines |
+| memorable_visual_mood | light event + palette families (no lettering) |
+| public_domain_technique_refs | preferred: Odyssey, Beowulf, Poe, Shelley, Stoker (technique only), fairy-tale forms, pulp magazine *forms* — not living-author clone lists |
+| living_work_technique_note | OPTIONAL: name a technique pattern (“progression serial status intercalation”) WITHOUT “write like Author X” |
+| never_do | hard never-lines (IP, cruelty, ledger lies, accent spam, etc.) |
+| Kid_Mode_delta | what softens vs what stays honest |
+| shipped_personality_overlap | which existing systemPersonality / gmPersonality it extends |
+
+Anti-hallucination: Prefer public-domain exemplars. If you cite a modern commercial series, cite only as a **technique family description** and explicitly forbid imitation prompts.
+
+================================================================================
+PART T2 — How to apply tones through the SynapticGM GM
+================================================================================
+
+Map every tone_id onto **existing levers only**:
+
+Levers you MUST use by name:
+- systemPersonality / gmPersonality (gmVoiceProfile IDs)
+- fluidProseRails (+ any tone-specific additive rail snippets you propose)
+- folkVoiceExpectations (bias, never stereotype lock)
+- situation SNAPSHOT AUTHORITY + flair-vs-facts rule
+- Mode DNA / choiceTierRules (litrpg | dnd | rpg | pyoa)
+- openingEstablishment / opener pointer families (mega opener_pointer_examples.md)
+- visible moat copy patterns (status / why / repair) where tone touches chrome wording
+- proseWarden / deterministic scrub classes (extend regex banks — no second LLM)
+- Perspective settings (2nd vs 3rd) interaction with tone
+
+Deliverable table columns:
+tone_id | best_engineModes | primary_personality_id | secondary_optional | fluid_rail_additions (bullet snippets) | SNAPSHOT_flair_policy | choice_pad_bank_id | STATUS_chrome_template_id | folk_bias | hard_gate_extras | eval_fixture_ids
+
+Also specify:
+1. New Game Simple picks (4 narrator + 4 System chrome) vs Expert matrix — reconcile vibe research with shipped LitRPG/tabletop pickers.
+2. What Surprise-me may pair; what pairs are banned (e.g. Jester + grimdark Kid).
+3. Semantic equivalence rule: switching tone must preserve render_equivalence for facts/math/permits (from vibe research).
+4. Opening hook deck: how tone changes *camera* of System Arrival / Debt Under Glass / etc. without changing deck facts.
+5. Anti-list: vibey ideas that destroy continuity or burn Free COGS.
+
+================================================================================
+PART T3 — Themes & images pairing (ingest last Manus research)
+================================================================================
+
+Explicitly ingest and reuse findings from:
+- mega theme_prompts.csv + memorable_plate_style_guide.md
+- premium Vampire Nocturne rescue + false-friend separations
+- comic maximizer visual tone / chrome / overlay rules / Klein-Flux constraints
+
+### T3.1 Tone → theme kit matrix
+For each tone_id, propose:
+| tone_id | primary_kit_key | secondary_kit_keys | false_friend_kits_to_avoid | font/dice notes from premium research | Kid_ok |
+
+Cover all 22 kit keys at least once as primary or secondary somewhere.
+Call out Vampire Nocturne (gothic), Undead Ossuary / Bone Reliquary (ashen), Infernal Pact / Ember Depths (sulfur vs magma false friends), Noir Crimson (case-file), Phosphor Terminal / Neon Protocol / Cyborg Chassis (System-chrome / hard SF), Parchment Ledger (warm chronicle / archivist), Fae Glamour, Wood-Elf Grove (cozy/field guide), Orc Warcamp / Cozy-brutal combat kits, etc.
+
+### T3.2 Image prompt recipes by tone
+For each tone, deliver:
+1. Memorable plate recipe deltas (light event, palette pair, composition bias) that **append** to memorable_plate_style_guide Master Suffix — do not replace the style guide.
+2. Which Templates 01–20 fit the tone best (ids only + why).
+3. Comic-lite PanelSpec mood tokens (camera family, gutter token, role preference) consistent with Maximizer — still overlay lettering only.
+4. Negative prompt must-includes: no readable text, no UI, no logos, no living-artist/studio imitation, no franchise lookalikes.
+5. Kid Mode rewrite rules for visual prompts under that tone.
+
+### T3.3 Cost / eligibility honesty
+Using comic cost_model_tier_scenarios.csv + mega free_cost notes if present:
+- When tone should suppress art (thin turns, alone invent risk, Kid skip).
+- Free vs Mid/High frequency expectations.
+- Never couple art jobs to GM turn timeout path.
+
+================================================================================
+PART T4 — Banks Manus must write (implementation fuel)
+================================================================================
+
+Produce downloadable files (names below are required):
+
+1. `tone_catalogue.csv` — one row per tone_id with T1 fields.
+2. `tone_to_gm_rails.csv` — T2 mapping table.
+3. `tone_theme_image_matrix.csv` — T3.1 + recipe pointers.
+4. `tone_fluid_rail_snippets.md` — copy-paste prompt rail blocks per tone (short; firewall header on each).
+5. `tone_choice_pad_banks.json` — 8–12 choice label patterns per tone × engineMode (original; no IP).
+6. `tone_status_chrome_templates.json` — Status / notice wording variants that stay ledger-honest.
+7. `tone_never_lines.csv` — never-lines with allowed=YES/NO + Kid flag (align with visible_moat discipline).
+8. `tone_eval_fixtures.json` — ≥24 fixtures: same ledger scene rendered under ≥3 tones; pass criteria = facts identical, tone distinct, Kid safe where tagged.
+9. `tone_blind_taste_protocol.md` — extend vibe blind taste + continuity regression.
+10. `p0_p1_p2_implementation_board.md` — see Part T5.
+11. `unknowns_and_evidence_gaps.md` — what Manus could not verify from attachments.
+12. `README.md` — pack map + Cursor import order.
+
+================================================================================
+PART T5 — Implementation board (P0–P2) for SynapticGM
+================================================================================
+
+Priority rules:
+- Deterministic banks/rails FIRST.
+- NO Continuity-Warden second LLM critic.
+- Extend gmVoiceProfile / fluidProseRails / folkVoice / theme tokens — do not invent a parallel personality engine.
+- Themes remain cosmetics; tone may *suggest* default kits on New Game but player can override.
+
+P0 (ship soon, low risk):
+- Tone→personality mapping for existing IDs + rail snippets for Cold / Patch / Army / Friendly / Cozy Brutal / tabletop five.
+- Never-lines + STATUS template variants.
+- Theme suggestion chips on New Game (non-binding).
+- Eval fixtures for vitest.
+
+P1:
+- Full tone catalogue in Expert picker (intensity slider optional).
+- Choice-pad banks per Mode DNA.
+- Memorable prompt deltas wired to tone_id.
+- Vampire/gothic + cozy + System-chrome visual presets validated against premium false friends.
+
+P2:
+- Comic-lite mood tokens per tone; optional Mid/High strip later only if Maximizer gates pass.
+- TTS / audio-lite flavour (thin; counsel later).
+- Seasonal kit×tone bundles (commerce — COUNSEL).
+
+Anti-list: full comic treadmill; style LoRA of living artists; RAG-as-truth for tone memory; personality that alters combat math; accent-mockery folk voice; Integration cyan leak into gothic kits.
+
+================================================================================
+PART T6 — Scorecard + founder decisions
+================================================================================
+
+1) One-page executive scorecard: which tones are Launch / Later / No-Go for Free vs Mid/High.
+2) Eight founder decisions with recommend + tradeoff (mirroring comic maximizer style).
+3) Cross-check: every recommendation cites attached file name OR public URL OR SPECULATIVE.
+
+================================================================================
+OUTPUT FORMAT / SELF-CHECK
+================================================================================
+
+Deliver many files with the prefix SynapticGM_story_tones_gm_personality_2026-08-26_…
+Include:
+- Executive scorecard (1 page)
+- Parts T1–T6 as files
+- All CSVs/JSON listed in T4
+- Citations; mark VERIFIED / SPECULATIVE / COUNSEL / UNKNOWN
+- Self-check checklist (must pass):
+  [ ] No WOF
+  [ ] No living-author clone instructions
+  [ ] No licensed series banks
+  [ ] No second Continuity-Warden LLM
+  [ ] Personality cannot override ledger
+  [ ] Images: no baked lettering
+  [ ] All 22 kit keys appear in matrix
+  [ ] Shipped personality IDs used by exact id
+  [ ] Kid Mode deltas present
+  [ ] Unknowns listed honestly
+
+Begin maximum research now. Ingest attached packs before writing banks.
+```
+
+## COPY END
+
+---
+
+## Notes for John (not for Manus)
+
+- Paste only the ` ```text ` block into a **new** Manus chat; attach the three pasted pack folders (or their zips) listed in the table at the top.
+- Prefer nesting: mega **unpacked** `SynapticGM_mega_research_pack_2026-08-25/` (not the incomplete outer Maximize Completion wrapper).
+- This prompt is research-only; do not treat Manus output as auto-wire until a playtest update batch.
+)

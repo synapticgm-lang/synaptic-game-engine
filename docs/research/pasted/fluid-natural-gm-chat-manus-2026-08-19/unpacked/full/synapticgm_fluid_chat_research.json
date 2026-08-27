@@ -1,0 +1,52 @@
+{
+  "project": {
+    "name": "SynapticGM Fluid Natural GM Chat Maximum Extract",
+    "date": "2026-08-19",
+    "scope": "Live SynapticGM only; ledger-first freeform chat/story feel."
+  },
+  "product_laws": [
+    "player correction authority",
+    "whole-message obligation coverage",
+    "adjudication before prose commit",
+    "answer direct questions first",
+    "one clear beat per default turn",
+    "personality renderer firewall",
+    "receipts as evidence not prose interruption",
+    "local repair",
+    "no mid-action soft offers",
+    "Kid Mode stricter contract"
+  ],
+  "evidence_domains": [
+    "A interacting chat/companion",
+    "B narrative craft",
+    "C audiobook/TTS",
+    "D interactive fiction/parser",
+    "E tabletop facilitation",
+    "F conversation design/HCI",
+    "G NPC dialogue patterns",
+    "H improv/oral performance"
+  ],
+  "decisions": {
+    "streaming": "closed beta post-commit sentence/paragraph streaming",
+    "memory": "ledger authoritative; retrieval/summary supporting only",
+    "voice": "semantic equivalence fixtures required",
+    "repair": "one contrastive question for material ambiguity",
+    "tts": "future text-parity pilot; no audio-only facts"
+  },
+  "deliverables": {
+    "constitution": "00_executive_fluid_gm_constitution.md",
+    "teardown": "F2_interaction_feel_teardown.md",
+    "protocol": "F3_turn_protocol_spec.md",
+    "rails": "F4_prose_rails.json",
+    "speech_acts": "speech_acts.json",
+    "repair_bank": "F6_repair_copy_bank.csv",
+    "eval_fixtures": "F11_fluid_chat_eval_fixtures.json",
+    "content_banks": "F13_content_banks.md"
+  },
+  "citations": "citations.md",
+  "labels": {
+    "VERIFIED_PUBLIC_MECHANISM": "Cited source explicitly documents a mechanism or result.",
+    "SPECULATIVE_TRANSFER": "SynapticGM product proposal inspired by evidence.",
+    "COUNSEL": "Requires specialist review before launch."
+  }
+}

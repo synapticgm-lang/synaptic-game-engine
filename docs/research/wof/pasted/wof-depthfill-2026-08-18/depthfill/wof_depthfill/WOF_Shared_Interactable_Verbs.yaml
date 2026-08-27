@@ -1,0 +1,50 @@
+packFormatVersion: 1
+verbs:
+- id: rest
+  displayDefault: Rest
+  engineMeaning: CODE validates the rest action against place, item, and ledger state
+    before narration.
+- id: repair
+  displayDefault: Repair
+  engineMeaning: CODE validates the repair action against place, item, and ledger
+    state before narration.
+- id: tend
+  displayDefault: Tend
+  engineMeaning: CODE validates the tend action against place, item, and ledger state
+    before narration.
+- id: craft
+  displayDefault: Craft
+  engineMeaning: CODE validates the craft action against place, item, and ledger state
+    before narration.
+- id: cook
+  displayDefault: Cook
+  engineMeaning: CODE validates the cook action against place, item, and ledger state
+    before narration.
+- id: bind_inn
+  displayDefault: Bind Inn
+  engineMeaning: CODE validates the bind_inn action against place, item, and ledger
+    state before narration.
+- id: inspect
+  displayDefault: Inspect
+  engineMeaning: CODE validates the inspect action against place, item, and ledger
+    state before narration.
+- id: open
+  displayDefault: Open
+  engineMeaning: CODE validates the open action against place, item, and ledger state
+    before narration.
+- id: carry
+  displayDefault: Carry
+  engineMeaning: CODE validates the carry action against place, item, and ledger state
+    before narration.
+- id: clean
+  displayDefault: Clean
+  engineMeaning: CODE validates the clean action against place, item, and ledger state
+    before narration.
+- id: signal
+  displayDefault: Signal
+  engineMeaning: CODE validates the signal action against place, item, and ledger
+    state before narration.
+- id: record
+  displayDefault: Record
+  engineMeaning: CODE validates the record action against place, item, and ledger
+    state before narration.

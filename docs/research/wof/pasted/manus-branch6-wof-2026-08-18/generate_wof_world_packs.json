@@ -1,0 +1,211 @@
+{
+  "results": [
+    {
+      "input": "ash_compact",
+      "output": {
+        "completion_note": "Completed and verified the full 0–12 original Ash Compact world pack with locked names, code-completeable quests, four starts, NPC dialogue, instances, economy, progression, Theme Kit, and integrity checks.",
+        "world_id": "ash_compact",
+        "world_pack": "https://private-us-east-1.manuscdn.com/sessionFile/8ZVKWfnfW5waMvuT4Ey0oy/sandbox/rkLx3HI48HeHVu10kKRWzW_1787001366261_na1fn_L2hvbWUvdWJ1bnR1L1dPRl9hc2hfY29tcGFjdF9QYWNr.md?Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly9wcml2YXRlLXVzLWVhc3QtMS5tYW51c2Nkbi5jb20vc2Vzc2lvbkZpbGUvOFpWS1dmbmZXNXdhTXZ1VDRFeTBveS9zYW5kYm94L3JrTHgzSEk0OEhlSFZ1MTBrS1JXeldfMTc4NzAwMTM2NjI2MV9uYTFmbl9MMmh2YldVdmRXSjFiblIxTDFkUFJsOWhjMmhmWTI5dGNHRmpkRjlRWVdOci5tZCIsIkNvbmRpdGlvbiI6eyJEYXRlTGVzc1RoYW4iOnsiQVdTOkVwb2NoVGltZSI6MTc4OTQzMDQwMH19fV19\u0026Key-Pair-Id=K2QY5QTL8JSY6C\u0026Signature=MEUCIFAv0i1x~O6SWu2gy8OIAM1lnd3TJfHEXj~lffwRcGT2AiEAtfh5xvu1j8K1sMkdputUIpcnqgsH~FS~jIDmvasoW7E_"
+      },
+      "error": ""
+    },
+    {
+      "input": "first_song",
+      "output": {
+        "completion_note": "Completed and validated the full original First-Song world pack with mandatory sections 0–12, code-owned quest data, maps, NPC dialogue, instances, progression, economy, Theme Kit, and IP-fence safeguards.",
+        "world_id": "first_song",
+        "world_pack": "https://private-us-east-1.manuscdn.com/sessionFile/5dMQOS2pGeRfjWV5FCygY5/sandbox/L8bSacUiQv6gBkRK52Halg_1787001353692_na1fn_L2hvbWUvdWJ1bnR1L1dPRl9maXJzdF9zb25nX1BhY2s.md?Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly9wcml2YXRlLXVzLWVhc3QtMS5tYW51c2Nkbi5jb20vc2Vzc2lvbkZpbGUvNWRNUU9TMnBHZVJmaldWNUZDeWdZNS9zYW5kYm94L0w4YlNhY1VpUXY2Z0JrUks1MkhhbGdfMTc4NzAwMTM1MzY5Ml9uYTFmbl9MMmh2YldVdmRXSjFiblIxTDFkUFJsOW1hWEp6ZEY5emIyNW5YMUJoWTJzLm1kIiwiQ29uZGl0aW9uIjp7IkRhdGVMZXNzVGhhbiI6eyJBV1M6RXBvY2hUaW1lIjoxNzg5NDMwNDAwfX19XX0_\u0026Key-Pair-Id=K2QY5QTL8JSY6C\u0026Signature=MEYCIQCaZWh0QTy~N0RBcfEuDvM~9lGclVdI3KRI1EIYvs1IEwIhANZklaLXhj4RXabfyYgtn7PclkcPvQwaBj7JC-GWAFZW"
+      },
+      "error": ""
+    },
+    {
+      "input": "isekai_gate",
+      "output": {
+        "completion_note": "Completed the original isekai_gate world pack with mandatory sections 0–12, Floor 1 depth, floors 1–8, quests, NPC dialogue, instances, economy, progression, UI copy, and IP-fence validation.",
+        "world_id": "isekai_gate",
+        "world_pack": "https://private-us-east-1.manuscdn.com/sessionFile/YfWKrr162q560ecWtQgvio/sandbox/eBWtaWLnCBEU9xjXOVdlmK_1787001333484_na1fn_L2hvbWUvdWJ1bnR1L1dPRl9pc2VrYWlfZ2F0ZV9QYWNr.md?Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly9wcml2YXRlLXVzLWVhc3QtMS5tYW51c2Nkbi5jb20vc2Vzc2lvbkZpbGUvWWZXS3JyMTYycTU2MGVjV3RRZ3Zpby9zYW5kYm94L2VCV3RhV0xuQ0JFVTl4alhPVmRsbUtfMTc4NzAwMTMzMzQ4NF9uYTFmbl9MMmh2YldVdmRXSjFiblIxTDFkUFJsOXBjMlZyWVdsZloyRjBaVjlRWVdOci5tZCIsIkNvbmRpdGlvbiI6eyJEYXRlTGVzc1RoYW4iOnsiQVdTOkVwb2NoVGltZSI6MTc4OTQzMDQwMH19fV19\u0026Key-Pair-Id=K2QY5QTL8JSY6C\u0026Signature=MEQCICBYwdLon-qGy65XJLkjEVBHbvdKODj2siCOmGA~8moRAiBOKzlzasP9ctrFz3II0~7mjgwTYUIpRW6LDmHNNPeyxg__"
+      },
+      "error": ""
+    },
+    {
+      "input": "bonded_menagerie",
+      "output": {
+        "completion_note": "Completed the original Bonded Menagerie world pack with mandatory sections 0–12, four starts, 64 creatures, type rules, quest DAGs, NPC dialogue, trials, economy, progression, UI copy, and integrity checks.",
+        "world_id": "bonded_menagerie",
+        "world_pack": "https://private-us-east-1.manuscdn.com/sessionFile/vQkVEnygIsT7aQZ2yUA6EQ/sandbox/KZub6USpXKLY5bPT01ALes_1787001370350_na1fn_L2hvbWUvdWJ1bnR1L1dPRl9ib25kZWRfbWVuYWdlcmllX1BhY2s.md?Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly9wcml2YXRlLXVzLWVhc3QtMS5tYW51c2Nkbi5jb20vc2Vzc2lvbkZpbGUvdlFrVkVueWdJc1Q3YVFaMnlVQTZFUS9zYW5kYm94L0tadWI2VVNwWEtMWTViUFQwMUFMZXNfMTc4NzAwMTM3MDM1MF9uYTFmbl9MMmh2YldVdmRXSjFiblIxTDFkUFJsOWliMjVrWldSZmJXVnVZV2RsY21sbFgxQmhZMnMubWQiLCJDb25kaXRpb24iOnsiRGF0ZUxlc3NUaGFuIjp7IkFXUzpFcG9jaFRpbWUiOjE3ODk0MzA0MDB9fX1dfQ__\u0026Key-Pair-Id=K2QY5QTL8JSY6C\u0026Signature=MEQCIB4o9gHalE-4dBdbxcdtazAbwczY3NnuKJQG7tyJ7erDAiAhf95sc5Up1ePM0lODAzTp-HBxEslNuQ-S09c7shAONQ__"
+      },
+      "error": ""
+    },
+    {
+      "input": "circuit_arc",
+      "output": {
+        "completion_note": "Completed and validated the original Circuit Arc world pack with mandatory sections 0–12, stable IDs, numeric rewards, authored quests, NPC dialogue, maps, instances, progression, economy, theme copy, and clone-risk calls.",
+        "world_id": "circuit_arc",
+        "world_pack": "https://private-us-east-1.manuscdn.com/sessionFile/VEZWGeLpVNuvSXe5HvoFqU/sandbox/VTZWCiTdmn0cEDgzjv3Ui6_1787001345850_na1fn_L2hvbWUvdWJ1bnR1L1dPRl9jaXJjdWl0X2FyY19QYWNr.md?Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly9wcml2YXRlLXVzLWVhc3QtMS5tYW51c2Nkbi5jb20vc2Vzc2lvbkZpbGUvVkVaV0dlTHBWTnV2U1hlNUh2b0ZxVS9zYW5kYm94L1ZUWldDaVRkbW4wY0VEZ3pqdjNVaTZfMTc4NzAwMTM0NTg1MF9uYTFmbl9MMmh2YldVdmRXSjFiblIxTDFkUFJsOWphWEpqZFdsMFgyRnlZMTlRWVdOci5tZCIsIkNvbmRpdGlvbiI6eyJEYXRlTGVzc1RoYW4iOnsiQVdTOkVwb2NoVGltZSI6MTc4OTQzMDQwMH19fV19\u0026Key-Pair-Id=K2QY5QTL8JSY6C\u0026Signature=MEUCIQDVKjNO7R5h1weyJGdfgPlStl0pDLuM~07DOWY9x~ycHwIgX4EII66S6fNDwoIIH9rLPF7gfXLWj-hcvIP~ZHJif6g_"
+      },
+      "error": ""
+    },
+    {
+      "input": "halo_term",
+      "output": {
+        "completion_note": "Completed and validated the original Halo Term powers-school world pack with mandatory sections 0–12, code-owned quest DAGs, maps, NPC dialogue, instances, economy, progression, UI copy, and IP-fence checks.",
+        "world_id": "halo_term",
+        "world_pack": "https://private-us-east-1.manuscdn.com/sessionFile/G7Ym0eNFH1ikGPqmTOZr1r/sandbox/BtzaCGNzMSL0lMJisXpgPh_1787001346379_na1fn_L2hvbWUvdWJ1bnR1L1dPRl9oYWxvX3Rlcm1fUGFjaw.md?Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly9wcml2YXRlLXVzLWVhc3QtMS5tYW51c2Nkbi5jb20vc2Vzc2lvbkZpbGUvRzdZbTBlTkZIMWlrR1BxbVRPWnIxci9zYW5kYm94L0J0emFDR056TVNMMGxNSmlzWHBnUGhfMTc4NzAwMTM0NjM3OV9uYTFmbl9MMmh2YldVdmRXSjFiblIxTDFkUFJsOW9ZV3h2WDNSbGNtMWZVR0ZqYXcubWQiLCJDb25kaXRpb24iOnsiRGF0ZUxlc3NUaGFuIjp7IkFXUzpFcG9jaFRpbWUiOjE3ODk0MzA0MDB9fX1dfQ__\u0026Key-Pair-Id=K2QY5QTL8JSY6C\u0026Signature=MEQCIGWHmsNdCG~jMvo20okLAfWcVnIF5ePmbsWwGlWJpTWqAiAjcZ5fevEXxOY91zIBgp0GzVNUiRKlxMA9qRcVzc2T6Q__"
+      },
+      "error": ""
+    },
+    {
+      "input": "hollow_term",
+      "output": {
+        "completion_note": "Completed the Hollow Term world pack with mandatory sections 0–12, original content, authored quest DAGs, dialogue, instances, economy, progression, and IP-fence safeguards.",
+        "world_id": "hollow_term",
+        "world_pack": "https://private-us-east-1.manuscdn.com/sessionFile/mk8r46aG9oomD0AIjeJDcv/sandbox/3ajRPwn5DLqlFSQ4ovtCFW_1787001340217_na1fn_L2hvbWUvdWJ1bnR1L1dPRl9ob2xsb3dfdGVybV9QYWNr.md?Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly9wcml2YXRlLXVzLWVhc3QtMS5tYW51c2Nkbi5jb20vc2Vzc2lvbkZpbGUvbWs4cjQ2YUc5b29tRDBBSWplSkRjdi9zYW5kYm94LzNhalJQd241RExxbEZTUTRvdnRDRldfMTc4NzAwMTM0MDIxN19uYTFmbl9MMmh2YldVdmRXSjFiblIxTDFkUFJsOW9iMnhzYjNkZmRHVnliVjlRWVdOci5tZCIsIkNvbmRpdGlvbiI6eyJEYXRlTGVzc1RoYW4iOnsiQVdTOkVwb2NoVGltZSI6MTc4OTQzMDQwMH19fV19\u0026Key-Pair-Id=K2QY5QTL8JSY6C\u0026Signature=MEQCIFXtj6rlwoieZAJgjdShJ26R5QHOFcnOz9Pacv0by9AIAiAdsz0eMiH-vJ6qfmVaiU-EeurF1D28Ody0adITAuu9LA__"
+      },
+      "error": ""
+    },
+    {
+      "input": "starwake",
+      "output": {
+        "completion_note": "Created and validated the complete original Starwake world pack with mandatory sections 0–12, ship-board rules, four starts, quest DAG, NPC dialogue, instances, economy, progression, UI copy, and IP-fence safeguards.",
+        "world_id": "starwake",
+        "world_pack": "https://private-us-east-1.manuscdn.com/sessionFile/CbjOv0XELyGM4RrRlkizgU/sandbox/KUaEyhTSGQiiIj4XRc7PRy_1787001366189_na1fn_L2hvbWUvdWJ1bnR1L1dPRl9zdGFyd2FrZV9QYWNr.md?Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly9wcml2YXRlLXVzLWVhc3QtMS5tYW51c2Nkbi5jb20vc2Vzc2lvbkZpbGUvQ2JqT3YwWEVMeUdNNFJyUmxraXpnVS9zYW5kYm94L0tVYUV5aFRTR1FpaUlqNFhSYzdQUnlfMTc4NzAwMTM2NjE4OV9uYTFmbl9MMmh2YldVdmRXSjFiblIxTDFkUFJsOXpkR0Z5ZDJGclpWOVFZV05yLm1kIiwiQ29uZGl0aW9uIjp7IkRhdGVMZXNzVGhhbiI6eyJBV1M6RXBvY2hUaW1lIjoxNzg5NDMwNDAwfX19XX0_\u0026Key-Pair-Id=K2QY5QTL8JSY6C\u0026Signature=MEQCIGXYi2buX971DhHTGadbsUsnEfJ1hJJYK75GccxcFJhCAiANM6SXpusuPZiz60Q-ax~GbuFaYDKQN438tyz-XIOb2g__"
+      },
+      "error": ""
+    },
+    {
+      "input": "lanceyard",
+      "output": {
+        "completion_note": "Completed and validated the original Lanceyard world pack with mandatory sections 0–12, frame-heat systems, authored quests, NPC dialogue, maps, instances, economy, progression, UI copy, and IP-fence checks.",
+        "world_id": "lanceyard",
+        "world_pack": "https://private-us-east-1.manuscdn.com/sessionFile/0tVF946fSU8jlH0Rx1EFoE/sandbox/KNljQAx2CQtC83FIeEnRB1_1787001350811_na1fn_L2hvbWUvdWJ1bnR1L1dPRl9sYW5jZXlhcmRfUGFjaw.md?Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly9wcml2YXRlLXVzLWVhc3QtMS5tYW51c2Nkbi5jb20vc2Vzc2lvbkZpbGUvMHRWRjk0NmZTVThqbEgwUngxRUZvRS9zYW5kYm94L0tObGpRQXgyQ1F0QzgzRkllRW5SQjFfMTc4NzAwMTM1MDgxMV9uYTFmbl9MMmh2YldVdmRXSjFiblIxTDFkUFJsOXNZVzVqWlhsaGNtUmZVR0ZqYXcubWQiLCJDb25kaXRpb24iOnsiRGF0ZUxlc3NUaGFuIjp7IkFXUzpFcG9jaFRpbWUiOjE3ODk0MzA0MDB9fX1dfQ__\u0026Key-Pair-Id=K2QY5QTL8JSY6C\u0026Signature=MEUCIBoG3xU2iiPlbJUIea-iwz0EM0fYDSgOzUUx76PL-cI5AiEA-QT6Lrps56PJuVx2o29S1Tc-iW8XXSBVwq0~jSHy2RU_"
+      },
+      "error": ""
+    },
+    {
+      "input": "quarry_pact",
+      "output": {
+        "completion_note": "Completed the original Quarry Pact world pack with mandatory sections 0–12, authored quest DAGs, map graph, NPC dialogue, instances, progression, economy, Theme Kit, and integrity checklist.",
+        "world_id": "quarry_pact",
+        "world_pack": "https://private-us-east-1.manuscdn.com/sessionFile/xn7jINTXwX3wPexvfaj2CE/sandbox/3OXJtICAMh6onjNzsU5GDr_1787001351031_na1fn_L2hvbWUvdWJ1bnR1L1dPRl9xdWFycnlfcGFjdF9QYWNr.md?Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly9wcml2YXRlLXVzLWVhc3QtMS5tYW51c2Nkbi5jb20vc2Vzc2lvbkZpbGUveG43aklOVFh3WDN3UGV4dmZhajJDRS9zYW5kYm94LzNPWEp0SUNBTWg2b25qTnpzVTVHRHJfMTc4NzAwMTM1MTAzMV9uYTFmbl9MMmh2YldVdmRXSjFiblIxTDFkUFJsOXhkV0Z5Y25sZmNHRmpkRjlRWVdOci5tZCIsIkNvbmRpdGlvbiI6eyJEYXRlTGVzc1RoYW4iOnsiQVdTOkVwb2NoVGltZSI6MTc4OTQzMDQwMH19fV19\u0026Key-Pair-Id=K2QY5QTL8JSY6C\u0026Signature=MEQCIFu~vPW4Ej6W~7OYpFoyZIwsasMEJ9HaZGUC5Z8xnDMLAiBL25CETZ7JQZF~8mpRzD9wEe0APMSwh-9ITsdkv0JpPA__"
+      },
+      "error": ""
+    },
+    {
+      "input": "sect_ascension",
+      "output": {
+        "completion_note": "Created and verified the complete original Sect Ascension world pack with mandatory sections 0–12, code-completeable quests, authored NPC dialogue, progression, economy, instances, Theme Kit, and IP-fence integrity checks.",
+        "world_id": "sect_ascension",
+        "world_pack": "https://private-us-east-1.manuscdn.com/sessionFile/z5gXMm6o66BlxmUE22uo7s/sandbox/5b8pqhVw6lIz4Zbezo5IVQ_1787001405011_na1fn_L2hvbWUvdWJ1bnR1L1dPRl9zZWN0X2FzY2Vuc2lvbl9QYWNr.md?Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly9wcml2YXRlLXVzLWVhc3QtMS5tYW51c2Nkbi5jb20vc2Vzc2lvbkZpbGUvejVnWE1tNm82NkJseG1VRTIydW83cy9zYW5kYm94LzViOHBxaFZ3NmxJejRaYmV6bzVJVlFfMTc4NzAwMTQwNTAxMV9uYTFmbl9MMmh2YldVdmRXSjFiblIxTDFkUFJsOXpaV04wWDJGelkyVnVjMmx2Ymw5UVlXTnIubWQiLCJDb25kaXRpb24iOnsiRGF0ZUxlc3NUaGFuIjp7IkFXUzpFcG9jaFRpbWUiOjE3ODk0MzA0MDB9fX1dfQ__\u0026Key-Pair-Id=K2QY5QTL8JSY6C\u0026Signature=MEYCIQCNEWIozcN7y~GuybeHytXn8Q16aBWuqH-OgwbalVNhcwIhAL9VE48drHaVlun0vqQ1suXnftdPkWf0GtVb8FHOlzoJ"
+      },
+      "error": ""
+    },
+    {
+      "input": "gridrun",
+      "output": {
+        "completion_note": "Completed and validated the full original Gridrun world pack with mandatory sections 0–12, code-owned quest data, maps, NPC dialogue, instances, economy, progression, Theme Kit, and integrity checks.",
+        "world_id": "gridrun",
+        "world_pack": "https://private-us-east-1.manuscdn.com/sessionFile/hcQjnl68irtjjZmZQi4OS2/sandbox/YgDUBN3kPH4lMGEjfrktUy_1787001313352_na1fn_L2hvbWUvdWJ1bnR1L1dPRl9ncmlkcnVuX1BhY2s.md?Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly9wcml2YXRlLXVzLWVhc3QtMS5tYW51c2Nkbi5jb20vc2Vzc2lvbkZpbGUvaGNRam5sNjhpcnRqalptWlFpNE9TMi9zYW5kYm94L1lnRFVCTjNrUEg0bE1HRWpmcmt0VXlfMTc4NzAwMTMxMzM1Ml9uYTFmbl9MMmh2YldVdmRXSjFiblIxTDFkUFJsOW5jbWxrY25WdVgxQmhZMnMubWQiLCJDb25kaXRpb24iOnsiRGF0ZUxlc3NUaGFuIjp7IkFXUzpFcG9jaFRpbWUiOjE3ODk0MzA0MDB9fX1dfQ__\u0026Key-Pair-Id=K2QY5QTL8JSY6C\u0026Signature=MEQCIDAJZXBtkPTbI15pMzcgixoFINqck0hW-Q1kdjqXYoWNAiBfrbqoyiwWwA60iP~P47lI5h0NslKK3Ia4M9Ew5UIYjQ__"
+      },
+      "error": ""
+    },
+    {
+      "input": "blackwake",
+      "output": {
+        "completion_note": "Completed the original Blackwake world pack with mandatory sections 0–12, code-owned quest and ship rules, authored NPC dialogue, maps, instances, economy, progression, Theme Kit, and integrity checks.",
+        "world_id": "blackwake",
+        "world_pack": "https://private-us-east-1.manuscdn.com/sessionFile/MyFSV8vTs4uRrItzoH7IeB/sandbox/rPyxTHF7QX36oP3KcyydaE_1787001350596_na1fn_L2hvbWUvdWJ1bnR1L1dPRl9ibGFja3dha2VfUGFjaw.md?Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly9wcml2YXRlLXVzLWVhc3QtMS5tYW51c2Nkbi5jb20vc2Vzc2lvbkZpbGUvTXlGU1Y4dlRzNHVSckl0em9IN0llQi9zYW5kYm94L3JQeXhUSEY3UVgzNm9QM0tjeXlkYUVfMTc4NzAwMTM1MDU5Nl9uYTFmbl9MMmh2YldVdmRXSjFiblIxTDFkUFJsOWliR0ZqYTNkaGEyVmZVR0ZqYXcubWQiLCJDb25kaXRpb24iOnsiRGF0ZUxlc3NUaGFuIjp7IkFXUzpFcG9jaFRpbWUiOjE3ODk0MzA0MDB9fX1dfQ__\u0026Key-Pair-Id=K2QY5QTL8JSY6C\u0026Signature=MEQCIAJWifrCPaUbuGQxeuJVvWqqdq6BU6xsZZv9FUnHqgKeAiBSMuruZqVh2NZaLMHgeZGWbLtekFNz3g7hA0g0dNjxVA__"
+      },
+      "error": ""
+    },
+    {
+      "input": "night_charter",
+      "output": {
+        "completion_note": "Created and validated the complete original Night Charter world pack with mandatory sections 0–12, authored quests, NPC dialogue, instances, economy, progression, UI copy, and integrity checks.",
+        "world_id": "night_charter",
+        "world_pack": "https://private-us-east-1.manuscdn.com/sessionFile/RDiFl6fQK94ZcuxqpnBJKa/sandbox/FeKvcQrz2IchX9ZnBNzhpx_1787001342423_na1fn_L2hvbWUvdWJ1bnR1L1dPRl9uaWdodF9jaGFydGVyX1BhY2s.md?Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly9wcml2YXRlLXVzLWVhc3QtMS5tYW51c2Nkbi5jb20vc2Vzc2lvbkZpbGUvUkRpRmw2ZlFLOTRaY3V4cXBuQkpLYS9zYW5kYm94L0ZlS3ZjUXJ6MkljaFg5Wm5CTnpocHhfMTc4NzAwMTM0MjQyM19uYTFmbl9MMmh2YldVdmRXSjFiblIxTDFkUFJsOXVhV2RvZEY5amFHRnlkR1Z5WDFCaFkycy5tZCIsIkNvbmRpdGlvbiI6eyJEYXRlTGVzc1RoYW4iOnsiQVdTOkVwb2NoVGltZSI6MTc4OTQzMDQwMH19fV19\u0026Key-Pair-Id=K2QY5QTL8JSY6C\u0026Signature=MEQCICRRjEKaU9rtg0kXp3-F5p275tqSxb1BUpAXx9CKG8bPAiAl2EvsfduI4lz17J5FtdCwCDLposFpQN41BOFlR7SZnQ__"
+      },
+      "error": ""
+    },
+    {
+      "input": "badge_circuit",
+      "output": {
+        "completion_note": "Completed the original Badge Circuit world pack with mandatory sections 0–12, authored patrol content, quest DAG, instance, economy, progression, UI copy, and integrity checks.",
+        "world_id": "badge_circuit",
+        "world_pack": "https://private-us-east-1.manuscdn.com/sessionFile/wHbaeZOTotYHkxwTKS3FtZ/sandbox/DZpFwMmrYRaamsyaADExlC_1787001314358_na1fn_L2hvbWUvdWJ1bnR1L1dPRl9iYWRnZV9jaXJjdWl0X1BhY2s.md?Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly9wcml2YXRlLXVzLWVhc3QtMS5tYW51c2Nkbi5jb20vc2Vzc2lvbkZpbGUvd0hiYWVaT1RvdFlIa3h3VEtTM0Z0Wi9zYW5kYm94L0RacEZ3TW1yWVJhYW1zeWFBREV4bENfMTc4NzAwMTMxNDM1OF9uYTFmbl9MMmh2YldVdmRXSjFiblIxTDFkUFJsOWlZV1JuWlY5amFYSmpkV2wwWDFCaFkycy5tZCIsIkNvbmRpdGlvbiI6eyJEYXRlTGVzc1RoYW4iOnsiQVdTOkVwb2NoVGltZSI6MTc4OTQzMDQwMH19fV19\u0026Key-Pair-Id=K2QY5QTL8JSY6C\u0026Signature=MEUCIQCbDdLDYqBWnWqIET7ZlDHRQAzmsN0jmR1Dbt8rH0sCewIgZSCNuO~~cUbUmBH60~QM4EZA7FMUPdm4niB72T4pPGs_"
+      },
+      "error": ""
+    },
+    {
+      "input": "dust_line",
+      "output": {
+        "completion_note": "Created and validated the complete original Dust Line world pack with mandatory sections 0–12, frontier-specific content, stable IDs, numeric rewards, quests, NPC dialogue, instances, progression, economy, UI copy, and integrity safeguards.",
+        "world_id": "dust_line",
+        "world_pack": "https://private-us-east-1.manuscdn.com/sessionFile/9awqn30RgPudNHosjhnEaF/sandbox/5mlb0DVLot5Wda4PFUcO5r_1787001327371_na1fn_L2hvbWUvdWJ1bnR1L1dPRl9kdXN0X2xpbmVfUGFjaw.md?Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly9wcml2YXRlLXVzLWVhc3QtMS5tYW51c2Nkbi5jb20vc2Vzc2lvbkZpbGUvOWF3cW4zMFJnUHVkTkhvc2pobkVhRi9zYW5kYm94LzVtbGIwRFZMb3Q1V2RhNFBGVWNPNXJfMTc4NzAwMTMyNzM3MV9uYTFmbl9MMmh2YldVdmRXSjFiblIxTDFkUFJsOWtkWE4wWDJ4cGJtVmZVR0ZqYXcubWQiLCJDb25kaXRpb24iOnsiRGF0ZUxlc3NUaGFuIjp7IkFXUzpFcG9jaFRpbWUiOjE3ODk0MzA0MDB9fX1dfQ__\u0026Key-Pair-Id=K2QY5QTL8JSY6C\u0026Signature=MEUCIGj6iNEbC6bRphznIV-E3YAcSDq7g5qSmoDyRTK2kXkEAiEAjPrjqrOmXMQXekTAbCptzffL2Ly0ajEeTQ5vVdpFGNc_"
+      },
+      "error": ""
+    },
+    {
+      "input": "veil_watch",
+      "output": {
+        "completion_note": "Completed and validated the original Veil Watch world pack with mandatory sections 0–12, authored quests, NPC dialogue, maps, instances, progression, economy, theme copy, and integrity checks.",
+        "world_id": "veil_watch",
+        "world_pack": "https://private-us-east-1.manuscdn.com/sessionFile/idQxCve7gSaR6n4URWB1HU/sandbox/OmMrcQk2TDHdB5FNKNNS7N_1787001437633_na1fn_L2hvbWUvdWJ1bnR1L1dPRl92ZWlsX3dhdGNoX1BhY2s.md?Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly9wcml2YXRlLXVzLWVhc3QtMS5tYW51c2Nkbi5jb20vc2Vzc2lvbkZpbGUvaWRReEN2ZTdnU2FSNm40VVJXQjFIVS9zYW5kYm94L09tTXJjUWsyVERIZEI1Rk5LTk5TN05fMTc4NzAwMTQzNzYzM19uYTFmbl9MMmh2YldVdmRXSjFiblIxTDFkUFJsOTJaV2xzWDNkaGRHTm9YMUJoWTJzLm1kIiwiQ29uZGl0aW9uIjp7IkRhdGVMZXNzVGhhbiI6eyJBV1M6RXBvY2hUaW1lIjoxNzg5NDMwNDAwfX19XX0_\u0026Key-Pair-Id=K2QY5QTL8JSY6C\u0026Signature=MEYCIQDfZyfpuhg-n470hZpAiBnkc5OkrjTjb-pIPpDdnlAB2AIhAPpk6bRz5TWUTkqJbKHt1YgYAYSuKdpm3s415zf~ns44"
+      },
+      "error": ""
+    },
+    {
+      "input": "crew_score",
+      "output": {
+        "completion_note": "Created and validated the complete original Crew Score world pack with mandatory sections 0–12, authored heist systems, quests, NPC dialogue, instances, economy, progression, UI copy, and integrity checks.",
+        "world_id": "crew_score",
+        "world_pack": "https://private-us-east-1.manuscdn.com/sessionFile/Mv9dVV7o2kS0OYnUudUnd4/sandbox/iD4O3RUcv2ux6hjD3dvTwt_1787001330642_na1fn_L2hvbWUvdWJ1bnR1L1dPRl9jcmV3X3Njb3JlX1BhY2s.md?Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly9wcml2YXRlLXVzLWVhc3QtMS5tYW51c2Nkbi5jb20vc2Vzc2lvbkZpbGUvTXY5ZFZWN28ya1MwT1luVXVkVW5kNC9zYW5kYm94L2lENE8zUlVjdjJ1eDZoakQzZHZUd3RfMTc4NzAwMTMzMDY0Ml9uYTFmbl9MMmh2YldVdmRXSjFiblIxTDFkUFJsOWpjbVYzWDNOamIzSmxYMUJoWTJzLm1kIiwiQ29uZGl0aW9uIjp7IkRhdGVMZXNzVGhhbiI6eyJBV1M6RXBvY2hUaW1lIjoxNzg5NDMwNDAwfX19XX0_\u0026Key-Pair-Id=K2QY5QTL8JSY6C\u0026Signature=MEYCIQCAxxtUHXjZVQACgmFEtYzUi3xsIXNCEBgwjBTBoQngygIhAMtBZuz7hbt3IPQhYNHKs0izgF7laaztsTMw7DWcdkwq"
+      },
+      "error": ""
+    },
+    {
+      "input": "hearth_season",
+      "output": {
+        "completion_note": "Created and validated the complete Hearth Season world pack with sections 0–12, original cozy-world content, numeric quest data, dialogue, instances, progression, economy, UI copy, and integrity checks.",
+        "world_id": "hearth_season",
+        "world_pack": "https://private-us-east-1.manuscdn.com/sessionFile/DVoF1hSkJMiMYxpaJDFAxX/sandbox/ZUVuoudR5qUM2itD3kVHX1_1787001330892_na1fn_L2hvbWUvdWJ1bnR1L1dPRl9oZWFydGhfc2Vhc29uX1BhY2s.md?Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly9wcml2YXRlLXVzLWVhc3QtMS5tYW51c2Nkbi5jb20vc2Vzc2lvbkZpbGUvRFZvRjFoU2tKTWlNWXhwYUpERkF4WC9zYW5kYm94L1pVVnVvdWRSNXFVTTJpdEQza1ZIWDFfMTc4NzAwMTMzMDg5Ml9uYTFmbl9MMmh2YldVdmRXSjFiblIxTDFkUFJsOW9aV0Z5ZEdoZmMyVmhjMjl1WDFCaFkycy5tZCIsIkNvbmRpdGlvbiI6eyJEYXRlTGVzc1RoYW4iOnsiQVdTOkVwb2NoVGltZSI6MTc4OTQzMDQwMH19fV19\u0026Key-Pair-Id=K2QY5QTL8JSY6C\u0026Signature=MEUCIH0kahvzHb564yl-hQBEsUcpD3CsuIM2EUPfw1nsnOvvAiEAnrQg1EVl8D1muDhmKORKvbR4KqaQg79FOhLwTjZV8GM_"
+      },
+      "error": ""
+    },
+    {
+      "input": "stage_light",
+      "output": {
+        "completion_note": "Created and validated the complete original Stage Light world pack with mandatory sections 0–12, code-complete quests, performance instances, economy, progression, UI copy, and integrity checklist.",
+        "world_id": "stage_light",
+        "world_pack": "https://private-us-east-1.manuscdn.com/sessionFile/GOlqgmKeX4n4U8ElTpzjsy/sandbox/5pTYGc045rtBPHMtNYYpMs_1787001340638_na1fn_L2hvbWUvdWJ1bnR1L1dPRl9zdGFnZV9saWdodF9QYWNr.md?Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly9wcml2YXRlLXVzLWVhc3QtMS5tYW51c2Nkbi5jb20vc2Vzc2lvbkZpbGUvR09scWdtS2VYNG40VThFbFRwempzeS9zYW5kYm94LzVwVFlHYzA0NXJ0QlBITXROWVlwTXNfMTc4NzAwMTM0MDYzOF9uYTFmbl9MMmh2YldVdmRXSjFiblIxTDFkUFJsOXpkR0ZuWlY5c2FXZG9kRjlRWVdOci5tZCIsIkNvbmRpdGlvbiI6eyJEYXRlTGVzc1RoYW4iOnsiQVdTOkVwb2NoVGltZSI6MTc4OTQzMDQwMH19fV19\u0026Key-Pair-Id=K2QY5QTL8JSY6C\u0026Signature=MEUCIHVo8mMS0tRRf4GVsE9wuXL2CnGaxelrvTMKlbC1ROwyAiEA1xUPBb-TzPyCYLntZB9sHrzxVvnZQ0CMdvYgeuVjG5g_"
+      },
+      "error": ""
+    },
+    {
+      "input": "pitch_league",
+      "output": {
+        "completion_note": "Completed the original all-ages Pitch League world pack with sections 0–12, code-owned match rules, authored quest DAGs, NPC dialogue, maps, instances, progression, economy, UI copy, and integrity checks.",
+        "world_id": "pitch_league",
+        "world_pack": "https://private-us-east-1.manuscdn.com/sessionFile/NMSPNs8kohEAXHaTija0aw/sandbox/i1hydUJKvUGh55W9XKt70B_1787001415349_na1fn_L2hvbWUvdWJ1bnR1L1dPRl9waXRjaF9sZWFndWVfUGFjaw.md?Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly9wcml2YXRlLXVzLWVhc3QtMS5tYW51c2Nkbi5jb20vc2Vzc2lvbkZpbGUvTk1TUE5zOGtvaEVBWEhhVGlqYTBhdy9zYW5kYm94L2kxaHlkVUpLdlVHaDU1VzlYS3Q3MEJfMTc4NzAwMTQxNTM0OV9uYTFmbl9MMmh2YldVdmRXSjFiblIxTDFkUFJsOXdhWFJqYUY5c1pXRm5kV1ZmVUdGamF3Lm1kIiwiQ29uZGl0aW9uIjp7IkRhdGVMZXNzVGhhbiI6eyJBV1M6RXBvY2hUaW1lIjoxNzg5NDMwNDAwfX19XX0_\u0026Key-Pair-Id=K2QY5QTL8JSY6C\u0026Signature=MEUCIQCtB3PkbqtNJOTlJmPsW9SHqeiSBnz5cpXe5Hz1NYTN~AIgCLmxG-mny7SjwrbwYsYroxMi4f4HwfzfzudidjGGKAk_"
+      },
+      "error": ""
+    },
+    {
+      "input": "route_lantern",
+      "output": {
+        "completion_note": "Created and validated the complete original Route Lantern world pack with mandatory sections 0–12, authored quest DAGs, dialogue, maps, instances, economy, progression, UI copy, and IP-fence safeguards.",
+        "world_id": "route_lantern",
+        "world_pack": "https://private-us-east-1.manuscdn.com/sessionFile/R2ntn82UpBJn4XuOG15JmX/sandbox/RsgEY86a86tPj4LwB9n1yd_1787001436183_na1fn_L2hvbWUvdWJ1bnR1L1dPRl9yb3V0ZV9sYW50ZXJuX1BhY2s.md?Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly9wcml2YXRlLXVzLWVhc3QtMS5tYW51c2Nkbi5jb20vc2Vzc2lvbkZpbGUvUjJudG44MlVwQkpuNFh1T0cxNUptWC9zYW5kYm94L1JzZ0VZODZhODZ0UGo0THdCOW4xeWRfMTc4NzAwMTQzNjE4M19uYTFmbl9MMmh2YldVdmRXSjFiblIxTDFkUFJsOXliM1YwWlY5c1lXNTBaWEp1WDFCaFkycy5tZCIsIkNvbmRpdGlvbiI6eyJEYXRlTGVzc1RoYW4iOnsiQVdTOkVwb2NoVGltZSI6MTc4OTQzMDQwMH19fV19\u0026Key-Pair-Id=K2QY5QTL8JSY6C\u0026Signature=MEUCIBBqyAjxbiCZcay4vQpgd6nxZgP774UUpbdYl-e~U0usAiEAlLkrFHs2LJJeUke0B0esdK89q~a-4~9iZh3HfCG82f4_"
+      },
+      "error": ""
+    },
+    {
+      "input": "card_vein",
+      "output": {
+        "completion_note": "Completed the original all-ages Card Vein world pack with sections 0–12, four starts, authored quest DAGs, card collection, instances, economy, progression, Theme Kit, and integrity checks.",
+        "world_id": "card_vein",
+        "world_pack": "https://private-us-east-1.manuscdn.com/sessionFile/EZgQij9v65RSzYS9osA59M/sandbox/8P20AfQLDs4cwncMXwLq0F_1787001525032_na1fn_L2hvbWUvdWJ1bnR1L1dPRl9jYXJkX3ZlaW5fUGFjaw.md?Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly9wcml2YXRlLXVzLWVhc3QtMS5tYW51c2Nkbi5jb20vc2Vzc2lvbkZpbGUvRVpnUWlqOXY2NVJTellTOW9zQTU5TS9zYW5kYm94LzhQMjBBZlFMRHM0Y3duY01Yd0xxMEZfMTc4NzAwMTUyNTAzMl9uYTFmbl9MMmh2YldVdmRXSjFiblIxTDFkUFJsOWpZWEprWDNabGFXNWZVR0ZqYXcubWQiLCJDb25kaXRpb24iOnsiRGF0ZUxlc3NUaGFuIjp7IkFXUzpFcG9jaFRpbWUiOjE3ODk0MzA0MDB9fX1dfQ__\u0026Key-Pair-Id=K2QY5QTL8JSY6C\u0026Signature=MEYCIQDmvZdVAuwGvLpv3kyv0qa5ooCI64KmkwG5jRsJNFzdnwIhAPoW3OZ2vUdw3QCVG-2~Eaq9Sxmx8pJs-P9bwrtko7t2"
+      },
+      "error": ""
+    }
+  ]
+}

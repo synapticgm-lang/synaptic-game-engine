@@ -1,0 +1,148 @@
+{
+  "results": [
+    {
+      "input": "WOF_GapFill_INDEX.md",
+      "output": {
+        "completion_note": "Created and validated the complete WOF gap-fill index with the mandatory file inventory, ingestion order, row-count contracts, locked-ID and rename policy, engine gates, and 25-line integrity checklist.",
+        "deliverable": "https://private-us-east-1.manuscdn.com/sessionFile/0XQxSKPUulANC4sdUrBuJH/sandbox/lgeGixMbSozHQIyNRVA9hl_1787002611821_na1fn_L2hvbWUvdWJ1bnR1L1dPRl9HYXBGaWxsX0lOREVY.md?Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly9wcml2YXRlLXVzLWVhc3QtMS5tYW51c2Nkbi5jb20vc2Vzc2lvbkZpbGUvMFhReFNLUFV1bEFOQzRzZFVyQnVKSC9zYW5kYm94L2xnZUdpeE1iU296SFFJeU5SVkE5aGxfMTc4NzAwMjYxMTgyMV9uYTFmbl9MMmh2YldVdmRXSjFiblIxTDFkUFJsOUhZWEJHYVd4c1gwbE9SRVZZLm1kIiwiQ29uZGl0aW9uIjp7IkRhdGVMZXNzVGhhbiI6eyJBV1M6RXBvY2hUaW1lIjoxNzg5NDMwNDAwfX19XX0_\u0026Key-Pair-Id=K2QY5QTL8JSY6C\u0026Signature=MEQCIBaT5Mhf54MUSV1XWJMmzOzcTEI6pgibqEEqz3-~foolAiAJGHXClavo2gNIEyChXApOHq1lwb2xhPXogcm6ItkHUw__",
+        "filename": "WOF_GapFill_INDEX.md"
+      },
+      "error": ""
+    },
+    {
+      "input": "WOF_Rename_Table.md",
+      "output": {
+        "completion_note": "Completed the WOF-only Markdown rename table with required dump corrections, rejected aliases, locked Ash Compact identifiers, namespace rules, and ingestion validation checks.",
+        "deliverable": "https://private-us-east-1.manuscdn.com/sessionFile/dMBiAjLCORwHzeOabvHJcB/sandbox/AnO9ZdPl0ItdKgu5oXseCP_1787002580216_na1fn_L2hvbWUvdWJ1bnR1L1dPRl9SZW5hbWVfVGFibGU.md?Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly9wcml2YXRlLXVzLWVhc3QtMS5tYW51c2Nkbi5jb20vc2Vzc2lvbkZpbGUvZE1CaUFqTENPUndIemVPYWJ2SEpjQi9zYW5kYm94L0FuTzlaZFBsMEl0ZEtndTVvWHNlQ1BfMTc4NzAwMjU4MDIxNl9uYTFmbl9MMmh2YldVdmRXSjFiblIxTDFkUFJsOVNaVzVoYldWZlZHRmliR1UubWQiLCJDb25kaXRpb24iOnsiRGF0ZUxlc3NUaGFuIjp7IkFXUzpFcG9jaFRpbWUiOjE3ODk0MzA0MDB9fX1dfQ__\u0026Key-Pair-Id=K2QY5QTL8JSY6C\u0026Signature=MEYCIQD-gSThwBlAHW-9YkN5hnwDd0UVawjrLOdSpZQcrtlltAIhALQ5qK9~ADPOs6a~eR1AVAZ25bPy7lZRuZ9ljaBJ8WAs",
+        "filename": "WOF_Rename_Table.md"
+      },
+      "error": ""
+    },
+    {
+      "input": "WOF_Engine_Schemas.yaml",
+      "output": {
+        "completion_note": "Completed and validated a 85-schema WOF typed-data YAML catalog with packFormatVersion 1, locked engine defaults, ownership boundaries, failure modes, uniqueness rules, and no live-service import.",
+        "deliverable": "https://private-us-east-1.manuscdn.com/sessionFile/mZnpLGurl6aMqdUsdQLAqn/sandbox/QoZOssGAZ3bOPTUXi4Wuvg_1787002629194_na1fn_L2hvbWUvdWJ1bnR1L1dPRl9FbmdpbmVfU2NoZW1hcw.yaml?Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly9wcml2YXRlLXVzLWVhc3QtMS5tYW51c2Nkbi5jb20vc2Vzc2lvbkZpbGUvbVpucExHdXJsNmFNcWRVc2RRTEFxbi9zYW5kYm94L1FvWk9zc0dBWjNiT1BUVVhpNFd1dmdfMTc4NzAwMjYyOTE5NF9uYTFmbl9MMmh2YldVdmRXSjFiblIxTDFkUFJsOUZibWRwYm1WZlUyTm9aVzFoY3cueWFtbCIsIkNvbmRpdGlvbiI6eyJEYXRlTGVzc1RoYW4iOnsiQVdTOkVwb2NoVGltZSI6MTc4OTQzMDQwMH19fV19\u0026Key-Pair-Id=K2QY5QTL8JSY6C\u0026Signature=MEUCIH0SshOkumD1qW1cpQb8OIDWmWu~3CgCZAh2xwpIa7VqAiEAlM12N5xkpT5e3jdkAbwTFuG4B4iX5V8uX0RS51ua2z0_",
+        "filename": "WOF_Engine_Schemas.yaml"
+      },
+      "error": ""
+    },
+    {
+      "input": "WOF_Rules_Modules.yaml",
+      "output": {
+        "completion_note": "Generated and validated a complete 13-module WOF-only YAML rules specification with locked engine defaults, rename corrections, per-module ledgers, round resolution, wipe/checkpoint behavior, lockouts, forbidden prose rules, status effects, combat verbs, chrome templates, and evaluation probes.",
+        "deliverable": "https://private-us-east-1.manuscdn.com/sessionFile/7YUv2TezDQU293yiQNUe9T/sandbox/i38IvBfgFkVrlXD3qpLEWZ_1787002714725_na1fn_L2hvbWUvdWJ1bnR1L1dPRl9SdWxlc19Nb2R1bGVz.yaml?Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly9wcml2YXRlLXVzLWVhc3QtMS5tYW51c2Nkbi5jb20vc2Vzc2lvbkZpbGUvN1lVdjJUZXpEUVUyOTN5aVFOVWU5VC9zYW5kYm94L2kzOEl2QmZnRmtWcmxYRDNxcExFV1pfMTc4NzAwMjcxNDcyNV9uYTFmbl9MMmh2YldVdmRXSjFiblIxTDFkUFJsOVNkV3hsYzE5TmIyUjFiR1Z6LnlhbWwiLCJDb25kaXRpb24iOnsiRGF0ZUxlc3NUaGFuIjp7IkFXUzpFcG9jaFRpbWUiOjE3ODk0MzA0MDB9fX1dfQ__\u0026Key-Pair-Id=K2QY5QTL8JSY6C\u0026Signature=MEUCIB0lqTEeKZ-0Ocvhv6AK7Yn14O-dMwiMyRKC92qRN2ojAiEAgh91LDwyp-UF05AuyZY5r1JFt8bpXZ53Zp~jYUZEq4Y_",
+        "filename": "WOF_Rules_Modules.yaml"
+      },
+      "error": ""
+    },
+    {
+      "input": "WOF_Interactables_Buildings_Housing.yaml",
+      "output": {
+        "completion_note": "Completed and validated a 39 KB WOF-only YAML pack containing 92 interactable verbs, 71 prop templates, 20 building interior graphs, numeric housing scarcity and build rules, functional and cosmetic furniture, and per-world naming deltas.",
+        "deliverable": "https://private-us-east-1.manuscdn.com/sessionFile/fftdi3EWBhiARGu8zcGwfb/sandbox/P0QDNbCO0YD994o69IJeQU_1787002652643_na1fn_L2hvbWUvdWJ1bnR1L1dPRl9JbnRlcmFjdGFibGVzX0J1aWxkaW5nc19Ib3VzaW5n.yaml?Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly9wcml2YXRlLXVzLWVhc3QtMS5tYW51c2Nkbi5jb20vc2Vzc2lvbkZpbGUvZmZ0ZGkzRVdCaGlBUkd1OHpjR3dmYi9zYW5kYm94L1AwUUROYkNPMFlEOTk0bzY5SUplUVVfMTc4NzAwMjY1MjY0M19uYTFmbl9MMmh2YldVdmRXSjFiblIxTDFkUFJsOUpiblJsY21GamRHRmliR1Z6WDBKMWFXeGthVzVuYzE5SWIzVnphVzVuLnlhbWwiLCJDb25kaXRpb24iOnsiRGF0ZUxlc3NUaGFuIjp7IkFXUzpFcG9jaFRpbWUiOjE3ODk0MzA0MDB9fX1dfQ__\u0026Key-Pair-Id=K2QY5QTL8JSY6C\u0026Signature=MEYCIQDkitHp824Nwb6olHG7wtpoNy0JY-6MEYY56ijfZwnXrAIhALpY2f4tlOazE99TPJRetEtVQMIJbbRrz39OK43ivsKG",
+        "filename": "WOF_Interactables_Buildings_Housing.yaml"
+      },
+      "error": ""
+    },
+    {
+      "input": "WOF_Vendors_Crafting_Gathering.yaml",
+      "output": {
+        "completion_note": "Completed and YAML-validated the WOF-only Ash Compact vendor, gathering, crafting, housing-build, cooking-buff, and personal-bank data pack with 12 vendors, 24 gathering nodes, 60 recipes, and 8 food buffs.",
+        "deliverable": "https://private-us-east-1.manuscdn.com/sessionFile/iVNAghAGIhWV4iVsU7P2mx/sandbox/BNvNVkG34uA3Bgl86jlKuN_1787002641479_na1fn_L2hvbWUvdWJ1bnR1L1dPRl9WZW5kb3JzX0NyYWZ0aW5nX0dhdGhlcmluZw.yaml?Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly9wcml2YXRlLXVzLWVhc3QtMS5tYW51c2Nkbi5jb20vc2Vzc2lvbkZpbGUvaVZOQWdoQUdJaFdWNGlWc1U3UDJteC9zYW5kYm94L0JOdk5Wa0czNHVBM0JnbDg2amxLdU5fMTc4NzAwMjY0MTQ3OV9uYTFmbl9MMmh2YldVdmRXSjFiblIxTDFkUFJsOVdaVzVrYjNKelgwTnlZV1owYVc1blgwZGhkR2hsY21sdVp3LnlhbWwiLCJDb25kaXRpb24iOnsiRGF0ZUxlc3NUaGFuIjp7IkFXUzpFcG9jaFRpbWUiOjE3ODk0MzA0MDB9fX1dfQ__\u0026Key-Pair-Id=K2QY5QTL8JSY6C\u0026Signature=MEYCIQD8lkBCY2lb-i~k-GoLyjdtCufLEDyOfGRtbKe6lbNxUgIhAN8qKIH7kR7eOXJ5J1aa1b~iW-1tPuLaYMUm-v5gTdOH",
+        "filename": "WOF_Vendors_Crafting_Gathering.yaml"
+      },
+      "error": ""
+    },
+    {
+      "input": "WOF_AshCompact_LockedIds_Typed.yaml",
+      "output": {
+        "completion_note": "Generated and YAML-validated the Ash Compact conversion file with 39 typed places, 39 quests, 14 durable NPC talk trees, travel routing through The Divide, four locked 5-person dungeons, the locked 10-person Millstone Hollow, vendors, drops, talents, interiors, engine defaults, and required rename corrections.",
+        "deliverable": "https://private-us-east-1.manuscdn.com/sessionFile/YHUM0He25EBbnBUtfarbpE/sandbox/yJCpaLHCMEBeozGazkhZXx_1787002633339_na1fn_L2hvbWUvdWJ1bnR1L1dPRl9Bc2hDb21wYWN0X0xvY2tlZElkc19UeXBlZA.yaml?Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly9wcml2YXRlLXVzLWVhc3QtMS5tYW51c2Nkbi5jb20vc2Vzc2lvbkZpbGUvWUhVTTBIZTI1RUJibkJVdGZhcmJwRS9zYW5kYm94L3lKQ3BhTEhDTUVCZW96R2F6a2haWHhfMTc4NzAwMjYzMzMzOV9uYTFmbl9MMmh2YldVdmRXSjFiblIxTDFkUFJsOUJjMmhEYjIxd1lXTjBYMHh2WTJ0bFpFbGtjMTlVZVhCbFpBLnlhbWwiLCJDb25kaXRpb24iOnsiRGF0ZUxlc3NUaGFuIjp7IkFXUzpFcG9jaFRpbWUiOjE3ODk0MzA0MDB9fX1dfQ__\u0026Key-Pair-Id=K2QY5QTL8JSY6C\u0026Signature=MEYCIQDX9t2BuxMcaxVZc7A80rFff1SthS2lw-KrKw62YC3lAwIhAKT1vebtRWaropTgvkoQkbhgbiXorJVDYvzt7HAR6bb1",
+        "filename": "WOF_AshCompact_LockedIds_Typed.yaml"
+      },
+      "error": ""
+    },
+    {
+      "input": "WOF_Badge_Circuit_Fill.md",
+      "output": {
+        "completion_note": "Completed and validated the original WOF-only Badge Circuit Markdown gap-fill with 18 primary-start quests, full NPC talk trees, city graph, five-person instance, numeric progression/economy, 48-entry ban-list, Theme Kit row, and integrity checks.",
+        "deliverable": "https://private-us-east-1.manuscdn.com/sessionFile/7gulgWfxrHt51vton8QndL/sandbox/iYxG9T3YR8UwZ2ohubBp9v_1787002654907_na1fn_L2hvbWUvdWJ1bnR1L1dPRl9CYWRnZV9DaXJjdWl0X0ZpbGw.md?Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly9wcml2YXRlLXVzLWVhc3QtMS5tYW51c2Nkbi5jb20vc2Vzc2lvbkZpbGUvN2d1bGdXZnhySHQ1MXZ0b244UW5kTC9zYW5kYm94L2lZeEc5VDNZUjhVd1oyb2h1YkJwOXZfMTc4NzAwMjY1NDkwN19uYTFmbl9MMmh2YldVdmRXSjFiblIxTDFkUFJsOUNZV1JuWlY5RGFYSmpkV2wwWDBacGJHdy5tZCIsIkNvbmRpdGlvbiI6eyJEYXRlTGVzc1RoYW4iOnsiQVdTOkVwb2NoVGltZSI6MTc4OTQzMDQwMH19fV19\u0026Key-Pair-Id=K2QY5QTL8JSY6C\u0026Signature=MEQCIAmxie1KE757A8qSri64pA3-t25o-0TiF0XfDoKMdnftAiBqBIsNJ-Sq37KqiW0S8PIh1-AHpZvpSyXGmQdjdhGn8w__",
+        "filename": "WOF_Badge_Circuit_Fill.md"
+      },
+      "error": ""
+    },
+    {
+      "input": "WOF_Social_Mail_Moderation.md",
+      "output": {
+        "completion_note": "Created and validated the complete WOF-only social, mail, presence, finder, Kid Mode, and moderation Markdown deliverable with 40 canned lines, 23 world remap rows, 12 report categories, and 25 mail templates.",
+        "deliverable": "https://private-us-east-1.manuscdn.com/sessionFile/vbtqpHrFFOIWeZWHxBAgoE/sandbox/McEA4K5WJx7Am1XJThHMtL_1787002600185_na1fn_L2hvbWUvdWJ1bnR1L1dPRl9Tb2NpYWxfTWFpbF9Nb2RlcmF0aW9u.md?Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly9wcml2YXRlLXVzLWVhc3QtMS5tYW51c2Nkbi5jb20vc2Vzc2lvbkZpbGUvdmJ0cXBIckZGT0lXZVpXSHhCQWdvRS9zYW5kYm94L01jRUE0SzVXSng3QW0xWEpUaEhNdExfMTc4NzAwMjYwMDE4NV9uYTFmbl9MMmh2YldVdmRXSjFiblIxTDFkUFJsOVRiMk5wWVd4ZlRXRnBiRjlOYjJSbGNtRjBhVzl1Lm1kIiwiQ29uZGl0aW9uIjp7IkRhdGVMZXNzVGhhbiI6eyJBV1M6RXBvY2hUaW1lIjoxNzg5NDMwNDAwfX19XX0_\u0026Key-Pair-Id=K2QY5QTL8JSY6C\u0026Signature=MEYCIQD9ZiQdbG534ouZ5~7evNJhsMWK-8vbNd5wmjhht~jAKQIhANZpLfyckfXEngttUMMHCMsnSRuSIbVHl~~ldLmaB5R9",
+        "filename": "WOF_Social_Mail_Moderation.md"
+      },
+      "error": ""
+    },
+    {
+      "input": "WOF_Combat_Instance_Net.md",
+      "output": {
+        "completion_note": "Completed the 391-line WOF-only combat, instance lifecycle, deterministic network protocol, disconnect, personal-loot, status-effect, interactable, raid, and integrity specification with locked Ash Compact defaults preserved.",
+        "deliverable": "https://private-us-east-1.manuscdn.com/sessionFile/RHUdDo5jbpuztkvNcq65i8/sandbox/BpGNPROYwMmGk7gqiYYP0j_1787002613124_na1fn_L2hvbWUvdWJ1bnR1L1dPRl9Db21iYXRfSW5zdGFuY2VfTmV0.md?Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly9wcml2YXRlLXVzLWVhc3QtMS5tYW51c2Nkbi5jb20vc2Vzc2lvbkZpbGUvUkhVZERvNWpicHV6dGt2TmNxNjVpOC9zYW5kYm94L0JwR05QUk9Zd01tR2s3Z3FpWVlQMGpfMTc4NzAwMjYxMzEyNF9uYTFmbl9MMmh2YldVdmRXSjFiblIxTDFkUFJsOURiMjFpWVhSZlNXNXpkR0Z1WTJWZlRtVjAubWQiLCJDb25kaXRpb24iOnsiRGF0ZUxlc3NUaGFuIjp7IkFXUzpFcG9jaFRpbWUiOjE3ODk0MzA0MDB9fX1dfQ__\u0026Key-Pair-Id=K2QY5QTL8JSY6C\u0026Signature=MEUCIQD3kpnNvGjwPEYHOsITAUuva768JJCP4OhLJQC7eu0lBgIgJoMWRZKUSMof00olv0I-a5f6QTo24GY2rLn4lNWyfTo_",
+        "filename": "WOF_Combat_Instance_Net.md"
+      },
+      "error": ""
+    },
+    {
+      "input": "WOF_Copy_Mail_UI_Errors.md",
+      "output": {
+        "completion_note": "Completed the WOF English v1 player-facing copy pack with HUD labels, 20 empty states, WOF-E001–WOF-E080 error handling, character creation, lifecycle, store honesty, age/accessibility copy, 10 essential push messages, and 15 support macros.",
+        "deliverable": "https://private-us-east-1.manuscdn.com/sessionFile/3T3qU76Q4lBwUoxGwqLhml/sandbox/1SyHKTmRea2O0qjvpsd7Nz_1787002619491_na1fn_L2hvbWUvdWJ1bnR1L1dPRl9Db3B5X01haWxfVUlfRXJyb3Jz.md?Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly9wcml2YXRlLXVzLWVhc3QtMS5tYW51c2Nkbi5jb20vc2Vzc2lvbkZpbGUvM1QzcVU3NlE0bEJ3VW94R3dxTGhtbC9zYW5kYm94LzFTeUhLVG1SZWEyTzBxanZwc2Q3TnpfMTc4NzAwMjYxOTQ5MV9uYTFmbl9MMmh2YldVdmRXSjFiblIxTDFkUFJsOURiM0I1WDAxaGFXeGZWVWxmUlhKeWIzSnoubWQiLCJDb25kaXRpb24iOnsiRGF0ZUxlc3NUaGFuIjp7IkFXUzpFcG9jaFRpbWUiOjE3ODk0MzA0MDB9fX1dfQ__\u0026Key-Pair-Id=K2QY5QTL8JSY6C\u0026Signature=MEQCIGPFn7uc--JvJfKNtszNrSbM6~xgO~Tiq-wx~MxO~F2PAiBclIuctODFnlmsOGTnMAVoRlx5rZoXW7CB52tMjI9~Uw__",
+        "filename": "WOF_Copy_Mail_UI_Errors.md"
+      },
+      "error": ""
+    },
+    {
+      "input": "WOF_Ops_Telemetry_Flags.md",
+      "output": {
+        "completion_note": "Completed the WOF-only telemetry and operations Markdown deliverable with 20 kill switches, staged feature flags, 40 privacy-safe events, SPEC capacity budgets, GDPR deletion fields, 12 admin actions, 30 evaluation probes, migration hooks, and namespace rules.",
+        "deliverable": "https://private-us-east-1.manuscdn.com/sessionFile/bYH4YSUdKnmqXnrv6RVI9S/sandbox/TM85LpNKpqtrDHGnVOAuAI_1787002597602_na1fn_L2hvbWUvdWJ1bnR1L1dPRl9PcHNfVGVsZW1ldHJ5X0ZsYWdz.md?Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly9wcml2YXRlLXVzLWVhc3QtMS5tYW51c2Nkbi5jb20vc2Vzc2lvbkZpbGUvYllINFlTVWRLbm1xWG5ydjZSVkk5Uy9zYW5kYm94L1RNODVMcE5LcHF0ckRIR25WT0F1QUlfMTc4NzAwMjU5NzYwMl9uYTFmbl9MMmh2YldVdmRXSjFiblIxTDFkUFJsOVBjSE5mVkdWc1pXMWxkSEo1WDBac1lXZHoubWQiLCJDb25kaXRpb24iOnsiRGF0ZUxlc3NUaGFuIjp7IkFXUzpFcG9jaFRpbWUiOjE3ODk0MzA0MDB9fX1dfQ__\u0026Key-Pair-Id=K2QY5QTL8JSY6C\u0026Signature=MEUCIQD9wSRzc9G97mXdZNBb3XYdlhkoLw03uicv9uAzxeVxKwIgFb1R7U0s59igRRHHDggp29FVq5Gj9emeZM8pPtEJMew_",
+        "filename": "WOF_Ops_Telemetry_Flags.md"
+      },
+      "error": ""
+    },
+    {
+      "input": "WOF_PerWorld_Skin_Deltas.md",
+      "output": {
+        "completion_note": "Completed and validated the 23-world WOF per-world skin delta table with ten public-name remaps, housing and clock skins, raid or big-night rules, two-wallet chrome, Kid Mode bans, and shared engine/IP guardrails.",
+        "deliverable": "https://private-us-east-1.manuscdn.com/sessionFile/WV1PF7IYzkH3bTRljIxr0m/sandbox/JDC9PZCTPdnFFhn7E12vij_1787002707641_na1fn_L2hvbWUvdWJ1bnR1L1dPRl9QZXJXb3JsZF9Ta2luX0RlbHRhcw.md?Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly9wcml2YXRlLXVzLWVhc3QtMS5tYW51c2Nkbi5jb20vc2Vzc2lvbkZpbGUvV1YxUEY3SVl6a0gzYlRSbGpJeHIwbS9zYW5kYm94L0pEQzlQWkNUUGRuRkZobjdFMTJ2aWpfMTc4NzAwMjcwNzY0MV9uYTFmbl9MMmh2YldVdmRXSjFiblIxTDFkUFJsOVFaWEpYYjNKc1pGOVRhMmx1WDBSbGJIUmhjdy5tZCIsIkNvbmRpdGlvbiI6eyJEYXRlTGVzc1RoYW4iOnsiQVdTOkVwb2NoVGltZSI6MTc4OTQzMDQwMH19fV19\u0026Key-Pair-Id=K2QY5QTL8JSY6C\u0026Signature=MEQCIAjp3OqJ1EPRgxr5BHIfYltl4strZaB2KrkWo-SIPHCgAiBzdH70UCO-H5041zzfOzkqitrutZs2FUPFBMZUs44GkQ__",
+        "filename": "WOF_PerWorld_Skin_Deltas.md"
+      },
+      "error": ""
+    },
+    {
+      "input": "WOF_Progression_LiveOps.yaml",
+      "output": {
+        "completion_note": "Completed and validated the WOF-only Ash Compact progression and live-ops YAML with XP, contracts, reputation, achievements, collection logs, festivals, environmental state, login rewards, and locked engine constraints.",
+        "deliverable": "https://private-us-east-1.manuscdn.com/sessionFile/8PJveDqF8jlXXcMWOKULfn/sandbox/aapLonjM3OW4jfwJicqjvl_1787002599282_na1fn_L2hvbWUvdWJ1bnR1L1dPRl9Qcm9ncmVzc2lvbl9MaXZlT3Bz.yaml?Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly9wcml2YXRlLXVzLWVhc3QtMS5tYW51c2Nkbi5jb20vc2Vzc2lvbkZpbGUvOFBKdmVEcUY4amxYWGNNV09LVUxmbi9zYW5kYm94L2FhcExvbmpNM09XNGpmd0ppY3FqdmxfMTc4NzAwMjU5OTI4Ml9uYTFmbl9MMmh2YldVdmRXSjFiblIxTDFkUFJsOVFjbTluY21WemMybHZibDlNYVhabFQzQnoueWFtbCIsIkNvbmRpdGlvbiI6eyJEYXRlTGVzc1RoYW4iOnsiQVdTOkVwb2NoVGltZSI6MTc4OTQzMDQwMH19fV19\u0026Key-Pair-Id=K2QY5QTL8JSY6C\u0026Signature=MEYCIQCVja1FdQTUagYOsOftJ0l5Xkd5vjmh2tm~U9Kl43XyGQIhAJVJjBLAzpfjly4lqkh4aJ~UuUbfC0HIAR2blNblwPo7",
+        "filename": "WOF_Progression_LiveOps.yaml"
+      },
+      "error": ""
+    },
+    {
+      "input": "WOF_Character_Alts_Safety.yaml",
+      "output": {
+        "completion_note": "Completed and YAML-validated the WOF character alternatives, cosmetic, family safety, prompt filtering, trade scam counter, report-only, and transfer restriction data.",
+        "deliverable": "https://private-us-east-1.manuscdn.com/sessionFile/HyMxyT88VMj22gTpni0uNW/sandbox/vkyT9Pv0dNF6ROgYforTDF_1787002766663_na1fn_L2hvbWUvdWJ1bnR1L1dPRl9DaGFyYWN0ZXJfQWx0c19TYWZldHk.yaml?Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly9wcml2YXRlLXVzLWVhc3QtMS5tYW51c2Nkbi5jb20vc2Vzc2lvbkZpbGUvSHlNeHlUODhWTWoyMmdUcG5pMHVOVy9zYW5kYm94L3ZreVQ5UHYwZE5GNlJPZ1lmb3JUREZfMTc4NzAwMjc2NjY2M19uYTFmbl9MMmh2YldVdmRXSjFiblIxTDFkUFJsOURhR0Z5WVdOMFpYSmZRV3gwYzE5VFlXWmxkSGsueWFtbCIsIkNvbmRpdGlvbiI6eyJEYXRlTGVzc1RoYW4iOnsiQVdTOkVwb2NoVGltZSI6MTc4OTQzMDQwMH19fV19\u0026Key-Pair-Id=K2QY5QTL8JSY6C\u0026Signature=MEQCIG60Gmbywo7K4chW12QUPdJgHH-vIsHC~d1leTw1bRewAiAjouC1zC~3m8szBzDgqh1y8EqWfHMC36U6wpyoUL-75w__",
+        "filename": "WOF_Character_Alts_Safety.yaml"
+      },
+      "error": ""
+    },
+    {
+      "input": "WOF_Lore_Readables.yaml",
+      "output": {
+        "completion_note": "Created and validated a complete YAML pack containing 40 unique Ash Compact readable notes, each tied to a place and limited to 80 words.",
+        "deliverable": "https://private-us-east-1.manuscdn.com/sessionFile/FSWheMVthdstA9RH7EyGPl/sandbox/uHEmt7EWTOETncyqISUd3D_1787002668933_na1fn_L2hvbWUvdWJ1bnR1L1dPRl9Mb3JlX1JlYWRhYmxlcw.yaml?Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly9wcml2YXRlLXVzLWVhc3QtMS5tYW51c2Nkbi5jb20vc2Vzc2lvbkZpbGUvRlNXaGVNVnRoZHN0QTlSSDdFeUdQbC9zYW5kYm94L3VIRW10N0VXVE9FVG5jeXFJU1VkM0RfMTc4NzAwMjY2ODkzM19uYTFmbl9MMmh2YldVdmRXSjFiblIxTDFkUFJsOU1iM0psWDFKbFlXUmhZbXhsY3cueWFtbCIsIkNvbmRpdGlvbiI6eyJEYXRlTGVzc1RoYW4iOnsiQVdTOkVwb2NoVGltZSI6MTc4OTQzMDQwMH19fV19\u0026Key-Pair-Id=K2QY5QTL8JSY6C\u0026Signature=MEUCIQCNp7-QAQZOuT4ADhXfJT40vujCkSD8UZwwHTIVEUXy9gIgdvckJUnrgx6BJRTXuChbOUbkx4-9OGS0NuD-vLNbY24_",
+        "filename": "WOF_Lore_Readables.yaml"
+      },
+      "error": ""
+    }
+  ]
+}

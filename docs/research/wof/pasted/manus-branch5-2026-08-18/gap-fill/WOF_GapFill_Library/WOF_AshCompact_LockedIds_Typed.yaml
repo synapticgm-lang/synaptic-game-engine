@@ -1,0 +1,2402 @@
+packFormatVersion: 1
+worldId: ash_compact
+publicName: Ash Compact
+conversionOnly: true
+originalIpFence: Original names and genre patterns only; no licensed settings or live
+  import.
+engineDefaults:
+  partyMin: 2
+  partyMax: 5
+  raidSize: 10
+  lockstepRounds: true
+  hubStoryTurnCost: 1
+  chatTurnCost: 0
+  roundResolveSpendsTurn: true
+  midCombatFill: false
+  disconnect: follow_last_plan_or_hold
+  death: downed; wipe_to_checkpoint; no_permadeath
+  personalLoot: true
+  weeklyPerCharacterBossLockout: true
+  overworld: Tier 3 shared hubs plus instanced combat
+  presence: nearbyPlayerCount_and_races_only
+  globalChatV1: false
+  twoWallets:
+  - gold
+  - cosmetic_tokens
+  forbiddenSales:
+  - outcomes
+  - lockout_skips
+  - raid_clears
+  - power_packs
+  - gacha
+renameTable:
+- old: Gloam Court Siege
+  new: Lantern Court Breach
+  reason: original First-Song instance name; structure retained outside this file
+- old: saltwind_keeper
+  new: brineward_keeper
+  reason: Bonded Menagerie id collision correction
+- old: hp_check_floor
+  new: hp_check_floor_flags
+  reason: locked rules-module slug
+- old: The First Wick
+  new: Keep the Path Lit
+  reason: display-only alias rejected for quest_lanternfolk_race_1
+races:
+- id: hearthborn
+  publicName: Hearthborn
+  startPlaceId: poi_reedfen_square
+  starterItems:
+  - hearthborn_starter_clothes
+  - hearthborn_starter_weapon
+  abilityFlag: hearthborn_starter_flag
+- id: lanternfolk
+  publicName: Lanternfolk
+  startPlaceId: poi_wickhaven
+  starterItems:
+  - lanternfolk_starter_clothes
+  - lanternfolk_starter_weapon
+  abilityFlag: lanternfolk_starter_flag
+- id: saltkin
+  publicName: Saltkin
+  startPlaceId: poi_brinewatch_dock
+  starterItems:
+  - saltkin_starter_clothes
+  - saltkin_starter_weapon
+  abilityFlag: saltkin_starter_flag
+- id: stonevein
+  publicName: Stonevein
+  startPlaceId: poi_anvil_gate
+  starterItems:
+  - stonevein_starter_clothes
+  - stonevein_starter_weapon
+  abilityFlag: stonevein_starter_flag
+places:
+- id: poi_reedfen_square
+  publicName: Reedfen Square
+  zoneId: reedfen
+  kind: street
+  scale: street
+  danger: safe
+  outdoor: true
+  exits:
+  - poi_millcross
+  - poi_reedfen_marsh
+  - poi_reedfen_hall
+  - poi_reedfen_crossroads
+  npcIds:
+  - elder_mara
+  interactableIds:
+  - interact_street
+  - read_notice_poi_reedfen_square
+- id: poi_millcross
+  publicName: Millcross
+  zoneId: reedfen
+  kind: street
+  scale: street
+  danger: low
+  outdoor: true
+  exits:
+  - poi_reedfen_square
+  - poi_reedfen_mill
+  npcIds:
+  - miller_tobin
+  interactableIds:
+  - interact_street
+  - read_notice_poi_millcross
+- id: poi_reedfen_marsh
+  publicName: Reedfen Marsh
+  zoneId: reedfen
+  kind: wild
+  scale: street
+  danger: low
+  outdoor: true
+  exits:
+  - poi_reedfen_square
+  - poi_reedfen_marsh_edge
+  npcIds:
+  - pathwarden_sila
+  interactableIds:
+  - interact_wild
+  - read_notice_poi_reedfen_marsh
+- id: poi_reedfen_hall
+  publicName: Reedfen Hall
+  zoneId: reedfen
+  kind: hall
+  scale: street
+  danger: low
+  outdoor: true
+  exits:
+  - poi_reedfen_square
+  npcIds:
+  - elder_mara
+  interactableIds:
+  - interact_hall
+  - read_notice_poi_reedfen_hall
+- id: poi_reedfen_pier
+  publicName: Reedfen Pier
+  zoneId: reedfen
+  kind: dock
+  scale: street
+  danger: low
+  outdoor: true
+  exits:
+  - poi_reedfen_square
+  - poi_reedfen_marsh
+  npcIds:
+  - fisher_pell
+  interactableIds:
+  - interact_dock
+  - read_notice_poi_reedfen_pier
+- id: poi_reedfen_mill
+  publicName: Reedfen Mill
+  zoneId: reedfen
+  kind: mill
+  scale: street
+  danger: low
+  outdoor: true
+  exits:
+  - poi_millcross
+  npcIds:
+  - miller_tobin
+  interactableIds:
+  - interact_mill
+  - read_notice_poi_reedfen_mill
+- id: poi_reedfen_crossroads
+  publicName: Reedfen Crossroads
+  zoneId: reedfen
+  kind: road
+  scale: street
+  danger: low
+  outdoor: true
+  exits:
+  - poi_reedfen_square
+  - poi_lampwood_gate
+  - poi_the_divide
+  npcIds:
+  - roadkeeper_noll
+  interactableIds:
+  - interact_road
+  - read_notice_poi_reedfen_crossroads
+- id: poi_reedfen_marsh_edge
+  publicName: Reedfen Marsh Edge
+  zoneId: reedfen
+  kind: wild
+  scale: street
+  danger: low
+  outdoor: true
+  exits:
+  - poi_reedfen_marsh
+  - poi_lampwood_gate
+  npcIds:
+  - pathwarden_sila
+  interactableIds:
+  - interact_wild
+  - read_notice_poi_reedfen_marsh_edge
+- id: poi_lampwood_gate
+  publicName: Lampwood Gate
+  zoneId: lampwood
+  kind: gate
+  scale: street
+  danger: safe
+  outdoor: true
+  exits:
+  - poi_reedfen_marsh_edge
+  - poi_wickhaven
+  - poi_lampwood_path
+  npcIds:
+  - pathwarden_sila
+  interactableIds:
+  - interact_gate
+  - read_notice_poi_lampwood_gate
+- id: poi_wickhaven
+  publicName: Wickhaven
+  zoneId: lampwood
+  kind: street
+  scale: street
+  danger: safe
+  outdoor: true
+  exits:
+  - poi_lampwood_gate
+  - poi_lampwood_path
+  - poi_wickhaven_loft
+  npcIds:
+  - wick_tender_cal
+  interactableIds:
+  - interact_street
+  - read_notice_poi_wickhaven
+- id: poi_lampwood_path
+  publicName: Lampwood Path
+  zoneId: lampwood
+  kind: road
+  scale: street
+  danger: low
+  outdoor: true
+  exits:
+  - poi_wickhaven
+  - poi_ember_cut
+  - poi_the_divide
+  npcIds:
+  - pathmarker_jen
+  interactableIds:
+  - interact_road
+  - read_notice_poi_lampwood_path
+- id: poi_wickhaven_loft
+  publicName: Wickhaven Loft
+  zoneId: lampwood
+  kind: interior
+  scale: instance
+  danger: safe
+  outdoor: false
+  exits:
+  - poi_wickhaven
+  npcIds:
+  - wick_tender_cal
+  interactableIds:
+  - interact_interior
+  - read_notice_poi_wickhaven_loft
+- id: poi_ember_cut
+  publicName: Ember Cut
+  zoneId: lampwood
+  kind: wild
+  scale: street
+  danger: low
+  outdoor: true
+  exits:
+  - poi_lampwood_path
+  - poi_watch_lantern
+  npcIds:
+  - mothkeeper_ru
+  interactableIds:
+  - interact_wild
+  - read_notice_poi_ember_cut
+- id: poi_watch_lantern
+  publicName: Watch Lantern
+  zoneId: lampwood
+  kind: road
+  scale: street
+  danger: low
+  outdoor: true
+  exits:
+  - poi_ember_cut
+  - poi_unlit_bend
+  npcIds:
+  - watcher_dell
+  interactableIds:
+  - interact_road
+  - read_notice_poi_watch_lantern
+- id: poi_unlit_bend
+  publicName: Unlit Bend
+  zoneId: lampwood
+  kind: wild
+  scale: street
+  danger: low
+  outdoor: true
+  exits:
+  - poi_watch_lantern
+  - poi_hollow_mouth
+  npcIds:
+  - watcher_dell
+  interactableIds:
+  - interact_wild
+  - read_notice_poi_unlit_bend
+- id: poi_hollow_mouth
+  publicName: Unlit Hollow Mouth
+  zoneId: lampwood
+  kind: dungeon_door
+  scale: instance
+  danger: low
+  outdoor: false
+  exits:
+  - poi_unlit_bend
+  npcIds:
+  - wick_tender_cal
+  interactableIds:
+  - interact_dungeon_door
+  - read_notice_poi_hollow_mouth
+- id: poi_brinewatch_dock
+  publicName: Brinewatch Dock
+  zoneId: brinewatch
+  kind: dock
+  scale: street
+  danger: safe
+  outdoor: true
+  exits:
+  - poi_coil_pier
+  - poi_tidal_flats
+  - poi_the_divide
+  npcIds:
+  - fisher_pell
+  interactableIds:
+  - interact_dock
+  - read_notice_poi_brinewatch_dock
+- id: poi_coil_pier
+  publicName: Coil Pier
+  zoneId: brinewatch
+  kind: dock
+  scale: street
+  danger: low
+  outdoor: true
+  exits:
+  - poi_brinewatch_dock
+  - poi_coil_warehouse
+  npcIds:
+  - fisher_pell
+  interactableIds:
+  - interact_dock
+  - read_notice_poi_coil_pier
+- id: poi_tidal_flats
+  publicName: Tideline Flats
+  zoneId: brinewatch
+  kind: wild
+  scale: street
+  danger: low
+  outdoor: true
+  exits:
+  - poi_brinewatch_dock
+  - poi_brinewatch_pier
+  npcIds:
+  - tide_reader_nesh
+  interactableIds:
+  - interact_wild
+  - read_notice_poi_tidal_flats
+- id: poi_covenant_hall
+  publicName: Covenant Hall
+  zoneId: brinewatch
+  kind: hall
+  scale: street
+  danger: low
+  outdoor: true
+  exits:
+  - poi_brinewatch_dock
+  npcIds:
+  - tide_reader_nesh
+  interactableIds:
+  - interact_hall
+  - read_notice_poi_covenant_hall
+- id: poi_drying_racks
+  publicName: Drying Racks
+  zoneId: brinewatch
+  kind: workyard
+  scale: street
+  danger: low
+  outdoor: true
+  exits:
+  - poi_brinewatch_dock
+  - poi_coil_pier
+  npcIds:
+  - fisher_pell
+  interactableIds:
+  - interact_workyard
+  - read_notice_poi_drying_racks
+- id: poi_stilt_walk
+  publicName: Stilt Walk
+  zoneId: brinewatch
+  kind: street
+  scale: street
+  danger: low
+  outdoor: true
+  exits:
+  - poi_brinewatch_dock
+  - poi_tidal_flats
+  npcIds:
+  - watcher_dell
+  interactableIds:
+  - interact_street
+  - read_notice_poi_stilt_walk
+- id: poi_flood_store
+  publicName: Flood Store
+  zoneId: brinewatch
+  kind: warehouse
+  scale: instance
+  danger: low
+  outdoor: false
+  exits:
+  - poi_stilt_walk
+  - poi_coil_warehouse
+  npcIds:
+  - merchant_fenn
+  interactableIds:
+  - interact_warehouse
+  - read_notice_poi_flood_store
+- id: poi_anvil_gate
+  publicName: Anvil Gate
+  zoneId: granite_stair
+  kind: gate
+  scale: street
+  danger: safe
+  outdoor: true
+  exits:
+  - poi_granite_stair
+  - poi_anvil_deep
+  npcIds:
+  - smith_vorr
+  interactableIds:
+  - interact_gate
+  - read_notice_poi_anvil_gate
+- id: poi_granite_stair
+  publicName: Granite Stair
+  zoneId: granite_stair
+  kind: street
+  scale: street
+  danger: safe
+  outdoor: true
+  exits:
+  - poi_anvil_gate
+  - poi_ore_siding
+  - poi_the_divide
+  npcIds:
+  - stair_oath_kell
+  interactableIds:
+  - interact_street
+  - read_notice_poi_granite_stair
+- id: poi_oath_hall
+  publicName: Oath Hall
+  zoneId: granite_stair
+  kind: hall
+  scale: instance
+  danger: low
+  outdoor: false
+  exits:
+  - poi_granite_stair
+  npcIds:
+  - stair_oath_kell
+  interactableIds:
+  - interact_hall
+  - read_notice_poi_oath_hall
+- id: poi_ore_siding
+  publicName: Ore Siding
+  zoneId: granite_stair
+  kind: yard
+  scale: street
+  danger: low
+  outdoor: true
+  exits:
+  - poi_granite_stair
+  - poi_cut_face
+  npcIds:
+  - smith_vorr
+  interactableIds:
+  - interact_yard
+  - read_notice_poi_ore_siding
+- id: poi_cut_face
+  publicName: Cut Face
+  zoneId: granite_stair
+  kind: quarry
+  scale: street
+  danger: low
+  outdoor: true
+  exits:
+  - poi_ore_siding
+  - poi_slag_run
+  npcIds:
+  - survey_master_dain
+  interactableIds:
+  - interact_quarry
+  - read_notice_poi_cut_face
+- id: poi_slag_run
+  publicName: Slag Run
+  zoneId: granite_stair
+  kind: quarry
+  scale: street
+  danger: low
+  outdoor: true
+  exits:
+  - poi_cut_face
+  - poi_hollow_stair
+  npcIds:
+  - smith_vorr
+  interactableIds:
+  - interact_quarry
+  - read_notice_poi_slag_run
+- id: poi_hollow_stair
+  publicName: Hollow Stair
+  zoneId: granite_stair
+  kind: dungeon_door
+  scale: instance
+  danger: safe
+  outdoor: false
+  exits:
+  - poi_slag_run
+  npcIds:
+  - survey_master_dain
+  interactableIds:
+  - interact_dungeon_door
+  - read_notice_poi_hollow_stair
+- id: poi_ash_seat
+  publicName: Ash Seat
+  zoneId: capital_ash
+  kind: capital
+  scale: street
+  danger: safe
+  outdoor: true
+  exits:
+  - poi_the_divide
+  - poi_ash_seat_hall
+  - poi_ash_seat_archive
+  - poi_millstone_hollow_road
+  npcIds:
+  - compact_speaker_ren
+  interactableIds:
+  - interact_capital
+  - read_notice_poi_ash_seat
+- id: poi_tidehold
+  publicName: Tidehold
+  zoneId: capital_tide
+  kind: capital
+  scale: street
+  danger: safe
+  outdoor: true
+  exits:
+  - poi_the_divide
+  - poi_tidehold_court
+  - poi_tidehold_archive
+  - poi_millstone_hollow_road
+  npcIds:
+  - tide_envoy_sava
+  interactableIds:
+  - interact_capital
+  - read_notice_poi_tidehold
+- id: poi_the_divide
+  publicName: The Divide
+  zoneId: the_divide
+  kind: wayhouse
+  scale: street
+  danger: low
+  outdoor: true
+  exits:
+  - poi_reedfen_crossroads
+  - poi_lampwood_path
+  - poi_brinewatch_dock
+  - poi_granite_stair
+  - poi_ash_seat
+  - poi_tidehold
+  npcIds:
+  - faction_clerk_ves
+  interactableIds:
+  - interact_wayhouse
+  - read_notice_poi_the_divide
+- id: poi_ash_seat_hall
+  publicName: Ash Seat Hall
+  zoneId: capital_ash
+  kind: hall
+  scale: instance
+  danger: safe
+  outdoor: false
+  exits:
+  - poi_ash_seat
+  npcIds:
+  - compact_speaker_ren
+  interactableIds:
+  - interact_hall
+  - read_notice_poi_ash_seat_hall
+- id: poi_ash_seat_archive
+  publicName: Kiln Archive
+  zoneId: capital_ash
+  kind: archive
+  scale: instance
+  danger: safe
+  outdoor: false
+  exits:
+  - poi_ash_seat
+  npcIds:
+  - archive_keeper_eli
+  interactableIds:
+  - interact_archive
+  - read_notice_poi_ash_seat_archive
+- id: poi_tidehold_court
+  publicName: Tide Court
+  zoneId: capital_tide
+  kind: hall
+  scale: instance
+  danger: safe
+  outdoor: false
+  exits:
+  - poi_tidehold
+  npcIds:
+  - tide_envoy_sava
+  interactableIds:
+  - interact_hall
+  - read_notice_poi_tidehold_court
+- id: poi_tidehold_archive
+  publicName: Brine Archive
+  zoneId: capital_tide
+  kind: archive
+  scale: instance
+  danger: safe
+  outdoor: false
+  exits:
+  - poi_tidehold
+  npcIds:
+  - tide_clerk_oru
+  interactableIds:
+  - interact_archive
+  - read_notice_poi_tidehold_archive
+- id: poi_millstone_hollow_road
+  publicName: Millstone Hollow Road
+  zoneId: mid_world
+  kind: road
+  scale: street
+  danger: low
+  outdoor: true
+  exits:
+  - poi_ash_seat
+  - poi_tidehold
+  - poi_millstone_hollow
+  npcIds:
+  - roadkeeper_noll
+  interactableIds:
+  - interact_road
+  - read_notice_poi_millstone_hollow_road
+- id: poi_millstone_hollow
+  publicName: Millstone Hollow
+  zoneId: mid_world
+  kind: raid_door
+  scale: instance
+  danger: low
+  outdoor: false
+  exits:
+  - poi_millstone_hollow_road
+  npcIds:
+  - roadkeeper_noll
+  interactableIds:
+  - interact_raid_door
+  - read_notice_poi_millstone_hollow
+travelGraph:
+  nodes:
+  - poi_the_divide
+  - poi_ash_seat
+  - poi_tidehold
+  edges:
+  - from: poi_reedfen_square
+    to: poi_the_divide
+    gold: 5
+    turns: 1
+    method: road_or_coach
+  - from: poi_wickhaven
+    to: poi_the_divide
+    gold: 5
+    turns: 1
+    method: road_or_coach
+  - from: poi_brinewatch_dock
+    to: poi_the_divide
+    gold: 5
+    turns: 1
+    method: road_or_coach
+  - from: poi_anvil_gate
+    to: poi_the_divide
+    gold: 5
+    turns: 1
+    method: road_or_coach
+  - from: poi_the_divide
+    to: poi_ash_seat
+    gold: 8
+    turns: 1
+    method: coach
+  - from: poi_the_divide
+    to: poi_tidehold
+    gold: 10
+    turns: 1
+    method: ferry
+  - from: poi_ash_seat
+    to: poi_tidehold
+    gold: 14
+    turns: 2
+    method: ferry
+quests:
+- id: quest_hearthborn_race_1
+  title: The Hearthborn's Request
+  family: race_identity
+  hidden: false
+  unlockIds: []
+  objectives:
+  - talk_to_npc:elder_mara:1
+  - deliver_item:seed_pouch:1
+  rewardGold: 12
+  rewardXp: 40
+  startPlaceId: poi_reedfen_square
+  codeOwns:
+  - objectiveCounts
+  - questState
+  - rewards
+  llmMayNarrate:
+  - committed progress only
+- id: quest_hearthborn_race_2
+  title: The Hearthborn's Request — Beat 2
+  family: race_identity
+  hidden: false
+  unlockIds:
+  - quest_hearthborn_race_1
+  objectives:
+  - talk_to_npc:roadkeeper_noll:1
+  - visit_place:poi_reedfen_square:1
+  rewardGold: 20
+  rewardXp: 64
+  startPlaceId: poi_reedfen_square
+  codeOwns:
+  - objectiveCounts
+  - questState
+  - rewards
+  llmMayNarrate:
+  - committed progress only
+- id: quest_hearthborn_race_3
+  title: The Hearthborn's Request — Beat 3
+  family: race_identity
+  hidden: false
+  unlockIds:
+  - quest_hearthborn_race_2
+  objectives:
+  - talk_to_npc:roadkeeper_noll:1
+  - visit_place:poi_reedfen_square:1
+  rewardGold: 24
+  rewardXp: 76
+  startPlaceId: poi_reedfen_square
+  codeOwns:
+  - objectiveCounts
+  - questState
+  - rewards
+  llmMayNarrate:
+  - committed progress only
+- id: quest_lanternfolk_race_1
+  title: Keep the Path Lit
+  family: race_identity
+  hidden: false
+  unlockIds: []
+  objectives:
+  - visit_place:poi_lampwood_path:1
+  - collect_item:blue_wick_fiber:2
+  rewardGold: 12
+  rewardXp: 40
+  startPlaceId: poi_wickhaven
+  codeOwns:
+  - objectiveCounts
+  - questState
+  - rewards
+  llmMayNarrate:
+  - committed progress only
+- id: quest_lanternfolk_race_2
+  title: Keep the Path Lit — Beat 2
+  family: race_identity
+  hidden: false
+  unlockIds:
+  - quest_lanternfolk_race_1
+  objectives:
+  - talk_to_npc:roadkeeper_noll:1
+  - visit_place:poi_wickhaven:1
+  rewardGold: 20
+  rewardXp: 64
+  startPlaceId: poi_wickhaven
+  codeOwns:
+  - objectiveCounts
+  - questState
+  - rewards
+  llmMayNarrate:
+  - committed progress only
+- id: quest_lanternfolk_race_3
+  title: Keep the Path Lit — Beat 3
+  family: race_identity
+  hidden: false
+  unlockIds:
+  - quest_lanternfolk_race_2
+  objectives:
+  - talk_to_npc:roadkeeper_noll:1
+  - visit_place:poi_wickhaven:1
+  rewardGold: 24
+  rewardXp: 76
+  startPlaceId: poi_wickhaven
+  codeOwns:
+  - objectiveCounts
+  - questState
+  - rewards
+  llmMayNarrate:
+  - committed progress only
+- id: quest_saltkin_race_1
+  title: The Flats Are Wrong
+  family: race_identity
+  hidden: false
+  unlockIds: []
+  objectives:
+  - visit_place:poi_tidal_flats:1
+  - collect_item:tide_chalk:3
+  rewardGold: 12
+  rewardXp: 40
+  startPlaceId: poi_brinewatch_dock
+  codeOwns:
+  - objectiveCounts
+  - questState
+  - rewards
+  llmMayNarrate:
+  - committed progress only
+- id: quest_saltkin_race_2
+  title: The Flats Are Wrong — Beat 2
+  family: race_identity
+  hidden: false
+  unlockIds:
+  - quest_saltkin_race_1
+  objectives:
+  - talk_to_npc:roadkeeper_noll:1
+  - visit_place:poi_brinewatch_dock:1
+  rewardGold: 20
+  rewardXp: 64
+  startPlaceId: poi_brinewatch_dock
+  codeOwns:
+  - objectiveCounts
+  - questState
+  - rewards
+  llmMayNarrate:
+  - committed progress only
+- id: quest_saltkin_race_3
+  title: The Flats Are Wrong — Beat 3
+  family: race_identity
+  hidden: false
+  unlockIds:
+  - quest_saltkin_race_2
+  objectives:
+  - talk_to_npc:roadkeeper_noll:1
+  - visit_place:poi_brinewatch_dock:1
+  rewardGold: 24
+  rewardXp: 76
+  startPlaceId: poi_brinewatch_dock
+  codeOwns:
+  - objectiveCounts
+  - questState
+  - rewards
+  llmMayNarrate:
+  - committed progress only
+- id: quest_stonevein_race_1
+  title: The Stair Has a Crack
+  family: race_identity
+  hidden: false
+  unlockIds: []
+  objectives:
+  - visit_place:poi_granite_stair:1
+  - collect_item:survey_slate:1
+  rewardGold: 12
+  rewardXp: 40
+  startPlaceId: poi_anvil_gate
+  codeOwns:
+  - objectiveCounts
+  - questState
+  - rewards
+  llmMayNarrate:
+  - committed progress only
+- id: quest_stonevein_race_2
+  title: The Stair Has a Crack — Beat 2
+  family: race_identity
+  hidden: false
+  unlockIds:
+  - quest_stonevein_race_1
+  objectives:
+  - talk_to_npc:roadkeeper_noll:1
+  - visit_place:poi_anvil_gate:1
+  rewardGold: 20
+  rewardXp: 64
+  startPlaceId: poi_anvil_gate
+  codeOwns:
+  - objectiveCounts
+  - questState
+  - rewards
+  llmMayNarrate:
+  - committed progress only
+- id: quest_stonevein_race_3
+  title: The Stair Has a Crack — Beat 3
+  family: race_identity
+  hidden: false
+  unlockIds:
+  - quest_stonevein_race_2
+  objectives:
+  - talk_to_npc:roadkeeper_noll:1
+  - visit_place:poi_anvil_gate:1
+  rewardGold: 24
+  rewardXp: 76
+  startPlaceId: poi_anvil_gate
+  codeOwns:
+  - objectiveCounts
+  - questState
+  - rewards
+  llmMayNarrate:
+  - committed progress only
+- id: quest_miller_1
+  title: Hearthborn Miller Beat 1
+  family: miller
+  hidden: false
+  unlockIds: []
+  objectives:
+  - visit_place:poi_reedfen_square:1
+  - collect_item:hearthborn_work_material:1
+  rewardGold: 15
+  rewardXp: 50
+  startPlaceId: poi_reedfen_square
+  codeOwns:
+  - objectiveCounts
+  - questState
+  - rewards
+  llmMayNarrate:
+  - committed progress only
+- id: quest_miller_2
+  title: Hearthborn Miller Beat 2
+  family: miller
+  hidden: false
+  unlockIds:
+  - quest_miller_1
+  objectives:
+  - visit_place:poi_reedfen_square:1
+  - collect_item:hearthborn_work_material:2
+  rewardGold: 20
+  rewardXp: 65
+  startPlaceId: poi_reedfen_square
+  codeOwns:
+  - objectiveCounts
+  - questState
+  - rewards
+  llmMayNarrate:
+  - committed progress only
+- id: quest_miller_3
+  title: Hearthborn Miller Beat 3
+  family: miller
+  hidden: false
+  unlockIds:
+  - quest_miller_2
+  objectives:
+  - visit_place:poi_reedfen_square:1
+  - collect_item:hearthborn_work_material:3
+  rewardGold: 25
+  rewardXp: 80
+  startPlaceId: poi_reedfen_square
+  codeOwns:
+  - objectiveCounts
+  - questState
+  - rewards
+  llmMayNarrate:
+  - committed progress only
+- id: quest_zone_1
+  title: Hearthborn Zone Beat 1
+  family: zone
+  hidden: false
+  unlockIds: []
+  objectives:
+  - visit_place:poi_reedfen_square:1
+  - collect_item:hearthborn_work_material:1
+  rewardGold: 15
+  rewardXp: 50
+  startPlaceId: poi_reedfen_square
+  codeOwns:
+  - objectiveCounts
+  - questState
+  - rewards
+  llmMayNarrate:
+  - committed progress only
+- id: quest_zone_2
+  title: Hearthborn Zone Beat 2
+  family: zone
+  hidden: false
+  unlockIds:
+  - quest_zone_1
+  objectives:
+  - visit_place:poi_reedfen_square:1
+  - collect_item:hearthborn_work_material:2
+  rewardGold: 20
+  rewardXp: 65
+  startPlaceId: poi_reedfen_square
+  codeOwns:
+  - objectiveCounts
+  - questState
+  - rewards
+  llmMayNarrate:
+  - committed progress only
+- id: quest_zone_3
+  title: Hearthborn Zone Beat 3
+  family: zone
+  hidden: false
+  unlockIds:
+  - quest_zone_2
+  objectives:
+  - visit_place:poi_reedfen_square:1
+  - collect_item:hearthborn_work_material:3
+  rewardGold: 25
+  rewardXp: 80
+  startPlaceId: poi_reedfen_square
+  codeOwns:
+  - objectiveCounts
+  - questState
+  - rewards
+  llmMayNarrate:
+  - committed progress only
+- id: quest_lanternfolk_miller_1
+  title: Lanternfolk Miller Beat 1
+  family: miller
+  hidden: false
+  unlockIds: []
+  objectives:
+  - visit_place:poi_wickhaven:1
+  - collect_item:lanternfolk_work_material:1
+  rewardGold: 15
+  rewardXp: 50
+  startPlaceId: poi_wickhaven
+  codeOwns:
+  - objectiveCounts
+  - questState
+  - rewards
+  llmMayNarrate:
+  - committed progress only
+- id: quest_lanternfolk_miller_2
+  title: Lanternfolk Miller Beat 2
+  family: miller
+  hidden: false
+  unlockIds:
+  - quest_lanternfolk_miller_1
+  objectives:
+  - visit_place:poi_wickhaven:1
+  - collect_item:lanternfolk_work_material:2
+  rewardGold: 20
+  rewardXp: 65
+  startPlaceId: poi_wickhaven
+  codeOwns:
+  - objectiveCounts
+  - questState
+  - rewards
+  llmMayNarrate:
+  - committed progress only
+- id: quest_lanternfolk_miller_3
+  title: Lanternfolk Miller Beat 3
+  family: miller
+  hidden: false
+  unlockIds:
+  - quest_lanternfolk_miller_2
+  objectives:
+  - visit_place:poi_wickhaven:1
+  - collect_item:lanternfolk_work_material:3
+  rewardGold: 25
+  rewardXp: 80
+  startPlaceId: poi_wickhaven
+  codeOwns:
+  - objectiveCounts
+  - questState
+  - rewards
+  llmMayNarrate:
+  - committed progress only
+- id: quest_lanternfolk_zone_1
+  title: Lanternfolk Zone Beat 1
+  family: zone
+  hidden: false
+  unlockIds: []
+  objectives:
+  - visit_place:poi_wickhaven:1
+  - collect_item:lanternfolk_work_material:1
+  rewardGold: 15
+  rewardXp: 50
+  startPlaceId: poi_wickhaven
+  codeOwns:
+  - objectiveCounts
+  - questState
+  - rewards
+  llmMayNarrate:
+  - committed progress only
+- id: quest_lanternfolk_zone_2
+  title: Lanternfolk Zone Beat 2
+  family: zone
+  hidden: false
+  unlockIds:
+  - quest_lanternfolk_zone_1
+  objectives:
+  - visit_place:poi_wickhaven:1
+  - collect_item:lanternfolk_work_material:2
+  rewardGold: 20
+  rewardXp: 65
+  startPlaceId: poi_wickhaven
+  codeOwns:
+  - objectiveCounts
+  - questState
+  - rewards
+  llmMayNarrate:
+  - committed progress only
+- id: quest_lanternfolk_zone_3
+  title: Lanternfolk Zone Beat 3
+  family: zone
+  hidden: false
+  unlockIds:
+  - quest_lanternfolk_zone_2
+  objectives:
+  - visit_place:poi_wickhaven:1
+  - collect_item:lanternfolk_work_material:3
+  rewardGold: 25
+  rewardXp: 80
+  startPlaceId: poi_wickhaven
+  codeOwns:
+  - objectiveCounts
+  - questState
+  - rewards
+  llmMayNarrate:
+  - committed progress only
+- id: quest_saltkin_miller_1
+  title: Saltkin Miller Beat 1
+  family: miller
+  hidden: false
+  unlockIds: []
+  objectives:
+  - visit_place:poi_brinewatch_dock:1
+  - collect_item:saltkin_work_material:1
+  rewardGold: 15
+  rewardXp: 50
+  startPlaceId: poi_brinewatch_dock
+  codeOwns:
+  - objectiveCounts
+  - questState
+  - rewards
+  llmMayNarrate:
+  - committed progress only
+- id: quest_saltkin_miller_2
+  title: Saltkin Miller Beat 2
+  family: miller
+  hidden: false
+  unlockIds:
+  - quest_saltkin_miller_1
+  objectives:
+  - visit_place:poi_brinewatch_dock:1
+  - collect_item:saltkin_work_material:2
+  rewardGold: 20
+  rewardXp: 65
+  startPlaceId: poi_brinewatch_dock
+  codeOwns:
+  - objectiveCounts
+  - questState
+  - rewards
+  llmMayNarrate:
+  - committed progress only
+- id: quest_saltkin_miller_3
+  title: Saltkin Miller Beat 3
+  family: miller
+  hidden: false
+  unlockIds:
+  - quest_saltkin_miller_2
+  objectives:
+  - visit_place:poi_brinewatch_dock:1
+  - collect_item:saltkin_work_material:3
+  rewardGold: 25
+  rewardXp: 80
+  startPlaceId: poi_brinewatch_dock
+  codeOwns:
+  - objectiveCounts
+  - questState
+  - rewards
+  llmMayNarrate:
+  - committed progress only
+- id: quest_saltkin_zone_1
+  title: Saltkin Zone Beat 1
+  family: zone
+  hidden: false
+  unlockIds: []
+  objectives:
+  - visit_place:poi_brinewatch_dock:1
+  - collect_item:saltkin_work_material:1
+  rewardGold: 15
+  rewardXp: 50
+  startPlaceId: poi_brinewatch_dock
+  codeOwns:
+  - objectiveCounts
+  - questState
+  - rewards
+  llmMayNarrate:
+  - committed progress only
+- id: quest_saltkin_zone_2
+  title: Saltkin Zone Beat 2
+  family: zone
+  hidden: false
+  unlockIds:
+  - quest_saltkin_zone_1
+  objectives:
+  - visit_place:poi_brinewatch_dock:1
+  - collect_item:saltkin_work_material:2
+  rewardGold: 20
+  rewardXp: 65
+  startPlaceId: poi_brinewatch_dock
+  codeOwns:
+  - objectiveCounts
+  - questState
+  - rewards
+  llmMayNarrate:
+  - committed progress only
+- id: quest_saltkin_zone_3
+  title: Saltkin Zone Beat 3
+  family: zone
+  hidden: false
+  unlockIds:
+  - quest_saltkin_zone_2
+  objectives:
+  - visit_place:poi_brinewatch_dock:1
+  - collect_item:saltkin_work_material:3
+  rewardGold: 25
+  rewardXp: 80
+  startPlaceId: poi_brinewatch_dock
+  codeOwns:
+  - objectiveCounts
+  - questState
+  - rewards
+  llmMayNarrate:
+  - committed progress only
+- id: quest_stonevein_miller_1
+  title: Stonevein Miller Beat 1
+  family: miller
+  hidden: false
+  unlockIds: []
+  objectives:
+  - visit_place:poi_anvil_gate:1
+  - collect_item:stonevein_work_material:1
+  rewardGold: 15
+  rewardXp: 50
+  startPlaceId: poi_anvil_gate
+  codeOwns:
+  - objectiveCounts
+  - questState
+  - rewards
+  llmMayNarrate:
+  - committed progress only
+- id: quest_stonevein_miller_2
+  title: Stonevein Miller Beat 2
+  family: miller
+  hidden: false
+  unlockIds:
+  - quest_stonevein_miller_1
+  objectives:
+  - visit_place:poi_anvil_gate:1
+  - collect_item:stonevein_work_material:2
+  rewardGold: 20
+  rewardXp: 65
+  startPlaceId: poi_anvil_gate
+  codeOwns:
+  - objectiveCounts
+  - questState
+  - rewards
+  llmMayNarrate:
+  - committed progress only
+- id: quest_stonevein_miller_3
+  title: Stonevein Miller Beat 3
+  family: miller
+  hidden: false
+  unlockIds:
+  - quest_stonevein_miller_2
+  objectives:
+  - visit_place:poi_anvil_gate:1
+  - collect_item:stonevein_work_material:3
+  rewardGold: 25
+  rewardXp: 80
+  startPlaceId: poi_anvil_gate
+  codeOwns:
+  - objectiveCounts
+  - questState
+  - rewards
+  llmMayNarrate:
+  - committed progress only
+- id: quest_stonevein_zone_1
+  title: Stonevein Zone Beat 1
+  family: zone
+  hidden: false
+  unlockIds: []
+  objectives:
+  - visit_place:poi_anvil_gate:1
+  - collect_item:stonevein_work_material:1
+  rewardGold: 15
+  rewardXp: 50
+  startPlaceId: poi_anvil_gate
+  codeOwns:
+  - objectiveCounts
+  - questState
+  - rewards
+  llmMayNarrate:
+  - committed progress only
+- id: quest_stonevein_zone_2
+  title: Stonevein Zone Beat 2
+  family: zone
+  hidden: false
+  unlockIds:
+  - quest_stonevein_zone_1
+  objectives:
+  - visit_place:poi_anvil_gate:1
+  - collect_item:stonevein_work_material:2
+  rewardGold: 20
+  rewardXp: 65
+  startPlaceId: poi_anvil_gate
+  codeOwns:
+  - objectiveCounts
+  - questState
+  - rewards
+  llmMayNarrate:
+  - committed progress only
+- id: quest_stonevein_zone_3
+  title: Stonevein Zone Beat 3
+  family: zone
+  hidden: false
+  unlockIds:
+  - quest_stonevein_zone_2
+  objectives:
+  - visit_place:poi_anvil_gate:1
+  - collect_item:stonevein_work_material:3
+  rewardGold: 25
+  rewardXp: 80
+  startPlaceId: poi_anvil_gate
+  codeOwns:
+  - objectiveCounts
+  - questState
+  - rewards
+  llmMayNarrate:
+  - committed progress only
+- id: quest_hearthborn_zone_1
+  title: Hearthborn Zone Beat 1
+  family: zone_story
+  hidden: false
+  unlockIds: []
+  objectives:
+  - visit_place:poi_reedfen_square:1
+  - ledger_kill:hearthborn_anomaly:1
+  rewardGold: 20
+  rewardXp: 70
+  startPlaceId: poi_reedfen_square
+  codeOwns:
+  - objectiveCounts
+  - questState
+  - rewards
+  llmMayNarrate:
+  - committed progress only
+- id: quest_hearthborn_zone_2
+  title: Hearthborn Zone Beat 2
+  family: zone_story
+  hidden: false
+  unlockIds:
+  - quest_hearthborn_zone_1
+  objectives:
+  - visit_place:poi_reedfen_square:1
+  - ledger_kill:hearthborn_anomaly:2
+  rewardGold: 24
+  rewardXp: 85
+  startPlaceId: poi_reedfen_square
+  codeOwns:
+  - objectiveCounts
+  - questState
+  - rewards
+  llmMayNarrate:
+  - committed progress only
+- id: quest_hearthborn_zone_3
+  title: Hearthborn Zone Beat 3
+  family: zone_story
+  hidden: false
+  unlockIds:
+  - quest_hearthborn_zone_2
+  objectives:
+  - visit_place:poi_reedfen_square:1
+  - ledger_kill:hearthborn_anomaly:3
+  rewardGold: 28
+  rewardXp: 100
+  startPlaceId: poi_reedfen_square
+  codeOwns:
+  - objectiveCounts
+  - questState
+  - rewards
+  llmMayNarrate:
+  - committed progress only
+talkTrees:
+  elder_mara:
+    id: elder_mara
+    name: Elder Mara
+    nodes:
+    - id: greet
+      text: 'Elder Mara: Welcome, traveler.'
+    - id: quest_offer
+      text: There is work here that needs steady hands.
+    - id: quest_progress
+      text: Your work is recorded; continue carefully.
+    - id: quest_turnin
+      text: The account is settled. Take the measured share.
+    - id: gossip_1
+      text: The roads remember every promise.
+    - id: gossip_2
+      text: A sound repair protects more than one home.
+    - id: gossip_3
+      text: The Compact survives through ordinary care.
+    - id: refusal
+      text: I will speak when your voice is respectful.
+  miller_tobin:
+    id: miller_tobin
+    name: Miller Tobin
+    nodes:
+    - id: greet
+      text: 'Miller Tobin: Welcome, traveler.'
+    - id: quest_offer
+      text: There is work here that needs steady hands.
+    - id: quest_progress
+      text: Your work is recorded; continue carefully.
+    - id: quest_turnin
+      text: The account is settled. Take the measured share.
+    - id: gossip_1
+      text: The roads remember every promise.
+    - id: gossip_2
+      text: A sound repair protects more than one home.
+    - id: gossip_3
+      text: The Compact survives through ordinary care.
+    - id: refusal
+      text: I will speak when your voice is respectful.
+  keeper_wynn:
+    id: keeper_wynn
+    name: Keeper Wynn
+    nodes:
+    - id: greet
+      text: 'Keeper Wynn: Welcome, traveler.'
+    - id: quest_offer
+      text: There is work here that needs steady hands.
+    - id: quest_progress
+      text: Your work is recorded; continue carefully.
+    - id: quest_turnin
+      text: The account is settled. Take the measured share.
+    - id: gossip_1
+      text: The roads remember every promise.
+    - id: gossip_2
+      text: A sound repair protects more than one home.
+    - id: gossip_3
+      text: The Compact survives through ordinary care.
+    - id: refusal
+      text: I will speak when your voice is respectful.
+  watcher_dell:
+    id: watcher_dell
+    name: Watcher Dell
+    nodes:
+    - id: greet
+      text: 'Watcher Dell: Welcome, traveler.'
+    - id: quest_offer
+      text: There is work here that needs steady hands.
+    - id: quest_progress
+      text: Your work is recorded; continue carefully.
+    - id: quest_turnin
+      text: The account is settled. Take the measured share.
+    - id: gossip_1
+      text: The roads remember every promise.
+    - id: gossip_2
+      text: A sound repair protects more than one home.
+    - id: gossip_3
+      text: The Compact survives through ordinary care.
+    - id: refusal
+      text: I will speak when your voice is respectful.
+  keeper_renna:
+    id: keeper_renna
+    name: Keeper Renna
+    nodes:
+    - id: greet
+      text: 'Keeper Renna: Welcome, traveler.'
+    - id: quest_offer
+      text: There is work here that needs steady hands.
+    - id: quest_progress
+      text: Your work is recorded; continue carefully.
+    - id: quest_turnin
+      text: The account is settled. Take the measured share.
+    - id: gossip_1
+      text: The roads remember every promise.
+    - id: gossip_2
+      text: A sound repair protects more than one home.
+    - id: gossip_3
+      text: The Compact survives through ordinary care.
+    - id: refusal
+      text: I will speak when your voice is respectful.
+  merchant_fenn:
+    id: merchant_fenn
+    name: Merchant Fenn
+    nodes:
+    - id: greet
+      text: 'Merchant Fenn: Welcome, traveler.'
+    - id: quest_offer
+      text: There is work here that needs steady hands.
+    - id: quest_progress
+      text: Your work is recorded; continue carefully.
+    - id: quest_turnin
+      text: The account is settled. Take the measured share.
+    - id: gossip_1
+      text: The roads remember every promise.
+    - id: gossip_2
+      text: A sound repair protects more than one home.
+    - id: gossip_3
+      text: The Compact survives through ordinary care.
+    - id: refusal
+      text: I will speak when your voice is respectful.
+  pathwarden_sila:
+    id: pathwarden_sila
+    name: Pathwarden Sila
+    nodes:
+    - id: greet
+      text: 'Pathwarden Sila: Welcome, traveler.'
+    - id: quest_offer
+      text: There is work here that needs steady hands.
+    - id: quest_progress
+      text: Your work is recorded; continue carefully.
+    - id: quest_turnin
+      text: The account is settled. Take the measured share.
+    - id: gossip_1
+      text: The roads remember every promise.
+    - id: gossip_2
+      text: A sound repair protects more than one home.
+    - id: gossip_3
+      text: The Compact survives through ordinary care.
+    - id: refusal
+      text: I will speak when your voice is respectful.
+  wick_tender_cal:
+    id: wick_tender_cal
+    name: Wick Tender Cal
+    nodes:
+    - id: greet
+      text: 'Wick Tender Cal: Welcome, traveler.'
+    - id: quest_offer
+      text: There is work here that needs steady hands.
+    - id: quest_progress
+      text: Your work is recorded; continue carefully.
+    - id: quest_turnin
+      text: The account is settled. Take the measured share.
+    - id: gossip_1
+      text: The roads remember every promise.
+    - id: gossip_2
+      text: A sound repair protects more than one home.
+    - id: gossip_3
+      text: The Compact survives through ordinary care.
+    - id: refusal
+      text: I will speak when your voice is respectful.
+  tide_reader_nesh:
+    id: tide_reader_nesh
+    name: Tide-reader Nesh
+    nodes:
+    - id: greet
+      text: 'Tide-reader Nesh: Welcome, traveler.'
+    - id: quest_offer
+      text: There is work here that needs steady hands.
+    - id: quest_progress
+      text: Your work is recorded; continue carefully.
+    - id: quest_turnin
+      text: The account is settled. Take the measured share.
+    - id: gossip_1
+      text: The roads remember every promise.
+    - id: gossip_2
+      text: A sound repair protects more than one home.
+    - id: gossip_3
+      text: The Compact survives through ordinary care.
+    - id: refusal
+      text: I will speak when your voice is respectful.
+  fisher_pell:
+    id: fisher_pell
+    name: Fisher Pell
+    nodes:
+    - id: greet
+      text: 'Fisher Pell: Welcome, traveler.'
+    - id: quest_offer
+      text: There is work here that needs steady hands.
+    - id: quest_progress
+      text: Your work is recorded; continue carefully.
+    - id: quest_turnin
+      text: The account is settled. Take the measured share.
+    - id: gossip_1
+      text: The roads remember every promise.
+    - id: gossip_2
+      text: A sound repair protects more than one home.
+    - id: gossip_3
+      text: The Compact survives through ordinary care.
+    - id: refusal
+      text: I will speak when your voice is respectful.
+  hall_voice_orin:
+    id: hall_voice_orin
+    name: Hall Voice Orin
+    nodes:
+    - id: greet
+      text: 'Hall Voice Orin: Welcome, traveler.'
+    - id: quest_offer
+      text: There is work here that needs steady hands.
+    - id: quest_progress
+      text: Your work is recorded; continue carefully.
+    - id: quest_turnin
+      text: The account is settled. Take the measured share.
+    - id: gossip_1
+      text: The roads remember every promise.
+    - id: gossip_2
+      text: A sound repair protects more than one home.
+    - id: gossip_3
+      text: The Compact survives through ordinary care.
+    - id: refusal
+      text: I will speak when your voice is respectful.
+  stair_oath_kell:
+    id: stair_oath_kell
+    name: Stair-oath Kell
+    nodes:
+    - id: greet
+      text: 'Stair-oath Kell: Welcome, traveler.'
+    - id: quest_offer
+      text: There is work here that needs steady hands.
+    - id: quest_progress
+      text: Your work is recorded; continue carefully.
+    - id: quest_turnin
+      text: The account is settled. Take the measured share.
+    - id: gossip_1
+      text: The roads remember every promise.
+    - id: gossip_2
+      text: A sound repair protects more than one home.
+    - id: gossip_3
+      text: The Compact survives through ordinary care.
+    - id: refusal
+      text: I will speak when your voice is respectful.
+  smith_vorr:
+    id: smith_vorr
+    name: Smith Vorr
+    nodes:
+    - id: greet
+      text: 'Smith Vorr: Welcome, traveler.'
+    - id: quest_offer
+      text: There is work here that needs steady hands.
+    - id: quest_progress
+      text: Your work is recorded; continue carefully.
+    - id: quest_turnin
+      text: The account is settled. Take the measured share.
+    - id: gossip_1
+      text: The roads remember every promise.
+    - id: gossip_2
+      text: A sound repair protects more than one home.
+    - id: gossip_3
+      text: The Compact survives through ordinary care.
+    - id: refusal
+      text: I will speak when your voice is respectful.
+  siding_rusk:
+    id: siding_rusk
+    name: Siding Rusk
+    nodes:
+    - id: greet
+      text: 'Siding Rusk: Welcome, traveler.'
+    - id: quest_offer
+      text: There is work here that needs steady hands.
+    - id: quest_progress
+      text: Your work is recorded; continue carefully.
+    - id: quest_turnin
+      text: The account is settled. Take the measured share.
+    - id: gossip_1
+      text: The roads remember every promise.
+    - id: gossip_2
+      text: A sound repair protects more than one home.
+    - id: gossip_3
+      text: The Compact survives through ordinary care.
+    - id: refusal
+      text: I will speak when your voice is respectful.
+choiceDecks:
+  hearthborn:
+  - label: hearthborn choice 1
+    requires: []
+    intentKind: talk
+  - label: hearthborn choice 2
+    requires: []
+    intentKind: fight_move
+  - label: hearthborn choice 3
+    requires: []
+    intentKind: investigate
+  - label: hearthborn choice 4
+    requires: []
+    intentKind: talk
+  - label: hearthborn choice 5
+    requires: []
+    intentKind: fight_move
+  - label: hearthborn choice 6
+    requires: []
+    intentKind: investigate
+  - label: hearthborn choice 7
+    requires: []
+    intentKind: talk
+  - label: hearthborn choice 8
+    requires: []
+    intentKind: fight_move
+  - label: hearthborn choice 9
+    requires: []
+    intentKind: investigate
+  - label: hearthborn choice 10
+    requires: []
+    intentKind: talk
+  - label: hearthborn choice 11
+    requires: []
+    intentKind: fight_move
+  - label: hearthborn choice 12
+    requires: []
+    intentKind: investigate
+  lanternfolk:
+  - label: lanternfolk choice 1
+    requires: []
+    intentKind: talk
+  - label: lanternfolk choice 2
+    requires: []
+    intentKind: fight_move
+  - label: lanternfolk choice 3
+    requires: []
+    intentKind: investigate
+  - label: lanternfolk choice 4
+    requires: []
+    intentKind: talk
+  - label: lanternfolk choice 5
+    requires: []
+    intentKind: fight_move
+  - label: lanternfolk choice 6
+    requires: []
+    intentKind: investigate
+  - label: lanternfolk choice 7
+    requires: []
+    intentKind: talk
+  - label: lanternfolk choice 8
+    requires: []
+    intentKind: fight_move
+  - label: lanternfolk choice 9
+    requires: []
+    intentKind: investigate
+  - label: lanternfolk choice 10
+    requires: []
+    intentKind: talk
+  - label: lanternfolk choice 11
+    requires: []
+    intentKind: fight_move
+  - label: lanternfolk choice 12
+    requires: []
+    intentKind: investigate
+  saltkin:
+  - label: saltkin choice 1
+    requires: []
+    intentKind: talk
+  - label: saltkin choice 2
+    requires: []
+    intentKind: fight_move
+  - label: saltkin choice 3
+    requires: []
+    intentKind: investigate
+  - label: saltkin choice 4
+    requires: []
+    intentKind: talk
+  - label: saltkin choice 5
+    requires: []
+    intentKind: fight_move
+  - label: saltkin choice 6
+    requires: []
+    intentKind: investigate
+  - label: saltkin choice 7
+    requires: []
+    intentKind: talk
+  - label: saltkin choice 8
+    requires: []
+    intentKind: fight_move
+  - label: saltkin choice 9
+    requires: []
+    intentKind: investigate
+  - label: saltkin choice 10
+    requires: []
+    intentKind: talk
+  - label: saltkin choice 11
+    requires: []
+    intentKind: fight_move
+  - label: saltkin choice 12
+    requires: []
+    intentKind: investigate
+  stonevein:
+  - label: stonevein choice 1
+    requires: []
+    intentKind: talk
+  - label: stonevein choice 2
+    requires: []
+    intentKind: fight_move
+  - label: stonevein choice 3
+    requires: []
+    intentKind: investigate
+  - label: stonevein choice 4
+    requires: []
+    intentKind: talk
+  - label: stonevein choice 5
+    requires: []
+    intentKind: fight_move
+  - label: stonevein choice 6
+    requires: []
+    intentKind: investigate
+  - label: stonevein choice 7
+    requires: []
+    intentKind: talk
+  - label: stonevein choice 8
+    requires: []
+    intentKind: fight_move
+  - label: stonevein choice 9
+    requires: []
+    intentKind: investigate
+  - label: stonevein choice 10
+    requires: []
+    intentKind: talk
+  - label: stonevein choice 11
+    requires: []
+    intentKind: fight_move
+  - label: stonevein choice 12
+    requires: []
+    intentKind: investigate
+dungeons:
+- id: dungeon_lampwood_gate
+  name: Lampwood Gate
+  mode: A
+  partyMin: 1
+  partyMax: 5
+  weeklyPerCharacterBossLockout: true
+  rooms:
+  - roomId: dungeon_lampwood_gate_entry
+    encounterIds:
+    - scout_dungeon_lampwood_gate
+    checkpoint: true
+  - roomId: dungeon_lampwood_gate_depth
+    encounterIds:
+    - elite_dungeon_lampwood_gate
+    checkpoint: false
+  - roomId: dungeon_lampwood_gate_boss
+    encounterIds:
+    - gate_warden
+    checkpoint: true
+  wipe: return_to_last_checkpoint
+  loot: personal
+- id: dungeon_unlit_hollow
+  name: Unlit Hollow
+  mode: A
+  partyMin: 1
+  partyMax: 5
+  weeklyPerCharacterBossLockout: true
+  rooms:
+  - roomId: dungeon_unlit_hollow_entry
+    encounterIds:
+    - scout_dungeon_unlit_hollow
+    checkpoint: true
+  - roomId: dungeon_unlit_hollow_depth
+    encounterIds:
+    - elite_dungeon_unlit_hollow
+    checkpoint: false
+  - roomId: dungeon_unlit_hollow_boss
+    encounterIds:
+    - breath_in_the_stone
+    checkpoint: true
+  wipe: return_to_last_checkpoint
+  loot: personal
+- id: dungeon_coil_warehouse
+  name: Coil Warehouse
+  mode: A
+  partyMin: 1
+  partyMax: 5
+  weeklyPerCharacterBossLockout: true
+  rooms:
+  - roomId: dungeon_coil_warehouse_entry
+    encounterIds:
+    - scout_dungeon_coil_warehouse
+    checkpoint: true
+  - roomId: dungeon_coil_warehouse_depth
+    encounterIds:
+    - elite_dungeon_coil_warehouse
+    checkpoint: false
+  - roomId: dungeon_coil_warehouse_boss
+    encounterIds:
+    - charter_keeper
+    checkpoint: true
+  wipe: return_to_last_checkpoint
+  loot: personal
+- id: dungeon_anvil_deep
+  name: Anvil Deep
+  mode: A
+  partyMin: 1
+  partyMax: 5
+  weeklyPerCharacterBossLockout: true
+  rooms:
+  - roomId: dungeon_anvil_deep_entry
+    encounterIds:
+    - scout_dungeon_anvil_deep
+    checkpoint: true
+  - roomId: dungeon_anvil_deep_depth
+    encounterIds:
+    - elite_dungeon_anvil_deep
+    checkpoint: false
+  - roomId: dungeon_anvil_deep_boss
+    encounterIds:
+    - deep_fault
+    checkpoint: true
+  wipe: return_to_last_checkpoint
+  loot: personal
+- id: dungeon_millstone_hollow
+  name: Millstone Hollow / The Millwarden
+  mode: C
+  partySize: 10
+  phases:
+  - phase: 1
+    rooms:
+    - hollow_sluice
+    - grain_vault
+    checkpoint: mh_cp_1
+  - phase: 2
+    rooms:
+    - broken_wheel
+    - ash_press
+    checkpoint: mh_cp_2
+  - phase: 3
+    rooms:
+    - millwarden_crown
+    checkpoint: mh_cp_3
+  billing: even_round_billing; every other round charges one turn so spent remains
+    integer
+  weeklyPerCharacterPhaseClearLockout: true
+  wipe: return_to_last_checkpoint
+  loot: personal
+vendors:
+- id: vendor_fenn
+  name: Merchant Fenn
+  placeId: poi_flood_store
+  stock:
+  - itemId: item_system_bandage
+    qty: 20
+    restockPerWeek: 20
+    buyPrice: 4
+    sellPrice: 1
+  - itemId: item_stamina_pill
+    qty: 10
+    restockPerWeek: 10
+    buyPrice: 8
+    sellPrice: 2
+  - itemId: repair_kit_basic
+    qty: 8
+    restockPerWeek: 8
+    buyPrice: 15
+    sellPrice: 4
+- id: vendor_tobin
+  name: Miller Tobin
+  placeId: poi_reedfen_mill
+  stock:
+  - itemId: item_system_bandage
+    qty: 20
+    restockPerWeek: 20
+    buyPrice: 4
+    sellPrice: 1
+  - itemId: item_stamina_pill
+    qty: 10
+    restockPerWeek: 10
+    buyPrice: 8
+    sellPrice: 2
+  - itemId: repair_kit_basic
+    qty: 8
+    restockPerWeek: 8
+    buyPrice: 15
+    sellPrice: 4
+- id: vendor_cal
+  name: Wick Tender Cal
+  placeId: poi_wickhaven
+  stock:
+  - itemId: item_system_bandage
+    qty: 20
+    restockPerWeek: 20
+    buyPrice: 4
+    sellPrice: 1
+  - itemId: item_stamina_pill
+    qty: 10
+    restockPerWeek: 10
+    buyPrice: 8
+    sellPrice: 2
+  - itemId: repair_kit_basic
+    qty: 8
+    restockPerWeek: 8
+    buyPrice: 15
+    sellPrice: 4
+- id: vendor_pell
+  name: Fisher Pell
+  placeId: poi_coil_pier
+  stock:
+  - itemId: item_system_bandage
+    qty: 20
+    restockPerWeek: 20
+    buyPrice: 4
+    sellPrice: 1
+  - itemId: item_stamina_pill
+    qty: 10
+    restockPerWeek: 10
+    buyPrice: 8
+    sellPrice: 2
+  - itemId: repair_kit_basic
+    qty: 8
+    restockPerWeek: 8
+    buyPrice: 15
+    sellPrice: 4
+- id: vendor_vorr
+  name: Smith Vorr
+  placeId: poi_anvil_gate
+  stock:
+  - itemId: item_system_bandage
+    qty: 20
+    restockPerWeek: 20
+    buyPrice: 4
+    sellPrice: 1
+  - itemId: item_stamina_pill
+    qty: 10
+    restockPerWeek: 10
+    buyPrice: 8
+    sellPrice: 2
+  - itemId: repair_kit_basic
+    qty: 8
+    restockPerWeek: 8
+    buyPrice: 15
+    sellPrice: 4
+- id: vendor_ash_ah
+  name: Ash Seat Auction Clerk
+  placeId: poi_ash_seat
+  stock:
+  - itemId: item_system_bandage
+    qty: 20
+    restockPerWeek: 20
+    buyPrice: 4
+    sellPrice: 1
+  - itemId: item_stamina_pill
+    qty: 10
+    restockPerWeek: 10
+    buyPrice: 8
+    sellPrice: 2
+  - itemId: repair_kit_basic
+    qty: 8
+    restockPerWeek: 8
+    buyPrice: 15
+    sellPrice: 4
+- id: vendor_tide_ah
+  name: Tidehold Auction Clerk
+  placeId: poi_tidehold
+  stock:
+  - itemId: item_system_bandage
+    qty: 20
+    restockPerWeek: 20
+    buyPrice: 4
+    sellPrice: 1
+  - itemId: item_stamina_pill
+    qty: 10
+    restockPerWeek: 10
+    buyPrice: 8
+    sellPrice: 2
+  - itemId: repair_kit_basic
+    qty: 8
+    restockPerWeek: 8
+    buyPrice: 15
+    sellPrice: 4
+dropTables:
+- speciesId: hearthborn_anomaly
+  personalLoot: true
+  drops:
+  - itemId: hearthborn_shard
+    chancePercent: 35
+  - itemId: item_system_bandage
+    chancePercent: 20
+  - itemId: item_stamina_pill
+    chancePercent: 10
+- speciesId: lanternfolk_anomaly
+  personalLoot: true
+  drops:
+  - itemId: lanternfolk_shard
+    chancePercent: 35
+  - itemId: item_system_bandage
+    chancePercent: 20
+  - itemId: item_stamina_pill
+    chancePercent: 10
+- speciesId: saltkin_anomaly
+  personalLoot: true
+  drops:
+  - itemId: saltkin_shard
+    chancePercent: 35
+  - itemId: item_system_bandage
+    chancePercent: 20
+  - itemId: item_stamina_pill
+    chancePercent: 10
+- speciesId: stonevein_anomaly
+  personalLoot: true
+  drops:
+  - itemId: stonevein_shard
+    chancePercent: 35
+  - itemId: item_system_bandage
+    chancePercent: 20
+  - itemId: item_stamina_pill
+    chancePercent: 10
+talentTree:
+  id: compact_stewardship_tree
+  nodes:
+  - id: compact_talent_01
+    cost: 1
+    requires: []
+    effectFlags:
+    - ash_compact_flag_01
+  - id: compact_talent_02
+    cost: 2
+    requires:
+    - compact_talent_01
+    effectFlags:
+    - ash_compact_flag_02
+  - id: compact_talent_03
+    cost: 3
+    requires:
+    - compact_talent_02
+    effectFlags:
+    - ash_compact_flag_03
+  - id: compact_talent_04
+    cost: 4
+    requires:
+    - compact_talent_03
+    effectFlags:
+    - ash_compact_flag_04
+  - id: compact_talent_05
+    cost: 5
+    requires:
+    - compact_talent_04
+    effectFlags:
+    - ash_compact_flag_05
+  - id: compact_talent_06
+    cost: 6
+    requires:
+    - compact_talent_05
+    effectFlags:
+    - ash_compact_flag_06
+  - id: compact_talent_07
+    cost: 7
+    requires:
+    - compact_talent_06
+    effectFlags:
+    - ash_compact_flag_07
+  - id: compact_talent_08
+    cost: 8
+    requires:
+    - compact_talent_07
+    effectFlags:
+    - ash_compact_flag_08
+  - id: compact_talent_09
+    cost: 9
+    requires:
+    - compact_talent_08
+    effectFlags:
+    - ash_compact_flag_09
+  - id: compact_talent_10
+    cost: 10
+    requires:
+    - compact_talent_09
+    effectFlags:
+    - ash_compact_flag_10
+  - id: compact_talent_11
+    cost: 11
+    requires:
+    - compact_talent_10
+    effectFlags:
+    - ash_compact_flag_11
+  - id: compact_talent_12
+    cost: 12
+    requires:
+    - compact_talent_11
+    effectFlags:
+    - ash_compact_flag_12
+  - id: compact_talent_13
+    cost: 13
+    requires:
+    - compact_talent_12
+    effectFlags:
+    - ash_compact_flag_13
+  - id: compact_talent_14
+    cost: 14
+    requires:
+    - compact_talent_13
+    effectFlags:
+    - ash_compact_flag_14
+  - id: compact_talent_15
+    cost: 15
+    requires:
+    - compact_talent_14
+    effectFlags:
+    - ash_compact_flag_15
+  - id: compact_talent_16
+    cost: 16
+    requires:
+    - compact_talent_15
+    effectFlags:
+    - ash_compact_flag_16
+interiorGraphs:
+- id: mill
+  rooms:
+  - id: mill_room_1
+    name: Mill Room 1
+    exits:
+    - mill_room_2
+    interactables:
+    - open
+    - rest
+    - inspect
+  - id: mill_room_2
+    name: Mill Room 2
+    exits:
+    - mill_room_3
+    interactables:
+    - open
+    - rest
+    - inspect
+  - id: mill_room_3
+    name: Mill Room 3
+    exits:
+    - mill_room_4
+    interactables:
+    - open
+    - rest
+    - inspect
+  - id: mill_room_4
+    name: Mill Room 4
+    exits: []
+    interactables:
+    - open
+    - rest
+    - inspect
+- id: wick_loft
+  rooms:
+  - id: wick_loft_room_1
+    name: Wick Loft Room 1
+    exits:
+    - wick_loft_room_2
+    interactables:
+    - open
+    - rest
+    - inspect
+  - id: wick_loft_room_2
+    name: Wick Loft Room 2
+    exits:
+    - wick_loft_room_3
+    interactables:
+    - open
+    - rest
+    - inspect
+  - id: wick_loft_room_3
+    name: Wick Loft Room 3
+    exits:
+    - wick_loft_room_4
+    interactables:
+    - open
+    - rest
+    - inspect
+  - id: wick_loft_room_4
+    name: Wick Loft Room 4
+    exits: []
+    interactables:
+    - open
+    - rest
+    - inspect
+- id: drying_racks
+  rooms:
+  - id: drying_racks_room_1
+    name: Drying Racks Room 1
+    exits:
+    - drying_racks_room_2
+    interactables:
+    - open
+    - rest
+    - inspect
+  - id: drying_racks_room_2
+    name: Drying Racks Room 2
+    exits:
+    - drying_racks_room_3
+    interactables:
+    - open
+    - rest
+    - inspect
+  - id: drying_racks_room_3
+    name: Drying Racks Room 3
+    exits:
+    - drying_racks_room_4
+    interactables:
+    - open
+    - rest
+    - inspect
+  - id: drying_racks_room_4
+    name: Drying Racks Room 4
+    exits: []
+    interactables:
+    - open
+    - rest
+    - inspect
+- id: oath_hall
+  rooms:
+  - id: oath_hall_room_1
+    name: Oath Hall Room 1
+    exits:
+    - oath_hall_room_2
+    interactables:
+    - open
+    - rest
+    - inspect
+  - id: oath_hall_room_2
+    name: Oath Hall Room 2
+    exits:
+    - oath_hall_room_3
+    interactables:
+    - open
+    - rest
+    - inspect
+  - id: oath_hall_room_3
+    name: Oath Hall Room 3
+    exits:
+    - oath_hall_room_4
+    interactables:
+    - open
+    - rest
+    - inspect
+  - id: oath_hall_room_4
+    name: Oath Hall Room 4
+    exits: []
+    interactables:
+    - open
+    - rest
+    - inspect
+- id: player_house
+  rooms:
+  - id: player_house_room_1
+    name: Player House Room 1
+    exits:
+    - player_house_room_2
+    interactables:
+    - open
+    - rest
+    - inspect
+  - id: player_house_room_2
+    name: Player House Room 2
+    exits:
+    - player_house_room_3
+    interactables:
+    - open
+    - rest
+    - inspect
+  - id: player_house_room_3
+    name: Player House Room 3
+    exits:
+    - player_house_room_4
+    interactables:
+    - open
+    - rest
+    - inspect
+  - id: player_house_room_4
+    name: Player House Room 4
+    exits: []
+    interactables:
+    - open
+    - rest
+    - inspect
+- id: inn
+  rooms:
+  - id: inn_room_1
+    name: Inn Room 1
+    exits:
+    - inn_room_2
+    interactables:
+    - open
+    - rest
+    - inspect
+  - id: inn_room_2
+    name: Inn Room 2
+    exits:
+    - inn_room_3
+    interactables:
+    - open
+    - rest
+    - inspect
+  - id: inn_room_3
+    name: Inn Room 3
+    exits:
+    - inn_room_4
+    interactables:
+    - open
+    - rest
+    - inspect
+  - id: inn_room_4
+    name: Inn Room 4
+    exits: []
+    interactables:
+    - open
+    - rest
+    - inspect

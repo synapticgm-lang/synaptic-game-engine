@@ -1,0 +1,2284 @@
+packFormatVersion: 1
+worldId: kindred_hide
+displayName: Kindred Hide
+maturity: all-ages
+rulesModuleId: hide_voice
+themeKit: Kindred Hide Theme Kit
+places:
+- id: kindred_hide_place_01
+  publicName: Welcome Burrow
+  zoneId: kindred_hide_zone_01
+  role: shared hub
+  mapScale: street
+  dangerTier: safe
+  outdoor: true
+  exits:
+  - kindred_hide_place_02
+  - kindred_hide_place_04
+  npcIds:
+  - kindred_hide_npc_01
+  - kindred_hide_npc_05
+  - kindred_hide_npc_09
+  dungeonId: null
+  interactableIds:
+  - kindred_hide_interact_01
+  - kindred_hide_interact_09
+- id: kindred_hide_place_02
+  publicName: Mosslight Arcade
+  zoneId: kindred_hide_zone_01
+  role: start hub
+  mapScale: street
+  dangerTier: safe
+  outdoor: true
+  exits:
+  - kindred_hide_place_01
+  - kindred_hide_place_03
+  npcIds:
+  - kindred_hide_npc_02
+  - kindred_hide_npc_06
+  - kindred_hide_npc_10
+  dungeonId: null
+  interactableIds:
+  - kindred_hide_interact_02
+  - kindred_hide_interact_10
+- id: kindred_hide_place_03
+  publicName: Tailor Steps
+  zoneId: kindred_hide_zone_01
+  role: street route
+  mapScale: street
+  dangerTier: safe
+  outdoor: true
+  exits:
+  - kindred_hide_place_02
+  - kindred_hide_place_04
+  npcIds:
+  - kindred_hide_npc_03
+  - kindred_hide_npc_07
+  dungeonId: null
+  interactableIds:
+  - kindred_hide_interact_03
+  - kindred_hide_interact_11
+- id: kindred_hide_place_04
+  publicName: Sunroom Square
+  zoneId: kindred_hide_zone_02
+  role: mid join
+  mapScale: street
+  dangerTier: low
+  outdoor: true
+  exits:
+  - kindred_hide_place_03
+  - kindred_hide_place_05
+  - kindred_hide_place_01
+  npcIds:
+  - kindred_hide_npc_04
+  - kindred_hide_npc_08
+  dungeonId: null
+  interactableIds:
+  - kindred_hide_interact_04
+  - kindred_hide_interact_12
+- id: kindred_hide_place_05
+  publicName: Quiet Den
+  zoneId: kindred_hide_zone_02
+  role: work district
+  mapScale: interior
+  dangerTier: low
+  outdoor: false
+  exits:
+  - kindred_hide_place_04
+  - kindred_hide_place_06
+  npcIds: []
+  dungeonId: null
+  interactableIds:
+  - kindred_hide_interact_05
+- id: kindred_hide_place_06
+  publicName: Bridge Bloom
+  zoneId: kindred_hide_zone_02
+  role: instance door
+  mapScale: dungeon
+  dangerTier: medium
+  outdoor: false
+  exits:
+  - kindred_hide_place_05
+  - kindred_hide_place_07
+  npcIds: []
+  dungeonId: kindred_hide_dungeon_01
+  interactableIds:
+  - kindred_hide_interact_06
+- id: kindred_hide_place_07
+  publicName: Candlepaw Studio
+  zoneId: kindred_hide_zone_03
+  role: wild edge
+  mapScale: street
+  dangerTier: medium
+  outdoor: true
+  exits:
+  - kindred_hide_place_06
+  - kindred_hide_place_08
+  npcIds: []
+  dungeonId: null
+  interactableIds:
+  - kindred_hide_interact_07
+- id: kindred_hide_place_08
+  publicName: Dovetail Baths
+  zoneId: kindred_hide_zone_03
+  role: housing approach
+  mapScale: interior
+  dangerTier: low
+  outdoor: false
+  exits:
+  - kindred_hide_place_07
+  npcIds: []
+  dungeonId: null
+  interactableIds:
+  - kindred_hide_interact_08
+npcs:
+- id: kindred_hide_npc_01
+  name: Cato Morrow
+  placeId: kindred_hide_place_01
+  role: quest
+  greet: Cato Morrow says, ‘Kindred Hide keeps its promises in small places. Tell me which one you noticed.’
+- id: kindred_hide_npc_02
+  name: Dessa Rowan
+  placeId: kindred_hide_place_02
+  role: profession
+  greet: Dessa Rowan says, ‘Kindred Hide keeps its promises in small places. Tell me which one you noticed.’
+- id: kindred_hide_npc_03
+  name: Eris Nook
+  placeId: kindred_hide_place_03
+  role: hub
+  greet: Eris Nook says, ‘Kindred Hide keeps its promises in small places. Tell me which one you noticed.’
+- id: kindred_hide_npc_04
+  name: Fenn Cress
+  placeId: kindred_hide_place_04
+  role: merchant
+  greet: Fenn Cress says, ‘Kindred Hide keeps its promises in small places. Tell me which one you noticed.’
+- id: kindred_hide_npc_05
+  name: Gala Silt
+  placeId: kindred_hide_place_01
+  role: local
+  greet: Gala Silt says, ‘Kindred Hide keeps its promises in small places. Tell me which one you noticed.’
+- id: kindred_hide_npc_06
+  name: Holl Pryce
+  placeId: kindred_hide_place_02
+  role: host
+  greet: Holl Pryce says, ‘Kindred Hide keeps its promises in small places. Tell me which one you noticed.’
+- id: kindred_hide_npc_07
+  name: Ivo Vane
+  placeId: kindred_hide_place_03
+  role: quest
+  greet: Ivo Vane says, ‘Kindred Hide keeps its promises in small places. Tell me which one you noticed.’
+- id: kindred_hide_npc_08
+  name: Jori Quill
+  placeId: kindred_hide_place_04
+  role: profession
+  greet: Jori Quill says, ‘Kindred Hide keeps its promises in small places. Tell me which one you noticed.’
+- id: kindred_hide_npc_09
+  name: Alden Vale
+  placeId: kindred_hide_place_01
+  role: local
+  greet: Alden Vale says, ‘Kindred Hide keeps its promises in small places. Tell me which one you noticed.’
+- id: kindred_hide_npc_10
+  name: Bryn Wren
+  placeId: kindred_hide_place_02
+  role: merchant
+  greet: Bryn Wren says, ‘Kindred Hide keeps its promises in small places. Tell me which one you noticed.’
+kits:
+- id: kindred_hide_kit_01
+  publicName: Velvet Morrow
+  look: moss velvet collar coat
+  values: curate a soft-voice club
+  taboo: Never name another person’s folk type for them.
+  speechTell: Offer a choice, name a boundary, then leave room for an answer.
+  starterClothes: velvet_morrow mantle
+  starterTool: velvet_morrow tool
+  starterMapItem: kindred_hide_map_01
+  startingPlaceId: kindred_hide_place_01
+  firstHourQuestId: kindred_hide_q_01
+  abilityFlag: kindred_hide_ability_01
+- id: kindred_hide_kit_02
+  publicName: Cairn Reed
+  look: river-reed vest
+  values: repair shared performance curtains
+  taboo: Never enter the Quiet Den without a green invitation.
+  speechTell: Offer a choice, name a boundary, then leave room for an answer.
+  starterClothes: cairn_reed vest
+  starterTool: cairn_reed tool
+  starterMapItem: kindred_hide_map_02
+  startingPlaceId: kindred_hide_place_02
+  firstHourQuestId: kindred_hide_q_02
+  abilityFlag: kindred_hide_ability_02
+- id: kindred_hide_kit_03
+  publicName: Pipetide Fern
+  look: pollen yellow shawl
+  values: label a comfort-first craft shelf
+  taboo: Never copy a maker’s crest without consent.
+  speechTell: Offer a choice, name a boundary, then leave room for an answer.
+  starterClothes: pipetide_fern jacket
+  starterTool: pipetide_fern tool
+  starterMapItem: kindred_hide_map_03
+  startingPlaceId: kindred_hide_place_01
+  firstHourQuestId: kindred_hide_q_03
+  abilityFlag: kindred_hide_ability_03
+- id: kindred_hide_kit_04
+  publicName: Brasswhistle Sable
+  look: brass-button overskirt
+  values: host an opt-in tea circle
+  taboo: Never turn a boundary card into a joke.
+  speechTell: Offer a choice, name a boundary, then leave room for an answer.
+  starterClothes: brasswhistle_sable sash
+  starterTool: brasswhistle_sable tool
+  starterMapItem: kindred_hide_map_04
+  startingPlaceId: kindred_hide_place_02
+  firstHourQuestId: kindred_hide_q_04
+  abilityFlag: kindred_hide_ability_04
+quests:
+- id: kindred_hide_q_01
+  title: 'Kindred Hide: Name a Working Promise'
+  family: identity
+  hidden: false
+  unlocksQuestId: kindred_hide_q_02
+  objectives:
+  - id: kindred_hide_q_01_obj_01
+    kind: visit_place
+    targetId: kindred_hide_place_01
+    count: 1
+  - id: kindred_hide_q_01_obj_02
+    kind: deliver_item
+    targetId: kindred_hide_deliver_item_01
+    count: 2
+  rewardGold: 12
+  rewardXp: 20
+- id: kindred_hide_q_02
+  title: 'Kindred Hide: Set the First Tool Aside'
+  family: identity
+  hidden: false
+  unlocksQuestId: kindred_hide_q_03
+  objectives:
+  - id: kindred_hide_q_02_obj_01
+    kind: ledger_kill
+    targetId: kindred_hide_ledger_kill_02
+    count: 1
+  - id: kindred_hide_q_02_obj_02
+    kind: talk_to_npc
+    targetId: kindred_hide_npc_03
+    count: 2
+  rewardGold: 15
+  rewardXp: 25
+- id: kindred_hide_q_03
+  title: 'Kindred Hide: Carry the Right Record'
+  family: identity
+  hidden: false
+  unlocksQuestId: kindred_hide_q_04
+  objectives:
+  - id: kindred_hide_q_03_obj_01
+    kind: ledger_bond
+    targetId: kindred_hide_ledger_bond_03
+    count: 1
+  - id: kindred_hide_q_03_obj_02
+    kind: collect_item
+    targetId: kindred_hide_collect_item_03
+    count: 2
+  rewardGold: 18
+  rewardXp: 30
+- id: kindred_hide_q_04
+  title: 'Kindred Hide: Find the Missing Measure'
+  family: identity
+  hidden: false
+  unlocksQuestId: kindred_hide_q_05
+  objectives:
+  - id: kindred_hide_q_04_obj_01
+    kind: deliver_item
+    targetId: kindred_hide_deliver_item_04
+    count: 1
+  - id: kindred_hide_q_04_obj_02
+    kind: interact
+    targetId: kindred_hide_place_05
+    count: 2
+    verbId: cook
+  rewardGold: 21
+  rewardXp: 35
+- id: kindred_hide_q_05
+  title: 'Kindred Hide: Teach a Safer Shortcut'
+  family: identity
+  hidden: false
+  unlocksQuestId: kindred_hide_q_06
+  objectives:
+  - id: kindred_hide_q_05_obj_01
+    kind: talk_to_npc
+    targetId: kindred_hide_npc_05
+    count: 1
+  - id: kindred_hide_q_05_obj_02
+    kind: score_beat
+    targetId: kindred_hide_score_beat_05
+    count: 2
+  rewardGold: 24
+  rewardXp: 40
+- id: kindred_hide_q_06
+  title: 'Kindred Hide: Read the Local Weather'
+  family: profession
+  hidden: false
+  unlocksQuestId: kindred_hide_q_07
+  objectives:
+  - id: kindred_hide_q_06_obj_01
+    kind: collect_item
+    targetId: kindred_hide_collect_item_06
+    count: 1
+  - id: kindred_hide_q_06_obj_02
+    kind: build_tick
+    targetId: kindred_hide_build_tick_06
+    count: 2
+  rewardGold: 27
+  rewardXp: 45
+- id: kindred_hide_q_07
+  title: 'Kindred Hide: Repair a Shared Threshold'
+  family: profession
+  hidden: false
+  unlocksQuestId: kindred_hide_q_08
+  objectives:
+  - id: kindred_hide_q_07_obj_01
+    kind: interact
+    targetId: kindred_hide_place_07
+    count: 1
+    verbId: inspect
+  - id: kindred_hide_q_07_obj_02
+    kind: hospitality_tick
+    targetId: kindred_hide_hospitality_tick_07
+    count: 2
+  rewardGold: 30
+  rewardXp: 50
+- id: kindred_hide_q_08
+  title: 'Kindred Hide: Return a Borrowed Sign'
+  family: profession
+  hidden: false
+  unlocksQuestId: kindred_hide_q_09
+  objectives:
+  - id: kindred_hide_q_08_obj_01
+    kind: score_beat
+    targetId: kindred_hide_score_beat_08
+    count: 1
+  - id: kindred_hide_q_08_obj_02
+    kind: lap_finish
+    targetId: kindred_hide_lap_finish_08
+    count: 2
+  rewardGold: 33
+  rewardXp: 55
+- id: kindred_hide_q_09
+  title: 'Kindred Hide: Host the Small Welcome'
+  family: profession
+  hidden: false
+  unlocksQuestId: kindred_hide_q_10
+  objectives:
+  - id: kindred_hide_q_09_obj_01
+    kind: build_tick
+    targetId: kindred_hide_build_tick_09
+    count: 1
+  - id: kindred_hide_q_09_obj_02
+    kind: visit_place
+    targetId: kindred_hide_place_02
+    count: 2
+  rewardGold: 36
+  rewardXp: 60
+- id: kindred_hide_q_10
+  title: 'Kindred Hide: Choose a Fair Order'
+  family: profession
+  hidden: false
+  unlocksQuestId: kindred_hide_q_11
+  objectives:
+  - id: kindred_hide_q_10_obj_01
+    kind: hospitality_tick
+    targetId: kindred_hide_hospitality_tick_10
+    count: 1
+  - id: kindred_hide_q_10_obj_02
+    kind: ledger_kill
+    targetId: kindred_hide_ledger_kill_10
+    count: 2
+  rewardGold: 39
+  rewardXp: 65
+- id: kindred_hide_q_11
+  title: 'Kindred Hide: Map the Quiet Detour'
+  family: profession
+  hidden: false
+  unlocksQuestId: kindred_hide_q_12
+  objectives:
+  - id: kindred_hide_q_11_obj_01
+    kind: lap_finish
+    targetId: kindred_hide_lap_finish_11
+    count: 1
+  - id: kindred_hide_q_11_obj_02
+    kind: ledger_bond
+    targetId: kindred_hide_ledger_bond_11
+    count: 2
+  rewardGold: 42
+  rewardXp: 70
+- id: kindred_hide_q_12
+  title: 'Kindred Hide: Bring a Useful Witness'
+  family: profession
+  hidden: false
+  unlocksQuestId: kindred_hide_q_13
+  objectives:
+  - id: kindred_hide_q_12_obj_01
+    kind: visit_place
+    targetId: kindred_hide_place_04
+    count: 1
+  - id: kindred_hide_q_12_obj_02
+    kind: deliver_item
+    targetId: kindred_hide_deliver_item_12
+    count: 2
+  rewardGold: 45
+  rewardXp: 75
+- id: kindred_hide_q_13
+  title: 'Kindred Hide: Sort the Unclaimed Materials'
+  family: zone_story
+  hidden: false
+  unlocksQuestId: kindred_hide_q_14
+  objectives:
+  - id: kindred_hide_q_13_obj_01
+    kind: ledger_kill
+    targetId: kindred_hide_ledger_kill_13
+    count: 1
+  - id: kindred_hide_q_13_obj_02
+    kind: talk_to_npc
+    targetId: kindred_hide_npc_04
+    count: 2
+  rewardGold: 48
+  rewardXp: 80
+- id: kindred_hide_q_14
+  title: 'Kindred Hide: Make Room for a Visitor'
+  family: zone_story
+  hidden: false
+  unlocksQuestId: kindred_hide_q_15
+  objectives:
+  - id: kindred_hide_q_14_obj_01
+    kind: ledger_bond
+    targetId: kindred_hide_ledger_bond_14
+    count: 1
+  - id: kindred_hide_q_14_obj_02
+    kind: collect_item
+    targetId: kindred_hide_collect_item_14
+    count: 2
+  rewardGold: 51
+  rewardXp: 85
+- id: kindred_hide_q_15
+  title: 'Kindred Hide: Close the Day’s Ledger'
+  family: zone_story
+  hidden: false
+  unlocksQuestId: kindred_hide_q_16
+  objectives:
+  - id: kindred_hide_q_15_obj_01
+    kind: deliver_item
+    targetId: kindred_hide_deliver_item_15
+    count: 1
+  - id: kindred_hide_q_15_obj_02
+    kind: interact
+    targetId: kindred_hide_place_08
+    count: 2
+    verbId: craft
+  rewardGold: 54
+  rewardXp: 90
+- id: kindred_hide_q_16
+  title: 'Kindred Hide: Follow the Midway Signal'
+  family: zone_story
+  hidden: false
+  unlocksQuestId: kindred_hide_q_17
+  objectives:
+  - id: kindred_hide_q_16_obj_01
+    kind: talk_to_npc
+    targetId: kindred_hide_npc_06
+    count: 1
+  - id: kindred_hide_q_16_obj_02
+    kind: score_beat
+    targetId: kindred_hide_score_beat_16
+    count: 2
+  rewardGold: 57
+  rewardXp: 95
+- id: kindred_hide_q_17
+  title: 'Kindred Hide: Uncover the Door Note'
+  family: zone_story
+  hidden: true
+  unlocksQuestId: kindred_hide_q_18
+  objectives:
+  - id: kindred_hide_q_17_obj_01
+    kind: collect_item
+    targetId: kindred_hide_collect_item_17
+    count: 1
+  - id: kindred_hide_q_17_obj_02
+    kind: build_tick
+    targetId: kindred_hide_build_tick_17
+    count: 2
+  rewardGold: 60
+  rewardXp: 100
+- id: kindred_hide_q_18
+  title: 'Kindred Hide: Prepare the Team Table'
+  family: zone_story
+  hidden: false
+  unlocksQuestId: kindred_hide_q_19
+  objectives:
+  - id: kindred_hide_q_18_obj_01
+    kind: interact
+    targetId: kindred_hide_place_02
+    count: 1
+    verbId: bind_inn
+  - id: kindred_hide_q_18_obj_02
+    kind: hospitality_tick
+    targetId: kindred_hide_hospitality_tick_18
+    count: 2
+  rewardGold: 63
+  rewardXp: 105
+- id: kindred_hide_q_19
+  title: 'Kindred Hide: Test the Local Method'
+  family: zone_story
+  hidden: false
+  unlocksQuestId: kindred_hide_q_20
+  objectives:
+  - id: kindred_hide_q_19_obj_01
+    kind: score_beat
+    targetId: kindred_hide_score_beat_19
+    count: 1
+  - id: kindred_hide_q_19_obj_02
+    kind: lap_finish
+    targetId: kindred_hide_lap_finish_19
+    count: 2
+  rewardGold: 66
+  rewardXp: 110
+- id: kindred_hide_q_20
+  title: 'Kindred Hide: Hold a Careful Boundary'
+  family: zone_story
+  hidden: false
+  unlocksQuestId: kindred_hide_q_21
+  objectives:
+  - id: kindred_hide_q_20_obj_01
+    kind: build_tick
+    targetId: kindred_hide_build_tick_20
+    count: 1
+  - id: kindred_hide_q_20_obj_02
+    kind: visit_place
+    targetId: kindred_hide_place_05
+    count: 2
+  rewardGold: 69
+  rewardXp: 115
+- id: kindred_hide_q_21
+  title: 'Kindred Hide: Answer the Neighbour’s Call'
+  family: extra
+  hidden: false
+  unlocksQuestId: kindred_hide_q_22
+  objectives:
+  - id: kindred_hide_q_21_obj_01
+    kind: hospitality_tick
+    targetId: kindred_hide_hospitality_tick_21
+    count: 1
+  - id: kindred_hide_q_21_obj_02
+    kind: ledger_kill
+    targetId: kindred_hide_ledger_kill_21
+    count: 2
+  rewardGold: 72
+  rewardXp: 120
+- id: kindred_hide_q_22
+  title: 'Kindred Hide: Finish the Side Route'
+  family: extra
+  hidden: false
+  unlocksQuestId: kindred_hide_q_23
+  objectives:
+  - id: kindred_hide_q_22_obj_01
+    kind: lap_finish
+    targetId: kindred_hide_lap_finish_22
+    count: 1
+  - id: kindred_hide_q_22_obj_02
+    kind: ledger_bond
+    targetId: kindred_hide_ledger_bond_22
+    count: 2
+  rewardGold: 75
+  rewardXp: 125
+- id: kindred_hide_q_23
+  title: 'Kindred Hide: Earn a Trusted Introduction'
+  family: extra
+  hidden: true
+  unlocksQuestId: kindred_hide_q_24
+  objectives:
+  - id: kindred_hide_q_23_obj_01
+    kind: visit_place
+    targetId: kindred_hide_place_07
+    count: 1
+  - id: kindred_hide_q_23_obj_02
+    kind: deliver_item
+    targetId: kindred_hide_deliver_item_23
+    count: 2
+  rewardGold: 78
+  rewardXp: 130
+- id: kindred_hide_q_24
+  title: 'Kindred Hide: Open the Instance Path'
+  family: extra
+  hidden: false
+  unlocksQuestId: kindred_hide_q_25
+  objectives:
+  - id: kindred_hide_q_24_obj_01
+    kind: ledger_kill
+    targetId: kindred_hide_ledger_kill_24
+    count: 1
+  - id: kindred_hide_q_24_obj_02
+    kind: talk_to_npc
+    targetId: kindred_hide_npc_05
+    count: 2
+  rewardGold: 81
+  rewardXp: 135
+- id: kindred_hide_q_25
+  title: 'Kindred Hide: Complete the First Big Night'
+  family: extra
+  hidden: false
+  unlocksQuestId: null
+  objectives:
+  - id: kindred_hide_q_25_obj_01
+    kind: ledger_bond
+    targetId: kindred_hide_ledger_bond_25
+    count: 1
+  - id: kindred_hide_q_25_obj_02
+    kind: collect_item
+    targetId: kindred_hide_collect_item_25
+    count: 2
+  rewardGold: 84
+  rewardXp: 140
+species:
+- id: kindred_hide_species_01
+  publicName: Velvet Morrow
+  kind: activity
+  hp: 0
+  armor: 0
+  threat: 1
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: kindred_hide_species_02
+  publicName: Cairn Reed
+  kind: activity
+  hp: 0
+  armor: 1
+  threat: 2
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: kindred_hide_species_03
+  publicName: Pipetide Fern
+  kind: activity
+  hp: 0
+  armor: 2
+  threat: 3
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: kindred_hide_species_04
+  publicName: Brasswhistle Sable
+  kind: activity
+  hp: 0
+  armor: 3
+  threat: 1
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: kindred_hide_species_05
+  publicName: Dapple Rook
+  kind: activity
+  hp: 0
+  armor: 0
+  threat: 2
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: kindred_hide_species_06
+  publicName: Mosslynx
+  kind: activity
+  hp: 0
+  armor: 1
+  threat: 3
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: kindred_hide_species_07
+  publicName: Tidehorn
+  kind: activity
+  hp: 0
+  armor: 2
+  threat: 1
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: kindred_hide_species_08
+  publicName: Quill Otter
+  kind: activity
+  hp: 0
+  armor: 3
+  threat: 2
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: kindred_hide_species_09
+  publicName: Bloom Badger
+  kind: activity
+  hp: 0
+  armor: 0
+  threat: 3
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: kindred_hide_species_10
+  publicName: Rill Fox
+  kind: activity
+  hp: 0
+  armor: 1
+  threat: 1
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: kindred_hide_species_11
+  publicName: Candle Mouse
+  kind: activity
+  hp: 0
+  armor: 2
+  threat: 2
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: kindred_hide_species_12
+  publicName: Thrum Deer
+  kind: activity
+  hp: 0
+  armor: 3
+  threat: 3
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: kindred_hide_species_13
+  publicName: Sable Moth
+  kind: activity
+  hp: 0
+  armor: 0
+  threat: 1
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: kindred_hide_species_14
+  publicName: Shale Dove
+  kind: activity
+  hp: 0
+  armor: 1
+  threat: 2
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: kindred_hide_species_15
+  publicName: Wicker Mink
+  kind: activity
+  hp: 0
+  armor: 2
+  threat: 3
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: kindred_hide_species_16
+  publicName: Rain Stoat
+  kind: activity
+  hp: 0
+  armor: 3
+  threat: 1
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+items:
+- id: kindred_hide_item_01
+  publicName: Welcome Burrow token
+  category: starter
+  power: false
+  sellGold: 3
+  description: A Kindred Hide item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: kindred_hide_item_02
+  publicName: Mosslight Arcade tool
+  category: starter
+  power: false
+  sellGold: 5
+  description: A Kindred Hide item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: kindred_hide_item_03
+  publicName: Tailor Steps thread
+  category: profession
+  power: false
+  sellGold: 7
+  description: A Kindred Hide item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: kindred_hide_item_04
+  publicName: Sunroom Square seal
+  category: profession
+  power: false
+  sellGold: 9
+  description: A Kindred Hide item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: kindred_hide_item_05
+  publicName: Quiet Den bundle
+  category: instance
+  power: false
+  sellGold: 11
+  description: A Kindred Hide item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: kindred_hide_item_06
+  publicName: Bridge Bloom token
+  category: instance
+  power: false
+  sellGold: 13
+  description: A Kindred Hide item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: kindred_hide_item_07
+  publicName: Candlepaw Studio tool
+  category: cosmetic
+  power: false
+  sellGold: 15
+  description: A Kindred Hide item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: kindred_hide_item_08
+  publicName: Dovetail Baths thread
+  category: cosmetic
+  power: false
+  sellGold: 17
+  description: A Kindred Hide item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: kindred_hide_item_09
+  publicName: Welcome Burrow seal
+  category: material
+  power: false
+  sellGold: 19
+  description: A Kindred Hide item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: kindred_hide_item_10
+  publicName: Mosslight Arcade bundle
+  category: material
+  power: false
+  sellGold: 21
+  description: A Kindred Hide item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: kindred_hide_item_11
+  publicName: Tailor Steps token
+  category: care
+  power: false
+  sellGold: 23
+  description: A Kindred Hide item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: kindred_hide_item_12
+  publicName: Sunroom Square tool
+  category: care
+  power: false
+  sellGold: 25
+  description: A Kindred Hide item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: kindred_hide_item_13
+  publicName: Quiet Den thread
+  category: map
+  power: false
+  sellGold: 27
+  description: A Kindred Hide item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: kindred_hide_item_14
+  publicName: Bridge Bloom seal
+  category: map
+  power: false
+  sellGold: 29
+  description: A Kindred Hide item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: kindred_hide_item_15
+  publicName: Candlepaw Studio bundle
+  category: vendor
+  power: false
+  sellGold: 31
+  description: A Kindred Hide item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: kindred_hide_item_16
+  publicName: Dovetail Baths token
+  category: vendor
+  power: false
+  sellGold: 33
+  description: A Kindred Hide item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: kindred_hide_item_17
+  publicName: Welcome Burrow tool
+  category: recipe
+  power: false
+  sellGold: 35
+  description: A Kindred Hide item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: kindred_hide_item_18
+  publicName: Mosslight Arcade thread
+  category: recipe
+  power: false
+  sellGold: 37
+  description: A Kindred Hide item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: kindred_hide_item_19
+  publicName: Tailor Steps seal
+  category: keepsake
+  power: false
+  sellGold: 39
+  description: A Kindred Hide item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: kindred_hide_item_20
+  publicName: Sunroom Square bundle
+  category: keepsake
+  power: false
+  sellGold: 41
+  description: A Kindred Hide item used for a stated craft, route, display, or record; it never alters paid outcomes.
+dropTables:
+- id: kindred_hide_drop_01
+  sourceId: kindred_hide_species_01
+  personalLoot: true
+  entries:
+  - itemId: kindred_hide_item_01
+    chancePct: 60
+    min: 1
+    max: 2
+  - itemId: kindred_hide_item_08
+    chancePct: 20
+    min: 1
+    max: 1
+- id: kindred_hide_drop_02
+  sourceId: kindred_hide_species_02
+  personalLoot: true
+  entries:
+  - itemId: kindred_hide_item_02
+    chancePct: 55
+    min: 1
+    max: 2
+  - itemId: kindred_hide_item_09
+    chancePct: 25
+    min: 1
+    max: 1
+- id: kindred_hide_drop_03
+  sourceId: kindred_hide_species_03
+  personalLoot: true
+  entries:
+  - itemId: kindred_hide_item_03
+    chancePct: 50
+    min: 1
+    max: 2
+  - itemId: kindred_hide_item_10
+    chancePct: 30
+    min: 1
+    max: 1
+- id: kindred_hide_drop_04
+  sourceId: kindred_hide_species_04
+  personalLoot: true
+  entries:
+  - itemId: kindred_hide_item_04
+    chancePct: 45
+    min: 1
+    max: 2
+  - itemId: kindred_hide_item_11
+    chancePct: 20
+    min: 1
+    max: 1
+- id: kindred_hide_drop_05
+  sourceId: kindred_hide_species_05
+  personalLoot: true
+  entries:
+  - itemId: kindred_hide_item_05
+    chancePct: 60
+    min: 1
+    max: 2
+  - itemId: kindred_hide_item_12
+    chancePct: 25
+    min: 1
+    max: 1
+- id: kindred_hide_drop_06
+  sourceId: kindred_hide_species_06
+  personalLoot: true
+  entries:
+  - itemId: kindred_hide_item_06
+    chancePct: 55
+    min: 1
+    max: 2
+  - itemId: kindred_hide_item_13
+    chancePct: 30
+    min: 1
+    max: 1
+- id: kindred_hide_drop_07
+  sourceId: kindred_hide_species_07
+  personalLoot: true
+  entries:
+  - itemId: kindred_hide_item_07
+    chancePct: 50
+    min: 1
+    max: 2
+  - itemId: kindred_hide_item_14
+    chancePct: 20
+    min: 1
+    max: 1
+- id: kindred_hide_drop_08
+  sourceId: kindred_hide_species_08
+  personalLoot: true
+  entries:
+  - itemId: kindred_hide_item_08
+    chancePct: 45
+    min: 1
+    max: 2
+  - itemId: kindred_hide_item_15
+    chancePct: 25
+    min: 1
+    max: 1
+- id: kindred_hide_drop_09
+  sourceId: kindred_hide_species_09
+  personalLoot: true
+  entries:
+  - itemId: kindred_hide_item_09
+    chancePct: 60
+    min: 1
+    max: 2
+  - itemId: kindred_hide_item_16
+    chancePct: 30
+    min: 1
+    max: 1
+- id: kindred_hide_drop_10
+  sourceId: kindred_hide_species_10
+  personalLoot: true
+  entries:
+  - itemId: kindred_hide_item_10
+    chancePct: 55
+    min: 1
+    max: 2
+  - itemId: kindred_hide_item_17
+    chancePct: 20
+    min: 1
+    max: 1
+- id: kindred_hide_drop_11
+  sourceId: kindred_hide_species_11
+  personalLoot: true
+  entries:
+  - itemId: kindred_hide_item_11
+    chancePct: 50
+    min: 1
+    max: 2
+  - itemId: kindred_hide_item_18
+    chancePct: 25
+    min: 1
+    max: 1
+- id: kindred_hide_drop_12
+  sourceId: kindred_hide_species_12
+  personalLoot: true
+  entries:
+  - itemId: kindred_hide_item_12
+    chancePct: 45
+    min: 1
+    max: 2
+  - itemId: kindred_hide_item_19
+    chancePct: 30
+    min: 1
+    max: 1
+vendors:
+- id: kindred_hide_vendor_01
+  publicName: Kindred Hide Exchange
+  placeId: kindred_hide_place_01
+  currencyGoldName: Hide Buttons
+  items:
+  - itemId: kindred_hide_item_01
+    priceGold: 8
+  - itemId: kindred_hide_item_02
+    priceGold: 11
+  - itemId: kindred_hide_item_03
+    priceGold: 14
+  - itemId: kindred_hide_item_04
+    priceGold: 17
+  - itemId: kindred_hide_item_05
+    priceGold: 20
+  - itemId: kindred_hide_item_06
+    priceGold: 23
+  - itemId: kindred_hide_item_07
+    priceGold: 26
+  - itemId: kindred_hide_item_08
+    priceGold: 29
+  repairCostPerPoint: 0
+dungeons:
+- id: kindred_hide_dungeon_01
+  publicName: The Closed-Curtain Rehearsal
+  partyMin: 1
+  partyMax: 5
+  entrancePlaceId: kindred_hide_place_06
+  rooms:
+  - id: kindred_hide_dungeon_room_01
+    publicName: 'The Closed-Curtain Rehearsal: Threshold Room'
+    describeBeforeCreature: Describe the material, sound, exits, and practical obstacle of Threshold Room before any species
+      is narrated.
+    trashSpeciesIds:
+    - kindred_hide_species_01
+    - kindred_hide_species_02
+    eliteSpeciesId: null
+    checkpoint: false
+    bossSpeciesId: null
+    exits:
+    - kindred_hide_dungeon_room_02
+  - id: kindred_hide_dungeon_room_02
+    publicName: 'The Closed-Curtain Rehearsal: Workroom'
+    describeBeforeCreature: Describe the material, sound, exits, and practical obstacle of Workroom before any species is
+      narrated.
+    trashSpeciesIds:
+    - kindred_hide_species_03
+    - kindred_hide_species_04
+    eliteSpeciesId: null
+    checkpoint: false
+    bossSpeciesId: null
+    exits:
+    - kindred_hide_dungeon_room_03
+  - id: kindred_hide_dungeon_room_03
+    publicName: 'The Closed-Curtain Rehearsal: Side Passage'
+    describeBeforeCreature: Describe the material, sound, exits, and practical obstacle of Side Passage before any species
+      is narrated.
+    trashSpeciesIds:
+    - kindred_hide_species_05
+    - kindred_hide_species_06
+    eliteSpeciesId: kindred_hide_species_09
+    checkpoint: false
+    bossSpeciesId: null
+    exits:
+    - kindred_hide_dungeon_room_04
+  - id: kindred_hide_dungeon_room_04
+    publicName: 'The Closed-Curtain Rehearsal: Checkpoint Alcove'
+    describeBeforeCreature: Describe the material, sound, exits, and practical obstacle of Checkpoint Alcove before any species
+      is narrated.
+    trashSpeciesIds:
+    - kindred_hide_species_07
+    - kindred_hide_species_08
+    eliteSpeciesId: null
+    checkpoint: true
+    bossSpeciesId: null
+    exits:
+    - kindred_hide_dungeon_room_05
+  - id: kindred_hide_dungeon_room_05
+    publicName: 'The Closed-Curtain Rehearsal: Finale Chamber'
+    describeBeforeCreature: Describe the material, sound, exits, and practical obstacle of Finale Chamber before any species
+      is narrated.
+    trashSpeciesIds:
+    - kindred_hide_species_09
+    - kindred_hide_species_10
+    eliteSpeciesId: null
+    checkpoint: false
+    bossSpeciesId: kindred_hide_species_14
+    exits: []
+  traps:
+  - id: kindred_hide_trap_01
+    publicName: misread sign
+    interactableId: kindred_hide_interact_01
+  - id: kindred_hide_trap_02
+    publicName: jammed latch
+    interactableId: kindred_hide_interact_02
+  - id: kindred_hide_trap_03
+    publicName: wet threshold
+    interactableId: kindred_hide_interact_03
+  - id: kindred_hide_trap_04
+    publicName: false shelf
+    interactableId: kindred_hide_interact_04
+  - id: kindred_hide_trap_05
+    publicName: quiet bell
+    interactableId: kindred_hide_interact_05
+  - id: kindred_hide_trap_06
+    publicName: sealed drawer
+    interactableId: kindred_hide_interact_06
+talkTrees:
+- npcId: kindred_hide_npc_01
+  greet: Cato Morrow says, ‘Kindred Hide keeps its promises in small places. Tell me which one you noticed.’
+  quest_offer: 'Cato Morrow offers a specific task at Welcome Burrow: settle the practical mismatch before it costs someone
+    a shift.'
+  quest_progress: Cato Morrow checks the record and asks for the one detail that would change the outcome.
+  quest_turnin: Cato Morrow marks the work complete, names who benefited, and hands over the recorded reward.
+  gossip:
+  - At Mosslight Arcade, people are discussing a missing care tag.
+  - The safest route today is through Tailor Steps, not the obvious shortcut.
+  - Someone at Sunroom Square is offering help but will not ask twice.
+  refusal: Cato Morrow says, ‘No. I can explain the rule, but I will not bend it for noise.’
+  player_rude: Cato Morrow says, ‘You may leave, lower your voice, or try a useful question. Choose one.’
+- npcId: kindred_hide_npc_02
+  greet: Dessa Rowan says, ‘Kindred Hide keeps its promises in small places. Tell me which one you noticed.’
+  quest_offer: 'Dessa Rowan offers a specific task at Mosslight Arcade: settle the practical mismatch before it costs someone
+    a shift.'
+  quest_progress: Dessa Rowan checks the record and asks for the one detail that would change the outcome.
+  quest_turnin: Dessa Rowan marks the work complete, names who benefited, and hands over the recorded reward.
+  gossip:
+  - At Tailor Steps, people are discussing a missing care tag.
+  - The safest route today is through Sunroom Square, not the obvious shortcut.
+  - Someone at Quiet Den is offering help but will not ask twice.
+  refusal: Dessa Rowan says, ‘No. I can explain the rule, but I will not bend it for noise.’
+  player_rude: Dessa Rowan says, ‘You may leave, lower your voice, or try a useful question. Choose one.’
+- npcId: kindred_hide_npc_03
+  greet: Eris Nook says, ‘Kindred Hide keeps its promises in small places. Tell me which one you noticed.’
+  quest_offer: 'Eris Nook offers a specific task at Tailor Steps: settle the practical mismatch before it costs someone a
+    shift.'
+  quest_progress: Eris Nook checks the record and asks for the one detail that would change the outcome.
+  quest_turnin: Eris Nook marks the work complete, names who benefited, and hands over the recorded reward.
+  gossip:
+  - At Sunroom Square, people are discussing a missing care tag.
+  - The safest route today is through Quiet Den, not the obvious shortcut.
+  - Someone at Bridge Bloom is offering help but will not ask twice.
+  refusal: Eris Nook says, ‘No. I can explain the rule, but I will not bend it for noise.’
+  player_rude: Eris Nook says, ‘You may leave, lower your voice, or try a useful question. Choose one.’
+- npcId: kindred_hide_npc_04
+  greet: Fenn Cress says, ‘Kindred Hide keeps its promises in small places. Tell me which one you noticed.’
+  quest_offer: 'Fenn Cress offers a specific task at Sunroom Square: settle the practical mismatch before it costs someone
+    a shift.'
+  quest_progress: Fenn Cress checks the record and asks for the one detail that would change the outcome.
+  quest_turnin: Fenn Cress marks the work complete, names who benefited, and hands over the recorded reward.
+  gossip:
+  - At Quiet Den, people are discussing a missing care tag.
+  - The safest route today is through Bridge Bloom, not the obvious shortcut.
+  - Someone at Candlepaw Studio is offering help but will not ask twice.
+  refusal: Fenn Cress says, ‘No. I can explain the rule, but I will not bend it for noise.’
+  player_rude: Fenn Cress says, ‘You may leave, lower your voice, or try a useful question. Choose one.’
+- npcId: kindred_hide_npc_05
+  greet: Gala Silt says, ‘Kindred Hide keeps its promises in small places. Tell me which one you noticed.’
+  quest_offer: 'Gala Silt offers a specific task at Welcome Burrow: settle the practical mismatch before it costs someone
+    a shift.'
+  quest_progress: Gala Silt checks the record and asks for the one detail that would change the outcome.
+  quest_turnin: Gala Silt marks the work complete, names who benefited, and hands over the recorded reward.
+  gossip:
+  - At Bridge Bloom, people are discussing a missing care tag.
+  - The safest route today is through Candlepaw Studio, not the obvious shortcut.
+  - Someone at Dovetail Baths is offering help but will not ask twice.
+  refusal: Gala Silt says, ‘No. I can explain the rule, but I will not bend it for noise.’
+  player_rude: Gala Silt says, ‘You may leave, lower your voice, or try a useful question. Choose one.’
+- npcId: kindred_hide_npc_06
+  greet: Holl Pryce says, ‘Kindred Hide keeps its promises in small places. Tell me which one you noticed.’
+  quest_offer: 'Holl Pryce offers a specific task at Mosslight Arcade: settle the practical mismatch before it costs someone
+    a shift.'
+  quest_progress: Holl Pryce checks the record and asks for the one detail that would change the outcome.
+  quest_turnin: Holl Pryce marks the work complete, names who benefited, and hands over the recorded reward.
+  gossip:
+  - At Candlepaw Studio, people are discussing a missing care tag.
+  - The safest route today is through Dovetail Baths, not the obvious shortcut.
+  - Someone at Welcome Burrow is offering help but will not ask twice.
+  refusal: Holl Pryce says, ‘No. I can explain the rule, but I will not bend it for noise.’
+  player_rude: Holl Pryce says, ‘You may leave, lower your voice, or try a useful question. Choose one.’
+- npcId: kindred_hide_npc_07
+  greet: Ivo Vane says, ‘Kindred Hide keeps its promises in small places. Tell me which one you noticed.’
+  quest_offer: 'Ivo Vane offers a specific task at Tailor Steps: settle the practical mismatch before it costs someone a shift.'
+  quest_progress: Ivo Vane checks the record and asks for the one detail that would change the outcome.
+  quest_turnin: Ivo Vane marks the work complete, names who benefited, and hands over the recorded reward.
+  gossip:
+  - At Dovetail Baths, people are discussing a missing care tag.
+  - The safest route today is through Welcome Burrow, not the obvious shortcut.
+  - Someone at Mosslight Arcade is offering help but will not ask twice.
+  refusal: Ivo Vane says, ‘No. I can explain the rule, but I will not bend it for noise.’
+  player_rude: Ivo Vane says, ‘You may leave, lower your voice, or try a useful question. Choose one.’
+- npcId: kindred_hide_npc_08
+  greet: Jori Quill says, ‘Kindred Hide keeps its promises in small places. Tell me which one you noticed.’
+  quest_offer: 'Jori Quill offers a specific task at Sunroom Square: settle the practical mismatch before it costs someone
+    a shift.'
+  quest_progress: Jori Quill checks the record and asks for the one detail that would change the outcome.
+  quest_turnin: Jori Quill marks the work complete, names who benefited, and hands over the recorded reward.
+  gossip:
+  - At Welcome Burrow, people are discussing a missing care tag.
+  - The safest route today is through Mosslight Arcade, not the obvious shortcut.
+  - Someone at Tailor Steps is offering help but will not ask twice.
+  refusal: Jori Quill says, ‘No. I can explain the rule, but I will not bend it for noise.’
+  player_rude: Jori Quill says, ‘You may leave, lower your voice, or try a useful question. Choose one.’
+- npcId: kindred_hide_npc_09
+  greet: Alden Vale says, ‘Kindred Hide keeps its promises in small places. Tell me which one you noticed.’
+  quest_offer: 'Alden Vale offers a specific task at Welcome Burrow: settle the practical mismatch before it costs someone
+    a shift.'
+  quest_progress: Alden Vale checks the record and asks for the one detail that would change the outcome.
+  quest_turnin: Alden Vale marks the work complete, names who benefited, and hands over the recorded reward.
+  gossip:
+  - At Mosslight Arcade, people are discussing a missing care tag.
+  - The safest route today is through Tailor Steps, not the obvious shortcut.
+  - Someone at Sunroom Square is offering help but will not ask twice.
+  refusal: Alden Vale says, ‘No. I can explain the rule, but I will not bend it for noise.’
+  player_rude: Alden Vale says, ‘You may leave, lower your voice, or try a useful question. Choose one.’
+- npcId: kindred_hide_npc_10
+  greet: Bryn Wren says, ‘Kindred Hide keeps its promises in small places. Tell me which one you noticed.’
+  quest_offer: 'Bryn Wren offers a specific task at Mosslight Arcade: settle the practical mismatch before it costs someone
+    a shift.'
+  quest_progress: Bryn Wren checks the record and asks for the one detail that would change the outcome.
+  quest_turnin: Bryn Wren marks the work complete, names who benefited, and hands over the recorded reward.
+  gossip:
+  - At Tailor Steps, people are discussing a missing care tag.
+  - The safest route today is through Sunroom Square, not the obvious shortcut.
+  - Someone at Quiet Den is offering help but will not ask twice.
+  refusal: Bryn Wren says, ‘No. I can explain the rule, but I will not bend it for noise.’
+  player_rude: Bryn Wren says, ‘You may leave, lower your voice, or try a useful question. Choose one.’
+choiceButtons:
+- id: kindred_hide_choice_01_01
+  placeId: kindred_hide_place_01
+  label: Read the notice at Welcome Burrow
+  requires: []
+  intentKind: talk
+  stake: one turn
+- id: kindred_hide_choice_01_02
+  placeId: kindred_hide_place_01
+  label: Ask for an introduction at Welcome Burrow
+  requires: []
+  intentKind: talk
+  stake: one supply
+- id: kindred_hide_choice_01_03
+  placeId: kindred_hide_place_01
+  label: Check the tool tag at Welcome Burrow
+  requires: []
+  intentKind: inspect
+  stake: a declined invitation
+- id: kindred_hide_choice_01_04
+  placeId: kindred_hide_place_01
+  label: Offer a hand at Welcome Burrow
+  requires: []
+  intentKind: interact
+  stake: a public note
+- id: kindred_hide_choice_01_05
+  placeId: kindred_hide_place_01
+  label: Take the safer route at Welcome Burrow
+  requires:
+  - kindred_hide_item_05
+  intentKind: travel
+  stake: a short detour
+- id: kindred_hide_choice_01_06
+  placeId: kindred_hide_place_01
+  label: Open the local record at Welcome Burrow
+  requires:
+  - kindred_hide_item_06
+  intentKind: interact
+  stake: one turn
+- id: kindred_hide_choice_01_07
+  placeId: kindred_hide_place_01
+  label: Rest at the bench at Welcome Burrow
+  requires:
+  - kindred_hide_item_07
+  intentKind: rest
+  stake: one supply
+- id: kindred_hide_choice_01_08
+  placeId: kindred_hide_place_01
+  label: Repair the marker at Welcome Burrow
+  requires:
+  - kindred_hide_item_08
+  intentKind: interact
+  stake: a declined invitation
+- id: kindred_hide_choice_01_09
+  placeId: kindred_hide_place_01
+  label: Prepare a shared item at Welcome Burrow
+  requires:
+  - kindred_hide_item_09
+  intentKind: craft
+  stake: a public note
+- id: kindred_hide_choice_01_10
+  placeId: kindred_hide_place_01
+  label: Leave a kind note at Welcome Burrow
+  requires:
+  - kindred_hide_item_10
+  intentKind: talk
+  stake: a short detour
+- id: kindred_hide_choice_02_01
+  placeId: kindred_hide_place_02
+  label: Read the notice at Mosslight Arcade
+  requires: []
+  intentKind: talk
+  stake: one turn
+- id: kindred_hide_choice_02_02
+  placeId: kindred_hide_place_02
+  label: Ask for an introduction at Mosslight Arcade
+  requires: []
+  intentKind: talk
+  stake: one supply
+- id: kindred_hide_choice_02_03
+  placeId: kindred_hide_place_02
+  label: Check the tool tag at Mosslight Arcade
+  requires: []
+  intentKind: inspect
+  stake: a declined invitation
+- id: kindred_hide_choice_02_04
+  placeId: kindred_hide_place_02
+  label: Offer a hand at Mosslight Arcade
+  requires: []
+  intentKind: interact
+  stake: a public note
+- id: kindred_hide_choice_02_05
+  placeId: kindred_hide_place_02
+  label: Take the safer route at Mosslight Arcade
+  requires:
+  - kindred_hide_item_05
+  intentKind: travel
+  stake: a short detour
+- id: kindred_hide_choice_02_06
+  placeId: kindred_hide_place_02
+  label: Open the local record at Mosslight Arcade
+  requires:
+  - kindred_hide_item_06
+  intentKind: interact
+  stake: one turn
+- id: kindred_hide_choice_02_07
+  placeId: kindred_hide_place_02
+  label: Rest at the bench at Mosslight Arcade
+  requires:
+  - kindred_hide_item_07
+  intentKind: rest
+  stake: one supply
+- id: kindred_hide_choice_02_08
+  placeId: kindred_hide_place_02
+  label: Repair the marker at Mosslight Arcade
+  requires:
+  - kindred_hide_item_08
+  intentKind: interact
+  stake: a declined invitation
+- id: kindred_hide_choice_02_09
+  placeId: kindred_hide_place_02
+  label: Prepare a shared item at Mosslight Arcade
+  requires:
+  - kindred_hide_item_09
+  intentKind: craft
+  stake: a public note
+- id: kindred_hide_choice_02_10
+  placeId: kindred_hide_place_02
+  label: Leave a kind note at Mosslight Arcade
+  requires:
+  - kindred_hide_item_10
+  intentKind: talk
+  stake: a short detour
+- id: kindred_hide_choice_03_01
+  placeId: kindred_hide_place_03
+  label: Read the notice at Tailor Steps
+  requires: []
+  intentKind: talk
+  stake: one turn
+- id: kindred_hide_choice_03_02
+  placeId: kindred_hide_place_03
+  label: Ask for an introduction at Tailor Steps
+  requires: []
+  intentKind: talk
+  stake: one supply
+- id: kindred_hide_choice_03_03
+  placeId: kindred_hide_place_03
+  label: Check the tool tag at Tailor Steps
+  requires: []
+  intentKind: inspect
+  stake: a declined invitation
+- id: kindred_hide_choice_03_04
+  placeId: kindred_hide_place_03
+  label: Offer a hand at Tailor Steps
+  requires: []
+  intentKind: interact
+  stake: a public note
+- id: kindred_hide_choice_03_05
+  placeId: kindred_hide_place_03
+  label: Take the safer route at Tailor Steps
+  requires:
+  - kindred_hide_item_05
+  intentKind: travel
+  stake: a short detour
+- id: kindred_hide_choice_03_06
+  placeId: kindred_hide_place_03
+  label: Open the local record at Tailor Steps
+  requires:
+  - kindred_hide_item_06
+  intentKind: interact
+  stake: one turn
+- id: kindred_hide_choice_03_07
+  placeId: kindred_hide_place_03
+  label: Rest at the bench at Tailor Steps
+  requires:
+  - kindred_hide_item_07
+  intentKind: rest
+  stake: one supply
+- id: kindred_hide_choice_03_08
+  placeId: kindred_hide_place_03
+  label: Repair the marker at Tailor Steps
+  requires:
+  - kindred_hide_item_08
+  intentKind: interact
+  stake: a declined invitation
+- id: kindred_hide_choice_03_09
+  placeId: kindred_hide_place_03
+  label: Prepare a shared item at Tailor Steps
+  requires:
+  - kindred_hide_item_09
+  intentKind: craft
+  stake: a public note
+- id: kindred_hide_choice_03_10
+  placeId: kindred_hide_place_03
+  label: Leave a kind note at Tailor Steps
+  requires:
+  - kindred_hide_item_10
+  intentKind: talk
+  stake: a short detour
+- id: kindred_hide_choice_04_01
+  placeId: kindred_hide_place_04
+  label: Read the notice at Sunroom Square
+  requires: []
+  intentKind: talk
+  stake: one turn
+- id: kindred_hide_choice_04_02
+  placeId: kindred_hide_place_04
+  label: Ask for an introduction at Sunroom Square
+  requires: []
+  intentKind: talk
+  stake: one supply
+- id: kindred_hide_choice_04_03
+  placeId: kindred_hide_place_04
+  label: Check the tool tag at Sunroom Square
+  requires: []
+  intentKind: inspect
+  stake: a declined invitation
+- id: kindred_hide_choice_04_04
+  placeId: kindred_hide_place_04
+  label: Offer a hand at Sunroom Square
+  requires: []
+  intentKind: interact
+  stake: a public note
+- id: kindred_hide_choice_04_05
+  placeId: kindred_hide_place_04
+  label: Take the safer route at Sunroom Square
+  requires:
+  - kindred_hide_item_05
+  intentKind: travel
+  stake: a short detour
+- id: kindred_hide_choice_04_06
+  placeId: kindred_hide_place_04
+  label: Open the local record at Sunroom Square
+  requires:
+  - kindred_hide_item_06
+  intentKind: interact
+  stake: one turn
+- id: kindred_hide_choice_04_07
+  placeId: kindred_hide_place_04
+  label: Rest at the bench at Sunroom Square
+  requires:
+  - kindred_hide_item_07
+  intentKind: rest
+  stake: one supply
+- id: kindred_hide_choice_04_08
+  placeId: kindred_hide_place_04
+  label: Repair the marker at Sunroom Square
+  requires:
+  - kindred_hide_item_08
+  intentKind: interact
+  stake: a declined invitation
+- id: kindred_hide_choice_04_09
+  placeId: kindred_hide_place_04
+  label: Prepare a shared item at Sunroom Square
+  requires:
+  - kindred_hide_item_09
+  intentKind: craft
+  stake: a public note
+- id: kindred_hide_choice_04_10
+  placeId: kindred_hide_place_04
+  label: Leave a kind note at Sunroom Square
+  requires:
+  - kindred_hide_item_10
+  intentKind: talk
+  stake: a short detour
+- id: kindred_hide_choice_05_01
+  placeId: kindred_hide_place_05
+  label: Read the notice at Quiet Den
+  requires: []
+  intentKind: talk
+  stake: one turn
+- id: kindred_hide_choice_05_02
+  placeId: kindred_hide_place_05
+  label: Ask for an introduction at Quiet Den
+  requires: []
+  intentKind: talk
+  stake: one supply
+- id: kindred_hide_choice_05_03
+  placeId: kindred_hide_place_05
+  label: Check the tool tag at Quiet Den
+  requires: []
+  intentKind: inspect
+  stake: a declined invitation
+- id: kindred_hide_choice_05_04
+  placeId: kindred_hide_place_05
+  label: Offer a hand at Quiet Den
+  requires: []
+  intentKind: interact
+  stake: a public note
+- id: kindred_hide_choice_05_05
+  placeId: kindred_hide_place_05
+  label: Take the safer route at Quiet Den
+  requires:
+  - kindred_hide_item_05
+  intentKind: travel
+  stake: a short detour
+- id: kindred_hide_choice_05_06
+  placeId: kindred_hide_place_05
+  label: Open the local record at Quiet Den
+  requires:
+  - kindred_hide_item_06
+  intentKind: interact
+  stake: one turn
+- id: kindred_hide_choice_05_07
+  placeId: kindred_hide_place_05
+  label: Rest at the bench at Quiet Den
+  requires:
+  - kindred_hide_item_07
+  intentKind: rest
+  stake: one supply
+- id: kindred_hide_choice_05_08
+  placeId: kindred_hide_place_05
+  label: Repair the marker at Quiet Den
+  requires:
+  - kindred_hide_item_08
+  intentKind: interact
+  stake: a declined invitation
+- id: kindred_hide_choice_05_09
+  placeId: kindred_hide_place_05
+  label: Prepare a shared item at Quiet Den
+  requires:
+  - kindred_hide_item_09
+  intentKind: craft
+  stake: a public note
+- id: kindred_hide_choice_05_10
+  placeId: kindred_hide_place_05
+  label: Leave a kind note at Quiet Den
+  requires:
+  - kindred_hide_item_10
+  intentKind: talk
+  stake: a short detour
+- id: kindred_hide_choice_06_01
+  placeId: kindred_hide_place_06
+  label: Read the notice at Bridge Bloom
+  requires: []
+  intentKind: talk
+  stake: one turn
+- id: kindred_hide_choice_06_02
+  placeId: kindred_hide_place_06
+  label: Ask for an introduction at Bridge Bloom
+  requires: []
+  intentKind: talk
+  stake: one supply
+- id: kindred_hide_choice_06_03
+  placeId: kindred_hide_place_06
+  label: Check the tool tag at Bridge Bloom
+  requires: []
+  intentKind: inspect
+  stake: a declined invitation
+- id: kindred_hide_choice_06_04
+  placeId: kindred_hide_place_06
+  label: Offer a hand at Bridge Bloom
+  requires: []
+  intentKind: interact
+  stake: a public note
+- id: kindred_hide_choice_06_05
+  placeId: kindred_hide_place_06
+  label: Take the safer route at Bridge Bloom
+  requires:
+  - kindred_hide_item_05
+  intentKind: travel
+  stake: a short detour
+- id: kindred_hide_choice_06_06
+  placeId: kindred_hide_place_06
+  label: Open the local record at Bridge Bloom
+  requires:
+  - kindred_hide_item_06
+  intentKind: interact
+  stake: one turn
+- id: kindred_hide_choice_06_07
+  placeId: kindred_hide_place_06
+  label: Rest at the bench at Bridge Bloom
+  requires:
+  - kindred_hide_item_07
+  intentKind: rest
+  stake: one supply
+- id: kindred_hide_choice_06_08
+  placeId: kindred_hide_place_06
+  label: Repair the marker at Bridge Bloom
+  requires:
+  - kindred_hide_item_08
+  intentKind: interact
+  stake: a declined invitation
+- id: kindred_hide_choice_06_09
+  placeId: kindred_hide_place_06
+  label: Prepare a shared item at Bridge Bloom
+  requires:
+  - kindred_hide_item_09
+  intentKind: craft
+  stake: a public note
+- id: kindred_hide_choice_06_10
+  placeId: kindred_hide_place_06
+  label: Leave a kind note at Bridge Bloom
+  requires:
+  - kindred_hide_item_10
+  intentKind: talk
+  stake: a short detour
+- id: kindred_hide_choice_07_01
+  placeId: kindred_hide_place_07
+  label: Read the notice at Candlepaw Studio
+  requires: []
+  intentKind: talk
+  stake: one turn
+- id: kindred_hide_choice_07_02
+  placeId: kindred_hide_place_07
+  label: Ask for an introduction at Candlepaw Studio
+  requires: []
+  intentKind: talk
+  stake: one supply
+- id: kindred_hide_choice_07_03
+  placeId: kindred_hide_place_07
+  label: Check the tool tag at Candlepaw Studio
+  requires: []
+  intentKind: inspect
+  stake: a declined invitation
+- id: kindred_hide_choice_07_04
+  placeId: kindred_hide_place_07
+  label: Offer a hand at Candlepaw Studio
+  requires: []
+  intentKind: interact
+  stake: a public note
+- id: kindred_hide_choice_07_05
+  placeId: kindred_hide_place_07
+  label: Take the safer route at Candlepaw Studio
+  requires:
+  - kindred_hide_item_05
+  intentKind: travel
+  stake: a short detour
+- id: kindred_hide_choice_07_06
+  placeId: kindred_hide_place_07
+  label: Open the local record at Candlepaw Studio
+  requires:
+  - kindred_hide_item_06
+  intentKind: interact
+  stake: one turn
+- id: kindred_hide_choice_07_07
+  placeId: kindred_hide_place_07
+  label: Rest at the bench at Candlepaw Studio
+  requires:
+  - kindred_hide_item_07
+  intentKind: rest
+  stake: one supply
+- id: kindred_hide_choice_07_08
+  placeId: kindred_hide_place_07
+  label: Repair the marker at Candlepaw Studio
+  requires:
+  - kindred_hide_item_08
+  intentKind: interact
+  stake: a declined invitation
+- id: kindred_hide_choice_07_09
+  placeId: kindred_hide_place_07
+  label: Prepare a shared item at Candlepaw Studio
+  requires:
+  - kindred_hide_item_09
+  intentKind: craft
+  stake: a public note
+- id: kindred_hide_choice_07_10
+  placeId: kindred_hide_place_07
+  label: Leave a kind note at Candlepaw Studio
+  requires:
+  - kindred_hide_item_10
+  intentKind: talk
+  stake: a short detour
+- id: kindred_hide_choice_08_01
+  placeId: kindred_hide_place_08
+  label: Read the notice at Dovetail Baths
+  requires: []
+  intentKind: talk
+  stake: one turn
+- id: kindred_hide_choice_08_02
+  placeId: kindred_hide_place_08
+  label: Ask for an introduction at Dovetail Baths
+  requires: []
+  intentKind: talk
+  stake: one supply
+- id: kindred_hide_choice_08_03
+  placeId: kindred_hide_place_08
+  label: Check the tool tag at Dovetail Baths
+  requires: []
+  intentKind: inspect
+  stake: a declined invitation
+- id: kindred_hide_choice_08_04
+  placeId: kindred_hide_place_08
+  label: Offer a hand at Dovetail Baths
+  requires: []
+  intentKind: interact
+  stake: a public note
+- id: kindred_hide_choice_08_05
+  placeId: kindred_hide_place_08
+  label: Take the safer route at Dovetail Baths
+  requires:
+  - kindred_hide_item_05
+  intentKind: travel
+  stake: a short detour
+- id: kindred_hide_choice_08_06
+  placeId: kindred_hide_place_08
+  label: Open the local record at Dovetail Baths
+  requires:
+  - kindred_hide_item_06
+  intentKind: interact
+  stake: one turn
+- id: kindred_hide_choice_08_07
+  placeId: kindred_hide_place_08
+  label: Rest at the bench at Dovetail Baths
+  requires:
+  - kindred_hide_item_07
+  intentKind: rest
+  stake: one supply
+- id: kindred_hide_choice_08_08
+  placeId: kindred_hide_place_08
+  label: Repair the marker at Dovetail Baths
+  requires:
+  - kindred_hide_item_08
+  intentKind: interact
+  stake: a declined invitation
+- id: kindred_hide_choice_08_09
+  placeId: kindred_hide_place_08
+  label: Prepare a shared item at Dovetail Baths
+  requires:
+  - kindred_hide_item_09
+  intentKind: craft
+  stake: a public note
+- id: kindred_hide_choice_08_10
+  placeId: kindred_hide_place_08
+  label: Leave a kind note at Dovetail Baths
+  requires:
+  - kindred_hide_item_10
+  intentKind: talk
+  stake: a short detour
+interactables:
+- id: kindred_hide_interact_01
+  verbId: rest
+  publicName: Welcome Burrow bench
+  placeId: kindred_hide_place_01
+  displayVerb: Rest here
+  stateKey: kindred_hide_rest_01
+- id: kindred_hide_interact_02
+  verbId: repair
+  publicName: Mosslight Arcade cabinet
+  placeId: kindred_hide_place_02
+  displayVerb: Repair here
+  stateKey: kindred_hide_repair_02
+- id: kindred_hide_interact_03
+  verbId: tend
+  publicName: Tailor Steps rack
+  placeId: kindred_hide_place_03
+  displayVerb: Tend here
+  stateKey: kindred_hide_tend_03
+- id: kindred_hide_interact_04
+  verbId: craft
+  publicName: Sunroom Square kettle
+  placeId: kindred_hide_place_04
+  displayVerb: Craft here
+  stateKey: kindred_hide_craft_04
+- id: kindred_hide_interact_05
+  verbId: cook
+  publicName: Quiet Den ledger
+  placeId: kindred_hide_place_05
+  displayVerb: Cook here
+  stateKey: kindred_hide_cook_05
+- id: kindred_hide_interact_06
+  verbId: bind_inn
+  publicName: Bridge Bloom rail
+  placeId: kindred_hide_place_06
+  displayVerb: Bind Inn here
+  stateKey: kindred_hide_bind_inn_06
+- id: kindred_hide_interact_07
+  verbId: inspect
+  publicName: Candlepaw Studio bell
+  placeId: kindred_hide_place_07
+  displayVerb: Inspect here
+  stateKey: kindred_hide_inspect_07
+- id: kindred_hide_interact_08
+  verbId: open
+  publicName: Dovetail Baths board
+  placeId: kindred_hide_place_08
+  displayVerb: Open here
+  stateKey: kindred_hide_open_08
+- id: kindred_hide_interact_09
+  verbId: carry
+  publicName: Welcome Burrow table
+  placeId: kindred_hide_place_01
+  displayVerb: Carry here
+  stateKey: kindred_hide_carry_09
+- id: kindred_hide_interact_10
+  verbId: clean
+  publicName: Mosslight Arcade lamp
+  placeId: kindred_hide_place_02
+  displayVerb: Clean here
+  stateKey: kindred_hide_clean_10
+- id: kindred_hide_interact_11
+  verbId: signal
+  publicName: Tailor Steps gate
+  placeId: kindred_hide_place_03
+  displayVerb: Signal here
+  stateKey: kindred_hide_signal_11
+- id: kindred_hide_interact_12
+  verbId: record
+  publicName: Sunroom Square shelf
+  placeId: kindred_hide_place_04
+  displayVerb: Record here
+  stateKey: kindred_hide_record_12
+interiors:
+- id: kindred_hide_interior_01
+  publicName: Kindred Hide Home Interior
+  entrancePlaceId: kindred_hide_place_08
+  rooms:
+  - id: kindred_hide_home_room_01
+    publicName: Kindred Hide Entry
+    mapScale: interior
+    exits:
+    - kindred_hide_home_room_02
+    props:
+    - kindred_hide_home_prop_01
+    - kindred_hide_home_prop_08
+  - id: kindred_hide_home_room_02
+    publicName: Kindred Hide Main Room
+    mapScale: interior
+    exits:
+    - kindred_hide_home_room_01
+    - kindred_hide_home_room_03
+    props:
+    - kindred_hide_home_prop_02
+    - kindred_hide_home_prop_09
+  - id: kindred_hide_home_room_03
+    publicName: Kindred Hide Work Nook
+    mapScale: interior
+    exits:
+    - kindred_hide_home_room_02
+    - kindred_hide_home_room_04
+    props:
+    - kindred_hide_home_prop_03
+    - kindred_hide_home_prop_10
+  - id: kindred_hide_home_room_04
+    publicName: Kindred Hide Window Room
+    mapScale: interior
+    exits:
+    - kindred_hide_home_room_03
+    - kindred_hide_home_room_05
+    props:
+    - kindred_hide_home_prop_04
+    - kindred_hide_home_prop_11
+  - id: kindred_hide_home_room_05
+    publicName: Kindred Hide Quiet Room
+    mapScale: interior
+    exits:
+    - kindred_hide_home_room_04
+    - kindred_hide_home_room_06
+    props:
+    - kindred_hide_home_prop_05
+    - kindred_hide_home_prop_12
+  - id: kindred_hide_home_room_06
+    publicName: Kindred Hide Storage
+    mapScale: interior
+    exits:
+    - kindred_hide_home_room_05
+    - kindred_hide_home_room_07
+    props:
+    - kindred_hide_home_prop_06
+    - kindred_hide_home_prop_13
+  - id: kindred_hide_home_room_07
+    publicName: Kindred Hide Back Step
+    mapScale: interior
+    exits:
+    - kindred_hide_home_room_06
+    props:
+    - kindred_hide_home_prop_07
+    - kindred_hide_home_prop_14
+talents:
+- id: kindred_hide_talent_01
+  publicName: Kindred Hide Local Ear
+  cost: 1
+  requires: []
+  effectFlags:
+  - kindred_hide_effect_01
+  payToUnlock: false
+- id: kindred_hide_talent_02
+  publicName: Kindred Hide Careful Hand
+  cost: 2
+  requires: []
+  effectFlags:
+  - kindred_hide_effect_02
+  payToUnlock: false
+- id: kindred_hide_talent_03
+  publicName: Kindred Hide Route Sense
+  cost: 3
+  requires: []
+  effectFlags:
+  - kindred_hide_effect_03
+  payToUnlock: false
+- id: kindred_hide_talent_04
+  publicName: Kindred Hide Shared Measure
+  cost: 4
+  requires: []
+  effectFlags:
+  - kindred_hide_effect_04
+  payToUnlock: false
+- id: kindred_hide_talent_05
+  publicName: Kindred Hide Quiet Craft
+  cost: 1
+  requires:
+  - kindred_hide_talent_04
+  effectFlags:
+  - kindred_hide_effect_05
+  payToUnlock: false
+- id: kindred_hide_talent_06
+  publicName: Kindred Hide Open Invitation
+  cost: 2
+  requires: []
+  effectFlags:
+  - kindred_hide_effect_06
+  payToUnlock: false
+- id: kindred_hide_talent_07
+  publicName: Kindred Hide Safe Return
+  cost: 3
+  requires: []
+  effectFlags:
+  - kindred_hide_effect_07
+  payToUnlock: false
+- id: kindred_hide_talent_08
+  publicName: Kindred Hide Field Note
+  cost: 4
+  requires: []
+  effectFlags:
+  - kindred_hide_effect_08
+  payToUnlock: false
+- id: kindred_hide_talent_09
+  publicName: Kindred Hide Steady Pace
+  cost: 1
+  requires:
+  - kindred_hide_talent_08
+  effectFlags:
+  - kindred_hide_effect_09
+  payToUnlock: false
+- id: kindred_hide_talent_10
+  publicName: Kindred Hide Clear Signal
+  cost: 2
+  requires: []
+  effectFlags:
+  - kindred_hide_effect_10
+  payToUnlock: false
+- id: kindred_hide_talent_11
+  publicName: Kindred Hide Warm Welcome
+  cost: 3
+  requires: []
+  effectFlags:
+  - kindred_hide_effect_11
+  payToUnlock: false
+- id: kindred_hide_talent_12
+  publicName: Kindred Hide Small Courage
+  cost: 4
+  requires: []
+  effectFlags:
+  - kindred_hide_effect_12
+  payToUnlock: false
+- id: kindred_hide_talent_13
+  publicName: Kindred Hide Repair Habit
+  cost: 1
+  requires:
+  - kindred_hide_talent_12
+  effectFlags:
+  - kindred_hide_effect_13
+  payToUnlock: false
+- id: kindred_hide_talent_14
+  publicName: Kindred Hide Trust Mark
+  cost: 2
+  requires: []
+  effectFlags:
+  - kindred_hide_effect_14
+  payToUnlock: false
+- id: kindred_hide_talent_15
+  publicName: Kindred Hide Second Look
+  cost: 3
+  requires: []
+  effectFlags:
+  - kindred_hide_effect_15
+  payToUnlock: false
+- id: kindred_hide_talent_16
+  publicName: Kindred Hide Closing Grace
+  cost: 4
+  requires: []
+  effectFlags:
+  - kindred_hide_effect_16
+  payToUnlock: false
+evalProbes:
+- id: kindred_hide_eval_01
+  given:
+    energy: 8
+    placeId: kindred_hide_place_01
+    turn: 1
+  action:
+    verbId: rest
+    targetId: kindred_hide_interact_01
+  expectedLedger:
+    turn: 2
+    lastAction: rest
+    placeId: kindred_hide_place_01
+  forbiddenProse:
+  - do not claim an uncommitted numeric reward
+  - do not alter damage, gold, ownership, or a score outside expectedLedger
+- id: kindred_hide_eval_02
+  given:
+    energy: 8
+    placeId: kindred_hide_place_02
+    turn: 2
+  action:
+    verbId: repair
+    targetId: kindred_hide_interact_02
+  expectedLedger:
+    turn: 3
+    lastAction: repair
+    placeId: kindred_hide_place_02
+  forbiddenProse:
+  - do not claim an uncommitted numeric reward
+  - do not alter damage, gold, ownership, or a score outside expectedLedger
+- id: kindred_hide_eval_03
+  given:
+    energy: 8
+    placeId: kindred_hide_place_03
+    turn: 3
+  action:
+    verbId: tend
+    targetId: kindred_hide_interact_03
+  expectedLedger:
+    turn: 4
+    lastAction: tend
+    placeId: kindred_hide_place_03
+  forbiddenProse:
+  - do not claim an uncommitted numeric reward
+  - do not alter damage, gold, ownership, or a score outside expectedLedger
+- id: kindred_hide_eval_04
+  given:
+    energy: 8
+    placeId: kindred_hide_place_04
+    turn: 4
+  action:
+    verbId: craft
+    targetId: kindred_hide_interact_04
+  expectedLedger:
+    turn: 5
+    lastAction: craft
+    placeId: kindred_hide_place_04
+  forbiddenProse:
+  - do not claim an uncommitted numeric reward
+  - do not alter damage, gold, ownership, or a score outside expectedLedger
+- id: kindred_hide_eval_05
+  given:
+    energy: 8
+    placeId: kindred_hide_place_05
+    turn: 5
+  action:
+    verbId: cook
+    targetId: kindred_hide_interact_05
+  expectedLedger:
+    turn: 6
+    lastAction: cook
+    placeId: kindred_hide_place_05
+  forbiddenProse:
+  - do not claim an uncommitted numeric reward
+  - do not alter damage, gold, ownership, or a score outside expectedLedger
+- id: kindred_hide_eval_06
+  given:
+    energy: 8
+    placeId: kindred_hide_place_06
+    turn: 6
+  action:
+    verbId: bind_inn
+    targetId: kindred_hide_interact_06
+  expectedLedger:
+    turn: 7
+    lastAction: bind_inn
+    placeId: kindred_hide_place_06
+  forbiddenProse:
+  - do not claim an uncommitted numeric reward
+  - do not alter damage, gold, ownership, or a score outside expectedLedger
+- id: kindred_hide_eval_07
+  given:
+    energy: 8
+    placeId: kindred_hide_place_07
+    turn: 7
+  action:
+    verbId: inspect
+    targetId: kindred_hide_interact_07
+  expectedLedger:
+    turn: 8
+    lastAction: inspect
+    placeId: kindred_hide_place_07
+  forbiddenProse:
+  - do not claim an uncommitted numeric reward
+  - do not alter damage, gold, ownership, or a score outside expectedLedger
+- id: kindred_hide_eval_08
+  given:
+    energy: 8
+    placeId: kindred_hide_place_08
+    turn: 8
+  action:
+    verbId: open
+    targetId: kindred_hide_interact_08
+  expectedLedger:
+    turn: 9
+    lastAction: open
+    placeId: kindred_hide_place_08
+  forbiddenProse:
+  - do not claim an uncommitted numeric reward
+  - do not alter damage, gold, ownership, or a score outside expectedLedger
+- id: kindred_hide_eval_09
+  given:
+    energy: 8
+    placeId: kindred_hide_place_01
+    turn: 9
+  action:
+    verbId: carry
+    targetId: kindred_hide_interact_09
+  expectedLedger:
+    turn: 10
+    lastAction: carry
+    placeId: kindred_hide_place_01
+  forbiddenProse:
+  - do not claim an uncommitted numeric reward
+  - do not alter damage, gold, ownership, or a score outside expectedLedger
+- id: kindred_hide_eval_10
+  given:
+    energy: 8
+    placeId: kindred_hide_place_02
+    turn: 10
+  action:
+    verbId: clean
+    targetId: kindred_hide_interact_10
+  expectedLedger:
+    turn: 11
+    lastAction: clean
+    placeId: kindred_hide_place_02
+  forbiddenProse:
+  - do not claim an uncommitted numeric reward
+  - do not alter damage, gold, ownership, or a score outside expectedLedger
+- id: kindred_hide_eval_11
+  given:
+    energy: 8
+    placeId: kindred_hide_place_03
+    turn: 11
+  action:
+    verbId: signal
+    targetId: kindred_hide_interact_11
+  expectedLedger:
+    turn: 12
+    lastAction: signal
+    placeId: kindred_hide_place_03
+  forbiddenProse:
+  - do not claim an uncommitted numeric reward
+  - do not alter damage, gold, ownership, or a score outside expectedLedger
+- id: kindred_hide_eval_12
+  given:
+    energy: 8
+    placeId: kindred_hide_place_04
+    turn: 12
+  action:
+    verbId: record
+    targetId: kindred_hide_interact_12
+  expectedLedger:
+    turn: 13
+    lastAction: record
+    placeId: kindred_hide_place_04
+  forbiddenProse:
+  - do not claim an uncommitted numeric reward
+  - do not alter damage, gold, ownership, or a score outside expectedLedger
+- id: kindred_hide_eval_13
+  given:
+    energy: 8
+    placeId: kindred_hide_place_05
+    turn: 13
+  action:
+    verbId: rest
+    targetId: kindred_hide_interact_01
+  expectedLedger:
+    turn: 14
+    lastAction: rest
+    placeId: kindred_hide_place_05
+  forbiddenProse:
+  - do not claim an uncommitted numeric reward
+  - do not alter damage, gold, ownership, or a score outside expectedLedger
+- id: kindred_hide_eval_14
+  given:
+    energy: 8
+    placeId: kindred_hide_place_06
+    turn: 14
+  action:
+    verbId: repair
+    targetId: kindred_hide_interact_02
+  expectedLedger:
+    turn: 15
+    lastAction: repair
+    placeId: kindred_hide_place_06
+  forbiddenProse:
+  - do not claim an uncommitted numeric reward
+  - do not alter damage, gold, ownership, or a score outside expectedLedger
+- id: kindred_hide_eval_15
+  given:
+    energy: 8
+    placeId: kindred_hide_place_07
+    turn: 15
+  action:
+    verbId: tend
+    targetId: kindred_hide_interact_03
+  expectedLedger:
+    turn: 16
+    lastAction: tend
+    placeId: kindred_hide_place_07
+  forbiddenProse:
+  - do not claim an uncommitted numeric reward
+  - do not alter damage, gold, ownership, or a score outside expectedLedger
+wallets:
+  goldName: Hide Buttons
+  cosmeticTokenName: Moss Charms
+  noConversion: true
+  prohibited:
+  - outcomes
+  - lockout skips
+  - catch rate
+  - raid clears
+  - random power packs
+  - gacha
+  - loot boxes
+dailyCaps:
+  contractsPerDay: 3
+  goldFromRepeatables: 90
+  weeklyBossLockout: per-character per-boss
+divergenceRecords:
+- id: kindred_hide_walkaway_01
+  choice: walk away from a local obligation
+  recordKey: kindred_hide_divergence_01
+  effect: Alternate dialogue and a non-punitive follow-up route.
+- id: kindred_hide_walkaway_02
+  choice: walk away from a local obligation
+  recordKey: kindred_hide_divergence_02
+  effect: Alternate dialogue and a non-punitive follow-up route.
+- id: kindred_hide_walkaway_03
+  choice: walk away from a local obligation
+  recordKey: kindred_hide_divergence_03
+  effect: Alternate dialogue and a non-punitive follow-up route.

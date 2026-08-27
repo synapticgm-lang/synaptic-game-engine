@@ -1,0 +1,2473 @@
+{
+  "ash-tide-compact": {
+    "title": "The Ash-Tide Compact",
+    "mode": "Classic faction fantasy",
+    "pitch": "Ash Compact and Tide Covenant contest a failing treaty road.",
+    "signatureEnemies": [
+      {
+        "id": "ash-tide-compact.signature.01",
+        "name": "Ember Warden 1",
+        "role": "scout",
+        "tier": 1
+      },
+      {
+        "id": "ash-tide-compact.signature.02",
+        "name": "Tide Rover 2",
+        "role": "guard",
+        "tier": 2
+      },
+      {
+        "id": "ash-tide-compact.signature.03",
+        "name": "Gale Mason 3",
+        "role": "brute",
+        "tier": 3
+      },
+      {
+        "id": "ash-tide-compact.signature.04",
+        "name": "Root Whisper 4",
+        "role": "mystic",
+        "tier": 4
+      },
+      {
+        "id": "ash-tide-compact.signature.05",
+        "name": "Stone Runner 5",
+        "role": "leader",
+        "tier": 5
+      },
+      {
+        "id": "ash-tide-compact.signature.06",
+        "name": "Veil Keeper 6",
+        "role": "scout",
+        "tier": 1
+      },
+      {
+        "id": "ash-tide-compact.signature.07",
+        "name": "Spark Warden 7",
+        "role": "guard",
+        "tier": 2
+      },
+      {
+        "id": "ash-tide-compact.signature.08",
+        "name": "Gloom Rover 8",
+        "role": "brute",
+        "tier": 3
+      },
+      {
+        "id": "ash-tide-compact.signature.09",
+        "name": "Gleam Mason 9",
+        "role": "mystic",
+        "tier": 4
+      },
+      {
+        "id": "ash-tide-compact.signature.10",
+        "name": "Bloom Whisper 10",
+        "role": "leader",
+        "tier": 5
+      },
+      {
+        "id": "ash-tide-compact.signature.11",
+        "name": "Ember Runner 11",
+        "role": "scout",
+        "tier": 1
+      },
+      {
+        "id": "ash-tide-compact.signature.12",
+        "name": "Tide Keeper 12",
+        "role": "guard",
+        "tier": 2
+      },
+      {
+        "id": "ash-tide-compact.signature.13",
+        "name": "Gale Warden 13",
+        "role": "brute",
+        "tier": 3
+      },
+      {
+        "id": "ash-tide-compact.signature.14",
+        "name": "Root Rover 14",
+        "role": "mystic",
+        "tier": 4
+      },
+      {
+        "id": "ash-tide-compact.signature.15",
+        "name": "Stone Mason 15",
+        "role": "leader",
+        "tier": 5
+      },
+      {
+        "id": "ash-tide-compact.signature.16",
+        "name": "Veil Whisper 16",
+        "role": "scout",
+        "tier": 1
+      },
+      {
+        "id": "ash-tide-compact.signature.17",
+        "name": "Spark Runner 17",
+        "role": "guard",
+        "tier": 2
+      },
+      {
+        "id": "ash-tide-compact.signature.18",
+        "name": "Gloom Keeper 18",
+        "role": "brute",
+        "tier": 3
+      },
+      {
+        "id": "ash-tide-compact.signature.19",
+        "name": "Gleam Warden 19",
+        "role": "mystic",
+        "tier": 4
+      },
+      {
+        "id": "ash-tide-compact.signature.20",
+        "name": "Bloom Rover 20",
+        "role": "leader",
+        "tier": 5
+      },
+      {
+        "id": "ash-tide-compact.signature.21",
+        "name": "Ember Mason 21",
+        "role": "scout",
+        "tier": 1
+      },
+      {
+        "id": "ash-tide-compact.signature.22",
+        "name": "Tide Whisper 22",
+        "role": "guard",
+        "tier": 2
+      },
+      {
+        "id": "ash-tide-compact.signature.23",
+        "name": "Gale Runner 23",
+        "role": "brute",
+        "tier": 3
+      },
+      {
+        "id": "ash-tide-compact.signature.24",
+        "name": "Root Keeper 24",
+        "role": "mystic",
+        "tier": 4
+      },
+      {
+        "id": "ash-tide-compact.signature.25",
+        "name": "Stone Warden 25",
+        "role": "leader",
+        "tier": 5
+      },
+      {
+        "id": "ash-tide-compact.signature.26",
+        "name": "Veil Rover 26",
+        "role": "scout",
+        "tier": 1
+      },
+      {
+        "id": "ash-tide-compact.signature.27",
+        "name": "Spark Mason 27",
+        "role": "guard",
+        "tier": 2
+      },
+      {
+        "id": "ash-tide-compact.signature.28",
+        "name": "Gloom Whisper 28",
+        "role": "brute",
+        "tier": 3
+      },
+      {
+        "id": "ash-tide-compact.signature.29",
+        "name": "Gleam Runner 29",
+        "role": "mystic",
+        "tier": 4
+      },
+      {
+        "id": "ash-tide-compact.signature.30",
+        "name": "Bloom Keeper 30",
+        "role": "leader",
+        "tier": 5
+      }
+    ],
+    "materials": [
+      {
+        "id": "ash-tide-compact.material.01",
+        "name": "ember-fiber",
+        "use": "repair"
+      },
+      {
+        "id": "ash-tide-compact.material.02",
+        "name": "tide-ore",
+        "use": "craft"
+      },
+      {
+        "id": "ash-tide-compact.material.03",
+        "name": "gale-resin",
+        "use": "trade"
+      },
+      {
+        "id": "ash-tide-compact.material.04",
+        "name": "root-salt",
+        "use": "quest"
+      },
+      {
+        "id": "ash-tide-compact.material.05",
+        "name": "stone-glass",
+        "use": "repair"
+      },
+      {
+        "id": "ash-tide-compact.material.06",
+        "name": "veil-fiber",
+        "use": "craft"
+      },
+      {
+        "id": "ash-tide-compact.material.07",
+        "name": "spark-ore",
+        "use": "trade"
+      },
+      {
+        "id": "ash-tide-compact.material.08",
+        "name": "gloom-resin",
+        "use": "quest"
+      },
+      {
+        "id": "ash-tide-compact.material.09",
+        "name": "gleam-salt",
+        "use": "repair"
+      },
+      {
+        "id": "ash-tide-compact.material.10",
+        "name": "bloom-glass",
+        "use": "craft"
+      },
+      {
+        "id": "ash-tide-compact.material.11",
+        "name": "ember-fiber",
+        "use": "trade"
+      },
+      {
+        "id": "ash-tide-compact.material.12",
+        "name": "tide-ore",
+        "use": "quest"
+      },
+      {
+        "id": "ash-tide-compact.material.13",
+        "name": "gale-resin",
+        "use": "repair"
+      },
+      {
+        "id": "ash-tide-compact.material.14",
+        "name": "root-salt",
+        "use": "craft"
+      },
+      {
+        "id": "ash-tide-compact.material.15",
+        "name": "stone-glass",
+        "use": "trade"
+      },
+      {
+        "id": "ash-tide-compact.material.16",
+        "name": "veil-fiber",
+        "use": "quest"
+      },
+      {
+        "id": "ash-tide-compact.material.17",
+        "name": "spark-ore",
+        "use": "repair"
+      },
+      {
+        "id": "ash-tide-compact.material.18",
+        "name": "gloom-resin",
+        "use": "craft"
+      },
+      {
+        "id": "ash-tide-compact.material.19",
+        "name": "gleam-salt",
+        "use": "trade"
+      },
+      {
+        "id": "ash-tide-compact.material.20",
+        "name": "bloom-glass",
+        "use": "quest"
+      }
+    ],
+    "questSeeds": [
+      "The Ash-Tide Compact: resolve find who altered a public route ledger.",
+      "The Ash-Tide Compact: resolve escort a disputed supply crate through a closed district.",
+      "The Ash-Tide Compact: resolve decide whether to reveal a harmful true map.",
+      "The Ash-Tide Compact: resolve recover a promise before it is sold.",
+      "The Ash-Tide Compact: resolve trace a rumor back to its first witness.",
+      "The Ash-Tide Compact: resolve repair a gate without restoring its old injustice.",
+      "The Ash-Tide Compact: resolve choose the keeper of a dangerous key orchard.",
+      "The Ash-Tide Compact: resolve stop a faction clock without rewarding its cruelty.",
+      "The Ash-Tide Compact: resolve prove whether a missing npc left voluntarily.",
+      "The Ash-Tide Compact: resolve negotiate a rescue that creates a new debt.",
+      "The Ash-Tide Compact: resolve clear a dungeon room without resetting its history.",
+      "The Ash-Tide Compact: resolve expose a forged weather permit.",
+      "The Ash-Tide Compact: resolve find a safe path for a displaced household.",
+      "The Ash-Tide Compact: resolve recover a tool that remembers its owner.",
+      "The Ash-Tide Compact: resolve decide which of two true stories enters the archive."
+    ],
+    "expeditionSeeds": [
+      "The Ash-Tide Compact: expedition into the sealed stair to recover evidence.",
+      "The Ash-Tide Compact: expedition into the flooded vault to secure a route.",
+      "The Ash-Tide Compact: expedition into the wind quarry to stop a clock.",
+      "The Ash-Tide Compact: expedition into the lantern trench to map a return.",
+      "The Ash-Tide Compact: expedition into the ash orchard to rescue a team.",
+      "The Ash-Tide Compact: expedition into the sealed stair to recover evidence.",
+      "The Ash-Tide Compact: expedition into the flooded vault to secure a route.",
+      "The Ash-Tide Compact: expedition into the wind quarry to stop a clock.",
+      "The Ash-Tide Compact: expedition into the lantern trench to map a return.",
+      "The Ash-Tide Compact: expedition into the ash orchard to rescue a team."
+    ],
+    "factionClocks": [
+      {
+        "id": "ash-tide-compact.clock.1",
+        "stageNames": [
+          "rumor",
+          "pressure",
+          "turning",
+          "aftermath"
+        ],
+        "trigger": "Ember resource falls below threshold or player-visible deadline expires",
+        "interrupt": "investigate, negotiate, reroute, or spend a declared resource"
+      },
+      {
+        "id": "ash-tide-compact.clock.2",
+        "stageNames": [
+          "rumor",
+          "pressure",
+          "turning",
+          "aftermath"
+        ],
+        "trigger": "Tide resource falls below threshold or player-visible deadline expires",
+        "interrupt": "investigate, negotiate, reroute, or spend a declared resource"
+      },
+      {
+        "id": "ash-tide-compact.clock.3",
+        "stageNames": [
+          "rumor",
+          "pressure",
+          "turning",
+          "aftermath"
+        ],
+        "trigger": "Gale resource falls below threshold or player-visible deadline expires",
+        "interrupt": "investigate, negotiate, reroute, or spend a declared resource"
+      }
+    ]
+  },
+  "understep-delves": {
+    "title": "Understep Delves",
+    "mode": "Dungeon-delver deep dark",
+    "pitch": "Expeditions descend changing strata and must return with the truth intact.",
+    "signatureEnemies": [
+      {
+        "id": "understep-delves.signature.01",
+        "name": "Tide Warden 1",
+        "role": "scout",
+        "tier": 1
+      },
+      {
+        "id": "understep-delves.signature.02",
+        "name": "Gale Rover 2",
+        "role": "guard",
+        "tier": 2
+      },
+      {
+        "id": "understep-delves.signature.03",
+        "name": "Root Mason 3",
+        "role": "brute",
+        "tier": 3
+      },
+      {
+        "id": "understep-delves.signature.04",
+        "name": "Stone Whisper 4",
+        "role": "mystic",
+        "tier": 4
+      },
+      {
+        "id": "understep-delves.signature.05",
+        "name": "Veil Runner 5",
+        "role": "leader",
+        "tier": 5
+      },
+      {
+        "id": "understep-delves.signature.06",
+        "name": "Spark Keeper 6",
+        "role": "scout",
+        "tier": 1
+      },
+      {
+        "id": "understep-delves.signature.07",
+        "name": "Gloom Warden 7",
+        "role": "guard",
+        "tier": 2
+      },
+      {
+        "id": "understep-delves.signature.08",
+        "name": "Gleam Rover 8",
+        "role": "brute",
+        "tier": 3
+      },
+      {
+        "id": "understep-delves.signature.09",
+        "name": "Bloom Mason 9",
+        "role": "mystic",
+        "tier": 4
+      },
+      {
+        "id": "understep-delves.signature.10",
+        "name": "Ember Whisper 10",
+        "role": "leader",
+        "tier": 5
+      },
+      {
+        "id": "understep-delves.signature.11",
+        "name": "Tide Runner 11",
+        "role": "scout",
+        "tier": 1
+      },
+      {
+        "id": "understep-delves.signature.12",
+        "name": "Gale Keeper 12",
+        "role": "guard",
+        "tier": 2
+      },
+      {
+        "id": "understep-delves.signature.13",
+        "name": "Root Warden 13",
+        "role": "brute",
+        "tier": 3
+      },
+      {
+        "id": "understep-delves.signature.14",
+        "name": "Stone Rover 14",
+        "role": "mystic",
+        "tier": 4
+      },
+      {
+        "id": "understep-delves.signature.15",
+        "name": "Veil Mason 15",
+        "role": "leader",
+        "tier": 5
+      },
+      {
+        "id": "understep-delves.signature.16",
+        "name": "Spark Whisper 16",
+        "role": "scout",
+        "tier": 1
+      },
+      {
+        "id": "understep-delves.signature.17",
+        "name": "Gloom Runner 17",
+        "role": "guard",
+        "tier": 2
+      },
+      {
+        "id": "understep-delves.signature.18",
+        "name": "Gleam Keeper 18",
+        "role": "brute",
+        "tier": 3
+      },
+      {
+        "id": "understep-delves.signature.19",
+        "name": "Bloom Warden 19",
+        "role": "mystic",
+        "tier": 4
+      },
+      {
+        "id": "understep-delves.signature.20",
+        "name": "Ember Rover 20",
+        "role": "leader",
+        "tier": 5
+      },
+      {
+        "id": "understep-delves.signature.21",
+        "name": "Tide Mason 21",
+        "role": "scout",
+        "tier": 1
+      },
+      {
+        "id": "understep-delves.signature.22",
+        "name": "Gale Whisper 22",
+        "role": "guard",
+        "tier": 2
+      },
+      {
+        "id": "understep-delves.signature.23",
+        "name": "Root Runner 23",
+        "role": "brute",
+        "tier": 3
+      },
+      {
+        "id": "understep-delves.signature.24",
+        "name": "Stone Keeper 24",
+        "role": "mystic",
+        "tier": 4
+      },
+      {
+        "id": "understep-delves.signature.25",
+        "name": "Veil Warden 25",
+        "role": "leader",
+        "tier": 5
+      },
+      {
+        "id": "understep-delves.signature.26",
+        "name": "Spark Rover 26",
+        "role": "scout",
+        "tier": 1
+      },
+      {
+        "id": "understep-delves.signature.27",
+        "name": "Gloom Mason 27",
+        "role": "guard",
+        "tier": 2
+      },
+      {
+        "id": "understep-delves.signature.28",
+        "name": "Gleam Whisper 28",
+        "role": "brute",
+        "tier": 3
+      },
+      {
+        "id": "understep-delves.signature.29",
+        "name": "Bloom Runner 29",
+        "role": "mystic",
+        "tier": 4
+      },
+      {
+        "id": "understep-delves.signature.30",
+        "name": "Ember Keeper 30",
+        "role": "leader",
+        "tier": 5
+      }
+    ],
+    "materials": [
+      {
+        "id": "understep-delves.material.01",
+        "name": "tide-fiber",
+        "use": "repair"
+      },
+      {
+        "id": "understep-delves.material.02",
+        "name": "gale-ore",
+        "use": "craft"
+      },
+      {
+        "id": "understep-delves.material.03",
+        "name": "root-resin",
+        "use": "trade"
+      },
+      {
+        "id": "understep-delves.material.04",
+        "name": "stone-salt",
+        "use": "quest"
+      },
+      {
+        "id": "understep-delves.material.05",
+        "name": "veil-glass",
+        "use": "repair"
+      },
+      {
+        "id": "understep-delves.material.06",
+        "name": "spark-fiber",
+        "use": "craft"
+      },
+      {
+        "id": "understep-delves.material.07",
+        "name": "gloom-ore",
+        "use": "trade"
+      },
+      {
+        "id": "understep-delves.material.08",
+        "name": "gleam-resin",
+        "use": "quest"
+      },
+      {
+        "id": "understep-delves.material.09",
+        "name": "bloom-salt",
+        "use": "repair"
+      },
+      {
+        "id": "understep-delves.material.10",
+        "name": "ember-glass",
+        "use": "craft"
+      },
+      {
+        "id": "understep-delves.material.11",
+        "name": "tide-fiber",
+        "use": "trade"
+      },
+      {
+        "id": "understep-delves.material.12",
+        "name": "gale-ore",
+        "use": "quest"
+      },
+      {
+        "id": "understep-delves.material.13",
+        "name": "root-resin",
+        "use": "repair"
+      },
+      {
+        "id": "understep-delves.material.14",
+        "name": "stone-salt",
+        "use": "craft"
+      },
+      {
+        "id": "understep-delves.material.15",
+        "name": "veil-glass",
+        "use": "trade"
+      },
+      {
+        "id": "understep-delves.material.16",
+        "name": "spark-fiber",
+        "use": "quest"
+      },
+      {
+        "id": "understep-delves.material.17",
+        "name": "gloom-ore",
+        "use": "repair"
+      },
+      {
+        "id": "understep-delves.material.18",
+        "name": "gleam-resin",
+        "use": "craft"
+      },
+      {
+        "id": "understep-delves.material.19",
+        "name": "bloom-salt",
+        "use": "trade"
+      },
+      {
+        "id": "understep-delves.material.20",
+        "name": "ember-glass",
+        "use": "quest"
+      }
+    ],
+    "questSeeds": [
+      "Understep Delves: resolve recover a promise before it is sold.",
+      "Understep Delves: resolve trace a rumor back to its first witness.",
+      "Understep Delves: resolve repair a gate without restoring its old injustice.",
+      "Understep Delves: resolve choose the keeper of a dangerous key orchard.",
+      "Understep Delves: resolve stop a faction clock without rewarding its cruelty.",
+      "Understep Delves: resolve prove whether a missing npc left voluntarily.",
+      "Understep Delves: resolve negotiate a rescue that creates a new debt.",
+      "Understep Delves: resolve clear a dungeon room without resetting its history.",
+      "Understep Delves: resolve expose a forged weather permit.",
+      "Understep Delves: resolve find a safe path for a displaced household.",
+      "Understep Delves: resolve recover a tool that remembers its owner.",
+      "Understep Delves: resolve decide which of two true stories enters the archive.",
+      "Understep Delves: resolve break a supply monopoly without collapsing the market.",
+      "Understep Delves: resolve follow a rival\u2019s fair but dangerous challenge.",
+      "Understep Delves: resolve return a creature to a habitat that has changed."
+    ],
+    "expeditionSeeds": [
+      "Understep Delves: expedition into the sealed stair to recover evidence.",
+      "Understep Delves: expedition into the flooded vault to secure a route.",
+      "Understep Delves: expedition into the wind quarry to stop a clock.",
+      "Understep Delves: expedition into the lantern trench to map a return.",
+      "Understep Delves: expedition into the ash orchard to rescue a team.",
+      "Understep Delves: expedition into the sealed stair to recover evidence.",
+      "Understep Delves: expedition into the flooded vault to secure a route.",
+      "Understep Delves: expedition into the wind quarry to stop a clock.",
+      "Understep Delves: expedition into the lantern trench to map a return.",
+      "Understep Delves: expedition into the ash orchard to rescue a team."
+    ],
+    "factionClocks": [
+      {
+        "id": "understep-delves.clock.1",
+        "stageNames": [
+          "rumor",
+          "pressure",
+          "turning",
+          "aftermath"
+        ],
+        "trigger": "Tide resource falls below threshold or player-visible deadline expires",
+        "interrupt": "investigate, negotiate, reroute, or spend a declared resource"
+      },
+      {
+        "id": "understep-delves.clock.2",
+        "stageNames": [
+          "rumor",
+          "pressure",
+          "turning",
+          "aftermath"
+        ],
+        "trigger": "Gale resource falls below threshold or player-visible deadline expires",
+        "interrupt": "investigate, negotiate, reroute, or spend a declared resource"
+      },
+      {
+        "id": "understep-delves.clock.3",
+        "stageNames": [
+          "rumor",
+          "pressure",
+          "turning",
+          "aftermath"
+        ],
+        "trigger": "Root resource falls below threshold or player-visible deadline expires",
+        "interrupt": "investigate, negotiate, reroute, or spend a declared resource"
+      }
+    ]
+  },
+  "brinewatch-ledgers": {
+    "title": "Brinewatch Ledgers",
+    "mode": "Coastal salt-trade intrigue",
+    "pitch": "Harbor families, salt routes and storm debts reshape a coastal city.",
+    "signatureEnemies": [
+      {
+        "id": "brinewatch-ledgers.signature.01",
+        "name": "Gale Warden 1",
+        "role": "scout",
+        "tier": 1
+      },
+      {
+        "id": "brinewatch-ledgers.signature.02",
+        "name": "Root Rover 2",
+        "role": "guard",
+        "tier": 2
+      },
+      {
+        "id": "brinewatch-ledgers.signature.03",
+        "name": "Stone Mason 3",
+        "role": "brute",
+        "tier": 3
+      },
+      {
+        "id": "brinewatch-ledgers.signature.04",
+        "name": "Veil Whisper 4",
+        "role": "mystic",
+        "tier": 4
+      },
+      {
+        "id": "brinewatch-ledgers.signature.05",
+        "name": "Spark Runner 5",
+        "role": "leader",
+        "tier": 5
+      },
+      {
+        "id": "brinewatch-ledgers.signature.06",
+        "name": "Gloom Keeper 6",
+        "role": "scout",
+        "tier": 1
+      },
+      {
+        "id": "brinewatch-ledgers.signature.07",
+        "name": "Gleam Warden 7",
+        "role": "guard",
+        "tier": 2
+      },
+      {
+        "id": "brinewatch-ledgers.signature.08",
+        "name": "Bloom Rover 8",
+        "role": "brute",
+        "tier": 3
+      },
+      {
+        "id": "brinewatch-ledgers.signature.09",
+        "name": "Ember Mason 9",
+        "role": "mystic",
+        "tier": 4
+      },
+      {
+        "id": "brinewatch-ledgers.signature.10",
+        "name": "Tide Whisper 10",
+        "role": "leader",
+        "tier": 5
+      },
+      {
+        "id": "brinewatch-ledgers.signature.11",
+        "name": "Gale Runner 11",
+        "role": "scout",
+        "tier": 1
+      },
+      {
+        "id": "brinewatch-ledgers.signature.12",
+        "name": "Root Keeper 12",
+        "role": "guard",
+        "tier": 2
+      },
+      {
+        "id": "brinewatch-ledgers.signature.13",
+        "name": "Stone Warden 13",
+        "role": "brute",
+        "tier": 3
+      },
+      {
+        "id": "brinewatch-ledgers.signature.14",
+        "name": "Veil Rover 14",
+        "role": "mystic",
+        "tier": 4
+      },
+      {
+        "id": "brinewatch-ledgers.signature.15",
+        "name": "Spark Mason 15",
+        "role": "leader",
+        "tier": 5
+      },
+      {
+        "id": "brinewatch-ledgers.signature.16",
+        "name": "Gloom Whisper 16",
+        "role": "scout",
+        "tier": 1
+      },
+      {
+        "id": "brinewatch-ledgers.signature.17",
+        "name": "Gleam Runner 17",
+        "role": "guard",
+        "tier": 2
+      },
+      {
+        "id": "brinewatch-ledgers.signature.18",
+        "name": "Bloom Keeper 18",
+        "role": "brute",
+        "tier": 3
+      },
+      {
+        "id": "brinewatch-ledgers.signature.19",
+        "name": "Ember Warden 19",
+        "role": "mystic",
+        "tier": 4
+      },
+      {
+        "id": "brinewatch-ledgers.signature.20",
+        "name": "Tide Rover 20",
+        "role": "leader",
+        "tier": 5
+      },
+      {
+        "id": "brinewatch-ledgers.signature.21",
+        "name": "Gale Mason 21",
+        "role": "scout",
+        "tier": 1
+      },
+      {
+        "id": "brinewatch-ledgers.signature.22",
+        "name": "Root Whisper 22",
+        "role": "guard",
+        "tier": 2
+      },
+      {
+        "id": "brinewatch-ledgers.signature.23",
+        "name": "Stone Runner 23",
+        "role": "brute",
+        "tier": 3
+      },
+      {
+        "id": "brinewatch-ledgers.signature.24",
+        "name": "Veil Keeper 24",
+        "role": "mystic",
+        "tier": 4
+      },
+      {
+        "id": "brinewatch-ledgers.signature.25",
+        "name": "Spark Warden 25",
+        "role": "leader",
+        "tier": 5
+      },
+      {
+        "id": "brinewatch-ledgers.signature.26",
+        "name": "Gloom Rover 26",
+        "role": "scout",
+        "tier": 1
+      },
+      {
+        "id": "brinewatch-ledgers.signature.27",
+        "name": "Gleam Mason 27",
+        "role": "guard",
+        "tier": 2
+      },
+      {
+        "id": "brinewatch-ledgers.signature.28",
+        "name": "Bloom Whisper 28",
+        "role": "brute",
+        "tier": 3
+      },
+      {
+        "id": "brinewatch-ledgers.signature.29",
+        "name": "Ember Runner 29",
+        "role": "mystic",
+        "tier": 4
+      },
+      {
+        "id": "brinewatch-ledgers.signature.30",
+        "name": "Tide Keeper 30",
+        "role": "leader",
+        "tier": 5
+      }
+    ],
+    "materials": [
+      {
+        "id": "brinewatch-ledgers.material.01",
+        "name": "gale-fiber",
+        "use": "repair"
+      },
+      {
+        "id": "brinewatch-ledgers.material.02",
+        "name": "root-ore",
+        "use": "craft"
+      },
+      {
+        "id": "brinewatch-ledgers.material.03",
+        "name": "stone-resin",
+        "use": "trade"
+      },
+      {
+        "id": "brinewatch-ledgers.material.04",
+        "name": "veil-salt",
+        "use": "quest"
+      },
+      {
+        "id": "brinewatch-ledgers.material.05",
+        "name": "spark-glass",
+        "use": "repair"
+      },
+      {
+        "id": "brinewatch-ledgers.material.06",
+        "name": "gloom-fiber",
+        "use": "craft"
+      },
+      {
+        "id": "brinewatch-ledgers.material.07",
+        "name": "gleam-ore",
+        "use": "trade"
+      },
+      {
+        "id": "brinewatch-ledgers.material.08",
+        "name": "bloom-resin",
+        "use": "quest"
+      },
+      {
+        "id": "brinewatch-ledgers.material.09",
+        "name": "ember-salt",
+        "use": "repair"
+      },
+      {
+        "id": "brinewatch-ledgers.material.10",
+        "name": "tide-glass",
+        "use": "craft"
+      },
+      {
+        "id": "brinewatch-ledgers.material.11",
+        "name": "gale-fiber",
+        "use": "trade"
+      },
+      {
+        "id": "brinewatch-ledgers.material.12",
+        "name": "root-ore",
+        "use": "quest"
+      },
+      {
+        "id": "brinewatch-ledgers.material.13",
+        "name": "stone-resin",
+        "use": "repair"
+      },
+      {
+        "id": "brinewatch-ledgers.material.14",
+        "name": "veil-salt",
+        "use": "craft"
+      },
+      {
+        "id": "brinewatch-ledgers.material.15",
+        "name": "spark-glass",
+        "use": "trade"
+      },
+      {
+        "id": "brinewatch-ledgers.material.16",
+        "name": "gloom-fiber",
+        "use": "quest"
+      },
+      {
+        "id": "brinewatch-ledgers.material.17",
+        "name": "gleam-ore",
+        "use": "repair"
+      },
+      {
+        "id": "brinewatch-ledgers.material.18",
+        "name": "bloom-resin",
+        "use": "craft"
+      },
+      {
+        "id": "brinewatch-ledgers.material.19",
+        "name": "ember-salt",
+        "use": "trade"
+      },
+      {
+        "id": "brinewatch-ledgers.material.20",
+        "name": "tide-glass",
+        "use": "quest"
+      }
+    ],
+    "questSeeds": [
+      "Brinewatch Ledgers: resolve choose the keeper of a dangerous key orchard.",
+      "Brinewatch Ledgers: resolve stop a faction clock without rewarding its cruelty.",
+      "Brinewatch Ledgers: resolve prove whether a missing npc left voluntarily.",
+      "Brinewatch Ledgers: resolve negotiate a rescue that creates a new debt.",
+      "Brinewatch Ledgers: resolve clear a dungeon room without resetting its history.",
+      "Brinewatch Ledgers: resolve expose a forged weather permit.",
+      "Brinewatch Ledgers: resolve find a safe path for a displaced household.",
+      "Brinewatch Ledgers: resolve recover a tool that remembers its owner.",
+      "Brinewatch Ledgers: resolve decide which of two true stories enters the archive.",
+      "Brinewatch Ledgers: resolve break a supply monopoly without collapsing the market.",
+      "Brinewatch Ledgers: resolve follow a rival\u2019s fair but dangerous challenge.",
+      "Brinewatch Ledgers: resolve return a creature to a habitat that has changed.",
+      "Brinewatch Ledgers: resolve resolve a border dispute using observed evidence.",
+      "Brinewatch Ledgers: resolve test a custom law against an unintended consequence.",
+      "Brinewatch Ledgers: resolve protect a festival from a nonviolent sabotage."
+    ],
+    "expeditionSeeds": [
+      "Brinewatch Ledgers: expedition into the sealed stair to recover evidence.",
+      "Brinewatch Ledgers: expedition into the flooded vault to secure a route.",
+      "Brinewatch Ledgers: expedition into the wind quarry to stop a clock.",
+      "Brinewatch Ledgers: expedition into the lantern trench to map a return.",
+      "Brinewatch Ledgers: expedition into the ash orchard to rescue a team.",
+      "Brinewatch Ledgers: expedition into the sealed stair to recover evidence.",
+      "Brinewatch Ledgers: expedition into the flooded vault to secure a route.",
+      "Brinewatch Ledgers: expedition into the wind quarry to stop a clock.",
+      "Brinewatch Ledgers: expedition into the lantern trench to map a return.",
+      "Brinewatch Ledgers: expedition into the ash orchard to rescue a team."
+    ],
+    "factionClocks": [
+      {
+        "id": "brinewatch-ledgers.clock.1",
+        "stageNames": [
+          "rumor",
+          "pressure",
+          "turning",
+          "aftermath"
+        ],
+        "trigger": "Gale resource falls below threshold or player-visible deadline expires",
+        "interrupt": "investigate, negotiate, reroute, or spend a declared resource"
+      },
+      {
+        "id": "brinewatch-ledgers.clock.2",
+        "stageNames": [
+          "rumor",
+          "pressure",
+          "turning",
+          "aftermath"
+        ],
+        "trigger": "Root resource falls below threshold or player-visible deadline expires",
+        "interrupt": "investigate, negotiate, reroute, or spend a declared resource"
+      },
+      {
+        "id": "brinewatch-ledgers.clock.3",
+        "stageNames": [
+          "rumor",
+          "pressure",
+          "turning",
+          "aftermath"
+        ],
+        "trigger": "Stone resource falls below threshold or player-visible deadline expires",
+        "interrupt": "investigate, negotiate, reroute, or spend a declared resource"
+      }
+    ]
+  },
+  "granite-stair-holds": {
+    "title": "Granite Stair Holds",
+    "mode": "Stone-and-stair mountain holds",
+    "pitch": "High holds endure avalanche politics and the cost of deep extraction.",
+    "signatureEnemies": [
+      {
+        "id": "granite-stair-holds.signature.01",
+        "name": "Root Warden 1",
+        "role": "scout",
+        "tier": 1
+      },
+      {
+        "id": "granite-stair-holds.signature.02",
+        "name": "Stone Rover 2",
+        "role": "guard",
+        "tier": 2
+      },
+      {
+        "id": "granite-stair-holds.signature.03",
+        "name": "Veil Mason 3",
+        "role": "brute",
+        "tier": 3
+      },
+      {
+        "id": "granite-stair-holds.signature.04",
+        "name": "Spark Whisper 4",
+        "role": "mystic",
+        "tier": 4
+      },
+      {
+        "id": "granite-stair-holds.signature.05",
+        "name": "Gloom Runner 5",
+        "role": "leader",
+        "tier": 5
+      },
+      {
+        "id": "granite-stair-holds.signature.06",
+        "name": "Gleam Keeper 6",
+        "role": "scout",
+        "tier": 1
+      },
+      {
+        "id": "granite-stair-holds.signature.07",
+        "name": "Bloom Warden 7",
+        "role": "guard",
+        "tier": 2
+      },
+      {
+        "id": "granite-stair-holds.signature.08",
+        "name": "Ember Rover 8",
+        "role": "brute",
+        "tier": 3
+      },
+      {
+        "id": "granite-stair-holds.signature.09",
+        "name": "Tide Mason 9",
+        "role": "mystic",
+        "tier": 4
+      },
+      {
+        "id": "granite-stair-holds.signature.10",
+        "name": "Gale Whisper 10",
+        "role": "leader",
+        "tier": 5
+      },
+      {
+        "id": "granite-stair-holds.signature.11",
+        "name": "Root Runner 11",
+        "role": "scout",
+        "tier": 1
+      },
+      {
+        "id": "granite-stair-holds.signature.12",
+        "name": "Stone Keeper 12",
+        "role": "guard",
+        "tier": 2
+      },
+      {
+        "id": "granite-stair-holds.signature.13",
+        "name": "Veil Warden 13",
+        "role": "brute",
+        "tier": 3
+      },
+      {
+        "id": "granite-stair-holds.signature.14",
+        "name": "Spark Rover 14",
+        "role": "mystic",
+        "tier": 4
+      },
+      {
+        "id": "granite-stair-holds.signature.15",
+        "name": "Gloom Mason 15",
+        "role": "leader",
+        "tier": 5
+      },
+      {
+        "id": "granite-stair-holds.signature.16",
+        "name": "Gleam Whisper 16",
+        "role": "scout",
+        "tier": 1
+      },
+      {
+        "id": "granite-stair-holds.signature.17",
+        "name": "Bloom Runner 17",
+        "role": "guard",
+        "tier": 2
+      },
+      {
+        "id": "granite-stair-holds.signature.18",
+        "name": "Ember Keeper 18",
+        "role": "brute",
+        "tier": 3
+      },
+      {
+        "id": "granite-stair-holds.signature.19",
+        "name": "Tide Warden 19",
+        "role": "mystic",
+        "tier": 4
+      },
+      {
+        "id": "granite-stair-holds.signature.20",
+        "name": "Gale Rover 20",
+        "role": "leader",
+        "tier": 5
+      },
+      {
+        "id": "granite-stair-holds.signature.21",
+        "name": "Root Mason 21",
+        "role": "scout",
+        "tier": 1
+      },
+      {
+        "id": "granite-stair-holds.signature.22",
+        "name": "Stone Whisper 22",
+        "role": "guard",
+        "tier": 2
+      },
+      {
+        "id": "granite-stair-holds.signature.23",
+        "name": "Veil Runner 23",
+        "role": "brute",
+        "tier": 3
+      },
+      {
+        "id": "granite-stair-holds.signature.24",
+        "name": "Spark Keeper 24",
+        "role": "mystic",
+        "tier": 4
+      },
+      {
+        "id": "granite-stair-holds.signature.25",
+        "name": "Gloom Warden 25",
+        "role": "leader",
+        "tier": 5
+      },
+      {
+        "id": "granite-stair-holds.signature.26",
+        "name": "Gleam Rover 26",
+        "role": "scout",
+        "tier": 1
+      },
+      {
+        "id": "granite-stair-holds.signature.27",
+        "name": "Bloom Mason 27",
+        "role": "guard",
+        "tier": 2
+      },
+      {
+        "id": "granite-stair-holds.signature.28",
+        "name": "Ember Whisper 28",
+        "role": "brute",
+        "tier": 3
+      },
+      {
+        "id": "granite-stair-holds.signature.29",
+        "name": "Tide Runner 29",
+        "role": "mystic",
+        "tier": 4
+      },
+      {
+        "id": "granite-stair-holds.signature.30",
+        "name": "Gale Keeper 30",
+        "role": "leader",
+        "tier": 5
+      }
+    ],
+    "materials": [
+      {
+        "id": "granite-stair-holds.material.01",
+        "name": "root-fiber",
+        "use": "repair"
+      },
+      {
+        "id": "granite-stair-holds.material.02",
+        "name": "stone-ore",
+        "use": "craft"
+      },
+      {
+        "id": "granite-stair-holds.material.03",
+        "name": "veil-resin",
+        "use": "trade"
+      },
+      {
+        "id": "granite-stair-holds.material.04",
+        "name": "spark-salt",
+        "use": "quest"
+      },
+      {
+        "id": "granite-stair-holds.material.05",
+        "name": "gloom-glass",
+        "use": "repair"
+      },
+      {
+        "id": "granite-stair-holds.material.06",
+        "name": "gleam-fiber",
+        "use": "craft"
+      },
+      {
+        "id": "granite-stair-holds.material.07",
+        "name": "bloom-ore",
+        "use": "trade"
+      },
+      {
+        "id": "granite-stair-holds.material.08",
+        "name": "ember-resin",
+        "use": "quest"
+      },
+      {
+        "id": "granite-stair-holds.material.09",
+        "name": "tide-salt",
+        "use": "repair"
+      },
+      {
+        "id": "granite-stair-holds.material.10",
+        "name": "gale-glass",
+        "use": "craft"
+      },
+      {
+        "id": "granite-stair-holds.material.11",
+        "name": "root-fiber",
+        "use": "trade"
+      },
+      {
+        "id": "granite-stair-holds.material.12",
+        "name": "stone-ore",
+        "use": "quest"
+      },
+      {
+        "id": "granite-stair-holds.material.13",
+        "name": "veil-resin",
+        "use": "repair"
+      },
+      {
+        "id": "granite-stair-holds.material.14",
+        "name": "spark-salt",
+        "use": "craft"
+      },
+      {
+        "id": "granite-stair-holds.material.15",
+        "name": "gloom-glass",
+        "use": "trade"
+      },
+      {
+        "id": "granite-stair-holds.material.16",
+        "name": "gleam-fiber",
+        "use": "quest"
+      },
+      {
+        "id": "granite-stair-holds.material.17",
+        "name": "bloom-ore",
+        "use": "repair"
+      },
+      {
+        "id": "granite-stair-holds.material.18",
+        "name": "ember-resin",
+        "use": "craft"
+      },
+      {
+        "id": "granite-stair-holds.material.19",
+        "name": "tide-salt",
+        "use": "trade"
+      },
+      {
+        "id": "granite-stair-holds.material.20",
+        "name": "gale-glass",
+        "use": "quest"
+      }
+    ],
+    "questSeeds": [
+      "Granite Stair Holds: resolve negotiate a rescue that creates a new debt.",
+      "Granite Stair Holds: resolve clear a dungeon room without resetting its history.",
+      "Granite Stair Holds: resolve expose a forged weather permit.",
+      "Granite Stair Holds: resolve find a safe path for a displaced household.",
+      "Granite Stair Holds: resolve recover a tool that remembers its owner.",
+      "Granite Stair Holds: resolve decide which of two true stories enters the archive.",
+      "Granite Stair Holds: resolve break a supply monopoly without collapsing the market.",
+      "Granite Stair Holds: resolve follow a rival\u2019s fair but dangerous challenge.",
+      "Granite Stair Holds: resolve return a creature to a habitat that has changed.",
+      "Granite Stair Holds: resolve resolve a border dispute using observed evidence.",
+      "Granite Stair Holds: resolve test a custom law against an unintended consequence.",
+      "Granite Stair Holds: resolve protect a festival from a nonviolent sabotage.",
+      "Granite Stair Holds: resolve choose whether to spend a favor or preserve it.",
+      "Granite Stair Holds: resolve locate an interior hidden by map error.",
+      "Granite Stair Holds: resolve rebuild a bridge while storms advance."
+    ],
+    "expeditionSeeds": [
+      "Granite Stair Holds: expedition into the sealed stair to recover evidence.",
+      "Granite Stair Holds: expedition into the flooded vault to secure a route.",
+      "Granite Stair Holds: expedition into the wind quarry to stop a clock.",
+      "Granite Stair Holds: expedition into the lantern trench to map a return.",
+      "Granite Stair Holds: expedition into the ash orchard to rescue a team.",
+      "Granite Stair Holds: expedition into the sealed stair to recover evidence.",
+      "Granite Stair Holds: expedition into the flooded vault to secure a route.",
+      "Granite Stair Holds: expedition into the wind quarry to stop a clock.",
+      "Granite Stair Holds: expedition into the lantern trench to map a return.",
+      "Granite Stair Holds: expedition into the ash orchard to rescue a team."
+    ],
+    "factionClocks": [
+      {
+        "id": "granite-stair-holds.clock.1",
+        "stageNames": [
+          "rumor",
+          "pressure",
+          "turning",
+          "aftermath"
+        ],
+        "trigger": "Root resource falls below threshold or player-visible deadline expires",
+        "interrupt": "investigate, negotiate, reroute, or spend a declared resource"
+      },
+      {
+        "id": "granite-stair-holds.clock.2",
+        "stageNames": [
+          "rumor",
+          "pressure",
+          "turning",
+          "aftermath"
+        ],
+        "trigger": "Stone resource falls below threshold or player-visible deadline expires",
+        "interrupt": "investigate, negotiate, reroute, or spend a declared resource"
+      },
+      {
+        "id": "granite-stair-holds.clock.3",
+        "stageNames": [
+          "rumor",
+          "pressure",
+          "turning",
+          "aftermath"
+        ],
+        "trigger": "Veil resource falls below threshold or player-visible deadline expires",
+        "interrupt": "investigate, negotiate, reroute, or spend a declared resource"
+      }
+    ]
+  },
+  "lantern-road": {
+    "title": "Lantern Road Pilgrimage",
+    "mode": "Lanternfolk night-road",
+    "pitch": "Light is a shared route resource across a nightward pilgrimage.",
+    "signatureEnemies": [
+      {
+        "id": "lantern-road.signature.01",
+        "name": "Stone Warden 1",
+        "role": "scout",
+        "tier": 1
+      },
+      {
+        "id": "lantern-road.signature.02",
+        "name": "Veil Rover 2",
+        "role": "guard",
+        "tier": 2
+      },
+      {
+        "id": "lantern-road.signature.03",
+        "name": "Spark Mason 3",
+        "role": "brute",
+        "tier": 3
+      },
+      {
+        "id": "lantern-road.signature.04",
+        "name": "Gloom Whisper 4",
+        "role": "mystic",
+        "tier": 4
+      },
+      {
+        "id": "lantern-road.signature.05",
+        "name": "Gleam Runner 5",
+        "role": "leader",
+        "tier": 5
+      },
+      {
+        "id": "lantern-road.signature.06",
+        "name": "Bloom Keeper 6",
+        "role": "scout",
+        "tier": 1
+      },
+      {
+        "id": "lantern-road.signature.07",
+        "name": "Ember Warden 7",
+        "role": "guard",
+        "tier": 2
+      },
+      {
+        "id": "lantern-road.signature.08",
+        "name": "Tide Rover 8",
+        "role": "brute",
+        "tier": 3
+      },
+      {
+        "id": "lantern-road.signature.09",
+        "name": "Gale Mason 9",
+        "role": "mystic",
+        "tier": 4
+      },
+      {
+        "id": "lantern-road.signature.10",
+        "name": "Root Whisper 10",
+        "role": "leader",
+        "tier": 5
+      },
+      {
+        "id": "lantern-road.signature.11",
+        "name": "Stone Runner 11",
+        "role": "scout",
+        "tier": 1
+      },
+      {
+        "id": "lantern-road.signature.12",
+        "name": "Veil Keeper 12",
+        "role": "guard",
+        "tier": 2
+      },
+      {
+        "id": "lantern-road.signature.13",
+        "name": "Spark Warden 13",
+        "role": "brute",
+        "tier": 3
+      },
+      {
+        "id": "lantern-road.signature.14",
+        "name": "Gloom Rover 14",
+        "role": "mystic",
+        "tier": 4
+      },
+      {
+        "id": "lantern-road.signature.15",
+        "name": "Gleam Mason 15",
+        "role": "leader",
+        "tier": 5
+      },
+      {
+        "id": "lantern-road.signature.16",
+        "name": "Bloom Whisper 16",
+        "role": "scout",
+        "tier": 1
+      },
+      {
+        "id": "lantern-road.signature.17",
+        "name": "Ember Runner 17",
+        "role": "guard",
+        "tier": 2
+      },
+      {
+        "id": "lantern-road.signature.18",
+        "name": "Tide Keeper 18",
+        "role": "brute",
+        "tier": 3
+      },
+      {
+        "id": "lantern-road.signature.19",
+        "name": "Gale Warden 19",
+        "role": "mystic",
+        "tier": 4
+      },
+      {
+        "id": "lantern-road.signature.20",
+        "name": "Root Rover 20",
+        "role": "leader",
+        "tier": 5
+      },
+      {
+        "id": "lantern-road.signature.21",
+        "name": "Stone Mason 21",
+        "role": "scout",
+        "tier": 1
+      },
+      {
+        "id": "lantern-road.signature.22",
+        "name": "Veil Whisper 22",
+        "role": "guard",
+        "tier": 2
+      },
+      {
+        "id": "lantern-road.signature.23",
+        "name": "Spark Runner 23",
+        "role": "brute",
+        "tier": 3
+      },
+      {
+        "id": "lantern-road.signature.24",
+        "name": "Gloom Keeper 24",
+        "role": "mystic",
+        "tier": 4
+      },
+      {
+        "id": "lantern-road.signature.25",
+        "name": "Gleam Warden 25",
+        "role": "leader",
+        "tier": 5
+      },
+      {
+        "id": "lantern-road.signature.26",
+        "name": "Bloom Rover 26",
+        "role": "scout",
+        "tier": 1
+      },
+      {
+        "id": "lantern-road.signature.27",
+        "name": "Ember Mason 27",
+        "role": "guard",
+        "tier": 2
+      },
+      {
+        "id": "lantern-road.signature.28",
+        "name": "Tide Whisper 28",
+        "role": "brute",
+        "tier": 3
+      },
+      {
+        "id": "lantern-road.signature.29",
+        "name": "Gale Runner 29",
+        "role": "mystic",
+        "tier": 4
+      },
+      {
+        "id": "lantern-road.signature.30",
+        "name": "Root Keeper 30",
+        "role": "leader",
+        "tier": 5
+      }
+    ],
+    "materials": [
+      {
+        "id": "lantern-road.material.01",
+        "name": "stone-fiber",
+        "use": "repair"
+      },
+      {
+        "id": "lantern-road.material.02",
+        "name": "veil-ore",
+        "use": "craft"
+      },
+      {
+        "id": "lantern-road.material.03",
+        "name": "spark-resin",
+        "use": "trade"
+      },
+      {
+        "id": "lantern-road.material.04",
+        "name": "gloom-salt",
+        "use": "quest"
+      },
+      {
+        "id": "lantern-road.material.05",
+        "name": "gleam-glass",
+        "use": "repair"
+      },
+      {
+        "id": "lantern-road.material.06",
+        "name": "bloom-fiber",
+        "use": "craft"
+      },
+      {
+        "id": "lantern-road.material.07",
+        "name": "ember-ore",
+        "use": "trade"
+      },
+      {
+        "id": "lantern-road.material.08",
+        "name": "tide-resin",
+        "use": "quest"
+      },
+      {
+        "id": "lantern-road.material.09",
+        "name": "gale-salt",
+        "use": "repair"
+      },
+      {
+        "id": "lantern-road.material.10",
+        "name": "root-glass",
+        "use": "craft"
+      },
+      {
+        "id": "lantern-road.material.11",
+        "name": "stone-fiber",
+        "use": "trade"
+      },
+      {
+        "id": "lantern-road.material.12",
+        "name": "veil-ore",
+        "use": "quest"
+      },
+      {
+        "id": "lantern-road.material.13",
+        "name": "spark-resin",
+        "use": "repair"
+      },
+      {
+        "id": "lantern-road.material.14",
+        "name": "gloom-salt",
+        "use": "craft"
+      },
+      {
+        "id": "lantern-road.material.15",
+        "name": "gleam-glass",
+        "use": "trade"
+      },
+      {
+        "id": "lantern-road.material.16",
+        "name": "bloom-fiber",
+        "use": "quest"
+      },
+      {
+        "id": "lantern-road.material.17",
+        "name": "ember-ore",
+        "use": "repair"
+      },
+      {
+        "id": "lantern-road.material.18",
+        "name": "tide-resin",
+        "use": "craft"
+      },
+      {
+        "id": "lantern-road.material.19",
+        "name": "gale-salt",
+        "use": "trade"
+      },
+      {
+        "id": "lantern-road.material.20",
+        "name": "root-glass",
+        "use": "quest"
+      }
+    ],
+    "questSeeds": [
+      "Lantern Road Pilgrimage: resolve find a safe path for a displaced household.",
+      "Lantern Road Pilgrimage: resolve recover a tool that remembers its owner.",
+      "Lantern Road Pilgrimage: resolve decide which of two true stories enters the archive.",
+      "Lantern Road Pilgrimage: resolve break a supply monopoly without collapsing the market.",
+      "Lantern Road Pilgrimage: resolve follow a rival\u2019s fair but dangerous challenge.",
+      "Lantern Road Pilgrimage: resolve return a creature to a habitat that has changed.",
+      "Lantern Road Pilgrimage: resolve resolve a border dispute using observed evidence.",
+      "Lantern Road Pilgrimage: resolve test a custom law against an unintended consequence.",
+      "Lantern Road Pilgrimage: resolve protect a festival from a nonviolent sabotage.",
+      "Lantern Road Pilgrimage: resolve choose whether to spend a favor or preserve it.",
+      "Lantern Road Pilgrimage: resolve locate an interior hidden by map error.",
+      "Lantern Road Pilgrimage: resolve rebuild a bridge while storms advance.",
+      "Lantern Road Pilgrimage: resolve find the source of a false quest notice.",
+      "Lantern Road Pilgrimage: resolve investigate a clock that is charging the wrong person.",
+      "Lantern Road Pilgrimage: resolve recover a lost party member\u2019s route memory."
+    ],
+    "expeditionSeeds": [
+      "Lantern Road Pilgrimage: expedition into the sealed stair to recover evidence.",
+      "Lantern Road Pilgrimage: expedition into the flooded vault to secure a route.",
+      "Lantern Road Pilgrimage: expedition into the wind quarry to stop a clock.",
+      "Lantern Road Pilgrimage: expedition into the lantern trench to map a return.",
+      "Lantern Road Pilgrimage: expedition into the ash orchard to rescue a team.",
+      "Lantern Road Pilgrimage: expedition into the sealed stair to recover evidence.",
+      "Lantern Road Pilgrimage: expedition into the flooded vault to secure a route.",
+      "Lantern Road Pilgrimage: expedition into the wind quarry to stop a clock.",
+      "Lantern Road Pilgrimage: expedition into the lantern trench to map a return.",
+      "Lantern Road Pilgrimage: expedition into the ash orchard to rescue a team."
+    ],
+    "factionClocks": [
+      {
+        "id": "lantern-road.clock.1",
+        "stageNames": [
+          "rumor",
+          "pressure",
+          "turning",
+          "aftermath"
+        ],
+        "trigger": "Stone resource falls below threshold or player-visible deadline expires",
+        "interrupt": "investigate, negotiate, reroute, or spend a declared resource"
+      },
+      {
+        "id": "lantern-road.clock.2",
+        "stageNames": [
+          "rumor",
+          "pressure",
+          "turning",
+          "aftermath"
+        ],
+        "trigger": "Veil resource falls below threshold or player-visible deadline expires",
+        "interrupt": "investigate, negotiate, reroute, or spend a declared resource"
+      },
+      {
+        "id": "lantern-road.clock.3",
+        "stageNames": [
+          "rumor",
+          "pressure",
+          "turning",
+          "aftermath"
+        ],
+        "trigger": "Spark resource falls below threshold or player-visible deadline expires",
+        "interrupt": "investigate, negotiate, reroute, or spend a declared resource"
+      }
+    ]
+  },
+  "hearthward": {
+    "title": "Hearthward",
+    "mode": "Hearthborn settlement-builder light",
+    "pitch": "A small settlement defends its home while remaining adventure-first.",
+    "signatureEnemies": [
+      {
+        "id": "hearthward.signature.01",
+        "name": "Veil Warden 1",
+        "role": "scout",
+        "tier": 1
+      },
+      {
+        "id": "hearthward.signature.02",
+        "name": "Spark Rover 2",
+        "role": "guard",
+        "tier": 2
+      },
+      {
+        "id": "hearthward.signature.03",
+        "name": "Gloom Mason 3",
+        "role": "brute",
+        "tier": 3
+      },
+      {
+        "id": "hearthward.signature.04",
+        "name": "Gleam Whisper 4",
+        "role": "mystic",
+        "tier": 4
+      },
+      {
+        "id": "hearthward.signature.05",
+        "name": "Bloom Runner 5",
+        "role": "leader",
+        "tier": 5
+      },
+      {
+        "id": "hearthward.signature.06",
+        "name": "Ember Keeper 6",
+        "role": "scout",
+        "tier": 1
+      },
+      {
+        "id": "hearthward.signature.07",
+        "name": "Tide Warden 7",
+        "role": "guard",
+        "tier": 2
+      },
+      {
+        "id": "hearthward.signature.08",
+        "name": "Gale Rover 8",
+        "role": "brute",
+        "tier": 3
+      },
+      {
+        "id": "hearthward.signature.09",
+        "name": "Root Mason 9",
+        "role": "mystic",
+        "tier": 4
+      },
+      {
+        "id": "hearthward.signature.10",
+        "name": "Stone Whisper 10",
+        "role": "leader",
+        "tier": 5
+      },
+      {
+        "id": "hearthward.signature.11",
+        "name": "Veil Runner 11",
+        "role": "scout",
+        "tier": 1
+      },
+      {
+        "id": "hearthward.signature.12",
+        "name": "Spark Keeper 12",
+        "role": "guard",
+        "tier": 2
+      },
+      {
+        "id": "hearthward.signature.13",
+        "name": "Gloom Warden 13",
+        "role": "brute",
+        "tier": 3
+      },
+      {
+        "id": "hearthward.signature.14",
+        "name": "Gleam Rover 14",
+        "role": "mystic",
+        "tier": 4
+      },
+      {
+        "id": "hearthward.signature.15",
+        "name": "Bloom Mason 15",
+        "role": "leader",
+        "tier": 5
+      },
+      {
+        "id": "hearthward.signature.16",
+        "name": "Ember Whisper 16",
+        "role": "scout",
+        "tier": 1
+      },
+      {
+        "id": "hearthward.signature.17",
+        "name": "Tide Runner 17",
+        "role": "guard",
+        "tier": 2
+      },
+      {
+        "id": "hearthward.signature.18",
+        "name": "Gale Keeper 18",
+        "role": "brute",
+        "tier": 3
+      },
+      {
+        "id": "hearthward.signature.19",
+        "name": "Root Warden 19",
+        "role": "mystic",
+        "tier": 4
+      },
+      {
+        "id": "hearthward.signature.20",
+        "name": "Stone Rover 20",
+        "role": "leader",
+        "tier": 5
+      },
+      {
+        "id": "hearthward.signature.21",
+        "name": "Veil Mason 21",
+        "role": "scout",
+        "tier": 1
+      },
+      {
+        "id": "hearthward.signature.22",
+        "name": "Spark Whisper 22",
+        "role": "guard",
+        "tier": 2
+      },
+      {
+        "id": "hearthward.signature.23",
+        "name": "Gloom Runner 23",
+        "role": "brute",
+        "tier": 3
+      },
+      {
+        "id": "hearthward.signature.24",
+        "name": "Gleam Keeper 24",
+        "role": "mystic",
+        "tier": 4
+      },
+      {
+        "id": "hearthward.signature.25",
+        "name": "Bloom Warden 25",
+        "role": "leader",
+        "tier": 5
+      },
+      {
+        "id": "hearthward.signature.26",
+        "name": "Ember Rover 26",
+        "role": "scout",
+        "tier": 1
+      },
+      {
+        "id": "hearthward.signature.27",
+        "name": "Tide Mason 27",
+        "role": "guard",
+        "tier": 2
+      },
+      {
+        "id": "hearthward.signature.28",
+        "name": "Gale Whisper 28",
+        "role": "brute",
+        "tier": 3
+      },
+      {
+        "id": "hearthward.signature.29",
+        "name": "Root Runner 29",
+        "role": "mystic",
+        "tier": 4
+      },
+      {
+        "id": "hearthward.signature.30",
+        "name": "Stone Keeper 30",
+        "role": "leader",
+        "tier": 5
+      }
+    ],
+    "materials": [
+      {
+        "id": "hearthward.material.01",
+        "name": "veil-fiber",
+        "use": "repair"
+      },
+      {
+        "id": "hearthward.material.02",
+        "name": "spark-ore",
+        "use": "craft"
+      },
+      {
+        "id": "hearthward.material.03",
+        "name": "gloom-resin",
+        "use": "trade"
+      },
+      {
+        "id": "hearthward.material.04",
+        "name": "gleam-salt",
+        "use": "quest"
+      },
+      {
+        "id": "hearthward.material.05",
+        "name": "bloom-glass",
+        "use": "repair"
+      },
+      {
+        "id": "hearthward.material.06",
+        "name": "ember-fiber",
+        "use": "craft"
+      },
+      {
+        "id": "hearthward.material.07",
+        "name": "tide-ore",
+        "use": "trade"
+      },
+      {
+        "id": "hearthward.material.08",
+        "name": "gale-resin",
+        "use": "quest"
+      },
+      {
+        "id": "hearthward.material.09",
+        "name": "root-salt",
+        "use": "repair"
+      },
+      {
+        "id": "hearthward.material.10",
+        "name": "stone-glass",
+        "use": "craft"
+      },
+      {
+        "id": "hearthward.material.11",
+        "name": "veil-fiber",
+        "use": "trade"
+      },
+      {
+        "id": "hearthward.material.12",
+        "name": "spark-ore",
+        "use": "quest"
+      },
+      {
+        "id": "hearthward.material.13",
+        "name": "gloom-resin",
+        "use": "repair"
+      },
+      {
+        "id": "hearthward.material.14",
+        "name": "gleam-salt",
+        "use": "craft"
+      },
+      {
+        "id": "hearthward.material.15",
+        "name": "bloom-glass",
+        "use": "trade"
+      },
+      {
+        "id": "hearthward.material.16",
+        "name": "ember-fiber",
+        "use": "quest"
+      },
+      {
+        "id": "hearthward.material.17",
+        "name": "tide-ore",
+        "use": "repair"
+      },
+      {
+        "id": "hearthward.material.18",
+        "name": "gale-resin",
+        "use": "craft"
+      },
+      {
+        "id": "hearthward.material.19",
+        "name": "root-salt",
+        "use": "trade"
+      },
+      {
+        "id": "hearthward.material.20",
+        "name": "stone-glass",
+        "use": "quest"
+      }
+    ],
+    "questSeeds": [
+      "Hearthward: resolve break a supply monopoly without collapsing the market.",
+      "Hearthward: resolve follow a rival\u2019s fair but dangerous challenge.",
+      "Hearthward: resolve return a creature to a habitat that has changed.",
+      "Hearthward: resolve resolve a border dispute using observed evidence.",
+      "Hearthward: resolve test a custom law against an unintended consequence.",
+      "Hearthward: resolve protect a festival from a nonviolent sabotage.",
+      "Hearthward: resolve choose whether to spend a favor or preserve it.",
+      "Hearthward: resolve locate an interior hidden by map error.",
+      "Hearthward: resolve rebuild a bridge while storms advance.",
+      "Hearthward: resolve find the source of a false quest notice.",
+      "Hearthward: resolve investigate a clock that is charging the wrong person.",
+      "Hearthward: resolve recover a lost party member\u2019s route memory.",
+      "Hearthward: resolve help a faction admit a public mistake.",
+      "Hearthward: resolve decide how a successor inherits a role.",
+      "Hearthward: resolve stop a dungeon restock from consuming a village resource."
+    ],
+    "expeditionSeeds": [
+      "Hearthward: expedition into the sealed stair to recover evidence.",
+      "Hearthward: expedition into the flooded vault to secure a route.",
+      "Hearthward: expedition into the wind quarry to stop a clock.",
+      "Hearthward: expedition into the lantern trench to map a return.",
+      "Hearthward: expedition into the ash orchard to rescue a team.",
+      "Hearthward: expedition into the sealed stair to recover evidence.",
+      "Hearthward: expedition into the flooded vault to secure a route.",
+      "Hearthward: expedition into the wind quarry to stop a clock.",
+      "Hearthward: expedition into the lantern trench to map a return.",
+      "Hearthward: expedition into the ash orchard to rescue a team."
+    ],
+    "factionClocks": [
+      {
+        "id": "hearthward.clock.1",
+        "stageNames": [
+          "rumor",
+          "pressure",
+          "turning",
+          "aftermath"
+        ],
+        "trigger": "Veil resource falls below threshold or player-visible deadline expires",
+        "interrupt": "investigate, negotiate, reroute, or spend a declared resource"
+      },
+      {
+        "id": "hearthward.clock.2",
+        "stageNames": [
+          "rumor",
+          "pressure",
+          "turning",
+          "aftermath"
+        ],
+        "trigger": "Spark resource falls below threshold or player-visible deadline expires",
+        "interrupt": "investigate, negotiate, reroute, or spend a declared resource"
+      },
+      {
+        "id": "hearthward.clock.3",
+        "stageNames": [
+          "rumor",
+          "pressure",
+          "turning",
+          "aftermath"
+        ],
+        "trigger": "Gloom resource falls below threshold or player-visible deadline expires",
+        "interrupt": "investigate, negotiate, reroute, or spend a declared resource"
+      }
+    ]
+  },
+  "collectors-compact": {
+    "title": "Collector\u2019s Compact",
+    "mode": "Hybrid collector faction war",
+    "pitch": "Creature accords and faction pressure collide across the borderlands.",
+    "signatureEnemies": [
+      {
+        "id": "collectors-compact.signature.01",
+        "name": "Spark Warden 1",
+        "role": "scout",
+        "tier": 1
+      },
+      {
+        "id": "collectors-compact.signature.02",
+        "name": "Gloom Rover 2",
+        "role": "guard",
+        "tier": 2
+      },
+      {
+        "id": "collectors-compact.signature.03",
+        "name": "Gleam Mason 3",
+        "role": "brute",
+        "tier": 3
+      },
+      {
+        "id": "collectors-compact.signature.04",
+        "name": "Bloom Whisper 4",
+        "role": "mystic",
+        "tier": 4
+      },
+      {
+        "id": "collectors-compact.signature.05",
+        "name": "Ember Runner 5",
+        "role": "leader",
+        "tier": 5
+      },
+      {
+        "id": "collectors-compact.signature.06",
+        "name": "Tide Keeper 6",
+        "role": "scout",
+        "tier": 1
+      },
+      {
+        "id": "collectors-compact.signature.07",
+        "name": "Gale Warden 7",
+        "role": "guard",
+        "tier": 2
+      },
+      {
+        "id": "collectors-compact.signature.08",
+        "name": "Root Rover 8",
+        "role": "brute",
+        "tier": 3
+      },
+      {
+        "id": "collectors-compact.signature.09",
+        "name": "Stone Mason 9",
+        "role": "mystic",
+        "tier": 4
+      },
+      {
+        "id": "collectors-compact.signature.10",
+        "name": "Veil Whisper 10",
+        "role": "leader",
+        "tier": 5
+      },
+      {
+        "id": "collectors-compact.signature.11",
+        "name": "Spark Runner 11",
+        "role": "scout",
+        "tier": 1
+      },
+      {
+        "id": "collectors-compact.signature.12",
+        "name": "Gloom Keeper 12",
+        "role": "guard",
+        "tier": 2
+      },
+      {
+        "id": "collectors-compact.signature.13",
+        "name": "Gleam Warden 13",
+        "role": "brute",
+        "tier": 3
+      },
+      {
+        "id": "collectors-compact.signature.14",
+        "name": "Bloom Rover 14",
+        "role": "mystic",
+        "tier": 4
+      },
+      {
+        "id": "collectors-compact.signature.15",
+        "name": "Ember Mason 15",
+        "role": "leader",
+        "tier": 5
+      },
+      {
+        "id": "collectors-compact.signature.16",
+        "name": "Tide Whisper 16",
+        "role": "scout",
+        "tier": 1
+      },
+      {
+        "id": "collectors-compact.signature.17",
+        "name": "Gale Runner 17",
+        "role": "guard",
+        "tier": 2
+      },
+      {
+        "id": "collectors-compact.signature.18",
+        "name": "Root Keeper 18",
+        "role": "brute",
+        "tier": 3
+      },
+      {
+        "id": "collectors-compact.signature.19",
+        "name": "Stone Warden 19",
+        "role": "mystic",
+        "tier": 4
+      },
+      {
+        "id": "collectors-compact.signature.20",
+        "name": "Veil Rover 20",
+        "role": "leader",
+        "tier": 5
+      },
+      {
+        "id": "collectors-compact.signature.21",
+        "name": "Spark Mason 21",
+        "role": "scout",
+        "tier": 1
+      },
+      {
+        "id": "collectors-compact.signature.22",
+        "name": "Gloom Whisper 22",
+        "role": "guard",
+        "tier": 2
+      },
+      {
+        "id": "collectors-compact.signature.23",
+        "name": "Gleam Runner 23",
+        "role": "brute",
+        "tier": 3
+      },
+      {
+        "id": "collectors-compact.signature.24",
+        "name": "Bloom Keeper 24",
+        "role": "mystic",
+        "tier": 4
+      },
+      {
+        "id": "collectors-compact.signature.25",
+        "name": "Ember Warden 25",
+        "role": "leader",
+        "tier": 5
+      },
+      {
+        "id": "collectors-compact.signature.26",
+        "name": "Tide Rover 26",
+        "role": "scout",
+        "tier": 1
+      },
+      {
+        "id": "collectors-compact.signature.27",
+        "name": "Gale Mason 27",
+        "role": "guard",
+        "tier": 2
+      },
+      {
+        "id": "collectors-compact.signature.28",
+        "name": "Root Whisper 28",
+        "role": "brute",
+        "tier": 3
+      },
+      {
+        "id": "collectors-compact.signature.29",
+        "name": "Stone Runner 29",
+        "role": "mystic",
+        "tier": 4
+      },
+      {
+        "id": "collectors-compact.signature.30",
+        "name": "Veil Keeper 30",
+        "role": "leader",
+        "tier": 5
+      }
+    ],
+    "materials": [
+      {
+        "id": "collectors-compact.material.01",
+        "name": "spark-fiber",
+        "use": "repair"
+      },
+      {
+        "id": "collectors-compact.material.02",
+        "name": "gloom-ore",
+        "use": "craft"
+      },
+      {
+        "id": "collectors-compact.material.03",
+        "name": "gleam-resin",
+        "use": "trade"
+      },
+      {
+        "id": "collectors-compact.material.04",
+        "name": "bloom-salt",
+        "use": "quest"
+      },
+      {
+        "id": "collectors-compact.material.05",
+        "name": "ember-glass",
+        "use": "repair"
+      },
+      {
+        "id": "collectors-compact.material.06",
+        "name": "tide-fiber",
+        "use": "craft"
+      },
+      {
+        "id": "collectors-compact.material.07",
+        "name": "gale-ore",
+        "use": "trade"
+      },
+      {
+        "id": "collectors-compact.material.08",
+        "name": "root-resin",
+        "use": "quest"
+      },
+      {
+        "id": "collectors-compact.material.09",
+        "name": "stone-salt",
+        "use": "repair"
+      },
+      {
+        "id": "collectors-compact.material.10",
+        "name": "veil-glass",
+        "use": "craft"
+      },
+      {
+        "id": "collectors-compact.material.11",
+        "name": "spark-fiber",
+        "use": "trade"
+      },
+      {
+        "id": "collectors-compact.material.12",
+        "name": "gloom-ore",
+        "use": "quest"
+      },
+      {
+        "id": "collectors-compact.material.13",
+        "name": "gleam-resin",
+        "use": "repair"
+      },
+      {
+        "id": "collectors-compact.material.14",
+        "name": "bloom-salt",
+        "use": "craft"
+      },
+      {
+        "id": "collectors-compact.material.15",
+        "name": "ember-glass",
+        "use": "trade"
+      },
+      {
+        "id": "collectors-compact.material.16",
+        "name": "tide-fiber",
+        "use": "quest"
+      },
+      {
+        "id": "collectors-compact.material.17",
+        "name": "gale-ore",
+        "use": "repair"
+      },
+      {
+        "id": "collectors-compact.material.18",
+        "name": "root-resin",
+        "use": "craft"
+      },
+      {
+        "id": "collectors-compact.material.19",
+        "name": "stone-salt",
+        "use": "trade"
+      },
+      {
+        "id": "collectors-compact.material.20",
+        "name": "veil-glass",
+        "use": "quest"
+      }
+    ],
+    "questSeeds": [
+      "Collector\u2019s Compact: resolve resolve a border dispute using observed evidence.",
+      "Collector\u2019s Compact: resolve test a custom law against an unintended consequence.",
+      "Collector\u2019s Compact: resolve protect a festival from a nonviolent sabotage.",
+      "Collector\u2019s Compact: resolve choose whether to spend a favor or preserve it.",
+      "Collector\u2019s Compact: resolve locate an interior hidden by map error.",
+      "Collector\u2019s Compact: resolve rebuild a bridge while storms advance.",
+      "Collector\u2019s Compact: resolve find the source of a false quest notice.",
+      "Collector\u2019s Compact: resolve investigate a clock that is charging the wrong person.",
+      "Collector\u2019s Compact: resolve recover a lost party member\u2019s route memory.",
+      "Collector\u2019s Compact: resolve help a faction admit a public mistake.",
+      "Collector\u2019s Compact: resolve decide how a successor inherits a role.",
+      "Collector\u2019s Compact: resolve stop a dungeon restock from consuming a village resource.",
+      "Collector\u2019s Compact: resolve prove a market shortage is manufactured.",
+      "Collector\u2019s Compact: resolve secure a lantern road before nightfall.",
+      "Collector\u2019s Compact: resolve resolve a rumor without naming an innocent person."
+    ],
+    "expeditionSeeds": [
+      "Collector\u2019s Compact: expedition into the sealed stair to recover evidence.",
+      "Collector\u2019s Compact: expedition into the flooded vault to secure a route.",
+      "Collector\u2019s Compact: expedition into the wind quarry to stop a clock.",
+      "Collector\u2019s Compact: expedition into the lantern trench to map a return.",
+      "Collector\u2019s Compact: expedition into the ash orchard to rescue a team.",
+      "Collector\u2019s Compact: expedition into the sealed stair to recover evidence.",
+      "Collector\u2019s Compact: expedition into the flooded vault to secure a route.",
+      "Collector\u2019s Compact: expedition into the wind quarry to stop a clock.",
+      "Collector\u2019s Compact: expedition into the lantern trench to map a return.",
+      "Collector\u2019s Compact: expedition into the ash orchard to rescue a team."
+    ],
+    "factionClocks": [
+      {
+        "id": "collectors-compact.clock.1",
+        "stageNames": [
+          "rumor",
+          "pressure",
+          "turning",
+          "aftermath"
+        ],
+        "trigger": "Spark resource falls below threshold or player-visible deadline expires",
+        "interrupt": "investigate, negotiate, reroute, or spend a declared resource"
+      },
+      {
+        "id": "collectors-compact.clock.2",
+        "stageNames": [
+          "rumor",
+          "pressure",
+          "turning",
+          "aftermath"
+        ],
+        "trigger": "Gloom resource falls below threshold or player-visible deadline expires",
+        "interrupt": "investigate, negotiate, reroute, or spend a declared resource"
+      },
+      {
+        "id": "collectors-compact.clock.3",
+        "stageNames": [
+          "rumor",
+          "pressure",
+          "turning",
+          "aftermath"
+        ],
+        "trigger": "Gleam resource falls below threshold or player-visible deadline expires",
+        "interrupt": "investigate, negotiate, reroute, or spend a declared resource"
+      }
+    ]
+  }
+}

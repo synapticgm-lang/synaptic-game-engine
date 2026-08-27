@@ -1,0 +1,352 @@
+{
+  "base": [
+    {
+      "scenario": "A \u2014 OpenRouter-only",
+      "mau": 100,
+      "monthly_gbp": 107.3486866376448,
+      "annual_gbp": 1288.1842396517377,
+      "per_mau_month_gbp": 1.073486866376448,
+      "gpu_count": 0,
+      "gpu_idle_hours": 0.0
+    },
+    {
+      "scenario": "A \u2014 OpenRouter-only",
+      "mau": 1000,
+      "monthly_gbp": 488.486866376448,
+      "annual_gbp": 5861.842396517376,
+      "per_mau_month_gbp": 0.488486866376448,
+      "gpu_count": 0,
+      "gpu_idle_hours": 0.0
+    },
+    {
+      "scenario": "A \u2014 OpenRouter-only",
+      "mau": 10000,
+      "monthly_gbp": 4299.86866376448,
+      "annual_gbp": 51598.42396517376,
+      "per_mau_month_gbp": 0.42998686637644795,
+      "gpu_count": 0,
+      "gpu_idle_hours": 0.0
+    },
+    {
+      "scenario": "B \u2014 Direct APIs + prompt cache",
+      "mau": 100,
+      "monthly_gbp": 160.23094517818933,
+      "annual_gbp": 1922.7713421382718,
+      "per_mau_month_gbp": 1.6023094517818932,
+      "gpu_count": 0,
+      "gpu_idle_hours": 0.0
+    },
+    {
+      "scenario": "B \u2014 Direct APIs + prompt cache",
+      "mau": 1000,
+      "monthly_gbp": 522.3094517818932,
+      "annual_gbp": 6267.713421382719,
+      "per_mau_month_gbp": 0.5223094517818933,
+      "gpu_count": 0,
+      "gpu_idle_hours": 0.0
+    },
+    {
+      "scenario": "B \u2014 Direct APIs + prompt cache",
+      "mau": 10000,
+      "monthly_gbp": 4143.094517818933,
+      "annual_gbp": 49717.1342138272,
+      "per_mau_month_gbp": 0.4143094517818933,
+      "gpu_count": 0,
+      "gpu_idle_hours": 0.0
+    },
+    {
+      "scenario": "C \u2014 Hosted low-cost gates + mid narrator",
+      "mau": 100,
+      "monthly_gbp": 220.15819375783957,
+      "annual_gbp": 2641.8983250940746,
+      "per_mau_month_gbp": 2.201581937578396,
+      "gpu_count": 0,
+      "gpu_idle_hours": 0.0
+    },
+    {
+      "scenario": "C \u2014 Hosted low-cost gates + mid narrator",
+      "mau": 1000,
+      "monthly_gbp": 581.5819375783959,
+      "annual_gbp": 6978.9832509407515,
+      "per_mau_month_gbp": 0.5815819375783959,
+      "gpu_count": 0,
+      "gpu_idle_hours": 0.0
+    },
+    {
+      "scenario": "C \u2014 Hosted low-cost gates + mid narrator",
+      "mau": 10000,
+      "monthly_gbp": 4195.819375783959,
+      "annual_gbp": 50349.83250940751,
+      "per_mau_month_gbp": 0.4195819375783959,
+      "gpu_count": 0,
+      "gpu_idle_hours": 0.0
+    },
+    {
+      "scenario": "D \u2014 Self-host Continuity Warden only",
+      "mau": 100,
+      "monthly_gbp": 525.6629410462629,
+      "annual_gbp": 6307.955292555154,
+      "per_mau_month_gbp": 5.2566294104626285,
+      "gpu_count": 1,
+      "gpu_idle_hours": 729.3333333333334
+    },
+    {
+      "scenario": "D \u2014 Self-host Continuity Warden only",
+      "mau": 1000,
+      "monthly_gbp": 887.7679037851398,
+      "annual_gbp": 10653.214845421677,
+      "per_mau_month_gbp": 0.8877679037851398,
+      "gpu_count": 1,
+      "gpu_idle_hours": 723.3333333333334
+    },
+    {
+      "scenario": "D \u2014 Self-host Continuity Warden only",
+      "mau": 10000,
+      "monthly_gbp": 4508.81753117391,
+      "annual_gbp": 54105.81037408691,
+      "per_mau_month_gbp": 0.450881753117391,
+      "gpu_count": 1,
+      "gpu_idle_hours": 663.3333333333334
+    },
+    {
+      "scenario": "E1 \u2014 Self-host full 7B narrator (production fallback)",
+      "mau": 100,
+      "monthly_gbp": 648.3258319191323,
+      "annual_gbp": 7779.909983029587,
+      "per_mau_month_gbp": 6.4832583191913224,
+      "gpu_count": 1,
+      "gpu_idle_hours": 726.5277777777778
+    },
+    {
+      "scenario": "E1 \u2014 Self-host full 7B narrator (production fallback)",
+      "mau": 1000,
+      "monthly_gbp": 944.3968125138346,
+      "annual_gbp": 11332.761750166015,
+      "per_mau_month_gbp": 0.9443968125138346,
+      "gpu_count": 1,
+      "gpu_idle_hours": 695.2777777777778
+    },
+    {
+      "scenario": "E1 \u2014 Self-host full 7B narrator (production fallback)",
+      "mau": 10000,
+      "monthly_gbp": 4486.8228436508525,
+      "annual_gbp": 53841.87412381023,
+      "per_mau_month_gbp": 0.4486822843650852,
+      "gpu_count": 5,
+      "gpu_idle_hours": 3302.777777777778
+    },
+    {
+      "scenario": "E2 \u2014 Self-host full 70B narrator",
+      "mau": 100,
+      "monthly_gbp": 1614.0839666494503,
+      "annual_gbp": 19369.007599793404,
+      "per_mau_month_gbp": 16.140839666494504,
+      "gpu_count": 1,
+      "gpu_idle_hours": 718.8888888888889
+    },
+    {
+      "scenario": "E2 \u2014 Self-host full 70B narrator",
+      "mau": 1000,
+      "monthly_gbp": 2411.317051575297,
+      "annual_gbp": 28935.80461890356,
+      "per_mau_month_gbp": 2.411317051575297,
+      "gpu_count": 2,
+      "gpu_idle_hours": 1348.888888888889
+    },
+    {
+      "scenario": "E2 \u2014 Self-host full 70B narrator",
+      "mau": 10000,
+      "monthly_gbp": 13378.409208293366,
+      "annual_gbp": 160540.9104995204,
+      "per_mau_month_gbp": 1.3378409208293365,
+      "gpu_count": 16,
+      "gpu_idle_hours": 10568.888888888889
+    }
+  ],
+  "cache_sensitivity_direct_1000": [
+    {
+      "cache_hit_rate": 0.0,
+      "monthly_gbp": 602.1072825204752,
+      "annual_gbp": 7225.287390245703,
+      "narrator_gbp": 464.84173245775844
+    },
+    {
+      "cache_hit_rate": 0.3,
+      "monthly_gbp": 522.3094517818932,
+      "annual_gbp": 6267.713421382719,
+      "narrator_gbp": 385.0439017191765
+    },
+    {
+      "cache_hit_rate": 0.7,
+      "monthly_gbp": 410.74743599203134,
+      "annual_gbp": 4928.969231904376,
+      "narrator_gbp": 273.4818859293146
+    }
+  ],
+  "retry_sensitivity_direct_1000": [
+    {
+      "retry_rate": 0.0,
+      "monthly_gbp": 503.9740278905039,
+      "annual_gbp": 6047.688334686047,
+      "narrator_gbp": 366.7084778277872
+    },
+    {
+      "retry_rate": 0.05,
+      "monthly_gbp": 522.3094517818932,
+      "annual_gbp": 6267.713421382719,
+      "narrator_gbp": 385.0439017191765
+    },
+    {
+      "retry_rate": 0.15,
+      "monthly_gbp": 558.9802995646719,
+      "annual_gbp": 6707.763594776063,
+      "narrator_gbp": 421.71474950195517
+    }
+  ],
+  "art_skip_sensitivity": [
+    {
+      "art_skip_rate": 0.0,
+      "100": {
+        "monthly_art_gbp": 5.755183354238914,
+        "monthly_attempts": 260.0
+      },
+      "1000": {
+        "monthly_art_gbp": 57.55183354238914,
+        "monthly_attempts": 2600.0
+      },
+      "10000": {
+        "monthly_art_gbp": 575.5183354238914,
+        "monthly_attempts": 26000.0
+      }
+    },
+    {
+      "art_skip_rate": 0.3,
+      "100": {
+        "monthly_art_gbp": 4.02862834796724,
+        "monthly_attempts": 182.0
+      },
+      "1000": {
+        "monthly_art_gbp": 40.28628347967239,
+        "monthly_attempts": 1819.9999999999998
+      },
+      "10000": {
+        "monthly_art_gbp": 402.862834796724,
+        "monthly_attempts": 18200.0
+      }
+    },
+    {
+      "art_skip_rate": 0.7,
+      "100": {
+        "monthly_art_gbp": 1.7265550062716746,
+        "monthly_attempts": 78.00000000000001
+      },
+      "1000": {
+        "monthly_art_gbp": 17.265550062716745,
+        "monthly_attempts": 780.0000000000001
+      },
+      "10000": {
+        "monthly_art_gbp": 172.65550062716744,
+        "monthly_attempts": 7800.000000000001
+      }
+    }
+  ],
+  "warden_vs_direct_break_even": [
+    {
+      "mau": 100,
+      "warden_monthly_premium_gbp": 365.4319958680735,
+      "paid_narrator_monthly_gbp": 38.504390171917656,
+      "required_narrator_cost_reduction_pct": 9.490657928523522,
+      "required_reduction_per_turn_gbp": 0.09135799896701838,
+      "warm_warden_idle_hours": 729.3333333333334,
+      "serverless_active_only_gpu_gbp": 0.3394082490961411
+    },
+    {
+      "mau": 1000,
+      "warden_monthly_premium_gbp": 365.4584520032465,
+      "paid_narrator_monthly_gbp": 385.0439017191765,
+      "required_narrator_cost_reduction_pct": 0.949134502251605,
+      "required_reduction_per_turn_gbp": 0.009136461300081163,
+      "warm_warden_idle_hours": 723.3333333333334,
+      "serverless_active_only_gpu_gbp": 3.3940824909614107
+    },
+    {
+      "mau": 10000,
+      "warden_monthly_premium_gbp": 365.7230133549765,
+      "paid_narrator_monthly_gbp": 3850.4390171917653,
+      "required_narrator_cost_reduction_pct": 0.09498215962441309,
+      "required_reduction_per_turn_gbp": 0.0009143075333874413,
+      "warm_warden_idle_hours": 663.3333333333334,
+      "serverless_active_only_gpu_gbp": 33.94082490961411
+    }
+  ],
+  "full_narrator_break_even": [
+    {
+      "scenario": "E1_selfhost_7b",
+      "mau": 100,
+      "current_fallback_rate": 0.85,
+      "max_fallback_rate_to_equal_direct": -12.460160965794769,
+      "current_monthly_gbp": 648.3258319191323,
+      "direct_monthly_gbp": 160.23094517818933,
+      "gpu_count": 1,
+      "idle_hours": 726.5277777777778
+    },
+    {
+      "scenario": "E2_selfhost_70b",
+      "mau": 100,
+      "current_fallback_rate": 0.1,
+      "max_fallback_rate_to_equal_direct": -39.54601609657948,
+      "current_monthly_gbp": 1614.0839666494503,
+      "direct_monthly_gbp": 160.23094517818933,
+      "gpu_count": 1,
+      "idle_hours": 718.8888888888889
+    },
+    {
+      "scenario": "E1_selfhost_7b",
+      "mau": 1000,
+      "current_fallback_rate": 0.85,
+      "max_fallback_rate_to_equal_direct": -0.301016096579477,
+      "current_monthly_gbp": 944.3968125138346,
+      "direct_monthly_gbp": 522.3094517818932,
+      "gpu_count": 1,
+      "idle_hours": 695.2777777777778
+    },
+    {
+      "scenario": "E2_selfhost_70b",
+      "mau": 1000,
+      "current_fallback_rate": 0.1,
+      "max_fallback_rate_to_equal_direct": -5.051251509054326,
+      "current_monthly_gbp": 2411.317051575297,
+      "direct_monthly_gbp": 522.3094517818932,
+      "gpu_count": 2,
+      "idle_hours": 1348.888888888889
+    },
+    {
+      "scenario": "E1_selfhost_7b",
+      "mau": 10000,
+      "current_fallback_rate": 0.85,
+      "max_fallback_rate_to_equal_direct": 0.7562665995975855,
+      "current_monthly_gbp": 4486.8228436508525,
+      "direct_monthly_gbp": 4143.094517818933,
+      "gpu_count": 5,
+      "idle_hours": 3302.777777777778
+    },
+    {
+      "scenario": "E2_selfhost_70b",
+      "mau": 10000,
+      "current_fallback_rate": 0.1,
+      "max_fallback_rate_to_equal_direct": -2.4184350100603624,
+      "current_monthly_gbp": 13378.409208293366,
+      "direct_monthly_gbp": 4143.094517818933,
+      "gpu_count": 16,
+      "idle_hours": 10568.888888888889
+    }
+  ],
+  "warden_gpu_quotes": {
+    "runpod_warm_a5000_24gb_usd_hour": 0.27,
+    "runpod_serverless_24gb_usd_active_hour": 0.69,
+    "lambda_a100_40gb_usd_hour": 1.99,
+    "lambda_a100_80gb_usd_hour": 2.79,
+    "vast_marketplace_snapshot_rtx3090_24gb_usd_hour": 0.07,
+    "vast_marketplace_snapshot_rtx4090_24gb_usd_hour": 0.13
+  }
+}

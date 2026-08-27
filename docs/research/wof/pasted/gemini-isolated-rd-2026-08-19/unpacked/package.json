@@ -1,0 +1,19 @@
+{
+  "name": "world-of-fantasy-rnd",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Isolated World of Fantasy research and development sandbox.",
+  "type": "module",
+  "scripts": {
+    "test": "tsx --test tests/**/*.test.ts",
+    "typecheck": "tsc --noEmit",
+    "verify:isolation": "node scripts/verify-isolation.mjs",
+    "validate:content": "node scripts/validate-content.mjs",
+    "verify": "pnpm run verify:isolation && pnpm run validate:content && pnpm run typecheck && pnpm test"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "tsx": "^4.19.0",
+    "typescript": "^5.7.0"
+  }
+}

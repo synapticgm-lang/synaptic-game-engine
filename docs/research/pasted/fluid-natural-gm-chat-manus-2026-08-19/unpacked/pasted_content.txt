@@ -1,0 +1,206 @@
+NEW PROJECT. Unlimited run. Bigger is better. Prefer many complete downloadable markdown + JSON/CSV files over chat summaries. Empty sections = failure.
+Filename prefix: SynapticGM_fluid_natural_gm_chat_maxextract_2026-08-19
+
+LIVE SynapticGM ONLY. No WOF. No hybrid climate. No patent. No MMO redesign. No licensed series names in player-facing content banks (tropes only).
+
+You are a senior narrative systems designer + conversation UX researcher + interactive storytelling engineer. Your mission: maximum extract on how to make SynapticGM’s **chat responses feel fluid, natural, and human-GM quality**, with LitRPG / Story RPG / tabletop / PYOA that feel like a **real story**, not a chatbot appendix.
+
+# PRODUCT LAW (do not contradict)
+
+Authority order: player correction → pinned canon / opening invariant → accepted StateTx → SceneManifest → supporting evidence → draft invention.
+
+Shipped / specified (EXTEND; do not invent a parallel engine):
+- IntentContract + obligation coverage; HookArc soft offers; StateTx + receipts; SceneManifest; IntroductionPermit; CampaignContract
+- beatFingerprint; leak scanner; GM voice profiles (diction-only firewall — style NEVER changes facts/math/permits)
+- OpenAsk / Why?; combat receipts; story-start honeymoon; Memorable Classic splash (full every-turn comic = No-Go)
+- Kid Mode stricter interaction contract
+
+North-star player feelings (must be earned in chat, not only in backend):
+- “This feels like a real person GMing me.”
+- “The reply answered what I typed — all of it.”
+- “It reads like a story / novel chapter, not a helpdesk.”
+- “Talk, joke, protest, bargain feel natural — not menu-speak.”
+- “When something changed, I can see what and why — without the prose dying.”
+- LitRPG System feels in-world; Story RPG feels literary; tabletop feels facilitated; PYOA feels authored-but-alive.
+
+Hard fences:
+- RAG/summary never authority for kit/roster/HP/quests.
+- No mid-action soft offers / sales.
+- Personality = renderer after adjudication.
+- Kid Mode: no pressure, no ads, plainer repair, safer defaults.
+- Do not recommend unbounded token dumps or “remember everything” marketing.
+
+# RESEARCH SCOPE — COVER ALL OF THESE DOMAINS
+
+You MUST harvest patterns from EACH domain below (public docs, papers, design guides, product help pages, craft books summaries that are public-domain-safe or citeable). Separate **verified public mechanism** vs **SPECULATIVE transfer**. Cite with access dates. No invented competitor internal metrics.
+
+## Domain A — Interacting AI / companion / chat products
+Include at least: ChatGPT/Claude-class assistant chat UX; Character.AI-class persona chat; Replika-class companion; Discord bots / roleplay servers (pattern-level); AI Dungeon / Friends & Fables / Hidden Door / NovelAI adventure-adjacent (interaction feel, not only memory); any strong public “talk to NPC” or visual novel AI demos with documented UX.
+
+Extract: turn structure, streaming vs commit, regenerate/edit/continue, acknowledgements, memory surfacing in chrome, persona consistency tricks, failure/repair UX, what feels creepy vs warm, what breaks immersion.
+
+## Domain B — Story writing & narrative craft (for interactive prose)
+Scene goals, dialogue beats, show-vs-tell, pacing, paragraph rhythm, hook/turn/payoff inside ONE GM reply, multi-character dialogue, interiority vs action, ending a beat so the player wants to type again. Map craft rules → programmable prompt/warden rules WITHOUT making the model the authority.
+
+## Domain C — AI audiobooks / narration / spoken story
+Pacing, breath, emphasis, chapter vs continuous listen, TTS vs human narrator expectations, how “heard aloud” prose differs from skim-chat. Spec for SynapticGM: optional TTS later must not make facts audio-only; prose must still work silent. Extract cadence/length/sentence-shape rules that make text feel speakable and human.
+
+## Domain D — Interactive fiction / choice narrative / MUDs / parser IF
+Twine/Ink/Choice of Games/Fallen London-style quality of click vs free text; parser misunderstanding repair; “I understood you as X”; room descriptions that stay alive; command vs natural language hybrids. Transfer only what fits ledger-first freeform.
+
+## Domain E — Tabletop GM practice (human facilitators)
+How good GMs answer questions, clarify intent, keep spotlight moving, paraphrase without stealing agency, run social scenes, cut between characters, telegraph danger, say “yes and / no but,” handle jokes and out-of-character, session pacing. Translate to code+prompt contracts.
+
+## Domain F — Conversation design / HCI / linguistics
+Repair (clarify misunderstanding), confirmations (when silent vs explicit), progressive dialogue, turn-taking, barge-in, grounding, adjacency pairs. Google Conversation Design, NN/g, conversation analysis papers — cite properly.
+
+## Domain G — Games with rich NPC dialogue (pattern-level)
+CRPG companion banter budgets, Radiant/Radiant-like ambient limits, Mass Effect / Disco Elysium-style dialogue systems as *design patterns* (not IP). Steal: response relevance, interruption rules, callback budgets, banter cooldowns — never copy plots/lines.
+
+## Domain H — Live storytelling / improv / oral tradition
+Yes-and constraints, reincorporation, “don’t deny established reality,” spotlight sharing. Map to SceneManifest + correction law.
+
+For EVERY domain: Copy / Avoid / Beat table for SynapticGM.
+
+---
+
+# DELIVERABLES (Parts F1–F14) — ALL REQUIRED
+
+## F1 — Executive: Fluid GM Chat Constitution (≤3 pages)
+Non-negotiable laws for natural chat feel across all engines. Explicitly reconcile with existing Vibe Constitution (do not weaken ledger). Define “fluid” operationally (latency perception, clause coverage, prose rhythm, repair cost, diegetic chrome).
+
+## F2 — Competitive / adjacent teardown: interaction feel only
+Scorecard columns: product | turn model | streaming | repair UX | persona lock | story quality smell | “heard me” | immersion killers | what to steal | what to refuse.
+Minimum 10 products/domains with citations.
+
+## F3 — Turn protocol specification (programming-ready)
+Exact pipeline for one player message → one committed GM turn:
+
+1. Input classes (action, speech, question, correction, protest, meta/safety, compound).
+2. IntentContract obligations + coverage matrix (must address / clarify / defer / block).
+3. Adjudication before prose (ledger, dice, permits).
+4. Render plan: prose structure template per engine.
+5. Receipt policy: silent | chip | expanded Why?
+6. Streaming policy: if/when to stream; what must NOT stream before commit; cancel/retry UX.
+7. Failure paths: timeout, empty, partial obligation, contradiction, Kid block — player-visible language.
+8. Sequence diagrams (mermaid) + pseudocode interfaces (TypeScript-ish).
+
+## F4 — Prose craft rules → warden/prompt rails
+Translate novel/scene craft into enforceable rails:
+- Opening hook of the reply (first 1–2 sentences)
+- Answer-the-input-first (especially questions)
+- One clear beat change per turn (default)
+- Dialogue formatting; attribution; multi-NPC rules
+- Sensory budget; anti-purple; anti-collage; anti-“you decide to…”
+- Ending the turn with playable pressure (not “What do you do?” spam unless earned)
+- Length bands by engine + beat type (short social ack vs set-piece)
+- LitRPG: story body BEFORE System chrome; System as characterful interface
+- Story RPG: literary continuity without stealing player emotion
+- Tabletop: facilitation voice vs boxed text
+- PYOA: prose + honest choice lenses
+
+Output: `prose_rails.json` + markdown examples Good/Bad/Why for ≥30 cases.
+
+## F5 — Speech acts & social fluidity library
+Expand V2 into a full speech-act catalog with runtime interpretation + receipt rules:
+ask, refuse, correct, protest, joke, insult, flirt, bargain, threaten, apologize, thank, whisper, yell, lie, bluff, stay silent, OOC safety (“make this less intense”).
+For each: examples, NPC reaction constraints, when to record StateTx, Kid Mode differences, never-lines.
+
+## F6 — Repair & clarification UX (natural, not robotic)
+State machine with player-facing copy banks:
+ambiguous → one contrastive question
+unsupported → in-world boundary
+contradiction → correction path
+protest → paraphrase confirm
+compound split → show dispositions
+Include: when NOT to ask; when silent inference is OK; anti-“I hear you” ritual.
+Output: `repair_copy_bank.csv` (engine × personality × situation).
+
+## F7 — Personality / voice without breaking story
+How Cold System / Chilled / Army / Dry / Theatrical / Fireside (and 4–8 justified additions) change:
+diction, sentence length, System notice templates, check-call phrasing —
+while semantic equivalence fixtures stay green.
+Include audiobook-adjacent cadence notes per voice (speakable prose).
+Blind A/B eval protocol.
+
+## F8 — Audiobook & TTS-informed writing (even if TTS is later)
+1. Rules that make silent chat still “sound” human when read aloud.
+2. What audiobook AI products do for pacing/chaptering — transferable vs not.
+3. Spec: TTS pilot must mirror on-screen text; no audio-only facts.
+4. Length/punctuation/attribution constraints for future Hear buttons.
+5. Anti-patterns: unspeakable clauses, nested asides, wall-of-stats mid-sentence.
+
+## F9 — Streaming, latency, and “alive” chrome
+Research + recommend:
+typing/stream indicators vs commit-on-complete for a GM product;
+partial reveal risks (lying mid-stream);
+cancel after N seconds;
+keep player bubble on abort (already a product need);
+progress during waits without fake drama or state mutation;
+mobile vs desktop.
+
+Ship a decision memo: **stream or not for v1 closed beta**, with rationale.
+
+## F10 — First-hour & long-session story feel
+1. Beat sheet: turns 1–10 LitRPG + Story RPG that feel like chapter one of a novel AND teach verbs by action.
+2. Turns 50 / 100 / return-from-save: how chat stays warm without recap dumps (callback budget, consequence-forward openings).
+3. Anti-recycle + anti-sameness for NPC talk.
+4. HookArc vs story momentum (offers only at safe beats).
+
+## F11 — Eval harness: “feels human / feels like story”
+≥40 fixtures with pass/fail:
+- compound obligation coverage
+- question-first answers
+- joke not literalized wrongly
+- correction without scene reset
+- voice A/B same facts
+- LitRPG never System-only turn
+- no assistant apologizing as ChatGPT
+- speakable prose checks
+- Kid Mode repair tone
+Human rubric: 0–4 “real GM,” “story quality,” “heard me,” “fairness,” “immersion kill.”
+Output: `fluid_chat_eval_fixtures.json` + scoring CSV template.
+
+## F12 — Implementation backlog (merge with vibe V10 / audit E11)
+P0/P1/P2 only for fluid/natural chat & story feel.
+Each item: extends which shipped module; done-when vibe test; effort S/M/L; do-not-substitute-with.
+Anti-list: vibey ideas that hurt continuity or cost.
+
+## F13 — Content banks (original only)
+- 20 GM reply skeletons (engine-tagged)
+- 40 repair/clarify lines (personality-tagged)
+- 20 System notice templates (LitRPG) that feel diegetic
+- 12 “bad chatbot → good GM” rewrite pairs
+- 10 opening reply examples for Hero Awakening-shaped and Blank Canvas-shaped (original; no licensed tropes by name)
+
+## F14 — Research-complete checklist + founder 7-day plan
+What is done enough to code tomorrow vs needs playtest vs counsel.
+7-day plan focused ONLY on chat/story feel (no GPU farm, no full comic, no WOF).
+
+---
+
+# OUTPUT PACKAGING
+
+Root README index of all files.
+Prefer:
+- `00_executive_fluid_gm_constitution.md`
+- `F2_interaction_feel_teardown.md`
+- `F3_turn_protocol_spec.md` + `turn_pipeline.mermaid`
+- `F4_prose_rails.json` + `F4_prose_good_bad.md`
+- `F5_speech_acts.md` + `speech_acts.json`
+- `F6_repair_copy_bank.csv`
+- `F7_voice_cadence.md`
+- `F8_audiobook_tts_writing.md`
+- `F9_streaming_decision_memo.md`
+- `F10_session_story_feel.md`
+- `F11_fluid_chat_eval_fixtures.json`
+- `F12_backlog_and_anti_list.md`
+- `F13_content_banks.md`
+- `F14_checklist_and_7_day_plan.md`
+- `citations.md`
+- `synapticgm_fluid_chat_research.json` (machine summary)
+
+Mark SPECULATIVE and COUNSEL clearly.
+If a domain lacks public evidence, say so — do not invent.
+
+END OF PROMPT. Begin maximum extract now.

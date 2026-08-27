@@ -1,0 +1,222 @@
+[
+  {
+    "id": "rival.1",
+    "name": "Aven Silt",
+    "partyTheme": "Ember",
+    "agendaSeed": "Seeks a ember accord map while protecting a personal promise.",
+    "startingParty": [
+      "creature.cindlet",
+      "creature.brazel",
+      "creature.kilmane"
+    ]
+  },
+  {
+    "id": "rival.2",
+    "name": "Mira Quill",
+    "partyTheme": "Tide",
+    "agendaSeed": "Seeks a tide accord map while protecting a personal promise.",
+    "startingParty": [
+      "creature.estuarion",
+      "creature.budmote",
+      "creature.bramblem"
+    ]
+  },
+  {
+    "id": "rival.3",
+    "name": "Orlo Pike",
+    "partyTheme": "Gale",
+    "agendaSeed": "Seeks a gale accord map while protecting a personal promise.",
+    "startingParty": [
+      "creature.kestrelume",
+      "creature.pebbit",
+      "creature.cairnox"
+    ]
+  },
+  {
+    "id": "rival.4",
+    "name": "Tessa Vane",
+    "partyTheme": "Root",
+    "agendaSeed": "Seeks a root accord map while protecting a personal promise.",
+    "startingParty": [
+      "creature.twitchcoil",
+      "creature.arcloom",
+      "creature.mirepup"
+    ]
+  },
+  {
+    "id": "rival.5",
+    "name": "Bram Coil",
+    "partyTheme": "Stone",
+    "agendaSeed": "Seeks a stone accord map while protecting a personal promise.",
+    "startingParty": [
+      "creature.auricant",
+      "creature.nectlet",
+      "creature.crowncap"
+    ]
+  },
+  {
+    "id": "rival.6",
+    "name": "Nia Hearth",
+    "partyTheme": "Veil",
+    "agendaSeed": "Seeks a veil accord map while protecting a personal promise.",
+    "startingParty": [
+      "creature.bristleek",
+      "creature.brinehart",
+      "creature.flitsail"
+    ]
+  },
+  {
+    "id": "rival.7",
+    "name": "Corin Rook",
+    "partyTheme": "Spark",
+    "agendaSeed": "Seeks a spark accord map while protecting a personal promise.",
+    "startingParty": [
+      "creature.barkhollow",
+      "creature.flintle",
+      "creature.ridgebacket"
+    ]
+  },
+  {
+    "id": "rival.8",
+    "name": "Jessa Mire",
+    "partyTheme": "Gloom",
+    "agendaSeed": "Seeks a gloom accord map while protecting a personal promise.",
+    "startingParty": [
+      "creature.nodlet",
+      "creature.relayram",
+      "creature.pallpup"
+    ]
+  },
+  {
+    "id": "rival.9",
+    "name": "Venn Lark",
+    "partyTheme": "Gleam",
+    "agendaSeed": "Seeks a gleam accord map while protecting a personal promise.",
+    "startingParty": [
+      "creature.beaconjaw",
+      "creature.mossip",
+      "creature.orchardhorn"
+    ]
+  },
+  {
+    "id": "rival.10",
+    "name": "Perrin Slate",
+    "partyTheme": "Bloom",
+    "agendaSeed": "Seeks a bloom accord map while protecting a personal promise.",
+    "startingParty": [
+      "creature.kelpaddle",
+      "creature.shoalspike",
+      "creature.driftdot"
+    ]
+  },
+  {
+    "id": "rival.11",
+    "name": "Sola Braid",
+    "partyTheme": "Ember",
+    "agendaSeed": "Seeks a ember accord map while protecting a personal promise.",
+    "startingParty": [
+      "creature.pineclink",
+      "creature.snowmoss",
+      "creature.ridgeveil"
+    ]
+  },
+  {
+    "id": "rival.12",
+    "name": "Kade Fen",
+    "partyTheme": "Tide",
+    "agendaSeed": "Seeks a tide accord map while protecting a personal promise.",
+    "startingParty": [
+      "creature.lampet",
+      "creature.wickwyrm",
+      "creature.hushhare"
+    ]
+  },
+  {
+    "id": "rival.13",
+    "name": "Iri Moth",
+    "partyTheme": "Gale",
+    "agendaSeed": "Seeks a gale accord map while protecting a personal promise.",
+    "startingParty": [
+      "creature.chimegale",
+      "creature.vaultmidge",
+      "creature.basaltick"
+    ]
+  },
+  {
+    "id": "rival.14",
+    "name": "Daro Bell",
+    "partyTheme": "Root",
+    "agendaSeed": "Seeks a root accord map while protecting a personal promise.",
+    "startingParty": [
+      "creature.sluicewraith",
+      "creature.hollowgale",
+      "creature.veilclast"
+    ]
+  },
+  {
+    "id": "rival.15",
+    "name": "Uma Flint",
+    "partyTheme": "Stone",
+    "agendaSeed": "Seeks a stone accord map while protecting a personal promise.",
+    "startingParty": [
+      "creature.briarbulk",
+      "creature.coilshard",
+      "creature.cairnjaw"
+    ]
+  },
+  {
+    "id": "rival.16",
+    "name": "Rook Vale",
+    "partyTheme": "Veil",
+    "agendaSeed": "Seeks a veil accord map while protecting a personal promise.",
+    "startingParty": [
+      "creature.rillvault",
+      "creature.grainpuff",
+      "creature.sootfinch"
+    ]
+  },
+  {
+    "id": "rival.17",
+    "name": "Lena Current",
+    "partyTheme": "Spark",
+    "agendaSeed": "Seeks a spark accord map while protecting a personal promise.",
+    "startingParty": [
+      "creature.dewcurl",
+      "creature.hedgeloom",
+      "creature.reedglider"
+    ]
+  },
+  {
+    "id": "rival.18",
+    "name": "Moss Dain",
+    "partyTheme": "Gloom",
+    "agendaSeed": "Seeks a gloom accord map while protecting a personal promise.",
+    "startingParty": [
+      "creature.sedgejaw",
+      "creature.fenflash",
+      "creature.siltlamp"
+    ]
+  },
+  {
+    "id": "rival.19",
+    "name": "Pia Glow",
+    "partyTheme": "Gleam",
+    "agendaSeed": "Seeks a gleam accord map while protecting a personal promise.",
+    "startingParty": [
+      "creature.tidevault",
+      "creature.granite-oracle",
+      "creature.lantern-comet"
+    ]
+  },
+  {
+    "id": "rival.20",
+    "name": "Tarn Wisp",
+    "partyTheme": "Bloom",
+    "agendaSeed": "Seeks a bloom accord map while protecting a personal promise.",
+    "startingParty": [
+      "creature.tinderloom",
+      "creature.puddleknit",
+      "creature.shadepurl"
+    ]
+  }
+]

@@ -1,0 +1,4 @@
+tier,retail_price_gbp,model_id,input_usd_per_million,output_usd_per_million,cache_read_usd_per_million,context_tokens,price_lookup_date,evidence_status
+Free player tier,0.00,deepseek/deepseek-v4-flash-0731,0.035,0.10,routing-dependent; provider table observed from 0.008,1000000,2026-08-25,PUBLICLY EVIDENCED model price; EVIDENCED founder retail price
+Mid,14.99,anthropic/claude-haiku-4.5,1.00,5.00,0.10 standard listed provider rows,200000,2026-08-25,PUBLICLY EVIDENCED model price; EVIDENCED founder retail price
+High,29.99,anthropic/claude-sonnet-4.6,3.00,15.00,0.30 standard listed provider rows,1000000,2026-08-25,PUBLICLY EVIDENCED model price; EVIDENCED founder retail price

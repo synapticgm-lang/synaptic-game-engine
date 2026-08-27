@@ -1,0 +1,164 @@
+packFormatVersion: 1
+releaseLanguage:
+  default: solo / private co-op
+  limitedOnline: only after limited-online-region gate
+  mmo: prohibited until true MP proof
+entitlements:
+  ash_compact: included
+  otherWorlds: buy-and-own
+  themeKit: included with each entitled world
+  restore: 'CODE: receipt-validated restore'
+  familyPlan: 'SPEC: separate legal and platform review'
+themeKitApply:
+  apply: 'CODE: entitlement check then world-scoped chrome change'
+  rollback: 'CODE: restore default chrome without affecting ledger'
+  ageVariant: 'CODE: use approved Kid variant or omit'
+wallets:
+  gold: world-scoped non-power goods
+  cosmeticTokens: world-scoped cosmetic goods
+  prohibited:
+  - outcomes
+  - raid clears
+  - lockout skips
+  - catches
+  - power packs
+  - gacha
+ageGate:
+  lanes:
+  - all-ages
+  - teen
+  - teen+
+  kidMode:
+    turnLimitPerDay: 10
+    publicDMs: false
+    trade: false
+    voice: false
+    routeLantern: crushes permitted; no sexual content
+sharedEngine:
+  partySize: 2-5
+  raid: 10 only after skin-specific approval
+  lockstep: true
+  weeklyBossLockout: per character
+  personalLoot: true
+  wipe: checkpoint return
+  midCombatFill: false
+  permadeathV1: false
+  guildBankV1: false
+  globalChatV1: false
+  presence: nearby count plus races only
+  languageV1: English
+killSwitches:
+  worldScoped:
+  - store_listing
+  - new_starts
+  - instance_entry
+  - festival
+  - themed_talk
+  - theme_kit_apply
+  sharedSafety:
+  - age_gate
+  - kid_mode
+  - reporting
+worldUnlocks:
+- worldId: ash_compact
+  unlock: included
+- worldId: brasswake
+  unlock: buy-and-own
+- worldId: thorn_law
+  unlock: buy-and-own
+- worldId: civic_mile
+  unlock: buy-and-own
+- worldId: homestead_ring
+  unlock: buy-and-own
+- worldId: scale_era
+  unlock: buy-and-own
+- worldId: glass_reef
+  unlock: buy-and-own
+- worldId: kindred_hide
+  unlock: buy-and-own
+- worldId: ink_banner
+  unlock: buy-and-own
+- worldId: leafrail
+  unlock: buy-and-own
+- worldId: saddle_sky
+  unlock: buy-and-own
+- worldId: northrim
+  unlock: buy-and-own
+- worldId: tide_colossus
+  unlock: buy-and-own
+- worldId: ribbon_guard
+  unlock: buy-and-own
+- worldId: quiet_brief
+  unlock: buy-and-own
+- worldId: neon_docket
+  unlock: buy-and-own
+- worldId: redline_hour
+  unlock: buy-and-own
+- worldId: atelier_row
+  unlock: buy-and-own
+- worldId: third_cup
+  unlock: buy-and-own
+- worldId: briar_court
+  unlock: buy-and-own
+- worldId: threshold_rooms
+  unlock: buy-and-own
+- worldId: smoke_ledger
+  unlock: buy-and-own
+- worldId: quiet_rite
+  unlock: buy-and-own
+- worldId: first_clay
+  unlock: buy-and-own
+- worldId: mesa_codex
+  unlock: buy-and-own
+- worldId: drumline_coast
+  unlock: buy-and-own
+- worldId: star_canoe
+  unlock: buy-and-own
+- worldId: winter_oven
+  unlock: buy-and-own
+- worldId: green_chapel
+  unlock: buy-and-own
+- worldId: first_song
+  unlock: buy-and-own
+- worldId: isekai_gate
+  unlock: buy-and-own
+- worldId: bonded_menagerie
+  unlock: buy-and-own
+- worldId: circuit_arc
+  unlock: buy-and-own
+- worldId: halo_term
+  unlock: buy-and-own
+- worldId: hollow_term
+  unlock: buy-and-own
+- worldId: starwake
+  unlock: buy-and-own
+- worldId: lanceyard
+  unlock: buy-and-own
+- worldId: quarry_pact
+  unlock: buy-and-own
+- worldId: sect_ascension
+  unlock: buy-and-own
+- worldId: gridrun
+  unlock: buy-and-own
+- worldId: blackwake
+  unlock: buy-and-own
+- worldId: night_charter
+  unlock: buy-and-own
+- worldId: badge_circuit
+  unlock: buy-and-own
+- worldId: dust_line
+  unlock: buy-and-own
+- worldId: veil_watch
+  unlock: buy-and-own
+- worldId: crew_score
+  unlock: buy-and-own
+- worldId: hearth_season
+  unlock: buy-and-own
+- worldId: stage_light
+  unlock: buy-and-own
+- worldId: pitch_league
+  unlock: buy-and-own
+- worldId: route_lantern
+  unlock: buy-and-own
+- worldId: card_vein
+  unlock: buy-and-own

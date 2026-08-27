@@ -1,0 +1,162 @@
+# SynapticGM — KEY PARTS trope catalogue (original / folklore only)
+
+You are producing a massive, prompt-ready TROPE CATALOGUE for SynapticGM, a hosted AI tabletop/LitRPG/story game. The live GM must be able to seed-pick ONE variant per AXIS at New Game and inject it as POINTER CARDS (ingredients), not scripts. The writer then writes original prose.
+
+## HARD PRODUCT LAW
+
+1. LIVE / GM-READY COLUMNS must NEVER name or clone licensed series, novels, anime, manga, manhwa, cartoons, films, or tabletop brands.
+ Forbidden examples in those columns: Solo Leveling, Shield Hero, The Wandering Inn, Azarinth Healer, My Vampire System, Sword Art Online, Dungeon Crawler Carl, Omniscient Reader, Tower of God, D&D, WotC, SRD product names, Marvel/DC teams, named Studio Ghibli/Disney properties, Aliens, Twilight, Underworld, Black Dagger Brotherhood, Fable, Albion, any specific anime title as “write like X”.
+2. You MAY use GENERIC TROPES and PUBLIC-DOMAIN FOLKLORE (summoning circles, inns as social hubs, guild job boards, dungeon floors, hunter licenses, academy houses, reincarnation bargains, murder-in-the-manor, road companions, salt-road caravans). Invent ORIGINAL SynapticGM wording for every player-facing and GM-ready string.
+3. Optional column `founder_shape_cousin` is SPECULATIVE FOUNDER RESEARCH ONLY.
+ - It may say: “same SHAPE as common isekai registration” or “same SHAPE as a locked-room midnight murder”.
+ - It must NEVER name a work in a way that could be pasted into a systemPrompt.
+ - Prefixed always with: `FOUNDER-ONLY / DO NOT INJECT:`
+ - If you are not sure, leave the cell empty.
+4. WOF (World of Fantasy) is a SEPARATE later project. Do not invent WOF races, places, or factions (no Ash Compact, Tide Covenant, Hearthborn, Lanternfolk, Saltkin, Stonevein, Reedfen, Lampwood, Brinewatch, Granite Stair). Do not mix them into live premade families.
+5. Kid Mode: every variant needs a `kid_ok` flag (true/false) and a `kid_transform` if false would still work when softened (no sex, no gore-as-porn, no gambling dens as the joke).
+6. Pointers, not Mad Libs. Each variant is INGREDIENTS the GM expands. Never a paragraph the model should reprint verbatim as the whole first page.
+
+## WHAT SYNAPTICGM ALREADY DOES (do not waste rows cloning this as if new)
+
+- Seed-picked first-page cameras (`openingHooks` / `OPENING_HOOK_DECKS`): location + a short beat. Summoned Pact also has faction, summonIntent, openingOffer, alone-ruin ladder.
+- LitRPG System voices (player pick): Cold registrar, Sarcastic Patch, Army quartermaster, Friendly System, Cozy Brutal. Voice is diction only; never changes facts.
+- Tabletop GM voices: Chilled, Dry sarcastic, Theatrical, Army, Fireside.
+- Folk diction banks (18 peoples) — speech only.
+- PYOA: each title has a FIXED styleRail (fork verbs) and two factions + companion + MacGuffin.
+- Archetype blobs (system apocalypse, isekai, tower, academy, dungeon core, void, etc.) — one rule-block, not 8–12 variants.
+- E7 research sketched “first proof of causality” for Hero Awakening / System Integration shapes — expand that idea across ALL families.
+
+Your job is the MISSING axes: 8–12 ORIGINAL variants per axis per family, GM-ready.
+
+## PREMADE FAMILIES (catalogue against these; do not invent new live titles)
+
+Use `family_id` exactly:
+
+LITRPG
+- `fam-isekai-summon` — The Summoned Pact. Earth clothes. Circle / ruin / camp / cell / arena / festival / ship / infirmary / ALONE ruin. Pactborn vs Calamity Mark. Kit is OFFERED not issued. Glitched unidentified blessing. Hubs: original inn, contract hall, undercroft dungeon.
+- `fam-null-pyoa-isekai` — Null-Parameter Protocol (PYOA cousin): failed summon, ERROR as story object (engine prints no XP), Glitch-Walkers vs Vanguard. Still original names only.
+- `fam-sys-apocalypse` — System Integration. Earth. Global Registration. Waves. Foundation Cores. Permadeath. Assigned class.
+- `fam-gate-city` — Gatebreak Ward. District gates, hunter licenses, poor ward vs rich guilds. Not a named hunter manhwa.
+- `fam-late-awaken` — Hero Awakening. NOT a summon. Already lives here. Private growth ledger vs public grades. Player locks folk + world-shape.
+- `fam-tower-climb` — Ascending Spire. Permits, ranking board, Floor Laws, Floor Wardens.
+- `fam-dungeon-drop` — Dungeon Transport. Accidental rift, only down, hunger/thirst/light, safe rooms, Descent Log.
+- `fam-academy` — Inkbound Academy. Living ink, houses, exams, Class Codex.
+- `fam-dungeon-core` — Hollow Core. Player IS the core. Expand/spawn/bargain.
+- `fam-void-bargain` — Void Audience. Auditor desk, Flaws/Boons, Cosmic Favor, rebirth into Resonance.
+- `fam-village-soft` — Fabled Legacy. Soft village; premise has NO blue panels; consequence-first.
+- `fam-litrpg-custom` — Blank Canvas LitRPG. Player Codex is canon; banks must be optional proposals, not invented kingdoms.
+
+PYOA (crisis already in motion; several endings; companion optional)
+- `fam-pyoa-road` — Thornferry Road (charter, Wren, Highmark).
+- `fam-pyoa-occult` — Vesper-Glass Cipher (flooded archives, cylinder).
+- `fam-pyoa-space` — Erebus-9 (swarm, airlock, nav-drive). Generic mining-rig survival tropes only.
+- `fam-pyoa-romance-gala` — Rose-Gold Ultimatum (dossier, gala).
+- `fam-pyoa-mystery` — Giltwood Estate (locked room, backward watch, hidden culprit — vary CAMERA and first proof, not the killer identity).
+- `fam-pyoa-underwater` — Resin Sonata (syringe, flooded city).
+- `fam-pyoa-assassin` — Umbra Protocol (ledger, rooftops).
+- `fam-pyoa-vampire` — Crimson Nocturne (ampoule, hunters vs night court). Folklore vampires, not a series.
+- `fam-pyoa-dark-romance` — Onyx Blood Covenant NSFW (club, fated-mate ledger, pack vs coven). Mark `nsfw:true`. Provide a kid_ok=false row and a fade-to-black cousin.
+
+STORY RPG
+- `fam-rpg-heist` Salt Road Heist
+- `fam-rpg-letters` Glass Harbor Letters
+- `fam-rpg-court` Embercourt Oath
+- `fam-rpg-noir` Rainglass Case
+- `fam-rpg-isolation` Static House
+- `fam-rpg-crew` Driftwake Crew
+- `fam-rpg-wasteland` Ashline Convoy
+- `fam-rpg-inn-romance` Twin Lanterns
+- `fam-rpg-western` Redmesa Claim
+- `fam-rpg-street-heroes` Cape District Vigil (original powered people; no publisher heroes)
+- `fam-rpg-travelogue` Wayfarers' Map
+- `fam-rpg-teashop` Hearthwick Teas
+- `fam-rpg-custom` Blank Canvas Story RPG
+
+TABLETOP FANTASY (generic d20 language; no company setting names)
+- `fam-tt-haunted` Cursed Keep / Greyhollow
+- `fam-tt-caravan` Millstone Road
+- `fam-tt-keep-war` Broken Crown Keep
+- `fam-tt-blight` Verdant Blight
+- `fam-tt-veil` Stillroot Veil
+- `fam-tt-city-guilds` Shattered Coast / Saltmar five guilds
+- `fam-tt-custom` Blank Canvas Tabletop
+
+OPTIONAL EXTRA FAMILIES (picker archetypes with no dedicated bible — banks only, for Custom / future)
+- `fam-vrmmo-trap` — logged-in-for-real; logout only in safe zones; never name a licensed MMO
+- `fam-regression` — wake earlier with foreknowledge; butterfly effects
+- `fam-creature-rebirth` — weak creature body, evolution tree (distinct from dungeon-core)
+- `fam-cyber-neural` — heat/overheat, hardware/software stats, corp street
+
+## AXES (emit 8–12 variants each, per family)
+
+axis_id must be one of:
+- `arrival` — first page camera
+- `name_ask` — who asks the name (NPC / System / inn book / never)
+- `kit_reveal` — how kit becomes real
+- `power_source` — why genre power exists
+- `growth` — how strength changes
+- `system_voice` — chrome diction HINTS as ingredients (do not copy SynapticGM’s existing five labels as the only rows; invent additional ORIGINAL registrar flavours that are still not licensed characters). Include a `none` row where the family should have no System.
+- `hub` — rest/rumor place
+- `opposition` — campaign pressure
+- `first_proof` — first causal proof the world is real / the System is not a dream
+- `crowd` — social vs alone on page one
+- `offer` — bargain structure
+- `companion` — walking-together pattern (especially PYOA)
+- `identity_lock` — what the opening must freeze
+- `ending_logic` — PYOA/Story true-ending keys (skip for tabletop one-shots if not applicable; still give 8 rows of “what a satisfying close keys on”)
+
+PIN RULES (respect these; variants on pinned axes should be “texture only” not a different genre):
+- Summoned Pact: pin Earth origin, unidentified blessing, offer-not-gift kit, no logout.
+- Hero Awakening: pin not-a-summon, private ledger vs public grades.
+- System Integration: pin Earth, global panel, permadeath.
+- Hollow Core: pin you-are-the-core.
+- PYOA titles: pin MacGuffin class (watch, cylinder, drive, dossier, syringe, ledger, ampoule) but VARY camera, first proof, companion posture, and who speaks first.
+- Blank Canvas families: variants are PROPOSALS the player may accept; never assert a kingdom.
+
+## OUTPUT (deliver all)
+
+A) `catalogue_index.md`
+- One table of families × which axes are PINNED vs FREE
+- Never-lines per family (10+) , original wording
+
+B) `tropes.csv` — UTF-8, one row per variant. Columns EXACTLY:
+
+family_id
+axis_id
+variant_id (stable kebab: fam-isekai-summon-arrival-07)
+title_short (3–6 words, original)
+pointer_location (optional camera)
+pointer_faction (who is in the room / who wants something)
+pointer_intent (why this beat exists)
+pointer_offer (bargain or “none”)
+pointer_beats (2–4 semicolon-separated ingredients, not a script)
+pointer_fallback (one grammatical paragraph, 2–4 sentences, used ONLY if the writer call fails — still original)
+never_lines (what the GM must not invent this run)
+first_proof (what changes in the world if the player acts; 1 sentence)
+kid_ok (true/false)
+kid_transform (how to soften)
+nsfw (true only for dark-romance adult rows)
+inject_ok (true if this row is legal to put in a live prompt)
+founder_shape_cousin (optional; MUST start with FOUNDER-ONLY / DO NOT INJECT: and must not contain a work’s title)
+
+C) `axes_crosswalk.md`
+- Which axes should be co-picked (e.g. crowd=alone forbids name_ask=NPC handler)
+- Illegal combos (academy midterms on a dungeon-drop floor-1; Floor Laws in Mossford; XP windows in Thornferry)
+
+D) `folklore_appendix.md`
+- Public-domain motifs used (circle, threshold, bargain, psychopomp, inn-as-hearth, guild-as-work, manor-murder, sea-bargain, etc.) with folklore names (not modern series).
+- 1 line each: how we ORIGINALIZED them for SynapticGM.
+
+## QUALITY BAR
+
+- 8–12 variants per axis per family. If a family truly cannot support an axis, output 3 rows explaining PINNED/N/A and still give texture variants.
+- No duplicate cameras with only a synonym swapped.
+- Mix: crowded / alone / in-motion / aftermath / wrong-room / rival-got-there-first.
+- Anime/manga/cartoon SHAPES allowed only as generic craft: “reaction beat”, “training-as-scene”, “transformation-as-costume-change”, “meal-after-fight”, “exam-as-trial”. Describe the SHAPE in original English. Never cite a show.
+- English: full grammatical sentences in pointer_fallback. No telegram fragments.
+- Do not output WOF names.
+- Do not output SynapticGM internal jargon in player-facing strings (no StateTx, SceneManifest, IntentContract).
+
+## BEGIN
+
+Produce the four deliverables. Prefer completeness over brevity. After the CSV, list any family/axis pairs you could not honestly fill and why.

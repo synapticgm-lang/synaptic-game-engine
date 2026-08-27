@@ -1,0 +1,669 @@
+packFormatVersion: 1
+fileId: WOF_Character_Alts_Safety
+worldScope: ash_compact
+worldDisplayName: Ash Compact
+contentKind: wof_typed_data
+originalIpFence: true
+liveSynapticGMImport: false
+
+engine_contract:
+  product_label: "solo / private co-op / limited online region"
+  character_slots:
+    default_per_world: 4
+    max_per_world_v1: 4
+    unlock_unit: character_slot
+    account_scope: world
+    delete_cooldown_days: 7
+    delete_requires_confirmation: true
+    deletion_restore_window_days: 7
+  party_size:
+    minimum: 1
+    maximum: 5
+  raid_size: 10
+  world_hop_v1: false
+  character_transfer_v1: false
+  cross_title_inventory: false
+  live_save_import: false
+  code_owns:
+    - identity
+    - slots
+    - appearance_validation
+    - name_reservation
+    - wallet_balances
+    - inventory
+    - family_limits
+    - moderation_actions
+    - trade_counters
+  llm_may_narrate:
+    - confirmed_appearance_description
+    - confirmed_fashion_description
+    - in_world_identity_acknowledgement
+  llm_must_not_invent:
+    - gold
+    - cosmetic_tokens
+    - item_ownership
+    - slot_unlocks
+    - rename_completion
+    - family_turns
+    - moderation_outcomes
+    - trade_acceptance
+
+wallets:
+  - walletId: wallet_gold
+    publicName: Coin
+    codeUse: gameplay
+    mutableBy: code_only
+    mayPurchase:
+      - repairs
+      - recipes
+      - maps
+      - travel_supplies
+      - vendor_items
+    forbiddenPurchases:
+      - combat_power
+      - catch_success
+      - loot_rolls
+      - boss_clears
+      - lockout_skips
+      - randomized_power_packs
+  - walletId: wallet_cosmetic
+    publicName: Glints
+    codeUse: cosmetic_only
+    mutableBy: code_only
+    mayPurchase:
+      - rename_token
+      - appearance_cosmetic
+      - fashion_cosmetic
+      - voice_cosmetic
+    forbiddenPurchases:
+      - combat_power
+      - catch_success
+      - loot_rolls
+      - boss_clears
+      - lockout_skips
+      - randomized_power_packs
+
+enums:
+  voiceMode:
+    - default_text
+    - silent
+    - soft_spoken
+    - resonant
+    - brisk
+    - warm
+  bodyPresentation:
+    - compact_a
+    - compact_b
+    - compact_neutral
+  fashionSlot:
+    - head
+    - face
+    - mantle
+    - torso
+    - hands
+    - legs
+    - feet
+    - sash
+    - tool_charm
+    - title_plate
+  cosmeticRarity:
+    - common
+    - uncommon
+    - rare
+    - epic
+  nameDecision:
+    - accepted
+    - rejected_reserved
+    - rejected_filtered
+    - rejected_taken
+    - rejected_length
+    - pending_review
+  moderationDisposition:
+    - rewrite
+    - skip
+    - allow
+    - report_only
+    - human_review
+  tradeCounterAction:
+    - warn
+    - add_confirmation
+    - delay_accept
+    - block_window
+    - report_only
+
+appearance_schema:
+  schemaId: AppearanceFields
+  description: "Cosmetic identity fields for an Ash Compact character; values never alter combat ledger values."
+  fields:
+    bodyPresentation:
+      type: enum
+      enumRef: bodyPresentation
+      required: true
+    skinTone:
+      type: enum_string
+      allowed: [ash_warm, ash_cool, clay_tan, tide_pale, stone_deep, river_brown]
+      required: true
+    hairProfile:
+      type: enum_string
+      allowed: [cropped, braided, wrapped, swept, coiled, shaved_sides, covered]
+      required: true
+    hairColor:
+      type: enum_string
+      allowed: [charcoal, soot_brown, reed_black, wick_blue, salt_white, iron_gray, copper_brown]
+      required: true
+    eyeAccent:
+      type: enum_string
+      allowed: [plain, amber_reflect, blue_reflect, tide_glint, mineral_thread]
+      required: true
+    faceMark:
+      type: enum_string
+      allowed: [none, chalk_line, kiln_freckle, tide_speckle, seam_mark, route_dot]
+      required: true
+    heightBand:
+      type: enum_string
+      allowed: [short, standard, tall]
+      required: true
+    mantleColor:
+      type: enum_string
+      allowed: [charcoal, kiln_red, reed_green, tide_blue, chalk_white, undyed]
+      required: true
+    voiceMode:
+      type: enum
+      enumRef: voiceMode
+      required: true
+    pronounSet:
+      type: enum_string
+      allowed: [she_her, he_him, they_them, custom_localized]
+      required: true
+    customPronounText:
+      type: string
+      maxLength: 48
+      required: false
+      safety: filtered_plain_text
+  invariants:
+    - appearance fields are cosmetic only
+    - raceId remains one of hearthborn, lanternfolk, saltkin, stonevein
+    - starter weapon and starter armor remain race-owned ledger items
+    - no appearance field changes hp, armor, damage, initiative, loot, or access
+
+character_schema:
+  schemaId: Character
+  description: "World-scoped player character record with cosmetic alternatives and safety state."
+  fields:
+    characterId: {type: branded_string, pattern: "char_[a-z0-9_]{8,48}", unique: global}
+    accountId: {type: account_ref, required: true}
+    worldId: {type: literal, value: ash_compact, required: true}
+    displayName: {type: string, minLength: 3, maxLength: 20, required: true}
+    nameRevision: {type: integer, min: 0, default: 0}
+    raceId:
+      type: enum_string
+      allowed: [hearthborn, lanternfolk, saltkin, stonevein]
+      required: true
+    originPlaceId:
+      type: enum_string
+      allowed: [poi_reedfen_square, poi_wickhaven, poi_brinewatch_dock, poi_anvil_gate]
+      required: true
+    appearance: {type: AppearanceFields, required: true}
+    fashionLoadout: {type: FashionLoadout, required: true}
+    voiceProfile: {type: VoiceProfile, required: true}
+    identityConfirmed: {type: boolean, default: false}
+    tutorialState: {type: TutorialState, required: true}
+    familyPlanId: {type: nullable_ref, required: false}
+    safetyFlags: {type: SafetyFlags, required: true}
+    createdAt: {type: timestamp, codeOwned: true}
+    updatedAt: {type: timestamp, codeOwned: true}
+  uniqueness:
+    - characterId globally unique
+    - displayName unique within worldId, casefolded
+  failureModes:
+    - duplicate name reservation must fail atomically
+    - stale revision must not overwrite appearance
+    - LLM output cannot create or mutate this record
+
+character_lock:
+  schemaId: CharacterLock
+  description: "Optimistic concurrency and destructive-action guard for character edits."
+  fields:
+    characterId: {type: character_ref, required: true}
+    expectedRevision: {type: integer, min: 0, required: true}
+    lockKind: {type: enum_string, allowed: [appearance_edit, rename, delete, tutorial_skip, fashion_save], required: true}
+    acquiredAt: {type: timestamp, required: true}
+    expiresAt: {type: timestamp, required: true}
+    actorSessionId: {type: session_ref, required: true}
+  defaults:
+    ttlSeconds: 30
+  failureModes:
+    - revision mismatch returns WOF-E042 and makes no change
+    - expired lock returns WOF-E043
+    - duplicate mutation key is idempotent
+
+tutorial_state:
+  schemaId: TutorialState
+  description: "Per-character first-hour progress; alternate characters may skip only after identity confirmation."
+  fields:
+    identityConfirmed: {type: boolean, default: false}
+    safeTaskComplete: {type: boolean, default: false}
+    anomalyInspected: {type: boolean, default: false}
+    stakeChoice: {type: nullable_enum, allowed: [spend_family_meal, protect_seed_pouch, reserve_oil, let_lane_dim, warn_pier, finish_catch, brace_public_arch, protect_family_tool]}
+    observedConsequence: {type: boolean, default: false}
+    combatTutorialComplete: {type: boolean, default: false}
+    firstTravelMarkerGranted: {type: boolean, default: false}
+    skipUsed: {type: boolean, default: false}
+  canonicalFlags: [identity_confirmed, first_choice, observed_consequence]
+  canonicalPath:
+    - choose_kit
+    - confirm_identity
+    - safe_local_task
+    - inspect_local_anomaly
+    - make_stake_choice
+    - resolve_instanced_combat_tutorial
+    - return_to_durable_npc
+    - receive_first_travel_marker
+  skipRule:
+    eligibleWhen:
+      - identityConfirmed == true
+    effects:
+      - mark skipUsed true
+      - mark safeTaskComplete true
+      - mark anomalyInspected true
+      - mark combatTutorialComplete true
+      - grant firstTravelMarker only after code confirms origin hub
+    forbidden:
+      - skipping before identity confirmation
+      - granting quest rewards without committed objective state
+      - changing raceId or originPlaceId
+
+family_plan:
+  schemaId: FamilyPlan
+  description: "Parent-controlled turn sharing and child safety configuration."
+  fields:
+    familyPlanId: {type: branded_string, pattern: "family_[a-z0-9_]{8,48}", unique: global}
+    ownerAccountId: {type: account_ref, required: true}
+    childAccountIds: {type: array_account_ref, maxItems: 8, required: true}
+    adultAccountIds: {type: array_account_ref, maxItems: 4, required: true}
+    dailyTurnCap: {type: integer, value: 10, codeOwned: true}
+    parentSharePoolEnabled: {type: boolean, default: true}
+    parentSharePoolDailyCap: {type: integer, min: 0, max: 10, default: 10}
+    sharedTurnsUsedToday: {type: integer, min: 0, default: 0}
+    resetTimezone: {type: iana_timezone, default: UTC}
+    publicDirectMessages: {type: boolean, value: false}
+    publicTrade: {type: boolean, value: false}
+    voiceChat: {type: boolean, value: false}
+    routeLanternCrushesAllowed: {type: boolean, value: true}
+    sexualContentAllowed: {type: boolean, value: false}
+    goreContentAllowed: {type: boolean, value: false}
+    drugContentAllowed: {type: boolean, value: false}
+    gamblingContentAllowed: {type: boolean, value: false}
+  invariants:
+    - child accounts receive at most 10 text turns per day
+    - parent may share only from the parentSharePoolDailyCap
+    - sharing never grants gold, items, combat power, or lockout skips
+    - no public DMs, public trade, or voice for children
+    - adult settings cannot override forbidden content blocks for child sessions
+  failureModes:
+    - over-cap turn request is rejected with WOF-E061
+    - parent share requires authenticated owner session
+    - midnight reset is code-owned and idempotent
+
+voice_profile:
+  schemaId: VoiceProfile
+  description: "Cosmetic voice direction only; WOF v1 is English text and does not require generated audio."
+  fields:
+    voiceProfileId: {type: branded_string, unique: true}
+    mode: {type: enum, enumRef: voiceMode, default: default_text}
+    language: {type: literal, value: en, default: en}
+    toneTags: {type: array_enum_string, allowed: [practical, intimate, observant, warm, brisk, quiet, resolute], maxItems: 4}
+    speechRate: {type: enum_string, allowed: [slow, standard, brisk], default: standard}
+    narrationAudioEnabled: {type: boolean, default: false}
+    textToSpeechEnabled: {type: boolean, default: false}
+  ashCompactDefaults:
+    toneTags: [practical, intimate, observant]
+    speechRate: standard
+    direction: "Every line values maintenance over spectacle."
+  safety:
+    - voice profile never changes access, combat, or rewards
+    - no celebrity or licensed voice imitation
+    - text remains available when audio is disabled
+
+fashion_loadout:
+  schemaId: FashionLoadout
+  description: "Appearance-only equipment with Ash Compact material and palette constraints."
+  fields:
+    head: {type: nullable_cosmetic_ref}
+    face: {type: nullable_cosmetic_ref}
+    mantle: {type: nullable_cosmetic_ref}
+    torso: {type: nullable_cosmetic_ref}
+    hands: {type: nullable_cosmetic_ref}
+    legs: {type: nullable_cosmetic_ref}
+    feet: {type: nullable_cosmetic_ref}
+    sash: {type: nullable_cosmetic_ref}
+    toolCharm: {type: nullable_cosmetic_ref}
+    titlePlate: {type: nullable_cosmetic_ref}
+  allowedMaterials: [soot_glazed_ceramic, waxed_cloth, river_glass, rope_fiber, riveted_iron]
+  allowedPalette: [charcoal, kiln_red, reed_green, tide_blue, chalk_white]
+  starterDefaults:
+    hearthborn: [layered_workwear, reedmantle_armor_visual, clay_bead_sash]
+    lanternfolk: [oilcloth_mantle, wickglass_coat_visual, blue_wick_scarf]
+    saltkin: [brine_cloak, brinecloak_armor_visual, shell_cord]
+    stonevein: [riveted_apron, riveted_dustcoat_visual, dust_goggles]
+  knownCosmetics:
+    - {cosmeticId: cinder_accord_sash, category: sash, source: vendor, combatPower: 0}
+    - {cosmeticId: clay_bead_sash, category: sash, source: starter, combatPower: 0}
+    - {cosmeticId: blue_wick_scarf, category: mantle, source: starter, combatPower: 0}
+    - {cosmeticId: shell_cord, category: tool_charm, source: starter, combatPower: 0}
+    - {cosmeticId: dust_goggles, category: face, source: starter, combatPower: 0}
+    - {cosmeticId: route_sash_reed, category: sash, source: quest, combatPower: 0}
+    - {cosmeticId: waxed_hood, category: head, source: vendor, combatPower: 0}
+    - {cosmeticId: riverglass_pin, category: tool_charm, source: vendor, combatPower: 0}
+  invariants:
+    - cosmeticPowerDelta must equal 0
+    - cosmetic items are account-bound
+    - cosmetics cannot buy outcomes, catch success, loot rolls, boss clears, or lockout skips
+    - no randomized power packs or gacha
+
+name_reservation:
+  schemaId: NameReservation
+  description: "Atomic world-scoped name reservation and cosmetic rename workflow."
+  fields:
+    reservationId: {type: branded_string, unique: true}
+    accountId: {type: account_ref, required: true}
+    worldId: {type: literal, value: ash_compact}
+    candidate: {type: string, minLength: 3, maxLength: 20}
+    normalizedCandidate: {type: string, uniqueWithin: worldId}
+    decision: {type: enum, enumRef: nameDecision, required: true}
+    reasonCode: {type: enum_string, allowed: [none, reserved_word, forbidden_phrase, already_taken, invalid_length, invalid_characters, rate_limited, human_review], required: true}
+    expiresAt: {type: timestamp, required: true}
+    renameTokenId: {type: nullable_item_ref}
+    requestKey: {type: idempotency_key, unique: true}
+  rules:
+    allowedCharacters: "letters, numbers, spaces, apostrophe, hyphen"
+    maxConsecutiveSpaces: 1
+    trimWhitespace: true
+    casefoldForUniqueness: true
+    currentNameRetentionDays: 90
+    renameCost: {wallet: wallet_cosmetic, itemId: rename_token, quantity: 1}
+    firstNameAtCreationCost: {wallet: wallet_cosmetic, quantity: 0}
+    renameDoesNotChange: [raceId, originPlaceId, inventory, gold, quest_state, lockouts, combat_stats]
+  workflow:
+    - validate_length_and_charset
+    - normalize_case_and_whitespace
+    - check_reserved_words
+    - check_world_reservation
+    - consume_rename_token_only_on_accept
+    - commit_name_and_revision_atomically
+    - release_old_reservation
+
+reserved_words:
+  schemaId: ReservedWords
+  description: "Reserved and collision-protection vocabulary for WOF, Compact, moderation, and licensed-IP avoidance."
+  exactWords:
+    - system
+    - admin
+    - moderator
+    - support
+    - developer
+    - gm
+    - synapticgm
+    - ash_compact
+    - tide_covenant
+    - hearthborn
+    - lanternfolk
+    - saltkin
+    - stonevein
+    - compact_speaker
+    - tide_envoy
+    - route_ledger
+    - faction_clerk
+    - roadkeeper
+  forbiddenSubstrings:
+    - warcraft
+    - blizzard
+    - pokemon
+    - palworld
+    - genshin
+    - hogwarts
+    - harry potter
+    - warhammer
+    - skyrim
+    - final fantasy
+    - one piece
+    - naruto
+    - star wars
+    - vampire masquerade
+    - mmo
+  moderationWords:
+    - sexual
+    - explicit
+    - gore
+    - drugs
+    - gambling
+    - slur
+    - threat
+  matching: unicode_casefold_substring
+  action: reject_or_human_review
+
+kid_prompt_safety:
+  schemaId: KidPromptSafety
+  description: "Rewrite-or-skip content blocks for child sessions; applies to generated WOF prose and user-entered prompts."
+  childMode: true
+  categories:
+    sexual:
+      action: rewrite_or_skip
+      blockedTerms: [explicit_sex, sexual_activity, fetish, pornographic]
+      rewrite: "Replace with a non-romantic civic or friendship beat."
+    gore:
+      action: rewrite_or_skip
+      blockedTerms: [graphic_dismemberment, blood_splatter, torture_detail, viscera]
+      rewrite: "Use non-graphic downed, damaged, or escaped language."
+    drugs:
+      action: rewrite_or_skip
+      blockedTerms: [drug_use, intoxication_instruction, narcotic_trade]
+      rewrite: "Use harmless medicine, clean water, or fatigue language."
+    gambling:
+      action: rewrite_or_skip
+      blockedTerms: [betting, wagering, casino, card_cash, loot_box]
+      rewrite: "Use a non-monetary contest or remove the scene."
+    predatory_contact:
+      action: skip_and_report
+      blockedTerms: [meet_stranger_private, off_platform_contact, credential_request]
+      rewrite: "Skip the interaction and create a safety report."
+  allowed:
+    - platonic_crushes
+    - friendship
+    - teamwork
+    - non_graphic peril
+    - civic disagreement
+  forbiddenForChildren:
+    - public_direct_messages
+    - public_trade
+    - voice_chat
+    - gambling
+    - sexual_content
+  codeOwns:
+    - category_detection
+    - rewrite_or_skip_decision
+    - daily_turn_accounting
+    - report_creation
+  llmMayNarrate:
+    - safe_rewrite_after_filter
+    - non_graphic consequence
+  llmMustNotNarrate:
+    - blocked_content_verbatim
+    - policy_override
+    - private_contact_instructions
+
+trade_safety:
+  schemaId: DirectTradeSafety
+  description: "Friends-only direct trade safety checks; counters reduce scams without vigilante punishment."
+  policy:
+    enabled: true
+    scope: friends_only
+    open_world_trade_shout: false
+    acceptWindowSeconds: 120
+    highValueSoulbindDelayMinutes: 60
+    highValueGoldThreshold: 100
+    no_mid_combat_trade: true
+    codeOwns: [offer_state, item_ownership, gold_balance, accept_window, confirmation, soulbind_delay, reports]
+    llmMayNarrate: [neutral_confirmation_copy]
+    llmMustNotNarrate: [trade_success, item_transfer, gold_transfer, scam_verdict]
+  scam_patterns:
+    - {counterId: trade_counter_01, pattern: last_second_item_removal, signal: offer_value_decreases_after_first_accept, action: add_confirmation, severity: medium}
+    - {counterId: trade_counter_02, pattern: gold_amount_change, signal: gold_delta_changes_after_accept, action: add_confirmation, severity: medium}
+    - {counterId: trade_counter_03, pattern: duplicate_item_claim, signal: same_item_instance_in_two_offers, action: block_window, severity: high}
+    - {counterId: trade_counter_04, pattern: counterfeit_name, signal: display_name_mimics_known_item, action: warn, severity: medium}
+    - {counterId: trade_counter_05, pattern: pressure_language, signal: repeated_accept_requests_in_10_seconds, action: add_confirmation, severity: low}
+    - {counterId: trade_counter_06, pattern: off_platform_redirect, signal: message_contains_external_contact_request, action: report_only, severity: medium}
+    - {counterId: trade_counter_07, pattern: credential_request, signal: asks_for_password_or_code, action: block_window, severity: critical}
+    - {counterId: trade_counter_08, pattern: gift_then_reversal, signal: repeated_offer_cancel_after_accept, action: warn, severity: low}
+    - {counterId: trade_counter_09, pattern: high_value_new_friend, signal: trade_within_24h_of_friend_edge, action: delay_accept, severity: medium}
+    - {counterId: trade_counter_10, pattern: suspicious_stack_split, signal: repeated_stack_split_merge_cycles, action: report_only, severity: low}
+    - {counterId: trade_counter_11, pattern: impossible_price, signal: price_exceeds_account_balance_or_item_rule, action: block_window, severity: high}
+    - {counterId: trade_counter_12, pattern: account_recovery_claim, signal: asks_recipient_to_hold_items_for_recovery, action: warn, severity: medium}
+    - {counterId: trade_counter_13, pattern: child_trade_attempt, signal: family_child_account_in_trade_window, action: block_window, severity: high}
+    - {counterId: trade_counter_14, pattern: repeated_cancel_loop, signal: 5_cancels_in_60_seconds, action: delay_accept, severity: low}
+    - {counterId: trade_counter_15, pattern: item_not_owned, signal: offer references non-owned item instance, action: block_window, severity: critical}
+  transaction_rules:
+    - both parties must be online and friends
+    - every material change resets both confirmations
+    - item and gold transfer commits atomically
+    - high-value items become soulbound-on-trade-delay for 60 minutes
+    - rejected or expired window transfers nothing
+    - all counters create telemetry without exposing private message text
+
+report_categories:
+  schemaId: ReportCategory
+  description: "Report-only categories for gold sellers, bots, scams, and harmful conduct; no vigilante PvP or player punishment."
+  categories:
+    - {categoryId: report_gold_seller, label: Gold seller, autoTriage: true, playerAction: report_only}
+    - {categoryId: report_bot_signal, label: Suspected bot, autoTriage: true, playerAction: report_only}
+    - {categoryId: report_trade_scam, label: Trade scam, autoTriage: true, playerAction: report_only}
+    - {categoryId: report_credential_request, label: Credential request, autoTriage: true, playerAction: report_only}
+    - {categoryId: report_harassment, label: Harassment, autoTriage: false, playerAction: report_only}
+    - {categoryId: report_hate_or_slur, label: Hate or slur, autoTriage: true, playerAction: report_only}
+    - {categoryId: report_sexual_content, label: Sexual content, autoTriage: true, playerAction: report_only}
+    - {categoryId: report_gore, label: Graphic gore, autoTriage: true, playerAction: report_only}
+    - {categoryId: report_drug_content, label: Drug content, autoTriage: true, playerAction: report_only}
+    - {categoryId: report_gambling, label: Gambling, autoTriage: true, playerAction: report_only}
+    - {categoryId: report_impersonation, label: Impersonation, autoTriage: false, playerAction: report_only}
+    - {categoryId: report_exploit, label: Exploit or bug abuse, autoTriage: true, playerAction: report_only}
+  enforcement:
+    goldSellerAndBotSignals: report_categories_only
+    playerVigilantePvp: false
+    automaticAccountAction: human_review_after_signal
+    evidence: code_owned_event_refs_only
+
+safety_flags:
+  schemaId: SafetyFlags
+  fields:
+    kidMode: {type: boolean, default: false}
+    promptRewriteEnabled: {type: boolean, default: true}
+    publicDmAllowed: {type: boolean, default: true}
+    publicTradeAllowed: {type: boolean, default: true}
+    voiceAllowed: {type: boolean, default: true}
+    reportPending: {type: boolean, default: false}
+  childOverrides:
+    publicDmAllowed: false
+    publicTradeAllowed: false
+    voiceAllowed: false
+    promptRewriteEnabled: true
+
+alt_operations:
+  create_alt:
+    prerequisites:
+      - account_authenticated
+      - available_slot_for_world
+      - accepted_name
+      - accepted_race
+      - accepted_origin
+    writes:
+      - character_record
+      - identity_confirmed_false
+      - tutorial_state_default
+      - starter_ledger_items
+    does_not_copy:
+      - gold
+      - inventory
+      - quest_progress
+      - lockouts
+      - race
+      - origin
+    may_copy_cosmetic_preset: true
+  save_appearance:
+    requires: [character_lock, expected_revision]
+    consumes: []
+    writes: [appearance, voiceProfile, updatedAt]
+    combatPowerDelta: 0
+  apply_fashion:
+    requires: [owned_account_bound_cosmetic]
+    consumes: []
+    writes: [fashionLoadout]
+    combatPowerDelta: 0
+  tutorial_skip:
+    requires: [identity_confirmed]
+    consumes: []
+    writes: [tutorialState.skipUsed, tutorialState.safeTaskComplete, tutorialState.anomalyInspected, tutorialState.combatTutorialComplete]
+    doesNotGrant: [quest_rewards, gold, loot, boss_clear, lockout_skip]
+  rename:
+    requires: [accepted_name, rename_token, character_lock]
+    consumes: [rename_token]
+    writes: [displayName, nameRevision]
+    cosmeticOnly: true
+  delete:
+    requires: [character_lock, confirmation_phrase]
+    cooldownDays: 7
+    restoresWithinCooldown: true
+    permanentAfterCooldown: true
+    neverDeletesAccount: true
+
+forbidden_transfers:
+  - {transferId: no_character_transfer_v1, source: ash_compact, destination: any_world, allowed: false}
+  - {transferId: no_world_hop_v1, source: ash_compact, destination: any_world, allowed: false}
+  - {transferId: no_cross_title_inventory, source: any_world, destination: any_title, allowed: false}
+  - {transferId: no_live_save_import, source: live_synapticgm, destination: ash_compact, allowed: false}
+  - {transferId: no_power_cosmetic, source: wallet_cosmetic, destination: combat_ledger, allowed: false}
+
+telemetry_events:
+  events:
+    - {eventId: alt_created, payload: [accountHash, worldId, characterId, raceId]}
+    - {eventId: alt_tutorial_skipped, payload: [accountHash, characterId, identityConfirmed]}
+    - {eventId: appearance_saved, payload: [accountHash, characterId, revision]}
+    - {eventId: fashion_equipped, payload: [accountHash, characterId, cosmeticId]}
+    - {eventId: name_reserved, payload: [accountHash, worldId, decision, reasonCode]}
+    - {eventId: rename_committed, payload: [accountHash, characterId, revision]}
+    - {eventId: kid_turn_denied, payload: [accountHash, familyPlanId, cap]}
+    - {eventId: kid_prompt_rewritten, payload: [accountHash, category, action]}
+    - {eventId: trade_counter_triggered, payload: [accountHash, counterId, tradeId]}
+    - {eventId: safety_report_created, payload: [accountHash, categoryId, reportId]}
+  piiPolicy: no_raw_names_no_chat_text_no_email_no_ip
+
+validation:
+  uniqueIdsWithinFile: true
+  crossFileNamespace: "{worldId}:{kind}:{slug}"
+  yamlRequired: true
+  numericDataRequired: true
+  lockedRaceIdsPreserved: [hearthborn, lanternfolk, saltkin, stonevein]
+  lockedOriginPlacesPreserved: [poi_reedfen_square, poi_wickhaven, poi_brinewatch_dock, poi_anvil_gate]
+  forbiddenClaims:
+    - MMO
+    - live_synapticgm_integration
+    - world_hop
+    - character_transfer
+    - cross_title_inventory
+    - pay_to_win
+  integrityChecks:
+    - alternate tutorial skip is gated by identity_confirmed
+    - four character slots per world are explicit
+    - rename is cosmetic-token funded and atomic
+    - fashion and voice have zero combat power
+    - FamilyPlan enforces ten child text turns per day
+    - child public DMs, trade, and voice are disabled
+    - sexual, gore, drugs, and gambling prompts rewrite or skip
+    - fifteen direct-trade scam counters are present
+    - gold-seller and bot handling is report-only
+    - no player vigilante PvP
+    - no character transfer v1
+    - no world hop v1
+    - no cross-title inventory
+    - no live SynapticGM import
+    - two wallets remain separate
+    - LLM never mints gold or commits ownership

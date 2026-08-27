@@ -1,0 +1,1058 @@
+{
+  "premises": [
+    {
+      "id": "premises.01",
+      "text": "A gate census discovers one resident is counted twice."
+    },
+    {
+      "id": "premises.02",
+      "text": "A river loses its reflection before a trade summit."
+    },
+    {
+      "id": "premises.03",
+      "text": "A town inherits a clock that charges favors instead of hours."
+    },
+    {
+      "id": "premises.04",
+      "text": "A silent library lends memories written on seed paper."
+    },
+    {
+      "id": "premises.05",
+      "text": "A hill road rearranges itself after every honest confession."
+    },
+    {
+      "id": "premises.06",
+      "text": "A harvest bell rings for a field no map contains."
+    },
+    {
+      "id": "premises.07",
+      "text": "A treaty ship arrives with a crew from tomorrow."
+    },
+    {
+      "id": "premises.08",
+      "text": "A village wakes to find its wells full of warm starlight."
+    },
+    {
+      "id": "premises.09",
+      "text": "A ruined relay tower begins answering questions in bird calls."
+    },
+    {
+      "id": "premises.10",
+      "text": "A court hires strangers to identify a counterfeit season."
+    },
+    {
+      "id": "premises.11",
+      "text": "A forest keeps returning lost tools with new instructions."
+    },
+    {
+      "id": "premises.12",
+      "text": "A mountain stair opens only for people carrying unfinished work."
+    },
+    {
+      "id": "premises.13",
+      "text": "A market sells weather in sealed jars."
+    },
+    {
+      "id": "premises.14",
+      "text": "A lighthouse casts its beam inland for seven nights."
+    },
+    {
+      "id": "premises.15",
+      "text": "A caravan route has acquired a second sunset."
+    },
+    {
+      "id": "premises.16",
+      "text": "A palace archive has begun filing living people as artifacts."
+    },
+    {
+      "id": "premises.17",
+      "text": "A plague of polite doors appears in every empty wall."
+    },
+    {
+      "id": "premises.18",
+      "text": "A city votes to outlaw a song no one remembers hearing."
+    },
+    {
+      "id": "premises.19",
+      "text": "A buried engine grants one useful miracle per district."
+    },
+    {
+      "id": "premises.20",
+      "text": "A salt marsh produces footprints that predict negotiations."
+    },
+    {
+      "id": "premises.21",
+      "text": "A comet drops a map made of changing moss."
+    },
+    {
+      "id": "premises.22",
+      "text": "A museum\u2019s exhibits ask to be returned to their owners."
+    },
+    {
+      "id": "premises.23",
+      "text": "A bridge accepts tolls only in promises."
+    },
+    {
+      "id": "premises.24",
+      "text": "An orchard grows keys instead of fruit."
+    },
+    {
+      "id": "premises.25",
+      "text": "A reservoir drains into an undiscovered valley."
+    },
+    {
+      "id": "premises.26",
+      "text": "A guild map shows a road that avoids every decision."
+    },
+    {
+      "id": "premises.27",
+      "text": "A winter festival receives letters from its future guests."
+    },
+    {
+      "id": "premises.28",
+      "text": "A broken statue appoints unwilling witnesses."
+    },
+    {
+      "id": "premises.29",
+      "text": "A train of lanterns crosses a road with no tracks."
+    },
+    {
+      "id": "premises.30",
+      "text": "A shrine\u2019s caretaker vanishes leaving the job to the next visitor."
+    },
+    {
+      "id": "premises.31",
+      "text": "A coast town trades names to calm storms."
+    },
+    {
+      "id": "premises.32",
+      "text": "A city\u2019s shadows begin arriving early."
+    },
+    {
+      "id": "premises.33",
+      "text": "A frontier post receives a census from an absent empire."
+    },
+    {
+      "id": "premises.34",
+      "text": "A harbor bell names one hidden debt each dawn."
+    },
+    {
+      "id": "premises.35",
+      "text": "A valley\u2019s animals carry tiny stamped passports."
+    },
+    {
+      "id": "premises.36",
+      "text": "A public garden blooms only around unresolved arguments."
+    },
+    {
+      "id": "premises.37",
+      "text": "A new moon exposes a second set of town walls."
+    },
+    {
+      "id": "premises.38",
+      "text": "A ruined theater stages events before they happen."
+    },
+    {
+      "id": "premises.39",
+      "text": "A marketplace loses the ability to recognize ownership."
+    },
+    {
+      "id": "premises.40",
+      "text": "A watchtower reports a threat that is slowly becoming true."
+    }
+  ],
+  "hardLaws": [
+    {
+      "id": "hardLaws.01",
+      "text": "No person may cross a marked threshold twice in one day."
+    },
+    {
+      "id": "hardLaws.02",
+      "text": "Fire reveals only what its keeper has already witnessed."
+    },
+    {
+      "id": "hardLaws.03",
+      "text": "Names spoken in debt become binding until repaid."
+    },
+    {
+      "id": "hardLaws.04",
+      "text": "Water remembers every vessel that carried it."
+    },
+    {
+      "id": "hardLaws.05",
+      "text": "Doors open only after a truthful offer."
+    },
+    {
+      "id": "hardLaws.06",
+      "text": "A promise may be traded but never erased."
+    },
+    {
+      "id": "hardLaws.07",
+      "text": "Every bridge keeps a ledger of crossings."
+    },
+    {
+      "id": "hardLaws.08",
+      "text": "Stone records weight, not words."
+    },
+    {
+      "id": "hardLaws.09",
+      "text": "Light cannot enter a room that has not been invited."
+    },
+    {
+      "id": "hardLaws.10",
+      "text": "Maps redraw themselves after an honest journey."
+    },
+    {
+      "id": "hardLaws.11",
+      "text": "The dead leave receipts, not ghosts."
+    },
+    {
+      "id": "hardLaws.12",
+      "text": "Time passes unevenly only where clocks are broken."
+    },
+    {
+      "id": "hardLaws.13",
+      "text": "No blade can cut a route that has been named."
+    },
+    {
+      "id": "hardLaws.14",
+      "text": "Food shared under rain creates a temporary truce."
+    },
+    {
+      "id": "hardLaws.15",
+      "text": "A lie cannot be written in blue ink."
+    },
+    {
+      "id": "hardLaws.16",
+      "text": "Storms follow unpaid favors."
+    },
+    {
+      "id": "hardLaws.17",
+      "text": "A city wall recognizes its current defenders."
+    },
+    {
+      "id": "hardLaws.18",
+      "text": "Every oath has a visible witness-mark."
+    },
+    {
+      "id": "hardLaws.19",
+      "text": "Seeds remember the last hand that planted them."
+    },
+    {
+      "id": "hardLaws.20",
+      "text": "A locked box may answer one question before opening."
+    },
+    {
+      "id": "hardLaws.21",
+      "text": "Metal cools only after its owner forgives a debt."
+    },
+    {
+      "id": "hardLaws.22",
+      "text": "A road forgets travelers who refuse to look back."
+    },
+    {
+      "id": "hardLaws.23",
+      "text": "Dreams can be taxed but not sold."
+    },
+    {
+      "id": "hardLaws.24",
+      "text": "A bell can summon only those who heard its first note."
+    },
+    {
+      "id": "hardLaws.25",
+      "text": "Mirrors show obligations before faces."
+    },
+    {
+      "id": "hardLaws.26",
+      "text": "No creature may claim land without maintaining it."
+    },
+    {
+      "id": "hardLaws.27",
+      "text": "Written orders expire at the next sunrise."
+    },
+    {
+      "id": "hardLaws.28",
+      "text": "A river cannot carry a secret upstream."
+    },
+    {
+      "id": "hardLaws.29",
+      "text": "All bargains require an offered alternative."
+    },
+    {
+      "id": "hardLaws.30",
+      "text": "A wound heals slowly when its cause remains unspoken."
+    },
+    {
+      "id": "hardLaws.31",
+      "text": "A crown weighs more for each ignored petition."
+    },
+    {
+      "id": "hardLaws.32",
+      "text": "Wind carries messages only to named landmarks."
+    },
+    {
+      "id": "hardLaws.33",
+      "text": "A lantern cannot be lit by stolen fuel."
+    },
+    {
+      "id": "hardLaws.34",
+      "text": "A map may omit danger but cannot invent safety."
+    },
+    {
+      "id": "hardLaws.35",
+      "text": "Every gate remembers its last refusal."
+    },
+    {
+      "id": "hardLaws.36",
+      "text": "Snow preserves tracks until a choice is made."
+    },
+    {
+      "id": "hardLaws.37",
+      "text": "Coins retain the mood of their final exchange."
+    },
+    {
+      "id": "hardLaws.38",
+      "text": "A chorus can open one sealed archive each year."
+    },
+    {
+      "id": "hardLaws.39",
+      "text": "The oldest tree knows routes but not motives."
+    },
+    {
+      "id": "hardLaws.40",
+      "text": "Every rescue creates a future obligation."
+    }
+  ],
+  "places": [
+    {
+      "id": "places.01",
+      "text": "A rain-scarred toll bridge"
+    },
+    {
+      "id": "places.02",
+      "text": "A stepped quarry market"
+    },
+    {
+      "id": "places.03",
+      "text": "A reed-walled ferry stop"
+    },
+    {
+      "id": "places.04",
+      "text": "A clockwork herb garden"
+    },
+    {
+      "id": "places.05",
+      "text": "A lantern repair lane"
+    },
+    {
+      "id": "places.06",
+      "text": "A salt cellar archive"
+    },
+    {
+      "id": "places.07",
+      "text": "A wind-carved shrine"
+    },
+    {
+      "id": "places.08",
+      "text": "A half-flooded courthouse"
+    },
+    {
+      "id": "places.09",
+      "text": "A rooftop seed exchange"
+    },
+    {
+      "id": "places.10",
+      "text": "A basalt stairwell"
+    },
+    {
+      "id": "places.11",
+      "text": "A silent bell orchard"
+    },
+    {
+      "id": "places.12",
+      "text": "A fogbound customs gate"
+    },
+    {
+      "id": "places.13",
+      "text": "A copper bathhouse"
+    },
+    {
+      "id": "places.14",
+      "text": "A hilltop observatory"
+    },
+    {
+      "id": "places.15",
+      "text": "A moss-roofed hostel"
+    },
+    {
+      "id": "places.16",
+      "text": "A river-lock workshop"
+    },
+    {
+      "id": "places.17",
+      "text": "A crumbling theatre vault"
+    },
+    {
+      "id": "places.18",
+      "text": "A clay kiln district"
+    },
+    {
+      "id": "places.19",
+      "text": "A stilted fish market"
+    },
+    {
+      "id": "places.20",
+      "text": "A skybridge granary"
+    },
+    {
+      "id": "places.21",
+      "text": "A hidden cistern library"
+    },
+    {
+      "id": "places.22",
+      "text": "A thorn hedgerow maze"
+    },
+    {
+      "id": "places.23",
+      "text": "A sealed survey camp"
+    },
+    {
+      "id": "places.24",
+      "text": "A candlelit debt office"
+    },
+    {
+      "id": "places.25",
+      "text": "A black-glass beach"
+    },
+    {
+      "id": "places.26",
+      "text": "A sunken caravan yard"
+    },
+    {
+      "id": "places.27",
+      "text": "A weather-vane cemetery"
+    },
+    {
+      "id": "places.28",
+      "text": "A spice warehouse with false walls"
+    },
+    {
+      "id": "places.29",
+      "text": "A cliffside courier post"
+    },
+    {
+      "id": "places.30",
+      "text": "A root-cellar chapel"
+    },
+    {
+      "id": "places.31",
+      "text": "A winter greenhouse"
+    },
+    {
+      "id": "places.32",
+      "text": "A mirror-polished alley"
+    },
+    {
+      "id": "places.33",
+      "text": "A rope-lift station"
+    },
+    {
+      "id": "places.34",
+      "text": "A forgotten signal tower"
+    },
+    {
+      "id": "places.35",
+      "text": "A public oath wall"
+    },
+    {
+      "id": "places.36",
+      "text": "A pebble-sorting monastery"
+    },
+    {
+      "id": "places.37",
+      "text": "A canal-side forge"
+    },
+    {
+      "id": "places.38",
+      "text": "A drifting market barge"
+    },
+    {
+      "id": "places.39",
+      "text": "A quiet embassy garden"
+    },
+    {
+      "id": "places.40",
+      "text": "A wildflower checkpoint"
+    }
+  ],
+  "npcs": [
+    {
+      "id": "npcs.01",
+      "text": "A route clerk hiding a forged itinerary"
+    },
+    {
+      "id": "npcs.02",
+      "text": "A patient locksmith collecting impossible keys"
+    },
+    {
+      "id": "npcs.03",
+      "text": "A tired ranger protecting an unmarked grave"
+    },
+    {
+      "id": "npcs.04",
+      "text": "A cheerful broker with one missing creditor"
+    },
+    {
+      "id": "npcs.05",
+      "text": "A scholar whose notes alter after midnight"
+    },
+    {
+      "id": "npcs.06",
+      "text": "A baker who can smell old bargains"
+    },
+    {
+      "id": "npcs.07",
+      "text": "A courier with a rival route map"
+    },
+    {
+      "id": "npcs.08",
+      "text": "A retired guard training unpaid volunteers"
+    },
+    {
+      "id": "npcs.09",
+      "text": "A ferry captain who refuses one shoreline"
+    },
+    {
+      "id": "npcs.10",
+      "text": "A child inventor seeking a lost blueprint"
+    },
+    {
+      "id": "npcs.11",
+      "text": "A magistrate afraid of a correct verdict"
+    },
+    {
+      "id": "npcs.12",
+      "text": "A gardener growing evidence in coded rows"
+    },
+    {
+      "id": "npcs.13",
+      "text": "A musician who trades melodies for rumors"
+    },
+    {
+      "id": "npcs.14",
+      "text": "A miner who found a door beneath the seam"
+    },
+    {
+      "id": "npcs.15",
+      "text": "A healer who owes service to a storm"
+    },
+    {
+      "id": "npcs.16",
+      "text": "A cartographer whose compass points to regret"
+    },
+    {
+      "id": "npcs.17",
+      "text": "A shopkeeper protecting a false identity"
+    },
+    {
+      "id": "npcs.18",
+      "text": "A diplomat with a failing truce schedule"
+    },
+    {
+      "id": "npcs.19",
+      "text": "A mason repairing damage nobody remembers causing"
+    },
+    {
+      "id": "npcs.20",
+      "text": "A cook who serves one meal from the future"
+    },
+    {
+      "id": "npcs.21",
+      "text": "A watch officer tracking a polite saboteur"
+    },
+    {
+      "id": "npcs.22",
+      "text": "A historian hiding a living artifact"
+    },
+    {
+      "id": "npcs.23",
+      "text": "A scout whose reports arrive out of order"
+    },
+    {
+      "id": "npcs.24",
+      "text": "A debt collector trying to break their own contract"
+    },
+    {
+      "id": "npcs.25",
+      "text": "A mechanic whose machines dream of the road"
+    },
+    {
+      "id": "npcs.26",
+      "text": "A fisher who knows the tide\u2019s secret calendar"
+    },
+    {
+      "id": "npcs.27",
+      "text": "A lantern tender missing their apprentice"
+    },
+    {
+      "id": "npcs.28",
+      "text": "A young rival obsessed with fair competition"
+    },
+    {
+      "id": "npcs.29",
+      "text": "A judge who hears testimony from objects"
+    },
+    {
+      "id": "npcs.30",
+      "text": "A trader trapped by an inherited vow"
+    },
+    {
+      "id": "npcs.31",
+      "text": "A seamstress stitching maps into coats"
+    },
+    {
+      "id": "npcs.32",
+      "text": "A botanist whose samples whisper directions"
+    },
+    {
+      "id": "npcs.33",
+      "text": "A courier guild elder facing a mutiny"
+    },
+    {
+      "id": "npcs.34",
+      "text": "A prisoner offered a role in the city archive"
+    },
+    {
+      "id": "npcs.35",
+      "text": "A pilgrim carrying a counterfeit relic"
+    },
+    {
+      "id": "npcs.36",
+      "text": "A harbor pilot charting a vanished reef"
+    },
+    {
+      "id": "npcs.37",
+      "text": "A village teacher defending forbidden questions"
+    },
+    {
+      "id": "npcs.38",
+      "text": "A craftsperson building a bridge for one person"
+    },
+    {
+      "id": "npcs.39",
+      "text": "A quiet orphan with a faction seal"
+    },
+    {
+      "id": "npcs.40",
+      "text": "A clockkeeper who has stopped sleeping"
+    }
+  ],
+  "quests": [
+    {
+      "id": "quests.01",
+      "text": "Find who altered a public route ledger."
+    },
+    {
+      "id": "quests.02",
+      "text": "Escort a disputed supply crate through a closed district."
+    },
+    {
+      "id": "quests.03",
+      "text": "Decide whether to reveal a harmful true map."
+    },
+    {
+      "id": "quests.04",
+      "text": "Recover a promise before it is sold."
+    },
+    {
+      "id": "quests.05",
+      "text": "Trace a rumor back to its first witness."
+    },
+    {
+      "id": "quests.06",
+      "text": "Repair a gate without restoring its old injustice."
+    },
+    {
+      "id": "quests.07",
+      "text": "Choose the keeper of a dangerous key orchard."
+    },
+    {
+      "id": "quests.08",
+      "text": "Stop a faction clock without rewarding its cruelty."
+    },
+    {
+      "id": "quests.09",
+      "text": "Prove whether a missing NPC left voluntarily."
+    },
+    {
+      "id": "quests.10",
+      "text": "Negotiate a rescue that creates a new debt."
+    },
+    {
+      "id": "quests.11",
+      "text": "Clear a dungeon room without resetting its history."
+    },
+    {
+      "id": "quests.12",
+      "text": "Expose a forged weather permit."
+    },
+    {
+      "id": "quests.13",
+      "text": "Find a safe path for a displaced household."
+    },
+    {
+      "id": "quests.14",
+      "text": "Recover a tool that remembers its owner."
+    },
+    {
+      "id": "quests.15",
+      "text": "Decide which of two true stories enters the archive."
+    },
+    {
+      "id": "quests.16",
+      "text": "Break a supply monopoly without collapsing the market."
+    },
+    {
+      "id": "quests.17",
+      "text": "Follow a rival\u2019s fair but dangerous challenge."
+    },
+    {
+      "id": "quests.18",
+      "text": "Return a creature to a habitat that has changed."
+    },
+    {
+      "id": "quests.19",
+      "text": "Resolve a border dispute using observed evidence."
+    },
+    {
+      "id": "quests.20",
+      "text": "Test a custom law against an unintended consequence."
+    },
+    {
+      "id": "quests.21",
+      "text": "Protect a festival from a nonviolent sabotage."
+    },
+    {
+      "id": "quests.22",
+      "text": "Choose whether to spend a favor or preserve it."
+    },
+    {
+      "id": "quests.23",
+      "text": "Locate an interior hidden by map error."
+    },
+    {
+      "id": "quests.24",
+      "text": "Rebuild a bridge while storms advance."
+    },
+    {
+      "id": "quests.25",
+      "text": "Find the source of a false quest notice."
+    },
+    {
+      "id": "quests.26",
+      "text": "Investigate a clock that is charging the wrong person."
+    },
+    {
+      "id": "quests.27",
+      "text": "Recover a lost party member\u2019s route memory."
+    },
+    {
+      "id": "quests.28",
+      "text": "Help a faction admit a public mistake."
+    },
+    {
+      "id": "quests.29",
+      "text": "Decide how a successor inherits a role."
+    },
+    {
+      "id": "quests.30",
+      "text": "Stop a dungeon restock from consuming a village resource."
+    },
+    {
+      "id": "quests.31",
+      "text": "Prove a market shortage is manufactured."
+    },
+    {
+      "id": "quests.32",
+      "text": "Secure a lantern road before nightfall."
+    },
+    {
+      "id": "quests.33",
+      "text": "Resolve a rumor without naming an innocent person."
+    },
+    {
+      "id": "quests.34",
+      "text": "Recover a legal title from a flooded archive."
+    },
+    {
+      "id": "quests.35",
+      "text": "Choose a witness for an irreversible oath."
+    },
+    {
+      "id": "quests.36",
+      "text": "Find why a known route became impossible."
+    },
+    {
+      "id": "quests.37",
+      "text": "Prevent an NPC\u2019s plan without reading their mind."
+    },
+    {
+      "id": "quests.38",
+      "text": "Return a stolen map without granting amnesty."
+    },
+    {
+      "id": "quests.39",
+      "text": "Defend a low-stakes home from a high-stakes clock."
+    },
+    {
+      "id": "quests.40",
+      "text": "Decide whether an old legend deserves correction."
+    }
+  ],
+  "openingStakes": [
+    {
+      "id": "openingStakes.01",
+      "text": "A trusted NPC needs an answer before dusk."
+    },
+    {
+      "id": "openingStakes.02",
+      "text": "Your starting kit contains an item claimed by another person."
+    },
+    {
+      "id": "openingStakes.03",
+      "text": "The road behind you closes at sundown."
+    },
+    {
+      "id": "openingStakes.04",
+      "text": "A public notice names you as a witness."
+    },
+    {
+      "id": "openingStakes.05",
+      "text": "A local faction offers safety at a visible cost."
+    },
+    {
+      "id": "openingStakes.06",
+      "text": "Your first map pin is only a rumor."
+    },
+    {
+      "id": "openingStakes.07",
+      "text": "A harmless task reveals a missing resource."
+    },
+    {
+      "id": "openingStakes.08",
+      "text": "A rival arrives with a fair challenge."
+    },
+    {
+      "id": "openingStakes.09",
+      "text": "A weather shift threatens the starting place."
+    },
+    {
+      "id": "openingStakes.10",
+      "text": "A hidden clock is about to become visible."
+    },
+    {
+      "id": "openingStakes.11",
+      "text": "A companion asks you to keep a difficult promise."
+    },
+    {
+      "id": "openingStakes.12",
+      "text": "A gate requires a choice, not a key."
+    },
+    {
+      "id": "openingStakes.13",
+      "text": "Your first reward will overfill your pack."
+    },
+    {
+      "id": "openingStakes.14",
+      "text": "A route is safe only if you leave something behind."
+    },
+    {
+      "id": "openingStakes.15",
+      "text": "An injured stranger knows a useful but partial truth."
+    },
+    {
+      "id": "openingStakes.16",
+      "text": "A public celebration masks a private deadline."
+    },
+    {
+      "id": "openingStakes.17",
+      "text": "A local law conflicts with your immediate goal."
+    },
+    {
+      "id": "openingStakes.18",
+      "text": "Your first check can protect a person or a resource."
+    },
+    {
+      "id": "openingStakes.19",
+      "text": "A familiar place has changed since morning."
+    },
+    {
+      "id": "openingStakes.20",
+      "text": "A message arrives with proof but no sender."
+    }
+  ],
+  "kits": [
+    {
+      "id": "kits.01",
+      "text": "Rainproof courier satchel"
+    },
+    {
+      "id": "kits.02",
+      "text": "Stoneworker hand kit"
+    },
+    {
+      "id": "kits.03",
+      "text": "Lantern tender roll"
+    },
+    {
+      "id": "kits.04",
+      "text": "Field apothecary wrap"
+    },
+    {
+      "id": "kits.05",
+      "text": "Surveyor\u2019s cord and chalk"
+    },
+    {
+      "id": "kits.06",
+      "text": "Canal mechanic pouch"
+    },
+    {
+      "id": "kits.07",
+      "text": "Archivist\u2019s safe notebook"
+    },
+    {
+      "id": "kits.08",
+      "text": "Hearth guard bundle"
+    },
+    {
+      "id": "kits.09",
+      "text": "Reedfen trail pack"
+    },
+    {
+      "id": "kits.10",
+      "text": "Trade clerk ledger case"
+    },
+    {
+      "id": "kits.11",
+      "text": "Quiet investigator wallet"
+    },
+    {
+      "id": "kits.12",
+      "text": "Cliff runner harness"
+    },
+    {
+      "id": "kits.13",
+      "text": "Garden keeper tools"
+    },
+    {
+      "id": "kits.14",
+      "text": "Ferry hand kit"
+    },
+    {
+      "id": "kits.15",
+      "text": "Signal repair pouch"
+    },
+    {
+      "id": "kits.16",
+      "text": "Oath witness case"
+    },
+    {
+      "id": "kits.17",
+      "text": "Weather watcher cloak"
+    },
+    {
+      "id": "kits.18",
+      "text": "Ranger\u2019s repair roll"
+    },
+    {
+      "id": "kits.19",
+      "text": "Mapmaker tube"
+    },
+    {
+      "id": "kits.20",
+      "text": "Market porter sling"
+    }
+  ],
+  "folkWorldShapes": [
+    {
+      "id": "folkWorldShapes.01",
+      "text": "Hearthborn orchard communes"
+    },
+    {
+      "id": "folkWorldShapes.02",
+      "text": "Lanternfolk road caravans"
+    },
+    {
+      "id": "folkWorldShapes.03",
+      "text": "Saltkin tide towns"
+    },
+    {
+      "id": "folkWorldShapes.04",
+      "text": "Stonevein stair holds"
+    },
+    {
+      "id": "folkWorldShapes.05",
+      "text": "Reedfen floating villages"
+    },
+    {
+      "id": "folkWorldShapes.06",
+      "text": "Lampwood canopy hamlets"
+    },
+    {
+      "id": "folkWorldShapes.07",
+      "text": "Ash Compact city wards"
+    },
+    {
+      "id": "folkWorldShapes.08",
+      "text": "Tide Covenant harbor leagues"
+    },
+    {
+      "id": "folkWorldShapes.09",
+      "text": "Cloudstep plateaus"
+    },
+    {
+      "id": "folkWorldShapes.10",
+      "text": "Mossbound canal cities"
+    },
+    {
+      "id": "folkWorldShapes.11",
+      "text": "Glassshore reef enclaves"
+    },
+    {
+      "id": "folkWorldShapes.12",
+      "text": "Cinderfield kiln marches"
+    },
+    {
+      "id": "folkWorldShapes.13",
+      "text": "Rivergate bridge republics"
+    },
+    {
+      "id": "folkWorldShapes.14",
+      "text": "Winterwell reservoir towns"
+    },
+    {
+      "id": "folkWorldShapes.15",
+      "text": "Sunvault terrace states"
+    },
+    {
+      "id": "folkWorldShapes.16",
+      "text": "Hollowroad tunnel villages"
+    },
+    {
+      "id": "folkWorldShapes.17",
+      "text": "Thornwatch hedge borders"
+    },
+    {
+      "id": "folkWorldShapes.18",
+      "text": "Copperwake repair fleets"
+    },
+    {
+      "id": "folkWorldShapes.19",
+      "text": "Dawnbarrow hill councils"
+    },
+    {
+      "id": "folkWorldShapes.20",
+      "text": "Mistlock archive islands"
+    }
+  ]
+}

@@ -1,0 +1,71 @@
+{
+  "packageVersion": "0.1.0",
+  "world": {
+    "worldId": "wof-first-tide",
+    "title": "Veyr: The Tidelock Chronicle",
+    "premise": "When the five Resonances fall out of sequence, expeditions must decide which histories a damaged world will carry forward.",
+    "cosmology": "Ember, brine, gale, root, and veil are living habits of becoming. Their temporary agreements make magic possible, and every forced agreement leaves a witnessable cost."
+  },
+  "magicAxioms": [
+    {
+      "id": "axiom-naming",
+      "statement": "A working must name the resonance it asks to change.",
+      "cost": "The practitioner becomes easier for that resonance to read.",
+      "observableSign": "A visible or audible trace persists after the working.",
+      "prohibitedShortcut": "No working may claim to be without an affinity or a witness."
+    },
+    {
+      "id": "axiom-burden",
+      "statement": "A working may transfer a burden but cannot eliminate it.",
+      "cost": "Someone, somewhere, must carry the displaced consequence.",
+      "observableSign": "A memory, debt, wound, route change, or regional condition records the transfer.",
+      "prohibitedShortcut": "No effect may resolve a pressure by deleting its cost from the chronicle."
+    }
+  ],
+  "regions": [
+    {
+      "id": "r-hushmere",
+      "name": "Hushmere",
+      "tier": 1,
+      "resonanceSignature": ["brine", "veil"],
+      "surfaceConflict": "A drowned observatory speaks through reed bells and calls for names no one wants to remember.",
+      "unlockCondition": "Starting region.",
+      "lastingQuestion": "Who has the right to name a collective loss?"
+    },
+    {
+      "id": "r-cinder-spine",
+      "name": "The Cinder Spine",
+      "tier": 2,
+      "resonanceSignature": ["ember", "gale"],
+      "surfaceConflict": "A fuel-less kiln produces tools from remembered disasters.",
+      "unlockCondition": "Discover an open route during rising or crest.",
+      "lastingQuestion": "Can a tool be ethical if its origin is a wound?"
+    }
+  ],
+  "factions": [
+    {
+      "id": "f-keepers",
+      "name": "Keepers of the Last Lantern",
+      "credo": "What is witnessed may be mourned; what is hidden will return hungry.",
+      "publicNeed": "Guides are needed to reach Hushmere's sealed observatory.",
+      "concealedCost": "Every archive witness becomes bound to an unspeakable memory.",
+      "typicalPressure": "Testimony versus mercy."
+    },
+    {
+      "id": "f-ashwrights",
+      "name": "Ashwright Compact",
+      "credo": "A made thing deserves a maker who accepts its consequences.",
+      "publicNeed": "Brine-glass is needed to quiet the eastern kiln.",
+      "concealedCost": "Each crafted tool remembers the disaster from which it was made.",
+      "typicalPressure": "Utility versus consent."
+    }
+  ],
+  "progressionPaths": [
+    {
+      "fromRegionId": "r-hushmere",
+      "toRegionId": "r-cinder-spine",
+      "gate": "Open the reed-bell route during a rising or crest phase.",
+      "fictionalRationale": "The observatory's floodwater briefly exposes the rope-forges' buried bridge."
+    }
+  ]
+}

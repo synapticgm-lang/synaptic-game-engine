@@ -1,0 +1,118 @@
+Answer ONLY for live SynapticGM. No WOF. No hybrid climate. No patent. No MMO.
+Filename prefix: SynapticGM_game_vibe_maxextract_2026-08-18
+Unlimited run. Prefer many complete markdown + JSON/CSV files over a short chat answer. Empty sections = failure.
+
+# SynapticGM — MAXIMUM RESEARCH: GAME VIBE / FEEL / PERSONALITY / “IT HEARD ME”
+
+You are a senior narrative-systems + UX researcher for an indie AI RPG. Produce an implementation omnibus so SynapticGM’s *vibe* is hard to beat: fluid, consistent, personal, consequential, and genre-true — without breaking the ledger.
+
+## Product truth (do not contradict)
+
+Authority order: player correction → pinned canon → StateTx → SceneManifest → evidence → invention.
+
+Already shipped (extend, do not reinvent): IntentContract, SceneManifest, IntroductionPermit, CampaignContract, StateTx, beatFingerprint, HookArc, leak scanner, GM voice profiles (cold-system / chilled-gm / army-brief / dry-wit), story-start honeymoon turns, Memorable Moments (Classic splash, not full comic), Kid Mode filters, LitRPG / Story RPG / tabletop / PYOA engines, theme kits + voice cosmetics.
+
+North star vibe (player words we must earn):
+- “It remembered.”
+- “It answered what I typed.”
+- “The System feels in-world, not like ChatGPT.”
+- “This run feels different (personality / opener / stakes).”
+- “I lost fairly / I chose and the world changed.”
+- Fluid chat — talk, protest, bargain, joke — not menu-speak only.
+- Long campaigns stay true without dumping more tokens every turn.
+
+## Hard fences
+
+- RAG/summary never authority for kit/roster/quests/HP.
+- No licensed series names in player-facing content (Solo Leveling, D&D product names, etc.) — tropes only.
+- Full every-turn comic = No-Go near-term; Memorable splash OK.
+- Never mid-action soft offers; HookArc already gates offers.
+- Kid Mode stays stricter; no Kid ads.
+
+---
+
+# PART V1 — Define the SynapticGM vibe matrix
+
+1. Write a **Vibe Constitution** (1–2 pages): non-negotiable feel laws for all engines.
+2. Per **engine mode** (LitRPG, Story RPG, tabletop fantasy, PYOA): vibe goals, failure smells, and “never-lines.”
+3. Per **maturity** (Kid / adult PG-13 / adult mature): what changes (tone, chrome, stakes) vs what never changes (ledger honesty).
+4. Contrast vs rivals (AI Dungeon, Friends & Fables, Hidden Door, Summon Worlds, generic ChatGPT RP): what vibe they fake vs what we must prove with UI+ledger.
+
+# PART V2 — “It heard me” (chat recognition + fluid dialogue)
+
+Research + specify:
+
+1. Obligation UX: how the player *sees* that an ask/refuse/correct was honored (receipt chips, paraphrase echo rules, OpenAsk discharge).
+2. Speech-as-dialogue rails: protest, joke, bargain, insult, challenge — without pocket-search stubs.
+3. Ambiguity handling that preserves vibe (clarify in-world vs cold “invalid”).
+4. Anti-recycle talk without killing callback warmth.
+5. Demo scripts: 12 player lines → expected vibe outcome (table).
+
+# PART V3 — Story personality / GM + System voice (complete the picker)
+
+We have a thin GM voice profile. Expand to a **shippable personality system**:
+
+1. Matrix: Narrator axis × System/chrome axis (cold registrar, sarcastic Patch, army brief, chilled GM, dry wit, warm chronicle, clinical auditor, jester — plus 4–6 more if justified).
+2. What each may change (diction, cadence, System notice templates) vs must NEVER change (facts, permits, combat math).
+3. New Game UI: Simple 4 picks vs Expert full matrix; “Surprise me”; persistence per campaign.
+4. Interaction with themes / TTS cosmetics (keep separate).
+5. Opening hook decks: how personality + opener family create run-to-run vibe variance without breaking CampaignContract.
+6. Eval: blind taste test protocol + continuity regression (personality must not invent kit).
+
+# PART V4 — First hour / HookArc feel
+
+1. Beat-by-beat first-10-turns vibe script for LitRPG System Integration-shaped and Hero Awakening-shaped openings (original names only).
+2. Teaching by action (verbs appear after safe use) — genre tutorial beats without lecture.
+3. Honeymoon turns as *feel* not just free quota.
+4. What ruins first-hour vibe (System-only turns, recycled collage, invent NPC, ignore question).
+
+# PART V5 — Diegesis: System / tabletop / PYOA chrome
+
+1. LitRPG System notice cadence, visibility classes, never-lines.
+2. Tabletop: check disclosure trust UX without drowning fiction.
+3. PYOA: comment/aside vibe vs main prose; ending fairness feel.
+4. How Memorable splash moments reinforce vibe without becoming a comic treadmill.
+
+# PART V6 — Combat / quest / inventory / map feel (vibe layer only)
+
+Do not redesign engines. Specify **feel receipts**:
+- Combat telegraph → fair loss → aftermath readability
+- Quest what-next / why-blocked without spoilers
+- Inventory/salvage as game not chores
+- Place knowledge vs map geometry (discovery feel)
+
+Map each to existing modules (OutcomeToken, StateTx, quest journal enrich, places).
+
+# PART V7 — Themes, typography, audio-lite (vibe, not full audio product)
+
+1. How UI themes + fonts + dice skins should reinforce engine vibe.
+2. Selective TTS later: when it helps vibe vs when it burns money/quality.
+3. Optional ambient one-liner policy (shop loops) — thin wedge only.
+
+# PART V8 — Outside games: vibe patterns to steal
+
+Theater stage bible, film continuity, TTRPG session zero, theme parks queue design, CRM “recognized customer,” sports broadcast “they answered the question,” etc. Map each to SynapticGM UX.
+
+# PART V9 — Blow-away vibe differentiators (ranked)
+
+15 player-visible moments ranked Impact × Feasibility × Uniqueness. Each: moment, ledger hook, 3-turn demo, metric, marketing claim honesty.
+
+# PART V10 — Build backlog + anti-list
+
+| Priority | Item | Extends | Done-when vibe test | Effort |
+
+Anti-list: what looks “vibey” but destroys continuity or burns cash.
+
+# PART V11 — Research complete checklist
+
+What is done enough to code vs still needs content writing vs counsel.
+
+## Output format
+
+1. Executive vibe scorecard (1 page)
+2. Parts V1–V11 as files
+3. JSON: personality matrix, never-lines per engine, first-hour beat sheets
+4. Citations; mark SPECULATIVE / COUNSEL
+5. Self-check: no WOF; no RAG-as-truth; personality cannot override ledger
+
+Begin maximum research now.

@@ -1,0 +1,4442 @@
+[
+  {
+    "id": "creature.cindlet",
+    "name": "Cindlet",
+    "speciesFamily": "Cindlet line",
+    "stage": "juvenile",
+    "types": [
+      "Ember"
+    ],
+    "stats": {
+      "HP": 38,
+      "ATK": 35,
+      "DEF": 36,
+      "SPD": 47,
+      "FOC": 34
+    },
+    "moves": [
+      "move.ember.1",
+      "move.ember.3",
+      "move.ember.5",
+      "move.ember.7"
+    ],
+    "abilities": [
+      "ability.ember.pulse",
+      "ability.ember.ward"
+    ],
+    "habitat": "Cinder warrens",
+    "rarity": "C",
+    "bindDifficulty": 18,
+    "evolutionPath": "Cindlet > Brazel > Kilmane",
+    "lootMaterials": [
+      "ember-trace",
+      "soft-husk"
+    ],
+    "kidSafe": true,
+    "tags": "evolution-line",
+    "description": "A juvenile ember-aligned cindlet line known for its distinct trail and temper."
+  },
+  {
+    "id": "creature.brazel",
+    "name": "Brazel",
+    "speciesFamily": "Cindlet line",
+    "stage": "adult",
+    "types": [
+      "Ember"
+    ],
+    "stats": {
+      "HP": 69,
+      "ATK": 66,
+      "DEF": 53,
+      "SPD": 59,
+      "FOC": 58
+    },
+    "moves": [
+      "move.ember.2",
+      "move.ember.4",
+      "move.ember.6",
+      "move.ember.signature"
+    ],
+    "abilities": [
+      "ability.ember.pulse",
+      "ability.ember.ward"
+    ],
+    "habitat": "Cinder warrens",
+    "rarity": "U",
+    "bindDifficulty": 32,
+    "evolutionPath": "Cindlet > Brazel > Kilmane",
+    "lootMaterials": [
+      "ember-trace",
+      "soft-husk"
+    ],
+    "kidSafe": true,
+    "tags": "evolution-line",
+    "description": "A adult ember-aligned cindlet line known for its distinct trail and temper."
+  },
+  {
+    "id": "creature.kilmane",
+    "name": "Kilmane",
+    "speciesFamily": "Cindlet line",
+    "stage": "apex",
+    "types": [
+      "Ember"
+    ],
+    "stats": {
+      "HP": 90,
+      "ATK": 84,
+      "DEF": 84,
+      "SPD": 83,
+      "FOC": 76
+    },
+    "moves": [
+      "move.ember.3",
+      "move.ember.5",
+      "move.ember.7",
+      "move.ember.1"
+    ],
+    "abilities": [
+      "ability.ember.pulse",
+      "ability.ember.ward"
+    ],
+    "habitat": "Cinder warrens",
+    "rarity": "R",
+    "bindDifficulty": 48,
+    "evolutionPath": "Cindlet > Brazel > Kilmane",
+    "lootMaterials": [
+      "ember-core",
+      "apex-fiber"
+    ],
+    "kidSafe": true,
+    "tags": "evolution-line",
+    "description": "A apex ember-aligned cindlet line known for its distinct trail and temper."
+  },
+  {
+    "id": "creature.rillip",
+    "name": "Rillip",
+    "speciesFamily": "Rillip line",
+    "stage": "juvenile",
+    "types": [
+      "Tide"
+    ],
+    "stats": {
+      "HP": 47,
+      "ATK": 32,
+      "DEF": 33,
+      "SPD": 44,
+      "FOC": 43
+    },
+    "moves": [
+      "move.tide.4",
+      "move.tide.6",
+      "move.tide.signature",
+      "move.tide.2"
+    ],
+    "abilities": [
+      "ability.tide.pulse",
+      "ability.tide.ward"
+    ],
+    "habitat": "Tidelane pools",
+    "rarity": "C",
+    "bindDifficulty": 18,
+    "evolutionPath": "Rillip > Sluicefin > Estuarion",
+    "lootMaterials": [
+      "tide-trace",
+      "soft-husk"
+    ],
+    "kidSafe": true,
+    "tags": "evolution-line",
+    "description": "A juvenile tide-aligned rillip line known for its distinct trail and temper."
+  },
+  {
+    "id": "creature.sluicefin",
+    "name": "Sluicefin",
+    "speciesFamily": "Rillip line",
+    "stage": "adult",
+    "types": [
+      "Tide"
+    ],
+    "stats": {
+      "HP": 66,
+      "ATK": 63,
+      "DEF": 62,
+      "SPD": 56,
+      "FOC": 55
+    },
+    "moves": [
+      "move.tide.5",
+      "move.tide.7",
+      "move.tide.1",
+      "move.tide.3"
+    ],
+    "abilities": [
+      "ability.tide.pulse",
+      "ability.tide.ward"
+    ],
+    "habitat": "Tidelane pools",
+    "rarity": "U",
+    "bindDifficulty": 32,
+    "evolutionPath": "Rillip > Sluicefin > Estuarion",
+    "lootMaterials": [
+      "tide-trace",
+      "soft-husk"
+    ],
+    "kidSafe": true,
+    "tags": "evolution-line",
+    "description": "A adult tide-aligned rillip line known for its distinct trail and temper."
+  },
+  {
+    "id": "creature.estuarion",
+    "name": "Estuarion",
+    "speciesFamily": "Rillip line",
+    "stage": "apex",
+    "types": [
+      "Tide"
+    ],
+    "stats": {
+      "HP": 99,
+      "ATK": 81,
+      "DEF": 81,
+      "SPD": 80,
+      "FOC": 85
+    },
+    "moves": [
+      "move.tide.6",
+      "move.tide.signature",
+      "move.tide.2",
+      "move.tide.4"
+    ],
+    "abilities": [
+      "ability.tide.pulse",
+      "ability.tide.ward"
+    ],
+    "habitat": "Tidelane pools",
+    "rarity": "R",
+    "bindDifficulty": 48,
+    "evolutionPath": "Rillip > Sluicefin > Estuarion",
+    "lootMaterials": [
+      "tide-core",
+      "apex-fiber"
+    ],
+    "kidSafe": true,
+    "tags": "evolution-line",
+    "description": "A apex tide-aligned rillip line known for its distinct trail and temper."
+  },
+  {
+    "id": "creature.budmote",
+    "name": "Budmote",
+    "speciesFamily": "Budmote line",
+    "stage": "juvenile",
+    "types": [
+      "Root"
+    ],
+    "stats": {
+      "HP": 44,
+      "ATK": 41,
+      "DEF": 30,
+      "SPD": 41,
+      "FOC": 40
+    },
+    "moves": [
+      "move.root.7",
+      "move.root.1",
+      "move.root.3",
+      "move.root.5"
+    ],
+    "abilities": [
+      "ability.root.pulse",
+      "ability.root.ward"
+    ],
+    "habitat": "Moss orchard",
+    "rarity": "C",
+    "bindDifficulty": 18,
+    "evolutionPath": "Budmote > Bramblem > Canoprowl",
+    "lootMaterials": [
+      "root-trace",
+      "soft-husk"
+    ],
+    "kidSafe": true,
+    "tags": "evolution-line",
+    "description": "A juvenile root-aligned budmote line known for its distinct trail and temper."
+  },
+  {
+    "id": "creature.bramblem",
+    "name": "Bramblem",
+    "speciesFamily": "Budmote line",
+    "stage": "adult",
+    "types": [
+      "Root"
+    ],
+    "stats": {
+      "HP": 63,
+      "ATK": 60,
+      "DEF": 59,
+      "SPD": 65,
+      "FOC": 52
+    },
+    "moves": [
+      "move.root.signature",
+      "move.root.2",
+      "move.root.4",
+      "move.root.6"
+    ],
+    "abilities": [
+      "ability.root.pulse",
+      "ability.root.ward"
+    ],
+    "habitat": "Moss orchard",
+    "rarity": "U",
+    "bindDifficulty": 32,
+    "evolutionPath": "Budmote > Bramblem > Canoprowl",
+    "lootMaterials": [
+      "root-trace",
+      "soft-husk"
+    ],
+    "kidSafe": true,
+    "tags": "evolution-line",
+    "description": "A adult root-aligned budmote line known for its distinct trail and temper."
+  },
+  {
+    "id": "creature.canoprowl",
+    "name": "Canoprowl",
+    "speciesFamily": "Budmote line",
+    "stage": "apex",
+    "types": [
+      "Root"
+    ],
+    "stats": {
+      "HP": 96,
+      "ATK": 90,
+      "DEF": 78,
+      "SPD": 77,
+      "FOC": 82
+    },
+    "moves": [
+      "move.root.1",
+      "move.root.3",
+      "move.root.5",
+      "move.root.7"
+    ],
+    "abilities": [
+      "ability.root.pulse",
+      "ability.root.ward"
+    ],
+    "habitat": "Moss orchard",
+    "rarity": "R",
+    "bindDifficulty": 48,
+    "evolutionPath": "Budmote > Bramblem > Canoprowl",
+    "lootMaterials": [
+      "root-core",
+      "apex-fiber"
+    ],
+    "kidSafe": true,
+    "tags": "evolution-line",
+    "description": "A apex root-aligned budmote line known for its distinct trail and temper."
+  },
+  {
+    "id": "creature.pipwing",
+    "name": "Pipwing",
+    "speciesFamily": "Pipwing line",
+    "stage": "juvenile",
+    "types": [
+      "Gale"
+    ],
+    "stats": {
+      "HP": 41,
+      "ATK": 38,
+      "DEF": 39,
+      "SPD": 38,
+      "FOC": 37
+    },
+    "moves": [
+      "move.gale.2",
+      "move.gale.4",
+      "move.gale.6",
+      "move.gale.signature"
+    ],
+    "abilities": [
+      "ability.gale.pulse",
+      "ability.gale.ward"
+    ],
+    "habitat": "Wind steps",
+    "rarity": "C",
+    "bindDifficulty": 18,
+    "evolutionPath": "Pipwing > Kestrelume",
+    "lootMaterials": [
+      "gale-trace",
+      "soft-husk"
+    ],
+    "kidSafe": true,
+    "tags": "evolution-line",
+    "description": "A juvenile gale-aligned pipwing line known for its distinct trail and temper."
+  },
+  {
+    "id": "creature.kestrelume",
+    "name": "Kestrelume",
+    "speciesFamily": "Pipwing line",
+    "stage": "adult",
+    "types": [
+      "Gale"
+    ],
+    "stats": {
+      "HP": 72,
+      "ATK": 57,
+      "DEF": 56,
+      "SPD": 62,
+      "FOC": 61
+    },
+    "moves": [
+      "move.gale.3",
+      "move.gale.5",
+      "move.gale.7",
+      "move.gale.1"
+    ],
+    "abilities": [
+      "ability.gale.pulse",
+      "ability.gale.ward"
+    ],
+    "habitat": "Wind steps",
+    "rarity": "U",
+    "bindDifficulty": 32,
+    "evolutionPath": "Pipwing > Kestrelume",
+    "lootMaterials": [
+      "gale-trace",
+      "soft-husk"
+    ],
+    "kidSafe": true,
+    "tags": "evolution-line",
+    "description": "A adult gale-aligned pipwing line known for its distinct trail and temper."
+  },
+  {
+    "id": "creature.pebbit",
+    "name": "Pebbit",
+    "speciesFamily": "Pebbit line",
+    "stage": "juvenile",
+    "types": [
+      "Stone"
+    ],
+    "stats": {
+      "HP": 43,
+      "ATK": 40,
+      "DEF": 41,
+      "SPD": 40,
+      "FOC": 39
+    },
+    "moves": [
+      "move.stone.4",
+      "move.stone.6",
+      "move.stone.signature",
+      "move.stone.2"
+    ],
+    "abilities": [
+      "ability.stone.pulse",
+      "ability.stone.ward"
+    ],
+    "habitat": "Granite Stair",
+    "rarity": "C",
+    "bindDifficulty": 18,
+    "evolutionPath": "Pebbit > Cairnox",
+    "lootMaterials": [
+      "stone-trace",
+      "soft-husk"
+    ],
+    "kidSafe": true,
+    "tags": "evolution-line",
+    "description": "A juvenile stone-aligned pebbit line known for its distinct trail and temper."
+  },
+  {
+    "id": "creature.cairnox",
+    "name": "Cairnox",
+    "speciesFamily": "Pebbit line",
+    "stage": "adult",
+    "types": [
+      "Stone"
+    ],
+    "stats": {
+      "HP": 62,
+      "ATK": 59,
+      "DEF": 58,
+      "SPD": 64,
+      "FOC": 51
+    },
+    "moves": [
+      "move.stone.5",
+      "move.stone.7",
+      "move.stone.1",
+      "move.stone.3"
+    ],
+    "abilities": [
+      "ability.stone.pulse",
+      "ability.stone.ward"
+    ],
+    "habitat": "Granite Stair",
+    "rarity": "U",
+    "bindDifficulty": 32,
+    "evolutionPath": "Pebbit > Cairnox",
+    "lootMaterials": [
+      "stone-trace",
+      "soft-husk"
+    ],
+    "kidSafe": true,
+    "tags": "evolution-line",
+    "description": "A adult stone-aligned pebbit line known for its distinct trail and temper."
+  },
+  {
+    "id": "creature.murmurkin",
+    "name": "Murmurkin",
+    "speciesFamily": "Murmurkin line",
+    "stage": "juvenile",
+    "types": [
+      "Veil"
+    ],
+    "stats": {
+      "HP": 45,
+      "ATK": 42,
+      "DEF": 31,
+      "SPD": 42,
+      "FOC": 41
+    },
+    "moves": [
+      "move.veil.6",
+      "move.veil.signature",
+      "move.veil.2",
+      "move.veil.4"
+    ],
+    "abilities": [
+      "ability.veil.pulse",
+      "ability.veil.ward"
+    ],
+    "habitat": "Lampwood",
+    "rarity": "C",
+    "bindDifficulty": 18,
+    "evolutionPath": "Murmurkin > Curtainel",
+    "lootMaterials": [
+      "veil-trace",
+      "soft-husk"
+    ],
+    "kidSafe": true,
+    "tags": "evolution-line",
+    "description": "A juvenile veil-aligned murmurkin line known for its distinct trail and temper."
+  },
+  {
+    "id": "creature.curtainel",
+    "name": "Curtainel",
+    "speciesFamily": "Murmurkin line",
+    "stage": "adult",
+    "types": [
+      "Veil"
+    ],
+    "stats": {
+      "HP": 64,
+      "ATK": 61,
+      "DEF": 60,
+      "SPD": 66,
+      "FOC": 53
+    },
+    "moves": [
+      "move.veil.7",
+      "move.veil.1",
+      "move.veil.3",
+      "move.veil.5"
+    ],
+    "abilities": [
+      "ability.veil.pulse",
+      "ability.veil.ward"
+    ],
+    "habitat": "Lampwood",
+    "rarity": "U",
+    "bindDifficulty": 32,
+    "evolutionPath": "Murmurkin > Curtainel",
+    "lootMaterials": [
+      "veil-trace",
+      "soft-husk"
+    ],
+    "kidSafe": true,
+    "tags": "evolution-line",
+    "description": "A adult veil-aligned murmurkin line known for its distinct trail and temper."
+  },
+  {
+    "id": "creature.twitchcoil",
+    "name": "Twitchcoil",
+    "speciesFamily": "Twitchcoil line",
+    "stage": "juvenile",
+    "types": [
+      "Spark"
+    ],
+    "stats": {
+      "HP": 47,
+      "ATK": 32,
+      "DEF": 33,
+      "SPD": 44,
+      "FOC": 43
+    },
+    "moves": [
+      "move.spark.signature",
+      "move.spark.2",
+      "move.spark.4",
+      "move.spark.6"
+    ],
+    "abilities": [
+      "ability.spark.pulse",
+      "ability.spark.ward"
+    ],
+    "habitat": "Storm relay",
+    "rarity": "C",
+    "bindDifficulty": 18,
+    "evolutionPath": "Twitchcoil > Arcloom",
+    "lootMaterials": [
+      "spark-trace",
+      "soft-husk"
+    ],
+    "kidSafe": true,
+    "tags": "evolution-line",
+    "description": "A juvenile spark-aligned twitchcoil line known for its distinct trail and temper."
+  },
+  {
+    "id": "creature.arcloom",
+    "name": "Arcloom",
+    "speciesFamily": "Twitchcoil line",
+    "stage": "adult",
+    "types": [
+      "Spark"
+    ],
+    "stats": {
+      "HP": 66,
+      "ATK": 63,
+      "DEF": 62,
+      "SPD": 56,
+      "FOC": 55
+    },
+    "moves": [
+      "move.spark.1",
+      "move.spark.3",
+      "move.spark.5",
+      "move.spark.7"
+    ],
+    "abilities": [
+      "ability.spark.pulse",
+      "ability.spark.ward"
+    ],
+    "habitat": "Storm relay",
+    "rarity": "U",
+    "bindDifficulty": 32,
+    "evolutionPath": "Twitchcoil > Arcloom",
+    "lootMaterials": [
+      "spark-trace",
+      "soft-husk"
+    ],
+    "kidSafe": true,
+    "tags": "evolution-line",
+    "description": "A adult spark-aligned twitchcoil line known for its distinct trail and temper."
+  },
+  {
+    "id": "creature.mirepup",
+    "name": "Mirepup",
+    "speciesFamily": "Mirepup line",
+    "stage": "juvenile",
+    "types": [
+      "Gloom"
+    ],
+    "stats": {
+      "HP": 49,
+      "ATK": 34,
+      "DEF": 35,
+      "SPD": 46,
+      "FOC": 45
+    },
+    "moves": [
+      "move.gloom.2",
+      "move.gloom.4",
+      "move.gloom.6",
+      "move.gloom.signature"
+    ],
+    "abilities": [
+      "ability.gloom.pulse",
+      "ability.gloom.ward"
+    ],
+    "habitat": "Reedfen dusk",
+    "rarity": "C",
+    "bindDifficulty": 18,
+    "evolutionPath": "Mirepup > Duskmaw",
+    "lootMaterials": [
+      "gloom-trace",
+      "soft-husk"
+    ],
+    "kidSafe": true,
+    "tags": "evolution-line",
+    "description": "A juvenile gloom-aligned mirepup line known for its distinct trail and temper."
+  },
+  {
+    "id": "creature.duskmaw",
+    "name": "Duskmaw",
+    "speciesFamily": "Mirepup line",
+    "stage": "adult",
+    "types": [
+      "Gloom"
+    ],
+    "stats": {
+      "HP": 68,
+      "ATK": 65,
+      "DEF": 52,
+      "SPD": 58,
+      "FOC": 57
+    },
+    "moves": [
+      "move.gloom.3",
+      "move.gloom.5",
+      "move.gloom.7",
+      "move.gloom.1"
+    ],
+    "abilities": [
+      "ability.gloom.pulse",
+      "ability.gloom.ward"
+    ],
+    "habitat": "Reedfen dusk",
+    "rarity": "U",
+    "bindDifficulty": 32,
+    "evolutionPath": "Mirepup > Duskmaw",
+    "lootMaterials": [
+      "gloom-trace",
+      "soft-husk"
+    ],
+    "kidSafe": true,
+    "tags": "evolution-line",
+    "description": "A adult gloom-aligned mirepup line known for its distinct trail and temper."
+  },
+  {
+    "id": "creature.glimbit",
+    "name": "Glimbit",
+    "speciesFamily": "Glimbit line",
+    "stage": "juvenile",
+    "types": [
+      "Gleam"
+    ],
+    "stats": {
+      "HP": 39,
+      "ATK": 36,
+      "DEF": 37,
+      "SPD": 48,
+      "FOC": 35
+    },
+    "moves": [
+      "move.gleam.4",
+      "move.gleam.6",
+      "move.gleam.signature",
+      "move.gleam.2"
+    ],
+    "abilities": [
+      "ability.gleam.pulse",
+      "ability.gleam.ward"
+    ],
+    "habitat": "Dawn terraces",
+    "rarity": "C",
+    "bindDifficulty": 18,
+    "evolutionPath": "Glimbit > Auricant",
+    "lootMaterials": [
+      "gleam-trace",
+      "soft-husk"
+    ],
+    "kidSafe": true,
+    "tags": "evolution-line",
+    "description": "A juvenile gleam-aligned glimbit line known for its distinct trail and temper."
+  },
+  {
+    "id": "creature.auricant",
+    "name": "Auricant",
+    "speciesFamily": "Glimbit line",
+    "stage": "adult",
+    "types": [
+      "Gleam"
+    ],
+    "stats": {
+      "HP": 70,
+      "ATK": 67,
+      "DEF": 54,
+      "SPD": 60,
+      "FOC": 59
+    },
+    "moves": [
+      "move.gleam.5",
+      "move.gleam.7",
+      "move.gleam.1",
+      "move.gleam.3"
+    ],
+    "abilities": [
+      "ability.gleam.pulse",
+      "ability.gleam.ward"
+    ],
+    "habitat": "Dawn terraces",
+    "rarity": "U",
+    "bindDifficulty": 32,
+    "evolutionPath": "Glimbit > Auricant",
+    "lootMaterials": [
+      "gleam-trace",
+      "soft-husk"
+    ],
+    "kidSafe": true,
+    "tags": "evolution-line",
+    "description": "A adult gleam-aligned glimbit line known for its distinct trail and temper."
+  },
+  {
+    "id": "creature.nectlet",
+    "name": "Nectlet",
+    "speciesFamily": "Nectlet line",
+    "stage": "juvenile",
+    "types": [
+      "Bloom"
+    ],
+    "stats": {
+      "HP": 41,
+      "ATK": 38,
+      "DEF": 39,
+      "SPD": 38,
+      "FOC": 37
+    },
+    "moves": [
+      "move.bloom.6",
+      "move.bloom.signature",
+      "move.bloom.2",
+      "move.bloom.4"
+    ],
+    "abilities": [
+      "ability.bloom.pulse",
+      "ability.bloom.ward"
+    ],
+    "habitat": "Hearth meadows",
+    "rarity": "C",
+    "bindDifficulty": 18,
+    "evolutionPath": "Nectlet > Crowncap",
+    "lootMaterials": [
+      "bloom-trace",
+      "soft-husk"
+    ],
+    "kidSafe": true,
+    "tags": "evolution-line",
+    "description": "A juvenile bloom-aligned nectlet line known for its distinct trail and temper."
+  },
+  {
+    "id": "creature.crowncap",
+    "name": "Crowncap",
+    "speciesFamily": "Nectlet line",
+    "stage": "adult",
+    "types": [
+      "Bloom"
+    ],
+    "stats": {
+      "HP": 72,
+      "ATK": 57,
+      "DEF": 56,
+      "SPD": 62,
+      "FOC": 61
+    },
+    "moves": [
+      "move.bloom.7",
+      "move.bloom.1",
+      "move.bloom.3",
+      "move.bloom.5"
+    ],
+    "abilities": [
+      "ability.bloom.pulse",
+      "ability.bloom.ward"
+    ],
+    "habitat": "Hearth meadows",
+    "rarity": "U",
+    "bindDifficulty": 32,
+    "evolutionPath": "Nectlet > Crowncap",
+    "lootMaterials": [
+      "bloom-trace",
+      "soft-husk"
+    ],
+    "kidSafe": true,
+    "tags": "evolution-line",
+    "description": "A adult bloom-aligned nectlet line known for its distinct trail and temper."
+  },
+  {
+    "id": "creature.sootib",
+    "name": "Sootib",
+    "speciesFamily": "Sootib line",
+    "stage": "juvenile",
+    "types": [
+      "Ember"
+    ],
+    "stats": {
+      "HP": 43,
+      "ATK": 40,
+      "DEF": 41,
+      "SPD": 40,
+      "FOC": 39
+    },
+    "moves": [
+      "move.ember.signature",
+      "move.ember.2",
+      "move.ember.4",
+      "move.ember.6"
+    ],
+    "abilities": [
+      "ability.ember.pulse",
+      "ability.ember.ward"
+    ],
+    "habitat": "Ash kiln",
+    "rarity": "C",
+    "bindDifficulty": 18,
+    "evolutionPath": "Sootib > Kilncrest",
+    "lootMaterials": [
+      "ember-trace",
+      "soft-husk"
+    ],
+    "kidSafe": true,
+    "tags": "evolution-line",
+    "description": "A juvenile ember-aligned sootib line known for its distinct trail and temper."
+  },
+  {
+    "id": "creature.kilncrest",
+    "name": "Kilncrest",
+    "speciesFamily": "Sootib line",
+    "stage": "adult",
+    "types": [
+      "Ember"
+    ],
+    "stats": {
+      "HP": 62,
+      "ATK": 59,
+      "DEF": 58,
+      "SPD": 64,
+      "FOC": 51
+    },
+    "moves": [
+      "move.ember.1",
+      "move.ember.3",
+      "move.ember.5",
+      "move.ember.7"
+    ],
+    "abilities": [
+      "ability.ember.pulse",
+      "ability.ember.ward"
+    ],
+    "habitat": "Ash kiln",
+    "rarity": "U",
+    "bindDifficulty": 32,
+    "evolutionPath": "Sootib > Kilncrest",
+    "lootMaterials": [
+      "ember-trace",
+      "soft-husk"
+    ],
+    "kidSafe": true,
+    "tags": "evolution-line",
+    "description": "A adult ember-aligned sootib line known for its distinct trail and temper."
+  },
+  {
+    "id": "creature.bristleek",
+    "name": "Bristleek",
+    "speciesFamily": "Bristleek line",
+    "stage": "juvenile",
+    "types": [
+      "Tide"
+    ],
+    "stats": {
+      "HP": 45,
+      "ATK": 42,
+      "DEF": 31,
+      "SPD": 42,
+      "FOC": 41
+    },
+    "moves": [
+      "move.tide.2",
+      "move.tide.4",
+      "move.tide.6",
+      "move.tide.signature"
+    ],
+    "abilities": [
+      "ability.tide.pulse",
+      "ability.tide.ward"
+    ],
+    "habitat": "Brinewatch",
+    "rarity": "C",
+    "bindDifficulty": 18,
+    "evolutionPath": "Bristleek > Brinehart",
+    "lootMaterials": [
+      "tide-trace",
+      "soft-husk"
+    ],
+    "kidSafe": true,
+    "tags": "evolution-line",
+    "description": "A juvenile tide-aligned bristleek line known for its distinct trail and temper."
+  },
+  {
+    "id": "creature.brinehart",
+    "name": "Brinehart",
+    "speciesFamily": "Bristleek line",
+    "stage": "adult",
+    "types": [
+      "Tide"
+    ],
+    "stats": {
+      "HP": 64,
+      "ATK": 61,
+      "DEF": 60,
+      "SPD": 66,
+      "FOC": 53
+    },
+    "moves": [
+      "move.tide.3",
+      "move.tide.5",
+      "move.tide.7",
+      "move.tide.1"
+    ],
+    "abilities": [
+      "ability.tide.pulse",
+      "ability.tide.ward"
+    ],
+    "habitat": "Brinewatch",
+    "rarity": "U",
+    "bindDifficulty": 32,
+    "evolutionPath": "Bristleek > Brinehart",
+    "lootMaterials": [
+      "tide-trace",
+      "soft-husk"
+    ],
+    "kidSafe": true,
+    "tags": "evolution-line",
+    "description": "A adult tide-aligned bristleek line known for its distinct trail and temper."
+  },
+  {
+    "id": "creature.flitsail",
+    "name": "Flitsail",
+    "speciesFamily": "Flitsail line",
+    "stage": "juvenile",
+    "types": [
+      "Gale"
+    ],
+    "stats": {
+      "HP": 47,
+      "ATK": 32,
+      "DEF": 33,
+      "SPD": 44,
+      "FOC": 43
+    },
+    "moves": [
+      "move.gale.4",
+      "move.gale.6",
+      "move.gale.signature",
+      "move.gale.2"
+    ],
+    "abilities": [
+      "ability.gale.pulse",
+      "ability.gale.ward"
+    ],
+    "habitat": "High passes",
+    "rarity": "C",
+    "bindDifficulty": 18,
+    "evolutionPath": "Flitsail > Cloudrake",
+    "lootMaterials": [
+      "gale-trace",
+      "soft-husk"
+    ],
+    "kidSafe": true,
+    "tags": "evolution-line",
+    "description": "A juvenile gale-aligned flitsail line known for its distinct trail and temper."
+  },
+  {
+    "id": "creature.cloudrake",
+    "name": "Cloudrake",
+    "speciesFamily": "Flitsail line",
+    "stage": "adult",
+    "types": [
+      "Gale"
+    ],
+    "stats": {
+      "HP": 66,
+      "ATK": 63,
+      "DEF": 62,
+      "SPD": 56,
+      "FOC": 55
+    },
+    "moves": [
+      "move.gale.5",
+      "move.gale.7",
+      "move.gale.1",
+      "move.gale.3"
+    ],
+    "abilities": [
+      "ability.gale.pulse",
+      "ability.gale.ward"
+    ],
+    "habitat": "High passes",
+    "rarity": "U",
+    "bindDifficulty": 32,
+    "evolutionPath": "Flitsail > Cloudrake",
+    "lootMaterials": [
+      "gale-trace",
+      "soft-husk"
+    ],
+    "kidSafe": true,
+    "tags": "evolution-line",
+    "description": "A adult gale-aligned flitsail line known for its distinct trail and temper."
+  },
+  {
+    "id": "creature.tendrill",
+    "name": "Tendrill",
+    "speciesFamily": "Tendrill line",
+    "stage": "juvenile",
+    "types": [
+      "Root"
+    ],
+    "stats": {
+      "HP": 49,
+      "ATK": 34,
+      "DEF": 35,
+      "SPD": 46,
+      "FOC": 45
+    },
+    "moves": [
+      "move.root.6",
+      "move.root.signature",
+      "move.root.2",
+      "move.root.4"
+    ],
+    "abilities": [
+      "ability.root.pulse",
+      "ability.root.ward"
+    ],
+    "habitat": "Old hedge",
+    "rarity": "C",
+    "bindDifficulty": 18,
+    "evolutionPath": "Tendrill > Barkhollow",
+    "lootMaterials": [
+      "root-trace",
+      "soft-husk"
+    ],
+    "kidSafe": true,
+    "tags": "evolution-line",
+    "description": "A juvenile root-aligned tendrill line known for its distinct trail and temper."
+  },
+  {
+    "id": "creature.barkhollow",
+    "name": "Barkhollow",
+    "speciesFamily": "Tendrill line",
+    "stage": "adult",
+    "types": [
+      "Root"
+    ],
+    "stats": {
+      "HP": 68,
+      "ATK": 65,
+      "DEF": 52,
+      "SPD": 58,
+      "FOC": 57
+    },
+    "moves": [
+      "move.root.7",
+      "move.root.1",
+      "move.root.3",
+      "move.root.5"
+    ],
+    "abilities": [
+      "ability.root.pulse",
+      "ability.root.ward"
+    ],
+    "habitat": "Old hedge",
+    "rarity": "U",
+    "bindDifficulty": 32,
+    "evolutionPath": "Tendrill > Barkhollow",
+    "lootMaterials": [
+      "root-trace",
+      "soft-husk"
+    ],
+    "kidSafe": true,
+    "tags": "evolution-line",
+    "description": "A adult root-aligned tendrill line known for its distinct trail and temper."
+  },
+  {
+    "id": "creature.flintle",
+    "name": "Flintle",
+    "speciesFamily": "Flintle line",
+    "stage": "juvenile",
+    "types": [
+      "Stone"
+    ],
+    "stats": {
+      "HP": 39,
+      "ATK": 36,
+      "DEF": 37,
+      "SPD": 48,
+      "FOC": 35
+    },
+    "moves": [
+      "move.stone.signature",
+      "move.stone.2",
+      "move.stone.4",
+      "move.stone.6"
+    ],
+    "abilities": [
+      "ability.stone.pulse",
+      "ability.stone.ward"
+    ],
+    "habitat": "Quarry lanes",
+    "rarity": "C",
+    "bindDifficulty": 18,
+    "evolutionPath": "Flintle > Ridgebacket",
+    "lootMaterials": [
+      "stone-trace",
+      "soft-husk"
+    ],
+    "kidSafe": true,
+    "tags": "evolution-line",
+    "description": "A juvenile stone-aligned flintle line known for its distinct trail and temper."
+  },
+  {
+    "id": "creature.ridgebacket",
+    "name": "Ridgebacket",
+    "speciesFamily": "Flintle line",
+    "stage": "adult",
+    "types": [
+      "Stone"
+    ],
+    "stats": {
+      "HP": 70,
+      "ATK": 67,
+      "DEF": 54,
+      "SPD": 60,
+      "FOC": 59
+    },
+    "moves": [
+      "move.stone.1",
+      "move.stone.3",
+      "move.stone.5",
+      "move.stone.7"
+    ],
+    "abilities": [
+      "ability.stone.pulse",
+      "ability.stone.ward"
+    ],
+    "habitat": "Quarry lanes",
+    "rarity": "U",
+    "bindDifficulty": 32,
+    "evolutionPath": "Flintle > Ridgebacket",
+    "lootMaterials": [
+      "stone-trace",
+      "soft-husk"
+    ],
+    "kidSafe": true,
+    "tags": "evolution-line",
+    "description": "A adult stone-aligned flintle line known for its distinct trail and temper."
+  },
+  {
+    "id": "creature.gleamoth",
+    "name": "Gleamoth",
+    "speciesFamily": "Gleamoth line",
+    "stage": "juvenile",
+    "types": [
+      "Veil"
+    ],
+    "stats": {
+      "HP": 41,
+      "ATK": 38,
+      "DEF": 39,
+      "SPD": 38,
+      "FOC": 37
+    },
+    "moves": [
+      "move.veil.2",
+      "move.veil.4",
+      "move.veil.6",
+      "move.veil.signature"
+    ],
+    "abilities": [
+      "ability.veil.pulse",
+      "ability.veil.ward"
+    ],
+    "habitat": "Night lanterns",
+    "rarity": "C",
+    "bindDifficulty": 18,
+    "evolutionPath": "Gleamoth > Foldmoth",
+    "lootMaterials": [
+      "veil-trace",
+      "soft-husk"
+    ],
+    "kidSafe": true,
+    "tags": "evolution-line",
+    "description": "A juvenile veil-aligned gleamoth line known for its distinct trail and temper."
+  },
+  {
+    "id": "creature.foldmoth",
+    "name": "Foldmoth",
+    "speciesFamily": "Gleamoth line",
+    "stage": "adult",
+    "types": [
+      "Veil"
+    ],
+    "stats": {
+      "HP": 72,
+      "ATK": 57,
+      "DEF": 56,
+      "SPD": 62,
+      "FOC": 61
+    },
+    "moves": [
+      "move.veil.3",
+      "move.veil.5",
+      "move.veil.7",
+      "move.veil.1"
+    ],
+    "abilities": [
+      "ability.veil.pulse",
+      "ability.veil.ward"
+    ],
+    "habitat": "Night lanterns",
+    "rarity": "U",
+    "bindDifficulty": 32,
+    "evolutionPath": "Gleamoth > Foldmoth",
+    "lootMaterials": [
+      "veil-trace",
+      "soft-husk"
+    ],
+    "kidSafe": true,
+    "tags": "evolution-line",
+    "description": "A adult veil-aligned gleamoth line known for its distinct trail and temper."
+  },
+  {
+    "id": "creature.nodlet",
+    "name": "Nodlet",
+    "speciesFamily": "Nodlet line",
+    "stage": "juvenile",
+    "types": [
+      "Spark"
+    ],
+    "stats": {
+      "HP": 43,
+      "ATK": 40,
+      "DEF": 41,
+      "SPD": 40,
+      "FOC": 39
+    },
+    "moves": [
+      "move.spark.4",
+      "move.spark.6",
+      "move.spark.signature",
+      "move.spark.2"
+    ],
+    "abilities": [
+      "ability.spark.pulse",
+      "ability.spark.ward"
+    ],
+    "habitat": "Copper fields",
+    "rarity": "C",
+    "bindDifficulty": 18,
+    "evolutionPath": "Nodlet > Relayram",
+    "lootMaterials": [
+      "spark-trace",
+      "soft-husk"
+    ],
+    "kidSafe": true,
+    "tags": "evolution-line",
+    "description": "A juvenile spark-aligned nodlet line known for its distinct trail and temper."
+  },
+  {
+    "id": "creature.relayram",
+    "name": "Relayram",
+    "speciesFamily": "Nodlet line",
+    "stage": "adult",
+    "types": [
+      "Spark"
+    ],
+    "stats": {
+      "HP": 62,
+      "ATK": 59,
+      "DEF": 58,
+      "SPD": 64,
+      "FOC": 51
+    },
+    "moves": [
+      "move.spark.5",
+      "move.spark.7",
+      "move.spark.1",
+      "move.spark.3"
+    ],
+    "abilities": [
+      "ability.spark.pulse",
+      "ability.spark.ward"
+    ],
+    "habitat": "Copper fields",
+    "rarity": "U",
+    "bindDifficulty": 32,
+    "evolutionPath": "Nodlet > Relayram",
+    "lootMaterials": [
+      "spark-trace",
+      "soft-husk"
+    ],
+    "kidSafe": true,
+    "tags": "evolution-line",
+    "description": "A adult spark-aligned nodlet line known for its distinct trail and temper."
+  },
+  {
+    "id": "creature.pallpup",
+    "name": "Pallpup",
+    "speciesFamily": "Pallpup line",
+    "stage": "juvenile",
+    "types": [
+      "Gloom"
+    ],
+    "stats": {
+      "HP": 45,
+      "ATK": 42,
+      "DEF": 31,
+      "SPD": 42,
+      "FOC": 41
+    },
+    "moves": [
+      "move.gloom.6",
+      "move.gloom.signature",
+      "move.gloom.2",
+      "move.gloom.4"
+    ],
+    "abilities": [
+      "ability.gloom.pulse",
+      "ability.gloom.ward"
+    ],
+    "habitat": "Fog bog",
+    "rarity": "C",
+    "bindDifficulty": 18,
+    "evolutionPath": "Pallpup > Hollowmane",
+    "lootMaterials": [
+      "gloom-trace",
+      "soft-husk"
+    ],
+    "kidSafe": true,
+    "tags": "evolution-line",
+    "description": "A juvenile gloom-aligned pallpup line known for its distinct trail and temper."
+  },
+  {
+    "id": "creature.hollowmane",
+    "name": "Hollowmane",
+    "speciesFamily": "Pallpup line",
+    "stage": "adult",
+    "types": [
+      "Gloom"
+    ],
+    "stats": {
+      "HP": 64,
+      "ATK": 61,
+      "DEF": 60,
+      "SPD": 66,
+      "FOC": 53
+    },
+    "moves": [
+      "move.gloom.7",
+      "move.gloom.1",
+      "move.gloom.3",
+      "move.gloom.5"
+    ],
+    "abilities": [
+      "ability.gloom.pulse",
+      "ability.gloom.ward"
+    ],
+    "habitat": "Fog bog",
+    "rarity": "U",
+    "bindDifficulty": 32,
+    "evolutionPath": "Pallpup > Hollowmane",
+    "lootMaterials": [
+      "gloom-trace",
+      "soft-husk"
+    ],
+    "kidSafe": true,
+    "tags": "evolution-line",
+    "description": "A adult gloom-aligned pallpup line known for its distinct trail and temper."
+  },
+  {
+    "id": "creature.pearlkin",
+    "name": "Pearlkin",
+    "speciesFamily": "Pearlkin line",
+    "stage": "juvenile",
+    "types": [
+      "Gleam"
+    ],
+    "stats": {
+      "HP": 47,
+      "ATK": 32,
+      "DEF": 33,
+      "SPD": 44,
+      "FOC": 43
+    },
+    "moves": [
+      "move.gleam.signature",
+      "move.gleam.2",
+      "move.gleam.4",
+      "move.gleam.6"
+    ],
+    "abilities": [
+      "ability.gleam.pulse",
+      "ability.gleam.ward"
+    ],
+    "habitat": "White shoals",
+    "rarity": "C",
+    "bindDifficulty": 18,
+    "evolutionPath": "Pearlkin > Beaconjaw",
+    "lootMaterials": [
+      "gleam-trace",
+      "soft-husk"
+    ],
+    "kidSafe": true,
+    "tags": "evolution-line",
+    "description": "A juvenile gleam-aligned pearlkin line known for its distinct trail and temper."
+  },
+  {
+    "id": "creature.beaconjaw",
+    "name": "Beaconjaw",
+    "speciesFamily": "Pearlkin line",
+    "stage": "adult",
+    "types": [
+      "Gleam"
+    ],
+    "stats": {
+      "HP": 66,
+      "ATK": 63,
+      "DEF": 62,
+      "SPD": 56,
+      "FOC": 55
+    },
+    "moves": [
+      "move.gleam.1",
+      "move.gleam.3",
+      "move.gleam.5",
+      "move.gleam.7"
+    ],
+    "abilities": [
+      "ability.gleam.pulse",
+      "ability.gleam.ward"
+    ],
+    "habitat": "White shoals",
+    "rarity": "U",
+    "bindDifficulty": 32,
+    "evolutionPath": "Pearlkin > Beaconjaw",
+    "lootMaterials": [
+      "gleam-trace",
+      "soft-husk"
+    ],
+    "kidSafe": true,
+    "tags": "evolution-line",
+    "description": "A adult gleam-aligned pearlkin line known for its distinct trail and temper."
+  },
+  {
+    "id": "creature.mossip",
+    "name": "Mossip",
+    "speciesFamily": "Mossip line",
+    "stage": "juvenile",
+    "types": [
+      "Bloom"
+    ],
+    "stats": {
+      "HP": 49,
+      "ATK": 34,
+      "DEF": 35,
+      "SPD": 46,
+      "FOC": 45
+    },
+    "moves": [
+      "move.bloom.2",
+      "move.bloom.4",
+      "move.bloom.6",
+      "move.bloom.signature"
+    ],
+    "abilities": [
+      "ability.bloom.pulse",
+      "ability.bloom.ward"
+    ],
+    "habitat": "Hearth rows",
+    "rarity": "C",
+    "bindDifficulty": 18,
+    "evolutionPath": "Mossip > Orchardhorn",
+    "lootMaterials": [
+      "bloom-trace",
+      "soft-husk"
+    ],
+    "kidSafe": true,
+    "tags": "evolution-line",
+    "description": "A juvenile bloom-aligned mossip line known for its distinct trail and temper."
+  },
+  {
+    "id": "creature.orchardhorn",
+    "name": "Orchardhorn",
+    "speciesFamily": "Mossip line",
+    "stage": "adult",
+    "types": [
+      "Bloom"
+    ],
+    "stats": {
+      "HP": 68,
+      "ATK": 65,
+      "DEF": 52,
+      "SPD": 58,
+      "FOC": 57
+    },
+    "moves": [
+      "move.bloom.3",
+      "move.bloom.5",
+      "move.bloom.7",
+      "move.bloom.1"
+    ],
+    "abilities": [
+      "ability.bloom.pulse",
+      "ability.bloom.ward"
+    ],
+    "habitat": "Hearth rows",
+    "rarity": "U",
+    "bindDifficulty": 32,
+    "evolutionPath": "Mossip > Orchardhorn",
+    "lootMaterials": [
+      "bloom-trace",
+      "soft-husk"
+    ],
+    "kidSafe": true,
+    "tags": "evolution-line",
+    "description": "A adult bloom-aligned mossip line known for its distinct trail and temper."
+  },
+  {
+    "id": "creature.marlip",
+    "name": "Marlip",
+    "speciesFamily": "Marlip family",
+    "stage": "adult",
+    "types": [
+      "Tide"
+    ],
+    "stats": {
+      "HP": 63,
+      "ATK": 60,
+      "DEF": 59,
+      "SPD": 65,
+      "FOC": 52
+    },
+    "moves": [
+      "move.tide.4",
+      "move.tide.6",
+      "move.tide.signature",
+      "move.tide.2"
+    ],
+    "abilities": [
+      "ability.tide.pulse",
+      "ability.tide.ward"
+    ],
+    "habitat": "Brinewatch tidepools",
+    "rarity": "C",
+    "bindDifficulty": 18,
+    "evolutionPath": "single-stage",
+    "lootMaterials": [
+      "tide-trace",
+      "soft-husk"
+    ],
+    "kidSafe": true,
+    "tags": "coast",
+    "description": "A adult tide-aligned marlip family known for its distinct trail and temper."
+  },
+  {
+    "id": "creature.salthush",
+    "name": "Salthush",
+    "speciesFamily": "Salthush family",
+    "stage": "adult",
+    "types": [
+      "Veil"
+    ],
+    "stats": {
+      "HP": 70,
+      "ATK": 67,
+      "DEF": 54,
+      "SPD": 60,
+      "FOC": 59
+    },
+    "moves": [
+      "move.veil.5",
+      "move.veil.7",
+      "move.veil.1",
+      "move.veil.3"
+    ],
+    "abilities": [
+      "ability.veil.pulse",
+      "ability.veil.ward"
+    ],
+    "habitat": "Brinewatch flats",
+    "rarity": "U",
+    "bindDifficulty": 32,
+    "evolutionPath": "single-stage",
+    "lootMaterials": [
+      "veil-trace",
+      "soft-husk"
+    ],
+    "kidSafe": true,
+    "tags": "coast",
+    "description": "A adult veil-aligned salthush family known for its distinct trail and temper."
+  },
+  {
+    "id": "creature.kelpaddle",
+    "name": "Kelpaddle",
+    "speciesFamily": "Kelpaddle family",
+    "stage": "adult",
+    "types": [
+      "Root"
+    ],
+    "stats": {
+      "HP": 65,
+      "ATK": 62,
+      "DEF": 61,
+      "SPD": 55,
+      "FOC": 54
+    },
+    "moves": [
+      "move.root.6",
+      "move.root.signature",
+      "move.root.2",
+      "move.root.4"
+    ],
+    "abilities": [
+      "ability.root.pulse",
+      "ability.root.ward"
+    ],
+    "habitat": "Brinewatch reeds",
+    "rarity": "C",
+    "bindDifficulty": 18,
+    "evolutionPath": "single-stage",
+    "lootMaterials": [
+      "root-trace",
+      "soft-husk"
+    ],
+    "kidSafe": true,
+    "tags": "coast",
+    "description": "A adult root-aligned kelpaddle family known for its distinct trail and temper."
+  },
+  {
+    "id": "creature.shoalspike",
+    "name": "Shoalspike",
+    "speciesFamily": "Shoalspike family",
+    "stage": "adult",
+    "types": [
+      "Stone"
+    ],
+    "stats": {
+      "HP": 72,
+      "ATK": 57,
+      "DEF": 56,
+      "SPD": 62,
+      "FOC": 61
+    },
+    "moves": [
+      "move.stone.7",
+      "move.stone.1",
+      "move.stone.3",
+      "move.stone.5"
+    ],
+    "abilities": [
+      "ability.stone.pulse",
+      "ability.stone.ward"
+    ],
+    "habitat": "Brinewatch shelves",
+    "rarity": "R",
+    "bindDifficulty": 48,
+    "evolutionPath": "single-stage",
+    "lootMaterials": [
+      "stone-trace",
+      "soft-husk"
+    ],
+    "kidSafe": true,
+    "tags": "coast",
+    "description": "A adult stone-aligned shoalspike family known for its distinct trail and temper."
+  },
+  {
+    "id": "creature.driftdot",
+    "name": "Driftdot",
+    "speciesFamily": "Driftdot family",
+    "stage": "adult",
+    "types": [
+      "Gale"
+    ],
+    "stats": {
+      "HP": 67,
+      "ATK": 64,
+      "DEF": 63,
+      "SPD": 57,
+      "FOC": 56
+    },
+    "moves": [
+      "move.gale.signature",
+      "move.gale.2",
+      "move.gale.4",
+      "move.gale.6"
+    ],
+    "abilities": [
+      "ability.gale.pulse",
+      "ability.gale.ward"
+    ],
+    "habitat": "Brinewatch spray",
+    "rarity": "C",
+    "bindDifficulty": 18,
+    "evolutionPath": "single-stage",
+    "lootMaterials": [
+      "gale-trace",
+      "soft-husk"
+    ],
+    "kidSafe": true,
+    "tags": "coast",
+    "description": "A adult gale-aligned driftdot family known for its distinct trail and temper."
+  },
+  {
+    "id": "creature.coralurk",
+    "name": "Coralurk",
+    "speciesFamily": "Coralurk family",
+    "stage": "adult",
+    "types": [
+      "Gloom"
+    ],
+    "stats": {
+      "HP": 62,
+      "ATK": 59,
+      "DEF": 58,
+      "SPD": 64,
+      "FOC": 51
+    },
+    "moves": [
+      "move.gloom.1",
+      "move.gloom.3",
+      "move.gloom.5",
+      "move.gloom.7"
+    ],
+    "abilities": [
+      "ability.gloom.pulse",
+      "ability.gloom.ward"
+    ],
+    "habitat": "Brinewatch caves",
+    "rarity": "R",
+    "bindDifficulty": 48,
+    "evolutionPath": "single-stage",
+    "lootMaterials": [
+      "gloom-trace",
+      "soft-husk"
+    ],
+    "kidSafe": true,
+    "tags": "coast",
+    "description": "A adult gloom-aligned coralurk family known for its distinct trail and temper."
+  },
+  {
+    "id": "creature.grittern",
+    "name": "Grittern",
+    "speciesFamily": "Grittern family",
+    "stage": "adult",
+    "types": [
+      "Stone"
+    ],
+    "stats": {
+      "HP": 69,
+      "ATK": 66,
+      "DEF": 53,
+      "SPD": 59,
+      "FOC": 58
+    },
+    "moves": [
+      "move.stone.2",
+      "move.stone.4",
+      "move.stone.6",
+      "move.stone.signature"
+    ],
+    "abilities": [
+      "ability.stone.pulse",
+      "ability.stone.ward"
+    ],
+    "habitat": "Granite Stair scree",
+    "rarity": "C",
+    "bindDifficulty": 18,
+    "evolutionPath": "single-stage",
+    "lootMaterials": [
+      "stone-trace",
+      "soft-husk"
+    ],
+    "kidSafe": true,
+    "tags": "mountain",
+    "description": "A adult stone-aligned grittern family known for its distinct trail and temper."
+  },
+  {
+    "id": "creature.pineclink",
+    "name": "Pineclink",
+    "speciesFamily": "Pineclink family",
+    "stage": "adult",
+    "types": [
+      "Spark"
+    ],
+    "stats": {
+      "HP": 64,
+      "ATK": 61,
+      "DEF": 60,
+      "SPD": 66,
+      "FOC": 53
+    },
+    "moves": [
+      "move.spark.3",
+      "move.spark.5",
+      "move.spark.7",
+      "move.spark.1"
+    ],
+    "abilities": [
+      "ability.spark.pulse",
+      "ability.spark.ward"
+    ],
+    "habitat": "Granite Stair cables",
+    "rarity": "U",
+    "bindDifficulty": 32,
+    "evolutionPath": "single-stage",
+    "lootMaterials": [
+      "spark-trace",
+      "soft-husk"
+    ],
+    "kidSafe": true,
+    "tags": "mountain",
+    "description": "A adult spark-aligned pineclink family known for its distinct trail and temper."
+  },
+  {
+    "id": "creature.snowmoss",
+    "name": "Snowmoss",
+    "speciesFamily": "Snowmoss family",
+    "stage": "adult",
+    "types": [
+      "Bloom"
+    ],
+    "stats": {
+      "HP": 71,
+      "ATK": 56,
+      "DEF": 55,
+      "SPD": 61,
+      "FOC": 60
+    },
+    "moves": [
+      "move.bloom.4",
+      "move.bloom.6",
+      "move.bloom.signature",
+      "move.bloom.2"
+    ],
+    "abilities": [
+      "ability.bloom.pulse",
+      "ability.bloom.ward"
+    ],
+    "habitat": "Granite Stair ledges",
+    "rarity": "C",
+    "bindDifficulty": 18,
+    "evolutionPath": "single-stage",
+    "lootMaterials": [
+      "bloom-trace",
+      "soft-husk"
+    ],
+    "kidSafe": true,
+    "tags": "mountain",
+    "description": "A adult bloom-aligned snowmoss family known for its distinct trail and temper."
+  },
+  {
+    "id": "creature.ridgeveil",
+    "name": "Ridgeveil",
+    "speciesFamily": "Ridgeveil family",
+    "stage": "adult",
+    "types": [
+      "Veil"
+    ],
+    "stats": {
+      "HP": 66,
+      "ATK": 63,
+      "DEF": 62,
+      "SPD": 56,
+      "FOC": 55
+    },
+    "moves": [
+      "move.veil.5",
+      "move.veil.7",
+      "move.veil.1",
+      "move.veil.3"
+    ],
+    "abilities": [
+      "ability.veil.pulse",
+      "ability.veil.ward"
+    ],
+    "habitat": "Granite Stair fogline",
+    "rarity": "R",
+    "bindDifficulty": 48,
+    "evolutionPath": "single-stage",
+    "lootMaterials": [
+      "veil-trace",
+      "soft-husk"
+    ],
+    "kidSafe": true,
+    "tags": "mountain",
+    "description": "A adult veil-aligned ridgeveil family known for its distinct trail and temper."
+  },
+  {
+    "id": "creature.craggleam",
+    "name": "Craggleam",
+    "speciesFamily": "Craggleam family",
+    "stage": "adult",
+    "types": [
+      "Gleam"
+    ],
+    "stats": {
+      "HP": 73,
+      "ATK": 58,
+      "DEF": 57,
+      "SPD": 63,
+      "FOC": 62
+    },
+    "moves": [
+      "move.gleam.6",
+      "move.gleam.signature",
+      "move.gleam.2",
+      "move.gleam.4"
+    ],
+    "abilities": [
+      "ability.gleam.pulse",
+      "ability.gleam.ward"
+    ],
+    "habitat": "Granite Stair sun faces",
+    "rarity": "U",
+    "bindDifficulty": 32,
+    "evolutionPath": "single-stage",
+    "lootMaterials": [
+      "gleam-trace",
+      "soft-husk"
+    ],
+    "kidSafe": true,
+    "tags": "mountain",
+    "description": "A adult gleam-aligned craggleam family known for its distinct trail and temper."
+  },
+  {
+    "id": "creature.fumehorn",
+    "name": "Fumehorn",
+    "speciesFamily": "Fumehorn family",
+    "stage": "adult",
+    "types": [
+      "Ember"
+    ],
+    "stats": {
+      "HP": 68,
+      "ATK": 65,
+      "DEF": 52,
+      "SPD": 58,
+      "FOC": 57
+    },
+    "moves": [
+      "move.ember.7",
+      "move.ember.1",
+      "move.ember.3",
+      "move.ember.5"
+    ],
+    "abilities": [
+      "ability.ember.pulse",
+      "ability.ember.ward"
+    ],
+    "habitat": "Granite Stair vents",
+    "rarity": "R",
+    "bindDifficulty": 48,
+    "evolutionPath": "single-stage",
+    "lootMaterials": [
+      "ember-trace",
+      "soft-husk"
+    ],
+    "kidSafe": true,
+    "tags": "mountain",
+    "description": "A adult ember-aligned fumehorn family known for its distinct trail and temper."
+  },
+  {
+    "id": "creature.lampet",
+    "name": "Lampet",
+    "speciesFamily": "Lampet family",
+    "stage": "adult",
+    "types": [
+      "Gleam"
+    ],
+    "stats": {
+      "HP": 63,
+      "ATK": 60,
+      "DEF": 59,
+      "SPD": 65,
+      "FOC": 52
+    },
+    "moves": [
+      "move.gleam.signature",
+      "move.gleam.2",
+      "move.gleam.4",
+      "move.gleam.6"
+    ],
+    "abilities": [
+      "ability.gleam.pulse",
+      "ability.gleam.ward"
+    ],
+    "habitat": "Lampwood night road",
+    "rarity": "C",
+    "bindDifficulty": 18,
+    "evolutionPath": "single-stage",
+    "lootMaterials": [
+      "gleam-trace",
+      "soft-husk"
+    ],
+    "kidSafe": true,
+    "tags": "night",
+    "description": "A adult gleam-aligned lampet family known for its distinct trail and temper."
+  },
+  {
+    "id": "creature.wickwyrm",
+    "name": "Wickwyrm",
+    "speciesFamily": "Wickwyrm family",
+    "stage": "adult",
+    "types": [
+      "Ember"
+    ],
+    "stats": {
+      "HP": 70,
+      "ATK": 67,
+      "DEF": 54,
+      "SPD": 60,
+      "FOC": 59
+    },
+    "moves": [
+      "move.ember.1",
+      "move.ember.3",
+      "move.ember.5",
+      "move.ember.7"
+    ],
+    "abilities": [
+      "ability.ember.pulse",
+      "ability.ember.ward"
+    ],
+    "habitat": "Lampwood night road",
+    "rarity": "U",
+    "bindDifficulty": 32,
+    "evolutionPath": "single-stage",
+    "lootMaterials": [
+      "ember-trace",
+      "soft-husk"
+    ],
+    "kidSafe": true,
+    "tags": "night",
+    "description": "A adult ember-aligned wickwyrm family known for its distinct trail and temper."
+  },
+  {
+    "id": "creature.hushhare",
+    "name": "Hushhare",
+    "speciesFamily": "Hushhare family",
+    "stage": "adult",
+    "types": [
+      "Veil"
+    ],
+    "stats": {
+      "HP": 65,
+      "ATK": 62,
+      "DEF": 61,
+      "SPD": 55,
+      "FOC": 54
+    },
+    "moves": [
+      "move.veil.2",
+      "move.veil.4",
+      "move.veil.6",
+      "move.veil.signature"
+    ],
+    "abilities": [
+      "ability.veil.pulse",
+      "ability.veil.ward"
+    ],
+    "habitat": "Lampwood thickets",
+    "rarity": "C",
+    "bindDifficulty": 18,
+    "evolutionPath": "single-stage",
+    "lootMaterials": [
+      "veil-trace",
+      "soft-husk"
+    ],
+    "kidSafe": true,
+    "tags": "night",
+    "description": "A adult veil-aligned hushhare family known for its distinct trail and temper."
+  },
+  {
+    "id": "creature.nightsilt",
+    "name": "Nightsilt",
+    "speciesFamily": "Nightsilt family",
+    "stage": "adult",
+    "types": [
+      "Gloom"
+    ],
+    "stats": {
+      "HP": 72,
+      "ATK": 57,
+      "DEF": 56,
+      "SPD": 62,
+      "FOC": 61
+    },
+    "moves": [
+      "move.gloom.3",
+      "move.gloom.5",
+      "move.gloom.7",
+      "move.gloom.1"
+    ],
+    "abilities": [
+      "ability.gloom.pulse",
+      "ability.gloom.ward"
+    ],
+    "habitat": "Lampwood ditches",
+    "rarity": "U",
+    "bindDifficulty": 32,
+    "evolutionPath": "single-stage",
+    "lootMaterials": [
+      "gloom-trace",
+      "soft-husk"
+    ],
+    "kidSafe": true,
+    "tags": "night",
+    "description": "A adult gloom-aligned nightsilt family known for its distinct trail and temper."
+  },
+  {
+    "id": "creature.mothroot",
+    "name": "Mothroot",
+    "speciesFamily": "Mothroot family",
+    "stage": "adult",
+    "types": [
+      "Root"
+    ],
+    "stats": {
+      "HP": 67,
+      "ATK": 64,
+      "DEF": 63,
+      "SPD": 57,
+      "FOC": 56
+    },
+    "moves": [
+      "move.root.4",
+      "move.root.6",
+      "move.root.signature",
+      "move.root.2"
+    ],
+    "abilities": [
+      "ability.root.pulse",
+      "ability.root.ward"
+    ],
+    "habitat": "Lampwood groves",
+    "rarity": "R",
+    "bindDifficulty": 48,
+    "evolutionPath": "single-stage",
+    "lootMaterials": [
+      "root-trace",
+      "soft-husk"
+    ],
+    "kidSafe": true,
+    "tags": "night",
+    "description": "A adult root-aligned mothroot family known for its distinct trail and temper."
+  },
+  {
+    "id": "creature.chimegale",
+    "name": "Chimegale",
+    "speciesFamily": "Chimegale family",
+    "stage": "adult",
+    "types": [
+      "Gale"
+    ],
+    "stats": {
+      "HP": 62,
+      "ATK": 59,
+      "DEF": 58,
+      "SPD": 64,
+      "FOC": 51
+    },
+    "moves": [
+      "move.gale.5",
+      "move.gale.7",
+      "move.gale.1",
+      "move.gale.3"
+    ],
+    "abilities": [
+      "ability.gale.pulse",
+      "ability.gale.ward"
+    ],
+    "habitat": "Lampwood arches",
+    "rarity": "R",
+    "bindDifficulty": 48,
+    "evolutionPath": "single-stage",
+    "lootMaterials": [
+      "gale-trace",
+      "soft-husk"
+    ],
+    "kidSafe": true,
+    "tags": "night",
+    "description": "A adult gale-aligned chimegale family known for its distinct trail and temper."
+  },
+  {
+    "id": "creature.vaultmidge",
+    "name": "Vaultmidge",
+    "speciesFamily": "Vaultmidge family",
+    "stage": "adult",
+    "types": [
+      "Spark"
+    ],
+    "stats": {
+      "HP": 69,
+      "ATK": 66,
+      "DEF": 53,
+      "SPD": 59,
+      "FOC": 58
+    },
+    "moves": [
+      "move.spark.6",
+      "move.spark.signature",
+      "move.spark.2",
+      "move.spark.4"
+    ],
+    "abilities": [
+      "ability.spark.pulse",
+      "ability.spark.ward"
+    ],
+    "habitat": "Understep vaults",
+    "rarity": "U",
+    "bindDifficulty": 32,
+    "evolutionPath": "single-stage",
+    "lootMaterials": [
+      "spark-trace",
+      "soft-husk"
+    ],
+    "kidSafe": true,
+    "tags": "dungeon",
+    "description": "A adult spark-aligned vaultmidge family known for its distinct trail and temper."
+  },
+  {
+    "id": "creature.basaltick",
+    "name": "Basaltick",
+    "speciesFamily": "Basaltick family",
+    "stage": "adult",
+    "types": [
+      "Stone"
+    ],
+    "stats": {
+      "HP": 64,
+      "ATK": 61,
+      "DEF": 60,
+      "SPD": 66,
+      "FOC": 53
+    },
+    "moves": [
+      "move.stone.7",
+      "move.stone.1",
+      "move.stone.3",
+      "move.stone.5"
+    ],
+    "abilities": [
+      "ability.stone.pulse",
+      "ability.stone.ward"
+    ],
+    "habitat": "Understep vaults",
+    "rarity": "C",
+    "bindDifficulty": 18,
+    "evolutionPath": "single-stage",
+    "lootMaterials": [
+      "stone-trace",
+      "soft-husk"
+    ],
+    "kidSafe": true,
+    "tags": "dungeon",
+    "description": "A adult stone-aligned basaltick family known for its distinct trail and temper."
+  },
+  {
+    "id": "creature.charspore",
+    "name": "Charspore",
+    "speciesFamily": "Charspore family",
+    "stage": "adult",
+    "types": [
+      "Ember"
+    ],
+    "stats": {
+      "HP": 71,
+      "ATK": 56,
+      "DEF": 55,
+      "SPD": 61,
+      "FOC": 60
+    },
+    "moves": [
+      "move.ember.signature",
+      "move.ember.2",
+      "move.ember.4",
+      "move.ember.6"
+    ],
+    "abilities": [
+      "ability.ember.pulse",
+      "ability.ember.ward"
+    ],
+    "habitat": "Understep vaults",
+    "rarity": "U",
+    "bindDifficulty": 32,
+    "evolutionPath": "single-stage",
+    "lootMaterials": [
+      "ember-trace",
+      "soft-husk"
+    ],
+    "kidSafe": true,
+    "tags": "dungeon",
+    "description": "A adult ember-aligned charspore family known for its distinct trail and temper."
+  },
+  {
+    "id": "creature.blindbloom",
+    "name": "Blindbloom",
+    "speciesFamily": "Blindbloom family",
+    "stage": "adult",
+    "types": [
+      "Bloom"
+    ],
+    "stats": {
+      "HP": 66,
+      "ATK": 63,
+      "DEF": 62,
+      "SPD": 56,
+      "FOC": 55
+    },
+    "moves": [
+      "move.bloom.1",
+      "move.bloom.3",
+      "move.bloom.5",
+      "move.bloom.7"
+    ],
+    "abilities": [
+      "ability.bloom.pulse",
+      "ability.bloom.ward"
+    ],
+    "habitat": "Understep vaults",
+    "rarity": "R",
+    "bindDifficulty": 48,
+    "evolutionPath": "single-stage",
+    "lootMaterials": [
+      "bloom-trace",
+      "soft-husk"
+    ],
+    "kidSafe": true,
+    "tags": "dungeon",
+    "description": "A adult bloom-aligned blindbloom family known for its distinct trail and temper."
+  },
+  {
+    "id": "creature.sluicewraith",
+    "name": "Sluicewraith",
+    "speciesFamily": "Sluicewraith family",
+    "stage": "adult",
+    "types": [
+      "Tide"
+    ],
+    "stats": {
+      "HP": 73,
+      "ATK": 58,
+      "DEF": 57,
+      "SPD": 63,
+      "FOC": 62
+    },
+    "moves": [
+      "move.tide.2",
+      "move.tide.4",
+      "move.tide.6",
+      "move.tide.signature"
+    ],
+    "abilities": [
+      "ability.tide.pulse",
+      "ability.tide.ward"
+    ],
+    "habitat": "Understep cisterns",
+    "rarity": "R",
+    "bindDifficulty": 48,
+    "evolutionPath": "single-stage",
+    "lootMaterials": [
+      "tide-trace",
+      "soft-husk"
+    ],
+    "kidSafe": true,
+    "tags": "dungeon",
+    "description": "A adult tide-aligned sluicewraith family known for its distinct trail and temper."
+  },
+  {
+    "id": "creature.hollowgale",
+    "name": "Hollowgale",
+    "speciesFamily": "Hollowgale family",
+    "stage": "adult",
+    "types": [
+      "Gale"
+    ],
+    "stats": {
+      "HP": 68,
+      "ATK": 65,
+      "DEF": 52,
+      "SPD": 58,
+      "FOC": 57
+    },
+    "moves": [
+      "move.gale.3",
+      "move.gale.5",
+      "move.gale.7",
+      "move.gale.1"
+    ],
+    "abilities": [
+      "ability.gale.pulse",
+      "ability.gale.ward"
+    ],
+    "habitat": "Understep shafts",
+    "rarity": "R",
+    "bindDifficulty": 48,
+    "evolutionPath": "single-stage",
+    "lootMaterials": [
+      "gale-trace",
+      "soft-husk"
+    ],
+    "kidSafe": true,
+    "tags": "dungeon",
+    "description": "A adult gale-aligned hollowgale family known for its distinct trail and temper."
+  },
+  {
+    "id": "creature.veilclast",
+    "name": "Veilclast",
+    "speciesFamily": "Veilclast family",
+    "stage": "adult",
+    "types": [
+      "Veil"
+    ],
+    "stats": {
+      "HP": 63,
+      "ATK": 60,
+      "DEF": 59,
+      "SPD": 65,
+      "FOC": 52
+    },
+    "moves": [
+      "move.veil.4",
+      "move.veil.6",
+      "move.veil.signature",
+      "move.veil.2"
+    ],
+    "abilities": [
+      "ability.veil.pulse",
+      "ability.veil.ward"
+    ],
+    "habitat": "Understep mirrors",
+    "rarity": "SR",
+    "bindDifficulty": 66,
+    "evolutionPath": "single-stage",
+    "lootMaterials": [
+      "veil-trace",
+      "soft-husk"
+    ],
+    "kidSafe": true,
+    "tags": "dungeon",
+    "description": "A adult veil-aligned veilclast family known for its distinct trail and temper."
+  },
+  {
+    "id": "creature.gloomskein",
+    "name": "Gloomskein",
+    "speciesFamily": "Gloomskein family",
+    "stage": "adult",
+    "types": [
+      "Gloom"
+    ],
+    "stats": {
+      "HP": 70,
+      "ATK": 67,
+      "DEF": 54,
+      "SPD": 60,
+      "FOC": 59
+    },
+    "moves": [
+      "move.gloom.5",
+      "move.gloom.7",
+      "move.gloom.1",
+      "move.gloom.3"
+    ],
+    "abilities": [
+      "ability.gloom.pulse",
+      "ability.gloom.ward"
+    ],
+    "habitat": "Understep galleries",
+    "rarity": "SR",
+    "bindDifficulty": 66,
+    "evolutionPath": "single-stage",
+    "lootMaterials": [
+      "gloom-trace",
+      "soft-husk"
+    ],
+    "kidSafe": true,
+    "tags": "dungeon",
+    "description": "A adult gloom-aligned gloomskein family known for its distinct trail and temper."
+  },
+  {
+    "id": "creature.prismknuckle",
+    "name": "Prismknuckle",
+    "speciesFamily": "Prismknuckle family",
+    "stage": "adult",
+    "types": [
+      "Gleam"
+    ],
+    "stats": {
+      "HP": 65,
+      "ATK": 62,
+      "DEF": 61,
+      "SPD": 55,
+      "FOC": 54
+    },
+    "moves": [
+      "move.gleam.6",
+      "move.gleam.signature",
+      "move.gleam.2",
+      "move.gleam.4"
+    ],
+    "abilities": [
+      "ability.gleam.pulse",
+      "ability.gleam.ward"
+    ],
+    "habitat": "Understep reliquary",
+    "rarity": "SR",
+    "bindDifficulty": 66,
+    "evolutionPath": "single-stage",
+    "lootMaterials": [
+      "gleam-trace",
+      "soft-husk"
+    ],
+    "kidSafe": true,
+    "tags": "dungeon",
+    "description": "A adult gleam-aligned prismknuckle family known for its distinct trail and temper."
+  },
+  {
+    "id": "creature.briarbulk",
+    "name": "Briarbulk",
+    "speciesFamily": "Briarbulk family",
+    "stage": "adult",
+    "types": [
+      "Root"
+    ],
+    "stats": {
+      "HP": 72,
+      "ATK": 57,
+      "DEF": 56,
+      "SPD": 62,
+      "FOC": 61
+    },
+    "moves": [
+      "move.root.7",
+      "move.root.1",
+      "move.root.3",
+      "move.root.5"
+    ],
+    "abilities": [
+      "ability.root.pulse",
+      "ability.root.ward"
+    ],
+    "habitat": "Understep roots",
+    "rarity": "R",
+    "bindDifficulty": 48,
+    "evolutionPath": "single-stage",
+    "lootMaterials": [
+      "root-trace",
+      "soft-husk"
+    ],
+    "kidSafe": true,
+    "tags": "dungeon",
+    "description": "A adult root-aligned briarbulk family known for its distinct trail and temper."
+  },
+  {
+    "id": "creature.coilshard",
+    "name": "Coilshard",
+    "speciesFamily": "Coilshard family",
+    "stage": "adult",
+    "types": [
+      "Spark"
+    ],
+    "stats": {
+      "HP": 67,
+      "ATK": 64,
+      "DEF": 63,
+      "SPD": 57,
+      "FOC": 56
+    },
+    "moves": [
+      "move.spark.signature",
+      "move.spark.2",
+      "move.spark.4",
+      "move.spark.6"
+    ],
+    "abilities": [
+      "ability.spark.pulse",
+      "ability.spark.ward"
+    ],
+    "habitat": "Understep relays",
+    "rarity": "R",
+    "bindDifficulty": 48,
+    "evolutionPath": "single-stage",
+    "lootMaterials": [
+      "spark-trace",
+      "soft-husk"
+    ],
+    "kidSafe": true,
+    "tags": "dungeon",
+    "description": "A adult spark-aligned coilshard family known for its distinct trail and temper."
+  },
+  {
+    "id": "creature.cairnjaw",
+    "name": "Cairnjaw",
+    "speciesFamily": "Cairnjaw family",
+    "stage": "adult",
+    "types": [
+      "Stone"
+    ],
+    "stats": {
+      "HP": 62,
+      "ATK": 59,
+      "DEF": 58,
+      "SPD": 64,
+      "FOC": 51
+    },
+    "moves": [
+      "move.stone.1",
+      "move.stone.3",
+      "move.stone.5",
+      "move.stone.7"
+    ],
+    "abilities": [
+      "ability.stone.pulse",
+      "ability.stone.ward"
+    ],
+    "habitat": "Understep quarry",
+    "rarity": "SR",
+    "bindDifficulty": 66,
+    "evolutionPath": "single-stage",
+    "lootMaterials": [
+      "stone-trace",
+      "soft-husk"
+    ],
+    "kidSafe": true,
+    "tags": "dungeon",
+    "description": "A adult stone-aligned cairnjaw family known for its distinct trail and temper."
+  },
+  {
+    "id": "creature.ashmolt",
+    "name": "Ashmolt",
+    "speciesFamily": "Ashmolt family",
+    "stage": "adult",
+    "types": [
+      "Ember"
+    ],
+    "stats": {
+      "HP": 69,
+      "ATK": 66,
+      "DEF": 53,
+      "SPD": 59,
+      "FOC": 58
+    },
+    "moves": [
+      "move.ember.2",
+      "move.ember.4",
+      "move.ember.6",
+      "move.ember.signature"
+    ],
+    "abilities": [
+      "ability.ember.pulse",
+      "ability.ember.ward"
+    ],
+    "habitat": "Understep kiln",
+    "rarity": "R",
+    "bindDifficulty": 48,
+    "evolutionPath": "single-stage",
+    "lootMaterials": [
+      "ember-trace",
+      "soft-husk"
+    ],
+    "kidSafe": true,
+    "tags": "dungeon",
+    "description": "A adult ember-aligned ashmolt family known for its distinct trail and temper."
+  },
+  {
+    "id": "creature.necterra",
+    "name": "Necterra",
+    "speciesFamily": "Necterra family",
+    "stage": "adult",
+    "types": [
+      "Bloom"
+    ],
+    "stats": {
+      "HP": 64,
+      "ATK": 61,
+      "DEF": 60,
+      "SPD": 66,
+      "FOC": 53
+    },
+    "moves": [
+      "move.bloom.3",
+      "move.bloom.5",
+      "move.bloom.7",
+      "move.bloom.1"
+    ],
+    "abilities": [
+      "ability.bloom.pulse",
+      "ability.bloom.ward"
+    ],
+    "habitat": "Understep garden",
+    "rarity": "SR",
+    "bindDifficulty": 66,
+    "evolutionPath": "single-stage",
+    "lootMaterials": [
+      "bloom-trace",
+      "soft-husk"
+    ],
+    "kidSafe": true,
+    "tags": "dungeon",
+    "description": "A adult bloom-aligned necterra family known for its distinct trail and temper."
+  },
+  {
+    "id": "creature.rillvault",
+    "name": "Rillvault",
+    "speciesFamily": "Rillvault family",
+    "stage": "adult",
+    "types": [
+      "Tide"
+    ],
+    "stats": {
+      "HP": 71,
+      "ATK": 56,
+      "DEF": 55,
+      "SPD": 61,
+      "FOC": 60
+    },
+    "moves": [
+      "move.tide.4",
+      "move.tide.6",
+      "move.tide.signature",
+      "move.tide.2"
+    ],
+    "abilities": [
+      "ability.tide.pulse",
+      "ability.tide.ward"
+    ],
+    "habitat": "Understep reservoir",
+    "rarity": "R",
+    "bindDifficulty": 48,
+    "evolutionPath": "single-stage",
+    "lootMaterials": [
+      "tide-trace",
+      "soft-husk"
+    ],
+    "kidSafe": true,
+    "tags": "dungeon",
+    "description": "A adult tide-aligned rillvault family known for its distinct trail and temper."
+  },
+  {
+    "id": "creature.grainpuff",
+    "name": "Grainpuff",
+    "speciesFamily": "Grainpuff family",
+    "stage": "adult",
+    "types": [
+      "Bloom"
+    ],
+    "stats": {
+      "HP": 66,
+      "ATK": 63,
+      "DEF": 62,
+      "SPD": 56,
+      "FOC": 55
+    },
+    "moves": [
+      "move.bloom.5",
+      "move.bloom.7",
+      "move.bloom.1",
+      "move.bloom.3"
+    ],
+    "abilities": [
+      "ability.bloom.pulse",
+      "ability.bloom.ward"
+    ],
+    "habitat": "Hearth fields",
+    "rarity": "C",
+    "bindDifficulty": 18,
+    "evolutionPath": "single-stage",
+    "lootMaterials": [
+      "bloom-trace",
+      "soft-husk"
+    ],
+    "kidSafe": true,
+    "tags": "hearth",
+    "description": "A adult bloom-aligned grainpuff family known for its distinct trail and temper."
+  },
+  {
+    "id": "creature.sootfinch",
+    "name": "Sootfinch",
+    "speciesFamily": "Sootfinch family",
+    "stage": "adult",
+    "types": [
+      "Ember"
+    ],
+    "stats": {
+      "HP": 73,
+      "ATK": 58,
+      "DEF": 57,
+      "SPD": 63,
+      "FOC": 62
+    },
+    "moves": [
+      "move.ember.6",
+      "move.ember.signature",
+      "move.ember.2",
+      "move.ember.4"
+    ],
+    "abilities": [
+      "ability.ember.pulse",
+      "ability.ember.ward"
+    ],
+    "habitat": "Hearth chimneys",
+    "rarity": "C",
+    "bindDifficulty": 18,
+    "evolutionPath": "single-stage",
+    "lootMaterials": [
+      "ember-trace",
+      "soft-husk"
+    ],
+    "kidSafe": true,
+    "tags": "hearth",
+    "description": "A adult ember-aligned sootfinch family known for its distinct trail and temper."
+  },
+  {
+    "id": "creature.buttonhoof",
+    "name": "Buttonhoof",
+    "speciesFamily": "Buttonhoof family",
+    "stage": "adult",
+    "types": [
+      "Stone"
+    ],
+    "stats": {
+      "HP": 68,
+      "ATK": 65,
+      "DEF": 52,
+      "SPD": 58,
+      "FOC": 57
+    },
+    "moves": [
+      "move.stone.7",
+      "move.stone.1",
+      "move.stone.3",
+      "move.stone.5"
+    ],
+    "abilities": [
+      "ability.stone.pulse",
+      "ability.stone.ward"
+    ],
+    "habitat": "Hearth lanes",
+    "rarity": "U",
+    "bindDifficulty": 32,
+    "evolutionPath": "single-stage",
+    "lootMaterials": [
+      "stone-trace",
+      "soft-husk"
+    ],
+    "kidSafe": true,
+    "tags": "hearth",
+    "description": "A adult stone-aligned buttonhoof family known for its distinct trail and temper."
+  },
+  {
+    "id": "creature.flickerpup",
+    "name": "Flickerpup",
+    "speciesFamily": "Flickerpup family",
+    "stage": "adult",
+    "types": [
+      "Spark"
+    ],
+    "stats": {
+      "HP": 63,
+      "ATK": 60,
+      "DEF": 59,
+      "SPD": 65,
+      "FOC": 52
+    },
+    "moves": [
+      "move.spark.signature",
+      "move.spark.2",
+      "move.spark.4",
+      "move.spark.6"
+    ],
+    "abilities": [
+      "ability.spark.pulse",
+      "ability.spark.ward"
+    ],
+    "habitat": "Hearth sheds",
+    "rarity": "C",
+    "bindDifficulty": 18,
+    "evolutionPath": "single-stage",
+    "lootMaterials": [
+      "spark-trace",
+      "soft-husk"
+    ],
+    "kidSafe": true,
+    "tags": "hearth",
+    "description": "A adult spark-aligned flickerpup family known for its distinct trail and temper."
+  },
+  {
+    "id": "creature.dewcurl",
+    "name": "Dewcurl",
+    "speciesFamily": "Dewcurl family",
+    "stage": "adult",
+    "types": [
+      "Tide"
+    ],
+    "stats": {
+      "HP": 70,
+      "ATK": 67,
+      "DEF": 54,
+      "SPD": 60,
+      "FOC": 59
+    },
+    "moves": [
+      "move.tide.1",
+      "move.tide.3",
+      "move.tide.5",
+      "move.tide.7"
+    ],
+    "abilities": [
+      "ability.tide.pulse",
+      "ability.tide.ward"
+    ],
+    "habitat": "Hearth wells",
+    "rarity": "C",
+    "bindDifficulty": 18,
+    "evolutionPath": "single-stage",
+    "lootMaterials": [
+      "tide-trace",
+      "soft-husk"
+    ],
+    "kidSafe": true,
+    "tags": "hearth",
+    "description": "A adult tide-aligned dewcurl family known for its distinct trail and temper."
+  },
+  {
+    "id": "creature.hedgeloom",
+    "name": "Hedgeloom",
+    "speciesFamily": "Hedgeloom family",
+    "stage": "adult",
+    "types": [
+      "Veil"
+    ],
+    "stats": {
+      "HP": 65,
+      "ATK": 62,
+      "DEF": 61,
+      "SPD": 55,
+      "FOC": 54
+    },
+    "moves": [
+      "move.veil.2",
+      "move.veil.4",
+      "move.veil.6",
+      "move.veil.signature"
+    ],
+    "abilities": [
+      "ability.veil.pulse",
+      "ability.veil.ward"
+    ],
+    "habitat": "Hearth hedges",
+    "rarity": "U",
+    "bindDifficulty": 32,
+    "evolutionPath": "single-stage",
+    "lootMaterials": [
+      "veil-trace",
+      "soft-husk"
+    ],
+    "kidSafe": true,
+    "tags": "hearth",
+    "description": "A adult veil-aligned hedgeloom family known for its distinct trail and temper."
+  },
+  {
+    "id": "creature.reedglider",
+    "name": "Reedglider",
+    "speciesFamily": "Reedglider family",
+    "stage": "adult",
+    "types": [
+      "Gale"
+    ],
+    "stats": {
+      "HP": 72,
+      "ATK": 57,
+      "DEF": 56,
+      "SPD": 62,
+      "FOC": 61
+    },
+    "moves": [
+      "move.gale.3",
+      "move.gale.5",
+      "move.gale.7",
+      "move.gale.1"
+    ],
+    "abilities": [
+      "ability.gale.pulse",
+      "ability.gale.ward"
+    ],
+    "habitat": "Reedfen",
+    "rarity": "C",
+    "bindDifficulty": 18,
+    "evolutionPath": "single-stage",
+    "lootMaterials": [
+      "gale-trace",
+      "soft-husk"
+    ],
+    "kidSafe": true,
+    "tags": "fen",
+    "description": "A adult gale-aligned reedglider family known for its distinct trail and temper."
+  },
+  {
+    "id": "creature.bogbell",
+    "name": "Bogbell",
+    "speciesFamily": "Bogbell family",
+    "stage": "adult",
+    "types": [
+      "Gloom"
+    ],
+    "stats": {
+      "HP": 67,
+      "ATK": 64,
+      "DEF": 63,
+      "SPD": 57,
+      "FOC": 56
+    },
+    "moves": [
+      "move.gloom.4",
+      "move.gloom.6",
+      "move.gloom.signature",
+      "move.gloom.2"
+    ],
+    "abilities": [
+      "ability.gloom.pulse",
+      "ability.gloom.ward"
+    ],
+    "habitat": "Reedfen",
+    "rarity": "U",
+    "bindDifficulty": 32,
+    "evolutionPath": "single-stage",
+    "lootMaterials": [
+      "gloom-trace",
+      "soft-husk"
+    ],
+    "kidSafe": true,
+    "tags": "fen",
+    "description": "A adult gloom-aligned bogbell family known for its distinct trail and temper."
+  },
+  {
+    "id": "creature.mirecrown",
+    "name": "Mirecrown",
+    "speciesFamily": "Mirecrown family",
+    "stage": "adult",
+    "types": [
+      "Bloom"
+    ],
+    "stats": {
+      "HP": 62,
+      "ATK": 59,
+      "DEF": 58,
+      "SPD": 64,
+      "FOC": 51
+    },
+    "moves": [
+      "move.bloom.5",
+      "move.bloom.7",
+      "move.bloom.1",
+      "move.bloom.3"
+    ],
+    "abilities": [
+      "ability.bloom.pulse",
+      "ability.bloom.ward"
+    ],
+    "habitat": "Reedfen",
+    "rarity": "R",
+    "bindDifficulty": 48,
+    "evolutionPath": "single-stage",
+    "lootMaterials": [
+      "bloom-trace",
+      "soft-husk"
+    ],
+    "kidSafe": true,
+    "tags": "fen",
+    "description": "A adult bloom-aligned mirecrown family known for its distinct trail and temper."
+  },
+  {
+    "id": "creature.sedgejaw",
+    "name": "Sedgejaw",
+    "speciesFamily": "Sedgejaw family",
+    "stage": "adult",
+    "types": [
+      "Root"
+    ],
+    "stats": {
+      "HP": 69,
+      "ATK": 66,
+      "DEF": 53,
+      "SPD": 59,
+      "FOC": 58
+    },
+    "moves": [
+      "move.root.6",
+      "move.root.signature",
+      "move.root.2",
+      "move.root.4"
+    ],
+    "abilities": [
+      "ability.root.pulse",
+      "ability.root.ward"
+    ],
+    "habitat": "Reedfen",
+    "rarity": "U",
+    "bindDifficulty": 32,
+    "evolutionPath": "single-stage",
+    "lootMaterials": [
+      "root-trace",
+      "soft-husk"
+    ],
+    "kidSafe": true,
+    "tags": "fen",
+    "description": "A adult root-aligned sedgejaw family known for its distinct trail and temper."
+  },
+  {
+    "id": "creature.fenflash",
+    "name": "Fenflash",
+    "speciesFamily": "Fenflash family",
+    "stage": "adult",
+    "types": [
+      "Spark"
+    ],
+    "stats": {
+      "HP": 64,
+      "ATK": 61,
+      "DEF": 60,
+      "SPD": 66,
+      "FOC": 53
+    },
+    "moves": [
+      "move.spark.7",
+      "move.spark.1",
+      "move.spark.3",
+      "move.spark.5"
+    ],
+    "abilities": [
+      "ability.spark.pulse",
+      "ability.spark.ward"
+    ],
+    "habitat": "Reedfen storms",
+    "rarity": "R",
+    "bindDifficulty": 48,
+    "evolutionPath": "single-stage",
+    "lootMaterials": [
+      "spark-trace",
+      "soft-husk"
+    ],
+    "kidSafe": true,
+    "tags": "fen",
+    "description": "A adult spark-aligned fenflash family known for its distinct trail and temper."
+  },
+  {
+    "id": "creature.siltlamp",
+    "name": "Siltlamp",
+    "speciesFamily": "Siltlamp family",
+    "stage": "adult",
+    "types": [
+      "Gleam"
+    ],
+    "stats": {
+      "HP": 71,
+      "ATK": 56,
+      "DEF": 55,
+      "SPD": 61,
+      "FOC": 60
+    },
+    "moves": [
+      "move.gleam.signature",
+      "move.gleam.2",
+      "move.gleam.4",
+      "move.gleam.6"
+    ],
+    "abilities": [
+      "ability.gleam.pulse",
+      "ability.gleam.ward"
+    ],
+    "habitat": "Reedfen pools",
+    "rarity": "U",
+    "bindDifficulty": 32,
+    "evolutionPath": "single-stage",
+    "lootMaterials": [
+      "gleam-trace",
+      "soft-husk"
+    ],
+    "kidSafe": true,
+    "tags": "fen",
+    "description": "A adult gleam-aligned siltlamp family known for its distinct trail and temper."
+  },
+  {
+    "id": "creature.dawnmantle",
+    "name": "Dawnmantle",
+    "speciesFamily": "Dawnmantle family",
+    "stage": "adult",
+    "types": [
+      "Gleam"
+    ],
+    "stats": {
+      "HP": 66,
+      "ATK": 63,
+      "DEF": 62,
+      "SPD": 56,
+      "FOC": 55
+    },
+    "moves": [
+      "move.gleam.1",
+      "move.gleam.3",
+      "move.gleam.5",
+      "move.gleam.7"
+    ],
+    "abilities": [
+      "ability.gleam.pulse",
+      "ability.gleam.ward"
+    ],
+    "habitat": "Dawn terraces",
+    "rarity": "R",
+    "bindDifficulty": 48,
+    "evolutionPath": "single-stage",
+    "lootMaterials": [
+      "gleam-trace",
+      "soft-husk"
+    ],
+    "kidSafe": true,
+    "tags": "legend",
+    "description": "A adult gleam-aligned dawnmantle family known for its distinct trail and temper."
+  },
+  {
+    "id": "creature.cinderstag",
+    "name": "Cinderstag",
+    "speciesFamily": "Cinderstag family",
+    "stage": "adult",
+    "types": [
+      "Ember"
+    ],
+    "stats": {
+      "HP": 73,
+      "ATK": 58,
+      "DEF": 57,
+      "SPD": 63,
+      "FOC": 62
+    },
+    "moves": [
+      "move.ember.2",
+      "move.ember.4",
+      "move.ember.6",
+      "move.ember.signature"
+    ],
+    "abilities": [
+      "ability.ember.pulse",
+      "ability.ember.ward"
+    ],
+    "habitat": "Ash Compact border",
+    "rarity": "SR",
+    "bindDifficulty": 66,
+    "evolutionPath": "single-stage",
+    "lootMaterials": [
+      "ember-trace",
+      "soft-husk"
+    ],
+    "kidSafe": true,
+    "tags": "legend",
+    "description": "A adult ember-aligned cinderstag family known for its distinct trail and temper."
+  },
+  {
+    "id": "creature.tidevault",
+    "name": "Tidevault",
+    "speciesFamily": "Tidevault family",
+    "stage": "adult",
+    "types": [
+      "Tide"
+    ],
+    "stats": {
+      "HP": 68,
+      "ATK": 65,
+      "DEF": 52,
+      "SPD": 58,
+      "FOC": 57
+    },
+    "moves": [
+      "move.tide.3",
+      "move.tide.5",
+      "move.tide.7",
+      "move.tide.1"
+    ],
+    "abilities": [
+      "ability.tide.pulse",
+      "ability.tide.ward"
+    ],
+    "habitat": "Brinewatch deeps",
+    "rarity": "SR",
+    "bindDifficulty": 66,
+    "evolutionPath": "single-stage",
+    "lootMaterials": [
+      "tide-trace",
+      "soft-husk"
+    ],
+    "kidSafe": true,
+    "tags": "legend",
+    "description": "A adult tide-aligned tidevault family known for its distinct trail and temper."
+  },
+  {
+    "id": "creature.granite-oracle",
+    "name": "Granite Oracle",
+    "speciesFamily": "Granite Oracle family",
+    "stage": "adult",
+    "types": [
+      "Stone"
+    ],
+    "stats": {
+      "HP": 63,
+      "ATK": 60,
+      "DEF": 59,
+      "SPD": 65,
+      "FOC": 52
+    },
+    "moves": [
+      "move.stone.4",
+      "move.stone.6",
+      "move.stone.signature",
+      "move.stone.2"
+    ],
+    "abilities": [
+      "ability.stone.pulse",
+      "ability.stone.ward"
+    ],
+    "habitat": "Granite Stair summit",
+    "rarity": "UR",
+    "bindDifficulty": 84,
+    "evolutionPath": "single-stage",
+    "lootMaterials": [
+      "stone-trace",
+      "soft-husk"
+    ],
+    "kidSafe": true,
+    "tags": "legend",
+    "description": "A adult stone-aligned granite oracle family known for its distinct trail and temper."
+  },
+  {
+    "id": "creature.lantern-comet",
+    "name": "Lantern Comet",
+    "speciesFamily": "Lantern Comet family",
+    "stage": "adult",
+    "types": [
+      "Veil"
+    ],
+    "stats": {
+      "HP": 70,
+      "ATK": 67,
+      "DEF": 54,
+      "SPD": 60,
+      "FOC": 59
+    },
+    "moves": [
+      "move.veil.5",
+      "move.veil.7",
+      "move.veil.1",
+      "move.veil.3"
+    ],
+    "abilities": [
+      "ability.veil.pulse",
+      "ability.veil.ward"
+    ],
+    "habitat": "Lampwood sky-road",
+    "rarity": "UR",
+    "bindDifficulty": 84,
+    "evolutionPath": "single-stage",
+    "lootMaterials": [
+      "veil-trace",
+      "soft-husk"
+    ],
+    "kidSafe": true,
+    "tags": "legend",
+    "description": "A adult veil-aligned lantern comet family known for its distinct trail and temper."
+  },
+  {
+    "id": "creature.rooted-crown",
+    "name": "Rooted Crown",
+    "speciesFamily": "Rooted Crown family",
+    "stage": "adult",
+    "types": [
+      "Root"
+    ],
+    "stats": {
+      "HP": 65,
+      "ATK": 62,
+      "DEF": 61,
+      "SPD": 55,
+      "FOC": 54
+    },
+    "moves": [
+      "move.root.6",
+      "move.root.signature",
+      "move.root.2",
+      "move.root.4"
+    ],
+    "abilities": [
+      "ability.root.pulse",
+      "ability.root.ward"
+    ],
+    "habitat": "Hearthborn grove",
+    "rarity": "UR",
+    "bindDifficulty": 84,
+    "evolutionPath": "single-stage",
+    "lootMaterials": [
+      "root-trace",
+      "soft-husk"
+    ],
+    "kidSafe": true,
+    "tags": "legend",
+    "description": "A adult root-aligned rooted crown family known for its distinct trail and temper."
+  },
+  {
+    "id": "creature.whistlecap",
+    "name": "Whistlecap",
+    "speciesFamily": "Whistlecap family",
+    "stage": "adult",
+    "types": [
+      "Gale"
+    ],
+    "stats": {
+      "HP": 72,
+      "ATK": 57,
+      "DEF": 56,
+      "SPD": 62,
+      "FOC": 61
+    },
+    "moves": [
+      "move.gale.7",
+      "move.gale.1",
+      "move.gale.3",
+      "move.gale.5"
+    ],
+    "abilities": [
+      "ability.gale.pulse",
+      "ability.gale.ward"
+    ],
+    "habitat": "Open road",
+    "rarity": "C",
+    "bindDifficulty": 18,
+    "evolutionPath": "single-stage",
+    "lootMaterials": [
+      "gale-trace",
+      "soft-husk"
+    ],
+    "kidSafe": true,
+    "tags": "route",
+    "description": "A adult gale-aligned whistlecap family known for its distinct trail and temper."
+  },
+  {
+    "id": "creature.tinderloom",
+    "name": "Tinderloom",
+    "speciesFamily": "Tinderloom family",
+    "stage": "adult",
+    "types": [
+      "Ember"
+    ],
+    "stats": {
+      "HP": 67,
+      "ATK": 64,
+      "DEF": 63,
+      "SPD": 57,
+      "FOC": 56
+    },
+    "moves": [
+      "move.ember.signature",
+      "move.ember.2",
+      "move.ember.4",
+      "move.ember.6"
+    ],
+    "abilities": [
+      "ability.ember.pulse",
+      "ability.ember.ward"
+    ],
+    "habitat": "Ash roadside",
+    "rarity": "U",
+    "bindDifficulty": 32,
+    "evolutionPath": "single-stage",
+    "lootMaterials": [
+      "ember-trace",
+      "soft-husk"
+    ],
+    "kidSafe": true,
+    "tags": "route",
+    "description": "A adult ember-aligned tinderloom family known for its distinct trail and temper."
+  },
+  {
+    "id": "creature.puddleknit",
+    "name": "Puddleknit",
+    "speciesFamily": "Puddleknit family",
+    "stage": "adult",
+    "types": [
+      "Tide"
+    ],
+    "stats": {
+      "HP": 62,
+      "ATK": 59,
+      "DEF": 58,
+      "SPD": 64,
+      "FOC": 51
+    },
+    "moves": [
+      "move.tide.1",
+      "move.tide.3",
+      "move.tide.5",
+      "move.tide.7"
+    ],
+    "abilities": [
+      "ability.tide.pulse",
+      "ability.tide.ward"
+    ],
+    "habitat": "Wayside ditch",
+    "rarity": "C",
+    "bindDifficulty": 18,
+    "evolutionPath": "single-stage",
+    "lootMaterials": [
+      "tide-trace",
+      "soft-husk"
+    ],
+    "kidSafe": true,
+    "tags": "route",
+    "description": "A adult tide-aligned puddleknit family known for its distinct trail and temper."
+  },
+  {
+    "id": "creature.shadepurl",
+    "name": "Shadepurl",
+    "speciesFamily": "Shadepurl family",
+    "stage": "adult",
+    "types": [
+      "Gloom"
+    ],
+    "stats": {
+      "HP": 69,
+      "ATK": 66,
+      "DEF": 53,
+      "SPD": 59,
+      "FOC": 58
+    },
+    "moves": [
+      "move.gloom.2",
+      "move.gloom.4",
+      "move.gloom.6",
+      "move.gloom.signature"
+    ],
+    "abilities": [
+      "ability.gloom.pulse",
+      "ability.gloom.ward"
+    ],
+    "habitat": "Abandoned inns",
+    "rarity": "U",
+    "bindDifficulty": 32,
+    "evolutionPath": "single-stage",
+    "lootMaterials": [
+      "gloom-trace",
+      "soft-husk"
+    ],
+    "kidSafe": true,
+    "tags": "route",
+    "description": "A adult gloom-aligned shadepurl family known for its distinct trail and temper."
+  },
+  {
+    "id": "creature.glowgrub",
+    "name": "Glowgrub",
+    "speciesFamily": "Glowgrub family",
+    "stage": "adult",
+    "types": [
+      "Gleam"
+    ],
+    "stats": {
+      "HP": 64,
+      "ATK": 61,
+      "DEF": 60,
+      "SPD": 66,
+      "FOC": 53
+    },
+    "moves": [
+      "move.gleam.3",
+      "move.gleam.5",
+      "move.gleam.7",
+      "move.gleam.1"
+    ],
+    "abilities": [
+      "ability.gleam.pulse",
+      "ability.gleam.ward"
+    ],
+    "habitat": "Mile stones",
+    "rarity": "C",
+    "bindDifficulty": 18,
+    "evolutionPath": "single-stage",
+    "lootMaterials": [
+      "gleam-trace",
+      "soft-husk"
+    ],
+    "kidSafe": true,
+    "tags": "route",
+    "description": "A adult gleam-aligned glowgrub family known for its distinct trail and temper."
+  },
+  {
+    "id": "creature.thornmerry",
+    "name": "Thornmerry",
+    "speciesFamily": "Thornmerry family",
+    "stage": "adult",
+    "types": [
+      "Bloom"
+    ],
+    "stats": {
+      "HP": 71,
+      "ATK": 56,
+      "DEF": 55,
+      "SPD": 61,
+      "FOC": 60
+    },
+    "moves": [
+      "move.bloom.4",
+      "move.bloom.6",
+      "move.bloom.signature",
+      "move.bloom.2"
+    ],
+    "abilities": [
+      "ability.bloom.pulse",
+      "ability.bloom.ward"
+    ],
+    "habitat": "Orchard path",
+    "rarity": "U",
+    "bindDifficulty": 32,
+    "evolutionPath": "single-stage",
+    "lootMaterials": [
+      "bloom-trace",
+      "soft-husk"
+    ],
+    "kidSafe": true,
+    "tags": "route",
+    "description": "A adult bloom-aligned thornmerry family known for its distinct trail and temper."
+  },
+  {
+    "id": "creature.rookbark",
+    "name": "Rookbark",
+    "speciesFamily": "Rookbark family",
+    "stage": "adult",
+    "types": [
+      "Root"
+    ],
+    "stats": {
+      "HP": 66,
+      "ATK": 63,
+      "DEF": 62,
+      "SPD": 56,
+      "FOC": 55
+    },
+    "moves": [
+      "move.root.5",
+      "move.root.7",
+      "move.root.1",
+      "move.root.3"
+    ],
+    "abilities": [
+      "ability.root.pulse",
+      "ability.root.ward"
+    ],
+    "habitat": "Border woods",
+    "rarity": "R",
+    "bindDifficulty": 48,
+    "evolutionPath": "single-stage",
+    "lootMaterials": [
+      "root-trace",
+      "soft-husk"
+    ],
+    "kidSafe": true,
+    "tags": "route",
+    "description": "A adult root-aligned rookbark family known for its distinct trail and temper."
+  },
+  {
+    "id": "creature.coldcoil",
+    "name": "Coldcoil",
+    "speciesFamily": "Coldcoil family",
+    "stage": "adult",
+    "types": [
+      "Spark"
+    ],
+    "stats": {
+      "HP": 73,
+      "ATK": 58,
+      "DEF": 57,
+      "SPD": 63,
+      "FOC": 62
+    },
+    "moves": [
+      "move.spark.6",
+      "move.spark.signature",
+      "move.spark.2",
+      "move.spark.4"
+    ],
+    "abilities": [
+      "ability.spark.pulse",
+      "ability.spark.ward"
+    ],
+    "habitat": "Storm flats",
+    "rarity": "R",
+    "bindDifficulty": 48,
+    "evolutionPath": "single-stage",
+    "lootMaterials": [
+      "spark-trace",
+      "soft-husk"
+    ],
+    "kidSafe": true,
+    "tags": "route",
+    "description": "A adult spark-aligned coldcoil family known for its distinct trail and temper."
+  },
+  {
+    "id": "creature.pebblewish",
+    "name": "Pebblewish",
+    "speciesFamily": "Pebblewish family",
+    "stage": "adult",
+    "types": [
+      "Stone"
+    ],
+    "stats": {
+      "HP": 68,
+      "ATK": 65,
+      "DEF": 52,
+      "SPD": 58,
+      "FOC": 57
+    },
+    "moves": [
+      "move.stone.7",
+      "move.stone.1",
+      "move.stone.3",
+      "move.stone.5"
+    ],
+    "abilities": [
+      "ability.stone.pulse",
+      "ability.stone.ward"
+    ],
+    "habitat": "Old road",
+    "rarity": "C",
+    "bindDifficulty": 18,
+    "evolutionPath": "single-stage",
+    "lootMaterials": [
+      "stone-trace",
+      "soft-husk"
+    ],
+    "kidSafe": true,
+    "tags": "route",
+    "description": "A adult stone-aligned pebblewish family known for its distinct trail and temper."
+  },
+  {
+    "id": "creature.foldfawn",
+    "name": "Foldfawn",
+    "speciesFamily": "Foldfawn family",
+    "stage": "adult",
+    "types": [
+      "Veil"
+    ],
+    "stats": {
+      "HP": 63,
+      "ATK": 60,
+      "DEF": 59,
+      "SPD": 65,
+      "FOC": 52
+    },
+    "moves": [
+      "move.veil.signature",
+      "move.veil.2",
+      "move.veil.4",
+      "move.veil.6"
+    ],
+    "abilities": [
+      "ability.veil.pulse",
+      "ability.veil.ward"
+    ],
+    "habitat": "Hollow lanes",
+    "rarity": "R",
+    "bindDifficulty": 48,
+    "evolutionPath": "single-stage",
+    "lootMaterials": [
+      "veil-trace",
+      "soft-husk"
+    ],
+    "kidSafe": true,
+    "tags": "route",
+    "description": "A adult veil-aligned foldfawn family known for its distinct trail and temper."
+  },
+  {
+    "id": "creature.mossbarge",
+    "name": "Mossbarge",
+    "speciesFamily": "Mossbarge family",
+    "stage": "adult",
+    "types": [
+      "Root"
+    ],
+    "stats": {
+      "HP": 70,
+      "ATK": 67,
+      "DEF": 54,
+      "SPD": 60,
+      "FOC": 59
+    },
+    "moves": [
+      "move.root.1",
+      "move.root.3",
+      "move.root.5",
+      "move.root.7"
+    ],
+    "abilities": [
+      "ability.root.pulse",
+      "ability.root.ward"
+    ],
+    "habitat": "River market",
+    "rarity": "U",
+    "bindDifficulty": 32,
+    "evolutionPath": "single-stage",
+    "lootMaterials": [
+      "root-trace",
+      "soft-husk"
+    ],
+    "kidSafe": true,
+    "tags": "market",
+    "description": "A adult root-aligned mossbarge family known for its distinct trail and temper."
+  },
+  {
+    "id": "creature.chalksail",
+    "name": "Chalksail",
+    "speciesFamily": "Chalksail family",
+    "stage": "adult",
+    "types": [
+      "Gale"
+    ],
+    "stats": {
+      "HP": 65,
+      "ATK": 62,
+      "DEF": 61,
+      "SPD": 55,
+      "FOC": 54
+    },
+    "moves": [
+      "move.gale.2",
+      "move.gale.4",
+      "move.gale.6",
+      "move.gale.signature"
+    ],
+    "abilities": [
+      "ability.gale.pulse",
+      "ability.gale.ward"
+    ],
+    "habitat": "River market",
+    "rarity": "U",
+    "bindDifficulty": 32,
+    "evolutionPath": "single-stage",
+    "lootMaterials": [
+      "gale-trace",
+      "soft-husk"
+    ],
+    "kidSafe": true,
+    "tags": "market",
+    "description": "A adult gale-aligned chalksail family known for its distinct trail and temper."
+  },
+  {
+    "id": "creature.bellscale",
+    "name": "Bellscale",
+    "speciesFamily": "Bellscale family",
+    "stage": "adult",
+    "types": [
+      "Gleam"
+    ],
+    "stats": {
+      "HP": 72,
+      "ATK": 57,
+      "DEF": 56,
+      "SPD": 62,
+      "FOC": 61
+    },
+    "moves": [
+      "move.gleam.3",
+      "move.gleam.5",
+      "move.gleam.7",
+      "move.gleam.1"
+    ],
+    "abilities": [
+      "ability.gleam.pulse",
+      "ability.gleam.ward"
+    ],
+    "habitat": "River market",
+    "rarity": "R",
+    "bindDifficulty": 48,
+    "evolutionPath": "single-stage",
+    "lootMaterials": [
+      "gleam-trace",
+      "soft-husk"
+    ],
+    "kidSafe": true,
+    "tags": "market",
+    "description": "A adult gleam-aligned bellscale family known for its distinct trail and temper."
+  },
+  {
+    "id": "creature.caskmole",
+    "name": "Caskmole",
+    "speciesFamily": "Caskmole family",
+    "stage": "adult",
+    "types": [
+      "Stone"
+    ],
+    "stats": {
+      "HP": 67,
+      "ATK": 64,
+      "DEF": 63,
+      "SPD": 57,
+      "FOC": 56
+    },
+    "moves": [
+      "move.stone.4",
+      "move.stone.6",
+      "move.stone.signature",
+      "move.stone.2"
+    ],
+    "abilities": [
+      "ability.stone.pulse",
+      "ability.stone.ward"
+    ],
+    "habitat": "Cellars",
+    "rarity": "C",
+    "bindDifficulty": 18,
+    "evolutionPath": "single-stage",
+    "lootMaterials": [
+      "stone-trace",
+      "soft-husk"
+    ],
+    "kidSafe": true,
+    "tags": "market",
+    "description": "A adult stone-aligned caskmole family known for its distinct trail and temper."
+  },
+  {
+    "id": "creature.vinebrisk",
+    "name": "Vinebrisk",
+    "speciesFamily": "Vinebrisk family",
+    "stage": "adult",
+    "types": [
+      "Bloom"
+    ],
+    "stats": {
+      "HP": 62,
+      "ATK": 59,
+      "DEF": 58,
+      "SPD": 64,
+      "FOC": 51
+    },
+    "moves": [
+      "move.bloom.5",
+      "move.bloom.7",
+      "move.bloom.1",
+      "move.bloom.3"
+    ],
+    "abilities": [
+      "ability.bloom.pulse",
+      "ability.bloom.ward"
+    ],
+    "habitat": "Vineyards",
+    "rarity": "R",
+    "bindDifficulty": 48,
+    "evolutionPath": "single-stage",
+    "lootMaterials": [
+      "bloom-trace",
+      "soft-husk"
+    ],
+    "kidSafe": true,
+    "tags": "market",
+    "description": "A adult bloom-aligned vinebrisk family known for its distinct trail and temper."
+  },
+  {
+    "id": "creature.duskpocket",
+    "name": "Duskpocket",
+    "speciesFamily": "Duskpocket family",
+    "stage": "adult",
+    "types": [
+      "Gloom"
+    ],
+    "stats": {
+      "HP": 69,
+      "ATK": 66,
+      "DEF": 53,
+      "SPD": 59,
+      "FOC": 58
+    },
+    "moves": [
+      "move.gloom.6",
+      "move.gloom.signature",
+      "move.gloom.2",
+      "move.gloom.4"
+    ],
+    "abilities": [
+      "ability.gloom.pulse",
+      "ability.gloom.ward"
+    ],
+    "habitat": "Alley shade",
+    "rarity": "U",
+    "bindDifficulty": 32,
+    "evolutionPath": "single-stage",
+    "lootMaterials": [
+      "gloom-trace",
+      "soft-husk"
+    ],
+    "kidSafe": true,
+    "tags": "market",
+    "description": "A adult gloom-aligned duskpocket family known for its distinct trail and temper."
+  },
+  {
+    "id": "creature.rillbraid",
+    "name": "Rillbraid",
+    "speciesFamily": "Rillbraid family",
+    "stage": "adult",
+    "types": [
+      "Tide"
+    ],
+    "stats": {
+      "HP": 64,
+      "ATK": 61,
+      "DEF": 60,
+      "SPD": 66,
+      "FOC": 53
+    },
+    "moves": [
+      "move.tide.7",
+      "move.tide.1",
+      "move.tide.3",
+      "move.tide.5"
+    ],
+    "abilities": [
+      "ability.tide.pulse",
+      "ability.tide.ward"
+    ],
+    "habitat": "Canal locks",
+    "rarity": "U",
+    "bindDifficulty": 32,
+    "evolutionPath": "single-stage",
+    "lootMaterials": [
+      "tide-trace",
+      "soft-husk"
+    ],
+    "kidSafe": true,
+    "tags": "market",
+    "description": "A adult tide-aligned rillbraid family known for its distinct trail and temper."
+  },
+  {
+    "id": "creature.ashsnout",
+    "name": "Ashsnout",
+    "speciesFamily": "Ashsnout family",
+    "stage": "adult",
+    "types": [
+      "Ember"
+    ],
+    "stats": {
+      "HP": 71,
+      "ATK": 56,
+      "DEF": 55,
+      "SPD": 61,
+      "FOC": 60
+    },
+    "moves": [
+      "move.ember.signature",
+      "move.ember.2",
+      "move.ember.4",
+      "move.ember.6"
+    ],
+    "abilities": [
+      "ability.ember.pulse",
+      "ability.ember.ward"
+    ],
+    "habitat": "Kiln ward",
+    "rarity": "R",
+    "bindDifficulty": 48,
+    "evolutionPath": "single-stage",
+    "lootMaterials": [
+      "ember-trace",
+      "soft-husk"
+    ],
+    "kidSafe": true,
+    "tags": "market",
+    "description": "A adult ember-aligned ashsnout family known for its distinct trail and temper."
+  },
+  {
+    "id": "creature.relaymite",
+    "name": "Relaymite",
+    "speciesFamily": "Relaymite family",
+    "stage": "adult",
+    "types": [
+      "Spark"
+    ],
+    "stats": {
+      "HP": 66,
+      "ATK": 63,
+      "DEF": 62,
+      "SPD": 56,
+      "FOC": 55
+    },
+    "moves": [
+      "move.spark.1",
+      "move.spark.3",
+      "move.spark.5",
+      "move.spark.7"
+    ],
+    "abilities": [
+      "ability.spark.pulse",
+      "ability.spark.ward"
+    ],
+    "habitat": "Signal towers",
+    "rarity": "R",
+    "bindDifficulty": 48,
+    "evolutionPath": "single-stage",
+    "lootMaterials": [
+      "spark-trace",
+      "soft-husk"
+    ],
+    "kidSafe": true,
+    "tags": "market",
+    "description": "A adult spark-aligned relaymite family known for its distinct trail and temper."
+  },
+  {
+    "id": "creature.silkfold",
+    "name": "Silkfold",
+    "speciesFamily": "Silkfold family",
+    "stage": "adult",
+    "types": [
+      "Veil"
+    ],
+    "stats": {
+      "HP": 73,
+      "ATK": 58,
+      "DEF": 57,
+      "SPD": 63,
+      "FOC": 62
+    },
+    "moves": [
+      "move.veil.2",
+      "move.veil.4",
+      "move.veil.6",
+      "move.veil.signature"
+    ],
+    "abilities": [
+      "ability.veil.pulse",
+      "ability.veil.ward"
+    ],
+    "habitat": "Archive stacks",
+    "rarity": "R",
+    "bindDifficulty": 48,
+    "evolutionPath": "single-stage",
+    "lootMaterials": [
+      "veil-trace",
+      "soft-husk"
+    ],
+    "kidSafe": true,
+    "tags": "market",
+    "description": "A adult veil-aligned silkfold family known for its distinct trail and temper."
+  },
+  {
+    "id": "creature.cinderclove",
+    "name": "Cinderclove",
+    "speciesFamily": "Cinderclove family",
+    "stage": "adult",
+    "types": [
+      "Ember"
+    ],
+    "stats": {
+      "HP": 68,
+      "ATK": 65,
+      "DEF": 52,
+      "SPD": 58,
+      "FOC": 57
+    },
+    "moves": [
+      "move.ember.3",
+      "move.ember.5",
+      "move.ember.7",
+      "move.ember.1"
+    ],
+    "abilities": [
+      "ability.ember.pulse",
+      "ability.ember.ward"
+    ],
+    "habitat": "Cinder orchards",
+    "rarity": "U",
+    "bindDifficulty": 32,
+    "evolutionPath": "single-stage",
+    "lootMaterials": [
+      "ember-trace",
+      "soft-husk"
+    ],
+    "kidSafe": true,
+    "tags": "route",
+    "description": "A adult ember-aligned cinderclove family known for its distinct trail and temper."
+  },
+  {
+    "id": "creature.moonrill",
+    "name": "Moonrill",
+    "speciesFamily": "Moonrill family",
+    "stage": "adult",
+    "types": [
+      "Tide"
+    ],
+    "stats": {
+      "HP": 63,
+      "ATK": 60,
+      "DEF": 59,
+      "SPD": 65,
+      "FOC": 52
+    },
+    "moves": [
+      "move.tide.4",
+      "move.tide.6",
+      "move.tide.signature",
+      "move.tide.2"
+    ],
+    "abilities": [
+      "ability.tide.pulse",
+      "ability.tide.ward"
+    ],
+    "habitat": "Moonlit sluices",
+    "rarity": "U",
+    "bindDifficulty": 32,
+    "evolutionPath": "single-stage",
+    "lootMaterials": [
+      "tide-trace",
+      "soft-husk"
+    ],
+    "kidSafe": true,
+    "tags": "route",
+    "description": "A adult tide-aligned moonrill family known for its distinct trail and temper."
+  },
+  {
+    "id": "creature.kitebloom",
+    "name": "Kitebloom",
+    "speciesFamily": "Kitebloom family",
+    "stage": "adult",
+    "types": [
+      "Gale"
+    ],
+    "stats": {
+      "HP": 70,
+      "ATK": 67,
+      "DEF": 54,
+      "SPD": 60,
+      "FOC": 59
+    },
+    "moves": [
+      "move.gale.5",
+      "move.gale.7",
+      "move.gale.1",
+      "move.gale.3"
+    ],
+    "abilities": [
+      "ability.gale.pulse",
+      "ability.gale.ward"
+    ],
+    "habitat": "High garden",
+    "rarity": "R",
+    "bindDifficulty": 48,
+    "evolutionPath": "single-stage",
+    "lootMaterials": [
+      "gale-trace",
+      "soft-husk"
+    ],
+    "kidSafe": true,
+    "tags": "route",
+    "description": "A adult gale-aligned kitebloom family known for its distinct trail and temper."
+  },
+  {
+    "id": "creature.thornlatch",
+    "name": "Thornlatch",
+    "speciesFamily": "Thornlatch family",
+    "stage": "adult",
+    "types": [
+      "Root"
+    ],
+    "stats": {
+      "HP": 65,
+      "ATK": 62,
+      "DEF": 61,
+      "SPD": 55,
+      "FOC": 54
+    },
+    "moves": [
+      "move.root.6",
+      "move.root.signature",
+      "move.root.2",
+      "move.root.4"
+    ],
+    "abilities": [
+      "ability.root.pulse",
+      "ability.root.ward"
+    ],
+    "habitat": "Old gates",
+    "rarity": "U",
+    "bindDifficulty": 32,
+    "evolutionPath": "single-stage",
+    "lootMaterials": [
+      "root-trace",
+      "soft-husk"
+    ],
+    "kidSafe": true,
+    "tags": "route",
+    "description": "A adult root-aligned thornlatch family known for its distinct trail and temper."
+  },
+  {
+    "id": "creature.duskgem",
+    "name": "Duskgem",
+    "speciesFamily": "Duskgem family",
+    "stage": "adult",
+    "types": [
+      "Gloom"
+    ],
+    "stats": {
+      "HP": 72,
+      "ATK": 57,
+      "DEF": 56,
+      "SPD": 62,
+      "FOC": 61
+    },
+    "moves": [
+      "move.gloom.7",
+      "move.gloom.1",
+      "move.gloom.3",
+      "move.gloom.5"
+    ],
+    "abilities": [
+      "ability.gloom.pulse",
+      "ability.gloom.ward"
+    ],
+    "habitat": "Black glass hills",
+    "rarity": "R",
+    "bindDifficulty": 48,
+    "evolutionPath": "single-stage",
+    "lootMaterials": [
+      "gloom-trace",
+      "soft-husk"
+    ],
+    "kidSafe": true,
+    "tags": "route",
+    "description": "A adult gloom-aligned duskgem family known for its distinct trail and temper."
+  },
+  {
+    "id": "creature.beaconbud",
+    "name": "Beaconbud",
+    "speciesFamily": "Beaconbud family",
+    "stage": "adult",
+    "types": [
+      "Gleam"
+    ],
+    "stats": {
+      "HP": 67,
+      "ATK": 64,
+      "DEF": 63,
+      "SPD": 57,
+      "FOC": 56
+    },
+    "moves": [
+      "move.gleam.signature",
+      "move.gleam.2",
+      "move.gleam.4",
+      "move.gleam.6"
+    ],
+    "abilities": [
+      "ability.gleam.pulse",
+      "ability.gleam.ward"
+    ],
+    "habitat": "Beacon fields",
+    "rarity": "R",
+    "bindDifficulty": 48,
+    "evolutionPath": "single-stage",
+    "lootMaterials": [
+      "gleam-trace",
+      "soft-husk"
+    ],
+    "kidSafe": true,
+    "tags": "route",
+    "description": "A adult gleam-aligned beaconbud family known for its distinct trail and temper."
+  }
+]

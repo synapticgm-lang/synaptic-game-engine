@@ -1,0 +1,1217 @@
+[
+  {
+    "family_id": "fam-academy",
+    "header_columns": 16,
+    "header": [
+      "family_id",
+      "axis_id",
+      "variant_id",
+      "title_short",
+      "pointer_location",
+      "pointer_faction",
+      "pointer_intent",
+      "pointer_offer",
+      "pointer_beats",
+      "pointer_fallback",
+      "never_lines",
+      "first_proof",
+      "kid_ok",
+      "kid_transform",
+      "nsfw",
+      "inject_ok"
+    ],
+    "data_rows": 112,
+    "row_column_counts": [
+      16
+    ]
+  },
+  {
+    "family_id": "fam-creature-rebirth",
+    "header_columns": 17,
+    "header": [
+      "family_id",
+      "axis_id",
+      "variant_id",
+      "title_short",
+      "pointer_location",
+      "pointer_faction",
+      "pointer_intent",
+      "pointer_offer",
+      "pointer_beats",
+      "pointer_fallback",
+      "never_lines",
+      "first_proof",
+      "kid_ok",
+      "kid_transform",
+      "nsfw",
+      "inject_ok",
+      "founder_shape_cousin"
+    ],
+    "data_rows": 112,
+    "row_column_counts": [
+      17
+    ]
+  },
+  {
+    "family_id": "fam-cyber-neural",
+    "header_columns": 17,
+    "header": [
+      "family_id",
+      "axis_id",
+      "variant_id",
+      "title_short",
+      "pointer_location",
+      "pointer_faction",
+      "pointer_intent",
+      "pointer_offer",
+      "pointer_beats",
+      "pointer_fallback",
+      "never_lines",
+      "first_proof",
+      "kid_ok",
+      "kid_transform",
+      "nsfw",
+      "inject_ok",
+      "founder_shape_cousin"
+    ],
+    "data_rows": 112,
+    "row_column_counts": [
+      17
+    ]
+  },
+  {
+    "family_id": "fam-dungeon-core",
+    "header_columns": 17,
+    "header": [
+      "family_id",
+      "axis_id",
+      "variant_id",
+      "title_short",
+      "pointer_location",
+      "pointer_faction",
+      "pointer_intent",
+      "pointer_offer",
+      "pointer_beats",
+      "pointer_fallback",
+      "never_lines",
+      "first_proof",
+      "kid_ok",
+      "kid_transform",
+      "nsfw",
+      "inject_ok",
+      "founder_shape_cousin"
+    ],
+    "data_rows": 112,
+    "row_column_counts": [
+      17
+    ]
+  },
+  {
+    "family_id": "fam-dungeon-drop",
+    "header_columns": 17,
+    "header": [
+      "family_id",
+      "axis_id",
+      "variant_id",
+      "title_short",
+      "pointer_location",
+      "pointer_faction",
+      "pointer_intent",
+      "pointer_offer",
+      "pointer_beats",
+      "pointer_fallback",
+      "never_lines",
+      "first_proof",
+      "kid_ok",
+      "kid_transform",
+      "nsfw",
+      "inject_ok",
+      "founder_shape_cousin"
+    ],
+    "data_rows": 112,
+    "row_column_counts": [
+      17
+    ]
+  },
+  {
+    "family_id": "fam-gate-city",
+    "header_columns": 17,
+    "header": [
+      "family_id",
+      "axis_id",
+      "variant_id",
+      "title_short",
+      "pointer_location",
+      "pointer_faction",
+      "pointer_intent",
+      "pointer_offer",
+      "pointer_beats",
+      "pointer_fallback",
+      "never_lines",
+      "first_proof",
+      "kid_ok",
+      "kid_transform",
+      "nsfw",
+      "inject_ok",
+      "founder_shape_cousin"
+    ],
+    "data_rows": 112,
+    "row_column_counts": [
+      17
+    ]
+  },
+  {
+    "family_id": "fam-isekai-summon",
+    "header_columns": 17,
+    "header": [
+      "family_id",
+      "axis_id",
+      "variant_id",
+      "title_short",
+      "pointer_location",
+      "pointer_faction",
+      "pointer_intent",
+      "pointer_offer",
+      "pointer_beats",
+      "pointer_fallback",
+      "never_lines",
+      "first_proof",
+      "kid_ok",
+      "kid_transform",
+      "nsfw",
+      "inject_ok",
+      "founder_shape_cousin"
+    ],
+    "data_rows": 112,
+    "row_column_counts": [
+      17,
+      18,
+      19,
+      20
+    ]
+  },
+  {
+    "family_id": "fam-late-awaken",
+    "header_columns": 17,
+    "header": [
+      "family_id",
+      "axis_id",
+      "variant_id",
+      "title_short",
+      "pointer_location",
+      "pointer_faction",
+      "pointer_intent",
+      "pointer_offer",
+      "pointer_beats",
+      "pointer_fallback",
+      "never_lines",
+      "first_proof",
+      "kid_ok",
+      "kid_transform",
+      "nsfw",
+      "inject_ok",
+      "founder_shape_cousin"
+    ],
+    "data_rows": 112,
+    "row_column_counts": [
+      17
+    ]
+  },
+  {
+    "family_id": "fam-litrpg-custom",
+    "header_columns": 17,
+    "header": [
+      "family_id",
+      "axis_id",
+      "variant_id",
+      "title_short",
+      "pointer_location",
+      "pointer_faction",
+      "pointer_intent",
+      "pointer_offer",
+      "pointer_beats",
+      "pointer_fallback",
+      "never_lines",
+      "first_proof",
+      "kid_ok",
+      "kid_transform",
+      "nsfw",
+      "inject_ok",
+      "founder_shape_cousin"
+    ],
+    "data_rows": 112,
+    "row_column_counts": [
+      17
+    ]
+  },
+  {
+    "family_id": "fam-null-pyoa-isekai",
+    "header_columns": 16,
+    "header": [
+      "family_id",
+      "axis_id",
+      "variant_id",
+      "title_short",
+      "pointer_location",
+      "pointer_faction",
+      "pointer_intent",
+      "pointer_offer",
+      "pointer_beats",
+      "pointer_fallback",
+      "first_proof",
+      "kid_ok",
+      "kid_transform",
+      "nsfw",
+      "inject_ok",
+      "founder_shape_cousin"
+    ],
+    "data_rows": 112,
+    "row_column_counts": [
+      16
+    ]
+  },
+  {
+    "family_id": "fam-pyoa-assassin",
+    "header_columns": 17,
+    "header": [
+      "family_id",
+      "axis_id",
+      "variant_id",
+      "title_short",
+      "pointer_location",
+      "pointer_faction",
+      "pointer_intent",
+      "pointer_offer",
+      "pointer_beats",
+      "pointer_fallback",
+      "never_lines",
+      "first_proof",
+      "kid_ok",
+      "kid_transform",
+      "nsfw",
+      "inject_ok",
+      "founder_shape_cousin"
+    ],
+    "data_rows": 112,
+    "row_column_counts": [
+      17
+    ]
+  },
+  {
+    "family_id": "fam-pyoa-dark-romance",
+    "header_columns": 17,
+    "header": [
+      "family_id",
+      "axis_id",
+      "variant_id",
+      "title_short",
+      "pointer_location",
+      "pointer_faction",
+      "pointer_intent",
+      "pointer_offer",
+      "pointer_beats",
+      "pointer_fallback",
+      "never_lines",
+      "first_proof",
+      "kid_ok",
+      "kid_transform",
+      "nsfw",
+      "inject_ok",
+      "founder_shape_cousin"
+    ],
+    "data_rows": 112,
+    "row_column_counts": [
+      17
+    ]
+  },
+  {
+    "family_id": "fam-pyoa-mystery",
+    "header_columns": 17,
+    "header": [
+      "family_id",
+      "axis_id",
+      "variant_id",
+      "title_short",
+      "pointer_location",
+      "pointer_faction",
+      "pointer_intent",
+      "pointer_offer",
+      "pointer_beats",
+      "pointer_fallback",
+      "never_lines",
+      "first_proof",
+      "kid_ok",
+      "kid_transform",
+      "nsfw",
+      "inject_ok",
+      "founder_shape_cousin"
+    ],
+    "data_rows": 112,
+    "row_column_counts": [
+      16,
+      17,
+      18,
+      19,
+      20
+    ]
+  },
+  {
+    "family_id": "fam-pyoa-occult",
+    "header_columns": 17,
+    "header": [
+      "family_id",
+      "axis_id",
+      "variant_id",
+      "title_short",
+      "pointer_location",
+      "pointer_faction",
+      "pointer_intent",
+      "pointer_offer",
+      "pointer_beats",
+      "pointer_fallback",
+      "never_lines",
+      "first_proof",
+      "kid_ok",
+      "kid_transform",
+      "nsfw",
+      "inject_ok",
+      "founder_shape_cousin"
+    ],
+    "data_rows": 112,
+    "row_column_counts": [
+      17
+    ]
+  },
+  {
+    "family_id": "fam-pyoa-road",
+    "header_columns": 17,
+    "header": [
+      "family_id",
+      "axis_id",
+      "variant_id",
+      "title_short",
+      "pointer_location",
+      "pointer_faction",
+      "pointer_intent",
+      "pointer_offer",
+      "pointer_beats",
+      "pointer_fallback",
+      "never_lines",
+      "first_proof",
+      "kid_ok",
+      "kid_transform",
+      "nsfw",
+      "inject_ok",
+      "founder_shape_cousin"
+    ],
+    "data_rows": 112,
+    "row_column_counts": [
+      17
+    ]
+  },
+  {
+    "family_id": "fam-pyoa-romance-gala",
+    "header_columns": 17,
+    "header": [
+      "family_id",
+      "axis_id",
+      "variant_id",
+      "title_short",
+      "pointer_location",
+      "pointer_faction",
+      "pointer_intent",
+      "pointer_offer",
+      "pointer_beats",
+      "pointer_fallback",
+      "never_lines",
+      "first_proof",
+      "kid_ok",
+      "kid_transform",
+      "nsfw",
+      "inject_ok",
+      "founder_shape_cousin"
+    ],
+    "data_rows": 112,
+    "row_column_counts": [
+      17
+    ]
+  },
+  {
+    "family_id": "fam-pyoa-space",
+    "header_columns": 17,
+    "header": [
+      "family_id",
+      "axis_id",
+      "variant_id",
+      "title_short",
+      "pointer_location",
+      "pointer_faction",
+      "pointer_intent",
+      "pointer_offer",
+      "pointer_beats",
+      "pointer_fallback",
+      "never_lines",
+      "first_proof",
+      "kid_ok",
+      "kid_transform",
+      "nsfw",
+      "inject_ok",
+      "founder_shape_cousin"
+    ],
+    "data_rows": 112,
+    "row_column_counts": [
+      17
+    ]
+  },
+  {
+    "family_id": "fam-pyoa-underwater",
+    "header_columns": 17,
+    "header": [
+      "family_id",
+      "axis_id",
+      "variant_id",
+      "title_short",
+      "pointer_location",
+      "pointer_faction",
+      "pointer_intent",
+      "pointer_offer",
+      "pointer_beats",
+      "pointer_fallback",
+      "never_lines",
+      "first_proof",
+      "kid_ok",
+      "kid_transform",
+      "nsfw",
+      "inject_ok",
+      "founder_shape_cousin"
+    ],
+    "data_rows": 112,
+    "row_column_counts": [
+      17
+    ]
+  },
+  {
+    "family_id": "fam-pyoa-vampire",
+    "header_columns": 17,
+    "header": [
+      "family_id",
+      "axis_id",
+      "variant_id",
+      "title_short",
+      "pointer_location",
+      "pointer_faction",
+      "pointer_intent",
+      "pointer_offer",
+      "pointer_beats",
+      "pointer_fallback",
+      "never_lines",
+      "first_proof",
+      "kid_ok",
+      "kid_transform",
+      "nsfw",
+      "inject_ok",
+      "founder_shape_cousin"
+    ],
+    "data_rows": 112,
+    "row_column_counts": [
+      17
+    ]
+  },
+  {
+    "family_id": "fam-regression",
+    "header_columns": 17,
+    "header": [
+      "family_id",
+      "axis_id",
+      "variant_id",
+      "title_short",
+      "pointer_location",
+      "pointer_faction",
+      "pointer_intent",
+      "pointer_offer",
+      "pointer_beats",
+      "pointer_fallback",
+      "never_lines",
+      "first_proof",
+      "kid_ok",
+      "kid_transform",
+      "nsfw",
+      "inject_ok",
+      "founder_shape_cousin"
+    ],
+    "data_rows": 112,
+    "row_column_counts": [
+      17
+    ]
+  },
+  {
+    "family_id": "fam-rpg-court",
+    "header_columns": 17,
+    "header": [
+      "family_id",
+      "axis_id",
+      "variant_id",
+      "title_short",
+      "pointer_location",
+      "pointer_faction",
+      "pointer_intent",
+      "pointer_offer",
+      "pointer_beats",
+      "pointer_fallback",
+      "never_lines",
+      "first_proof",
+      "kid_ok",
+      "kid_transform",
+      "nsfw",
+      "inject_ok",
+      "founder_shape_cousin"
+    ],
+    "data_rows": 112,
+    "row_column_counts": [
+      17
+    ]
+  },
+  {
+    "family_id": "fam-rpg-crew",
+    "header_columns": 17,
+    "header": [
+      "family_id",
+      "axis_id",
+      "variant_id",
+      "title_short",
+      "pointer_location",
+      "pointer_faction",
+      "pointer_intent",
+      "pointer_offer",
+      "pointer_beats",
+      "pointer_fallback",
+      "never_lines",
+      "first_proof",
+      "kid_ok",
+      "kid_transform",
+      "nsfw",
+      "inject_ok",
+      "founder_shape_cousin"
+    ],
+    "data_rows": 112,
+    "row_column_counts": [
+      17
+    ]
+  },
+  {
+    "family_id": "fam-rpg-custom",
+    "header_columns": 16,
+    "header": [
+      "family_id",
+      "axis_id",
+      "variant_id",
+      "title_short",
+      "pointer_location",
+      "pointer_faction",
+      "pointer_intent",
+      "pointer_offer",
+      "pointer_beats",
+      "pointer_fallback",
+      "never_lines",
+      "first_proof",
+      "kid_ok",
+      "kid_transform",
+      "nsfw",
+      "inject_ok"
+    ],
+    "data_rows": 112,
+    "row_column_counts": [
+      16
+    ]
+  },
+  {
+    "family_id": "fam-rpg-heist",
+    "header_columns": 17,
+    "header": [
+      "family_id",
+      "axis_id",
+      "variant_id",
+      "title_short",
+      "pointer_location",
+      "pointer_faction",
+      "pointer_intent",
+      "pointer_offer",
+      "pointer_beats",
+      "pointer_fallback",
+      "never_lines",
+      "first_proof",
+      "kid_ok",
+      "kid_transform",
+      "nsfw",
+      "inject_ok",
+      "founder_shape_cousin"
+    ],
+    "data_rows": 112,
+    "row_column_counts": [
+      17
+    ]
+  },
+  {
+    "family_id": "fam-rpg-inn-romance",
+    "header_columns": 17,
+    "header": [
+      "family_id",
+      "axis_id",
+      "variant_id",
+      "title_short",
+      "pointer_location",
+      "pointer_faction",
+      "pointer_intent",
+      "pointer_offer",
+      "pointer_beats",
+      "pointer_fallback",
+      "never_lines",
+      "first_proof",
+      "kid_ok",
+      "kid_transform",
+      "nsfw",
+      "inject_ok",
+      "founder_shape_cousin"
+    ],
+    "data_rows": 112,
+    "row_column_counts": [
+      17
+    ]
+  },
+  {
+    "family_id": "fam-rpg-isolation",
+    "header_columns": 17,
+    "header": [
+      "family_id",
+      "axis_id",
+      "variant_id",
+      "title_short",
+      "pointer_location",
+      "pointer_faction",
+      "pointer_intent",
+      "pointer_offer",
+      "pointer_beats",
+      "pointer_fallback",
+      "never_lines",
+      "first_proof",
+      "kid_ok",
+      "kid_transform",
+      "nsfw",
+      "inject_ok",
+      "founder_shape_cousin"
+    ],
+    "data_rows": 112,
+    "row_column_counts": [
+      17
+    ]
+  },
+  {
+    "family_id": "fam-rpg-letters",
+    "header_columns": 17,
+    "header": [
+      "family_id",
+      "axis_id",
+      "variant_id",
+      "title_short",
+      "pointer_location",
+      "pointer_faction",
+      "pointer_intent",
+      "pointer_offer",
+      "pointer_beats",
+      "pointer_fallback",
+      "never_lines",
+      "first_proof",
+      "kid_ok",
+      "kid_transform",
+      "nsfw",
+      "inject_ok",
+      "founder_shape_cousin"
+    ],
+    "data_rows": 112,
+    "row_column_counts": [
+      17
+    ]
+  },
+  {
+    "family_id": "fam-rpg-noir",
+    "header_columns": 16,
+    "header": [
+      "family_id",
+      "axis_id",
+      "variant_id",
+      "title_short",
+      "pointer_location",
+      "pointer_faction",
+      "pointer_intent",
+      "pointer_offer",
+      "pointer_beats",
+      "pointer_fallback",
+      "never_lines",
+      "first_proof",
+      "kid_ok",
+      "kid_transform",
+      "nsfw",
+      "inject_ok"
+    ],
+    "data_rows": 112,
+    "row_column_counts": [
+      16
+    ]
+  },
+  {
+    "family_id": "fam-rpg-street-heroes",
+    "header_columns": 17,
+    "header": [
+      "family_id",
+      "axis_id",
+      "variant_id",
+      "title_short",
+      "pointer_location",
+      "pointer_faction",
+      "pointer_intent",
+      "pointer_offer",
+      "pointer_beats",
+      "pointer_fallback",
+      "never_lines",
+      "first_proof",
+      "kid_ok",
+      "kid_transform",
+      "nsfw",
+      "inject_ok",
+      "founder_shape_cousin"
+    ],
+    "data_rows": 112,
+    "row_column_counts": [
+      17
+    ]
+  },
+  {
+    "family_id": "fam-rpg-teashop",
+    "header_columns": 16,
+    "header": [
+      "family_id",
+      "axis_id",
+      "variant_id",
+      "title_short",
+      "pointer_location",
+      "pointer_faction",
+      "pointer_intent",
+      "pointer_offer",
+      "pointer_beats",
+      "pointer_fallback",
+      "never_lines",
+      "first_proof",
+      "kid_ok",
+      "kid_transform",
+      "nsfw",
+      "inject_ok"
+    ],
+    "data_rows": 112,
+    "row_column_counts": [
+      16
+    ]
+  },
+  {
+    "family_id": "fam-rpg-travelogue",
+    "header_columns": 17,
+    "header": [
+      "family_id",
+      "axis_id",
+      "variant_id",
+      "title_short",
+      "pointer_location",
+      "pointer_faction",
+      "pointer_intent",
+      "pointer_offer",
+      "pointer_beats",
+      "pointer_fallback",
+      "never_lines",
+      "first_proof",
+      "kid_ok",
+      "kid_transform",
+      "nsfw",
+      "inject_ok",
+      "founder_shape_cousin"
+    ],
+    "data_rows": 112,
+    "row_column_counts": [
+      17
+    ]
+  },
+  {
+    "family_id": "fam-rpg-wasteland",
+    "header_columns": 17,
+    "header": [
+      "family_id",
+      "axis_id",
+      "variant_id",
+      "title_short",
+      "pointer_location",
+      "pointer_faction",
+      "pointer_intent",
+      "pointer_offer",
+      "pointer_beats",
+      "pointer_fallback",
+      "never_lines",
+      "first_proof",
+      "kid_ok",
+      "kid_transform",
+      "nsfw",
+      "inject_ok",
+      "founder_shape_cousin"
+    ],
+    "data_rows": 112,
+    "row_column_counts": [
+      17
+    ]
+  },
+  {
+    "family_id": "fam-rpg-western",
+    "header_columns": 17,
+    "header": [
+      "family_id",
+      "axis_id",
+      "variant_id",
+      "title_short",
+      "pointer_location",
+      "pointer_faction",
+      "pointer_intent",
+      "pointer_offer",
+      "pointer_beats",
+      "pointer_fallback",
+      "never_lines",
+      "first_proof",
+      "kid_ok",
+      "kid_transform",
+      "nsfw",
+      "inject_ok",
+      "founder_shape_cousin"
+    ],
+    "data_rows": 112,
+    "row_column_counts": [
+      17
+    ]
+  },
+  {
+    "family_id": "fam-sys-apocalypse",
+    "header_columns": 17,
+    "header": [
+      "family_id",
+      "axis_id",
+      "variant_id",
+      "title_short",
+      "pointer_location",
+      "pointer_faction",
+      "pointer_intent",
+      "pointer_offer",
+      "pointer_beats",
+      "pointer_fallback",
+      "never_lines",
+      "first_proof",
+      "kid_ok",
+      "kid_transform",
+      "nsfw",
+      "inject_ok",
+      "founder_shape_cousin"
+    ],
+    "data_rows": 112,
+    "row_column_counts": [
+      17
+    ]
+  },
+  {
+    "family_id": "fam-tower-climb",
+    "header_columns": 16,
+    "header": [
+      "family_id",
+      "axis_id",
+      "variant_id",
+      "title_short",
+      "pointer_location",
+      "pointer_faction",
+      "pointer_intent",
+      "pointer_offer",
+      "pointer_beats",
+      "pointer_fallback",
+      "never_lines",
+      "first_proof",
+      "kid_ok",
+      "kid_transform",
+      "nsfw",
+      "inject_ok"
+    ],
+    "data_rows": 112,
+    "row_column_counts": [
+      16
+    ]
+  },
+  {
+    "family_id": "fam-tt-blight",
+    "header_columns": 17,
+    "header": [
+      "family_id",
+      "axis_id",
+      "variant_id",
+      "title_short",
+      "pointer_location",
+      "pointer_faction",
+      "pointer_intent",
+      "pointer_offer",
+      "pointer_beats",
+      "pointer_fallback",
+      "never_lines",
+      "first_proof",
+      "kid_ok",
+      "kid_transform",
+      "nsfw",
+      "inject_ok",
+      "founder_shape_cousin"
+    ],
+    "data_rows": 112,
+    "row_column_counts": [
+      17
+    ]
+  },
+  {
+    "family_id": "fam-tt-caravan",
+    "header_columns": 17,
+    "header": [
+      "family_id",
+      "axis_id",
+      "variant_id",
+      "title_short",
+      "pointer_location",
+      "pointer_faction",
+      "pointer_intent",
+      "pointer_offer",
+      "pointer_beats",
+      "pointer_fallback",
+      "never_lines",
+      "first_proof",
+      "kid_ok",
+      "kid_transform",
+      "nsfw",
+      "inject_ok",
+      "founder_shape_cousin"
+    ],
+    "data_rows": 112,
+    "row_column_counts": [
+      17
+    ]
+  },
+  {
+    "family_id": "fam-tt-city-guilds",
+    "header_columns": 17,
+    "header": [
+      "family_id",
+      "axis_id",
+      "variant_id",
+      "title_short",
+      "pointer_location",
+      "pointer_faction",
+      "pointer_intent",
+      "pointer_offer",
+      "pointer_beats",
+      "pointer_fallback",
+      "never_lines",
+      "first_proof",
+      "kid_ok",
+      "kid_transform",
+      "nsfw",
+      "inject_ok",
+      "founder_shape_cousin"
+    ],
+    "data_rows": 112,
+    "row_column_counts": [
+      17
+    ]
+  },
+  {
+    "family_id": "fam-tt-custom",
+    "header_columns": 17,
+    "header": [
+      "family_id",
+      "axis_id",
+      "variant_id",
+      "title_short",
+      "pointer_location",
+      "pointer_faction",
+      "pointer_intent",
+      "pointer_offer",
+      "pointer_beats",
+      "pointer_fallback",
+      "never_lines",
+      "first_proof",
+      "kid_ok",
+      "kid_transform",
+      "nsfw",
+      "inject_ok",
+      "founder_shape_cousin"
+    ],
+    "data_rows": 112,
+    "row_column_counts": [
+      17
+    ]
+  },
+  {
+    "family_id": "fam-tt-haunted",
+    "header_columns": 17,
+    "header": [
+      "family_id",
+      "axis_id",
+      "variant_id",
+      "title_short",
+      "pointer_location",
+      "pointer_faction",
+      "pointer_intent",
+      "pointer_offer",
+      "pointer_beats",
+      "pointer_fallback",
+      "never_lines",
+      "first_proof",
+      "kid_ok",
+      "kid_transform",
+      "nsfw",
+      "inject_ok",
+      "founder_shape_cousin"
+    ],
+    "data_rows": 112,
+    "row_column_counts": [
+      17
+    ]
+  },
+  {
+    "family_id": "fam-tt-keep-war",
+    "header_columns": 17,
+    "header": [
+      "family_id",
+      "axis_id",
+      "variant_id",
+      "title_short",
+      "pointer_location",
+      "pointer_faction",
+      "pointer_intent",
+      "pointer_offer",
+      "pointer_beats",
+      "pointer_fallback",
+      "never_lines",
+      "first_proof",
+      "kid_ok",
+      "kid_transform",
+      "nsfw",
+      "inject_ok",
+      "founder_shape_cousin"
+    ],
+    "data_rows": 112,
+    "row_column_counts": [
+      17
+    ]
+  },
+  {
+    "family_id": "fam-tt-veil",
+    "header_columns": 17,
+    "header": [
+      "family_id",
+      "axis_id",
+      "variant_id",
+      "title_short",
+      "pointer_location",
+      "pointer_faction",
+      "pointer_intent",
+      "pointer_offer",
+      "pointer_beats",
+      "pointer_fallback",
+      "never_lines",
+      "first_proof",
+      "kid_ok",
+      "kid_transform",
+      "nsfw",
+      "inject_ok",
+      "founder_shape_cousin"
+    ],
+    "data_rows": 112,
+    "row_column_counts": [
+      17
+    ]
+  },
+  {
+    "family_id": "fam-village-soft",
+    "header_columns": 17,
+    "header": [
+      "family_id",
+      "axis_id",
+      "variant_id",
+      "title_short",
+      "pointer_location",
+      "pointer_faction",
+      "pointer_intent",
+      "pointer_offer",
+      "pointer_beats",
+      "pointer_fallback",
+      "never_lines",
+      "first_proof",
+      "kid_ok",
+      "kid_transform",
+      "nsfw",
+      "inject_ok",
+      "founder_shape_cousin"
+    ],
+    "data_rows": 112,
+    "row_column_counts": [
+      17
+    ]
+  },
+  {
+    "family_id": "fam-void-bargain",
+    "header_columns": 16,
+    "header": [
+      "family_id",
+      "axis_id",
+      "variant_id",
+      "title_short",
+      "pointer_location",
+      "pointer_faction",
+      "pointer_intent",
+      "pointer_offer",
+      "pointer_beats",
+      "pointer_fallback",
+      "never_lines",
+      "first_proof",
+      "kid_ok",
+      "kid_transform",
+      "nsfw",
+      "inject_ok"
+    ],
+    "data_rows": 112,
+    "row_column_counts": [
+      16
+    ]
+  },
+  {
+    "family_id": "fam-vrmmo-trap",
+    "header_columns": 17,
+    "header": [
+      "family_id",
+      "axis_id",
+      "variant_id",
+      "title_short",
+      "pointer_location",
+      "pointer_faction",
+      "pointer_intent",
+      "pointer_offer",
+      "pointer_beats",
+      "pointer_fallback",
+      "never_lines",
+      "first_proof",
+      "kid_ok",
+      "kid_transform",
+      "nsfw",
+      "inject_ok",
+      "founder_shape_cousin"
+    ],
+    "data_rows": 112,
+    "row_column_counts": [
+      17
+    ]
+  }
+]

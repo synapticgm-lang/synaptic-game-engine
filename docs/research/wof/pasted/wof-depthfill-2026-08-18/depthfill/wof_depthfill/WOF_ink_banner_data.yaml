@@ -1,0 +1,2281 @@
+packFormatVersion: 1
+worldId: ink_banner
+displayName: Ink Banner
+maturity: teen
+rulesModuleId: hp_check
+themeKit: Ink Banner Theme Kit
+places:
+- id: ink_banner_place_01
+  publicName: Banner Gate
+  zoneId: ink_banner_zone_01
+  role: shared hub
+  mapScale: street
+  dangerTier: safe
+  outdoor: true
+  exits:
+  - ink_banner_place_02
+  - ink_banner_place_04
+  npcIds:
+  - ink_banner_npc_01
+  - ink_banner_npc_05
+  - ink_banner_npc_09
+  dungeonId: null
+  interactableIds:
+  - ink_banner_interact_01
+  - ink_banner_interact_09
+- id: ink_banner_place_02
+  publicName: Reed Court
+  zoneId: ink_banner_zone_01
+  role: start hub
+  mapScale: street
+  dangerTier: safe
+  outdoor: true
+  exits:
+  - ink_banner_place_01
+  - ink_banner_place_03
+  npcIds:
+  - ink_banner_npc_02
+  - ink_banner_npc_06
+  - ink_banner_npc_10
+  dungeonId: null
+  interactableIds:
+  - ink_banner_interact_02
+  - ink_banner_interact_10
+- id: ink_banner_place_03
+  publicName: Kite Barracks
+  zoneId: ink_banner_zone_01
+  role: street route
+  mapScale: street
+  dangerTier: safe
+  outdoor: true
+  exits:
+  - ink_banner_place_02
+  - ink_banner_place_04
+  npcIds:
+  - ink_banner_npc_03
+  - ink_banner_npc_07
+  dungeonId: null
+  interactableIds:
+  - ink_banner_interact_03
+  - ink_banner_interact_11
+- id: ink_banner_place_04
+  publicName: Red Seal Road
+  zoneId: ink_banner_zone_02
+  role: mid join
+  mapScale: street
+  dangerTier: low
+  outdoor: true
+  exits:
+  - ink_banner_place_03
+  - ink_banner_place_05
+  - ink_banner_place_01
+  npcIds:
+  - ink_banner_npc_04
+  - ink_banner_npc_08
+  dungeonId: null
+  interactableIds:
+  - ink_banner_interact_04
+  - ink_banner_interact_12
+- id: ink_banner_place_05
+  publicName: Cedar Watch
+  zoneId: ink_banner_zone_02
+  role: work district
+  mapScale: interior
+  dangerTier: low
+  outdoor: false
+  exits:
+  - ink_banner_place_04
+  - ink_banner_place_06
+  npcIds: []
+  dungeonId: null
+  interactableIds:
+  - ink_banner_interact_05
+- id: ink_banner_place_06
+  publicName: The Quiet Standard
+  zoneId: ink_banner_zone_02
+  role: instance door
+  mapScale: dungeon
+  dangerTier: medium
+  outdoor: false
+  exits:
+  - ink_banner_place_05
+  - ink_banner_place_07
+  npcIds: []
+  dungeonId: ink_banner_dungeon_01
+  interactableIds:
+  - ink_banner_interact_06
+- id: ink_banner_place_07
+  publicName: Lacquer Bridge
+  zoneId: ink_banner_zone_03
+  role: wild edge
+  mapScale: street
+  dangerTier: medium
+  outdoor: true
+  exits:
+  - ink_banner_place_06
+  - ink_banner_place_08
+  npcIds: []
+  dungeonId: null
+  interactableIds:
+  - ink_banner_interact_07
+- id: ink_banner_place_08
+  publicName: Willow Muster
+  zoneId: ink_banner_zone_03
+  role: housing approach
+  mapScale: interior
+  dangerTier: low
+  outdoor: false
+  exits:
+  - ink_banner_place_07
+  npcIds: []
+  dungeonId: null
+  interactableIds:
+  - ink_banner_interact_08
+npcs:
+- id: ink_banner_npc_01
+  name: Alden Vane
+  placeId: ink_banner_place_01
+  role: quest
+  greet: Alden Vane says, ‘Ink Banner keeps its promises in small places. Tell me which one you noticed.’
+- id: ink_banner_npc_02
+  name: Bryn Quill
+  placeId: ink_banner_place_02
+  role: profession
+  greet: Bryn Quill says, ‘Ink Banner keeps its promises in small places. Tell me which one you noticed.’
+- id: ink_banner_npc_03
+  name: Cato Vale
+  placeId: ink_banner_place_03
+  role: hub
+  greet: Cato Vale says, ‘Ink Banner keeps its promises in small places. Tell me which one you noticed.’
+- id: ink_banner_npc_04
+  name: Dessa Wren
+  placeId: ink_banner_place_04
+  role: merchant
+  greet: Dessa Wren says, ‘Ink Banner keeps its promises in small places. Tell me which one you noticed.’
+- id: ink_banner_npc_05
+  name: Eris Morrow
+  placeId: ink_banner_place_01
+  role: local
+  greet: Eris Morrow says, ‘Ink Banner keeps its promises in small places. Tell me which one you noticed.’
+- id: ink_banner_npc_06
+  name: Fenn Rowan
+  placeId: ink_banner_place_02
+  role: host
+  greet: Fenn Rowan says, ‘Ink Banner keeps its promises in small places. Tell me which one you noticed.’
+- id: ink_banner_npc_07
+  name: Gala Nook
+  placeId: ink_banner_place_03
+  role: quest
+  greet: Gala Nook says, ‘Ink Banner keeps its promises in small places. Tell me which one you noticed.’
+- id: ink_banner_npc_08
+  name: Holl Cress
+  placeId: ink_banner_place_04
+  role: profession
+  greet: Holl Cress says, ‘Ink Banner keeps its promises in small places. Tell me which one you noticed.’
+- id: ink_banner_npc_09
+  name: Ivo Silt
+  placeId: ink_banner_place_01
+  role: local
+  greet: Ivo Silt says, ‘Ink Banner keeps its promises in small places. Tell me which one you noticed.’
+- id: ink_banner_npc_10
+  name: Jori Pryce
+  placeId: ink_banner_place_02
+  role: merchant
+  greet: Jori Pryce says, ‘Ink Banner keeps its promises in small places. Tell me which one you noticed.’
+kits:
+- id: ink_banner_kit_01
+  publicName: Seal Runner
+  look: vermillion seal cloak
+  values: carry sealed dispatches
+  taboo: Never break a seal in private.
+  speechTell: Speak with precise courtesy and name the duty before the desire.
+  starterClothes: seal_runner mantle
+  starterTool: seal_runner tool
+  starterMapItem: ink_banner_map_01
+  startingPlaceId: ink_banner_place_01
+  firstHourQuestId: ink_banner_q_01
+  abilityFlag: ink_banner_ability_01
+- id: ink_banner_kit_02
+  publicName: Reed Magistrate
+  look: reed-gray court robe
+  values: read civil provisions
+  taboo: Never cite a law you cannot name.
+  speechTell: Speak with precise courtesy and name the duty before the desire.
+  starterClothes: reed_magistrate vest
+  starterTool: reed_magistrate tool
+  starterMapItem: ink_banner_map_02
+  startingPlaceId: ink_banner_place_02
+  firstHourQuestId: ink_banner_q_02
+  abilityFlag: ink_banner_ability_02
+- id: ink_banner_kit_03
+  publicName: Kite Quartermaster
+  look: kite-blue supply jacket
+  values: ration banner stores
+  taboo: Never withhold rations to win a bow.
+  speechTell: Speak with precise courtesy and name the duty before the desire.
+  starterClothes: kite_quartermaster jacket
+  starterTool: kite_quartermaster tool
+  starterMapItem: ink_banner_map_03
+  startingPlaceId: ink_banner_place_01
+  firstHourQuestId: ink_banner_q_03
+  abilityFlag: ink_banner_ability_03
+- id: ink_banner_kit_04
+  publicName: Cedar Duellist
+  look: cedar-brown duel coat
+  values: judge ceremonial footing
+  taboo: Never draw steel before the bell phrase.
+  speechTell: Speak with precise courtesy and name the duty before the desire.
+  starterClothes: cedar_duellist sash
+  starterTool: cedar_duellist tool
+  starterMapItem: ink_banner_map_04
+  startingPlaceId: ink_banner_place_02
+  firstHourQuestId: ink_banner_q_04
+  abilityFlag: ink_banner_ability_04
+quests:
+- id: ink_banner_q_01
+  title: 'Ink Banner: Name a Working Promise'
+  family: identity
+  hidden: false
+  unlocksQuestId: ink_banner_q_02
+  objectives:
+  - id: ink_banner_q_01_obj_01
+    kind: visit_place
+    targetId: ink_banner_place_01
+    count: 1
+  - id: ink_banner_q_01_obj_02
+    kind: deliver_item
+    targetId: ink_banner_deliver_item_01
+    count: 2
+  rewardGold: 12
+  rewardXp: 20
+- id: ink_banner_q_02
+  title: 'Ink Banner: Set the First Tool Aside'
+  family: identity
+  hidden: false
+  unlocksQuestId: ink_banner_q_03
+  objectives:
+  - id: ink_banner_q_02_obj_01
+    kind: ledger_kill
+    targetId: ink_banner_ledger_kill_02
+    count: 1
+  - id: ink_banner_q_02_obj_02
+    kind: talk_to_npc
+    targetId: ink_banner_npc_03
+    count: 2
+  rewardGold: 15
+  rewardXp: 25
+- id: ink_banner_q_03
+  title: 'Ink Banner: Carry the Right Record'
+  family: identity
+  hidden: false
+  unlocksQuestId: ink_banner_q_04
+  objectives:
+  - id: ink_banner_q_03_obj_01
+    kind: ledger_bond
+    targetId: ink_banner_ledger_bond_03
+    count: 1
+  - id: ink_banner_q_03_obj_02
+    kind: collect_item
+    targetId: ink_banner_collect_item_03
+    count: 2
+  rewardGold: 18
+  rewardXp: 30
+- id: ink_banner_q_04
+  title: 'Ink Banner: Find the Missing Measure'
+  family: identity
+  hidden: false
+  unlocksQuestId: ink_banner_q_05
+  objectives:
+  - id: ink_banner_q_04_obj_01
+    kind: deliver_item
+    targetId: ink_banner_deliver_item_04
+    count: 1
+  - id: ink_banner_q_04_obj_02
+    kind: interact
+    targetId: ink_banner_place_05
+    count: 2
+    verbId: cook
+  rewardGold: 21
+  rewardXp: 35
+- id: ink_banner_q_05
+  title: 'Ink Banner: Teach a Safer Shortcut'
+  family: identity
+  hidden: false
+  unlocksQuestId: ink_banner_q_06
+  objectives:
+  - id: ink_banner_q_05_obj_01
+    kind: talk_to_npc
+    targetId: ink_banner_npc_05
+    count: 1
+  - id: ink_banner_q_05_obj_02
+    kind: score_beat
+    targetId: ink_banner_score_beat_05
+    count: 2
+  rewardGold: 24
+  rewardXp: 40
+- id: ink_banner_q_06
+  title: 'Ink Banner: Read the Local Weather'
+  family: profession
+  hidden: false
+  unlocksQuestId: ink_banner_q_07
+  objectives:
+  - id: ink_banner_q_06_obj_01
+    kind: collect_item
+    targetId: ink_banner_collect_item_06
+    count: 1
+  - id: ink_banner_q_06_obj_02
+    kind: build_tick
+    targetId: ink_banner_build_tick_06
+    count: 2
+  rewardGold: 27
+  rewardXp: 45
+- id: ink_banner_q_07
+  title: 'Ink Banner: Repair a Shared Threshold'
+  family: profession
+  hidden: false
+  unlocksQuestId: ink_banner_q_08
+  objectives:
+  - id: ink_banner_q_07_obj_01
+    kind: interact
+    targetId: ink_banner_place_07
+    count: 1
+    verbId: inspect
+  - id: ink_banner_q_07_obj_02
+    kind: hospitality_tick
+    targetId: ink_banner_hospitality_tick_07
+    count: 2
+  rewardGold: 30
+  rewardXp: 50
+- id: ink_banner_q_08
+  title: 'Ink Banner: Return a Borrowed Sign'
+  family: profession
+  hidden: false
+  unlocksQuestId: ink_banner_q_09
+  objectives:
+  - id: ink_banner_q_08_obj_01
+    kind: score_beat
+    targetId: ink_banner_score_beat_08
+    count: 1
+  - id: ink_banner_q_08_obj_02
+    kind: lap_finish
+    targetId: ink_banner_lap_finish_08
+    count: 2
+  rewardGold: 33
+  rewardXp: 55
+- id: ink_banner_q_09
+  title: 'Ink Banner: Host the Small Welcome'
+  family: profession
+  hidden: false
+  unlocksQuestId: ink_banner_q_10
+  objectives:
+  - id: ink_banner_q_09_obj_01
+    kind: build_tick
+    targetId: ink_banner_build_tick_09
+    count: 1
+  - id: ink_banner_q_09_obj_02
+    kind: visit_place
+    targetId: ink_banner_place_02
+    count: 2
+  rewardGold: 36
+  rewardXp: 60
+- id: ink_banner_q_10
+  title: 'Ink Banner: Choose a Fair Order'
+  family: profession
+  hidden: false
+  unlocksQuestId: ink_banner_q_11
+  objectives:
+  - id: ink_banner_q_10_obj_01
+    kind: hospitality_tick
+    targetId: ink_banner_hospitality_tick_10
+    count: 1
+  - id: ink_banner_q_10_obj_02
+    kind: ledger_kill
+    targetId: ink_banner_ledger_kill_10
+    count: 2
+  rewardGold: 39
+  rewardXp: 65
+- id: ink_banner_q_11
+  title: 'Ink Banner: Map the Quiet Detour'
+  family: profession
+  hidden: false
+  unlocksQuestId: ink_banner_q_12
+  objectives:
+  - id: ink_banner_q_11_obj_01
+    kind: lap_finish
+    targetId: ink_banner_lap_finish_11
+    count: 1
+  - id: ink_banner_q_11_obj_02
+    kind: ledger_bond
+    targetId: ink_banner_ledger_bond_11
+    count: 2
+  rewardGold: 42
+  rewardXp: 70
+- id: ink_banner_q_12
+  title: 'Ink Banner: Bring a Useful Witness'
+  family: profession
+  hidden: false
+  unlocksQuestId: ink_banner_q_13
+  objectives:
+  - id: ink_banner_q_12_obj_01
+    kind: visit_place
+    targetId: ink_banner_place_04
+    count: 1
+  - id: ink_banner_q_12_obj_02
+    kind: deliver_item
+    targetId: ink_banner_deliver_item_12
+    count: 2
+  rewardGold: 45
+  rewardXp: 75
+- id: ink_banner_q_13
+  title: 'Ink Banner: Sort the Unclaimed Materials'
+  family: zone_story
+  hidden: false
+  unlocksQuestId: ink_banner_q_14
+  objectives:
+  - id: ink_banner_q_13_obj_01
+    kind: ledger_kill
+    targetId: ink_banner_ledger_kill_13
+    count: 1
+  - id: ink_banner_q_13_obj_02
+    kind: talk_to_npc
+    targetId: ink_banner_npc_04
+    count: 2
+  rewardGold: 48
+  rewardXp: 80
+- id: ink_banner_q_14
+  title: 'Ink Banner: Make Room for a Visitor'
+  family: zone_story
+  hidden: false
+  unlocksQuestId: ink_banner_q_15
+  objectives:
+  - id: ink_banner_q_14_obj_01
+    kind: ledger_bond
+    targetId: ink_banner_ledger_bond_14
+    count: 1
+  - id: ink_banner_q_14_obj_02
+    kind: collect_item
+    targetId: ink_banner_collect_item_14
+    count: 2
+  rewardGold: 51
+  rewardXp: 85
+- id: ink_banner_q_15
+  title: 'Ink Banner: Close the Day’s Ledger'
+  family: zone_story
+  hidden: false
+  unlocksQuestId: ink_banner_q_16
+  objectives:
+  - id: ink_banner_q_15_obj_01
+    kind: deliver_item
+    targetId: ink_banner_deliver_item_15
+    count: 1
+  - id: ink_banner_q_15_obj_02
+    kind: interact
+    targetId: ink_banner_place_08
+    count: 2
+    verbId: craft
+  rewardGold: 54
+  rewardXp: 90
+- id: ink_banner_q_16
+  title: 'Ink Banner: Follow the Midway Signal'
+  family: zone_story
+  hidden: false
+  unlocksQuestId: ink_banner_q_17
+  objectives:
+  - id: ink_banner_q_16_obj_01
+    kind: talk_to_npc
+    targetId: ink_banner_npc_06
+    count: 1
+  - id: ink_banner_q_16_obj_02
+    kind: score_beat
+    targetId: ink_banner_score_beat_16
+    count: 2
+  rewardGold: 57
+  rewardXp: 95
+- id: ink_banner_q_17
+  title: 'Ink Banner: Uncover the Door Note'
+  family: zone_story
+  hidden: true
+  unlocksQuestId: ink_banner_q_18
+  objectives:
+  - id: ink_banner_q_17_obj_01
+    kind: collect_item
+    targetId: ink_banner_collect_item_17
+    count: 1
+  - id: ink_banner_q_17_obj_02
+    kind: build_tick
+    targetId: ink_banner_build_tick_17
+    count: 2
+  rewardGold: 60
+  rewardXp: 100
+- id: ink_banner_q_18
+  title: 'Ink Banner: Prepare the Team Table'
+  family: zone_story
+  hidden: false
+  unlocksQuestId: ink_banner_q_19
+  objectives:
+  - id: ink_banner_q_18_obj_01
+    kind: interact
+    targetId: ink_banner_place_02
+    count: 1
+    verbId: bind_inn
+  - id: ink_banner_q_18_obj_02
+    kind: hospitality_tick
+    targetId: ink_banner_hospitality_tick_18
+    count: 2
+  rewardGold: 63
+  rewardXp: 105
+- id: ink_banner_q_19
+  title: 'Ink Banner: Test the Local Method'
+  family: zone_story
+  hidden: false
+  unlocksQuestId: ink_banner_q_20
+  objectives:
+  - id: ink_banner_q_19_obj_01
+    kind: score_beat
+    targetId: ink_banner_score_beat_19
+    count: 1
+  - id: ink_banner_q_19_obj_02
+    kind: lap_finish
+    targetId: ink_banner_lap_finish_19
+    count: 2
+  rewardGold: 66
+  rewardXp: 110
+- id: ink_banner_q_20
+  title: 'Ink Banner: Hold a Careful Boundary'
+  family: zone_story
+  hidden: false
+  unlocksQuestId: ink_banner_q_21
+  objectives:
+  - id: ink_banner_q_20_obj_01
+    kind: build_tick
+    targetId: ink_banner_build_tick_20
+    count: 1
+  - id: ink_banner_q_20_obj_02
+    kind: visit_place
+    targetId: ink_banner_place_05
+    count: 2
+  rewardGold: 69
+  rewardXp: 115
+- id: ink_banner_q_21
+  title: 'Ink Banner: Answer the Neighbour’s Call'
+  family: extra
+  hidden: false
+  unlocksQuestId: ink_banner_q_22
+  objectives:
+  - id: ink_banner_q_21_obj_01
+    kind: hospitality_tick
+    targetId: ink_banner_hospitality_tick_21
+    count: 1
+  - id: ink_banner_q_21_obj_02
+    kind: ledger_kill
+    targetId: ink_banner_ledger_kill_21
+    count: 2
+  rewardGold: 72
+  rewardXp: 120
+- id: ink_banner_q_22
+  title: 'Ink Banner: Finish the Side Route'
+  family: extra
+  hidden: false
+  unlocksQuestId: ink_banner_q_23
+  objectives:
+  - id: ink_banner_q_22_obj_01
+    kind: lap_finish
+    targetId: ink_banner_lap_finish_22
+    count: 1
+  - id: ink_banner_q_22_obj_02
+    kind: ledger_bond
+    targetId: ink_banner_ledger_bond_22
+    count: 2
+  rewardGold: 75
+  rewardXp: 125
+- id: ink_banner_q_23
+  title: 'Ink Banner: Earn a Trusted Introduction'
+  family: extra
+  hidden: true
+  unlocksQuestId: ink_banner_q_24
+  objectives:
+  - id: ink_banner_q_23_obj_01
+    kind: visit_place
+    targetId: ink_banner_place_07
+    count: 1
+  - id: ink_banner_q_23_obj_02
+    kind: deliver_item
+    targetId: ink_banner_deliver_item_23
+    count: 2
+  rewardGold: 78
+  rewardXp: 130
+- id: ink_banner_q_24
+  title: 'Ink Banner: Open the Instance Path'
+  family: extra
+  hidden: false
+  unlocksQuestId: ink_banner_q_25
+  objectives:
+  - id: ink_banner_q_24_obj_01
+    kind: ledger_kill
+    targetId: ink_banner_ledger_kill_24
+    count: 1
+  - id: ink_banner_q_24_obj_02
+    kind: talk_to_npc
+    targetId: ink_banner_npc_05
+    count: 2
+  rewardGold: 81
+  rewardXp: 135
+- id: ink_banner_q_25
+  title: 'Ink Banner: Complete the First Big Night'
+  family: extra
+  hidden: false
+  unlocksQuestId: null
+  objectives:
+  - id: ink_banner_q_25_obj_01
+    kind: ledger_bond
+    targetId: ink_banner_ledger_bond_25
+    count: 1
+  - id: ink_banner_q_25_obj_02
+    kind: collect_item
+    targetId: ink_banner_collect_item_25
+    count: 2
+  rewardGold: 84
+  rewardXp: 140
+species:
+- id: ink_banner_species_01
+  publicName: Koi Hound
+  kind: opponent
+  hp: 8
+  armor: 0
+  threat: 1
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: ink_banner_species_02
+  publicName: Paper Crane
+  kind: opponent
+  hp: 9
+  armor: 1
+  threat: 2
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: ink_banner_species_03
+  publicName: Reed Cat
+  kind: opponent
+  hp: 10
+  armor: 2
+  threat: 3
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: ink_banner_species_04
+  publicName: Lantern Stag
+  kind: opponent
+  hp: 11
+  armor: 3
+  threat: 1
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: ink_banner_species_05
+  publicName: Cedar Beetle
+  kind: opponent
+  hp: 12
+  armor: 0
+  threat: 2
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: ink_banner_species_06
+  publicName: Ink Swallow
+  kind: opponent
+  hp: 13
+  armor: 1
+  threat: 3
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: ink_banner_species_07
+  publicName: Kite Carp
+  kind: opponent
+  hp: 14
+  armor: 2
+  threat: 1
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: ink_banner_species_08
+  publicName: Willow Fox
+  kind: opponent
+  hp: 15
+  armor: 3
+  threat: 2
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: ink_banner_species_09
+  publicName: Seal Moth
+  kind: opponent
+  hp: 16
+  armor: 0
+  threat: 3
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: ink_banner_species_10
+  publicName: Lacquer Toad
+  kind: opponent
+  hp: 17
+  armor: 1
+  threat: 1
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: ink_banner_species_11
+  publicName: Court Hare
+  kind: opponent
+  hp: 18
+  armor: 2
+  threat: 2
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: ink_banner_species_12
+  publicName: Ribbon Eel
+  kind: opponent
+  hp: 19
+  armor: 3
+  threat: 3
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: ink_banner_species_13
+  publicName: Watch Heron
+  kind: opponent
+  hp: 20
+  armor: 0
+  threat: 1
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: ink_banner_species_14
+  publicName: Bamboo Vole
+  kind: opponent
+  hp: 21
+  armor: 1
+  threat: 2
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: ink_banner_species_15
+  publicName: Mist Turtle
+  kind: opponent
+  hp: 22
+  armor: 2
+  threat: 3
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: ink_banner_species_16
+  publicName: Drum Sparrow
+  kind: opponent
+  hp: 23
+  armor: 3
+  threat: 1
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+items:
+- id: ink_banner_item_01
+  publicName: Banner Gate token
+  category: starter
+  power: false
+  sellGold: 3
+  description: A Ink Banner item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: ink_banner_item_02
+  publicName: Reed Court tool
+  category: starter
+  power: false
+  sellGold: 5
+  description: A Ink Banner item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: ink_banner_item_03
+  publicName: Kite Barracks thread
+  category: profession
+  power: false
+  sellGold: 7
+  description: A Ink Banner item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: ink_banner_item_04
+  publicName: Red Seal Road seal
+  category: profession
+  power: false
+  sellGold: 9
+  description: A Ink Banner item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: ink_banner_item_05
+  publicName: Cedar Watch bundle
+  category: instance
+  power: false
+  sellGold: 11
+  description: A Ink Banner item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: ink_banner_item_06
+  publicName: The Quiet Standard token
+  category: instance
+  power: false
+  sellGold: 13
+  description: A Ink Banner item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: ink_banner_item_07
+  publicName: Lacquer Bridge tool
+  category: cosmetic
+  power: false
+  sellGold: 15
+  description: A Ink Banner item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: ink_banner_item_08
+  publicName: Willow Muster thread
+  category: cosmetic
+  power: false
+  sellGold: 17
+  description: A Ink Banner item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: ink_banner_item_09
+  publicName: Banner Gate seal
+  category: material
+  power: false
+  sellGold: 19
+  description: A Ink Banner item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: ink_banner_item_10
+  publicName: Reed Court bundle
+  category: material
+  power: false
+  sellGold: 21
+  description: A Ink Banner item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: ink_banner_item_11
+  publicName: Kite Barracks token
+  category: care
+  power: false
+  sellGold: 23
+  description: A Ink Banner item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: ink_banner_item_12
+  publicName: Red Seal Road tool
+  category: care
+  power: false
+  sellGold: 25
+  description: A Ink Banner item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: ink_banner_item_13
+  publicName: Cedar Watch thread
+  category: map
+  power: false
+  sellGold: 27
+  description: A Ink Banner item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: ink_banner_item_14
+  publicName: The Quiet Standard seal
+  category: map
+  power: false
+  sellGold: 29
+  description: A Ink Banner item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: ink_banner_item_15
+  publicName: Lacquer Bridge bundle
+  category: vendor
+  power: false
+  sellGold: 31
+  description: A Ink Banner item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: ink_banner_item_16
+  publicName: Willow Muster token
+  category: vendor
+  power: false
+  sellGold: 33
+  description: A Ink Banner item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: ink_banner_item_17
+  publicName: Banner Gate tool
+  category: recipe
+  power: false
+  sellGold: 35
+  description: A Ink Banner item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: ink_banner_item_18
+  publicName: Reed Court thread
+  category: recipe
+  power: false
+  sellGold: 37
+  description: A Ink Banner item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: ink_banner_item_19
+  publicName: Kite Barracks seal
+  category: keepsake
+  power: false
+  sellGold: 39
+  description: A Ink Banner item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: ink_banner_item_20
+  publicName: Red Seal Road bundle
+  category: keepsake
+  power: false
+  sellGold: 41
+  description: A Ink Banner item used for a stated craft, route, display, or record; it never alters paid outcomes.
+dropTables:
+- id: ink_banner_drop_01
+  sourceId: ink_banner_species_01
+  personalLoot: true
+  entries:
+  - itemId: ink_banner_item_01
+    chancePct: 60
+    min: 1
+    max: 2
+  - itemId: ink_banner_item_08
+    chancePct: 20
+    min: 1
+    max: 1
+- id: ink_banner_drop_02
+  sourceId: ink_banner_species_02
+  personalLoot: true
+  entries:
+  - itemId: ink_banner_item_02
+    chancePct: 55
+    min: 1
+    max: 2
+  - itemId: ink_banner_item_09
+    chancePct: 25
+    min: 1
+    max: 1
+- id: ink_banner_drop_03
+  sourceId: ink_banner_species_03
+  personalLoot: true
+  entries:
+  - itemId: ink_banner_item_03
+    chancePct: 50
+    min: 1
+    max: 2
+  - itemId: ink_banner_item_10
+    chancePct: 30
+    min: 1
+    max: 1
+- id: ink_banner_drop_04
+  sourceId: ink_banner_species_04
+  personalLoot: true
+  entries:
+  - itemId: ink_banner_item_04
+    chancePct: 45
+    min: 1
+    max: 2
+  - itemId: ink_banner_item_11
+    chancePct: 20
+    min: 1
+    max: 1
+- id: ink_banner_drop_05
+  sourceId: ink_banner_species_05
+  personalLoot: true
+  entries:
+  - itemId: ink_banner_item_05
+    chancePct: 60
+    min: 1
+    max: 2
+  - itemId: ink_banner_item_12
+    chancePct: 25
+    min: 1
+    max: 1
+- id: ink_banner_drop_06
+  sourceId: ink_banner_species_06
+  personalLoot: true
+  entries:
+  - itemId: ink_banner_item_06
+    chancePct: 55
+    min: 1
+    max: 2
+  - itemId: ink_banner_item_13
+    chancePct: 30
+    min: 1
+    max: 1
+- id: ink_banner_drop_07
+  sourceId: ink_banner_species_07
+  personalLoot: true
+  entries:
+  - itemId: ink_banner_item_07
+    chancePct: 50
+    min: 1
+    max: 2
+  - itemId: ink_banner_item_14
+    chancePct: 20
+    min: 1
+    max: 1
+- id: ink_banner_drop_08
+  sourceId: ink_banner_species_08
+  personalLoot: true
+  entries:
+  - itemId: ink_banner_item_08
+    chancePct: 45
+    min: 1
+    max: 2
+  - itemId: ink_banner_item_15
+    chancePct: 25
+    min: 1
+    max: 1
+- id: ink_banner_drop_09
+  sourceId: ink_banner_species_09
+  personalLoot: true
+  entries:
+  - itemId: ink_banner_item_09
+    chancePct: 60
+    min: 1
+    max: 2
+  - itemId: ink_banner_item_16
+    chancePct: 30
+    min: 1
+    max: 1
+- id: ink_banner_drop_10
+  sourceId: ink_banner_species_10
+  personalLoot: true
+  entries:
+  - itemId: ink_banner_item_10
+    chancePct: 55
+    min: 1
+    max: 2
+  - itemId: ink_banner_item_17
+    chancePct: 20
+    min: 1
+    max: 1
+- id: ink_banner_drop_11
+  sourceId: ink_banner_species_11
+  personalLoot: true
+  entries:
+  - itemId: ink_banner_item_11
+    chancePct: 50
+    min: 1
+    max: 2
+  - itemId: ink_banner_item_18
+    chancePct: 25
+    min: 1
+    max: 1
+- id: ink_banner_drop_12
+  sourceId: ink_banner_species_12
+  personalLoot: true
+  entries:
+  - itemId: ink_banner_item_12
+    chancePct: 45
+    min: 1
+    max: 2
+  - itemId: ink_banner_item_19
+    chancePct: 30
+    min: 1
+    max: 1
+vendors:
+- id: ink_banner_vendor_01
+  publicName: Ink Banner Exchange
+  placeId: ink_banner_place_01
+  currencyGoldName: Seal Coin
+  items:
+  - itemId: ink_banner_item_01
+    priceGold: 8
+  - itemId: ink_banner_item_02
+    priceGold: 11
+  - itemId: ink_banner_item_03
+    priceGold: 14
+  - itemId: ink_banner_item_04
+    priceGold: 17
+  - itemId: ink_banner_item_05
+    priceGold: 20
+  - itemId: ink_banner_item_06
+    priceGold: 23
+  - itemId: ink_banner_item_07
+    priceGold: 26
+  - itemId: ink_banner_item_08
+    priceGold: 29
+  repairCostPerPoint: 2
+dungeons:
+- id: ink_banner_dungeon_01
+  publicName: The Quiet Standard Vault
+  partyMin: 1
+  partyMax: 5
+  entrancePlaceId: ink_banner_place_06
+  rooms:
+  - id: ink_banner_dungeon_room_01
+    publicName: 'The Quiet Standard Vault: Threshold Room'
+    describeBeforeCreature: Describe the material, sound, exits, and practical obstacle of Threshold Room before any species
+      is narrated.
+    trashSpeciesIds:
+    - ink_banner_species_01
+    - ink_banner_species_02
+    eliteSpeciesId: null
+    checkpoint: false
+    bossSpeciesId: null
+    exits:
+    - ink_banner_dungeon_room_02
+  - id: ink_banner_dungeon_room_02
+    publicName: 'The Quiet Standard Vault: Workroom'
+    describeBeforeCreature: Describe the material, sound, exits, and practical obstacle of Workroom before any species is
+      narrated.
+    trashSpeciesIds:
+    - ink_banner_species_03
+    - ink_banner_species_04
+    eliteSpeciesId: null
+    checkpoint: false
+    bossSpeciesId: null
+    exits:
+    - ink_banner_dungeon_room_03
+  - id: ink_banner_dungeon_room_03
+    publicName: 'The Quiet Standard Vault: Side Passage'
+    describeBeforeCreature: Describe the material, sound, exits, and practical obstacle of Side Passage before any species
+      is narrated.
+    trashSpeciesIds:
+    - ink_banner_species_05
+    - ink_banner_species_06
+    eliteSpeciesId: ink_banner_species_09
+    checkpoint: false
+    bossSpeciesId: null
+    exits:
+    - ink_banner_dungeon_room_04
+  - id: ink_banner_dungeon_room_04
+    publicName: 'The Quiet Standard Vault: Checkpoint Alcove'
+    describeBeforeCreature: Describe the material, sound, exits, and practical obstacle of Checkpoint Alcove before any species
+      is narrated.
+    trashSpeciesIds:
+    - ink_banner_species_07
+    - ink_banner_species_08
+    eliteSpeciesId: null
+    checkpoint: true
+    bossSpeciesId: null
+    exits:
+    - ink_banner_dungeon_room_05
+  - id: ink_banner_dungeon_room_05
+    publicName: 'The Quiet Standard Vault: Finale Chamber'
+    describeBeforeCreature: Describe the material, sound, exits, and practical obstacle of Finale Chamber before any species
+      is narrated.
+    trashSpeciesIds:
+    - ink_banner_species_09
+    - ink_banner_species_10
+    eliteSpeciesId: null
+    checkpoint: false
+    bossSpeciesId: ink_banner_species_14
+    exits: []
+  traps:
+  - id: ink_banner_trap_01
+    publicName: misread sign
+    interactableId: ink_banner_interact_01
+  - id: ink_banner_trap_02
+    publicName: jammed latch
+    interactableId: ink_banner_interact_02
+  - id: ink_banner_trap_03
+    publicName: wet threshold
+    interactableId: ink_banner_interact_03
+  - id: ink_banner_trap_04
+    publicName: false shelf
+    interactableId: ink_banner_interact_04
+  - id: ink_banner_trap_05
+    publicName: quiet bell
+    interactableId: ink_banner_interact_05
+  - id: ink_banner_trap_06
+    publicName: sealed drawer
+    interactableId: ink_banner_interact_06
+talkTrees:
+- npcId: ink_banner_npc_01
+  greet: Alden Vane says, ‘Ink Banner keeps its promises in small places. Tell me which one you noticed.’
+  quest_offer: 'Alden Vane offers a specific task at Banner Gate: settle the practical mismatch before it costs someone a
+    shift.'
+  quest_progress: Alden Vane checks the record and asks for the one detail that would change the outcome.
+  quest_turnin: Alden Vane marks the work complete, names who benefited, and hands over the recorded reward.
+  gossip:
+  - At Reed Court, people are discussing a missing care tag.
+  - The safest route today is through Kite Barracks, not the obvious shortcut.
+  - Someone at Red Seal Road is offering help but will not ask twice.
+  refusal: Alden Vane says, ‘No. I can explain the rule, but I will not bend it for noise.’
+  player_rude: Alden Vane says, ‘You may leave, lower your voice, or try a useful question. Choose one.’
+- npcId: ink_banner_npc_02
+  greet: Bryn Quill says, ‘Ink Banner keeps its promises in small places. Tell me which one you noticed.’
+  quest_offer: 'Bryn Quill offers a specific task at Reed Court: settle the practical mismatch before it costs someone a shift.'
+  quest_progress: Bryn Quill checks the record and asks for the one detail that would change the outcome.
+  quest_turnin: Bryn Quill marks the work complete, names who benefited, and hands over the recorded reward.
+  gossip:
+  - At Kite Barracks, people are discussing a missing care tag.
+  - The safest route today is through Red Seal Road, not the obvious shortcut.
+  - Someone at Cedar Watch is offering help but will not ask twice.
+  refusal: Bryn Quill says, ‘No. I can explain the rule, but I will not bend it for noise.’
+  player_rude: Bryn Quill says, ‘You may leave, lower your voice, or try a useful question. Choose one.’
+- npcId: ink_banner_npc_03
+  greet: Cato Vale says, ‘Ink Banner keeps its promises in small places. Tell me which one you noticed.’
+  quest_offer: 'Cato Vale offers a specific task at Kite Barracks: settle the practical mismatch before it costs someone a
+    shift.'
+  quest_progress: Cato Vale checks the record and asks for the one detail that would change the outcome.
+  quest_turnin: Cato Vale marks the work complete, names who benefited, and hands over the recorded reward.
+  gossip:
+  - At Red Seal Road, people are discussing a missing care tag.
+  - The safest route today is through Cedar Watch, not the obvious shortcut.
+  - Someone at The Quiet Standard is offering help but will not ask twice.
+  refusal: Cato Vale says, ‘No. I can explain the rule, but I will not bend it for noise.’
+  player_rude: Cato Vale says, ‘You may leave, lower your voice, or try a useful question. Choose one.’
+- npcId: ink_banner_npc_04
+  greet: Dessa Wren says, ‘Ink Banner keeps its promises in small places. Tell me which one you noticed.’
+  quest_offer: 'Dessa Wren offers a specific task at Red Seal Road: settle the practical mismatch before it costs someone
+    a shift.'
+  quest_progress: Dessa Wren checks the record and asks for the one detail that would change the outcome.
+  quest_turnin: Dessa Wren marks the work complete, names who benefited, and hands over the recorded reward.
+  gossip:
+  - At Cedar Watch, people are discussing a missing care tag.
+  - The safest route today is through The Quiet Standard, not the obvious shortcut.
+  - Someone at Lacquer Bridge is offering help but will not ask twice.
+  refusal: Dessa Wren says, ‘No. I can explain the rule, but I will not bend it for noise.’
+  player_rude: Dessa Wren says, ‘You may leave, lower your voice, or try a useful question. Choose one.’
+- npcId: ink_banner_npc_05
+  greet: Eris Morrow says, ‘Ink Banner keeps its promises in small places. Tell me which one you noticed.’
+  quest_offer: 'Eris Morrow offers a specific task at Banner Gate: settle the practical mismatch before it costs someone a
+    shift.'
+  quest_progress: Eris Morrow checks the record and asks for the one detail that would change the outcome.
+  quest_turnin: Eris Morrow marks the work complete, names who benefited, and hands over the recorded reward.
+  gossip:
+  - At The Quiet Standard, people are discussing a missing care tag.
+  - The safest route today is through Lacquer Bridge, not the obvious shortcut.
+  - Someone at Willow Muster is offering help but will not ask twice.
+  refusal: Eris Morrow says, ‘No. I can explain the rule, but I will not bend it for noise.’
+  player_rude: Eris Morrow says, ‘You may leave, lower your voice, or try a useful question. Choose one.’
+- npcId: ink_banner_npc_06
+  greet: Fenn Rowan says, ‘Ink Banner keeps its promises in small places. Tell me which one you noticed.’
+  quest_offer: 'Fenn Rowan offers a specific task at Reed Court: settle the practical mismatch before it costs someone a shift.'
+  quest_progress: Fenn Rowan checks the record and asks for the one detail that would change the outcome.
+  quest_turnin: Fenn Rowan marks the work complete, names who benefited, and hands over the recorded reward.
+  gossip:
+  - At Lacquer Bridge, people are discussing a missing care tag.
+  - The safest route today is through Willow Muster, not the obvious shortcut.
+  - Someone at Banner Gate is offering help but will not ask twice.
+  refusal: Fenn Rowan says, ‘No. I can explain the rule, but I will not bend it for noise.’
+  player_rude: Fenn Rowan says, ‘You may leave, lower your voice, or try a useful question. Choose one.’
+- npcId: ink_banner_npc_07
+  greet: Gala Nook says, ‘Ink Banner keeps its promises in small places. Tell me which one you noticed.’
+  quest_offer: 'Gala Nook offers a specific task at Kite Barracks: settle the practical mismatch before it costs someone a
+    shift.'
+  quest_progress: Gala Nook checks the record and asks for the one detail that would change the outcome.
+  quest_turnin: Gala Nook marks the work complete, names who benefited, and hands over the recorded reward.
+  gossip:
+  - At Willow Muster, people are discussing a missing care tag.
+  - The safest route today is through Banner Gate, not the obvious shortcut.
+  - Someone at Reed Court is offering help but will not ask twice.
+  refusal: Gala Nook says, ‘No. I can explain the rule, but I will not bend it for noise.’
+  player_rude: Gala Nook says, ‘You may leave, lower your voice, or try a useful question. Choose one.’
+- npcId: ink_banner_npc_08
+  greet: Holl Cress says, ‘Ink Banner keeps its promises in small places. Tell me which one you noticed.’
+  quest_offer: 'Holl Cress offers a specific task at Red Seal Road: settle the practical mismatch before it costs someone
+    a shift.'
+  quest_progress: Holl Cress checks the record and asks for the one detail that would change the outcome.
+  quest_turnin: Holl Cress marks the work complete, names who benefited, and hands over the recorded reward.
+  gossip:
+  - At Banner Gate, people are discussing a missing care tag.
+  - The safest route today is through Reed Court, not the obvious shortcut.
+  - Someone at Kite Barracks is offering help but will not ask twice.
+  refusal: Holl Cress says, ‘No. I can explain the rule, but I will not bend it for noise.’
+  player_rude: Holl Cress says, ‘You may leave, lower your voice, or try a useful question. Choose one.’
+- npcId: ink_banner_npc_09
+  greet: Ivo Silt says, ‘Ink Banner keeps its promises in small places. Tell me which one you noticed.’
+  quest_offer: 'Ivo Silt offers a specific task at Banner Gate: settle the practical mismatch before it costs someone a shift.'
+  quest_progress: Ivo Silt checks the record and asks for the one detail that would change the outcome.
+  quest_turnin: Ivo Silt marks the work complete, names who benefited, and hands over the recorded reward.
+  gossip:
+  - At Reed Court, people are discussing a missing care tag.
+  - The safest route today is through Kite Barracks, not the obvious shortcut.
+  - Someone at Red Seal Road is offering help but will not ask twice.
+  refusal: Ivo Silt says, ‘No. I can explain the rule, but I will not bend it for noise.’
+  player_rude: Ivo Silt says, ‘You may leave, lower your voice, or try a useful question. Choose one.’
+- npcId: ink_banner_npc_10
+  greet: Jori Pryce says, ‘Ink Banner keeps its promises in small places. Tell me which one you noticed.’
+  quest_offer: 'Jori Pryce offers a specific task at Reed Court: settle the practical mismatch before it costs someone a shift.'
+  quest_progress: Jori Pryce checks the record and asks for the one detail that would change the outcome.
+  quest_turnin: Jori Pryce marks the work complete, names who benefited, and hands over the recorded reward.
+  gossip:
+  - At Kite Barracks, people are discussing a missing care tag.
+  - The safest route today is through Red Seal Road, not the obvious shortcut.
+  - Someone at Cedar Watch is offering help but will not ask twice.
+  refusal: Jori Pryce says, ‘No. I can explain the rule, but I will not bend it for noise.’
+  player_rude: Jori Pryce says, ‘You may leave, lower your voice, or try a useful question. Choose one.’
+choiceButtons:
+- id: ink_banner_choice_01_01
+  placeId: ink_banner_place_01
+  label: Read the notice at Banner Gate
+  requires: []
+  intentKind: talk
+  stake: one turn
+- id: ink_banner_choice_01_02
+  placeId: ink_banner_place_01
+  label: Ask for an introduction at Banner Gate
+  requires: []
+  intentKind: talk
+  stake: one supply
+- id: ink_banner_choice_01_03
+  placeId: ink_banner_place_01
+  label: Check the tool tag at Banner Gate
+  requires: []
+  intentKind: inspect
+  stake: a declined invitation
+- id: ink_banner_choice_01_04
+  placeId: ink_banner_place_01
+  label: Offer a hand at Banner Gate
+  requires: []
+  intentKind: interact
+  stake: a public note
+- id: ink_banner_choice_01_05
+  placeId: ink_banner_place_01
+  label: Take the safer route at Banner Gate
+  requires:
+  - ink_banner_item_05
+  intentKind: travel
+  stake: a short detour
+- id: ink_banner_choice_01_06
+  placeId: ink_banner_place_01
+  label: Open the local record at Banner Gate
+  requires:
+  - ink_banner_item_06
+  intentKind: interact
+  stake: one turn
+- id: ink_banner_choice_01_07
+  placeId: ink_banner_place_01
+  label: Rest at the bench at Banner Gate
+  requires:
+  - ink_banner_item_07
+  intentKind: rest
+  stake: one supply
+- id: ink_banner_choice_01_08
+  placeId: ink_banner_place_01
+  label: Repair the marker at Banner Gate
+  requires:
+  - ink_banner_item_08
+  intentKind: interact
+  stake: a declined invitation
+- id: ink_banner_choice_01_09
+  placeId: ink_banner_place_01
+  label: Prepare a shared item at Banner Gate
+  requires:
+  - ink_banner_item_09
+  intentKind: craft
+  stake: a public note
+- id: ink_banner_choice_01_10
+  placeId: ink_banner_place_01
+  label: Leave a kind note at Banner Gate
+  requires:
+  - ink_banner_item_10
+  intentKind: talk
+  stake: a short detour
+- id: ink_banner_choice_02_01
+  placeId: ink_banner_place_02
+  label: Read the notice at Reed Court
+  requires: []
+  intentKind: talk
+  stake: one turn
+- id: ink_banner_choice_02_02
+  placeId: ink_banner_place_02
+  label: Ask for an introduction at Reed Court
+  requires: []
+  intentKind: talk
+  stake: one supply
+- id: ink_banner_choice_02_03
+  placeId: ink_banner_place_02
+  label: Check the tool tag at Reed Court
+  requires: []
+  intentKind: inspect
+  stake: a declined invitation
+- id: ink_banner_choice_02_04
+  placeId: ink_banner_place_02
+  label: Offer a hand at Reed Court
+  requires: []
+  intentKind: interact
+  stake: a public note
+- id: ink_banner_choice_02_05
+  placeId: ink_banner_place_02
+  label: Take the safer route at Reed Court
+  requires:
+  - ink_banner_item_05
+  intentKind: travel
+  stake: a short detour
+- id: ink_banner_choice_02_06
+  placeId: ink_banner_place_02
+  label: Open the local record at Reed Court
+  requires:
+  - ink_banner_item_06
+  intentKind: interact
+  stake: one turn
+- id: ink_banner_choice_02_07
+  placeId: ink_banner_place_02
+  label: Rest at the bench at Reed Court
+  requires:
+  - ink_banner_item_07
+  intentKind: rest
+  stake: one supply
+- id: ink_banner_choice_02_08
+  placeId: ink_banner_place_02
+  label: Repair the marker at Reed Court
+  requires:
+  - ink_banner_item_08
+  intentKind: interact
+  stake: a declined invitation
+- id: ink_banner_choice_02_09
+  placeId: ink_banner_place_02
+  label: Prepare a shared item at Reed Court
+  requires:
+  - ink_banner_item_09
+  intentKind: craft
+  stake: a public note
+- id: ink_banner_choice_02_10
+  placeId: ink_banner_place_02
+  label: Leave a kind note at Reed Court
+  requires:
+  - ink_banner_item_10
+  intentKind: talk
+  stake: a short detour
+- id: ink_banner_choice_03_01
+  placeId: ink_banner_place_03
+  label: Read the notice at Kite Barracks
+  requires: []
+  intentKind: talk
+  stake: one turn
+- id: ink_banner_choice_03_02
+  placeId: ink_banner_place_03
+  label: Ask for an introduction at Kite Barracks
+  requires: []
+  intentKind: talk
+  stake: one supply
+- id: ink_banner_choice_03_03
+  placeId: ink_banner_place_03
+  label: Check the tool tag at Kite Barracks
+  requires: []
+  intentKind: inspect
+  stake: a declined invitation
+- id: ink_banner_choice_03_04
+  placeId: ink_banner_place_03
+  label: Offer a hand at Kite Barracks
+  requires: []
+  intentKind: interact
+  stake: a public note
+- id: ink_banner_choice_03_05
+  placeId: ink_banner_place_03
+  label: Take the safer route at Kite Barracks
+  requires:
+  - ink_banner_item_05
+  intentKind: travel
+  stake: a short detour
+- id: ink_banner_choice_03_06
+  placeId: ink_banner_place_03
+  label: Open the local record at Kite Barracks
+  requires:
+  - ink_banner_item_06
+  intentKind: interact
+  stake: one turn
+- id: ink_banner_choice_03_07
+  placeId: ink_banner_place_03
+  label: Rest at the bench at Kite Barracks
+  requires:
+  - ink_banner_item_07
+  intentKind: rest
+  stake: one supply
+- id: ink_banner_choice_03_08
+  placeId: ink_banner_place_03
+  label: Repair the marker at Kite Barracks
+  requires:
+  - ink_banner_item_08
+  intentKind: interact
+  stake: a declined invitation
+- id: ink_banner_choice_03_09
+  placeId: ink_banner_place_03
+  label: Prepare a shared item at Kite Barracks
+  requires:
+  - ink_banner_item_09
+  intentKind: craft
+  stake: a public note
+- id: ink_banner_choice_03_10
+  placeId: ink_banner_place_03
+  label: Leave a kind note at Kite Barracks
+  requires:
+  - ink_banner_item_10
+  intentKind: talk
+  stake: a short detour
+- id: ink_banner_choice_04_01
+  placeId: ink_banner_place_04
+  label: Read the notice at Red Seal Road
+  requires: []
+  intentKind: talk
+  stake: one turn
+- id: ink_banner_choice_04_02
+  placeId: ink_banner_place_04
+  label: Ask for an introduction at Red Seal Road
+  requires: []
+  intentKind: talk
+  stake: one supply
+- id: ink_banner_choice_04_03
+  placeId: ink_banner_place_04
+  label: Check the tool tag at Red Seal Road
+  requires: []
+  intentKind: inspect
+  stake: a declined invitation
+- id: ink_banner_choice_04_04
+  placeId: ink_banner_place_04
+  label: Offer a hand at Red Seal Road
+  requires: []
+  intentKind: interact
+  stake: a public note
+- id: ink_banner_choice_04_05
+  placeId: ink_banner_place_04
+  label: Take the safer route at Red Seal Road
+  requires:
+  - ink_banner_item_05
+  intentKind: travel
+  stake: a short detour
+- id: ink_banner_choice_04_06
+  placeId: ink_banner_place_04
+  label: Open the local record at Red Seal Road
+  requires:
+  - ink_banner_item_06
+  intentKind: interact
+  stake: one turn
+- id: ink_banner_choice_04_07
+  placeId: ink_banner_place_04
+  label: Rest at the bench at Red Seal Road
+  requires:
+  - ink_banner_item_07
+  intentKind: rest
+  stake: one supply
+- id: ink_banner_choice_04_08
+  placeId: ink_banner_place_04
+  label: Repair the marker at Red Seal Road
+  requires:
+  - ink_banner_item_08
+  intentKind: interact
+  stake: a declined invitation
+- id: ink_banner_choice_04_09
+  placeId: ink_banner_place_04
+  label: Prepare a shared item at Red Seal Road
+  requires:
+  - ink_banner_item_09
+  intentKind: craft
+  stake: a public note
+- id: ink_banner_choice_04_10
+  placeId: ink_banner_place_04
+  label: Leave a kind note at Red Seal Road
+  requires:
+  - ink_banner_item_10
+  intentKind: talk
+  stake: a short detour
+- id: ink_banner_choice_05_01
+  placeId: ink_banner_place_05
+  label: Read the notice at Cedar Watch
+  requires: []
+  intentKind: talk
+  stake: one turn
+- id: ink_banner_choice_05_02
+  placeId: ink_banner_place_05
+  label: Ask for an introduction at Cedar Watch
+  requires: []
+  intentKind: talk
+  stake: one supply
+- id: ink_banner_choice_05_03
+  placeId: ink_banner_place_05
+  label: Check the tool tag at Cedar Watch
+  requires: []
+  intentKind: inspect
+  stake: a declined invitation
+- id: ink_banner_choice_05_04
+  placeId: ink_banner_place_05
+  label: Offer a hand at Cedar Watch
+  requires: []
+  intentKind: interact
+  stake: a public note
+- id: ink_banner_choice_05_05
+  placeId: ink_banner_place_05
+  label: Take the safer route at Cedar Watch
+  requires:
+  - ink_banner_item_05
+  intentKind: travel
+  stake: a short detour
+- id: ink_banner_choice_05_06
+  placeId: ink_banner_place_05
+  label: Open the local record at Cedar Watch
+  requires:
+  - ink_banner_item_06
+  intentKind: interact
+  stake: one turn
+- id: ink_banner_choice_05_07
+  placeId: ink_banner_place_05
+  label: Rest at the bench at Cedar Watch
+  requires:
+  - ink_banner_item_07
+  intentKind: rest
+  stake: one supply
+- id: ink_banner_choice_05_08
+  placeId: ink_banner_place_05
+  label: Repair the marker at Cedar Watch
+  requires:
+  - ink_banner_item_08
+  intentKind: interact
+  stake: a declined invitation
+- id: ink_banner_choice_05_09
+  placeId: ink_banner_place_05
+  label: Prepare a shared item at Cedar Watch
+  requires:
+  - ink_banner_item_09
+  intentKind: craft
+  stake: a public note
+- id: ink_banner_choice_05_10
+  placeId: ink_banner_place_05
+  label: Leave a kind note at Cedar Watch
+  requires:
+  - ink_banner_item_10
+  intentKind: talk
+  stake: a short detour
+- id: ink_banner_choice_06_01
+  placeId: ink_banner_place_06
+  label: Read the notice at The Quiet Standard
+  requires: []
+  intentKind: talk
+  stake: one turn
+- id: ink_banner_choice_06_02
+  placeId: ink_banner_place_06
+  label: Ask for an introduction at The Quiet Standard
+  requires: []
+  intentKind: talk
+  stake: one supply
+- id: ink_banner_choice_06_03
+  placeId: ink_banner_place_06
+  label: Check the tool tag at The Quiet Standard
+  requires: []
+  intentKind: inspect
+  stake: a declined invitation
+- id: ink_banner_choice_06_04
+  placeId: ink_banner_place_06
+  label: Offer a hand at The Quiet Standard
+  requires: []
+  intentKind: interact
+  stake: a public note
+- id: ink_banner_choice_06_05
+  placeId: ink_banner_place_06
+  label: Take the safer route at The Quiet Standard
+  requires:
+  - ink_banner_item_05
+  intentKind: travel
+  stake: a short detour
+- id: ink_banner_choice_06_06
+  placeId: ink_banner_place_06
+  label: Open the local record at The Quiet Standard
+  requires:
+  - ink_banner_item_06
+  intentKind: interact
+  stake: one turn
+- id: ink_banner_choice_06_07
+  placeId: ink_banner_place_06
+  label: Rest at the bench at The Quiet Standard
+  requires:
+  - ink_banner_item_07
+  intentKind: rest
+  stake: one supply
+- id: ink_banner_choice_06_08
+  placeId: ink_banner_place_06
+  label: Repair the marker at The Quiet Standard
+  requires:
+  - ink_banner_item_08
+  intentKind: interact
+  stake: a declined invitation
+- id: ink_banner_choice_06_09
+  placeId: ink_banner_place_06
+  label: Prepare a shared item at The Quiet Standard
+  requires:
+  - ink_banner_item_09
+  intentKind: craft
+  stake: a public note
+- id: ink_banner_choice_06_10
+  placeId: ink_banner_place_06
+  label: Leave a kind note at The Quiet Standard
+  requires:
+  - ink_banner_item_10
+  intentKind: talk
+  stake: a short detour
+- id: ink_banner_choice_07_01
+  placeId: ink_banner_place_07
+  label: Read the notice at Lacquer Bridge
+  requires: []
+  intentKind: talk
+  stake: one turn
+- id: ink_banner_choice_07_02
+  placeId: ink_banner_place_07
+  label: Ask for an introduction at Lacquer Bridge
+  requires: []
+  intentKind: talk
+  stake: one supply
+- id: ink_banner_choice_07_03
+  placeId: ink_banner_place_07
+  label: Check the tool tag at Lacquer Bridge
+  requires: []
+  intentKind: inspect
+  stake: a declined invitation
+- id: ink_banner_choice_07_04
+  placeId: ink_banner_place_07
+  label: Offer a hand at Lacquer Bridge
+  requires: []
+  intentKind: interact
+  stake: a public note
+- id: ink_banner_choice_07_05
+  placeId: ink_banner_place_07
+  label: Take the safer route at Lacquer Bridge
+  requires:
+  - ink_banner_item_05
+  intentKind: travel
+  stake: a short detour
+- id: ink_banner_choice_07_06
+  placeId: ink_banner_place_07
+  label: Open the local record at Lacquer Bridge
+  requires:
+  - ink_banner_item_06
+  intentKind: interact
+  stake: one turn
+- id: ink_banner_choice_07_07
+  placeId: ink_banner_place_07
+  label: Rest at the bench at Lacquer Bridge
+  requires:
+  - ink_banner_item_07
+  intentKind: rest
+  stake: one supply
+- id: ink_banner_choice_07_08
+  placeId: ink_banner_place_07
+  label: Repair the marker at Lacquer Bridge
+  requires:
+  - ink_banner_item_08
+  intentKind: interact
+  stake: a declined invitation
+- id: ink_banner_choice_07_09
+  placeId: ink_banner_place_07
+  label: Prepare a shared item at Lacquer Bridge
+  requires:
+  - ink_banner_item_09
+  intentKind: craft
+  stake: a public note
+- id: ink_banner_choice_07_10
+  placeId: ink_banner_place_07
+  label: Leave a kind note at Lacquer Bridge
+  requires:
+  - ink_banner_item_10
+  intentKind: talk
+  stake: a short detour
+- id: ink_banner_choice_08_01
+  placeId: ink_banner_place_08
+  label: Read the notice at Willow Muster
+  requires: []
+  intentKind: talk
+  stake: one turn
+- id: ink_banner_choice_08_02
+  placeId: ink_banner_place_08
+  label: Ask for an introduction at Willow Muster
+  requires: []
+  intentKind: talk
+  stake: one supply
+- id: ink_banner_choice_08_03
+  placeId: ink_banner_place_08
+  label: Check the tool tag at Willow Muster
+  requires: []
+  intentKind: inspect
+  stake: a declined invitation
+- id: ink_banner_choice_08_04
+  placeId: ink_banner_place_08
+  label: Offer a hand at Willow Muster
+  requires: []
+  intentKind: interact
+  stake: a public note
+- id: ink_banner_choice_08_05
+  placeId: ink_banner_place_08
+  label: Take the safer route at Willow Muster
+  requires:
+  - ink_banner_item_05
+  intentKind: travel
+  stake: a short detour
+- id: ink_banner_choice_08_06
+  placeId: ink_banner_place_08
+  label: Open the local record at Willow Muster
+  requires:
+  - ink_banner_item_06
+  intentKind: interact
+  stake: one turn
+- id: ink_banner_choice_08_07
+  placeId: ink_banner_place_08
+  label: Rest at the bench at Willow Muster
+  requires:
+  - ink_banner_item_07
+  intentKind: rest
+  stake: one supply
+- id: ink_banner_choice_08_08
+  placeId: ink_banner_place_08
+  label: Repair the marker at Willow Muster
+  requires:
+  - ink_banner_item_08
+  intentKind: interact
+  stake: a declined invitation
+- id: ink_banner_choice_08_09
+  placeId: ink_banner_place_08
+  label: Prepare a shared item at Willow Muster
+  requires:
+  - ink_banner_item_09
+  intentKind: craft
+  stake: a public note
+- id: ink_banner_choice_08_10
+  placeId: ink_banner_place_08
+  label: Leave a kind note at Willow Muster
+  requires:
+  - ink_banner_item_10
+  intentKind: talk
+  stake: a short detour
+interactables:
+- id: ink_banner_interact_01
+  verbId: rest
+  publicName: Banner Gate bench
+  placeId: ink_banner_place_01
+  displayVerb: Rest here
+  stateKey: ink_banner_rest_01
+- id: ink_banner_interact_02
+  verbId: repair
+  publicName: Reed Court cabinet
+  placeId: ink_banner_place_02
+  displayVerb: Repair here
+  stateKey: ink_banner_repair_02
+- id: ink_banner_interact_03
+  verbId: tend
+  publicName: Kite Barracks rack
+  placeId: ink_banner_place_03
+  displayVerb: Tend here
+  stateKey: ink_banner_tend_03
+- id: ink_banner_interact_04
+  verbId: craft
+  publicName: Red Seal Road kettle
+  placeId: ink_banner_place_04
+  displayVerb: Craft here
+  stateKey: ink_banner_craft_04
+- id: ink_banner_interact_05
+  verbId: cook
+  publicName: Cedar Watch ledger
+  placeId: ink_banner_place_05
+  displayVerb: Cook here
+  stateKey: ink_banner_cook_05
+- id: ink_banner_interact_06
+  verbId: bind_inn
+  publicName: The Quiet Standard rail
+  placeId: ink_banner_place_06
+  displayVerb: Bind Inn here
+  stateKey: ink_banner_bind_inn_06
+- id: ink_banner_interact_07
+  verbId: inspect
+  publicName: Lacquer Bridge bell
+  placeId: ink_banner_place_07
+  displayVerb: Inspect here
+  stateKey: ink_banner_inspect_07
+- id: ink_banner_interact_08
+  verbId: open
+  publicName: Willow Muster board
+  placeId: ink_banner_place_08
+  displayVerb: Open here
+  stateKey: ink_banner_open_08
+- id: ink_banner_interact_09
+  verbId: carry
+  publicName: Banner Gate table
+  placeId: ink_banner_place_01
+  displayVerb: Carry here
+  stateKey: ink_banner_carry_09
+- id: ink_banner_interact_10
+  verbId: clean
+  publicName: Reed Court lamp
+  placeId: ink_banner_place_02
+  displayVerb: Clean here
+  stateKey: ink_banner_clean_10
+- id: ink_banner_interact_11
+  verbId: signal
+  publicName: Kite Barracks gate
+  placeId: ink_banner_place_03
+  displayVerb: Signal here
+  stateKey: ink_banner_signal_11
+- id: ink_banner_interact_12
+  verbId: record
+  publicName: Red Seal Road shelf
+  placeId: ink_banner_place_04
+  displayVerb: Record here
+  stateKey: ink_banner_record_12
+interiors:
+- id: ink_banner_interior_01
+  publicName: Ink Banner Home Interior
+  entrancePlaceId: ink_banner_place_08
+  rooms:
+  - id: ink_banner_home_room_01
+    publicName: Ink Banner Entry
+    mapScale: interior
+    exits:
+    - ink_banner_home_room_02
+    props:
+    - ink_banner_home_prop_01
+    - ink_banner_home_prop_08
+  - id: ink_banner_home_room_02
+    publicName: Ink Banner Main Room
+    mapScale: interior
+    exits:
+    - ink_banner_home_room_01
+    - ink_banner_home_room_03
+    props:
+    - ink_banner_home_prop_02
+    - ink_banner_home_prop_09
+  - id: ink_banner_home_room_03
+    publicName: Ink Banner Work Nook
+    mapScale: interior
+    exits:
+    - ink_banner_home_room_02
+    - ink_banner_home_room_04
+    props:
+    - ink_banner_home_prop_03
+    - ink_banner_home_prop_10
+  - id: ink_banner_home_room_04
+    publicName: Ink Banner Window Room
+    mapScale: interior
+    exits:
+    - ink_banner_home_room_03
+    - ink_banner_home_room_05
+    props:
+    - ink_banner_home_prop_04
+    - ink_banner_home_prop_11
+  - id: ink_banner_home_room_05
+    publicName: Ink Banner Quiet Room
+    mapScale: interior
+    exits:
+    - ink_banner_home_room_04
+    - ink_banner_home_room_06
+    props:
+    - ink_banner_home_prop_05
+    - ink_banner_home_prop_12
+  - id: ink_banner_home_room_06
+    publicName: Ink Banner Storage
+    mapScale: interior
+    exits:
+    - ink_banner_home_room_05
+    - ink_banner_home_room_07
+    props:
+    - ink_banner_home_prop_06
+    - ink_banner_home_prop_13
+  - id: ink_banner_home_room_07
+    publicName: Ink Banner Back Step
+    mapScale: interior
+    exits:
+    - ink_banner_home_room_06
+    props:
+    - ink_banner_home_prop_07
+    - ink_banner_home_prop_14
+talents:
+- id: ink_banner_talent_01
+  publicName: Ink Banner Local Ear
+  cost: 1
+  requires: []
+  effectFlags:
+  - ink_banner_effect_01
+  payToUnlock: false
+- id: ink_banner_talent_02
+  publicName: Ink Banner Careful Hand
+  cost: 2
+  requires: []
+  effectFlags:
+  - ink_banner_effect_02
+  payToUnlock: false
+- id: ink_banner_talent_03
+  publicName: Ink Banner Route Sense
+  cost: 3
+  requires: []
+  effectFlags:
+  - ink_banner_effect_03
+  payToUnlock: false
+- id: ink_banner_talent_04
+  publicName: Ink Banner Shared Measure
+  cost: 4
+  requires: []
+  effectFlags:
+  - ink_banner_effect_04
+  payToUnlock: false
+- id: ink_banner_talent_05
+  publicName: Ink Banner Quiet Craft
+  cost: 1
+  requires:
+  - ink_banner_talent_04
+  effectFlags:
+  - ink_banner_effect_05
+  payToUnlock: false
+- id: ink_banner_talent_06
+  publicName: Ink Banner Open Invitation
+  cost: 2
+  requires: []
+  effectFlags:
+  - ink_banner_effect_06
+  payToUnlock: false
+- id: ink_banner_talent_07
+  publicName: Ink Banner Safe Return
+  cost: 3
+  requires: []
+  effectFlags:
+  - ink_banner_effect_07
+  payToUnlock: false
+- id: ink_banner_talent_08
+  publicName: Ink Banner Field Note
+  cost: 4
+  requires: []
+  effectFlags:
+  - ink_banner_effect_08
+  payToUnlock: false
+- id: ink_banner_talent_09
+  publicName: Ink Banner Steady Pace
+  cost: 1
+  requires:
+  - ink_banner_talent_08
+  effectFlags:
+  - ink_banner_effect_09
+  payToUnlock: false
+- id: ink_banner_talent_10
+  publicName: Ink Banner Clear Signal
+  cost: 2
+  requires: []
+  effectFlags:
+  - ink_banner_effect_10
+  payToUnlock: false
+- id: ink_banner_talent_11
+  publicName: Ink Banner Warm Welcome
+  cost: 3
+  requires: []
+  effectFlags:
+  - ink_banner_effect_11
+  payToUnlock: false
+- id: ink_banner_talent_12
+  publicName: Ink Banner Small Courage
+  cost: 4
+  requires: []
+  effectFlags:
+  - ink_banner_effect_12
+  payToUnlock: false
+- id: ink_banner_talent_13
+  publicName: Ink Banner Repair Habit
+  cost: 1
+  requires:
+  - ink_banner_talent_12
+  effectFlags:
+  - ink_banner_effect_13
+  payToUnlock: false
+- id: ink_banner_talent_14
+  publicName: Ink Banner Trust Mark
+  cost: 2
+  requires: []
+  effectFlags:
+  - ink_banner_effect_14
+  payToUnlock: false
+- id: ink_banner_talent_15
+  publicName: Ink Banner Second Look
+  cost: 3
+  requires: []
+  effectFlags:
+  - ink_banner_effect_15
+  payToUnlock: false
+- id: ink_banner_talent_16
+  publicName: Ink Banner Closing Grace
+  cost: 4
+  requires: []
+  effectFlags:
+  - ink_banner_effect_16
+  payToUnlock: false
+evalProbes:
+- id: ink_banner_eval_01
+  given:
+    hp: 18
+    placeId: ink_banner_place_01
+    turn: 1
+  action:
+    verbId: rest
+    targetId: ink_banner_interact_01
+  expectedLedger:
+    turn: 2
+    lastAction: rest
+    placeId: ink_banner_place_01
+  forbiddenProse:
+  - do not claim an uncommitted numeric reward
+  - do not alter damage, gold, ownership, or a score outside expectedLedger
+- id: ink_banner_eval_02
+  given:
+    hp: 18
+    placeId: ink_banner_place_02
+    turn: 2
+  action:
+    verbId: repair
+    targetId: ink_banner_interact_02
+  expectedLedger:
+    turn: 3
+    lastAction: repair
+    placeId: ink_banner_place_02
+  forbiddenProse:
+  - do not claim an uncommitted numeric reward
+  - do not alter damage, gold, ownership, or a score outside expectedLedger
+- id: ink_banner_eval_03
+  given:
+    hp: 18
+    placeId: ink_banner_place_03
+    turn: 3
+  action:
+    verbId: tend
+    targetId: ink_banner_interact_03
+  expectedLedger:
+    turn: 4
+    lastAction: tend
+    placeId: ink_banner_place_03
+  forbiddenProse:
+  - do not claim an uncommitted numeric reward
+  - do not alter damage, gold, ownership, or a score outside expectedLedger
+- id: ink_banner_eval_04
+  given:
+    hp: 18
+    placeId: ink_banner_place_04
+    turn: 4
+  action:
+    verbId: craft
+    targetId: ink_banner_interact_04
+  expectedLedger:
+    turn: 5
+    lastAction: craft
+    placeId: ink_banner_place_04
+  forbiddenProse:
+  - do not claim an uncommitted numeric reward
+  - do not alter damage, gold, ownership, or a score outside expectedLedger
+- id: ink_banner_eval_05
+  given:
+    hp: 18
+    placeId: ink_banner_place_05
+    turn: 5
+  action:
+    verbId: cook
+    targetId: ink_banner_interact_05
+  expectedLedger:
+    turn: 6
+    lastAction: cook
+    placeId: ink_banner_place_05
+  forbiddenProse:
+  - do not claim an uncommitted numeric reward
+  - do not alter damage, gold, ownership, or a score outside expectedLedger
+- id: ink_banner_eval_06
+  given:
+    hp: 18
+    placeId: ink_banner_place_06
+    turn: 6
+  action:
+    verbId: bind_inn
+    targetId: ink_banner_interact_06
+  expectedLedger:
+    turn: 7
+    lastAction: bind_inn
+    placeId: ink_banner_place_06
+  forbiddenProse:
+  - do not claim an uncommitted numeric reward
+  - do not alter damage, gold, ownership, or a score outside expectedLedger
+- id: ink_banner_eval_07
+  given:
+    hp: 18
+    placeId: ink_banner_place_07
+    turn: 7
+  action:
+    verbId: inspect
+    targetId: ink_banner_interact_07
+  expectedLedger:
+    turn: 8
+    lastAction: inspect
+    placeId: ink_banner_place_07
+  forbiddenProse:
+  - do not claim an uncommitted numeric reward
+  - do not alter damage, gold, ownership, or a score outside expectedLedger
+- id: ink_banner_eval_08
+  given:
+    hp: 18
+    placeId: ink_banner_place_08
+    turn: 8
+  action:
+    verbId: open
+    targetId: ink_banner_interact_08
+  expectedLedger:
+    turn: 9
+    lastAction: open
+    placeId: ink_banner_place_08
+  forbiddenProse:
+  - do not claim an uncommitted numeric reward
+  - do not alter damage, gold, ownership, or a score outside expectedLedger
+- id: ink_banner_eval_09
+  given:
+    hp: 18
+    placeId: ink_banner_place_01
+    turn: 9
+  action:
+    verbId: carry
+    targetId: ink_banner_interact_09
+  expectedLedger:
+    turn: 10
+    lastAction: carry
+    placeId: ink_banner_place_01
+  forbiddenProse:
+  - do not claim an uncommitted numeric reward
+  - do not alter damage, gold, ownership, or a score outside expectedLedger
+- id: ink_banner_eval_10
+  given:
+    hp: 18
+    placeId: ink_banner_place_02
+    turn: 10
+  action:
+    verbId: clean
+    targetId: ink_banner_interact_10
+  expectedLedger:
+    turn: 11
+    lastAction: clean
+    placeId: ink_banner_place_02
+  forbiddenProse:
+  - do not claim an uncommitted numeric reward
+  - do not alter damage, gold, ownership, or a score outside expectedLedger
+- id: ink_banner_eval_11
+  given:
+    hp: 18
+    placeId: ink_banner_place_03
+    turn: 11
+  action:
+    verbId: signal
+    targetId: ink_banner_interact_11
+  expectedLedger:
+    turn: 12
+    lastAction: signal
+    placeId: ink_banner_place_03
+  forbiddenProse:
+  - do not claim an uncommitted numeric reward
+  - do not alter damage, gold, ownership, or a score outside expectedLedger
+- id: ink_banner_eval_12
+  given:
+    hp: 18
+    placeId: ink_banner_place_04
+    turn: 12
+  action:
+    verbId: record
+    targetId: ink_banner_interact_12
+  expectedLedger:
+    turn: 13
+    lastAction: record
+    placeId: ink_banner_place_04
+  forbiddenProse:
+  - do not claim an uncommitted numeric reward
+  - do not alter damage, gold, ownership, or a score outside expectedLedger
+- id: ink_banner_eval_13
+  given:
+    hp: 18
+    placeId: ink_banner_place_05
+    turn: 13
+  action:
+    verbId: rest
+    targetId: ink_banner_interact_01
+  expectedLedger:
+    turn: 14
+    lastAction: rest
+    placeId: ink_banner_place_05
+  forbiddenProse:
+  - do not claim an uncommitted numeric reward
+  - do not alter damage, gold, ownership, or a score outside expectedLedger
+- id: ink_banner_eval_14
+  given:
+    hp: 18
+    placeId: ink_banner_place_06
+    turn: 14
+  action:
+    verbId: repair
+    targetId: ink_banner_interact_02
+  expectedLedger:
+    turn: 15
+    lastAction: repair
+    placeId: ink_banner_place_06
+  forbiddenProse:
+  - do not claim an uncommitted numeric reward
+  - do not alter damage, gold, ownership, or a score outside expectedLedger
+- id: ink_banner_eval_15
+  given:
+    hp: 18
+    placeId: ink_banner_place_07
+    turn: 15
+  action:
+    verbId: tend
+    targetId: ink_banner_interact_03
+  expectedLedger:
+    turn: 16
+    lastAction: tend
+    placeId: ink_banner_place_07
+  forbiddenProse:
+  - do not claim an uncommitted numeric reward
+  - do not alter damage, gold, ownership, or a score outside expectedLedger
+wallets:
+  goldName: Seal Coin
+  cosmeticTokenName: Banner Threads
+  noConversion: true
+  prohibited:
+  - outcomes
+  - lockout skips
+  - catch rate
+  - raid clears
+  - random power packs
+  - gacha
+  - loot boxes
+dailyCaps:
+  contractsPerDay: 3
+  goldFromRepeatables: 90
+  weeklyBossLockout: per-character per-boss
+divergenceRecords:
+- id: ink_banner_walkaway_01
+  choice: walk away from a local obligation
+  recordKey: ink_banner_divergence_01
+  effect: Alternate dialogue and a non-punitive follow-up route.
+- id: ink_banner_walkaway_02
+  choice: walk away from a local obligation
+  recordKey: ink_banner_divergence_02
+  effect: Alternate dialogue and a non-punitive follow-up route.
+- id: ink_banner_walkaway_03
+  choice: walk away from a local obligation
+  recordKey: ink_banner_divergence_03
+  effect: Alternate dialogue and a non-punitive follow-up route.

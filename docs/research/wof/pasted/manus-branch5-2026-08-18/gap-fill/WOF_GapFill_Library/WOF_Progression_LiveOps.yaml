@@ -1,0 +1,174 @@
+packFormatVersion: 1
+fileId: WOF_Progression_LiveOps
+worldId: ash_compact
+publicLabel: Ash Compact Progression and Live Ops
+scope: WOF-only typed data; no production code; no live-service import
+engineDefaults:
+  levelRange: {min: 1, max: 30}
+  restedXp: {enabled: false, reason: "Rested XP is not shipped in v1."}
+  xpSoftCapLevel: 30
+  turnBilling: {hubStory: 1, chat: 0, auctionBrowse: 0, mail: 0, idle: 0, roundResolve: 1}
+  combat: {partyMin: 1, partyMax: 5, raidSize: 10, lockstep: true, midCombatFill: false, personalLoot: true, wipeReturnsToCheckpoint: true}
+  lockouts: {scope: per_character_per_boss, cadence: weekly}
+  wallets: [gold, cosmetic_tokens]
+  monetizationForbidden: [power_items, outcome_sales, lockout_skips, catch_rate_packs, loot_boxes, gacha, gambling]
+  social: {friendsFirstFinder: true, globalChat: false, publicDmForKidMode: false, publicTradeForKidMode: false}
+  productLabel: "solo / private co-op / limited online region"
+  speculativeNumbersPrefix: SPEC
+xpCurve:
+  description: "Code-owned cumulative XP required to reach each level; level 1 starts at zero."
+  table:
+    - {level: 1, xpTotal: 0, xpToNext: 100}
+    - {level: 2, xpTotal: 100, xpToNext: 130}
+    - {level: 3, xpTotal: 230, xpToNext: 165}
+    - {level: 4, xpTotal: 395, xpToNext: 205}
+    - {level: 5, xpTotal: 600, xpToNext: 250}
+    - {level: 6, xpTotal: 850, xpToNext: 300}
+    - {level: 7, xpTotal: 1150, xpToNext: 355}
+    - {level: 8, xpTotal: 1505, xpToNext: 415}
+    - {level: 9, xpTotal: 1920, xpToNext: 480}
+    - {level: 10, xpTotal: 2400, xpToNext: 550}
+    - {level: 11, xpTotal: 2950, xpToNext: 625}
+    - {level: 12, xpTotal: 3575, xpToNext: 705}
+    - {level: 13, xpTotal: 4280, xpToNext: 790}
+    - {level: 14, xpTotal: 5070, xpToNext: 880}
+    - {level: 15, xpTotal: 5950, xpToNext: 975}
+    - {level: 16, xpTotal: 6925, xpToNext: 1075}
+    - {level: 17, xpTotal: 8000, xpToNext: 1180}
+    - {level: 18, xpTotal: 9180, xpToNext: 1290}
+    - {level: 19, xpTotal: 10470, xpToNext: 1405}
+    - {level: 20, xpTotal: 11875, xpToNext: 1525}
+    - {level: 21, xpTotal: 13400, xpToNext: 1650}
+    - {level: 22, xpTotal: 15050, xpToNext: 1780}
+    - {level: 23, xpTotal: 16830, xpToNext: 1915}
+    - {level: 24, xpTotal: 18745, xpToNext: 2055}
+    - {level: 25, xpTotal: 20800, xpToNext: 2200}
+    - {level: 26, xpTotal: 23000, xpToNext: 2350}
+    - {level: 27, xpTotal: 25350, xpToNext: 2505}
+    - {level: 28, xpTotal: 27855, xpToNext: 2665}
+    - {level: 29, xpTotal: 30520, xpToNext: 2830}
+    - {level: 30, xpTotal: 33350, xpToNext: 0}
+  softCap: "At level 30, earned XP is recorded as xp_overflow for achievement and contract checks; no level 31 exists in v1."
+contracts:
+  refreshPolicy: weekly_tick
+  payToRefresh: false
+  templates:
+    - {id: contract_repair_posts, scope: local, objective: repair_marker, target: 3, rewardXp: 90, rewardGold: 18, capPerWeek: 3}
+    - {id: contract_gather_reed, scope: local, objective: collect_item, itemId: material_dry_reed, target: 8, rewardXp: 80, rewardGold: 14, capPerWeek: 3}
+    - {id: contract_gather_wick, scope: local, objective: collect_item, itemId: material_blue_wick, target: 8, rewardXp: 85, rewardGold: 16, capPerWeek: 3}
+    - {id: contract_gather_salt, scope: local, objective: collect_item, itemId: material_brine_salt, target: 8, rewardXp: 85, rewardGold: 16, capPerWeek: 3}
+    - {id: contract_gather_ore, scope: local, objective: collect_item, itemId: material_ore_chip, target: 8, rewardXp: 90, rewardGold: 18, capPerWeek: 3}
+    - {id: contract_fen_mill, scope: local, objective: complete_interactable, interactableId: mill_wheel, target: 2, rewardXp: 110, rewardGold: 22, capPerWeek: 2}
+    - {id: contract_instance_clear, scope: compact, objective: clear_instance, target: 1, rewardXp: 220, rewardGold: 40, capPerWeek: 2}
+    - {id: contract_personal_loot, scope: compact, objective: claim_personal_loot, target: 3, rewardXp: 120, rewardGold: 20, capPerWeek: 2}
+    - {id: contract_faction_promise, scope: faction, objective: complete_promise, target: 2, rewardXp: 180, rewardGold: 35, capPerWeek: 2}
+    - {id: contract_craft_supplies, scope: local, objective: craft_recipe, target: 4, rewardXp: 100, rewardGold: 24, capPerWeek: 3}
+reputation:
+  scope: local_trust_not_world_save
+  factions:
+    - {id: faction_ash_compact, name: Ash Compact, startingStanding: 0, maxRank: 6}
+    - {id: faction_tide_covenant, name: Tide Covenant, startingStanding: 0, maxRank: 6}
+  ranks:
+    - {rank: 0, name: Unrecorded, threshold: 0, benefits: [local_gossip]}
+    - {rank: 1, name: Noted, threshold: 100, benefits: [basic_vendor_stock]}
+    - {rank: 2, name: Trusted, threshold: 250, benefits: [one_contract_reroll_free_weekly]}
+    - {rank: 3, name: Sworn, threshold: 500, benefits: [faction_cosmetic_unlock]}
+    - {rank: 4, name: Proven, threshold: 900, benefits: [capital_vendor_discount_5_percent]}
+    - {rank: 5, name: Pillar, threshold: 1400, benefits: [faction_title]}
+    - {rank: 6, name: Sealkeeper, threshold: 2000, benefits: [faction_cosmetic_set_piece, promise_board_bonus]}
+  standingSources:
+    - {source: local_quest_turnin, amountRange: [10, 35]}
+    - {source: weekly_contract, amountRange: [12, 30]}
+    - {source: faction_promise, amountRange: [25, 70]}
+  standingSinks:
+    - {source: failed_promise, amount: -10}
+    - {source: abandon_promise, amount: -5}
+achievements:
+  titlesTab: true
+  catalog:
+    - {id: ach_first_wick, title: First Wick, flag: completed_lanternfolk_intro}
+    - {id: ach_hearth_request, title: Measured Help, flag: completed_hearthborn_intro}
+    - {id: ach_flats_listened, title: Tide Listener, flag: completed_saltkin_intro}
+    - {id: ach_stair_seam, title: Seam Witness, flag: completed_stonevein_intro}
+    - {id: ach_four_starts, title: Four Roads, flag: completed_all_start_intros}
+    - {id: ach_mill_turns, title: Wheel-Keeper, flag: completed_miller_chain}
+    - {id: ach_path_marked, title: Road Memory, flag: completed_pathwarden_chain}
+    - {id: ach_wickline, title: Night-Line Tender, flag: completed_wick_chain}
+    - {id: ach_fisher_stall, title: Fed the Pier, flag: completed_fisher_chain}
+    - {id: ach_smith_spine, title: Tool with a Spine, flag: completed_smith_chain}
+    - {id: ach_dike_witness, title: Dike Witness, flag: completed_reedfen_zone_chain}
+    - {id: ach_lampwood_guard, title: Coppice Guard, flag: completed_lampwood_zone_chain}
+    - {id: ach_brinewatch_guard, title: Flats Corrected, flag: completed_brinewatch_zone_chain}
+    - {id: ach_granite_guard, title: Stair Honest, flag: completed_granite_zone_chain}
+    - {id: ach_gate_clear, title: Gate Unbarred, flag: cleared_dungeon_lampwood_gate}
+    - {id: ach_hollow_clear, title: Hollow Rekindled, flag: cleared_dungeon_unlit_hollow}
+    - {id: ach_warehouse_clear, title: Warehouse Secured, flag: cleared_dungeon_coil_warehouse}
+    - {id: ach_anvil_clear, title: Deep Surveyor, flag: cleared_dungeon_anvil_deep}
+    - {id: ach_divide_route, title: Divide Walker, flag: visited_poi_the_divide}
+    - {id: ach_ash_seat, title: Seat of Measures, flag: visited_poi_ash_seat}
+    - {id: ach_tidehold, title: Tidehold Guest, flag: visited_poi_tidehold}
+    - {id: ach_two_seals, title: Two Seals, flag: reached_rank_2_both_factions}
+    - {id: ach_promise_board, title: Board Regular, flag: completed_12_capital_promises}
+    - {id: ach_personal_loot, title: Personal Claim, flag: claimed_25_personal_loot_grants}
+    - {id: ach_checkpoint, title: Checkpoint Keeper, flag: reached_10_checkpoints}
+    - {id: ach_wipe_return, title: Returned to the Door, flag: recovered_from_wipe}
+    - {id: ach_millstone_phase, title: Hollow Phasekeeper, flag: cleared_one_millstone_phase}
+    - {id: ach_millstone_clear, title: Millstone Hollow Clear, flag: cleared_millstone_hollow}
+    - {id: ach_craft_ledger, title: Bench Ledger, flag: crafted_40_items}
+    - {id: ach_compact_level, title: Sealkeeper, flag: reached_level_30}
+collectionLog:
+  schemaVersion: 1
+  entryTypes:
+    creatures: {fields: [entryId, speciesId, displayName, firstSeenPlaceId, defeatedCount, personalLootSeen, discoveredAt], codeOwned: true}
+    cards: {fields: [entryId, cardId, displayName, sourceId, quantity, firstObtainedAt], codeOwned: true}
+    cosmetics: {fields: [entryId, cosmeticId, displayName, sourceType, unlockedAt, accountBound], codeOwned: true}
+  rules: {countsPerCharacter: true, cosmeticsAccountWide: true, no_power_from_collection: true, llmMayNarrate: [discovery_flavor, committed_entry_description]}
+festivalCalendar:
+  clockBasis: compact_month_analog
+  rows:
+    - {month: 1, id: festival_first_ember, name: First Ember Measure, clockReuse: weekly_tick, rewardType: cosmetics_only}
+    - {month: 2, id: festival_reed_marking, name: Reed Marking, clockReuse: daily_gather_cap, rewardType: cosmetics_only}
+    - {month: 3, id: festival_wick_turn, name: Wick-Turn Night, clockReuse: day_night, rewardType: cosmetics_only}
+    - {month: 4, id: festival_floodline, name: Floodline Watch, clockReuse: tide_tick, rewardType: cosmetics_only}
+    - {month: 5, id: festival_stone_showing, name: Stone Showing, clockReuse: weekly_tick, rewardType: cosmetics_only}
+    - {month: 6, id: festival_divide_market, name: Divide Market, clockReuse: ah_week, rewardType: cosmetics_only}
+    - {month: 7, id: festival_ash_seat_day, name: Ash Seat Day, clockReuse: faction_week, rewardType: cosmetics_only}
+    - {month: 8, id: festival_tidehold_charter, name: Tidehold Charter, clockReuse: faction_week, rewardType: cosmetics_only}
+    - {month: 9, id: festival_millwheel, name: Millwheel Turning, clockReuse: crafting_week, rewardType: cosmetics_only}
+    - {month: 10, id: festival_lantern_return, name: Lantern Return, clockReuse: day_night, rewardType: cosmetics_only}
+    - {month: 11, id: festival_quarry_echo, name: Quarry Echo, clockReuse: instance_lockout, rewardType: cosmetics_only}
+    - {month: 12, id: festival_compact_renewal, name: Compact Renewal, clockReuse: weekly_tick, rewardType: cosmetics_only}
+weatherDayNightTide:
+  damageFromWeather: false
+  defaultCosmeticOnly: true
+  dayNightCycle: {enabled: true, phases: [dawn, day, dusk, night], durationTurns: 4, codeOwns: true}
+  tideCycle: {enabled: true, phases: [ebb, low, flood, high], durationTurns: 3, codeOwns: true}
+  gatedInteractables:
+    - {id: lampwood_night_wickline, worldId: ash_compact, placeId: poi_wickhaven, condition: phase_night, action: light_wick, turnCost: 1}
+    - {id: brinewatch_high_tide_gate, worldId: ash_compact, placeId: poi_tidal_flats, condition: phase_high, action: dock_tie, turnCost: 1}
+loginRewards:
+  enabledByDefault: false
+  friendsAlpha: disabled
+  rewardPolicy: cosmetics_only
+  sevenDayTrack:
+    - {day: 1, rewardCosmeticId: cosmetic_clay_bead_sash}
+    - {day: 2, rewardCosmeticId: cosmetic_blue_wick_scarf}
+    - {day: 3, rewardCosmeticId: cosmetic_shell_cord}
+    - {day: 4, rewardCosmeticId: cosmetic_dust_goggles}
+    - {day: 5, rewardCosmeticId: cosmetic_divide_badge}
+    - {day: 6, rewardCosmeticId: cosmetic_ash_seat_pin}
+    - {day: 7, rewardCosmeticId: cosmetic_tidehold_ribbon}
+  forbiddenRewards: [gold, xp, stat_items, weapons, armor, lockout_skip, catch_rate]
+opsNotes:
+  serverClock: weekly_tick_with_login_catchup
+  catchUpCapWeeks: 4
+  digestMail: one_system_digest_per_login
+  lmmRole: "LLM may narrate only committed progression, reputation, collection, festival, and reward state; it may not mint XP, gold, standing, items, titles, or unlocks."
+  speculative: ["SPEC: XP values and contract caps are balancing seeds for human evaluation.", "SPEC: festival month analog is a content cadence label, not a real-world calendar."]
+dataIntegrity:
+  uniqueIds: true
+  localTrustNotWorldSave: true
+  noLiveClockTick: true
+  noProductionCode: true
+  noLicensedNames: true
+  noEmptyTables: true

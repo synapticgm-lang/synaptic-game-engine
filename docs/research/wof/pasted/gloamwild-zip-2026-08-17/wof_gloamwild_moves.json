@@ -1,0 +1,802 @@
+[
+  {
+    "id": "move.ember.1",
+    "name": "Coal Tap",
+    "type": "Ember",
+    "category": "strike",
+    "power": 36,
+    "accuracy": 94,
+    "effects": "scorch",
+    "learnLevels": "1+"
+  },
+  {
+    "id": "move.ember.2",
+    "name": "Cinder Ward",
+    "type": "Ember",
+    "category": "guard",
+    "power": 0,
+    "accuracy": 100,
+    "effects": "guard +18% DEF for 1 turn",
+    "learnLevels": "6+"
+  },
+  {
+    "id": "move.ember.3",
+    "name": "Hearth Turn",
+    "type": "Ember",
+    "category": "support",
+    "power": 0,
+    "accuracy": 100,
+    "effects": "restore 14% HP or clear one matching status",
+    "learnLevels": "11+"
+  },
+  {
+    "id": "move.ember.4",
+    "name": "Flare Lance",
+    "type": "Ember",
+    "category": "strike",
+    "power": 84,
+    "accuracy": 94,
+    "effects": "rooted",
+    "learnLevels": "16+"
+  },
+  {
+    "id": "move.ember.5",
+    "name": "Sear Step",
+    "type": "Ember",
+    "category": "guard",
+    "power": 0,
+    "accuracy": 100,
+    "effects": "guard +18% DEF for 1 turn",
+    "learnLevels": "21+"
+  },
+  {
+    "id": "move.ember.6",
+    "name": "Kiln Shell",
+    "type": "Ember",
+    "category": "support",
+    "power": 0,
+    "accuracy": 100,
+    "effects": "restore 14% HP or clear one matching status",
+    "learnLevels": "26+"
+  },
+  {
+    "id": "move.ember.7",
+    "name": "Ash Call",
+    "type": "Ember",
+    "category": "strike",
+    "power": 68,
+    "accuracy": 94,
+    "effects": "charged",
+    "learnLevels": "31+"
+  },
+  {
+    "id": "move.tide.1",
+    "name": "Rill Tap",
+    "type": "Tide",
+    "category": "strike",
+    "power": 36,
+    "accuracy": 94,
+    "effects": "soak",
+    "learnLevels": "1+"
+  },
+  {
+    "id": "move.tide.2",
+    "name": "Current Ward",
+    "type": "Tide",
+    "category": "guard",
+    "power": 0,
+    "accuracy": 100,
+    "effects": "guard +18% DEF for 1 turn",
+    "learnLevels": "6+"
+  },
+  {
+    "id": "move.tide.3",
+    "name": "Brine Turn",
+    "type": "Tide",
+    "category": "support",
+    "power": 0,
+    "accuracy": 100,
+    "effects": "restore 14% HP or clear one matching status",
+    "learnLevels": "11+"
+  },
+  {
+    "id": "move.tide.4",
+    "name": "Wash Lance",
+    "type": "Tide",
+    "category": "strike",
+    "power": 84,
+    "accuracy": 94,
+    "effects": "cracked",
+    "learnLevels": "16+"
+  },
+  {
+    "id": "move.tide.5",
+    "name": "Undertow Step",
+    "type": "Tide",
+    "category": "guard",
+    "power": 0,
+    "accuracy": 100,
+    "effects": "guard +18% DEF for 1 turn",
+    "learnLevels": "21+"
+  },
+  {
+    "id": "move.tide.6",
+    "name": "Swell Shell",
+    "type": "Tide",
+    "category": "support",
+    "power": 0,
+    "accuracy": 100,
+    "effects": "restore 14% HP or clear one matching status",
+    "learnLevels": "26+"
+  },
+  {
+    "id": "move.tide.7",
+    "name": "Spray Call",
+    "type": "Tide",
+    "category": "strike",
+    "power": 68,
+    "accuracy": 94,
+    "effects": "fogblind",
+    "learnLevels": "31+"
+  },
+  {
+    "id": "move.gale.1",
+    "name": "Draft Tap",
+    "type": "Gale",
+    "category": "strike",
+    "power": 36,
+    "accuracy": 94,
+    "effects": "gusted",
+    "learnLevels": "1+"
+  },
+  {
+    "id": "move.gale.2",
+    "name": "Whirl Ward",
+    "type": "Gale",
+    "category": "guard",
+    "power": 0,
+    "accuracy": 100,
+    "effects": "guard +18% DEF for 1 turn",
+    "learnLevels": "6+"
+  },
+  {
+    "id": "move.gale.3",
+    "name": "Kite Turn",
+    "type": "Gale",
+    "category": "support",
+    "power": 0,
+    "accuracy": 100,
+    "effects": "restore 14% HP or clear one matching status",
+    "learnLevels": "11+"
+  },
+  {
+    "id": "move.gale.4",
+    "name": "Shear Lance",
+    "type": "Gale",
+    "category": "strike",
+    "power": 84,
+    "accuracy": 94,
+    "effects": "veiled",
+    "learnLevels": "16+"
+  },
+  {
+    "id": "move.gale.5",
+    "name": "Lift Step",
+    "type": "Gale",
+    "category": "guard",
+    "power": 0,
+    "accuracy": 100,
+    "effects": "guard +18% DEF for 1 turn",
+    "learnLevels": "21+"
+  },
+  {
+    "id": "move.gale.6",
+    "name": "Gust Shell",
+    "type": "Gale",
+    "category": "support",
+    "power": 0,
+    "accuracy": 100,
+    "effects": "restore 14% HP or clear one matching status",
+    "learnLevels": "26+"
+  },
+  {
+    "id": "move.gale.7",
+    "name": "Skirl Call",
+    "type": "Gale",
+    "category": "strike",
+    "power": 68,
+    "accuracy": 94,
+    "effects": "glimmered",
+    "learnLevels": "31+"
+  },
+  {
+    "id": "move.root.1",
+    "name": "Briar Tap",
+    "type": "Root",
+    "category": "strike",
+    "power": 36,
+    "accuracy": 94,
+    "effects": "rooted",
+    "learnLevels": "1+"
+  },
+  {
+    "id": "move.root.2",
+    "name": "Vine Ward",
+    "type": "Root",
+    "category": "guard",
+    "power": 0,
+    "accuracy": 100,
+    "effects": "guard +18% DEF for 1 turn",
+    "learnLevels": "6+"
+  },
+  {
+    "id": "move.root.3",
+    "name": "Bark Turn",
+    "type": "Root",
+    "category": "support",
+    "power": 0,
+    "accuracy": 100,
+    "effects": "restore 14% HP or clear one matching status",
+    "learnLevels": "11+"
+  },
+  {
+    "id": "move.root.4",
+    "name": "Sprout Lance",
+    "type": "Root",
+    "category": "strike",
+    "power": 84,
+    "accuracy": 94,
+    "effects": "charged",
+    "learnLevels": "16+"
+  },
+  {
+    "id": "move.root.5",
+    "name": "Thorn Step",
+    "type": "Root",
+    "category": "guard",
+    "power": 0,
+    "accuracy": 100,
+    "effects": "guard +18% DEF for 1 turn",
+    "learnLevels": "21+"
+  },
+  {
+    "id": "move.root.6",
+    "name": "Moss Shell",
+    "type": "Root",
+    "category": "support",
+    "power": 0,
+    "accuracy": 100,
+    "effects": "restore 14% HP or clear one matching status",
+    "learnLevels": "26+"
+  },
+  {
+    "id": "move.root.7",
+    "name": "Tangle Call",
+    "type": "Root",
+    "category": "strike",
+    "power": 68,
+    "accuracy": 94,
+    "effects": "spored",
+    "learnLevels": "31+"
+  },
+  {
+    "id": "move.stone.1",
+    "name": "Shard Tap",
+    "type": "Stone",
+    "category": "strike",
+    "power": 36,
+    "accuracy": 94,
+    "effects": "cracked",
+    "learnLevels": "1+"
+  },
+  {
+    "id": "move.stone.2",
+    "name": "Cairn Ward",
+    "type": "Stone",
+    "category": "guard",
+    "power": 0,
+    "accuracy": 100,
+    "effects": "guard +18% DEF for 1 turn",
+    "learnLevels": "6+"
+  },
+  {
+    "id": "move.stone.3",
+    "name": "Flint Turn",
+    "type": "Stone",
+    "category": "support",
+    "power": 0,
+    "accuracy": 100,
+    "effects": "restore 14% HP or clear one matching status",
+    "learnLevels": "11+"
+  },
+  {
+    "id": "move.stone.4",
+    "name": "Gravel Lance",
+    "type": "Stone",
+    "category": "strike",
+    "power": 84,
+    "accuracy": 94,
+    "effects": "fogblind",
+    "learnLevels": "16+"
+  },
+  {
+    "id": "move.stone.5",
+    "name": "Pillar Step",
+    "type": "Stone",
+    "category": "guard",
+    "power": 0,
+    "accuracy": 100,
+    "effects": "guard +18% DEF for 1 turn",
+    "learnLevels": "21+"
+  },
+  {
+    "id": "move.stone.6",
+    "name": "Ridge Shell",
+    "type": "Stone",
+    "category": "support",
+    "power": 0,
+    "accuracy": 100,
+    "effects": "restore 14% HP or clear one matching status",
+    "learnLevels": "26+"
+  },
+  {
+    "id": "move.stone.7",
+    "name": "Slate Call",
+    "type": "Stone",
+    "category": "strike",
+    "power": 68,
+    "accuracy": 94,
+    "effects": "scorch",
+    "learnLevels": "31+"
+  },
+  {
+    "id": "move.veil.1",
+    "name": "Hush Tap",
+    "type": "Veil",
+    "category": "strike",
+    "power": 36,
+    "accuracy": 94,
+    "effects": "veiled",
+    "learnLevels": "1+"
+  },
+  {
+    "id": "move.veil.2",
+    "name": "Fold Ward",
+    "type": "Veil",
+    "category": "guard",
+    "power": 0,
+    "accuracy": 100,
+    "effects": "guard +18% DEF for 1 turn",
+    "learnLevels": "6+"
+  },
+  {
+    "id": "move.veil.3",
+    "name": "Wisp Turn",
+    "type": "Veil",
+    "category": "support",
+    "power": 0,
+    "accuracy": 100,
+    "effects": "restore 14% HP or clear one matching status",
+    "learnLevels": "11+"
+  },
+  {
+    "id": "move.veil.4",
+    "name": "Mirror Lance",
+    "type": "Veil",
+    "category": "strike",
+    "power": 84,
+    "accuracy": 94,
+    "effects": "glimmered",
+    "learnLevels": "16+"
+  },
+  {
+    "id": "move.veil.5",
+    "name": "Curtain Step",
+    "type": "Veil",
+    "category": "guard",
+    "power": 0,
+    "accuracy": 100,
+    "effects": "guard +18% DEF for 1 turn",
+    "learnLevels": "21+"
+  },
+  {
+    "id": "move.veil.6",
+    "name": "Loom Shell",
+    "type": "Veil",
+    "category": "support",
+    "power": 0,
+    "accuracy": 100,
+    "effects": "restore 14% HP or clear one matching status",
+    "learnLevels": "26+"
+  },
+  {
+    "id": "move.veil.7",
+    "name": "Shade Call",
+    "type": "Veil",
+    "category": "strike",
+    "power": 68,
+    "accuracy": 94,
+    "effects": "soak",
+    "learnLevels": "31+"
+  },
+  {
+    "id": "move.spark.1",
+    "name": "Arc Tap",
+    "type": "Spark",
+    "category": "strike",
+    "power": 36,
+    "accuracy": 94,
+    "effects": "charged",
+    "learnLevels": "1+"
+  },
+  {
+    "id": "move.spark.2",
+    "name": "Static Ward",
+    "type": "Spark",
+    "category": "guard",
+    "power": 0,
+    "accuracy": 100,
+    "effects": "guard +18% DEF for 1 turn",
+    "learnLevels": "6+"
+  },
+  {
+    "id": "move.spark.3",
+    "name": "Pulse Turn",
+    "type": "Spark",
+    "category": "support",
+    "power": 0,
+    "accuracy": 100,
+    "effects": "restore 14% HP or clear one matching status",
+    "learnLevels": "11+"
+  },
+  {
+    "id": "move.spark.4",
+    "name": "Coil Lance",
+    "type": "Spark",
+    "category": "strike",
+    "power": 84,
+    "accuracy": 94,
+    "effects": "spored",
+    "learnLevels": "16+"
+  },
+  {
+    "id": "move.spark.5",
+    "name": "Relay Step",
+    "type": "Spark",
+    "category": "guard",
+    "power": 0,
+    "accuracy": 100,
+    "effects": "guard +18% DEF for 1 turn",
+    "learnLevels": "21+"
+  },
+  {
+    "id": "move.spark.6",
+    "name": "Flicker Shell",
+    "type": "Spark",
+    "category": "support",
+    "power": 0,
+    "accuracy": 100,
+    "effects": "restore 14% HP or clear one matching status",
+    "learnLevels": "26+"
+  },
+  {
+    "id": "move.spark.7",
+    "name": "Volt Call",
+    "type": "Spark",
+    "category": "strike",
+    "power": 68,
+    "accuracy": 94,
+    "effects": "gusted",
+    "learnLevels": "31+"
+  },
+  {
+    "id": "move.gloom.1",
+    "name": "Dusk Tap",
+    "type": "Gloom",
+    "category": "strike",
+    "power": 36,
+    "accuracy": 94,
+    "effects": "fogblind",
+    "learnLevels": "1+"
+  },
+  {
+    "id": "move.gloom.2",
+    "name": "Murk Ward",
+    "type": "Gloom",
+    "category": "guard",
+    "power": 0,
+    "accuracy": 100,
+    "effects": "guard +18% DEF for 1 turn",
+    "learnLevels": "6+"
+  },
+  {
+    "id": "move.gloom.3",
+    "name": "Sable Turn",
+    "type": "Gloom",
+    "category": "support",
+    "power": 0,
+    "accuracy": 100,
+    "effects": "restore 14% HP or clear one matching status",
+    "learnLevels": "11+"
+  },
+  {
+    "id": "move.gloom.4",
+    "name": "Eclipse Lance",
+    "type": "Gloom",
+    "category": "strike",
+    "power": 84,
+    "accuracy": 94,
+    "effects": "scorch",
+    "learnLevels": "16+"
+  },
+  {
+    "id": "move.gloom.5",
+    "name": "Nettle Step",
+    "type": "Gloom",
+    "category": "guard",
+    "power": 0,
+    "accuracy": 100,
+    "effects": "guard +18% DEF for 1 turn",
+    "learnLevels": "21+"
+  },
+  {
+    "id": "move.gloom.6",
+    "name": "Umber Shell",
+    "type": "Gloom",
+    "category": "support",
+    "power": 0,
+    "accuracy": 100,
+    "effects": "restore 14% HP or clear one matching status",
+    "learnLevels": "26+"
+  },
+  {
+    "id": "move.gloom.7",
+    "name": "Hollow Call",
+    "type": "Gloom",
+    "category": "strike",
+    "power": 68,
+    "accuracy": 94,
+    "effects": "rooted",
+    "learnLevels": "31+"
+  },
+  {
+    "id": "move.gleam.1",
+    "name": "Dawn Tap",
+    "type": "Gleam",
+    "category": "strike",
+    "power": 36,
+    "accuracy": 94,
+    "effects": "glimmered",
+    "learnLevels": "1+"
+  },
+  {
+    "id": "move.gleam.2",
+    "name": "Prism Ward",
+    "type": "Gleam",
+    "category": "guard",
+    "power": 0,
+    "accuracy": 100,
+    "effects": "guard +18% DEF for 1 turn",
+    "learnLevels": "6+"
+  },
+  {
+    "id": "move.gleam.3",
+    "name": "Halo Turn",
+    "type": "Gleam",
+    "category": "support",
+    "power": 0,
+    "accuracy": 100,
+    "effects": "restore 14% HP or clear one matching status",
+    "learnLevels": "11+"
+  },
+  {
+    "id": "move.gleam.4",
+    "name": "Beacon Lance",
+    "type": "Gleam",
+    "category": "strike",
+    "power": 84,
+    "accuracy": 94,
+    "effects": "soak",
+    "learnLevels": "16+"
+  },
+  {
+    "id": "move.gleam.5",
+    "name": "Luster Step",
+    "type": "Gleam",
+    "category": "guard",
+    "power": 0,
+    "accuracy": 100,
+    "effects": "guard +18% DEF for 1 turn",
+    "learnLevels": "21+"
+  },
+  {
+    "id": "move.gleam.6",
+    "name": "Ray Shell",
+    "type": "Gleam",
+    "category": "support",
+    "power": 0,
+    "accuracy": 100,
+    "effects": "restore 14% HP or clear one matching status",
+    "learnLevels": "26+"
+  },
+  {
+    "id": "move.gleam.7",
+    "name": "Pearl Call",
+    "type": "Gleam",
+    "category": "strike",
+    "power": 68,
+    "accuracy": 94,
+    "effects": "cracked",
+    "learnLevels": "31+"
+  },
+  {
+    "id": "move.bloom.1",
+    "name": "Pollen Tap",
+    "type": "Bloom",
+    "category": "strike",
+    "power": 36,
+    "accuracy": 94,
+    "effects": "spored",
+    "learnLevels": "1+"
+  },
+  {
+    "id": "move.bloom.2",
+    "name": "Petal Ward",
+    "type": "Bloom",
+    "category": "guard",
+    "power": 0,
+    "accuracy": 100,
+    "effects": "guard +18% DEF for 1 turn",
+    "learnLevels": "6+"
+  },
+  {
+    "id": "move.bloom.3",
+    "name": "Nectar Turn",
+    "type": "Bloom",
+    "category": "support",
+    "power": 0,
+    "accuracy": 100,
+    "effects": "restore 14% HP or clear one matching status",
+    "learnLevels": "11+"
+  },
+  {
+    "id": "move.bloom.4",
+    "name": "Bud Lance",
+    "type": "Bloom",
+    "category": "strike",
+    "power": 84,
+    "accuracy": 94,
+    "effects": "gusted",
+    "learnLevels": "16+"
+  },
+  {
+    "id": "move.bloom.5",
+    "name": "Meadow Step",
+    "type": "Bloom",
+    "category": "guard",
+    "power": 0,
+    "accuracy": 100,
+    "effects": "guard +18% DEF for 1 turn",
+    "learnLevels": "21+"
+  },
+  {
+    "id": "move.bloom.6",
+    "name": "Crown Shell",
+    "type": "Bloom",
+    "category": "support",
+    "power": 0,
+    "accuracy": 100,
+    "effects": "restore 14% HP or clear one matching status",
+    "learnLevels": "26+"
+  },
+  {
+    "id": "move.bloom.7",
+    "name": "Breeze Call",
+    "type": "Bloom",
+    "category": "strike",
+    "power": 68,
+    "accuracy": 94,
+    "effects": "veiled",
+    "learnLevels": "31+"
+  },
+  {
+    "id": "move.ember.signature",
+    "name": "Ember Accord",
+    "type": "Ember",
+    "category": "support",
+    "power": 0,
+    "accuracy": 100,
+    "effects": "grant scorch resistance and restore 8% HP",
+    "learnLevels": "22+"
+  },
+  {
+    "id": "move.tide.signature",
+    "name": "Tide Accord",
+    "type": "Tide",
+    "category": "support",
+    "power": 0,
+    "accuracy": 100,
+    "effects": "grant soak resistance and restore 8% HP",
+    "learnLevels": "22+"
+  },
+  {
+    "id": "move.gale.signature",
+    "name": "Gale Accord",
+    "type": "Gale",
+    "category": "support",
+    "power": 0,
+    "accuracy": 100,
+    "effects": "grant gusted resistance and restore 8% HP",
+    "learnLevels": "22+"
+  },
+  {
+    "id": "move.root.signature",
+    "name": "Root Accord",
+    "type": "Root",
+    "category": "support",
+    "power": 0,
+    "accuracy": 100,
+    "effects": "grant rooted resistance and restore 8% HP",
+    "learnLevels": "22+"
+  },
+  {
+    "id": "move.stone.signature",
+    "name": "Stone Accord",
+    "type": "Stone",
+    "category": "support",
+    "power": 0,
+    "accuracy": 100,
+    "effects": "grant cracked resistance and restore 8% HP",
+    "learnLevels": "22+"
+  },
+  {
+    "id": "move.veil.signature",
+    "name": "Veil Accord",
+    "type": "Veil",
+    "category": "support",
+    "power": 0,
+    "accuracy": 100,
+    "effects": "grant veiled resistance and restore 8% HP",
+    "learnLevels": "22+"
+  },
+  {
+    "id": "move.spark.signature",
+    "name": "Spark Accord",
+    "type": "Spark",
+    "category": "support",
+    "power": 0,
+    "accuracy": 100,
+    "effects": "grant charged resistance and restore 8% HP",
+    "learnLevels": "22+"
+  },
+  {
+    "id": "move.gloom.signature",
+    "name": "Gloom Accord",
+    "type": "Gloom",
+    "category": "support",
+    "power": 0,
+    "accuracy": 100,
+    "effects": "grant fogblind resistance and restore 8% HP",
+    "learnLevels": "22+"
+  },
+  {
+    "id": "move.gleam.signature",
+    "name": "Gleam Accord",
+    "type": "Gleam",
+    "category": "support",
+    "power": 0,
+    "accuracy": 100,
+    "effects": "grant glimmered resistance and restore 8% HP",
+    "learnLevels": "22+"
+  },
+  {
+    "id": "move.bloom.signature",
+    "name": "Bloom Accord",
+    "type": "Bloom",
+    "category": "support",
+    "power": 0,
+    "accuracy": 100,
+    "effects": "grant spored resistance and restore 8% HP",
+    "learnLevels": "22+"
+  }
+]

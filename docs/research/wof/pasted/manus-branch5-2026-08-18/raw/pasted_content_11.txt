@@ -1,0 +1,59 @@
+Act as a Principal Systems Engineer, Embedded Firmware Architect, and Registered Patent Agent.
+
+Utilizing the verified parametric screening dataset (incorporating the 0.6 kW micro-chiller/PCM runtime models, the 14.7 N to 31.7 N breakaway curtain load limits, and the 24V/48V SELV DC bus architecture), generate a comprehensive Technical Engineering Package, CAD/Firmware Asset Library, and Formal Patent Draft.
+
+Format the output for direct export into a Word or PDF document, including fully rendered ASCII/Unicode diagrams, standalone SVG vector code, executable OpenSCAD parametric CAD scripts, and complete C++ embedded firmware.
+
+---
+
+### REQUIRED SECTIONS & DELIVERABLES
+
+#### Section 1: Detailed Technical Schematics & Vector Diagrams
+Generate complete visual schematics across the following formats (provide both detailed ASCII/Unicode diagrams for direct viewing and standalone, copy-pasteable SVG / Mermaid / PlantUML code blocks):
+
+1. Mechanical Cross-Section & Packaging Schematic:
+   - 2D elevation cross-section of the 2.5m–3.0m Universal Cassette and central mast.
+   - Visual callouts for: Direct-drive BLDC hub motor, slip ring assembly, 3-inch (75 mm) plenum chamber, low-profile copper radiator, sloped condensate tray (3° grade) with drain line, and perimeter radial diffuser slot (10 mm equivalent) angled at 35° inward.
+   - Mast internal routing cross-section (50 mm OD / 44 mm ID): isolated channels for 2x insulated EPDM fluid hoses (10 mm ID), high-draw IR power conductors, and shielded low-voltage sensor cabling with anti-snag separation baffles.
+
+2. Piping & Instrumentation Diagram (P&ID):
+   - Complete hydronic schematic showing: Chilled/PCM base reservoir, 12V/24V brushless circulation pump, in-line filter, flow sensor, motor-jacket waste-heat heat exchanger, plenum radiator coil, air-bleed valve, condensate drain loop, expansion bladder, and quick-connect auxiliary chiller/mains ports.
+
+3. Electrical Single-Line Diagram (SLD):
+   - Full 24V/48V DC power distribution network: Canopy PV array -> MPPT Controller -> DC Bus -> LiFePO4 BMS Pack.
+   - PMSG Wind Generation Path -> Active Rectifier / DC-DC -> Smart Bus Injection.
+   - Automated Dump Load Diversion Circuit -> Immersion Heating Resistor in base reservoir.
+   - Auxiliary AC Mains Grid-Tie interface with physical break-before-make interlock for high-draw 1.5 kW IR elements.
+
+#### Section 2: Parametric 3D CAD Generation (OpenSCAD Scripts)
+Provide complete, executable, and modular OpenSCAD (.scad) code for:
+1. Universal Plenum Diffuser Sector: A 3D-printable modular arc segment featuring internal aerodynamic guide vanes, an angled perimeter discharge nozzle (35° downward-inward pitch), and snap-fit alignment tabs.
+2. Internal Mast Cable/Hose Separator Bushing: A multi-channel vibration-dampening routing insert designed to slip inside a 50 mm OD / 44 mm ID structural aluminum mast to isolate fluid hoses from electrical lines.
+
+#### Section 3: Production-Ready Embedded Control Firmware (C++ / ESP-IDF / Arduino)
+Provide a complete, functional C++ firmware program for an ESP32 or STM32 controller implementing the system state machine:
+- Real-time Sensor Inputs: Ambient Temp/RH, Coil Surface Temp, Water Inlet/Outlet RTDs, Anemometer Wind Speed, Rotor RPM, Hall-effect Flow Sensor, Base Leak Detection, and Condensate Pan Float Switch.
+- Control Algorithms:
+  a) Dynamic Dew-Point Calculation: Compares coil surface temperature against ambient dew point to throttle pump PWM and prevent unmanaged dripping.
+  b) Smart Multi-State FSM: Transitions between SAFE_STOW, SOLAR_FAN_COOL, HYDRONIC_CHILL, HYDRONIC_HEAT, WIND_GENERATION, and DUMP_HEAT.
+  c) Emergency Gust Interlock: Triggers aerodynamic blade feathering/stow and electronic magnetic braking if measured wind gust exceeds 18 mph (with curtains) or 35 mph (open canopy).
+
+#### Section 4: Formal Patent Application Draft (UK IPO / EPO / USPTO Standard)
+Draft a complete, filing-ready Patent Specification structured to statutory standards:
+1. Title of Invention & Field of Art.
+2. Background of the Invention & Prior Art Limitations (specifically addressing strobe effects, wind overturning moments, and thermal endurance deficits).
+3. Summary of the Invention (detailing the synergistic technical effect of the isolated plenum, waste-heat scavenging, and dual-mode kinetic cassette).
+4. Brief Description of Drawings (referencing the schematics generated in Section 1).
+5. Detailed Description of Preferred Embodiments (complete with numbered reference numerals [10, 12, 14...] matching all drawing elements).
+6. Comprehensive Claim Tree (15 claims total):
+   - Claim 1: Broad independent apparatus claim for the multi-layer micro-climate cassette.
+   - Claim 2–10: Dependent claims covering specific physical interfaces (plenum dimensions, diffuser geometry, condensate management, mast conduit routing, and breakaway curtain thresholds).
+   - Claim 11: Independent system claim covering the hybrid power and thermal energy routing method.
+   - Claim 12–15: Dependent claims covering the dynamic delta-wye/rectifier control, dew-point condensation throttling, and waste-heat recovery loop.
+
+---
+
+### EXECUTION REQUIREMENTS
+- Include all mathematical constants, component pinouts, and physical dimensions directly in the code and descriptions.
+- Ensure all OpenSCAD and C++ code blocks are syntactically complete, commented, and ready for immediate compilation and execution.
+- Maintain rigorous engineering terminology suitable for technical review and legal submission.

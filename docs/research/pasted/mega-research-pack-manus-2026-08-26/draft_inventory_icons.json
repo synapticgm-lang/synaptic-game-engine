@@ -1,0 +1,484 @@
+{
+  "results": [
+    {
+      "input": "canvas-satchel|urban",
+      "output": {
+        "category": "urban",
+        "item_key": "canvas-satchel",
+        "kid_ok": "YES",
+        "negative_prompt": "cast-off frame, readable text, logo, brand, hands, people, scene, distinctive product designs, trademarked interfaces, real-company styling, copyrighted-world references, violence, weapons, blood, gore, 3d render, photorealistic, photography, signature, watermark, border, frame, drop shadow, glowing effects, neon, futuristic elements, sci-fi elements, magic aura, messy silhouette",
+        "notes": "The satchel is designed as a harmless, everyday item without any copyrighted branding or dangerous elements.",
+        "prompt_text": "A centered 3/4-view object of a rugged urban canvas satchel with brass buckles and worn leather straps, clean readable silhouette, hand-painted ink-and-watercolour texture over restrained gouache, transparent background, square canvas. The bag is practical and durable, designed for everyday city life, featuring a flap closure and a comfortable adjustable shoulder strap, styled as a commercial hosted text RPG inventory icon."
+      },
+      "error": ""
+    },
+    {
+      "input": "generic-smartphone|urban",
+      "output": {
+        "category": "urban",
+        "item_key": "generic-smartphone",
+        "kid_ok": "YES",
+        "negative_prompt": "frame, border, text, logo, brand, hands, people, scene, background, cast shadow, watermark, signature, apple, iphone, samsung, android, realistic, photorealistic, 3d render, low poly, pixel art, weapons, violence, blood, sharp edges, distinct product design, copyrighted interface, words, letters, numbers",
+        "notes": "The generic smartphone avoids specific branding and interfaces to remain fully original and safe for all ages.",
+        "prompt_text": "A centered 3/4-view of a generic modern smartphone with a blank glowing screen, resting on a transparent background in a square canvas. The design features a clean readable silhouette with smooth rounded corners and a simple unbranded dark casing. Rendered in a hand-painted ink-and-watercolour texture over restrained gouache, offering a stylized, practical tool aesthetic without readable text, logos, or distinct real-world product styling."
+      },
+      "error": ""
+    },
+    {
+      "input": "folding-utility-knife|urban",
+      "output": {
+        "category": "urban",
+        "item_key": "folding-utility-knife",
+        "kid_ok": "YES",
+        "negative_prompt": "text, watermark, logo, brand, trademark, hands, people, scene, background, cast-off frame, blood, violence, weapon, realistic, 3d render, photograph, shiny metal, copyrighted design, distinctive product, interface, ui elements, text labels, words, signature, messy silhouette, cluttered canvas, multiple objects, unretracted blade, dangerous edge, messy ink",
+        "notes": "The utility knife is presented safely closed as a practical crafting tool to ensure it remains entirely appropriate for younger audiences.",
+        "prompt_text": "A centered 3/4-view folding utility knife presented as a practical crafting tool with the blade safely retracted into a bright orange and grey textured handle. Clean readable silhouette, hand-painted ink-and-watercolour texture over restrained gouache, transparent background, square canvas. The design features industrial grips and a pocket clip, isolated with no cast-off frame, no readable text, no logo, no brand, no hands, no people, and no scene."
+      },
+      "error": ""
+    },
+    {
+      "input": "blue-glass-vial|fantasy",
+      "output": {
+        "category": "fantasy",
+        "item_key": "blue-glass-vial",
+        "kid_ok": "YES",
+        "negative_prompt": "cast-off frame, readable text, logo, brand, hands, people, scene, background, realistic, photograph, 3d render, vector art, modern, sci-fi elements, violence, blood, sharp shards, broken glass, dark fantasy, trademarked design, copyrighted world, cluttered, messy silhouette, harsh shadows, glowing text, signatures, watermarks, frames, borders, characters",
+        "notes": "The design focuses on a harmless, practical fantasy potion container with a soft glowing aesthetic to ensure complete safety for younger audiences.",
+        "prompt_text": "A centered 3/4-view inventory icon of a delicate blue glass vial filled with glowing azure liquid, featuring a clean and readable silhouette against a transparent background on a square canvas. The artwork showcases a hand-painted ink-and-watercolour texture layered over restrained gouache, emphasizing a rustic cork stopper and intricate silver wire wrapping. The composition highlights practical craftsmanship with a soft luminous quality, ensuring no cast-off frame, readable text, logos, brands, hands, people, or background scenes are present."
+      },
+      "error": ""
+    },
+    {
+      "input": "old-brass-key|fantasy",
+      "output": {
+        "category": "fantasy",
+        "item_key": "old-brass-key",
+        "kid_ok": "YES",
+        "negative_prompt": "cast-off frame, readable text, logo, brand, hands, people, scene, background elements, copyrighted-world references, distinctive product designs, trademarked interfaces, real-company styling, violence, blood, weapons, sharp edges, modern technology, sci-fi elements, dark magic aura, skulls, gore, adult content, realistic shadows, ground plane, text labels, watermark, signature, UI elements, border, drop shadow, 3d render, photorealistic, photography, frame",
+        "notes": "The key features a uniquely stylized ornate bow design to ensure complete originality while remaining perfectly safe and non-threatening for younger players.",
+        "prompt_text": "A centered 3/4-view inventory icon of an old brass key, featuring a clean and readable silhouette against a transparent background on a square canvas. The key is designed with a heavy, ornate bow and thick bit, rendered in a hand-painted ink-and-watercolour texture over restrained gouache. It appears as a practical, antique unlocking tool with a beautifully weathered golden-brown patina, entirely kid-safe with no sharp or dangerous edges."
+      },
+      "error": ""
+    },
+    {
+      "input": "resin-hand-torch|fantasy",
+      "output": {
+        "category": "fantasy",
+        "item_key": "resin-hand-torch",
+        "kid_ok": "YES",
+        "negative_prompt": "cast-off frame, readable text, logo, brand, hands, people, scene, background elements, open fire, dangerous flames, violence, weapons, copyrighted references, modern interfaces, 3d render, photorealism, digital painting, messy silhouette, cropped, out of frame, signature, watermark, dark shadows, real-company styling, trademarked design",
+        "notes": "The torch uses a glowing resin crystal instead of open fire to ensure it remains completely kid-safe as a practical exploration tool.",
+        "prompt_text": "A centered 3/4-view fantasy resin hand torch, glowing warmly with safely contained magical light. The practical wooden handle is wrapped in durable leather, topped with a smooth, translucent amber resin crystal instead of an open flame. Clean readable silhouette, hand-painted ink-and-watercolour texture over restrained gouache, transparent background, square canvas, isolated object."
+      },
+      "error": ""
+    },
+    {
+      "input": "field-notebook|urban",
+      "output": {
+        "category": "urban",
+        "item_key": "field-notebook",
+        "kid_ok": "YES",
+        "negative_prompt": "text, words, letters, logo, brand, watermark, signature, hands, fingers, people, human, character, scene, background, environment, frame, border, box, drop shadow, cast shadow, photorealistic, 3d render, digital painting, messy silhouette, weapons, violence, blood, copyrighted, trademark, moleskine, distinct product design, glowing UI, modern interface",
+        "notes": "The generic canvas cover avoids recognizable brand styling while remaining perfectly safe for young players.",
+        "prompt_text": "Centered 3/4-view object of a rugged urban field notebook, bound in worn charcoal-grey canvas with a thick elastic closure strap and a simple pen loop. The cover is slightly weathered with reinforced stitched corners. Rendered with a clean readable silhouette in a hand-painted ink-and-watercolour texture over restrained gouache. Transparent background, square canvas, isolated asset without any surrounding scene, frame, or text."
+      },
+      "error": ""
+    },
+    {
+      "input": "ration-tin|urban",
+      "output": {
+        "category": "urban",
+        "item_key": "ration-tin",
+        "kid_ok": "YES",
+        "negative_prompt": "text, watermark, logo, brand, trademark, copyright, hands, people, characters, background, scene, frame, border, drop shadow, realistic, photograph, 3d render, vector, gradients, cluttered, messy, complex, weapons, violence, blood, gore, distinct product design, real-company styling, modern interfaces, glowing UI, text overlay, signature",
+        "notes": "The design ensures originality by using a generic utilitarian appearance without any recognizable branding, maintaining a completely safe and non-violent survival theme.",
+        "prompt_text": "A centered 3/4-view urban survival ration tin, clean readable silhouette, hand-painted ink-and-watercolour texture over restrained gouache. The rectangular metal container features a dull olive drab finish with simple utilitarian scoring, securely sealed and unbranded. Isolated on a transparent background, square canvas, no cast-off frame, no readable text, no logo, no brand, no hands, no people, no scene, perfect for an inventory icon."
+      },
+      "error": ""
+    },
+    {
+      "input": "pocket-compass|urban",
+      "output": {
+        "category": "urban",
+        "item_key": "pocket-compass",
+        "kid_ok": "YES",
+        "negative_prompt": "cast-off frame, readable text, logo, brand, hands, people, scene, background, distinctive product design, trademarked interface, real-company styling, violence, blood, weapons, copyright, watermark, signature, modern brand, sharp edges, dangerous elements, framing, border, environment, landscape, shadow, text, typography, letters, numbers, symbols, character, face",
+        "notes": "The compass is presented as a harmless navigational tool with generic styling to ensure complete originality and safety for young players.",
+        "prompt_text": "A centered 3/4-view of a practical urban pocket compass with a weathered brass casing and a simple hinged lid. The object features a clean readable silhouette rendered in a hand-painted ink-and-watercolour texture over restrained gouache. Set against a transparent background on a square canvas, this ordinary navigational tool highlights clear directional markings without any readable text, logos, or brand identifiers."
+      },
+      "error": ""
+    },
+    {
+      "input": "hemp-rope-coil|fantasy",
+      "output": {
+        "category": "fantasy",
+        "item_key": "hemp-rope-coil",
+        "kid_ok": "YES",
+        "negative_prompt": "text, logo, brand, watermark, hands, people, scene, background, frame, border, cast shadow, blood, weapons, violence, gore, modern, sci-fi, realistic photo, 3d render, plastic, neon, copyrighted characters, signature, messy silhouette, cropped, out of frame, blurry, noisy, low resolution, multiple objects",
+        "notes": "The hemp rope coil is depicted as a purely practical adventuring tool, ensuring a safe and non-violent representation suitable for children.",
+        "prompt_text": "Centered 3/4-view of a neatly tied hemp rope coil, practical adventurer tool, rough natural fiber texture, warm brown and tan hues. Clean readable silhouette, hand-painted ink-and-watercolour texture over restrained gouache, isolated on transparent background, square canvas. High quality, detailed, fantasy inventory icon, studio lighting, no frame, no text, no people."
+      },
+      "error": ""
+    },
+    {
+      "input": "lock-tool-roll|urban",
+      "output": {
+        "category": "urban",
+        "item_key": "lock-tool-roll",
+        "kid_ok": "YES",
+        "negative_prompt": "text, watermark, logo, brand, trademark, signature, words, letters, people, hands, fingers, human, face, background scene, environment, floor, table, shadows, frame, border, box, UI elements, realistic, photograph, 3d render, low quality, messy silhouette, violence, weapons, blood, gore, copyrighted designs, modern branding",
+        "notes": "The lock tools are presented simply as practical mechanical instruments without any association to criminal activity or violence.",
+        "prompt_text": "A rolled-out canvas tool pouch containing various practical lock-picking tools and tension wrenches, displayed in a centered 3/4-view with a clean, readable silhouette. The artwork features a hand-painted ink-and-watercolour texture over restrained gouache, ensuring a vibrant yet grounded look. Designed for a transparent background on a square canvas, with no cast-off frame, readable text, logos, brands, hands, people, or surrounding scene."
+      },
+      "error": ""
+    },
+    {
+      "input": "first-aid-pouch|urban",
+      "output": {
+        "category": "urban",
+        "item_key": "first-aid-pouch",
+        "kid_ok": "YES",
+        "negative_prompt": "cast-off frame, readable text, logo, brand, hands, people, scene, violence, blood, weapons, trademarked interface, real-company styling, copyrighted-world references, distinctive product designs, photorealistic, 3d render, messy silhouette, background, drop shadow, signature, watermark, typography, letters, numbers, complex background",
+        "notes": "The design uses a generic cross symbol instead of real-world trademarked logos to ensure originality and complete safety for younger audiences.",
+        "prompt_text": "A centered 3/4-view urban first aid pouch, featuring a clean readable silhouette of a durable red nylon zip-up bag with practical medical supplies neatly strapped to the exterior. Hand-painted ink-and-watercolour texture over restrained gouache, displaying a generic white cross symbol. Rendered on a transparent background, square canvas, isolated object, completely devoid of any background elements, scene, or text."
+      },
+      "error": ""
+    },
+    {
+      "input": "water-flask|urban",
+      "output": {
+        "category": "urban",
+        "item_key": "water-flask",
+        "kid_ok": "YES",
+        "negative_prompt": "cast-off frame, readable text, logo, brand, hands, people, scene, background, distinctive product design, trademarked interface, real-company styling, copyright references, violence, blood, sharp edges, weapon, dark, messy, blurry, photo, realistic, 3d render, low quality, noise, artifacts, signature, watermark, border, frame, words, letters",
+        "notes": "The design presents a completely generic, practical hydration container without any real-world brand markings to ensure full commercial safety and originality.",
+        "prompt_text": "A centered 3/4-view of a modern urban water flask, featuring a clean readable silhouette and a durable metallic and matte plastic construction with a secure screw-on cap and a sturdy carabiner loop. Rendered in a hand-painted ink-and-watercolour texture over restrained gouache. The composition has a transparent background on a square canvas, strictly excluding any cast-off frames, readable text, logos, branding, hands, people, or background scenes, ensuring a purely isolated object focus."
+      },
+      "error": ""
+    },
+    {
+      "input": "folded-trail-map|urban",
+      "output": {
+        "category": "urban",
+        "item_key": "folded-trail-map",
+        "kid_ok": "YES",
+        "negative_prompt": "text, watermark, logo, brand, trademark, words, letters, signature, hands, fingers, people, character, human, face, scene, background, frame, border, cast shadow, environment, landscape, violence, blood, weapon, copyright, distinctive product design, UI elements, user interface, photorealistic, 3d render, complex shading, messy lines, dirty",
+        "notes": "This design relies on abstract cartographic shapes to avoid real-world city layouts, ensuring a completely safe and universally applicable exploration item.",
+        "prompt_text": "A centered 3/4-view of a neatly folded urban trail map, featuring a clean readable silhouette against a transparent background on a square canvas. The map shows abstract city grid lines and green park zones, rendered in a hand-painted ink-and-watercolour texture over restrained gouache. It is a practical navigation tool with no readable text, no logos, no hands, no people, and no surrounding scene."
+      },
+      "error": ""
+    },
+    {
+      "input": "hooded-lantern|fantasy",
+      "output": {
+        "category": "fantasy",
+        "item_key": "hooded-lantern",
+        "kid_ok": "YES",
+        "negative_prompt": "cast-off frame, readable text, logo, brand, hands, people, scene, background elements, watermark, signature, modern interface, copyrighted designs, blood, violence, sharp hazards, realistic photography, 3d render, vector art, flat shading, drop shadow, complex environment, weapons, trademarked styling, UI elements, borders, margins",
+        "notes": "The lantern is depicted as a purely practical illumination tool without any hazardous open flames or modern branding, ensuring safe kid-friendly fantasy gameplay.",
+        "prompt_text": "A centered 3/4-view of a vintage hooded lantern crafted from darkened brass and thick glass panels, emitting a warm, soft amber glow, presented as a clean readable silhouette on a transparent background, square canvas. Rendered with a hand-painted ink-and-watercolour texture over restrained gouache, featuring detailed metalwork and a sturdy carrying handle, completely isolated."
+      },
+      "error": ""
+    },
+    {
+      "input": "compact-multitool|urban",
+      "output": {
+        "category": "urban",
+        "item_key": "compact-multitool",
+        "kid_ok": "YES",
+        "negative_prompt": "cast-off frame, readable text, logo, brand, hands, people, scene, background, violence, blood, weapons, gun, knife blade, distinctive product design, trademarked interface, real-company styling, copyright references, photo, realistic, 3d render, low quality, blurry, watermark, signature, messy, cluttered, dark, scary, dangerous, jagged edges, messy silhouette, shadows, gradient, drop shadow, complex background",
+        "notes": "The multitool is presented entirely folded as a safe, practical utility device without any exposed blades or dangerous sharp edges.",
+        "prompt_text": "A centered 3/4-view compact multitool, clean readable silhouette, folded practical utility gadget with pliers and screwdrivers safely tucked in, bright safety-orange and brushed steel finish. Hand-painted ink-and-watercolour texture over restrained gouache, transparent background, square canvas. No cast-off frame, no readable text, no logo, no brand, no hands, no people, no scene. Designed as a helpful mechanical device for urban exploration and everyday repairs."
+      },
+      "error": ""
+    },
+    {
+      "input": "ceramic-power-cell|sci-fi",
+      "output": {
+        "category": "sci-fi",
+        "item_key": "ceramic-power-cell",
+        "kid_ok": "YES",
+        "negative_prompt": "cast-off frame, readable text, logo, brand, hands, people, scene, background elements, shadow, frame, border, typography, watermark, signature, violence, weapons, gore, dark tones, photorealistic, 3d render, copyrighted designs, trademarked interface, real-company styling, distinctive product design, complex background, messy silhouette, harsh lighting",
+        "notes": "The generic ceramic design avoids real-world battery brands while ensuring the glowing elements appear as a safe, practical tool.",
+        "prompt_text": "A centered 3/4-view sci-fi ceramic power cell, clean readable silhouette, featuring a smooth white ceramic outer casing with soft glowing blue energy conduits and polished copper terminals. Rendered in a hand-painted ink-and-watercolour texture over restrained gouache on a transparent background, square canvas. Presented as a safe, practical energy storage tool with no hazardous exposures, isolated as a distinct object."
+      },
+      "error": ""
+    },
+    {
+      "input": "crystal-data-shard|sci-fi",
+      "output": {
+        "category": "sci-fi",
+        "item_key": "crystal-data-shard",
+        "kid_ok": "YES",
+        "negative_prompt": "cast-off frame, readable text, logo, brand, hands, people, scene, violence, blood, gore, weapons, sharp edges, real-world branding, copyrighted designs, trademarked interfaces, distinctive product designs, real-company styling, photorealistic, 3d render, drop shadow, background scenery, messy silhouette, cluttered, multiple objects, UI elements, watermark",
+        "notes": "The design avoids trademarked interfaces by using a completely original faceted crystal structure intended strictly for safe data storage.",
+        "prompt_text": "A centered 3/4-view glowing crystal data shard, faceted translucent blue and purple geometric structure with intricate internal circuitry and a sleek metallic base. The practical sci-fi data storage tool features a clean readable silhouette, rendered with a hand-painted ink-and-watercolour texture over restrained gouache. It is isolated on a transparent background within a square canvas, presenting a unique and original technological artifact with no readable text, logos, or brands."
+      },
+      "error": ""
+    },
+    {
+      "input": "folding-respirator|sci-fi",
+      "output": {
+        "category": "sci-fi",
+        "item_key": "folding-respirator",
+        "kid_ok": "YES",
+        "negative_prompt": "cast-off frame, readable text, logo, brand, hands, people, scene, violence, blood, gore, weapons, copyright, trademark, real-world company, signature, watermark, background, floor, shadow, human, face, head, neck, typography, letters, numbers, modern branding, photorealistic, 3d render, plastic, grunge",
+        "notes": "The folding respirator is depicted purely as a protective environmental tool without any alarming biohazard context, ensuring it remains safe for children.",
+        "prompt_text": "A centered 3/4-view of a futuristic folding respirator mask, designed as a practical survival tool, featuring a clean readable silhouette. The collapsible breathing apparatus is rendered in a hand-painted ink-and-watercolour texture over restrained gouache. It features smooth metallic gray and teal panels, glowing blue filtration nodes, and adjustable canvas straps. Isolated on a transparent background, square canvas, showing no readable text, no logos, no people, and no scene."
+      },
+      "error": ""
+    },
+    {
+      "input": "climbing-hook|fantasy",
+      "output": {
+        "category": "fantasy",
+        "item_key": "climbing-hook",
+        "kid_ok": "YES",
+        "negative_prompt": "cast-off frame, readable text, logo, brand, hands, people, scene, violence, blood, sharp edges, weapons, copyrighted material, trademarked interfaces, distinctive product designs, real-company styling, background environment, drop shadow, modern technology, plastic materials, neon lights, glowing effects, complex patterns, watermarks, signatures, borders, UI elements",
+        "notes": "The climbing hook is designed as a purely practical traversal tool with rounded safety tips to ensure it remains completely kid-safe.",
+        "prompt_text": "A sturdy fantasy climbing hook, centered 3/4-view object with a clean readable silhouette. The practical tool features a thick forged iron grappling claw with dulled safety tips and a tightly wound hemp rope attached to its sturdy ring. Rendered in a hand-painted ink-and-watercolour texture over restrained gouache. Transparent background, square canvas, isolated inventory icon."
+      },
+      "error": ""
+    },
+    {
+      "input": "coin-pouch|fantasy",
+      "output": {
+        "category": "fantasy",
+        "item_key": "coin-pouch",
+        "kid_ok": "YES",
+        "negative_prompt": "text, words, letters, logo, watermark, signature, brand, frame, border, background scene, environment, landscape, hands, fingers, people, characters, modern interface, UI elements, realistic photograph, 3d render, plastic texture, copyright, trademark, violent imagery, blood, weapons, glowing magic, sharp edges, clutter, messy silhouette, shadows, ground plane, floor",
+        "notes": "The generic coin pouch uses unbranded fantasy currency to ensure complete originality and avoids any sharp or hazardous elements for kid safety.",
+        "prompt_text": "A centered 3/4-view of a plump, worn leather coin pouch tightly cinched with a thick hemp drawcord, overflowing slightly with unbranded, generic brass and copper fantasy coins. The asset features a clean, readable silhouette and a hand-painted ink-and-watercolour texture layered over restrained gouache. Isolated on a transparent background for a square canvas, with no frame, text, logos, hands, or surrounding scene."
+      },
+      "error": ""
+    },
+    {
+      "input": "travel-sewing-kit|urban",
+      "output": {
+        "category": "urban",
+        "item_key": "travel-sewing-kit",
+        "kid_ok": "YES",
+        "negative_prompt": "cast-off frame, readable text, logo, brand, hands, people, scene, violence, blood, sharp exposed needles, weapons, copyrighted references, trademarked interfaces, distinctive product designs, real-company styling, photorealistic, 3d render, messy, cluttered, dark, blurry, low resolution, cropped, out of frame, drop shadow, complex background, watermark, signature, border, text, words",
+        "notes": "The travel sewing kit uses neatly stored supplies without exposed sharp needles, ensuring it remains a practical and kid-safe item for players.",
+        "prompt_text": "A centered 3/4-view of a practical travel sewing kit inside a small open metal tin, featuring a few neat spools of colorful thread, a small fabric pin cushion, and folded measuring tape. Clean readable silhouette, hand-painted ink-and-watercolour texture over restrained gouache, transparent background, square canvas, highly detailed game inventory icon, isolated."
+      },
+      "error": ""
+    },
+    {
+      "input": "chalk-sticks|urban",
+      "output": {
+        "category": "urban",
+        "item_key": "chalk-sticks",
+        "kid_ok": "YES",
+        "negative_prompt": "cast-off frame, readable text, logo, brand, hands, people, scene, background elements, realistic photography, 3d render, low poly, dark fantasy, violence, weapons, copyrighted material, trademarked design, messy composition, cropped, out of frame, watermarks, signatures, borders, extra objects, floating particles",
+        "notes": "The chalk sticks are depicted as harmless, generic art supplies without any real-world branding or messy environmental elements.",
+        "prompt_text": "A small bundle of colorful chalk sticks tied with a simple twine, centered 3/4-view object, clean readable silhouette, hand-painted ink-and-watercolour texture over restrained gouache, transparent background, square canvas, soft pastel colors including pink, blue, yellow, and green, slightly dusty surface, bright and cheerful urban art supplies, well-lit studio lighting, isolated game inventory asset."
+      },
+      "error": ""
+    },
+    {
+      "input": "polished-scrying-disc|fantasy",
+      "output": {
+        "category": "fantasy",
+        "item_key": "polished-scrying-disc",
+        "kid_ok": "YES",
+        "negative_prompt": "cast-off frame, readable text, logo, brand, hands, people, scene, background elements, violence, blood, weapons, copyrighted references, modern interfaces, real-company styling, photorealism, 3d render, messy edges, complex background, shadow, dark corners, noise, watermark, signature, blurry, cropped, out of frame",
+        "notes": "The scrying disc is presented as a peaceful magical artifact for observation, ensuring it remains entirely safe and suitable for young players.",
+        "prompt_text": "A centered 3/4-view polished scrying disc, resting on a neutral surface. The disc is made of smooth obsidian with a silver rim, reflecting a subtle, mystical swirl of deep purple and starlight. Hand-painted ink-and-watercolour texture over restrained gouache, featuring a clean readable silhouette on a transparent background, square canvas, isolated object, soft diffuse lighting, stylized fantasy inventory icon."
+      },
+      "error": ""
+    },
+    {
+      "input": "sealed-letter|fantasy",
+      "output": {
+        "category": "fantasy",
+        "item_key": "sealed-letter",
+        "kid_ok": "YES",
+        "negative_prompt": "cast-off frame, readable text, logo, brand, hands, people, scene, background elements, copyrighted references, modern interfaces, real-world styling, violence, weapons, gore, dark magic, spooky motifs, digital artifacts, photorealism, 3d render, drop shadow, signature, watermark, multiple objects, busy composition, floating particles",
+        "notes": "The sealed letter uses an abstract wax crest without any readable text, ensuring a safe and original fantasy design.",
+        "prompt_text": "A single folded parchment letter sealed with thick crimson wax bearing an intricate abstract crest, centered 3/4-view object. The paper has a warm aged tone with slightly deckled edges, presented with a clean readable silhouette. Rendered in a hand-painted ink-and-watercolour texture over restrained gouache. Transparent background, square canvas, isolated asset."
+      },
+      "error": ""
+    },
+    {
+      "input": "wooden-whistle|fantasy",
+      "output": {
+        "category": "fantasy",
+        "item_key": "wooden-whistle",
+        "kid_ok": "YES",
+        "negative_prompt": "cast-off frame, readable text, logo, brand, hands, people, scene, violence, blood, gore, weapons, sharp edges, modern technology, sci-fi elements, copyright, trademark, distinctive product design, real-company styling, photorealistic, 3d render, plastic, metallic, complex background, shadow, signature, watermark, typography, UI elements, border, drop shadow",
+        "notes": "This design ensures a safe and charming appearance by focusing purely on the carved wooden craftsmanship without any sharp or dangerous elements.",
+        "prompt_text": "A simple carved wooden whistle, centered 3/4-view object, clean readable silhouette, crafted from polished oak with delicate vine engravings along the sides. Hand-painted ink-and-watercolour texture over restrained gouache, transparent background, square canvas. The design features a smooth mouthpiece and a sturdy cord tied around the base, glowing slightly with a warm, natural amber tone, isolated on a blank background."
+      },
+      "error": ""
+    },
+    {
+      "input": "weathered-spellbook|fantasy",
+      "output": {
+        "category": "fantasy",
+        "item_key": "weathered-spellbook",
+        "kid_ok": "YES",
+        "negative_prompt": "text, signature, watermark, readable text, logo, brand, hands, fingers, people, character, scene, background environment, cast-off frame, border, drop shadow, realistic, photograph, 3d render, modern elements, sci-fi, horror, skulls, blood, gore, violence, weapons, trademarked interfaces, distinctive product designs, copyrighted references, busy background, messy silhouette",
+        "notes": "The spellbook uses generic geometric patterns instead of specific runes to avoid any real-world occult or copyrighted franchise references.",
+        "prompt_text": "A weathered, ancient fantasy spellbook bound in cracked brown leather with tarnished brass corner guards, centered 3/4-view object. Clean readable silhouette, featuring thick parchment pages slightly yellowed with age and a simple geometric embossed cover emblem. Hand-painted ink-and-watercolour texture over restrained gouache, transparent background, square canvas, no cast-off frame, completely isolated."
+      },
+      "error": ""
+    },
+    {
+      "input": "iron-cooking-pot|fantasy",
+      "output": {
+        "category": "fantasy",
+        "item_key": "iron-cooking-pot",
+        "kid_ok": "YES",
+        "negative_prompt": "cast-off frame, readable text, logo, brand, hands, people, scene, background, violence, weapons, blood, gore, copyright, trademark, modern, sci-fi, urban, photorealistic, 3d render, plastic, neon, glowing, magic aura, sharp edges, broken, rusty, dirty, messy, multiple objects, out of frame, cropped, watermark, signature",
+        "notes": "The iron cooking pot is presented as a practical camping tool without any dangerous elements or trademarked fantasy designs.",
+        "prompt_text": "A centered 3/4-view of a sturdy cast iron cooking pot with a thick metal handle, resting on a flat invisible surface. The pot features a clean readable silhouette with a slightly curved bottom and subtle metallic sheen. Rendered in a hand-painted ink-and-watercolour texture over restrained gouache. Transparent background, square canvas, isolated object. A practical fantasy camping tool, no cast-off frame, no text, no hands, no people, no background scene."
+      },
+      "error": ""
+    },
+    {
+      "input": "mechanical-pocket-watch|urban",
+      "output": {
+        "category": "urban",
+        "item_key": "mechanical-pocket-watch",
+        "kid_ok": "YES",
+        "negative_prompt": "frame, readable text, logo, brand, hands, people, scene, background, watermark, signature, border, cast shadow, UI elements, copyright, trademark, modern smartwatch, digital display, real-world branding, weapons, blood, gore, violence, photorealistic, 3d render, low poly, pixel art, messy lines, cluttered silhouette, cropped, out of frame",
+        "notes": "The classic pocket watch is depicted as a purely functional timepiece with intricate gears, avoiding any modern branding or dangerous modifications.",
+        "prompt_text": "A centered 3/4-view mechanical pocket watch with an intricate exposed gear face, brass casing, and a delicate silver chain, presented as a clean readable silhouette on a transparent background for a square canvas. The style features a hand-painted ink-and-watercolour texture over restrained gouache, creating a detailed, elegant, and timeless urban inventory icon."
+      },
+      "error": ""
+    },
+    {
+      "input": "signal-flare-tube|urban",
+      "output": {
+        "category": "urban",
+        "item_key": "signal-flare-tube",
+        "kid_ok": "YES",
+        "negative_prompt": "frame, border, text, words, letters, numbers, logo, brand, trademark, watermark, signature, people, hands, fingers, human, face, character, background scene, environment, floor, shadow cast, fire, active flame, explosion, smoke, sparks, weapons, violence, blood, gore, copyrighted design, photorealistic, 3d render, vector",
+        "notes": "The flare tube features a closed safety cap, highlighting its role as a practical survival tool rather than a dangerous fire hazard.",
+        "prompt_text": "A centered 3/4-view of a practical emergency signal flare tube, featuring a durable bright orange and yellow cylindrical casing with a secure safety cap. The object has a clean readable silhouette against a transparent background on a square canvas. Rendered in a hand-painted ink-and-watercolour texture over restrained gouache. It displays no readable text, logos, or brands, showing a helpful survival tool ready for outdoor signaling without any active flame or hazard."
+      },
+      "error": ""
+    },
+    {
+      "input": "magnetic-access-token|sci-fi",
+      "output": {
+        "category": "sci-fi",
+        "item_key": "magnetic-access-token",
+        "kid_ok": "YES",
+        "negative_prompt": "text, watermark, logo, brand, typography, letters, numbers, signature, copyright, frame, border, background, shadow, ground, floor, scene, environment, hands, fingers, people, person, character, face, weapons, violence, blood, gore, real-world branding, trademarked designs, photorealistic, 3d render, vector, pixel art, messy lines, cluttered silhouette",
+        "notes": "The design relies on generic glowing circuitry rather than recognizable sci-fi franchise aesthetics to ensure complete originality and commercial safety.",
+        "prompt_text": "A centered 3/4-view sci-fi magnetic access token, featuring a sleek metallic rectangular card with glowing cyan circuit lines and a translucent polymer core. Clean readable silhouette, hand-painted ink-and-watercolour texture over restrained gouache. The token rests isolated against a transparent background on a square canvas. Designed as a practical tool for secure digital entry, with no cast-off frame, no readable text, no logo, no brand, no hands, no people, and no scene."
+      },
+      "error": ""
+    },
+    {
+      "input": "fiber-cable-spool|sci-fi",
+      "output": {
+        "category": "sci-fi",
+        "item_key": "fiber-cable-spool",
+        "kid_ok": "YES",
+        "negative_prompt": "cast-off frame, readable text, logo, brand, hands, people, scene, violence, blood, weapons, copyrighted worlds, distinctive product designs, trademarked interfaces, real-company styling, background elements, clutter, realistic photograph, 3d render, low quality, blurry, messy silhouette, extra objects, floating elements, text overlay, signature, watermark, frame, border, cropped, out of frame",
+        "notes": "The design emphasizes a practical engineering aesthetic without real-world branding, ensuring the spool appears as a safe, functional utility item.",
+        "prompt_text": "A centered 3/4-view sci-fi fiber optic cable spool, glowing blue and silver synthetic casing, neatly wound transparent optical fibers pulsing with soft light. Clean readable silhouette, hand-painted ink-and-watercolour texture over restrained gouache, transparent background, square canvas, practical engineering tool, safe and controlled design, no text, no logos, no hands, isolated."
+      },
+      "error": ""
+    },
+    {
+      "input": "portable-sensor-puck|sci-fi",
+      "output": {
+        "category": "sci-fi",
+        "item_key": "portable-sensor-puck",
+        "kid_ok": "YES",
+        "negative_prompt": "cast-off frame, readable text, logo, brand, hands, people, scene, background, weapons, violence, blood, gore, copyrighted designs, trademarked interfaces, real-company styling, photorealistic, 3d render, complex environment, messy silhouette, dark shadows, multiple objects, text, watermark, signature, blurry, cropped, out of frame, worst quality, low quality",
+        "notes": "The sensor puck is presented as a harmless scientific instrument with a generic futuristic design to avoid any specific copyrighted media references.",
+        "prompt_text": "A portable sci-fi sensor puck, centered 3/4-view object with a clean readable silhouette, featuring a sleek metallic casing, glowing soft blue indicator nodes, and subtle futuristic panel lines. Hand-painted ink-and-watercolour texture over restrained gouache, transparent background, square canvas, no cast-off frame, no readable text, no logo, no brand, no hands, no people, and no scene. High-quality game inventory icon."
+      },
+      "error": ""
+    },
+    {
+      "input": "empty-sample-canister|sci-fi",
+      "output": {
+        "category": "sci-fi",
+        "item_key": "empty-sample-canister",
+        "kid_ok": "YES",
+        "negative_prompt": "text, readable text, letters, words, logo, brand, watermark, signature, frame, border, cast-off frame, hands, fingers, people, person, human, face, background, scene, environment, floor, table, shadows, photorealistic, 3d render, low quality, sketch, messy lines, copyright, trademark, violent, weapons, blood, gore",
+        "notes": "The design avoids recognizable franchise aesthetics by using generic geometric shapes and emphasizes scientific curiosity rather than hazardous containment.",
+        "prompt_text": "A centered 3/4-view sci-fi empty sample canister, featuring a clean readable silhouette. It has a clear cylindrical glass chamber with brushed metal end caps, a small digital pressure gauge, and secure locking latches. The style is a hand-painted ink-and-watercolour texture over restrained gouache. It has a transparent background, square canvas, no cast-off frame, no readable text, no logo, no brand, no hands, no people, and no scene."
+      },
+      "error": ""
+    },
+    {
+      "input": "insulated-gloves|sci-fi",
+      "output": {
+        "category": "sci-fi",
+        "item_key": "insulated-gloves",
+        "kid_ok": "YES",
+        "negative_prompt": "cast-off frame, readable text, logo, brand, hands, people, scene, background, trademarked interface, real-world branding, weapons, violence, blood, gore, sharp blades, copyrighted designs, distinctive product styling, photorealism, 3d render, low quality, messy silhouette, cluttered, cropped, cut off",
+        "notes": "The gloves are designed purely as functional engineering equipment without any weaponized attachments, ensuring a completely safe and original futuristic appearance.",
+        "prompt_text": "A pair of heavy-duty insulated sci-fi work gloves, centered 3/4-view object, featuring reinforced synthetic padding, metallic conductive fingertips, and thick protective wrist cuffs with glowing energy seals. Clean readable silhouette, hand-painted ink-and-watercolour texture over restrained gouache, isolated on a transparent background, square canvas, highly detailed, vibrant lighting, designed as a practical futuristic engineering tool for handling extreme temperatures."
+      },
+      "error": ""
+    },
+    {
+      "input": "ceramic-coin|sci-fi",
+      "output": {
+        "category": "sci-fi",
+        "item_key": "ceramic-coin",
+        "kid_ok": "YES",
+        "negative_prompt": "frame, border, text, words, letters, signature, watermark, logo, brand, hands, fingers, people, characters, scene, background, environment, landscape, shadow, reflection, violent, dangerous, weapon, blood, gore, copyright, trademark, realistic, photo, 3d render, low quality, blurry, noisy",
+        "notes": "The design uses original glowing circuit motifs rather than real currency symbols to ensure a completely distinct and safe sci-fi currency icon.",
+        "prompt_text": "A futuristic sci-fi ceramic coin, centered in a 3/4-view with a clean readable silhouette. The coin features glowing circuit patterns embedded in smooth white ceramic, glowing with soft neon blue accents. Rendered in a hand-painted ink-and-watercolour texture over restrained gouache. Isolated on a transparent background, square canvas, with no cast-off frame, no readable text, no logo, no hands, no people, and no scene."
+      },
+      "error": ""
+    },
+    {
+      "input": "rain-poncho-roll|urban",
+      "output": {
+        "category": "urban",
+        "item_key": "rain-poncho-roll",
+        "kid_ok": "YES",
+        "negative_prompt": "text, watermark, signature, logo, brand, trademark, frame, border, background, shadow, ground, floor, people, hands, face, fingers, body, character, scene, landscape, environment, room, table, prop, clutter, messy, photorealistic, 3d render, low poly, pixel art, cartoon, anime, violence, blood, weapons",
+        "notes": "The rolled poncho is depicted purely as a harmless weather-protection tool without any brand logos or dangerous attachments.",
+        "prompt_text": "A tightly rolled bright yellow rain poncho secured with two black elastic bands, presented as a centered 3/4-view object with a clean, readable silhouette. The illustration features a hand-painted ink-and-watercolour texture layered over restrained gouache on a transparent background, filling a square canvas. The design contains no cast-off frame, no readable text, no logos, no branding, no hands, no people, and no surrounding scene, maintaining a practical and stylized urban survival aesthetic."
+      },
+      "error": ""
+    },
+    {
+      "input": "small-telescope|fantasy",
+      "output": {
+        "category": "fantasy",
+        "item_key": "small-telescope",
+        "kid_ok": "YES",
+        "negative_prompt": "cast-off frame, readable text, logo, brand, hands, people, scene, violence, blood, gore, weapons, modern interface, UI elements, copyright references, trademarked designs, real-world branding, photorealism, 3d render, plastic, metallic foil, messy background, shadows on ground, drop shadow, watermark, signature, border",
+        "notes": "The small telescope is designed as a harmless observational instrument with generic celestial motifs, ensuring it remains completely kid-safe and wholly original.",
+        "prompt_text": "A centered 3/4-view small brass and wood telescope, practical tool for stargazing and navigation, clean readable silhouette, hand-painted ink-and-watercolour texture over restrained gouache, transparent background, square canvas, isolated object. Intricate celestial engravings on the brass casing, polished wooden handle, clear glass lens reflecting a hint of starry light, crafted in a classic fantasy style without any specific franchise references, no readable text, no logo, no brand, no hands, no people, no scene."
+      },
+      "error": ""
+    },
+    {
+      "input": "repair-tape-roll|sci-fi",
+      "output": {
+        "category": "sci-fi",
+        "item_key": "repair-tape-roll",
+        "kid_ok": "YES",
+        "negative_prompt": "text, watermark, logo, signature, brand, trademark, typography, hands, fingers, human, people, characters, background, scene, environment, floor, shadow, frame, border, box, edge, violent, weapon, dangerous, sharp, photorealistic, 3d render, low quality, sketch, messy, cluttered, unreadable, dark, noisy, grainy, copyrighted, recognizable IP, real-world branding",
+        "notes": "The design avoids existing sci-fi franchises by using generic industrial elements and presents the tape as a completely safe utility item.",
+        "prompt_text": "A centered 3/4-view sci-fi repair tape roll, metallic silver and neon blue dispenser with glowing edges, unspooling a short strip of translucent grid-patterned tape, clean readable silhouette. Hand-painted ink-and-watercolour texture over restrained gouache, stylized game asset, transparent background, square canvas, isolated object. No cast-off frame, no readable text, no logo, no brand, no hands, no people, no scene, practical maintenance tool."
+      },
+      "error": ""
+    },
+    {
+      "input": "tea-tin|urban",
+      "output": {
+        "category": "urban",
+        "item_key": "tea-tin",
+        "kid_ok": "YES",
+        "negative_prompt": "text, logo, brand, watermark, hands, people, scene, background, cast-off frame, border, interface, UI, trademark, copyrighted, violence, weapon, blood, sharp edges, photo, realistic, 3d render, low poly, messy silhouette, cluttered, multiple objects, letters, words, numbers, signature, frame",
+        "notes": "The tea tin features generic decorative patterns to avoid any real-world branding while remaining completely safe for all players.",
+        "prompt_text": "A centered 3/4-view urban tea tin, featuring a clean readable silhouette and a classic cylindrical shape with a tight lid. Rendered in a hand-painted ink-and-watercolour texture over restrained gouache, showing subtle metallic reflections and soft pastel painted patterns without any text or branding. Isolated on a transparent background, square canvas, free of cast-off frames, hands, people, or any surrounding scene, serving as a charming everyday inventory icon."
+      },
+      "error": ""
+    }
+  ]
+}

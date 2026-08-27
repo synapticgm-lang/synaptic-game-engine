@@ -1,0 +1,911 @@
+1. Screen inventory
+Screen / surface
+One job
+Enter / exit
+Must-show
+Must-hide
+Mobile / desktop
+A11y notes
+Welcome / Auth
+Explain value and authenticate.
+Root; exit to Hub.
+Continue, sign-in/up, privacy/safety link, recent status if known.
+Subscription pressure before value; campaign spoilers.
+Single column mobile; split value/auth desktop.
+Native labels, error summary, focus to first invalid field.
+Main Menu / Hub
+Resume or start a campaign.
+After auth/Back; exit to Play/New Game/Settings.
+Continue card, New Game, archived shelf, Settings, account/capacity entry.
+Full dashboard metrics, raw ledger, unrelated shop tiles.
+Bottom primary actions mobile; left rail desktop.
+Campaign cards are buttons with last-save text.
+Continue / campaign switcher
+Choose active, archived, or conflict version.
+Hub card; exit to Play/Archive/Conflict chooser.
+Campaign title, mode, last confirmed turn/time, pending state.
+Auto-merged divergence.
+Full-screen sheet mobile; modal/drawer desktop.
+Radio-group version picker; clear destructive confirmation.
+New Game â€” mode
+Choose premade, Simple, Expert, PYOA/tabletop family.
+Hub; exit to setup/Back.
+Short mode descriptions, â€œchange laterâ€ constraints, safety profile.
+Prompt engineering fields in Simple.
+Stepper mobile; two-column chooser desktop.
+Keyboard selectable cards, not drag-only carousel.
+New Game â€” Simple
+Create a runnable seed with minimal choices.
+Mode; exit to opening preview/Back.
+Genre, role, tone/voice, perspective, safety/content, one premise field.
+Expert compiler internals, capacity marketing.
+One question per visual block.
+Plain-language help; all choices have text labels.
+New Game â€” Expert
+Author/validate a custom world.
+Mode; exit to preflight/preview/Back.
+Sections, validation status, blank-space policy, test run.
+Raw hidden prompt/chain reasoning.
+Tabs become accordion mobile.
+Error summary links to field; no color-only severity.
+Premade / pack browser
+Select a ready world.
+New Game; exit to setup/opening.
+Premise, commitment, content mode, play style, estimated first session.
+Unlicensed resemblance claims.
+Vertical cards mobile; grid desktop.
+Filters keyboard operable and announced.
+Opening preview / start
+Confirm campaign contract and begin.
+New Game; exit to Play/Back.
+Opening invariant, selected profile, â€œStart story.â€
+Long bible, upsell, creator internals.
+Single focus panel.
+Start button is final tab stop; returns to prior step safely.
+Play HUD â€” composition
+Play one scene and choose/respond.
+Continue/start; exit to menus/drawers.
+Prose log, choices, input, current place, compact state receipt, Settings access.
+Multiple competing dashboards, author tools, unopened panels.
+One vertical composition; bottom input/action bar. Desktop allows narrow status rail.
+Semantic log, focus-safe new-turn update, keyboard command path.
+Turn log / transcript
+Read and revisit accepted story.
+Play default; exit stays Play.
+Accepted prose, receipts, time separators, retry/correction status.
+Draft as accepted, raw system/provider errors.
+Infinite but virtualized scroll; sticky â€œjump latest.â€
+role=log/landmark; preserve reading position, not forced scroll.
+Choice tray
+Make a concrete decision.
+Appears after accepted turn; exit on choice/close if free text exists.
+2â€“5 intent labels, known stakes, disabled explanation.
+Hidden score, fake urgency, unrelated controls.
+Bottom sheet mobile; inline under log desktop.
+Arrow keys/number shortcuts; focus lands once, never steals mid-read.
+Free-text composer
+State player intent.
+Play; exit submit/cancel.
+Input, send, optional actions/help, pending status.
+Guess that text is committed until acknowledged.
+Docked bottom safe area; desktop full width.
+Multiline label, send shortcut documented, restore unsent draft.
+Turn receipt drawer
+Explain meaningful state change.
+Tap receipt; exit close.
+What changed, why, source/rule, expand detail.
+Provider prompts, chain reasoning, secret scope.
+Bottom sheet mobile; right drawer desktop.
+Dialog heading, copyable text, focus return to source receipt.
+Character window
+Read paper doll, state, abilities and relationships.
+HUD; exit close.
+Portrait/paper doll, equipped gear, HP/conditions, progression, tabs.
+Invented art facts; inaccessible tiny slots.
+Full-screen tab sheet mobile; resizable side pane desktop.
+Slots are labeled controls; status has text and icon.
+Inventory / Salvage
+Manage carried/equipped/stored gear.
+HUD/Character; exit close.
+Capacity, filters, compare, item provenance, salvage preview.
+Silent overflow/destruction.
+Full-screen mobile; drawer/modal desktop.
+Grid has list fallback; bulk actions confirm and announce delta.
+Journal / Guide Book
+Answer what is active/known/next.
+HUD; exit close.
+Active/blocked/completed, source/why, player-known next steps.
+GM-only plots or solved mystery.
+Tabbed sheet mobile; side pane desktop.
+Filter controls named; status does not rely only on color.
+Map â€” street
+Orient and plan travel.
+HUD; exit close.
+Current location, known/rumored pins, legend, travel preview.
+Unearned locations, secret factions, omniscient routes.
+Full-screen with persistent back action.
+Pan/zoom alternatives, pin list, text route fallback.
+Map â€” dungeon
+Read explored/current/fog state.
+HUD/interior; exit close.
+Current node, exits, explored vs visible, threat/return route.
+Future rooms/hidden actor labels.
+Full-screen; node list mobile.
+Never canvas-only; node list and keyboard selection.
+System window / log
+Present committed mechanics diegetically.
+HUD/receipt; exit close.
+Typed notice, compact delta, expand source.
+Jargon flood, uncommitted reward.
+Inline compact + log drawer.
+Announce important notices politely; full detail inspectable.
+Memorable gallery / plate
+Revisit selected accepted moments.
+Hub/HUD; exit close.
+Event caption, date/chapter, source receipt, text fallback.
+Claim that image is world truth.
+Vertical gallery mobile; grid desktop.
+Alt text/transcript; no essential text baked only in image.
+Comic / illustrated view
+Present same accepted text in visual projection.
+Toggle from Play/Gallery; exit Classic.
+Transcript, panel/plate status, text fallback.
+Different canon, blocking render spinner.
+Vertical scroll mobile; paged/grid desktop.
+Reading order, reduced motion, text overlay scale.
+Themes / Shop
+Choose visual cosmetic and optional entitlement.
+Hub/Settings; exit apply/back.
+Preview, price/owned state, contrast-safe indication.
+Safety/capacity effects disguised as cosmetics.
+Cards mobile; grid desktop.
+Preview respects text scale/reduced motion.
+Settings
+Change preferences without losing play.
+HUD/Hub; exit Done/Back.
+Sections, applied/saved state, reset, account/safety.
+Campaign truth edits; duplicate controls.
+Full-screen sheet mobile; modal + nav desktop.
+Deep links, heading hierarchy, no trapped focus.
+Kid Mode PIN / guardian gate
+Set or unlock guardian-controlled mode.
+Settings/New Game; exit to prior context.
+Scope, PIN state, recovery instructions, mode effect.
+PIN value, adult content previews, coercive copy.
+Full-screen secure sheet.
+Password semantics, reveal disabled by default, nonvisual explanation.
+Capacity / subscription detail
+Explain current entitlement and optional purchase.
+Hub/Settings/limit event; exit back.
+Current status, what is included, retry/refund state, manage link.
+Blocking story explanation, dark patterns, invented usage.
+Sheet mobile, drawer desktop.
+Plain text values, no color-only quota signal.
+Feedback / report
+Capture feedback safely.
+HUD/Settings; exit submit/cancel.
+Category, optional context consent, report status.
+Secret system/other-player data.
+Small modal/sheet.
+Textarea labels and success announcement.
+Toast center / notifications
+Surface transient noncritical feedback.
+HUD; exit timeout/dismiss/history.
+One actionable message, undo where valid.
+Multi-toast pile, persistent screen obstruction.
+Top safe area mobile; top-right desktop.
+Pause on hover/focus, accessible history.
+Debug / developer panel
+Inspect local diagnostics in dev/admin builds.
+Explicit dev route; exit close.
+Build/version, flags, test state, safe redaction.
+Production player access, secrets/keys, raw private prompts.
+Separate page.
+Not needed in production tree.
+2. Layout system
+Breakpoints and safe areas
+Tier
+Width
+Primary composition
+Rules
+Compact
+0â€“599 px
+Single column / full-screen sheets.
+Input is bottom-docked above env(safe-area-inset-bottom); drawers become pages/sheets.
+Medium
+600â€“1023 px
+One main column + optional temporary side sheet.
+Never three permanent columns; map/character opens full overlay.
+Expanded
+1024â€“1439 px
+Main play column + one narrow context rail.
+Rail holds place/receipt shortcuts only; log remains dominant.
+Wide
+â‰¥1440 px
+Same composition with comfortable max-width.
+Do not add analytics/dashboard panels merely because space exists.
+Play HUD: one composition
+Desktop:  [utility rail 72] [story column max 760] [context rail 280 optional]
+Mobile:   [top compact bar] [story / choices] [composer + safe-area] [one sheet at a time]
+
+Rule
+Contract
+Main focus
+The accepted story log and current choice/input always occupy the visual center.
+HUD chrome
+Top bar: back/hub, campaign title, place, compact menu. Bottom: composer/choice. No persistent XP/shop/map/inventory strip.
+Context rail
+Desktop only; shows at most current place, one active objective, one compact receipt. It is collapsible.
+Drawer stacking
+One major drawer or modal at a time. A child confirmation replaces parent visually and returns on cancel; never modal-over-drawer-over-modal.
+Modal rules
+Modal for irreversible confirm, auth, PIN, conflict and short form. Drawer/sheet for inspect/manage. Full screen for map, Character, Inventory, Journal, Settings on compact.
+Keyboard
+Focus order is top controls â†’ transcript tools â†’ choices â†’ composer â†’ context; opening a surface moves focus to title and closing restores origin.
+Motion
+New story content never scrolls player away from older text unless already at latest; typewriter/plate transitions are optional.
+Dashboard ban
+Never turn Play into metrics, store, creator console, capacity wall, social feed, or a grid of simultaneous mini-panels.
+3. Settings matrix (exhaustive)
+ID
+Label
+Default
+Free/Mid/High/Admin
+Kid vs adult
+Simple vs Expert
+Affects
+Never does
+Storage
+Done-when
+content.mode
+Content mode
+Campaign selected / standard
+All
+Kid locks guardian policy; adult policy per product
+Both
+prose, safety
+Change accepted history or bypass safety
+campaign + account guardian policy
+Mode badge and effective policy are visible.
+kid.enabled
+Family-safe mode
+Off unless guardian set
+All
+Kid only
+Both
+prose, art, safety
+Hide receipts/continuity; sell access
+account guardian + campaign
+Toggle demands PIN; no unsafe artifact reachable.
+kid.pin
+Guardian PIN
+Unset
+All
+Kid
+Both
+safety
+Reveal/adult reset through UI
+secure account store
+Set/change/recovery/lockout flow tested.
+perspective
+Story perspective
+Second person
+All
+Both
+Both
+prose
+Change rules/actor ownership
+campaign
+Next generated prose uses selection; history unchanged.
+voice.profile
+Guide voice
+Clear & Grounded
+All
+Kid clamps safe rails
+Simple 4 / Expert axes
+prose
+Change facts, checks or safety
+campaign
+Preview/apply/reset works.
+voice.verbosity
+Detail level
+Standard
+All
+Both
+Simple 3 / Expert slider
+prose, UI
+Change state or hide required receipt
+campaign
+Current turn changes density, receipt remains.
+system.intensity
+System notice intensity
+Standard
+All
+Kid plain language
+Simple 3 / Expert cadence
+prose, UI
+Suppress mandatory decision/consequence notice
+campaign
+Templates collapse/expand correctly.
+stats.display
+Show compact stats
+On
+All
+Both
+Both
+UI
+Change combat/check math
+campaign
+HUD/Character toggle, text fallback.
+dice.animation
+Dice animation
+On, skippable
+All
+Both
+Both
+UI
+Change roll, seed or outcome
+account
+Reduced motion overrides animation.
+dice.cosmetic
+Dice cosmetic
+Default owned
+Free/Mid/High; Admin grant
+Both
+Both
+UI
+Affect odds/roll disclosure
+account inventory
+Applies only to renderer.
+map.autoOpen
+Open map on travel
+Prompt
+All
+Both
+Both
+UI
+Reveal a place or skip travel receipt
+campaign
+Travel preview honors choice.
+map.discoveryPrompt
+Ask before pinning rumor
+On
+All
+Both
+Both
+UI
+Promote rumor to confirmed
+campaign
+Pin records source/confidence.
+map.orientation
+Map orientation
+North-up
+All
+Both
+Both
+UI
+Change topology
+account
+Street/dungeon both honor it.
+journal.tracking
+Track current objective
+Auto, editable
+All
+Both
+Simple one / Expert filters
+UI
+Create or resolve quest
+campaign
+Guide Book reads player-known state.
+inventory.sort
+Inventory sort
+Recent
+All
+Both
+Both
+UI
+Change item instances/capacity
+account + campaign view
+Stable sort and manual override.
+salvage.confirm
+Confirm salvage
+On
+All
+Both
+Both
+UI, economy
+Hide exact outputs or salvage quest item
+account
+Preview/confirm occurs before StateTx.
+memorable.enabled
+Memorable moments
+On, caps apply
+All core; tier only changes elective allowance
+Kid safe rewrite/skip
+Both
+UI, capacity, safety
+Block story or create truth
+campaign
+Eligible plate failure leaves story complete.
+memorable.notifications
+Moment notifications
+On
+All
+Both
+Both
+UI
+Force render/charge
+account
+Toast links to accepted receipt.
+comic.view
+Reading view
+Classic
+All; illustrated entitlement policy applies
+Kid policy
+Both
+UI
+Change canon or block turn
+account + campaign
+Same transcript/receipt in both views.
+comic.autoOpen
+Open illustrated beat
+Off
+All
+Kid safe only
+Both
+UI, capacity
+Generate a required beat or create truth
+campaign
+Pending art never hijacks focus.
+hear.enabled
+Hear controls
+Off
+All
+Kid allowed safe text
+Both
+UI, accessibility
+Autoplay all prose or replace text
+account
+Latest/System/choice scopes work.
+hear.rate
+Speech rate
+1.0Ã—
+All
+Both
+Both
+UI, accessibility
+Affect prose meaning
+account
+Range labels and pause/replay work.
+hear.volume
+Speech volume
+70%
+All
+Both
+Both
+UI, accessibility
+Affect SFX/music other channels
+account
+Per-channel persistence works.
+theme.id
+UI theme
+Core
+Free owned / Mid/High cosmetics / Admin grant
+Kid has safe approved subset
+Both
+UI
+Lower contrast; change fog/capacity/safety truth
+account
+Contrast test passes before apply.
+font.family
+Reading font
+Default readable
+All
+Both
+Both
+UI, accessibility
+Rewrite prose or alter rules
+account
+Fallback/legibility tested.
+font.scale
+Text scale
+100%
+All
+Both
+Both
+UI, accessibility
+Clip controls or change turn state
+account
+80â€“200% reflow passes.
+line.spacing
+Line spacing
+Standard
+All
+Both
+Both
+UI, accessibility
+Change content
+account
+Log/choice wrap passes.
+contrast.mode
+Contrast
+Standard
+All
+Both
+Both
+UI, accessibility
+Change theme entitlement or fog truth
+account
+Standard/high contrast pass visual tokens.
+motion.reduced
+Reduce motion
+System preference
+All
+Both
+Both
+UI, accessibility
+Change timer/rule outcomes
+account
+No shake/typewriter/autoscroll when active.
+color.statusLabels
+Always show status labels
+On
+All
+Both
+Both
+UI, accessibility
+Change status itself
+account
+Conditions/rarity/fog have text labels.
+input.shortcuts
+Keyboard shortcuts
+On
+All
+Both
+Both
+UI, accessibility
+Commit action without confirmation policy
+account
+Remap/reset/collision check.
+subscription.display
+Plan and capacity detail
+Visible
+All
+Both
+Both
+UI, economy
+Gate story or misstate availability
+account
+Shows current plan/status/source time.
+capacity.detail
+Show capacity detail
+Compact
+All
+Both
+Expert exposes more
+UI, economy
+Alter allocation/refund
+account
+Compact/expanded source consistent.
+cloud.sync
+Cloud save
+On
+All
+Both
+Both
+UI
+Merge divergent StateTx silently
+account
+Last confirmed save and errors clear.
+cloud.driveLink
+Drive backup/link
+Off
+All if connector available
+Both
+Expert/Settings
+UI
+Export secrets or change campaign truth
+account connector config
+Explicit connect/disconnect/state.
+feedback.context
+Attach safe game context
+Ask each time
+All
+Kid strips sensitive context
+Both
+UI, safety
+Attach hidden/private prompts or secrets
+account
+Consent preview/redaction works.
+feedback.channel
+Feedback route
+In-app
+All
+Both
+Both
+UI
+Change live game / promise response
+account
+Submitted state and copyable ID.
+api.byok
+Bring your own key
+Off / Admin only
+Admin
+Adult/admin only
+Expert only
+economy, safety
+Bypass policy, telemetry or ledger checks
+secure admin account
+Key never returns to client/log; disable clears use.
+api.model
+Admin model route
+Product default
+Admin
+Adult/admin
+Expert only
+prose, economy
+Change authority, rules or safety
+server-side admin config
+Capability/price validation and audit.
+debug.enabled
+Developer diagnostics
+Off
+Dev/Admin only
+Never Kid/player
+Expert/dev
+UI
+Expose secrets/hidden state in prod
+local dev + server role
+Build guard / redaction / no prod route.
+debug.worldTrace
+World trace
+Off
+Dev/Admin only
+Never Kid/player
+Expert/dev
+UI
+Mutate world or leak hidden facts
+dev session
+Read-only, redacted and capability-gated.
+ops.imagesOff
+Images kill switch
+Server controlled
+Ops/Admin
+Kid respects
+N/A
+safety, capacity, UI
+Stop text/story/receipts
+server flag
+UI hides/degrades image actions safely.
+ops.simOff
+Living-world simulation safety hold
+Server controlled
+Ops/Admin
+Both
+N/A
+safety, prose
+Rewrite existing state or silently advance clock
+server flag
+Uses last valid state and explicit status.
+4. Theme/cosmetics application map
+Component
+Theme may restyle
+Theme must not change
+Hud
+Surface, border, radius, spacing, decorative motion, icon skin.
+Choice order, focus order, receipt content, input availability.
+Log / prose
+Font family/size, paper/background, line measure, separators.
+Accepted text, source receipts, contrast floor.
+Character / inventory
+Frame, portrait border, slot art, cosmetic dice/rarity accents.
+Slot meaning, equipment truth, status text, capacity.
+Map
+Palette, pin icon skin, grid decoration.
+Fog/reveal state, pin confidence, route truth, player location.
+System
+Notice frame, glyph, sound optional.
+Template payload, visibility class, mechanics delta.
+Memorable / comic
+Frame, gutters, caption styling, transition.
+Transcript, reading order, art/canon separation.
+Themes/Shop
+Preview card and owned indicator.
+Price, plan/capacity truth, safety policy, accessibility settings.
+Non-negotiable design tokens
+Token
+Floor / rule
+Text contrast
+Default text meets WCAG AA intent; high-contrast mode increases it.
+Focus
+Visible focus indicator on all interactive controls; theme cannot suppress it.
+Status
+Color is paired with label/icon/pattern.
+Motion
+prefers-reduced-motion and user toggle override theme animation.
+Layout
+Theme cannot reduce hit target, text scale or modal escape affordance.
+Truth
+Cosmetics never alter map fog, capacity/refund, safety, ledger, rewards or entitlement.
+5. Copy bank
+20 lines: do
+#
+Use this copy
+1
+â€œMemorable moments add an optional plate to an accepted story event.â€
+2
+â€œYour story continues if an illustration is delayed or unavailable.â€
+3
+â€œThis view changes how the story is presented, not what happened.â€
+4
+â€œSecond person: the story addresses you as â€˜you.â€™â€
+5
+â€œThird person: the story follows your character by name.â€
+6
+â€œFamily-safe mode changes what is shown and described. Your campaign facts stay intact.â€
+7
+â€œEnter your guardian PIN to change family-safe settings.â€
+8
+â€œCapacity affects optional creation features. It never removes your saved story.â€
+9
+â€œYou can keep playing in Classic view while this plate prepares.â€
+10
+â€œThis illustration is based on the accepted event shown below.â€
+11
+â€œShow why this is available.â€
+12
+â€œThis place is a rumor from Mara, not a confirmed destination.â€
+13
+â€œYour bag is full. Review what to keep, store, salvage, or leave.â€
+14
+â€œSalvage returns these materials. This cannot be undone.â€
+15
+â€œThis roll used the modifiers shown here.â€
+16
+â€œChoose a saved version. Your other version will be kept.â€
+17
+â€œYour last message was not confirmed. Restore it to the composer?â€
+18
+â€œReduce motion removes typewriter, shake, and decorative transitions.â€
+19
+â€œHear last prose reads the most recent accepted response.â€
+20
+â€œVoice changes tone and pacing, never rules or outcomes.â€
+20 lines: donâ€™t
+#
+Do not use this copy
+1
+â€œUnlock the real story with images.â€
+2
+â€œThe AI decided this is canon.â€
+3
+â€œUnlimited comics forever.â€
+4
+â€œWe improved memory.â€
+5
+â€œYour capacity is gone.â€
+6
+â€œWatch an ad to see what happens.â€
+7
+â€œKid Mode makes the game less complete.â€
+8
+â€œEnter PIN to access adult content.â€
+9
+â€œThis image proves the scene.â€
+10
+â€œYou rolled badly.â€
+11
+â€œQuest failed.â€
+12
+â€œYou cannot go there.â€
+13
+â€œYour items were cleaned up.â€
+14
+â€œSave conflict resolved automatically.â€
+15
+â€œWe changed your campaign to match the cloud.â€
+16
+â€œThis voice is smarter.â€
+17
+â€œTurn off accessibility effects.â€
+18
+â€œUse dark mode for better gameplay.â€
+19
+â€œPremium users get accurate maps.â€
+20
+â€œThe System knows everything.â€
+6. Module map
+Module
+Verdict
+Coding responsibility
+SettingsModal
+HARDEN
+Section routing, account/campaign/device scope, search/deep links, applied-state and reset semantics.
+Hud
+HARDEN
+One composition, safe-area composer, toast queue, focus order, compact status rail.
+MainMenu
+EXTEND
+Continue/active/archive/capacity/settings navigation without dashboard sprawl.
+NewGameModal
+EXTEND
+Simple/Expert/premade flow, voice/perspective/content mode, validation and preview.
+CharacterWindow
+HARDEN
+Responsive paper doll/tabs, status labels, keyboard/list fallback.
+Themes/Shop
+HARDEN
+Token preview/ownership and contrast/motion guard; cosmetics separate from truth.
+uiTheme
+EXTEND
+Semantic tokens, high contrast, scale, font, motion cascade and safe fallbacks.
+ScreenShell
+NEW FILE
+Route-level safe area, modal/drawer stack, focus return and breakpoint composition.
+PreferenceStore
+NEW FILE
+Typed setting registry, defaults, scope, migration and effective-policy resolution.
+A11yAnnouncer
+NEW FILE
+Polite/critical announcement queue and transcript-safe status history.
+CampaignSwitchSheet
+NEW FILE
+Active/archive/choose-version/pending-turn recovery presentation.
+7. 30-day UI polish spikes (max 6)
+Spike
+Build slice
+Success metric
+Kill criteria
+1
+Play HUD one-composition refactor with compact/expanded breakpoints.
+90% task completion for read/choose/send in mobile test; no composer obstruction.
+Adds a permanent dashboard/extra taps to respond.
+2
+Typed PreferenceStore + Settings matrix implementation.
+Every setting has scope/default/effective state/reset; zero duplicate defaults.
+Setting can change ledger truth or safety without audit.
+3
+A11y baseline: focus, scale, contrast, motion, log/receipt announcement.
+Keyboard completion of one turn and 200% text test pass.
+Any focus trap, clipped choice, color-only status.
+4
+Continue/archive/conflict/pending-turn UI.
+No silent conflict overwrite; draft restore â‰¥95% in fixtures.
+User loses a confirmed turn or sees duplicate action.
+5
+Theme token + cosmetics guard.
+All supplied themes pass contrast/focus/motion test matrix.
+Cosmetic changes fog, capacity, safety or layout contract.
+6
+Kid/capacity/Memorable/comic copy and state edge audit.
+Players correctly explain text-first/fail-holds-story in usability test.
+Copy implies story gate, paid continuity, or art truth.
+8. Open founder decisions only if new
+Decision
+Recommendation
+Alternative
+Cost if wrong
+Settings scope default
+Campaign for narrative preferences; account for accessibility/theme; server for kill switches.
+Account-wide prose preferences.
+Cross-campaign surprise versus repeated setup.
+Comic toggle location
+In reading/view switch, not Settings primary.
+Settings-only.
+Hidden feature versus cluttered play HUD.
+Capacity surface
+Compact status on Hub/limit event; detailed sheet on demand.
+Persistent HUD counter.
+Ambiguity versus anxiety/dashboard feel.
+Theme shopping
+Hub/Settings cosmetic surface, never in turn path.
+Inline prompt during play.
+Lower discovery versus disrupted fiction.
+Hear
+Ship only after a11y baseline; opt-in manual scopes.
+Full autoplay narration.
+Missed accessibility aid versus distraction/cost/latency.
+Kid Mode title
+â€œFamily-safe modeâ€ in player UI; â€œKid Modeâ€ in internal/admin labels only if product language requires it.
+Use â€œKid Modeâ€ everywhere.
+Clarity trade-off; avoid framing safety as a lesser game.

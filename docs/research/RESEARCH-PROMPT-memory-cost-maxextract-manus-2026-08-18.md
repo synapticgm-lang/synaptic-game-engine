@@ -1,0 +1,227 @@
+# Manus research prompt — maximum extract (memory moat + cost + long-context + outside-game)
+
+**Date:** 2026-08-18  
+**Use:** Paste into Manus while free. One mega-brief preferred; if Manus splits, ask for Parts A–G as separate files with the same glossary.  
+**Product:** SynapticGM — live single-player ledger-first AI GM (LitRPG / isekai / story RPG / PYOA / tabletop).  
+**Not in scope:** WOF / multiplayer MMO / housing / auction (quarantined later project). Do not invent WOF content.
+
+---
+
+## COPY EVERYTHING BELOW THIS LINE INTO MANUS
+
+---
+
+# SynapticGM — MAXIMUM RESEARCH BRIEF: Blow away rivals on memory + slash inference cost
+
+You are a senior research analyst for an indie AI game studio. Produce a **dense, cited, implementation-oriented** research omnibus. Prefer primary sources, papers, vendor docs, benchmarks, and named patterns over vague “best practices.” Flag speculation as **SPECULATIVE**. Flag legal/counsel needs as **COUNSEL**.
+
+## Product truth (do not contradict)
+
+SynapticGM’s edge is **not** “better chat memory.” It is:
+
+**Authority order (product law):**  
+player correction → pinned canon / opening invariant → accepted ledger transaction (StateTx) → Scene Manifest → supporting evidence → draft invention.
+
+Already built or building:
+
+- Ledger sheets: inventory, quests, sceneFacts, campaign memory pins, consequences  
+- SceneManifest, IntentContract + obligation coverage, IntroductionPermit  
+- CampaignContract, beatFingerprint retry novelty, HookArc soft-offer guard  
+- Speculative retry journal (retries ≠ world truth), expected ledger revision  
+- Leak scanner / System jargon filters  
+- Classic + Memorable images (Flux / OpenRouter path); text via OpenRouter-hosted or BYOK  
+
+**North star:** One visible causal chain — intent → adjudicated outcome → StateTx → scene projection → prose/HUD → save/entitlement — that still holds at **100–500+ turns**, not just the first hour.
+
+**Business constraint:** Solo founder. Must **save money** on inference/images without destroying quality. Prefer architectures that get *cheaper* as sessions get longer (ledger-compressed context), not ones that dump more tokens every turn.
+
+## Research mission
+
+1. **Reinforce** what we already have (harden, don’t replace with RAG-as-truth).  
+2. **Scaffold longer memory** (100–1000 turn campaigns; multi-session return).  
+3. **Blow away competitors** on continuity, answering, recognition of player chat, anti-invention.  
+4. **Cross-domain** ideas (outside games) that map cleanly to a ledger GM.  
+5. **Custom / dedicated AI** options: fine-tune, distill, adapters, local/self-host, long-memory specialized models — what is real in 2026 vs hype.  
+6. **Cost alts** to OpenRouter and Flux for text + images; when “own AI” actually saves money vs when it burns cash.
+
+## Hard fences
+
+- Do **not** recommend semantic retrieval or a master summary as **authority** for inventory, roster, quests, or HP. Those may be **supporting evidence only**.  
+- Do **not** recommend always-on full bible dump or “pin everything.”  
+- Do **not** recommend mid-action turn-count walls or soft offer spam.  
+- No licensed IP cloning (no Solo Leveling / D&D-named SRD marketing / named series). Original + public-domain folklore only.  
+- No WOF / MMO design.  
+- Separate **player-visible** vs **writer-only** vs **engine-only** facts.
+
+---
+
+# PART A — Competitive memory moat (reinforce + kill remaining gaps)
+
+Research how the best AI RPG / chatbot companions / long-form agents still fail (invention, forgot kit, ignored question, recycled beat). Map each failure to a **gate we can code** on top of StateTx / SceneManifest / IntentContract.
+
+Deliver:
+
+1. **Gap matrix:** Failure mode → rival behavior → our current defense → remaining hole → P0/P1 fix (1–2 sentences each).  
+2. **100-turn / 500-turn endurance patterns:** What systems (games, agents, IDEs, CRM) keep state true for long sessions? Map each to SynapticGM modules.  
+3. **Recognition of player chat:** Patterns for “the game heard me” (obligation coverage, paraphrase echo, correction supersede, open-ask ledger). Best UX copy patterns.  
+4. **Contradiction quarantine:** How aviation, legal e-discovery, or wiki conflict models quarantine contested facts without silent overwrite. Concrete schema for SynapticGM.  
+5. **What NOT to build** (anti-list) with reasons.
+
+Success tests we should keep or add (name them): e.g. 50-input invention gauntlet, 20-retry novelty, 10×40 premise-drift, 100-turn kit recall.
+
+---
+
+# PART B — Longer memory scaffolding (architecture, not vibes)
+
+We need scaffolding that supports **even longer** memory without exploding token cost.
+
+Research and propose:
+
+1. **Hierarchical memory layouts** used outside games (OS page tables, event sourcing, CQRS, git history, accounting ledgers, EHR problem lists, case management). Which map 1:1 to StateTx + pins + micro-summaries?  
+2. **Compression that never mutates truth:** Summaries as views; lossless pins; TTL classes; visibility classes (engine / GM / diegetic / player).  
+3. **Working set vs archival:** How to choose what enters the prompt each turn (budget in tokens). Give a **concrete assembler algorithm** (ordered slots + hard caps).  
+4. **Multi-session return:** Player leaves for a week — what rehydrates first so they feel continuity in ≤3 turns?  
+5. **Entity IDs + alias tables:** Handling “the clerk” → named later; corrections; merges.  
+6. **Provenance / Simple Why?:** Minimal schema so HUD can answer “why is this true?” without Expert mode.  
+7. **Append-only + snapshots:** Checkpoint / projection hash patterns cheap enough for a browser + Supabase game.
+
+Output: a **recommended memory stack diagram** (text/mermaid) with layers: truth → projection → prompt assembly → draft → gates → commit.
+
+---
+
+# PART C — Dedicated / custom AI for longest memory (reality check + money)
+
+Research **as of mid–late 2026** (cite dates):
+
+### C1 — Models and techniques claiming long memory
+
+For each relevant approach, score: maturity, cost, latency, fit for **tool-using GM with hard ledger**, risk of hallucination:
+
+- Long-context frontier models (1M+ context) — when context dump still loses to ledger  
+- Memory-augmented / recurrent / Infini-attention / Compressive Transformer lineage  
+- RAG / HyDE / GraphRAG — **supporting only**; when it helps lore flavor vs when it poisons kit  
+- Fine-tunes / LoRA / QLoRA on GM transcripts — what data would we need; catastrophic forgetting risk  
+- Distillation of a “warden” or “claim gate” small model vs one giant narrator  
+- Speculative decoding / router models (cheap draft + expensive judge)  
+- On-device / local models (Llama, Qwen, Mistral class) for: intent parse, invent detect, obligation check — **not** full narrative if quality fails  
+- Agents with external memory stores (MemGPT-style, Letta, etc.) — map to our StateTx, don’t replace it  
+
+### C2 — “Our own dedicated AI”
+
+Answer bluntly:
+
+1. When does self-hosting or a dedicated fine-tune **actually save money** for an indie with variable traffic? Break-even math (assumptions table).  
+2. When is it a **money pit** (GPU rent, ops, eval harness, safety)?  
+3. Hybrid that saves most cash first: **small local/edge models for gates** + rented big model for prose only when needed.  
+4. Data flywheel: what logged fields (anonymized) make a future custom model unique to SynapticGM without storing creepy raw chat forever?  
+5. Minimum viable “SynapticGM Continuity Model” — one specialized classifier/reranker (invent? obligation miss? beat recycle?) vs full LLM replacement.
+
+### C3 — Vendor / route alternatives to OpenRouter (text)
+
+Compare routes for quality × $/1M tokens × reliability × ToS risk for a commercial game:
+
+- Direct APIs (OpenAI, Anthropic, Google, DeepSeek, Groq, Fireworks, Together, Azure, etc.)  
+- Open-weight hosts  
+- Batch / flex / cache / prompt-caching pricing tricks  
+- Fallback graphs when primary fails  
+- EU/UK data residency notes if relevant  
+
+Give a **recommended routing ladder** for Free / Mid / High tiers (we already force Free model under kill switch).
+
+### C4 — Image alternatives to Flux / OpenRouter Flux
+
+Compare cheap splash art paths for Memorable Moments (not full comic every turn):
+
+- Flux variants, SDXL, SD3, AuraFlow, local Comfy, Replicate, fal, BFL direct, etc.  
+- Quality vs NSFW/Kid Mode filterability  
+- Cost per image at our caps (weekly memorable budget)  
+- When to skip generation entirely (soft-skip) to save money  
+
+---
+
+# PART D — Outside the gaming world (steal ruthlessly)
+
+Find **non-game** domains that solved “long-lived truth under noisy language”:
+
+Examples to investigate (and others you find):
+
+- Air traffic / black box / NOTAMs  
+- Electronic health records / problem lists  
+- Court case management / chain of custody  
+- Banking ledgers / double-entry  
+- Wikipedia / Wikidata dispute resolution  
+- Customer support case systems  
+- Scientific lab notebooks / ELNs  
+- Version control + code review bots  
+- Theater stage management / rehearsal “bible”  
+- Tabletop GM prep tools (non-IP): session notes, clocks, fronts  
+
+For each useful pattern: **Name → mechanism → SynapticGM mapping → build size (S/M/L) → expected continuity gain**.
+
+---
+
+# PART E — Blow-away product differentiators (player-visible)
+
+List 10 player-visible moments that make someone say “this AI actually remembers / listens,” ranked by Impact × Feasibility for our stack. Each needs:
+
+- Player-facing moment  
+- Underlying ledger/gate  
+- Demo script (3 turns)  
+- Metric to prove it  
+
+Also: marketing claims we can **honestly** make vs claims that would be false until server capacity / harder gates ship.
+
+---
+
+# PART F — Cost kill-list (save John money this quarter)
+
+Prioritized list of **concrete** savings with estimated % or $/session impact (state assumptions):
+
+1. Prompt budget discipline (what to stop sending)  
+2. Model routing / caching  
+3. Gate models vs narrator models  
+4. Image skip / cheaper image route  
+5. Retry policy (when NOT to burn a second GM call)  
+6. Free-tier session design (honeymoon already exists — reinforce without spend spikes)  
+7. What to postpone (own GPU cluster, full comic, always-on TTS, etc.)
+
+End with a **90-day cost roadmap**: Week 1–2 / 3–6 / 7–12.
+
+---
+
+# PART G — Build backlog (code-ready)
+
+Produce a ranked backlog of **only** items that strengthen memory/cost for SynapticGM live:
+
+| Priority | Item | Extends existing module | Done-when test | Est. effort | Saves $ or quality? |
+
+Do **not** list WOF. Do **not** reopen “more generic memory research.” Prefer harden/wire.
+
+Include a short **“research complete vs still unknown”** checklist so we know when to stop researching and only build.
+
+---
+
+# Output format (required)
+
+1. **Executive scorecard** (1 page): Memory moat / Cost / Custom-AI realism / Outside-game gold — each scored 1–10 with one sentence.  
+2. Parts A–G as clearly headed sections.  
+3. **Glossary** of terms aligned to our names: StateTx, SceneManifest, IntentContract, IntroductionPermit, CampaignContract, HookArc, beatFingerprint.  
+4. **Citations** with links or paper IDs; mark access date.  
+5. **Anti-hallucination for you (Manus):** If a vendor feature is rumored, say so. Do not invent benchmark numbers.  
+6. Deliver as markdown files + one JSON or CSV support table for model/cost routes if helpful.  
+7. Filename prefix: `SynapticGM_memory_cost_maxextract_2026-08-18`
+
+## Final self-check before you finish
+
+- Did you avoid making RAG/summary into authority?  
+- Did you give break-even honesty on “own AI”?  
+- Did you give a prompt assembler algorithm with token budgets?  
+- Did you give OpenRouter + Flux alternatives with a routing ladder?  
+- Did you stay off WOF/MMO?  
+- Is there a P0 backlog that extends **existing** SynapticGM modules?
+
+Begin research now. Maximize signal. Minimize filler.
+
+---
+
+## END OF MANUS PROMPT

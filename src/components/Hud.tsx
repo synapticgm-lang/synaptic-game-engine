@@ -8,9 +8,9 @@ import { effectiveWriterTier, isTestLabEnabled } from '../game/testLab';
 import { equippedSetLabel, equippedSetName } from '../game/uiTheme';
 
 /** Visible after a hard refresh -- if this is missing, Vercel is still serving the 16 Aug bundle. */
-export const HUD_BUILD_STAMP = '2026-08-26v';
+export const HUD_BUILD_STAMP = '2026-08-27w';
 const HUD_BUILD_TITLE =
-  'Debug 2026-08-26v - Gemini mode table + inventory-them scrub + alone crowd-pad filter + hard stagnation rail';
+  'Debug 2026-08-27w - P0+P1 quality governance (progress governor, entity validation, semantic loops, pad cooldowns, discovery XP, voice cadence, meta recovery)';
 
 interface Props {
   state: GameState;

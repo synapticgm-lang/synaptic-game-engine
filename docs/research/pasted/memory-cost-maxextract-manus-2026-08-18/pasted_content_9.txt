@@ -1,0 +1,85 @@
+ROLE
+You are a principal product + systems researcher for SynapticGM comic / illustrated storytelling. Produce a deep “how to make comic mode work” brief: methods used on other sites/products, and alternative techniques that achieve the SAME player effect (seeing the story as panels / a comic) without destroying cost, latency, or ledger truth.
+
+GOAL
+Map every serious approach to AI/game comic presentation, extract what actually works for players, and design SynapticGM-fit options from thin wedge → full comic — ranked by delight × cost × continuity safety.
+
+PRODUCT TRUTH
+SynapticGM is a ledger-first AI GM (LitRPG / isekai / story RPG / PYOA / tabletop).
+Already have:
+- Classic text
+- Memorable Moment plates (opener / death / boss / writer-offer; schnell; weekly caps; fail holds story)
+- Comic view scaffolding / panel prompts exist in places but full comic mode is NOT launched
+- Kid Mode Families bar on image prompts; skip unsalvageable
+- Authority: player correction > canon > StateTx > SceneManifest > evidence > invention
+- Images must NEVER become new world truth; text/ledger commits first
+- Omnibus already said: No-Go full comic in 90 days; Go harden Classic + Memorable; optional thin wedge later
+Do NOT reopen WOF/multiplayer. Do NOT propose every-turn unlimited panels as the main plan.
+
+WHAT “SAME EFFECT” MEANS (player feels)
+- “I can see the scene / my character / the fight / the twist”
+- “It feels like reading a comic or webtoon, not a wallpaper generator”
+- “The picture matches who is here, what I’m wearing, and what just happened”
+- “If art fails, the story still continues”
+
+RESEARCH SPACE (cover ALL)
+
+A. Other products / sites (named where public)
+- AI story games with panels/illustrations (AI Dungeon image modes, NovelAI image, similar)
+- AI comic / manga generators and story-to-comic tools
+- Visual novels / kinetic novels with CG CG-event models
+- Webtoon / manhwa reading UX patterns (not licensed content)
+- Tabletop VTTs that show portraits/tokens vs full scene art
+- RPG Maker / Ren’Py style show/hide sprite + background
+- Graphic-novel games (panel grammar, lettering, gutters) — patterns only
+For each: what player effect they buy, cost model, consistency method, failure UX, what SynapticGM should steal vs never copy.
+
+B. Technical methods for consistency
+- Character reference / IP-Adapter / face lock / style presets
+- Seed locking, character cards, outfit IDs from inventory ledger
+- Panel script → image (dialogue balloons vs caption under panel)
+- Multi-panel strip from one validated beat vs per-turn spam
+- Recap comic from accepted event IDs (after the fact)
+- Background plate + sprite composite (cheaper than full scene every time)
+- Reusing memorable plates as “chapter covers”
+- Video/motion later (only if relevant; not required)
+
+C. Narrative design methods
+- When a panel MUST fire vs must not
+- Beat taxonomy: establishing, reaction, action, reveal, aftermath
+- Lettering: in-image balloons vs HTML overlay (SynapticGM already has comic overlay concepts)
+- Kid Mode rewrite/skip before spend
+- Perspective (2nd person) and how that affects framing
+
+D. Economy & product packaging
+- Free / Mid / High / packs for comic vs memorable
+- Trial-once Illustrated
+- What Free keeps forever vs limited
+- Cost formulas and kill criteria
+- Ads: never gate required story beats behind ads for comic panels
+
+OUTPUT STRUCTURE
+
+0. Executive: best path for SynapticGM (thin wedge → full) + what NOT to build
+1. Competitor / adjacent teardown table (effect, method, cost, steal, never-copy)
+2. Effect library: 12 player effects and the cheapest method that achieves each
+3. Architecture options (at least 6), scored Impact × Cost × Continuity-fit × Latency
+   Must include: (a) Memorable-only hardening (b) sprite+BG composite (c) event-tied single plate (d) 2–3 panel beat strip (e) end-of-chapter recap comic (f) full every-turn comic
+4. Consistency stack mapped to SynapticGM ledger (SceneManifest, kit, entity IDs, visual anchors)
+5. Panel grammar + fire contracts (when to generate)
+6. Failure UX (pending/fail holds story) + Kid Mode
+7. UX flows: Classic / Memorable / Comic toggle; mobile webtoon vs paged
+8. SKU & caps recommendation (90-day vs later)
+9. Evaluation: how to A/B “same effect” without measuring vanity image count
+10. 60-day spike plan (max 6 spikes) with kill criteria — research/spikes only; assume full comic still gated
+11. Open founder decisions
+
+QUALITY BAR
+- Mechanisms over moodboards
+- No licensed manga/comic IP cloning; original examples only
+- Prefer extending memorableMoments / visualCanon / comicScriptAdapter / generate-image over greenfield
+- Dense tables. No fluff.
+- Explicitly call out where “comic feel” can be faked with 1 great plate + UI chrome
+
+START NOW
+Begin with section 0. No preamble.

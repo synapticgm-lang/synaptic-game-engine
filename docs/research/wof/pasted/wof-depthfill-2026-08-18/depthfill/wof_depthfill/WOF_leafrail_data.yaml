@@ -1,0 +1,2285 @@
+packFormatVersion: 1
+worldId: leafrail
+displayName: Leafrail
+maturity: all-ages
+rulesModuleId: cozy_tick
+themeKit: Leafrail Theme Kit
+places:
+- id: leafrail_place_01
+  publicName: Canopy Terminal
+  zoneId: leafrail_zone_01
+  role: shared hub
+  mapScale: street
+  dangerTier: safe
+  outdoor: true
+  exits:
+  - leafrail_place_02
+  - leafrail_place_04
+  npcIds:
+  - leafrail_npc_01
+  - leafrail_npc_05
+  - leafrail_npc_09
+  dungeonId: null
+  interactableIds:
+  - leafrail_interact_01
+  - leafrail_interact_09
+- id: leafrail_place_02
+  publicName: Glass Orchard
+  zoneId: leafrail_zone_01
+  role: start hub
+  mapScale: street
+  dangerTier: safe
+  outdoor: true
+  exits:
+  - leafrail_place_01
+  - leafrail_place_03
+  npcIds:
+  - leafrail_npc_02
+  - leafrail_npc_06
+  - leafrail_npc_10
+  dungeonId: null
+  interactableIds:
+  - leafrail_interact_02
+  - leafrail_interact_10
+- id: leafrail_place_03
+  publicName: Sunspoke Yard
+  zoneId: leafrail_zone_01
+  role: street route
+  mapScale: street
+  dangerTier: safe
+  outdoor: true
+  exits:
+  - leafrail_place_02
+  - leafrail_place_04
+  npcIds:
+  - leafrail_npc_03
+  - leafrail_npc_07
+  dungeonId: null
+  interactableIds:
+  - leafrail_interact_03
+  - leafrail_interact_11
+- id: leafrail_place_04
+  publicName: Fern Viaduct
+  zoneId: leafrail_zone_02
+  role: mid join
+  mapScale: street
+  dangerTier: low
+  outdoor: true
+  exits:
+  - leafrail_place_03
+  - leafrail_place_05
+  - leafrail_place_01
+  npcIds:
+  - leafrail_npc_04
+  - leafrail_npc_08
+  dungeonId: null
+  interactableIds:
+  - leafrail_interact_04
+  - leafrail_interact_12
+- id: leafrail_place_05
+  publicName: Lattice Commons
+  zoneId: leafrail_zone_02
+  role: work district
+  mapScale: interior
+  dangerTier: low
+  outdoor: false
+  exits:
+  - leafrail_place_04
+  - leafrail_place_06
+  npcIds: []
+  dungeonId: null
+  interactableIds:
+  - leafrail_interact_05
+- id: leafrail_place_06
+  publicName: Dawn Depot
+  zoneId: leafrail_zone_02
+  role: instance door
+  mapScale: dungeon
+  dangerTier: medium
+  outdoor: false
+  exits:
+  - leafrail_place_05
+  - leafrail_place_07
+  npcIds: []
+  dungeonId: leafrail_dungeon_01
+  interactableIds:
+  - leafrail_interact_06
+- id: leafrail_place_07
+  publicName: Moss Platform
+  zoneId: leafrail_zone_03
+  role: wild edge
+  mapScale: street
+  dangerTier: medium
+  outdoor: true
+  exits:
+  - leafrail_place_06
+  - leafrail_place_08
+  npcIds: []
+  dungeonId: null
+  interactableIds:
+  - leafrail_interact_07
+- id: leafrail_place_08
+  publicName: Apricot Switch
+  zoneId: leafrail_zone_03
+  role: housing approach
+  mapScale: interior
+  dangerTier: low
+  outdoor: false
+  exits:
+  - leafrail_place_07
+  npcIds: []
+  dungeonId: null
+  interactableIds:
+  - leafrail_interact_08
+npcs:
+- id: leafrail_npc_01
+  name: Ivo Nook
+  placeId: leafrail_place_01
+  role: quest
+  greet: Ivo Nook says, ‘Leafrail keeps its promises in small places. Tell me which one you noticed.’
+- id: leafrail_npc_02
+  name: Jori Cress
+  placeId: leafrail_place_02
+  role: profession
+  greet: Jori Cress says, ‘Leafrail keeps its promises in small places. Tell me which one you noticed.’
+- id: leafrail_npc_03
+  name: Alden Silt
+  placeId: leafrail_place_03
+  role: hub
+  greet: Alden Silt says, ‘Leafrail keeps its promises in small places. Tell me which one you noticed.’
+- id: leafrail_npc_04
+  name: Bryn Pryce
+  placeId: leafrail_place_04
+  role: merchant
+  greet: Bryn Pryce says, ‘Leafrail keeps its promises in small places. Tell me which one you noticed.’
+- id: leafrail_npc_05
+  name: Cato Vane
+  placeId: leafrail_place_01
+  role: local
+  greet: Cato Vane says, ‘Leafrail keeps its promises in small places. Tell me which one you noticed.’
+- id: leafrail_npc_06
+  name: Dessa Quill
+  placeId: leafrail_place_02
+  role: host
+  greet: Dessa Quill says, ‘Leafrail keeps its promises in small places. Tell me which one you noticed.’
+- id: leafrail_npc_07
+  name: Eris Vale
+  placeId: leafrail_place_03
+  role: quest
+  greet: Eris Vale says, ‘Leafrail keeps its promises in small places. Tell me which one you noticed.’
+- id: leafrail_npc_08
+  name: Fenn Wren
+  placeId: leafrail_place_04
+  role: profession
+  greet: Fenn Wren says, ‘Leafrail keeps its promises in small places. Tell me which one you noticed.’
+- id: leafrail_npc_09
+  name: Gala Morrow
+  placeId: leafrail_place_01
+  role: local
+  greet: Gala Morrow says, ‘Leafrail keeps its promises in small places. Tell me which one you noticed.’
+- id: leafrail_npc_10
+  name: Holl Rowan
+  placeId: leafrail_place_02
+  role: merchant
+  greet: Holl Rowan says, ‘Leafrail keeps its promises in small places. Tell me which one you noticed.’
+kits:
+- id: leafrail_kit_01
+  publicName: Canopy Conductor
+  look: leaf-green conductor coat
+  values: coordinate garden carriages
+  taboo: Never close a rail for a private picnic.
+  speechTell: Use bright practical language and invite repair before complaint.
+  starterClothes: canopy_conductor mantle
+  starterTool: canopy_conductor tool
+  starterMapItem: leafrail_map_01
+  startingPlaceId: leafrail_place_01
+  firstHourQuestId: leafrail_q_01
+  abilityFlag: leafrail_ability_01
+- id: leafrail_kit_02
+  publicName: Glass Orchardist
+  look: apricot orchard smock
+  values: prune light-catching trees
+  taboo: Never shade a community panel for a prize.
+  speechTell: Use bright practical language and invite repair before complaint.
+  starterClothes: glass_orchardist vest
+  starterTool: glass_orchardist tool
+  starterMapItem: leafrail_map_02
+  startingPlaceId: leafrail_place_02
+  firstHourQuestId: leafrail_q_02
+  abilityFlag: leafrail_ability_02
+- id: leafrail_kit_03
+  publicName: Sunspoke Mechanic
+  look: solar cloth tool vest
+  values: repair sunspoke brakes
+  taboo: Never sell a repair slot to the highest bidder.
+  speechTell: Use bright practical language and invite repair before complaint.
+  starterClothes: sunspoke_mechanic jacket
+  starterTool: sunspoke_mechanic tool
+  starterMapItem: leafrail_map_03
+  startingPlaceId: leafrail_place_01
+  firstHourQuestId: leafrail_q_03
+  abilityFlag: leafrail_ability_03
+- id: leafrail_kit_04
+  publicName: Lattice Mediator
+  look: woven lattice cape
+  values: settle platform schedules
+  taboo: Never schedule over an accessibility stop.
+  speechTell: Use bright practical language and invite repair before complaint.
+  starterClothes: lattice_mediator sash
+  starterTool: lattice_mediator tool
+  starterMapItem: leafrail_map_04
+  startingPlaceId: leafrail_place_02
+  firstHourQuestId: leafrail_q_04
+  abilityFlag: leafrail_ability_04
+quests:
+- id: leafrail_q_01
+  title: 'Leafrail: Name a Working Promise'
+  family: identity
+  hidden: false
+  unlocksQuestId: leafrail_q_02
+  objectives:
+  - id: leafrail_q_01_obj_01
+    kind: visit_place
+    targetId: leafrail_place_01
+    count: 1
+  - id: leafrail_q_01_obj_02
+    kind: deliver_item
+    targetId: leafrail_deliver_item_01
+    count: 2
+  rewardGold: 12
+  rewardXp: 20
+- id: leafrail_q_02
+  title: 'Leafrail: Set the First Tool Aside'
+  family: identity
+  hidden: false
+  unlocksQuestId: leafrail_q_03
+  objectives:
+  - id: leafrail_q_02_obj_01
+    kind: ledger_kill
+    targetId: leafrail_ledger_kill_02
+    count: 1
+  - id: leafrail_q_02_obj_02
+    kind: talk_to_npc
+    targetId: leafrail_npc_03
+    count: 2
+  rewardGold: 15
+  rewardXp: 25
+- id: leafrail_q_03
+  title: 'Leafrail: Carry the Right Record'
+  family: identity
+  hidden: false
+  unlocksQuestId: leafrail_q_04
+  objectives:
+  - id: leafrail_q_03_obj_01
+    kind: ledger_bond
+    targetId: leafrail_ledger_bond_03
+    count: 1
+  - id: leafrail_q_03_obj_02
+    kind: collect_item
+    targetId: leafrail_collect_item_03
+    count: 2
+  rewardGold: 18
+  rewardXp: 30
+- id: leafrail_q_04
+  title: 'Leafrail: Find the Missing Measure'
+  family: identity
+  hidden: false
+  unlocksQuestId: leafrail_q_05
+  objectives:
+  - id: leafrail_q_04_obj_01
+    kind: deliver_item
+    targetId: leafrail_deliver_item_04
+    count: 1
+  - id: leafrail_q_04_obj_02
+    kind: interact
+    targetId: leafrail_place_05
+    count: 2
+    verbId: cook
+  rewardGold: 21
+  rewardXp: 35
+- id: leafrail_q_05
+  title: 'Leafrail: Teach a Safer Shortcut'
+  family: identity
+  hidden: false
+  unlocksQuestId: leafrail_q_06
+  objectives:
+  - id: leafrail_q_05_obj_01
+    kind: talk_to_npc
+    targetId: leafrail_npc_05
+    count: 1
+  - id: leafrail_q_05_obj_02
+    kind: score_beat
+    targetId: leafrail_score_beat_05
+    count: 2
+  rewardGold: 24
+  rewardXp: 40
+- id: leafrail_q_06
+  title: 'Leafrail: Read the Local Weather'
+  family: profession
+  hidden: false
+  unlocksQuestId: leafrail_q_07
+  objectives:
+  - id: leafrail_q_06_obj_01
+    kind: collect_item
+    targetId: leafrail_collect_item_06
+    count: 1
+  - id: leafrail_q_06_obj_02
+    kind: build_tick
+    targetId: leafrail_build_tick_06
+    count: 2
+  rewardGold: 27
+  rewardXp: 45
+- id: leafrail_q_07
+  title: 'Leafrail: Repair a Shared Threshold'
+  family: profession
+  hidden: false
+  unlocksQuestId: leafrail_q_08
+  objectives:
+  - id: leafrail_q_07_obj_01
+    kind: interact
+    targetId: leafrail_place_07
+    count: 1
+    verbId: inspect
+  - id: leafrail_q_07_obj_02
+    kind: hospitality_tick
+    targetId: leafrail_hospitality_tick_07
+    count: 2
+  rewardGold: 30
+  rewardXp: 50
+- id: leafrail_q_08
+  title: 'Leafrail: Return a Borrowed Sign'
+  family: profession
+  hidden: false
+  unlocksQuestId: leafrail_q_09
+  objectives:
+  - id: leafrail_q_08_obj_01
+    kind: score_beat
+    targetId: leafrail_score_beat_08
+    count: 1
+  - id: leafrail_q_08_obj_02
+    kind: lap_finish
+    targetId: leafrail_lap_finish_08
+    count: 2
+  rewardGold: 33
+  rewardXp: 55
+- id: leafrail_q_09
+  title: 'Leafrail: Host the Small Welcome'
+  family: profession
+  hidden: false
+  unlocksQuestId: leafrail_q_10
+  objectives:
+  - id: leafrail_q_09_obj_01
+    kind: build_tick
+    targetId: leafrail_build_tick_09
+    count: 1
+  - id: leafrail_q_09_obj_02
+    kind: visit_place
+    targetId: leafrail_place_02
+    count: 2
+  rewardGold: 36
+  rewardXp: 60
+- id: leafrail_q_10
+  title: 'Leafrail: Choose a Fair Order'
+  family: profession
+  hidden: false
+  unlocksQuestId: leafrail_q_11
+  objectives:
+  - id: leafrail_q_10_obj_01
+    kind: hospitality_tick
+    targetId: leafrail_hospitality_tick_10
+    count: 1
+  - id: leafrail_q_10_obj_02
+    kind: ledger_kill
+    targetId: leafrail_ledger_kill_10
+    count: 2
+  rewardGold: 39
+  rewardXp: 65
+- id: leafrail_q_11
+  title: 'Leafrail: Map the Quiet Detour'
+  family: profession
+  hidden: false
+  unlocksQuestId: leafrail_q_12
+  objectives:
+  - id: leafrail_q_11_obj_01
+    kind: lap_finish
+    targetId: leafrail_lap_finish_11
+    count: 1
+  - id: leafrail_q_11_obj_02
+    kind: ledger_bond
+    targetId: leafrail_ledger_bond_11
+    count: 2
+  rewardGold: 42
+  rewardXp: 70
+- id: leafrail_q_12
+  title: 'Leafrail: Bring a Useful Witness'
+  family: profession
+  hidden: false
+  unlocksQuestId: leafrail_q_13
+  objectives:
+  - id: leafrail_q_12_obj_01
+    kind: visit_place
+    targetId: leafrail_place_04
+    count: 1
+  - id: leafrail_q_12_obj_02
+    kind: deliver_item
+    targetId: leafrail_deliver_item_12
+    count: 2
+  rewardGold: 45
+  rewardXp: 75
+- id: leafrail_q_13
+  title: 'Leafrail: Sort the Unclaimed Materials'
+  family: zone_story
+  hidden: false
+  unlocksQuestId: leafrail_q_14
+  objectives:
+  - id: leafrail_q_13_obj_01
+    kind: ledger_kill
+    targetId: leafrail_ledger_kill_13
+    count: 1
+  - id: leafrail_q_13_obj_02
+    kind: talk_to_npc
+    targetId: leafrail_npc_04
+    count: 2
+  rewardGold: 48
+  rewardXp: 80
+- id: leafrail_q_14
+  title: 'Leafrail: Make Room for a Visitor'
+  family: zone_story
+  hidden: false
+  unlocksQuestId: leafrail_q_15
+  objectives:
+  - id: leafrail_q_14_obj_01
+    kind: ledger_bond
+    targetId: leafrail_ledger_bond_14
+    count: 1
+  - id: leafrail_q_14_obj_02
+    kind: collect_item
+    targetId: leafrail_collect_item_14
+    count: 2
+  rewardGold: 51
+  rewardXp: 85
+- id: leafrail_q_15
+  title: 'Leafrail: Close the Day’s Ledger'
+  family: zone_story
+  hidden: false
+  unlocksQuestId: leafrail_q_16
+  objectives:
+  - id: leafrail_q_15_obj_01
+    kind: deliver_item
+    targetId: leafrail_deliver_item_15
+    count: 1
+  - id: leafrail_q_15_obj_02
+    kind: interact
+    targetId: leafrail_place_08
+    count: 2
+    verbId: craft
+  rewardGold: 54
+  rewardXp: 90
+- id: leafrail_q_16
+  title: 'Leafrail: Follow the Midway Signal'
+  family: zone_story
+  hidden: false
+  unlocksQuestId: leafrail_q_17
+  objectives:
+  - id: leafrail_q_16_obj_01
+    kind: talk_to_npc
+    targetId: leafrail_npc_06
+    count: 1
+  - id: leafrail_q_16_obj_02
+    kind: score_beat
+    targetId: leafrail_score_beat_16
+    count: 2
+  rewardGold: 57
+  rewardXp: 95
+- id: leafrail_q_17
+  title: 'Leafrail: Uncover the Door Note'
+  family: zone_story
+  hidden: true
+  unlocksQuestId: leafrail_q_18
+  objectives:
+  - id: leafrail_q_17_obj_01
+    kind: collect_item
+    targetId: leafrail_collect_item_17
+    count: 1
+  - id: leafrail_q_17_obj_02
+    kind: build_tick
+    targetId: leafrail_build_tick_17
+    count: 2
+  rewardGold: 60
+  rewardXp: 100
+- id: leafrail_q_18
+  title: 'Leafrail: Prepare the Team Table'
+  family: zone_story
+  hidden: false
+  unlocksQuestId: leafrail_q_19
+  objectives:
+  - id: leafrail_q_18_obj_01
+    kind: interact
+    targetId: leafrail_place_02
+    count: 1
+    verbId: bind_inn
+  - id: leafrail_q_18_obj_02
+    kind: hospitality_tick
+    targetId: leafrail_hospitality_tick_18
+    count: 2
+  rewardGold: 63
+  rewardXp: 105
+- id: leafrail_q_19
+  title: 'Leafrail: Test the Local Method'
+  family: zone_story
+  hidden: false
+  unlocksQuestId: leafrail_q_20
+  objectives:
+  - id: leafrail_q_19_obj_01
+    kind: score_beat
+    targetId: leafrail_score_beat_19
+    count: 1
+  - id: leafrail_q_19_obj_02
+    kind: lap_finish
+    targetId: leafrail_lap_finish_19
+    count: 2
+  rewardGold: 66
+  rewardXp: 110
+- id: leafrail_q_20
+  title: 'Leafrail: Hold a Careful Boundary'
+  family: zone_story
+  hidden: false
+  unlocksQuestId: leafrail_q_21
+  objectives:
+  - id: leafrail_q_20_obj_01
+    kind: build_tick
+    targetId: leafrail_build_tick_20
+    count: 1
+  - id: leafrail_q_20_obj_02
+    kind: visit_place
+    targetId: leafrail_place_05
+    count: 2
+  rewardGold: 69
+  rewardXp: 115
+- id: leafrail_q_21
+  title: 'Leafrail: Answer the Neighbour’s Call'
+  family: extra
+  hidden: false
+  unlocksQuestId: leafrail_q_22
+  objectives:
+  - id: leafrail_q_21_obj_01
+    kind: hospitality_tick
+    targetId: leafrail_hospitality_tick_21
+    count: 1
+  - id: leafrail_q_21_obj_02
+    kind: ledger_kill
+    targetId: leafrail_ledger_kill_21
+    count: 2
+  rewardGold: 72
+  rewardXp: 120
+- id: leafrail_q_22
+  title: 'Leafrail: Finish the Side Route'
+  family: extra
+  hidden: false
+  unlocksQuestId: leafrail_q_23
+  objectives:
+  - id: leafrail_q_22_obj_01
+    kind: lap_finish
+    targetId: leafrail_lap_finish_22
+    count: 1
+  - id: leafrail_q_22_obj_02
+    kind: ledger_bond
+    targetId: leafrail_ledger_bond_22
+    count: 2
+  rewardGold: 75
+  rewardXp: 125
+- id: leafrail_q_23
+  title: 'Leafrail: Earn a Trusted Introduction'
+  family: extra
+  hidden: true
+  unlocksQuestId: leafrail_q_24
+  objectives:
+  - id: leafrail_q_23_obj_01
+    kind: visit_place
+    targetId: leafrail_place_07
+    count: 1
+  - id: leafrail_q_23_obj_02
+    kind: deliver_item
+    targetId: leafrail_deliver_item_23
+    count: 2
+  rewardGold: 78
+  rewardXp: 130
+- id: leafrail_q_24
+  title: 'Leafrail: Open the Instance Path'
+  family: extra
+  hidden: false
+  unlocksQuestId: leafrail_q_25
+  objectives:
+  - id: leafrail_q_24_obj_01
+    kind: ledger_kill
+    targetId: leafrail_ledger_kill_24
+    count: 1
+  - id: leafrail_q_24_obj_02
+    kind: talk_to_npc
+    targetId: leafrail_npc_05
+    count: 2
+  rewardGold: 81
+  rewardXp: 135
+- id: leafrail_q_25
+  title: 'Leafrail: Complete the First Big Night'
+  family: extra
+  hidden: false
+  unlocksQuestId: null
+  objectives:
+  - id: leafrail_q_25_obj_01
+    kind: ledger_bond
+    targetId: leafrail_ledger_bond_25
+    count: 1
+  - id: leafrail_q_25_obj_02
+    kind: collect_item
+    targetId: leafrail_collect_item_25
+    count: 2
+  rewardGold: 84
+  rewardXp: 140
+species:
+- id: leafrail_species_01
+  publicName: Leaf Skimmer
+  kind: activity
+  hp: 0
+  armor: 0
+  threat: 1
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: leafrail_species_02
+  publicName: Pollen Jay
+  kind: activity
+  hp: 0
+  armor: 1
+  threat: 2
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: leafrail_species_03
+  publicName: Vine Tortoise
+  kind: activity
+  hp: 0
+  armor: 2
+  threat: 3
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: leafrail_species_04
+  publicName: Dew Fox
+  kind: activity
+  hp: 0
+  armor: 3
+  threat: 1
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: leafrail_species_05
+  publicName: Moss Beetle
+  kind: activity
+  hp: 0
+  armor: 0
+  threat: 2
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: leafrail_species_06
+  publicName: Glass Bee
+  kind: activity
+  hp: 0
+  armor: 1
+  threat: 3
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: leafrail_species_07
+  publicName: Sun Hare
+  kind: activity
+  hp: 0
+  armor: 2
+  threat: 1
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: leafrail_species_08
+  publicName: Fern Crow
+  kind: activity
+  hp: 0
+  armor: 3
+  threat: 2
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: leafrail_species_09
+  publicName: Lattice Lizard
+  kind: activity
+  hp: 0
+  armor: 0
+  threat: 3
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: leafrail_species_10
+  publicName: Orchard Wren
+  kind: activity
+  hp: 0
+  armor: 1
+  threat: 1
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: leafrail_species_11
+  publicName: Petal Snail
+  kind: activity
+  hp: 0
+  armor: 2
+  threat: 2
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: leafrail_species_12
+  publicName: Rail Cricket
+  kind: activity
+  hp: 0
+  armor: 3
+  threat: 3
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: leafrail_species_13
+  publicName: Apricot Bat
+  kind: activity
+  hp: 0
+  armor: 0
+  threat: 1
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: leafrail_species_14
+  publicName: Shade Carp
+  kind: activity
+  hp: 0
+  armor: 1
+  threat: 2
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: leafrail_species_15
+  publicName: Canopy Vole
+  kind: activity
+  hp: 0
+  armor: 2
+  threat: 3
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: leafrail_species_16
+  publicName: Light Moth
+  kind: activity
+  hp: 0
+  armor: 3
+  threat: 1
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+items:
+- id: leafrail_item_01
+  publicName: Canopy Terminal token
+  category: starter
+  power: false
+  sellGold: 3
+  description: A Leafrail item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: leafrail_item_02
+  publicName: Glass Orchard tool
+  category: starter
+  power: false
+  sellGold: 5
+  description: A Leafrail item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: leafrail_item_03
+  publicName: Sunspoke Yard thread
+  category: profession
+  power: false
+  sellGold: 7
+  description: A Leafrail item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: leafrail_item_04
+  publicName: Fern Viaduct seal
+  category: profession
+  power: false
+  sellGold: 9
+  description: A Leafrail item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: leafrail_item_05
+  publicName: Lattice Commons bundle
+  category: instance
+  power: false
+  sellGold: 11
+  description: A Leafrail item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: leafrail_item_06
+  publicName: Dawn Depot token
+  category: instance
+  power: false
+  sellGold: 13
+  description: A Leafrail item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: leafrail_item_07
+  publicName: Moss Platform tool
+  category: cosmetic
+  power: false
+  sellGold: 15
+  description: A Leafrail item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: leafrail_item_08
+  publicName: Apricot Switch thread
+  category: cosmetic
+  power: false
+  sellGold: 17
+  description: A Leafrail item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: leafrail_item_09
+  publicName: Canopy Terminal seal
+  category: material
+  power: false
+  sellGold: 19
+  description: A Leafrail item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: leafrail_item_10
+  publicName: Glass Orchard bundle
+  category: material
+  power: false
+  sellGold: 21
+  description: A Leafrail item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: leafrail_item_11
+  publicName: Sunspoke Yard token
+  category: care
+  power: false
+  sellGold: 23
+  description: A Leafrail item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: leafrail_item_12
+  publicName: Fern Viaduct tool
+  category: care
+  power: false
+  sellGold: 25
+  description: A Leafrail item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: leafrail_item_13
+  publicName: Lattice Commons thread
+  category: map
+  power: false
+  sellGold: 27
+  description: A Leafrail item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: leafrail_item_14
+  publicName: Dawn Depot seal
+  category: map
+  power: false
+  sellGold: 29
+  description: A Leafrail item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: leafrail_item_15
+  publicName: Moss Platform bundle
+  category: vendor
+  power: false
+  sellGold: 31
+  description: A Leafrail item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: leafrail_item_16
+  publicName: Apricot Switch token
+  category: vendor
+  power: false
+  sellGold: 33
+  description: A Leafrail item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: leafrail_item_17
+  publicName: Canopy Terminal tool
+  category: recipe
+  power: false
+  sellGold: 35
+  description: A Leafrail item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: leafrail_item_18
+  publicName: Glass Orchard thread
+  category: recipe
+  power: false
+  sellGold: 37
+  description: A Leafrail item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: leafrail_item_19
+  publicName: Sunspoke Yard seal
+  category: keepsake
+  power: false
+  sellGold: 39
+  description: A Leafrail item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: leafrail_item_20
+  publicName: Fern Viaduct bundle
+  category: keepsake
+  power: false
+  sellGold: 41
+  description: A Leafrail item used for a stated craft, route, display, or record; it never alters paid outcomes.
+dropTables:
+- id: leafrail_drop_01
+  sourceId: leafrail_species_01
+  personalLoot: true
+  entries:
+  - itemId: leafrail_item_01
+    chancePct: 60
+    min: 1
+    max: 2
+  - itemId: leafrail_item_08
+    chancePct: 20
+    min: 1
+    max: 1
+- id: leafrail_drop_02
+  sourceId: leafrail_species_02
+  personalLoot: true
+  entries:
+  - itemId: leafrail_item_02
+    chancePct: 55
+    min: 1
+    max: 2
+  - itemId: leafrail_item_09
+    chancePct: 25
+    min: 1
+    max: 1
+- id: leafrail_drop_03
+  sourceId: leafrail_species_03
+  personalLoot: true
+  entries:
+  - itemId: leafrail_item_03
+    chancePct: 50
+    min: 1
+    max: 2
+  - itemId: leafrail_item_10
+    chancePct: 30
+    min: 1
+    max: 1
+- id: leafrail_drop_04
+  sourceId: leafrail_species_04
+  personalLoot: true
+  entries:
+  - itemId: leafrail_item_04
+    chancePct: 45
+    min: 1
+    max: 2
+  - itemId: leafrail_item_11
+    chancePct: 20
+    min: 1
+    max: 1
+- id: leafrail_drop_05
+  sourceId: leafrail_species_05
+  personalLoot: true
+  entries:
+  - itemId: leafrail_item_05
+    chancePct: 60
+    min: 1
+    max: 2
+  - itemId: leafrail_item_12
+    chancePct: 25
+    min: 1
+    max: 1
+- id: leafrail_drop_06
+  sourceId: leafrail_species_06
+  personalLoot: true
+  entries:
+  - itemId: leafrail_item_06
+    chancePct: 55
+    min: 1
+    max: 2
+  - itemId: leafrail_item_13
+    chancePct: 30
+    min: 1
+    max: 1
+- id: leafrail_drop_07
+  sourceId: leafrail_species_07
+  personalLoot: true
+  entries:
+  - itemId: leafrail_item_07
+    chancePct: 50
+    min: 1
+    max: 2
+  - itemId: leafrail_item_14
+    chancePct: 20
+    min: 1
+    max: 1
+- id: leafrail_drop_08
+  sourceId: leafrail_species_08
+  personalLoot: true
+  entries:
+  - itemId: leafrail_item_08
+    chancePct: 45
+    min: 1
+    max: 2
+  - itemId: leafrail_item_15
+    chancePct: 25
+    min: 1
+    max: 1
+- id: leafrail_drop_09
+  sourceId: leafrail_species_09
+  personalLoot: true
+  entries:
+  - itemId: leafrail_item_09
+    chancePct: 60
+    min: 1
+    max: 2
+  - itemId: leafrail_item_16
+    chancePct: 30
+    min: 1
+    max: 1
+- id: leafrail_drop_10
+  sourceId: leafrail_species_10
+  personalLoot: true
+  entries:
+  - itemId: leafrail_item_10
+    chancePct: 55
+    min: 1
+    max: 2
+  - itemId: leafrail_item_17
+    chancePct: 20
+    min: 1
+    max: 1
+- id: leafrail_drop_11
+  sourceId: leafrail_species_11
+  personalLoot: true
+  entries:
+  - itemId: leafrail_item_11
+    chancePct: 50
+    min: 1
+    max: 2
+  - itemId: leafrail_item_18
+    chancePct: 25
+    min: 1
+    max: 1
+- id: leafrail_drop_12
+  sourceId: leafrail_species_12
+  personalLoot: true
+  entries:
+  - itemId: leafrail_item_12
+    chancePct: 45
+    min: 1
+    max: 2
+  - itemId: leafrail_item_19
+    chancePct: 30
+    min: 1
+    max: 1
+vendors:
+- id: leafrail_vendor_01
+  publicName: Leafrail Exchange
+  placeId: leafrail_place_01
+  currencyGoldName: Rail Leaves
+  items:
+  - itemId: leafrail_item_01
+    priceGold: 8
+  - itemId: leafrail_item_02
+    priceGold: 11
+  - itemId: leafrail_item_03
+    priceGold: 14
+  - itemId: leafrail_item_04
+    priceGold: 17
+  - itemId: leafrail_item_05
+    priceGold: 20
+  - itemId: leafrail_item_06
+    priceGold: 23
+  - itemId: leafrail_item_07
+    priceGold: 26
+  - itemId: leafrail_item_08
+    priceGold: 29
+  repairCostPerPoint: 0
+dungeons:
+- id: leafrail_dungeon_01
+  publicName: The Viaduct Bloom Jam
+  partyMin: 1
+  partyMax: 5
+  entrancePlaceId: leafrail_place_06
+  rooms:
+  - id: leafrail_dungeon_room_01
+    publicName: 'The Viaduct Bloom Jam: Threshold Room'
+    describeBeforeCreature: Describe the material, sound, exits, and practical obstacle of Threshold Room before any species
+      is narrated.
+    trashSpeciesIds:
+    - leafrail_species_01
+    - leafrail_species_02
+    eliteSpeciesId: null
+    checkpoint: false
+    bossSpeciesId: null
+    exits:
+    - leafrail_dungeon_room_02
+  - id: leafrail_dungeon_room_02
+    publicName: 'The Viaduct Bloom Jam: Workroom'
+    describeBeforeCreature: Describe the material, sound, exits, and practical obstacle of Workroom before any species is
+      narrated.
+    trashSpeciesIds:
+    - leafrail_species_03
+    - leafrail_species_04
+    eliteSpeciesId: null
+    checkpoint: false
+    bossSpeciesId: null
+    exits:
+    - leafrail_dungeon_room_03
+  - id: leafrail_dungeon_room_03
+    publicName: 'The Viaduct Bloom Jam: Side Passage'
+    describeBeforeCreature: Describe the material, sound, exits, and practical obstacle of Side Passage before any species
+      is narrated.
+    trashSpeciesIds:
+    - leafrail_species_05
+    - leafrail_species_06
+    eliteSpeciesId: leafrail_species_09
+    checkpoint: false
+    bossSpeciesId: null
+    exits:
+    - leafrail_dungeon_room_04
+  - id: leafrail_dungeon_room_04
+    publicName: 'The Viaduct Bloom Jam: Checkpoint Alcove'
+    describeBeforeCreature: Describe the material, sound, exits, and practical obstacle of Checkpoint Alcove before any species
+      is narrated.
+    trashSpeciesIds:
+    - leafrail_species_07
+    - leafrail_species_08
+    eliteSpeciesId: null
+    checkpoint: true
+    bossSpeciesId: null
+    exits:
+    - leafrail_dungeon_room_05
+  - id: leafrail_dungeon_room_05
+    publicName: 'The Viaduct Bloom Jam: Finale Chamber'
+    describeBeforeCreature: Describe the material, sound, exits, and practical obstacle of Finale Chamber before any species
+      is narrated.
+    trashSpeciesIds:
+    - leafrail_species_09
+    - leafrail_species_10
+    eliteSpeciesId: null
+    checkpoint: false
+    bossSpeciesId: leafrail_species_14
+    exits: []
+  traps:
+  - id: leafrail_trap_01
+    publicName: misread sign
+    interactableId: leafrail_interact_01
+  - id: leafrail_trap_02
+    publicName: jammed latch
+    interactableId: leafrail_interact_02
+  - id: leafrail_trap_03
+    publicName: wet threshold
+    interactableId: leafrail_interact_03
+  - id: leafrail_trap_04
+    publicName: false shelf
+    interactableId: leafrail_interact_04
+  - id: leafrail_trap_05
+    publicName: quiet bell
+    interactableId: leafrail_interact_05
+  - id: leafrail_trap_06
+    publicName: sealed drawer
+    interactableId: leafrail_interact_06
+talkTrees:
+- npcId: leafrail_npc_01
+  greet: Ivo Nook says, ‘Leafrail keeps its promises in small places. Tell me which one you noticed.’
+  quest_offer: 'Ivo Nook offers a specific task at Canopy Terminal: settle the practical mismatch before it costs someone
+    a shift.'
+  quest_progress: Ivo Nook checks the record and asks for the one detail that would change the outcome.
+  quest_turnin: Ivo Nook marks the work complete, names who benefited, and hands over the recorded reward.
+  gossip:
+  - At Glass Orchard, people are discussing a missing care tag.
+  - The safest route today is through Sunspoke Yard, not the obvious shortcut.
+  - Someone at Fern Viaduct is offering help but will not ask twice.
+  refusal: Ivo Nook says, ‘No. I can explain the rule, but I will not bend it for noise.’
+  player_rude: Ivo Nook says, ‘You may leave, lower your voice, or try a useful question. Choose one.’
+- npcId: leafrail_npc_02
+  greet: Jori Cress says, ‘Leafrail keeps its promises in small places. Tell me which one you noticed.’
+  quest_offer: 'Jori Cress offers a specific task at Glass Orchard: settle the practical mismatch before it costs someone
+    a shift.'
+  quest_progress: Jori Cress checks the record and asks for the one detail that would change the outcome.
+  quest_turnin: Jori Cress marks the work complete, names who benefited, and hands over the recorded reward.
+  gossip:
+  - At Sunspoke Yard, people are discussing a missing care tag.
+  - The safest route today is through Fern Viaduct, not the obvious shortcut.
+  - Someone at Lattice Commons is offering help but will not ask twice.
+  refusal: Jori Cress says, ‘No. I can explain the rule, but I will not bend it for noise.’
+  player_rude: Jori Cress says, ‘You may leave, lower your voice, or try a useful question. Choose one.’
+- npcId: leafrail_npc_03
+  greet: Alden Silt says, ‘Leafrail keeps its promises in small places. Tell me which one you noticed.’
+  quest_offer: 'Alden Silt offers a specific task at Sunspoke Yard: settle the practical mismatch before it costs someone
+    a shift.'
+  quest_progress: Alden Silt checks the record and asks for the one detail that would change the outcome.
+  quest_turnin: Alden Silt marks the work complete, names who benefited, and hands over the recorded reward.
+  gossip:
+  - At Fern Viaduct, people are discussing a missing care tag.
+  - The safest route today is through Lattice Commons, not the obvious shortcut.
+  - Someone at Dawn Depot is offering help but will not ask twice.
+  refusal: Alden Silt says, ‘No. I can explain the rule, but I will not bend it for noise.’
+  player_rude: Alden Silt says, ‘You may leave, lower your voice, or try a useful question. Choose one.’
+- npcId: leafrail_npc_04
+  greet: Bryn Pryce says, ‘Leafrail keeps its promises in small places. Tell me which one you noticed.’
+  quest_offer: 'Bryn Pryce offers a specific task at Fern Viaduct: settle the practical mismatch before it costs someone a
+    shift.'
+  quest_progress: Bryn Pryce checks the record and asks for the one detail that would change the outcome.
+  quest_turnin: Bryn Pryce marks the work complete, names who benefited, and hands over the recorded reward.
+  gossip:
+  - At Lattice Commons, people are discussing a missing care tag.
+  - The safest route today is through Dawn Depot, not the obvious shortcut.
+  - Someone at Moss Platform is offering help but will not ask twice.
+  refusal: Bryn Pryce says, ‘No. I can explain the rule, but I will not bend it for noise.’
+  player_rude: Bryn Pryce says, ‘You may leave, lower your voice, or try a useful question. Choose one.’
+- npcId: leafrail_npc_05
+  greet: Cato Vane says, ‘Leafrail keeps its promises in small places. Tell me which one you noticed.’
+  quest_offer: 'Cato Vane offers a specific task at Canopy Terminal: settle the practical mismatch before it costs someone
+    a shift.'
+  quest_progress: Cato Vane checks the record and asks for the one detail that would change the outcome.
+  quest_turnin: Cato Vane marks the work complete, names who benefited, and hands over the recorded reward.
+  gossip:
+  - At Dawn Depot, people are discussing a missing care tag.
+  - The safest route today is through Moss Platform, not the obvious shortcut.
+  - Someone at Apricot Switch is offering help but will not ask twice.
+  refusal: Cato Vane says, ‘No. I can explain the rule, but I will not bend it for noise.’
+  player_rude: Cato Vane says, ‘You may leave, lower your voice, or try a useful question. Choose one.’
+- npcId: leafrail_npc_06
+  greet: Dessa Quill says, ‘Leafrail keeps its promises in small places. Tell me which one you noticed.’
+  quest_offer: 'Dessa Quill offers a specific task at Glass Orchard: settle the practical mismatch before it costs someone
+    a shift.'
+  quest_progress: Dessa Quill checks the record and asks for the one detail that would change the outcome.
+  quest_turnin: Dessa Quill marks the work complete, names who benefited, and hands over the recorded reward.
+  gossip:
+  - At Moss Platform, people are discussing a missing care tag.
+  - The safest route today is through Apricot Switch, not the obvious shortcut.
+  - Someone at Canopy Terminal is offering help but will not ask twice.
+  refusal: Dessa Quill says, ‘No. I can explain the rule, but I will not bend it for noise.’
+  player_rude: Dessa Quill says, ‘You may leave, lower your voice, or try a useful question. Choose one.’
+- npcId: leafrail_npc_07
+  greet: Eris Vale says, ‘Leafrail keeps its promises in small places. Tell me which one you noticed.’
+  quest_offer: 'Eris Vale offers a specific task at Sunspoke Yard: settle the practical mismatch before it costs someone a
+    shift.'
+  quest_progress: Eris Vale checks the record and asks for the one detail that would change the outcome.
+  quest_turnin: Eris Vale marks the work complete, names who benefited, and hands over the recorded reward.
+  gossip:
+  - At Apricot Switch, people are discussing a missing care tag.
+  - The safest route today is through Canopy Terminal, not the obvious shortcut.
+  - Someone at Glass Orchard is offering help but will not ask twice.
+  refusal: Eris Vale says, ‘No. I can explain the rule, but I will not bend it for noise.’
+  player_rude: Eris Vale says, ‘You may leave, lower your voice, or try a useful question. Choose one.’
+- npcId: leafrail_npc_08
+  greet: Fenn Wren says, ‘Leafrail keeps its promises in small places. Tell me which one you noticed.’
+  quest_offer: 'Fenn Wren offers a specific task at Fern Viaduct: settle the practical mismatch before it costs someone a
+    shift.'
+  quest_progress: Fenn Wren checks the record and asks for the one detail that would change the outcome.
+  quest_turnin: Fenn Wren marks the work complete, names who benefited, and hands over the recorded reward.
+  gossip:
+  - At Canopy Terminal, people are discussing a missing care tag.
+  - The safest route today is through Glass Orchard, not the obvious shortcut.
+  - Someone at Sunspoke Yard is offering help but will not ask twice.
+  refusal: Fenn Wren says, ‘No. I can explain the rule, but I will not bend it for noise.’
+  player_rude: Fenn Wren says, ‘You may leave, lower your voice, or try a useful question. Choose one.’
+- npcId: leafrail_npc_09
+  greet: Gala Morrow says, ‘Leafrail keeps its promises in small places. Tell me which one you noticed.’
+  quest_offer: 'Gala Morrow offers a specific task at Canopy Terminal: settle the practical mismatch before it costs someone
+    a shift.'
+  quest_progress: Gala Morrow checks the record and asks for the one detail that would change the outcome.
+  quest_turnin: Gala Morrow marks the work complete, names who benefited, and hands over the recorded reward.
+  gossip:
+  - At Glass Orchard, people are discussing a missing care tag.
+  - The safest route today is through Sunspoke Yard, not the obvious shortcut.
+  - Someone at Fern Viaduct is offering help but will not ask twice.
+  refusal: Gala Morrow says, ‘No. I can explain the rule, but I will not bend it for noise.’
+  player_rude: Gala Morrow says, ‘You may leave, lower your voice, or try a useful question. Choose one.’
+- npcId: leafrail_npc_10
+  greet: Holl Rowan says, ‘Leafrail keeps its promises in small places. Tell me which one you noticed.’
+  quest_offer: 'Holl Rowan offers a specific task at Glass Orchard: settle the practical mismatch before it costs someone
+    a shift.'
+  quest_progress: Holl Rowan checks the record and asks for the one detail that would change the outcome.
+  quest_turnin: Holl Rowan marks the work complete, names who benefited, and hands over the recorded reward.
+  gossip:
+  - At Sunspoke Yard, people are discussing a missing care tag.
+  - The safest route today is through Fern Viaduct, not the obvious shortcut.
+  - Someone at Lattice Commons is offering help but will not ask twice.
+  refusal: Holl Rowan says, ‘No. I can explain the rule, but I will not bend it for noise.’
+  player_rude: Holl Rowan says, ‘You may leave, lower your voice, or try a useful question. Choose one.’
+choiceButtons:
+- id: leafrail_choice_01_01
+  placeId: leafrail_place_01
+  label: Read the notice at Canopy Terminal
+  requires: []
+  intentKind: talk
+  stake: one turn
+- id: leafrail_choice_01_02
+  placeId: leafrail_place_01
+  label: Ask for an introduction at Canopy Terminal
+  requires: []
+  intentKind: talk
+  stake: one supply
+- id: leafrail_choice_01_03
+  placeId: leafrail_place_01
+  label: Check the tool tag at Canopy Terminal
+  requires: []
+  intentKind: inspect
+  stake: a declined invitation
+- id: leafrail_choice_01_04
+  placeId: leafrail_place_01
+  label: Offer a hand at Canopy Terminal
+  requires: []
+  intentKind: interact
+  stake: a public note
+- id: leafrail_choice_01_05
+  placeId: leafrail_place_01
+  label: Take the safer route at Canopy Terminal
+  requires:
+  - leafrail_item_05
+  intentKind: travel
+  stake: a short detour
+- id: leafrail_choice_01_06
+  placeId: leafrail_place_01
+  label: Open the local record at Canopy Terminal
+  requires:
+  - leafrail_item_06
+  intentKind: interact
+  stake: one turn
+- id: leafrail_choice_01_07
+  placeId: leafrail_place_01
+  label: Rest at the bench at Canopy Terminal
+  requires:
+  - leafrail_item_07
+  intentKind: rest
+  stake: one supply
+- id: leafrail_choice_01_08
+  placeId: leafrail_place_01
+  label: Repair the marker at Canopy Terminal
+  requires:
+  - leafrail_item_08
+  intentKind: interact
+  stake: a declined invitation
+- id: leafrail_choice_01_09
+  placeId: leafrail_place_01
+  label: Prepare a shared item at Canopy Terminal
+  requires:
+  - leafrail_item_09
+  intentKind: craft
+  stake: a public note
+- id: leafrail_choice_01_10
+  placeId: leafrail_place_01
+  label: Leave a kind note at Canopy Terminal
+  requires:
+  - leafrail_item_10
+  intentKind: talk
+  stake: a short detour
+- id: leafrail_choice_02_01
+  placeId: leafrail_place_02
+  label: Read the notice at Glass Orchard
+  requires: []
+  intentKind: talk
+  stake: one turn
+- id: leafrail_choice_02_02
+  placeId: leafrail_place_02
+  label: Ask for an introduction at Glass Orchard
+  requires: []
+  intentKind: talk
+  stake: one supply
+- id: leafrail_choice_02_03
+  placeId: leafrail_place_02
+  label: Check the tool tag at Glass Orchard
+  requires: []
+  intentKind: inspect
+  stake: a declined invitation
+- id: leafrail_choice_02_04
+  placeId: leafrail_place_02
+  label: Offer a hand at Glass Orchard
+  requires: []
+  intentKind: interact
+  stake: a public note
+- id: leafrail_choice_02_05
+  placeId: leafrail_place_02
+  label: Take the safer route at Glass Orchard
+  requires:
+  - leafrail_item_05
+  intentKind: travel
+  stake: a short detour
+- id: leafrail_choice_02_06
+  placeId: leafrail_place_02
+  label: Open the local record at Glass Orchard
+  requires:
+  - leafrail_item_06
+  intentKind: interact
+  stake: one turn
+- id: leafrail_choice_02_07
+  placeId: leafrail_place_02
+  label: Rest at the bench at Glass Orchard
+  requires:
+  - leafrail_item_07
+  intentKind: rest
+  stake: one supply
+- id: leafrail_choice_02_08
+  placeId: leafrail_place_02
+  label: Repair the marker at Glass Orchard
+  requires:
+  - leafrail_item_08
+  intentKind: interact
+  stake: a declined invitation
+- id: leafrail_choice_02_09
+  placeId: leafrail_place_02
+  label: Prepare a shared item at Glass Orchard
+  requires:
+  - leafrail_item_09
+  intentKind: craft
+  stake: a public note
+- id: leafrail_choice_02_10
+  placeId: leafrail_place_02
+  label: Leave a kind note at Glass Orchard
+  requires:
+  - leafrail_item_10
+  intentKind: talk
+  stake: a short detour
+- id: leafrail_choice_03_01
+  placeId: leafrail_place_03
+  label: Read the notice at Sunspoke Yard
+  requires: []
+  intentKind: talk
+  stake: one turn
+- id: leafrail_choice_03_02
+  placeId: leafrail_place_03
+  label: Ask for an introduction at Sunspoke Yard
+  requires: []
+  intentKind: talk
+  stake: one supply
+- id: leafrail_choice_03_03
+  placeId: leafrail_place_03
+  label: Check the tool tag at Sunspoke Yard
+  requires: []
+  intentKind: inspect
+  stake: a declined invitation
+- id: leafrail_choice_03_04
+  placeId: leafrail_place_03
+  label: Offer a hand at Sunspoke Yard
+  requires: []
+  intentKind: interact
+  stake: a public note
+- id: leafrail_choice_03_05
+  placeId: leafrail_place_03
+  label: Take the safer route at Sunspoke Yard
+  requires:
+  - leafrail_item_05
+  intentKind: travel
+  stake: a short detour
+- id: leafrail_choice_03_06
+  placeId: leafrail_place_03
+  label: Open the local record at Sunspoke Yard
+  requires:
+  - leafrail_item_06
+  intentKind: interact
+  stake: one turn
+- id: leafrail_choice_03_07
+  placeId: leafrail_place_03
+  label: Rest at the bench at Sunspoke Yard
+  requires:
+  - leafrail_item_07
+  intentKind: rest
+  stake: one supply
+- id: leafrail_choice_03_08
+  placeId: leafrail_place_03
+  label: Repair the marker at Sunspoke Yard
+  requires:
+  - leafrail_item_08
+  intentKind: interact
+  stake: a declined invitation
+- id: leafrail_choice_03_09
+  placeId: leafrail_place_03
+  label: Prepare a shared item at Sunspoke Yard
+  requires:
+  - leafrail_item_09
+  intentKind: craft
+  stake: a public note
+- id: leafrail_choice_03_10
+  placeId: leafrail_place_03
+  label: Leave a kind note at Sunspoke Yard
+  requires:
+  - leafrail_item_10
+  intentKind: talk
+  stake: a short detour
+- id: leafrail_choice_04_01
+  placeId: leafrail_place_04
+  label: Read the notice at Fern Viaduct
+  requires: []
+  intentKind: talk
+  stake: one turn
+- id: leafrail_choice_04_02
+  placeId: leafrail_place_04
+  label: Ask for an introduction at Fern Viaduct
+  requires: []
+  intentKind: talk
+  stake: one supply
+- id: leafrail_choice_04_03
+  placeId: leafrail_place_04
+  label: Check the tool tag at Fern Viaduct
+  requires: []
+  intentKind: inspect
+  stake: a declined invitation
+- id: leafrail_choice_04_04
+  placeId: leafrail_place_04
+  label: Offer a hand at Fern Viaduct
+  requires: []
+  intentKind: interact
+  stake: a public note
+- id: leafrail_choice_04_05
+  placeId: leafrail_place_04
+  label: Take the safer route at Fern Viaduct
+  requires:
+  - leafrail_item_05
+  intentKind: travel
+  stake: a short detour
+- id: leafrail_choice_04_06
+  placeId: leafrail_place_04
+  label: Open the local record at Fern Viaduct
+  requires:
+  - leafrail_item_06
+  intentKind: interact
+  stake: one turn
+- id: leafrail_choice_04_07
+  placeId: leafrail_place_04
+  label: Rest at the bench at Fern Viaduct
+  requires:
+  - leafrail_item_07
+  intentKind: rest
+  stake: one supply
+- id: leafrail_choice_04_08
+  placeId: leafrail_place_04
+  label: Repair the marker at Fern Viaduct
+  requires:
+  - leafrail_item_08
+  intentKind: interact
+  stake: a declined invitation
+- id: leafrail_choice_04_09
+  placeId: leafrail_place_04
+  label: Prepare a shared item at Fern Viaduct
+  requires:
+  - leafrail_item_09
+  intentKind: craft
+  stake: a public note
+- id: leafrail_choice_04_10
+  placeId: leafrail_place_04
+  label: Leave a kind note at Fern Viaduct
+  requires:
+  - leafrail_item_10
+  intentKind: talk
+  stake: a short detour
+- id: leafrail_choice_05_01
+  placeId: leafrail_place_05
+  label: Read the notice at Lattice Commons
+  requires: []
+  intentKind: talk
+  stake: one turn
+- id: leafrail_choice_05_02
+  placeId: leafrail_place_05
+  label: Ask for an introduction at Lattice Commons
+  requires: []
+  intentKind: talk
+  stake: one supply
+- id: leafrail_choice_05_03
+  placeId: leafrail_place_05
+  label: Check the tool tag at Lattice Commons
+  requires: []
+  intentKind: inspect
+  stake: a declined invitation
+- id: leafrail_choice_05_04
+  placeId: leafrail_place_05
+  label: Offer a hand at Lattice Commons
+  requires: []
+  intentKind: interact
+  stake: a public note
+- id: leafrail_choice_05_05
+  placeId: leafrail_place_05
+  label: Take the safer route at Lattice Commons
+  requires:
+  - leafrail_item_05
+  intentKind: travel
+  stake: a short detour
+- id: leafrail_choice_05_06
+  placeId: leafrail_place_05
+  label: Open the local record at Lattice Commons
+  requires:
+  - leafrail_item_06
+  intentKind: interact
+  stake: one turn
+- id: leafrail_choice_05_07
+  placeId: leafrail_place_05
+  label: Rest at the bench at Lattice Commons
+  requires:
+  - leafrail_item_07
+  intentKind: rest
+  stake: one supply
+- id: leafrail_choice_05_08
+  placeId: leafrail_place_05
+  label: Repair the marker at Lattice Commons
+  requires:
+  - leafrail_item_08
+  intentKind: interact
+  stake: a declined invitation
+- id: leafrail_choice_05_09
+  placeId: leafrail_place_05
+  label: Prepare a shared item at Lattice Commons
+  requires:
+  - leafrail_item_09
+  intentKind: craft
+  stake: a public note
+- id: leafrail_choice_05_10
+  placeId: leafrail_place_05
+  label: Leave a kind note at Lattice Commons
+  requires:
+  - leafrail_item_10
+  intentKind: talk
+  stake: a short detour
+- id: leafrail_choice_06_01
+  placeId: leafrail_place_06
+  label: Read the notice at Dawn Depot
+  requires: []
+  intentKind: talk
+  stake: one turn
+- id: leafrail_choice_06_02
+  placeId: leafrail_place_06
+  label: Ask for an introduction at Dawn Depot
+  requires: []
+  intentKind: talk
+  stake: one supply
+- id: leafrail_choice_06_03
+  placeId: leafrail_place_06
+  label: Check the tool tag at Dawn Depot
+  requires: []
+  intentKind: inspect
+  stake: a declined invitation
+- id: leafrail_choice_06_04
+  placeId: leafrail_place_06
+  label: Offer a hand at Dawn Depot
+  requires: []
+  intentKind: interact
+  stake: a public note
+- id: leafrail_choice_06_05
+  placeId: leafrail_place_06
+  label: Take the safer route at Dawn Depot
+  requires:
+  - leafrail_item_05
+  intentKind: travel
+  stake: a short detour
+- id: leafrail_choice_06_06
+  placeId: leafrail_place_06
+  label: Open the local record at Dawn Depot
+  requires:
+  - leafrail_item_06
+  intentKind: interact
+  stake: one turn
+- id: leafrail_choice_06_07
+  placeId: leafrail_place_06
+  label: Rest at the bench at Dawn Depot
+  requires:
+  - leafrail_item_07
+  intentKind: rest
+  stake: one supply
+- id: leafrail_choice_06_08
+  placeId: leafrail_place_06
+  label: Repair the marker at Dawn Depot
+  requires:
+  - leafrail_item_08
+  intentKind: interact
+  stake: a declined invitation
+- id: leafrail_choice_06_09
+  placeId: leafrail_place_06
+  label: Prepare a shared item at Dawn Depot
+  requires:
+  - leafrail_item_09
+  intentKind: craft
+  stake: a public note
+- id: leafrail_choice_06_10
+  placeId: leafrail_place_06
+  label: Leave a kind note at Dawn Depot
+  requires:
+  - leafrail_item_10
+  intentKind: talk
+  stake: a short detour
+- id: leafrail_choice_07_01
+  placeId: leafrail_place_07
+  label: Read the notice at Moss Platform
+  requires: []
+  intentKind: talk
+  stake: one turn
+- id: leafrail_choice_07_02
+  placeId: leafrail_place_07
+  label: Ask for an introduction at Moss Platform
+  requires: []
+  intentKind: talk
+  stake: one supply
+- id: leafrail_choice_07_03
+  placeId: leafrail_place_07
+  label: Check the tool tag at Moss Platform
+  requires: []
+  intentKind: inspect
+  stake: a declined invitation
+- id: leafrail_choice_07_04
+  placeId: leafrail_place_07
+  label: Offer a hand at Moss Platform
+  requires: []
+  intentKind: interact
+  stake: a public note
+- id: leafrail_choice_07_05
+  placeId: leafrail_place_07
+  label: Take the safer route at Moss Platform
+  requires:
+  - leafrail_item_05
+  intentKind: travel
+  stake: a short detour
+- id: leafrail_choice_07_06
+  placeId: leafrail_place_07
+  label: Open the local record at Moss Platform
+  requires:
+  - leafrail_item_06
+  intentKind: interact
+  stake: one turn
+- id: leafrail_choice_07_07
+  placeId: leafrail_place_07
+  label: Rest at the bench at Moss Platform
+  requires:
+  - leafrail_item_07
+  intentKind: rest
+  stake: one supply
+- id: leafrail_choice_07_08
+  placeId: leafrail_place_07
+  label: Repair the marker at Moss Platform
+  requires:
+  - leafrail_item_08
+  intentKind: interact
+  stake: a declined invitation
+- id: leafrail_choice_07_09
+  placeId: leafrail_place_07
+  label: Prepare a shared item at Moss Platform
+  requires:
+  - leafrail_item_09
+  intentKind: craft
+  stake: a public note
+- id: leafrail_choice_07_10
+  placeId: leafrail_place_07
+  label: Leave a kind note at Moss Platform
+  requires:
+  - leafrail_item_10
+  intentKind: talk
+  stake: a short detour
+- id: leafrail_choice_08_01
+  placeId: leafrail_place_08
+  label: Read the notice at Apricot Switch
+  requires: []
+  intentKind: talk
+  stake: one turn
+- id: leafrail_choice_08_02
+  placeId: leafrail_place_08
+  label: Ask for an introduction at Apricot Switch
+  requires: []
+  intentKind: talk
+  stake: one supply
+- id: leafrail_choice_08_03
+  placeId: leafrail_place_08
+  label: Check the tool tag at Apricot Switch
+  requires: []
+  intentKind: inspect
+  stake: a declined invitation
+- id: leafrail_choice_08_04
+  placeId: leafrail_place_08
+  label: Offer a hand at Apricot Switch
+  requires: []
+  intentKind: interact
+  stake: a public note
+- id: leafrail_choice_08_05
+  placeId: leafrail_place_08
+  label: Take the safer route at Apricot Switch
+  requires:
+  - leafrail_item_05
+  intentKind: travel
+  stake: a short detour
+- id: leafrail_choice_08_06
+  placeId: leafrail_place_08
+  label: Open the local record at Apricot Switch
+  requires:
+  - leafrail_item_06
+  intentKind: interact
+  stake: one turn
+- id: leafrail_choice_08_07
+  placeId: leafrail_place_08
+  label: Rest at the bench at Apricot Switch
+  requires:
+  - leafrail_item_07
+  intentKind: rest
+  stake: one supply
+- id: leafrail_choice_08_08
+  placeId: leafrail_place_08
+  label: Repair the marker at Apricot Switch
+  requires:
+  - leafrail_item_08
+  intentKind: interact
+  stake: a declined invitation
+- id: leafrail_choice_08_09
+  placeId: leafrail_place_08
+  label: Prepare a shared item at Apricot Switch
+  requires:
+  - leafrail_item_09
+  intentKind: craft
+  stake: a public note
+- id: leafrail_choice_08_10
+  placeId: leafrail_place_08
+  label: Leave a kind note at Apricot Switch
+  requires:
+  - leafrail_item_10
+  intentKind: talk
+  stake: a short detour
+interactables:
+- id: leafrail_interact_01
+  verbId: rest
+  publicName: Canopy Terminal bench
+  placeId: leafrail_place_01
+  displayVerb: Rest here
+  stateKey: leafrail_rest_01
+- id: leafrail_interact_02
+  verbId: repair
+  publicName: Glass Orchard cabinet
+  placeId: leafrail_place_02
+  displayVerb: Repair here
+  stateKey: leafrail_repair_02
+- id: leafrail_interact_03
+  verbId: tend
+  publicName: Sunspoke Yard rack
+  placeId: leafrail_place_03
+  displayVerb: Tend here
+  stateKey: leafrail_tend_03
+- id: leafrail_interact_04
+  verbId: craft
+  publicName: Fern Viaduct kettle
+  placeId: leafrail_place_04
+  displayVerb: Craft here
+  stateKey: leafrail_craft_04
+- id: leafrail_interact_05
+  verbId: cook
+  publicName: Lattice Commons ledger
+  placeId: leafrail_place_05
+  displayVerb: Cook here
+  stateKey: leafrail_cook_05
+- id: leafrail_interact_06
+  verbId: bind_inn
+  publicName: Dawn Depot rail
+  placeId: leafrail_place_06
+  displayVerb: Bind Inn here
+  stateKey: leafrail_bind_inn_06
+- id: leafrail_interact_07
+  verbId: inspect
+  publicName: Moss Platform bell
+  placeId: leafrail_place_07
+  displayVerb: Inspect here
+  stateKey: leafrail_inspect_07
+- id: leafrail_interact_08
+  verbId: open
+  publicName: Apricot Switch board
+  placeId: leafrail_place_08
+  displayVerb: Open here
+  stateKey: leafrail_open_08
+- id: leafrail_interact_09
+  verbId: carry
+  publicName: Canopy Terminal table
+  placeId: leafrail_place_01
+  displayVerb: Carry here
+  stateKey: leafrail_carry_09
+- id: leafrail_interact_10
+  verbId: clean
+  publicName: Glass Orchard lamp
+  placeId: leafrail_place_02
+  displayVerb: Clean here
+  stateKey: leafrail_clean_10
+- id: leafrail_interact_11
+  verbId: signal
+  publicName: Sunspoke Yard gate
+  placeId: leafrail_place_03
+  displayVerb: Signal here
+  stateKey: leafrail_signal_11
+- id: leafrail_interact_12
+  verbId: record
+  publicName: Fern Viaduct shelf
+  placeId: leafrail_place_04
+  displayVerb: Record here
+  stateKey: leafrail_record_12
+interiors:
+- id: leafrail_interior_01
+  publicName: Leafrail Home Interior
+  entrancePlaceId: leafrail_place_08
+  rooms:
+  - id: leafrail_home_room_01
+    publicName: Leafrail Entry
+    mapScale: interior
+    exits:
+    - leafrail_home_room_02
+    props:
+    - leafrail_home_prop_01
+    - leafrail_home_prop_08
+  - id: leafrail_home_room_02
+    publicName: Leafrail Main Room
+    mapScale: interior
+    exits:
+    - leafrail_home_room_01
+    - leafrail_home_room_03
+    props:
+    - leafrail_home_prop_02
+    - leafrail_home_prop_09
+  - id: leafrail_home_room_03
+    publicName: Leafrail Work Nook
+    mapScale: interior
+    exits:
+    - leafrail_home_room_02
+    - leafrail_home_room_04
+    props:
+    - leafrail_home_prop_03
+    - leafrail_home_prop_10
+  - id: leafrail_home_room_04
+    publicName: Leafrail Window Room
+    mapScale: interior
+    exits:
+    - leafrail_home_room_03
+    - leafrail_home_room_05
+    props:
+    - leafrail_home_prop_04
+    - leafrail_home_prop_11
+  - id: leafrail_home_room_05
+    publicName: Leafrail Quiet Room
+    mapScale: interior
+    exits:
+    - leafrail_home_room_04
+    - leafrail_home_room_06
+    props:
+    - leafrail_home_prop_05
+    - leafrail_home_prop_12
+  - id: leafrail_home_room_06
+    publicName: Leafrail Storage
+    mapScale: interior
+    exits:
+    - leafrail_home_room_05
+    - leafrail_home_room_07
+    props:
+    - leafrail_home_prop_06
+    - leafrail_home_prop_13
+  - id: leafrail_home_room_07
+    publicName: Leafrail Back Step
+    mapScale: interior
+    exits:
+    - leafrail_home_room_06
+    props:
+    - leafrail_home_prop_07
+    - leafrail_home_prop_14
+talents:
+- id: leafrail_talent_01
+  publicName: Leafrail Local Ear
+  cost: 1
+  requires: []
+  effectFlags:
+  - leafrail_effect_01
+  payToUnlock: false
+- id: leafrail_talent_02
+  publicName: Leafrail Careful Hand
+  cost: 2
+  requires: []
+  effectFlags:
+  - leafrail_effect_02
+  payToUnlock: false
+- id: leafrail_talent_03
+  publicName: Leafrail Route Sense
+  cost: 3
+  requires: []
+  effectFlags:
+  - leafrail_effect_03
+  payToUnlock: false
+- id: leafrail_talent_04
+  publicName: Leafrail Shared Measure
+  cost: 4
+  requires: []
+  effectFlags:
+  - leafrail_effect_04
+  payToUnlock: false
+- id: leafrail_talent_05
+  publicName: Leafrail Quiet Craft
+  cost: 1
+  requires:
+  - leafrail_talent_04
+  effectFlags:
+  - leafrail_effect_05
+  payToUnlock: false
+- id: leafrail_talent_06
+  publicName: Leafrail Open Invitation
+  cost: 2
+  requires: []
+  effectFlags:
+  - leafrail_effect_06
+  payToUnlock: false
+- id: leafrail_talent_07
+  publicName: Leafrail Safe Return
+  cost: 3
+  requires: []
+  effectFlags:
+  - leafrail_effect_07
+  payToUnlock: false
+- id: leafrail_talent_08
+  publicName: Leafrail Field Note
+  cost: 4
+  requires: []
+  effectFlags:
+  - leafrail_effect_08
+  payToUnlock: false
+- id: leafrail_talent_09
+  publicName: Leafrail Steady Pace
+  cost: 1
+  requires:
+  - leafrail_talent_08
+  effectFlags:
+  - leafrail_effect_09
+  payToUnlock: false
+- id: leafrail_talent_10
+  publicName: Leafrail Clear Signal
+  cost: 2
+  requires: []
+  effectFlags:
+  - leafrail_effect_10
+  payToUnlock: false
+- id: leafrail_talent_11
+  publicName: Leafrail Warm Welcome
+  cost: 3
+  requires: []
+  effectFlags:
+  - leafrail_effect_11
+  payToUnlock: false
+- id: leafrail_talent_12
+  publicName: Leafrail Small Courage
+  cost: 4
+  requires: []
+  effectFlags:
+  - leafrail_effect_12
+  payToUnlock: false
+- id: leafrail_talent_13
+  publicName: Leafrail Repair Habit
+  cost: 1
+  requires:
+  - leafrail_talent_12
+  effectFlags:
+  - leafrail_effect_13
+  payToUnlock: false
+- id: leafrail_talent_14
+  publicName: Leafrail Trust Mark
+  cost: 2
+  requires: []
+  effectFlags:
+  - leafrail_effect_14
+  payToUnlock: false
+- id: leafrail_talent_15
+  publicName: Leafrail Second Look
+  cost: 3
+  requires: []
+  effectFlags:
+  - leafrail_effect_15
+  payToUnlock: false
+- id: leafrail_talent_16
+  publicName: Leafrail Closing Grace
+  cost: 4
+  requires: []
+  effectFlags:
+  - leafrail_effect_16
+  payToUnlock: false
+evalProbes:
+- id: leafrail_eval_01
+  given:
+    hp: 18
+    placeId: leafrail_place_01
+    turn: 1
+  action:
+    verbId: rest
+    targetId: leafrail_interact_01
+  expectedLedger:
+    turn: 2
+    lastAction: rest
+    placeId: leafrail_place_01
+  forbiddenProse:
+  - do not claim an uncommitted numeric reward
+  - do not alter damage, gold, ownership, or a score outside expectedLedger
+- id: leafrail_eval_02
+  given:
+    hp: 18
+    placeId: leafrail_place_02
+    turn: 2
+  action:
+    verbId: repair
+    targetId: leafrail_interact_02
+  expectedLedger:
+    turn: 3
+    lastAction: repair
+    placeId: leafrail_place_02
+  forbiddenProse:
+  - do not claim an uncommitted numeric reward
+  - do not alter damage, gold, ownership, or a score outside expectedLedger
+- id: leafrail_eval_03
+  given:
+    hp: 18
+    placeId: leafrail_place_03
+    turn: 3
+  action:
+    verbId: tend
+    targetId: leafrail_interact_03
+  expectedLedger:
+    turn: 4
+    lastAction: tend
+    placeId: leafrail_place_03
+  forbiddenProse:
+  - do not claim an uncommitted numeric reward
+  - do not alter damage, gold, ownership, or a score outside expectedLedger
+- id: leafrail_eval_04
+  given:
+    hp: 18
+    placeId: leafrail_place_04
+    turn: 4
+  action:
+    verbId: craft
+    targetId: leafrail_interact_04
+  expectedLedger:
+    turn: 5
+    lastAction: craft
+    placeId: leafrail_place_04
+  forbiddenProse:
+  - do not claim an uncommitted numeric reward
+  - do not alter damage, gold, ownership, or a score outside expectedLedger
+- id: leafrail_eval_05
+  given:
+    hp: 18
+    placeId: leafrail_place_05
+    turn: 5
+  action:
+    verbId: cook
+    targetId: leafrail_interact_05
+  expectedLedger:
+    turn: 6
+    lastAction: cook
+    placeId: leafrail_place_05
+  forbiddenProse:
+  - do not claim an uncommitted numeric reward
+  - do not alter damage, gold, ownership, or a score outside expectedLedger
+- id: leafrail_eval_06
+  given:
+    hp: 18
+    placeId: leafrail_place_06
+    turn: 6
+  action:
+    verbId: bind_inn
+    targetId: leafrail_interact_06
+  expectedLedger:
+    turn: 7
+    lastAction: bind_inn
+    placeId: leafrail_place_06
+  forbiddenProse:
+  - do not claim an uncommitted numeric reward
+  - do not alter damage, gold, ownership, or a score outside expectedLedger
+- id: leafrail_eval_07
+  given:
+    hp: 18
+    placeId: leafrail_place_07
+    turn: 7
+  action:
+    verbId: inspect
+    targetId: leafrail_interact_07
+  expectedLedger:
+    turn: 8
+    lastAction: inspect
+    placeId: leafrail_place_07
+  forbiddenProse:
+  - do not claim an uncommitted numeric reward
+  - do not alter damage, gold, ownership, or a score outside expectedLedger
+- id: leafrail_eval_08
+  given:
+    hp: 18
+    placeId: leafrail_place_08
+    turn: 8
+  action:
+    verbId: open
+    targetId: leafrail_interact_08
+  expectedLedger:
+    turn: 9
+    lastAction: open
+    placeId: leafrail_place_08
+  forbiddenProse:
+  - do not claim an uncommitted numeric reward
+  - do not alter damage, gold, ownership, or a score outside expectedLedger
+- id: leafrail_eval_09
+  given:
+    hp: 18
+    placeId: leafrail_place_01
+    turn: 9
+  action:
+    verbId: carry
+    targetId: leafrail_interact_09
+  expectedLedger:
+    turn: 10
+    lastAction: carry
+    placeId: leafrail_place_01
+  forbiddenProse:
+  - do not claim an uncommitted numeric reward
+  - do not alter damage, gold, ownership, or a score outside expectedLedger
+- id: leafrail_eval_10
+  given:
+    hp: 18
+    placeId: leafrail_place_02
+    turn: 10
+  action:
+    verbId: clean
+    targetId: leafrail_interact_10
+  expectedLedger:
+    turn: 11
+    lastAction: clean
+    placeId: leafrail_place_02
+  forbiddenProse:
+  - do not claim an uncommitted numeric reward
+  - do not alter damage, gold, ownership, or a score outside expectedLedger
+- id: leafrail_eval_11
+  given:
+    hp: 18
+    placeId: leafrail_place_03
+    turn: 11
+  action:
+    verbId: signal
+    targetId: leafrail_interact_11
+  expectedLedger:
+    turn: 12
+    lastAction: signal
+    placeId: leafrail_place_03
+  forbiddenProse:
+  - do not claim an uncommitted numeric reward
+  - do not alter damage, gold, ownership, or a score outside expectedLedger
+- id: leafrail_eval_12
+  given:
+    hp: 18
+    placeId: leafrail_place_04
+    turn: 12
+  action:
+    verbId: record
+    targetId: leafrail_interact_12
+  expectedLedger:
+    turn: 13
+    lastAction: record
+    placeId: leafrail_place_04
+  forbiddenProse:
+  - do not claim an uncommitted numeric reward
+  - do not alter damage, gold, ownership, or a score outside expectedLedger
+- id: leafrail_eval_13
+  given:
+    hp: 18
+    placeId: leafrail_place_05
+    turn: 13
+  action:
+    verbId: rest
+    targetId: leafrail_interact_01
+  expectedLedger:
+    turn: 14
+    lastAction: rest
+    placeId: leafrail_place_05
+  forbiddenProse:
+  - do not claim an uncommitted numeric reward
+  - do not alter damage, gold, ownership, or a score outside expectedLedger
+- id: leafrail_eval_14
+  given:
+    hp: 18
+    placeId: leafrail_place_06
+    turn: 14
+  action:
+    verbId: repair
+    targetId: leafrail_interact_02
+  expectedLedger:
+    turn: 15
+    lastAction: repair
+    placeId: leafrail_place_06
+  forbiddenProse:
+  - do not claim an uncommitted numeric reward
+  - do not alter damage, gold, ownership, or a score outside expectedLedger
+- id: leafrail_eval_15
+  given:
+    hp: 18
+    placeId: leafrail_place_07
+    turn: 15
+  action:
+    verbId: tend
+    targetId: leafrail_interact_03
+  expectedLedger:
+    turn: 16
+    lastAction: tend
+    placeId: leafrail_place_07
+  forbiddenProse:
+  - do not claim an uncommitted numeric reward
+  - do not alter damage, gold, ownership, or a score outside expectedLedger
+wallets:
+  goldName: Rail Leaves
+  cosmeticTokenName: Sun Buttons
+  noConversion: true
+  prohibited:
+  - outcomes
+  - lockout skips
+  - catch rate
+  - raid clears
+  - random power packs
+  - gacha
+  - loot boxes
+dailyCaps:
+  contractsPerDay: 3
+  goldFromRepeatables: 90
+  weeklyBossLockout: per-character per-boss
+divergenceRecords:
+- id: leafrail_walkaway_01
+  choice: walk away from a local obligation
+  recordKey: leafrail_divergence_01
+  effect: Alternate dialogue and a non-punitive follow-up route.
+- id: leafrail_walkaway_02
+  choice: walk away from a local obligation
+  recordKey: leafrail_divergence_02
+  effect: Alternate dialogue and a non-punitive follow-up route.
+- id: leafrail_walkaway_03
+  choice: walk away from a local obligation
+  recordKey: leafrail_divergence_03
+  effect: Alternate dialogue and a non-punitive follow-up route.

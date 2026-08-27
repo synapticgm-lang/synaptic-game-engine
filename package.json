@@ -12,7 +12,8 @@
     "typecheck": "tsc --noEmit -p tsconfig.app.json",
     "wof:check": "tsc --noEmit -p wof/tsconfig.json && tsc -p wof/tsconfig.json && node wof/dist/selftest.js",
     "sync:gm-edge": "node scripts/sync-gm-edge-shared.mjs",
-    "fate-autoplay": "npx vite-node --config vite.config.ts scripts/fate-autoplay/run.ts --"
+    "fate-autoplay": "node ./node_modules/vite-node/vite-node.mjs --config vite.config.ts scripts/fate-autoplay/run.ts --",
+    "fate-autoplay:detach": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/fate-autoplay/start-detached.ps1"
   },
   "dependencies": {
     "@react-oauth/google": "^0.13.5",
@@ -39,6 +40,7 @@
     "typescript": "^5.5.3",
     "typescript-eslint": "^8.3.0",
     "vite": "^5.4.2",
+    "vite-node": "^3.2.4",
     "vitest": "^4.1.11"
   }
 }

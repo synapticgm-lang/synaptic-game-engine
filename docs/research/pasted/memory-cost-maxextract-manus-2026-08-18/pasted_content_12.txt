@@ -1,0 +1,60 @@
+Act as a Senior Operations Director, Engineering Project Manager, and Technology Transfer Officer.
+
+Using the completed engineering specifications, simulation models, OpenSCAD scripts, firmware, and 15-claim working patent draft from the "Hybrid SELV Micro-Climate Cassette" project, generate a complete, execution-ready Operational & Commercialization Document Suite.
+
+Generate all six required project documents in full, professional detail, formatted cleanly with structured headers and tables for immediate export into a Word (.docx) or PDF package.
+
+---
+
+### DOCUMENT 1: PATENT ATTORNEY INSTRUCTION & INVENTION DISCLOSURE BRIEF
+- Executive summary of the 15-claim hierarchy (Claims 1–10 for the apparatus, Claims 11–15 for the thermal routing/control methods).
+- Detailed technical breakdown of the core novelty points (isolated 75 mm plenum, 35° perimeter diffuser, 3° sloped condensation tray, mast conduit segregation, dew-point throttling, and waste-heat recovery).
+- Formal instruction letter to a UK Chartered Patent Attorney (CIPA) with specific questions regarding UK IPO priority filing, fee structure, and PCT international strategy.
+
+### DOCUMENT 2: UK BILATERAL MUTUAL NON-DISCLOSURE AGREEMENT (NDA)
+- A complete, legally structured bilateral NDA governed by the laws of England and Wales.
+- Specifically drafted for clean-tech hardware, proprietary CAD/firmware disclosure, and prototype fabrication.
+- Clear definitions of Confidential Information, exclusion clauses, non-circumvention terms, 3-year term duration, and IP ownership non-transfer clauses.
+
+### DOCUMENT 3: SEGMENTED REQUEST FOR QUOTATION (RFQ) SPEC SHEETS
+Create three distinct, partitioned RFQs to keep the full system architecture confidential across suppliers:
+1. RFQ Package A — Mechanical Mast & Structural Hardware:
+   - Specs for 6061-T6 aluminum mast (50 mm OD / 44 mm ID), internal baffle tolerances, base ballast chassis, and 316 stainless fasteners.
+2. RFQ Package B — Thermal Loop & Custom Radiator Assembly:
+   - Specs for 75 mm low-profile Cu/Al radiator, 24V/48V EC fluid pump, EPDM hosing, 3° sloped drain tray, and quick-connect coupling specs.
+3. RFQ Package C — Power Electronics & Sensor Harness:
+   - Specs for custom PCB fabrication, ESP32 carrier board, MPPT solar controller, sensor harnesses (RTD, Hall-effect flow, float switch), and isolated relay/contactor breakout.
+
+### DOCUMENT 4: PHASE 0 BENCHTOP TESTING PROTOCOL & RUN-SHEET
+- Step-by-step assembly and safety procedure for the 300 mm–500 mm 3D-printed benchtop rig.
+- Sensor calibration checklist (anemometer, pressure transducer, thermal RTDs).
+- Detailed 8-point experimental test matrix:
+  * Fan PWM vs. slot velocity & pressure drop.
+  * Thermal duty (kW) & air Delta-T (°C drop) across varying chilled water flow rates.
+  * Condensation onset verification vs. Magnus dew-point pump throttling logic.
+  * Latched fault simulation (leak sensor trigger, pan overflow float trip, low fluid flow).
+- Data logging run-sheet table with columns for setpoints, raw sensor readings, calculated efficiencies, and pass/fail criteria.
+
+### DOCUMENT 5: 10-SLIDE COMMERCIAL LICENSING PITCH DECK SCRIPT
+- Complete slide-by-slide script and visual layout instructions for pitching commercial canopy OEMs and outdoor hospitality brands:
+  * Slide 1: Title & Executive Hook (The All-Season Outdoor Micro-Climate).
+  * Slide 2: The Problem (Strobe flicker, unmanaged drip, blade hazards, seasonal obsolescence).
+  * Slide 3: The Solution (The Universal Cassette: 35° radial airflow, hydronic cooling/heating, dual-mode kinetic harvesting).
+  * Slide 4: Underlying Technology & Architecture (Plenum physics & waste-heat recovery).
+  * Slide 5: Validated Bench Data (Simulation models, CFM delivery, Delta-T results).
+  * Slide 6: IP & Regulatory Shield (UK IPO Priority status, 15-claim scope, registered design).
+  * Slide 7: Market Opportunity & Target Sectors (Hospitality, Luxury Patio, Glamping, Architectural Cowl).
+  * Slide 8: Unit Economics & COGS Breakdown (Target BOM vs. gross margins).
+  * Slide 9: Commercial Licensing Model (3%–7% gross royalty structure, minimum annual guarantees).
+  * Slide 10: Partnership Call-to-Action & Development Timeline.
+
+### DOCUMENT 6: PROCUREMENT & BILL OF MATERIALS TRACKER
+- Itemized parts procurement list for the Phase 0 benchtop PoC and Phase 2 full-scale rig.
+- Columns for Part Description, Exact Specification, Manufacturer/Distributor Category, Estimated Unit Cost (£ GBP), Lead Time, and Critical Inspection Criteria.
+
+---
+
+### OUTPUT FORMAT INSTRUCTIONS
+- Maintain rigorous engineering and business terminology throughout.
+- Avoid placeholder text (e.g., "[Insert text here]"); draft all clauses, tables, and specifications in full.
+- Format with structured Markdown headings and tables ready for export to Word (.docx) or PDF.

@@ -1,0 +1,5 @@
+tier,eligible_turn_rate,avg_panels_per_eligible_turn,klein_share,pro_share,paid_retry_rate,blended_model_cost_per_1mp_panel_usd,base_panels_per_turn,paid_jobs_per_turn_including_retries,raw_model_cost_per_turn_usd,raw_model_cost_per_25_turn_session_usd,raw_model_cost_per_100_turns_usd
+Classic + Memorable baseline,0.12,1.0,1.0,0.0,0.1,0.014,0.12,0.132,0.001848,0.0462,0.1848
+Free comic-lite,0.2,1.0,1.0,0.0,0.1,0.014,0.2,0.22000000000000003,0.0030800000000000003,0.07700000000000001,0.30800000000000005
+Mid balanced,0.5,1.4,1.0,0.0,0.12,0.014,0.7,0.784,0.010976000000000001,0.27440000000000003,1.0976000000000001
+High selective premium,0.7,1.8,0.8,0.2,0.15,0.0172,1.26,1.4489999999999998,0.0249228,0.62307,2.49228

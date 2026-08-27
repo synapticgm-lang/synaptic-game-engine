@@ -1,0 +1,2293 @@
+packFormatVersion: 1
+worldId: green_chapel
+displayName: Green Chapel
+maturity: teen
+rulesModuleId: hp_check
+themeKit: Green Chapel Theme Kit
+places:
+- id: green_chapel_place_01
+  publicName: Green Nave
+  zoneId: green_chapel_zone_01
+  role: shared hub
+  mapScale: street
+  dangerTier: safe
+  outdoor: true
+  exits:
+  - green_chapel_place_02
+  - green_chapel_place_04
+  npcIds:
+  - green_chapel_npc_01
+  - green_chapel_npc_05
+  - green_chapel_npc_09
+  dungeonId: null
+  interactableIds:
+  - green_chapel_interact_01
+  - green_chapel_interact_09
+- id: green_chapel_place_02
+  publicName: Apple Ford
+  zoneId: green_chapel_zone_01
+  role: start hub
+  mapScale: street
+  dangerTier: safe
+  outdoor: true
+  exits:
+  - green_chapel_place_01
+  - green_chapel_place_03
+  npcIds:
+  - green_chapel_npc_02
+  - green_chapel_npc_06
+  - green_chapel_npc_10
+  dungeonId: null
+  interactableIds:
+  - green_chapel_interact_02
+  - green_chapel_interact_10
+- id: green_chapel_place_03
+  publicName: Bell Meadow
+  zoneId: green_chapel_zone_01
+  role: street route
+  mapScale: street
+  dangerTier: safe
+  outdoor: true
+  exits:
+  - green_chapel_place_02
+  - green_chapel_place_04
+  npcIds:
+  - green_chapel_npc_03
+  - green_chapel_npc_07
+  dungeonId: null
+  interactableIds:
+  - green_chapel_interact_03
+  - green_chapel_interact_11
+- id: green_chapel_place_04
+  publicName: Hearth Vale
+  zoneId: green_chapel_zone_02
+  role: mid join
+  mapScale: street
+  dangerTier: low
+  outdoor: true
+  exits:
+  - green_chapel_place_03
+  - green_chapel_place_05
+  - green_chapel_place_01
+  npcIds:
+  - green_chapel_npc_04
+  - green_chapel_npc_08
+  dungeonId: null
+  interactableIds:
+  - green_chapel_interact_04
+  - green_chapel_interact_12
+- id: green_chapel_place_05
+  publicName: Moss Vestry
+  zoneId: green_chapel_zone_02
+  role: work district
+  mapScale: interior
+  dangerTier: low
+  outdoor: false
+  exits:
+  - green_chapel_place_04
+  - green_chapel_place_06
+  npcIds: []
+  dungeonId: null
+  interactableIds:
+  - green_chapel_interact_05
+- id: green_chapel_place_06
+  publicName: Crownless Hill
+  zoneId: green_chapel_zone_02
+  role: instance door
+  mapScale: dungeon
+  dangerTier: medium
+  outdoor: false
+  exits:
+  - green_chapel_place_05
+  - green_chapel_place_07
+  npcIds: []
+  dungeonId: green_chapel_dungeon_01
+  interactableIds:
+  - green_chapel_interact_06
+- id: green_chapel_place_07
+  publicName: Wellspring Path
+  zoneId: green_chapel_zone_03
+  role: wild edge
+  mapScale: street
+  dangerTier: medium
+  outdoor: true
+  exits:
+  - green_chapel_place_06
+  - green_chapel_place_08
+  npcIds: []
+  dungeonId: null
+  interactableIds:
+  - green_chapel_interact_07
+- id: green_chapel_place_08
+  publicName: Harrow Gate
+  zoneId: green_chapel_zone_03
+  role: housing approach
+  mapScale: interior
+  dangerTier: low
+  outdoor: false
+  exits:
+  - green_chapel_place_07
+  npcIds: []
+  dungeonId: null
+  interactableIds:
+  - green_chapel_interact_08
+npcs:
+- id: green_chapel_npc_01
+  name: Cato Morrow
+  placeId: green_chapel_place_01
+  role: quest
+  greet: Cato Morrow says, ‘Green Chapel keeps its promises in small places. Tell me which one you noticed.’
+- id: green_chapel_npc_02
+  name: Dessa Rowan
+  placeId: green_chapel_place_02
+  role: profession
+  greet: Dessa Rowan says, ‘Green Chapel keeps its promises in small places. Tell me which one you noticed.’
+- id: green_chapel_npc_03
+  name: Eris Nook
+  placeId: green_chapel_place_03
+  role: hub
+  greet: Eris Nook says, ‘Green Chapel keeps its promises in small places. Tell me which one you noticed.’
+- id: green_chapel_npc_04
+  name: Fenn Cress
+  placeId: green_chapel_place_04
+  role: merchant
+  greet: Fenn Cress says, ‘Green Chapel keeps its promises in small places. Tell me which one you noticed.’
+- id: green_chapel_npc_05
+  name: Gala Silt
+  placeId: green_chapel_place_01
+  role: local
+  greet: Gala Silt says, ‘Green Chapel keeps its promises in small places. Tell me which one you noticed.’
+- id: green_chapel_npc_06
+  name: Holl Pryce
+  placeId: green_chapel_place_02
+  role: host
+  greet: Holl Pryce says, ‘Green Chapel keeps its promises in small places. Tell me which one you noticed.’
+- id: green_chapel_npc_07
+  name: Ivo Vane
+  placeId: green_chapel_place_03
+  role: quest
+  greet: Ivo Vane says, ‘Green Chapel keeps its promises in small places. Tell me which one you noticed.’
+- id: green_chapel_npc_08
+  name: Jori Quill
+  placeId: green_chapel_place_04
+  role: profession
+  greet: Jori Quill says, ‘Green Chapel keeps its promises in small places. Tell me which one you noticed.’
+- id: green_chapel_npc_09
+  name: Alden Vale
+  placeId: green_chapel_place_01
+  role: local
+  greet: Alden Vale says, ‘Green Chapel keeps its promises in small places. Tell me which one you noticed.’
+- id: green_chapel_npc_10
+  name: Bryn Wren
+  placeId: green_chapel_place_02
+  role: merchant
+  greet: Bryn Wren says, ‘Green Chapel keeps its promises in small places. Tell me which one you noticed.’
+kits:
+- id: green_chapel_kit_01
+  publicName: Vow Gardener
+  look: vow gardener workwear
+  values: practice vow gardener
+  taboo: Never use vow gardener authority to remove another person’s choice.
+  speechTell: Use the local rhythm of Green Chapel and make every offer concrete.
+  starterClothes: vow_gardener mantle
+  starterTool: vow_gardener tool
+  starterMapItem: green_chapel_map_01
+  startingPlaceId: green_chapel_place_01
+  firstHourQuestId: green_chapel_q_01
+  abilityFlag: green_chapel_ability_01
+- id: green_chapel_kit_02
+  publicName: Ford Keeper
+  look: ford keeper workwear
+  values: practice ford keeper
+  taboo: Never use ford keeper authority to remove another person’s choice.
+  speechTell: Use the local rhythm of Green Chapel and make every offer concrete.
+  starterClothes: ford_keeper vest
+  starterTool: ford_keeper tool
+  starterMapItem: green_chapel_map_02
+  startingPlaceId: green_chapel_place_02
+  firstHourQuestId: green_chapel_q_02
+  abilityFlag: green_chapel_ability_02
+- id: green_chapel_kit_03
+  publicName: Bell Reeve
+  look: bell reeve workwear
+  values: practice bell reeve
+  taboo: Never use bell reeve authority to remove another person’s choice.
+  speechTell: Use the local rhythm of Green Chapel and make every offer concrete.
+  starterClothes: bell_reeve jacket
+  starterTool: bell_reeve tool
+  starterMapItem: green_chapel_map_03
+  startingPlaceId: green_chapel_place_01
+  firstHourQuestId: green_chapel_q_03
+  abilityFlag: green_chapel_ability_03
+- id: green_chapel_kit_04
+  publicName: Green Pilgrim
+  look: green pilgrim workwear
+  values: practice green pilgrim
+  taboo: Never use green pilgrim authority to remove another person’s choice.
+  speechTell: Use the local rhythm of Green Chapel and make every offer concrete.
+  starterClothes: green_pilgrim sash
+  starterTool: green_pilgrim tool
+  starterMapItem: green_chapel_map_04
+  startingPlaceId: green_chapel_place_02
+  firstHourQuestId: green_chapel_q_04
+  abilityFlag: green_chapel_ability_04
+quests:
+- id: green_chapel_q_01
+  title: 'Green Chapel: Name a Working Promise'
+  family: identity
+  hidden: false
+  unlocksQuestId: green_chapel_q_02
+  objectives:
+  - id: green_chapel_q_01_obj_01
+    kind: visit_place
+    targetId: green_chapel_place_01
+    count: 1
+  - id: green_chapel_q_01_obj_02
+    kind: deliver_item
+    targetId: green_chapel_deliver_item_01
+    count: 2
+  rewardGold: 12
+  rewardXp: 20
+- id: green_chapel_q_02
+  title: 'Green Chapel: Set the First Tool Aside'
+  family: identity
+  hidden: false
+  unlocksQuestId: green_chapel_q_03
+  objectives:
+  - id: green_chapel_q_02_obj_01
+    kind: ledger_kill
+    targetId: green_chapel_ledger_kill_02
+    count: 1
+  - id: green_chapel_q_02_obj_02
+    kind: talk_to_npc
+    targetId: green_chapel_npc_03
+    count: 2
+  rewardGold: 15
+  rewardXp: 25
+- id: green_chapel_q_03
+  title: 'Green Chapel: Carry the Right Record'
+  family: identity
+  hidden: false
+  unlocksQuestId: green_chapel_q_04
+  objectives:
+  - id: green_chapel_q_03_obj_01
+    kind: ledger_bond
+    targetId: green_chapel_ledger_bond_03
+    count: 1
+  - id: green_chapel_q_03_obj_02
+    kind: collect_item
+    targetId: green_chapel_collect_item_03
+    count: 2
+  rewardGold: 18
+  rewardXp: 30
+- id: green_chapel_q_04
+  title: 'Green Chapel: Find the Missing Measure'
+  family: identity
+  hidden: false
+  unlocksQuestId: green_chapel_q_05
+  objectives:
+  - id: green_chapel_q_04_obj_01
+    kind: deliver_item
+    targetId: green_chapel_deliver_item_04
+    count: 1
+  - id: green_chapel_q_04_obj_02
+    kind: interact
+    targetId: green_chapel_place_05
+    count: 2
+    verbId: cook
+  rewardGold: 21
+  rewardXp: 35
+- id: green_chapel_q_05
+  title: 'Green Chapel: Teach a Safer Shortcut'
+  family: identity
+  hidden: false
+  unlocksQuestId: green_chapel_q_06
+  objectives:
+  - id: green_chapel_q_05_obj_01
+    kind: talk_to_npc
+    targetId: green_chapel_npc_05
+    count: 1
+  - id: green_chapel_q_05_obj_02
+    kind: score_beat
+    targetId: green_chapel_score_beat_05
+    count: 2
+  rewardGold: 24
+  rewardXp: 40
+- id: green_chapel_q_06
+  title: 'Green Chapel: Read the Local Weather'
+  family: profession
+  hidden: false
+  unlocksQuestId: green_chapel_q_07
+  objectives:
+  - id: green_chapel_q_06_obj_01
+    kind: collect_item
+    targetId: green_chapel_collect_item_06
+    count: 1
+  - id: green_chapel_q_06_obj_02
+    kind: build_tick
+    targetId: green_chapel_build_tick_06
+    count: 2
+  rewardGold: 27
+  rewardXp: 45
+- id: green_chapel_q_07
+  title: 'Green Chapel: Repair a Shared Threshold'
+  family: profession
+  hidden: false
+  unlocksQuestId: green_chapel_q_08
+  objectives:
+  - id: green_chapel_q_07_obj_01
+    kind: interact
+    targetId: green_chapel_place_07
+    count: 1
+    verbId: inspect
+  - id: green_chapel_q_07_obj_02
+    kind: hospitality_tick
+    targetId: green_chapel_hospitality_tick_07
+    count: 2
+  rewardGold: 30
+  rewardXp: 50
+- id: green_chapel_q_08
+  title: 'Green Chapel: Return a Borrowed Sign'
+  family: profession
+  hidden: false
+  unlocksQuestId: green_chapel_q_09
+  objectives:
+  - id: green_chapel_q_08_obj_01
+    kind: score_beat
+    targetId: green_chapel_score_beat_08
+    count: 1
+  - id: green_chapel_q_08_obj_02
+    kind: lap_finish
+    targetId: green_chapel_lap_finish_08
+    count: 2
+  rewardGold: 33
+  rewardXp: 55
+- id: green_chapel_q_09
+  title: 'Green Chapel: Host the Small Welcome'
+  family: profession
+  hidden: false
+  unlocksQuestId: green_chapel_q_10
+  objectives:
+  - id: green_chapel_q_09_obj_01
+    kind: build_tick
+    targetId: green_chapel_build_tick_09
+    count: 1
+  - id: green_chapel_q_09_obj_02
+    kind: visit_place
+    targetId: green_chapel_place_02
+    count: 2
+  rewardGold: 36
+  rewardXp: 60
+- id: green_chapel_q_10
+  title: 'Green Chapel: Choose a Fair Order'
+  family: profession
+  hidden: false
+  unlocksQuestId: green_chapel_q_11
+  objectives:
+  - id: green_chapel_q_10_obj_01
+    kind: hospitality_tick
+    targetId: green_chapel_hospitality_tick_10
+    count: 1
+  - id: green_chapel_q_10_obj_02
+    kind: ledger_kill
+    targetId: green_chapel_ledger_kill_10
+    count: 2
+  rewardGold: 39
+  rewardXp: 65
+- id: green_chapel_q_11
+  title: 'Green Chapel: Map the Quiet Detour'
+  family: profession
+  hidden: false
+  unlocksQuestId: green_chapel_q_12
+  objectives:
+  - id: green_chapel_q_11_obj_01
+    kind: lap_finish
+    targetId: green_chapel_lap_finish_11
+    count: 1
+  - id: green_chapel_q_11_obj_02
+    kind: ledger_bond
+    targetId: green_chapel_ledger_bond_11
+    count: 2
+  rewardGold: 42
+  rewardXp: 70
+- id: green_chapel_q_12
+  title: 'Green Chapel: Bring a Useful Witness'
+  family: profession
+  hidden: false
+  unlocksQuestId: green_chapel_q_13
+  objectives:
+  - id: green_chapel_q_12_obj_01
+    kind: visit_place
+    targetId: green_chapel_place_04
+    count: 1
+  - id: green_chapel_q_12_obj_02
+    kind: deliver_item
+    targetId: green_chapel_deliver_item_12
+    count: 2
+  rewardGold: 45
+  rewardXp: 75
+- id: green_chapel_q_13
+  title: 'Green Chapel: Sort the Unclaimed Materials'
+  family: zone_story
+  hidden: false
+  unlocksQuestId: green_chapel_q_14
+  objectives:
+  - id: green_chapel_q_13_obj_01
+    kind: ledger_kill
+    targetId: green_chapel_ledger_kill_13
+    count: 1
+  - id: green_chapel_q_13_obj_02
+    kind: talk_to_npc
+    targetId: green_chapel_npc_04
+    count: 2
+  rewardGold: 48
+  rewardXp: 80
+- id: green_chapel_q_14
+  title: 'Green Chapel: Make Room for a Visitor'
+  family: zone_story
+  hidden: false
+  unlocksQuestId: green_chapel_q_15
+  objectives:
+  - id: green_chapel_q_14_obj_01
+    kind: ledger_bond
+    targetId: green_chapel_ledger_bond_14
+    count: 1
+  - id: green_chapel_q_14_obj_02
+    kind: collect_item
+    targetId: green_chapel_collect_item_14
+    count: 2
+  rewardGold: 51
+  rewardXp: 85
+- id: green_chapel_q_15
+  title: 'Green Chapel: Close the Day’s Ledger'
+  family: zone_story
+  hidden: false
+  unlocksQuestId: green_chapel_q_16
+  objectives:
+  - id: green_chapel_q_15_obj_01
+    kind: deliver_item
+    targetId: green_chapel_deliver_item_15
+    count: 1
+  - id: green_chapel_q_15_obj_02
+    kind: interact
+    targetId: green_chapel_place_08
+    count: 2
+    verbId: craft
+  rewardGold: 54
+  rewardXp: 90
+- id: green_chapel_q_16
+  title: 'Green Chapel: Follow the Midway Signal'
+  family: zone_story
+  hidden: false
+  unlocksQuestId: green_chapel_q_17
+  objectives:
+  - id: green_chapel_q_16_obj_01
+    kind: talk_to_npc
+    targetId: green_chapel_npc_06
+    count: 1
+  - id: green_chapel_q_16_obj_02
+    kind: score_beat
+    targetId: green_chapel_score_beat_16
+    count: 2
+  rewardGold: 57
+  rewardXp: 95
+- id: green_chapel_q_17
+  title: 'Green Chapel: Uncover the Door Note'
+  family: zone_story
+  hidden: true
+  unlocksQuestId: green_chapel_q_18
+  objectives:
+  - id: green_chapel_q_17_obj_01
+    kind: collect_item
+    targetId: green_chapel_collect_item_17
+    count: 1
+  - id: green_chapel_q_17_obj_02
+    kind: build_tick
+    targetId: green_chapel_build_tick_17
+    count: 2
+  rewardGold: 60
+  rewardXp: 100
+- id: green_chapel_q_18
+  title: 'Green Chapel: Prepare the Team Table'
+  family: zone_story
+  hidden: false
+  unlocksQuestId: green_chapel_q_19
+  objectives:
+  - id: green_chapel_q_18_obj_01
+    kind: interact
+    targetId: green_chapel_place_02
+    count: 1
+    verbId: bind_inn
+  - id: green_chapel_q_18_obj_02
+    kind: hospitality_tick
+    targetId: green_chapel_hospitality_tick_18
+    count: 2
+  rewardGold: 63
+  rewardXp: 105
+- id: green_chapel_q_19
+  title: 'Green Chapel: Test the Local Method'
+  family: zone_story
+  hidden: false
+  unlocksQuestId: green_chapel_q_20
+  objectives:
+  - id: green_chapel_q_19_obj_01
+    kind: score_beat
+    targetId: green_chapel_score_beat_19
+    count: 1
+  - id: green_chapel_q_19_obj_02
+    kind: lap_finish
+    targetId: green_chapel_lap_finish_19
+    count: 2
+  rewardGold: 66
+  rewardXp: 110
+- id: green_chapel_q_20
+  title: 'Green Chapel: Hold a Careful Boundary'
+  family: zone_story
+  hidden: false
+  unlocksQuestId: green_chapel_q_21
+  objectives:
+  - id: green_chapel_q_20_obj_01
+    kind: build_tick
+    targetId: green_chapel_build_tick_20
+    count: 1
+  - id: green_chapel_q_20_obj_02
+    kind: visit_place
+    targetId: green_chapel_place_05
+    count: 2
+  rewardGold: 69
+  rewardXp: 115
+- id: green_chapel_q_21
+  title: 'Green Chapel: Answer the Neighbour’s Call'
+  family: extra
+  hidden: false
+  unlocksQuestId: green_chapel_q_22
+  objectives:
+  - id: green_chapel_q_21_obj_01
+    kind: hospitality_tick
+    targetId: green_chapel_hospitality_tick_21
+    count: 1
+  - id: green_chapel_q_21_obj_02
+    kind: ledger_kill
+    targetId: green_chapel_ledger_kill_21
+    count: 2
+  rewardGold: 72
+  rewardXp: 120
+- id: green_chapel_q_22
+  title: 'Green Chapel: Finish the Side Route'
+  family: extra
+  hidden: false
+  unlocksQuestId: green_chapel_q_23
+  objectives:
+  - id: green_chapel_q_22_obj_01
+    kind: lap_finish
+    targetId: green_chapel_lap_finish_22
+    count: 1
+  - id: green_chapel_q_22_obj_02
+    kind: ledger_bond
+    targetId: green_chapel_ledger_bond_22
+    count: 2
+  rewardGold: 75
+  rewardXp: 125
+- id: green_chapel_q_23
+  title: 'Green Chapel: Earn a Trusted Introduction'
+  family: extra
+  hidden: true
+  unlocksQuestId: green_chapel_q_24
+  objectives:
+  - id: green_chapel_q_23_obj_01
+    kind: visit_place
+    targetId: green_chapel_place_07
+    count: 1
+  - id: green_chapel_q_23_obj_02
+    kind: deliver_item
+    targetId: green_chapel_deliver_item_23
+    count: 2
+  rewardGold: 78
+  rewardXp: 130
+- id: green_chapel_q_24
+  title: 'Green Chapel: Open the Instance Path'
+  family: extra
+  hidden: false
+  unlocksQuestId: green_chapel_q_25
+  objectives:
+  - id: green_chapel_q_24_obj_01
+    kind: ledger_kill
+    targetId: green_chapel_ledger_kill_24
+    count: 1
+  - id: green_chapel_q_24_obj_02
+    kind: talk_to_npc
+    targetId: green_chapel_npc_05
+    count: 2
+  rewardGold: 81
+  rewardXp: 135
+- id: green_chapel_q_25
+  title: 'Green Chapel: Complete the First Big Night'
+  family: extra
+  hidden: false
+  unlocksQuestId: null
+  objectives:
+  - id: green_chapel_q_25_obj_01
+    kind: ledger_bond
+    targetId: green_chapel_ledger_bond_25
+    count: 1
+  - id: green_chapel_q_25_obj_02
+    kind: collect_item
+    targetId: green_chapel_collect_item_25
+    count: 2
+  rewardGold: 84
+  rewardXp: 140
+species:
+- id: green_chapel_species_01
+  publicName: Chapel Stag
+  kind: opponent
+  hp: 8
+  armor: 0
+  threat: 1
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: green_chapel_species_02
+  publicName: Apple Rook
+  kind: opponent
+  hp: 9
+  armor: 1
+  threat: 2
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: green_chapel_species_03
+  publicName: Green Hound
+  kind: opponent
+  hp: 10
+  armor: 2
+  threat: 3
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: green_chapel_species_04
+  publicName: Well Carp
+  kind: opponent
+  hp: 11
+  armor: 3
+  threat: 1
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: green_chapel_species_05
+  publicName: Green Chapel Field Type 5
+  kind: opponent
+  hp: 12
+  armor: 0
+  threat: 2
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: green_chapel_species_06
+  publicName: Green Chapel Field Type 6
+  kind: opponent
+  hp: 13
+  armor: 1
+  threat: 3
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: green_chapel_species_07
+  publicName: Green Chapel Field Type 7
+  kind: opponent
+  hp: 14
+  armor: 2
+  threat: 1
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: green_chapel_species_08
+  publicName: Green Chapel Field Type 8
+  kind: opponent
+  hp: 15
+  armor: 3
+  threat: 2
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: green_chapel_species_09
+  publicName: Green Chapel Field Type 9
+  kind: opponent
+  hp: 16
+  armor: 0
+  threat: 3
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: green_chapel_species_10
+  publicName: Green Chapel Field Type 10
+  kind: opponent
+  hp: 17
+  armor: 1
+  threat: 1
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: green_chapel_species_11
+  publicName: Green Chapel Field Type 11
+  kind: opponent
+  hp: 18
+  armor: 2
+  threat: 2
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: green_chapel_species_12
+  publicName: Green Chapel Field Type 12
+  kind: opponent
+  hp: 19
+  armor: 3
+  threat: 3
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: green_chapel_species_13
+  publicName: Green Chapel Field Type 13
+  kind: opponent
+  hp: 20
+  armor: 0
+  threat: 1
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: green_chapel_species_14
+  publicName: Green Chapel Field Type 14
+  kind: opponent
+  hp: 21
+  armor: 1
+  threat: 2
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: green_chapel_species_15
+  publicName: Green Chapel Field Type 15
+  kind: opponent
+  hp: 22
+  armor: 2
+  threat: 3
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: green_chapel_species_16
+  publicName: Green Chapel Field Type 16
+  kind: opponent
+  hp: 23
+  armor: 3
+  threat: 1
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: green_chapel_species_17
+  publicName: Green Chapel Field Type 17
+  kind: opponent
+  hp: 24
+  armor: 0
+  threat: 2
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: green_chapel_species_18
+  publicName: Green Chapel Field Type 18
+  kind: opponent
+  hp: 25
+  armor: 1
+  threat: 3
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+items:
+- id: green_chapel_item_01
+  publicName: Green Nave token
+  category: starter
+  power: false
+  sellGold: 3
+  description: A Green Chapel item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: green_chapel_item_02
+  publicName: Apple Ford tool
+  category: starter
+  power: false
+  sellGold: 5
+  description: A Green Chapel item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: green_chapel_item_03
+  publicName: Bell Meadow thread
+  category: profession
+  power: false
+  sellGold: 7
+  description: A Green Chapel item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: green_chapel_item_04
+  publicName: Hearth Vale seal
+  category: profession
+  power: false
+  sellGold: 9
+  description: A Green Chapel item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: green_chapel_item_05
+  publicName: Moss Vestry bundle
+  category: instance
+  power: false
+  sellGold: 11
+  description: A Green Chapel item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: green_chapel_item_06
+  publicName: Crownless Hill token
+  category: instance
+  power: false
+  sellGold: 13
+  description: A Green Chapel item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: green_chapel_item_07
+  publicName: Wellspring Path tool
+  category: cosmetic
+  power: false
+  sellGold: 15
+  description: A Green Chapel item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: green_chapel_item_08
+  publicName: Harrow Gate thread
+  category: cosmetic
+  power: false
+  sellGold: 17
+  description: A Green Chapel item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: green_chapel_item_09
+  publicName: Green Nave seal
+  category: material
+  power: false
+  sellGold: 19
+  description: A Green Chapel item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: green_chapel_item_10
+  publicName: Apple Ford bundle
+  category: material
+  power: false
+  sellGold: 21
+  description: A Green Chapel item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: green_chapel_item_11
+  publicName: Bell Meadow token
+  category: care
+  power: false
+  sellGold: 23
+  description: A Green Chapel item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: green_chapel_item_12
+  publicName: Hearth Vale tool
+  category: care
+  power: false
+  sellGold: 25
+  description: A Green Chapel item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: green_chapel_item_13
+  publicName: Moss Vestry thread
+  category: map
+  power: false
+  sellGold: 27
+  description: A Green Chapel item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: green_chapel_item_14
+  publicName: Crownless Hill seal
+  category: map
+  power: false
+  sellGold: 29
+  description: A Green Chapel item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: green_chapel_item_15
+  publicName: Wellspring Path bundle
+  category: vendor
+  power: false
+  sellGold: 31
+  description: A Green Chapel item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: green_chapel_item_16
+  publicName: Harrow Gate token
+  category: vendor
+  power: false
+  sellGold: 33
+  description: A Green Chapel item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: green_chapel_item_17
+  publicName: Green Nave tool
+  category: recipe
+  power: false
+  sellGold: 35
+  description: A Green Chapel item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: green_chapel_item_18
+  publicName: Apple Ford thread
+  category: recipe
+  power: false
+  sellGold: 37
+  description: A Green Chapel item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: green_chapel_item_19
+  publicName: Bell Meadow seal
+  category: keepsake
+  power: false
+  sellGold: 39
+  description: A Green Chapel item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: green_chapel_item_20
+  publicName: Hearth Vale bundle
+  category: keepsake
+  power: false
+  sellGold: 41
+  description: A Green Chapel item used for a stated craft, route, display, or record; it never alters paid outcomes.
+dropTables:
+- id: green_chapel_drop_01
+  sourceId: green_chapel_species_01
+  personalLoot: true
+  entries:
+  - itemId: green_chapel_item_01
+    chancePct: 60
+    min: 1
+    max: 2
+  - itemId: green_chapel_item_08
+    chancePct: 20
+    min: 1
+    max: 1
+- id: green_chapel_drop_02
+  sourceId: green_chapel_species_02
+  personalLoot: true
+  entries:
+  - itemId: green_chapel_item_02
+    chancePct: 55
+    min: 1
+    max: 2
+  - itemId: green_chapel_item_09
+    chancePct: 25
+    min: 1
+    max: 1
+- id: green_chapel_drop_03
+  sourceId: green_chapel_species_03
+  personalLoot: true
+  entries:
+  - itemId: green_chapel_item_03
+    chancePct: 50
+    min: 1
+    max: 2
+  - itemId: green_chapel_item_10
+    chancePct: 30
+    min: 1
+    max: 1
+- id: green_chapel_drop_04
+  sourceId: green_chapel_species_04
+  personalLoot: true
+  entries:
+  - itemId: green_chapel_item_04
+    chancePct: 45
+    min: 1
+    max: 2
+  - itemId: green_chapel_item_11
+    chancePct: 20
+    min: 1
+    max: 1
+- id: green_chapel_drop_05
+  sourceId: green_chapel_species_05
+  personalLoot: true
+  entries:
+  - itemId: green_chapel_item_05
+    chancePct: 60
+    min: 1
+    max: 2
+  - itemId: green_chapel_item_12
+    chancePct: 25
+    min: 1
+    max: 1
+- id: green_chapel_drop_06
+  sourceId: green_chapel_species_06
+  personalLoot: true
+  entries:
+  - itemId: green_chapel_item_06
+    chancePct: 55
+    min: 1
+    max: 2
+  - itemId: green_chapel_item_13
+    chancePct: 30
+    min: 1
+    max: 1
+- id: green_chapel_drop_07
+  sourceId: green_chapel_species_07
+  personalLoot: true
+  entries:
+  - itemId: green_chapel_item_07
+    chancePct: 50
+    min: 1
+    max: 2
+  - itemId: green_chapel_item_14
+    chancePct: 20
+    min: 1
+    max: 1
+- id: green_chapel_drop_08
+  sourceId: green_chapel_species_08
+  personalLoot: true
+  entries:
+  - itemId: green_chapel_item_08
+    chancePct: 45
+    min: 1
+    max: 2
+  - itemId: green_chapel_item_15
+    chancePct: 25
+    min: 1
+    max: 1
+- id: green_chapel_drop_09
+  sourceId: green_chapel_species_09
+  personalLoot: true
+  entries:
+  - itemId: green_chapel_item_09
+    chancePct: 60
+    min: 1
+    max: 2
+  - itemId: green_chapel_item_16
+    chancePct: 30
+    min: 1
+    max: 1
+- id: green_chapel_drop_10
+  sourceId: green_chapel_species_10
+  personalLoot: true
+  entries:
+  - itemId: green_chapel_item_10
+    chancePct: 55
+    min: 1
+    max: 2
+  - itemId: green_chapel_item_17
+    chancePct: 20
+    min: 1
+    max: 1
+- id: green_chapel_drop_11
+  sourceId: green_chapel_species_11
+  personalLoot: true
+  entries:
+  - itemId: green_chapel_item_11
+    chancePct: 50
+    min: 1
+    max: 2
+  - itemId: green_chapel_item_18
+    chancePct: 25
+    min: 1
+    max: 1
+- id: green_chapel_drop_12
+  sourceId: green_chapel_species_12
+  personalLoot: true
+  entries:
+  - itemId: green_chapel_item_12
+    chancePct: 45
+    min: 1
+    max: 2
+  - itemId: green_chapel_item_19
+    chancePct: 30
+    min: 1
+    max: 1
+vendors:
+- id: green_chapel_vendor_01
+  publicName: Green Chapel Exchange
+  placeId: green_chapel_place_01
+  currencyGoldName: Chapel Pence
+  items:
+  - itemId: green_chapel_item_01
+    priceGold: 8
+  - itemId: green_chapel_item_02
+    priceGold: 11
+  - itemId: green_chapel_item_03
+    priceGold: 14
+  - itemId: green_chapel_item_04
+    priceGold: 17
+  - itemId: green_chapel_item_05
+    priceGold: 20
+  - itemId: green_chapel_item_06
+    priceGold: 23
+  - itemId: green_chapel_item_07
+    priceGold: 26
+  - itemId: green_chapel_item_08
+    priceGold: 29
+  repairCostPerPoint: 2
+dungeons:
+- id: green_chapel_dungeon_01
+  publicName: The Crownless Hill Trial
+  partyMin: 1
+  partyMax: 5
+  entrancePlaceId: green_chapel_place_06
+  rooms:
+  - id: green_chapel_dungeon_room_01
+    publicName: 'The Crownless Hill Trial: Threshold Room'
+    describeBeforeCreature: Describe the material, sound, exits, and practical obstacle of Threshold Room before any species
+      is narrated.
+    trashSpeciesIds:
+    - green_chapel_species_01
+    - green_chapel_species_02
+    eliteSpeciesId: null
+    checkpoint: false
+    bossSpeciesId: null
+    exits:
+    - green_chapel_dungeon_room_02
+  - id: green_chapel_dungeon_room_02
+    publicName: 'The Crownless Hill Trial: Workroom'
+    describeBeforeCreature: Describe the material, sound, exits, and practical obstacle of Workroom before any species is
+      narrated.
+    trashSpeciesIds:
+    - green_chapel_species_03
+    - green_chapel_species_04
+    eliteSpeciesId: null
+    checkpoint: false
+    bossSpeciesId: null
+    exits:
+    - green_chapel_dungeon_room_03
+  - id: green_chapel_dungeon_room_03
+    publicName: 'The Crownless Hill Trial: Side Passage'
+    describeBeforeCreature: Describe the material, sound, exits, and practical obstacle of Side Passage before any species
+      is narrated.
+    trashSpeciesIds:
+    - green_chapel_species_05
+    - green_chapel_species_06
+    eliteSpeciesId: green_chapel_species_09
+    checkpoint: false
+    bossSpeciesId: null
+    exits:
+    - green_chapel_dungeon_room_04
+  - id: green_chapel_dungeon_room_04
+    publicName: 'The Crownless Hill Trial: Checkpoint Alcove'
+    describeBeforeCreature: Describe the material, sound, exits, and practical obstacle of Checkpoint Alcove before any species
+      is narrated.
+    trashSpeciesIds:
+    - green_chapel_species_07
+    - green_chapel_species_08
+    eliteSpeciesId: null
+    checkpoint: true
+    bossSpeciesId: null
+    exits:
+    - green_chapel_dungeon_room_05
+  - id: green_chapel_dungeon_room_05
+    publicName: 'The Crownless Hill Trial: Finale Chamber'
+    describeBeforeCreature: Describe the material, sound, exits, and practical obstacle of Finale Chamber before any species
+      is narrated.
+    trashSpeciesIds:
+    - green_chapel_species_09
+    - green_chapel_species_10
+    eliteSpeciesId: null
+    checkpoint: false
+    bossSpeciesId: green_chapel_species_14
+    exits: []
+  traps:
+  - id: green_chapel_trap_01
+    publicName: misread sign
+    interactableId: green_chapel_interact_01
+  - id: green_chapel_trap_02
+    publicName: jammed latch
+    interactableId: green_chapel_interact_02
+  - id: green_chapel_trap_03
+    publicName: wet threshold
+    interactableId: green_chapel_interact_03
+  - id: green_chapel_trap_04
+    publicName: false shelf
+    interactableId: green_chapel_interact_04
+  - id: green_chapel_trap_05
+    publicName: quiet bell
+    interactableId: green_chapel_interact_05
+  - id: green_chapel_trap_06
+    publicName: sealed drawer
+    interactableId: green_chapel_interact_06
+talkTrees:
+- npcId: green_chapel_npc_01
+  greet: Cato Morrow says, ‘Green Chapel keeps its promises in small places. Tell me which one you noticed.’
+  quest_offer: 'Cato Morrow offers a specific task at Green Nave: settle the practical mismatch before it costs someone a
+    shift.'
+  quest_progress: Cato Morrow checks the record and asks for the one detail that would change the outcome.
+  quest_turnin: Cato Morrow marks the work complete, names who benefited, and hands over the recorded reward.
+  gossip:
+  - At Apple Ford, people are discussing a missing care tag.
+  - The safest route today is through Bell Meadow, not the obvious shortcut.
+  - Someone at Hearth Vale is offering help but will not ask twice.
+  refusal: Cato Morrow says, ‘No. I can explain the rule, but I will not bend it for noise.’
+  player_rude: Cato Morrow says, ‘You may leave, lower your voice, or try a useful question. Choose one.’
+- npcId: green_chapel_npc_02
+  greet: Dessa Rowan says, ‘Green Chapel keeps its promises in small places. Tell me which one you noticed.’
+  quest_offer: 'Dessa Rowan offers a specific task at Apple Ford: settle the practical mismatch before it costs someone a
+    shift.'
+  quest_progress: Dessa Rowan checks the record and asks for the one detail that would change the outcome.
+  quest_turnin: Dessa Rowan marks the work complete, names who benefited, and hands over the recorded reward.
+  gossip:
+  - At Bell Meadow, people are discussing a missing care tag.
+  - The safest route today is through Hearth Vale, not the obvious shortcut.
+  - Someone at Moss Vestry is offering help but will not ask twice.
+  refusal: Dessa Rowan says, ‘No. I can explain the rule, but I will not bend it for noise.’
+  player_rude: Dessa Rowan says, ‘You may leave, lower your voice, or try a useful question. Choose one.’
+- npcId: green_chapel_npc_03
+  greet: Eris Nook says, ‘Green Chapel keeps its promises in small places. Tell me which one you noticed.’
+  quest_offer: 'Eris Nook offers a specific task at Bell Meadow: settle the practical mismatch before it costs someone a shift.'
+  quest_progress: Eris Nook checks the record and asks for the one detail that would change the outcome.
+  quest_turnin: Eris Nook marks the work complete, names who benefited, and hands over the recorded reward.
+  gossip:
+  - At Hearth Vale, people are discussing a missing care tag.
+  - The safest route today is through Moss Vestry, not the obvious shortcut.
+  - Someone at Crownless Hill is offering help but will not ask twice.
+  refusal: Eris Nook says, ‘No. I can explain the rule, but I will not bend it for noise.’
+  player_rude: Eris Nook says, ‘You may leave, lower your voice, or try a useful question. Choose one.’
+- npcId: green_chapel_npc_04
+  greet: Fenn Cress says, ‘Green Chapel keeps its promises in small places. Tell me which one you noticed.’
+  quest_offer: 'Fenn Cress offers a specific task at Hearth Vale: settle the practical mismatch before it costs someone a
+    shift.'
+  quest_progress: Fenn Cress checks the record and asks for the one detail that would change the outcome.
+  quest_turnin: Fenn Cress marks the work complete, names who benefited, and hands over the recorded reward.
+  gossip:
+  - At Moss Vestry, people are discussing a missing care tag.
+  - The safest route today is through Crownless Hill, not the obvious shortcut.
+  - Someone at Wellspring Path is offering help but will not ask twice.
+  refusal: Fenn Cress says, ‘No. I can explain the rule, but I will not bend it for noise.’
+  player_rude: Fenn Cress says, ‘You may leave, lower your voice, or try a useful question. Choose one.’
+- npcId: green_chapel_npc_05
+  greet: Gala Silt says, ‘Green Chapel keeps its promises in small places. Tell me which one you noticed.’
+  quest_offer: 'Gala Silt offers a specific task at Green Nave: settle the practical mismatch before it costs someone a shift.'
+  quest_progress: Gala Silt checks the record and asks for the one detail that would change the outcome.
+  quest_turnin: Gala Silt marks the work complete, names who benefited, and hands over the recorded reward.
+  gossip:
+  - At Crownless Hill, people are discussing a missing care tag.
+  - The safest route today is through Wellspring Path, not the obvious shortcut.
+  - Someone at Harrow Gate is offering help but will not ask twice.
+  refusal: Gala Silt says, ‘No. I can explain the rule, but I will not bend it for noise.’
+  player_rude: Gala Silt says, ‘You may leave, lower your voice, or try a useful question. Choose one.’
+- npcId: green_chapel_npc_06
+  greet: Holl Pryce says, ‘Green Chapel keeps its promises in small places. Tell me which one you noticed.’
+  quest_offer: 'Holl Pryce offers a specific task at Apple Ford: settle the practical mismatch before it costs someone a shift.'
+  quest_progress: Holl Pryce checks the record and asks for the one detail that would change the outcome.
+  quest_turnin: Holl Pryce marks the work complete, names who benefited, and hands over the recorded reward.
+  gossip:
+  - At Wellspring Path, people are discussing a missing care tag.
+  - The safest route today is through Harrow Gate, not the obvious shortcut.
+  - Someone at Green Nave is offering help but will not ask twice.
+  refusal: Holl Pryce says, ‘No. I can explain the rule, but I will not bend it for noise.’
+  player_rude: Holl Pryce says, ‘You may leave, lower your voice, or try a useful question. Choose one.’
+- npcId: green_chapel_npc_07
+  greet: Ivo Vane says, ‘Green Chapel keeps its promises in small places. Tell me which one you noticed.’
+  quest_offer: 'Ivo Vane offers a specific task at Bell Meadow: settle the practical mismatch before it costs someone a shift.'
+  quest_progress: Ivo Vane checks the record and asks for the one detail that would change the outcome.
+  quest_turnin: Ivo Vane marks the work complete, names who benefited, and hands over the recorded reward.
+  gossip:
+  - At Harrow Gate, people are discussing a missing care tag.
+  - The safest route today is through Green Nave, not the obvious shortcut.
+  - Someone at Apple Ford is offering help but will not ask twice.
+  refusal: Ivo Vane says, ‘No. I can explain the rule, but I will not bend it for noise.’
+  player_rude: Ivo Vane says, ‘You may leave, lower your voice, or try a useful question. Choose one.’
+- npcId: green_chapel_npc_08
+  greet: Jori Quill says, ‘Green Chapel keeps its promises in small places. Tell me which one you noticed.’
+  quest_offer: 'Jori Quill offers a specific task at Hearth Vale: settle the practical mismatch before it costs someone a
+    shift.'
+  quest_progress: Jori Quill checks the record and asks for the one detail that would change the outcome.
+  quest_turnin: Jori Quill marks the work complete, names who benefited, and hands over the recorded reward.
+  gossip:
+  - At Green Nave, people are discussing a missing care tag.
+  - The safest route today is through Apple Ford, not the obvious shortcut.
+  - Someone at Bell Meadow is offering help but will not ask twice.
+  refusal: Jori Quill says, ‘No. I can explain the rule, but I will not bend it for noise.’
+  player_rude: Jori Quill says, ‘You may leave, lower your voice, or try a useful question. Choose one.’
+- npcId: green_chapel_npc_09
+  greet: Alden Vale says, ‘Green Chapel keeps its promises in small places. Tell me which one you noticed.’
+  quest_offer: 'Alden Vale offers a specific task at Green Nave: settle the practical mismatch before it costs someone a shift.'
+  quest_progress: Alden Vale checks the record and asks for the one detail that would change the outcome.
+  quest_turnin: Alden Vale marks the work complete, names who benefited, and hands over the recorded reward.
+  gossip:
+  - At Apple Ford, people are discussing a missing care tag.
+  - The safest route today is through Bell Meadow, not the obvious shortcut.
+  - Someone at Hearth Vale is offering help but will not ask twice.
+  refusal: Alden Vale says, ‘No. I can explain the rule, but I will not bend it for noise.’
+  player_rude: Alden Vale says, ‘You may leave, lower your voice, or try a useful question. Choose one.’
+- npcId: green_chapel_npc_10
+  greet: Bryn Wren says, ‘Green Chapel keeps its promises in small places. Tell me which one you noticed.’
+  quest_offer: 'Bryn Wren offers a specific task at Apple Ford: settle the practical mismatch before it costs someone a shift.'
+  quest_progress: Bryn Wren checks the record and asks for the one detail that would change the outcome.
+  quest_turnin: Bryn Wren marks the work complete, names who benefited, and hands over the recorded reward.
+  gossip:
+  - At Bell Meadow, people are discussing a missing care tag.
+  - The safest route today is through Hearth Vale, not the obvious shortcut.
+  - Someone at Moss Vestry is offering help but will not ask twice.
+  refusal: Bryn Wren says, ‘No. I can explain the rule, but I will not bend it for noise.’
+  player_rude: Bryn Wren says, ‘You may leave, lower your voice, or try a useful question. Choose one.’
+choiceButtons:
+- id: green_chapel_choice_01_01
+  placeId: green_chapel_place_01
+  label: Read the notice at Green Nave
+  requires: []
+  intentKind: talk
+  stake: one turn
+- id: green_chapel_choice_01_02
+  placeId: green_chapel_place_01
+  label: Ask for an introduction at Green Nave
+  requires: []
+  intentKind: talk
+  stake: one supply
+- id: green_chapel_choice_01_03
+  placeId: green_chapel_place_01
+  label: Check the tool tag at Green Nave
+  requires: []
+  intentKind: inspect
+  stake: a declined invitation
+- id: green_chapel_choice_01_04
+  placeId: green_chapel_place_01
+  label: Offer a hand at Green Nave
+  requires: []
+  intentKind: interact
+  stake: a public note
+- id: green_chapel_choice_01_05
+  placeId: green_chapel_place_01
+  label: Take the safer route at Green Nave
+  requires:
+  - green_chapel_item_05
+  intentKind: travel
+  stake: a short detour
+- id: green_chapel_choice_01_06
+  placeId: green_chapel_place_01
+  label: Open the local record at Green Nave
+  requires:
+  - green_chapel_item_06
+  intentKind: interact
+  stake: one turn
+- id: green_chapel_choice_01_07
+  placeId: green_chapel_place_01
+  label: Rest at the bench at Green Nave
+  requires:
+  - green_chapel_item_07
+  intentKind: rest
+  stake: one supply
+- id: green_chapel_choice_01_08
+  placeId: green_chapel_place_01
+  label: Repair the marker at Green Nave
+  requires:
+  - green_chapel_item_08
+  intentKind: interact
+  stake: a declined invitation
+- id: green_chapel_choice_01_09
+  placeId: green_chapel_place_01
+  label: Prepare a shared item at Green Nave
+  requires:
+  - green_chapel_item_09
+  intentKind: craft
+  stake: a public note
+- id: green_chapel_choice_01_10
+  placeId: green_chapel_place_01
+  label: Leave a kind note at Green Nave
+  requires:
+  - green_chapel_item_10
+  intentKind: talk
+  stake: a short detour
+- id: green_chapel_choice_02_01
+  placeId: green_chapel_place_02
+  label: Read the notice at Apple Ford
+  requires: []
+  intentKind: talk
+  stake: one turn
+- id: green_chapel_choice_02_02
+  placeId: green_chapel_place_02
+  label: Ask for an introduction at Apple Ford
+  requires: []
+  intentKind: talk
+  stake: one supply
+- id: green_chapel_choice_02_03
+  placeId: green_chapel_place_02
+  label: Check the tool tag at Apple Ford
+  requires: []
+  intentKind: inspect
+  stake: a declined invitation
+- id: green_chapel_choice_02_04
+  placeId: green_chapel_place_02
+  label: Offer a hand at Apple Ford
+  requires: []
+  intentKind: interact
+  stake: a public note
+- id: green_chapel_choice_02_05
+  placeId: green_chapel_place_02
+  label: Take the safer route at Apple Ford
+  requires:
+  - green_chapel_item_05
+  intentKind: travel
+  stake: a short detour
+- id: green_chapel_choice_02_06
+  placeId: green_chapel_place_02
+  label: Open the local record at Apple Ford
+  requires:
+  - green_chapel_item_06
+  intentKind: interact
+  stake: one turn
+- id: green_chapel_choice_02_07
+  placeId: green_chapel_place_02
+  label: Rest at the bench at Apple Ford
+  requires:
+  - green_chapel_item_07
+  intentKind: rest
+  stake: one supply
+- id: green_chapel_choice_02_08
+  placeId: green_chapel_place_02
+  label: Repair the marker at Apple Ford
+  requires:
+  - green_chapel_item_08
+  intentKind: interact
+  stake: a declined invitation
+- id: green_chapel_choice_02_09
+  placeId: green_chapel_place_02
+  label: Prepare a shared item at Apple Ford
+  requires:
+  - green_chapel_item_09
+  intentKind: craft
+  stake: a public note
+- id: green_chapel_choice_02_10
+  placeId: green_chapel_place_02
+  label: Leave a kind note at Apple Ford
+  requires:
+  - green_chapel_item_10
+  intentKind: talk
+  stake: a short detour
+- id: green_chapel_choice_03_01
+  placeId: green_chapel_place_03
+  label: Read the notice at Bell Meadow
+  requires: []
+  intentKind: talk
+  stake: one turn
+- id: green_chapel_choice_03_02
+  placeId: green_chapel_place_03
+  label: Ask for an introduction at Bell Meadow
+  requires: []
+  intentKind: talk
+  stake: one supply
+- id: green_chapel_choice_03_03
+  placeId: green_chapel_place_03
+  label: Check the tool tag at Bell Meadow
+  requires: []
+  intentKind: inspect
+  stake: a declined invitation
+- id: green_chapel_choice_03_04
+  placeId: green_chapel_place_03
+  label: Offer a hand at Bell Meadow
+  requires: []
+  intentKind: interact
+  stake: a public note
+- id: green_chapel_choice_03_05
+  placeId: green_chapel_place_03
+  label: Take the safer route at Bell Meadow
+  requires:
+  - green_chapel_item_05
+  intentKind: travel
+  stake: a short detour
+- id: green_chapel_choice_03_06
+  placeId: green_chapel_place_03
+  label: Open the local record at Bell Meadow
+  requires:
+  - green_chapel_item_06
+  intentKind: interact
+  stake: one turn
+- id: green_chapel_choice_03_07
+  placeId: green_chapel_place_03
+  label: Rest at the bench at Bell Meadow
+  requires:
+  - green_chapel_item_07
+  intentKind: rest
+  stake: one supply
+- id: green_chapel_choice_03_08
+  placeId: green_chapel_place_03
+  label: Repair the marker at Bell Meadow
+  requires:
+  - green_chapel_item_08
+  intentKind: interact
+  stake: a declined invitation
+- id: green_chapel_choice_03_09
+  placeId: green_chapel_place_03
+  label: Prepare a shared item at Bell Meadow
+  requires:
+  - green_chapel_item_09
+  intentKind: craft
+  stake: a public note
+- id: green_chapel_choice_03_10
+  placeId: green_chapel_place_03
+  label: Leave a kind note at Bell Meadow
+  requires:
+  - green_chapel_item_10
+  intentKind: talk
+  stake: a short detour
+- id: green_chapel_choice_04_01
+  placeId: green_chapel_place_04
+  label: Read the notice at Hearth Vale
+  requires: []
+  intentKind: talk
+  stake: one turn
+- id: green_chapel_choice_04_02
+  placeId: green_chapel_place_04
+  label: Ask for an introduction at Hearth Vale
+  requires: []
+  intentKind: talk
+  stake: one supply
+- id: green_chapel_choice_04_03
+  placeId: green_chapel_place_04
+  label: Check the tool tag at Hearth Vale
+  requires: []
+  intentKind: inspect
+  stake: a declined invitation
+- id: green_chapel_choice_04_04
+  placeId: green_chapel_place_04
+  label: Offer a hand at Hearth Vale
+  requires: []
+  intentKind: interact
+  stake: a public note
+- id: green_chapel_choice_04_05
+  placeId: green_chapel_place_04
+  label: Take the safer route at Hearth Vale
+  requires:
+  - green_chapel_item_05
+  intentKind: travel
+  stake: a short detour
+- id: green_chapel_choice_04_06
+  placeId: green_chapel_place_04
+  label: Open the local record at Hearth Vale
+  requires:
+  - green_chapel_item_06
+  intentKind: interact
+  stake: one turn
+- id: green_chapel_choice_04_07
+  placeId: green_chapel_place_04
+  label: Rest at the bench at Hearth Vale
+  requires:
+  - green_chapel_item_07
+  intentKind: rest
+  stake: one supply
+- id: green_chapel_choice_04_08
+  placeId: green_chapel_place_04
+  label: Repair the marker at Hearth Vale
+  requires:
+  - green_chapel_item_08
+  intentKind: interact
+  stake: a declined invitation
+- id: green_chapel_choice_04_09
+  placeId: green_chapel_place_04
+  label: Prepare a shared item at Hearth Vale
+  requires:
+  - green_chapel_item_09
+  intentKind: craft
+  stake: a public note
+- id: green_chapel_choice_04_10
+  placeId: green_chapel_place_04
+  label: Leave a kind note at Hearth Vale
+  requires:
+  - green_chapel_item_10
+  intentKind: talk
+  stake: a short detour
+- id: green_chapel_choice_05_01
+  placeId: green_chapel_place_05
+  label: Read the notice at Moss Vestry
+  requires: []
+  intentKind: talk
+  stake: one turn
+- id: green_chapel_choice_05_02
+  placeId: green_chapel_place_05
+  label: Ask for an introduction at Moss Vestry
+  requires: []
+  intentKind: talk
+  stake: one supply
+- id: green_chapel_choice_05_03
+  placeId: green_chapel_place_05
+  label: Check the tool tag at Moss Vestry
+  requires: []
+  intentKind: inspect
+  stake: a declined invitation
+- id: green_chapel_choice_05_04
+  placeId: green_chapel_place_05
+  label: Offer a hand at Moss Vestry
+  requires: []
+  intentKind: interact
+  stake: a public note
+- id: green_chapel_choice_05_05
+  placeId: green_chapel_place_05
+  label: Take the safer route at Moss Vestry
+  requires:
+  - green_chapel_item_05
+  intentKind: travel
+  stake: a short detour
+- id: green_chapel_choice_05_06
+  placeId: green_chapel_place_05
+  label: Open the local record at Moss Vestry
+  requires:
+  - green_chapel_item_06
+  intentKind: interact
+  stake: one turn
+- id: green_chapel_choice_05_07
+  placeId: green_chapel_place_05
+  label: Rest at the bench at Moss Vestry
+  requires:
+  - green_chapel_item_07
+  intentKind: rest
+  stake: one supply
+- id: green_chapel_choice_05_08
+  placeId: green_chapel_place_05
+  label: Repair the marker at Moss Vestry
+  requires:
+  - green_chapel_item_08
+  intentKind: interact
+  stake: a declined invitation
+- id: green_chapel_choice_05_09
+  placeId: green_chapel_place_05
+  label: Prepare a shared item at Moss Vestry
+  requires:
+  - green_chapel_item_09
+  intentKind: craft
+  stake: a public note
+- id: green_chapel_choice_05_10
+  placeId: green_chapel_place_05
+  label: Leave a kind note at Moss Vestry
+  requires:
+  - green_chapel_item_10
+  intentKind: talk
+  stake: a short detour
+- id: green_chapel_choice_06_01
+  placeId: green_chapel_place_06
+  label: Read the notice at Crownless Hill
+  requires: []
+  intentKind: talk
+  stake: one turn
+- id: green_chapel_choice_06_02
+  placeId: green_chapel_place_06
+  label: Ask for an introduction at Crownless Hill
+  requires: []
+  intentKind: talk
+  stake: one supply
+- id: green_chapel_choice_06_03
+  placeId: green_chapel_place_06
+  label: Check the tool tag at Crownless Hill
+  requires: []
+  intentKind: inspect
+  stake: a declined invitation
+- id: green_chapel_choice_06_04
+  placeId: green_chapel_place_06
+  label: Offer a hand at Crownless Hill
+  requires: []
+  intentKind: interact
+  stake: a public note
+- id: green_chapel_choice_06_05
+  placeId: green_chapel_place_06
+  label: Take the safer route at Crownless Hill
+  requires:
+  - green_chapel_item_05
+  intentKind: travel
+  stake: a short detour
+- id: green_chapel_choice_06_06
+  placeId: green_chapel_place_06
+  label: Open the local record at Crownless Hill
+  requires:
+  - green_chapel_item_06
+  intentKind: interact
+  stake: one turn
+- id: green_chapel_choice_06_07
+  placeId: green_chapel_place_06
+  label: Rest at the bench at Crownless Hill
+  requires:
+  - green_chapel_item_07
+  intentKind: rest
+  stake: one supply
+- id: green_chapel_choice_06_08
+  placeId: green_chapel_place_06
+  label: Repair the marker at Crownless Hill
+  requires:
+  - green_chapel_item_08
+  intentKind: interact
+  stake: a declined invitation
+- id: green_chapel_choice_06_09
+  placeId: green_chapel_place_06
+  label: Prepare a shared item at Crownless Hill
+  requires:
+  - green_chapel_item_09
+  intentKind: craft
+  stake: a public note
+- id: green_chapel_choice_06_10
+  placeId: green_chapel_place_06
+  label: Leave a kind note at Crownless Hill
+  requires:
+  - green_chapel_item_10
+  intentKind: talk
+  stake: a short detour
+- id: green_chapel_choice_07_01
+  placeId: green_chapel_place_07
+  label: Read the notice at Wellspring Path
+  requires: []
+  intentKind: talk
+  stake: one turn
+- id: green_chapel_choice_07_02
+  placeId: green_chapel_place_07
+  label: Ask for an introduction at Wellspring Path
+  requires: []
+  intentKind: talk
+  stake: one supply
+- id: green_chapel_choice_07_03
+  placeId: green_chapel_place_07
+  label: Check the tool tag at Wellspring Path
+  requires: []
+  intentKind: inspect
+  stake: a declined invitation
+- id: green_chapel_choice_07_04
+  placeId: green_chapel_place_07
+  label: Offer a hand at Wellspring Path
+  requires: []
+  intentKind: interact
+  stake: a public note
+- id: green_chapel_choice_07_05
+  placeId: green_chapel_place_07
+  label: Take the safer route at Wellspring Path
+  requires:
+  - green_chapel_item_05
+  intentKind: travel
+  stake: a short detour
+- id: green_chapel_choice_07_06
+  placeId: green_chapel_place_07
+  label: Open the local record at Wellspring Path
+  requires:
+  - green_chapel_item_06
+  intentKind: interact
+  stake: one turn
+- id: green_chapel_choice_07_07
+  placeId: green_chapel_place_07
+  label: Rest at the bench at Wellspring Path
+  requires:
+  - green_chapel_item_07
+  intentKind: rest
+  stake: one supply
+- id: green_chapel_choice_07_08
+  placeId: green_chapel_place_07
+  label: Repair the marker at Wellspring Path
+  requires:
+  - green_chapel_item_08
+  intentKind: interact
+  stake: a declined invitation
+- id: green_chapel_choice_07_09
+  placeId: green_chapel_place_07
+  label: Prepare a shared item at Wellspring Path
+  requires:
+  - green_chapel_item_09
+  intentKind: craft
+  stake: a public note
+- id: green_chapel_choice_07_10
+  placeId: green_chapel_place_07
+  label: Leave a kind note at Wellspring Path
+  requires:
+  - green_chapel_item_10
+  intentKind: talk
+  stake: a short detour
+- id: green_chapel_choice_08_01
+  placeId: green_chapel_place_08
+  label: Read the notice at Harrow Gate
+  requires: []
+  intentKind: talk
+  stake: one turn
+- id: green_chapel_choice_08_02
+  placeId: green_chapel_place_08
+  label: Ask for an introduction at Harrow Gate
+  requires: []
+  intentKind: talk
+  stake: one supply
+- id: green_chapel_choice_08_03
+  placeId: green_chapel_place_08
+  label: Check the tool tag at Harrow Gate
+  requires: []
+  intentKind: inspect
+  stake: a declined invitation
+- id: green_chapel_choice_08_04
+  placeId: green_chapel_place_08
+  label: Offer a hand at Harrow Gate
+  requires: []
+  intentKind: interact
+  stake: a public note
+- id: green_chapel_choice_08_05
+  placeId: green_chapel_place_08
+  label: Take the safer route at Harrow Gate
+  requires:
+  - green_chapel_item_05
+  intentKind: travel
+  stake: a short detour
+- id: green_chapel_choice_08_06
+  placeId: green_chapel_place_08
+  label: Open the local record at Harrow Gate
+  requires:
+  - green_chapel_item_06
+  intentKind: interact
+  stake: one turn
+- id: green_chapel_choice_08_07
+  placeId: green_chapel_place_08
+  label: Rest at the bench at Harrow Gate
+  requires:
+  - green_chapel_item_07
+  intentKind: rest
+  stake: one supply
+- id: green_chapel_choice_08_08
+  placeId: green_chapel_place_08
+  label: Repair the marker at Harrow Gate
+  requires:
+  - green_chapel_item_08
+  intentKind: interact
+  stake: a declined invitation
+- id: green_chapel_choice_08_09
+  placeId: green_chapel_place_08
+  label: Prepare a shared item at Harrow Gate
+  requires:
+  - green_chapel_item_09
+  intentKind: craft
+  stake: a public note
+- id: green_chapel_choice_08_10
+  placeId: green_chapel_place_08
+  label: Leave a kind note at Harrow Gate
+  requires:
+  - green_chapel_item_10
+  intentKind: talk
+  stake: a short detour
+interactables:
+- id: green_chapel_interact_01
+  verbId: rest
+  publicName: Green Nave bench
+  placeId: green_chapel_place_01
+  displayVerb: Rest here
+  stateKey: green_chapel_rest_01
+- id: green_chapel_interact_02
+  verbId: repair
+  publicName: Apple Ford cabinet
+  placeId: green_chapel_place_02
+  displayVerb: Repair here
+  stateKey: green_chapel_repair_02
+- id: green_chapel_interact_03
+  verbId: tend
+  publicName: Bell Meadow rack
+  placeId: green_chapel_place_03
+  displayVerb: Tend here
+  stateKey: green_chapel_tend_03
+- id: green_chapel_interact_04
+  verbId: craft
+  publicName: Hearth Vale kettle
+  placeId: green_chapel_place_04
+  displayVerb: Craft here
+  stateKey: green_chapel_craft_04
+- id: green_chapel_interact_05
+  verbId: cook
+  publicName: Moss Vestry ledger
+  placeId: green_chapel_place_05
+  displayVerb: Cook here
+  stateKey: green_chapel_cook_05
+- id: green_chapel_interact_06
+  verbId: bind_inn
+  publicName: Crownless Hill rail
+  placeId: green_chapel_place_06
+  displayVerb: Bind Inn here
+  stateKey: green_chapel_bind_inn_06
+- id: green_chapel_interact_07
+  verbId: inspect
+  publicName: Wellspring Path bell
+  placeId: green_chapel_place_07
+  displayVerb: Inspect here
+  stateKey: green_chapel_inspect_07
+- id: green_chapel_interact_08
+  verbId: open
+  publicName: Harrow Gate board
+  placeId: green_chapel_place_08
+  displayVerb: Open here
+  stateKey: green_chapel_open_08
+- id: green_chapel_interact_09
+  verbId: carry
+  publicName: Green Nave table
+  placeId: green_chapel_place_01
+  displayVerb: Carry here
+  stateKey: green_chapel_carry_09
+- id: green_chapel_interact_10
+  verbId: clean
+  publicName: Apple Ford lamp
+  placeId: green_chapel_place_02
+  displayVerb: Clean here
+  stateKey: green_chapel_clean_10
+- id: green_chapel_interact_11
+  verbId: signal
+  publicName: Bell Meadow gate
+  placeId: green_chapel_place_03
+  displayVerb: Signal here
+  stateKey: green_chapel_signal_11
+- id: green_chapel_interact_12
+  verbId: record
+  publicName: Hearth Vale shelf
+  placeId: green_chapel_place_04
+  displayVerb: Record here
+  stateKey: green_chapel_record_12
+interiors:
+- id: green_chapel_interior_01
+  publicName: Green Chapel Home Interior
+  entrancePlaceId: green_chapel_place_08
+  rooms:
+  - id: green_chapel_home_room_01
+    publicName: Green Chapel Entry
+    mapScale: interior
+    exits:
+    - green_chapel_home_room_02
+    props:
+    - green_chapel_home_prop_01
+    - green_chapel_home_prop_08
+  - id: green_chapel_home_room_02
+    publicName: Green Chapel Main Room
+    mapScale: interior
+    exits:
+    - green_chapel_home_room_01
+    - green_chapel_home_room_03
+    props:
+    - green_chapel_home_prop_02
+    - green_chapel_home_prop_09
+  - id: green_chapel_home_room_03
+    publicName: Green Chapel Work Nook
+    mapScale: interior
+    exits:
+    - green_chapel_home_room_02
+    - green_chapel_home_room_04
+    props:
+    - green_chapel_home_prop_03
+    - green_chapel_home_prop_10
+  - id: green_chapel_home_room_04
+    publicName: Green Chapel Window Room
+    mapScale: interior
+    exits:
+    - green_chapel_home_room_03
+    - green_chapel_home_room_05
+    props:
+    - green_chapel_home_prop_04
+    - green_chapel_home_prop_11
+  - id: green_chapel_home_room_05
+    publicName: Green Chapel Quiet Room
+    mapScale: interior
+    exits:
+    - green_chapel_home_room_04
+    - green_chapel_home_room_06
+    props:
+    - green_chapel_home_prop_05
+    - green_chapel_home_prop_12
+  - id: green_chapel_home_room_06
+    publicName: Green Chapel Storage
+    mapScale: interior
+    exits:
+    - green_chapel_home_room_05
+    - green_chapel_home_room_07
+    props:
+    - green_chapel_home_prop_06
+    - green_chapel_home_prop_13
+  - id: green_chapel_home_room_07
+    publicName: Green Chapel Back Step
+    mapScale: interior
+    exits:
+    - green_chapel_home_room_06
+    props:
+    - green_chapel_home_prop_07
+    - green_chapel_home_prop_14
+talents:
+- id: green_chapel_talent_01
+  publicName: Green Chapel Local Ear
+  cost: 1
+  requires: []
+  effectFlags:
+  - green_chapel_effect_01
+  payToUnlock: false
+- id: green_chapel_talent_02
+  publicName: Green Chapel Careful Hand
+  cost: 2
+  requires: []
+  effectFlags:
+  - green_chapel_effect_02
+  payToUnlock: false
+- id: green_chapel_talent_03
+  publicName: Green Chapel Route Sense
+  cost: 3
+  requires: []
+  effectFlags:
+  - green_chapel_effect_03
+  payToUnlock: false
+- id: green_chapel_talent_04
+  publicName: Green Chapel Shared Measure
+  cost: 4
+  requires: []
+  effectFlags:
+  - green_chapel_effect_04
+  payToUnlock: false
+- id: green_chapel_talent_05
+  publicName: Green Chapel Quiet Craft
+  cost: 1
+  requires:
+  - green_chapel_talent_04
+  effectFlags:
+  - green_chapel_effect_05
+  payToUnlock: false
+- id: green_chapel_talent_06
+  publicName: Green Chapel Open Invitation
+  cost: 2
+  requires: []
+  effectFlags:
+  - green_chapel_effect_06
+  payToUnlock: false
+- id: green_chapel_talent_07
+  publicName: Green Chapel Safe Return
+  cost: 3
+  requires: []
+  effectFlags:
+  - green_chapel_effect_07
+  payToUnlock: false
+- id: green_chapel_talent_08
+  publicName: Green Chapel Field Note
+  cost: 4
+  requires: []
+  effectFlags:
+  - green_chapel_effect_08
+  payToUnlock: false
+- id: green_chapel_talent_09
+  publicName: Green Chapel Steady Pace
+  cost: 1
+  requires:
+  - green_chapel_talent_08
+  effectFlags:
+  - green_chapel_effect_09
+  payToUnlock: false
+- id: green_chapel_talent_10
+  publicName: Green Chapel Clear Signal
+  cost: 2
+  requires: []
+  effectFlags:
+  - green_chapel_effect_10
+  payToUnlock: false
+- id: green_chapel_talent_11
+  publicName: Green Chapel Warm Welcome
+  cost: 3
+  requires: []
+  effectFlags:
+  - green_chapel_effect_11
+  payToUnlock: false
+- id: green_chapel_talent_12
+  publicName: Green Chapel Small Courage
+  cost: 4
+  requires: []
+  effectFlags:
+  - green_chapel_effect_12
+  payToUnlock: false
+- id: green_chapel_talent_13
+  publicName: Green Chapel Repair Habit
+  cost: 1
+  requires:
+  - green_chapel_talent_12
+  effectFlags:
+  - green_chapel_effect_13
+  payToUnlock: false
+- id: green_chapel_talent_14
+  publicName: Green Chapel Trust Mark
+  cost: 2
+  requires: []
+  effectFlags:
+  - green_chapel_effect_14
+  payToUnlock: false
+- id: green_chapel_talent_15
+  publicName: Green Chapel Second Look
+  cost: 3
+  requires: []
+  effectFlags:
+  - green_chapel_effect_15
+  payToUnlock: false
+- id: green_chapel_talent_16
+  publicName: Green Chapel Closing Grace
+  cost: 4
+  requires: []
+  effectFlags:
+  - green_chapel_effect_16
+  payToUnlock: false
+evalProbes:
+- id: green_chapel_eval_01
+  given:
+    hp: 18
+    placeId: green_chapel_place_01
+    turn: 1
+  action:
+    verbId: rest
+    targetId: green_chapel_interact_01
+  expectedLedger:
+    turn: 2
+    lastAction: rest
+    placeId: green_chapel_place_01
+  forbiddenProse:
+  - do not claim an uncommitted numeric reward
+  - do not alter damage, gold, ownership, or a score outside expectedLedger
+- id: green_chapel_eval_02
+  given:
+    hp: 18
+    placeId: green_chapel_place_02
+    turn: 2
+  action:
+    verbId: repair
+    targetId: green_chapel_interact_02
+  expectedLedger:
+    turn: 3
+    lastAction: repair
+    placeId: green_chapel_place_02
+  forbiddenProse:
+  - do not claim an uncommitted numeric reward
+  - do not alter damage, gold, ownership, or a score outside expectedLedger
+- id: green_chapel_eval_03
+  given:
+    hp: 18
+    placeId: green_chapel_place_03
+    turn: 3
+  action:
+    verbId: tend
+    targetId: green_chapel_interact_03
+  expectedLedger:
+    turn: 4
+    lastAction: tend
+    placeId: green_chapel_place_03
+  forbiddenProse:
+  - do not claim an uncommitted numeric reward
+  - do not alter damage, gold, ownership, or a score outside expectedLedger
+- id: green_chapel_eval_04
+  given:
+    hp: 18
+    placeId: green_chapel_place_04
+    turn: 4
+  action:
+    verbId: craft
+    targetId: green_chapel_interact_04
+  expectedLedger:
+    turn: 5
+    lastAction: craft
+    placeId: green_chapel_place_04
+  forbiddenProse:
+  - do not claim an uncommitted numeric reward
+  - do not alter damage, gold, ownership, or a score outside expectedLedger
+- id: green_chapel_eval_05
+  given:
+    hp: 18
+    placeId: green_chapel_place_05
+    turn: 5
+  action:
+    verbId: cook
+    targetId: green_chapel_interact_05
+  expectedLedger:
+    turn: 6
+    lastAction: cook
+    placeId: green_chapel_place_05
+  forbiddenProse:
+  - do not claim an uncommitted numeric reward
+  - do not alter damage, gold, ownership, or a score outside expectedLedger
+- id: green_chapel_eval_06
+  given:
+    hp: 18
+    placeId: green_chapel_place_06
+    turn: 6
+  action:
+    verbId: bind_inn
+    targetId: green_chapel_interact_06
+  expectedLedger:
+    turn: 7
+    lastAction: bind_inn
+    placeId: green_chapel_place_06
+  forbiddenProse:
+  - do not claim an uncommitted numeric reward
+  - do not alter damage, gold, ownership, or a score outside expectedLedger
+- id: green_chapel_eval_07
+  given:
+    hp: 18
+    placeId: green_chapel_place_07
+    turn: 7
+  action:
+    verbId: inspect
+    targetId: green_chapel_interact_07
+  expectedLedger:
+    turn: 8
+    lastAction: inspect
+    placeId: green_chapel_place_07
+  forbiddenProse:
+  - do not claim an uncommitted numeric reward
+  - do not alter damage, gold, ownership, or a score outside expectedLedger
+- id: green_chapel_eval_08
+  given:
+    hp: 18
+    placeId: green_chapel_place_08
+    turn: 8
+  action:
+    verbId: open
+    targetId: green_chapel_interact_08
+  expectedLedger:
+    turn: 9
+    lastAction: open
+    placeId: green_chapel_place_08
+  forbiddenProse:
+  - do not claim an uncommitted numeric reward
+  - do not alter damage, gold, ownership, or a score outside expectedLedger
+- id: green_chapel_eval_09
+  given:
+    hp: 18
+    placeId: green_chapel_place_01
+    turn: 9
+  action:
+    verbId: carry
+    targetId: green_chapel_interact_09
+  expectedLedger:
+    turn: 10
+    lastAction: carry
+    placeId: green_chapel_place_01
+  forbiddenProse:
+  - do not claim an uncommitted numeric reward
+  - do not alter damage, gold, ownership, or a score outside expectedLedger
+- id: green_chapel_eval_10
+  given:
+    hp: 18
+    placeId: green_chapel_place_02
+    turn: 10
+  action:
+    verbId: clean
+    targetId: green_chapel_interact_10
+  expectedLedger:
+    turn: 11
+    lastAction: clean
+    placeId: green_chapel_place_02
+  forbiddenProse:
+  - do not claim an uncommitted numeric reward
+  - do not alter damage, gold, ownership, or a score outside expectedLedger
+- id: green_chapel_eval_11
+  given:
+    hp: 18
+    placeId: green_chapel_place_03
+    turn: 11
+  action:
+    verbId: signal
+    targetId: green_chapel_interact_11
+  expectedLedger:
+    turn: 12
+    lastAction: signal
+    placeId: green_chapel_place_03
+  forbiddenProse:
+  - do not claim an uncommitted numeric reward
+  - do not alter damage, gold, ownership, or a score outside expectedLedger
+- id: green_chapel_eval_12
+  given:
+    hp: 18
+    placeId: green_chapel_place_04
+    turn: 12
+  action:
+    verbId: record
+    targetId: green_chapel_interact_12
+  expectedLedger:
+    turn: 13
+    lastAction: record
+    placeId: green_chapel_place_04
+  forbiddenProse:
+  - do not claim an uncommitted numeric reward
+  - do not alter damage, gold, ownership, or a score outside expectedLedger
+- id: green_chapel_eval_13
+  given:
+    hp: 18
+    placeId: green_chapel_place_05
+    turn: 13
+  action:
+    verbId: rest
+    targetId: green_chapel_interact_01
+  expectedLedger:
+    turn: 14
+    lastAction: rest
+    placeId: green_chapel_place_05
+  forbiddenProse:
+  - do not claim an uncommitted numeric reward
+  - do not alter damage, gold, ownership, or a score outside expectedLedger
+- id: green_chapel_eval_14
+  given:
+    hp: 18
+    placeId: green_chapel_place_06
+    turn: 14
+  action:
+    verbId: repair
+    targetId: green_chapel_interact_02
+  expectedLedger:
+    turn: 15
+    lastAction: repair
+    placeId: green_chapel_place_06
+  forbiddenProse:
+  - do not claim an uncommitted numeric reward
+  - do not alter damage, gold, ownership, or a score outside expectedLedger
+- id: green_chapel_eval_15
+  given:
+    hp: 18
+    placeId: green_chapel_place_07
+    turn: 15
+  action:
+    verbId: tend
+    targetId: green_chapel_interact_03
+  expectedLedger:
+    turn: 16
+    lastAction: tend
+    placeId: green_chapel_place_07
+  forbiddenProse:
+  - do not claim an uncommitted numeric reward
+  - do not alter damage, gold, ownership, or a score outside expectedLedger
+wallets:
+  goldName: Chapel Pence
+  cosmeticTokenName: Apple Ribbons
+  noConversion: true
+  prohibited:
+  - outcomes
+  - lockout skips
+  - catch rate
+  - raid clears
+  - random power packs
+  - gacha
+  - loot boxes
+dailyCaps:
+  contractsPerDay: 3
+  goldFromRepeatables: 90
+  weeklyBossLockout: per-character per-boss
+divergenceRecords:
+- id: green_chapel_walkaway_01
+  choice: walk away from a local obligation
+  recordKey: green_chapel_divergence_01
+  effect: Alternate dialogue and a non-punitive follow-up route.
+- id: green_chapel_walkaway_02
+  choice: walk away from a local obligation
+  recordKey: green_chapel_divergence_02
+  effect: Alternate dialogue and a non-punitive follow-up route.
+- id: green_chapel_walkaway_03
+  choice: walk away from a local obligation
+  recordKey: green_chapel_divergence_03
+  effect: Alternate dialogue and a non-punitive follow-up route.

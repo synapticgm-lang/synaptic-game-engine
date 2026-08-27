@@ -1,0 +1,115 @@
+ROLE
+You are a principal game-design + UX systems researcher for SynapticGM.
+Produce ONE massive “remaining gameplay & player-facing systems” research brief.
+
+GOAL
+Cover every important LIVE gameplay/UX area that still lacks deep research — how other games/apps nail the same player effects, what to steal, what never to copy, and how to harden SynapticGM without rebuilding it.
+
+DO NOT REWRITE (assume done — one-line “already covered” only if needed)
+- Continuity/memory stack (SceneManifest, StateTx, IntentContract, outsider memory)
+- Full Product Operating Manual turn pipeline
+- Ads / growth / pre-release / launch ops omnibus (security, COGS, legal, QA harness, analytics, brand, TTS defer, schema migration, support)
+- Comic/illustrated thin-wedge strategy + module-map gap-fill (chrome → event plate → composite → strip/recap; full every-turn No-Go)
+- WOF / multiplayer / housing / auction / shared world
+
+PRODUCT TRUTH
+Ledger-first AI GM: LitRPG / isekai / story RPG / PYOA / tabletop fantasy.
+Code owns combat/checks/inventory/quests/map outcomes; LLM writes prose that must obey.
+Already shipped or in code (EXTEND): ledger combat, First Blood dungeon graphs, street vs dungeon maps + fog, Salvage, paper-doll character window, quest journal + Guide Book lock, opening establishment + openingHooks + honeymoon turns, Simple/Expert custom, System windows, locality/perspective wardens, Kid Mode, Memorable plates, themes/shop, cloud save, capacity ledger, SceneManifest (new), kill switches.
+Authority order unchanged. Never sell continuity. Art never creates truth.
+
+AUDIENCE
+Founder/engineer. Tables, beat contracts, schemas, do/don’t, module maps (EXTEND/HARDEN/NEW FILE), 60-day spikes. Dense. No fluff.
+
+================================================================================
+REQUIRED PARTS (exact headings)
+================================================================================
+
+PART 0 — Executive remaining-systems scorecard
+- Score SynapticGM 1–10 on each area below vs best comparable non-AI and AI products
+- Top 15 experience gaps ranked Severity × Frequency
+- Top 15 highest-ROI upgrades Impact × Effort
+- Explicit “research complete / build only” list vs “still need spikes”
+
+PART A — Combat & encounter feel
+Cover: trash → elite → boss pacing; move verbs; corpse/loot gates; Social skip; sticky fail teaching; HP/feedback; auto-fight; First Blood-style graphs; diegetic System combat notices.
+Steal from: turn-based CRPGs, roguelikes, solo TTRPG apps, LitRPG game UIs (patterns only, no IP).
+Output: verb allowlists, anti-patterns, beat contracts, module map (ledgerCombat, combat, choicePipeline, outcomeToken), 10 spikes.
+
+PART B — Map, place, travel, fog
+Cover: street pins vs dungeon nodes; fog/? labels; fake place harvest; locality props; enter interior; landmark trust; “what is a place.”
+Steal from: immersive sims, metroidvania maps, VTTs, Google Maps-lite game HUDs.
+Output: Place authority rules, pin allow/deny, UX flows, module map (mapEngine, placeAuthority, places, enterInterior, locality).
+
+PART C — Quests, journal, Guide Book, “what next”
+Cover: reveal timing; hidden hooks; same-turn complete bans; vague travel-worn items; Quest Unlocked toast timing; rival/thread clarity.
+Steal from: Witcher/BG3-class journal patterns, adventure-game objective UX, mystery clue boards (patterns only).
+Output: journal IA (Simple vs Expert), quest state machine hardening, anti-spoil rails, module map (questPlay, questGuards).
+
+PART D — Inventory, paper-doll, Salvage, loot readability
+Cover: garment split; bag extras; rarity/pity; Salvage anywhere vs merchant; portrait triggers; container capacity.
+Steal from: Diablo/BG3/WoW-like paper dolls (no Blizzard IP), survival inventory UIs.
+Output: inventory UX cleanup, Salvage loop beats, loot announcement rules, module map (inventory, wornGear, salvage, inventoryArt).
+
+PART E — LitRPG System window & diegesis
+Cover: when System may speak; template vs prose; XP/loot/status cadence; jargon leak; Status vs in-world System; progressive reveal.
+Steal from: best LitRPG novels’ system presentation + game HUDs that feel diegetic.
+Output: SystemProtocol templates, visibility classes, fire cadence, never-lines, module map (systemLog, systemPrompt, structuralEvents).
+
+PART F — PYOA, mystery, ending honesty
+Cover: clue visibility; accuse verbs; ending provenance; branch pressure without soft-locks; inner comments; true-ending memorable plate.
+Steal from: Choice of Games, detective adventure UX, visual novel CG-event gating (patterns).
+Output: clue board UX, ending checklists, anti-gotcha fairness, module map (mysteryCulprit, campaign bibles, memorable ending).
+
+PART G — Tabletop fantasy mode
+Cover: checkMath feel; outcome tokens; custom rules paste bounds; dice animation trust; when rolls show; solo GM vs VTT expectations.
+Steal from: Foundry/Roll20 player UX (patterns), Ironsworn/solo TTRPG apps, theatre-of-mind aids.
+Output: roll disclosure policy, custom-rules compiler limits, module map (checkMath, outcomeToken, customTabletopRules).
+
+PART H — Story personality / GM + System voice picker
+Cover: Simple 4 profiles vs Expert axes; New Game placement; Kid Mode constraints; interaction with LitRPG templates; sample rails.
+(Do not duplicate full matrix if already in Product Manual Appendix — extend into SHIPPABLE UX + storage + picker copy.)
+Output: VoiceProfile UX flow, picker wireframes-in-text, persistence, module map (systemPrompt, NewGameModal, settings).
+
+PART I — Tutorial, teaching, sticky-fail, first-hour clarity
+Cover: when to teach; never teach on look-only; sticky-fail only on ledger change; HookArc teaching without meta dump.
+Steal from: Hades/Celeste-class teaching, IF tutorial patterns, mobile onboarding that doesn’t kill fantasy.
+Output: tutorial beat sheet by genre, toast policy, module map (tutorialBeats, Hud).
+
+PART J — Accessibility & readability
+Cover: keyboard, focus, contrast, text scale, reduced motion, screen reader for log/choices/System, color-not-only status, dyslexia-friendly options, TTS selective (defer full auto).
+Output: a11y checklist Must/Should, quick wins mapped to components.
+
+PART K — Saves, Continue, cloud conflict, multi-campaign mental model
+Cover: one active Free campaign; archival; device switch; conflict choose-version; lost-send restore draft; pending images across reload.
+Output: player-facing save UX copy, conflict flows, module map (cloudSync, drive, db, pendingTurn).
+
+PART L — Expert Custom & author power tools
+Cover: preflight; contradiction probes; context inspector; randomize quality; blank-space declarations; permission policy; testing a custom bible.
+Steal from: Twine/Inform author tools, Notion databases, RPG Maker event editors (patterns).
+Output: Expert v2 feature set phased, module map (NewGameModal, customExpertDraft, campaignSeed).
+
+PART M — Audio lite (selective only)
+Cover: Hear on System line / last prose / choice; mute; theme voice packs — NOT full audiobook mode.
+Output: go/no-go for 90 days; if go, thin wedge only; module map (useVoice, themes).
+
+PART N — Cross-cutting anti-patterns & delight backlog
+- 40 anti-patterns across A–M
+- 40 delight ideas with Effort/Impact/Risk/Depends + Do-now/Do-next/Later/Never
+- Prefer ideas that use ledger+quests+bible (SynapticGM-only feel)
+
+PART O — Master synthesis
+1. Single ranked backlog Must / Should / Later across A–M (no continuity/ads/comic strategy repeats unless a gameplay dependency)
+2. 90-day calendar that FITS BESIDE continuity + Stripe + safety work (parallel-safe only)
+3. Module map master table (all mentioned files → EXTEND/HARDEN/NEW)
+4. Founder decision pack
+5. Definition of “gameplay feel ready for public web adult Free” (separate from launch-ops definition)
+
+ALSO
+- TypeScript-ish interfaces where helpful (minimal)
+- Original names only; no licensed lore
+- “Player feels X because system did Y”
+- If length-limited: finish 0, A–E, H, I, O first; then F–G, J–N as Part 2 without repeating
+
+START NOW
+Begin with PART 0. No preamble.

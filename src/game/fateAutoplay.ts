@@ -6,7 +6,7 @@
  * Capacity: enableAutoplayTestLab() so Free week-cap never stops the run.
  */
 
-import { mkdirSync, writeFileSync } from 'node:fs';
+import { appendFileSync, mkdirSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import {
   getCampaignBibleById,
@@ -79,6 +79,12 @@ import {
 import { scrubOfficialPlaceholder } from './narrativeScrub';
 import { applySandboxXpAwards } from './sandboxXp';
 import { applyCharacterXpGain } from './characterXp';
+import {
+  applyGovernanceCommit,
+  applyGovernanceToProse,
+  filterGovernanceChoices,
+  processMetaInput,
+} from './qualityGovernance';
 import { filterSystemLogForEngine, reconcileXpStatusLines } from './systemLog';
 import { beatFingerprint, isSameBeat, isNearClone, buildBeatNoveltyRetryBlock, beatSimilarity } from './beatFingerprint';
 import { enforcePerspective } from './perspectiveWarden';
@@ -99,6 +105,8 @@ import {
   type HostedAiTier,
 } from './testLab';
 import type { EngineMode, GameState, LogEntry, Settings } from './types';
+
+export type { EngineMode };
 import { runWarden } from './warden';
 import { emptyWorldLedger } from './worldSim';
 import { storyStartTextTurnsForTier } from './capacityLedger';
@@ -128,6 +136,10 @@ export type FateAutoplayCliOpts = {
    * 3×500 AI-agent spines + 3× matrix-40×100 ≈ 13,500 turns (~6.5h).
    */
   nightStoryforge: boolean;
+  /** 4 engine modes × 3 AI agents × turns (default 300) → combined Gemini + telemetry. */
+  modesAgents300: boolean;
+  /** Resume an existing modes-agents batch folder (skip completed cells). */
+  resumeDir?: string;
   outRoot: string;
   characterName: string;
 };
@@ -691,6 +703,8 @@ export async function headlessFateTurn(
     repairNote = (repairNote ? `${repairNote}; ` : '') + 'hard_gate_rewrite';
   }
 
+  const govInputState = processMetaInput(state, playerInput).state;
+
   if (meta.dryRun) {
     const stubGm = `(dry-run) Fate picked: ${fatePick}. Offered: ${offered.join(' | ')}`;
     const playerEntry: LogEntry = {
@@ -768,7 +782,7 @@ Do NOT print dice notation or CODE ENFORCED.
     intent,
   });
 
-  const gmResult = await callGmWithRetries(state, payload, settings);
+  const gmResult = await callGmWithRetries(govInputState, payload, settings);
   let error: string | undefined;
   let gmText = gmResult.text;
   let transportRetries = gmResult.transportRetries;
@@ -803,7 +817,7 @@ Do NOT print dice notation or CODE ENFORCED.
       retry: true,
       intent,
     });
-    const retry = await callGmWithRetries(state, retryPayload, settings);
+    const retry = await callGmWithRetries(govInputState, retryPayload, settings);
     transportRetries += retry.transportRetries + 1;
     if (retry.text.trim() && (!isSameBeat(retry.text, fps) || travelHubEarly)) {
       gmText = retry.text;
@@ -848,6 +862,11 @@ Do NOT print dice notation or CODE ENFORCED.
   cleanText = scrubOfficialPlaceholder(cleanText, working);
   const leak = scanAndScrubLeaks(cleanText);
   if (leak.notes.length) cleanText = leak.clean;
+  {
+    const govProse = applyGovernanceToProse(working, cleanText);
+    cleanText = govProse.prose;
+    if (govProse.notes.length) warden.notes.push(...govProse.notes);
+  }
 
   const updates = extractUpdates(working, narrativeSource);
   if (updates.character) {
@@ -882,13 +901,18 @@ Do NOT print dice notation or CODE ENFORCED.
     lastPlayerAction: playerInput,
   });
   const storyProse = normalizeStoryCorpus(cleanText);
-  const finalChoices = padChoicesToCount(
+  let finalChoices = padChoicesToCount(
     pipeline.choices.length ? pipeline.choices : [],
     working,
     storyProse,
     3,
     playerInput
   );
+  {
+    const govChoices = filterGovernanceChoices(working, finalChoices);
+    finalChoices = govChoices.choices;
+    if (govChoices.notes.length) warden.notes.push(...govChoices.notes);
+  }
 
   const nextTurn = state.turn + 1;
   const questsBefore = [...(state.quests ?? [])];
@@ -987,9 +1011,19 @@ Do NOT print dice notation or CODE ENFORCED.
     lastUpdated: Date.now(),
   };
 
+  let governed = next;
+  {
+    const govCommit = applyGovernanceCommit(state, next, playerInput);
+    governed = { ...next, ...govCommit.patches };
+    if (govCommit.xpAward && govCommit.xpAward.amount > 0) {
+      const leveled = applyCharacterXpGain(governed.character, govCommit.xpAward.amount);
+      governed = { ...governed, character: leveled.character };
+    }
+  }
+
   const ended = Date.now();
   return {
-    state: next,
+    state: governed,
     telemetry: {
       turn: nextTurn,
       startedAt,
@@ -1008,10 +1042,10 @@ Do NOT print dice notation or CODE ENFORCED.
       questUnlocks,
       itemsEquipped: extractEquippedItems(state, next),
       itemsUsed: extractUsedItems(state, next),
-      xpGained: sandboxXp.xp,
-      level: next.character?.level,
-      characterXp: next.character?.xp,
-      xpToNext: next.character?.xpToNext,
+      xpGained: sandboxXp.xp + (governed.character?.xp ?? 0) - (state.character?.xp ?? 0),
+      level: governed.character?.level,
+      characterXp: governed.character?.xp,
+      xpToNext: governed.character?.xpToNext,
       loopFlags: detectLoopFlags(cleanText, state),
       error,
       failKind: gmResult.failKind,
@@ -1063,23 +1097,80 @@ export async function runFateAutoplay(opts: {
   const turns: TurnTelemetry[] = [];
   const startedAt = new Date().toISOString();
   let fatal: string | undefined;
+  const turnsPath = join(outDir, 'turns.jsonl');
+  const heartbeatPath = join(outDir, 'heartbeat.json');
+  const crashPath = join(outDir, 'crash.log');
+  // Truncate turns file once; append per turn so a mid-run kill keeps all completed turns.
+  writeFileSync(turnsPath, '');
 
   try {
     for (let i = 0; i < opts.turns; i++) {
-      const result = await headlessFateTurn(state, settings, rng, {
-        bibleId: bible.id,
-        personalityId,
-        seed: opts.seed,
-        mode: opts.mode,
-        aiAgentMode: opts.aiAgentMode ?? 'default',
-        dryRun: opts.dryRun,
-      });
-      state = result.state;
-      turns.push(result.telemetry);
-      writeFileSync(join(outDir, 'turns.jsonl'), turns.map((t) => JSON.stringify(t)).join('\n') + '\n');
-      if (result.telemetry.error && result.telemetry.failKind === 'auth') {
-        fatal = result.telemetry.error;
-        break;
+      const turnNo = i + 1;
+      writeFileSync(
+        heartbeatPath,
+        JSON.stringify(
+          {
+            pid: process.pid,
+            turn: turnNo,
+            of: opts.turns,
+            bibleId: bible.id,
+            seed: opts.seed,
+            aiAgentMode: opts.aiAgentMode ?? 'default',
+            at: new Date().toISOString(),
+          },
+          null,
+          2
+        ) + '\n'
+      );
+      try {
+        const result = await headlessFateTurn(state, settings, rng, {
+          bibleId: bible.id,
+          personalityId,
+          seed: opts.seed,
+          mode: opts.mode,
+          aiAgentMode: opts.aiAgentMode ?? 'default',
+          dryRun: opts.dryRun,
+        });
+        state = result.state;
+        turns.push(result.telemetry);
+        appendFileSync(turnsPath, JSON.stringify(result.telemetry) + '\n');
+        if (result.telemetry.error && result.telemetry.failKind === 'auth') {
+          fatal = result.telemetry.error;
+          break;
+        }
+      } catch (err) {
+        const msg = err instanceof Error ? `${err.name}: ${err.message}\n${err.stack || ''}` : String(err);
+        appendFileSync(
+          crashPath,
+          `[${new Date().toISOString()}] turn ${turnNo} threw:\n${msg}\n\n`
+        );
+        const failedAt = Date.now();
+        const failTel: TurnTelemetry = {
+          turn: state.turn + 1,
+          startedAt: new Date(failedAt).toISOString(),
+          endedAt: new Date(failedAt).toISOString(),
+          durationMs: 0,
+          bibleId: bible.id,
+          engineMode: state.engineMode,
+          personalityId,
+          seed: opts.seed,
+          fatePick: '(crash)',
+          offeredChoices: [],
+          offeredChoiceIds: [],
+          playerInput: '(crash — see crash.log)',
+          gmText: '',
+          systemLog: [`Autoplay turn threw: ${err instanceof Error ? err.message : String(err)}`],
+          questUnlocks: [],
+          itemsEquipped: [],
+          itemsUsed: [],
+          loopFlags: { officialCount: 0, atmosphereRepeat: false, strangerCount: 0 },
+          transportRetries: 0,
+          error: err instanceof Error ? err.message : String(err),
+          failKind: 'client_bug',
+        };
+        turns.push(failTel);
+        appendFileSync(turnsPath, JSON.stringify(failTel) + '\n');
+        // Keep going — one bad turn must not kill a multi-hour batch.
       }
     }
   } finally {
@@ -1160,6 +1251,7 @@ export function parseFateArgs(argv: string[]): FateAutoplayCliOpts {
     matrix40: false,
     matrixLimit: 0,
     nightStoryforge: false,
+    modesAgents300: false,
     outRoot: join(process.cwd(), 'scripts', 'fate-autoplay', 'runs'),
     characterName: 'Jax',
   };
@@ -1180,14 +1272,16 @@ export function parseFateArgs(argv: string[]): FateAutoplayCliOpts {
       out.mode = m === 'first-pad' ? 'first-pad' : 'fate';
     } else if (a === '--ai-agent-mode') {
       const m = next();
-      out.aiAgentMode = ['maxlevel', 'storyfollower', 'completionist'].includes(m) 
-        ? (m as AiAgentMode) 
+      out.aiAgentMode = ['maxlevel', 'storyfollower', 'completionist'].includes(m)
+        ? (m as AiAgentMode)
         : 'default';
     } else if (a === '--dry-run') out.dryRun = true;
     else if (a === '--matrix-40' || a === '--matrix40') out.matrix40 = true;
     else if (a === '--matrix') out.matrix = true;
     else if (a === '--matrix-limit') out.matrixLimit = Math.max(0, Number(next()) || 0);
     else if (a === '--night-storyforge' || a === '--night-sf') out.nightStoryforge = true;
+    else if (a === '--modes-agents-300' || a === '--modes-agents') out.modesAgents300 = true;
+    else if (a === '--resume-dir') out.resumeDir = next();
     else if (a === '--out') out.outRoot = next();
     else if (a === '--name') out.characterName = next();
     else if (a === '--help' || a === '-h') {

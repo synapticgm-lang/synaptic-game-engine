@@ -1,0 +1,102 @@
+# Terminal Full Output
+# Terminal: wof_verify_final
+# Command: cd /home/ubuntu/wof && pnpm install --frozen-lockfile=false && pnpm run verify
+# PID: 736
+# Timestamp: 2026-08-19_19-36-34.482334
+# Original Length: 8479 characters
+# ----------------------------------------
+
+[32mubuntu@sandbox:~$ [0mcd /home/ubuntu/wof && pnpm install --frozen-lockfile=false && pnpm run verify
+[32m✓[39m Lockfile passes supply-chain policies (verified 36s ago)
+Lockfile is up to date, resolution step is skipped
+Already up to date
+[90mnode_modules/.pnpm/esbuild@0.28.2/node_modules/[39mesbuild: Running postinstall script, done in 65ms
+Done in 984ms using pnpm v11.21.0
+[2m$ pnpm run verify:isolation && pnpm run typecheck && pnpm test
+[22m[2m$ node scripts/verify-isolation.mjs
+[22mWOF isolation check passed: no protected namespace references found.
+[2m$ tsc --noEmit
+[22m[96msrc/engine/reducer.ts[0m:[93m2[0m:[93m3[0m - [91merror[0m[90m TS1484: [0m'Character' is a type and must be imported using a type-only import when 'verbatimModuleSyntax' is enabled.
+[7m2[0m   Character,
+[7m [0m [91m  ~~~~~~~~~
+[0m[96msrc/engine/reducer.ts[0m:[93m3[0m:[93m3[0m - [91merror[0m[90m TS1484: [0m'ChronicleEntry' is a type and must be imported using a type-only import when 'verbatimModuleSyntax' is enabled.
+[7m3[0m   ChronicleEntry,
+[7m [0m [91m  ~~~~~~~~~~~~~~
+[0m[96msrc/engine/reducer.ts[0m:[93m4[0m:[93m3[0m - [91merror[0m[90m TS1484: [0m'EventId' is a type and must be imported using a type-only import when 'verbatimModuleSyntax' is enabled.
+[7m4[0m   EventId,
+[7m [0m [91m  ~~~~~~~
+[0m[96msrc/engine/reducer.ts[0m:[93m5[0m:[93m3[0m - [91merror[0m[90m TS1484: [0m'FactionRelation' is a type and must be imported using a type-only import when 'verbatimModuleSyntax' is enabled.
+[7m5[0m   FactionRelation,
+[7m [0m [91m  ~~~~~~~~~~~~~~~
+[0m[96msrc/engine/reducer.ts[0m:[93m6[0m:[93m3[0m - [91merror[0m[90m TS1484: [0m'Oath' is a type and must be imported using a type-only import when 'verbatimModuleSyntax' is enabled.
+[7m6[0m   Oath,
+[7m [0m [91m  ~~~~
+[0m[96msrc/engine/reducer.ts[0m:[93m7[0m:[93m3[0m - [91merror[0m[90m TS1484: [0m'ReplayResult' is a type and must be imported using a type-only import when 'verbatimModuleSyntax' is enabled.
+[7m7[0m   ReplayResult,
+[7m [0m [91m  ~~~~~~~~~~~~
+[0m[96msrc/engine/reducer.ts[0m:[93m8[0m:[93m3[0m - [91merror[0m[90m TS1484: [0m'Route' is a type and must be imported using a type-only import when 'verbatimModuleSyntax' is enabled.
+[7m8[0m   Route,
+[7m [0m [91m  ~~~~~
+[0m[96msrc/engine/reducer.ts[0m:[93m9[0m:[93m3[0m - [91merror[0m[90m TS1484: [0m'StoryThread' is a type and must be imported using a type-only import when 'verbatimModuleSyntax' is enabled.
+[7m9[0m   StoryThread,
+[7m [0m [91m  ~~~~~~~~~~~
+[0m[96msrc/engine/reducer.ts[0m:[93m10[0m:[93m3[0m - [91merror[0m[90m TS1484: [0m'WorldEvent' is a type and must be imported using a type-only import when 'verbatimModuleSyntax' is enabled.
+[7m10[0m   WorldEvent,
+[7m  [0m [91m  ~~~~~~~~~~
+[0m[96msrc/engine/reducer.ts[0m:[93m11[0m:[93m3[0m - [91merror[0m[90m TS1484: [0m'WorldState' is a type and must be imported using a type-only import when 'verbatimModuleSyntax' is enabled.
+[7m11[0m   WorldState,
+[7m  [0m [91m  ~~~~~~~~~~
+[0m[96msrc/engine/reducer.ts[0m:[93m115[0m:[93m57[0m - [91merror[0m[90m TS2345: [0mArgument of type '{ oathIds: OathId[]; id?: CharacterId; name?: string; archetype?: string; originRegionId?: RegionId; wounds?: number; focus?: number; resonance?: Record<Resonance, number>; memories?: readonly Memory[]; }' is not assignable to parameter of type 'Character'.
+  Property 'id' is optional in type '{ oathIds: OathId[]; id?: CharacterId; name?: string; archetype?: string; originRegionId?: RegionId; wounds?: number; focus?: number; resonance?: Record<Resonance, number>; memories?: readonly Memory[]; }' but required in type 'Character'.
+[7m115[0m       next = replaceCharacter(replaceOath(state, oath), { ...bearer, oathIds: [...bearer.oathIds, oath.id] });
+[7m   [0m [91m                                                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[0m[96msrc/engine/reducer.ts[0m:[93m115[0m:[93m83[0m - [91merror[0m[90m TS18048: [0m'bearer' is possibly 'undefined'.
+[7m115[0m       next = replaceCharacter(replaceOath(state, oath), { ...bearer, oathIds: [...bearer.oathIds, oath.id] });
+[7m   [0m [91m                                                                                  ~~~~~~
+[0m[96msrc/fixtures/first-tide.ts[0m:[93m1[0m:[93m10[0m - [91merror[0m[90m TS1484: [0m'FactionId' is a type and must be imported using a type-only import when 'verbatimModuleSyntax' is enabled.
+[7m1[0m import { FactionId, RegionId, WorldState } from "../models.js";
+[7m [0m [91m         ~~~~~~~~~
+[0m[96msrc/fixtures/first-tide.ts[0m:[93m1[0m:[93m21[0m - [91merror[0m[90m TS1484: [0m'RegionId' is a type and must be imported using a type-only import when 'verbatimModuleSyntax' is enabled.
+[7m1[0m import { FactionId, RegionId, WorldState } from "../models.js";
+[7m [0m [91m                    ~~~~~~~~
+[0m[96msrc/fixtures/first-tide.ts[0m:[93m1[0m:[93m31[0m - [91merror[0m[90m TS1484: [0m'WorldState' is a type and must be imported using a type-only import when 'verbatimModuleSyntax' is enabled.
+[7m1[0m import { FactionId, RegionId, WorldState } from "../models.js";
+[7m [0m [91m                              ~~~~~~~~~~
+[0m[96msrc/fixtures/first-tide.ts[0m:[93m55[0m:[93m5[0m - [91merror[0m[90m TS2353: [0mObject literal may only specify known properties, and '"f-keepers"' does not exist in type 'Readonly<Record<FactionId, FactionRelation>>'.
+[7m55[0m     "f-keepers": { factionId: "f-keepers" as FactionId, disposition: "warm", esteem: 2, debt: 0, lastChangedAt: 0 },
+[7m  [0m [91m    ~~~~~~~~~~~
+[0m  [96msrc/models.ts[0m:[93m167[0m:[93m12
+[0m    [7m167[0m   readonly factionRelations: Readonly<Record<FactionId, FactionRelation>>;
+    [7m   [0m [96m           ~~~~~~~~~~~~~~~~
+[0m    The expected type comes from property 'factionRelations' which is declared here on type 'WorldState'
+[96msrc/fixtures/first-tide.ts[0m:[93m59[0m:[93m5[0m - [91merror[0m[90m TS2353: [0mObject literal may only specify known properties, and '"c-iren"' does not exist in type 'Readonly<Record<CharacterId, Character>>'.
+[7m59[0m     "c-iren": {
+[7m  [0m [91m    ~~~~~~~~
+[0m  [96msrc/models.ts[0m:[93m168[0m:[93m12
+[0m    [7m168[0m   readonly characters: Readonly<Record<CharacterId, Character>>;
+    [7m   [0m [96m           ~~~~~~~~~~
+[0m    The expected type comes from property 'characters' which is declared here on type 'WorldState'
+[96msrc/fixtures/first-tide.ts[0m:[93m74[0m:[93m5[0m - [91merror[0m[90m TS2353: [0mObject literal may only specify known properties, and '"t-lantern"' does not exist in type 'Readonly<Record<ThreadId, StoryThread>>'.
+[7m74[0m     "t-lantern": {
+[7m  [0m [91m    ~~~~~~~~~~~
+[0m  [96msrc/models.ts[0m:[93m171[0m:[93m12
+[0m    [7m171[0m   readonly threads: Readonly<Record<ThreadId, StoryThread>>;
+    [7m   [0m [96m           ~~~~~~~
+[0m    The expected type comes from property 'threads' which is declared here on type 'WorldState'
+[96mtests/reducer.test.ts[0m:[93m6[0m:[93m10[0m - [91merror[0m[90m TS1484: [0m'EventId' is a type and must be imported using a type-only import when 'verbatimModuleSyntax' is enabled.
+[7m6[0m import { EventId, ThreadId } from "../src/models.js";
+[7m [0m [91m         ~~~~~~~
+[0m[96mtests/reducer.test.ts[0m:[93m6[0m:[93m19[0m - [91merror[0m[90m TS1484: [0m'ThreadId' is a type and must be imported using a type-only import when 'verbatimModuleSyntax' is enabled.
+[7m6[0m import { EventId, ThreadId } from "../src/models.js";
+[7m [0m [91m                  ~~~~~~~~
+[0m[96mtests/reducer.test.ts[0m:[93m35[0m:[93m16[0m - [91merror[0m[90m TS2532: [0mObject is possibly 'undefined'.
+[7m35[0m   assert.equal(result.finalState.threads["t-lantern" as ThreadId].stage, 1);
+[7m  [0m [91m               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[0mFound 21 errors in 3 files.
+Errors  Files
+    12  src/engine/reducer.ts[90m:2
+[0m     6  src/fixtures/first-tide.ts[90m:1
+[0m     3  tests/reducer.test.ts[90m:6
+[0m[41m[31m[[39m[49m[41m[30mELIFECYCLE[39m[49m[41m[31m][39m[49m [31mCommand failed with exit code 2.
+[39m[41m[31m[[39m[49m[41m[30mELIFECYCLE[39m[49m[41m[31m][39m[49m [31mCommand failed with exit code 2.
+[32mubuntu@sandbox:~/wof$ [0m

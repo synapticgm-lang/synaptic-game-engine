@@ -1,0 +1,2296 @@
+packFormatVersion: 1
+worldId: quiet_brief
+displayName: Quiet Brief
+maturity: teen
+rulesModuleId: heat_cover
+themeKit: Quiet Brief Theme Kit
+places:
+- id: quiet_brief_place_01
+  publicName: Civic Annex
+  zoneId: quiet_brief_zone_01
+  role: shared hub
+  mapScale: street
+  dangerTier: safe
+  outdoor: true
+  exits:
+  - quiet_brief_place_02
+  - quiet_brief_place_04
+  npcIds:
+  - quiet_brief_npc_01
+  - quiet_brief_npc_05
+  - quiet_brief_npc_09
+  dungeonId: null
+  interactableIds:
+  - quiet_brief_interact_01
+  - quiet_brief_interact_09
+- id: quiet_brief_place_02
+  publicName: Paper Hotel
+  zoneId: quiet_brief_zone_01
+  role: start hub
+  mapScale: street
+  dangerTier: safe
+  outdoor: true
+  exits:
+  - quiet_brief_place_01
+  - quiet_brief_place_03
+  npcIds:
+  - quiet_brief_npc_02
+  - quiet_brief_npc_06
+  - quiet_brief_npc_10
+  dungeonId: null
+  interactableIds:
+  - quiet_brief_interact_02
+  - quiet_brief_interact_10
+- id: quiet_brief_place_03
+  publicName: Rain Platform
+  zoneId: quiet_brief_zone_01
+  role: street route
+  mapScale: street
+  dangerTier: safe
+  outdoor: true
+  exits:
+  - quiet_brief_place_02
+  - quiet_brief_place_04
+  npcIds:
+  - quiet_brief_npc_03
+  - quiet_brief_npc_07
+  dungeonId: null
+  interactableIds:
+  - quiet_brief_interact_03
+  - quiet_brief_interact_11
+- id: quiet_brief_place_04
+  publicName: Signal Room
+  zoneId: quiet_brief_zone_02
+  role: mid join
+  mapScale: street
+  dangerTier: low
+  outdoor: true
+  exits:
+  - quiet_brief_place_03
+  - quiet_brief_place_05
+  - quiet_brief_place_01
+  npcIds:
+  - quiet_brief_npc_04
+  - quiet_brief_npc_08
+  dungeonId: null
+  interactableIds:
+  - quiet_brief_interact_04
+  - quiet_brief_interact_12
+- id: quiet_brief_place_05
+  publicName: Crate Garden
+  zoneId: quiet_brief_zone_02
+  role: work district
+  mapScale: interior
+  dangerTier: low
+  outdoor: false
+  exits:
+  - quiet_brief_place_04
+  - quiet_brief_place_06
+  npcIds: []
+  dungeonId: null
+  interactableIds:
+  - quiet_brief_interact_05
+- id: quiet_brief_place_06
+  publicName: Tollhouse Roof
+  zoneId: quiet_brief_zone_02
+  role: instance door
+  mapScale: dungeon
+  dangerTier: medium
+  outdoor: false
+  exits:
+  - quiet_brief_place_05
+  - quiet_brief_place_07
+  npcIds: []
+  dungeonId: quiet_brief_dungeon_01
+  interactableIds:
+  - quiet_brief_interact_06
+- id: quiet_brief_place_07
+  publicName: Archive Lift
+  zoneId: quiet_brief_zone_03
+  role: wild edge
+  mapScale: street
+  dangerTier: medium
+  outdoor: true
+  exits:
+  - quiet_brief_place_06
+  - quiet_brief_place_08
+  npcIds: []
+  dungeonId: null
+  interactableIds:
+  - quiet_brief_interact_07
+- id: quiet_brief_place_08
+  publicName: Blanket Café
+  zoneId: quiet_brief_zone_03
+  role: housing approach
+  mapScale: interior
+  dangerTier: low
+  outdoor: false
+  exits:
+  - quiet_brief_place_07
+  npcIds: []
+  dungeonId: null
+  interactableIds:
+  - quiet_brief_interact_08
+npcs:
+- id: quiet_brief_npc_01
+  name: Bryn Cress
+  placeId: quiet_brief_place_01
+  role: quest
+  greet: Bryn Cress says, ‘Quiet Brief keeps its promises in small places. Tell me which one you noticed.’
+- id: quiet_brief_npc_02
+  name: Cato Silt
+  placeId: quiet_brief_place_02
+  role: profession
+  greet: Cato Silt says, ‘Quiet Brief keeps its promises in small places. Tell me which one you noticed.’
+- id: quiet_brief_npc_03
+  name: Dessa Pryce
+  placeId: quiet_brief_place_03
+  role: hub
+  greet: Dessa Pryce says, ‘Quiet Brief keeps its promises in small places. Tell me which one you noticed.’
+- id: quiet_brief_npc_04
+  name: Eris Vane
+  placeId: quiet_brief_place_04
+  role: merchant
+  greet: Eris Vane says, ‘Quiet Brief keeps its promises in small places. Tell me which one you noticed.’
+- id: quiet_brief_npc_05
+  name: Fenn Quill
+  placeId: quiet_brief_place_01
+  role: local
+  greet: Fenn Quill says, ‘Quiet Brief keeps its promises in small places. Tell me which one you noticed.’
+- id: quiet_brief_npc_06
+  name: Gala Vale
+  placeId: quiet_brief_place_02
+  role: host
+  greet: Gala Vale says, ‘Quiet Brief keeps its promises in small places. Tell me which one you noticed.’
+- id: quiet_brief_npc_07
+  name: Holl Wren
+  placeId: quiet_brief_place_03
+  role: quest
+  greet: Holl Wren says, ‘Quiet Brief keeps its promises in small places. Tell me which one you noticed.’
+- id: quiet_brief_npc_08
+  name: Ivo Morrow
+  placeId: quiet_brief_place_04
+  role: profession
+  greet: Ivo Morrow says, ‘Quiet Brief keeps its promises in small places. Tell me which one you noticed.’
+- id: quiet_brief_npc_09
+  name: Jori Rowan
+  placeId: quiet_brief_place_01
+  role: local
+  greet: Jori Rowan says, ‘Quiet Brief keeps its promises in small places. Tell me which one you noticed.’
+- id: quiet_brief_npc_10
+  name: Alden Nook
+  placeId: quiet_brief_place_02
+  role: merchant
+  greet: Alden Nook says, ‘Quiet Brief keeps its promises in small places. Tell me which one you noticed.’
+kits:
+- id: quiet_brief_kit_01
+  publicName: Cover Tailor
+  look: cover tailor workwear
+  values: practice cover tailor
+  taboo: Never use cover tailor authority to remove another person’s choice.
+  speechTell: Use the local rhythm of Quiet Brief and make every offer concrete.
+  starterClothes: cover_tailor mantle
+  starterTool: cover_tailor tool
+  starterMapItem: quiet_brief_map_01
+  startingPlaceId: quiet_brief_place_01
+  firstHourQuestId: quiet_brief_q_01
+  abilityFlag: quiet_brief_ability_01
+- id: quiet_brief_kit_02
+  publicName: Signal Listener
+  look: signal listener workwear
+  values: practice signal listener
+  taboo: Never use signal listener authority to remove another person’s choice.
+  speechTell: Use the local rhythm of Quiet Brief and make every offer concrete.
+  starterClothes: signal_listener vest
+  starterTool: signal_listener tool
+  starterMapItem: quiet_brief_map_02
+  startingPlaceId: quiet_brief_place_02
+  firstHourQuestId: quiet_brief_q_02
+  abilityFlag: quiet_brief_ability_02
+- id: quiet_brief_kit_03
+  publicName: Paper Forger
+  look: paper forger workwear
+  values: practice paper forger
+  taboo: Never use paper forger authority to remove another person’s choice.
+  speechTell: Use the local rhythm of Quiet Brief and make every offer concrete.
+  starterClothes: paper_forger jacket
+  starterTool: paper_forger tool
+  starterMapItem: quiet_brief_map_03
+  startingPlaceId: quiet_brief_place_01
+  firstHourQuestId: quiet_brief_q_03
+  abilityFlag: quiet_brief_ability_03
+- id: quiet_brief_kit_04
+  publicName: Rain Extractor
+  look: rain extractor workwear
+  values: practice rain extractor
+  taboo: Never use rain extractor authority to remove another person’s choice.
+  speechTell: Use the local rhythm of Quiet Brief and make every offer concrete.
+  starterClothes: rain_extractor sash
+  starterTool: rain_extractor tool
+  starterMapItem: quiet_brief_map_04
+  startingPlaceId: quiet_brief_place_02
+  firstHourQuestId: quiet_brief_q_04
+  abilityFlag: quiet_brief_ability_04
+quests:
+- id: quiet_brief_q_01
+  title: 'Quiet Brief: Name a Working Promise'
+  family: identity
+  hidden: false
+  unlocksQuestId: quiet_brief_q_02
+  objectives:
+  - id: quiet_brief_q_01_obj_01
+    kind: visit_place
+    targetId: quiet_brief_place_01
+    count: 1
+  - id: quiet_brief_q_01_obj_02
+    kind: deliver_item
+    targetId: quiet_brief_deliver_item_01
+    count: 2
+  rewardGold: 12
+  rewardXp: 20
+- id: quiet_brief_q_02
+  title: 'Quiet Brief: Set the First Tool Aside'
+  family: identity
+  hidden: false
+  unlocksQuestId: quiet_brief_q_03
+  objectives:
+  - id: quiet_brief_q_02_obj_01
+    kind: ledger_kill
+    targetId: quiet_brief_ledger_kill_02
+    count: 1
+  - id: quiet_brief_q_02_obj_02
+    kind: talk_to_npc
+    targetId: quiet_brief_npc_03
+    count: 2
+  rewardGold: 15
+  rewardXp: 25
+- id: quiet_brief_q_03
+  title: 'Quiet Brief: Carry the Right Record'
+  family: identity
+  hidden: false
+  unlocksQuestId: quiet_brief_q_04
+  objectives:
+  - id: quiet_brief_q_03_obj_01
+    kind: ledger_bond
+    targetId: quiet_brief_ledger_bond_03
+    count: 1
+  - id: quiet_brief_q_03_obj_02
+    kind: collect_item
+    targetId: quiet_brief_collect_item_03
+    count: 2
+  rewardGold: 18
+  rewardXp: 30
+- id: quiet_brief_q_04
+  title: 'Quiet Brief: Find the Missing Measure'
+  family: identity
+  hidden: false
+  unlocksQuestId: quiet_brief_q_05
+  objectives:
+  - id: quiet_brief_q_04_obj_01
+    kind: deliver_item
+    targetId: quiet_brief_deliver_item_04
+    count: 1
+  - id: quiet_brief_q_04_obj_02
+    kind: interact
+    targetId: quiet_brief_place_05
+    count: 2
+    verbId: cook
+  rewardGold: 21
+  rewardXp: 35
+- id: quiet_brief_q_05
+  title: 'Quiet Brief: Teach a Safer Shortcut'
+  family: identity
+  hidden: false
+  unlocksQuestId: quiet_brief_q_06
+  objectives:
+  - id: quiet_brief_q_05_obj_01
+    kind: talk_to_npc
+    targetId: quiet_brief_npc_05
+    count: 1
+  - id: quiet_brief_q_05_obj_02
+    kind: score_beat
+    targetId: quiet_brief_score_beat_05
+    count: 2
+  rewardGold: 24
+  rewardXp: 40
+- id: quiet_brief_q_06
+  title: 'Quiet Brief: Read the Local Weather'
+  family: profession
+  hidden: false
+  unlocksQuestId: quiet_brief_q_07
+  objectives:
+  - id: quiet_brief_q_06_obj_01
+    kind: collect_item
+    targetId: quiet_brief_collect_item_06
+    count: 1
+  - id: quiet_brief_q_06_obj_02
+    kind: build_tick
+    targetId: quiet_brief_build_tick_06
+    count: 2
+  rewardGold: 27
+  rewardXp: 45
+- id: quiet_brief_q_07
+  title: 'Quiet Brief: Repair a Shared Threshold'
+  family: profession
+  hidden: false
+  unlocksQuestId: quiet_brief_q_08
+  objectives:
+  - id: quiet_brief_q_07_obj_01
+    kind: interact
+    targetId: quiet_brief_place_07
+    count: 1
+    verbId: inspect
+  - id: quiet_brief_q_07_obj_02
+    kind: hospitality_tick
+    targetId: quiet_brief_hospitality_tick_07
+    count: 2
+  rewardGold: 30
+  rewardXp: 50
+- id: quiet_brief_q_08
+  title: 'Quiet Brief: Return a Borrowed Sign'
+  family: profession
+  hidden: false
+  unlocksQuestId: quiet_brief_q_09
+  objectives:
+  - id: quiet_brief_q_08_obj_01
+    kind: score_beat
+    targetId: quiet_brief_score_beat_08
+    count: 1
+  - id: quiet_brief_q_08_obj_02
+    kind: lap_finish
+    targetId: quiet_brief_lap_finish_08
+    count: 2
+  rewardGold: 33
+  rewardXp: 55
+- id: quiet_brief_q_09
+  title: 'Quiet Brief: Host the Small Welcome'
+  family: profession
+  hidden: false
+  unlocksQuestId: quiet_brief_q_10
+  objectives:
+  - id: quiet_brief_q_09_obj_01
+    kind: build_tick
+    targetId: quiet_brief_build_tick_09
+    count: 1
+  - id: quiet_brief_q_09_obj_02
+    kind: visit_place
+    targetId: quiet_brief_place_02
+    count: 2
+  rewardGold: 36
+  rewardXp: 60
+- id: quiet_brief_q_10
+  title: 'Quiet Brief: Choose a Fair Order'
+  family: profession
+  hidden: false
+  unlocksQuestId: quiet_brief_q_11
+  objectives:
+  - id: quiet_brief_q_10_obj_01
+    kind: hospitality_tick
+    targetId: quiet_brief_hospitality_tick_10
+    count: 1
+  - id: quiet_brief_q_10_obj_02
+    kind: ledger_kill
+    targetId: quiet_brief_ledger_kill_10
+    count: 2
+  rewardGold: 39
+  rewardXp: 65
+- id: quiet_brief_q_11
+  title: 'Quiet Brief: Map the Quiet Detour'
+  family: profession
+  hidden: false
+  unlocksQuestId: quiet_brief_q_12
+  objectives:
+  - id: quiet_brief_q_11_obj_01
+    kind: lap_finish
+    targetId: quiet_brief_lap_finish_11
+    count: 1
+  - id: quiet_brief_q_11_obj_02
+    kind: ledger_bond
+    targetId: quiet_brief_ledger_bond_11
+    count: 2
+  rewardGold: 42
+  rewardXp: 70
+- id: quiet_brief_q_12
+  title: 'Quiet Brief: Bring a Useful Witness'
+  family: profession
+  hidden: false
+  unlocksQuestId: quiet_brief_q_13
+  objectives:
+  - id: quiet_brief_q_12_obj_01
+    kind: visit_place
+    targetId: quiet_brief_place_04
+    count: 1
+  - id: quiet_brief_q_12_obj_02
+    kind: deliver_item
+    targetId: quiet_brief_deliver_item_12
+    count: 2
+  rewardGold: 45
+  rewardXp: 75
+- id: quiet_brief_q_13
+  title: 'Quiet Brief: Sort the Unclaimed Materials'
+  family: zone_story
+  hidden: false
+  unlocksQuestId: quiet_brief_q_14
+  objectives:
+  - id: quiet_brief_q_13_obj_01
+    kind: ledger_kill
+    targetId: quiet_brief_ledger_kill_13
+    count: 1
+  - id: quiet_brief_q_13_obj_02
+    kind: talk_to_npc
+    targetId: quiet_brief_npc_04
+    count: 2
+  rewardGold: 48
+  rewardXp: 80
+- id: quiet_brief_q_14
+  title: 'Quiet Brief: Make Room for a Visitor'
+  family: zone_story
+  hidden: false
+  unlocksQuestId: quiet_brief_q_15
+  objectives:
+  - id: quiet_brief_q_14_obj_01
+    kind: ledger_bond
+    targetId: quiet_brief_ledger_bond_14
+    count: 1
+  - id: quiet_brief_q_14_obj_02
+    kind: collect_item
+    targetId: quiet_brief_collect_item_14
+    count: 2
+  rewardGold: 51
+  rewardXp: 85
+- id: quiet_brief_q_15
+  title: 'Quiet Brief: Close the Day’s Ledger'
+  family: zone_story
+  hidden: false
+  unlocksQuestId: quiet_brief_q_16
+  objectives:
+  - id: quiet_brief_q_15_obj_01
+    kind: deliver_item
+    targetId: quiet_brief_deliver_item_15
+    count: 1
+  - id: quiet_brief_q_15_obj_02
+    kind: interact
+    targetId: quiet_brief_place_08
+    count: 2
+    verbId: craft
+  rewardGold: 54
+  rewardXp: 90
+- id: quiet_brief_q_16
+  title: 'Quiet Brief: Follow the Midway Signal'
+  family: zone_story
+  hidden: false
+  unlocksQuestId: quiet_brief_q_17
+  objectives:
+  - id: quiet_brief_q_16_obj_01
+    kind: talk_to_npc
+    targetId: quiet_brief_npc_06
+    count: 1
+  - id: quiet_brief_q_16_obj_02
+    kind: score_beat
+    targetId: quiet_brief_score_beat_16
+    count: 2
+  rewardGold: 57
+  rewardXp: 95
+- id: quiet_brief_q_17
+  title: 'Quiet Brief: Uncover the Door Note'
+  family: zone_story
+  hidden: true
+  unlocksQuestId: quiet_brief_q_18
+  objectives:
+  - id: quiet_brief_q_17_obj_01
+    kind: collect_item
+    targetId: quiet_brief_collect_item_17
+    count: 1
+  - id: quiet_brief_q_17_obj_02
+    kind: build_tick
+    targetId: quiet_brief_build_tick_17
+    count: 2
+  rewardGold: 60
+  rewardXp: 100
+- id: quiet_brief_q_18
+  title: 'Quiet Brief: Prepare the Team Table'
+  family: zone_story
+  hidden: false
+  unlocksQuestId: quiet_brief_q_19
+  objectives:
+  - id: quiet_brief_q_18_obj_01
+    kind: interact
+    targetId: quiet_brief_place_02
+    count: 1
+    verbId: bind_inn
+  - id: quiet_brief_q_18_obj_02
+    kind: hospitality_tick
+    targetId: quiet_brief_hospitality_tick_18
+    count: 2
+  rewardGold: 63
+  rewardXp: 105
+- id: quiet_brief_q_19
+  title: 'Quiet Brief: Test the Local Method'
+  family: zone_story
+  hidden: false
+  unlocksQuestId: quiet_brief_q_20
+  objectives:
+  - id: quiet_brief_q_19_obj_01
+    kind: score_beat
+    targetId: quiet_brief_score_beat_19
+    count: 1
+  - id: quiet_brief_q_19_obj_02
+    kind: lap_finish
+    targetId: quiet_brief_lap_finish_19
+    count: 2
+  rewardGold: 66
+  rewardXp: 110
+- id: quiet_brief_q_20
+  title: 'Quiet Brief: Hold a Careful Boundary'
+  family: zone_story
+  hidden: false
+  unlocksQuestId: quiet_brief_q_21
+  objectives:
+  - id: quiet_brief_q_20_obj_01
+    kind: build_tick
+    targetId: quiet_brief_build_tick_20
+    count: 1
+  - id: quiet_brief_q_20_obj_02
+    kind: visit_place
+    targetId: quiet_brief_place_05
+    count: 2
+  rewardGold: 69
+  rewardXp: 115
+- id: quiet_brief_q_21
+  title: 'Quiet Brief: Answer the Neighbour’s Call'
+  family: extra
+  hidden: false
+  unlocksQuestId: quiet_brief_q_22
+  objectives:
+  - id: quiet_brief_q_21_obj_01
+    kind: hospitality_tick
+    targetId: quiet_brief_hospitality_tick_21
+    count: 1
+  - id: quiet_brief_q_21_obj_02
+    kind: ledger_kill
+    targetId: quiet_brief_ledger_kill_21
+    count: 2
+  rewardGold: 72
+  rewardXp: 120
+- id: quiet_brief_q_22
+  title: 'Quiet Brief: Finish the Side Route'
+  family: extra
+  hidden: false
+  unlocksQuestId: quiet_brief_q_23
+  objectives:
+  - id: quiet_brief_q_22_obj_01
+    kind: lap_finish
+    targetId: quiet_brief_lap_finish_22
+    count: 1
+  - id: quiet_brief_q_22_obj_02
+    kind: ledger_bond
+    targetId: quiet_brief_ledger_bond_22
+    count: 2
+  rewardGold: 75
+  rewardXp: 125
+- id: quiet_brief_q_23
+  title: 'Quiet Brief: Earn a Trusted Introduction'
+  family: extra
+  hidden: true
+  unlocksQuestId: quiet_brief_q_24
+  objectives:
+  - id: quiet_brief_q_23_obj_01
+    kind: visit_place
+    targetId: quiet_brief_place_07
+    count: 1
+  - id: quiet_brief_q_23_obj_02
+    kind: deliver_item
+    targetId: quiet_brief_deliver_item_23
+    count: 2
+  rewardGold: 78
+  rewardXp: 130
+- id: quiet_brief_q_24
+  title: 'Quiet Brief: Open the Instance Path'
+  family: extra
+  hidden: false
+  unlocksQuestId: quiet_brief_q_25
+  objectives:
+  - id: quiet_brief_q_24_obj_01
+    kind: ledger_kill
+    targetId: quiet_brief_ledger_kill_24
+    count: 1
+  - id: quiet_brief_q_24_obj_02
+    kind: talk_to_npc
+    targetId: quiet_brief_npc_05
+    count: 2
+  rewardGold: 81
+  rewardXp: 135
+- id: quiet_brief_q_25
+  title: 'Quiet Brief: Complete the First Big Night'
+  family: extra
+  hidden: false
+  unlocksQuestId: null
+  objectives:
+  - id: quiet_brief_q_25_obj_01
+    kind: ledger_bond
+    targetId: quiet_brief_ledger_bond_25
+    count: 1
+  - id: quiet_brief_q_25_obj_02
+    kind: collect_item
+    targetId: quiet_brief_collect_item_25
+    count: 2
+  rewardGold: 84
+  rewardXp: 140
+species:
+- id: quiet_brief_species_01
+  publicName: Courier Crow
+  kind: opponent
+  hp: 8
+  armor: 0
+  threat: 1
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: quiet_brief_species_02
+  publicName: Keycat
+  kind: opponent
+  hp: 9
+  armor: 1
+  threat: 2
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: quiet_brief_species_03
+  publicName: Window Lizard
+  kind: opponent
+  hp: 10
+  armor: 2
+  threat: 3
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: quiet_brief_species_04
+  publicName: Tape Moth
+  kind: opponent
+  hp: 11
+  armor: 3
+  threat: 1
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: quiet_brief_species_05
+  publicName: Quiet Brief Field Type 5
+  kind: opponent
+  hp: 12
+  armor: 0
+  threat: 2
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: quiet_brief_species_06
+  publicName: Quiet Brief Field Type 6
+  kind: opponent
+  hp: 13
+  armor: 1
+  threat: 3
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: quiet_brief_species_07
+  publicName: Quiet Brief Field Type 7
+  kind: opponent
+  hp: 14
+  armor: 2
+  threat: 1
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: quiet_brief_species_08
+  publicName: Quiet Brief Field Type 8
+  kind: opponent
+  hp: 15
+  armor: 3
+  threat: 2
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: quiet_brief_species_09
+  publicName: Quiet Brief Field Type 9
+  kind: opponent
+  hp: 16
+  armor: 0
+  threat: 3
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: quiet_brief_species_10
+  publicName: Quiet Brief Field Type 10
+  kind: opponent
+  hp: 17
+  armor: 1
+  threat: 1
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: quiet_brief_species_11
+  publicName: Quiet Brief Field Type 11
+  kind: opponent
+  hp: 18
+  armor: 2
+  threat: 2
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: quiet_brief_species_12
+  publicName: Quiet Brief Field Type 12
+  kind: opponent
+  hp: 19
+  armor: 3
+  threat: 3
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: quiet_brief_species_13
+  publicName: Quiet Brief Field Type 13
+  kind: opponent
+  hp: 20
+  armor: 0
+  threat: 1
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: quiet_brief_species_14
+  publicName: Quiet Brief Field Type 14
+  kind: opponent
+  hp: 21
+  armor: 1
+  threat: 2
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: quiet_brief_species_15
+  publicName: Quiet Brief Field Type 15
+  kind: opponent
+  hp: 22
+  armor: 2
+  threat: 3
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: quiet_brief_species_16
+  publicName: Quiet Brief Field Type 16
+  kind: opponent
+  hp: 23
+  armor: 3
+  threat: 1
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: quiet_brief_species_17
+  publicName: Quiet Brief Field Type 17
+  kind: opponent
+  hp: 24
+  armor: 0
+  threat: 2
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: quiet_brief_species_18
+  publicName: Quiet Brief Field Type 18
+  kind: opponent
+  hp: 25
+  armor: 1
+  threat: 3
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+items:
+- id: quiet_brief_item_01
+  publicName: Civic Annex token
+  category: starter
+  power: false
+  sellGold: 3
+  description: A Quiet Brief item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: quiet_brief_item_02
+  publicName: Paper Hotel tool
+  category: starter
+  power: false
+  sellGold: 5
+  description: A Quiet Brief item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: quiet_brief_item_03
+  publicName: Rain Platform thread
+  category: profession
+  power: false
+  sellGold: 7
+  description: A Quiet Brief item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: quiet_brief_item_04
+  publicName: Signal Room seal
+  category: profession
+  power: false
+  sellGold: 9
+  description: A Quiet Brief item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: quiet_brief_item_05
+  publicName: Crate Garden bundle
+  category: instance
+  power: false
+  sellGold: 11
+  description: A Quiet Brief item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: quiet_brief_item_06
+  publicName: Tollhouse Roof token
+  category: instance
+  power: false
+  sellGold: 13
+  description: A Quiet Brief item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: quiet_brief_item_07
+  publicName: Archive Lift tool
+  category: cosmetic
+  power: false
+  sellGold: 15
+  description: A Quiet Brief item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: quiet_brief_item_08
+  publicName: Blanket Café thread
+  category: cosmetic
+  power: false
+  sellGold: 17
+  description: A Quiet Brief item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: quiet_brief_item_09
+  publicName: Civic Annex seal
+  category: material
+  power: false
+  sellGold: 19
+  description: A Quiet Brief item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: quiet_brief_item_10
+  publicName: Paper Hotel bundle
+  category: material
+  power: false
+  sellGold: 21
+  description: A Quiet Brief item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: quiet_brief_item_11
+  publicName: Rain Platform token
+  category: care
+  power: false
+  sellGold: 23
+  description: A Quiet Brief item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: quiet_brief_item_12
+  publicName: Signal Room tool
+  category: care
+  power: false
+  sellGold: 25
+  description: A Quiet Brief item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: quiet_brief_item_13
+  publicName: Crate Garden thread
+  category: map
+  power: false
+  sellGold: 27
+  description: A Quiet Brief item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: quiet_brief_item_14
+  publicName: Tollhouse Roof seal
+  category: map
+  power: false
+  sellGold: 29
+  description: A Quiet Brief item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: quiet_brief_item_15
+  publicName: Archive Lift bundle
+  category: vendor
+  power: false
+  sellGold: 31
+  description: A Quiet Brief item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: quiet_brief_item_16
+  publicName: Blanket Café token
+  category: vendor
+  power: false
+  sellGold: 33
+  description: A Quiet Brief item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: quiet_brief_item_17
+  publicName: Civic Annex tool
+  category: recipe
+  power: false
+  sellGold: 35
+  description: A Quiet Brief item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: quiet_brief_item_18
+  publicName: Paper Hotel thread
+  category: recipe
+  power: false
+  sellGold: 37
+  description: A Quiet Brief item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: quiet_brief_item_19
+  publicName: Rain Platform seal
+  category: keepsake
+  power: false
+  sellGold: 39
+  description: A Quiet Brief item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: quiet_brief_item_20
+  publicName: Signal Room bundle
+  category: keepsake
+  power: false
+  sellGold: 41
+  description: A Quiet Brief item used for a stated craft, route, display, or record; it never alters paid outcomes.
+dropTables:
+- id: quiet_brief_drop_01
+  sourceId: quiet_brief_species_01
+  personalLoot: true
+  entries:
+  - itemId: quiet_brief_item_01
+    chancePct: 60
+    min: 1
+    max: 2
+  - itemId: quiet_brief_item_08
+    chancePct: 20
+    min: 1
+    max: 1
+- id: quiet_brief_drop_02
+  sourceId: quiet_brief_species_02
+  personalLoot: true
+  entries:
+  - itemId: quiet_brief_item_02
+    chancePct: 55
+    min: 1
+    max: 2
+  - itemId: quiet_brief_item_09
+    chancePct: 25
+    min: 1
+    max: 1
+- id: quiet_brief_drop_03
+  sourceId: quiet_brief_species_03
+  personalLoot: true
+  entries:
+  - itemId: quiet_brief_item_03
+    chancePct: 50
+    min: 1
+    max: 2
+  - itemId: quiet_brief_item_10
+    chancePct: 30
+    min: 1
+    max: 1
+- id: quiet_brief_drop_04
+  sourceId: quiet_brief_species_04
+  personalLoot: true
+  entries:
+  - itemId: quiet_brief_item_04
+    chancePct: 45
+    min: 1
+    max: 2
+  - itemId: quiet_brief_item_11
+    chancePct: 20
+    min: 1
+    max: 1
+- id: quiet_brief_drop_05
+  sourceId: quiet_brief_species_05
+  personalLoot: true
+  entries:
+  - itemId: quiet_brief_item_05
+    chancePct: 60
+    min: 1
+    max: 2
+  - itemId: quiet_brief_item_12
+    chancePct: 25
+    min: 1
+    max: 1
+- id: quiet_brief_drop_06
+  sourceId: quiet_brief_species_06
+  personalLoot: true
+  entries:
+  - itemId: quiet_brief_item_06
+    chancePct: 55
+    min: 1
+    max: 2
+  - itemId: quiet_brief_item_13
+    chancePct: 30
+    min: 1
+    max: 1
+- id: quiet_brief_drop_07
+  sourceId: quiet_brief_species_07
+  personalLoot: true
+  entries:
+  - itemId: quiet_brief_item_07
+    chancePct: 50
+    min: 1
+    max: 2
+  - itemId: quiet_brief_item_14
+    chancePct: 20
+    min: 1
+    max: 1
+- id: quiet_brief_drop_08
+  sourceId: quiet_brief_species_08
+  personalLoot: true
+  entries:
+  - itemId: quiet_brief_item_08
+    chancePct: 45
+    min: 1
+    max: 2
+  - itemId: quiet_brief_item_15
+    chancePct: 25
+    min: 1
+    max: 1
+- id: quiet_brief_drop_09
+  sourceId: quiet_brief_species_09
+  personalLoot: true
+  entries:
+  - itemId: quiet_brief_item_09
+    chancePct: 60
+    min: 1
+    max: 2
+  - itemId: quiet_brief_item_16
+    chancePct: 30
+    min: 1
+    max: 1
+- id: quiet_brief_drop_10
+  sourceId: quiet_brief_species_10
+  personalLoot: true
+  entries:
+  - itemId: quiet_brief_item_10
+    chancePct: 55
+    min: 1
+    max: 2
+  - itemId: quiet_brief_item_17
+    chancePct: 20
+    min: 1
+    max: 1
+- id: quiet_brief_drop_11
+  sourceId: quiet_brief_species_11
+  personalLoot: true
+  entries:
+  - itemId: quiet_brief_item_11
+    chancePct: 50
+    min: 1
+    max: 2
+  - itemId: quiet_brief_item_18
+    chancePct: 25
+    min: 1
+    max: 1
+- id: quiet_brief_drop_12
+  sourceId: quiet_brief_species_12
+  personalLoot: true
+  entries:
+  - itemId: quiet_brief_item_12
+    chancePct: 45
+    min: 1
+    max: 2
+  - itemId: quiet_brief_item_19
+    chancePct: 30
+    min: 1
+    max: 1
+vendors:
+- id: quiet_brief_vendor_01
+  publicName: Quiet Brief Exchange
+  placeId: quiet_brief_place_01
+  currencyGoldName: Brief Notes
+  items:
+  - itemId: quiet_brief_item_01
+    priceGold: 8
+  - itemId: quiet_brief_item_02
+    priceGold: 11
+  - itemId: quiet_brief_item_03
+    priceGold: 14
+  - itemId: quiet_brief_item_04
+    priceGold: 17
+  - itemId: quiet_brief_item_05
+    priceGold: 20
+  - itemId: quiet_brief_item_06
+    priceGold: 23
+  - itemId: quiet_brief_item_07
+    priceGold: 26
+  - itemId: quiet_brief_item_08
+    priceGold: 29
+  repairCostPerPoint: 0
+dungeons:
+- id: quiet_brief_dungeon_01
+  publicName: The Unsent Dispatch
+  partyMin: 1
+  partyMax: 5
+  entrancePlaceId: quiet_brief_place_06
+  rooms:
+  - id: quiet_brief_dungeon_room_01
+    publicName: 'The Unsent Dispatch: Threshold Room'
+    describeBeforeCreature: Describe the material, sound, exits, and practical obstacle of Threshold Room before any species
+      is narrated.
+    trashSpeciesIds:
+    - quiet_brief_species_01
+    - quiet_brief_species_02
+    eliteSpeciesId: null
+    checkpoint: false
+    bossSpeciesId: null
+    exits:
+    - quiet_brief_dungeon_room_02
+  - id: quiet_brief_dungeon_room_02
+    publicName: 'The Unsent Dispatch: Workroom'
+    describeBeforeCreature: Describe the material, sound, exits, and practical obstacle of Workroom before any species is
+      narrated.
+    trashSpeciesIds:
+    - quiet_brief_species_03
+    - quiet_brief_species_04
+    eliteSpeciesId: null
+    checkpoint: false
+    bossSpeciesId: null
+    exits:
+    - quiet_brief_dungeon_room_03
+  - id: quiet_brief_dungeon_room_03
+    publicName: 'The Unsent Dispatch: Side Passage'
+    describeBeforeCreature: Describe the material, sound, exits, and practical obstacle of Side Passage before any species
+      is narrated.
+    trashSpeciesIds:
+    - quiet_brief_species_05
+    - quiet_brief_species_06
+    eliteSpeciesId: quiet_brief_species_09
+    checkpoint: false
+    bossSpeciesId: null
+    exits:
+    - quiet_brief_dungeon_room_04
+  - id: quiet_brief_dungeon_room_04
+    publicName: 'The Unsent Dispatch: Checkpoint Alcove'
+    describeBeforeCreature: Describe the material, sound, exits, and practical obstacle of Checkpoint Alcove before any species
+      is narrated.
+    trashSpeciesIds:
+    - quiet_brief_species_07
+    - quiet_brief_species_08
+    eliteSpeciesId: null
+    checkpoint: true
+    bossSpeciesId: null
+    exits:
+    - quiet_brief_dungeon_room_05
+  - id: quiet_brief_dungeon_room_05
+    publicName: 'The Unsent Dispatch: Finale Chamber'
+    describeBeforeCreature: Describe the material, sound, exits, and practical obstacle of Finale Chamber before any species
+      is narrated.
+    trashSpeciesIds:
+    - quiet_brief_species_09
+    - quiet_brief_species_10
+    eliteSpeciesId: null
+    checkpoint: false
+    bossSpeciesId: quiet_brief_species_14
+    exits: []
+  traps:
+  - id: quiet_brief_trap_01
+    publicName: misread sign
+    interactableId: quiet_brief_interact_01
+  - id: quiet_brief_trap_02
+    publicName: jammed latch
+    interactableId: quiet_brief_interact_02
+  - id: quiet_brief_trap_03
+    publicName: wet threshold
+    interactableId: quiet_brief_interact_03
+  - id: quiet_brief_trap_04
+    publicName: false shelf
+    interactableId: quiet_brief_interact_04
+  - id: quiet_brief_trap_05
+    publicName: quiet bell
+    interactableId: quiet_brief_interact_05
+  - id: quiet_brief_trap_06
+    publicName: sealed drawer
+    interactableId: quiet_brief_interact_06
+talkTrees:
+- npcId: quiet_brief_npc_01
+  greet: Bryn Cress says, ‘Quiet Brief keeps its promises in small places. Tell me which one you noticed.’
+  quest_offer: 'Bryn Cress offers a specific task at Civic Annex: settle the practical mismatch before it costs someone a
+    shift.'
+  quest_progress: Bryn Cress checks the record and asks for the one detail that would change the outcome.
+  quest_turnin: Bryn Cress marks the work complete, names who benefited, and hands over the recorded reward.
+  gossip:
+  - At Paper Hotel, people are discussing a missing care tag.
+  - The safest route today is through Rain Platform, not the obvious shortcut.
+  - Someone at Signal Room is offering help but will not ask twice.
+  refusal: Bryn Cress says, ‘No. I can explain the rule, but I will not bend it for noise.’
+  player_rude: Bryn Cress says, ‘You may leave, lower your voice, or try a useful question. Choose one.’
+- npcId: quiet_brief_npc_02
+  greet: Cato Silt says, ‘Quiet Brief keeps its promises in small places. Tell me which one you noticed.’
+  quest_offer: 'Cato Silt offers a specific task at Paper Hotel: settle the practical mismatch before it costs someone a shift.'
+  quest_progress: Cato Silt checks the record and asks for the one detail that would change the outcome.
+  quest_turnin: Cato Silt marks the work complete, names who benefited, and hands over the recorded reward.
+  gossip:
+  - At Rain Platform, people are discussing a missing care tag.
+  - The safest route today is through Signal Room, not the obvious shortcut.
+  - Someone at Crate Garden is offering help but will not ask twice.
+  refusal: Cato Silt says, ‘No. I can explain the rule, but I will not bend it for noise.’
+  player_rude: Cato Silt says, ‘You may leave, lower your voice, or try a useful question. Choose one.’
+- npcId: quiet_brief_npc_03
+  greet: Dessa Pryce says, ‘Quiet Brief keeps its promises in small places. Tell me which one you noticed.’
+  quest_offer: 'Dessa Pryce offers a specific task at Rain Platform: settle the practical mismatch before it costs someone
+    a shift.'
+  quest_progress: Dessa Pryce checks the record and asks for the one detail that would change the outcome.
+  quest_turnin: Dessa Pryce marks the work complete, names who benefited, and hands over the recorded reward.
+  gossip:
+  - At Signal Room, people are discussing a missing care tag.
+  - The safest route today is through Crate Garden, not the obvious shortcut.
+  - Someone at Tollhouse Roof is offering help but will not ask twice.
+  refusal: Dessa Pryce says, ‘No. I can explain the rule, but I will not bend it for noise.’
+  player_rude: Dessa Pryce says, ‘You may leave, lower your voice, or try a useful question. Choose one.’
+- npcId: quiet_brief_npc_04
+  greet: Eris Vane says, ‘Quiet Brief keeps its promises in small places. Tell me which one you noticed.’
+  quest_offer: 'Eris Vane offers a specific task at Signal Room: settle the practical mismatch before it costs someone a shift.'
+  quest_progress: Eris Vane checks the record and asks for the one detail that would change the outcome.
+  quest_turnin: Eris Vane marks the work complete, names who benefited, and hands over the recorded reward.
+  gossip:
+  - At Crate Garden, people are discussing a missing care tag.
+  - The safest route today is through Tollhouse Roof, not the obvious shortcut.
+  - Someone at Archive Lift is offering help but will not ask twice.
+  refusal: Eris Vane says, ‘No. I can explain the rule, but I will not bend it for noise.’
+  player_rude: Eris Vane says, ‘You may leave, lower your voice, or try a useful question. Choose one.’
+- npcId: quiet_brief_npc_05
+  greet: Fenn Quill says, ‘Quiet Brief keeps its promises in small places. Tell me which one you noticed.’
+  quest_offer: 'Fenn Quill offers a specific task at Civic Annex: settle the practical mismatch before it costs someone a
+    shift.'
+  quest_progress: Fenn Quill checks the record and asks for the one detail that would change the outcome.
+  quest_turnin: Fenn Quill marks the work complete, names who benefited, and hands over the recorded reward.
+  gossip:
+  - At Tollhouse Roof, people are discussing a missing care tag.
+  - The safest route today is through Archive Lift, not the obvious shortcut.
+  - Someone at Blanket Café is offering help but will not ask twice.
+  refusal: Fenn Quill says, ‘No. I can explain the rule, but I will not bend it for noise.’
+  player_rude: Fenn Quill says, ‘You may leave, lower your voice, or try a useful question. Choose one.’
+- npcId: quiet_brief_npc_06
+  greet: Gala Vale says, ‘Quiet Brief keeps its promises in small places. Tell me which one you noticed.’
+  quest_offer: 'Gala Vale offers a specific task at Paper Hotel: settle the practical mismatch before it costs someone a shift.'
+  quest_progress: Gala Vale checks the record and asks for the one detail that would change the outcome.
+  quest_turnin: Gala Vale marks the work complete, names who benefited, and hands over the recorded reward.
+  gossip:
+  - At Archive Lift, people are discussing a missing care tag.
+  - The safest route today is through Blanket Café, not the obvious shortcut.
+  - Someone at Civic Annex is offering help but will not ask twice.
+  refusal: Gala Vale says, ‘No. I can explain the rule, but I will not bend it for noise.’
+  player_rude: Gala Vale says, ‘You may leave, lower your voice, or try a useful question. Choose one.’
+- npcId: quiet_brief_npc_07
+  greet: Holl Wren says, ‘Quiet Brief keeps its promises in small places. Tell me which one you noticed.’
+  quest_offer: 'Holl Wren offers a specific task at Rain Platform: settle the practical mismatch before it costs someone a
+    shift.'
+  quest_progress: Holl Wren checks the record and asks for the one detail that would change the outcome.
+  quest_turnin: Holl Wren marks the work complete, names who benefited, and hands over the recorded reward.
+  gossip:
+  - At Blanket Café, people are discussing a missing care tag.
+  - The safest route today is through Civic Annex, not the obvious shortcut.
+  - Someone at Paper Hotel is offering help but will not ask twice.
+  refusal: Holl Wren says, ‘No. I can explain the rule, but I will not bend it for noise.’
+  player_rude: Holl Wren says, ‘You may leave, lower your voice, or try a useful question. Choose one.’
+- npcId: quiet_brief_npc_08
+  greet: Ivo Morrow says, ‘Quiet Brief keeps its promises in small places. Tell me which one you noticed.’
+  quest_offer: 'Ivo Morrow offers a specific task at Signal Room: settle the practical mismatch before it costs someone a
+    shift.'
+  quest_progress: Ivo Morrow checks the record and asks for the one detail that would change the outcome.
+  quest_turnin: Ivo Morrow marks the work complete, names who benefited, and hands over the recorded reward.
+  gossip:
+  - At Civic Annex, people are discussing a missing care tag.
+  - The safest route today is through Paper Hotel, not the obvious shortcut.
+  - Someone at Rain Platform is offering help but will not ask twice.
+  refusal: Ivo Morrow says, ‘No. I can explain the rule, but I will not bend it for noise.’
+  player_rude: Ivo Morrow says, ‘You may leave, lower your voice, or try a useful question. Choose one.’
+- npcId: quiet_brief_npc_09
+  greet: Jori Rowan says, ‘Quiet Brief keeps its promises in small places. Tell me which one you noticed.’
+  quest_offer: 'Jori Rowan offers a specific task at Civic Annex: settle the practical mismatch before it costs someone a
+    shift.'
+  quest_progress: Jori Rowan checks the record and asks for the one detail that would change the outcome.
+  quest_turnin: Jori Rowan marks the work complete, names who benefited, and hands over the recorded reward.
+  gossip:
+  - At Paper Hotel, people are discussing a missing care tag.
+  - The safest route today is through Rain Platform, not the obvious shortcut.
+  - Someone at Signal Room is offering help but will not ask twice.
+  refusal: Jori Rowan says, ‘No. I can explain the rule, but I will not bend it for noise.’
+  player_rude: Jori Rowan says, ‘You may leave, lower your voice, or try a useful question. Choose one.’
+- npcId: quiet_brief_npc_10
+  greet: Alden Nook says, ‘Quiet Brief keeps its promises in small places. Tell me which one you noticed.’
+  quest_offer: 'Alden Nook offers a specific task at Paper Hotel: settle the practical mismatch before it costs someone a
+    shift.'
+  quest_progress: Alden Nook checks the record and asks for the one detail that would change the outcome.
+  quest_turnin: Alden Nook marks the work complete, names who benefited, and hands over the recorded reward.
+  gossip:
+  - At Rain Platform, people are discussing a missing care tag.
+  - The safest route today is through Signal Room, not the obvious shortcut.
+  - Someone at Crate Garden is offering help but will not ask twice.
+  refusal: Alden Nook says, ‘No. I can explain the rule, but I will not bend it for noise.’
+  player_rude: Alden Nook says, ‘You may leave, lower your voice, or try a useful question. Choose one.’
+choiceButtons:
+- id: quiet_brief_choice_01_01
+  placeId: quiet_brief_place_01
+  label: Read the notice at Civic Annex
+  requires: []
+  intentKind: talk
+  stake: one turn
+- id: quiet_brief_choice_01_02
+  placeId: quiet_brief_place_01
+  label: Ask for an introduction at Civic Annex
+  requires: []
+  intentKind: talk
+  stake: one supply
+- id: quiet_brief_choice_01_03
+  placeId: quiet_brief_place_01
+  label: Check the tool tag at Civic Annex
+  requires: []
+  intentKind: inspect
+  stake: a declined invitation
+- id: quiet_brief_choice_01_04
+  placeId: quiet_brief_place_01
+  label: Offer a hand at Civic Annex
+  requires: []
+  intentKind: interact
+  stake: a public note
+- id: quiet_brief_choice_01_05
+  placeId: quiet_brief_place_01
+  label: Take the safer route at Civic Annex
+  requires:
+  - quiet_brief_item_05
+  intentKind: travel
+  stake: a short detour
+- id: quiet_brief_choice_01_06
+  placeId: quiet_brief_place_01
+  label: Open the local record at Civic Annex
+  requires:
+  - quiet_brief_item_06
+  intentKind: interact
+  stake: one turn
+- id: quiet_brief_choice_01_07
+  placeId: quiet_brief_place_01
+  label: Rest at the bench at Civic Annex
+  requires:
+  - quiet_brief_item_07
+  intentKind: rest
+  stake: one supply
+- id: quiet_brief_choice_01_08
+  placeId: quiet_brief_place_01
+  label: Repair the marker at Civic Annex
+  requires:
+  - quiet_brief_item_08
+  intentKind: interact
+  stake: a declined invitation
+- id: quiet_brief_choice_01_09
+  placeId: quiet_brief_place_01
+  label: Prepare a shared item at Civic Annex
+  requires:
+  - quiet_brief_item_09
+  intentKind: craft
+  stake: a public note
+- id: quiet_brief_choice_01_10
+  placeId: quiet_brief_place_01
+  label: Leave a kind note at Civic Annex
+  requires:
+  - quiet_brief_item_10
+  intentKind: talk
+  stake: a short detour
+- id: quiet_brief_choice_02_01
+  placeId: quiet_brief_place_02
+  label: Read the notice at Paper Hotel
+  requires: []
+  intentKind: talk
+  stake: one turn
+- id: quiet_brief_choice_02_02
+  placeId: quiet_brief_place_02
+  label: Ask for an introduction at Paper Hotel
+  requires: []
+  intentKind: talk
+  stake: one supply
+- id: quiet_brief_choice_02_03
+  placeId: quiet_brief_place_02
+  label: Check the tool tag at Paper Hotel
+  requires: []
+  intentKind: inspect
+  stake: a declined invitation
+- id: quiet_brief_choice_02_04
+  placeId: quiet_brief_place_02
+  label: Offer a hand at Paper Hotel
+  requires: []
+  intentKind: interact
+  stake: a public note
+- id: quiet_brief_choice_02_05
+  placeId: quiet_brief_place_02
+  label: Take the safer route at Paper Hotel
+  requires:
+  - quiet_brief_item_05
+  intentKind: travel
+  stake: a short detour
+- id: quiet_brief_choice_02_06
+  placeId: quiet_brief_place_02
+  label: Open the local record at Paper Hotel
+  requires:
+  - quiet_brief_item_06
+  intentKind: interact
+  stake: one turn
+- id: quiet_brief_choice_02_07
+  placeId: quiet_brief_place_02
+  label: Rest at the bench at Paper Hotel
+  requires:
+  - quiet_brief_item_07
+  intentKind: rest
+  stake: one supply
+- id: quiet_brief_choice_02_08
+  placeId: quiet_brief_place_02
+  label: Repair the marker at Paper Hotel
+  requires:
+  - quiet_brief_item_08
+  intentKind: interact
+  stake: a declined invitation
+- id: quiet_brief_choice_02_09
+  placeId: quiet_brief_place_02
+  label: Prepare a shared item at Paper Hotel
+  requires:
+  - quiet_brief_item_09
+  intentKind: craft
+  stake: a public note
+- id: quiet_brief_choice_02_10
+  placeId: quiet_brief_place_02
+  label: Leave a kind note at Paper Hotel
+  requires:
+  - quiet_brief_item_10
+  intentKind: talk
+  stake: a short detour
+- id: quiet_brief_choice_03_01
+  placeId: quiet_brief_place_03
+  label: Read the notice at Rain Platform
+  requires: []
+  intentKind: talk
+  stake: one turn
+- id: quiet_brief_choice_03_02
+  placeId: quiet_brief_place_03
+  label: Ask for an introduction at Rain Platform
+  requires: []
+  intentKind: talk
+  stake: one supply
+- id: quiet_brief_choice_03_03
+  placeId: quiet_brief_place_03
+  label: Check the tool tag at Rain Platform
+  requires: []
+  intentKind: inspect
+  stake: a declined invitation
+- id: quiet_brief_choice_03_04
+  placeId: quiet_brief_place_03
+  label: Offer a hand at Rain Platform
+  requires: []
+  intentKind: interact
+  stake: a public note
+- id: quiet_brief_choice_03_05
+  placeId: quiet_brief_place_03
+  label: Take the safer route at Rain Platform
+  requires:
+  - quiet_brief_item_05
+  intentKind: travel
+  stake: a short detour
+- id: quiet_brief_choice_03_06
+  placeId: quiet_brief_place_03
+  label: Open the local record at Rain Platform
+  requires:
+  - quiet_brief_item_06
+  intentKind: interact
+  stake: one turn
+- id: quiet_brief_choice_03_07
+  placeId: quiet_brief_place_03
+  label: Rest at the bench at Rain Platform
+  requires:
+  - quiet_brief_item_07
+  intentKind: rest
+  stake: one supply
+- id: quiet_brief_choice_03_08
+  placeId: quiet_brief_place_03
+  label: Repair the marker at Rain Platform
+  requires:
+  - quiet_brief_item_08
+  intentKind: interact
+  stake: a declined invitation
+- id: quiet_brief_choice_03_09
+  placeId: quiet_brief_place_03
+  label: Prepare a shared item at Rain Platform
+  requires:
+  - quiet_brief_item_09
+  intentKind: craft
+  stake: a public note
+- id: quiet_brief_choice_03_10
+  placeId: quiet_brief_place_03
+  label: Leave a kind note at Rain Platform
+  requires:
+  - quiet_brief_item_10
+  intentKind: talk
+  stake: a short detour
+- id: quiet_brief_choice_04_01
+  placeId: quiet_brief_place_04
+  label: Read the notice at Signal Room
+  requires: []
+  intentKind: talk
+  stake: one turn
+- id: quiet_brief_choice_04_02
+  placeId: quiet_brief_place_04
+  label: Ask for an introduction at Signal Room
+  requires: []
+  intentKind: talk
+  stake: one supply
+- id: quiet_brief_choice_04_03
+  placeId: quiet_brief_place_04
+  label: Check the tool tag at Signal Room
+  requires: []
+  intentKind: inspect
+  stake: a declined invitation
+- id: quiet_brief_choice_04_04
+  placeId: quiet_brief_place_04
+  label: Offer a hand at Signal Room
+  requires: []
+  intentKind: interact
+  stake: a public note
+- id: quiet_brief_choice_04_05
+  placeId: quiet_brief_place_04
+  label: Take the safer route at Signal Room
+  requires:
+  - quiet_brief_item_05
+  intentKind: travel
+  stake: a short detour
+- id: quiet_brief_choice_04_06
+  placeId: quiet_brief_place_04
+  label: Open the local record at Signal Room
+  requires:
+  - quiet_brief_item_06
+  intentKind: interact
+  stake: one turn
+- id: quiet_brief_choice_04_07
+  placeId: quiet_brief_place_04
+  label: Rest at the bench at Signal Room
+  requires:
+  - quiet_brief_item_07
+  intentKind: rest
+  stake: one supply
+- id: quiet_brief_choice_04_08
+  placeId: quiet_brief_place_04
+  label: Repair the marker at Signal Room
+  requires:
+  - quiet_brief_item_08
+  intentKind: interact
+  stake: a declined invitation
+- id: quiet_brief_choice_04_09
+  placeId: quiet_brief_place_04
+  label: Prepare a shared item at Signal Room
+  requires:
+  - quiet_brief_item_09
+  intentKind: craft
+  stake: a public note
+- id: quiet_brief_choice_04_10
+  placeId: quiet_brief_place_04
+  label: Leave a kind note at Signal Room
+  requires:
+  - quiet_brief_item_10
+  intentKind: talk
+  stake: a short detour
+- id: quiet_brief_choice_05_01
+  placeId: quiet_brief_place_05
+  label: Read the notice at Crate Garden
+  requires: []
+  intentKind: talk
+  stake: one turn
+- id: quiet_brief_choice_05_02
+  placeId: quiet_brief_place_05
+  label: Ask for an introduction at Crate Garden
+  requires: []
+  intentKind: talk
+  stake: one supply
+- id: quiet_brief_choice_05_03
+  placeId: quiet_brief_place_05
+  label: Check the tool tag at Crate Garden
+  requires: []
+  intentKind: inspect
+  stake: a declined invitation
+- id: quiet_brief_choice_05_04
+  placeId: quiet_brief_place_05
+  label: Offer a hand at Crate Garden
+  requires: []
+  intentKind: interact
+  stake: a public note
+- id: quiet_brief_choice_05_05
+  placeId: quiet_brief_place_05
+  label: Take the safer route at Crate Garden
+  requires:
+  - quiet_brief_item_05
+  intentKind: travel
+  stake: a short detour
+- id: quiet_brief_choice_05_06
+  placeId: quiet_brief_place_05
+  label: Open the local record at Crate Garden
+  requires:
+  - quiet_brief_item_06
+  intentKind: interact
+  stake: one turn
+- id: quiet_brief_choice_05_07
+  placeId: quiet_brief_place_05
+  label: Rest at the bench at Crate Garden
+  requires:
+  - quiet_brief_item_07
+  intentKind: rest
+  stake: one supply
+- id: quiet_brief_choice_05_08
+  placeId: quiet_brief_place_05
+  label: Repair the marker at Crate Garden
+  requires:
+  - quiet_brief_item_08
+  intentKind: interact
+  stake: a declined invitation
+- id: quiet_brief_choice_05_09
+  placeId: quiet_brief_place_05
+  label: Prepare a shared item at Crate Garden
+  requires:
+  - quiet_brief_item_09
+  intentKind: craft
+  stake: a public note
+- id: quiet_brief_choice_05_10
+  placeId: quiet_brief_place_05
+  label: Leave a kind note at Crate Garden
+  requires:
+  - quiet_brief_item_10
+  intentKind: talk
+  stake: a short detour
+- id: quiet_brief_choice_06_01
+  placeId: quiet_brief_place_06
+  label: Read the notice at Tollhouse Roof
+  requires: []
+  intentKind: talk
+  stake: one turn
+- id: quiet_brief_choice_06_02
+  placeId: quiet_brief_place_06
+  label: Ask for an introduction at Tollhouse Roof
+  requires: []
+  intentKind: talk
+  stake: one supply
+- id: quiet_brief_choice_06_03
+  placeId: quiet_brief_place_06
+  label: Check the tool tag at Tollhouse Roof
+  requires: []
+  intentKind: inspect
+  stake: a declined invitation
+- id: quiet_brief_choice_06_04
+  placeId: quiet_brief_place_06
+  label: Offer a hand at Tollhouse Roof
+  requires: []
+  intentKind: interact
+  stake: a public note
+- id: quiet_brief_choice_06_05
+  placeId: quiet_brief_place_06
+  label: Take the safer route at Tollhouse Roof
+  requires:
+  - quiet_brief_item_05
+  intentKind: travel
+  stake: a short detour
+- id: quiet_brief_choice_06_06
+  placeId: quiet_brief_place_06
+  label: Open the local record at Tollhouse Roof
+  requires:
+  - quiet_brief_item_06
+  intentKind: interact
+  stake: one turn
+- id: quiet_brief_choice_06_07
+  placeId: quiet_brief_place_06
+  label: Rest at the bench at Tollhouse Roof
+  requires:
+  - quiet_brief_item_07
+  intentKind: rest
+  stake: one supply
+- id: quiet_brief_choice_06_08
+  placeId: quiet_brief_place_06
+  label: Repair the marker at Tollhouse Roof
+  requires:
+  - quiet_brief_item_08
+  intentKind: interact
+  stake: a declined invitation
+- id: quiet_brief_choice_06_09
+  placeId: quiet_brief_place_06
+  label: Prepare a shared item at Tollhouse Roof
+  requires:
+  - quiet_brief_item_09
+  intentKind: craft
+  stake: a public note
+- id: quiet_brief_choice_06_10
+  placeId: quiet_brief_place_06
+  label: Leave a kind note at Tollhouse Roof
+  requires:
+  - quiet_brief_item_10
+  intentKind: talk
+  stake: a short detour
+- id: quiet_brief_choice_07_01
+  placeId: quiet_brief_place_07
+  label: Read the notice at Archive Lift
+  requires: []
+  intentKind: talk
+  stake: one turn
+- id: quiet_brief_choice_07_02
+  placeId: quiet_brief_place_07
+  label: Ask for an introduction at Archive Lift
+  requires: []
+  intentKind: talk
+  stake: one supply
+- id: quiet_brief_choice_07_03
+  placeId: quiet_brief_place_07
+  label: Check the tool tag at Archive Lift
+  requires: []
+  intentKind: inspect
+  stake: a declined invitation
+- id: quiet_brief_choice_07_04
+  placeId: quiet_brief_place_07
+  label: Offer a hand at Archive Lift
+  requires: []
+  intentKind: interact
+  stake: a public note
+- id: quiet_brief_choice_07_05
+  placeId: quiet_brief_place_07
+  label: Take the safer route at Archive Lift
+  requires:
+  - quiet_brief_item_05
+  intentKind: travel
+  stake: a short detour
+- id: quiet_brief_choice_07_06
+  placeId: quiet_brief_place_07
+  label: Open the local record at Archive Lift
+  requires:
+  - quiet_brief_item_06
+  intentKind: interact
+  stake: one turn
+- id: quiet_brief_choice_07_07
+  placeId: quiet_brief_place_07
+  label: Rest at the bench at Archive Lift
+  requires:
+  - quiet_brief_item_07
+  intentKind: rest
+  stake: one supply
+- id: quiet_brief_choice_07_08
+  placeId: quiet_brief_place_07
+  label: Repair the marker at Archive Lift
+  requires:
+  - quiet_brief_item_08
+  intentKind: interact
+  stake: a declined invitation
+- id: quiet_brief_choice_07_09
+  placeId: quiet_brief_place_07
+  label: Prepare a shared item at Archive Lift
+  requires:
+  - quiet_brief_item_09
+  intentKind: craft
+  stake: a public note
+- id: quiet_brief_choice_07_10
+  placeId: quiet_brief_place_07
+  label: Leave a kind note at Archive Lift
+  requires:
+  - quiet_brief_item_10
+  intentKind: talk
+  stake: a short detour
+- id: quiet_brief_choice_08_01
+  placeId: quiet_brief_place_08
+  label: Read the notice at Blanket Café
+  requires: []
+  intentKind: talk
+  stake: one turn
+- id: quiet_brief_choice_08_02
+  placeId: quiet_brief_place_08
+  label: Ask for an introduction at Blanket Café
+  requires: []
+  intentKind: talk
+  stake: one supply
+- id: quiet_brief_choice_08_03
+  placeId: quiet_brief_place_08
+  label: Check the tool tag at Blanket Café
+  requires: []
+  intentKind: inspect
+  stake: a declined invitation
+- id: quiet_brief_choice_08_04
+  placeId: quiet_brief_place_08
+  label: Offer a hand at Blanket Café
+  requires: []
+  intentKind: interact
+  stake: a public note
+- id: quiet_brief_choice_08_05
+  placeId: quiet_brief_place_08
+  label: Take the safer route at Blanket Café
+  requires:
+  - quiet_brief_item_05
+  intentKind: travel
+  stake: a short detour
+- id: quiet_brief_choice_08_06
+  placeId: quiet_brief_place_08
+  label: Open the local record at Blanket Café
+  requires:
+  - quiet_brief_item_06
+  intentKind: interact
+  stake: one turn
+- id: quiet_brief_choice_08_07
+  placeId: quiet_brief_place_08
+  label: Rest at the bench at Blanket Café
+  requires:
+  - quiet_brief_item_07
+  intentKind: rest
+  stake: one supply
+- id: quiet_brief_choice_08_08
+  placeId: quiet_brief_place_08
+  label: Repair the marker at Blanket Café
+  requires:
+  - quiet_brief_item_08
+  intentKind: interact
+  stake: a declined invitation
+- id: quiet_brief_choice_08_09
+  placeId: quiet_brief_place_08
+  label: Prepare a shared item at Blanket Café
+  requires:
+  - quiet_brief_item_09
+  intentKind: craft
+  stake: a public note
+- id: quiet_brief_choice_08_10
+  placeId: quiet_brief_place_08
+  label: Leave a kind note at Blanket Café
+  requires:
+  - quiet_brief_item_10
+  intentKind: talk
+  stake: a short detour
+interactables:
+- id: quiet_brief_interact_01
+  verbId: rest
+  publicName: Civic Annex bench
+  placeId: quiet_brief_place_01
+  displayVerb: Rest here
+  stateKey: quiet_brief_rest_01
+- id: quiet_brief_interact_02
+  verbId: repair
+  publicName: Paper Hotel cabinet
+  placeId: quiet_brief_place_02
+  displayVerb: Repair here
+  stateKey: quiet_brief_repair_02
+- id: quiet_brief_interact_03
+  verbId: tend
+  publicName: Rain Platform rack
+  placeId: quiet_brief_place_03
+  displayVerb: Tend here
+  stateKey: quiet_brief_tend_03
+- id: quiet_brief_interact_04
+  verbId: craft
+  publicName: Signal Room kettle
+  placeId: quiet_brief_place_04
+  displayVerb: Craft here
+  stateKey: quiet_brief_craft_04
+- id: quiet_brief_interact_05
+  verbId: cook
+  publicName: Crate Garden ledger
+  placeId: quiet_brief_place_05
+  displayVerb: Cook here
+  stateKey: quiet_brief_cook_05
+- id: quiet_brief_interact_06
+  verbId: bind_inn
+  publicName: Tollhouse Roof rail
+  placeId: quiet_brief_place_06
+  displayVerb: Bind Inn here
+  stateKey: quiet_brief_bind_inn_06
+- id: quiet_brief_interact_07
+  verbId: inspect
+  publicName: Archive Lift bell
+  placeId: quiet_brief_place_07
+  displayVerb: Inspect here
+  stateKey: quiet_brief_inspect_07
+- id: quiet_brief_interact_08
+  verbId: open
+  publicName: Blanket Café board
+  placeId: quiet_brief_place_08
+  displayVerb: Open here
+  stateKey: quiet_brief_open_08
+- id: quiet_brief_interact_09
+  verbId: carry
+  publicName: Civic Annex table
+  placeId: quiet_brief_place_01
+  displayVerb: Carry here
+  stateKey: quiet_brief_carry_09
+- id: quiet_brief_interact_10
+  verbId: clean
+  publicName: Paper Hotel lamp
+  placeId: quiet_brief_place_02
+  displayVerb: Clean here
+  stateKey: quiet_brief_clean_10
+- id: quiet_brief_interact_11
+  verbId: signal
+  publicName: Rain Platform gate
+  placeId: quiet_brief_place_03
+  displayVerb: Signal here
+  stateKey: quiet_brief_signal_11
+- id: quiet_brief_interact_12
+  verbId: record
+  publicName: Signal Room shelf
+  placeId: quiet_brief_place_04
+  displayVerb: Record here
+  stateKey: quiet_brief_record_12
+interiors:
+- id: quiet_brief_interior_01
+  publicName: Quiet Brief Home Interior
+  entrancePlaceId: quiet_brief_place_08
+  rooms:
+  - id: quiet_brief_home_room_01
+    publicName: Quiet Brief Entry
+    mapScale: interior
+    exits:
+    - quiet_brief_home_room_02
+    props:
+    - quiet_brief_home_prop_01
+    - quiet_brief_home_prop_08
+  - id: quiet_brief_home_room_02
+    publicName: Quiet Brief Main Room
+    mapScale: interior
+    exits:
+    - quiet_brief_home_room_01
+    - quiet_brief_home_room_03
+    props:
+    - quiet_brief_home_prop_02
+    - quiet_brief_home_prop_09
+  - id: quiet_brief_home_room_03
+    publicName: Quiet Brief Work Nook
+    mapScale: interior
+    exits:
+    - quiet_brief_home_room_02
+    - quiet_brief_home_room_04
+    props:
+    - quiet_brief_home_prop_03
+    - quiet_brief_home_prop_10
+  - id: quiet_brief_home_room_04
+    publicName: Quiet Brief Window Room
+    mapScale: interior
+    exits:
+    - quiet_brief_home_room_03
+    - quiet_brief_home_room_05
+    props:
+    - quiet_brief_home_prop_04
+    - quiet_brief_home_prop_11
+  - id: quiet_brief_home_room_05
+    publicName: Quiet Brief Quiet Room
+    mapScale: interior
+    exits:
+    - quiet_brief_home_room_04
+    - quiet_brief_home_room_06
+    props:
+    - quiet_brief_home_prop_05
+    - quiet_brief_home_prop_12
+  - id: quiet_brief_home_room_06
+    publicName: Quiet Brief Storage
+    mapScale: interior
+    exits:
+    - quiet_brief_home_room_05
+    - quiet_brief_home_room_07
+    props:
+    - quiet_brief_home_prop_06
+    - quiet_brief_home_prop_13
+  - id: quiet_brief_home_room_07
+    publicName: Quiet Brief Back Step
+    mapScale: interior
+    exits:
+    - quiet_brief_home_room_06
+    props:
+    - quiet_brief_home_prop_07
+    - quiet_brief_home_prop_14
+talents:
+- id: quiet_brief_talent_01
+  publicName: Quiet Brief Local Ear
+  cost: 1
+  requires: []
+  effectFlags:
+  - quiet_brief_effect_01
+  payToUnlock: false
+- id: quiet_brief_talent_02
+  publicName: Quiet Brief Careful Hand
+  cost: 2
+  requires: []
+  effectFlags:
+  - quiet_brief_effect_02
+  payToUnlock: false
+- id: quiet_brief_talent_03
+  publicName: Quiet Brief Route Sense
+  cost: 3
+  requires: []
+  effectFlags:
+  - quiet_brief_effect_03
+  payToUnlock: false
+- id: quiet_brief_talent_04
+  publicName: Quiet Brief Shared Measure
+  cost: 4
+  requires: []
+  effectFlags:
+  - quiet_brief_effect_04
+  payToUnlock: false
+- id: quiet_brief_talent_05
+  publicName: Quiet Brief Quiet Craft
+  cost: 1
+  requires:
+  - quiet_brief_talent_04
+  effectFlags:
+  - quiet_brief_effect_05
+  payToUnlock: false
+- id: quiet_brief_talent_06
+  publicName: Quiet Brief Open Invitation
+  cost: 2
+  requires: []
+  effectFlags:
+  - quiet_brief_effect_06
+  payToUnlock: false
+- id: quiet_brief_talent_07
+  publicName: Quiet Brief Safe Return
+  cost: 3
+  requires: []
+  effectFlags:
+  - quiet_brief_effect_07
+  payToUnlock: false
+- id: quiet_brief_talent_08
+  publicName: Quiet Brief Field Note
+  cost: 4
+  requires: []
+  effectFlags:
+  - quiet_brief_effect_08
+  payToUnlock: false
+- id: quiet_brief_talent_09
+  publicName: Quiet Brief Steady Pace
+  cost: 1
+  requires:
+  - quiet_brief_talent_08
+  effectFlags:
+  - quiet_brief_effect_09
+  payToUnlock: false
+- id: quiet_brief_talent_10
+  publicName: Quiet Brief Clear Signal
+  cost: 2
+  requires: []
+  effectFlags:
+  - quiet_brief_effect_10
+  payToUnlock: false
+- id: quiet_brief_talent_11
+  publicName: Quiet Brief Warm Welcome
+  cost: 3
+  requires: []
+  effectFlags:
+  - quiet_brief_effect_11
+  payToUnlock: false
+- id: quiet_brief_talent_12
+  publicName: Quiet Brief Small Courage
+  cost: 4
+  requires: []
+  effectFlags:
+  - quiet_brief_effect_12
+  payToUnlock: false
+- id: quiet_brief_talent_13
+  publicName: Quiet Brief Repair Habit
+  cost: 1
+  requires:
+  - quiet_brief_talent_12
+  effectFlags:
+  - quiet_brief_effect_13
+  payToUnlock: false
+- id: quiet_brief_talent_14
+  publicName: Quiet Brief Trust Mark
+  cost: 2
+  requires: []
+  effectFlags:
+  - quiet_brief_effect_14
+  payToUnlock: false
+- id: quiet_brief_talent_15
+  publicName: Quiet Brief Second Look
+  cost: 3
+  requires: []
+  effectFlags:
+  - quiet_brief_effect_15
+  payToUnlock: false
+- id: quiet_brief_talent_16
+  publicName: Quiet Brief Closing Grace
+  cost: 4
+  requires: []
+  effectFlags:
+  - quiet_brief_effect_16
+  payToUnlock: false
+evalProbes:
+- id: quiet_brief_eval_01
+  given:
+    hp: 14
+    placeId: quiet_brief_place_01
+    turn: 1
+  action:
+    verbId: rest
+    targetId: quiet_brief_interact_01
+  expectedLedger:
+    turn: 2
+    lastAction: rest
+    placeId: quiet_brief_place_01
+  forbiddenProse:
+  - do not claim an uncommitted numeric reward
+  - do not alter damage, gold, ownership, or a score outside expectedLedger
+- id: quiet_brief_eval_02
+  given:
+    hp: 14
+    placeId: quiet_brief_place_02
+    turn: 2
+  action:
+    verbId: repair
+    targetId: quiet_brief_interact_02
+  expectedLedger:
+    turn: 3
+    lastAction: repair
+    placeId: quiet_brief_place_02
+  forbiddenProse:
+  - do not claim an uncommitted numeric reward
+  - do not alter damage, gold, ownership, or a score outside expectedLedger
+- id: quiet_brief_eval_03
+  given:
+    hp: 14
+    placeId: quiet_brief_place_03
+    turn: 3
+  action:
+    verbId: tend
+    targetId: quiet_brief_interact_03
+  expectedLedger:
+    turn: 4
+    lastAction: tend
+    placeId: quiet_brief_place_03
+  forbiddenProse:
+  - do not claim an uncommitted numeric reward
+  - do not alter damage, gold, ownership, or a score outside expectedLedger
+- id: quiet_brief_eval_04
+  given:
+    hp: 14
+    placeId: quiet_brief_place_04
+    turn: 4
+  action:
+    verbId: craft
+    targetId: quiet_brief_interact_04
+  expectedLedger:
+    turn: 5
+    lastAction: craft
+    placeId: quiet_brief_place_04
+  forbiddenProse:
+  - do not claim an uncommitted numeric reward
+  - do not alter damage, gold, ownership, or a score outside expectedLedger
+- id: quiet_brief_eval_05
+  given:
+    hp: 14
+    placeId: quiet_brief_place_05
+    turn: 5
+  action:
+    verbId: cook
+    targetId: quiet_brief_interact_05
+  expectedLedger:
+    turn: 6
+    lastAction: cook
+    placeId: quiet_brief_place_05
+  forbiddenProse:
+  - do not claim an uncommitted numeric reward
+  - do not alter damage, gold, ownership, or a score outside expectedLedger
+- id: quiet_brief_eval_06
+  given:
+    hp: 14
+    placeId: quiet_brief_place_06
+    turn: 6
+  action:
+    verbId: bind_inn
+    targetId: quiet_brief_interact_06
+  expectedLedger:
+    turn: 7
+    lastAction: bind_inn
+    placeId: quiet_brief_place_06
+  forbiddenProse:
+  - do not claim an uncommitted numeric reward
+  - do not alter damage, gold, ownership, or a score outside expectedLedger
+- id: quiet_brief_eval_07
+  given:
+    hp: 14
+    placeId: quiet_brief_place_07
+    turn: 7
+  action:
+    verbId: inspect
+    targetId: quiet_brief_interact_07
+  expectedLedger:
+    turn: 8
+    lastAction: inspect
+    placeId: quiet_brief_place_07
+  forbiddenProse:
+  - do not claim an uncommitted numeric reward
+  - do not alter damage, gold, ownership, or a score outside expectedLedger
+- id: quiet_brief_eval_08
+  given:
+    hp: 14
+    placeId: quiet_brief_place_08
+    turn: 8
+  action:
+    verbId: open
+    targetId: quiet_brief_interact_08
+  expectedLedger:
+    turn: 9
+    lastAction: open
+    placeId: quiet_brief_place_08
+  forbiddenProse:
+  - do not claim an uncommitted numeric reward
+  - do not alter damage, gold, ownership, or a score outside expectedLedger
+- id: quiet_brief_eval_09
+  given:
+    hp: 14
+    placeId: quiet_brief_place_01
+    turn: 9
+  action:
+    verbId: carry
+    targetId: quiet_brief_interact_09
+  expectedLedger:
+    turn: 10
+    lastAction: carry
+    placeId: quiet_brief_place_01
+  forbiddenProse:
+  - do not claim an uncommitted numeric reward
+  - do not alter damage, gold, ownership, or a score outside expectedLedger
+- id: quiet_brief_eval_10
+  given:
+    hp: 14
+    placeId: quiet_brief_place_02
+    turn: 10
+  action:
+    verbId: clean
+    targetId: quiet_brief_interact_10
+  expectedLedger:
+    turn: 11
+    lastAction: clean
+    placeId: quiet_brief_place_02
+  forbiddenProse:
+  - do not claim an uncommitted numeric reward
+  - do not alter damage, gold, ownership, or a score outside expectedLedger
+- id: quiet_brief_eval_11
+  given:
+    hp: 14
+    placeId: quiet_brief_place_03
+    turn: 11
+  action:
+    verbId: signal
+    targetId: quiet_brief_interact_11
+  expectedLedger:
+    turn: 12
+    lastAction: signal
+    placeId: quiet_brief_place_03
+  forbiddenProse:
+  - do not claim an uncommitted numeric reward
+  - do not alter damage, gold, ownership, or a score outside expectedLedger
+- id: quiet_brief_eval_12
+  given:
+    hp: 14
+    placeId: quiet_brief_place_04
+    turn: 12
+  action:
+    verbId: record
+    targetId: quiet_brief_interact_12
+  expectedLedger:
+    turn: 13
+    lastAction: record
+    placeId: quiet_brief_place_04
+  forbiddenProse:
+  - do not claim an uncommitted numeric reward
+  - do not alter damage, gold, ownership, or a score outside expectedLedger
+- id: quiet_brief_eval_13
+  given:
+    hp: 14
+    placeId: quiet_brief_place_05
+    turn: 13
+  action:
+    verbId: rest
+    targetId: quiet_brief_interact_01
+  expectedLedger:
+    turn: 14
+    lastAction: rest
+    placeId: quiet_brief_place_05
+  forbiddenProse:
+  - do not claim an uncommitted numeric reward
+  - do not alter damage, gold, ownership, or a score outside expectedLedger
+- id: quiet_brief_eval_14
+  given:
+    hp: 14
+    placeId: quiet_brief_place_06
+    turn: 14
+  action:
+    verbId: repair
+    targetId: quiet_brief_interact_02
+  expectedLedger:
+    turn: 15
+    lastAction: repair
+    placeId: quiet_brief_place_06
+  forbiddenProse:
+  - do not claim an uncommitted numeric reward
+  - do not alter damage, gold, ownership, or a score outside expectedLedger
+- id: quiet_brief_eval_15
+  given:
+    hp: 14
+    placeId: quiet_brief_place_07
+    turn: 15
+  action:
+    verbId: tend
+    targetId: quiet_brief_interact_03
+  expectedLedger:
+    turn: 16
+    lastAction: tend
+    placeId: quiet_brief_place_07
+  forbiddenProse:
+  - do not claim an uncommitted numeric reward
+  - do not alter damage, gold, ownership, or a score outside expectedLedger
+wallets:
+  goldName: Brief Notes
+  cosmeticTokenName: Ink Ciphers
+  noConversion: true
+  prohibited:
+  - outcomes
+  - lockout skips
+  - catch rate
+  - raid clears
+  - random power packs
+  - gacha
+  - loot boxes
+dailyCaps:
+  contractsPerDay: 3
+  goldFromRepeatables: 90
+  weeklyBossLockout: per-character per-boss
+divergenceRecords:
+- id: quiet_brief_walkaway_01
+  choice: walk away from a local obligation
+  recordKey: quiet_brief_divergence_01
+  effect: Alternate dialogue and a non-punitive follow-up route.
+- id: quiet_brief_walkaway_02
+  choice: walk away from a local obligation
+  recordKey: quiet_brief_divergence_02
+  effect: Alternate dialogue and a non-punitive follow-up route.
+- id: quiet_brief_walkaway_03
+  choice: walk away from a local obligation
+  recordKey: quiet_brief_divergence_03
+  effect: Alternate dialogue and a non-punitive follow-up route.

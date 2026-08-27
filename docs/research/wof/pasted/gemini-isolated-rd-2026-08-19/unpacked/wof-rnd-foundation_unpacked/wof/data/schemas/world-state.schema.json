@@ -1,0 +1,184 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "wof://schemas/world-state/0.1.0",
+  "title": "World of Fantasy World State",
+  "description": "Portable, WOF-local snapshot contract for sandbox research fixtures and save experiments.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion", "worldId", "tidelock", "regions", "factions", "factionRelations",
+    "characters", "oaths", "routes", "threads", "ledger", "chronicle"
+  ],
+  "properties": {
+    "schemaVersion": { "const": "0.1.0" },
+    "worldId": { "type": "string", "minLength": 3 },
+    "tidelock": { "$ref": "#/$defs/tidelock" },
+    "regions": { "type": "object", "additionalProperties": { "$ref": "#/$defs/region" } },
+    "factions": { "type": "object", "additionalProperties": { "$ref": "#/$defs/faction" } },
+    "factionRelations": { "type": "object", "additionalProperties": { "$ref": "#/$defs/factionRelation" } },
+    "characters": { "type": "object", "additionalProperties": { "$ref": "#/$defs/character" } },
+    "oaths": { "type": "object", "additionalProperties": { "$ref": "#/$defs/oath" } },
+    "routes": { "type": "object", "additionalProperties": { "$ref": "#/$defs/route" } },
+    "threads": { "type": "object", "additionalProperties": { "$ref": "#/$defs/thread" } },
+    "ledger": { "$ref": "#/$defs/ledger" },
+    "chronicle": { "type": "array", "items": { "$ref": "#/$defs/chronicleEntry" } }
+  },
+  "$defs": {
+    "resonance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["ember", "brine", "gale", "root", "veil"],
+      "properties": {
+        "ember": { "type": "integer", "minimum": 0, "maximum": 5 },
+        "brine": { "type": "integer", "minimum": 0, "maximum": 5 },
+        "gale": { "type": "integer", "minimum": 0, "maximum": 5 },
+        "root": { "type": "integer", "minimum": 0, "maximum": 5 },
+        "veil": { "type": "integer", "minimum": 0, "maximum": 5 }
+      }
+    },
+    "tidelock": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["turn", "season", "phase", "intensity"],
+      "properties": {
+        "turn": { "type": "integer", "minimum": 0 },
+        "season": { "enum": ["ashen-spring", "glass-summer", "brine-autumn", "starless-winter"] },
+        "phase": { "enum": ["slack", "rising", "crest", "ebb"] },
+        "intensity": { "type": "integer", "minimum": 1, "maximum": 5 }
+      }
+    },
+    "region": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "name", "tier", "condition", "landmarks", "tensions", "unlocksFrom", "resonance"],
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "tier": { "type": "integer", "minimum": 1, "maximum": 5 },
+        "condition": { "enum": ["settled", "strained", "unbound", "submerged", "quarantined"] },
+        "landmarks": { "type": "array", "items": { "type": "string" } },
+        "tensions": { "type": "array", "items": { "type": "string" } },
+        "unlocksFrom": { "type": "array", "items": { "type": "string" } },
+        "resonance": { "$ref": "#/$defs/resonance" }
+      }
+    },
+    "faction": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "name", "credo", "method", "publicNeed", "concealedCost", "homeRegionId"],
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "credo": { "type": "string" },
+        "method": { "type": "string" },
+        "publicNeed": { "type": "string" },
+        "concealedCost": { "type": "string" },
+        "homeRegionId": { "type": "string" }
+      }
+    },
+    "factionRelation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["factionId", "disposition", "esteem", "debt", "lastChangedAt"],
+      "properties": {
+        "factionId": { "type": "string" },
+        "disposition": { "enum": ["allied", "warm", "wary", "hostile", "at-war"] },
+        "esteem": { "type": "integer", "minimum": -10, "maximum": 10 },
+        "debt": { "type": "integer", "minimum": -10, "maximum": 10 },
+        "lastChangedAt": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "memory": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "eventId", "label", "scar", "invokedBy"],
+      "properties": {
+        "id": { "type": "string" },
+        "eventId": { "type": "string" },
+        "label": { "type": "string" },
+        "scar": { "type": "string" },
+        "invokedBy": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "character": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "name", "archetype", "originRegionId", "wounds", "focus", "resonance", "memories", "oathIds"],
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "archetype": { "type": "string" },
+        "originRegionId": { "type": "string" },
+        "wounds": { "type": "integer", "minimum": 0 },
+        "focus": { "type": "integer", "minimum": 0 },
+        "resonance": { "$ref": "#/$defs/resonance" },
+        "memories": { "type": "array", "items": { "$ref": "#/$defs/memory" } },
+        "oathIds": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "oath": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "bearerId", "wording", "beneficiary", "dueByTurn", "state"],
+      "properties": {
+        "id": { "type": "string" },
+        "bearerId": { "type": "string" },
+        "wording": { "type": "string" },
+        "beneficiary": { "type": "string" },
+        "dueByTurn": { "type": ["integer", "null"], "minimum": 0 },
+        "state": { "enum": ["open", "kept", "forfeit"] }
+      }
+    },
+    "route": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "fromRegionId", "toRegionId", "requiredPhase", "risk", "state"],
+      "properties": {
+        "id": { "type": "string" },
+        "fromRegionId": { "type": "string" },
+        "toRegionId": { "type": "string" },
+        "requiredPhase": { "type": ["string", "null"], "enum": ["slack", "rising", "crest", "ebb", null] },
+        "risk": { "type": "integer", "minimum": 1, "maximum": 5 },
+        "state": { "enum": ["rumoured", "open", "sealed"] }
+      }
+    },
+    "thread": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "title", "regionId", "pressure", "status", "stage", "maxStage", "stakes"],
+      "properties": {
+        "id": { "type": "string" },
+        "title": { "type": "string" },
+        "regionId": { "type": "string" },
+        "pressure": { "type": "integer", "minimum": 0, "maximum": 10 },
+        "status": { "enum": ["dormant", "active", "resolved", "fractured"] },
+        "stage": { "type": "integer", "minimum": 0 },
+        "maxStage": { "type": "integer", "minimum": 1 },
+        "stakes": { "type": "string" }
+      }
+    },
+    "ledger": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["supplies", "discoveries", "unresolvedEventIds"],
+      "properties": {
+        "supplies": { "type": "integer", "minimum": 0 },
+        "discoveries": { "type": "array", "items": { "type": "string" } },
+        "unresolvedEventIds": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "chronicleEntry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "turn", "kind", "summary", "causedBy", "payload"],
+      "properties": {
+        "id": { "type": "string" },
+        "turn": { "type": "integer", "minimum": 0 },
+        "kind": { "type": "string" },
+        "summary": { "type": "string" },
+        "causedBy": { "type": "string" },
+        "payload": { "type": "object" }
+      }
+    }
+  }
+}

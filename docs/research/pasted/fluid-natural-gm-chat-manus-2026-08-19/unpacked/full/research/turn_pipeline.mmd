@@ -1,0 +1,25 @@
+sequenceDiagram
+  autonumber
+  actor Player
+  participant Client
+  participant IntentContract
+  participant Adjudicator
+  participant Ledger as StateTx Ledger
+  participant Renderer
+  Player->>Client: message
+  Client->>IntentContract: clause parse / correction / safety
+  Note over IntentContract: Coverage matrix and safety gate
+  IntentContract->>Adjudicator: obligations + coverage requirements
+  Adjudicator->>Ledger: authority-ranked reads
+  Ledger-->>Adjudicator: accepted facts, permits, receipts
+  Note over Adjudicator: Resolve and construct semantic plan
+  alt Needs clarification, safety boundary, or block
+    Adjudicator-->>Client: Repair plan, no commit
+    Client-->>Player: concise local repair
+  else Commit-ready
+    Adjudicator->>Ledger: accept StateTx with provenance
+    Ledger-->>Adjudicator: committed IDs
+    Adjudicator->>Renderer: locked semantic plan
+    Renderer-->>Client: sentence-safe prose stream
+    Client-->>Player: prose then receipt / Why?
+  end

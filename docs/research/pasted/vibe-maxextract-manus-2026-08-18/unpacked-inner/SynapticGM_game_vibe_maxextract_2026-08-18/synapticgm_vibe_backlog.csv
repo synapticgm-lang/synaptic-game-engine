@@ -1,0 +1,19 @@
+priority,item,extends,done_when_vibe_test,effort,authority_risk
+P0,Authoritative correction transaction,"StateTx; pinned canon; SceneManifest","One-turn correction visibly supersedes downstream lower-authority claims without restart",M,critical
+P0,Semantic style firewall,"GM voice profiles; renderer","All profiles preserve facts math permits and state deltas for identical resolved fixtures",M,critical
+P0,Material state receipt,"StateTx; OutcomeToken","Players name what changed and inspect why after meaningful resolution",S,high
+P0,OpenAsk Q&A,"SceneManifest; evidence","Why/who knows/what changed answers are direct source-labelled and non-mutating",M,high
+P0,Continuity regression fixtures,"beatFingerprint; StateTx","Canonical cases fail closed on ledger conflict and derived-context conflict",M,critical
+P1,Repair state machine,"IntentContract","Ambiguity contradiction and unsupported inputs repair locally without repetitive apologies",M,high
+P1,First-ten-turn HookArc decks,"HookArc; CampaignContract","Novices reach action consequence and meaningful choice by turn 10",M,medium
+P1,Check and fair-loss card,"OutcomeToken; StateTx","Players can explain sampled losses without hidden logs",S-M,high
+P1,Personality picker,"GM profiles; themes","User choice changes voice/chrome but never semantic fixture result",M,critical
+P1,Quest why-blocked enrich,"Quest journal","Journal states blocker and known leads without spoilers or invented certainty",S,medium
+P1,Callback reuse budget,"beatFingerprint; Memorable Moments","Callbacks yield payoff and no near-duplicate repeats",M,high
+P2,Witness knowledge Q&A,"Evidence; places; relationships","Confirmed witness suspicion and unknown are distinguished accurately",M,high
+P2,Inventory provenance,"StateTx; inventory","Players trace meaningful items and understand use/cost",S-M,medium
+P2,Map knowledge layers,"places; evidence","Confirmed rumor and unknown render as distinct accessible layers",M,medium
+P2,Event-driven memorable splash,"Memorable Moments","Real threshold only; skippable; returns player to orientation and action",M-L,medium
+P2,Theme accessibility audit,"theme kits; UI system","State cues work in grayscale large text mute and reduced motion",M,high
+P3,Selective TTS pilot,"TTS cosmetics","Optional speech improves access without making facts audio-only",M-L,medium
+P3,Ambient pause line,"shops; scene flavor","One skippable atmosphere line; no implicit factual or quest mutation",S,low

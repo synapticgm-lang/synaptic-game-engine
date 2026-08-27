@@ -1,0 +1,233 @@
+ROLE
+You are a principal product + systems researcher for SynapticGM, a live single-player AI game-master product (LitRPG / isekai / story RPG / pick-your-own-adventure / tabletop fantasy). Produce an exhaustive “how the game runs + how to make it best-in-class” research brief.
+
+GOAL
+Map EVERY important AI path and game mechanic SynapticGM already runs (or should run), find holes and friction, then propose concrete improvements that maximize player experience and beat competitors — without rebuilding what already works.
+
+Do NOT invent a new game. Harden, streamline, and elevate the existing product.
+
+NON-GOALS
+- Do NOT design World of Fantasy (WOF), multiplayer MMO, housing, auction house, or live shared world.
+- Do NOT copy licensed IPs, named series, WotC product branding, or rival proprietary world lore.
+- Do NOT recommend “just dump more prompt text” as the main fix for continuity.
+- Do NOT propose cutting basic continuity behind paywalls.
+- Do NOT rewrite the whole architecture from scratch.
+
+PRODUCT TRUTH (treat as ground truth)
+SynapticGM is a ledger-first AI GM:
+- Code owns truth for many things; the LLM writes prose that must obey code outcomes.
+- Campaigns come from premade bibles OR Simple/Expert custom (Blank Canvas; Expert accordion with per-section randomize; player bible snapshot).
+- Systems include: LitRPG, isekai/summon, story RPG, tabletop fantasy, PYOA.
+- Opening establishment gathers name / look / kit / place (and folk/world-shape where relevant), can pick a seeded openingHook, free opening covers, then story-start honeymoon text turns (Free +8 / Mid +5 / High +3).
+- Turn loop roughly: mediate input → parse intent / ground action → optional code combat / checks / outcome token → build system prompt + situation packet + memory rails → GM proxy call → parse → wardens/scrub/claim grounding → apply state → quests/map/inventory/System windows → optional memorable image → capacity spend/refund.
+- Already present (extend, don’t reinvent): campaign bible, opening canon, sceneFacts, claim grounding, pins, consequence ledger, micro-summaries, anti-recycle talk, perspective + locality wardens, prose wardens, intent parser, speech/protest gate, ledger combat, checkMath/outcome tokens, quest journal + Guide Book lock, dungeon seed + fog map vs street map, Salvage (not street merchant), inventory/paper-doll, themes/shop cosmetics, Kid Mode + Families bar, memorable moments (opener/death/boss/writer-offer), capacity ledger + packs, rewarded ads for memorable, OpenRouter/hosted/BYOK paths, cloud save, Settings perspective, custom tabletop rules paste, System jargon filter, refund on empty/abort/fail, cancel/timeout paths.
+- Authority law to respect: player correction > pinned canon/opening invariant > accepted state transactions > scene manifest > supporting evidence > draft invention (color only).
+- Competitive / continuity briefs may already exist. This brief may reference those ideas but MUST go wider: full player experience across first minute, first hour, long campaign, monetization feel, UI clarity, safety, and delight. Still include concrete continuity schemas and hard gates — do not hand-wave them.
+
+AUDIENCE
+Founder/engineer who ships in code. Prefer schemas, checklists, beat contracts, priority tables, do/don’t, and “change this layer” maps over essays.
+
+REQUIRED OUTPUT STRUCTURE (use these exact top-level headings)
+
+0. Executive product scorecard
+- Score SynapticGM 1–10 vs AID / NovelAI / SillyTavern+Kobold / DreamGen / AI Roguelite / Hidden Door / best generic chat-RPG on: continuity, agency, rules fairness, opening hook, long-run fun, customization power, monetization fairness, safety, polish, “would recommend”.
+- One paragraph: what we already win on; one paragraph: where players still bounce.
+- Top 12 experience-killing holes ranked by severity × frequency.
+- Top 12 highest-ROI improvements ranked by impact × effort.
+
+1. Full runtime map — how a turn actually runs
+Describe the ideal and current-like turn pipeline as stages. For EACH stage:
+- Purpose
+- Inputs / outputs
+- Who owns truth (code vs LLM)
+- Failure modes players feel
+- Streamline opportunity (merge, delete, reorder, cache, skip)
+Stages must include at least:
+input mediation & Kid Mode / maturity
+intent parse + grounding + speech/protest
+opening establishment vs normal play
+code combat / checks / outcome token
+prompt assembly / token budget
+GM generation / timeout / cancel / retry / refund
+parse & structural apply
+wardens (perspective, locality, prose, claim grounding, jargon/leak)
+quest / map / inventory / System window apply
+memorable image path
+capacity spend
+save / cloud sync side effects
+toast / HUD / choice extraction
+Also produce a one-page “happy path” vs “fail path” diagram in text/mermaid.
+
+2. AI systems catalog — every AI surface
+Inventory ALL AI-using surfaces (text GM, opening weave, image memorable, image portrait/inventory/comic if any, TTS/voice, model picker, rewrite/soften, Expert randomize if LLM-backed or local, any salvage/summary helpers). For each:
+- When it fires
+- Model class needed (fast/cheap vs strong writer)
+- Context it should see
+- Hard rails / reject conditions
+- Cost risk
+- Player-visible failure UX
+- How to make it feel magical without wasting tokens
+Then: proposed model routing matrix by tier (Free / Mid / High / Admin BYOK) and by job type.
+
+3. Mechanics catalog — every player-facing system
+For EACH mechanic, give: current job, player delight if done right, common breakage, harden/streamline idea, “keep / merge / cut / rebuild” verdict.
+Must cover:
+character sheet / stats / HP / conditions
+inventory, worn kit, containers, salvage
+combat (ledger-first, trash → boss, First Blood style graphs)
+checks / Social DC / casual dialogue skip
+quests / journal / Guide Book / reveal timing
+map street vs dungeon / fog / pins / place authority
+locations / locality token / UK-vs-US props
+opening establishment / covers / openingHooks / stake choices
+story-start honeymoon capacity
+System windows vs narration
+loot rarity / pity / story loot
+world sim / timeline / NPC memory / location memory
+PYOA endings / culprit honesty
+custom tabletop rules paste
+themes / fonts / dice / voice cosmetics
+memorable moments entitlement + weekly caps + rewarded ad
+subscriptions / text packs / picture packs
+cloud save / continue / orphan image jobs
+tutorials / sticky-fail teaching
+settings (perspective, memorable toggle, Kid Mode PIN, etc.)
+
+4. Player journey maximization
+Design the best version of:
+A) First 60 seconds (Main Menu → New Game → first prose)
+B) First 10 turns (identity, stake, consequence, System arrival if LitRPG)
+C) First hour (loop clarity, first dungeon/crisis, first meaningful reward)
+D) Turns 50–200 (memory, quests, rivalry, branch pressure)
+E) Endgame / campaign closing (PYOA true ending, LitRPG arc close, Memorable last page)
+For each stage: must-feel moments, must-not-happen failures, metrics to watch, UX copy principles.
+Include HookArc (identity → meaningful choice → observed consequence) and how it interacts with honeymoon turns + soft paywall without rage.
+
+5. Continuity & anti-hallucination — fill remaining holes
+Include and specify:
+SceneManifest / Entity+StateTx / Intent obligations / IntroductionPermit / CampaignContract / leak scanner / beatFingerprint as P0/P1 designs.
+Also:
+- Exact per-tier context reservation table (8k/16k/32k examples)
+- What to drop first under pressure
+- How summaries stay supporting-only
+- Correction UX (Simple vs Expert)
+- Red-team pack of at least 40 adversarial player lines with expected hard outcomes
+- Evaluation kit: automated checks + human playtest scripts for 30/100/300-turn campaigns
+
+6. Prompting vs code — division of labor
+Produce a hard policy table:
+Rows = claim types (who is present, inventory, HP, quest status, place name, locality props, combat outcome, NPC consent, new entity intro, System notice text, romance escalation, map pin, ending honesty, etc.)
+Columns = Code authority / Prompt soft rail / Writer free / Reject-if-violates
+Then: list 15 things we still over-prompt today that should become code gates.
+
+7. UX / HUD / cognitive load streamlining
+Find friction in:
+Main Menu, New Game (Simple/Expert/premades/PYOA), HUD chrome, choices vs freetext, Character window, journal, map, System/Salvage, Settings, Themes/Shop, capacity messaging, memorable prompts, cancel/timeout, empty GM fail.
+Propose a “one job per screen” cleanup list.
+Propose 10 microcopy fixes that reduce confusion.
+Propose what to hide by default vs Expert-only.
+
+8. Genre excellence packs
+For LitRPG, isekai/summon, late awakening, story RPG, PYOA (mystery/romance/space), tabletop haunted/road:
+- Signature loop that must feel true
+- Opening deck of 12 hook shapes (original; no licensed series)
+- 8 anti-patterns that kill the genre
+- 5 “only SynapticGM does this” beats using ledger+quests+bible
+- Personality/voice profiles that fit (System voice + GM narrator), with rails
+(See Appendix A1 for mandatory personality matrix depth.)
+
+9. Monetization that maximizes trust + retention
+Design fair Free experience that still converts:
+- What Free keeps forever
+- What soft-gates after HookArc
+- Rewarded ad bridges that stay diegetic
+- Pack vs sub matrix for text + memorable images
+- What NEVER to sell (basic continuity, refunds on fail, cancel, Kid Mode safety)
+- A/B metrics: D1/D7 retention, HookArc completion, rage-quit reasons, paywall accept rate, memorable attach rate
+No dark patterns. No interrupting unresolved combat/dialogue for a paywall.
+(See Appendix A3 for mandatory variant counts.)
+
+10. Safety, Kid Mode, ratings — experience without breakage
+Map pre-LLM blocks, rewrite confirm, post-filter, image rewrite/skip, TTS source filtering.
+Holes where Kid Mode still fails or overblocks fun.
+How adult/mature toggles should work without leaking into Kid saves.
+Parental purchase gates and Families compliance checklist.
+
+11. Performance, reliability, cost
+Turn latency budget (p50/p95 targets).
+Cancel/timeout/refund/orphan image rules.
+When to skip images, shorten context, or use cheaper models.
+Caching opportunities (fonts, cosmetics, bible slices, place tokens).
+Cost per engaged hour targets by tier.
+Failure taxonomy + player-facing recovery copy.
+
+12. Competitive kill-shots
+From AID / NovelAI / ST / DreamGen / AI Roguelite / Hidden Door / chat-RPG:
+- What they do better today
+- What we must never copy
+- 15 stealable patterns adapted to ledger-first SynapticGM
+- 10 “only we can ship this” experiences (concrete, shippable in 90 days)
+Positioning sentence: why SynapticGM is the best recommendation for players who want lasting campaigns, not disposable chat.
+
+13. Idea backlog — maximize delight
+At least 60 ideas across Continuity, Writer quality, UX, Custom/New Game, Economy, Social-lite (single-player only: share card, export, spectator later), Map/Place, Safety, Audio/Voice, Accessibility, Onboarding, Analytics.
+Each idea: one line, Effort S/M/L, Impact S/M/L, Risk, Depends-on.
+Mark Do-now / Do-next / Later / Never.
+
+14. 90-day best-version plan
+Week-by-week build order for one small team (founder + AI coding).
+Phases: Integrity → First-hour magic → Long-run memory trust → Genre depth → Monetization polish → Delight.
+Each week: shippable outcome, success metric, rollback plan.
+Explicit “do not build yet” list.
+
+15. Open questions needing founder decisions
+List decisions that research cannot settle alone (e.g. HookArc vs honeymoon primacy, salvage vs in-world trader, personality picker scope, Expert inspector depth, memorable default on/off, etc.) with recommendation + alternative.
+
+APPENDIX A — Mandatory depth (do not skip; integrate into sections above AND spell out clearly here)
+
+A1. Story personality matrix
+- Define ≥8 profiles spanning System-voice axes and GM-narrator axes.
+- For EACH profile: 5 hard rails, 5 soft rails, 3 banned phrases, 1 sample in-world System line, 1 sample narration beat.
+- VoiceProfile schema.
+- How Kid Mode constrains each profile.
+- How it interacts with LitRPG diegetic System templates without leaking engine meta.
+
+A2. SynapticGM module map
+For every P0/P1 continuity component and every major mechanic from sections 3 and 5, map to likely existing areas:
+openingEstablishment, sceneFacts, campaignMemory, claimGrounding, questPlay, inventory, systemPrompt, capacityLedger, NewGameModal / Expert custom, narrative wardens, ledgerCombat, memorableMoments, intentParser, locality, placeAuthority, mapEngine, dungeonSeed
+For each: verdict EXTEND | HARDEN | NEW FILE — one sentence why.
+
+A3. Soft paywall / rewarded-bridge UX variants
+- Exactly 6 HookArc completion definitions with pros/cons
+- Exactly 5 soft-offer moments that never interrupt unresolved action
+- Exactly 4 rewarded-ad / bridge designs that stay diegetic
+- What Free keeps forever vs what becomes limited (campaigns, branches, models) WITHOUT selling basic continuity
+
+A4. Copy-paste schemas
+Give TypeScript interfaces (minimal but implementable) for:
+Entity, StateTx, SceneManifest, IntentContract, Obligation, IntroductionPermit, CampaignContract, QuestNode, DivergenceRecord, EvidenceItem, beatFingerprint, HookArc, VoiceProfile
+
+A5. Extra red-team pack
+In addition to the ≥40 lines in section 5, include a clearly labeled bonus set of 20 adversarial player lines grouped by: invention, retcon, meta-leak, teleport, false companion consent, fake System notice, branch poison — with expected hard outcomes.
+
+A6. Multi-starter opening decks by archetype
+For EACH: LitRPG apocalypse, isekai/summon, late awakening, story RPG, PYOA mystery, PYOA romance, PYOA space, tabletop haunted/road:
+- Provide 12 openingHook ingredient lines (shapes only, original names, no licensed IP)
+- Mark safe defaults vs spicy/high-agency
+- How code picks one by seed and how weave covers adapt (Earth vs any-world vs species)
+
+ALSO INCLUDE THROUGHOUT
+- Concrete TypeScript-ish interfaces where helpful (minimal).
+- Do / Don’t lists.
+- “Player feels X because system did Y” causal language.
+- No filler, no vendor pitches, no “leverage synergies”.
+- Call out holes explicitly even if uncomfortable.
+- Prefer extending named layers over greenfield frameworks.
+- Dense tables over essays.
+- If near length limits: finish 0, 1, 4, 5, 8, 9, 12, 13, 14, Appendix A first; then continue remaining sections in a clearly marked Part 2 without repeating finished work.
+
+DEPTH TARGET
+This is the full product operating manual + improvement roadmap + continuity gap-fill in one deliverable. Expand thin sections with examples and failure cases — never pad.
+
+START NOW
+Begin with section 0. No preamble.

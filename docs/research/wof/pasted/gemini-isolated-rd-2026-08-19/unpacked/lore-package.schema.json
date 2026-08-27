@@ -1,0 +1,88 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "wof://schemas/lore-package/0.1.0",
+  "title": "World of Fantasy Lore Package",
+  "description": "WOF-local content contract for world canon, magic axioms, regions, factions, and progression paths.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["packageVersion", "world", "magicAxioms", "regions", "factions", "progressionPaths"],
+  "properties": {
+    "packageVersion": { "const": "0.1.0" },
+    "world": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["worldId", "title", "premise", "cosmology"],
+      "properties": {
+        "worldId": { "type": "string", "minLength": 3 },
+        "title": { "type": "string", "minLength": 3 },
+        "premise": { "type": "string", "minLength": 20 },
+        "cosmology": { "type": "string", "minLength": 20 }
+      }
+    },
+    "magicAxioms": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "statement", "cost", "observableSign", "prohibitedShortcut"],
+        "properties": {
+          "id": { "type": "string" },
+          "statement": { "type": "string" },
+          "cost": { "type": "string" },
+          "observableSign": { "type": "string" },
+          "prohibitedShortcut": { "type": "string" }
+        }
+      }
+    },
+    "regions": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "name", "tier", "resonanceSignature", "surfaceConflict", "unlockCondition", "lastingQuestion"],
+        "properties": {
+          "id": { "type": "string" },
+          "name": { "type": "string" },
+          "tier": { "type": "integer", "minimum": 1, "maximum": 5 },
+          "resonanceSignature": { "type": "array", "minItems": 1, "items": { "enum": ["ember", "brine", "gale", "root", "veil"] } },
+          "surfaceConflict": { "type": "string" },
+          "unlockCondition": { "type": "string" },
+          "lastingQuestion": { "type": "string" }
+        }
+      }
+    },
+    "factions": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "name", "credo", "publicNeed", "concealedCost", "typicalPressure"],
+        "properties": {
+          "id": { "type": "string" },
+          "name": { "type": "string" },
+          "credo": { "type": "string" },
+          "publicNeed": { "type": "string" },
+          "concealedCost": { "type": "string" },
+          "typicalPressure": { "type": "string" }
+        }
+      }
+    },
+    "progressionPaths": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["fromRegionId", "toRegionId", "gate", "fictionalRationale"],
+        "properties": {
+          "fromRegionId": { "type": "string" },
+          "toRegionId": { "type": "string" },
+          "gate": { "type": "string" },
+          "fictionalRationale": { "type": "string" }
+        }
+      }
+    }
+  }
+}

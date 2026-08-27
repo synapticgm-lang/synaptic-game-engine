@@ -20,6 +20,7 @@ import {
   type AiAgentMode,
   type FateAutoplayCliOpts,
 } from '../../src/game/fateAutoplay';
+import { runModesAgentsBatch } from './modesAgents300';
 
 /** Minimal localStorage for Node (Test Lab / capacity / settings never touch John's browser). */
 function installNodeShims(): void {
@@ -61,6 +62,8 @@ Options:
   --ai-tier free|mid|high
   --pick-mode fate|first-pad
   --ai-agent-mode MODE default|maxlevel|storyfollower|completionist (goal-oriented AI)
+  --modes-agents-300   4 modes × 3 AI agents × 300 turns → combined Gemini + telemetry
+  --resume-dir PATH    Resume modes-agents batch (skip completed cells)
   --night-storyforge   ~7h batch @ observed ~1.6s/turn: 3×500 AI spines + 3× matrix-40×100 (~13.5k turns)
   --matrix-40          John's 40 plan (10×4 modes; every premade once when ≤10)
   --matrix             Full Launch cartesian (mode × premade × narrator)
@@ -243,7 +246,9 @@ async function main(): Promise<void> {
     opts.outRoot,
     opts.nightStoryforge
       ? `night-storyforge-progress-${batchStarted.replace(/[:.]/g, '-')}.log`
-      : `matrix-progress-${batchStarted.replace(/[:.]/g, '-')}.log`
+      : opts.modesAgents300
+        ? `modes-agents-progress-${batchStarted.replace(/[:.]/g, '-')}.log`
+        : `matrix-progress-${batchStarted.replace(/[:.]/g, '-')}.log`
   );
   mkdirSync(opts.outRoot, { recursive: true });
 
@@ -258,7 +263,15 @@ async function main(): Promise<void> {
   };
 
   try {
-    if (opts.nightStoryforge) {
+    if (opts.modesAgents300) {
+      await runModesAgentsBatch({
+        turns: opts.turns > 0 && opts.turns !== 20 ? opts.turns : 300,
+        seed: opts.seed || 100,
+        outRoot: opts.outRoot,
+        dryRun: opts.dryRun,
+        resumeDir: opts.resumeDir,
+      });
+    } else if (opts.nightStoryforge) {
       await runNightStoryforge(opts, log, batchStarted, progressLog);
     } else if (opts.matrix40 || opts.matrix) {
       const { combos: balanced, deferred, notes } = buildBalancedMatrix40(opts.seed);

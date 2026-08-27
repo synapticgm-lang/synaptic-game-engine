@@ -1,0 +1,148 @@
+{
+  "results": [
+    {
+      "input": "object_in_hand",
+      "output": {
+        "claim_type": "object_in_hand",
+        "fail_examples": "You draw the ancient iron sword from your scabbard. || She holds the glowing crystal sphere tightly. || You are carrying a loaded heavy crossbow. || He brandishes the stolen silver dagger at the guard.",
+        "leave_flair_examples": "You clench your fists in a sudden burst of anger. || She waves her hands dramatically while speaking the incantation. || Your fingers twitch instinctively near your empty belt. || He raises an open palm to abruptly halt the conversation.",
+        "regex_or_token_cues": "Look for physical verbs of holding or drawing (e.g., hold, grasp, wield, draw, brandish) followed closely by noun phrases denoting items; watch out for prepositional phrases like 'in hand' or 'carrying'; false positives frequently occur with metaphorical usage like 'holding a grudge' or 'grasping the concept'; semantic context is strictly required to ensure physical objects are actually meant.",
+        "rewrite_template_plain_english": "Describe the character's aggressive or defensive posture, intent, and physical motions without explicitly naming the specific held item, or condition the action on whether they actually possess the object, maintaining the scene's energy.",
+        "snapshot_fields_required": "character.equipment.hands || character.inventory.items || scene.active_objects"
+      },
+      "error": ""
+    },
+    {
+      "input": "last_remaining_item",
+      "output": {
+        "claim_type": "last_remaining_item",
+        "fail_examples": "You hold the absolute final healing potion in existence. || This is the last sword ever forged by the ancient smiths. || There are no other magical amulets left in the entire kingdom. || You just consumed the very last drop of pure spring water on the continent.",
+        "leave_flair_examples": "It feels like the last healing potion you will ever need. || This sword is a remarkably rare relic from the ancient smiths. || Magical amulets of this specific design are incredibly scarce nowadays. || You drank greedily, as if it were the last drop of water in the desert.",
+        "regex_or_token_cues": "Look for tokens like 'last', 'final', or 'only' followed closely by item categories or specific noun phrases; watch for absolutes such as 'no other' or 'none left' in the same sentence as an inventory object; be highly cautious of false positives in metaphorical phrases like 'last hope' or conditional statements like 'if this is the last'; semantic context is strictly required to differentiate between a localized 'last one in my bag' and a global 'last one in existence'.",
+        "rewrite_template_plain_english": "Replace global absolutes with localized scarcity or subjective rarity, maintaining the dramatic weight of the moment by focusing on the item's unique value or immediate importance rather than its total non-existence elsewhere.",
+        "snapshot_fields_required": "inventory.item_counts || world_state.global_item_totals || zone.remaining_loot_spawns"
+      },
+      "error": ""
+    },
+    {
+      "input": "crowd_size",
+      "output": {
+        "claim_type": "crowd_size",
+        "fail_examples": "Thousands of people packed the tavern tonight. || Over five hundred warriors stood in the courtyard. || Exactly fifty merchants were haggling in the square. || A massive crowd of 10,000 onlookers gathered to watch.",
+        "leave_flair_examples": "The tavern felt completely packed with rowdy patrons. || Warriors filled the courtyard to the brim. || A bustling throng of merchants haggled in the square. || A massive crowd gathered to watch the spectacle.",
+        "regex_or_token_cues": "Look for exact numbers or specific magnitude words like hundreds, thousands, or millions placed directly before nouns indicating people, crowds, or groups; flag phrases combining exact counts with spatial containment such as packed the room or filled the square; be extremely cautious of metaphorical exaggerations like a million voices or a thousand eyes, as these are stylistic flair and not literal crowd counts; semantic context is strictly required to distinguish literal numeric assertions from poetic descriptions.",
+        "rewrite_template_plain_english": "Replace the specific numeric count with a vivid, descriptive term of magnitude such as a bustling throng, a packed room, or an endless sea of faces, ensuring the scene retains its busy energy without making an unsupported factual claim about the exact number of people present.",
+        "snapshot_fields_required": "location.current_occupancy || location.max_capacity || event.registered_attendees"
+      },
+      "error": ""
+    },
+    {
+      "input": "named_speaker_absent",
+      "output": {
+        "claim_type": "named_speaker_absent",
+        "fail_examples": "Elias hands you the rusty key. || Captain Thorne shouts orders from the upper deck. || Mayor Vance mutters in the corner. || Elara quickly bandages your arm.",
+        "leave_flair_examples": "Someone hands you the rusty key. || Orders are shouted from the upper deck. || You hear a voice muttering in the corner. || A local healer quickly bandages your arm.",
+        "regex_or_token_cues": "Look for proper nouns immediately preceding dialogue tags or action verbs; flag sequences of capitalized words followed by verbs like says, hands, or shouts; beware of false positives from location names or capitalized item names; semantic context is required to distinguish actual character names from titles or legendary figures mentioned in passing.",
+        "rewrite_template_plain_english": "Replace the specific character name with a generic descriptor or pronoun, or shift the action to an unknown presence in the room, ensuring the scene's atmosphere remains intact without confirming the exact identity.",
+        "snapshot_fields_required": "scene.present_characters || room.occupants || event.active_speakers"
+      },
+      "error": ""
+    },
+    {
+      "input": "exit_used",
+      "output": {
+        "claim_type": "exit_used",
+        "fail_examples": "He escaped through the north door. || The thief fled out the back window. || You step through the glowing portal. || She walked out the main gate.",
+        "leave_flair_examples": "The north door looks like a viable escape route. || A cold breeze blows in from the back window. || The glowing portal hums with mysterious energy. || Shadows stretch ominously toward the main gate.",
+        "regex_or_token_cues": "Match movement verbs (went, walked, ran, escaped, fled, stepped, passed) followed by prepositions (through, out, into) and exit nouns (door, gate, window, portal, exit, archway); beware false positives from hypothetical statements (you could go through the door) or visual descriptions (light poured through the window); ensure the subject is an actor and not an inanimate object or environmental effect; requires semantic check to confirm actual traversal rather than mere proximity or intention.",
+        "rewrite_template_plain_english": "Describe the character moving toward the exit, reaching for the handle, or preparing to cross the threshold, maintaining the momentum of the scene without definitively stating they have successfully passed through the opening.",
+        "snapshot_fields_required": "room.exits.available || character.current_location || action.movement.target"
+      },
+      "error": ""
+    },
+    {
+      "input": "time_skip",
+      "output": {
+        "claim_type": "time_skip",
+        "fail_examples": "Three days pass while you rest at the inn. || You travel for a week through the dense forest. || Months go by before the merchant finally returns. || You sleep through the entire night and wake up at noon.",
+        "leave_flair_examples": "The shadows lengthen as the afternoon drags on. || It feels like an eternity waiting for the heavy doors to open. || Time seems to blur in the oppressive heat of the desert. || You lose track of the hours as you study the ancient runes.",
+        "regex_or_token_cues": "Target numeric expressions paired with time units like days, weeks, or months followed by passage verbs; flag explicit phrases like fast forward or time passes; beware of false positives from subjective idioms like feels like days or historical lore references; semantic context is strictly required to differentiate forced game-time advancement from atmospheric pacing or character dialogue.",
+        "rewrite_template_plain_english": "Describe the immediate atmospheric transition or the character's subjective experience of waiting, without explicitly advancing the in-game clock or declaring how much time has objectively passed, allowing the player to decide when to conclude their current activity.",
+        "snapshot_fields_required": "world.current_time || player.status.active_duration || narrative.allowed_time_skips"
+      },
+      "error": ""
+    },
+    {
+      "input": "weather_change",
+      "output": {
+        "claim_type": "weather_change",
+        "fail_examples": "A sudden blizzard buries the town in three feet of snow. || The rain finally stops and the sun breaks through the clouds. || Hurricane-force winds suddenly tear the roofs off the nearby houses. || A magical drought instantly dries up the river.",
+        "leave_flair_examples": "The air feels heavy, as if a storm might be brewing. || It looks like the dark clouds are gathering overhead. || A chill runs down your spine, colder than the evening breeze. || The sky takes on an eerie, bruised purple hue.",
+        "regex_or_token_cues": "Look for absolute weather nouns (rain, snow, storm, wind, drought) near sudden verbs (starts, stops, erupts, clears); flag combinations of weather words with immediate temporal adverbs (suddenly, instantly, finally); beware of false positives from metaphorical language (a storm of arrows, raining fire, cloudy judgment) or character subjective hopes (hoping for rain); semantic context is required to distinguish actual environment changes from magical visual effects or internal character feelings.",
+        "rewrite_template_plain_english": "Describe the sensory experience of the current atmosphere or express the character's anticipation of a shift, ensuring you do not assert a definitive change in the global meteorological state without system confirmation.",
+        "snapshot_fields_required": "environment.weather.current_state || environment.weather.upcoming_events || region.climate.modifiers"
+      },
+      "error": ""
+    },
+    {
+      "input": "indoor_outdoor_shift",
+      "output": {
+        "claim_type": "indoor_outdoor_shift",
+        "fail_examples": "You step out of the tavern into the bright sunlight. || She pushes open the heavy doors and enters the dusty library. || He walks outside to get some fresh air. || They leave the cave and find themselves under the open sky.",
+        "leave_flair_examples": "The air shifts as you move, carrying a new scent. || Shadows dance along the threshold as she steps forward. || He takes a deep breath, sensing a change in the atmosphere. || They proceed onward, their surroundings taking on a different hue.",
+        "regex_or_token_cues": "Look for verbs of entering or exiting paired with location boundaries; target phrases like 'step out into', 'enter the', or 'leave the' followed by weather or interior terms; beware of metaphorical uses like 'entered a state of shock' which trigger false positives; ensure semantic context confirms a physical transition between interior and exterior spaces before flagging; match words like 'outside', 'indoors', 'sunlight', or 'roof' near movement verbs.",
+        "rewrite_template_plain_english": "Focus on the immediate sensory details of the character's movement without explicitly declaring a change in their indoor or outdoor status, allowing the established scene setting to dictate the environment.",
+        "snapshot_fields_required": "location.is_indoors || location.current_zone || character.current_position"
+      },
+      "error": ""
+    },
+    {
+      "input": "tension_drop",
+      "output": {
+        "claim_type": "tension_drop",
+        "fail_examples": "The guards immediately stand down and drop their weapons. || All hostility in the sector completely ceases. || The red alert sirens shut off as the danger passes. || The tension evaporates entirely from the standoff.",
+        "leave_flair_examples": "A momentary quiet settles over the standoff. || The guards exchange uncertain glances, their grips loosening slightly. || The blaring sirens seem less deafening in the sudden pause. || A heavy breath escapes, though the shadows still loom.",
+        "regex_or_token_cues": "Look for absolute cessation verbs like vanishes, ceases, drops, or ends near tension or hostility keywords; flag adverbs like immediately, completely, or entirely modifying calm states; warn on false positives where the drop is a subjective feeling rather than a factual world state; remember that this requires semantic context to distinguish between a temporary pause and a permanent de-escalation.",
+        "rewrite_template_plain_english": "Rewrite the passage to shift the absolute resolution to a subjective perception or a temporary lull, describing the physical signs of relaxation or quiet without claiming the underlying threat or alert status has permanently ended.",
+        "snapshot_fields_required": "scene.threat_level || factions.current_hostility || environment.alert_status"
+      },
+      "error": ""
+    },
+    {
+      "input": "companion_present",
+      "output": {
+        "claim_type": "companion_present",
+        "fail_examples": "Your trusty wolf companion stands right beside you. || The loyal mercenary draws his sword to defend you. || Your pet dragon breathes a puff of smoke nearby. || The merchant friend is waiting in the room with you.",
+        "leave_flair_examples": "You feel as though a guardian spirit is watching over your steps. || The shadows dance like a pack of wolves keeping pace with you. || You remember the warmth of a loyal friend standing by your side. || The room echoes as if a dozen mercenaries were preparing for battle.",
+        "regex_or_token_cues": "Look for possessive pronouns paired with companion keywords like pet, friend, or mercenary; flag proximity verbs or prepositions such as stands beside, is here, or next to you; identify absolute statements of physical presence in the current scene; beware of false positives from metaphorical language, memories, or wishes; always remember that semantic context is required to differentiate actual presence from figurative descriptions or past events.",
+        "rewrite_template_plain_english": "Shift the focus from the companion's physical presence to the player's internal feelings of readiness or the atmospheric tension of the environment, ensuring the scene retains its dynamic energy without asserting that another character is actually standing there.",
+        "snapshot_fields_required": "player.companions.active || player.party.members || scene.entities.present"
+      },
+      "error": ""
+    },
+    {
+      "input": "location_as_speaker",
+      "output": {
+        "claim_type": "location_as_speaker",
+        "fail_examples": "The ancient ruins whisper that their depths hold a legendary sword. || The tavern's sign proudly declares it serves the cheapest ale in the entire kingdom. || The haunted forest warns you that no traveler has ever returned from its center. || The bustling marketplace announces that all potions are half price today.",
+        "leave_flair_examples": "The ancient ruins whisper with the echoes of forgotten winds. || The tavern's sign proudly swings in the evening breeze. || The haunted forest seems to warn you with its looming branches. || The bustling marketplace surrounds you with a chaotic symphony.",
+        "regex_or_token_cues": "Target location nouns like room, cave, or city followed by communication verbs such as whispers, declares, or announces; watch for subordinate clauses or direct quotes that introduce factual game-state assertions; beware of false positives where verbs are purely atmospheric, such as the wind howling or trees groaning, without asserting hard facts; remember that semantic context is required to accurately distinguish harmless flavor text from unauthorized mechanical claims.",
+        "rewrite_template_plain_english": "Shift the location's voice to purely atmospheric description without making concrete mechanical promises. Describe the sensory details, mood, or rumors rather than stating absolute facts, ensuring the environment feels alive without asserting unsupported game-state details.",
+        "snapshot_fields_required": "location.metadata.id || location.state.properties || location.events.current"
+      },
+      "error": ""
+    },
+    {
+      "input": "invented_title_or_rank",
+      "output": {
+        "claim_type": "invented_title_or_rank",
+        "fail_examples": "I am the Supreme Commander of the Northern Fleet. || As the newly appointed Arch-Mage, I order you to stop. || The guild recognizes me as a Grandmaster. || I hold the rank of Captain in the royal guard.",
+        "leave_flair_examples": "I fight with the fury of a supreme commander. || They call me a master of the blade in the streets. || I wear this captain's coat because it looks intimidating. || My magic rivals that of an arch-mage.",
+        "regex_or_token_cues": "Look for copula verbs followed by definite articles and formal titles; flag phrases like \"I am the\", \"rank of\", or \"appointed as\" near capitalized role nouns; beware of false positives from metaphorical usage or dialogue where the character is mocking someone else; semantic context is required to distinguish between literal assertions of official rank and boastful comparisons; always verify if the title is used as a formal proper noun or a descriptive adjective.",
+        "rewrite_template_plain_english": "Shift the focus from an official rank to the character's reputation or behavior by replacing the formal title with a descriptive comparison, ensuring the scene retains its dramatic energy without making an unverified claim about their actual standing in the world hierarchy.",
+        "snapshot_fields_required": "character.profile.titles || character.faction.rank || character.achievements.official_roles"
+      },
+      "error": ""
+    }
+  ]
+}

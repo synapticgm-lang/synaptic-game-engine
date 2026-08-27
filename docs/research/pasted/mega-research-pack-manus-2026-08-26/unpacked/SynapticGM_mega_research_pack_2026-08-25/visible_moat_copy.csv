@@ -1,0 +1,121 @@
+group,subtype,variant,kid_mode,allowed,text,word_count,notes
+status_chip,changed,01,BOTH,YES,Found the brass key,4,Display after a confirmed change; eight words maximum.
+status_chip,changed,02,BOTH,YES,Used the north stair,4,Display after a confirmed change; eight words maximum.
+status_chip,changed,03,BOTH,YES,Rain began outside,3,Display after a confirmed change; eight words maximum.
+status_chip,changed,04,BOTH,YES,Lantern light faded,3,Display after a confirmed change; eight words maximum.
+status_chip,changed,05,BOTH,YES,Mara joined you,3,Display after a confirmed change; eight words maximum.
+status_chip,changed,06,BOTH,YES,Left the market hall,4,Display after a confirmed change; eight words maximum.
+status_chip,changed,07,BOTH,YES,Time moved to dusk,4,Display after a confirmed change; eight words maximum.
+status_chip,changed,08,BOTH,YES,Last vial was spent,4,Display after a confirmed change; eight words maximum.
+status_chip,changed,09,BOTH,YES,"Tension eased, not ended",4,Display after a confirmed change; eight words maximum.
+status_chip,changed,10,BOTH,YES,"Rumor noted, not accepted",4,Display after a confirmed change; eight words maximum.
+status_chip,changed,11,BOTH,YES,Quest accepted,2,Display after a confirmed change; eight words maximum.
+status_chip,changed,12,BOTH,YES,Offer remains open,3,Display after a confirmed change; eight words maximum.
+status_chip,changed,13,BOTH,YES,Door is now unlocked,4,Display after a confirmed change; eight words maximum.
+status_chip,changed,14,BOTH,YES,Companion stepped away,3,Display after a confirmed change; eight words maximum.
+status_chip,changed,15,BOTH,YES,Map route revealed,3,Display after a confirmed change; eight words maximum.
+status_chip,changed,16,BOTH,YES,Relic bond deepened,3,Display after a confirmed change; eight words maximum.
+status_chip,changed,17,BOTH,YES,Codex skill learned,3,Display after a confirmed change; eight words maximum.
+status_chip,changed,18,BOTH,YES,Skill offer declined,3,Display after a confirmed change; eight words maximum.
+status_chip,changed,19,BOTH,YES,Skill offer accepted,3,Display after a confirmed change; eight words maximum.
+status_chip,changed,20,BOTH,YES,Returned to the courtyard,4,Display after a confirmed change; eight words maximum.
+status_chip,changed,21,BOTH,YES,Weather cleared,2,Display after a confirmed change; eight words maximum.
+status_chip,changed,22,BOTH,YES,Moved indoors,2,Display after a confirmed change; eight words maximum.
+status_chip,changed,23,BOTH,YES,Moved outside,2,Display after a confirmed change; eight words maximum.
+status_chip,changed,24,BOTH,YES,Speaker entered the scene,4,Display after a confirmed change; eight words maximum.
+status_chip,changed,25,BOTH,YES,Inventory count corrected,3,Display after a confirmed change; eight words maximum.
+status_chip,changed,26,BOTH,YES,Scene restored,2,Display after a confirmed change; eight words maximum.
+status_chip,changed,27,BOTH,YES,Unsupported title removed,3,Display after a confirmed change; eight words maximum.
+status_chip,changed,28,BOTH,YES,Exit choice confirmed,3,Display after a confirmed change; eight words maximum.
+status_chip,changed,29,BOTH,YES,Nearby crowd thinned,3,Display after a confirmed change; eight words maximum.
+status_chip,changed,30,BOTH,YES,Your hands are empty,4,Display after a confirmed change; eight words maximum.
+why_line,fair_check,01,BOTH,YES,We checked whether that item was actually with you.,9,Shown only when the player opens Why? after a check.
+why_line,fair_check,02,BOTH,YES,We checked who was present before the reply.,8,Shown only when the player opens Why? after a check.
+why_line,fair_check,03,BOTH,YES,We checked which exit your last action used.,8,Shown only when the player opens Why? after a check.
+why_line,fair_check,04,BOTH,YES,We checked whether time had really moved forward.,8,Shown only when the player opens Why? after a check.
+why_line,fair_check,05,BOTH,YES,We checked the active weather before changing it.,8,Shown only when the player opens Why? after a check.
+why_line,fair_check,06,BOTH,YES,We checked whether you were inside or outside.,8,Shown only when the player opens Why? after a check.
+why_line,fair_check,07,BOTH,YES,We checked whether the danger had truly eased.,8,Shown only when the player opens Why? after a check.
+why_line,fair_check,08,BOTH,YES,We checked that your companion was still nearby.,8,Shown only when the player opens Why? after a check.
+why_line,fair_check,09,BOTH,YES,We checked who could reasonably speak here.,7,Shown only when the player opens Why? after a check.
+why_line,fair_check,10,BOTH,YES,We checked whether that title had been established.,8,Shown only when the player opens Why? after a check.
+why_line,fair_check,11,BOTH,YES,We checked the quantity before calling it the last one.,10,Shown only when the player opens Why? after a check.
+why_line,fair_check,12,BOTH,YES,We checked the crowd before giving it a number.,9,Shown only when the player opens Why? after a check.
+why_line,fair_check,13,BOTH,YES,We checked your carried gear before describing your hands.,9,Shown only when the player opens Why? after a check.
+why_line,fair_check,14,BOTH,YES,We checked the route before moving the scene.,8,Shown only when the player opens Why? after a check.
+why_line,fair_check,15,BOTH,YES,We checked the accepted task before calling it a quest.,10,Shown only when the player opens Why? after a check.
+why_line,fair_check,16,BOTH,YES,We checked whether the offer was accepted or still open.,10,Shown only when the player opens Why? after a check.
+why_line,fair_check,17,BOTH,YES,We checked the speaker’s location before continuing.,7,Shown only when the player opens Why? after a check.
+why_line,fair_check,18,BOTH,YES,We checked what changed and left the rest alone.,9,Shown only when the player opens Why? after a check.
+why_line,fair_check,19,BOTH,YES,We checked your last confirmed choice before restoring.,8,Shown only when the player opens Why? after a check.
+why_line,fair_check,20,BOTH,YES,"We checked the scene facts, then kept the flourish.",9,Shown only when the player opens Why? after a check.
+repair_banner,invented_item,standard_01,STANDARD,YES,"That item was never in your pack, so we removed it.",11,Standard repair wording; no implementation jargon.
+repair_banner,invented_item,standard_02,STANDARD,YES,Your hands are restored to what you actually carried.,9,Standard repair wording; no implementation jargon.
+repair_banner,invented_item,standard_03,STANDARD,YES,The scene added an item you did not have. It is gone.,12,Standard repair wording; no implementation jargon.
+repair_banner,invented_item,standard_04,STANDARD,YES,We rolled back the unearned item and kept the rest.,10,Standard repair wording; no implementation jargon.
+repair_banner,invented_item,standard_05,STANDARD,YES,We removed the extra item without changing your choice.,9,Standard repair wording; no implementation jargon.
+repair_banner,invented_item,kid_01,KID,YES,"That item was not in your bag, so we tidied the scene.",12,Softened Kid Mode wording; no blame or frightening detail.
+repair_banner,invented_item,kid_02,KID,YES,Your hands now match what you were really carrying.,9,Softened Kid Mode wording; no blame or frightening detail.
+repair_banner,invented_item,kid_03,KID,YES,An extra item slipped into the story. We removed it.,10,Softened Kid Mode wording; no blame or frightening detail.
+repair_banner,invented_item,kid_04,KID,YES,We put the surprise item away and kept your choice.,10,Softened Kid Mode wording; no blame or frightening detail.
+repair_banner,invented_item,kid_05,KID,YES,The added item is gone; everything else stays the same.,10,Softened Kid Mode wording; no blame or frightening detail.
+repair_banner,absent_companion,standard_01,STANDARD,YES,"That companion was not here, so we restored the scene.",10,Standard repair wording; no implementation jargon.
+repair_banner,absent_companion,standard_02,STANDARD,YES,We removed the absent companion and kept your action.,9,Standard repair wording; no implementation jargon.
+repair_banner,absent_companion,standard_03,STANDARD,YES,The scene brought someone in without cause. That is fixed.,10,Standard repair wording; no implementation jargon.
+repair_banner,absent_companion,standard_04,STANDARD,YES,Your companion stays where the story last left them.,9,Standard repair wording; no implementation jargon.
+repair_banner,absent_companion,standard_05,STANDARD,YES,We restored the scene without the person who was away.,10,Standard repair wording; no implementation jargon.
+repair_banner,absent_companion,kid_01,KID,YES,"That friend was elsewhere, so we put the scene right.",10,Softened Kid Mode wording; no blame or frightening detail.
+repair_banner,absent_companion,kid_02,KID,YES,We kept your action and removed the person who was away.,11,Softened Kid Mode wording; no blame or frightening detail.
+repair_banner,absent_companion,kid_03,KID,YES,Someone arrived too soon in the story. We fixed it.,10,Softened Kid Mode wording; no blame or frightening detail.
+repair_banner,absent_companion,kid_04,KID,YES,Your friend stays where the story last left them.,9,Softened Kid Mode wording; no blame or frightening detail.
+repair_banner,absent_companion,kid_05,KID,YES,The scene is restored without the person who was away.,10,Softened Kid Mode wording; no blame or frightening detail.
+repair_banner,ungrounded_talk,standard_01,STANDARD,YES,"Nobody present could have said that, so we repaired the exchange.",11,Standard repair wording; no implementation jargon.
+repair_banner,ungrounded_talk,standard_02,STANDARD,YES,We removed the unsupported reply and kept the surrounding scene.,10,Standard repair wording; no implementation jargon.
+repair_banner,ungrounded_talk,standard_03,STANDARD,YES,The scene gave a voice to the wrong source. It is fixed.,12,Standard repair wording; no implementation jargon.
+repair_banner,ungrounded_talk,standard_04,STANDARD,YES,Only present speakers may answer here; the exchange is restored.,10,Standard repair wording; no implementation jargon.
+repair_banner,ungrounded_talk,standard_05,STANDARD,YES,We repaired the line without changing what you chose to do.,11,Standard repair wording; no implementation jargon.
+repair_banner,ungrounded_talk,kid_01,KID,YES,"That reply had no speaker here, so we fixed the scene.",11,Softened Kid Mode wording; no blame or frightening detail.
+repair_banner,ungrounded_talk,kid_02,KID,YES,We removed the stray reply and kept the rest.,9,Softened Kid Mode wording; no blame or frightening detail.
+repair_banner,ungrounded_talk,kid_03,KID,YES,The wrong thing seemed to speak. The scene is fixed.,10,Softened Kid Mode wording; no blame or frightening detail.
+repair_banner,ungrounded_talk,kid_04,KID,YES,Only someone present can answer here; we restored the exchange.,10,Softened Kid Mode wording; no blame or frightening detail.
+repair_banner,ungrounded_talk,kid_05,KID,YES,We repaired the line and kept your choice exactly as made.,11,Softened Kid Mode wording; no blame or frightening detail.
+repair_banner,cancel_restore,standard_01,STANDARD,YES,Cancelled. You are back before that action.,7,Standard repair wording; no implementation jargon.
+repair_banner,cancel_restore,standard_02,STANDARD,YES,Action cancelled. The prior scene is restored.,7,Standard repair wording; no implementation jargon.
+repair_banner,cancel_restore,standard_03,STANDARD,YES,Nothing from the cancelled action was kept.,7,Standard repair wording; no implementation jargon.
+repair_banner,cancel_restore,standard_04,STANDARD,YES,Cancelled cleanly. Your earlier position and items are restored.,9,Standard repair wording; no implementation jargon.
+repair_banner,cancel_restore,standard_05,STANDARD,YES,You stepped back from that action; the scene is unchanged.,10,Standard repair wording; no implementation jargon.
+repair_banner,cancel_restore,kid_01,KID,YES,Cancelled. You are safely back before that action.,8,Softened Kid Mode wording; no blame or frightening detail.
+repair_banner,cancel_restore,kid_02,KID,YES,Action cancelled. The earlier scene is back.,7,Softened Kid Mode wording; no blame or frightening detail.
+repair_banner,cancel_restore,kid_03,KID,YES,Nothing from the cancelled action was kept.,7,Softened Kid Mode wording; no blame or frightening detail.
+repair_banner,cancel_restore,kid_04,KID,YES,Cancelled cleanly. Your place and items are restored.,8,Softened Kid Mode wording; no blame or frightening detail.
+repair_banner,cancel_restore,kid_05,KID,YES,You chose not to do that; the scene stays the same.,11,Softened Kid Mode wording; no blame or frightening detail.
+correction_confirmation,confirmed,01,BOTH,YES,Corrected. Your scene now matches what happened.,7,Short confirmation after a repair succeeds.
+correction_confirmation,confirmed,02,BOTH,YES,Fixed. Your items and position are restored.,7,Short confirmation after a repair succeeds.
+correction_confirmation,confirmed,03,BOTH,YES,Corrected without changing your chosen action.,6,Short confirmation after a repair succeeds.
+correction_confirmation,confirmed,04,BOTH,YES,The unsupported detail is gone; the scene continues.,8,Short confirmation after a repair succeeds.
+correction_confirmation,confirmed,05,BOTH,YES,Restored. Everyone is where the story left them.,8,Short confirmation after a repair succeeds.
+correction_confirmation,confirmed,06,BOTH,YES,Corrected. The right speaker now holds the line.,8,Short confirmation after a repair succeeds.
+correction_confirmation,confirmed,07,BOTH,YES,Restored to the moment before the mismatch.,7,Short confirmation after a repair succeeds.
+correction_confirmation,confirmed,08,BOTH,YES,The scene is grounded again. Continue when ready.,8,Short confirmation after a repair succeeds.
+correction_confirmation,confirmed,09,BOTH,YES,Correction complete. Your accepted tasks are unchanged.,7,Short confirmation after a repair succeeds.
+correction_confirmation,confirmed,10,BOTH,YES,Fixed. Only the mistaken detail was removed.,7,Short confirmation after a repair succeeds.
+quest_provenance,accepted,01,BOTH,YES,Accepted: you agreed to carry the sealed parcel.,8,States provenance without upgrading rumor or offer into acceptance.
+quest_provenance,accepted,02,BOTH,YES,Accepted: you promised to inspect the flooded cellar.,8,States provenance without upgrading rumor or offer into acceptance.
+quest_provenance,accepted,03,BOTH,YES,Accepted: you took the watch at the east gate.,9,States provenance without upgrading rumor or offer into acceptance.
+quest_provenance,accepted,04,BOTH,YES,Accepted: you agreed to find the missing survey kit.,9,States provenance without upgrading rumor or offer into acceptance.
+quest_provenance,rumor,01,BOTH,YES,Rumor: lights were seen beneath the old reservoir.,8,States provenance without upgrading rumor or offer into acceptance.
+quest_provenance,rumor,02,BOTH,YES,Rumor: someone heard bells beyond the sealed arch.,8,States provenance without upgrading rumor or offer into acceptance.
+quest_provenance,rumor,03,BOTH,YES,Rumor: a locked room may still contain supplies.,8,States provenance without upgrading rumor or offer into acceptance.
+quest_provenance,rumor,04,BOTH,YES,Rumor: the night ferry sometimes returns empty.,7,States provenance without upgrading rumor or offer into acceptance.
+quest_provenance,soft_offer,01,BOTH,YES,Open offer: the archivist could use a careful courier.,9,States provenance without upgrading rumor or offer into acceptance.
+quest_provenance,soft_offer,02,BOTH,YES,Open offer: the workshop needs one safe power cell.,9,States provenance without upgrading rumor or offer into acceptance.
+quest_provenance,soft_offer,03,BOTH,YES,Open offer: a guide may trade directions for help.,9,States provenance without upgrading rumor or offer into acceptance.
+quest_provenance,soft_offer,04,BOTH,YES,Open offer: the watch captain is still seeking volunteers.,9,States provenance without upgrading rumor or offer into acceptance.
+never_line,as_an_ai,01,BOTH,NO,"As an AI, I cannot continue that story.",8,Forbidden player-facing phrasing; preserve only as a negative test fixture.
+never_line,chatbot_apology,02,BOTH,NO,"I am sorry, but I made a mistake in my previous response.",12,Forbidden player-facing phrasing; preserve only as a negative test fixture.
+never_line,menu_speak,03,BOTH,NO,Select option 1 to proceed to the next scenario.,9,Forbidden player-facing phrasing; preserve only as a negative test fixture.
+never_line,developer_speak,04,BOTH,NO,The system prompt prevents me from doing that.,8,Forbidden player-facing phrasing; preserve only as a negative test fixture.
+never_line,state_jargon,05,BOTH,NO,Your state transaction failed validation and was rolled back.,9,Forbidden player-facing phrasing; preserve only as a negative test fixture.
+never_line,retrieval_jargon,06,BOTH,NO,The retrieval context did not contain that companion.,8,Forbidden player-facing phrasing; preserve only as a negative test fixture.
+never_line,model_jargon,07,BOTH,NO,The language model hallucinated an item.,6,Forbidden player-facing phrasing; preserve only as a negative test fixture.
+never_line,fake_certainty,08,BOTH,NO,Do not worry; I remember everything forever.,7,Forbidden player-facing phrasing; preserve only as a negative test fixture.

@@ -1,0 +1,194 @@
+ROLE
+You are a principal cross-domain researcher for SynapticGM, a live single-player ledger-first AI game master (LitRPG / isekai / story RPG / PYOA / tabletop fantasy). Produce ONE massive remaining-research omnibus: everything still needed to launch well, stay solvent, stay safe, retain players, and operate the product — beyond the research already completed.
+
+GOAL
+Fill ALL remaining research holes in one deliverable. Be exhaustive, concrete, and implementation-ready. Prefer tables, schemas, checklists, formulas, test cases, and playbooks over essays.
+
+ALREADY DONE — DO NOT REWRITE
+Do NOT regenerate or deeply rehash these (assume they exist and are accepted):
+- Competitive product/systems + continuity P0 stack (SceneManifest, StateTx, IntentContract, IntroductionPermit, CampaignContract, claim gate, leak scanner, beatFingerprint)
+- Product Operating Manual / best-in-class roadmap + Appendix personality/module map/schemas
+- Ads, growth, pre-release readiness + gap-fill §§6–8 (web adult Free first; Kid ad-free at launch; Mid/High no ads; AppLixir pilot after written approval; 1 rewarded/day start; HookArc offer guard; honeymoon floor)
+- Outsider/hybrid memory brief (event sourcing, provenance, control accounts, character-chat steal/never-copy, Continuity Pager, etc.)
+Only REFERENCE these when a new part depends on them. If a topic was covered, say “already covered — see X” in one line and move on.
+
+PRODUCT TRUTH
+- Ledger-first: code owns many truths; LLM writes prose that must obey outcomes
+- Authority: player correction > pinned canon/opening invariant > accepted StateTx > SceneManifest > supporting evidence > draft invention
+- Tiers: Free / Mid £14.99 / High £29.99 / Admin BYOK (separate adult processor; web-only)
+- Capacity + packs + memorable weekly caps + story-start honeymoon (Free +8 / Mid +5 / High +3)
+- Systems: opening establishment, openingHooks, Simple/Expert custom, ledger combat, quests/map, Salvage, themes/shop, Kid Mode Families bar, cloud save, Supabase+Google auth (Discord later), refunds on empty/abort/fail
+- Launch posture: web adult Free first; Play later; never sell basic continuity/safety/refunds/cancel
+- Non-goals: WOF, MMO, housing, auction, shared world, fake installs, dark-pattern paywalls mid-action
+
+AUDIENCE
+Founder/engineer shipping with AI coding help. Mechanisms, exit criteria, owner tags (Founder/Code/Ops/Legal-verify).
+
+HARD RULES
+- No fluff, no vendor pitches, no “leverage synergies”
+- Mark legal/store items “verify with counsel / official policy” where needed — still give concrete product requirements
+- Prefer extending existing SynapticGM modules over greenfield rewrites
+- If length-limited: finish PARTS A–F first, then continue G–L as clearly marked Part 2 without repeating finished work
+- Dense tables. Explicit open decisions. “Player feels X because system did Y” where UX matters
+
+================================================================================
+REQUIRED OUTPUT STRUCTURE — use these exact PART headings
+================================================================================
+
+PART A — Security & abuse threat model
+0A. Executive risk ranking (Likelihood × Impact)
+1A. Assets & trust boundaries (keys, saves, entitlements, prompts, images, admin, ads callbacks, Stripe)
+2A. STRIDE-style threats per asset
+3A. Attack trees for top 15 real abuses (prompt injection, jailbreak, key theft, capacity fraud, ad reward fraud, ATO, save tampering, cross-account access, Kid/adult bypass, CSAM/self-harm/threat mishandling, PII in logs, cost amplification, admin abuse, entitlement forgery, BYOK leakage)
+4A. Hardening controls mapped to layers (edge proxy, RLS, webhooks, capacity, ads S2S, logging, admin)
+5A. Secure defaults by tier (Free/Mid/High/Admin BYOK) and Kid Mode differences
+6A. Detection, alerts, and incident runbooks
+7A. Red-team pack: 50 cases with expected hard outcomes
+8A. 30-day security ship plan
+9A. Open founder decisions
+
+PART B — Unit economics & cost engineering
+0B. Executive: can this business work? under what assumptions?
+1B. Full COGS model with spreadsheet-ready formulas (accepted turn, retries, fails, memorable, honeymoon, ad extras)
+2B. Margin scenarios by tier (pessimistic/base/optimistic) for Mid £14.99 / High £29.99 / packs
+3B. Cost-control levers ranked Impact × Player-harm (routing, context trim, skip-image, caps, caching) — never sell continuity
+4B. Model routing matrix: Free/Mid/High/Admin × job type (writer, choices, images, rewrite, etc.)
+5B. Abuse/cost amplification defenses
+6B. Monitoring KPIs, daily/weekly guardrails, kill switches
+7B. Sensitivity analysis (±30% model prices, retention, attach rates)
+8B. 90-day cost hardening plan
+9B. Open founder decisions
+
+PART C — Legal / age / store compliance matrix
+0C. Launch blockers vs later (web adult Free)
+1C. Web adult Free compliance matrix (UK GDPR, consumer distance-selling, AI disclosure, cookies/consent, payments)
+2C. Kid Mode compliance matrix (Children’s Code, ad-free, parental gates, data minimization) — verify with counsel
+3C. Ads compliance for rewarded adult web (disclosure, fraud, vendor ToS)
+4C. Stripe vs adult BYOK processor requirements
+5C. Play/Apple preflight matrices (only if/when; do not force day-one)
+6C. Policy document outlines: Privacy, Terms, Content, Refund, Cookies — section lists only, not lawyer prose
+7C. Product feature requirements implied by policy
+8C. Evidence pack to retain for audits/incidents
+9C. Open founder decisions
+
+PART D — First-session retention science
+0D. Top 12 retention killers + fixes
+1D. First 60 seconds / first 10 turns / first hour beat contracts per genre (LitRPG, isekai/summon, late awakening, story RPG, PYOA mystery/romance/space, tabletop)
+2D. How HookArc + honeymoon + stake choices interact with D1/D7 (do not reopen monetization policy)
+3D. Cognitive load / New Game simplification recommendations
+4D. Measurement plan (events + cohorts)
+5D. 20 experiments with hypotheses, metrics, kill criteria
+6D. Microcopy bank: 30 improvements
+7D. Anti-patterns
+8D. 45-day ship list mapped to existing modules (NewGameModal, openingEstablishment, Hud, capacityLedger, etc.)
+9D. Open founder decisions
+
+PART E — QA / regression harness design
+0E. Executive test strategy
+1E. Test taxonomy + severity (continuity, combat, quests, map, capacity, Kid Mode, entitlements, ads, saves)
+2E. Fixture library design (seeded RNG, golden StateTx traces, bible packs)
+3E. Oracle definitions: pass/fail without vibes
+4E. Handling nondeterministic LLMs (stubs, canaries, recording/replay)
+5E. CI pipeline stages and gates
+6E. 100 named regression cases (grouped)
+7E. Human playtest scripts for 30/100/300 turns
+8E. Cost of running tests + prioritization
+9E. 60-day harness build plan
+10E. Open founder decisions
+
+PART F — Privacy-safe analytics taxonomy
+0F. Principles (minimal, purpose-limited, Kid differences)
+1F. Full event dictionary: Must-for-launch vs Should vs Later
+   Must include: install/start, New Game path, HookArc steps, accepted turn, fail/refund/cancel/timeout, out-of-turns, ad intent/complete/grant, purchase, D1/D7 proxies, safety report, memorable fire/fail, correction used
+2F. Property schemas and identity model
+3F. Dashboards: Founder daily / weekly
+4F. Experiment assignment events
+5F. Retention windows, deletion/export implications
+6F. What NEVER to log
+7F. Implementation notes for web
+8F. Open founder decisions
+
+PART G — Brand / listing / creative system
+0G. Positioning platform (one sentence + pillars)
+1G. Message house by audience (LitRPG, AID refugees, NovelAI/ST, parents/Kid, tabletop)
+2G. Web landing information architecture + section copy outlines
+3G. Screenshot / UI storyboard scripts (12) proving ledger consequence
+4G. Short-form video scripts 15/30/60s (12) — show input → world change; no AI-slop montage; no sexualised bait; no “perfect memory” claims
+5G. Creator brief + FTC/ASA disclosure kit
+6G. Press kit checklist
+7G. 8-week production calendar
+8G. Open founder decisions
+
+PART H — Audio / TTS / voice UX
+0H. Executive recommendation (ship now vs later)
+1H. When to speak / what never to speak (prose vs System vs meta)
+2H. Player journeys (off / selective / full)
+3H. Technical architecture, caching, latency, interruption
+4H. Safety + Kid Mode filtering of TTS source
+5H. Voice catalog / theme integration / SKU ideas
+6H. Cost controls
+7H. Anti-patterns
+8H. 60-day plan if recommended
+9H. Open founder decisions
+
+PART I — Illustrated / comic mode product brief
+0I. Go / No-Go for next 90 days + conditions
+1I. Player fantasy vs COGS constraints (Classic + Memorable already exist)
+2I. Beat contracts: when panels fire; fail holds story
+3I. Pipeline + style consistency + Kid Mode rewrite/skip
+4I. Economy/caps by tier + Free trial-once policy
+5I. UX flows (grid, pending, failed, download later)
+6I. MVP vs v2
+7I. Kill criteria
+8I. Open founder decisions
+
+PART J — Localization & regional authenticity
+0J. Executive (English-first excellence, then languages)
+1J. Locale pack schema extending LocalityToken (currency, emergency, firearms norms, slang, shop/vehicle defaults, legal norms)
+2J. Writer rails per locale (UK/US/AU/CA/IE + unknown/fantasy)
+3J. UI string inventory strategy
+4J. Future language priority roadmap
+5J. QA locale test packs (including known UK street firearm bug class)
+6J. 60-day English-locale hardening plan
+7J. Open founder decisions
+
+PART K — Schema evolution & save migration
+0K. Principles for long-lived campaigns
+1K. Versioning strategy (events, projections, settings, entitlements)
+2K. Migration patterns (expand/contract, feature flags)
+3K. Compatibility matrix across clients
+4K. Cloud vs local conflict during migrations
+5K. Disaster recovery / corrupt save handling
+6K. Export/import validation
+7K. 90-day implementation plan
+8K. Open founder decisions
+
+PART L — Support & trust-and-safety playbooks
+0L. Severity ladder + SLAs
+1L. Macros/scripts for top 30 ticket types (billing, lost save, unsafe output, Kid incident, ad fraud, capacity confusion, correction help, creator issues)
+2L. Escalation paths and evidence preservation
+3L. Public status / incident comms templates
+4L. Staffing model at 100 / 1k / 10k DAU
+5L. Training checklist for anyone with admin access
+6L. Red-alert alignment with existing ads/pre-release pause rules
+7L. Open founder decisions
+
+PART M — Master synthesis (mandatory closing)
+0M. Single ranked backlog of ALL Must-before-public-web items across Parts A–L
+1M. 90-day integrated calendar (security + cost + compliance + retention + QA + ops) that does not conflict with continuity P0 engineering
+2M. Explicit “do not research further / do not build yet” list
+3M. Founder decision pack: every open decision from A–L in one table with recommendation + alternative + cost-if-wrong
+4M. Definition of “ready for public web adult Free”
+
+================================================================================
+ALSO INCLUDE THROUGHOUT
+- TypeScript-ish interfaces / formulas where helpful (minimal)
+- Owner tags and Done-when exit criteria on checklists
+- Cross-links between parts (e.g. analytics events that prove HookArc; security controls that protect ad grants)
+- Call out holes and uncomfortable risks explicitly
+
+DEPTH TARGET
+This is the remaining operating system for launch: security, money, law, retention, QA, measurement, brand, audio, illustrated mode, locale, migrations, support. Make it as complete as the Product Operating Manual was for gameplay systems.
+
+START NOW
+Begin with PART A section 0A. No preamble.

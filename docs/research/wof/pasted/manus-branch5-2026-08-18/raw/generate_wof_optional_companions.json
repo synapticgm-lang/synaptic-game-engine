@@ -1,0 +1,31 @@
+{
+  "results": [
+    {
+      "input": "WOF_Travel_Taxi_Ferry.yaml",
+      "output": {
+        "completion_note": "Created and YAML-validated the WOF-only coach and ferry travel companion with 13 places, 12 routes, explicit gold and turn costs, and preserved locked Compact identifiers.",
+        "deliverable": "https://private-us-east-1.manuscdn.com/sessionFile/buL6gyrcJccn7BpfVOqPMN/sandbox/Cd95Qh9rDlarIJo1vKISEJ_1787002909231_na1fn_L2hvbWUvdWJ1bnR1L1dPRl9UcmF2ZWxfVGF4aV9GZXJyeQ.yaml?Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly9wcml2YXRlLXVzLWVhc3QtMS5tYW51c2Nkbi5jb20vc2Vzc2lvbkZpbGUvYnVMNmd5cmNKY2NuN0JwZlZPcVBNTi9zYW5kYm94L0NkOTVRaDlyRGxhcklKbzF2S0lTRUpfMTc4NzAwMjkwOTIzMV9uYTFmbl9MMmh2YldVdmRXSjFiblIxTDFkUFJsOVVjbUYyWld4ZlZHRjRhVjlHWlhKeWVRLnlhbWwiLCJDb25kaXRpb24iOnsiRGF0ZUxlc3NUaGFuIjp7IkFXUzpFcG9jaFRpbWUiOjE3ODk0MzA0MDB9fX1dfQ__\u0026Key-Pair-Id=K2QY5QTL8JSY6C\u0026Signature=MEUCIEIXKtPE1-essvTiTpDiWxeMFQOBBDz8XXAhNmlPQAdEAiEAvDpywPxq2ZauxWcX5TL7dklDg3CIQzM-fH4oNBSH4-o_",
+        "filename": "WOF_Travel_Taxi_Ferry.yaml"
+      },
+      "error": ""
+    },
+    {
+      "input": "WOF_Memorable_Text_Plates.md",
+      "output": {
+        "completion_note": "Created and validated the complete WOF-only text-plate companion file with seven original Ash Compact plates.",
+        "deliverable": "https://private-us-east-1.manuscdn.com/sessionFile/a17NoXiydDYdj7kfZcJLmQ/sandbox/ZLFzZYLQmQymfq2UOIaHYk_1787002881148_na1fn_L2hvbWUvdWJ1bnR1L1dPRl9NZW1vcmFibGVfVGV4dF9QbGF0ZXM.md?Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly9wcml2YXRlLXVzLWVhc3QtMS5tYW51c2Nkbi5jb20vc2Vzc2lvbkZpbGUvYTE3Tm9YaXlkRFlkajdrZlpjSkxtUS9zYW5kYm94L1pMRnpaWUxRbVF5bWZxMlVPSWFIWWtfMTc4NzAwMjg4MTE0OF9uYTFmbl9MMmh2YldVdmRXSjFiblIxTDFkUFJsOU5aVzF2Y21GaWJHVmZWR1Y0ZEY5UWJHRjBaWE0ubWQiLCJDb25kaXRpb24iOnsiRGF0ZUxlc3NUaGFuIjp7IkFXUzpFcG9jaFRpbWUiOjE3ODk0MzA0MDB9fX1dfQ__\u0026Key-Pair-Id=K2QY5QTL8JSY6C\u0026Signature=MEUCIQCmVF7JV9yz79r7apCpbTwclWlAl1hS~tQvBYxG4Kj7dgIgJQ0X4GNk0eXp-U2c2MTZWYU39OJYfvJDa-e8D-xDa94_",
+        "filename": "WOF_Memorable_Text_Plates.md"
+      },
+      "error": ""
+    },
+    {
+      "input": "WOF_Audio_Cue_List.md",
+      "output": {
+        "completion_note": "Created and validated the complete WOF-only audio cue catalog with 110 unique cue IDs.",
+        "deliverable": "https://private-us-east-1.manuscdn.com/sessionFile/6VWjJFZxmSAC1AWcWncnvv/sandbox/qOc06OJYr9uYUB1a6KqHxX_1787002876410_na1fn_L2hvbWUvdWJ1bnR1L1dPRl9BdWRpb19DdWVfTGlzdA.md?Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly9wcml2YXRlLXVzLWVhc3QtMS5tYW51c2Nkbi5jb20vc2Vzc2lvbkZpbGUvNlZXakpGWnhtU0FDMUFXY1duY252di9zYW5kYm94L3FPYzA2T0pZcjl1WVVCMWE2S3FIeFhfMTc4NzAwMjg3NjQxMF9uYTFmbl9MMmh2YldVdmRXSjFiblIxTDFkUFJsOUJkV1JwYjE5RGRXVmZUR2x6ZEEubWQiLCJDb25kaXRpb24iOnsiRGF0ZUxlc3NUaGFuIjp7IkFXUzpFcG9jaFRpbWUiOjE3ODk0MzA0MDB9fX1dfQ__\u0026Key-Pair-Id=K2QY5QTL8JSY6C\u0026Signature=MEYCIQDtLoqdJIeilP596WlFpvalLepKZT5ewAkQqulg3rjoQgIhALHiKgPHrIhjZ99wCcrsWvc8k6hPBlZjjtWRJmElUwiL",
+        "filename": "WOF_Audio_Cue_List.md"
+      },
+      "error": ""
+    }
+  ]
+}

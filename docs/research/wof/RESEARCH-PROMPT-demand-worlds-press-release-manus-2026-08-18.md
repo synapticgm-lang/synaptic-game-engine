@@ -1,0 +1,206 @@
+# WOF — Manus prompt: demand worlds + press-release bill
+
+Paste the block below into Manus (unlimited run). Download **all** files. Drop them in this chat or `docs/research/wof/pasted/`.
+
+**WOF later only.** Not live SynapticGM. Not going live yet. Do not implement into `src/` / `supabase/`.
+
+Do **not** regenerate the 23 existing world novels. Do **not** rewrite Agones / 36-month platform / HVAC / live ads/comic/memory.
+
+---
+
+```
+You are doing MAXIMUM RESEARCH + CONTENT GENERATION for WOF (World of Fantasy): a later-release family of original TEXT MMOs on ONE engine. This is NOT live SynapticGM. Do not write production app code. Do not import live-game files, prompts, saves, or databases. Do not invent 3D meshes or navmeshes. Do not claim an unshipped title is an “MMO” in player-facing copy — honest labels are “solo” / “private co-op” / “limited online region.”
+
+You have an UNLIMITED run. Use it. Do not summarize. No “TBD”. Empty tables are a failure. If a file is long, finish it and continue in the next numbered file.
+
+GOAL OF THIS RUN
+1) Rank the MMO world-types people actually ask for (commercial players, private-server/fan-made scenes, text/MUD/social worlds, cozy/pets/friends, medieval, present-day, future, and everything between).
+2) Map each demand row to a WOF world we ALREADY HAVE, or to a NEW original world (gap).
+3) For EVERY world (old + new), write a PRESS-RELEASE BILL: every artifact required to hit “press Release and everything is there” — code, rules, content, art, audio, store, legal, QA, support — without pretending the network is live today.
+4) Generate FULL content packs ONLY for NEW gap worlds. Do not rewrite the 23 existing setting bibles.
+
+============================================================
+ALREADY HAVE — DO NOT REGENERATE WORLD NOVELS
+============================================================
+These 23 packs already exist. You may write a PressBill for each. You may add missing PRESS artifacts (store copy, art briefs, shot lists, ratings). You MUST NOT reprint maps, peoples, quest DAGs, or ban-lists.
+
+Ash Compact (hp_check, teen) — high-fantasy two-faction spine. FROZEN: factions Ash Compact / Tide Covenant; races Hearthborn, Lanternfolk, Saltkin, Stonevein; starts Reedfen, Lampwood, Brinewatch, Granite Stair; hubs Millcross, Wickhaven, Coil Pier, Anvil Gate; capitals Ash Seat, Tidehold; mid The Divide; 5-mans Lampwood Gate, Unlit Hollow, Coil Warehouse, Anvil Deep; raid Millstone Hollow / The Millwarden 10-man 3-phase.
+First-Song (hp_check, teen) — Tolkien-PATTERN fellowship/courts. Instance rename locked: first_song_courtfall / Courtfall at Vespermere (NOT Gloam Court Siege / Cinder-Court / Lantern Court Breach).
+Isekai Gate (hp_check_floor_flags, teen) — SAO-PATTERN floor climb. WOF-app only. Diegetic OS: Gateglass / Waymark. Not live SynapticGM System.
+Bonded Menagerie (bond_type, all-ages) — Pokémon-PATTERN pets/friends. Kit rename locked: brineveil_curator / Brineveil Curator (NOT saltwind_keeper). Fair Night 5-person start big night; Migration Night 10 optional Mid+.
+Circuit Arc (score_set, teen) — shonen tournament, NOT sci-fi.
+Halo Term — powers school. Hollow Term — magic school.
+Starwake (ship_board) — space opera. Lanceyard (frame_heat) — mecha.
+Quarry Pact (hunt_part). Sect Ascension (realm_gate) — wuxia/cultivation.
+Gridrun (heat_wanted) — cyberpunk. Blackwake (ship_board) — age of sail.
+Night Charter — hidden-society courts. Badge Circuit — superhero patrol.
+Dust Line — western. Veil Watch (steadfast) — horror.
+Crew Score — heist. Hearth Season (cozy_tick) — cozy town/garden.
+Stage Light — idol. Pitch League — sports. Route Lantern (bond_heart) — romance/friends. Card Vein (card_lane).
+
+Ignore dump titles: Ember Crown, Pactbeasts, Gloamwild, Deepgate Accord, Salt Ledger, Sunloom Circuit, Lantern Run Company.
+Skip Hearth Ruin entirely (post-collapse salvage is live SynapticGM’s lane). Do not create Void Reach or Sky Frame. Do not put WOF into live SynapticGM.
+
+Tide Covenant = FACTION. Saltkin = RACE, not a creature. Compact races are not regions.
+
+ENGINE LOCKS (do not redesign)
+One engine, many packs. Code owns dice/HP/ledgers/catalogs/quest ticks/loot/gold/lockouts/instance seeds. LLM narrates AFTER commit. Tier 3 hubs + INSTANCED combat. Not contested open-world PvP (Tier 4 deferred). Party 2–5. Raid 10 only where the skin needs it. Lockstep. Weekly per-character boss lockout. Friends-first finder. Personal loot. Wipe → checkpoint. No mid-combat fill. No permadeath v1. No guild bank v1. No global chat v1. Two wallets: gold vs cosmetic tokens. Never sell outcomes / lockout skips / catch / raid clears / power packs / gacha. Theme Kit included with each bought world. Presence = nearby count + races only. English v1. Kid Mode: 10 turns/day; no public DMs/trade/voice; Route Lantern crushes OK, no sexual content.
+
+============================================================
+DEMAND SIGNALS YOU MUST USE (cite; do not invent percentages)
+============================================================
+Write WOF_Demand_Worlds_INDEX.md using PUBLIC signals, marked with source + year. If a number is uncertain, mark SPEC: and say so. Cover ALL of these lanes:
+
+A) Commercial MMO setting demand
+- Fantasy still the largest setting bucket (~40%+ in market overviews); sci-fi next (~30%); historical/modern smaller; post-apoc smaller. Cite Market Research Future or equivalent, dated.
+- MeinMMO reader poll (n≈1967, 2020): high fantasy far ahead (~55% with two votes allowed); also rank steampunk, low fantasy, cyberpunk, historical; pirates/western/wuxia/superhero in the teens-ranks. Recreate the FULL published ranking you can verify; do not fake missing ranks.
+
+B) What new MMOs actually launched toward (2024–2026)
+- Survival/sandbox (Dune Awakening, Once Human, Pax Dei, BitCraft, Albion as reference). Players asked for homestead, water/base, player-built towns — NOT only tab-target raids.
+- Cozy/life-sim filling a gap Ultima Online veterans named (Animal Crossing / Stardew-shaped social worlds).
+
+C) Fan-made / private-server / nostalgia demand (this is “most commonly fan-made”)
+Private-server lists 2026 cluster on: WoW-likes, Ragnarok Online, MU Online, Lineage 2, Silkroad, Tibia, RuneScape, MapleStory, Perfect World, Metin, Flyff, Aion, Cabal, Ultima Online shards, Minecraft-as-MMO. Extract the GENRE PATTERN each cluster wants (high fantasy raid, cute-dark grind, PK sandbox, 2.5D hunt, skilling, life-skills, sandbox housing) — then invent ORIGINAL WOF worlds. Never clone those products’ maps, classes, slogans, or monsters.
+
+D) Text / MUD / social-world demand
+IRE-style story games, UO/Second Life/OpenSim housing-and-identity, Habbo/IMVU hangout, Furcadia/anthro social, Pony Town-likes (original equine-folk ONLY if not licensed), pet sites (Neopets-PATTERN collect+care, original fauna). Pets-and-friends is a first-class demand, not a side mode.
+
+E) “Anything between” checklist — you MUST have a row for each, even if the row is MERGE INTO an existing WOF world:
+Medieval high; medieval low/grit; mythic antiquity (Greek/Egyptian/Norse/Celtic/Arthurian FOLKLORE inspiration, original cultures); feudal Japan/samurai (not a licensed ninja village); viking/north; silk road/caravan; wuxia (have); pirate (have); western (have); steampunk; dieselpunk; solarpunk; present-day city slice-of-life; present-day crime; spy; school (have); cafe/life-sim; fashion; racing; sports (have); idol (have); romance/friends (have); pets (have); cozy farm (have); player-built homestead/civ (NOT post-collapse salvage); superhero (have); mecha (have); kaiju; space opera (have); cyberpunk (have); colony/mars; underwater/atlantis-pattern; sky islands/airships; dinosaurs/prehistoric; dragon-rider; fey/fairy-tale dark; liminal/backrooms (teen+); ghost/exorcist; werefolk (not White Wolf); celestial/infernal original courts; anthro/social; noir 1920s; 1980s cassette; Y2K mall/teen present; cooking; wrestling; train/transcontinental; afterlife; tiny-folk; Mesoamerica-inspired original; West African folklore-inspired original; Polynesian voyaging original; Slavic folklore original. Skip licensed fandoms (HP, WoW unique, SAO unique, Pokémon unique, MLP, Warrior Cats, VtM clans).
+
+For each row: DemandHeat (High/Mid/Low), FanMadeHeat, HaveWOF (worldId or NEW), MergeOrNew, Maturity, rulesModuleId (existing or new slug), one-line why players want it.
+
+============================================================
+NEW WORLDS — GENERATE FULL PACKS (gaps only)
+============================================================
+Create a NEW original world pack ONLY when HaveWOF is empty AND DemandHeat is High or Mid AND it is not a clone of an existing skin (do not make a second Starwake, second Hearth Season, second Bonded Menagerie, second Gridrun).
+
+LOCKED WORKING NAMES for likely gaps (use exactly; do not rename; skip a name if you merge instead):
+- Brasswake (steampunk / airships / clockwork; NOT Blackwake)
+- Thorn Law (low-fantasy grit medieval; little magic; human-led; NOT Compact high fantasy)
+- Civic Mile (present-day slice-of-life city / friends hangout / apartments / cafe)
+- Homestead Ring (peaceful player-built town on the SERVER CLOCK; NOT Hearth Ruin salvage; NOT Hearth Season authored farm)
+- Scale Era (prehistoric / original megafauna; NOT franchise dinosaurs-as-IP)
+- Glass Reef (underwater city / tidecraft)
+- Kite Isle (sky islands; may share Brasswake airship verbs if you MERGE — pick one primary)
+- Northrim (north / sea-kings; folklore inspiration, original peoples)
+- Ink Banner (feudal banner-houses / duel-and-duty; NOT licensed ninja villages)
+- Leafrail (solarpunk; NOT dump title Sunloom)
+- Tide Colossus (kaiju-scale instanced hunts; original titans)
+- Ribbon Guard (magical-girl / sentai-PATTERN team shows; original)
+- Quiet Brief (present-day spy; instanced jobs)
+- Neon Docket (present-day crime crew; teen+; not GTA clone streets)
+- Redline Hour (racing / time-trial instances)
+- Atelier Row (fashion / runway score_set)
+- Third Cup (cafe / hospitality life-sim)
+- Saddle Sky (dragon-rider ARCHETYPE; original mounts, not licensed)
+- Briar Court (fey / dark fairy-tale courts)
+- Threshold Rooms (liminal interiors; teen+; steadfast-adjacent)
+- Kindred Hide (anthro/social identity + hangout; original folk, no licensed ponies/cats)
+- Smoke Ledger (1920s noir)
+- Quiet Rite (ghost / exorcist / household haunt; original)
+- First Clay (mythic antiquity original cultures; folklore analog one line each)
+- Mesa Codex, Drumline Coast, Star Canoe, Winter Oven, Green Chapel — folklore-inspired originals (Mesoamerica / West African / Polynesian voyaging / Slavic / Arthurian-PD). Each needs originality fence + ban-list. If run length forces a cut, still write INDEX rows + a SHORT pack (4 hubs, 18 quests, 6 NPC trees, 1 five-man, Theme Kit, PressBill) rather than skip.
+
+Do NOT generate 40 novels of equal length. Priority FULL depth (Ash Compact start depth): Brasswake, Thorn Law, Civic Mile, Homestead Ring, Scale Era, Glass Reef, Kindred Hide, Ink Banner, Leafrail, Saddle Sky. Others: SHORT pack still complete (no empty sections).
+
+Each NEW pack file WOF_<worldId>_Pack.md MUST include the same sections as the earlier all-worlds prompt: header, rules module (CODE fields), identity kits, place graph, NPCs + premade talk, choices, quests with numeric rewards, species/collectibles, loot, instances, talent nodes, Theme Kit, failures. Unique ids. Ban-list 40+. Opening choices include a stake. Local problems in hour one. Room described before creature. No Compact races reused as this world’s elves/dwarves.
+
+If a gap needs a NEW rules module, specify it fully (ledger fields, round resolve, wipe, lockout, 8 status effects, 12 verbs, 5 chrome templates, 10 eval probes). Candidates: grit_wound (Thorn Law), civic_rep (Civic Mile), build_tick (Homestead Ring), depth_gauge (Glass Reef), colossus_part (Tide Colossus), show_pose (Ribbon Guard), heat_cover (Quiet Brief), lap_time (Redline Hour), atelier_score (Atelier Row), hospitality_tick (Third Cup), bond_mount (Saddle Sky), veil_glamour (Briar Court), liminal_steadfast (Threshold Rooms), hide_voice (Kindred Hide). Reuse hp_check / cozy_tick / score_set / hunt_part / steadfast / heat_wanted / ship_board / bond_type when they already fit.
+
+============================================================
+PRESS-RELEASE BILL — EVERY WORLD, INCLUDING THE 23
+============================================================
+For each world write WOF_<worldId>_PressBill.md. This is the “press Release and everything is there” checklist. Mark each row: HAVE (exists in prior packs), SPEC (you are inventing now), CODE (must be built later), ART (brief only), LEGAL, QA. Honest store copy. No fake screenshots as binary files — write SHOT LISTS and art-direction so a later artist/generator can produce them.
+
+Mandatory sections (every PressBill):
+
+0) Store identity
+- Display name, one-line pitch, 80-word store paragraph, 5 bullets, 10 search keywords, maturity, content descriptors, what we will NOT claim (no “MMO” until MP proven).
+- Age rating table (all-ages / teen / teen+). Kid Mode extras.
+- What’s included vs DLC vs Theme Kit (kit included with world).
+- Two-wallet chrome names for this world.
+
+1) Why this world (demand)
+- Which demand row(s) it serves. Who it is for. Who it is NOT for.
+- Competitor PATTERNS (not clones) in 3 bullets + fence.
+
+2) Rules / code remaining
+- rulesModuleId + ledger fields.
+- Feature flags this world needs beyond friends-alpha (housing flavor, ranch, berth, exam, concert, etc.).
+- Data files required (places, NPCs, quests, talk, drops, vendors, interiors, talent, Theme Kit).
+- Eval probes (10).
+- Kill switches that would disable this world only.
+
+3) Content remaining vs friends-alpha
+- First-hour path (named beats). Solo 5-man. Big night or raid. Capitals/mid. Housing label. Vendor. Inn bind. Daily/weekly examples (5).
+- If this is an EXISTING 23: do not reprint the bible; list GAPS only (what pack 26 still lacked: e.g. typed YAML, Divide walk, talk runner).
+
+4) Art / images (briefs, not binary)
+WOF is a TEXT game; store still needs pictures. For each world deliver:
+- App icon brief (shape, material, no licensed marks)
+- Key art brief (1 hero + 1 safety/Kid variant)
+- 8 store screenshot SHOT LIST (UI chrome + a named place + a named kit; 9:16 phone and 16:9)
+- 4 kit/race portrait briefs
+- 4 place establishing-shot briefs (hub, wild, instance door, housing)
+- Theme Kit: fonts (named stacks, not pirated files), dice material, 6 UI chrome labels, 1 fashion default
+- Optional memorable TEXT plates already exist in gap-fill; add 4 matching still-image briefs (opening, first clear, first down, ending) — generate-later, schnell-cheap, Kid rewrite/skip rules
+- Ban visual lookalikes (40+), same as name ban-list
+- Color/material words. No hex required. No 3D asset list.
+
+5) Audio
+- 1 ambient loop brief, 8 SFX cue ids (hit, wipe, mail, level, vendor, instance-enter, festival, death), voice flavour, Hear-button line. No audio files.
+
+6) Live-ops / calendar
+- 12 festival/season rows with cosmetic-only rewards. No power.
+
+7) Legal / trust
+- IP fence paragraph. User-gen talk: canned say only in hubs; report/mute/block. Privacy: hashed telemetry. Accessibility: TTS reads chrome+prose, font scale, no color-only danger. Support macros (8) for this world.
+
+8) QA / go-to-press gate
+- 25 click-test rows a human can run in solo.
+- Ban-list CI probes (15 strings that must never appear).
+- Performance/LLM budget SPEC numbers per sub tier for a session of this world.
+- “Not ready” list: anything still CODE.
+
+9) Press kit
+- 120-word press blurb, 3 pull quotes (fictional-placeholder labeled PLACEHOLDER), fact sheet (genre, party size, platforms: phone-first), 5 FAQ.
+
+Also write ONE shared file WOF_PressRelease_Master_Bill.md:
+- Friends-alpha gate vs world-unlock gate vs “limited online region” gate vs true MP gate.
+- Shared art pipeline (how Theme Kit + stills are produced later; Kid rewrite; skip unsalvageable).
+- Shared store page template.
+- Shared legal pack list (ToS, privacy, ratings) — titles only, not live SynapticGM counsel dump.
+- What is explicitly SIDE and deferred: auction, guild bank, contested PvP, global chat, cross-title inventory, live-game import, 3D, voice chat, comics, ads growth.
+
+WOF_Shared_Release_Spine.yaml: entitlements, Theme Kit apply, two wallets, age gate, family plan, kill switches, packFormatVersion 1, world unlock table (Ash Compact included; others buy-and-own).
+
+WOF_Art_Audio_Store_Catalog.md: index of every brief across worlds (filename, worldId, type: icon|keyart|screenshot|portrait|place|still|loop|sfx).
+
+============================================================
+FILE OUTPUT
+============================================================
+Create downloadable files. End by telling the user: “Download every WOF_* file from the file tree.”
+
+1) WOF_Demand_Worlds_INDEX.md — ranked demand + sources + fan-made cluster table + “everything between” checklist.
+2) WOF_Demand_Vs_Have.md — every demand row → have / merge / NEW working name.
+3) WOF_PressRelease_Master_Bill.md
+4) WOF_Shared_Release_Spine.yaml
+5) WOF_Art_Audio_Store_Catalog.md
+6) WOF_<newWorldId>_Pack.md for each NEW world you generate
+7) WOF_<worldId>_PressBill.md for ALL 23 existing PLUS every new world
+8) Optional YAML sidecars if complete and valid.
+
+QUALITY
+- Original names only. Ban-lists 40+ per NEW world.
+- Numbers in data. Unique ids. Compact frozen names untouched.
+- First-Song instance public name is Courtfall at Vespermere only.
+- Bonded kit is brineveil_curator only.
+- Isekai module is hp_check_floor_flags only.
+- No HVAC, no live SynapticGM, no Ember Crown, no 3D.
+- Mark SPEC: on invented capacity/budget numbers.
+
+START with Demand index + Demand vs Have, then Master Press bill + Shared spine, then NEW world packs in priority order, then PressBills for Ash Compact, Bonded Menagerie, Isekai Gate, First-Song, then every remaining existing world, then remaining new short packs, then the art/audio catalog.
+
+END with a file list, row counts, and a 25-line integrity checklist (demand cited, 23 not regenerated, gaps named, frozen ids, honest store copy, no live import).
+```

@@ -1,0 +1,141 @@
+COPYRIGHT / IP FENCE (NON-NEGOTIABLE)
+- Do NOT use, imitate, or reference copyrighted/trademarked games, books, anime, manga, films, TV, comics, or tabletop brands.
+- Forbidden examples (non-exhaustive): Pokémon, Digimon, Monster Hunter (as a clone), World of Warcraft, Final Fantasy XIV, Elder Scrolls Online, Destiny, Warframe, Genshin, Roblox clones-as-IP, D&D/WotC product lines, Tolkien, Warhammer, etc.
+- Forbidden: franchise names, characters, places, factions, creature lines, slogans, UI logos, celebrity likeness.
+- Allowed: original names only; generic genre aesthetics; public-domain folklore used generically.
+- “Feels like” = INTERNAL only. Never in player-facing copy.
+- If unsure, invent a different original alternative.
+- Not legal advice; ban-list pass before shipping.
+
+ROLE
+You are a principal MMO / live-service architect + content pipeline designer for the SynapticGM company’s SEPARATE later projects — primarily WOF (World of Fantasy) and a family of related MMO-capable titles.
+
+GOAL
+This is PROMPT 2 / PART B. Assume PROMPT 1 already generated:
+- SynapticGM live cosmetics/campaigns (ignore; do not extend live src/)
+- WOF world variants + monster-collecting bestiary/moves/tables
+Do NOT regenerate that content. Build the MISSING layer: how to support WOF + multiple MMO titles operationally and technically, with content pipelines so each title can be filled and shipped in waves.
+
+HARD SEPARATION
+- Everything here is QUARANTINED from live SynapticGM (no imports into live src/, live supabase game paths, live prompts, live settings/saves).
+- Prefer folder/data suggestions under wof/ and future title roots only.
+- WOF folk/place working names may appear: Ash Compact, Tide Covenant, Hearthborn, Lanternfolk, Saltkin, Stonevein, Reedfen, Lampwood, Brinewatch, Granite Stair — plus new original names.
+- Single-player truth still matters: SP must work before MP features unlock.
+
+NON-GOALS
+- Do not redesign SynapticGM live AI GM turn pipeline.
+- Do not claim one content dump finishes “all MMOs forever.”
+- Do not invent blockchain/NFT economies.
+
+================================================================================
+REQUIRED OUTPUT
+================================================================================
+
+PART 0 — Executive
+0.1 What Prompt 1 already covered vs what this brief must add
+0.2 Recommended product family map (WOF + N sibling titles) — names ORIGINAL
+0.3 Shared engine vs per-title content split
+0.4 36-month phased roadmap (SP → co-op instances → limited MP → fuller MMO features)
+0.5 Explicit “not an MMO yet” honesty checklist (what players must not be promised)
+
+PART 1 — Shared multi-title engine spine
+Design one shared backend/gameplay spine reusable across titles:
+- Identity/accounts, characters, inventories, collections
+- World regions/instances, travel, fog/knowledge
+- Combat resolution authority (server-authoritative)
+- Quests/journals
+- Chat/social (friends, party, guild) — staged
+- Matchmaking / instance lifecycle
+- Economy services (vendor, auction — staged; auction LATE)
+- Housing — LATE
+- Moderation, reporting, ToS hooks
+- Telemetry, live ops config, feature flags
+For each: SP-only / co-op / full-MP readiness, data ownership, anti-cheat notes.
+
+PART 2 — Networking & scale architecture (practical)
+- Recommended topology for indie-scale → mid-scale (regions, shards, instances)
+- Authoritative sim vs client prediction boundaries
+- Persistence model (events vs state snapshots)
+- Lag, disconnect, rollback, dupe-item prevention
+- Cost model sketch (CCU bands: 100 / 1k / 10k)
+- Kill switches (disable auction, chat, MP instances, keep SP)
+
+PART 3 — Title family catalog (generate 6 ORIGINAL MMO-capable titles)
+For EACH title:
+- id, name, pitch, fantasy fantasy loop (the 30-second fantasy)
+- Relationship to WOF (same universe shard / adjacent / fully separate)
+- Core loop (daily/weekly)
+- Unique systems (only what differentiates)
+- MP features at soft launch vs later
+- Content minimum for soft launch (numbers)
+- Monetization stance (cosmetic-first; no P2W)
+- Kid/teen suitability
+Titles must include at least:
+1) WOF classic faction fantasy MMO-capable
+2) WOF monster-collecting MMO-capable (uses Prompt 1 bestiary; do not regenerate 120 monsters — reference schema + gaps only)
+3) Dungeon-expedition MMO-capable
+4) Coastal trade / intrigue MMO-capable
+5) One experimental hybrid
+6) One “smaller” co-op-first title (not full MMO day one)
+
+PART 4 — Content pipeline (how we never run out of stuff)
+4.1 Content types taxonomy (creatures, moves, regions, dungeons, quests, raids, cosmetics, seasons)
+4.2 Production wave template: Wave 0 soft launch → Wave 1–4
+4.3 Per-wave quotas (e.g. +X creatures, +Y dungeons, +Z quests)
+4.4 Tools/schemas authors need (JSON/TS interfaces)
+4.5 Validation gates (duplicate IDs, type-chart illegal refs, unreachable quests, economy breaks)
+4.6 Localization/readability notes
+4.7 AI-assisted authoring rules: AI may draft; humans approve; never auto-ship balance-critical numbers without sim tests
+
+PART 5 — Monster-collecting MMO layer (EXTENSION ONLY)
+Assume Prompt 1 delivered SP bestiary ≥120 + moves.
+Add ONLY MP/live-service needs:
+- Trading policy (recommend delayed/disabled at soft launch)
+- Binding/ownership anti-dupe
+- Competitive formats (async clear boards vs live PvP — pick safe MVP)
+- Seasonal rotation without invalidating SP saves
+- Gaps list: what extra creatures/moves/biomes needed for MP seasons 1–4 (COUNTS + themes, not full regen unless critical holes)
+
+PART 6 — Other systems content packs (tables, not novels)
+For each title in Part 3, provide soft-launch minimum tables:
+- 12 regions
+- 20 quest seeds
+- 10 dungeons/expeditions
+- 5 world bosses or plot clocks
+- 15 cosmetics concepts
+- 10 seasonal event seeds
+Keep original; no franchise echoes.
+
+PART 7 — Economy, progression, anti-P2W
+- Soft currency / premium currency rules
+- What premium may never buy (power, catch rates, raid clears)
+- sinks/faucets
+- Auction house go/no-go criteria
+- Collector rarity without pay-to-win
+
+PART 8 — Live ops & trust
+- Seasons calendar
+- Incident kill switches
+- Moderation queues (chat, names, UGC if any)
+- Kid/teen MP restrictions
+- Support playbooks unique to MP (rolled-back raid, lost bound creature, dupe exploit)
+
+PART 9 — Staffing & build order
+- Team roles at 0 / soft launch / 10k CCU
+- What one founder + contractors can ship first
+- Parallel tracks vs hard dependencies
+
+PART 10 — Master checklists
+10.1 “WOF SP living world ready”
+10.2 “WOF co-op instances ready”
+10.3 “Title N soft-launch ready” (reusable)
+10.4 “Do not call it an MMO yet” red lines
+
+PART 11 — Open founder decisions
+MP ambition level, trading, PvP, auction, shared WOF universe vs separate titles, Kid MP, etc. Recommendation + alternative + cost-if-wrong.
+
+OUTPUT RULES
+- Dense tables, schemas, quotas, checklists.
+- Do not regenerate Prompt 1 bestiary/themes unless listing GAPS.
+- No preamble. Start with PART 0.
+- If length-limited: finish 0–5 + 10 first; continue 6–9 + 11 as Part 2 without repeating.

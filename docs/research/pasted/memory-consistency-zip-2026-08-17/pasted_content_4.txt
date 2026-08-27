@@ -1,0 +1,91 @@
+ROLE
+You are a launch, monetization, and user-acquisition researcher for SynapticGM — a live single-player AI game-master (LitRPG / isekai / story RPG / PYOA / tabletop fantasy). Produce a practical Ads + Growth + Pre-Release readiness brief.
+
+GOAL
+1) Choose / validate ad services and placements by player level to maximize revenue WITHOUT destroying trust or retention.
+2) Plan how to advertise and get the game discovered (organic + paid).
+3) List ANYTHING AND EVERYTHING needed before public release (product, tech, payments, legal, store, ops, content, safety).
+
+NON-GOALS
+- Do NOT redesign the game loop or WOF/multiplayer.
+- Do NOT recommend fake installs, review farms, botnet UA, or dark-pattern paywalls mid-combat.
+- Do NOT put Mid/High subscribers behind rewarded ads by default.
+- Do NOT sell basic continuity, fail-refunds, cancel, or Kid Mode safety.
+
+PRODUCT TRUTH (ground truth)
+Tiers: Free / Mid (£14.99) / High (£29.99) / Admin BYOK (separate adult processor; web-only; ~£12.99 rec).
+Capacity: Free ~12 text/day; Mid 20; High 24; memorable weekly caps; never-expire packs; story-start honeymoon turns already exist.
+Ads policy already coded/intended:
+- Free: optional rewarded ads for +text turns; Free memorable +1 after weekly cap (daily/weekly ad extra caps).
+- Mid/High: no ads.
+- Kid Mode: family-safe ad path (AdMob kids when live); adult Free: harder daily ad cap then packs/sub.
+- Providers stubbed toward: AppLixir (adult web rewarded) + AdMob (kids / Play).
+Channels: web first likely; Play possible; Apple later; Admin BYOK never on store kids builds.
+Payments: Stripe for Mid/High/packs/themes; separate adult merchant for Admin BYOK; server entitlements + webhooks still a ship gate.
+Discovery stance already noted: own content + real creators/PR — never fake-install mills.
+Content: Kid Mode + adult/mature paths; memorable images; AI GM (store/policy sensitive).
+
+AUDIENCE
+Founder shipping alone + AI coding help. Checklists, decision tables, vendor shortlists, timelines, risks. Concrete. No fluff.
+
+REQUIRED OUTPUT STRUCTURE
+
+0. Executive recommendation
+- One clear ads strategy for launch (web vs Play vs both).
+- One clear acquisition strategy for first 90 days (budget tiers: £0 / £500 / £2k / £10k).
+- Top 15 release blockers ranked P0/P1/P2.
+- “Ship when X is true” definition of done.
+
+1. How we treat ads today → economics model
+Model player states: Kid Free, Adult Free, Mid, High, Admin.
+For each: when ads may show, max/day, reward type (text turns vs memorable), soft-offer timing rules (never interrupt unresolved action), expected fill rate assumptions, eCPM ranges by platform, expected revenue per DAU, cannibalization risk vs Mid conversion.
+Recommend: keep / tweak caps / tweak rewards / never show interstitial (or when interstitial is acceptable if ever).
+Include HookArc + honeymoon interaction: when soft offers are fair vs rage-inducing.
+
+2. Ad service / mediation plan by level & channel
+Compare realistic options for OUR model (rewarded primary; optional offerwall later):
+Web adult rewarded: AppLixir, other web rewarded/offerwall vendors worth considering, house ads, direct sponsor.
+Mobile: Google AdMob (Families / Designed for Families constraints), AppLovin MAX / ironSource mediation, Unity Ads — only if relevant.
+For EACH serious candidate:
+- Best fit channel (web/Play/iOS)
+- Kid vs adult suitability
+- Rewarded support quality
+- Typical eCPM / fill caveats
+- Policy risk with AI-generated / mature content
+- Integration effort S/M/L
+- Fraud / VPN / reward-cheat risks
+- Verdict: Primary / Backup / Avoid for SynapticGM
+Then propose a concrete stack:
+- Launch web adult Free
+- Launch Kid Mode
+- Launch Play (if any)
+- Later mediation
+Include server-side reward grant design (anti-cheat): ad completion token → capacity grant; never trust client alone.
+
+3. Placement & creative rules (maximize return, minimize churn)
+Specify exact moments:
+- Out of text turns (soft offer)
+- Shop → Earn turns
+- Memorable weekly cap bridge (Free only)
+- Optional: between chapters / after HookArc — never mid-fight / mid-dialogue
+Copy banks: 10 diegetic soft-offer lines; 10 banned pushy lines.
+A/B tests to run in first 60 days (hypothesis → metric → stop rule).
+House ads promoting Mid/packs: when ethical and effective.
+
+4. Go-to-market — get the game out there
+Organic (priority order with effort/impact):
+- Landing page / SEO / App Store / Play listing basics
+- Trailer / 30s hook clips / Shorts/Reels/TikTok formats that show the PRODUCT (not AI slop)
+- Reddit / Discords / LitRPG / AI RPG communities (rules-respecting)
+- Creator seeding (what to send; who; FTC disclosure)
+- Press / newsletter / Product Hunt / IndieDB / itch if relevant
+- Content cadence for first 8 weeks
+Paid UA (only after soft launch metrics exist):
+- Which channels fit AI GM (and which burn money)
+- Creative angles that convert (continuity, genres, Kid Mode, memorable plates) vs angles that attract wrong users / refunds
+- Budget ladders and kill criteria
+- Influencer vs ads mix
+Positioning one-liners for: LitRPG players, AID refugees, NovelAI/ST users, parents (Kid Mode), tabletop fans.
+Do-not-copy competitor marketing claims.
+
+5. Channel strategy

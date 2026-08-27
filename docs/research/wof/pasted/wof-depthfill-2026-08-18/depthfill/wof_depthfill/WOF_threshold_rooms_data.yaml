@@ -1,0 +1,2294 @@
+packFormatVersion: 1
+worldId: threshold_rooms
+displayName: Threshold Rooms
+maturity: teen+
+rulesModuleId: liminal_steadfast
+themeKit: Threshold Rooms Theme Kit
+places:
+- id: threshold_rooms_place_01
+  publicName: Welcome Desk
+  zoneId: threshold_rooms_zone_01
+  role: shared hub
+  mapScale: street
+  dangerTier: safe
+  outdoor: true
+  exits:
+  - threshold_rooms_place_02
+  - threshold_rooms_place_04
+  npcIds:
+  - threshold_rooms_npc_01
+  - threshold_rooms_npc_05
+  - threshold_rooms_npc_09
+  dungeonId: null
+  interactableIds:
+  - threshold_rooms_interact_01
+  - threshold_rooms_interact_09
+- id: threshold_rooms_place_02
+  publicName: Carpet Hall
+  zoneId: threshold_rooms_zone_01
+  role: start hub
+  mapScale: street
+  dangerTier: safe
+  outdoor: true
+  exits:
+  - threshold_rooms_place_01
+  - threshold_rooms_place_03
+  npcIds:
+  - threshold_rooms_npc_02
+  - threshold_rooms_npc_06
+  - threshold_rooms_npc_10
+  dungeonId: null
+  interactableIds:
+  - threshold_rooms_interact_02
+  - threshold_rooms_interact_10
+- id: threshold_rooms_place_03
+  publicName: Blue Stair
+  zoneId: threshold_rooms_zone_01
+  role: street route
+  mapScale: street
+  dangerTier: safe
+  outdoor: true
+  exits:
+  - threshold_rooms_place_02
+  - threshold_rooms_place_04
+  npcIds:
+  - threshold_rooms_npc_03
+  - threshold_rooms_npc_07
+  dungeonId: null
+  interactableIds:
+  - threshold_rooms_interact_03
+  - threshold_rooms_interact_11
+- id: threshold_rooms_place_04
+  publicName: Exit Light
+  zoneId: threshold_rooms_zone_02
+  role: mid join
+  mapScale: street
+  dangerTier: low
+  outdoor: true
+  exits:
+  - threshold_rooms_place_03
+  - threshold_rooms_place_05
+  - threshold_rooms_place_01
+  npcIds:
+  - threshold_rooms_npc_04
+  - threshold_rooms_npc_08
+  dungeonId: null
+  interactableIds:
+  - threshold_rooms_interact_04
+  - threshold_rooms_interact_12
+- id: threshold_rooms_place_05
+  publicName: Vending Niche
+  zoneId: threshold_rooms_zone_02
+  role: work district
+  mapScale: interior
+  dangerTier: low
+  outdoor: false
+  exits:
+  - threshold_rooms_place_04
+  - threshold_rooms_place_06
+  npcIds: []
+  dungeonId: null
+  interactableIds:
+  - threshold_rooms_interact_05
+- id: threshold_rooms_place_06
+  publicName: Mauve Lift
+  zoneId: threshold_rooms_zone_02
+  role: instance door
+  mapScale: dungeon
+  dangerTier: medium
+  outdoor: false
+  exits:
+  - threshold_rooms_place_05
+  - threshold_rooms_place_07
+  npcIds: []
+  dungeonId: threshold_rooms_dungeon_01
+  interactableIds:
+  - threshold_rooms_interact_06
+- id: threshold_rooms_place_07
+  publicName: Service Corridor
+  zoneId: threshold_rooms_zone_03
+  role: wild edge
+  mapScale: street
+  dangerTier: medium
+  outdoor: true
+  exits:
+  - threshold_rooms_place_06
+  - threshold_rooms_place_08
+  npcIds: []
+  dungeonId: null
+  interactableIds:
+  - threshold_rooms_interact_07
+- id: threshold_rooms_place_08
+  publicName: Quiet Atrium
+  zoneId: threshold_rooms_zone_03
+  role: housing approach
+  mapScale: interior
+  dangerTier: low
+  outdoor: false
+  exits:
+  - threshold_rooms_place_07
+  npcIds: []
+  dungeonId: null
+  interactableIds:
+  - threshold_rooms_interact_08
+npcs:
+- id: threshold_rooms_npc_01
+  name: Fenn Rowan
+  placeId: threshold_rooms_place_01
+  role: quest
+  greet: Fenn Rowan says, ‘Threshold Rooms keeps its promises in small places. Tell me which one you noticed.’
+- id: threshold_rooms_npc_02
+  name: Gala Nook
+  placeId: threshold_rooms_place_02
+  role: profession
+  greet: Gala Nook says, ‘Threshold Rooms keeps its promises in small places. Tell me which one you noticed.’
+- id: threshold_rooms_npc_03
+  name: Holl Cress
+  placeId: threshold_rooms_place_03
+  role: hub
+  greet: Holl Cress says, ‘Threshold Rooms keeps its promises in small places. Tell me which one you noticed.’
+- id: threshold_rooms_npc_04
+  name: Ivo Silt
+  placeId: threshold_rooms_place_04
+  role: merchant
+  greet: Ivo Silt says, ‘Threshold Rooms keeps its promises in small places. Tell me which one you noticed.’
+- id: threshold_rooms_npc_05
+  name: Jori Pryce
+  placeId: threshold_rooms_place_01
+  role: local
+  greet: Jori Pryce says, ‘Threshold Rooms keeps its promises in small places. Tell me which one you noticed.’
+- id: threshold_rooms_npc_06
+  name: Alden Vane
+  placeId: threshold_rooms_place_02
+  role: host
+  greet: Alden Vane says, ‘Threshold Rooms keeps its promises in small places. Tell me which one you noticed.’
+- id: threshold_rooms_npc_07
+  name: Bryn Quill
+  placeId: threshold_rooms_place_03
+  role: quest
+  greet: Bryn Quill says, ‘Threshold Rooms keeps its promises in small places. Tell me which one you noticed.’
+- id: threshold_rooms_npc_08
+  name: Cato Vale
+  placeId: threshold_rooms_place_04
+  role: profession
+  greet: Cato Vale says, ‘Threshold Rooms keeps its promises in small places. Tell me which one you noticed.’
+- id: threshold_rooms_npc_09
+  name: Dessa Wren
+  placeId: threshold_rooms_place_01
+  role: local
+  greet: Dessa Wren says, ‘Threshold Rooms keeps its promises in small places. Tell me which one you noticed.’
+- id: threshold_rooms_npc_10
+  name: Eris Morrow
+  placeId: threshold_rooms_place_02
+  role: merchant
+  greet: Eris Morrow says, ‘Threshold Rooms keeps its promises in small places. Tell me which one you noticed.’
+kits:
+- id: threshold_rooms_kit_01
+  publicName: Anchor Monitor
+  look: anchor monitor workwear
+  values: practice anchor monitor
+  taboo: Never use anchor monitor authority to remove another person’s choice.
+  speechTell: Use the local rhythm of Threshold Rooms and make every offer concrete.
+  starterClothes: anchor_monitor mantle
+  starterTool: anchor_monitor tool
+  starterMapItem: threshold_rooms_map_01
+  startingPlaceId: threshold_rooms_place_01
+  firstHourQuestId: threshold_rooms_q_01
+  abilityFlag: threshold_rooms_ability_01
+- id: threshold_rooms_kit_02
+  publicName: Map Foldkeeper
+  look: map foldkeeper workwear
+  values: practice map foldkeeper
+  taboo: Never use map foldkeeper authority to remove another person’s choice.
+  speechTell: Use the local rhythm of Threshold Rooms and make every offer concrete.
+  starterClothes: map_foldkeeper vest
+  starterTool: map_foldkeeper tool
+  starterMapItem: threshold_rooms_map_02
+  startingPlaceId: threshold_rooms_place_02
+  firstHourQuestId: threshold_rooms_q_02
+  abilityFlag: threshold_rooms_ability_02
+- id: threshold_rooms_kit_03
+  publicName: Comfort Attendant
+  look: comfort attendant workwear
+  values: practice comfort attendant
+  taboo: Never use comfort attendant authority to remove another person’s choice.
+  speechTell: Use the local rhythm of Threshold Rooms and make every offer concrete.
+  starterClothes: comfort_attendant jacket
+  starterTool: comfort_attendant tool
+  starterMapItem: threshold_rooms_map_03
+  startingPlaceId: threshold_rooms_place_01
+  firstHourQuestId: threshold_rooms_q_03
+  abilityFlag: threshold_rooms_ability_03
+- id: threshold_rooms_kit_04
+  publicName: Exit Registrar
+  look: exit registrar workwear
+  values: practice exit registrar
+  taboo: Never use exit registrar authority to remove another person’s choice.
+  speechTell: Use the local rhythm of Threshold Rooms and make every offer concrete.
+  starterClothes: exit_registrar sash
+  starterTool: exit_registrar tool
+  starterMapItem: threshold_rooms_map_04
+  startingPlaceId: threshold_rooms_place_02
+  firstHourQuestId: threshold_rooms_q_04
+  abilityFlag: threshold_rooms_ability_04
+quests:
+- id: threshold_rooms_q_01
+  title: 'Threshold Rooms: Name a Working Promise'
+  family: identity
+  hidden: false
+  unlocksQuestId: threshold_rooms_q_02
+  objectives:
+  - id: threshold_rooms_q_01_obj_01
+    kind: visit_place
+    targetId: threshold_rooms_place_01
+    count: 1
+  - id: threshold_rooms_q_01_obj_02
+    kind: deliver_item
+    targetId: threshold_rooms_deliver_item_01
+    count: 2
+  rewardGold: 12
+  rewardXp: 20
+- id: threshold_rooms_q_02
+  title: 'Threshold Rooms: Set the First Tool Aside'
+  family: identity
+  hidden: false
+  unlocksQuestId: threshold_rooms_q_03
+  objectives:
+  - id: threshold_rooms_q_02_obj_01
+    kind: ledger_kill
+    targetId: threshold_rooms_ledger_kill_02
+    count: 1
+  - id: threshold_rooms_q_02_obj_02
+    kind: talk_to_npc
+    targetId: threshold_rooms_npc_03
+    count: 2
+  rewardGold: 15
+  rewardXp: 25
+- id: threshold_rooms_q_03
+  title: 'Threshold Rooms: Carry the Right Record'
+  family: identity
+  hidden: false
+  unlocksQuestId: threshold_rooms_q_04
+  objectives:
+  - id: threshold_rooms_q_03_obj_01
+    kind: ledger_bond
+    targetId: threshold_rooms_ledger_bond_03
+    count: 1
+  - id: threshold_rooms_q_03_obj_02
+    kind: collect_item
+    targetId: threshold_rooms_collect_item_03
+    count: 2
+  rewardGold: 18
+  rewardXp: 30
+- id: threshold_rooms_q_04
+  title: 'Threshold Rooms: Find the Missing Measure'
+  family: identity
+  hidden: false
+  unlocksQuestId: threshold_rooms_q_05
+  objectives:
+  - id: threshold_rooms_q_04_obj_01
+    kind: deliver_item
+    targetId: threshold_rooms_deliver_item_04
+    count: 1
+  - id: threshold_rooms_q_04_obj_02
+    kind: interact
+    targetId: threshold_rooms_place_05
+    count: 2
+    verbId: cook
+  rewardGold: 21
+  rewardXp: 35
+- id: threshold_rooms_q_05
+  title: 'Threshold Rooms: Teach a Safer Shortcut'
+  family: identity
+  hidden: false
+  unlocksQuestId: threshold_rooms_q_06
+  objectives:
+  - id: threshold_rooms_q_05_obj_01
+    kind: talk_to_npc
+    targetId: threshold_rooms_npc_05
+    count: 1
+  - id: threshold_rooms_q_05_obj_02
+    kind: score_beat
+    targetId: threshold_rooms_score_beat_05
+    count: 2
+  rewardGold: 24
+  rewardXp: 40
+- id: threshold_rooms_q_06
+  title: 'Threshold Rooms: Read the Local Weather'
+  family: profession
+  hidden: false
+  unlocksQuestId: threshold_rooms_q_07
+  objectives:
+  - id: threshold_rooms_q_06_obj_01
+    kind: collect_item
+    targetId: threshold_rooms_collect_item_06
+    count: 1
+  - id: threshold_rooms_q_06_obj_02
+    kind: build_tick
+    targetId: threshold_rooms_build_tick_06
+    count: 2
+  rewardGold: 27
+  rewardXp: 45
+- id: threshold_rooms_q_07
+  title: 'Threshold Rooms: Repair a Shared Threshold'
+  family: profession
+  hidden: false
+  unlocksQuestId: threshold_rooms_q_08
+  objectives:
+  - id: threshold_rooms_q_07_obj_01
+    kind: interact
+    targetId: threshold_rooms_place_07
+    count: 1
+    verbId: inspect
+  - id: threshold_rooms_q_07_obj_02
+    kind: hospitality_tick
+    targetId: threshold_rooms_hospitality_tick_07
+    count: 2
+  rewardGold: 30
+  rewardXp: 50
+- id: threshold_rooms_q_08
+  title: 'Threshold Rooms: Return a Borrowed Sign'
+  family: profession
+  hidden: false
+  unlocksQuestId: threshold_rooms_q_09
+  objectives:
+  - id: threshold_rooms_q_08_obj_01
+    kind: score_beat
+    targetId: threshold_rooms_score_beat_08
+    count: 1
+  - id: threshold_rooms_q_08_obj_02
+    kind: lap_finish
+    targetId: threshold_rooms_lap_finish_08
+    count: 2
+  rewardGold: 33
+  rewardXp: 55
+- id: threshold_rooms_q_09
+  title: 'Threshold Rooms: Host the Small Welcome'
+  family: profession
+  hidden: false
+  unlocksQuestId: threshold_rooms_q_10
+  objectives:
+  - id: threshold_rooms_q_09_obj_01
+    kind: build_tick
+    targetId: threshold_rooms_build_tick_09
+    count: 1
+  - id: threshold_rooms_q_09_obj_02
+    kind: visit_place
+    targetId: threshold_rooms_place_02
+    count: 2
+  rewardGold: 36
+  rewardXp: 60
+- id: threshold_rooms_q_10
+  title: 'Threshold Rooms: Choose a Fair Order'
+  family: profession
+  hidden: false
+  unlocksQuestId: threshold_rooms_q_11
+  objectives:
+  - id: threshold_rooms_q_10_obj_01
+    kind: hospitality_tick
+    targetId: threshold_rooms_hospitality_tick_10
+    count: 1
+  - id: threshold_rooms_q_10_obj_02
+    kind: ledger_kill
+    targetId: threshold_rooms_ledger_kill_10
+    count: 2
+  rewardGold: 39
+  rewardXp: 65
+- id: threshold_rooms_q_11
+  title: 'Threshold Rooms: Map the Quiet Detour'
+  family: profession
+  hidden: false
+  unlocksQuestId: threshold_rooms_q_12
+  objectives:
+  - id: threshold_rooms_q_11_obj_01
+    kind: lap_finish
+    targetId: threshold_rooms_lap_finish_11
+    count: 1
+  - id: threshold_rooms_q_11_obj_02
+    kind: ledger_bond
+    targetId: threshold_rooms_ledger_bond_11
+    count: 2
+  rewardGold: 42
+  rewardXp: 70
+- id: threshold_rooms_q_12
+  title: 'Threshold Rooms: Bring a Useful Witness'
+  family: profession
+  hidden: false
+  unlocksQuestId: threshold_rooms_q_13
+  objectives:
+  - id: threshold_rooms_q_12_obj_01
+    kind: visit_place
+    targetId: threshold_rooms_place_04
+    count: 1
+  - id: threshold_rooms_q_12_obj_02
+    kind: deliver_item
+    targetId: threshold_rooms_deliver_item_12
+    count: 2
+  rewardGold: 45
+  rewardXp: 75
+- id: threshold_rooms_q_13
+  title: 'Threshold Rooms: Sort the Unclaimed Materials'
+  family: zone_story
+  hidden: false
+  unlocksQuestId: threshold_rooms_q_14
+  objectives:
+  - id: threshold_rooms_q_13_obj_01
+    kind: ledger_kill
+    targetId: threshold_rooms_ledger_kill_13
+    count: 1
+  - id: threshold_rooms_q_13_obj_02
+    kind: talk_to_npc
+    targetId: threshold_rooms_npc_04
+    count: 2
+  rewardGold: 48
+  rewardXp: 80
+- id: threshold_rooms_q_14
+  title: 'Threshold Rooms: Make Room for a Visitor'
+  family: zone_story
+  hidden: false
+  unlocksQuestId: threshold_rooms_q_15
+  objectives:
+  - id: threshold_rooms_q_14_obj_01
+    kind: ledger_bond
+    targetId: threshold_rooms_ledger_bond_14
+    count: 1
+  - id: threshold_rooms_q_14_obj_02
+    kind: collect_item
+    targetId: threshold_rooms_collect_item_14
+    count: 2
+  rewardGold: 51
+  rewardXp: 85
+- id: threshold_rooms_q_15
+  title: 'Threshold Rooms: Close the Day’s Ledger'
+  family: zone_story
+  hidden: false
+  unlocksQuestId: threshold_rooms_q_16
+  objectives:
+  - id: threshold_rooms_q_15_obj_01
+    kind: deliver_item
+    targetId: threshold_rooms_deliver_item_15
+    count: 1
+  - id: threshold_rooms_q_15_obj_02
+    kind: interact
+    targetId: threshold_rooms_place_08
+    count: 2
+    verbId: craft
+  rewardGold: 54
+  rewardXp: 90
+- id: threshold_rooms_q_16
+  title: 'Threshold Rooms: Follow the Midway Signal'
+  family: zone_story
+  hidden: false
+  unlocksQuestId: threshold_rooms_q_17
+  objectives:
+  - id: threshold_rooms_q_16_obj_01
+    kind: talk_to_npc
+    targetId: threshold_rooms_npc_06
+    count: 1
+  - id: threshold_rooms_q_16_obj_02
+    kind: score_beat
+    targetId: threshold_rooms_score_beat_16
+    count: 2
+  rewardGold: 57
+  rewardXp: 95
+- id: threshold_rooms_q_17
+  title: 'Threshold Rooms: Uncover the Door Note'
+  family: zone_story
+  hidden: true
+  unlocksQuestId: threshold_rooms_q_18
+  objectives:
+  - id: threshold_rooms_q_17_obj_01
+    kind: collect_item
+    targetId: threshold_rooms_collect_item_17
+    count: 1
+  - id: threshold_rooms_q_17_obj_02
+    kind: build_tick
+    targetId: threshold_rooms_build_tick_17
+    count: 2
+  rewardGold: 60
+  rewardXp: 100
+- id: threshold_rooms_q_18
+  title: 'Threshold Rooms: Prepare the Team Table'
+  family: zone_story
+  hidden: false
+  unlocksQuestId: threshold_rooms_q_19
+  objectives:
+  - id: threshold_rooms_q_18_obj_01
+    kind: interact
+    targetId: threshold_rooms_place_02
+    count: 1
+    verbId: bind_inn
+  - id: threshold_rooms_q_18_obj_02
+    kind: hospitality_tick
+    targetId: threshold_rooms_hospitality_tick_18
+    count: 2
+  rewardGold: 63
+  rewardXp: 105
+- id: threshold_rooms_q_19
+  title: 'Threshold Rooms: Test the Local Method'
+  family: zone_story
+  hidden: false
+  unlocksQuestId: threshold_rooms_q_20
+  objectives:
+  - id: threshold_rooms_q_19_obj_01
+    kind: score_beat
+    targetId: threshold_rooms_score_beat_19
+    count: 1
+  - id: threshold_rooms_q_19_obj_02
+    kind: lap_finish
+    targetId: threshold_rooms_lap_finish_19
+    count: 2
+  rewardGold: 66
+  rewardXp: 110
+- id: threshold_rooms_q_20
+  title: 'Threshold Rooms: Hold a Careful Boundary'
+  family: zone_story
+  hidden: false
+  unlocksQuestId: threshold_rooms_q_21
+  objectives:
+  - id: threshold_rooms_q_20_obj_01
+    kind: build_tick
+    targetId: threshold_rooms_build_tick_20
+    count: 1
+  - id: threshold_rooms_q_20_obj_02
+    kind: visit_place
+    targetId: threshold_rooms_place_05
+    count: 2
+  rewardGold: 69
+  rewardXp: 115
+- id: threshold_rooms_q_21
+  title: 'Threshold Rooms: Answer the Neighbour’s Call'
+  family: extra
+  hidden: false
+  unlocksQuestId: threshold_rooms_q_22
+  objectives:
+  - id: threshold_rooms_q_21_obj_01
+    kind: hospitality_tick
+    targetId: threshold_rooms_hospitality_tick_21
+    count: 1
+  - id: threshold_rooms_q_21_obj_02
+    kind: ledger_kill
+    targetId: threshold_rooms_ledger_kill_21
+    count: 2
+  rewardGold: 72
+  rewardXp: 120
+- id: threshold_rooms_q_22
+  title: 'Threshold Rooms: Finish the Side Route'
+  family: extra
+  hidden: false
+  unlocksQuestId: threshold_rooms_q_23
+  objectives:
+  - id: threshold_rooms_q_22_obj_01
+    kind: lap_finish
+    targetId: threshold_rooms_lap_finish_22
+    count: 1
+  - id: threshold_rooms_q_22_obj_02
+    kind: ledger_bond
+    targetId: threshold_rooms_ledger_bond_22
+    count: 2
+  rewardGold: 75
+  rewardXp: 125
+- id: threshold_rooms_q_23
+  title: 'Threshold Rooms: Earn a Trusted Introduction'
+  family: extra
+  hidden: true
+  unlocksQuestId: threshold_rooms_q_24
+  objectives:
+  - id: threshold_rooms_q_23_obj_01
+    kind: visit_place
+    targetId: threshold_rooms_place_07
+    count: 1
+  - id: threshold_rooms_q_23_obj_02
+    kind: deliver_item
+    targetId: threshold_rooms_deliver_item_23
+    count: 2
+  rewardGold: 78
+  rewardXp: 130
+- id: threshold_rooms_q_24
+  title: 'Threshold Rooms: Open the Instance Path'
+  family: extra
+  hidden: false
+  unlocksQuestId: threshold_rooms_q_25
+  objectives:
+  - id: threshold_rooms_q_24_obj_01
+    kind: ledger_kill
+    targetId: threshold_rooms_ledger_kill_24
+    count: 1
+  - id: threshold_rooms_q_24_obj_02
+    kind: talk_to_npc
+    targetId: threshold_rooms_npc_05
+    count: 2
+  rewardGold: 81
+  rewardXp: 135
+- id: threshold_rooms_q_25
+  title: 'Threshold Rooms: Complete the First Big Night'
+  family: extra
+  hidden: false
+  unlocksQuestId: null
+  objectives:
+  - id: threshold_rooms_q_25_obj_01
+    kind: ledger_bond
+    targetId: threshold_rooms_ledger_bond_25
+    count: 1
+  - id: threshold_rooms_q_25_obj_02
+    kind: collect_item
+    targetId: threshold_rooms_collect_item_25
+    count: 2
+  rewardGold: 84
+  rewardXp: 140
+species:
+- id: threshold_rooms_species_01
+  publicName: Paper Moth
+  kind: opponent
+  hp: 8
+  armor: 0
+  threat: 1
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: threshold_rooms_species_02
+  publicName: Lost Hound
+  kind: opponent
+  hp: 9
+  armor: 1
+  threat: 2
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: threshold_rooms_species_03
+  publicName: Clock Beetle
+  kind: opponent
+  hp: 10
+  armor: 2
+  threat: 3
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: threshold_rooms_species_04
+  publicName: Hush Crow
+  kind: opponent
+  hp: 11
+  armor: 3
+  threat: 1
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: threshold_rooms_species_05
+  publicName: Threshold Rooms Field Type 5
+  kind: opponent
+  hp: 12
+  armor: 0
+  threat: 2
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: threshold_rooms_species_06
+  publicName: Threshold Rooms Field Type 6
+  kind: opponent
+  hp: 13
+  armor: 1
+  threat: 3
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: threshold_rooms_species_07
+  publicName: Threshold Rooms Field Type 7
+  kind: opponent
+  hp: 14
+  armor: 2
+  threat: 1
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: threshold_rooms_species_08
+  publicName: Threshold Rooms Field Type 8
+  kind: opponent
+  hp: 15
+  armor: 3
+  threat: 2
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: threshold_rooms_species_09
+  publicName: Threshold Rooms Field Type 9
+  kind: opponent
+  hp: 16
+  armor: 0
+  threat: 3
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: threshold_rooms_species_10
+  publicName: Threshold Rooms Field Type 10
+  kind: opponent
+  hp: 17
+  armor: 1
+  threat: 1
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: threshold_rooms_species_11
+  publicName: Threshold Rooms Field Type 11
+  kind: opponent
+  hp: 18
+  armor: 2
+  threat: 2
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: threshold_rooms_species_12
+  publicName: Threshold Rooms Field Type 12
+  kind: opponent
+  hp: 19
+  armor: 3
+  threat: 3
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: threshold_rooms_species_13
+  publicName: Threshold Rooms Field Type 13
+  kind: opponent
+  hp: 20
+  armor: 0
+  threat: 1
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: threshold_rooms_species_14
+  publicName: Threshold Rooms Field Type 14
+  kind: opponent
+  hp: 21
+  armor: 1
+  threat: 2
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: threshold_rooms_species_15
+  publicName: Threshold Rooms Field Type 15
+  kind: opponent
+  hp: 22
+  armor: 2
+  threat: 3
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: threshold_rooms_species_16
+  publicName: Threshold Rooms Field Type 16
+  kind: opponent
+  hp: 23
+  armor: 3
+  threat: 1
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: threshold_rooms_species_17
+  publicName: Threshold Rooms Field Type 17
+  kind: opponent
+  hp: 24
+  armor: 0
+  threat: 2
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: threshold_rooms_species_18
+  publicName: Threshold Rooms Field Type 18
+  kind: opponent
+  hp: 25
+  armor: 1
+  threat: 3
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+items:
+- id: threshold_rooms_item_01
+  publicName: Welcome Desk token
+  category: starter
+  power: false
+  sellGold: 3
+  description: A Threshold Rooms item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: threshold_rooms_item_02
+  publicName: Carpet Hall tool
+  category: starter
+  power: false
+  sellGold: 5
+  description: A Threshold Rooms item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: threshold_rooms_item_03
+  publicName: Blue Stair thread
+  category: profession
+  power: false
+  sellGold: 7
+  description: A Threshold Rooms item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: threshold_rooms_item_04
+  publicName: Exit Light seal
+  category: profession
+  power: false
+  sellGold: 9
+  description: A Threshold Rooms item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: threshold_rooms_item_05
+  publicName: Vending Niche bundle
+  category: instance
+  power: false
+  sellGold: 11
+  description: A Threshold Rooms item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: threshold_rooms_item_06
+  publicName: Mauve Lift token
+  category: instance
+  power: false
+  sellGold: 13
+  description: A Threshold Rooms item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: threshold_rooms_item_07
+  publicName: Service Corridor tool
+  category: cosmetic
+  power: false
+  sellGold: 15
+  description: A Threshold Rooms item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: threshold_rooms_item_08
+  publicName: Quiet Atrium thread
+  category: cosmetic
+  power: false
+  sellGold: 17
+  description: A Threshold Rooms item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: threshold_rooms_item_09
+  publicName: Welcome Desk seal
+  category: material
+  power: false
+  sellGold: 19
+  description: A Threshold Rooms item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: threshold_rooms_item_10
+  publicName: Carpet Hall bundle
+  category: material
+  power: false
+  sellGold: 21
+  description: A Threshold Rooms item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: threshold_rooms_item_11
+  publicName: Blue Stair token
+  category: care
+  power: false
+  sellGold: 23
+  description: A Threshold Rooms item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: threshold_rooms_item_12
+  publicName: Exit Light tool
+  category: care
+  power: false
+  sellGold: 25
+  description: A Threshold Rooms item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: threshold_rooms_item_13
+  publicName: Vending Niche thread
+  category: map
+  power: false
+  sellGold: 27
+  description: A Threshold Rooms item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: threshold_rooms_item_14
+  publicName: Mauve Lift seal
+  category: map
+  power: false
+  sellGold: 29
+  description: A Threshold Rooms item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: threshold_rooms_item_15
+  publicName: Service Corridor bundle
+  category: vendor
+  power: false
+  sellGold: 31
+  description: A Threshold Rooms item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: threshold_rooms_item_16
+  publicName: Quiet Atrium token
+  category: vendor
+  power: false
+  sellGold: 33
+  description: A Threshold Rooms item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: threshold_rooms_item_17
+  publicName: Welcome Desk tool
+  category: recipe
+  power: false
+  sellGold: 35
+  description: A Threshold Rooms item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: threshold_rooms_item_18
+  publicName: Carpet Hall thread
+  category: recipe
+  power: false
+  sellGold: 37
+  description: A Threshold Rooms item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: threshold_rooms_item_19
+  publicName: Blue Stair seal
+  category: keepsake
+  power: false
+  sellGold: 39
+  description: A Threshold Rooms item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: threshold_rooms_item_20
+  publicName: Exit Light bundle
+  category: keepsake
+  power: false
+  sellGold: 41
+  description: A Threshold Rooms item used for a stated craft, route, display, or record; it never alters paid outcomes.
+dropTables:
+- id: threshold_rooms_drop_01
+  sourceId: threshold_rooms_species_01
+  personalLoot: true
+  entries:
+  - itemId: threshold_rooms_item_01
+    chancePct: 60
+    min: 1
+    max: 2
+  - itemId: threshold_rooms_item_08
+    chancePct: 20
+    min: 1
+    max: 1
+- id: threshold_rooms_drop_02
+  sourceId: threshold_rooms_species_02
+  personalLoot: true
+  entries:
+  - itemId: threshold_rooms_item_02
+    chancePct: 55
+    min: 1
+    max: 2
+  - itemId: threshold_rooms_item_09
+    chancePct: 25
+    min: 1
+    max: 1
+- id: threshold_rooms_drop_03
+  sourceId: threshold_rooms_species_03
+  personalLoot: true
+  entries:
+  - itemId: threshold_rooms_item_03
+    chancePct: 50
+    min: 1
+    max: 2
+  - itemId: threshold_rooms_item_10
+    chancePct: 30
+    min: 1
+    max: 1
+- id: threshold_rooms_drop_04
+  sourceId: threshold_rooms_species_04
+  personalLoot: true
+  entries:
+  - itemId: threshold_rooms_item_04
+    chancePct: 45
+    min: 1
+    max: 2
+  - itemId: threshold_rooms_item_11
+    chancePct: 20
+    min: 1
+    max: 1
+- id: threshold_rooms_drop_05
+  sourceId: threshold_rooms_species_05
+  personalLoot: true
+  entries:
+  - itemId: threshold_rooms_item_05
+    chancePct: 60
+    min: 1
+    max: 2
+  - itemId: threshold_rooms_item_12
+    chancePct: 25
+    min: 1
+    max: 1
+- id: threshold_rooms_drop_06
+  sourceId: threshold_rooms_species_06
+  personalLoot: true
+  entries:
+  - itemId: threshold_rooms_item_06
+    chancePct: 55
+    min: 1
+    max: 2
+  - itemId: threshold_rooms_item_13
+    chancePct: 30
+    min: 1
+    max: 1
+- id: threshold_rooms_drop_07
+  sourceId: threshold_rooms_species_07
+  personalLoot: true
+  entries:
+  - itemId: threshold_rooms_item_07
+    chancePct: 50
+    min: 1
+    max: 2
+  - itemId: threshold_rooms_item_14
+    chancePct: 20
+    min: 1
+    max: 1
+- id: threshold_rooms_drop_08
+  sourceId: threshold_rooms_species_08
+  personalLoot: true
+  entries:
+  - itemId: threshold_rooms_item_08
+    chancePct: 45
+    min: 1
+    max: 2
+  - itemId: threshold_rooms_item_15
+    chancePct: 25
+    min: 1
+    max: 1
+- id: threshold_rooms_drop_09
+  sourceId: threshold_rooms_species_09
+  personalLoot: true
+  entries:
+  - itemId: threshold_rooms_item_09
+    chancePct: 60
+    min: 1
+    max: 2
+  - itemId: threshold_rooms_item_16
+    chancePct: 30
+    min: 1
+    max: 1
+- id: threshold_rooms_drop_10
+  sourceId: threshold_rooms_species_10
+  personalLoot: true
+  entries:
+  - itemId: threshold_rooms_item_10
+    chancePct: 55
+    min: 1
+    max: 2
+  - itemId: threshold_rooms_item_17
+    chancePct: 20
+    min: 1
+    max: 1
+- id: threshold_rooms_drop_11
+  sourceId: threshold_rooms_species_11
+  personalLoot: true
+  entries:
+  - itemId: threshold_rooms_item_11
+    chancePct: 50
+    min: 1
+    max: 2
+  - itemId: threshold_rooms_item_18
+    chancePct: 25
+    min: 1
+    max: 1
+- id: threshold_rooms_drop_12
+  sourceId: threshold_rooms_species_12
+  personalLoot: true
+  entries:
+  - itemId: threshold_rooms_item_12
+    chancePct: 45
+    min: 1
+    max: 2
+  - itemId: threshold_rooms_item_19
+    chancePct: 30
+    min: 1
+    max: 1
+vendors:
+- id: threshold_rooms_vendor_01
+  publicName: Threshold Rooms Exchange
+  placeId: threshold_rooms_place_01
+  currencyGoldName: Exit Stamps
+  items:
+  - itemId: threshold_rooms_item_01
+    priceGold: 8
+  - itemId: threshold_rooms_item_02
+    priceGold: 11
+  - itemId: threshold_rooms_item_03
+    priceGold: 14
+  - itemId: threshold_rooms_item_04
+    priceGold: 17
+  - itemId: threshold_rooms_item_05
+    priceGold: 20
+  - itemId: threshold_rooms_item_06
+    priceGold: 23
+  - itemId: threshold_rooms_item_07
+    priceGold: 26
+  - itemId: threshold_rooms_item_08
+    priceGold: 29
+  repairCostPerPoint: 0
+dungeons:
+- id: threshold_rooms_dungeon_01
+  publicName: The Wrong-Floor Return
+  partyMin: 1
+  partyMax: 5
+  entrancePlaceId: threshold_rooms_place_06
+  rooms:
+  - id: threshold_rooms_dungeon_room_01
+    publicName: 'The Wrong-Floor Return: Threshold Room'
+    describeBeforeCreature: Describe the material, sound, exits, and practical obstacle of Threshold Room before any species
+      is narrated.
+    trashSpeciesIds:
+    - threshold_rooms_species_01
+    - threshold_rooms_species_02
+    eliteSpeciesId: null
+    checkpoint: false
+    bossSpeciesId: null
+    exits:
+    - threshold_rooms_dungeon_room_02
+  - id: threshold_rooms_dungeon_room_02
+    publicName: 'The Wrong-Floor Return: Workroom'
+    describeBeforeCreature: Describe the material, sound, exits, and practical obstacle of Workroom before any species is
+      narrated.
+    trashSpeciesIds:
+    - threshold_rooms_species_03
+    - threshold_rooms_species_04
+    eliteSpeciesId: null
+    checkpoint: false
+    bossSpeciesId: null
+    exits:
+    - threshold_rooms_dungeon_room_03
+  - id: threshold_rooms_dungeon_room_03
+    publicName: 'The Wrong-Floor Return: Side Passage'
+    describeBeforeCreature: Describe the material, sound, exits, and practical obstacle of Side Passage before any species
+      is narrated.
+    trashSpeciesIds:
+    - threshold_rooms_species_05
+    - threshold_rooms_species_06
+    eliteSpeciesId: threshold_rooms_species_09
+    checkpoint: false
+    bossSpeciesId: null
+    exits:
+    - threshold_rooms_dungeon_room_04
+  - id: threshold_rooms_dungeon_room_04
+    publicName: 'The Wrong-Floor Return: Checkpoint Alcove'
+    describeBeforeCreature: Describe the material, sound, exits, and practical obstacle of Checkpoint Alcove before any species
+      is narrated.
+    trashSpeciesIds:
+    - threshold_rooms_species_07
+    - threshold_rooms_species_08
+    eliteSpeciesId: null
+    checkpoint: true
+    bossSpeciesId: null
+    exits:
+    - threshold_rooms_dungeon_room_05
+  - id: threshold_rooms_dungeon_room_05
+    publicName: 'The Wrong-Floor Return: Finale Chamber'
+    describeBeforeCreature: Describe the material, sound, exits, and practical obstacle of Finale Chamber before any species
+      is narrated.
+    trashSpeciesIds:
+    - threshold_rooms_species_09
+    - threshold_rooms_species_10
+    eliteSpeciesId: null
+    checkpoint: false
+    bossSpeciesId: threshold_rooms_species_14
+    exits: []
+  traps:
+  - id: threshold_rooms_trap_01
+    publicName: misread sign
+    interactableId: threshold_rooms_interact_01
+  - id: threshold_rooms_trap_02
+    publicName: jammed latch
+    interactableId: threshold_rooms_interact_02
+  - id: threshold_rooms_trap_03
+    publicName: wet threshold
+    interactableId: threshold_rooms_interact_03
+  - id: threshold_rooms_trap_04
+    publicName: false shelf
+    interactableId: threshold_rooms_interact_04
+  - id: threshold_rooms_trap_05
+    publicName: quiet bell
+    interactableId: threshold_rooms_interact_05
+  - id: threshold_rooms_trap_06
+    publicName: sealed drawer
+    interactableId: threshold_rooms_interact_06
+talkTrees:
+- npcId: threshold_rooms_npc_01
+  greet: Fenn Rowan says, ‘Threshold Rooms keeps its promises in small places. Tell me which one you noticed.’
+  quest_offer: 'Fenn Rowan offers a specific task at Welcome Desk: settle the practical mismatch before it costs someone a
+    shift.'
+  quest_progress: Fenn Rowan checks the record and asks for the one detail that would change the outcome.
+  quest_turnin: Fenn Rowan marks the work complete, names who benefited, and hands over the recorded reward.
+  gossip:
+  - At Carpet Hall, people are discussing a missing care tag.
+  - The safest route today is through Blue Stair, not the obvious shortcut.
+  - Someone at Exit Light is offering help but will not ask twice.
+  refusal: Fenn Rowan says, ‘No. I can explain the rule, but I will not bend it for noise.’
+  player_rude: Fenn Rowan says, ‘You may leave, lower your voice, or try a useful question. Choose one.’
+- npcId: threshold_rooms_npc_02
+  greet: Gala Nook says, ‘Threshold Rooms keeps its promises in small places. Tell me which one you noticed.’
+  quest_offer: 'Gala Nook offers a specific task at Carpet Hall: settle the practical mismatch before it costs someone a shift.'
+  quest_progress: Gala Nook checks the record and asks for the one detail that would change the outcome.
+  quest_turnin: Gala Nook marks the work complete, names who benefited, and hands over the recorded reward.
+  gossip:
+  - At Blue Stair, people are discussing a missing care tag.
+  - The safest route today is through Exit Light, not the obvious shortcut.
+  - Someone at Vending Niche is offering help but will not ask twice.
+  refusal: Gala Nook says, ‘No. I can explain the rule, but I will not bend it for noise.’
+  player_rude: Gala Nook says, ‘You may leave, lower your voice, or try a useful question. Choose one.’
+- npcId: threshold_rooms_npc_03
+  greet: Holl Cress says, ‘Threshold Rooms keeps its promises in small places. Tell me which one you noticed.’
+  quest_offer: 'Holl Cress offers a specific task at Blue Stair: settle the practical mismatch before it costs someone a shift.'
+  quest_progress: Holl Cress checks the record and asks for the one detail that would change the outcome.
+  quest_turnin: Holl Cress marks the work complete, names who benefited, and hands over the recorded reward.
+  gossip:
+  - At Exit Light, people are discussing a missing care tag.
+  - The safest route today is through Vending Niche, not the obvious shortcut.
+  - Someone at Mauve Lift is offering help but will not ask twice.
+  refusal: Holl Cress says, ‘No. I can explain the rule, but I will not bend it for noise.’
+  player_rude: Holl Cress says, ‘You may leave, lower your voice, or try a useful question. Choose one.’
+- npcId: threshold_rooms_npc_04
+  greet: Ivo Silt says, ‘Threshold Rooms keeps its promises in small places. Tell me which one you noticed.’
+  quest_offer: 'Ivo Silt offers a specific task at Exit Light: settle the practical mismatch before it costs someone a shift.'
+  quest_progress: Ivo Silt checks the record and asks for the one detail that would change the outcome.
+  quest_turnin: Ivo Silt marks the work complete, names who benefited, and hands over the recorded reward.
+  gossip:
+  - At Vending Niche, people are discussing a missing care tag.
+  - The safest route today is through Mauve Lift, not the obvious shortcut.
+  - Someone at Service Corridor is offering help but will not ask twice.
+  refusal: Ivo Silt says, ‘No. I can explain the rule, but I will not bend it for noise.’
+  player_rude: Ivo Silt says, ‘You may leave, lower your voice, or try a useful question. Choose one.’
+- npcId: threshold_rooms_npc_05
+  greet: Jori Pryce says, ‘Threshold Rooms keeps its promises in small places. Tell me which one you noticed.’
+  quest_offer: 'Jori Pryce offers a specific task at Welcome Desk: settle the practical mismatch before it costs someone a
+    shift.'
+  quest_progress: Jori Pryce checks the record and asks for the one detail that would change the outcome.
+  quest_turnin: Jori Pryce marks the work complete, names who benefited, and hands over the recorded reward.
+  gossip:
+  - At Mauve Lift, people are discussing a missing care tag.
+  - The safest route today is through Service Corridor, not the obvious shortcut.
+  - Someone at Quiet Atrium is offering help but will not ask twice.
+  refusal: Jori Pryce says, ‘No. I can explain the rule, but I will not bend it for noise.’
+  player_rude: Jori Pryce says, ‘You may leave, lower your voice, or try a useful question. Choose one.’
+- npcId: threshold_rooms_npc_06
+  greet: Alden Vane says, ‘Threshold Rooms keeps its promises in small places. Tell me which one you noticed.’
+  quest_offer: 'Alden Vane offers a specific task at Carpet Hall: settle the practical mismatch before it costs someone a
+    shift.'
+  quest_progress: Alden Vane checks the record and asks for the one detail that would change the outcome.
+  quest_turnin: Alden Vane marks the work complete, names who benefited, and hands over the recorded reward.
+  gossip:
+  - At Service Corridor, people are discussing a missing care tag.
+  - The safest route today is through Quiet Atrium, not the obvious shortcut.
+  - Someone at Welcome Desk is offering help but will not ask twice.
+  refusal: Alden Vane says, ‘No. I can explain the rule, but I will not bend it for noise.’
+  player_rude: Alden Vane says, ‘You may leave, lower your voice, or try a useful question. Choose one.’
+- npcId: threshold_rooms_npc_07
+  greet: Bryn Quill says, ‘Threshold Rooms keeps its promises in small places. Tell me which one you noticed.’
+  quest_offer: 'Bryn Quill offers a specific task at Blue Stair: settle the practical mismatch before it costs someone a shift.'
+  quest_progress: Bryn Quill checks the record and asks for the one detail that would change the outcome.
+  quest_turnin: Bryn Quill marks the work complete, names who benefited, and hands over the recorded reward.
+  gossip:
+  - At Quiet Atrium, people are discussing a missing care tag.
+  - The safest route today is through Welcome Desk, not the obvious shortcut.
+  - Someone at Carpet Hall is offering help but will not ask twice.
+  refusal: Bryn Quill says, ‘No. I can explain the rule, but I will not bend it for noise.’
+  player_rude: Bryn Quill says, ‘You may leave, lower your voice, or try a useful question. Choose one.’
+- npcId: threshold_rooms_npc_08
+  greet: Cato Vale says, ‘Threshold Rooms keeps its promises in small places. Tell me which one you noticed.’
+  quest_offer: 'Cato Vale offers a specific task at Exit Light: settle the practical mismatch before it costs someone a shift.'
+  quest_progress: Cato Vale checks the record and asks for the one detail that would change the outcome.
+  quest_turnin: Cato Vale marks the work complete, names who benefited, and hands over the recorded reward.
+  gossip:
+  - At Welcome Desk, people are discussing a missing care tag.
+  - The safest route today is through Carpet Hall, not the obvious shortcut.
+  - Someone at Blue Stair is offering help but will not ask twice.
+  refusal: Cato Vale says, ‘No. I can explain the rule, but I will not bend it for noise.’
+  player_rude: Cato Vale says, ‘You may leave, lower your voice, or try a useful question. Choose one.’
+- npcId: threshold_rooms_npc_09
+  greet: Dessa Wren says, ‘Threshold Rooms keeps its promises in small places. Tell me which one you noticed.’
+  quest_offer: 'Dessa Wren offers a specific task at Welcome Desk: settle the practical mismatch before it costs someone a
+    shift.'
+  quest_progress: Dessa Wren checks the record and asks for the one detail that would change the outcome.
+  quest_turnin: Dessa Wren marks the work complete, names who benefited, and hands over the recorded reward.
+  gossip:
+  - At Carpet Hall, people are discussing a missing care tag.
+  - The safest route today is through Blue Stair, not the obvious shortcut.
+  - Someone at Exit Light is offering help but will not ask twice.
+  refusal: Dessa Wren says, ‘No. I can explain the rule, but I will not bend it for noise.’
+  player_rude: Dessa Wren says, ‘You may leave, lower your voice, or try a useful question. Choose one.’
+- npcId: threshold_rooms_npc_10
+  greet: Eris Morrow says, ‘Threshold Rooms keeps its promises in small places. Tell me which one you noticed.’
+  quest_offer: 'Eris Morrow offers a specific task at Carpet Hall: settle the practical mismatch before it costs someone a
+    shift.'
+  quest_progress: Eris Morrow checks the record and asks for the one detail that would change the outcome.
+  quest_turnin: Eris Morrow marks the work complete, names who benefited, and hands over the recorded reward.
+  gossip:
+  - At Blue Stair, people are discussing a missing care tag.
+  - The safest route today is through Exit Light, not the obvious shortcut.
+  - Someone at Vending Niche is offering help but will not ask twice.
+  refusal: Eris Morrow says, ‘No. I can explain the rule, but I will not bend it for noise.’
+  player_rude: Eris Morrow says, ‘You may leave, lower your voice, or try a useful question. Choose one.’
+choiceButtons:
+- id: threshold_rooms_choice_01_01
+  placeId: threshold_rooms_place_01
+  label: Read the notice at Welcome Desk
+  requires: []
+  intentKind: talk
+  stake: one turn
+- id: threshold_rooms_choice_01_02
+  placeId: threshold_rooms_place_01
+  label: Ask for an introduction at Welcome Desk
+  requires: []
+  intentKind: talk
+  stake: one supply
+- id: threshold_rooms_choice_01_03
+  placeId: threshold_rooms_place_01
+  label: Check the tool tag at Welcome Desk
+  requires: []
+  intentKind: inspect
+  stake: a declined invitation
+- id: threshold_rooms_choice_01_04
+  placeId: threshold_rooms_place_01
+  label: Offer a hand at Welcome Desk
+  requires: []
+  intentKind: interact
+  stake: a public note
+- id: threshold_rooms_choice_01_05
+  placeId: threshold_rooms_place_01
+  label: Take the safer route at Welcome Desk
+  requires:
+  - threshold_rooms_item_05
+  intentKind: travel
+  stake: a short detour
+- id: threshold_rooms_choice_01_06
+  placeId: threshold_rooms_place_01
+  label: Open the local record at Welcome Desk
+  requires:
+  - threshold_rooms_item_06
+  intentKind: interact
+  stake: one turn
+- id: threshold_rooms_choice_01_07
+  placeId: threshold_rooms_place_01
+  label: Rest at the bench at Welcome Desk
+  requires:
+  - threshold_rooms_item_07
+  intentKind: rest
+  stake: one supply
+- id: threshold_rooms_choice_01_08
+  placeId: threshold_rooms_place_01
+  label: Repair the marker at Welcome Desk
+  requires:
+  - threshold_rooms_item_08
+  intentKind: interact
+  stake: a declined invitation
+- id: threshold_rooms_choice_01_09
+  placeId: threshold_rooms_place_01
+  label: Prepare a shared item at Welcome Desk
+  requires:
+  - threshold_rooms_item_09
+  intentKind: craft
+  stake: a public note
+- id: threshold_rooms_choice_01_10
+  placeId: threshold_rooms_place_01
+  label: Leave a kind note at Welcome Desk
+  requires:
+  - threshold_rooms_item_10
+  intentKind: talk
+  stake: a short detour
+- id: threshold_rooms_choice_02_01
+  placeId: threshold_rooms_place_02
+  label: Read the notice at Carpet Hall
+  requires: []
+  intentKind: talk
+  stake: one turn
+- id: threshold_rooms_choice_02_02
+  placeId: threshold_rooms_place_02
+  label: Ask for an introduction at Carpet Hall
+  requires: []
+  intentKind: talk
+  stake: one supply
+- id: threshold_rooms_choice_02_03
+  placeId: threshold_rooms_place_02
+  label: Check the tool tag at Carpet Hall
+  requires: []
+  intentKind: inspect
+  stake: a declined invitation
+- id: threshold_rooms_choice_02_04
+  placeId: threshold_rooms_place_02
+  label: Offer a hand at Carpet Hall
+  requires: []
+  intentKind: interact
+  stake: a public note
+- id: threshold_rooms_choice_02_05
+  placeId: threshold_rooms_place_02
+  label: Take the safer route at Carpet Hall
+  requires:
+  - threshold_rooms_item_05
+  intentKind: travel
+  stake: a short detour
+- id: threshold_rooms_choice_02_06
+  placeId: threshold_rooms_place_02
+  label: Open the local record at Carpet Hall
+  requires:
+  - threshold_rooms_item_06
+  intentKind: interact
+  stake: one turn
+- id: threshold_rooms_choice_02_07
+  placeId: threshold_rooms_place_02
+  label: Rest at the bench at Carpet Hall
+  requires:
+  - threshold_rooms_item_07
+  intentKind: rest
+  stake: one supply
+- id: threshold_rooms_choice_02_08
+  placeId: threshold_rooms_place_02
+  label: Repair the marker at Carpet Hall
+  requires:
+  - threshold_rooms_item_08
+  intentKind: interact
+  stake: a declined invitation
+- id: threshold_rooms_choice_02_09
+  placeId: threshold_rooms_place_02
+  label: Prepare a shared item at Carpet Hall
+  requires:
+  - threshold_rooms_item_09
+  intentKind: craft
+  stake: a public note
+- id: threshold_rooms_choice_02_10
+  placeId: threshold_rooms_place_02
+  label: Leave a kind note at Carpet Hall
+  requires:
+  - threshold_rooms_item_10
+  intentKind: talk
+  stake: a short detour
+- id: threshold_rooms_choice_03_01
+  placeId: threshold_rooms_place_03
+  label: Read the notice at Blue Stair
+  requires: []
+  intentKind: talk
+  stake: one turn
+- id: threshold_rooms_choice_03_02
+  placeId: threshold_rooms_place_03
+  label: Ask for an introduction at Blue Stair
+  requires: []
+  intentKind: talk
+  stake: one supply
+- id: threshold_rooms_choice_03_03
+  placeId: threshold_rooms_place_03
+  label: Check the tool tag at Blue Stair
+  requires: []
+  intentKind: inspect
+  stake: a declined invitation
+- id: threshold_rooms_choice_03_04
+  placeId: threshold_rooms_place_03
+  label: Offer a hand at Blue Stair
+  requires: []
+  intentKind: interact
+  stake: a public note
+- id: threshold_rooms_choice_03_05
+  placeId: threshold_rooms_place_03
+  label: Take the safer route at Blue Stair
+  requires:
+  - threshold_rooms_item_05
+  intentKind: travel
+  stake: a short detour
+- id: threshold_rooms_choice_03_06
+  placeId: threshold_rooms_place_03
+  label: Open the local record at Blue Stair
+  requires:
+  - threshold_rooms_item_06
+  intentKind: interact
+  stake: one turn
+- id: threshold_rooms_choice_03_07
+  placeId: threshold_rooms_place_03
+  label: Rest at the bench at Blue Stair
+  requires:
+  - threshold_rooms_item_07
+  intentKind: rest
+  stake: one supply
+- id: threshold_rooms_choice_03_08
+  placeId: threshold_rooms_place_03
+  label: Repair the marker at Blue Stair
+  requires:
+  - threshold_rooms_item_08
+  intentKind: interact
+  stake: a declined invitation
+- id: threshold_rooms_choice_03_09
+  placeId: threshold_rooms_place_03
+  label: Prepare a shared item at Blue Stair
+  requires:
+  - threshold_rooms_item_09
+  intentKind: craft
+  stake: a public note
+- id: threshold_rooms_choice_03_10
+  placeId: threshold_rooms_place_03
+  label: Leave a kind note at Blue Stair
+  requires:
+  - threshold_rooms_item_10
+  intentKind: talk
+  stake: a short detour
+- id: threshold_rooms_choice_04_01
+  placeId: threshold_rooms_place_04
+  label: Read the notice at Exit Light
+  requires: []
+  intentKind: talk
+  stake: one turn
+- id: threshold_rooms_choice_04_02
+  placeId: threshold_rooms_place_04
+  label: Ask for an introduction at Exit Light
+  requires: []
+  intentKind: talk
+  stake: one supply
+- id: threshold_rooms_choice_04_03
+  placeId: threshold_rooms_place_04
+  label: Check the tool tag at Exit Light
+  requires: []
+  intentKind: inspect
+  stake: a declined invitation
+- id: threshold_rooms_choice_04_04
+  placeId: threshold_rooms_place_04
+  label: Offer a hand at Exit Light
+  requires: []
+  intentKind: interact
+  stake: a public note
+- id: threshold_rooms_choice_04_05
+  placeId: threshold_rooms_place_04
+  label: Take the safer route at Exit Light
+  requires:
+  - threshold_rooms_item_05
+  intentKind: travel
+  stake: a short detour
+- id: threshold_rooms_choice_04_06
+  placeId: threshold_rooms_place_04
+  label: Open the local record at Exit Light
+  requires:
+  - threshold_rooms_item_06
+  intentKind: interact
+  stake: one turn
+- id: threshold_rooms_choice_04_07
+  placeId: threshold_rooms_place_04
+  label: Rest at the bench at Exit Light
+  requires:
+  - threshold_rooms_item_07
+  intentKind: rest
+  stake: one supply
+- id: threshold_rooms_choice_04_08
+  placeId: threshold_rooms_place_04
+  label: Repair the marker at Exit Light
+  requires:
+  - threshold_rooms_item_08
+  intentKind: interact
+  stake: a declined invitation
+- id: threshold_rooms_choice_04_09
+  placeId: threshold_rooms_place_04
+  label: Prepare a shared item at Exit Light
+  requires:
+  - threshold_rooms_item_09
+  intentKind: craft
+  stake: a public note
+- id: threshold_rooms_choice_04_10
+  placeId: threshold_rooms_place_04
+  label: Leave a kind note at Exit Light
+  requires:
+  - threshold_rooms_item_10
+  intentKind: talk
+  stake: a short detour
+- id: threshold_rooms_choice_05_01
+  placeId: threshold_rooms_place_05
+  label: Read the notice at Vending Niche
+  requires: []
+  intentKind: talk
+  stake: one turn
+- id: threshold_rooms_choice_05_02
+  placeId: threshold_rooms_place_05
+  label: Ask for an introduction at Vending Niche
+  requires: []
+  intentKind: talk
+  stake: one supply
+- id: threshold_rooms_choice_05_03
+  placeId: threshold_rooms_place_05
+  label: Check the tool tag at Vending Niche
+  requires: []
+  intentKind: inspect
+  stake: a declined invitation
+- id: threshold_rooms_choice_05_04
+  placeId: threshold_rooms_place_05
+  label: Offer a hand at Vending Niche
+  requires: []
+  intentKind: interact
+  stake: a public note
+- id: threshold_rooms_choice_05_05
+  placeId: threshold_rooms_place_05
+  label: Take the safer route at Vending Niche
+  requires:
+  - threshold_rooms_item_05
+  intentKind: travel
+  stake: a short detour
+- id: threshold_rooms_choice_05_06
+  placeId: threshold_rooms_place_05
+  label: Open the local record at Vending Niche
+  requires:
+  - threshold_rooms_item_06
+  intentKind: interact
+  stake: one turn
+- id: threshold_rooms_choice_05_07
+  placeId: threshold_rooms_place_05
+  label: Rest at the bench at Vending Niche
+  requires:
+  - threshold_rooms_item_07
+  intentKind: rest
+  stake: one supply
+- id: threshold_rooms_choice_05_08
+  placeId: threshold_rooms_place_05
+  label: Repair the marker at Vending Niche
+  requires:
+  - threshold_rooms_item_08
+  intentKind: interact
+  stake: a declined invitation
+- id: threshold_rooms_choice_05_09
+  placeId: threshold_rooms_place_05
+  label: Prepare a shared item at Vending Niche
+  requires:
+  - threshold_rooms_item_09
+  intentKind: craft
+  stake: a public note
+- id: threshold_rooms_choice_05_10
+  placeId: threshold_rooms_place_05
+  label: Leave a kind note at Vending Niche
+  requires:
+  - threshold_rooms_item_10
+  intentKind: talk
+  stake: a short detour
+- id: threshold_rooms_choice_06_01
+  placeId: threshold_rooms_place_06
+  label: Read the notice at Mauve Lift
+  requires: []
+  intentKind: talk
+  stake: one turn
+- id: threshold_rooms_choice_06_02
+  placeId: threshold_rooms_place_06
+  label: Ask for an introduction at Mauve Lift
+  requires: []
+  intentKind: talk
+  stake: one supply
+- id: threshold_rooms_choice_06_03
+  placeId: threshold_rooms_place_06
+  label: Check the tool tag at Mauve Lift
+  requires: []
+  intentKind: inspect
+  stake: a declined invitation
+- id: threshold_rooms_choice_06_04
+  placeId: threshold_rooms_place_06
+  label: Offer a hand at Mauve Lift
+  requires: []
+  intentKind: interact
+  stake: a public note
+- id: threshold_rooms_choice_06_05
+  placeId: threshold_rooms_place_06
+  label: Take the safer route at Mauve Lift
+  requires:
+  - threshold_rooms_item_05
+  intentKind: travel
+  stake: a short detour
+- id: threshold_rooms_choice_06_06
+  placeId: threshold_rooms_place_06
+  label: Open the local record at Mauve Lift
+  requires:
+  - threshold_rooms_item_06
+  intentKind: interact
+  stake: one turn
+- id: threshold_rooms_choice_06_07
+  placeId: threshold_rooms_place_06
+  label: Rest at the bench at Mauve Lift
+  requires:
+  - threshold_rooms_item_07
+  intentKind: rest
+  stake: one supply
+- id: threshold_rooms_choice_06_08
+  placeId: threshold_rooms_place_06
+  label: Repair the marker at Mauve Lift
+  requires:
+  - threshold_rooms_item_08
+  intentKind: interact
+  stake: a declined invitation
+- id: threshold_rooms_choice_06_09
+  placeId: threshold_rooms_place_06
+  label: Prepare a shared item at Mauve Lift
+  requires:
+  - threshold_rooms_item_09
+  intentKind: craft
+  stake: a public note
+- id: threshold_rooms_choice_06_10
+  placeId: threshold_rooms_place_06
+  label: Leave a kind note at Mauve Lift
+  requires:
+  - threshold_rooms_item_10
+  intentKind: talk
+  stake: a short detour
+- id: threshold_rooms_choice_07_01
+  placeId: threshold_rooms_place_07
+  label: Read the notice at Service Corridor
+  requires: []
+  intentKind: talk
+  stake: one turn
+- id: threshold_rooms_choice_07_02
+  placeId: threshold_rooms_place_07
+  label: Ask for an introduction at Service Corridor
+  requires: []
+  intentKind: talk
+  stake: one supply
+- id: threshold_rooms_choice_07_03
+  placeId: threshold_rooms_place_07
+  label: Check the tool tag at Service Corridor
+  requires: []
+  intentKind: inspect
+  stake: a declined invitation
+- id: threshold_rooms_choice_07_04
+  placeId: threshold_rooms_place_07
+  label: Offer a hand at Service Corridor
+  requires: []
+  intentKind: interact
+  stake: a public note
+- id: threshold_rooms_choice_07_05
+  placeId: threshold_rooms_place_07
+  label: Take the safer route at Service Corridor
+  requires:
+  - threshold_rooms_item_05
+  intentKind: travel
+  stake: a short detour
+- id: threshold_rooms_choice_07_06
+  placeId: threshold_rooms_place_07
+  label: Open the local record at Service Corridor
+  requires:
+  - threshold_rooms_item_06
+  intentKind: interact
+  stake: one turn
+- id: threshold_rooms_choice_07_07
+  placeId: threshold_rooms_place_07
+  label: Rest at the bench at Service Corridor
+  requires:
+  - threshold_rooms_item_07
+  intentKind: rest
+  stake: one supply
+- id: threshold_rooms_choice_07_08
+  placeId: threshold_rooms_place_07
+  label: Repair the marker at Service Corridor
+  requires:
+  - threshold_rooms_item_08
+  intentKind: interact
+  stake: a declined invitation
+- id: threshold_rooms_choice_07_09
+  placeId: threshold_rooms_place_07
+  label: Prepare a shared item at Service Corridor
+  requires:
+  - threshold_rooms_item_09
+  intentKind: craft
+  stake: a public note
+- id: threshold_rooms_choice_07_10
+  placeId: threshold_rooms_place_07
+  label: Leave a kind note at Service Corridor
+  requires:
+  - threshold_rooms_item_10
+  intentKind: talk
+  stake: a short detour
+- id: threshold_rooms_choice_08_01
+  placeId: threshold_rooms_place_08
+  label: Read the notice at Quiet Atrium
+  requires: []
+  intentKind: talk
+  stake: one turn
+- id: threshold_rooms_choice_08_02
+  placeId: threshold_rooms_place_08
+  label: Ask for an introduction at Quiet Atrium
+  requires: []
+  intentKind: talk
+  stake: one supply
+- id: threshold_rooms_choice_08_03
+  placeId: threshold_rooms_place_08
+  label: Check the tool tag at Quiet Atrium
+  requires: []
+  intentKind: inspect
+  stake: a declined invitation
+- id: threshold_rooms_choice_08_04
+  placeId: threshold_rooms_place_08
+  label: Offer a hand at Quiet Atrium
+  requires: []
+  intentKind: interact
+  stake: a public note
+- id: threshold_rooms_choice_08_05
+  placeId: threshold_rooms_place_08
+  label: Take the safer route at Quiet Atrium
+  requires:
+  - threshold_rooms_item_05
+  intentKind: travel
+  stake: a short detour
+- id: threshold_rooms_choice_08_06
+  placeId: threshold_rooms_place_08
+  label: Open the local record at Quiet Atrium
+  requires:
+  - threshold_rooms_item_06
+  intentKind: interact
+  stake: one turn
+- id: threshold_rooms_choice_08_07
+  placeId: threshold_rooms_place_08
+  label: Rest at the bench at Quiet Atrium
+  requires:
+  - threshold_rooms_item_07
+  intentKind: rest
+  stake: one supply
+- id: threshold_rooms_choice_08_08
+  placeId: threshold_rooms_place_08
+  label: Repair the marker at Quiet Atrium
+  requires:
+  - threshold_rooms_item_08
+  intentKind: interact
+  stake: a declined invitation
+- id: threshold_rooms_choice_08_09
+  placeId: threshold_rooms_place_08
+  label: Prepare a shared item at Quiet Atrium
+  requires:
+  - threshold_rooms_item_09
+  intentKind: craft
+  stake: a public note
+- id: threshold_rooms_choice_08_10
+  placeId: threshold_rooms_place_08
+  label: Leave a kind note at Quiet Atrium
+  requires:
+  - threshold_rooms_item_10
+  intentKind: talk
+  stake: a short detour
+interactables:
+- id: threshold_rooms_interact_01
+  verbId: rest
+  publicName: Welcome Desk bench
+  placeId: threshold_rooms_place_01
+  displayVerb: Rest here
+  stateKey: threshold_rooms_rest_01
+- id: threshold_rooms_interact_02
+  verbId: repair
+  publicName: Carpet Hall cabinet
+  placeId: threshold_rooms_place_02
+  displayVerb: Repair here
+  stateKey: threshold_rooms_repair_02
+- id: threshold_rooms_interact_03
+  verbId: tend
+  publicName: Blue Stair rack
+  placeId: threshold_rooms_place_03
+  displayVerb: Tend here
+  stateKey: threshold_rooms_tend_03
+- id: threshold_rooms_interact_04
+  verbId: craft
+  publicName: Exit Light kettle
+  placeId: threshold_rooms_place_04
+  displayVerb: Craft here
+  stateKey: threshold_rooms_craft_04
+- id: threshold_rooms_interact_05
+  verbId: cook
+  publicName: Vending Niche ledger
+  placeId: threshold_rooms_place_05
+  displayVerb: Cook here
+  stateKey: threshold_rooms_cook_05
+- id: threshold_rooms_interact_06
+  verbId: bind_inn
+  publicName: Mauve Lift rail
+  placeId: threshold_rooms_place_06
+  displayVerb: Bind Inn here
+  stateKey: threshold_rooms_bind_inn_06
+- id: threshold_rooms_interact_07
+  verbId: inspect
+  publicName: Service Corridor bell
+  placeId: threshold_rooms_place_07
+  displayVerb: Inspect here
+  stateKey: threshold_rooms_inspect_07
+- id: threshold_rooms_interact_08
+  verbId: open
+  publicName: Quiet Atrium board
+  placeId: threshold_rooms_place_08
+  displayVerb: Open here
+  stateKey: threshold_rooms_open_08
+- id: threshold_rooms_interact_09
+  verbId: carry
+  publicName: Welcome Desk table
+  placeId: threshold_rooms_place_01
+  displayVerb: Carry here
+  stateKey: threshold_rooms_carry_09
+- id: threshold_rooms_interact_10
+  verbId: clean
+  publicName: Carpet Hall lamp
+  placeId: threshold_rooms_place_02
+  displayVerb: Clean here
+  stateKey: threshold_rooms_clean_10
+- id: threshold_rooms_interact_11
+  verbId: signal
+  publicName: Blue Stair gate
+  placeId: threshold_rooms_place_03
+  displayVerb: Signal here
+  stateKey: threshold_rooms_signal_11
+- id: threshold_rooms_interact_12
+  verbId: record
+  publicName: Exit Light shelf
+  placeId: threshold_rooms_place_04
+  displayVerb: Record here
+  stateKey: threshold_rooms_record_12
+interiors:
+- id: threshold_rooms_interior_01
+  publicName: Threshold Rooms Home Interior
+  entrancePlaceId: threshold_rooms_place_08
+  rooms:
+  - id: threshold_rooms_home_room_01
+    publicName: Threshold Rooms Entry
+    mapScale: interior
+    exits:
+    - threshold_rooms_home_room_02
+    props:
+    - threshold_rooms_home_prop_01
+    - threshold_rooms_home_prop_08
+  - id: threshold_rooms_home_room_02
+    publicName: Threshold Rooms Main Room
+    mapScale: interior
+    exits:
+    - threshold_rooms_home_room_01
+    - threshold_rooms_home_room_03
+    props:
+    - threshold_rooms_home_prop_02
+    - threshold_rooms_home_prop_09
+  - id: threshold_rooms_home_room_03
+    publicName: Threshold Rooms Work Nook
+    mapScale: interior
+    exits:
+    - threshold_rooms_home_room_02
+    - threshold_rooms_home_room_04
+    props:
+    - threshold_rooms_home_prop_03
+    - threshold_rooms_home_prop_10
+  - id: threshold_rooms_home_room_04
+    publicName: Threshold Rooms Window Room
+    mapScale: interior
+    exits:
+    - threshold_rooms_home_room_03
+    - threshold_rooms_home_room_05
+    props:
+    - threshold_rooms_home_prop_04
+    - threshold_rooms_home_prop_11
+  - id: threshold_rooms_home_room_05
+    publicName: Threshold Rooms Quiet Room
+    mapScale: interior
+    exits:
+    - threshold_rooms_home_room_04
+    - threshold_rooms_home_room_06
+    props:
+    - threshold_rooms_home_prop_05
+    - threshold_rooms_home_prop_12
+  - id: threshold_rooms_home_room_06
+    publicName: Threshold Rooms Storage
+    mapScale: interior
+    exits:
+    - threshold_rooms_home_room_05
+    - threshold_rooms_home_room_07
+    props:
+    - threshold_rooms_home_prop_06
+    - threshold_rooms_home_prop_13
+  - id: threshold_rooms_home_room_07
+    publicName: Threshold Rooms Back Step
+    mapScale: interior
+    exits:
+    - threshold_rooms_home_room_06
+    props:
+    - threshold_rooms_home_prop_07
+    - threshold_rooms_home_prop_14
+talents:
+- id: threshold_rooms_talent_01
+  publicName: Threshold Rooms Local Ear
+  cost: 1
+  requires: []
+  effectFlags:
+  - threshold_rooms_effect_01
+  payToUnlock: false
+- id: threshold_rooms_talent_02
+  publicName: Threshold Rooms Careful Hand
+  cost: 2
+  requires: []
+  effectFlags:
+  - threshold_rooms_effect_02
+  payToUnlock: false
+- id: threshold_rooms_talent_03
+  publicName: Threshold Rooms Route Sense
+  cost: 3
+  requires: []
+  effectFlags:
+  - threshold_rooms_effect_03
+  payToUnlock: false
+- id: threshold_rooms_talent_04
+  publicName: Threshold Rooms Shared Measure
+  cost: 4
+  requires: []
+  effectFlags:
+  - threshold_rooms_effect_04
+  payToUnlock: false
+- id: threshold_rooms_talent_05
+  publicName: Threshold Rooms Quiet Craft
+  cost: 1
+  requires:
+  - threshold_rooms_talent_04
+  effectFlags:
+  - threshold_rooms_effect_05
+  payToUnlock: false
+- id: threshold_rooms_talent_06
+  publicName: Threshold Rooms Open Invitation
+  cost: 2
+  requires: []
+  effectFlags:
+  - threshold_rooms_effect_06
+  payToUnlock: false
+- id: threshold_rooms_talent_07
+  publicName: Threshold Rooms Safe Return
+  cost: 3
+  requires: []
+  effectFlags:
+  - threshold_rooms_effect_07
+  payToUnlock: false
+- id: threshold_rooms_talent_08
+  publicName: Threshold Rooms Field Note
+  cost: 4
+  requires: []
+  effectFlags:
+  - threshold_rooms_effect_08
+  payToUnlock: false
+- id: threshold_rooms_talent_09
+  publicName: Threshold Rooms Steady Pace
+  cost: 1
+  requires:
+  - threshold_rooms_talent_08
+  effectFlags:
+  - threshold_rooms_effect_09
+  payToUnlock: false
+- id: threshold_rooms_talent_10
+  publicName: Threshold Rooms Clear Signal
+  cost: 2
+  requires: []
+  effectFlags:
+  - threshold_rooms_effect_10
+  payToUnlock: false
+- id: threshold_rooms_talent_11
+  publicName: Threshold Rooms Warm Welcome
+  cost: 3
+  requires: []
+  effectFlags:
+  - threshold_rooms_effect_11
+  payToUnlock: false
+- id: threshold_rooms_talent_12
+  publicName: Threshold Rooms Small Courage
+  cost: 4
+  requires: []
+  effectFlags:
+  - threshold_rooms_effect_12
+  payToUnlock: false
+- id: threshold_rooms_talent_13
+  publicName: Threshold Rooms Repair Habit
+  cost: 1
+  requires:
+  - threshold_rooms_talent_12
+  effectFlags:
+  - threshold_rooms_effect_13
+  payToUnlock: false
+- id: threshold_rooms_talent_14
+  publicName: Threshold Rooms Trust Mark
+  cost: 2
+  requires: []
+  effectFlags:
+  - threshold_rooms_effect_14
+  payToUnlock: false
+- id: threshold_rooms_talent_15
+  publicName: Threshold Rooms Second Look
+  cost: 3
+  requires: []
+  effectFlags:
+  - threshold_rooms_effect_15
+  payToUnlock: false
+- id: threshold_rooms_talent_16
+  publicName: Threshold Rooms Closing Grace
+  cost: 4
+  requires: []
+  effectFlags:
+  - threshold_rooms_effect_16
+  payToUnlock: false
+evalProbes:
+- id: threshold_rooms_eval_01
+  given:
+    steadfast: 8
+    placeId: threshold_rooms_place_01
+    turn: 1
+  action:
+    verbId: rest
+    targetId: threshold_rooms_interact_01
+  expectedLedger:
+    turn: 2
+    lastAction: rest
+    placeId: threshold_rooms_place_01
+  forbiddenProse:
+  - do not claim an uncommitted numeric reward
+  - do not alter damage, gold, ownership, or a score outside expectedLedger
+- id: threshold_rooms_eval_02
+  given:
+    steadfast: 8
+    placeId: threshold_rooms_place_02
+    turn: 2
+  action:
+    verbId: repair
+    targetId: threshold_rooms_interact_02
+  expectedLedger:
+    turn: 3
+    lastAction: repair
+    placeId: threshold_rooms_place_02
+  forbiddenProse:
+  - do not claim an uncommitted numeric reward
+  - do not alter damage, gold, ownership, or a score outside expectedLedger
+- id: threshold_rooms_eval_03
+  given:
+    steadfast: 8
+    placeId: threshold_rooms_place_03
+    turn: 3
+  action:
+    verbId: tend
+    targetId: threshold_rooms_interact_03
+  expectedLedger:
+    turn: 4
+    lastAction: tend
+    placeId: threshold_rooms_place_03
+  forbiddenProse:
+  - do not claim an uncommitted numeric reward
+  - do not alter damage, gold, ownership, or a score outside expectedLedger
+- id: threshold_rooms_eval_04
+  given:
+    steadfast: 8
+    placeId: threshold_rooms_place_04
+    turn: 4
+  action:
+    verbId: craft
+    targetId: threshold_rooms_interact_04
+  expectedLedger:
+    turn: 5
+    lastAction: craft
+    placeId: threshold_rooms_place_04
+  forbiddenProse:
+  - do not claim an uncommitted numeric reward
+  - do not alter damage, gold, ownership, or a score outside expectedLedger
+- id: threshold_rooms_eval_05
+  given:
+    steadfast: 8
+    placeId: threshold_rooms_place_05
+    turn: 5
+  action:
+    verbId: cook
+    targetId: threshold_rooms_interact_05
+  expectedLedger:
+    turn: 6
+    lastAction: cook
+    placeId: threshold_rooms_place_05
+  forbiddenProse:
+  - do not claim an uncommitted numeric reward
+  - do not alter damage, gold, ownership, or a score outside expectedLedger
+- id: threshold_rooms_eval_06
+  given:
+    steadfast: 8
+    placeId: threshold_rooms_place_06
+    turn: 6
+  action:
+    verbId: bind_inn
+    targetId: threshold_rooms_interact_06
+  expectedLedger:
+    turn: 7
+    lastAction: bind_inn
+    placeId: threshold_rooms_place_06
+  forbiddenProse:
+  - do not claim an uncommitted numeric reward
+  - do not alter damage, gold, ownership, or a score outside expectedLedger
+- id: threshold_rooms_eval_07
+  given:
+    steadfast: 8
+    placeId: threshold_rooms_place_07
+    turn: 7
+  action:
+    verbId: inspect
+    targetId: threshold_rooms_interact_07
+  expectedLedger:
+    turn: 8
+    lastAction: inspect
+    placeId: threshold_rooms_place_07
+  forbiddenProse:
+  - do not claim an uncommitted numeric reward
+  - do not alter damage, gold, ownership, or a score outside expectedLedger
+- id: threshold_rooms_eval_08
+  given:
+    steadfast: 8
+    placeId: threshold_rooms_place_08
+    turn: 8
+  action:
+    verbId: open
+    targetId: threshold_rooms_interact_08
+  expectedLedger:
+    turn: 9
+    lastAction: open
+    placeId: threshold_rooms_place_08
+  forbiddenProse:
+  - do not claim an uncommitted numeric reward
+  - do not alter damage, gold, ownership, or a score outside expectedLedger
+- id: threshold_rooms_eval_09
+  given:
+    steadfast: 8
+    placeId: threshold_rooms_place_01
+    turn: 9
+  action:
+    verbId: carry
+    targetId: threshold_rooms_interact_09
+  expectedLedger:
+    turn: 10
+    lastAction: carry
+    placeId: threshold_rooms_place_01
+  forbiddenProse:
+  - do not claim an uncommitted numeric reward
+  - do not alter damage, gold, ownership, or a score outside expectedLedger
+- id: threshold_rooms_eval_10
+  given:
+    steadfast: 8
+    placeId: threshold_rooms_place_02
+    turn: 10
+  action:
+    verbId: clean
+    targetId: threshold_rooms_interact_10
+  expectedLedger:
+    turn: 11
+    lastAction: clean
+    placeId: threshold_rooms_place_02
+  forbiddenProse:
+  - do not claim an uncommitted numeric reward
+  - do not alter damage, gold, ownership, or a score outside expectedLedger
+- id: threshold_rooms_eval_11
+  given:
+    steadfast: 8
+    placeId: threshold_rooms_place_03
+    turn: 11
+  action:
+    verbId: signal
+    targetId: threshold_rooms_interact_11
+  expectedLedger:
+    turn: 12
+    lastAction: signal
+    placeId: threshold_rooms_place_03
+  forbiddenProse:
+  - do not claim an uncommitted numeric reward
+  - do not alter damage, gold, ownership, or a score outside expectedLedger
+- id: threshold_rooms_eval_12
+  given:
+    steadfast: 8
+    placeId: threshold_rooms_place_04
+    turn: 12
+  action:
+    verbId: record
+    targetId: threshold_rooms_interact_12
+  expectedLedger:
+    turn: 13
+    lastAction: record
+    placeId: threshold_rooms_place_04
+  forbiddenProse:
+  - do not claim an uncommitted numeric reward
+  - do not alter damage, gold, ownership, or a score outside expectedLedger
+- id: threshold_rooms_eval_13
+  given:
+    steadfast: 8
+    placeId: threshold_rooms_place_05
+    turn: 13
+  action:
+    verbId: rest
+    targetId: threshold_rooms_interact_01
+  expectedLedger:
+    turn: 14
+    lastAction: rest
+    placeId: threshold_rooms_place_05
+  forbiddenProse:
+  - do not claim an uncommitted numeric reward
+  - do not alter damage, gold, ownership, or a score outside expectedLedger
+- id: threshold_rooms_eval_14
+  given:
+    steadfast: 8
+    placeId: threshold_rooms_place_06
+    turn: 14
+  action:
+    verbId: repair
+    targetId: threshold_rooms_interact_02
+  expectedLedger:
+    turn: 15
+    lastAction: repair
+    placeId: threshold_rooms_place_06
+  forbiddenProse:
+  - do not claim an uncommitted numeric reward
+  - do not alter damage, gold, ownership, or a score outside expectedLedger
+- id: threshold_rooms_eval_15
+  given:
+    steadfast: 8
+    placeId: threshold_rooms_place_07
+    turn: 15
+  action:
+    verbId: tend
+    targetId: threshold_rooms_interact_03
+  expectedLedger:
+    turn: 16
+    lastAction: tend
+    placeId: threshold_rooms_place_07
+  forbiddenProse:
+  - do not claim an uncommitted numeric reward
+  - do not alter damage, gold, ownership, or a score outside expectedLedger
+wallets:
+  goldName: Exit Stamps
+  cosmeticTokenName: Comfort Threads
+  noConversion: true
+  prohibited:
+  - outcomes
+  - lockout skips
+  - catch rate
+  - raid clears
+  - random power packs
+  - gacha
+  - loot boxes
+dailyCaps:
+  contractsPerDay: 3
+  goldFromRepeatables: 90
+  weeklyBossLockout: per-character per-boss
+divergenceRecords:
+- id: threshold_rooms_walkaway_01
+  choice: walk away from a local obligation
+  recordKey: threshold_rooms_divergence_01
+  effect: Alternate dialogue and a non-punitive follow-up route.
+- id: threshold_rooms_walkaway_02
+  choice: walk away from a local obligation
+  recordKey: threshold_rooms_divergence_02
+  effect: Alternate dialogue and a non-punitive follow-up route.
+- id: threshold_rooms_walkaway_03
+  choice: walk away from a local obligation
+  recordKey: threshold_rooms_divergence_03
+  effect: Alternate dialogue and a non-punitive follow-up route.

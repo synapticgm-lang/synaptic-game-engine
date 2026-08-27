@@ -1,0 +1,50 @@
+* Hybrid cassette sensor conditioning AFE - LTspice screening netlist
+* Concept-only: verify op-amp model, resistor tolerance, RTD lead compensation,
+* surge energy, layout, creepage/clearance and fault behaviour on actual hardware.
+.param VREF=2.5 RTD=100 RREF=100 GAIN=25
+V24 V24 0 24
+* PT100 bridge: 1 mA excitation approximated by 2.5 V / 2.5k source branch
+VEXC VEXC 0 {VREF}
+RBIAS VEXC NRTD 2.49k
+RPT NRTD 0 {RTD}
+RREF VEXC NREF 2.49k
+RREFLEG NREF 0 {RREF}
+* Ideal instrumentation-amplifier behavioural model; replace with validated part macro-model.
+BINA VIN 0 V={GAIN*(V(NRTD)-V(NREF))+VREF}
+* 2nd-order Butterworth low-pass: two unity-gain Sallen-Key approximation stages,
+* fc=10 Hz; R=15.8k, C=1uF each. Buffer represented by VCVS.
+R1 VIN N1 15.8k
+C1 N1 0 1u
+E1 N2 0 N1 0 1
+R2 N2 N3 15.8k
+C2 N3 0 1u
+E2 VOUT 0 N3 0 1
+RLOAD VOUT 0 100k
+* 24V pump PWM line with source impedance, TVS clamp and inductive load surrogate.
+VPWM PWM_SRC 0 PULSE(0 3.3 0 1u 1u 2m 4m)
+RGATE PWM_SRC PWM_G 100
+DTVSP PWM_G 0 DTVS24
+RPULLP PWM_G 0 100k
+LPU P24 NPUMP 1m
+RPU NPUMP 0 8
+DTVS24 V24 0 DTVS24
+* 24V fan PWM line with equivalent TVS clamp.
+VFAN FAN_SRC 0 PULSE(0 3.3 0 1u 1u 1m 2m)
+RGF FAN_SRC FAN_G 100
+DTVSF FAN_G 0 DTVS24
+RPULLF FAN_G 0 100k
+* Auxiliary IR permit: LED side is SELV; transistor side is dry contact only.
+VPERMIT PERMIT 0 PULSE(0 3.3 0 1u 1u 10m 20m)
+RLED PERMIT LED_A 220
+DLED LED_A 0 DLED
+* Current-controlled switch represents optocoupler output; isolate from mains model.
+HOPTO DRY_A DRY_B VLED 100k
+VLED PERMIT LED_A 0
+RDRY DRY_A DRY_B 1Meg
+.model DLED D(Is=1e-14 N=2)
+.model DTVS24 D(BV=33 IBV=1m Rs=0.5 Cjo=1n)
+.tran 0 100m 0 10u
+.ac dec 100 0.1 1k
+.step param RTD list 90 100 110 1000 1090 1100
+.meas tran VoutAvg AVG V(VOUT) FROM=40m TO=90m
+.end

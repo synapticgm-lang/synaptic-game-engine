@@ -1,0 +1,444 @@
+{
+  "results": [
+    {
+      "input": "object_in_hand#1",
+      "output": {
+        "claim_type": "object_in_hand",
+        "safe_handling": "Ignore matches immediately preceded by verbs of desire or imagination to avoid flagging unfulfilled wishes.",
+        "sentence": "She wished she held the rusted key in her trembling hand, but her pockets were entirely empty.",
+        "test_id": "object_in_hand#1",
+        "why_naive_regex_breaks": "The statement expresses a desire for possession rather than an actual physical state of holding the object."
+      },
+      "error": ""
+    },
+    {
+      "input": "object_in_hand#2",
+      "output": {
+        "claim_type": "object_in_hand",
+        "safe_handling": "Configure the gate to verify the absence of hypothetical or desire-based modifiers before applying any object-possession rewrites.",
+        "sentence": "She wished she was holding a heavy iron key, but her empty fingers grasped only the damp cavern air.",
+        "test_id": "object_in_hand#2",
+        "why_naive_regex_breaks": "A simple regex targeting the phrase holding a would flag this sentence, ignoring the preceding verbs that establish the action as a mere desire rather than reality."
+      },
+      "error": ""
+    },
+    {
+      "input": "object_in_hand#3",
+      "output": {
+        "claim_type": "object_in_hand",
+        "safe_handling": "Ensure the parsing logic ignores possession verbs when they are framed within dreams or explicit negations.",
+        "sentence": "She dreamed of clutching a heavy silver coin, though her palms remained completely empty.",
+        "test_id": "object_in_hand#3",
+        "why_naive_regex_breaks": "The text explicitly states her hands are empty while using words that usually imply physical possession."
+      },
+      "error": ""
+    },
+    {
+      "input": "last_remaining_item#1",
+      "output": {
+        "claim_type": "inventory_status",
+        "safe_handling": "Configure the gate to ignore conditional clauses and require definitive assertions of scarcity before triggering any automated rewrite.",
+        "sentence": "If this truly is the last remaining item on the shelf, we should probably buy it before the storm hits.",
+        "test_id": "last_remaining_item#1",
+        "why_naive_regex_breaks": "The sentence employs a conditional structure that hypothesizes about scarcity rather than stating it as an absolute fact, which a simple keyword match would incorrectly flag."
+      },
+      "error": ""
+    },
+    {
+      "input": "last_remaining_item#2",
+      "output": {
+        "claim_type": "last_remaining_item",
+        "safe_handling": "Ensure the regex pattern excludes matches that immediately follow verbs expressing desire, hypothetical thoughts, or unfulfilled wishes.",
+        "sentence": "I desperately wished the heavy wooden chest was the last remaining item to carry, but a dozen more awaited my attention.",
+        "test_id": "last_remaining_item#2",
+        "why_naive_regex_breaks": "A naive regex matches the exact phrase without recognizing the subjunctive mood that proves it is merely a frustrated desire, not a factual claim."
+      },
+      "error": ""
+    },
+    {
+      "input": "last_remaining_item#3",
+      "output": {
+        "claim_type": "last_remaining_item",
+        "safe_handling": "Ensure the regex ignores matches located inside hypothetical constructs or conditional clauses to avoid altering dramatic hyperbole.",
+        "sentence": "If this dusty artifact were the last remaining item on earth, I still wouldn't pay such an outrageous price for it.",
+        "test_id": "last_remaining_item#3",
+        "why_naive_regex_breaks": "The phrase functions as a hypothetical exaggeration rather than a factual inventory claim, meaning a blind rewrite would ruin the speaker's dramatic effect."
+      },
+      "error": ""
+    },
+    {
+      "input": "crowd_size#1",
+      "output": {
+        "claim_type": "crowd_size",
+        "safe_handling": "Restrict matches to statements confirming actual physical attendance, explicitly excluding predictions, hopes, or dreams of large gatherings.",
+        "sentence": "The ambitious mayor confidently predicted that over fifty thousand cheering citizens would flood the plaza, but a sudden thunderstorm kept everyone at home.",
+        "test_id": "crowd_size#1",
+        "why_naive_regex_breaks": "A simple pattern matching the large number would trigger a false positive because the text describes an unfulfilled prediction rather than an actual crowd."
+      },
+      "error": ""
+    },
+    {
+      "input": "crowd_size#2",
+      "output": {
+        "claim_type": "crowd_size",
+        "safe_handling": "Require verbs indicating actual occurrence rather than conditional or hypothetical markers before applying any crowd size restrictions.",
+        "sentence": "If a million people had gathered in the square, the ensuing chaos would have been impossible to manage with our current resources.",
+        "test_id": "crowd_size#2",
+        "why_naive_regex_breaks": "The sentence uses a hypothetical condition rather than asserting an actual historical crowd size, so a blind substitution would ruin the speculative meaning."
+      },
+      "error": ""
+    },
+    {
+      "input": "crowd_size#3",
+      "output": {
+        "claim_type": "crowd_size",
+        "safe_handling": "Gates must ignore numerical quantities that are grammatically governed by verbs expressing desire, intent, or imagination.",
+        "sentence": "Although the mayor dreamed of drawing ten thousand supporters to the rally, only a handful of curious onlookers actually appeared.",
+        "test_id": "crowd_size#3",
+        "why_naive_regex_breaks": "The numerical figure represents a subjective desire rather than a factual claim about the actual number of attendees present."
+      },
+      "error": ""
+    },
+    {
+      "input": "named_speaker_absent#1",
+      "output": {
+        "claim_type": "named_speaker_absent",
+        "safe_handling": "Require a dependency parse confirming the absence is stated as a fact rather than being embedded within a rumor or hypothetical clause.",
+        "sentence": "Despite rumors that the keynote presenter was entirely absent from the venue, she confidently walked onto the podium and began her address.",
+        "test_id": "named_speaker_absent#1",
+        "why_naive_regex_breaks": "A regex matching the words presenter and absent would flag this text, ignoring the preceding phrase that frames the absence as a mere rumor."
+      },
+      "error": ""
+    },
+    {
+      "input": "named_speaker_absent#2",
+      "output": {
+        "claim_type": "named_speaker_absent",
+        "safe_handling": "Only trigger the gate if the unnamed speaker's claim is presented as objective truth without immediate contradiction.",
+        "sentence": "Although the shadowy figure claimed the artifact was cursed, nobody in the village actually believed such a ridiculous superstition.",
+        "test_id": "named_speaker_absent#2",
+        "why_naive_regex_breaks": "The sentence contains a claim by an unnamed speaker, but it is explicitly framed as a rejected superstition rather than an asserted fact."
+      },
+      "error": ""
+    },
+    {
+      "input": "named_speaker_absent#3",
+      "output": {
+        "claim_type": "named_speaker_absence",
+        "safe_handling": "Require the parsing engine to verify physical location context before flagging a person as officially absent.",
+        "sentence": "Dr. Aris stared blankly at the podium, his mind completely absent from the ongoing debate.",
+        "test_id": "named_speaker_absent#3",
+        "why_naive_regex_breaks": "A simple regex looking for a name near the word absent would falsely flag this sentence, missing that it describes a mental state rather than physical nonattendance."
+      },
+      "error": ""
+    },
+    {
+      "input": "exit_used#1",
+      "output": {
+        "claim_type": "exit_used",
+        "safe_handling": "Restrict matches to declarative statements and explicitly ignore subjunctive or conditional structures containing the target keywords.",
+        "sentence": "Had they actually used the rear exit as planned, the heavy metal door would have jammed instantly.",
+        "test_id": "exit_used#1",
+        "why_naive_regex_breaks": "The phrase employs a counterfactual conditional, meaning the action of using the exit never actually occurred in reality."
+      },
+      "error": ""
+    },
+    {
+      "input": "exit_used#2",
+      "output": {
+        "claim_type": "exit_used",
+        "safe_handling": "Only flag the phrase if the surrounding context confirms the action was successfully completed by the subject.",
+        "sentence": "Although the captain ordered them to use the emergency exit, the panicked crew barricaded it instead.",
+        "test_id": "exit_used#2",
+        "why_naive_regex_breaks": "A simple regex matching the phrase 'use the emergency exit' would falsely trigger, ignoring the fact that the action was refused."
+      },
+      "error": ""
+    },
+    {
+      "input": "exit_used#3",
+      "output": {
+        "claim_type": "exit_used",
+        "safe_handling": "Only trigger the gate if the sentence asserts the exit was actually used, bypassing hypothetical conditional clauses entirely.",
+        "sentence": "If the hidden rear exit is used by the thieves, the motion sensors will immediately trigger a silent alarm.",
+        "test_id": "exit_used#3",
+        "why_naive_regex_breaks": "A naive regex would flag this as a factual claim about an exit being used, ignoring the hypothetical conditional structure."
+      },
+      "error": ""
+    },
+    {
+      "input": "time_skip#1",
+      "output": {
+        "claim_type": "time_skip",
+        "safe_handling": "Ensure the hard-gate logic evaluates surrounding context for jokes, metaphors, or hypothetical phrasing before triggering an automatic block.",
+        "sentence": "He often joked that sleeping through the dreary weekend was his own personal method of initiating a massive time skip.",
+        "test_id": "time_skip#1",
+        "why_naive_regex_breaks": "A naive regex targeting the phrase would flag this, but it is used purely as a metaphorical exaggeration for sleeping rather than a literal temporal event."
+      },
+      "error": ""
+    },
+    {
+      "input": "time_skip#2",
+      "output": {
+        "claim_type": "time_skip",
+        "safe_handling": "Ignore phrases embedded within desires, wishes, or hypothetical constructs that do not assert factual events.",
+        "sentence": "The weary traveler often wished he could skip time and arrive at his destination without enduring the endless rain.",
+        "test_id": "time_skip#2",
+        "why_naive_regex_breaks": "The sentence describes a character's wishful thinking about bypassing time, not an actual event or ability that occurs."
+      },
+      "error": ""
+    },
+    {
+      "input": "time_skip#3",
+      "output": {
+        "claim_type": "time_skip",
+        "safe_handling": "Only trigger the time skip filter if the text presents temporal displacement as an actual event rather than a hypothetical scenario.",
+        "sentence": "If I could somehow skip forward a century, I would finally know how this grand architectural project concludes.",
+        "test_id": "time_skip#3",
+        "why_naive_regex_breaks": "A naive regex looking for phrases about skipping forward in time would flag this hypothetical wish as a literal claim."
+      },
+      "error": ""
+    },
+    {
+      "input": "weather_change#1",
+      "output": {
+        "claim_type": "weather_change",
+        "safe_handling": "Configure the regex to ignore conditional clauses and expressions of desire when scanning for weather claims.",
+        "sentence": "The weary travelers prayed for a sudden weather change to clear the dense fog from the treacherous mountain pass.",
+        "test_id": "weather_change#1",
+        "why_naive_regex_breaks": "A simple regex matching the phrase would falsely trigger here, missing that the sentence expresses a desire rather than an actual meteorological event."
+      },
+      "error": ""
+    },
+    {
+      "input": "weather_change#2",
+      "output": {
+        "claim_type": "weather_change",
+        "safe_handling": "Configure the gate to bypass matches that are framed within conditional statements or expressions of impossible desires.",
+        "sentence": "If I had a machine capable of sudden weather change, I would never let another summer picnic be ruined by rain.",
+        "test_id": "weather_change#2",
+        "why_naive_regex_breaks": "The regex would flag the mention of a weather change machine, failing to recognize it as a purely hypothetical wish."
+      },
+      "error": ""
+    },
+    {
+      "input": "weather_change#3",
+      "output": {
+        "claim_type": "weather_change",
+        "safe_handling": "Bypass the hard gate when the matched keywords appear inside clauses governed by verbs of dreaming or wishing.",
+        "sentence": "The weary travelers merely dreamt that the abrupt weather change would finally bring rain to the parched valley.",
+        "test_id": "weather_change#3",
+        "why_naive_regex_breaks": "The phrase describes a hopeful dream rather than asserting that an abrupt weather change actually occurred in reality."
+      },
+      "error": ""
+    },
+    {
+      "input": "indoor_outdoor_shift#1",
+      "output": {
+        "claim_type": "indoor_outdoor_shift",
+        "safe_handling": "Ensure the regex accounts for hypothetical framing and quotation contexts before applying any automated rewrites to the text.",
+        "sentence": "If I had a dollar for every time someone claimed this fragile indoor fern thrives outdoors in the frost, I would be rich.",
+        "test_id": "indoor_outdoor_shift#1",
+        "why_naive_regex_breaks": "A naive regex targeting the phrase 'fern thrives outdoors' would trigger incorrectly, because the sentence describes a false claim made by others rather than asserting it."
+      },
+      "error": ""
+    },
+    {
+      "input": "indoor_outdoor_shift#2",
+      "output": {
+        "claim_type": "indoor_outdoor_shift",
+        "safe_handling": "Ensure the gate only triggers on actual physical transitions by ignoring movement phrases immediately preceded by verbs of desire or imagination.",
+        "sentence": "He dreamed of stepping outside to feel the rain, but the heavy iron door remained firmly locked.",
+        "test_id": "indoor_outdoor_shift#2",
+        "why_naive_regex_breaks": "A naive regex targeting outdoor movement verbs would falsely trigger here, ignoring that the action is merely a frustrated desire rather than a completed physical transition."
+      },
+      "error": ""
+    },
+    {
+      "input": "indoor_outdoor_shift#3",
+      "output": {
+        "claim_type": "indoor_outdoor_shift",
+        "safe_handling": "Ensure the gate requires active past or present tense verbs confirming the shift rather than conditional phrases.",
+        "sentence": "If I ever decided on an indoor to outdoor shift for my fragile ferns, I would definitely wait until the harsh winter passed.",
+        "test_id": "indoor_outdoor_shift#3",
+        "why_naive_regex_breaks": "The phrase is framed as a hypothetical future desire rather than a stated fact of a shift having occurred."
+      },
+      "error": ""
+    },
+    {
+      "input": "tension_drop#1",
+      "output": {
+        "claim_type": "tension_drop",
+        "safe_handling": "Configure the gate to bypass matches that are surrounded by in-world descriptive language or lack explicit structural critique markers.",
+        "sentence": "The sudden drop in tension was merely an illusion, a brief moment of quiet before the storm finally unleashed its fury upon the weary travelers.",
+        "test_id": "tension_drop#1",
+        "why_naive_regex_breaks": "A naive regex matching the phrase would incorrectly trigger here, missing that it describes a deliberate atmospheric shift within the story rather than an actual pacing error."
+      },
+      "error": ""
+    },
+    {
+      "input": "tension_drop#2",
+      "output": {
+        "claim_type": "tension_drop",
+        "safe_handling": "Restrict regex matches for tension drops to contexts involving narrative pacing, story structure, or emotional engagement.",
+        "sentence": "The engineer feared a sudden tension drop in the main suspension cable would send the entire bridge crashing into the frozen river.",
+        "test_id": "tension_drop#2",
+        "why_naive_regex_breaks": "A simple regex matching \"tension drop\" would flag this structural engineering description, failing to recognize it as a physical phenomenon rather than a narrative pacing flaw."
+      },
+      "error": ""
+    },
+    {
+      "input": "tension_drop#3",
+      "output": {
+        "claim_type": "tension_drop",
+        "safe_handling": "Ensure the parser verifies the statement is a factual assertion before applying any hard-gate filtering rules.",
+        "sentence": "The engineers debated whether a sudden drop in tension would compromise the integrity of the makeshift bridge during the storm.",
+        "test_id": "tension_drop#3",
+        "why_naive_regex_breaks": "The phrase appears within a hypothetical debate about potential risks rather than stating an actual drop in tension happened."
+      },
+      "error": ""
+    },
+    {
+      "input": "companion_present#1",
+      "output": {
+        "claim_type": "companion_present",
+        "safe_handling": "Require verbs of current possession or active presence rather than relying solely on noun phrases about companions.",
+        "sentence": "Staring into the dying embers, the old knight wished he had a faithful companion by his side.",
+        "test_id": "companion_present#1",
+        "why_naive_regex_breaks": "A naive regex matching the phrase had a faithful companion would wrongly flag this text, ignoring that the statement is framed entirely as an unfulfilled wish."
+      },
+      "error": ""
+    },
+    {
+      "input": "companion_present#2",
+      "output": {
+        "claim_type": "companion_present",
+        "safe_handling": "Ensure the matching logic checks for past-tense memory markers or explicit indicators of current solitude before applying the block.",
+        "sentence": "The merchant vividly remembered a time when his loyal companion was present, making the current solitude feel even more crushing.",
+        "test_id": "companion_present#2",
+        "why_naive_regex_breaks": "A naive regex would match the phrase about a companion being present without recognizing it as a memory contrasted with current solitude."
+      },
+      "error": ""
+    },
+    {
+      "input": "companion_present#3",
+      "output": {
+        "claim_type": "companion_presence",
+        "safe_handling": "Ensure the regex checks for preceding conditional or subjunctive clauses to avoid stripping hypothetical statements of companionship.",
+        "sentence": "If only my trusty hound were standing right beside me, the biting chill of the midnight wind would feel far less intimidating.",
+        "test_id": "companion_present#3",
+        "why_naive_regex_breaks": "The sentence expresses a wistful desire for a companion's presence rather than stating it as a factual reality, which a simple keyword match would falsely flag."
+      },
+      "error": ""
+    },
+    {
+      "input": "location_as_speaker#1",
+      "output": {
+        "claim_type": "location_as_speaker",
+        "safe_handling": "Allow speech verbs near location nouns when the text explicitly frames the sound as a simile, metaphor, or natural phenomenon.",
+        "sentence": "Though the ruined fortress seemed to whisper ancient warnings, it was only the wind howling through the shattered stones.",
+        "test_id": "location_as_speaker#1",
+        "why_naive_regex_breaks": "A naive regex targeting locations paired with speech verbs would falsely flag this text, ignoring that the whispering is explicitly attributed to the wind rather than the structure itself."
+      },
+      "error": ""
+    },
+    {
+      "input": "location_as_speaker#2",
+      "output": {
+        "claim_type": "location_as_speaker",
+        "safe_handling": "Bypass the gate for communication verbs when they are part of recognized idioms or clearly figurative personification.",
+        "sentence": "The crumbling theater seemed to echo with laughter, speaking volumes about the joyous performances it once hosted.",
+        "test_id": "location_as_speaker#2",
+        "why_naive_regex_breaks": "A naive regex would flag the building as a literal speaker, completely missing that the phrase is an idiomatic expression of personification."
+      },
+      "error": ""
+    },
+    {
+      "input": "location_as_speaker#3",
+      "output": {
+        "claim_type": "location_as_speaker",
+        "safe_handling": "Bypass the intervention gate when a location subject is paired with a communication verb in a metaphorical context.",
+        "sentence": "The howling wind made it sound as though the jagged canyon itself was shouting a warning.",
+        "test_id": "location_as_speaker#3",
+        "why_naive_regex_breaks": "The text describes the ambient sound of the wind using a simile rather than asserting the physical location actually spoke."
+      },
+      "error": ""
+    },
+    {
+      "input": "invented_title_or_rank#1",
+      "output": {
+        "claim_type": "invented_title_or_rank",
+        "safe_handling": "Configure the gate to bypass title-like phrases when they are closely preceded by verbs indicating imagination, desire, or hypothetical thought.",
+        "sentence": "She was merely daydreaming about being recognized as the Grand Architect of the Clouds, knowing full well such a rank did not exist.",
+        "test_id": "invented_title_or_rank#1",
+        "why_naive_regex_breaks": "A naive regex searching for capitalized fictional ranks would trigger here, completely missing that the sentence describes a self-aware daydream rather than asserting a real title."
+      },
+      "error": ""
+    },
+    {
+      "input": "invented_title_or_rank#2",
+      "output": {
+        "claim_type": "invented_title_or_rank",
+        "safe_handling": "Require the title to appear in a formal context, avoiding matches when surrounded by humorous modifiers or everyday household settings.",
+        "sentence": "He jokingly called himself the Supreme Commander of the kitchen, even though his culinary skills were limited to boiling water and burning toast.",
+        "test_id": "invented_title_or_rank#2",
+        "why_naive_regex_breaks": "A naive regex would flag the title without recognizing that it is used in a purely humorous, nonliteral context to describe someone's cooking abilities."
+      },
+      "error": ""
+    },
+    {
+      "input": "invented_title_or_rank#3",
+      "output": {
+        "claim_type": "invented_title_or_rank",
+        "safe_handling": "Ensure the filtering logic checks for contextual markers of play or imagination before stripping capitalized ranks.",
+        "sentence": "The children paraded through the garden, pretending their golden retriever was the Grand Chancellor of the realm.",
+        "test_id": "invented_title_or_rank#3",
+        "why_naive_regex_breaks": "A simplistic filter would flag the capitalized title, failing to recognize that it is merely part of a harmless childhood game rather than a genuine assertion of authority."
+      },
+      "error": ""
+    },
+    {
+      "input": "cross_claim_negated_object_and_exit",
+      "output": {
+        "claim_type": "cross_claim_negated_object_and_exit",
+        "safe_handling": "The system must verify the presence of negating modifiers before applying any hard-gate rules to the matched object.",
+        "sentence": "He did not discover the hidden cure for the deadly plague, choosing rather to flee the quarantined city.",
+        "test_id": "cross_claim_negated_object_and_exit",
+        "why_naive_regex_breaks": "A naive regex targeting the phrase about discovering a cure would trigger falsely, ignoring the explicit negation and the subject's departure."
+      },
+      "error": ""
+    },
+    {
+      "input": "cross_claim_quoted_title_and_speaker",
+      "output": {
+        "claim_type": "cross_claim",
+        "safe_handling": "Ensure the gate ignores matches enclosed in quotation marks when they are clearly framed as titles or objects of criticism.",
+        "sentence": "During the debate, the mayor dismissed the pamphlet 'Water Cures All Diseases' as dangerous nonsense.",
+        "test_id": "cross_claim_quoted_title_and_speaker",
+        "why_naive_regex_breaks": "A simple pattern matching the medical claim would trigger on the quoted title, ignoring that the speaker actively refutes the premise."
+      },
+      "error": ""
+    },
+    {
+      "input": "cross_claim_hypothetical_weather_and_time",
+      "output": {
+        "claim_type": "weather_and_time",
+        "safe_handling": "Require the absence of conditional markers like if or were to before triggering the hard gate on weather and time combinations.",
+        "sentence": "If a torrential downpour were to strike at midnight, the ancient bridge would surely wash away.",
+        "test_id": "cross_claim_hypothetical_weather_and_time",
+        "why_naive_regex_breaks": "A naive regex looking for weather events and times might flag this, but the sentence describes a purely hypothetical scenario rather than asserting a factual forecast."
+      },
+      "error": ""
+    },
+    {
+      "input": "cross_claim_metaphor_location_and_tension",
+      "output": {
+        "claim_type": "cross_claim_metaphor_location_and_tension",
+        "safe_handling": "Require an explicit causal verb linking the location directly to the physical tension before applying any automated redaction.",
+        "sentence": "The thick tension in the underground bunker felt less like fear and more like a coiled spring waiting to snap.",
+        "test_id": "cross_claim_metaphor_location_and_tension",
+        "why_naive_regex_breaks": "A naive regex might flag the combination of location and tension as a forbidden environmental effect, ignoring that it is merely a subjective metaphor."
+      },
+      "error": ""
+    }
+  ]
+}

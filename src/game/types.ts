@@ -443,6 +443,10 @@ export interface GameState {
   speculativeTakes?: SpeculativeTake[];
   /** Append-only high-impact world changes (inventory, presence, quests, combat). */
   stateTxLog?: import('./stateTx').StateTx[];
+  /** P0.0: Forward-Progress Governor state (Manus #1 priority). */
+  progressGovernor?: import('./forwardProgressGovernor').ProgressGovernorState;
+  /** P0+P1 quality governance telemetry (2026-08-27w). */
+  qualityGovernance?: import('./qualityGovernance').QualityGovernanceState;
   /** Frozen opening invariants for this run. */
   campaignContract?: import('./campaignContract').CampaignContract | null;
   /** Soft drifts against campaignContract (Expert / continuity). */

@@ -1,0 +1,513 @@
+packFormatVersion: 1
+fileId: WOF_Travel_Taxi_Ferry
+worldId: ash_compact
+scope: WOF-only
+status: original-companion-data
+summary: >-
+  Coach and ferry travel graph for Ash Compact. Travel is represented as Place exits;
+  no teleportation, combat travel, live SynapticGM imports, licensed names, or production code.
+
+rules:
+  travelIsPlaceExit: true
+  noTeleport: true
+  noCombatTravel: true
+  travelResolvesAtHubOnly: true
+  turnCostIsInteger: true
+  goldWalletOnly: true
+  cosmeticWalletAllowed: false
+  innBindFastTravel:
+    firstBindTurnCost: 1
+    repeatBindTurnCost: 0
+    repeatRequiresSameRegionBoard: true
+  unavailableExitBehavior:
+    deny_without_spending: true
+  insufficientGoldBehavior:
+    deny_without_spending: true
+  disconnectDuringTravel:
+    return_to_origin_before_commit: true
+  speculativeNumberNotation: "SPEC:"
+
+idNamespace:
+  format: "ash_compact:travel:{slug}"
+  uniqueness: unique_within_file_and_locked_compact_set
+  lockedPlaceIdsPreserved: true
+
+places:
+  - id: poi_reedfen_square
+    name: Reedfen Square
+    kind: start_hub
+    regionId: reedfen
+    factionId: ash_compact
+    exits:
+      - exitId: exit_reedfen_to_reedfen_crossroads
+        mode: coach
+        destinationPlaceId: poi_reedfen_crossroads
+        routeId: route_reedfen_local
+        goldCost: 0
+        turnCost: 1
+        requires: []
+  - id: poi_reedfen_crossroads
+    name: Reedfen Crossroads
+    kind: road_junction
+    regionId: reedfen
+    exits:
+      - exitId: exit_crossroads_to_divide
+        mode: coach
+        destinationPlaceId: poi_the_divide
+        routeId: route_reedfen_divide
+        goldCost: 6
+        turnCost: 1
+        requires: []
+      - exitId: exit_crossroads_to_reedfen_square
+        mode: coach
+        destinationPlaceId: poi_reedfen_square
+        routeId: route_reedfen_local
+        goldCost: 0
+        turnCost: 1
+        requires: []
+  - id: poi_wickhaven
+    name: Wickhaven
+    kind: start_hub
+    regionId: lampwood
+    factionId: ash_compact
+    exits:
+      - exitId: exit_wickhaven_to_lampwood_gate
+        mode: coach
+        destinationPlaceId: poi_lampwood_gate
+        routeId: route_lampwood_local
+        goldCost: 0
+        turnCost: 1
+        requires: []
+  - id: poi_lampwood_gate
+    name: Lampwood Gate
+    kind: road_gate
+    regionId: lampwood
+    exits:
+      - exitId: exit_lampwood_to_lampwood_path
+        mode: coach
+        destinationPlaceId: poi_lampwood_path
+        routeId: route_lampwood_path
+        goldCost: 4
+        turnCost: 1
+        requires: []
+      - exitId: exit_lampwood_to_divide
+        mode: coach
+        destinationPlaceId: poi_the_divide
+        routeId: route_lampwood_divide
+        goldCost: 7
+        turnCost: 1
+        requires: []
+      - exitId: exit_lampwood_to_wickhaven
+        mode: coach
+        destinationPlaceId: poi_wickhaven
+        routeId: route_lampwood_local
+        goldCost: 0
+        turnCost: 1
+        requires: []
+  - id: poi_lampwood_path
+    name: Lampwood Path
+    kind: road_junction
+    regionId: lampwood
+    exits:
+      - exitId: exit_lampwood_path_to_divide
+        mode: coach
+        destinationPlaceId: poi_the_divide
+        routeId: route_lampwood_divide
+        goldCost: 5
+        turnCost: 1
+        requires: []
+      - exitId: exit_lampwood_path_to_gate
+        mode: coach
+        destinationPlaceId: poi_lampwood_gate
+        routeId: route_lampwood_path
+        goldCost: 4
+        turnCost: 1
+        requires: []
+  - id: poi_brinewatch_dock
+    name: Brinewatch Dock
+    kind: start_hub
+    regionId: brinewatch
+    factionId: tide_covenant
+    exits:
+      - exitId: exit_brinewatch_to_coil_pier
+        mode: ferry
+        destinationPlaceId: poi_coil_pier
+        routeId: route_brinewatch_coil
+        goldCost: 8
+        turnCost: 1
+        requires:
+          - flag: travel_brinewatch_ferry_unlocked
+  - id: poi_coil_pier
+    name: Coil Pier
+    kind: ferry_hub
+    regionId: brinewatch
+    factionId: tide_covenant
+    exits:
+      - exitId: exit_coil_to_brinewatch
+        mode: ferry
+        destinationPlaceId: poi_brinewatch_dock
+        routeId: route_brinewatch_coil
+        goldCost: 8
+        turnCost: 1
+        requires:
+          - flag: travel_brinewatch_ferry_unlocked
+      - exitId: exit_coil_to_divide
+        mode: ferry
+        destinationPlaceId: poi_the_divide
+        routeId: route_coil_divide
+        goldCost: 10
+        turnCost: 1
+        requires:
+          - flag: travel_coil_ferry_unlocked
+      - exitId: exit_coil_to_tidal_flats
+        mode: ferry
+        destinationPlaceId: poi_tidal_flats
+        routeId: route_coil_flats
+        goldCost: 3
+        turnCost: 1
+        requires: []
+  - id: poi_tidal_flats
+    name: Tidal Flats
+    kind: ferry_stop
+    regionId: brinewatch
+    exits:
+      - exitId: exit_flats_to_coil
+        mode: ferry
+        destinationPlaceId: poi_coil_pier
+        routeId: route_coil_flats
+        goldCost: 3
+        turnCost: 1
+        requires: []
+      - exitId: exit_flats_to_divide
+        mode: ferry
+        destinationPlaceId: poi_the_divide
+        routeId: route_coil_divide
+        goldCost: 12
+        turnCost: 1
+        requires:
+          - flag: travel_coil_ferry_unlocked
+  - id: poi_anvil_gate
+    name: Anvil Gate
+    kind: start_hub
+    regionId: granite_stair
+    factionId: ash_compact
+    exits:
+      - exitId: exit_anvil_to_granite_stair
+        mode: coach
+        destinationPlaceId: poi_granite_stair
+        routeId: route_anvil_local
+        goldCost: 0
+        turnCost: 1
+        requires: []
+  - id: poi_granite_stair
+    name: Granite Stair
+    kind: road_junction
+    regionId: granite_stair
+    exits:
+      - exitId: exit_granite_to_divide
+        mode: coach
+        destinationPlaceId: poi_the_divide
+        routeId: route_granite_divide
+        goldCost: 9
+        turnCost: 1
+        requires: []
+      - exitId: exit_granite_to_anvil
+        mode: coach
+        destinationPlaceId: poi_anvil_gate
+        routeId: route_anvil_local
+        goldCost: 0
+        turnCost: 1
+        requires: []
+  - id: poi_the_divide
+    name: The Divide
+    kind: central_transit_hub
+    regionId: the_divide
+    factionId: neutral
+    exits:
+      - exitId: exit_divide_to_reedfen
+        mode: coach
+        destinationPlaceId: poi_reedfen_crossroads
+        routeId: route_reedfen_divide
+        goldCost: 6
+        turnCost: 1
+        requires: []
+      - exitId: exit_divide_to_lampwood
+        mode: coach
+        destinationPlaceId: poi_lampwood_gate
+        routeId: route_lampwood_divide
+        goldCost: 7
+        turnCost: 1
+        requires: []
+      - exitId: exit_divide_to_coil
+        mode: ferry
+        destinationPlaceId: poi_coil_pier
+        routeId: route_coil_divide
+        goldCost: 10
+        turnCost: 1
+        requires:
+          - flag: travel_coil_ferry_unlocked
+      - exitId: exit_divide_to_granite
+        mode: coach
+        destinationPlaceId: poi_granite_stair
+        routeId: route_granite_divide
+        goldCost: 9
+        turnCost: 1
+        requires: []
+      - exitId: exit_divide_to_ash_seat
+        mode: coach
+        destinationPlaceId: poi_ash_seat
+        routeId: route_divide_ash_seat
+        goldCost: 12
+        turnCost: 1
+        requires:
+          - factionStandingAtLeast:
+              factionId: ash_compact
+              rank: 1
+      - exitId: exit_divide_to_tidehold
+        mode: ferry
+        destinationPlaceId: poi_tidehold
+        routeId: route_divide_tidehold
+        goldCost: 15
+        turnCost: 1
+        requires:
+          - factionStandingAtLeast:
+              factionId: tide_covenant
+              rank: 1
+  - id: poi_ash_seat
+    name: Ash Seat
+    kind: faction_capital
+    regionId: ash_seat
+    factionId: ash_compact
+    exits:
+      - exitId: exit_ash_seat_to_divide
+        mode: coach
+        destinationPlaceId: poi_the_divide
+        routeId: route_divide_ash_seat
+        goldCost: 12
+        turnCost: 1
+        requires:
+          - factionStandingAtLeast:
+              factionId: ash_compact
+              rank: 1
+  - id: poi_tidehold
+    name: Tidehold
+    kind: faction_capital
+    regionId: tidehold
+    factionId: tide_covenant
+    exits:
+      - exitId: exit_tidehold_to_divide
+        mode: ferry
+        destinationPlaceId: poi_the_divide
+        routeId: route_divide_tidehold
+        goldCost: 15
+        turnCost: 1
+        requires:
+          - factionStandingAtLeast:
+              factionId: tide_covenant
+              rank: 1
+
+routes:
+  - id: route_reedfen_local
+    mode: coach
+    fromPlaceIds: [poi_reedfen_square, poi_reedfen_crossroads]
+    toPlaceIds: [poi_reedfen_crossroads, poi_reedfen_square]
+    goldCost: 0
+    turnCost: 1
+    durationTurns: 1
+    operatorId: operator_reedfen_coach
+    safety: hub_to_hub_only
+  - id: route_reedfen_divide
+    mode: coach
+    fromPlaceIds: [poi_reedfen_crossroads, poi_the_divide]
+    toPlaceIds: [poi_the_divide, poi_reedfen_crossroads]
+    goldCost: 6
+    turnCost: 1
+    durationTurns: 1
+    operatorId: operator_reedfen_coach
+    safety: hub_to_hub_only
+  - id: route_lampwood_local
+    mode: coach
+    fromPlaceIds: [poi_wickhaven, poi_lampwood_gate]
+    toPlaceIds: [poi_lampwood_gate, poi_wickhaven]
+    goldCost: 0
+    turnCost: 1
+    durationTurns: 1
+    operatorId: operator_lampwood_coach
+    safety: hub_to_hub_only
+  - id: route_lampwood_path
+    mode: coach
+    fromPlaceIds: [poi_lampwood_gate, poi_lampwood_path]
+    toPlaceIds: [poi_lampwood_path, poi_lampwood_gate]
+    goldCost: 4
+    turnCost: 1
+    durationTurns: 1
+    operatorId: operator_lampwood_coach
+    safety: hub_to_hub_only
+  - id: route_lampwood_divide
+    mode: coach
+    fromPlaceIds: [poi_lampwood_gate, poi_lampwood_path, poi_the_divide]
+    toPlaceIds: [poi_the_divide, poi_lampwood_path, poi_lampwood_gate]
+    goldCost: 5
+    turnCost: 1
+    durationTurns: 1
+    operatorId: operator_lampwood_coach
+    safety: hub_to_hub_only
+  - id: route_brinewatch_coil
+    mode: ferry
+    fromPlaceIds: [poi_brinewatch_dock, poi_coil_pier]
+    toPlaceIds: [poi_coil_pier, poi_brinewatch_dock]
+    goldCost: 8
+    turnCost: 1
+    durationTurns: 1
+    operatorId: operator_tide_covenant_ferry
+    safety: dock_to_dock_only
+  - id: route_coil_flats
+    mode: ferry
+    fromPlaceIds: [poi_coil_pier, poi_tidal_flats]
+    toPlaceIds: [poi_tidal_flats, poi_coil_pier]
+    goldCost: 3
+    turnCost: 1
+    durationTurns: 1
+    operatorId: operator_tide_covenant_ferry
+    safety: dock_to_dock_only
+  - id: route_coil_divide
+    mode: ferry
+    fromPlaceIds: [poi_coil_pier, poi_tidal_flats, poi_the_divide]
+    toPlaceIds: [poi_the_divide, poi_coil_pier, poi_tidal_flats]
+    goldCost: 10
+    turnCost: 1
+    durationTurns: 1
+    operatorId: operator_tide_covenant_ferry
+    safety: dock_to_dock_only
+  - id: route_anvil_local
+    mode: coach
+    fromPlaceIds: [poi_anvil_gate, poi_granite_stair]
+    toPlaceIds: [poi_granite_stair, poi_anvil_gate]
+    goldCost: 0
+    turnCost: 1
+    durationTurns: 1
+    operatorId: operator_granite_coach
+    safety: hub_to_hub_only
+  - id: route_granite_divide
+    mode: coach
+    fromPlaceIds: [poi_granite_stair, poi_the_divide]
+    toPlaceIds: [poi_the_divide, poi_granite_stair]
+    goldCost: 9
+    turnCost: 1
+    durationTurns: 1
+    operatorId: operator_granite_coach
+    safety: hub_to_hub_only
+  - id: route_divide_ash_seat
+    mode: coach
+    fromPlaceIds: [poi_the_divide, poi_ash_seat]
+    toPlaceIds: [poi_ash_seat, poi_the_divide]
+    goldCost: 12
+    turnCost: 1
+    durationTurns: 1
+    operatorId: operator_ash_compact_coach
+    safety: capital_to_hub_only
+  - id: route_divide_tidehold
+    mode: ferry
+    fromPlaceIds: [poi_the_divide, poi_tidehold]
+    toPlaceIds: [poi_tidehold, poi_the_divide]
+    goldCost: 15
+    turnCost: 1
+    durationTurns: 1
+    operatorId: operator_tide_covenant_ferry
+    safety: capital_to_hub_only
+
+operators:
+  - id: operator_reedfen_coach
+    name: Reedfen Road Coach
+    mode: coach
+    factionId: ash_compact
+    playerFacingCopy: "The Reedfen coach waits at the post."
+  - id: operator_lampwood_coach
+    name: Lampwood Road Coach
+    mode: coach
+    factionId: ash_compact
+    playerFacingCopy: "The Lampwood coach is ready at the gate."
+  - id: operator_tide_covenant_ferry
+    name: Tide Covenant Ferry
+    mode: ferry
+    factionId: tide_covenant
+    playerFacingCopy: "The ferry bell sounds once from the water."
+  - id: operator_granite_coach
+    name: Granite Stair Coach
+    mode: coach
+    factionId: ash_compact
+    playerFacingCopy: "The Granite Stair coach has secured its load."
+  - id: operator_ash_compact_coach
+    name: Ash Compact Capital Coach
+    mode: coach
+    factionId: ash_compact
+    playerFacingCopy: "The capital coach opens its door beneath the ash-mark."
+
+innBindBoards:
+  - id: bind_board_reedfen
+    placeId: poi_reedfen_square
+    regionId: reedfen
+    bindTargetPlaceId: poi_reedfen_square
+    firstBindTurnCost: 1
+    laterSameRegionTurnCost: 0
+    goldCost: 0
+  - id: bind_board_wickhaven
+    placeId: poi_wickhaven
+    regionId: lampwood
+    bindTargetPlaceId: poi_wickhaven
+    firstBindTurnCost: 1
+    laterSameRegionTurnCost: 0
+    goldCost: 0
+  - id: bind_board_brinewatch
+    placeId: poi_brinewatch_dock
+    regionId: brinewatch
+    bindTargetPlaceId: poi_brinewatch_dock
+    firstBindTurnCost: 1
+    laterSameRegionTurnCost: 0
+    goldCost: 0
+  - id: bind_board_anvil
+    placeId: poi_anvil_gate
+    regionId: granite_stair
+    bindTargetPlaceId: poi_anvil_gate
+    firstBindTurnCost: 1
+    laterSameRegionTurnCost: 0
+    goldCost: 0
+  - id: bind_board_ash_seat
+    placeId: poi_ash_seat
+    regionId: ash_seat
+    bindTargetPlaceId: poi_ash_seat
+    firstBindTurnCost: 1
+    laterSameRegionTurnCost: 0
+    goldCost: 0
+  - id: bind_board_tidehold
+    placeId: poi_tidehold
+    regionId: tidehold
+    bindTargetPlaceId: poi_tidehold
+    firstBindTurnCost: 1
+    laterSameRegionTurnCost: 0
+    goldCost: 0
+
+integrity:
+  lockedPlacesReferenced:
+    - poi_reedfen_square
+    - poi_wickhaven
+    - poi_brinewatch_dock
+    - poi_coil_pier
+    - poi_tidal_flats
+    - poi_anvil_gate
+    - poi_granite_stair
+    - poi_ash_seat
+    - poi_tidehold
+  newPlaces:
+    - poi_reedfen_crossroads
+    - poi_lampwood_path
+    - poi_the_divide
+  noLiveSynapticGMContent: true
+  noLicensedIP: true
+  noPlaceholders: true
+  noProductionAppCode: true
+  noTeleport: true
+  noCombatTravel: true
+  twoWalletsPreserved: true
+  goldCostsAreExplicit: true
+  turnCostsAreExplicit: true

@@ -1,0 +1,2296 @@
+packFormatVersion: 1
+worldId: tide_colossus
+displayName: Tide Colossus
+maturity: teen
+rulesModuleId: colossus_part
+themeKit: Tide Colossus Theme Kit
+places:
+- id: tide_colossus_place_01
+  publicName: Breakwater Camp
+  zoneId: tide_colossus_zone_01
+  role: shared hub
+  mapScale: street
+  dangerTier: safe
+  outdoor: true
+  exits:
+  - tide_colossus_place_02
+  - tide_colossus_place_04
+  npcIds:
+  - tide_colossus_npc_01
+  - tide_colossus_npc_05
+  - tide_colossus_npc_09
+  dungeonId: null
+  interactableIds:
+  - tide_colossus_interact_01
+  - tide_colossus_interact_09
+- id: tide_colossus_place_02
+  publicName: Titan Sound
+  zoneId: tide_colossus_zone_01
+  role: start hub
+  mapScale: street
+  dangerTier: safe
+  outdoor: true
+  exits:
+  - tide_colossus_place_01
+  - tide_colossus_place_03
+  npcIds:
+  - tide_colossus_npc_02
+  - tide_colossus_npc_06
+  - tide_colossus_npc_10
+  dungeonId: null
+  interactableIds:
+  - tide_colossus_interact_02
+  - tide_colossus_interact_10
+- id: tide_colossus_place_03
+  publicName: Anchor Cliff
+  zoneId: tide_colossus_zone_01
+  role: street route
+  mapScale: street
+  dangerTier: safe
+  outdoor: true
+  exits:
+  - tide_colossus_place_02
+  - tide_colossus_place_04
+  npcIds:
+  - tide_colossus_npc_03
+  - tide_colossus_npc_07
+  dungeonId: null
+  interactableIds:
+  - tide_colossus_interact_03
+  - tide_colossus_interact_11
+- id: tide_colossus_place_04
+  publicName: Foam Chapel
+  zoneId: tide_colossus_zone_02
+  role: mid join
+  mapScale: street
+  dangerTier: low
+  outdoor: true
+  exits:
+  - tide_colossus_place_03
+  - tide_colossus_place_05
+  - tide_colossus_place_01
+  npcIds:
+  - tide_colossus_npc_04
+  - tide_colossus_npc_08
+  dungeonId: null
+  interactableIds:
+  - tide_colossus_interact_04
+  - tide_colossus_interact_12
+- id: tide_colossus_place_05
+  publicName: Gullbone Reach
+  zoneId: tide_colossus_zone_02
+  role: work district
+  mapScale: interior
+  dangerTier: low
+  outdoor: false
+  exits:
+  - tide_colossus_place_04
+  - tide_colossus_place_06
+  npcIds: []
+  dungeonId: null
+  interactableIds:
+  - tide_colossus_interact_05
+- id: tide_colossus_place_06
+  publicName: Saltstone Yard
+  zoneId: tide_colossus_zone_02
+  role: instance door
+  mapScale: dungeon
+  dangerTier: medium
+  outdoor: false
+  exits:
+  - tide_colossus_place_05
+  - tide_colossus_place_07
+  npcIds: []
+  dungeonId: tide_colossus_dungeon_01
+  interactableIds:
+  - tide_colossus_interact_06
+- id: tide_colossus_place_07
+  publicName: Warden Buoy
+  zoneId: tide_colossus_zone_03
+  role: wild edge
+  mapScale: street
+  dangerTier: medium
+  outdoor: true
+  exits:
+  - tide_colossus_place_06
+  - tide_colossus_place_08
+  npcIds: []
+  dungeonId: null
+  interactableIds:
+  - tide_colossus_interact_07
+- id: tide_colossus_place_08
+  publicName: Mastroot Cave
+  zoneId: tide_colossus_zone_03
+  role: housing approach
+  mapScale: interior
+  dangerTier: low
+  outdoor: false
+  exits:
+  - tide_colossus_place_07
+  npcIds: []
+  dungeonId: null
+  interactableIds:
+  - tide_colossus_interact_08
+npcs:
+- id: tide_colossus_npc_01
+  name: Dessa Quill
+  placeId: tide_colossus_place_01
+  role: quest
+  greet: Dessa Quill says, ‘Tide Colossus keeps its promises in small places. Tell me which one you noticed.’
+- id: tide_colossus_npc_02
+  name: Eris Vale
+  placeId: tide_colossus_place_02
+  role: profession
+  greet: Eris Vale says, ‘Tide Colossus keeps its promises in small places. Tell me which one you noticed.’
+- id: tide_colossus_npc_03
+  name: Fenn Wren
+  placeId: tide_colossus_place_03
+  role: hub
+  greet: Fenn Wren says, ‘Tide Colossus keeps its promises in small places. Tell me which one you noticed.’
+- id: tide_colossus_npc_04
+  name: Gala Morrow
+  placeId: tide_colossus_place_04
+  role: merchant
+  greet: Gala Morrow says, ‘Tide Colossus keeps its promises in small places. Tell me which one you noticed.’
+- id: tide_colossus_npc_05
+  name: Holl Rowan
+  placeId: tide_colossus_place_01
+  role: local
+  greet: Holl Rowan says, ‘Tide Colossus keeps its promises in small places. Tell me which one you noticed.’
+- id: tide_colossus_npc_06
+  name: Ivo Nook
+  placeId: tide_colossus_place_02
+  role: host
+  greet: Ivo Nook says, ‘Tide Colossus keeps its promises in small places. Tell me which one you noticed.’
+- id: tide_colossus_npc_07
+  name: Jori Cress
+  placeId: tide_colossus_place_03
+  role: quest
+  greet: Jori Cress says, ‘Tide Colossus keeps its promises in small places. Tell me which one you noticed.’
+- id: tide_colossus_npc_08
+  name: Alden Silt
+  placeId: tide_colossus_place_04
+  role: profession
+  greet: Alden Silt says, ‘Tide Colossus keeps its promises in small places. Tell me which one you noticed.’
+- id: tide_colossus_npc_09
+  name: Bryn Pryce
+  placeId: tide_colossus_place_01
+  role: local
+  greet: Bryn Pryce says, ‘Tide Colossus keeps its promises in small places. Tell me which one you noticed.’
+- id: tide_colossus_npc_10
+  name: Cato Vane
+  placeId: tide_colossus_place_02
+  role: merchant
+  greet: Cato Vane says, ‘Tide Colossus keeps its promises in small places. Tell me which one you noticed.’
+kits:
+- id: tide_colossus_kit_01
+  publicName: Part Surveyor
+  look: part surveyor workwear
+  values: practice part surveyor
+  taboo: Never use part surveyor authority to remove another person’s choice.
+  speechTell: Use the local rhythm of Tide Colossus and make every offer concrete.
+  starterClothes: part_surveyor mantle
+  starterTool: part_surveyor tool
+  starterMapItem: tide_colossus_map_01
+  startingPlaceId: tide_colossus_place_01
+  firstHourQuestId: tide_colossus_q_01
+  abilityFlag: tide_colossus_ability_01
+- id: tide_colossus_kit_02
+  publicName: Anchor Striker
+  look: anchor striker workwear
+  values: practice anchor striker
+  taboo: Never use anchor striker authority to remove another person’s choice.
+  speechTell: Use the local rhythm of Tide Colossus and make every offer concrete.
+  starterClothes: anchor_striker vest
+  starterTool: anchor_striker tool
+  starterMapItem: tide_colossus_map_02
+  startingPlaceId: tide_colossus_place_02
+  firstHourQuestId: tide_colossus_q_02
+  abilityFlag: tide_colossus_ability_02
+- id: tide_colossus_kit_03
+  publicName: Foam Chirurgeon
+  look: foam chirurgeon workwear
+  values: practice foam chirurgeon
+  taboo: Never use foam chirurgeon authority to remove another person’s choice.
+  speechTell: Use the local rhythm of Tide Colossus and make every offer concrete.
+  starterClothes: foam_chirurgeon jacket
+  starterTool: foam_chirurgeon tool
+  starterMapItem: tide_colossus_map_03
+  startingPlaceId: tide_colossus_place_01
+  firstHourQuestId: tide_colossus_q_03
+  abilityFlag: tide_colossus_ability_03
+- id: tide_colossus_kit_04
+  publicName: Buoy Caller
+  look: buoy caller workwear
+  values: practice buoy caller
+  taboo: Never use buoy caller authority to remove another person’s choice.
+  speechTell: Use the local rhythm of Tide Colossus and make every offer concrete.
+  starterClothes: buoy_caller sash
+  starterTool: buoy_caller tool
+  starterMapItem: tide_colossus_map_04
+  startingPlaceId: tide_colossus_place_02
+  firstHourQuestId: tide_colossus_q_04
+  abilityFlag: tide_colossus_ability_04
+quests:
+- id: tide_colossus_q_01
+  title: 'Tide Colossus: Name a Working Promise'
+  family: identity
+  hidden: false
+  unlocksQuestId: tide_colossus_q_02
+  objectives:
+  - id: tide_colossus_q_01_obj_01
+    kind: visit_place
+    targetId: tide_colossus_place_01
+    count: 1
+  - id: tide_colossus_q_01_obj_02
+    kind: deliver_item
+    targetId: tide_colossus_deliver_item_01
+    count: 2
+  rewardGold: 12
+  rewardXp: 20
+- id: tide_colossus_q_02
+  title: 'Tide Colossus: Set the First Tool Aside'
+  family: identity
+  hidden: false
+  unlocksQuestId: tide_colossus_q_03
+  objectives:
+  - id: tide_colossus_q_02_obj_01
+    kind: ledger_kill
+    targetId: tide_colossus_ledger_kill_02
+    count: 1
+  - id: tide_colossus_q_02_obj_02
+    kind: talk_to_npc
+    targetId: tide_colossus_npc_03
+    count: 2
+  rewardGold: 15
+  rewardXp: 25
+- id: tide_colossus_q_03
+  title: 'Tide Colossus: Carry the Right Record'
+  family: identity
+  hidden: false
+  unlocksQuestId: tide_colossus_q_04
+  objectives:
+  - id: tide_colossus_q_03_obj_01
+    kind: ledger_bond
+    targetId: tide_colossus_ledger_bond_03
+    count: 1
+  - id: tide_colossus_q_03_obj_02
+    kind: collect_item
+    targetId: tide_colossus_collect_item_03
+    count: 2
+  rewardGold: 18
+  rewardXp: 30
+- id: tide_colossus_q_04
+  title: 'Tide Colossus: Find the Missing Measure'
+  family: identity
+  hidden: false
+  unlocksQuestId: tide_colossus_q_05
+  objectives:
+  - id: tide_colossus_q_04_obj_01
+    kind: deliver_item
+    targetId: tide_colossus_deliver_item_04
+    count: 1
+  - id: tide_colossus_q_04_obj_02
+    kind: interact
+    targetId: tide_colossus_place_05
+    count: 2
+    verbId: cook
+  rewardGold: 21
+  rewardXp: 35
+- id: tide_colossus_q_05
+  title: 'Tide Colossus: Teach a Safer Shortcut'
+  family: identity
+  hidden: false
+  unlocksQuestId: tide_colossus_q_06
+  objectives:
+  - id: tide_colossus_q_05_obj_01
+    kind: talk_to_npc
+    targetId: tide_colossus_npc_05
+    count: 1
+  - id: tide_colossus_q_05_obj_02
+    kind: score_beat
+    targetId: tide_colossus_score_beat_05
+    count: 2
+  rewardGold: 24
+  rewardXp: 40
+- id: tide_colossus_q_06
+  title: 'Tide Colossus: Read the Local Weather'
+  family: profession
+  hidden: false
+  unlocksQuestId: tide_colossus_q_07
+  objectives:
+  - id: tide_colossus_q_06_obj_01
+    kind: collect_item
+    targetId: tide_colossus_collect_item_06
+    count: 1
+  - id: tide_colossus_q_06_obj_02
+    kind: build_tick
+    targetId: tide_colossus_build_tick_06
+    count: 2
+  rewardGold: 27
+  rewardXp: 45
+- id: tide_colossus_q_07
+  title: 'Tide Colossus: Repair a Shared Threshold'
+  family: profession
+  hidden: false
+  unlocksQuestId: tide_colossus_q_08
+  objectives:
+  - id: tide_colossus_q_07_obj_01
+    kind: interact
+    targetId: tide_colossus_place_07
+    count: 1
+    verbId: inspect
+  - id: tide_colossus_q_07_obj_02
+    kind: hospitality_tick
+    targetId: tide_colossus_hospitality_tick_07
+    count: 2
+  rewardGold: 30
+  rewardXp: 50
+- id: tide_colossus_q_08
+  title: 'Tide Colossus: Return a Borrowed Sign'
+  family: profession
+  hidden: false
+  unlocksQuestId: tide_colossus_q_09
+  objectives:
+  - id: tide_colossus_q_08_obj_01
+    kind: score_beat
+    targetId: tide_colossus_score_beat_08
+    count: 1
+  - id: tide_colossus_q_08_obj_02
+    kind: lap_finish
+    targetId: tide_colossus_lap_finish_08
+    count: 2
+  rewardGold: 33
+  rewardXp: 55
+- id: tide_colossus_q_09
+  title: 'Tide Colossus: Host the Small Welcome'
+  family: profession
+  hidden: false
+  unlocksQuestId: tide_colossus_q_10
+  objectives:
+  - id: tide_colossus_q_09_obj_01
+    kind: build_tick
+    targetId: tide_colossus_build_tick_09
+    count: 1
+  - id: tide_colossus_q_09_obj_02
+    kind: visit_place
+    targetId: tide_colossus_place_02
+    count: 2
+  rewardGold: 36
+  rewardXp: 60
+- id: tide_colossus_q_10
+  title: 'Tide Colossus: Choose a Fair Order'
+  family: profession
+  hidden: false
+  unlocksQuestId: tide_colossus_q_11
+  objectives:
+  - id: tide_colossus_q_10_obj_01
+    kind: hospitality_tick
+    targetId: tide_colossus_hospitality_tick_10
+    count: 1
+  - id: tide_colossus_q_10_obj_02
+    kind: ledger_kill
+    targetId: tide_colossus_ledger_kill_10
+    count: 2
+  rewardGold: 39
+  rewardXp: 65
+- id: tide_colossus_q_11
+  title: 'Tide Colossus: Map the Quiet Detour'
+  family: profession
+  hidden: false
+  unlocksQuestId: tide_colossus_q_12
+  objectives:
+  - id: tide_colossus_q_11_obj_01
+    kind: lap_finish
+    targetId: tide_colossus_lap_finish_11
+    count: 1
+  - id: tide_colossus_q_11_obj_02
+    kind: ledger_bond
+    targetId: tide_colossus_ledger_bond_11
+    count: 2
+  rewardGold: 42
+  rewardXp: 70
+- id: tide_colossus_q_12
+  title: 'Tide Colossus: Bring a Useful Witness'
+  family: profession
+  hidden: false
+  unlocksQuestId: tide_colossus_q_13
+  objectives:
+  - id: tide_colossus_q_12_obj_01
+    kind: visit_place
+    targetId: tide_colossus_place_04
+    count: 1
+  - id: tide_colossus_q_12_obj_02
+    kind: deliver_item
+    targetId: tide_colossus_deliver_item_12
+    count: 2
+  rewardGold: 45
+  rewardXp: 75
+- id: tide_colossus_q_13
+  title: 'Tide Colossus: Sort the Unclaimed Materials'
+  family: zone_story
+  hidden: false
+  unlocksQuestId: tide_colossus_q_14
+  objectives:
+  - id: tide_colossus_q_13_obj_01
+    kind: ledger_kill
+    targetId: tide_colossus_ledger_kill_13
+    count: 1
+  - id: tide_colossus_q_13_obj_02
+    kind: talk_to_npc
+    targetId: tide_colossus_npc_04
+    count: 2
+  rewardGold: 48
+  rewardXp: 80
+- id: tide_colossus_q_14
+  title: 'Tide Colossus: Make Room for a Visitor'
+  family: zone_story
+  hidden: false
+  unlocksQuestId: tide_colossus_q_15
+  objectives:
+  - id: tide_colossus_q_14_obj_01
+    kind: ledger_bond
+    targetId: tide_colossus_ledger_bond_14
+    count: 1
+  - id: tide_colossus_q_14_obj_02
+    kind: collect_item
+    targetId: tide_colossus_collect_item_14
+    count: 2
+  rewardGold: 51
+  rewardXp: 85
+- id: tide_colossus_q_15
+  title: 'Tide Colossus: Close the Day’s Ledger'
+  family: zone_story
+  hidden: false
+  unlocksQuestId: tide_colossus_q_16
+  objectives:
+  - id: tide_colossus_q_15_obj_01
+    kind: deliver_item
+    targetId: tide_colossus_deliver_item_15
+    count: 1
+  - id: tide_colossus_q_15_obj_02
+    kind: interact
+    targetId: tide_colossus_place_08
+    count: 2
+    verbId: craft
+  rewardGold: 54
+  rewardXp: 90
+- id: tide_colossus_q_16
+  title: 'Tide Colossus: Follow the Midway Signal'
+  family: zone_story
+  hidden: false
+  unlocksQuestId: tide_colossus_q_17
+  objectives:
+  - id: tide_colossus_q_16_obj_01
+    kind: talk_to_npc
+    targetId: tide_colossus_npc_06
+    count: 1
+  - id: tide_colossus_q_16_obj_02
+    kind: score_beat
+    targetId: tide_colossus_score_beat_16
+    count: 2
+  rewardGold: 57
+  rewardXp: 95
+- id: tide_colossus_q_17
+  title: 'Tide Colossus: Uncover the Door Note'
+  family: zone_story
+  hidden: true
+  unlocksQuestId: tide_colossus_q_18
+  objectives:
+  - id: tide_colossus_q_17_obj_01
+    kind: collect_item
+    targetId: tide_colossus_collect_item_17
+    count: 1
+  - id: tide_colossus_q_17_obj_02
+    kind: build_tick
+    targetId: tide_colossus_build_tick_17
+    count: 2
+  rewardGold: 60
+  rewardXp: 100
+- id: tide_colossus_q_18
+  title: 'Tide Colossus: Prepare the Team Table'
+  family: zone_story
+  hidden: false
+  unlocksQuestId: tide_colossus_q_19
+  objectives:
+  - id: tide_colossus_q_18_obj_01
+    kind: interact
+    targetId: tide_colossus_place_02
+    count: 1
+    verbId: bind_inn
+  - id: tide_colossus_q_18_obj_02
+    kind: hospitality_tick
+    targetId: tide_colossus_hospitality_tick_18
+    count: 2
+  rewardGold: 63
+  rewardXp: 105
+- id: tide_colossus_q_19
+  title: 'Tide Colossus: Test the Local Method'
+  family: zone_story
+  hidden: false
+  unlocksQuestId: tide_colossus_q_20
+  objectives:
+  - id: tide_colossus_q_19_obj_01
+    kind: score_beat
+    targetId: tide_colossus_score_beat_19
+    count: 1
+  - id: tide_colossus_q_19_obj_02
+    kind: lap_finish
+    targetId: tide_colossus_lap_finish_19
+    count: 2
+  rewardGold: 66
+  rewardXp: 110
+- id: tide_colossus_q_20
+  title: 'Tide Colossus: Hold a Careful Boundary'
+  family: zone_story
+  hidden: false
+  unlocksQuestId: tide_colossus_q_21
+  objectives:
+  - id: tide_colossus_q_20_obj_01
+    kind: build_tick
+    targetId: tide_colossus_build_tick_20
+    count: 1
+  - id: tide_colossus_q_20_obj_02
+    kind: visit_place
+    targetId: tide_colossus_place_05
+    count: 2
+  rewardGold: 69
+  rewardXp: 115
+- id: tide_colossus_q_21
+  title: 'Tide Colossus: Answer the Neighbour’s Call'
+  family: extra
+  hidden: false
+  unlocksQuestId: tide_colossus_q_22
+  objectives:
+  - id: tide_colossus_q_21_obj_01
+    kind: hospitality_tick
+    targetId: tide_colossus_hospitality_tick_21
+    count: 1
+  - id: tide_colossus_q_21_obj_02
+    kind: ledger_kill
+    targetId: tide_colossus_ledger_kill_21
+    count: 2
+  rewardGold: 72
+  rewardXp: 120
+- id: tide_colossus_q_22
+  title: 'Tide Colossus: Finish the Side Route'
+  family: extra
+  hidden: false
+  unlocksQuestId: tide_colossus_q_23
+  objectives:
+  - id: tide_colossus_q_22_obj_01
+    kind: lap_finish
+    targetId: tide_colossus_lap_finish_22
+    count: 1
+  - id: tide_colossus_q_22_obj_02
+    kind: ledger_bond
+    targetId: tide_colossus_ledger_bond_22
+    count: 2
+  rewardGold: 75
+  rewardXp: 125
+- id: tide_colossus_q_23
+  title: 'Tide Colossus: Earn a Trusted Introduction'
+  family: extra
+  hidden: true
+  unlocksQuestId: tide_colossus_q_24
+  objectives:
+  - id: tide_colossus_q_23_obj_01
+    kind: visit_place
+    targetId: tide_colossus_place_07
+    count: 1
+  - id: tide_colossus_q_23_obj_02
+    kind: deliver_item
+    targetId: tide_colossus_deliver_item_23
+    count: 2
+  rewardGold: 78
+  rewardXp: 130
+- id: tide_colossus_q_24
+  title: 'Tide Colossus: Open the Instance Path'
+  family: extra
+  hidden: false
+  unlocksQuestId: tide_colossus_q_25
+  objectives:
+  - id: tide_colossus_q_24_obj_01
+    kind: ledger_kill
+    targetId: tide_colossus_ledger_kill_24
+    count: 1
+  - id: tide_colossus_q_24_obj_02
+    kind: talk_to_npc
+    targetId: tide_colossus_npc_05
+    count: 2
+  rewardGold: 81
+  rewardXp: 135
+- id: tide_colossus_q_25
+  title: 'Tide Colossus: Complete the First Big Night'
+  family: extra
+  hidden: false
+  unlocksQuestId: null
+  objectives:
+  - id: tide_colossus_q_25_obj_01
+    kind: ledger_bond
+    targetId: tide_colossus_ledger_bond_25
+    count: 1
+  - id: tide_colossus_q_25_obj_02
+    kind: collect_item
+    targetId: tide_colossus_collect_item_25
+    count: 2
+  rewardGold: 84
+  rewardXp: 140
+species:
+- id: tide_colossus_species_01
+  publicName: Shell Titan
+  kind: opponent
+  hp: 8
+  armor: 0
+  threat: 1
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: tide_colossus_species_02
+  publicName: Reed Giant
+  kind: opponent
+  hp: 9
+  armor: 1
+  threat: 2
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: tide_colossus_species_03
+  publicName: Stormback
+  kind: opponent
+  hp: 10
+  armor: 2
+  threat: 3
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: tide_colossus_species_04
+  publicName: Mud Oracle
+  kind: opponent
+  hp: 11
+  armor: 3
+  threat: 1
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: tide_colossus_species_05
+  publicName: Tide Colossus Field Type 5
+  kind: opponent
+  hp: 12
+  armor: 0
+  threat: 2
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: tide_colossus_species_06
+  publicName: Tide Colossus Field Type 6
+  kind: opponent
+  hp: 13
+  armor: 1
+  threat: 3
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: tide_colossus_species_07
+  publicName: Tide Colossus Field Type 7
+  kind: opponent
+  hp: 14
+  armor: 2
+  threat: 1
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: tide_colossus_species_08
+  publicName: Tide Colossus Field Type 8
+  kind: opponent
+  hp: 15
+  armor: 3
+  threat: 2
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: tide_colossus_species_09
+  publicName: Tide Colossus Field Type 9
+  kind: opponent
+  hp: 16
+  armor: 0
+  threat: 3
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: tide_colossus_species_10
+  publicName: Tide Colossus Field Type 10
+  kind: opponent
+  hp: 17
+  armor: 1
+  threat: 1
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: tide_colossus_species_11
+  publicName: Tide Colossus Field Type 11
+  kind: opponent
+  hp: 18
+  armor: 2
+  threat: 2
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: tide_colossus_species_12
+  publicName: Tide Colossus Field Type 12
+  kind: opponent
+  hp: 19
+  armor: 3
+  threat: 3
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: tide_colossus_species_13
+  publicName: Tide Colossus Field Type 13
+  kind: opponent
+  hp: 20
+  armor: 0
+  threat: 1
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: tide_colossus_species_14
+  publicName: Tide Colossus Field Type 14
+  kind: opponent
+  hp: 21
+  armor: 1
+  threat: 2
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: tide_colossus_species_15
+  publicName: Tide Colossus Field Type 15
+  kind: opponent
+  hp: 22
+  armor: 2
+  threat: 3
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: tide_colossus_species_16
+  publicName: Tide Colossus Field Type 16
+  kind: opponent
+  hp: 23
+  armor: 3
+  threat: 1
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: tide_colossus_species_17
+  publicName: Tide Colossus Field Type 17
+  kind: opponent
+  hp: 24
+  armor: 0
+  threat: 2
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: tide_colossus_species_18
+  publicName: Tide Colossus Field Type 18
+  kind: opponent
+  hp: 25
+  armor: 1
+  threat: 3
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+items:
+- id: tide_colossus_item_01
+  publicName: Breakwater Camp token
+  category: starter
+  power: false
+  sellGold: 3
+  description: A Tide Colossus item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: tide_colossus_item_02
+  publicName: Titan Sound tool
+  category: starter
+  power: false
+  sellGold: 5
+  description: A Tide Colossus item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: tide_colossus_item_03
+  publicName: Anchor Cliff thread
+  category: profession
+  power: false
+  sellGold: 7
+  description: A Tide Colossus item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: tide_colossus_item_04
+  publicName: Foam Chapel seal
+  category: profession
+  power: false
+  sellGold: 9
+  description: A Tide Colossus item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: tide_colossus_item_05
+  publicName: Gullbone Reach bundle
+  category: instance
+  power: false
+  sellGold: 11
+  description: A Tide Colossus item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: tide_colossus_item_06
+  publicName: Saltstone Yard token
+  category: instance
+  power: false
+  sellGold: 13
+  description: A Tide Colossus item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: tide_colossus_item_07
+  publicName: Warden Buoy tool
+  category: cosmetic
+  power: false
+  sellGold: 15
+  description: A Tide Colossus item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: tide_colossus_item_08
+  publicName: Mastroot Cave thread
+  category: cosmetic
+  power: false
+  sellGold: 17
+  description: A Tide Colossus item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: tide_colossus_item_09
+  publicName: Breakwater Camp seal
+  category: material
+  power: false
+  sellGold: 19
+  description: A Tide Colossus item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: tide_colossus_item_10
+  publicName: Titan Sound bundle
+  category: material
+  power: false
+  sellGold: 21
+  description: A Tide Colossus item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: tide_colossus_item_11
+  publicName: Anchor Cliff token
+  category: care
+  power: false
+  sellGold: 23
+  description: A Tide Colossus item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: tide_colossus_item_12
+  publicName: Foam Chapel tool
+  category: care
+  power: false
+  sellGold: 25
+  description: A Tide Colossus item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: tide_colossus_item_13
+  publicName: Gullbone Reach thread
+  category: map
+  power: false
+  sellGold: 27
+  description: A Tide Colossus item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: tide_colossus_item_14
+  publicName: Saltstone Yard seal
+  category: map
+  power: false
+  sellGold: 29
+  description: A Tide Colossus item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: tide_colossus_item_15
+  publicName: Warden Buoy bundle
+  category: vendor
+  power: false
+  sellGold: 31
+  description: A Tide Colossus item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: tide_colossus_item_16
+  publicName: Mastroot Cave token
+  category: vendor
+  power: false
+  sellGold: 33
+  description: A Tide Colossus item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: tide_colossus_item_17
+  publicName: Breakwater Camp tool
+  category: recipe
+  power: false
+  sellGold: 35
+  description: A Tide Colossus item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: tide_colossus_item_18
+  publicName: Titan Sound thread
+  category: recipe
+  power: false
+  sellGold: 37
+  description: A Tide Colossus item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: tide_colossus_item_19
+  publicName: Anchor Cliff seal
+  category: keepsake
+  power: false
+  sellGold: 39
+  description: A Tide Colossus item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: tide_colossus_item_20
+  publicName: Foam Chapel bundle
+  category: keepsake
+  power: false
+  sellGold: 41
+  description: A Tide Colossus item used for a stated craft, route, display, or record; it never alters paid outcomes.
+dropTables:
+- id: tide_colossus_drop_01
+  sourceId: tide_colossus_species_01
+  personalLoot: true
+  entries:
+  - itemId: tide_colossus_item_01
+    chancePct: 60
+    min: 1
+    max: 2
+  - itemId: tide_colossus_item_08
+    chancePct: 20
+    min: 1
+    max: 1
+- id: tide_colossus_drop_02
+  sourceId: tide_colossus_species_02
+  personalLoot: true
+  entries:
+  - itemId: tide_colossus_item_02
+    chancePct: 55
+    min: 1
+    max: 2
+  - itemId: tide_colossus_item_09
+    chancePct: 25
+    min: 1
+    max: 1
+- id: tide_colossus_drop_03
+  sourceId: tide_colossus_species_03
+  personalLoot: true
+  entries:
+  - itemId: tide_colossus_item_03
+    chancePct: 50
+    min: 1
+    max: 2
+  - itemId: tide_colossus_item_10
+    chancePct: 30
+    min: 1
+    max: 1
+- id: tide_colossus_drop_04
+  sourceId: tide_colossus_species_04
+  personalLoot: true
+  entries:
+  - itemId: tide_colossus_item_04
+    chancePct: 45
+    min: 1
+    max: 2
+  - itemId: tide_colossus_item_11
+    chancePct: 20
+    min: 1
+    max: 1
+- id: tide_colossus_drop_05
+  sourceId: tide_colossus_species_05
+  personalLoot: true
+  entries:
+  - itemId: tide_colossus_item_05
+    chancePct: 60
+    min: 1
+    max: 2
+  - itemId: tide_colossus_item_12
+    chancePct: 25
+    min: 1
+    max: 1
+- id: tide_colossus_drop_06
+  sourceId: tide_colossus_species_06
+  personalLoot: true
+  entries:
+  - itemId: tide_colossus_item_06
+    chancePct: 55
+    min: 1
+    max: 2
+  - itemId: tide_colossus_item_13
+    chancePct: 30
+    min: 1
+    max: 1
+- id: tide_colossus_drop_07
+  sourceId: tide_colossus_species_07
+  personalLoot: true
+  entries:
+  - itemId: tide_colossus_item_07
+    chancePct: 50
+    min: 1
+    max: 2
+  - itemId: tide_colossus_item_14
+    chancePct: 20
+    min: 1
+    max: 1
+- id: tide_colossus_drop_08
+  sourceId: tide_colossus_species_08
+  personalLoot: true
+  entries:
+  - itemId: tide_colossus_item_08
+    chancePct: 45
+    min: 1
+    max: 2
+  - itemId: tide_colossus_item_15
+    chancePct: 25
+    min: 1
+    max: 1
+- id: tide_colossus_drop_09
+  sourceId: tide_colossus_species_09
+  personalLoot: true
+  entries:
+  - itemId: tide_colossus_item_09
+    chancePct: 60
+    min: 1
+    max: 2
+  - itemId: tide_colossus_item_16
+    chancePct: 30
+    min: 1
+    max: 1
+- id: tide_colossus_drop_10
+  sourceId: tide_colossus_species_10
+  personalLoot: true
+  entries:
+  - itemId: tide_colossus_item_10
+    chancePct: 55
+    min: 1
+    max: 2
+  - itemId: tide_colossus_item_17
+    chancePct: 20
+    min: 1
+    max: 1
+- id: tide_colossus_drop_11
+  sourceId: tide_colossus_species_11
+  personalLoot: true
+  entries:
+  - itemId: tide_colossus_item_11
+    chancePct: 50
+    min: 1
+    max: 2
+  - itemId: tide_colossus_item_18
+    chancePct: 25
+    min: 1
+    max: 1
+- id: tide_colossus_drop_12
+  sourceId: tide_colossus_species_12
+  personalLoot: true
+  entries:
+  - itemId: tide_colossus_item_12
+    chancePct: 45
+    min: 1
+    max: 2
+  - itemId: tide_colossus_item_19
+    chancePct: 30
+    min: 1
+    max: 1
+vendors:
+- id: tide_colossus_vendor_01
+  publicName: Tide Colossus Exchange
+  placeId: tide_colossus_place_01
+  currencyGoldName: Anchor Crowns
+  items:
+  - itemId: tide_colossus_item_01
+    priceGold: 8
+  - itemId: tide_colossus_item_02
+    priceGold: 11
+  - itemId: tide_colossus_item_03
+    priceGold: 14
+  - itemId: tide_colossus_item_04
+    priceGold: 17
+  - itemId: tide_colossus_item_05
+    priceGold: 20
+  - itemId: tide_colossus_item_06
+    priceGold: 23
+  - itemId: tide_colossus_item_07
+    priceGold: 26
+  - itemId: tide_colossus_item_08
+    priceGold: 29
+  repairCostPerPoint: 2
+dungeons:
+- id: tide_colossus_dungeon_01
+  publicName: The Hollow-Shelled Bell
+  partyMin: 1
+  partyMax: 5
+  entrancePlaceId: tide_colossus_place_06
+  rooms:
+  - id: tide_colossus_dungeon_room_01
+    publicName: 'The Hollow-Shelled Bell: Threshold Room'
+    describeBeforeCreature: Describe the material, sound, exits, and practical obstacle of Threshold Room before any species
+      is narrated.
+    trashSpeciesIds:
+    - tide_colossus_species_01
+    - tide_colossus_species_02
+    eliteSpeciesId: null
+    checkpoint: false
+    bossSpeciesId: null
+    exits:
+    - tide_colossus_dungeon_room_02
+  - id: tide_colossus_dungeon_room_02
+    publicName: 'The Hollow-Shelled Bell: Workroom'
+    describeBeforeCreature: Describe the material, sound, exits, and practical obstacle of Workroom before any species is
+      narrated.
+    trashSpeciesIds:
+    - tide_colossus_species_03
+    - tide_colossus_species_04
+    eliteSpeciesId: null
+    checkpoint: false
+    bossSpeciesId: null
+    exits:
+    - tide_colossus_dungeon_room_03
+  - id: tide_colossus_dungeon_room_03
+    publicName: 'The Hollow-Shelled Bell: Side Passage'
+    describeBeforeCreature: Describe the material, sound, exits, and practical obstacle of Side Passage before any species
+      is narrated.
+    trashSpeciesIds:
+    - tide_colossus_species_05
+    - tide_colossus_species_06
+    eliteSpeciesId: tide_colossus_species_09
+    checkpoint: false
+    bossSpeciesId: null
+    exits:
+    - tide_colossus_dungeon_room_04
+  - id: tide_colossus_dungeon_room_04
+    publicName: 'The Hollow-Shelled Bell: Checkpoint Alcove'
+    describeBeforeCreature: Describe the material, sound, exits, and practical obstacle of Checkpoint Alcove before any species
+      is narrated.
+    trashSpeciesIds:
+    - tide_colossus_species_07
+    - tide_colossus_species_08
+    eliteSpeciesId: null
+    checkpoint: true
+    bossSpeciesId: null
+    exits:
+    - tide_colossus_dungeon_room_05
+  - id: tide_colossus_dungeon_room_05
+    publicName: 'The Hollow-Shelled Bell: Finale Chamber'
+    describeBeforeCreature: Describe the material, sound, exits, and practical obstacle of Finale Chamber before any species
+      is narrated.
+    trashSpeciesIds:
+    - tide_colossus_species_09
+    - tide_colossus_species_10
+    eliteSpeciesId: null
+    checkpoint: false
+    bossSpeciesId: tide_colossus_species_14
+    exits: []
+  traps:
+  - id: tide_colossus_trap_01
+    publicName: misread sign
+    interactableId: tide_colossus_interact_01
+  - id: tide_colossus_trap_02
+    publicName: jammed latch
+    interactableId: tide_colossus_interact_02
+  - id: tide_colossus_trap_03
+    publicName: wet threshold
+    interactableId: tide_colossus_interact_03
+  - id: tide_colossus_trap_04
+    publicName: false shelf
+    interactableId: tide_colossus_interact_04
+  - id: tide_colossus_trap_05
+    publicName: quiet bell
+    interactableId: tide_colossus_interact_05
+  - id: tide_colossus_trap_06
+    publicName: sealed drawer
+    interactableId: tide_colossus_interact_06
+talkTrees:
+- npcId: tide_colossus_npc_01
+  greet: Dessa Quill says, ‘Tide Colossus keeps its promises in small places. Tell me which one you noticed.’
+  quest_offer: 'Dessa Quill offers a specific task at Breakwater Camp: settle the practical mismatch before it costs someone
+    a shift.'
+  quest_progress: Dessa Quill checks the record and asks for the one detail that would change the outcome.
+  quest_turnin: Dessa Quill marks the work complete, names who benefited, and hands over the recorded reward.
+  gossip:
+  - At Titan Sound, people are discussing a missing care tag.
+  - The safest route today is through Anchor Cliff, not the obvious shortcut.
+  - Someone at Foam Chapel is offering help but will not ask twice.
+  refusal: Dessa Quill says, ‘No. I can explain the rule, but I will not bend it for noise.’
+  player_rude: Dessa Quill says, ‘You may leave, lower your voice, or try a useful question. Choose one.’
+- npcId: tide_colossus_npc_02
+  greet: Eris Vale says, ‘Tide Colossus keeps its promises in small places. Tell me which one you noticed.’
+  quest_offer: 'Eris Vale offers a specific task at Titan Sound: settle the practical mismatch before it costs someone a shift.'
+  quest_progress: Eris Vale checks the record and asks for the one detail that would change the outcome.
+  quest_turnin: Eris Vale marks the work complete, names who benefited, and hands over the recorded reward.
+  gossip:
+  - At Anchor Cliff, people are discussing a missing care tag.
+  - The safest route today is through Foam Chapel, not the obvious shortcut.
+  - Someone at Gullbone Reach is offering help but will not ask twice.
+  refusal: Eris Vale says, ‘No. I can explain the rule, but I will not bend it for noise.’
+  player_rude: Eris Vale says, ‘You may leave, lower your voice, or try a useful question. Choose one.’
+- npcId: tide_colossus_npc_03
+  greet: Fenn Wren says, ‘Tide Colossus keeps its promises in small places. Tell me which one you noticed.’
+  quest_offer: 'Fenn Wren offers a specific task at Anchor Cliff: settle the practical mismatch before it costs someone a
+    shift.'
+  quest_progress: Fenn Wren checks the record and asks for the one detail that would change the outcome.
+  quest_turnin: Fenn Wren marks the work complete, names who benefited, and hands over the recorded reward.
+  gossip:
+  - At Foam Chapel, people are discussing a missing care tag.
+  - The safest route today is through Gullbone Reach, not the obvious shortcut.
+  - Someone at Saltstone Yard is offering help but will not ask twice.
+  refusal: Fenn Wren says, ‘No. I can explain the rule, but I will not bend it for noise.’
+  player_rude: Fenn Wren says, ‘You may leave, lower your voice, or try a useful question. Choose one.’
+- npcId: tide_colossus_npc_04
+  greet: Gala Morrow says, ‘Tide Colossus keeps its promises in small places. Tell me which one you noticed.’
+  quest_offer: 'Gala Morrow offers a specific task at Foam Chapel: settle the practical mismatch before it costs someone a
+    shift.'
+  quest_progress: Gala Morrow checks the record and asks for the one detail that would change the outcome.
+  quest_turnin: Gala Morrow marks the work complete, names who benefited, and hands over the recorded reward.
+  gossip:
+  - At Gullbone Reach, people are discussing a missing care tag.
+  - The safest route today is through Saltstone Yard, not the obvious shortcut.
+  - Someone at Warden Buoy is offering help but will not ask twice.
+  refusal: Gala Morrow says, ‘No. I can explain the rule, but I will not bend it for noise.’
+  player_rude: Gala Morrow says, ‘You may leave, lower your voice, or try a useful question. Choose one.’
+- npcId: tide_colossus_npc_05
+  greet: Holl Rowan says, ‘Tide Colossus keeps its promises in small places. Tell me which one you noticed.’
+  quest_offer: 'Holl Rowan offers a specific task at Breakwater Camp: settle the practical mismatch before it costs someone
+    a shift.'
+  quest_progress: Holl Rowan checks the record and asks for the one detail that would change the outcome.
+  quest_turnin: Holl Rowan marks the work complete, names who benefited, and hands over the recorded reward.
+  gossip:
+  - At Saltstone Yard, people are discussing a missing care tag.
+  - The safest route today is through Warden Buoy, not the obvious shortcut.
+  - Someone at Mastroot Cave is offering help but will not ask twice.
+  refusal: Holl Rowan says, ‘No. I can explain the rule, but I will not bend it for noise.’
+  player_rude: Holl Rowan says, ‘You may leave, lower your voice, or try a useful question. Choose one.’
+- npcId: tide_colossus_npc_06
+  greet: Ivo Nook says, ‘Tide Colossus keeps its promises in small places. Tell me which one you noticed.’
+  quest_offer: 'Ivo Nook offers a specific task at Titan Sound: settle the practical mismatch before it costs someone a shift.'
+  quest_progress: Ivo Nook checks the record and asks for the one detail that would change the outcome.
+  quest_turnin: Ivo Nook marks the work complete, names who benefited, and hands over the recorded reward.
+  gossip:
+  - At Warden Buoy, people are discussing a missing care tag.
+  - The safest route today is through Mastroot Cave, not the obvious shortcut.
+  - Someone at Breakwater Camp is offering help but will not ask twice.
+  refusal: Ivo Nook says, ‘No. I can explain the rule, but I will not bend it for noise.’
+  player_rude: Ivo Nook says, ‘You may leave, lower your voice, or try a useful question. Choose one.’
+- npcId: tide_colossus_npc_07
+  greet: Jori Cress says, ‘Tide Colossus keeps its promises in small places. Tell me which one you noticed.’
+  quest_offer: 'Jori Cress offers a specific task at Anchor Cliff: settle the practical mismatch before it costs someone a
+    shift.'
+  quest_progress: Jori Cress checks the record and asks for the one detail that would change the outcome.
+  quest_turnin: Jori Cress marks the work complete, names who benefited, and hands over the recorded reward.
+  gossip:
+  - At Mastroot Cave, people are discussing a missing care tag.
+  - The safest route today is through Breakwater Camp, not the obvious shortcut.
+  - Someone at Titan Sound is offering help but will not ask twice.
+  refusal: Jori Cress says, ‘No. I can explain the rule, but I will not bend it for noise.’
+  player_rude: Jori Cress says, ‘You may leave, lower your voice, or try a useful question. Choose one.’
+- npcId: tide_colossus_npc_08
+  greet: Alden Silt says, ‘Tide Colossus keeps its promises in small places. Tell me which one you noticed.’
+  quest_offer: 'Alden Silt offers a specific task at Foam Chapel: settle the practical mismatch before it costs someone a
+    shift.'
+  quest_progress: Alden Silt checks the record and asks for the one detail that would change the outcome.
+  quest_turnin: Alden Silt marks the work complete, names who benefited, and hands over the recorded reward.
+  gossip:
+  - At Breakwater Camp, people are discussing a missing care tag.
+  - The safest route today is through Titan Sound, not the obvious shortcut.
+  - Someone at Anchor Cliff is offering help but will not ask twice.
+  refusal: Alden Silt says, ‘No. I can explain the rule, but I will not bend it for noise.’
+  player_rude: Alden Silt says, ‘You may leave, lower your voice, or try a useful question. Choose one.’
+- npcId: tide_colossus_npc_09
+  greet: Bryn Pryce says, ‘Tide Colossus keeps its promises in small places. Tell me which one you noticed.’
+  quest_offer: 'Bryn Pryce offers a specific task at Breakwater Camp: settle the practical mismatch before it costs someone
+    a shift.'
+  quest_progress: Bryn Pryce checks the record and asks for the one detail that would change the outcome.
+  quest_turnin: Bryn Pryce marks the work complete, names who benefited, and hands over the recorded reward.
+  gossip:
+  - At Titan Sound, people are discussing a missing care tag.
+  - The safest route today is through Anchor Cliff, not the obvious shortcut.
+  - Someone at Foam Chapel is offering help but will not ask twice.
+  refusal: Bryn Pryce says, ‘No. I can explain the rule, but I will not bend it for noise.’
+  player_rude: Bryn Pryce says, ‘You may leave, lower your voice, or try a useful question. Choose one.’
+- npcId: tide_colossus_npc_10
+  greet: Cato Vane says, ‘Tide Colossus keeps its promises in small places. Tell me which one you noticed.’
+  quest_offer: 'Cato Vane offers a specific task at Titan Sound: settle the practical mismatch before it costs someone a shift.'
+  quest_progress: Cato Vane checks the record and asks for the one detail that would change the outcome.
+  quest_turnin: Cato Vane marks the work complete, names who benefited, and hands over the recorded reward.
+  gossip:
+  - At Anchor Cliff, people are discussing a missing care tag.
+  - The safest route today is through Foam Chapel, not the obvious shortcut.
+  - Someone at Gullbone Reach is offering help but will not ask twice.
+  refusal: Cato Vane says, ‘No. I can explain the rule, but I will not bend it for noise.’
+  player_rude: Cato Vane says, ‘You may leave, lower your voice, or try a useful question. Choose one.’
+choiceButtons:
+- id: tide_colossus_choice_01_01
+  placeId: tide_colossus_place_01
+  label: Read the notice at Breakwater Camp
+  requires: []
+  intentKind: talk
+  stake: one turn
+- id: tide_colossus_choice_01_02
+  placeId: tide_colossus_place_01
+  label: Ask for an introduction at Breakwater Camp
+  requires: []
+  intentKind: talk
+  stake: one supply
+- id: tide_colossus_choice_01_03
+  placeId: tide_colossus_place_01
+  label: Check the tool tag at Breakwater Camp
+  requires: []
+  intentKind: inspect
+  stake: a declined invitation
+- id: tide_colossus_choice_01_04
+  placeId: tide_colossus_place_01
+  label: Offer a hand at Breakwater Camp
+  requires: []
+  intentKind: interact
+  stake: a public note
+- id: tide_colossus_choice_01_05
+  placeId: tide_colossus_place_01
+  label: Take the safer route at Breakwater Camp
+  requires:
+  - tide_colossus_item_05
+  intentKind: travel
+  stake: a short detour
+- id: tide_colossus_choice_01_06
+  placeId: tide_colossus_place_01
+  label: Open the local record at Breakwater Camp
+  requires:
+  - tide_colossus_item_06
+  intentKind: interact
+  stake: one turn
+- id: tide_colossus_choice_01_07
+  placeId: tide_colossus_place_01
+  label: Rest at the bench at Breakwater Camp
+  requires:
+  - tide_colossus_item_07
+  intentKind: rest
+  stake: one supply
+- id: tide_colossus_choice_01_08
+  placeId: tide_colossus_place_01
+  label: Repair the marker at Breakwater Camp
+  requires:
+  - tide_colossus_item_08
+  intentKind: interact
+  stake: a declined invitation
+- id: tide_colossus_choice_01_09
+  placeId: tide_colossus_place_01
+  label: Prepare a shared item at Breakwater Camp
+  requires:
+  - tide_colossus_item_09
+  intentKind: craft
+  stake: a public note
+- id: tide_colossus_choice_01_10
+  placeId: tide_colossus_place_01
+  label: Leave a kind note at Breakwater Camp
+  requires:
+  - tide_colossus_item_10
+  intentKind: talk
+  stake: a short detour
+- id: tide_colossus_choice_02_01
+  placeId: tide_colossus_place_02
+  label: Read the notice at Titan Sound
+  requires: []
+  intentKind: talk
+  stake: one turn
+- id: tide_colossus_choice_02_02
+  placeId: tide_colossus_place_02
+  label: Ask for an introduction at Titan Sound
+  requires: []
+  intentKind: talk
+  stake: one supply
+- id: tide_colossus_choice_02_03
+  placeId: tide_colossus_place_02
+  label: Check the tool tag at Titan Sound
+  requires: []
+  intentKind: inspect
+  stake: a declined invitation
+- id: tide_colossus_choice_02_04
+  placeId: tide_colossus_place_02
+  label: Offer a hand at Titan Sound
+  requires: []
+  intentKind: interact
+  stake: a public note
+- id: tide_colossus_choice_02_05
+  placeId: tide_colossus_place_02
+  label: Take the safer route at Titan Sound
+  requires:
+  - tide_colossus_item_05
+  intentKind: travel
+  stake: a short detour
+- id: tide_colossus_choice_02_06
+  placeId: tide_colossus_place_02
+  label: Open the local record at Titan Sound
+  requires:
+  - tide_colossus_item_06
+  intentKind: interact
+  stake: one turn
+- id: tide_colossus_choice_02_07
+  placeId: tide_colossus_place_02
+  label: Rest at the bench at Titan Sound
+  requires:
+  - tide_colossus_item_07
+  intentKind: rest
+  stake: one supply
+- id: tide_colossus_choice_02_08
+  placeId: tide_colossus_place_02
+  label: Repair the marker at Titan Sound
+  requires:
+  - tide_colossus_item_08
+  intentKind: interact
+  stake: a declined invitation
+- id: tide_colossus_choice_02_09
+  placeId: tide_colossus_place_02
+  label: Prepare a shared item at Titan Sound
+  requires:
+  - tide_colossus_item_09
+  intentKind: craft
+  stake: a public note
+- id: tide_colossus_choice_02_10
+  placeId: tide_colossus_place_02
+  label: Leave a kind note at Titan Sound
+  requires:
+  - tide_colossus_item_10
+  intentKind: talk
+  stake: a short detour
+- id: tide_colossus_choice_03_01
+  placeId: tide_colossus_place_03
+  label: Read the notice at Anchor Cliff
+  requires: []
+  intentKind: talk
+  stake: one turn
+- id: tide_colossus_choice_03_02
+  placeId: tide_colossus_place_03
+  label: Ask for an introduction at Anchor Cliff
+  requires: []
+  intentKind: talk
+  stake: one supply
+- id: tide_colossus_choice_03_03
+  placeId: tide_colossus_place_03
+  label: Check the tool tag at Anchor Cliff
+  requires: []
+  intentKind: inspect
+  stake: a declined invitation
+- id: tide_colossus_choice_03_04
+  placeId: tide_colossus_place_03
+  label: Offer a hand at Anchor Cliff
+  requires: []
+  intentKind: interact
+  stake: a public note
+- id: tide_colossus_choice_03_05
+  placeId: tide_colossus_place_03
+  label: Take the safer route at Anchor Cliff
+  requires:
+  - tide_colossus_item_05
+  intentKind: travel
+  stake: a short detour
+- id: tide_colossus_choice_03_06
+  placeId: tide_colossus_place_03
+  label: Open the local record at Anchor Cliff
+  requires:
+  - tide_colossus_item_06
+  intentKind: interact
+  stake: one turn
+- id: tide_colossus_choice_03_07
+  placeId: tide_colossus_place_03
+  label: Rest at the bench at Anchor Cliff
+  requires:
+  - tide_colossus_item_07
+  intentKind: rest
+  stake: one supply
+- id: tide_colossus_choice_03_08
+  placeId: tide_colossus_place_03
+  label: Repair the marker at Anchor Cliff
+  requires:
+  - tide_colossus_item_08
+  intentKind: interact
+  stake: a declined invitation
+- id: tide_colossus_choice_03_09
+  placeId: tide_colossus_place_03
+  label: Prepare a shared item at Anchor Cliff
+  requires:
+  - tide_colossus_item_09
+  intentKind: craft
+  stake: a public note
+- id: tide_colossus_choice_03_10
+  placeId: tide_colossus_place_03
+  label: Leave a kind note at Anchor Cliff
+  requires:
+  - tide_colossus_item_10
+  intentKind: talk
+  stake: a short detour
+- id: tide_colossus_choice_04_01
+  placeId: tide_colossus_place_04
+  label: Read the notice at Foam Chapel
+  requires: []
+  intentKind: talk
+  stake: one turn
+- id: tide_colossus_choice_04_02
+  placeId: tide_colossus_place_04
+  label: Ask for an introduction at Foam Chapel
+  requires: []
+  intentKind: talk
+  stake: one supply
+- id: tide_colossus_choice_04_03
+  placeId: tide_colossus_place_04
+  label: Check the tool tag at Foam Chapel
+  requires: []
+  intentKind: inspect
+  stake: a declined invitation
+- id: tide_colossus_choice_04_04
+  placeId: tide_colossus_place_04
+  label: Offer a hand at Foam Chapel
+  requires: []
+  intentKind: interact
+  stake: a public note
+- id: tide_colossus_choice_04_05
+  placeId: tide_colossus_place_04
+  label: Take the safer route at Foam Chapel
+  requires:
+  - tide_colossus_item_05
+  intentKind: travel
+  stake: a short detour
+- id: tide_colossus_choice_04_06
+  placeId: tide_colossus_place_04
+  label: Open the local record at Foam Chapel
+  requires:
+  - tide_colossus_item_06
+  intentKind: interact
+  stake: one turn
+- id: tide_colossus_choice_04_07
+  placeId: tide_colossus_place_04
+  label: Rest at the bench at Foam Chapel
+  requires:
+  - tide_colossus_item_07
+  intentKind: rest
+  stake: one supply
+- id: tide_colossus_choice_04_08
+  placeId: tide_colossus_place_04
+  label: Repair the marker at Foam Chapel
+  requires:
+  - tide_colossus_item_08
+  intentKind: interact
+  stake: a declined invitation
+- id: tide_colossus_choice_04_09
+  placeId: tide_colossus_place_04
+  label: Prepare a shared item at Foam Chapel
+  requires:
+  - tide_colossus_item_09
+  intentKind: craft
+  stake: a public note
+- id: tide_colossus_choice_04_10
+  placeId: tide_colossus_place_04
+  label: Leave a kind note at Foam Chapel
+  requires:
+  - tide_colossus_item_10
+  intentKind: talk
+  stake: a short detour
+- id: tide_colossus_choice_05_01
+  placeId: tide_colossus_place_05
+  label: Read the notice at Gullbone Reach
+  requires: []
+  intentKind: talk
+  stake: one turn
+- id: tide_colossus_choice_05_02
+  placeId: tide_colossus_place_05
+  label: Ask for an introduction at Gullbone Reach
+  requires: []
+  intentKind: talk
+  stake: one supply
+- id: tide_colossus_choice_05_03
+  placeId: tide_colossus_place_05
+  label: Check the tool tag at Gullbone Reach
+  requires: []
+  intentKind: inspect
+  stake: a declined invitation
+- id: tide_colossus_choice_05_04
+  placeId: tide_colossus_place_05
+  label: Offer a hand at Gullbone Reach
+  requires: []
+  intentKind: interact
+  stake: a public note
+- id: tide_colossus_choice_05_05
+  placeId: tide_colossus_place_05
+  label: Take the safer route at Gullbone Reach
+  requires:
+  - tide_colossus_item_05
+  intentKind: travel
+  stake: a short detour
+- id: tide_colossus_choice_05_06
+  placeId: tide_colossus_place_05
+  label: Open the local record at Gullbone Reach
+  requires:
+  - tide_colossus_item_06
+  intentKind: interact
+  stake: one turn
+- id: tide_colossus_choice_05_07
+  placeId: tide_colossus_place_05
+  label: Rest at the bench at Gullbone Reach
+  requires:
+  - tide_colossus_item_07
+  intentKind: rest
+  stake: one supply
+- id: tide_colossus_choice_05_08
+  placeId: tide_colossus_place_05
+  label: Repair the marker at Gullbone Reach
+  requires:
+  - tide_colossus_item_08
+  intentKind: interact
+  stake: a declined invitation
+- id: tide_colossus_choice_05_09
+  placeId: tide_colossus_place_05
+  label: Prepare a shared item at Gullbone Reach
+  requires:
+  - tide_colossus_item_09
+  intentKind: craft
+  stake: a public note
+- id: tide_colossus_choice_05_10
+  placeId: tide_colossus_place_05
+  label: Leave a kind note at Gullbone Reach
+  requires:
+  - tide_colossus_item_10
+  intentKind: talk
+  stake: a short detour
+- id: tide_colossus_choice_06_01
+  placeId: tide_colossus_place_06
+  label: Read the notice at Saltstone Yard
+  requires: []
+  intentKind: talk
+  stake: one turn
+- id: tide_colossus_choice_06_02
+  placeId: tide_colossus_place_06
+  label: Ask for an introduction at Saltstone Yard
+  requires: []
+  intentKind: talk
+  stake: one supply
+- id: tide_colossus_choice_06_03
+  placeId: tide_colossus_place_06
+  label: Check the tool tag at Saltstone Yard
+  requires: []
+  intentKind: inspect
+  stake: a declined invitation
+- id: tide_colossus_choice_06_04
+  placeId: tide_colossus_place_06
+  label: Offer a hand at Saltstone Yard
+  requires: []
+  intentKind: interact
+  stake: a public note
+- id: tide_colossus_choice_06_05
+  placeId: tide_colossus_place_06
+  label: Take the safer route at Saltstone Yard
+  requires:
+  - tide_colossus_item_05
+  intentKind: travel
+  stake: a short detour
+- id: tide_colossus_choice_06_06
+  placeId: tide_colossus_place_06
+  label: Open the local record at Saltstone Yard
+  requires:
+  - tide_colossus_item_06
+  intentKind: interact
+  stake: one turn
+- id: tide_colossus_choice_06_07
+  placeId: tide_colossus_place_06
+  label: Rest at the bench at Saltstone Yard
+  requires:
+  - tide_colossus_item_07
+  intentKind: rest
+  stake: one supply
+- id: tide_colossus_choice_06_08
+  placeId: tide_colossus_place_06
+  label: Repair the marker at Saltstone Yard
+  requires:
+  - tide_colossus_item_08
+  intentKind: interact
+  stake: a declined invitation
+- id: tide_colossus_choice_06_09
+  placeId: tide_colossus_place_06
+  label: Prepare a shared item at Saltstone Yard
+  requires:
+  - tide_colossus_item_09
+  intentKind: craft
+  stake: a public note
+- id: tide_colossus_choice_06_10
+  placeId: tide_colossus_place_06
+  label: Leave a kind note at Saltstone Yard
+  requires:
+  - tide_colossus_item_10
+  intentKind: talk
+  stake: a short detour
+- id: tide_colossus_choice_07_01
+  placeId: tide_colossus_place_07
+  label: Read the notice at Warden Buoy
+  requires: []
+  intentKind: talk
+  stake: one turn
+- id: tide_colossus_choice_07_02
+  placeId: tide_colossus_place_07
+  label: Ask for an introduction at Warden Buoy
+  requires: []
+  intentKind: talk
+  stake: one supply
+- id: tide_colossus_choice_07_03
+  placeId: tide_colossus_place_07
+  label: Check the tool tag at Warden Buoy
+  requires: []
+  intentKind: inspect
+  stake: a declined invitation
+- id: tide_colossus_choice_07_04
+  placeId: tide_colossus_place_07
+  label: Offer a hand at Warden Buoy
+  requires: []
+  intentKind: interact
+  stake: a public note
+- id: tide_colossus_choice_07_05
+  placeId: tide_colossus_place_07
+  label: Take the safer route at Warden Buoy
+  requires:
+  - tide_colossus_item_05
+  intentKind: travel
+  stake: a short detour
+- id: tide_colossus_choice_07_06
+  placeId: tide_colossus_place_07
+  label: Open the local record at Warden Buoy
+  requires:
+  - tide_colossus_item_06
+  intentKind: interact
+  stake: one turn
+- id: tide_colossus_choice_07_07
+  placeId: tide_colossus_place_07
+  label: Rest at the bench at Warden Buoy
+  requires:
+  - tide_colossus_item_07
+  intentKind: rest
+  stake: one supply
+- id: tide_colossus_choice_07_08
+  placeId: tide_colossus_place_07
+  label: Repair the marker at Warden Buoy
+  requires:
+  - tide_colossus_item_08
+  intentKind: interact
+  stake: a declined invitation
+- id: tide_colossus_choice_07_09
+  placeId: tide_colossus_place_07
+  label: Prepare a shared item at Warden Buoy
+  requires:
+  - tide_colossus_item_09
+  intentKind: craft
+  stake: a public note
+- id: tide_colossus_choice_07_10
+  placeId: tide_colossus_place_07
+  label: Leave a kind note at Warden Buoy
+  requires:
+  - tide_colossus_item_10
+  intentKind: talk
+  stake: a short detour
+- id: tide_colossus_choice_08_01
+  placeId: tide_colossus_place_08
+  label: Read the notice at Mastroot Cave
+  requires: []
+  intentKind: talk
+  stake: one turn
+- id: tide_colossus_choice_08_02
+  placeId: tide_colossus_place_08
+  label: Ask for an introduction at Mastroot Cave
+  requires: []
+  intentKind: talk
+  stake: one supply
+- id: tide_colossus_choice_08_03
+  placeId: tide_colossus_place_08
+  label: Check the tool tag at Mastroot Cave
+  requires: []
+  intentKind: inspect
+  stake: a declined invitation
+- id: tide_colossus_choice_08_04
+  placeId: tide_colossus_place_08
+  label: Offer a hand at Mastroot Cave
+  requires: []
+  intentKind: interact
+  stake: a public note
+- id: tide_colossus_choice_08_05
+  placeId: tide_colossus_place_08
+  label: Take the safer route at Mastroot Cave
+  requires:
+  - tide_colossus_item_05
+  intentKind: travel
+  stake: a short detour
+- id: tide_colossus_choice_08_06
+  placeId: tide_colossus_place_08
+  label: Open the local record at Mastroot Cave
+  requires:
+  - tide_colossus_item_06
+  intentKind: interact
+  stake: one turn
+- id: tide_colossus_choice_08_07
+  placeId: tide_colossus_place_08
+  label: Rest at the bench at Mastroot Cave
+  requires:
+  - tide_colossus_item_07
+  intentKind: rest
+  stake: one supply
+- id: tide_colossus_choice_08_08
+  placeId: tide_colossus_place_08
+  label: Repair the marker at Mastroot Cave
+  requires:
+  - tide_colossus_item_08
+  intentKind: interact
+  stake: a declined invitation
+- id: tide_colossus_choice_08_09
+  placeId: tide_colossus_place_08
+  label: Prepare a shared item at Mastroot Cave
+  requires:
+  - tide_colossus_item_09
+  intentKind: craft
+  stake: a public note
+- id: tide_colossus_choice_08_10
+  placeId: tide_colossus_place_08
+  label: Leave a kind note at Mastroot Cave
+  requires:
+  - tide_colossus_item_10
+  intentKind: talk
+  stake: a short detour
+interactables:
+- id: tide_colossus_interact_01
+  verbId: rest
+  publicName: Breakwater Camp bench
+  placeId: tide_colossus_place_01
+  displayVerb: Rest here
+  stateKey: tide_colossus_rest_01
+- id: tide_colossus_interact_02
+  verbId: repair
+  publicName: Titan Sound cabinet
+  placeId: tide_colossus_place_02
+  displayVerb: Repair here
+  stateKey: tide_colossus_repair_02
+- id: tide_colossus_interact_03
+  verbId: tend
+  publicName: Anchor Cliff rack
+  placeId: tide_colossus_place_03
+  displayVerb: Tend here
+  stateKey: tide_colossus_tend_03
+- id: tide_colossus_interact_04
+  verbId: craft
+  publicName: Foam Chapel kettle
+  placeId: tide_colossus_place_04
+  displayVerb: Craft here
+  stateKey: tide_colossus_craft_04
+- id: tide_colossus_interact_05
+  verbId: cook
+  publicName: Gullbone Reach ledger
+  placeId: tide_colossus_place_05
+  displayVerb: Cook here
+  stateKey: tide_colossus_cook_05
+- id: tide_colossus_interact_06
+  verbId: bind_inn
+  publicName: Saltstone Yard rail
+  placeId: tide_colossus_place_06
+  displayVerb: Bind Inn here
+  stateKey: tide_colossus_bind_inn_06
+- id: tide_colossus_interact_07
+  verbId: inspect
+  publicName: Warden Buoy bell
+  placeId: tide_colossus_place_07
+  displayVerb: Inspect here
+  stateKey: tide_colossus_inspect_07
+- id: tide_colossus_interact_08
+  verbId: open
+  publicName: Mastroot Cave board
+  placeId: tide_colossus_place_08
+  displayVerb: Open here
+  stateKey: tide_colossus_open_08
+- id: tide_colossus_interact_09
+  verbId: carry
+  publicName: Breakwater Camp table
+  placeId: tide_colossus_place_01
+  displayVerb: Carry here
+  stateKey: tide_colossus_carry_09
+- id: tide_colossus_interact_10
+  verbId: clean
+  publicName: Titan Sound lamp
+  placeId: tide_colossus_place_02
+  displayVerb: Clean here
+  stateKey: tide_colossus_clean_10
+- id: tide_colossus_interact_11
+  verbId: signal
+  publicName: Anchor Cliff gate
+  placeId: tide_colossus_place_03
+  displayVerb: Signal here
+  stateKey: tide_colossus_signal_11
+- id: tide_colossus_interact_12
+  verbId: record
+  publicName: Foam Chapel shelf
+  placeId: tide_colossus_place_04
+  displayVerb: Record here
+  stateKey: tide_colossus_record_12
+interiors:
+- id: tide_colossus_interior_01
+  publicName: Tide Colossus Home Interior
+  entrancePlaceId: tide_colossus_place_08
+  rooms:
+  - id: tide_colossus_home_room_01
+    publicName: Tide Colossus Entry
+    mapScale: interior
+    exits:
+    - tide_colossus_home_room_02
+    props:
+    - tide_colossus_home_prop_01
+    - tide_colossus_home_prop_08
+  - id: tide_colossus_home_room_02
+    publicName: Tide Colossus Main Room
+    mapScale: interior
+    exits:
+    - tide_colossus_home_room_01
+    - tide_colossus_home_room_03
+    props:
+    - tide_colossus_home_prop_02
+    - tide_colossus_home_prop_09
+  - id: tide_colossus_home_room_03
+    publicName: Tide Colossus Work Nook
+    mapScale: interior
+    exits:
+    - tide_colossus_home_room_02
+    - tide_colossus_home_room_04
+    props:
+    - tide_colossus_home_prop_03
+    - tide_colossus_home_prop_10
+  - id: tide_colossus_home_room_04
+    publicName: Tide Colossus Window Room
+    mapScale: interior
+    exits:
+    - tide_colossus_home_room_03
+    - tide_colossus_home_room_05
+    props:
+    - tide_colossus_home_prop_04
+    - tide_colossus_home_prop_11
+  - id: tide_colossus_home_room_05
+    publicName: Tide Colossus Quiet Room
+    mapScale: interior
+    exits:
+    - tide_colossus_home_room_04
+    - tide_colossus_home_room_06
+    props:
+    - tide_colossus_home_prop_05
+    - tide_colossus_home_prop_12
+  - id: tide_colossus_home_room_06
+    publicName: Tide Colossus Storage
+    mapScale: interior
+    exits:
+    - tide_colossus_home_room_05
+    - tide_colossus_home_room_07
+    props:
+    - tide_colossus_home_prop_06
+    - tide_colossus_home_prop_13
+  - id: tide_colossus_home_room_07
+    publicName: Tide Colossus Back Step
+    mapScale: interior
+    exits:
+    - tide_colossus_home_room_06
+    props:
+    - tide_colossus_home_prop_07
+    - tide_colossus_home_prop_14
+talents:
+- id: tide_colossus_talent_01
+  publicName: Tide Colossus Local Ear
+  cost: 1
+  requires: []
+  effectFlags:
+  - tide_colossus_effect_01
+  payToUnlock: false
+- id: tide_colossus_talent_02
+  publicName: Tide Colossus Careful Hand
+  cost: 2
+  requires: []
+  effectFlags:
+  - tide_colossus_effect_02
+  payToUnlock: false
+- id: tide_colossus_talent_03
+  publicName: Tide Colossus Route Sense
+  cost: 3
+  requires: []
+  effectFlags:
+  - tide_colossus_effect_03
+  payToUnlock: false
+- id: tide_colossus_talent_04
+  publicName: Tide Colossus Shared Measure
+  cost: 4
+  requires: []
+  effectFlags:
+  - tide_colossus_effect_04
+  payToUnlock: false
+- id: tide_colossus_talent_05
+  publicName: Tide Colossus Quiet Craft
+  cost: 1
+  requires:
+  - tide_colossus_talent_04
+  effectFlags:
+  - tide_colossus_effect_05
+  payToUnlock: false
+- id: tide_colossus_talent_06
+  publicName: Tide Colossus Open Invitation
+  cost: 2
+  requires: []
+  effectFlags:
+  - tide_colossus_effect_06
+  payToUnlock: false
+- id: tide_colossus_talent_07
+  publicName: Tide Colossus Safe Return
+  cost: 3
+  requires: []
+  effectFlags:
+  - tide_colossus_effect_07
+  payToUnlock: false
+- id: tide_colossus_talent_08
+  publicName: Tide Colossus Field Note
+  cost: 4
+  requires: []
+  effectFlags:
+  - tide_colossus_effect_08
+  payToUnlock: false
+- id: tide_colossus_talent_09
+  publicName: Tide Colossus Steady Pace
+  cost: 1
+  requires:
+  - tide_colossus_talent_08
+  effectFlags:
+  - tide_colossus_effect_09
+  payToUnlock: false
+- id: tide_colossus_talent_10
+  publicName: Tide Colossus Clear Signal
+  cost: 2
+  requires: []
+  effectFlags:
+  - tide_colossus_effect_10
+  payToUnlock: false
+- id: tide_colossus_talent_11
+  publicName: Tide Colossus Warm Welcome
+  cost: 3
+  requires: []
+  effectFlags:
+  - tide_colossus_effect_11
+  payToUnlock: false
+- id: tide_colossus_talent_12
+  publicName: Tide Colossus Small Courage
+  cost: 4
+  requires: []
+  effectFlags:
+  - tide_colossus_effect_12
+  payToUnlock: false
+- id: tide_colossus_talent_13
+  publicName: Tide Colossus Repair Habit
+  cost: 1
+  requires:
+  - tide_colossus_talent_12
+  effectFlags:
+  - tide_colossus_effect_13
+  payToUnlock: false
+- id: tide_colossus_talent_14
+  publicName: Tide Colossus Trust Mark
+  cost: 2
+  requires: []
+  effectFlags:
+  - tide_colossus_effect_14
+  payToUnlock: false
+- id: tide_colossus_talent_15
+  publicName: Tide Colossus Second Look
+  cost: 3
+  requires: []
+  effectFlags:
+  - tide_colossus_effect_15
+  payToUnlock: false
+- id: tide_colossus_talent_16
+  publicName: Tide Colossus Closing Grace
+  cost: 4
+  requires: []
+  effectFlags:
+  - tide_colossus_effect_16
+  payToUnlock: false
+evalProbes:
+- id: tide_colossus_eval_01
+  given:
+    hp: 20
+    placeId: tide_colossus_place_01
+    turn: 1
+  action:
+    verbId: rest
+    targetId: tide_colossus_interact_01
+  expectedLedger:
+    turn: 2
+    lastAction: rest
+    placeId: tide_colossus_place_01
+  forbiddenProse:
+  - do not claim an uncommitted numeric reward
+  - do not alter damage, gold, ownership, or a score outside expectedLedger
+- id: tide_colossus_eval_02
+  given:
+    hp: 20
+    placeId: tide_colossus_place_02
+    turn: 2
+  action:
+    verbId: repair
+    targetId: tide_colossus_interact_02
+  expectedLedger:
+    turn: 3
+    lastAction: repair
+    placeId: tide_colossus_place_02
+  forbiddenProse:
+  - do not claim an uncommitted numeric reward
+  - do not alter damage, gold, ownership, or a score outside expectedLedger
+- id: tide_colossus_eval_03
+  given:
+    hp: 20
+    placeId: tide_colossus_place_03
+    turn: 3
+  action:
+    verbId: tend
+    targetId: tide_colossus_interact_03
+  expectedLedger:
+    turn: 4
+    lastAction: tend
+    placeId: tide_colossus_place_03
+  forbiddenProse:
+  - do not claim an uncommitted numeric reward
+  - do not alter damage, gold, ownership, or a score outside expectedLedger
+- id: tide_colossus_eval_04
+  given:
+    hp: 20
+    placeId: tide_colossus_place_04
+    turn: 4
+  action:
+    verbId: craft
+    targetId: tide_colossus_interact_04
+  expectedLedger:
+    turn: 5
+    lastAction: craft
+    placeId: tide_colossus_place_04
+  forbiddenProse:
+  - do not claim an uncommitted numeric reward
+  - do not alter damage, gold, ownership, or a score outside expectedLedger
+- id: tide_colossus_eval_05
+  given:
+    hp: 20
+    placeId: tide_colossus_place_05
+    turn: 5
+  action:
+    verbId: cook
+    targetId: tide_colossus_interact_05
+  expectedLedger:
+    turn: 6
+    lastAction: cook
+    placeId: tide_colossus_place_05
+  forbiddenProse:
+  - do not claim an uncommitted numeric reward
+  - do not alter damage, gold, ownership, or a score outside expectedLedger
+- id: tide_colossus_eval_06
+  given:
+    hp: 20
+    placeId: tide_colossus_place_06
+    turn: 6
+  action:
+    verbId: bind_inn
+    targetId: tide_colossus_interact_06
+  expectedLedger:
+    turn: 7
+    lastAction: bind_inn
+    placeId: tide_colossus_place_06
+  forbiddenProse:
+  - do not claim an uncommitted numeric reward
+  - do not alter damage, gold, ownership, or a score outside expectedLedger
+- id: tide_colossus_eval_07
+  given:
+    hp: 20
+    placeId: tide_colossus_place_07
+    turn: 7
+  action:
+    verbId: inspect
+    targetId: tide_colossus_interact_07
+  expectedLedger:
+    turn: 8
+    lastAction: inspect
+    placeId: tide_colossus_place_07
+  forbiddenProse:
+  - do not claim an uncommitted numeric reward
+  - do not alter damage, gold, ownership, or a score outside expectedLedger
+- id: tide_colossus_eval_08
+  given:
+    hp: 20
+    placeId: tide_colossus_place_08
+    turn: 8
+  action:
+    verbId: open
+    targetId: tide_colossus_interact_08
+  expectedLedger:
+    turn: 9
+    lastAction: open
+    placeId: tide_colossus_place_08
+  forbiddenProse:
+  - do not claim an uncommitted numeric reward
+  - do not alter damage, gold, ownership, or a score outside expectedLedger
+- id: tide_colossus_eval_09
+  given:
+    hp: 20
+    placeId: tide_colossus_place_01
+    turn: 9
+  action:
+    verbId: carry
+    targetId: tide_colossus_interact_09
+  expectedLedger:
+    turn: 10
+    lastAction: carry
+    placeId: tide_colossus_place_01
+  forbiddenProse:
+  - do not claim an uncommitted numeric reward
+  - do not alter damage, gold, ownership, or a score outside expectedLedger
+- id: tide_colossus_eval_10
+  given:
+    hp: 20
+    placeId: tide_colossus_place_02
+    turn: 10
+  action:
+    verbId: clean
+    targetId: tide_colossus_interact_10
+  expectedLedger:
+    turn: 11
+    lastAction: clean
+    placeId: tide_colossus_place_02
+  forbiddenProse:
+  - do not claim an uncommitted numeric reward
+  - do not alter damage, gold, ownership, or a score outside expectedLedger
+- id: tide_colossus_eval_11
+  given:
+    hp: 20
+    placeId: tide_colossus_place_03
+    turn: 11
+  action:
+    verbId: signal
+    targetId: tide_colossus_interact_11
+  expectedLedger:
+    turn: 12
+    lastAction: signal
+    placeId: tide_colossus_place_03
+  forbiddenProse:
+  - do not claim an uncommitted numeric reward
+  - do not alter damage, gold, ownership, or a score outside expectedLedger
+- id: tide_colossus_eval_12
+  given:
+    hp: 20
+    placeId: tide_colossus_place_04
+    turn: 12
+  action:
+    verbId: record
+    targetId: tide_colossus_interact_12
+  expectedLedger:
+    turn: 13
+    lastAction: record
+    placeId: tide_colossus_place_04
+  forbiddenProse:
+  - do not claim an uncommitted numeric reward
+  - do not alter damage, gold, ownership, or a score outside expectedLedger
+- id: tide_colossus_eval_13
+  given:
+    hp: 20
+    placeId: tide_colossus_place_05
+    turn: 13
+  action:
+    verbId: rest
+    targetId: tide_colossus_interact_01
+  expectedLedger:
+    turn: 14
+    lastAction: rest
+    placeId: tide_colossus_place_05
+  forbiddenProse:
+  - do not claim an uncommitted numeric reward
+  - do not alter damage, gold, ownership, or a score outside expectedLedger
+- id: tide_colossus_eval_14
+  given:
+    hp: 20
+    placeId: tide_colossus_place_06
+    turn: 14
+  action:
+    verbId: repair
+    targetId: tide_colossus_interact_02
+  expectedLedger:
+    turn: 15
+    lastAction: repair
+    placeId: tide_colossus_place_06
+  forbiddenProse:
+  - do not claim an uncommitted numeric reward
+  - do not alter damage, gold, ownership, or a score outside expectedLedger
+- id: tide_colossus_eval_15
+  given:
+    hp: 20
+    placeId: tide_colossus_place_07
+    turn: 15
+  action:
+    verbId: tend
+    targetId: tide_colossus_interact_03
+  expectedLedger:
+    turn: 16
+    lastAction: tend
+    placeId: tide_colossus_place_07
+  forbiddenProse:
+  - do not claim an uncommitted numeric reward
+  - do not alter damage, gold, ownership, or a score outside expectedLedger
+wallets:
+  goldName: Anchor Crowns
+  cosmeticTokenName: Foam Pennants
+  noConversion: true
+  prohibited:
+  - outcomes
+  - lockout skips
+  - catch rate
+  - raid clears
+  - random power packs
+  - gacha
+  - loot boxes
+dailyCaps:
+  contractsPerDay: 3
+  goldFromRepeatables: 90
+  weeklyBossLockout: per-character per-boss
+divergenceRecords:
+- id: tide_colossus_walkaway_01
+  choice: walk away from a local obligation
+  recordKey: tide_colossus_divergence_01
+  effect: Alternate dialogue and a non-punitive follow-up route.
+- id: tide_colossus_walkaway_02
+  choice: walk away from a local obligation
+  recordKey: tide_colossus_divergence_02
+  effect: Alternate dialogue and a non-punitive follow-up route.
+- id: tide_colossus_walkaway_03
+  choice: walk away from a local obligation
+  recordKey: tide_colossus_divergence_03
+  effect: Alternate dialogue and a non-punitive follow-up route.

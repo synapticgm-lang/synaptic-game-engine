@@ -1,0 +1,2296 @@
+packFormatVersion: 1
+worldId: winter_oven
+displayName: Winter Oven
+maturity: all-ages
+rulesModuleId: cozy_tick
+themeKit: Winter Oven Theme Kit
+places:
+- id: winter_oven_place_01
+  publicName: Oven Square
+  zoneId: winter_oven_zone_01
+  role: shared hub
+  mapScale: street
+  dangerTier: safe
+  outdoor: true
+  exits:
+  - winter_oven_place_02
+  - winter_oven_place_04
+  npcIds:
+  - winter_oven_npc_01
+  - winter_oven_npc_05
+  - winter_oven_npc_09
+  dungeonId: null
+  interactableIds:
+  - winter_oven_interact_01
+  - winter_oven_interact_09
+- id: winter_oven_place_02
+  publicName: Snow Lane
+  zoneId: winter_oven_zone_01
+  role: start hub
+  mapScale: street
+  dangerTier: safe
+  outdoor: true
+  exits:
+  - winter_oven_place_01
+  - winter_oven_place_03
+  npcIds:
+  - winter_oven_npc_02
+  - winter_oven_npc_06
+  - winter_oven_npc_10
+  dungeonId: null
+  interactableIds:
+  - winter_oven_interact_02
+  - winter_oven_interact_10
+- id: winter_oven_place_03
+  publicName: Birch Pantry
+  zoneId: winter_oven_zone_01
+  role: street route
+  mapScale: street
+  dangerTier: safe
+  outdoor: true
+  exits:
+  - winter_oven_place_02
+  - winter_oven_place_04
+  npcIds:
+  - winter_oven_npc_03
+  - winter_oven_npc_07
+  dungeonId: null
+  interactableIds:
+  - winter_oven_interact_03
+  - winter_oven_interact_11
+- id: winter_oven_place_04
+  publicName: Ember Bridge
+  zoneId: winter_oven_zone_02
+  role: mid join
+  mapScale: street
+  dangerTier: low
+  outdoor: true
+  exits:
+  - winter_oven_place_03
+  - winter_oven_place_05
+  - winter_oven_place_01
+  npcIds:
+  - winter_oven_npc_04
+  - winter_oven_npc_08
+  dungeonId: null
+  interactableIds:
+  - winter_oven_interact_04
+  - winter_oven_interact_12
+- id: winter_oven_place_05
+  publicName: Dough Cellar
+  zoneId: winter_oven_zone_02
+  role: work district
+  mapScale: interior
+  dangerTier: low
+  outdoor: false
+  exits:
+  - winter_oven_place_04
+  - winter_oven_place_06
+  npcIds: []
+  dungeonId: null
+  interactableIds:
+  - winter_oven_interact_05
+- id: winter_oven_place_06
+  publicName: Frost Porch
+  zoneId: winter_oven_zone_02
+  role: instance door
+  mapScale: dungeon
+  dangerTier: medium
+  outdoor: false
+  exits:
+  - winter_oven_place_05
+  - winter_oven_place_07
+  npcIds: []
+  dungeonId: winter_oven_dungeon_01
+  interactableIds:
+  - winter_oven_interact_06
+- id: winter_oven_place_07
+  publicName: Kettle Hall
+  zoneId: winter_oven_zone_03
+  role: wild edge
+  mapScale: street
+  dangerTier: medium
+  outdoor: true
+  exits:
+  - winter_oven_place_06
+  - winter_oven_place_08
+  npcIds: []
+  dungeonId: null
+  interactableIds:
+  - winter_oven_interact_07
+- id: winter_oven_place_08
+  publicName: Wool Window
+  zoneId: winter_oven_zone_03
+  role: housing approach
+  mapScale: interior
+  dangerTier: low
+  outdoor: false
+  exits:
+  - winter_oven_place_07
+  npcIds: []
+  dungeonId: null
+  interactableIds:
+  - winter_oven_interact_08
+npcs:
+- id: winter_oven_npc_01
+  name: Bryn Cress
+  placeId: winter_oven_place_01
+  role: quest
+  greet: Bryn Cress says, ‘Winter Oven keeps its promises in small places. Tell me which one you noticed.’
+- id: winter_oven_npc_02
+  name: Cato Silt
+  placeId: winter_oven_place_02
+  role: profession
+  greet: Cato Silt says, ‘Winter Oven keeps its promises in small places. Tell me which one you noticed.’
+- id: winter_oven_npc_03
+  name: Dessa Pryce
+  placeId: winter_oven_place_03
+  role: hub
+  greet: Dessa Pryce says, ‘Winter Oven keeps its promises in small places. Tell me which one you noticed.’
+- id: winter_oven_npc_04
+  name: Eris Vane
+  placeId: winter_oven_place_04
+  role: merchant
+  greet: Eris Vane says, ‘Winter Oven keeps its promises in small places. Tell me which one you noticed.’
+- id: winter_oven_npc_05
+  name: Fenn Quill
+  placeId: winter_oven_place_01
+  role: local
+  greet: Fenn Quill says, ‘Winter Oven keeps its promises in small places. Tell me which one you noticed.’
+- id: winter_oven_npc_06
+  name: Gala Vale
+  placeId: winter_oven_place_02
+  role: host
+  greet: Gala Vale says, ‘Winter Oven keeps its promises in small places. Tell me which one you noticed.’
+- id: winter_oven_npc_07
+  name: Holl Wren
+  placeId: winter_oven_place_03
+  role: quest
+  greet: Holl Wren says, ‘Winter Oven keeps its promises in small places. Tell me which one you noticed.’
+- id: winter_oven_npc_08
+  name: Ivo Morrow
+  placeId: winter_oven_place_04
+  role: profession
+  greet: Ivo Morrow says, ‘Winter Oven keeps its promises in small places. Tell me which one you noticed.’
+- id: winter_oven_npc_09
+  name: Jori Rowan
+  placeId: winter_oven_place_01
+  role: local
+  greet: Jori Rowan says, ‘Winter Oven keeps its promises in small places. Tell me which one you noticed.’
+- id: winter_oven_npc_10
+  name: Alden Nook
+  placeId: winter_oven_place_02
+  role: merchant
+  greet: Alden Nook says, ‘Winter Oven keeps its promises in small places. Tell me which one you noticed.’
+kits:
+- id: winter_oven_kit_01
+  publicName: Oven Tender
+  look: oven tender workwear
+  values: practice oven tender
+  taboo: Never use oven tender authority to remove another person’s choice.
+  speechTell: Use the local rhythm of Winter Oven and make every offer concrete.
+  starterClothes: oven_tender mantle
+  starterTool: oven_tender tool
+  starterMapItem: winter_oven_map_01
+  startingPlaceId: winter_oven_place_01
+  firstHourQuestId: winter_oven_q_01
+  abilityFlag: winter_oven_ability_01
+- id: winter_oven_kit_02
+  publicName: Birch Gatherer
+  look: birch gatherer workwear
+  values: practice birch gatherer
+  taboo: Never use birch gatherer authority to remove another person’s choice.
+  speechTell: Use the local rhythm of Winter Oven and make every offer concrete.
+  starterClothes: birch_gatherer vest
+  starterTool: birch_gatherer tool
+  starterMapItem: winter_oven_map_02
+  startingPlaceId: winter_oven_place_02
+  firstHourQuestId: winter_oven_q_02
+  abilityFlag: winter_oven_ability_02
+- id: winter_oven_kit_03
+  publicName: Kettle Caller
+  look: kettle caller workwear
+  values: practice kettle caller
+  taboo: Never use kettle caller authority to remove another person’s choice.
+  speechTell: Use the local rhythm of Winter Oven and make every offer concrete.
+  starterClothes: kettle_caller jacket
+  starterTool: kettle_caller tool
+  starterMapItem: winter_oven_map_03
+  startingPlaceId: winter_oven_place_01
+  firstHourQuestId: winter_oven_q_03
+  abilityFlag: winter_oven_ability_03
+- id: winter_oven_kit_04
+  publicName: Wool Mender
+  look: wool mender workwear
+  values: practice wool mender
+  taboo: Never use wool mender authority to remove another person’s choice.
+  speechTell: Use the local rhythm of Winter Oven and make every offer concrete.
+  starterClothes: wool_mender sash
+  starterTool: wool_mender tool
+  starterMapItem: winter_oven_map_04
+  startingPlaceId: winter_oven_place_02
+  firstHourQuestId: winter_oven_q_04
+  abilityFlag: winter_oven_ability_04
+quests:
+- id: winter_oven_q_01
+  title: 'Winter Oven: Name a Working Promise'
+  family: identity
+  hidden: false
+  unlocksQuestId: winter_oven_q_02
+  objectives:
+  - id: winter_oven_q_01_obj_01
+    kind: visit_place
+    targetId: winter_oven_place_01
+    count: 1
+  - id: winter_oven_q_01_obj_02
+    kind: deliver_item
+    targetId: winter_oven_deliver_item_01
+    count: 2
+  rewardGold: 12
+  rewardXp: 20
+- id: winter_oven_q_02
+  title: 'Winter Oven: Set the First Tool Aside'
+  family: identity
+  hidden: false
+  unlocksQuestId: winter_oven_q_03
+  objectives:
+  - id: winter_oven_q_02_obj_01
+    kind: ledger_kill
+    targetId: winter_oven_ledger_kill_02
+    count: 1
+  - id: winter_oven_q_02_obj_02
+    kind: talk_to_npc
+    targetId: winter_oven_npc_03
+    count: 2
+  rewardGold: 15
+  rewardXp: 25
+- id: winter_oven_q_03
+  title: 'Winter Oven: Carry the Right Record'
+  family: identity
+  hidden: false
+  unlocksQuestId: winter_oven_q_04
+  objectives:
+  - id: winter_oven_q_03_obj_01
+    kind: ledger_bond
+    targetId: winter_oven_ledger_bond_03
+    count: 1
+  - id: winter_oven_q_03_obj_02
+    kind: collect_item
+    targetId: winter_oven_collect_item_03
+    count: 2
+  rewardGold: 18
+  rewardXp: 30
+- id: winter_oven_q_04
+  title: 'Winter Oven: Find the Missing Measure'
+  family: identity
+  hidden: false
+  unlocksQuestId: winter_oven_q_05
+  objectives:
+  - id: winter_oven_q_04_obj_01
+    kind: deliver_item
+    targetId: winter_oven_deliver_item_04
+    count: 1
+  - id: winter_oven_q_04_obj_02
+    kind: interact
+    targetId: winter_oven_place_05
+    count: 2
+    verbId: cook
+  rewardGold: 21
+  rewardXp: 35
+- id: winter_oven_q_05
+  title: 'Winter Oven: Teach a Safer Shortcut'
+  family: identity
+  hidden: false
+  unlocksQuestId: winter_oven_q_06
+  objectives:
+  - id: winter_oven_q_05_obj_01
+    kind: talk_to_npc
+    targetId: winter_oven_npc_05
+    count: 1
+  - id: winter_oven_q_05_obj_02
+    kind: score_beat
+    targetId: winter_oven_score_beat_05
+    count: 2
+  rewardGold: 24
+  rewardXp: 40
+- id: winter_oven_q_06
+  title: 'Winter Oven: Read the Local Weather'
+  family: profession
+  hidden: false
+  unlocksQuestId: winter_oven_q_07
+  objectives:
+  - id: winter_oven_q_06_obj_01
+    kind: collect_item
+    targetId: winter_oven_collect_item_06
+    count: 1
+  - id: winter_oven_q_06_obj_02
+    kind: build_tick
+    targetId: winter_oven_build_tick_06
+    count: 2
+  rewardGold: 27
+  rewardXp: 45
+- id: winter_oven_q_07
+  title: 'Winter Oven: Repair a Shared Threshold'
+  family: profession
+  hidden: false
+  unlocksQuestId: winter_oven_q_08
+  objectives:
+  - id: winter_oven_q_07_obj_01
+    kind: interact
+    targetId: winter_oven_place_07
+    count: 1
+    verbId: inspect
+  - id: winter_oven_q_07_obj_02
+    kind: hospitality_tick
+    targetId: winter_oven_hospitality_tick_07
+    count: 2
+  rewardGold: 30
+  rewardXp: 50
+- id: winter_oven_q_08
+  title: 'Winter Oven: Return a Borrowed Sign'
+  family: profession
+  hidden: false
+  unlocksQuestId: winter_oven_q_09
+  objectives:
+  - id: winter_oven_q_08_obj_01
+    kind: score_beat
+    targetId: winter_oven_score_beat_08
+    count: 1
+  - id: winter_oven_q_08_obj_02
+    kind: lap_finish
+    targetId: winter_oven_lap_finish_08
+    count: 2
+  rewardGold: 33
+  rewardXp: 55
+- id: winter_oven_q_09
+  title: 'Winter Oven: Host the Small Welcome'
+  family: profession
+  hidden: false
+  unlocksQuestId: winter_oven_q_10
+  objectives:
+  - id: winter_oven_q_09_obj_01
+    kind: build_tick
+    targetId: winter_oven_build_tick_09
+    count: 1
+  - id: winter_oven_q_09_obj_02
+    kind: visit_place
+    targetId: winter_oven_place_02
+    count: 2
+  rewardGold: 36
+  rewardXp: 60
+- id: winter_oven_q_10
+  title: 'Winter Oven: Choose a Fair Order'
+  family: profession
+  hidden: false
+  unlocksQuestId: winter_oven_q_11
+  objectives:
+  - id: winter_oven_q_10_obj_01
+    kind: hospitality_tick
+    targetId: winter_oven_hospitality_tick_10
+    count: 1
+  - id: winter_oven_q_10_obj_02
+    kind: ledger_kill
+    targetId: winter_oven_ledger_kill_10
+    count: 2
+  rewardGold: 39
+  rewardXp: 65
+- id: winter_oven_q_11
+  title: 'Winter Oven: Map the Quiet Detour'
+  family: profession
+  hidden: false
+  unlocksQuestId: winter_oven_q_12
+  objectives:
+  - id: winter_oven_q_11_obj_01
+    kind: lap_finish
+    targetId: winter_oven_lap_finish_11
+    count: 1
+  - id: winter_oven_q_11_obj_02
+    kind: ledger_bond
+    targetId: winter_oven_ledger_bond_11
+    count: 2
+  rewardGold: 42
+  rewardXp: 70
+- id: winter_oven_q_12
+  title: 'Winter Oven: Bring a Useful Witness'
+  family: profession
+  hidden: false
+  unlocksQuestId: winter_oven_q_13
+  objectives:
+  - id: winter_oven_q_12_obj_01
+    kind: visit_place
+    targetId: winter_oven_place_04
+    count: 1
+  - id: winter_oven_q_12_obj_02
+    kind: deliver_item
+    targetId: winter_oven_deliver_item_12
+    count: 2
+  rewardGold: 45
+  rewardXp: 75
+- id: winter_oven_q_13
+  title: 'Winter Oven: Sort the Unclaimed Materials'
+  family: zone_story
+  hidden: false
+  unlocksQuestId: winter_oven_q_14
+  objectives:
+  - id: winter_oven_q_13_obj_01
+    kind: ledger_kill
+    targetId: winter_oven_ledger_kill_13
+    count: 1
+  - id: winter_oven_q_13_obj_02
+    kind: talk_to_npc
+    targetId: winter_oven_npc_04
+    count: 2
+  rewardGold: 48
+  rewardXp: 80
+- id: winter_oven_q_14
+  title: 'Winter Oven: Make Room for a Visitor'
+  family: zone_story
+  hidden: false
+  unlocksQuestId: winter_oven_q_15
+  objectives:
+  - id: winter_oven_q_14_obj_01
+    kind: ledger_bond
+    targetId: winter_oven_ledger_bond_14
+    count: 1
+  - id: winter_oven_q_14_obj_02
+    kind: collect_item
+    targetId: winter_oven_collect_item_14
+    count: 2
+  rewardGold: 51
+  rewardXp: 85
+- id: winter_oven_q_15
+  title: 'Winter Oven: Close the Day’s Ledger'
+  family: zone_story
+  hidden: false
+  unlocksQuestId: winter_oven_q_16
+  objectives:
+  - id: winter_oven_q_15_obj_01
+    kind: deliver_item
+    targetId: winter_oven_deliver_item_15
+    count: 1
+  - id: winter_oven_q_15_obj_02
+    kind: interact
+    targetId: winter_oven_place_08
+    count: 2
+    verbId: craft
+  rewardGold: 54
+  rewardXp: 90
+- id: winter_oven_q_16
+  title: 'Winter Oven: Follow the Midway Signal'
+  family: zone_story
+  hidden: false
+  unlocksQuestId: winter_oven_q_17
+  objectives:
+  - id: winter_oven_q_16_obj_01
+    kind: talk_to_npc
+    targetId: winter_oven_npc_06
+    count: 1
+  - id: winter_oven_q_16_obj_02
+    kind: score_beat
+    targetId: winter_oven_score_beat_16
+    count: 2
+  rewardGold: 57
+  rewardXp: 95
+- id: winter_oven_q_17
+  title: 'Winter Oven: Uncover the Door Note'
+  family: zone_story
+  hidden: true
+  unlocksQuestId: winter_oven_q_18
+  objectives:
+  - id: winter_oven_q_17_obj_01
+    kind: collect_item
+    targetId: winter_oven_collect_item_17
+    count: 1
+  - id: winter_oven_q_17_obj_02
+    kind: build_tick
+    targetId: winter_oven_build_tick_17
+    count: 2
+  rewardGold: 60
+  rewardXp: 100
+- id: winter_oven_q_18
+  title: 'Winter Oven: Prepare the Team Table'
+  family: zone_story
+  hidden: false
+  unlocksQuestId: winter_oven_q_19
+  objectives:
+  - id: winter_oven_q_18_obj_01
+    kind: interact
+    targetId: winter_oven_place_02
+    count: 1
+    verbId: bind_inn
+  - id: winter_oven_q_18_obj_02
+    kind: hospitality_tick
+    targetId: winter_oven_hospitality_tick_18
+    count: 2
+  rewardGold: 63
+  rewardXp: 105
+- id: winter_oven_q_19
+  title: 'Winter Oven: Test the Local Method'
+  family: zone_story
+  hidden: false
+  unlocksQuestId: winter_oven_q_20
+  objectives:
+  - id: winter_oven_q_19_obj_01
+    kind: score_beat
+    targetId: winter_oven_score_beat_19
+    count: 1
+  - id: winter_oven_q_19_obj_02
+    kind: lap_finish
+    targetId: winter_oven_lap_finish_19
+    count: 2
+  rewardGold: 66
+  rewardXp: 110
+- id: winter_oven_q_20
+  title: 'Winter Oven: Hold a Careful Boundary'
+  family: zone_story
+  hidden: false
+  unlocksQuestId: winter_oven_q_21
+  objectives:
+  - id: winter_oven_q_20_obj_01
+    kind: build_tick
+    targetId: winter_oven_build_tick_20
+    count: 1
+  - id: winter_oven_q_20_obj_02
+    kind: visit_place
+    targetId: winter_oven_place_05
+    count: 2
+  rewardGold: 69
+  rewardXp: 115
+- id: winter_oven_q_21
+  title: 'Winter Oven: Answer the Neighbour’s Call'
+  family: extra
+  hidden: false
+  unlocksQuestId: winter_oven_q_22
+  objectives:
+  - id: winter_oven_q_21_obj_01
+    kind: hospitality_tick
+    targetId: winter_oven_hospitality_tick_21
+    count: 1
+  - id: winter_oven_q_21_obj_02
+    kind: ledger_kill
+    targetId: winter_oven_ledger_kill_21
+    count: 2
+  rewardGold: 72
+  rewardXp: 120
+- id: winter_oven_q_22
+  title: 'Winter Oven: Finish the Side Route'
+  family: extra
+  hidden: false
+  unlocksQuestId: winter_oven_q_23
+  objectives:
+  - id: winter_oven_q_22_obj_01
+    kind: lap_finish
+    targetId: winter_oven_lap_finish_22
+    count: 1
+  - id: winter_oven_q_22_obj_02
+    kind: ledger_bond
+    targetId: winter_oven_ledger_bond_22
+    count: 2
+  rewardGold: 75
+  rewardXp: 125
+- id: winter_oven_q_23
+  title: 'Winter Oven: Earn a Trusted Introduction'
+  family: extra
+  hidden: true
+  unlocksQuestId: winter_oven_q_24
+  objectives:
+  - id: winter_oven_q_23_obj_01
+    kind: visit_place
+    targetId: winter_oven_place_07
+    count: 1
+  - id: winter_oven_q_23_obj_02
+    kind: deliver_item
+    targetId: winter_oven_deliver_item_23
+    count: 2
+  rewardGold: 78
+  rewardXp: 130
+- id: winter_oven_q_24
+  title: 'Winter Oven: Open the Instance Path'
+  family: extra
+  hidden: false
+  unlocksQuestId: winter_oven_q_25
+  objectives:
+  - id: winter_oven_q_24_obj_01
+    kind: ledger_kill
+    targetId: winter_oven_ledger_kill_24
+    count: 1
+  - id: winter_oven_q_24_obj_02
+    kind: talk_to_npc
+    targetId: winter_oven_npc_05
+    count: 2
+  rewardGold: 81
+  rewardXp: 135
+- id: winter_oven_q_25
+  title: 'Winter Oven: Complete the First Big Night'
+  family: extra
+  hidden: false
+  unlocksQuestId: null
+  objectives:
+  - id: winter_oven_q_25_obj_01
+    kind: ledger_bond
+    targetId: winter_oven_ledger_bond_25
+    count: 1
+  - id: winter_oven_q_25_obj_02
+    kind: collect_item
+    targetId: winter_oven_collect_item_25
+    count: 2
+  rewardGold: 84
+  rewardXp: 140
+species:
+- id: winter_oven_species_01
+  publicName: Flour Fox
+  kind: activity
+  hp: 0
+  armor: 0
+  threat: 1
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: winter_oven_species_02
+  publicName: Birch Owl
+  kind: activity
+  hp: 0
+  armor: 1
+  threat: 2
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: winter_oven_species_03
+  publicName: Kettle Hare
+  kind: activity
+  hp: 0
+  armor: 2
+  threat: 3
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: winter_oven_species_04
+  publicName: Frost Carp
+  kind: activity
+  hp: 0
+  armor: 3
+  threat: 1
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: winter_oven_species_05
+  publicName: Winter Oven Field Type 5
+  kind: activity
+  hp: 0
+  armor: 0
+  threat: 2
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: winter_oven_species_06
+  publicName: Winter Oven Field Type 6
+  kind: activity
+  hp: 0
+  armor: 1
+  threat: 3
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: winter_oven_species_07
+  publicName: Winter Oven Field Type 7
+  kind: activity
+  hp: 0
+  armor: 2
+  threat: 1
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: winter_oven_species_08
+  publicName: Winter Oven Field Type 8
+  kind: activity
+  hp: 0
+  armor: 3
+  threat: 2
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: winter_oven_species_09
+  publicName: Winter Oven Field Type 9
+  kind: activity
+  hp: 0
+  armor: 0
+  threat: 3
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: winter_oven_species_10
+  publicName: Winter Oven Field Type 10
+  kind: activity
+  hp: 0
+  armor: 1
+  threat: 1
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: winter_oven_species_11
+  publicName: Winter Oven Field Type 11
+  kind: activity
+  hp: 0
+  armor: 2
+  threat: 2
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: winter_oven_species_12
+  publicName: Winter Oven Field Type 12
+  kind: activity
+  hp: 0
+  armor: 3
+  threat: 3
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: winter_oven_species_13
+  publicName: Winter Oven Field Type 13
+  kind: activity
+  hp: 0
+  armor: 0
+  threat: 1
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: winter_oven_species_14
+  publicName: Winter Oven Field Type 14
+  kind: activity
+  hp: 0
+  armor: 1
+  threat: 2
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: winter_oven_species_15
+  publicName: Winter Oven Field Type 15
+  kind: activity
+  hp: 0
+  armor: 2
+  threat: 3
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: winter_oven_species_16
+  publicName: Winter Oven Field Type 16
+  kind: activity
+  hp: 0
+  armor: 3
+  threat: 1
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: winter_oven_species_17
+  publicName: Winter Oven Field Type 17
+  kind: activity
+  hp: 0
+  armor: 0
+  threat: 2
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: winter_oven_species_18
+  publicName: Winter Oven Field Type 18
+  kind: activity
+  hp: 0
+  armor: 1
+  threat: 3
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+items:
+- id: winter_oven_item_01
+  publicName: Oven Square token
+  category: starter
+  power: false
+  sellGold: 3
+  description: A Winter Oven item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: winter_oven_item_02
+  publicName: Snow Lane tool
+  category: starter
+  power: false
+  sellGold: 5
+  description: A Winter Oven item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: winter_oven_item_03
+  publicName: Birch Pantry thread
+  category: profession
+  power: false
+  sellGold: 7
+  description: A Winter Oven item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: winter_oven_item_04
+  publicName: Ember Bridge seal
+  category: profession
+  power: false
+  sellGold: 9
+  description: A Winter Oven item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: winter_oven_item_05
+  publicName: Dough Cellar bundle
+  category: instance
+  power: false
+  sellGold: 11
+  description: A Winter Oven item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: winter_oven_item_06
+  publicName: Frost Porch token
+  category: instance
+  power: false
+  sellGold: 13
+  description: A Winter Oven item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: winter_oven_item_07
+  publicName: Kettle Hall tool
+  category: cosmetic
+  power: false
+  sellGold: 15
+  description: A Winter Oven item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: winter_oven_item_08
+  publicName: Wool Window thread
+  category: cosmetic
+  power: false
+  sellGold: 17
+  description: A Winter Oven item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: winter_oven_item_09
+  publicName: Oven Square seal
+  category: material
+  power: false
+  sellGold: 19
+  description: A Winter Oven item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: winter_oven_item_10
+  publicName: Snow Lane bundle
+  category: material
+  power: false
+  sellGold: 21
+  description: A Winter Oven item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: winter_oven_item_11
+  publicName: Birch Pantry token
+  category: care
+  power: false
+  sellGold: 23
+  description: A Winter Oven item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: winter_oven_item_12
+  publicName: Ember Bridge tool
+  category: care
+  power: false
+  sellGold: 25
+  description: A Winter Oven item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: winter_oven_item_13
+  publicName: Dough Cellar thread
+  category: map
+  power: false
+  sellGold: 27
+  description: A Winter Oven item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: winter_oven_item_14
+  publicName: Frost Porch seal
+  category: map
+  power: false
+  sellGold: 29
+  description: A Winter Oven item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: winter_oven_item_15
+  publicName: Kettle Hall bundle
+  category: vendor
+  power: false
+  sellGold: 31
+  description: A Winter Oven item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: winter_oven_item_16
+  publicName: Wool Window token
+  category: vendor
+  power: false
+  sellGold: 33
+  description: A Winter Oven item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: winter_oven_item_17
+  publicName: Oven Square tool
+  category: recipe
+  power: false
+  sellGold: 35
+  description: A Winter Oven item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: winter_oven_item_18
+  publicName: Snow Lane thread
+  category: recipe
+  power: false
+  sellGold: 37
+  description: A Winter Oven item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: winter_oven_item_19
+  publicName: Birch Pantry seal
+  category: keepsake
+  power: false
+  sellGold: 39
+  description: A Winter Oven item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: winter_oven_item_20
+  publicName: Ember Bridge bundle
+  category: keepsake
+  power: false
+  sellGold: 41
+  description: A Winter Oven item used for a stated craft, route, display, or record; it never alters paid outcomes.
+dropTables:
+- id: winter_oven_drop_01
+  sourceId: winter_oven_species_01
+  personalLoot: true
+  entries:
+  - itemId: winter_oven_item_01
+    chancePct: 60
+    min: 1
+    max: 2
+  - itemId: winter_oven_item_08
+    chancePct: 20
+    min: 1
+    max: 1
+- id: winter_oven_drop_02
+  sourceId: winter_oven_species_02
+  personalLoot: true
+  entries:
+  - itemId: winter_oven_item_02
+    chancePct: 55
+    min: 1
+    max: 2
+  - itemId: winter_oven_item_09
+    chancePct: 25
+    min: 1
+    max: 1
+- id: winter_oven_drop_03
+  sourceId: winter_oven_species_03
+  personalLoot: true
+  entries:
+  - itemId: winter_oven_item_03
+    chancePct: 50
+    min: 1
+    max: 2
+  - itemId: winter_oven_item_10
+    chancePct: 30
+    min: 1
+    max: 1
+- id: winter_oven_drop_04
+  sourceId: winter_oven_species_04
+  personalLoot: true
+  entries:
+  - itemId: winter_oven_item_04
+    chancePct: 45
+    min: 1
+    max: 2
+  - itemId: winter_oven_item_11
+    chancePct: 20
+    min: 1
+    max: 1
+- id: winter_oven_drop_05
+  sourceId: winter_oven_species_05
+  personalLoot: true
+  entries:
+  - itemId: winter_oven_item_05
+    chancePct: 60
+    min: 1
+    max: 2
+  - itemId: winter_oven_item_12
+    chancePct: 25
+    min: 1
+    max: 1
+- id: winter_oven_drop_06
+  sourceId: winter_oven_species_06
+  personalLoot: true
+  entries:
+  - itemId: winter_oven_item_06
+    chancePct: 55
+    min: 1
+    max: 2
+  - itemId: winter_oven_item_13
+    chancePct: 30
+    min: 1
+    max: 1
+- id: winter_oven_drop_07
+  sourceId: winter_oven_species_07
+  personalLoot: true
+  entries:
+  - itemId: winter_oven_item_07
+    chancePct: 50
+    min: 1
+    max: 2
+  - itemId: winter_oven_item_14
+    chancePct: 20
+    min: 1
+    max: 1
+- id: winter_oven_drop_08
+  sourceId: winter_oven_species_08
+  personalLoot: true
+  entries:
+  - itemId: winter_oven_item_08
+    chancePct: 45
+    min: 1
+    max: 2
+  - itemId: winter_oven_item_15
+    chancePct: 25
+    min: 1
+    max: 1
+- id: winter_oven_drop_09
+  sourceId: winter_oven_species_09
+  personalLoot: true
+  entries:
+  - itemId: winter_oven_item_09
+    chancePct: 60
+    min: 1
+    max: 2
+  - itemId: winter_oven_item_16
+    chancePct: 30
+    min: 1
+    max: 1
+- id: winter_oven_drop_10
+  sourceId: winter_oven_species_10
+  personalLoot: true
+  entries:
+  - itemId: winter_oven_item_10
+    chancePct: 55
+    min: 1
+    max: 2
+  - itemId: winter_oven_item_17
+    chancePct: 20
+    min: 1
+    max: 1
+- id: winter_oven_drop_11
+  sourceId: winter_oven_species_11
+  personalLoot: true
+  entries:
+  - itemId: winter_oven_item_11
+    chancePct: 50
+    min: 1
+    max: 2
+  - itemId: winter_oven_item_18
+    chancePct: 25
+    min: 1
+    max: 1
+- id: winter_oven_drop_12
+  sourceId: winter_oven_species_12
+  personalLoot: true
+  entries:
+  - itemId: winter_oven_item_12
+    chancePct: 45
+    min: 1
+    max: 2
+  - itemId: winter_oven_item_19
+    chancePct: 30
+    min: 1
+    max: 1
+vendors:
+- id: winter_oven_vendor_01
+  publicName: Winter Oven Exchange
+  placeId: winter_oven_place_01
+  currencyGoldName: Oven Pennies
+  items:
+  - itemId: winter_oven_item_01
+    priceGold: 8
+  - itemId: winter_oven_item_02
+    priceGold: 11
+  - itemId: winter_oven_item_03
+    priceGold: 14
+  - itemId: winter_oven_item_04
+    priceGold: 17
+  - itemId: winter_oven_item_05
+    priceGold: 20
+  - itemId: winter_oven_item_06
+    priceGold: 23
+  - itemId: winter_oven_item_07
+    priceGold: 26
+  - itemId: winter_oven_item_08
+    priceGold: 29
+  repairCostPerPoint: 0
+dungeons:
+- id: winter_oven_dungeon_01
+  publicName: The Dough Cellar Thaw
+  partyMin: 1
+  partyMax: 5
+  entrancePlaceId: winter_oven_place_06
+  rooms:
+  - id: winter_oven_dungeon_room_01
+    publicName: 'The Dough Cellar Thaw: Threshold Room'
+    describeBeforeCreature: Describe the material, sound, exits, and practical obstacle of Threshold Room before any species
+      is narrated.
+    trashSpeciesIds:
+    - winter_oven_species_01
+    - winter_oven_species_02
+    eliteSpeciesId: null
+    checkpoint: false
+    bossSpeciesId: null
+    exits:
+    - winter_oven_dungeon_room_02
+  - id: winter_oven_dungeon_room_02
+    publicName: 'The Dough Cellar Thaw: Workroom'
+    describeBeforeCreature: Describe the material, sound, exits, and practical obstacle of Workroom before any species is
+      narrated.
+    trashSpeciesIds:
+    - winter_oven_species_03
+    - winter_oven_species_04
+    eliteSpeciesId: null
+    checkpoint: false
+    bossSpeciesId: null
+    exits:
+    - winter_oven_dungeon_room_03
+  - id: winter_oven_dungeon_room_03
+    publicName: 'The Dough Cellar Thaw: Side Passage'
+    describeBeforeCreature: Describe the material, sound, exits, and practical obstacle of Side Passage before any species
+      is narrated.
+    trashSpeciesIds:
+    - winter_oven_species_05
+    - winter_oven_species_06
+    eliteSpeciesId: winter_oven_species_09
+    checkpoint: false
+    bossSpeciesId: null
+    exits:
+    - winter_oven_dungeon_room_04
+  - id: winter_oven_dungeon_room_04
+    publicName: 'The Dough Cellar Thaw: Checkpoint Alcove'
+    describeBeforeCreature: Describe the material, sound, exits, and practical obstacle of Checkpoint Alcove before any species
+      is narrated.
+    trashSpeciesIds:
+    - winter_oven_species_07
+    - winter_oven_species_08
+    eliteSpeciesId: null
+    checkpoint: true
+    bossSpeciesId: null
+    exits:
+    - winter_oven_dungeon_room_05
+  - id: winter_oven_dungeon_room_05
+    publicName: 'The Dough Cellar Thaw: Finale Chamber'
+    describeBeforeCreature: Describe the material, sound, exits, and practical obstacle of Finale Chamber before any species
+      is narrated.
+    trashSpeciesIds:
+    - winter_oven_species_09
+    - winter_oven_species_10
+    eliteSpeciesId: null
+    checkpoint: false
+    bossSpeciesId: winter_oven_species_14
+    exits: []
+  traps:
+  - id: winter_oven_trap_01
+    publicName: misread sign
+    interactableId: winter_oven_interact_01
+  - id: winter_oven_trap_02
+    publicName: jammed latch
+    interactableId: winter_oven_interact_02
+  - id: winter_oven_trap_03
+    publicName: wet threshold
+    interactableId: winter_oven_interact_03
+  - id: winter_oven_trap_04
+    publicName: false shelf
+    interactableId: winter_oven_interact_04
+  - id: winter_oven_trap_05
+    publicName: quiet bell
+    interactableId: winter_oven_interact_05
+  - id: winter_oven_trap_06
+    publicName: sealed drawer
+    interactableId: winter_oven_interact_06
+talkTrees:
+- npcId: winter_oven_npc_01
+  greet: Bryn Cress says, ‘Winter Oven keeps its promises in small places. Tell me which one you noticed.’
+  quest_offer: 'Bryn Cress offers a specific task at Oven Square: settle the practical mismatch before it costs someone a
+    shift.'
+  quest_progress: Bryn Cress checks the record and asks for the one detail that would change the outcome.
+  quest_turnin: Bryn Cress marks the work complete, names who benefited, and hands over the recorded reward.
+  gossip:
+  - At Snow Lane, people are discussing a missing care tag.
+  - The safest route today is through Birch Pantry, not the obvious shortcut.
+  - Someone at Ember Bridge is offering help but will not ask twice.
+  refusal: Bryn Cress says, ‘No. I can explain the rule, but I will not bend it for noise.’
+  player_rude: Bryn Cress says, ‘You may leave, lower your voice, or try a useful question. Choose one.’
+- npcId: winter_oven_npc_02
+  greet: Cato Silt says, ‘Winter Oven keeps its promises in small places. Tell me which one you noticed.’
+  quest_offer: 'Cato Silt offers a specific task at Snow Lane: settle the practical mismatch before it costs someone a shift.'
+  quest_progress: Cato Silt checks the record and asks for the one detail that would change the outcome.
+  quest_turnin: Cato Silt marks the work complete, names who benefited, and hands over the recorded reward.
+  gossip:
+  - At Birch Pantry, people are discussing a missing care tag.
+  - The safest route today is through Ember Bridge, not the obvious shortcut.
+  - Someone at Dough Cellar is offering help but will not ask twice.
+  refusal: Cato Silt says, ‘No. I can explain the rule, but I will not bend it for noise.’
+  player_rude: Cato Silt says, ‘You may leave, lower your voice, or try a useful question. Choose one.’
+- npcId: winter_oven_npc_03
+  greet: Dessa Pryce says, ‘Winter Oven keeps its promises in small places. Tell me which one you noticed.’
+  quest_offer: 'Dessa Pryce offers a specific task at Birch Pantry: settle the practical mismatch before it costs someone
+    a shift.'
+  quest_progress: Dessa Pryce checks the record and asks for the one detail that would change the outcome.
+  quest_turnin: Dessa Pryce marks the work complete, names who benefited, and hands over the recorded reward.
+  gossip:
+  - At Ember Bridge, people are discussing a missing care tag.
+  - The safest route today is through Dough Cellar, not the obvious shortcut.
+  - Someone at Frost Porch is offering help but will not ask twice.
+  refusal: Dessa Pryce says, ‘No. I can explain the rule, but I will not bend it for noise.’
+  player_rude: Dessa Pryce says, ‘You may leave, lower your voice, or try a useful question. Choose one.’
+- npcId: winter_oven_npc_04
+  greet: Eris Vane says, ‘Winter Oven keeps its promises in small places. Tell me which one you noticed.’
+  quest_offer: 'Eris Vane offers a specific task at Ember Bridge: settle the practical mismatch before it costs someone a
+    shift.'
+  quest_progress: Eris Vane checks the record and asks for the one detail that would change the outcome.
+  quest_turnin: Eris Vane marks the work complete, names who benefited, and hands over the recorded reward.
+  gossip:
+  - At Dough Cellar, people are discussing a missing care tag.
+  - The safest route today is through Frost Porch, not the obvious shortcut.
+  - Someone at Kettle Hall is offering help but will not ask twice.
+  refusal: Eris Vane says, ‘No. I can explain the rule, but I will not bend it for noise.’
+  player_rude: Eris Vane says, ‘You may leave, lower your voice, or try a useful question. Choose one.’
+- npcId: winter_oven_npc_05
+  greet: Fenn Quill says, ‘Winter Oven keeps its promises in small places. Tell me which one you noticed.’
+  quest_offer: 'Fenn Quill offers a specific task at Oven Square: settle the practical mismatch before it costs someone a
+    shift.'
+  quest_progress: Fenn Quill checks the record and asks for the one detail that would change the outcome.
+  quest_turnin: Fenn Quill marks the work complete, names who benefited, and hands over the recorded reward.
+  gossip:
+  - At Frost Porch, people are discussing a missing care tag.
+  - The safest route today is through Kettle Hall, not the obvious shortcut.
+  - Someone at Wool Window is offering help but will not ask twice.
+  refusal: Fenn Quill says, ‘No. I can explain the rule, but I will not bend it for noise.’
+  player_rude: Fenn Quill says, ‘You may leave, lower your voice, or try a useful question. Choose one.’
+- npcId: winter_oven_npc_06
+  greet: Gala Vale says, ‘Winter Oven keeps its promises in small places. Tell me which one you noticed.’
+  quest_offer: 'Gala Vale offers a specific task at Snow Lane: settle the practical mismatch before it costs someone a shift.'
+  quest_progress: Gala Vale checks the record and asks for the one detail that would change the outcome.
+  quest_turnin: Gala Vale marks the work complete, names who benefited, and hands over the recorded reward.
+  gossip:
+  - At Kettle Hall, people are discussing a missing care tag.
+  - The safest route today is through Wool Window, not the obvious shortcut.
+  - Someone at Oven Square is offering help but will not ask twice.
+  refusal: Gala Vale says, ‘No. I can explain the rule, but I will not bend it for noise.’
+  player_rude: Gala Vale says, ‘You may leave, lower your voice, or try a useful question. Choose one.’
+- npcId: winter_oven_npc_07
+  greet: Holl Wren says, ‘Winter Oven keeps its promises in small places. Tell me which one you noticed.’
+  quest_offer: 'Holl Wren offers a specific task at Birch Pantry: settle the practical mismatch before it costs someone a
+    shift.'
+  quest_progress: Holl Wren checks the record and asks for the one detail that would change the outcome.
+  quest_turnin: Holl Wren marks the work complete, names who benefited, and hands over the recorded reward.
+  gossip:
+  - At Wool Window, people are discussing a missing care tag.
+  - The safest route today is through Oven Square, not the obvious shortcut.
+  - Someone at Snow Lane is offering help but will not ask twice.
+  refusal: Holl Wren says, ‘No. I can explain the rule, but I will not bend it for noise.’
+  player_rude: Holl Wren says, ‘You may leave, lower your voice, or try a useful question. Choose one.’
+- npcId: winter_oven_npc_08
+  greet: Ivo Morrow says, ‘Winter Oven keeps its promises in small places. Tell me which one you noticed.’
+  quest_offer: 'Ivo Morrow offers a specific task at Ember Bridge: settle the practical mismatch before it costs someone a
+    shift.'
+  quest_progress: Ivo Morrow checks the record and asks for the one detail that would change the outcome.
+  quest_turnin: Ivo Morrow marks the work complete, names who benefited, and hands over the recorded reward.
+  gossip:
+  - At Oven Square, people are discussing a missing care tag.
+  - The safest route today is through Snow Lane, not the obvious shortcut.
+  - Someone at Birch Pantry is offering help but will not ask twice.
+  refusal: Ivo Morrow says, ‘No. I can explain the rule, but I will not bend it for noise.’
+  player_rude: Ivo Morrow says, ‘You may leave, lower your voice, or try a useful question. Choose one.’
+- npcId: winter_oven_npc_09
+  greet: Jori Rowan says, ‘Winter Oven keeps its promises in small places. Tell me which one you noticed.’
+  quest_offer: 'Jori Rowan offers a specific task at Oven Square: settle the practical mismatch before it costs someone a
+    shift.'
+  quest_progress: Jori Rowan checks the record and asks for the one detail that would change the outcome.
+  quest_turnin: Jori Rowan marks the work complete, names who benefited, and hands over the recorded reward.
+  gossip:
+  - At Snow Lane, people are discussing a missing care tag.
+  - The safest route today is through Birch Pantry, not the obvious shortcut.
+  - Someone at Ember Bridge is offering help but will not ask twice.
+  refusal: Jori Rowan says, ‘No. I can explain the rule, but I will not bend it for noise.’
+  player_rude: Jori Rowan says, ‘You may leave, lower your voice, or try a useful question. Choose one.’
+- npcId: winter_oven_npc_10
+  greet: Alden Nook says, ‘Winter Oven keeps its promises in small places. Tell me which one you noticed.’
+  quest_offer: 'Alden Nook offers a specific task at Snow Lane: settle the practical mismatch before it costs someone a shift.'
+  quest_progress: Alden Nook checks the record and asks for the one detail that would change the outcome.
+  quest_turnin: Alden Nook marks the work complete, names who benefited, and hands over the recorded reward.
+  gossip:
+  - At Birch Pantry, people are discussing a missing care tag.
+  - The safest route today is through Ember Bridge, not the obvious shortcut.
+  - Someone at Dough Cellar is offering help but will not ask twice.
+  refusal: Alden Nook says, ‘No. I can explain the rule, but I will not bend it for noise.’
+  player_rude: Alden Nook says, ‘You may leave, lower your voice, or try a useful question. Choose one.’
+choiceButtons:
+- id: winter_oven_choice_01_01
+  placeId: winter_oven_place_01
+  label: Read the notice at Oven Square
+  requires: []
+  intentKind: talk
+  stake: one turn
+- id: winter_oven_choice_01_02
+  placeId: winter_oven_place_01
+  label: Ask for an introduction at Oven Square
+  requires: []
+  intentKind: talk
+  stake: one supply
+- id: winter_oven_choice_01_03
+  placeId: winter_oven_place_01
+  label: Check the tool tag at Oven Square
+  requires: []
+  intentKind: inspect
+  stake: a declined invitation
+- id: winter_oven_choice_01_04
+  placeId: winter_oven_place_01
+  label: Offer a hand at Oven Square
+  requires: []
+  intentKind: interact
+  stake: a public note
+- id: winter_oven_choice_01_05
+  placeId: winter_oven_place_01
+  label: Take the safer route at Oven Square
+  requires:
+  - winter_oven_item_05
+  intentKind: travel
+  stake: a short detour
+- id: winter_oven_choice_01_06
+  placeId: winter_oven_place_01
+  label: Open the local record at Oven Square
+  requires:
+  - winter_oven_item_06
+  intentKind: interact
+  stake: one turn
+- id: winter_oven_choice_01_07
+  placeId: winter_oven_place_01
+  label: Rest at the bench at Oven Square
+  requires:
+  - winter_oven_item_07
+  intentKind: rest
+  stake: one supply
+- id: winter_oven_choice_01_08
+  placeId: winter_oven_place_01
+  label: Repair the marker at Oven Square
+  requires:
+  - winter_oven_item_08
+  intentKind: interact
+  stake: a declined invitation
+- id: winter_oven_choice_01_09
+  placeId: winter_oven_place_01
+  label: Prepare a shared item at Oven Square
+  requires:
+  - winter_oven_item_09
+  intentKind: craft
+  stake: a public note
+- id: winter_oven_choice_01_10
+  placeId: winter_oven_place_01
+  label: Leave a kind note at Oven Square
+  requires:
+  - winter_oven_item_10
+  intentKind: talk
+  stake: a short detour
+- id: winter_oven_choice_02_01
+  placeId: winter_oven_place_02
+  label: Read the notice at Snow Lane
+  requires: []
+  intentKind: talk
+  stake: one turn
+- id: winter_oven_choice_02_02
+  placeId: winter_oven_place_02
+  label: Ask for an introduction at Snow Lane
+  requires: []
+  intentKind: talk
+  stake: one supply
+- id: winter_oven_choice_02_03
+  placeId: winter_oven_place_02
+  label: Check the tool tag at Snow Lane
+  requires: []
+  intentKind: inspect
+  stake: a declined invitation
+- id: winter_oven_choice_02_04
+  placeId: winter_oven_place_02
+  label: Offer a hand at Snow Lane
+  requires: []
+  intentKind: interact
+  stake: a public note
+- id: winter_oven_choice_02_05
+  placeId: winter_oven_place_02
+  label: Take the safer route at Snow Lane
+  requires:
+  - winter_oven_item_05
+  intentKind: travel
+  stake: a short detour
+- id: winter_oven_choice_02_06
+  placeId: winter_oven_place_02
+  label: Open the local record at Snow Lane
+  requires:
+  - winter_oven_item_06
+  intentKind: interact
+  stake: one turn
+- id: winter_oven_choice_02_07
+  placeId: winter_oven_place_02
+  label: Rest at the bench at Snow Lane
+  requires:
+  - winter_oven_item_07
+  intentKind: rest
+  stake: one supply
+- id: winter_oven_choice_02_08
+  placeId: winter_oven_place_02
+  label: Repair the marker at Snow Lane
+  requires:
+  - winter_oven_item_08
+  intentKind: interact
+  stake: a declined invitation
+- id: winter_oven_choice_02_09
+  placeId: winter_oven_place_02
+  label: Prepare a shared item at Snow Lane
+  requires:
+  - winter_oven_item_09
+  intentKind: craft
+  stake: a public note
+- id: winter_oven_choice_02_10
+  placeId: winter_oven_place_02
+  label: Leave a kind note at Snow Lane
+  requires:
+  - winter_oven_item_10
+  intentKind: talk
+  stake: a short detour
+- id: winter_oven_choice_03_01
+  placeId: winter_oven_place_03
+  label: Read the notice at Birch Pantry
+  requires: []
+  intentKind: talk
+  stake: one turn
+- id: winter_oven_choice_03_02
+  placeId: winter_oven_place_03
+  label: Ask for an introduction at Birch Pantry
+  requires: []
+  intentKind: talk
+  stake: one supply
+- id: winter_oven_choice_03_03
+  placeId: winter_oven_place_03
+  label: Check the tool tag at Birch Pantry
+  requires: []
+  intentKind: inspect
+  stake: a declined invitation
+- id: winter_oven_choice_03_04
+  placeId: winter_oven_place_03
+  label: Offer a hand at Birch Pantry
+  requires: []
+  intentKind: interact
+  stake: a public note
+- id: winter_oven_choice_03_05
+  placeId: winter_oven_place_03
+  label: Take the safer route at Birch Pantry
+  requires:
+  - winter_oven_item_05
+  intentKind: travel
+  stake: a short detour
+- id: winter_oven_choice_03_06
+  placeId: winter_oven_place_03
+  label: Open the local record at Birch Pantry
+  requires:
+  - winter_oven_item_06
+  intentKind: interact
+  stake: one turn
+- id: winter_oven_choice_03_07
+  placeId: winter_oven_place_03
+  label: Rest at the bench at Birch Pantry
+  requires:
+  - winter_oven_item_07
+  intentKind: rest
+  stake: one supply
+- id: winter_oven_choice_03_08
+  placeId: winter_oven_place_03
+  label: Repair the marker at Birch Pantry
+  requires:
+  - winter_oven_item_08
+  intentKind: interact
+  stake: a declined invitation
+- id: winter_oven_choice_03_09
+  placeId: winter_oven_place_03
+  label: Prepare a shared item at Birch Pantry
+  requires:
+  - winter_oven_item_09
+  intentKind: craft
+  stake: a public note
+- id: winter_oven_choice_03_10
+  placeId: winter_oven_place_03
+  label: Leave a kind note at Birch Pantry
+  requires:
+  - winter_oven_item_10
+  intentKind: talk
+  stake: a short detour
+- id: winter_oven_choice_04_01
+  placeId: winter_oven_place_04
+  label: Read the notice at Ember Bridge
+  requires: []
+  intentKind: talk
+  stake: one turn
+- id: winter_oven_choice_04_02
+  placeId: winter_oven_place_04
+  label: Ask for an introduction at Ember Bridge
+  requires: []
+  intentKind: talk
+  stake: one supply
+- id: winter_oven_choice_04_03
+  placeId: winter_oven_place_04
+  label: Check the tool tag at Ember Bridge
+  requires: []
+  intentKind: inspect
+  stake: a declined invitation
+- id: winter_oven_choice_04_04
+  placeId: winter_oven_place_04
+  label: Offer a hand at Ember Bridge
+  requires: []
+  intentKind: interact
+  stake: a public note
+- id: winter_oven_choice_04_05
+  placeId: winter_oven_place_04
+  label: Take the safer route at Ember Bridge
+  requires:
+  - winter_oven_item_05
+  intentKind: travel
+  stake: a short detour
+- id: winter_oven_choice_04_06
+  placeId: winter_oven_place_04
+  label: Open the local record at Ember Bridge
+  requires:
+  - winter_oven_item_06
+  intentKind: interact
+  stake: one turn
+- id: winter_oven_choice_04_07
+  placeId: winter_oven_place_04
+  label: Rest at the bench at Ember Bridge
+  requires:
+  - winter_oven_item_07
+  intentKind: rest
+  stake: one supply
+- id: winter_oven_choice_04_08
+  placeId: winter_oven_place_04
+  label: Repair the marker at Ember Bridge
+  requires:
+  - winter_oven_item_08
+  intentKind: interact
+  stake: a declined invitation
+- id: winter_oven_choice_04_09
+  placeId: winter_oven_place_04
+  label: Prepare a shared item at Ember Bridge
+  requires:
+  - winter_oven_item_09
+  intentKind: craft
+  stake: a public note
+- id: winter_oven_choice_04_10
+  placeId: winter_oven_place_04
+  label: Leave a kind note at Ember Bridge
+  requires:
+  - winter_oven_item_10
+  intentKind: talk
+  stake: a short detour
+- id: winter_oven_choice_05_01
+  placeId: winter_oven_place_05
+  label: Read the notice at Dough Cellar
+  requires: []
+  intentKind: talk
+  stake: one turn
+- id: winter_oven_choice_05_02
+  placeId: winter_oven_place_05
+  label: Ask for an introduction at Dough Cellar
+  requires: []
+  intentKind: talk
+  stake: one supply
+- id: winter_oven_choice_05_03
+  placeId: winter_oven_place_05
+  label: Check the tool tag at Dough Cellar
+  requires: []
+  intentKind: inspect
+  stake: a declined invitation
+- id: winter_oven_choice_05_04
+  placeId: winter_oven_place_05
+  label: Offer a hand at Dough Cellar
+  requires: []
+  intentKind: interact
+  stake: a public note
+- id: winter_oven_choice_05_05
+  placeId: winter_oven_place_05
+  label: Take the safer route at Dough Cellar
+  requires:
+  - winter_oven_item_05
+  intentKind: travel
+  stake: a short detour
+- id: winter_oven_choice_05_06
+  placeId: winter_oven_place_05
+  label: Open the local record at Dough Cellar
+  requires:
+  - winter_oven_item_06
+  intentKind: interact
+  stake: one turn
+- id: winter_oven_choice_05_07
+  placeId: winter_oven_place_05
+  label: Rest at the bench at Dough Cellar
+  requires:
+  - winter_oven_item_07
+  intentKind: rest
+  stake: one supply
+- id: winter_oven_choice_05_08
+  placeId: winter_oven_place_05
+  label: Repair the marker at Dough Cellar
+  requires:
+  - winter_oven_item_08
+  intentKind: interact
+  stake: a declined invitation
+- id: winter_oven_choice_05_09
+  placeId: winter_oven_place_05
+  label: Prepare a shared item at Dough Cellar
+  requires:
+  - winter_oven_item_09
+  intentKind: craft
+  stake: a public note
+- id: winter_oven_choice_05_10
+  placeId: winter_oven_place_05
+  label: Leave a kind note at Dough Cellar
+  requires:
+  - winter_oven_item_10
+  intentKind: talk
+  stake: a short detour
+- id: winter_oven_choice_06_01
+  placeId: winter_oven_place_06
+  label: Read the notice at Frost Porch
+  requires: []
+  intentKind: talk
+  stake: one turn
+- id: winter_oven_choice_06_02
+  placeId: winter_oven_place_06
+  label: Ask for an introduction at Frost Porch
+  requires: []
+  intentKind: talk
+  stake: one supply
+- id: winter_oven_choice_06_03
+  placeId: winter_oven_place_06
+  label: Check the tool tag at Frost Porch
+  requires: []
+  intentKind: inspect
+  stake: a declined invitation
+- id: winter_oven_choice_06_04
+  placeId: winter_oven_place_06
+  label: Offer a hand at Frost Porch
+  requires: []
+  intentKind: interact
+  stake: a public note
+- id: winter_oven_choice_06_05
+  placeId: winter_oven_place_06
+  label: Take the safer route at Frost Porch
+  requires:
+  - winter_oven_item_05
+  intentKind: travel
+  stake: a short detour
+- id: winter_oven_choice_06_06
+  placeId: winter_oven_place_06
+  label: Open the local record at Frost Porch
+  requires:
+  - winter_oven_item_06
+  intentKind: interact
+  stake: one turn
+- id: winter_oven_choice_06_07
+  placeId: winter_oven_place_06
+  label: Rest at the bench at Frost Porch
+  requires:
+  - winter_oven_item_07
+  intentKind: rest
+  stake: one supply
+- id: winter_oven_choice_06_08
+  placeId: winter_oven_place_06
+  label: Repair the marker at Frost Porch
+  requires:
+  - winter_oven_item_08
+  intentKind: interact
+  stake: a declined invitation
+- id: winter_oven_choice_06_09
+  placeId: winter_oven_place_06
+  label: Prepare a shared item at Frost Porch
+  requires:
+  - winter_oven_item_09
+  intentKind: craft
+  stake: a public note
+- id: winter_oven_choice_06_10
+  placeId: winter_oven_place_06
+  label: Leave a kind note at Frost Porch
+  requires:
+  - winter_oven_item_10
+  intentKind: talk
+  stake: a short detour
+- id: winter_oven_choice_07_01
+  placeId: winter_oven_place_07
+  label: Read the notice at Kettle Hall
+  requires: []
+  intentKind: talk
+  stake: one turn
+- id: winter_oven_choice_07_02
+  placeId: winter_oven_place_07
+  label: Ask for an introduction at Kettle Hall
+  requires: []
+  intentKind: talk
+  stake: one supply
+- id: winter_oven_choice_07_03
+  placeId: winter_oven_place_07
+  label: Check the tool tag at Kettle Hall
+  requires: []
+  intentKind: inspect
+  stake: a declined invitation
+- id: winter_oven_choice_07_04
+  placeId: winter_oven_place_07
+  label: Offer a hand at Kettle Hall
+  requires: []
+  intentKind: interact
+  stake: a public note
+- id: winter_oven_choice_07_05
+  placeId: winter_oven_place_07
+  label: Take the safer route at Kettle Hall
+  requires:
+  - winter_oven_item_05
+  intentKind: travel
+  stake: a short detour
+- id: winter_oven_choice_07_06
+  placeId: winter_oven_place_07
+  label: Open the local record at Kettle Hall
+  requires:
+  - winter_oven_item_06
+  intentKind: interact
+  stake: one turn
+- id: winter_oven_choice_07_07
+  placeId: winter_oven_place_07
+  label: Rest at the bench at Kettle Hall
+  requires:
+  - winter_oven_item_07
+  intentKind: rest
+  stake: one supply
+- id: winter_oven_choice_07_08
+  placeId: winter_oven_place_07
+  label: Repair the marker at Kettle Hall
+  requires:
+  - winter_oven_item_08
+  intentKind: interact
+  stake: a declined invitation
+- id: winter_oven_choice_07_09
+  placeId: winter_oven_place_07
+  label: Prepare a shared item at Kettle Hall
+  requires:
+  - winter_oven_item_09
+  intentKind: craft
+  stake: a public note
+- id: winter_oven_choice_07_10
+  placeId: winter_oven_place_07
+  label: Leave a kind note at Kettle Hall
+  requires:
+  - winter_oven_item_10
+  intentKind: talk
+  stake: a short detour
+- id: winter_oven_choice_08_01
+  placeId: winter_oven_place_08
+  label: Read the notice at Wool Window
+  requires: []
+  intentKind: talk
+  stake: one turn
+- id: winter_oven_choice_08_02
+  placeId: winter_oven_place_08
+  label: Ask for an introduction at Wool Window
+  requires: []
+  intentKind: talk
+  stake: one supply
+- id: winter_oven_choice_08_03
+  placeId: winter_oven_place_08
+  label: Check the tool tag at Wool Window
+  requires: []
+  intentKind: inspect
+  stake: a declined invitation
+- id: winter_oven_choice_08_04
+  placeId: winter_oven_place_08
+  label: Offer a hand at Wool Window
+  requires: []
+  intentKind: interact
+  stake: a public note
+- id: winter_oven_choice_08_05
+  placeId: winter_oven_place_08
+  label: Take the safer route at Wool Window
+  requires:
+  - winter_oven_item_05
+  intentKind: travel
+  stake: a short detour
+- id: winter_oven_choice_08_06
+  placeId: winter_oven_place_08
+  label: Open the local record at Wool Window
+  requires:
+  - winter_oven_item_06
+  intentKind: interact
+  stake: one turn
+- id: winter_oven_choice_08_07
+  placeId: winter_oven_place_08
+  label: Rest at the bench at Wool Window
+  requires:
+  - winter_oven_item_07
+  intentKind: rest
+  stake: one supply
+- id: winter_oven_choice_08_08
+  placeId: winter_oven_place_08
+  label: Repair the marker at Wool Window
+  requires:
+  - winter_oven_item_08
+  intentKind: interact
+  stake: a declined invitation
+- id: winter_oven_choice_08_09
+  placeId: winter_oven_place_08
+  label: Prepare a shared item at Wool Window
+  requires:
+  - winter_oven_item_09
+  intentKind: craft
+  stake: a public note
+- id: winter_oven_choice_08_10
+  placeId: winter_oven_place_08
+  label: Leave a kind note at Wool Window
+  requires:
+  - winter_oven_item_10
+  intentKind: talk
+  stake: a short detour
+interactables:
+- id: winter_oven_interact_01
+  verbId: rest
+  publicName: Oven Square bench
+  placeId: winter_oven_place_01
+  displayVerb: Rest here
+  stateKey: winter_oven_rest_01
+- id: winter_oven_interact_02
+  verbId: repair
+  publicName: Snow Lane cabinet
+  placeId: winter_oven_place_02
+  displayVerb: Repair here
+  stateKey: winter_oven_repair_02
+- id: winter_oven_interact_03
+  verbId: tend
+  publicName: Birch Pantry rack
+  placeId: winter_oven_place_03
+  displayVerb: Tend here
+  stateKey: winter_oven_tend_03
+- id: winter_oven_interact_04
+  verbId: craft
+  publicName: Ember Bridge kettle
+  placeId: winter_oven_place_04
+  displayVerb: Craft here
+  stateKey: winter_oven_craft_04
+- id: winter_oven_interact_05
+  verbId: cook
+  publicName: Dough Cellar ledger
+  placeId: winter_oven_place_05
+  displayVerb: Cook here
+  stateKey: winter_oven_cook_05
+- id: winter_oven_interact_06
+  verbId: bind_inn
+  publicName: Frost Porch rail
+  placeId: winter_oven_place_06
+  displayVerb: Bind Inn here
+  stateKey: winter_oven_bind_inn_06
+- id: winter_oven_interact_07
+  verbId: inspect
+  publicName: Kettle Hall bell
+  placeId: winter_oven_place_07
+  displayVerb: Inspect here
+  stateKey: winter_oven_inspect_07
+- id: winter_oven_interact_08
+  verbId: open
+  publicName: Wool Window board
+  placeId: winter_oven_place_08
+  displayVerb: Open here
+  stateKey: winter_oven_open_08
+- id: winter_oven_interact_09
+  verbId: carry
+  publicName: Oven Square table
+  placeId: winter_oven_place_01
+  displayVerb: Carry here
+  stateKey: winter_oven_carry_09
+- id: winter_oven_interact_10
+  verbId: clean
+  publicName: Snow Lane lamp
+  placeId: winter_oven_place_02
+  displayVerb: Clean here
+  stateKey: winter_oven_clean_10
+- id: winter_oven_interact_11
+  verbId: signal
+  publicName: Birch Pantry gate
+  placeId: winter_oven_place_03
+  displayVerb: Signal here
+  stateKey: winter_oven_signal_11
+- id: winter_oven_interact_12
+  verbId: record
+  publicName: Ember Bridge shelf
+  placeId: winter_oven_place_04
+  displayVerb: Record here
+  stateKey: winter_oven_record_12
+interiors:
+- id: winter_oven_interior_01
+  publicName: Winter Oven Home Interior
+  entrancePlaceId: winter_oven_place_08
+  rooms:
+  - id: winter_oven_home_room_01
+    publicName: Winter Oven Entry
+    mapScale: interior
+    exits:
+    - winter_oven_home_room_02
+    props:
+    - winter_oven_home_prop_01
+    - winter_oven_home_prop_08
+  - id: winter_oven_home_room_02
+    publicName: Winter Oven Main Room
+    mapScale: interior
+    exits:
+    - winter_oven_home_room_01
+    - winter_oven_home_room_03
+    props:
+    - winter_oven_home_prop_02
+    - winter_oven_home_prop_09
+  - id: winter_oven_home_room_03
+    publicName: Winter Oven Work Nook
+    mapScale: interior
+    exits:
+    - winter_oven_home_room_02
+    - winter_oven_home_room_04
+    props:
+    - winter_oven_home_prop_03
+    - winter_oven_home_prop_10
+  - id: winter_oven_home_room_04
+    publicName: Winter Oven Window Room
+    mapScale: interior
+    exits:
+    - winter_oven_home_room_03
+    - winter_oven_home_room_05
+    props:
+    - winter_oven_home_prop_04
+    - winter_oven_home_prop_11
+  - id: winter_oven_home_room_05
+    publicName: Winter Oven Quiet Room
+    mapScale: interior
+    exits:
+    - winter_oven_home_room_04
+    - winter_oven_home_room_06
+    props:
+    - winter_oven_home_prop_05
+    - winter_oven_home_prop_12
+  - id: winter_oven_home_room_06
+    publicName: Winter Oven Storage
+    mapScale: interior
+    exits:
+    - winter_oven_home_room_05
+    - winter_oven_home_room_07
+    props:
+    - winter_oven_home_prop_06
+    - winter_oven_home_prop_13
+  - id: winter_oven_home_room_07
+    publicName: Winter Oven Back Step
+    mapScale: interior
+    exits:
+    - winter_oven_home_room_06
+    props:
+    - winter_oven_home_prop_07
+    - winter_oven_home_prop_14
+talents:
+- id: winter_oven_talent_01
+  publicName: Winter Oven Local Ear
+  cost: 1
+  requires: []
+  effectFlags:
+  - winter_oven_effect_01
+  payToUnlock: false
+- id: winter_oven_talent_02
+  publicName: Winter Oven Careful Hand
+  cost: 2
+  requires: []
+  effectFlags:
+  - winter_oven_effect_02
+  payToUnlock: false
+- id: winter_oven_talent_03
+  publicName: Winter Oven Route Sense
+  cost: 3
+  requires: []
+  effectFlags:
+  - winter_oven_effect_03
+  payToUnlock: false
+- id: winter_oven_talent_04
+  publicName: Winter Oven Shared Measure
+  cost: 4
+  requires: []
+  effectFlags:
+  - winter_oven_effect_04
+  payToUnlock: false
+- id: winter_oven_talent_05
+  publicName: Winter Oven Quiet Craft
+  cost: 1
+  requires:
+  - winter_oven_talent_04
+  effectFlags:
+  - winter_oven_effect_05
+  payToUnlock: false
+- id: winter_oven_talent_06
+  publicName: Winter Oven Open Invitation
+  cost: 2
+  requires: []
+  effectFlags:
+  - winter_oven_effect_06
+  payToUnlock: false
+- id: winter_oven_talent_07
+  publicName: Winter Oven Safe Return
+  cost: 3
+  requires: []
+  effectFlags:
+  - winter_oven_effect_07
+  payToUnlock: false
+- id: winter_oven_talent_08
+  publicName: Winter Oven Field Note
+  cost: 4
+  requires: []
+  effectFlags:
+  - winter_oven_effect_08
+  payToUnlock: false
+- id: winter_oven_talent_09
+  publicName: Winter Oven Steady Pace
+  cost: 1
+  requires:
+  - winter_oven_talent_08
+  effectFlags:
+  - winter_oven_effect_09
+  payToUnlock: false
+- id: winter_oven_talent_10
+  publicName: Winter Oven Clear Signal
+  cost: 2
+  requires: []
+  effectFlags:
+  - winter_oven_effect_10
+  payToUnlock: false
+- id: winter_oven_talent_11
+  publicName: Winter Oven Warm Welcome
+  cost: 3
+  requires: []
+  effectFlags:
+  - winter_oven_effect_11
+  payToUnlock: false
+- id: winter_oven_talent_12
+  publicName: Winter Oven Small Courage
+  cost: 4
+  requires: []
+  effectFlags:
+  - winter_oven_effect_12
+  payToUnlock: false
+- id: winter_oven_talent_13
+  publicName: Winter Oven Repair Habit
+  cost: 1
+  requires:
+  - winter_oven_talent_12
+  effectFlags:
+  - winter_oven_effect_13
+  payToUnlock: false
+- id: winter_oven_talent_14
+  publicName: Winter Oven Trust Mark
+  cost: 2
+  requires: []
+  effectFlags:
+  - winter_oven_effect_14
+  payToUnlock: false
+- id: winter_oven_talent_15
+  publicName: Winter Oven Second Look
+  cost: 3
+  requires: []
+  effectFlags:
+  - winter_oven_effect_15
+  payToUnlock: false
+- id: winter_oven_talent_16
+  publicName: Winter Oven Closing Grace
+  cost: 4
+  requires: []
+  effectFlags:
+  - winter_oven_effect_16
+  payToUnlock: false
+evalProbes:
+- id: winter_oven_eval_01
+  given:
+    hp: 18
+    placeId: winter_oven_place_01
+    turn: 1
+  action:
+    verbId: rest
+    targetId: winter_oven_interact_01
+  expectedLedger:
+    turn: 2
+    lastAction: rest
+    placeId: winter_oven_place_01
+  forbiddenProse:
+  - do not claim an uncommitted numeric reward
+  - do not alter damage, gold, ownership, or a score outside expectedLedger
+- id: winter_oven_eval_02
+  given:
+    hp: 18
+    placeId: winter_oven_place_02
+    turn: 2
+  action:
+    verbId: repair
+    targetId: winter_oven_interact_02
+  expectedLedger:
+    turn: 3
+    lastAction: repair
+    placeId: winter_oven_place_02
+  forbiddenProse:
+  - do not claim an uncommitted numeric reward
+  - do not alter damage, gold, ownership, or a score outside expectedLedger
+- id: winter_oven_eval_03
+  given:
+    hp: 18
+    placeId: winter_oven_place_03
+    turn: 3
+  action:
+    verbId: tend
+    targetId: winter_oven_interact_03
+  expectedLedger:
+    turn: 4
+    lastAction: tend
+    placeId: winter_oven_place_03
+  forbiddenProse:
+  - do not claim an uncommitted numeric reward
+  - do not alter damage, gold, ownership, or a score outside expectedLedger
+- id: winter_oven_eval_04
+  given:
+    hp: 18
+    placeId: winter_oven_place_04
+    turn: 4
+  action:
+    verbId: craft
+    targetId: winter_oven_interact_04
+  expectedLedger:
+    turn: 5
+    lastAction: craft
+    placeId: winter_oven_place_04
+  forbiddenProse:
+  - do not claim an uncommitted numeric reward
+  - do not alter damage, gold, ownership, or a score outside expectedLedger
+- id: winter_oven_eval_05
+  given:
+    hp: 18
+    placeId: winter_oven_place_05
+    turn: 5
+  action:
+    verbId: cook
+    targetId: winter_oven_interact_05
+  expectedLedger:
+    turn: 6
+    lastAction: cook
+    placeId: winter_oven_place_05
+  forbiddenProse:
+  - do not claim an uncommitted numeric reward
+  - do not alter damage, gold, ownership, or a score outside expectedLedger
+- id: winter_oven_eval_06
+  given:
+    hp: 18
+    placeId: winter_oven_place_06
+    turn: 6
+  action:
+    verbId: bind_inn
+    targetId: winter_oven_interact_06
+  expectedLedger:
+    turn: 7
+    lastAction: bind_inn
+    placeId: winter_oven_place_06
+  forbiddenProse:
+  - do not claim an uncommitted numeric reward
+  - do not alter damage, gold, ownership, or a score outside expectedLedger
+- id: winter_oven_eval_07
+  given:
+    hp: 18
+    placeId: winter_oven_place_07
+    turn: 7
+  action:
+    verbId: inspect
+    targetId: winter_oven_interact_07
+  expectedLedger:
+    turn: 8
+    lastAction: inspect
+    placeId: winter_oven_place_07
+  forbiddenProse:
+  - do not claim an uncommitted numeric reward
+  - do not alter damage, gold, ownership, or a score outside expectedLedger
+- id: winter_oven_eval_08
+  given:
+    hp: 18
+    placeId: winter_oven_place_08
+    turn: 8
+  action:
+    verbId: open
+    targetId: winter_oven_interact_08
+  expectedLedger:
+    turn: 9
+    lastAction: open
+    placeId: winter_oven_place_08
+  forbiddenProse:
+  - do not claim an uncommitted numeric reward
+  - do not alter damage, gold, ownership, or a score outside expectedLedger
+- id: winter_oven_eval_09
+  given:
+    hp: 18
+    placeId: winter_oven_place_01
+    turn: 9
+  action:
+    verbId: carry
+    targetId: winter_oven_interact_09
+  expectedLedger:
+    turn: 10
+    lastAction: carry
+    placeId: winter_oven_place_01
+  forbiddenProse:
+  - do not claim an uncommitted numeric reward
+  - do not alter damage, gold, ownership, or a score outside expectedLedger
+- id: winter_oven_eval_10
+  given:
+    hp: 18
+    placeId: winter_oven_place_02
+    turn: 10
+  action:
+    verbId: clean
+    targetId: winter_oven_interact_10
+  expectedLedger:
+    turn: 11
+    lastAction: clean
+    placeId: winter_oven_place_02
+  forbiddenProse:
+  - do not claim an uncommitted numeric reward
+  - do not alter damage, gold, ownership, or a score outside expectedLedger
+- id: winter_oven_eval_11
+  given:
+    hp: 18
+    placeId: winter_oven_place_03
+    turn: 11
+  action:
+    verbId: signal
+    targetId: winter_oven_interact_11
+  expectedLedger:
+    turn: 12
+    lastAction: signal
+    placeId: winter_oven_place_03
+  forbiddenProse:
+  - do not claim an uncommitted numeric reward
+  - do not alter damage, gold, ownership, or a score outside expectedLedger
+- id: winter_oven_eval_12
+  given:
+    hp: 18
+    placeId: winter_oven_place_04
+    turn: 12
+  action:
+    verbId: record
+    targetId: winter_oven_interact_12
+  expectedLedger:
+    turn: 13
+    lastAction: record
+    placeId: winter_oven_place_04
+  forbiddenProse:
+  - do not claim an uncommitted numeric reward
+  - do not alter damage, gold, ownership, or a score outside expectedLedger
+- id: winter_oven_eval_13
+  given:
+    hp: 18
+    placeId: winter_oven_place_05
+    turn: 13
+  action:
+    verbId: rest
+    targetId: winter_oven_interact_01
+  expectedLedger:
+    turn: 14
+    lastAction: rest
+    placeId: winter_oven_place_05
+  forbiddenProse:
+  - do not claim an uncommitted numeric reward
+  - do not alter damage, gold, ownership, or a score outside expectedLedger
+- id: winter_oven_eval_14
+  given:
+    hp: 18
+    placeId: winter_oven_place_06
+    turn: 14
+  action:
+    verbId: repair
+    targetId: winter_oven_interact_02
+  expectedLedger:
+    turn: 15
+    lastAction: repair
+    placeId: winter_oven_place_06
+  forbiddenProse:
+  - do not claim an uncommitted numeric reward
+  - do not alter damage, gold, ownership, or a score outside expectedLedger
+- id: winter_oven_eval_15
+  given:
+    hp: 18
+    placeId: winter_oven_place_07
+    turn: 15
+  action:
+    verbId: tend
+    targetId: winter_oven_interact_03
+  expectedLedger:
+    turn: 16
+    lastAction: tend
+    placeId: winter_oven_place_07
+  forbiddenProse:
+  - do not claim an uncommitted numeric reward
+  - do not alter damage, gold, ownership, or a score outside expectedLedger
+wallets:
+  goldName: Oven Pennies
+  cosmeticTokenName: Frost Buttons
+  noConversion: true
+  prohibited:
+  - outcomes
+  - lockout skips
+  - catch rate
+  - raid clears
+  - random power packs
+  - gacha
+  - loot boxes
+dailyCaps:
+  contractsPerDay: 3
+  goldFromRepeatables: 90
+  weeklyBossLockout: per-character per-boss
+divergenceRecords:
+- id: winter_oven_walkaway_01
+  choice: walk away from a local obligation
+  recordKey: winter_oven_divergence_01
+  effect: Alternate dialogue and a non-punitive follow-up route.
+- id: winter_oven_walkaway_02
+  choice: walk away from a local obligation
+  recordKey: winter_oven_divergence_02
+  effect: Alternate dialogue and a non-punitive follow-up route.
+- id: winter_oven_walkaway_03
+  choice: walk away from a local obligation
+  recordKey: winter_oven_divergence_03
+  effect: Alternate dialogue and a non-punitive follow-up route.

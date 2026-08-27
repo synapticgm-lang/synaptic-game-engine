@@ -1,0 +1,2296 @@
+packFormatVersion: 1
+worldId: ribbon_guard
+displayName: Ribbon Guard
+maturity: all-ages
+rulesModuleId: show_pose
+themeKit: Ribbon Guard Theme Kit
+places:
+- id: ribbon_guard_place_01
+  publicName: Bright Base
+  zoneId: ribbon_guard_zone_01
+  role: shared hub
+  mapScale: street
+  dangerTier: safe
+  outdoor: true
+  exits:
+  - ribbon_guard_place_02
+  - ribbon_guard_place_04
+  npcIds:
+  - ribbon_guard_npc_01
+  - ribbon_guard_npc_05
+  - ribbon_guard_npc_09
+  dungeonId: null
+  interactableIds:
+  - ribbon_guard_interact_01
+  - ribbon_guard_interact_09
+- id: ribbon_guard_place_02
+  publicName: Mirror Street
+  zoneId: ribbon_guard_zone_01
+  role: start hub
+  mapScale: street
+  dangerTier: safe
+  outdoor: true
+  exits:
+  - ribbon_guard_place_01
+  - ribbon_guard_place_03
+  npcIds:
+  - ribbon_guard_npc_02
+  - ribbon_guard_npc_06
+  - ribbon_guard_npc_10
+  dungeonId: null
+  interactableIds:
+  - ribbon_guard_interact_02
+  - ribbon_guard_interact_10
+- id: ribbon_guard_place_03
+  publicName: Ribbon Pier
+  zoneId: ribbon_guard_zone_01
+  role: street route
+  mapScale: street
+  dangerTier: safe
+  outdoor: true
+  exits:
+  - ribbon_guard_place_02
+  - ribbon_guard_place_04
+  npcIds:
+  - ribbon_guard_npc_03
+  - ribbon_guard_npc_07
+  dungeonId: null
+  interactableIds:
+  - ribbon_guard_interact_03
+  - ribbon_guard_interact_11
+- id: ribbon_guard_place_04
+  publicName: Stage Vault
+  zoneId: ribbon_guard_zone_02
+  role: mid join
+  mapScale: street
+  dangerTier: low
+  outdoor: true
+  exits:
+  - ribbon_guard_place_03
+  - ribbon_guard_place_05
+  - ribbon_guard_place_01
+  npcIds:
+  - ribbon_guard_npc_04
+  - ribbon_guard_npc_08
+  dungeonId: null
+  interactableIds:
+  - ribbon_guard_interact_04
+  - ribbon_guard_interact_12
+- id: ribbon_guard_place_05
+  publicName: Prism Park
+  zoneId: ribbon_guard_zone_02
+  role: work district
+  mapScale: interior
+  dangerTier: low
+  outdoor: false
+  exits:
+  - ribbon_guard_place_04
+  - ribbon_guard_place_06
+  npcIds: []
+  dungeonId: null
+  interactableIds:
+  - ribbon_guard_interact_05
+- id: ribbon_guard_place_06
+  publicName: Beacon Roof
+  zoneId: ribbon_guard_zone_02
+  role: instance door
+  mapScale: dungeon
+  dangerTier: medium
+  outdoor: false
+  exits:
+  - ribbon_guard_place_05
+  - ribbon_guard_place_07
+  npcIds: []
+  dungeonId: ribbon_guard_dungeon_01
+  interactableIds:
+  - ribbon_guard_interact_06
+- id: ribbon_guard_place_07
+  publicName: Curtain Alley
+  zoneId: ribbon_guard_zone_03
+  role: wild edge
+  mapScale: street
+  dangerTier: medium
+  outdoor: true
+  exits:
+  - ribbon_guard_place_06
+  - ribbon_guard_place_08
+  npcIds: []
+  dungeonId: null
+  interactableIds:
+  - ribbon_guard_interact_07
+- id: ribbon_guard_place_08
+  publicName: Glow Tunnel
+  zoneId: ribbon_guard_zone_03
+  role: housing approach
+  mapScale: interior
+  dangerTier: low
+  outdoor: false
+  exits:
+  - ribbon_guard_place_07
+  npcIds: []
+  dungeonId: null
+  interactableIds:
+  - ribbon_guard_interact_08
+npcs:
+- id: ribbon_guard_npc_01
+  name: Cato Morrow
+  placeId: ribbon_guard_place_01
+  role: quest
+  greet: Cato Morrow says, ‘Ribbon Guard keeps its promises in small places. Tell me which one you noticed.’
+- id: ribbon_guard_npc_02
+  name: Dessa Rowan
+  placeId: ribbon_guard_place_02
+  role: profession
+  greet: Dessa Rowan says, ‘Ribbon Guard keeps its promises in small places. Tell me which one you noticed.’
+- id: ribbon_guard_npc_03
+  name: Eris Nook
+  placeId: ribbon_guard_place_03
+  role: hub
+  greet: Eris Nook says, ‘Ribbon Guard keeps its promises in small places. Tell me which one you noticed.’
+- id: ribbon_guard_npc_04
+  name: Fenn Cress
+  placeId: ribbon_guard_place_04
+  role: merchant
+  greet: Fenn Cress says, ‘Ribbon Guard keeps its promises in small places. Tell me which one you noticed.’
+- id: ribbon_guard_npc_05
+  name: Gala Silt
+  placeId: ribbon_guard_place_01
+  role: local
+  greet: Gala Silt says, ‘Ribbon Guard keeps its promises in small places. Tell me which one you noticed.’
+- id: ribbon_guard_npc_06
+  name: Holl Pryce
+  placeId: ribbon_guard_place_02
+  role: host
+  greet: Holl Pryce says, ‘Ribbon Guard keeps its promises in small places. Tell me which one you noticed.’
+- id: ribbon_guard_npc_07
+  name: Ivo Vane
+  placeId: ribbon_guard_place_03
+  role: quest
+  greet: Ivo Vane says, ‘Ribbon Guard keeps its promises in small places. Tell me which one you noticed.’
+- id: ribbon_guard_npc_08
+  name: Jori Quill
+  placeId: ribbon_guard_place_04
+  role: profession
+  greet: Jori Quill says, ‘Ribbon Guard keeps its promises in small places. Tell me which one you noticed.’
+- id: ribbon_guard_npc_09
+  name: Alden Vale
+  placeId: ribbon_guard_place_01
+  role: local
+  greet: Alden Vale says, ‘Ribbon Guard keeps its promises in small places. Tell me which one you noticed.’
+- id: ribbon_guard_npc_10
+  name: Bryn Wren
+  placeId: ribbon_guard_place_02
+  role: merchant
+  greet: Bryn Wren says, ‘Ribbon Guard keeps its promises in small places. Tell me which one you noticed.’
+kits:
+- id: ribbon_guard_kit_01
+  publicName: Pose Captain
+  look: pose captain workwear
+  values: practice pose captain
+  taboo: Never use pose captain authority to remove another person’s choice.
+  speechTell: Use the local rhythm of Ribbon Guard and make every offer concrete.
+  starterClothes: pose_captain mantle
+  starterTool: pose_captain tool
+  starterMapItem: ribbon_guard_map_01
+  startingPlaceId: ribbon_guard_place_01
+  firstHourQuestId: ribbon_guard_q_01
+  abilityFlag: ribbon_guard_ability_01
+- id: ribbon_guard_kit_02
+  publicName: Ribbon Rigger
+  look: ribbon rigger workwear
+  values: practice ribbon rigger
+  taboo: Never use ribbon rigger authority to remove another person’s choice.
+  speechTell: Use the local rhythm of Ribbon Guard and make every offer concrete.
+  starterClothes: ribbon_rigger vest
+  starterTool: ribbon_rigger tool
+  starterMapItem: ribbon_guard_map_02
+  startingPlaceId: ribbon_guard_place_02
+  firstHourQuestId: ribbon_guard_q_02
+  abilityFlag: ribbon_guard_ability_02
+- id: ribbon_guard_kit_03
+  publicName: Mirror Medic
+  look: mirror medic workwear
+  values: practice mirror medic
+  taboo: Never use mirror medic authority to remove another person’s choice.
+  speechTell: Use the local rhythm of Ribbon Guard and make every offer concrete.
+  starterClothes: mirror_medic jacket
+  starterTool: mirror_medic tool
+  starterMapItem: ribbon_guard_map_03
+  startingPlaceId: ribbon_guard_place_01
+  firstHourQuestId: ribbon_guard_q_03
+  abilityFlag: ribbon_guard_ability_03
+- id: ribbon_guard_kit_04
+  publicName: Cue Archivist
+  look: cue archivist workwear
+  values: practice cue archivist
+  taboo: Never use cue archivist authority to remove another person’s choice.
+  speechTell: Use the local rhythm of Ribbon Guard and make every offer concrete.
+  starterClothes: cue_archivist sash
+  starterTool: cue_archivist tool
+  starterMapItem: ribbon_guard_map_04
+  startingPlaceId: ribbon_guard_place_02
+  firstHourQuestId: ribbon_guard_q_04
+  abilityFlag: ribbon_guard_ability_04
+quests:
+- id: ribbon_guard_q_01
+  title: 'Ribbon Guard: Name a Working Promise'
+  family: identity
+  hidden: false
+  unlocksQuestId: ribbon_guard_q_02
+  objectives:
+  - id: ribbon_guard_q_01_obj_01
+    kind: visit_place
+    targetId: ribbon_guard_place_01
+    count: 1
+  - id: ribbon_guard_q_01_obj_02
+    kind: deliver_item
+    targetId: ribbon_guard_deliver_item_01
+    count: 2
+  rewardGold: 12
+  rewardXp: 20
+- id: ribbon_guard_q_02
+  title: 'Ribbon Guard: Set the First Tool Aside'
+  family: identity
+  hidden: false
+  unlocksQuestId: ribbon_guard_q_03
+  objectives:
+  - id: ribbon_guard_q_02_obj_01
+    kind: ledger_kill
+    targetId: ribbon_guard_ledger_kill_02
+    count: 1
+  - id: ribbon_guard_q_02_obj_02
+    kind: talk_to_npc
+    targetId: ribbon_guard_npc_03
+    count: 2
+  rewardGold: 15
+  rewardXp: 25
+- id: ribbon_guard_q_03
+  title: 'Ribbon Guard: Carry the Right Record'
+  family: identity
+  hidden: false
+  unlocksQuestId: ribbon_guard_q_04
+  objectives:
+  - id: ribbon_guard_q_03_obj_01
+    kind: ledger_bond
+    targetId: ribbon_guard_ledger_bond_03
+    count: 1
+  - id: ribbon_guard_q_03_obj_02
+    kind: collect_item
+    targetId: ribbon_guard_collect_item_03
+    count: 2
+  rewardGold: 18
+  rewardXp: 30
+- id: ribbon_guard_q_04
+  title: 'Ribbon Guard: Find the Missing Measure'
+  family: identity
+  hidden: false
+  unlocksQuestId: ribbon_guard_q_05
+  objectives:
+  - id: ribbon_guard_q_04_obj_01
+    kind: deliver_item
+    targetId: ribbon_guard_deliver_item_04
+    count: 1
+  - id: ribbon_guard_q_04_obj_02
+    kind: interact
+    targetId: ribbon_guard_place_05
+    count: 2
+    verbId: cook
+  rewardGold: 21
+  rewardXp: 35
+- id: ribbon_guard_q_05
+  title: 'Ribbon Guard: Teach a Safer Shortcut'
+  family: identity
+  hidden: false
+  unlocksQuestId: ribbon_guard_q_06
+  objectives:
+  - id: ribbon_guard_q_05_obj_01
+    kind: talk_to_npc
+    targetId: ribbon_guard_npc_05
+    count: 1
+  - id: ribbon_guard_q_05_obj_02
+    kind: score_beat
+    targetId: ribbon_guard_score_beat_05
+    count: 2
+  rewardGold: 24
+  rewardXp: 40
+- id: ribbon_guard_q_06
+  title: 'Ribbon Guard: Read the Local Weather'
+  family: profession
+  hidden: false
+  unlocksQuestId: ribbon_guard_q_07
+  objectives:
+  - id: ribbon_guard_q_06_obj_01
+    kind: collect_item
+    targetId: ribbon_guard_collect_item_06
+    count: 1
+  - id: ribbon_guard_q_06_obj_02
+    kind: build_tick
+    targetId: ribbon_guard_build_tick_06
+    count: 2
+  rewardGold: 27
+  rewardXp: 45
+- id: ribbon_guard_q_07
+  title: 'Ribbon Guard: Repair a Shared Threshold'
+  family: profession
+  hidden: false
+  unlocksQuestId: ribbon_guard_q_08
+  objectives:
+  - id: ribbon_guard_q_07_obj_01
+    kind: interact
+    targetId: ribbon_guard_place_07
+    count: 1
+    verbId: inspect
+  - id: ribbon_guard_q_07_obj_02
+    kind: hospitality_tick
+    targetId: ribbon_guard_hospitality_tick_07
+    count: 2
+  rewardGold: 30
+  rewardXp: 50
+- id: ribbon_guard_q_08
+  title: 'Ribbon Guard: Return a Borrowed Sign'
+  family: profession
+  hidden: false
+  unlocksQuestId: ribbon_guard_q_09
+  objectives:
+  - id: ribbon_guard_q_08_obj_01
+    kind: score_beat
+    targetId: ribbon_guard_score_beat_08
+    count: 1
+  - id: ribbon_guard_q_08_obj_02
+    kind: lap_finish
+    targetId: ribbon_guard_lap_finish_08
+    count: 2
+  rewardGold: 33
+  rewardXp: 55
+- id: ribbon_guard_q_09
+  title: 'Ribbon Guard: Host the Small Welcome'
+  family: profession
+  hidden: false
+  unlocksQuestId: ribbon_guard_q_10
+  objectives:
+  - id: ribbon_guard_q_09_obj_01
+    kind: build_tick
+    targetId: ribbon_guard_build_tick_09
+    count: 1
+  - id: ribbon_guard_q_09_obj_02
+    kind: visit_place
+    targetId: ribbon_guard_place_02
+    count: 2
+  rewardGold: 36
+  rewardXp: 60
+- id: ribbon_guard_q_10
+  title: 'Ribbon Guard: Choose a Fair Order'
+  family: profession
+  hidden: false
+  unlocksQuestId: ribbon_guard_q_11
+  objectives:
+  - id: ribbon_guard_q_10_obj_01
+    kind: hospitality_tick
+    targetId: ribbon_guard_hospitality_tick_10
+    count: 1
+  - id: ribbon_guard_q_10_obj_02
+    kind: ledger_kill
+    targetId: ribbon_guard_ledger_kill_10
+    count: 2
+  rewardGold: 39
+  rewardXp: 65
+- id: ribbon_guard_q_11
+  title: 'Ribbon Guard: Map the Quiet Detour'
+  family: profession
+  hidden: false
+  unlocksQuestId: ribbon_guard_q_12
+  objectives:
+  - id: ribbon_guard_q_11_obj_01
+    kind: lap_finish
+    targetId: ribbon_guard_lap_finish_11
+    count: 1
+  - id: ribbon_guard_q_11_obj_02
+    kind: ledger_bond
+    targetId: ribbon_guard_ledger_bond_11
+    count: 2
+  rewardGold: 42
+  rewardXp: 70
+- id: ribbon_guard_q_12
+  title: 'Ribbon Guard: Bring a Useful Witness'
+  family: profession
+  hidden: false
+  unlocksQuestId: ribbon_guard_q_13
+  objectives:
+  - id: ribbon_guard_q_12_obj_01
+    kind: visit_place
+    targetId: ribbon_guard_place_04
+    count: 1
+  - id: ribbon_guard_q_12_obj_02
+    kind: deliver_item
+    targetId: ribbon_guard_deliver_item_12
+    count: 2
+  rewardGold: 45
+  rewardXp: 75
+- id: ribbon_guard_q_13
+  title: 'Ribbon Guard: Sort the Unclaimed Materials'
+  family: zone_story
+  hidden: false
+  unlocksQuestId: ribbon_guard_q_14
+  objectives:
+  - id: ribbon_guard_q_13_obj_01
+    kind: ledger_kill
+    targetId: ribbon_guard_ledger_kill_13
+    count: 1
+  - id: ribbon_guard_q_13_obj_02
+    kind: talk_to_npc
+    targetId: ribbon_guard_npc_04
+    count: 2
+  rewardGold: 48
+  rewardXp: 80
+- id: ribbon_guard_q_14
+  title: 'Ribbon Guard: Make Room for a Visitor'
+  family: zone_story
+  hidden: false
+  unlocksQuestId: ribbon_guard_q_15
+  objectives:
+  - id: ribbon_guard_q_14_obj_01
+    kind: ledger_bond
+    targetId: ribbon_guard_ledger_bond_14
+    count: 1
+  - id: ribbon_guard_q_14_obj_02
+    kind: collect_item
+    targetId: ribbon_guard_collect_item_14
+    count: 2
+  rewardGold: 51
+  rewardXp: 85
+- id: ribbon_guard_q_15
+  title: 'Ribbon Guard: Close the Day’s Ledger'
+  family: zone_story
+  hidden: false
+  unlocksQuestId: ribbon_guard_q_16
+  objectives:
+  - id: ribbon_guard_q_15_obj_01
+    kind: deliver_item
+    targetId: ribbon_guard_deliver_item_15
+    count: 1
+  - id: ribbon_guard_q_15_obj_02
+    kind: interact
+    targetId: ribbon_guard_place_08
+    count: 2
+    verbId: craft
+  rewardGold: 54
+  rewardXp: 90
+- id: ribbon_guard_q_16
+  title: 'Ribbon Guard: Follow the Midway Signal'
+  family: zone_story
+  hidden: false
+  unlocksQuestId: ribbon_guard_q_17
+  objectives:
+  - id: ribbon_guard_q_16_obj_01
+    kind: talk_to_npc
+    targetId: ribbon_guard_npc_06
+    count: 1
+  - id: ribbon_guard_q_16_obj_02
+    kind: score_beat
+    targetId: ribbon_guard_score_beat_16
+    count: 2
+  rewardGold: 57
+  rewardXp: 95
+- id: ribbon_guard_q_17
+  title: 'Ribbon Guard: Uncover the Door Note'
+  family: zone_story
+  hidden: true
+  unlocksQuestId: ribbon_guard_q_18
+  objectives:
+  - id: ribbon_guard_q_17_obj_01
+    kind: collect_item
+    targetId: ribbon_guard_collect_item_17
+    count: 1
+  - id: ribbon_guard_q_17_obj_02
+    kind: build_tick
+    targetId: ribbon_guard_build_tick_17
+    count: 2
+  rewardGold: 60
+  rewardXp: 100
+- id: ribbon_guard_q_18
+  title: 'Ribbon Guard: Prepare the Team Table'
+  family: zone_story
+  hidden: false
+  unlocksQuestId: ribbon_guard_q_19
+  objectives:
+  - id: ribbon_guard_q_18_obj_01
+    kind: interact
+    targetId: ribbon_guard_place_02
+    count: 1
+    verbId: bind_inn
+  - id: ribbon_guard_q_18_obj_02
+    kind: hospitality_tick
+    targetId: ribbon_guard_hospitality_tick_18
+    count: 2
+  rewardGold: 63
+  rewardXp: 105
+- id: ribbon_guard_q_19
+  title: 'Ribbon Guard: Test the Local Method'
+  family: zone_story
+  hidden: false
+  unlocksQuestId: ribbon_guard_q_20
+  objectives:
+  - id: ribbon_guard_q_19_obj_01
+    kind: score_beat
+    targetId: ribbon_guard_score_beat_19
+    count: 1
+  - id: ribbon_guard_q_19_obj_02
+    kind: lap_finish
+    targetId: ribbon_guard_lap_finish_19
+    count: 2
+  rewardGold: 66
+  rewardXp: 110
+- id: ribbon_guard_q_20
+  title: 'Ribbon Guard: Hold a Careful Boundary'
+  family: zone_story
+  hidden: false
+  unlocksQuestId: ribbon_guard_q_21
+  objectives:
+  - id: ribbon_guard_q_20_obj_01
+    kind: build_tick
+    targetId: ribbon_guard_build_tick_20
+    count: 1
+  - id: ribbon_guard_q_20_obj_02
+    kind: visit_place
+    targetId: ribbon_guard_place_05
+    count: 2
+  rewardGold: 69
+  rewardXp: 115
+- id: ribbon_guard_q_21
+  title: 'Ribbon Guard: Answer the Neighbour’s Call'
+  family: extra
+  hidden: false
+  unlocksQuestId: ribbon_guard_q_22
+  objectives:
+  - id: ribbon_guard_q_21_obj_01
+    kind: hospitality_tick
+    targetId: ribbon_guard_hospitality_tick_21
+    count: 1
+  - id: ribbon_guard_q_21_obj_02
+    kind: ledger_kill
+    targetId: ribbon_guard_ledger_kill_21
+    count: 2
+  rewardGold: 72
+  rewardXp: 120
+- id: ribbon_guard_q_22
+  title: 'Ribbon Guard: Finish the Side Route'
+  family: extra
+  hidden: false
+  unlocksQuestId: ribbon_guard_q_23
+  objectives:
+  - id: ribbon_guard_q_22_obj_01
+    kind: lap_finish
+    targetId: ribbon_guard_lap_finish_22
+    count: 1
+  - id: ribbon_guard_q_22_obj_02
+    kind: ledger_bond
+    targetId: ribbon_guard_ledger_bond_22
+    count: 2
+  rewardGold: 75
+  rewardXp: 125
+- id: ribbon_guard_q_23
+  title: 'Ribbon Guard: Earn a Trusted Introduction'
+  family: extra
+  hidden: true
+  unlocksQuestId: ribbon_guard_q_24
+  objectives:
+  - id: ribbon_guard_q_23_obj_01
+    kind: visit_place
+    targetId: ribbon_guard_place_07
+    count: 1
+  - id: ribbon_guard_q_23_obj_02
+    kind: deliver_item
+    targetId: ribbon_guard_deliver_item_23
+    count: 2
+  rewardGold: 78
+  rewardXp: 130
+- id: ribbon_guard_q_24
+  title: 'Ribbon Guard: Open the Instance Path'
+  family: extra
+  hidden: false
+  unlocksQuestId: ribbon_guard_q_25
+  objectives:
+  - id: ribbon_guard_q_24_obj_01
+    kind: ledger_kill
+    targetId: ribbon_guard_ledger_kill_24
+    count: 1
+  - id: ribbon_guard_q_24_obj_02
+    kind: talk_to_npc
+    targetId: ribbon_guard_npc_05
+    count: 2
+  rewardGold: 81
+  rewardXp: 135
+- id: ribbon_guard_q_25
+  title: 'Ribbon Guard: Complete the First Big Night'
+  family: extra
+  hidden: false
+  unlocksQuestId: null
+  objectives:
+  - id: ribbon_guard_q_25_obj_01
+    kind: ledger_bond
+    targetId: ribbon_guard_ledger_bond_25
+    count: 1
+  - id: ribbon_guard_q_25_obj_02
+    kind: collect_item
+    targetId: ribbon_guard_collect_item_25
+    count: 2
+  rewardGold: 84
+  rewardXp: 140
+species:
+- id: ribbon_guard_species_01
+  publicName: Spark Pigeon
+  kind: activity
+  hp: 0
+  armor: 0
+  threat: 1
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: ribbon_guard_species_02
+  publicName: Prism Pup
+  kind: activity
+  hp: 0
+  armor: 1
+  threat: 2
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: ribbon_guard_species_03
+  publicName: Ribbon Koi
+  kind: activity
+  hp: 0
+  armor: 2
+  threat: 3
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: ribbon_guard_species_04
+  publicName: Glow Beetle
+  kind: activity
+  hp: 0
+  armor: 3
+  threat: 1
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: ribbon_guard_species_05
+  publicName: Ribbon Guard Field Type 5
+  kind: activity
+  hp: 0
+  armor: 0
+  threat: 2
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: ribbon_guard_species_06
+  publicName: Ribbon Guard Field Type 6
+  kind: activity
+  hp: 0
+  armor: 1
+  threat: 3
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: ribbon_guard_species_07
+  publicName: Ribbon Guard Field Type 7
+  kind: activity
+  hp: 0
+  armor: 2
+  threat: 1
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: ribbon_guard_species_08
+  publicName: Ribbon Guard Field Type 8
+  kind: activity
+  hp: 0
+  armor: 3
+  threat: 2
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: ribbon_guard_species_09
+  publicName: Ribbon Guard Field Type 9
+  kind: activity
+  hp: 0
+  armor: 0
+  threat: 3
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: ribbon_guard_species_10
+  publicName: Ribbon Guard Field Type 10
+  kind: activity
+  hp: 0
+  armor: 1
+  threat: 1
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: ribbon_guard_species_11
+  publicName: Ribbon Guard Field Type 11
+  kind: activity
+  hp: 0
+  armor: 2
+  threat: 2
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: ribbon_guard_species_12
+  publicName: Ribbon Guard Field Type 12
+  kind: activity
+  hp: 0
+  armor: 3
+  threat: 3
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: ribbon_guard_species_13
+  publicName: Ribbon Guard Field Type 13
+  kind: activity
+  hp: 0
+  armor: 0
+  threat: 1
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: ribbon_guard_species_14
+  publicName: Ribbon Guard Field Type 14
+  kind: activity
+  hp: 0
+  armor: 1
+  threat: 2
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: ribbon_guard_species_15
+  publicName: Ribbon Guard Field Type 15
+  kind: activity
+  hp: 0
+  armor: 2
+  threat: 3
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: ribbon_guard_species_16
+  publicName: Ribbon Guard Field Type 16
+  kind: activity
+  hp: 0
+  armor: 3
+  threat: 1
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: ribbon_guard_species_17
+  publicName: Ribbon Guard Field Type 17
+  kind: activity
+  hp: 0
+  armor: 0
+  threat: 2
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: ribbon_guard_species_18
+  publicName: Ribbon Guard Field Type 18
+  kind: activity
+  hp: 0
+  armor: 1
+  threat: 3
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+items:
+- id: ribbon_guard_item_01
+  publicName: Bright Base token
+  category: starter
+  power: false
+  sellGold: 3
+  description: A Ribbon Guard item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: ribbon_guard_item_02
+  publicName: Mirror Street tool
+  category: starter
+  power: false
+  sellGold: 5
+  description: A Ribbon Guard item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: ribbon_guard_item_03
+  publicName: Ribbon Pier thread
+  category: profession
+  power: false
+  sellGold: 7
+  description: A Ribbon Guard item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: ribbon_guard_item_04
+  publicName: Stage Vault seal
+  category: profession
+  power: false
+  sellGold: 9
+  description: A Ribbon Guard item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: ribbon_guard_item_05
+  publicName: Prism Park bundle
+  category: instance
+  power: false
+  sellGold: 11
+  description: A Ribbon Guard item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: ribbon_guard_item_06
+  publicName: Beacon Roof token
+  category: instance
+  power: false
+  sellGold: 13
+  description: A Ribbon Guard item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: ribbon_guard_item_07
+  publicName: Curtain Alley tool
+  category: cosmetic
+  power: false
+  sellGold: 15
+  description: A Ribbon Guard item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: ribbon_guard_item_08
+  publicName: Glow Tunnel thread
+  category: cosmetic
+  power: false
+  sellGold: 17
+  description: A Ribbon Guard item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: ribbon_guard_item_09
+  publicName: Bright Base seal
+  category: material
+  power: false
+  sellGold: 19
+  description: A Ribbon Guard item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: ribbon_guard_item_10
+  publicName: Mirror Street bundle
+  category: material
+  power: false
+  sellGold: 21
+  description: A Ribbon Guard item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: ribbon_guard_item_11
+  publicName: Ribbon Pier token
+  category: care
+  power: false
+  sellGold: 23
+  description: A Ribbon Guard item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: ribbon_guard_item_12
+  publicName: Stage Vault tool
+  category: care
+  power: false
+  sellGold: 25
+  description: A Ribbon Guard item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: ribbon_guard_item_13
+  publicName: Prism Park thread
+  category: map
+  power: false
+  sellGold: 27
+  description: A Ribbon Guard item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: ribbon_guard_item_14
+  publicName: Beacon Roof seal
+  category: map
+  power: false
+  sellGold: 29
+  description: A Ribbon Guard item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: ribbon_guard_item_15
+  publicName: Curtain Alley bundle
+  category: vendor
+  power: false
+  sellGold: 31
+  description: A Ribbon Guard item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: ribbon_guard_item_16
+  publicName: Glow Tunnel token
+  category: vendor
+  power: false
+  sellGold: 33
+  description: A Ribbon Guard item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: ribbon_guard_item_17
+  publicName: Bright Base tool
+  category: recipe
+  power: false
+  sellGold: 35
+  description: A Ribbon Guard item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: ribbon_guard_item_18
+  publicName: Mirror Street thread
+  category: recipe
+  power: false
+  sellGold: 37
+  description: A Ribbon Guard item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: ribbon_guard_item_19
+  publicName: Ribbon Pier seal
+  category: keepsake
+  power: false
+  sellGold: 39
+  description: A Ribbon Guard item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: ribbon_guard_item_20
+  publicName: Stage Vault bundle
+  category: keepsake
+  power: false
+  sellGold: 41
+  description: A Ribbon Guard item used for a stated craft, route, display, or record; it never alters paid outcomes.
+dropTables:
+- id: ribbon_guard_drop_01
+  sourceId: ribbon_guard_species_01
+  personalLoot: true
+  entries:
+  - itemId: ribbon_guard_item_01
+    chancePct: 60
+    min: 1
+    max: 2
+  - itemId: ribbon_guard_item_08
+    chancePct: 20
+    min: 1
+    max: 1
+- id: ribbon_guard_drop_02
+  sourceId: ribbon_guard_species_02
+  personalLoot: true
+  entries:
+  - itemId: ribbon_guard_item_02
+    chancePct: 55
+    min: 1
+    max: 2
+  - itemId: ribbon_guard_item_09
+    chancePct: 25
+    min: 1
+    max: 1
+- id: ribbon_guard_drop_03
+  sourceId: ribbon_guard_species_03
+  personalLoot: true
+  entries:
+  - itemId: ribbon_guard_item_03
+    chancePct: 50
+    min: 1
+    max: 2
+  - itemId: ribbon_guard_item_10
+    chancePct: 30
+    min: 1
+    max: 1
+- id: ribbon_guard_drop_04
+  sourceId: ribbon_guard_species_04
+  personalLoot: true
+  entries:
+  - itemId: ribbon_guard_item_04
+    chancePct: 45
+    min: 1
+    max: 2
+  - itemId: ribbon_guard_item_11
+    chancePct: 20
+    min: 1
+    max: 1
+- id: ribbon_guard_drop_05
+  sourceId: ribbon_guard_species_05
+  personalLoot: true
+  entries:
+  - itemId: ribbon_guard_item_05
+    chancePct: 60
+    min: 1
+    max: 2
+  - itemId: ribbon_guard_item_12
+    chancePct: 25
+    min: 1
+    max: 1
+- id: ribbon_guard_drop_06
+  sourceId: ribbon_guard_species_06
+  personalLoot: true
+  entries:
+  - itemId: ribbon_guard_item_06
+    chancePct: 55
+    min: 1
+    max: 2
+  - itemId: ribbon_guard_item_13
+    chancePct: 30
+    min: 1
+    max: 1
+- id: ribbon_guard_drop_07
+  sourceId: ribbon_guard_species_07
+  personalLoot: true
+  entries:
+  - itemId: ribbon_guard_item_07
+    chancePct: 50
+    min: 1
+    max: 2
+  - itemId: ribbon_guard_item_14
+    chancePct: 20
+    min: 1
+    max: 1
+- id: ribbon_guard_drop_08
+  sourceId: ribbon_guard_species_08
+  personalLoot: true
+  entries:
+  - itemId: ribbon_guard_item_08
+    chancePct: 45
+    min: 1
+    max: 2
+  - itemId: ribbon_guard_item_15
+    chancePct: 25
+    min: 1
+    max: 1
+- id: ribbon_guard_drop_09
+  sourceId: ribbon_guard_species_09
+  personalLoot: true
+  entries:
+  - itemId: ribbon_guard_item_09
+    chancePct: 60
+    min: 1
+    max: 2
+  - itemId: ribbon_guard_item_16
+    chancePct: 30
+    min: 1
+    max: 1
+- id: ribbon_guard_drop_10
+  sourceId: ribbon_guard_species_10
+  personalLoot: true
+  entries:
+  - itemId: ribbon_guard_item_10
+    chancePct: 55
+    min: 1
+    max: 2
+  - itemId: ribbon_guard_item_17
+    chancePct: 20
+    min: 1
+    max: 1
+- id: ribbon_guard_drop_11
+  sourceId: ribbon_guard_species_11
+  personalLoot: true
+  entries:
+  - itemId: ribbon_guard_item_11
+    chancePct: 50
+    min: 1
+    max: 2
+  - itemId: ribbon_guard_item_18
+    chancePct: 25
+    min: 1
+    max: 1
+- id: ribbon_guard_drop_12
+  sourceId: ribbon_guard_species_12
+  personalLoot: true
+  entries:
+  - itemId: ribbon_guard_item_12
+    chancePct: 45
+    min: 1
+    max: 2
+  - itemId: ribbon_guard_item_19
+    chancePct: 30
+    min: 1
+    max: 1
+vendors:
+- id: ribbon_guard_vendor_01
+  publicName: Ribbon Guard Exchange
+  placeId: ribbon_guard_place_01
+  currencyGoldName: Bright Tickets
+  items:
+  - itemId: ribbon_guard_item_01
+    priceGold: 8
+  - itemId: ribbon_guard_item_02
+    priceGold: 11
+  - itemId: ribbon_guard_item_03
+    priceGold: 14
+  - itemId: ribbon_guard_item_04
+    priceGold: 17
+  - itemId: ribbon_guard_item_05
+    priceGold: 20
+  - itemId: ribbon_guard_item_06
+    priceGold: 23
+  - itemId: ribbon_guard_item_07
+    priceGold: 26
+  - itemId: ribbon_guard_item_08
+    priceGold: 29
+  repairCostPerPoint: 0
+dungeons:
+- id: ribbon_guard_dungeon_01
+  publicName: The Stage Vault Blackout
+  partyMin: 1
+  partyMax: 5
+  entrancePlaceId: ribbon_guard_place_06
+  rooms:
+  - id: ribbon_guard_dungeon_room_01
+    publicName: 'The Stage Vault Blackout: Threshold Room'
+    describeBeforeCreature: Describe the material, sound, exits, and practical obstacle of Threshold Room before any species
+      is narrated.
+    trashSpeciesIds:
+    - ribbon_guard_species_01
+    - ribbon_guard_species_02
+    eliteSpeciesId: null
+    checkpoint: false
+    bossSpeciesId: null
+    exits:
+    - ribbon_guard_dungeon_room_02
+  - id: ribbon_guard_dungeon_room_02
+    publicName: 'The Stage Vault Blackout: Workroom'
+    describeBeforeCreature: Describe the material, sound, exits, and practical obstacle of Workroom before any species is
+      narrated.
+    trashSpeciesIds:
+    - ribbon_guard_species_03
+    - ribbon_guard_species_04
+    eliteSpeciesId: null
+    checkpoint: false
+    bossSpeciesId: null
+    exits:
+    - ribbon_guard_dungeon_room_03
+  - id: ribbon_guard_dungeon_room_03
+    publicName: 'The Stage Vault Blackout: Side Passage'
+    describeBeforeCreature: Describe the material, sound, exits, and practical obstacle of Side Passage before any species
+      is narrated.
+    trashSpeciesIds:
+    - ribbon_guard_species_05
+    - ribbon_guard_species_06
+    eliteSpeciesId: ribbon_guard_species_09
+    checkpoint: false
+    bossSpeciesId: null
+    exits:
+    - ribbon_guard_dungeon_room_04
+  - id: ribbon_guard_dungeon_room_04
+    publicName: 'The Stage Vault Blackout: Checkpoint Alcove'
+    describeBeforeCreature: Describe the material, sound, exits, and practical obstacle of Checkpoint Alcove before any species
+      is narrated.
+    trashSpeciesIds:
+    - ribbon_guard_species_07
+    - ribbon_guard_species_08
+    eliteSpeciesId: null
+    checkpoint: true
+    bossSpeciesId: null
+    exits:
+    - ribbon_guard_dungeon_room_05
+  - id: ribbon_guard_dungeon_room_05
+    publicName: 'The Stage Vault Blackout: Finale Chamber'
+    describeBeforeCreature: Describe the material, sound, exits, and practical obstacle of Finale Chamber before any species
+      is narrated.
+    trashSpeciesIds:
+    - ribbon_guard_species_09
+    - ribbon_guard_species_10
+    eliteSpeciesId: null
+    checkpoint: false
+    bossSpeciesId: ribbon_guard_species_14
+    exits: []
+  traps:
+  - id: ribbon_guard_trap_01
+    publicName: misread sign
+    interactableId: ribbon_guard_interact_01
+  - id: ribbon_guard_trap_02
+    publicName: jammed latch
+    interactableId: ribbon_guard_interact_02
+  - id: ribbon_guard_trap_03
+    publicName: wet threshold
+    interactableId: ribbon_guard_interact_03
+  - id: ribbon_guard_trap_04
+    publicName: false shelf
+    interactableId: ribbon_guard_interact_04
+  - id: ribbon_guard_trap_05
+    publicName: quiet bell
+    interactableId: ribbon_guard_interact_05
+  - id: ribbon_guard_trap_06
+    publicName: sealed drawer
+    interactableId: ribbon_guard_interact_06
+talkTrees:
+- npcId: ribbon_guard_npc_01
+  greet: Cato Morrow says, ‘Ribbon Guard keeps its promises in small places. Tell me which one you noticed.’
+  quest_offer: 'Cato Morrow offers a specific task at Bright Base: settle the practical mismatch before it costs someone a
+    shift.'
+  quest_progress: Cato Morrow checks the record and asks for the one detail that would change the outcome.
+  quest_turnin: Cato Morrow marks the work complete, names who benefited, and hands over the recorded reward.
+  gossip:
+  - At Mirror Street, people are discussing a missing care tag.
+  - The safest route today is through Ribbon Pier, not the obvious shortcut.
+  - Someone at Stage Vault is offering help but will not ask twice.
+  refusal: Cato Morrow says, ‘No. I can explain the rule, but I will not bend it for noise.’
+  player_rude: Cato Morrow says, ‘You may leave, lower your voice, or try a useful question. Choose one.’
+- npcId: ribbon_guard_npc_02
+  greet: Dessa Rowan says, ‘Ribbon Guard keeps its promises in small places. Tell me which one you noticed.’
+  quest_offer: 'Dessa Rowan offers a specific task at Mirror Street: settle the practical mismatch before it costs someone
+    a shift.'
+  quest_progress: Dessa Rowan checks the record and asks for the one detail that would change the outcome.
+  quest_turnin: Dessa Rowan marks the work complete, names who benefited, and hands over the recorded reward.
+  gossip:
+  - At Ribbon Pier, people are discussing a missing care tag.
+  - The safest route today is through Stage Vault, not the obvious shortcut.
+  - Someone at Prism Park is offering help but will not ask twice.
+  refusal: Dessa Rowan says, ‘No. I can explain the rule, but I will not bend it for noise.’
+  player_rude: Dessa Rowan says, ‘You may leave, lower your voice, or try a useful question. Choose one.’
+- npcId: ribbon_guard_npc_03
+  greet: Eris Nook says, ‘Ribbon Guard keeps its promises in small places. Tell me which one you noticed.’
+  quest_offer: 'Eris Nook offers a specific task at Ribbon Pier: settle the practical mismatch before it costs someone a shift.'
+  quest_progress: Eris Nook checks the record and asks for the one detail that would change the outcome.
+  quest_turnin: Eris Nook marks the work complete, names who benefited, and hands over the recorded reward.
+  gossip:
+  - At Stage Vault, people are discussing a missing care tag.
+  - The safest route today is through Prism Park, not the obvious shortcut.
+  - Someone at Beacon Roof is offering help but will not ask twice.
+  refusal: Eris Nook says, ‘No. I can explain the rule, but I will not bend it for noise.’
+  player_rude: Eris Nook says, ‘You may leave, lower your voice, or try a useful question. Choose one.’
+- npcId: ribbon_guard_npc_04
+  greet: Fenn Cress says, ‘Ribbon Guard keeps its promises in small places. Tell me which one you noticed.’
+  quest_offer: 'Fenn Cress offers a specific task at Stage Vault: settle the practical mismatch before it costs someone a
+    shift.'
+  quest_progress: Fenn Cress checks the record and asks for the one detail that would change the outcome.
+  quest_turnin: Fenn Cress marks the work complete, names who benefited, and hands over the recorded reward.
+  gossip:
+  - At Prism Park, people are discussing a missing care tag.
+  - The safest route today is through Beacon Roof, not the obvious shortcut.
+  - Someone at Curtain Alley is offering help but will not ask twice.
+  refusal: Fenn Cress says, ‘No. I can explain the rule, but I will not bend it for noise.’
+  player_rude: Fenn Cress says, ‘You may leave, lower your voice, or try a useful question. Choose one.’
+- npcId: ribbon_guard_npc_05
+  greet: Gala Silt says, ‘Ribbon Guard keeps its promises in small places. Tell me which one you noticed.’
+  quest_offer: 'Gala Silt offers a specific task at Bright Base: settle the practical mismatch before it costs someone a shift.'
+  quest_progress: Gala Silt checks the record and asks for the one detail that would change the outcome.
+  quest_turnin: Gala Silt marks the work complete, names who benefited, and hands over the recorded reward.
+  gossip:
+  - At Beacon Roof, people are discussing a missing care tag.
+  - The safest route today is through Curtain Alley, not the obvious shortcut.
+  - Someone at Glow Tunnel is offering help but will not ask twice.
+  refusal: Gala Silt says, ‘No. I can explain the rule, but I will not bend it for noise.’
+  player_rude: Gala Silt says, ‘You may leave, lower your voice, or try a useful question. Choose one.’
+- npcId: ribbon_guard_npc_06
+  greet: Holl Pryce says, ‘Ribbon Guard keeps its promises in small places. Tell me which one you noticed.’
+  quest_offer: 'Holl Pryce offers a specific task at Mirror Street: settle the practical mismatch before it costs someone
+    a shift.'
+  quest_progress: Holl Pryce checks the record and asks for the one detail that would change the outcome.
+  quest_turnin: Holl Pryce marks the work complete, names who benefited, and hands over the recorded reward.
+  gossip:
+  - At Curtain Alley, people are discussing a missing care tag.
+  - The safest route today is through Glow Tunnel, not the obvious shortcut.
+  - Someone at Bright Base is offering help but will not ask twice.
+  refusal: Holl Pryce says, ‘No. I can explain the rule, but I will not bend it for noise.’
+  player_rude: Holl Pryce says, ‘You may leave, lower your voice, or try a useful question. Choose one.’
+- npcId: ribbon_guard_npc_07
+  greet: Ivo Vane says, ‘Ribbon Guard keeps its promises in small places. Tell me which one you noticed.’
+  quest_offer: 'Ivo Vane offers a specific task at Ribbon Pier: settle the practical mismatch before it costs someone a shift.'
+  quest_progress: Ivo Vane checks the record and asks for the one detail that would change the outcome.
+  quest_turnin: Ivo Vane marks the work complete, names who benefited, and hands over the recorded reward.
+  gossip:
+  - At Glow Tunnel, people are discussing a missing care tag.
+  - The safest route today is through Bright Base, not the obvious shortcut.
+  - Someone at Mirror Street is offering help but will not ask twice.
+  refusal: Ivo Vane says, ‘No. I can explain the rule, but I will not bend it for noise.’
+  player_rude: Ivo Vane says, ‘You may leave, lower your voice, or try a useful question. Choose one.’
+- npcId: ribbon_guard_npc_08
+  greet: Jori Quill says, ‘Ribbon Guard keeps its promises in small places. Tell me which one you noticed.’
+  quest_offer: 'Jori Quill offers a specific task at Stage Vault: settle the practical mismatch before it costs someone a
+    shift.'
+  quest_progress: Jori Quill checks the record and asks for the one detail that would change the outcome.
+  quest_turnin: Jori Quill marks the work complete, names who benefited, and hands over the recorded reward.
+  gossip:
+  - At Bright Base, people are discussing a missing care tag.
+  - The safest route today is through Mirror Street, not the obvious shortcut.
+  - Someone at Ribbon Pier is offering help but will not ask twice.
+  refusal: Jori Quill says, ‘No. I can explain the rule, but I will not bend it for noise.’
+  player_rude: Jori Quill says, ‘You may leave, lower your voice, or try a useful question. Choose one.’
+- npcId: ribbon_guard_npc_09
+  greet: Alden Vale says, ‘Ribbon Guard keeps its promises in small places. Tell me which one you noticed.’
+  quest_offer: 'Alden Vale offers a specific task at Bright Base: settle the practical mismatch before it costs someone a
+    shift.'
+  quest_progress: Alden Vale checks the record and asks for the one detail that would change the outcome.
+  quest_turnin: Alden Vale marks the work complete, names who benefited, and hands over the recorded reward.
+  gossip:
+  - At Mirror Street, people are discussing a missing care tag.
+  - The safest route today is through Ribbon Pier, not the obvious shortcut.
+  - Someone at Stage Vault is offering help but will not ask twice.
+  refusal: Alden Vale says, ‘No. I can explain the rule, but I will not bend it for noise.’
+  player_rude: Alden Vale says, ‘You may leave, lower your voice, or try a useful question. Choose one.’
+- npcId: ribbon_guard_npc_10
+  greet: Bryn Wren says, ‘Ribbon Guard keeps its promises in small places. Tell me which one you noticed.’
+  quest_offer: 'Bryn Wren offers a specific task at Mirror Street: settle the practical mismatch before it costs someone a
+    shift.'
+  quest_progress: Bryn Wren checks the record and asks for the one detail that would change the outcome.
+  quest_turnin: Bryn Wren marks the work complete, names who benefited, and hands over the recorded reward.
+  gossip:
+  - At Ribbon Pier, people are discussing a missing care tag.
+  - The safest route today is through Stage Vault, not the obvious shortcut.
+  - Someone at Prism Park is offering help but will not ask twice.
+  refusal: Bryn Wren says, ‘No. I can explain the rule, but I will not bend it for noise.’
+  player_rude: Bryn Wren says, ‘You may leave, lower your voice, or try a useful question. Choose one.’
+choiceButtons:
+- id: ribbon_guard_choice_01_01
+  placeId: ribbon_guard_place_01
+  label: Read the notice at Bright Base
+  requires: []
+  intentKind: talk
+  stake: one turn
+- id: ribbon_guard_choice_01_02
+  placeId: ribbon_guard_place_01
+  label: Ask for an introduction at Bright Base
+  requires: []
+  intentKind: talk
+  stake: one supply
+- id: ribbon_guard_choice_01_03
+  placeId: ribbon_guard_place_01
+  label: Check the tool tag at Bright Base
+  requires: []
+  intentKind: inspect
+  stake: a declined invitation
+- id: ribbon_guard_choice_01_04
+  placeId: ribbon_guard_place_01
+  label: Offer a hand at Bright Base
+  requires: []
+  intentKind: interact
+  stake: a public note
+- id: ribbon_guard_choice_01_05
+  placeId: ribbon_guard_place_01
+  label: Take the safer route at Bright Base
+  requires:
+  - ribbon_guard_item_05
+  intentKind: travel
+  stake: a short detour
+- id: ribbon_guard_choice_01_06
+  placeId: ribbon_guard_place_01
+  label: Open the local record at Bright Base
+  requires:
+  - ribbon_guard_item_06
+  intentKind: interact
+  stake: one turn
+- id: ribbon_guard_choice_01_07
+  placeId: ribbon_guard_place_01
+  label: Rest at the bench at Bright Base
+  requires:
+  - ribbon_guard_item_07
+  intentKind: rest
+  stake: one supply
+- id: ribbon_guard_choice_01_08
+  placeId: ribbon_guard_place_01
+  label: Repair the marker at Bright Base
+  requires:
+  - ribbon_guard_item_08
+  intentKind: interact
+  stake: a declined invitation
+- id: ribbon_guard_choice_01_09
+  placeId: ribbon_guard_place_01
+  label: Prepare a shared item at Bright Base
+  requires:
+  - ribbon_guard_item_09
+  intentKind: craft
+  stake: a public note
+- id: ribbon_guard_choice_01_10
+  placeId: ribbon_guard_place_01
+  label: Leave a kind note at Bright Base
+  requires:
+  - ribbon_guard_item_10
+  intentKind: talk
+  stake: a short detour
+- id: ribbon_guard_choice_02_01
+  placeId: ribbon_guard_place_02
+  label: Read the notice at Mirror Street
+  requires: []
+  intentKind: talk
+  stake: one turn
+- id: ribbon_guard_choice_02_02
+  placeId: ribbon_guard_place_02
+  label: Ask for an introduction at Mirror Street
+  requires: []
+  intentKind: talk
+  stake: one supply
+- id: ribbon_guard_choice_02_03
+  placeId: ribbon_guard_place_02
+  label: Check the tool tag at Mirror Street
+  requires: []
+  intentKind: inspect
+  stake: a declined invitation
+- id: ribbon_guard_choice_02_04
+  placeId: ribbon_guard_place_02
+  label: Offer a hand at Mirror Street
+  requires: []
+  intentKind: interact
+  stake: a public note
+- id: ribbon_guard_choice_02_05
+  placeId: ribbon_guard_place_02
+  label: Take the safer route at Mirror Street
+  requires:
+  - ribbon_guard_item_05
+  intentKind: travel
+  stake: a short detour
+- id: ribbon_guard_choice_02_06
+  placeId: ribbon_guard_place_02
+  label: Open the local record at Mirror Street
+  requires:
+  - ribbon_guard_item_06
+  intentKind: interact
+  stake: one turn
+- id: ribbon_guard_choice_02_07
+  placeId: ribbon_guard_place_02
+  label: Rest at the bench at Mirror Street
+  requires:
+  - ribbon_guard_item_07
+  intentKind: rest
+  stake: one supply
+- id: ribbon_guard_choice_02_08
+  placeId: ribbon_guard_place_02
+  label: Repair the marker at Mirror Street
+  requires:
+  - ribbon_guard_item_08
+  intentKind: interact
+  stake: a declined invitation
+- id: ribbon_guard_choice_02_09
+  placeId: ribbon_guard_place_02
+  label: Prepare a shared item at Mirror Street
+  requires:
+  - ribbon_guard_item_09
+  intentKind: craft
+  stake: a public note
+- id: ribbon_guard_choice_02_10
+  placeId: ribbon_guard_place_02
+  label: Leave a kind note at Mirror Street
+  requires:
+  - ribbon_guard_item_10
+  intentKind: talk
+  stake: a short detour
+- id: ribbon_guard_choice_03_01
+  placeId: ribbon_guard_place_03
+  label: Read the notice at Ribbon Pier
+  requires: []
+  intentKind: talk
+  stake: one turn
+- id: ribbon_guard_choice_03_02
+  placeId: ribbon_guard_place_03
+  label: Ask for an introduction at Ribbon Pier
+  requires: []
+  intentKind: talk
+  stake: one supply
+- id: ribbon_guard_choice_03_03
+  placeId: ribbon_guard_place_03
+  label: Check the tool tag at Ribbon Pier
+  requires: []
+  intentKind: inspect
+  stake: a declined invitation
+- id: ribbon_guard_choice_03_04
+  placeId: ribbon_guard_place_03
+  label: Offer a hand at Ribbon Pier
+  requires: []
+  intentKind: interact
+  stake: a public note
+- id: ribbon_guard_choice_03_05
+  placeId: ribbon_guard_place_03
+  label: Take the safer route at Ribbon Pier
+  requires:
+  - ribbon_guard_item_05
+  intentKind: travel
+  stake: a short detour
+- id: ribbon_guard_choice_03_06
+  placeId: ribbon_guard_place_03
+  label: Open the local record at Ribbon Pier
+  requires:
+  - ribbon_guard_item_06
+  intentKind: interact
+  stake: one turn
+- id: ribbon_guard_choice_03_07
+  placeId: ribbon_guard_place_03
+  label: Rest at the bench at Ribbon Pier
+  requires:
+  - ribbon_guard_item_07
+  intentKind: rest
+  stake: one supply
+- id: ribbon_guard_choice_03_08
+  placeId: ribbon_guard_place_03
+  label: Repair the marker at Ribbon Pier
+  requires:
+  - ribbon_guard_item_08
+  intentKind: interact
+  stake: a declined invitation
+- id: ribbon_guard_choice_03_09
+  placeId: ribbon_guard_place_03
+  label: Prepare a shared item at Ribbon Pier
+  requires:
+  - ribbon_guard_item_09
+  intentKind: craft
+  stake: a public note
+- id: ribbon_guard_choice_03_10
+  placeId: ribbon_guard_place_03
+  label: Leave a kind note at Ribbon Pier
+  requires:
+  - ribbon_guard_item_10
+  intentKind: talk
+  stake: a short detour
+- id: ribbon_guard_choice_04_01
+  placeId: ribbon_guard_place_04
+  label: Read the notice at Stage Vault
+  requires: []
+  intentKind: talk
+  stake: one turn
+- id: ribbon_guard_choice_04_02
+  placeId: ribbon_guard_place_04
+  label: Ask for an introduction at Stage Vault
+  requires: []
+  intentKind: talk
+  stake: one supply
+- id: ribbon_guard_choice_04_03
+  placeId: ribbon_guard_place_04
+  label: Check the tool tag at Stage Vault
+  requires: []
+  intentKind: inspect
+  stake: a declined invitation
+- id: ribbon_guard_choice_04_04
+  placeId: ribbon_guard_place_04
+  label: Offer a hand at Stage Vault
+  requires: []
+  intentKind: interact
+  stake: a public note
+- id: ribbon_guard_choice_04_05
+  placeId: ribbon_guard_place_04
+  label: Take the safer route at Stage Vault
+  requires:
+  - ribbon_guard_item_05
+  intentKind: travel
+  stake: a short detour
+- id: ribbon_guard_choice_04_06
+  placeId: ribbon_guard_place_04
+  label: Open the local record at Stage Vault
+  requires:
+  - ribbon_guard_item_06
+  intentKind: interact
+  stake: one turn
+- id: ribbon_guard_choice_04_07
+  placeId: ribbon_guard_place_04
+  label: Rest at the bench at Stage Vault
+  requires:
+  - ribbon_guard_item_07
+  intentKind: rest
+  stake: one supply
+- id: ribbon_guard_choice_04_08
+  placeId: ribbon_guard_place_04
+  label: Repair the marker at Stage Vault
+  requires:
+  - ribbon_guard_item_08
+  intentKind: interact
+  stake: a declined invitation
+- id: ribbon_guard_choice_04_09
+  placeId: ribbon_guard_place_04
+  label: Prepare a shared item at Stage Vault
+  requires:
+  - ribbon_guard_item_09
+  intentKind: craft
+  stake: a public note
+- id: ribbon_guard_choice_04_10
+  placeId: ribbon_guard_place_04
+  label: Leave a kind note at Stage Vault
+  requires:
+  - ribbon_guard_item_10
+  intentKind: talk
+  stake: a short detour
+- id: ribbon_guard_choice_05_01
+  placeId: ribbon_guard_place_05
+  label: Read the notice at Prism Park
+  requires: []
+  intentKind: talk
+  stake: one turn
+- id: ribbon_guard_choice_05_02
+  placeId: ribbon_guard_place_05
+  label: Ask for an introduction at Prism Park
+  requires: []
+  intentKind: talk
+  stake: one supply
+- id: ribbon_guard_choice_05_03
+  placeId: ribbon_guard_place_05
+  label: Check the tool tag at Prism Park
+  requires: []
+  intentKind: inspect
+  stake: a declined invitation
+- id: ribbon_guard_choice_05_04
+  placeId: ribbon_guard_place_05
+  label: Offer a hand at Prism Park
+  requires: []
+  intentKind: interact
+  stake: a public note
+- id: ribbon_guard_choice_05_05
+  placeId: ribbon_guard_place_05
+  label: Take the safer route at Prism Park
+  requires:
+  - ribbon_guard_item_05
+  intentKind: travel
+  stake: a short detour
+- id: ribbon_guard_choice_05_06
+  placeId: ribbon_guard_place_05
+  label: Open the local record at Prism Park
+  requires:
+  - ribbon_guard_item_06
+  intentKind: interact
+  stake: one turn
+- id: ribbon_guard_choice_05_07
+  placeId: ribbon_guard_place_05
+  label: Rest at the bench at Prism Park
+  requires:
+  - ribbon_guard_item_07
+  intentKind: rest
+  stake: one supply
+- id: ribbon_guard_choice_05_08
+  placeId: ribbon_guard_place_05
+  label: Repair the marker at Prism Park
+  requires:
+  - ribbon_guard_item_08
+  intentKind: interact
+  stake: a declined invitation
+- id: ribbon_guard_choice_05_09
+  placeId: ribbon_guard_place_05
+  label: Prepare a shared item at Prism Park
+  requires:
+  - ribbon_guard_item_09
+  intentKind: craft
+  stake: a public note
+- id: ribbon_guard_choice_05_10
+  placeId: ribbon_guard_place_05
+  label: Leave a kind note at Prism Park
+  requires:
+  - ribbon_guard_item_10
+  intentKind: talk
+  stake: a short detour
+- id: ribbon_guard_choice_06_01
+  placeId: ribbon_guard_place_06
+  label: Read the notice at Beacon Roof
+  requires: []
+  intentKind: talk
+  stake: one turn
+- id: ribbon_guard_choice_06_02
+  placeId: ribbon_guard_place_06
+  label: Ask for an introduction at Beacon Roof
+  requires: []
+  intentKind: talk
+  stake: one supply
+- id: ribbon_guard_choice_06_03
+  placeId: ribbon_guard_place_06
+  label: Check the tool tag at Beacon Roof
+  requires: []
+  intentKind: inspect
+  stake: a declined invitation
+- id: ribbon_guard_choice_06_04
+  placeId: ribbon_guard_place_06
+  label: Offer a hand at Beacon Roof
+  requires: []
+  intentKind: interact
+  stake: a public note
+- id: ribbon_guard_choice_06_05
+  placeId: ribbon_guard_place_06
+  label: Take the safer route at Beacon Roof
+  requires:
+  - ribbon_guard_item_05
+  intentKind: travel
+  stake: a short detour
+- id: ribbon_guard_choice_06_06
+  placeId: ribbon_guard_place_06
+  label: Open the local record at Beacon Roof
+  requires:
+  - ribbon_guard_item_06
+  intentKind: interact
+  stake: one turn
+- id: ribbon_guard_choice_06_07
+  placeId: ribbon_guard_place_06
+  label: Rest at the bench at Beacon Roof
+  requires:
+  - ribbon_guard_item_07
+  intentKind: rest
+  stake: one supply
+- id: ribbon_guard_choice_06_08
+  placeId: ribbon_guard_place_06
+  label: Repair the marker at Beacon Roof
+  requires:
+  - ribbon_guard_item_08
+  intentKind: interact
+  stake: a declined invitation
+- id: ribbon_guard_choice_06_09
+  placeId: ribbon_guard_place_06
+  label: Prepare a shared item at Beacon Roof
+  requires:
+  - ribbon_guard_item_09
+  intentKind: craft
+  stake: a public note
+- id: ribbon_guard_choice_06_10
+  placeId: ribbon_guard_place_06
+  label: Leave a kind note at Beacon Roof
+  requires:
+  - ribbon_guard_item_10
+  intentKind: talk
+  stake: a short detour
+- id: ribbon_guard_choice_07_01
+  placeId: ribbon_guard_place_07
+  label: Read the notice at Curtain Alley
+  requires: []
+  intentKind: talk
+  stake: one turn
+- id: ribbon_guard_choice_07_02
+  placeId: ribbon_guard_place_07
+  label: Ask for an introduction at Curtain Alley
+  requires: []
+  intentKind: talk
+  stake: one supply
+- id: ribbon_guard_choice_07_03
+  placeId: ribbon_guard_place_07
+  label: Check the tool tag at Curtain Alley
+  requires: []
+  intentKind: inspect
+  stake: a declined invitation
+- id: ribbon_guard_choice_07_04
+  placeId: ribbon_guard_place_07
+  label: Offer a hand at Curtain Alley
+  requires: []
+  intentKind: interact
+  stake: a public note
+- id: ribbon_guard_choice_07_05
+  placeId: ribbon_guard_place_07
+  label: Take the safer route at Curtain Alley
+  requires:
+  - ribbon_guard_item_05
+  intentKind: travel
+  stake: a short detour
+- id: ribbon_guard_choice_07_06
+  placeId: ribbon_guard_place_07
+  label: Open the local record at Curtain Alley
+  requires:
+  - ribbon_guard_item_06
+  intentKind: interact
+  stake: one turn
+- id: ribbon_guard_choice_07_07
+  placeId: ribbon_guard_place_07
+  label: Rest at the bench at Curtain Alley
+  requires:
+  - ribbon_guard_item_07
+  intentKind: rest
+  stake: one supply
+- id: ribbon_guard_choice_07_08
+  placeId: ribbon_guard_place_07
+  label: Repair the marker at Curtain Alley
+  requires:
+  - ribbon_guard_item_08
+  intentKind: interact
+  stake: a declined invitation
+- id: ribbon_guard_choice_07_09
+  placeId: ribbon_guard_place_07
+  label: Prepare a shared item at Curtain Alley
+  requires:
+  - ribbon_guard_item_09
+  intentKind: craft
+  stake: a public note
+- id: ribbon_guard_choice_07_10
+  placeId: ribbon_guard_place_07
+  label: Leave a kind note at Curtain Alley
+  requires:
+  - ribbon_guard_item_10
+  intentKind: talk
+  stake: a short detour
+- id: ribbon_guard_choice_08_01
+  placeId: ribbon_guard_place_08
+  label: Read the notice at Glow Tunnel
+  requires: []
+  intentKind: talk
+  stake: one turn
+- id: ribbon_guard_choice_08_02
+  placeId: ribbon_guard_place_08
+  label: Ask for an introduction at Glow Tunnel
+  requires: []
+  intentKind: talk
+  stake: one supply
+- id: ribbon_guard_choice_08_03
+  placeId: ribbon_guard_place_08
+  label: Check the tool tag at Glow Tunnel
+  requires: []
+  intentKind: inspect
+  stake: a declined invitation
+- id: ribbon_guard_choice_08_04
+  placeId: ribbon_guard_place_08
+  label: Offer a hand at Glow Tunnel
+  requires: []
+  intentKind: interact
+  stake: a public note
+- id: ribbon_guard_choice_08_05
+  placeId: ribbon_guard_place_08
+  label: Take the safer route at Glow Tunnel
+  requires:
+  - ribbon_guard_item_05
+  intentKind: travel
+  stake: a short detour
+- id: ribbon_guard_choice_08_06
+  placeId: ribbon_guard_place_08
+  label: Open the local record at Glow Tunnel
+  requires:
+  - ribbon_guard_item_06
+  intentKind: interact
+  stake: one turn
+- id: ribbon_guard_choice_08_07
+  placeId: ribbon_guard_place_08
+  label: Rest at the bench at Glow Tunnel
+  requires:
+  - ribbon_guard_item_07
+  intentKind: rest
+  stake: one supply
+- id: ribbon_guard_choice_08_08
+  placeId: ribbon_guard_place_08
+  label: Repair the marker at Glow Tunnel
+  requires:
+  - ribbon_guard_item_08
+  intentKind: interact
+  stake: a declined invitation
+- id: ribbon_guard_choice_08_09
+  placeId: ribbon_guard_place_08
+  label: Prepare a shared item at Glow Tunnel
+  requires:
+  - ribbon_guard_item_09
+  intentKind: craft
+  stake: a public note
+- id: ribbon_guard_choice_08_10
+  placeId: ribbon_guard_place_08
+  label: Leave a kind note at Glow Tunnel
+  requires:
+  - ribbon_guard_item_10
+  intentKind: talk
+  stake: a short detour
+interactables:
+- id: ribbon_guard_interact_01
+  verbId: rest
+  publicName: Bright Base bench
+  placeId: ribbon_guard_place_01
+  displayVerb: Rest here
+  stateKey: ribbon_guard_rest_01
+- id: ribbon_guard_interact_02
+  verbId: repair
+  publicName: Mirror Street cabinet
+  placeId: ribbon_guard_place_02
+  displayVerb: Repair here
+  stateKey: ribbon_guard_repair_02
+- id: ribbon_guard_interact_03
+  verbId: tend
+  publicName: Ribbon Pier rack
+  placeId: ribbon_guard_place_03
+  displayVerb: Tend here
+  stateKey: ribbon_guard_tend_03
+- id: ribbon_guard_interact_04
+  verbId: craft
+  publicName: Stage Vault kettle
+  placeId: ribbon_guard_place_04
+  displayVerb: Craft here
+  stateKey: ribbon_guard_craft_04
+- id: ribbon_guard_interact_05
+  verbId: cook
+  publicName: Prism Park ledger
+  placeId: ribbon_guard_place_05
+  displayVerb: Cook here
+  stateKey: ribbon_guard_cook_05
+- id: ribbon_guard_interact_06
+  verbId: bind_inn
+  publicName: Beacon Roof rail
+  placeId: ribbon_guard_place_06
+  displayVerb: Bind Inn here
+  stateKey: ribbon_guard_bind_inn_06
+- id: ribbon_guard_interact_07
+  verbId: inspect
+  publicName: Curtain Alley bell
+  placeId: ribbon_guard_place_07
+  displayVerb: Inspect here
+  stateKey: ribbon_guard_inspect_07
+- id: ribbon_guard_interact_08
+  verbId: open
+  publicName: Glow Tunnel board
+  placeId: ribbon_guard_place_08
+  displayVerb: Open here
+  stateKey: ribbon_guard_open_08
+- id: ribbon_guard_interact_09
+  verbId: carry
+  publicName: Bright Base table
+  placeId: ribbon_guard_place_01
+  displayVerb: Carry here
+  stateKey: ribbon_guard_carry_09
+- id: ribbon_guard_interact_10
+  verbId: clean
+  publicName: Mirror Street lamp
+  placeId: ribbon_guard_place_02
+  displayVerb: Clean here
+  stateKey: ribbon_guard_clean_10
+- id: ribbon_guard_interact_11
+  verbId: signal
+  publicName: Ribbon Pier gate
+  placeId: ribbon_guard_place_03
+  displayVerb: Signal here
+  stateKey: ribbon_guard_signal_11
+- id: ribbon_guard_interact_12
+  verbId: record
+  publicName: Stage Vault shelf
+  placeId: ribbon_guard_place_04
+  displayVerb: Record here
+  stateKey: ribbon_guard_record_12
+interiors:
+- id: ribbon_guard_interior_01
+  publicName: Ribbon Guard Home Interior
+  entrancePlaceId: ribbon_guard_place_08
+  rooms:
+  - id: ribbon_guard_home_room_01
+    publicName: Ribbon Guard Entry
+    mapScale: interior
+    exits:
+    - ribbon_guard_home_room_02
+    props:
+    - ribbon_guard_home_prop_01
+    - ribbon_guard_home_prop_08
+  - id: ribbon_guard_home_room_02
+    publicName: Ribbon Guard Main Room
+    mapScale: interior
+    exits:
+    - ribbon_guard_home_room_01
+    - ribbon_guard_home_room_03
+    props:
+    - ribbon_guard_home_prop_02
+    - ribbon_guard_home_prop_09
+  - id: ribbon_guard_home_room_03
+    publicName: Ribbon Guard Work Nook
+    mapScale: interior
+    exits:
+    - ribbon_guard_home_room_02
+    - ribbon_guard_home_room_04
+    props:
+    - ribbon_guard_home_prop_03
+    - ribbon_guard_home_prop_10
+  - id: ribbon_guard_home_room_04
+    publicName: Ribbon Guard Window Room
+    mapScale: interior
+    exits:
+    - ribbon_guard_home_room_03
+    - ribbon_guard_home_room_05
+    props:
+    - ribbon_guard_home_prop_04
+    - ribbon_guard_home_prop_11
+  - id: ribbon_guard_home_room_05
+    publicName: Ribbon Guard Quiet Room
+    mapScale: interior
+    exits:
+    - ribbon_guard_home_room_04
+    - ribbon_guard_home_room_06
+    props:
+    - ribbon_guard_home_prop_05
+    - ribbon_guard_home_prop_12
+  - id: ribbon_guard_home_room_06
+    publicName: Ribbon Guard Storage
+    mapScale: interior
+    exits:
+    - ribbon_guard_home_room_05
+    - ribbon_guard_home_room_07
+    props:
+    - ribbon_guard_home_prop_06
+    - ribbon_guard_home_prop_13
+  - id: ribbon_guard_home_room_07
+    publicName: Ribbon Guard Back Step
+    mapScale: interior
+    exits:
+    - ribbon_guard_home_room_06
+    props:
+    - ribbon_guard_home_prop_07
+    - ribbon_guard_home_prop_14
+talents:
+- id: ribbon_guard_talent_01
+  publicName: Ribbon Guard Local Ear
+  cost: 1
+  requires: []
+  effectFlags:
+  - ribbon_guard_effect_01
+  payToUnlock: false
+- id: ribbon_guard_talent_02
+  publicName: Ribbon Guard Careful Hand
+  cost: 2
+  requires: []
+  effectFlags:
+  - ribbon_guard_effect_02
+  payToUnlock: false
+- id: ribbon_guard_talent_03
+  publicName: Ribbon Guard Route Sense
+  cost: 3
+  requires: []
+  effectFlags:
+  - ribbon_guard_effect_03
+  payToUnlock: false
+- id: ribbon_guard_talent_04
+  publicName: Ribbon Guard Shared Measure
+  cost: 4
+  requires: []
+  effectFlags:
+  - ribbon_guard_effect_04
+  payToUnlock: false
+- id: ribbon_guard_talent_05
+  publicName: Ribbon Guard Quiet Craft
+  cost: 1
+  requires:
+  - ribbon_guard_talent_04
+  effectFlags:
+  - ribbon_guard_effect_05
+  payToUnlock: false
+- id: ribbon_guard_talent_06
+  publicName: Ribbon Guard Open Invitation
+  cost: 2
+  requires: []
+  effectFlags:
+  - ribbon_guard_effect_06
+  payToUnlock: false
+- id: ribbon_guard_talent_07
+  publicName: Ribbon Guard Safe Return
+  cost: 3
+  requires: []
+  effectFlags:
+  - ribbon_guard_effect_07
+  payToUnlock: false
+- id: ribbon_guard_talent_08
+  publicName: Ribbon Guard Field Note
+  cost: 4
+  requires: []
+  effectFlags:
+  - ribbon_guard_effect_08
+  payToUnlock: false
+- id: ribbon_guard_talent_09
+  publicName: Ribbon Guard Steady Pace
+  cost: 1
+  requires:
+  - ribbon_guard_talent_08
+  effectFlags:
+  - ribbon_guard_effect_09
+  payToUnlock: false
+- id: ribbon_guard_talent_10
+  publicName: Ribbon Guard Clear Signal
+  cost: 2
+  requires: []
+  effectFlags:
+  - ribbon_guard_effect_10
+  payToUnlock: false
+- id: ribbon_guard_talent_11
+  publicName: Ribbon Guard Warm Welcome
+  cost: 3
+  requires: []
+  effectFlags:
+  - ribbon_guard_effect_11
+  payToUnlock: false
+- id: ribbon_guard_talent_12
+  publicName: Ribbon Guard Small Courage
+  cost: 4
+  requires: []
+  effectFlags:
+  - ribbon_guard_effect_12
+  payToUnlock: false
+- id: ribbon_guard_talent_13
+  publicName: Ribbon Guard Repair Habit
+  cost: 1
+  requires:
+  - ribbon_guard_talent_12
+  effectFlags:
+  - ribbon_guard_effect_13
+  payToUnlock: false
+- id: ribbon_guard_talent_14
+  publicName: Ribbon Guard Trust Mark
+  cost: 2
+  requires: []
+  effectFlags:
+  - ribbon_guard_effect_14
+  payToUnlock: false
+- id: ribbon_guard_talent_15
+  publicName: Ribbon Guard Second Look
+  cost: 3
+  requires: []
+  effectFlags:
+  - ribbon_guard_effect_15
+  payToUnlock: false
+- id: ribbon_guard_talent_16
+  publicName: Ribbon Guard Closing Grace
+  cost: 4
+  requires: []
+  effectFlags:
+  - ribbon_guard_effect_16
+  payToUnlock: false
+evalProbes:
+- id: ribbon_guard_eval_01
+  given:
+    energy: 8
+    placeId: ribbon_guard_place_01
+    turn: 1
+  action:
+    verbId: rest
+    targetId: ribbon_guard_interact_01
+  expectedLedger:
+    turn: 2
+    lastAction: rest
+    placeId: ribbon_guard_place_01
+  forbiddenProse:
+  - do not claim an uncommitted numeric reward
+  - do not alter damage, gold, ownership, or a score outside expectedLedger
+- id: ribbon_guard_eval_02
+  given:
+    energy: 8
+    placeId: ribbon_guard_place_02
+    turn: 2
+  action:
+    verbId: repair
+    targetId: ribbon_guard_interact_02
+  expectedLedger:
+    turn: 3
+    lastAction: repair
+    placeId: ribbon_guard_place_02
+  forbiddenProse:
+  - do not claim an uncommitted numeric reward
+  - do not alter damage, gold, ownership, or a score outside expectedLedger
+- id: ribbon_guard_eval_03
+  given:
+    energy: 8
+    placeId: ribbon_guard_place_03
+    turn: 3
+  action:
+    verbId: tend
+    targetId: ribbon_guard_interact_03
+  expectedLedger:
+    turn: 4
+    lastAction: tend
+    placeId: ribbon_guard_place_03
+  forbiddenProse:
+  - do not claim an uncommitted numeric reward
+  - do not alter damage, gold, ownership, or a score outside expectedLedger
+- id: ribbon_guard_eval_04
+  given:
+    energy: 8
+    placeId: ribbon_guard_place_04
+    turn: 4
+  action:
+    verbId: craft
+    targetId: ribbon_guard_interact_04
+  expectedLedger:
+    turn: 5
+    lastAction: craft
+    placeId: ribbon_guard_place_04
+  forbiddenProse:
+  - do not claim an uncommitted numeric reward
+  - do not alter damage, gold, ownership, or a score outside expectedLedger
+- id: ribbon_guard_eval_05
+  given:
+    energy: 8
+    placeId: ribbon_guard_place_05
+    turn: 5
+  action:
+    verbId: cook
+    targetId: ribbon_guard_interact_05
+  expectedLedger:
+    turn: 6
+    lastAction: cook
+    placeId: ribbon_guard_place_05
+  forbiddenProse:
+  - do not claim an uncommitted numeric reward
+  - do not alter damage, gold, ownership, or a score outside expectedLedger
+- id: ribbon_guard_eval_06
+  given:
+    energy: 8
+    placeId: ribbon_guard_place_06
+    turn: 6
+  action:
+    verbId: bind_inn
+    targetId: ribbon_guard_interact_06
+  expectedLedger:
+    turn: 7
+    lastAction: bind_inn
+    placeId: ribbon_guard_place_06
+  forbiddenProse:
+  - do not claim an uncommitted numeric reward
+  - do not alter damage, gold, ownership, or a score outside expectedLedger
+- id: ribbon_guard_eval_07
+  given:
+    energy: 8
+    placeId: ribbon_guard_place_07
+    turn: 7
+  action:
+    verbId: inspect
+    targetId: ribbon_guard_interact_07
+  expectedLedger:
+    turn: 8
+    lastAction: inspect
+    placeId: ribbon_guard_place_07
+  forbiddenProse:
+  - do not claim an uncommitted numeric reward
+  - do not alter damage, gold, ownership, or a score outside expectedLedger
+- id: ribbon_guard_eval_08
+  given:
+    energy: 8
+    placeId: ribbon_guard_place_08
+    turn: 8
+  action:
+    verbId: open
+    targetId: ribbon_guard_interact_08
+  expectedLedger:
+    turn: 9
+    lastAction: open
+    placeId: ribbon_guard_place_08
+  forbiddenProse:
+  - do not claim an uncommitted numeric reward
+  - do not alter damage, gold, ownership, or a score outside expectedLedger
+- id: ribbon_guard_eval_09
+  given:
+    energy: 8
+    placeId: ribbon_guard_place_01
+    turn: 9
+  action:
+    verbId: carry
+    targetId: ribbon_guard_interact_09
+  expectedLedger:
+    turn: 10
+    lastAction: carry
+    placeId: ribbon_guard_place_01
+  forbiddenProse:
+  - do not claim an uncommitted numeric reward
+  - do not alter damage, gold, ownership, or a score outside expectedLedger
+- id: ribbon_guard_eval_10
+  given:
+    energy: 8
+    placeId: ribbon_guard_place_02
+    turn: 10
+  action:
+    verbId: clean
+    targetId: ribbon_guard_interact_10
+  expectedLedger:
+    turn: 11
+    lastAction: clean
+    placeId: ribbon_guard_place_02
+  forbiddenProse:
+  - do not claim an uncommitted numeric reward
+  - do not alter damage, gold, ownership, or a score outside expectedLedger
+- id: ribbon_guard_eval_11
+  given:
+    energy: 8
+    placeId: ribbon_guard_place_03
+    turn: 11
+  action:
+    verbId: signal
+    targetId: ribbon_guard_interact_11
+  expectedLedger:
+    turn: 12
+    lastAction: signal
+    placeId: ribbon_guard_place_03
+  forbiddenProse:
+  - do not claim an uncommitted numeric reward
+  - do not alter damage, gold, ownership, or a score outside expectedLedger
+- id: ribbon_guard_eval_12
+  given:
+    energy: 8
+    placeId: ribbon_guard_place_04
+    turn: 12
+  action:
+    verbId: record
+    targetId: ribbon_guard_interact_12
+  expectedLedger:
+    turn: 13
+    lastAction: record
+    placeId: ribbon_guard_place_04
+  forbiddenProse:
+  - do not claim an uncommitted numeric reward
+  - do not alter damage, gold, ownership, or a score outside expectedLedger
+- id: ribbon_guard_eval_13
+  given:
+    energy: 8
+    placeId: ribbon_guard_place_05
+    turn: 13
+  action:
+    verbId: rest
+    targetId: ribbon_guard_interact_01
+  expectedLedger:
+    turn: 14
+    lastAction: rest
+    placeId: ribbon_guard_place_05
+  forbiddenProse:
+  - do not claim an uncommitted numeric reward
+  - do not alter damage, gold, ownership, or a score outside expectedLedger
+- id: ribbon_guard_eval_14
+  given:
+    energy: 8
+    placeId: ribbon_guard_place_06
+    turn: 14
+  action:
+    verbId: repair
+    targetId: ribbon_guard_interact_02
+  expectedLedger:
+    turn: 15
+    lastAction: repair
+    placeId: ribbon_guard_place_06
+  forbiddenProse:
+  - do not claim an uncommitted numeric reward
+  - do not alter damage, gold, ownership, or a score outside expectedLedger
+- id: ribbon_guard_eval_15
+  given:
+    energy: 8
+    placeId: ribbon_guard_place_07
+    turn: 15
+  action:
+    verbId: tend
+    targetId: ribbon_guard_interact_03
+  expectedLedger:
+    turn: 16
+    lastAction: tend
+    placeId: ribbon_guard_place_07
+  forbiddenProse:
+  - do not claim an uncommitted numeric reward
+  - do not alter damage, gold, ownership, or a score outside expectedLedger
+wallets:
+  goldName: Bright Tickets
+  cosmeticTokenName: Prism Pins
+  noConversion: true
+  prohibited:
+  - outcomes
+  - lockout skips
+  - catch rate
+  - raid clears
+  - random power packs
+  - gacha
+  - loot boxes
+dailyCaps:
+  contractsPerDay: 3
+  goldFromRepeatables: 90
+  weeklyBossLockout: per-character per-boss
+divergenceRecords:
+- id: ribbon_guard_walkaway_01
+  choice: walk away from a local obligation
+  recordKey: ribbon_guard_divergence_01
+  effect: Alternate dialogue and a non-punitive follow-up route.
+- id: ribbon_guard_walkaway_02
+  choice: walk away from a local obligation
+  recordKey: ribbon_guard_divergence_02
+  effect: Alternate dialogue and a non-punitive follow-up route.
+- id: ribbon_guard_walkaway_03
+  choice: walk away from a local obligation
+  recordKey: ribbon_guard_divergence_03
+  effect: Alternate dialogue and a non-punitive follow-up route.

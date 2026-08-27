@@ -1,0 +1,170 @@
+ROLE
+You are a senior product + systems researcher for SynapticGM. Produce a LARGE, dense research brief. Prefer breadth + concrete mechanisms over fluff. No marketing tone. No “improve memory” without saying HOW.
+
+SCOPE BUDGET
+Aim for a long brief (roughly 6–12k words / high token use). Cover EVERY section below. If something is uncertain, mark Uncertain and still give the best mechanism options.
+
+PRODUCT
+SynapticGM = AI Game Master for LitRPG, isekai/summon, story RPG, Pick-Your-Own-Adventure, and tabletop fantasy.
+Not chat-only: it has campaign bible, lore/NPC sheets, inventory, quests, map/dungeon, opening establishment (name/place/folk/look/kit), scene facts, claim grounding, pins, consequence ledger, micro-summaries, anti-recycle talk, perspective/locality wardens, Simple/Expert custom New Game, story-start honeymoon turns, free opening covers.
+Original IP only — never recommend copying named novels/anime/games into play content.
+
+GOAL
+Find many actionable ways SynapticGM can:
+1) Beat rivals on memory, consistency, staying on track
+2) Kill player complaints
+3) Improve hook, retention, replayability, and “feels like a real campaign”
+4) Improve custom/premade authoring and opening variety
+5) Keep Free players hooked without destroying monetization
+
+RIVALS TO STUDY
+AI Dungeon, NovelAI, SillyTavern (+ common lorebook/RAG setups), Kobold-style local stacks, DreamGen, and any strong adjacent AI RPG / IF / CYOA tools worth stealing shapes from (patterns only, not IP).
+
+PLAYER COMPLAINTS / FAILURE MODES (expand on each)
+A. Forgets names, places, kit, who is in the room
+B. Ignores what the player just typed; recycles dialogue; invents people/places
+C. Goes off rails vs premise / opening answers / quest spine
+D. Samey openings and samey retries; thin/empty replies
+E. Free turn wall before attachment
+F. System jargon / meta leaks into story
+G. Combat/loot/quest feeling disconnected from prose
+H. Custom worlds feel empty or AI invents against player canon
+I. Long campaigns (turn 50–200) degrade more than turn 1–20
+J. Kid Mode / tone / personality not sticky enough
+
+ALREADY SHIPPED (do not reinvent; say EXTEND / HARDEN / REPLACE)
+- Campaign bible + lore/NPC/quest sheets
+- Opening canon weave
+- Scene facts + claim grounding
+- Pins + unresolved consequences
+- Micro-summaries
+- Talk anti-recycle / perspective / locality wardens
+- Simple + Expert custom + per-section Randomize
+- Story-start bonus turns + free opening covers
+- Multi-starter openingHooks (Hero Awakening)
+
+============================================================
+REQUIRED OUTPUT STRUCTURE (use these exact headings)
+============================================================
+
+1. Executive map
+- 15 one-line opportunities ranked by impact × feasibility for SynapticGM
+- Top 5 “moat” ideas rivals struggle to copy because we have ledger/quests/bible
+
+2. Rival teardown (deep)
+For EACH rival (AID, NovelAI, ST, Kobold, DreamGen, +2 optional):
+- Memory model
+- Continuity strengths
+- Failure modes players still hate
+- 5 stealable MECHANISMS (not UI clone / not IP)
+- What SynapticGM should NOT copy
+
+3. Complaint encyclopedia
+For EACH complaint A–J:
+- Why it happens in LLM GMs
+- 3 competing fix designs
+- Recommended fix for SynapticGM (store / retrieve / block / UI)
+- P0 / P1 / P2
+- Playtest proof
+
+4. Beat-rivals continuity stack (expanded)
+Design a full stack of 8–12 components.
+For EACH component:
+- Purpose
+- Trigger
+- Data schema (fields)
+- What is injected each turn
+- Hard gate vs soft rail
+- Failure if omitted
+- How it reuses our existing systems
+
+Include at minimum:
+- Canonical entity registry + StateTx ledger
+- Scene Manifest
+- Player Intent Contract + obligations
+- Introduction Permit
+- Campaign Contract / quest graph / divergence records
+- Evidence index (supporting-only)
+- Claim gate
+- Retry director / beatFingerprint
+- Visibility classes + leak scanner
+- HookArc / entitlement logic
+Plus 2–4 extra components you think we missed
+
+Authority order: state the final precedence list and justify conflicts.
+
+5. Prompting vs code
+- What belongs in system prompt vs deterministic code
+- 10 rails that should become HARD rejects
+- 10 rails that should stay soft writer guidance
+- Token budget strategy: what always loads, what retrieves, what never dumps
+
+6. Long-run memory (turn 1 → 200)
+- Compression strategy that does not destroy qualifiers
+- When to summarize vs pin vs ledger
+- How to handle corrections and retcons
+- Multi-location / multi-NPC / time-skip consistency
+- Dungeon vs street continuity
+- Relationship memory that doesn’t become creepy or contradictory
+
+7. Hook, retention, monetization (ethical)
+- First-session beat design beyond free covers/honeymoon
+- When Free should end (HookArc variants)
+- Soft paywall moments that don’t feel spiteful
+- Ad/rewarded turn designs that preserve immersion
+- Metrics dashboard for attachment
+
+8. Openings, premades, custom
+- Multi-starter decks for all major archetypes (shapes only)
+- Story personality system (System voice + GM narrator axes)
+- Expert Custom upgrades rivals don’t have
+- How custom player canon becomes hard law
+- Replayability without licensed tropes by name
+
+9. LitRPG / tabletop / PYOA specific
+- Keeping System windows diegetic and bible-bound
+- Combat/loot/prose coherence
+- PYOA fork memory and ending honesty
+- Tabletop transparency vs immersion
+
+10. Anti-patterns (expanded)
+At least 12 “do not build” items with why each makes complaints worse.
+
+11. Idea backlog (quantity section)
+Produce 40 additional improvement ideas outside the core stack, grouped:
+- Continuity
+- Writer quality
+- UX/HUD/Codex
+- New Game / custom
+- Economy/capacity
+- Social/NPC
+- Map/dungeon
+- Safety/Kid Mode
+Each idea: 1 sentence + effort S/M/L + impact H/M/L
+
+12. 90-day build plan
+- Weeks 1–2, 3–4, 5–8, 9–12
+- Dependencies
+- What ships to playtest first
+- What can wait
+
+13. Evaluation kit
+- 10 scripted playtests
+- Pass/fail criteria
+- Automated checks we could code
+- Red-team prompts that try to break continuity
+
+14. Open questions
+- 10 research unknowns that need a live experiment in SynapticGM
+
+RULES
+- Mechanisms over slogans
+- Prefer extending our ledger/bible over adding another summary blob
+- Original names only in examples
+- No licensed series content in sample prose
+- If recommending RAG/embeddings, specify they are EVIDENCE ONLY, never roster/inventory/quest authority
+
+Banned empty phrases unless followed by a mechanism:
+“improve memory”, “be more consistent”, “better prompting”, “use RAG”, “add a summary”
+
+START NOW. Fill every section. Do not stop early.

@@ -1,0 +1,2294 @@
+packFormatVersion: 1
+worldId: brasswake
+displayName: Brasswake
+maturity: teen
+rulesModuleId: hp_check
+themeKit: Brasswake Theme Kit
+places:
+- id: brasswake_place_01
+  publicName: Cinder Dock
+  zoneId: brasswake_zone_01
+  role: shared hub
+  mapScale: street
+  dangerTier: safe
+  outdoor: true
+  exits:
+  - brasswake_place_02
+  - brasswake_place_04
+  npcIds:
+  - brasswake_npc_01
+  - brasswake_npc_05
+  - brasswake_npc_09
+  dungeonId: null
+  interactableIds:
+  - brasswake_interact_01
+  - brasswake_interact_09
+- id: brasswake_place_02
+  publicName: Aerial Brassway
+  zoneId: brasswake_zone_01
+  role: start hub
+  mapScale: street
+  dangerTier: safe
+  outdoor: true
+  exits:
+  - brasswake_place_01
+  - brasswake_place_03
+  npcIds:
+  - brasswake_npc_02
+  - brasswake_npc_06
+  - brasswake_npc_10
+  dungeonId: null
+  interactableIds:
+  - brasswake_interact_02
+  - brasswake_interact_10
+- id: brasswake_place_03
+  publicName: Orchard Mast
+  zoneId: brasswake_zone_01
+  role: street route
+  mapScale: street
+  dangerTier: safe
+  outdoor: true
+  exits:
+  - brasswake_place_02
+  - brasswake_place_04
+  npcIds:
+  - brasswake_npc_03
+  - brasswake_npc_07
+  dungeonId: null
+  interactableIds:
+  - brasswake_interact_03
+  - brasswake_interact_11
+- id: brasswake_place_04
+  publicName: Clockwind Exchange
+  zoneId: brasswake_zone_02
+  role: mid join
+  mapScale: street
+  dangerTier: low
+  outdoor: true
+  exits:
+  - brasswake_place_03
+  - brasswake_place_05
+  - brasswake_place_01
+  npcIds:
+  - brasswake_npc_04
+  - brasswake_npc_08
+  dungeonId: null
+  interactableIds:
+  - brasswake_interact_04
+  - brasswake_interact_12
+- id: brasswake_place_05
+  publicName: Rivet Court
+  zoneId: brasswake_zone_02
+  role: work district
+  mapScale: interior
+  dangerTier: low
+  outdoor: false
+  exits:
+  - brasswake_place_04
+  - brasswake_place_06
+  npcIds: []
+  dungeonId: null
+  interactableIds:
+  - brasswake_interact_05
+- id: brasswake_place_06
+  publicName: The Soot Meridian
+  zoneId: brasswake_zone_02
+  role: instance door
+  mapScale: dungeon
+  dangerTier: medium
+  outdoor: false
+  exits:
+  - brasswake_place_05
+  - brasswake_place_07
+  npcIds: []
+  dungeonId: brasswake_dungeon_01
+  interactableIds:
+  - brasswake_interact_06
+- id: brasswake_place_07
+  publicName: Wicker Cloudstep
+  zoneId: brasswake_zone_03
+  role: wild edge
+  mapScale: street
+  dangerTier: medium
+  outdoor: true
+  exits:
+  - brasswake_place_06
+  - brasswake_place_08
+  npcIds: []
+  dungeonId: null
+  interactableIds:
+  - brasswake_interact_07
+  airshipExits:
+  - id: brasswake_air_07
+    vehicle: packet skiff
+    destinationPlaceId: brasswake_place_08
+    requires: brasswake_kit_01 or brasswake_kit_03
+- id: brasswake_place_08
+  publicName: Marmot Key
+  zoneId: brasswake_zone_03
+  role: housing approach
+  mapScale: interior
+  dangerTier: low
+  outdoor: false
+  exits:
+  - brasswake_place_07
+  npcIds: []
+  dungeonId: null
+  interactableIds:
+  - brasswake_interact_08
+  airshipExits:
+  - id: brasswake_air_08
+    vehicle: packet skiff
+    destinationPlaceId: brasswake_place_07
+    requires: brasswake_kit_01 or brasswake_kit_03
+npcs:
+- id: brasswake_npc_01
+  name: Jori Wren
+  placeId: brasswake_place_01
+  role: quest
+  greet: Jori Wren says, ‘Brasswake keeps its promises in small places. Tell me which one you noticed.’
+- id: brasswake_npc_02
+  name: Alden Morrow
+  placeId: brasswake_place_02
+  role: profession
+  greet: Alden Morrow says, ‘Brasswake keeps its promises in small places. Tell me which one you noticed.’
+- id: brasswake_npc_03
+  name: Bryn Rowan
+  placeId: brasswake_place_03
+  role: hub
+  greet: Bryn Rowan says, ‘Brasswake keeps its promises in small places. Tell me which one you noticed.’
+- id: brasswake_npc_04
+  name: Cato Nook
+  placeId: brasswake_place_04
+  role: merchant
+  greet: Cato Nook says, ‘Brasswake keeps its promises in small places. Tell me which one you noticed.’
+- id: brasswake_npc_05
+  name: Dessa Cress
+  placeId: brasswake_place_01
+  role: local
+  greet: Dessa Cress says, ‘Brasswake keeps its promises in small places. Tell me which one you noticed.’
+- id: brasswake_npc_06
+  name: Eris Silt
+  placeId: brasswake_place_02
+  role: host
+  greet: Eris Silt says, ‘Brasswake keeps its promises in small places. Tell me which one you noticed.’
+- id: brasswake_npc_07
+  name: Fenn Pryce
+  placeId: brasswake_place_03
+  role: quest
+  greet: Fenn Pryce says, ‘Brasswake keeps its promises in small places. Tell me which one you noticed.’
+- id: brasswake_npc_08
+  name: Gala Vane
+  placeId: brasswake_place_04
+  role: profession
+  greet: Gala Vane says, ‘Brasswake keeps its promises in small places. Tell me which one you noticed.’
+- id: brasswake_npc_09
+  name: Holl Quill
+  placeId: brasswake_place_01
+  role: local
+  greet: Holl Quill says, ‘Brasswake keeps its promises in small places. Tell me which one you noticed.’
+- id: brasswake_npc_10
+  name: Ivo Vale
+  placeId: brasswake_place_02
+  role: merchant
+  greet: Ivo Vale says, ‘Brasswake keeps its promises in small places. Tell me which one you noticed.’
+kits:
+- id: brasswake_kit_01
+  publicName: Mail-Rigger
+  look: waxed rope coat
+  values: retie storm-mail routes
+  taboo: Never cut a line that someone is still climbing.
+  speechTell: Speak in clipped work orders softened by weather metaphors.
+  starterClothes: mail_rigger mantle
+  starterTool: mail_rigger tool
+  starterMapItem: brasswake_map_01
+  startingPlaceId: brasswake_place_01
+  firstHourQuestId: brasswake_q_01
+  abilityFlag: brasswake_ability_01
+- id: brasswake_kit_02
+  publicName: Boiler-Hand
+  look: heatproof sleeve apron
+  values: balance a hungry boiler
+  taboo: Never take heat before the pressure gauge is read.
+  speechTell: Speak in clipped work orders softened by weather metaphors.
+  starterClothes: boiler_hand vest
+  starterTool: boiler_hand tool
+  starterMapItem: brasswake_map_02
+  startingPlaceId: brasswake_place_02
+  firstHourQuestId: brasswake_q_02
+  abilityFlag: brasswake_ability_02
+- id: brasswake_kit_03
+  publicName: Lift Engineer
+  look: brass-cornered harness
+  values: certify a public lift
+  taboo: Never stamp a lift clear for a bribe.
+  speechTell: Speak in clipped work orders softened by weather metaphors.
+  starterClothes: lift_engineer jacket
+  starterTool: lift_engineer tool
+  starterMapItem: brasswake_map_03
+  startingPlaceId: brasswake_place_01
+  firstHourQuestId: brasswake_q_03
+  abilityFlag: brasswake_ability_03
+- id: brasswake_kit_04
+  publicName: Signal Printer
+  look: indigo ink smock
+  values: set safe semaphore sheets
+  taboo: Never print a false all-clear.
+  speechTell: Speak in clipped work orders softened by weather metaphors.
+  starterClothes: signal_printer sash
+  starterTool: signal_printer tool
+  starterMapItem: brasswake_map_04
+  startingPlaceId: brasswake_place_02
+  firstHourQuestId: brasswake_q_04
+  abilityFlag: brasswake_ability_04
+quests:
+- id: brasswake_q_01
+  title: 'Brasswake: Name a Working Promise'
+  family: identity
+  hidden: false
+  unlocksQuestId: brasswake_q_02
+  objectives:
+  - id: brasswake_q_01_obj_01
+    kind: visit_place
+    targetId: brasswake_place_01
+    count: 1
+  - id: brasswake_q_01_obj_02
+    kind: deliver_item
+    targetId: brasswake_deliver_item_01
+    count: 2
+  rewardGold: 12
+  rewardXp: 20
+- id: brasswake_q_02
+  title: 'Brasswake: Set the First Tool Aside'
+  family: identity
+  hidden: false
+  unlocksQuestId: brasswake_q_03
+  objectives:
+  - id: brasswake_q_02_obj_01
+    kind: ledger_kill
+    targetId: brasswake_ledger_kill_02
+    count: 1
+  - id: brasswake_q_02_obj_02
+    kind: talk_to_npc
+    targetId: brasswake_npc_03
+    count: 2
+  rewardGold: 15
+  rewardXp: 25
+- id: brasswake_q_03
+  title: 'Brasswake: Carry the Right Record'
+  family: identity
+  hidden: false
+  unlocksQuestId: brasswake_q_04
+  objectives:
+  - id: brasswake_q_03_obj_01
+    kind: ledger_bond
+    targetId: brasswake_ledger_bond_03
+    count: 1
+  - id: brasswake_q_03_obj_02
+    kind: collect_item
+    targetId: brasswake_collect_item_03
+    count: 2
+  rewardGold: 18
+  rewardXp: 30
+- id: brasswake_q_04
+  title: 'Brasswake: Find the Missing Measure'
+  family: identity
+  hidden: false
+  unlocksQuestId: brasswake_q_05
+  objectives:
+  - id: brasswake_q_04_obj_01
+    kind: deliver_item
+    targetId: brasswake_deliver_item_04
+    count: 1
+  - id: brasswake_q_04_obj_02
+    kind: interact
+    targetId: brasswake_place_05
+    count: 2
+    verbId: cook
+  rewardGold: 21
+  rewardXp: 35
+- id: brasswake_q_05
+  title: 'Brasswake: Teach a Safer Shortcut'
+  family: identity
+  hidden: false
+  unlocksQuestId: brasswake_q_06
+  objectives:
+  - id: brasswake_q_05_obj_01
+    kind: talk_to_npc
+    targetId: brasswake_npc_05
+    count: 1
+  - id: brasswake_q_05_obj_02
+    kind: score_beat
+    targetId: brasswake_score_beat_05
+    count: 2
+  rewardGold: 24
+  rewardXp: 40
+- id: brasswake_q_06
+  title: 'Brasswake: Read the Local Weather'
+  family: profession
+  hidden: false
+  unlocksQuestId: brasswake_q_07
+  objectives:
+  - id: brasswake_q_06_obj_01
+    kind: collect_item
+    targetId: brasswake_collect_item_06
+    count: 1
+  - id: brasswake_q_06_obj_02
+    kind: build_tick
+    targetId: brasswake_build_tick_06
+    count: 2
+  rewardGold: 27
+  rewardXp: 45
+- id: brasswake_q_07
+  title: 'Brasswake: Repair a Shared Threshold'
+  family: profession
+  hidden: false
+  unlocksQuestId: brasswake_q_08
+  objectives:
+  - id: brasswake_q_07_obj_01
+    kind: interact
+    targetId: brasswake_place_07
+    count: 1
+    verbId: inspect
+  - id: brasswake_q_07_obj_02
+    kind: hospitality_tick
+    targetId: brasswake_hospitality_tick_07
+    count: 2
+  rewardGold: 30
+  rewardXp: 50
+- id: brasswake_q_08
+  title: 'Brasswake: Return a Borrowed Sign'
+  family: profession
+  hidden: false
+  unlocksQuestId: brasswake_q_09
+  objectives:
+  - id: brasswake_q_08_obj_01
+    kind: score_beat
+    targetId: brasswake_score_beat_08
+    count: 1
+  - id: brasswake_q_08_obj_02
+    kind: lap_finish
+    targetId: brasswake_lap_finish_08
+    count: 2
+  rewardGold: 33
+  rewardXp: 55
+- id: brasswake_q_09
+  title: 'Brasswake: Host the Small Welcome'
+  family: profession
+  hidden: false
+  unlocksQuestId: brasswake_q_10
+  objectives:
+  - id: brasswake_q_09_obj_01
+    kind: build_tick
+    targetId: brasswake_build_tick_09
+    count: 1
+  - id: brasswake_q_09_obj_02
+    kind: visit_place
+    targetId: brasswake_place_02
+    count: 2
+  rewardGold: 36
+  rewardXp: 60
+- id: brasswake_q_10
+  title: 'Brasswake: Choose a Fair Order'
+  family: profession
+  hidden: false
+  unlocksQuestId: brasswake_q_11
+  objectives:
+  - id: brasswake_q_10_obj_01
+    kind: hospitality_tick
+    targetId: brasswake_hospitality_tick_10
+    count: 1
+  - id: brasswake_q_10_obj_02
+    kind: ledger_kill
+    targetId: brasswake_ledger_kill_10
+    count: 2
+  rewardGold: 39
+  rewardXp: 65
+- id: brasswake_q_11
+  title: 'Brasswake: Map the Quiet Detour'
+  family: profession
+  hidden: false
+  unlocksQuestId: brasswake_q_12
+  objectives:
+  - id: brasswake_q_11_obj_01
+    kind: lap_finish
+    targetId: brasswake_lap_finish_11
+    count: 1
+  - id: brasswake_q_11_obj_02
+    kind: ledger_bond
+    targetId: brasswake_ledger_bond_11
+    count: 2
+  rewardGold: 42
+  rewardXp: 70
+- id: brasswake_q_12
+  title: 'Brasswake: Bring a Useful Witness'
+  family: profession
+  hidden: false
+  unlocksQuestId: brasswake_q_13
+  objectives:
+  - id: brasswake_q_12_obj_01
+    kind: visit_place
+    targetId: brasswake_place_04
+    count: 1
+  - id: brasswake_q_12_obj_02
+    kind: deliver_item
+    targetId: brasswake_deliver_item_12
+    count: 2
+  rewardGold: 45
+  rewardXp: 75
+- id: brasswake_q_13
+  title: 'Brasswake: Sort the Unclaimed Materials'
+  family: zone_story
+  hidden: false
+  unlocksQuestId: brasswake_q_14
+  objectives:
+  - id: brasswake_q_13_obj_01
+    kind: ledger_kill
+    targetId: brasswake_ledger_kill_13
+    count: 1
+  - id: brasswake_q_13_obj_02
+    kind: talk_to_npc
+    targetId: brasswake_npc_04
+    count: 2
+  rewardGold: 48
+  rewardXp: 80
+- id: brasswake_q_14
+  title: 'Brasswake: Make Room for a Visitor'
+  family: zone_story
+  hidden: false
+  unlocksQuestId: brasswake_q_15
+  objectives:
+  - id: brasswake_q_14_obj_01
+    kind: ledger_bond
+    targetId: brasswake_ledger_bond_14
+    count: 1
+  - id: brasswake_q_14_obj_02
+    kind: collect_item
+    targetId: brasswake_collect_item_14
+    count: 2
+  rewardGold: 51
+  rewardXp: 85
+- id: brasswake_q_15
+  title: 'Brasswake: Close the Day’s Ledger'
+  family: zone_story
+  hidden: false
+  unlocksQuestId: brasswake_q_16
+  objectives:
+  - id: brasswake_q_15_obj_01
+    kind: deliver_item
+    targetId: brasswake_deliver_item_15
+    count: 1
+  - id: brasswake_q_15_obj_02
+    kind: interact
+    targetId: brasswake_place_08
+    count: 2
+    verbId: craft
+  rewardGold: 54
+  rewardXp: 90
+- id: brasswake_q_16
+  title: 'Brasswake: Follow the Midway Signal'
+  family: zone_story
+  hidden: false
+  unlocksQuestId: brasswake_q_17
+  objectives:
+  - id: brasswake_q_16_obj_01
+    kind: talk_to_npc
+    targetId: brasswake_npc_06
+    count: 1
+  - id: brasswake_q_16_obj_02
+    kind: score_beat
+    targetId: brasswake_score_beat_16
+    count: 2
+  rewardGold: 57
+  rewardXp: 95
+- id: brasswake_q_17
+  title: 'Brasswake: Uncover the Door Note'
+  family: zone_story
+  hidden: true
+  unlocksQuestId: brasswake_q_18
+  objectives:
+  - id: brasswake_q_17_obj_01
+    kind: collect_item
+    targetId: brasswake_collect_item_17
+    count: 1
+  - id: brasswake_q_17_obj_02
+    kind: build_tick
+    targetId: brasswake_build_tick_17
+    count: 2
+  rewardGold: 60
+  rewardXp: 100
+- id: brasswake_q_18
+  title: 'Brasswake: Prepare the Team Table'
+  family: zone_story
+  hidden: false
+  unlocksQuestId: brasswake_q_19
+  objectives:
+  - id: brasswake_q_18_obj_01
+    kind: interact
+    targetId: brasswake_place_02
+    count: 1
+    verbId: bind_inn
+  - id: brasswake_q_18_obj_02
+    kind: hospitality_tick
+    targetId: brasswake_hospitality_tick_18
+    count: 2
+  rewardGold: 63
+  rewardXp: 105
+- id: brasswake_q_19
+  title: 'Brasswake: Test the Local Method'
+  family: zone_story
+  hidden: false
+  unlocksQuestId: brasswake_q_20
+  objectives:
+  - id: brasswake_q_19_obj_01
+    kind: score_beat
+    targetId: brasswake_score_beat_19
+    count: 1
+  - id: brasswake_q_19_obj_02
+    kind: lap_finish
+    targetId: brasswake_lap_finish_19
+    count: 2
+  rewardGold: 66
+  rewardXp: 110
+- id: brasswake_q_20
+  title: 'Brasswake: Hold a Careful Boundary'
+  family: zone_story
+  hidden: false
+  unlocksQuestId: brasswake_q_21
+  objectives:
+  - id: brasswake_q_20_obj_01
+    kind: build_tick
+    targetId: brasswake_build_tick_20
+    count: 1
+  - id: brasswake_q_20_obj_02
+    kind: visit_place
+    targetId: brasswake_place_05
+    count: 2
+  rewardGold: 69
+  rewardXp: 115
+- id: brasswake_q_21
+  title: 'Brasswake: Answer the Neighbour’s Call'
+  family: extra
+  hidden: false
+  unlocksQuestId: brasswake_q_22
+  objectives:
+  - id: brasswake_q_21_obj_01
+    kind: hospitality_tick
+    targetId: brasswake_hospitality_tick_21
+    count: 1
+  - id: brasswake_q_21_obj_02
+    kind: ledger_kill
+    targetId: brasswake_ledger_kill_21
+    count: 2
+  rewardGold: 72
+  rewardXp: 120
+- id: brasswake_q_22
+  title: 'Brasswake: Finish the Side Route'
+  family: extra
+  hidden: false
+  unlocksQuestId: brasswake_q_23
+  objectives:
+  - id: brasswake_q_22_obj_01
+    kind: lap_finish
+    targetId: brasswake_lap_finish_22
+    count: 1
+  - id: brasswake_q_22_obj_02
+    kind: ledger_bond
+    targetId: brasswake_ledger_bond_22
+    count: 2
+  rewardGold: 75
+  rewardXp: 125
+- id: brasswake_q_23
+  title: 'Brasswake: Earn a Trusted Introduction'
+  family: extra
+  hidden: true
+  unlocksQuestId: brasswake_q_24
+  objectives:
+  - id: brasswake_q_23_obj_01
+    kind: visit_place
+    targetId: brasswake_place_07
+    count: 1
+  - id: brasswake_q_23_obj_02
+    kind: deliver_item
+    targetId: brasswake_deliver_item_23
+    count: 2
+  rewardGold: 78
+  rewardXp: 130
+- id: brasswake_q_24
+  title: 'Brasswake: Open the Instance Path'
+  family: extra
+  hidden: false
+  unlocksQuestId: brasswake_q_25
+  objectives:
+  - id: brasswake_q_24_obj_01
+    kind: ledger_kill
+    targetId: brasswake_ledger_kill_24
+    count: 1
+  - id: brasswake_q_24_obj_02
+    kind: talk_to_npc
+    targetId: brasswake_npc_05
+    count: 2
+  rewardGold: 81
+  rewardXp: 135
+- id: brasswake_q_25
+  title: 'Brasswake: Complete the First Big Night'
+  family: extra
+  hidden: false
+  unlocksQuestId: null
+  objectives:
+  - id: brasswake_q_25_obj_01
+    kind: ledger_bond
+    targetId: brasswake_ledger_bond_25
+    count: 1
+  - id: brasswake_q_25_obj_02
+    kind: collect_item
+    targetId: brasswake_collect_item_25
+    count: 2
+  rewardGold: 84
+  rewardXp: 140
+species:
+- id: brasswake_species_01
+  publicName: Soot Martin
+  kind: opponent
+  hp: 8
+  armor: 0
+  threat: 1
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: brasswake_species_02
+  publicName: Coil Crab
+  kind: opponent
+  hp: 9
+  armor: 1
+  threat: 2
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: brasswake_species_03
+  publicName: Brass Moth
+  kind: opponent
+  hp: 10
+  armor: 2
+  threat: 3
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: brasswake_species_04
+  publicName: Tug Beetle
+  kind: opponent
+  hp: 11
+  armor: 3
+  threat: 1
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: brasswake_species_05
+  publicName: Copper Vole
+  kind: opponent
+  hp: 12
+  armor: 0
+  threat: 2
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: brasswake_species_06
+  publicName: Wind Gull
+  kind: opponent
+  hp: 13
+  armor: 1
+  threat: 3
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: brasswake_species_07
+  publicName: Furnace Newt
+  kind: opponent
+  hp: 14
+  armor: 2
+  threat: 1
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: brasswake_species_08
+  publicName: Mossy Ram
+  kind: opponent
+  hp: 15
+  armor: 3
+  threat: 2
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: brasswake_species_09
+  publicName: Rail Lizard
+  kind: opponent
+  hp: 16
+  armor: 0
+  threat: 3
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: brasswake_species_10
+  publicName: Pocket Owl
+  kind: opponent
+  hp: 17
+  armor: 1
+  threat: 1
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: brasswake_species_11
+  publicName: Spark Trout
+  kind: opponent
+  hp: 18
+  armor: 2
+  threat: 2
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: brasswake_species_12
+  publicName: Haze Hare
+  kind: opponent
+  hp: 19
+  armor: 3
+  threat: 3
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: brasswake_species_13
+  publicName: Cable Spider
+  kind: opponent
+  hp: 20
+  armor: 0
+  threat: 1
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: brasswake_species_14
+  publicName: Tinfin
+  kind: opponent
+  hp: 21
+  armor: 1
+  threat: 2
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: brasswake_species_15
+  publicName: Orchard Bat
+  kind: opponent
+  hp: 22
+  armor: 2
+  threat: 3
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+- id: brasswake_species_16
+  publicName: Cloud Carp
+  kind: opponent
+  hp: 23
+  armor: 3
+  threat: 1
+  ownedStatNote: CODE owns HP, armor, state and personal loot resolution.
+items:
+- id: brasswake_item_01
+  publicName: Cinder Dock token
+  category: starter
+  power: false
+  sellGold: 3
+  description: A Brasswake item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: brasswake_item_02
+  publicName: Aerial Brassway tool
+  category: starter
+  power: false
+  sellGold: 5
+  description: A Brasswake item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: brasswake_item_03
+  publicName: Orchard Mast thread
+  category: profession
+  power: false
+  sellGold: 7
+  description: A Brasswake item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: brasswake_item_04
+  publicName: Clockwind Exchange seal
+  category: profession
+  power: false
+  sellGold: 9
+  description: A Brasswake item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: brasswake_item_05
+  publicName: Rivet Court bundle
+  category: instance
+  power: false
+  sellGold: 11
+  description: A Brasswake item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: brasswake_item_06
+  publicName: The Soot Meridian token
+  category: instance
+  power: false
+  sellGold: 13
+  description: A Brasswake item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: brasswake_item_07
+  publicName: Wicker Cloudstep tool
+  category: cosmetic
+  power: false
+  sellGold: 15
+  description: A Brasswake item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: brasswake_item_08
+  publicName: Marmot Key thread
+  category: cosmetic
+  power: false
+  sellGold: 17
+  description: A Brasswake item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: brasswake_item_09
+  publicName: Cinder Dock seal
+  category: material
+  power: false
+  sellGold: 19
+  description: A Brasswake item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: brasswake_item_10
+  publicName: Aerial Brassway bundle
+  category: material
+  power: false
+  sellGold: 21
+  description: A Brasswake item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: brasswake_item_11
+  publicName: Orchard Mast token
+  category: care
+  power: false
+  sellGold: 23
+  description: A Brasswake item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: brasswake_item_12
+  publicName: Clockwind Exchange tool
+  category: care
+  power: false
+  sellGold: 25
+  description: A Brasswake item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: brasswake_item_13
+  publicName: Rivet Court thread
+  category: map
+  power: false
+  sellGold: 27
+  description: A Brasswake item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: brasswake_item_14
+  publicName: The Soot Meridian seal
+  category: map
+  power: false
+  sellGold: 29
+  description: A Brasswake item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: brasswake_item_15
+  publicName: Wicker Cloudstep bundle
+  category: vendor
+  power: false
+  sellGold: 31
+  description: A Brasswake item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: brasswake_item_16
+  publicName: Marmot Key token
+  category: vendor
+  power: false
+  sellGold: 33
+  description: A Brasswake item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: brasswake_item_17
+  publicName: Cinder Dock tool
+  category: recipe
+  power: false
+  sellGold: 35
+  description: A Brasswake item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: brasswake_item_18
+  publicName: Aerial Brassway thread
+  category: recipe
+  power: false
+  sellGold: 37
+  description: A Brasswake item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: brasswake_item_19
+  publicName: Orchard Mast seal
+  category: keepsake
+  power: false
+  sellGold: 39
+  description: A Brasswake item used for a stated craft, route, display, or record; it never alters paid outcomes.
+- id: brasswake_item_20
+  publicName: Clockwind Exchange bundle
+  category: keepsake
+  power: false
+  sellGold: 41
+  description: A Brasswake item used for a stated craft, route, display, or record; it never alters paid outcomes.
+dropTables:
+- id: brasswake_drop_01
+  sourceId: brasswake_species_01
+  personalLoot: true
+  entries:
+  - itemId: brasswake_item_01
+    chancePct: 60
+    min: 1
+    max: 2
+  - itemId: brasswake_item_08
+    chancePct: 20
+    min: 1
+    max: 1
+- id: brasswake_drop_02
+  sourceId: brasswake_species_02
+  personalLoot: true
+  entries:
+  - itemId: brasswake_item_02
+    chancePct: 55
+    min: 1
+    max: 2
+  - itemId: brasswake_item_09
+    chancePct: 25
+    min: 1
+    max: 1
+- id: brasswake_drop_03
+  sourceId: brasswake_species_03
+  personalLoot: true
+  entries:
+  - itemId: brasswake_item_03
+    chancePct: 50
+    min: 1
+    max: 2
+  - itemId: brasswake_item_10
+    chancePct: 30
+    min: 1
+    max: 1
+- id: brasswake_drop_04
+  sourceId: brasswake_species_04
+  personalLoot: true
+  entries:
+  - itemId: brasswake_item_04
+    chancePct: 45
+    min: 1
+    max: 2
+  - itemId: brasswake_item_11
+    chancePct: 20
+    min: 1
+    max: 1
+- id: brasswake_drop_05
+  sourceId: brasswake_species_05
+  personalLoot: true
+  entries:
+  - itemId: brasswake_item_05
+    chancePct: 60
+    min: 1
+    max: 2
+  - itemId: brasswake_item_12
+    chancePct: 25
+    min: 1
+    max: 1
+- id: brasswake_drop_06
+  sourceId: brasswake_species_06
+  personalLoot: true
+  entries:
+  - itemId: brasswake_item_06
+    chancePct: 55
+    min: 1
+    max: 2
+  - itemId: brasswake_item_13
+    chancePct: 30
+    min: 1
+    max: 1
+- id: brasswake_drop_07
+  sourceId: brasswake_species_07
+  personalLoot: true
+  entries:
+  - itemId: brasswake_item_07
+    chancePct: 50
+    min: 1
+    max: 2
+  - itemId: brasswake_item_14
+    chancePct: 20
+    min: 1
+    max: 1
+- id: brasswake_drop_08
+  sourceId: brasswake_species_08
+  personalLoot: true
+  entries:
+  - itemId: brasswake_item_08
+    chancePct: 45
+    min: 1
+    max: 2
+  - itemId: brasswake_item_15
+    chancePct: 25
+    min: 1
+    max: 1
+- id: brasswake_drop_09
+  sourceId: brasswake_species_09
+  personalLoot: true
+  entries:
+  - itemId: brasswake_item_09
+    chancePct: 60
+    min: 1
+    max: 2
+  - itemId: brasswake_item_16
+    chancePct: 30
+    min: 1
+    max: 1
+- id: brasswake_drop_10
+  sourceId: brasswake_species_10
+  personalLoot: true
+  entries:
+  - itemId: brasswake_item_10
+    chancePct: 55
+    min: 1
+    max: 2
+  - itemId: brasswake_item_17
+    chancePct: 20
+    min: 1
+    max: 1
+- id: brasswake_drop_11
+  sourceId: brasswake_species_11
+  personalLoot: true
+  entries:
+  - itemId: brasswake_item_11
+    chancePct: 50
+    min: 1
+    max: 2
+  - itemId: brasswake_item_18
+    chancePct: 25
+    min: 1
+    max: 1
+- id: brasswake_drop_12
+  sourceId: brasswake_species_12
+  personalLoot: true
+  entries:
+  - itemId: brasswake_item_12
+    chancePct: 45
+    min: 1
+    max: 2
+  - itemId: brasswake_item_19
+    chancePct: 30
+    min: 1
+    max: 1
+vendors:
+- id: brasswake_vendor_01
+  publicName: Brasswake Exchange
+  placeId: brasswake_place_01
+  currencyGoldName: Cinder Crowns
+  items:
+  - itemId: brasswake_item_01
+    priceGold: 8
+  - itemId: brasswake_item_02
+    priceGold: 11
+  - itemId: brasswake_item_03
+    priceGold: 14
+  - itemId: brasswake_item_04
+    priceGold: 17
+  - itemId: brasswake_item_05
+    priceGold: 20
+  - itemId: brasswake_item_06
+    priceGold: 23
+  - itemId: brasswake_item_07
+    priceGold: 26
+  - itemId: brasswake_item_08
+    priceGold: 29
+  repairCostPerPoint: 2
+dungeons:
+- id: brasswake_dungeon_01
+  publicName: The Misfiled Elevator
+  partyMin: 1
+  partyMax: 5
+  entrancePlaceId: brasswake_place_06
+  rooms:
+  - id: brasswake_dungeon_room_01
+    publicName: 'The Misfiled Elevator: Threshold Room'
+    describeBeforeCreature: Describe the material, sound, exits, and practical obstacle of Threshold Room before any species
+      is narrated.
+    trashSpeciesIds:
+    - brasswake_species_01
+    - brasswake_species_02
+    eliteSpeciesId: null
+    checkpoint: false
+    bossSpeciesId: null
+    exits:
+    - brasswake_dungeon_room_02
+  - id: brasswake_dungeon_room_02
+    publicName: 'The Misfiled Elevator: Workroom'
+    describeBeforeCreature: Describe the material, sound, exits, and practical obstacle of Workroom before any species is
+      narrated.
+    trashSpeciesIds:
+    - brasswake_species_03
+    - brasswake_species_04
+    eliteSpeciesId: null
+    checkpoint: false
+    bossSpeciesId: null
+    exits:
+    - brasswake_dungeon_room_03
+  - id: brasswake_dungeon_room_03
+    publicName: 'The Misfiled Elevator: Side Passage'
+    describeBeforeCreature: Describe the material, sound, exits, and practical obstacle of Side Passage before any species
+      is narrated.
+    trashSpeciesIds:
+    - brasswake_species_05
+    - brasswake_species_06
+    eliteSpeciesId: brasswake_species_09
+    checkpoint: false
+    bossSpeciesId: null
+    exits:
+    - brasswake_dungeon_room_04
+  - id: brasswake_dungeon_room_04
+    publicName: 'The Misfiled Elevator: Checkpoint Alcove'
+    describeBeforeCreature: Describe the material, sound, exits, and practical obstacle of Checkpoint Alcove before any species
+      is narrated.
+    trashSpeciesIds:
+    - brasswake_species_07
+    - brasswake_species_08
+    eliteSpeciesId: null
+    checkpoint: true
+    bossSpeciesId: null
+    exits:
+    - brasswake_dungeon_room_05
+  - id: brasswake_dungeon_room_05
+    publicName: 'The Misfiled Elevator: Finale Chamber'
+    describeBeforeCreature: Describe the material, sound, exits, and practical obstacle of Finale Chamber before any species
+      is narrated.
+    trashSpeciesIds:
+    - brasswake_species_09
+    - brasswake_species_10
+    eliteSpeciesId: null
+    checkpoint: false
+    bossSpeciesId: brasswake_species_14
+    exits: []
+  traps:
+  - id: brasswake_trap_01
+    publicName: misread sign
+    interactableId: brasswake_interact_01
+  - id: brasswake_trap_02
+    publicName: jammed latch
+    interactableId: brasswake_interact_02
+  - id: brasswake_trap_03
+    publicName: wet threshold
+    interactableId: brasswake_interact_03
+  - id: brasswake_trap_04
+    publicName: false shelf
+    interactableId: brasswake_interact_04
+  - id: brasswake_trap_05
+    publicName: quiet bell
+    interactableId: brasswake_interact_05
+  - id: brasswake_trap_06
+    publicName: sealed drawer
+    interactableId: brasswake_interact_06
+talkTrees:
+- npcId: brasswake_npc_01
+  greet: Jori Wren says, ‘Brasswake keeps its promises in small places. Tell me which one you noticed.’
+  quest_offer: 'Jori Wren offers a specific task at Cinder Dock: settle the practical mismatch before it costs someone a shift.'
+  quest_progress: Jori Wren checks the record and asks for the one detail that would change the outcome.
+  quest_turnin: Jori Wren marks the work complete, names who benefited, and hands over the recorded reward.
+  gossip:
+  - At Aerial Brassway, people are discussing a missing care tag.
+  - The safest route today is through Orchard Mast, not the obvious shortcut.
+  - Someone at Clockwind Exchange is offering help but will not ask twice.
+  refusal: Jori Wren says, ‘No. I can explain the rule, but I will not bend it for noise.’
+  player_rude: Jori Wren says, ‘You may leave, lower your voice, or try a useful question. Choose one.’
+- npcId: brasswake_npc_02
+  greet: Alden Morrow says, ‘Brasswake keeps its promises in small places. Tell me which one you noticed.’
+  quest_offer: 'Alden Morrow offers a specific task at Aerial Brassway: settle the practical mismatch before it costs someone
+    a shift.'
+  quest_progress: Alden Morrow checks the record and asks for the one detail that would change the outcome.
+  quest_turnin: Alden Morrow marks the work complete, names who benefited, and hands over the recorded reward.
+  gossip:
+  - At Orchard Mast, people are discussing a missing care tag.
+  - The safest route today is through Clockwind Exchange, not the obvious shortcut.
+  - Someone at Rivet Court is offering help but will not ask twice.
+  refusal: Alden Morrow says, ‘No. I can explain the rule, but I will not bend it for noise.’
+  player_rude: Alden Morrow says, ‘You may leave, lower your voice, or try a useful question. Choose one.’
+- npcId: brasswake_npc_03
+  greet: Bryn Rowan says, ‘Brasswake keeps its promises in small places. Tell me which one you noticed.’
+  quest_offer: 'Bryn Rowan offers a specific task at Orchard Mast: settle the practical mismatch before it costs someone a
+    shift.'
+  quest_progress: Bryn Rowan checks the record and asks for the one detail that would change the outcome.
+  quest_turnin: Bryn Rowan marks the work complete, names who benefited, and hands over the recorded reward.
+  gossip:
+  - At Clockwind Exchange, people are discussing a missing care tag.
+  - The safest route today is through Rivet Court, not the obvious shortcut.
+  - Someone at The Soot Meridian is offering help but will not ask twice.
+  refusal: Bryn Rowan says, ‘No. I can explain the rule, but I will not bend it for noise.’
+  player_rude: Bryn Rowan says, ‘You may leave, lower your voice, or try a useful question. Choose one.’
+- npcId: brasswake_npc_04
+  greet: Cato Nook says, ‘Brasswake keeps its promises in small places. Tell me which one you noticed.’
+  quest_offer: 'Cato Nook offers a specific task at Clockwind Exchange: settle the practical mismatch before it costs someone
+    a shift.'
+  quest_progress: Cato Nook checks the record and asks for the one detail that would change the outcome.
+  quest_turnin: Cato Nook marks the work complete, names who benefited, and hands over the recorded reward.
+  gossip:
+  - At Rivet Court, people are discussing a missing care tag.
+  - The safest route today is through The Soot Meridian, not the obvious shortcut.
+  - Someone at Wicker Cloudstep is offering help but will not ask twice.
+  refusal: Cato Nook says, ‘No. I can explain the rule, but I will not bend it for noise.’
+  player_rude: Cato Nook says, ‘You may leave, lower your voice, or try a useful question. Choose one.’
+- npcId: brasswake_npc_05
+  greet: Dessa Cress says, ‘Brasswake keeps its promises in small places. Tell me which one you noticed.’
+  quest_offer: 'Dessa Cress offers a specific task at Cinder Dock: settle the practical mismatch before it costs someone a
+    shift.'
+  quest_progress: Dessa Cress checks the record and asks for the one detail that would change the outcome.
+  quest_turnin: Dessa Cress marks the work complete, names who benefited, and hands over the recorded reward.
+  gossip:
+  - At The Soot Meridian, people are discussing a missing care tag.
+  - The safest route today is through Wicker Cloudstep, not the obvious shortcut.
+  - Someone at Marmot Key is offering help but will not ask twice.
+  refusal: Dessa Cress says, ‘No. I can explain the rule, but I will not bend it for noise.’
+  player_rude: Dessa Cress says, ‘You may leave, lower your voice, or try a useful question. Choose one.’
+- npcId: brasswake_npc_06
+  greet: Eris Silt says, ‘Brasswake keeps its promises in small places. Tell me which one you noticed.’
+  quest_offer: 'Eris Silt offers a specific task at Aerial Brassway: settle the practical mismatch before it costs someone
+    a shift.'
+  quest_progress: Eris Silt checks the record and asks for the one detail that would change the outcome.
+  quest_turnin: Eris Silt marks the work complete, names who benefited, and hands over the recorded reward.
+  gossip:
+  - At Wicker Cloudstep, people are discussing a missing care tag.
+  - The safest route today is through Marmot Key, not the obvious shortcut.
+  - Someone at Cinder Dock is offering help but will not ask twice.
+  refusal: Eris Silt says, ‘No. I can explain the rule, but I will not bend it for noise.’
+  player_rude: Eris Silt says, ‘You may leave, lower your voice, or try a useful question. Choose one.’
+- npcId: brasswake_npc_07
+  greet: Fenn Pryce says, ‘Brasswake keeps its promises in small places. Tell me which one you noticed.’
+  quest_offer: 'Fenn Pryce offers a specific task at Orchard Mast: settle the practical mismatch before it costs someone a
+    shift.'
+  quest_progress: Fenn Pryce checks the record and asks for the one detail that would change the outcome.
+  quest_turnin: Fenn Pryce marks the work complete, names who benefited, and hands over the recorded reward.
+  gossip:
+  - At Marmot Key, people are discussing a missing care tag.
+  - The safest route today is through Cinder Dock, not the obvious shortcut.
+  - Someone at Aerial Brassway is offering help but will not ask twice.
+  refusal: Fenn Pryce says, ‘No. I can explain the rule, but I will not bend it for noise.’
+  player_rude: Fenn Pryce says, ‘You may leave, lower your voice, or try a useful question. Choose one.’
+- npcId: brasswake_npc_08
+  greet: Gala Vane says, ‘Brasswake keeps its promises in small places. Tell me which one you noticed.’
+  quest_offer: 'Gala Vane offers a specific task at Clockwind Exchange: settle the practical mismatch before it costs someone
+    a shift.'
+  quest_progress: Gala Vane checks the record and asks for the one detail that would change the outcome.
+  quest_turnin: Gala Vane marks the work complete, names who benefited, and hands over the recorded reward.
+  gossip:
+  - At Cinder Dock, people are discussing a missing care tag.
+  - The safest route today is through Aerial Brassway, not the obvious shortcut.
+  - Someone at Orchard Mast is offering help but will not ask twice.
+  refusal: Gala Vane says, ‘No. I can explain the rule, but I will not bend it for noise.’
+  player_rude: Gala Vane says, ‘You may leave, lower your voice, or try a useful question. Choose one.’
+- npcId: brasswake_npc_09
+  greet: Holl Quill says, ‘Brasswake keeps its promises in small places. Tell me which one you noticed.’
+  quest_offer: 'Holl Quill offers a specific task at Cinder Dock: settle the practical mismatch before it costs someone a
+    shift.'
+  quest_progress: Holl Quill checks the record and asks for the one detail that would change the outcome.
+  quest_turnin: Holl Quill marks the work complete, names who benefited, and hands over the recorded reward.
+  gossip:
+  - At Aerial Brassway, people are discussing a missing care tag.
+  - The safest route today is through Orchard Mast, not the obvious shortcut.
+  - Someone at Clockwind Exchange is offering help but will not ask twice.
+  refusal: Holl Quill says, ‘No. I can explain the rule, but I will not bend it for noise.’
+  player_rude: Holl Quill says, ‘You may leave, lower your voice, or try a useful question. Choose one.’
+- npcId: brasswake_npc_10
+  greet: Ivo Vale says, ‘Brasswake keeps its promises in small places. Tell me which one you noticed.’
+  quest_offer: 'Ivo Vale offers a specific task at Aerial Brassway: settle the practical mismatch before it costs someone
+    a shift.'
+  quest_progress: Ivo Vale checks the record and asks for the one detail that would change the outcome.
+  quest_turnin: Ivo Vale marks the work complete, names who benefited, and hands over the recorded reward.
+  gossip:
+  - At Orchard Mast, people are discussing a missing care tag.
+  - The safest route today is through Clockwind Exchange, not the obvious shortcut.
+  - Someone at Rivet Court is offering help but will not ask twice.
+  refusal: Ivo Vale says, ‘No. I can explain the rule, but I will not bend it for noise.’
+  player_rude: Ivo Vale says, ‘You may leave, lower your voice, or try a useful question. Choose one.’
+choiceButtons:
+- id: brasswake_choice_01_01
+  placeId: brasswake_place_01
+  label: Read the notice at Cinder Dock
+  requires: []
+  intentKind: talk
+  stake: one turn
+- id: brasswake_choice_01_02
+  placeId: brasswake_place_01
+  label: Ask for an introduction at Cinder Dock
+  requires: []
+  intentKind: talk
+  stake: one supply
+- id: brasswake_choice_01_03
+  placeId: brasswake_place_01
+  label: Check the tool tag at Cinder Dock
+  requires: []
+  intentKind: inspect
+  stake: a declined invitation
+- id: brasswake_choice_01_04
+  placeId: brasswake_place_01
+  label: Offer a hand at Cinder Dock
+  requires: []
+  intentKind: interact
+  stake: a public note
+- id: brasswake_choice_01_05
+  placeId: brasswake_place_01
+  label: Take the safer route at Cinder Dock
+  requires:
+  - brasswake_item_05
+  intentKind: travel
+  stake: a short detour
+- id: brasswake_choice_01_06
+  placeId: brasswake_place_01
+  label: Open the local record at Cinder Dock
+  requires:
+  - brasswake_item_06
+  intentKind: interact
+  stake: one turn
+- id: brasswake_choice_01_07
+  placeId: brasswake_place_01
+  label: Rest at the bench at Cinder Dock
+  requires:
+  - brasswake_item_07
+  intentKind: rest
+  stake: one supply
+- id: brasswake_choice_01_08
+  placeId: brasswake_place_01
+  label: Repair the marker at Cinder Dock
+  requires:
+  - brasswake_item_08
+  intentKind: interact
+  stake: a declined invitation
+- id: brasswake_choice_01_09
+  placeId: brasswake_place_01
+  label: Prepare a shared item at Cinder Dock
+  requires:
+  - brasswake_item_09
+  intentKind: craft
+  stake: a public note
+- id: brasswake_choice_01_10
+  placeId: brasswake_place_01
+  label: Leave a kind note at Cinder Dock
+  requires:
+  - brasswake_item_10
+  intentKind: talk
+  stake: a short detour
+- id: brasswake_choice_02_01
+  placeId: brasswake_place_02
+  label: Read the notice at Aerial Brassway
+  requires: []
+  intentKind: talk
+  stake: one turn
+- id: brasswake_choice_02_02
+  placeId: brasswake_place_02
+  label: Ask for an introduction at Aerial Brassway
+  requires: []
+  intentKind: talk
+  stake: one supply
+- id: brasswake_choice_02_03
+  placeId: brasswake_place_02
+  label: Check the tool tag at Aerial Brassway
+  requires: []
+  intentKind: inspect
+  stake: a declined invitation
+- id: brasswake_choice_02_04
+  placeId: brasswake_place_02
+  label: Offer a hand at Aerial Brassway
+  requires: []
+  intentKind: interact
+  stake: a public note
+- id: brasswake_choice_02_05
+  placeId: brasswake_place_02
+  label: Take the safer route at Aerial Brassway
+  requires:
+  - brasswake_item_05
+  intentKind: travel
+  stake: a short detour
+- id: brasswake_choice_02_06
+  placeId: brasswake_place_02
+  label: Open the local record at Aerial Brassway
+  requires:
+  - brasswake_item_06
+  intentKind: interact
+  stake: one turn
+- id: brasswake_choice_02_07
+  placeId: brasswake_place_02
+  label: Rest at the bench at Aerial Brassway
+  requires:
+  - brasswake_item_07
+  intentKind: rest
+  stake: one supply
+- id: brasswake_choice_02_08
+  placeId: brasswake_place_02
+  label: Repair the marker at Aerial Brassway
+  requires:
+  - brasswake_item_08
+  intentKind: interact
+  stake: a declined invitation
+- id: brasswake_choice_02_09
+  placeId: brasswake_place_02
+  label: Prepare a shared item at Aerial Brassway
+  requires:
+  - brasswake_item_09
+  intentKind: craft
+  stake: a public note
+- id: brasswake_choice_02_10
+  placeId: brasswake_place_02
+  label: Leave a kind note at Aerial Brassway
+  requires:
+  - brasswake_item_10
+  intentKind: talk
+  stake: a short detour
+- id: brasswake_choice_03_01
+  placeId: brasswake_place_03
+  label: Read the notice at Orchard Mast
+  requires: []
+  intentKind: talk
+  stake: one turn
+- id: brasswake_choice_03_02
+  placeId: brasswake_place_03
+  label: Ask for an introduction at Orchard Mast
+  requires: []
+  intentKind: talk
+  stake: one supply
+- id: brasswake_choice_03_03
+  placeId: brasswake_place_03
+  label: Check the tool tag at Orchard Mast
+  requires: []
+  intentKind: inspect
+  stake: a declined invitation
+- id: brasswake_choice_03_04
+  placeId: brasswake_place_03
+  label: Offer a hand at Orchard Mast
+  requires: []
+  intentKind: interact
+  stake: a public note
+- id: brasswake_choice_03_05
+  placeId: brasswake_place_03
+  label: Take the safer route at Orchard Mast
+  requires:
+  - brasswake_item_05
+  intentKind: travel
+  stake: a short detour
+- id: brasswake_choice_03_06
+  placeId: brasswake_place_03
+  label: Open the local record at Orchard Mast
+  requires:
+  - brasswake_item_06
+  intentKind: interact
+  stake: one turn
+- id: brasswake_choice_03_07
+  placeId: brasswake_place_03
+  label: Rest at the bench at Orchard Mast
+  requires:
+  - brasswake_item_07
+  intentKind: rest
+  stake: one supply
+- id: brasswake_choice_03_08
+  placeId: brasswake_place_03
+  label: Repair the marker at Orchard Mast
+  requires:
+  - brasswake_item_08
+  intentKind: interact
+  stake: a declined invitation
+- id: brasswake_choice_03_09
+  placeId: brasswake_place_03
+  label: Prepare a shared item at Orchard Mast
+  requires:
+  - brasswake_item_09
+  intentKind: craft
+  stake: a public note
+- id: brasswake_choice_03_10
+  placeId: brasswake_place_03
+  label: Leave a kind note at Orchard Mast
+  requires:
+  - brasswake_item_10
+  intentKind: talk
+  stake: a short detour
+- id: brasswake_choice_04_01
+  placeId: brasswake_place_04
+  label: Read the notice at Clockwind Exchange
+  requires: []
+  intentKind: talk
+  stake: one turn
+- id: brasswake_choice_04_02
+  placeId: brasswake_place_04
+  label: Ask for an introduction at Clockwind Exchange
+  requires: []
+  intentKind: talk
+  stake: one supply
+- id: brasswake_choice_04_03
+  placeId: brasswake_place_04
+  label: Check the tool tag at Clockwind Exchange
+  requires: []
+  intentKind: inspect
+  stake: a declined invitation
+- id: brasswake_choice_04_04
+  placeId: brasswake_place_04
+  label: Offer a hand at Clockwind Exchange
+  requires: []
+  intentKind: interact
+  stake: a public note
+- id: brasswake_choice_04_05
+  placeId: brasswake_place_04
+  label: Take the safer route at Clockwind Exchange
+  requires:
+  - brasswake_item_05
+  intentKind: travel
+  stake: a short detour
+- id: brasswake_choice_04_06
+  placeId: brasswake_place_04
+  label: Open the local record at Clockwind Exchange
+  requires:
+  - brasswake_item_06
+  intentKind: interact
+  stake: one turn
+- id: brasswake_choice_04_07
+  placeId: brasswake_place_04
+  label: Rest at the bench at Clockwind Exchange
+  requires:
+  - brasswake_item_07
+  intentKind: rest
+  stake: one supply
+- id: brasswake_choice_04_08
+  placeId: brasswake_place_04
+  label: Repair the marker at Clockwind Exchange
+  requires:
+  - brasswake_item_08
+  intentKind: interact
+  stake: a declined invitation
+- id: brasswake_choice_04_09
+  placeId: brasswake_place_04
+  label: Prepare a shared item at Clockwind Exchange
+  requires:
+  - brasswake_item_09
+  intentKind: craft
+  stake: a public note
+- id: brasswake_choice_04_10
+  placeId: brasswake_place_04
+  label: Leave a kind note at Clockwind Exchange
+  requires:
+  - brasswake_item_10
+  intentKind: talk
+  stake: a short detour
+- id: brasswake_choice_05_01
+  placeId: brasswake_place_05
+  label: Read the notice at Rivet Court
+  requires: []
+  intentKind: talk
+  stake: one turn
+- id: brasswake_choice_05_02
+  placeId: brasswake_place_05
+  label: Ask for an introduction at Rivet Court
+  requires: []
+  intentKind: talk
+  stake: one supply
+- id: brasswake_choice_05_03
+  placeId: brasswake_place_05
+  label: Check the tool tag at Rivet Court
+  requires: []
+  intentKind: inspect
+  stake: a declined invitation
+- id: brasswake_choice_05_04
+  placeId: brasswake_place_05
+  label: Offer a hand at Rivet Court
+  requires: []
+  intentKind: interact
+  stake: a public note
+- id: brasswake_choice_05_05
+  placeId: brasswake_place_05
+  label: Take the safer route at Rivet Court
+  requires:
+  - brasswake_item_05
+  intentKind: travel
+  stake: a short detour
+- id: brasswake_choice_05_06
+  placeId: brasswake_place_05
+  label: Open the local record at Rivet Court
+  requires:
+  - brasswake_item_06
+  intentKind: interact
+  stake: one turn
+- id: brasswake_choice_05_07
+  placeId: brasswake_place_05
+  label: Rest at the bench at Rivet Court
+  requires:
+  - brasswake_item_07
+  intentKind: rest
+  stake: one supply
+- id: brasswake_choice_05_08
+  placeId: brasswake_place_05
+  label: Repair the marker at Rivet Court
+  requires:
+  - brasswake_item_08
+  intentKind: interact
+  stake: a declined invitation
+- id: brasswake_choice_05_09
+  placeId: brasswake_place_05
+  label: Prepare a shared item at Rivet Court
+  requires:
+  - brasswake_item_09
+  intentKind: craft
+  stake: a public note
+- id: brasswake_choice_05_10
+  placeId: brasswake_place_05
+  label: Leave a kind note at Rivet Court
+  requires:
+  - brasswake_item_10
+  intentKind: talk
+  stake: a short detour
+- id: brasswake_choice_06_01
+  placeId: brasswake_place_06
+  label: Read the notice at The Soot Meridian
+  requires: []
+  intentKind: talk
+  stake: one turn
+- id: brasswake_choice_06_02
+  placeId: brasswake_place_06
+  label: Ask for an introduction at The Soot Meridian
+  requires: []
+  intentKind: talk
+  stake: one supply
+- id: brasswake_choice_06_03
+  placeId: brasswake_place_06
+  label: Check the tool tag at The Soot Meridian
+  requires: []
+  intentKind: inspect
+  stake: a declined invitation
+- id: brasswake_choice_06_04
+  placeId: brasswake_place_06
+  label: Offer a hand at The Soot Meridian
+  requires: []
+  intentKind: interact
+  stake: a public note
+- id: brasswake_choice_06_05
+  placeId: brasswake_place_06
+  label: Take the safer route at The Soot Meridian
+  requires:
+  - brasswake_item_05
+  intentKind: travel
+  stake: a short detour
+- id: brasswake_choice_06_06
+  placeId: brasswake_place_06
+  label: Open the local record at The Soot Meridian
+  requires:
+  - brasswake_item_06
+  intentKind: interact
+  stake: one turn
+- id: brasswake_choice_06_07
+  placeId: brasswake_place_06
+  label: Rest at the bench at The Soot Meridian
+  requires:
+  - brasswake_item_07
+  intentKind: rest
+  stake: one supply
+- id: brasswake_choice_06_08
+  placeId: brasswake_place_06
+  label: Repair the marker at The Soot Meridian
+  requires:
+  - brasswake_item_08
+  intentKind: interact
+  stake: a declined invitation
+- id: brasswake_choice_06_09
+  placeId: brasswake_place_06
+  label: Prepare a shared item at The Soot Meridian
+  requires:
+  - brasswake_item_09
+  intentKind: craft
+  stake: a public note
+- id: brasswake_choice_06_10
+  placeId: brasswake_place_06
+  label: Leave a kind note at The Soot Meridian
+  requires:
+  - brasswake_item_10
+  intentKind: talk
+  stake: a short detour
+- id: brasswake_choice_07_01
+  placeId: brasswake_place_07
+  label: Read the notice at Wicker Cloudstep
+  requires: []
+  intentKind: talk
+  stake: one turn
+- id: brasswake_choice_07_02
+  placeId: brasswake_place_07
+  label: Ask for an introduction at Wicker Cloudstep
+  requires: []
+  intentKind: talk
+  stake: one supply
+- id: brasswake_choice_07_03
+  placeId: brasswake_place_07
+  label: Check the tool tag at Wicker Cloudstep
+  requires: []
+  intentKind: inspect
+  stake: a declined invitation
+- id: brasswake_choice_07_04
+  placeId: brasswake_place_07
+  label: Offer a hand at Wicker Cloudstep
+  requires: []
+  intentKind: interact
+  stake: a public note
+- id: brasswake_choice_07_05
+  placeId: brasswake_place_07
+  label: Take the safer route at Wicker Cloudstep
+  requires:
+  - brasswake_item_05
+  intentKind: travel
+  stake: a short detour
+- id: brasswake_choice_07_06
+  placeId: brasswake_place_07
+  label: Open the local record at Wicker Cloudstep
+  requires:
+  - brasswake_item_06
+  intentKind: interact
+  stake: one turn
+- id: brasswake_choice_07_07
+  placeId: brasswake_place_07
+  label: Rest at the bench at Wicker Cloudstep
+  requires:
+  - brasswake_item_07
+  intentKind: rest
+  stake: one supply
+- id: brasswake_choice_07_08
+  placeId: brasswake_place_07
+  label: Repair the marker at Wicker Cloudstep
+  requires:
+  - brasswake_item_08
+  intentKind: interact
+  stake: a declined invitation
+- id: brasswake_choice_07_09
+  placeId: brasswake_place_07
+  label: Prepare a shared item at Wicker Cloudstep
+  requires:
+  - brasswake_item_09
+  intentKind: craft
+  stake: a public note
+- id: brasswake_choice_07_10
+  placeId: brasswake_place_07
+  label: Leave a kind note at Wicker Cloudstep
+  requires:
+  - brasswake_item_10
+  intentKind: talk
+  stake: a short detour
+- id: brasswake_choice_08_01
+  placeId: brasswake_place_08
+  label: Read the notice at Marmot Key
+  requires: []
+  intentKind: talk
+  stake: one turn
+- id: brasswake_choice_08_02
+  placeId: brasswake_place_08
+  label: Ask for an introduction at Marmot Key
+  requires: []
+  intentKind: talk
+  stake: one supply
+- id: brasswake_choice_08_03
+  placeId: brasswake_place_08
+  label: Check the tool tag at Marmot Key
+  requires: []
+  intentKind: inspect
+  stake: a declined invitation
+- id: brasswake_choice_08_04
+  placeId: brasswake_place_08
+  label: Offer a hand at Marmot Key
+  requires: []
+  intentKind: interact
+  stake: a public note
+- id: brasswake_choice_08_05
+  placeId: brasswake_place_08
+  label: Take the safer route at Marmot Key
+  requires:
+  - brasswake_item_05
+  intentKind: travel
+  stake: a short detour
+- id: brasswake_choice_08_06
+  placeId: brasswake_place_08
+  label: Open the local record at Marmot Key
+  requires:
+  - brasswake_item_06
+  intentKind: interact
+  stake: one turn
+- id: brasswake_choice_08_07
+  placeId: brasswake_place_08
+  label: Rest at the bench at Marmot Key
+  requires:
+  - brasswake_item_07
+  intentKind: rest
+  stake: one supply
+- id: brasswake_choice_08_08
+  placeId: brasswake_place_08
+  label: Repair the marker at Marmot Key
+  requires:
+  - brasswake_item_08
+  intentKind: interact
+  stake: a declined invitation
+- id: brasswake_choice_08_09
+  placeId: brasswake_place_08
+  label: Prepare a shared item at Marmot Key
+  requires:
+  - brasswake_item_09
+  intentKind: craft
+  stake: a public note
+- id: brasswake_choice_08_10
+  placeId: brasswake_place_08
+  label: Leave a kind note at Marmot Key
+  requires:
+  - brasswake_item_10
+  intentKind: talk
+  stake: a short detour
+interactables:
+- id: brasswake_interact_01
+  verbId: rest
+  publicName: Cinder Dock bench
+  placeId: brasswake_place_01
+  displayVerb: Rest here
+  stateKey: brasswake_rest_01
+- id: brasswake_interact_02
+  verbId: repair
+  publicName: Aerial Brassway cabinet
+  placeId: brasswake_place_02
+  displayVerb: Repair here
+  stateKey: brasswake_repair_02
+- id: brasswake_interact_03
+  verbId: tend
+  publicName: Orchard Mast rack
+  placeId: brasswake_place_03
+  displayVerb: Tend here
+  stateKey: brasswake_tend_03
+- id: brasswake_interact_04
+  verbId: craft
+  publicName: Clockwind Exchange kettle
+  placeId: brasswake_place_04
+  displayVerb: Craft here
+  stateKey: brasswake_craft_04
+- id: brasswake_interact_05
+  verbId: cook
+  publicName: Rivet Court ledger
+  placeId: brasswake_place_05
+  displayVerb: Cook here
+  stateKey: brasswake_cook_05
+- id: brasswake_interact_06
+  verbId: bind_inn
+  publicName: The Soot Meridian rail
+  placeId: brasswake_place_06
+  displayVerb: Bind Inn here
+  stateKey: brasswake_bind_inn_06
+- id: brasswake_interact_07
+  verbId: inspect
+  publicName: Wicker Cloudstep bell
+  placeId: brasswake_place_07
+  displayVerb: Inspect here
+  stateKey: brasswake_inspect_07
+- id: brasswake_interact_08
+  verbId: open
+  publicName: Marmot Key board
+  placeId: brasswake_place_08
+  displayVerb: Open here
+  stateKey: brasswake_open_08
+- id: brasswake_interact_09
+  verbId: carry
+  publicName: Cinder Dock table
+  placeId: brasswake_place_01
+  displayVerb: Carry here
+  stateKey: brasswake_carry_09
+- id: brasswake_interact_10
+  verbId: clean
+  publicName: Aerial Brassway lamp
+  placeId: brasswake_place_02
+  displayVerb: Clean here
+  stateKey: brasswake_clean_10
+- id: brasswake_interact_11
+  verbId: signal
+  publicName: Orchard Mast gate
+  placeId: brasswake_place_03
+  displayVerb: Signal here
+  stateKey: brasswake_signal_11
+- id: brasswake_interact_12
+  verbId: record
+  publicName: Clockwind Exchange shelf
+  placeId: brasswake_place_04
+  displayVerb: Record here
+  stateKey: brasswake_record_12
+interiors:
+- id: brasswake_interior_01
+  publicName: Brasswake Home Interior
+  entrancePlaceId: brasswake_place_08
+  rooms:
+  - id: brasswake_home_room_01
+    publicName: Brasswake Entry
+    mapScale: interior
+    exits:
+    - brasswake_home_room_02
+    props:
+    - brasswake_home_prop_01
+    - brasswake_home_prop_08
+  - id: brasswake_home_room_02
+    publicName: Brasswake Main Room
+    mapScale: interior
+    exits:
+    - brasswake_home_room_01
+    - brasswake_home_room_03
+    props:
+    - brasswake_home_prop_02
+    - brasswake_home_prop_09
+  - id: brasswake_home_room_03
+    publicName: Brasswake Work Nook
+    mapScale: interior
+    exits:
+    - brasswake_home_room_02
+    - brasswake_home_room_04
+    props:
+    - brasswake_home_prop_03
+    - brasswake_home_prop_10
+  - id: brasswake_home_room_04
+    publicName: Brasswake Window Room
+    mapScale: interior
+    exits:
+    - brasswake_home_room_03
+    - brasswake_home_room_05
+    props:
+    - brasswake_home_prop_04
+    - brasswake_home_prop_11
+  - id: brasswake_home_room_05
+    publicName: Brasswake Quiet Room
+    mapScale: interior
+    exits:
+    - brasswake_home_room_04
+    - brasswake_home_room_06
+    props:
+    - brasswake_home_prop_05
+    - brasswake_home_prop_12
+  - id: brasswake_home_room_06
+    publicName: Brasswake Storage
+    mapScale: interior
+    exits:
+    - brasswake_home_room_05
+    - brasswake_home_room_07
+    props:
+    - brasswake_home_prop_06
+    - brasswake_home_prop_13
+  - id: brasswake_home_room_07
+    publicName: Brasswake Back Step
+    mapScale: interior
+    exits:
+    - brasswake_home_room_06
+    props:
+    - brasswake_home_prop_07
+    - brasswake_home_prop_14
+talents:
+- id: brasswake_talent_01
+  publicName: Brasswake Local Ear
+  cost: 1
+  requires: []
+  effectFlags:
+  - brasswake_effect_01
+  payToUnlock: false
+- id: brasswake_talent_02
+  publicName: Brasswake Careful Hand
+  cost: 2
+  requires: []
+  effectFlags:
+  - brasswake_effect_02
+  payToUnlock: false
+- id: brasswake_talent_03
+  publicName: Brasswake Route Sense
+  cost: 3
+  requires: []
+  effectFlags:
+  - brasswake_effect_03
+  payToUnlock: false
+- id: brasswake_talent_04
+  publicName: Brasswake Shared Measure
+  cost: 4
+  requires: []
+  effectFlags:
+  - brasswake_effect_04
+  payToUnlock: false
+- id: brasswake_talent_05
+  publicName: Brasswake Quiet Craft
+  cost: 1
+  requires:
+  - brasswake_talent_04
+  effectFlags:
+  - brasswake_effect_05
+  payToUnlock: false
+- id: brasswake_talent_06
+  publicName: Brasswake Open Invitation
+  cost: 2
+  requires: []
+  effectFlags:
+  - brasswake_effect_06
+  payToUnlock: false
+- id: brasswake_talent_07
+  publicName: Brasswake Safe Return
+  cost: 3
+  requires: []
+  effectFlags:
+  - brasswake_effect_07
+  payToUnlock: false
+- id: brasswake_talent_08
+  publicName: Brasswake Field Note
+  cost: 4
+  requires: []
+  effectFlags:
+  - brasswake_effect_08
+  payToUnlock: false
+- id: brasswake_talent_09
+  publicName: Brasswake Steady Pace
+  cost: 1
+  requires:
+  - brasswake_talent_08
+  effectFlags:
+  - brasswake_effect_09
+  payToUnlock: false
+- id: brasswake_talent_10
+  publicName: Brasswake Clear Signal
+  cost: 2
+  requires: []
+  effectFlags:
+  - brasswake_effect_10
+  payToUnlock: false
+- id: brasswake_talent_11
+  publicName: Brasswake Warm Welcome
+  cost: 3
+  requires: []
+  effectFlags:
+  - brasswake_effect_11
+  payToUnlock: false
+- id: brasswake_talent_12
+  publicName: Brasswake Small Courage
+  cost: 4
+  requires: []
+  effectFlags:
+  - brasswake_effect_12
+  payToUnlock: false
+- id: brasswake_talent_13
+  publicName: Brasswake Repair Habit
+  cost: 1
+  requires:
+  - brasswake_talent_12
+  effectFlags:
+  - brasswake_effect_13
+  payToUnlock: false
+- id: brasswake_talent_14
+  publicName: Brasswake Trust Mark
+  cost: 2
+  requires: []
+  effectFlags:
+  - brasswake_effect_14
+  payToUnlock: false
+- id: brasswake_talent_15
+  publicName: Brasswake Second Look
+  cost: 3
+  requires: []
+  effectFlags:
+  - brasswake_effect_15
+  payToUnlock: false
+- id: brasswake_talent_16
+  publicName: Brasswake Closing Grace
+  cost: 4
+  requires: []
+  effectFlags:
+  - brasswake_effect_16
+  payToUnlock: false
+evalProbes:
+- id: brasswake_eval_01
+  given:
+    hp: 18
+    placeId: brasswake_place_01
+    turn: 1
+  action:
+    verbId: rest
+    targetId: brasswake_interact_01
+  expectedLedger:
+    turn: 2
+    lastAction: rest
+    placeId: brasswake_place_01
+  forbiddenProse:
+  - do not claim an uncommitted numeric reward
+  - do not alter damage, gold, ownership, or a score outside expectedLedger
+- id: brasswake_eval_02
+  given:
+    hp: 18
+    placeId: brasswake_place_02
+    turn: 2
+  action:
+    verbId: repair
+    targetId: brasswake_interact_02
+  expectedLedger:
+    turn: 3
+    lastAction: repair
+    placeId: brasswake_place_02
+  forbiddenProse:
+  - do not claim an uncommitted numeric reward
+  - do not alter damage, gold, ownership, or a score outside expectedLedger
+- id: brasswake_eval_03
+  given:
+    hp: 18
+    placeId: brasswake_place_03
+    turn: 3
+  action:
+    verbId: tend
+    targetId: brasswake_interact_03
+  expectedLedger:
+    turn: 4
+    lastAction: tend
+    placeId: brasswake_place_03
+  forbiddenProse:
+  - do not claim an uncommitted numeric reward
+  - do not alter damage, gold, ownership, or a score outside expectedLedger
+- id: brasswake_eval_04
+  given:
+    hp: 18
+    placeId: brasswake_place_04
+    turn: 4
+  action:
+    verbId: craft
+    targetId: brasswake_interact_04
+  expectedLedger:
+    turn: 5
+    lastAction: craft
+    placeId: brasswake_place_04
+  forbiddenProse:
+  - do not claim an uncommitted numeric reward
+  - do not alter damage, gold, ownership, or a score outside expectedLedger
+- id: brasswake_eval_05
+  given:
+    hp: 18
+    placeId: brasswake_place_05
+    turn: 5
+  action:
+    verbId: cook
+    targetId: brasswake_interact_05
+  expectedLedger:
+    turn: 6
+    lastAction: cook
+    placeId: brasswake_place_05
+  forbiddenProse:
+  - do not claim an uncommitted numeric reward
+  - do not alter damage, gold, ownership, or a score outside expectedLedger
+- id: brasswake_eval_06
+  given:
+    hp: 18
+    placeId: brasswake_place_06
+    turn: 6
+  action:
+    verbId: bind_inn
+    targetId: brasswake_interact_06
+  expectedLedger:
+    turn: 7
+    lastAction: bind_inn
+    placeId: brasswake_place_06
+  forbiddenProse:
+  - do not claim an uncommitted numeric reward
+  - do not alter damage, gold, ownership, or a score outside expectedLedger
+- id: brasswake_eval_07
+  given:
+    hp: 18
+    placeId: brasswake_place_07
+    turn: 7
+  action:
+    verbId: inspect
+    targetId: brasswake_interact_07
+  expectedLedger:
+    turn: 8
+    lastAction: inspect
+    placeId: brasswake_place_07
+  forbiddenProse:
+  - do not claim an uncommitted numeric reward
+  - do not alter damage, gold, ownership, or a score outside expectedLedger
+- id: brasswake_eval_08
+  given:
+    hp: 18
+    placeId: brasswake_place_08
+    turn: 8
+  action:
+    verbId: open
+    targetId: brasswake_interact_08
+  expectedLedger:
+    turn: 9
+    lastAction: open
+    placeId: brasswake_place_08
+  forbiddenProse:
+  - do not claim an uncommitted numeric reward
+  - do not alter damage, gold, ownership, or a score outside expectedLedger
+- id: brasswake_eval_09
+  given:
+    hp: 18
+    placeId: brasswake_place_01
+    turn: 9
+  action:
+    verbId: carry
+    targetId: brasswake_interact_09
+  expectedLedger:
+    turn: 10
+    lastAction: carry
+    placeId: brasswake_place_01
+  forbiddenProse:
+  - do not claim an uncommitted numeric reward
+  - do not alter damage, gold, ownership, or a score outside expectedLedger
+- id: brasswake_eval_10
+  given:
+    hp: 18
+    placeId: brasswake_place_02
+    turn: 10
+  action:
+    verbId: clean
+    targetId: brasswake_interact_10
+  expectedLedger:
+    turn: 11
+    lastAction: clean
+    placeId: brasswake_place_02
+  forbiddenProse:
+  - do not claim an uncommitted numeric reward
+  - do not alter damage, gold, ownership, or a score outside expectedLedger
+- id: brasswake_eval_11
+  given:
+    hp: 18
+    placeId: brasswake_place_03
+    turn: 11
+  action:
+    verbId: signal
+    targetId: brasswake_interact_11
+  expectedLedger:
+    turn: 12
+    lastAction: signal
+    placeId: brasswake_place_03
+  forbiddenProse:
+  - do not claim an uncommitted numeric reward
+  - do not alter damage, gold, ownership, or a score outside expectedLedger
+- id: brasswake_eval_12
+  given:
+    hp: 18
+    placeId: brasswake_place_04
+    turn: 12
+  action:
+    verbId: record
+    targetId: brasswake_interact_12
+  expectedLedger:
+    turn: 13
+    lastAction: record
+    placeId: brasswake_place_04
+  forbiddenProse:
+  - do not claim an uncommitted numeric reward
+  - do not alter damage, gold, ownership, or a score outside expectedLedger
+- id: brasswake_eval_13
+  given:
+    hp: 18
+    placeId: brasswake_place_05
+    turn: 13
+  action:
+    verbId: rest
+    targetId: brasswake_interact_01
+  expectedLedger:
+    turn: 14
+    lastAction: rest
+    placeId: brasswake_place_05
+  forbiddenProse:
+  - do not claim an uncommitted numeric reward
+  - do not alter damage, gold, ownership, or a score outside expectedLedger
+- id: brasswake_eval_14
+  given:
+    hp: 18
+    placeId: brasswake_place_06
+    turn: 14
+  action:
+    verbId: repair
+    targetId: brasswake_interact_02
+  expectedLedger:
+    turn: 15
+    lastAction: repair
+    placeId: brasswake_place_06
+  forbiddenProse:
+  - do not claim an uncommitted numeric reward
+  - do not alter damage, gold, ownership, or a score outside expectedLedger
+- id: brasswake_eval_15
+  given:
+    hp: 18
+    placeId: brasswake_place_07
+    turn: 15
+  action:
+    verbId: tend
+    targetId: brasswake_interact_03
+  expectedLedger:
+    turn: 16
+    lastAction: tend
+    placeId: brasswake_place_07
+  forbiddenProse:
+  - do not claim an uncommitted numeric reward
+  - do not alter damage, gold, ownership, or a score outside expectedLedger
+wallets:
+  goldName: Cinder Crowns
+  cosmeticTokenName: Cloud Ribbons
+  noConversion: true
+  prohibited:
+  - outcomes
+  - lockout skips
+  - catch rate
+  - raid clears
+  - random power packs
+  - gacha
+  - loot boxes
+dailyCaps:
+  contractsPerDay: 3
+  goldFromRepeatables: 90
+  weeklyBossLockout: per-character per-boss
+divergenceRecords:
+- id: brasswake_walkaway_01
+  choice: walk away from a local obligation
+  recordKey: brasswake_divergence_01
+  effect: Alternate dialogue and a non-punitive follow-up route.
+- id: brasswake_walkaway_02
+  choice: walk away from a local obligation
+  recordKey: brasswake_divergence_02
+  effect: Alternate dialogue and a non-punitive follow-up route.
+- id: brasswake_walkaway_03
+  choice: walk away from a local obligation
+  recordKey: brasswake_divergence_03
+  effect: Alternate dialogue and a non-punitive follow-up route.

@@ -1,0 +1,4771 @@
+file: WOF_Engine_Schemas.yaml
+packFormatVersion: 1
+worldScope: WOF quarantined content library
+ipFence: Original genre patterns only; no licensed names or live-service import.
+engineDefaults:
+  overworld: Tier 3 shared hubs with instanced combat
+  partySize:
+  - 2
+  - 5
+  raidSize: 10
+  personalLoot: true
+  midCombatFill: false
+  wipe: checkpoint
+  perCharacterWeeklyBossLockout: true
+  wallets:
+  - gold
+  - cosmetic_tokens
+  globalChatV1: false
+  permadeathV1: false
+  gacha: false
+  lockoutSkips: false
+  combatResolution: lockstep rounds; CODE commits state before prose
+uniquenessRules:
+- Every schema id is unique within its schema and namespaced as worldId:kind:slug
+  where applicable.
+- Locked Ash Compact identifiers are immutable and never reused.
+- LootGrant idempotencyKey is unique per character, instance, reward event.
+- ExpectedRevision rejects stale writes.
+schemas:
+  Account:
+    description: WOF typed schema for Account; original content only, not production
+      code.
+    fields:
+      id: &id001
+        type: string
+        required: true
+        unique: true
+        description: Stable WOF identifier; never reused for another object.
+      version: &id002
+        type: integer
+        required: true
+        default: 1
+        minimum: 1
+      createdAt:
+        type: datetime
+        required: true
+        owner: CODE
+      updatedAt: &id003
+        type: string
+        required: true
+        format: iso8601
+        owner: CODE
+      accountId:
+        type: string
+        required: true
+        owner: CODE
+      emailHash:
+        type: string
+        required: true
+        owner: CODE
+        description: Hash only; no PII in telemetry
+      ageBand:
+        type: enum
+        required: true
+        owner: CODE
+        allowed:
+        - all_ages
+        - teen
+        - teen_plus
+      worldIds:
+        type: array[string]
+        required: true
+        owner: CODE
+        default: []
+    codeOwns:
+    - validation
+    - dice
+    - HP
+    - catalogs
+    - quest ticks
+    - loot
+    - gold
+    - lockouts
+    - instance seeds
+    - revisions
+    llmMayNarrate:
+    - committed state prose
+    - diegetic descriptions
+    - NPC dialogue without engine terms
+    failureModes:
+    - double-grant prevented by idempotency/revision checks
+    - LLM invents gold or ownership rejected
+    - desync rejected on stale ExpectedRevision
+  Session:
+    description: WOF typed schema for Session; original content only, not production
+      code.
+    fields:
+      id: *id001
+      version: *id002
+      createdAt: &id004
+        type: string
+        required: true
+        format: iso8601
+        owner: CODE
+      updatedAt: *id003
+      sessionId:
+        type: string
+        required: true
+        owner: CODE
+      accountId:
+        type: string
+        required: true
+        owner: CODE
+      deviceId:
+        type: string
+        required: true
+        owner: CODE
+      worldId:
+        type: string
+        required: true
+        owner: CODE
+      lastHeartbeat:
+        type: datetime
+        required: true
+        owner: CODE
+      status:
+        type: enum
+        required: true
+        owner: CODE
+        default: active
+        allowed:
+        - active
+        - disconnected
+        - closed
+      turnBilling:
+        type: enum
+        required: true
+        owner: CODE
+        default: hub_1_turn_story_0_turn_social_round_resolve
+        allowed:
+        - hub_1_turn_story_0_turn_social_round_resolve
+    codeOwns:
+    - validation
+    - dice
+    - HP
+    - catalogs
+    - quest ticks
+    - loot
+    - gold
+    - lockouts
+    - instance seeds
+    - revisions
+    llmMayNarrate:
+    - committed state prose
+    - diegetic descriptions
+    - NPC dialogue without engine terms
+    failureModes:
+    - double-grant prevented by idempotency/revision checks
+    - LLM invents gold or ownership rejected
+    - desync rejected on stale ExpectedRevision
+  Device:
+    description: WOF typed schema for Device; original content only, not production
+      code.
+    fields:
+      id: *id001
+      version: *id002
+      createdAt: *id004
+      updatedAt: *id003
+      deviceId:
+        type: string
+        required: true
+        owner: CODE
+      platform:
+        type: enum
+        required: true
+        owner: CODE
+        allowed:
+        - web
+        - ios
+        - android
+        - desktop
+      clientVersion:
+        type: string
+        required: true
+        owner: CODE
+      pushEnabled:
+        type: boolean
+        required: true
+        owner: CODE
+        default: false
+    codeOwns:
+    - validation
+    - dice
+    - HP
+    - catalogs
+    - quest ticks
+    - loot
+    - gold
+    - lockouts
+    - instance seeds
+    - revisions
+    llmMayNarrate:
+    - committed state prose
+    - diegetic descriptions
+    - NPC dialogue without engine terms
+    failureModes:
+    - double-grant prevented by idempotency/revision checks
+    - LLM invents gold or ownership rejected
+    - desync rejected on stale ExpectedRevision
+  Character:
+    description: WOF typed schema for Character; original content only, not production
+      code.
+    fields:
+      id: *id001
+      version: *id002
+      createdAt: *id004
+      updatedAt: *id003
+      characterId:
+        type: string
+        required: true
+        owner: CODE
+      accountId:
+        type: string
+        required: true
+        owner: CODE
+      worldId:
+        type: string
+        required: true
+        owner: CODE
+      name:
+        type: string
+        required: true
+        owner: CODE
+      raceId:
+        type: enum
+        required: true
+        owner: CODE
+        allowed:
+        - hearthborn
+        - lanternfolk
+        - saltkin
+        - stonevein
+      level:
+        type: integer
+        required: true
+        owner: CODE
+        default: 1
+      xp:
+        type: integer
+        required: true
+        owner: CODE
+        default: 0
+      hpCurrent:
+        type: integer
+        required: true
+        owner: CODE
+        default: 10
+      hpMax:
+        type: integer
+        required: true
+        owner: CODE
+        default: 10
+      staCurrent:
+        type: integer
+        required: true
+        owner: CODE
+        default: 10
+      staMax:
+        type: integer
+        required: true
+        owner: CODE
+        default: 10
+      gold:
+        type: integer
+        required: true
+        owner: CODE
+        default: 0
+      cosmeticTokens:
+        type: integer
+        required: true
+        owner: CODE
+        default: 0
+      placeId:
+        type: string
+        required: true
+        owner: CODE
+      checkpointId:
+        type: string
+        required: true
+        owner: CODE
+      inventoryItemIds:
+        type: array[string]
+        required: true
+        owner: CODE
+        default: []
+      statusFlags:
+        type: array[string]
+        required: true
+        owner: CODE
+        default: []
+      permadeath:
+        type: boolean
+        required: true
+        owner: CODE
+        default: false
+      walletSeparation:
+        type: boolean
+        required: true
+        owner: CODE
+        default: true
+    codeOwns:
+    - validation
+    - dice
+    - HP
+    - catalogs
+    - quest ticks
+    - loot
+    - gold
+    - lockouts
+    - instance seeds
+    - revisions
+    llmMayNarrate:
+    - committed state prose
+    - diegetic descriptions
+    - NPC dialogue without engine terms
+    failureModes:
+    - double-grant prevented by idempotency/revision checks
+    - LLM invents gold or ownership rejected
+    - desync rejected on stale ExpectedRevision
+  CharacterLock:
+    description: WOF typed schema for CharacterLock; original content only, not production
+      code.
+    fields:
+      id: *id001
+      version: *id002
+      createdAt: *id004
+      updatedAt: *id003
+      characterId:
+        type: string
+        required: true
+        owner: CODE
+      lockType:
+        type: enum
+        required: true
+        owner: CODE
+        allowed:
+        - delete_cooldown
+        - boss_lockout
+        - phase_lockout
+        - housing_seize
+      expiresAt:
+        type: datetime
+        required: true
+        owner: CODE
+      reason:
+        type: string
+        required: true
+        owner: CODE
+    codeOwns:
+    - validation
+    - dice
+    - HP
+    - catalogs
+    - quest ticks
+    - loot
+    - gold
+    - lockouts
+    - instance seeds
+    - revisions
+    llmMayNarrate:
+    - committed state prose
+    - diegetic descriptions
+    - NPC dialogue without engine terms
+    failureModes:
+    - double-grant prevented by idempotency/revision checks
+    - LLM invents gold or ownership rejected
+    - desync rejected on stale ExpectedRevision
+  Entitlement:
+    description: WOF typed schema for Entitlement; original content only, not production
+      code.
+    fields:
+      id: *id001
+      version: *id002
+      createdAt: *id004
+      updatedAt: *id003
+      status:
+        type: enum
+        required: true
+        owner: CODE
+        default: active
+        allowed:
+        - active
+        - inactive
+        - committed
+        - revoked
+      ownerId:
+        type: string
+        required: false
+        owner: CODE
+      worldId:
+        type: string
+        required: false
+        owner: CODE
+      revision:
+        type: integer
+        required: true
+        owner: CODE
+        default: 0
+      payload:
+        type: object
+        required: true
+        owner: CODE
+        description: Typed payload owned by CODE; validated before commit
+    codeOwns:
+    - validation
+    - dice
+    - HP
+    - catalogs
+    - quest ticks
+    - loot
+    - gold
+    - lockouts
+    - instance seeds
+    - revisions
+    llmMayNarrate:
+    - committed state prose
+    - diegetic descriptions
+    - NPC dialogue without engine terms
+    failureModes:
+    - double-grant prevented by idempotency/revision checks
+    - LLM invents gold or ownership rejected
+    - desync rejected on stale ExpectedRevision
+  WalletGold:
+    description: WOF typed schema for WalletGold; original content only, not production
+      code.
+    fields:
+      id: *id001
+      version: *id002
+      createdAt: *id004
+      updatedAt: *id003
+      characterId:
+        type: string
+        required: true
+        owner: CODE
+      balance:
+        type: integer
+        required: true
+        owner: CODE
+        default: 0
+      ledgerRevision:
+        type: integer
+        required: true
+        owner: CODE
+        default: 0
+    codeOwns:
+    - validation
+    - dice
+    - HP
+    - catalogs
+    - quest ticks
+    - loot
+    - gold
+    - lockouts
+    - instance seeds
+    - revisions
+    llmMayNarrate:
+    - committed state prose
+    - diegetic descriptions
+    - NPC dialogue without engine terms
+    failureModes:
+    - double-grant prevented by idempotency/revision checks
+    - LLM invents gold or ownership rejected
+    - desync rejected on stale ExpectedRevision
+  WalletCosmetic:
+    description: WOF typed schema for WalletCosmetic; original content only, not production
+      code.
+    fields:
+      id: *id001
+      version: *id002
+      createdAt: *id004
+      updatedAt: *id003
+      accountId:
+        type: string
+        required: true
+        owner: CODE
+      balance:
+        type: integer
+        required: true
+        owner: CODE
+        default: 0
+      ledgerRevision:
+        type: integer
+        required: true
+        owner: CODE
+        default: 0
+    codeOwns:
+    - validation
+    - dice
+    - HP
+    - catalogs
+    - quest ticks
+    - loot
+    - gold
+    - lockouts
+    - instance seeds
+    - revisions
+    llmMayNarrate:
+    - committed state prose
+    - diegetic descriptions
+    - NPC dialogue without engine terms
+    failureModes:
+    - double-grant prevented by idempotency/revision checks
+    - LLM invents gold or ownership rejected
+    - desync rejected on stale ExpectedRevision
+  FriendsEdge:
+    description: WOF typed schema for FriendsEdge; original content only, not production
+      code.
+    fields:
+      id: *id001
+      version: *id002
+      createdAt: *id004
+      updatedAt: *id003
+      status:
+        type: enum
+        required: true
+        owner: CODE
+        default: active
+        allowed:
+        - active
+        - inactive
+        - committed
+        - revoked
+      ownerId:
+        type: string
+        required: false
+        owner: CODE
+      worldId:
+        type: string
+        required: false
+        owner: CODE
+      revision:
+        type: integer
+        required: true
+        owner: CODE
+        default: 0
+      payload:
+        type: object
+        required: true
+        owner: CODE
+        description: Typed payload owned by CODE; validated before commit
+    codeOwns:
+    - validation
+    - dice
+    - HP
+    - catalogs
+    - quest ticks
+    - loot
+    - gold
+    - lockouts
+    - instance seeds
+    - revisions
+    llmMayNarrate:
+    - committed state prose
+    - diegetic descriptions
+    - NPC dialogue without engine terms
+    failureModes:
+    - double-grant prevented by idempotency/revision checks
+    - LLM invents gold or ownership rejected
+    - desync rejected on stale ExpectedRevision
+  BlockMute:
+    description: WOF typed schema for BlockMute; original content only, not production
+      code.
+    fields:
+      id: *id001
+      version: *id002
+      createdAt: *id004
+      updatedAt: *id003
+      status:
+        type: enum
+        required: true
+        owner: CODE
+        default: active
+        allowed:
+        - active
+        - inactive
+        - committed
+        - revoked
+      ownerId:
+        type: string
+        required: false
+        owner: CODE
+      worldId:
+        type: string
+        required: false
+        owner: CODE
+      revision:
+        type: integer
+        required: true
+        owner: CODE
+        default: 0
+      payload:
+        type: object
+        required: true
+        owner: CODE
+        description: Typed payload owned by CODE; validated before commit
+    codeOwns:
+    - validation
+    - dice
+    - HP
+    - catalogs
+    - quest ticks
+    - loot
+    - gold
+    - lockouts
+    - instance seeds
+    - revisions
+    llmMayNarrate:
+    - committed state prose
+    - diegetic descriptions
+    - NPC dialogue without engine terms
+    failureModes:
+    - double-grant prevented by idempotency/revision checks
+    - LLM invents gold or ownership rejected
+    - desync rejected on stale ExpectedRevision
+  Party:
+    description: WOF typed schema for Party; original content only, not production
+      code.
+    fields:
+      id: *id001
+      version: *id002
+      createdAt: *id004
+      updatedAt: *id003
+      partyId:
+        type: string
+        required: true
+        owner: CODE
+      leaderId:
+        type: string
+        required: true
+        owner: CODE
+      memberIds:
+        type: array[string]
+        required: true
+        owner: CODE
+      minSize:
+        type: integer
+        required: true
+        owner: CODE
+        default: 2
+      maxSize:
+        type: integer
+        required: true
+        owner: CODE
+        default: 5
+      midCombatFill:
+        type: boolean
+        required: true
+        owner: CODE
+        default: false
+    codeOwns:
+    - validation
+    - dice
+    - HP
+    - catalogs
+    - quest ticks
+    - loot
+    - gold
+    - lockouts
+    - instance seeds
+    - revisions
+    llmMayNarrate:
+    - committed state prose
+    - diegetic descriptions
+    - NPC dialogue without engine terms
+    failureModes:
+    - double-grant prevented by idempotency/revision checks
+    - LLM invents gold or ownership rejected
+    - desync rejected on stale ExpectedRevision
+  Raid:
+    description: WOF typed schema for Raid; original content only, not production
+      code.
+    fields:
+      id: *id001
+      version: *id002
+      createdAt: *id004
+      updatedAt: *id003
+      raidId:
+        type: string
+        required: true
+        owner: CODE
+      partyId:
+        type: string
+        required: true
+        owner: CODE
+      memberIds:
+        type: array[string]
+        required: true
+        owner: CODE
+      size:
+        type: integer
+        required: true
+        owner: CODE
+        default: 10
+      minimumTier:
+        type: enum
+        required: true
+        owner: CODE
+        default: mid_plus
+        allowed:
+        - mid_plus
+        - high
+      lockoutPerCharacter:
+        type: boolean
+        required: true
+        owner: CODE
+        default: true
+    codeOwns:
+    - validation
+    - dice
+    - HP
+    - catalogs
+    - quest ticks
+    - loot
+    - gold
+    - lockouts
+    - instance seeds
+    - revisions
+    llmMayNarrate:
+    - committed state prose
+    - diegetic descriptions
+    - NPC dialogue without engine terms
+    failureModes:
+    - double-grant prevented by idempotency/revision checks
+    - LLM invents gold or ownership rejected
+    - desync rejected on stale ExpectedRevision
+  Instance:
+    description: WOF typed schema for Instance; original content only, not production
+      code.
+    fields:
+      id: *id001
+      version: *id002
+      createdAt: *id004
+      updatedAt: *id003
+      instanceId:
+        type: string
+        required: true
+        owner: CODE
+      worldId:
+        type: string
+        required: true
+        owner: CODE
+      dungeonId:
+        type: string
+        required: true
+        owner: CODE
+      partyId:
+        type: string
+        required: true
+        owner: CODE
+      mode:
+        type: enum
+        required: true
+        owner: CODE
+        allowed:
+        - A
+        - C
+      round:
+        type: integer
+        required: true
+        owner: CODE
+        default: 0
+      phase:
+        type: integer
+        required: true
+        owner: CODE
+        default: 1
+      state:
+        type: enum
+        required: true
+        owner: CODE
+        default: created
+        allowed:
+        - created
+        - joinable
+        - ready
+        - round
+        - hold
+        - checkpoint
+        - wipe
+        - left
+        - abandoned
+      checkpointId:
+        type: string
+        required: true
+        owner: CODE
+      expectedRevision:
+        type: integer
+        required: true
+        owner: CODE
+        default: 0
+      turnBilling:
+        type: enum
+        required: true
+        owner: CODE
+        default: mode_a_one_turn_per_player_per_round
+        allowed:
+        - mode_a_one_turn_per_player_per_round
+        - mode_c_even_round_billing
+      midCombatFill:
+        type: boolean
+        required: true
+        owner: CODE
+        default: false
+    codeOwns:
+    - validation
+    - dice
+    - HP
+    - catalogs
+    - quest ticks
+    - loot
+    - gold
+    - lockouts
+    - instance seeds
+    - revisions
+    llmMayNarrate:
+    - committed state prose
+    - diegetic descriptions
+    - NPC dialogue without engine terms
+    failureModes:
+    - double-grant prevented by idempotency/revision checks
+    - LLM invents gold or ownership rejected
+    - desync rejected on stale ExpectedRevision
+  InstanceToken:
+    description: WOF typed schema for InstanceToken; original content only, not production
+      code.
+    fields:
+      id: *id001
+      version: *id002
+      createdAt: *id004
+      updatedAt: *id003
+      status:
+        type: enum
+        required: true
+        owner: CODE
+        default: active
+        allowed:
+        - active
+        - inactive
+        - committed
+        - revoked
+      ownerId:
+        type: string
+        required: false
+        owner: CODE
+      worldId:
+        type: string
+        required: false
+        owner: CODE
+      revision:
+        type: integer
+        required: true
+        owner: CODE
+        default: 0
+      payload:
+        type: object
+        required: true
+        owner: CODE
+        description: Typed payload owned by CODE; validated before commit
+    codeOwns:
+    - validation
+    - dice
+    - HP
+    - catalogs
+    - quest ticks
+    - loot
+    - gold
+    - lockouts
+    - instance seeds
+    - revisions
+    llmMayNarrate:
+    - committed state prose
+    - diegetic descriptions
+    - NPC dialogue without engine terms
+    failureModes:
+    - double-grant prevented by idempotency/revision checks
+    - LLM invents gold or ownership rejected
+    - desync rejected on stale ExpectedRevision
+  ReconnectState:
+    description: WOF typed schema for ReconnectState; original content only, not production
+      code.
+    fields:
+      id: *id001
+      version: *id002
+      createdAt: *id004
+      updatedAt: *id003
+      status:
+        type: enum
+        required: true
+        owner: CODE
+        default: active
+        allowed:
+        - active
+        - inactive
+        - committed
+        - revoked
+      ownerId:
+        type: string
+        required: false
+        owner: CODE
+      worldId:
+        type: string
+        required: false
+        owner: CODE
+      revision:
+        type: integer
+        required: true
+        owner: CODE
+        default: 0
+      payload:
+        type: object
+        required: true
+        owner: CODE
+        description: Typed payload owned by CODE; validated before commit
+    codeOwns:
+    - validation
+    - dice
+    - HP
+    - catalogs
+    - quest ticks
+    - loot
+    - gold
+    - lockouts
+    - instance seeds
+    - revisions
+    llmMayNarrate:
+    - committed state prose
+    - diegetic descriptions
+    - NPC dialogue without engine terms
+    failureModes:
+    - double-grant prevented by idempotency/revision checks
+    - LLM invents gold or ownership rejected
+    - desync rejected on stale ExpectedRevision
+  ExpectedRevision:
+    description: WOF typed schema for ExpectedRevision; original content only, not
+      production code.
+    fields:
+      id: *id001
+      version: *id002
+      createdAt: *id004
+      updatedAt: *id003
+      entityId:
+        type: string
+        required: true
+        owner: CODE
+      revision:
+        type: integer
+        required: true
+        owner: CODE
+      conflictPolicy:
+        type: enum
+        required: true
+        owner: CODE
+        default: reject
+        allowed:
+        - reject
+        - reload
+    codeOwns:
+    - validation
+    - dice
+    - HP
+    - catalogs
+    - quest ticks
+    - loot
+    - gold
+    - lockouts
+    - instance seeds
+    - revisions
+    llmMayNarrate:
+    - committed state prose
+    - diegetic descriptions
+    - NPC dialogue without engine terms
+    failureModes:
+    - double-grant prevented by idempotency/revision checks
+    - LLM invents gold or ownership rejected
+    - desync rejected on stale ExpectedRevision
+  PresenceHub:
+    description: WOF typed schema for PresenceHub; original content only, not production
+      code.
+    fields:
+      worldId:
+        type: string
+        required: true
+        owner: CODE
+      placeId:
+        type: string
+        required: true
+        owner: CODE
+      nearbyPlayerCount:
+        type: integer
+        required: true
+        owner: CODE
+        default: 0
+      races:
+        type: array[enum]
+        required: true
+        owner: CODE
+        default: []
+      namesShown:
+        type: boolean
+        required: true
+        owner: CODE
+        default: false
+    codeOwns:
+    - validation
+    - dice
+    - HP
+    - catalogs
+    - quest ticks
+    - loot
+    - gold
+    - lockouts
+    - instance seeds
+    - revisions
+    llmMayNarrate:
+    - committed state prose
+    - diegetic descriptions
+    - NPC dialogue without engine terms
+    failureModes:
+    - double-grant prevented by idempotency/revision checks
+    - LLM invents gold or ownership rejected
+    - desync rejected on stale ExpectedRevision
+  TellMessage:
+    description: WOF typed schema for TellMessage; original content only, not production
+      code.
+    fields:
+      id: *id001
+      version: *id002
+      createdAt: *id004
+      updatedAt: *id003
+      status:
+        type: enum
+        required: true
+        owner: CODE
+        default: active
+        allowed:
+        - active
+        - inactive
+        - committed
+        - revoked
+      ownerId:
+        type: string
+        required: false
+        owner: CODE
+      worldId:
+        type: string
+        required: false
+        owner: CODE
+      revision:
+        type: integer
+        required: true
+        owner: CODE
+        default: 0
+      payload:
+        type: object
+        required: true
+        owner: CODE
+        description: Typed payload owned by CODE; validated before commit
+    codeOwns:
+    - validation
+    - dice
+    - HP
+    - catalogs
+    - quest ticks
+    - loot
+    - gold
+    - lockouts
+    - instance seeds
+    - revisions
+    llmMayNarrate:
+    - committed state prose
+    - diegetic descriptions
+    - NPC dialogue without engine terms
+    failureModes:
+    - double-grant prevented by idempotency/revision checks
+    - LLM invents gold or ownership rejected
+    - desync rejected on stale ExpectedRevision
+  PartyChatMessage:
+    description: WOF typed schema for PartyChatMessage; original content only, not
+      production code.
+    fields:
+      id: *id001
+      version: *id002
+      createdAt: *id004
+      updatedAt: *id003
+      status:
+        type: enum
+        required: true
+        owner: CODE
+        default: active
+        allowed:
+        - active
+        - inactive
+        - committed
+        - revoked
+      ownerId:
+        type: string
+        required: false
+        owner: CODE
+      worldId:
+        type: string
+        required: false
+        owner: CODE
+      revision:
+        type: integer
+        required: true
+        owner: CODE
+        default: 0
+      payload:
+        type: object
+        required: true
+        owner: CODE
+        description: Typed payload owned by CODE; validated before commit
+    codeOwns:
+    - validation
+    - dice
+    - HP
+    - catalogs
+    - quest ticks
+    - loot
+    - gold
+    - lockouts
+    - instance seeds
+    - revisions
+    llmMayNarrate:
+    - committed state prose
+    - diegetic descriptions
+    - NPC dialogue without engine terms
+    failureModes:
+    - double-grant prevented by idempotency/revision checks
+    - LLM invents gold or ownership rejected
+    - desync rejected on stale ExpectedRevision
+  CannedSay:
+    description: WOF typed schema for CannedSay; original content only, not production
+      code.
+    fields:
+      id: *id001
+      version: *id002
+      createdAt: *id004
+      updatedAt: *id003
+      status:
+        type: enum
+        required: true
+        owner: CODE
+        default: active
+        allowed:
+        - active
+        - inactive
+        - committed
+        - revoked
+      ownerId:
+        type: string
+        required: false
+        owner: CODE
+      worldId:
+        type: string
+        required: false
+        owner: CODE
+      revision:
+        type: integer
+        required: true
+        owner: CODE
+        default: 0
+      payload:
+        type: object
+        required: true
+        owner: CODE
+        description: Typed payload owned by CODE; validated before commit
+    codeOwns:
+    - validation
+    - dice
+    - HP
+    - catalogs
+    - quest ticks
+    - loot
+    - gold
+    - lockouts
+    - instance seeds
+    - revisions
+    llmMayNarrate:
+    - committed state prose
+    - diegetic descriptions
+    - NPC dialogue without engine terms
+    failureModes:
+    - double-grant prevented by idempotency/revision checks
+    - LLM invents gold or ownership rejected
+    - desync rejected on stale ExpectedRevision
+  MailItem:
+    description: WOF typed schema for MailItem; original content only, not production
+      code.
+    fields:
+      id: *id001
+      version: *id002
+      createdAt: *id004
+      updatedAt: *id003
+      status:
+        type: enum
+        required: true
+        owner: CODE
+        default: active
+        allowed:
+        - active
+        - inactive
+        - committed
+        - revoked
+      ownerId:
+        type: string
+        required: false
+        owner: CODE
+      worldId:
+        type: string
+        required: false
+        owner: CODE
+      revision:
+        type: integer
+        required: true
+        owner: CODE
+        default: 0
+      payload:
+        type: object
+        required: true
+        owner: CODE
+        description: Typed payload owned by CODE; validated before commit
+    codeOwns:
+    - validation
+    - dice
+    - HP
+    - catalogs
+    - quest ticks
+    - loot
+    - gold
+    - lockouts
+    - instance seeds
+    - revisions
+    llmMayNarrate:
+    - committed state prose
+    - diegetic descriptions
+    - NPC dialogue without engine terms
+    failureModes:
+    - double-grant prevented by idempotency/revision checks
+    - LLM invents gold or ownership rejected
+    - desync rejected on stale ExpectedRevision
+  MailDigest:
+    description: WOF typed schema for MailDigest; original content only, not production
+      code.
+    fields:
+      id: *id001
+      version: *id002
+      createdAt: *id004
+      updatedAt: *id003
+      status:
+        type: enum
+        required: true
+        owner: CODE
+        default: active
+        allowed:
+        - active
+        - inactive
+        - committed
+        - revoked
+      ownerId:
+        type: string
+        required: false
+        owner: CODE
+      worldId:
+        type: string
+        required: false
+        owner: CODE
+      revision:
+        type: integer
+        required: true
+        owner: CODE
+        default: 0
+      payload:
+        type: object
+        required: true
+        owner: CODE
+        description: Typed payload owned by CODE; validated before commit
+    codeOwns:
+    - validation
+    - dice
+    - HP
+    - catalogs
+    - quest ticks
+    - loot
+    - gold
+    - lockouts
+    - instance seeds
+    - revisions
+    llmMayNarrate:
+    - committed state prose
+    - diegetic descriptions
+    - NPC dialogue without engine terms
+    failureModes:
+    - double-grant prevented by idempotency/revision checks
+    - LLM invents gold or ownership rejected
+    - desync rejected on stale ExpectedRevision
+  WorldClock:
+    description: WOF typed schema for WorldClock; original content only, not production
+      code.
+    fields:
+      worldId:
+        type: string
+        required: true
+        owner: CODE
+      weekKey:
+        type: string
+        required: true
+        owner: CODE
+      lastTickAt:
+        type: datetime
+        required: true
+        owner: CODE
+      catchUpCapWeeks:
+        type: integer
+        required: true
+        owner: CODE
+        default: 4
+      llmMayMintGold:
+        type: boolean
+        required: true
+        owner: CODE
+        default: false
+    codeOwns:
+    - validation
+    - dice
+    - HP
+    - catalogs
+    - quest ticks
+    - loot
+    - gold
+    - lockouts
+    - instance seeds
+    - revisions
+    llmMayNarrate:
+    - committed state prose
+    - diegetic descriptions
+    - NPC dialogue without engine terms
+    failureModes:
+    - double-grant prevented by idempotency/revision checks
+    - LLM invents gold or ownership rejected
+    - desync rejected on stale ExpectedRevision
+  CatchUpJob:
+    description: WOF typed schema for CatchUpJob; original content only, not production
+      code.
+    fields:
+      id: *id001
+      version: *id002
+      createdAt: *id004
+      updatedAt: *id003
+      status:
+        type: enum
+        required: true
+        owner: CODE
+        default: active
+        allowed:
+        - active
+        - inactive
+        - committed
+        - revoked
+      ownerId:
+        type: string
+        required: false
+        owner: CODE
+      worldId:
+        type: string
+        required: false
+        owner: CODE
+      revision:
+        type: integer
+        required: true
+        owner: CODE
+        default: 0
+      payload:
+        type: object
+        required: true
+        owner: CODE
+        description: Typed payload owned by CODE; validated before commit
+    codeOwns:
+    - validation
+    - dice
+    - HP
+    - catalogs
+    - quest ticks
+    - loot
+    - gold
+    - lockouts
+    - instance seeds
+    - revisions
+    llmMayNarrate:
+    - committed state prose
+    - diegetic descriptions
+    - NPC dialogue without engine terms
+    failureModes:
+    - double-grant prevented by idempotency/revision checks
+    - LLM invents gold or ownership rejected
+    - desync rejected on stale ExpectedRevision
+  PlaceDef:
+    description: WOF typed schema for PlaceDef; original content only, not production
+      code.
+    fields:
+      id: *id001
+      version: *id002
+      createdAt: *id004
+      updatedAt: *id003
+      placeId:
+        type: string
+        required: true
+        owner: CODE
+      worldId:
+        type: string
+        required: true
+        owner: CODE
+      publicName:
+        type: string
+        required: true
+        owner: CODE
+      zoneId:
+        type: string
+        required: true
+        owner: CODE
+      kind:
+        type: enum
+        required: true
+        owner: CODE
+        allowed:
+        - street
+        - hub
+        - dungeon
+        - interior
+        - road
+        - ferry
+        - coach
+      danger:
+        type: enum
+        required: true
+        owner: CODE
+        allowed:
+        - safe
+        - low
+        - medium
+        - high
+      outdoor:
+        type: boolean
+        required: true
+        owner: CODE
+      exits:
+        type: array[object]
+        required: true
+        owner: CODE
+        default: []
+      npcIds:
+        type: array[string]
+        required: true
+        owner: CODE
+        default: []
+      dungeonId:
+        type: string
+        required: false
+        owner: CODE
+    codeOwns:
+    - validation
+    - dice
+    - HP
+    - catalogs
+    - quest ticks
+    - loot
+    - gold
+    - lockouts
+    - instance seeds
+    - revisions
+    llmMayNarrate:
+    - committed state prose
+    - diegetic descriptions
+    - NPC dialogue without engine terms
+    failureModes:
+    - double-grant prevented by idempotency/revision checks
+    - LLM invents gold or ownership rejected
+    - desync rejected on stale ExpectedRevision
+  InteractableDef:
+    description: WOF typed schema for InteractableDef; original content only, not
+      production code.
+    fields:
+      id: *id001
+      version: *id002
+      createdAt: *id004
+      updatedAt: *id003
+      interactableId:
+        type: string
+        required: true
+        owner: CODE
+      verb:
+        type: string
+        required: true
+        owner: CODE
+      placeId:
+        type: string
+        required: true
+        owner: CODE
+      requires:
+        type: array[string]
+        required: true
+        owner: CODE
+        default: []
+      grants:
+        type: array[string]
+        required: true
+        owner: CODE
+        default: []
+      turnCost:
+        type: integer
+        required: true
+        owner: CODE
+        default: 0
+      llmMayNarrate:
+        type: boolean
+        required: true
+        owner: CODE
+        default: true
+    codeOwns:
+    - validation
+    - dice
+    - HP
+    - catalogs
+    - quest ticks
+    - loot
+    - gold
+    - lockouts
+    - instance seeds
+    - revisions
+    llmMayNarrate:
+    - committed state prose
+    - diegetic descriptions
+    - NPC dialogue without engine terms
+    failureModes:
+    - double-grant prevented by idempotency/revision checks
+    - LLM invents gold or ownership rejected
+    - desync rejected on stale ExpectedRevision
+  PropInstance:
+    description: WOF typed schema for PropInstance; original content only, not production
+      code.
+    fields:
+      id: *id001
+      version: *id002
+      createdAt: *id004
+      updatedAt: *id003
+      status:
+        type: enum
+        required: true
+        owner: CODE
+        default: active
+        allowed:
+        - active
+        - inactive
+        - committed
+        - revoked
+      ownerId:
+        type: string
+        required: false
+        owner: CODE
+      worldId:
+        type: string
+        required: false
+        owner: CODE
+      revision:
+        type: integer
+        required: true
+        owner: CODE
+        default: 0
+      payload:
+        type: object
+        required: true
+        owner: CODE
+        description: Typed payload owned by CODE; validated before commit
+    codeOwns:
+    - validation
+    - dice
+    - HP
+    - catalogs
+    - quest ticks
+    - loot
+    - gold
+    - lockouts
+    - instance seeds
+    - revisions
+    llmMayNarrate:
+    - committed state prose
+    - diegetic descriptions
+    - NPC dialogue without engine terms
+    failureModes:
+    - double-grant prevented by idempotency/revision checks
+    - LLM invents gold or ownership rejected
+    - desync rejected on stale ExpectedRevision
+  Deed:
+    description: WOF typed schema for Deed; original content only, not production
+      code.
+    fields:
+      id: *id001
+      version: *id002
+      createdAt: *id004
+      updatedAt: *id003
+      status:
+        type: enum
+        required: true
+        owner: CODE
+        default: active
+        allowed:
+        - active
+        - inactive
+        - committed
+        - revoked
+      ownerId:
+        type: string
+        required: false
+        owner: CODE
+      worldId:
+        type: string
+        required: false
+        owner: CODE
+      revision:
+        type: integer
+        required: true
+        owner: CODE
+        default: 0
+      payload:
+        type: object
+        required: true
+        owner: CODE
+        description: Typed payload owned by CODE; validated before commit
+    codeOwns:
+    - validation
+    - dice
+    - HP
+    - catalogs
+    - quest ticks
+    - loot
+    - gold
+    - lockouts
+    - instance seeds
+    - revisions
+    llmMayNarrate:
+    - committed state prose
+    - diegetic descriptions
+    - NPC dialogue without engine terms
+    failureModes:
+    - double-grant prevented by idempotency/revision checks
+    - LLM invents gold or ownership rejected
+    - desync rejected on stale ExpectedRevision
+  InteriorGraph:
+    description: WOF typed schema for InteriorGraph; original content only, not production
+      code.
+    fields:
+      id: *id001
+      version: *id002
+      createdAt: *id004
+      updatedAt: *id003
+      status:
+        type: enum
+        required: true
+        owner: CODE
+        default: active
+        allowed:
+        - active
+        - inactive
+        - committed
+        - revoked
+      ownerId:
+        type: string
+        required: false
+        owner: CODE
+      worldId:
+        type: string
+        required: false
+        owner: CODE
+      revision:
+        type: integer
+        required: true
+        owner: CODE
+        default: 0
+      payload:
+        type: object
+        required: true
+        owner: CODE
+        description: Typed payload owned by CODE; validated before commit
+    codeOwns:
+    - validation
+    - dice
+    - HP
+    - catalogs
+    - quest ticks
+    - loot
+    - gold
+    - lockouts
+    - instance seeds
+    - revisions
+    llmMayNarrate:
+    - committed state prose
+    - diegetic descriptions
+    - NPC dialogue without engine terms
+    failureModes:
+    - double-grant prevented by idempotency/revision checks
+    - LLM invents gold or ownership rejected
+    - desync rejected on stale ExpectedRevision
+  HousingGuest:
+    description: WOF typed schema for HousingGuest; original content only, not production
+      code.
+    fields:
+      id: *id001
+      version: *id002
+      createdAt: *id004
+      updatedAt: *id003
+      status:
+        type: enum
+        required: true
+        owner: CODE
+        default: active
+        allowed:
+        - active
+        - inactive
+        - committed
+        - revoked
+      ownerId:
+        type: string
+        required: false
+        owner: CODE
+      worldId:
+        type: string
+        required: false
+        owner: CODE
+      revision:
+        type: integer
+        required: true
+        owner: CODE
+        default: 0
+      payload:
+        type: object
+        required: true
+        owner: CODE
+        description: Typed payload owned by CODE; validated before commit
+    codeOwns:
+    - validation
+    - dice
+    - HP
+    - catalogs
+    - quest ticks
+    - loot
+    - gold
+    - lockouts
+    - instance seeds
+    - revisions
+    llmMayNarrate:
+    - committed state prose
+    - diegetic descriptions
+    - NPC dialogue without engine terms
+    failureModes:
+    - double-grant prevented by idempotency/revision checks
+    - LLM invents gold or ownership rejected
+    - desync rejected on stale ExpectedRevision
+  Holding:
+    description: WOF typed schema for Holding; original content only, not production
+      code.
+    fields:
+      id: *id001
+      version: *id002
+      createdAt: *id004
+      updatedAt: *id003
+      status:
+        type: enum
+        required: true
+        owner: CODE
+        default: active
+        allowed:
+        - active
+        - inactive
+        - committed
+        - revoked
+      ownerId:
+        type: string
+        required: false
+        owner: CODE
+      worldId:
+        type: string
+        required: false
+        owner: CODE
+      revision:
+        type: integer
+        required: true
+        owner: CODE
+        default: 0
+      payload:
+        type: object
+        required: true
+        owner: CODE
+        description: Typed payload owned by CODE; validated before commit
+    codeOwns:
+    - validation
+    - dice
+    - HP
+    - catalogs
+    - quest ticks
+    - loot
+    - gold
+    - lockouts
+    - instance seeds
+    - revisions
+    llmMayNarrate:
+    - committed state prose
+    - diegetic descriptions
+    - NPC dialogue without engine terms
+    failureModes:
+    - double-grant prevented by idempotency/revision checks
+    - LLM invents gold or ownership rejected
+    - desync rejected on stale ExpectedRevision
+  DealPersonalCopy:
+    description: WOF typed schema for DealPersonalCopy; original content only, not
+      production code.
+    fields:
+      dealId:
+        type: string
+        required: true
+        owner: CODE
+      vendorId:
+        type: string
+        required: true
+        owner: CODE
+      characterId:
+        type: string
+        required: true
+        owner: CODE
+      itemId:
+        type: string
+        required: true
+        owner: CODE
+      quantity:
+        type: integer
+        required: true
+        owner: CODE
+      buyPrice:
+        type: integer
+        required: true
+        owner: CODE
+      personalCopy:
+        type: boolean
+        required: true
+        owner: CODE
+        default: true
+    codeOwns:
+    - validation
+    - dice
+    - HP
+    - catalogs
+    - quest ticks
+    - loot
+    - gold
+    - lockouts
+    - instance seeds
+    - revisions
+    llmMayNarrate:
+    - committed state prose
+    - diegetic descriptions
+    - NPC dialogue without engine terms
+    failureModes:
+    - double-grant prevented by idempotency/revision checks
+    - LLM invents gold or ownership rejected
+    - desync rejected on stale ExpectedRevision
+  AuctionListing:
+    description: WOF typed schema for AuctionListing; original content only, not production
+      code.
+    fields:
+      listingId:
+        type: string
+        required: true
+        owner: CODE
+      regionId:
+        type: string
+        required: true
+        owner: CODE
+      sellerCharacterId:
+        type: string
+        required: true
+        owner: CODE
+      itemInstanceId:
+        type: string
+        required: true
+        owner: CODE
+      buyoutGold:
+        type: integer
+        required: true
+        owner: CODE
+      escrowId:
+        type: string
+        required: true
+        owner: CODE
+      expiresAt:
+        type: datetime
+        required: true
+        owner: CODE
+      status:
+        type: enum
+        required: true
+        owner: CODE
+        default: listed
+        allowed:
+        - listed
+        - sold
+        - expired
+        - cancelled
+    codeOwns:
+    - validation
+    - dice
+    - HP
+    - catalogs
+    - quest ticks
+    - loot
+    - gold
+    - lockouts
+    - instance seeds
+    - revisions
+    llmMayNarrate:
+    - committed state prose
+    - diegetic descriptions
+    - NPC dialogue without engine terms
+    failureModes:
+    - double-grant prevented by idempotency/revision checks
+    - LLM invents gold or ownership rejected
+    - desync rejected on stale ExpectedRevision
+  Escrow:
+    description: WOF typed schema for Escrow; original content only, not production
+      code.
+    fields:
+      id: *id001
+      version: *id002
+      createdAt: *id004
+      updatedAt: *id003
+      status:
+        type: enum
+        required: true
+        owner: CODE
+        default: active
+        allowed:
+        - active
+        - inactive
+        - committed
+        - revoked
+      ownerId:
+        type: string
+        required: false
+        owner: CODE
+      worldId:
+        type: string
+        required: false
+        owner: CODE
+      revision:
+        type: integer
+        required: true
+        owner: CODE
+        default: 0
+      payload:
+        type: object
+        required: true
+        owner: CODE
+        description: Typed payload owned by CODE; validated before commit
+    codeOwns:
+    - validation
+    - dice
+    - HP
+    - catalogs
+    - quest ticks
+    - loot
+    - gold
+    - lockouts
+    - instance seeds
+    - revisions
+    llmMayNarrate:
+    - committed state prose
+    - diegetic descriptions
+    - NPC dialogue without engine terms
+    failureModes:
+    - double-grant prevented by idempotency/revision checks
+    - LLM invents gold or ownership rejected
+    - desync rejected on stale ExpectedRevision
+  VendorDef:
+    description: WOF typed schema for VendorDef; original content only, not production
+      code.
+    fields:
+      id: *id001
+      version: *id002
+      createdAt: *id004
+      updatedAt: *id003
+      status:
+        type: enum
+        required: true
+        owner: CODE
+        default: active
+        allowed:
+        - active
+        - inactive
+        - committed
+        - revoked
+      ownerId:
+        type: string
+        required: false
+        owner: CODE
+      worldId:
+        type: string
+        required: false
+        owner: CODE
+      revision:
+        type: integer
+        required: true
+        owner: CODE
+        default: 0
+      payload:
+        type: object
+        required: true
+        owner: CODE
+        description: Typed payload owned by CODE; validated before commit
+    codeOwns:
+    - validation
+    - dice
+    - HP
+    - catalogs
+    - quest ticks
+    - loot
+    - gold
+    - lockouts
+    - instance seeds
+    - revisions
+    llmMayNarrate:
+    - committed state prose
+    - diegetic descriptions
+    - NPC dialogue without engine terms
+    failureModes:
+    - double-grant prevented by idempotency/revision checks
+    - LLM invents gold or ownership rejected
+    - desync rejected on stale ExpectedRevision
+  VendorStock:
+    description: WOF typed schema for VendorStock; original content only, not production
+      code.
+    fields:
+      id: *id001
+      version: *id002
+      createdAt: *id004
+      updatedAt: *id003
+      status:
+        type: enum
+        required: true
+        owner: CODE
+        default: active
+        allowed:
+        - active
+        - inactive
+        - committed
+        - revoked
+      ownerId:
+        type: string
+        required: false
+        owner: CODE
+      worldId:
+        type: string
+        required: false
+        owner: CODE
+      revision:
+        type: integer
+        required: true
+        owner: CODE
+        default: 0
+      payload:
+        type: object
+        required: true
+        owner: CODE
+        description: Typed payload owned by CODE; validated before commit
+    codeOwns:
+    - validation
+    - dice
+    - HP
+    - catalogs
+    - quest ticks
+    - loot
+    - gold
+    - lockouts
+    - instance seeds
+    - revisions
+    llmMayNarrate:
+    - committed state prose
+    - diegetic descriptions
+    - NPC dialogue without engine terms
+    failureModes:
+    - double-grant prevented by idempotency/revision checks
+    - LLM invents gold or ownership rejected
+    - desync rejected on stale ExpectedRevision
+  RepairTicket:
+    description: WOF typed schema for RepairTicket; original content only, not production
+      code.
+    fields:
+      id: *id001
+      version: *id002
+      createdAt: *id004
+      updatedAt: *id003
+      status:
+        type: enum
+        required: true
+        owner: CODE
+        default: active
+        allowed:
+        - active
+        - inactive
+        - committed
+        - revoked
+      ownerId:
+        type: string
+        required: false
+        owner: CODE
+      worldId:
+        type: string
+        required: false
+        owner: CODE
+      revision:
+        type: integer
+        required: true
+        owner: CODE
+        default: 0
+      payload:
+        type: object
+        required: true
+        owner: CODE
+        description: Typed payload owned by CODE; validated before commit
+    codeOwns:
+    - validation
+    - dice
+    - HP
+    - catalogs
+    - quest ticks
+    - loot
+    - gold
+    - lockouts
+    - instance seeds
+    - revisions
+    llmMayNarrate:
+    - committed state prose
+    - diegetic descriptions
+    - NPC dialogue without engine terms
+    failureModes:
+    - double-grant prevented by idempotency/revision checks
+    - LLM invents gold or ownership rejected
+    - desync rejected on stale ExpectedRevision
+  BankTab:
+    description: WOF typed schema for BankTab; original content only, not production
+      code.
+    fields:
+      id: *id001
+      version: *id002
+      createdAt: *id004
+      updatedAt: *id003
+      status:
+        type: enum
+        required: true
+        owner: CODE
+        default: active
+        allowed:
+        - active
+        - inactive
+        - committed
+        - revoked
+      ownerId:
+        type: string
+        required: false
+        owner: CODE
+      worldId:
+        type: string
+        required: false
+        owner: CODE
+      revision:
+        type: integer
+        required: true
+        owner: CODE
+        default: 0
+      payload:
+        type: object
+        required: true
+        owner: CODE
+        description: Typed payload owned by CODE; validated before commit
+    codeOwns:
+    - validation
+    - dice
+    - HP
+    - catalogs
+    - quest ticks
+    - loot
+    - gold
+    - lockouts
+    - instance seeds
+    - revisions
+    llmMayNarrate:
+    - committed state prose
+    - diegetic descriptions
+    - NPC dialogue without engine terms
+    failureModes:
+    - double-grant prevented by idempotency/revision checks
+    - LLM invents gold or ownership rejected
+    - desync rejected on stale ExpectedRevision
+  TradeWindow:
+    description: WOF typed schema for TradeWindow; original content only, not production
+      code.
+    fields:
+      tradeId:
+        type: string
+        required: true
+        owner: CODE
+      friendOnly:
+        type: boolean
+        required: true
+        owner: CODE
+        default: true
+      acceptWindowSeconds:
+        type: integer
+        required: true
+        owner: CODE
+        default: 120
+      highValueSoulbindDelayHours:
+        type: integer
+        required: true
+        owner: CODE
+        default: 1
+      highValueGoldThreshold:
+        type: integer
+        required: true
+        owner: CODE
+        default: 1000
+      status:
+        type: enum
+        required: true
+        owner: CODE
+        default: open
+        allowed:
+        - open
+        - accepted
+        - cancelled
+        - expired
+    codeOwns:
+    - validation
+    - dice
+    - HP
+    - catalogs
+    - quest ticks
+    - loot
+    - gold
+    - lockouts
+    - instance seeds
+    - revisions
+    llmMayNarrate:
+    - committed state prose
+    - diegetic descriptions
+    - NPC dialogue without engine terms
+    failureModes:
+    - double-grant prevented by idempotency/revision checks
+    - LLM invents gold or ownership rejected
+    - desync rejected on stale ExpectedRevision
+  ItemTemplate:
+    description: WOF typed schema for ItemTemplate; original content only, not production
+      code.
+    fields:
+      id: *id001
+      version: *id002
+      createdAt: *id004
+      updatedAt: *id003
+      itemId:
+        type: string
+        required: true
+        owner: CODE
+      publicName:
+        type: string
+        required: true
+        owner: CODE
+      category:
+        type: enum
+        required: true
+        owner: CODE
+        allowed:
+        - junk
+        - material
+        - food
+        - repair
+        - quest_unique
+        - cosmetic
+        - weapon
+        - armor
+        - furniture
+      stackLimit:
+        type: integer
+        required: true
+        owner: CODE
+        default: 1
+      bindRule:
+        type: enum
+        required: true
+        owner: CODE
+        default: tradeable
+        allowed:
+        - soulbound
+        - tradeable
+        - account_bound
+      powerGrant:
+        type: integer
+        required: true
+        owner: CODE
+        default: 0
+    codeOwns:
+    - validation
+    - dice
+    - HP
+    - catalogs
+    - quest ticks
+    - loot
+    - gold
+    - lockouts
+    - instance seeds
+    - revisions
+    llmMayNarrate:
+    - committed state prose
+    - diegetic descriptions
+    - NPC dialogue without engine terms
+    failureModes:
+    - double-grant prevented by idempotency/revision checks
+    - LLM invents gold or ownership rejected
+    - desync rejected on stale ExpectedRevision
+  ItemInstance:
+    description: WOF typed schema for ItemInstance; original content only, not production
+      code.
+    fields:
+      id: *id001
+      version: *id002
+      createdAt: *id004
+      updatedAt: *id003
+      itemInstanceId:
+        type: string
+        required: true
+        owner: CODE
+      itemId:
+        type: string
+        required: true
+        owner: CODE
+      ownerCharacterId:
+        type: string
+        required: true
+        owner: CODE
+      quantity:
+        type: integer
+        required: true
+        owner: CODE
+        default: 1
+      durability:
+        type: object
+        required: true
+        owner: CODE
+    codeOwns:
+    - validation
+    - dice
+    - HP
+    - catalogs
+    - quest ticks
+    - loot
+    - gold
+    - lockouts
+    - instance seeds
+    - revisions
+    llmMayNarrate:
+    - committed state prose
+    - diegetic descriptions
+    - NPC dialogue without engine terms
+    failureModes:
+    - double-grant prevented by idempotency/revision checks
+    - LLM invents gold or ownership rejected
+    - desync rejected on stale ExpectedRevision
+  Durability:
+    description: WOF typed schema for Durability; original content only, not production
+      code.
+    fields:
+      id: *id001
+      version: *id002
+      createdAt: *id004
+      updatedAt: *id003
+      current:
+        type: integer
+        required: true
+        owner: CODE
+        default: 100
+      maximum:
+        type: integer
+        required: true
+        owner: CODE
+        default: 100
+      broken:
+        type: boolean
+        required: true
+        owner: CODE
+        default: false
+      combatLossPerRound:
+        type: integer
+        required: true
+        owner: CODE
+        default: 1
+      wipeLossPercent:
+        type: integer
+        required: true
+        owner: CODE
+        default: 10
+    codeOwns:
+    - validation
+    - dice
+    - HP
+    - catalogs
+    - quest ticks
+    - loot
+    - gold
+    - lockouts
+    - instance seeds
+    - revisions
+    llmMayNarrate:
+    - committed state prose
+    - diegetic descriptions
+    - NPC dialogue without engine terms
+    failureModes:
+    - double-grant prevented by idempotency/revision checks
+    - LLM invents gold or ownership rejected
+    - desync rejected on stale ExpectedRevision
+  StackRule:
+    description: WOF typed schema for StackRule; original content only, not production
+      code.
+    fields:
+      id: *id001
+      version: *id002
+      createdAt: *id004
+      updatedAt: *id003
+      status:
+        type: enum
+        required: true
+        owner: CODE
+        default: active
+        allowed:
+        - active
+        - inactive
+        - committed
+        - revoked
+      ownerId:
+        type: string
+        required: false
+        owner: CODE
+      worldId:
+        type: string
+        required: false
+        owner: CODE
+      revision:
+        type: integer
+        required: true
+        owner: CODE
+        default: 0
+      payload:
+        type: object
+        required: true
+        owner: CODE
+        description: Typed payload owned by CODE; validated before commit
+    codeOwns:
+    - validation
+    - dice
+    - HP
+    - catalogs
+    - quest ticks
+    - loot
+    - gold
+    - lockouts
+    - instance seeds
+    - revisions
+    llmMayNarrate:
+    - committed state prose
+    - diegetic descriptions
+    - NPC dialogue without engine terms
+    failureModes:
+    - double-grant prevented by idempotency/revision checks
+    - LLM invents gold or ownership rejected
+    - desync rejected on stale ExpectedRevision
+  BindRule:
+    description: WOF typed schema for BindRule; original content only, not production
+      code.
+    fields:
+      id: *id001
+      version: *id002
+      createdAt: *id004
+      updatedAt: *id003
+      status:
+        type: enum
+        required: true
+        owner: CODE
+        default: active
+        allowed:
+        - active
+        - inactive
+        - committed
+        - revoked
+      ownerId:
+        type: string
+        required: false
+        owner: CODE
+      worldId:
+        type: string
+        required: false
+        owner: CODE
+      revision:
+        type: integer
+        required: true
+        owner: CODE
+        default: 0
+      payload:
+        type: object
+        required: true
+        owner: CODE
+        description: Typed payload owned by CODE; validated before commit
+    codeOwns:
+    - validation
+    - dice
+    - HP
+    - catalogs
+    - quest ticks
+    - loot
+    - gold
+    - lockouts
+    - instance seeds
+    - revisions
+    llmMayNarrate:
+    - committed state prose
+    - diegetic descriptions
+    - NPC dialogue without engine terms
+    failureModes:
+    - double-grant prevented by idempotency/revision checks
+    - LLM invents gold or ownership rejected
+    - desync rejected on stale ExpectedRevision
+  DropTable:
+    description: WOF typed schema for DropTable; original content only, not production
+      code.
+    fields:
+      id: *id001
+      version: *id002
+      createdAt: *id004
+      updatedAt: *id003
+      status:
+        type: enum
+        required: true
+        owner: CODE
+        default: active
+        allowed:
+        - active
+        - inactive
+        - committed
+        - revoked
+      ownerId:
+        type: string
+        required: false
+        owner: CODE
+      worldId:
+        type: string
+        required: false
+        owner: CODE
+      revision:
+        type: integer
+        required: true
+        owner: CODE
+        default: 0
+      payload:
+        type: object
+        required: true
+        owner: CODE
+        description: Typed payload owned by CODE; validated before commit
+    codeOwns:
+    - validation
+    - dice
+    - HP
+    - catalogs
+    - quest ticks
+    - loot
+    - gold
+    - lockouts
+    - instance seeds
+    - revisions
+    llmMayNarrate:
+    - committed state prose
+    - diegetic descriptions
+    - NPC dialogue without engine terms
+    failureModes:
+    - double-grant prevented by idempotency/revision checks
+    - LLM invents gold or ownership rejected
+    - desync rejected on stale ExpectedRevision
+  LootGrant:
+    description: WOF typed schema for LootGrant; original content only, not production
+      code.
+    fields:
+      id: *id001
+      version: *id002
+      createdAt: *id004
+      updatedAt: *id003
+      lootGrantId:
+        type: string
+        required: true
+        owner: CODE
+      idempotencyKey:
+        type: string
+        required: true
+        owner: CODE
+      instanceId:
+        type: string
+        required: true
+        owner: CODE
+      characterId:
+        type: string
+        required: true
+        owner: CODE
+      itemIds:
+        type: array[string]
+        required: true
+        owner: CODE
+      gold:
+        type: integer
+        required: true
+        owner: CODE
+        default: 0
+      committed:
+        type: boolean
+        required: true
+        owner: CODE
+        default: false
+    codeOwns:
+    - validation
+    - dice
+    - HP
+    - catalogs
+    - quest ticks
+    - loot
+    - gold
+    - lockouts
+    - instance seeds
+    - revisions
+    llmMayNarrate:
+    - committed state prose
+    - diegetic descriptions
+    - NPC dialogue without engine terms
+    failureModes:
+    - double-grant prevented by idempotency/revision checks
+    - LLM invents gold or ownership rejected
+    - desync rejected on stale ExpectedRevision
+  QuestDef:
+    description: WOF typed schema for QuestDef; original content only, not production
+      code.
+    fields:
+      id: *id001
+      version: *id002
+      createdAt: *id004
+      updatedAt: *id003
+      questId:
+        type: string
+        required: true
+        owner: CODE
+      worldId:
+        type: string
+        required: true
+        owner: CODE
+      title:
+        type: string
+        required: true
+        owner: CODE
+      giverNpcId:
+        type: string
+        required: false
+        owner: CODE
+      objectives:
+        type: array[object]
+        required: true
+        owner: CODE
+      rewardGold:
+        type: integer
+        required: true
+        owner: CODE
+        default: 0
+      rewardItemIds:
+        type: array[string]
+        required: true
+        owner: CODE
+        default: []
+      repeat:
+        type: enum
+        required: true
+        owner: CODE
+        default: once
+        allowed:
+        - once
+        - daily
+        - weekly
+        - hidden
+    codeOwns:
+    - validation
+    - dice
+    - HP
+    - catalogs
+    - quest ticks
+    - loot
+    - gold
+    - lockouts
+    - instance seeds
+    - revisions
+    llmMayNarrate:
+    - committed state prose
+    - diegetic descriptions
+    - NPC dialogue without engine terms
+    failureModes:
+    - double-grant prevented by idempotency/revision checks
+    - LLM invents gold or ownership rejected
+    - desync rejected on stale ExpectedRevision
+  QuestObjective:
+    description: WOF typed schema for QuestObjective; original content only, not production
+      code.
+    fields:
+      id: *id001
+      version: *id002
+      createdAt: *id004
+      updatedAt: *id003
+      status:
+        type: enum
+        required: true
+        owner: CODE
+        default: active
+        allowed:
+        - active
+        - inactive
+        - committed
+        - revoked
+      ownerId:
+        type: string
+        required: false
+        owner: CODE
+      worldId:
+        type: string
+        required: false
+        owner: CODE
+      revision:
+        type: integer
+        required: true
+        owner: CODE
+        default: 0
+      payload:
+        type: object
+        required: true
+        owner: CODE
+        description: Typed payload owned by CODE; validated before commit
+    codeOwns:
+    - validation
+    - dice
+    - HP
+    - catalogs
+    - quest ticks
+    - loot
+    - gold
+    - lockouts
+    - instance seeds
+    - revisions
+    llmMayNarrate:
+    - committed state prose
+    - diegetic descriptions
+    - NPC dialogue without engine terms
+    failureModes:
+    - double-grant prevented by idempotency/revision checks
+    - LLM invents gold or ownership rejected
+    - desync rejected on stale ExpectedRevision
+  QuestProgress:
+    description: WOF typed schema for QuestProgress; original content only, not production
+      code.
+    fields:
+      id: *id001
+      version: *id002
+      createdAt: *id004
+      updatedAt: *id003
+      status:
+        type: enum
+        required: true
+        owner: CODE
+        default: active
+        allowed:
+        - active
+        - inactive
+        - committed
+        - revoked
+      ownerId:
+        type: string
+        required: false
+        owner: CODE
+      worldId:
+        type: string
+        required: false
+        owner: CODE
+      revision:
+        type: integer
+        required: true
+        owner: CODE
+        default: 0
+      payload:
+        type: object
+        required: true
+        owner: CODE
+        description: Typed payload owned by CODE; validated before commit
+    codeOwns:
+    - validation
+    - dice
+    - HP
+    - catalogs
+    - quest ticks
+    - loot
+    - gold
+    - lockouts
+    - instance seeds
+    - revisions
+    llmMayNarrate:
+    - committed state prose
+    - diegetic descriptions
+    - NPC dialogue without engine terms
+    failureModes:
+    - double-grant prevented by idempotency/revision checks
+    - LLM invents gold or ownership rejected
+    - desync rejected on stale ExpectedRevision
+  TalkTree:
+    description: WOF typed schema for TalkTree; original content only, not production
+      code.
+    fields:
+      id: *id001
+      version: *id002
+      createdAt: *id004
+      updatedAt: *id003
+      status:
+        type: enum
+        required: true
+        owner: CODE
+        default: active
+        allowed:
+        - active
+        - inactive
+        - committed
+        - revoked
+      ownerId:
+        type: string
+        required: false
+        owner: CODE
+      worldId:
+        type: string
+        required: false
+        owner: CODE
+      revision:
+        type: integer
+        required: true
+        owner: CODE
+        default: 0
+      payload:
+        type: object
+        required: true
+        owner: CODE
+        description: Typed payload owned by CODE; validated before commit
+    codeOwns:
+    - validation
+    - dice
+    - HP
+    - catalogs
+    - quest ticks
+    - loot
+    - gold
+    - lockouts
+    - instance seeds
+    - revisions
+    llmMayNarrate:
+    - committed state prose
+    - diegetic descriptions
+    - NPC dialogue without engine terms
+    failureModes:
+    - double-grant prevented by idempotency/revision checks
+    - LLM invents gold or ownership rejected
+    - desync rejected on stale ExpectedRevision
+  TalkNode:
+    description: WOF typed schema for TalkNode; original content only, not production
+      code.
+    fields:
+      id: *id001
+      version: *id002
+      createdAt: *id004
+      updatedAt: *id003
+      status:
+        type: enum
+        required: true
+        owner: CODE
+        default: active
+        allowed:
+        - active
+        - inactive
+        - committed
+        - revoked
+      ownerId:
+        type: string
+        required: false
+        owner: CODE
+      worldId:
+        type: string
+        required: false
+        owner: CODE
+      revision:
+        type: integer
+        required: true
+        owner: CODE
+        default: 0
+      payload:
+        type: object
+        required: true
+        owner: CODE
+        description: Typed payload owned by CODE; validated before commit
+    codeOwns:
+    - validation
+    - dice
+    - HP
+    - catalogs
+    - quest ticks
+    - loot
+    - gold
+    - lockouts
+    - instance seeds
+    - revisions
+    llmMayNarrate:
+    - committed state prose
+    - diegetic descriptions
+    - NPC dialogue without engine terms
+    failureModes:
+    - double-grant prevented by idempotency/revision checks
+    - LLM invents gold or ownership rejected
+    - desync rejected on stale ExpectedRevision
+  ChoiceButton:
+    description: WOF typed schema for ChoiceButton; original content only, not production
+      code.
+    fields:
+      id: *id001
+      version: *id002
+      createdAt: *id004
+      updatedAt: *id003
+      status:
+        type: enum
+        required: true
+        owner: CODE
+        default: active
+        allowed:
+        - active
+        - inactive
+        - committed
+        - revoked
+      ownerId:
+        type: string
+        required: false
+        owner: CODE
+      worldId:
+        type: string
+        required: false
+        owner: CODE
+      revision:
+        type: integer
+        required: true
+        owner: CODE
+        default: 0
+      payload:
+        type: object
+        required: true
+        owner: CODE
+        description: Typed payload owned by CODE; validated before commit
+    codeOwns:
+    - validation
+    - dice
+    - HP
+    - catalogs
+    - quest ticks
+    - loot
+    - gold
+    - lockouts
+    - instance seeds
+    - revisions
+    llmMayNarrate:
+    - committed state prose
+    - diegetic descriptions
+    - NPC dialogue without engine terms
+    failureModes:
+    - double-grant prevented by idempotency/revision checks
+    - LLM invents gold or ownership rejected
+    - desync rejected on stale ExpectedRevision
+  TalentNode:
+    description: WOF typed schema for TalentNode; original content only, not production
+      code.
+    fields:
+      id: *id001
+      version: *id002
+      createdAt: *id004
+      updatedAt: *id003
+      status:
+        type: enum
+        required: true
+        owner: CODE
+        default: active
+        allowed:
+        - active
+        - inactive
+        - committed
+        - revoked
+      ownerId:
+        type: string
+        required: false
+        owner: CODE
+      worldId:
+        type: string
+        required: false
+        owner: CODE
+      revision:
+        type: integer
+        required: true
+        owner: CODE
+        default: 0
+      payload:
+        type: object
+        required: true
+        owner: CODE
+        description: Typed payload owned by CODE; validated before commit
+    codeOwns:
+    - validation
+    - dice
+    - HP
+    - catalogs
+    - quest ticks
+    - loot
+    - gold
+    - lockouts
+    - instance seeds
+    - revisions
+    llmMayNarrate:
+    - committed state prose
+    - diegetic descriptions
+    - NPC dialogue without engine terms
+    failureModes:
+    - double-grant prevented by idempotency/revision checks
+    - LLM invents gold or ownership rejected
+    - desync rejected on stale ExpectedRevision
+  Recipe:
+    description: WOF typed schema for Recipe; original content only, not production
+      code.
+    fields:
+      id: *id001
+      version: *id002
+      createdAt: *id004
+      updatedAt: *id003
+      status:
+        type: enum
+        required: true
+        owner: CODE
+        default: active
+        allowed:
+        - active
+        - inactive
+        - committed
+        - revoked
+      ownerId:
+        type: string
+        required: false
+        owner: CODE
+      worldId:
+        type: string
+        required: false
+        owner: CODE
+      revision:
+        type: integer
+        required: true
+        owner: CODE
+        default: 0
+      payload:
+        type: object
+        required: true
+        owner: CODE
+        description: Typed payload owned by CODE; validated before commit
+    codeOwns:
+    - validation
+    - dice
+    - HP
+    - catalogs
+    - quest ticks
+    - loot
+    - gold
+    - lockouts
+    - instance seeds
+    - revisions
+    llmMayNarrate:
+    - committed state prose
+    - diegetic descriptions
+    - NPC dialogue without engine terms
+    failureModes:
+    - double-grant prevented by idempotency/revision checks
+    - LLM invents gold or ownership rejected
+    - desync rejected on stale ExpectedRevision
+  GatheringNode:
+    description: WOF typed schema for GatheringNode; original content only, not production
+      code.
+    fields:
+      id: *id001
+      version: *id002
+      createdAt: *id004
+      updatedAt: *id003
+      status:
+        type: enum
+        required: true
+        owner: CODE
+        default: active
+        allowed:
+        - active
+        - inactive
+        - committed
+        - revoked
+      ownerId:
+        type: string
+        required: false
+        owner: CODE
+      worldId:
+        type: string
+        required: false
+        owner: CODE
+      revision:
+        type: integer
+        required: true
+        owner: CODE
+        default: 0
+      payload:
+        type: object
+        required: true
+        owner: CODE
+        description: Typed payload owned by CODE; validated before commit
+    codeOwns:
+    - validation
+    - dice
+    - HP
+    - catalogs
+    - quest ticks
+    - loot
+    - gold
+    - lockouts
+    - instance seeds
+    - revisions
+    llmMayNarrate:
+    - committed state prose
+    - diegetic descriptions
+    - NPC dialogue without engine terms
+    failureModes:
+    - double-grant prevented by idempotency/revision checks
+    - LLM invents gold or ownership rejected
+    - desync rejected on stale ExpectedRevision
+  StatusEffect:
+    description: WOF typed schema for StatusEffect; original content only, not production
+      code.
+    fields:
+      id: *id001
+      version: *id002
+      createdAt: *id004
+      updatedAt: *id003
+      statusEffectId:
+        type: string
+        required: true
+        owner: CODE
+      moduleTags:
+        type: array[string]
+        required: true
+        owner: CODE
+      durationRounds:
+        type: integer
+        required: true
+        owner: CODE
+        default: 1
+      magnitude:
+        type: integer
+        required: true
+        owner: CODE
+        default: 0
+      stackRule:
+        type: enum
+        required: true
+        owner: CODE
+        default: refresh
+        allowed:
+        - refresh
+        - stack
+        - replace
+    codeOwns:
+    - validation
+    - dice
+    - HP
+    - catalogs
+    - quest ticks
+    - loot
+    - gold
+    - lockouts
+    - instance seeds
+    - revisions
+    llmMayNarrate:
+    - committed state prose
+    - diegetic descriptions
+    - NPC dialogue without engine terms
+    failureModes:
+    - double-grant prevented by idempotency/revision checks
+    - LLM invents gold or ownership rejected
+    - desync rejected on stale ExpectedRevision
+  CombatReceipt:
+    description: WOF typed schema for CombatReceipt; original content only, not production
+      code.
+    fields:
+      id: *id001
+      version: *id002
+      createdAt: *id004
+      updatedAt: *id003
+      status:
+        type: enum
+        required: true
+        owner: CODE
+        default: active
+        allowed:
+        - active
+        - inactive
+        - committed
+        - revoked
+      ownerId:
+        type: string
+        required: false
+        owner: CODE
+      worldId:
+        type: string
+        required: false
+        owner: CODE
+      revision:
+        type: integer
+        required: true
+        owner: CODE
+        default: 0
+      payload:
+        type: object
+        required: true
+        owner: CODE
+        description: Typed payload owned by CODE; validated before commit
+    codeOwns:
+    - validation
+    - dice
+    - HP
+    - catalogs
+    - quest ticks
+    - loot
+    - gold
+    - lockouts
+    - instance seeds
+    - revisions
+    llmMayNarrate:
+    - committed state prose
+    - diegetic descriptions
+    - NPC dialogue without engine terms
+    failureModes:
+    - double-grant prevented by idempotency/revision checks
+    - LLM invents gold or ownership rejected
+    - desync rejected on stale ExpectedRevision
+  RoundPlan:
+    description: WOF typed schema for RoundPlan; original content only, not production
+      code.
+    fields:
+      id: *id001
+      version: *id002
+      createdAt: *id004
+      updatedAt: *id003
+      instanceId:
+        type: string
+        required: true
+        owner: CODE
+      characterId:
+        type: string
+        required: true
+        owner: CODE
+      action:
+        type: enum
+        required: true
+        owner: CODE
+        allowed:
+        - fight
+        - guard
+        - heal
+        - interact
+        - revive_at_checkpoint
+        - hold
+      targetId:
+        type: string
+        required: false
+        owner: CODE
+      submittedRevision:
+        type: integer
+        required: true
+        owner: CODE
+    codeOwns:
+    - validation
+    - dice
+    - HP
+    - catalogs
+    - quest ticks
+    - loot
+    - gold
+    - lockouts
+    - instance seeds
+    - revisions
+    llmMayNarrate:
+    - committed state prose
+    - diegetic descriptions
+    - NPC dialogue without engine terms
+    failureModes:
+    - double-grant prevented by idempotency/revision checks
+    - LLM invents gold or ownership rejected
+    - desync rejected on stale ExpectedRevision
+  HoldOrder:
+    description: WOF typed schema for HoldOrder; original content only, not production
+      code.
+    fields:
+      id: *id001
+      version: *id002
+      createdAt: *id004
+      updatedAt: *id003
+      characterId:
+        type: string
+        required: true
+        owner: CODE
+      reason:
+        type: enum
+        required: true
+        owner: CODE
+        allowed:
+        - disconnect
+        - logout
+        - manual
+      lastPlan:
+        type: object
+        required: true
+        owner: CODE
+      expiresAt:
+        type: datetime
+        required: true
+        owner: CODE
+    codeOwns:
+    - validation
+    - dice
+    - HP
+    - catalogs
+    - quest ticks
+    - loot
+    - gold
+    - lockouts
+    - instance seeds
+    - revisions
+    llmMayNarrate:
+    - committed state prose
+    - diegetic descriptions
+    - NPC dialogue without engine terms
+    failureModes:
+    - double-grant prevented by idempotency/revision checks
+    - LLM invents gold or ownership rejected
+    - desync rejected on stale ExpectedRevision
+  Checkpoint:
+    description: WOF typed schema for Checkpoint; original content only, not production
+      code.
+    fields:
+      id: *id001
+      version: *id002
+      createdAt: *id004
+      updatedAt: *id003
+      checkpointId:
+        type: string
+        required: true
+        owner: CODE
+      instanceId:
+        type: string
+        required: true
+        owner: CODE
+      roomId:
+        type: string
+        required: true
+        owner: CODE
+      completedObjectiveIds:
+        type: array[string]
+        required: true
+        owner: CODE
+        default: []
+      createdRevision:
+        type: integer
+        required: true
+        owner: CODE
+    codeOwns:
+    - validation
+    - dice
+    - HP
+    - catalogs
+    - quest ticks
+    - loot
+    - gold
+    - lockouts
+    - instance seeds
+    - revisions
+    llmMayNarrate:
+    - committed state prose
+    - diegetic descriptions
+    - NPC dialogue without engine terms
+    failureModes:
+    - double-grant prevented by idempotency/revision checks
+    - LLM invents gold or ownership rejected
+    - desync rejected on stale ExpectedRevision
+  Lockout:
+    description: WOF typed schema for Lockout; original content only, not production
+      code.
+    fields:
+      id: *id001
+      version: *id002
+      createdAt: *id004
+      updatedAt: *id003
+      characterId:
+        type: string
+        required: true
+        owner: CODE
+      bossId:
+        type: string
+        required: true
+        owner: CODE
+      weekKey:
+        type: string
+        required: true
+        owner: CODE
+      mode:
+        type: enum
+        required: true
+        owner: CODE
+        allowed:
+        - instance
+        - raid
+      cleared:
+        type: boolean
+        required: true
+        owner: CODE
+        default: true
+    codeOwns:
+    - validation
+    - dice
+    - HP
+    - catalogs
+    - quest ticks
+    - loot
+    - gold
+    - lockouts
+    - instance seeds
+    - revisions
+    llmMayNarrate:
+    - committed state prose
+    - diegetic descriptions
+    - NPC dialogue without engine terms
+    failureModes:
+    - double-grant prevented by idempotency/revision checks
+    - LLM invents gold or ownership rejected
+    - desync rejected on stale ExpectedRevision
+  SpeciesTemplate:
+    description: WOF typed schema for SpeciesTemplate; original content only, not
+      production code.
+    fields:
+      id: *id001
+      version: *id002
+      createdAt: *id004
+      updatedAt: *id003
+      status:
+        type: enum
+        required: true
+        owner: CODE
+        default: active
+        allowed:
+        - active
+        - inactive
+        - committed
+        - revoked
+      ownerId:
+        type: string
+        required: false
+        owner: CODE
+      worldId:
+        type: string
+        required: false
+        owner: CODE
+      revision:
+        type: integer
+        required: true
+        owner: CODE
+        default: 0
+      payload:
+        type: object
+        required: true
+        owner: CODE
+        description: Typed payload owned by CODE; validated before commit
+    codeOwns:
+    - validation
+    - dice
+    - HP
+    - catalogs
+    - quest ticks
+    - loot
+    - gold
+    - lockouts
+    - instance seeds
+    - revisions
+    llmMayNarrate:
+    - committed state prose
+    - diegetic descriptions
+    - NPC dialogue without engine terms
+    failureModes:
+    - double-grant prevented by idempotency/revision checks
+    - LLM invents gold or ownership rejected
+    - desync rejected on stale ExpectedRevision
+  BondRecord:
+    description: WOF typed schema for BondRecord; original content only, not production
+      code.
+    fields:
+      id: *id001
+      version: *id002
+      createdAt: *id004
+      updatedAt: *id003
+      status:
+        type: enum
+        required: true
+        owner: CODE
+        default: active
+        allowed:
+        - active
+        - inactive
+        - committed
+        - revoked
+      ownerId:
+        type: string
+        required: false
+        owner: CODE
+      worldId:
+        type: string
+        required: false
+        owner: CODE
+      revision:
+        type: integer
+        required: true
+        owner: CODE
+        default: 0
+      payload:
+        type: object
+        required: true
+        owner: CODE
+        description: Typed payload owned by CODE; validated before commit
+    codeOwns:
+    - validation
+    - dice
+    - HP
+    - catalogs
+    - quest ticks
+    - loot
+    - gold
+    - lockouts
+    - instance seeds
+    - revisions
+    llmMayNarrate:
+    - committed state prose
+    - diegetic descriptions
+    - NPC dialogue without engine terms
+    failureModes:
+    - double-grant prevented by idempotency/revision checks
+    - LLM invents gold or ownership rejected
+    - desync rejected on stale ExpectedRevision
+  ShipBoardState:
+    description: WOF typed schema for ShipBoardState; original content only, not production
+      code.
+    fields:
+      id: *id001
+      version: *id002
+      createdAt: *id004
+      updatedAt: *id003
+      status:
+        type: enum
+        required: true
+        owner: CODE
+        default: active
+        allowed:
+        - active
+        - inactive
+        - committed
+        - revoked
+      ownerId:
+        type: string
+        required: false
+        owner: CODE
+      worldId:
+        type: string
+        required: false
+        owner: CODE
+      revision:
+        type: integer
+        required: true
+        owner: CODE
+        default: 0
+      payload:
+        type: object
+        required: true
+        owner: CODE
+        description: Typed payload owned by CODE; validated before commit
+    codeOwns:
+    - validation
+    - dice
+    - HP
+    - catalogs
+    - quest ticks
+    - loot
+    - gold
+    - lockouts
+    - instance seeds
+    - revisions
+    llmMayNarrate:
+    - committed state prose
+    - diegetic descriptions
+    - NPC dialogue without engine terms
+    failureModes:
+    - double-grant prevented by idempotency/revision checks
+    - LLM invents gold or ownership rejected
+    - desync rejected on stale ExpectedRevision
+  FrameHeatState:
+    description: WOF typed schema for FrameHeatState; original content only, not production
+      code.
+    fields:
+      id: *id001
+      version: *id002
+      createdAt: *id004
+      updatedAt: *id003
+      status:
+        type: enum
+        required: true
+        owner: CODE
+        default: active
+        allowed:
+        - active
+        - inactive
+        - committed
+        - revoked
+      ownerId:
+        type: string
+        required: false
+        owner: CODE
+      worldId:
+        type: string
+        required: false
+        owner: CODE
+      revision:
+        type: integer
+        required: true
+        owner: CODE
+        default: 0
+      payload:
+        type: object
+        required: true
+        owner: CODE
+        description: Typed payload owned by CODE; validated before commit
+    codeOwns:
+    - validation
+    - dice
+    - HP
+    - catalogs
+    - quest ticks
+    - loot
+    - gold
+    - lockouts
+    - instance seeds
+    - revisions
+    llmMayNarrate:
+    - committed state prose
+    - diegetic descriptions
+    - NPC dialogue without engine terms
+    failureModes:
+    - double-grant prevented by idempotency/revision checks
+    - LLM invents gold or ownership rejected
+    - desync rejected on stale ExpectedRevision
+  ScoreSetState:
+    description: WOF typed schema for ScoreSetState; original content only, not production
+      code.
+    fields:
+      id: *id001
+      version: *id002
+      createdAt: *id004
+      updatedAt: *id003
+      status:
+        type: enum
+        required: true
+        owner: CODE
+        default: active
+        allowed:
+        - active
+        - inactive
+        - committed
+        - revoked
+      ownerId:
+        type: string
+        required: false
+        owner: CODE
+      worldId:
+        type: string
+        required: false
+        owner: CODE
+      revision:
+        type: integer
+        required: true
+        owner: CODE
+        default: 0
+      payload:
+        type: object
+        required: true
+        owner: CODE
+        description: Typed payload owned by CODE; validated before commit
+    codeOwns:
+    - validation
+    - dice
+    - HP
+    - catalogs
+    - quest ticks
+    - loot
+    - gold
+    - lockouts
+    - instance seeds
+    - revisions
+    llmMayNarrate:
+    - committed state prose
+    - diegetic descriptions
+    - NPC dialogue without engine terms
+    failureModes:
+    - double-grant prevented by idempotency/revision checks
+    - LLM invents gold or ownership rejected
+    - desync rejected on stale ExpectedRevision
+  SteadfastState:
+    description: WOF typed schema for SteadfastState; original content only, not production
+      code.
+    fields:
+      id: *id001
+      version: *id002
+      createdAt: *id004
+      updatedAt: *id003
+      status:
+        type: enum
+        required: true
+        owner: CODE
+        default: active
+        allowed:
+        - active
+        - inactive
+        - committed
+        - revoked
+      ownerId:
+        type: string
+        required: false
+        owner: CODE
+      worldId:
+        type: string
+        required: false
+        owner: CODE
+      revision:
+        type: integer
+        required: true
+        owner: CODE
+        default: 0
+      payload:
+        type: object
+        required: true
+        owner: CODE
+        description: Typed payload owned by CODE; validated before commit
+    codeOwns:
+    - validation
+    - dice
+    - HP
+    - catalogs
+    - quest ticks
+    - loot
+    - gold
+    - lockouts
+    - instance seeds
+    - revisions
+    llmMayNarrate:
+    - committed state prose
+    - diegetic descriptions
+    - NPC dialogue without engine terms
+    failureModes:
+    - double-grant prevented by idempotency/revision checks
+    - LLM invents gold or ownership rejected
+    - desync rejected on stale ExpectedRevision
+  CardLaneState:
+    description: WOF typed schema for CardLaneState; original content only, not production
+      code.
+    fields:
+      id: *id001
+      version: *id002
+      createdAt: *id004
+      updatedAt: *id003
+      status:
+        type: enum
+        required: true
+        owner: CODE
+        default: active
+        allowed:
+        - active
+        - inactive
+        - committed
+        - revoked
+      ownerId:
+        type: string
+        required: false
+        owner: CODE
+      worldId:
+        type: string
+        required: false
+        owner: CODE
+      revision:
+        type: integer
+        required: true
+        owner: CODE
+        default: 0
+      payload:
+        type: object
+        required: true
+        owner: CODE
+        description: Typed payload owned by CODE; validated before commit
+    codeOwns:
+    - validation
+    - dice
+    - HP
+    - catalogs
+    - quest ticks
+    - loot
+    - gold
+    - lockouts
+    - instance seeds
+    - revisions
+    llmMayNarrate:
+    - committed state prose
+    - diegetic descriptions
+    - NPC dialogue without engine terms
+    failureModes:
+    - double-grant prevented by idempotency/revision checks
+    - LLM invents gold or ownership rejected
+    - desync rejected on stale ExpectedRevision
+  CozyTickState:
+    description: WOF typed schema for CozyTickState; original content only, not production
+      code.
+    fields:
+      id: *id001
+      version: *id002
+      createdAt: *id004
+      updatedAt: *id003
+      status:
+        type: enum
+        required: true
+        owner: CODE
+        default: active
+        allowed:
+        - active
+        - inactive
+        - committed
+        - revoked
+      ownerId:
+        type: string
+        required: false
+        owner: CODE
+      worldId:
+        type: string
+        required: false
+        owner: CODE
+      revision:
+        type: integer
+        required: true
+        owner: CODE
+        default: 0
+      payload:
+        type: object
+        required: true
+        owner: CODE
+        description: Typed payload owned by CODE; validated before commit
+    codeOwns:
+    - validation
+    - dice
+    - HP
+    - catalogs
+    - quest ticks
+    - loot
+    - gold
+    - lockouts
+    - instance seeds
+    - revisions
+    llmMayNarrate:
+    - committed state prose
+    - diegetic descriptions
+    - NPC dialogue without engine terms
+    failureModes:
+    - double-grant prevented by idempotency/revision checks
+    - LLM invents gold or ownership rejected
+    - desync rejected on stale ExpectedRevision
+  HeatWantedState:
+    description: WOF typed schema for HeatWantedState; original content only, not
+      production code.
+    fields:
+      id: *id001
+      version: *id002
+      createdAt: *id004
+      updatedAt: *id003
+      status:
+        type: enum
+        required: true
+        owner: CODE
+        default: active
+        allowed:
+        - active
+        - inactive
+        - committed
+        - revoked
+      ownerId:
+        type: string
+        required: false
+        owner: CODE
+      worldId:
+        type: string
+        required: false
+        owner: CODE
+      revision:
+        type: integer
+        required: true
+        owner: CODE
+        default: 0
+      payload:
+        type: object
+        required: true
+        owner: CODE
+        description: Typed payload owned by CODE; validated before commit
+    codeOwns:
+    - validation
+    - dice
+    - HP
+    - catalogs
+    - quest ticks
+    - loot
+    - gold
+    - lockouts
+    - instance seeds
+    - revisions
+    llmMayNarrate:
+    - committed state prose
+    - diegetic descriptions
+    - NPC dialogue without engine terms
+    failureModes:
+    - double-grant prevented by idempotency/revision checks
+    - LLM invents gold or ownership rejected
+    - desync rejected on stale ExpectedRevision
+  RealmGateState:
+    description: WOF typed schema for RealmGateState; original content only, not production
+      code.
+    fields:
+      id: *id001
+      version: *id002
+      createdAt: *id004
+      updatedAt: *id003
+      status:
+        type: enum
+        required: true
+        owner: CODE
+        default: active
+        allowed:
+        - active
+        - inactive
+        - committed
+        - revoked
+      ownerId:
+        type: string
+        required: false
+        owner: CODE
+      worldId:
+        type: string
+        required: false
+        owner: CODE
+      revision:
+        type: integer
+        required: true
+        owner: CODE
+        default: 0
+      payload:
+        type: object
+        required: true
+        owner: CODE
+        description: Typed payload owned by CODE; validated before commit
+    codeOwns:
+    - validation
+    - dice
+    - HP
+    - catalogs
+    - quest ticks
+    - loot
+    - gold
+    - lockouts
+    - instance seeds
+    - revisions
+    llmMayNarrate:
+    - committed state prose
+    - diegetic descriptions
+    - NPC dialogue without engine terms
+    failureModes:
+    - double-grant prevented by idempotency/revision checks
+    - LLM invents gold or ownership rejected
+    - desync rejected on stale ExpectedRevision
+  FloorFlagState:
+    description: WOF typed schema for FloorFlagState; original content only, not production
+      code.
+    fields:
+      id: *id001
+      version: *id002
+      createdAt: *id004
+      updatedAt: *id003
+      status:
+        type: enum
+        required: true
+        owner: CODE
+        default: active
+        allowed:
+        - active
+        - inactive
+        - committed
+        - revoked
+      ownerId:
+        type: string
+        required: false
+        owner: CODE
+      worldId:
+        type: string
+        required: false
+        owner: CODE
+      revision:
+        type: integer
+        required: true
+        owner: CODE
+        default: 0
+      payload:
+        type: object
+        required: true
+        owner: CODE
+        description: Typed payload owned by CODE; validated before commit
+    codeOwns:
+    - validation
+    - dice
+    - HP
+    - catalogs
+    - quest ticks
+    - loot
+    - gold
+    - lockouts
+    - instance seeds
+    - revisions
+    llmMayNarrate:
+    - committed state prose
+    - diegetic descriptions
+    - NPC dialogue without engine terms
+    failureModes:
+    - double-grant prevented by idempotency/revision checks
+    - LLM invents gold or ownership rejected
+    - desync rejected on stale ExpectedRevision
+  ReportTicket:
+    description: WOF typed schema for ReportTicket; original content only, not production
+      code.
+    fields:
+      id: *id001
+      version: *id002
+      createdAt: *id004
+      updatedAt: *id003
+      status:
+        type: enum
+        required: true
+        owner: CODE
+        default: active
+        allowed:
+        - active
+        - inactive
+        - committed
+        - revoked
+      ownerId:
+        type: string
+        required: false
+        owner: CODE
+      worldId:
+        type: string
+        required: false
+        owner: CODE
+      revision:
+        type: integer
+        required: true
+        owner: CODE
+        default: 0
+      payload:
+        type: object
+        required: true
+        owner: CODE
+        description: Typed payload owned by CODE; validated before commit
+    codeOwns:
+    - validation
+    - dice
+    - HP
+    - catalogs
+    - quest ticks
+    - loot
+    - gold
+    - lockouts
+    - instance seeds
+    - revisions
+    llmMayNarrate:
+    - committed state prose
+    - diegetic descriptions
+    - NPC dialogue without engine terms
+    failureModes:
+    - double-grant prevented by idempotency/revision checks
+    - LLM invents gold or ownership rejected
+    - desync rejected on stale ExpectedRevision
+  ModerationAction:
+    description: WOF typed schema for ModerationAction; original content only, not
+      production code.
+    fields:
+      id: *id001
+      version: *id002
+      createdAt: *id004
+      updatedAt: *id003
+      status:
+        type: enum
+        required: true
+        owner: CODE
+        default: active
+        allowed:
+        - active
+        - inactive
+        - committed
+        - revoked
+      ownerId:
+        type: string
+        required: false
+        owner: CODE
+      worldId:
+        type: string
+        required: false
+        owner: CODE
+      revision:
+        type: integer
+        required: true
+        owner: CODE
+        default: 0
+      payload:
+        type: object
+        required: true
+        owner: CODE
+        description: Typed payload owned by CODE; validated before commit
+    codeOwns:
+    - validation
+    - dice
+    - HP
+    - catalogs
+    - quest ticks
+    - loot
+    - gold
+    - lockouts
+    - instance seeds
+    - revisions
+    llmMayNarrate:
+    - committed state prose
+    - diegetic descriptions
+    - NPC dialogue without engine terms
+    failureModes:
+    - double-grant prevented by idempotency/revision checks
+    - LLM invents gold or ownership rejected
+    - desync rejected on stale ExpectedRevision
+  FeatureFlag:
+    description: WOF typed schema for FeatureFlag; original content only, not production
+      code.
+    fields:
+      flagId:
+        type: string
+        required: true
+        owner: CODE
+      enabled:
+        type: boolean
+        required: true
+        owner: CODE
+        default: false
+      rollout:
+        type: integer
+        required: true
+        owner: CODE
+        default: 0
+      gate:
+        type: enum
+        required: true
+        owner: CODE
+        default: friends_alpha
+        allowed:
+        - friends_alpha
+        - clock
+        - housing
+        - auction
+        - second_world
+    codeOwns:
+    - validation
+    - dice
+    - HP
+    - catalogs
+    - quest ticks
+    - loot
+    - gold
+    - lockouts
+    - instance seeds
+    - revisions
+    llmMayNarrate:
+    - committed state prose
+    - diegetic descriptions
+    - NPC dialogue without engine terms
+    failureModes:
+    - double-grant prevented by idempotency/revision checks
+    - LLM invents gold or ownership rejected
+    - desync rejected on stale ExpectedRevision
+  KillSwitch:
+    description: WOF typed schema for KillSwitch; original content only, not production
+      code.
+    fields:
+      switchId:
+        type: string
+        required: true
+        owner: CODE
+      enabled:
+        type: boolean
+        required: true
+        owner: CODE
+        default: false
+      scope:
+        type: enum
+        required: true
+        owner: CODE
+        allowed:
+        - instances
+        - tells
+        - auction
+        - mail
+        - housing
+        - vendors
+        - rewards
+        - writer
+        - presence
+        - entitlements
+        - kid
+        - raids
+        - dailies
+        - clock
+        - trade
+        - finder
+        - push
+        - cosmetics
+        - world_unlock
+        - eval_probe
+    codeOwns:
+    - validation
+    - dice
+    - HP
+    - catalogs
+    - quest ticks
+    - loot
+    - gold
+    - lockouts
+    - instance seeds
+    - revisions
+    llmMayNarrate:
+    - committed state prose
+    - diegetic descriptions
+    - NPC dialogue without engine terms
+    failureModes:
+    - double-grant prevented by idempotency/revision checks
+    - LLM invents gold or ownership rejected
+    - desync rejected on stale ExpectedRevision
+  TelemetryEvent:
+    description: WOF typed schema for TelemetryEvent; original content only, not production
+      code.
+    fields:
+      id: *id001
+      version: *id002
+      createdAt: *id004
+      updatedAt: *id003
+      status:
+        type: enum
+        required: true
+        owner: CODE
+        default: active
+        allowed:
+        - active
+        - inactive
+        - committed
+        - revoked
+      ownerId:
+        type: string
+        required: false
+        owner: CODE
+      worldId:
+        type: string
+        required: false
+        owner: CODE
+      revision:
+        type: integer
+        required: true
+        owner: CODE
+        default: 0
+      payload:
+        type: object
+        required: true
+        owner: CODE
+        description: Typed payload owned by CODE; validated before commit
+    codeOwns:
+    - validation
+    - dice
+    - HP
+    - catalogs
+    - quest ticks
+    - loot
+    - gold
+    - lockouts
+    - instance seeds
+    - revisions
+    llmMayNarrate:
+    - committed state prose
+    - diegetic descriptions
+    - NPC dialogue without engine terms
+    failureModes:
+    - double-grant prevented by idempotency/revision checks
+    - LLM invents gold or ownership rejected
+    - desync rejected on stale ExpectedRevision
+  PackManifest:
+    description: WOF typed schema for PackManifest; original content only, not production
+      code.
+    fields:
+      id: *id001
+      version: *id002
+      createdAt: *id004
+      updatedAt: *id003
+      packId:
+        type: string
+        required: true
+        owner: CODE
+      packFormatVersion:
+        type: integer
+        required: true
+        owner: CODE
+        default: 1
+      worldId:
+        type: string
+        required: true
+        owner: CODE
+      schemaIds:
+        type: array[string]
+        required: true
+        owner: CODE
+      migrationHook:
+        type: string
+        required: true
+        owner: CODE
+        default: v1_to_v2_reserved
+    codeOwns:
+    - validation
+    - dice
+    - HP
+    - catalogs
+    - quest ticks
+    - loot
+    - gold
+    - lockouts
+    - instance seeds
+    - revisions
+    llmMayNarrate:
+    - committed state prose
+    - diegetic descriptions
+    - NPC dialogue without engine terms
+    failureModes:
+    - double-grant prevented by idempotency/revision checks
+    - LLM invents gold or ownership rejected
+    - desync rejected on stale ExpectedRevision
+  IdNamespace:
+    description: WOF typed schema for IdNamespace; original content only, not production
+      code.
+    fields:
+      id: *id001
+      version: *id002
+      createdAt: *id004
+      updatedAt: *id003
+      worldId:
+        type: string
+        required: true
+        owner: CODE
+      kind:
+        type: string
+        required: true
+        owner: CODE
+      slug:
+        type: string
+        required: true
+        owner: CODE
+      canonicalId:
+        type: string
+        required: true
+        owner: CODE
+        description: '{worldId}:{kind}:{slug}'
+    codeOwns:
+    - validation
+    - dice
+    - HP
+    - catalogs
+    - quest ticks
+    - loot
+    - gold
+    - lockouts
+    - instance seeds
+    - revisions
+    llmMayNarrate:
+    - committed state prose
+    - diegetic descriptions
+    - NPC dialogue without engine terms
+    failureModes:
+    - double-grant prevented by idempotency/revision checks
+    - LLM invents gold or ownership rejected
+    - desync rejected on stale ExpectedRevision
+  BanListEntry:
+    description: WOF typed schema for BanListEntry; original content only, not production
+      code.
+    fields:
+      id: *id001
+      version: *id002
+      createdAt: *id004
+      updatedAt: *id003
+      status:
+        type: enum
+        required: true
+        owner: CODE
+        default: active
+        allowed:
+        - active
+        - inactive
+        - committed
+        - revoked
+      ownerId:
+        type: string
+        required: false
+        owner: CODE
+      worldId:
+        type: string
+        required: false
+        owner: CODE
+      revision:
+        type: integer
+        required: true
+        owner: CODE
+        default: 0
+      payload:
+        type: object
+        required: true
+        owner: CODE
+        description: Typed payload owned by CODE; validated before commit
+    codeOwns:
+    - validation
+    - dice
+    - HP
+    - catalogs
+    - quest ticks
+    - loot
+    - gold
+    - lockouts
+    - instance seeds
+    - revisions
+    llmMayNarrate:
+    - committed state prose
+    - diegetic descriptions
+    - NPC dialogue without engine terms
+    failureModes:
+    - double-grant prevented by idempotency/revision checks
+    - LLM invents gold or ownership rejected
+    - desync rejected on stale ExpectedRevision
+  NameFilter:
+    description: WOF typed schema for NameFilter; original content only, not production
+      code.
+    fields:
+      id: *id001
+      version: *id002
+      createdAt: *id004
+      updatedAt: *id003
+      status:
+        type: enum
+        required: true
+        owner: CODE
+        default: active
+        allowed:
+        - active
+        - inactive
+        - committed
+        - revoked
+      ownerId:
+        type: string
+        required: false
+        owner: CODE
+      worldId:
+        type: string
+        required: false
+        owner: CODE
+      revision:
+        type: integer
+        required: true
+        owner: CODE
+        default: 0
+      payload:
+        type: object
+        required: true
+        owner: CODE
+        description: Typed payload owned by CODE; validated before commit
+    codeOwns:
+    - validation
+    - dice
+    - HP
+    - catalogs
+    - quest ticks
+    - loot
+    - gold
+    - lockouts
+    - instance seeds
+    - revisions
+    llmMayNarrate:
+    - committed state prose
+    - diegetic descriptions
+    - NPC dialogue without engine terms
+    failureModes:
+    - double-grant prevented by idempotency/revision checks
+    - LLM invents gold or ownership rejected
+    - desync rejected on stale ExpectedRevision
+  AgeGate:
+    description: WOF typed schema for AgeGate; original content only, not production
+      code.
+    fields:
+      id: *id001
+      version: *id002
+      createdAt: *id004
+      updatedAt: *id003
+      status:
+        type: enum
+        required: true
+        owner: CODE
+        default: active
+        allowed:
+        - active
+        - inactive
+        - committed
+        - revoked
+      ownerId:
+        type: string
+        required: false
+        owner: CODE
+      worldId:
+        type: string
+        required: false
+        owner: CODE
+      revision:
+        type: integer
+        required: true
+        owner: CODE
+        default: 0
+      payload:
+        type: object
+        required: true
+        owner: CODE
+        description: Typed payload owned by CODE; validated before commit
+    codeOwns:
+    - validation
+    - dice
+    - HP
+    - catalogs
+    - quest ticks
+    - loot
+    - gold
+    - lockouts
+    - instance seeds
+    - revisions
+    llmMayNarrate:
+    - committed state prose
+    - diegetic descriptions
+    - NPC dialogue without engine terms
+    failureModes:
+    - double-grant prevented by idempotency/revision checks
+    - LLM invents gold or ownership rejected
+    - desync rejected on stale ExpectedRevision
+  FamilyPlan:
+    description: WOF typed schema for FamilyPlan; original content only, not production
+      code.
+    fields:
+      id: *id001
+      version: *id002
+      createdAt: *id004
+      updatedAt: *id003
+      status:
+        type: enum
+        required: true
+        owner: CODE
+        default: active
+        allowed:
+        - active
+        - inactive
+        - committed
+        - revoked
+      ownerId:
+        type: string
+        required: false
+        owner: CODE
+      worldId:
+        type: string
+        required: false
+        owner: CODE
+      revision:
+        type: integer
+        required: true
+        owner: CODE
+        default: 0
+      payload:
+        type: object
+        required: true
+        owner: CODE
+        description: Typed payload owned by CODE; validated before commit
+    codeOwns:
+    - validation
+    - dice
+    - HP
+    - catalogs
+    - quest ticks
+    - loot
+    - gold
+    - lockouts
+    - instance seeds
+    - revisions
+    llmMayNarrate:
+    - committed state prose
+    - diegetic descriptions
+    - NPC dialogue without engine terms
+    failureModes:
+    - double-grant prevented by idempotency/revision checks
+    - LLM invents gold or ownership rejected
+    - desync rejected on stale ExpectedRevision
+  PushPref:
+    description: WOF typed schema for PushPref; original content only, not production
+      code.
+    fields:
+      id: *id001
+      version: *id002
+      createdAt: *id004
+      updatedAt: *id003
+      status:
+        type: enum
+        required: true
+        owner: CODE
+        default: active
+        allowed:
+        - active
+        - inactive
+        - committed
+        - revoked
+      ownerId:
+        type: string
+        required: false
+        owner: CODE
+      worldId:
+        type: string
+        required: false
+        owner: CODE
+      revision:
+        type: integer
+        required: true
+        owner: CODE
+        default: 0
+      payload:
+        type: object
+        required: true
+        owner: CODE
+        description: Typed payload owned by CODE; validated before commit
+    codeOwns:
+    - validation
+    - dice
+    - HP
+    - catalogs
+    - quest ticks
+    - loot
+    - gold
+    - lockouts
+    - instance seeds
+    - revisions
+    llmMayNarrate:
+    - committed state prose
+    - diegetic descriptions
+    - NPC dialogue without engine terms
+    failureModes:
+    - double-grant prevented by idempotency/revision checks
+    - LLM invents gold or ownership rejected
+    - desync rejected on stale ExpectedRevision
+  SupportMacro:
+    description: WOF typed schema for SupportMacro; original content only, not production
+      code.
+    fields:
+      id: *id001
+      version: *id002
+      createdAt: *id004
+      updatedAt: *id003
+      status:
+        type: enum
+        required: true
+        owner: CODE
+        default: active
+        allowed:
+        - active
+        - inactive
+        - committed
+        - revoked
+      ownerId:
+        type: string
+        required: false
+        owner: CODE
+      worldId:
+        type: string
+        required: false
+        owner: CODE
+      revision:
+        type: integer
+        required: true
+        owner: CODE
+        default: 0
+      payload:
+        type: object
+        required: true
+        owner: CODE
+        description: Typed payload owned by CODE; validated before commit
+    codeOwns:
+    - validation
+    - dice
+    - HP
+    - catalogs
+    - quest ticks
+    - loot
+    - gold
+    - lockouts
+    - instance seeds
+    - revisions
+    llmMayNarrate:
+    - committed state prose
+    - diegetic descriptions
+    - NPC dialogue without engine terms
+    failureModes:
+    - double-grant prevented by idempotency/revision checks
+    - LLM invents gold or ownership rejected
+    - desync rejected on stale ExpectedRevision

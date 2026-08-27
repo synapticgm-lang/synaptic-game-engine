@@ -251,6 +251,12 @@ import { scrubOfficialPlaceholder } from './narrativeScrub';
 import { hubBeatAwardKey, resolveHubArrival } from './hubEncounters';
 import { applySandboxXpAwards } from './sandboxXp';
 import { applyCharacterXpGain } from './characterXp';
+import {
+  applyGovernanceCommit,
+  applyGovernanceToProse,
+  filterGovernanceChoices,
+  processMetaInput,
+} from './qualityGovernance';
 import { extractUpdates, extractNewItems, parseActionTags, stripActionTags, matchLoreCards, eventsToLoreCards, parseTurnFrame, eventsToQuestUpdates, eventsToEncounterUpdate, parsePanels, eventsToMilestone, eventsToLootVideo, eventsToVisualUpdate, stripChoiceList, extractChoiceLines, stripTurnCloser, storyHasBody, looksLikeChoiceOffer, isStoryTooThin, storyWordCount } from './parser';
 import { hasRealGmStory } from './turnAsk';
 import { encounterOriginPlace } from './locationName';
@@ -1794,6 +1800,12 @@ export function useGame() {
       return;
     }
 
+    const metaGov = processMetaInput(current, mediated.text);
+    if (metaGov.state !== current) {
+      current = metaGov.state;
+      stateRef.current = current;
+    }
+
     // Opening covers + establishment generation are free (hook the player before the meter bites).
     const freeOpeningTurn =
       isOpeningEstablishmentPending(current) || !!current.pendingGeneratedOpening;
@@ -2932,6 +2944,11 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
         nsfw: isNsfwCampaign(getCampaignBibleById(stateRef.current?.campaignBibleId ?? '')),
       });
       cleanText = ensureTurnProse(cleanText, sanitizedInput);
+      {
+        const govProse = applyGovernanceToProse(liveCurrent, cleanText);
+        cleanText = govProse.prose;
+        if (govProse.notes.length) warden.notes.push(...govProse.notes);
+      }
       const storyBeforeCuts = cleanText;
 
       // Apply previously-unwired structural tags (items, dungeon, hex) after Warden filter.
@@ -2994,7 +3011,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
           withInProseOffers.unshift(offer);
         }
       }
-      const finalChoices = padChoicesToCount(
+      let finalChoices = padChoicesToCount(
         withInProseOffers.length > 0
           ? withInProseOffers
           : sceneSafeFallbacks(suggestionState, normalizeStoryCorpus(cleanText), sanitizedInput),
@@ -3003,6 +3020,11 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
         3,
         sanitizedInput
       );
+      {
+        const govChoices = filterGovernanceChoices(suggestionState, finalChoices);
+        finalChoices = govChoices.choices;
+        if (govChoices.notes.length) warden.notes.push(...govChoices.notes);
+      }
       if (pipelineChoices.regenerated || pipelineChoices.rejectedCount > 0) {
         debugLogger.record('STATE_UPDATE', 'Choice pipeline enforced turn grounding', {
           regenerated: pipelineChoices.regenerated,
@@ -3955,6 +3977,66 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
         ...mergedState,
         recentBeatFingerprints: [...(liveCurrent.recentBeatFingerprints ?? []), fp].slice(-12),
       };
+      {
+        const govCommit = applyGovernanceCommit(liveCurrent, mergedState, sanitizedInput);
+        if (govCommit.xpAward && govCommit.xpAward.amount > 0) {
+          const leveled = applyCharacterXpGain(mergedState.character, govCommit.xpAward.amount);
+          mergedState = {
+            ...mergedState,
+            ...govCommit.patches,
+            character: leveled.character,
+          };
+          if (leveled.notes.length) {
+            mergedState = {
+              ...mergedState,
+              log: mergedState.log.map((entry) =>
+                entry.id === gmEntry.id
+                  ? {
+                      ...entry,
+                      systemLog: Array.from(
+                        new Set([...(entry.systemLog ?? []), ...leveled.notes])
+                      ),
+                    }
+                  : entry
+              ),
+            };
+          }
+          mergedState = {
+            ...mergedState,
+            log: mergedState.log.map((entry) =>
+              entry.id === gmEntry.id
+                ? {
+                    ...entry,
+                    systemLog: Array.from(
+                      new Set([
+                        ...(entry.systemLog ?? []),
+                        `XP Gained: ${govCommit.xpAward!.amount} (${govCommit.xpAward!.reason})`,
+                        ...govCommit.systemNotes,
+                      ])
+                    ),
+                  }
+                : entry
+            ),
+          };
+        } else {
+          mergedState = { ...mergedState, ...govCommit.patches };
+          if (govCommit.systemNotes.length) {
+            mergedState = {
+              ...mergedState,
+              log: mergedState.log.map((entry) =>
+                entry.id === gmEntry.id
+                  ? {
+                      ...entry,
+                      systemLog: Array.from(
+                        new Set([...(entry.systemLog ?? []), ...govCommit.systemNotes])
+                      ),
+                    }
+                  : entry
+              ),
+            };
+          }
+        }
+      }
       const postCommitImageJobs: ImageGenJob[] = [];
       const allowSceneArt = storyHasBody(cleanText) && !imagesKilled();
       if (imagesKilled()) {

@@ -1,0 +1,194 @@
+packFormatVersion: 1
+fileId: WOF_Lore_Readables
+worldId: ash_compact
+displayName: Ash Compact Lore Readables
+scope: original_wof_only
+notes:
+- itemId: lore_reedfen_welcome_board
+  placeId: poi_reedfen_square
+  kind: plaque
+  text: Reedfen stands where wet ground meets careful work. Share the dry path, keep the mill supplied, and leave a marker
+    brighter than the one you found.
+- itemId: lore_reedfen_dike_marks
+  placeId: poi_reedfen_marsh
+  kind: field_note
+  text: Three cuts in the post mean the dike was checked at dawn. Two cuts mean water rose after dark. A blank post is not
+    a safe post.
+- itemId: lore_reedfen_hall_compact
+  placeId: poi_reedfen_hall
+  kind: plaque
+  text: 'A compact is not a crown. It is a promise made useful: measured grain, witnessed water, and a road repaired before
+    blame can settle.'
+- itemId: lore_reedfen_pier_tally
+  placeId: poi_reedfen_pier
+  kind: ledger_note
+  text: 'Pier tally: four dry bundles, two empty hooks, one missing bell rope. Report shortages plainly; a neat lie still
+    sinks a boat.'
+- itemId: lore_reedfen_mill_wheel
+  placeId: poi_reedfen_mill
+  kind: plaque
+  text: The wheel likes steady hands. Feed it evenly, clear the teeth before forcing the crank, and never call damp grain
+    a harvest.
+- itemId: lore_reedfen_crossroads
+  placeId: poi_reedfen_crossroads
+  kind: road_note
+  text: At the crossroads, the left marker points to homes, the high marker to the gate, and the white cord toward The Divide.
+    Follow the cord when fog closes in.
+- itemId: lore_reedfen_marsh_edge
+  placeId: poi_reedfen_marsh_edge
+  kind: field_note
+  text: 'Marsh edge rule: step where reeds bend away, not where mud shines. The fen keeps old channels beneath new grass.'
+- itemId: lore_lampwood_gate
+  placeId: poi_lampwood_gate
+  kind: gate_plaque
+  text: Lampwood Gate opens for travelers who name their road and close the wick-box behind them. A light left loose becomes
+    another person's danger.
+- itemId: lore_wickhaven
+  placeId: poi_wickhaven
+  kind: plaque
+  text: Wickhaven measures night by visible corners. Every household tends one public flame, and every public flame has a
+    keeper's name.
+- itemId: lore_lampwood_path
+  placeId: poi_lampwood_path
+  kind: road_note
+  text: Mark the corner before you turn. If a path has no corner mark, pause, listen for water, and return to the last wick
+    you can see.
+- itemId: lore_wickhaven_loft
+  placeId: poi_wickhaven_loft
+  kind: workshop_note
+  text: Blue-wick fiber burns cool when cleaned twice. Do not mix sap batches unless both labels carry the same harvest moon.
+- itemId: lore_ember_cut
+  placeId: poi_ember_cut
+  kind: quarry_note
+  text: The cut is warm after rain because old ash holds heat below the stone. Gloves are sensible; bravado is not a tool.
+- itemId: lore_watch_lantern
+  placeId: poi_watch_lantern
+  kind: plaque
+  text: 'The watch lantern is a question, not a warning: who passed, which way, and did they leave the road safer than before?'
+- itemId: lore_unlit_bend
+  placeId: poi_unlit_bend
+  kind: road_note
+  text: At the unlit bend, count seven breaths before moving. The dark is often ordinary, but haste makes ordinary hazards
+    sharp.
+- itemId: lore_hollow_mouth
+  placeId: poi_hollow_mouth
+  kind: dungeon_plaque
+  text: A hollow mouth does not promise treasure. It promises that sound travels strangely and that every return should be
+    recorded.
+- itemId: lore_brinewatch_dock
+  placeId: poi_brinewatch_dock
+  kind: dock_plaque
+  text: 'Brinewatch ties every vessel twice: once for the current and once for the promise to come back. Water remembers careless
+    knots.'
+- itemId: lore_coil_pier
+  placeId: poi_coil_pier
+  kind: dock_note
+  text: 'Coil Pier bell code: one ring for a clear line, two for a snag, three for a boat needing hands. Do not answer a storm
+    with silence.'
+- itemId: lore_tidal_flats
+  placeId: poi_tidal_flats
+  kind: field_note
+  text: The flats change shape without asking permission. Read the stakes, respect the retreating water, and never mistake
+    a dry stripe for a road.
+- itemId: lore_covenant_hall
+  placeId: poi_covenant_hall
+  kind: plaque
+  text: Water witnesses promises, but witnesses do not repair them. A charter becomes trustworthy only when someone does the
+    work it names.
+- itemId: lore_drying_racks
+  placeId: poi_drying_racks
+  kind: workshop_note
+  text: Leave space between the bundles. Salt needs air to settle, and crowded racks turn a week's catch into a single sour
+    smell.
+- itemId: lore_stilt_walk
+  placeId: poi_stilt_walk
+  kind: walkway_note
+  text: On the stilt walk, keep one hand free for the rail. Children learn the rhythm before they learn the shortcuts.
+- itemId: lore_flood_store
+  placeId: poi_flood_store
+  kind: store_note
+  text: Flood stores hold grain, lamp oil, and dry cord in that order. The order changes only when the keeper writes why.
+- itemId: lore_anvil_gate
+  placeId: poi_anvil_gate
+  kind: gate_plaque
+  text: Anvil Gate admits sound tools and honest reports. A hidden crack is heavier than any ore cart.
+- itemId: lore_granite_stair
+  placeId: poi_granite_stair
+  kind: plaque
+  text: Granite Stair was raised one sound step at a time. If a step shifts, stop traffic, mark the seam, and call the oath
+    hall.
+- itemId: lore_oath_hall
+  placeId: poi_oath_hall
+  kind: plaque
+  text: An oath here is witnessed by stone, not thunder. Speak what you can keep, name what you cannot, and let the record
+    remain readable.
+- itemId: lore_ore_siding
+  placeId: poi_ore_siding
+  kind: work_note
+  text: 'Ore siding rule: cool the load before stacking. Warm stone can split a wall long after the cart has gone.'
+- itemId: lore_cut_face
+  placeId: poi_cut_face
+  kind: quarry_plaque
+  text: A clean cut shows its history in layers. Follow the line of the rock; do not ask a hammer to correct a survey.
+- itemId: lore_slag_run
+  placeId: poi_slag_run
+  kind: forge_note
+  text: Slag is not waste until the smith says so. Sort the dark glass from the dull metal and keep both bins dry.
+- itemId: lore_hollow_stair
+  placeId: poi_hollow_stair
+  kind: dungeon_note
+  text: The hollow stair carries old heat upward. Test each rail, listen for loose grit, and leave a chalk mark at every safe
+    landing.
+- itemId: lore_ash_seat
+  placeId: poi_ash_seat
+  kind: capital_plaque
+  text: Ash Seat is a meeting place, not a throne. Its ledgers matter because four peoples can read them and ask who will
+    act.
+- itemId: lore_tidehold
+  placeId: poi_tidehold
+  kind: capital_plaque
+  text: Tidehold keeps the water charter under seal, but the seal is only a beginning. Routes live or fail by the hands that
+    maintain them.
+- itemId: lore_divide_wayhouse
+  placeId: poi_the_divide
+  kind: wayhouse_plaque
+  text: The Divide is where roads meet and excuses lose their shape. Rest, check your supplies, and choose a route you can
+    explain.
+- itemId: lore_lampwood_gate_door
+  placeId: poi_lampwood_gate
+  kind: instance_note
+  text: Gate crews carry spare wick, cord, and a written return mark. A door is not conquered by entering it; it is made safe
+    by coming back.
+- itemId: lore_unlit_hollow_door
+  placeId: poi_unlit_bend
+  kind: instance_note
+  text: Before the hollow, name the last light outside. If the room changes the sound of your voice, stay together and use
+    the marked route.
+- itemId: lore_coil_warehouse_door
+  placeId: poi_coil_pier
+  kind: instance_note
+  text: Warehouse crews count hooks before crates. Missing hardware turns a small tide into a long repair.
+- itemId: lore_anvil_deep_door
+  placeId: poi_anvil_gate
+  kind: instance_note
+  text: Deep work begins with a clean slate and a cool tool. Record the seam before striking; the mountain rewards patience
+    with evidence.
+- itemId: lore_millstone_hollow_road
+  placeId: poi_the_divide
+  kind: road_plaque
+  text: The Hollow road is repaired in sections so one failure does not take every traveler with it. Leave room for carts
+    and report leaning posts.
+- itemId: lore_compact_seal
+  placeId: poi_ash_seat
+  kind: archive_note
+  text: 'The Compact seal has four strokes: hearth, wick, tide, and stone. None is complete alone, and none may cover another.'
+- itemId: lore_tide_charter
+  placeId: poi_tidehold
+  kind: archive_note
+  text: A tide charter names a source, a route, a witness, and a remedy. If one line is missing, the water may still move,
+    but trust will not.
+- itemId: lore_millwarden_marker
+  placeId: poi_the_divide
+  kind: raid_note
+  text: Millstone Hollow is entered by teams, but its memory is kept by each traveler. Record the phase reached, the safe
+    room, and what must be checked next.

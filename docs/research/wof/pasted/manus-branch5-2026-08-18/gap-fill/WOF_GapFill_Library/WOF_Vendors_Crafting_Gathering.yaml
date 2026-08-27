@@ -1,0 +1,1324 @@
+packFormatVersion: 1
+worldId: ash_compact
+fileId: WOF_Vendors_Crafting_Gathering
+scope: WOF-only typed content; no production code and no live SynapticGM import
+engineLocks:
+  currency:
+  - gold
+  - cosmetic_tokens
+  personalLoot: true
+  merchantCopiesPerPlayer: true
+  craftFailChanceV1: 0
+  powerPacksForbidden: true
+  gachaForbidden: true
+  housingGuestsCanLoot: false
+  overweightInstanceEntry: false
+  bankTabsPerCharacter: 4
+  stackMaterialsMax: 99
+  uniqueItemStackMax: 1
+vendors:
+- id: vendor_miller_tobin
+  publicName: Miller Tobin
+  placeId: poi_reedfen_mill
+  vendorKind: mill
+  role: miller
+  personalCopies: true
+  stock:
+  - itemId: item_reed_bundle
+    qty: 20
+    restockPerWeek: 3
+    buyPriceGold: 4
+    sellPriceGold: 2
+  - itemId: item_mill_flour
+    qty: 12
+    restockPerWeek: 3
+    buyPriceGold: 8
+    sellPriceGold: 4
+  - itemId: item_ash_loaf
+    qty: 8
+    restockPerWeek: 3
+    buyPriceGold: 12
+    sellPriceGold: 6
+  - itemId: item_repair_kit_light
+    qty: 4
+    restockPerWeek: 2
+    buyPriceGold: 30
+    sellPriceGold: 15
+  buybackRule: sellPriceGold is paid from the player-facing vendor ledger; LLM cannot
+    mint gold.
+- id: vendor_wick_tender_cal
+  publicName: Wick Tender Cal
+  placeId: poi_wickhaven_loft
+  vendorKind: wick_tender
+  role: crafting
+  personalCopies: true
+  stock:
+  - itemId: item_wick_fiber
+    qty: 20
+    restockPerWeek: 3
+    buyPriceGold: 5
+    sellPriceGold: 2
+  - itemId: item_wick_oil
+    qty: 10
+    restockPerWeek: 3
+    buyPriceGold: 14
+    sellPriceGold: 7
+  - itemId: item_flint_chip
+    qty: 12
+    restockPerWeek: 3
+    buyPriceGold: 4
+    sellPriceGold: 2
+  - itemId: item_repair_kit_light
+    qty: 4
+    restockPerWeek: 2
+    buyPriceGold: 30
+    sellPriceGold: 15
+  buybackRule: sellPriceGold is paid from the player-facing vendor ledger; LLM cannot
+    mint gold.
+- id: vendor_fisher_pell
+  publicName: Fisher Pell
+  placeId: poi_coil_pier
+  vendorKind: fishmonger
+  role: food
+  personalCopies: true
+  stock:
+  - itemId: item_coilfish
+    qty: 12
+    restockPerWeek: 3
+    buyPriceGold: 10
+    sellPriceGold: 5
+  - itemId: item_brine_salt
+    qty: 20
+    restockPerWeek: 3
+    buyPriceGold: 4
+    sellPriceGold: 2
+  - itemId: item_dried_fish
+    qty: 8
+    restockPerWeek: 3
+    buyPriceGold: 16
+    sellPriceGold: 8
+  - itemId: item_repair_kit_light
+    qty: 4
+    restockPerWeek: 2
+    buyPriceGold: 30
+    sellPriceGold: 15
+  buybackRule: sellPriceGold is paid from the player-facing vendor ledger; LLM cannot
+    mint gold.
+- id: vendor_smith_vorr
+  publicName: Smith Vorr
+  placeId: poi_anvil_gate
+  vendorKind: smith
+  role: repair
+  personalCopies: true
+  stock:
+  - itemId: item_ore_chip
+    qty: 20
+    restockPerWeek: 3
+    buyPriceGold: 6
+    sellPriceGold: 3
+  - itemId: item_cool_rivet
+    qty: 12
+    restockPerWeek: 3
+    buyPriceGold: 12
+    sellPriceGold: 6
+  - itemId: item_slag_bloom
+    qty: 8
+    restockPerWeek: 2
+    buyPriceGold: 18
+    sellPriceGold: 9
+  - itemId: item_repair_kit_heavy
+    qty: 4
+    restockPerWeek: 2
+    buyPriceGold: 55
+    sellPriceGold: 27
+  buybackRule: sellPriceGold is paid from the player-facing vendor ledger; LLM cannot
+    mint gold.
+- id: vendor_fenn
+  publicName: Merchant Fenn
+  placeId: poi_reedfen_square
+  vendorKind: general
+  role: start
+  personalCopies: true
+  stock:
+  - itemId: item_bandage_compact
+    qty: 20
+    restockPerWeek: 3
+    buyPriceGold: 10
+    sellPriceGold: 5
+  - itemId: item_stamina_pill_compact
+    qty: 10
+    restockPerWeek: 3
+    buyPriceGold: 18
+    sellPriceGold: 9
+  - itemId: item_travel_rope
+    qty: 8
+    restockPerWeek: 2
+    buyPriceGold: 12
+    sellPriceGold: 6
+  - itemId: item_empty_sack
+    qty: 12
+    restockPerWeek: 3
+    buyPriceGold: 5
+    sellPriceGold: 2
+  buybackRule: sellPriceGold is paid from the player-facing vendor ledger; LLM cannot
+    mint gold.
+- id: vendor_clerk_ves
+  publicName: Faction Clerk Ves
+  placeId: poi_the_divide
+  vendorKind: faction_supply
+  role: faction_supply
+  personalCopies: true
+  stock:
+  - itemId: item_waybread
+    qty: 12
+    restockPerWeek: 3
+    buyPriceGold: 9
+    sellPriceGold: 4
+  - itemId: item_travel_rope
+    qty: 12
+    restockPerWeek: 3
+    buyPriceGold: 12
+    sellPriceGold: 6
+  - itemId: item_repair_kit_light
+    qty: 8
+    restockPerWeek: 2
+    buyPriceGold: 30
+    sellPriceGold: 15
+  - itemId: item_contract_seal
+    qty: 6
+    restockPerWeek: 1
+    buyPriceGold: 25
+    sellPriceGold: 12
+  buybackRule: sellPriceGold is paid from the player-facing vendor ledger; LLM cannot
+    mint gold.
+- id: vendor_ash_seat_ah
+  publicName: Ash Seat Auction Clerk
+  placeId: poi_ash_seat
+  vendorKind: auction_house
+  role: auction_house
+  personalCopies: true
+  stock:
+  - itemId: item_auction_escrow_form
+    qty: 99
+    restockPerWeek: 1
+    buyPriceGold: 2
+    sellPriceGold: 0
+  - itemId: item_mail_scrip
+    qty: 99
+    restockPerWeek: 1
+    buyPriceGold: 1
+    sellPriceGold: 0
+  buybackRule: sellPriceGold is paid from the player-facing vendor ledger; LLM cannot
+    mint gold.
+- id: vendor_tidehold_ah
+  publicName: Tidehold Auction Clerk
+  placeId: poi_tidehold
+  vendorKind: auction_house
+  role: auction_house
+  personalCopies: true
+  stock:
+  - itemId: item_auction_escrow_form
+    qty: 99
+    restockPerWeek: 1
+    buyPriceGold: 2
+    sellPriceGold: 0
+  - itemId: item_mail_scrip
+    qty: 99
+    restockPerWeek: 1
+    buyPriceGold: 1
+    sellPriceGold: 0
+  buybackRule: sellPriceGold is paid from the player-facing vendor ledger; LLM cannot
+    mint gold.
+- id: vendor_ash_innkeeper
+  publicName: Ash Seat Innkeeper
+  placeId: poi_ash_seat
+  vendorKind: innkeeper
+  role: innkeeper
+  personalCopies: true
+  stock:
+  - itemId: item_waybread
+    qty: 20
+    restockPerWeek: 3
+    buyPriceGold: 9
+    sellPriceGold: 4
+  - itemId: item_ash_tea
+    qty: 12
+    restockPerWeek: 3
+    buyPriceGold: 7
+    sellPriceGold: 3
+  - itemId: item_bedroll
+    qty: 4
+    restockPerWeek: 1
+    buyPriceGold: 25
+    sellPriceGold: 12
+  buybackRule: sellPriceGold is paid from the player-facing vendor ledger; LLM cannot
+    mint gold.
+- id: vendor_tide_innkeeper
+  publicName: Tidehold Innkeeper
+  placeId: poi_tidehold
+  vendorKind: innkeeper
+  role: innkeeper
+  personalCopies: true
+  stock:
+  - itemId: item_waybread
+    qty: 20
+    restockPerWeek: 3
+    buyPriceGold: 9
+    sellPriceGold: 4
+  - itemId: item_brine_broth
+    qty: 12
+    restockPerWeek: 3
+    buyPriceGold: 11
+    sellPriceGold: 5
+  - itemId: item_bedroll
+    qty: 4
+    restockPerWeek: 1
+    buyPriceGold: 25
+    sellPriceGold: 12
+  buybackRule: sellPriceGold is paid from the player-facing vendor ledger; LLM cannot
+    mint gold.
+- id: vendor_ash_repair
+  publicName: Ash Seat Repairer
+  placeId: poi_ash_seat
+  vendorKind: repairer
+  role: repairer
+  personalCopies: true
+  stock:
+  - itemId: item_repair_kit_light
+    qty: 12
+    restockPerWeek: 2
+    buyPriceGold: 30
+    sellPriceGold: 15
+  - itemId: item_repair_kit_heavy
+    qty: 8
+    restockPerWeek: 2
+    buyPriceGold: 55
+    sellPriceGold: 27
+  buybackRule: sellPriceGold is paid from the player-facing vendor ledger; LLM cannot
+    mint gold.
+- id: vendor_tide_repair
+  publicName: Tidehold Repairer
+  placeId: poi_tidehold
+  vendorKind: repairer
+  role: repairer
+  personalCopies: true
+  stock:
+  - itemId: item_repair_kit_light
+    qty: 12
+    restockPerWeek: 2
+    buyPriceGold: 30
+    sellPriceGold: 15
+  - itemId: item_repair_kit_heavy
+    qty: 8
+    restockPerWeek: 2
+    buyPriceGold: 55
+    sellPriceGold: 27
+  buybackRule: sellPriceGold is paid from the player-facing vendor ledger; LLM cannot
+    mint gold.
+gatheringNodes:
+- id: gather_reed
+  placeId: poi_reedfen_marsh
+  itemId: item_reed_bundle
+  dailyCap: 12
+  toolRequired: sickle
+  turnCost: 1
+- id: gather_reed_root
+  placeId: poi_reedfen_marsh_edge
+  itemId: item_reed_root
+  dailyCap: 8
+  toolRequired: sickle
+  turnCost: 1
+- id: gather_fen_moss
+  placeId: poi_reedfen_marsh
+  itemId: item_fen_moss
+  dailyCap: 8
+  toolRequired: gloves
+  turnCost: 1
+- id: gather_dry_reed
+  placeId: poi_reedfen_mill
+  itemId: item_dry_reed
+  dailyCap: 10
+  toolRequired: sickle
+  turnCost: 1
+- id: gather_wick_sap
+  placeId: poi_lampwood_path
+  itemId: item_wick_sap
+  dailyCap: 10
+  toolRequired: sap_knife
+  turnCost: 1
+- id: gather_wick_fiber
+  placeId: poi_wickhaven
+  itemId: item_wick_fiber
+  dailyCap: 10
+  toolRequired: hookblade
+  turnCost: 1
+- id: gather_blue_moth_dust
+  placeId: poi_lampwood_gate
+  itemId: item_blue_moth_dust
+  dailyCap: 6
+  toolRequired: net
+  turnCost: 1
+- id: gather_flint
+  placeId: poi_unlit_bend
+  itemId: item_flint_chip
+  dailyCap: 8
+  toolRequired: pick
+  turnCost: 1
+- id: gather_brine_salt
+  placeId: poi_tidal_flats
+  itemId: item_brine_salt
+  dailyCap: 14
+  toolRequired: salt_pan
+  turnCost: 1
+- id: gather_salt_crust
+  placeId: poi_tidal_flats
+  itemId: item_salt_crust
+  dailyCap: 10
+  toolRequired: scraper
+  turnCost: 1
+- id: gather_coilfish
+  placeId: poi_coil_pier
+  itemId: item_coilfish
+  dailyCap: 8
+  toolRequired: net
+  turnCost: 1
+- id: gather_shell_shard
+  placeId: poi_brinewatch_dock
+  itemId: item_shell_shard
+  dailyCap: 8
+  toolRequired: net
+  turnCost: 1
+- id: gather_kelp_strip
+  placeId: poi_tidal_flats
+  itemId: item_kelp_strip
+  dailyCap: 10
+  toolRequired: knife
+  turnCost: 1
+- id: gather_rope_fiber
+  placeId: poi_coil_pier
+  itemId: item_rope_fiber
+  dailyCap: 10
+  toolRequired: hook
+  turnCost: 1
+- id: gather_ore_chip
+  placeId: poi_ore_siding
+  itemId: item_ore_chip
+  dailyCap: 14
+  toolRequired: pick
+  turnCost: 1
+- id: gather_slag_bloom
+  placeId: poi_slag_run
+  itemId: item_slag_bloom
+  dailyCap: 8
+  toolRequired: tongs
+  turnCost: 1
+- id: gather_cool_rivet
+  placeId: poi_cut_face
+  itemId: item_cool_rivet
+  dailyCap: 8
+  toolRequired: pick
+  turnCost: 1
+- id: gather_quartz_dust
+  placeId: poi_granite_stair
+  itemId: item_quartz_dust
+  dailyCap: 8
+  toolRequired: pick
+  turnCost: 1
+- id: gather_clay
+  placeId: poi_reedfen_square
+  itemId: item_kiln_clay
+  dailyCap: 10
+  toolRequired: trowel
+  turnCost: 1
+- id: gather_ash_grain
+  placeId: poi_millcross
+  itemId: item_ash_grain
+  dailyCap: 12
+  toolRequired: sickle
+  turnCost: 1
+- id: gather_hemp_cord
+  placeId: poi_stilt_walk
+  itemId: item_hemp_cord
+  dailyCap: 8
+  toolRequired: knife
+  turnCost: 1
+- id: gather_lamp_oil
+  placeId: poi_drying_racks
+  itemId: item_lamp_oil
+  dailyCap: 8
+  toolRequired: jar
+  turnCost: 1
+- id: gather_coal_nugget
+  placeId: poi_ember_cut
+  itemId: item_coal_nugget
+  dailyCap: 8
+  toolRequired: pick
+  turnCost: 1
+- id: gather_stone_sliver
+  placeId: poi_granite_stair
+  itemId: item_stone_sliver
+  dailyCap: 12
+  toolRequired: pick
+  turnCost: 1
+recipes:
+- id: recipe_ash_loaf
+  category: compact_craft
+  inputs:
+  - itemId: item_mill_flour
+    qty: 2
+  - itemId: item_ash_grain
+    qty: 1
+  output:
+    itemId: item_ash_loaf
+    qty: 1
+  stationInteractableId: interact_cook_stove
+  failChance: 0
+  turnCost: 1
+- id: recipe_waybread
+  category: compact_craft
+  inputs:
+  - itemId: item_mill_flour
+    qty: 1
+  - itemId: item_dried_fish
+    qty: 1
+  output:
+    itemId: item_waybread
+    qty: 1
+  stationInteractableId: interact_cook_stove
+  failChance: 0
+  turnCost: 1
+- id: recipe_brine_broth
+  category: compact_craft
+  inputs:
+  - itemId: item_coilfish
+    qty: 1
+  - itemId: item_brine_salt
+    qty: 1
+  output:
+    itemId: item_brine_broth
+    qty: 1
+  stationInteractableId: interact_cook_stove
+  failChance: 0
+  turnCost: 1
+- id: recipe_ash_tea
+  category: compact_craft
+  inputs:
+  - itemId: item_wick_sap
+    qty: 1
+  - itemId: item_fen_moss
+    qty: 1
+  output:
+    itemId: item_ash_tea
+    qty: 1
+  stationInteractableId: interact_cook_stove
+  failChance: 0
+  turnCost: 1
+- id: recipe_dried_fish
+  category: compact_craft
+  inputs:
+  - itemId: item_coilfish
+    qty: 2
+  - itemId: item_brine_salt
+    qty: 1
+  output:
+    itemId: item_dried_fish
+    qty: 1
+  stationInteractableId: interact_drying_rack
+  failChance: 0
+  turnCost: 1
+- id: recipe_wick_oil
+  category: compact_craft
+  inputs:
+  - itemId: item_wick_sap
+    qty: 2
+  - itemId: item_lamp_oil
+    qty: 1
+  output:
+    itemId: item_wick_oil
+    qty: 1
+  stationInteractableId: interact_wick_press
+  failChance: 0
+  turnCost: 1
+- id: recipe_repair_light
+  category: compact_craft
+  inputs:
+  - itemId: item_ore_chip
+    qty: 1
+  - itemId: item_cool_rivet
+    qty: 1
+  output:
+    itemId: item_repair_kit_light
+    qty: 1
+  stationInteractableId: interact_forge
+  failChance: 0
+  turnCost: 1
+- id: recipe_repair_heavy
+  category: compact_craft
+  inputs:
+  - itemId: item_slag_bloom
+    qty: 2
+  - itemId: item_cool_rivet
+    qty: 2
+  output:
+    itemId: item_repair_kit_heavy
+    qty: 1
+  stationInteractableId: interact_forge
+  failChance: 0
+  turnCost: 1
+- id: recipe_mill_flour
+  category: compact_craft
+  inputs:
+  - itemId: item_ash_grain
+    qty: 2
+  output:
+    itemId: item_mill_flour
+    qty: 1
+  stationInteractableId: interact_mill
+  failChance: 0
+  turnCost: 1
+- id: recipe_cord
+  category: compact_craft
+  inputs:
+  - itemId: item_hemp_cord
+    qty: 2
+  output:
+    itemId: item_travel_rope
+    qty: 1
+  stationInteractableId: interact_workbench
+  failChance: 0
+  turnCost: 1
+- id: recipe_compact_utility_01
+  category: compact_craft
+  inputs:
+  - itemId: item_ore_chip
+    qty: 1
+  - itemId: item_stone_sliver
+    qty: 1
+  output:
+    itemId: item_compact_utility_01
+    qty: 1
+  stationInteractableId: interact_workbench
+  failChance: 0
+  turnCost: 1
+- id: recipe_compact_utility_02
+  category: compact_craft
+  inputs:
+  - itemId: item_ore_chip
+    qty: 1
+  - itemId: item_stone_sliver
+    qty: 1
+  output:
+    itemId: item_compact_utility_02
+    qty: 1
+  stationInteractableId: interact_workbench
+  failChance: 0
+  turnCost: 1
+- id: recipe_compact_utility_03
+  category: compact_craft
+  inputs:
+  - itemId: item_ore_chip
+    qty: 1
+  - itemId: item_stone_sliver
+    qty: 1
+  output:
+    itemId: item_compact_utility_03
+    qty: 1
+  stationInteractableId: interact_workbench
+  failChance: 0
+  turnCost: 1
+- id: recipe_compact_utility_04
+  category: compact_craft
+  inputs:
+  - itemId: item_ore_chip
+    qty: 1
+  - itemId: item_stone_sliver
+    qty: 1
+  output:
+    itemId: item_compact_utility_04
+    qty: 1
+  stationInteractableId: interact_workbench
+  failChance: 0
+  turnCost: 1
+- id: recipe_compact_utility_05
+  category: compact_craft
+  inputs:
+  - itemId: item_ore_chip
+    qty: 1
+  - itemId: item_stone_sliver
+    qty: 1
+  output:
+    itemId: item_compact_utility_05
+    qty: 1
+  stationInteractableId: interact_workbench
+  failChance: 0
+  turnCost: 1
+- id: recipe_compact_utility_06
+  category: compact_craft
+  inputs:
+  - itemId: item_ore_chip
+    qty: 1
+  - itemId: item_stone_sliver
+    qty: 1
+  output:
+    itemId: item_compact_utility_06
+    qty: 1
+  stationInteractableId: interact_workbench
+  failChance: 0
+  turnCost: 1
+- id: recipe_compact_utility_07
+  category: compact_craft
+  inputs:
+  - itemId: item_ore_chip
+    qty: 1
+  - itemId: item_stone_sliver
+    qty: 1
+  output:
+    itemId: item_compact_utility_07
+    qty: 1
+  stationInteractableId: interact_workbench
+  failChance: 0
+  turnCost: 1
+- id: recipe_compact_utility_08
+  category: compact_craft
+  inputs:
+  - itemId: item_ore_chip
+    qty: 1
+  - itemId: item_stone_sliver
+    qty: 1
+  output:
+    itemId: item_compact_utility_08
+    qty: 1
+  stationInteractableId: interact_workbench
+  failChance: 0
+  turnCost: 1
+- id: recipe_compact_utility_09
+  category: compact_craft
+  inputs:
+  - itemId: item_ore_chip
+    qty: 1
+  - itemId: item_stone_sliver
+    qty: 1
+  output:
+    itemId: item_compact_utility_09
+    qty: 1
+  stationInteractableId: interact_workbench
+  failChance: 0
+  turnCost: 1
+- id: recipe_compact_utility_10
+  category: compact_craft
+  inputs:
+  - itemId: item_ore_chip
+    qty: 1
+  - itemId: item_stone_sliver
+    qty: 1
+  output:
+    itemId: item_compact_utility_10
+    qty: 1
+  stationInteractableId: interact_workbench
+  failChance: 0
+  turnCost: 1
+- id: recipe_compact_utility_11
+  category: compact_craft
+  inputs:
+  - itemId: item_ore_chip
+    qty: 1
+  - itemId: item_stone_sliver
+    qty: 1
+  output:
+    itemId: item_compact_utility_11
+    qty: 1
+  stationInteractableId: interact_workbench
+  failChance: 0
+  turnCost: 1
+- id: recipe_compact_utility_12
+  category: compact_craft
+  inputs:
+  - itemId: item_ore_chip
+    qty: 1
+  - itemId: item_stone_sliver
+    qty: 1
+  output:
+    itemId: item_compact_utility_12
+    qty: 1
+  stationInteractableId: interact_workbench
+  failChance: 0
+  turnCost: 1
+- id: recipe_compact_utility_13
+  category: compact_craft
+  inputs:
+  - itemId: item_ore_chip
+    qty: 1
+  - itemId: item_stone_sliver
+    qty: 1
+  output:
+    itemId: item_compact_utility_13
+    qty: 1
+  stationInteractableId: interact_workbench
+  failChance: 0
+  turnCost: 1
+- id: recipe_compact_utility_14
+  category: compact_craft
+  inputs:
+  - itemId: item_ore_chip
+    qty: 1
+  - itemId: item_stone_sliver
+    qty: 1
+  output:
+    itemId: item_compact_utility_14
+    qty: 1
+  stationInteractableId: interact_workbench
+  failChance: 0
+  turnCost: 1
+- id: recipe_compact_utility_15
+  category: compact_craft
+  inputs:
+  - itemId: item_ore_chip
+    qty: 1
+  - itemId: item_stone_sliver
+    qty: 1
+  output:
+    itemId: item_compact_utility_15
+    qty: 1
+  stationInteractableId: interact_workbench
+  failChance: 0
+  turnCost: 1
+- id: recipe_compact_utility_16
+  category: compact_craft
+  inputs:
+  - itemId: item_ore_chip
+    qty: 1
+  - itemId: item_stone_sliver
+    qty: 1
+  output:
+    itemId: item_compact_utility_16
+    qty: 1
+  stationInteractableId: interact_workbench
+  failChance: 0
+  turnCost: 1
+- id: recipe_compact_utility_17
+  category: compact_craft
+  inputs:
+  - itemId: item_ore_chip
+    qty: 1
+  - itemId: item_stone_sliver
+    qty: 1
+  output:
+    itemId: item_compact_utility_17
+    qty: 1
+  stationInteractableId: interact_workbench
+  failChance: 0
+  turnCost: 1
+- id: recipe_compact_utility_18
+  category: compact_craft
+  inputs:
+  - itemId: item_ore_chip
+    qty: 1
+  - itemId: item_stone_sliver
+    qty: 1
+  output:
+    itemId: item_compact_utility_18
+    qty: 1
+  stationInteractableId: interact_workbench
+  failChance: 0
+  turnCost: 1
+- id: recipe_compact_utility_19
+  category: compact_craft
+  inputs:
+  - itemId: item_ore_chip
+    qty: 1
+  - itemId: item_stone_sliver
+    qty: 1
+  output:
+    itemId: item_compact_utility_19
+    qty: 1
+  stationInteractableId: interact_workbench
+  failChance: 0
+  turnCost: 1
+- id: recipe_compact_utility_20
+  category: compact_craft
+  inputs:
+  - itemId: item_ore_chip
+    qty: 1
+  - itemId: item_stone_sliver
+    qty: 1
+  output:
+    itemId: item_compact_utility_20
+    qty: 1
+  stationInteractableId: interact_workbench
+  failChance: 0
+  turnCost: 1
+- id: recipe_compact_utility_21
+  category: compact_craft
+  inputs:
+  - itemId: item_ore_chip
+    qty: 1
+  - itemId: item_stone_sliver
+    qty: 1
+  output:
+    itemId: item_compact_utility_21
+    qty: 1
+  stationInteractableId: interact_workbench
+  failChance: 0
+  turnCost: 1
+- id: recipe_compact_utility_22
+  category: compact_craft
+  inputs:
+  - itemId: item_ore_chip
+    qty: 1
+  - itemId: item_stone_sliver
+    qty: 1
+  output:
+    itemId: item_compact_utility_22
+    qty: 1
+  stationInteractableId: interact_workbench
+  failChance: 0
+  turnCost: 1
+- id: recipe_compact_utility_23
+  category: compact_craft
+  inputs:
+  - itemId: item_ore_chip
+    qty: 1
+  - itemId: item_stone_sliver
+    qty: 1
+  output:
+    itemId: item_compact_utility_23
+    qty: 1
+  stationInteractableId: interact_workbench
+  failChance: 0
+  turnCost: 1
+- id: recipe_compact_utility_24
+  category: compact_craft
+  inputs:
+  - itemId: item_ore_chip
+    qty: 1
+  - itemId: item_stone_sliver
+    qty: 1
+  output:
+    itemId: item_compact_utility_24
+    qty: 1
+  stationInteractableId: interact_workbench
+  failChance: 0
+  turnCost: 1
+- id: recipe_compact_utility_25
+  category: compact_craft
+  inputs:
+  - itemId: item_ore_chip
+    qty: 1
+  - itemId: item_stone_sliver
+    qty: 1
+  output:
+    itemId: item_compact_utility_25
+    qty: 1
+  stationInteractableId: interact_workbench
+  failChance: 0
+  turnCost: 1
+- id: recipe_compact_utility_26
+  category: compact_craft
+  inputs:
+  - itemId: item_ore_chip
+    qty: 1
+  - itemId: item_stone_sliver
+    qty: 1
+  output:
+    itemId: item_compact_utility_26
+    qty: 1
+  stationInteractableId: interact_workbench
+  failChance: 0
+  turnCost: 1
+- id: recipe_compact_utility_27
+  category: compact_craft
+  inputs:
+  - itemId: item_ore_chip
+    qty: 1
+  - itemId: item_stone_sliver
+    qty: 1
+  output:
+    itemId: item_compact_utility_27
+    qty: 1
+  stationInteractableId: interact_workbench
+  failChance: 0
+  turnCost: 1
+- id: recipe_compact_utility_28
+  category: compact_craft
+  inputs:
+  - itemId: item_ore_chip
+    qty: 1
+  - itemId: item_stone_sliver
+    qty: 1
+  output:
+    itemId: item_compact_utility_28
+    qty: 1
+  stationInteractableId: interact_workbench
+  failChance: 0
+  turnCost: 1
+- id: recipe_compact_utility_29
+  category: compact_craft
+  inputs:
+  - itemId: item_ore_chip
+    qty: 1
+  - itemId: item_stone_sliver
+    qty: 1
+  output:
+    itemId: item_compact_utility_29
+    qty: 1
+  stationInteractableId: interact_workbench
+  failChance: 0
+  turnCost: 1
+- id: recipe_compact_utility_30
+  category: compact_craft
+  inputs:
+  - itemId: item_ore_chip
+    qty: 1
+  - itemId: item_stone_sliver
+    qty: 1
+  output:
+    itemId: item_compact_utility_30
+    qty: 1
+  stationInteractableId: interact_workbench
+  failChance: 0
+  turnCost: 1
+- id: recipe_housing_build_01
+  category: housing_build
+  inputs:
+  - itemId: item_stone_sliver
+    qty: 4
+  - itemId: item_dry_reed
+    qty: 2
+  output:
+    itemId: item_housing_component_01
+    qty: 1
+  stationInteractableId: interact_workbench
+  failChance: 0
+  turnCost: 1
+  clockWeeks: 2
+- id: recipe_housing_build_02
+  category: housing_build
+  inputs:
+  - itemId: item_stone_sliver
+    qty: 4
+  - itemId: item_dry_reed
+    qty: 2
+  output:
+    itemId: item_housing_component_02
+    qty: 1
+  stationInteractableId: interact_workbench
+  failChance: 0
+  turnCost: 1
+  clockWeeks: 2
+- id: recipe_housing_build_03
+  category: housing_build
+  inputs:
+  - itemId: item_stone_sliver
+    qty: 4
+  - itemId: item_dry_reed
+    qty: 2
+  output:
+    itemId: item_housing_component_03
+    qty: 1
+  stationInteractableId: interact_workbench
+  failChance: 0
+  turnCost: 1
+  clockWeeks: 2
+- id: recipe_housing_build_04
+  category: housing_build
+  inputs:
+  - itemId: item_stone_sliver
+    qty: 4
+  - itemId: item_dry_reed
+    qty: 2
+  output:
+    itemId: item_housing_component_04
+    qty: 1
+  stationInteractableId: interact_workbench
+  failChance: 0
+  turnCost: 1
+  clockWeeks: 2
+- id: recipe_housing_build_05
+  category: housing_build
+  inputs:
+  - itemId: item_stone_sliver
+    qty: 4
+  - itemId: item_dry_reed
+    qty: 2
+  output:
+    itemId: item_housing_component_05
+    qty: 1
+  stationInteractableId: interact_workbench
+  failChance: 0
+  turnCost: 1
+  clockWeeks: 2
+- id: recipe_housing_build_06
+  category: housing_build
+  inputs:
+  - itemId: item_stone_sliver
+    qty: 4
+  - itemId: item_dry_reed
+    qty: 2
+  output:
+    itemId: item_housing_component_06
+    qty: 1
+  stationInteractableId: interact_workbench
+  failChance: 0
+  turnCost: 1
+  clockWeeks: 2
+- id: recipe_housing_build_07
+  category: housing_build
+  inputs:
+  - itemId: item_stone_sliver
+    qty: 4
+  - itemId: item_dry_reed
+    qty: 2
+  output:
+    itemId: item_housing_component_07
+    qty: 1
+  stationInteractableId: interact_workbench
+  failChance: 0
+  turnCost: 1
+  clockWeeks: 2
+- id: recipe_housing_build_08
+  category: housing_build
+  inputs:
+  - itemId: item_stone_sliver
+    qty: 4
+  - itemId: item_dry_reed
+    qty: 2
+  output:
+    itemId: item_housing_component_08
+    qty: 1
+  stationInteractableId: interact_workbench
+  failChance: 0
+  turnCost: 1
+  clockWeeks: 2
+- id: recipe_housing_build_09
+  category: housing_build
+  inputs:
+  - itemId: item_stone_sliver
+    qty: 4
+  - itemId: item_dry_reed
+    qty: 2
+  output:
+    itemId: item_housing_component_09
+    qty: 1
+  stationInteractableId: interact_workbench
+  failChance: 0
+  turnCost: 1
+  clockWeeks: 2
+- id: recipe_housing_build_10
+  category: housing_build
+  inputs:
+  - itemId: item_stone_sliver
+    qty: 4
+  - itemId: item_dry_reed
+    qty: 2
+  output:
+    itemId: item_housing_component_10
+    qty: 1
+  stationInteractableId: interact_workbench
+  failChance: 0
+  turnCost: 1
+  clockWeeks: 2
+- id: recipe_housing_build_11
+  category: housing_build
+  inputs:
+  - itemId: item_stone_sliver
+    qty: 4
+  - itemId: item_dry_reed
+    qty: 2
+  output:
+    itemId: item_housing_component_11
+    qty: 1
+  stationInteractableId: interact_workbench
+  failChance: 0
+  turnCost: 1
+  clockWeeks: 2
+- id: recipe_housing_build_12
+  category: housing_build
+  inputs:
+  - itemId: item_stone_sliver
+    qty: 4
+  - itemId: item_dry_reed
+    qty: 2
+  output:
+    itemId: item_housing_component_12
+    qty: 1
+  stationInteractableId: interact_workbench
+  failChance: 0
+  turnCost: 1
+  clockWeeks: 2
+- id: recipe_housing_build_13
+  category: housing_build
+  inputs:
+  - itemId: item_stone_sliver
+    qty: 4
+  - itemId: item_dry_reed
+    qty: 2
+  output:
+    itemId: item_housing_component_13
+    qty: 1
+  stationInteractableId: interact_workbench
+  failChance: 0
+  turnCost: 1
+  clockWeeks: 2
+- id: recipe_housing_build_14
+  category: housing_build
+  inputs:
+  - itemId: item_stone_sliver
+    qty: 4
+  - itemId: item_dry_reed
+    qty: 2
+  output:
+    itemId: item_housing_component_14
+    qty: 1
+  stationInteractableId: interact_workbench
+  failChance: 0
+  turnCost: 1
+  clockWeeks: 2
+- id: recipe_housing_build_15
+  category: housing_build
+  inputs:
+  - itemId: item_stone_sliver
+    qty: 4
+  - itemId: item_dry_reed
+    qty: 2
+  output:
+    itemId: item_housing_component_15
+    qty: 1
+  stationInteractableId: interact_workbench
+  failChance: 0
+  turnCost: 1
+  clockWeeks: 2
+- id: recipe_housing_build_16
+  category: housing_build
+  inputs:
+  - itemId: item_stone_sliver
+    qty: 4
+  - itemId: item_dry_reed
+    qty: 2
+  output:
+    itemId: item_housing_component_16
+    qty: 1
+  stationInteractableId: interact_workbench
+  failChance: 0
+  turnCost: 1
+  clockWeeks: 2
+- id: recipe_housing_build_17
+  category: housing_build
+  inputs:
+  - itemId: item_stone_sliver
+    qty: 4
+  - itemId: item_dry_reed
+    qty: 2
+  output:
+    itemId: item_housing_component_17
+    qty: 1
+  stationInteractableId: interact_workbench
+  failChance: 0
+  turnCost: 1
+  clockWeeks: 2
+- id: recipe_housing_build_18
+  category: housing_build
+  inputs:
+  - itemId: item_stone_sliver
+    qty: 4
+  - itemId: item_dry_reed
+    qty: 2
+  output:
+    itemId: item_housing_component_18
+    qty: 1
+  stationInteractableId: interact_workbench
+  failChance: 0
+  turnCost: 1
+  clockWeeks: 2
+- id: recipe_housing_build_19
+  category: housing_build
+  inputs:
+  - itemId: item_stone_sliver
+    qty: 4
+  - itemId: item_dry_reed
+    qty: 2
+  output:
+    itemId: item_housing_component_19
+    qty: 1
+  stationInteractableId: interact_workbench
+  failChance: 0
+  turnCost: 1
+  clockWeeks: 2
+- id: recipe_housing_build_20
+  category: housing_build
+  inputs:
+  - itemId: item_stone_sliver
+    qty: 4
+  - itemId: item_dry_reed
+    qty: 2
+  output:
+    itemId: item_housing_component_20
+    qty: 1
+  stationInteractableId: interact_workbench
+  failChance: 0
+  turnCost: 1
+  clockWeeks: 2
+cookingBuffs:
+- id: food_buff_loaf
+  foodItemId: item_ash_loaf
+  durationRounds: 6
+  statusFlag: rested_guard
+  owner: CODE
+  llmMayNarrate: false
+- id: food_buff_waybread
+  foodItemId: item_waybread
+  durationRounds: 8
+  statusFlag: travel_ready
+  owner: CODE
+  llmMayNarrate: false
+- id: food_buff_broth
+  foodItemId: item_brine_broth
+  durationRounds: 6
+  statusFlag: brine_resolve
+  owner: CODE
+  llmMayNarrate: false
+- id: food_buff_tea
+  foodItemId: item_ash_tea
+  durationRounds: 5
+  statusFlag: focus
+  owner: CODE
+  llmMayNarrate: false
+- id: food_buff_dried_fish
+  foodItemId: item_dried_fish
+  durationRounds: 6
+  statusFlag: steady_hand
+  owner: CODE
+  llmMayNarrate: false
+- id: food_buff_wick_oil
+  foodItemId: item_wick_oil
+  durationRounds: 8
+  statusFlag: light_ward
+  owner: CODE
+  llmMayNarrate: false
+- id: food_buff_fen_cake
+  foodItemId: item_fen_cake
+  durationRounds: 6
+  statusFlag: hearth_grit
+  owner: CODE
+  llmMayNarrate: false
+- id: food_buff_salt_crisp
+  foodItemId: item_salt_crisp
+  durationRounds: 6
+  statusFlag: tide_listening
+  owner: CODE
+  llmMayNarrate: false
+bank:
+  tabs: 4
+  tabLabels:
+  - Materials
+  - Quest Keepsakes
+  - Crafted Goods
+  - Cosmetics
+  stashSize: 120
+  personalOnly: true
+  guildBank: false
+  bindRules:
+    questUniques: soulbound
+    materials: tradeable
+    cosmetics: account_bound
+  overweightRule: stack materials to 99; unique items to 1; overweight blocks instance
+    entry but not hub walking

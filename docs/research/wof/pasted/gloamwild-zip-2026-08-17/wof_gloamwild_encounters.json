@@ -1,0 +1,610 @@
+[
+  {
+    "biome": "Brinewatch Tidepools",
+    "period": "day",
+    "entries": [
+      {
+        "creatureId": "creature.bristleek",
+        "weight": 30
+      },
+      {
+        "creatureId": "creature.brinehart",
+        "weight": 22
+      },
+      {
+        "creatureId": "creature.marlip",
+        "weight": 16
+      },
+      {
+        "creatureId": "creature.salthush",
+        "weight": 12
+      },
+      {
+        "creatureId": "creature.kelpaddle",
+        "weight": 8
+      },
+      {
+        "creatureId": "creature.shoalspike",
+        "weight": 6
+      },
+      {
+        "creatureId": "creature.driftdot",
+        "weight": 4
+      },
+      {
+        "creatureId": "creature.coralurk",
+        "weight": 2
+      }
+    ]
+  },
+  {
+    "biome": "Brinewatch Tidepools",
+    "period": "night",
+    "entries": [
+      {
+        "creatureId": "creature.bristleek",
+        "weight": 20
+      },
+      {
+        "creatureId": "creature.brinehart",
+        "weight": 18
+      },
+      {
+        "creatureId": "creature.marlip",
+        "weight": 16
+      },
+      {
+        "creatureId": "creature.salthush",
+        "weight": 14
+      },
+      {
+        "creatureId": "creature.kelpaddle",
+        "weight": 12
+      },
+      {
+        "creatureId": "creature.shoalspike",
+        "weight": 10
+      },
+      {
+        "creatureId": "creature.driftdot",
+        "weight": 6
+      },
+      {
+        "creatureId": "creature.coralurk",
+        "weight": 4
+      }
+    ]
+  },
+  {
+    "biome": "Granite Stair",
+    "period": "day",
+    "entries": [
+      {
+        "creatureId": "creature.pebbit",
+        "weight": 30
+      },
+      {
+        "creatureId": "creature.cairnox",
+        "weight": 22
+      },
+      {
+        "creatureId": "creature.grittern",
+        "weight": 16
+      },
+      {
+        "creatureId": "creature.pineclink",
+        "weight": 12
+      },
+      {
+        "creatureId": "creature.snowmoss",
+        "weight": 8
+      },
+      {
+        "creatureId": "creature.ridgeveil",
+        "weight": 6
+      },
+      {
+        "creatureId": "creature.craggleam",
+        "weight": 4
+      },
+      {
+        "creatureId": "creature.fumehorn",
+        "weight": 2
+      }
+    ]
+  },
+  {
+    "biome": "Granite Stair",
+    "period": "night",
+    "entries": [
+      {
+        "creatureId": "creature.pebbit",
+        "weight": 20
+      },
+      {
+        "creatureId": "creature.cairnox",
+        "weight": 18
+      },
+      {
+        "creatureId": "creature.grittern",
+        "weight": 16
+      },
+      {
+        "creatureId": "creature.pineclink",
+        "weight": 14
+      },
+      {
+        "creatureId": "creature.snowmoss",
+        "weight": 12
+      },
+      {
+        "creatureId": "creature.ridgeveil",
+        "weight": 10
+      },
+      {
+        "creatureId": "creature.craggleam",
+        "weight": 6
+      },
+      {
+        "creatureId": "creature.fumehorn",
+        "weight": 4
+      }
+    ]
+  },
+  {
+    "biome": "Lampwood Night Road",
+    "period": "day",
+    "entries": [
+      {
+        "creatureId": "creature.murmurkin",
+        "weight": 30
+      },
+      {
+        "creatureId": "creature.curtainel",
+        "weight": 22
+      },
+      {
+        "creatureId": "creature.lampet",
+        "weight": 16
+      },
+      {
+        "creatureId": "creature.wickwyrm",
+        "weight": 12
+      },
+      {
+        "creatureId": "creature.hushhare",
+        "weight": 8
+      },
+      {
+        "creatureId": "creature.nightsilt",
+        "weight": 6
+      },
+      {
+        "creatureId": "creature.mothroot",
+        "weight": 4
+      },
+      {
+        "creatureId": "creature.chimegale",
+        "weight": 2
+      }
+    ]
+  },
+  {
+    "biome": "Lampwood Night Road",
+    "period": "night",
+    "entries": [
+      {
+        "creatureId": "creature.murmurkin",
+        "weight": 20
+      },
+      {
+        "creatureId": "creature.curtainel",
+        "weight": 18
+      },
+      {
+        "creatureId": "creature.lampet",
+        "weight": 16
+      },
+      {
+        "creatureId": "creature.wickwyrm",
+        "weight": 14
+      },
+      {
+        "creatureId": "creature.hushhare",
+        "weight": 12
+      },
+      {
+        "creatureId": "creature.nightsilt",
+        "weight": 10
+      },
+      {
+        "creatureId": "creature.mothroot",
+        "weight": 6
+      },
+      {
+        "creatureId": "creature.chimegale",
+        "weight": 4
+      }
+    ]
+  },
+  {
+    "biome": "Understep Vaults",
+    "period": "day",
+    "entries": [
+      {
+        "creatureId": "creature.vaultmidge",
+        "weight": 30
+      },
+      {
+        "creatureId": "creature.basaltick",
+        "weight": 22
+      },
+      {
+        "creatureId": "creature.charspore",
+        "weight": 16
+      },
+      {
+        "creatureId": "creature.blindbloom",
+        "weight": 12
+      },
+      {
+        "creatureId": "creature.sluicewraith",
+        "weight": 8
+      },
+      {
+        "creatureId": "creature.hollowgale",
+        "weight": 6
+      },
+      {
+        "creatureId": "creature.veilclast",
+        "weight": 4
+      },
+      {
+        "creatureId": "creature.gloomskein",
+        "weight": 2
+      }
+    ]
+  },
+  {
+    "biome": "Understep Vaults",
+    "period": "night",
+    "entries": [
+      {
+        "creatureId": "creature.vaultmidge",
+        "weight": 20
+      },
+      {
+        "creatureId": "creature.basaltick",
+        "weight": 18
+      },
+      {
+        "creatureId": "creature.charspore",
+        "weight": 16
+      },
+      {
+        "creatureId": "creature.blindbloom",
+        "weight": 14
+      },
+      {
+        "creatureId": "creature.sluicewraith",
+        "weight": 12
+      },
+      {
+        "creatureId": "creature.hollowgale",
+        "weight": 10
+      },
+      {
+        "creatureId": "creature.veilclast",
+        "weight": 6
+      },
+      {
+        "creatureId": "creature.gloomskein",
+        "weight": 4
+      }
+    ]
+  },
+  {
+    "biome": "Hearth Fields",
+    "period": "day",
+    "entries": [
+      {
+        "creatureId": "creature.nectlet",
+        "weight": 30
+      },
+      {
+        "creatureId": "creature.crowncap",
+        "weight": 22
+      },
+      {
+        "creatureId": "creature.mossip",
+        "weight": 16
+      },
+      {
+        "creatureId": "creature.orchardhorn",
+        "weight": 12
+      },
+      {
+        "creatureId": "creature.grainpuff",
+        "weight": 8
+      },
+      {
+        "creatureId": "creature.sootfinch",
+        "weight": 6
+      },
+      {
+        "creatureId": "creature.buttonhoof",
+        "weight": 4
+      },
+      {
+        "creatureId": "creature.flickerpup",
+        "weight": 2
+      }
+    ]
+  },
+  {
+    "biome": "Hearth Fields",
+    "period": "night",
+    "entries": [
+      {
+        "creatureId": "creature.nectlet",
+        "weight": 20
+      },
+      {
+        "creatureId": "creature.crowncap",
+        "weight": 18
+      },
+      {
+        "creatureId": "creature.mossip",
+        "weight": 16
+      },
+      {
+        "creatureId": "creature.orchardhorn",
+        "weight": 14
+      },
+      {
+        "creatureId": "creature.grainpuff",
+        "weight": 12
+      },
+      {
+        "creatureId": "creature.sootfinch",
+        "weight": 10
+      },
+      {
+        "creatureId": "creature.buttonhoof",
+        "weight": 6
+      },
+      {
+        "creatureId": "creature.flickerpup",
+        "weight": 4
+      }
+    ]
+  },
+  {
+    "biome": "Reedfen",
+    "period": "day",
+    "entries": [
+      {
+        "creatureId": "creature.mirepup",
+        "weight": 30
+      },
+      {
+        "creatureId": "creature.duskmaw",
+        "weight": 22
+      },
+      {
+        "creatureId": "creature.reedglider",
+        "weight": 16
+      },
+      {
+        "creatureId": "creature.bogbell",
+        "weight": 12
+      },
+      {
+        "creatureId": "creature.mirecrown",
+        "weight": 8
+      },
+      {
+        "creatureId": "creature.sedgejaw",
+        "weight": 6
+      },
+      {
+        "creatureId": "creature.fenflash",
+        "weight": 4
+      },
+      {
+        "creatureId": "creature.siltlamp",
+        "weight": 2
+      }
+    ]
+  },
+  {
+    "biome": "Reedfen",
+    "period": "night",
+    "entries": [
+      {
+        "creatureId": "creature.mirepup",
+        "weight": 20
+      },
+      {
+        "creatureId": "creature.duskmaw",
+        "weight": 18
+      },
+      {
+        "creatureId": "creature.reedglider",
+        "weight": 16
+      },
+      {
+        "creatureId": "creature.bogbell",
+        "weight": 14
+      },
+      {
+        "creatureId": "creature.mirecrown",
+        "weight": 12
+      },
+      {
+        "creatureId": "creature.sedgejaw",
+        "weight": 10
+      },
+      {
+        "creatureId": "creature.fenflash",
+        "weight": 6
+      },
+      {
+        "creatureId": "creature.siltlamp",
+        "weight": 4
+      }
+    ]
+  },
+  {
+    "biome": "Ash Border",
+    "period": "day",
+    "entries": [
+      {
+        "creatureId": "creature.tidevault",
+        "weight": 30
+      },
+      {
+        "creatureId": "creature.granite-oracle",
+        "weight": 22
+      },
+      {
+        "creatureId": "creature.lantern-comet",
+        "weight": 16
+      },
+      {
+        "creatureId": "creature.rooted-crown",
+        "weight": 12
+      },
+      {
+        "creatureId": "creature.whistlecap",
+        "weight": 8
+      },
+      {
+        "creatureId": "creature.tinderloom",
+        "weight": 6
+      },
+      {
+        "creatureId": "creature.puddleknit",
+        "weight": 4
+      },
+      {
+        "creatureId": "creature.shadepurl",
+        "weight": 2
+      }
+    ]
+  },
+  {
+    "biome": "Ash Border",
+    "period": "night",
+    "entries": [
+      {
+        "creatureId": "creature.tidevault",
+        "weight": 20
+      },
+      {
+        "creatureId": "creature.granite-oracle",
+        "weight": 18
+      },
+      {
+        "creatureId": "creature.lantern-comet",
+        "weight": 16
+      },
+      {
+        "creatureId": "creature.rooted-crown",
+        "weight": 14
+      },
+      {
+        "creatureId": "creature.whistlecap",
+        "weight": 12
+      },
+      {
+        "creatureId": "creature.tinderloom",
+        "weight": 10
+      },
+      {
+        "creatureId": "creature.puddleknit",
+        "weight": 6
+      },
+      {
+        "creatureId": "creature.shadepurl",
+        "weight": 4
+      }
+    ]
+  },
+  {
+    "biome": "Dawn Terraces",
+    "period": "day",
+    "entries": [
+      {
+        "creatureId": "creature.chalksail",
+        "weight": 30
+      },
+      {
+        "creatureId": "creature.bellscale",
+        "weight": 22
+      },
+      {
+        "creatureId": "creature.caskmole",
+        "weight": 16
+      },
+      {
+        "creatureId": "creature.vinebrisk",
+        "weight": 12
+      },
+      {
+        "creatureId": "creature.duskpocket",
+        "weight": 8
+      },
+      {
+        "creatureId": "creature.rillbraid",
+        "weight": 6
+      },
+      {
+        "creatureId": "creature.ashsnout",
+        "weight": 4
+      },
+      {
+        "creatureId": "creature.relaymite",
+        "weight": 2
+      }
+    ]
+  },
+  {
+    "biome": "Dawn Terraces",
+    "period": "night",
+    "entries": [
+      {
+        "creatureId": "creature.chalksail",
+        "weight": 20
+      },
+      {
+        "creatureId": "creature.bellscale",
+        "weight": 18
+      },
+      {
+        "creatureId": "creature.caskmole",
+        "weight": 16
+      },
+      {
+        "creatureId": "creature.vinebrisk",
+        "weight": 14
+      },
+      {
+        "creatureId": "creature.duskpocket",
+        "weight": 12
+      },
+      {
+        "creatureId": "creature.rillbraid",
+        "weight": 10
+      },
+      {
+        "creatureId": "creature.ashsnout",
+        "weight": 6
+      },
+      {
+        "creatureId": "creature.relaymite",
+        "weight": 4
+      }
+    ]
+  }
+]
