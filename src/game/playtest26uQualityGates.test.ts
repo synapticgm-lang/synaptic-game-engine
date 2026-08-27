@@ -170,5 +170,8 @@ describe('playtest26u — Gemini P0 quality gates', () => {
     expect(md).toMatch(/\*\*STATUS \/ System:\*\*/);
     expect(md).toMatch(/XP Gained: 10 \(discover hub\)/);
     expect(md).not.toMatch(/Warden: noise/);
+    expect(md).toMatch(/## Critic prompt/);
+    expect(md).toMatch(/Scorecard \(required\)/);
+    expect(md).toMatch(/Option quality/);
   });
 });

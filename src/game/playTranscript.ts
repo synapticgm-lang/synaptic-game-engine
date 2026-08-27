@@ -7,6 +7,7 @@ import {
 } from './choicePipeline';
 import { establishmentChoices, isOpeningEstablishmentPending } from './openingEstablishment';
 import { filterInventedContextChoices } from './choiceWarden';
+import { buildGeminiCriticPrompt } from './geminiCriticPrompt';
 
 const FALLBACK_CHOICE = '🎲 Let Fate Decide';
 
@@ -159,21 +160,24 @@ export function buildStoryReviewExport(
     `- Character: ${state.character?.name ?? '?'} · Level ${state.character?.level ?? '?'} · XP ${state.character?.xp ?? 0}/${state.character?.xpToNext ?? '?'}`,
     `- Exported: ${new Date().toISOString()}`,
     '',
-    '## Reviewer brief (paste into Gemini)',
+    '## Critic prompt (follow this — then read the transcript)',
     '',
     meta?.reviewPrompt?.trim()
-      || [
-        'You are reviewing an AI game-master transcript for an original LitRPG session.',
-        'Score 1–10 and give short evidence for: (1) hook & stakes, (2) pace/chapter feel,',
-        '(3) option relevance to the last beat, (4) continuity (people/places/kit),',
-        '(5) voice consistency, (6) progression feel (quests/XP/travel), (7) would you keep playing?',
-        'STATUS/XP lines are included under each turn when present — use them for LitRPG scoring.',
-        'List top 5 failure modes and top 5 strengths. Do not invent missing plot.',
-      ].join(' '),
+      || buildGeminiCriticPrompt({
+        bibleTitle: title,
+        personalityId: meta?.personalityId ?? state.systemPersonality ?? state.gmPersonality ?? undefined,
+        aiAgentMode: meta?.aiAgentMode,
+        seed: meta?.seed,
+        turns: state.turn ?? 0,
+        level: state.character?.level ?? '?',
+        xpLine: `${state.character?.xp ?? 0}/${state.character?.xpToNext ?? '?'}`,
+      }),
     '',
     '---',
     '',
     '## Transcript',
+    '',
+    '_Each turn below: Narration → **Options:** (exact choices offered that beat) → **Player:** (what was picked) → optional **STATUS / System.**_',
     '',
   ];
 
