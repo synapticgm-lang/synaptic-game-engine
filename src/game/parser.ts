@@ -724,19 +724,40 @@ export function eventsToEncounterUpdate(events: GameEvent[], current: ActiveEnco
   let encounter = current;
   for (const e of events) {
     if (e.type === 'enemy-appear' && e.enemyName) {
-      const cur = e.enemyHp ?? 10;
-      const max = e.enemyMaxHp ?? cur;
+      const parsedCur = e.enemyHp ?? 10;
+      const parsedMax = e.enemyMaxHp ?? parsedCur;
+      const sameThreat =
+        current &&
+        current.name.trim().toLowerCase() === e.enemyName.trim().toLowerCase();
+      // 29b — ledger/FSM HP is authoritative; never let GM re-emit heal a live foe.
+      const hp = sameThreat
+        ? Math.min(current.hp, parsedCur)
+        : parsedCur;
+      const maxHp = sameThreat ? Math.max(current.maxHp, parsedMax) : parsedMax;
       encounter = {
+        ...(sameThreat ? current : {}),
         name: e.enemyName,
-        level: e.enemyLevel ?? 1,
-        hp: cur,
-        maxHp: max,
-        armorClass: e.enemyAc ?? 10,
-        strength: e.enemyStr ?? 10,
-        dexterity: e.enemyDex ?? 10,
-        constitution: e.enemyCon ?? 10,
-        xpReward: e.enemyXp ?? 0,
-        goldReward: e.enemyGold ?? 0,
+        level: e.enemyLevel ?? current?.level ?? 1,
+        hp,
+        maxHp,
+        armorClass: e.enemyAc ?? current?.armorClass ?? 10,
+        strength: e.enemyStr ?? current?.strength ?? 10,
+        dexterity: e.enemyDex ?? current?.dexterity ?? 10,
+        constitution: e.enemyCon ?? current?.constitution ?? 10,
+        xpReward: e.enemyXp ?? current?.xpReward ?? 0,
+        goldReward: e.enemyGold ?? current?.goldReward ?? 0,
+        // Preserve FSM fields across GM enemy-appear rewrites
+        encounterId: current?.encounterId,
+        phase: current?.phase ?? 'engaged',
+        startedTurn: current?.startedTurn,
+        engagedTurnCount: current?.engagedTurnCount,
+        failedFleeCount: current?.failedFleeCount,
+        failedParleyCount: current?.failedParleyCount,
+        maxEngagedTurns: current?.maxEngagedTurns,
+        maxFailedFlee: current?.maxFailedFlee,
+        maxFailedParley: current?.maxFailedParley,
+        source: current?.source,
+        forcedSpawnKey: current?.forcedSpawnKey,
       };
     } else if (e.type === 'encounter-end') {
       encounter = null;

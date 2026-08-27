@@ -17,6 +17,11 @@ function milestoneKey(kind: SocialMilestoneKind, target: string, loc: string): s
   return `social:${kind}:${target.toLowerCase().slice(0, 32)}@${loc.toLowerCase().slice(0, 32)}`;
 }
 
+/** 29b — once any social award at this node+target, block further talk/listen farm. */
+function nodeKey(target: string, loc: string): string {
+  return `social:node:${target.toLowerCase().slice(0, 32)}@${loc.toLowerCase().slice(0, 32)}`;
+}
+
 export function detectSocialMilestone(
   input: string,
   state: GameState
@@ -36,8 +41,9 @@ export function detectSocialMilestone(
   const npcMatch = lower.match(/(?:talk to|speak with|ask|tell|listen to)\s+([a-z][a-z\s'-]{2,30})/i);
   const target = (npcMatch?.[1] ?? 'scene').trim();
   const key = milestoneKey(kind, target, loc);
+  const node = nodeKey(target, loc);
 
-  if (awarded.has(key)) return null;
+  if (awarded.has(key) || awarded.has(node)) return null;
 
   const amount = kind === 'negotiate' ? 25 : kind === 'overhear' ? 20 : 15;
   return {
@@ -53,11 +59,15 @@ export function applySocialMilestone(
   award: SocialMilestoneAward
 ): GameState {
   const prev = state.arcDirector?.socialMilestones ?? [];
+  const loc = state.currentLocation ?? 'unknown';
+  const npcMatch = award.key.match(/social:[^:]+:(.+)@(.+)$/);
+  const target = npcMatch?.[1] ?? 'scene';
+  const node = nodeKey(target, loc);
   return {
     ...state,
     arcDirector: {
       ...state.arcDirector,
-      socialMilestones: [...prev, award.key],
+      socialMilestones: [...prev, award.key, node],
     },
   };
 }

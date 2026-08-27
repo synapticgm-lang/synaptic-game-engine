@@ -80,6 +80,8 @@ export type ProseWardenContext = {
   groundedWeapons?: string[];
   /** PC name for possessive weapon scrub (Jax's dagger). */
   playerName?: string;
+  /** 29b — player exit/flee authority this turn; do not scrub outdoor transitions. */
+  exitNarrated?: boolean;
 };
 
 /** Interiors that already name "here" — nearby is for things that are not here. */
@@ -556,23 +558,30 @@ export function scrubInventedTimeSkip(text: string, currentTime?: string, prevTi
 /**
  * Pack 12 Extended Validation: Indoor/Outdoor
  * Scrubs "you step outside" if location is marked interior and player didn't use an exit.
+ * 29b — skip outdoor scrub when exitAuthority / exitNarrated is set.
  */
-export function scrubInventedLocationChange(text: string, isIndoor?: boolean, wasIndoor?: boolean): string {
+export function scrubInventedLocationChange(
+  text: string,
+  isIndoor?: boolean,
+  wasIndoor?: boolean,
+  exitNarrated?: boolean
+): string {
   if (!text || isIndoor === undefined) return text;
-  
+  if (exitNarrated) return text;
+
   const OUTDOOR_TRANSITIONS = /\b(you (?:step|walk|go|move|head) (?:outside|outdoors|into (?:the )?(?:street|open air|sunlight|rain))|(?:exit(?:ing)?|leav(?:e|ing)) (?:the )?(?:building|room|hall))\b/i;
   const INDOOR_TRANSITIONS = /\b(you (?:step|walk|go|move|enter) (?:inside|indoors|into (?:the )?(?:building|room|hall)))\b/i;
-  
+
   // Scrub outdoor transition if we're still indoors
   if (isIndoor && OUTDOOR_TRANSITIONS.test(text)) {
     return text.replace(OUTDOOR_TRANSITIONS, 'you move forward');
   }
-  
-  // Scrub indoor transition if we're still outdoors
+
+  // Scrub indoor transition if we're still outdoors (snap-back after exit)
   if (isIndoor === false && INDOOR_TRANSITIONS.test(text)) {
     return text.replace(INDOOR_TRANSITIONS, 'you continue');
   }
-  
+
   return text;
 }
 
@@ -687,7 +696,7 @@ export function applyProseWarden(text: string, ctx?: ProseWardenContext): string
   next = scrubInventedEmptySearchLoot(next, ctx?.searchedEmpty ?? [], ctx?.playerInput);
   next = scrubInventedWeapons(next, ctx?.groundedWeapons ?? [], 'bare hands', ctx?.playerName);
   next = scrubInventedTimeSkip(next, ctx?.currentTimeOfDay, ctx?.previousTimeOfDay);
-  next = scrubInventedLocationChange(next, ctx?.isIndoor, ctx?.wasIndoor);
+  next = scrubInventedLocationChange(next, ctx?.isIndoor, ctx?.wasIndoor, ctx?.exitNarrated);
   next = scrubInventedTensionChange(next, ctx?.currentTension, ctx?.previousTension);
   next = scrubLocationTautology(next, ctx?.currentLocation);
   next = scrubAwakeSpeakerAsSleeper(next, {

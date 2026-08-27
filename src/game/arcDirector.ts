@@ -31,11 +31,15 @@ import {
   initEncounterTerminal,
   tickEncounterTerminal,
   forceClearIfStale,
+  isEncounterOnCooldown,
 } from './encounterTerminalFsm';
 import {
   lockPyoaBranchOnCrisis,
   exhaustDelayPads,
 } from './pyoaBranchLedger';
+import { countPlayerIntentStreak } from './beatFingerprint';
+import { pickStatusVoiceLine } from './voiceCadenceSystem';
+import { hasDurableDeltaByT12, forceFreeT12DurableDelta } from './freeT12Hook';
 
 export interface ArcDirectorState {
   committedBeatIds?: string[];
@@ -51,6 +55,14 @@ export interface ArcDirectorState {
   choiceFingerprints?: import('./choiceCompiler').ChoiceFingerprintRecord[];
   /** 29a — paired encounterCleared receipts */
   encounterClearedReceipts?: import('./encounterTerminalFsm').EncounterClearedReceipt[];
+  /** 29b — turn of last encounter clear */
+  lastEncounterClearedTurn?: number;
+  /** 29b — forcedSpawnKey → cooldown-until turn (no re-engage) */
+  encounterCooldownUntil?: Record<string, number>;
+  /** 29b — voice aside cooldown bookkeeping */
+  voiceAsideLastUsed?: Record<string, number>;
+  /** 29b — Free T12 durable delta forced */
+  freeT12Forced?: boolean;
 }
 
 export interface ArcDirectorResult {
@@ -204,9 +216,15 @@ function applyBeatEffects(
   }
 
   if (contract.spawnEncounter && !next.activeEncounter) {
-    next = { ...next, activeEncounter: hubSkirmishEncounter(next) };
-    receipts.push(`Encounter: ${next.activeEncounter!.name}`);
-    extras.encounterName = next.activeEncounter!.name;
+    const preview = hubSkirmishEncounter(next);
+    const spawnKey = preview.forcedSpawnKey ?? preview.name;
+    if (isEncounterOnCooldown(next, spawnKey)) {
+      receipts.push(`Encounter cooldown: ${spawnKey} — skipped re-engage`);
+    } else {
+      next = { ...next, activeEncounter: preview };
+      receipts.push(`Encounter: ${next.activeEncounter!.name}`);
+      extras.encounterName = next.activeEncounter!.name;
+    }
   }
 
   next = pushBeatStateTx(next, contract.summary, extras, state.turn + 1);
@@ -235,6 +253,8 @@ export function formatArcStatusReceipts(result: ArcDirectorResult): string[] {
     } else if (r.startsWith('Social:')) {
       const m = r.match(/Social: \+(\d+) XP \((.+)\)/);
       if (m) lines.push(`XP Gained: ${m[1]} (${m[2]})`);
+    } else if (r.startsWith('Voice:')) {
+      lines.push(r.replace(/^Voice:\s*/, ''));
     }
   }
   return lines;
@@ -257,16 +277,38 @@ export function runArcDirectorBeforeGm(
     const tick = tickEncounterTerminal(working, playerInput);
     working = tick.state;
     systemReceipts.push(...tick.receipts);
+    if (tick.xpAward) {
+      xpAwards.push(tick.xpAward);
+    }
     if (!working.activeEncounter) {
       mandates.push('ENCOUNTER TERMINAL: Threat cleared — unlock travel and ordinary pads next beat.');
+      // 29b — voice line on combat clear
+      const voice = pickStatusVoiceLine(working, 'xp_gain');
+      if (voice) {
+        systemReceipts.push(`Voice: ${voice.line}`);
+        working = {
+          ...working,
+          arcDirector: {
+            ...working.arcDirector,
+            voiceAsideLastUsed: {
+              ...(working.arcDirector?.voiceAsideLastUsed ?? {}),
+              [voice.trigger]: working.turn,
+            },
+          },
+        };
+      }
     }
   } else {
     const stale = forceClearIfStale(working, 50);
     if (stale.forcedTerminal) {
       working = stale.state;
       systemReceipts.push(...stale.receipts);
+      if (stale.xpAward) xpAwards.push(stale.xpAward);
     }
   }
+
+  // 29b — spatial: flee/exit intent marks outdoor authority so prose can't snap back inside
+  working = applyExitAuthorityOnFlee(working, playerInput);
 
   working = recordPyoaBranchChoice(working, playerInput);
   working = lockPyoaBranchOnCrisis(working);
@@ -300,8 +342,34 @@ export function runArcDirectorBeforeGm(
 
   const committed = committedSet(working);
   const turnsSinceCombat = working.arcDirector?.turnsSinceCombatReceipt ?? working.turn;
+  const intentStreak = countPlayerIntentStreak(working);
 
   let contract = selectDueBeat(working, committed);
+  // 29b — Free T12 durable delta (runtime, not eval-only)
+  if (working.turn >= 12 && !hasDurableDeltaByT12(working)) {
+    const t12 = forceFreeT12DurableDelta(working, committed);
+    if (t12) {
+      contract = t12;
+      mandates.push('FREE T12 HOOK: Durable delta required this beat (quest stage / clear / branch / level).');
+      working = {
+        ...working,
+        arcDirector: { ...working.arcDirector, freeT12Forced: true },
+      };
+    }
+  }
+  // 29b — hard interrupt when same-action streak ≥5
+  if (intentStreak.count >= 5 && intentStreak.key !== 'empty' && !working.activeEncounter) {
+    const interrupt =
+      forceLivenessBeat(working, committed) ??
+      forcedEncounterBeat(working, turnsSinceCombat, committed) ??
+      forceFreeT12DurableDelta(working, committed);
+    if (interrupt) {
+      contract = interrupt;
+      mandates.push(
+        `STREAK INTERRUPT (${intentStreak.key} ×${intentStreak.count}): Force consequence beat — no stall clone.`
+      );
+    }
+  }
   if (!contract || contract.kind === 'pressure') {
     contract =
       forceLivenessBeat(working, committed) ??
@@ -350,6 +418,24 @@ export function runArcDirectorBeforeGm(
         },
       };
     }
+
+    // 29b — voice STATUS on quest/xp commits
+    if (applied.xp > 0 || contract.kind === 'quest_stage' || contract.kind === 'leverage') {
+      const voice = pickStatusVoiceLine(working, applied.xp > 0 ? 'xp_gain' : 'hub_change');
+      if (voice) {
+        systemReceipts.push(`Voice: ${voice.line}`);
+        working = {
+          ...working,
+          arcDirector: {
+            ...working.arcDirector,
+            voiceAsideLastUsed: {
+              ...(working.arcDirector?.voiceAsideLastUsed ?? {}),
+              [voice.trigger]: working.turn,
+            },
+          },
+        };
+      }
+    }
   } else if (contract && (!contract.once || !committed.has(contract.id))) {
     mandates.push(`ARC PENDING (${contract.id}): ${contract.mandate}`);
     beatId = contract.id;
@@ -380,6 +466,35 @@ export function runArcDirectorBeforeGm(
     xpAwards,
     systemReceipts,
     beatCommitted,
+  };
+}
+
+/** 29b — mark outdoor when flee/exit succeeds so scrub cannot snap back inside. */
+function applyExitAuthorityOnFlee(state: GameState, playerInput: string): GameState {
+  const lower = (playerInput || '').toLowerCase();
+  const fleeClear =
+    !state.activeEncounter &&
+    state.arcDirector?.lastEncounterClearedTurn === state.turn &&
+    /\b(flee|escape|retreat|run away|bolt)\b/i.test(lower);
+  const exitIntent = /\b(exit|leave|step outside|go outside|head outside|into the (?:street|open))\b/i.test(
+    lower
+  );
+  if (!fleeClear && !exitIntent) return state;
+  const prev = state.sceneFacts;
+  return {
+    ...state,
+    sceneFacts: {
+      crowd: prev?.crowd ?? 'empty',
+      noise: prev?.noise ?? 'quiet',
+      present: prev?.present ?? [],
+      props: prev?.props ?? [],
+      lastBeat: prev?.lastBeat ?? '',
+      updatedTurn: state.turn,
+      ...prev,
+      indoor: false,
+      exitAuthorityTurn: state.turn,
+    },
+    previousSceneFacts: prev ?? state.previousSceneFacts,
   };
 }
 

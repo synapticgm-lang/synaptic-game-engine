@@ -7,6 +7,7 @@ import type { RunSummary, TurnTelemetry } from './fateAutoplay';
 import { BUILD_STAMP } from './runManifest';
 import { verifyReplayChain, hashCanonicalState } from './replayHash';
 import { countRunReceipts } from './receiptTelemetry';
+import { hasDurableDeltaByT12 } from './freeT12Hook';
 
 export interface EvalQuarantineFlags {
   criticContamination: boolean;
@@ -60,25 +61,8 @@ export function checkReceiptLivenessGates(state: GameState): Record<string, bool
   gates.beatCommitByT20 = turn < 20 || receipts.beatCommit >= 1;
   // Free T12 hook: durable delta (level, quest stage, clear, or branch lock)
   gates.freeT12DurableDelta =
-    turn < 12 ||
-    (state.character?.level ?? 1) >= 2 ||
-    clearedCount(state) >= 1 ||
-    !!(state.pyoaBranchLedger?.branchLocked) ||
-    hasQuestStage2(state) ||
-    Object.keys(state.arcDirector?.topicCommits ?? {}).length > 0;
+    turn < 12 || hasDurableDeltaByT12(state);
   return gates;
-}
-
-function clearedCount(state: GameState): number {
-  return (state.arcDirector?.encounterClearedReceipts ?? []).length;
-}
-
-function hasQuestStage2(state: GameState): boolean {
-  for (const q of state.quests ?? []) {
-    const done = (q.objectives ?? []).filter((o) => o.completed).length;
-    if (done >= 1 && q.status === 'active') return true;
-  }
-  return false;
 }
 
 const CRITIC_BLEED_PATTERNS: Array<{ pattern: RegExp; allowedBibles: RegExp }> = [

@@ -13,6 +13,7 @@
  */
 
 import type { GameState, EngineMode } from './types';
+import { resolveVoiceIdForState } from './gmVoiceProfile';
 
 export type VoicePersonality =
   | 'cold-registrar'         // LitRPG: clinical, data-focused
@@ -50,16 +51,16 @@ export interface DictionPattern {
   lastUsed?: number;
 }
 
-export interface VoiceAsideTrigger {
+export type VoiceAsideTrigger = {
   /** When to insert an aside */
-  trigger: 'hub_change' | 'xp_gain' | 'level_up' | 'quest_complete' | 'fail' | 'discovery' | 'combat_start';
+  trigger: 'hub_change' | 'xp_gain' | 'level_up' | 'quest_complete' | 'fail' | 'discovery' | 'combat_start' | 'danger';
   /** Example aside */
   example: string;
   /** Cooldown turns */
   cooldown: number;
   /** Last turn used */
   lastUsed?: number;
-}
+};
 
 export interface ToneSuppression {
   /** Suppress voice personality in these situations */
@@ -335,7 +336,7 @@ export function isPatternOnCooldown(
  * Get available voice aside for this trigger.
  */
 export function getVoiceAside(
-  trigger: 'hub_change' | 'xp_gain' | 'level_up' | 'quest_complete' | 'fail' | 'discovery' | 'combat_start',
+  trigger: 'hub_change' | 'xp_gain' | 'level_up' | 'quest_complete' | 'fail' | 'discovery' | 'combat_start' | 'danger',
   asides: VoiceAsideTrigger[],
   currentTurn: number
 ): string | null {
@@ -383,6 +384,51 @@ export function updateAsideCooldowns(
     }
     return aside;
   });
+}
+
+/**
+ * Wave 5 — authority-layer voice hints (post-ArcDirector, no Mid writer).
+ */
+export function resolveVoicePersonalityFromState(state: GameState): VoicePersonality {
+  const raw = resolveVoiceIdForState(state);
+  const map: Record<string, VoicePersonality> = {
+    'cold-registrar': 'cold-registrar',
+    'cold-system': 'cold-registrar',
+    'sarcastic-patch': 'sarcastic-patch',
+    'army-quartermaster': 'army-quartermaster',
+    'army-brief': 'army-quartermaster',
+    'friendly-system': 'friendly-system',
+    'cozy-brutal': 'cozy-brutal',
+    'dry-wit': 'dry-wit',
+    theatrical: 'theatrical',
+    'theatrical-jester': 'theatrical',
+    chilled: 'chilled',
+    'chilled-gm': 'chilled',
+    'fireside-chronicler': 'fireside-chronicler',
+    'fireside-innkeep': 'fireside-chronicler',
+    'mission-lead': 'mission-lead',
+    'friendly-guide': 'friendly-guide',
+  };
+  return map[raw] ?? 'friendly-guide';
+}
+
+/**
+ * 29b — one diegetic STATUS voice line (not Mid writer). Firewalled; player-facing.
+ */
+export function pickStatusVoiceLine(
+  state: GameState,
+  trigger: VoiceAsideTrigger['trigger']
+): { line: string; trigger: string } | null {
+  const personality = resolveVoicePersonalityFromState(state);
+  const asides = buildVoiceAsides(personality);
+  const lastUsed = state.arcDirector?.voiceAsideLastUsed ?? {};
+  const withCooldown = asides.map((a) => ({
+    ...a,
+    lastUsed: lastUsed[`${personality}:${a.trigger}`],
+  }));
+  const example = getVoiceAside(trigger, withCooldown, state.turn);
+  if (!example) return null;
+  return { line: example, trigger: `${personality}:${trigger}` };
 }
 
 /**

@@ -9,6 +9,7 @@ import { isTopicExhausted } from './npcTopicFsm';
 import { hubsForBibleId, matchHub } from './outdoorHubs';
 import { enumerateLegalEdges, edgesToChoiceLabels } from './choiceEdge';
 import { isEncounterEngaged, fleeAvailable, parleyAvailable } from './encounterTerminalFsm';
+import { countPlayerIntentStreak } from './beatFingerprint';
 
 export type ChoiceFingerprintFamily =
   | 'walk_away'
@@ -177,6 +178,8 @@ export function compileChoices(
   const edgeLabels = edgesToChoiceLabels(legalEdges);
 
   const engaged = isEncounterEngaged(state);
+  const streak = countPlayerIntentStreak(state);
+  const hardStreak = streak.count >= 5 && streak.key !== 'empty';
   let filtered = choices.filter((c) => {
     const lower = c.toLowerCase();
     if (engaged) {
@@ -199,6 +202,11 @@ export function compileChoices(
       }
     }
     const family = classifyChoiceFamily(c);
+    // 29b — hard same-action interrupt: strip stall families when streak ≥5
+    if (hardStreak && (family === 'wait' || family === 'walk_away' || family === 'inspect' || family === 'gate_queue')) {
+      notes.push(`Streak interrupt drop: ${family}`);
+      return false;
+    }
     if (family !== 'generic' && familyOnCooldown(fingerprints, family, turn)) {
       notes.push(`Cooldown family: ${family}`);
       return false;
@@ -219,6 +227,10 @@ export function compileChoices(
     }
     return true;
   });
+
+  if (hardStreak) {
+    notes.push(`Hard streak interrupt: ${streak.key}×${streak.count}`);
+  }
 
   const cooldownResult = filterCooldownChoices(filtered, turn, cooldownMap);
   filtered = cooldownResult.filtered;
@@ -251,11 +263,18 @@ export function compileChoices(
         supplements.push('Choose the risky fork', 'Buy time', 'Call for help');
       } else if (state.engineMode === 'litrpg') {
         supplements.push('Check Status', 'Ask what they want', 'Scout the exit');
+      } else if (hardStreak) {
+        // 29b — no wait/walk-away refill under hard streak
+        supplements.push('Ask a direct question', 'Change position', 'Press for leverage');
       } else {
         supplements.push('Ask a direct question', 'Change position', 'Wait and watch');
       }
     }
     for (const s of supplements) {
+      if (hardStreak) {
+        const fam = classifyChoiceFamily(s);
+        if (fam === 'wait' || fam === 'walk_away' || fam === 'inspect' || fam === 'gate_queue') continue;
+      }
       if (!filtered.some((f) => f.toLowerCase() === s.toLowerCase())) {
         filtered.push(s);
       }

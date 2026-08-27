@@ -789,6 +789,8 @@ export interface SceneFacts {
   weather?: Weather;
   indoor?: boolean;
   tension?: TensionLevel;
+  /** 29b — turn when exit/flee outdoor authority was committed (blocks snap-back scrub). */
+  exitAuthorityTurn?: number;
 
   /** Targets already searched and established empty (here / debris / exterior / loc:…). */
   searchedEmpty?: string[];

@@ -14,6 +14,13 @@ const DENIED_TAG_PATTERNS: RegExp[] = [
   /^\s*(?:system_prompt|campaign_contract|render_fallback_used|renderFallbackUsed)\s*[:=].*$/gim,
   /RenderFallbackUsed\s*[:=]\s*\w+/gi,
   /\[Campaign Contract[^\]]*\]/gi,
+  // 29b residual — unbracketed / authority leaks
+  /\bGM_VOICE(?:_PROFILE)?\b/gi,
+  /\bAUTHORITY VOICE\s*:/gi,
+  /\bARC DIRECTOR\s*\(AUTHORITY[^\)]*\)/gi,
+  /\bSEALED MANIFEST\b/gi,
+  /---\s*ARC DIRECTOR[\s\S]*?---/gi,
+  /\[ARC RECEIPTS\][^\n]*/gi,
 ];
 
 const SAFE_FALLBACK_LINE = 'Beat resolved — continuing from committed state.';

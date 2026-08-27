@@ -103,7 +103,12 @@ export interface TickEncounterResult {
   cleared?: EncounterClearedReceipt;
   receipts: string[];
   forcedTerminal: boolean;
+  /** 29b — XP awarded on clear (victory / costly escape / parley). */
+  xpAward?: { amount: number; reason: string };
 }
+
+/** Turns before the same forcedSpawnKey may re-engage after a clear. */
+export const ENCOUNTER_REENGAGE_COOLDOWN = 12;
 
 /**
  * Tick encounter FSM on accepted player input while engaged.
@@ -169,6 +174,15 @@ export function tickEncounterTerminal(
   };
 }
 
+function clearXpForOutcome(enc: ActiveEncounter, outcome: TerminalOutcome): number {
+  const base = enc.xpReward || 25;
+  if (outcome === 'victory') return base;
+  if (outcome === 'parleyResolved') return Math.max(10, Math.floor(base * 0.6));
+  if (outcome === 'escape') return Math.max(5, Math.floor(base * 0.35));
+  if (outcome === 'capture') return Math.max(8, Math.floor(base * 0.5));
+  return 0;
+}
+
 function commitClear(
   state: GameState,
   enc: ActiveEncounter,
@@ -187,6 +201,19 @@ function commitClear(
   };
   const prior = state.arcDirector?.encounterClearedReceipts ?? [];
   const statusLine = formatEncounterClearedStatus(receipt);
+  const xpAmount = clearXpForOutcome(enc, outcome);
+  const spawnKey = enc.forcedSpawnKey ?? enc.name;
+  const cooldownKeys = {
+    ...(state.arcDirector?.encounterCooldownUntil ?? {}),
+    [spawnKey]: state.turn + ENCOUNTER_REENGAGE_COOLDOWN,
+  };
+  const receipts = [
+    `Encounter cleared: ${enc.name} (${outcome})`,
+    statusLine,
+  ];
+  if (xpAmount > 0) {
+    receipts.push(`Arc XP: +${xpAmount} (encounter clear: ${enc.name})`);
+  }
   return {
     state: {
       ...state,
@@ -195,15 +222,25 @@ function commitClear(
         ...state.arcDirector,
         encounterClearedReceipts: [...prior, receipt].slice(-12),
         turnsSinceCombatReceipt: 0,
+        lastEncounterClearedTurn: state.turn,
+        encounterCooldownUntil: cooldownKeys,
       },
     },
     cleared: receipt,
-    receipts: [
-      `Encounter cleared: ${enc.name} (${outcome})`,
-      statusLine,
-    ],
+    receipts,
     forcedTerminal: true,
+    xpAward:
+      xpAmount > 0
+        ? { amount: xpAmount, reason: `Encounter clear: ${enc.name} (${outcome})` }
+        : undefined,
   };
+}
+
+/** True when this spawn key is still cooling down after a clear. */
+export function isEncounterOnCooldown(state: GameState, spawnKey: string): boolean {
+  const until = state.arcDirector?.encounterCooldownUntil?.[spawnKey];
+  if (until == null) return false;
+  return state.turn < until;
 }
 
 export function formatEncounterClearedStatus(receipt: EncounterClearedReceipt): string {

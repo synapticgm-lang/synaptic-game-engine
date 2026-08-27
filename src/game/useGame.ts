@@ -3406,6 +3406,9 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
           previousTimeOfDay: workingState.previousSceneFacts?.timeOfDay,
           isIndoor: workingState.sceneFacts?.indoor,
           wasIndoor: workingState.previousSceneFacts?.indoor,
+          exitNarrated:
+            (workingState.sceneFacts?.exitAuthorityTurn ?? 0) >= nextTurn - 1 ||
+            (liveCurrent.sceneFacts?.exitAuthorityTurn ?? 0) >= nextTurn - 1,
           currentTension: workingState.sceneFacts?.tension,
           previousTension: workingState.previousSceneFacts?.tension,
           inventory: workingState.inventory ?? liveCurrent.inventory,
@@ -3566,7 +3569,15 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
       if (ledgerFlee?.fled) {
         updatedEncounter = null;
       } else if (ledgerRound) {
-        updatedEncounter = ledgerRound.enemyDead ? null : (liveCurrent.activeEncounter ?? null);
+        // 29b — keep ledger HP / FSM fields; never trust GM full-heal rewrite
+        if (ledgerRound.enemyDead) {
+          updatedEncounter = null;
+        } else {
+          const base = updatedEncounter ?? liveCurrent.activeEncounter ?? workingState.activeEncounter;
+          updatedEncounter = base
+            ? { ...base, hp: Math.min(base.hp, ledgerRound.enemyHpAfter) }
+            : null;
+        }
       }
       const turnFacts = collectTurnTimelineFacts({
         turn: nextTurn,

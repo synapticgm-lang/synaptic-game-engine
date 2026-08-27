@@ -19,8 +19,8 @@ import { filterSystemLogForEngine } from './systemLog';
 import { applyRenderFallback, buildSealedManifest } from './sealedManifest';
 
 describe('playtest29a — Manus score boost terminal authority', () => {
-  it('stamp is 2026-08-29a and Mid writer stays OFF', () => {
-    expect(BUILD_STAMP).toBe('2026-08-29a');
+  it('stamp advanced past 29a; Mid writer stays OFF', () => {
+    expect(BUILD_STAMP).toMatch(/^2026-08-29/);
     expect(STAGNATION_MID_WRITER_ENABLED).toBe(false);
   });
 

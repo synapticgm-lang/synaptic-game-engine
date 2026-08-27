@@ -64,6 +64,8 @@ export type ProseWardenContext = {
   lastGmProse?: string;
   /** Named present NPCs from SNAPSHOT / sceneFacts. */
   presentNames?: string[];
+  /** 29b — player exit/flee authority; do not scrub outdoor transitions. */
+  exitNarrated?: boolean;
 };
 
 /** Interiors that already name "here" — nearby is for things that are not here. */
@@ -434,24 +436,77 @@ export function scrubInventedTimeSkip(text: string, currentTime?: string, prevTi
 /**
  * Pack 12 Extended Validation: Indoor/Outdoor
  * Scrubs "you step outside" if location is marked interior and player didn't use an exit.
+ * 29b — skip outdoor scrub when exitNarrated is set.
  */
-export function scrubInventedLocationChange(text: string, isIndoor?: boolean, wasIndoor?: boolean): string {
+export function scrubInventedLocationChange(
+  text: string,
+  isIndoor?: boolean,
+  wasIndoor?: boolean,
+  exitNarrated?: boolean
+): string {
   if (!text || isIndoor === undefined) return text;
-  
+  if (exitNarrated) return text;
+
   const OUTDOOR_TRANSITIONS = /\b(you (?:step|walk|go|move|head) (?:outside|outdoors|into (?:the )?(?:street|open air|sunlight|rain))|(?:exit(?:ing)?|leav(?:e|ing)) (?:the )?(?:building|room|hall))\b/i;
   const INDOOR_TRANSITIONS = /\b(you (?:step|walk|go|move|enter) (?:inside|indoors|into (?:the )?(?:building|room|hall)))\b/i;
-  
-  // Scrub outdoor transition if we're still indoors
+
   if (isIndoor && OUTDOOR_TRANSITIONS.test(text)) {
     return text.replace(OUTDOOR_TRANSITIONS, 'you move forward');
   }
-  
-  // Scrub indoor transition if we're still outdoors
+
   if (isIndoor === false && INDOOR_TRANSITIONS.test(text)) {
     return text.replace(INDOOR_TRANSITIONS, 'you continue');
   }
-  
+
   return text;
+}
+
+/**
+ * 29b sync — rarity-them / this-place mush (client parity).
+ */
+export function scrubPlaceholderNouns(text: string, currentLocation?: string): string {
+  if (!text) return text;
+  const loc = (currentLocation ?? '').trim();
+  const locShort = loc
+    ? loc.replace(/^(the\s+)/i, '').split(/[,—–-]/)[0]!.trim().slice(0, 48)
+    : '';
+  const place = locShort ? `the ${locShort}` : 'the building';
+  let next = text;
+  next = next.replace(/\bthe imposing this place\b/gi, `the imposing mass of ${place}`);
+  next = next.replace(/\bstructure of this place\b/gi, `structure of ${place}`);
+  next = next.replace(/\bspires of this place\b/gi, `spires of ${place}`);
+  next = next.replace(/\bedifice of this place\b/gi, `edifice of ${place}`);
+  next = next.replace(/\bgrand entrance of this place\b/gi, `grand entrance of ${place}`);
+  next = next.replace(/\bApproach this place\b/gi, `Approach ${place}`);
+  next = next.replace(/\btowards? this place\b/gi, `toward ${place}`);
+  next = next.replace(/\bback towards? this place\b/gi, `back toward ${place}`);
+  next = next.replace(/\bpresence of them\b/gi, 'presence ahead');
+  next = next.replace(/\bopen them\b/gi, 'the open way');
+  next = next.replace(/\bassume is them\b/gi, 'assume lies ahead');
+  next = next.replace(/\brumored them\b/gi, 'rumored place');
+  next = next.replace(/\bcluster of them\b/gi, 'cluster of debris');
+  next = next.replace(/\bsurfaces of them\b/gi, 'surfaces of the items');
+  next = next.replace(/\btwo them\b/gi, 'two items');
+  next = next.replace(/\bfour them\b/gi, 'four items');
+  next = next.replace(/\bthree them\b/gi, 'three items');
+  next = next.replace(/\ba few them\b/gi, 'a few items');
+  next = next.replace(
+    /\b(two|three|four|several)\s+\[(Common|Uncommon|Rare|Epic|Legendary|Unique)\]\s+them\b/gi,
+    '$1 [$2] items'
+  );
+  next = next.replace(
+    /\[(Common|Uncommon|Rare|Epic|Legendary|Unique)\]\s+them\b/gi,
+    '[$1] item'
+  );
+  next = next.replace(/\bCheck your them\b/gi, 'Check your items');
+  next = next.replace(/\bExamine (?:your )?them clues\b/gi, 'Examine the clues');
+  next = next.replace(/\bInspect them\b(?!\s+\w)/gi, 'Inspect it');
+  next = next.replace(/\bPick up them\b/gi, 'Pick it up');
+  next = next.replace(/\bof them in your (bag|pack|pockets?)\b/gi, 'of your items in your $1');
+  next = next.replace(/\bthe them\b/gi, 'them');
+  next = next.replace(/\b(?:a|an)\s+them\b/gi, 'someone');
+  next = next.replace(/\breads\s+['']them\s*[-–—]\s*them['']/gi, "reads a worn brass nameplate");
+  return next;
 }
 
 /**
@@ -546,6 +601,7 @@ export function applyProseWarden(text: string, ctx?: ProseWardenContext): string
   next = scrubSomeoneNearbyPlaceholder(next, alone);
   next = scrubUiQuestVerbs(next, alone);
   next = scrubSpeakerPlaceholder(next, alone);
+  next = scrubPlaceholderNouns(next, ctx?.currentLocation);
   next = scrubPrematureSecrets(next);
   next = scrubInventedAlonePresence(next, alone);
   next = scrubInteriorOneRoomLie(
@@ -557,7 +613,7 @@ export function applyProseWarden(text: string, ctx?: ProseWardenContext): string
   next = scrubInventedCrowdSize(next, ctx?.crowdSize ?? 0, ctx?.crowdPresent);
   next = scrubInventedContainers(next, ctx?.inventory ?? [], ctx?.sceneProps ?? []);
   next = scrubInventedTimeSkip(next, ctx?.currentTimeOfDay, ctx?.previousTimeOfDay);
-  next = scrubInventedLocationChange(next, ctx?.isIndoor, ctx?.wasIndoor);
+  next = scrubInventedLocationChange(next, ctx?.isIndoor, ctx?.wasIndoor, ctx?.exitNarrated);
   next = scrubInventedTensionChange(next, ctx?.currentTension, ctx?.previousTension);
   next = scrubLocationTautology(next, ctx?.currentLocation);
   next = scrubAwakeSpeakerAsSleeper(next, {
