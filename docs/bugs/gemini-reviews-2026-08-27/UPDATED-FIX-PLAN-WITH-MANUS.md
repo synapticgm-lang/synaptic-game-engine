@@ -1,13 +1,43 @@
 # Updated Fix Plan — Incorporating Manus Calibration
 
-**Date:** 2026-08-27  
+**Date:** 2026-08-27 (big-changes ingest appended same day)  
 **Base plan:** `BIG-UPDATE-SCORE-UPLIFT-FROM-4x300.md`  
 **Manus docs:** `MANUS-CALIBRATED-REVIEW.md` + `MANUS-PRIORITIES-AND-BLIND-SPOTS.md` + evidence + score model  
+**Big-changes ingest:** `docs/research/manus-big-changes-ingest-2026-08-27.md` + T1–T12 under `docs/research/pasted/manus-big-changes-2026-08-27/`  
 **Status:** Waiting — do **not** ship until John asks for the next update.
 
-## Executive Summary
+---
 
-Manus's calibrated review confirms Gemini's **core diagnosis is directionally right** but **forensic reliability is poor**. The P0/P1 plan will move from "catastrophically broken to rough but playable" with scores reaching **4–5/10** (isolated 6–7 for mush if done right). Cannot honestly claim 6/10 overall without the **Forward-Progress Governor** and deeper implementation.
+## BIG CHANGES supersession (2026-08-27 — post-27w failure)
+
+**27w shipped** the P0+P1 board below (`qualityGovernance.ts` + ten modules). **12×300 telemetry** (`2026-08-27T12-07-17-166Z`) shows partial wins (them ↓~31%, 7/12 L2) but **core cluster unchanged**: pad spam 180–260×, streakMax 2–4, **zero combat/crisis receipts**, LitRPG gateQueue regression 65–100.
+
+Manus BIG CHANGES research **supersedes incremental tuning** of 27w modules. Next batch is **architectural authority inversion**, not another scrub/prompt rail.
+
+### New P0 architectural board (when John says go)
+
+| Rank | Intervention | Owner | Replaces / extends |
+|---:|---|---|---|
+| 1 | **Authoritative Progress Kernel** (`ArcDirector`) | `ArcDirector`, `StateTx` | Rebuilds `forwardProgressGovernor` as pre-GM actuator |
+| 2 | **Beat/Encounter Contract Registry** | `EncounterBible` | Adds executor for `questCompletionSchema` + `encounterResolution` |
+| 3 | **Graph-Derived Choice Compiler** | `ChoiceCompiler` | Replaces `optionDiversityContract` pad generation |
+| 4 | **Receipt Liveness Gates** | `EvalHarness` | New — fail missing receipts in first 4–12 turns |
+| 5 | **Mode Mechanic Resolvers** | `ModeRules` | Seeded combat/check/leverage/crisis before prose |
+| 6 | **Immutable Run Manifest** | `EvalHarness` | End critic contamination |
+
+**Recommended bundle:** I01 + I02 + I03 (T7 Options 1+2+3). **Honest ceiling:** one batch **4.5–6.5/10**; three batches **7.0–8.5/10** (T6).
+
+**Engineering backlog:** `docs/research/manus-big-changes-implementation-backlog-2026-08-27.md` (B001–B040, waves 0–5).
+
+**John INPUT REQUIRED:** Pick T7 path (A Structural reset recommended); explicit ship authorization; optional stagnation-only Mid writer approval.
+
+**Retain from 27w (do not delete):** `typedEntityValidator`, `inventoryConservation`, hardened `discoveryXpLedger`, `metaInputRecovery` — wire under new authority layer.
+
+---
+
+## Executive Summary (pre-27w plan — shipped as 27w)
+
+Manus's calibrated review confirms Gemini's **core diagnosis is directionally right** but **forensic reliability is poor**. The P0/P1 plan below was **shipped as 27w** and **underperformed** the 4–5/10 projection because modules were mandate-heavy without authoritative pre-GM commits. See BIG CHANGES section above for the corrected path.
 
 ### Manus's Key Addition: Forward-Progress Governor (P0+)
 
@@ -271,8 +301,11 @@ Then: Re-run 12×300 → file new Gemini packs with immutable manifests (mode/ru
 
 | Doc | Role |
 |---|---|
+| `docs/research/manus-big-changes-ingest-2026-08-27.md` | **Current** — post-27w executive summary + calibration |
+| `docs/research/manus-big-changes-implementation-backlog-2026-08-27.md` | T9 engineering backlog (B001–B040) |
+| `docs/research/pasted/manus-big-changes-2026-08-27/` | Verbatim Manus T1–T12 deliverables |
 | `BIG-UPDATE-SCORE-UPLIFT-FROM-4x300.md` | Original cross-mode ship plan |
-| `UPDATED-FIX-PLAN-WITH-MANUS.md` | **This doc** — plan + Manus calibration |
+| `UPDATED-FIX-PLAN-WITH-MANUS.md` | **This doc** — 27w plan + BIG CHANGES supersession |
 | `MANUS-CALIBRATED-REVIEW.md` | Full Manus analysis (real failures, overstatements, uplift matrix, maximization, blind spots) |
 | `MANUS-PRIORITIES-AND-BLIND-SPOTS.md` | Forward-Progress Governor contract + implementation specs + release gates |
 | `MANUS-EVIDENCE-CLASSIFICATION.md` | What's confirmed vs plausible vs contradicted |

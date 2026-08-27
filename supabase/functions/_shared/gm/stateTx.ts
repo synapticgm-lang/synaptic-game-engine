@@ -13,6 +13,8 @@ export type StateTxKind =
   | 'quest_reveal'
   | 'quest_complete'
   | 'quest_fail'
+  | 'quest_stage'
+  | 'beat_commit'
   | 'combat'
   | 'open_ask'
   | 'correction'

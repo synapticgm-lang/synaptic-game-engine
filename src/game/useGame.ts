@@ -257,6 +257,12 @@ import {
   filterGovernanceChoices,
   processMetaInput,
 } from './qualityGovernance';
+import {
+  runArcDirectorBeforeGm,
+  formatArcDirectorMandateBlock,
+  preserveArcQuestProgress,
+} from './arcDirector';
+import { playerInputGateBlock } from './choiceCompiler';
 import { extractUpdates, extractNewItems, parseActionTags, stripActionTags, matchLoreCards, eventsToLoreCards, parseTurnFrame, eventsToQuestUpdates, eventsToEncounterUpdate, parsePanels, eventsToMilestone, eventsToLootVideo, eventsToVisualUpdate, stripChoiceList, extractChoiceLines, stripTurnCloser, storyHasBody, looksLikeChoiceOffer, isStoryTooThin, storyWordCount } from './parser';
 import { hasRealGmStory } from './turnAsk';
 import { encounterOriginPlace } from './locationName';
@@ -1999,6 +2005,16 @@ export function useGame() {
       ? { text: contentSanitized, intent: parsePlayerIntent(contentSanitized, current), rewritten: false, notes: [] as string[] }
       : groundPlayerAction(contentSanitized, current, storyProseForGround);
     sanitizedInput = grounded.text;
+    if (!openingPending) {
+      const gate = playerInputGateBlock(current, sanitizedInput);
+      if (gate.state !== current) {
+        current = gate.state;
+        stateRef.current = current;
+      }
+      if (gate.blocked && gate.message) {
+        addToast(gate.message, 'info');
+      }
+    }
     if (grounded.rewritten) {
       addToast(`Action grounded: ${grounded.notes[0] ?? 'adjusted to match scene/inventory'}`, 'info');
     }
@@ -2510,6 +2526,26 @@ export function useGame() {
         worldNotes.push(`Weekly cut: +${preTick.goldPaid}g`);
       }
 
+      let arcMandateBlock = '';
+      let arcReceiptLine = '';
+      if (!freeOpeningTurn && liveCurrent.openingEstablishment?.complete) {
+        const arc = runArcDirectorBeforeGm(liveCurrent, sanitizedInput);
+        liveCurrent = arc.state;
+        arcMandateBlock = formatArcDirectorMandateBlock(arc);
+        if (arc.xpAwards.length) {
+          let char = liveCurrent.character;
+          for (const award of arc.xpAwards) {
+            const leveled = applyCharacterXpGain(char, award.amount);
+            char = leveled.character;
+          }
+          liveCurrent = { ...liveCurrent, character: char };
+        }
+        if (arc.systemReceipts.length) {
+          arcReceiptLine = `\n[ARC RECEIPTS]: ${arc.systemReceipts.join('; ')}`;
+        }
+        stateRef.current = liveCurrent;
+      }
+
       const unsupportedItems = findUnsupportedItemClaims(sanitizedInput, liveCurrent);
       const inventoryGate = unsupportedItems.length
         ? `\n[INVENTORY GATE — MANDATORY]: Player attempted to use item(s) NOT in inventory: ${unsupportedItems.join(', ')}. REJECT the use. Do not invent the item. Narrate the failed attempt, emit <system>Action failed: item not in inventory.</system>, and offer alternatives based on Equipped Gear / Inventory only.`
@@ -2517,7 +2553,7 @@ export function useGame() {
       const groundingGate = grounded.notes.length
         ? `\n[SCENE GROUNDING GATE]: Player input was soft-corrected for: ${grounded.notes.join('; ')}. Stay inside Situation Packet + Inventory + Timeline. Do not invent the rejected premise.`
         : '';
-      const actionGates = `${inventoryGate}${groundingGate}${refuseGate}`;
+      const actionGates = `${inventoryGate}${groundingGate}${refuseGate}${arcMandateBlock}${arcReceiptLine}`;
       const outcomeBlock = formatOutcomeTokenForPrompt(outcomeToken, !isDndEngine);
 
       // LitRPG/RPG: keep dice math out of the model-facing story cue so it is less likely to echo into prose.
@@ -3894,8 +3930,8 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
         ...updates,
         character: baseChar,
         playPhase: phased.playPhase ?? workingState.playPhase ?? liveCurrent.playPhase,
-        quests: enrichQuests(updatedQuests),
-        activeEncounter: updatedEncounter,
+        quests: enrichQuests(preserveArcQuestProgress(liveCurrent.quests, updatedQuests)),
+        activeEncounter: updatedEncounter ?? liveCurrent.activeEncounter ?? null,
         currentLocation: finalLocationName,
         activeDungeon: areaMap,
         currentCoordinates: workingState.currentCoordinates ?? liveCurrent.currentCoordinates,
@@ -3932,6 +3968,8 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
         worldLedger,
         sandboxAwardKeys: workingState.sandboxAwardKeys ?? liveCurrent.sandboxAwardKeys,
         mapFocusPlace: workingState.mapFocusPlace ?? liveCurrent.mapFocusPlace ?? null,
+        arcDirector: liveCurrent.arcDirector ?? workingState.arcDirector,
+        runManifest: liveCurrent.runManifest ?? workingState.runManifest,
         ...(turnFrame ? { turnFrameTheme: turnFrame } : {}),
       };
 

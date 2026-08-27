@@ -167,10 +167,9 @@ export function calculateDiscoveryXp(
           oneTime: true,
           discoveryKey: buildDiscoveryKey(object, 'object', currentLocation),
         };
-      } else if (check.record && check.record.inspectionCount >= 2) {
-        // Repeat inspection of same object in same location: 0 XP
-        return null;
       }
+      // Repeat inspect of same evidence-id: 0 XP (option E)
+      return null;
     }
   }
   

@@ -1,9 +1,12 @@
 /**
  * P0+P1 quality governance — wires Manus-calibrated modules into the live turn pipeline.
- * Build stamp: 2026-08-27w
+ * Extended 2026-08-28a: ArcDirector authority + ChoiceCompiler delegation.
  */
 
 import type { GameState } from './types';
+import { buildArcDirectorSnapshotLines, applyArcDirectorCommit } from './arcDirector';
+import { compileChoices } from './choiceCompiler';
+import { formatPressureClockSnippet } from './pressureClock';
 import { hasActiveObjectives, initProgressGovernor, updateProgressGovernor } from './forwardProgressGovernor';
 import {
   detectSemanticLoop,
@@ -150,6 +153,12 @@ export function buildGovernanceSnapshotLines(state: GameState): string[] {
   const questMandate = formatQuestPressureMandate(questSchemas, state.turn);
   if (questMandate) lines.push(questMandate);
 
+  for (const arcLine of buildArcDirectorSnapshotLines(state)) {
+    if (arcLine.trim()) lines.push(arcLine);
+  }
+  const pressure = formatPressureClockSnippet(state);
+  if (pressure) lines.push(pressure);
+
   const personality = resolveVoicePersonality(state);
   const cadence = buildVoiceCadence(personality);
   const asides = buildVoiceAsides(personality);
@@ -235,6 +244,12 @@ export function filterGovernanceChoices(state: GameState, choices: string[]): {
   }
   filtered = cooldownResult.filtered;
 
+  const compiled = compileChoices(state, filtered, Object.fromEntries(cooldownMap(state)));
+  if (compiled.notes.length) {
+    notes.push(...compiled.notes);
+  }
+  filtered = compiled.choices;
+
   const contract = getDiversityContract(state);
   const profiles = buildChoiceProfiles(filtered, state, state.turn + 1);
   const diversityViolations = checkDiversityContract(profiles, contract);
@@ -313,10 +328,13 @@ export function applyGovernanceCommit(
     ? 0
     : (prevQg.turnsSinceLastEncounter ?? 0) + 1;
 
+  const arcPatch = applyArcDirectorCommit(previous, next, next.choices ?? []);
+
   return {
     patches: {
       progressGovernor,
       qualityGovernance,
+      ...arcPatch,
       ...(invCheck.valid ? {} : { inventory: previous.inventory }),
     },
     xpAward,

@@ -447,6 +447,10 @@ export interface GameState {
   progressGovernor?: import('./forwardProgressGovernor').ProgressGovernorState;
   /** P0+P1 quality governance telemetry (2026-08-27w). */
   qualityGovernance?: import('./qualityGovernance').QualityGovernanceState;
+  /** Path A ArcDirector — authoritative beat commits (2026-08-28a). */
+  arcDirector?: import('./arcDirector').ArcDirectorState;
+  /** Immutable run manifest for eval/replay binding. */
+  runManifest?: import('./runManifest').RunManifest;
   /** Frozen opening invariants for this run. */
   campaignContract?: import('./campaignContract').CampaignContract | null;
   /** Soft drifts against campaignContract (Expert / continuity). */

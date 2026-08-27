@@ -85,6 +85,12 @@ import {
   filterGovernanceChoices,
   processMetaInput,
 } from './qualityGovernance';
+import {
+  runArcDirectorBeforeGm,
+  formatArcDirectorMandateBlock,
+  preserveArcQuestProgress,
+} from './arcDirector';
+import { playerInputGateBlock } from './choiceCompiler';
 import { filterSystemLogForEngine, reconcileXpStatusLines } from './systemLog';
 import { beatFingerprint, isSameBeat, isNearClone, buildBeatNoveltyRetryBlock, beatSimilarity } from './beatFingerprint';
 import { enforcePerspective } from './perspectiveWarden';
@@ -711,6 +717,24 @@ export async function headlessFateTurn(
 
   const govInputState = processMetaInput(state, playerInput).state;
 
+  let arcState = govInputState;
+  const gate = playerInputGateBlock(arcState, playerInput);
+  arcState = gate.state;
+  let arcBlock = '';
+  if (arcState.openingEstablishment?.complete) {
+    const arc = runArcDirectorBeforeGm(arcState, playerInput);
+    arcState = arc.state;
+    arcBlock = formatArcDirectorMandateBlock(arc);
+    if (arc.xpAwards.length) {
+      let char = arcState.character;
+      for (const award of arc.xpAwards) {
+        const leveled = applyCharacterXpGain(char, award.amount);
+        char = leveled.character;
+      }
+      arcState = { ...arcState, character: char };
+    }
+  }
+
   if (meta.dryRun) {
     const stubGm = `(dry-run) Fate picked: ${fatePick}. Offered: ${offered.join(' | ')}`;
     const playerEntry: LogEntry = {
@@ -781,14 +805,14 @@ Do NOT print dice notation or CODE ENFORCED.
 -------------------------------------------------
 `;
   const payload = buildResolutionUserPayload({
-    mandateBlock: turnMandate.block,
+    mandateBlock: turnMandate.block + arcBlock,
     playerAction: playerInput,
     deterministicBlock,
     retry: false,
     intent,
   });
 
-  const gmResult = await callGmWithRetries(govInputState, payload, settings);
+  const gmResult = await callGmWithRetries(arcState, payload, settings);
   let error: string | undefined;
   let gmText = gmResult.text;
   let transportRetries = gmResult.transportRetries;
@@ -823,7 +847,7 @@ Do NOT print dice notation or CODE ENFORCED.
       retry: true,
       intent,
     });
-    const retry = await callGmWithRetries(govInputState, retryPayload, settings);
+    const retry = await callGmWithRetries(arcState, retryPayload, settings);
     transportRetries += retry.transportRetries + 1;
     if (retry.text.trim() && (!isSameBeat(retry.text, fps) || travelHubEarly)) {
       gmText = retry.text;
@@ -836,7 +860,7 @@ Do NOT print dice notation or CODE ENFORCED.
   const events = warden.events;
   const narrativeSource = warden.scrubbedNarrative ?? gmText;
 
-  const structural = applyStructuralEvents(state, events, {
+  const structural = applyStructuralEvents(arcState, events, {
     strictEncumbrance: settings.strictEncumbrance === true,
   });
   let working = structural.state;
@@ -922,11 +946,14 @@ Do NOT print dice notation or CODE ENFORCED.
 
   const nextTurn = state.turn + 1;
   const questsBefore = [...(state.quests ?? [])];
-  let updatedQuests = syncQuestsFromPlay(
-    eventsToQuestUpdates(events, working.quests ?? [], nextTurn),
-    gmResult.systemLog,
-    `${playerInput}\n${cleanText}`,
-    { locked: questsLockedDuringOpening(state) }
+  let updatedQuests = preserveArcQuestProgress(
+    arcState.quests,
+    syncQuestsFromPlay(
+      eventsToQuestUpdates(events, working.quests ?? [], nextTurn),
+      gmResult.systemLog,
+      `${playerInput}\n${cleanText}`,
+      { locked: questsLockedDuringOpening(state) }
+    )
   );
 
   // Code-owned sandbox XP (hub discover / NPC meet / landmark / quest) — was missing in headless.
@@ -960,6 +987,9 @@ Do NOT print dice notation or CODE ENFORCED.
     places: sandboxXp.places ?? working.places,
     sandboxAwardKeys: sandboxXp.awardKeys,
     quests: updatedQuests,
+    activeEncounter: working.activeEncounter ?? arcState.activeEncounter ?? null,
+    arcDirector: arcState.arcDirector,
+    runManifest: arcState.runManifest,
   };
 
   // Track recent choices for live-style dedupe (agent + pipeline).

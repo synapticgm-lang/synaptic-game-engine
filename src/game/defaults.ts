@@ -26,7 +26,7 @@ export function createInitialState(storyName?: string, engineMode: EngineMode = 
       name: 'Unknown Survivor',
       level: 1,
       xp: 0,
-      xpToNext: 300,
+      xpToNext: 200,
       hp: 24,
       maxHp: 24,
       mp: 12,

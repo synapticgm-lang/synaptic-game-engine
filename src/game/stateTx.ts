@@ -16,10 +16,20 @@ export type StateTxKind =
   | 'quest_reveal'
   | 'quest_complete'
   | 'quest_fail'
+  | 'quest_stage'
+  | 'beat_commit'
   | 'combat'
   | 'open_ask'
   | 'correction'
   | 'other';
+
+export interface BeatStateTxExtras {
+  beatId: string;
+  eventSeq: number;
+  why: string;
+  questStage?: string;
+  encounterName?: string;
+}
 
 export interface StateTx {
   id: string;
@@ -243,6 +253,46 @@ export function appendStateTxDiff(
   }
 
   return { ...next, stateTxLog: log };
+}
+
+/** Append authoritative beat commit before GM prose (ArcDirector). */
+export function pushBeatStateTx(
+  state: GameState,
+  summary: string,
+  extras: BeatStateTxExtras
+): GameState {
+  const rev = Math.max(0, state.ledgerRevision ?? 0);
+  const turn = state.turn;
+  let log = [...(state.stateTxLog ?? [])];
+  log = pushTx(log, {
+    rev,
+    turn,
+    kind: 'beat_commit',
+    summary: summary.slice(0, 160),
+    entity: extras.beatId,
+    why: `${extras.why} (seq ${extras.eventSeq})`,
+  });
+  if (extras.questStage) {
+    log = pushTx(log, {
+      rev,
+      turn,
+      kind: 'quest_stage',
+      summary: extras.questStage.slice(0, 160),
+      entity: extras.beatId,
+      why: extras.why,
+    });
+  }
+  if (extras.encounterName) {
+    log = pushTx(log, {
+      rev,
+      turn,
+      kind: 'combat',
+      summary: `Encounter started: ${extras.encounterName}`,
+      entity: extras.encounterName,
+      why: extras.why,
+    });
+  }
+  return { ...state, stateTxLog: log };
 }
 
 /** Latest few player-facing receipts (for HUD / TurnConfirmBar). */

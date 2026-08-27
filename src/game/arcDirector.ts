@@ -1,0 +1,338 @@
+/**
+ * ArcDirector — authoritative pre-GM beat selection and effect commits (Path A Wave 0–1).
+ * Commits quest stages, encounters, and XP chunks BEFORE callGm.
+ */
+
+import type { ActiveEncounter, GameState, Quest } from './types';
+import {
+  type BeatContract,
+  forcedEncounterBeat,
+  selectDueBeat,
+} from './beatContract';
+import { updateChoiceFingerprints } from './choiceCompiler';
+import { ensureRunManifest, nextEventSeq } from './runManifest';
+import { tickPressureClock, type PressureClockState } from './pressureClock';
+import {
+  formatNpcTopicMandate,
+  recordNpcTopic,
+  shouldForceNpcStageAdvance,
+} from './npcTopicFsm';
+import {
+  applySocialMilestone,
+  detectSocialMilestone,
+} from './socialMilestoneLedger';
+import { pushBeatStateTx, type BeatStateTxExtras } from './stateTx';
+
+export interface ArcDirectorState {
+  committedBeatIds?: string[];
+  activeBeatId?: string | null;
+  lastMandate?: string;
+  turnsSinceCombatReceipt?: number;
+  pressureClock?: PressureClockState;
+  npcTopics?: Record<string, string[]>;
+  socialMilestones?: string[];
+  gateDispositions?: Record<string, number>;
+  choiceFingerprints?: import('./choiceCompiler').ChoiceFingerprintRecord[];
+}
+
+export interface ArcDirectorResult {
+  state: GameState;
+  mandate: string;
+  beatId?: string;
+  xpAwards: Array<{ amount: number; reason: string }>;
+  systemReceipts: string[];
+  beatCommitted: boolean;
+}
+
+function committedSet(state: GameState): Set<string> {
+  return new Set(state.arcDirector?.committedBeatIds ?? []);
+}
+
+function hubSkirmishEncounter(state: GameState): ActiveEncounter {
+  const lvl = state.character?.level ?? 1;
+  const hp = 12 + lvl * 4;
+  return {
+    name: state.engineMode === 'litrpg' ? 'Pact-Hunter Skirmisher' : 'Keep Wraith',
+    level: lvl,
+    hp,
+    maxHp: hp,
+    armorClass: 11 + lvl,
+    strength: 12,
+    dexterity: 12,
+    constitution: 12,
+    xpReward: 25 + lvl * 5,
+    goldReward: 5 + lvl * 2,
+  };
+}
+
+function completeQuestObjective(
+  quests: Quest[],
+  questId: string,
+  objectiveIndex: number
+): Quest[] {
+  return quests.map((q) => {
+    if (q.id !== questId) return q;
+    const objectives = [...(q.objectives ?? [])];
+    if (objectiveIndex >= objectives.length) return q;
+    objectives[objectiveIndex] = { ...objectives[objectiveIndex], completed: true };
+    return { ...q, objectives, status: q.status === 'available' ? 'active' : q.status };
+  });
+}
+
+function shouldCommitBeat(
+  contract: BeatContract,
+  state: GameState,
+  playerInput: string
+): boolean {
+  const turn = state.turn;
+  if (turn < contract.minTurn) return false;
+
+  const lower = playerInput.toLowerCase();
+  const talkish = /\b(ask|talk|speak|listen|overhear|negotiate|tell|who|why|what|where)\b/i.test(lower);
+
+  if (contract.id === 'sp-beat-hear-reason') {
+    return talkish || turn >= 6;
+  }
+  if (contract.id === 'sp-beat-orient') {
+    return turn >= 2 && (state.openingEstablishment?.complete === true || turn >= 4);
+  }
+  if (contract.kind === 'encounter') {
+    return true;
+  }
+  if (contract.kind === 'crisis' || contract.kind === 'branch') {
+    return turn >= contract.minTurn;
+  }
+  if (contract.kind === 'check' && state.engineMode === 'dnd') {
+    return /\b(check|investigate|search|inspect|look)\b/i.test(lower) || turn >= contract.minTurn + 2;
+  }
+  if (contract.kind === 'leverage' || contract.kind === 'quest_stage') {
+    return talkish || turn >= contract.minTurn + 2;
+  }
+  return turn >= contract.minTurn;
+}
+
+function applyBeatEffects(
+  state: GameState,
+  contract: BeatContract,
+  seq: number
+): { state: GameState; xp: number; receipts: string[] } {
+  let next = { ...state };
+  const receipts: string[] = [];
+  const xp = contract.xpChunk ?? 0;
+  const extras: BeatStateTxExtras = {
+    beatId: contract.id,
+    eventSeq: seq,
+    why: `ArcDirector beat commit: ${contract.id}`,
+  };
+
+  if (contract.questId != null && contract.questObjectiveIndex != null) {
+    next = {
+      ...next,
+      quests: completeQuestObjective(
+        next.quests ?? [],
+        contract.questId,
+        contract.questObjectiveIndex
+      ),
+    };
+    receipts.push(`Quest stage: ${contract.summary}`);
+    extras.questStage = contract.summary;
+  }
+
+  if (contract.spawnEncounter && !next.activeEncounter) {
+    next = { ...next, activeEncounter: hubSkirmishEncounter(next) };
+    receipts.push(`Encounter: ${next.activeEncounter!.name}`);
+    extras.encounterName = next.activeEncounter!.name;
+  }
+
+  next = pushBeatStateTx(next, contract.summary, extras);
+
+  if (xp > 0) {
+    receipts.push(`Arc XP: +${xp} (${contract.summary})`);
+  }
+
+  return { state: next, xp, receipts };
+}
+
+/** Run before GM — select beat, resolve mechanics stub, commit effects. */
+export function runArcDirectorBeforeGm(
+  state: GameState,
+  playerInput: string
+): ArcDirectorResult {
+  let working = ensureRunManifest(state);
+  const xpAwards: Array<{ amount: number; reason: string }> = [];
+  const systemReceipts: string[] = [];
+  const mandates: string[] = [];
+  let beatCommitted = false;
+  let beatId: string | undefined;
+
+  const topicResult = recordNpcTopic(working, playerInput);
+  working = topicResult.state;
+  const topicMandate = topicResult.npc
+    ? formatNpcTopicMandate(topicResult.npc, topicResult.topic ?? '', topicResult.exhausted)
+    : null;
+  if (topicMandate) mandates.push(topicMandate);
+  if (topicResult.npc && shouldForceNpcStageAdvance(working, topicResult.npc)) {
+    mandates.push(
+      `NPC STAGE ADVANCE (${topicResult.npc}): Topics exhausted — move quest stage or end scene with consequence.`
+    );
+  }
+
+  const social = detectSocialMilestone(playerInput, working);
+  if (social) {
+    working = applySocialMilestone(working, social);
+    xpAwards.push({ amount: social.amount, reason: social.reason });
+    systemReceipts.push(`Social: +${social.amount} XP (${social.kind})`);
+  }
+
+  const committed = committedSet(working);
+  const turnsSinceCombat = working.arcDirector?.turnsSinceCombatReceipt ?? working.turn;
+
+  let contract =
+    forcedEncounterBeat(working, turnsSinceCombat, committed) ??
+    selectDueBeat(working, committed);
+
+  if (contract && (!contract.once || !committed.has(contract.id)) && shouldCommitBeat(contract, working, playerInput)) {
+    const { seq, state: seqState } = nextEventSeq(working);
+    working = seqState;
+    const applied = applyBeatEffects(working, contract, seq);
+    working = applied.state;
+    if (applied.xp > 0) {
+      xpAwards.push({ amount: applied.xp, reason: contract.summary });
+    }
+    systemReceipts.push(...applied.receipts);
+    mandates.push(contract.mandate);
+    beatId = contract.id;
+    beatCommitted = true;
+
+    if (contract.once) {
+      const beatIds = [...(working.arcDirector?.committedBeatIds ?? []), contract.id];
+      working = {
+        ...working,
+        arcDirector: {
+          ...working.arcDirector,
+          committedBeatIds: beatIds,
+          activeBeatId: contract.id,
+          lastMandate: contract.mandate,
+          turnsSinceCombatReceipt: contract.spawnEncounter ? 0 : turnsSinceCombat,
+        },
+      };
+    } else {
+      working = {
+        ...working,
+        arcDirector: {
+          ...working.arcDirector,
+          activeBeatId: contract.id,
+          lastMandate: contract.mandate,
+          turnsSinceCombatReceipt: contract.spawnEncounter ? 0 : turnsSinceCombat,
+        },
+      };
+    }
+  } else if (contract && (!contract.once || !committed.has(contract.id))) {
+    mandates.push(`ARC PENDING (${contract.id}): ${contract.mandate}`);
+    beatId = contract.id;
+  }
+
+  if (working.arcDirector?.lastMandate && !beatCommitted) {
+    mandates.push(working.arcDirector.lastMandate);
+  }
+
+  const pressureClock = tickPressureClock(
+    working.arcDirector?.pressureClock,
+    beatCommitted,
+    working.turn
+  );
+
+  working = {
+    ...working,
+    arcDirector: {
+      ...working.arcDirector,
+      pressureClock,
+    },
+  };
+
+  return {
+    state: working,
+    mandate: mandates.filter(Boolean).join('\n'),
+    beatId,
+    xpAwards,
+    systemReceipts,
+    beatCommitted,
+  };
+}
+
+/** SNAPSHOT lines for situation packet. */
+export function buildArcDirectorSnapshotLines(state: GameState): string[] {
+  const lines: string[] = [];
+  const ad = state.arcDirector;
+  if (ad?.activeBeatId) {
+    lines.push(
+      `ArcDirector beat: ${ad.activeBeatId} (committed: ${(ad.committedBeatIds ?? []).join(', ') || 'none'})`
+    );
+  }
+  if (ad?.lastMandate?.trim()) {
+    lines.push(ad.lastMandate.trim());
+  }
+  const forced = forcedEncounterBeat(state, ad?.turnsSinceCombatReceipt ?? state.turn, new Set(ad?.committedBeatIds ?? []));
+  if (forced && !(ad?.committedBeatIds ?? []).includes(forced.id)) {
+    lines.push(
+      `Encounter pressure: ${forced.summary} due (turns since combat: ${ad?.turnsSinceCombatReceipt ?? '?'})`
+    );
+  }
+  return lines;
+}
+
+/** Post-commit: bump combat receipt counter, record choice fingerprints. */
+export function applyArcDirectorCommit(
+  previous: GameState,
+  next: GameState,
+  offeredChoices: string[]
+): Partial<GameState> {
+  const prevAd = previous.arcDirector ?? {};
+  const hadCombat =
+    !!next.activeEncounter ||
+    (previous.activeEncounter && !next.activeEncounter) ||
+    (next.stateTxLog ?? []).some((t) => t.turn === next.turn && t.kind === 'combat');
+
+  return {
+    arcDirector: {
+      ...prevAd,
+      ...next.arcDirector,
+      turnsSinceCombatReceipt: hadCombat ? 0 : (prevAd.turnsSinceCombatReceipt ?? 0) + 1,
+      choiceFingerprints: updateChoiceFingerprints(
+        offeredChoices,
+        next.turn,
+        prevAd.choiceFingerprints
+      ),
+    },
+  };
+}
+
+export function formatArcDirectorMandateBlock(result: ArcDirectorResult): string {
+  if (!result.mandate.trim()) return '';
+  return `\n--- ARC DIRECTOR (AUTHORITY — COMMITTED BEFORE PROSE) ---\n${result.mandate}\n${result.systemReceipts.length ? `Receipts: ${result.systemReceipts.join('; ')}\n` : ''}-------------------------------------------------\n`;
+}
+
+/** Keep ArcDirector objective commits when GM sync runs. */
+export function preserveArcQuestProgress(
+  arcQuests: Quest[] | undefined,
+  syncedQuests: Quest[]
+): Quest[] {
+  const arcMap = new Map((arcQuests ?? []).map((q) => [q.id, q]));
+  return syncedQuests.map((q) => {
+    const arc = arcMap.get(q.id);
+    if (!arc?.objectives?.length) return q;
+    const objectives = (q.objectives ?? []).map((o, i) => ({
+      ...o,
+      completed: o.completed || !!arc.objectives?.[i]?.completed,
+    }));
+    const anyNew = objectives.some((o, i) => o.completed && !arc.objectives?.[i]?.completed);
+    return {
+      ...q,
+      objectives,
+      status:
+        anyNew && q.status === 'available'
+          ? 'active'
+          : q.status,
+    };
+  });
+}
