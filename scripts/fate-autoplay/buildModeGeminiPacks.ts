@@ -8,8 +8,10 @@ import { join } from 'node:path';
 import type { EngineMode } from '../../src/game/types';
 import { buildGeminiCriticPrompt, buildPlayerCapacityContext } from '../../src/game/geminiCriticPrompt';
 
+import { BUILD_STAMP } from '../../src/game/runManifest';
+
 /** HUD / quality-governance stamp at batch export time. */
-export const MODES_AGENTS_BUILD_STAMP = '2026-08-27w';
+export const MODES_AGENTS_BUILD_STAMP = BUILD_STAMP;
 
 export const MODE_ORDER: EngineMode[] = ['litrpg', 'dnd', 'rpg', 'pyoa'];
 

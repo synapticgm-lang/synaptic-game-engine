@@ -64,6 +64,7 @@ Options:
   --pick-mode fate|first-pad
   --ai-agent-mode MODE default|maxlevel|storyfollower|completionist (goal-oriented AI)
   --modes-agents-300   4 modes × 3 AI agents × 300 turns → 4 mode Gemini packs + telemetry
+  --worst-cells-only   With --modes-agents-300: only 27w worst cell per mode (4 runs)
   --split-modes-gemini Regenerate mode Gemini packs from --batch-dir (no re-run)
   --batch-dir PATH     Batch folder for --split-modes-gemini
   --combined-gemini    Also write optional combined 12-run file (default off)
@@ -275,6 +276,7 @@ async function main(): Promise<void> {
         dryRun: opts.dryRun,
         resumeDir: opts.resumeDir,
         includeCombined: opts.combinedGemini,
+        worstCellsOnly: opts.worstCellsOnly,
       });
     } else if (opts.splitModesGemini) {
       const batchDir =

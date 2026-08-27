@@ -33,6 +33,38 @@ const FLAGSHIPS: Array<{ engineMode: EngineMode; bibleId: string; personality: s
 
 const AGENTS: AiAgentMode[] = ['maxlevel', 'storyfollower', 'completionist'];
 
+/** Worst cell per mode from 27w batch (modes-agents-300t-2026-08-27T12-07-17-166Z). */
+export const WORST_CELLS_27W: Cell[] = [
+  {
+    engineMode: 'litrpg',
+    bibleId: 'summoned-pact',
+    personality: 'cold-system',
+    agent: 'storyfollower',
+    seed: 18,
+  },
+  {
+    engineMode: 'dnd',
+    bibleId: 'cursed-keep',
+    personality: 'dry-wit',
+    agent: 'storyfollower',
+    seed: 69,
+  },
+  {
+    engineMode: 'rpg',
+    bibleId: 'cape-district-vigil',
+    personality: 'chilled-gm',
+    agent: 'completionist',
+    seed: 137,
+  },
+  {
+    engineMode: 'pyoa',
+    bibleId: 'thornferry-road',
+    personality: 'army-brief',
+    agent: 'completionist',
+    seed: 188,
+  },
+];
+
 function installNodeShims(): void {
   const store = new Map<string, string>();
   const localStorage = {
@@ -174,6 +206,8 @@ export async function runModesAgentsBatch(opts: {
   includeCombined?: boolean;
   /** HUD / quality-governance stamp written into Gemini manifests. */
   buildStamp?: string;
+  /** Run only the 27w worst cell per mode (4 runs total). */
+  worstCellsOnly?: boolean;
 }): Promise<{
   batchDir: string;
   telemetryPath: string;
@@ -185,9 +219,10 @@ export async function runModesAgentsBatch(opts: {
   const batchId = opts.resumeDir
     ? opts.resumeDir.replace(/\\/g, '/').split('/').pop()!.replace(/^modes-agents-\d+t-/, '')
     : new Date().toISOString().replace(/[:.]/g, '-');
+  const batchPrefix = opts.worstCellsOnly ? 'worst-cells' : 'modes-agents';
   const batchDir = opts.resumeDir
     ? opts.resumeDir
-    : join(opts.outRoot, `modes-agents-${opts.turns}t-${batchId}`);
+    : join(opts.outRoot, `${batchPrefix}-${opts.turns}t-${batchId}`);
   mkdirSync(batchDir, { recursive: true });
   writeFileSync(join(batchDir, 'batch.pid'), String(process.pid) + '\n');
   if (!opts.resumeDir) {
@@ -199,7 +234,11 @@ export async function runModesAgentsBatch(opts: {
           buildStamp: opts.buildStamp ?? MODES_AGENTS_BUILD_STAMP,
           turns: opts.turns,
           baseSeed: opts.seed,
-          grid: buildGrid(opts.seed),
+          grid: opts.worstCellsOnly ? WORST_CELLS_27W : buildGrid(opts.seed),
+          worstCellsOnly: opts.worstCellsOnly === true,
+          sourceBatch: opts.worstCellsOnly
+            ? 'modes-agents-300t-2026-08-27T12-07-17-166Z'
+            : undefined,
           startedAt: new Date().toISOString(),
         },
         null,
@@ -236,9 +275,9 @@ export async function runModesAgentsBatch(opts: {
     }
   }
 
-  const grid = buildGrid(opts.seed);
+  const grid = opts.worstCellsOnly ? WORST_CELLS_27W : buildGrid(opts.seed);
   log(
-    `Modes×agents batch ${opts.resumeDir ? 'RESUME' : 'start'}: ${grid.length} runs × ${opts.turns} turns (~${grid.length * opts.turns} total)`
+    `${opts.worstCellsOnly ? 'Worst-cells' : 'Modes×agents'} batch ${opts.resumeDir ? 'RESUME' : 'start'}: ${grid.length} runs × ${opts.turns} turns (~${grid.length * opts.turns} total)`
   );
   log(`ETA ~${Math.round((grid.length * opts.turns * 1.7) / 3600)}h at ~1.7s/turn`);
   if (opts.resumeDir) log(`Resume dir: ${batchDir}`);
@@ -443,8 +482,9 @@ async function main(): Promise<void> {
   const resumeIdx = argv.indexOf('--resume-dir');
   const resumeDir = resumeIdx >= 0 ? argv[resumeIdx + 1] : undefined;
   const includeCombined = argv.includes('--combined-gemini');
+  const worstCellsOnly = argv.includes('--worst-cells-only');
   const outRoot = join(process.cwd(), 'scripts', 'fate-autoplay', 'runs');
-  await runModesAgentsBatch({ turns, seed, outRoot, dryRun: dry, resumeDir, includeCombined });
+  await runModesAgentsBatch({ turns, seed, outRoot, dryRun: dry, resumeDir, includeCombined, worstCellsOnly });
 }
 
 const isDirect =
