@@ -9,7 +9,14 @@ John is playtesting live. Collect issues here. Do not implement until he asks fo
 
 ## Open
 
-_(none — 2026-08-26u shipped Gemini P0 quality gates)_
+_(waiting — John still playtesting; next update when he asks)_
+
+- **Gemini-04 (500t cold completionist)** ingested `docs/bugs/gemini-reviews-2026-08-27/gemini-04-cold-completionist-500t.md` — harsh fail on them/this-place, NPC your-eyes, 14-turn clones, option spam, 0 XP, 0 combat, missing Cold Registrar chrome. That pack is **pre-26u/26t**; re-verify those P0s on a new autoplay before re-fixing. Still **open for next update:** threat-decay/ambush, hard inventory lock, stronger System/Cold Registrar chrome, meta-input handling, quest pressure when no active quest.
+- **Gemini-03 (500t cold storyfollower)** ingested `docs/bugs/gemini-reviews-2026-08-27/gemini-03-cold-storyfollower-500t.md` — same failure cluster as 04 (seed 42): berry-juice 14-turn loop, `four [Uncommon] them`, gate-queue spam, 0 XP/combat, absent Cold Registrar. Reinforces inventory-string + anti-loiter + chrome as next-batch priorities after post-26u re-score.
+- **Gemini-02 (500t cold maxlevel)** ingested `docs/bugs/gemini-reviews-2026-08-27/gemini-02-cold-maxlevel-500t.md` — same seed-42 cluster; worse action loops (undercroft door ~60t, battlement spam); **maxlevel still 0 XP** on pre-26t pack — high-value post-26t/26u re-run candidate. Adds plaque `them - them` (T73) and same-action anti-loop (not only prose clone) to next-batch notes.
+- **3×500 synthesis (next update board):** `docs/bugs/gemini-reviews-2026-08-27/NEXT-UPDATE-FROM-3x500.md` — remaining after **26v** fine-tune: threat-decay/ambush, hard bag JSON lock, Cold Registrar cadence, quest spine after registration, meta-input repair. Critic packs include **Game mode** table + anti-false-positive rails.
+
+**Residual risk (26v):** Alone crowd-pad filter uses coarse alone/empty signals — outdoor hubs with real crowds still keep gate-queue pads. `[Uncommon] them` scrub is string-level not ledger lock. Stagnation HARD at ×5 is still prompt-rail (no guaranteed combat spawn).
 
 **Residual risk (26u):** Near-clone retry (≥0.85) still burns one extra Free GM call when merchant loops — cost vs quality trade. Stagnation interrupt is prompt-rail only (no guaranteed combat spawn). Quest pressure needs a revealed/active quest in save. `them` scrub covers common orphans — novel mush may still slip. Gemini packs now include STATUS XP but not full Warden dumps. Programmatic ambush / threat-decay timers deferred (P2). Inventory LLM invent still post-hoc scrub, not hard bag lock.
 
@@ -56,6 +63,8 @@ _(none — 2026-08-26u shipped Gemini P0 quality gates)_
 - Premium theme five-rater / Shop preview parity (Manus T8/T9 P0-04) — after playtest of `2026-08-19t` Vampire rescue; ingest `docs/research/manus-premium-themes-ingest-2026-08-19.md`
 
 ## Done (already shipped)
+
+- **2026-08-26v Gemini game-mode + fine-tunes:** Critic packs embed **Game mode** table (LitRPG / Tabletop / Story RPG / PYOA) + agent mode + anti-false-positive rails; Meta `Game mode` line; scrub `[Uncommon] them` / kit mush; alone-scene filter drops gate-queue/battlement crowd pads; SNAPSHOT stagnation HARD at ×5. Vitest extended. HUD + index.html `2026-08-26v`. Client-only.
 
 - **2026-08-26u Gemini P0 quality gates:** Stop stranger→them; scrub `this place`/`presence of them`; NPC `your head/eyes` reverse; reject broken choice labels; choice spam ≤1 in 8 turns; near-clone (≥0.85) forces novelty retry even on Free; SNAPSHOT quest focus + stagnation interrupt + dry-wit voice check; Gemini export includes STATUS/XP; headless empty-GM pushes scene forward; presentNames passed into prose warden. Vitest `playtest26uQualityGates`. HUD + index.html `2026-08-26u`. Client-only (gm-turn SNAPSHOT via client packet).
 

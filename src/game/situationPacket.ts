@@ -217,6 +217,11 @@ export function formatSceneSnapshotForPrompt(state: GameState): string {
     lines.push(
       `- Stagnation: player repeated "${streak.key}" ×${streak.count} — FORCE a concrete interrupt this beat (arrival, danger, offer change, or quest-relevant beat). Do not clone prior paragraphs.`
     );
+    if (streak.count >= 5) {
+      lines.push(
+        `- Stagnation HARD: ${streak.count} identical intents — you MUST change location pressure or introduce a new named person/event; answering with the same stall dialogue is forbidden.`
+      );
+    }
   }
   if (timeLabel) lines.push(`- Time of Day: ${timeLabel}`);
   if (weatherLabel) lines.push(`- Weather: ${weatherLabel}`);

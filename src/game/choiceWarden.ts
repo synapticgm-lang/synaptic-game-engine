@@ -132,6 +132,20 @@ export function filterInventedContextChoices(
       console.log(`[Choice Filter] Removed broken-label choice: "${choice}"`);
       return false;
     }
+    // Hub pads that invent crowds when scene is alone/empty.
+    const alone =
+      state.openingEstablishment?.aloneArrival === true
+      || state.sceneFacts?.crowd === 'none'
+      || ((state.sceneFacts?.present ?? []).length === 0
+        && !state.activeEncounter
+        && /\b(alone|empty|nobody|no one)\b/i.test(recentStory));
+    if (
+      alone
+      && /\b(gate queue|watch the gate|walk the battlement|crowd|onlookers?)\b/i.test(choice)
+    ) {
+      console.log(`[Choice Filter] Removed alone-scene crowd pad: "${choice}"`);
+      return false;
+    }
     // Matrix-40: scrub damage turned NPCs into "the official" and polluted pads.
     if (/\bthe official\b|\ban official\b/i.test(choice)) {
       console.log(`[Choice Filter] Removed official-placeholder choice: "${choice}"`);

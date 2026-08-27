@@ -339,10 +339,26 @@ export function scrubPlaceholderNouns(text: string, currentLocation?: string): s
   next = next.replace(/\bcluster of them\b/gi, 'cluster of debris');
   next = next.replace(/\bsurfaces of them\b/gi, 'surfaces of the items');
   next = next.replace(/\btwo them\b/gi, 'two items');
+  next = next.replace(/\bfour them\b/gi, 'four items');
+  next = next.replace(/\bthree them\b/gi, 'three items');
   next = next.replace(/\ba few them\b/gi, 'a few items');
+  // Rarity-tagged inventory mush: "[Uncommon] them" (count forms first).
+  next = next.replace(
+    /\b(two|three|four|several)\s+\[(Common|Uncommon|Rare|Epic|Legendary|Unique)\]\s+them\b/gi,
+    '$1 [$2] items'
+  );
+  next = next.replace(
+    /\[(Common|Uncommon|Rare|Epic|Legendary|Unique)\]\s+them\b/gi,
+    '[$1] item'
+  );
+  next = next.replace(/\bCheck your them\b/gi, 'Check your items');
+  next = next.replace(/\bExamine (?:your )?them clues\b/gi, 'Examine the clues');
+  next = next.replace(/\bInspect them\b(?!\s+\w)/gi, 'Inspect it');
+  next = next.replace(/\bPick up them\b/gi, 'Pick it up');
   next = next.replace(/\bof them in your (bag|pack|pockets?)\b/gi, 'of your items in your $1');
   next = next.replace(/\bthe them\b/gi, 'them');
   next = next.replace(/\b(?:a|an)\s+them\b/gi, 'someone');
+  next = next.replace(/\breads\s+['']them\s*[-–—]\s*them['']/gi, "reads a worn brass nameplate");
   return next;
 }
 

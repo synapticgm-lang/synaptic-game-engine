@@ -44,6 +44,14 @@ describe('playtest26u — Gemini P0 quality gates', () => {
     expect(cleaned.toLowerCase()).not.toMatch(/surfaces of them/);
   });
 
+  it('scrubs [Uncommon] them inventory mush', () => {
+    const cleaned = scrubPlaceholderNouns(
+      'You notice two [Uncommon] them, two [Uncommon] them, and four [Uncommon] them.'
+    );
+    expect(cleaned.toLowerCase()).not.toMatch(/\] them/);
+    expect(cleaned).toMatch(/\[Uncommon\] items/i);
+  });
+
   it('keeps NPC tilted head as his/her after perspective', () => {
     const raw = 'He tilted his head. She tilted her head and looked at you.';
     const pov = enforcePerspective(raw, { perspective: 'second-person' }, 'Jax');
@@ -173,5 +181,9 @@ describe('playtest26u — Gemini P0 quality gates', () => {
     expect(md).toMatch(/## Critic prompt/);
     expect(md).toMatch(/Scorecard \(required\)/);
     expect(md).toMatch(/Option quality/);
+    expect(md).toMatch(/Anti-misdiagnosis rules/);
+    expect(md).toMatch(/Code baseline/);
+    expect(md).toMatch(/Game mode/);
+    expect(md).toMatch(/\*\*LitRPG\*\*/);
   });
 });

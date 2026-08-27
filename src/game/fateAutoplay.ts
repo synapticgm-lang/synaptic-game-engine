@@ -1121,6 +1121,11 @@ export async function runFateAutoplay(opts: {
       personalityId,
       aiAgentMode: opts.aiAgentMode,
       seed: opts.seed,
+      codeBaseline: '2026-08-26u+ client (HUD stamp at export)',
+      errorNote:
+        summary.errorCount > 0
+          ? `${summary.errorCount} errors / ${summary.timeoutCount} timeouts (see summary.json issueTurns)`
+          : 'no turn errors recorded in summary',
     })
   );
   writeFileSync(join(outDir, 'turns.jsonl'), turns.map((t) => JSON.stringify(t)).join('\n') + '\n');

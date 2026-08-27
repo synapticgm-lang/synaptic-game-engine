@@ -143,21 +143,35 @@ export function buildStoryReviewExport(
     aiAgentMode?: string;
     seed?: number;
     reviewPrompt?: string;
+    codeBaseline?: string;
+    errorNote?: string;
   }
 ): string {
   const title = state.storyName?.trim() || state.character?.name?.trim() || 'Story review';
+  const personalityId =
+    meta?.personalityId ?? state.systemPersonality ?? state.gmPersonality ?? undefined;
   const lines: string[] = [
     `# Story quality review pack — ${title}`,
     '',
     '## Meta',
     '',
     `- Bible / story: ${title}`,
+    `- Game mode: ${
+      state.engineMode === 'dnd'
+        ? 'Tabletop Fantasy (dnd)'
+        : state.engineMode === 'rpg'
+          ? 'Story RPG (rpg)'
+          : state.engineMode === 'pyoa'
+            ? 'Pick Your Own Adventure (pyoa)'
+            : `LitRPG (${state.engineMode || 'litrpg'})`
+    }`,
     `- Engine: ${state.engineMode || 'unknown'}`,
-    `- Personality: ${meta?.personalityId ?? state.systemPersonality ?? state.gmPersonality ?? '(default)'}`,
+    `- Personality: ${personalityId ?? '(default)'}`,
     `- AI agent mode: ${meta?.aiAgentMode ?? 'n/a'}`,
     `- Seed: ${meta?.seed ?? '(n/a)'}`,
     `- Turns completed: ${state.turn ?? 0}`,
     `- Character: ${state.character?.name ?? '?'} · Level ${state.character?.level ?? '?'} · XP ${state.character?.xp ?? 0}/${state.character?.xpToNext ?? '?'}`,
+    `- Code baseline: ${meta?.codeBaseline ?? 'unknown — treat findings as baseline-agnostic'}`,
     `- Exported: ${new Date().toISOString()}`,
     '',
     '## Critic prompt (follow this — then read the transcript)',
@@ -165,12 +179,15 @@ export function buildStoryReviewExport(
     meta?.reviewPrompt?.trim()
       || buildGeminiCriticPrompt({
         bibleTitle: title,
-        personalityId: meta?.personalityId ?? state.systemPersonality ?? state.gmPersonality ?? undefined,
+        personalityId,
         aiAgentMode: meta?.aiAgentMode,
         seed: meta?.seed,
         turns: state.turn ?? 0,
         level: state.character?.level ?? '?',
         xpLine: `${state.character?.xp ?? 0}/${state.character?.xpToNext ?? '?'}`,
+        engineMode: state.engineMode,
+        codeBaseline: meta?.codeBaseline,
+        errorNote: meta?.errorNote,
       }),
     '',
     '---',
