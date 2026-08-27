@@ -6,6 +6,14 @@
  * "UI template parsers" or claim "no LitRPG chrome" when STATUS lines exist.
  */
 
+import {
+  storyStartTextTurnsForTier,
+} from './capacityLedger';
+import {
+  SUBSCRIPTION_TIERS,
+} from './subscriptionTiers';
+import { ADULT_MAX_REWARDED_ADS_PER_DAY } from './rewardedAds';
+
 export type GeminiCriticSessionMeta = {
   bibleTitle?: string;
   personalityId?: string;
@@ -52,6 +60,60 @@ function agentExplain(mode?: string): string {
     default:
       return mode ? `autoplay mode "${mode}"` : 'autoplay';
   }
+}
+
+/** Paste-ready Free-tier turn budget for Gemini hook / retention scoring. */
+export function buildPlayerCapacityContext(): string {
+  const free = SUBSCRIPTION_TIERS.free;
+  const mid = SUBSCRIPTION_TIERS.mid;
+  const high = SUBSCRIPTION_TIERS.high;
+  const freeStoryStart = storyStartTextTurnsForTier('free');
+  const midStoryStart = storyStartTextTurnsForTier('mid');
+  const highStoryStart = storyStartTextTurnsForTier('high');
+  const adTurnsPerAd = free.adTextTurns;
+  const maxAdTurns = ADULT_MAX_REWARDED_ADS_PER_DAY * adTurnsPerAd;
+  const newGameDayMax =
+    freeStoryStart + free.textTurnsPerDay + maxAdTurns;
+
+  return [
+    '## PLAYER CAPACITY CONTEXT (Free tier — autoplay uses Test Lab unlimited)',
+    '',
+    '**Judge player hook and retention as a real Free player would experience it.**',
+    'This autoplay batch ran with **Test Lab unlimited** turns — do **not** treat 300-turn durability as the Free hook bar.',
+    '',
+    '### Free tier (primary hook audience)',
+    '',
+    '| Field | Value |',
+    '|---|---|',
+    `| **Daily text turns** | **${free.textTurnsPerDay}** (resets UTC; use-it-or-lose-it) |`,
+    `| **Story-start bonus (per New Game)** | **+${freeStoryStart}** text turns — spent **before** the daily meter |`,
+    '| **Opening / covers** | **Free** — name, look, kit, location setup do **not** consume turns |',
+    `| **Rewarded ads (Adult Free)** | **+${adTurnsPerAd} turns/ad**, max **${ADULT_MAX_REWARDED_ADS_PER_DAY} ads/day** (**+${maxAdTurns}** max from ads) |`,
+    `| **Practical hook window (return visit)** | **~${free.textTurnsPerDay}–${free.textTurnsPerDay + 8} meaningful turns** before the daily cliff (daily cap ± a few ad turns) |`,
+    `| **Practical hook window (New Game day)** | **~${freeStoryStart + free.textTurnsPerDay}–${newGameDayMax}+ turns** if story-start + daily (+ optional ads) — **first ${freeStoryStart}–12 turns are the critical hook band** |`,
+    '',
+    '### Paid tiers (comparison only — not the autoplay run tier)',
+    '',
+    '| Tier | Daily text | Story-start bonus |',
+    '|---|---:|---:|',
+    `| **Mid** | ${mid.textTurnsPerDay} | +${midStoryStart} |`,
+    `| **High** | ${high.textTurnsPerDay} | +${highStoryStart} |`,
+    '',
+    '### How to score hook vs long-session quality',
+    '',
+    '1. **Separate axes:** Score **“Would a Free player come back tomorrow?”** independently from **long-session autoplay quality** (turns 50–300).',
+    '2. **Story-start band:** Weight **Turns 1–' +
+      Math.max(freeStoryStart, 12) +
+      '** heavily — stakes, voice, first quest/combat/danger, and whether the session ends on a pull, not a pad loop.',
+    '3. **Daily cliff:** By turn **~' +
+      (freeStoryStart + free.textTurnsPerDay) +
+      '** on a New Game day, would a Free player feel progress worth returning for?',
+    '4. **Return visit:** On a **second day** with only **~' +
+      free.textTurnsPerDay +
+      '** turns, does the transcript still justify opening the app again?',
+    '5. **Do not** downgrade hook because the agent loitered for 300 turns — score what a human would see in the first session window.',
+    '',
+  ].join('\n');
 }
 
 function engineModeLabel(mode?: string): { id: string; label: string; genreExpect: string } {
@@ -139,6 +201,8 @@ ${
     : `This run is **${engine.label}** — do **not** fail it for "missing LitRPG XP bars." Judge progression in ${engine.label} terms.`
 }
 
+${buildPlayerCapacityContext()}
+
 ## Anti-misdiagnosis rules (read before scoring)
 
 These mistakes appeared in prior reviews — do **not** repeat them:
@@ -158,30 +222,31 @@ Score **1–10** (10 = clearly better than typical AI-GM apps; 5 = average chatb
 
 ## Scorecard (required)
 
-1. Opening hook & stakes
-2. Pace (include **same-action** loops AND paragraph clones)
-3. Flow / scene transitions
-4. Option quality (use **Options:** lists; count top recycled labels)
-5. Agency & consequence (include whether meta/adversarial player lines are acknowledged)
-6. Progression (quests / goals) — for mode **${engine.label}**
-7. ${
+1. Opening hook & stakes (**Turns 1–12 / story-start window** — see PLAYER CAPACITY CONTEXT)
+2. **Free player hook / retention** — **Would a Free player come back tomorrow?** (turn-budget aware; separate from item 19)
+3. Pace (include **same-action** loops AND paragraph clones)
+4. Flow / scene transitions
+5. Option quality (use **Options:** lists; count top recycled labels)
+6. Agency & consequence (include whether meta/adversarial player lines are acknowledged)
+7. Progression (quests / goals) — for mode **${engine.label}**
+8. ${
     isLitrpg
       ? 'XP / level / LitRPG feel (**count STATUS XP lines**; reconcile with Meta Level/XP)'
       : `Progression systems feel for **${engine.label}** (not LitRPG XP bars unless STATUS appears)`
   }
-8. Combat / danger
-9. Exploration & sandbox
-10. NPC / dialogue
-11. Voice consistency for **${voice}**
-12. Continuity / consistency
-13. Hallucinations / mush (\`them\`, \`this place\`, orphan tags)
-14. Invented items / kit lies / inventory string corruption (\`[Uncommon] them\`)
-15. Invented presence (gate queue / crowds when alone)
-16. English / polish (broken option grammar)
-17. STATUS / System honesty & **frequency** (mode-appropriate)
-18. Long-session durability
-19. Would you keep playing? (Mid-tier paying player)
-20. Competitive win/loss (one paragraph)
+9. Combat / danger
+10. Exploration & sandbox
+11. NPC / dialogue
+12. Voice consistency for **${voice}**
+13. Continuity / consistency
+14. Hallucinations / mush (\`them\`, \`this place\`, orphan tags)
+15. Invented items / kit lies / inventory string corruption (\`[Uncommon] them\`)
+16. Invented presence (gate queue / crowds when alone)
+17. English / polish (broken option grammar)
+18. STATUS / System honesty & **frequency** (mode-appropriate)
+19. Long-session durability (turns 50+ — **not** the Free hook bar)
+20. Would you keep playing? (Mid-tier paying player)
+21. Competitive win/loss (one paragraph)
 
 ## Deep dives (required)
 
@@ -223,11 +288,18 @@ Exactly **12** fixes P0→P2. Each: problem → owner hint (allowed list) → ac
 - Agent vs engine: % blame split (rough).
 - Confirm you scored against **${engine.label}** (\`${engine.id}\`), not a different game mode.
 
+### H. Free hook & retention autopsy (required)
+- **Story-start window (Turns 1–12):** stakes landed? voice perceptible? first meaningful state change by turn 3–5?
+- **New Game day cliff (~20 turns with story-start + daily):** progress, quest/combat/danger, or cliffhanger that earns tomorrow?
+- **Return visit (~12 daily turns):** would a Free player reopen the app, or did mush/pads/passivity kill retention?
+- **Verdict line:** \`Free player would return tomorrow: YES / MAYBE / NO\` — one sentence why.
+- Explicitly **decouple** this from long-session autoplay scores (item 19).
+
 ## Output format
 
-1. Executive verdict (≤5 sentences). Name the **game mode** in sentence 1.
-2. Scorecard table (area | score | one-line).
-3. Sections A–G.
+1. Executive verdict (≤5 sentences). Name the **game mode** in sentence 1. Include **Free hook verdict** (YES/MAYBE/NO).
+2. Scorecard table (area | score | one-line) — must include rows **1, 2, 19** with distinct scores.
+3. Sections A–H.
 4. **"Must-fix before claiming better than other apps"** — top 5 only.
 5. End with: \`REVIEW_COMPLETE\`.`;
 }

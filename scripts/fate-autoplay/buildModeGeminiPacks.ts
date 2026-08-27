@@ -6,7 +6,7 @@
 import { existsSync, readFileSync, readdirSync, statSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import type { EngineMode } from '../../src/game/types';
-import { buildGeminiCriticPrompt } from '../../src/game/geminiCriticPrompt';
+import { buildGeminiCriticPrompt, buildPlayerCapacityContext } from '../../src/game/geminiCriticPrompt';
 
 /** HUD / quality-governance stamp at batch export time. */
 export const MODES_AGENTS_BUILD_STAMP = '2026-08-27w';
@@ -211,6 +211,8 @@ export function buildModeGeminiPack(opts: {
 
   parts.push(buildBatchAntiFalsePositiveRails(opts.mode, opts.turns));
 
+  parts.push(buildPlayerCapacityContext());
+
   parts.push('## Critic prompt (apply to EVERY run below)');
   parts.push('');
   parts.push(
@@ -238,7 +240,8 @@ export function buildModeGeminiPack(opts: {
       `4. Judge **${MODE_LABEL[opts.mode]}** expectations only — wrong-genre bar is a critic error.`,
       `5. Cite only turn numbers ≤ **${opts.turns}** with verbatim quotes.`,
       '6. Search `STATUS / System:` before claiming absent chrome.',
-      '7. End with: top 8 fixes for this mode (tag which agents), then `REVIEW_COMPLETE`.',
+      '7. Score **Free player hook / retention** separately from long-session durability — see PLAYER CAPACITY CONTEXT and scorecard items **1, 2, 19** + section **H**.',
+      '8. End with: top 8 fixes for this mode (tag which agents), then `REVIEW_COMPLETE`.',
       '',
     ].join('\n')
   );
@@ -385,6 +388,8 @@ export function buildGeminiFeedIndex(opts: {
     '# GEMINI-FEED-INDEX — modes×agents batch',
     '',
     'Upload **one mode file per Gemini chat** for accurate per-genre reviews.',
+    '',
+    'Each mode pack includes **PLAYER CAPACITY CONTEXT** (Free daily turns, story-start bonus, ad top-ups) so Gemini can score **player hook / retention** fairly — autoplay runs use Test Lab unlimited, but critics should judge as if a Free player with ~12–20 meaningful turns per session.',
     '',
     '## Manifest',
     '',
