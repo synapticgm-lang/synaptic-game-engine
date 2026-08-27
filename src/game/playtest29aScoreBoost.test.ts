@@ -215,7 +215,8 @@ describe('playtest29a — Manus score boost terminal authority', () => {
     const manifest = buildSealedManifest(arc.state, 'Ask who', arc);
     const fallback = applyRenderFallback(manifest, arc.state, 'timeout');
     expect(fallback.prose).not.toMatch(/RenderFallbackUsed/i);
-    expect(fallback.prose).toMatch(/beat recovered|timeout/i);
+    expect(fallback.prose).not.toMatch(/beat recovered/i);
+    expect(fallback.prose.length).toBeGreaterThan(20);
   });
 
   it('PYOA charter use locks branch; delay pads exhaust to lock', () => {

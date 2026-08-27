@@ -8,9 +8,9 @@ import { effectiveWriterTier, isTestLabEnabled } from '../game/testLab';
 import { equippedSetLabel, equippedSetName } from '../game/uiTheme';
 
 /** Visible after a hard refresh -- if this is missing, Vercel is still serving the 16 Aug bundle. */
-export const HUD_BUILD_STAMP = '2026-08-29b';
+export const HUD_BUILD_STAMP = '2026-08-29c';
 const HUD_BUILD_TITLE =
-  'Debug 2026-08-29b - HP ledger + clear XP/cooldown + Free T12 + voice STATUS + exit authority; Mid writer NO';
+  'Debug 2026-08-29c - kill kit-pronoun scrub + loiter/drought/branch Free-hook; Mid writer NO';
 
 interface Props {
   state: GameState;

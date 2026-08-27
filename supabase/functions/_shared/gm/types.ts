@@ -139,6 +139,7 @@ export type PlayPhase = 'live' | 'down' | 'ended';
 
 export type QuestStatus = 'active' | 'completed' | 'failed' | 'hidden';
 export type QuestType = 'main' | 'side' | 'faction';
+export type QuestUrgency = 'immediate' | 'time-sensitive' | 'flexible' | 'unknown';
 
 export interface QuestObjective {
   id: string;
@@ -187,6 +188,10 @@ export interface Quest {
   whatNext?: string;
   /** Provenance for Simple Why? (bible seed, story beat, System notice). */
   provenance?: string;
+  
+  // Pack 12 Urgency Tracking
+  urgency?: QuestUrgency;
+  deadline?: number;  // turn number for urgent reminder
 }
 
 export interface ShrineEntry {
@@ -334,6 +339,19 @@ export interface ActiveEncounter {
   constitution: number;
   xpReward: number;
   goldReward: number;
+  /** 29a Encounter Terminal FSM */
+  encounterId?: string;
+  phase?: 'engaged' | 'resolving' | 'terminal';
+  startedTurn?: number;
+  engagedTurnCount?: number;
+  failedFleeCount?: number;
+  failedParleyCount?: number;
+  maxEngagedTurns?: number;
+  maxFailedFlee?: number;
+  maxFailedParley?: number;
+  terminalOutcome?: 'escape' | 'victory' | 'defeat' | 'capture' | 'parleyResolved';
+  source?: string;
+  forcedSpawnKey?: string;
 }
 
 export interface OpeningEstablishment {
@@ -363,6 +381,8 @@ export interface OpeningEstablishment {
   pickedHookFallback?: string;
   /** True when this run’s opener has no summoners on page one. */
   aloneArrival?: boolean;
+  /** 29c — opening NPC names pinned into scene presence for early turns. */
+  pinnedNpcNames?: string[];
 }
 
 export interface GameState {
@@ -405,7 +425,7 @@ export interface GameState {
    * Full bible snapshot for player-authored custom campaigns (id `player-custom-*`).
    * Catalog lookup cannot find these; opening quests and reconcile use this.
    */
-  campaignBibleSnapshot?: import('./campaignBibleTypes.ts').CampaignBible | null;
+  campaignBibleSnapshot?: import('./campaignBibleTypes').CampaignBible | null;
   /** Short premise injected every turn as Guide Book rails. */
   campaignPremise?: string | null;
   /**
@@ -428,6 +448,7 @@ export interface GameState {
   npcMemories?: NpcMemory[];
   /** Bound last-beat scene (crowd, noise, props). Authority over improvisation. */
   sceneFacts?: SceneFacts;
+  previousSceneFacts?: SceneFacts;
   /**
    * Monotonic campaign ledger revision. Bumped on every accepted turn commit.
    * Pending proposals carry expectedRevision and must match this to accept.
@@ -436,15 +457,31 @@ export interface GameState {
   /** Discarded retry drafts — never world truth; debug / Expert continuity only. */
   speculativeTakes?: SpeculativeTake[];
   /** Append-only high-impact world changes (inventory, presence, quests, combat). */
-  stateTxLog?: import('./stateTx.ts').StateTx[];
+  stateTxLog?: import('./stateTx').StateTx[];
+  /** P0.0: Forward-Progress Governor state (Manus #1 priority). */
+  progressGovernor?: import('./forwardProgressGovernor').ProgressGovernorState;
+  /** P0+P1 quality governance telemetry (2026-08-27w). */
+  qualityGovernance?: import('./qualityGovernance').QualityGovernanceState;
+  /** Path A ArcDirector — authoritative beat commits (2026-08-28a). */
+  arcDirector?: import('./arcDirector').ArcDirectorState;
+  /** Immutable run manifest for eval/replay binding. */
+  runManifest?: import('./runManifest').RunManifest;
+  /** B026 sealed manifest snapshot (pre-GM). */
+  sealedManifest?: import('./sealedManifest').SceneManifest;
+  /** B007 replay hash chain for eval verifier. */
+  replayHashes?: import('./replayHash').ReplayHashRecord[];
+  /** B025 PYOA branch ledger — Millstone Charter paths. */
+  pyoaBranchLedger?: import('./pyoaBranchLedger').PyoaBranchLedger;
   /** Frozen opening invariants for this run. */
-  campaignContract?: import('./campaignContract.ts').CampaignContract | null;
+  campaignContract?: import('./campaignContract').CampaignContract | null;
   /** Soft drifts against campaignContract (Expert / continuity). */
-  campaignDivergences?: import('./campaignContract.ts').CampaignDivergence[];
+  campaignDivergences?: import('./campaignContract').CampaignDivergence[];
   /** Soft-offer / retention stage (identity → choice → consequence). */
-  hookArc?: import('./hookArc.ts').HookArcState;
+  hookArc?: import('./hookArc').HookArcState;
   /** Recent accepted prose fingerprints for retry novelty. */
   recentBeatFingerprints?: string[];
+  /** Recent offered choices for deduplication across turns (sliding window). */
+  recentChoices?: Array<{ turn: number; choices: string[] }>;
   /** Current location sheet (interactables / exits). */
   locationSheet?: LocationSheet | null;
   /** Sheet for the place just left — injected with current for dual-location memory. */
@@ -476,6 +513,10 @@ export interface GameState {
   currentCoordinates?: Location3D;
   activeDungeon?: ActiveDungeonState | null;
   worldLedger?: WorldLedger;
+  /** Idempotent keys for off-spine XP banks (discover / quest / non-lethal). */
+  sandboxAwardKeys?: string[];
+  /** Journal Resume main pin — map chrome highlights this place name. */
+  mapFocusPlace?: string | null;
   activeEncounter?: ActiveEncounter | null;
   /**
    * Premade world landmass outline + fogged regions (LitRPG/tabletop/RPG open worlds).
@@ -494,13 +535,13 @@ export interface GameState {
    * Prompt voice only — not rules tightness (`gmStrictness`) and not TTS.
    * Persists on the save. Absent on old saves = chilled.
    */
-  gmPersonality?: import('./gmVoiceProfile.ts').GmPersonalityId;
+  gmPersonality?: import('./gmVoiceProfile').GmPersonalityId;
   /**
    * LitRPG System personality for this campaign (`engineMode === 'litrpg'`).
    * Prompt voice only — not TTS. Persists on the save.
    * Absent on old saves = Settings `gmVoiceProfileId`, then cold registrar.
    */
-  systemPersonality?: import('./gmVoiceProfile.ts').SystemPersonalityId;
+  systemPersonality?: import('./gmVoiceProfile').SystemPersonalityId;
   /**
    * Simulationist sandbox power tone. Absent on old saves = balanced (repair hydrates).
    * Prompt only — HP/XP/loot still come from code.
@@ -513,7 +554,7 @@ export interface GameState {
   threatTier?: number;
 }
 
-export type RepairSituation = import('./repairEngine.ts').RepairSituation;
+export type RepairSituation = import('./repairEngine').RepairSituation;
 
 export interface PendingRepair {
   id: string;
@@ -632,6 +673,9 @@ export interface ComicPanel {
   textAnchor?: ComicTextAnchor;
   /** User-adjusted bubble positions/text from the pre-export Comic Page Editor. */
   overlayEdits?: ComicOverlayEdit[];
+  /** Revision-scoped job key — stale attaches discarded when mismatched. */
+  artJobKey?: string;
+  beatRevision?: number;
 }
 
 export interface LogEntry {
@@ -660,6 +704,12 @@ export interface LogEntry {
   imageFailMessage?: string;
   /** Prompt used for the memorable plate — kept so a failed opener can retry. */
   splashImagePrompt?: string;
+  /**
+   * Post-pipeline choice labels the player actually saw after this GM beat
+   * (ActionBar pad: filterInventedContextChoices / padChoicesToCount / opening chips).
+   * Absent on older saves — transcript omits the Options section.
+   */
+  offeredChoices?: string[];
 }
 
 /** Distinct rule engines chosen at campaign setup. `'dnd'` is tabletop fantasy (saved key). */
@@ -723,6 +773,9 @@ export type TimelineFactKind =
 
 export type CrowdPresence = 'present' | 'sparse' | 'none' | 'unknown';
 export type SceneNoise = 'shouting' | 'voices' | 'quiet' | 'unknown';
+export type TimeOfDay = 'dawn' | 'morning' | 'midday' | 'afternoon' | 'dusk' | 'evening' | 'night' | 'unknown';
+export type Weather = 'clear' | 'rain' | 'storm' | 'snow' | 'fog' | 'cloudy' | 'unknown';
+export type TensionLevel = 'combat' | 'danger' | 'tense' | 'calm' | 'unknown';
 
 /** Bound last-beat facts. Prose cannot empty a present crowd without time passing. */
 export interface SceneFacts {
@@ -732,13 +785,18 @@ export interface SceneFacts {
   props: string[];
   lastBeat: string;
   updatedTurn: number;
-  timeOfDay?: string;
-  weather?: string;
+  
+  // Pack 12 Extended Tracking
+  timeOfDay?: TimeOfDay;
+  weather?: Weather;
   indoor?: boolean;
-  tension?: string;
-  /** Targets already searched and established empty. */
+  tension?: TensionLevel;
+  /** 29b — turn when exit/flee outdoor authority was committed (blocks snap-back scrub). */
+  exitAuthorityTurn?: number;
+
+  /** Targets already searched and established empty (here / debris / exterior / loc:…). */
   searchedEmpty?: string[];
-  /** Named containers established empty. */
+  /** Named containers established empty (box / crate / bag when declared empty). */
   emptyContainers?: string[];
 }
 
@@ -761,6 +819,8 @@ export interface SituationPacket {
   recentFacts: string[];
 }
 
+export type NpcMood = 'friendly' | 'angry' | 'scared' | 'sad' | 'cautious' | 'neutral' | 'unknown';
+
 /** Per-NPC memory so knowledge does not bleed across characters. */
 export interface NpcMemory {
   npcId: string;
@@ -770,6 +830,10 @@ export interface NpcMemory {
   lastSeenTurn: number;
   /** Pack 6 short relationship texture for prompts. */
   relationshipSummary?: string;
+  
+  // Pack 12 Mood Tracking
+  currentMood?: NpcMood;
+  lastMoodChange?: number;
 }
 
 /** Location sheet — spatial facts for the current zone. */
@@ -854,6 +918,10 @@ export interface TurnSummary {
   id: string;
   turn: number;
   text: string;
+  /** Importance score 0-1 (Pack 12 - memory weighting). */
+  importance?: number;
+  /** Semantic embedding for retrieval (Pack 12 - 384d vector). */
+  embedding?: number[];
 }
 
 export interface MemoryPin {
@@ -876,10 +944,34 @@ export interface CampaignMemoryState {
   campaignSummary?: string | null;
   personalitySummary?: string | null;
   turnSummaries?: TurnSummary[];
+  /** Chapter summaries (20-turn blocks, Pack 12). */
+  chapterSummaries?: ChapterSummary[];
+  /** Arc summaries (100-turn blocks, Pack 12). */
+  arcSummaries?: ArcSummary[];
   pins: MemoryPin[];
   consequences?: ConsequenceThread[];
   lastCampaignSummaryTurn?: number;
   lastTurnSummaryTurn?: number;
+  /** Last turn a chapter summary was created (Pack 12). */
+  lastChapterSummaryTurn?: number;
+}
+
+export interface ChapterSummary {
+  id: string;
+  turnRange: [number, number];
+  keyEvents: string[];
+  questProgress: string;
+  npcsIntroduced: string[];
+  locationsMapped: string[];
+  createdTurn: number;
+}
+
+export interface ArcSummary {
+  id: string;
+  turnRange: [number, number];
+  summary: string;
+  majorMilestones: string[];
+  createdTurn: number;
 }
 
 /**
@@ -1043,7 +1135,7 @@ export interface Settings {
   statFrequency: StatFrequency;
   perspective: NarrativePerspective;
   /** GM/System narrative voice profile (prompt tone). Separate from TTS cosmetics. */
-  gmVoiceProfileId?: import('./gmVoiceProfile.ts').GmVoiceProfileId;
+  gmVoiceProfileId?: import('./gmVoiceProfile').GmVoiceProfileId;
   violenceLevel: ViolenceLevel;
   cursingLevel: CursingLevel;
   romanceSubplots: boolean;
@@ -1073,6 +1165,11 @@ export interface Settings {
   flankingAdvantage: boolean;
   /** When true, skip post-commit sentence reveal and show full GM prose immediately. */
   preferFullResponse?: boolean;
+  /**
+   * When true, show Pack 12 opening quick-response chip banks (name/look/kit/location).
+   * Default false — free-text opening; player types in the box.
+   */
+  fastSetupChips?: boolean;
 }
 
 export const DEFAULT_TURN_FRAME: TurnFrameTheme = {

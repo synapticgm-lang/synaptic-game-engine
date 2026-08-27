@@ -20,8 +20,8 @@ import { checkReceiptLivenessGates } from './evalHarness';
 import type { GameEvent } from './types';
 
 describe('playtest29b — optimise after terminal authority', () => {
-  it('stamp is 2026-08-29b and Mid writer stays OFF', () => {
-    expect(BUILD_STAMP).toBe('2026-08-29b');
+  it('stamp is 2026-08-29c and Mid writer stays OFF', () => {
+    expect(BUILD_STAMP).toBe('2026-08-29c');
     expect(STAGNATION_MID_WRITER_ENABLED).toBe(false);
   });
 

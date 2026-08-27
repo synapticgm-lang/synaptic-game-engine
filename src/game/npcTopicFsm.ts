@@ -12,15 +12,24 @@ function npcKey(name: string): string {
 }
 
 function extractNpcFromInput(input: string, state: GameState): string | null {
-  const m = input.match(/(?:talk to|speak with|ask|greet)\s+([A-Z][a-z]+(?:\s+[A-Z][a-z]+)?)/);
+  const m = input.match(/(?:talk to|speak with|ask|greet|listen to|press)\s+([A-Z][a-z]+(?:\s+[A-Z][a-z]+)?)/);
   if (m) return m[1].trim();
   const present = state.sceneFacts?.present ?? [];
+  // 29c — Listen / Press / Wait dialogue pads bind to the sole present NPC
   if (present.length === 1) return present[0];
+  if (present.length > 0 && /\b(listen|press|wait|ask|talk)\b/i.test(input)) {
+    return present[0];
+  }
   return null;
 }
 
 function topicKey(input: string): string {
   const intent = canonicalizeIntent(input, 0);
+  const lower = (input || '').toLowerCase();
+  // 29c — collapse Listen/Press/Wait dialogue purgatory into one basin
+  if (/\b(listen|press for|wait and watch|wait)\b/.test(lower)) {
+    return `dialogue:${intent.target || 'general'}`.slice(0, 48);
+  }
   return `${intent.action}:${intent.target || 'general'}`.slice(0, 48);
 }
 
@@ -73,10 +82,10 @@ export function formatNpcTopicMandate(
   return `NPC TOPIC EXHAUSTED (${npc} / ${topic}): Do not repeat this dialogue basin — advance quest stage, introduce new fact, or end the conversation with consequence.`;
 }
 
-/** After 3+ topics with same NPC, mandate stage advance. */
+/** After 2+ dialogue-basin topics with same NPC, mandate stage advance (29c tighter). */
 export function shouldForceNpcStageAdvance(state: GameState, npc: string): boolean {
   const used = state.arcDirector?.npcTopics?.[npcKey(npc)] ?? [];
-  return used.length >= 3;
+  return used.length >= 2;
 }
 
 /** B022–B023 — full topic exhaustion → quest stage advance or close branch. */

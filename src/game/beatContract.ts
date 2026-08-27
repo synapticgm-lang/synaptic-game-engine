@@ -179,10 +179,25 @@ const CONTRACTS: BeatContract[] = [
 
 export function resolveBiblePrefix(state: GameState): string {
   const id = (state.campaignBibleId ?? '').toLowerCase();
-  if (id.includes('summoned') || id === 'summoned-pact') return 'summoned-pact';
-  if (id.includes('cursed') || id.includes('keep')) return 'cursed-keep';
+  if (id.includes('summoned') || id === 'summoned-pact' || id.includes('hero-awakening')) {
+    return 'summoned-pact';
+  }
+  // Shattered Coast is DnD but must NOT inherit Keep Wraith contracts as identity —
+  // still use cursed-keep beat ids for liveness; drought table is bible-aware separately.
+  if (id.includes('cursed') || id.includes('keep') || id.includes('shattered') || id.includes('coast')) {
+    return 'cursed-keep';
+  }
   if (id.includes('cape') || id.includes('vigil') || id.includes('salt-road')) return 'cape-district-vigil';
-  if (id.includes('thornferry') || id.includes('pyoa')) return 'thornferry-road';
+  if (
+    id.includes('thornferry') ||
+    id.includes('vesper') ||
+    id.includes('pyoa') ||
+    id.includes('cipher') ||
+    id.includes('nocturne') ||
+    id.includes('giltwood')
+  ) {
+    return 'thornferry-road';
+  }
   // Engine-mode fallback when bible unset
   const mode = state.engineMode;
   if (mode === 'litrpg') return 'summoned-pact';

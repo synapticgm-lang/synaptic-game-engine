@@ -3,7 +3,7 @@
  * Committed beat/effects hash is sealed before GM; GM fail uses local templates.
  */
 
-import { scrubProseControlTags } from './statusFirewall';
+import { scrubProseControlTags, applyStatusFirewall } from './statusFirewall';
 import type { GameState } from './types';
 import type { ArcDirectorResult } from './arcDirector';
 import { contractById } from './beatContract';
@@ -137,8 +137,11 @@ export function applyRenderFallback(
   reason: RenderFallbackReason
 ): { prose: string; systemLog: string[] } {
   const prose = renderDeterministicFallback(manifest, state);
+  // 29c — no player-facing "(beat recovered; fail)" chrome
   return {
-    prose: scrubProseControlTags(`${prose} (beat recovered; ${reason})`),
-    systemLog: [`Deterministic fallback applied (${reason}) — ledger preserved`],
+    prose: scrubProseControlTags(prose),
+    systemLog: applyStatusFirewall([
+      `Deterministic fallback applied (${reason}) — ledger preserved`,
+    ]).lines,
   };
 }

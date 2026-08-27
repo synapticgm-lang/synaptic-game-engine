@@ -21,6 +21,9 @@ const DENIED_TAG_PATTERNS: RegExp[] = [
   /\bSEALED MANIFEST\b/gi,
   /---\s*ARC DIRECTOR[\s\S]*?---/gi,
   /\[ARC RECEIPTS\][^\n]*/gi,
+  // 29c — empty-GM chrome must not dump recovery tags into story
+  /\(\s*beat recovered\s*;\s*[^)]+\)/gi,
+  /\bbeat recovered\b/gi,
 ];
 
 const SAFE_FALLBACK_LINE = 'Beat resolved — continuing from committed state.';

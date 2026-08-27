@@ -37,9 +37,10 @@ import {
   lockPyoaBranchOnCrisis,
   exhaustDelayPads,
 } from './pyoaBranchLedger';
-import { countPlayerIntentStreak } from './beatFingerprint';
+import { countPlayerIntentStreak, countLoiterFamilyStreak } from './beatFingerprint';
 import { pickStatusVoiceLine } from './voiceCadenceSystem';
 import { hasDurableDeltaByT12, forceFreeT12DurableDelta } from './freeT12Hook';
+import { ensureOpeningNpcPinned, formatOpeningPinMandate } from './openingPin';
 
 export interface ArcDirectorState {
   committedBeatIds?: string[];
@@ -78,10 +79,45 @@ function committedSet(state: GameState): Set<string> {
   return new Set(state.arcDirector?.committedBeatIds ?? []);
 }
 
+/** 29c — bible-aware drought tables (no Keep Wraith on Shattered Coast). */
+export function droughtSkirmishTable(state: GameState): string[] {
+  const id = (state.campaignBibleId ?? '').toLowerCase();
+  if (id.includes('shattered') || id.includes('coast') || id.includes('saltmar')) {
+    return ['Saltmar Raider', 'Coastal Wight', 'Brine Scout', 'Cliff Cutpurse'];
+  }
+  if (id.includes('cursed') || (id.includes('keep') && !id.includes('salt'))) {
+    return ['Keep Wraith', 'Crypt Shade', 'Gate Haunt', 'Chapel Shade'];
+  }
+  if (state.engineMode === 'litrpg' || id.includes('hero') || id.includes('summoned') || id.includes('pact')) {
+    return [
+      'Pact-Hunter Skirmisher',
+      'Void-Touched Scavenger',
+      'Wardline Bandit',
+      'Calamity Remnant',
+    ];
+  }
+  if (state.engineMode === 'dnd') {
+    return ['Road Bandit', 'Hired Blade', 'Shadow Cutthroat', 'Wilds Stalker'];
+  }
+  return ['Road Bandit', 'Hired Blade'];
+}
+
 function hubSkirmishEncounter(state: GameState): ActiveEncounter {
   const lvl = state.character?.level ?? 1;
   const hp = 12 + lvl * 4;
-  const name = state.engineMode === 'litrpg' ? 'Pact-Hunter Skirmisher' : 'Keep Wraith';
+  const table = droughtSkirmishTable(state);
+  const clearCount = (state.stateTxLog ?? []).filter(
+    (t) => /Encounter cleared|Encounter:/i.test(t.summary)
+  ).length;
+  // Rotate by clears+turn; skip names still on re-engage cooldown
+  let name = table[(clearCount + state.turn) % table.length]!;
+  for (let i = 0; i < table.length; i++) {
+    const candidate = table[(clearCount + state.turn + i) % table.length]!;
+    if (!isEncounterOnCooldown(state, candidate)) {
+      name = candidate;
+      break;
+    }
+  }
   return initEncounterTerminal(
     {
       name,
@@ -266,11 +302,15 @@ export function runArcDirectorBeforeGm(
   playerInput: string
 ): ArcDirectorResult {
   let working = ensureRunManifest(state);
+  working = ensureOpeningNpcPinned(working);
   const xpAwards: Array<{ amount: number; reason: string }> = [];
   const systemReceipts: string[] = [];
   const mandates: string[] = [];
   let beatCommitted = false;
   let beatId: string | undefined;
+
+  const openPin = formatOpeningPinMandate(working);
+  if (openPin) mandates.push(openPin);
 
   // 29a — tick / force-clear active encounter before new beat commits
   if (working.activeEncounter) {
@@ -343,6 +383,7 @@ export function runArcDirectorBeforeGm(
   const committed = committedSet(working);
   const turnsSinceCombat = working.arcDirector?.turnsSinceCombatReceipt ?? working.turn;
   const intentStreak = countPlayerIntentStreak(working);
+  const loiterStreak = countLoiterFamilyStreak(working);
 
   let contract = selectDueBeat(working, committed);
   // 29b — Free T12 durable delta (runtime, not eval-only)
@@ -357,16 +398,24 @@ export function runArcDirectorBeforeGm(
       };
     }
   }
-  // 29b — hard interrupt when same-action streak ≥5
-  if (intentStreak.count >= 5 && intentStreak.key !== 'empty' && !working.activeEncounter) {
+  // 29b/29c — hard interrupt: same-action streak ≥5 OR loiter family (travel ping-pong / Wait) ≥4
+  const forceLoiterInterrupt =
+    (intentStreak.count >= 5 && intentStreak.key !== 'empty') ||
+    (loiterStreak.count >= 4 && loiterStreak.key === 'loiter');
+  if (forceLoiterInterrupt && !working.activeEncounter) {
     const interrupt =
       forceLivenessBeat(working, committed) ??
-      forcedEncounterBeat(working, turnsSinceCombat, committed) ??
-      forceFreeT12DurableDelta(working, committed);
+      forcedEncounterBeat(working, Math.max(turnsSinceCombat, 15), committed) ??
+      forceFreeT12DurableDelta(working, committed) ??
+      (working.engineMode === 'rpg'
+        ? contractById('rpg-beat-leverage') ?? selectDueBeat(working, committed)
+        : working.engineMode === 'pyoa'
+          ? contractById('pyoa-beat-crisis') ?? selectDueBeat(working, committed)
+          : null);
     if (interrupt) {
       contract = interrupt;
       mandates.push(
-        `STREAK INTERRUPT (${intentStreak.key} ×${intentStreak.count}): Force consequence beat — no stall clone.`
+        `LOITER INTERRUPT (${intentStreak.key}×${intentStreak.count} / loiter×${loiterStreak.count}): Force consequence beat — no hub ping-pong.`
       );
     }
   }

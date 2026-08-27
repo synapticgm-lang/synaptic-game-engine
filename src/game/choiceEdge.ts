@@ -175,11 +175,23 @@ export function enumerateLegalEdges(state: GameState): ChoiceEdge[] {
   // Drop delay pads once PYOA branch locked
   if (state.engineMode === 'pyoa' && isPyoaBranchLocked(state)) {
     for (let i = edges.length - 1; i >= 0; i--) {
-      if (/buy time|call for help/i.test(edges[i].label)) edges.splice(i, 1);
+      if (/buy time|call for help|wait and watch/i.test(edges[i].label)) edges.splice(i, 1);
     }
+    edges.push({
+      id: 'pyoa-locked-consequence',
+      label: 'Face the locked consequence',
+      kind: 'branch',
+      risk: 'high',
+    });
   }
 
-  edges.push({ id: 'wait', label: 'Wait and watch', kind: 'wait', risk: 'low' });
+  // 29c — drop Wait under loiter / when RPG leverage is due
+  const skipWait =
+    (state.engineMode === 'pyoa' && isPyoaBranchLocked(state)) ||
+    (state.arcDirector?.lastMandate ?? '').includes('LOITER INTERRUPT');
+  if (!skipWait) {
+    edges.push({ id: 'wait', label: 'Wait and watch', kind: 'wait', risk: 'low' });
+  }
   return dedupeEdges(edges);
 }
 

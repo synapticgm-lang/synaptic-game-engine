@@ -1,5 +1,6 @@
 import type { GameState, SceneFacts } from './types.ts';
 import { applyFactLocks } from './factLocks.ts';
+import { applySearchContinuityToFacts } from './searchContinuity.ts';
 
 const EMPTY_STREET =
   /\b(eerily silent|unnervingly quiet|empty (?:street|buildings|road)|no one (?:is )?(?:here|around|responds)|deserted|abandoned street|world feels frozen|holding its breath)\b/i;
@@ -140,6 +141,8 @@ export function mergeSceneFacts(prev: SceneFacts | undefined, next: SceneFacts):
     weather: next.weather !== 'unknown' ? next.weather : prev.weather,
     indoor: next.indoor !== undefined ? next.indoor : prev.indoor,
     tension: next.tension !== 'unknown' ? next.tension : prev.tension,
+    searchedEmpty: Array.from(new Set([...(prev.searchedEmpty ?? []), ...(next.searchedEmpty ?? [])])),
+    emptyContainers: Array.from(new Set([...(prev.emptyContainers ?? []), ...(next.emptyContainers ?? [])])),
   };
 }
 
@@ -237,17 +240,31 @@ export function rewriteContinuityBreak(
 export function applyCommittedNarrative(
   state: GameState,
   narrative: string,
-  turn: number
+  turn: number,
+  playerInput?: string
 ): SceneFacts {
   const extracted = extractSceneFacts(narrative, state.sceneFacts, turn);
+  let merged: SceneFacts;
   if (state.sceneFacts?.crowd === 'present' && extracted.crowd === 'none' && !TIME_PASSED.test(narrative)) {
-    return {
+    merged = {
       ...mergeSceneFacts(state.sceneFacts, extracted),
       crowd: 'present',
       noise: state.sceneFacts.noise === 'shouting' ? 'shouting' : extracted.noise,
       lastBeat: state.sceneFacts.lastBeat,
       updatedTurn: turn,
     };
+  } else {
+    merged = mergeSceneFacts(state.sceneFacts, extracted);
   }
-  return mergeSceneFacts(state.sceneFacts, extracted);
+  if (playerInput) {
+    const withSearch = applySearchContinuityToFacts(
+      merged,
+      playerInput,
+      narrative,
+      turn,
+      state.currentLocation ?? state.locationSheet?.name
+    );
+    if (withSearch) return withSearch;
+  }
+  return merged;
 }

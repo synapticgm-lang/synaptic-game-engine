@@ -46,6 +46,20 @@ export function recordPyoaBranchChoice(state: GameState, playerInput: string): G
       branchClosed: true,
       committedPaths: [...(ledger.committedPaths ?? []), path, 'locked:millstone-commit'].slice(-24),
     };
+  } else if (/\b(risky fork|face the crisis|trust silas|leave silas|smuggler route)\b/.test(lower)) {
+    // 29c — crisis fork picks lock a real mutually exclusive branch
+    const locked = /\bleave silas\b/.test(lower)
+      ? 'solo-road'
+      : /\btrust silas|smuggler\b/.test(lower)
+        ? 'ally-path'
+        : 'help-overseer';
+    ledger = {
+      ...ledger,
+      activeBranch: locked === 'solo-road' ? 'solo-road' : locked === 'ally-path' ? 'ally-path' : ledger.activeBranch,
+      branchLocked: ledger.branchLocked || locked,
+      branchClosed: true,
+      committedPaths: [...(ledger.committedPaths ?? []), `fork:${locked}`, `locked:${locked}`].slice(-24),
+    };
   } else if (/\bbetray\b/.test(lower)) {
     ledger = {
       ...ledger,
@@ -125,18 +139,20 @@ export function lockPyoaBranchOnCrisis(state: GameState): GameState {
   return { ...state, pyoaBranchLedger: ledger };
 }
 
-/** Exhaust Buy time / Call for help into forced fork (29a). */
+/** Exhaust Buy time / Call for help / Wait / Inspect into forced fork (29a/29c). */
 export function exhaustDelayPads(state: GameState, playerInput: string): GameState {
   if (state.engineMode !== 'pyoa') return state;
   const lower = (playerInput || '').toLowerCase();
-  if (!/\b(buy time|call for help|wait)\b/.test(lower)) return state;
+  if (!/\b(buy time|call for help|wait|inspect|examine|study)\b/.test(lower)) return state;
   let ledger = state.pyoaBranchLedger ?? initPyoaBranchLedger();
   const delays = (ledger.committedPaths ?? []).filter((p) => p.startsWith('delay:')).length + 1;
   ledger = {
     ...ledger,
     committedPaths: [...(ledger.committedPaths ?? []), `delay:${delays}`].slice(-24),
   };
-  if (delays >= 3 && !ledger.branchLocked) {
+  // 29c — lock faster on Wait/Inspect stall (2) vs Buy time (3)
+  const threshold = /\b(wait|inspect|examine|study)\b/.test(lower) ? 2 : 3;
+  if (delays >= threshold && !ledger.branchLocked) {
     ledger = {
       ...ledger,
       branchLocked: 'help-overseer',

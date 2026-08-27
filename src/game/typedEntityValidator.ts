@@ -235,8 +235,33 @@ export function validateChoiceReference(
 }
 
 /**
+ * Living speakers only — never kit / inventory display names.
+ * 29c: kit→pronoun scrub (clothes / Worn Iron / Crew Token / Coat) was Free=NO root cause.
+ */
+function speakerPreferred(context: TypedEntityContext): string | undefined {
+  return context.encounterName || context.presentNpcs[0] || context.lastSpeaker || undefined;
+}
+
+function isKitLikeName(name: string | undefined, context: TypedEntityContext): boolean {
+  if (!name) return true;
+  const lower = name.toLowerCase();
+  if (FORBIDDEN_SCRUB_REPLACEMENTS.includes(lower as never)) return true;
+  if (context.inventoryItems.some((i) => i.toLowerCase() === lower)) return true;
+  // Starter-kit / garment patterns that must never replace pronouns
+  if (
+    /\b(clothes|coat|cloak|scarf|token|shortsword|sword|dagger|knife|bag|pack|phone|keys|headphones|leatherman|charter|blessing)\b/i.test(
+      lower
+    )
+  ) {
+    return true;
+  }
+  return false;
+}
+
+/**
  * Rewrite prose to replace invalid references with explicit nouns.
  * This is the fallback when regeneration would be too expensive.
+ * 29c: NEVER map they/them/their (or env nouns) onto inventory kit names.
  */
 export function rewriteInvalidReferences(
   prose: string,
@@ -244,41 +269,33 @@ export function rewriteInvalidReferences(
   report: InvalidReferenceReport
 ): string {
   let rewritten = prose;
-  const preferred =
-    context.encounterName ||
-    context.presentNpcs[0] ||
-    context.lastSpeaker ||
-    context.inventoryItems[0] ||
-    context.locationName;
+  const speaker = speakerPreferred(context);
+  const place = context.locationName;
 
-  // Prefer canonical names — never introduce forbidden generics
-  if (report.themCount > 0 && preferred) {
-    rewritten = rewritten.replace(/\bthey\b/gi, preferred);
-    rewritten = rewritten.replace(/\bthem\b/gi, preferred);
-    rewritten = rewritten.replace(/\btheir\b/gi, `${preferred}'s`);
+  // 29c — do NOT blind-replace they/them/their. Kit fallback destroyed English
+  // (Crew Token're / clothes-as-NPC). Leave pronouns; retry mandate names speakers.
+  void report.themCount;
+
+  if (report.thisPlaceCount > 0 && place && !isKitLikeName(place, context)) {
+    rewritten = rewritten.replace(/\bthis place\b/gi, place);
+    rewritten = rewritten.replace(/\bthe place\b/gi, place);
   }
 
-  if (report.thisPlaceCount > 0 && context.locationName) {
-    rewritten = rewritten.replace(/\bthis place\b/gi, context.locationName);
-    rewritten = rewritten.replace(/\bthe place\b/gi, context.locationName);
+  if (report.strangerCount > 0 && speaker && !isKitLikeName(speaker, context)) {
+    rewritten = rewritten.replace(/\bthe stranger\b/gi, speaker);
+    rewritten = rewritten.replace(/\ba stranger\b/gi, speaker);
+    rewritten = rewritten.replace(/\bthe figure\b/gi, speaker);
+    rewritten = rewritten.replace(/\ba figure\b/gi, speaker);
   }
 
-  if (report.strangerCount > 0) {
-    const npc = context.encounterName || context.presentNpcs[0] || preferred;
-    if (npc && !FORBIDDEN_SCRUB_REPLACEMENTS.includes(npc.toLowerCase() as never)) {
-      rewritten = rewritten.replace(/\bthe stranger\b/gi, npc);
-      rewritten = rewritten.replace(/\ba stranger\b/gi, npc);
-      rewritten = rewritten.replace(/\bthe figure\b/gi, npc);
-      rewritten = rewritten.replace(/\ba figure\b/gi, npc);
-    }
+  // 29a/29c — collateral tokens → speaker or place only (never kit)
+  if (speaker && !isKitLikeName(speaker, context)) {
+    rewritten = rewritten.replace(/\bthe mark\b/gi, speaker);
+    rewritten = rewritten.replace(/\bthe panel\b/gi, speaker);
   }
-
-  // 29a — revert scrub collateral tokens when we have a bound entity
-  if (preferred) {
-    rewritten = rewritten.replace(/\bthe mark\b/gi, preferred);
-    rewritten = rewritten.replace(/\ba nearby building\b/gi, context.locationName || preferred);
-    rewritten = rewritten.replace(/\bthe nearby building\b/gi, context.locationName || preferred);
-    rewritten = rewritten.replace(/\bthe panel\b/gi, preferred);
+  if (place && !isKitLikeName(place, context)) {
+    rewritten = rewritten.replace(/\ba nearby building\b/gi, place);
+    rewritten = rewritten.replace(/\bthe nearby building\b/gi, place);
   }
 
   return rewritten;

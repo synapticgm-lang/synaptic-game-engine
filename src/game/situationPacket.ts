@@ -266,6 +266,12 @@ export function formatSceneSnapshotForPrompt(state: GameState): string {
       'STAGNATION INTERRUPT: The player is looping. Advance the world — do not answer with the same stall dialogue.'
     );
   }
+  const pinned = state.openingEstablishment?.pinnedNpcNames ?? [];
+  if (pinned.length && (state.turn ?? 0) <= 20 && !alone) {
+    lines.push(
+      `OPENING PIN: ${pinned.join(', ')} stay present and consequential — do not forget the opening offer or replace them with stranger/kit nouns.`
+    );
+  }
   if (state.systemPersonality === 'dry-wit' || state.gmPersonality === 'dry-wit') {
     lines.push(
       'VOICE CHECK (Sarcastic Patch / Dry Wit): At most one dry aside when STATUS changes; never mock the player; numbers stay literal.'

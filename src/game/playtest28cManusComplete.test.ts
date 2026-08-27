@@ -36,7 +36,7 @@ describe('playtest28c — Manus complete ranked backlog', () => {
     expect(manifest.beatEffectsHash).toMatch(/^[0-9a-f]{8}$/);
     expect(manifest.requiredFacts.some((f) => /Location:/.test(f))).toBe(true);
     const fallback = applyRenderFallback(manifest, arc.state, 'timeout');
-    expect(fallback.prose).toMatch(/beat recovered|timeout/i);
+    expect(fallback.prose).not.toMatch(/beat recovered/i);
     expect(fallback.prose).not.toMatch(/RenderFallbackUsed/i);
     expect(fallback.prose.length).toBeGreaterThan(40);
   });

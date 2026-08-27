@@ -17,6 +17,16 @@ import { formatTutorialBeatMandate } from './tutorialBeats.ts';
 import { formatLocalityForPrompt } from './locality.ts';
 import { formatHiddenCulpritRail } from './mysteryCulprit.ts';
 import { formatInteriorExploreAuthority, listInteriorExitsFromHere } from './mapEngine.ts';
+import { formatOutdoorHubsForPrompt } from './outdoorHubs.ts';
+import { formatHubArrivalForPrompt } from './hubEncounters.ts';
+import { emptySearchAuthorityLine, weaponAuthorityLine } from './searchContinuity.ts';
+import { countPlayerIntentStreak } from './beatFingerprint.ts';
+import {
+  checkProgressGovernor,
+  hasActiveObjectives,
+  initProgressGovernor,
+} from './forwardProgressGovernor.ts';
+import { buildGovernanceSnapshotLines } from './qualityGovernance.ts';
 
 export function effectivePowerScaling(state: GameState): PowerScaling {
   return state.powerScaling ?? 'balanced';
@@ -196,6 +206,42 @@ export function formatSceneSnapshotForPrompt(state: GameState): string {
     `- Power Scaling: ${effectivePowerScaling(state)}`,
     `- Map: ${scale}${danger ? ` | ${danger}` : ''}`,
   ];
+  const mainQuest = (state.quests ?? []).find(
+    (q) => (q.status === 'active' || q.status === 'available') && q.type === 'main'
+  ) ?? (state.quests ?? []).find((q) => q.status === 'active' || q.status === 'available');
+  if (mainQuest?.name) {
+    const nextObj =
+      (mainQuest.objectives ?? []).find((o) => !o.completed)?.description
+      || mainQuest.description
+      || '';
+    lines.push(
+      `- Quest focus: ${mainQuest.name}${nextObj ? ` — ${String(nextObj).slice(0, 120)}` : ''}`
+    );
+  }
+  const streak = countPlayerIntentStreak(state);
+  if (streak.count >= 3 && streak.key !== 'empty') {
+    lines.push(
+      `- Stagnation: player repeated "${streak.key}" ×${streak.count} — FORCE a concrete interrupt this beat (arrival, danger, offer change, or quest-relevant beat). Do not clone prior paragraphs.`
+    );
+    if (streak.count >= 5) {
+      lines.push(
+        `- Stagnation HARD: ${streak.count} identical intents — you MUST change location pressure or introduce a new named person/event; answering with the same stall dialogue is forbidden.`
+      );
+    }
+  }
+  
+  // P0.0: Forward-Progress Governor
+  const governor = state.progressGovernor ?? initProgressGovernor();
+  const activeObjective = hasActiveObjectives(state);
+  const progressCheck = checkProgressGovernor(state, governor, activeObjective);
+  if (progressCheck.needsProgress && progressCheck.mandate) {
+    lines.push(`- ${progressCheck.mandate}`);
+  }
+
+  for (const mandate of buildGovernanceSnapshotLines(state)) {
+    if (mandate.trim()) lines.push(`- ${mandate.replace(/^-\s*/, '')}`);
+  }
+  
   if (timeLabel) lines.push(`- Time of Day: ${timeLabel}`);
   if (weatherLabel) lines.push(`- Weather: ${weatherLabel}`);
   if (locationTypeLabel) lines.push(`- Location Type: ${locationTypeLabel}`);
@@ -203,28 +249,34 @@ export function formatSceneSnapshotForPrompt(state: GameState): string {
   if (noiseLabel) lines.push(`- Noise: ${noiseLabel}`);
   if (state.sceneFacts?.lastBeat) lines.push(`- Last beat: ${state.sceneFacts.lastBeat}`);
   if (openAsks.length) lines.push(`- Open asks: ${openAsks.join('; ')}`);
-  const emptyKeys = [
-    ...(state.sceneFacts?.searchedEmpty ?? []),
-    ...(state.sceneFacts?.emptyContainers ?? []),
-  ];
-  if (emptyKeys.length) {
-    lines.push(
-      `- EMPTY SEARCHED (AUTHORITY): ${Array.from(new Set(emptyKeys)).join(', ')} — already searched and empty. Re-search stays empty unless the player brings a new circumstance (light, break floor, different room). Do not invent loot.`
-    );
-  }
-  const invNames = (state.inventory ?? []).map((i) => i.name);
-  const hasWeapon = invNames.some((n) =>
-    /\b(knife|blade|sword|dagger|axe|club|bat|spear|staff|pistol|gun|bow|mace|weapon)\b/i.test(n)
-  );
-  if (!hasWeapon) {
-    lines.push(
-      '- WEAPON AUTHORITY: Player has no declared weapon (sealed bag contents undeclared). Narrate unarmed / fists / improvised debris only — never invent a dagger, sword, or knife.'
-    );
-  }
+  const emptySearch = emptySearchAuthorityLine(state.sceneFacts);
+  if (emptySearch) lines.push(`- ${emptySearch}`);
+  lines.push(`- ${weaponAuthorityLine(state)}`);
   lines.push('');
   lines.push(
     'AUTHORITY: Narrate richly — descriptive, engaging language and narrative flair are required. Atmosphere (smell, rust, cadence, metaphor, NPC mannerism) is free. Do not contradict these facts or the ledger. Do not invent items, doors, named people, or numeric results absent from this snapshot.'
   );
+  if (mainQuest?.name) {
+    lines.push(
+      'QUEST PRESSURE: Unless mid-combat or mid-opening covers, include one concrete reminder or option tied to Quest focus this beat.'
+    );
+  }
+  if (streak.count >= 3) {
+    lines.push(
+      'STAGNATION INTERRUPT: The player is looping. Advance the world — do not answer with the same stall dialogue.'
+    );
+  }
+  const pinned = state.openingEstablishment?.pinnedNpcNames ?? [];
+  if (pinned.length && (state.turn ?? 0) <= 20 && !alone) {
+    lines.push(
+      `OPENING PIN: ${pinned.join(', ')} stay present and consequential — do not forget the opening offer or replace them with stranger/kit nouns.`
+    );
+  }
+  if (state.systemPersonality === 'dry-wit' || state.gmPersonality === 'dry-wit') {
+    lines.push(
+      'VOICE CHECK (Sarcastic Patch / Dry Wit): At most one dry aside when STATUS changes; never mock the player; numbers stay literal.'
+    );
+  }
   if (!alone || state.activeEncounter) {
     lines.push(
       'SPEAKER CONTINUITY: Named people in Presence who just spoke or attended stay awake and present this beat unless Time/Location changes. Do not open by treating them as a cot-bound sleeper who never stirs.'
@@ -280,6 +332,8 @@ export function formatSituationForPrompt(state: GameState): string {
     previousLine,
     placeRegistry ? `PLACE REGISTRY (authority for name/tier/arc):\n${placeRegistry}` : '',
     ...simulationist,
+    formatOutdoorHubsForPrompt(state),
+    formatHubArrivalForPrompt(state),
     `Dungeon: ${s.dungeon}`,
     interiorExplore || '',
     'NPC memories (how they were treated sticks — no karma meter):',
@@ -293,7 +347,6 @@ export function formatSituationForPrompt(state: GameState): string {
       ? 'ALONE ARRIVAL: Empty ruin — no handlers or "people who saw you arrive." Do not invent voices outside or watchers at the wall.'
       : '',
     'RAILS: SNAPSHOT + ledger are fact authority. Narrate richly; do not contradict them. Do not invent named threats, loot, NPCs, doors, or interactables absent above. Do not invent a dungeon danger tier outdoors. Interior floor-plan Exits / EXPLORE AUTHORITY override "one room / only a gap" improvisation.',
-    'LOOT AUTHORITY (BINDING): Only items from ledger / sceneFacts.props / containers / HIDDEN ROOM LEDGER may be found. Generic debris (splinters, ash, rubble) = OK to describe. Named loot (lockets, datapads, crystals, weapons) MUST exist in Inventory, containers, locationSheet.interactables, or loose floor items before narration. NEVER invent named items into the scene.',
     'HIDDEN QUESTS: Never spoil quests with status hidden or revealed=false.',
     formatWorldLedgerBlock(state.worldLedger),
   ];

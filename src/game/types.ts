@@ -381,6 +381,8 @@ export interface OpeningEstablishment {
   pickedHookFallback?: string;
   /** True when this run’s opener has no summoners on page one. */
   aloneArrival?: boolean;
+  /** 29c — opening NPC names pinned into scene presence for early turns. */
+  pinnedNpcNames?: string[];
 }
 
 export interface GameState {

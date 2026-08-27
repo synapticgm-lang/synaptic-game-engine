@@ -9,12 +9,6 @@ import type {
   TurnSummary,
 } from './types.ts';
 import { isOfferOnlyUnansweredBeat } from './offerOnlyAsk.ts';
-import {
-  semanticSearchMemories,
-  hybridSearchMemories,
-  areEmbeddingsAvailable,
-  embedTurnSummary,
-} from './semanticMemory.ts';
 
 const PLAYER_PIN_LIMIT = 10;
 /** Soft token budget for memory middle section (~4 chars/token). */
@@ -473,14 +467,20 @@ export async function retrieveMemoriesSmartly(
     return [];
   }
   
-  // Use semantic search if available
-  if (areEmbeddingsAvailable()) {
-    try {
-      return await hybridSearchMemories(query, summaries, limit);
-    } catch (error) {
-      console.warn('[Memory] Semantic search failed, falling back to keyword:', error);
-      // Fall through to keyword search
+  // Try semantic search if available (dynamic import to avoid initialization issues)
+  try {
+    const { areEmbeddingsAvailable, hybridSearchMemories } = await import('./semanticMemory');
+    if (areEmbeddingsAvailable()) {
+      try {
+        return await hybridSearchMemories(query, summaries, limit);
+      } catch (error) {
+        console.warn('[Memory] Semantic search failed, falling back to keyword:', error);
+        // Fall through to keyword search
+      }
     }
+  } catch (importError) {
+    // Semantic memory module not available, fall through to keyword
+    console.warn('[Memory] Semantic memory module not available, using keyword search');
   }
   
   // Keyword fallback
@@ -524,7 +524,7 @@ export function formatCampaignMemoryForPrompt(
     .join('\n');
 
   // Compact prompt memory: recent beats + keyword retrieve + one arc/chapter line.
-  // Keyword-only on the hosted prompt path (no embeddings / extra LLM).
+  // Do not dump last-15 full turn summaries every turn (Pack 12 helpers still used elsewhere).
   let hierarchicalMemory = '';
 
   const recentTurns = (memory.turnSummaries ?? []).slice(-4);
@@ -623,14 +623,19 @@ export function advanceCampaignMemory(
     const latest = memory.turnSummaries[memory.turnSummaries.length - 1];
     if (latest && !latest.embedding) {
       // Fire-and-forget embedding (don't block turn commit)
-      embedTurnSummary(latest).then(embedded => {
-        // Store embedded version (will be persisted on next save)
-        const idx = memory.turnSummaries!.findIndex(t => t.id === embedded.id);
-        if (idx >= 0 && memory.turnSummaries) {
-          memory.turnSummaries[idx] = embedded;
-        }
+      // Dynamic import to avoid initialization issues
+      import('./semanticMemory').then(({ embedTurnSummary }) => {
+        embedTurnSummary(latest).then(embedded => {
+          // Store embedded version (will be persisted on next save)
+          const idx = memory.turnSummaries!.findIndex(t => t.id === embedded.id);
+          if (idx >= 0 && memory.turnSummaries) {
+            memory.turnSummaries[idx] = embedded;
+          }
+        }).catch(err => {
+          console.warn('[Memory] Failed to embed turn summary:', err);
+        });
       }).catch(err => {
-        console.warn('[Memory] Failed to embed turn summary:', err);
+        console.warn('[Memory] Failed to load semantic memory module:', err);
       });
     }
   }

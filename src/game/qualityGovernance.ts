@@ -203,6 +203,7 @@ export function processMetaInput(state: GameState, input: string): {
 export function applyGovernanceToProse(state: GameState, prose: string): {
   prose: string;
   notes: string[];
+  rejectClone?: boolean;
 } {
   const notes: string[] = [];
   const context = extractEntityContext(state);
@@ -211,18 +212,24 @@ export function applyGovernanceToProse(state: GameState, prose: string): {
 
   if (report.shouldRegenerate || report.themCount + report.strangerCount + report.thisPlaceCount > 0) {
     out = rewriteInvalidReferences(out, context, report);
-    if (report.themCount) notes.push(`Entity scrub: them×${report.themCount}`);
+    if (report.themCount) notes.push(`Entity scrub: them×${report.themCount} (pronouns kept — no kit rewrite)`);
     if (report.strangerCount) notes.push(`Entity scrub: stranger×${report.strangerCount}`);
     if (report.thisPlaceCount) notes.push(`Entity scrub: this-place×${report.thisPlaceCount}`);
   }
 
   const novelty = noveltyFromState(state);
   const clone = checkParagraphNovelty(out, novelty, state.turn);
+  let rejectClone = false;
   if (!clone.novel && clone.similarity != null) {
     notes.push(`Novelty: paragraph clone (${(clone.similarity * 100).toFixed(0)}% similar)`);
+    // 29c — opening / early Free window: hard-reject near-verbatim clones
+    if ((state.turn ?? 0) <= 12 && clone.similarity >= 0.85) {
+      rejectClone = true;
+      notes.push('Opening clone reject');
+    }
   }
 
-  return { prose: out, notes };
+  return { prose: out, notes, rejectClone };
 }
 
 /** Choice pad filter (P0.1, P0.3). */

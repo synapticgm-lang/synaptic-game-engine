@@ -90,14 +90,63 @@ export function normalizePlayerIntentKey(input: string): string {
   if (/\blisten\b.*\b(corner|table|bar)\b|\bcorner table\b/.test(s)) return 'listen_corner';
   if (/\bbrowse\b.*\bstall\b|\bnearest stall\b/.test(s)) return 'browse_stall';
   if (/\bwalk away\b|\bgo another direction\b/.test(s)) return 'walk_away';
+  if (/\bchange position\b/.test(s)) return 'change_position';
+  if (/\bwait(?:\s+and\s+watch)?\b|\bstand around\b|\bdo nothing\b/.test(s)) return 'wait_watch';
+  if (/\b(inspect|examine|check|study)\b/.test(s) && !/\bstatus\b/.test(s)) {
+    return `inspect_${s.slice(0, 24).replace(/\W+/g, '_')}`;
+  }
   if (/\bcheck (?:the )?(?:contents of )?your (?:bag|pack|pockets?)\b|\bcheck your bag\b/.test(s)) {
     return 'check_bag';
   }
-  if (/\btravel (?:to|toward|towards)\b/.test(s)) {
-    const m = s.match(/\btravel (?:to|toward|towards)\s+(.+)$/);
+  if (/\btravel (?:to|toward|towards)\b|\bgo to\b|\bhead to\b|\bmove to\b/.test(s)) {
+    const m = s.match(/\b(?:travel (?:to|toward|towards)|go to|head to|move to)\s+(?:the\s+)?(.+)$/);
     return `travel_${(m?.[1] ?? 'hub').slice(0, 24).replace(/\W+/g, '_')}`;
   }
   return s.slice(0, 48);
+}
+
+/** Collapse destination-specific travel/inspect keys into loiter families. */
+export function loiterFamilyKey(intentKey: string): string | null {
+  if (!intentKey || intentKey === 'empty') return null;
+  if (intentKey.startsWith('travel_')) return 'travel';
+  if (intentKey.startsWith('inspect_')) return 'inspect';
+  if (
+    intentKey === 'wait_watch' ||
+    intentKey === 'walk_away' ||
+    intentKey === 'change_position' ||
+    intentKey === 'listen_corner' ||
+    intentKey === 'browse_stall'
+  ) {
+    return intentKey === 'listen_corner' || intentKey === 'browse_stall' ? 'pad' : intentKey;
+  }
+  return null;
+}
+
+/**
+ * 29c — consecutive travel/wait/inspect/change-position intents (hubs may differ).
+ * Catches Ward Rest↔Ashline and Camp↔Waystation triangles that never hit same-key streak≥5.
+ */
+export function countLoiterFamilyStreak(state: {
+  log?: Array<{ role?: string; content?: string }>;
+}): { key: string; count: number } {
+  const log = state.log ?? [];
+  let family = '';
+  let count = 0;
+  for (let i = log.length - 1; i >= 0; i--) {
+    const e = log[i];
+    if (e?.role !== 'player') continue;
+    const raw = normalizePlayerIntentKey(e.content ?? '');
+    const fam = loiterFamilyKey(raw);
+    if (!fam) break;
+    // Any loiter family continues the loiter streak (travel A → travel B still counts)
+    if (!family) {
+      family = 'loiter';
+      count = 1;
+      continue;
+    }
+    count += 1;
+  }
+  return { key: family || 'empty', count };
 }
 
 /** Count consecutive identical intent keys from the end of the player log. */

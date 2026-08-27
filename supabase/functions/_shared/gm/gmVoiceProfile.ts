@@ -282,6 +282,15 @@ const LITRPG_NEW_GAME_IDS: SystemPersonalityId[] = [
 /** Featured Tone shortcut (Launch; not Simple four). */
 const LITRPG_FEATURED_IDS: SystemPersonalityId[] = ['cozy-brutal'];
 
+/** Launch LitRPG System ids (Simple four + Featured Cozy Brutal) — matrix / autoplay. */
+export const LAUNCH_LITRPG_SYSTEM_PERSONALITY_IDS: SystemPersonalityId[] = [
+  ...LITRPG_NEW_GAME_IDS,
+  ...LITRPG_FEATURED_IDS,
+];
+
+/** Launch tabletop / RPG / PYOA narrator ids (Simple four; More styles excluded). */
+export const LAUNCH_GM_PERSONALITY_IDS: GmPersonalityId[] = [...TABLETOP_NEW_GAME_IDS];
+
 export const LITRPG_SYSTEM_PERSONALITIES: GmVoiceProfile[] = LITRPG_NEW_GAME_IDS.map(
   (id) => GM_VOICE_PROFILES.find((p) => p.id === id)!
 );

@@ -105,6 +105,7 @@ import {
   tryHandleQuickResponseButton,
   ensureSealedOpeningBag,
 } from './openingEstablishment';
+import { ensureOpeningNpcPinned, resolveOpeningPinnedNames } from './openingPin';
 import {
   applyOpeningContract,
   ensureStarterLookCharacter,
@@ -4557,11 +4558,46 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
         engineMode === 'litrpg' ? resolveLitrpgSystemPersonality(systemPersonality) : undefined,
     });
     const sealedNewState = ensureSealedOpeningBag(rawNewState, openingPromptsRaw);
+    const pinnedNames = aloneArrival
+      ? []
+      : resolveOpeningPinnedNames(
+          {
+            ...sealedNewState,
+            openingEstablishment: {
+              ...sealedNewState.openingEstablishment!,
+              pickedHook,
+              pickedHookFallback,
+              aloneArrival,
+            },
+          },
+          bible
+        );
+    const pinnedState = ensureOpeningNpcPinned(
+      {
+        ...sealedNewState,
+        openingEstablishment: {
+          ...sealedNewState.openingEstablishment!,
+          pinnedNpcNames: pinnedNames,
+        },
+        sceneFacts: {
+          ...sealedNewState.sceneFacts,
+          present: pinnedNames.length
+            ? [
+                ...(sealedNewState.sceneFacts?.present ?? []).filter(
+                  (p) => !pinnedNames.some((n) => n.toLowerCase() === p.toLowerCase())
+                ),
+                ...pinnedNames,
+              ]
+            : sealedNewState.sceneFacts?.present,
+        },
+      },
+      bible
+    );
     const newState = withUpdatedHookArc(
       ensureCampaignContract(
         {
-          ...sealedNewState,
-          quests: enrichQuests(sealedNewState.quests ?? []),
+          ...pinnedState,
+          quests: enrichQuests(pinnedState.quests ?? []),
           recentBeatFingerprints: [],
           stateTxLog: [],
         },
