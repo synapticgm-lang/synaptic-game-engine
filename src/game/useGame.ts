@@ -3417,6 +3417,9 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
       );
       cleanText = applyLocalityWarden(cleanText, workingState.currentLocation ?? liveCurrent.currentLocation, hasFirearm);
       cleanText = enforcePerspective(cleanText, settingsRef.current, liveCurrent.character.name);
+      // Declared before the prose-warden / harvest block — using it above this line
+      // was `ReferenceError: Cannot access 'nextTurn' before initialization` (client_bug toast).
+      const nextTurn = liveCurrent.turn + 1;
       {
         const dungeon = workingState.activeDungeon ?? liveCurrent.activeDungeon;
         const exits =
@@ -3537,7 +3540,6 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
           })
         : workingState.inventory;
 
-      const nextTurn = liveCurrent.turn + 1;
       let updatedQuests = syncQuestsFromPlay(
         eventsToQuestUpdates(events, workingState.quests ?? [], nextTurn),
         mergedSystemLog,
@@ -4382,6 +4384,9 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
       turnInFlightRef.current = false;
       setBusy(false);
       clearPhaseTimers();
+      // Opening continue / early return used to leave turnPhase at reading/resolving
+      // (timers already fired; finally did not idle). Textarea stayed locked until reload.
+      setTurnPhase((phase) => (phase === 'reading' || phase === 'resolving' ? 'idle' : phase));
     }
   });
 

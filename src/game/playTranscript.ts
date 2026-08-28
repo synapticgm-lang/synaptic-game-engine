@@ -21,19 +21,35 @@ function lastGmStoryProse(state: GameState): string {
   return '';
 }
 
+/** Last committed GM pad — ActionBar must not ignore these when `state.choices` is empty. */
+function lastGmOfferedChoices(state: GameState): string[] {
+  for (let i = (state.log ?? []).length - 1; i >= 0; i--) {
+    const entry = state.log[i];
+    if (entry?.role !== 'gm') continue;
+    const offered = entry.offeredChoices;
+    if (!Array.isArray(offered) || offered.length === 0) continue;
+    return offered.map((c) => String(c ?? '').trim()).filter(Boolean);
+  }
+  return [];
+}
+
 /**
  * Labels the ActionBar will show for this state — post-pipeline pad after
  * sanitize / alone-presence / invented-context filter / pad-to-count.
- * Opening covers use establishment chips only (same as ActionBar).
+ * Opening covers use establishment chips when present; otherwise last GM
+ * `offeredChoices` (fastSetupChips off used to return [] and hide ActionBar).
  */
 export function resolveOfferedChoices(state: GameState): string[] {
   if (isOpeningEstablishmentPending(state)) {
-    return establishmentChoices(state.openingEstablishment?.pending ?? [], state).slice(0, 4);
+    const cover = establishmentChoices(state.openingEstablishment?.pending ?? [], state).slice(0, 4);
+    if (cover.length) return cover;
   }
   const storyProse = lastGmStoryProse(state);
-  const gmChoices = (state.choices ?? [])
+  const fromState = (state.choices ?? [])
     .map((c) => sanitizeChoiceLabel(c))
-    .filter((c) => c && c !== FALLBACK_CHOICE)
+    .filter((c) => c && c !== FALLBACK_CHOICE);
+  const source = fromState.length ? fromState : lastGmOfferedChoices(state).map((c) => sanitizeChoiceLabel(c));
+  const gmChoices = source.filter((c) => c && c !== FALLBACK_CHOICE)
     .filter((c) => !inventsPresenceOnEmptyScene(c, state, storyProse));
 
   const contextFiltered = filterInventedContextChoices(gmChoices, state);

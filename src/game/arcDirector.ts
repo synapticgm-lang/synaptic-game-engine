@@ -50,6 +50,35 @@ import {
   shouldSpawnEncounter,
   checkDrought,
 } from './encounterDensity';
+// WS-2 Wave C: NPC Memory and Lifecycle
+import {
+  selectMemoriesForPacket,
+  buildNpcPacket,
+  type MemorySelection,
+} from './npcMemoryRetrieval';
+import {
+  checkLifecycleTurnover,
+  advanceLifecycleState,
+  type TurnoverCheck,
+} from './npcLifecycleFsm';
+// WS-5 Wave B: PYOA Delayed Consequences
+import {
+  getDueConsequences,
+  deliverConsequence,
+  enforceT150Deadline,
+  type DelayedConsequence,
+} from './pyoaDelayedConsequences';
+// WS-6 Wave C: Content Density and Exhaustion
+import {
+  recordDensityEvent,
+  createDensityEvent,
+  classifyNovelty,
+  markTerminalNode,
+  checkDurableDeltaTiming,
+  type ContentDensityState,
+  type DensityEvent,
+} from './exhaustionCurve';
+import { NoveltyClass } from './contentDensity';
 
 export interface ArcDirectorState {
   committedBeatIds?: string[];
@@ -508,6 +537,44 @@ export function runArcDirectorBeforeGm(
   const intentStreak = countPlayerIntentStreak(working);
   const loiterStreak = countLoiterFamilyStreak(working);
 
+  // WS-2 Wave C: Check NPC lifecycle turnover (before GM)
+  const lifecycles = working.arcDirector?.npcLifecycles ?? [];
+  for (const lifecycle of lifecycles) {
+    const turnoverCheck = checkLifecycleTurnover(lifecycle, working.turn);
+    if (turnoverCheck.shouldAdvance) {
+      const advanced = advanceLifecycleState(lifecycle, turnoverCheck.reason || 'auto');
+      working = {
+        ...working,
+        arcDirector: {
+          ...working.arcDirector,
+          npcLifecycles: (working.arcDirector?.npcLifecycles ?? []).map(l =>
+            l.npcId === lifecycle.npcId ? advanced : l
+          ),
+        },
+      };
+      systemReceipts.push(`NPC Lifecycle: ${lifecycle.npcId} → ${advanced.state}`);
+    }
+  }
+
+  // WS-5 Wave B: Deliver due consequences (before GM)
+  const dueConsequences = getDueConsequences(working);
+  for (const consequence of dueConsequences.slice(0, 1)) {
+    const delivery = deliverConsequence(consequence, working);
+    working = delivery.state;
+    mandates.push(delivery.mandate);
+    systemReceipts.push(...delivery.receipts);
+  }
+
+  // WS-5 Wave B: Check T150 deadline enforcement
+  if (working.engineMode === 'pyoa') {
+    const deadline = enforceT150Deadline(working);
+    if (deadline.enforced) {
+      mandates.push(
+        `T150 DEADLINE: ${deadline.pendingCount} undelivered consequences remain — story must conclude this arc.`
+      );
+    }
+  }
+
   // WS-7 Wave 1: Social crisis selection (P2 priority — after combat, before generic beats)
   let socialCrisisSelected: SocialCrisis | null = null;
   if (!working.activeEncounter) {
@@ -577,6 +644,65 @@ export function runArcDirectorBeforeGm(
     mandates.push(contract.mandate);
     beatId = contract.id;
     beatCommitted = true;
+
+    // WS-6 Wave C: Record density event for exhaustion tracking
+    if (working.arcDirector?.contentDensityState) {
+      const familyId = `${contract.kind}:${contract.id}`;
+      const materialDeltas: import('./contentDensity').MaterialDelta[] = [];
+      
+      // Detect material changes
+      if (contract.spawnEncounter) {
+        materialDeltas.push({
+          dimension: 'OPPOSITION' as import('./contentDensity').MaterialDimension,
+          changed: true,
+          reason: 'New encounter spawned',
+        });
+      }
+      if (contract.questId) {
+        materialDeltas.push({
+          dimension: 'QUEST_STATE' as import('./contentDensity').MaterialDimension,
+          changed: true,
+          reason: 'Quest objective updated',
+        });
+      }
+      if (contract.xpChunk && contract.xpChunk > 0) {
+        materialDeltas.push({
+          dimension: 'REWARD_TYPE' as import('./contentDensity').MaterialDimension,
+          changed: true,
+          reason: 'XP reward',
+        });
+      }
+
+      const densityEvent = createDensityEvent(
+        working.turn,
+        seq,
+        contract.kind === 'encounter' ? 'ENCOUNTER' as import('./contentDensity').BeatType :
+        contract.kind === 'crisis' ? 'CRISIS' as import('./contentDensity').BeatType :
+        contract.kind === 'quest_stage' ? 'QUEST' as import('./contentDensity').BeatType :
+        'SOCIAL' as import('./contentDensity').BeatType,
+        familyId,
+        classifyNovelty(
+          familyId,
+          materialDeltas,
+          working.arcDirector.contentDensityState.familyUsages,
+          working.arcDirector.contentDensityState.terminalNodes
+        ),
+        materialDeltas,
+        working.currentLocation?.name ?? 'unknown',
+        {
+          templateId: contract.id,
+          hasDurableDelta: !!(contract.spawnEncounter || contract.questId || (contract.xpChunk && contract.xpChunk > 0)),
+        }
+      );
+
+      working = {
+        ...working,
+        arcDirector: {
+          ...working.arcDirector,
+          contentDensityState: recordDensityEvent(working.arcDirector.contentDensityState, densityEvent),
+        },
+      };
+    }
 
     if (contract.once) {
       const beatIds = [...(working.arcDirector?.committedBeatIds ?? []), contract.id];

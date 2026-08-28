@@ -29,6 +29,21 @@ import {
 import { buildGovernanceSnapshotLines } from './qualityGovernance';
 import { formatWorldAtlasBlock } from './worldAtlas';
 import { formatWorldMapAuthorityBlock } from './worldMapAuthority';
+// WS-2 Wave C: NPC Memory sections
+import {
+  buildNpcPacket,
+  formatNpcPacketSection,
+} from './npcMemoryRetrieval';
+// WS-5 Wave B: PYOA Branch State
+import {
+  buildDelayedConsequencesSituationSection,
+  buildJournalConsequenceHints,
+} from './pyoaDelayedConsequences';
+// WS-6 Wave C: Spine Map and Exhaustion
+import {
+  formatExhaustionSummary,
+  type ContentDensityState,
+} from './exhaustionCurve';
 
 export function effectivePowerScaling(state: GameState): PowerScaling {
   return state.powerScaling ?? 'balanced';
@@ -338,6 +353,17 @@ export function formatSituationForPrompt(state: GameState): string {
   const alone = state.openingEstablishment?.aloneArrival === true;
   const snapshot = formatSceneSnapshotForPrompt(state);
 
+  // WS-2 Wave C: Build NPC memory packets
+  const presentNpcs = state.sceneFacts?.present?.filter(p => p && !/^(a|an|the|some)\s/i.test(p)) ?? [];
+  const npcPackets = presentNpcs.slice(0, 3).map(npcId => 
+    buildNpcPacket(npcId, state, {
+      includeFullMemories: false,
+      includeObligations: true,
+      includeTopics: true,
+    })
+  );
+  const npcMemoryBlock = npcPackets.map(p => formatNpcPacketSection(p)).join('\n\n');
+
   const npcBlock = (state.npcMemories ?? [])
     .slice(0, 5)
     .map((m) => `${m.npcName}[${m.disposition}]: ${m.facts.slice(-2).join('; ') || '—'}`)
@@ -372,6 +398,16 @@ export function formatSituationForPrompt(state: GameState): string {
       : '';
   const simulationist = formatSimulationistBlocks(state);
   const none = '(none)';
+  // WS-5 Wave B: PYOA delayed consequences section
+  const delayedConsequencesBlock = state.engineMode === 'pyoa' 
+    ? buildDelayedConsequencesSituationSection(state)
+    : '';
+
+  // WS-6 Wave C: Exhaustion summary
+  const exhaustionBlock = state.arcDirector?.contentDensityState
+    ? `EXHAUSTION: ${formatExhaustionSummary(state.arcDirector.contentDensityState)}`
+    : '';
+
   const lines = [
     snapshot,
     '',
@@ -386,6 +422,7 @@ export function formatSituationForPrompt(state: GameState): string {
     formatHubArrivalForPrompt(state),
     `Dungeon: ${s.dungeon}`,
     interiorExplore || '',
+    npcMemoryBlock ? `=== NPC MEMORY PACKETS (WS-2 AUTHORITY) ===\n${npcMemoryBlock}\n===` : '',
     'NPC memories (how they were treated sticks — no karma meter):',
     npcBlock || none,
     'Place-scoped facts (current + last location):',
@@ -396,6 +433,8 @@ export function formatSituationForPrompt(state: GameState): string {
     alone
       ? 'ALONE ARRIVAL: Empty ruin — no handlers or "people who saw you arrive." Do not invent voices outside or watchers at the wall.'
       : '',
+    delayedConsequencesBlock || '',
+    exhaustionBlock || '',
     'RAILS: SNAPSHOT + ledger + WORLD MAP are fact authority. Narrate richly inside listed settlements. Do not invent new cities, towns, shores, or continents. Do not invent named threats, loot, or doors absent above. Quest sites must fit biome. Dungeons open at allowsDungeon sites then close when cleared.',
     'HIDDEN QUESTS: Never spoil quests with status hidden or revealed=false.',
     'PROSE LICENSE: Full artistic freedom on sensory detail, metaphor, pacing, and NPC manner. Descriptive engaging language and narrative flair are required.',

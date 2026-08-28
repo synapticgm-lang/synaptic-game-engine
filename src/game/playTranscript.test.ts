@@ -36,6 +36,69 @@ describe('playTranscript', () => {
     expect(withPad.offeredChoices).toEqual(resolveOfferedChoices(state));
   });
 
+  it('falls back to last GM offeredChoices when opening pending and cover chips are empty', () => {
+    const base = createInitialState('Test Tale', 'litrpg');
+    const offered = [
+      'Examine the damaged building more closely',
+      'Check the contents of your bag',
+      'Inspect the immediate surroundings',
+      'Approach the doorway to Corridor',
+    ];
+    const state = {
+      ...base,
+      choices: [],
+      log: [
+        {
+          id: 'g1',
+          turn: 1,
+          role: 'gm' as const,
+          content:
+            'The damaged building leans over a doorway to a corridor. Your bag sits at your feet. The immediate surroundings are ash.',
+          timestamp: 1,
+          offeredChoices: offered,
+        },
+      ],
+      openingEstablishment: {
+        complete: false,
+        pending: [{ id: 'appearance', kind: 'appearance' as const, question: 'What do you look like?' }],
+        answers: { name: 'Jax' },
+        sceneWritten: true,
+      },
+    };
+    expect(resolveOfferedChoices(state)).toEqual(offered);
+  });
+
+  it('falls back to last GM offeredChoices when opening is complete and state.choices is empty', () => {
+    const base = createInitialState('Test Tale', 'litrpg');
+    const offered = [
+      'Examine the damaged building more closely',
+      'Check the contents of your bag',
+      'Inspect the immediate surroundings',
+    ];
+    const state = {
+      ...base,
+      choices: [],
+      log: [
+        {
+          id: 'g1',
+          turn: 1,
+          role: 'gm' as const,
+          content:
+            'The damaged building leans over a doorway to a corridor. Your bag sits at your feet. The immediate surroundings are ash.',
+          timestamp: 1,
+          offeredChoices: offered,
+        },
+      ],
+      openingEstablishment: {
+        complete: true,
+        pending: [],
+        answers: { name: 'Jax' },
+        sceneWritten: true,
+      },
+    };
+    expect(resolveOfferedChoices(state).slice(0, 3)).toEqual(offered);
+  });
+
   it('formats transcript with options and omits missing offeredChoices', () => {
     const base = createInitialState('Test Tale', 'litrpg');
     const log: LogEntry[] = [

@@ -75,6 +75,26 @@ import {
   formatConvergenceMandate,
 } from './pyoaBranchLedger';
 import { hubsForBibleId, matchHub } from './outdoorHubs';
+// WS-2 Wave C: NPC Memory Validation
+import {
+  verifyMemoryGrounding,
+  type MemoryGroundingCheck,
+} from './npcMemoryRetrieval';
+// WS-4 Wave D: Encounter Receipts
+import {
+  checkDrought as checkEncounterDrought,
+} from './encounterDensity';
+// WS-5 Wave B: Branch Lock Enforcement
+import {
+  getPendingConsequences,
+} from './pyoaDelayedConsequences';
+// WS-6 Wave C: Exhaustion Gates
+import {
+  checkDurableDeltaTiming,
+  hasRepeatDominance,
+  hasTerminalLoop,
+  type ContentDensityState,
+} from './exhaustionCurve';
 
 export interface QualityGovernanceState {
   turnsSinceLastEncounter?: number;
@@ -167,6 +187,36 @@ export function buildGovernanceSnapshotLines(state: GameState): string[] {
     lines.push(convergenceMandate);
   }
 
+  // WS-6 Wave C: Exhaustion gates
+  if (state.arcDirector?.contentDensityState) {
+    const densityState = state.arcDirector.contentDensityState;
+    const droughtCheck = checkDurableDeltaTiming(densityState.densityEvents, 12);
+    
+    if (droughtCheck.isDrought) {
+      lines.push(
+        `DURABLE DELTA DROUGHT: ${droughtCheck.turnsSinceDurableDelta} turns without progress — force quest tick, clear, or level.`
+      );
+    }
+
+    if (hasRepeatDominance(densityState.densityEvents, state.turn, 100)) {
+      lines.push(
+        'REPEAT DOMINANCE: >50% stale reuse — force unused content or exit to new location.'
+      );
+    }
+
+    if (hasTerminalLoop(densityState.densityEvents)) {
+      lines.push(
+        'TERMINAL LOOP VIOLATION: Cannot revisit defeated boss/closed wing/ended crisis — hard block.'
+      );
+    }
+
+    if (densityState.exhaustionPressure === 'RED' || densityState.exhaustionPressure === 'ORANGE') {
+      lines.push(
+        `EXHAUSTION ${densityState.exhaustionPressure}: ${densityState.recommendedIntervention}`
+      );
+    }
+  }
+
   const loop = detectSemanticLoop(state);
   const activeObjective = hasActiveObjectives(state);
   if (loop.isLoop) {
@@ -250,6 +300,24 @@ export function applyGovernanceToProse(state: GameState, prose: string): {
     if (report.themCount) notes.push(`Entity scrub: them×${report.themCount} (pronouns kept — no kit rewrite)`);
     if (report.strangerCount) notes.push(`Entity scrub: stranger×${report.strangerCount}`);
     if (report.thisPlaceCount) notes.push(`Entity scrub: this-place×${report.thisPlaceCount}`);
+  }
+
+  // WS-2 Wave C: Verify memory grounding for present NPCs
+  const presentNpcs = state.sceneFacts?.present?.filter(p => p && !/^(a|an|the|some)\s/i.test(p)) ?? [];
+  if (presentNpcs.length > 0) {
+    const npcMemories = state.arcDirector?.npcMemories ?? [];
+    for (const npcId of presentNpcs) {
+      const ledger = npcMemories.find(m => m.npcId === npcId);
+      if (ledger) {
+        const groundingCheck = verifyMemoryGrounding(out, ledger.memories);
+        if (!groundingCheck.valid) {
+          notes.push(`Memory grounding: ${npcId} — ${groundingCheck.errors.length} violation(s)`);
+        }
+        if (groundingCheck.warnings.length > 0) {
+          notes.push(`Memory warning: ${npcId} — ${groundingCheck.warnings[0]}`);
+        }
+      }
+    }
   }
 
   const novelty = noveltyFromState(state);

@@ -81,15 +81,17 @@ export async function callOpeningGm(
     writerTier: effectiveWriterTier(settings.subscriptionTier ?? 'free'),
   });
   const started = Date.now();
+  // New Game / first-page continue used to send '' — gm-turn 400'd "playerInput is required".
+  const openingInput = (playerInput ?? '').trim() || '(opening)';
   try {
-    const result = await callGm(state, playerInput, settings, [], undefined, signal, timeoutMs);
+    const result = await callGm(state, openingInput, settings, [], undefined, signal, timeoutMs);
     const text = (result.text ?? '').trim();
     logApiLatency({
       label: 'callOpeningGm',
       latencyMs: Date.now() - started,
       provider: settings.aiProvider,
       engineMode: state.engineMode,
-      playerInput: playerInput || '(opening)',
+      playerInput: openingInput,
       aiResponse: text || undefined,
       failed: !text,
       extra: { saveId: state.saveId, turn: state.turn },
@@ -101,7 +103,7 @@ export async function callOpeningGm(
       latencyMs: Date.now() - started,
       provider: settings.aiProvider,
       engineMode: state.engineMode,
-      playerInput: playerInput || '(opening)',
+      playerInput: openingInput,
       failed: true,
       stack: err instanceof Error ? err.stack : undefined,
       extra: {

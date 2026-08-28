@@ -8,7 +8,7 @@ import { effectiveWriterTier, hasUnlimitedTextCapacity, isFounderPlayAccount } f
 import { equippedSetLabel, equippedSetName } from '../game/uiTheme';
 
 /** Visible after a hard refresh -- if this is missing, Vercel is still serving the 16 Aug bundle. */
-export const HUD_BUILD_STAMP = '2026-08-30f';
+export const HUD_BUILD_STAMP = '2026-08-30g';
 const HUD_BUILD_TITLE =
   'Debug 2026-08-30f - WS-2 Waves B-D: Complete NPC memory, turnover, and cross-NPC integration';
 
