@@ -13,10 +13,10 @@
 
 CREATE TABLE IF NOT EXISTS package_receipts (
   -- Primary key
-  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   
   -- Foreign keys
-  save_id UUID NOT NULL REFERENCES saves(id) ON DELETE CASCADE,
+  save_id UUID NOT NULL REFERENCES game_saves(id) ON DELETE CASCADE,
   
   -- Package metadata
   package TEXT NOT NULL CHECK (package IN ('ws2', 'ws4', 'ws5')),
@@ -62,7 +62,7 @@ CREATE POLICY select_own_package_receipts ON package_receipts
   FOR SELECT
   USING (
     save_id IN (
-      SELECT id FROM saves WHERE user_id = auth.uid()
+      SELECT id FROM game_saves WHERE user_id = auth.uid()
     )
   );
 
@@ -71,7 +71,7 @@ CREATE POLICY insert_own_package_receipts ON package_receipts
   FOR INSERT
   WITH CHECK (
     save_id IN (
-      SELECT id FROM saves WHERE user_id = auth.uid()
+      SELECT id FROM game_saves WHERE user_id = auth.uid()
     )
   );
 

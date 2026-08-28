@@ -111,6 +111,13 @@ drop policy if exists "users_select_authenticated" on public.users;
 create policy "users_select_authenticated"
   on public.users for select to authenticated using (true);
 
+-- Ensure unique constraint exists on subscriptions.user_id for ON CONFLICT
+-- (needed if table was created before this constraint was added)
+alter table public.subscriptions
+  drop constraint if exists subscriptions_user_id_key;
+alter table public.subscriptions
+  add constraint subscriptions_user_id_key unique (user_id);
+
 insert into public.profiles (id, email, created_at, display_name, avatar_url)
 select
   u.id,

@@ -1,591 +1,1616 @@
 /**
- * WS-2 Wave A: NPC Role Registry
+ * WS-2 Wave 1 Batch 1A — NPC Role Registry
  * 
- * 24 typed role archetypes with lifecycle contracts.
- * Each role has function, timeline, exit, and transform patterns.
+ * Based on: Manus WS-2 Complete Package
+ * Tasks: NPC-001, NPC-002
+ * 
+ * 24 typed NPC roles with obligations, deadlines, and genre variants.
  */
 
-import type { GameState } from './types';
-
-// ============================================================================
-// ROLE CATALOG (24 ARCHETYPES)
-// ============================================================================
-
 export type NpcRole =
-  // Core functional roles
-  | 'mysterious_guide'        // Opening NPC, reveals first clue
-  | 'trusted_mentor'          // Teaching NPC, skill/knowledge transfer
-  | 'quest_patron'            // Main quest giver, story spine driver
-  | 'side_quest_giver'        // Optional quest provider
-  | 'recurring_merchant'      // Hub vendor, 3+ transactions
-  | 'limited_vendor'          // One-time or limited stock
-  | 'hub_official'            // Registry, permits, access control
-  | 'information_broker'      // Clues/intel for price
-  | 'faction_ambassador'      // Alliance offer, faction access
-  | 'faction_lieutenant'      // Subordinate, takes over if leader exits
+  // Core roles (existing from B022-B025)
+  | 'guide'
+  | 'quest-patron'
+  | 'merchant'
+  | 'faction-envoy'
+  | 'companion'
+  | 'rival'
+  | 'herald'
+  | 'keeper'
   
-  // Opposition & conflict
-  | 'hidden_traitor'          // Ally who betrays at scripted beat
-  | 'obvious_antagonist'      // Declared opposition, combat/leverage
-  | 'rival'                   // Competition, non-lethal stakes
-  | 'boss_encounter'          // Final/act-ending confrontation
-  
-  // Companion & support
-  | 'companion'               // Joins party, stays indefinitely
-  | 'temporary_ally'          // Joins for specific quest/act
-  | 'escort_target'           // Must protect, exits after delivery
-  | 'rescued_npc'             // Freed from encounter, may join/exit
-  
-  // Social & hub roles
-  | 'gatekeeper'              // Controls passage, door/bridge
-  | 'witness'                 // Saw player action, may gossip/testify
-  | 'crowd_background'        // Ambient NPC, no obligation
-  | 'faction_grunt'           // Low-rank faction member
-  
-  // Special lifecycle
-  | 'dying_npc'               // Limited turns, death triggers consequence
-  | 'transforming_npc';       // Role changes mid-campaign (ally→traitor)
+  // Expanded roles (WS-2)
+  | 'mentor'
+  | 'antagonist'
+  | 'informant'
+  | 'captive'
+  | 'ruler'
+  | 'traitor'
+  | 'witness'
+  | 'gatekeeper'
+  | 'artisan'
+  | 'courier'
+  | 'refugee'
+  | 'oracle'
+  | 'bounty-target'
+  | 'debt-holder'
+  | 'conspirator'
+  | 'sacrifice';
 
-// ============================================================================
-// ROLE OBLIGATIONS
-// ============================================================================
+export type NpcGenre = 'litrpg' | 'dnd' | 'rpg' | 'pyoa';
 
-export interface NpcRoleObligation {
-  role: NpcRole;
-  function: string;           // What story debt this NPC owes
-  timeline: number | null;    // Turns to satisfy (null = no deadline)
-  exitCondition: string;      // How NPC leaves when satisfied
-  failureCondition: string;   // What happens if deadline missed
-  transformPattern?: string;  // How role can evolve
+export type DeadlineKind = 'hard' | 'soft' | 'story-beat' | 'quota';
+
+export interface RoleDeadline {
+  readonly kind: DeadlineKind;
+  readonly turnOffset?: number; // Hard deadline: T_entry + offset
+  readonly warning?: number; // Soft deadline: warning turns before hard
+  readonly milestoneId?: string; // Story-beat: quest stage, faction event, etc.
+  readonly quotaSuccess?: number; // Quota: min interactions for success
+  readonly quotaFailure?: number; // Quota: conditions before escalation
+}
+
+export interface RoleObligationContract {
+  readonly roleId: NpcRole;
+  readonly description: string;
+  readonly entrance: {
+    readonly when: string; // Narrative condition (e.g., "opening cover", "quest accepted")
+    readonly genericSpawn?: boolean; // Can spawn generically vs named only
+  };
+  readonly timeline: {
+    readonly deadlines: readonly RoleDeadline[];
+    readonly exitWindow: number; // Turns after debt satisfied before must exit
+  };
+  readonly exit: {
+    readonly onSuccess: 'graceful' | 'transform' | 'relocate' | 'remain';
+    readonly onFailure: 'escalate' | 'disappear' | 'turnover' | 'conflict';
+  };
+  readonly transform?: {
+    readonly toRole: NpcRole;
+    readonly condition: string;
+  };
+  readonly obligations: {
+    readonly successCriteria: readonly string[];
+    readonly failureCriteria: readonly string[];
+    readonly observableBehaviors: readonly string[];
+  };
+  readonly genreVariants: Readonly<Partial<Record<NpcGenre, {
+    readonly name: string;
+    readonly archetype: string;
+    readonly example: string;
+  }>>>;
 }
 
 /**
- * Role obligation catalog
- * 
- * Each role has:
- * - function: Story debt owed
- * - timeline: Turns to satisfy (null = indefinite)
- * - exitCondition: How NPC exits when done
- * - failureCondition: Consequence if ignored
- * - transformPattern: Optional role evolution
+ * 24 NPC Role Definitions
  */
-export const ROLE_OBLIGATIONS: Record<NpcRole, NpcRoleObligation> = {
-  mysterious_guide: {
-    role: 'mysterious_guide',
-    function: 'Reveal first clue or objective',
-    timeline: 15,
-    exitCondition: 'Exits after clue revealed and player acts on it',
-    failureCondition: 'Leaves cryptic warning, clue remains hidden',
-    transformPattern: 'Can transform to quest_patron if story deepens',
+export const NPC_ROLE_REGISTRY: Readonly<Record<NpcRole, RoleObligationContract>> = {
+  // ========================================================================
+  // CORE ROLES (8) — Existing from B022-B025
+  // ========================================================================
+
+  'guide': {
+    roleId: 'guide',
+    description: 'Temporary mentor who helps player through opening or crisis, then exits',
+    entrance: {
+      when: 'opening cover or early crisis (T < 8)',
+      genericSpawn: true,
+    },
+    timeline: {
+      deadlines: [
+        {
+          kind: 'story-beat',
+          milestoneId: 'opening-establishment-complete',
+        },
+      ],
+      exitWindow: 10,
+    },
+    exit: {
+      onSuccess: 'graceful',
+      onFailure: 'escalate',
+    },
+    obligations: {
+      successCriteria: [
+        'disposition recorded in GM turn',
+        'exit hook offered',
+        'player acknowledges guide presence',
+      ],
+      failureCriteria: [
+        'still present at T18 after opening complete',
+        'introduced but never speaks',
+      ],
+      observableBehaviors: [
+        'speaks in opening scene',
+        'offers quest or advice',
+        'exits naturally',
+      ],
+    },
+    genreVariants: {
+      litrpg: {
+        name: 'System Herald',
+        archetype: 'Tutorial NPC',
+        example: 'Aldous (Summoned Pact)',
+      },
+      dnd: {
+        name: 'Grizzled Veteran',
+        archetype: 'Mentor figure',
+        example: 'Oskar (Cursed Keep)',
+      },
+      rpg: {
+        name: 'Street Contact',
+        archetype: 'Fixer / Guide',
+        example: 'Marcus (Salt Road)',
+      },
+      pyoa: {
+        name: 'Opening Witness',
+        archetype: 'Crisis observer',
+        example: 'Miller (Thornferry Road)',
+      },
+    },
   },
-  
-  trusted_mentor: {
-    role: 'trusted_mentor',
-    function: 'Teach skill, grant knowledge, or provide training',
-    timeline: 20,
-    exitCondition: 'Exits after training complete or knowledge transferred',
-    failureCondition: 'Disappointed, may refuse future aid',
+
+  'quest-patron': {
+    roleId: 'quest-patron',
+    description: 'NPC who gives quest, expects completion or disposition by deadline',
+    entrance: {
+      when: 'quest acceptance',
+      genericSpawn: false,
+    },
+    timeline: {
+      deadlines: [
+        {
+          kind: 'hard',
+          turnOffset: 10,
+          warning: 3,
+        },
+      ],
+      exitWindow: 10,
+    },
+    exit: {
+      onSuccess: 'graceful',
+      onFailure: 'escalate',
+    },
+    obligations: {
+      successCriteria: [
+        'quest completed or explicit disposition (refuse / defer / negotiate)',
+        'disposition recorded by T10',
+      ],
+      failureCriteria: [
+        'quest given but no disposition by T10',
+        'player ignores patron entirely',
+      ],
+      observableBehaviors: [
+        'offers quest',
+        'records player decision',
+        'exits after resolution',
+      ],
+    },
+    genreVariants: {
+      litrpg: {
+        name: 'Quest Giver',
+        archetype: 'NPC with exclamation mark',
+        example: 'Guild Master',
+      },
+      dnd: {
+        name: 'Local Magistrate',
+        archetype: 'Authority figure',
+        example: 'Lord / Lady / Sheriff',
+      },
+      rpg: {
+        name: 'Fixer',
+        archetype: 'Job broker',
+        example: 'Corporate handler',
+      },
+      pyoa: {
+        name: 'Demanding Figure',
+        archetype: 'Crisis stakeholder',
+        example: 'Silas (Thornferry)',
+      },
+    },
   },
-  
-  quest_patron: {
-    role: 'quest_patron',
-    function: 'Assign main quest objective',
-    timeline: 10,
-    exitCondition: 'Monitors from distance after quest accepted',
-    failureCondition: 'Assigns quest to other hero, player locked out',
-    transformPattern: 'Can transform to faction_ambassador if alliance forms',
+
+  'merchant': {
+    roleId: 'merchant',
+    description: 'Shopkeeper who exits after quota transactions or prolonged neglect',
+    entrance: {
+      when: 'hub arrival or commerce scene',
+      genericSpawn: true,
+    },
+    timeline: {
+      deadlines: [
+        {
+          kind: 'quota',
+          quotaSuccess: 3, // 3 transactions = satisfied
+        },
+      ],
+      exitWindow: 10,
+    },
+    exit: {
+      onSuccess: 'remain',
+      onFailure: 'disappear',
+    },
+    obligations: {
+      successCriteria: [
+        '3 transactions completed',
+        'merchant acknowledged and used',
+      ],
+      failureCriteria: [
+        'opened shop but never transacted',
+        '20 turns with zero transactions',
+      ],
+      observableBehaviors: [
+        'offers goods',
+        'tracks transactions',
+        'remains available',
+      ],
+    },
+    genreVariants: {
+      litrpg: {
+        name: 'General Store NPC',
+        archetype: 'Vendor',
+        example: 'Blacksmith / Potions / Armor',
+      },
+      dnd: {
+        name: 'Traveling Merchant',
+        archetype: 'Peddler',
+        example: 'Caravan trader',
+      },
+      rpg: {
+        name: 'Fence',
+        archetype: 'Black market dealer',
+        example: 'Salvage broker',
+      },
+      pyoa: {
+        name: 'Shop Keeper',
+        archetype: 'Resource provider',
+        example: 'Village merchant',
+      },
+    },
   },
-  
-  side_quest_giver: {
-    role: 'side_quest_giver',
-    function: 'Offer optional quest',
-    timeline: 12,
-    exitCondition: 'Exits after quest accepted/rejected',
-    failureCondition: 'Quest expires, NPC moves on',
+
+  'faction-envoy': {
+    roleId: 'faction-envoy',
+    description: 'Representative who demands allegiance decision by deadline',
+    entrance: {
+      when: 'faction encounter or hub event',
+      genericSpawn: false,
+    },
+    timeline: {
+      deadlines: [
+        {
+          kind: 'soft',
+          turnOffset: 20,
+          warning: 5,
+        },
+      ],
+      exitWindow: 10,
+    },
+    exit: {
+      onSuccess: 'graceful',
+      onFailure: 'escalate',
+    },
+    transform: {
+      toRole: 'rival',
+      condition: 'player refuses allegiance after deadline',
+    },
+    obligations: {
+      successCriteria: [
+        'player makes faction choice (accept / refuse / defer)',
+        'choice recorded in faction standings',
+      ],
+      failureCriteria: [
+        'envoy ignored past deadline',
+        'no faction interaction after introduction',
+      ],
+      observableBehaviors: [
+        'introduces faction',
+        'demands decision',
+        'escalates if ignored',
+      ],
+    },
+    genreVariants: {
+      litrpg: {
+        name: 'Guild Recruiter',
+        archetype: 'Faction rep',
+        example: 'Circle emissary',
+      },
+      dnd: {
+        name: 'Lord\'s Herald',
+        archetype: 'Official messenger',
+        example: 'King\'s envoy',
+      },
+      rpg: {
+        name: 'Gang Envoy',
+        archetype: 'Territorial rep',
+        example: 'Syndicate operative',
+      },
+      pyoa: {
+        name: 'Faction Broker',
+        archetype: 'Alliance seeker',
+        example: 'Rebel / Authority agent',
+      },
+    },
   },
-  
-  recurring_merchant: {
-    role: 'recurring_merchant',
-    function: 'Provide goods/services, 3+ transactions',
-    timeline: null, // No deadline, stays until hub departure
-    exitCondition: 'Exits when player leaves hub or stock exhausted',
-    failureCondition: 'N/A - soft deadline',
+
+  'companion': {
+    roleId: 'companion',
+    description: 'Party member who travels with player, no exit deadline unless betrayed',
+    entrance: {
+      when: 'recruitment quest or story beat',
+      genericSpawn: false,
+    },
+    timeline: {
+      deadlines: [
+        {
+          kind: 'story-beat',
+          milestoneId: 'companion-loyalty-test',
+        },
+      ],
+      exitWindow: 0, // No auto-exit
+    },
+    exit: {
+      onSuccess: 'remain',
+      onFailure: 'turnover',
+    },
+    transform: {
+      toRole: 'traitor',
+      condition: 'betrayal or trust break',
+    },
+    obligations: {
+      successCriteria: [
+        'present in party roster',
+        'speaks in party scenes',
+        'loyalty tested and resolved',
+      ],
+      failureCriteria: [
+        'recruited but never speaks again',
+        'party disbanded without resolution',
+      ],
+      observableBehaviors: [
+        'travels with player',
+        'comments on story beats',
+        'available for dialogue',
+      ],
+    },
+    genreVariants: {
+      litrpg: {
+        name: 'Party Member',
+        archetype: 'Combat companion',
+        example: 'Tank / Healer / DPS',
+      },
+      dnd: {
+        name: 'Adventuring Companion',
+        archetype: 'Fellow traveler',
+        example: 'Ranger / Cleric / Rogue',
+      },
+      rpg: {
+        name: 'Crew Member',
+        archetype: 'Team specialist',
+        example: 'Hacker / Muscle / Face',
+      },
+      pyoa: {
+        name: 'Ally',
+        archetype: 'Trusted friend',
+        example: 'Silas (if trusted)',
+      },
+    },
   },
-  
-  limited_vendor: {
-    role: 'limited_vendor',
-    function: 'Sell specific item(s), limited stock',
-    timeline: 8,
-    exitCondition: 'Exits after sale or stock expires',
-    failureCondition: 'Stock spoils or sold to rival',
+
+  'rival': {
+    roleId: 'rival',
+    description: 'Competitive NPC who recurs until confrontation or resolution',
+    entrance: {
+      when: 'conflict scene or faction split',
+      genericSpawn: false,
+    },
+    timeline: {
+      deadlines: [
+        {
+          kind: 'story-beat',
+          milestoneId: 'rival-confrontation',
+        },
+      ],
+      exitWindow: 0, // Persists until resolved
+    },
+    exit: {
+      onSuccess: 'transform',
+      onFailure: 'conflict',
+    },
+    transform: {
+      toRole: 'companion',
+      condition: 'reconciliation or alliance',
+    },
+    obligations: {
+      successCriteria: [
+        'rivalry established in narrative',
+        'confrontation scene occurs',
+        'resolution recorded',
+      ],
+      failureCriteria: [
+        'rival introduced but never recurs',
+        'rivalry forgotten',
+      ],
+      observableBehaviors: [
+        'opposes player',
+        'recurs in key scenes',
+        'forces confrontation',
+      ],
+    },
+    genreVariants: {
+      litrpg: {
+        name: 'Rival Adventurer',
+        archetype: 'Competitive player',
+        example: 'Guild rival',
+      },
+      dnd: {
+        name: 'Opposing Champion',
+        archetype: 'Mirror character',
+        example: 'Knight of rival order',
+      },
+      rpg: {
+        name: 'Corporate Rival',
+        archetype: 'Competitor',
+        example: 'Rival fixer / agent',
+      },
+      pyoa: {
+        name: 'Antagonist',
+        archetype: 'Opposing force',
+        example: 'Faction enemy',
+      },
+    },
   },
-  
-  hub_official: {
-    role: 'hub_official',
-    function: 'Grant permits, access, or registry',
-    timeline: 6,
-    exitCondition: 'Exits after paperwork complete',
-    failureCondition: 'Office closes, player must find alternate route',
+
+  'herald': {
+    roleId: 'herald',
+    description: 'Messenger who delivers plot beat then exits',
+    entrance: {
+      when: 'plot advancement trigger',
+      genericSpawn: true,
+    },
+    timeline: {
+      deadlines: [
+        {
+          kind: 'hard',
+          turnOffset: 3,
+        },
+      ],
+      exitWindow: 3,
+    },
+    exit: {
+      onSuccess: 'graceful',
+      onFailure: 'disappear',
+    },
+    obligations: {
+      successCriteria: [
+        'message delivered',
+        'player acknowledges message',
+        'exits within 3 turns',
+      ],
+      failureCriteria: [
+        'herald stays beyond delivery',
+        'message never acknowledged',
+      ],
+      observableBehaviors: [
+        'arrives',
+        'delivers message',
+        'exits',
+      ],
+    },
+    genreVariants: {
+      litrpg: {
+        name: 'System Alert',
+        archetype: 'Notification NPC',
+        example: 'Messenger sprite',
+      },
+      dnd: {
+        name: 'Royal Herald',
+        archetype: 'Official messenger',
+        example: 'King\'s herald',
+      },
+      rpg: {
+        name: 'Courier',
+        archetype: 'Message runner',
+        example: 'Street kid / drone',
+      },
+      pyoa: {
+        name: 'Messenger',
+        archetype: 'Plot device',
+        example: 'News bearer',
+      },
+    },
   },
-  
-  information_broker: {
-    role: 'information_broker',
-    function: 'Sell clue or intel',
-    timeline: 10,
-    exitCondition: 'Exits after info purchased or deal rejected',
-    failureCondition: 'Intel sold to rival, player loses advantage',
+
+  'keeper': {
+    roleId: 'keeper',
+    description: 'Location-bound NPC who persists at specific site',
+    entrance: {
+      when: 'arrive at kept location',
+      genericSpawn: true,
+    },
+    timeline: {
+      deadlines: [],
+      exitWindow: 0, // Never auto-exits
+    },
+    exit: {
+      onSuccess: 'remain',
+      onFailure: 'remain',
+    },
+    obligations: {
+      successCriteria: [
+        'present at location',
+        'responds to player presence',
+      ],
+      failureCriteria: [
+        'location destroyed',
+        'keeper displaced',
+      ],
+      observableBehaviors: [
+        'guards location',
+        'provides information',
+        'remains at post',
+      ],
+    },
+    genreVariants: {
+      litrpg: {
+        name: 'Dungeon Keeper',
+        archetype: 'Boss / Guardian',
+        example: 'Crypt keeper',
+      },
+      dnd: {
+        name: 'Tower Wizard',
+        archetype: 'Resident',
+        example: 'Sage / Hermit',
+      },
+      rpg: {
+        name: 'Bartender',
+        archetype: 'Hub anchor',
+        example: 'Pub owner',
+      },
+      pyoa: {
+        name: 'Gatekeeper',
+        archetype: 'Threshold guardian',
+        example: 'Bridge keeper',
+      },
+    },
   },
-  
-  faction_ambassador: {
-    role: 'faction_ambassador',
-    function: 'Offer alliance with faction',
-    timeline: 15,
-    exitCondition: 'Exits after alliance accepted/rejected',
-    failureCondition: 'Faction considers player neutral or enemy',
+
+  // ========================================================================
+  // EXPANDED ROLES (16) — WS-2 Addition
+  // ========================================================================
+
+  'mentor': {
+    roleId: 'mentor',
+    description: 'Long-term teacher who imparts skills or knowledge over time',
+    entrance: {
+      when: 'training request or story milestone',
+      genericSpawn: false,
+    },
+    timeline: {
+      deadlines: [
+        {
+          kind: 'quota',
+          quotaSuccess: 5, // 5 training sessions
+        },
+      ],
+      exitWindow: 10,
+    },
+    exit: {
+      onSuccess: 'graceful',
+      onFailure: 'disappoint',
+    },
+    obligations: {
+      successCriteria: [
+        '5 training interactions',
+        'skill or knowledge imparted',
+        'graduation or completion beat',
+      ],
+      failureCriteria: [
+        'training started but abandoned',
+        'mentor ignored after introduction',
+      ],
+      observableBehaviors: [
+        'teaches skills',
+        'tracks progress',
+        'offers final lesson',
+      ],
+    },
+    genreVariants: {
+      litrpg: {
+        name: 'Master Trainer',
+        archetype: 'Skill NPC',
+        example: 'Weapon master',
+      },
+      dnd: {
+        name: 'Archmage',
+        archetype: 'Magical mentor',
+        example: 'Wizard teacher',
+      },
+      rpg: {
+        name: 'Street Sensei',
+        archetype: 'Combat trainer',
+        example: 'Martial arts teacher',
+      },
+      pyoa: {
+        name: 'Wise Elder',
+        archetype: 'Knowledge keeper',
+        example: 'Village elder',
+      },
+    },
   },
-  
-  faction_lieutenant: {
-    role: 'faction_lieutenant',
-    function: 'Subordinate role, takes over if leader absent',
-    timeline: null,
-    exitCondition: 'Exits when faction leader returns or faction dissolved',
-    failureCondition: 'N/A - soft deadline',
-    transformPattern: 'Becomes faction_ambassador if leader exits',
+
+  'antagonist': {
+    roleId: 'antagonist',
+    description: 'Primary villain who drives main conflict, persists until final confrontation',
+    entrance: {
+      when: 'main plot revelation',
+      genericSpawn: false,
+    },
+    timeline: {
+      deadlines: [
+        {
+          kind: 'story-beat',
+          milestoneId: 'final-confrontation',
+        },
+      ],
+      exitWindow: 0,
+    },
+    exit: {
+      onSuccess: 'conflict',
+      onFailure: 'remain',
+    },
+    obligations: {
+      successCriteria: [
+        'established as main villain',
+        'opposes player throughout',
+        'final battle occurs',
+      ],
+      failureCriteria: [
+        'introduced but never opposes',
+        'conflict never realized',
+      ],
+      observableBehaviors: [
+        'threatens player',
+        'advances evil plot',
+        'forces confrontation',
+      ],
+    },
+    genreVariants: {
+      litrpg: {
+        name: 'Demon Lord',
+        archetype: 'Final boss',
+        example: 'Calamity King',
+      },
+      dnd: {
+        name: 'Dark Lord',
+        archetype: 'BBEG',
+        example: 'Lich / Dragon',
+      },
+      rpg: {
+        name: 'Crime Boss',
+        archetype: 'Mastermind',
+        example: 'Syndicate leader',
+      },
+      pyoa: {
+        name: 'Oppressor',
+        archetype: 'Authority villain',
+        example: 'Corrupt official',
+      },
+    },
   },
-  
-  hidden_traitor: {
-    role: 'hidden_traitor',
-    function: 'Plant false clue or misdirect player',
-    timeline: 25,
-    exitCondition: 'Betrayal reveal triggers exit or combat',
-    failureCondition: 'Betrayal delayed to later act',
-    transformPattern: 'Becomes obvious_antagonist at betrayal reveal',
+
+  'informant': {
+    roleId: 'informant',
+    description: 'Information broker who provides intel for price, exits when dry',
+    entrance: {
+      when: 'information need or urban hub',
+      genericSpawn: true,
+    },
+    timeline: {
+      deadlines: [
+        {
+          kind: 'quota',
+          quotaSuccess: 3, // 3 intel exchanges
+        },
+      ],
+      exitWindow: 5,
+    },
+    exit: {
+      onSuccess: 'disappear',
+      onFailure: 'disappear',
+    },
+    obligations: {
+      successCriteria: [
+        '3 information exchanges',
+        'intel relevant to plot',
+      ],
+      failureCriteria: [
+        'informant introduced but never used',
+        'intel ignored',
+      ],
+      observableBehaviors: [
+        'offers information',
+        'demands payment',
+        'disappears when dry',
+      ],
+    },
+    genreVariants: {
+      litrpg: {
+        name: 'Information Broker',
+        archetype: 'Guild spy',
+        example: 'Rogue NPC',
+      },
+      dnd: {
+        name: 'Tavern Rat',
+        archetype: 'Street urchin',
+        example: 'Pickpocket / spy',
+      },
+      rpg: {
+        name: 'Hacker',
+        archetype: 'Data broker',
+        example: 'Net runner',
+      },
+      pyoa: {
+        name: 'Whisperer',
+        archetype: 'Secret keeper',
+        example: 'Gossip / spy',
+      },
+    },
   },
-  
-  obvious_antagonist: {
-    role: 'obvious_antagonist',
-    function: 'Oppose player, create conflict',
-    timeline: 40,
-    exitCondition: 'Combat resolution, parley, or exile',
-    failureCondition: 'Escalates to boss_encounter',
-    transformPattern: 'Can transform to rival if parley succeeds',
+
+  'captive': {
+    roleId: 'captive',
+    description: 'Prisoner or hostage who must be rescued by deadline',
+    entrance: {
+      when: 'rescue quest trigger',
+      genericSpawn: false,
+    },
+    timeline: {
+      deadlines: [
+        {
+          kind: 'hard',
+          turnOffset: 15,
+          warning: 5,
+        },
+      ],
+      exitWindow: 5,
+    },
+    exit: {
+      onSuccess: 'graceful',
+      onFailure: 'turnover', // Death or alternative fate
+    },
+    obligations: {
+      successCriteria: [
+        'rescue attempted',
+        'captive freed or fate resolved',
+      ],
+      failureCriteria: [
+        'deadline missed',
+        'captive abandoned',
+      ],
+      observableBehaviors: [
+        'suffers in captivity',
+        'calls for help',
+        'exits after rescue',
+      ],
+    },
+    genreVariants: {
+      litrpg: {
+        name: 'Captured Adventurer',
+        archetype: 'Rescue target',
+        example: 'Guild member',
+      },
+      dnd: {
+        name: 'Princess',
+        archetype: 'Damsel',
+        example: 'Nobility / innocent',
+      },
+      rpg: {
+        name: 'Hostage',
+        archetype: 'Kidnap victim',
+        example: 'Corporate exec',
+      },
+      pyoa: {
+        name: 'Prisoner',
+        archetype: 'Crisis victim',
+        example: 'Wrongly accused',
+      },
+    },
   },
-  
-  rival: {
-    role: 'rival',
-    function: 'Non-lethal competition, parallel goals',
-    timeline: 30,
-    exitCondition: 'Competition resolved, player wins/loses race',
-    failureCondition: 'Rival succeeds first, player loses advantage',
+
+  'ruler': {
+    roleId: 'ruler',
+    description: 'Authority figure who issues major quests or faction decisions',
+    entrance: {
+      when: 'audience or royal summons',
+      genericSpawn: false,
+    },
+    timeline: {
+      deadlines: [
+        {
+          kind: 'soft',
+          turnOffset: 25,
+          warning: 5,
+        },
+      ],
+      exitWindow: 0, // Remains unless deposed
+    },
+    exit: {
+      onSuccess: 'remain',
+      onFailure: 'escalate',
+    },
+    obligations: {
+      successCriteria: [
+        'royal quest accepted or refused',
+        'disposition recorded',
+      ],
+      failureCriteria: [
+        'summoned but ignored',
+        'ruler disrespected past deadline',
+      ],
+      observableBehaviors: [
+        'issues commands',
+        'expects obedience',
+        'escalates if defied',
+      ],
+    },
+    genreVariants: {
+      litrpg: {
+        name: 'Kingdom Ruler',
+        archetype: 'Authority NPC',
+        example: 'King / Queen',
+      },
+      dnd: {
+        name: 'Lord of the Realm',
+        archetype: 'Noble',
+        example: 'Duke / Baron',
+      },
+      rpg: {
+        name: 'Corporate CEO',
+        archetype: 'Powerful exec',
+        example: 'Megacorp head',
+      },
+      pyoa: {
+        name: 'Authority Figure',
+        archetype: 'Power broker',
+        example: 'Mayor / Governor',
+      },
+    },
   },
-  
-  boss_encounter: {
-    role: 'boss_encounter',
-    function: 'Act-ending confrontation',
-    timeline: 50,
-    exitCondition: 'Combat terminal or parley with major concession',
-    failureCondition: 'Player defeat or forced retreat',
+
+  'traitor': {
+    roleId: 'traitor',
+    description: 'Former ally who betrays player, triggers crisis',
+    entrance: {
+      when: 'betrayal trigger or story beat',
+      genericSpawn: false,
+    },
+    timeline: {
+      deadlines: [
+        {
+          kind: 'story-beat',
+          milestoneId: 'betrayal-confrontation',
+        },
+      ],
+      exitWindow: 10,
+    },
+    exit: {
+      onSuccess: 'conflict',
+      onFailure: 'disappear',
+    },
+    transform: {
+      toRole: 'rival',
+      condition: 'betrayal incomplete',
+    },
+    obligations: {
+      successCriteria: [
+        'betrayal executed',
+        'player confronts traitor',
+        'resolution occurs',
+      ],
+      failureCriteria: [
+        'betrayal never realized',
+        'traitor ignored',
+      ],
+      observableBehaviors: [
+        'enacts betrayal',
+        'forces confrontation',
+        'exits after resolution',
+      ],
+    },
+    genreVariants: {
+      litrpg: {
+        name: 'Backstabber',
+        archetype: 'Party betrayer',
+        example: 'Rival guild member',
+      },
+      dnd: {
+        name: 'Judas',
+        archetype: 'False friend',
+        example: 'Corrupt paladin',
+      },
+      rpg: {
+        name: 'Double Agent',
+        archetype: 'Spy',
+        example: 'Corp mole',
+      },
+      pyoa: {
+        name: 'Betrayer',
+        archetype: 'False ally',
+        example: 'Silas (if betrays)',
+      },
+    },
   },
-  
-  companion: {
-    role: 'companion',
-    function: 'Join party, aid in challenges',
-    timeline: null, // Stays indefinitely
-    exitCondition: 'Player dismisses, betrayal, or death',
-    failureCondition: 'N/A - soft deadline',
-    transformPattern: 'Can transform to hidden_traitor if story demands',
+
+  'witness': {
+    roleId: 'witness',
+    description: 'Observer who saw key event, provides testimony',
+    entrance: {
+      when: 'investigation or legal scene',
+      genericSpawn: true,
+    },
+    timeline: {
+      deadlines: [
+        {
+          kind: 'hard',
+          turnOffset: 5,
+        },
+      ],
+      exitWindow: 5,
+    },
+    exit: {
+      onSuccess: 'graceful',
+      onFailure: 'disappear',
+    },
+    obligations: {
+      successCriteria: [
+        'testimony given',
+        'evidence recorded',
+      ],
+      failureCriteria: [
+        'witness never questioned',
+        'testimony ignored',
+      ],
+      observableBehaviors: [
+        'provides testimony',
+        'answers questions',
+        'exits after interrogation',
+      ],
+    },
+    genreVariants: {
+      litrpg: {
+        name: 'Event Observer',
+        archetype: 'NPC with info',
+        example: 'Bystander',
+      },
+      dnd: {
+        name: 'Town Witness',
+        archetype: 'Testimony giver',
+        example: 'Village elder',
+      },
+      rpg: {
+        name: 'Street Witness',
+        archetype: 'Crime observer',
+        example: 'Informant',
+      },
+      pyoa: {
+        name: 'Bystander',
+        archetype: 'Event witness',
+        example: 'Innocent observer',
+      },
+    },
   },
-  
-  temporary_ally: {
-    role: 'temporary_ally',
-    function: 'Aid for specific quest or act',
-    timeline: 20,
-    exitCondition: 'Exits after quest complete or act ends',
-    failureCondition: 'Abandons player mid-quest',
+
+  'gatekeeper': {
+    roleId: 'gatekeeper',
+    description: 'Blocks passage until condition met, then exits or remains',
+    entrance: {
+      when: 'arrive at gate / threshold',
+      genericSpawn: true,
+    },
+    timeline: {
+      deadlines: [
+        {
+          kind: 'story-beat',
+          milestoneId: 'gate-condition-met',
+        },
+      ],
+      exitWindow: 5,
+    },
+    exit: {
+      onSuccess: 'graceful',
+      onFailure: 'remain',
+    },
+    obligations: {
+      successCriteria: [
+        'condition presented',
+        'player meets condition or negotiates',
+        'passage granted',
+      ],
+      failureCriteria: [
+        'gatekeeper ignored',
+        'condition never met',
+      ],
+      observableBehaviors: [
+        'blocks passage',
+        'states condition',
+        'allows passage when met',
+      ],
+    },
+    genreVariants: {
+      litrpg: {
+        name: 'Quest Gate NPC',
+        archetype: 'Blocker',
+        example: 'Guild receptionist',
+      },
+      dnd: {
+        name: 'Bridge Troll',
+        archetype: 'Riddle keeper',
+        example: 'Sphinx / guard',
+      },
+      rpg: {
+        name: 'Bouncer',
+        archetype: 'Club security',
+        example: 'Door guard',
+      },
+      pyoa: {
+        name: 'Threshold Guardian',
+        archetype: 'Test giver',
+        example: 'Gate keeper',
+      },
+    },
   },
-  
-  escort_target: {
-    role: 'escort_target',
-    function: 'Must be protected and delivered',
-    timeline: 15,
-    exitCondition: 'Exits after safe delivery',
-    failureCondition: 'Captured, killed, or lost',
+
+  'artisan': {
+    roleId: 'artisan',
+    description: 'Crafter who creates custom items for quests or payment',
+    entrance: {
+      when: 'crafting need or workshop visit',
+      genericSpawn: true,
+    },
+    timeline: {
+      deadlines: [
+        {
+          kind: 'quota',
+          quotaSuccess: 2, // 2 crafting jobs
+        },
+      ],
+      exitWindow: 10,
+    },
+    exit: {
+      onSuccess: 'remain',
+      onFailure: 'disappear',
+    },
+    obligations: {
+      successCriteria: [
+        '2 items crafted',
+        'payment exchanged',
+      ],
+      failureCriteria: [
+        'artisan introduced but never used',
+        'no crafting occurred',
+      ],
+      observableBehaviors: [
+        'offers crafting',
+        'delivers items',
+        'remains available',
+      ],
+    },
+    genreVariants: {
+      litrpg: {
+        name: 'Master Crafter',
+        archetype: 'Profession NPC',
+        example: 'Enchanter / Alchemist',
+      },
+      dnd: {
+        name: 'Dwarven Smith',
+        archetype: 'Master craftsman',
+        example: 'Blacksmith',
+      },
+      rpg: {
+        name: 'Tech Specialist',
+        archetype: 'Modder',
+        example: 'Cyberware installer',
+      },
+      pyoa: {
+        name: 'Village Artisan',
+        archetype: 'Skilled worker',
+        example: 'Carpenter / Tailor',
+      },
+    },
   },
-  
-  rescued_npc: {
-    role: 'rescued_npc',
-    function: 'Freed from encounter, offers reward/alliance',
-    timeline: 8,
-    exitCondition: 'Exits after reward given or favor declined',
-    failureCondition: 'Returns to captivity or flees',
-    transformPattern: 'Can transform to companion if player recruits',
+
+  'courier': {
+    roleId: 'courier',
+    description: 'Delivery NPC who brings items or messages, exits immediately',
+    entrance: {
+      when: 'delivery trigger',
+      genericSpawn: true,
+    },
+    timeline: {
+      deadlines: [
+        {
+          kind: 'hard',
+          turnOffset: 1,
+        },
+      ],
+      exitWindow: 1,
+    },
+    exit: {
+      onSuccess: 'graceful',
+      onFailure: 'disappear',
+    },
+    obligations: {
+      successCriteria: [
+        'delivery made',
+        'player acknowledges',
+      ],
+      failureCriteria: [
+        'delivery ignored',
+      ],
+      observableBehaviors: [
+        'delivers item/message',
+        'exits immediately',
+      ],
+    },
+    genreVariants: {
+      litrpg: {
+        name: 'System Mailbox',
+        archetype: 'Auto-delivery',
+        example: 'Mail NPC',
+      },
+      dnd: {
+        name: 'Courier',
+        archetype: 'Message runner',
+        example: 'Mounted messenger',
+      },
+      rpg: {
+        name: 'Drone Delivery',
+        archetype: 'Package drop',
+        example: 'Automated courier',
+      },
+      pyoa: {
+        name: 'Post Rider',
+        archetype: 'Letter bearer',
+        example: 'Mail carrier',
+      },
+    },
   },
-  
-  gatekeeper: {
-    role: 'gatekeeper',
-    function: 'Control passage through door/gate/bridge',
-    timeline: 6,
-    exitCondition: 'Exits after passage granted or combat resolved',
-    failureCondition: 'Gate closes permanently or alternate route needed',
+
+  'refugee': {
+    roleId: 'refugee',
+    description: 'Displaced person seeking aid or shelter, exits after help or refusal',
+    entrance: {
+      when: 'crisis or humanitarian scene',
+      genericSpawn: true,
+    },
+    timeline: {
+      deadlines: [
+        {
+          kind: 'hard',
+          turnOffset: 8,
+          warning: 3,
+        },
+      ],
+      exitWindow: 5,
+    },
+    exit: {
+      onSuccess: 'graceful',
+      onFailure: 'disappear',
+    },
+    obligations: {
+      successCriteria: [
+        'aid given or refused',
+        'disposition recorded',
+      ],
+      failureCriteria: [
+        'refugee ignored',
+        'no decision made',
+      ],
+      observableBehaviors: [
+        'seeks help',
+        'records player response',
+        'exits after resolution',
+      ],
+    },
+    genreVariants: {
+      litrpg: {
+        name: 'Displaced NPC',
+        archetype: 'Quest starter',
+        example: 'Village survivor',
+      },
+      dnd: {
+        name: 'Fleeing Villager',
+        archetype: 'War victim',
+        example: 'Homeless peasant',
+      },
+      rpg: {
+        name: 'Displaced Person',
+        archetype: 'Social crisis',
+        example: 'Evicted tenant',
+      },
+      pyoa: {
+        name: 'Seeker',
+        archetype: 'Help requester',
+        example: 'Homeless stranger',
+      },
+    },
   },
-  
-  witness: {
-    role: 'witness',
-    function: 'Saw player action, may gossip or testify',
-    timeline: 10,
-    exitCondition: 'Exits after testimony or bribe/threat silences',
-    failureCondition: 'Spreads rumor, faction reputation damaged',
+
+  'oracle': {
+    roleId: 'oracle',
+    description: 'Prophecy giver who reveals future, exits after revelation',
+    entrance: {
+      when: 'mystical encounter or quest',
+      genericSpawn: false,
+    },
+    timeline: {
+      deadlines: [
+        {
+          kind: 'hard',
+          turnOffset: 3,
+        },
+      ],
+      exitWindow: 3,
+    },
+    exit: {
+      onSuccess: 'disappear',
+      onFailure: 'disappear',
+    },
+    obligations: {
+      successCriteria: [
+        'prophecy delivered',
+        'player acknowledges',
+      ],
+      failureCriteria: [
+        'oracle ignored',
+      ],
+      observableBehaviors: [
+        'gives prophecy',
+        'vanishes',
+      ],
+    },
+    genreVariants: {
+      litrpg: {
+        name: 'System Prophet',
+        archetype: 'Lore NPC',
+        example: 'Ancient AI',
+      },
+      dnd: {
+        name: 'Seer',
+        archetype: 'Mystic',
+        example: 'Blind prophet',
+      },
+      rpg: {
+        name: 'Precog',
+        archetype: 'Psychic',
+        example: 'Future reader',
+      },
+      pyoa: {
+        name: 'Soothsayer',
+        archetype: 'Fortune teller',
+        example: 'Mystic guide',
+      },
+    },
   },
-  
-  crowd_background: {
-    role: 'crowd_background',
-    function: 'Ambient presence, no obligation',
-    timeline: null,
-    exitCondition: 'Exits when scene changes or player leaves',
-    failureCondition: 'N/A - no obligation',
+
+  'bounty-target': {
+    roleId: 'bounty-target',
+    description: 'Hunted NPC who player must capture or kill for reward',
+    entrance: {
+      when: 'bounty quest accepted',
+      genericSpawn: false,
+    },
+    timeline: {
+      deadlines: [
+        {
+          kind: 'hard',
+          turnOffset: 20,
+          warning: 5,
+        },
+      ],
+      exitWindow: 0,
+    },
+    exit: {
+      onSuccess: 'conflict', // Captured/killed
+      onFailure: 'disappear', // Escaped
+    },
+    obligations: {
+      successCriteria: [
+        'bounty confronted',
+        'capture or kill attempted',
+      ],
+      failureCriteria: [
+        'bounty never found',
+        'deadline missed',
+      ],
+      observableBehaviors: [
+        'flees or fights',
+        'resists capture',
+        'exits after resolution',
+      ],
+    },
+    genreVariants: {
+      litrpg: {
+        name: 'Wanted Monster',
+        archetype: 'Boss target',
+        example: 'Elite mob',
+      },
+      dnd: {
+        name: 'Outlaw',
+        archetype: 'Criminal',
+        example: 'Bandit leader',
+      },
+      rpg: {
+        name: 'Fugitive',
+        archetype: 'Wanted person',
+        example: 'Corp defector',
+      },
+      pyoa: {
+        name: 'Hunted',
+        archetype: 'Pursued target',
+        example: 'Accused criminal',
+      },
+    },
   },
-  
-  faction_grunt: {
-    role: 'faction_grunt',
-    function: 'Low-rank faction member, takes orders',
-    timeline: null,
-    exitCondition: 'Exits when faction leaves or dismissed',
-    failureCondition: 'N/A - follows faction lifecycle',
+
+  'debt-holder': {
+    roleId: 'debt-holder',
+    description: 'Creditor who demands payment by deadline, escalates if unpaid',
+    entrance: {
+      when: 'debt trigger or loan scene',
+      genericSpawn: false,
+    },
+    timeline: {
+      deadlines: [
+        {
+          kind: 'hard',
+          turnOffset: 15,
+          warning: 5,
+        },
+      ],
+      exitWindow: 5,
+    },
+    exit: {
+      onSuccess: 'graceful',
+      onFailure: 'escalate',
+    },
+    transform: {
+      toRole: 'antagonist',
+      condition: 'debt unpaid past deadline',
+    },
+    obligations: {
+      successCriteria: [
+        'debt repaid or renegotiated',
+        'disposition recorded',
+      ],
+      failureCriteria: [
+        'debt unpaid past deadline',
+        'creditor ignored',
+      ],
+      observableBehaviors: [
+        'demands payment',
+        'issues warnings',
+        'escalates if unpaid',
+      ],
+    },
+    genreVariants: {
+      litrpg: {
+        name: 'Loan Shark',
+        archetype: 'Debt collector',
+        example: 'Shady merchant',
+      },
+      dnd: {
+        name: 'Moneylender',
+        archetype: 'Usurer',
+        example: 'Corrupt banker',
+      },
+      rpg: {
+        name: 'Fixer',
+        archetype: 'Debt holder',
+        example: 'Gang creditor',
+      },
+      pyoa: {
+        name: 'Creditor',
+        archetype: 'Debt enforcer',
+        example: 'Ruthless lender',
+      },
+    },
   },
-  
-  dying_npc: {
-    role: 'dying_npc',
-    function: 'Deliver deathbed message or clue',
-    timeline: 3,
-    exitCondition: 'Dies after message delivered',
-    failureCondition: 'Dies before message delivered, clue lost',
+
+  'conspirator': {
+    roleId: 'conspirator',
+    description: 'Secret plotter who involves player in scheme, exits after reveal',
+    entrance: {
+      when: 'conspiracy scene or intrigue',
+      genericSpawn: false,
+    },
+    timeline: {
+      deadlines: [
+        {
+          kind: 'story-beat',
+          milestoneId: 'conspiracy-revealed',
+        },
+      ],
+      exitWindow: 10,
+    },
+    exit: {
+      onSuccess: 'graceful',
+      onFailure: 'turnover',
+    },
+    obligations: {
+      successCriteria: [
+        'conspiracy presented',
+        'player chooses side',
+        'plot resolved',
+      ],
+      failureCriteria: [
+        'conspirator exposed but plot forgotten',
+        'no resolution',
+      ],
+      observableBehaviors: [
+        'recruits player',
+        'advances plot',
+        'exits after reveal',
+      ],
+    },
+    genreVariants: {
+      litrpg: {
+        name: 'Schemer',
+        archetype: 'Plot NPC',
+        example: 'Guild conspirator',
+      },
+      dnd: {
+        name: 'Court Intriguer',
+        archetype: 'Political plotter',
+        example: 'Noble schemer',
+      },
+      rpg: {
+        name: 'Shadow Broker',
+        archetype: 'Conspiracy leader',
+        example: 'Corp infiltrator',
+      },
+      pyoa: {
+        name: 'Plotter',
+        archetype: 'Secret schemer',
+        example: 'Hidden traitor',
+      },
+    },
   },
-  
-  transforming_npc: {
-    role: 'transforming_npc',
-    function: 'Role changes mid-campaign based on story',
-    timeline: null,
-    exitCondition: 'Transforms at scripted beat',
-    failureCondition: 'N/A - transformation is the lifecycle',
-    transformPattern: 'Script-driven transformation (any role → any role)',
+
+  'sacrifice': {
+    roleId: 'sacrifice',
+    description: 'NPC who must be sacrificed or saved for critical choice',
+    entrance: {
+      when: 'moral dilemma or crisis beat',
+      genericSpawn: false,
+    },
+    timeline: {
+      deadlines: [
+        {
+          kind: 'hard',
+          turnOffset: 10,
+          warning: 3,
+        },
+      ],
+      exitWindow: 0,
+    },
+    exit: {
+      onSuccess: 'turnover', // Saved or sacrificed
+      onFailure: 'turnover', // Fate decided
+    },
+    obligations: {
+      successCriteria: [
+        'choice presented',
+        'player decides',
+        'outcome recorded',
+      ],
+      failureCriteria: [
+        'dilemma ignored',
+        'no choice made',
+      ],
+      observableBehaviors: [
+        'presents moral choice',
+        'suffers fate',
+        'exits after resolution',
+      ],
+    },
+    genreVariants: {
+      litrpg: {
+        name: 'Chosen Vessel',
+        archetype: 'Sacrifice target',
+        example: 'Ritual victim',
+      },
+      dnd: {
+        name: 'Virgin Sacrifice',
+        archetype: 'Classic trope',
+        example: 'Cult target',
+      },
+      rpg: {
+        name: 'Hostage',
+        archetype: 'Moral lever',
+        example: 'Collateral',
+      },
+      pyoa: {
+        name: 'Martyr',
+        archetype: 'Crisis victim',
+        example: 'Innocent in danger',
+      },
+    },
   },
 };
 
-// ============================================================================
-// ROLE INFERENCE
-// ============================================================================
-
 /**
- * Infer NPC role from context
- * 
- * Uses location, dialogue keywords, quest state to guess role.
- * More sophisticated than simple keyword matching.
+ * NPC-001 — Get role definition
  */
-export function inferNpcRole(
-  npc: string,
-  state: GameState,
-  context: {
-    input?: string;
-    location?: string;
-    sceneContext?: string;
-    questContext?: string[];
-  }
-): NpcRole {
-  const input = (context.input || '').toLowerCase();
-  const location = context.location || state.currentLocation || '';
-  const sceneContext = (context.sceneContext || '').toLowerCase();
-  
-  // Opening guide (first 3 turns, not yet established)
-  const isEarly = (state.turn ?? 0) < 3;
-  const isOpening = !state.openingEstablishment?.complete;
-  const present = state.sceneFacts?.present ?? [];
-  
-  if (isEarly && isOpening && present.includes(npc)) {
-    // First NPC in opening is likely mysterious_guide
-    return 'mysterious_guide';
-  }
-  
-  // Check for explicit role keywords in input
-  if (/\b(mentor|teach|train|learn|master)\b/.test(input)) {
-    return 'trusted_mentor';
-  }
-  
-  if (/\b(quest|mission|task|assignment|job)\b/.test(input)) {
-    const activeMain = (state.quests ?? []).find(q => q.status === 'active' && q.type === 'main');
-    return activeMain ? 'side_quest_giver' : 'quest_patron';
-  }
-  
-  if (/\b(buy|sell|trade|merchant|shop|vendor|wares|goods|stock)\b/.test(input)) {
-    // Check if recurring (hub) or limited (traveling)
-    const isHub = location && /\b(town|city|hub|settlement|outpost)\b/i.test(location);
-    return isHub ? 'recurring_merchant' : 'limited_vendor';
-  }
-  
-  if (/\b(permit|registry|register|official|papers|access|clearance)\b/.test(input)) {
-    return 'hub_official';
-  }
-  
-  if (/\b(information|intel|clue|secret|know|tell me|reveal|broker)\b/.test(input)) {
-    const wantsMoney = /\b(pay|gold|coin|price|cost)\b/.test(input);
-    return wantsMoney ? 'information_broker' : 'mysterious_guide';
-  }
-  
-  if (/\b(alliance|ally|faction|join us|side with|support)\b/.test(input)) {
-    return 'faction_ambassador';
-  }
-  
-  if (/\b(gate|door|passage|bridge|crossing|checkpoint)\b/.test(input) ||
-      /\b(let me pass|open the|through)\b/.test(input)) {
-    return 'gatekeeper';
-  }
-  
-  if (/\b(join|follow|come with|party|together)\b/.test(input)) {
-    const isTemporary = /\b(help|once|this quest)\b/.test(input);
-    return isTemporary ? 'temporary_ally' : 'companion';
-  }
-  
-  if (/\b(escort|protect|guard|deliver|safe)\b/.test(input)) {
-    return 'escort_target';
-  }
-  
-  // Check combat context for antagonist roles
-  const isHostile = state.activeEncounter?.enemies?.some(
-    e => e.name.toLowerCase().includes(npc.toLowerCase())
-  );
-  
-  if (isHostile) {
-    // Boss if health is high and it's late in act
-    const isBoss = (state.activeEncounter?.maxHp ?? 0) > 50 && (state.turn ?? 0) > 40;
-    return isBoss ? 'boss_encounter' : 'obvious_antagonist';
-  }
-  
-  // Check for traitor hints in scene
-  if (/\b(suspicious|untrustworthy|shifty|nervous|hiding)\b/.test(sceneContext)) {
-    return 'hidden_traitor';
-  }
-  
-  // Check for rescue context
-  if (/\b(captive|prisoner|rescue|freed|saved)\b/.test(sceneContext)) {
-    return 'rescued_npc';
-  }
-  
-  // Check for dying context
-  if (/\b(dying|wounded|bleeding|fading|last breath)\b/.test(sceneContext)) {
-    return 'dying_npc';
-  }
-  
-  // Check for witness context
-  if (/\b(saw|witnessed|observed|noticed)\b/.test(sceneContext)) {
-    return 'witness';
-  }
-  
-  // Default: crowd background for unnamed/generic NPCs
-  if (!npc || /\b(person|figure|someone|stranger|guard|civilian)\b/i.test(npc)) {
-    return 'crowd_background';
-  }
-  
-  // Named NPC with no clear role: faction_grunt if faction is present
-  const hasFaction = (state.worldLedger?.factionStandings ?? []).length > 0;
-  return hasFaction ? 'faction_grunt' : 'crowd_background';
-}
-
-// ============================================================================
-// ROLE TRANSFORMS
-// ============================================================================
-
-/**
- * Check if role can transform to another role
- */
-export function canTransformRole(from: NpcRole, to: NpcRole): boolean {
-  const pattern = ROLE_OBLIGATIONS[from].transformPattern;
-  if (!pattern) return false;
-  
-  // Check if transform pattern mentions target role
-  const toSnake = to.replace(/_/g, ' ');
-  return pattern.toLowerCase().includes(toSnake);
+export function getNpcRole(roleId: NpcRole): RoleObligationContract {
+  return NPC_ROLE_REGISTRY[roleId];
 }
 
 /**
- * Get valid transform targets for a role
+ * NPC-002 — Validate role registry completeness
  */
-export function getValidTransforms(role: NpcRole): NpcRole[] {
-  const pattern = ROLE_OBLIGATIONS[role].transformPattern;
-  if (!pattern) return [];
-  
-  const valid: NpcRole[] = [];
-  const roles = Object.keys(ROLE_OBLIGATIONS) as NpcRole[];
-  
-  for (const target of roles) {
-    if (canTransformRole(role, target)) {
-      valid.push(target);
+export function assertRoleRegistryComplete(): void {
+  const expectedRoles = 24;
+  const actualRoles = Object.keys(NPC_ROLE_REGISTRY).length;
+
+  if (actualRoles !== expectedRoles) {
+    throw new Error(
+      `Role registry incomplete: expected ${expectedRoles} roles, found ${actualRoles}`,
+    );
+  }
+
+  // Validate each role has required fields
+  for (const [roleId, contract] of Object.entries(NPC_ROLE_REGISTRY)) {
+    if (!contract.roleId) {
+      throw new Error(`Role ${roleId} missing roleId field`);
+    }
+    if (!contract.description) {
+      throw new Error(`Role ${roleId} missing description field`);
+    }
+    if (!contract.entrance.when) {
+      throw new Error(`Role ${roleId} missing entrance.when field`);
+    }
+    if (!contract.exit.onSuccess || !contract.exit.onFailure) {
+      throw new Error(`Role ${roleId} missing exit conditions`);
+    }
+    if (contract.obligations.successCriteria.length === 0) {
+      throw new Error(`Role ${roleId} has no success criteria`);
     }
   }
-  
-  return valid;
-}
-
-// ============================================================================
-// DEADLINE CALCULATION
-// ============================================================================
-
-/**
- * Calculate deadline turn for an NPC role
- * 
- * @param role - NPC role
- * @param startTurn - Turn when NPC entered scene
- * @param state - Game state (for mode-specific adjustments)
- * @returns Deadline turn (null if no deadline)
- */
-export function calculateRoleDeadline(
-  role: NpcRole,
-  startTurn: number,
-  state: GameState
-): number | null {
-  const obligation = ROLE_OBLIGATIONS[role];
-  if (obligation.timeline === null) return null;
-  
-  // Mode-specific adjustments
-  let multiplier = 1.0;
-  
-  if (state.engineMode === 'litrpg') {
-    // LitRPG moves faster, tighter deadlines
-    multiplier = 0.8;
-  } else if (state.engineMode === 'dnd') {
-    // DnD is more forgiving
-    multiplier = 1.2;
-  } else if (state.engineMode === 'pyoa') {
-    // PYOA is tightest (crisis pressure)
-    multiplier = 0.7;
-  }
-  
-  const adjustedTimeline = Math.floor(obligation.timeline * multiplier);
-  return startTurn + adjustedTimeline;
-}
-
-// ============================================================================
-// SATISFACTION CHECKS
-// ============================================================================
-
-/**
- * Check if NPC role obligation is satisfied
- * 
- * Role-specific satisfaction conditions based on game state.
- */
-export function isRoleSatisfied(
-  role: NpcRole,
-  npc: string,
-  state: GameState
-): boolean {
-  const topics = state.arcDirector?.npcTopics?.[npcKey(npc)] ?? [];
-  const topicCount = topics.length;
-  const quests = state.quests ?? [];
-  
-  switch (role) {
-    case 'mysterious_guide':
-      // Satisfied if opening complete and player acted on clue
-      return state.openingEstablishment?.complete ?? false;
-      
-    case 'trusted_mentor':
-      // Satisfied if 2+ training topics
-      return topicCount >= 2;
-      
-    case 'quest_patron':
-    case 'side_quest_giver':
-      // Satisfied if quest accepted
-      return quests.some(q => q.status === 'active');
-      
-    case 'recurring_merchant':
-      // Satisfied if 3+ trade topics
-      return topics.filter(t => /trade|buy|sell/.test(t)).length >= 3;
-      
-    case 'limited_vendor':
-      // Satisfied if 1+ trade
-      return topics.some(t => /trade|buy|sell/.test(t));
-      
-    case 'hub_official':
-      // Satisfied if 1+ registry topic
-      return topicCount >= 1;
-      
-    case 'information_broker':
-      // Satisfied if info purchased
-      return topics.some(t => /buy|purchase|pay/.test(t));
-      
-    case 'faction_ambassador':
-      // Satisfied if faction standing changed
-      const standings = state.worldLedger?.factionStandings ?? [];
-      return standings.length > 0;
-      
-    case 'gatekeeper':
-      // Satisfied if passage granted
-      return topics.some(t => /pass|through|enter/.test(t));
-      
-    case 'escort_target':
-      // Satisfied if location changed (delivered)
-      const startLoc = state.sceneFacts?.location;
-      return !startLoc || state.currentLocation !== startLoc;
-      
-    case 'hidden_traitor':
-      // Satisfied when betrayal revealed (tracked in key moments)
-      // For now, use topic count as proxy
-      return topicCount >= 3;
-      
-    case 'obvious_antagonist':
-    case 'boss_encounter':
-      // Satisfied when combat cleared
-      const cleared = state.arcDirector?.encounterClearedReceipts ?? [];
-      return cleared.some(r => r.name.toLowerCase().includes(npc.toLowerCase()));
-      
-    case 'temporary_ally':
-      // Satisfied when quest complete
-      return quests.some(q => q.status === 'completed');
-      
-    case 'rescued_npc':
-      // Satisfied if 1+ topic (reward given)
-      return topicCount >= 1;
-      
-    case 'dying_npc':
-      // Always satisfied (dies immediately after message)
-      return topicCount >= 1;
-      
-    case 'witness':
-      // Satisfied if bribed or threatened
-      return topics.some(t => /bribe|threaten|silence/.test(t));
-      
-    case 'companion':
-    case 'faction_lieutenant':
-    case 'faction_grunt':
-    case 'crowd_background':
-    case 'rival':
-    case 'transforming_npc':
-      // No satisfaction condition (stays until story beat)
-      return false;
-      
-    default:
-      return false;
-  }
-}
-
-// ============================================================================
-// HELPERS
-// ============================================================================
-
-function npcKey(name: string): string {
-  return name.toLowerCase().replace(/[^a-z0-9]+/g, '-').slice(0, 40);
 }
 
 /**
- * Format role obligation as situation packet mandate
+ * NPC-002 — Get genre variant for role
  */
-export function formatRoleObligation(role: NpcRole, npc: string, deadline: number | null): string {
-  const obligation = ROLE_OBLIGATIONS[role];
-  const deadlineStr = deadline ? ` (deadline: T${deadline})` : '';
-  return `NPC ROLE (${npc}): ${obligation.function}${deadlineStr}. ${obligation.exitCondition}`;
+export function getRoleGenreVariant(
+  roleId: NpcRole,
+  genre: NpcGenre,
+): { name: string; archetype: string; example: string } | undefined {
+  const contract = getNpcRole(roleId);
+  return contract.genreVariants[genre];
 }
 
 /**
- * Format exit mandate when deadline missed
+ * NPC-002 — Get all roles with specific entrance condition
  */
-export function formatExitMandate(role: NpcRole, npc: string, reason: string): string {
-  const obligation = ROLE_OBLIGATIONS[role];
-  return `NPC EXIT (${npc}): ${reason}. ${obligation.failureCondition}`;
+export function getRolesByEntranceCondition(condition: string): NpcRole[] {
+  return (Object.entries(NPC_ROLE_REGISTRY) as Array<[NpcRole, RoleObligationContract]>)
+    .filter(([_, contract]) => contract.entrance.when.includes(condition))
+    .map(([roleId]) => roleId);
+}
+
+/**
+ * NPC-002 — Get all roles that can transform
+ */
+export function getTransformableRoles(): Array<{
+  roleId: NpcRole;
+  toRole: NpcRole;
+  condition: string;
+}> {
+  return (Object.entries(NPC_ROLE_REGISTRY) as Array<[NpcRole, RoleObligationContract]>)
+    .filter(([_, contract]) => contract.transform !== undefined)
+    .map(([roleId, contract]) => ({
+      roleId,
+      toRole: contract.transform!.toRole,
+      condition: contract.transform!.condition,
+    }));
 }
