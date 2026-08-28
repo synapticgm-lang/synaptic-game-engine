@@ -10,6 +10,8 @@ import {
   isGmProxyAvailable,
   isGmProxyRequired,
 } from './gmProxy';
+import { gmProxyTimeoutMsForState } from './errorRepairWarden';
+import { effectiveWriterTier } from './testLab';
 
 export type { GmResult } from './aiServiceShared';
 export { RateLimitError, withRetry } from './aiServiceShared';
@@ -65,6 +67,20 @@ export async function callGm(
   throw new Error(
     'GM proxy required. Deploy supabase function gm-turn and set VITE_SUPABASE_URL / VITE_REQUIRE_GM_PROXY=true.'
   );
+}
+
+/** Opening page / cover-continue — real `callGm` args (never a phantom 5th callback). */
+export async function callOpeningGm(
+  state: GameState,
+  playerInput: string,
+  settings: Settings,
+  signal?: AbortSignal,
+): Promise<string> {
+  const timeoutMs = gmProxyTimeoutMsForState(state, {
+    writerTier: effectiveWriterTier(settings.subscriptionTier ?? 'free'),
+  });
+  const result = await callGm(state, playerInput, settings, [], undefined, signal, timeoutMs);
+  return (result.text ?? '').trim();
 }
 
 export async function callGmAutoFight(

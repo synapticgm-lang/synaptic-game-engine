@@ -53,6 +53,13 @@ describe('errorRepairWarden', () => {
     );
   });
 
+  it('classifies ReferenceError / TypeError / proxy 400 as actionable kinds', () => {
+    expect(classifyTurnFailure(new Error('freeCallRef is not defined'))).toBe('client_bug');
+    expect(classifyTurnFailure(new TypeError('x is not a function'))).toBe('client_bug');
+    expect(classifyTurnFailure(new Error('GM proxy error 400'))).toBe('empty');
+    expect(classifyTurnFailure(new Error(''))).toBe('network');
+  });
+
   it('uses a longer first-post-open / honeymoon proxy budget', () => {
     const base = createInitialState('The Summoned Pact', 'litrpg');
     const afterOpen = {

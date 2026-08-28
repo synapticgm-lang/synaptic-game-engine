@@ -25,6 +25,7 @@ const DEVICE_ID_KEY = 'tactical-litrpg-device-id';
 const SESSION_ID_KEY = 'tactical-litrpg-session-id';
 const SESSION_STARTED_KEY = 'tactical-litrpg-session-started';
 const SESSION_LOG_KEY = 'tactical-litrpg-session-debug-log';
+const LAST_SESSION_LOG_KEY = 'tactical-litrpg-last-session-debug-log';
 const AUTO_DOWNLOAD_KEY = 'tactical-litrpg-auto-download-debug';
 
 /**
@@ -362,6 +363,12 @@ class DebugLogger {
     const id = generateUUID();
     const started = new Date().toISOString();
     if (typeof localStorage !== 'undefined') {
+      try {
+        const prev = localStorage.getItem(SESSION_LOG_KEY);
+        if (prev) localStorage.setItem(LAST_SESSION_LOG_KEY, prev);
+      } catch {
+        /* ignore quota */
+      }
       localStorage.setItem(SESSION_ID_KEY, id);
       localStorage.setItem(SESSION_STARTED_KEY, started);
       try {
@@ -435,6 +442,16 @@ class DebugLogger {
       return JSON.stringify(errorPackage, null, 2);
     }
 
+    let previousSession: unknown = null;
+    if (typeof localStorage !== 'undefined') {
+      try {
+        const raw = localStorage.getItem(LAST_SESSION_LOG_KEY);
+        if (raw) previousSession = JSON.parse(raw);
+      } catch {
+        previousSession = null;
+      }
+    }
+
     const eventPackage = {
       logType: 'event-log',
       ...common,
@@ -444,6 +461,7 @@ class DebugLogger {
       recentRolls: currentState?.rolls?.slice(-20) || [],
       eventLog: chronological,
       totalEvents: chronological.length,
+      previousSession,
     };
     return JSON.stringify(eventPackage, null, 2);
   }

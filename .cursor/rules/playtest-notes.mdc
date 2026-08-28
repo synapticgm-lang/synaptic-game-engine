@@ -11,7 +11,8 @@ John is playtesting live. Collect issues here. Do not implement until he asks fo
 
 _(waiting — John still playtesting; next update when he asks)_
 
-- **Next gate after 29g:** re-run alt-premades **4×300** under stamp `2026-08-29g` + Gemini re-score. World map authority should cut invented geography; do not claim 8/10 until scored.
+- **Next gate after 30c:** re-run alt-premades **4×300** under stamp `2026-08-30c` + Gemini re-score. World map authority should cut invented geography; do not claim 8/10 until scored.
+- **2026-08-30c opening GM + turn-fail (shipped):** `callOpeningGm`; classify TypeError / proxy 400 / blank; Continue keeps previous debug session. Evidence: `docs/bugs/playtest-2026-08-28-turn-did-not-land/`.
 - **2026-08-29g hide chrome meaning (shipped):** Hide text = bottom action box. Hide options = choice chips only. “What do you do?” note stays. Residual: opening with no chips still looks like Hide options does nothing. Doc: `path-a-ship-implementation-2026-08-29g.md`.
 - **2026-08-29f hide/show + stitch opener (kept):** Taps never undone by saveId flip. Stitch banks + unused card beat + no stacked name-ask. Residual: New Game still falls back to stitch when GM empty/timeout. Doc: `path-a-ship-implementation-2026-08-29f.md`.
 - **2026-08-29e world map overhaul (kept):** Premade settlements on atlas; LitRPG/DnD/RPG always get a map; invent-lock cities/shores; NPC harvest; dungeon open/close; biome-sane quest sites; WORLD MAP AUTHORITY in packet. Doc: `path-a-ship-implementation-2026-08-29e.md`.
@@ -71,6 +72,8 @@ _(waiting — John still playtesting; next update when he asks)_
 - Premium theme five-rater / Shop preview parity (Manus T8/T9 P0-04) ? after playtest of `2026-08-19t` Vampire rescue; ingest `docs/research/manus-premium-themes-ingest-2026-08-19.md`
 
 ## Done (already shipped)
+
+- **2026-08-30c opening GM + turn-fail (John authorized push):** `callOpeningGm` (no `freeCallRef` / `result.story`); classify TypeError/ReferenceError/`GM proxy error`/blank; Continue keeps last session in export. Vitest `playtest29hTurnFail`. HUD + index.html `2026-08-30c`. Mid writer NO. Doc: `docs/research/path-a-ship-implementation-2026-08-30c.md`. Client-only.
 
 - **2026-08-29g hide chrome meaning (John authorized push):** Hide text collapses mic/textarea/send only; story stays. Hide options hides choice chips only; TURN_ASK stays. Vitest `playtest29gHideChrome`. HUD + index.html `2026-08-29g`. Mid writer NO. Doc: `docs/research/path-a-ship-implementation-2026-08-29g.md`. Client-only.
 

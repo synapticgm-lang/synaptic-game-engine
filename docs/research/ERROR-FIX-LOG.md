@@ -38,6 +38,7 @@
 | **20p** | Connection drop / first-post-open timeout | Auto-retry ×2 + 75s/55s budgets + exhausted toast | — |
 | **26c** | Mid-game Free still timing out at 30s | Default 55s / Free hosted 60s / busy retry copy | DeepSeek cold starts |
 | **26i** | Free/DeepSeek cold-start latency | Free writer → `google/gemini-2.5-flash-lite` (John-approved) | Rare Google cold starts remain |
+| **29g live** | First chip after name: “That turn did not land” ×2; dump empty | Opening `freeCallRef` ReferenceError + silent stitch; Continue wiped log. `callOpeningGm` + last-session buffer | |
 
 ### Opening (Class B)
 

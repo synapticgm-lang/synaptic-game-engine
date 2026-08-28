@@ -83,6 +83,7 @@ export function gmProxyTimeoutMsForState(
 export function classifyTurnFailure(err: unknown): TurnFailKind {
   const msg = err instanceof Error ? err.message : String(err ?? '');
   const name = err instanceof Error ? err.name : '';
+  if (!msg.trim()) return 'network';
   if (/still compiling|aborted|AbortError|timed?\s*out/i.test(msg) || name === 'AbortError') {
     return 'timeout';
   }
@@ -94,17 +95,22 @@ export function classifyTurnFailure(err: unknown): TurnFailKind {
     return 'network';
   }
   if (/429|Rate limit/i.test(msg)) return 'rate_limit';
+  if (/auth|JWT|session|401|403/i.test(msg)) return 'auth';
   // Free writers sometimes return "The AI provider returned no content." — must be empty (retryable), not unknown.
   // Also map provider/proxy soft-fails that matrix-40 logged as unknown into empty (retryable).
   if (
-    /empty content|empty response|returned no content|\bno content\b|no text|blank response|provider.*fail|OpenRouter|upstream|502|503|504|500\b|BOOT_ERROR|Internal Server Error|invalid (?:json|response)|malformed/i.test(
+    /empty content|empty response|returned no content|\bno content\b|no text|blank response|provider.*fail|OpenRouter|upstream|502|503|504|500\b|BOOT_ERROR|Internal Server Error|invalid (?:json|response)|malformed|GM proxy error/i.test(
       msg
     )
   ) {
     return 'empty';
   }
-  if (/auth|JWT|session|401|403/i.test(msg)) return 'auth';
-  if (/is not defined|Cannot read|undefined is not/i.test(msg)) return 'client_bug';
+  if (
+    name === 'TypeError' || name === 'ReferenceError'
+    || /is not defined|is not a function|Cannot read|Cannot access|undefined is not/i.test(msg)
+  ) {
+    return 'client_bug';
+  }
   return 'unknown';
 }
 

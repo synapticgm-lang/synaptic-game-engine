@@ -22,7 +22,7 @@ import {
   gameStateToLocalSlot,
 } from './cloudSync';
 import { filterSystemLogForEngine, suppressNoOpStatusEcho, reconcileXpStatusLines } from './systemLog';
-import { callGm, callGmAutoFight, type GmResult } from './aiService';
+import { callGm, callGmAutoFight, callOpeningGm, type GmResult } from './aiService';
 import { gmProxyHost } from './gmProxy';
 import { simulateCombat, buildAutoFightPrompt } from './combat';
 import type { EnemyStats } from './combat';
@@ -2158,41 +2158,41 @@ export function useGame() {
         let gmAuthored = false;
         
         if (openingState.openingEstablishment?.sceneWritten) {
-          // Continue path - try GM first
           try {
-            const result = await callGm(
+            const story = await callOpeningGm(
               openingState,
-              contentSanitized || '', // Player's answer to cover question
+              contentSanitized || '',
               settingsRef.current,
-              void 0,
-              freeCallRef
+              turnAbort.signal,
             );
-            if (result.story?.trim()) {
-              openingRaw = result.story;
-              openingText = result.story;
+            if (story) {
+              openingRaw = story;
+              openingText = story;
               gmAuthored = true;
             }
           } catch (gmError) {
-            // Silent fallback
+            debugLogger.record('WARN', 'Opening continue GM failed — stitch fallback', {
+              error: gmError instanceof Error ? gmError.message : String(gmError),
+            });
             logger.debug('Opening continue GM call failed, using stitch fallback', gmError);
           }
         } else {
-          // First page path - try GM first
           try {
-            const result = await callGm(
+            const story = await callOpeningGm(
               openingState,
-              '', // no player action for first page
+              '',
               settingsRef.current,
-              void 0,
-              freeCallRef
+              turnAbort.signal,
             );
-            if (result.story?.trim()) {
-              openingRaw = result.story;
-              openingText = result.story;
+            if (story) {
+              openingRaw = story;
+              openingText = story;
               gmAuthored = true;
             }
           } catch (gmError) {
-            // Silent fallback
+            debugLogger.record('WARN', 'Opening GM failed — stitch fallback', {
+              error: gmError instanceof Error ? gmError.message : String(gmError),
+            });
             logger.debug('Opening GM call failed, using stitch fallback', gmError);
           }
         }
@@ -3342,6 +3342,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
         if (manifest) {
           const fallback = applyRenderFallback(manifest, liveCurrent, 'empty');
           cleanText = fallback.prose;
+          liveCurrent = attachSealedManifest(liveCurrent, fallback.manifestUpdated);
           debugLogger.record('WARN', 'GM empty — deterministic fallback from sealed manifest', {
             turn: liveCurrent.turn,
             hash: manifest.beatEffectsHash,
@@ -4665,20 +4666,16 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
       let gmAuthored = false;
       
       try {
-        const result = await callGm(
-          newState,
-          '', // no player action for opening
-          settingsRef.current,
-          void 0,
-          freeCallRef
-        );
-        if (result.story?.trim()) {
-          openingRaw = result.story;
-          openingText = result.story;
+        const story = await callOpeningGm(newState, '', settingsRef.current);
+        if (story) {
+          openingRaw = story;
+          openingText = story;
           gmAuthored = true;
         }
       } catch (gmError) {
-        // Silent fallback — never toast "the book"
+        debugLogger.record('WARN', 'New Game opening GM failed — stitch fallback', {
+          error: gmError instanceof Error ? gmError.message : String(gmError),
+        });
         logger.debug('Opening GM call failed, using stitch fallback', gmError);
       }
       
