@@ -64,6 +64,8 @@ export interface ArcDirectorState {
   voiceAsideLastUsed?: Record<string, number>;
   /** 29b — Free T12 durable delta forced */
   freeT12Forced?: boolean;
+  /** 29d — turn soft threat / leverage pressure opened (resolve within 6 turns) */
+  softThreatOpenedTurn?: number;
 }
 
 export interface ArcDirectorResult {
@@ -163,7 +165,20 @@ function hasCrisisReceipt(state: GameState): boolean {
   return (state.stateTxLog ?? []).some((t) => /crisis|fork|branch lock/i.test(t.summary));
 }
 
-/** B043 — enforce combat/crisis receipts by T8/T15/T12 (not just telemetry). */
+function hasLeverageReceipt(state: GameState): boolean {
+  const committed = state.arcDirector?.committedBeatIds ?? [];
+  if (committed.some((id) => /leverage|demand|consequence/i.test(id))) return true;
+  return (state.stateTxLog ?? []).some((t) => /leverage|demand|vigil|heat|consequence/i.test(t.summary));
+}
+
+/** Soft-threat open without resolution — RPG/PYOA pressure that never lands. */
+function softThreatOverdue(state: GameState): boolean {
+  const opened = state.arcDirector?.softThreatOpenedTurn;
+  if (opened == null) return false;
+  return state.turn - opened >= 6 && !state.activeEncounter;
+}
+
+/** B043 — enforce combat/crisis/leverage receipts by T8/T15/T12 (not just telemetry). */
 export function forceLivenessBeat(
   state: GameState,
   committed: Set<string>
@@ -173,6 +188,28 @@ export function forceLivenessBeat(
 
   if (mode === 'pyoa' && turn >= 12 && !hasCrisisReceipt(state) && !committed.has('pyoa-beat-crisis')) {
     return contractById('pyoa-beat-crisis') ?? null;
+  }
+
+  // 29d — RPG soft world: force leverage/demand by T12 (Gemini soft Salt Road)
+  if (mode === 'rpg' && turn >= 12 && !hasLeverageReceipt(state)) {
+    return (
+      contractById('rpg-beat-leverage') ??
+      contractById('rpg-beat-demand') ??
+      contractById('rpg-beat-consequence') ??
+      null
+    );
+  }
+
+  // 29d — soft-threat timer: open pressure without terminal after 6 turns
+  if (softThreatOverdue(state) && (mode === 'rpg' || mode === 'pyoa')) {
+    if (mode === 'pyoa') {
+      return contractById('pyoa-beat-branch') ?? contractById('pyoa-beat-crisis') ?? null;
+    }
+    return (
+      contractById('rpg-beat-consequence') ??
+      contractById('rpg-beat-leverage') ??
+      null
+    );
   }
 
   if (!engineAllowsCombat(state) || hasCombatReceipt(state)) return null;
@@ -446,6 +483,15 @@ export function runArcDirectorBeforeGm(
 
     if (contract.once) {
       const beatIds = [...(working.arcDirector?.committedBeatIds ?? []), contract.id];
+      const softOpen =
+        /leverage|demand|crisis|pressure/i.test(contract.id) ||
+        contract.kind === 'leverage' ||
+        contract.kind === 'crisis';
+      const softClear =
+        /consequence|branch|closure|skirmish|hostility/i.test(contract.id) ||
+        contract.kind === 'encounter' ||
+        contract.kind === 'branch' ||
+        !!contract.spawnEncounter;
       working = {
         ...working,
         arcDirector: {
@@ -454,6 +500,11 @@ export function runArcDirectorBeforeGm(
           activeBeatId: contract.id,
           lastMandate: contract.mandate,
           turnsSinceCombatReceipt: contract.spawnEncounter ? 0 : turnsSinceCombat,
+          softThreatOpenedTurn: softClear
+            ? undefined
+            : softOpen
+              ? (working.arcDirector?.softThreatOpenedTurn ?? working.turn)
+              : working.arcDirector?.softThreatOpenedTurn,
         },
       };
     } else {

@@ -165,6 +165,18 @@ export const SALT_ROAD_HUBS: OutdoorHub[] = [
   { id: 'sr-hub-checkpoint', name: 'Checkpoint Rise', blurb: 'Heat rises here — papers or a fight.', threatTier: 2, aliases: ['the checkpoint'] },
 ];
 
+/** Shattered Coast — tabletop coast flagship (Saltmar + atlas outlying, 29e follow-up). */
+export const SHATTERED_COAST_HUBS: OutdoorHub[] = [
+  { id: 'sc-hub-saltmar', name: 'Saltmar', blurb: 'Cliff-city capital of the Compact.', threatTier: 1, linkedQuestIds: ['sc-quest-1'], aliases: ['Saltmar City', 'the harborside streets of Saltmar'] },
+  { id: 'sc-hub-lower', name: 'Lower Ward', blurb: 'Harbor, fish markets, and sea-cave undercity.', threatTier: 1, linkedQuestIds: ['sc-quest-1'], aliases: ['Saltmar Lower Ward', 'the harbor'] },
+  { id: 'sc-hub-middle', name: 'Middle Ward', blurb: 'Markets and workshops on the cliff face.', threatTier: 1, linkedQuestIds: ['sc-quest-2'], aliases: ['Saltmar Middle Ward'] },
+  { id: 'sc-hub-upper', name: 'Upper Ward', blurb: 'Guild halls and Sentinel barracks atop the cliffs.', threatTier: 2, linkedQuestIds: ['sc-quest-3'], aliases: ['Saltmar Upper Ward'] },
+  { id: 'sc-hub-lift', name: 'Great Lift', blurb: 'Counterweight elevators between the three wards.', threatTier: 1, aliases: ['the Great Lift'] },
+  { id: 'sc-hub-brinewatch', name: 'Brinewatch', blurb: 'Fishing town under a salt-stained keep.', threatTier: 1, aliases: ['Brinewatch Town', 'the fishing town'] },
+  { id: 'sc-hub-keep', name: 'Salt-Stained Keep', blurb: 'Keep above Brinewatch harbor — dungeon site.', threatTier: 2, linkedQuestIds: ['sc-quest-4'], aliases: ['the keep', 'salt keep'] },
+  { id: 'sc-hub-stonevein', name: 'Stonevein Quarry', blurb: 'Quarry and dwarf-cut halls.', threatTier: 2, linkedQuestIds: ['sc-quest-2'], aliases: ['Stonevein', 'the quarry'] },
+];
+
 const HUBS_BY_BIBLE: Record<string, OutdoorHub[]> = {
   'summoned-pact': SUMMONED_PACT_HUBS,
   'hero-awakening': HERO_AWAKENING_HUBS,
@@ -178,6 +190,7 @@ const HUBS_BY_BIBLE: Record<string, OutdoorHub[]> = {
   'dungeon-transport': DUNGEON_TRANSPORT_HUBS,
   'cursed-keep': CURSED_KEEP_HUBS,
   'salt-road-heist': SALT_ROAD_HUBS,
+  'shattered-coast': SHATTERED_COAST_HUBS,
 };
 
 export function hubsForBibleId(bibleId: string | undefined | null): OutdoorHub[] {
@@ -189,29 +202,45 @@ export function hubsForBible(bible: CampaignBible | undefined | null): OutdoorHu
   return hubsForBibleId(bible?.id);
 }
 
-function hubToPlace(hub: OutdoorHub): PlaceRecord {
+function hubToPlace(
+  hub: OutdoorHub,
+  atlas?: { settlements?: Array<{ name: string; aliases?: string[]; biome?: string; regionId?: string; allowsDungeon?: boolean }> } | null
+): PlaceRecord {
   const dangerTier = hub.threatTier <= 1 ? 1 : hub.threatTier <= 2 ? 2 : 3;
+  const settle = atlas?.settlements?.find(
+    (s) =>
+      s.name.toLowerCase() === hub.name.toLowerCase() ||
+      hub.aliases?.some((a) => a.toLowerCase() === s.name.toLowerCase()) ||
+      s.aliases?.some((a) => a.toLowerCase() === hub.name.toLowerCase())
+  );
   return {
     id: placeIdFromName(hub.name),
     name: hub.name,
-    aliases: hub.aliases,
+    aliases: Array.from(
+      new Set([...(hub.aliases ?? []), ...(settle?.aliases ?? [])])
+    ).slice(0, 12),
     threatTier: hub.threatTier,
     dangerTier: dangerTier as 1 | 2 | 3 | 4,
     mapScale: hub.threatTier >= 3 ? 'region' : 'street',
     arcStatus: 'open',
+    mapCanonical: true,
+    biome: settle?.biome,
+    allowsDungeon: settle?.allowsDungeon,
+    regionId: settle?.regionId,
   };
 }
 
-/** Seed hub places on New Game without overwriting visited arcs. */
+/** Seed hub places on New Game without overwriting visited arcs. Joins atlas settlements when names match. */
 export function seedOutdoorHubPlaces(
   places: PlaceRecord[] | undefined,
-  bible: CampaignBible | undefined | null
+  bible: CampaignBible | undefined | null,
+  atlas?: GameState['worldAtlas']
 ): PlaceRecord[] {
   const hubs = hubsForBible(bible);
   if (!hubs.length) return places ?? [];
   let next = [...(places ?? [])];
   for (const hub of hubs) {
-    const place = hubToPlace(hub);
+    const place = hubToPlace(hub, atlas);
     const existing = next.find(
       (p) =>
         p.id === place.id
@@ -225,6 +254,10 @@ export function seedOutdoorHubPlaces(
               ...p,
               threatTier: p.threatTier ?? place.threatTier,
               dangerTier: p.dangerTier ?? place.dangerTier,
+              mapCanonical: p.mapCanonical ?? place.mapCanonical,
+              biome: p.biome ?? place.biome,
+              regionId: p.regionId ?? place.regionId,
+              allowsDungeon: p.allowsDungeon ?? place.allowsDungeon,
               aliases: Array.from(new Set([...(p.aliases ?? []), ...(place.aliases ?? [])])).slice(0, 12),
             }
           : p

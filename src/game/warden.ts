@@ -252,6 +252,12 @@ export async function runWarden(
     presentNames: (state.sceneFacts?.present ?? []).filter(
       (n) => typeof n === 'string' && n.trim().length >= 2
     ),
+    groundedWeapons: undefined,
+    playerName: state.character?.name,
+    hasLiveEncounter: !!state.activeEncounter,
+    recentlyClearedEncounter:
+      state.arcDirector?.lastEncounterClearedTurn === state.turn ||
+      state.arcDirector?.lastEncounterClearedTurn === state.turn - 1,
   };
   
   const polishedBase = enableGrammarCheck

@@ -27,6 +27,8 @@ import {
   initProgressGovernor,
 } from './forwardProgressGovernor.ts';
 import { buildGovernanceSnapshotLines } from './qualityGovernance.ts';
+import { formatWorldAtlasBlock } from './worldAtlas.ts';
+import { formatWorldMapAuthorityBlock } from './worldMapAuthority.ts';
 
 export function effectivePowerScaling(state: GameState): PowerScaling {
   return state.powerScaling ?? 'balanced';
@@ -234,14 +236,23 @@ export function formatSceneSnapshotForPrompt(state: GameState): string {
   const governor = state.progressGovernor ?? initProgressGovernor();
   const activeObjective = hasActiveObjectives(state);
   const progressCheck = checkProgressGovernor(state, governor, activeObjective);
-  if (progressCheck.needsProgress && progressCheck.mandate) {
+  // 29d prompt diet — skip Forward-Progress mandate when ArcDirector / governance already owns interrupt
+  const governanceLines = buildGovernanceSnapshotLines(state)
+    .map((m) => m.trim())
+    .filter(Boolean);
+  const governanceBlob = governanceLines.join('\n').toLowerCase();
+  if (
+    progressCheck.needsProgress &&
+    progressCheck.mandate &&
+    !/loiter interrupt|free t12|arc beat|stagnation/i.test(governanceBlob)
+  ) {
     lines.push(`- ${progressCheck.mandate}`);
   }
 
-  for (const mandate of buildGovernanceSnapshotLines(state)) {
-    if (mandate.trim()) lines.push(`- ${mandate.replace(/^-\s*/, '')}`);
+  for (const mandate of governanceLines) {
+    lines.push(`- ${mandate.replace(/^-\s*/, '')}`);
   }
-  
+
   if (timeLabel) lines.push(`- Time of Day: ${timeLabel}`);
   if (weatherLabel) lines.push(`- Weather: ${weatherLabel}`);
   if (locationTypeLabel) lines.push(`- Location Type: ${locationTypeLabel}`);
@@ -253,33 +264,29 @@ export function formatSceneSnapshotForPrompt(state: GameState): string {
   if (emptySearch) lines.push(`- ${emptySearch}`);
   lines.push(`- ${weaponAuthorityLine(state)}`);
   lines.push('');
+  // 29d — one AUTHORITY + PROSE LICENSE block (no duplicate STAGNATION / QUEST essays)
   lines.push(
-    'AUTHORITY: Narrate richly — descriptive, engaging language and narrative flair are required. Atmosphere (smell, rust, cadence, metaphor, NPC mannerism) is free. Do not contradict these facts or the ledger. Do not invent items, doors, named people, or numeric results absent from this snapshot.'
+    'AUTHORITY: SNAPSHOT + ledger win on facts (kit, exits, presence, HP, outcomes). Do not invent items, doors, named people, or numeric results absent above.'
   );
-  if (mainQuest?.name) {
+  lines.push(
+    'PROSE LICENSE: Full artistic freedom on sensory detail, metaphor, pacing, and NPC manner — dramatize the OUTCOME token; never invert it. Stakes stay honest (no auto-win, no invented kit).'
+  );
+  if (mainQuest?.name && !/quest pressure|quest focus/i.test(governanceBlob)) {
     lines.push(
       'QUEST PRESSURE: Unless mid-combat or mid-opening covers, include one concrete reminder or option tied to Quest focus this beat.'
     );
   }
-  if (streak.count >= 3) {
-    lines.push(
-      'STAGNATION INTERRUPT: The player is looping. Advance the world — do not answer with the same stall dialogue.'
-    );
-  }
+  // Stagnation already listed above when streak≥3; skip duplicate INTERRUPT essay
   const pinned = state.openingEstablishment?.pinnedNpcNames ?? [];
   if (pinned.length && (state.turn ?? 0) <= 20 && !alone) {
     lines.push(
       `OPENING PIN: ${pinned.join(', ')} stay present and consequential — do not forget the opening offer or replace them with stranger/kit nouns.`
     );
   }
-  if (state.systemPersonality === 'dry-wit' || state.gmPersonality === 'dry-wit') {
-    lines.push(
-      'VOICE CHECK (Sarcastic Patch / Dry Wit): At most one dry aside when STATUS changes; never mock the player; numbers stay literal.'
-    );
-  }
+  // Dry-wit voice lives in VOICE cadence directive — no second VOICE CHECK line
   if (!alone || state.activeEncounter) {
     lines.push(
-      'SPEAKER CONTINUITY: Named people in Presence who just spoke or attended stay awake and present this beat unless Time/Location changes. Do not open by treating them as a cot-bound sleeper who never stirs.'
+      'SPEAKER CONTINUITY: Named people in Presence who just spoke stay present this beat unless Time/Location changes.'
     );
   }
   return lines.join('\n');
@@ -327,6 +334,8 @@ export function formatSituationForPrompt(state: GameState): string {
   const lines = [
     snapshot,
     '',
+    formatWorldMapAuthorityBlock(state),
+    formatWorldAtlasBlock(state),
     contractBlock,
     currentLine,
     previousLine,
@@ -346,7 +355,7 @@ export function formatSituationForPrompt(state: GameState): string {
     alone
       ? 'ALONE ARRIVAL: Empty ruin — no handlers or "people who saw you arrive." Do not invent voices outside or watchers at the wall.'
       : '',
-    'RAILS: SNAPSHOT + ledger are fact authority. Narrate richly; do not contradict them. Do not invent named threats, loot, NPCs, doors, or interactables absent above. Do not invent a dungeon danger tier outdoors. Interior floor-plan Exits / EXPLORE AUTHORITY override "one room / only a gap" improvisation.',
+    'RAILS: SNAPSHOT + ledger + WORLD MAP are fact authority. Narrate richly inside listed settlements. Do not invent new cities, towns, shores, or continents. Do not invent named threats, loot, or doors absent above. Quest sites must fit biome. Dungeons open at allowsDungeon sites then close when cleared.',
     'HIDDEN QUESTS: Never spoil quests with status hidden or revealed=false.',
     formatWorldLedgerBlock(state.worldLedger),
   ];

@@ -99,6 +99,8 @@ export interface MapBlueprint {
 export interface ActiveDungeonState {
   blueprintId: string;
   dungeonName: string;
+  /** Exterior site this interior was opened from (29e). */
+  siteName?: string;
   /** Map SCALE (1 world … 4 tactical). For local-area street maps this is 3 — not danger. */
   tier: MapTier;
   /** Dungeon danger T1–T4 for loot/enemies. Omit on street maps. */
@@ -117,6 +119,8 @@ export interface ActiveDungeonState {
   bossFirstClearPending?: boolean;
   /** Guaranteed Rare+/Epic+ floor for this run (Pack 1). */
   runFloorMet?: boolean;
+  /** 29e — marked cleared before close */
+  cleared?: boolean;
 }
 
 export const CORE_BLUEPRINTS: MapBlueprint[] = [

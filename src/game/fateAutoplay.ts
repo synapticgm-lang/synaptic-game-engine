@@ -68,7 +68,16 @@ import {
   seedCoverAnswers,
 } from './openingEstablishment';
 import { applyOpeningContract, ensureStarterLookCharacter, stitchOpeningScene } from './openingStitch';
-import { seedOutdoorHubPlaces, parseTravelDestination, ensureTravelArrivalProse } from './outdoorHubs';
+import {
+  seedOutdoorHubPlaces,
+  parseTravelDestination,
+  ensureTravelArrivalProse,
+} from './outdoorHubs';
+import { resolveHubArrival, hubBeatAwardKey } from './hubEncounters';
+import { seedWorldMapPlaces } from './worldMapAuthority';
+import { maybeRevealFromLocation } from './worldAtlas';
+import { harvestNarrativeIntoLedger, scrubInventedGeography } from './narrativeHarvest';
+import { maybeAutoCloseDungeon } from './dungeonLifecycle';
 import {
   extractUpdates,
   parseActionTags,
@@ -114,7 +123,12 @@ import {
   calculateCrowdSize,
   collectSceneObjectNames,
 } from './proseWarden';
-import { syncQuestsFromPlay, questsLockedDuringOpening } from './questPlay';
+import {
+  syncQuestsFromPlay,
+  questsLockedDuringOpening,
+  revealQuestsFromHubLinks,
+  applyBiomeSaneQuestSites,
+} from './questPlay';
 import { touchPlaceVisit } from './places';
 import { buildTurnMandate } from './sceneFocus';
 import { groundedWeaponNames, listEmptySearchTargets } from './searchContinuity';
@@ -471,7 +485,10 @@ export function buildNewGameState(opts: {
     choices: [],
     log: [],
     worldLedger: seedWorldLedgerFactions(emptyWorldLedger(), bible),
-    places: seedOutdoorHubPlaces([], bible),
+    places: seedWorldMapPlaces(
+      seedOutdoorHubPlaces([], bible, namedSeeded.worldAtlas),
+      namedSeeded.worldAtlas
+    ),
     sandboxAwardKeys: [],
     mapFocusPlace: null,
     pendingGeneratedOpening: false,
@@ -928,6 +945,13 @@ Do NOT print dice notation or CODE ENFORCED.
     playerInput,
     groundedWeapons: groundedWeaponNames(working),
     playerName: working.character?.name ?? state.character?.name,
+    hasLiveEncounter: !!(working.activeEncounter ?? state.activeEncounter),
+    recentlyClearedEncounter:
+      (working.arcDirector?.lastEncounterClearedTurn ??
+        state.arcDirector?.lastEncounterClearedTurn) === working.turn ||
+      (working.arcDirector?.lastEncounterClearedTurn ??
+        state.arcDirector?.lastEncounterClearedTurn) ===
+        working.turn - 1,
     presentNames: [
       ...(working.sceneFacts?.present ?? []),
       ...(state.sceneFacts?.present ?? []),
@@ -935,6 +959,10 @@ Do NOT print dice notation or CODE ENFORCED.
     ].filter(Boolean),
   });
   cleanText = scrubOfficialPlaceholder(cleanText, working);
+  cleanText = scrubInventedGeography(cleanText, working);
+  working = harvestNarrativeIntoLedger(working, cleanText, state.turn + 1);
+  working = maybeRevealFromLocation(working, working.currentLocation);
+  working = maybeAutoCloseDungeon(working);
   const leak = scanAndScrubLeaks(cleanText);
   if (leak.notes.length) cleanText = leak.clean;
   {
@@ -1000,6 +1028,45 @@ Do NOT print dice notation or CODE ENFORCED.
       { locked: questsLockedDuringOpening(state) }
     )
   );
+
+  // 29e — hub linkedQuestIds reveal on travel / location change (parity with useGame)
+  {
+    const traveled = !!parseTravelDestination(playerInput, meta.bibleId);
+    const justArrived =
+      !!working.currentLocation &&
+      !!state.currentLocation &&
+      working.currentLocation !== state.currentLocation;
+    if (traveled || justArrived) {
+      const arrival = resolveHubArrival(
+        {
+          ...working,
+          places: working.places ?? state.places,
+          sandboxAwardKeys: working.sandboxAwardKeys ?? state.sandboxAwardKeys,
+        },
+        working.currentLocation
+      );
+      if (arrival) {
+        const keys = [...(working.sandboxAwardKeys ?? state.sandboxAwardKeys ?? [])];
+        const visitIdx = keys.filter((k) => k.startsWith('hub-beat:' + arrival.hub.id + ':')).length;
+        const beatKey = hubBeatAwardKey(arrival.hub.id, 'v' + String(visitIdx), nextTurn);
+        if (!keys.includes(beatKey)) {
+          keys.push(beatKey);
+          const linkIds = [
+            ...(arrival.hub.linkedQuestIds ?? []),
+            ...(arrival.beat.revealQuestId ? [arrival.beat.revealQuestId] : []),
+          ];
+          updatedQuests = revealQuestsFromHubLinks(
+            updatedQuests,
+            linkIds,
+            arrival.hub.name
+          );
+          updatedQuests = applyBiomeSaneQuestSites(working, updatedQuests);
+          working = { ...working, sandboxAwardKeys: keys };
+        }
+      }
+    }
+  }
+  updatedQuests = applyBiomeSaneQuestSites(working, updatedQuests);
 
   // Code-owned sandbox XP (hub discover / NPC meet / landmark / quest) — was missing in headless.
   const sandboxXp = applySandboxXpAwards(

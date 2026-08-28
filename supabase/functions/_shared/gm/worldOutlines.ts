@@ -1,4 +1,4 @@
-import type { EngineMode } from '@/game/types';
+import type { EngineMode } from './types.ts';
 
 /**
  * Premade landmass / region graphs + named settlements (towns, cities, shores).

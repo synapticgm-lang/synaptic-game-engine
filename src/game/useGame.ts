@@ -250,6 +250,10 @@ import {
   visitedHubLandmarkNames,
   ensureTravelArrivalProse,
 } from './outdoorHubs';
+import { seedWorldMapPlaces } from './worldMapAuthority';
+import { harvestNarrativeIntoLedger, scrubInventedGeography } from './narrativeHarvest';
+import { maybeAutoCloseDungeon } from './dungeonLifecycle';
+import { maybeRevealFromLocation } from './worldAtlas';
 import { scrubOfficialPlaceholder } from './narrativeScrub';
 import { hubBeatAwardKey, resolveHubArrival } from './hubEncounters';
 import { applySandboxXpAwards } from './sandboxXp';
@@ -277,7 +281,7 @@ import { playerInputGateBlock } from './choiceCompiler';
 import { extractUpdates, extractNewItems, parseActionTags, stripActionTags, matchLoreCards, eventsToLoreCards, parseTurnFrame, eventsToQuestUpdates, eventsToEncounterUpdate, parsePanels, eventsToMilestone, eventsToLootVideo, eventsToVisualUpdate, stripChoiceList, extractChoiceLines, stripTurnCloser, storyHasBody, looksLikeChoiceOffer, isStoryTooThin, storyWordCount } from './parser';
 import { hasRealGmStory } from './turnAsk';
 import { encounterOriginPlace } from './locationName';
-import { clampLeakedOpeningQuests, extractNamedPlaces, harvestPlayText, isGenericMapPlace, mapAnchorName, newlyRevealedQuests, questsLockedDuringOpening, revealLocalStarterQuest, resumeMainQuestFocus, revealQuestsFromBanks, syncQuestsFromPlay } from './questPlay';
+import { clampLeakedOpeningQuests, extractNamedPlaces, harvestPlayText, isGenericMapPlace, mapAnchorName, newlyRevealedQuests, questsLockedDuringOpening, revealLocalStarterQuest, resumeMainQuestFocus, revealQuestsFromBanks, syncQuestsFromPlay, applyBiomeSaneQuestSites, revealQuestsFromHubLinks } from './questPlay';
 import { inferItemType } from './salvage';
 import { initializeDungeon, moveToNode, exitDungeon as engineExitDungeon, resolvePlayAreaMap, listInteriorExitsFromHere } from './mapEngine';
 import type { Toast } from '@/components/ToastStack';
@@ -3418,6 +3422,13 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
           playerInput: sanitizedInput,
           groundedWeapons: groundedWeaponNames(workingState),
           playerName: workingState.character?.name ?? liveCurrent.character?.name,
+          hasLiveEncounter: !!(workingState.activeEncounter ?? liveCurrent.activeEncounter),
+          recentlyClearedEncounter:
+            (workingState.arcDirector?.lastEncounterClearedTurn ??
+              liveCurrent.arcDirector?.lastEncounterClearedTurn) === nextTurn ||
+            (workingState.arcDirector?.lastEncounterClearedTurn ??
+              liveCurrent.arcDirector?.lastEncounterClearedTurn) ===
+              nextTurn - 1,
           presentNames: [
             ...(workingState.sceneFacts?.present ?? []),
             ...(liveCurrent.sceneFacts?.present ?? []),
@@ -3425,6 +3436,10 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
           ].filter(Boolean),
         });
         cleanText = scrubOfficialPlaceholder(cleanText, workingState);
+        cleanText = scrubInventedGeography(cleanText, workingState);
+        workingState = harvestNarrativeIntoLedger(workingState, cleanText, nextTurn);
+        workingState = maybeRevealFromLocation(workingState, workingState.currentLocation);
+        workingState = maybeAutoCloseDungeon(workingState);
       }
       {
         const leak = scanAndScrubLeaks(cleanText);
@@ -3507,6 +3522,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
         `${sanitizedInput}\n${cleanText}\n${mergedSystemLog.join('\n')}`,
         { locked: questsLockedDuringOpening(liveCurrent) }
       );
+      updatedQuests = applyBiomeSaneQuestSites(workingState, updatedQuests);
       updatedQuests = ensureTutorialQuest(
         { ...workingState, quests: updatedQuests },
         nextTurn
@@ -3702,11 +3718,17 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
       locationSheet = normalizeSheetAuthority(locationSheet, areaMap);
 
       let places = upsertPlaceFromSheet(
-        touchPlaceVisit(workingState.places ?? liveCurrent.places ?? [], finalLocationName, nextTurn),
+        touchPlaceVisit(
+          workingState.places ?? liveCurrent.places ?? [],
+          finalLocationName,
+          nextTurn,
+          workingState
+        ),
         locationSheet,
         {
           dungeonRef:
             isExplorableDungeon(areaMap) ? areaMap?.blueprintId : undefined,
+          state: workingState,
         }
       );
 
@@ -3861,6 +3883,17 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
               mergedSystemLog.push(
                 'Hub: ' + arrival.hub.name + ' — ' + arrival.beat.kind + ': ' + arrival.beat.pressure
               );
+              // 29e follow-up — hub linkedQuestIds actually reveal
+              const linkIds = [
+                ...(arrival.hub.linkedQuestIds ?? []),
+                ...(arrival.beat.revealQuestId ? [arrival.beat.revealQuestId] : []),
+              ];
+              updatedQuests = revealQuestsFromHubLinks(
+                updatedQuests,
+                linkIds,
+                arrival.hub.name
+              );
+              updatedQuests = applyBiomeSaneQuestSites(workingState, updatedQuests);
               if (arrival.beat.contactName) {
                 const present = [...(workingState.sceneFacts?.present ?? [])];
                 if (!present.some((p) => p.toLowerCase() === arrival.beat.contactName!.toLowerCase())) {
@@ -4528,7 +4561,10 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
       choices: pendingCovers.length ? establishmentChoices(pendingCovers, namedSeeded) : [],
       log: [],
       worldLedger: seedWorldLedgerFactions(emptyWorldLedger(), bible),
-      places: seedOutdoorHubPlaces([], bible),
+      places: seedWorldMapPlaces(
+        seedOutdoorHubPlaces([], bible, namedSeeded.worldAtlas),
+        namedSeeded.worldAtlas
+      ),
       sandboxAwardKeys: [],
       mapFocusPlace: null,
       pendingGeneratedOpening: true,

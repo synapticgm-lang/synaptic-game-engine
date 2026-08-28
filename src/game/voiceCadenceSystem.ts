@@ -444,11 +444,11 @@ export function buildAuthorityVoiceHint(state: GameState, personality: VoicePers
     parts.push(`Seal gist: ${state.sealedManifest.gist.slice(0, 80)}`);
   }
   const modeHint: Partial<Record<VoicePersonality, string>> = {
-    'cold-registrar': 'STATUS-adjacent clauses OK; story stays clinical.',
-    'dry-wit': 'One dry aside per hub change minimum when not suppressed.',
-    'sarcastic-patch': 'Undercut mush with System snark, not new facts.',
+    'cold-registrar': 'Clinical story diction — not STATUS-only.',
+    'dry-wit': 'One dry aside in story prose per hub change when not suppressed.',
+    'sarcastic-patch': 'System snark in story beats, not new facts.',
     'army-quartermaster': 'Tactical brevity on encounter beats.',
-    'friendly-guide': 'Warm framing on crisis forks — stakes stay honest.',
+    'friendly-guide': 'Warm diction; stakes stay honest — no auto-win.',
   };
   if (modeHint[personality]) parts.push(modeHint[personality]!);
   return parts.length ? `AUTHORITY VOICE: ${parts.join(' ')}` : '';
@@ -456,6 +456,7 @@ export function buildAuthorityVoiceHint(state: GameState, personality: VoicePers
 
 /**
  * Format voice cadence directive for GM prompt.
+ * 29d — short; personality must color STORY BODY (Gemini: not STATUS-only).
  */
 export function formatVoiceCadenceDirective(
   cadence: VoiceCadence,
@@ -463,36 +464,32 @@ export function formatVoiceCadenceDirective(
   availableAsides: VoiceAsideTrigger[],
   authorityHint?: string
 ): string {
+  void availableAsides;
   if (suppression) {
-    return `VOICE: Suppress personality for ${suppression.situation} scene. ${suppression.reason}. Use plain, respectful narration.`;
+    return `VOICE: Suppress personality for ${suppression.situation}. ${suppression.reason}. Plain narration.`;
   }
-  
+
   const dictionExamples = cadence.diction
-    .map(p => p.examples.slice(0, 2).join(', '))
+    .map((p) => p.examples.slice(0, 2).join(', '))
     .join(' | ');
-  
+
   const compressionGuide = {
-    terse: 'Keep sentences short and direct (10-15 words average)',
-    balanced: 'Mix short and medium sentences (15-25 words average)',
-    expansive: 'Use flowing, descriptive sentences (20-30 words average)',
+    terse: 'short sentences',
+    balanced: 'mix short/medium',
+    expansive: 'flowing descriptive',
   };
-  
+
   const attitudeGuide = {
-    clinical: 'Detached, factual tone. Report events objectively.',
-    warm: 'Friendly, encouraging tone. Make player feel supported.',
-    sarcastic: 'Dry, ironic tone. Undercut drama with wit.',
-    dramatic: 'Colorful, emphatic tone. Amplify stakes and emotion.',
-    professional: 'Clear, efficient tone. Present facts and objectives.',
-    casual: 'Relaxed, conversational tone. Sound like a friend.',
+    clinical: 'detached factual',
+    warm: 'warm diction; honest stakes (no plot armor)',
+    sarcastic: 'dry irony',
+    dramatic: 'emphatic stakes',
+    professional: 'clear efficient',
+    casual: 'conversational',
   };
-  
-  return `VOICE (${cadence.personality}):
-- Diction: Use patterns like [${dictionExamples}]
-- Compression: ${compressionGuide[cadence.compression]}
-- Attitude: ${attitudeGuide[cadence.attitude]}
-- Framing: Present events through ${cadence.framing} lens
-${authorityHint ? `- ${authorityHint}\n` : ''}
-Do not repeat catchphrases. Vary word choice while maintaining personality.`;
+
+  const hint = authorityHint?.replace(/^AUTHORITY VOICE:\s*/i, '').trim();
+  return `VOICE (${cadence.personality}): Color the STORY BODY (not only STATUS). Diction [${dictionExamples}]; ${compressionGuide[cadence.compression]}; ${attitudeGuide[cadence.attitude]}; ${cadence.framing} framing.${hint ? ` ${hint}` : ''} No catchphrase loops.`;
 }
 
 /**

@@ -176,7 +176,16 @@ export function markDefeatedMobAtCurrentNode(state: GameState, enemyName: string
   const nodes = dungeon.nodes.map((n) =>
     n.id === node.id ? { ...n, hidden: { ...n.hidden!, mobs } } : n
   );
-  return { ...state, activeDungeon: { ...dungeon, nodes } };
+  // 29e follow-up — mark room cleared when no remaining mobs on this node
+  const nodeAfter = nodes.find((n) => n.id === node.id)!;
+  const remainingHere = (nodeAfter.hidden?.mobs ?? []).some((m) => mobCountsAsRemaining(m));
+  const clearedNodeIds = remainingHere
+    ? (dungeon.clearedNodeIds ?? [])
+    : Array.from(new Set([...(dungeon.clearedNodeIds ?? []), node.id]));
+  return {
+    ...state,
+    activeDungeon: { ...dungeon, nodes, clearedNodeIds },
+  };
 }
 
 export function countRemainingMobsOnDungeon(dungeon: ActiveDungeonState): string[] {

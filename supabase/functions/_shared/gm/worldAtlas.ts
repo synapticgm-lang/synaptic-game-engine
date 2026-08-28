@@ -1,7 +1,7 @@
-import { pickWorldOutline, type WorldOutlineDef } from '@/data/worldOutlines';
-import type { CampaignBible } from '@/data/campaigns/types';
-import type { EngineMode, GameState, WorldAtlasState } from './types';
-import { attachSettlementsToAtlas } from './worldMapAuthority';
+import { pickWorldOutline, type WorldOutlineDef } from './worldOutlines.ts';
+import type { CampaignBible } from './campaignBibleTypes.ts';
+import type { EngineMode, GameState, WorldAtlasState } from './types.ts';
+import { attachSettlementsToAtlas } from './worldMapAuthority.ts';
 
 export function instantiateWorldAtlas(outline: WorldOutlineDef): WorldAtlasState {
   const base: WorldAtlasState = {

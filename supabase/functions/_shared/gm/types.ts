@@ -627,12 +627,27 @@ export interface WorldAtlasRegionState {
   revealed: boolean;
 }
 
+/** Premade settlement on the world map (29e). */
+export interface WorldAtlasSettlement {
+  id: string;
+  name: string;
+  regionId: string;
+  kind: 'city' | 'town' | 'village' | 'shore' | 'landmark' | 'ruin' | 'fort' | 'district';
+  biome: string;
+  blurb: string;
+  aliases?: string[];
+  allowsDungeon?: boolean;
+  questTags?: string[];
+}
+
 export interface WorldAtlasState {
   outlineId: string;
   outlineName: string;
   description: string;
   currentRegionId: string;
   regions: WorldAtlasRegionState[];
+  /** Fixed towns/cities/shores — AI must not invent new ones. */
+  settlements?: WorldAtlasSettlement[];
 }
 
 export interface SaveSlotInfo {
@@ -893,6 +908,13 @@ export interface PlaceRecord {
   arcSummary?: string;
   arcStatus?: 'open' | 'visited' | 'cleared' | 'closed';
   lastVisitedTurn?: number;
+  /** 29e — biome for quest-site fitness */
+  biome?: string;
+  settlementKind?: string;
+  regionId?: string;
+  /** True if seeded from premade world map (not GM invent). */
+  mapCanonical?: boolean;
+  allowsDungeon?: boolean;
 }
 
 export interface TutorialProgress {

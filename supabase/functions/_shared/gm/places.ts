@@ -1,4 +1,5 @@
 import type { GameState, LocationSheet, MapScale, MapTier, PlaceRecord } from './types.ts';
+import { looksLikeGeographyInvent, isLegalMapPlace } from './worldMapAuthority.ts';
 
 function slugify(name: string): string {
   return name
@@ -16,13 +17,33 @@ export function ensurePlaces(state: GameState): PlaceRecord[] {
   return state.places ?? [];
 }
 
+/**
+ * Upsert place from location sheet.
+ * 29e: reject inventing new cities/towns/shores off the premade world map.
+ */
 export function upsertPlaceFromSheet(
   places: PlaceRecord[],
   sheet: LocationSheet | null | undefined,
-  opts?: { dungeonRef?: string | null; loreName?: string; aliases?: string[] }
+  opts?: {
+    dungeonRef?: string | null;
+    loreName?: string;
+    aliases?: string[];
+    state?: GameState;
+    allowInvent?: boolean;
+  }
 ): PlaceRecord[] {
   const name = sheet?.name?.trim();
   if (!name) return places;
+  const state = opts?.state;
+  if (
+    state?.worldAtlas?.settlements?.length &&
+    !opts?.allowInvent &&
+    looksLikeGeographyInvent(name) &&
+    !isLegalMapPlace(state, name)
+  ) {
+    // Do not add invented geography to the registry
+    return places;
+  }
   const id = placeIdFromName(name);
   const existing = places.find((p) => p.id === id || p.name.toLowerCase() === name.toLowerCase());
   const next: PlaceRecord = {
@@ -38,6 +59,11 @@ export function upsertPlaceFromSheet(
     arcSummary: existing?.arcSummary,
     arcStatus: existing?.arcStatus ?? 'open',
     lastVisitedTurn: existing?.lastVisitedTurn,
+    biome: existing?.biome,
+    settlementKind: existing?.settlementKind,
+    regionId: existing?.regionId,
+    mapCanonical: existing?.mapCanonical,
+    allowsDungeon: existing?.allowsDungeon,
   };
   if (existing) {
     return places.map((p) => (p.id === existing.id ? { ...existing, ...next } : p));
@@ -48,14 +74,23 @@ export function upsertPlaceFromSheet(
 export function touchPlaceVisit(
   places: PlaceRecord[],
   placeName: string | undefined,
-  turn: number
+  turn: number,
+  state?: GameState
 ): PlaceRecord[] {
   if (!placeName?.trim()) return places;
+  if (
+    state?.worldAtlas?.settlements?.length &&
+    looksLikeGeographyInvent(placeName) &&
+    !isLegalMapPlace(state, placeName)
+  ) {
+    return places;
+  }
   const id = placeIdFromName(placeName);
   const existing = places.find(
     (p) => p.id === id || p.name.toLowerCase() === placeName.toLowerCase() || p.aliases?.some((a) => a.toLowerCase() === placeName.toLowerCase())
   );
   if (!existing) {
+    // Local alley/room detail OK; geography invent blocked above
     return [
       ...places,
       {
@@ -65,6 +100,7 @@ export function touchPlaceVisit(
         arcStatus: 'open',
         lastVisitedTurn: turn,
         aliases: [placeName.trim()],
+        mapCanonical: false,
       },
     ];
   }

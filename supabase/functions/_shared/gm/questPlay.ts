@@ -1,4 +1,10 @@
 import type { GameState, LogEntry, Quest } from './types.ts';
+import {
+  findSettlement,
+  inferQuestTagsFromText,
+  pickQuestSiteForTags,
+  questFitsSettlement,
+} from './worldMapAuthority.ts';
 
 export type StarterQuestSeed = {
   id: string;
@@ -641,6 +647,28 @@ export function revealQuestsFromBanks(quests: Quest[], haystack: string): Quest[
   return next;
 }
 
+/**
+ * 29e follow-up — reveal quests linked on the hub bank when the player arrives.
+ */
+export function revealQuestsFromHubLinks(
+  quests: Quest[],
+  linkedQuestIds: string[] | undefined,
+  hubName?: string
+): Quest[] {
+  if (!linkedQuestIds?.length) return quests;
+  const ids = new Set(linkedQuestIds);
+  return quests.map((q) => {
+    if (!ids.has(q.id)) return q;
+    if (q.revealed || q.status === 'completed' || q.status === 'failed') return q;
+    return {
+      ...q,
+      revealed: true,
+      status: q.status === 'hidden' ? 'active' : q.status,
+      location: q.location ?? hubName,
+    };
+  });
+}
+
 const COARSE_PLACE =
   /^(england|britain|uk|united kingdom|scotland|wales|earth|the world|europe|asia|america|usa|the united states|japan|france|germany|australia|canada)$/i;
 
@@ -841,4 +869,24 @@ export function mapAnchorName(currentLocation: string | undefined, landmarks: st
   if (specific && isGenericMapPlace(currentLocation)) return specific;
   if (!isGenericMapPlace(currentLocation)) return currentLocation!.trim();
   return specific || currentLocation?.trim() || '';
+}
+
+/**
+ * 29e — Move quest location to a biome-sane settlement when farming/fishing/etc. mismatch.
+ */
+export function applyBiomeSaneQuestSites(state: GameState, quests: Quest[]): Quest[] {
+  const atlas = state.worldAtlas;
+  if (!atlas?.settlements?.length) return quests;
+  return quests.map((q) => {
+    const tags = inferQuestTagsFromText(`${q.name} ${q.description} ${q.location ?? ''}`);
+    if (!tags.length) return q;
+    const loc = q.location?.trim();
+    if (loc) {
+      const site = findSettlement(atlas, loc);
+      if (site && tags.every((t) => questFitsSettlement(t, site))) return q;
+    }
+    const pick = pickQuestSiteForTags(atlas, tags, atlas.currentRegionId);
+    if (!pick) return q;
+    return { ...q, location: pick.name };
+  });
 }

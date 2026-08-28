@@ -3,6 +3,7 @@ import type { ActiveDungeonState, MapNode } from './mapEngine';
 import { initializeDungeon, moveToNode } from './mapEngine';
 import { seedDungeonState } from './dungeonSeed';
 import { isExplorableDungeon } from './placeAuthority';
+import { openDungeonAtSite, placeAllowsDungeon } from './dungeonLifecycle';
 
 const ENTER_ACTION =
   /\b(enter|go in|step in|head in|inside|forward|sneak(?:ing)? in|move (?:in|forward)|scout(?:ing)?(?:\s+the)?\s+entrance|through the (?:door|doors))\b/i;
@@ -133,18 +134,31 @@ export function maybeEnterInteriorDungeon(state: GameState, action: string): Gam
     state.locationSheet?.name
     || state.currentLocation
     || 'Convenience store';
-  const dungeon = buildConvenienceStoreDungeon(state.seed || 'seed', place.replace(/\s+uk$/i, '').trim());
-  return {
-    ...state,
-    activeDungeon: dungeon,
-    currentLocation: dungeon.dungeonName,
-    locationSheet: {
-      name: 'Store entrance',
-      interactables: state.locationSheet?.interactables ?? [],
-      exits: state.locationSheet?.exits ?? [],
-      presentNpcIds: state.locationSheet?.presentNpcIds ?? [],
-      mapScale: 'dungeon',
-      dangerTier: 1,
-    },
-  };
+
+  // First Blood / store micro-dungeon when store cues present
+  if (INTERIOR_CUE.test(action) || INTERIOR_CUE.test(place)) {
+    const dungeon = buildConvenienceStoreDungeon(
+      state.seed || 'seed',
+      place.replace(/\s+uk$/i, '').trim()
+    );
+    return {
+      ...state,
+      activeDungeon: { ...dungeon, siteName: place },
+      currentLocation: dungeon.nodes?.[0]?.name ?? 'Store entrance',
+      locationSheet: {
+        name: 'Store entrance',
+        interactables: state.locationSheet?.interactables ?? [],
+        exits: state.locationSheet?.exits ?? [],
+        presentNpcIds: state.locationSheet?.presentNpcIds ?? [],
+        mapScale: 'dungeon',
+        dangerTier: 1,
+      },
+    };
+  }
+
+  // 29e — procedural dungeon only at allowsDungeon map sites
+  if (!placeAllowsDungeon(state, place)) {
+    return state;
+  }
+  return openDungeonAtSite(state, { siteName: place, seed: state.seed || 'seed' });
 }

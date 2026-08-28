@@ -11,13 +11,14 @@ John is playtesting live. Collect issues here. Do not implement until he asks fo
 
 _(waiting — John still playtesting; next update when he asks)_
 
-- **Next gate after 29c:** re-run alt-premades **4×300** (hero-awakening / shattered-coast / salt-road / vesper-glass) under stamp `2026-08-29c` + Gemini re-score. Expect English/mush uplift if kit scrub was Free=NO root cause; do not claim portfolio 8/10 until scored.
-- **29b alt-premades board (archive / evidence)** — `GEMINI-29B-ALT-PREMADES-SYNTHESIS.md` + gemini-21/22/23/24. **Shipped as 29c** (kit scrub kill, loiter force, drought bible, branch lock, opening pin). Keep Gemini packs for calibration only — do not re-open scrub tickets without new 29c transcripts.
-- **Gemini-24 / 21 / 23 / 22 / 19 / 18 / 20 / 17** — evidence retained under `docs/bugs/gemini-reviews-2026-08-27/`; 29c addresses shared P0s. Misfiles (17/20) still discarded for scores.
-- **28c vs 27w synthesis** — `GEMINI-28C-VS-27W-SYNTHESIS.md`. 29a/29b/29c shipped. Residual: content depth for 7+; voice in GM prose (P1).
-- **Gemini-16…02 + Manus calibrated** — historical evidence; prefer 29b alt board + 29c ship notes when prioritizing. John continuing live playtest — merge new issues before next batch.
+- **Next gate after 29e:** re-run alt-premades **4×300** under stamp `2026-08-29e` + Gemini re-score. World map authority should cut invented geography; do not claim 8/10 until scored.
+- **2026-08-29e world map overhaul (shipped):** Premade settlements on atlas; LitRPG/DnD/RPG always get a map; invent-lock cities/shores; NPC harvest; dungeon open/close; biome-sane quest sites; WORLD MAP AUTHORITY in packet. Doc: `path-a-ship-implementation-2026-08-29e.md`.
+- **2026-08-29d Gemini-calibrated (kept):** prompt diet, PROSE LICENSE, soft stakes, stranger/win scrub, Free failover.
+- **29c Free-hook recovery (kept):** kit→pronoun scrub kill, loiter force, drought bible, branch lock, opening pin.
 
-**Residual risk (29c):** Pronouns left in place when no speaker (may still score themWordHits); loiter interrupt forces beat but drought spawn still LitRPG/DnD-only (RPG/PYOA get leverage/crisis); opening pin is heuristic Title-Case + bible keyNPCs (may miss unnamed hook roles); clone reject is a governance flag — useGame near-clone retry path still primary; stranger→merchant role inject in proseWarden unchanged (not kit, but still mushy).
+**Residual risk (29e):** Hub banks still merge with atlas (not deleted); hub↔settlement join + Saltmar pin for shattered-coast shipped; hub `linkedQuestIds` reveal on arrival + dungeon `clearedNodeIds` on room clear (client + fate parity). PYOA atlas null; harvest Title-Case heuristic; loot tables still partial; edge uses thin `forwardProgressGovernor` + `qualityGovernance` stubs (map authority lives in synced situationPacket).
+
+**Residual risk (29d):** Prompt diet thins mandates but Flash Lite may ignore PROSE LICENSE; Free Llama failover only on empty/timeout.
 
 **Residual risk (26v):** Alone crowd-pad filter uses coarse alone/empty signals ? outdoor hubs with real crowds still keep gate-queue pads. `[Uncommon] them` scrub is string-level not ledger lock. Stagnation HARD at ?5 is still prompt-rail (no guaranteed combat spawn).
 
@@ -68,6 +69,10 @@ _(waiting — John still playtesting; next update when he asks)_
 - Premium theme five-rater / Shop preview parity (Manus T8/T9 P0-04) ? after playtest of `2026-08-19t` Vampire rescue; ingest `docs/research/manus-premium-themes-ingest-2026-08-19.md`
 
 ## Done (already shipped)
+
+- **2026-08-29e world map overhaul (John authorized):** Premade settlements on all outlines; LitRPG/DnD/RPG always seed atlas+places; WORLD MAP AUTHORITY in situation packet; invent-lock new cities/towns/shores; NPC harvest→lorebook; dungeon open at allowsDungeon / close on clear; biome-sane quest sites (no farm in ash desert). Follow-up: hub linkedQuestIds reveal, clearedNodeIds, Saltmar/shatter-coast join, fate-autoplay harvest/dungeon parity. Vitest `playtest29eWorldMapOverhaul`. HUD + index.html `2026-08-29e`. Doc: `docs/research/path-a-ship-implementation-2026-08-29e.md`. Redeploy: client + sync + `npx supabase functions deploy gm-turn`.
+
+- **2026-08-29d Gemini-calibrated (John authorized):** Prompt diet (AUTHORITY + PROSE LICENSE; drop duplicate STAGNATION/VOICE CHECK); voice colors STORY BODY; stranger≠merchant invent; unearned victory scrub; RPG T12 leverage + soft-threat timer; Free Flash Lite→Llama 8B failover on empty/timeout; Mid writer NO. Vitest `playtest29dGeminiCalibrated`. HUD + index.html `2026-08-29d`. Doc: `docs/research/path-a-ship-implementation-2026-08-29d.md`. Redeploy: client + `node scripts/sync-gm-edge-shared.mjs` + `npx supabase functions deploy gm-turn`. **Next gate:** alt-cells 4×300 re-score under 29d.
 
 - **2026-08-29c Free-hook recovery (John authorized push + Supabase sync):** Kill kit→pronoun scrub (`rewriteInvalidReferences` never maps they/them/their onto inventory); travel/Wait loiter family streak + ArcDirector force; bible-aware drought tables (no Keep Wraith on Shattered Coast) + variety; PYOA Wait/Inspect/risky-fork branch lock + RPG dialogue commit tighten; opening NPC pin + early clone reject flag; empty-GM fallback strips `(beat recovered; …)` chrome. Vitest `playtest29cFreeHook`. HUD + index.html `2026-08-29c`. Mid writer NO. Doc: `docs/research/path-a-ship-implementation-2026-08-29c.md`. Redeploy: client + `npx supabase functions deploy gm-turn` (situationPacket OPENING PIN). **Next gate:** alt-cells 4×300 re-score.
 

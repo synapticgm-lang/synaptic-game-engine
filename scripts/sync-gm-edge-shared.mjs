@@ -50,6 +50,12 @@ const FILES = [
   'offerOnlyAsk.ts',
   'dungeonPresence.ts',
   'campaignNsfw.ts',
+  'worldMapAuthority.ts',
+  'worldAtlas.ts',
+  'narrativeHarvest.ts',
+  'dungeonLifecycle.ts',
+  'dungeonMobLedger.ts',
+  'outdoorHubs.ts',
 ];
 
 function rewriteImports(source, file) {
@@ -63,6 +69,7 @@ function rewriteImports(source, file) {
   next = next
     .replace(/from\s+['"]@\/data\/campaigns\/types['"]/g, "from './campaignBibleTypes.ts'")
     .replace(/import\(['"]@\/data\/campaigns\/types['"]\)/g, "import('./campaignBibleTypes.ts')")
+    .replace(/from\s+['"]@\/data\/worldOutlines['"]/g, "from './worldOutlines.ts'")
     .replace(/from\s+['"]@\/utils\/filterLogic['"]/g, "from './filterLogic.ts'")
     .replace(/from\s+['"]@\/game\/types['"]/g, "from './types.ts'")
     .replace(/from\s+['"]@\/game\/archetypes['"]/g, "from './archetypes.ts'");
@@ -106,6 +113,13 @@ for (const file of FILES) {
   const raw = fs.readFileSync(srcPath, 'utf8');
   fs.writeFileSync(path.join(destDir, 'filterLogic.ts'), rewriteImports(raw, 'filterLogic.ts'), 'utf8');
   console.log('synced filterLogic.ts');
+}
+
+{
+  const srcPath = path.join(root, 'src', 'data', 'worldOutlines.ts');
+  const raw = fs.readFileSync(srcPath, 'utf8');
+  fs.writeFileSync(path.join(destDir, 'worldOutlines.ts'), rewriteImports(raw, 'worldOutlines.ts'), 'utf8');
+  console.log('synced worldOutlines.ts');
 }
 
 fs.writeFileSync(

@@ -289,6 +289,7 @@ export function rewriteInvalidReferences(
   }
 
   // 29a/29c — collateral tokens → speaker or place only (never kit)
+  // 29d — only rewrite when a real speaker/place exists; never invent roles
   if (speaker && !isKitLikeName(speaker, context)) {
     rewritten = rewritten.replace(/\bthe mark\b/gi, speaker);
     rewritten = rewritten.replace(/\bthe panel\b/gi, speaker);

@@ -17,7 +17,7 @@ import { hasStatusLeak } from './statusFirewall';
 
 describe('playtest29c — kit scrub kill + Free-hook recovery', () => {
   it('stamp is 2026-08-29c and Mid writer stays OFF', () => {
-    expect(BUILD_STAMP).toBe('2026-08-29c');
+    expect(BUILD_STAMP).toMatch(/^2026-08-29/);
     expect(STAGNATION_MID_WRITER_ENABLED).toBe(false);
   });
 

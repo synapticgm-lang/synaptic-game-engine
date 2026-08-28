@@ -156,8 +156,10 @@ describe('playtest26u — Gemini P0 quality gates', () => {
     const snap = formatSceneSnapshotForPrompt(state);
     expect(snap).toMatch(/Quest focus: Circle's Price/i);
     expect(snap).toMatch(/Stagnation:.*ask_earth_junk/i);
-    expect(snap).toMatch(/VOICE CHECK \(Sarcastic Patch/i);
+    // 29d — dry-wit lives in VOICE cadence (STORY BODY), not a separate VOICE CHECK line
+    expect(snap).toMatch(/VOICE \(dry-wit\).*STORY BODY/i);
     expect(snap).toMatch(/QUEST PRESSURE/i);
+    expect(snap).toMatch(/PROSE LICENSE:/i);
   });
 
   it('Gemini export includes STATUS XP lines', () => {

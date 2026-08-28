@@ -13,6 +13,7 @@ import {
 } from './distributionChannel';
 import { forceFreeModel } from './opsKillSwitches';
 import { GM_PROXY_TIMEOUT_DEFAULT_MS } from './errorRepairWarden';
+import { resolveFreeWriterFailover } from './writerPolicy';
 
 export type GmProxyMode = 'turn' | 'auto-fight';
 
@@ -80,7 +81,7 @@ export async function invokeGmProxy(params: {
     throw new Error('GM proxy unavailable — configure VITE_SUPABASE_URL / VITE_SUPABASE_ANON_KEY.');
   }
 
-  const run = async (): Promise<string> => {
+  const run = async (attempt = 0): Promise<string> => {
     const headers: Record<string, string> = {
       'Content-Type': 'application/json',
       apikey: import.meta.env.VITE_SUPABASE_ANON_KEY as string,
@@ -92,6 +93,22 @@ export async function invokeGmProxy(params: {
       headers.Authorization = `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`;
     }
 
+    const tier = forceFreeModel()
+      ? 'free'
+      : effectiveWriterTier(params.settings.subscriptionTier);
+    let modelId = forceFreeModel()
+      ? getTierDefinition('free').writerOpenRouterId
+      : resolveWriterModel({
+          aiProvider: 'openrouter',
+          customModelId: isTestLabEnabled() ? null : params.settings.customModelId,
+          tier,
+        });
+    // 29d — Free Flash Lite empty/timeout → Llama 8B failover (same physics)
+    if (attempt > 0 && (tier === 'free' || forceFreeModel())) {
+      const failover = resolveFreeWriterFailover(modelId);
+      if (failover) modelId = failover;
+    }
+
     const body = {
       mode: params.mode,
       playerInput: params.playerInput,
@@ -101,17 +118,8 @@ export async function invokeGmProxy(params: {
         contentMode: params.settings.contentMode,
         mapTriggerMode: params.settings.mapTriggerMode,
         aiProvider: 'openrouter',
-        customModelId: forceFreeModel()
-          ? getTierDefinition('free').writerOpenRouterId
-          : resolveWriterModel({
-              aiProvider: 'openrouter',
-              // Test Lab exercises hosted Free/Mid/High — ignore Admin custom model ids.
-              customModelId: isTestLabEnabled() ? null : params.settings.customModelId,
-              tier: effectiveWriterTier(params.settings.subscriptionTier),
-            }),
-        subscriptionTier: forceFreeModel()
-          ? 'free'
-          : effectiveWriterTier(params.settings.subscriptionTier),
+        customModelId: modelId,
+        subscriptionTier: tier,
         baseUrl: params.settings.baseUrl,
         diceAnimation: params.settings.diceAnimation,
         panelFrequency: params.settings.panelFrequency,
@@ -130,6 +138,8 @@ export async function invokeGmProxy(params: {
     logger.info('ai-proxy', `gm-turn ${params.mode}`, {
       turn: params.state.turn,
       provider: 'openrouter',
+      model: modelId,
+      attempt,
       hasClientKey: !!body.clientApiKey,
     });
 
@@ -159,6 +169,10 @@ export async function invokeGmProxy(params: {
         throw err instanceof Error ? err : new Error(String(err));
       }
       if (timedOut || controller.signal.aborted) {
+        if (attempt === 0 && (tier === 'free' || forceFreeModel()) && resolveFreeWriterFailover(modelId)) {
+          logger.warn('ai-proxy', 'Free writer timeout — retrying with Llama failover');
+          return run(1);
+        }
         throw new Error('The System is still compiling. Try again, or cancel and keep the last scene.');
       }
       const errMsg = err instanceof Error ? err.message : String(err);
@@ -167,6 +181,9 @@ export async function invokeGmProxy(params: {
           host: gmProxyHost(),
           path: '/functions/v1/gm-turn',
         });
+        if (attempt === 0 && (tier === 'free' || forceFreeModel()) && resolveFreeWriterFailover(modelId)) {
+          return run(1);
+        }
       }
       throw err;
     } finally {
@@ -185,6 +202,14 @@ export async function invokeGmProxy(params: {
         typeof payload?.error === 'string'
           ? payload.error
           : `GM proxy error ${res.status}`;
+      if (
+        attempt === 0 &&
+        (tier === 'free' || forceFreeModel()) &&
+        resolveFreeWriterFailover(modelId) &&
+        /empty|timeout|unavailable|503|502/i.test(msg)
+      ) {
+        return run(1);
+      }
       throw new Error(msg);
     }
 
@@ -194,11 +219,17 @@ export async function invokeGmProxy(params: {
     }
 
     const text = typeof payload?.text === 'string' ? payload.text : '';
-    if (!text) throw new Error('GM proxy returned empty content.');
+    if (!text) {
+      if (attempt === 0 && (tier === 'free' || forceFreeModel()) && resolveFreeWriterFailover(modelId)) {
+        logger.warn('ai-proxy', 'Free writer empty — retrying with Llama failover');
+        return run(1);
+      }
+      throw new Error('GM proxy returned empty content.');
+    }
     return text;
   };
 
-  return withRetry(run, params.onRetry);
+  return withRetry(() => run(0), params.onRetry);
 }
 
 function imageProxyUrl(): string {
