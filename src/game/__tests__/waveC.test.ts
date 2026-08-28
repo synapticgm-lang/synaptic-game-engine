@@ -83,10 +83,10 @@ function createMockMemory(overrides: Partial<KeyMoment> = {}): KeyMoment {
     npcId: 'test_npc',
     actorId: 'test_actor',
     turn: 10,
-    category: 'first_meet',
-    summary: 'First meeting with Test Actor',
-    fact: 'met_test_actor',
-    retention: 'permanent',
+    category: 'incidental',
+    summary: 'Test memory',
+    fact: 'test_fact',
+    retention: 'temporary',
     ...overrides
   };
 }

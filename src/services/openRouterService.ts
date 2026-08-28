@@ -17,7 +17,6 @@ import { generateFluxImage } from './fluxDirect';
 import { resolveFluxImageModel } from '../game/subscriptionTiers';
 import { effectiveWriterTier } from '../game/testLab';
 import { canSpend, spendCapacity, spendComicKleinUnit } from '../game/capacityLedger';
-import { spendComicKleinUnit } from '../game/capacityLedger';
 import {
   BYOK_IMAGE_KEY_REQUIRED,
   canConfigurePlayerAiKeys,

@@ -14,13 +14,13 @@ import {
   hasReceipt,
   clearAllReceipts,
   getStoreStats,
-} from '../receiptLedger';
+} from './receiptLedger';
 import {
   assertExclusiveFacts,
   FactConflictError,
   getFactGroups,
-} from '../exclusiveFactsRegistry';
-import { buildIdempotencyKey } from '../types/crossPackageContracts';
+} from './exclusiveFactsRegistry';
+import { buildIdempotencyKey } from './types/crossPackageContracts';
 import type {
   EncounterReceipt,
   CrisisReceipt,

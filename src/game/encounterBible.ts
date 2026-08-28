@@ -282,6 +282,9 @@ export const BIOME_TAXONOMY = {
 // ============================================================================
 
 export interface EncounterTemplateRegistry {
+  /** All templates */
+  templates: EncounterTemplate[];
+  
   /** Templates by bible */
   byBible: Map<string, EncounterTemplate[]>;
   
@@ -290,6 +293,9 @@ export interface EncounterTemplateRegistry {
   
   /** Templates by mode */
   byMode: Map<EngineMode, EncounterTemplate[]>;
+  
+  /** Registry version */
+  version: string;
 }
 
 /**
@@ -297,9 +303,11 @@ export interface EncounterTemplateRegistry {
  */
 export function createTemplateRegistry(): EncounterTemplateRegistry {
   return {
+    templates: [],
     byBible: new Map(),
     byId: new Map(),
     byMode: new Map(),
+    version: '1.0.0',
   };
 }
 
@@ -310,6 +318,9 @@ export function registerTemplate(
   registry: EncounterTemplateRegistry,
   template: EncounterTemplate
 ): void {
+  // Add to templates array
+  registry.templates.push(template);
+  
   // By ID
   registry.byId.set(template.id, template);
   
@@ -323,13 +334,20 @@ export function registerTemplate(
 }
 
 /**
- * Get templates for bible
+ * Get templates for bible (optionally filtered by mode)
  */
 export function getTemplatesForBible(
   registry: EncounterTemplateRegistry,
-  bibleId: string
+  bibleId: string,
+  mode?: EngineMode
 ): EncounterTemplate[] {
-  return registry.byBible.get(bibleId) ?? [];
+  const templates = registry.byBible.get(bibleId) ?? [];
+  
+  if (mode) {
+    return templates.filter(t => t.mode === mode);
+  }
+  
+  return templates;
 }
 
 /**
@@ -524,7 +542,7 @@ export function validateTemplate(template: EncounterTemplate): {
   // Aftermath
   if (!template.aftermath) {
     errors.push('Missing aftermath phase');
-  } else if (template.aftermath.receiptTypes.length === 0) {
+  } else if (!template.aftermath.receiptTypes || template.aftermath.receiptTypes.length === 0) {
     errors.push('Aftermath has no receipt types');
   }
   

@@ -41,6 +41,7 @@ import { countPlayerIntentStreak, countLoiterFamilyStreak } from './beatFingerpr
 import { pickStatusVoiceLine } from './voiceCadenceSystem';
 import { hasDurableDeltaByT12, forceFreeT12DurableDelta } from './freeT12Hook';
 import { ensureOpeningNpcPinned, formatOpeningPinMandate } from './openingPin';
+import { selectEligibleCrisis, type SocialCrisis } from './socialCrisis';
 
 export interface ArcDirectorState {
   committedBeatIds?: string[];
@@ -465,9 +466,8 @@ export function runArcDirectorBeforeGm(
   const loiterStreak = countLoiterFamilyStreak(working);
 
   // WS-7 Wave 1: Social crisis selection (P2 priority — after combat, before generic beats)
-  let socialCrisisSelected: import('./socialCrisis').SocialCrisis | null = null;
+  let socialCrisisSelected: SocialCrisis | null = null;
   if (!working.activeEncounter) {
-    const { selectEligibleCrisis } = require('./socialCrisis');
     socialCrisisSelected = selectEligibleCrisis(working);
     if (socialCrisisSelected) {
       mandates.push(

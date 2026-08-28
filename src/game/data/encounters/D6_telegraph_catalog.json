@@ -1,0 +1,219 @@
+{
+  "schemaVersion": "1.0.0",
+  "catalogId": "ws4.telegraph.v1",
+  "selectionPolicy": {
+    "preEngagementCoverageTarget": 0.8,
+    "defaultMinimumChannels": 1,
+    "eliteMinimumChannels": 2,
+    "bossMinimumChannels": 3,
+    "maxSamePatternConsecutive": 2,
+    "surprisePolicy": {
+      "maximumShare": 0.2,
+      "requiresSurpriseEligibleTemplate": true,
+      "requiresSuspicionCueOrReactionWindow": true,
+      "openingSeverityCap": "moderate"
+    }
+  },
+  "patterns": [
+    {
+      "id": "status.threat-band",
+      "channel": "status",
+      "appliesTo": ["litrpg", "dnd"],
+      "signalTemplate": "THREAT: {tierLabel} — estimated {riskBand}; engagement in {turns} turns.",
+      "inference": "Communicates comparative danger and timing.",
+      "actionHooks": ["inspect", "equip", "retreat", "call_ally"],
+      "minResponseTurns": 1,
+      "example": "THREAT: Elite — severe for your current tier; engagement in 2 turns."
+    },
+    {
+      "id": "status.deadline-clock",
+      "channel": "status",
+      "appliesTo": ["rpg", "pyoa", "dnd"],
+      "signalTemplate": "{clockName}: {filled}/{segments}. At full: {terminalEvent}.",
+      "inference": "Shows bounded escalation and the exact event at completion.",
+      "actionHooks": ["advance_goal", "reduce_danger", "withdraw", "accept_cost"],
+      "minResponseTurns": 1,
+      "example": "Watch Arrives: 3/6. At full: the gates close and the smugglers are arrested."
+    },
+    {
+      "id": "status.rule-reveal",
+      "channel": "status",
+      "appliesTo": ["litrpg", "dnd", "rpg"],
+      "signalTemplate": "ENCOUNTER RULE: {rule}. Counterplay: {counterplay}.",
+      "inference": "Exposes a special mechanic before it can punish the player.",
+      "actionHooks": ["use_counterplay", "change_position", "spend_resource"],
+      "minResponseTurns": 1,
+      "example": "ENCOUNTER RULE: The sentinel reflects the first spell each round. Counterplay: bait the reflection or attack physically."
+    },
+    {
+      "id": "status.route-closure",
+      "channel": "status",
+      "appliesTo": ["litrpg", "dnd", "pyoa"],
+      "signalTemplate": "ROUTE CHANGE: {route} becomes unavailable after {trigger}.",
+      "inference": "Warns that retreat or access is about to change.",
+      "actionHooks": ["leave_now", "secure_route", "choose_alternate"],
+      "minResponseTurns": 1,
+      "example": "ROUTE CHANGE: The west stair becomes unavailable when the tide bell rings."
+    },
+    {
+      "id": "npc.direct-warning",
+      "channel": "npc",
+      "appliesTo": ["litrpg", "dnd", "rpg", "pyoa"],
+      "signalTemplate": "{speaker}: ‘{warning}’",
+      "inference": "Names the threat, demand, or consequence through a situated character.",
+      "actionHooks": ["question", "prepare", "avoid", "challenge_claim"],
+      "minResponseTurns": 1,
+      "example": "Old Merrow: ‘The brass knight wakes when steel crosses the blue tiles.’"
+    },
+    {
+      "id": "npc.ultimatum",
+      "channel": "npc",
+      "appliesTo": ["rpg", "pyoa", "dnd"],
+      "signalTemplate": "{speaker} demands {demand} before {deadline}; refusal means {fallback}.",
+      "inference": "Makes the opponent’s desired concession and fallback explicit.",
+      "actionHooks": ["accept", "counteroffer", "refuse", "expose", "withdraw"],
+      "minResponseTurns": 1,
+      "example": "Captain Vale demands the ledger before midnight; refusal means a raid on the mill quarter."
+    },
+    {
+      "id": "npc.behavioral-tell",
+      "channel": "npc",
+      "appliesTo": ["rpg", "pyoa", "dnd"],
+      "signalTemplate": "{actor} repeatedly {tell}, especially when {topic} is mentioned.",
+      "inference": "Hints at fear, deception, allegiance, or leverage.",
+      "actionHooks": ["insight_check", "press_topic", "reassure", "present_evidence"],
+      "minResponseTurns": 0,
+      "example": "The reeve checks the shutter latch whenever the missing charter is mentioned."
+    },
+    {
+      "id": "npc.ally-counsel",
+      "channel": "npc",
+      "appliesTo": ["litrpg", "dnd", "rpg", "pyoa"],
+      "signalTemplate": "{ally} recommends {approach} because {reason}, but warns {cost}.",
+      "inference": "Surfaces one viable plan and its trade-off without prescribing it.",
+      "actionHooks": ["follow_counsel", "ask_alternative", "reject_counsel"],
+      "minResponseTurns": 1,
+      "example": "Nia recommends cutting the lift cable because it strands the raiders, but warns the miners will lose their only safe descent."
+    },
+    {
+      "id": "scene.aftermath-trace",
+      "channel": "scene",
+      "appliesTo": ["litrpg", "dnd"],
+      "signalTemplate": "The scene shows {trace}; its pattern points toward {threatInference}.",
+      "inference": "Uses prior damage or residue to indicate actor type, capability, or direction.",
+      "actionHooks": ["track", "study", "prepare_resistance", "detour"],
+      "minResponseTurns": 1,
+      "example": "Armor lies folded inward without blood; the pressure rings point toward a gravity caster."
+    },
+    {
+      "id": "scene.arena-foothold",
+      "channel": "scene",
+      "appliesTo": ["litrpg", "dnd"],
+      "signalTemplate": "From {vantage}, the player can identify {footholds}, {hazards}, and {escapeRoute}.",
+      "inference": "Allows planning before commitment.",
+      "actionHooks": ["take_foothold", "disable_hazard", "mark_escape", "ambush"],
+      "minResponseTurns": 1,
+      "example": "From the cracked gallery, you see two intact pillars, an oil channel, and a service hatch behind the dais."
+    },
+    {
+      "id": "scene.anomalous-silence",
+      "channel": "scene",
+      "appliesTo": ["litrpg", "dnd", "pyoa"],
+      "signalTemplate": "Expected ambient sign {expected} is absent; {replacement} is present.",
+      "inference": "Creates a suspicion cue for ambush or environmental danger.",
+      "actionHooks": ["slow_down", "search", "probe", "withdraw"],
+      "minResponseTurns": 1,
+      "example": "The gulls have vanished; only fresh rope-fiber drifts across the quay."
+    },
+    {
+      "id": "scene.escalation-change",
+      "channel": "scene",
+      "appliesTo": ["rpg", "pyoa", "dnd"],
+      "signalTemplate": "After {event}, {visibleChange} indicates {escalation}.",
+      "inference": "Shows that prior action changed danger or opportunity.",
+      "actionHooks": ["change_approach", "accelerate", "deescalate"],
+      "minResponseTurns": 0,
+      "example": "After the second accusation, shop shutters close along the square; witnesses are choosing sides."
+    },
+    {
+      "id": "item.countermeasure-hint",
+      "channel": "item",
+      "appliesTo": ["litrpg", "dnd"],
+      "signalTemplate": "{item} bears {evidence}, implying it can {countermeasure}.",
+      "inference": "Links a discoverable object to a concrete counterplay option.",
+      "actionHooks": ["equip", "apply", "combine", "save_for_boss"],
+      "minResponseTurns": 1,
+      "example": "The glassbuckler is pitted only on its mirrored face, implying it can turn the wraith’s gaze."
+    },
+    {
+      "id": "item.provenance-clue",
+      "channel": "item",
+      "appliesTo": ["rpg", "pyoa", "dnd"],
+      "signalTemplate": "{item} carries {mark}, linking it to {actorOrFaction}.",
+      "inference": "Creates evidence or social leverage with traceable provenance.",
+      "actionHooks": ["present_evidence", "conceal", "verify", "trade"],
+      "minResponseTurns": 0,
+      "example": "The forged permit uses blue dock wax issued only to the Harbormaster’s clerks."
+    },
+    {
+      "id": "item.resource-warning",
+      "channel": "item",
+      "appliesTo": ["litrpg", "dnd", "pyoa"],
+      "signalTemplate": "{resource} shows {warningState}; at {threshold}, {consequence}.",
+      "inference": "Turns depletion into a forecast rather than a surprise punishment.",
+      "actionHooks": ["replenish", "ration", "spend_now", "abandon_route"],
+      "minResponseTurns": 1,
+      "example": "The ward candle has one band left; when it gutters, the sealed names can hear you."
+    },
+    {
+      "id": "item.choice-token",
+      "channel": "item",
+      "appliesTo": ["pyoa", "rpg"],
+      "signalTemplate": "Keeping {item} preserves {pathA}; surrendering it enables {pathB} and locks {lockout}.",
+      "inference": "Makes an exclusive fork tangible and auditable.",
+      "actionHooks": ["keep", "surrender", "destroy", "entrust"],
+      "minResponseTurns": 1,
+      "example": "Keeping the Charter preserves the millers’ claim; surrendering it gains the Baron’s pardon and locks public arbitration."
+    },
+    {
+      "id": "faction.intercepted-order",
+      "channel": "faction",
+      "appliesTo": ["litrpg", "dnd", "rpg"],
+      "signalTemplate": "Intercepted order: {faction} will {operation} at {time} unless {condition}.",
+      "inference": "Forecasts a faction encounter and a prevention condition.",
+      "actionHooks": ["intercept", "warn_target", "sabotage", "exploit"],
+      "minResponseTurns": 2,
+      "example": "Intercepted order: Ash Guard patrols seal the north bridge at dusk unless the bell tower is disabled."
+    },
+    {
+      "id": "faction.standing-threshold",
+      "channel": "faction",
+      "appliesTo": ["rpg", "pyoa", "litrpg"],
+      "signalTemplate": "{faction} standing is {value}; {action} will change it by {delta} and cross {thresholdEffect}.",
+      "inference": "Makes political costs and unlocks explicit.",
+      "actionHooks": ["proceed", "seek_cover", "call_favor", "choose_rival"],
+      "minResponseTurns": 0,
+      "example": "Mill Guild standing is +1; exposing Tarrow changes it by −2 and removes workshop access."
+    },
+    {
+      "id": "faction.reinforcement-window",
+      "channel": "faction",
+      "appliesTo": ["litrpg", "dnd", "rpg"],
+      "signalTemplate": "{faction} reinforcements arrive in {turns} turns from {route}; blocking {route} prevents arrival.",
+      "inference": "Makes escalation timing and counterplay legible.",
+      "actionHooks": ["block_route", "finish_fast", "flee", "misdirect"],
+      "minResponseTurns": 1,
+      "example": "Vesper constables arrive in 3 turns from Lantern Gate; lowering the canal bridge prevents arrival."
+    },
+    {
+      "id": "faction.public-narrative",
+      "channel": "faction",
+      "appliesTo": ["rpg", "pyoa"],
+      "signalTemplate": "If {event} becomes public, {faction} will frame it as {narrative}, changing {state}.",
+      "inference": "Telegraphs reputational aftermath before a social choice.",
+      "actionHooks": ["control_story", "accept_exposure", "find_witness", "conceal"],
+      "minResponseTurns": 1,
+      "example": "If the food seizure becomes public, the Council will call it riot control, changing Dockside trust by −2."
+    }
+  ]
+}

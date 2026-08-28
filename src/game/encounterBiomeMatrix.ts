@@ -47,12 +47,23 @@ export async function loadBiomeMatrix(): Promise<BiomeMatrix> {
   }
 
   try {
-    const response = await fetch('/data/encounters/D10_biome_spawn_matrix.csv');
-    if (!response.ok) {
-      throw new Error(`Failed to load biome matrix: ${response.statusText}`);
+    let csvText: string;
+    
+    // In Node.js test environment, use fs to load file
+    if (typeof process !== 'undefined' && process.versions?.node) {
+      const fs = await import('fs');
+      const path = await import('path');
+      const filePath = path.join(process.cwd(), 'src/game/data/encounters/D10_biome_spawn_matrix.csv');
+      csvText = fs.readFileSync(filePath, 'utf-8');
+    } else {
+      // In browser, use fetch
+      const response = await fetch('/data/encounters/D10_biome_spawn_matrix.csv');
+      if (!response.ok) {
+        throw new Error(`Failed to load biome matrix: ${response.statusText}`);
+      }
+      csvText = await response.text();
     }
     
-    const csvText = await response.text();
     const matrix = parseBiomeMatrixCsv(csvText);
     _matrixCache = matrix;
     return matrix;

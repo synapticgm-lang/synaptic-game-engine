@@ -57,12 +57,24 @@ export async function loadTelegraphCatalog(): Promise<TelegraphCatalog> {
   }
 
   try {
-    const response = await fetch('/data/encounters/D6_telegraph_catalog.json');
-    if (!response.ok) {
-      throw new Error(`Failed to load telegraph catalog: ${response.statusText}`);
+    let catalog: TelegraphCatalog;
+    
+    // In Node.js test environment, use fs to load file
+    if (typeof process !== 'undefined' && process.versions?.node) {
+      const fs = await import('fs');
+      const path = await import('path');
+      const filePath = path.join(process.cwd(), 'src/game/data/encounters/D6_telegraph_catalog.json');
+      const jsonText = fs.readFileSync(filePath, 'utf-8');
+      catalog = JSON.parse(jsonText) as TelegraphCatalog;
+    } else {
+      // In browser, use fetch
+      const response = await fetch('/data/encounters/D6_telegraph_catalog.json');
+      if (!response.ok) {
+        throw new Error(`Failed to load telegraph catalog: ${response.statusText}`);
+      }
+      catalog = await response.json() as TelegraphCatalog;
     }
     
-    const catalog = await response.json() as TelegraphCatalog;
     _catalogCache = catalog;
     return catalog;
   } catch (error) {
