@@ -70,6 +70,16 @@ export interface ArcDirectorState {
   npcRoleObligations?: import('./npcTopicFsm').NpcRoleObligation[];
   /** B024 Wave 2 — hub beat records for typed gate disposition */
   hubBeatRecords?: import('./choiceCompiler').HubBeatRecord[];
+  
+  // WS-2 Wave A: NPC Lifecycle
+  /** WS-2 Wave A — NPC lifecycle states (entering → functioning → debt_satisfied → exiting → transformed → absent) */
+  npcLifecycles?: import('./npcLifecycleFsm').NpcLifecycle[];
+  /** WS-2 Wave A — NPC memory ledgers (key moments only) */
+  npcMemories?: import('./npcMemoryLedger').NpcMemoryLedger[];
+  
+  // WS-5 Wave A: PYOA Delayed Consequences
+  /** WS-5 Wave A — Delayed consequences (T50 choice → T150 payoff) */
+  pyoaDelayedConsequences?: import('./pyoaDelayedConsequences').DelayedConsequence[];
 }
 
 export interface ArcDirectorResult {
