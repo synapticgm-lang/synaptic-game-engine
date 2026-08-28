@@ -251,6 +251,8 @@ export function CenterPanel({ state, busy, turnPhase = 'idle', streamingReveal =
               onAcceptBeautyOffer={onAcceptBeautyOffer}
               onDismissBeautyOffer={onDismissBeautyOffer}
               contentMode={contentMode}
+              saveId={state.saveId}
+              bibleId={state.bibleId}
             />
         </div>
       ) : (

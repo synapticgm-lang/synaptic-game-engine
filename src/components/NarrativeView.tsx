@@ -11,6 +11,7 @@ import {
   type TurnPhase,
 } from '@/game/streamReveal';
 import { BeautyMomentOfferLink } from './BeautyMomentOffer';
+import { GmResponseFeedback } from './GmResponseFeedback';
 import {
   ChevronRight, ChevronDown, Zap, Sword, Shield, Sparkles,
   TrendingUp, Skull, Heart, Dice5, Eye, EyeOff, Terminal,
@@ -25,6 +26,10 @@ interface Props {
   contentMode?: string | null;
   onAcceptBeautyOffer?: (entryId: string) => void;
   onDismissBeautyOffer?: (entryId: string) => void;
+  /** Current save ID for feedback tracking */
+  saveId?: string | null;
+  /** Bible ID for feedback context */
+  bibleId?: string | null;
 }
 
 type ActionKind = 'crit' | 'damage' | 'heal' | 'skill' | 'defeat' | 'miss';
@@ -74,7 +79,7 @@ function extractActions(log: LogEntry[], engineMode: EngineMode = 'litrpg'): Act
   return cards.slice(-20).reverse();
 }
 
-export function NarrativeView({ log, busy, turnPhase = 'idle', streamingReveal = null, engineMode = 'litrpg', contentMode, onAcceptBeautyOffer, onDismissBeautyOffer }: Props) {
+export function NarrativeView({ log, busy, turnPhase = 'idle', streamingReveal = null, engineMode = 'litrpg', contentMode, onAcceptBeautyOffer, onDismissBeautyOffer, saveId, bibleId }: Props) {
   const [streamOpen, setStreamOpen] = useState(true);
   const actionCards = useMemo(() => extractActions(log, engineMode), [log, engineMode]);
   const turnUiBlocked = isTurnUiBlocked(!!busy, turnPhase, streamingReveal);
@@ -96,6 +101,9 @@ export function NarrativeView({ log, busy, turnPhase = 'idle', streamingReveal =
                 onAcceptBeautyOffer={onAcceptBeautyOffer}
                 onDismissBeautyOffer={onDismissBeautyOffer}
                 contentMode={contentMode}
+                saveId={saveId}
+                bibleId={bibleId}
+                log={log}
               />
             )
           ))}
@@ -126,12 +134,17 @@ export function NarrativeView({ log, busy, turnPhase = 'idle', streamingReveal =
 
 /* ============ NARRATIVE ENTRY DISPATCHER ============ */
 
-function NarrativeEntry({ entry, engineMode, showTurnAsk, streamingReveal, onAcceptBeautyOffer, onDismissBeautyOffer, contentMode }: { entry: LogEntry; engineMode: EngineMode; showTurnAsk: boolean; streamingReveal?: StreamingRevealState | null; onAcceptBeautyOffer?: (entryId: string) => void; onDismissBeautyOffer?: (entryId: string) => void; contentMode?: string | null }) {
+function NarrativeEntry({ entry, engineMode, showTurnAsk, streamingReveal, onAcceptBeautyOffer, onDismissBeautyOffer, contentMode, saveId, bibleId, log }: { entry: LogEntry; engineMode: EngineMode; showTurnAsk: boolean; streamingReveal?: StreamingRevealState | null; onAcceptBeautyOffer?: (entryId: string) => void; onDismissBeautyOffer?: (entryId: string) => void; contentMode?: string | null; saveId?: string | null; bibleId?: string | null; log: LogEntry[] }) {
   if (entry.role === 'player') return <PlayerBubble entry={entry} />;
   if (entry.role === 'system') return <SystemMessage entry={entry} />;
   if (!hasRealGmStory(entry) && !showTurnAsk) {
     return null;
   }
+  
+  // Find the previous player action for this turn
+  const turnIndex = log.findIndex(e => e.id === entry.id);
+  const previousPlayerEntry = turnIndex > 0 ? log.slice(0, turnIndex).reverse().find(e => e.role === 'player') : null;
+  
   return (
     <DmNarration
       entry={entry}
@@ -141,13 +154,16 @@ function NarrativeEntry({ entry, engineMode, showTurnAsk, streamingReveal, onAcc
       onAcceptBeautyOffer={onAcceptBeautyOffer}
       onDismissBeautyOffer={onDismissBeautyOffer}
       contentMode={contentMode}
+      saveId={saveId}
+      bibleId={bibleId}
+      playerAction={previousPlayerEntry?.content}
     />
   );
 }
 
 /* ============ 1. AI DM NARRATION PANEL ============ */
 
-function DmNarration({ entry, engineMode, showTurnAsk, streamingReveal, onAcceptBeautyOffer, onDismissBeautyOffer, contentMode }: { entry: LogEntry; engineMode: EngineMode; showTurnAsk: boolean; streamingReveal?: StreamingRevealState | null; onAcceptBeautyOffer?: (entryId: string) => void; onDismissBeautyOffer?: (entryId: string) => void; contentMode?: string | null }) {
+function DmNarration({ entry, engineMode, showTurnAsk, streamingReveal, onAcceptBeautyOffer, onDismissBeautyOffer, contentMode, saveId, bibleId, playerAction }: { entry: LogEntry; engineMode: EngineMode; showTurnAsk: boolean; streamingReveal?: StreamingRevealState | null; onAcceptBeautyOffer?: (entryId: string) => void; onDismissBeautyOffer?: (entryId: string) => void; contentMode?: string | null; saveId?: string | null; bibleId?: string | null; playerAction?: string }) {
   const { text: displayContent, isRevealing } = resolveRevealContent(entry.id, entry.content, streamingReveal);
   const segments = useMemo(() => parseSegments(stripTurnCloser(displayContent)), [displayContent]);
   const systemLines = useMemo(
@@ -208,6 +224,19 @@ function DmNarration({ entry, engineMode, showTurnAsk, streamingReveal, onAccept
           </div>
         )}
       </div>
+      
+      {/* GM Response Feedback - only show for completed turns with real GM content */}
+      {saveId && hasRealGmStory(entry) && !isRevealing && (
+        <GmResponseFeedback
+          saveId={saveId}
+          turnNumber={entry.turn}
+          gmStory={displayContent}
+          playerAction={playerAction}
+          gameMode={engineMode}
+          bibleId={bibleId}
+        />
+      )}
+      
       <BeautyMomentOfferLink
         offer={entry.beautyOffer}
         contentMode={contentMode}

@@ -11,6 +11,7 @@ John is playtesting live. Collect issues here. Do not implement until he asks fo
 
 _(waiting — John still playtesting; next update when he asks)_
 
+- **2026-08-30h GM response feedback (shipped):** Thumbs up/down on each GM turn with optional comment (500 chars). Supabase table `gm_response_feedback` + service + component wired into NarrativeView. Admin review at `GmFeedbackReview.tsx` (CSV export, filters). RLS: users own feedback, staff see all. Vitest `playtest30hGmFeedback`. HUD + index.html `2026-08-30h`. Client-only (no edge redeploy). Residual: admin UI not yet mounted in Settings/nav.
 - **2026-08-30f first-turn chips + send (shipped):** nextTurn TDZ, opening `(opening)` sentinel, ActionBar/resolveOfferedChoices fallback, turnPhase idle in finally. Residual: New Game still stitches if opening GM empty/timeout. Redeploy: client + `gm-turn`.
 - **2026-08-30e tester window:** Google-only play; default `play_access=tester`. Admin Users & Subscriptions dropdown: Tester / Player / Staff / Admin. Edge + SQL `017`+`018` required. Doc: `path-a-ship-implementation-2026-08-30e.md`.
 - **Next gate after 30c:** re-run alt-premades **4×300** under stamp `2026-08-30c` + Gemini re-score. World map authority should cut invented geography; do not claim 8/10 until scored.
