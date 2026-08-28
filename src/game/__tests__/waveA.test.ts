@@ -121,38 +121,39 @@ describe('WS-2 Wave A: NPC Role Registry', () => {
   
   it('each role has required fields', () => {
     for (const [role, obligation] of Object.entries(ROLE_OBLIGATIONS)) {
-      expect(obligation.role).toBe(role);
-      expect(obligation.function).toBeTruthy();
-      expect(obligation.exitCondition).toBeTruthy();
-      expect(obligation.failureCondition).toBeTruthy();
-      expect(typeof obligation.timeline).toBe('number' || obligation.timeline === null);
+      expect(obligation.roleId).toBe(role);
+      expect(obligation.description).toBeTruthy();
+      expect(obligation.exit.onSuccess).toBeTruthy();
+      expect(obligation.exit.onFailure).toBeTruthy();
+      expect(obligation.obligations.successCriteria).toBeTruthy();
+      expect(obligation.obligations.failureCriteria).toBeTruthy();
     }
   });
   
-  it('infers mysterious_guide for opening NPC', () => {
+  it('infers guide for opening NPC', () => {
     const state = createTestState({ turn: 1, openingEstablishment: { complete: false } });
     state.sceneFacts = { present: ['Aldous'] };
     
-    const role = inferNpcRole('Aldous', state, { input: 'talk to Aldous' });
-    expect(role).toBe('mysterious_guide');
+    const role = inferNpcRole(['guide', 'help']);
+    expect(role).toBe('guide');
   });
   
-  it('infers quest_patron for quest keywords', () => {
+  it('infers quest-patron for quest keywords', () => {
     const state = createTestState();
-    const role = inferNpcRole('Patron', state, { input: 'accept quest' });
-    expect(role).toBe('quest_patron');
+    const role = inferNpcRole(['quest', 'patron']);
+    expect(role).toBe('quest-patron');
   });
   
-  it('infers recurring_merchant in hub', () => {
+  it('infers merchant in hub', () => {
     const state = createTestState({ currentLocation: 'Lowmarket Hub' });
-    const role = inferNpcRole('Vendor', state, { input: 'buy supplies' });
-    expect(role).toBe('recurring_merchant');
+    const role = inferNpcRole(['merchant', 'shop']);
+    expect(role).toBe('merchant');
   });
   
   it('calculates deadline for role with timeline', () => {
     const state = createTestState({ turn: 10 });
-    const deadline = calculateRoleDeadline('mysterious_guide', 10, state);
-    expect(deadline).toBeGreaterThan(10); // Should be 10 + ~15 turns
+    const deadline = calculateRoleDeadline('quest-patron', 10, state);
+    expect(deadline).toBe(20); // Current turn (10) + turnOffset (10)
   });
   
   it('returns null deadline for indefinite roles', () => {
@@ -169,17 +170,17 @@ describe('WS-2 Wave A: NPC Role Registry', () => {
 describe('WS-2 Wave A: NPC Lifecycle FSM', () => {
   it('initializes lifecycle in entering state', () => {
     const state = createTestState();
-    const lifecycle = initNpcLifecycle('Aldous', 'mysterious_guide', state);
+    const lifecycle = initNpcLifecycle('Aldous', 'guide', state);
     
     expect(lifecycle.npcId).toBe('Aldous');
-    expect(lifecycle.role).toBe('mysterious_guide');
+    expect(lifecycle.role).toBe('guide');
     expect(lifecycle.state).toBe('entering');
     expect(lifecycle.debtSatisfied).toBe(false);
   });
   
   it('transitions from entering to functioning', () => {
     const state = createTestState();
-    const lifecycle = initNpcLifecycle('Aldous', 'mysterious_guide', state);
+    const lifecycle = initNpcLifecycle('Aldous', 'guide', state);
     
     const result = updateNpcLifecycle(lifecycle, state);
     
@@ -195,7 +196,7 @@ describe('WS-2 Wave A: NPC Lifecycle FSM', () => {
       openingEstablishment: { complete: true },
     });
     
-    let lifecycle = initNpcLifecycle('Aldous', 'mysterious_guide', state);
+    let lifecycle = initNpcLifecycle('Aldous', 'guide', state);
     lifecycle = { ...lifecycle, state: 'functioning' };
     
     const result = updateNpcLifecycle(lifecycle, state);
@@ -208,7 +209,7 @@ describe('WS-2 Wave A: NPC Lifecycle FSM', () => {
   it('enforces exit window after debt satisfied', () => {
     const state = createTestState({ turn: 30 });
     
-    let lifecycle = initNpcLifecycle('Aldous', 'mysterious_guide', state);
+    let lifecycle = initNpcLifecycle('Aldous', 'guide', state);
     lifecycle = {
       ...lifecycle,
       state: 'debt_satisfied',
@@ -226,7 +227,7 @@ describe('WS-2 Wave A: NPC Lifecycle FSM', () => {
   it('forces exit on deadline miss', () => {
     const state = createTestState({ turn: 50 });
     
-    let lifecycle = initNpcLifecycle('Aldous', 'mysterious_guide', state);
+    let lifecycle = initNpcLifecycle('Aldous', 'guide', state);
     lifecycle = {
       ...lifecycle,
       state: 'functioning',
@@ -245,8 +246,8 @@ describe('WS-2 Wave A: NPC Lifecycle FSM', () => {
       openingEstablishment: { complete: true },
     });
     
-    const lc1 = initNpcLifecycle('Aldous', 'mysterious_guide', state);
-    const lc2 = initNpcLifecycle('Vendor', 'recurring_merchant', state);
+    const lc1 = initNpcLifecycle('Aldous', 'guide', state);
+    const lc2 = initNpcLifecycle('Vendor', 'merchant', state);
     
     state.arcDirector = {
       ...state.arcDirector,

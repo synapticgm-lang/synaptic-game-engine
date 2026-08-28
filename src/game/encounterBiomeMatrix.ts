@@ -336,3 +336,107 @@ export function validateWrongBiblePrevention(matrix: BiomeMatrix): {
     errors,
   };
 }
+
+// ============================================================================
+// BIOME DETECTION UTILITIES
+// ============================================================================
+
+/**
+ * Detect biome from location name or description
+ * Returns the biome identifier
+ */
+export function detectBiome(location: string): string {
+  const loc = location.toLowerCase();
+  
+  // Urban
+  if (loc.includes('city') || loc.includes('market') || loc.includes('town') || loc.includes('street')) {
+    return 'urban';
+  }
+  
+  // Urban ruin
+  if (loc.includes('destroyed') || loc.includes('ruined') || loc.includes('abandoned') || loc.includes('burnt')) {
+    return 'urban_ruin';
+  }
+  
+  // Dungeon
+  if (loc.includes('dungeon') || loc.includes('crypt') || loc.includes('keep') || loc.includes('vault') || loc.includes('cave')) {
+    return 'dungeon';
+  }
+  
+  // Coastal
+  if (loc.includes('harbor') || loc.includes('coast') || loc.includes('shore') || loc.includes('saltmar') || loc.includes('port')) {
+    return 'coastal';
+  }
+  
+  // Wilderness
+  if (loc.includes('forest') || loc.includes('woods') || loc.includes('wild')) {
+    return 'wilderness';
+  }
+  
+  // Desert
+  if (loc.includes('desert') || loc.includes('dune') || loc.includes('ash')) {
+    return 'desert';
+  }
+  
+  // Default
+  return 'generic';
+}
+
+/**
+ * Check if encounter is wrong for the given bible
+ * Returns true if encounter should be blocked
+ */
+export function isWrongBibleEncounter(encounterName: string, bibleId: string): boolean {
+  const encounter = encounterName.toLowerCase();
+  const bible = bibleId.toLowerCase();
+  
+  // Keep Wraith is wrong for shattered-coast (summoned-pact territory)
+  if (encounter.includes('keep') && encounter.includes('wraith') && bible.includes('shattered')) {
+    return true;
+  }
+  
+  // Pact-Hunter is wrong for cursed-keep
+  if (encounter.includes('pact') && encounter.includes('hunter') && bible.includes('cursed')) {
+    return true;
+  }
+  
+  // Summoned Pact actors wrong for Cursed Keep
+  if (encounter.includes('pact') && bible.includes('cursed')) {
+    return true;
+  }
+  
+  // Cursed Keep actors wrong for Summoned Pact
+  if (encounter.includes('keep') && bible.includes('summoned')) {
+    return true;
+  }
+  
+  return false;
+}
+
+/**
+ * Validate encounter against biome rules
+ * Returns validation result with errors
+ */
+export function validateEncounterBiome(
+  template: EncounterTemplate,
+  biome: string,
+  bibleId: string
+): { valid: boolean; errors: string[] } {
+  const errors: string[] = [];
+  
+  // Check wrong-bible filter
+  if (isWrongBibleEncounter(template.id, bibleId)) {
+    errors.push(`Encounter ${template.id} is wrong for bible ${bibleId}`);
+  }
+  
+  // Check biome compatibility
+  const allowedBiomes = template.biomes || [];
+  if (allowedBiomes.length > 0 && !allowedBiomes.includes(biome)) {
+    errors.push(`Encounter ${template.id} not allowed in biome ${biome}`);
+  }
+  
+  return {
+    valid: errors.length === 0,
+    errors,
+  };
+}

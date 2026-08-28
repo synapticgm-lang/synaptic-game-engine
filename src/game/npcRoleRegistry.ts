@@ -1614,3 +1614,153 @@ export function getTransformableRoles(): Array<{
       condition: contract.transform!.condition,
     }));
 }
+
+// ============================================================================
+// ROLE UTILITY FUNCTIONS (for npcLifecycleFsm)
+// ============================================================================
+
+/**
+ * Export ROLE_OBLIGATIONS as alias for NPC_ROLE_REGISTRY
+ */
+export const ROLE_OBLIGATIONS = NPC_ROLE_REGISTRY;
+
+/**
+ * Infer NPC role from keywords or context
+ * Returns null if role cannot be inferred
+ */
+export function inferNpcRole(keywords: string[]): NpcRole | null {
+  const keywordLower = keywords.map(k => k.toLowerCase());
+  
+  // Check for quest-related keywords
+  if (keywordLower.some(k => k.includes('quest') || k.includes('patron') || k.includes('job'))) {
+    return 'quest-patron';
+  }
+  
+  // Check for merchant keywords
+  if (keywordLower.some(k => k.includes('merchant') || k.includes('shop') || k.includes('trade') || k.includes('sell'))) {
+    return 'merchant';
+  }
+  
+  // Check for guide keywords
+  if (keywordLower.some(k => k.includes('guide') || k.includes('help') || k.includes('tutorial'))) {
+    return 'guide';
+  }
+  
+  // Check for keeper/gatekeeper keywords
+  if (keywordLower.some(k => k.includes('gate') || k.includes('guard') || k.includes('keeper') || k.includes('door'))) {
+    return 'gatekeeper';
+  }
+  
+  // Default: cannot infer
+  return null;
+}
+
+/**
+ * Calculate role deadline based on contract
+ * Returns null if no deadline applies
+ */
+export function calculateRoleDeadline(
+  role: NpcRole,
+  currentTurn: number,
+  state: { openingEstablishment?: { complete?: boolean } }
+): number | null {
+  const contract = getNpcRole(role);
+  
+  if (!contract.timeline || contract.timeline.deadlines.length === 0) {
+    return null;
+  }
+  
+  // Use first deadline (hard deadlines take priority)
+  const deadline = contract.timeline.deadlines[0];
+  
+  if (deadline.kind === 'hard' && deadline.turnOffset !== undefined) {
+    return currentTurn + deadline.turnOffset;
+  }
+  
+  if (deadline.kind === 'soft' && deadline.turnOffset !== undefined) {
+    return currentTurn + deadline.turnOffset;
+  }
+  
+  if (deadline.kind === 'story-beat') {
+    // Check if milestone is complete
+    if (deadline.milestoneId === 'opening-establishment-complete') {
+      return state.openingEstablishment?.complete ? currentTurn + 10 : null;
+    }
+    return null;
+  }
+  
+  // Quota deadlines don't have turn-based deadlines
+  if (deadline.kind === 'quota') {
+    return null;
+  }
+  
+  return null;
+}
+
+/**
+ * Check if role obligation is satisfied
+ */
+export function isRoleSatisfied(
+  role: NpcRole,
+  npcId: string,
+  state: {
+    openingEstablishment?: { complete?: boolean };
+    quests?: Array<{ source?: string; status?: string }>;
+    turn: number;
+  }
+): boolean {
+  const contract = getNpcRole(role);
+  
+  // Special case: guide role satisfied when opening complete
+  if (role === 'guide' && state.openingEstablishment?.complete) {
+    return true;
+  }
+  
+  // Special case: quest-patron satisfied when quest has disposition
+  if (role === 'quest-patron') {
+    const hasQuest = state.quests?.some(q => 
+      q.source === npcId && (q.status === 'active' || q.status === 'complete' || q.status === 'failed')
+    );
+    return hasQuest ?? false;
+  }
+  
+  // Special case: merchant with quota
+  if (role === 'merchant') {
+    const quotaDeadline = contract.timeline?.deadlines.find(d => d.kind === 'quota');
+    if (quotaDeadline?.quotaSuccess) {
+      // Would need transaction count from state
+      return false; // Not satisfied by default
+    }
+  }
+  
+  // Default: not satisfied
+  return false;
+}
+
+/**
+ * Format role obligation for GM mandate
+ */
+export function formatRoleObligation(
+  role: NpcRole,
+  npcId: string,
+  deadline: number | null
+): string {
+  const contract = getNpcRole(role);
+  const deadlineText = deadline !== null ? ` (deadline: T${deadline})` : '';
+  
+  return `NPC ROLE (${npcId}): ${contract.description}${deadlineText}`;
+}
+
+/**
+ * Format exit mandate
+ */
+export function formatExitMandate(
+  role: NpcRole,
+  npcId: string,
+  reason: 'success' | 'failure' | 'deadline' | 'transform'
+): string {
+  const contract = getNpcRole(role);
+  const exitBehavior = reason === 'success' ? contract.exit.onSuccess : contract.exit.onFailure;
+  
+  return `NPC EXIT (${npcId}): ${reason} - ${exitBehavior}`;
+}
