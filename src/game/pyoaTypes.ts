@@ -297,7 +297,7 @@ export class BranchInvariantError extends Error {
       | 'RUN_ALREADY_TERMINAL',
     message: string,
   ) {
-    super(message);
+    super(`${code}: ${message}`);
     this.name = 'BranchInvariantError';
   }
 }
