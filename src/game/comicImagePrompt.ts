@@ -1,6 +1,7 @@
 import type { ArtStylePreset, EngineMode, Settings } from './types';
 import type { CampaignArchetype } from './archetypes';
 import { formatWorldCanonForPrompt, kidSafeArtDirective } from './visualCanon';
+import { hostedImagesAllowed } from './testLab';
 
 export type ImagePromptKind =
   | 'comic-panel'
@@ -117,6 +118,7 @@ export function allowsImageGeneration(
   settings: Settings,
   promptKind?: ImagePromptKind
 ): boolean {
+  if (!hostedImagesAllowed()) return false;
   if (promptKind === 'item-icon' || promptKind === 'character-portrait') return true;
   if (settings.visualMode !== 'classic') return true;
   return Boolean(settings.classicMemorableImages && promptKind === 'milestone-illustration');

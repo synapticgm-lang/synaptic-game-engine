@@ -4,13 +4,13 @@ import { Bug, ChevronDown, ChevronUp, Settings, Map, Compass, Recycle, Backpack 
 import { loadCapacityLedger } from '../game/capacityLedger';
 import { getTierDefinition, type SubscriptionTierId } from '../game/subscriptionTiers';
 import { explainWhy, recentStateTxReceipts } from '../game/stateTx';
-import { effectiveWriterTier, isTestLabEnabled } from '../game/testLab';
+import { effectiveWriterTier, hasUnlimitedTextCapacity, isFounderPlayAccount } from '../game/testLab';
 import { equippedSetLabel, equippedSetName } from '../game/uiTheme';
 
 /** Visible after a hard refresh -- if this is missing, Vercel is still serving the 16 Aug bundle. */
-export const HUD_BUILD_STAMP = '2026-08-30d';
+export const HUD_BUILD_STAMP = '2026-08-30e';
 const HUD_BUILD_TITLE =
-  'Debug 2026-08-30c - opening GM call + turn-fail class';
+  'Debug 2026-08-30e - Google-only play + tester cohort';
 
 interface Props {
   state: GameState;
@@ -38,26 +38,29 @@ export function Hud({ state, settings, onSettings, onOpenMap, onOpenQuestLog, on
   const c = state?.character;
   const hpPercent = c && c.maxHp > 0 ? Math.round((c.hp / c.maxHp) * 100) : 100;
   const ledger = loadCapacityLedger();
-  const testLab = isTestLabEnabled();
+  const unlimitedText = hasUnlimitedTextCapacity();
+  const founderLab = isFounderPlayAccount() && unlimitedText;
   const tier = (
-    testLab
+    unlimitedText
       ? effectiveWriterTier(settings.subscriptionTier)
       : (settings.subscriptionTier ?? ledger.tier)
   ) as SubscriptionTierId;
   const dailyCap = getTierDefinition(tier).textTurnsPerDay;
   const storyStartLeft = Math.max(0, state.storyStartTextTurnsRemaining ?? 0);
-  const turnsLeft = testLab
+  const turnsLeft = unlimitedText
     ? '∞'
     : String(
         Math.max(0, dailyCap + ledger.textAdBonusToday - ledger.textDailySpent)
           + ledger.textPackBalance
           + storyStartLeft
       );
-  const turnsTitle = testLab
+  const turnsTitle = founderLab
     ? `Test Lab on — unlimited capacity. AI catalog: ${tier.toUpperCase()}.`
-    : storyStartLeft > 0
-      ? `Turns left: daily cap ${dailyCap}/day on this tier, plus packs, plus ${storyStartLeft} story-start bonus. Opening setup answers are free.`
-      : `Daily text turns remaining (cap ${dailyCap}/day on this tier, plus packs). Opening setup answers are free.`;
+    : unlimitedText
+      ? 'Turns available. Opening setup answers are free.'
+      : storyStartLeft > 0
+        ? `Turns left: daily cap ${dailyCap}/day on this tier, plus packs, plus ${storyStartLeft} story-start bonus. Opening setup answers are free.`
+        : `Daily text turns remaining (cap ${dailyCap}/day on this tier, plus packs). Opening setup answers are free.`;
 
 
   // Adaptive Secondary Resource Check (Supports MP, SP, Power, Rage, etc.)
@@ -102,8 +105,8 @@ export function Hud({ state, settings, onSettings, onOpenMap, onOpenQuestLog, on
           className="font-mono text-[10px] sm:text-[11px] text-amber-200/90 whitespace-nowrap shrink-0"
           title={turnsTitle}
         >
-          {testLab ? (
-            <>∞ turns · {tier}</>
+          {unlimitedText ? (
+            <>∞ turns</>
           ) : (
             <>
               {turnsLeft} turn{turnsLeft === '1' ? '' : 's'}

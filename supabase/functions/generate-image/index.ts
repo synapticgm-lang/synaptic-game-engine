@@ -14,6 +14,8 @@
  * CORS: echo Origin (not `*`) so Authorization + apikey preflights succeed from
  * synaptic-game-engine.vercel.app and synapticgm.com.
  */
+import { isPrivilegedPlayRequest } from '../_shared/playPrivileges.ts';
+
 const ALLOWED_ORIGINS = new Set([
   'https://synaptic-game-engine.vercel.app',
   'https://www.synapticgm.com',
@@ -171,6 +173,10 @@ Deno.serve(async (req) => {
     const apiKey = clientKey || serverKey;
 
     if (!prompt) return jsonResponse(req, { error: 'Missing prompt' }, 400);
+    const privileged = await isPrivilegedPlayRequest(req);
+    if (!privileged) {
+      return jsonResponse(req, { error: 'Illustrations are unavailable.' }, 403);
+    }
     if (!apiKey) {
       return jsonResponse(req, { error: 'Hosted image service is unavailable.' }, 503);
     }

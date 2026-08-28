@@ -111,11 +111,13 @@ export default function App() {
     );
   }
 
-  if (game.bootPhase === 'auth') {
+  const signedInGoogle = !!game.googleUser && !game.googleUser.isGuest;
+
+  if (game.bootPhase === 'auth' || (!signedInGoogle && game.bootPhase !== 'welcome' && game.bootPhase !== 'syncing')) {
     return (
       <>
         <BootSplash phase="syncing" />
-        <AuthOverlay onSignIn={game.handleBootSignIn} onGuest={game.handleGuestSignIn} />
+        <AuthOverlay onSignIn={game.handleBootSignIn} />
         <ToastStack toasts={game.toasts} onDismiss={game.dismissToast} />
       </>
     );

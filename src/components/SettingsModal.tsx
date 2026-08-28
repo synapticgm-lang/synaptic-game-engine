@@ -27,6 +27,7 @@ import {
   canShowTestLabUi,
   getTestLabAiTier,
   isTestLabEnabled,
+  isTesterCohort,
   loadTestLab,
   markTestAccountEmail,
   setTestLabAiTier,
@@ -170,7 +171,11 @@ export function SettingsModal({ settings, storyName, engineMode, gameState, onSa
       aiProvider: 'openrouter',
       geminiApiKey: '',
       imageApiKey: draft.fluxApiKey,
-      classicMemorableImages: memorableToggleEnabled() ? draft.classicMemorableImages : false,
+      classicMemorableImages: isTesterCohort()
+        ? false
+        : memorableToggleEnabled() ? draft.classicMemorableImages : false,
+      visualMode: isTesterCohort() ? 'classic' : draft.visualMode,
+      artStylePreset: isTesterCohort() ? 'classic-book' : draft.artStylePreset,
     };
     if (!toSave.fluxApiKey.trim() && toSave.imageProvider === 'flux-direct') {
       toSave.imageProvider = 'flux';
@@ -559,8 +564,8 @@ export function SettingsModal({ settings, storyName, engineMode, gameState, onSa
             </div>
           </Section>
 
-          {/* Visual Mode: Comic / Classic (Locked mid-story) */}
-          <Section icon={<Palette size={16} />} title="Visual Mode" visible={activeTab === 'visuals'}>
+          {/* Visual Mode: Comic / Classic (Locked mid-story). Testers stay Classic Text. */}
+          <Section icon={<Palette size={16} />} title="Visual Mode" visible={activeTab === 'visuals' && !isTesterCohort()}>
             {isStoryActive && (
               <p className="text-[11px] text-amber-400 mb-2">Visual mode is locked during an active story campaign.</p>
             )}

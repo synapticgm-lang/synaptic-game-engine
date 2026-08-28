@@ -1,17 +1,26 @@
 /**
  * Test Lab — founder / QA unlock.
+ * Tester cohort — signed-in Google players who are not founders.
  *
- * When enabled on a marked account (or this device):
- * - Capacity is unlimited (text, memorable, illustrated)
- * - Writer + image catalog follow Free / Mid / High (hosted), switchable in Settings
- * - Cosmetics remain fully unlocked via cosmeticEntitlements TEST_UNLOCK_ALL
+ * Testers (silent playtest):
+ * - Unlimited text turns
+ * - Hosted Free writer only
+ * - No comic / memorable / portrait / item-icon generation
+ * - No Test Lab UI (they should not know they are in a special cohort)
  *
- * Mark an account: Settings → Test Lab, or VITE_TEST_ACCOUNT_EMAILS.
+ * Founder Test Lab (Settings → Test Lab, VITE_TEST_ACCOUNT_EMAILS, or DEV + toggle):
+ * - Unlimited text + art
+ * - Switchable Free / Mid / High
+ *
+ * Mark a founder account: Settings → Test Lab, or VITE_TEST_ACCOUNT_EMAILS.
  */
 
 import type { SubscriptionTierId } from './subscriptionTiers';
 
 export type HostedAiTier = 'free' | 'mid' | 'high';
+
+/** Server role from profiles.play_access (Admin Users dropdown). */
+export type PlayAccess = 'tester' | 'player' | 'staff' | 'admin';
 
 export interface TestLabConfig {
   enabled: boolean;
@@ -21,6 +30,12 @@ export interface TestLabConfig {
   markedEmails: string[];
 }
 
+export interface PlayAccountContext {
+  signedIn: boolean;
+  email: string | null;
+  userId: string | null;
+}
+
 const STORAGE_KEY = 'synapticgm-test-lab';
 
 const DEFAULT: TestLabConfig = {
@@ -28,6 +43,15 @@ const DEFAULT: TestLabConfig = {
   aiPreviewTier: 'free',
   markedEmails: [],
 };
+
+const EMPTY_ACCOUNT: PlayAccountContext = {
+  signedIn: false,
+  email: null,
+  userId: null,
+};
+
+let playAccount: PlayAccountContext = { ...EMPTY_ACCOUNT };
+let serverPlayAccess: PlayAccess | null = null;
 
 function envEmailAllowlist(): string[] {
   const raw = (import.meta.env.VITE_TEST_ACCOUNT_EMAILS as string | undefined) ?? '';
@@ -87,6 +111,46 @@ export function isAutoplayTestLabSession(): boolean {
   return autoplayUnlimitedSession;
 }
 
+export function setPlayAccountContext(next: PlayAccountContext | null): void {
+  playAccount = next
+    ? {
+        signedIn: !!next.signedIn,
+        email: normalizeEmail(next.email),
+        userId: next.userId?.trim() || null,
+      }
+    : { ...EMPTY_ACCOUNT };
+  if (!next) serverPlayAccess = null;
+}
+
+export function setServerPlayAccess(access: PlayAccess | string | null | undefined): void {
+  const v = String(access ?? '').trim().toLowerCase();
+  if (v === 'tester' || v === 'player' || v === 'staff' || v === 'admin') {
+    serverPlayAccess = v;
+    return;
+  }
+  serverPlayAccess = null;
+}
+
+export function getServerPlayAccess(): PlayAccess | null {
+  return serverPlayAccess;
+}
+
+export function parsePlayAccess(raw: unknown): PlayAccess | null {
+  const v = String(raw ?? '').trim().toLowerCase();
+  if (v === 'tester' || v === 'player' || v === 'staff' || v === 'admin') return v;
+  return null;
+}
+
+export function getPlayAccountContext(): PlayAccountContext {
+  return { ...playAccount };
+}
+
+/** @internal vitest */
+export function __resetPlayAccountForTests(): void {
+  playAccount = { ...EMPTY_ACCOUNT };
+  serverPlayAccess = null;
+}
+
 export function isTestLabEnabled(): boolean {
   if (autoplayUnlimitedSession) return true;
   return loadTestLab().enabled;
@@ -126,38 +190,102 @@ export function isEmailTestAccount(email?: string | null): boolean {
   return loadTestLab().markedEmails.includes(e);
 }
 
-/** Show Test Lab controls (DEV, env flag, already enabled, marked email, or admin tier). */
+function isEnvFounderEmail(email?: string | null): boolean {
+  const e = normalizeEmail(email);
+  if (!e) return false;
+  return envEmailAllowlist().includes(e);
+}
+
+/**
+ * Founder play account — production uses VITE_TEST_ACCOUNT_EMAILS only.
+ * Device `markedEmails` is ignored in prod so testers cannot self-promote
+ * via localStorage. DEV still honors the Test Lab toggle.
+ */
+export function isFounderPlayAccount(email?: string | null): boolean {
+  if (autoplayUnlimitedSession) return true;
+  if (serverPlayAccess === 'staff' || serverPlayAccess === 'admin') return true;
+  const resolved = normalizeEmail(email) ?? playAccount.email;
+  if (isEnvFounderEmail(resolved)) return true;
+  // DEV only: Settings → Test Lab marks the signed-in email. `enabled` alone is not enough.
+  if (import.meta.env.DEV && loadTestLab().enabled && isEmailTestAccount(resolved)) return true;
+  return false;
+}
+
+/**
+ * Signed-in Google player in the silent tester cohort.
+ * Server play_access wins when present; otherwise unmarked Google users are testers.
+ */
+export function isTesterCohort(): boolean {
+  if (autoplayUnlimitedSession) return false;
+  if (!playAccount.signedIn) return false;
+  if (serverPlayAccess === 'tester') return true;
+  if (serverPlayAccess === 'player' || serverPlayAccess === 'staff' || serverPlayAccess === 'admin') {
+    return false;
+  }
+  return !isFounderPlayAccount();
+}
+
+/** Unlimited text turns (testers + founder Test Lab + autoplay). */
+export function hasUnlimitedTextCapacity(): boolean {
+  if (autoplayUnlimitedSession) return true;
+  if (isTesterCohort()) return true;
+  if (isFounderPlayAccount()) return true;
+  return isTestLabEnabled() && isFounderPlayAccount();
+}
+
+/**
+ * Hosted images / comic / memorable / portraits may be requested.
+ * Testers are hard-off. Everyone else follows the normal ledger / Test Lab.
+ */
+export function hostedImagesAllowed(): boolean {
+  if (autoplayUnlimitedSession) return true;
+  return !isTesterCohort();
+}
+
+/** Founder Test Lab / autoplay: image spend is a no-op. Testers never qualify. */
+export function hasUnlimitedImageCapacity(): boolean {
+  if (autoplayUnlimitedSession) return true;
+  if (isTesterCohort()) return false;
+  if (isFounderPlayAccount()) return true;
+  return isTestLabEnabled() && isFounderPlayAccount();
+}
+
+/** Show Test Lab controls — never for an unmarked signed-in tester. */
 export function canShowTestLabUi(opts: {
   email?: string | null;
   subscriptionTier?: string | null;
 }): boolean {
+  void opts.subscriptionTier;
   if (import.meta.env.DEV) return true;
   if (import.meta.env.VITE_ENABLE_TEST_LAB === 'true') return true;
-  if (isTestLabEnabled()) return true;
+  if (serverPlayAccess === 'staff' || serverPlayAccess === 'admin') return true;
   if (isEmailTestAccount(opts.email)) return true;
-  if (opts.subscriptionTier === 'admin') return true;
   return false;
 }
 
 /**
  * Effective hosted Free/Mid/High for writer + image catalog.
- * Test Lab forces the preview tier (never Admin BYOK custom model for this path).
+ * Testers are locked to Free. Founder Test Lab uses the preview tier.
  */
 export function effectiveHostedAiTier(
   settingsTier: SubscriptionTierId | string | null | undefined
 ): HostedAiTier {
-  if (isTestLabEnabled()) return getTestLabAiTier();
+  if (autoplayUnlimitedSession) return autoplayAiTier;
+  if (isTesterCohort()) return 'free';
+  if (isTestLabEnabled() && isFounderPlayAccount()) return getTestLabAiTier();
   if (settingsTier === 'mid' || settingsTier === 'high' || settingsTier === 'free') {
     return settingsTier;
   }
   return 'free';
 }
 
-/** Tier id passed to resolveWriterModel / Flux when Test Lab is on. */
+/** Tier id passed to resolveWriterModel / Flux. Testers never leave Free. */
 export function effectiveWriterTier(
   settingsTier: SubscriptionTierId | string | null | undefined
 ): SubscriptionTierId {
-  if (isTestLabEnabled()) return getTestLabAiTier();
+  if (autoplayUnlimitedSession) return autoplayAiTier;
+  if (isTesterCohort()) return 'free';
+  if (isTestLabEnabled() && isFounderPlayAccount()) return getTestLabAiTier();
   if (
     settingsTier === 'mid'
     || settingsTier === 'high'

@@ -156,7 +156,12 @@ import {
 } from './campaignMemory';
 import { canSpend, spendCapacity, refundCapacity, capacityStatusMessage, storyStartTextTurnsForTier } from './capacityLedger';
 import { setActiveSubscriptionTier } from './subscriptionTiers';
-import { effectiveWriterTier, isTestLabEnabled } from './testLab';
+import {
+  effectiveWriterTier,
+  hasUnlimitedTextCapacity,
+  isTesterCohort,
+  setPlayAccountContext,
+} from './testLab';
 import { resolveWriterTierForTurn } from './writerPolicy';
 import { applyDailyQuestMilestone } from './dailyMilestoneLedger';
 import { canOfferRewardedMemorable } from './rewardedAds';
@@ -506,15 +511,7 @@ export function extractChoicesFromText(text: string, state?: GameState, storyPro
   return validatedChoices;
 }
 
-const GOOGLE_USER_KEY = 'tactical-litrpg-google-user';
 const LOCAL_UPDATED_KEY = 'tactical-litrpg-local-updated';
-const GUEST_USER_KEY = 'tactical-litrpg-guest';
-
-const GUEST_USER: GoogleUser = {
-  credential: 'guest',
-  name: 'Guest Adventurer',
-  isGuest: true,
-};
 
 export type SyncPhase = 'idle' | 'syncing';
 export type BootPhase = 'welcome' | 'auth' | 'setup' | 'hub' | 'syncing' | 'ready';
@@ -743,12 +740,17 @@ export function useGame() {
 
   const applySupabaseSession = useCallbackRef((session: Session | null) => {
     if (!session?.user) {
+      setPlayAccountContext(null);
       setTelemetryContext({ playerId: 'guest' });
       if (googleUserRef.current && !googleUserRef.current.isGuest) {
         setGoogleUser(null);
       }
+      if (googleUserRef.current?.isGuest) {
+        setGoogleUser(null);
+      }
       setCloudSlot(null);
       setCloudSlots([]);
+      setBootPhase((phase) => (phase === 'hub' || phase === 'ready' ? 'auth' : phase));
       void refreshSaveSlots();
       return;
     }
@@ -764,7 +766,26 @@ export function useGame() {
     };
     setGoogleUser(nextUser);
     googleUserRef.current = nextUser;
+    setPlayAccountContext({
+      signedIn: true,
+      email: session.user.email ?? null,
+      userId: session.user.id,
+    });
     setTelemetryContext({ playerId: session.user.id });
+    if (isTesterCohort()) {
+      const locked: Settings = {
+        ...settingsRef.current,
+        visualMode: 'classic',
+        artStylePreset: 'classic-book',
+        classicMemorableImages: false,
+        subscriptionTier: 'free',
+      };
+      setSettings(locked);
+      settingsRef.current = locked;
+      saveSettings(locked);
+      setComicMode(false);
+      setNarrativeMode(false);
+    }
     debugLogger.record('SYSTEM', 'Supabase Google session active', {
       userId: session.user.id,
       email: session.user.email,
@@ -1932,7 +1953,7 @@ export function useGame() {
     // Sync tier + spend a text turn from story-start bonus, then capacity ledger.
     // Test Lab: route writer/image catalog via Free/Mid/High preview without burning caps.
     setActiveSubscriptionTier(
-      isTestLabEnabled()
+      hasUnlimitedTextCapacity()
         ? effectiveWriterTier(settingsRef.current.subscriptionTier)
         : (settingsRef.current.subscriptionTier ?? 'free')
     );
@@ -4465,6 +4486,12 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
     useUsualSelf?: boolean,
   ) => {
     debugLogger.beginPlaySession('new-game');
+    if (!googleUserRef.current || googleUserRef.current.isGuest) {
+      addToast('Sign in with Google to play.', 'error');
+      setBootPhase('auth');
+      return;
+    }
+
     if (
       selectedVisualMode ||
       selectedArtStyle ||
@@ -4473,13 +4500,21 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
       comicReadingDirection
     ) {
       const updated = { ...settingsRef.current } as Settings;
-      if (selectedVisualMode) updated.visualMode = selectedVisualMode;
-      if (selectedVisualMode === 'classic') {
+      if (isTesterCohort()) {
+        updated.visualMode = 'classic';
         updated.artStylePreset = 'classic-book';
+        updated.classicMemorableImages = false;
+      } else if (selectedVisualMode) {
+        updated.visualMode = selectedVisualMode;
+        if (selectedVisualMode === 'classic') {
+          updated.artStylePreset = 'classic-book';
+        } else if (selectedArtStyle) {
+          updated.artStylePreset = selectedArtStyle;
+        }
       } else if (selectedArtStyle) {
         updated.artStylePreset = selectedArtStyle;
       }
-      if (typeof classicMemorableImages === 'boolean') {
+      if (!isTesterCohort() && typeof classicMemorableImages === 'boolean') {
         updated.classicMemorableImages = classicMemorableImages;
       }
       if (comicLayout) updated.comicLayout = comicLayout;
@@ -5539,15 +5574,15 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
     },
     loadDungeon, ensureLocalMap, hydratePlayFromLog, moveDungeonNode, exitDungeon,
     handleGuestSignIn: async () => {
-      setGoogleUser(GUEST_USER);
-      setTelemetryContext({ playerId: 'guest' });
-      setBootPhase('hub');
-      isHydratedRef.current = true;
-      setCloudSlot(null);
-      setCloudSlots([]);
-      void refreshSaveSlots();
+      addToast('Sign in with Google to play.', 'info');
+      setBootPhase('auth');
     },
     continueGame: async () => {
+      if (!googleUserRef.current || googleUserRef.current.isGuest) {
+        addToast('Sign in with Google to play.', 'error');
+        setBootPhase('auth');
+        return;
+      }
       debugLogger.beginPlaySession('continue');
       debugLogger.record('SYSTEM', 'continueGame invoked — resolving local + Supabase cloud save');
       setSyncPhase('syncing');
@@ -5637,6 +5672,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
       setBootPhase('hub');
     },
     handleGuestSignOut: () => {
+      setPlayAccountContext(null);
       setGoogleUser(null);
       setTelemetryContext({ playerId: 'guest' });
       setBootPhase('auth');
@@ -5670,6 +5706,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
     },
     handleGoogleSignOut: async () => {
       await signOutSupabase();
+      setPlayAccountContext(null);
       setGoogleUser(null);
       setTelemetryContext({ playerId: 'guest' });
       setBootPhase('auth');

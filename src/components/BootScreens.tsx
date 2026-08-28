@@ -119,7 +119,7 @@ export function AuthOverlay({ onSignIn, onGuest }: AuthProps) {
           <div>
             <h2 className="font-serif text-xl text-slate-100">Enter the Realm</h2>
             <p className="mt-2 text-sm text-slate-400">
-              Sign in with Google to sync your campaigns across devices and never lose your progress.
+              Sign in with Google to play. Campaigns sync to your account so you never lose progress.
             </p>
           </div>
 
@@ -143,8 +143,7 @@ export function AuthOverlay({ onSignIn, onGuest }: AuthProps) {
           </div>
 
           <div className="flex flex-col items-center gap-1 text-[11px] text-slate-500">
-            <span>Saves stored in your private app data folder on Drive</span>
-            {onGuest && <span className="text-slate-600">Guest mode stores saves locally in your browser</span>}
+            <span>Saves stay on your signed-in account</span>
           </div>
 
           <LegalLinks className="mt-1" />

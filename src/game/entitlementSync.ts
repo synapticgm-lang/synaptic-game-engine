@@ -11,6 +11,7 @@ import {
 import { applyStaffDailyReset, loadCapacityLedger, saveCapacityLedger } from '@/game/capacityLedger';
 import { loadSettings, saveSettings } from '@/game/db';
 import { unlockCosmetic } from '@/game/cosmeticEntitlements';
+import { isTesterCohort, parsePlayAccess, setServerPlayAccess } from '@/game/testLab';
 
 /** Keep in sync with `SETTINGS_EVENT_NAME` in useGame (avoid circular import). */
 const SETTINGS_EVENT_NAME = 'tactical-litrpg-settings-update';
@@ -89,7 +90,7 @@ export async function syncEntitlementsFromServer(): Promise<EntitlementSyncResul
 
   const userId = authData.user.id;
 
-  const [subRes, packResRaw, cosRes] = await Promise.all([
+  const [subRes, packResRaw, cosRes, profileRes] = await Promise.all([
     supabase
       .from('subscriptions')
       .select('plan_id, tier, status, current_period_end, provider')
@@ -104,7 +105,16 @@ export async function syncEntitlementsFromServer(): Promise<EntitlementSyncResul
       .from('cosmetic_entitlements')
       .select('item_id')
       .eq('user_id', userId),
+    supabase
+      .from('profiles')
+      .select('play_access')
+      .eq('id', userId)
+      .maybeSingle(),
   ]);
+
+  if (!profileRes.error) {
+    setServerPlayAccess(parsePlayAccess((profileRes.data as { play_access?: string } | null)?.play_access));
+  }
 
   let packRes = packResRaw;
   if (packRes.error && /capacity_reset_at|column/i.test(packRes.error.message)) {
@@ -128,14 +138,30 @@ export async function syncEntitlementsFromServer(): Promise<EntitlementSyncResul
     } | null) ?? null
   );
 
-  setActiveSubscriptionTier(planId);
+  const writerPlan = isTesterCohort() ? 'free' : planId;
+  setActiveSubscriptionTier(writerPlan);
   const settings = loadSettings();
-  if (settings.subscriptionTier !== planId) {
-    const next = { ...settings, subscriptionTier: planId };
-    saveSettings(next);
-    emitSettings(next);
+  const testerLock = isTesterCohort();
+  const nextSettings = {
+    ...settings,
+    subscriptionTier: writerPlan,
+    ...(testerLock
+      ? {
+          visualMode: 'classic' as const,
+          artStylePreset: 'classic-book' as const,
+          classicMemorableImages: false,
+        }
+      : {}),
+  };
+  if (
+    settings.subscriptionTier !== nextSettings.subscriptionTier
+    || settings.classicMemorableImages !== nextSettings.classicMemorableImages
+    || settings.visualMode !== nextSettings.visualMode
+  ) {
+    saveSettings(nextSettings);
+    emitSettings(nextSettings);
   } else {
-    saveSettings(settings);
+    saveSettings(nextSettings);
   }
 
   let textPackBalance: number | null = null;

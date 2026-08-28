@@ -17,7 +17,11 @@ import {
   type TurnPackId,
   TURN_PACKS,
 } from './subscriptionTiers';
-import { isTestLabEnabled } from './testLab';
+import {
+  hasUnlimitedImageCapacity,
+  hasUnlimitedTextCapacity,
+  hostedImagesAllowed,
+} from './testLab';
 
 const LEDGER_KEY = 'synapticgm-capacity-ledger';
 
@@ -204,9 +208,10 @@ export function memorableRemaining(ledger = loadCapacityLedger()): number {
   return memorableSubRemaining(ledger) + Math.max(0, ledger.memorablePackBalance ?? 0);
 }
 
-/** True when the player can spend a memorable plate right now (or Test Lab). */
+/** True when the player can spend a memorable plate right now. Testers: never. */
 export function memorablePlatesAvailable(ledger = loadCapacityLedger()): boolean {
-  if (isTestLabEnabled()) return true;
+  if (!hostedImagesAllowed()) return false;
+  if (hasUnlimitedImageCapacity()) return true;
   return memorableRemaining(ledger) > 0;
 }
 
@@ -236,8 +241,12 @@ export function illustratedRemaining(ledger = loadCapacityLedger()): number {
 export type CapacitySpendKind = 'text' | 'memorable' | 'illustrated';
 
 export function canSpend(kind: CapacitySpendKind, amount = 1, ledger = loadCapacityLedger()): boolean {
-  if (isTestLabEnabled()) return true;
-  if (kind === 'text') return textTurnsRemaining(ledger) >= amount;
+  if (kind === 'text') {
+    if (hasUnlimitedTextCapacity()) return true;
+    return textTurnsRemaining(ledger) >= amount;
+  }
+  if (!hostedImagesAllowed()) return false;
+  if (hasUnlimitedImageCapacity()) return true;
   if (kind === 'memorable') return memorableRemaining(ledger) >= amount;
   return illustratedRemaining(ledger) >= amount;
 }
@@ -251,7 +260,17 @@ export function spendCapacity(
   amount = 1,
   ledger = loadCapacityLedger()
 ): { ok: boolean; ledger: CapacityLedger; reason?: string; fromPack?: boolean } {
-  if (isTestLabEnabled()) {
+  if (kind === 'text' && hasUnlimitedTextCapacity()) {
+    return { ok: true, ledger };
+  }
+  if (kind !== 'text' && !hostedImagesAllowed()) {
+    return {
+      ok: false,
+      ledger,
+      reason: kind === 'memorable' ? 'out_of_memorable' : 'out_of_illustrated',
+    };
+  }
+  if (kind !== 'text' && hasUnlimitedImageCapacity()) {
     return { ok: true, ledger };
   }
   if (!canSpend(kind, amount, ledger)) {
@@ -466,7 +485,8 @@ export function canSpendComicKleinUnit(
   amount = 1,
   ledger = loadCapacityLedger()
 ): boolean {
-  if (isTestLabEnabled()) return true;
+  if (!hostedImagesAllowed()) return false;
+  if (hasUnlimitedImageCapacity()) return true;
   const caps = COMIC_KLEIN_CAPS[ledger.tier] ?? COMIC_KLEIN_CAPS.free;
   if (comicKleinSessionSpent + amount > caps.session) return false;
   if ((ledger.comicKleinDaySpent ?? 0) + amount > caps.day) return false;
@@ -478,7 +498,10 @@ export function spendComicKleinUnit(
   amount = 1,
   ledger = loadCapacityLedger()
 ): { ok: boolean; ledger: CapacityLedger } {
-  if (isTestLabEnabled()) {
+  if (!hostedImagesAllowed()) {
+    return { ok: false, ledger };
+  }
+  if (hasUnlimitedImageCapacity()) {
     return { ok: true, ledger };
   }
   if (!canSpendComicKleinUnit(amount, ledger)) {

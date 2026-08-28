@@ -12,6 +12,7 @@ import {
 import { CustomTabletopRulesField } from './CustomTabletopRulesField';
 import { ExpertCustomPanel } from './ExpertCustomPanel';
 import { memorableToggleEnabled, memorableWeeklyCapLabel } from '@/game/capacityLedger';
+import { isTesterCohort } from '@/game/testLab';
 import { blankBibleIdForMode } from '@/game/customBlank';
 import {
   buildPlayerCampaignBible,
@@ -206,17 +207,25 @@ export function NewGameModal({ contentMode, onStart, onClose }: Props) {
     } else if (step === 'presentation') {
       setStep('system');
     } else if (step === 'character') {
-      setStep('presentation');
+      setStep(isTesterCohort() ? 'system' : 'presentation');
     } else if (step === 'persona') {
       if (path === 'custom') setStep('character');
-      else setStep('presentation');
+      else setStep(isTesterCohort() ? 'system' : 'presentation');
     }
   };
 
   const goNext = () => {
     setReadyHint(undefined);
     if (step === 'customDepth') setStep('system');
-    else if (step === 'system') setStep('presentation');
+    else if (step === 'system') {
+      if (isTesterCohort()) {
+        if (path === 'custom') setStep('character');
+        else if (personaReady) setStep('persona');
+        else beginPremade(false);
+      } else {
+        setStep('presentation');
+      }
+    }
     else if (step === 'presentation') {
       if (path === 'custom') setStep('character');
       else if (personaReady) setStep('persona');
@@ -235,9 +244,9 @@ export function NewGameModal({ contentMode, onStart, onClose }: Props) {
       engineMode,
       'standard',
       archetype,
-      visualMode,
-      artStylePreset,
-      classicMemorableImages && memorableToggleEnabled() ? classicMemorableImages : false,
+      isTesterCohort() ? 'classic' : visualMode,
+      isTesterCohort() ? 'classic-book' : artStylePreset,
+      isTesterCohort() ? false : classicMemorableImages && memorableToggleEnabled() ? classicMemorableImages : false,
       comicLayout,
       comicReadingDirection,
       bibleId,
@@ -300,9 +309,9 @@ export function NewGameModal({ contentMode, onStart, onClose }: Props) {
       engineMode,
       gmStrictness,
       customArchetype,
-      visualMode,
-      artStylePreset,
-      classicMemorableImages && memorableToggleEnabled() ? classicMemorableImages : false,
+      isTesterCohort() ? 'classic' : visualMode,
+      isTesterCohort() ? 'classic-book' : artStylePreset,
+      isTesterCohort() ? false : classicMemorableImages && memorableToggleEnabled() ? classicMemorableImages : false,
       comicLayout,
       comicReadingDirection,
       blankBibleIdForMode(engineMode),

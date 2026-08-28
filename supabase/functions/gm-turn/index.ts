@@ -1,4 +1,5 @@
 import { buildSystemPrompt, buildContextPrompt } from '../_shared/gm/masterPrompt.ts';
+import { freeWriterModelId, isPrivilegedPlayRequest } from '../_shared/playPrivileges.ts';
 
 const AI_MAX_OUTPUT_TOKENS = 4096;
 const CORS_HEADERS: Record<string, string> = {
@@ -217,6 +218,12 @@ Deno.serve(async (req) => {
 
   const settings = body.settings ?? {};
   const loreCards = Array.isArray(body.loreCards) ? body.loreCards : [];
+  const privileged = await isPrivilegedPlayRequest(req);
+  if (!privileged) {
+    settings.subscriptionTier = 'free';
+    settings.customModelId = freeWriterModelId();
+    body.settings = settings;
+  }
   const { provider, apiKey, model, baseUrl } = resolveCredentials(body);
   if (!apiKey) {
     return jsonResponse(
