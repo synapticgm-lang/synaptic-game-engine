@@ -98,7 +98,7 @@ export function decideTurnover(
   lifecycle: NpcLifecycle,
   trigger: TurnoverTrigger
 ): TurnoverDecision {
-  const { npcId, state, role, debtSatisfied, deadline } = lifecycle;
+  const { npcId, state, role, debtSatisfied, obligationDeadline: deadline } = lifecycle;
   
   // Completion trigger (obligation satisfied)
   if (trigger === 'completion') {
@@ -130,6 +130,15 @@ export function decideTurnover(
             newLocationId: newLocation
           };
         }
+      }
+      
+      if (completionAction === 'remain') {
+        return {
+          npcId,
+          action: 'remain',
+          trigger: 'completion',
+          reason: `${role} obligation satisfied; continuing service`
+        };
       }
       
       // Default: exit after debt satisfied

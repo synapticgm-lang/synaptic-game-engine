@@ -146,8 +146,8 @@ export function createKeyMoment(
     turn: state.turn,
     data: {
       ...data,
-      witnessNpcIds: opts?.witnessNpcIds,
-      factionIds: opts?.factionIds,
+      witnessNpcIds: opts?.witnessNpcIds ?? data.witnessNpcIds,
+      factionIds: opts?.factionIds ?? data.factionIds,
     },
     provenance: provenance as NpcKeyMoment['provenance'],
     visibility: visibility as NpcKeyMoment['visibility'],
