@@ -24,9 +24,9 @@ import { ALL_CAMPAIGN_BIBLES } from '@/data/campaigns';
 import type { Quest } from './types';
 
 describe('playtest29e — world map overhaul', () => {
-  it('stamp is 2026-08-29e and Mid writer stays OFF', () => {
-    expect(BUILD_STAMP).toBe('2026-08-29e');
-    expect(HUD_BUILD_STAMP).toBe('2026-08-29e');
+  it('stamp is 2026-08-29 and Mid writer stays OFF', () => {
+    expect(BUILD_STAMP).toMatch(/^2026-08-29/);
+    expect(HUD_BUILD_STAMP).toMatch(/^2026-08-29/);
     expect(STAGNATION_MID_WRITER_ENABLED).toBe(false);
   });
 

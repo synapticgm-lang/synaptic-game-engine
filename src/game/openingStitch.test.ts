@@ -61,6 +61,64 @@ describe('openingStitch', () => {
     expect(c.appearance).toMatch(/everyday street clothes/i);
   });
 
+  it('does not stack a second name-ask when the hook already asked', () => {
+    const base = createInitialState('The Summoned Pact', 'litrpg');
+    const state = {
+      ...base,
+      seed: 'already-named',
+      campaignBibleId: 'summoned-pact',
+      openingEstablishment: {
+        pending: [
+          {
+            id: 'name',
+            kind: 'name' as const,
+            question: 'They will not move until you give them something to write. What name?',
+          },
+        ],
+        answers: {},
+        complete: false,
+        registrar: { voice: 'inworld' as const, label: 'THE CIRCLE', startLine: 'Light.' },
+        sceneWritten: false,
+        mode: 'weave' as const,
+        pickedHookFallback:
+          'Light, then three other people on neighboring rings. A mass summon. What name do they write?',
+        aloneArrival: false,
+      },
+    };
+    const text = stitchOpeningScene(state);
+    expect(text).toMatch(/what name/i);
+    expect(text.match(/what name/gi)?.length).toBe(1);
+  });
+
+  it('adds an unused card beat so a known hook is not only spice + name-ask', () => {
+    const base = createInitialState('The Summoned Pact', 'litrpg');
+    const state = {
+      ...base,
+      seed: 'mass-summon-extra',
+      campaignBibleId: 'summoned-pact',
+      openingEstablishment: {
+        pending: [
+          {
+            id: 'name',
+            kind: 'name' as const,
+            question: 'They will not move until you give them something to write. What name?',
+          },
+        ],
+        answers: {},
+        complete: false,
+        registrar: { voice: 'inworld' as const, label: 'THE CIRCLE', startLine: 'Light.' },
+        sceneWritten: false,
+        mode: 'weave' as const,
+        pickedHookFallback:
+          'Light, then three other people on neighboring rings. A mass summon. The room is already arguing who is Pactborn, who is Marked, and who was extra. A blue panel hangs at eye level — private, yours. Your Earth clothes are still on you.',
+        aloneArrival: false,
+      },
+    };
+    const text = stitchOpeningScene(state);
+    expect(text).toMatch(/kit crate|not a solo hero|yours, not theirs/i);
+    expect(text).toMatch(/what name/i);
+  });
+
   it('continues after covers locally without rehashing locked name/look/kit', () => {
     const base = createInitialState('The Summoned Pact', 'litrpg');
     const state = {

@@ -487,14 +487,23 @@ export function openingHookDeck(bible: CampaignBible | undefined): OpeningHookCa
   return single ? [single] : [];
 }
 
+export function resolveOpeningHookCard(
+  bible: CampaignBible | undefined,
+  seed?: string
+): OpeningHookCard | undefined {
+  const deck = openingHookDeck(bible).filter((card) => normalizeOpeningHookCard(card).text);
+  if (deck.length === 0) return undefined;
+  const idx = hashOpenerSeed(`${seed ?? '0'}|${bible?.id ?? 'bible'}|opener`) % deck.length;
+  return deck[idx];
+}
+
 export function resolveOpeningHookPick(
   bible: CampaignBible | undefined,
   seed?: string
 ): { text: string; location?: string; fallback?: string } | undefined {
-  const deck = openingHookDeck(bible).map(normalizeOpeningHookCard).filter((h) => h.text);
-  if (deck.length === 0) return undefined;
-  const idx = hashOpenerSeed(`${seed ?? '0'}|${bible?.id ?? 'bible'}|opener`) % deck.length;
-  return deck[idx];
+  const card = resolveOpeningHookCard(bible, seed);
+  if (!card) return undefined;
+  return normalizeOpeningHookCard(card);
 }
 
 export function resolveOpeningHook(bible: CampaignBible | undefined, seed?: string): string | undefined {

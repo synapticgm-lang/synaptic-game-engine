@@ -121,6 +121,7 @@ export function CenterPanel({ state, busy, turnPhase = 'idle', streamingReveal =
   const [diceRoll, setDiceRoll] = useState<string | null>(null);
   const [hideOptions, setHideOptions] = useState(() => readBoolPref(HIDE_OPTIONS_KEY));
   const [hideText, setHideText] = useState(() => readBoolPref(HIDE_TEXT_KEY));
+  const userSetHideRef = useRef(false);
   const logRef = useRef<HTMLDivElement>(null);
   const isDnd = engineMode === 'dnd';
   const showRollsPanel = isDnd && showRolls && state.rolls.length > 0;
@@ -130,6 +131,7 @@ export function CenterPanel({ state, busy, turnPhase = 'idle', streamingReveal =
   const turnStatusMessage = busy ? turnPhaseStatusMessage(turnPhase) : null;
 
   const toggleHideOptions = () => {
+    userSetHideRef.current = true;
     setHideOptions((prev) => {
       const next = !prev;
       writeBoolPref(HIDE_OPTIONS_KEY, next);
@@ -137,6 +139,7 @@ export function CenterPanel({ state, busy, turnPhase = 'idle', streamingReveal =
     });
   };
   const toggleHideText = () => {
+    userSetHideRef.current = true;
     setHideText((prev) => {
       const next = !prev;
       writeBoolPref(HIDE_TEXT_KEY, next);
@@ -145,13 +148,14 @@ export function CenterPanel({ state, busy, turnPhase = 'idle', streamingReveal =
   };
 
   // Once per New Game / save: clear stale Hide prefs so opening starts visible.
-  // Persist cleared-for key in sessionStorage — remount must not re-clear mid-opening (25f intent).
-  // Do NOT depend on hideText/hideOptions — those deps made every tap instantly undo.
+  // Never undo a tap the player already made (saveId flip used to re-clear).
   const hideClearedForSaveRef = useRef<string | null>(readClearedForSave());
   useEffect(() => {
+    if (userSetHideRef.current) return;
     const est = state.openingEstablishment;
     if (!est || est.complete) return;
-    const key = state.saveId ?? 'opening';
+    const key = state.saveId;
+    if (!key) return;
     const already = hideClearedForSaveRef.current === key || readClearedForSave() === key;
     if (already) {
       hideClearedForSaveRef.current = key;
@@ -220,7 +224,9 @@ export function CenterPanel({ state, busy, turnPhase = 'idle', streamingReveal =
       )}
       {comicMode ? (
         <div className="sgm-play-story-panel relative z-10 min-h-0 flex-1 overflow-hidden">
-          {!hideText && (
+          {hideText ? (
+            <HiddenStoryRestore onShow={toggleHideText} />
+          ) : (
             <ComicGrid
               log={state.log}
               lorebook={state.lorebook}
@@ -240,13 +246,16 @@ export function CenterPanel({ state, busy, turnPhase = 'idle', streamingReveal =
         </div>
       ) : narrativeMode ? (
         <div className="sgm-play-story-panel relative z-10 min-h-0 flex-1 overflow-hidden">
-          {!hideText && (
+          {hideText ? (
+            <HiddenStoryRestore onShow={toggleHideText} />
+          ) : (
             <NarrativeView
               log={state.log}
               busy={busy}
               turnPhase={turnPhase}
               streamingReveal={streamingReveal}
               engineMode={engineMode}
+              hideOptions={hideOptions}
               onAcceptBeautyOffer={onAcceptBeautyOffer}
               onDismissBeautyOffer={onDismissBeautyOffer}
               contentMode={contentMode}
@@ -257,9 +266,10 @@ export function CenterPanel({ state, busy, turnPhase = 'idle', streamingReveal =
         <div
           ref={logRef}
           className="sgm-play-story-panel relative z-10 min-h-0 flex-1 overflow-y-auto overscroll-contain px-3 py-4 sm:px-6"
-          aria-hidden={hideText}
         >
-          {!hideText && (
+          {hideText ? (
+            <HiddenStoryRestore onShow={toggleHideText} />
+          ) : (
           <div className="mx-auto max-w-2xl space-y-4">
             {state.log.map((entry, index) => (
               shouldSkipDuplicatePlayerBubble(state.log, index) ? null : (
@@ -270,7 +280,7 @@ export function CenterPanel({ state, busy, turnPhase = 'idle', streamingReveal =
                   showSystemLog={showSystemLog}
                   statVerbosity={statVerbosity}
                   engineMode={engineMode}
-                  showTurnAsk={shouldShowTurnAsk(state.log, index, turnUiBlocked)}
+                  showTurnAsk={!hideOptions && shouldShowTurnAsk(state.log, index, turnUiBlocked)}
                   streamingReveal={streamingReveal}
                   onAcceptBeautyOffer={onAcceptBeautyOffer}
                   onDismissBeautyOffer={onDismissBeautyOffer}
@@ -645,6 +655,19 @@ function LogRow({ entry, lorebook, showSystemLog, statVerbosity, engineMode, sho
       />
       {showTurnAsk && <TurnAskLine />}
     </div>
+  );
+}
+
+function HiddenStoryRestore({ onShow }: { onShow: () => void }) {
+  return (
+    <button
+      type="button"
+      onClick={onShow}
+      className="flex h-full min-h-[12rem] w-full flex-col items-center justify-center gap-2 px-6 text-center text-sm text-slate-400 hover:bg-slate-900/40 hover:text-slate-200"
+    >
+      <Eye size={20} className="opacity-70" />
+      <span>Story hidden — tap to show</span>
+    </button>
   );
 }
 

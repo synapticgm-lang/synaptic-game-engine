@@ -10,7 +10,9 @@ import { resolveActiveCampaignBible } from './campaignSeed';
 import {
   isAloneArrivalOpening,
   isEarthOriginPrompt,
+  openingHookDeck,
   resolveLockedOpeningPlace,
+  resolveOpeningHookCard,
   resolveOpeningHookPick,
 } from './openingEstablishment';
 
@@ -38,6 +40,14 @@ const SENSORY_BANK = [
   'Your ears still ring from the pull.',
   'Ash or chalk grit sticks to your palms.',
   'Broken plaster crunches under your hand.',
+  'Lamp-oil smoke sits in the back of your throat.',
+  'A floor-joint ticks as it cools.',
+  'Your pulse is still catching up to the room.',
+  'Grit from the landing is in your teeth.',
+  'Heat leaves the stone in uneven patches.',
+  'A moth bats once against the panel-light.',
+  'Sweat on your spine goes cold.',
+  'The floor is warmer than the air, then it is not.',
 ] as const;
 
 const PRESSURE_CROWD = [
@@ -45,6 +55,12 @@ const PRESSURE_CROWD = [
   'Eyes find you before anyone speaks.',
   'The next word in this room will cost something.',
   'Nobody looks ready to wait long.',
+  'A scribe has a slate ready and an empty line.',
+  'Two people start a sentence at the same time and both stop.',
+  'Whoever holds rank here has not decided if you are cargo.',
+  'Someone takes a half-step closer, then thinks better of it.',
+  'The offer is still in the air — kit, oath, or a door — and nobody has handed it over.',
+  'A voice at the edge says your arrival was not the plan.',
 ] as const;
 
 const PRESSURE_ALONE = [
@@ -52,12 +68,19 @@ const PRESSURE_ALONE = [
   'Nothing else moves in this room.',
   'Whatever pulled you here did not stay to explain.',
   'Dust and broken stone — no footsteps but yours.',
+  'The doorway stays empty. No one is coming in to greet you.',
+  'If there was a rite, the people who ran it are already gone.',
+  'You could stand up. Nothing in the room argues about it.',
+  'The quiet is not peaceful. It is unfinished.',
 ] as const;
 
 const NAME_ASKS_CROWD = [
   'Someone in the room needs a name for you. What do they call you?',
   'A handler waits on a name before they will speak plainly. What is it?',
   'They will not move until you give them something to write. What name?',
+  'A slate tilts toward you. First word they will accept: your name.',
+  'Someone asks it like a roll-call, not a kindness. What name?',
+  'They need a name before they will say what they want. What is yours?',
 ] as const;
 
 const NAME_ASKS_ALONE = [
@@ -170,15 +193,44 @@ function spiceLines(state: GameState): string[] {
   return [sensory, pressure];
 }
 
+function extraCardBeat(state: GameState, already: string): string | undefined {
+  const bible = resolveActiveCampaignBible(state);
+  const fallback = state.openingEstablishment?.pickedHookFallback?.trim();
+  const matched = fallback
+    ? openingHookDeck(bible).find((c) => typeof c !== 'string' && c.fallback?.trim() === fallback)
+    : undefined;
+  const card = matched ?? resolveOpeningHookCard(bible, state.seed);
+  if (!card || typeof card === 'string') return undefined;
+  const candidates = (card.beats ?? [])
+    .map((b) => b.trim())
+    .filter((b) => b.length > 12);
+  const hay = already.toLowerCase();
+  const unused = candidates.filter((b) => !hay.includes(b.slice(0, 22).toLowerCase()));
+  if (!unused.length) return undefined;
+  return pickBank(unused, state.seed ?? state.saveId ?? '0', 'extra-beat');
+}
+
+function bodyAlreadyAsksCover(body: string, cover: string): boolean {
+  const hay = body.toLowerCase();
+  if (/what name|what do they call|designation|what do you enter/.test(hay)) return true;
+  const slice = cover.trim().slice(0, 24).toLowerCase();
+  return slice.length > 8 && hay.includes(slice);
+}
+
 /**
  * Instant first page — authored card + seed banks. No network.
  */
 export function stitchOpeningScene(state: GameState): string {
   const base = baseSceneFromCard(state).trim();
-  const spice = spiceLines(state).filter((line) => !base.toLowerCase().includes(line.slice(0, 18).toLowerCase()));
-  const body = spice.length ? `${base} ${spice.join(' ')}` : base;
-  const cover = state.openingEstablishment?.pending[0]?.question;
-  return cover ? `${body}\n\n${cover}` : body;
+  const extra = extraCardBeat(state, base);
+  const grounded = extra && !base.toLowerCase().includes(extra.slice(0, 22).toLowerCase())
+    ? `${base} ${extra}`
+    : base;
+  const spice = spiceLines(state).filter((line) => !grounded.toLowerCase().includes(line.slice(0, 18).toLowerCase()));
+  const body = spice.length ? `${grounded} ${spice.join(' ')}` : grounded;
+  const cover = state.openingEstablishment?.pending[0]?.question?.trim();
+  if (!cover || bodyAlreadyAsksCover(body, cover)) return body;
+  return `${body}\n\n${cover}`;
 }
 
 /** Alias for older call sites. */
