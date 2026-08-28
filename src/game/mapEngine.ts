@@ -757,9 +757,16 @@ const SHED_LAYOUTS: InteriorRoomSpec[][] = [
  * Seeded multi-floor footprints (original layouts — not licensed mansion geometry).
  * Stairs link z-levels; secret cellars stay locked until revealed.
  * Room sizes vary (corridors thin, halls wide) — not equal stamp squares.
+ * 
+ * ARCHITECTURAL LOGIC (2026-08-30P):
+ * - Ground floor (1F) is the reference footprint
+ * - Basement (B1) has similar or slightly smaller footprint
+ * - Upper floors (2F) have similar or slightly smaller footprint
+ * - Room counts are balanced across floors (no 7-room ground + 2-room upper)
  */
 const RUIN_LAYOUTS: InteriorRoomSpec[][] = [
   [
+    // 1F: 5 rooms (entry, corridor, hall, side, stairs)
     { id: 'entry', label: 'Entry', x: 1.05, y: 2.45, z: 0, w: 1.15, h: 0.95, links: ['corridor'], entry: true },
     {
       id: 'corridor',
@@ -779,28 +786,24 @@ const RUIN_LAYOUTS: InteriorRoomSpec[][] = [
       z: 0,
       w: 1.85,
       h: 1.15,
-      links: ['corridor', 'chamber', 'stairs'],
+      links: ['corridor', 'stairs'],
     },
     { id: 'side', label: 'Side room', x: 0, y: 1.25, z: 0, w: 1.1, h: 1.0, links: ['corridor', 'store'] },
-    { id: 'chamber', label: 'Chamber', x: 2.55, y: 0.1, z: 0, w: 1.2, h: 1.05, links: ['hall'] },
-    { id: 'stairs', label: 'Stairs', x: 0, y: 0.05, z: 0, w: 0.7, h: 0.85, links: ['hall', 'cellar', 'landing'] },
-    {
-      id: 'store',
-      label: 'Storeroom',
-      x: 0,
-      y: 2.4,
-      z: 0,
-      w: 0.95,
-      h: 0.85,
-      links: ['side'],
-      edgeKinds: { side: 'damaged' },
-    },
-    { id: 'cellar', label: 'Cellar', x: 0, y: 0, z: -1, w: 1.3, h: 1.1, links: ['stairs', 'vault'], isSecret: true },
-    { id: 'vault', label: 'Vault', x: 1.45, y: 0.15, z: -1, w: 1.05, h: 0.9, links: ['cellar'], isSecret: true },
-    { id: 'landing', label: 'Upper landing', x: 0, y: 0, z: 1, w: 1.1, h: 0.95, links: ['stairs', 'attic'] },
-    { id: 'attic', label: 'Attic', x: 1.25, y: 0.1, z: 1, w: 1.35, h: 1.05, links: ['landing'] },
+    { id: 'store', label: 'Storeroom', x: 0, y: 2.4, z: 0, w: 0.95, h: 0.85, links: ['side'], edgeKinds: { side: 'damaged' } },
+    { id: 'stairs', label: 'Stairs', x: 2.55, y: 0.05, z: 0, w: 0.7, h: 0.85, links: ['hall', 'cellar', 'landing'] },
+    // B1: 4 rooms (undercroft, cellar, vault, storage) — similar footprint to 1F
+    { id: 'undercroft', label: 'Undercroft', x: 0.55, y: 0, z: -1, w: 1.85, h: 1.15, links: ['cellar', 'storage'] },
+    { id: 'cellar', label: 'Cellar', x: 0.55, y: 1.25, z: -1, w: 1.3, h: 1.1, links: ['stairs', 'undercroft', 'vault'] },
+    { id: 'vault', label: 'Vault', x: 2.0, y: 1.3, z: -1, w: 1.05, h: 0.9, links: ['cellar'], isSecret: true },
+    { id: 'storage', label: 'Storage', x: 0, y: 1.25, z: -1, w: 1.0, h: 1.0, links: ['undercroft'] },
+    // 2F: 4 rooms (landing, chamber, loft, alcove) — similar footprint to 1F
+    { id: 'landing', label: 'Upper landing', x: 1.05, y: 1.2, z: 1, w: 1.1, h: 0.95, links: ['stairs', 'chamber', 'loft'] },
+    { id: 'chamber', label: 'Upper chamber', x: 0.55, y: 0, z: 1, w: 1.85, h: 1.05, links: ['landing'] },
+    { id: 'loft', label: 'Loft', x: 2.3, y: 1.15, z: 1, w: 1.35, h: 1.05, links: ['landing', 'alcove'] },
+    { id: 'alcove', label: 'Alcove', x: 2.3, y: 2.3, z: 1, w: 1.0, h: 0.85, links: ['loft'] },
   ],
   [
+    // 1F: 6 rooms (entry, ante, hall, passage, east, stairs)
     { id: 'entry', label: 'Entry', x: 0, y: 1.2, z: 0, w: 1.1, h: 1.0, links: ['ante', 'yard'], entry: true },
     {
       id: 'ante',
@@ -835,24 +838,22 @@ const RUIN_LAYOUTS: InteriorRoomSpec[][] = [
     { id: 'east', label: 'Side chamber', x: 4.5, y: 1.05, z: 0, w: 1.15, h: 1.0, links: ['hall'] },
     { id: 'store', label: 'Storeroom', x: 1.2, y: 3.55, z: 0, w: 1.05, h: 0.85, links: ['passage'] },
     { id: 'stairs', label: 'Stairs', x: 3.0, y: 0, z: 0, w: 0.7, h: 0.75, links: ['hall', 'crypt', 'upper'] },
-    {
-      id: 'yard',
-      label: 'Collapsed wing',
-      x: 0,
-      y: 0,
-      z: 0,
-      w: 1.0,
-      h: 1.05,
-      links: ['entry'],
-      isSecret: true,
-      edgeKinds: { entry: 'damaged' },
-    },
-    { id: 'crypt', label: 'Crypt', x: 2.6, y: 0, z: -1, w: 1.4, h: 1.15, links: ['stairs', 'ossuary'] },
-    { id: 'ossuary', label: 'Ossuary', x: 1.15, y: 0.1, z: -1, w: 1.2, h: 1.0, links: ['crypt'], isSecret: true },
-    { id: 'upper', label: 'Upper hall', x: 2.5, y: 0, z: 1, w: 1.55, h: 1.2, links: ['stairs', 'gallery'] },
-    { id: 'gallery', label: 'Gallery', x: 4.2, y: 0.15, z: 1, w: 0.6, h: 1.3, links: ['upper'] },
+    { id: 'yard', label: 'Collapsed wing', x: 0, y: 0, z: 0, w: 1.0, h: 1.05, links: ['entry'], isSecret: true, edgeKinds: { entry: 'damaged' } },
+    // B1: 5 rooms (crypt, ossuary, tomb, vault, reliquary) — similar footprint to 1F
+    { id: 'crypt', label: 'Crypt', x: 2.6, y: 0.8, z: -1, w: 1.4, h: 1.15, links: ['stairs', 'ossuary', 'tomb'] },
+    { id: 'ossuary', label: 'Ossuary', x: 1.15, y: 1.0, z: -1, w: 1.2, h: 1.0, links: ['crypt', 'vault'] },
+    { id: 'tomb', label: 'Tomb chamber', x: 4.2, y: 0.9, z: -1, w: 1.15, h: 1.05, links: ['crypt'] },
+    { id: 'vault', label: 'Vault', x: 0, y: 1.1, z: -1, w: 1.0, h: 0.95, links: ['ossuary', 'reliquary'], isSecret: true },
+    { id: 'reliquary', label: 'Reliquary', x: 0, y: 2.2, z: -1, w: 0.95, h: 0.85, links: ['vault'], isSecret: true },
+    // 2F: 5 rooms (upper, gallery, study, library, balcony) — similar footprint to 1F
+    { id: 'upper', label: 'Upper hall', x: 2.5, y: 0.8, z: 1, w: 1.55, h: 1.2, links: ['stairs', 'gallery', 'study'] },
+    { id: 'gallery', label: 'Gallery', x: 4.2, y: 0.85, z: 1, w: 1.3, h: 1.15, links: ['upper'] },
+    { id: 'study', label: 'Study', x: 1.15, y: 1.0, z: 1, w: 1.2, h: 1.0, links: ['upper', 'library'] },
+    { id: 'library', label: 'Library', x: 0, y: 1.1, z: 1, w: 1.05, h: 0.95, links: ['study', 'balcony'] },
+    { id: 'balcony', label: 'Balcony', x: 0, y: 2.2, z: 1, w: 0.95, h: 0.85, links: ['library'] },
   ],
   [
+    // 1F: 6 rooms (entry, west, east, south, hall, stairs)
     {
       id: 'entry',
       label: 'First chamber',
@@ -866,29 +867,38 @@ const RUIN_LAYOUTS: InteriorRoomSpec[][] = [
     },
     { id: 'west', label: 'Corridor', x: 0, y: 1.25, z: 0, w: 0.9, h: 0.55, links: ['entry', 'hall'] },
     { id: 'east', label: 'Side room', x: 2.5, y: 1.2, z: 0, w: 1.1, h: 1.0, links: ['entry', 'store'] },
-    {
-      id: 'south',
-      label: 'Passage',
-      x: 1.25,
-      y: 2.5,
-      z: 0,
-      w: 0.55,
-      h: 1.1,
-      links: ['entry', 'stairs'],
-    },
+    { id: 'south', label: 'Passage', x: 1.25, y: 2.5, z: 0, w: 0.55, h: 1.1, links: ['entry', 'stairs'] },
     { id: 'hall', label: 'Ruined hall', x: 0, y: 0, z: 0, w: 1.55, h: 1.15, links: ['west', 'chamber'] },
     { id: 'chamber', label: 'Chamber', x: 1.7, y: 0.05, z: 0, w: 1.15, h: 1.0, links: ['hall'] },
     { id: 'store', label: 'Storeroom', x: 3.75, y: 1.25, z: 0, w: 0.95, h: 0.85, links: ['east'] },
     { id: 'stairs', label: 'Stairs', x: 1.15, y: 3.7, z: 0, w: 0.75, h: 0.8, links: ['south', 'cellar', 'landing'] },
-    { id: 'cellar', label: 'Cellar', x: 1.1, y: 1.0, z: -1, w: 1.25, h: 1.1, links: ['stairs'], isSecret: true },
-    { id: 'landing', label: 'Upper landing', x: 1.05, y: 1.05, z: 1, w: 1.15, h: 1.0, links: ['stairs', 'loft'] },
-    { id: 'loft', label: 'Loft', x: 2.35, y: 1.0, z: 1, w: 1.3, h: 1.1, links: ['landing'] },
+    // B1: 5 rooms (cellar, vault, root, storage, archive) — similar footprint to 1F
+    { id: 'cellar', label: 'Cellar', x: 1.0, y: 1.1, z: -1, w: 1.35, h: 1.2, links: ['stairs', 'vault', 'root'] },
+    { id: 'vault', label: 'Vault', x: 0, y: 1.2, z: -1, w: 0.9, h: 0.95, links: ['cellar', 'storage'], isSecret: true },
+    { id: 'root', label: 'Root cellar', x: 2.5, y: 1.15, z: -1, w: 1.1, h: 1.0, links: ['cellar', 'archive'] },
+    { id: 'storage', label: 'Storage', x: 0, y: 0, z: -1, w: 1.55, h: 1.05, links: ['vault'] },
+    { id: 'archive', label: 'Archive', x: 3.75, y: 1.2, z: -1, w: 0.95, h: 0.9, links: ['root'] },
+    // 2F: 5 rooms (landing, loft, bedroom, wardrobe, solar) — similar footprint to 1F
+    { id: 'landing', label: 'Upper landing', x: 1.0, y: 1.1, z: 1, w: 1.35, h: 1.2, links: ['stairs', 'loft', 'bedroom'] },
+    { id: 'loft', label: 'Loft', x: 0, y: 1.2, z: 1, w: 0.9, h: 0.95, links: ['landing', 'wardrobe'] },
+    { id: 'bedroom', label: 'Bedroom', x: 2.5, y: 1.15, z: 1, w: 1.1, h: 1.0, links: ['landing', 'solar'] },
+    { id: 'wardrobe', label: 'Wardrobe', x: 0, y: 0, z: 1, w: 1.55, h: 1.05, links: ['loft'] },
+    { id: 'solar', label: 'Solar', x: 3.75, y: 1.2, z: 1, w: 0.95, h: 0.9, links: ['bedroom'] },
   ],
 ];
 
-/** Larger footprints for cathedrals / manors / circles — still original geometry. */
+/** 
+ * Larger footprints for cathedrals / manors / circles — still original geometry.
+ * 
+ * ARCHITECTURAL LOGIC (2026-08-30P):
+ * - Ground floor (1F) is the reference footprint
+ * - Basement (B1) has similar footprint (crypts/cellars span the foundation)
+ * - Upper floors (2F) have similar footprint (galleries/chambers above)
+ * - Room counts are balanced across floors
+ */
 const GRAND_LAYOUTS: InteriorRoomSpec[][] = [
   [
+    // 1F: 7 rooms (narthex, nave, aisle, vestry, choir, sanctum, stairs)
     { id: 'entry', label: 'Narthex', x: 1.1, y: 2.55, z: 0, w: 1.3, h: 0.95, links: ['nave'], entry: true },
     {
       id: 'nave',
@@ -905,22 +915,23 @@ const GRAND_LAYOUTS: InteriorRoomSpec[][] = [
     { id: 'choir', label: 'Choir', x: 1.0, y: 0, z: 0, w: 1.4, h: 0.95, links: ['nave', 'sanctum'] },
     { id: 'sanctum', label: 'Sanctum', x: 2.55, y: 0, z: 0, w: 1.15, h: 1.05, links: ['choir'] },
     { id: 'stairs', label: 'Stairs', x: 2.85, y: 1.2, z: 0, w: 0.7, h: 0.85, links: ['nave', 'crypt', 'gallery'] },
-    { id: 'crypt', label: 'Crypt', x: 2.6, y: 1.0, z: -1, w: 1.45, h: 1.2, links: ['stairs', 'reliquary'] },
-    {
-      id: 'reliquary',
-      label: 'Reliquary',
-      x: 1.15,
-      y: 1.1,
-      z: -1,
-      w: 1.2,
-      h: 1.0,
-      links: ['crypt'],
-      isSecret: true,
-    },
-    { id: 'gallery', label: 'Gallery', x: 2.7, y: 1.05, z: 1, w: 0.55, h: 1.35, links: ['stairs', 'belfry'] },
-    { id: 'belfry', label: 'Belfry', x: 3.4, y: 1.15, z: 1, w: 1.0, h: 1.0, links: ['gallery'] },
+    // B1: 6 rooms (crypt, reliquary, ossuary, tomb, vault, catacomb) — full undercroft
+    { id: 'crypt', label: 'Crypt', x: 2.6, y: 1.0, z: -1, w: 1.45, h: 1.2, links: ['stairs', 'reliquary', 'ossuary'] },
+    { id: 'reliquary', label: 'Reliquary', x: 1.15, y: 1.1, z: -1, w: 1.2, h: 1.0, links: ['crypt', 'vault'], isSecret: true },
+    { id: 'ossuary', label: 'Ossuary', x: 2.7, y: 0, z: -1, w: 1.1, h: 0.95, links: ['crypt', 'tomb'] },
+    { id: 'tomb', label: 'Tomb chamber', x: 1.0, y: 0, z: -1, w: 1.4, h: 0.9, links: ['ossuary'] },
+    { id: 'vault', label: 'Vault', x: 0, y: 1.2, z: -1, w: 1.05, h: 0.95, links: ['reliquary', 'catacomb'] },
+    { id: 'catacomb', label: 'Catacomb', x: 0, y: 0, z: -1, w: 0.95, h: 1.05, links: ['vault'], isSecret: true },
+    // 2F: 6 rooms (gallery, belfry, organ, balcony, scriptorium, bell chamber) — full upper level
+    { id: 'gallery', label: 'Gallery', x: 2.7, y: 1.05, z: 1, w: 0.55, h: 1.35, links: ['stairs', 'belfry', 'organ'] },
+    { id: 'belfry', label: 'Belfry', x: 3.4, y: 1.15, z: 1, w: 1.0, h: 1.0, links: ['gallery', 'bell'] },
+    { id: 'organ', label: 'Organ loft', x: 1.1, y: 1.1, z: 1, w: 1.3, h: 1.05, links: ['gallery', 'balcony'] },
+    { id: 'balcony', label: 'Balcony', x: 0.7, y: 1.0, z: 1, w: 0.6, h: 1.2, links: ['organ', 'scriptorium'] },
+    { id: 'scriptorium', label: 'Scriptorium', x: 0, y: 0.9, z: 1, w: 1.05, h: 1.15, links: ['balcony'] },
+    { id: 'bell', label: 'Bell chamber', x: 3.5, y: 0, z: 1, w: 0.9, h: 1.0, links: ['belfry'] },
   ],
   [
+    // 1F: 6 rooms (entry, foyer, salon, dining, study, stairs)
     { id: 'entry', label: 'Entry', x: 1.15, y: 2.5, z: 0, w: 1.15, h: 0.9, links: ['foyer'], entry: true },
     {
       id: 'foyer',
@@ -936,30 +947,18 @@ const GRAND_LAYOUTS: InteriorRoomSpec[][] = [
     { id: 'dining', label: 'Dining hall', x: 0, y: 0, z: 0, w: 1.55, h: 1.05, links: ['salon'] },
     { id: 'study', label: 'Study', x: 2.6, y: 1.25, z: 0, w: 1.1, h: 1.0, links: ['foyer'] },
     { id: 'stairs', label: 'Stairs', x: 1.25, y: 0, z: 0, w: 0.7, h: 1.05, links: ['foyer', 'cellar', 'landing'] },
-    {
-      id: 'cellar',
-      label: 'Cellar',
-      x: 1.15,
-      y: 0,
-      z: -1,
-      w: 1.3,
-      h: 1.1,
-      links: ['stairs', 'wine'],
-      isSecret: true,
-    },
-    { id: 'wine', label: 'Wine cellar', x: 0, y: 0.1, z: -1, w: 1.05, h: 0.95, links: ['cellar'] },
-    {
-      id: 'landing',
-      label: 'Upper landing',
-      x: 1.1,
-      y: 0,
-      z: 1,
-      w: 1.2,
-      h: 1.0,
-      links: ['stairs', 'bedroom', 'library'],
-    },
-    { id: 'bedroom', label: 'Bedroom', x: 0, y: 0.05, z: 1, w: 1.0, h: 0.95, links: ['landing'] },
-    { id: 'library', label: 'Library', x: 2.45, y: 0, z: 1, w: 1.35, h: 1.15, links: ['landing'] },
+    // B1: 5 rooms (cellar, wine, root, vault, storage) — full foundation
+    { id: 'cellar', label: 'Cellar', x: 1.15, y: 1.15, z: -1, w: 1.3, h: 1.1, links: ['stairs', 'wine', 'root'] },
+    { id: 'wine', label: 'Wine cellar', x: 0, y: 1.2, z: -1, w: 1.05, h: 0.95, links: ['cellar', 'storage'] },
+    { id: 'root', label: 'Root cellar', x: 2.6, y: 1.2, z: -1, w: 1.1, h: 1.0, links: ['cellar'] },
+    { id: 'vault', label: 'Vault', x: 1.2, y: 0, z: -1, w: 1.2, h: 1.0, links: ['cellar'], isSecret: true },
+    { id: 'storage', label: 'Storage', x: 0, y: 0, z: -1, w: 1.05, h: 1.05, links: ['wine'] },
+    // 2F: 5 rooms (landing, bedroom, library, dressing, solar) — full upper floor
+    { id: 'landing', label: 'Upper landing', x: 1.1, y: 1.15, z: 1, w: 1.2, h: 1.0, links: ['stairs', 'bedroom', 'library'] },
+    { id: 'bedroom', label: 'Bedroom', x: 0, y: 1.2, z: 1, w: 1.0, h: 0.95, links: ['landing', 'dressing'] },
+    { id: 'library', label: 'Library', x: 2.45, y: 1.15, z: 1, w: 1.35, h: 1.15, links: ['landing', 'solar'] },
+    { id: 'dressing', label: 'Dressing room', x: 0, y: 0, z: 1, w: 1.0, h: 1.05, links: ['bedroom'] },
+    { id: 'solar', label: 'Solar', x: 2.5, y: 0, z: 1, w: 1.3, h: 1.0, links: ['library'] },
   ],
 ];
 
