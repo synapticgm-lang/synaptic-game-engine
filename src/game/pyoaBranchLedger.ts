@@ -13,10 +13,22 @@ export interface PyoaBranchLedger {
   branchClosed?: boolean;
   /** 29a mutually exclusive lock id */
   branchLocked?: string | false;
+  /** B025 — convergence points where branches merge */
+  convergencePoints?: Array<{
+    turn: number;
+    branches: string[];
+    stateHash: string;
+  }>;
 }
 
 export function initPyoaBranchLedger(): PyoaBranchLedger {
-  return { activeBranch: 'none', committedPaths: [], charterUses: 0, branchClosed: false };
+  return { 
+    activeBranch: 'none', 
+    committedPaths: [], 
+    charterUses: 0, 
+    branchClosed: false,
+    convergencePoints: [],
+  };
 }
 
 export function isPyoaBranchExhausted(state: GameState, branch: PyoaBranchId): boolean {
@@ -167,3 +179,167 @@ export function isPyoaBranchLocked(state: GameState): boolean {
   return !!(state.pyoaBranchLedger?.branchLocked || state.pyoaBranchLedger?.branchClosed);
 }
 
+/** B025 — Compute state hash for convergence detection */
+function computeBranchStateHash(state: GameState): string {
+  // Hash based on key convergence indicators
+  const indicators = [
+    state.currentLocation ?? '',
+    (state.quests ?? []).filter(q => q.status === 'active').map(q => q.id).sort().join(','),
+    (state.inventory ?? []).map(i => i.name).sort().join(','),
+    (state.character?.level ?? 0).toString(),
+    (state.sceneFacts?.present ?? []).sort().join(','),
+  ];
+  
+  // Simple hash (not cryptographic, just for detecting same state)
+  const str = indicators.join('::');
+  let hash = 0;
+  for (let i = 0; i < str.length; i++) {
+    const char = str.charCodeAt(i);
+    hash = ((hash << 5) - hash) + char;
+    hash = hash & hash; // Convert to 32bit integer
+  }
+  return hash.toString(16);
+}
+
+/** B025 — Detect if current state has converged with previous branches */
+export function detectBranchConvergence(state: GameState): {
+  converged: boolean;
+  convergencePoint?: {
+    turn: number;
+    branches: string[];
+    stateHash: string;
+  };
+} {
+  if (state.engineMode !== 'pyoa') {
+    return { converged: false };
+  }
+  
+  const ledger = state.pyoaBranchLedger ?? initPyoaBranchLedger();
+  const currentHash = computeBranchStateHash(state);
+  
+  // Check previous convergence points
+  const existing = (ledger.convergencePoints ?? []).find(
+    cp => cp.stateHash === currentHash
+  );
+  
+  if (existing) {
+    // Already at a known convergence point
+    return { converged: true, convergencePoint: existing };
+  }
+  
+  // Check if current branch state matches historical state
+  // (This is a simplified version - full implementation would track per-branch state history)
+  const activeBranch = ledger.activeBranch ?? 'none';
+  const committedPaths = ledger.committedPaths ?? [];
+  
+  // Convergence indicators:
+  // - Same location after different paths
+  // - Same quest state after different choices
+  // - Same inventory after different resource paths
+  
+  // For MVP, detect convergence when:
+  // 1. Branch was locked (divergence happened)
+  // 2. Current state matches a "canonical" state (e.g., specific quest stage)
+  
+  if (ledger.branchLocked && committedPaths.length >= 4) {
+    const quests = state.quests ?? [];
+    const activeQuests = quests.filter(q => q.status === 'active');
+    
+    // Convergence at key quest stages
+    const convergenceQuests = ['circle-price-final', 'thornferry-ending', 'vesper-conclusion'];
+    const atConvergence = activeQuests.some(q => 
+      convergenceQuests.some(cq => q.id.includes(cq))
+    );
+    
+    if (atConvergence) {
+      const convergencePoint = {
+        turn: state.turn,
+        branches: [activeBranch, ledger.branchLocked].filter(Boolean) as string[],
+        stateHash: currentHash,
+      };
+      return { converged: true, convergencePoint };
+    }
+  }
+  
+  return { converged: false };
+}
+
+/** B025 — Record convergence point */
+export function recordBranchConvergence(
+  state: GameState,
+  convergencePoint: {
+    turn: number;
+    branches: string[];
+    stateHash: string;
+  }
+): GameState {
+  if (state.engineMode !== 'pyoa') return state;
+  
+  const ledger = state.pyoaBranchLedger ?? initPyoaBranchLedger();
+  const existing = (ledger.convergencePoints ?? []).find(
+    cp => cp.stateHash === convergencePoint.stateHash
+  );
+  
+  if (existing) return state; // Already recorded
+  
+  return {
+    ...state,
+    pyoaBranchLedger: {
+      ...ledger,
+      convergencePoints: [
+        ...(ledger.convergencePoints ?? []),
+        convergencePoint,
+      ].slice(-10), // Keep last 10 convergence points
+    },
+  };
+}
+
+/** B025 — Clean up branch-specific memory at convergence */
+export function cleanupBranchMemoryAtConvergence(
+  state: GameState
+): GameState {
+  if (state.engineMode !== 'pyoa') return state;
+  
+  const { converged, convergencePoint } = detectBranchConvergence(state);
+  if (!converged || !convergencePoint) return state;
+  
+  let next = recordBranchConvergence(state, convergencePoint);
+  
+  // Clean up branch-specific paths that are now irrelevant
+  const ledger = next.pyoaBranchLedger ?? initPyoaBranchLedger();
+  const committedPaths = ledger.committedPaths ?? [];
+  
+  // Keep only recent paths (last 8) and convergence markers
+  const recentPaths = committedPaths.slice(-8);
+  const convergencePaths = committedPaths.filter(p => 
+    p.startsWith('locked:') || p.startsWith('convergence:')
+  );
+  
+  const cleanedPaths = [
+    ...convergencePaths,
+    ...recentPaths,
+    `convergence:${convergencePoint.stateHash}`,
+  ].slice(-16);
+  
+  next = {
+    ...next,
+    pyoaBranchLedger: {
+      ...ledger,
+      committedPaths: cleanedPaths,
+      // Unlock branch after convergence to allow new divergences
+      branchLocked: false,
+      branchClosed: false,
+    },
+  };
+  
+  return next;
+}
+
+/** B025 — Format mandate for convergence */
+export function formatConvergenceMandate(state: GameState): string | null {
+  const { converged, convergencePoint } = detectBranchConvergence(state);
+  if (!converged || !convergencePoint) return null;
+  
+  const branches = convergencePoint.branches.join(' and ');
+  return `PYOA CONVERGENCE: Branches (${branches}) have converged to shared state. Branch-specific facts preserved; new divergences available.`;
+}

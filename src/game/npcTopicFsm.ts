@@ -7,6 +7,26 @@ import { canonicalizeIntent } from './semanticLoopDetector';
 
 export type NpcTopicFsmState = Record<string, string[]>;
 
+/** B023 — NPC role types for lifecycle tracking */
+export type NpcRole =
+  | 'guide' // Opening NPC who explains rules
+  | 'merchant' // Trader/vendor
+  | 'guardian' // Gate/door keeper
+  | 'quest_giver' // Starts quests
+  | 'informant' // Provides clues
+  | 'companion' // Joins party
+  | 'antagonist' // Opposition
+  | 'neutral'; // No specific role
+
+export interface NpcRoleObligation {
+  npc: string;
+  role: NpcRole;
+  obligationTurn: number; // Turn when role obligation was created
+  deadlineTurn: number; // Turn by which NPC must exit or transform
+  satisfied: boolean;
+  exitedAt?: number;
+}
+
 function npcKey(name: string): string {
   return name.toLowerCase().replace(/[^a-z0-9]+/g, '-').slice(0, 40);
 }
@@ -145,4 +165,155 @@ export function advanceNpcTopicExhaustion(
   }
 
   return { state: next, mandate };
+}
+
+/** B023 — Infer NPC role from context and create obligation */
+export function inferNpcRole(
+  npc: string,
+  state: GameState,
+  input: string
+): NpcRole {
+  const lower = (input || '').toLowerCase();
+  const present = state.sceneFacts?.present ?? [];
+  const isOpening = (state.turn ?? 0) < 3 && !state.openingEstablishment?.complete;
+  
+  // Guide role: opening NPCs who explain rules
+  if (isOpening && present.includes(npc)) return 'guide';
+  
+  // Merchant: trade/buy/sell/shop keywords
+  if (/\b(buy|sell|trade|merchant|shop|vendor|wares)\b/.test(lower)) return 'merchant';
+  
+  // Guardian: gate/door/entrance keywords
+  if (/\b(gate|door|entrance|guard|keeper|sentry)\b/.test(lower)) return 'guardian';
+  
+  // Quest giver: quest/mission/task keywords
+  if (/\b(quest|mission|task|job|contract)\b/.test(lower)) return 'quest_giver';
+  
+  // Informant: information/clue/know keywords
+  if (/\b(know|tell|information|clue|reveal|secret)\b/.test(lower)) return 'informant';
+  
+  // Companion: join/follow/come keywords
+  if (/\b(join|follow|come with|party)\b/.test(lower)) return 'companion';
+  
+  // Antagonist: hostile NPCs
+  const enemies = state.activeEncounter?.enemies ?? [];
+  if (enemies.some(e => e.name.toLowerCase().includes(npc.toLowerCase()))) return 'antagonist';
+  
+  return 'neutral';
+}
+
+/** B023 — Create or update NPC role obligation */
+export function trackNpcRoleObligation(
+  state: GameState,
+  npc: string,
+  input: string
+): GameState {
+  const role = inferNpcRole(npc, state, input);
+  if (role === 'neutral') return state;
+  
+  const obligations = state.arcDirector?.npcRoleObligations ?? [];
+  const existing = obligations.find(o => npcKey(o.npc) === npcKey(npc) && !o.exitedAt);
+  
+  if (existing) return state; // Already tracking
+  
+  // Set deadline based on role type
+  const turnDeadlines: Record<NpcRole, number> = {
+    guide: 8,        // Opening guide exits after 8 turns
+    merchant: 12,    // Merchant exits after trade or 12 turns
+    guardian: 6,     // Guardian exits after gate passage or 6 turns
+    quest_giver: 10, // Quest giver exits after quest accepted or 10 turns
+    informant: 8,    // Informant exits after clue revealed or 8 turns
+    companion: 999,  // Companions stay indefinitely
+    antagonist: 999, // Antagonists stay until combat ends
+    neutral: 999,
+  };
+  
+  const obligation: NpcRoleObligation = {
+    npc,
+    role,
+    obligationTurn: state.turn,
+    deadlineTurn: state.turn + turnDeadlines[role],
+    satisfied: false,
+  };
+  
+  return {
+    ...state,
+    arcDirector: {
+      ...state.arcDirector,
+      npcRoleObligations: [...obligations, obligation],
+    },
+  };
+}
+
+/** B023 — Check if NPC should exit due to deadline */
+export function checkNpcRoleDeadlines(
+  state: GameState
+): { state: GameState; exits: string[] } {
+  const obligations = state.arcDirector?.npcRoleObligations ?? [];
+  const exits: string[] = [];
+  let updated = false;
+  
+  const nextObligations = obligations.map(obl => {
+    if (obl.exitedAt || obl.satisfied) return obl;
+    
+    // Check if deadline exceeded
+    if (state.turn >= obl.deadlineTurn) {
+      exits.push(obl.npc);
+      updated = true;
+      return { ...obl, exitedAt: state.turn, satisfied: true };
+    }
+    
+    // Check if role obligation naturally satisfied
+    const topics = state.arcDirector?.npcTopics?.[npcKey(obl.npc)] ?? [];
+    const topicCount = topics.length;
+    
+    // Role-specific satisfaction conditions
+    let satisfied = false;
+    switch (obl.role) {
+      case 'guide':
+        satisfied = state.openingEstablishment?.complete || topicCount >= 2;
+        break;
+      case 'merchant':
+        satisfied = topicCount >= 1 && /trade|buy|sell/i.test(topics.join(' '));
+        break;
+      case 'guardian':
+        satisfied = topicCount >= 1 && /pass|through|enter/i.test(topics.join(' '));
+        break;
+      case 'quest_giver':
+        satisfied = (state.quests ?? []).some(q => q.status === 'active');
+        break;
+      case 'informant':
+        satisfied = topicCount >= 1;
+        break;
+      default:
+        satisfied = false;
+    }
+    
+    if (satisfied) {
+      updated = true;
+      return { ...obl, satisfied: true };
+    }
+    
+    return obl;
+  });
+  
+  if (!updated) return { state, exits: [] };
+  
+  return {
+    state: {
+      ...state,
+      arcDirector: {
+        ...state.arcDirector,
+        npcRoleObligations: nextObligations,
+      },
+    },
+    exits,
+  };
+}
+
+/** B023 — Format mandate for NPC exits */
+export function formatNpcExitMandate(exits: string[]): string | null {
+  if (!exits.length) return null;
+  const names = exits.slice(0, 3).join(', ');
+  return `NPC ROLE DEADLINE: ${names} must exit scene — role obligation complete or deadline exceeded. Do not keep them lingering indefinitely.`;
 }

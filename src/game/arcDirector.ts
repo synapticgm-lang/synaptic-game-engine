@@ -66,6 +66,10 @@ export interface ArcDirectorState {
   freeT12Forced?: boolean;
   /** 29d — turn soft threat / leverage pressure opened (resolve within 6 turns) */
   softThreatOpenedTurn?: number;
+  /** B023 Wave 2 — NPC role obligations + exit deadlines */
+  npcRoleObligations?: import('./npcTopicFsm').NpcRoleObligation[];
+  /** B024 Wave 2 — hub beat records for typed gate disposition */
+  hubBeatRecords?: import('./choiceCompiler').HubBeatRecord[];
 }
 
 export interface ArcDirectorResult {

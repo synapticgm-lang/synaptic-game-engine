@@ -60,6 +60,21 @@ import {
 } from './discoveryXpLedger';
 import { validateInventoryChanges, buildInventoryAuthority } from './inventoryConservation';
 import { resolveVoiceIdForState } from './gmVoiceProfile';
+import {
+  checkNpcRoleDeadlines,
+  formatNpcExitMandate,
+  trackNpcRoleObligation,
+} from './npcTopicFsm';
+import {
+  recordHubBeat,
+  classifyHubGate,
+  shouldForceLitrpgHubExit,
+} from './choiceCompiler';
+import {
+  cleanupBranchMemoryAtConvergence,
+  formatConvergenceMandate,
+} from './pyoaBranchLedger';
+import { hubsForBibleId, matchHub } from './outdoorHubs';
 
 export interface QualityGovernanceState {
   turnsSinceLastEncounter?: number;
@@ -124,12 +139,32 @@ function resolveVoicePersonality(state: GameState): VoicePersonality {
   return map[id] ?? 'friendly-guide';
 }
 
-/** SNAPSHOT / situation-packet mandate lines (P0.0, P0.2, P1.1–P1.4). */
+/** SNAPSHOT / situation-packet mandate lines (P0.0, P0.2, P1.1–P1.4, Wave 2). */
 export function buildGovernanceSnapshotLines(state: GameState): string[] {
   const lines: string[] = [];
   const recovery = qg(state).recoveryMandate;
   if (recovery?.trim()) {
     lines.push(recovery.trim());
+  }
+
+  // B023 Wave 2 — NPC role deadlines
+  const { exits } = checkNpcRoleDeadlines(state);
+  if (exits.length > 0) {
+    const exitMandate = formatNpcExitMandate(exits);
+    if (exitMandate) lines.push(exitMandate);
+  }
+
+  // B024 Wave 2 — LitRPG hub exit deadline
+  if (shouldForceLitrpgHubExit(state)) {
+    lines.push(
+      'HUB EXIT DEADLINE: LitRPG loiter threshold exceeded — force player to leave hub (travel, quest departure, or crisis).'
+    );
+  }
+
+  // B025 Wave 2 — PYOA convergence
+  const convergenceMandate = formatConvergenceMandate(state);
+  if (convergenceMandate) {
+    lines.push(convergenceMandate);
   }
 
   const loop = detectSemanticLoop(state);
@@ -276,7 +311,7 @@ export interface GovernanceCommitResult {
   systemNotes: string[];
 }
 
-/** Post-commit state updates (P0.0, P0.3, P0.4, P1.1). */
+/** Post-commit state updates (P0.0, P0.3, P0.4, P1.1, Wave 2). */
 export function applyGovernanceCommit(
   previous: GameState,
   next: GameState,
@@ -289,23 +324,43 @@ export function applyGovernanceCommit(
 
   qualityGovernance.recoveryMandate = undefined;
 
+  // B023 Wave 2 — Track NPC role obligations
+  let nextWithNpc = trackNpcRoleObligation(next, '', playerInput);
+  
+  // B023 Wave 2 — Apply NPC exit deadlines
+  const { state: afterExits, exits } = checkNpcRoleDeadlines(nextWithNpc);
+  if (exits.length > 0) {
+    systemNotes.push(`NPC exits: ${exits.join(', ')}`);
+  }
+  nextWithNpc = afterExits;
+
+  // B024 Wave 2 — Record hub beat
+  const hub = matchHub(hubsForBibleId(nextWithNpc.campaignBibleId), nextWithNpc.currentLocation);
+  if (hub) {
+    const gateType = classifyHubGate(playerInput);
+    nextWithNpc = recordHubBeat(nextWithNpc, hub.id, gateType);
+  }
+
+  // B025 Wave 2 — Clean up branch memory at convergence
+  nextWithNpc = cleanupBranchMemoryAtConvergence(nextWithNpc);
+
   const progressGovernor = updateProgressGovernor(
     previous,
-    next,
+    nextWithNpc,
     previous.progressGovernor ?? initProgressGovernor()
   );
 
-  const offered = next.choices ?? [];
-  const cooldowns = updateCooldowns(offered, next.turn, cooldownMap(previous));
+  const offered = nextWithNpc.choices ?? [];
+  const cooldowns = updateCooldowns(offered, nextWithNpc.turn, cooldownMap(previous));
   qualityGovernance.optionCooldowns = Object.fromEntries(cooldowns);
 
   const gmProseForNovelty = gmProse;
-  const novelty = updateNoveltyBudget(gmProseForNovelty, next.turn, noveltyFromState(previous));
+  const novelty = updateNoveltyBudget(gmProseForNovelty, nextWithNpc.turn, noveltyFromState(previous));
   qualityGovernance.noveltyBudget = noveltyToRecord(novelty);
 
   let xpAward: GovernanceCommitResult['xpAward'];
   const ledger = ledgerMap(previous);
-  const discovery = calculateDiscoveryXp(playerInput, next, ledger);
+  const discovery = calculateDiscoveryXp(playerInput, nextWithNpc, ledger);
   if (discovery && discovery.amount > 0) {
     const [typePart, ctxPart] = (discovery.discoveryKey ?? '').split('@');
     const [, target] = typePart.split(':');
@@ -317,11 +372,11 @@ export function applyGovernanceCommit(
       systemNotes.push(`Discovery blocked: ${discovery.reason} (evidence-id exhausted)`);
     } else {
       xpAward = { amount: discovery.amount, reason: discovery.reason };
-      const updatedLedger = updateDiscoveryLedger([discovery], next.turn, ledger);
+      const updatedLedger = updateDiscoveryLedger([discovery], nextWithNpc.turn, ledger);
       qualityGovernance.discoveryLedger = Object.fromEntries(updatedLedger);
       qualityGovernance.recentXpAwards = [
         ...(prevQg.recentXpAwards ?? []).slice(-99),
-        { amount: discovery.amount, reason: discovery.reason, type: discovery.type, turn: next.turn },
+        { amount: discovery.amount, reason: discovery.reason, type: discovery.type, turn: nextWithNpc.turn },
       ];
     }
   }
@@ -329,34 +384,45 @@ export function applyGovernanceCommit(
   const invAuth = buildInventoryAuthority(previous);
   const invCheck = validateInventoryChanges(
     invAuth,
-    next.inventory ?? [],
+    nextWithNpc.inventory ?? [],
     gmProse
   );
   if (!invCheck.valid && invCheck.violations.length) {
     systemNotes.push(`Inventory: blocked ${invCheck.violations.length} conservation violation(s)`);
   }
 
-  const hub = next.currentLocation ?? '';
-  if (hub && hub !== prevQg.lastHubLocation) {
-    qualityGovernance.lastHubLocation = hub;
+  const hubLoc = nextWithNpc.currentLocation ?? '';
+  if (hubLoc && hubLoc !== prevQg.lastHubLocation) {
+    qualityGovernance.lastHubLocation = hubLoc;
   }
 
   const hadEncounter =
-    !!next.activeEncounter ||
-    (previous.activeEncounter && !next.activeEncounter);
+    !!nextWithNpc.activeEncounter ||
+    (previous.activeEncounter && !nextWithNpc.activeEncounter);
   qualityGovernance.turnsSinceLastEncounter = hadEncounter
     ? 0
     : (prevQg.turnsSinceLastEncounter ?? 0) + 1;
 
-  const arcPatch = applyArcDirectorCommit(previous, next, next.choices ?? []);
+  const arcPatch = applyArcDirectorCommit(previous, nextWithNpc, nextWithNpc.choices ?? []);
+
+  // Merge nextWithNpc updates into final patches
+  const finalPatches: Partial<GameState> = {
+    progressGovernor,
+    qualityGovernance,
+    ...arcPatch,
+    ...(invCheck.valid ? {} : { inventory: previous.inventory }),
+  };
+  
+  // Carry forward Wave 2 state updates
+  if (nextWithNpc.arcDirector !== next.arcDirector) {
+    finalPatches.arcDirector = nextWithNpc.arcDirector;
+  }
+  if (nextWithNpc.pyoaBranchLedger !== next.pyoaBranchLedger) {
+    finalPatches.pyoaBranchLedger = nextWithNpc.pyoaBranchLedger;
+  }
 
   return {
-    patches: {
-      progressGovernor,
-      qualityGovernance,
-      ...arcPatch,
-      ...(invCheck.valid ? {} : { inventory: previous.inventory }),
-    },
+    patches: finalPatches,
     xpAward,
     systemNotes,
   };

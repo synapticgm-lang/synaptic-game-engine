@@ -34,6 +34,31 @@ export interface GateDisposition {
   message: string;
 }
 
+/** B024 — Hub gate disposition types */
+export type HubGateType =
+  | 'entrance'   // First arrival at hub
+  | 'loiter'     // Standing around/waiting
+  | 'vendor'     // Merchant/shop interaction
+  | 'quest'      // Quest-related interaction
+  | 'travel';    // Leaving hub
+
+export interface HubBeatRecord {
+  hubId: string;
+  gateType: HubGateType;
+  turn: number;
+  count: number;
+}
+
+const HUB_BEAT_CAPS: Record<HubGateType, number> = {
+  entrance: 1,   // Only arrive once
+  loiter: 3,     // Max 3 wait/loiter beats
+  vendor: 2,     // Max 2 merchant interactions
+  quest: 999,    // Quest interactions unlimited
+  travel: 999,   // Travel unlimited
+};
+
+const LITRPG_HUB_EXIT_DEADLINE = 50; // LitRPG must leave hub by turn 50 if loitering
+
 const FAMILY_LIMIT = 3;
 const FAMILY_WINDOW = 50;
 const FAMILY_COOLDOWN = 8;
@@ -116,6 +141,87 @@ function gateTravelTarget(input: string): string | null {
 const GATE_TARGET_PATTERNS =
   /\b(gate|queue|circle|registrar|registration|sevenfold|palace approach|contract hall)\b/i;
 
+/** B024 — Classify hub gate type from input */
+export function classifyHubGate(input: string): HubGateType {
+  const lower = input.toLowerCase();
+  if (/\b(arrive|enter|approach|reach)\b/.test(lower)) return 'entrance';
+  if (/\b(wait|stand|loiter|do nothing)\b/.test(lower)) return 'loiter';
+  if (/\b(buy|sell|trade|merchant|shop|vendor)\b/.test(lower)) return 'vendor';
+  if (/\b(quest|mission|ask about|talk to)\b/.test(lower)) return 'quest';
+  if (/\b(travel|leave|go to|head to)\b/.test(lower)) return 'travel';
+  return 'loiter'; // Default to loiter
+}
+
+/** B024 — Check hub beat cap exhaustion */
+export function isHubBeatCapped(
+  state: GameState,
+  hubId: string,
+  gateType: HubGateType
+): boolean {
+  const records = state.arcDirector?.hubBeatRecords ?? [];
+  const count = records
+    .filter(r => r.hubId === hubId && r.gateType === gateType)
+    .reduce((sum, r) => sum + r.count, 0);
+  return count >= HUB_BEAT_CAPS[gateType];
+}
+
+/** B024 — Record hub beat usage */
+export function recordHubBeat(
+  state: GameState,
+  hubId: string,
+  gateType: HubGateType
+): GameState {
+  const records = state.arcDirector?.hubBeatRecords ?? [];
+  const existing = records.find(r => 
+    r.hubId === hubId && r.gateType === gateType && r.turn === state.turn
+  );
+  
+  let nextRecords: HubBeatRecord[];
+  if (existing) {
+    nextRecords = records.map(r =>
+      r === existing ? { ...r, count: r.count + 1 } : r
+    );
+  } else {
+    nextRecords = [
+      ...records,
+      { hubId, gateType, turn: state.turn, count: 1 }
+    ].slice(-40); // Keep last 40 records
+  }
+  
+  return {
+    ...state,
+    arcDirector: {
+      ...state.arcDirector,
+      hubBeatRecords: nextRecords,
+    },
+  };
+}
+
+/** B024 — Check if LitRPG hub exit deadline exceeded */
+export function shouldForceLitrpgHubExit(state: GameState): boolean {
+  if (state.engineMode !== 'litrpg') return false;
+  
+  const hub = matchHub(hubsForBibleId(state.campaignBibleId), state.currentLocation);
+  if (!hub) return false;
+  
+  const records = state.arcDirector?.hubBeatRecords ?? [];
+  const hubRecords = records.filter(r => r.hubId === hub.id);
+  if (!hubRecords.length) return false;
+  
+  // Count non-travel beats
+  const loiterBeats = hubRecords.filter(r => 
+    r.gateType === 'loiter' || r.gateType === 'vendor'
+  );
+  const totalLoiter = loiterBeats.reduce((sum, r) => sum + r.count, 0);
+  
+  // Force exit if too much loitering
+  if (totalLoiter >= 4 && state.turn >= LITRPG_HUB_EXIT_DEADLINE) {
+    return true;
+  }
+  
+  return false;
+}
+
 /** Gate disposition matrix (B024) — reject/transform hub gate travel loops. */
 export function checkGateDisposition(
   state: GameState,
@@ -145,6 +251,21 @@ export function checkGateDisposition(
       message: `Hub beats exhausted at this location — pick a crisis fork or talk path instead of ${target}.`,
     };
   }
+  
+  // B024 — Check typed gate caps
+  const hub = matchHub(hubsForBibleId(state.campaignBibleId), state.currentLocation);
+  if (hub) {
+    const gateType = classifyHubGate(playerInput);
+    if (isHubBeatCapped(state, hub.id, gateType)) {
+      return {
+        target,
+        cooldownUntilTurn: state.turn + 6,
+        kind: 'transform',
+        message: `Hub ${gateType} beats capped — try a different action or leave this location.`,
+      };
+    }
+  }
+  
   return null;
 }
 
