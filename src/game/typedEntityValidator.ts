@@ -274,7 +274,17 @@ export function rewriteInvalidReferences(
 
   // 29c — do NOT blind-replace they/them/their. Kit fallback destroyed English
   // (Crew Token're / clothes-as-NPC). Leave pronouns; retry mandate names speakers.
-  void report.themCount;
+  // Exception: when exactly one NPC is present, safe to replace orphan "them"
+  if (report.themCount > 0 && speaker && !isKitLikeName(speaker, context)) {
+    const presentNpcs = context.presentNpcs.filter(n => !isKitLikeName(n, context));
+    if (presentNpcs.length === 1) {
+      // Safe to replace "them" when only one NPC present
+      rewritten = rewritten.replace(/\bwatch them\b/gi, `watch ${speaker}`);
+      rewritten = rewritten.replace(/\bsee them\b/gi, `see ${speaker}`);
+      rewritten = rewritten.replace(/\btell them\b/gi, `tell ${speaker}`);
+      rewritten = rewritten.replace(/\bask them\b/gi, `ask ${speaker}`);
+    }
+  }
 
   if (report.thisPlaceCount > 0 && place && !isKitLikeName(place, context)) {
     rewritten = rewritten.replace(/\bthis place\b/gi, place);

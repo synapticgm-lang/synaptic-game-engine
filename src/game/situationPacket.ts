@@ -398,6 +398,7 @@ export function formatSituationForPrompt(state: GameState): string {
       : '',
     'RAILS: SNAPSHOT + ledger + WORLD MAP are fact authority. Narrate richly inside listed settlements. Do not invent new cities, towns, shores, or continents. Do not invent named threats, loot, or doors absent above. Quest sites must fit biome. Dungeons open at allowsDungeon sites then close when cleared.',
     'HIDDEN QUESTS: Never spoil quests with status hidden or revealed=false.',
+    'PROSE LICENSE: Full artistic freedom on sensory detail, metaphor, pacing, and NPC manner. Descriptive engaging language and narrative flair are required.',
     formatWorldLedgerBlock(state.worldLedger),
   ];
   return lines.filter((line) => line !== '').join('\n');

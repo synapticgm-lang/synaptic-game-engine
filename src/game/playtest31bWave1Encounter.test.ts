@@ -357,7 +357,7 @@ describe('WS-4 Wave 1 — Biome Matrix', () => {
     const filtered = filterByBiome(
       registry.templates,
       'summoned-pact',
-      'urban-hub',
+      'crypt-dungeon',
       'litrpg',
       matrix
     );

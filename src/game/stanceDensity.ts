@@ -36,7 +36,7 @@ const COMBAT_RE =
   /\b(strike|attack|fight|lunge|guard|dodge|parry|cast|shoot|charge|draw (?:your )?weapon|take cover)\b/i;
 
 const DIRECT_RE =
-  /\b(force|smash|bash|pry|push|climb|clear|charge through|break|shove open|dig|jump|rush|physical|open the|approach (?:the )?(?:door|gap|rubble)|enter)\b/i;
+  /\b(force|smash|bash|pry|push|climb|clear|charge through|break|shove open|dig|jump|rush|physical|open the|approach (?:the )?(?:door|doorway|gap|rubble)|enter)\b/i;
 const DIPLOMATIC_RE =
   /\b(ask|talk|speak|bargain|trade|negotiat|faction|offer|deal|persuade|convince|hail|greet|call out|diplom|check in with)\b/i;
 const SOLITARY_RE =

@@ -8,7 +8,7 @@ import { effectiveWriterTier, hasUnlimitedTextCapacity, isFounderPlayAccount } f
 import { equippedSetLabel, equippedSetName } from '../game/uiTheme';
 
 /** Visible after a hard refresh -- if this is missing, Vercel is still serving the 16 Aug bundle. */
-export const HUD_BUILD_STAMP = '2026-08-30a';
+export const HUD_BUILD_STAMP = '2026-08-30e';
 const HUD_BUILD_TITLE =
   'Debug 2026-08-30a - Sprint 5: Final test fixes - 100% Wave 1';
 

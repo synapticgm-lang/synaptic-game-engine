@@ -530,29 +530,46 @@ export function validateTemplate(template: EncounterTemplate): {
   if (!template.stakes) {
     errors.push('Missing stakes phase');
   } else {
-    if (!template.stakes.win) errors.push('Missing win outcome');
-    if (!template.stakes.lose) errors.push('Missing lose outcome');
+    // Check for either new structure (win/lose) or old structure (headline/approaches)
+    const hasNewStructure = template.stakes.win && template.stakes.lose;
+    const hasOldStructure = (template.stakes as any).headline && (template.stakes as any).approaches;
+    if (!hasNewStructure && !hasOldStructure) {
+      errors.push('Stakes must have either win/lose outcomes or headline/approaches');
+    }
   }
   
   // Resolution
   if (!template.resolution) {
     errors.push('Missing resolution mechanics');
-  } else if (!template.resolution.type) {
-    errors.push('Missing resolution type');
+  } else {
+    const hasType = template.resolution.type;
+    const hasMechanic = (template.resolution as any).mechanic;
+    if (!hasType && !hasMechanic) {
+      errors.push('Resolution must have either type or mechanic');
+    }
   }
   
   // Aftermath
   if (!template.aftermath) {
     errors.push('Missing aftermath phase');
-  } else if (!template.aftermath.receiptTypes || template.aftermath.receiptTypes.length === 0) {
-    errors.push('Aftermath has no receipt types');
+  } else {
+    const hasReceiptTypes = template.aftermath.receiptTypes && template.aftermath.receiptTypes.length > 0;
+    const hasByTerminal = (template.aftermath as any).byTerminal;
+    const hasMinimumReceiptTypes = (template.aftermath as any).minimumReceiptTypes !== undefined;
+    if (!hasReceiptTypes && !hasByTerminal && !hasMinimumReceiptTypes) {
+      errors.push('Aftermath must have receiptTypes, byTerminal, or minimumReceiptTypes');
+    }
   }
   
   // Biome constraints
   if (!template.biomeConstraints) {
     errors.push('Missing biome constraints');
-  } else if (!template.biomeConstraints.allowedBiomes || template.biomeConstraints.allowedBiomes.length === 0) {
-    errors.push('No allowed biomes specified');
+  } else {
+    const hasAllowedBiomes = template.biomeConstraints.allowedBiomes && template.biomeConstraints.allowedBiomes.length > 0;
+    const hasAllow = (template.biomeConstraints as any).allow && (template.biomeConstraints as any).allow.length > 0;
+    if (!hasAllowedBiomes && !hasAllow) {
+      errors.push('No allowed biomes specified');
+    }
   }
   
   return {

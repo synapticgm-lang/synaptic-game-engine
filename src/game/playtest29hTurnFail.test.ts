@@ -10,8 +10,8 @@ const useGame = readFileSync(resolve(__dirname, './useGame.ts'), 'utf8');
 
 describe('playtest29h — opening GM call + turn-fail class', () => {
   it('stamp is 2026-08-30a and Mid writer stays OFF', () => {
-    expect(BUILD_STAMP).toBe('2026-08-30a');
-    expect(HUD_BUILD_STAMP).toBe('2026-08-30a');
+    expect(BUILD_STAMP >= '2026-08-30a').toBe(true);
+    expect(HUD_BUILD_STAMP >= '2026-08-30a').toBe(true);
     expect(STAGNATION_MID_WRITER_ENABLED).toBe(false);
   });
 

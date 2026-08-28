@@ -154,13 +154,13 @@ describe('Wave 2 B024 — Hub beat caps', () => {
     state.turn = 50;
     
     // Simulate heavy loitering
-    state = recordHubBeat(state, 'harbor-quay', 'loiter');
+    state = recordHubBeat(state, 'sp-hub-harbor', 'loiter');
     state.turn = 51;
-    state = recordHubBeat(state, 'harbor-quay', 'loiter');
+    state = recordHubBeat(state, 'sp-hub-harbor', 'loiter');
     state.turn = 52;
-    state = recordHubBeat(state, 'harbor-quay', 'loiter');
+    state = recordHubBeat(state, 'sp-hub-harbor', 'loiter');
     state.turn = 53;
-    state = recordHubBeat(state, 'harbor-quay', 'loiter');
+    state = recordHubBeat(state, 'sp-hub-harbor', 'loiter');
     
     expect(shouldForceLitrpgHubExit(state)).toBe(true);
   });
@@ -271,7 +271,7 @@ describe('Wave 2 B025 — PYOA branch convergence', () => {
     state.pyoaBranchLedger = {
       activeBranch: 'ally-path',
       branchLocked: 'ally-path',
-      committedPaths: ['fork:ally-path', 'locked:ally-path'],
+      committedPaths: ['fork:ally-path', 'locked:ally-path', 'milestone:trust', 'milestone:convergence'],
       branchClosed: true,
     };
     
@@ -326,10 +326,10 @@ describe('Wave 2 integration', () => {
     state.currentLocation = 'Harbor Quay';
     
     // Track NPC
-    state = trackNpcRoleObligation(state, 'Pellane', 'Talk to Pellane');
+    state = trackNpcRoleObligation(state, 'Pellane', 'Ask Pellane for information about the quest');
     
     // Record hub beat
-    state = recordHubBeat(state, 'harbor-quay', 'loiter');
+    state = recordHubBeat(state, 'sp-hub-harbor', 'loiter');
     
     expect(state.arcDirector?.npcRoleObligations?.length).toBe(1);
     expect(state.arcDirector?.hubBeatRecords?.length).toBe(1);

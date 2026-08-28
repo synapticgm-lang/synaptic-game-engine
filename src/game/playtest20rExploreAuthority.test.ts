@@ -121,6 +121,7 @@ describe('20r map-authority explore + alone presence + status dedupe', () => {
       mode: 'weave',
       aloneArrival: true,
     };
+    state.currentLocation = ALONE_RUIN;
     state.activeDungeon = buildInteriorFloorPlan(ALONE_RUIN, [], undefined, 'fallback-door-seed');
     const pads = sceneSafeFallbacks(state, 'Dust. Nothing moves.');
     expect(pads.every((c) => !/crowd|voices|saw you/i.test(c))).toBe(true);

@@ -218,11 +218,21 @@ export function filterByBiome(
     if (allowedTypes.size > 0) {
       const templateType = template.densityRole;
       // Map density roles to encounter types
-      const typeMatch = 
+      let typeMatch = 
         allowedTypes.has(templateType) ||
         allowedTypes.has(`${templateType}-encounter`) ||
         allowedTypes.has('random-encounter') ||
         allowedTypes.has('combat');
+      
+      // Also check for suffix matches (e.g., 'trash' matches 'dungeon-trash')
+      if (!typeMatch) {
+        for (const allowedType of allowedTypes) {
+          if (allowedType.endsWith(`-${templateType}`)) {
+            typeMatch = true;
+            break;
+          }
+        }
+      }
       
       if (!typeMatch) {
         return false;

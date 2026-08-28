@@ -643,24 +643,46 @@ export function checkReceiptLivenessGates(state: GameState): ReceiptLivenessGate
 /**
  * Validate an eval run's manifest stamp and gate bindings
  */
-export function validateEvalRun(manifest: any): { valid: boolean; errors: string[] } {
-  const errors: string[] = [];
+export function validateEvalRun(
+  state: any,
+  summary: any,
+  _turns: any[]
+): {
+  manifestBound: boolean;
+  livenessGates: {
+    combatByT8: boolean;
+    [key: string]: boolean;
+  };
+} {
+  // Check if manifest is bound (has required fields)
+  const manifest = summary?.runManifest || state?.runManifest;
+  const manifestBound = Boolean(
+    manifest && 
+    manifest.buildStamp && 
+    manifest.engineMode
+  );
   
-  if (!manifest) {
-    errors.push('Missing manifest');
-    return { valid: false, errors };
-  }
+  // Check liveness gates (combat by turn 8, etc.)
+  const arcDirector = state?.arcDirector || {};
+  const turn = state?.turn || 0;
   
-  if (!manifest.buildStamp) {
-    errors.push('Missing build stamp');
-  }
-  
-  if (!manifest.engineMode) {
-    errors.push('Missing engine mode');
-  }
+  // Combat liveness: should have combat encounter by turn 8
+  const hasHadCombat = Boolean(
+    (arcDirector.encounterResolutionLog && arcDirector.encounterResolutionLog.length > 0) ||
+    (arcDirector.beatStateTx && arcDirector.beatStateTx.some((tx: any) => tx.kind === 'combat')) ||
+    (state?.stateTxLog && state.stateTxLog.some((tx: any) => tx.kind === 'combat')) ||
+    state?.activeEncounter || 
+    (state?.log || []).some((entry: any) => 
+      entry.gmRole === 'narrator' && 
+      /combat|fight|attack|enemy|foe/i.test(entry.content || '')
+    )
+  );
+  const combatByT8 = turn >= 8 ? hasHadCombat : true;
   
   return {
-    valid: errors.length === 0,
-    errors
+    manifestBound,
+    livenessGates: {
+      combatByT8,
+    },
   };
 }

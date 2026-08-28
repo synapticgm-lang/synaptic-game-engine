@@ -670,19 +670,27 @@ export function sceneSafeFallbacks(
     options.push('Search the ruin carefully');
     options.push('Find a way out');
     const dungeon = state.activeDungeon;
+    let hasDungeonExitChoice = false;
     if (dungeon && isInteriorMap(dungeon)) {
       const exits = listInteriorExitsFromHere(dungeon);
       const door = exits.find((e) => e.kind === 'door' || e.kind === 'stairs');
       if (door) {
         options.push(`Approach the ${door.noun} to ${door.name}`);
+        hasDungeonExitChoice = true;
       } else if (exits[0]) {
         options.push(`Approach the ${exits[0].noun} cautiously`);
+        hasDungeonExitChoice = true;
       }
     }
     if (/\b(gap|door|arch|doorway|rubble|debris|stone|corridor)\b/i.test(storyProse)) {
       const preferGap =
         /\b(gap|crack|broken wall)\b/i.test(storyProse) && !/\b(door|doorway|corridor)\b/i.test(storyProse);
       options.push(preferGap ? 'Approach the gap cautiously' : 'Approach the doorway cautiously');
+      hasDungeonExitChoice = true;
+    }
+    // If we have an interior dungeon but no specific exit choice yet, add generic doorway option
+    if (dungeon && isInteriorMap(dungeon) && !hasDungeonExitChoice) {
+      options.push('Approach the doorway cautiously');
     }
   }
   options.push('Wait and listen carefully');
