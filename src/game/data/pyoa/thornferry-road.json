@@ -1,0 +1,1313 @@
+{
+  "schemaVersion": 1,
+  "bibleId": "thornferry-road",
+  "title": "Thornferry Road",
+  "premise": "A rural-gothic road journey in which a disputed charter, a miller’s warning, factional war, and the thing beneath the milestones determine who controls the final crossing.",
+  "exclusiveFactGroups": [
+    {
+      "id": "thornferry-road.allegiance",
+      "mode": "exactly-one-after-crisis",
+      "ownerCrisisId": "thornferry-road:crisis:2_lord_vs_rebels",
+      "members": [
+        "thornferry-road.allegiance.lord",
+        "thornferry-road.allegiance.rebels",
+        "thornferry-road.allegiance.neutral"
+      ],
+      "description": "The player’s durable political alignment."
+    },
+    {
+      "id": "thornferry-road.miller_verdict",
+      "mode": "exactly-one-after-crisis",
+      "ownerCrisisId": "thornferry-road:crisis:1_millstone_charter",
+      "members": [
+        "thornferry-road.trust.miller",
+        "thornferry-road.trust.miller_doubted"
+      ],
+      "description": "Whether the player treats the miller as a confidant or a threat."
+    },
+    {
+      "id": "thornferry-road.village_fate",
+      "mode": "exactly-one-after-crisis",
+      "ownerCrisisId": "thornferry-road:crisis:3_bandits_vs_villagers",
+      "members": [
+        "thornferry-road.village.saved",
+        "thornferry-road.village.abandoned"
+      ],
+      "description": "The irreversible fate of Hushwater village."
+    },
+    {
+      "id": "thornferry-road.truth_disposition",
+      "mode": "exactly-one-after-crisis",
+      "ownerCrisisId": "thornferry-road:crisis:4_secret_under_road",
+      "members": [
+        "thornferry-road.truth.revealed",
+        "thornferry-road.truth.concealed"
+      ],
+      "description": "Whether the road’s buried truth becomes public."
+    },
+    {
+      "id": "thornferry-road.final_method",
+      "mode": "exactly-one-after-crisis",
+      "ownerCrisisId": "thornferry-road:crisis:6_final_crossing",
+      "members": [
+        "thornferry-road.method.force",
+        "thornferry-road.method.stealth",
+        "thornferry-road.method.diplomacy"
+      ],
+      "description": "How the final crossing is won or attempted."
+    },
+    {
+      "id": "thornferry-road.terminal_outcome",
+      "mode": "at-most-one",
+      "members": [
+        "thornferry-road.outcome.triumph",
+        "thornferry-road.outcome.escape",
+        "thornferry-road.outcome.failure"
+      ],
+      "description": "The terminal outcome class."
+    }
+  ],
+  "crises": [
+    {
+      "schemaVersion": 1,
+      "id": "thornferry-road:crisis:1_millstone_charter",
+      "bibleId": "thornferry-road",
+      "title": "Millstone Charter",
+      "archetype": "charter",
+      "telegraph": "The miller bars the ford and asks whether the charter in your coat belongs to you—or to the dead surveyor whose name it bears.",
+      "window": {
+        "earliest": 1,
+        "target": 5,
+        "latest": 15
+      },
+      "prerequisites": {},
+      "oncePerRun": true,
+      "journalHint": "You presented the Millstone Charter.",
+      "forks": [
+        {
+          "id": "thornferry-road:crisis:1_millstone_charter:fork_show",
+          "label": "Sign openly and trust the miller with the forgery.",
+          "journalLabel": "Trusted the miller with the charter’s false seal.",
+          "writes": [
+            {
+              "factId": "thornferry-road.charter.shown",
+              "value": true,
+              "visibility": "known"
+            },
+            {
+              "factId": "thornferry-road.trust.miller",
+              "value": true,
+              "visibility": "known"
+            }
+          ],
+          "costs": {
+            "resources": [
+              {
+                "resource": "coin",
+                "amount": -10
+              }
+            ],
+            "relationships": [
+              {
+                "actorId": "miller",
+                "amount": 20
+              },
+              {
+                "actorId": "lord",
+                "amount": -5
+              }
+            ]
+          },
+          "immediateBeat": "The miller witnesses the seal, pockets your hush money, and promises that the old wheel remembers honest bargains.",
+          "locks": [
+            "thornferry-road:crisis:1_millstone_charter:fork_hide"
+          ],
+          "schedules": [
+            {
+              "key": "miller-keeps-copy",
+              "delayTurns": 50,
+              "type": "reveal",
+              "payload": {
+                "writes": [
+                  {
+                    "factId": "thornferry-road.miller.evidence_preserved",
+                    "value": true,
+                    "visibility": "veiled",
+                    "journalText": "The miller preserved proof from that night."
+                  }
+                ],
+                "relationshipDeltas": [
+                  {
+                    "actorId": "miller",
+                    "amount": 15
+                  }
+                ],
+                "narrativeBeat": "The miller produces a charcoal copy proving who altered the road charter.",
+                "journalHint": "The miller kept more than your confidence."
+              }
+            }
+          ],
+          "endingAffinity": [
+            "thornferry-road:ending:lord-champion",
+            "thornferry-road:ending:keeper-under-stone"
+          ]
+        },
+        {
+          "id": "thornferry-road:crisis:1_millstone_charter:fork_hide",
+          "label": "Deny the charter and threaten the miller into silence.",
+          "journalLabel": "Doubted and threatened the miller.",
+          "writes": [
+            {
+              "factId": "thornferry-road.charter.hidden",
+              "value": true,
+              "visibility": "known"
+            },
+            {
+              "factId": "thornferry-road.trust.miller_doubted",
+              "value": true,
+              "visibility": "known"
+            }
+          ],
+          "costs": {
+            "resources": [
+              {
+                "resource": "heat",
+                "amount": 10
+              }
+            ],
+            "relationships": [
+              {
+                "actorId": "miller",
+                "amount": -25
+              }
+            ]
+          },
+          "immediateBeat": "The miller lowers his eyes, but his apprentice slips away toward the lord’s tollhouse.",
+          "locks": [
+            "thornferry-road:crisis:1_millstone_charter:fork_show"
+          ],
+          "schedules": [
+            {
+              "key": "miller-blackmail",
+              "delayTurns": 45,
+              "type": "penalty",
+              "payload": {
+                "writes": [
+                  {
+                    "factId": "thornferry-road.miller.blackmail_active",
+                    "value": true,
+                    "visibility": "veiled",
+                    "journalText": "The hidden charter has become leverage."
+                  }
+                ],
+                "resourceDeltas": [
+                  {
+                    "resource": "heat",
+                    "amount": 20
+                  }
+                ],
+                "narrativeBeat": "A copied seal reaches the tollhouse, and riders begin asking for you by name.",
+                "journalHint": "Someone sold the shape of your seal."
+              }
+            }
+          ],
+          "endingAffinity": [
+            "thornferry-road:ending:free-road",
+            "thornferry-road:ending:lone-wanderer"
+          ]
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "id": "thornferry-road:crisis:2_lord_vs_rebels",
+      "bibleId": "thornferry-road",
+      "title": "Lord versus Rebels",
+      "archetype": "alliance",
+      "telegraph": "The lord’s bailiffs and briar-masked rebels both demand the charter before the bells stop.",
+      "window": {
+        "earliest": 20,
+        "target": 30,
+        "latest": 40
+      },
+      "prerequisites": {},
+      "oncePerRun": true,
+      "journalHint": "You chose a side in the conflict.",
+      "forks": [
+        {
+          "id": "thornferry-road:crisis:2_lord_vs_rebels:fork_lord",
+          "label": "Side with the Lord.",
+          "journalLabel": "Sided with the Lord.",
+          "writes": [
+            {
+              "factId": "thornferry-road.allegiance.lord",
+              "value": true,
+              "visibility": "known"
+            },
+            {
+              "factId": "thornferry-road.state.faction_conflict_resolved",
+              "value": true,
+              "visibility": "hidden"
+            }
+          ],
+          "costs": {
+            "resources": [
+              {
+                "resource": "supplies",
+                "amount": -15
+              }
+            ],
+            "relationships": [
+              {
+                "actorId": "lord",
+                "amount": 25
+              },
+              {
+                "actorId": "rebels",
+                "amount": -30
+              }
+            ]
+          },
+          "immediateBeat": "The lord's men thank you.",
+          "locks": [
+            "thornferry-road:crisis:2_lord_vs_rebels:fork_rebels",
+            "thornferry-road:crisis:2_lord_vs_rebels:fork_neutral"
+          ],
+          "schedules": [
+            {
+              "key": "lord-levy",
+              "delayTurns": 55,
+              "type": "penalty",
+              "payload": {
+                "writes": [
+                  {
+                    "factId": "thornferry-road.lord.levy_due",
+                    "value": true,
+                    "visibility": "veiled",
+                    "journalText": "The lord has called in a debt."
+                  }
+                ],
+                "resourceDeltas": [
+                  {
+                    "resource": "supplies",
+                    "amount": -20
+                  }
+                ],
+                "narrativeBeat": "The lord calls in the levy promised by your allegiance.",
+                "journalHint": "The lord has remembered the price of protection."
+              }
+            }
+          ],
+          "endingAffinity": [
+            "thornferry-road:ending:lord-champion"
+          ]
+        },
+        {
+          "id": "thornferry-road:crisis:2_lord_vs_rebels:fork_rebels",
+          "label": "Side with the Rebels.",
+          "journalLabel": "Sided with the Rebels.",
+          "writes": [
+            {
+              "factId": "thornferry-road.allegiance.rebels",
+              "value": true,
+              "visibility": "known"
+            },
+            {
+              "factId": "thornferry-road.state.faction_conflict_resolved",
+              "value": true,
+              "visibility": "hidden"
+            }
+          ],
+          "costs": {
+            "resources": [
+              {
+                "resource": "heat",
+                "amount": 15
+              }
+            ],
+            "relationships": [
+              {
+                "actorId": "lord",
+                "amount": -30
+              },
+              {
+                "actorId": "rebels",
+                "amount": 25
+              }
+            ]
+          },
+          "immediateBeat": "The rebels welcome you.",
+          "locks": [
+            "thornferry-road:crisis:2_lord_vs_rebels:fork_lord",
+            "thornferry-road:crisis:2_lord_vs_rebels:fork_neutral"
+          ],
+          "schedules": [
+            {
+              "key": "rebel-cache",
+              "delayTurns": 50,
+              "type": "reward",
+              "payload": {
+                "writes": [
+                  {
+                    "factId": "thornferry-road.rebels.cache_opened",
+                    "value": true,
+                    "visibility": "veiled",
+                    "journalText": "The rebels honored their promise."
+                  }
+                ],
+                "resourceDeltas": [
+                  {
+                    "resource": "supplies",
+                    "amount": 20
+                  },
+                  {
+                    "resource": "intel",
+                    "amount": 15
+                  }
+                ],
+                "narrativeBeat": "The rebels open a hidden milestone cache containing powder and the old road plans.",
+                "journalHint": "A masked promise waits beneath a milestone."
+              }
+            }
+          ],
+          "endingAffinity": [
+            "thornferry-road:ending:rebel-hero"
+          ]
+        },
+        {
+          "id": "thornferry-road:crisis:2_lord_vs_rebels:fork_neutral",
+          "label": "Stay neutral.",
+          "journalLabel": "Stayed neutral.",
+          "writes": [
+            {
+              "factId": "thornferry-road.allegiance.neutral",
+              "value": true,
+              "visibility": "known"
+            },
+            {
+              "factId": "thornferry-road.state.faction_conflict_resolved",
+              "value": true,
+              "visibility": "hidden"
+            }
+          ],
+          "costs": {
+            "resources": [
+              {
+                "resource": "time",
+                "amount": -10
+              },
+              {
+                "resource": "coin",
+                "amount": -10
+              }
+            ],
+            "relationships": [
+              {
+                "actorId": "lord",
+                "amount": -10
+              },
+              {
+                "actorId": "rebels",
+                "amount": -10
+              }
+            ]
+          },
+          "immediateBeat": "You slip away.",
+          "locks": [
+            "thornferry-road:crisis:2_lord_vs_rebels:fork_lord",
+            "thornferry-road:crisis:2_lord_vs_rebels:fork_rebels"
+          ],
+          "schedules": [
+            {
+              "key": "both-sides-hunt",
+              "delayTurns": 40,
+              "type": "penalty",
+              "payload": {
+                "writes": [
+                  {
+                    "factId": "thornferry-road.neutral.hunted",
+                    "value": true,
+                    "visibility": "veiled",
+                    "journalText": "Both factions are hunting the unaligned traveler."
+                  }
+                ],
+                "resourceDeltas": [
+                  {
+                    "resource": "heat",
+                    "amount": 20
+                  }
+                ],
+                "narrativeBeat": "Lord and rebels independently mark you as an unowned risk.",
+                "journalHint": "Neither banner has forgotten your refusal."
+              }
+            }
+          ],
+          "endingAffinity": [
+            "thornferry-road:ending:free-road",
+            "thornferry-road:ending:lone-wanderer"
+          ]
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "id": "thornferry-road:crisis:3_bandits_vs_villagers",
+      "bibleId": "thornferry-road",
+      "title": "Bandits at Hushwater",
+      "archetype": "triage",
+      "telegraph": "Smoke crosses the road: bandits have chained villagers to the ferry winch and demand the charter as ransom.",
+      "window": {
+        "earliest": 45,
+        "target": 55,
+        "latest": 65
+      },
+      "prerequisites": {},
+      "oncePerRun": true,
+      "journalHint": "You handled the bandit attack.",
+      "forks": [
+        {
+          "id": "thornferry-road:crisis:3_bandits_vs_villagers:fork_defend",
+          "label": "Defend the villagers.",
+          "journalLabel": "Defended the villagers.",
+          "writes": [
+            {
+              "factId": "thornferry-road.village.saved",
+              "value": true,
+              "visibility": "known"
+            }
+          ],
+          "costs": {
+            "resources": [
+              {
+                "resource": "health",
+                "amount": -15
+              },
+              {
+                "resource": "supplies",
+                "amount": -10
+              }
+            ],
+            "relationships": [
+              {
+                "actorId": "villagers",
+                "amount": 30
+              }
+            ]
+          },
+          "immediateBeat": "The villagers are saved.",
+          "locks": [
+            "thornferry-road:crisis:3_bandits_vs_villagers:fork_flee"
+          ],
+          "schedules": [
+            {
+              "key": "villagers-witness",
+              "delayTurns": 45,
+              "type": "reward",
+              "payload": {
+                "writes": [
+                  {
+                    "factId": "thornferry-road.villagers.testimony",
+                    "value": true,
+                    "visibility": "veiled",
+                    "journalText": "The villagers are ready to testify."
+                  }
+                ],
+                "relationshipDeltas": [
+                  {
+                    "actorId": "villagers",
+                    "amount": 15
+                  }
+                ],
+                "narrativeBeat": "Survivors arrive at the hearing and testify about what moved beneath the ferry.",
+                "journalHint": "Hushwater owes you a voice."
+              }
+            }
+          ],
+          "endingAffinity": [
+            "thornferry-road:ending:rebel-hero",
+            "thornferry-road:ending:free-road"
+          ]
+        },
+        {
+          "id": "thornferry-road:crisis:3_bandits_vs_villagers:fork_flee",
+          "label": "Cut the ferry loose and abandon the village.",
+          "journalLabel": "Abandoned Hushwater to keep the road open.",
+          "writes": [
+            {
+              "factId": "thornferry-road.village.abandoned",
+              "value": true,
+              "visibility": "known"
+            }
+          ],
+          "costs": {
+            "resources": [
+              {
+                "resource": "morale",
+                "amount": -20
+              }
+            ],
+            "relationships": [
+              {
+                "actorId": "villagers",
+                "amount": -40
+              }
+            ]
+          },
+          "immediateBeat": "You run away.",
+          "locks": [
+            "thornferry-road:crisis:3_bandits_vs_villagers:fork_defend"
+          ],
+          "schedules": [
+            {
+              "key": "hushwater-ghosts",
+              "delayTurns": 35,
+              "type": "betrayal",
+              "payload": {
+                "writes": [
+                  {
+                    "factId": "thornferry-road.village.haunting",
+                    "value": true,
+                    "visibility": "veiled",
+                    "journalText": "The abandoned village follows the road."
+                  }
+                ],
+                "resourceDeltas": [
+                  {
+                    "resource": "morale",
+                    "amount": -15
+                  },
+                  {
+                    "resource": "heat",
+                    "amount": 10
+                  }
+                ],
+                "narrativeBeat": "The abandoned dead return along the milestone shadows and expose your route.",
+                "journalHint": "Hushwater has not gone quiet."
+              }
+            }
+          ],
+          "endingAffinity": [
+            "thornferry-road:ending:lone-wanderer",
+            "thornferry-road:ending:road-takes-its-due"
+          ]
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "id": "thornferry-road:crisis:4_secret_under_road",
+      "bibleId": "thornferry-road",
+      "title": "A Secret Under the Road",
+      "archetype": "revelation",
+      "telegraph": "Beneath the oldest milestone, the road is revealed as a binding laid over a sleeping boundary spirit.",
+      "window": {
+        "earliest": 70,
+        "target": 80,
+        "latest": 90
+      },
+      "prerequisites": {},
+      "oncePerRun": true,
+      "journalHint": "You uncovered the secret.",
+      "forks": [
+        {
+          "id": "thornferry-road:crisis:4_secret_under_road:fork_reveal",
+          "label": "Reveal the secret.",
+          "journalLabel": "Revealed the secret.",
+          "writes": [
+            {
+              "factId": "thornferry-road.truth.revealed",
+              "value": true,
+              "visibility": "known"
+            },
+            {
+              "factId": "thornferry-road.state.secret_resolved",
+              "value": true,
+              "visibility": "hidden"
+            }
+          ],
+          "costs": {
+            "resources": [
+              {
+                "resource": "heat",
+                "amount": 10
+              }
+            ],
+            "relationships": []
+          },
+          "immediateBeat": "The truth is out.",
+          "locks": [
+            "thornferry-road:crisis:4_secret_under_road:fork_conceal"
+          ],
+          "schedules": [
+            {
+              "key": "truth-uprising",
+              "delayTurns": 35,
+              "type": "world_state",
+              "payload": {
+                "writes": [
+                  {
+                    "factId": "thornferry-road.truth.public_uprising",
+                    "value": true,
+                    "visibility": "veiled",
+                    "journalText": "The revealed truth has become a movement."
+                  }
+                ],
+                "resourceDeltas": [
+                  {
+                    "resource": "heat",
+                    "amount": 20
+                  }
+                ],
+                "narrativeBeat": "The revealed secret unites frightened villagers and opportunists against every old authority.",
+                "journalHint": "The road’s secret is changing who dares to speak."
+              }
+            }
+          ],
+          "endingAffinity": [
+            "thornferry-road:ending:rebel-hero",
+            "thornferry-road:ending:free-road"
+          ]
+        },
+        {
+          "id": "thornferry-road:crisis:4_secret_under_road:fork_conceal",
+          "label": "Conceal the secret.",
+          "journalLabel": "Concealed the secret.",
+          "writes": [
+            {
+              "factId": "thornferry-road.truth.concealed",
+              "value": true,
+              "visibility": "known"
+            },
+            {
+              "factId": "thornferry-road.state.secret_resolved",
+              "value": true,
+              "visibility": "hidden"
+            }
+          ],
+          "costs": {
+            "resources": [
+              {
+                "resource": "integrity",
+                "amount": -10
+              }
+            ],
+            "relationships": []
+          },
+          "immediateBeat": "The secret remains hidden.",
+          "locks": [
+            "thornferry-road:crisis:4_secret_under_road:fork_reveal"
+          ],
+          "schedules": [
+            {
+              "key": "binding-weakens",
+              "delayTurns": 30,
+              "type": "world_state",
+              "payload": {
+                "writes": [
+                  {
+                    "factId": "thornferry-road.secret.binding_weak",
+                    "value": true,
+                    "visibility": "veiled",
+                    "journalText": "The old binding is failing."
+                  }
+                ],
+                "resourceDeltas": [
+                  {
+                    "resource": "integrity",
+                    "amount": -15
+                  }
+                ],
+                "narrativeBeat": "The concealed binding cracks, and the thing under the road learns your name.",
+                "journalHint": "Silence has not put the buried thing back to sleep."
+              }
+            }
+          ],
+          "endingAffinity": [
+            "thornferry-road:ending:lord-champion",
+            "thornferry-road:ending:keeper-under-stone"
+          ]
+        }
+      ],
+      "convergence": "thornferry-road:convergence:1_road_merges"
+    },
+    {
+      "schemaVersion": 1,
+      "id": "thornferry-road:crisis:5_alliance_proposal",
+      "bibleId": "thornferry-road",
+      "title": "An Alliance Proposal",
+      "archetype": "trust-test",
+      "telegraph": "A messenger offers armed passage in exchange for the charter and the right to decide what remains buried.",
+      "window": {
+        "earliest": 95,
+        "target": 105,
+        "latest": 115
+      },
+      "prerequisites": {},
+      "oncePerRun": true,
+      "journalHint": "You responded to the alliance proposal.",
+      "forks": [
+        {
+          "id": "thornferry-road:crisis:5_alliance_proposal:fork_accept",
+          "label": "Accept the alliance.",
+          "journalLabel": "Accepted the alliance.",
+          "writes": [
+            {
+              "factId": "thornferry-road.alliance.accepted",
+              "value": true,
+              "visibility": "known"
+            },
+            {
+              "factId": "thornferry-road.state.alliance_resolved",
+              "value": true,
+              "visibility": "hidden"
+            }
+          ],
+          "costs": {
+            "resources": [
+              {
+                "resource": "coin",
+                "amount": -20
+              }
+            ],
+            "relationships": [
+              {
+                "actorId": "messenger",
+                "amount": 10
+              }
+            ]
+          },
+          "immediateBeat": "The alliance is struck.",
+          "locks": [
+            "thornferry-road:crisis:5_alliance_proposal:fork_reject"
+          ],
+          "schedules": [
+            {
+              "key": "alliance-claim",
+              "delayTurns": 20,
+              "type": "relationship_shift",
+              "payload": {
+                "writes": [
+                  {
+                    "factId": "thornferry-road.alliance.price_claimed",
+                    "value": true,
+                    "visibility": "veiled",
+                    "journalText": "The alliance has named its price."
+                  }
+                ],
+                "relationshipDeltas": [
+                  {
+                    "actorId": "alliance",
+                    "amount": -10
+                  }
+                ],
+                "narrativeBeat": "Your ally arrives at the crossing—and demands ownership of the secret as payment.",
+                "journalHint": "Help is coming with a hand already outstretched."
+              }
+            }
+          ],
+          "endingAffinity": [
+            "thornferry-road:ending:lord-champion",
+            "thornferry-road:ending:rebel-hero",
+            "thornferry-road:ending:keeper-under-stone"
+          ]
+        },
+        {
+          "id": "thornferry-road:crisis:5_alliance_proposal:fork_reject",
+          "label": "Reject the alliance.",
+          "journalLabel": "Rejected the alliance.",
+          "writes": [
+            {
+              "factId": "thornferry-road.alliance.rejected",
+              "value": true,
+              "visibility": "known"
+            },
+            {
+              "factId": "thornferry-road.state.alliance_resolved",
+              "value": true,
+              "visibility": "hidden"
+            }
+          ],
+          "costs": {
+            "resources": [],
+            "relationships": [
+              {
+                "actorId": "messenger",
+                "amount": -10
+              }
+            ]
+          },
+          "immediateBeat": "The messenger leaves in anger.",
+          "locks": [
+            "thornferry-road:crisis:5_alliance_proposal:fork_accept"
+          ],
+          "schedules": [
+            {
+              "key": "solitary-resolve",
+              "delayTurns": 18,
+              "type": "reward",
+              "payload": {
+                "writes": [
+                  {
+                    "factId": "thornferry-road.alliance.solo_path",
+                    "value": true,
+                    "visibility": "veiled",
+                    "journalText": "A solitary route remains open."
+                  }
+                ],
+                "resourceDeltas": [
+                  {
+                    "resource": "intel",
+                    "amount": 10
+                  }
+                ],
+                "narrativeBeat": "With no ally to answer to, you find an unmarked footpath to the crossing.",
+                "journalHint": "Refusal has left one narrow freedom."
+              }
+            }
+          ],
+          "endingAffinity": [
+            "thornferry-road:ending:free-road",
+            "thornferry-road:ending:lone-wanderer"
+          ]
+        }
+      ],
+      "convergence": "thornferry-road:convergence:2_end_of_road"
+    },
+    {
+      "schemaVersion": 1,
+      "id": "thornferry-road:crisis:6_final_crossing",
+      "bibleId": "thornferry-road",
+      "title": "A Final Crossing",
+      "archetype": "final-confrontation",
+      "telegraph": "At Thornferry, the river rises over the milestones while every surviving claimant closes in.",
+      "window": {
+        "earliest": 120,
+        "target": 130,
+        "latest": 140
+      },
+      "prerequisites": {},
+      "oncePerRun": true,
+      "journalHint": "You crossed the river.",
+      "forks": [
+        {
+          "id": "thornferry-road:crisis:6_final_crossing:fork_force",
+          "label": "Force your way across.",
+          "journalLabel": "Forced a crossing.",
+          "writes": [
+            {
+              "factId": "thornferry-road.method.force",
+              "value": true,
+              "visibility": "known"
+            },
+            {
+              "factId": "thornferry-road.state.crossing_complete",
+              "value": true,
+              "visibility": "hidden"
+            }
+          ],
+          "costs": {
+            "resources": [
+              {
+                "resource": "health",
+                "amount": -30
+              }
+            ],
+            "relationships": []
+          },
+          "immediateBeat": "You fight across the river.",
+          "locks": [
+            "thornferry-road:crisis:6_final_crossing:fork_stealth",
+            "thornferry-road:crisis:6_final_crossing:fork_diplomacy"
+          ],
+          "schedules": [],
+          "endingAffinity": [
+            "thornferry-road:ending:lord-champion",
+            "thornferry-road:ending:rebel-hero"
+          ]
+        },
+        {
+          "id": "thornferry-road:crisis:6_final_crossing:fork_stealth",
+          "label": "Sneak across.",
+          "journalLabel": "Sneaked across.",
+          "writes": [
+            {
+              "factId": "thornferry-road.method.stealth",
+              "value": true,
+              "visibility": "known"
+            },
+            {
+              "factId": "thornferry-road.state.crossing_complete",
+              "value": true,
+              "visibility": "hidden"
+            }
+          ],
+          "costs": {
+            "resources": [
+              {
+                "resource": "time",
+                "amount": -20
+              }
+            ],
+            "relationships": []
+          },
+          "immediateBeat": "You slip across unseen.",
+          "locks": [
+            "thornferry-road:crisis:6_final_crossing:fork_force",
+            "thornferry-road:crisis:6_final_crossing:fork_diplomacy"
+          ],
+          "schedules": [],
+          "endingAffinity": [
+            "thornferry-road:ending:rebel-hero",
+            "thornferry-road:ending:lone-wanderer"
+          ]
+        },
+        {
+          "id": "thornferry-road:crisis:6_final_crossing:fork_diplomacy",
+          "label": "Negotiate passage.",
+          "journalLabel": "Negotiated passage.",
+          "writes": [
+            {
+              "factId": "thornferry-road.method.diplomacy",
+              "value": true,
+              "visibility": "known"
+            },
+            {
+              "factId": "thornferry-road.state.crossing_complete",
+              "value": true,
+              "visibility": "hidden"
+            }
+          ],
+          "costs": {
+            "resources": [
+              {
+                "resource": "coin",
+                "amount": -50
+              }
+            ],
+            "relationships": []
+          },
+          "immediateBeat": "You pay the toll.",
+          "locks": [
+            "thornferry-road:crisis:6_final_crossing:fork_force",
+            "thornferry-road:crisis:6_final_crossing:fork_stealth"
+          ],
+          "schedules": [],
+          "endingAffinity": [
+            "thornferry-road:ending:lord-champion",
+            "thornferry-road:ending:keeper-under-stone",
+            "thornferry-road:ending:free-road"
+          ]
+        }
+      ]
+    }
+  ],
+  "convergences": [
+    {
+      "schemaVersion": 1,
+      "id": "thornferry-road:convergence:1_road_merges",
+      "bibleId": "thornferry-road",
+      "title": "All Roads Reach the Buried Mile",
+      "window": {
+        "earliest": 88,
+        "target": 92,
+        "latest": 96
+      },
+      "eligibleWhen": {
+        "any": [
+          {
+            "factId": "thornferry-road.truth.revealed",
+            "op": "exists"
+          },
+          {
+            "factId": "thornferry-road.truth.concealed",
+            "op": "exists"
+          }
+        ]
+      },
+      "equivalentOn": [
+        "thornferry-road.state.secret_resolved"
+      ],
+      "preserveProvenanceFacts": [
+        "thornferry-road.allegiance.lord",
+        "thornferry-road.allegiance.rebels",
+        "thornferry-road.allegiance.neutral",
+        "thornferry-road.truth.revealed",
+        "thornferry-road.truth.concealed",
+        "thornferry-road.village.saved",
+        "thornferry-road.village.abandoned"
+      ],
+      "spawnCrisisId": "thornferry-road:crisis:5_alliance_proposal",
+      "oncePerRun": true,
+      "journalText": "Different bargains have brought every claimant to the buried mile."
+    },
+    {
+      "schemaVersion": 1,
+      "id": "thornferry-road:convergence:2_end_of_road",
+      "bibleId": "thornferry-road",
+      "title": "Thornferry Crossing",
+      "window": {
+        "earliest": 116,
+        "target": 120,
+        "latest": 124
+      },
+      "eligibleWhen": {
+        "any": [
+          {
+            "factId": "thornferry-road.alliance.accepted",
+            "op": "exists"
+          },
+          {
+            "factId": "thornferry-road.alliance.rejected",
+            "op": "exists"
+          }
+        ]
+      },
+      "equivalentOn": [
+        "thornferry-road.state.alliance_resolved"
+      ],
+      "preserveProvenanceFacts": [
+        "thornferry-road.alliance.accepted",
+        "thornferry-road.alliance.rejected",
+        "thornferry-road.allegiance.lord",
+        "thornferry-road.allegiance.rebels",
+        "thornferry-road.allegiance.neutral",
+        "thornferry-road.truth.revealed",
+        "thornferry-road.truth.concealed"
+      ],
+      "spawnCrisisId": "thornferry-road:crisis:6_final_crossing",
+      "oncePerRun": true,
+      "journalText": "Alone or accompanied, you have reached Thornferry."
+    }
+  ],
+  "endings": [
+    {
+      "schemaVersion": 1,
+      "id": "thornferry-road:ending:keeper-under-stone",
+      "bibleId": "thornferry-road",
+      "name": "Keeper Under Stone",
+      "class": "secret",
+      "priority": 120,
+      "window": {
+        "earliest": 125,
+        "target": 140,
+        "latest": 150
+      },
+      "prerequisites": {
+        "all": [
+          {
+            "factId": "thornferry-road.trust.miller",
+            "op": "exists"
+          },
+          {
+            "factId": "thornferry-road.truth.concealed",
+            "op": "exists"
+          },
+          {
+            "factId": "thornferry-road.method.diplomacy",
+            "op": "exists"
+          },
+          {
+            "factId": "thornferry-road.alliance.accepted",
+            "op": "exists"
+          }
+        ]
+      },
+      "triggerCrisisId": "thornferry-road:crisis:6_final_crossing",
+      "terminalWrites": [
+        {
+          "factId": "thornferry-road.outcome.triumph",
+          "value": true,
+          "visibility": "known"
+        }
+      ],
+      "terminalText": "You renew the binding with the miller as witness, refusing every crown while becoming the road’s living keeper.",
+      "journalTeaser": "One bargain can outlast every banner."
+    },
+    {
+      "schemaVersion": 1,
+      "id": "thornferry-road:ending:lord-champion",
+      "bibleId": "thornferry-road",
+      "name": "The Lord’s Champion",
+      "class": "triumph",
+      "priority": 105,
+      "window": {
+        "earliest": 125,
+        "target": 140,
+        "latest": 150
+      },
+      "prerequisites": {
+        "all": [
+          {
+            "factId": "thornferry-road.allegiance.lord",
+            "op": "exists"
+          },
+          {
+            "factId": "thornferry-road.alliance.accepted",
+            "op": "exists"
+          }
+        ],
+        "any": [
+          {
+            "factId": "thornferry-road.method.force",
+            "op": "exists"
+          },
+          {
+            "factId": "thornferry-road.method.diplomacy",
+            "op": "exists"
+          }
+        ]
+      },
+      "triggerCrisisId": "thornferry-road:crisis:6_final_crossing",
+      "terminalWrites": [
+        {
+          "factId": "thornferry-road.outcome.triumph",
+          "value": true,
+          "visibility": "known"
+        }
+      ],
+      "terminalText": "You secure Thornferry for the lord; the road opens, and the levy becomes law.",
+      "journalTeaser": "A banner waits beyond the crossing."
+    },
+    {
+      "schemaVersion": 1,
+      "id": "thornferry-road:ending:rebel-hero",
+      "bibleId": "thornferry-road",
+      "name": "Hero of the Briar",
+      "class": "triumph",
+      "priority": 100,
+      "window": {
+        "earliest": 125,
+        "target": 140,
+        "latest": 150
+      },
+      "prerequisites": {
+        "all": [
+          {
+            "factId": "thornferry-road.allegiance.rebels",
+            "op": "exists"
+          },
+          {
+            "factId": "thornferry-road.village.saved",
+            "op": "exists"
+          },
+          {
+            "factId": "thornferry-road.truth.revealed",
+            "op": "exists"
+          }
+        ]
+      },
+      "triggerCrisisId": "thornferry-road:crisis:6_final_crossing",
+      "terminalWrites": [
+        {
+          "factId": "thornferry-road.outcome.triumph",
+          "value": true,
+          "visibility": "known"
+        }
+      ],
+      "terminalText": "Hushwater’s survivors carry the truth across the river, and the briar masks come off in daylight.",
+      "journalTeaser": "A road can belong to those who walk it."
+    },
+    {
+      "schemaVersion": 1,
+      "id": "thornferry-road:ending:free-road",
+      "bibleId": "thornferry-road",
+      "name": "The Free Road",
+      "class": "transformation",
+      "priority": 95,
+      "window": {
+        "earliest": 125,
+        "target": 140,
+        "latest": 150
+      },
+      "prerequisites": {
+        "all": [
+          {
+            "factId": "thornferry-road.allegiance.neutral",
+            "op": "exists"
+          },
+          {
+            "factId": "thornferry-road.village.saved",
+            "op": "exists"
+          },
+          {
+            "factId": "thornferry-road.truth.revealed",
+            "op": "exists"
+          },
+          {
+            "factId": "thornferry-road.method.diplomacy",
+            "op": "exists"
+          }
+        ]
+      },
+      "triggerCrisisId": "thornferry-road:crisis:6_final_crossing",
+      "terminalWrites": [
+        {
+          "factId": "thornferry-road.outcome.triumph",
+          "value": true,
+          "visibility": "known"
+        }
+      ],
+      "terminalText": "You break the toll compact and leave Thornferry governed by ferrymen, millers, and travelers instead of banners.",
+      "journalTeaser": "No lord owns every mile."
+    },
+    {
+      "schemaVersion": 1,
+      "id": "thornferry-road:ending:lone-wanderer",
+      "bibleId": "thornferry-road",
+      "name": "Lone Wanderer",
+      "class": "escape",
+      "priority": 70,
+      "window": {
+        "earliest": 125,
+        "target": 140,
+        "latest": 150
+      },
+      "prerequisites": {
+        "all": [
+          {
+            "factId": "thornferry-road.alliance.rejected",
+            "op": "exists"
+          },
+          {
+            "factId": "thornferry-road.method.stealth",
+            "op": "exists"
+          }
+        ]
+      },
+      "triggerCrisisId": "thornferry-road:crisis:6_final_crossing",
+      "terminalWrites": [
+        {
+          "factId": "thornferry-road.outcome.escape",
+          "value": true,
+          "visibility": "known"
+        }
+      ],
+      "terminalText": "You take the unmarked path beyond Thornferry; the conflict survives behind you, but no faction owns your name.",
+      "journalTeaser": "There is still a path with no witnesses."
+    },
+    {
+      "schemaVersion": 1,
+      "id": "thornferry-road:ending:road-takes-its-due",
+      "bibleId": "thornferry-road",
+      "name": "The Road Takes Its Due",
+      "class": "failure",
+      "priority": 1,
+      "window": {
+        "earliest": 150,
+        "target": 150,
+        "latest": 150
+      },
+      "prerequisites": {},
+      "triggerCrisisId": "thornferry-road:crisis:6_final_crossing",
+      "terminalWrites": [
+        {
+          "factId": "thornferry-road.outcome.failure",
+          "value": true,
+          "visibility": "known"
+        }
+      ],
+      "terminalText": "At the deadline, flood, riders, and the waking thing beneath the stones close every remaining path.",
+      "journalTeaser": "Every road eventually collects its debt."
+    }
+  ]
+}

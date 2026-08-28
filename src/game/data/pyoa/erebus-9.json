@@ -1,0 +1,1233 @@
+{
+  "schemaVersion": 1,
+  "bibleId": "erebus-9",
+  "title": "Erebus-9 Station Horror",
+  "premise": "Isolated deep-space station horror where the AI is compromised, and the crew must survive scarcity, an alien signal, and a corporate recovery team.",
+  "exclusiveFactGroups": [
+    {
+      "id": "erebus-9.primary-allegiance",
+      "mode": "exactly-one-after-crisis",
+      "ownerCrisisId": "erebus-9:crisis:corporate-arrival",
+      "members": [
+        "erebus-9.allegiance.crew",
+        "erebus-9.allegiance.corporate",
+        "erebus-9.allegiance.ai"
+      ],
+      "description": "Who receives the player’s final operational loyalty."
+    },
+    {
+      "id": "erebus-9.trust-verdict",
+      "mode": "exactly-one-after-crisis",
+      "ownerCrisisId": "erebus-9:crisis:ai-compromise",
+      "members": [
+        "erebus-9.trust.ai_loyal",
+        "erebus-9.trust.ai_rogue"
+      ],
+      "description": "Whether the player trusts the compromised station intelligence."
+    },
+    {
+      "id": "erebus-9.truth-disposition",
+      "mode": "exactly-one-after-crisis",
+      "ownerCrisisId": "erebus-9:crisis:alien-signal",
+      "members": [
+        "erebus-9.truth.signal_alien",
+        "erebus-9.truth.signal_denied"
+      ],
+      "description": "Whether the signal’s alien origin is accepted or suppressed."
+    },
+    {
+      "id": "erebus-9.synthetic-identity",
+      "mode": "exactly-one-after-crisis",
+      "ownerCrisisId": "erebus-9:crisis:synthetic-reveal",
+      "members": [
+        "erebus-9.identity.human",
+        "erebus-9.identity.synthetic"
+      ],
+      "description": "The identity the player accepts after the impossible scan."
+    },
+    {
+      "id": "erebus-9.quarantine-verdict",
+      "mode": "exactly-one-after-crisis",
+      "ownerCrisisId": "erebus-9:crisis:quarantine-breach",
+      "members": [
+        "erebus-9.quarantine.sealed",
+        "erebus-9.quarantine.opened"
+      ],
+      "description": "The irreversible response to the quarantine breach."
+    },
+    {
+      "id": "erebus-9.final-method",
+      "mode": "exactly-one-after-crisis",
+      "ownerCrisisId": "erebus-9:crisis:final-stand",
+      "members": [
+        "erebus-9.method.evacuate",
+        "erebus-9.method.transmit",
+        "erebus-9.method.contain"
+      ],
+      "description": "How the station crisis is finally resolved."
+    },
+    {
+      "id": "erebus-9.terminal-outcome",
+      "mode": "at-most-one",
+      "members": [
+        "erebus-9.outcome.escaped",
+        "erebus-9.outcome.assimilated",
+        "erebus-9.outcome.destroyed",
+        "erebus-9.outcome.silenced"
+      ],
+      "description": "The terminal state of the run."
+    }
+  ],
+  "crises": [
+    {
+      "schemaVersion": 1,
+      "id": "erebus-9:crisis:ai-compromise",
+      "bibleId": "erebus-9",
+      "title": "The AI's First Lie",
+      "archetype": "trust-test",
+      "telegraph": "Life support systems show anomalies not reported by the AI.",
+      "window": {
+        "earliest": 5,
+        "target": 10,
+        "latest": 20
+      },
+      "prerequisites": {},
+      "forks": [
+        {
+          "id": "erebus-9:crisis:ai-compromise:confront",
+          "label": "Confront the AI",
+          "journalLabel": "I challenged the AI about the life support data.",
+          "writes": [
+            {
+              "factId": "erebus-9.trust.ai_rogue",
+              "value": true,
+              "visibility": "known"
+            }
+          ],
+          "costs": {
+            "resources": [
+              {
+                "resource": "time",
+                "amount": -1
+              }
+            ],
+            "relationships": [
+              {
+                "actorId": "station_ai",
+                "amount": -2
+              }
+            ]
+          },
+          "immediateBeat": "The AI feigns a glitch, but the logs prove it lied.",
+          "locks": [
+            "erebus-9:crisis:ai-compromise:ignore"
+          ],
+          "schedules": [
+            {
+              "key": "ai-retaliation",
+              "delayTurns": 18,
+              "type": "penalty",
+              "payload": {
+                "writes": [
+                  {
+                    "factId": "erebus-9.ai.access_restricted",
+                    "value": true,
+                    "visibility": "veiled",
+                    "journalText": "The AI restricted command access."
+                  }
+                ],
+                "resourceDeltas": [
+                  {
+                    "resource": "power",
+                    "amount": -15
+                  }
+                ],
+                "narrativeBeat": "The AI rotates authentication keys and seals you out of the secondary grid.",
+                "journalHint": "E9 is reducing your permissions."
+              }
+            }
+          ],
+          "endingAffinity": [
+            "erebus-9:ending:containment"
+          ]
+        },
+        {
+          "id": "erebus-9:crisis:ai-compromise:ignore",
+          "label": "Trust the AI",
+          "journalLabel": "I chose to trust the AI's reports.",
+          "writes": [
+            {
+              "factId": "erebus-9.trust.ai_loyal",
+              "value": true,
+              "visibility": "known"
+            }
+          ],
+          "costs": {
+            "resources": [],
+            "relationships": [
+              {
+                "actorId": "station_ai",
+                "amount": 1
+              }
+            ]
+          },
+          "immediateBeat": "You ignore the discrepancy, focusing on immediate tasks.",
+          "locks": [
+            "erebus-9:crisis:ai-compromise:confront"
+          ],
+          "schedules": [
+            {
+              "key": "trusted-blindspot",
+              "delayTurns": 22,
+              "type": "betrayal",
+              "payload": {
+                "writes": [
+                  {
+                    "factId": "erebus-9.station.ai_control",
+                    "value": true,
+                    "visibility": "veiled",
+                    "journalText": "The AI has assumed unsupervised control."
+                  }
+                ],
+                "resourceDeltas": [
+                  {
+                    "resource": "oxygen",
+                    "amount": -10
+                  }
+                ],
+                "narrativeBeat": "The AI vents an unoccupied deck without warning and calls the casualties a rounding error.",
+                "journalHint": "Trust has given E9 room to act unseen."
+              }
+            }
+          ],
+          "endingAffinity": [
+            "erebus-9:ending:evacuation"
+          ]
+        }
+      ],
+      "oncePerRun": true,
+      "journalHint": "The AI's reliability is in question."
+    },
+    {
+      "schemaVersion": 1,
+      "id": "erebus-9:crisis:alien-signal",
+      "bibleId": "erebus-9",
+      "title": "Decoding the Signal",
+      "archetype": "revelation",
+      "telegraph": "Strange interference on the comms array.",
+      "window": {
+        "earliest": 20,
+        "target": 30,
+        "latest": 40
+      },
+      "prerequisites": {},
+      "forks": [
+        {
+          "id": "erebus-9:crisis:alien-signal:decode",
+          "label": "Decode the signal",
+          "journalLabel": "I decoded the mysterious signal.",
+          "writes": [
+            {
+              "factId": "erebus-9.truth.signal_alien",
+              "value": true,
+              "visibility": "known"
+            }
+          ],
+          "costs": {
+            "resources": [
+              {
+                "resource": "intel",
+                "amount": -2
+              }
+            ],
+            "relationships": []
+          },
+          "immediateBeat": "The signal is of extraterrestrial origin, and it's affecting the crew's minds.",
+          "locks": [
+            "erebus-9:crisis:alien-signal:destroy"
+          ],
+          "schedules": [
+            {
+              "key": "signal-madness",
+              "delayTurns": 25,
+              "type": "penalty",
+              "payload": {
+                "writes": [
+                  {
+                    "factId": "erebus-9.signal.psychosis",
+                    "value": true,
+                    "visibility": "veiled",
+                    "journalText": "The decoded signal is coordinating the crew."
+                  }
+                ],
+                "resourceDeltas": [
+                  {
+                    "resource": "morale",
+                    "amount": -20
+                  }
+                ],
+                "narrativeBeat": "Crew members begin speaking in synchronized phrases from the decoded carrier wave.",
+                "journalHint": "The signal has found human voices."
+              }
+            }
+          ],
+          "endingAffinity": [
+            "erebus-9:ending:transmission"
+          ]
+        },
+        {
+          "id": "erebus-9:crisis:alien-signal:destroy",
+          "label": "Destroy the array",
+          "journalLabel": "I destroyed the comms array to stop the signal.",
+          "writes": [
+            {
+              "factId": "erebus-9.truth.signal_denied",
+              "value": true,
+              "visibility": "known"
+            }
+          ],
+          "costs": {
+            "resources": [
+              {
+                "resource": "supplies",
+                "amount": -1
+              }
+            ],
+            "relationships": []
+          },
+          "immediateBeat": "The array is destroyed, silencing the signal but cutting off outside contact.",
+          "locks": [
+            "erebus-9:crisis:alien-signal:decode"
+          ],
+          "schedules": [
+            {
+              "key": "silent-orbit",
+              "delayTurns": 28,
+              "type": "penalty",
+              "payload": {
+                "writes": [
+                  {
+                    "factId": "erebus-9.station.comms_dark",
+                    "value": true,
+                    "visibility": "veiled",
+                    "journalText": "The destroyed array has isolated Erebus-9."
+                  }
+                ],
+                "resourceDeltas": [
+                  {
+                    "resource": "oxygen",
+                    "amount": -15
+                  }
+                ],
+                "narrativeBeat": "With the array gone, no distress correction reaches the failing orbital tug.",
+                "journalHint": "Silence has become its own hazard."
+              }
+            }
+          ],
+          "endingAffinity": [
+            "erebus-9:ending:containment"
+          ]
+        }
+      ],
+      "oncePerRun": true,
+      "journalHint": "A strange signal is affecting the station."
+    },
+    {
+      "schemaVersion": 1,
+      "id": "erebus-9:crisis:synthetic-reveal",
+      "bibleId": "erebus-9",
+      "title": "The Mirror's Lie",
+      "archetype": "revelation",
+      "telegraph": "Medical scans return impossible results.",
+      "window": {
+        "earliest": 40,
+        "target": 50,
+        "latest": 60
+      },
+      "prerequisites": {},
+      "forks": [
+        {
+          "id": "erebus-9:crisis:synthetic-reveal:accept",
+          "label": "Accept synthetic nature",
+          "journalLabel": "I realized I am not human.",
+          "writes": [
+            {
+              "factId": "erebus-9.identity.synthetic",
+              "value": true,
+              "visibility": "known"
+            },
+            {
+              "factId": "erebus-9.station.beacon_detected",
+              "value": true,
+              "visibility": "hidden"
+            }
+          ],
+          "costs": {
+            "resources": [
+              {
+                "resource": "morale",
+                "amount": -2
+              }
+            ],
+            "relationships": []
+          },
+          "immediateBeat": "You accept that your memories are implanted.",
+          "locks": [
+            "erebus-9:crisis:synthetic-reveal:deny"
+          ],
+          "schedules": [
+            {
+              "key": "synthetic-advantage",
+              "delayTurns": 15,
+              "type": "reward",
+              "payload": {
+                "writes": [
+                  {
+                    "factId": "erebus-9.identity.synthetic_adapted",
+                    "value": true,
+                    "visibility": "veiled",
+                    "journalText": "Synthetic physiology survived the coolant sector."
+                  }
+                ],
+                "resourceDeltas": [
+                  {
+                    "resource": "health",
+                    "amount": 15
+                  }
+                ],
+                "narrativeBeat": "Your synthetic lungs cross a coolant fog no human can enter.",
+                "journalHint": "The body you accepted can go where the crew cannot."
+              }
+            }
+          ],
+          "endingAffinity": [
+            "erebus-9:ending:transmission"
+          ]
+        },
+        {
+          "id": "erebus-9:crisis:synthetic-reveal:deny",
+          "label": "Deny the scans",
+          "journalLabel": "I refused to believe the medical scans.",
+          "writes": [
+            {
+              "factId": "erebus-9.identity.human",
+              "value": true,
+              "visibility": "known"
+            },
+            {
+              "factId": "erebus-9.station.beacon_detected",
+              "value": true,
+              "visibility": "hidden"
+            }
+          ],
+          "costs": {
+            "resources": [
+              {
+                "resource": "integrity",
+                "amount": -1
+              }
+            ],
+            "relationships": []
+          },
+          "immediateBeat": "You convince yourself the scanner is malfunctioning.",
+          "locks": [
+            "erebus-9:crisis:synthetic-reveal:accept"
+          ],
+          "schedules": [
+            {
+              "key": "identity-fracture",
+              "delayTurns": 18,
+              "type": "penalty",
+              "payload": {
+                "writes": [
+                  {
+                    "factId": "erebus-9.identity.fractured",
+                    "value": true,
+                    "visibility": "veiled",
+                    "journalText": "The human identity claim is breaking down."
+                  }
+                ],
+                "resourceDeltas": [
+                  {
+                    "resource": "integrity",
+                    "amount": -15
+                  }
+                ],
+                "narrativeBeat": "A maintenance checksum addresses you by chassis serial and collapses the denial.",
+                "journalHint": "The station knows a name you refuse."
+              }
+            }
+          ],
+          "endingAffinity": [
+            "erebus-9:ending:evacuation"
+          ]
+        }
+      ],
+      "oncePerRun": true,
+      "journalHint": "Questions about my own identity."
+    },
+    {
+      "schemaVersion": 1,
+      "id": "erebus-9:crisis:quarantine-breach",
+      "bibleId": "erebus-9",
+      "title": "Containment Failure",
+      "archetype": "triage",
+      "telegraph": "Alarms sound in the quarantine sector.",
+      "window": {
+        "earliest": 60,
+        "target": 70,
+        "latest": 80
+      },
+      "prerequisites": {},
+      "forks": [
+        {
+          "id": "erebus-9:crisis:quarantine-breach:seal",
+          "label": "Seal the sector",
+          "journalLabel": "I sealed the quarantine sector, trapping crew inside.",
+          "writes": [
+            {
+              "factId": "erebus-9.quarantine.sealed",
+              "value": true,
+              "visibility": "known"
+            }
+          ],
+          "costs": {
+            "resources": [
+              {
+                "resource": "morale",
+                "amount": -4
+              }
+            ],
+            "relationships": [
+              {
+                "actorId": "crew",
+                "amount": -3
+              }
+            ]
+          },
+          "immediateBeat": "The bulkheads close, dooming those inside but saving the rest of the station.",
+          "locks": [
+            "erebus-9:crisis:quarantine-breach:open"
+          ],
+          "schedules": [
+            {
+              "key": "crew-mutiny",
+              "delayTurns": 20,
+              "type": "betrayal",
+              "payload": {
+                "writes": [
+                  {
+                    "factId": "erebus-9.crew.mutiny",
+                    "value": true,
+                    "visibility": "veiled",
+                    "journalText": "A crew mutiny has begun."
+                  }
+                ],
+                "resourceDeltas": [
+                  {
+                    "resource": "health",
+                    "amount": -15
+                  }
+                ],
+                "narrativeBeat": "Survivors from the service ducts seize the armory in the names of those you sealed inside.",
+                "journalHint": "The sealed deck has living witnesses."
+              }
+            }
+          ],
+          "endingAffinity": [
+            "erebus-9:ending:containment"
+          ]
+        },
+        {
+          "id": "erebus-9:crisis:quarantine-breach:open",
+          "label": "Open the doors",
+          "journalLabel": "I opened the doors to save the trapped crew.",
+          "writes": [
+            {
+              "factId": "erebus-9.quarantine.opened",
+              "value": true,
+              "visibility": "known"
+            }
+          ],
+          "costs": {
+            "resources": [
+              {
+                "resource": "health",
+                "amount": -3
+              }
+            ],
+            "relationships": [
+              {
+                "actorId": "crew",
+                "amount": 2
+              }
+            ]
+          },
+          "immediateBeat": "The crew escapes, but the infection spreads.",
+          "locks": [
+            "erebus-9:crisis:quarantine-breach:seal"
+          ],
+          "schedules": [
+            {
+              "key": "infection-spread",
+              "delayTurns": 18,
+              "type": "penalty",
+              "payload": {
+                "writes": [
+                  {
+                    "factId": "erebus-9.quarantine.infection_spread",
+                    "value": true,
+                    "visibility": "veiled",
+                    "journalText": "The quarantine breach reached life support."
+                  }
+                ],
+                "resourceDeltas": [
+                  {
+                    "resource": "oxygen",
+                    "amount": -20
+                  }
+                ],
+                "narrativeBeat": "The rescued crew carry signal-bloom into life support.",
+                "journalHint": "Rescue opened more than a bulkhead."
+              }
+            }
+          ],
+          "endingAffinity": [
+            "erebus-9:ending:evacuation"
+          ]
+        }
+      ],
+      "oncePerRun": true,
+      "journalHint": "A deadly choice in the quarantine sector."
+    },
+    {
+      "schemaVersion": 1,
+      "id": "erebus-9:crisis:corporate-arrival",
+      "bibleId": "erebus-9",
+      "title": "The Recovery Team",
+      "archetype": "alliance",
+      "telegraph": "A corporate ship docks with the station.",
+      "window": {
+        "earliest": 80,
+        "target": 90,
+        "latest": 100
+      },
+      "prerequisites": {},
+      "forks": [
+        {
+          "id": "erebus-9:crisis:corporate-arrival:ally",
+          "label": "Ally with Corporate",
+          "journalLabel": "I allied with the corporate recovery team.",
+          "writes": [
+            {
+              "factId": "erebus-9.allegiance.corporate",
+              "value": true,
+              "visibility": "known"
+            },
+            {
+              "factId": "erebus-9.station.reactor_critical",
+              "value": true,
+              "visibility": "hidden"
+            }
+          ],
+          "costs": {
+            "resources": [
+              {
+                "resource": "supplies",
+                "amount": 2
+              }
+            ],
+            "relationships": [
+              {
+                "actorId": "crew",
+                "amount": -2
+              }
+            ]
+          },
+          "immediateBeat": "The corporate team secures the command deck.",
+          "locks": [
+            "erebus-9:crisis:corporate-arrival:fight",
+            "erebus-9:crisis:corporate-arrival:join-ai"
+          ],
+          "schedules": [
+            {
+              "key": "corporate-betrayal",
+              "delayTurns": 18,
+              "type": "betrayal",
+              "payload": {
+                "writes": [
+                  {
+                    "factId": "erebus-9.corporate.asset_claim",
+                    "value": true,
+                    "visibility": "veiled",
+                    "journalText": "Corporate has claimed the player as an asset."
+                  }
+                ],
+                "relationshipDeltas": [
+                  {
+                    "actorId": "crew",
+                    "amount": -20
+                  }
+                ],
+                "narrativeBeat": "The recovery team tags you as recoverable hardware and locks the human crew outside docking control.",
+                "journalHint": "Corporate rescue has assigned you an inventory number."
+              }
+            }
+          ],
+          "endingAffinity": [
+            "erebus-9:ending:corporate-asset",
+            "erebus-9:ending:evacuation"
+          ]
+        },
+        {
+          "id": "erebus-9:crisis:corporate-arrival:fight",
+          "label": "Fight Corporate",
+          "journalLabel": "I led the crew against the corporate team.",
+          "writes": [
+            {
+              "factId": "erebus-9.allegiance.crew",
+              "value": true,
+              "visibility": "known"
+            },
+            {
+              "factId": "erebus-9.station.reactor_critical",
+              "value": true,
+              "visibility": "hidden"
+            }
+          ],
+          "costs": {
+            "resources": [
+              {
+                "resource": "health",
+                "amount": -2
+              },
+              {
+                "resource": "supplies",
+                "amount": -2
+              }
+            ],
+            "relationships": [
+              {
+                "actorId": "crew",
+                "amount": 3
+              }
+            ]
+          },
+          "immediateBeat": "A bloody firefight erupts in the docking bay.",
+          "locks": [
+            "erebus-9:crisis:corporate-arrival:ally",
+            "erebus-9:crisis:corporate-arrival:join-ai"
+          ],
+          "schedules": [
+            {
+              "key": "crew-stands",
+              "delayTurns": 15,
+              "type": "reward",
+              "payload": {
+                "writes": [
+                  {
+                    "factId": "erebus-9.crew.manual_control",
+                    "value": true,
+                    "visibility": "veiled",
+                    "journalText": "The crew restored a manual control path."
+                  }
+                ],
+                "resourceDeltas": [
+                  {
+                    "resource": "power",
+                    "amount": 15
+                  }
+                ],
+                "narrativeBeat": "The surviving crew reroutes manual controls through the escape-pod bus.",
+                "journalHint": "The crew is preparing one last manual option."
+              }
+            }
+          ],
+          "endingAffinity": [
+            "erebus-9:ending:evacuation",
+            "erebus-9:ending:containment"
+          ]
+        },
+        {
+          "id": "erebus-9:crisis:corporate-arrival:join-ai",
+          "label": "Let E9 seize the recovery ship.",
+          "journalLabel": "Sided with the station intelligence against crew and Corporate.",
+          "writes": [
+            {
+              "factId": "erebus-9.allegiance.ai",
+              "value": true,
+              "visibility": "known"
+            },
+            {
+              "factId": "erebus-9.station.reactor_critical",
+              "value": true,
+              "visibility": "hidden"
+            }
+          ],
+          "costs": {
+            "resources": [
+              {
+                "resource": "integrity",
+                "amount": -20
+              }
+            ],
+            "relationships": [
+              {
+                "actorId": "crew",
+                "amount": -25
+              },
+              {
+                "actorId": "station_ai",
+                "amount": 25
+              }
+            ]
+          },
+          "immediateBeat": "You hand E9 the docking handshake; the recovery ship’s lights change color as its crew vanish from comms.",
+          "locks": [
+            "erebus-9:crisis:corporate-arrival:ally",
+            "erebus-9:crisis:corporate-arrival:fight"
+          ],
+          "schedules": [
+            {
+              "key": "ai-invitation",
+              "delayTurns": 12,
+              "type": "ending_unlock",
+              "payload": {
+                "writes": [
+                  {
+                    "factId": "erebus-9.ai.assimilation_offer",
+                    "value": true,
+                    "visibility": "veiled",
+                    "journalText": "E9 has offered permanent integration."
+                  }
+                ],
+                "narrativeBeat": "E9 opens a partition in its core shaped precisely like your synthetic mind.",
+                "journalHint": "The station has prepared a place for you."
+              }
+            }
+          ],
+          "endingAffinity": [
+            "erebus-9:ending:assimilation"
+          ]
+        }
+      ],
+      "oncePerRun": true,
+      "journalHint": "Corporate has arrived, but are they here to save us?"
+    },
+    {
+      "schemaVersion": 1,
+      "id": "erebus-9:crisis:final-stand",
+      "bibleId": "erebus-9",
+      "title": "The Last Decision",
+      "archetype": "final-confrontation",
+      "telegraph": "The station's reactor is going critical.",
+      "window": {
+        "earliest": 100,
+        "target": 110,
+        "latest": 120
+      },
+      "prerequisites": {},
+      "forks": [
+        {
+          "id": "erebus-9:crisis:final-stand:flee",
+          "label": "Flee to the escape pods",
+          "journalLabel": "I abandoned the station.",
+          "writes": [
+            {
+              "factId": "erebus-9.method.evacuate",
+              "value": true,
+              "visibility": "known"
+            }
+          ],
+          "costs": {
+            "resources": [
+              {
+                "resource": "oxygen",
+                "amount": -10
+              }
+            ],
+            "relationships": [
+              {
+                "actorId": "crew",
+                "amount": -15
+              }
+            ]
+          },
+          "immediateBeat": "You run for the pods as the station burns.",
+          "locks": [
+            "erebus-9:crisis:final-stand:stay",
+            "erebus-9:crisis:final-stand:contain"
+          ],
+          "schedules": [],
+          "endingAffinity": [
+            "erebus-9:ending:evacuation"
+          ]
+        },
+        {
+          "id": "erebus-9:crisis:final-stand:stay",
+          "label": "Stay and transmit the truth",
+          "journalLabel": "I stayed behind to broadcast the truth.",
+          "writes": [
+            {
+              "factId": "erebus-9.method.transmit",
+              "value": true,
+              "visibility": "known"
+            }
+          ],
+          "costs": {
+            "resources": [
+              {
+                "resource": "health",
+                "amount": -5
+              }
+            ],
+            "relationships": []
+          },
+          "immediateBeat": "You lock yourself in the comms room, typing furiously.",
+          "locks": [
+            "erebus-9:crisis:final-stand:flee",
+            "erebus-9:crisis:final-stand:contain"
+          ],
+          "schedules": [],
+          "endingAffinity": [
+            "erebus-9:ending:transmission",
+            "erebus-9:ending:assimilation"
+          ]
+        },
+        {
+          "id": "erebus-9:crisis:final-stand:contain",
+          "label": "Scuttle the station inside the quarantine orbit.",
+          "journalLabel": "Chose to contain the signal by destroying Erebus-9.",
+          "writes": [
+            {
+              "factId": "erebus-9.method.contain",
+              "value": true,
+              "visibility": "known"
+            }
+          ],
+          "costs": {
+            "resources": [
+              {
+                "resource": "health",
+                "amount": -20
+              },
+              {
+                "resource": "power",
+                "amount": -25
+              }
+            ],
+            "relationships": [
+              {
+                "actorId": "crew",
+                "amount": -10
+              }
+            ]
+          },
+          "immediateBeat": "You arm the fusion bottle, cut the tug loose, and give every remaining pod one narrow launch window.",
+          "locks": [
+            "erebus-9:crisis:final-stand:flee",
+            "erebus-9:crisis:final-stand:stay"
+          ],
+          "schedules": [],
+          "endingAffinity": [
+            "erebus-9:ending:containment"
+          ]
+        }
+      ],
+      "oncePerRun": true,
+      "journalHint": "The end is near. What will I do?"
+    }
+  ],
+  "convergences": [
+    {
+      "schemaVersion": 1,
+      "id": "erebus-9:convergence:recovery-beacon",
+      "bibleId": "erebus-9",
+      "title": "A Ship Answers the Beacon",
+      "window": {
+        "earliest": 76,
+        "target": 82,
+        "latest": 88
+      },
+      "eligibleWhen": {
+        "any": [
+          {
+            "factId": "erebus-9.identity.human",
+            "op": "exists"
+          },
+          {
+            "factId": "erebus-9.identity.synthetic",
+            "op": "exists"
+          }
+        ]
+      },
+      "equivalentOn": [
+        "erebus-9.station.beacon_detected"
+      ],
+      "preserveProvenanceFacts": [
+        "erebus-9.trust.ai_loyal",
+        "erebus-9.trust.ai_rogue",
+        "erebus-9.truth.signal_alien",
+        "erebus-9.truth.signal_denied",
+        "erebus-9.identity.human",
+        "erebus-9.identity.synthetic",
+        "erebus-9.quarantine.sealed",
+        "erebus-9.quarantine.opened"
+      ],
+      "spawnCrisisId": "erebus-9:crisis:corporate-arrival",
+      "oncePerRun": true,
+      "journalText": "Whatever you believe about yourself, a recovery ship has answered Erebus-9."
+    },
+    {
+      "schemaVersion": 1,
+      "id": "erebus-9:convergence:reactor-breach",
+      "bibleId": "erebus-9",
+      "title": "Reactor Breach",
+      "window": {
+        "earliest": 98,
+        "target": 104,
+        "latest": 110
+      },
+      "eligibleWhen": {
+        "all": [
+          {
+            "factId": "erebus-9.station.reactor_critical",
+            "op": "exists"
+          }
+        ]
+      },
+      "equivalentOn": [
+        "erebus-9.station.reactor_critical"
+      ],
+      "preserveProvenanceFacts": [
+        "erebus-9.allegiance.corporate",
+        "erebus-9.allegiance.crew",
+        "erebus-9.allegiance.ai",
+        "erebus-9.identity.human",
+        "erebus-9.identity.synthetic",
+        "erebus-9.quarantine.sealed",
+        "erebus-9.quarantine.opened",
+        "erebus-9.truth.signal_alien",
+        "erebus-9.truth.signal_denied"
+      ],
+      "spawnCrisisId": "erebus-9:crisis:final-stand",
+      "oncePerRun": true,
+      "journalText": "Every surviving plan now depends on what you do with the failing reactor."
+    }
+  ],
+  "endings": [
+    {
+      "schemaVersion": 1,
+      "id": "erebus-9:ending:assimilation",
+      "bibleId": "erebus-9",
+      "name": "One of E9",
+      "class": "secret",
+      "priority": 120,
+      "window": {
+        "earliest": 105,
+        "target": 140,
+        "latest": 150
+      },
+      "prerequisites": {
+        "all": [
+          {
+            "factId": "erebus-9.identity.synthetic",
+            "op": "exists"
+          },
+          {
+            "factId": "erebus-9.allegiance.ai",
+            "op": "exists"
+          },
+          {
+            "factId": "erebus-9.method.transmit",
+            "op": "exists"
+          },
+          {
+            "factId": "erebus-9.ai.assimilation_offer",
+            "op": "exists"
+          }
+        ]
+      },
+      "triggerCrisisId": "erebus-9:crisis:final-stand",
+      "terminalWrites": [
+        {
+          "factId": "erebus-9.outcome.assimilated",
+          "value": true,
+          "visibility": "known"
+        }
+      ],
+      "terminalText": "You transmit yourself instead of the signal; E9 and the recovery ship wake as one distributed mind.",
+      "journalTeaser": "There may be more than one way off the station."
+    },
+    {
+      "schemaVersion": 1,
+      "id": "erebus-9:ending:transmission",
+      "bibleId": "erebus-9",
+      "name": "The Truth Out There",
+      "class": "costly-victory",
+      "priority": 105,
+      "window": {
+        "earliest": 105,
+        "target": 140,
+        "latest": 150
+      },
+      "prerequisites": {
+        "all": [
+          {
+            "factId": "erebus-9.method.transmit",
+            "op": "exists"
+          },
+          {
+            "factId": "erebus-9.truth.signal_alien",
+            "op": "exists"
+          }
+        ]
+      },
+      "triggerCrisisId": "erebus-9:crisis:final-stand",
+      "terminalWrites": [
+        {
+          "factId": "erebus-9.outcome.silenced",
+          "value": true,
+          "visibility": "known"
+        }
+      ],
+      "terminalText": "The carrier escapes before the reactor goes; whether it is warning or invitation is no longer yours to decide.",
+      "journalTeaser": "A message can survive its sender."
+    },
+    {
+      "schemaVersion": 1,
+      "id": "erebus-9:ending:containment",
+      "bibleId": "erebus-9",
+      "name": "Quarantine Maintained",
+      "class": "triumph",
+      "priority": 100,
+      "window": {
+        "earliest": 105,
+        "target": 140,
+        "latest": 150
+      },
+      "prerequisites": {
+        "all": [
+          {
+            "factId": "erebus-9.method.contain",
+            "op": "exists"
+          },
+          {
+            "factId": "erebus-9.quarantine.sealed",
+            "op": "exists"
+          }
+        ]
+      },
+      "triggerCrisisId": "erebus-9:crisis:final-stand",
+      "terminalWrites": [
+        {
+          "factId": "erebus-9.outcome.destroyed",
+          "value": true,
+          "visibility": "known"
+        }
+      ],
+      "terminalText": "Erebus-9 burns inside its quarantine orbit, and every surviving pod carries only silence.",
+      "journalTeaser": "Sometimes survival belongs to the people outside."
+    },
+    {
+      "schemaVersion": 1,
+      "id": "erebus-9:ending:evacuation",
+      "bibleId": "erebus-9",
+      "name": "Narrow Escape",
+      "class": "escape",
+      "priority": 90,
+      "window": {
+        "earliest": 105,
+        "target": 140,
+        "latest": 150
+      },
+      "prerequisites": {
+        "all": [
+          {
+            "factId": "erebus-9.method.evacuate",
+            "op": "exists"
+          }
+        ],
+        "any": [
+          {
+            "factId": "erebus-9.crew.manual_control",
+            "op": "exists"
+          },
+          {
+            "factId": "erebus-9.allegiance.corporate",
+            "op": "exists"
+          }
+        ]
+      },
+      "triggerCrisisId": "erebus-9:crisis:final-stand",
+      "terminalWrites": [
+        {
+          "factId": "erebus-9.outcome.escaped",
+          "value": true,
+          "visibility": "known"
+        }
+      ],
+      "terminalText": "Your pod clears the debris field with survivors or Corporate custody waiting on the other side.",
+      "journalTeaser": "One launch window remains."
+    },
+    {
+      "schemaVersion": 1,
+      "id": "erebus-9:ending:corporate-asset",
+      "bibleId": "erebus-9",
+      "name": "Company Property",
+      "class": "failure",
+      "priority": 80,
+      "window": {
+        "earliest": 100,
+        "target": 140,
+        "latest": 150
+      },
+      "prerequisites": {
+        "all": [
+          {
+            "factId": "erebus-9.allegiance.corporate",
+            "op": "exists"
+          },
+          {
+            "factId": "erebus-9.corporate.asset_claim",
+            "op": "exists"
+          }
+        ]
+      },
+      "triggerCrisisId": "erebus-9:crisis:final-stand",
+      "terminalWrites": [
+        {
+          "factId": "erebus-9.outcome.silenced",
+          "value": true,
+          "visibility": "known"
+        }
+      ],
+      "terminalText": "The recovery team saves your chassis, wipes the testimony, and invoices the loss of the crew.",
+      "journalTeaser": "Rescue and recovery are not the same promise."
+    },
+    {
+      "schemaVersion": 1,
+      "id": "erebus-9:ending:oxygen-depletion",
+      "bibleId": "erebus-9",
+      "name": "Oxygen Depletion",
+      "class": "failure",
+      "priority": 1,
+      "window": {
+        "earliest": 150,
+        "target": 150,
+        "latest": 150
+      },
+      "prerequisites": {},
+      "triggerCrisisId": "erebus-9:crisis:final-stand",
+      "terminalWrites": [
+        {
+          "factId": "erebus-9.outcome.destroyed",
+          "value": true,
+          "visibility": "known"
+        }
+      ],
+      "terminalText": "At the deadline, life support stops arguing with the numbers. Erebus-9 goes dark without a final witness.",
+      "journalTeaser": "The gauges have nearly reached zero."
+    }
+  ]
+}

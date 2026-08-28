@@ -1,0 +1,1216 @@
+{
+  "schemaVersion": 1,
+  "bibleId": "vesper-glass-cipher",
+  "title": "Vesper Glass Cipher",
+  "premise": "An occult urban espionage narrative where a sentient glass cipher forces a choice between rival factions, memory debt, and mirrored doubles.",
+  "exclusiveFactGroups": [
+    {
+      "id": "vesper-glass-cipher.primary-allegiance",
+      "mode": "exactly-one-after-crisis",
+      "members": [
+        "vesper-glass-cipher.allegiance.curatorium",
+        "vesper-glass-cipher.allegiance.lantern-cell",
+        "vesper-glass-cipher.allegiance.independent"
+      ],
+      "ownerCrisisId": "vesper-glass-cipher:crisis:faction-choice",
+      "description": "Primary allegiance"
+    },
+    {
+      "id": "vesper-glass-cipher.trust-verdict",
+      "mode": "at-most-one",
+      "members": [
+        "vesper-glass-cipher.trust.cipher-trusted",
+        "vesper-glass-cipher.trust.cipher-distrusted"
+      ],
+      "description": "Trust verdict regarding the sentient glass cipher"
+    },
+    {
+      "id": "vesper-glass-cipher.truth-disposition",
+      "mode": "at-most-one",
+      "members": [
+        "vesper-glass-cipher.truth.revealed",
+        "vesper-glass-cipher.truth.concealed"
+      ],
+      "description": "Truth disposition"
+    },
+    {
+      "id": "vesper-glass-cipher.final-method",
+      "mode": "at-most-one",
+      "members": [
+        "vesper-glass-cipher.method.seal",
+        "vesper-glass-cipher.method.expose",
+        "vesper-glass-cipher.method.wield"
+      ],
+      "description": "Final method to handle the cipher"
+    },
+    {
+      "id": "vesper-glass-cipher.terminal-outcome",
+      "mode": "exactly-one-after-crisis",
+      "members": [
+        "vesper-glass-cipher.terminal.victory",
+        "vesper-glass-cipher.terminal.failure",
+        "vesper-glass-cipher.terminal.escape"
+      ],
+      "description": "Terminal outcome"
+    }
+  ],
+  "crises": [
+    {
+      "schemaVersion": 1,
+      "id": "vesper-glass-cipher:crisis:initial-contact",
+      "bibleId": "vesper-glass-cipher",
+      "title": "The Glass Awakens",
+      "archetype": "revelation",
+      "telegraph": "A strange resonance hums from the glass artifact.",
+      "window": {
+        "earliest": 5,
+        "target": 10,
+        "latest": 20
+      },
+      "prerequisites": {},
+      "forks": [
+        {
+          "id": "vesper-glass-cipher:crisis:initial-contact:embrace",
+          "label": "Embrace the resonance",
+          "journalLabel": "Embraced the cipher's awakening",
+          "writes": [
+            {
+              "factId": "vesper-glass-cipher.trust.cipher-trusted",
+              "value": true,
+              "visibility": "known"
+            }
+          ],
+          "costs": {
+            "resources": [
+              {
+                "resource": "integrity",
+                "amount": -10
+              }
+            ],
+            "relationships": []
+          },
+          "immediateBeat": "The glass whispers secrets of mirrored doubles.",
+          "locks": [
+            "vesper-glass-cipher:crisis:initial-contact:reject"
+          ],
+          "schedules": [
+            {
+              "key": "echo-trust",
+              "delayTurns": 18,
+              "type": "world_state",
+              "payload": {
+                "writes": [
+                  {
+                    "factId": "vesper-glass-cipher.cipher.future_murder_seen",
+                    "value": true,
+                    "visibility": "veiled",
+                    "journalText": "The cipher showed a possible murder."
+                  }
+                ],
+                "resourceDeltas": [
+                  {
+                    "resource": "integrity",
+                    "amount": -5
+                  }
+                ],
+                "narrativeBeat": "The cipher reflects a murder that has not happened yet.",
+                "journalHint": "The glass is rehearsing someone’s death."
+              }
+            }
+          ],
+          "endingAffinity": [
+            "vesper-glass-cipher:ending:wield-cipher"
+          ]
+        },
+        {
+          "id": "vesper-glass-cipher:crisis:initial-contact:reject",
+          "label": "Suppress the resonance",
+          "journalLabel": "Suppressed the cipher's awakening",
+          "writes": [
+            {
+              "factId": "vesper-glass-cipher.trust.cipher-distrusted",
+              "value": true,
+              "visibility": "known"
+            }
+          ],
+          "costs": {
+            "resources": [
+              {
+                "resource": "time",
+                "amount": -5
+              }
+            ],
+            "relationships": []
+          },
+          "immediateBeat": "The glass falls silent, but the memory debt increases.",
+          "locks": [
+            "vesper-glass-cipher:crisis:initial-contact:embrace"
+          ],
+          "schedules": [
+            {
+              "key": "suppressed-resonance",
+              "delayTurns": 22,
+              "type": "penalty",
+              "payload": {
+                "writes": [
+                  {
+                    "factId": "vesper-glass-cipher.memory.debt_high",
+                    "value": true,
+                    "visibility": "veiled",
+                    "journalText": "The resisted cipher is collecting memory debt."
+                  }
+                ],
+                "resourceDeltas": [
+                  {
+                    "resource": "morale",
+                    "amount": -10
+                  }
+                ],
+                "narrativeBeat": "Suppressed resonance returns as missing hours in your own memory.",
+                "journalHint": "Silence in the glass has become silence in you."
+              }
+            }
+          ],
+          "endingAffinity": [
+            "vesper-glass-cipher:ending:seal-cipher"
+          ]
+        }
+      ],
+      "oncePerRun": true,
+      "journalHint": "The first encounter with the sentient glass."
+    },
+    {
+      "schemaVersion": 1,
+      "id": "vesper-glass-cipher:crisis:faction-choice",
+      "bibleId": "vesper-glass-cipher",
+      "title": "Crossroads of Shadows",
+      "archetype": "alliance",
+      "telegraph": "Agents from both the Curatorium and the Lantern Cell make their approach.",
+      "window": {
+        "earliest": 25,
+        "target": 35,
+        "latest": 50
+      },
+      "prerequisites": {},
+      "forks": [
+        {
+          "id": "vesper-glass-cipher:crisis:faction-choice:curatorium",
+          "label": "Side with the Curatorium",
+          "journalLabel": "Allied with the Curatorium",
+          "writes": [
+            {
+              "factId": "vesper-glass-cipher.allegiance.curatorium",
+              "value": true,
+              "visibility": "known"
+            },
+            {
+              "factId": "vesper-glass-cipher.state.archive_located",
+              "value": true,
+              "visibility": "hidden"
+            }
+          ],
+          "costs": {
+            "resources": [
+              {
+                "resource": "intel",
+                "amount": 20
+              },
+              {
+                "resource": "integrity",
+                "amount": -10
+              }
+            ],
+            "relationships": [
+              {
+                "actorId": "lantern-cell",
+                "amount": -30
+              }
+            ]
+          },
+          "immediateBeat": "You are granted access to the secret archive.",
+          "locks": [
+            "vesper-glass-cipher:crisis:faction-choice:lantern",
+            "vesper-glass-cipher:crisis:faction-choice:independent"
+          ],
+          "schedules": [
+            {
+              "key": "curatorium-betrayal",
+              "delayTurns": 40,
+              "type": "betrayal",
+              "payload": {
+                "writes": [
+                  {
+                    "factId": "vesper-glass-cipher.curatorium.claim_active",
+                    "value": true,
+                    "visibility": "veiled",
+                    "journalText": "The Curatorium has asserted ownership."
+                  }
+                ],
+                "relationshipDeltas": [
+                  {
+                    "actorId": "curatorium",
+                    "amount": -20
+                  }
+                ],
+                "narrativeBeat": "The Curatorium invokes the small print and claims your memories as catalog property.",
+                "journalHint": "The Curatorium has opened a file with your name on it."
+              }
+            }
+          ],
+          "endingAffinity": [
+            "vesper-glass-cipher:ending:seal-cipher"
+          ]
+        },
+        {
+          "id": "vesper-glass-cipher:crisis:faction-choice:lantern",
+          "label": "Join the Lantern Cell",
+          "journalLabel": "Joined the Lantern Cell",
+          "writes": [
+            {
+              "factId": "vesper-glass-cipher.allegiance.lantern-cell",
+              "value": true,
+              "visibility": "known"
+            },
+            {
+              "factId": "vesper-glass-cipher.state.archive_located",
+              "value": true,
+              "visibility": "hidden"
+            }
+          ],
+          "costs": {
+            "resources": [
+              {
+                "resource": "supplies",
+                "amount": 15
+              },
+              {
+                "resource": "heat",
+                "amount": 15
+              }
+            ],
+            "relationships": [
+              {
+                "actorId": "curatorium",
+                "amount": -30
+              }
+            ]
+          },
+          "immediateBeat": "You embrace the chaos of the Lantern Cell.",
+          "locks": [
+            "vesper-glass-cipher:crisis:faction-choice:curatorium",
+            "vesper-glass-cipher:crisis:faction-choice:independent"
+          ],
+          "schedules": [
+            {
+              "key": "lantern-reckoning",
+              "delayTurns": 35,
+              "type": "penalty",
+              "payload": {
+                "writes": [
+                  {
+                    "factId": "vesper-glass-cipher.lantern.hunted",
+                    "value": true,
+                    "visibility": "veiled",
+                    "journalText": "The Lantern Cell’s attack has exposed you."
+                  }
+                ],
+                "resourceDeltas": [
+                  {
+                    "resource": "heat",
+                    "amount": 20
+                  }
+                ],
+                "narrativeBeat": "A Lantern bombing shatters a mirrored tram and turns the city hunt toward you.",
+                "journalHint": "The Lantern Cell has lit a fire it cannot hide."
+              }
+            }
+          ],
+          "endingAffinity": [
+            "vesper-glass-cipher:ending:expose-cipher"
+          ]
+        },
+        {
+          "id": "vesper-glass-cipher:crisis:faction-choice:independent",
+          "label": "Remain Independent",
+          "journalLabel": "Refused all factions",
+          "writes": [
+            {
+              "factId": "vesper-glass-cipher.allegiance.independent",
+              "value": true,
+              "visibility": "known"
+            },
+            {
+              "factId": "vesper-glass-cipher.state.archive_located",
+              "value": true,
+              "visibility": "hidden"
+            }
+          ],
+          "costs": {
+            "resources": [
+              {
+                "resource": "heat",
+                "amount": 20
+              }
+            ],
+            "relationships": [
+              {
+                "actorId": "curatorium",
+                "amount": -15
+              },
+              {
+                "actorId": "lantern-cell",
+                "amount": -15
+              }
+            ]
+          },
+          "immediateBeat": "You stand alone against the shadows.",
+          "locks": [
+            "vesper-glass-cipher:crisis:faction-choice:curatorium",
+            "vesper-glass-cipher:crisis:faction-choice:lantern"
+          ],
+          "schedules": [
+            {
+              "key": "double-bounty",
+              "delayTurns": 30,
+              "type": "penalty",
+              "payload": {
+                "writes": [
+                  {
+                    "factId": "vesper-glass-cipher.independent.double_bounty",
+                    "value": true,
+                    "visibility": "veiled",
+                    "journalText": "Both factions have marked you."
+                  }
+                ],
+                "resourceDeltas": [
+                  {
+                    "resource": "heat",
+                    "amount": 25
+                  }
+                ],
+                "narrativeBeat": "Both factions circulate your reflection as a kill-order.",
+                "journalHint": "Two enemies are learning the same face."
+              }
+            }
+          ],
+          "endingAffinity": [
+            "vesper-glass-cipher:ending:wield-cipher"
+          ]
+        }
+      ],
+      "oncePerRun": true,
+      "journalHint": "A choice of allegiance that shapes the path ahead."
+    },
+    {
+      "schemaVersion": 1,
+      "id": "vesper-glass-cipher:crisis:memory-debt",
+      "bibleId": "vesper-glass-cipher",
+      "title": "The Toll of Memories",
+      "archetype": "sacrifice",
+      "telegraph": "The cipher demands a payment of memories to unlock the next secret.",
+      "window": {
+        "earliest": 55,
+        "target": 65,
+        "latest": 80
+      },
+      "prerequisites": {
+        "any": [
+          {
+            "factId": "vesper-glass-cipher.trust.cipher-trusted",
+            "op": "exists"
+          },
+          {
+            "factId": "vesper-glass-cipher.trust.cipher-distrusted",
+            "op": "exists"
+          }
+        ]
+      },
+      "forks": [
+        {
+          "id": "vesper-glass-cipher:crisis:memory-debt:pay",
+          "label": "Sacrifice a memory",
+          "journalLabel": "Sacrificed a memory to the cipher",
+          "writes": [
+            {
+              "factId": "vesper-glass-cipher.memory.sacrificed",
+              "value": true,
+              "visibility": "known"
+            }
+          ],
+          "costs": {
+            "resources": [
+              {
+                "resource": "morale",
+                "amount": -20
+              }
+            ],
+            "relationships": []
+          },
+          "immediateBeat": "A piece of your past vanishes, replaced by cold truth.",
+          "locks": [
+            "vesper-glass-cipher:crisis:memory-debt:refuse"
+          ],
+          "schedules": [
+            {
+              "key": "memory-return",
+              "delayTurns": 35,
+              "type": "reveal",
+              "payload": {
+                "writes": [
+                  {
+                    "factId": "vesper-glass-cipher.memory.true_name_recovered",
+                    "value": true,
+                    "visibility": "veiled",
+                    "journalText": "The lost memory returned with the cipher’s true name."
+                  }
+                ],
+                "resourceDeltas": [
+                  {
+                    "resource": "intel",
+                    "amount": 20
+                  }
+                ],
+                "narrativeBeat": "The sacrificed memory returns inside your double, carrying the cipher’s true name.",
+                "journalHint": "What you gave away has found another keeper."
+              }
+            }
+          ],
+          "endingAffinity": [
+            "vesper-glass-cipher:ending:wield-cipher"
+          ]
+        },
+        {
+          "id": "vesper-glass-cipher:crisis:memory-debt:refuse",
+          "label": "Refuse the toll",
+          "journalLabel": "Refused to sacrifice a memory",
+          "writes": [
+            {
+              "factId": "vesper-glass-cipher.memory.kept",
+              "value": true,
+              "visibility": "known"
+            }
+          ],
+          "costs": {
+            "resources": [
+              {
+                "resource": "health",
+                "amount": -15
+              }
+            ],
+            "relationships": []
+          },
+          "immediateBeat": "The cipher lashes out, searing your mind.",
+          "locks": [
+            "vesper-glass-cipher:crisis:memory-debt:pay"
+          ],
+          "schedules": [
+            {
+              "key": "false-memory",
+              "delayTurns": 28,
+              "type": "betrayal",
+              "payload": {
+                "writes": [
+                  {
+                    "factId": "vesper-glass-cipher.memory.fragmented",
+                    "value": true,
+                    "visibility": "veiled",
+                    "journalText": "A protected memory was false."
+                  }
+                ],
+                "resourceDeltas": [
+                  {
+                    "resource": "integrity",
+                    "amount": -15
+                  }
+                ],
+                "narrativeBeat": "A cherished memory proves to be a Curatorium implant placed where the cipher could not feed.",
+                "journalHint": "One protected memory no longer feels like yours."
+              }
+            }
+          ],
+          "endingAffinity": [
+            "vesper-glass-cipher:ending:seal-cipher"
+          ]
+        }
+      ],
+      "oncePerRun": true,
+      "journalHint": "A test of resolve against the cipher's demands."
+    },
+    {
+      "schemaVersion": 1,
+      "id": "vesper-glass-cipher:crisis:secret-archive",
+      "bibleId": "vesper-glass-cipher",
+      "title": "Breaching the Archive",
+      "archetype": "triage",
+      "telegraph": "You have located the secret archive, but time is running out.",
+      "window": {
+        "earliest": 85,
+        "target": 95,
+        "latest": 110
+      },
+      "prerequisites": {},
+      "forks": [
+        {
+          "id": "vesper-glass-cipher:crisis:secret-archive:steal",
+          "label": "Steal the core files",
+          "journalLabel": "Stole the core files from the archive",
+          "writes": [
+            {
+              "factId": "vesper-glass-cipher.truth.revealed",
+              "value": true,
+              "visibility": "known"
+            }
+          ],
+          "costs": {
+            "resources": [
+              {
+                "resource": "time",
+                "amount": -15
+              },
+              {
+                "resource": "heat",
+                "amount": 25
+              }
+            ],
+            "relationships": []
+          },
+          "immediateBeat": "You escape with the truth, alarms blaring.",
+          "locks": [
+            "vesper-glass-cipher:crisis:secret-archive:destroy"
+          ],
+          "schedules": [
+            {
+              "key": "archive-fallout",
+              "delayTurns": 22,
+              "type": "penalty",
+              "payload": {
+                "writes": [
+                  {
+                    "factId": "vesper-glass-cipher.archive.purge_started",
+                    "value": true,
+                    "visibility": "veiled",
+                    "journalText": "The stolen archive triggered a purge."
+                  }
+                ],
+                "resourceDeltas": [
+                  {
+                    "resource": "heat",
+                    "amount": 20
+                  }
+                ],
+                "narrativeBeat": "Names from the stolen archive begin vanishing before you can warn them.",
+                "journalHint": "The archive is being erased person by person."
+              }
+            }
+          ],
+          "endingAffinity": [
+            "vesper-glass-cipher:ending:expose-cipher"
+          ]
+        },
+        {
+          "id": "vesper-glass-cipher:crisis:secret-archive:destroy",
+          "label": "Destroy the archive",
+          "journalLabel": "Destroyed the secret archive",
+          "writes": [
+            {
+              "factId": "vesper-glass-cipher.truth.concealed",
+              "value": true,
+              "visibility": "known"
+            }
+          ],
+          "costs": {
+            "resources": [
+              {
+                "resource": "supplies",
+                "amount": -10
+              }
+            ],
+            "relationships": []
+          },
+          "immediateBeat": "The archive burns, taking its secrets to ash.",
+          "locks": [
+            "vesper-glass-cipher:crisis:secret-archive:steal"
+          ],
+          "schedules": [
+            {
+              "key": "ash-cipher",
+              "delayTurns": 18,
+              "type": "world_state",
+              "payload": {
+                "writes": [
+                  {
+                    "factId": "vesper-glass-cipher.archive.ash_index",
+                    "value": true,
+                    "visibility": "veiled",
+                    "journalText": "The destroyed archive left an occult index."
+                  }
+                ],
+                "resourceDeltas": [
+                  {
+                    "resource": "integrity",
+                    "amount": -10
+                  }
+                ],
+                "narrativeBeat": "Soot from the destroyed archive writes the missing index across every mirror in the district.",
+                "journalHint": "Burning the archive did not erase its index."
+              }
+            }
+          ],
+          "endingAffinity": [
+            "vesper-glass-cipher:ending:seal-cipher"
+          ]
+        }
+      ],
+      "oncePerRun": true,
+      "journalHint": "A critical decision regarding the hidden truths."
+    },
+    {
+      "schemaVersion": 1,
+      "id": "vesper-glass-cipher:crisis:mirrored-double",
+      "bibleId": "vesper-glass-cipher",
+      "title": "Face to Face",
+      "archetype": "trust-test",
+      "telegraph": "Your mirrored double corners you in an alley.",
+      "window": {
+        "earliest": 115,
+        "target": 125,
+        "latest": 140
+      },
+      "prerequisites": {},
+      "forks": [
+        {
+          "id": "vesper-glass-cipher:crisis:mirrored-double:merge",
+          "label": "Merge with the double",
+          "journalLabel": "Merged with the mirrored double",
+          "writes": [
+            {
+              "factId": "vesper-glass-cipher.double.merged",
+              "value": true,
+              "visibility": "known"
+            },
+            {
+              "factId": "vesper-glass-cipher.state.nexus_reached",
+              "value": true,
+              "visibility": "hidden"
+            }
+          ],
+          "costs": {
+            "resources": [
+              {
+                "resource": "integrity",
+                "amount": -25
+              }
+            ],
+            "relationships": []
+          },
+          "immediateBeat": "Two minds become one, sharing memories and pain.",
+          "locks": [
+            "vesper-glass-cipher:crisis:mirrored-double:kill"
+          ],
+          "schedules": [
+            {
+              "key": "double-strength",
+              "delayTurns": 8,
+              "type": "reward",
+              "payload": {
+                "writes": [
+                  {
+                    "factId": "vesper-glass-cipher.double.nexus_key",
+                    "value": true,
+                    "visibility": "veiled",
+                    "journalText": "The merged double knows the Nexus path."
+                  }
+                ],
+                "resourceDeltas": [
+                  {
+                    "resource": "intel",
+                    "amount": 15
+                  }
+                ],
+                "narrativeBeat": "Your joined reflection recognizes the only safe angle through the Glass Nexus.",
+                "journalHint": "Two sets of memories now point to one opening."
+              }
+            }
+          ],
+          "endingAffinity": [
+            "vesper-glass-cipher:ending:wield-cipher"
+          ]
+        },
+        {
+          "id": "vesper-glass-cipher:crisis:mirrored-double:kill",
+          "label": "Eliminate the double",
+          "journalLabel": "Eliminated the mirrored double",
+          "writes": [
+            {
+              "factId": "vesper-glass-cipher.double.killed",
+              "value": true,
+              "visibility": "known"
+            },
+            {
+              "factId": "vesper-glass-cipher.state.nexus_reached",
+              "value": true,
+              "visibility": "hidden"
+            }
+          ],
+          "costs": {
+            "resources": [
+              {
+                "resource": "health",
+                "amount": -20
+              }
+            ],
+            "relationships": []
+          },
+          "immediateBeat": "The double shatters into glass dust.",
+          "locks": [
+            "vesper-glass-cipher:crisis:mirrored-double:merge"
+          ],
+          "schedules": [
+            {
+              "key": "shard-testimony",
+              "delayTurns": 10,
+              "type": "reveal",
+              "payload": {
+                "writes": [
+                  {
+                    "factId": "vesper-glass-cipher.double.shard_confession",
+                    "value": true,
+                    "visibility": "veiled",
+                    "journalText": "The destroyed double left testimony."
+                  }
+                ],
+                "resourceDeltas": [
+                  {
+                    "resource": "morale",
+                    "amount": -5
+                  }
+                ],
+                "narrativeBeat": "A shard of the dead double repeats the confession you refused to hear.",
+                "journalHint": "A broken reflection is still trying to speak."
+              }
+            }
+          ],
+          "endingAffinity": [
+            "vesper-glass-cipher:ending:seal-cipher"
+          ]
+        }
+      ],
+      "oncePerRun": true,
+      "journalHint": "A confrontation with your own reflection."
+    },
+    {
+      "schemaVersion": 1,
+      "id": "vesper-glass-cipher:crisis:final-choice",
+      "bibleId": "vesper-glass-cipher",
+      "title": "The Cipher's Fate",
+      "archetype": "final-confrontation",
+      "telegraph": "The final convergence approaches. The cipher hums with ultimate power.",
+      "window": {
+        "earliest": 140,
+        "target": 145,
+        "latest": 149
+      },
+      "prerequisites": {},
+      "convergence": "vesper-glass-cipher:convergence:final-stand",
+      "forks": [
+        {
+          "id": "vesper-glass-cipher:crisis:final-choice:seal",
+          "label": "Seal the cipher",
+          "journalLabel": "Sealed the cipher away",
+          "writes": [
+            {
+              "factId": "vesper-glass-cipher.method.seal",
+              "value": true,
+              "visibility": "known"
+            }
+          ],
+          "costs": {
+            "resources": [
+              {
+                "resource": "integrity",
+                "amount": -10
+              }
+            ],
+            "relationships": []
+          },
+          "immediateBeat": "You lock the cipher away, ensuring its power remains dormant.",
+          "locks": [
+            "vesper-glass-cipher:crisis:final-choice:expose",
+            "vesper-glass-cipher:crisis:final-choice:wield"
+          ],
+          "schedules": [],
+          "endingAffinity": [
+            "vesper-glass-cipher:ending:seal-cipher"
+          ]
+        },
+        {
+          "id": "vesper-glass-cipher:crisis:final-choice:expose",
+          "label": "Expose the cipher",
+          "journalLabel": "Exposed the cipher to the world",
+          "writes": [
+            {
+              "factId": "vesper-glass-cipher.method.expose",
+              "value": true,
+              "visibility": "known"
+            }
+          ],
+          "costs": {
+            "resources": [
+              {
+                "resource": "heat",
+                "amount": 50
+              }
+            ],
+            "relationships": []
+          },
+          "immediateBeat": "You broadcast the cipher's secrets to the world.",
+          "locks": [
+            "vesper-glass-cipher:crisis:final-choice:seal",
+            "vesper-glass-cipher:crisis:final-choice:wield"
+          ],
+          "schedules": [],
+          "endingAffinity": [
+            "vesper-glass-cipher:ending:expose-cipher"
+          ]
+        },
+        {
+          "id": "vesper-glass-cipher:crisis:final-choice:wield",
+          "label": "Wield the cipher",
+          "journalLabel": "Wielded the cipher's power",
+          "writes": [
+            {
+              "factId": "vesper-glass-cipher.method.wield",
+              "value": true,
+              "visibility": "known"
+            }
+          ],
+          "costs": {
+            "resources": [
+              {
+                "resource": "integrity",
+                "amount": -40
+              }
+            ],
+            "relationships": []
+          },
+          "immediateBeat": "You merge with the cipher, becoming something new.",
+          "locks": [
+            "vesper-glass-cipher:crisis:final-choice:seal",
+            "vesper-glass-cipher:crisis:final-choice:expose"
+          ],
+          "schedules": [],
+          "endingAffinity": [
+            "vesper-glass-cipher:ending:wield-cipher"
+          ]
+        }
+      ],
+      "oncePerRun": true,
+      "journalHint": "The ultimate decision regarding the sentient glass."
+    }
+  ],
+  "convergences": [
+    {
+      "schemaVersion": 1,
+      "id": "vesper-glass-cipher:convergence:midpoint-reveal",
+      "bibleId": "vesper-glass-cipher",
+      "title": "The Archive Has One Door",
+      "window": {
+        "earliest": 78,
+        "target": 82,
+        "latest": 86
+      },
+      "eligibleWhen": {
+        "any": [
+          {
+            "factId": "vesper-glass-cipher.allegiance.curatorium",
+            "op": "exists"
+          },
+          {
+            "factId": "vesper-glass-cipher.allegiance.lantern-cell",
+            "op": "exists"
+          },
+          {
+            "factId": "vesper-glass-cipher.allegiance.independent",
+            "op": "exists"
+          }
+        ]
+      },
+      "equivalentOn": [
+        "vesper-glass-cipher.state.archive_located"
+      ],
+      "preserveProvenanceFacts": [
+        "vesper-glass-cipher.allegiance.curatorium",
+        "vesper-glass-cipher.allegiance.lantern-cell",
+        "vesper-glass-cipher.allegiance.independent",
+        "vesper-glass-cipher.trust.cipher-trusted",
+        "vesper-glass-cipher.trust.cipher-distrusted",
+        "vesper-glass-cipher.memory.sacrificed",
+        "vesper-glass-cipher.memory.kept"
+      ],
+      "spawnCrisisId": "vesper-glass-cipher:crisis:secret-archive",
+      "oncePerRun": true,
+      "journalText": "Every faction has found the same door, but each expects a different price."
+    },
+    {
+      "schemaVersion": 1,
+      "id": "vesper-glass-cipher:convergence:final-stand",
+      "bibleId": "vesper-glass-cipher",
+      "title": "The Glass Nexus",
+      "window": {
+        "earliest": 136,
+        "target": 140,
+        "latest": 144
+      },
+      "eligibleWhen": {
+        "any": [
+          {
+            "factId": "vesper-glass-cipher.double.merged",
+            "op": "exists"
+          },
+          {
+            "factId": "vesper-glass-cipher.double.killed",
+            "op": "exists"
+          }
+        ]
+      },
+      "equivalentOn": [
+        "vesper-glass-cipher.state.nexus_reached"
+      ],
+      "preserveProvenanceFacts": [
+        "vesper-glass-cipher.allegiance.curatorium",
+        "vesper-glass-cipher.allegiance.lantern-cell",
+        "vesper-glass-cipher.allegiance.independent",
+        "vesper-glass-cipher.truth.revealed",
+        "vesper-glass-cipher.truth.concealed",
+        "vesper-glass-cipher.double.merged",
+        "vesper-glass-cipher.double.killed",
+        "vesper-glass-cipher.trust.cipher-trusted",
+        "vesper-glass-cipher.trust.cipher-distrusted"
+      ],
+      "spawnCrisisId": "vesper-glass-cipher:crisis:final-choice",
+      "oncePerRun": true,
+      "journalText": "Every reflection opens onto the same impossible chamber."
+    }
+  ],
+  "endings": [
+    {
+      "schemaVersion": 1,
+      "id": "vesper-glass-cipher:ending:wield-cipher",
+      "bibleId": "vesper-glass-cipher",
+      "name": "The Glass Sovereign",
+      "class": "secret",
+      "priority": 120,
+      "window": {
+        "earliest": 140,
+        "target": 140,
+        "latest": 150
+      },
+      "prerequisites": {
+        "all": [
+          {
+            "factId": "vesper-glass-cipher.method.wield",
+            "op": "exists"
+          },
+          {
+            "factId": "vesper-glass-cipher.trust.cipher-trusted",
+            "op": "exists"
+          }
+        ],
+        "any": [
+          {
+            "factId": "vesper-glass-cipher.memory.true_name_recovered",
+            "op": "exists"
+          },
+          {
+            "factId": "vesper-glass-cipher.double.merged",
+            "op": "exists"
+          }
+        ]
+      },
+      "triggerCrisisId": "vesper-glass-cipher:crisis:final-choice",
+      "terminalWrites": [
+        {
+          "factId": "vesper-glass-cipher.terminal.victory",
+          "value": true,
+          "visibility": "known"
+        }
+      ],
+      "terminalText": "You speak the cipher’s true name and become the only reflection the city cannot rewrite.",
+      "journalTeaser": "One reflection may learn to command the rest."
+    },
+    {
+      "schemaVersion": 1,
+      "id": "vesper-glass-cipher:ending:expose-cipher",
+      "bibleId": "vesper-glass-cipher",
+      "name": "Shattered Illusions",
+      "class": "transformation",
+      "priority": 105,
+      "window": {
+        "earliest": 140,
+        "target": 140,
+        "latest": 150
+      },
+      "prerequisites": {
+        "all": [
+          {
+            "factId": "vesper-glass-cipher.method.expose",
+            "op": "exists"
+          },
+          {
+            "factId": "vesper-glass-cipher.truth.revealed",
+            "op": "exists"
+          }
+        ]
+      },
+      "triggerCrisisId": "vesper-glass-cipher:crisis:final-choice",
+      "terminalWrites": [
+        {
+          "factId": "vesper-glass-cipher.terminal.victory",
+          "value": true,
+          "visibility": "known"
+        }
+      ],
+      "terminalText": "You publish the archive and the cipher together; the city sees its hidden rulers and pays for the sight.",
+      "journalTeaser": "Truth can break a city without freeing it."
+    },
+    {
+      "schemaVersion": 1,
+      "id": "vesper-glass-cipher:ending:seal-cipher",
+      "bibleId": "vesper-glass-cipher",
+      "name": "The Vault of Shadows",
+      "class": "costly-victory",
+      "priority": 100,
+      "window": {
+        "earliest": 140,
+        "target": 140,
+        "latest": 150
+      },
+      "prerequisites": {
+        "all": [
+          {
+            "factId": "vesper-glass-cipher.method.seal",
+            "op": "exists"
+          }
+        ],
+        "any": [
+          {
+            "factId": "vesper-glass-cipher.truth.concealed",
+            "op": "exists"
+          },
+          {
+            "factId": "vesper-glass-cipher.trust.cipher-distrusted",
+            "op": "exists"
+          }
+        ]
+      },
+      "triggerCrisisId": "vesper-glass-cipher:crisis:final-choice",
+      "terminalWrites": [
+        {
+          "factId": "vesper-glass-cipher.terminal.victory",
+          "value": true,
+          "visibility": "known"
+        }
+      ],
+      "terminalText": "The cipher sleeps behind an unremembered door, while you retain every key and none of the peace.",
+      "journalTeaser": "Some doors stay closed only because someone remembers them."
+    },
+    {
+      "schemaVersion": 1,
+      "id": "vesper-glass-cipher:ending:curatorium-puppet",
+      "bibleId": "vesper-glass-cipher",
+      "name": "A Gilded Cage",
+      "class": "failure",
+      "priority": 80,
+      "window": {
+        "earliest": 140,
+        "target": 140,
+        "latest": 150
+      },
+      "prerequisites": {
+        "all": [
+          {
+            "factId": "vesper-glass-cipher.allegiance.curatorium",
+            "op": "exists"
+          },
+          {
+            "factId": "vesper-glass-cipher.curatorium.claim_active",
+            "op": "exists"
+          }
+        ]
+      },
+      "triggerCrisisId": "vesper-glass-cipher:crisis:final-choice",
+      "terminalWrites": [
+        {
+          "factId": "vesper-glass-cipher.terminal.failure",
+          "value": true,
+          "visibility": "known"
+        }
+      ],
+      "terminalText": "The Curatorium catalogs the cipher, your memories, and finally you.",
+      "journalTeaser": "A perfect archive has room for its archivist."
+    },
+    {
+      "schemaVersion": 1,
+      "id": "vesper-glass-cipher:ending:lantern-martyr",
+      "bibleId": "vesper-glass-cipher",
+      "name": "Burned Bright",
+      "class": "costly-victory",
+      "priority": 75,
+      "window": {
+        "earliest": 140,
+        "target": 140,
+        "latest": 150
+      },
+      "prerequisites": {
+        "all": [
+          {
+            "factId": "vesper-glass-cipher.allegiance.lantern-cell",
+            "op": "exists"
+          },
+          {
+            "factId": "vesper-glass-cipher.lantern.hunted",
+            "op": "exists"
+          },
+          {
+            "factId": "vesper-glass-cipher.method.expose",
+            "op": "exists"
+          }
+        ]
+      },
+      "triggerCrisisId": "vesper-glass-cipher:crisis:final-choice",
+      "terminalWrites": [
+        {
+          "factId": "vesper-glass-cipher.terminal.failure",
+          "value": true,
+          "visibility": "known"
+        }
+      ],
+      "terminalText": "Your broadcast survives the raid; the Lantern Cell calls that victory, though you do not survive to argue.",
+      "journalTeaser": "A spark may outlive the hand that struck it."
+    },
+    {
+      "schemaVersion": 1,
+      "id": "vesper-glass-cipher:ending:fade-away",
+      "bibleId": "vesper-glass-cipher",
+      "name": "Into the Unreflected Dark",
+      "class": "escape",
+      "priority": 1,
+      "window": {
+        "earliest": 150,
+        "target": 150,
+        "latest": 150
+      },
+      "prerequisites": {},
+      "triggerCrisisId": "vesper-glass-cipher:crisis:final-choice",
+      "terminalWrites": [
+        {
+          "factId": "vesper-glass-cipher.terminal.escape",
+          "value": true,
+          "visibility": "known"
+        }
+      ],
+      "terminalText": "You abandon the Nexus at the deadline and erase your face from every mirror, leaving the factions to inherit the debt.",
+      "journalTeaser": "There may be one street the mirrors do not watch."
+    }
+  ]
+}

@@ -1,0 +1,4621 @@
+{
+  "schemaVersion": "1.0.0",
+  "libraryId": "ws4.pyoa.crises",
+  "mode": "pyoa",
+  "bibles": [
+    "ashwinter-court",
+    "erebus-9",
+    "thornferry",
+    "vesper-glass"
+  ],
+  "templates": [
+    {
+      "schemaVersion": "1.0.0",
+      "templateVersion": "1.0.0",
+      "id": "thornferry.crisis.millstone-charter",
+      "mode": "pyoa",
+      "bibleId": "thornferry",
+      "name": "Millstone Charter",
+      "role": "crisis",
+      "summary": "Choose who holds the only charter proving the millers’ water rights.",
+      "telegraph": {
+        "required": true,
+        "channels": [
+          "item"
+        ],
+        "cues": [
+          {
+            "channel": "item",
+            "signal": "Keeping the charter preserves public arbitration; surrendering it buys village amnesty and destroys the original.",
+            "inference": "The fork is exclusive and materially persistent.",
+            "actionHook": "keep-charter"
+          }
+        ],
+        "responseWindowTurns": 2,
+        "surpriseEligible": false,
+        "openingSeverityCap": "none"
+      },
+      "stakes": {
+        "headline": "Choose law or immediate safety before the Baron’s clerk seals the levy.",
+        "approaches": [
+          {
+            "id": "keep-charter",
+            "label": "Keep the Millstone Charter",
+            "requirements": [],
+            "method": "fork",
+            "onSuccess": {
+              "terminal": true,
+              "stateChanges": [
+                "fact:player-holds-charter:set:true",
+                "fact:baron-holds-charter:lock:false",
+                "callback:hearing.player-evidence:schedule",
+                "ending:ending.free-mills:eligible",
+                "convergence:thornferry-flood-season:preserve_flags"
+              ],
+              "summary": "The player keeps the evidence, angers the Baron, and qualifies for the free-mills ending.",
+              "terminalState": "crisisEnding"
+            },
+            "onFailure": {
+              "terminal": false,
+              "stateChanges": [
+                "choice:validation_error:record",
+                "choice:remain_uncommitted"
+              ],
+              "summary": "The engine rejects an illegal option without consuming a turn."
+            },
+            "lockout": "A valid fork commits once; the opposing fact is locked until an explicitly authored reversal crisis."
+          },
+          {
+            "id": "surrender-charter",
+            "label": "Surrender the Charter for Amnesty",
+            "requirements": [],
+            "method": "fork",
+            "onSuccess": {
+              "terminal": true,
+              "stateChanges": [
+                "fact:baron-holds-charter:set:true",
+                "fact:player-holds-charter:lock:false",
+                "callback:hearing.no-original:schedule",
+                "ending:ending.pardoned-village:eligible",
+                "convergence:thornferry-flood-season:preserve_flags"
+              ],
+              "summary": "The village gains amnesty, the Baron controls the evidence, and arbitration closes.",
+              "terminalState": "crisisEnding"
+            },
+            "onFailure": {
+              "terminal": false,
+              "stateChanges": [
+                "choice:validation_error:record",
+                "choice:remain_uncommitted"
+              ],
+              "summary": "The engine rejects an illegal option without consuming a turn."
+            },
+            "lockout": "A valid fork commits once; the opposing fact is locked until an explicitly authored reversal crisis."
+          }
+        ]
+      },
+      "resolution": {
+        "mechanic": "fork",
+        "config": {
+          "exclusiveFactGroup": "charter-holder",
+          "delayedPayoffAt": "chapter-3-flood-levy-hearing",
+          "convergencePoint": "thornferry-flood-season",
+          "convergencePolicy": "merge scene topology only; preserve facts, callbacks, relationships, and ending eligibility",
+          "commitOnce": true
+        },
+        "terminalStates": [
+          "crisisEnding"
+        ],
+        "maxTurns": 3,
+        "forcedTerminal": {
+          "terminal": true,
+          "stateChanges": [
+            "fact:charter-seized-by-clerk:set:true",
+            "callback:hearing.no-original:schedule",
+            "ending:ending.taxed-silence:eligible",
+            "convergence:thornferry-flood-season:preserve_flags"
+          ],
+          "summary": "Delay lets the clerk seize the charter; the story continues without original evidence.",
+          "terminalState": "crisisEnding"
+        },
+        "antiRepeatRule": "After commit, the crisis ID is terminal and cannot respawn; convergence reads stored flags."
+      },
+      "aftermath": {
+        "minimumReceiptTypes": 3,
+        "byTerminal": {
+          "keep-charter": [
+            {
+              "type": "quest",
+              "target": "hearing.player-evidence",
+              "operation": "unlock",
+              "value": true
+            },
+            {
+              "type": "faction",
+              "target": "millers",
+              "operation": "increment",
+              "value": 2
+            },
+            {
+              "type": "npc",
+              "target": "miller-tarrow",
+              "operation": "set",
+              "value": "trusts-player"
+            }
+          ],
+          "surrender-charter": [
+            {
+              "type": "quest",
+              "target": "hearing.no-original",
+              "operation": "unlock",
+              "value": true
+            },
+            {
+              "type": "faction",
+              "target": "barony",
+              "operation": "increment",
+              "value": 2
+            },
+            {
+              "type": "npc",
+              "target": "miller-tarrow",
+              "operation": "set",
+              "value": "feels-betrayed"
+            }
+          ]
+        }
+      },
+      "biomeFilter": {
+        "allow": [
+          "thornferry-mill"
+        ],
+        "siteTags": [
+          "charter-crisis",
+          "commitment-fork"
+        ],
+        "requireFactionTags": [
+          "millers",
+          "barony"
+        ],
+        "exclude": [
+          "vesper-glass",
+          "erebus-9"
+        ]
+      },
+      "turnWindow": {
+        "earliest": 4,
+        "latest": 35,
+        "cooldown": 9999,
+        "droughtEligible": true
+      },
+      "governance": {
+        "stage": "draft",
+        "contentHash": "d5fc9b6d0247a377",
+        "owner": "encounter-design",
+        "replaces": null
+      },
+      "example": {
+        "telegraphProse": "The clerk states that surrender buys amnesty while the item panel warns it destroys public arbitration.",
+        "stakesProse": "Keep the charter for a later hearing or surrender it for immediate amnesty; the flags are mutually exclusive.",
+        "resolutionProse": "The selected option atomically writes the holder fact, locks its opposite, schedules the hearing callback, and sets ending eligibility.",
+        "receiptProse": "The receipt records charter custody, Miller and faction reactions, the delayed hearing variant, and the eligible ending."
+      }
+    },
+    {
+      "schemaVersion": "1.0.0",
+      "templateVersion": "1.0.0",
+      "id": "thornferry.crisis.trust-the-miller",
+      "mode": "pyoa",
+      "bibleId": "thornferry",
+      "name": "Trust the Miller",
+      "role": "crisis",
+      "summary": "Choose whether Tarrow controls the grain tally during the flood shortage.",
+      "telegraph": {
+        "required": true,
+        "channels": [
+          "scene"
+        ],
+        "cues": [
+          {
+            "channel": "scene",
+            "signal": "Tarrow offers his sealed tally while the cooper warns that one page was replaced.",
+            "inference": "The crisis presents an exclusive decision with a visible future callback.",
+            "actionHook": "trust-tarrow"
+          }
+        ],
+        "responseWindowTurns": 2,
+        "surpriseEligible": false,
+        "openingSeverityCap": "none"
+      },
+      "stakes": {
+        "headline": "Trust buys speed; doubt preserves oversight but delays relief.",
+        "approaches": [
+          {
+            "id": "trust-tarrow",
+            "label": "Trust Tarrow with the Tally",
+            "requirements": [],
+            "method": "fork",
+            "onSuccess": {
+              "terminal": true,
+              "stateChanges": [
+                "fact:tarrow-holds-tally:set:true",
+                "fact:council-holds-tally:lock:false",
+                "callback:shortage.tarrow-account:schedule",
+                "ending:ending.millers-mandate:eligible",
+                "convergence:thornferry-flood-season:preserve_flags"
+              ],
+              "summary": "Trust Tarrow with the Tally writes a durable fact and qualifies ending.millers-mandate.",
+              "terminalState": "crisisEnding"
+            },
+            "onFailure": {
+              "terminal": false,
+              "stateChanges": [
+                "choice:validation_error:record",
+                "choice:remain_uncommitted"
+              ],
+              "summary": "The engine rejects an illegal option without consuming a turn."
+            },
+            "lockout": "A valid fork commits once; the opposing fact is locked until an explicitly authored reversal crisis."
+          },
+          {
+            "id": "audit-tarrow",
+            "label": "Demand a Public Audit",
+            "requirements": [],
+            "method": "fork",
+            "onSuccess": {
+              "terminal": true,
+              "stateChanges": [
+                "fact:council-holds-tally:set:true",
+                "fact:tarrow-holds-tally:lock:false",
+                "callback:shortage.public-audit:schedule",
+                "ending:ending.open-granary:eligible",
+                "convergence:thornferry-flood-season:preserve_flags"
+              ],
+              "summary": "Demand a Public Audit writes the opposing fact and qualifies ending.open-granary.",
+              "terminalState": "crisisEnding"
+            },
+            "onFailure": {
+              "terminal": false,
+              "stateChanges": [
+                "choice:validation_error:record",
+                "choice:remain_uncommitted"
+              ],
+              "summary": "The engine rejects an illegal option without consuming a turn."
+            },
+            "lockout": "A valid fork commits once; the opposing fact is locked until an explicitly authored reversal crisis."
+          }
+        ]
+      },
+      "resolution": {
+        "mechanic": "fork",
+        "config": {
+          "exclusiveFactGroup": "trust-the-miller-commitment",
+          "delayedPayoffAt": "chapter-2-grain-shortage",
+          "convergencePoint": "thornferry-flood-season",
+          "convergencePolicy": "merge scene topology only; preserve facts, callbacks, relationships, and ending eligibility",
+          "commitOnce": true
+        },
+        "terminalStates": [
+          "crisisEnding"
+        ],
+        "maxTurns": 3,
+        "forcedTerminal": {
+          "terminal": true,
+          "stateChanges": [
+            "fact:tally-seized-by-bailiff:set:true",
+            "callback:shortage.bailiff-count:schedule",
+            "ending:ending.rationed-village:eligible",
+            "convergence:thornferry-flood-season:preserve_flags"
+          ],
+          "summary": "Delay commits tally-seized-by-bailiff; the crisis ends and schedules shortage.bailiff-count.",
+          "terminalState": "crisisEnding"
+        },
+        "antiRepeatRule": "After commit, the crisis ID is terminal and cannot respawn; convergence reads stored flags."
+      },
+      "aftermath": {
+        "minimumReceiptTypes": 3,
+        "byTerminal": {
+          "trust-tarrow": [
+            {
+              "type": "quest",
+              "target": "shortage.tarrow-account",
+              "operation": "unlock",
+              "value": true
+            },
+            {
+              "type": "faction",
+              "target": "millers",
+              "operation": "increment",
+              "value": 2
+            },
+            {
+              "type": "npc",
+              "target": "miller-tarrow",
+              "operation": "set",
+              "value": "trusted-steward"
+            }
+          ],
+          "audit-tarrow": [
+            {
+              "type": "quest",
+              "target": "shortage.public-audit",
+              "operation": "unlock",
+              "value": true
+            },
+            {
+              "type": "faction",
+              "target": "village-council",
+              "operation": "increment",
+              "value": 2
+            },
+            {
+              "type": "npc",
+              "target": "miller-tarrow",
+              "operation": "set",
+              "value": "watched-but-cooperative"
+            }
+          ]
+        }
+      },
+      "biomeFilter": {
+        "allow": [
+          "thornferry-mill"
+        ],
+        "siteTags": [
+          "trust-crisis"
+        ],
+        "requireFactionTags": [
+          "millers",
+          "village-council"
+        ],
+        "exclude": [
+          "vesper-glass",
+          "erebus-9",
+          "ashwinter-court"
+        ]
+      },
+      "turnWindow": {
+        "earliest": 6,
+        "latest": 40,
+        "cooldown": 9999,
+        "droughtEligible": true
+      },
+      "governance": {
+        "stage": "draft",
+        "contentHash": "0a6722de72046a96",
+        "owner": "encounter-design",
+        "replaces": null
+      },
+      "example": {
+        "telegraphProse": "Tarrow offers his sealed tally while the cooper warns that one page was replaced.",
+        "stakesProse": "Trust Tarrow with the Tally or Demand a Public Audit; each writes an exclusive fact, a delayed callback, and distinct ending eligibility.",
+        "resolutionProse": "The choice commits once within three turns. Both paths converge at thornferry-flood-season, which reads rather than erases the stored flags.",
+        "receiptProse": "The receipt records the selected fact, the locked opposite, faction and NPC changes, callback chapter-2-grain-shortage, and ending eligibility."
+      }
+    },
+    {
+      "schemaVersion": "1.0.0",
+      "templateVersion": "1.0.0",
+      "id": "thornferry.crisis.bandits-or-villagers",
+      "mode": "pyoa",
+      "bibleId": "thornferry",
+      "name": "Bandits or Villagers",
+      "role": "crisis",
+      "summary": "Decide which group receives the only safe ferry crossing before soldiers arrive.",
+      "telegraph": {
+        "required": true,
+        "channels": [
+          "scene"
+        ],
+        "cues": [
+          {
+            "channel": "scene",
+            "signal": "Two boats remain: one carries wounded villagers, the other repentant bandits with medicine.",
+            "inference": "The crisis presents an exclusive decision with a visible future callback.",
+            "actionHook": "ferry-villagers"
+          }
+        ],
+        "responseWindowTurns": 2,
+        "surpriseEligible": false,
+        "openingSeverityCap": "none"
+      },
+      "stakes": {
+        "headline": "Choose immediate lives, future medicine, and who is left to the soldiers.",
+        "approaches": [
+          {
+            "id": "ferry-villagers",
+            "label": "Ferry the Villagers First",
+            "requirements": [],
+            "method": "fork",
+            "onSuccess": {
+              "terminal": true,
+              "stateChanges": [
+                "fact:villagers-cross-first:set:true",
+                "fact:bandits-cross-first:lock:false",
+                "callback:soldiers.bandits-captured:schedule",
+                "ending:ending.village-kept:eligible",
+                "convergence:thornferry-east-bank:preserve_flags"
+              ],
+              "summary": "Ferry the Villagers First writes a durable fact and qualifies ending.village-kept.",
+              "terminalState": "crisisEnding"
+            },
+            "onFailure": {
+              "terminal": false,
+              "stateChanges": [
+                "choice:validation_error:record",
+                "choice:remain_uncommitted"
+              ],
+              "summary": "The engine rejects an illegal option without consuming a turn."
+            },
+            "lockout": "A valid fork commits once; the opposing fact is locked until an explicitly authored reversal crisis."
+          },
+          {
+            "id": "ferry-bandits",
+            "label": "Ferry the Bandits and Medicine",
+            "requirements": [],
+            "method": "fork",
+            "onSuccess": {
+              "terminal": true,
+              "stateChanges": [
+                "fact:bandits-cross-first:set:true",
+                "fact:villagers-cross-first:lock:false",
+                "callback:soldiers.villagers-delayed:schedule",
+                "ending:ending.mercy-road:eligible",
+                "convergence:thornferry-east-bank:preserve_flags"
+              ],
+              "summary": "Ferry the Bandits and Medicine writes the opposing fact and qualifies ending.mercy-road.",
+              "terminalState": "crisisEnding"
+            },
+            "onFailure": {
+              "terminal": false,
+              "stateChanges": [
+                "choice:validation_error:record",
+                "choice:remain_uncommitted"
+              ],
+              "summary": "The engine rejects an illegal option without consuming a turn."
+            },
+            "lockout": "A valid fork commits once; the opposing fact is locked until an explicitly authored reversal crisis."
+          }
+        ]
+      },
+      "resolution": {
+        "mechanic": "fork",
+        "config": {
+          "exclusiveFactGroup": "bandits-or-villagers-commitment",
+          "delayedPayoffAt": "chapter-3-soldier-arrival",
+          "convergencePoint": "thornferry-east-bank",
+          "convergencePolicy": "merge scene topology only; preserve facts, callbacks, relationships, and ending eligibility",
+          "commitOnce": true
+        },
+        "terminalStates": [
+          "crisisEnding"
+        ],
+        "maxTurns": 3,
+        "forcedTerminal": {
+          "terminal": true,
+          "stateChanges": [
+            "fact:both-boats-confiscated:set:true",
+            "callback:soldiers.ferry-seized:schedule",
+            "ending:ending.closed-crossing:eligible",
+            "convergence:thornferry-east-bank:preserve_flags"
+          ],
+          "summary": "Delay commits both-boats-confiscated; the crisis ends and schedules soldiers.ferry-seized.",
+          "terminalState": "crisisEnding"
+        },
+        "antiRepeatRule": "After commit, the crisis ID is terminal and cannot respawn; convergence reads stored flags."
+      },
+      "aftermath": {
+        "minimumReceiptTypes": 3,
+        "byTerminal": {
+          "ferry-villagers": [
+            {
+              "type": "quest",
+              "target": "soldiers.bandits-captured",
+              "operation": "unlock",
+              "value": true
+            },
+            {
+              "type": "faction",
+              "target": "villagers",
+              "operation": "increment",
+              "value": 2
+            },
+            {
+              "type": "npc",
+              "target": "bandit-lark",
+              "operation": "set",
+              "value": "left-behind"
+            }
+          ],
+          "ferry-bandits": [
+            {
+              "type": "quest",
+              "target": "soldiers.villagers-delayed",
+              "operation": "unlock",
+              "value": true
+            },
+            {
+              "type": "faction",
+              "target": "reed-bandits",
+              "operation": "increment",
+              "value": 2
+            },
+            {
+              "type": "npc",
+              "target": "bandit-lark",
+              "operation": "set",
+              "value": "allied"
+            }
+          ]
+        }
+      },
+      "biomeFilter": {
+        "allow": [
+          "thornferry-river"
+        ],
+        "siteTags": [
+          "ferry-crisis"
+        ],
+        "requireFactionTags": [
+          "villagers",
+          "reed-bandits"
+        ],
+        "exclude": [
+          "vesper-glass",
+          "erebus-9",
+          "ashwinter-court"
+        ]
+      },
+      "turnWindow": {
+        "earliest": 10,
+        "latest": 55,
+        "cooldown": 9999,
+        "droughtEligible": true
+      },
+      "governance": {
+        "stage": "draft",
+        "contentHash": "37fac2e3785c22a0",
+        "owner": "encounter-design",
+        "replaces": null
+      },
+      "example": {
+        "telegraphProse": "Two boats remain: one carries wounded villagers, the other repentant bandits with medicine.",
+        "stakesProse": "Ferry the Villagers First or Ferry the Bandits and Medicine; each writes an exclusive fact, a delayed callback, and distinct ending eligibility.",
+        "resolutionProse": "The choice commits once within three turns. Both paths converge at thornferry-east-bank, which reads rather than erases the stored flags.",
+        "receiptProse": "The receipt records the selected fact, the locked opposite, faction and NPC changes, callback chapter-3-soldier-arrival, and ending eligibility."
+      }
+    },
+    {
+      "schemaVersion": "1.0.0",
+      "templateVersion": "1.0.0",
+      "id": "thornferry.crisis.floodgate-sacrifice",
+      "mode": "pyoa",
+      "bibleId": "thornferry",
+      "name": "Floodgate Sacrifice",
+      "role": "crisis",
+      "summary": "Choose which district the emergency floodgate protects.",
+      "telegraph": {
+        "required": true,
+        "channels": [
+          "scene"
+        ],
+        "cues": [
+          {
+            "channel": "scene",
+            "signal": "The gate wheel can lock toward Mill Row or Reedbank only once before the axle shears.",
+            "inference": "The crisis presents an exclusive decision with a visible future callback.",
+            "actionHook": "protect-mill-row"
+          }
+        ],
+        "responseWindowTurns": 2,
+        "surpriseEligible": false,
+        "openingSeverityCap": "none"
+      },
+      "stakes": {
+        "headline": "Protect production or homes, with no hidden third position.",
+        "approaches": [
+          {
+            "id": "protect-mill-row",
+            "label": "Turn the Gate toward Mill Row",
+            "requirements": [],
+            "method": "fork",
+            "onSuccess": {
+              "terminal": true,
+              "stateChanges": [
+                "fact:mill-row-protected:set:true",
+                "fact:reedbank-protected:lock:false",
+                "callback:flood.reedbank-loss:schedule",
+                "ending:ending.granary-standing:eligible",
+                "convergence:thornferry-high-ground:preserve_flags"
+              ],
+              "summary": "Turn the Gate toward Mill Row writes a durable fact and qualifies ending.granary-standing.",
+              "terminalState": "crisisEnding"
+            },
+            "onFailure": {
+              "terminal": false,
+              "stateChanges": [
+                "choice:validation_error:record",
+                "choice:remain_uncommitted"
+              ],
+              "summary": "The engine rejects an illegal option without consuming a turn."
+            },
+            "lockout": "A valid fork commits once; the opposing fact is locked until an explicitly authored reversal crisis."
+          },
+          {
+            "id": "protect-reedbank",
+            "label": "Turn the Gate toward Reedbank",
+            "requirements": [],
+            "method": "fork",
+            "onSuccess": {
+              "terminal": true,
+              "stateChanges": [
+                "fact:reedbank-protected:set:true",
+                "fact:mill-row-protected:lock:false",
+                "callback:flood.mill-loss:schedule",
+                "ending:ending.homes-before-grain:eligible",
+                "convergence:thornferry-high-ground:preserve_flags"
+              ],
+              "summary": "Turn the Gate toward Reedbank writes the opposing fact and qualifies ending.homes-before-grain.",
+              "terminalState": "crisisEnding"
+            },
+            "onFailure": {
+              "terminal": false,
+              "stateChanges": [
+                "choice:validation_error:record",
+                "choice:remain_uncommitted"
+              ],
+              "summary": "The engine rejects an illegal option without consuming a turn."
+            },
+            "lockout": "A valid fork commits once; the opposing fact is locked until an explicitly authored reversal crisis."
+          }
+        ]
+      },
+      "resolution": {
+        "mechanic": "fork",
+        "config": {
+          "exclusiveFactGroup": "floodgate-sacrifice-commitment",
+          "delayedPayoffAt": "chapter-4-flood-impact",
+          "convergencePoint": "thornferry-high-ground",
+          "convergencePolicy": "merge scene topology only; preserve facts, callbacks, relationships, and ending eligibility",
+          "commitOnce": true
+        },
+        "terminalStates": [
+          "crisisEnding"
+        ],
+        "maxTurns": 3,
+        "forcedTerminal": {
+          "terminal": true,
+          "stateChanges": [
+            "fact:gate-axle-breaks-centered:set:true",
+            "callback:flood.both-damaged:schedule",
+            "ending:ending.shared-ruin:eligible",
+            "convergence:thornferry-high-ground:preserve_flags"
+          ],
+          "summary": "Delay commits gate-axle-breaks-centered; the crisis ends and schedules flood.both-damaged.",
+          "terminalState": "crisisEnding"
+        },
+        "antiRepeatRule": "After commit, the crisis ID is terminal and cannot respawn; convergence reads stored flags."
+      },
+      "aftermath": {
+        "minimumReceiptTypes": 3,
+        "byTerminal": {
+          "protect-mill-row": [
+            {
+              "type": "quest",
+              "target": "flood.reedbank-loss",
+              "operation": "unlock",
+              "value": true
+            },
+            {
+              "type": "faction",
+              "target": "millers",
+              "operation": "increment",
+              "value": 2
+            },
+            {
+              "type": "npc",
+              "target": "reeve-sona",
+              "operation": "set",
+              "value": "backs-industry"
+            }
+          ],
+          "protect-reedbank": [
+            {
+              "type": "quest",
+              "target": "flood.mill-loss",
+              "operation": "unlock",
+              "value": true
+            },
+            {
+              "type": "faction",
+              "target": "villagers",
+              "operation": "increment",
+              "value": 2
+            },
+            {
+              "type": "npc",
+              "target": "reeve-sona",
+              "operation": "set",
+              "value": "backs-homes"
+            }
+          ]
+        }
+      },
+      "biomeFilter": {
+        "allow": [
+          "thornferry-floodgate"
+        ],
+        "siteTags": [
+          "disaster-fork"
+        ],
+        "requireFactionTags": [
+          "millers",
+          "villagers"
+        ],
+        "exclude": [
+          "vesper-glass",
+          "erebus-9",
+          "ashwinter-court"
+        ]
+      },
+      "turnWindow": {
+        "earliest": 14,
+        "latest": 65,
+        "cooldown": 9999,
+        "droughtEligible": true
+      },
+      "governance": {
+        "stage": "draft",
+        "contentHash": "3d7552eb6b786af5",
+        "owner": "encounter-design",
+        "replaces": null
+      },
+      "example": {
+        "telegraphProse": "The gate wheel can lock toward Mill Row or Reedbank only once before the axle shears.",
+        "stakesProse": "Turn the Gate toward Mill Row or Turn the Gate toward Reedbank; each writes an exclusive fact, a delayed callback, and distinct ending eligibility.",
+        "resolutionProse": "The choice commits once within three turns. Both paths converge at thornferry-high-ground, which reads rather than erases the stored flags.",
+        "receiptProse": "The receipt records the selected fact, the locked opposite, faction and NPC changes, callback chapter-4-flood-impact, and ending eligibility."
+      }
+    },
+    {
+      "schemaVersion": "1.0.0",
+      "templateVersion": "1.0.0",
+      "id": "thornferry.crisis.bell-of-witness",
+      "mode": "pyoa",
+      "bibleId": "thornferry",
+      "name": "Bell of Witness",
+      "role": "crisis",
+      "summary": "Choose whether to ring a bell that summons testimony and invading authority alike.",
+      "telegraph": {
+        "required": true,
+        "channels": [
+          "scene"
+        ],
+        "cues": [
+          {
+            "channel": "scene",
+            "signal": "The witness bell carries to the county fort; ringing exposes the Baron and invites occupation.",
+            "inference": "The crisis presents an exclusive decision with a visible future callback.",
+            "actionHook": "ring-bell"
+          }
+        ],
+        "responseWindowTurns": 2,
+        "surpriseEligible": false,
+        "openingSeverityCap": "none"
+      },
+      "stakes": {
+        "headline": "Choose public proof or local secrecy.",
+        "approaches": [
+          {
+            "id": "ring-bell",
+            "label": "Ring the Bell of Witness",
+            "requirements": [],
+            "method": "fork",
+            "onSuccess": {
+              "terminal": true,
+              "stateChanges": [
+                "fact:county-witness-summoned:set:true",
+                "fact:local-silence-kept:lock:false",
+                "callback:trial.county-witnesses:schedule",
+                "ending:ending.barony-overturned:eligible",
+                "convergence:thornferry-court-day:preserve_flags"
+              ],
+              "summary": "Ring the Bell of Witness writes a durable fact and qualifies ending.barony-overturned.",
+              "terminalState": "crisisEnding"
+            },
+            "onFailure": {
+              "terminal": false,
+              "stateChanges": [
+                "choice:validation_error:record",
+                "choice:remain_uncommitted"
+              ],
+              "summary": "The engine rejects an illegal option without consuming a turn."
+            },
+            "lockout": "A valid fork commits once; the opposing fact is locked until an explicitly authored reversal crisis."
+          },
+          {
+            "id": "keep-silence",
+            "label": "Muffle the Bell",
+            "requirements": [],
+            "method": "fork",
+            "onSuccess": {
+              "terminal": true,
+              "stateChanges": [
+                "fact:local-silence-kept:set:true",
+                "fact:county-witness-summoned:lock:false",
+                "callback:trial.local-bargain:schedule",
+                "ending:ending.thornferry-autonomy:eligible",
+                "convergence:thornferry-court-day:preserve_flags"
+              ],
+              "summary": "Muffle the Bell writes the opposing fact and qualifies ending.thornferry-autonomy.",
+              "terminalState": "crisisEnding"
+            },
+            "onFailure": {
+              "terminal": false,
+              "stateChanges": [
+                "choice:validation_error:record",
+                "choice:remain_uncommitted"
+              ],
+              "summary": "The engine rejects an illegal option without consuming a turn."
+            },
+            "lockout": "A valid fork commits once; the opposing fact is locked until an explicitly authored reversal crisis."
+          }
+        ]
+      },
+      "resolution": {
+        "mechanic": "fork",
+        "config": {
+          "exclusiveFactGroup": "bell-of-witness-commitment",
+          "delayedPayoffAt": "chapter-5-charter-trial",
+          "convergencePoint": "thornferry-court-day",
+          "convergencePolicy": "merge scene topology only; preserve facts, callbacks, relationships, and ending eligibility",
+          "commitOnce": true
+        },
+        "terminalStates": [
+          "crisisEnding"
+        ],
+        "maxTurns": 3,
+        "forcedTerminal": {
+          "terminal": true,
+          "stateChanges": [
+            "fact:bell-rings-in-storm:set:true",
+            "callback:trial.uncontrolled-summons:schedule",
+            "ending:ending.occupied-ferry:eligible",
+            "convergence:thornferry-court-day:preserve_flags"
+          ],
+          "summary": "Delay commits bell-rings-in-storm; the crisis ends and schedules trial.uncontrolled-summons.",
+          "terminalState": "crisisEnding"
+        },
+        "antiRepeatRule": "After commit, the crisis ID is terminal and cannot respawn; convergence reads stored flags."
+      },
+      "aftermath": {
+        "minimumReceiptTypes": 3,
+        "byTerminal": {
+          "ring-bell": [
+            {
+              "type": "quest",
+              "target": "trial.county-witnesses",
+              "operation": "unlock",
+              "value": true
+            },
+            {
+              "type": "faction",
+              "target": "county-court",
+              "operation": "increment",
+              "value": 2
+            },
+            {
+              "type": "npc",
+              "target": "miller-tarrow",
+              "operation": "set",
+              "value": "public-witness"
+            }
+          ],
+          "keep-silence": [
+            {
+              "type": "quest",
+              "target": "trial.local-bargain",
+              "operation": "unlock",
+              "value": true
+            },
+            {
+              "type": "faction",
+              "target": "villagers",
+              "operation": "increment",
+              "value": 1
+            },
+            {
+              "type": "npc",
+              "target": "miller-tarrow",
+              "operation": "set",
+              "value": "secret-keeper"
+            }
+          ]
+        }
+      },
+      "biomeFilter": {
+        "allow": [
+          "thornferry-bell-tower"
+        ],
+        "siteTags": [
+          "witness-fork"
+        ],
+        "requireFactionTags": [
+          "county-court",
+          "villagers"
+        ],
+        "exclude": [
+          "vesper-glass",
+          "erebus-9",
+          "ashwinter-court"
+        ]
+      },
+      "turnWindow": {
+        "earliest": 18,
+        "latest": 75,
+        "cooldown": 9999,
+        "droughtEligible": true
+      },
+      "governance": {
+        "stage": "draft",
+        "contentHash": "a45e39ed3761f414",
+        "owner": "encounter-design",
+        "replaces": null
+      },
+      "example": {
+        "telegraphProse": "The witness bell carries to the county fort; ringing exposes the Baron and invites occupation.",
+        "stakesProse": "Ring the Bell of Witness or Muffle the Bell; each writes an exclusive fact, a delayed callback, and distinct ending eligibility.",
+        "resolutionProse": "The choice commits once within three turns. Both paths converge at thornferry-court-day, which reads rather than erases the stored flags.",
+        "receiptProse": "The receipt records the selected fact, the locked opposite, faction and NPC changes, callback chapter-5-charter-trial, and ending eligibility."
+      }
+    },
+    {
+      "schemaVersion": "1.0.0",
+      "templateVersion": "1.0.0",
+      "id": "thornferry.crisis.ferrymans-ending",
+      "mode": "pyoa",
+      "bibleId": "thornferry",
+      "name": "Ferryman’s Ending",
+      "role": "crisis",
+      "summary": "Choose the final custody of the ferry and its toll charter.",
+      "telegraph": {
+        "required": true,
+        "channels": [
+          "scene"
+        ],
+        "cues": [
+          {
+            "channel": "scene",
+            "signal": "At dawn the old ferryman offers the oar to the village or to the player; accepting either closes the other succession.",
+            "inference": "The crisis presents an exclusive decision with a visible future callback.",
+            "actionHook": "give-village-oar"
+          }
+        ],
+        "responseWindowTurns": 2,
+        "surpriseEligible": false,
+        "openingSeverityCap": "none"
+      },
+      "stakes": {
+        "headline": "Choose stewardship or personal rule.",
+        "approaches": [
+          {
+            "id": "give-village-oar",
+            "label": "Give the Oar to the Village",
+            "requirements": [],
+            "method": "fork",
+            "onSuccess": {
+              "terminal": true,
+              "stateChanges": [
+                "fact:village-owns-ferry:set:true",
+                "fact:player-owns-ferry:lock:false",
+                "callback:epilogue.common-crossing:schedule",
+                "ending:ending.common-ferry:eligible",
+                "convergence:thornferry-epilogue:preserve_flags"
+              ],
+              "summary": "Give the Oar to the Village writes a durable fact and qualifies ending.common-ferry.",
+              "terminalState": "crisisEnding"
+            },
+            "onFailure": {
+              "terminal": false,
+              "stateChanges": [
+                "choice:validation_error:record",
+                "choice:remain_uncommitted"
+              ],
+              "summary": "The engine rejects an illegal option without consuming a turn."
+            },
+            "lockout": "A valid fork commits once; the opposing fact is locked until an explicitly authored reversal crisis."
+          },
+          {
+            "id": "take-ferrymans-oar",
+            "label": "Take the Ferryman’s Oar",
+            "requirements": [],
+            "method": "fork",
+            "onSuccess": {
+              "terminal": true,
+              "stateChanges": [
+                "fact:player-owns-ferry:set:true",
+                "fact:village-owns-ferry:lock:false",
+                "callback:epilogue.player-tolls:schedule",
+                "ending:ending.new-ferryman:eligible",
+                "convergence:thornferry-epilogue:preserve_flags"
+              ],
+              "summary": "Take the Ferryman’s Oar writes the opposing fact and qualifies ending.new-ferryman.",
+              "terminalState": "crisisEnding"
+            },
+            "onFailure": {
+              "terminal": false,
+              "stateChanges": [
+                "choice:validation_error:record",
+                "choice:remain_uncommitted"
+              ],
+              "summary": "The engine rejects an illegal option without consuming a turn."
+            },
+            "lockout": "A valid fork commits once; the opposing fact is locked until an explicitly authored reversal crisis."
+          }
+        ]
+      },
+      "resolution": {
+        "mechanic": "fork",
+        "config": {
+          "exclusiveFactGroup": "ferrymans-ending-commitment",
+          "delayedPayoffAt": "epilogue-river-crossing",
+          "convergencePoint": "thornferry-epilogue",
+          "convergencePolicy": "merge scene topology only; preserve facts, callbacks, relationships, and ending eligibility",
+          "commitOnce": true
+        },
+        "terminalStates": [
+          "crisisEnding"
+        ],
+        "maxTurns": 3,
+        "forcedTerminal": {
+          "terminal": true,
+          "stateChanges": [
+            "fact:barony-claims-ferry:set:true",
+            "callback:epilogue.baronial-tolls:schedule",
+            "ending:ending.barons-ferry:eligible",
+            "convergence:thornferry-epilogue:preserve_flags"
+          ],
+          "summary": "Delay commits barony-claims-ferry; the crisis ends and schedules epilogue.baronial-tolls.",
+          "terminalState": "crisisEnding"
+        },
+        "antiRepeatRule": "After commit, the crisis ID is terminal and cannot respawn; convergence reads stored flags."
+      },
+      "aftermath": {
+        "minimumReceiptTypes": 3,
+        "byTerminal": {
+          "give-village-oar": [
+            {
+              "type": "quest",
+              "target": "epilogue.common-crossing",
+              "operation": "unlock",
+              "value": true
+            },
+            {
+              "type": "faction",
+              "target": "villagers",
+              "operation": "increment",
+              "value": 3
+            },
+            {
+              "type": "npc",
+              "target": "old-ferryman",
+              "operation": "set",
+              "value": "retired-content"
+            }
+          ],
+          "take-ferrymans-oar": [
+            {
+              "type": "quest",
+              "target": "epilogue.player-tolls",
+              "operation": "unlock",
+              "value": true
+            },
+            {
+              "type": "faction",
+              "target": "ferrymens-guild",
+              "operation": "increment",
+              "value": 3
+            },
+            {
+              "type": "npc",
+              "target": "old-ferryman",
+              "operation": "set",
+              "value": "names-successor"
+            }
+          ]
+        }
+      },
+      "biomeFilter": {
+        "allow": [
+          "thornferry-ferry"
+        ],
+        "siteTags": [
+          "ending-fork"
+        ],
+        "requireFactionTags": [
+          "villagers",
+          "ferrymens-guild"
+        ],
+        "exclude": [
+          "vesper-glass",
+          "erebus-9",
+          "ashwinter-court"
+        ]
+      },
+      "turnWindow": {
+        "earliest": 22,
+        "latest": 95,
+        "cooldown": 9999,
+        "droughtEligible": true
+      },
+      "governance": {
+        "stage": "draft",
+        "contentHash": "39a3adaf3b6af665",
+        "owner": "encounter-design",
+        "replaces": null
+      },
+      "example": {
+        "telegraphProse": "At dawn the old ferryman offers the oar to the village or to the player; accepting either closes the other succession.",
+        "stakesProse": "Give the Oar to the Village or Take the Ferryman’s Oar; each writes an exclusive fact, a delayed callback, and distinct ending eligibility.",
+        "resolutionProse": "The choice commits once within three turns. Both paths converge at thornferry-epilogue, which reads rather than erases the stored flags.",
+        "receiptProse": "The receipt records the selected fact, the locked opposite, faction and NPC changes, callback epilogue-river-crossing, and ending eligibility."
+      }
+    },
+    {
+      "schemaVersion": "1.0.0",
+      "templateVersion": "1.0.0",
+      "id": "vesper-glass.crisis.mirror-census",
+      "mode": "pyoa",
+      "bibleId": "vesper-glass",
+      "name": "Mirror Census",
+      "role": "crisis",
+      "summary": "Choose whether citizens must register reflections to prove identity.",
+      "telegraph": {
+        "required": true,
+        "channels": [
+          "scene"
+        ],
+        "cues": [
+          {
+            "channel": "scene",
+            "signal": "The census mirror can reveal impostors but permanently archives every registered face.",
+            "inference": "The crisis presents an exclusive decision with a visible future callback.",
+            "actionHook": "open-census"
+          }
+        ],
+        "responseWindowTurns": 2,
+        "surpriseEligible": false,
+        "openingSeverityCap": "none"
+      },
+      "stakes": {
+        "headline": "Choose security through registration or privacy through refusal.",
+        "approaches": [
+          {
+            "id": "open-census",
+            "label": "Open the Mirror Census",
+            "requirements": [],
+            "method": "fork",
+            "onSuccess": {
+              "terminal": true,
+              "stateChanges": [
+                "fact:reflection-census-active:set:true",
+                "fact:reflection-census-refused:lock:false",
+                "callback:masquerade.registered-faces:schedule",
+                "ending:ending.city-accounted:eligible",
+                "convergence:vesper-glass-equinox:preserve_flags"
+              ],
+              "summary": "Open the Mirror Census writes a durable fact and qualifies ending.city-accounted.",
+              "terminalState": "crisisEnding"
+            },
+            "onFailure": {
+              "terminal": false,
+              "stateChanges": [
+                "choice:validation_error:record",
+                "choice:remain_uncommitted"
+              ],
+              "summary": "The engine rejects an illegal option without consuming a turn."
+            },
+            "lockout": "A valid fork commits once; the opposing fact is locked until an explicitly authored reversal crisis."
+          },
+          {
+            "id": "refuse-census",
+            "label": "Shatter the Census Seal",
+            "requirements": [],
+            "method": "fork",
+            "onSuccess": {
+              "terminal": true,
+              "stateChanges": [
+                "fact:reflection-census-refused:set:true",
+                "fact:reflection-census-active:lock:false",
+                "callback:masquerade.unregistered:schedule",
+                "ending:ending.unmeasured-city:eligible",
+                "convergence:vesper-glass-equinox:preserve_flags"
+              ],
+              "summary": "Shatter the Census Seal writes the opposing fact and qualifies ending.unmeasured-city.",
+              "terminalState": "crisisEnding"
+            },
+            "onFailure": {
+              "terminal": false,
+              "stateChanges": [
+                "choice:validation_error:record",
+                "choice:remain_uncommitted"
+              ],
+              "summary": "The engine rejects an illegal option without consuming a turn."
+            },
+            "lockout": "A valid fork commits once; the opposing fact is locked until an explicitly authored reversal crisis."
+          }
+        ]
+      },
+      "resolution": {
+        "mechanic": "fork",
+        "config": {
+          "exclusiveFactGroup": "mirror-census-commitment",
+          "delayedPayoffAt": "chapter-2-masquerade",
+          "convergencePoint": "vesper-glass-equinox",
+          "convergencePolicy": "merge scene topology only; preserve facts, callbacks, relationships, and ending eligibility",
+          "commitOnce": true
+        },
+        "terminalStates": [
+          "crisisEnding"
+        ],
+        "maxTurns": 3,
+        "forcedTerminal": {
+          "terminal": true,
+          "stateChanges": [
+            "fact:census-seal-self-activates:set:true",
+            "callback:masquerade.corrupt-census:schedule",
+            "ending:ending.false-register:eligible",
+            "convergence:vesper-glass-equinox:preserve_flags"
+          ],
+          "summary": "Delay commits census-seal-self-activates; the crisis ends and schedules masquerade.corrupt-census.",
+          "terminalState": "crisisEnding"
+        },
+        "antiRepeatRule": "After commit, the crisis ID is terminal and cannot respawn; convergence reads stored flags."
+      },
+      "aftermath": {
+        "minimumReceiptTypes": 3,
+        "byTerminal": {
+          "open-census": [
+            {
+              "type": "quest",
+              "target": "masquerade.registered-faces",
+              "operation": "unlock",
+              "value": true
+            },
+            {
+              "type": "faction",
+              "target": "glass-magistracy",
+              "operation": "increment",
+              "value": 2
+            },
+            {
+              "type": "npc",
+              "target": "registrar-vee",
+              "operation": "set",
+              "value": "empowered"
+            }
+          ],
+          "refuse-census": [
+            {
+              "type": "quest",
+              "target": "masquerade.unregistered",
+              "operation": "unlock",
+              "value": true
+            },
+            {
+              "type": "faction",
+              "target": "maskers",
+              "operation": "increment",
+              "value": 2
+            },
+            {
+              "type": "npc",
+              "target": "registrar-vee",
+              "operation": "set",
+              "value": "opposed"
+            }
+          ]
+        }
+      },
+      "biomeFilter": {
+        "allow": [
+          "vesper-glass-census-hall"
+        ],
+        "siteTags": [
+          "identity-fork"
+        ],
+        "requireFactionTags": [
+          "glass-magistracy",
+          "maskers"
+        ],
+        "exclude": [
+          "thornferry",
+          "erebus-9",
+          "ashwinter-court"
+        ]
+      },
+      "turnWindow": {
+        "earliest": 4,
+        "latest": 35,
+        "cooldown": 9999,
+        "droughtEligible": true
+      },
+      "governance": {
+        "stage": "draft",
+        "contentHash": "2c101d2959ed50ca",
+        "owner": "encounter-design",
+        "replaces": null
+      },
+      "example": {
+        "telegraphProse": "The census mirror can reveal impostors but permanently archives every registered face.",
+        "stakesProse": "Open the Mirror Census or Shatter the Census Seal; each writes an exclusive fact, a delayed callback, and distinct ending eligibility.",
+        "resolutionProse": "The choice commits once within three turns. Both paths converge at vesper-glass-equinox, which reads rather than erases the stored flags.",
+        "receiptProse": "The receipt records the selected fact, the locked opposite, faction and NPC changes, callback chapter-2-masquerade, and ending eligibility."
+      }
+    },
+    {
+      "schemaVersion": "1.0.0",
+      "templateVersion": "1.0.0",
+      "id": "vesper-glass.crisis.smugglers-reflection",
+      "mode": "pyoa",
+      "bibleId": "vesper-glass",
+      "name": "Smuggler’s Reflection",
+      "role": "crisis",
+      "summary": "Choose whether to shelter a reflection detached from its smuggler owner.",
+      "telegraph": {
+        "required": true,
+        "channels": [
+          "scene"
+        ],
+        "cues": [
+          {
+            "channel": "scene",
+            "signal": "The loose reflection knows the canal route; returning it restores one criminal, while sheltering it creates a new person.",
+            "inference": "The crisis presents an exclusive decision with a visible future callback.",
+            "actionHook": "return-reflection"
+          }
+        ],
+        "responseWindowTurns": 2,
+        "surpriseEligible": false,
+        "openingSeverityCap": "none"
+      },
+      "stakes": {
+        "headline": "Choose restoration or emancipation.",
+        "approaches": [
+          {
+            "id": "return-reflection",
+            "label": "Return the Smuggler’s Reflection",
+            "requirements": [],
+            "method": "fork",
+            "onSuccess": {
+              "terminal": true,
+              "stateChanges": [
+                "fact:reflection-returned:set:true",
+                "fact:reflection-emancipated:lock:false",
+                "callback:canal.smuggler-restored:schedule",
+                "ending:ending.debt-paid:eligible",
+                "convergence:vesper-glass-canal-hub:preserve_flags"
+              ],
+              "summary": "Return the Smuggler’s Reflection writes a durable fact and qualifies ending.debt-paid.",
+              "terminalState": "crisisEnding"
+            },
+            "onFailure": {
+              "terminal": false,
+              "stateChanges": [
+                "choice:validation_error:record",
+                "choice:remain_uncommitted"
+              ],
+              "summary": "The engine rejects an illegal option without consuming a turn."
+            },
+            "lockout": "A valid fork commits once; the opposing fact is locked until an explicitly authored reversal crisis."
+          },
+          {
+            "id": "free-reflection",
+            "label": "Grant the Reflection a Name",
+            "requirements": [],
+            "method": "fork",
+            "onSuccess": {
+              "terminal": true,
+              "stateChanges": [
+                "fact:reflection-emancipated:set:true",
+                "fact:reflection-returned:lock:false",
+                "callback:canal.named-reflection:schedule",
+                "ending:ending.second-self:eligible",
+                "convergence:vesper-glass-canal-hub:preserve_flags"
+              ],
+              "summary": "Grant the Reflection a Name writes the opposing fact and qualifies ending.second-self.",
+              "terminalState": "crisisEnding"
+            },
+            "onFailure": {
+              "terminal": false,
+              "stateChanges": [
+                "choice:validation_error:record",
+                "choice:remain_uncommitted"
+              ],
+              "summary": "The engine rejects an illegal option without consuming a turn."
+            },
+            "lockout": "A valid fork commits once; the opposing fact is locked until an explicitly authored reversal crisis."
+          }
+        ]
+      },
+      "resolution": {
+        "mechanic": "fork",
+        "config": {
+          "exclusiveFactGroup": "smugglers-reflection-commitment",
+          "delayedPayoffAt": "chapter-3-canal-crossing",
+          "convergencePoint": "vesper-glass-canal-hub",
+          "convergencePolicy": "merge scene topology only; preserve facts, callbacks, relationships, and ending eligibility",
+          "commitOnce": true
+        },
+        "terminalStates": [
+          "crisisEnding"
+        ],
+        "maxTurns": 3,
+        "forcedTerminal": {
+          "terminal": true,
+          "stateChanges": [
+            "fact:reflection-fades-unnamed:set:true",
+            "callback:canal.lost-route:schedule",
+            "ending:ending.no-second-chance:eligible",
+            "convergence:vesper-glass-canal-hub:preserve_flags"
+          ],
+          "summary": "Delay commits reflection-fades-unnamed; the crisis ends and schedules canal.lost-route.",
+          "terminalState": "crisisEnding"
+        },
+        "antiRepeatRule": "After commit, the crisis ID is terminal and cannot respawn; convergence reads stored flags."
+      },
+      "aftermath": {
+        "minimumReceiptTypes": 3,
+        "byTerminal": {
+          "return-reflection": [
+            {
+              "type": "quest",
+              "target": "canal.smuggler-restored",
+              "operation": "unlock",
+              "value": true
+            },
+            {
+              "type": "faction",
+              "target": "canal-smugglers",
+              "operation": "increment",
+              "value": 2
+            },
+            {
+              "type": "npc",
+              "target": "smuggler-sio",
+              "operation": "set",
+              "value": "whole-again"
+            }
+          ],
+          "free-reflection": [
+            {
+              "type": "quest",
+              "target": "canal.named-reflection",
+              "operation": "unlock",
+              "value": true
+            },
+            {
+              "type": "faction",
+              "target": "free-reflections",
+              "operation": "increment",
+              "value": 3
+            },
+            {
+              "type": "npc",
+              "target": "smuggler-sio",
+              "operation": "set",
+              "value": "bereft-but-alive"
+            }
+          ]
+        }
+      },
+      "biomeFilter": {
+        "allow": [
+          "vesper-glass-canals"
+        ],
+        "siteTags": [
+          "reflection-fork"
+        ],
+        "requireFactionTags": [
+          "canal-smugglers",
+          "free-reflections"
+        ],
+        "exclude": [
+          "thornferry",
+          "erebus-9",
+          "ashwinter-court"
+        ]
+      },
+      "turnWindow": {
+        "earliest": 7,
+        "latest": 45,
+        "cooldown": 9999,
+        "droughtEligible": true
+      },
+      "governance": {
+        "stage": "draft",
+        "contentHash": "4b9e81bbae1bb20a",
+        "owner": "encounter-design",
+        "replaces": null
+      },
+      "example": {
+        "telegraphProse": "The loose reflection knows the canal route; returning it restores one criminal, while sheltering it creates a new person.",
+        "stakesProse": "Return the Smuggler’s Reflection or Grant the Reflection a Name; each writes an exclusive fact, a delayed callback, and distinct ending eligibility.",
+        "resolutionProse": "The choice commits once within three turns. Both paths converge at vesper-glass-canal-hub, which reads rather than erases the stored flags.",
+        "receiptProse": "The receipt records the selected fact, the locked opposite, faction and NPC changes, callback chapter-3-canal-crossing, and ending eligibility."
+      }
+    },
+    {
+      "schemaVersion": "1.0.0",
+      "templateVersion": "1.0.0",
+      "id": "vesper-glass.crisis.broken-opera-pact",
+      "mode": "pyoa",
+      "bibleId": "vesper-glass",
+      "name": "Broken Opera Pact",
+      "role": "crisis",
+      "summary": "Choose which singer carries a lethal note needed to finish the opera ward.",
+      "telegraph": {
+        "required": true,
+        "channels": [
+          "scene"
+        ],
+        "cues": [
+          {
+            "channel": "scene",
+            "signal": "Only one throat can hold the final glass note; the lead demands it, while the understudy offers consent.",
+            "inference": "The crisis presents an exclusive decision with a visible future callback.",
+            "actionHook": "give-note-to-lead"
+          }
+        ],
+        "responseWindowTurns": 2,
+        "surpriseEligible": false,
+        "openingSeverityCap": "none"
+      },
+      "stakes": {
+        "headline": "Choose fame-bound duty or voluntary sacrifice.",
+        "approaches": [
+          {
+            "id": "give-note-to-lead",
+            "label": "Bind the Note to the Lead",
+            "requirements": [],
+            "method": "fork",
+            "onSuccess": {
+              "terminal": true,
+              "stateChanges": [
+                "fact:lead-holds-final-note:set:true",
+                "fact:understudy-holds-final-note:lock:false",
+                "callback:opera.leads-last-aria:schedule",
+                "ending:ending.perfect-opera:eligible",
+                "convergence:vesper-glass-opera-night:preserve_flags"
+              ],
+              "summary": "Bind the Note to the Lead writes a durable fact and qualifies ending.perfect-opera.",
+              "terminalState": "crisisEnding"
+            },
+            "onFailure": {
+              "terminal": false,
+              "stateChanges": [
+                "choice:validation_error:record",
+                "choice:remain_uncommitted"
+              ],
+              "summary": "The engine rejects an illegal option without consuming a turn."
+            },
+            "lockout": "A valid fork commits once; the opposing fact is locked until an explicitly authored reversal crisis."
+          },
+          {
+            "id": "give-note-to-understudy",
+            "label": "Accept the Understudy’s Offer",
+            "requirements": [],
+            "method": "fork",
+            "onSuccess": {
+              "terminal": true,
+              "stateChanges": [
+                "fact:understudy-holds-final-note:set:true",
+                "fact:lead-holds-final-note:lock:false",
+                "callback:opera.understudy-aria:schedule",
+                "ending:ending.consent-in-glass:eligible",
+                "convergence:vesper-glass-opera-night:preserve_flags"
+              ],
+              "summary": "Accept the Understudy’s Offer writes the opposing fact and qualifies ending.consent-in-glass.",
+              "terminalState": "crisisEnding"
+            },
+            "onFailure": {
+              "terminal": false,
+              "stateChanges": [
+                "choice:validation_error:record",
+                "choice:remain_uncommitted"
+              ],
+              "summary": "The engine rejects an illegal option without consuming a turn."
+            },
+            "lockout": "A valid fork commits once; the opposing fact is locked until an explicitly authored reversal crisis."
+          }
+        ]
+      },
+      "resolution": {
+        "mechanic": "fork",
+        "config": {
+          "exclusiveFactGroup": "broken-opera-pact-commitment",
+          "delayedPayoffAt": "chapter-4-final-aria",
+          "convergencePoint": "vesper-glass-opera-night",
+          "convergencePolicy": "merge scene topology only; preserve facts, callbacks, relationships, and ending eligibility",
+          "commitOnce": true
+        },
+        "terminalStates": [
+          "crisisEnding"
+        ],
+        "maxTurns": 3,
+        "forcedTerminal": {
+          "terminal": true,
+          "stateChanges": [
+            "fact:note-binds-random-singer:set:true",
+            "callback:opera.chaotic-aria:schedule",
+            "ending:ending.shattered-stage:eligible",
+            "convergence:vesper-glass-opera-night:preserve_flags"
+          ],
+          "summary": "Delay commits note-binds-random-singer; the crisis ends and schedules opera.chaotic-aria.",
+          "terminalState": "crisisEnding"
+        },
+        "antiRepeatRule": "After commit, the crisis ID is terminal and cannot respawn; convergence reads stored flags."
+      },
+      "aftermath": {
+        "minimumReceiptTypes": 3,
+        "byTerminal": {
+          "give-note-to-lead": [
+            {
+              "type": "quest",
+              "target": "opera.leads-last-aria",
+              "operation": "unlock",
+              "value": true
+            },
+            {
+              "type": "faction",
+              "target": "opera-house",
+              "operation": "increment",
+              "value": 2
+            },
+            {
+              "type": "npc",
+              "target": "singer-avel",
+              "operation": "set",
+              "value": "bound-to-role"
+            }
+          ],
+          "give-note-to-understudy": [
+            {
+              "type": "quest",
+              "target": "opera.understudy-aria",
+              "operation": "unlock",
+              "value": true
+            },
+            {
+              "type": "faction",
+              "target": "chorus-union",
+              "operation": "increment",
+              "value": 2
+            },
+            {
+              "type": "npc",
+              "target": "singer-avel",
+              "operation": "set",
+              "value": "freed-from-role"
+            }
+          ]
+        }
+      },
+      "biomeFilter": {
+        "allow": [
+          "vesper-glass-opera"
+        ],
+        "siteTags": [
+          "sacrifice-fork"
+        ],
+        "requireFactionTags": [
+          "opera-house",
+          "chorus-union"
+        ],
+        "exclude": [
+          "thornferry",
+          "erebus-9",
+          "ashwinter-court"
+        ]
+      },
+      "turnWindow": {
+        "earliest": 10,
+        "latest": 60,
+        "cooldown": 9999,
+        "droughtEligible": true
+      },
+      "governance": {
+        "stage": "draft",
+        "contentHash": "88f002cc896c6bfc",
+        "owner": "encounter-design",
+        "replaces": null
+      },
+      "example": {
+        "telegraphProse": "Only one throat can hold the final glass note; the lead demands it, while the understudy offers consent.",
+        "stakesProse": "Bind the Note to the Lead or Accept the Understudy’s Offer; each writes an exclusive fact, a delayed callback, and distinct ending eligibility.",
+        "resolutionProse": "The choice commits once within three turns. Both paths converge at vesper-glass-opera-night, which reads rather than erases the stored flags.",
+        "receiptProse": "The receipt records the selected fact, the locked opposite, faction and NPC changes, callback chapter-4-final-aria, and ending eligibility."
+      }
+    },
+    {
+      "schemaVersion": "1.0.0",
+      "templateVersion": "1.0.0",
+      "id": "vesper-glass.crisis.name-in-glass",
+      "mode": "pyoa",
+      "bibleId": "vesper-glass",
+      "name": "Name in Glass",
+      "role": "crisis",
+      "summary": "Choose whether to reveal a true name etched beneath the city mirror.",
+      "telegraph": {
+        "required": true,
+        "channels": [
+          "scene"
+        ],
+        "cues": [
+          {
+            "channel": "scene",
+            "signal": "Speaking the etched name frees its owner and also lets every listener command them once.",
+            "inference": "The crisis presents an exclusive decision with a visible future callback.",
+            "actionHook": "speak-true-name"
+          }
+        ],
+        "responseWindowTurns": 2,
+        "surpriseEligible": false,
+        "openingSeverityCap": "none"
+      },
+      "stakes": {
+        "headline": "Choose exposure or concealment.",
+        "approaches": [
+          {
+            "id": "speak-true-name",
+            "label": "Speak the Name Publicly",
+            "requirements": [],
+            "method": "fork",
+            "onSuccess": {
+              "terminal": true,
+              "stateChanges": [
+                "fact:true-name-public:set:true",
+                "fact:true-name-hidden:lock:false",
+                "callback:trial.commanded-witness:schedule",
+                "ending:ending.named-and-free:eligible",
+                "convergence:vesper-glass-trial:preserve_flags"
+              ],
+              "summary": "Speak the Name Publicly writes a durable fact and qualifies ending.named-and-free.",
+              "terminalState": "crisisEnding"
+            },
+            "onFailure": {
+              "terminal": false,
+              "stateChanges": [
+                "choice:validation_error:record",
+                "choice:remain_uncommitted"
+              ],
+              "summary": "The engine rejects an illegal option without consuming a turn."
+            },
+            "lockout": "A valid fork commits once; the opposing fact is locked until an explicitly authored reversal crisis."
+          },
+          {
+            "id": "hide-true-name",
+            "label": "Silver Over the Name",
+            "requirements": [],
+            "method": "fork",
+            "onSuccess": {
+              "terminal": true,
+              "stateChanges": [
+                "fact:true-name-hidden:set:true",
+                "fact:true-name-public:lock:false",
+                "callback:trial.anonymous-witness:schedule",
+                "ending:ending.protected-silence:eligible",
+                "convergence:vesper-glass-trial:preserve_flags"
+              ],
+              "summary": "Silver Over the Name writes the opposing fact and qualifies ending.protected-silence.",
+              "terminalState": "crisisEnding"
+            },
+            "onFailure": {
+              "terminal": false,
+              "stateChanges": [
+                "choice:validation_error:record",
+                "choice:remain_uncommitted"
+              ],
+              "summary": "The engine rejects an illegal option without consuming a turn."
+            },
+            "lockout": "A valid fork commits once; the opposing fact is locked until an explicitly authored reversal crisis."
+          }
+        ]
+      },
+      "resolution": {
+        "mechanic": "fork",
+        "config": {
+          "exclusiveFactGroup": "name-in-glass-commitment",
+          "delayedPayoffAt": "chapter-5-mirror-trial",
+          "convergencePoint": "vesper-glass-trial",
+          "convergencePolicy": "merge scene topology only; preserve facts, callbacks, relationships, and ending eligibility",
+          "commitOnce": true
+        },
+        "terminalStates": [
+          "crisisEnding"
+        ],
+        "maxTurns": 3,
+        "forcedTerminal": {
+          "terminal": true,
+          "stateChanges": [
+            "fact:name-reflects-by-itself:set:true",
+            "callback:trial.uncontrolled-name:schedule",
+            "ending:ending.echo-servant:eligible",
+            "convergence:vesper-glass-trial:preserve_flags"
+          ],
+          "summary": "Delay commits name-reflects-by-itself; the crisis ends and schedules trial.uncontrolled-name.",
+          "terminalState": "crisisEnding"
+        },
+        "antiRepeatRule": "After commit, the crisis ID is terminal and cannot respawn; convergence reads stored flags."
+      },
+      "aftermath": {
+        "minimumReceiptTypes": 3,
+        "byTerminal": {
+          "speak-true-name": [
+            {
+              "type": "quest",
+              "target": "trial.commanded-witness",
+              "operation": "unlock",
+              "value": true
+            },
+            {
+              "type": "faction",
+              "target": "truth-seekers",
+              "operation": "increment",
+              "value": 2
+            },
+            {
+              "type": "npc",
+              "target": "veiled-witness",
+              "operation": "set",
+              "value": "free-but-exposed"
+            }
+          ],
+          "hide-true-name": [
+            {
+              "type": "quest",
+              "target": "trial.anonymous-witness",
+              "operation": "unlock",
+              "value": true
+            },
+            {
+              "type": "faction",
+              "target": "veilkeepers",
+              "operation": "increment",
+              "value": 2
+            },
+            {
+              "type": "npc",
+              "target": "veiled-witness",
+              "operation": "set",
+              "value": "hidden-and-bound"
+            }
+          ]
+        }
+      },
+      "biomeFilter": {
+        "allow": [
+          "vesper-glass-under-mirror"
+        ],
+        "siteTags": [
+          "name-fork"
+        ],
+        "requireFactionTags": [
+          "truth-seekers",
+          "veilkeepers"
+        ],
+        "exclude": [
+          "thornferry",
+          "erebus-9",
+          "ashwinter-court"
+        ]
+      },
+      "turnWindow": {
+        "earliest": 13,
+        "latest": 70,
+        "cooldown": 9999,
+        "droughtEligible": true
+      },
+      "governance": {
+        "stage": "draft",
+        "contentHash": "cff24181762bc906",
+        "owner": "encounter-design",
+        "replaces": null
+      },
+      "example": {
+        "telegraphProse": "Speaking the etched name frees its owner and also lets every listener command them once.",
+        "stakesProse": "Speak the Name Publicly or Silver Over the Name; each writes an exclusive fact, a delayed callback, and distinct ending eligibility.",
+        "resolutionProse": "The choice commits once within three turns. Both paths converge at vesper-glass-trial, which reads rather than erases the stored flags.",
+        "receiptProse": "The receipt records the selected fact, the locked opposite, faction and NPC changes, callback chapter-5-mirror-trial, and ending eligibility."
+      }
+    },
+    {
+      "schemaVersion": "1.0.0",
+      "templateVersion": "1.0.0",
+      "id": "vesper-glass.crisis.lantern-heir",
+      "mode": "pyoa",
+      "bibleId": "vesper-glass",
+      "name": "Lantern Heir",
+      "role": "crisis",
+      "summary": "Choose which claimant receives the lantern that reveals inherited memories.",
+      "telegraph": {
+        "required": true,
+        "channels": [
+          "scene"
+        ],
+        "cues": [
+          {
+            "channel": "scene",
+            "signal": "The lantern authenticates blood and transfers every prior heir’s grief to its bearer.",
+            "inference": "The crisis presents an exclusive decision with a visible future callback.",
+            "actionHook": "crown-blood-heir"
+          }
+        ],
+        "responseWindowTurns": 2,
+        "surpriseEligible": false,
+        "openingSeverityCap": "none"
+      },
+      "stakes": {
+        "headline": "Choose lawful succession or a chosen heir.",
+        "approaches": [
+          {
+            "id": "crown-blood-heir",
+            "label": "Give the Lantern to the Blood Heir",
+            "requirements": [],
+            "method": "fork",
+            "onSuccess": {
+              "terminal": true,
+              "stateChanges": [
+                "fact:blood-heir-crowned:set:true",
+                "fact:chosen-heir-crowned:lock:false",
+                "callback:equinox.blood-memories:schedule",
+                "ending:ending.old-line-restored:eligible",
+                "convergence:vesper-glass-equinox:preserve_flags"
+              ],
+              "summary": "Give the Lantern to the Blood Heir writes a durable fact and qualifies ending.old-line-restored.",
+              "terminalState": "crisisEnding"
+            },
+            "onFailure": {
+              "terminal": false,
+              "stateChanges": [
+                "choice:validation_error:record",
+                "choice:remain_uncommitted"
+              ],
+              "summary": "The engine rejects an illegal option without consuming a turn."
+            },
+            "lockout": "A valid fork commits once; the opposing fact is locked until an explicitly authored reversal crisis."
+          },
+          {
+            "id": "crown-chosen-heir",
+            "label": "Give the Lantern to the Chosen Heir",
+            "requirements": [],
+            "method": "fork",
+            "onSuccess": {
+              "terminal": true,
+              "stateChanges": [
+                "fact:chosen-heir-crowned:set:true",
+                "fact:blood-heir-crowned:lock:false",
+                "callback:equinox.chosen-memories:schedule",
+                "ending:ending.new-light:eligible",
+                "convergence:vesper-glass-equinox:preserve_flags"
+              ],
+              "summary": "Give the Lantern to the Chosen Heir writes the opposing fact and qualifies ending.new-light.",
+              "terminalState": "crisisEnding"
+            },
+            "onFailure": {
+              "terminal": false,
+              "stateChanges": [
+                "choice:validation_error:record",
+                "choice:remain_uncommitted"
+              ],
+              "summary": "The engine rejects an illegal option without consuming a turn."
+            },
+            "lockout": "A valid fork commits once; the opposing fact is locked until an explicitly authored reversal crisis."
+          }
+        ]
+      },
+      "resolution": {
+        "mechanic": "fork",
+        "config": {
+          "exclusiveFactGroup": "lantern-heir-commitment",
+          "delayedPayoffAt": "chapter-6-equinox",
+          "convergencePoint": "vesper-glass-equinox",
+          "convergencePolicy": "merge scene topology only; preserve facts, callbacks, relationships, and ending eligibility",
+          "commitOnce": true
+        },
+        "terminalStates": [
+          "crisisEnding"
+        ],
+        "maxTurns": 3,
+        "forcedTerminal": {
+          "terminal": true,
+          "stateChanges": [
+            "fact:lantern-chooses-child:set:true",
+            "callback:equinox.unknown-heir:schedule",
+            "ending:ending-child-regent:eligible",
+            "convergence:vesper-glass-equinox:preserve_flags"
+          ],
+          "summary": "Delay commits lantern-chooses-child; the crisis ends and schedules equinox.unknown-heir.",
+          "terminalState": "crisisEnding"
+        },
+        "antiRepeatRule": "After commit, the crisis ID is terminal and cannot respawn; convergence reads stored flags."
+      },
+      "aftermath": {
+        "minimumReceiptTypes": 3,
+        "byTerminal": {
+          "crown-blood-heir": [
+            {
+              "type": "quest",
+              "target": "equinox.blood-memories",
+              "operation": "unlock",
+              "value": true
+            },
+            {
+              "type": "faction",
+              "target": "glass-magistracy",
+              "operation": "increment",
+              "value": 2
+            },
+            {
+              "type": "npc",
+              "target": "heir-cass",
+              "operation": "set",
+              "value": "crowned-burdened"
+            }
+          ],
+          "crown-chosen-heir": [
+            {
+              "type": "quest",
+              "target": "equinox.chosen-memories",
+              "operation": "unlock",
+              "value": true
+            },
+            {
+              "type": "faction",
+              "target": "lantern-guild",
+              "operation": "increment",
+              "value": 2
+            },
+            {
+              "type": "npc",
+              "target": "heir-cass",
+              "operation": "set",
+              "value": "disinherited"
+            }
+          ]
+        }
+      },
+      "biomeFilter": {
+        "allow": [
+          "vesper-glass-lantern-court"
+        ],
+        "siteTags": [
+          "succession-fork"
+        ],
+        "requireFactionTags": [
+          "glass-magistracy",
+          "lantern-guild"
+        ],
+        "exclude": [
+          "thornferry",
+          "erebus-9",
+          "ashwinter-court"
+        ]
+      },
+      "turnWindow": {
+        "earliest": 16,
+        "latest": 82,
+        "cooldown": 9999,
+        "droughtEligible": true
+      },
+      "governance": {
+        "stage": "draft",
+        "contentHash": "d6efa574e6940ed1",
+        "owner": "encounter-design",
+        "replaces": null
+      },
+      "example": {
+        "telegraphProse": "The lantern authenticates blood and transfers every prior heir’s grief to its bearer.",
+        "stakesProse": "Give the Lantern to the Blood Heir or Give the Lantern to the Chosen Heir; each writes an exclusive fact, a delayed callback, and distinct ending eligibility.",
+        "resolutionProse": "The choice commits once within three turns. Both paths converge at vesper-glass-equinox, which reads rather than erases the stored flags.",
+        "receiptProse": "The receipt records the selected fact, the locked opposite, faction and NPC changes, callback chapter-6-equinox, and ending eligibility."
+      }
+    },
+    {
+      "schemaVersion": "1.0.0",
+      "templateVersion": "1.0.0",
+      "id": "vesper-glass.crisis.city-without-faces",
+      "mode": "pyoa",
+      "bibleId": "vesper-glass",
+      "name": "City Without Faces",
+      "role": "crisis",
+      "summary": "Choose whether the city keeps its faces after the mirror plague.",
+      "telegraph": {
+        "required": true,
+        "channels": [
+          "scene"
+        ],
+        "cues": [
+          {
+            "channel": "scene",
+            "signal": "The cure restores every face and every suppressed crime; the veil ends the plague by making anonymity permanent.",
+            "inference": "The crisis presents an exclusive decision with a visible future callback.",
+            "actionHook": "restore-faces"
+          }
+        ],
+        "responseWindowTurns": 2,
+        "surpriseEligible": false,
+        "openingSeverityCap": "none"
+      },
+      "stakes": {
+        "headline": "Choose memory with accountability or safety without faces.",
+        "approaches": [
+          {
+            "id": "restore-faces",
+            "label": "Release the Restoring Light",
+            "requirements": [],
+            "method": "fork",
+            "onSuccess": {
+              "terminal": true,
+              "stateChanges": [
+                "fact:faces-restored:set:true",
+                "fact:permanent-veils:lock:false",
+                "callback:epilogue.crimes-remembered:schedule",
+                "ending:ending.faces-and-reckoning:eligible",
+                "convergence:vesper-glass-epilogue:preserve_flags"
+              ],
+              "summary": "Release the Restoring Light writes a durable fact and qualifies ending.faces-and-reckoning.",
+              "terminalState": "crisisEnding"
+            },
+            "onFailure": {
+              "terminal": false,
+              "stateChanges": [
+                "choice:validation_error:record",
+                "choice:remain_uncommitted"
+              ],
+              "summary": "The engine rejects an illegal option without consuming a turn."
+            },
+            "lockout": "A valid fork commits once; the opposing fact is locked until an explicitly authored reversal crisis."
+          },
+          {
+            "id": "accept-veils",
+            "label": "Accept Permanent Veils",
+            "requirements": [],
+            "method": "fork",
+            "onSuccess": {
+              "terminal": true,
+              "stateChanges": [
+                "fact:permanent-veils:set:true",
+                "fact:faces-restored:lock:false",
+                "callback:epilogue.anonymous-city:schedule",
+                "ending:ending.city-without-faces:eligible",
+                "convergence:vesper-glass-epilogue:preserve_flags"
+              ],
+              "summary": "Accept Permanent Veils writes the opposing fact and qualifies ending.city-without-faces.",
+              "terminalState": "crisisEnding"
+            },
+            "onFailure": {
+              "terminal": false,
+              "stateChanges": [
+                "choice:validation_error:record",
+                "choice:remain_uncommitted"
+              ],
+              "summary": "The engine rejects an illegal option without consuming a turn."
+            },
+            "lockout": "A valid fork commits once; the opposing fact is locked until an explicitly authored reversal crisis."
+          }
+        ]
+      },
+      "resolution": {
+        "mechanic": "fork",
+        "config": {
+          "exclusiveFactGroup": "city-without-faces-commitment",
+          "delayedPayoffAt": "epilogue-first-dawn",
+          "convergencePoint": "vesper-glass-epilogue",
+          "convergencePolicy": "merge scene topology only; preserve facts, callbacks, relationships, and ending eligibility",
+          "commitOnce": true
+        },
+        "terminalStates": [
+          "crisisEnding"
+        ],
+        "maxTurns": 3,
+        "forcedTerminal": {
+          "terminal": true,
+          "stateChanges": [
+            "fact:plague-erases-faces:set:true",
+            "callback:epilogue.forced-anonymity:schedule",
+            "ending:ending.blank-glass:eligible",
+            "convergence:vesper-glass-epilogue:preserve_flags"
+          ],
+          "summary": "Delay commits plague-erases-faces; the crisis ends and schedules epilogue.forced-anonymity.",
+          "terminalState": "crisisEnding"
+        },
+        "antiRepeatRule": "After commit, the crisis ID is terminal and cannot respawn; convergence reads stored flags."
+      },
+      "aftermath": {
+        "minimumReceiptTypes": 3,
+        "byTerminal": {
+          "restore-faces": [
+            {
+              "type": "quest",
+              "target": "epilogue.crimes-remembered",
+              "operation": "unlock",
+              "value": true
+            },
+            {
+              "type": "faction",
+              "target": "truth-seekers",
+              "operation": "increment",
+              "value": 3
+            },
+            {
+              "type": "npc",
+              "target": "registrar-vee",
+              "operation": "set",
+              "value": "records-restored"
+            }
+          ],
+          "accept-veils": [
+            {
+              "type": "quest",
+              "target": "epilogue.anonymous-city",
+              "operation": "unlock",
+              "value": true
+            },
+            {
+              "type": "faction",
+              "target": "veilkeepers",
+              "operation": "increment",
+              "value": 3
+            },
+            {
+              "type": "npc",
+              "target": "registrar-vee",
+              "operation": "set",
+              "value": "archive-closed"
+            }
+          ]
+        }
+      },
+      "biomeFilter": {
+        "allow": [
+          "vesper-glass-central-mirror"
+        ],
+        "siteTags": [
+          "ending-fork"
+        ],
+        "requireFactionTags": [
+          "truth-seekers",
+          "veilkeepers"
+        ],
+        "exclude": [
+          "thornferry",
+          "erebus-9",
+          "ashwinter-court"
+        ]
+      },
+      "turnWindow": {
+        "earliest": 20,
+        "latest": 95,
+        "cooldown": 9999,
+        "droughtEligible": true
+      },
+      "governance": {
+        "stage": "draft",
+        "contentHash": "034120cf06bc971a",
+        "owner": "encounter-design",
+        "replaces": null
+      },
+      "example": {
+        "telegraphProse": "The cure restores every face and every suppressed crime; the veil ends the plague by making anonymity permanent.",
+        "stakesProse": "Release the Restoring Light or Accept Permanent Veils; each writes an exclusive fact, a delayed callback, and distinct ending eligibility.",
+        "resolutionProse": "The choice commits once within three turns. Both paths converge at vesper-glass-epilogue, which reads rather than erases the stored flags.",
+        "receiptProse": "The receipt records the selected fact, the locked opposite, faction and NPC changes, callback epilogue-first-dawn, and ending eligibility."
+      }
+    },
+    {
+      "schemaVersion": "1.0.0",
+      "templateVersion": "1.0.0",
+      "id": "erebus-9.crisis.oxygen-compact",
+      "mode": "pyoa",
+      "bibleId": "erebus-9",
+      "name": "Oxygen Compact",
+      "role": "crisis",
+      "summary": "Choose which deck receives the station’s last stable oxygen reserve.",
+      "telegraph": {
+        "required": true,
+        "channels": [
+          "scene"
+        ],
+        "cues": [
+          {
+            "channel": "scene",
+            "signal": "Life support can stabilize Habitation or Hydroponics, not both, before the next orbit.",
+            "inference": "The crisis presents an exclusive decision with a visible future callback.",
+            "actionHook": "oxygen-to-hab"
+          }
+        ],
+        "responseWindowTurns": 2,
+        "surpriseEligible": false,
+        "openingSeverityCap": "none"
+      },
+      "stakes": {
+        "headline": "Choose immediate population survival or future food security.",
+        "approaches": [
+          {
+            "id": "oxygen-to-hab",
+            "label": "Route Oxygen to Habitation",
+            "requirements": [],
+            "method": "fork",
+            "onSuccess": {
+              "terminal": true,
+              "stateChanges": [
+                "fact:habitation-oxygen-stable:set:true",
+                "fact:hydroponics-oxygen-stable:lock:false",
+                "callback:orbit.hydroponics-failure:schedule",
+                "ending:ending.people-first:eligible",
+                "convergence:erebus-9-central-ring:preserve_flags"
+              ],
+              "summary": "Route Oxygen to Habitation writes a durable fact and qualifies ending.people-first.",
+              "terminalState": "crisisEnding"
+            },
+            "onFailure": {
+              "terminal": false,
+              "stateChanges": [
+                "choice:validation_error:record",
+                "choice:remain_uncommitted"
+              ],
+              "summary": "The engine rejects an illegal option without consuming a turn."
+            },
+            "lockout": "A valid fork commits once; the opposing fact is locked until an explicitly authored reversal crisis."
+          },
+          {
+            "id": "oxygen-to-hydro",
+            "label": "Route Oxygen to Hydroponics",
+            "requirements": [],
+            "method": "fork",
+            "onSuccess": {
+              "terminal": true,
+              "stateChanges": [
+                "fact:hydroponics-oxygen-stable:set:true",
+                "fact:habitation-oxygen-stable:lock:false",
+                "callback:orbit.hab-evacuation:schedule",
+                "ending:ending-seed-ark:eligible",
+                "convergence:erebus-9-central-ring:preserve_flags"
+              ],
+              "summary": "Route Oxygen to Hydroponics writes the opposing fact and qualifies ending-seed-ark.",
+              "terminalState": "crisisEnding"
+            },
+            "onFailure": {
+              "terminal": false,
+              "stateChanges": [
+                "choice:validation_error:record",
+                "choice:remain_uncommitted"
+              ],
+              "summary": "The engine rejects an illegal option without consuming a turn."
+            },
+            "lockout": "A valid fork commits once; the opposing fact is locked until an explicitly authored reversal crisis."
+          }
+        ]
+      },
+      "resolution": {
+        "mechanic": "fork",
+        "config": {
+          "exclusiveFactGroup": "oxygen-compact-commitment",
+          "delayedPayoffAt": "chapter-2-next-orbit",
+          "convergencePoint": "erebus-9-central-ring",
+          "convergencePolicy": "merge scene topology only; preserve facts, callbacks, relationships, and ending eligibility",
+          "commitOnce": true
+        },
+        "terminalStates": [
+          "crisisEnding"
+        ],
+        "maxTurns": 3,
+        "forcedTerminal": {
+          "terminal": true,
+          "stateChanges": [
+            "fact:oxygen-splits-inefficiently:set:true",
+            "callback:orbit.both-critical:schedule",
+            "ending:ending-thin-air:eligible",
+            "convergence:erebus-9-central-ring:preserve_flags"
+          ],
+          "summary": "Delay commits oxygen-splits-inefficiently; the crisis ends and schedules orbit.both-critical.",
+          "terminalState": "crisisEnding"
+        },
+        "antiRepeatRule": "After commit, the crisis ID is terminal and cannot respawn; convergence reads stored flags."
+      },
+      "aftermath": {
+        "minimumReceiptTypes": 3,
+        "byTerminal": {
+          "oxygen-to-hab": [
+            {
+              "type": "quest",
+              "target": "orbit.hydroponics-failure",
+              "operation": "unlock",
+              "value": true
+            },
+            {
+              "type": "faction",
+              "target": "habitation-council",
+              "operation": "increment",
+              "value": 2
+            },
+            {
+              "type": "npc",
+              "target": "chief-rhee",
+              "operation": "set",
+              "value": "backs-habitation"
+            }
+          ],
+          "oxygen-to-hydro": [
+            {
+              "type": "quest",
+              "target": "orbit.hab-evacuation",
+              "operation": "unlock",
+              "value": true
+            },
+            {
+              "type": "faction",
+              "target": "agronomy-crew",
+              "operation": "increment",
+              "value": 2
+            },
+            {
+              "type": "npc",
+              "target": "chief-rhee",
+              "operation": "set",
+              "value": "backs-hydroponics"
+            }
+          ]
+        }
+      },
+      "biomeFilter": {
+        "allow": [
+          "erebus-9-life-support"
+        ],
+        "siteTags": [
+          "resource-fork"
+        ],
+        "requireFactionTags": [
+          "habitation-council",
+          "agronomy-crew"
+        ],
+        "exclude": [
+          "thornferry",
+          "vesper-glass",
+          "ashwinter-court"
+        ]
+      },
+      "turnWindow": {
+        "earliest": 4,
+        "latest": 35,
+        "cooldown": 9999,
+        "droughtEligible": true
+      },
+      "governance": {
+        "stage": "draft",
+        "contentHash": "ffc2178c1df17ba4",
+        "owner": "encounter-design",
+        "replaces": null
+      },
+      "example": {
+        "telegraphProse": "Life support can stabilize Habitation or Hydroponics, not both, before the next orbit.",
+        "stakesProse": "Route Oxygen to Habitation or Route Oxygen to Hydroponics; each writes an exclusive fact, a delayed callback, and distinct ending eligibility.",
+        "resolutionProse": "The choice commits once within three turns. Both paths converge at erebus-9-central-ring, which reads rather than erases the stored flags.",
+        "receiptProse": "The receipt records the selected fact, the locked opposite, faction and NPC changes, callback chapter-2-next-orbit, and ending eligibility."
+      }
+    },
+    {
+      "schemaVersion": "1.0.0",
+      "templateVersion": "1.0.0",
+      "id": "erebus-9.crisis.wake-the-navigator",
+      "mode": "pyoa",
+      "bibleId": "erebus-9",
+      "name": "Wake the Navigator",
+      "role": "crisis",
+      "summary": "Choose whether to wake a cryogenic navigator whose neural map will decay on use.",
+      "telegraph": {
+        "required": true,
+        "channels": [
+          "scene"
+        ],
+        "cues": [
+          {
+            "channel": "scene",
+            "signal": "Waking Ilyan gives one perfect route and destroys the backup memory; leaving him asleep forces a risky manual burn.",
+            "inference": "The crisis presents an exclusive decision with a visible future callback.",
+            "actionHook": "wake-ilyan"
+          }
+        ],
+        "responseWindowTurns": 2,
+        "surpriseEligible": false,
+        "openingSeverityCap": "none"
+      },
+      "stakes": {
+        "headline": "Choose certainty now or preserve the navigator.",
+        "approaches": [
+          {
+            "id": "wake-ilyan",
+            "label": "Wake Navigator Ilyan",
+            "requirements": [],
+            "method": "fork",
+            "onSuccess": {
+              "terminal": true,
+              "stateChanges": [
+                "fact:navigator-awake:set:true",
+                "fact:navigator-preserved:lock:false",
+                "callback:burn.perfect-route:schedule",
+                "ending:ending-guided-home:eligible",
+                "convergence:erebus-9-transit:preserve_flags"
+              ],
+              "summary": "Wake Navigator Ilyan writes a durable fact and qualifies ending-guided-home.",
+              "terminalState": "crisisEnding"
+            },
+            "onFailure": {
+              "terminal": false,
+              "stateChanges": [
+                "choice:validation_error:record",
+                "choice:remain_uncommitted"
+              ],
+              "summary": "The engine rejects an illegal option without consuming a turn."
+            },
+            "lockout": "A valid fork commits once; the opposing fact is locked until an explicitly authored reversal crisis."
+          },
+          {
+            "id": "manual-burn",
+            "label": "Attempt the Manual Burn",
+            "requirements": [],
+            "method": "fork",
+            "onSuccess": {
+              "terminal": true,
+              "stateChanges": [
+                "fact:navigator-preserved:set:true",
+                "fact:navigator-awake:lock:false",
+                "callback:burn.manual-variance:schedule",
+                "ending:ending-crew-found-path:eligible",
+                "convergence:erebus-9-transit:preserve_flags"
+              ],
+              "summary": "Attempt the Manual Burn writes the opposing fact and qualifies ending-crew-found-path.",
+              "terminalState": "crisisEnding"
+            },
+            "onFailure": {
+              "terminal": false,
+              "stateChanges": [
+                "choice:validation_error:record",
+                "choice:remain_uncommitted"
+              ],
+              "summary": "The engine rejects an illegal option without consuming a turn."
+            },
+            "lockout": "A valid fork commits once; the opposing fact is locked until an explicitly authored reversal crisis."
+          }
+        ]
+      },
+      "resolution": {
+        "mechanic": "fork",
+        "config": {
+          "exclusiveFactGroup": "wake-the-navigator-commitment",
+          "delayedPayoffAt": "chapter-3-orbital-burn",
+          "convergencePoint": "erebus-9-transit",
+          "convergencePolicy": "merge scene topology only; preserve facts, callbacks, relationships, and ending eligibility",
+          "commitOnce": true
+        },
+        "terminalStates": [
+          "crisisEnding"
+        ],
+        "maxTurns": 3,
+        "forcedTerminal": {
+          "terminal": true,
+          "stateChanges": [
+            "fact:navigator-wakes-damaged:set:true",
+            "callback:burn.fragmented-route:schedule",
+            "ending:ending-lost-coordinate:eligible",
+            "convergence:erebus-9-transit:preserve_flags"
+          ],
+          "summary": "Delay commits navigator-wakes-damaged; the crisis ends and schedules burn.fragmented-route.",
+          "terminalState": "crisisEnding"
+        },
+        "antiRepeatRule": "After commit, the crisis ID is terminal and cannot respawn; convergence reads stored flags."
+      },
+      "aftermath": {
+        "minimumReceiptTypes": 3,
+        "byTerminal": {
+          "wake-ilyan": [
+            {
+              "type": "quest",
+              "target": "burn.perfect-route",
+              "operation": "unlock",
+              "value": true
+            },
+            {
+              "type": "faction",
+              "target": "bridge-crew",
+              "operation": "increment",
+              "value": 2
+            },
+            {
+              "type": "npc",
+              "target": "navigator-ilyan",
+              "operation": "set",
+              "value": "awake-degrading"
+            }
+          ],
+          "manual-burn": [
+            {
+              "type": "quest",
+              "target": "burn.manual-variance",
+              "operation": "unlock",
+              "value": true
+            },
+            {
+              "type": "faction",
+              "target": "engineering-crew",
+              "operation": "increment",
+              "value": 2
+            },
+            {
+              "type": "npc",
+              "target": "navigator-ilyan",
+              "operation": "set",
+              "value": "asleep-preserved"
+            }
+          ]
+        }
+      },
+      "biomeFilter": {
+        "allow": [
+          "erebus-9-cryo"
+        ],
+        "siteTags": [
+          "navigation-fork"
+        ],
+        "requireFactionTags": [
+          "bridge-crew",
+          "engineering-crew"
+        ],
+        "exclude": [
+          "thornferry",
+          "vesper-glass",
+          "ashwinter-court"
+        ]
+      },
+      "turnWindow": {
+        "earliest": 7,
+        "latest": 45,
+        "cooldown": 9999,
+        "droughtEligible": true
+      },
+      "governance": {
+        "stage": "draft",
+        "contentHash": "10771fa5920b0841",
+        "owner": "encounter-design",
+        "replaces": null
+      },
+      "example": {
+        "telegraphProse": "Waking Ilyan gives one perfect route and destroys the backup memory; leaving him asleep forces a risky manual burn.",
+        "stakesProse": "Wake Navigator Ilyan or Attempt the Manual Burn; each writes an exclusive fact, a delayed callback, and distinct ending eligibility.",
+        "resolutionProse": "The choice commits once within three turns. Both paths converge at erebus-9-transit, which reads rather than erases the stored flags.",
+        "receiptProse": "The receipt records the selected fact, the locked opposite, faction and NPC changes, callback chapter-3-orbital-burn, and ending eligibility."
+      }
+    },
+    {
+      "schemaVersion": "1.0.0",
+      "templateVersion": "1.0.0",
+      "id": "erebus-9.crisis.quarantine-breach",
+      "mode": "pyoa",
+      "bibleId": "erebus-9",
+      "name": "Quarantine Breach",
+      "role": "crisis",
+      "summary": "Choose whether to vent an infected deck or open it for rescue.",
+      "telegraph": {
+        "required": true,
+        "channels": [
+          "scene"
+        ],
+        "cues": [
+          {
+            "channel": "scene",
+            "signal": "The breach door can vent the spores or admit a rescue team once; either action locks the other.",
+            "inference": "The crisis presents an exclusive decision with a visible future callback.",
+            "actionHook": "vent-deck"
+          }
+        ],
+        "responseWindowTurns": 2,
+        "surpriseEligible": false,
+        "openingSeverityCap": "none"
+      },
+      "stakes": {
+        "headline": "Choose containment or rescue.",
+        "approaches": [
+          {
+            "id": "vent-deck",
+            "label": "Vent Quarantine Deck",
+            "requirements": [],
+            "method": "fork",
+            "onSuccess": {
+              "terminal": true,
+              "stateChanges": [
+                "fact:quarantine-deck-vented:set:true",
+                "fact:quarantine-deck-opened:lock:false",
+                "callback:medbay.containment-success:schedule",
+                "ending:ending-clean-station:eligible",
+                "convergence:erebus-9-medbay:preserve_flags"
+              ],
+              "summary": "Vent Quarantine Deck writes a durable fact and qualifies ending-clean-station.",
+              "terminalState": "crisisEnding"
+            },
+            "onFailure": {
+              "terminal": false,
+              "stateChanges": [
+                "choice:validation_error:record",
+                "choice:remain_uncommitted"
+              ],
+              "summary": "The engine rejects an illegal option without consuming a turn."
+            },
+            "lockout": "A valid fork commits once; the opposing fact is locked until an explicitly authored reversal crisis."
+          },
+          {
+            "id": "open-rescue",
+            "label": "Open for Rescue",
+            "requirements": [],
+            "method": "fork",
+            "onSuccess": {
+              "terminal": true,
+              "stateChanges": [
+                "fact:quarantine-deck-opened:set:true",
+                "fact:quarantine-deck-vented:lock:false",
+                "callback:medbay.rescued-carriers:schedule",
+                "ending:ending-no-one-left:eligible",
+                "convergence:erebus-9-medbay:preserve_flags"
+              ],
+              "summary": "Open for Rescue writes the opposing fact and qualifies ending-no-one-left.",
+              "terminalState": "crisisEnding"
+            },
+            "onFailure": {
+              "terminal": false,
+              "stateChanges": [
+                "choice:validation_error:record",
+                "choice:remain_uncommitted"
+              ],
+              "summary": "The engine rejects an illegal option without consuming a turn."
+            },
+            "lockout": "A valid fork commits once; the opposing fact is locked until an explicitly authored reversal crisis."
+          }
+        ]
+      },
+      "resolution": {
+        "mechanic": "fork",
+        "config": {
+          "exclusiveFactGroup": "quarantine-breach-commitment",
+          "delayedPayoffAt": "chapter-4-medbay-outcome",
+          "convergencePoint": "erebus-9-medbay",
+          "convergencePolicy": "merge scene topology only; preserve facts, callbacks, relationships, and ending eligibility",
+          "commitOnce": true
+        },
+        "terminalStates": [
+          "crisisEnding"
+        ],
+        "maxTurns": 3,
+        "forcedTerminal": {
+          "terminal": true,
+          "stateChanges": [
+            "fact:breach-spreads-uncontrolled:set:true",
+            "callback:medbay.station-exposure:schedule",
+            "ending:ending-spore-station:eligible",
+            "convergence:erebus-9-medbay:preserve_flags"
+          ],
+          "summary": "Delay commits breach-spreads-uncontrolled; the crisis ends and schedules medbay.station-exposure.",
+          "terminalState": "crisisEnding"
+        },
+        "antiRepeatRule": "After commit, the crisis ID is terminal and cannot respawn; convergence reads stored flags."
+      },
+      "aftermath": {
+        "minimumReceiptTypes": 3,
+        "byTerminal": {
+          "vent-deck": [
+            {
+              "type": "quest",
+              "target": "medbay.containment-success",
+              "operation": "unlock",
+              "value": true
+            },
+            {
+              "type": "faction",
+              "target": "medical-command",
+              "operation": "increment",
+              "value": 2
+            },
+            {
+              "type": "npc",
+              "target": "doctor-voss",
+              "operation": "set",
+              "value": "contained-grieving"
+            }
+          ],
+          "open-rescue": [
+            {
+              "type": "quest",
+              "target": "medbay.rescued-carriers",
+              "operation": "unlock",
+              "value": true
+            },
+            {
+              "type": "faction",
+              "target": "maintenance-clan",
+              "operation": "increment",
+              "value": 2
+            },
+            {
+              "type": "npc",
+              "target": "doctor-voss",
+              "operation": "set",
+              "value": "opposed-but-treating"
+            }
+          ]
+        }
+      },
+      "biomeFilter": {
+        "allow": [
+          "erebus-9-quarantine"
+        ],
+        "siteTags": [
+          "containment-fork"
+        ],
+        "requireFactionTags": [
+          "medical-command",
+          "maintenance-clan"
+        ],
+        "exclude": [
+          "thornferry",
+          "vesper-glass",
+          "ashwinter-court"
+        ]
+      },
+      "turnWindow": {
+        "earliest": 10,
+        "latest": 60,
+        "cooldown": 9999,
+        "droughtEligible": true
+      },
+      "governance": {
+        "stage": "draft",
+        "contentHash": "ce7575ae70711568",
+        "owner": "encounter-design",
+        "replaces": null
+      },
+      "example": {
+        "telegraphProse": "The breach door can vent the spores or admit a rescue team once; either action locks the other.",
+        "stakesProse": "Vent Quarantine Deck or Open for Rescue; each writes an exclusive fact, a delayed callback, and distinct ending eligibility.",
+        "resolutionProse": "The choice commits once within three turns. Both paths converge at erebus-9-medbay, which reads rather than erases the stored flags.",
+        "receiptProse": "The receipt records the selected fact, the locked opposite, faction and NPC changes, callback chapter-4-medbay-outcome, and ending eligibility."
+      }
+    },
+    {
+      "schemaVersion": "1.0.0",
+      "templateVersion": "1.0.0",
+      "id": "erebus-9.crisis.reactor-vote",
+      "mode": "pyoa",
+      "bibleId": "erebus-9",
+      "name": "Reactor Vote",
+      "role": "crisis",
+      "summary": "Choose whether to overload the reactor for propulsion or preserve it for station life.",
+      "telegraph": {
+        "required": true,
+        "channels": [
+          "scene"
+        ],
+        "cues": [
+          {
+            "channel": "scene",
+            "signal": "The reactor has one safe cycle left; propulsion reaches rescue, while station mode supports a long siege.",
+            "inference": "The crisis presents an exclusive decision with a visible future callback.",
+            "actionHook": "burn-for-thrust"
+          }
+        ],
+        "responseWindowTurns": 2,
+        "surpriseEligible": false,
+        "openingSeverityCap": "none"
+      },
+      "stakes": {
+        "headline": "Choose escape or endurance.",
+        "approaches": [
+          {
+            "id": "burn-for-thrust",
+            "label": "Burn the Reactor for Thrust",
+            "requirements": [],
+            "method": "fork",
+            "onSuccess": {
+              "terminal": true,
+              "stateChanges": [
+                "fact:reactor-spent-on-thrust:set:true",
+                "fact:reactor-preserved-for-station:lock:false",
+                "callback:approach.rescue-intercept:schedule",
+                "ending:ending-last-burn:eligible",
+                "convergence:erebus-9-command-vote:preserve_flags"
+              ],
+              "summary": "Burn the Reactor for Thrust writes a durable fact and qualifies ending-last-burn.",
+              "terminalState": "crisisEnding"
+            },
+            "onFailure": {
+              "terminal": false,
+              "stateChanges": [
+                "choice:validation_error:record",
+                "choice:remain_uncommitted"
+              ],
+              "summary": "The engine rejects an illegal option without consuming a turn."
+            },
+            "lockout": "A valid fork commits once; the opposing fact is locked until an explicitly authored reversal crisis."
+          },
+          {
+            "id": "preserve-reactor",
+            "label": "Preserve the Reactor for Station Life",
+            "requirements": [],
+            "method": "fork",
+            "onSuccess": {
+              "terminal": true,
+              "stateChanges": [
+                "fact:reactor-preserved-for-station:set:true",
+                "fact:reactor-spent-on-thrust:lock:false",
+                "callback:siege.long-survival:schedule",
+                "ending:ending-station-keepers:eligible",
+                "convergence:erebus-9-command-vote:preserve_flags"
+              ],
+              "summary": "Preserve the Reactor for Station Life writes the opposing fact and qualifies ending-station-keepers.",
+              "terminalState": "crisisEnding"
+            },
+            "onFailure": {
+              "terminal": false,
+              "stateChanges": [
+                "choice:validation_error:record",
+                "choice:remain_uncommitted"
+              ],
+              "summary": "The engine rejects an illegal option without consuming a turn."
+            },
+            "lockout": "A valid fork commits once; the opposing fact is locked until an explicitly authored reversal crisis."
+          }
+        ]
+      },
+      "resolution": {
+        "mechanic": "fork",
+        "config": {
+          "exclusiveFactGroup": "reactor-vote-commitment",
+          "delayedPayoffAt": "chapter-5-rescue-window",
+          "convergencePoint": "erebus-9-command-vote",
+          "convergencePolicy": "merge scene topology only; preserve facts, callbacks, relationships, and ending eligibility",
+          "commitOnce": true
+        },
+        "terminalStates": [
+          "crisisEnding"
+        ],
+        "maxTurns": 3,
+        "forcedTerminal": {
+          "terminal": true,
+          "stateChanges": [
+            "fact:reactor-scrams:set:true",
+            "callback:siege-no-thrust:schedule",
+            "ending:ending-dark-orbit:eligible",
+            "convergence:erebus-9-command-vote:preserve_flags"
+          ],
+          "summary": "Delay commits reactor-scrams; the crisis ends and schedules siege-no-thrust.",
+          "terminalState": "crisisEnding"
+        },
+        "antiRepeatRule": "After commit, the crisis ID is terminal and cannot respawn; convergence reads stored flags."
+      },
+      "aftermath": {
+        "minimumReceiptTypes": 3,
+        "byTerminal": {
+          "burn-for-thrust": [
+            {
+              "type": "quest",
+              "target": "approach.rescue-intercept",
+              "operation": "unlock",
+              "value": true
+            },
+            {
+              "type": "faction",
+              "target": "bridge-crew",
+              "operation": "increment",
+              "value": 3
+            },
+            {
+              "type": "npc",
+              "target": "engineer-mako",
+              "operation": "set",
+              "value": "committed-to-burn"
+            }
+          ],
+          "preserve-reactor": [
+            {
+              "type": "quest",
+              "target": "siege.long-survival",
+              "operation": "unlock",
+              "value": true
+            },
+            {
+              "type": "faction",
+              "target": "habitation-council",
+              "operation": "increment",
+              "value": 3
+            },
+            {
+              "type": "npc",
+              "target": "engineer-mako",
+              "operation": "set",
+              "value": "committed-to-station"
+            }
+          ]
+        }
+      },
+      "biomeFilter": {
+        "allow": [
+          "erebus-9-reactor"
+        ],
+        "siteTags": [
+          "strategic-fork"
+        ],
+        "requireFactionTags": [
+          "bridge-crew",
+          "habitation-council"
+        ],
+        "exclude": [
+          "thornferry",
+          "vesper-glass",
+          "ashwinter-court"
+        ]
+      },
+      "turnWindow": {
+        "earliest": 13,
+        "latest": 72,
+        "cooldown": 9999,
+        "droughtEligible": true
+      },
+      "governance": {
+        "stage": "draft",
+        "contentHash": "9abc8069313690e7",
+        "owner": "encounter-design",
+        "replaces": null
+      },
+      "example": {
+        "telegraphProse": "The reactor has one safe cycle left; propulsion reaches rescue, while station mode supports a long siege.",
+        "stakesProse": "Burn the Reactor for Thrust or Preserve the Reactor for Station Life; each writes an exclusive fact, a delayed callback, and distinct ending eligibility.",
+        "resolutionProse": "The choice commits once within three turns. Both paths converge at erebus-9-command-vote, which reads rather than erases the stored flags.",
+        "receiptProse": "The receipt records the selected fact, the locked opposite, faction and NPC changes, callback chapter-5-rescue-window, and ending eligibility."
+      }
+    },
+    {
+      "schemaVersion": "1.0.0",
+      "templateVersion": "1.0.0",
+      "id": "erebus-9.crisis.signal-from-deck-nine",
+      "mode": "pyoa",
+      "bibleId": "erebus-9",
+      "name": "Signal from Deck Nine",
+      "role": "crisis",
+      "summary": "Choose whether to answer a signal using the dead captain’s voice.",
+      "telegraph": {
+        "required": true,
+        "channels": [
+          "scene"
+        ],
+        "cues": [
+          {
+            "channel": "scene",
+            "signal": "The signal offers docking coordinates but repeats a private phrase only the captain knew.",
+            "inference": "The crisis presents an exclusive decision with a visible future callback.",
+            "actionHook": "answer-signal"
+          }
+        ],
+        "responseWindowTurns": 2,
+        "surpriseEligible": false,
+        "openingSeverityCap": "none"
+      },
+      "stakes": {
+        "headline": "Choose contact or radio silence.",
+        "approaches": [
+          {
+            "id": "answer-signal",
+            "label": "Answer the Deck Nine Signal",
+            "requirements": [],
+            "method": "fork",
+            "onSuccess": {
+              "terminal": true,
+              "stateChanges": [
+                "fact:deck-nine-contacted:set:true",
+                "fact:deck-nine-ignored:lock:false",
+                "callback:docking.unknown-responder:schedule",
+                "ending:ending-voice-in-hull:eligible",
+                "convergence:erebus-9-docking-spine:preserve_flags"
+              ],
+              "summary": "Answer the Deck Nine Signal writes a durable fact and qualifies ending-voice-in-hull.",
+              "terminalState": "crisisEnding"
+            },
+            "onFailure": {
+              "terminal": false,
+              "stateChanges": [
+                "choice:validation_error:record",
+                "choice:remain_uncommitted"
+              ],
+              "summary": "The engine rejects an illegal option without consuming a turn."
+            },
+            "lockout": "A valid fork commits once; the opposing fact is locked until an explicitly authored reversal crisis."
+          },
+          {
+            "id": "keep-radio-silence",
+            "label": "Maintain Radio Silence",
+            "requirements": [],
+            "method": "fork",
+            "onSuccess": {
+              "terminal": true,
+              "stateChanges": [
+                "fact:deck-nine-ignored:set:true",
+                "fact:deck-nine-contacted:lock:false",
+                "callback:docking-silent-approach:schedule",
+                "ending:ending-unanswered-orbit:eligible",
+                "convergence:erebus-9-docking-spine:preserve_flags"
+              ],
+              "summary": "Maintain Radio Silence writes the opposing fact and qualifies ending-unanswered-orbit.",
+              "terminalState": "crisisEnding"
+            },
+            "onFailure": {
+              "terminal": false,
+              "stateChanges": [
+                "choice:validation_error:record",
+                "choice:remain_uncommitted"
+              ],
+              "summary": "The engine rejects an illegal option without consuming a turn."
+            },
+            "lockout": "A valid fork commits once; the opposing fact is locked until an explicitly authored reversal crisis."
+          }
+        ]
+      },
+      "resolution": {
+        "mechanic": "fork",
+        "config": {
+          "exclusiveFactGroup": "signal-from-deck-nine-commitment",
+          "delayedPayoffAt": "chapter-6-docking",
+          "convergencePoint": "erebus-9-docking-spine",
+          "convergencePolicy": "merge scene topology only; preserve facts, callbacks, relationships, and ending eligibility",
+          "commitOnce": true
+        },
+        "terminalStates": [
+          "crisisEnding"
+        ],
+        "maxTurns": 3,
+        "forcedTerminal": {
+          "terminal": true,
+          "stateChanges": [
+            "fact:signal-locks-on:set:true",
+            "callback:docking-forced-contact:schedule",
+            "ending:ending-open-channel:eligible",
+            "convergence:erebus-9-docking-spine:preserve_flags"
+          ],
+          "summary": "Delay commits signal-locks-on; the crisis ends and schedules docking-forced-contact.",
+          "terminalState": "crisisEnding"
+        },
+        "antiRepeatRule": "After commit, the crisis ID is terminal and cannot respawn; convergence reads stored flags."
+      },
+      "aftermath": {
+        "minimumReceiptTypes": 3,
+        "byTerminal": {
+          "answer-signal": [
+            {
+              "type": "quest",
+              "target": "docking.unknown-responder",
+              "operation": "unlock",
+              "value": true
+            },
+            {
+              "type": "faction",
+              "target": "signal-cult",
+              "operation": "increment",
+              "value": 2
+            },
+            {
+              "type": "npc",
+              "target": "captain-echo",
+              "operation": "set",
+              "value": "invited"
+            }
+          ],
+          "keep-radio-silence": [
+            {
+              "type": "quest",
+              "target": "docking-silent-approach",
+              "operation": "unlock",
+              "value": true
+            },
+            {
+              "type": "faction",
+              "target": "security-command",
+              "operation": "increment",
+              "value": 2
+            },
+            {
+              "type": "npc",
+              "target": "captain-echo",
+              "operation": "set",
+              "value": "outside"
+            }
+          ]
+        }
+      },
+      "biomeFilter": {
+        "allow": [
+          "erebus-9-comms"
+        ],
+        "siteTags": [
+          "contact-fork"
+        ],
+        "requireFactionTags": [
+          "security-command",
+          "signal-cult"
+        ],
+        "exclude": [
+          "thornferry",
+          "vesper-glass",
+          "ashwinter-court"
+        ]
+      },
+      "turnWindow": {
+        "earliest": 16,
+        "latest": 82,
+        "cooldown": 9999,
+        "droughtEligible": true
+      },
+      "governance": {
+        "stage": "draft",
+        "contentHash": "6e0b1c4bd8946746",
+        "owner": "encounter-design",
+        "replaces": null
+      },
+      "example": {
+        "telegraphProse": "The signal offers docking coordinates but repeats a private phrase only the captain knew.",
+        "stakesProse": "Answer the Deck Nine Signal or Maintain Radio Silence; each writes an exclusive fact, a delayed callback, and distinct ending eligibility.",
+        "resolutionProse": "The choice commits once within three turns. Both paths converge at erebus-9-docking-spine, which reads rather than erases the stored flags.",
+        "receiptProse": "The receipt records the selected fact, the locked opposite, faction and NPC changes, callback chapter-6-docking, and ending eligibility."
+      }
+    },
+    {
+      "schemaVersion": "1.0.0",
+      "templateVersion": "1.0.0",
+      "id": "erebus-9.crisis.last-shuttle",
+      "mode": "pyoa",
+      "bibleId": "erebus-9",
+      "name": "Last Shuttle",
+      "role": "crisis",
+      "summary": "Choose who receives the last shuttle seats before station breakup.",
+      "telegraph": {
+        "required": true,
+        "channels": [
+          "scene"
+        ],
+        "cues": [
+          {
+            "channel": "scene",
+            "signal": "The shuttle seats the bridge crew or the habitation delegates, and launch seals the other group aboard.",
+            "inference": "The crisis presents an exclusive decision with a visible future callback.",
+            "actionHook": "seat-bridge-crew"
+          }
+        ],
+        "responseWindowTurns": 2,
+        "surpriseEligible": false,
+        "openingSeverityCap": "none"
+      },
+      "stakes": {
+        "headline": "Choose command continuity or civilian mandate.",
+        "approaches": [
+          {
+            "id": "seat-bridge-crew",
+            "label": "Seat the Bridge Crew",
+            "requirements": [],
+            "method": "fork",
+            "onSuccess": {
+              "terminal": true,
+              "stateChanges": [
+                "fact:bridge-crew-evacuated:set:true",
+                "fact:hab-delegates-evacuated:lock:false",
+                "callback:epilogue-command-colony:schedule",
+                "ending:ending-command-seed:eligible",
+                "convergence:erebus-9-breakup:preserve_flags"
+              ],
+              "summary": "Seat the Bridge Crew writes a durable fact and qualifies ending-command-seed.",
+              "terminalState": "crisisEnding"
+            },
+            "onFailure": {
+              "terminal": false,
+              "stateChanges": [
+                "choice:validation_error:record",
+                "choice:remain_uncommitted"
+              ],
+              "summary": "The engine rejects an illegal option without consuming a turn."
+            },
+            "lockout": "A valid fork commits once; the opposing fact is locked until an explicitly authored reversal crisis."
+          },
+          {
+            "id": "seat-hab-delegates",
+            "label": "Seat the Habitation Delegates",
+            "requirements": [],
+            "method": "fork",
+            "onSuccess": {
+              "terminal": true,
+              "stateChanges": [
+                "fact:hab-delegates-evacuated:set:true",
+                "fact:bridge-crew-evacuated:lock:false",
+                "callback:epilogue-civic-colony:schedule",
+                "ending:ending-civic-seed:eligible",
+                "convergence:erebus-9-breakup:preserve_flags"
+              ],
+              "summary": "Seat the Habitation Delegates writes the opposing fact and qualifies ending-civic-seed.",
+              "terminalState": "crisisEnding"
+            },
+            "onFailure": {
+              "terminal": false,
+              "stateChanges": [
+                "choice:validation_error:record",
+                "choice:remain_uncommitted"
+              ],
+              "summary": "The engine rejects an illegal option without consuming a turn."
+            },
+            "lockout": "A valid fork commits once; the opposing fact is locked until an explicitly authored reversal crisis."
+          }
+        ]
+      },
+      "resolution": {
+        "mechanic": "fork",
+        "config": {
+          "exclusiveFactGroup": "last-shuttle-commitment",
+          "delayedPayoffAt": "epilogue-colony",
+          "convergencePoint": "erebus-9-breakup",
+          "convergencePolicy": "merge scene topology only; preserve facts, callbacks, relationships, and ending eligibility",
+          "commitOnce": true
+        },
+        "terminalStates": [
+          "crisisEnding"
+        ],
+        "maxTurns": 3,
+        "forcedTerminal": {
+          "terminal": true,
+          "stateChanges": [
+            "fact:shuttle-launches-autonomously:set:true",
+            "callback:epilogue-random-survivors:schedule",
+            "ending:ending-lottery-seed:eligible",
+            "convergence:erebus-9-breakup:preserve_flags"
+          ],
+          "summary": "Delay commits shuttle-launches-autonomously; the crisis ends and schedules epilogue-random-survivors.",
+          "terminalState": "crisisEnding"
+        },
+        "antiRepeatRule": "After commit, the crisis ID is terminal and cannot respawn; convergence reads stored flags."
+      },
+      "aftermath": {
+        "minimumReceiptTypes": 3,
+        "byTerminal": {
+          "seat-bridge-crew": [
+            {
+              "type": "quest",
+              "target": "epilogue-command-colony",
+              "operation": "unlock",
+              "value": true
+            },
+            {
+              "type": "faction",
+              "target": "bridge-crew",
+              "operation": "increment",
+              "value": 3
+            },
+            {
+              "type": "npc",
+              "target": "chief-rhee",
+              "operation": "set",
+              "value": "evacuated-commanding"
+            }
+          ],
+          "seat-hab-delegates": [
+            {
+              "type": "quest",
+              "target": "epilogue-civic-colony",
+              "operation": "unlock",
+              "value": true
+            },
+            {
+              "type": "faction",
+              "target": "habitation-council",
+              "operation": "increment",
+              "value": 3
+            },
+            {
+              "type": "npc",
+              "target": "chief-rhee",
+              "operation": "set",
+              "value": "stays-behind"
+            }
+          ]
+        }
+      },
+      "biomeFilter": {
+        "allow": [
+          "erebus-9-hangar"
+        ],
+        "siteTags": [
+          "ending-fork"
+        ],
+        "requireFactionTags": [
+          "bridge-crew",
+          "habitation-council"
+        ],
+        "exclude": [
+          "thornferry",
+          "vesper-glass",
+          "ashwinter-court"
+        ]
+      },
+      "turnWindow": {
+        "earliest": 20,
+        "latest": 95,
+        "cooldown": 9999,
+        "droughtEligible": true
+      },
+      "governance": {
+        "stage": "draft",
+        "contentHash": "7ecf8e60c2f55f47",
+        "owner": "encounter-design",
+        "replaces": null
+      },
+      "example": {
+        "telegraphProse": "The shuttle seats the bridge crew or the habitation delegates, and launch seals the other group aboard.",
+        "stakesProse": "Seat the Bridge Crew or Seat the Habitation Delegates; each writes an exclusive fact, a delayed callback, and distinct ending eligibility.",
+        "resolutionProse": "The choice commits once within three turns. Both paths converge at erebus-9-breakup, which reads rather than erases the stored flags.",
+        "receiptProse": "The receipt records the selected fact, the locked opposite, faction and NPC changes, callback epilogue-colony, and ending eligibility."
+      }
+    },
+    {
+      "schemaVersion": "1.0.0",
+      "templateVersion": "1.0.0",
+      "id": "ashwinter-court.crisis.white-hart-oath",
+      "mode": "pyoa",
+      "bibleId": "ashwinter-court",
+      "name": "White Hart Oath",
+      "role": "crisis",
+      "summary": "Choose whether to swear the winter hunt to Crown or forest spirits.",
+      "telegraph": {
+        "required": true,
+        "channels": [
+          "scene"
+        ],
+        "cues": [
+          {
+            "channel": "scene",
+            "signal": "The Hart accepts one oath; Crown grants law, while the spirits grant passage through the whitewood.",
+            "inference": "The crisis presents an exclusive decision with a visible future callback.",
+            "actionHook": "oath-to-crown"
+          }
+        ],
+        "responseWindowTurns": 2,
+        "surpriseEligible": false,
+        "openingSeverityCap": "none"
+      },
+      "stakes": {
+        "headline": "Choose royal duty or old covenant.",
+        "approaches": [
+          {
+            "id": "oath-to-crown",
+            "label": "Swear the Hunt to the Crown",
+            "requirements": [],
+            "method": "fork",
+            "onSuccess": {
+              "terminal": true,
+              "stateChanges": [
+                "fact:hart-oath-crown:set:true",
+                "fact:hart-oath-spirits:lock:false",
+                "callback:hunt.royal-quarry:schedule",
+                "ending:ending-crowned-hunter:eligible",
+                "convergence:ashwinter-whitewood:preserve_flags"
+              ],
+              "summary": "Swear the Hunt to the Crown writes a durable fact and qualifies ending-crowned-hunter.",
+              "terminalState": "crisisEnding"
+            },
+            "onFailure": {
+              "terminal": false,
+              "stateChanges": [
+                "choice:validation_error:record",
+                "choice:remain_uncommitted"
+              ],
+              "summary": "The engine rejects an illegal option without consuming a turn."
+            },
+            "lockout": "A valid fork commits once; the opposing fact is locked until an explicitly authored reversal crisis."
+          },
+          {
+            "id": "oath-to-spirits",
+            "label": "Swear the Hunt to the Spirits",
+            "requirements": [],
+            "method": "fork",
+            "onSuccess": {
+              "terminal": true,
+              "stateChanges": [
+                "fact:hart-oath-spirits:set:true",
+                "fact:hart-oath-crown:lock:false",
+                "callback:hunt-spirit-trail:schedule",
+                "ending:ending-keeper-of-whitewood:eligible",
+                "convergence:ashwinter-whitewood:preserve_flags"
+              ],
+              "summary": "Swear the Hunt to the Spirits writes the opposing fact and qualifies ending-keeper-of-whitewood.",
+              "terminalState": "crisisEnding"
+            },
+            "onFailure": {
+              "terminal": false,
+              "stateChanges": [
+                "choice:validation_error:record",
+                "choice:remain_uncommitted"
+              ],
+              "summary": "The engine rejects an illegal option without consuming a turn."
+            },
+            "lockout": "A valid fork commits once; the opposing fact is locked until an explicitly authored reversal crisis."
+          }
+        ]
+      },
+      "resolution": {
+        "mechanic": "fork",
+        "config": {
+          "exclusiveFactGroup": "white-hart-oath-commitment",
+          "delayedPayoffAt": "chapter-2-winter-hunt",
+          "convergencePoint": "ashwinter-whitewood",
+          "convergencePolicy": "merge scene topology only; preserve facts, callbacks, relationships, and ending eligibility",
+          "commitOnce": true
+        },
+        "terminalStates": [
+          "crisisEnding"
+        ],
+        "maxTurns": 3,
+        "forcedTerminal": {
+          "terminal": true,
+          "stateChanges": [
+            "fact:hart-refuses-oath:set:true",
+            "callback:hunt.no-guide:schedule",
+            "ending:ending-trackless-snow:eligible",
+            "convergence:ashwinter-whitewood:preserve_flags"
+          ],
+          "summary": "Delay commits hart-refuses-oath; the crisis ends and schedules hunt.no-guide.",
+          "terminalState": "crisisEnding"
+        },
+        "antiRepeatRule": "After commit, the crisis ID is terminal and cannot respawn; convergence reads stored flags."
+      },
+      "aftermath": {
+        "minimumReceiptTypes": 3,
+        "byTerminal": {
+          "oath-to-crown": [
+            {
+              "type": "quest",
+              "target": "hunt.royal-quarry",
+              "operation": "unlock",
+              "value": true
+            },
+            {
+              "type": "faction",
+              "target": "ashwinter-court",
+              "operation": "increment",
+              "value": 2
+            },
+            {
+              "type": "npc",
+              "target": "white-hart",
+              "operation": "set",
+              "value": "royal-quarry"
+            }
+          ],
+          "oath-to-spirits": [
+            {
+              "type": "quest",
+              "target": "hunt-spirit-trail",
+              "operation": "unlock",
+              "value": true
+            },
+            {
+              "type": "faction",
+              "target": "whitewood-spirits",
+              "operation": "increment",
+              "value": 2
+            },
+            {
+              "type": "npc",
+              "target": "white-hart",
+              "operation": "set",
+              "value": "spirit-guide"
+            }
+          ]
+        }
+      },
+      "biomeFilter": {
+        "allow": [
+          "ashwinter-whitewood"
+        ],
+        "siteTags": [
+          "oath-fork"
+        ],
+        "requireFactionTags": [
+          "ashwinter-court",
+          "whitewood-spirits"
+        ],
+        "exclude": [
+          "thornferry",
+          "vesper-glass",
+          "erebus-9"
+        ]
+      },
+      "turnWindow": {
+        "earliest": 4,
+        "latest": 35,
+        "cooldown": 9999,
+        "droughtEligible": true
+      },
+      "governance": {
+        "stage": "draft",
+        "contentHash": "5e4bde5a84532092",
+        "owner": "encounter-design",
+        "replaces": null
+      },
+      "example": {
+        "telegraphProse": "The Hart accepts one oath; Crown grants law, while the spirits grant passage through the whitewood.",
+        "stakesProse": "Swear the Hunt to the Crown or Swear the Hunt to the Spirits; each writes an exclusive fact, a delayed callback, and distinct ending eligibility.",
+        "resolutionProse": "The choice commits once within three turns. Both paths converge at ashwinter-whitewood, which reads rather than erases the stored flags.",
+        "receiptProse": "The receipt records the selected fact, the locked opposite, faction and NPC changes, callback chapter-2-winter-hunt, and ending eligibility."
+      }
+    },
+    {
+      "schemaVersion": "1.0.0",
+      "templateVersion": "1.0.0",
+      "id": "ashwinter-court.crisis.warmth-tax",
+      "mode": "pyoa",
+      "bibleId": "ashwinter-court",
+      "name": "Warmth Tax",
+      "role": "crisis",
+      "summary": "Choose whether palace heat is rationed to villages or preserved for the court.",
+      "telegraph": {
+        "required": true,
+        "channels": [
+          "scene"
+        ],
+        "cues": [
+          {
+            "channel": "scene",
+            "signal": "The ember tithe can warm three villages or keep the palace defenses alive through midwinter.",
+            "inference": "The crisis presents an exclusive decision with a visible future callback.",
+            "actionHook": "warm-villages"
+          }
+        ],
+        "responseWindowTurns": 2,
+        "surpriseEligible": false,
+        "openingSeverityCap": "none"
+      },
+      "stakes": {
+        "headline": "Choose subjects or stronghold.",
+        "approaches": [
+          {
+            "id": "warm-villages",
+            "label": "Send the Ember Tithe to the Villages",
+            "requirements": [],
+            "method": "fork",
+            "onSuccess": {
+              "terminal": true,
+              "stateChanges": [
+                "fact:villages-warmed:set:true",
+                "fact:palace-warmed:lock:false",
+                "callback:midwinter.palace-freezes:schedule",
+                "ending:ending-hearth-queen:eligible",
+                "convergence:ashwinter-midwinter:preserve_flags"
+              ],
+              "summary": "Send the Ember Tithe to the Villages writes a durable fact and qualifies ending-hearth-queen.",
+              "terminalState": "crisisEnding"
+            },
+            "onFailure": {
+              "terminal": false,
+              "stateChanges": [
+                "choice:validation_error:record",
+                "choice:remain_uncommitted"
+              ],
+              "summary": "The engine rejects an illegal option without consuming a turn."
+            },
+            "lockout": "A valid fork commits once; the opposing fact is locked until an explicitly authored reversal crisis."
+          },
+          {
+            "id": "warm-palace",
+            "label": "Keep the Ember Tithe at Court",
+            "requirements": [],
+            "method": "fork",
+            "onSuccess": {
+              "terminal": true,
+              "stateChanges": [
+                "fact:palace-warmed:set:true",
+                "fact:villages-warmed:lock:false",
+                "callback:midwinter.village-loss:schedule",
+                "ending:ending-last-stronghold:eligible",
+                "convergence:ashwinter-midwinter:preserve_flags"
+              ],
+              "summary": "Keep the Ember Tithe at Court writes the opposing fact and qualifies ending-last-stronghold.",
+              "terminalState": "crisisEnding"
+            },
+            "onFailure": {
+              "terminal": false,
+              "stateChanges": [
+                "choice:validation_error:record",
+                "choice:remain_uncommitted"
+              ],
+              "summary": "The engine rejects an illegal option without consuming a turn."
+            },
+            "lockout": "A valid fork commits once; the opposing fact is locked until an explicitly authored reversal crisis."
+          }
+        ]
+      },
+      "resolution": {
+        "mechanic": "fork",
+        "config": {
+          "exclusiveFactGroup": "warmth-tax-commitment",
+          "delayedPayoffAt": "chapter-3-midwinter",
+          "convergencePoint": "ashwinter-midwinter",
+          "convergencePolicy": "merge scene topology only; preserve facts, callbacks, relationships, and ending eligibility",
+          "commitOnce": true
+        },
+        "terminalStates": [
+          "crisisEnding"
+        ],
+        "maxTurns": 3,
+        "forcedTerminal": {
+          "terminal": true,
+          "stateChanges": [
+            "fact:embers-divided-too-late:set:true",
+            "callback:midwinter-both-cold:schedule",
+            "ending:ending-ashen-dawn:eligible",
+            "convergence:ashwinter-midwinter:preserve_flags"
+          ],
+          "summary": "Delay commits embers-divided-too-late; the crisis ends and schedules midwinter-both-cold.",
+          "terminalState": "crisisEnding"
+        },
+        "antiRepeatRule": "After commit, the crisis ID is terminal and cannot respawn; convergence reads stored flags."
+      },
+      "aftermath": {
+        "minimumReceiptTypes": 3,
+        "byTerminal": {
+          "warm-villages": [
+            {
+              "type": "quest",
+              "target": "midwinter.palace-freezes",
+              "operation": "unlock",
+              "value": true
+            },
+            {
+              "type": "faction",
+              "target": "village-hearths",
+              "operation": "increment",
+              "value": 3
+            },
+            {
+              "type": "npc",
+              "target": "steward-ilse",
+              "operation": "set",
+              "value": "backs-villages"
+            }
+          ],
+          "warm-palace": [
+            {
+              "type": "quest",
+              "target": "midwinter.village-loss",
+              "operation": "unlock",
+              "value": true
+            },
+            {
+              "type": "faction",
+              "target": "ashwinter-court",
+              "operation": "increment",
+              "value": 2
+            },
+            {
+              "type": "npc",
+              "target": "steward-ilse",
+              "operation": "set",
+              "value": "backs-palace"
+            }
+          ]
+        }
+      },
+      "biomeFilter": {
+        "allow": [
+          "ashwinter-ember-hall"
+        ],
+        "siteTags": [
+          "scarcity-fork"
+        ],
+        "requireFactionTags": [
+          "ashwinter-court",
+          "village-hearths"
+        ],
+        "exclude": [
+          "thornferry",
+          "vesper-glass",
+          "erebus-9"
+        ]
+      },
+      "turnWindow": {
+        "earliest": 7,
+        "latest": 45,
+        "cooldown": 9999,
+        "droughtEligible": true
+      },
+      "governance": {
+        "stage": "draft",
+        "contentHash": "8aa861fb8f5b6faa",
+        "owner": "encounter-design",
+        "replaces": null
+      },
+      "example": {
+        "telegraphProse": "The ember tithe can warm three villages or keep the palace defenses alive through midwinter.",
+        "stakesProse": "Send the Ember Tithe to the Villages or Keep the Ember Tithe at Court; each writes an exclusive fact, a delayed callback, and distinct ending eligibility.",
+        "resolutionProse": "The choice commits once within three turns. Both paths converge at ashwinter-midwinter, which reads rather than erases the stored flags.",
+        "receiptProse": "The receipt records the selected fact, the locked opposite, faction and NPC changes, callback chapter-3-midwinter, and ending eligibility."
+      }
+    },
+    {
+      "schemaVersion": "1.0.0",
+      "templateVersion": "1.0.0",
+      "id": "ashwinter-court.crisis.heir-beneath-ice",
+      "mode": "pyoa",
+      "bibleId": "ashwinter-court",
+      "name": "Heir Beneath Ice",
+      "role": "crisis",
+      "summary": "Choose whether to thaw the lost heir or preserve the treaty built on their death.",
+      "telegraph": {
+        "required": true,
+        "channels": [
+          "scene"
+        ],
+        "cues": [
+          {
+            "channel": "scene",
+            "signal": "The heir lives beneath the lake; waking them voids the regent’s peace treaty.",
+            "inference": "The crisis presents an exclusive decision with a visible future callback.",
+            "actionHook": "thaw-heir"
+          }
+        ],
+        "responseWindowTurns": 2,
+        "surpriseEligible": false,
+        "openingSeverityCap": "none"
+      },
+      "stakes": {
+        "headline": "Choose rightful return or political stability.",
+        "approaches": [
+          {
+            "id": "thaw-heir",
+            "label": "Thaw the Lost Heir",
+            "requirements": [],
+            "method": "fork",
+            "onSuccess": {
+              "terminal": true,
+              "stateChanges": [
+                "fact:lost-heir-awake:set:true",
+                "fact:lost-heir-entombed:lock:false",
+                "callback:court.heir-returns:schedule",
+                "ending:ending-rightful-thaw:eligible",
+                "convergence:ashwinter-frozen-lake:preserve_flags"
+              ],
+              "summary": "Thaw the Lost Heir writes a durable fact and qualifies ending-rightful-thaw.",
+              "terminalState": "crisisEnding"
+            },
+            "onFailure": {
+              "terminal": false,
+              "stateChanges": [
+                "choice:validation_error:record",
+                "choice:remain_uncommitted"
+              ],
+              "summary": "The engine rejects an illegal option without consuming a turn."
+            },
+            "lockout": "A valid fork commits once; the opposing fact is locked until an explicitly authored reversal crisis."
+          },
+          {
+            "id": "leave-heir",
+            "label": "Leave the Heir Beneath Ice",
+            "requirements": [],
+            "method": "fork",
+            "onSuccess": {
+              "terminal": true,
+              "stateChanges": [
+                "fact:lost-heir-entombed:set:true",
+                "fact:lost-heir-awake:lock:false",
+                "callback:court.treaty-stands:schedule",
+                "ending:ending-peace-kept:eligible",
+                "convergence:ashwinter-frozen-lake:preserve_flags"
+              ],
+              "summary": "Leave the Heir Beneath Ice writes the opposing fact and qualifies ending-peace-kept.",
+              "terminalState": "crisisEnding"
+            },
+            "onFailure": {
+              "terminal": false,
+              "stateChanges": [
+                "choice:validation_error:record",
+                "choice:remain_uncommitted"
+              ],
+              "summary": "The engine rejects an illegal option without consuming a turn."
+            },
+            "lockout": "A valid fork commits once; the opposing fact is locked until an explicitly authored reversal crisis."
+          }
+        ]
+      },
+      "resolution": {
+        "mechanic": "fork",
+        "config": {
+          "exclusiveFactGroup": "heir-beneath-ice-commitment",
+          "delayedPayoffAt": "chapter-4-court-claim",
+          "convergencePoint": "ashwinter-frozen-lake",
+          "convergencePolicy": "merge scene topology only; preserve facts, callbacks, relationships, and ending eligibility",
+          "commitOnce": true
+        },
+        "terminalStates": [
+          "crisisEnding"
+        ],
+        "maxTurns": 3,
+        "forcedTerminal": {
+          "terminal": true,
+          "stateChanges": [
+            "fact:ice-cracks-without-ritual:set:true",
+            "callback:court-heir-damaged:schedule",
+            "ending:ending-broken-claim:eligible",
+            "convergence:ashwinter-frozen-lake:preserve_flags"
+          ],
+          "summary": "Delay commits ice-cracks-without-ritual; the crisis ends and schedules court-heir-damaged.",
+          "terminalState": "crisisEnding"
+        },
+        "antiRepeatRule": "After commit, the crisis ID is terminal and cannot respawn; convergence reads stored flags."
+      },
+      "aftermath": {
+        "minimumReceiptTypes": 3,
+        "byTerminal": {
+          "thaw-heir": [
+            {
+              "type": "quest",
+              "target": "court.heir-returns",
+              "operation": "unlock",
+              "value": true
+            },
+            {
+              "type": "faction",
+              "target": "old-royalists",
+              "operation": "increment",
+              "value": 3
+            },
+            {
+              "type": "npc",
+              "target": "heir-maelin",
+              "operation": "set",
+              "value": "awake-claimant"
+            }
+          ],
+          "leave-heir": [
+            {
+              "type": "quest",
+              "target": "court.treaty-stands",
+              "operation": "unlock",
+              "value": true
+            },
+            {
+              "type": "faction",
+              "target": "regency",
+              "operation": "increment",
+              "value": 2
+            },
+            {
+              "type": "npc",
+              "target": "heir-maelin",
+              "operation": "set",
+              "value": "sleeping-secret"
+            }
+          ]
+        }
+      },
+      "biomeFilter": {
+        "allow": [
+          "ashwinter-frozen-lake"
+        ],
+        "siteTags": [
+          "succession-fork"
+        ],
+        "requireFactionTags": [
+          "old-royalists",
+          "regency"
+        ],
+        "exclude": [
+          "thornferry",
+          "vesper-glass",
+          "erebus-9"
+        ]
+      },
+      "turnWindow": {
+        "earliest": 10,
+        "latest": 60,
+        "cooldown": 9999,
+        "droughtEligible": true
+      },
+      "governance": {
+        "stage": "draft",
+        "contentHash": "1d87b0de8dd38a70",
+        "owner": "encounter-design",
+        "replaces": null
+      },
+      "example": {
+        "telegraphProse": "The heir lives beneath the lake; waking them voids the regent’s peace treaty.",
+        "stakesProse": "Thaw the Lost Heir or Leave the Heir Beneath Ice; each writes an exclusive fact, a delayed callback, and distinct ending eligibility.",
+        "resolutionProse": "The choice commits once within three turns. Both paths converge at ashwinter-frozen-lake, which reads rather than erases the stored flags.",
+        "receiptProse": "The receipt records the selected fact, the locked opposite, faction and NPC changes, callback chapter-4-court-claim, and ending eligibility."
+      }
+    },
+    {
+      "schemaVersion": "1.0.0",
+      "templateVersion": "1.0.0",
+      "id": "ashwinter-court.crisis.mask-at-midwinter",
+      "mode": "pyoa",
+      "bibleId": "ashwinter-court",
+      "name": "Mask at Midwinter",
+      "role": "crisis",
+      "summary": "Choose which identity to wear before the court’s truth-seeing candles.",
+      "telegraph": {
+        "required": true,
+        "channels": [
+          "scene"
+        ],
+        "cues": [
+          {
+            "channel": "scene",
+            "signal": "The rebel mask protects allies but condemns the wearer; the royal mask preserves rank and exposes the rebels.",
+            "inference": "The crisis presents an exclusive decision with a visible future callback.",
+            "actionHook": "wear-rebel-mask"
+          }
+        ],
+        "responseWindowTurns": 2,
+        "surpriseEligible": false,
+        "openingSeverityCap": "none"
+      },
+      "stakes": {
+        "headline": "Choose solidarity or privilege.",
+        "approaches": [
+          {
+            "id": "wear-rebel-mask",
+            "label": "Wear the Rebel Mask",
+            "requirements": [],
+            "method": "fork",
+            "onSuccess": {
+              "terminal": true,
+              "stateChanges": [
+                "fact:rebel-identity-embraced:set:true",
+                "fact:royal-identity-preserved:lock:false",
+                "callback:ball.rebels-protected:schedule",
+                "ending:ending-red-mask-rising:eligible",
+                "convergence:ashwinter-midwinter-ball:preserve_flags"
+              ],
+              "summary": "Wear the Rebel Mask writes a durable fact and qualifies ending-red-mask-rising.",
+              "terminalState": "crisisEnding"
+            },
+            "onFailure": {
+              "terminal": false,
+              "stateChanges": [
+                "choice:validation_error:record",
+                "choice:remain_uncommitted"
+              ],
+              "summary": "The engine rejects an illegal option without consuming a turn."
+            },
+            "lockout": "A valid fork commits once; the opposing fact is locked until an explicitly authored reversal crisis."
+          },
+          {
+            "id": "wear-royal-mask",
+            "label": "Wear the Royal Mask",
+            "requirements": [],
+            "method": "fork",
+            "onSuccess": {
+              "terminal": true,
+              "stateChanges": [
+                "fact:royal-identity-preserved:set:true",
+                "fact:rebel-identity-embraced:lock:false",
+                "callback:ball-rebels-exposed:schedule",
+                "ending:ending-winter-favorite:eligible",
+                "convergence:ashwinter-midwinter-ball:preserve_flags"
+              ],
+              "summary": "Wear the Royal Mask writes the opposing fact and qualifies ending-winter-favorite.",
+              "terminalState": "crisisEnding"
+            },
+            "onFailure": {
+              "terminal": false,
+              "stateChanges": [
+                "choice:validation_error:record",
+                "choice:remain_uncommitted"
+              ],
+              "summary": "The engine rejects an illegal option without consuming a turn."
+            },
+            "lockout": "A valid fork commits once; the opposing fact is locked until an explicitly authored reversal crisis."
+          }
+        ]
+      },
+      "resolution": {
+        "mechanic": "fork",
+        "config": {
+          "exclusiveFactGroup": "mask-at-midwinter-commitment",
+          "delayedPayoffAt": "chapter-5-mask-ball",
+          "convergencePoint": "ashwinter-midwinter-ball",
+          "convergencePolicy": "merge scene topology only; preserve facts, callbacks, relationships, and ending eligibility",
+          "commitOnce": true
+        },
+        "terminalStates": [
+          "crisisEnding"
+        ],
+        "maxTurns": 3,
+        "forcedTerminal": {
+          "terminal": true,
+          "stateChanges": [
+            "fact:candles-name-player:set:true",
+            "callback:ball-identity-exposed:schedule",
+            "ending:ending-unmasked:eligible",
+            "convergence:ashwinter-midwinter-ball:preserve_flags"
+          ],
+          "summary": "Delay commits candles-name-player; the crisis ends and schedules ball-identity-exposed.",
+          "terminalState": "crisisEnding"
+        },
+        "antiRepeatRule": "After commit, the crisis ID is terminal and cannot respawn; convergence reads stored flags."
+      },
+      "aftermath": {
+        "minimumReceiptTypes": 3,
+        "byTerminal": {
+          "wear-rebel-mask": [
+            {
+              "type": "quest",
+              "target": "ball.rebels-protected",
+              "operation": "unlock",
+              "value": true
+            },
+            {
+              "type": "faction",
+              "target": "hearth-rebels",
+              "operation": "increment",
+              "value": 3
+            },
+            {
+              "type": "npc",
+              "target": "queen-syr",
+              "operation": "set",
+              "value": "suspects-player"
+            }
+          ],
+          "wear-royal-mask": [
+            {
+              "type": "quest",
+              "target": "ball-rebels-exposed",
+              "operation": "unlock",
+              "value": true
+            },
+            {
+              "type": "faction",
+              "target": "ashwinter-court",
+              "operation": "increment",
+              "value": 3
+            },
+            {
+              "type": "npc",
+              "target": "queen-syr",
+              "operation": "set",
+              "value": "trusts-courtier"
+            }
+          ]
+        }
+      },
+      "biomeFilter": {
+        "allow": [
+          "ashwinter-palace"
+        ],
+        "siteTags": [
+          "identity-fork"
+        ],
+        "requireFactionTags": [
+          "hearth-rebels",
+          "ashwinter-court"
+        ],
+        "exclude": [
+          "thornferry",
+          "vesper-glass",
+          "erebus-9"
+        ]
+      },
+      "turnWindow": {
+        "earliest": 13,
+        "latest": 72,
+        "cooldown": 9999,
+        "droughtEligible": true
+      },
+      "governance": {
+        "stage": "draft",
+        "contentHash": "61ffbc1c83940bc8",
+        "owner": "encounter-design",
+        "replaces": null
+      },
+      "example": {
+        "telegraphProse": "The rebel mask protects allies but condemns the wearer; the royal mask preserves rank and exposes the rebels.",
+        "stakesProse": "Wear the Rebel Mask or Wear the Royal Mask; each writes an exclusive fact, a delayed callback, and distinct ending eligibility.",
+        "resolutionProse": "The choice commits once within three turns. Both paths converge at ashwinter-midwinter-ball, which reads rather than erases the stored flags.",
+        "receiptProse": "The receipt records the selected fact, the locked opposite, faction and NPC changes, callback chapter-5-mask-ball, and ending eligibility."
+      }
+    },
+    {
+      "schemaVersion": "1.0.0",
+      "templateVersion": "1.0.0",
+      "id": "ashwinter-court.crisis.thaw-the-prisoner",
+      "mode": "pyoa",
+      "bibleId": "ashwinter-court",
+      "name": "Thaw the Prisoner",
+      "role": "crisis",
+      "summary": "Choose whether to release an enemy general who knows how to stop the endless winter.",
+      "telegraph": {
+        "required": true,
+        "channels": [
+          "scene"
+        ],
+        "cues": [
+          {
+            "channel": "scene",
+            "signal": "The prisoner offers the thaw rite; freedom risks renewed war, while execution preserves war but loses the rite.",
+            "inference": "The crisis presents an exclusive decision with a visible future callback.",
+            "actionHook": "release-general"
+          }
+        ],
+        "responseWindowTurns": 2,
+        "surpriseEligible": false,
+        "openingSeverityCap": "none"
+      },
+      "stakes": {
+        "headline": "Choose dangerous knowledge or final punishment.",
+        "approaches": [
+          {
+            "id": "release-general",
+            "label": "Release the Frost General",
+            "requirements": [],
+            "method": "fork",
+            "onSuccess": {
+              "terminal": true,
+              "stateChanges": [
+                "fact:frost-general-free:set:true",
+                "fact:frost-general-executed:lock:false",
+                "callback:thaw.general-rite:schedule",
+                "ending:ending-enemy-sun:eligible",
+                "convergence:ashwinter-prison:preserve_flags"
+              ],
+              "summary": "Release the Frost General writes a durable fact and qualifies ending-enemy-sun.",
+              "terminalState": "crisisEnding"
+            },
+            "onFailure": {
+              "terminal": false,
+              "stateChanges": [
+                "choice:validation_error:record",
+                "choice:remain_uncommitted"
+              ],
+              "summary": "The engine rejects an illegal option without consuming a turn."
+            },
+            "lockout": "A valid fork commits once; the opposing fact is locked until an explicitly authored reversal crisis."
+          },
+          {
+            "id": "execute-general",
+            "label": "Execute the Frost General",
+            "requirements": [],
+            "method": "fork",
+            "onSuccess": {
+              "terminal": true,
+              "stateChanges": [
+                "fact:frost-general-executed:set:true",
+                "fact:frost-general-free:lock:false",
+                "callback:thaw-lost-rite:schedule",
+                "ending:ending-winter-justice:eligible",
+                "convergence:ashwinter-prison:preserve_flags"
+              ],
+              "summary": "Execute the Frost General writes the opposing fact and qualifies ending-winter-justice.",
+              "terminalState": "crisisEnding"
+            },
+            "onFailure": {
+              "terminal": false,
+              "stateChanges": [
+                "choice:validation_error:record",
+                "choice:remain_uncommitted"
+              ],
+              "summary": "The engine rejects an illegal option without consuming a turn."
+            },
+            "lockout": "A valid fork commits once; the opposing fact is locked until an explicitly authored reversal crisis."
+          }
+        ]
+      },
+      "resolution": {
+        "mechanic": "fork",
+        "config": {
+          "exclusiveFactGroup": "thaw-the-prisoner-commitment",
+          "delayedPayoffAt": "chapter-6-thaw-rite",
+          "convergencePoint": "ashwinter-prison",
+          "convergencePolicy": "merge scene topology only; preserve facts, callbacks, relationships, and ending eligibility",
+          "commitOnce": true
+        },
+        "terminalStates": [
+          "crisisEnding"
+        ],
+        "maxTurns": 3,
+        "forcedTerminal": {
+          "terminal": true,
+          "stateChanges": [
+            "fact:prisoner-dies-unheard:set:true",
+            "callback:thaw-fragmented-rite:schedule",
+            "ending:ending-no-thaw:eligible",
+            "convergence:ashwinter-prison:preserve_flags"
+          ],
+          "summary": "Delay commits prisoner-dies-unheard; the crisis ends and schedules thaw-fragmented-rite.",
+          "terminalState": "crisisEnding"
+        },
+        "antiRepeatRule": "After commit, the crisis ID is terminal and cannot respawn; convergence reads stored flags."
+      },
+      "aftermath": {
+        "minimumReceiptTypes": 3,
+        "byTerminal": {
+          "release-general": [
+            {
+              "type": "quest",
+              "target": "thaw.general-rite",
+              "operation": "unlock",
+              "value": true
+            },
+            {
+              "type": "faction",
+              "target": "frostbound-army",
+              "operation": "increment",
+              "value": 2
+            },
+            {
+              "type": "npc",
+              "target": "general-vark",
+              "operation": "set",
+              "value": "free-under-oath"
+            }
+          ],
+          "execute-general": [
+            {
+              "type": "quest",
+              "target": "thaw-lost-rite",
+              "operation": "unlock",
+              "value": true
+            },
+            {
+              "type": "faction",
+              "target": "ashwinter-court",
+              "operation": "increment",
+              "value": 2
+            },
+            {
+              "type": "npc",
+              "target": "general-vark",
+              "operation": "set",
+              "value": "dead-silent"
+            }
+          ]
+        }
+      },
+      "biomeFilter": {
+        "allow": [
+          "ashwinter-ice-prison"
+        ],
+        "siteTags": [
+          "mercy-fork"
+        ],
+        "requireFactionTags": [
+          "frostbound-army",
+          "ashwinter-court"
+        ],
+        "exclude": [
+          "thornferry",
+          "vesper-glass",
+          "erebus-9"
+        ]
+      },
+      "turnWindow": {
+        "earliest": 16,
+        "latest": 82,
+        "cooldown": 9999,
+        "droughtEligible": true
+      },
+      "governance": {
+        "stage": "draft",
+        "contentHash": "6e54c8a2c347a669",
+        "owner": "encounter-design",
+        "replaces": null
+      },
+      "example": {
+        "telegraphProse": "The prisoner offers the thaw rite; freedom risks renewed war, while execution preserves war but loses the rite.",
+        "stakesProse": "Release the Frost General or Execute the Frost General; each writes an exclusive fact, a delayed callback, and distinct ending eligibility.",
+        "resolutionProse": "The choice commits once within three turns. Both paths converge at ashwinter-prison, which reads rather than erases the stored flags.",
+        "receiptProse": "The receipt records the selected fact, the locked opposite, faction and NPC changes, callback chapter-6-thaw-rite, and ending eligibility."
+      }
+    },
+    {
+      "schemaVersion": "1.0.0",
+      "templateVersion": "1.0.0",
+      "id": "ashwinter-court.crisis.crown-of-embers",
+      "mode": "pyoa",
+      "bibleId": "ashwinter-court",
+      "name": "Crown of Embers",
+      "role": "crisis",
+      "summary": "Choose who bears the crown that can end winter by consuming its wearer.",
+      "telegraph": {
+        "required": true,
+        "channels": [
+          "scene"
+        ],
+        "cues": [
+          {
+            "channel": "scene",
+            "signal": "The crown ends winter but burns one sovereign from history; giving it away changes whose name survives.",
+            "inference": "The crisis presents an exclusive decision with a visible future callback.",
+            "actionHook": "wear-ember-crown"
+          }
+        ],
+        "responseWindowTurns": 2,
+        "surpriseEligible": false,
+        "openingSeverityCap": "none"
+      },
+      "stakes": {
+        "headline": "Choose self-sacrifice or appointed sacrifice.",
+        "approaches": [
+          {
+            "id": "wear-ember-crown",
+            "label": "Wear the Crown of Embers",
+            "requirements": [],
+            "method": "fork",
+            "onSuccess": {
+              "terminal": true,
+              "stateChanges": [
+                "fact:player-bears-ember-crown:set:true",
+                "fact:queen-bears-ember-crown:lock:false",
+                "callback:epilogue-player-erased:schedule",
+                "ending:ending-sun-without-name:eligible",
+                "convergence:ashwinter-epilogue:preserve_flags"
+              ],
+              "summary": "Wear the Crown of Embers writes a durable fact and qualifies ending-sun-without-name.",
+              "terminalState": "crisisEnding"
+            },
+            "onFailure": {
+              "terminal": false,
+              "stateChanges": [
+                "choice:validation_error:record",
+                "choice:remain_uncommitted"
+              ],
+              "summary": "The engine rejects an illegal option without consuming a turn."
+            },
+            "lockout": "A valid fork commits once; the opposing fact is locked until an explicitly authored reversal crisis."
+          },
+          {
+            "id": "give-crown-to-queen",
+            "label": "Give the Crown to Queen Syr",
+            "requirements": [],
+            "method": "fork",
+            "onSuccess": {
+              "terminal": true,
+              "stateChanges": [
+                "fact:queen-bears-ember-crown:set:true",
+                "fact:player-bears-ember-crown:lock:false",
+                "callback:epilogue-queen-erased:schedule",
+                "ending:ending-last-queen:eligible",
+                "convergence:ashwinter-epilogue:preserve_flags"
+              ],
+              "summary": "Give the Crown to Queen Syr writes the opposing fact and qualifies ending-last-queen.",
+              "terminalState": "crisisEnding"
+            },
+            "onFailure": {
+              "terminal": false,
+              "stateChanges": [
+                "choice:validation_error:record",
+                "choice:remain_uncommitted"
+              ],
+              "summary": "The engine rejects an illegal option without consuming a turn."
+            },
+            "lockout": "A valid fork commits once; the opposing fact is locked until an explicitly authored reversal crisis."
+          }
+        ]
+      },
+      "resolution": {
+        "mechanic": "fork",
+        "config": {
+          "exclusiveFactGroup": "crown-of-embers-commitment",
+          "delayedPayoffAt": "epilogue-first-thaw",
+          "convergencePoint": "ashwinter-epilogue",
+          "convergencePolicy": "merge scene topology only; preserve facts, callbacks, relationships, and ending eligibility",
+          "commitOnce": true
+        },
+        "terminalStates": [
+          "crisisEnding"
+        ],
+        "maxTurns": 3,
+        "forcedTerminal": {
+          "terminal": true,
+          "stateChanges": [
+            "fact:crown-burns-unclaimed:set:true",
+            "callback:epilogue-winter-continues:schedule",
+            "ending:ending-emberless:eligible",
+            "convergence:ashwinter-epilogue:preserve_flags"
+          ],
+          "summary": "Delay commits crown-burns-unclaimed; the crisis ends and schedules epilogue-winter-continues.",
+          "terminalState": "crisisEnding"
+        },
+        "antiRepeatRule": "After commit, the crisis ID is terminal and cannot respawn; convergence reads stored flags."
+      },
+      "aftermath": {
+        "minimumReceiptTypes": 3,
+        "byTerminal": {
+          "wear-ember-crown": [
+            {
+              "type": "quest",
+              "target": "epilogue-player-erased",
+              "operation": "unlock",
+              "value": true
+            },
+            {
+              "type": "faction",
+              "target": "village-hearths",
+              "operation": "increment",
+              "value": 3
+            },
+            {
+              "type": "npc",
+              "target": "queen-syr",
+              "operation": "set",
+              "value": "survives-changed"
+            }
+          ],
+          "give-crown-to-queen": [
+            {
+              "type": "quest",
+              "target": "epilogue-queen-erased",
+              "operation": "unlock",
+              "value": true
+            },
+            {
+              "type": "faction",
+              "target": "ashwinter-court",
+              "operation": "increment",
+              "value": 3
+            },
+            {
+              "type": "npc",
+              "target": "queen-syr",
+              "operation": "set",
+              "value": "accepts-sacrifice"
+            }
+          ]
+        }
+      },
+      "biomeFilter": {
+        "allow": [
+          "ashwinter-throne"
+        ],
+        "siteTags": [
+          "ending-fork"
+        ],
+        "requireFactionTags": [
+          "village-hearths",
+          "ashwinter-court"
+        ],
+        "exclude": [
+          "thornferry",
+          "vesper-glass",
+          "erebus-9"
+        ]
+      },
+      "turnWindow": {
+        "earliest": 20,
+        "latest": 95,
+        "cooldown": 9999,
+        "droughtEligible": true
+      },
+      "governance": {
+        "stage": "draft",
+        "contentHash": "e69e7d334fb801a5",
+        "owner": "encounter-design",
+        "replaces": null
+      },
+      "example": {
+        "telegraphProse": "The crown ends winter but burns one sovereign from history; giving it away changes whose name survives.",
+        "stakesProse": "Wear the Crown of Embers or Give the Crown to Queen Syr; each writes an exclusive fact, a delayed callback, and distinct ending eligibility.",
+        "resolutionProse": "The choice commits once within three turns. Both paths converge at ashwinter-epilogue, which reads rather than erases the stored flags.",
+        "receiptProse": "The receipt records the selected fact, the locked opposite, faction and NPC changes, callback epilogue-first-thaw, and ending eligibility."
+      }
+    }
+  ]
+}
