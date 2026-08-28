@@ -23,7 +23,6 @@ interface Props {
   streamingReveal?: StreamingRevealState | null;
   engineMode?: EngineMode;
   contentMode?: string | null;
-  hideOptions?: boolean;
   onAcceptBeautyOffer?: (entryId: string) => void;
   onDismissBeautyOffer?: (entryId: string) => void;
 }
@@ -75,7 +74,7 @@ function extractActions(log: LogEntry[], engineMode: EngineMode = 'litrpg'): Act
   return cards.slice(-20).reverse();
 }
 
-export function NarrativeView({ log, busy, turnPhase = 'idle', streamingReveal = null, engineMode = 'litrpg', contentMode, hideOptions = false, onAcceptBeautyOffer, onDismissBeautyOffer }: Props) {
+export function NarrativeView({ log, busy, turnPhase = 'idle', streamingReveal = null, engineMode = 'litrpg', contentMode, onAcceptBeautyOffer, onDismissBeautyOffer }: Props) {
   const [streamOpen, setStreamOpen] = useState(true);
   const actionCards = useMemo(() => extractActions(log, engineMode), [log, engineMode]);
   const turnUiBlocked = isTurnUiBlocked(!!busy, turnPhase, streamingReveal);
@@ -92,7 +91,7 @@ export function NarrativeView({ log, busy, turnPhase = 'idle', streamingReveal =
                 key={entry.id}
                 entry={entry}
                 engineMode={engineMode}
-                showTurnAsk={!hideOptions && shouldShowTurnAsk(log, index, turnUiBlocked)}
+                showTurnAsk={shouldShowTurnAsk(log, index, turnUiBlocked)}
                 streamingReveal={streamingReveal}
                 onAcceptBeautyOffer={onAcceptBeautyOffer}
                 onDismissBeautyOffer={onDismissBeautyOffer}

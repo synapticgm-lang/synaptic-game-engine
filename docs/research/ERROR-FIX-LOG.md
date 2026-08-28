@@ -76,7 +76,8 @@
 | 20e open | HP/MP overlap @ 384px | *Still open* — needs layout owner |
 | **26f** | Debug open → “realm fractured” after deploy | Stale Vite `lazy()` chunk (`DebugModal-*.js` 404). `safeLazy` one-shot reload + modal `LazyChunkBoundary` |
 | **26l** | Hide text shows title art; Hide toggles undo after remount | `invisible` punched static bg through story panel; 25f clear-ref reset on remount. Opaque flex spacer + sessionStorage cleared-for saveId |
-| **29e live** | Hide text = black void; Hide options no-op at opening; saveId flip re-clears | `userSetHideRef`; tappable restore in story panel; hide TURN_ASK with options; never key `'opening'` then flip to saveId |
+| **29e live** | Hide text = black void; Hide options no-op at opening; saveId flip re-clears | `userSetHideRef`; never key `'opening'` then flip to saveId |
+| **29f live** | Hide text hid story; Hide options hid TURN_ASK | Hide text = bottom action box; Hide options = choice chips only |
 
 ### Quest / STATUS (Class C)
 

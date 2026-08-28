@@ -185,12 +185,12 @@ export function CenterPanel({ state, busy, turnPhase = 'idle', streamingReveal =
 
   useEffect(() => {
     const el = logRef.current;
-    if (!el || hideText) return;
+    if (!el) return;
     const t = window.setTimeout(() => {
       el.scrollIntoView({ block: 'end', behavior: 'smooth' });
     }, 80);
     return () => window.clearTimeout(t);
-  }, [state.log.length, hideText]);
+  }, [state.log.length]);
 
   useEffect(() => {
     if (!isDnd || diceAnimation === 'static' || !busy) return;
@@ -224,9 +224,6 @@ export function CenterPanel({ state, busy, turnPhase = 'idle', streamingReveal =
       )}
       {comicMode ? (
         <div className="sgm-play-story-panel relative z-10 min-h-0 flex-1 overflow-hidden">
-          {hideText ? (
-            <HiddenStoryRestore onShow={toggleHideText} />
-          ) : (
             <ComicGrid
               log={state.log}
               lorebook={state.lorebook}
@@ -242,34 +239,25 @@ export function CenterPanel({ state, busy, turnPhase = 'idle', streamingReveal =
               onRetryMemorableImage={onRetryMemorableImage}
               onUpdatePanelOverlay={onUpdatePanelOverlay}
             />
-          )}
         </div>
       ) : narrativeMode ? (
         <div className="sgm-play-story-panel relative z-10 min-h-0 flex-1 overflow-hidden">
-          {hideText ? (
-            <HiddenStoryRestore onShow={toggleHideText} />
-          ) : (
             <NarrativeView
               log={state.log}
               busy={busy}
               turnPhase={turnPhase}
               streamingReveal={streamingReveal}
               engineMode={engineMode}
-              hideOptions={hideOptions}
               onAcceptBeautyOffer={onAcceptBeautyOffer}
               onDismissBeautyOffer={onDismissBeautyOffer}
               contentMode={contentMode}
             />
-          )}
         </div>
       ) : (
         <div
           ref={logRef}
           className="sgm-play-story-panel relative z-10 min-h-0 flex-1 overflow-y-auto overscroll-contain px-3 py-4 sm:px-6"
         >
-          {hideText ? (
-            <HiddenStoryRestore onShow={toggleHideText} />
-          ) : (
           <div className="mx-auto max-w-2xl space-y-4">
             {state.log.map((entry, index) => (
               shouldSkipDuplicatePlayerBubble(state.log, index) ? null : (
@@ -280,7 +268,7 @@ export function CenterPanel({ state, busy, turnPhase = 'idle', streamingReveal =
                   showSystemLog={showSystemLog}
                   statVerbosity={statVerbosity}
                   engineMode={engineMode}
-                  showTurnAsk={!hideOptions && shouldShowTurnAsk(state.log, index, turnUiBlocked)}
+                  showTurnAsk={shouldShowTurnAsk(state.log, index, turnUiBlocked)}
                   streamingReveal={streamingReveal}
                   onAcceptBeautyOffer={onAcceptBeautyOffer}
                   onDismissBeautyOffer={onDismissBeautyOffer}
@@ -323,7 +311,6 @@ export function CenterPanel({ state, busy, turnPhase = 'idle', streamingReveal =
               </div>
             )}
           </div>
-          )}
         </div>
       )}
 
@@ -414,7 +401,7 @@ export function CenterPanel({ state, busy, turnPhase = 'idle', streamingReveal =
               onClick={toggleHideOptions}
               aria-pressed={hideOptions}
               aria-label={hideOptions ? 'Show options' : 'Hide options'}
-              title={hideOptions ? 'Show options' : 'Hide options'}
+              title={hideOptions ? 'Show choice buttons' : 'Hide choice buttons'}
               className={`flex min-h-[40px] items-center gap-1.5 rounded-md border px-2.5 py-1.5 text-[11px] font-medium transition-colors ${
                 hideOptions
                   ? 'border-crimson-700/50 bg-crimson-950/40 text-crimson-300'
@@ -430,7 +417,7 @@ export function CenterPanel({ state, busy, turnPhase = 'idle', streamingReveal =
               onClick={toggleHideText}
               aria-pressed={hideText}
               aria-label={hideText ? 'Show text' : 'Hide text'}
-              title={hideText ? 'Show text' : 'Hide text'}
+              title={hideText ? 'Show the action box' : 'Hide the action box'}
               className={`flex min-h-[40px] items-center gap-1.5 rounded-md border px-2.5 py-1.5 text-[11px] font-medium transition-colors ${
                 hideText
                   ? 'border-crimson-700/50 bg-crimson-950/40 text-crimson-300'
@@ -464,7 +451,7 @@ export function CenterPanel({ state, busy, turnPhase = 'idle', streamingReveal =
               You are down. Rest, recover, or seek aid before acting again.
             </p>
           )}
-          {!hideText && state.activeEncounter && (
+          {state.activeEncounter && (
             <div className="mb-2">
               <EnemyTargetFrame encounter={state.activeEncounter} />
             </div>
@@ -509,6 +496,7 @@ export function CenterPanel({ state, busy, turnPhase = 'idle', streamingReveal =
               </button>
             )}
           </div>
+          {!hideText && (
           <div className="flex gap-2">
             {voice.sttSupported && (
               <button
@@ -558,6 +546,7 @@ export function CenterPanel({ state, busy, turnPhase = 'idle', streamingReveal =
               <Send size={18} />
             </button>
           </div>
+          )}
         </div>
       </div>
     </div>
@@ -655,19 +644,6 @@ function LogRow({ entry, lorebook, showSystemLog, statVerbosity, engineMode, sho
       />
       {showTurnAsk && <TurnAskLine />}
     </div>
-  );
-}
-
-function HiddenStoryRestore({ onShow }: { onShow: () => void }) {
-  return (
-    <button
-      type="button"
-      onClick={onShow}
-      className="flex h-full min-h-[12rem] w-full flex-col items-center justify-center gap-2 px-6 text-center text-sm text-slate-400 hover:bg-slate-900/40 hover:text-slate-200"
-    >
-      <Eye size={20} className="opacity-70" />
-      <span>Story hidden — tap to show</span>
-    </button>
   );
 }
 

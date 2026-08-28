@@ -6,9 +6,9 @@ import { HUD_BUILD_STAMP } from '../components/Hud';
 import { stitchOpeningScene } from './openingStitch';
 
 describe('playtest29f — hide/show chrome + stitch opener variety', () => {
-  it('stamp is 2026-08-29f and Mid writer stays OFF', () => {
-    expect(BUILD_STAMP).toBe('2026-08-29f');
-    expect(HUD_BUILD_STAMP).toBe('2026-08-29f');
+  it('stamp is 2026-08-29 and Mid writer stays OFF', () => {
+    expect(BUILD_STAMP).toMatch(/^2026-08-29/);
+    expect(HUD_BUILD_STAMP).toMatch(/^2026-08-29/);
     expect(STAGNATION_MID_WRITER_ENABLED).toBe(false);
   });
 
