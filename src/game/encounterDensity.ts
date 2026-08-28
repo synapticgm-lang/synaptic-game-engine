@@ -406,7 +406,7 @@ export function selectEncounterWithDensity(
   
   // Filter candidates by available roles
   let filtered = candidates.filter(t =>
-    availableRoles.includes(t.role as 'trash' | 'elite' | 'boss')
+    availableRoles.includes(t.densityRole as 'trash' | 'elite' | 'boss')
   );
   
   // If drought and no candidates match roles, allow any role

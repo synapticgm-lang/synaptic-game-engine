@@ -1,97 +1,81 @@
 /**
- * WS-5 Wave A: PYOA Exclusive Facts System
+ * WS-5 Wave B: PYOA Exclusive Facts System
  * 
- * Mutex enforcement for branch facts.
- * Choosing "ally with lord" makes "ally with rebels" impossible.
+ * Complete mutex enforcement for branch facts with:
+ * - Registry of exclusive fact groups
+ * - Conflict detection for mutually exclusive states
+ * - Fact write validation
+ * - Integration with pyoaBranchLedger
  */
 
 import type { GameState } from './types';
-import type { FactWrite } from './types/crossPackageContracts';
+import type { FactWrite, ExclusiveFactGroup, FactPredicate, PredicateGroup } from './pyoaTypes';
 
 // ============================================================================
-// EXCLUSIVE FACT GROUPS
+// EXCLUSIVE FACT GROUPS REGISTRY
 // ============================================================================
-
-export interface ExclusiveFactGroup {
-  /** Group ID */
-  id: string;
-  
-  /** Group name */
-  name: string;
-  
-  /** Mutex mode */
-  mode: 'at-most-one' | 'exactly-one-after-crisis';
-  
-  /** Member fact IDs */
-  members: readonly string[];
-  
-  /** Owner crisis (if exactly-one-after-crisis) */
-  ownerCrisisId?: string;
-  
-  /** Description */
-  description: string;
-}
 
 /**
- * Standard exclusive fact groups for PYOA
+ * Thornferry Road exclusive fact groups
  */
-export const STANDARD_EXCLUSIVE_GROUPS: ExclusiveFactGroup[] = [
-  // Alliance groups
+export const THORNFERRY_EXCLUSIVE_GROUPS: ExclusiveFactGroup[] = [
   {
-    id: 'alliance-millstone',
-    name: 'Millstone Charter Alliance',
+    id: 'thornferry-road.allegiance',
     mode: 'exactly-one-after-crisis',
-    members: ['lordAlly', 'rebelAlly'],
-    ownerCrisisId: 'millstone-charter',
-    description: 'Player must choose lord or rebels',
+    members: [
+      'thornferry-road.allegiance.lord',
+      'thornferry-road.allegiance.rebels',
+      'thornferry-road.allegiance.neutral',
+    ],
+    ownerCrisisId: 'thornferry-road:crisis:2_lord_vs_rebels',
+    description: 'Player allegiance in the conflict',
   },
   {
-    id: 'trust-miller',
-    name: 'Miller Trust',
+    id: 'thornferry-road.miller_verdict',
     mode: 'exactly-one-after-crisis',
-    members: ['millerTrusted', 'millerDoubt'],
-    ownerCrisisId: 'trust-miller',
-    description: 'Player must trust or doubt miller',
+    members: [
+      'thornferry-road.trust.miller',
+      'thornferry-road.trust.miller_doubted',
+    ],
+    ownerCrisisId: 'thornferry-road:crisis:1_millstone_charter',
+    description: 'Trust decision regarding the miller',
   },
   {
-    id: 'bandits-villagers',
-    name: 'Bandit or Villager Alliance',
+    id: 'thornferry-road.village_fate',
     mode: 'exactly-one-after-crisis',
-    members: ['banditAlly', 'villagerAlly'],
-    ownerCrisisId: 'bandits-or-villagers',
-    description: 'Player must side with bandits or villagers',
+    members: [
+      'thornferry-road.village.saved',
+      'thornferry-road.village.abandoned',
+    ],
+    ownerCrisisId: 'thornferry-road:crisis:3_bandits_vs_villagers',
+    description: 'Outcome of Hushwater village crisis',
   },
   {
-    id: 'faction-membership',
-    name: 'Faction Membership',
+    id: 'thornferry-road.truth_disposition',
     mode: 'exactly-one-after-crisis',
-    members: ['factionMember', 'soloPath'],
-    ownerCrisisId: 'alliance-proposal',
-    description: 'Player joins faction or stays solo',
-  },
-  
-  // Secret groups
-  {
-    id: 'secret-revelation',
-    name: 'Secret Revelation',
-    mode: 'exactly-one-after-crisis',
-    members: ['secretRevealed', 'secretHidden'],
-    ownerCrisisId: 'reveal-secret',
-    description: 'Player reveals or conceals secret',
+    members: [
+      'thornferry-road.truth.revealed',
+      'thornferry-road.truth.concealed',
+    ],
+    ownerCrisisId: 'thornferry-road:crisis:4_secret_under_road',
+    description: 'Secret revelation decision',
   },
   {
-    id: 'nobles-plan',
-    name: 'Nobles Plan Knowledge',
-    mode: 'at-most-one',
-    members: ['noblesPlanKnown'],
-    description: 'Player knows nobles plan (convergence point)',
+    id: 'thornferry-road.final_method',
+    mode: 'exactly-one-after-crisis',
+    members: [
+      'thornferry-road.method.force',
+      'thornferry-road.method.stealth',
+      'thornferry-road.method.diplomacy',
+    ],
+    ownerCrisisId: 'thornferry-road:crisis:6_final_crossing',
+    description: 'Method used at final crossing',
   },
 ];
 
-// ============================================================================
-// FACT REGISTRY
-// ============================================================================
-
+/**
+ * Global exclusive fact registry
+ */
 export class ExclusiveFactRegistry {
   private groups: Map<string, ExclusiveFactGroup>;
   private factToGroup: Map<string, string>;
@@ -100,8 +84,8 @@ export class ExclusiveFactRegistry {
     this.groups = new Map();
     this.factToGroup = new Map();
     
-    // Register standard groups
-    for (const group of STANDARD_EXCLUSIVE_GROUPS) {
+    // Register all standard groups
+    for (const group of THORNFERRY_EXCLUSIVE_GROUPS) {
       this.registerGroup(group);
     }
   }
@@ -127,28 +111,40 @@ export class ExclusiveFactRegistry {
   getAllGroups(): ExclusiveFactGroup[] {
     return Array.from(this.groups.values());
   }
+  
+  getAllFactsInGroup(groupId: string): readonly string[] {
+    const group = this.getGroup(groupId);
+    return group ? group.members : [];
+  }
 }
 
 // Global registry instance
 export const EXCLUSIVE_FACT_REGISTRY = new ExclusiveFactRegistry();
 
 // ============================================================================
-// FACT VALIDATION
+// FACT CONFLICT DETECTION
 // ============================================================================
+
+export interface FactConflict {
+  hasConflict: boolean;
+  conflictingFact?: string;
+  groupId?: string;
+  reason?: string;
+}
 
 /**
  * Check if fact write conflicts with existing facts
  */
 export function checkFactConflict(
   factWrite: FactWrite,
-  existingFacts: readonly string[],
+  existingFacts: Readonly<Record<string, unknown>>,
   registry: ExclusiveFactRegistry = EXCLUSIVE_FACT_REGISTRY
-): {
-  hasConflict: boolean;
-  conflictingFact?: string;
-  groupId?: string;
-  reason?: string;
-} {
+): FactConflict {
+  // Only check boolean true writes (setting false doesn't conflict)
+  if (factWrite.value !== true) {
+    return { hasConflict: false };
+  }
+  
   const group = registry.getGroupForFact(factWrite.factId);
   if (!group) {
     // Not in any exclusive group, no conflict
@@ -159,13 +155,22 @@ export function checkFactConflict(
   for (const member of group.members) {
     if (member === factWrite.factId) continue; // Skip self
     
-    if (existingFacts.includes(member)) {
+    if (existingFacts[member] === true) {
       return {
         hasConflict: true,
         conflictingFact: member,
         groupId: group.id,
-        reason: `Cannot set ${factWrite.factId}=true because ${member}=true (group: ${group.name})`,
+        reason: `Cannot set ${factWrite.factId}=true because ${member}=true (group: ${group.id})`,
       };
+    }
+  }
+  
+  // For exactly-one-after-crisis groups, check if crisis is resolved
+  if (group.mode === 'exactly-one-after-crisis') {
+    const someSet = group.members.some(m => existingFacts[m] === true);
+    if (!someSet && !factWrite.value) {
+      // No fact set yet, and this write is false/unset - that's ok during setup
+      return { hasConflict: false };
     }
   }
   
@@ -177,7 +182,7 @@ export function checkFactConflict(
  */
 export function validateFactWrites(
   factWrites: readonly FactWrite[],
-  state: GameState,
+  existingFacts: Readonly<Record<string, unknown>>,
   registry: ExclusiveFactRegistry = EXCLUSIVE_FACT_REGISTRY
 ): {
   valid: boolean;
@@ -188,7 +193,6 @@ export function validateFactWrites(
     reason: string;
   }>;
 } {
-  const existingFacts = getExistingFacts(state);
   const conflicts: Array<{
     factId: string;
     conflictingFact: string;
@@ -196,14 +200,11 @@ export function validateFactWrites(
     reason: string;
   }> = [];
   
-  // Also check within the batch itself
-  const batchFacts = new Set<string>(existingFacts);
+  // Build cumulative fact state as we process writes
+  const workingFacts = { ...existingFacts };
   
   for (const write of factWrites) {
-    // Skip if value is false (unsetting doesn't conflict)
-    if (write.value === false) continue;
-    
-    const conflict = checkFactConflict(write, Array.from(batchFacts), registry);
+    const conflict = checkFactConflict(write, workingFacts, registry);
     
     if (conflict.hasConflict) {
       conflicts.push({
@@ -212,9 +213,9 @@ export function validateFactWrites(
         groupId: conflict.groupId!,
         reason: conflict.reason!,
       });
-    } else {
-      // Add to batch facts for next iteration
-      batchFacts.add(write.factId);
+    } else if (write.value !== undefined) {
+      // Apply this write for next iteration
+      workingFacts[write.factId] = write.value;
     }
   }
   
@@ -225,10 +226,115 @@ export function validateFactWrites(
 }
 
 /**
- * Get existing facts from game state
+ * Check if exactly-one requirement is satisfied
  */
-function getExistingFacts(state: GameState): string[] {
-  const facts: string[] = [];
+export function validateExactlyOneRequirement(
+  group: ExclusiveFactGroup,
+  facts: Readonly<Record<string, unknown>>,
+  crisisResolved: boolean
+): {
+  satisfied: boolean;
+  reason?: string;
+} {
+  if (group.mode !== 'exactly-one-after-crisis') {
+    return { satisfied: true };
+  }
+  
+  if (!crisisResolved) {
+    // Crisis not yet resolved, no requirement
+    return { satisfied: true };
+  }
+  
+  const setCount = group.members.filter(m => facts[m] === true).length;
+  
+  if (setCount === 0) {
+    return {
+      satisfied: false,
+      reason: `Group ${group.id} requires exactly one fact after crisis ${group.ownerCrisisId} resolves, but none are set`,
+    };
+  }
+  
+  if (setCount > 1) {
+    return {
+      satisfied: false,
+      reason: `Group ${group.id} requires exactly one fact, but ${setCount} are set`,
+    };
+  }
+  
+  return { satisfied: true };
+}
+
+// ============================================================================
+// PREDICATE EVALUATION
+// ============================================================================
+
+/**
+ * Evaluate a single fact predicate
+ */
+export function evaluatePredicate(
+  pred: FactPredicate,
+  facts: Readonly<Record<string, unknown>>
+): boolean {
+  const value = facts[pred.factId];
+  
+  switch (pred.op) {
+    case 'exists':
+      return value !== undefined && value !== null;
+    case 'absent':
+      return value === undefined || value === null;
+    case 'eq':
+      return value === pred.value;
+    case 'neq':
+      return value !== pred.value;
+    case 'gte':
+      return typeof value === 'number' && typeof pred.value === 'number' && value >= pred.value;
+    case 'lte':
+      return typeof value === 'number' && typeof pred.value === 'number' && value <= pred.value;
+    default:
+      return false;
+  }
+}
+
+/**
+ * Evaluate a predicate group
+ */
+export function evaluatePredicateGroup(
+  group: PredicateGroup,
+  facts: Readonly<Record<string, unknown>>
+): boolean {
+  // Check 'all' predicates
+  if (group.all && group.all.length > 0) {
+    if (!group.all.every(pred => evaluatePredicate(pred, facts))) {
+      return false;
+    }
+  }
+  
+  // Check 'any' predicates
+  if (group.any && group.any.length > 0) {
+    if (!group.any.some(pred => evaluatePredicate(pred, facts))) {
+      return false;
+    }
+  }
+  
+  // Check 'none' predicates
+  if (group.none && group.none.length > 0) {
+    if (group.none.some(pred => evaluatePredicate(pred, facts))) {
+      return false;
+    }
+  }
+  
+  return true;
+}
+
+// ============================================================================
+// GAME STATE INTEGRATION
+// ============================================================================
+
+/**
+ * Extract facts from game state
+ */
+export function extractFactsFromGameState(state: GameState): Record<string, unknown> {
+  const facts: Record<string, unknown> = {};
   
   // Extract from pyoaBranchLedger
   const ledger = state.pyoaBranchLedger;
@@ -237,56 +343,44 @@ function getExistingFacts(state: GameState): string[] {
   // Parse committed paths for fact patterns
   const paths = ledger.committedPaths ?? [];
   for (const path of paths) {
+    if (path.startsWith('fact:')) {
+      const factId = path.replace('fact:', '');
+      facts[factId] = true;
+    }
+    
+    // Map locked branches to facts
     if (path.startsWith('locked:')) {
       const locked = path.replace('locked:', '');
       
-      // Map locked branches to facts
+      // Map branch locks to exclusive facts
       switch (locked) {
         case 'millstone-commit':
-          facts.push('lordAlly');
+          facts['thornferry-road.trust.miller'] = true;
           break;
         case 'solo-road':
-          facts.push('soloPath');
+          facts['thornferry-road.allegiance.neutral'] = true;
           break;
         case 'ally-path':
-          facts.push('factionMember');
+          facts['thornferry-road.allegiance.rebels'] = true;
+          break;
+        case 'help-overseer':
+          facts['thornferry-road.allegiance.lord'] = true;
           break;
       }
-    }
-  }
-  
-  // Also check branchLocked
-  if (ledger.branchLocked) {
-    switch (ledger.branchLocked) {
-      case 'millstone-commit':
-        facts.push('lordAlly');
-        break;
-      case 'solo-road':
-        facts.push('soloPath');
-        break;
-      case 'ally-path':
-        facts.push('factionMember');
-        break;
     }
   }
   
   return facts;
 }
 
-// ============================================================================
-// FACT COMMIT
-// ============================================================================
-
 /**
  * Commit fact write to game state
- * 
- * Validates exclusive facts before committing.
  */
 export function commitFactWrite(
   factWrite: FactWrite,
   state: GameState
 ): GameState {
-  const existingFacts = getExistingFacts(state);
+  const existingFacts = extractFactsFromGameState(state);
   const conflict = checkFactConflict(factWrite, existingFacts);
   
   if (conflict.hasConflict) {
@@ -303,103 +397,82 @@ export function commitFactWrite(
     convergencePoints: [],
   };
   
-  // Map fact to branch lock
-  let branchLock: string | false = ledger.branchLocked ?? false;
-  
-  switch (factWrite.factId) {
-    case 'lordAlly':
-      branchLock = 'millstone-commit';
-      break;
-    case 'rebelAlly':
-      branchLock = 'millstone-commit'; // Same lock, different side
-      break;
-    case 'millerTrusted':
-    case 'millerDoubt':
-      branchLock = 'trust-miller';
-      break;
-    case 'banditAlly':
-    case 'villagerAlly':
-      branchLock = 'bandits-or-villagers';
-      break;
-    case 'factionMember':
-      branchLock = 'ally-path';
-      break;
-    case 'soloPath':
-      branchLock = 'solo-road';
-      break;
-    case 'secretRevealed':
-    case 'secretHidden':
-      branchLock = 'reveal-secret';
-      break;
-  }
-  
   return {
     ...state,
     pyoaBranchLedger: {
       ...ledger,
-      branchLocked: branchLock,
-      branchClosed: true,
       committedPaths: [
         ...(ledger.committedPaths ?? []),
         `fact:${factWrite.factId}`,
-        `locked:${branchLock}`,
       ].slice(-24),
     },
   };
 }
 
-// ============================================================================
-// QUERY HELPERS
-// ============================================================================
-
 /**
- * Check if fact is true
- */
-export function isFactTrue(factId: string, state: GameState): boolean {
-  const facts = getExistingFacts(state);
-  return facts.includes(factId);
-}
-
-/**
- * Get conflicting facts
- */
-export function getConflictingFacts(
-  factId: string,
-  state: GameState
-): string[] {
-  const group = EXCLUSIVE_FACT_REGISTRY.getGroupForFact(factId);
-  if (!group) return [];
-  
-  const existingFacts = getExistingFacts(state);
-  const conflicts: string[] = [];
-  
-  for (const member of group.members) {
-    if (member !== factId && existingFacts.includes(member)) {
-      conflicts.push(member);
-    }
-  }
-  
-  return conflicts;
-}
-
-/**
- * Build exclusive facts situation section
+ * Build exclusive facts situation section for GM
  */
 export function buildExclusiveFactsSituationSection(state: GameState): string {
-  const facts = getExistingFacts(state);
-  if (facts.length === 0) return '';
+  const facts = extractFactsFromGameState(state);
+  const activeFacts = Object.entries(facts).filter(([_, v]) => v === true);
+  
+  if (activeFacts.length === 0) return '';
   
   const lines: string[] = ['### EXCLUSIVE FACTS'];
-  lines.push('Branch locks currently active:');
+  lines.push('Branch commitments:');
   
-  for (const fact of facts) {
-    const group = EXCLUSIVE_FACT_REGISTRY.getGroupForFact(fact);
+  for (const [factId, _] of activeFacts) {
+    const group = EXCLUSIVE_FACT_REGISTRY.getGroupForFact(factId);
     if (group) {
-      lines.push(`- **${fact}**: ${group.description}`);
+      lines.push(`- **${factId}**: ${group.description} (group: ${group.id})`);
     } else {
-      lines.push(`- **${fact}**`);
+      lines.push(`- **${factId}**`);
     }
   }
   
   return lines.join('\n');
+}
+
+/**
+ * Validate all exclusive fact invariants
+ */
+export function validateExclusiveFactInvariants(
+  state: GameState,
+  registry: ExclusiveFactRegistry = EXCLUSIVE_FACT_REGISTRY
+): {
+  valid: boolean;
+  errors: string[];
+} {
+  const facts = extractFactsFromGameState(state);
+  const errors: string[] = [];
+  
+  // Check each group
+  for (const group of registry.getAllGroups()) {
+    const activeCount = group.members.filter(m => facts[m] === true).length;
+    
+    if (group.mode === 'at-most-one' && activeCount > 1) {
+      errors.push(`Group ${group.id} allows at-most-one but has ${activeCount} active facts`);
+    }
+    
+    if (group.mode === 'exactly-one-after-crisis') {
+      // Check if owning crisis is resolved
+      const ledger = state.pyoaBranchLedger;
+      const paths = ledger?.committedPaths ?? [];
+      const crisisResolved = group.ownerCrisisId
+        ? paths.some(p => p.includes(group.ownerCrisisId!))
+        : false;
+      
+      if (crisisResolved) {
+        const validation = validateExactlyOneRequirement(group, facts, crisisResolved);
+        if (!validation.satisfied) {
+          errors.push(validation.reason!);
+        }
+      }
+    }
+  }
+  
+  return {
+    valid: errors.length === 0,
+    errors,
+  };
 }

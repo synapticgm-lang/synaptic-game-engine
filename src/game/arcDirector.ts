@@ -42,6 +42,14 @@ import { pickStatusVoiceLine } from './voiceCadenceSystem';
 import { hasDurableDeltaByT12, forceFreeT12DurableDelta } from './freeT12Hook';
 import { ensureOpeningNpcPinned, formatOpeningPinMandate } from './openingPin';
 import { selectEligibleCrisis, type SocialCrisis } from './socialCrisis';
+// WS-4 Wave D+: Encounter Density Governance
+import {
+  getDensityProfile,
+  getDensityState,
+  updateDensityState,
+  shouldSpawnEncounter,
+  checkDrought,
+} from './encounterDensity';
 
 export interface ArcDirectorState {
   committedBeatIds?: string[];
@@ -109,6 +117,16 @@ export interface ArcDirectorState {
       summary: string;
     }>;
   }>;
+  
+  // WS-4 Wave D+: Encounter Density Governance
+  /** WS-4 Wave D+ — Encounter density state (trash/elite/boss quotas, recent spawns) */
+  densityState?: import('./encounterDensity').DensityState;
+  
+  // WS-6 Waves B-D: Content Density and Exhaustion
+  /** WS-6 Wave B-C — Content density state with exhaustion tracking */
+  contentDensityState?: import('./exhaustionCurve').ContentDensityState;
+  /** WS-6 Wave B — Completed milestone IDs */
+  completedMilestones?: string[];
 }
 
 export interface ArcDirectorResult {
@@ -332,14 +350,39 @@ function applyBeatEffects(
   }
 
   if (contract.spawnEncounter && !next.activeEncounter) {
+    // WS-4 Wave D+: Check density before spawning
+    const locationId = next.currentLocation?.name ?? 'unknown';
+    const isDungeon = !!(next.currentLocation?.isDungeon);
+    const densityProfile = getDensityProfile(next.engineMode, locationId, isDungeon);
+    const densityState = getDensityState(next, locationId);
+    
+    const droughtCheck = checkDrought(densityState, densityProfile);
+    const shouldSpawn = shouldSpawnEncounter(next, densityProfile, densityState);
+    
     const preview = hubSkirmishEncounter(next);
     const spawnKey = preview.forcedSpawnKey ?? preview.name;
+    
     if (isEncounterOnCooldown(next, spawnKey)) {
       receipts.push(`Encounter cooldown: ${spawnKey} — skipped re-engage`);
+    } else if (!shouldSpawn && !droughtCheck.isDrought) {
+      receipts.push(`Encounter density: spawn rate limit — deferred`);
     } else {
       next = { ...next, activeEncounter: preview };
       receipts.push(`Encounter: ${next.activeEncounter!.name}`);
       extras.encounterName = next.activeEncounter!.name;
+      
+      // Update density state after spawn
+      const role = preview.threatTier === 'boss' ? 'boss' : preview.threatTier === 'elite' ? 'elite' : 'trash';
+      const encounterId = `${contract.id}-${next.turn}`;
+      const templateId = contract.id; // Using contract id as template id for beat-spawned encounters
+      const updatedDensity = updateDensityState(densityState, encounterId, templateId, role, next.turn);
+      next = {
+        ...next,
+        arcDirector: {
+          ...next.arcDirector,
+          densityState: updatedDensity
+        }
+      };
     }
   }
 
