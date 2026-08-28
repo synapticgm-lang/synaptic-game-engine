@@ -120,14 +120,18 @@ export function selectTelegraphCues(
   mode: EngineMode,
   catalog: TelegraphCatalog
 ): TelegraphPattern[] {
-  const { role } = template;
-  const requiredChannels = template.telegraph.channels;
+  const role = template.densityRole;
+  
+  // Extract channels from template patterns
+  const requiredChannels = Array.from(
+    new Set(template.telegraph.patterns.map(p => p.type))
+  );
   
   // Determine minimum channels based on role
   let minChannels = catalog.selectionPolicy.defaultMinimumChannels;
-  if (role === 'elite' || role === 'duel') {
+  if (role === 'elite' || role === 'miniboss') {
     minChannels = catalog.selectionPolicy.eliteMinimumChannels;
-  } else if (role === 'boss' || role === 'raid') {
+  } else if (role === 'boss') {
     minChannels = catalog.selectionPolicy.bossMinimumChannels;
   }
   
@@ -187,13 +191,13 @@ export function buildTelegraphContext(
   template: EncounterTemplate | null,
   state: GameState
 ): string | null {
-  if (!template || !template.telegraph.required) {
+  if (!template || !template.telegraph) {
     return null;
   }
   
   const { timing, patterns } = template.telegraph;
   
-  if (timing === 'none' || patterns.length === 0) {
+  if (timing === 'none' || !patterns || patterns.length === 0) {
     return null;
   }
   

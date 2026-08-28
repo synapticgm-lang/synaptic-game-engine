@@ -398,14 +398,16 @@ export function filterTemplatesByBiome(
     
     // Check allowed biomes
     let biomeMatch = false;
-    for (const allowed of constraints.allowedBiomes) {
-      if (biomeLower.includes(allowed.toLowerCase())) {
-        biomeMatch = true;
-        break;
+    if (constraints.allowedBiomes && Array.isArray(constraints.allowedBiomes)) {
+      for (const allowed of constraints.allowedBiomes) {
+        if (biomeLower.includes(allowed.toLowerCase())) {
+          biomeMatch = true;
+          break;
+        }
       }
+      
+      if (!biomeMatch) return false;
     }
-    
-    if (!biomeMatch) return false;
     
     // Check required locations
     if (constraints.requiredLocations) {
@@ -549,7 +551,7 @@ export function validateTemplate(template: EncounterTemplate): {
   // Biome constraints
   if (!template.biomeConstraints) {
     errors.push('Missing biome constraints');
-  } else if (template.biomeConstraints.allowedBiomes.length === 0) {
+  } else if (!template.biomeConstraints.allowedBiomes || template.biomeConstraints.allowedBiomes.length === 0) {
     errors.push('No allowed biomes specified');
   }
   

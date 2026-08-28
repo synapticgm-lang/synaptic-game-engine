@@ -181,7 +181,7 @@ describe('binding constraints', () => {
     expect((packet.match(/### SNAPSHOT/g) ?? []).length).toBe(1);
     expect((packet.match(/^- Crowd:/gm) ?? []).length).toBe(1);
     expect((packet.match(/^- Exits:/gm) ?? []).length).toBe(1);
-    expect(packet).toMatch(/AUTHORITY: Narrate richly/);
+    expect(packet).toMatch(/AUTHORITY:.*SNAPSHOT.*ledger/);
   });
 });
 

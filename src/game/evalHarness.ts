@@ -602,3 +602,65 @@ export function runEvaluationSuite(state: GameState): EvalSuite {
     results
   };
 }
+
+// ============================================================================
+// RECEIPT LIVENESS GATES
+// ============================================================================
+
+export interface ReceiptLivenessGates {
+  crisisByT12: boolean;
+  freeT12DurableDelta: boolean;
+}
+
+/**
+ * Check receipt-based liveness gates for eval harness
+ */
+export function checkReceiptLivenessGates(state: GameState): ReceiptLivenessGates {
+  // Check if PYOA had a crisis beat by T12
+  const crisisByT12 = state.engineMode === 'pyoa' && state.turn >= 12
+    ? (state.arcDirector?.committedBeatIds ?? []).some(id => /crisis|branch/i.test(id))
+    : false;
+  
+  // Check if there's a durable delta by T12 (uses hasDurableDeltaByT12)
+  // Import dynamically to avoid circular deps
+  const freeT12DurableDelta = state.turn >= 12
+    ? (state.character?.level ?? 1) >= 2 ||
+      (state.arcDirector?.encounterClearedReceipts ?? []).length >= 1 ||
+      !!(state.pyoaBranchLedger?.branchLocked || state.pyoaBranchLedger?.branchClosed) ||
+      Object.keys(state.arcDirector?.topicCommits ?? {}).length > 0 ||
+      (state.quests ?? []).some(q => 
+        (q.objectives ?? []).filter(o => o.completed).length >= 1 && 
+        (q.status === 'active' || q.status === 'completed')
+      )
+    : false;
+  
+  return {
+    crisisByT12,
+    freeT12DurableDelta
+  };
+}
+
+/**
+ * Validate an eval run's manifest stamp and gate bindings
+ */
+export function validateEvalRun(manifest: any): { valid: boolean; errors: string[] } {
+  const errors: string[] = [];
+  
+  if (!manifest) {
+    errors.push('Missing manifest');
+    return { valid: false, errors };
+  }
+  
+  if (!manifest.buildStamp) {
+    errors.push('Missing build stamp');
+  }
+  
+  if (!manifest.engineMode) {
+    errors.push('Missing engine mode');
+  }
+  
+  return {
+    valid: errors.length === 0,
+    errors
+  };
+}

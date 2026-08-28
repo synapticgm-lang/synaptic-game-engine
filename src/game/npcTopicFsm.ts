@@ -190,8 +190,11 @@ export function inferNpcRole(
   const present = state.sceneFacts?.present ?? [];
   const isOpening = (state.turn ?? 0) < 3 && !state.openingEstablishment?.complete;
   
-  // Guide role: opening NPCs who explain rules
-  if (isOpening && present.includes(npc)) return 'guide';
+  // Guide role: opening NPCs who explain rules or are being talked to during opening
+  // Check if NPC is in present array OR if they're mentioned in a talk/ask context during opening
+  const isTalkingToNpc = /\b(talk|speak|ask|tell|listen)\b/.test(lower) && 
+                         lower.includes(npc.toLowerCase());
+  if (isOpening && (present.includes(npc) || isTalkingToNpc)) return 'guide';
   
   // Merchant: trade/buy/sell/shop keywords
   if (/\b(buy|sell|trade|merchant|shop|vendor|wares)\b/.test(lower)) return 'merchant';

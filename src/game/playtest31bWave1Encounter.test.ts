@@ -264,10 +264,20 @@ describe('WS-4 Wave 1 — Encounter Bible', () => {
     registerTemplate(registry, template);
     
     const state = createTestState();
+    state.campaignBibleId = 'test-bible';
+    state.currentLocation = 'Test Dungeon Floor 1';
+    
     const picked = pickEncounterTemplate(
-      registry.templates,
+      registry,
       state,
-      { seed: 'test-seed-123' }
+      { 
+        bibleId: 'test-bible',
+        location: 'Test Dungeon Floor 1',
+        biome: 'dungeon',
+        tier: 1,
+        densityRole: 'trash',
+        seed: 123
+      }
     );
     
     expect(picked).toBeDefined();

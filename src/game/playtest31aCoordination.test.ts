@@ -403,10 +403,10 @@ describe('Package Coordination', () => {
     clearAllReceipts();
   });
 
-  it('should validate package integration', () => {
+  it('should validate package integration', async () => {
     // This test just ensures that the coordination module loads
     // without throwing errors during validation
-    const { validatePackageIntegration } = require('../packageCoordination');
+    const { validatePackageIntegration } = await import('./packageCoordination');
     
     expect(() => {
       validatePackageIntegration();
