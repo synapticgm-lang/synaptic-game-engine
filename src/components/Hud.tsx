@@ -8,9 +8,9 @@ import { effectiveWriterTier, hasUnlimitedTextCapacity, isFounderPlayAccount } f
 import { equippedSetLabel, equippedSetName } from '../game/uiTheme';
 
 /** Visible after a hard refresh -- if this is missing, Vercel is still serving the 16 Aug bundle. */
-export const HUD_BUILD_STAMP = '2026-08-30P';
+export const HUD_BUILD_STAMP = '2026-08-30Q';
 const HUD_BUILD_TITLE =
-  'Debug 2026-08-30P - Fix multi-floor building footprint consistency';
+  'Debug 2026-08-30Q - Fix false ambiguous action detection on clear choices';
 
 interface Props {
   state: GameState;

@@ -153,6 +153,32 @@ describe('repairEngine', () => {
     ).toBeNull();
     expect(detectRepairSituation('check the panel for menus or buttons', base)).toBeNull();
   });
+
+  it('does not treat examine actions with compound targets as ambiguous_action', () => {
+    // Pattern 1: "Examine X for Y or Z" - single action, compound search target
+    expect(
+      detectRepairSituation('Examine the cell more closely for any hidden details or weaknesses.', base)
+    ).toBeNull();
+    expect(
+      detectRepairSituation('Inspect the room for traps or hidden passages', base)
+    ).toBeNull();
+    expect(
+      detectRepairSituation('Check the desk for documents or clues', base)
+    ).toBeNull();
+    expect(
+      detectRepairSituation('Search the body for weapons or valuables', base)
+    ).toBeNull();
+
+    // Pattern 2: "Press your ear to X to listen for Y"
+    expect(
+      detectRepairSituation('Press your ear against the iron door to listen for sounds outside.', base)
+    ).toBeNull();
+
+    // Pattern 3: Specific action with clear target (choice chip style)
+    expect(
+      detectRepairSituation('Try calling out again, louder this time.', base)
+    ).toBeNull();
+  });
 });
 
 describe('repairCopyBank', () => {
