@@ -1,0 +1,307 @@
+{
+  "logType": "event-log",
+  "exportTimestamp": "2026-08-28T18:19:23.970Z",
+  "deviceId": "0d4efcbc-ad46-4ddc-917a-b9ef095b6f68",
+  "sessionId": "c6adf30f-8b63-4397-a714-ab156cd0262b",
+  "sessionStartedAt": "2026-08-28T18:09:56.346Z",
+  "platform": "Android (Chromium, Not?A_Brand, Google Chrome)",
+  "userAgent": "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Mobile Safari/537.36",
+  "screenResolution": "384x832",
+  "viewport": "384x693",
+  "pixelRatio": 2.8125,
+  "language": "en-GB",
+  "online": true,
+  "hostedBackend": {
+    "gmProxyConfigured": true,
+    "gmProxyRequired": true,
+    "gmProxyHost": "wzgsrpwhmgffcyohvtko.supabase.co",
+    "gmTurnPath": "/functions/v1/gm-turn"
+  },
+  "sessionStats": {
+    "sessionId": "c6adf30f-8b63-4397-a714-ab156cd0262b",
+    "sessionStartedAt": "2026-08-28T18:09:56.346Z",
+    "eventCount": 5,
+    "errorCount": 2,
+    "warnCount": 1,
+    "estimatedBytes": 3071,
+    "softByteCap": 8388608,
+    "softCapPolicy": "Unlimited for ERROR/WARN/CRITICAL/TURN_START/SESSION within session. Soft-trim oldest INFO/other only if buffer exceeds ~8MB. Absolute ceiling 50k entries.",
+    "autoDownloadOnError": false
+  },
+  "softCapPolicy": "Unlimited for ERROR/WARN/CRITICAL/TURN_START/SESSION within session. Soft-trim oldest INFO/other only if buffer exceeds ~8MB. Absolute ceiling 50k entries.",
+  "agentPullHint": "Give Cursor the sessionId + deviceId, or drop synaptic-debug-latest.json into the workspace. Hosted: query telemetry_logs WHERE session_id = <sessionId> (signed-in / Ops).",
+  "settings": {
+    "ttsEnabled": false,
+    "sttEnabled": false,
+    "diceAnimation": "normal",
+    "contentMode": "adult",
+    "kidModeLocked": false,
+    "contentPin": null,
+    "maturityTier": "pg13",
+    "sexualContent": false,
+    "substanceUse": true,
+    "darkThemes": "implied",
+    "byokModeEnabled": false,
+    "byokDisclaimerAccepted": false,
+    "confirmContentRewrites": true,
+    "geminiApiKey": "",
+    "openrouterApiKey": "",
+    "fluxApiKey": "",
+    "aiProvider": "openrouter",
+    "customModelId": "",
+    "baseUrl": "",
+    "imageProvider": "flux",
+    "imageBaseUrl": "",
+    "imageApiKey": "",
+    "imageEndpointType": "openai",
+    "imageModel": "",
+    "subscriptionTier": "free",
+    "videoProvider": "none",
+    "videoBaseUrl": "",
+    "videoApiKey": "",
+    "videoModel": "",
+    "postLoginBehavior": "MAIN_MENU",
+    "visualMode": "classic",
+    "classicMemorableImages": false,
+    "comicLayout": "paged",
+    "comicReadingDirection": "ltr",
+    "bgMode": "static",
+    "bgOpacity": 40,
+    "artStylePreset": "classic-book",
+    "colorVariant": "default",
+    "uiThemeId": "theme.phoenix-ashrise",
+    "fontPackId": "font.ashrise",
+    "diceCosmeticId": "dice.ashrise",
+    "voicePackId": "voice.ashrise",
+    "turnFrameCosmeticId": "frame.ashrise",
+    "panelFrequency": "balanced",
+    "halftoneOverlay": true,
+    "sfxPopups": true,
+    "speechBubbles": true,
+    "panelBorderIntensity": "bold",
+    "gmStrictness": "standard",
+    "statDisplayMode": "inline",
+    "statVerbosity": "core",
+    "statFrequency": "every-5-turns",
+    "perspective": "second-person",
+    "gmVoiceProfileId": "cold-system",
+    "violenceLevel": "mild",
+    "cursingLevel": "mild",
+    "romanceSubplots": false,
+    "haremContent": false,
+    "statScreensEnabled": true,
+    "dndMode": false,
+    "mapTriggerMode": "tactical",
+    "fogRevealThreshold": "adjacent",
+    "combatFrequency": 50,
+    "combatResolveMode": "auto",
+    "socialRoleplay": 50,
+    "worldBuilding": 50,
+    "strictEncumbrance": false,
+    "requireTurnConfirm": false,
+    "secretDeathSaves": false,
+    "cleaveMechanics": false,
+    "flankingAdvantage": false,
+    "preferFullResponse": false,
+    "fastSetupChips": false
+  },
+  "character": {
+    "name": "Jax",
+    "level": 1,
+    "xp": 0,
+    "xpToNext": 200,
+    "hp": 24,
+    "maxHp": 24,
+    "mp": 12,
+    "maxMp": 12,
+    "sp": 20,
+    "maxSp": 20,
+    "attributes": {
+      "STR": 14,
+      "DEX": 12,
+      "CON": 14,
+      "INT": 12,
+      "WIS": 10,
+      "CHA": 10
+    },
+    "conditions": [],
+    "bio": "Someone already living in this world when the story begins.",
+    "appearance": "everyday street clothes",
+    "classTitle": "Hero"
+  },
+  "recentTurns": [
+    {
+      "id": "980nkh4j0",
+      "turn": 0,
+      "role": "gm",
+      "content": "Light, then dust and a draft. You are alone in a damaged building: one wall cracked, rain staining the floor, the door half off its hinges. A blue panel hangs at eye level. Nobody came to greet you. No sword on a pedestal. Anything useful is salvage you choose to take. A draft finds the back of your neck. The panel is the only thing that treats you as real.\n\nYour blue panel waits on a designation. What name should it show?",
+      "timestamp": 1787940598275,
+      "systemLog": [
+        "Registration incomplete",
+        "Stamp: Pactborn / Calamity Mark — unresolved",
+        "Gift channel: unresolved — Appraisal names it"
+      ]
+    },
+    {
+      "id": "gunwhe21f",
+      "turn": 1,
+      "role": "player",
+      "content": "Jax",
+      "timestamp": 1787940771898
+    },
+    {
+      "id": "z1b1x4prc",
+      "turn": 1,
+      "role": "gm",
+      "content": "The faint light filtering through the cracked walls catches motes of dust dancing in the damp air. The blue panel, a stark and clinical presence against the decay, hums almost imperceptibly. Your designation is registered.\n\n<system>Registration Complete. Welcome, Jax.</system>",
+      "timestamp": 1787940773855,
+      "systemLog": [
+        "Registration incomplete",
+        "Stamp: Pactborn / Calamity Mark — unresolved",
+        "Gift channel: unresolved — Appraisal names it",
+        "Quest Unlocked: The Circle’s Price"
+      ],
+      "offeredChoices": [
+        "Examine the damaged building more closely.",
+        "Check the contents of your bag.",
+        "Inspect the immediate surroundings",
+        "Approach the doorway to Corridor"
+      ]
+    }
+  ],
+  "recentRolls": [],
+  "eventLog": [
+    {
+      "timestamp": "2026-08-28T18:09:56.346Z",
+      "type": "SESSION",
+      "message": "Play session started (new-game)",
+      "data": {
+        "sessionId": "c6adf30f-8b63-4397-a714-ab156cd0262b",
+        "reason": "new-game"
+      },
+      "telemetry": {
+        "deviceId": "0d4efcbc-ad46-4ddc-917a-b9ef095b6f68",
+        "sessionId": "c6adf30f-8b63-4397-a714-ab156cd0262b",
+        "sessionStartedAt": "2026-08-28T18:09:56.346Z",
+        "platform": "Android (Chromium, Not?A_Brand, Google Chrome)",
+        "userAgent": "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Mobile Safari/537.36",
+        "screenResolution": "384x832",
+        "viewport": "384x693",
+        "pixelRatio": 2.8125,
+        "language": "en-GB",
+        "online": true
+      }
+    },
+    {
+      "timestamp": "2026-08-28T18:09:58.242Z",
+      "type": "ERROR",
+      "message": "[ai-retry] retries exhausted or non-retryable",
+      "data": {
+        "name": "Error",
+        "message": "playerInput is required"
+      },
+      "telemetry": {
+        "deviceId": "0d4efcbc-ad46-4ddc-917a-b9ef095b6f68",
+        "sessionId": "c6adf30f-8b63-4397-a714-ab156cd0262b",
+        "sessionStartedAt": "2026-08-28T18:09:56.346Z",
+        "platform": "Android (Chromium, Not?A_Brand, Google Chrome)",
+        "userAgent": "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Mobile Safari/537.36",
+        "screenResolution": "384x832",
+        "viewport": "384x693",
+        "pixelRatio": 2.8125,
+        "language": "en-GB",
+        "online": true
+      }
+    },
+    {
+      "timestamp": "2026-08-28T18:09:58.244Z",
+      "type": "ERROR",
+      "message": "[ai-proxy] GM proxy failed and client GM path is disabled",
+      "data": {
+        "message": "playerInput is required"
+      },
+      "telemetry": {
+        "deviceId": "0d4efcbc-ad46-4ddc-917a-b9ef095b6f68",
+        "sessionId": "c6adf30f-8b63-4397-a714-ab156cd0262b",
+        "sessionStartedAt": "2026-08-28T18:09:56.346Z",
+        "platform": "Android (Chromium, Not?A_Brand, Google Chrome)",
+        "userAgent": "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Mobile Safari/537.36",
+        "screenResolution": "384x832",
+        "viewport": "384x693",
+        "pixelRatio": 2.8125,
+        "language": "en-GB",
+        "online": true
+      }
+    },
+    {
+      "timestamp": "2026-08-28T18:09:58.249Z",
+      "type": "WARN",
+      "message": "New Game opening GM failed — stitch fallback",
+      "data": {
+        "error": "playerInput is required"
+      },
+      "telemetry": {
+        "deviceId": "0d4efcbc-ad46-4ddc-917a-b9ef095b6f68",
+        "sessionId": "c6adf30f-8b63-4397-a714-ab156cd0262b",
+        "sessionStartedAt": "2026-08-28T18:09:56.346Z",
+        "platform": "Android (Chromium, Not?A_Brand, Google Chrome)",
+        "userAgent": "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Mobile Safari/537.36",
+        "screenResolution": "384x832",
+        "viewport": "384x693",
+        "pixelRatio": 2.8125,
+        "language": "en-GB",
+        "online": true
+      }
+    },
+    {
+      "timestamp": "2026-08-28T18:12:51.888Z",
+      "type": "TURN_START",
+      "message": "sendAction invoked",
+      "data": {
+        "input": "Jax",
+        "currentTurn": 1,
+        "busy": false
+      },
+      "telemetry": {
+        "deviceId": "0d4efcbc-ad46-4ddc-917a-b9ef095b6f68",
+        "sessionId": "c6adf30f-8b63-4397-a714-ab156cd0262b",
+        "sessionStartedAt": "2026-08-28T18:09:56.346Z",
+        "platform": "Android (Chromium, Not?A_Brand, Google Chrome)",
+        "userAgent": "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Mobile Safari/537.36",
+        "screenResolution": "384x832",
+        "viewport": "384x693",
+        "pixelRatio": 2.8125,
+        "language": "en-GB",
+        "online": true
+      }
+    }
+  ],
+  "totalEvents": 5,
+  "previousSession": {
+    "sessionId": "ea0a9a62-dab5-48c7-8d38-0dbda351487f",
+    "sessionStartedAt": "2026-08-28T10:48:11.931Z",
+    "logs": [
+      {
+        "timestamp": "2026-08-28T10:48:11.932Z",
+        "type": "SESSION",
+        "message": "Play session started (continue)",
+        "data": {
+          "sessionId": "ea0a9a62-dab5-48c7-8d38-0dbda351487f",
+          "reason": "continue"
+        },
+        "telemetry": {
+          "deviceId": "0d4efcbc-ad46-4ddc-917a-b9ef095b6f68",
+          "sessionId": "ea0a9a62-dab5-48c7-8d38-0dbda351487f",
+          "sessionStartedAt": "2026-08-28T10:48:11.931Z",
+          "platform": "Android (Chromium, Not?A_Brand, Google Chrome)",
+          "userAgent": "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Mobile Safari/537.36",
+          "screenResolution": "384x832",
+          "viewport": "384x693",
+          "pixelRatio": 2.8125,
+          "language": "en-GB",
+          "online": true
+        }
+      }
+    ]
+  }
+}

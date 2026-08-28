@@ -208,10 +208,10 @@ Deno.serve(async (req) => {
   }
 
   const mode: GmMode = body.mode === 'auto-fight' ? 'auto-fight' : 'turn';
-  const playerInput = typeof body.playerInput === 'string' ? body.playerInput : '';
-  if (!playerInput.trim()) {
-    return jsonResponse({ error: 'playerInput is required' }, 400);
-  }
+  // Opening page / cover-continue may send '' or '(opening)'. Blank used to 400
+  // ("playerInput is required") and force the stitch fallback.
+  const playerInput = (typeof body.playerInput === 'string' ? body.playerInput : '').trim()
+    || '(opening)';
   if (!body.state || typeof body.state !== 'object') {
     return jsonResponse({ error: 'state is required' }, 400);
   }

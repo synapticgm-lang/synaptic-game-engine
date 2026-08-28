@@ -1,4 +1,4 @@
-﻿---
+---
 description: Open playtest issues to fix in the next update batch. Do not patch these until John says to ship the next update.
 alwaysApply: true
 ---
@@ -11,6 +11,7 @@ John is playtesting live. Collect issues here. Do not implement until he asks fo
 
 _(waiting — John still playtesting; next update when he asks)_
 
+- **2026-08-30f first-turn chips + send (shipped):** nextTurn TDZ, opening `(opening)` sentinel, ActionBar/resolveOfferedChoices fallback, turnPhase idle in finally. Residual: New Game still stitches if opening GM empty/timeout. Redeploy: client + `gm-turn`.
 - **2026-08-30e tester window:** Google-only play; default `play_access=tester`. Admin Users & Subscriptions dropdown: Tester / Player / Staff / Admin. Edge + SQL `017`+`018` required. Doc: `path-a-ship-implementation-2026-08-30e.md`.
 - **Next gate after 30c:** re-run alt-premades **4×300** under stamp `2026-08-30c` + Gemini re-score. World map authority should cut invented geography; do not claim 8/10 until scored.
 - **2026-08-30c opening GM + turn-fail (shipped):** `callOpeningGm`; classify TypeError / proxy 400 / blank; Continue keeps previous debug session. Evidence: `docs/bugs/playtest-2026-08-28-turn-did-not-land/`.
@@ -74,6 +75,7 @@ _(waiting — John still playtesting; next update when he asks)_
 
 ## Done (already shipped)
 
+- **2026-08-30f first-turn / locked-input / client-bug (John authorized push):** `nextTurn` TDZ in sendAction; `callOpeningGm` + gm-turn accept empty opening as `(opening)`; ActionBar/`resolveOfferedChoices` fallback so chips show without reload; `turnPhase` idle in finally so the box unlocks. Evidence: `docs/bugs/playtest-2026-08-28-first-turn-no-options/`. Vitest `playtest29hTurnFail` / playTranscript. HUD + index.html `2026-08-30f`. Mid writer NO. Redeploy: client + `npx supabase functions deploy gm-turn`.
 - **2026-08-30e Google-only + tester cohort (John authorized push):** Guest play off. Default `play_access=tester` (unlimited Free text, no art). Admin Users dropdown: Tester / Player / Staff / Admin. Edge clamps writer + images unless staff/`FOUNDER_EMAILS`. RLS `017`+`018`. Vitest `playtest30eTesterGate`. HUD + index.html `2026-08-30e`. Mid writer NO. Docs: `path-a-ship-implementation-2026-08-30e.md`, `security-audit-2026-08-30e.md`. Redeploy: SQL `017`+`018` + `gm-turn` + `generate-image` + `FOUNDER_EMAILS`.
 
 - **2026-08-30d Wave 3 sealed manifests (John authorized push):** B026-B028 from Manus BIG CHANGES backlog. Enhanced `buildSealedManifest` captures HP/XP/quest states + defeated enemy locks + completed quest locks. B027 `validateProseAgainstManifest` detects contradictions (enemy resurrection, quest reversals) and omissions (combat language). B028 one-repair policy enforces max 1 fallback per manifest (hard throw on retry). Vitest `playtest30bWave3` (14 tests). HUD + index.html `2026-08-30d`. Mid writer NO. Doc: `docs/research/path-a-wave-3-ship-2026-08-30.md`. Client-only (no edge redeploy).
