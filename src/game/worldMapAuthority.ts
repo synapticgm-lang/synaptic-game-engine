@@ -7,6 +7,11 @@ import type { WorldOutlineDef, WorldOutlineSettlement } from '@/data/worldOutlin
 import type { GameState, PlaceRecord, WorldAtlasState } from './types';
 import { placeIdFromName } from './placeUtils';
 
+/** Normalize location name for comparison. */
+export function normalizeLocationName(name: string): string {
+  return name.trim().toLowerCase();
+}
+
 /** Quest / site tags that must match settlement biomes. */
 const BIOME_QUEST_ALLOW: Record<string, string[]> = {
   farming: ['farm', 'rural', 'plains', 'wetland', 'orchard'],

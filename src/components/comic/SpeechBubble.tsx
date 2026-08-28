@@ -54,7 +54,6 @@ export function SpeechBubble({
   const bubbleStyle: CSSProperties | undefined = theme
     ? {
         fontFamily: theme.bubbleFontFamily,
-        backgroundColor: theme.bubbleBackground,
         color: theme.bubbleTextColor,
         borderColor: theme.bubbleBorderColor,
         borderWidth: theme.bubbleBorderWidth,

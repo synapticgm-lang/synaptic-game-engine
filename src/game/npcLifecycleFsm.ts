@@ -122,6 +122,153 @@ export function getOrCreateLifecycle(
 // ============================================================================
 
 /**
+ * Turnover check result
+ */
+export interface TurnoverCheck {
+  shouldAdvance: boolean;
+  reason?: string;
+  targetState?: NpcLifecycleState;
+}
+
+/**
+ * Check if lifecycle should transition (turnover check)
+ */
+export function checkLifecycleTurnover(
+  lifecycle: NpcLifecycle,
+  currentTurn: number
+): TurnoverCheck {
+  const currentState = lifecycle.state;
+  
+  switch (currentState) {
+    case 'entering': {
+      // entering → functioning (immediately)
+      return {
+        shouldAdvance: true,
+        reason: 'NPC role assigned and active',
+        targetState: 'functioning',
+      };
+    }
+    
+    case 'functioning': {
+      // Check if debt satisfied
+      // Note: This requires full game state, so we return false here
+      // The caller should use updateNpcLifecycle for full state checks
+      if (lifecycle.debtSatisfied && !lifecycle.satisfiedAtTurn) {
+        return {
+          shouldAdvance: true,
+          reason: 'Role obligation satisfied',
+          targetState: 'debt_satisfied',
+        };
+      }
+      
+      // Check deadline
+      if (
+        lifecycle.obligationDeadline !== null &&
+        currentTurn >= lifecycle.obligationDeadline + GRACE_PERIOD_TURNS
+      ) {
+        return {
+          shouldAdvance: true,
+          reason: 'Deadline missed',
+          targetState: 'exiting',
+        };
+      }
+      
+      return { shouldAdvance: false };
+    }
+    
+    case 'debt_satisfied': {
+      // Check if exit window exceeded
+      const windowStart = lifecycle.satisfiedAtTurn ?? currentTurn;
+      const windowExpired = currentTurn >= windowStart + EXIT_WINDOW_TURNS;
+      
+      if (windowExpired) {
+        return {
+          shouldAdvance: true,
+          reason: 'Exit window exceeded',
+          targetState: 'exiting',
+        };
+      }
+      
+      return { shouldAdvance: false };
+    }
+    
+    case 'exiting': {
+      // exiting → absent (next turn)
+      if (lifecycle.exitedAtTurn && currentTurn > lifecycle.exitedAtTurn) {
+        return {
+          shouldAdvance: true,
+          reason: 'Exit complete',
+          targetState: 'absent',
+        };
+      }
+      
+      return { shouldAdvance: false };
+    }
+    
+    case 'transformed':
+    case 'absent': {
+      // Terminal states, no transitions
+      return { shouldAdvance: false };
+    }
+  }
+}
+
+/**
+ * Advance lifecycle state (simple state transition)
+ */
+export function advanceLifecycleState(
+  lifecycle: NpcLifecycle,
+  reason: string
+): NpcLifecycle {
+  const currentState = lifecycle.state;
+  
+  switch (currentState) {
+    case 'entering': {
+      return {
+        ...lifecycle,
+        state: 'functioning',
+      };
+    }
+    
+    case 'functioning': {
+      if (lifecycle.debtSatisfied) {
+        return {
+          ...lifecycle,
+          state: 'debt_satisfied',
+          satisfiedAtTurn: lifecycle.satisfiedAtTurn,
+        };
+      }
+      // Deadline missed
+      return {
+        ...lifecycle,
+        state: 'exiting',
+        exitedAtTurn: lifecycle.enteredAtTurn,
+        exitReason: 'deadline_missed',
+      };
+    }
+    
+    case 'debt_satisfied': {
+      return {
+        ...lifecycle,
+        state: 'exiting',
+        exitedAtTurn: lifecycle.enteredAtTurn,
+        exitReason: 'function_complete',
+      };
+    }
+    
+    case 'exiting': {
+      return {
+        ...lifecycle,
+        state: 'absent',
+      };
+    }
+    
+    default:
+      return lifecycle;
+  }
+}
+
+/**
  * Update NPC lifecycle state
  * 
  * Called every turn from packageCoordination pre-GM sequence.

@@ -8,9 +8,9 @@ import { effectiveWriterTier, hasUnlimitedTextCapacity, isFounderPlayAccount } f
 import { equippedSetLabel, equippedSetName } from '../game/uiTheme';
 
 /** Visible after a hard refresh -- if this is missing, Vercel is still serving the 16 Aug bundle. */
-export const HUD_BUILD_STAMP = '2026-08-30j';
+export const HUD_BUILD_STAMP = '2026-08-30k';
 const HUD_BUILD_TITLE =
-  'Debug 2026-08-30j - Fix circular dependency causing TDZ error at turn 1';
+  'Debug 2026-08-30k - Fix Vercel build errors (missing exports, duplicate key)';
 
 interface Props {
   state: GameState;
