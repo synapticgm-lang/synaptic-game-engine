@@ -73,6 +73,8 @@ _(waiting — John still playtesting; next update when he asks)_
 
 ## Done (already shipped)
 
+- **2026-08-30d Wave 3 sealed manifests (John authorized push):** B026-B028 from Manus BIG CHANGES backlog. Enhanced `buildSealedManifest` captures HP/XP/quest states + defeated enemy locks + completed quest locks. B027 `validateProseAgainstManifest` detects contradictions (enemy resurrection, quest reversals) and omissions (combat language). B028 one-repair policy enforces max 1 fallback per manifest (hard throw on retry). Vitest `playtest30bWave3` (14 tests). HUD + index.html `2026-08-30d`. Mid writer NO. Doc: `docs/research/path-a-wave-3-ship-2026-08-30.md`. Client-only (no edge redeploy).
+
 - **2026-08-30c opening GM + turn-fail (John authorized push):** `callOpeningGm` (no `freeCallRef` / `result.story`); classify TypeError/ReferenceError/`GM proxy error`/blank; Continue keeps last session in export. Vitest `playtest29hTurnFail`. HUD + index.html `2026-08-30c`. Mid writer NO. Doc: `docs/research/path-a-ship-implementation-2026-08-30c.md`. Client-only.
 
 - **2026-08-29g hide chrome meaning (John authorized push):** Hide text collapses mic/textarea/send only; story stays. Hide options hides choice chips only; TURN_ASK stays. Vitest `playtest29gHideChrome`. HUD + index.html `2026-08-29g`. Mid writer NO. Doc: `docs/research/path-a-ship-implementation-2026-08-29g.md`. Client-only.

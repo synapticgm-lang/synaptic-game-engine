@@ -9,8 +9,8 @@ const panel = readFileSync(resolve(__dirname, '../components/CenterPanel.tsx'), 
 
 describe('playtest29g — hide text is action box, hide options is chips', () => {
   it('stamp is 2026-08-29g and Mid writer stays OFF', () => {
-    expect(BUILD_STAMP).toBe('2026-08-29g');
-    expect(HUD_BUILD_STAMP).toBe('2026-08-29g');
+    expect(BUILD_STAMP >= '2026-08-29g').toBe(true);
+    expect(HUD_BUILD_STAMP >= '2026-08-29g').toBe(true);
     expect(STAGNATION_MID_WRITER_ENABLED).toBe(false);
   });
 

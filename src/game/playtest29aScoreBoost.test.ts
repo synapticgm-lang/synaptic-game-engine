@@ -20,7 +20,7 @@ import { applyRenderFallback, buildSealedManifest } from './sealedManifest';
 
 describe('playtest29a — Manus score boost terminal authority', () => {
   it('stamp advanced past 29a; Mid writer stays OFF', () => {
-    expect(BUILD_STAMP).toMatch(/^2026-08-29/);
+    expect(BUILD_STAMP >= '2026-08-29a').toBe(true);
     expect(STAGNATION_MID_WRITER_ENABLED).toBe(false);
   });
 

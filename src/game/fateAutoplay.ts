@@ -885,6 +885,7 @@ Do NOT print dice notation or CODE ENFORCED.
     const fallback = applyRenderFallback(manifest, arcState, reason);
     gmText = fallback.prose;
     gmSystemLog = [...gmSystemLog, ...fallback.systemLog];
+    arcState = attachSealedManifest(arcState, fallback.manifestUpdated);
     renderFallbackUsed = true;
   }
 

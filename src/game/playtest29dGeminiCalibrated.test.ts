@@ -14,8 +14,8 @@ import { HUD_BUILD_STAMP } from '../components/Hud';
 
 describe('playtest29d — Gemini-calibrated prompt diet + soft stakes', () => {
   it('stamp is 2026-08-29d and Mid writer stays OFF', () => {
-    expect(BUILD_STAMP).toMatch(/^2026-08-29/);
-    expect(HUD_BUILD_STAMP).toMatch(/^2026-08-29/);
+    expect(BUILD_STAMP >= '2026-08-29d').toBe(true);
+    expect(HUD_BUILD_STAMP >= '2026-08-29d').toBe(true);
     expect(STAGNATION_MID_WRITER_ENABLED).toBe(false);
   });
 

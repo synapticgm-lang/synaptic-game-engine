@@ -21,7 +21,7 @@ import type { GameEvent } from './types';
 
 describe('playtest29b — optimise after terminal authority', () => {
   it('stamp is 2026-08-29c and Mid writer stays OFF', () => {
-    expect(BUILD_STAMP).toMatch(/^2026-08-29/);
+    expect(BUILD_STAMP >= '2026-08-29b').toBe(true);
     expect(STAGNATION_MID_WRITER_ENABLED).toBe(false);
   });
 
