@@ -40,14 +40,19 @@ export function GmResponseFeedback({
     if (!isSupabaseConfigured) return;
     
     setLoading(true);
-    void getGmFeedback(saveId, turnNumber).then((existing) => {
-      setLoading(false);
-      if (existing) {
-        setFeedbackType(existing.feedback_type);
-        setComment(existing.comment || '');
-        setShowCommentBox(Boolean(existing.comment));
-      }
-    });
+    void getGmFeedback(saveId, turnNumber)
+      .then((existing) => {
+        setLoading(false);
+        if (existing) {
+          setFeedbackType(existing.feedback_type);
+          setComment(existing.comment || '');
+          setShowCommentBox(Boolean(existing.comment));
+        }
+      })
+      .catch((err) => {
+        setLoading(false);
+        console.error('Failed to load GM feedback:', err);
+      });
   }, [saveId, turnNumber]);
 
   const handleFeedbackClick = async (type: GmFeedbackType) => {
