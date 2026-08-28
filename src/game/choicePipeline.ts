@@ -156,6 +156,22 @@ export function isAloneOrEmptyScene(state: GameState, storyProse = ''): boolean 
   return false;
 }
 
+/** Detect if the player is examining a UI element (System panel, interface, overlay, screen). */
+export function isUIExaminationContext(storyProse: string): boolean {
+  const lower = storyProse.toLowerCase();
+  // Check for UI/panel keywords
+  const hasUIKeyword = /\b(panel|interface|system (?:window|screen|overlay|display)|overlay|hud|status (?:screen|window|panel)|blue (?:panel|window|screen)|holographic|display)\b/i.test(lower);
+  if (!hasUIKeyword) return false;
+  
+  // Check for examination verbs
+  const hasExamineVerb = /\b(examin|inspect|observ|look(?:ing)? at|read(?:ing)?|stud(?:y|ying)|focus(?:ing)? on|glance(?:d)? at)\b/i.test(lower);
+  
+  // Strong signal: "the panel" or "the system" + examination
+  const strongSignal = /\b(?:the|a|an) (?:panel|interface|system|overlay|display|screen)\b/i.test(lower) && hasExamineVerb;
+  
+  return strongSignal || (hasUIKeyword && hasExamineVerb);
+}
+
 const ALONE_FORBIDDEN_CHOICE =
   /\b(crowd|bystander|onlookers?|handlers?|voices?\s+(?:outside|beyond)|call out to (?:the )?(?:voices?|crowd|people)|inspect (?:the )?(?:speaker|emblem)|someone (?:nearby|listening|watching)|ask (?:the )?(?:crowd|people|locals)|people who saw|saw you arrive|you(?:'re| are) not alone)\b/i;
 
@@ -656,14 +672,15 @@ export function sceneSafeFallbacks(
     options.push('Force a path forward');
   }
 
-  // Path2 Diplomatic / Trade / Faction — honor alone invent gate
-  if (!alone && /\b(people|crowd|someone|scream|shout)\b/i.test(storyProse)) {
+  // Path2 Diplomatic / Trade / Faction — honor alone invent gate + UI context
+  const isUIContext = isUIExaminationContext(storyProse);
+  if (!alone && !isUIContext && /\b(people|crowd|someone|scream|shout)\b/i.test(storyProse)) {
     options.push('Call out to a bystander');
   }
-  if (!alone && /\b(crystal|crack)\b/i.test(storyProse)) {
+  if (!alone && !isUIContext && /\b(crystal|crack)\b/i.test(storyProse)) {
     options.push('Inspect the crystals breaking the street');
   }
-  if (/\b(alley)\b/i.test(storyProse) && !alone) options.push('Check the nearest alley');
+  if (/\b(alley)\b/i.test(storyProse) && !alone && !isUIContext) options.push('Check the nearest alley');
 
   // Path3 Solitary / Stealth
   if (alone) {
@@ -703,6 +720,12 @@ export function sceneSafeFallbacks(
 
   if (/\b(panel|system)\b/i.test(storyProse)) {
     options.push('Read the System panel more closely');
+    // When examining UI, add UI-specific options
+    if (isUIExaminationContext(storyProse)) {
+      options.push('Examine sections of the panel');
+      options.push('Dismiss the panel');
+      options.push('Continue reading');
+    }
   }
   if (state.activeEncounter && state.activeEncounter.hp > 0) {
     options.push('Strike with what you are holding');
@@ -711,8 +734,10 @@ export function sceneSafeFallbacks(
     options.push('Check your wounds');
     options.push('Look for the next room or exit');
   } else if (!isCombatLockedTurn(state)) {
+    // Skip social/dialogue options when examining UI elements
     if (
       !alone
+      && !isUIExaminationContext(storyProse)
       && (/\b(he says|she says|they say|asks you|merchant|guard|innkeep|someone|crowd|people)\b/i.test(storyProse)
         || (state.companions ?? []).length > 0
         || (state.npcMemories ?? []).some((m) => (state.turn - (m.lastSeenTurn ?? 0)) <= 4))
