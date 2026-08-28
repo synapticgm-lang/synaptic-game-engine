@@ -1,0 +1,2354 @@
+{
+  "schemaVersion": "1.0.0",
+  "libraryId": "ws4.rpg.cape-district",
+  "mode": "rpg",
+  "bibleId": "cape-district",
+  "templates": [
+    {
+      "schemaVersion": "1.0.0",
+      "templateVersion": "1.0.0",
+      "id": "cape-district.social.dock-union-standoff",
+      "mode": "rpg",
+      "bibleId": "cape-district",
+      "name": "Dock Union Standoff",
+      "role": "social",
+      "summary": "Union pickets block a bonded cargo while the Watch threatens dispersal.",
+      "telegraph": {
+        "required": true,
+        "channels": [
+          "npc",
+          "status"
+        ],
+        "cues": [
+          {
+            "channel": "npc",
+            "signal": "The union steward demands wage escrow before the Watch bell’s sixth toll.",
+            "inference": "The demand, deadline, and fallback are explicit.",
+            "actionHook": "spend-payroll-ledger"
+          },
+          {
+            "channel": "status",
+            "signal": "Watch Intervention 2/6; at full, the square is cleared by force.",
+            "inference": "The confrontation has a bounded danger clock.",
+            "actionHook": "call-neutral-arbiter"
+          }
+        ],
+        "responseWindowTurns": 2,
+        "surpriseEligible": false,
+        "openingSeverityCap": "none"
+      },
+      "stakes": {
+        "headline": "Secure passage without sacrificing workers or let the Watch define the outcome.",
+        "approaches": [
+          {
+            "id": "spend-payroll-ledger",
+            "label": "Spend the payroll ledger to prove withheld wages",
+            "requirements": [
+              "leverage:payroll-ledger:available",
+              "leverage_value>=3"
+            ],
+            "method": "clock",
+            "check": {
+              "clock": {
+                "successSegments": 6,
+                "dangerSegments": 6
+              }
+            },
+            "onSuccess": {
+              "terminal": true,
+              "stateChanges": [
+                "clock:union-concession:set:full",
+                "cargo:set:released",
+                "leverage:payroll-ledger:set:consumed"
+              ],
+              "summary": "The employer funds escrow and the union releases the cargo.",
+              "terminalState": "negotiated"
+            },
+            "onPartial": {
+              "terminal": true,
+              "stateChanges": [
+                "cargo:set:released",
+                "faction:dock-union:increment:1",
+                "faction:merchant-council:decrement:1"
+              ],
+              "summary": "Cargo moves, but the Council blames the player for the public settlement.",
+              "terminalState": "partial"
+            },
+            "onFailure": {
+              "terminal": false,
+              "stateChanges": [
+                "leverage:payroll-ledger:set:discredited",
+                "clock:watch-intervention:increment:2"
+              ],
+              "summary": "The ledger is challenged and the Watch closes in."
+            },
+            "lockout": "payroll-ledger is consumed on success or discredited on refusal; its topic cannot be replayed."
+          },
+          {
+            "id": "call-neutral-arbiter",
+            "label": "Call Sister Merrow as neutral arbiter",
+            "requirements": [
+              "npc:sister-merrow:available"
+            ],
+            "method": "clock",
+            "check": {
+              "clock": {
+                "successSegments": 4,
+                "dangerSegments": 6
+              }
+            },
+            "onSuccess": {
+              "terminal": true,
+              "stateChanges": [
+                "npc:sister-merrow:set:arbiter",
+                "cargo:set:released-under-bond"
+              ],
+              "summary": "A bonded settlement releases cargo and defers final wages.",
+              "terminalState": "victory"
+            },
+            "onFailure": {
+              "terminal": false,
+              "stateChanges": [
+                "npc:sister-merrow:set:credibility-spent",
+                "clock:watch-intervention:increment:1"
+              ],
+              "summary": "The Council rejects the arbiter and spends her credibility."
+            },
+            "lockout": "Merrow’s credibility can be spent once in this confrontation."
+          },
+          {
+            "id": "walk-away-with-cost",
+            "label": "Walk away and concede the night shipment",
+            "requirements": [
+              "withdrawal_route:available"
+            ],
+            "method": "deterministic",
+            "onSuccess": {
+              "terminal": true,
+              "stateChanges": [
+                "encounter:set:fled",
+                "cargo:set:seized-by-watch",
+                "cooldown:standoff:set:15"
+              ],
+              "summary": "The standoff ends; the Watch seizes the shipment and the player preserves the ledger.",
+              "terminalState": "fled"
+            },
+            "onFailure": {
+              "terminal": false,
+              "stateChanges": [
+                "withdrawal_route:lock",
+                "danger_clock:increment:1"
+              ],
+              "summary": "The route closes and is removed rather than offered again."
+            },
+            "lockout": "Walking away always ends the current confrontation and applies the declared concession/cooldown."
+          }
+        ]
+      },
+      "resolution": {
+        "mechanic": "clock",
+        "config": {
+          "successClock": 6,
+          "dangerClock": 6,
+          "leverageToken": "payroll-ledger",
+          "leverageRequired": 3,
+          "onRepeat": "consume/discredit leverage, advance danger, or lock approach",
+          "deadlineEvent": "Watch disperses the square"
+        },
+        "terminalStates": [
+          "victory",
+          "defeat",
+          "fled",
+          "negotiated",
+          "partial"
+        ],
+        "maxTurns": 8,
+        "forcedTerminal": {
+          "terminal": true,
+          "stateChanges": [
+            "cargo:set:seized-by-watch",
+            "faction:dock-union:decrement:1",
+            "quest:free-arrested-pickets:unlock"
+          ],
+          "summary": "The Watch disperses the square, seizes cargo, and arrests pickets; the confrontation ends.",
+          "terminalState": "defeat"
+        },
+        "antiRepeatRule": "No unchanged leverage topic may be selected twice; withdrawal terminates and starts cooldown."
+      },
+      "aftermath": {
+        "minimumReceiptTypes": 2,
+        "byTerminal": {
+          "negotiated": [
+            {
+              "type": "faction",
+              "target": "dock-union",
+              "operation": "increment",
+              "value": 2
+            },
+            {
+              "type": "npc",
+              "target": "steward-hale",
+              "operation": "set",
+              "value": "settled"
+            },
+            {
+              "type": "quest",
+              "target": "audit-withheld-wages",
+              "operation": "unlock",
+              "value": true
+            }
+          ],
+          "victory": [
+            {
+              "type": "faction",
+              "target": "dock-union",
+              "operation": "increment",
+              "value": 1
+            },
+            {
+              "type": "loot",
+              "target": "access",
+              "operation": "unlock",
+              "value": "union-wharf-access"
+            },
+            {
+              "type": "quest",
+              "target": "audit-withheld-wages",
+              "operation": "unlock",
+              "value": true
+            }
+          ],
+          "partial": [
+            {
+              "type": "faction",
+              "target": "dock-union",
+              "operation": "increment",
+              "value": 1
+            },
+            {
+              "type": "quest",
+              "target": "answer-merchant-council",
+              "operation": "unlock",
+              "value": true
+            }
+          ],
+          "fled": [
+            {
+              "type": "faction",
+              "target": "dock-union",
+              "operation": "increment",
+              "value": -1
+            },
+            {
+              "type": "quest",
+              "target": "recover-watch-cargo",
+              "operation": "unlock",
+              "value": true
+            }
+          ],
+          "defeat": [
+            {
+              "type": "npc",
+              "target": "steward-hale",
+              "operation": "set",
+              "value": "arrested"
+            },
+            {
+              "type": "quest",
+              "target": "free-arrested-pickets",
+              "operation": "unlock",
+              "value": true
+            }
+          ]
+        }
+      },
+      "biomeFilter": {
+        "allow": [
+          "cape-district-harbor"
+        ],
+        "siteTags": [
+          "dock-square",
+          "labor-conflict"
+        ],
+        "requireFactionTags": [
+          "dock-union",
+          "watch"
+        ],
+        "exclude": [
+          "dungeon",
+          "wilderness"
+        ]
+      },
+      "turnWindow": {
+        "earliest": 5,
+        "latest": 50,
+        "cooldown": 15,
+        "droughtEligible": true
+      },
+      "governance": {
+        "stage": "draft",
+        "contentHash": "77b5e958800afb2f",
+        "owner": "encounter-design",
+        "replaces": null
+      },
+      "example": {
+        "telegraphProse": "The steward names wage escrow and the sixth bell while the intervention clock reveals the Watch’s exact fallback.",
+        "stakesProse": "Spend the one-use payroll ledger, call a neutral arbiter whose credibility can be spent, or leave and concede the shipment.",
+        "resolutionProse": "Every argument consumes leverage or advances a clock; at eight turns the Watch action commits and the scene cannot pad.",
+        "receiptProse": "The receipt records cargo custody, union/Watch standing, NPC arrests or settlement, and the next quest."
+      }
+    },
+    {
+      "schemaVersion": "1.0.0",
+      "templateVersion": "1.0.0",
+      "id": "cape-district.crisis.salt-clerk-betrayal",
+      "mode": "rpg",
+      "bibleId": "cape-district",
+      "name": "The Salt Clerk’s Betrayal",
+      "role": "crisis",
+      "summary": "A trusted clerk sells the player’s route list to customs and asks for protection.",
+      "telegraph": {
+        "required": true,
+        "channels": [
+          "scene",
+          "npc"
+        ],
+        "cues": [
+          {
+            "channel": "scene",
+            "signal": "The route list bears fresh customs pinholes and the clerk’s ink is missing.",
+            "inference": "The betrayal is evidenced before confrontation.",
+            "actionHook": "spend-ink-match"
+          },
+          {
+            "channel": "npc",
+            "signal": "The clerk asks for passage on the dawn packet in exchange for naming the buyer.",
+            "inference": "The confession has a concrete price and deadline.",
+            "actionHook": "grant-passage"
+          }
+        ],
+        "responseWindowTurns": 2,
+        "surpriseEligible": false,
+        "openingSeverityCap": "none"
+      },
+      "stakes": {
+        "headline": "Extract the buyer’s name, turn the clerk over, or protect them and absorb the political cost.",
+        "approaches": [
+          {
+            "id": "spend-ink-match",
+            "label": "Spend the matched ink proof to force a confession",
+            "requirements": [
+              "leverage:ink-match:available",
+              "leverage_value>=2"
+            ],
+            "method": "clock",
+            "check": {
+              "clock": {
+                "successSegments": 4,
+                "dangerSegments": 4
+              }
+            },
+            "onSuccess": {
+              "terminal": true,
+              "stateChanges": [
+                "npc:salt-clerk:set:confessed",
+                "intel:customs-buyer:set:known",
+                "leverage:ink-match:set:consumed"
+              ],
+              "summary": "The clerk names the buyer and accepts protective custody.",
+              "terminalState": "negotiated"
+            },
+            "onPartial": {
+              "terminal": true,
+              "stateChanges": [
+                "intel:customs-buyer:set:known",
+                "npc:salt-clerk:set:fled"
+              ],
+              "summary": "The buyer is named, but the clerk escapes before custody.",
+              "terminalState": "partial"
+            },
+            "onFailure": {
+              "terminal": false,
+              "stateChanges": [
+                "leverage:ink-match:set:discredited",
+                "clock:customs-arrival:increment:2"
+              ],
+              "summary": "The clerk contests the proof and customs nears."
+            },
+            "lockout": "ink-match is consumed on success or discredited on refusal; its topic cannot be replayed."
+          },
+          {
+            "id": "grant-passage",
+            "label": "Grant passage on the dawn packet",
+            "requirements": [
+              "asset:dawn-packet-seat:available"
+            ],
+            "method": "deterministic",
+            "check": {
+              "clock": {
+                "successSegments": 3,
+                "dangerSegments": 4
+              }
+            },
+            "onSuccess": {
+              "terminal": true,
+              "stateChanges": [
+                "asset:dawn-packet-seat:set:spent",
+                "npc:salt-clerk:set:protected",
+                "intel:customs-buyer:set:known"
+              ],
+              "summary": "Protection buys the name and keeps the clerk alive.",
+              "terminalState": "negotiated"
+            },
+            "onFailure": {
+              "terminal": false,
+              "stateChanges": [
+                "asset:dawn-packet-seat:set:unavailable",
+                "npc:salt-clerk:set:distrustful"
+              ],
+              "summary": "The seat cannot be guaranteed, so the offer becomes invalid."
+            },
+            "lockout": "The packet seat is spent or invalidated once."
+          },
+          {
+            "id": "walk-away-with-cost",
+            "label": "Walk away and let customs take the clerk",
+            "requirements": [
+              "withdrawal_route:available"
+            ],
+            "method": "deterministic",
+            "onSuccess": {
+              "terminal": true,
+              "stateChanges": [
+                "encounter:set:fled",
+                "npc:salt-clerk:set:customs-custody",
+                "cooldown:betrayal:set:15"
+              ],
+              "summary": "The confrontation ends; the clerk enters customs custody and the buyer remains hidden.",
+              "terminalState": "fled"
+            },
+            "onFailure": {
+              "terminal": false,
+              "stateChanges": [
+                "withdrawal_route:lock",
+                "danger_clock:increment:1"
+              ],
+              "summary": "The route closes and is removed rather than offered again."
+            },
+            "lockout": "Walking away always ends the current confrontation and applies the declared concession/cooldown."
+          }
+        ]
+      },
+      "resolution": {
+        "mechanic": "clock",
+        "config": {
+          "successClock": 4,
+          "dangerClock": 4,
+          "leverageToken": "ink-match",
+          "leverageRequired": 2,
+          "onRepeat": "consume/discredit leverage, advance danger, or lock approach",
+          "deadlineEvent": "Customs arrives"
+        },
+        "terminalStates": [
+          "victory",
+          "defeat",
+          "fled",
+          "negotiated",
+          "partial"
+        ],
+        "maxTurns": 6,
+        "forcedTerminal": {
+          "terminal": true,
+          "stateChanges": [
+            "npc:salt-clerk:set:customs-custody",
+            "intel:customs-buyer:set:lost",
+            "quest:intercept-prison-barge:unlock"
+          ],
+          "summary": "Customs takes the clerk and the immediate confession opportunity closes.",
+          "terminalState": "defeat"
+        },
+        "antiRepeatRule": "No unchanged leverage topic may be selected twice; withdrawal terminates and starts cooldown."
+      },
+      "aftermath": {
+        "minimumReceiptTypes": 2,
+        "byTerminal": {
+          "negotiated": [
+            {
+              "type": "faction",
+              "target": "customs-office",
+              "operation": "increment",
+              "value": -1
+            },
+            {
+              "type": "npc",
+              "target": "salt-clerk",
+              "operation": "set",
+              "value": "protected-witness"
+            },
+            {
+              "type": "quest",
+              "target": "unmask-customs-buyer",
+              "operation": "unlock",
+              "value": true
+            }
+          ],
+          "victory": [
+            {
+              "type": "faction",
+              "target": "customs-office",
+              "operation": "increment",
+              "value": -2
+            },
+            {
+              "type": "loot",
+              "target": "intel",
+              "operation": "unlock",
+              "value": "customs-buyer-name"
+            },
+            {
+              "type": "quest",
+              "target": "unmask-customs-buyer",
+              "operation": "unlock",
+              "value": true
+            }
+          ],
+          "partial": [
+            {
+              "type": "faction",
+              "target": "customs-office",
+              "operation": "increment",
+              "value": -1
+            },
+            {
+              "type": "quest",
+              "target": "find-fugitive-clerk",
+              "operation": "unlock",
+              "value": true
+            }
+          ],
+          "fled": [
+            {
+              "type": "faction",
+              "target": "customs-office",
+              "operation": "increment",
+              "value": 1
+            },
+            {
+              "type": "quest",
+              "target": "monitor-customs-custody",
+              "operation": "unlock",
+              "value": true
+            }
+          ],
+          "defeat": [
+            {
+              "type": "npc",
+              "target": "salt-clerk",
+              "operation": "set",
+              "value": "customs-custody"
+            },
+            {
+              "type": "quest",
+              "target": "intercept-prison-barge",
+              "operation": "unlock",
+              "value": true
+            }
+          ]
+        }
+      },
+      "biomeFilter": {
+        "allow": [
+          "cape-district-harbor"
+        ],
+        "siteTags": [
+          "counting-house",
+          "betrayal"
+        ],
+        "requireFactionTags": [
+          "customs-office"
+        ],
+        "exclude": [
+          "dungeon",
+          "farmland"
+        ]
+      },
+      "turnWindow": {
+        "earliest": 8,
+        "latest": 70,
+        "cooldown": 20,
+        "droughtEligible": true
+      },
+      "governance": {
+        "stage": "draft",
+        "contentHash": "1325624f9bf631a3",
+        "owner": "encounter-design",
+        "replaces": null
+      },
+      "example": {
+        "telegraphProse": "Pinholes and missing ink prove the route list was copied, while the clerk names the dawn-packet price.",
+        "stakesProse": "Spend the ink match, spend a unique packet seat, or leave the clerk to customs custody.",
+        "resolutionProse": "Proof and passage cannot be reused; customs arrives by turn six and converts the unresolved crisis into a prison-barge hook.",
+        "receiptProse": "The system records confession, buyer intel, custody, passage asset, faction standing, and the appropriate follow-up."
+      }
+    },
+    {
+      "schemaVersion": "1.0.0",
+      "templateVersion": "1.0.0",
+      "id": "cape-district.crisis.flood-levy-deadline",
+      "mode": "rpg",
+      "bibleId": "cape-district",
+      "name": "Flood Levy Deadline",
+      "role": "crisis",
+      "summary": "The council will condemn one ward unless the player assembles funding or proves fraud.",
+      "telegraph": {
+        "required": true,
+        "channels": [
+          "status",
+          "faction"
+        ],
+        "cues": [
+          {
+            "channel": "status",
+            "signal": "Levy Vote 3/6; at full, Low Cape is condemned.",
+            "inference": "The political deadline and consequence are visible.",
+            "actionHook": "spend-audit"
+          },
+          {
+            "channel": "faction",
+            "signal": "Merchant Council will fund two segments in exchange for warehouse immunity.",
+            "inference": "A costly acceleration path is explicit.",
+            "actionHook": "trade-immunity"
+          }
+        ],
+        "responseWindowTurns": 3,
+        "surpriseEligible": false,
+        "openingSeverityCap": "none"
+      },
+      "stakes": {
+        "headline": "Save Low Cape without granting permanent immunity, or choose which cost the district carries.",
+        "approaches": [
+          {
+            "id": "spend-audit",
+            "label": "Spend the verified drainage audit to expose fraud",
+            "requirements": [
+              "leverage:verified-drainage-audit:available",
+              "leverage_value>=3"
+            ],
+            "method": "clock",
+            "check": {
+              "clock": {
+                "successSegments": 6,
+                "dangerSegments": 6
+              }
+            },
+            "onSuccess": {
+              "terminal": true,
+              "stateChanges": [
+                "clock:levy-defense:set:full",
+                "ward:low-cape:set:protected",
+                "leverage:verified-drainage-audit:set:consumed"
+              ],
+              "summary": "The fraud finding voids the condemnation vote.",
+              "terminalState": "negotiated"
+            },
+            "onPartial": {
+              "terminal": true,
+              "stateChanges": [
+                "ward:low-cape:set:protected",
+                "faction:council:decrement:2"
+              ],
+              "summary": "The ward is saved, but the Council excludes the player from committee access.",
+              "terminalState": "partial"
+            },
+            "onFailure": {
+              "terminal": false,
+              "stateChanges": [
+                "leverage:verified-drainage-audit:set:discredited",
+                "clock:levy-vote:increment:2"
+              ],
+              "summary": "The audit is challenged and the vote accelerates."
+            },
+            "lockout": "verified-drainage-audit is consumed on success or discredited on refusal; its topic cannot be replayed."
+          },
+          {
+            "id": "trade-immunity",
+            "label": "Trade warehouse immunity for emergency funding",
+            "requirements": [
+              "authority:grant-limited-immunity"
+            ],
+            "method": "clock",
+            "check": {
+              "clock": {
+                "successSegments": 4,
+                "dangerSegments": 6
+              }
+            },
+            "onSuccess": {
+              "terminal": true,
+              "stateChanges": [
+                "ward:low-cape:set:protected",
+                "faction:merchant-council:set:warehouse-immunity"
+              ],
+              "summary": "Funding saves the ward while merchants gain declared immunity.",
+              "terminalState": "victory"
+            },
+            "onFailure": {
+              "terminal": false,
+              "stateChanges": [
+                "faction:merchant-council:set:offer-withdrawn",
+                "clock:levy-vote:increment:1"
+              ],
+              "summary": "The merchants withdraw the offer and it cannot be repeated."
+            },
+            "lockout": "The immunity offer is accepted or withdrawn once."
+          },
+          {
+            "id": "walk-away-with-cost",
+            "label": "Walk away and evacuate Low Cape",
+            "requirements": [
+              "withdrawal_route:available"
+            ],
+            "method": "deterministic",
+            "onSuccess": {
+              "terminal": true,
+              "stateChanges": [
+                "encounter:set:fled",
+                "ward:low-cape:set:condemned",
+                "quest:evacuate-low-cape:unlock"
+              ],
+              "summary": "The vote proceeds; the player pivots to evacuation rather than repeating debate.",
+              "terminalState": "fled"
+            },
+            "onFailure": {
+              "terminal": false,
+              "stateChanges": [
+                "withdrawal_route:lock",
+                "danger_clock:increment:1"
+              ],
+              "summary": "The route closes and is removed rather than offered again."
+            },
+            "lockout": "Walking away always ends the current confrontation and applies the declared concession/cooldown."
+          }
+        ]
+      },
+      "resolution": {
+        "mechanic": "clock",
+        "config": {
+          "successClock": 6,
+          "dangerClock": 6,
+          "leverageToken": "verified-drainage-audit",
+          "leverageRequired": 3,
+          "onRepeat": "consume/discredit leverage, advance danger, or lock approach",
+          "deadlineEvent": "Council condemnation vote"
+        },
+        "terminalStates": [
+          "victory",
+          "defeat",
+          "fled",
+          "negotiated",
+          "partial"
+        ],
+        "maxTurns": 8,
+        "forcedTerminal": {
+          "terminal": true,
+          "stateChanges": [
+            "ward:low-cape:set:condemned",
+            "npc:low-cape-residents:set:displaced",
+            "quest:evacuate-low-cape:unlock"
+          ],
+          "summary": "The vote condemns Low Cape and the crisis ends in an evacuation arc.",
+          "terminalState": "defeat"
+        },
+        "antiRepeatRule": "No unchanged leverage topic may be selected twice; withdrawal terminates and starts cooldown."
+      },
+      "aftermath": {
+        "minimumReceiptTypes": 2,
+        "byTerminal": {
+          "negotiated": [
+            {
+              "type": "faction",
+              "target": "low-cape-residents",
+              "operation": "increment",
+              "value": 3
+            },
+            {
+              "type": "npc",
+              "target": "council-chair",
+              "operation": "set",
+              "value": "fraud-overruled"
+            },
+            {
+              "type": "quest",
+              "target": "prosecute-drainage-fraud",
+              "operation": "unlock",
+              "value": true
+            }
+          ],
+          "victory": [
+            {
+              "type": "faction",
+              "target": "low-cape-residents",
+              "operation": "increment",
+              "value": 2
+            },
+            {
+              "type": "loot",
+              "target": "access",
+              "operation": "unlock",
+              "value": "low-cape-safehouses"
+            },
+            {
+              "type": "quest",
+              "target": "prosecute-drainage-fraud",
+              "operation": "unlock",
+              "value": true
+            }
+          ],
+          "partial": [
+            {
+              "type": "faction",
+              "target": "low-cape-residents",
+              "operation": "increment",
+              "value": 2
+            },
+            {
+              "type": "quest",
+              "target": "restore-committee-access",
+              "operation": "unlock",
+              "value": true
+            }
+          ],
+          "fled": [
+            {
+              "type": "faction",
+              "target": "low-cape-residents",
+              "operation": "increment",
+              "value": -2
+            },
+            {
+              "type": "quest",
+              "target": "evacuate-low-cape",
+              "operation": "unlock",
+              "value": true
+            }
+          ],
+          "defeat": [
+            {
+              "type": "npc",
+              "target": "council-chair",
+              "operation": "set",
+              "value": "condemnation-signed"
+            },
+            {
+              "type": "quest",
+              "target": "evacuate-low-cape",
+              "operation": "unlock",
+              "value": true
+            }
+          ]
+        }
+      },
+      "biomeFilter": {
+        "allow": [
+          "cape-district-civic"
+        ],
+        "siteTags": [
+          "council-hall",
+          "deadline"
+        ],
+        "requireFactionTags": [
+          "merchant-council",
+          "low-cape-residents"
+        ],
+        "exclude": [
+          "dungeon",
+          "open-sea"
+        ]
+      },
+      "turnWindow": {
+        "earliest": 10,
+        "latest": 90,
+        "cooldown": 30,
+        "droughtEligible": true
+      },
+      "governance": {
+        "stage": "draft",
+        "contentHash": "f4d2764bff6e75ba",
+        "owner": "encounter-design",
+        "replaces": null
+      },
+      "example": {
+        "telegraphProse": "The vote clock states the condemnation result, and the merchants’ immunity price appears as a named political cost.",
+        "stakesProse": "Spend the audit, trade immunity for funding, or abandon debate and begin evacuation.",
+        "resolutionProse": "Every maneuver moves defense or vote clocks; turn eight condemns the ward and opens a different objective.",
+        "receiptProse": "Receipts preserve ward status, residents, council/merchant standing, access, audit consumption, and evacuation or fraud quests."
+      }
+    },
+    {
+      "schemaVersion": "1.0.0",
+      "templateVersion": "1.0.0",
+      "id": "cape-district.social.night-market-seizure",
+      "mode": "rpg",
+      "bibleId": "cape-district",
+      "name": "Night Market Seizure",
+      "role": "social",
+      "summary": "The Watch moves to confiscate unlicensed stalls while two factions claim authority.",
+      "telegraph": {
+        "required": true,
+        "channels": [
+          "faction",
+          "scene"
+        ],
+        "cues": [
+          {
+            "channel": "faction",
+            "signal": "A posted order lists confiscation at moonrise and names the officer authorized to suspend it.",
+            "inference": "The operation, deadline, and decision-maker are known.",
+            "actionHook": "spend-jurisdiction-writ"
+          },
+          {
+            "channel": "scene",
+            "signal": "Stallkeepers chain carts into three defensible lanes.",
+            "inference": "Escalation geometry and a withdrawal route are visible.",
+            "actionHook": "organize-evacuation"
+          }
+        ],
+        "responseWindowTurns": 2,
+        "surpriseEligible": false,
+        "openingSeverityCap": "none"
+      },
+      "stakes": {
+        "headline": "Keep the market open, evacuate it intact, or let confiscation redefine district control.",
+        "approaches": [
+          {
+            "id": "spend-jurisdiction-writ",
+            "label": "Spend the harbor jurisdiction writ",
+            "requirements": [
+              "leverage:harbor-jurisdiction-writ:available",
+              "leverage_value>=3"
+            ],
+            "method": "clock",
+            "check": {
+              "clock": {
+                "successSegments": 5,
+                "dangerSegments": 6
+              }
+            },
+            "onSuccess": {
+              "terminal": true,
+              "stateChanges": [
+                "watch:seizure-order:set:suspended",
+                "market:night:set:open",
+                "leverage:harbor-jurisdiction-writ:set:consumed"
+              ],
+              "summary": "The Watch suspends seizure under superior harbor authority.",
+              "terminalState": "negotiated"
+            },
+            "onPartial": {
+              "terminal": true,
+              "stateChanges": [
+                "market:night:set:open-probation",
+                "faction:watch:decrement:1"
+              ],
+              "summary": "The market stays open for one week under hostile probation.",
+              "terminalState": "partial"
+            },
+            "onFailure": {
+              "terminal": false,
+              "stateChanges": [
+                "leverage:harbor-jurisdiction-writ:set:discredited",
+                "clock:confiscation:increment:2"
+              ],
+              "summary": "The officer rejects the writ and begins confiscation."
+            },
+            "lockout": "harbor-jurisdiction-writ is consumed on success or discredited on refusal; its topic cannot be replayed."
+          },
+          {
+            "id": "organize-evacuation",
+            "label": "Organize a three-lane stall evacuation",
+            "requirements": [
+              "npc:stallkeepers:cooperative"
+            ],
+            "method": "clock",
+            "check": {
+              "clock": {
+                "successSegments": 4,
+                "dangerSegments": 6
+              }
+            },
+            "onSuccess": {
+              "terminal": true,
+              "stateChanges": [
+                "market:goods:set:evacuated",
+                "market:night:set:closed-temporary"
+              ],
+              "summary": "The goods escape before the Watch can seize them.",
+              "terminalState": "victory"
+            },
+            "onFailure": {
+              "terminal": false,
+              "stateChanges": [
+                "market:goods:decrement:one-cache",
+                "clock:confiscation:increment:1"
+              ],
+              "summary": "One cache is seized and the lanes narrow."
+            },
+            "lockout": "Each failed lane closes; the evacuation topology changes."
+          },
+          {
+            "id": "walk-away-with-cost",
+            "label": "Walk away and concede the market",
+            "requirements": [
+              "withdrawal_route:available"
+            ],
+            "method": "deterministic",
+            "onSuccess": {
+              "terminal": true,
+              "stateChanges": [
+                "encounter:set:fled",
+                "market:night:set:watch-controlled",
+                "cooldown:night-market:set:15"
+              ],
+              "summary": "The Watch takes the market and the current confrontation ends.",
+              "terminalState": "fled"
+            },
+            "onFailure": {
+              "terminal": false,
+              "stateChanges": [
+                "withdrawal_route:lock",
+                "danger_clock:increment:1"
+              ],
+              "summary": "The route closes and is removed rather than offered again."
+            },
+            "lockout": "Walking away always ends the current confrontation and applies the declared concession/cooldown."
+          }
+        ]
+      },
+      "resolution": {
+        "mechanic": "clock",
+        "config": {
+          "successClock": 5,
+          "dangerClock": 6,
+          "leverageToken": "harbor-jurisdiction-writ",
+          "leverageRequired": 3,
+          "onRepeat": "consume/discredit leverage, advance danger, or lock approach",
+          "deadlineEvent": "Moonrise confiscation"
+        },
+        "terminalStates": [
+          "victory",
+          "defeat",
+          "fled",
+          "negotiated",
+          "partial"
+        ],
+        "maxTurns": 7,
+        "forcedTerminal": {
+          "terminal": true,
+          "stateChanges": [
+            "market:night:set:watch-controlled",
+            "market:goods:set:confiscated",
+            "quest:recover-confiscated-goods:unlock"
+          ],
+          "summary": "Moonrise confiscation completes and the encounter becomes a recovery arc.",
+          "terminalState": "defeat"
+        },
+        "antiRepeatRule": "No unchanged leverage topic may be selected twice; withdrawal terminates and starts cooldown."
+      },
+      "aftermath": {
+        "minimumReceiptTypes": 2,
+        "byTerminal": {
+          "negotiated": [
+            {
+              "type": "faction",
+              "target": "night-market",
+              "operation": "increment",
+              "value": 2
+            },
+            {
+              "type": "npc",
+              "target": "watch-lieutenant-vale",
+              "operation": "set",
+              "value": "order-suspended"
+            },
+            {
+              "type": "quest",
+              "target": "formalize-market-charter",
+              "operation": "unlock",
+              "value": true
+            }
+          ],
+          "victory": [
+            {
+              "type": "faction",
+              "target": "night-market",
+              "operation": "increment",
+              "value": 2
+            },
+            {
+              "type": "loot",
+              "target": "access",
+              "operation": "unlock",
+              "value": "night-market-network"
+            },
+            {
+              "type": "quest",
+              "target": "formalize-market-charter",
+              "operation": "unlock",
+              "value": true
+            }
+          ],
+          "partial": [
+            {
+              "type": "faction",
+              "target": "night-market",
+              "operation": "increment",
+              "value": 1
+            },
+            {
+              "type": "quest",
+              "target": "survive-probation-week",
+              "operation": "unlock",
+              "value": true
+            }
+          ],
+          "fled": [
+            {
+              "type": "faction",
+              "target": "night-market",
+              "operation": "increment",
+              "value": -2
+            },
+            {
+              "type": "quest",
+              "target": "recover-confiscated-goods",
+              "operation": "unlock",
+              "value": true
+            }
+          ],
+          "defeat": [
+            {
+              "type": "npc",
+              "target": "watch-lieutenant-vale",
+              "operation": "set",
+              "value": "market-commandant"
+            },
+            {
+              "type": "quest",
+              "target": "recover-confiscated-goods",
+              "operation": "unlock",
+              "value": true
+            }
+          ]
+        }
+      },
+      "biomeFilter": {
+        "allow": [
+          "cape-district-market"
+        ],
+        "siteTags": [
+          "night-market",
+          "faction-confrontation"
+        ],
+        "requireFactionTags": [
+          "watch",
+          "stallkeepers"
+        ],
+        "exclude": [
+          "dungeon",
+          "rural-road"
+        ]
+      },
+      "turnWindow": {
+        "earliest": 8,
+        "latest": 75,
+        "cooldown": 18,
+        "droughtEligible": true
+      },
+      "governance": {
+        "stage": "draft",
+        "contentHash": "8bec46b703f7e8e5",
+        "owner": "encounter-design",
+        "replaces": null
+      },
+      "example": {
+        "telegraphProse": "The seizure order names moonrise and Lieutenant Vale, while chained stalls reveal the three-lane evacuation plan.",
+        "stakesProse": "Spend the writ, evacuate changing lanes, or concede control and end the standoff immediately.",
+        "resolutionProse": "The writ is one-use and evacuation failures close lanes; the seventh turn commits confiscation and a recovery quest.",
+        "receiptProse": "The ledger records market control, goods, Watch and stallkeeper standing, network access, and recovery or charter hooks."
+      }
+    },
+    {
+      "schemaVersion": "1.0.0",
+      "templateVersion": "1.0.0",
+      "id": "cape-district.crisis.reef-medicine",
+      "mode": "rpg",
+      "bibleId": "cape-district",
+      "name": "Reef Fever Allocation",
+      "role": "crisis",
+      "summary": "A limited antitoxin shipment can protect dockworkers or reef refugees, not both.",
+      "telegraph": {
+        "required": true,
+        "channels": [
+          "item",
+          "npc"
+        ],
+        "cues": [
+          {
+            "channel": "item",
+            "signal": "The crate holds twelve sealed doses; both clinics require nine before dawn.",
+            "inference": "Scarcity and exclusivity are explicit.",
+            "actionHook": "spend-cargo-manifest"
+          },
+          {
+            "channel": "npc",
+            "signal": "Both physicians state the mortality and political consequences of receiving only three doses.",
+            "inference": "Each branch has declared human and faction stakes.",
+            "actionHook": "split-doses"
+          }
+        ],
+        "responseWindowTurns": 3,
+        "surpriseEligible": false,
+        "openingSeverityCap": "none"
+      },
+      "stakes": {
+        "headline": "Allocate scarce medicine with no hidden option to save everyone.",
+        "approaches": [
+          {
+            "id": "spend-cargo-manifest",
+            "label": "Spend the cargo manifest to requisition three reserve doses",
+            "requirements": [
+              "leverage:antitoxin-cargo-manifest:available",
+              "leverage_value>=2"
+            ],
+            "method": "clock",
+            "check": {
+              "clock": {
+                "successSegments": 4,
+                "dangerSegments": 4
+              }
+            },
+            "onSuccess": {
+              "terminal": true,
+              "stateChanges": [
+                "inventory:antitoxin:add:3",
+                "leverage:antitoxin-cargo-manifest:set:consumed",
+                "clock:dawn:increment:1"
+              ],
+              "summary": "Three reserve doses become available at the cost of one turn.",
+              "terminalState": "negotiated"
+            },
+            "onPartial": {
+              "terminal": true,
+              "stateChanges": [
+                "inventory:antitoxin:add:2",
+                "faction:customs:decrement:1"
+              ],
+              "summary": "Two doses arrive while customs opens an inquiry.",
+              "terminalState": "partial"
+            },
+            "onFailure": {
+              "terminal": false,
+              "stateChanges": [
+                "leverage:antitoxin-cargo-manifest:set:discredited",
+                "clock:dawn:increment:2"
+              ],
+              "summary": "The manifest fails and dawn approaches."
+            },
+            "lockout": "antitoxin-cargo-manifest is consumed on success or discredited on refusal; its topic cannot be replayed."
+          },
+          {
+            "id": "split-doses",
+            "label": "Split six doses to each clinic",
+            "requirements": [
+              "inventory:antitoxin>=12"
+            ],
+            "method": "deterministic",
+            "check": {
+              "clock": {
+                "successSegments": 3,
+                "dangerSegments": 4
+              }
+            },
+            "onSuccess": {
+              "terminal": true,
+              "stateChanges": [
+                "clinic:dockworkers:set:partial-cover",
+                "clinic:reef-refugees:set:partial-cover",
+                "inventory:antitoxin:set:0"
+              ],
+              "summary": "Both clinics receive partial protection and both suffer declared losses.",
+              "terminalState": "partial"
+            },
+            "onFailure": {
+              "terminal": false,
+              "stateChanges": [
+                "inventory:antitoxin:set:quarantined",
+                "clock:dawn:increment:1"
+              ],
+              "summary": "If custody is invalid, the split is blocked and the crate is quarantined."
+            },
+            "lockout": "The sealed crate can be allocated once; no dose duplication is possible."
+          },
+          {
+            "id": "walk-away-with-cost",
+            "label": "Walk away and let the health board choose",
+            "requirements": [
+              "withdrawal_route:available"
+            ],
+            "method": "deterministic",
+            "onSuccess": {
+              "terminal": true,
+              "stateChanges": [
+                "encounter:set:fled",
+                "clinic:allocation:set:board-choice",
+                "cooldown:medicine-crisis:set:20"
+              ],
+              "summary": "The board allocates by policy and the player loses control of the decision.",
+              "terminalState": "fled"
+            },
+            "onFailure": {
+              "terminal": false,
+              "stateChanges": [
+                "withdrawal_route:lock",
+                "danger_clock:increment:1"
+              ],
+              "summary": "The route closes and is removed rather than offered again."
+            },
+            "lockout": "Walking away always ends the current confrontation and applies the declared concession/cooldown."
+          }
+        ]
+      },
+      "resolution": {
+        "mechanic": "clock",
+        "config": {
+          "successClock": 4,
+          "dangerClock": 4,
+          "leverageToken": "antitoxin-cargo-manifest",
+          "leverageRequired": 2,
+          "onRepeat": "consume/discredit leverage, advance danger, or lock approach",
+          "deadlineEvent": "Dawn fever spike"
+        },
+        "terminalStates": [
+          "victory",
+          "defeat",
+          "fled",
+          "negotiated",
+          "partial"
+        ],
+        "maxTurns": 5,
+        "forcedTerminal": {
+          "terminal": true,
+          "stateChanges": [
+            "clinic:allocation:set:too-late",
+            "npc:both-clinics:set:casualties",
+            "quest:contain-reef-fever:unlock"
+          ],
+          "summary": "Dawn arrives without allocation; both clinics suffer and containment begins.",
+          "terminalState": "defeat"
+        },
+        "antiRepeatRule": "No unchanged leverage topic may be selected twice; withdrawal terminates and starts cooldown."
+      },
+      "aftermath": {
+        "minimumReceiptTypes": 2,
+        "byTerminal": {
+          "negotiated": [
+            {
+              "type": "faction",
+              "target": "public-health-board",
+              "operation": "increment",
+              "value": 1
+            },
+            {
+              "type": "npc",
+              "target": "physician-anik",
+              "operation": "set",
+              "value": "allocation-recorded"
+            },
+            {
+              "type": "quest",
+              "target": "trace-contaminated-catch",
+              "operation": "unlock",
+              "value": true
+            }
+          ],
+          "victory": [
+            {
+              "type": "faction",
+              "target": "public-health-board",
+              "operation": "increment",
+              "value": 1
+            },
+            {
+              "type": "loot",
+              "target": "favor",
+              "operation": "unlock",
+              "value": "clinic-priority-favor"
+            },
+            {
+              "type": "quest",
+              "target": "trace-contaminated-catch",
+              "operation": "unlock",
+              "value": true
+            }
+          ],
+          "partial": [
+            {
+              "type": "faction",
+              "target": "public-health-board",
+              "operation": "increment",
+              "value": -1
+            },
+            {
+              "type": "quest",
+              "target": "memorial-and-recovery",
+              "operation": "unlock",
+              "value": true
+            }
+          ],
+          "fled": [
+            {
+              "type": "faction",
+              "target": "public-health-board",
+              "operation": "increment",
+              "value": 0
+            },
+            {
+              "type": "quest",
+              "target": "answer-board-allocation",
+              "operation": "unlock",
+              "value": true
+            }
+          ],
+          "defeat": [
+            {
+              "type": "npc",
+              "target": "physician-anik",
+              "operation": "set",
+              "value": "overwhelmed"
+            },
+            {
+              "type": "quest",
+              "target": "contain-reef-fever",
+              "operation": "unlock",
+              "value": true
+            }
+          ]
+        }
+      },
+      "biomeFilter": {
+        "allow": [
+          "cape-district-clinics"
+        ],
+        "siteTags": [
+          "medical-crisis",
+          "scarcity"
+        ],
+        "requireFactionTags": [
+          "dockworkers",
+          "reef-refugees"
+        ],
+        "exclude": [
+          "dungeon",
+          "battlefield"
+        ]
+      },
+      "turnWindow": {
+        "earliest": 12,
+        "latest": 85,
+        "cooldown": 30,
+        "droughtEligible": false
+      },
+      "governance": {
+        "stage": "draft",
+        "contentHash": "d5067fd4693d56cf",
+        "owner": "encounter-design",
+        "replaces": null
+      },
+      "example": {
+        "telegraphProse": "The visible dose count and physicians’ estimates establish that no hidden perfect allocation exists.",
+        "stakesProse": "Use the one-use manifest to seek reserves, split the crate with known losses, or surrender the choice to the board.",
+        "resolutionProse": "Inventory cannot duplicate; dawn advances with attempts and the fifth turn converts delay into containment.",
+        "receiptProse": "The receipt stores exact clinic coverage, casualties, dose inventory, customs/board standing, favors, and recovery hooks."
+      }
+    },
+    {
+      "schemaVersion": "1.0.0",
+      "templateVersion": "1.0.0",
+      "id": "cape-district.social.black-ledger-exposure",
+      "mode": "rpg",
+      "bibleId": "cape-district",
+      "name": "Black Ledger Exposure",
+      "role": "social",
+      "summary": "A journalist will publish a ledger that implicates both enemies and allies unless the player shapes the release.",
+      "telegraph": {
+        "required": true,
+        "channels": [
+          "npc",
+          "status"
+        ],
+        "cues": [
+          {
+            "channel": "npc",
+            "signal": "Editor Saye names the print deadline and the three redactions she will accept.",
+            "inference": "Publication and modification paths are bounded.",
+            "actionHook": "spend-source-chain"
+          },
+          {
+            "channel": "status",
+            "signal": "Press Run 2/6; at full, the unredacted ledger becomes public.",
+            "inference": "Exposure has an exact terminal event.",
+            "actionHook": "negotiate-redactions"
+          }
+        ],
+        "responseWindowTurns": 2,
+        "surpriseEligible": false,
+        "openingSeverityCap": "none"
+      },
+      "stakes": {
+        "headline": "Publish truth, protect vulnerable sources, or suppress the ledger at a lasting trust cost.",
+        "approaches": [
+          {
+            "id": "spend-source-chain",
+            "label": "Spend the verified source chain to require safe redactions",
+            "requirements": [
+              "leverage:verified-source-chain:available",
+              "leverage_value>=3"
+            ],
+            "method": "clock",
+            "check": {
+              "clock": {
+                "successSegments": 5,
+                "dangerSegments": 6
+              }
+            },
+            "onSuccess": {
+              "terminal": true,
+              "stateChanges": [
+                "press:ledger:set:published-redacted",
+                "npc:vulnerable-sources:set:protected",
+                "leverage:verified-source-chain:set:consumed"
+              ],
+              "summary": "The ledger publishes with the agreed source protections.",
+              "terminalState": "negotiated"
+            },
+            "onPartial": {
+              "terminal": true,
+              "stateChanges": [
+                "press:ledger:set:published-redacted",
+                "faction:reform-league:decrement:1"
+              ],
+              "summary": "Sources are protected, but reformers accuse the player of concealment.",
+              "terminalState": "partial"
+            },
+            "onFailure": {
+              "terminal": false,
+              "stateChanges": [
+                "leverage:verified-source-chain:set:discredited",
+                "clock:press-run:increment:2"
+              ],
+              "summary": "The editor rejects interference and publication accelerates."
+            },
+            "lockout": "verified-source-chain is consumed on success or discredited on refusal; its topic cannot be replayed."
+          },
+          {
+            "id": "negotiate-redactions",
+            "label": "Trade an exclusive interview for named redactions",
+            "requirements": [
+              "asset:exclusive-interview:available"
+            ],
+            "method": "clock",
+            "check": {
+              "clock": {
+                "successSegments": 4,
+                "dangerSegments": 6
+              }
+            },
+            "onSuccess": {
+              "terminal": true,
+              "stateChanges": [
+                "asset:exclusive-interview:set:spent",
+                "press:ledger:set:published-redacted"
+              ],
+              "summary": "The interview purchases limited, visible redactions.",
+              "terminalState": "negotiated"
+            },
+            "onFailure": {
+              "terminal": false,
+              "stateChanges": [
+                "asset:exclusive-interview:set:withdrawn",
+                "clock:press-run:increment:1"
+              ],
+              "summary": "The editor rejects the trade and it cannot be offered again."
+            },
+            "lockout": "The exclusive is one-use; rejection removes it."
+          },
+          {
+            "id": "walk-away-with-cost",
+            "label": "Walk away and accept unredacted publication",
+            "requirements": [
+              "withdrawal_route:available"
+            ],
+            "method": "deterministic",
+            "onSuccess": {
+              "terminal": true,
+              "stateChanges": [
+                "encounter:set:fled",
+                "press:ledger:set:published-unredacted",
+                "cooldown:exposure:set:18"
+              ],
+              "summary": "The confrontation ends and every named actor faces the declared fallout.",
+              "terminalState": "fled"
+            },
+            "onFailure": {
+              "terminal": false,
+              "stateChanges": [
+                "withdrawal_route:lock",
+                "danger_clock:increment:1"
+              ],
+              "summary": "The route closes and is removed rather than offered again."
+            },
+            "lockout": "Walking away always ends the current confrontation and applies the declared concession/cooldown."
+          }
+        ]
+      },
+      "resolution": {
+        "mechanic": "clock",
+        "config": {
+          "successClock": 5,
+          "dangerClock": 6,
+          "leverageToken": "verified-source-chain",
+          "leverageRequired": 3,
+          "onRepeat": "consume/discredit leverage, advance danger, or lock approach",
+          "deadlineEvent": "Unredacted press run"
+        },
+        "terminalStates": [
+          "victory",
+          "defeat",
+          "fled",
+          "negotiated",
+          "partial"
+        ],
+        "maxTurns": 7,
+        "forcedTerminal": {
+          "terminal": true,
+          "stateChanges": [
+            "press:ledger:set:published-unredacted",
+            "npc:vulnerable-sources:set:exposed",
+            "quest:protect-exposed-sources:unlock"
+          ],
+          "summary": "The presses complete and the exposure crisis ends with source-protection work.",
+          "terminalState": "defeat"
+        },
+        "antiRepeatRule": "No unchanged leverage topic may be selected twice; withdrawal terminates and starts cooldown."
+      },
+      "aftermath": {
+        "minimumReceiptTypes": 2,
+        "byTerminal": {
+          "negotiated": [
+            {
+              "type": "faction",
+              "target": "free-press",
+              "operation": "increment",
+              "value": 2
+            },
+            {
+              "type": "npc",
+              "target": "editor-saye",
+              "operation": "set",
+              "value": "trusted-negotiator"
+            },
+            {
+              "type": "quest",
+              "target": "investigate-ledger-network",
+              "operation": "unlock",
+              "value": true
+            }
+          ],
+          "victory": [
+            {
+              "type": "faction",
+              "target": "free-press",
+              "operation": "increment",
+              "value": 1
+            },
+            {
+              "type": "loot",
+              "target": "intel",
+              "operation": "unlock",
+              "value": "ledger-network-map"
+            },
+            {
+              "type": "quest",
+              "target": "investigate-ledger-network",
+              "operation": "unlock",
+              "value": true
+            }
+          ],
+          "partial": [
+            {
+              "type": "faction",
+              "target": "free-press",
+              "operation": "increment",
+              "value": -1
+            },
+            {
+              "type": "quest",
+              "target": "answer-reform-league",
+              "operation": "unlock",
+              "value": true
+            }
+          ],
+          "fled": [
+            {
+              "type": "faction",
+              "target": "free-press",
+              "operation": "increment",
+              "value": 2
+            },
+            {
+              "type": "quest",
+              "target": "manage-public-fallout",
+              "operation": "unlock",
+              "value": true
+            }
+          ],
+          "defeat": [
+            {
+              "type": "npc",
+              "target": "editor-saye",
+              "operation": "set",
+              "value": "uncompromising-publisher"
+            },
+            {
+              "type": "quest",
+              "target": "protect-exposed-sources",
+              "operation": "unlock",
+              "value": true
+            }
+          ]
+        }
+      },
+      "biomeFilter": {
+        "allow": [
+          "cape-district-press-row"
+        ],
+        "siteTags": [
+          "newspaper-office",
+          "exposure"
+        ],
+        "requireFactionTags": [
+          "free-press",
+          "reform-league"
+        ],
+        "exclude": [
+          "dungeon",
+          "open-water"
+        ]
+      },
+      "turnWindow": {
+        "earliest": 10,
+        "latest": 80,
+        "cooldown": 22,
+        "droughtEligible": true
+      },
+      "governance": {
+        "stage": "draft",
+        "contentHash": "e91cad2bf3313b6a",
+        "owner": "encounter-design",
+        "replaces": null
+      },
+      "example": {
+        "telegraphProse": "Editor Saye names the print deadline and acceptable redactions while the press clock shows when publication becomes irreversible.",
+        "stakesProse": "Spend the source chain, trade a one-use exclusive, or leave and accept unredacted fallout.",
+        "resolutionProse": "Leverage is consumed or rejected; at seven turns publication commits and the debate cannot recur.",
+        "receiptProse": "The outcome stores publication form, source safety, press/reform standing, editor relationship, intel, and follow-ups."
+      }
+    },
+    {
+      "schemaVersion": "1.0.0",
+      "templateVersion": "1.0.0",
+      "id": "cape-district.social.harbor-master-leverage",
+      "mode": "rpg",
+      "bibleId": "cape-district",
+      "name": "Harbormaster Leverage Negotiation",
+      "role": "social",
+      "summary": "The Harbormaster controls a quarantine berth and will trade access for silence or verified public cover.",
+      "telegraph": {
+        "required": true,
+        "channels": [
+          "item",
+          "npc"
+        ],
+        "cues": [
+          {
+            "channel": "item",
+            "signal": "A blue-wax permit links the Harbormaster’s clerk to an illegal berth sale.",
+            "inference": "The evidence has specific provenance and relevance.",
+            "actionHook": "spend-blue-wax-permit"
+          },
+          {
+            "channel": "npc",
+            "signal": "The Harbormaster offers one berth in exchange for the permit before the tide turns.",
+            "inference": "The concession, cost, and deadline are explicit.",
+            "actionHook": "trade-silence"
+          }
+        ],
+        "responseWindowTurns": 2,
+        "surpriseEligible": false,
+        "openingSeverityCap": "none"
+      },
+      "stakes": {
+        "headline": "Secure quarantine access without creating an infinitely reusable threat.",
+        "approaches": [
+          {
+            "id": "spend-blue-wax-permit",
+            "label": "Spend the blue-wax permit to demand berth access",
+            "requirements": [
+              "leverage:blue-wax-permit:available",
+              "leverage_value>=3"
+            ],
+            "method": "clock",
+            "check": {
+              "clock": {
+                "successSegments": 4,
+                "dangerSegments": 4
+              }
+            },
+            "onSuccess": {
+              "terminal": true,
+              "stateChanges": [
+                "access:quarantine-berth:set:open",
+                "leverage:blue-wax-permit:set:consumed",
+                "npc:harbormaster:set:compelled"
+              ],
+              "summary": "The evidence compels one berth authorization.",
+              "terminalState": "negotiated"
+            },
+            "onPartial": {
+              "terminal": true,
+              "stateChanges": [
+                "access:quarantine-berth:set:open-once",
+                "faction:harbor-office:decrement:1"
+              ],
+              "summary": "Access opens for one voyage while the office turns hostile.",
+              "terminalState": "partial"
+            },
+            "onFailure": {
+              "terminal": false,
+              "stateChanges": [
+                "leverage:blue-wax-permit:set:discredited",
+                "clock:tide-turn:increment:2"
+              ],
+              "summary": "The permit is dismissed and the access window shrinks."
+            },
+            "lockout": "blue-wax-permit is consumed on success or discredited on refusal; its topic cannot be replayed."
+          },
+          {
+            "id": "trade-silence",
+            "label": "Trade silence for a one-voyage berth",
+            "requirements": [
+              "promise:silence:not-previously-broken"
+            ],
+            "method": "deterministic",
+            "check": {
+              "clock": {
+                "successSegments": 3,
+                "dangerSegments": 4
+              }
+            },
+            "onSuccess": {
+              "terminal": true,
+              "stateChanges": [
+                "access:quarantine-berth:set:one-voyage",
+                "promise:silence:set:bound"
+              ],
+              "summary": "A binding silence promise buys one voyage.",
+              "terminalState": "negotiated"
+            },
+            "onFailure": {
+              "terminal": false,
+              "stateChanges": [
+                "promise:silence:set:unavailable",
+                "npc:harbormaster:set:hostile"
+              ],
+              "summary": "Prior conduct makes the trade unavailable."
+            },
+            "lockout": "The silence promise is bound once and later violations have authored consequences."
+          },
+          {
+            "id": "walk-away-with-cost",
+            "label": "Walk away and miss the tide window",
+            "requirements": [
+              "withdrawal_route:available"
+            ],
+            "method": "deterministic",
+            "onSuccess": {
+              "terminal": true,
+              "stateChanges": [
+                "encounter:set:fled",
+                "access:quarantine-berth:set:closed-this-tide",
+                "cooldown:harbor-negotiation:set:15"
+              ],
+              "summary": "The tide window closes and the player must pursue another route.",
+              "terminalState": "fled"
+            },
+            "onFailure": {
+              "terminal": false,
+              "stateChanges": [
+                "withdrawal_route:lock",
+                "danger_clock:increment:1"
+              ],
+              "summary": "The route closes and is removed rather than offered again."
+            },
+            "lockout": "Walking away always ends the current confrontation and applies the declared concession/cooldown."
+          }
+        ]
+      },
+      "resolution": {
+        "mechanic": "clock",
+        "config": {
+          "successClock": 4,
+          "dangerClock": 4,
+          "leverageToken": "blue-wax-permit",
+          "leverageRequired": 3,
+          "onRepeat": "consume/discredit leverage, advance danger, or lock approach",
+          "deadlineEvent": "Tide turns"
+        },
+        "terminalStates": [
+          "victory",
+          "defeat",
+          "fled",
+          "negotiated",
+          "partial"
+        ],
+        "maxTurns": 5,
+        "forcedTerminal": {
+          "terminal": true,
+          "stateChanges": [
+            "access:quarantine-berth:set:closed-this-tide",
+            "quest:find-reef-anchorage:unlock",
+            "encounter:set:ended"
+          ],
+          "summary": "The tide turns, ending this negotiation and opening the reef anchorage route.",
+          "terminalState": "defeat"
+        },
+        "antiRepeatRule": "No unchanged leverage topic may be selected twice; withdrawal terminates and starts cooldown."
+      },
+      "aftermath": {
+        "minimumReceiptTypes": 2,
+        "byTerminal": {
+          "negotiated": [
+            {
+              "type": "faction",
+              "target": "harbor-office",
+              "operation": "increment",
+              "value": -1
+            },
+            {
+              "type": "npc",
+              "target": "harbormaster-oren",
+              "operation": "set",
+              "value": "compelled"
+            },
+            {
+              "type": "quest",
+              "target": "use-quarantine-berth",
+              "operation": "unlock",
+              "value": true
+            }
+          ],
+          "victory": [
+            {
+              "type": "faction",
+              "target": "harbor-office",
+              "operation": "increment",
+              "value": -1
+            },
+            {
+              "type": "loot",
+              "target": "access",
+              "operation": "unlock",
+              "value": "quarantine-berth"
+            },
+            {
+              "type": "quest",
+              "target": "use-quarantine-berth",
+              "operation": "unlock",
+              "value": true
+            }
+          ],
+          "partial": [
+            {
+              "type": "faction",
+              "target": "harbor-office",
+              "operation": "increment",
+              "value": -1
+            },
+            {
+              "type": "quest",
+              "target": "repair-harbor-standing",
+              "operation": "unlock",
+              "value": true
+            }
+          ],
+          "fled": [
+            {
+              "type": "faction",
+              "target": "harbor-office",
+              "operation": "increment",
+              "value": 0
+            },
+            {
+              "type": "quest",
+              "target": "find-reef-anchorage",
+              "operation": "unlock",
+              "value": true
+            }
+          ],
+          "defeat": [
+            {
+              "type": "npc",
+              "target": "harbormaster-oren",
+              "operation": "set",
+              "value": "unmoved"
+            },
+            {
+              "type": "quest",
+              "target": "find-reef-anchorage",
+              "operation": "unlock",
+              "value": true
+            }
+          ]
+        }
+      },
+      "biomeFilter": {
+        "allow": [
+          "cape-district-harbor"
+        ],
+        "siteTags": [
+          "harbor-office",
+          "leverage-negotiation"
+        ],
+        "requireFactionTags": [
+          "harbor-office"
+        ],
+        "exclude": [
+          "dungeon",
+          "inland-village"
+        ]
+      },
+      "turnWindow": {
+        "earliest": 4,
+        "latest": 60,
+        "cooldown": 15,
+        "droughtEligible": true
+      },
+      "governance": {
+        "stage": "draft",
+        "contentHash": "8f1f36ad637b57b3",
+        "owner": "encounter-design",
+        "replaces": null
+      },
+      "example": {
+        "telegraphProse": "The blue-wax permit proves the berth sale and Oren names the exact silence-for-access trade before the tide turns.",
+        "stakesProse": "Consume the permit, bind a one-voyage silence promise, or leave and lose this tide window.",
+        "resolutionProse": "Every leverage item becomes consumed, bound, or discredited; turn five closes the berth and creates a new route.",
+        "receiptProse": "The receipt stores berth scope, permit/promise state, Oren and Harbor Office reactions, and the follow-up route."
+      }
+    },
+    {
+      "schemaVersion": "1.0.0",
+      "templateVersion": "1.0.0",
+      "id": "cape-district.ambush.silk-lane",
+      "mode": "rpg",
+      "bibleId": "cape-district",
+      "name": "Silk Lane Political Ambush",
+      "role": "ambush",
+      "summary": "A knife crew stages an attack to make the player appear responsible for faction violence.",
+      "telegraph": {
+        "required": true,
+        "channels": [
+          "scene",
+          "faction"
+        ],
+        "cues": [
+          {
+            "channel": "scene",
+            "signal": "Shop shutters close in sequence and a dropped campaign ribbon points against the wind.",
+            "inference": "A coordinated frame-up ambush is about to begin.",
+            "actionHook": "expose-planted-ribbon"
+          },
+          {
+            "channel": "faction",
+            "signal": "A courier warns that three pamphleteers are waiting to report the first blade drawn.",
+            "inference": "Witness control is the true objective.",
+            "actionHook": "turn-witnesses"
+          }
+        ],
+        "responseWindowTurns": 1,
+        "surpriseEligible": true,
+        "openingSeverityCap": "moderate"
+      },
+      "stakes": {
+        "headline": "Survive without validating the attackers’ public narrative.",
+        "approaches": [
+          {
+            "id": "expose-planted-ribbon",
+            "label": "Expose the planted campaign ribbon to the witnesses",
+            "requirements": [
+              "leverage:planted-campaign-ribbon:available",
+              "leverage_value>=2"
+            ],
+            "method": "clock",
+            "check": {
+              "clock": {
+                "successSegments": 4,
+                "dangerSegments": 5
+              }
+            },
+            "onSuccess": {
+              "terminal": true,
+              "stateChanges": [
+                "witnesses:set:frame-up-recognized",
+                "leverage:planted-campaign-ribbon:set:consumed",
+                "attackers:set:retreated"
+              ],
+              "summary": "The witnesses recognize the frame-up and the crew withdraws.",
+              "terminalState": "negotiated"
+            },
+            "onPartial": {
+              "terminal": true,
+              "stateChanges": [
+                "witnesses:set:divided",
+                "attackers:set:retreated",
+                "faction:rival-campaign:increment:1"
+              ],
+              "summary": "The attack ends, but public opinion splits.",
+              "terminalState": "partial"
+            },
+            "onFailure": {
+              "terminal": false,
+              "stateChanges": [
+                "leverage:planted-campaign-ribbon:set:discredited",
+                "clock:public-blame:increment:2"
+              ],
+              "summary": "The evidence looks planted by the player and blame accelerates."
+            },
+            "lockout": "planted-campaign-ribbon is consumed on success or discredited on refusal; its topic cannot be replayed."
+          },
+          {
+            "id": "turn-witnesses",
+            "label": "Turn the pamphleteers by protecting them from the first volley",
+            "requirements": [
+              "position:awning-cover:available"
+            ],
+            "method": "clock",
+            "check": {
+              "clock": {
+                "successSegments": 4,
+                "dangerSegments": 5
+              }
+            },
+            "onSuccess": {
+              "terminal": true,
+              "stateChanges": [
+                "witnesses:set:player-protected",
+                "attackers:set:identified"
+              ],
+              "summary": "Protected witnesses identify the attackers and break the frame.",
+              "terminalState": "victory"
+            },
+            "onFailure": {
+              "terminal": false,
+              "stateChanges": [
+                "npc:pamphleteer:condition:add:wounded",
+                "clock:public-blame:increment:1"
+              ],
+              "summary": "A witness is wounded and blame rises."
+            },
+            "lockout": "Each cover position can protect once; wounded witnesses change the next option."
+          },
+          {
+            "id": "walk-away-with-cost",
+            "label": "Escape through the dye yard and accept suspicion",
+            "requirements": [
+              "withdrawal_route:available"
+            ],
+            "method": "deterministic",
+            "onSuccess": {
+              "terminal": true,
+              "stateChanges": [
+                "encounter:set:fled",
+                "location:set:dye-yard",
+                "faction:public-opinion:decrement:1"
+              ],
+              "summary": "The player escapes alive, but the attackers control the first public account.",
+              "terminalState": "fled"
+            },
+            "onFailure": {
+              "terminal": false,
+              "stateChanges": [
+                "withdrawal_route:lock",
+                "danger_clock:increment:1"
+              ],
+              "summary": "The route closes and is removed rather than offered again."
+            },
+            "lockout": "Walking away always ends the current confrontation and applies the declared concession/cooldown."
+          }
+        ]
+      },
+      "resolution": {
+        "mechanic": "clock",
+        "config": {
+          "successClock": 4,
+          "dangerClock": 5,
+          "leverageToken": "planted-campaign-ribbon",
+          "leverageRequired": 2,
+          "onRepeat": "consume/discredit leverage, advance danger, or lock approach",
+          "deadlineEvent": "Pamphlets go to press"
+        },
+        "terminalStates": [
+          "victory",
+          "defeat",
+          "fled",
+          "negotiated",
+          "partial"
+        ],
+        "maxTurns": 6,
+        "forcedTerminal": {
+          "terminal": true,
+          "stateChanges": [
+            "faction:public-opinion:decrement:2",
+            "attackers:set:escaped",
+            "quest:clear-your-name:unlock"
+          ],
+          "summary": "The false account reaches print, the attackers escape, and the scene ends in a name-clearing arc.",
+          "terminalState": "defeat"
+        },
+        "antiRepeatRule": "No unchanged leverage topic may be selected twice; withdrawal terminates and starts cooldown."
+      },
+      "aftermath": {
+        "minimumReceiptTypes": 2,
+        "byTerminal": {
+          "negotiated": [
+            {
+              "type": "faction",
+              "target": "public-opinion",
+              "operation": "increment",
+              "value": 2
+            },
+            {
+              "type": "npc",
+              "target": "pamphleteer-iona",
+              "operation": "set",
+              "value": "protected-witness"
+            },
+            {
+              "type": "quest",
+              "target": "identify-knife-crew-paymaster",
+              "operation": "unlock",
+              "value": true
+            }
+          ],
+          "victory": [
+            {
+              "type": "faction",
+              "target": "public-opinion",
+              "operation": "increment",
+              "value": 2
+            },
+            {
+              "type": "loot",
+              "target": "intel",
+              "operation": "unlock",
+              "value": "knife-crew-description"
+            },
+            {
+              "type": "quest",
+              "target": "identify-knife-crew-paymaster",
+              "operation": "unlock",
+              "value": true
+            }
+          ],
+          "partial": [
+            {
+              "type": "faction",
+              "target": "public-opinion",
+              "operation": "increment",
+              "value": 0
+            },
+            {
+              "type": "quest",
+              "target": "win-over-divided-witnesses",
+              "operation": "unlock",
+              "value": true
+            }
+          ],
+          "fled": [
+            {
+              "type": "faction",
+              "target": "public-opinion",
+              "operation": "increment",
+              "value": -1
+            },
+            {
+              "type": "quest",
+              "target": "counter-first-account",
+              "operation": "unlock",
+              "value": true
+            }
+          ],
+          "defeat": [
+            {
+              "type": "npc",
+              "target": "pamphleteer-iona",
+              "operation": "set",
+              "value": "hostile-reporter"
+            },
+            {
+              "type": "quest",
+              "target": "clear-your-name",
+              "operation": "unlock",
+              "value": true
+            }
+          ]
+        }
+      },
+      "biomeFilter": {
+        "allow": [
+          "cape-district-market"
+        ],
+        "siteTags": [
+          "silk-lane",
+          "political-ambush"
+        ],
+        "requireFactionTags": [
+          "rival-campaign",
+          "pamphleteers"
+        ],
+        "exclude": [
+          "dungeon",
+          "rural-field"
+        ]
+      },
+      "turnWindow": {
+        "earliest": 9,
+        "latest": 85,
+        "cooldown": 25,
+        "droughtEligible": false
+      },
+      "governance": {
+        "stage": "draft",
+        "contentHash": "0cbadd5bd1031254",
+        "owner": "encounter-design",
+        "replaces": null
+      },
+      "example": {
+        "telegraphProse": "Closing shutters, an impossible ribbon, and waiting pamphleteers reveal that the ambush targets reputation as much as life.",
+        "stakesProse": "Spend the ribbon proof, protect witnesses through changing cover, or flee and accept suspicion.",
+        "resolutionProse": "Witness and blame clocks advance; by turn six the account prints and the confrontation ends in a clear-your-name quest.",
+        "receiptProse": "The system records witness states, attacker identity, public opinion, escape location, intel, and the next political beat."
+      }
+    }
+  ]
+}

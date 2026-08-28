@@ -1,0 +1,221 @@
+WS-4: Encounter Bible Design Research Commission
+
+COMMISSION REQUEST
+
+Please research and deliver: Per-bible encounter libraries (5-8 templates per mode) with full lifecycle governance (telegraph → stakes → resolution → aftermath) to eliminate combat purgatory and generic spawns.
+
+---
+
+PROBLEM STATEMENT
+
+Player Evidence:
+
+Gemini LitRPG s18 (Summoned Pact worst cell, 28c):
+- Combat spawns T9 but never resolves in 300 turns (290-turn combat purgatory)
+- Try to flee ×364 (flee choice present but doesn't flee)
+- Parley ×337 (negotiate choice present but doesn't negotiate)
+- Zero resolution receipts: no HP ledger persist, no flee succeed, no parley resolve
+- Gemini verdict: "Combat purgatory; Free retention NO; 1/10"
+
+Gemini DnD s69 (Cursed Keep, 27w):
+- Zero combat in 300 turns (no encounters spawn despite dungeon setting)
+- No trap hazards (Keep exploration feels empty)
+- No skill checks (DnD dice/risk feel missing)
+- Gemini verdict: "Passive GM; no encounter mechanics; 2/10"
+
+Gemini RPG s137 (Cape District, 27w):
+- Walk Away pads 240-260× (no non-combat crisis resolution)
+- Leverage topics loop (same threat works forever, no consequence)
+- No social standoffs (confrontation → pad loop, not consequence)
+- Gemini verdict: "Pad loops; leverage broken; 1/10"
+
+Gemini PYOA s188 (Thornferry, 29b):
+- Millstone Charter crisis 288× (no fork locks, no endings)
+- Crisis receipts exist (3×) but no branch persistence
+- Gemini verdict: "Theater branching; no endings; 2/10"
+
+Current partial implementation (28a-29e):
+- encounterTerminalFsm.ts: Encounter spawn + cooldown (29b)
+- encounterResolution.ts: Ledger-first combat HP tracking (29b)
+- dungeonMobLedger.ts: Dungeon mob counts + cleared nodes (29e)
+- arcDirector.ts: Drought pressure (spawn encounter at T15 if no combat)
+- World map authority: Biome-appropriate quest sites (29e)
+
+What's missing:
+❌ Encounter bible (genre-appropriate templates per mode)
+❌ Telegraph patterns (warning signs before engagement)
+❌ Stakes clarity (what happens if you win/lose/flee/negotiate)
+❌ Aftermath receipts (XP + loot tables + faction delta + quest tick)
+❌ Biome-appropriate spawns (no Keep Wraith on Shattered Coast)
+❌ Density targets (how many trash/elite/boss per 100t or per dungeon)
+
+---
+
+TARGET DELIVERABLES (12 Items)
+
+D1: Encounter Bible Constitution
+Format: Markdown specification + design principles
+Contents: Four-phase encounter lifecycle
+- Telegraph patterns catalog (STATUS, NPC, scene, item, faction)
+- Stakes clarity rules (win/lose/flee/negotiate outcomes)
+- Resolution mechanics principles (deterministic core, GM narrates flavor)
+- Aftermath receipt types (XP, loot, faction, quest, NPC, dungeon)
+- Biome-appropriate spawn rules (no wrong-bible encounters)
+- Density targets (FO3-like, not MMO)
+
+D2: LitRPG Encounter Library (8 Templates)
+Format: 8 encounter templates (JSON schema + prose example for each)
+Contents: Hub ambush, dungeon trash, miniboss, boss, arena duel, faction raid, patrol, wandering elite
+- Per-template: Telegraph, stakes, resolution, aftermath, biome filter, turn window
+
+D3: DnD Encounter Library (8 Templates)
+Format: 8 encounter templates (JSON schema + prose example for each)
+Contents: Combat, trap hazard, skill check, environmental hazard, NPC duel, dungeon puzzle, boss fight, random encounter
+- Per-template: Telegraph, stakes (d20 + modifier vs DC), resolution, aftermath
+
+D4: RPG Encounter Library (8 Templates)
+Format: 8 encounter templates (JSON schema + prose example for each)
+Contents: Social standoff, betrayal crisis, deadline pressure, faction confrontation, moral dilemma, exposure threat, leverage negotiation, ambush
+- Per-template: Telegraph, stakes, leverage resolution, aftermath
+
+D5: PYOA Crisis Library (Per-Bible, 5-8 Each)
+Format: Crisis templates for 3-5 PYOA bibles (Thornferry, Vesper Glass, Erebus-9, etc.)
+Contents: Per-crisis: Telegraph, fork labels, exclusive facts, delayed payoff, ending path, convergence
+- Example: Millstone Charter (Sign/Reject), Trust Miller (Trust/Doubt), Bandits or Villagers, etc.
+
+D6: Telegraph Pattern Catalog
+Format: JSON catalog + prose examples
+Contents: STATUS alert patterns, NPC warning patterns, scene cue patterns, item hint patterns, faction intel patterns
+
+D7: Stakes Clarity Templates
+Format: JSON stakes schema + prose templates
+Contents: Win outcomes, lose outcomes, flee outcomes, negotiate outcomes, partial outcomes
+
+D8: Resolution Mechanics Spec
+Format: TypeScript interfaces + resolution algorithms
+Contents: Combat resolution (HP ledger, damage calc, flee check, parley check), skill check resolution (d20 + modifier vs DC), leverage resolution, crisis resolution
+
+D9: Loot Table Design
+Format: Tiered loot tables (trash, elite, boss) per mode
+Contents: LitRPG loot (gold + weapons + consumables), DnD loot (gold + magic items + quest items), RPG loot (favors + intel + faction access)
+
+D10: Biome-Appropriate Spawn Matrix
+Format: CSV matrix (bible × biome × encounter types)
+Contents: Per-bible encounter lists with biome filters, wrong-bible exclusions, drought picker logic
+
+D11: Density Targets & Enforcement
+Format: Density rules table + enforcement logic
+Contents: LitRPG dungeon density (4-6 trash, 1-2 miniboss, 1 boss per 10-room dungeon), DnD Keep density, RPG hub density, PYOA crisis density, turn-based drought, location-based minimums
+
+D12: Implementation Backlog + Eval Harness
+Format: CSV backlog (30-40 tasks) + JSON eval gates
+Contents: P0/P1/P2 tasks + five quality gates
+- G1: 100% encounters resolve with receipt (no 0-receipt runs)
+- G2: 80%+ encounters show telegraph (STATUS, NPC, or scene)
+- G3: 0 wrong-bible spawns (biome filter works)
+- G4: Density targets met (dungeon has 4-6 trash, 1 boss)
+- G5: Aftermath receipts present (XP + loot + faction + quest)
+
+---
+
+FORMAT EXPECTATIONS
+
+Follow the BIG CHANGES pattern:
+- Constitution (D1): Design principles + four-phase lifecycle + genre alignment
+- Template libraries (D2-D5): JSON schema + prose example + full lifecycle per template
+- Pattern catalogs (D6-D11): JSON/CSV with examples + integration points
+- Implementation backlog (D12): CSV with columns: ID, Priority, Task, Complexity, Integration, Notes
+- Eval harness (D12): JSON with gate ID, criteria, measurement method, pass/fail threshold
+
+---
+
+INTEGRATION POINTS
+
+Code Integration:
+- encounterBible.ts: Per-bible encounter libraries (5-8 templates per mode)
+- encounterTelegraph.ts: Telegraph pattern catalog + situation packet builder
+- encounterStakes.ts: Stakes clarity templates + situation packet section
+- encounterResolution.ts extension: Mode-specific resolution mechanics
+- encounterAftermath.ts: Receipt generator (XP, loot, faction, quest, NPC, dungeon)
+- lootTables.ts: Tiered loot (trash, elite, boss) per mode
+- encounterBiomeMatrix.ts: Biome-appropriate spawn filters + wrong-bible exclusions
+- encounterDensity.ts: Density targets + turn-based drought + location minimums
+- arcDirector.ts extension: Pre-GM encounter commit (telegraph → stakes → resolution → aftermath)
+- situationPacket.ts extension: Include encounter telegraph, stakes, resolution mechanics
+- proseWarden.ts extension: Verify GM honors resolution, aftermath receipts, biome filter
+- evalHarness.ts: Encounter quality gates + per-run metrics
+
+Design Alignment:
+- Path A architecture: Pre-GM commits for deterministic resolution
+- BeatContract registry: Encounter templates feed into beat contracts
+- World map authority: Biome filter syncs with 29e place authority
+- Quality governance: Encounter density enforces forward progress
+
+---
+
+SUCCESS METRICS
+
+Measurable Targets:
+- Encounter resolution: 0 receipts in 300t → 100% encounters resolve with receipt
+- Telegraph presence: Generic "a foe" → 80%+ telegraph before engagement
+- Wrong-bible spawns: Keep Wraith on Saltmar → 0 wrong-bible spawns
+- Density targets: 0 combat DnD, 290t combat LitRPG → Targets met (4-6 trash, 1 boss per dungeon)
+- Aftermath receipts: Combat just ends → XP + loot + faction + quest
+- Gemini encounter score: ~1-2/10 → ~6-8/10
+
+Quality Gates (Pass/Fail):
+- G1: 100% encounters resolve with receipt
+- G2: 80%+ show warning pre-spawn
+- G3: 0 wrong-bible spawns per run
+- G4: Dungeons meet minimums
+- G5: Every encounter has >=2 receipt types
+
+---
+
+TIMELINE
+
+Research Phase: 5-7 days
+- Days 1-2: D1 (Constitution) + D6 (Telegraph catalog) + design principles
+- Days 3-4: D2 (LitRPG 8 templates) + D3 (DnD 8 templates) — full lifecycle each
+- Days 5-6: D4 (RPG 8 templates) + D5 (PYOA crises 5-8 per bible) — full lifecycle each
+- Day 7: D7 (Stakes) + D8 (Resolution) + D9 (Loot) + D10 (Biome) + D11 (Density) + D12 (Backlog/Eval)
+
+Implementation (After Research): 11-16 days
+- Wave 1: Template schemas + biome matrix + telegraph (3-4 days)
+- Wave 2: Resolution mechanics + aftermath + loot tables (2-3 days)
+- Wave 3: Per-bible libraries (8 × 4 modes = 32 templates) (3-4 days)
+- Wave 4: Density enforcement + ArcDirector integration (2-3 days)
+- Wave 5: Eval harness + quality gates + validation (1-2 days)
+
+---
+
+DESIGN QUESTIONS TO RESOLVE
+
+1. Template depth: 3-5 minimal / 5-8 standard (RECOMMENDED) / 10-15 comprehensive
+2. Telegraph strictness: Always / Most (80% warn, 20% ambush) (RECOMMENDED) / Optional
+3. Resolution complexity: Fully deterministic / Hybrid (deterministic core, GM flavor) (RECOMMENDED) / GM-narrated
+4. Loot granularity: Generic / Typed for boss/elite, procedural for trash (RECOMMENDED) / Procedural all
+5. Biome filter: Hard filter (code blocks) (RECOMMENDED) / Soft filter (GM rail) / No filter
+6. Density enforcement: Turn-based / Location-based / Both combined (RECOMMENDED)
+
+Recommendation: Use defaults above unless research uncovers compelling evidence otherwise.
+
+---
+
+REFERENCES
+
+- Gemini LitRPG s18: docs/bugs/gemini-reviews-2026-08-27/gemini-13-litrpg-storyfollower-28c-worst-300t.md
+- Gemini DnD s69: docs/bugs/gemini-reviews-2026-08-27/gemini-10-dnd-storyfollower-27w-300t.md
+- Gemini RPG s137: docs/bugs/gemini-reviews-2026-08-27/gemini-11-rpg-completionist-27w-300t.md
+- Manus BIG CHANGES: docs/research/pasted/manus-big-changes-2026-08-27/T2 — Ranked Architectural Intervention Matrix.md
+
+---
+
+CONTEXT
+
+Current game state: 2026-08-30d (wave 3 sealed manifests shipped)
+Path A status: Wave 1 complete (B026-B028), Wave 2 research phase (B014-B025 needs specs)
+Evidence base: Gemini reviews under docs/bugs/gemini-reviews-2026-08-27/ (27w baseline + 28c/29d calibration)
+Prior Manus packages: BIG CHANGES (T1-T12), Premium Themes (T1-T14)
+
+Note: D5 (PYOA crisis library) will feed into WS-5 crisis deck catalog. Coordinate with WS-5 to avoid duplication.

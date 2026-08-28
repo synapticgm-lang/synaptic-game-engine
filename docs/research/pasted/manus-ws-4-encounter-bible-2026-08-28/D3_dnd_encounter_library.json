@@ -1,0 +1,2251 @@
+{
+  "schemaVersion": "1.0.0",
+  "libraryId": "ws4.dnd.cursed-keep",
+  "mode": "dnd",
+  "bibleId": "cursed-keep",
+  "templates": [
+    {
+      "schemaVersion": "1.0.0",
+      "templateVersion": "1.0.0",
+      "id": "cursed-keep.combat.skeletal-retainers",
+      "mode": "dnd",
+      "bibleId": "cursed-keep",
+      "name": "Skeletal Retainers",
+      "role": "trash",
+      "summary": "Four retainers defend the servants’ hall under a brittle command seal.",
+      "telegraph": {
+        "required": true,
+        "channels": [
+          "scene"
+        ],
+        "cues": [
+          {
+            "channel": "scene",
+            "signal": "Four place settings gather dust except for fresh bone scratches beneath the table.",
+            "inference": "Skeletal guards rise if the command seal is crossed.",
+            "actionHook": "break-command-seal"
+          }
+        ],
+        "responseWindowTurns": 1,
+        "surpriseEligible": false,
+        "openingSeverityCap": "none"
+      },
+      "stakes": {
+        "headline": "Break, turn, or avoid the retainers before they ring the keep bell.",
+        "approaches": [
+          {
+            "id": "fight-retainers",
+            "label": "Fight the skeletal retainers",
+            "requirements": [
+              "weapon-or-damaging-spell"
+            ],
+            "method": "combat",
+            "check": {
+              "ability": "Strength",
+              "skill": "Athletics",
+              "dc": 13,
+              "modifierSource": "character.strength + proficiency when Athletics applies",
+              "advantageWhen": [
+                "command-seal-smashed"
+              ],
+              "disadvantageWhen": [
+                "fighting-from-doorway"
+              ]
+            },
+            "onSuccess": {
+              "terminal": true,
+              "stateChanges": [
+                "mob:skeletal-retainers:set:defeated",
+                "dungeon:servants-hall:set:cleared"
+              ],
+              "summary": "The retainers fall and the servants’ hall clears.",
+              "terminalState": "victory"
+            },
+            "onPartial": {
+              "terminal": true,
+              "stateChanges": [
+                "mob:skeletal-retainers:set:defeated",
+                "npc:party:condition:add:rattled"
+              ],
+              "summary": "The guards fall, but the bell rings once and the party becomes rattled.",
+              "terminalState": "partial"
+            },
+            "onFailure": {
+              "terminal": false,
+              "stateChanges": [
+                "party:hp:decrement:resolved-damage",
+                "clock:keep-alert:increment:1"
+              ],
+              "summary": "Damage is applied and Keep Alert rises."
+            },
+            "lockout": "Every round changes HP or Keep Alert; defeated mobs cannot respawn at the cleared node."
+          },
+          {
+            "id": "turn-command-seal",
+            "label": "Turn the command seal with Religion",
+            "requirements": [
+              "command-seal-visible"
+            ],
+            "method": "d20",
+            "check": {
+              "ability": "Wisdom",
+              "skill": "Religion",
+              "dc": 14,
+              "modifierSource": "character.wisdom + proficiency when Religion applies",
+              "advantageWhen": [
+                "chapel-rubbing-carried"
+              ],
+              "disadvantageWhen": [
+                "keep-alert>=4"
+              ]
+            },
+            "onSuccess": {
+              "terminal": true,
+              "stateChanges": [
+                "mob:skeletal-retainers:set:stood-down",
+                "item:command-seal:set:claimed"
+              ],
+              "summary": "The seal recognizes a higher command and the retainers stand down.",
+              "terminalState": "negotiated"
+            },
+            "onFailure": {
+              "terminal": false,
+              "stateChanges": [
+                "item:command-seal:set:cracked",
+                "approach:turn-command-seal:lock",
+                "clock:keep-alert:increment:1"
+              ],
+              "summary": "The seal cracks, locking this method and raising alert."
+            },
+            "lockout": "The cracked seal cannot be invoked again."
+          },
+          {
+            "id": "withdraw",
+            "label": "Close the iron service door and reroute",
+            "requirements": [
+              "route:service-door:open"
+            ],
+            "method": "deterministic",
+            "onSuccess": {
+              "terminal": true,
+              "stateChanges": [
+                "encounter:set:fled",
+                "route:service-door:set:barred",
+                "quest:find-west-stair:unlock"
+              ],
+              "summary": "The party bars the door and accepts a detour.",
+              "terminalState": "fled"
+            },
+            "onFailure": {
+              "terminal": false,
+              "stateChanges": [
+                "route:withdraw:lock",
+                "danger:increment:1"
+              ],
+              "summary": "The route is unavailable; the UI removes this option and explains why."
+            },
+            "lockout": "Withdrawal commits once or becomes unavailable because the named route closes."
+          }
+        ]
+      },
+      "resolution": {
+        "mechanic": "combat",
+        "config": {
+          "procedure": "roll d20; apply advantage/disadvantage; add ability and proficiency when relevant; meet or exceed DC/AC",
+          "primaryDC": 13,
+          "alternativeDC": 14,
+          "combatObjective": "reduce all active retainer HP to zero or invert the command seal",
+          "clock": {
+            "keepAlert": 6
+          }
+        },
+        "terminalStates": [
+          "victory",
+          "defeat",
+          "fled",
+          "negotiated",
+          "partial"
+        ],
+        "maxTurns": 6,
+        "forcedTerminal": {
+          "terminal": true,
+          "stateChanges": [
+            "route:service-door:set:barred",
+            "party:condition:add:rattled",
+            "encounter:set:fled"
+          ],
+          "summary": "The party slams the service door after the bell rings; the encounter ends with a detour.",
+          "terminalState": "fled"
+        },
+        "antiRepeatRule": "A failed check changes the mechanism, route, danger, resource, or opportunity before another roll."
+      },
+      "aftermath": {
+        "minimumReceiptTypes": 2,
+        "byTerminal": {
+          "victory": [
+            {
+              "type": "xp",
+              "target": "party.milestone",
+              "operation": "increment",
+              "value": 1
+            },
+            {
+              "type": "dungeon",
+              "target": "servants-hall",
+              "operation": "set",
+              "value": "cleared"
+            },
+            {
+              "type": "loot",
+              "target": "dnd.trash.retainers",
+              "operation": "unlock",
+              "value": "silver-button-cache"
+            }
+          ],
+          "partial": [
+            {
+              "type": "dungeon",
+              "target": "servants-hall",
+              "operation": "set",
+              "value": "passed_with_cost"
+            },
+            {
+              "type": "npc",
+              "target": "party",
+              "operation": "set",
+              "value": "rattled"
+            }
+          ],
+          "fled": [
+            {
+              "type": "dungeon",
+              "target": "servants-hall",
+              "operation": "set",
+              "value": "unresolved_route_changed"
+            },
+            {
+              "type": "quest",
+              "target": "find-west-stair",
+              "operation": "unlock",
+              "value": true
+            }
+          ],
+          "defeat": [
+            {
+              "type": "npc",
+              "target": "party",
+              "operation": "set",
+              "value": "captured-in-pantry"
+            },
+            {
+              "type": "quest",
+              "target": "escape-pantry",
+              "operation": "unlock",
+              "value": true
+            }
+          ]
+        }
+      },
+      "biomeFilter": {
+        "allow": [
+          "cursed-keep-interior"
+        ],
+        "siteTags": [
+          "servants-hall",
+          "undead-patrol"
+        ],
+        "requireFactionTags": [
+          "hollow-household"
+        ],
+        "exclude": [
+          "coast",
+          "forest-road"
+        ]
+      },
+      "turnWindow": {
+        "earliest": 1,
+        "latest": 18,
+        "cooldown": 6,
+        "droughtEligible": true
+      },
+      "governance": {
+        "stage": "draft",
+        "contentHash": "3152829ecfed3b23",
+        "owner": "encounter-design",
+        "replaces": null
+      },
+      "example": {
+        "telegraphProse": "Fresh scratches beneath dusty place settings and a taut bell cord reveal the retainers before they rise.",
+        "stakesProse": "Fight, invoke the command seal at DC 14, or bar the service door and accept the west-stair detour.",
+        "resolutionProse": "HP and Keep Alert update each round; turn six forces the door-barred exit rather than indefinite initiative.",
+        "receiptProse": "The ledger marks the hall cleared or rerouted and records milestone progress plus loot, condition, or quest state."
+      }
+    },
+    {
+      "schemaVersion": "1.0.0",
+      "templateVersion": "1.0.0",
+      "id": "cursed-keep.trap.pendulum-chapel",
+      "mode": "dnd",
+      "bibleId": "cursed-keep",
+      "name": "Pendulum Chapel Trap",
+      "role": "hazard",
+      "summary": "A visible pressure seam releases consecrated pendulum blades across the nave.",
+      "telegraph": {
+        "required": true,
+        "channels": [
+          "scene"
+        ],
+        "cues": [
+          {
+            "channel": "scene",
+            "signal": "Dust stops at a clean line while copper hooks and a ceiling slit frame the nave.",
+            "inference": "A pressure-triggered blade sweep crosses the route.",
+            "actionHook": "disable-pendulum"
+          }
+        ],
+        "responseWindowTurns": 2,
+        "surpriseEligible": false,
+        "openingSeverityCap": "none"
+      },
+      "stakes": {
+        "headline": "Disarm, bypass, or abandon the chapel route before the pendulum releases.",
+        "approaches": [
+          {
+            "id": "disable-pendulum",
+            "label": "Disable the gear train with thieves’ tools",
+            "requirements": [
+              "tools:thieves-tools"
+            ],
+            "method": "d20",
+            "check": {
+              "ability": "Dexterity",
+              "skill": "Thieves Tools",
+              "dc": 15,
+              "modifierSource": "character.dexterity + proficiency when Thieves Tools applies",
+              "advantageWhen": [
+                "clockwork-pin-carried"
+              ],
+              "disadvantageWhen": [
+                "chapel-flooded"
+              ]
+            },
+            "onSuccess": {
+              "terminal": true,
+              "stateChanges": [
+                "hazard:pendulum:set:disarmed",
+                "route:chapel-nave:set:open"
+              ],
+              "summary": "The gear train locks and the nave opens.",
+              "terminalState": "victory"
+            },
+            "onPartial": {
+              "terminal": true,
+              "stateChanges": [
+                "hazard:pendulum:set:disarmed",
+                "item:thieves-tools:set:damaged"
+              ],
+              "summary": "The blades lock, but the tool tip snaps; success remains committed.",
+              "terminalState": "partial"
+            },
+            "onFailure": {
+              "terminal": false,
+              "stateChanges": [
+                "hazard:pendulum:set:triggered",
+                "party:dex-save:queue:dc14",
+                "approach:disable-pendulum:lock"
+              ],
+              "summary": "The blades sweep, a DC 14 Dexterity save resolves damage, and the panel bends shut."
+            },
+            "lockout": "Failure bends the panel shut; this exact tools approach cannot repeat."
+          },
+          {
+            "id": "jam-blades",
+            "label": "Jam the blades with the iron lectern",
+            "requirements": [
+              "scene:iron-lectern:available"
+            ],
+            "method": "d20",
+            "check": {
+              "ability": "Strength",
+              "skill": "Athletics",
+              "dc": 13,
+              "modifierSource": "character.strength + proficiency when Athletics applies",
+              "advantageWhen": [
+                "two-or-more-helpers"
+              ],
+              "disadvantageWhen": [
+                "character-small-size-alone"
+              ]
+            },
+            "onSuccess": {
+              "terminal": true,
+              "stateChanges": [
+                "hazard:pendulum:set:jammed",
+                "route:chapel-nave:set:open",
+                "scene:lectern:set:destroyed"
+              ],
+              "summary": "The lectern jams the sweep and the party passes.",
+              "terminalState": "victory"
+            },
+            "onFailure": {
+              "terminal": false,
+              "stateChanges": [
+                "scene:lectern:set:wedged-badly",
+                "clock:pendulum-release:increment:2"
+              ],
+              "summary": "The lectern slips and release danger advances."
+            },
+            "lockout": "A failed jam changes the lectern state and increases the next DC."
+          },
+          {
+            "id": "withdraw",
+            "label": "Take the flooded sacristy bypass",
+            "requirements": [
+              "route:sacristy:known"
+            ],
+            "method": "deterministic",
+            "onSuccess": {
+              "terminal": true,
+              "stateChanges": [
+                "encounter:set:fled",
+                "route:sacristy:set:selected",
+                "party:resource:torches:decrement:1"
+              ],
+              "summary": "The party avoids the trap through a flooded, resource-costly bypass.",
+              "terminalState": "fled"
+            },
+            "onFailure": {
+              "terminal": false,
+              "stateChanges": [
+                "route:withdraw:lock",
+                "danger:increment:1"
+              ],
+              "summary": "The route is unavailable; the UI removes this option and explains why."
+            },
+            "lockout": "Withdrawal commits once or becomes unavailable because the named route closes."
+          }
+        ]
+      },
+      "resolution": {
+        "mechanic": "d20",
+        "config": {
+          "procedure": "roll d20; apply advantage/disadvantage; add ability and proficiency when relevant; meet or exceed DC/AC",
+          "primaryDC": 15,
+          "alternativeDC": 13,
+          "combatObjective": null,
+          "clock": {
+            "pendulumRelease": 4
+          }
+        },
+        "terminalStates": [
+          "victory",
+          "defeat",
+          "fled",
+          "negotiated",
+          "partial"
+        ],
+        "maxTurns": 4,
+        "forcedTerminal": {
+          "terminal": true,
+          "stateChanges": [
+            "hazard:pendulum:set:triggered-once",
+            "party:dex-save:queue:dc14",
+            "route:chapel-nave:set:open-after-sweep"
+          ],
+          "summary": "The pendulum releases once, damage resolves, and the route opens behind the spent mechanism.",
+          "terminalState": "partial"
+        },
+        "antiRepeatRule": "A failed check changes the mechanism, route, danger, resource, or opportunity before another roll."
+      },
+      "aftermath": {
+        "minimumReceiptTypes": 2,
+        "byTerminal": {
+          "victory": [
+            {
+              "type": "xp",
+              "target": "party.milestone",
+              "operation": "increment",
+              "value": 1
+            },
+            {
+              "type": "dungeon",
+              "target": "chapel-nave",
+              "operation": "set",
+              "value": "hazard-cleared"
+            },
+            {
+              "type": "loot",
+              "target": "quest-item.clockwork-pin",
+              "operation": "unlock",
+              "value": true
+            }
+          ],
+          "partial": [
+            {
+              "type": "dungeon",
+              "target": "chapel-nave",
+              "operation": "set",
+              "value": "passed_with_cost"
+            },
+            {
+              "type": "npc",
+              "target": "party",
+              "operation": "set",
+              "value": "cut"
+            }
+          ],
+          "fled": [
+            {
+              "type": "dungeon",
+              "target": "chapel-nave",
+              "operation": "set",
+              "value": "unresolved_route_changed"
+            },
+            {
+              "type": "quest",
+              "target": "map-sacristy-drain",
+              "operation": "unlock",
+              "value": true
+            }
+          ],
+          "defeat": [
+            {
+              "type": "npc",
+              "target": "party",
+              "operation": "set",
+              "value": "separated-by-blades"
+            },
+            {
+              "type": "quest",
+              "target": "reunite-in-crypt",
+              "operation": "unlock",
+              "value": true
+            }
+          ]
+        }
+      },
+      "biomeFilter": {
+        "allow": [
+          "cursed-keep-interior"
+        ],
+        "siteTags": [
+          "chapel",
+          "mechanical-trap"
+        ],
+        "requireFactionTags": [
+          "hollow-household"
+        ],
+        "exclude": [
+          "open-field",
+          "coast"
+        ]
+      },
+      "turnWindow": {
+        "earliest": 2,
+        "latest": 25,
+        "cooldown": 9999,
+        "droughtEligible": true
+      },
+      "governance": {
+        "stage": "draft",
+        "contentHash": "b32fa1e67a7376bc",
+        "owner": "encounter-design",
+        "replaces": null
+      },
+      "example": {
+        "telegraphProse": "A clean dust line, wall hooks, and the ceiling slit show exactly where the pendulum will sweep.",
+        "stakesProse": "Disable at DC 15, jam at DC 13 with the lectern, or spend a torch on the flooded sacristy route.",
+        "resolutionProse": "A failed disable queues the DC 14 save and closes that panel; at four turns the blade fires once and becomes spent.",
+        "receiptProse": "Receipts mark the hazard disarmed, jammed, bypassed, or triggered and record route, tool, injury, milestone, and item changes."
+      }
+    },
+    {
+      "schemaVersion": "1.0.0",
+      "templateVersion": "1.0.0",
+      "id": "cursed-keep.skill.portcullis-oath",
+      "mode": "dnd",
+      "bibleId": "cursed-keep",
+      "name": "Portcullis Oath Check",
+      "role": "skill",
+      "summary": "A speaking portcullis tests whether visitors can prove lawful purpose.",
+      "telegraph": {
+        "required": true,
+        "channels": [
+          "npc"
+        ],
+        "cues": [
+          {
+            "channel": "npc",
+            "signal": "The gate recites three lawful purposes and asks the party to name its witness.",
+            "inference": "The obstacle accepts social or historical proof, not only force.",
+            "actionHook": "state-lawful-purpose"
+          }
+        ],
+        "responseWindowTurns": 2,
+        "surpriseEligible": false,
+        "openingSeverityCap": "none"
+      },
+      "stakes": {
+        "headline": "Convince, recall, or abandon the oath gate before it brands the party trespassers.",
+        "approaches": [
+          {
+            "id": "state-lawful-purpose",
+            "label": "State a lawful purpose and name a witness",
+            "requirements": [
+              "npc:witness-or-token:available"
+            ],
+            "method": "d20",
+            "check": {
+              "ability": "Charisma",
+              "skill": "Persuasion",
+              "dc": 14,
+              "modifierSource": "character.charisma + proficiency when Persuasion applies",
+              "advantageWhen": [
+                "castellan-signature-carried"
+              ],
+              "disadvantageWhen": [
+                "party-marked-thief"
+              ]
+            },
+            "onSuccess": {
+              "terminal": true,
+              "stateChanges": [
+                "route:inner-ward:set:open",
+                "gate:attitude:set:friendly"
+              ],
+              "summary": "The gate accepts the purpose and opens.",
+              "terminalState": "victory"
+            },
+            "onPartial": {
+              "terminal": true,
+              "stateChanges": [
+                "route:inner-ward:set:open",
+                "gate:condition:set:escort-required"
+              ],
+              "summary": "The gate opens but summons a spectral escort.",
+              "terminalState": "partial"
+            },
+            "onFailure": {
+              "terminal": false,
+              "stateChanges": [
+                "gate:attitude:set:hostile",
+                "approach:state-lawful-purpose:lock",
+                "clock:trespass-brand:increment:2"
+              ],
+              "summary": "The claim is rejected and cannot be repeated unchanged."
+            },
+            "lockout": "A rejected witness is recorded; the party must present different proof or choose another route."
+          },
+          {
+            "id": "recall-founder-clause",
+            "label": "Recall the founder’s exception with History",
+            "requirements": [
+              "clue:founder-exception:known"
+            ],
+            "method": "d20",
+            "check": {
+              "ability": "Intelligence",
+              "skill": "History",
+              "dc": 12,
+              "modifierSource": "character.intelligence + proficiency when History applies",
+              "advantageWhen": [
+                "library-rubbing-carried"
+              ],
+              "disadvantageWhen": [
+                "character-cursed-memory"
+              ]
+            },
+            "onSuccess": {
+              "terminal": true,
+              "stateChanges": [
+                "route:inner-ward:set:open",
+                "gate:set:founder-clause-invoked"
+              ],
+              "summary": "The forgotten exception compels the portcullis to rise.",
+              "terminalState": "victory"
+            },
+            "onFailure": {
+              "terminal": false,
+              "stateChanges": [
+                "clue:founder-exception:set:misquoted",
+                "clock:trespass-brand:increment:1"
+              ],
+              "summary": "The misquotation advances the brand and changes the clause state."
+            },
+            "lockout": "The same quotation cannot be rolled again; a corrected source is required."
+          },
+          {
+            "id": "withdraw",
+            "label": "Leave for the roof-walk approach",
+            "requirements": [
+              "route:roof-walk:known"
+            ],
+            "method": "deterministic",
+            "onSuccess": {
+              "terminal": true,
+              "stateChanges": [
+                "encounter:set:fled",
+                "route:roof-walk:set:selected",
+                "clock:storm:increment:1"
+              ],
+              "summary": "The party abandons the gate and climbs into the storm.",
+              "terminalState": "fled"
+            },
+            "onFailure": {
+              "terminal": false,
+              "stateChanges": [
+                "route:withdraw:lock",
+                "danger:increment:1"
+              ],
+              "summary": "The route is unavailable; the UI removes this option and explains why."
+            },
+            "lockout": "Withdrawal commits once or becomes unavailable because the named route closes."
+          }
+        ]
+      },
+      "resolution": {
+        "mechanic": "d20",
+        "config": {
+          "procedure": "roll d20; apply advantage/disadvantage; add ability and proficiency when relevant; meet or exceed DC/AC",
+          "primaryDC": 14,
+          "alternativeDC": 12,
+          "combatObjective": null,
+          "clock": {
+            "trespassBrand": 4
+          }
+        },
+        "terminalStates": [
+          "victory",
+          "defeat",
+          "fled",
+          "negotiated",
+          "partial"
+        ],
+        "maxTurns": 4,
+        "forcedTerminal": {
+          "terminal": true,
+          "stateChanges": [
+            "party:condition:add:trespass-brand",
+            "route:inner-ward:set:locked",
+            "quest:remove-brand:unlock"
+          ],
+          "summary": "The gate brands the party and locks; the encounter ends with a removal quest.",
+          "terminalState": "defeat"
+        },
+        "antiRepeatRule": "A failed check changes the mechanism, route, danger, resource, or opportunity before another roll."
+      },
+      "aftermath": {
+        "minimumReceiptTypes": 2,
+        "byTerminal": {
+          "victory": [
+            {
+              "type": "xp",
+              "target": "party.milestone",
+              "operation": "increment",
+              "value": 1
+            },
+            {
+              "type": "dungeon",
+              "target": "oath-portcullis",
+              "operation": "set",
+              "value": "opened"
+            },
+            {
+              "type": "quest",
+              "target": "inner-ward-access",
+              "operation": "unlock",
+              "value": true
+            }
+          ],
+          "partial": [
+            {
+              "type": "dungeon",
+              "target": "oath-portcullis",
+              "operation": "set",
+              "value": "passed_with_cost"
+            },
+            {
+              "type": "npc",
+              "target": "party",
+              "operation": "set",
+              "value": "escorted"
+            }
+          ],
+          "fled": [
+            {
+              "type": "dungeon",
+              "target": "oath-portcullis",
+              "operation": "set",
+              "value": "unresolved_route_changed"
+            },
+            {
+              "type": "quest",
+              "target": "cross-the-roof-walk",
+              "operation": "unlock",
+              "value": true
+            }
+          ],
+          "defeat": [
+            {
+              "type": "npc",
+              "target": "party",
+              "operation": "set",
+              "value": "trespass-branded"
+            },
+            {
+              "type": "quest",
+              "target": "remove-the-brand",
+              "operation": "unlock",
+              "value": true
+            }
+          ]
+        }
+      },
+      "biomeFilter": {
+        "allow": [
+          "cursed-keep-interior"
+        ],
+        "siteTags": [
+          "gate",
+          "social-check"
+        ],
+        "requireFactionTags": [
+          "hollow-household"
+        ],
+        "exclude": [
+          "wilderness",
+          "village"
+        ]
+      },
+      "turnWindow": {
+        "earliest": 3,
+        "latest": 35,
+        "cooldown": 9999,
+        "droughtEligible": true
+      },
+      "governance": {
+        "stage": "draft",
+        "contentHash": "2c081e75d7a2be04",
+        "owner": "encounter-design",
+        "replaces": null
+      },
+      "example": {
+        "telegraphProse": "The speaking gate lists accepted purposes and asks for a witness, making the social obstacle and proof structure explicit.",
+        "stakesProse": "Persuade at DC 14, invoke a known historical exception at DC 12, or take the dangerous roof walk.",
+        "resolutionProse": "Rejected evidence is logged and cannot be recycled; four turns fill the brand clock and close the gate conclusively.",
+        "receiptProse": "The system records opened access, escort, brand, or detour along with milestone and quest progression."
+      }
+    },
+    {
+      "schemaVersion": "1.0.0",
+      "templateVersion": "1.0.0",
+      "id": "cursed-keep.environmental.black-cistern",
+      "mode": "dnd",
+      "bibleId": "cursed-keep",
+      "name": "Rising Black Cistern",
+      "role": "hazard",
+      "summary": "Cursed water rises while the party searches for a drain wheel.",
+      "telegraph": {
+        "required": true,
+        "channels": [
+          "status",
+          "scene"
+        ],
+        "cues": [
+          {
+            "channel": "status",
+            "signal": "BLACK WATER 2/6; at full, the lower vault floods.",
+            "inference": "The hazard is a visible deadline.",
+            "actionHook": "open-drain"
+          },
+          {
+            "channel": "scene",
+            "signal": "A rusted chain leads from the drain grille to a wheel above the waterline.",
+            "inference": "The environment exposes a mechanical solution.",
+            "actionHook": "open-drain"
+          }
+        ],
+        "responseWindowTurns": 2,
+        "surpriseEligible": false,
+        "openingSeverityCap": "none"
+      },
+      "stakes": {
+        "headline": "Open the drain, reach the balcony, or retreat before the cistern fills.",
+        "approaches": [
+          {
+            "id": "open-drain",
+            "label": "Turn the rusted drain wheel",
+            "requirements": [
+              "scene:drain-wheel:reachable"
+            ],
+            "method": "d20",
+            "check": {
+              "ability": "Strength",
+              "skill": "Athletics",
+              "dc": 15,
+              "modifierSource": "character.strength + proficiency when Athletics applies",
+              "advantageWhen": [
+                "item:gear-oil:used"
+              ],
+              "disadvantageWhen": [
+                "water-level>=4"
+              ]
+            },
+            "onSuccess": {
+              "terminal": true,
+              "stateChanges": [
+                "hazard:black-water:set:draining",
+                "route:lower-vault:set:open"
+              ],
+              "summary": "The drain opens and the lower vault remains accessible.",
+              "terminalState": "victory"
+            },
+            "onPartial": {
+              "terminal": true,
+              "stateChanges": [
+                "hazard:black-water:set:draining",
+                "party:condition:add:exhausted"
+              ],
+              "summary": "The drain opens, but the effort causes exhaustion.",
+              "terminalState": "partial"
+            },
+            "onFailure": {
+              "terminal": false,
+              "stateChanges": [
+                "clock:black-water:increment:2",
+                "scene:drain-wheel:set:bent"
+              ],
+              "summary": "The water rises and the wheel bends, increasing the next DC."
+            },
+            "lockout": "Wheel state changes after failure; the same DC is never rolled from the same state."
+          },
+          {
+            "id": "climb-balcony",
+            "label": "Climb to the reliquary balcony",
+            "requirements": [
+              "route:balcony:visible"
+            ],
+            "method": "d20",
+            "check": {
+              "ability": "Dexterity",
+              "skill": "Acrobatics",
+              "dc": 13,
+              "modifierSource": "character.dexterity + proficiency when Acrobatics applies",
+              "advantageWhen": [
+                "rope-secured"
+              ],
+              "disadvantageWhen": [
+                "heavy-armor"
+              ]
+            },
+            "onSuccess": {
+              "terminal": true,
+              "stateChanges": [
+                "location:set:reliquary-balcony",
+                "route:lower-vault:set:flooded"
+              ],
+              "summary": "The party escapes upward but loses the lower route.",
+              "terminalState": "fled"
+            },
+            "onFailure": {
+              "terminal": false,
+              "stateChanges": [
+                "party:condition:add:soaked",
+                "clock:black-water:increment:1"
+              ],
+              "summary": "The climber slips and the water rises."
+            },
+            "lockout": "A failed climb consumes or relocates the rope and alters advantage."
+          },
+          {
+            "id": "withdraw",
+            "label": "Retreat through the intake tunnel",
+            "requirements": [
+              "route:intake-tunnel:open"
+            ],
+            "method": "deterministic",
+            "onSuccess": {
+              "terminal": true,
+              "stateChanges": [
+                "encounter:set:fled",
+                "route:intake-tunnel:set:sealed-behind",
+                "loot:lower-vault:set:inaccessible"
+              ],
+              "summary": "The party leaves safely but forfeits lower-vault access.",
+              "terminalState": "fled"
+            },
+            "onFailure": {
+              "terminal": false,
+              "stateChanges": [
+                "route:withdraw:lock",
+                "danger:increment:1"
+              ],
+              "summary": "The route is unavailable; the UI removes this option and explains why."
+            },
+            "lockout": "Withdrawal commits once or becomes unavailable because the named route closes."
+          }
+        ]
+      },
+      "resolution": {
+        "mechanic": "d20",
+        "config": {
+          "procedure": "roll d20; apply advantage/disadvantage; add ability and proficiency when relevant; meet or exceed DC/AC",
+          "primaryDC": 15,
+          "alternativeDC": 13,
+          "combatObjective": null,
+          "clock": {
+            "blackWater": 6
+          }
+        },
+        "terminalStates": [
+          "victory",
+          "defeat",
+          "fled",
+          "negotiated",
+          "partial"
+        ],
+        "maxTurns": 6,
+        "forcedTerminal": {
+          "terminal": true,
+          "stateChanges": [
+            "location:set:reliquary-balcony",
+            "route:lower-vault:set:flooded",
+            "party:condition:add:soaked"
+          ],
+          "summary": "The water fills the chamber and carries the party to the balcony; the lower vault is lost.",
+          "terminalState": "fled"
+        },
+        "antiRepeatRule": "A failed check changes the mechanism, route, danger, resource, or opportunity before another roll."
+      },
+      "aftermath": {
+        "minimumReceiptTypes": 2,
+        "byTerminal": {
+          "victory": [
+            {
+              "type": "xp",
+              "target": "party.milestone",
+              "operation": "increment",
+              "value": 1
+            },
+            {
+              "type": "dungeon",
+              "target": "black-cistern",
+              "operation": "set",
+              "value": "drained"
+            },
+            {
+              "type": "loot",
+              "target": "reliquary-cache",
+              "operation": "unlock",
+              "value": true
+            }
+          ],
+          "partial": [
+            {
+              "type": "dungeon",
+              "target": "black-cistern",
+              "operation": "set",
+              "value": "passed_with_cost"
+            },
+            {
+              "type": "npc",
+              "target": "party",
+              "operation": "set",
+              "value": "exhausted"
+            }
+          ],
+          "fled": [
+            {
+              "type": "dungeon",
+              "target": "black-cistern",
+              "operation": "set",
+              "value": "unresolved_route_changed"
+            },
+            {
+              "type": "quest",
+              "target": "drain-cistern-from-above",
+              "operation": "unlock",
+              "value": true
+            }
+          ],
+          "defeat": [
+            {
+              "type": "npc",
+              "target": "party",
+              "operation": "set",
+              "value": "lower-vault-lost"
+            },
+            {
+              "type": "quest",
+              "target": "recover-flooded-relic",
+              "operation": "unlock",
+              "value": true
+            }
+          ]
+        }
+      },
+      "biomeFilter": {
+        "allow": [
+          "cursed-keep-sublevel"
+        ],
+        "siteTags": [
+          "cistern",
+          "flood-hazard"
+        ],
+        "requireFactionTags": [
+          "hollow-household"
+        ],
+        "exclude": [
+          "dry-tower",
+          "coast"
+        ]
+      },
+      "turnWindow": {
+        "earliest": 4,
+        "latest": 45,
+        "cooldown": 9999,
+        "droughtEligible": true
+      },
+      "governance": {
+        "stage": "draft",
+        "contentHash": "069d8dd0f06a63de",
+        "owner": "encounter-design",
+        "replaces": null
+      },
+      "example": {
+        "telegraphProse": "The visible water clock and chain-to-wheel geometry show both deadline and solution.",
+        "stakesProse": "Open the wheel at DC 15, climb at DC 13 and lose the lower route, or retreat and forfeit its loot.",
+        "resolutionProse": "Every failure raises the water; at six turns the flood carries the party out and permanently resolves the location state.",
+        "receiptProse": "Receipts reconcile water, routes, exhaustion, lower-vault access, milestones, and reliquary rewards."
+      }
+    },
+    {
+      "schemaVersion": "1.0.0",
+      "templateVersion": "1.0.0",
+      "id": "cursed-keep.duel.castellans-heir",
+      "mode": "dnd",
+      "bibleId": "cursed-keep",
+      "name": "Duel with the Castellan’s Heir",
+      "role": "duel",
+      "summary": "A spectral heir demands satisfaction but can be released by proving the true murderer.",
+      "telegraph": {
+        "required": true,
+        "channels": [
+          "npc"
+        ],
+        "cues": [
+          {
+            "channel": "npc",
+            "signal": "The heir names the formal duel law and points to the blood-stained witness gallery.",
+            "inference": "Combat, surrender, and evidentiary release are valid terminals.",
+            "actionHook": "present-murder-proof"
+          }
+        ],
+        "responseWindowTurns": 2,
+        "surpriseEligible": false,
+        "openingSeverityCap": "none"
+      },
+      "stakes": {
+        "headline": "Defeat, release, or yield to the heir before the gallery seals.",
+        "approaches": [
+          {
+            "id": "formal-duel",
+            "label": "Fight under the heir’s duel law",
+            "requirements": [
+              "one-party-champion"
+            ],
+            "method": "combat",
+            "check": {
+              "ability": "Strength",
+              "skill": "Athletics",
+              "dc": 15,
+              "modifierSource": "character.strength + proficiency when Athletics applies",
+              "advantageWhen": [
+                "heir-true-name-known"
+              ],
+              "disadvantageWhen": [
+                "duelist-carries-stolen-signet"
+              ]
+            },
+            "onSuccess": {
+              "terminal": true,
+              "stateChanges": [
+                "npc:castellans-heir:set:yielded",
+                "route:witness-gallery:set:open"
+              ],
+              "summary": "The heir yields and opens the gallery.",
+              "terminalState": "victory"
+            },
+            "onPartial": {
+              "terminal": true,
+              "stateChanges": [
+                "npc:castellans-heir:set:yielded",
+                "party-champion:condition:add:wounded"
+              ],
+              "summary": "The heir yields, but the champion is wounded.",
+              "terminalState": "partial"
+            },
+            "onFailure": {
+              "terminal": false,
+              "stateChanges": [
+                "party-champion:hp:decrement:resolved-damage",
+                "clock:gallery-seal:increment:1"
+              ],
+              "summary": "The champion takes damage and the gallery seal advances."
+            },
+            "lockout": "Combat rounds always change HP or the gallery clock."
+          },
+          {
+            "id": "present-murder-proof",
+            "label": "Present the kitchen ledger as murder proof",
+            "requirements": [
+              "item:kitchen-ledger:available"
+            ],
+            "method": "d20",
+            "check": {
+              "ability": "Intelligence",
+              "skill": "Investigation",
+              "dc": 14,
+              "modifierSource": "character.intelligence + proficiency when Investigation applies",
+              "advantageWhen": [
+                "npc:maid-ghost:testimony"
+              ],
+              "disadvantageWhen": [
+                "ledger-water-damaged"
+              ]
+            },
+            "onSuccess": {
+              "terminal": true,
+              "stateChanges": [
+                "npc:castellans-heir:set:released",
+                "item:heir-signet:set:received",
+                "quest:true-murderer:unlock"
+              ],
+              "summary": "The heir accepts the proof, releases the duel, and entrusts the signet.",
+              "terminalState": "negotiated"
+            },
+            "onFailure": {
+              "terminal": false,
+              "stateChanges": [
+                "item:kitchen-ledger:set:rejected-evidence",
+                "approach:present-murder-proof:lock",
+                "clock:gallery-seal:increment:2"
+              ],
+              "summary": "The proof is rejected and cannot be presented again unchanged."
+            },
+            "lockout": "Rejected evidence requires new corroboration; the same ledger topic cannot loop."
+          },
+          {
+            "id": "withdraw",
+            "label": "Yield and surrender the stolen signet",
+            "requirements": [
+              "item:stolen-signet:available"
+            ],
+            "method": "deterministic",
+            "onSuccess": {
+              "terminal": true,
+              "stateChanges": [
+                "encounter:set:fled",
+                "item:stolen-signet:remove:1",
+                "npc:castellans-heir:set:appeased"
+              ],
+              "summary": "The duel ends and the heir takes the signet.",
+              "terminalState": "fled"
+            },
+            "onFailure": {
+              "terminal": false,
+              "stateChanges": [
+                "route:withdraw:lock",
+                "danger:increment:1"
+              ],
+              "summary": "The route is unavailable; the UI removes this option and explains why."
+            },
+            "lockout": "Withdrawal commits once or becomes unavailable because the named route closes."
+          }
+        ]
+      },
+      "resolution": {
+        "mechanic": "hybrid",
+        "config": {
+          "procedure": "roll d20; apply advantage/disadvantage; add ability and proficiency when relevant; meet or exceed DC/AC",
+          "primaryDC": 15,
+          "alternativeDC": 14,
+          "combatObjective": "force formal surrender or prove the murderer",
+          "clock": {
+            "gallerySeal": 6
+          }
+        },
+        "terminalStates": [
+          "victory",
+          "defeat",
+          "fled",
+          "negotiated",
+          "partial"
+        ],
+        "maxTurns": 8,
+        "forcedTerminal": {
+          "terminal": true,
+          "stateChanges": [
+            "route:witness-gallery:set:sealed",
+            "npc:castellans-heir:set:hostile-elsewhere",
+            "quest:break-gallery-seal:unlock"
+          ],
+          "summary": "The gallery seals; the heir withdraws and the duel ends with a new route objective.",
+          "terminalState": "defeat"
+        },
+        "antiRepeatRule": "A failed check changes the mechanism, route, danger, resource, or opportunity before another roll."
+      },
+      "aftermath": {
+        "minimumReceiptTypes": 3,
+        "byTerminal": {
+          "victory": [
+            {
+              "type": "xp",
+              "target": "party.milestone",
+              "operation": "increment",
+              "value": 2
+            },
+            {
+              "type": "dungeon",
+              "target": "witness-gallery",
+              "operation": "set",
+              "value": "opened"
+            },
+            {
+              "type": "npc",
+              "target": "castellans-heir",
+              "operation": "set",
+              "value": "released-or-yielded"
+            }
+          ],
+          "partial": [
+            {
+              "type": "dungeon",
+              "target": "witness-gallery",
+              "operation": "set",
+              "value": "passed_with_cost"
+            },
+            {
+              "type": "npc",
+              "target": "party",
+              "operation": "set",
+              "value": "wounded"
+            }
+          ],
+          "fled": [
+            {
+              "type": "dungeon",
+              "target": "witness-gallery",
+              "operation": "set",
+              "value": "unresolved_route_changed"
+            },
+            {
+              "type": "quest",
+              "target": "enter-gallery-from-roof",
+              "operation": "unlock",
+              "value": true
+            }
+          ],
+          "defeat": [
+            {
+              "type": "npc",
+              "target": "party",
+              "operation": "set",
+              "value": "gallery-sealed"
+            },
+            {
+              "type": "quest",
+              "target": "break-gallery-seal",
+              "operation": "unlock",
+              "value": true
+            }
+          ]
+        }
+      },
+      "biomeFilter": {
+        "allow": [
+          "cursed-keep-interior"
+        ],
+        "siteTags": [
+          "duel-gallery",
+          "spectral-npc"
+        ],
+        "requireFactionTags": [
+          "hollow-household"
+        ],
+        "exclude": [
+          "village",
+          "coast"
+        ]
+      },
+      "turnWindow": {
+        "earliest": 10,
+        "latest": 60,
+        "cooldown": 9999,
+        "droughtEligible": false
+      },
+      "governance": {
+        "stage": "draft",
+        "contentHash": "cd6c334341048723",
+        "owner": "encounter-design",
+        "replaces": null
+      },
+      "example": {
+        "telegraphProse": "The heir announces the law, the surrender price, and the evidence gallery before drawing steel.",
+        "stakesProse": "Fight, present the kitchen ledger at DC 14 with corroboration, or yield the stolen signet to end the duel.",
+        "resolutionProse": "Combat changes HP; rejected evidence locks; and the eighth turn seals the gallery and closes the encounter.",
+        "receiptProse": "The outcome records the heir’s durable state, signet ownership, gallery access, milestone progress, and follow-up quest."
+      }
+    },
+    {
+      "schemaVersion": "1.0.0",
+      "templateVersion": "1.0.0",
+      "id": "cursed-keep.puzzle.four-saints",
+      "mode": "dnd",
+      "bibleId": "cursed-keep",
+      "name": "The Four Saints Door",
+      "role": "puzzle",
+      "summary": "Four movable saint reliefs encode the keep’s order of succession.",
+      "telegraph": {
+        "required": true,
+        "channels": [
+          "item"
+        ],
+        "cues": [
+          {
+            "channel": "item",
+            "signal": "A nursery rubbing names the saints by season, while each relief holds a different harvest tool.",
+            "inference": "The puzzle has discoverable ordering evidence.",
+            "actionHook": "order-saints"
+          }
+        ],
+        "responseWindowTurns": 3,
+        "surpriseEligible": false,
+        "openingSeverityCap": "none"
+      },
+      "stakes": {
+        "headline": "Open the saint door, spend a bypass resource, or retreat before the curse brands a false succession.",
+        "approaches": [
+          {
+            "id": "order-saints",
+            "label": "Order the saints using the nursery rubbing",
+            "requirements": [
+              "clue:nursery-rubbing:known"
+            ],
+            "method": "d20",
+            "check": {
+              "ability": "Intelligence",
+              "skill": "Investigation",
+              "dc": 13,
+              "modifierSource": "character.intelligence + proficiency when Investigation applies",
+              "advantageWhen": [
+                "all-four-tool-symbols-inspected"
+              ],
+              "disadvantageWhen": [
+                "one-relief-broken"
+              ]
+            },
+            "onSuccess": {
+              "terminal": true,
+              "stateChanges": [
+                "puzzle:four-saints:set:solved",
+                "route:ancestral-library:set:open"
+              ],
+              "summary": "The correct succession opens the library.",
+              "terminalState": "victory"
+            },
+            "onPartial": {
+              "terminal": true,
+              "stateChanges": [
+                "puzzle:four-saints:set:solved",
+                "clock:ancestral-curse:increment:1"
+              ],
+              "summary": "The door opens while a minor curse attaches to the solver.",
+              "terminalState": "partial"
+            },
+            "onFailure": {
+              "terminal": false,
+              "stateChanges": [
+                "puzzle:attempt-pattern:record",
+                "clock:ancestral-curse:increment:1",
+                "puzzle:one-arrangement:exclude"
+              ],
+              "summary": "The wrong order is recorded, excluded, and advances the curse."
+            },
+            "lockout": "Identical arrangements are rejected without a roll; failed patterns cannot repeat."
+          },
+          {
+            "id": "spend-saint-key",
+            "label": "Spend the wax Saint Key",
+            "requirements": [
+              "item:wax-saint-key:available"
+            ],
+            "method": "deterministic",
+            "check": {
+              "ability": "Intelligence",
+              "skill": "Arcana",
+              "dc": 10,
+              "modifierSource": "character.intelligence + proficiency when Arcana applies",
+              "advantageWhen": [
+                "not-applicable-deterministic"
+              ],
+              "disadvantageWhen": []
+            },
+            "onSuccess": {
+              "terminal": true,
+              "stateChanges": [
+                "item:wax-saint-key:remove:1",
+                "route:ancestral-library:set:open",
+                "puzzle:four-saints:set:bypassed"
+              ],
+              "summary": "The consumed key bypasses the sequence and opens the door.",
+              "terminalState": "victory"
+            },
+            "onFailure": {
+              "terminal": false,
+              "stateChanges": [
+                "item:wax-saint-key:set:invalid",
+                "approach:spend-saint-key:lock"
+              ],
+              "summary": "An invalid key is not consumed but becomes unavailable for this door."
+            },
+            "lockout": "The unique key can be used once; invalid provenance disables the option."
+          },
+          {
+            "id": "withdraw",
+            "label": "Leave the ancestral wing",
+            "requirements": [
+              "route:west-gallery:open"
+            ],
+            "method": "deterministic",
+            "onSuccess": {
+              "terminal": true,
+              "stateChanges": [
+                "encounter:set:fled",
+                "route:ancestral-library:set:closed",
+                "quest:find-saint-key:unlock"
+              ],
+              "summary": "The party leaves and opens a clue-finding objective.",
+              "terminalState": "fled"
+            },
+            "onFailure": {
+              "terminal": false,
+              "stateChanges": [
+                "route:withdraw:lock",
+                "danger:increment:1"
+              ],
+              "summary": "The route is unavailable; the UI removes this option and explains why."
+            },
+            "lockout": "Withdrawal commits once or becomes unavailable because the named route closes."
+          }
+        ]
+      },
+      "resolution": {
+        "mechanic": "d20",
+        "config": {
+          "procedure": "roll d20; apply advantage/disadvantage; add ability and proficiency when relevant; meet or exceed DC/AC",
+          "primaryDC": 13,
+          "alternativeDC": 10,
+          "combatObjective": null,
+          "clock": {
+            "ancestralCurse": 4
+          }
+        },
+        "terminalStates": [
+          "victory",
+          "defeat",
+          "fled",
+          "negotiated",
+          "partial"
+        ],
+        "maxTurns": 4,
+        "forcedTerminal": {
+          "terminal": true,
+          "stateChanges": [
+            "party:condition:add:false-heir-mark",
+            "route:ancestral-library:set:locked",
+            "quest:appease-four-saints:unlock"
+          ],
+          "summary": "The curse marks a false heir and the door locks; a cleansing quest begins.",
+          "terminalState": "defeat"
+        },
+        "antiRepeatRule": "A failed check changes the mechanism, route, danger, resource, or opportunity before another roll."
+      },
+      "aftermath": {
+        "minimumReceiptTypes": 2,
+        "byTerminal": {
+          "victory": [
+            {
+              "type": "xp",
+              "target": "party.milestone",
+              "operation": "increment",
+              "value": 1
+            },
+            {
+              "type": "dungeon",
+              "target": "four-saints-door",
+              "operation": "set",
+              "value": "solved"
+            },
+            {
+              "type": "quest",
+              "target": "ancestral-library",
+              "operation": "unlock",
+              "value": true
+            }
+          ],
+          "partial": [
+            {
+              "type": "dungeon",
+              "target": "four-saints-door",
+              "operation": "set",
+              "value": "passed_with_cost"
+            },
+            {
+              "type": "npc",
+              "target": "party",
+              "operation": "set",
+              "value": "minor-ancestral-curse"
+            }
+          ],
+          "fled": [
+            {
+              "type": "dungeon",
+              "target": "four-saints-door",
+              "operation": "set",
+              "value": "unresolved_route_changed"
+            },
+            {
+              "type": "quest",
+              "target": "find-saint-key",
+              "operation": "unlock",
+              "value": true
+            }
+          ],
+          "defeat": [
+            {
+              "type": "npc",
+              "target": "party",
+              "operation": "set",
+              "value": "false-heir-marked"
+            },
+            {
+              "type": "quest",
+              "target": "appease-four-saints",
+              "operation": "unlock",
+              "value": true
+            }
+          ]
+        }
+      },
+      "biomeFilter": {
+        "allow": [
+          "cursed-keep-interior"
+        ],
+        "siteTags": [
+          "ancestral-wing",
+          "logic-puzzle"
+        ],
+        "requireFactionTags": [
+          "hollow-household"
+        ],
+        "exclude": [
+          "dungeon-cistern",
+          "outside-road"
+        ]
+      },
+      "turnWindow": {
+        "earliest": 5,
+        "latest": 50,
+        "cooldown": 9999,
+        "droughtEligible": true
+      },
+      "governance": {
+        "stage": "draft",
+        "contentHash": "55d11412af17a98a",
+        "owner": "encounter-design",
+        "replaces": null
+      },
+      "example": {
+        "telegraphProse": "The nursery rubbing and harvest tools provide a fair evidence chain for the succession order.",
+        "stakesProse": "Solve at DC 13 with inspected symbols, consume the unique wax key, or leave and search for more evidence.",
+        "resolutionProse": "Wrong arrangements are stored and blocked; after four attempts the false-heir mark commits and the door locks.",
+        "receiptProse": "The receipt preserves solution or bypass method, key state, library access, curse state, milestone, and follow-up."
+      }
+    },
+    {
+      "schemaVersion": "1.0.0",
+      "templateVersion": "1.0.0",
+      "id": "cursed-keep.boss.hollow-castellan",
+      "mode": "dnd",
+      "bibleId": "cursed-keep",
+      "name": "The Hollow Castellan",
+      "role": "boss",
+      "summary": "The keep’s ruler alternates martial and oath-bound phases around a visible heart reliquary.",
+      "telegraph": {
+        "required": true,
+        "channels": [
+          "scene",
+          "npc",
+          "status"
+        ],
+        "cues": [
+          {
+            "channel": "scene",
+            "signal": "From the witness gallery, the party sees the heart reliquary, two oath braziers, and the postern stair.",
+            "inference": "The boss objectives and flee route are visible before commitment.",
+            "actionHook": "fight-castellan"
+          },
+          {
+            "channel": "npc",
+            "signal": "The heir warns that the Castellan must answer a true accusation after both braziers go dark.",
+            "inference": "A proof-based parley terminal is available after setup.",
+            "actionHook": "accuse-castellan"
+          },
+          {
+            "channel": "status",
+            "signal": "BOSS RULE: martial and oath phases alternate; repeated tactics lose advantage.",
+            "inference": "Phase structure and anti-repeat rule are explicit.",
+            "actionHook": "fight-castellan"
+          }
+        ],
+        "responseWindowTurns": 3,
+        "surpriseEligible": false,
+        "openingSeverityCap": "none"
+      },
+      "stakes": {
+        "headline": "End the curse, expose the Castellan, or escape before the keep seals its heart.",
+        "approaches": [
+          {
+            "id": "fight-castellan",
+            "label": "Extinguish both oath braziers and break the reliquary",
+            "requirements": [
+              "party:combat-capable"
+            ],
+            "method": "combat",
+            "check": {
+              "ability": "Strength",
+              "skill": "Athletics",
+              "dc": 17,
+              "modifierSource": "character.strength + proficiency when Athletics applies",
+              "advantageWhen": [
+                "heir-signet-carried"
+              ],
+              "disadvantageWhen": [
+                "same-tactic-as-prior-phase"
+              ]
+            },
+            "onSuccess": {
+              "terminal": true,
+              "stateChanges": [
+                "boss:hollow-castellan:set:defeated",
+                "curse:cursed-keep:set:broken",
+                "dungeon:heart-room:set:cleared"
+              ],
+              "summary": "The reliquary breaks and the keep’s curse ends.",
+              "terminalState": "victory"
+            },
+            "onPartial": {
+              "terminal": true,
+              "stateChanges": [
+                "boss:hollow-castellan:set:defeated",
+                "curse:cursed-keep:set:broken",
+                "npc:castellans-heir:set:lost"
+              ],
+              "summary": "The curse ends, but the heir spends their spirit to hold the heart open.",
+              "terminalState": "partial"
+            },
+            "onFailure": {
+              "terminal": false,
+              "stateChanges": [
+                "party:hp:decrement:resolved-damage",
+                "clock:heart-seal:increment:1"
+              ],
+              "summary": "Resolved damage lands and the heart seal advances."
+            },
+            "lockout": "Each phase changes HP, brazier state, or heart-seal progress; repeated tactics lose advantage."
+          },
+          {
+            "id": "accuse-castellan",
+            "label": "Accuse the Castellan with the murder proof",
+            "requirements": [
+              "braziers:both-extinguished",
+              "item:kitchen-ledger:validated"
+            ],
+            "method": "d20",
+            "check": {
+              "ability": "Charisma",
+              "skill": "Persuasion",
+              "dc": 16,
+              "modifierSource": "character.charisma + proficiency when Persuasion applies",
+              "advantageWhen": [
+                "castellans-heir:released"
+              ],
+              "disadvantageWhen": [
+                "proof-publicly-discredited"
+              ]
+            },
+            "onSuccess": {
+              "terminal": true,
+              "stateChanges": [
+                "boss:hollow-castellan:set:confessed-and-dissolved",
+                "curse:cursed-keep:set:broken",
+                "item:castellan-seal:set:received"
+              ],
+              "summary": "The true accusation compels confession and dissolves the oath-body.",
+              "terminalState": "negotiated"
+            },
+            "onFailure": {
+              "terminal": false,
+              "stateChanges": [
+                "item:kitchen-ledger:set:spent-as-proof",
+                "approach:accuse-castellan:lock",
+                "clock:heart-seal:increment:2"
+              ],
+              "summary": "The accusation fails, consumes the public proof, and accelerates the seal."
+            },
+            "lockout": "The proof is spent whether accepted or rejected; no accusation loop is possible."
+          },
+          {
+            "id": "withdraw",
+            "label": "Escape down the postern stair",
+            "requirements": [
+              "route:postern-stair:marked"
+            ],
+            "method": "deterministic",
+            "onSuccess": {
+              "terminal": true,
+              "stateChanges": [
+                "encounter:set:fled",
+                "route:postern-stair:set:collapsed-behind",
+                "curse:cursed-keep:set:active"
+              ],
+              "summary": "The party escapes while the keep remains cursed.",
+              "terminalState": "fled"
+            },
+            "onFailure": {
+              "terminal": false,
+              "stateChanges": [
+                "route:withdraw:lock",
+                "danger:increment:1"
+              ],
+              "summary": "The route is unavailable; the UI removes this option and explains why."
+            },
+            "lockout": "Withdrawal commits once or becomes unavailable because the named route closes."
+          }
+        ]
+      },
+      "resolution": {
+        "mechanic": "hybrid",
+        "config": {
+          "procedure": "roll d20; apply advantage/disadvantage; add ability and proficiency when relevant; meet or exceed DC/AC",
+          "primaryDC": 17,
+          "alternativeDC": 16,
+          "combatObjective": "extinguish braziers then reduce reliquary HP to zero or compel confession",
+          "clock": {
+            "heartSeal": 8
+          }
+        },
+        "terminalStates": [
+          "victory",
+          "defeat",
+          "fled",
+          "negotiated",
+          "partial"
+        ],
+        "maxTurns": 12,
+        "forcedTerminal": {
+          "terminal": true,
+          "stateChanges": [
+            "boss:hollow-castellan:set:heart-sealed",
+            "party:condition:add:keep-bound",
+            "quest:break-the-bound-oath:unlock"
+          ],
+          "summary": "The heart seals and expels the party as oath-bound servants; the fight ends with a liberation quest.",
+          "terminalState": "defeat"
+        },
+        "antiRepeatRule": "A failed check changes the mechanism, route, danger, resource, or opportunity before another roll."
+      },
+      "aftermath": {
+        "minimumReceiptTypes": 4,
+        "byTerminal": {
+          "victory": [
+            {
+              "type": "xp",
+              "target": "party.milestone",
+              "operation": "increment",
+              "value": 4
+            },
+            {
+              "type": "dungeon",
+              "target": "heart-room",
+              "operation": "set",
+              "value": "boss-cleared"
+            },
+            {
+              "type": "loot",
+              "target": "dnd.boss.hollow-castellan",
+              "operation": "unlock",
+              "value": "castellan-seal-and-guaranteed-major-item"
+            }
+          ],
+          "partial": [
+            {
+              "type": "dungeon",
+              "target": "heart-room",
+              "operation": "set",
+              "value": "passed_with_cost"
+            },
+            {
+              "type": "npc",
+              "target": "party",
+              "operation": "set",
+              "value": "heir-sacrificed"
+            }
+          ],
+          "fled": [
+            {
+              "type": "dungeon",
+              "target": "heart-room",
+              "operation": "set",
+              "value": "unresolved_route_changed"
+            },
+            {
+              "type": "quest",
+              "target": "return-through-postern",
+              "operation": "unlock",
+              "value": true
+            }
+          ],
+          "defeat": [
+            {
+              "type": "npc",
+              "target": "party",
+              "operation": "set",
+              "value": "keep-bound"
+            },
+            {
+              "type": "quest",
+              "target": "break-the-bound-oath",
+              "operation": "unlock",
+              "value": true
+            }
+          ]
+        }
+      },
+      "biomeFilter": {
+        "allow": [
+          "cursed-keep-heart"
+        ],
+        "siteTags": [
+          "boss-room",
+          "oath-reliquary"
+        ],
+        "requireFactionTags": [
+          "hollow-household"
+        ],
+        "exclude": [
+          "coast",
+          "village",
+          "generic-cave"
+        ]
+      },
+      "turnWindow": {
+        "earliest": 25,
+        "latest": 100,
+        "cooldown": 9999,
+        "droughtEligible": false
+      },
+      "governance": {
+        "stage": "draft",
+        "contentHash": "7c63db44aef8104e",
+        "owner": "encounter-design",
+        "replaces": null
+      },
+      "example": {
+        "telegraphProse": "The gallery vista shows braziers, reliquary, and postern while the heir explains the accusation condition and status panel reveals phase rules.",
+        "stakesProse": "Break the curse in combat, spend validated murder proof after setup, or escape and leave the keep cursed.",
+        "resolutionProse": "The heart-seal clock bounds twelve turns; all attacks, proof, and routes mutate state, and the bound creates a liberation quest.",
+        "receiptProse": "Victory or confession emits boss loot, milestone, dungeon, curse, NPC, and quest receipts; retreat and defeat remain durable."
+      }
+    },
+    {
+      "schemaVersion": "1.0.0",
+      "templateVersion": "1.0.0",
+      "id": "cursed-keep.random.lantern-pilgrim",
+      "mode": "dnd",
+      "bibleId": "cursed-keep",
+      "name": "Lantern Pilgrim at the Cross-Stair",
+      "role": "random",
+      "summary": "A neutral ghost offers guidance but may be a mimic wearing a pilgrim’s memory.",
+      "telegraph": {
+        "required": true,
+        "channels": [
+          "scene"
+        ],
+        "cues": [
+          {
+            "channel": "scene",
+            "signal": "The pilgrim’s lantern casts two shadows, one pointing toward a safe stair and one toward a sealed pantry.",
+            "inference": "The apparition may be divided or false.",
+            "actionHook": "test-pilgrim"
+          }
+        ],
+        "responseWindowTurns": 2,
+        "surpriseEligible": false,
+        "openingSeverityCap": "none"
+      },
+      "stakes": {
+        "headline": "Trust, test, or avoid the pilgrim before the lantern chooses a stair.",
+        "approaches": [
+          {
+            "id": "test-pilgrim",
+            "label": "Test the pilgrim with Insight",
+            "requirements": [
+              "npc:lantern-pilgrim:present"
+            ],
+            "method": "d20",
+            "check": {
+              "ability": "Wisdom",
+              "skill": "Insight",
+              "dc": 12,
+              "modifierSource": "character.wisdom + proficiency when Insight applies",
+              "advantageWhen": [
+                "true-pilgrim-prayer-known"
+              ],
+              "disadvantageWhen": [
+                "party-carrying-cursed-mirror"
+              ]
+            },
+            "onSuccess": {
+              "terminal": true,
+              "stateChanges": [
+                "npc:lantern-pilgrim:set:identified",
+                "route:safe-stair:set:revealed"
+              ],
+              "summary": "The party identifies the ghost’s truth and learns the safe stair.",
+              "terminalState": "victory"
+            },
+            "onPartial": {
+              "terminal": true,
+              "stateChanges": [
+                "route:safe-stair:set:revealed",
+                "clock:keep-alert:increment:1"
+              ],
+              "summary": "The safe stair is revealed, but the lantern cry raises Keep Alert.",
+              "terminalState": "partial"
+            },
+            "onFailure": {
+              "terminal": false,
+              "stateChanges": [
+                "npc:lantern-pilgrim:set:suspicious",
+                "route:one-stair:set:false-clue",
+                "approach:test-pilgrim:lock"
+              ],
+              "summary": "The reading fails and changes the clue state; Insight cannot repeat unchanged."
+            },
+            "lockout": "Once the apparition reacts, the social state changes and the same Insight check is invalid."
+          },
+          {
+            "id": "offer-pilgrim-name",
+            "label": "Offer the recovered pilgrim name",
+            "requirements": [
+              "clue:pilgrim-name:known"
+            ],
+            "method": "d20",
+            "check": {
+              "ability": "Charisma",
+              "skill": "Persuasion",
+              "dc": 10,
+              "modifierSource": "character.charisma + proficiency when Persuasion applies",
+              "advantageWhen": [
+                "prayer-spoken"
+              ],
+              "disadvantageWhen": [
+                "name-mispronounced-earlier"
+              ]
+            },
+            "onSuccess": {
+              "terminal": true,
+              "stateChanges": [
+                "npc:lantern-pilgrim:set:ally",
+                "route:safe-stair:set:guided",
+                "item:ghost-light:set:received"
+              ],
+              "summary": "The named spirit becomes a temporary guide.",
+              "terminalState": "negotiated"
+            },
+            "onFailure": {
+              "terminal": false,
+              "stateChanges": [
+                "clue:pilgrim-name:set:spent",
+                "npc:lantern-pilgrim:set:departed"
+              ],
+              "summary": "The name is wrong; the spirit departs and this route closes."
+            },
+            "lockout": "The name can be offered once and is then confirmed or spent."
+          },
+          {
+            "id": "withdraw",
+            "label": "Avoid both marked stairs",
+            "requirements": [
+              "route:backtrack:open"
+            ],
+            "method": "deterministic",
+            "onSuccess": {
+              "terminal": true,
+              "stateChanges": [
+                "encounter:set:fled",
+                "location:set:prior-landing",
+                "clock:keep-alert:increment:1"
+              ],
+              "summary": "The party backtracks safely while alert rises.",
+              "terminalState": "fled"
+            },
+            "onFailure": {
+              "terminal": false,
+              "stateChanges": [
+                "route:withdraw:lock",
+                "danger:increment:1"
+              ],
+              "summary": "The route is unavailable; the UI removes this option and explains why."
+            },
+            "lockout": "Withdrawal commits once or becomes unavailable because the named route closes."
+          }
+        ]
+      },
+      "resolution": {
+        "mechanic": "d20",
+        "config": {
+          "procedure": "roll d20; apply advantage/disadvantage; add ability and proficiency when relevant; meet or exceed DC/AC",
+          "primaryDC": 12,
+          "alternativeDC": 10,
+          "combatObjective": null,
+          "clock": {
+            "lanternChoice": 4
+          }
+        },
+        "terminalStates": [
+          "victory",
+          "defeat",
+          "fled",
+          "negotiated",
+          "partial"
+        ],
+        "maxTurns": 4,
+        "forcedTerminal": {
+          "terminal": true,
+          "stateChanges": [
+            "npc:lantern-pilgrim:set:departed",
+            "route:random-stair:set:selected",
+            "encounter:set:fled"
+          ],
+          "summary": "The lantern chooses and vanishes; the party is placed on one persistent route and the encounter closes.",
+          "terminalState": "fled"
+        },
+        "antiRepeatRule": "A failed check changes the mechanism, route, danger, resource, or opportunity before another roll."
+      },
+      "aftermath": {
+        "minimumReceiptTypes": 2,
+        "byTerminal": {
+          "victory": [
+            {
+              "type": "xp",
+              "target": "party.milestone",
+              "operation": "increment",
+              "value": 1
+            },
+            {
+              "type": "dungeon",
+              "target": "cross-stair",
+              "operation": "set",
+              "value": "route-revealed"
+            },
+            {
+              "type": "npc",
+              "target": "lantern-pilgrim",
+              "operation": "set",
+              "value": "identified-or-allied"
+            }
+          ],
+          "partial": [
+            {
+              "type": "dungeon",
+              "target": "cross-stair",
+              "operation": "set",
+              "value": "passed_with_cost"
+            },
+            {
+              "type": "npc",
+              "target": "party",
+              "operation": "set",
+              "value": "alerted"
+            }
+          ],
+          "fled": [
+            {
+              "type": "dungeon",
+              "target": "cross-stair",
+              "operation": "set",
+              "value": "unresolved_route_changed"
+            },
+            {
+              "type": "quest",
+              "target": "map-the-cross-stair",
+              "operation": "unlock",
+              "value": true
+            }
+          ],
+          "defeat": [
+            {
+              "type": "npc",
+              "target": "party",
+              "operation": "set",
+              "value": "misled"
+            },
+            {
+              "type": "quest",
+              "target": "escape-sealed-pantry",
+              "operation": "unlock",
+              "value": true
+            }
+          ]
+        }
+      },
+      "biomeFilter": {
+        "allow": [
+          "cursed-keep-interior"
+        ],
+        "siteTags": [
+          "cross-stair",
+          "ghost-event"
+        ],
+        "requireFactionTags": [
+          "restless-dead"
+        ],
+        "exclude": [
+          "outside-road",
+          "coast"
+        ]
+      },
+      "turnWindow": {
+        "earliest": 1,
+        "latest": 80,
+        "cooldown": 15,
+        "droughtEligible": true
+      },
+      "governance": {
+        "stage": "draft",
+        "contentHash": "993917518f203417",
+        "owner": "encounter-design",
+        "replaces": null
+      },
+      "example": {
+        "telegraphProse": "The double shadow turns a random ghost meeting into a readable trust problem.",
+        "stakesProse": "Test at DC 12, offer the one-use name at DC 10, or backtrack while accepting alert.",
+        "resolutionProse": "The apparition changes after every attempt; the fourth turn selects a persistent route and removes the event.",
+        "receiptProse": "The result records route, pilgrim identity, ghost-light, alert, milestone, and any pantry escape hook."
+      }
+    }
+  ]
+}

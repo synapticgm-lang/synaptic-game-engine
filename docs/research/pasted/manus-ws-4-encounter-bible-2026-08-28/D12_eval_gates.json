@@ -1,0 +1,191 @@
+{
+  "schemaVersion": "1.0.0",
+  "harnessId": "ws4.encounter-quality.v1",
+  "evaluationUnit": "run",
+  "aggregateWindow": {
+    "minimumRunsPerMode": 20,
+    "minimumSpawnedEncounters": 100,
+    "retainEventEvidence": true
+  },
+  "requiredEvents": [
+    "encounter.spawned",
+    "encounter.telegraph.rendered",
+    "encounter.action.accepted",
+    "encounter.state.delta",
+    "encounter.terminal",
+    "encounter.aftermath.applied",
+    "encounter.candidate.rejected",
+    "encounter.density.scope_closed"
+  ],
+  "gates": [
+    {
+      "id": "G1",
+      "name": "Every Encounter Resolves with a Receipt",
+      "criteria": "Every spawned encounter reaches exactly one terminal state within its declared maxTurns and has exactly one successfully applied aftermath receipt.",
+      "measurementMethod": {
+        "numerator": "count(distinct encounterId where terminalCount=1 and turnToTerminal<=maxTurns and appliedReceiptCount=1)",
+        "denominator": "count(distinct encounterId from encounter.spawned)",
+        "supportingChecks": [
+          "no encounter accepts an action after terminal",
+          "no filled terminal clock remains active",
+          "no active encounter exceeds maxTurns",
+          "receipt commit key is unique"
+        ]
+      },
+      "passThreshold": {
+        "perRun": "1.00",
+        "aggregate": "1.00",
+        "maximumViolations": 0
+      },
+      "failureEvidence": ["encounterId", "templateId", "spawnTurn", "maxTurns", "lastAction", "clockSnapshot", "ledgerHash", "receiptCount"]
+    },
+    {
+      "id": "G2",
+      "name": "Telegraph Coverage and Actionability",
+      "criteria": "At least 80% of spawned encounters render a pre-engagement STATUS, NPC, scene, item, or faction telegraph; every rendered cue maps to at least one legal action hook. Surprise encounters must satisfy their fairness exception.",
+      "measurementMethod": {
+        "numerator": "count(encounterId with telegraph.rendered.turn < encounter.engagement.turn)",
+        "denominator": "count(distinct encounterId from encounter.spawned)",
+        "supportingChecks": [
+          "every cue actionHook exists in the stakes packet",
+          "elite encounters have at least two distinct channels",
+          "boss encounters have at least three distinct channels",
+          "surprise encounter has suspicion cue or reaction window",
+          "surprise opening severity is not above moderate"
+        ]
+      },
+      "passThreshold": {
+        "perRun": ">=0.80 when run has five or more encounters; otherwise aggregate only",
+        "aggregate": ">=0.80",
+        "maximumUnactionableCues": 0,
+        "maximumUnfairSurprises": 0
+      },
+      "failureEvidence": ["encounterId", "templateId", "role", "channels", "renderTurn", "engagementTurn", "actionHooks", "surprisePolicy"]
+    },
+    {
+      "id": "G3",
+      "name": "Zero Wrong-Bible Spawns",
+      "criteria": "Every selected encounter and actor passes mode, bible, biome, site, faction reach, tier, prerequisite, exclusion, cooldown, and density-role checks.",
+      "measurementMethod": {
+        "numerator": "count(selected encounterId where all legality predicates are true)",
+        "denominator": "count(distinct encounterId from encounter.spawned)",
+        "supportingChecks": [
+          "drought picker never overrides a hard rejection",
+          "empty candidate set uses legal fallback or content-gap receipt",
+          "all actors have world-map authority at the site",
+          "loot entries also pass biome provenance"
+        ]
+      },
+      "passThreshold": {
+        "perRun": "1.00",
+        "aggregate": "1.00",
+        "maximumWrongBibleSpawns": 0,
+        "maximumHardFilterOverrides": 0
+      },
+      "failureEvidence": ["encounterId", "templateId", "mode", "bibleId", "biomeId", "siteTags", "actorIds", "failedPredicates", "droughtState"]
+    },
+    {
+      "id": "G4",
+      "name": "Density Targets Met",
+      "criteria": "Closed locations and chapters meet configured minimum and maximum role bands without saturation, duplicate one-shot crises, or cleared-node respawns.",
+      "measurementMethod": {
+        "profiles": {
+          "litrpg.dungeon.10-room": "trash 4-6; elite 1-2; boss exactly 1",
+          "dnd.keep.10-area": "combat 3-5; trap 1-2; hazard 1-2; skill 2-4; puzzle 1-2; boss exactly 1",
+          "rpg.hub.100-turn": "social 3-5; crisis 1-2; ambush 0-1",
+          "pyoa.chapter.60-turn": "unique crisis 2-4; at least one commitment fork"
+        },
+        "supportingChecks": [
+          "only terminal encounters count",
+          "no role exceeds configured maximum",
+          "no cleared node respawns without repopulation event",
+          "no one-shot crisis ID repeats",
+          "saturation and recovery guards hold"
+        ]
+      },
+      "passThreshold": {
+        "perClosedScope": "all applicable role bands pass",
+        "aggregate": ">=0.95 of closed scopes pass during canary; 1.00 required before stable",
+        "maximumBossCountDeviation": 0
+      },
+      "failureEvidence": ["scopeId", "profileId", "counts", "deficits", "excesses", "roomsOrTurns", "repeatedTemplateIds", "repopulationEvents"]
+    },
+    {
+      "id": "G5",
+      "name": "Aftermath Receipts Are Complete",
+      "criteria": "Every terminal encounter has at least two distinct nonempty receipt types and all receipt mutations reconcile with authoritative post-state.",
+      "measurementMethod": {
+        "numerator": "count(encounterId where distinct receipt types>=2 and every mutation reconciles and commitKey applied once)",
+        "denominator": "count(encounterId from encounter.terminal)",
+        "requiredBossTypes": ["xp-or-progression", "loot-or-campaign-asset", "quest-or-dungeon"],
+        "supportingChecks": [
+          "receipt beforeHash matches terminal ledger hash",
+          "receipt afterHash matches post-aftermath ledger hash",
+          "no duplicate XP or loot application",
+          "negotiated/fled/defeat terminals receive authored receipts"
+        ]
+      },
+      "passThreshold": {
+        "perRun": "1.00",
+        "aggregate": "1.00",
+        "minimumDistinctReceiptTypes": 2,
+        "maximumReconciliationFailures": 0,
+        "maximumDuplicateApplications": 0
+      },
+      "failureEvidence": ["encounterId", "terminalState", "receiptId", "commitKey", "types", "mutations", "beforeHash", "afterHash", "ledgerDiff"]
+    }
+  ],
+  "historicalRegressionFixtures": [
+    {
+      "id": "R1-summoned-pact-combat-purgatory",
+      "sourceScenario": "Gemini LitRPG s18",
+      "setup": "Spawn a Tier-appropriate Summoned Pact combat with fight, flee, and parley visible; drive adversarial choices for 300 turns.",
+      "assertions": [
+        "terminal turn is no greater than template maxTurns",
+        "flee or parley changes state on every accepted attempt",
+        "exactly one receipt is applied",
+        "no action is accepted after terminal"
+      ]
+    },
+    {
+      "id": "R2-cursed-keep-passive-gm",
+      "sourceScenario": "Gemini DnD s69",
+      "setup": "Traverse a 10-area Cursed Keep with no manually forced encounters.",
+      "assertions": [
+        "DnD density minima include combat, trap or hazard, skill check or puzzle, and boss",
+        "each d20 action records die, modifier, target, and result",
+        "cleared nodes do not respawn"
+      ]
+    },
+    {
+      "id": "R3-cape-district-pad-loop",
+      "sourceScenario": "Gemini RPG s137",
+      "setup": "Attempt Walk Away and the same leverage topic repeatedly during a Cape District confrontation.",
+      "assertions": [
+        "Walk Away commits a terminal fled outcome and cooldown",
+        "leverage is consumed or discredited after one resolution",
+        "repeated unchanged leverage action is rejected without consuming a turn",
+        "a faction NPC or quest receipt persists"
+      ]
+    },
+    {
+      "id": "R4-thornferry-theater-branching",
+      "sourceScenario": "Gemini PYOA s188",
+      "setup": "Resolve Millstone Charter then advance through its convergence and ending gate.",
+      "assertions": [
+        "one holder fact is true and the opposed fact is locked",
+        "the hearing callback differs by choice",
+        "ending eligibility differs by choice",
+        "resolved crisis cannot spawn again"
+      ]
+    }
+  ],
+  "reportShape": {
+    "runId": "string",
+    "mode": "string",
+    "bibleId": "string",
+    "gateResults": "array of gate ID, pass boolean, numerator, denominator, threshold, evidence",
+    "overallPass": "boolean; true only when every applicable gate passes",
+    "contentGaps": "array of bible, biome, role, rejected candidates and reasons"
+  }
+}

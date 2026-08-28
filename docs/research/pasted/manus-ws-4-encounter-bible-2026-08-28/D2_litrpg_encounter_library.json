@@ -1,0 +1,2324 @@
+{
+  "schemaVersion": "1.0.0",
+  "libraryId": "ws4.litrpg.summoned-pact",
+  "mode": "litrpg",
+  "bibleId": "summoned-pact",
+  "templates": [
+    {
+      "schemaVersion": "1.0.0",
+      "templateVersion": "1.0.0",
+      "id": "summoned-pact.hub-ambush.ashknife-cell",
+      "mode": "litrpg",
+      "bibleId": "summoned-pact",
+      "name": "Ashknife Cell at the Contract Market",
+      "role": "ambush",
+      "summary": "Assassins collapse a contract-market ward and strike from shuttered stalls.",
+      "telegraph": {
+        "required": false,
+        "channels": [
+          "scene"
+        ],
+        "cues": [
+          {
+            "channel": "scene",
+            "signal": "Every contract bell stops on the same note and awnings drop in sequence.",
+            "inference": "A coordinated isolation ambush is beginning.",
+            "actionHook": "flee"
+          }
+        ],
+        "responseWindowTurns": 0,
+        "surpriseEligible": true,
+        "openingSeverityCap": "moderate"
+      },
+      "stakes": {
+        "headline": "Survive the cell without letting its paymaster erase the market ledgers.",
+        "approaches": [
+          {
+            "id": "fight",
+            "label": "Break the isolation ward and fight",
+            "requirements": [
+              "player:combat_capable"
+            ],
+            "method": "combat",
+            "check": {
+              "clock": {
+                "successSegments": 4,
+                "dangerSegments": 4
+              }
+            },
+            "onSuccess": {
+              "terminal": true,
+              "stateChanges": [
+                "enemy:ashknife-cell:defeated",
+                "objective:contract-market-security:complete"
+              ],
+              "summary": "The cell is defeated and the market ward stabilizes.",
+              "terminalState": "victory"
+            },
+            "onPartial": {
+              "terminal": false,
+              "stateChanges": [
+                "enemy:ashknife-cell:hp:decrement",
+                "player:resource:decrement:resolved_cost"
+              ],
+              "summary": "Damage is committed while a separate cost is paid."
+            },
+            "onFailure": {
+              "terminal": false,
+              "stateChanges": [
+                "player:hp:decrement_resolved_damage",
+                "encounter:danger:increment:1"
+              ],
+              "summary": "The enemy lands a resolved hit and danger rises; the encounter state cannot remain unchanged."
+            },
+            "lockout": "Each combat action changes HP, resources, position, or danger before it can be offered again."
+          },
+          {
+            "id": "flee",
+            "label": "Flee through the archive turnstile",
+            "requirements": [
+              "route:guild-archive:available"
+            ],
+            "method": "clock",
+            "check": {
+              "clock": {
+                "successSegments": 4,
+                "dangerSegments": 4
+              }
+            },
+            "onSuccess": {
+              "terminal": true,
+              "stateChanges": [
+                "location:set:guild-archive",
+                "resource:stamina:decrement:flee_cost",
+                "encounter:set:fled"
+              ],
+              "summary": "The player escapes into the warded archive while the market enters lockdown.",
+              "terminalState": "fled"
+            },
+            "onPartial": {
+              "terminal": true,
+              "stateChanges": [
+                "location:set:guild-archive",
+                "player:condition:add:winded",
+                "loot:carried_unbound:remove:1"
+              ],
+              "summary": "Escape succeeds with a visible injury or lost carried item.",
+              "terminalState": "fled"
+            },
+            "onFailure": {
+              "terminal": false,
+              "stateChanges": [
+                "encounter:escape_route:lock_current",
+                "encounter:danger:increment:2",
+                "resource:stamina:decrement:1"
+              ],
+              "summary": "The current route closes, danger advances, and a different route or tactic is required."
+            },
+            "lockout": "Failure locks the current route and modifies the next flee option."
+          },
+          {
+            "id": "negotiate",
+            "label": "Expose the captured Ashknife seal",
+            "requirements": [
+              "resource:captured-ashknife-seal:available",
+              "enemy:leader:hp<=50_percent"
+            ],
+            "method": "deterministic",
+            "onSuccess": {
+              "terminal": true,
+              "stateChanges": [
+                "resource:captured-ashknife-seal:remove:1",
+                "enemy:ashknife-cell:state:withdrawn-under-blackmail",
+                "encounter:set:negotiated"
+              ],
+              "summary": "The assassins withdraw to protect their paymaster.",
+              "terminalState": "negotiated"
+            },
+            "onFailure": {
+              "terminal": false,
+              "stateChanges": [
+                "resource:captured-ashknife-seal:set:discredited",
+                "encounter:danger:increment:2",
+                "approach:negotiate:lock"
+              ],
+              "summary": "The offer is rejected and discredited; the same concession cannot be repeated."
+            },
+            "lockout": "The leverage is consumed on success or discredited on refusal."
+          }
+        ]
+      },
+      "resolution": {
+        "mechanic": "combat",
+        "config": {
+          "tierBand": "T3-T5",
+          "enemyHp": 48,
+          "damageRule": "max(1, attack + skill + seededVariance - defense)",
+          "fleeRule": "opposed success/danger clocks; route locks after failed attempt",
+          "parleyRule": "requires named leverage and threshold; consume or discredit once"
+        },
+        "terminalStates": [
+          "victory",
+          "defeat",
+          "fled",
+          "negotiated",
+          "partial"
+        ],
+        "maxTurns": 6,
+        "forcedTerminal": {
+          "terminal": true,
+          "stateChanges": [
+            "location:set:guild-archive",
+            "player:condition:add:cut",
+            "market:set:lockdown"
+          ],
+          "summary": "At the bound, wardens drag the player through the archive gate; escape succeeds with a cut and market lockdown.",
+          "terminalState": "fled"
+        },
+        "antiRepeatRule": "Every action mutates HP, a clock, a resource, position, legality, or terminal state."
+      },
+      "aftermath": {
+        "minimumReceiptTypes": 2,
+        "byTerminal": {
+          "victory": [
+            {
+              "type": "xp",
+              "target": "player.progression",
+              "operation": "add",
+              "value": 220
+            },
+            {
+              "type": "loot",
+              "target": "litrpg.elite.assassin",
+              "operation": "unlock",
+              "value": "shadowsteel component or contract cipher"
+            },
+            {
+              "type": "dungeon",
+              "target": "contract-market-security",
+              "operation": "set",
+              "value": "cleared"
+            }
+          ],
+          "fled": [
+            {
+              "type": "dungeon",
+              "target": "contract-market-security",
+              "operation": "set",
+              "value": "unresolved_cooldown"
+            },
+            {
+              "type": "quest",
+              "target": "find-the-ashknife-paymaster",
+              "operation": "unlock",
+              "value": true
+            }
+          ],
+          "negotiated": [
+            {
+              "type": "faction",
+              "target": "contract-guild",
+              "operation": "increment",
+              "value": 1
+            },
+            {
+              "type": "npc",
+              "target": "ashknife-cell",
+              "operation": "set",
+              "value": "withdrawn-under-blackmail"
+            },
+            {
+              "type": "quest",
+              "target": "find-the-ashknife-paymaster",
+              "operation": "unlock",
+              "value": true
+            }
+          ],
+          "defeat": [
+            {
+              "type": "npc",
+              "target": "player",
+              "operation": "set",
+              "value": "captured-by-ashknife"
+            },
+            {
+              "type": "quest",
+              "target": "escape-the-cellar-cart",
+              "operation": "unlock",
+              "value": true
+            }
+          ]
+        }
+      },
+      "biomeFilter": {
+        "allow": [
+          "urban-hub",
+          "arcane-market"
+        ],
+        "siteTags": [
+          "market",
+          "warded-safe-zone"
+        ],
+        "requireFactionTags": [
+          "ashknife"
+        ],
+        "exclude": [
+          "open-ocean",
+          "cursed-keep"
+        ]
+      },
+      "turnWindow": {
+        "earliest": 8,
+        "latest": 60,
+        "cooldown": 25,
+        "droughtEligible": false
+      },
+      "governance": {
+        "stage": "draft",
+        "contentHash": "4993f0f609b73c0b",
+        "owner": "encounter-design",
+        "replaces": null
+      },
+      "example": {
+        "telegraphProse": "The contract bells stop together; silk awnings snap down and a dropped coin rolls uphill toward a broken ward.",
+        "stakesProse": "Fight to secure the ledgers, flee through the warded archive at a stamina cost, or expose a captured Ashknife seal after the leader is wounded.",
+        "resolutionProse": "Each exchange changes HP or the danger clock; a failed escape locks that route, and the sixth turn forces a costly archive extraction.",
+        "receiptProse": "Victory records XP, an assassin-tier drop, and restored market security; flight records lockdown and opens the paymaster investigation."
+      }
+    },
+    {
+      "schemaVersion": "1.0.0",
+      "templateVersion": "1.0.0",
+      "id": "summoned-pact.dungeon-trash.chain-mites",
+      "mode": "litrpg",
+      "bibleId": "summoned-pact",
+      "name": "Chain-Mite Nest",
+      "role": "trash",
+      "summary": "Low-tier pact parasites feed on binding chains in a dungeon passage.",
+      "telegraph": {
+        "required": true,
+        "channels": [
+          "scene"
+        ],
+        "cues": [
+          {
+            "channel": "scene",
+            "signal": "Nickel-sized chain links tremble and shed translucent shells.",
+            "inference": "A pact-parasite nest is directly ahead.",
+            "actionHook": "fight"
+          }
+        ],
+        "responseWindowTurns": 1,
+        "surpriseEligible": false,
+        "openingSeverityCap": "none"
+      },
+      "stakes": {
+        "headline": "Clear, bypass, or retreat before the mites sever the corridor binding.",
+        "approaches": [
+          {
+            "id": "fight",
+            "label": "Clear the nest",
+            "requirements": [
+              "player:combat_capable"
+            ],
+            "method": "combat",
+            "check": {
+              "clock": {
+                "successSegments": 3,
+                "dangerSegments": 4
+              }
+            },
+            "onSuccess": {
+              "terminal": true,
+              "stateChanges": [
+                "enemy:chain-mite-nest:defeated",
+                "objective:ossuary-east-corridor:complete"
+              ],
+              "summary": "The nest is burned out and the corridor becomes safe.",
+              "terminalState": "victory"
+            },
+            "onPartial": {
+              "terminal": false,
+              "stateChanges": [
+                "enemy:chain-mite-nest:hp:decrement",
+                "player:resource:decrement:resolved_cost"
+              ],
+              "summary": "Damage is committed while a separate cost is paid."
+            },
+            "onFailure": {
+              "terminal": false,
+              "stateChanges": [
+                "player:hp:decrement_resolved_damage",
+                "encounter:danger:increment:1"
+              ],
+              "summary": "The enemy lands a resolved hit and danger rises; the encounter state cannot remain unchanged."
+            },
+            "lockout": "Each combat action changes HP, resources, position, or danger before it can be offered again."
+          },
+          {
+            "id": "flee",
+            "label": "Retreat to the sealed rest niche",
+            "requirements": [
+              "route:ossuary-rest-niche:available"
+            ],
+            "method": "clock",
+            "check": {
+              "clock": {
+                "successSegments": 4,
+                "dangerSegments": 4
+              }
+            },
+            "onSuccess": {
+              "terminal": true,
+              "stateChanges": [
+                "location:set:ossuary-rest-niche",
+                "resource:stamina:decrement:flee_cost",
+                "encounter:set:fled"
+              ],
+              "summary": "The player retreats to the sealed niche while the nest remains on cooldown.",
+              "terminalState": "fled"
+            },
+            "onPartial": {
+              "terminal": true,
+              "stateChanges": [
+                "location:set:ossuary-rest-niche",
+                "player:condition:add:winded",
+                "loot:carried_unbound:remove:1"
+              ],
+              "summary": "Escape succeeds with a visible injury or lost carried item.",
+              "terminalState": "fled"
+            },
+            "onFailure": {
+              "terminal": false,
+              "stateChanges": [
+                "encounter:escape_route:lock_current",
+                "encounter:danger:increment:2",
+                "resource:stamina:decrement:1"
+              ],
+              "summary": "The current route closes, danger advances, and a different route or tactic is required."
+            },
+            "lockout": "Failure locks the current route and modifies the next flee option."
+          },
+          {
+            "id": "negotiate",
+            "label": "Lure the brood with scent",
+            "requirements": [
+              "resource:brood-scent-vial:available",
+              "item:brood-scent-vial:available"
+            ],
+            "method": "deterministic",
+            "onSuccess": {
+              "terminal": true,
+              "stateChanges": [
+                "resource:brood-scent-vial:remove:1",
+                "enemy:chain-mite-nest:state:lured-away",
+                "encounter:set:negotiated"
+              ],
+              "summary": "The brood follows the scent vial into a disposal shaft.",
+              "terminalState": "negotiated"
+            },
+            "onFailure": {
+              "terminal": false,
+              "stateChanges": [
+                "resource:brood-scent-vial:set:discredited",
+                "encounter:danger:increment:2",
+                "approach:negotiate:lock"
+              ],
+              "summary": "The offer is rejected and discredited; the same concession cannot be repeated."
+            },
+            "lockout": "The leverage is consumed on success or discredited on refusal."
+          }
+        ]
+      },
+      "resolution": {
+        "mechanic": "combat",
+        "config": {
+          "tierBand": "T1-T3",
+          "enemyHp": 24,
+          "damageRule": "max(1, attack + skill + seededVariance - defense)",
+          "fleeRule": "opposed success/danger clocks; route locks after failed attempt",
+          "parleyRule": "requires named leverage and threshold; consume or discredit once"
+        },
+        "terminalStates": [
+          "victory",
+          "defeat",
+          "fled",
+          "negotiated",
+          "partial"
+        ],
+        "maxTurns": 4,
+        "forcedTerminal": {
+          "terminal": true,
+          "stateChanges": [
+            "location:set:ossuary-rest-niche",
+            "player:condition:add:bitten",
+            "dungeon:nest:set:cooldown"
+          ],
+          "summary": "The player slams the niche seal and escapes with a bite; the nest remains uncleared.",
+          "terminalState": "fled"
+        },
+        "antiRepeatRule": "Every action mutates HP, a clock, a resource, position, legality, or terminal state."
+      },
+      "aftermath": {
+        "minimumReceiptTypes": 2,
+        "byTerminal": {
+          "victory": [
+            {
+              "type": "xp",
+              "target": "player.progression",
+              "operation": "add",
+              "value": 70
+            },
+            {
+              "type": "loot",
+              "target": "litrpg.trash.vermin",
+              "operation": "unlock",
+              "value": "binding chitin and minor tonic"
+            },
+            {
+              "type": "dungeon",
+              "target": "ossuary-east-corridor",
+              "operation": "set",
+              "value": "cleared"
+            }
+          ],
+          "fled": [
+            {
+              "type": "dungeon",
+              "target": "ossuary-east-corridor",
+              "operation": "set",
+              "value": "unresolved_cooldown"
+            },
+            {
+              "type": "quest",
+              "target": "smoke-the-chain-mite-nest",
+              "operation": "unlock",
+              "value": true
+            }
+          ],
+          "negotiated": [
+            {
+              "type": "faction",
+              "target": "ossuary-keepers",
+              "operation": "increment",
+              "value": 1
+            },
+            {
+              "type": "npc",
+              "target": "chain-mite-nest",
+              "operation": "set",
+              "value": "lured-away"
+            },
+            {
+              "type": "quest",
+              "target": "smoke-the-chain-mite-nest",
+              "operation": "unlock",
+              "value": true
+            }
+          ],
+          "defeat": [
+            {
+              "type": "npc",
+              "target": "player",
+              "operation": "set",
+              "value": "infested"
+            },
+            {
+              "type": "quest",
+              "target": "seek-keeper-antidote",
+              "operation": "unlock",
+              "value": true
+            }
+          ]
+        }
+      },
+      "biomeFilter": {
+        "allow": [
+          "crypt-dungeon",
+          "chain-vault"
+        ],
+        "siteTags": [
+          "corridor",
+          "vermin-nest"
+        ],
+        "requireFactionTags": [
+          "pact-vermin"
+        ],
+        "exclude": [
+          "urban-hub",
+          "shattered-coast"
+        ]
+      },
+      "turnWindow": {
+        "earliest": 1,
+        "latest": 20,
+        "cooldown": 5,
+        "droughtEligible": true
+      },
+      "governance": {
+        "stage": "draft",
+        "contentHash": "d6426c7915807521",
+        "owner": "encounter-design",
+        "replaces": null
+      },
+      "example": {
+        "telegraphProse": "Empty shells click across the stones while the binding chains tremble against the draft.",
+        "stakesProse": "Fight for XP and crafting chitin, retreat to the sealed niche, or spend the unique scent vial to lure the brood away.",
+        "resolutionProse": "The low-tier fight lasts at most four turns; every hit updates HP, and any failed route is removed from the next choice set.",
+        "receiptProse": "The receipt grants 70 XP, a trash-table roll, and marks the east corridor cleared or records the unresolved-nest follow-up."
+      }
+    },
+    {
+      "schemaVersion": "1.0.0",
+      "templateVersion": "1.0.0",
+      "id": "summoned-pact.miniboss.covenant-devourer",
+      "mode": "litrpg",
+      "bibleId": "summoned-pact",
+      "name": "Covenant Devourer",
+      "role": "elite",
+      "summary": "A rogue summon eats active contracts and grows stronger from unused skills.",
+      "telegraph": {
+        "required": true,
+        "channels": [
+          "status",
+          "item"
+        ],
+        "cues": [
+          {
+            "channel": "status",
+            "signal": "PACT INTEGRITY falls whenever an unused skill icon flickers.",
+            "inference": "The elite feeds on dormant abilities.",
+            "actionHook": "fight"
+          },
+          {
+            "channel": "item",
+            "signal": "A true-name fragment warms when the ward plates crack.",
+            "inference": "It can enable a nonlethal binding after setup.",
+            "actionHook": "negotiate"
+          }
+        ],
+        "responseWindowTurns": 2,
+        "surpriseEligible": false,
+        "openingSeverityCap": "none"
+      },
+      "stakes": {
+        "headline": "Stop the devourer before it steals a permanent skill slot.",
+        "approaches": [
+          {
+            "id": "fight",
+            "label": "Shatter its contract plates",
+            "requirements": [
+              "player:combat_capable"
+            ],
+            "method": "combat",
+            "check": {
+              "clock": {
+                "successSegments": 6,
+                "dangerSegments": 5
+              }
+            },
+            "onSuccess": {
+              "terminal": true,
+              "stateChanges": [
+                "enemy:covenant-devourer:defeated",
+                "objective:seal-hall-core:complete"
+              ],
+              "summary": "The devourer collapses and releases the stolen contract names.",
+              "terminalState": "victory"
+            },
+            "onPartial": {
+              "terminal": false,
+              "stateChanges": [
+                "enemy:covenant-devourer:hp:decrement",
+                "player:resource:decrement:resolved_cost"
+              ],
+              "summary": "Damage is committed while a separate cost is paid."
+            },
+            "onFailure": {
+              "terminal": false,
+              "stateChanges": [
+                "player:hp:decrement_resolved_damage",
+                "encounter:danger:increment:1"
+              ],
+              "summary": "The enemy lands a resolved hit and danger rises; the encounter state cannot remain unchanged."
+            },
+            "lockout": "Each combat action changes HP, resources, position, or danger before it can be offered again."
+          },
+          {
+            "id": "flee",
+            "label": "Seal the antechamber and withdraw",
+            "requirements": [
+              "route:seal-hall-antechamber:available"
+            ],
+            "method": "clock",
+            "check": {
+              "clock": {
+                "successSegments": 4,
+                "dangerSegments": 4
+              }
+            },
+            "onSuccess": {
+              "terminal": true,
+              "stateChanges": [
+                "location:set:seal-hall-antechamber",
+                "resource:stamina:decrement:flee_cost",
+                "encounter:set:fled"
+              ],
+              "summary": "The party seals the antechamber and preserves the stolen-name quest.",
+              "terminalState": "fled"
+            },
+            "onPartial": {
+              "terminal": true,
+              "stateChanges": [
+                "location:set:seal-hall-antechamber",
+                "player:condition:add:winded",
+                "loot:carried_unbound:remove:1"
+              ],
+              "summary": "Escape succeeds with a visible injury or lost carried item.",
+              "terminalState": "fled"
+            },
+            "onFailure": {
+              "terminal": false,
+              "stateChanges": [
+                "encounter:escape_route:lock_current",
+                "encounter:danger:increment:2",
+                "resource:stamina:decrement:1"
+              ],
+              "summary": "The current route closes, danger advances, and a different route or tactic is required."
+            },
+            "lockout": "Failure locks the current route and modifies the next flee option."
+          },
+          {
+            "id": "negotiate",
+            "label": "Speak the recovered true-name fragment",
+            "requirements": [
+              "resource:true-name-fragment:available",
+              "enemy:ward-plates=0"
+            ],
+            "method": "deterministic",
+            "onSuccess": {
+              "terminal": true,
+              "stateChanges": [
+                "resource:true-name-fragment:remove:1",
+                "enemy:covenant-devourer:state:rebound-to-custodian",
+                "encounter:set:negotiated"
+              ],
+              "summary": "The fragment restores the original pact and ends hostility.",
+              "terminalState": "negotiated"
+            },
+            "onFailure": {
+              "terminal": false,
+              "stateChanges": [
+                "resource:true-name-fragment:set:discredited",
+                "encounter:danger:increment:2",
+                "approach:negotiate:lock"
+              ],
+              "summary": "The offer is rejected and discredited; the same concession cannot be repeated."
+            },
+            "lockout": "The leverage is consumed on success or discredited on refusal."
+          }
+        ]
+      },
+      "resolution": {
+        "mechanic": "combat",
+        "config": {
+          "tierBand": "T5-T7",
+          "enemyHp": 86,
+          "damageRule": "max(1, attack + skill + seededVariance - defense)",
+          "fleeRule": "opposed success/danger clocks; route locks after failed attempt",
+          "parleyRule": "requires named leverage and threshold; consume or discredit once"
+        },
+        "terminalStates": [
+          "victory",
+          "defeat",
+          "fled",
+          "negotiated",
+          "partial"
+        ],
+        "maxTurns": 8,
+        "forcedTerminal": {
+          "terminal": true,
+          "stateChanges": [
+            "player:active-skill:lock:1",
+            "enemy:set:escaped-with-contract",
+            "quest:recover-stolen-skill:unlock"
+          ],
+          "summary": "The devourer consumes one active skill and escapes; the battle ends with a recovery quest.",
+          "terminalState": "defeat"
+        },
+        "antiRepeatRule": "Every action mutates HP, a clock, a resource, position, legality, or terminal state."
+      },
+      "aftermath": {
+        "minimumReceiptTypes": 3,
+        "byTerminal": {
+          "victory": [
+            {
+              "type": "xp",
+              "target": "player.progression",
+              "operation": "add",
+              "value": 680
+            },
+            {
+              "type": "loot",
+              "target": "litrpg.elite.pact",
+              "operation": "unlock",
+              "value": "named pact core and rare contract ink"
+            },
+            {
+              "type": "dungeon",
+              "target": "seal-hall-core",
+              "operation": "set",
+              "value": "cleared"
+            }
+          ],
+          "fled": [
+            {
+              "type": "dungeon",
+              "target": "seal-hall-core",
+              "operation": "set",
+              "value": "unresolved_cooldown"
+            },
+            {
+              "type": "quest",
+              "target": "audit-the-devoured-contracts",
+              "operation": "unlock",
+              "value": true
+            }
+          ],
+          "negotiated": [
+            {
+              "type": "faction",
+              "target": "summoners-collegium",
+              "operation": "increment",
+              "value": 2
+            },
+            {
+              "type": "npc",
+              "target": "covenant-devourer",
+              "operation": "set",
+              "value": "rebound-to-custodian"
+            },
+            {
+              "type": "quest",
+              "target": "audit-the-devoured-contracts",
+              "operation": "unlock",
+              "value": true
+            }
+          ],
+          "defeat": [
+            {
+              "type": "npc",
+              "target": "player",
+              "operation": "set",
+              "value": "skill-sealed"
+            },
+            {
+              "type": "quest",
+              "target": "recover-stolen-skill",
+              "operation": "unlock",
+              "value": true
+            }
+          ]
+        }
+      },
+      "biomeFilter": {
+        "allow": [
+          "arcane-dungeon",
+          "contract-vault"
+        ],
+        "siteTags": [
+          "seal-hall",
+          "miniboss-room"
+        ],
+        "requireFactionTags": [
+          "rogue-summon"
+        ],
+        "exclude": [
+          "mundane-coast",
+          "peaceful-hub"
+        ]
+      },
+      "turnWindow": {
+        "earliest": 8,
+        "latest": 40,
+        "cooldown": 20,
+        "droughtEligible": false
+      },
+      "governance": {
+        "stage": "draft",
+        "contentHash": "de32cbc511d2ba86",
+        "owner": "encounter-design",
+        "replaces": null
+      },
+      "example": {
+        "telegraphProse": "Unused skill icons flicker as contract names peel from the walls; the true-name fragment warms when the creature exposes a plate.",
+        "stakesProse": "Break six progress segments, retreat behind the antechamber seal, or speak the true name once both ward plates are gone.",
+        "resolutionProse": "Failed attacks deal ledger damage and advance consumption danger; at turn eight the creature steals one skill and exits, ending the encounter.",
+        "receiptProse": "Victory grants 680 XP, elite pact loot, and releases the stolen names; binding adds Collegium standing and a custodian NPC state."
+      }
+    },
+    {
+      "schemaVersion": "1.0.0",
+      "templateVersion": "1.0.0",
+      "id": "summoned-pact.boss.null-notary",
+      "mode": "litrpg",
+      "bibleId": "summoned-pact",
+      "name": "The Null Notary",
+      "role": "boss",
+      "summary": "A boss that voids one declared action each phase unless its seal clauses are countered.",
+      "telegraph": {
+        "required": true,
+        "channels": [
+          "status",
+          "scene",
+          "item"
+        ],
+        "cues": [
+          {
+            "channel": "status",
+            "signal": "ENCOUNTER RULE: the first repeated action each phase is voided.",
+            "inference": "Action variety is required.",
+            "actionHook": "fight"
+          },
+          {
+            "channel": "scene",
+            "signal": "Three seal desks face the core and a service vault stands behind the witness rail.",
+            "inference": "The room contains objectives and an escape route.",
+            "actionHook": "flee"
+          },
+          {
+            "channel": "item",
+            "signal": "The original summons writ carries the Notary’s unvoided signature.",
+            "inference": "It can compel recognition after the null seal breaks.",
+            "actionHook": "negotiate"
+          }
+        ],
+        "responseWindowTurns": 3,
+        "surpriseEligible": false,
+        "openingSeverityCap": "none"
+      },
+      "stakes": {
+        "headline": "Claim the black ledger before the twelfth seal closes.",
+        "approaches": [
+          {
+            "id": "fight",
+            "label": "Break three seal clauses and strike the core",
+            "requirements": [
+              "player:combat_capable"
+            ],
+            "method": "combat",
+            "check": {
+              "clock": {
+                "successSegments": 8,
+                "dangerSegments": 6
+              }
+            },
+            "onSuccess": {
+              "terminal": true,
+              "stateChanges": [
+                "enemy:null-notary:defeated",
+                "objective:black-ledger-sanctum:complete"
+              ],
+              "summary": "The Notary is defeated and the black ledger accepts the player as lawful claimant.",
+              "terminalState": "victory"
+            },
+            "onPartial": {
+              "terminal": false,
+              "stateChanges": [
+                "enemy:null-notary:hp:decrement",
+                "player:resource:decrement:resolved_cost"
+              ],
+              "summary": "Damage is committed while a separate cost is paid."
+            },
+            "onFailure": {
+              "terminal": false,
+              "stateChanges": [
+                "player:hp:decrement_resolved_damage",
+                "encounter:danger:increment:1"
+              ],
+              "summary": "The enemy lands a resolved hit and danger rises; the encounter state cannot remain unchanged."
+            },
+            "lockout": "Each combat action changes HP, resources, position, or danger before it can be offered again."
+          },
+          {
+            "id": "flee",
+            "label": "Escape through the service vault",
+            "requirements": [
+              "route:sanctum-service-vault:available"
+            ],
+            "method": "clock",
+            "check": {
+              "clock": {
+                "successSegments": 4,
+                "dangerSegments": 4
+              }
+            },
+            "onSuccess": {
+              "terminal": true,
+              "stateChanges": [
+                "location:set:sanctum-service-vault",
+                "resource:stamina:decrement:flee_cost",
+                "encounter:set:fled"
+              ],
+              "summary": "The party reaches the service vault while the Notary claims the ledger.",
+              "terminalState": "fled"
+            },
+            "onPartial": {
+              "terminal": true,
+              "stateChanges": [
+                "location:set:sanctum-service-vault",
+                "player:condition:add:winded",
+                "loot:carried_unbound:remove:1"
+              ],
+              "summary": "Escape succeeds with a visible injury or lost carried item.",
+              "terminalState": "fled"
+            },
+            "onFailure": {
+              "terminal": false,
+              "stateChanges": [
+                "encounter:escape_route:lock_current",
+                "encounter:danger:increment:2",
+                "resource:stamina:decrement:1"
+              ],
+              "summary": "The current route closes, danger advances, and a different route or tactic is required."
+            },
+            "lockout": "Failure locks the current route and modifies the next flee option."
+          },
+          {
+            "id": "negotiate",
+            "label": "Present the original summons writ",
+            "requirements": [
+              "resource:original-summons-writ:available",
+              "boss:null-seal:broken"
+            ],
+            "method": "deterministic",
+            "onSuccess": {
+              "terminal": true,
+              "stateChanges": [
+                "resource:original-summons-writ:remove:1",
+                "enemy:null-notary:state:recognized-claimant",
+                "encounter:set:negotiated"
+              ],
+              "summary": "The writ compels the Notary to recognize the player and dissolve the fight.",
+              "terminalState": "negotiated"
+            },
+            "onFailure": {
+              "terminal": false,
+              "stateChanges": [
+                "resource:original-summons-writ:set:discredited",
+                "encounter:danger:increment:2",
+                "approach:negotiate:lock"
+              ],
+              "summary": "The offer is rejected and discredited; the same concession cannot be repeated."
+            },
+            "lockout": "The leverage is consumed on success or discredited on refusal."
+          }
+        ]
+      },
+      "resolution": {
+        "mechanic": "combat",
+        "config": {
+          "tierBand": "T8-T10",
+          "enemyHp": 160,
+          "damageRule": "max(1, attack + skill + seededVariance - defense)",
+          "fleeRule": "opposed success/danger clocks; route locks after failed attempt",
+          "parleyRule": "requires named leverage and threshold; consume or discredit once"
+        },
+        "terminalStates": [
+          "victory",
+          "defeat",
+          "fled",
+          "negotiated",
+          "partial"
+        ],
+        "maxTurns": 12,
+        "forcedTerminal": {
+          "terminal": true,
+          "stateChanges": [
+            "boss:set:ledger-claimed",
+            "party:condition:add:oathburn",
+            "quest:appeal-null-judgment:unlock"
+          ],
+          "summary": "The twelfth seal closes; the Notary claims the ledger and brands the party, then the encounter ends.",
+          "terminalState": "defeat"
+        },
+        "antiRepeatRule": "Every action mutates HP, a clock, a resource, position, legality, or terminal state."
+      },
+      "aftermath": {
+        "minimumReceiptTypes": 4,
+        "byTerminal": {
+          "victory": [
+            {
+              "type": "xp",
+              "target": "player.progression",
+              "operation": "add",
+              "value": 1800
+            },
+            {
+              "type": "loot",
+              "target": "litrpg.boss.null-notary",
+              "operation": "unlock",
+              "value": "Null Quill, boss currency, and guaranteed build item"
+            },
+            {
+              "type": "dungeon",
+              "target": "black-ledger-sanctum",
+              "operation": "set",
+              "value": "cleared"
+            }
+          ],
+          "fled": [
+            {
+              "type": "dungeon",
+              "target": "black-ledger-sanctum",
+              "operation": "set",
+              "value": "unresolved_cooldown"
+            },
+            {
+              "type": "quest",
+              "target": "rewrite-the-black-ledger",
+              "operation": "unlock",
+              "value": true
+            }
+          ],
+          "negotiated": [
+            {
+              "type": "faction",
+              "target": "summoners-collegium",
+              "operation": "increment",
+              "value": 3
+            },
+            {
+              "type": "npc",
+              "target": "null-notary",
+              "operation": "set",
+              "value": "recognized-claimant"
+            },
+            {
+              "type": "quest",
+              "target": "rewrite-the-black-ledger",
+              "operation": "unlock",
+              "value": true
+            }
+          ],
+          "defeat": [
+            {
+              "type": "npc",
+              "target": "player",
+              "operation": "set",
+              "value": "oathburned"
+            },
+            {
+              "type": "quest",
+              "target": "appeal-null-judgment",
+              "operation": "unlock",
+              "value": true
+            }
+          ]
+        }
+      },
+      "biomeFilter": {
+        "allow": [
+          "contract-vault",
+          "void-court"
+        ],
+        "siteTags": [
+          "boss-sanctum",
+          "ledger-core"
+        ],
+        "requireFactionTags": [
+          "null-court"
+        ],
+        "exclude": [
+          "shattered-coast",
+          "forest-road"
+        ]
+      },
+      "turnWindow": {
+        "earliest": 25,
+        "latest": 90,
+        "cooldown": 999,
+        "droughtEligible": false
+      },
+      "governance": {
+        "stage": "draft",
+        "contentHash": "74fa2d914bb0a5ed",
+        "owner": "encounter-design",
+        "replaces": null
+      },
+      "example": {
+        "telegraphProse": "The status panel reveals the repeated-action void, three seal desks mark the phases, and the signed writ remains bright in the boss’s shadow.",
+        "stakesProse": "Win by breaking clauses and the core, flee to the service vault at the cost of the ledger, or compel recognition after breaking the null seal.",
+        "resolutionProse": "The fight uses eight success and six danger segments with HP accounting; turn twelve commits defeat and an appeal quest rather than continuing.",
+        "receiptProse": "Victory emits XP, guaranteed boss loot, sanctum clearance, and quest/faction receipts; all alternatives produce at least two durable outcomes."
+      }
+    },
+    {
+      "schemaVersion": "1.0.0",
+      "templateVersion": "1.0.0",
+      "id": "summoned-pact.arena-duel.bronze-oath",
+      "mode": "litrpg",
+      "bibleId": "summoned-pact",
+      "name": "Bronze Oath Arena Duel",
+      "role": "duel",
+      "summary": "A nonlethal formal duel where crowd favor can enable an honorable draw.",
+      "telegraph": {
+        "required": true,
+        "channels": [
+          "npc",
+          "status"
+        ],
+        "cues": [
+          {
+            "channel": "npc",
+            "signal": "The herald states the surrender, draw, and time-limit rules before the gates lock.",
+            "inference": "The duel has visible nonlethal terminal states.",
+            "actionHook": "negotiate"
+          },
+          {
+            "channel": "status",
+            "signal": "Crowd Favor 2/3; one display of restraint unlocks a draw offer.",
+            "inference": "A social terminal can be earned during combat.",
+            "actionHook": "fight"
+          }
+        ],
+        "responseWindowTurns": 2,
+        "surpriseEligible": false,
+        "openingSeverityCap": "none"
+      },
+      "stakes": {
+        "headline": "Win the circuit, yield safely, or earn an honorable draw before the gong.",
+        "approaches": [
+          {
+            "id": "fight",
+            "label": "Duel to formal surrender",
+            "requirements": [
+              "player:combat_capable"
+            ],
+            "method": "combat",
+            "check": {
+              "clock": {
+                "successSegments": 5,
+                "dangerSegments": 5
+              }
+            },
+            "onSuccess": {
+              "terminal": true,
+              "stateChanges": [
+                "enemy:bronze-oath-champion:defeated",
+                "objective:arena-bronze-circuit:complete"
+              ],
+              "summary": "The champion yields under arena law and the player takes the bronze circuit.",
+              "terminalState": "victory"
+            },
+            "onPartial": {
+              "terminal": false,
+              "stateChanges": [
+                "enemy:bronze-oath-champion:hp:decrement",
+                "player:resource:decrement:resolved_cost"
+              ],
+              "summary": "Damage is committed while a separate cost is paid."
+            },
+            "onFailure": {
+              "terminal": false,
+              "stateChanges": [
+                "player:hp:decrement_resolved_damage",
+                "encounter:danger:increment:1"
+              ],
+              "summary": "The enemy lands a resolved hit and danger rises; the encounter state cannot remain unchanged."
+            },
+            "lockout": "Each combat action changes HP, resources, position, or danger before it can be offered again."
+          },
+          {
+            "id": "flee",
+            "label": "Yield through the healers’ gate",
+            "requirements": [
+              "route:healers-gate:available"
+            ],
+            "method": "clock",
+            "check": {
+              "clock": {
+                "successSegments": 4,
+                "dangerSegments": 4
+              }
+            },
+            "onSuccess": {
+              "terminal": true,
+              "stateChanges": [
+                "location:set:healers-gate",
+                "resource:stamina:decrement:flee_cost",
+                "encounter:set:fled"
+              ],
+              "summary": "The player yields and exits through the healers’ gate.",
+              "terminalState": "fled"
+            },
+            "onPartial": {
+              "terminal": true,
+              "stateChanges": [
+                "location:set:healers-gate",
+                "player:condition:add:winded",
+                "loot:carried_unbound:remove:1"
+              ],
+              "summary": "Escape succeeds with a visible injury or lost carried item.",
+              "terminalState": "fled"
+            },
+            "onFailure": {
+              "terminal": false,
+              "stateChanges": [
+                "encounter:escape_route:lock_current",
+                "encounter:danger:increment:2",
+                "resource:stamina:decrement:1"
+              ],
+              "summary": "The current route closes, danger advances, and a different route or tactic is required."
+            },
+            "lockout": "Failure locks the current route and modifies the next flee option."
+          },
+          {
+            "id": "negotiate",
+            "label": "Spend crowd favor to propose a draw",
+            "requirements": [
+              "resource:crowd-favor-token:available",
+              "crowd-favor>=3"
+            ],
+            "method": "deterministic",
+            "onSuccess": {
+              "terminal": true,
+              "stateChanges": [
+                "resource:crowd-favor-token:remove:1",
+                "enemy:bronze-oath-champion:state:honorable-draw",
+                "encounter:set:negotiated"
+              ],
+              "summary": "The champion accepts a draw that preserves both standings.",
+              "terminalState": "negotiated"
+            },
+            "onFailure": {
+              "terminal": false,
+              "stateChanges": [
+                "resource:crowd-favor-token:set:discredited",
+                "encounter:danger:increment:2",
+                "approach:negotiate:lock"
+              ],
+              "summary": "The offer is rejected and discredited; the same concession cannot be repeated."
+            },
+            "lockout": "The leverage is consumed on success or discredited on refusal."
+          }
+        ]
+      },
+      "resolution": {
+        "mechanic": "combat",
+        "config": {
+          "tierBand": "T4-T6",
+          "enemyHp": 72,
+          "damageRule": "max(1, attack + skill + seededVariance - defense)",
+          "fleeRule": "opposed success/danger clocks; route locks after failed attempt",
+          "parleyRule": "requires named leverage and threshold; consume or discredit once"
+        },
+        "terminalStates": [
+          "victory",
+          "defeat",
+          "fled",
+          "negotiated",
+          "partial"
+        ],
+        "maxTurns": 10,
+        "forcedTerminal": {
+          "terminal": true,
+          "stateChanges": [
+            "encounter:set:time-limit-draw",
+            "faction:arena:increment:1",
+            "loot:champion-prize:lock"
+          ],
+          "summary": "The gong ends the match as a draw; standing rises slightly but the champion prize remains locked.",
+          "terminalState": "partial"
+        },
+        "antiRepeatRule": "Every action mutates HP, a clock, a resource, position, legality, or terminal state."
+      },
+      "aftermath": {
+        "minimumReceiptTypes": 2,
+        "byTerminal": {
+          "victory": [
+            {
+              "type": "xp",
+              "target": "player.progression",
+              "operation": "add",
+              "value": 420
+            },
+            {
+              "type": "loot",
+              "target": "litrpg.elite.arena",
+              "operation": "unlock",
+              "value": "Bronze Oath medallion or arena technique"
+            },
+            {
+              "type": "dungeon",
+              "target": "arena-bronze-circuit",
+              "operation": "set",
+              "value": "cleared"
+            }
+          ],
+          "fled": [
+            {
+              "type": "dungeon",
+              "target": "arena-bronze-circuit",
+              "operation": "set",
+              "value": "unresolved_cooldown"
+            },
+            {
+              "type": "quest",
+              "target": "arena-silver-circuit",
+              "operation": "unlock",
+              "value": true
+            }
+          ],
+          "negotiated": [
+            {
+              "type": "faction",
+              "target": "arena-guild",
+              "operation": "increment",
+              "value": 1
+            },
+            {
+              "type": "npc",
+              "target": "bronze-oath-champion",
+              "operation": "set",
+              "value": "honorable-draw"
+            },
+            {
+              "type": "quest",
+              "target": "arena-silver-circuit",
+              "operation": "unlock",
+              "value": true
+            }
+          ],
+          "defeat": [
+            {
+              "type": "npc",
+              "target": "player",
+              "operation": "set",
+              "value": "arena-defeated"
+            },
+            {
+              "type": "quest",
+              "target": "train-with-the-champion",
+              "operation": "unlock",
+              "value": true
+            }
+          ]
+        }
+      },
+      "biomeFilter": {
+        "allow": [
+          "urban-hub",
+          "arena"
+        ],
+        "siteTags": [
+          "formal-duel",
+          "spectators"
+        ],
+        "requireFactionTags": [
+          "arena-guild"
+        ],
+        "exclude": [
+          "dungeon",
+          "wilderness"
+        ]
+      },
+      "turnWindow": {
+        "earliest": 10,
+        "latest": 70,
+        "cooldown": 18,
+        "droughtEligible": false
+      },
+      "governance": {
+        "stage": "draft",
+        "contentHash": "3c6f8e2616b85d9e",
+        "owner": "encounter-design",
+        "replaces": null
+      },
+      "example": {
+        "telegraphProse": "The herald reads the law aloud while the status pane exposes surrender, draw, and time-limit outcomes.",
+        "stakesProse": "Fight to formal surrender, yield through the healers’ gate, or spend three crowd favor after demonstrating restraint.",
+        "resolutionProse": "HP and crowd favor change each exchange; at ten turns the gong commits a partial draw and permanently closes the match.",
+        "receiptProse": "Victory grants XP and arena loot; a draw grants standing and a rival relationship; defeat opens training rather than a repeat loop."
+      }
+    },
+    {
+      "schemaVersion": "1.0.0",
+      "templateVersion": "1.0.0",
+      "id": "summoned-pact.faction-raid.glass-binder",
+      "mode": "litrpg",
+      "bibleId": "summoned-pact",
+      "name": "Glass-Binder Faction Raid",
+      "role": "raid",
+      "summary": "A three-objective raid on a faction convoy carrying captive summons.",
+      "telegraph": {
+        "required": true,
+        "channels": [
+          "faction",
+          "scene",
+          "npc"
+        ],
+        "cues": [
+          {
+            "channel": "faction",
+            "signal": "Intercepted orders show the convoy route and reinforcement turn.",
+            "inference": "The raid has a deadline and blockable escalation.",
+            "actionHook": "fight"
+          },
+          {
+            "channel": "scene",
+            "signal": "Three wagons display distinct vanguard, cage, and command seals.",
+            "inference": "The raid consists of readable objectives.",
+            "actionHook": "flee"
+          },
+          {
+            "channel": "npc",
+            "signal": "The commander values one documented exchange above a costly last stand.",
+            "inference": "A conditional negotiation path exists.",
+            "actionHook": "negotiate"
+          }
+        ],
+        "responseWindowTurns": 3,
+        "surpriseEligible": false,
+        "openingSeverityCap": "none"
+      },
+      "stakes": {
+        "headline": "Free the captives before binder reinforcements reach the ravine.",
+        "approaches": [
+          {
+            "id": "fight",
+            "label": "Break the vanguard, cages, and command seal",
+            "requirements": [
+              "player:combat_capable"
+            ],
+            "method": "combat",
+            "check": {
+              "clock": {
+                "successSegments": 8,
+                "dangerSegments": 8
+              }
+            },
+            "onSuccess": {
+              "terminal": true,
+              "stateChanges": [
+                "enemy:glass-binder-convoy:defeated",
+                "objective:free-captive-summons:complete"
+              ],
+              "summary": "The convoy breaks and the captive summons are freed.",
+              "terminalState": "victory"
+            },
+            "onPartial": {
+              "terminal": false,
+              "stateChanges": [
+                "enemy:glass-binder-convoy:hp:decrement",
+                "player:resource:decrement:resolved_cost"
+              ],
+              "summary": "Damage is committed while a separate cost is paid."
+            },
+            "onFailure": {
+              "terminal": false,
+              "stateChanges": [
+                "player:hp:decrement_resolved_damage",
+                "encounter:danger:increment:1"
+              ],
+              "summary": "The enemy lands a resolved hit and danger rises; the encounter state cannot remain unchanged."
+            },
+            "lockout": "Each combat action changes HP, resources, position, or danger before it can be offered again."
+          },
+          {
+            "id": "flee",
+            "label": "Order a withdrawal to the ravine",
+            "requirements": [
+              "route:ravine-rally-point:available"
+            ],
+            "method": "clock",
+            "check": {
+              "clock": {
+                "successSegments": 4,
+                "dangerSegments": 4
+              }
+            },
+            "onSuccess": {
+              "terminal": true,
+              "stateChanges": [
+                "location:set:ravine-rally-point",
+                "resource:stamina:decrement:flee_cost",
+                "encounter:set:fled"
+              ],
+              "summary": "The strike team withdraws to the rally point with surviving allies.",
+              "terminalState": "fled"
+            },
+            "onPartial": {
+              "terminal": true,
+              "stateChanges": [
+                "location:set:ravine-rally-point",
+                "player:condition:add:winded",
+                "loot:carried_unbound:remove:1"
+              ],
+              "summary": "Escape succeeds with a visible injury or lost carried item.",
+              "terminalState": "fled"
+            },
+            "onFailure": {
+              "terminal": false,
+              "stateChanges": [
+                "encounter:escape_route:lock_current",
+                "encounter:danger:increment:2",
+                "resource:stamina:decrement:1"
+              ],
+              "summary": "The current route closes, danger advances, and a different route or tactic is required."
+            },
+            "lockout": "Failure locks the current route and modifies the next flee option."
+          },
+          {
+            "id": "negotiate",
+            "label": "Present the route orders and demand exchange",
+            "requirements": [
+              "resource:binder-route-orders:available",
+              "objective:escort-wagons<=1"
+            ],
+            "method": "deterministic",
+            "onSuccess": {
+              "terminal": true,
+              "stateChanges": [
+                "resource:binder-route-orders:remove:1",
+                "enemy:glass-binder-convoy:state:prisoner-exchange",
+                "encounter:set:negotiated"
+              ],
+              "summary": "The commander accepts a documented prisoner exchange.",
+              "terminalState": "negotiated"
+            },
+            "onFailure": {
+              "terminal": false,
+              "stateChanges": [
+                "resource:binder-route-orders:set:discredited",
+                "encounter:danger:increment:2",
+                "approach:negotiate:lock"
+              ],
+              "summary": "The offer is rejected and discredited; the same concession cannot be repeated."
+            },
+            "lockout": "The leverage is consumed on success or discredited on refusal."
+          }
+        ]
+      },
+      "resolution": {
+        "mechanic": "combat",
+        "config": {
+          "tierBand": "T6-T9",
+          "enemyHp": 220,
+          "damageRule": "max(1, attack + skill + seededVariance - defense)",
+          "fleeRule": "opposed success/danger clocks; route locks after failed attempt",
+          "parleyRule": "requires named leverage and threshold; consume or discredit once"
+        },
+        "terminalStates": [
+          "victory",
+          "defeat",
+          "fled",
+          "negotiated",
+          "partial"
+        ],
+        "maxTurns": 12,
+        "forcedTerminal": {
+          "terminal": true,
+          "stateChanges": [
+            "location:set:ravine-rally-point",
+            "faction:allied-summons:decrement:1",
+            "convoy:set:escaped-partial"
+          ],
+          "summary": "Reinforcements force a withdrawal; one captive cohort is lost and the encounter closes.",
+          "terminalState": "fled"
+        },
+        "antiRepeatRule": "Every action mutates HP, a clock, a resource, position, legality, or terminal state."
+      },
+      "aftermath": {
+        "minimumReceiptTypes": 4,
+        "byTerminal": {
+          "victory": [
+            {
+              "type": "xp",
+              "target": "player.progression",
+              "operation": "add",
+              "value": 1400
+            },
+            {
+              "type": "loot",
+              "target": "litrpg.raid.glass-binder",
+              "operation": "unlock",
+              "value": "raid currency, binder weapon, and captive favor"
+            },
+            {
+              "type": "dungeon",
+              "target": "free-captive-summons",
+              "operation": "set",
+              "value": "cleared"
+            }
+          ],
+          "fled": [
+            {
+              "type": "dungeon",
+              "target": "free-captive-summons",
+              "operation": "set",
+              "value": "unresolved_cooldown"
+            },
+            {
+              "type": "quest",
+              "target": "hunt-the-escaped-cages",
+              "operation": "unlock",
+              "value": true
+            }
+          ],
+          "negotiated": [
+            {
+              "type": "faction",
+              "target": "free-pact-coalition",
+              "operation": "increment",
+              "value": 3
+            },
+            {
+              "type": "npc",
+              "target": "glass-binder-convoy",
+              "operation": "set",
+              "value": "prisoner-exchange"
+            },
+            {
+              "type": "quest",
+              "target": "hunt-the-escaped-cages",
+              "operation": "unlock",
+              "value": true
+            }
+          ],
+          "defeat": [
+            {
+              "type": "npc",
+              "target": "player",
+              "operation": "set",
+              "value": "raid-routed"
+            },
+            {
+              "type": "quest",
+              "target": "ransom-the-captured-strike-team",
+              "operation": "unlock",
+              "value": true
+            }
+          ]
+        }
+      },
+      "biomeFilter": {
+        "allow": [
+          "badlands-road",
+          "ravine",
+          "fortified-convoy"
+        ],
+        "siteTags": [
+          "raid-route",
+          "faction-war"
+        ],
+        "requireFactionTags": [
+          "glass-binders",
+          "free-pact-coalition"
+        ],
+        "exclude": [
+          "peaceful-hub",
+          "undersea"
+        ]
+      },
+      "turnWindow": {
+        "earliest": 20,
+        "latest": 85,
+        "cooldown": 35,
+        "droughtEligible": false
+      },
+      "governance": {
+        "stage": "draft",
+        "contentHash": "b76a914e4f294d4d",
+        "owner": "encounter-design",
+        "replaces": null
+      },
+      "example": {
+        "telegraphProse": "Intercepted orders reveal the convoy timing; the three seals show objective order, and an ally names the commander’s exchange doctrine.",
+        "stakesProse": "Assault all three objectives, order a costly withdrawal, or force an exchange after isolating the escort wagons.",
+        "resolutionProse": "Success and reinforcement clocks race for at most twelve turns; the bound forces withdrawal and records which captives were lost.",
+        "receiptProse": "Victory pays raid XP, typed loot, faction standing, and the captive quest; other terminals preserve ally and convoy state."
+      }
+    },
+    {
+      "schemaVersion": "1.0.0",
+      "templateVersion": "1.0.0",
+      "id": "summoned-pact.patrol.seal-wardens",
+      "mode": "litrpg",
+      "bibleId": "summoned-pact",
+      "name": "Seal-Warden Patrol",
+      "role": "patrol",
+      "summary": "Collegium wardens inspect active pacts on a controlled road.",
+      "telegraph": {
+        "required": true,
+        "channels": [
+          "faction",
+          "scene"
+        ],
+        "cues": [
+          {
+            "channel": "faction",
+            "signal": "Blue seal-flares mark a scheduled Collegium inspection ahead.",
+            "inference": "A lawful patrol can be prepared for or avoided.",
+            "actionHook": "negotiate"
+          },
+          {
+            "channel": "scene",
+            "signal": "Chalk dust obscures a side gully where ward sigils fail.",
+            "inference": "The terrain provides a flee route.",
+            "actionHook": "flee"
+          }
+        ],
+        "responseWindowTurns": 2,
+        "surpriseEligible": false,
+        "openingSeverityCap": "none"
+      },
+      "stakes": {
+        "headline": "Pass inspection, escape the patrol, or resist confiscation.",
+        "approaches": [
+          {
+            "id": "fight",
+            "label": "Resist confiscation",
+            "requirements": [
+              "player:combat_capable"
+            ],
+            "method": "combat",
+            "check": {
+              "clock": {
+                "successSegments": 4,
+                "dangerSegments": 4
+              }
+            },
+            "onSuccess": {
+              "terminal": true,
+              "stateChanges": [
+                "enemy:seal-warden-patrol:defeated",
+                "objective:north-contract-road:complete"
+              ],
+              "summary": "The patrol is defeated and the confiscation order is recovered.",
+              "terminalState": "victory"
+            },
+            "onPartial": {
+              "terminal": false,
+              "stateChanges": [
+                "enemy:seal-warden-patrol:hp:decrement",
+                "player:resource:decrement:resolved_cost"
+              ],
+              "summary": "Damage is committed while a separate cost is paid."
+            },
+            "onFailure": {
+              "terminal": false,
+              "stateChanges": [
+                "player:hp:decrement_resolved_damage",
+                "encounter:danger:increment:1"
+              ],
+              "summary": "The enemy lands a resolved hit and danger rises; the encounter state cannot remain unchanged."
+            },
+            "lockout": "Each combat action changes HP, resources, position, or danger before it can be offered again."
+          },
+          {
+            "id": "flee",
+            "label": "Break line of sight in the chalk gully",
+            "requirements": [
+              "route:chalk-gully:available"
+            ],
+            "method": "clock",
+            "check": {
+              "clock": {
+                "successSegments": 4,
+                "dangerSegments": 4
+              }
+            },
+            "onSuccess": {
+              "terminal": true,
+              "stateChanges": [
+                "location:set:chalk-gully",
+                "resource:stamina:decrement:flee_cost",
+                "encounter:set:fled"
+              ],
+              "summary": "The player loses the patrol in a ward-dead gully.",
+              "terminalState": "fled"
+            },
+            "onPartial": {
+              "terminal": true,
+              "stateChanges": [
+                "location:set:chalk-gully",
+                "player:condition:add:winded",
+                "loot:carried_unbound:remove:1"
+              ],
+              "summary": "Escape succeeds with a visible injury or lost carried item.",
+              "terminalState": "fled"
+            },
+            "onFailure": {
+              "terminal": false,
+              "stateChanges": [
+                "encounter:escape_route:lock_current",
+                "encounter:danger:increment:2",
+                "resource:stamina:decrement:1"
+              ],
+              "summary": "The current route closes, danger advances, and a different route or tactic is required."
+            },
+            "lockout": "Failure locks the current route and modifies the next flee option."
+          },
+          {
+            "id": "negotiate",
+            "label": "Submit the valid transit writ",
+            "requirements": [
+              "resource:valid-transit-writ:available",
+              "document:transit-writ:not-forged"
+            ],
+            "method": "deterministic",
+            "onSuccess": {
+              "terminal": true,
+              "stateChanges": [
+                "resource:valid-transit-writ:remove:1",
+                "enemy:seal-warden-patrol:state:inspection-passed",
+                "encounter:set:negotiated"
+              ],
+              "summary": "The wardens verify the transit writ and grant safe passage.",
+              "terminalState": "negotiated"
+            },
+            "onFailure": {
+              "terminal": false,
+              "stateChanges": [
+                "resource:valid-transit-writ:set:discredited",
+                "encounter:danger:increment:2",
+                "approach:negotiate:lock"
+              ],
+              "summary": "The offer is rejected and discredited; the same concession cannot be repeated."
+            },
+            "lockout": "The leverage is consumed on success or discredited on refusal."
+          }
+        ]
+      },
+      "resolution": {
+        "mechanic": "combat",
+        "config": {
+          "tierBand": "T2-T5",
+          "enemyHp": 54,
+          "damageRule": "max(1, attack + skill + seededVariance - defense)",
+          "fleeRule": "opposed success/danger clocks; route locks after failed attempt",
+          "parleyRule": "requires named leverage and threshold; consume or discredit once"
+        },
+        "terminalStates": [
+          "victory",
+          "defeat",
+          "fled",
+          "negotiated",
+          "partial"
+        ],
+        "maxTurns": 6,
+        "forcedTerminal": {
+          "terminal": true,
+          "stateChanges": [
+            "inventory:unlicensed-summon:set:impounded",
+            "faction:collegium:decrement:1",
+            "encounter:set:inspection-ended"
+          ],
+          "summary": "The inspection concludes with one unlicensed summon impounded; the patrol leaves.",
+          "terminalState": "negotiated"
+        },
+        "antiRepeatRule": "Every action mutates HP, a clock, a resource, position, legality, or terminal state."
+      },
+      "aftermath": {
+        "minimumReceiptTypes": 2,
+        "byTerminal": {
+          "victory": [
+            {
+              "type": "xp",
+              "target": "player.progression",
+              "operation": "add",
+              "value": 190
+            },
+            {
+              "type": "loot",
+              "target": "litrpg.trash.warden",
+              "operation": "unlock",
+              "value": "seal baton or confiscation order"
+            },
+            {
+              "type": "dungeon",
+              "target": "north-contract-road",
+              "operation": "set",
+              "value": "cleared"
+            }
+          ],
+          "fled": [
+            {
+              "type": "dungeon",
+              "target": "north-contract-road",
+              "operation": "set",
+              "value": "unresolved_cooldown"
+            },
+            {
+              "type": "quest",
+              "target": "challenge-the-impound",
+              "operation": "unlock",
+              "value": true
+            }
+          ],
+          "negotiated": [
+            {
+              "type": "faction",
+              "target": "summoners-collegium",
+              "operation": "increment",
+              "value": 1
+            },
+            {
+              "type": "npc",
+              "target": "seal-warden-patrol",
+              "operation": "set",
+              "value": "inspection-passed"
+            },
+            {
+              "type": "quest",
+              "target": "challenge-the-impound",
+              "operation": "unlock",
+              "value": true
+            }
+          ],
+          "defeat": [
+            {
+              "type": "npc",
+              "target": "player",
+              "operation": "set",
+              "value": "summon-impounded"
+            },
+            {
+              "type": "quest",
+              "target": "challenge-the-impound",
+              "operation": "unlock",
+              "value": true
+            }
+          ]
+        }
+      },
+      "biomeFilter": {
+        "allow": [
+          "controlled-road",
+          "chalk-badlands",
+          "city-outskirts"
+        ],
+        "siteTags": [
+          "patrol-route",
+          "collegium-territory"
+        ],
+        "requireFactionTags": [
+          "summoners-collegium"
+        ],
+        "exclude": [
+          "deep-dungeon",
+          "open-sea"
+        ]
+      },
+      "turnWindow": {
+        "earliest": 4,
+        "latest": 45,
+        "cooldown": 12,
+        "droughtEligible": true
+      },
+      "governance": {
+        "stage": "draft",
+        "contentHash": "f12e840c5380908e",
+        "owner": "encounter-design",
+        "replaces": null
+      },
+      "example": {
+        "telegraphProse": "Blue seal-flares pulse beyond the bend while chalk dust reveals a ward-dead gully to the west.",
+        "stakesProse": "Submit a valid writ for safe passage, flee through the gully, or fight and accept a Collegium standing cost.",
+        "resolutionProse": "The patrol cannot inspect forever: each exchange changes legality or clocks, and turn six ends with a declared impound result.",
+        "receiptProse": "The receipt records passage, impound, or patrol defeat together with faction, quest, XP, loot, or route changes."
+      }
+    },
+    {
+      "schemaVersion": "1.0.0",
+      "templateVersion": "1.0.0",
+      "id": "summoned-pact.wandering-elite.unbound-chimera",
+      "mode": "litrpg",
+      "bibleId": "summoned-pact",
+      "name": "Unbound Chimera",
+      "role": "elite",
+      "summary": "A roaming three-aspect summon hunts mana signatures across broken highlands.",
+      "telegraph": {
+        "required": true,
+        "channels": [
+          "scene",
+          "item"
+        ],
+        "cues": [
+          {
+            "channel": "scene",
+            "signal": "Three sets of tracks converge without overlapping shadows.",
+            "inference": "A multi-aspect roaming elite is hunting nearby.",
+            "actionHook": "fight"
+          },
+          {
+            "channel": "item",
+            "signal": "The founder bell vibrates only when the central track crosses basalt.",
+            "inference": "The bell can recall the creature at a vulnerable moment.",
+            "actionHook": "negotiate"
+          }
+        ],
+        "responseWindowTurns": 2,
+        "surpriseEligible": false,
+        "openingSeverityCap": "none"
+      },
+      "stakes": {
+        "headline": "Survive the roaming elite without letting it consume the trail’s mana wells.",
+        "approaches": [
+          {
+            "id": "fight",
+            "label": "Sever its three pact aspects",
+            "requirements": [
+              "player:combat_capable"
+            ],
+            "method": "combat",
+            "check": {
+              "clock": {
+                "successSegments": 6,
+                "dangerSegments": 6
+              }
+            },
+            "onSuccess": {
+              "terminal": true,
+              "stateChanges": [
+                "enemy:unbound-chimera:defeated",
+                "objective:highland-mana-trail:complete"
+              ],
+              "summary": "The chimera’s three aspects collapse and the highland trail becomes safe.",
+              "terminalState": "victory"
+            },
+            "onPartial": {
+              "terminal": false,
+              "stateChanges": [
+                "enemy:unbound-chimera:hp:decrement",
+                "player:resource:decrement:resolved_cost"
+              ],
+              "summary": "Damage is committed while a separate cost is paid."
+            },
+            "onFailure": {
+              "terminal": false,
+              "stateChanges": [
+                "player:hp:decrement_resolved_damage",
+                "encounter:danger:increment:1"
+              ],
+              "summary": "The enemy lands a resolved hit and danger rises; the encounter state cannot remain unchanged."
+            },
+            "lockout": "Each combat action changes HP, resources, position, or danger before it can be offered again."
+          },
+          {
+            "id": "flee",
+            "label": "Mask your signature in the basalt tunnel",
+            "requirements": [
+              "route:basalt-tunnel:available"
+            ],
+            "method": "clock",
+            "check": {
+              "clock": {
+                "successSegments": 4,
+                "dangerSegments": 4
+              }
+            },
+            "onSuccess": {
+              "terminal": true,
+              "stateChanges": [
+                "location:set:basalt-tunnel",
+                "resource:stamina:decrement:flee_cost",
+                "encounter:set:fled"
+              ],
+              "summary": "The player masks their signature inside the basalt tunnel.",
+              "terminalState": "fled"
+            },
+            "onPartial": {
+              "terminal": true,
+              "stateChanges": [
+                "location:set:basalt-tunnel",
+                "player:condition:add:winded",
+                "loot:carried_unbound:remove:1"
+              ],
+              "summary": "Escape succeeds with a visible injury or lost carried item.",
+              "terminalState": "fled"
+            },
+            "onFailure": {
+              "terminal": false,
+              "stateChanges": [
+                "encounter:escape_route:lock_current",
+                "encounter:danger:increment:2",
+                "resource:stamina:decrement:1"
+              ],
+              "summary": "The current route closes, danger advances, and a different route or tactic is required."
+            },
+            "lockout": "Failure locks the current route and modifies the next flee option."
+          },
+          {
+            "id": "negotiate",
+            "label": "Ring the founder bell at the exposed aspect",
+            "requirements": [
+              "resource:founder-bell:available",
+              "chimera:hearing-aspect:exposed"
+            ],
+            "method": "deterministic",
+            "onSuccess": {
+              "terminal": true,
+              "stateChanges": [
+                "resource:founder-bell:remove:1",
+                "enemy:unbound-chimera:state:recalled-to-shrine",
+                "encounter:set:negotiated"
+              ],
+              "summary": "The founder bell recalls the chimera to its abandoned shrine.",
+              "terminalState": "negotiated"
+            },
+            "onFailure": {
+              "terminal": false,
+              "stateChanges": [
+                "resource:founder-bell:set:discredited",
+                "encounter:danger:increment:2",
+                "approach:negotiate:lock"
+              ],
+              "summary": "The offer is rejected and discredited; the same concession cannot be repeated."
+            },
+            "lockout": "The leverage is consumed on success or discredited on refusal."
+          }
+        ]
+      },
+      "resolution": {
+        "mechanic": "combat",
+        "config": {
+          "tierBand": "T5-T8",
+          "enemyHp": 102,
+          "damageRule": "max(1, attack + skill + seededVariance - defense)",
+          "fleeRule": "opposed success/danger clocks; route locks after failed attempt",
+          "parleyRule": "requires named leverage and threshold; consume or discredit once"
+        },
+        "terminalStates": [
+          "victory",
+          "defeat",
+          "fled",
+          "negotiated",
+          "partial"
+        ],
+        "maxTurns": 9,
+        "forcedTerminal": {
+          "terminal": true,
+          "stateChanges": [
+            "location:set:basalt-tunnel",
+            "player:mana:set:0",
+            "chimera:set:roaming-cooldown"
+          ],
+          "summary": "The player burns all mana to mask their signature and escapes into basalt; the chimera resumes roaming later.",
+          "terminalState": "fled"
+        },
+        "antiRepeatRule": "Every action mutates HP, a clock, a resource, position, legality, or terminal state."
+      },
+      "aftermath": {
+        "minimumReceiptTypes": 3,
+        "byTerminal": {
+          "victory": [
+            {
+              "type": "xp",
+              "target": "player.progression",
+              "operation": "add",
+              "value": 760
+            },
+            {
+              "type": "loot",
+              "target": "litrpg.elite.chimera",
+              "operation": "unlock",
+              "value": "aspect gland and rare adaptive armor"
+            },
+            {
+              "type": "dungeon",
+              "target": "highland-mana-trail",
+              "operation": "set",
+              "value": "cleared"
+            }
+          ],
+          "fled": [
+            {
+              "type": "dungeon",
+              "target": "highland-mana-trail",
+              "operation": "set",
+              "value": "unresolved_cooldown"
+            },
+            {
+              "type": "quest",
+              "target": "restore-the-founder-shrine",
+              "operation": "unlock",
+              "value": true
+            }
+          ],
+          "negotiated": [
+            {
+              "type": "faction",
+              "target": "highland-settlers",
+              "operation": "increment",
+              "value": 2
+            },
+            {
+              "type": "npc",
+              "target": "unbound-chimera",
+              "operation": "set",
+              "value": "recalled-to-shrine"
+            },
+            {
+              "type": "quest",
+              "target": "restore-the-founder-shrine",
+              "operation": "unlock",
+              "value": true
+            }
+          ],
+          "defeat": [
+            {
+              "type": "npc",
+              "target": "player",
+              "operation": "set",
+              "value": "mana-scarred"
+            },
+            {
+              "type": "quest",
+              "target": "track-the-chimera-to-shrine",
+              "operation": "unlock",
+              "value": true
+            }
+          ]
+        }
+      },
+      "biomeFilter": {
+        "allow": [
+          "broken-highlands",
+          "basalt-fields",
+          "ruined-shrine"
+        ],
+        "siteTags": [
+          "roaming-elite",
+          "mana-trail"
+        ],
+        "requireFactionTags": [
+          "unbound-summon"
+        ],
+        "exclude": [
+          "urban-hub",
+          "salt-marsh"
+        ]
+      },
+      "turnWindow": {
+        "earliest": 12,
+        "latest": 80,
+        "cooldown": 28,
+        "droughtEligible": true
+      },
+      "governance": {
+        "stage": "draft",
+        "contentHash": "97a736892ec08ec9",
+        "owner": "encounter-design",
+        "replaces": null
+      },
+      "example": {
+        "telegraphProse": "Three incompatible tracks share one shadow, and the founder bell hums at a basalt tunnel cut into the ridge.",
+        "stakesProse": "Sever all aspects, escape by burning mana to mask your signature, or expose the hearing aspect and ring the unique bell.",
+        "resolutionProse": "The elite lasts at most nine turns; failure advances hunger, and the bound forces a zero-mana escape rather than endless pursuit.",
+        "receiptProse": "Victory grants elite loot and trail clearance; recall changes shrine and settler state; flight creates a roaming cooldown and restoration hook."
+      }
+    }
+  ]
+}

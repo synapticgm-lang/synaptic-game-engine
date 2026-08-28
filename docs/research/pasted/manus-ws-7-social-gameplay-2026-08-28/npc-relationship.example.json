@@ -1,0 +1,161 @@
+{
+  "schemaVersion": 1,
+  "npcId": "npc.mira_voss",
+  "playerId": "player.001",
+  "disposition": "wary",
+  "trust": -18,
+  "respect": 62,
+  "fear": 21,
+  "intimacy": 28,
+  "familiarity": 67,
+  "firstMetTurn": 8,
+  "lastInteractionTurn": 100,
+  "milestones": [
+    {
+      "milestoneId": "rm.001",
+      "type": "first_meet",
+      "turn": 8,
+      "sourceEventId": "ev.meet.mira",
+      "summary": "Mira guided the player through the quarantine cordon.",
+      "valence": 8,
+      "salience": 30,
+      "permanent": true,
+      "relatedNpcIds": [],
+      "relatedFactionIds": ["faction.merchants"],
+      "tags": ["cape_district", "quarantine"]
+    },
+    {
+      "milestoneId": "rm.014",
+      "type": "favor_granted",
+      "turn": 24,
+      "sourceEventId": "ev.hide_ledger",
+      "summary": "The player hid Mira's audit ledger from the watch.",
+      "valence": 24,
+      "salience": 65,
+      "permanent": true,
+      "relatedNpcIds": ["npc.captain_ren"],
+      "relatedFactionIds": ["faction.watch", "faction.merchants"],
+      "tags": ["favor", "secret"]
+    },
+    {
+      "milestoneId": "rm.031",
+      "type": "alliance",
+      "turn": 42,
+      "sourceEventId": "ev.convoy_pact",
+      "summary": "Mira and the player agreed to protect the eastern convoy together.",
+      "valence": 30,
+      "salience": 80,
+      "permanent": true,
+      "relatedNpcIds": [],
+      "relatedFactionIds": ["faction.merchants"],
+      "tags": ["alliance", "convoy"]
+    },
+    {
+      "milestoneId": "rm.037",
+      "type": "betrayal",
+      "turn": 50,
+      "sourceEventId": "ev.expose_mira",
+      "summary": "The player exposed Mira's ledger to secure passage from the watch.",
+      "valence": -75,
+      "salience": 100,
+      "permanent": true,
+      "relatedNpcIds": ["npc.captain_ren"],
+      "relatedFactionIds": ["faction.watch", "faction.merchants"],
+      "tags": ["betrayal", "public", "leverage"]
+    },
+    {
+      "milestoneId": "rm.062",
+      "type": "public_support",
+      "turn": 91,
+      "sourceEventId": "ev.defend_mira_council",
+      "summary": "The player defended Mira's trading license before the council.",
+      "valence": 18,
+      "salience": 70,
+      "permanent": true,
+      "relatedNpcIds": ["npc.captain_ren"],
+      "relatedFactionIds": ["faction.merchants"],
+      "tags": ["repair_attempt", "public"]
+    }
+  ],
+  "promises": [
+    {
+      "promiseId": "promise.convoy",
+      "madeTurn": 42,
+      "dueTurn": 60,
+      "description": "Protect the eastern convoy and keep its route private.",
+      "status": "broken",
+      "trustDeltaOnKeep": 15,
+      "trustDeltaOnBreak": -30,
+      "beneficiaries": ["npc.mira_voss", "faction.merchants"],
+      "witnesses": ["npc.orin_clerk"]
+    },
+    {
+      "promiseId": "promise.hearing",
+      "madeTurn": 91,
+      "dueTurn": 110,
+      "description": "Find proof that the guildmaster ordered the forged audit.",
+      "status": "open",
+      "trustDeltaOnKeep": 20,
+      "trustDeltaOnBreak": -15,
+      "beneficiaries": ["npc.mira_voss"],
+      "witnesses": ["npc.councillor_ves"]
+    }
+  ],
+  "knowledge": [
+    {
+      "factId": "fact.player_exposed_ledger",
+      "proposition": "The player gave Mira's private ledger to the watch for personal access.",
+      "learnedTurn": 50,
+      "channel": "observed",
+      "sourceActorId": "npc.mira_voss",
+      "confidence": 100,
+      "salience": 100,
+      "contradictedBy": [],
+      "tags": ["betrayal", "leverage_use"]
+    },
+    {
+      "factId": "fact.player_defended_license",
+      "proposition": "The player publicly defended Mira's right to trade.",
+      "learnedTurn": 91,
+      "channel": "public_record",
+      "sourceActorId": "npc.councillor_ves",
+      "confidence": 100,
+      "salience": 70,
+      "contradictedBy": [],
+      "tags": ["repair_attempt", "public_support"]
+    },
+    {
+      "factId": "fact.guildmaster_forgery_rumor",
+      "proposition": "The guildmaster may have ordered the forged audit.",
+      "learnedTurn": 98,
+      "channel": "rumor",
+      "sourceActorId": "npc.orin_clerk",
+      "confidence": 55,
+      "salience": 75,
+      "expiryTurn": 148,
+      "contradictedBy": [],
+      "tags": ["open_investigation"]
+    }
+  ],
+  "boundaries": [
+    {
+      "boundaryId": "boundary.no_private_records",
+      "category": "privacy",
+      "statement": "Do not use Mira's private records as leverage again.",
+      "establishedTurn": 52,
+      "active": true,
+      "breachConsequence": "Mira becomes hostile and alerts the merchant network."
+    }
+  ],
+  "roles": ["role.informant", "role.merchant_liaison"],
+  "factionIds": ["faction.merchants"],
+  "availableUnlocks": ["npc_accepts_strategic_disagreement"],
+  "closedPaths": [
+    {
+      "pathId": "path.mira_allied_safehouse",
+      "reason": "The turn-50 betrayal remains unforgiven.",
+      "reopenConditions": ["Keep promise.hearing", "Complete an explicit forgiveness conversation", "Trust reaches 50 after reparative action"]
+    }
+  ],
+  "revision": 19
+}

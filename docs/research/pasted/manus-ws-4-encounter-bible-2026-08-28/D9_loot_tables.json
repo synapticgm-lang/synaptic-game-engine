@@ -1,0 +1,170 @@
+{
+  "schemaVersion": "1.0.0",
+  "catalogId": "ws4.loot.v1",
+  "globalRules": {
+    "seededSelection": true,
+    "previewCategoriesBeforeEncounter": true,
+    "applyOnlyAfterTerminal": true,
+    "idempotentCommitRequired": true,
+    "duplicateUniqueConvertsTo": "mode_specific_currency",
+    "pityCounters": {
+      "eliteRareAfterMisses": 3,
+      "bossBuildItemGuaranteed": true
+    },
+    "outcomeMultipliers": {
+      "victory": 1.0,
+      "negotiated": 0.85,
+      "partial": 0.65,
+      "fled": 0.2,
+      "defeat": 0.1
+    }
+  },
+  "modes": {
+    "litrpg": {
+      "currency": "gold",
+      "tables": {
+        "trash": {
+          "rolls": 2,
+          "entries": [
+            { "id": "gold-small", "category": "currency", "weight": 45, "quantity": "8-18", "tags": ["generic"] },
+            { "id": "common-material", "category": "crafting", "weight": 30, "quantity": "1-3", "tags": ["biome-derived"] },
+            { "id": "minor-consumable", "category": "consumable", "weight": 20, "quantity": "1", "tags": ["healing", "mana", "stamina"] },
+            { "id": "uncommon-weapon-part", "category": "weapon-component", "weight": 5, "quantity": "1", "tags": ["build-relevant"] }
+          ],
+          "guarantees": ["one currency or crafting entry"]
+        },
+        "elite": {
+          "rolls": 3,
+          "entries": [
+            { "id": "gold-medium", "category": "currency", "weight": 30, "quantity": "40-90", "tags": ["generic"] },
+            { "id": "typed-rare-component", "category": "crafting", "weight": 25, "quantity": "1-2", "tags": ["enemy-family"] },
+            { "id": "greater-consumable", "category": "consumable", "weight": 20, "quantity": "1-2", "tags": ["combat"] },
+            { "id": "rare-weapon-or-armor", "category": "equipment", "weight": 20, "quantity": "1", "tags": ["tier-scaled", "build-relevant"] },
+            { "id": "named-pact-core", "category": "progression", "weight": 5, "quantity": "1", "tags": ["unique"] }
+          ],
+          "guarantees": ["one enemy-family component", "rare equipment by third rare miss"]
+        },
+        "boss": {
+          "rolls": 5,
+          "entries": [
+            { "id": "gold-large", "category": "currency", "weight": 20, "quantity": "180-360", "tags": ["generic"] },
+            { "id": "boss-crafting-core", "category": "crafting", "weight": 20, "quantity": "1", "tags": ["boss-unique"] },
+            { "id": "named-weapon", "category": "equipment", "weight": 20, "quantity": "1", "tags": ["unique", "weapon"] },
+            { "id": "named-armor", "category": "equipment", "weight": 20, "quantity": "1", "tags": ["unique", "armor"] },
+            { "id": "skill-or-slot-upgrade", "category": "progression", "weight": 15, "quantity": "1", "tags": ["build-item"] },
+            { "id": "quest-relic", "category": "quest-item", "weight": 5, "quantity": "1", "tags": ["story-bound"] }
+          ],
+          "guarantees": ["one build item", "one boss-unique component", "no duplicate unique without conversion"]
+        }
+      }
+    },
+    "dnd": {
+      "currency": "gold-piece-equivalent",
+      "tables": {
+        "trash": {
+          "rolls": 2,
+          "entries": [
+            { "id": "coins-small", "category": "currency", "weight": 40, "quantity": "2d6 gp equivalent", "tags": ["contextual"] },
+            { "id": "usable-supplies", "category": "consumable", "weight": 30, "quantity": "1d3", "tags": ["arrows", "oil", "rations"] },
+            { "id": "clue-object", "category": "quest-item", "weight": 20, "quantity": "1", "tags": ["dungeon-clue"] },
+            { "id": "minor-curio", "category": "treasure", "weight": 10, "quantity": "1", "tags": ["saleable"] }
+          ],
+          "guarantees": ["one contextual, recoverable object when fiction permits"]
+        },
+        "elite": {
+          "rolls": 3,
+          "entries": [
+            { "id": "coins-medium", "category": "currency", "weight": 25, "quantity": "6d6 gp equivalent", "tags": ["contextual"] },
+            { "id": "potion-or-scroll", "category": "magic-consumable", "weight": 25, "quantity": "1", "tags": ["tier-appropriate"] },
+            { "id": "uncommon-magic-item", "category": "magic-item", "weight": 15, "quantity": "1", "tags": ["attunement-aware"] },
+            { "id": "quest-key", "category": "quest-item", "weight": 25, "quantity": "1", "tags": ["opens-route-or-proof"] },
+            { "id": "ally-token", "category": "npc", "weight": 10, "quantity": "1", "tags": ["favor"] }
+          ],
+          "guarantees": ["one clue, route key, or useful consumable", "rare magic result by third rare miss"]
+        },
+        "boss": {
+          "rolls": 4,
+          "entries": [
+            { "id": "coins-hoard", "category": "currency", "weight": 15, "quantity": "tier-budgeted hoard", "tags": ["contextual"] },
+            { "id": "major-magic-item", "category": "magic-item", "weight": 25, "quantity": "1", "tags": ["tier-appropriate", "build-relevant"] },
+            { "id": "signature-relic", "category": "magic-item", "weight": 20, "quantity": "1", "tags": ["boss-unique"] },
+            { "id": "campaign-quest-item", "category": "quest-item", "weight": 25, "quantity": "1", "tags": ["story-bound"] },
+            { "id": "stronghold-or-faction-boon", "category": "access", "weight": 15, "quantity": "1", "tags": ["world-state"] }
+          ],
+          "guarantees": ["one major or signature item", "one campaign-state reward", "no unrelated biome item"]
+        }
+      }
+    },
+    "rpg": {
+      "currency": "influence",
+      "tables": {
+        "trash": {
+          "rolls": 2,
+          "entries": [
+            { "id": "minor-favor", "category": "favor", "weight": 35, "quantity": "1", "tags": ["named-source"] },
+            { "id": "local-intel", "category": "intel", "weight": 35, "quantity": "1", "tags": ["topic-specific"] },
+            { "id": "temporary-access", "category": "access", "weight": 20, "quantity": "one scene", "tags": ["location-specific"] },
+            { "id": "small-material-recovery", "category": "currency", "weight": 10, "quantity": "cost-offset", "tags": ["contextual"] }
+          ],
+          "guarantees": ["at least one named social asset"]
+        },
+        "elite": {
+          "rolls": 3,
+          "entries": [
+            { "id": "strong-favor", "category": "favor", "weight": 25, "quantity": "1", "tags": ["one-use", "named-npc"] },
+            { "id": "verified-leverage", "category": "intel", "weight": 25, "quantity": "value 2-3", "tags": ["provenance", "consumable"] },
+            { "id": "faction-access", "category": "access", "weight": 25, "quantity": "one location or service", "tags": ["standing-gated"] },
+            { "id": "public-narrative-shift", "category": "faction", "weight": 15, "quantity": "+1 standing equivalent", "tags": ["reputation"] },
+            { "id": "protected-contact", "category": "npc", "weight": 10, "quantity": "1", "tags": ["persistent"] }
+          ],
+          "guarantees": ["one provenance-bearing leverage or strong favor", "asset records consumption rule"]
+        },
+        "boss": {
+          "rolls": 4,
+          "entries": [
+            { "id": "institutional-favor", "category": "favor", "weight": 20, "quantity": "1", "tags": ["faction-level"] },
+            { "id": "decisive-intel", "category": "intel", "weight": 25, "quantity": "value 3-4", "tags": ["campaign-changing"] },
+            { "id": "permanent-faction-access", "category": "access", "weight": 25, "quantity": "1", "tags": ["persistent"] },
+            { "id": "policy-or-territory-change", "category": "faction", "weight": 20, "quantity": "1", "tags": ["world-state"] },
+            { "id": "signature-relationship", "category": "npc", "weight": 10, "quantity": "1", "tags": ["ally-or-rival"] }
+          ],
+          "guarantees": ["one persistent world-state reward", "one campaign-changing social asset"]
+        }
+      }
+    },
+    "pyoa": {
+      "currency": "story-state",
+      "tables": {
+        "trash": {
+          "rolls": 2,
+          "entries": [
+            { "id": "minor-callback", "category": "quest", "weight": 40, "quantity": "1", "tags": ["delayed-payoff"] },
+            { "id": "relationship-delta", "category": "npc", "weight": 35, "quantity": "+1 or -1", "tags": ["branch-specific"] },
+            { "id": "scene-access", "category": "access", "weight": 25, "quantity": "1", "tags": ["branch-specific"] }
+          ],
+          "guarantees": ["one branch-visible response"]
+        },
+        "elite": {
+          "rolls": 3,
+          "entries": [
+            { "id": "major-callback", "category": "quest", "weight": 30, "quantity": "1", "tags": ["delayed-payoff"] },
+            { "id": "exclusive-fact", "category": "fact", "weight": 30, "quantity": "1", "tags": ["fork-lock"] },
+            { "id": "ending-eligibility", "category": "ending", "weight": 25, "quantity": "1", "tags": ["path"] },
+            { "id": "faction-realignment", "category": "faction", "weight": 15, "quantity": "1", "tags": ["persistent"] }
+          ],
+          "guarantees": ["one delayed callback", "one exclusive fact or ending gate"]
+        },
+        "boss": {
+          "rolls": 4,
+          "entries": [
+            { "id": "chapter-ending-path", "category": "ending", "weight": 30, "quantity": "1", "tags": ["terminal-path"] },
+            { "id": "world-state-rewrite", "category": "fact", "weight": 25, "quantity": "1", "tags": ["persistent"] },
+            { "id": "epilogue-callback", "category": "quest", "weight": 25, "quantity": "1", "tags": ["delayed-payoff"] },
+            { "id": "relationship-resolution", "category": "npc", "weight": 20, "quantity": "1", "tags": ["terminal-relationship"] }
+          ],
+          "guarantees": ["one ending path", "one epilogue callback", "choice facts survive convergence"]
+        }
+      }
+    }
+  }
+}

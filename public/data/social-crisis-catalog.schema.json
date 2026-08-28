@@ -1,0 +1,138 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://synapticgm.com/schemas/social-crisis-catalog.json",
+  "title": "Social Crisis Catalog",
+  "description": "WS-7 Wave 1: Social crisis patterns with stakes and eligibility",
+  "type": "object",
+  "properties": {
+    "version": {
+      "type": "string",
+      "description": "Catalog version (semantic versioning)"
+    },
+    "crises": {
+      "type": "array",
+      "description": "Crisis pattern definitions",
+      "items": {
+        "$ref": "#/definitions/socialCrisis"
+      },
+      "minItems": 1
+    }
+  },
+  "required": ["version", "crises"],
+  "definitions": {
+    "socialCrisis": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^SC-\\d{2}$",
+          "description": "Crisis pattern ID (SC-01 through SC-15)"
+        },
+        "name": {
+          "type": "string",
+          "minLength": 3,
+          "description": "Crisis name"
+        },
+        "modes": {
+          "type": "array",
+          "description": "Eligible game modes",
+          "items": {
+            "type": "string",
+            "enum": ["litrpg", "dnd", "rpg", "pyoa"]
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "eligibility": {
+          "type": "object",
+          "description": "Eligibility conditions",
+          "properties": {
+            "minTurn": {
+              "type": "integer",
+              "minimum": 0,
+              "description": "Minimum turn required"
+            },
+            "requiresTwoActors": {
+              "type": "boolean",
+              "description": "Requires two named NPCs present"
+            },
+            "requiresFaction": {
+              "type": "boolean",
+              "description": "Requires faction standing"
+            },
+            "requiresQuest": {
+              "type": "boolean",
+              "description": "Requires active quest"
+            },
+            "incompatibleWithCombat": {
+              "type": "boolean",
+              "description": "Cannot spawn during combat"
+            }
+          },
+          "required": [
+            "minTurn",
+            "requiresTwoActors",
+            "requiresFaction",
+            "requiresQuest",
+            "incompatibleWithCombat"
+          ]
+        },
+        "stakesTemplates": {
+          "type": "array",
+          "description": "Stakes templates (pick one per spawn)",
+          "items": {
+            "$ref": "#/definitions/stakesTemplate"
+          },
+          "minItems": 1
+        },
+        "suppressionTurns": {
+          "type": "integer",
+          "minimum": 20,
+          "maximum": 100,
+          "description": "Turns before can spawn again"
+        },
+        "targetCadence": {
+          "type": "integer",
+          "minimum": 20,
+          "maximum": 60,
+          "description": "Target turns between spawns"
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "modes",
+        "eligibility",
+        "stakesTemplates",
+        "suppressionTurns",
+        "targetCadence"
+      ]
+    },
+    "stakesTemplate": {
+      "type": "object",
+      "properties": {
+        "gain": {
+          "type": "string",
+          "minLength": 10,
+          "description": "What player gains on success"
+        },
+        "loss": {
+          "type": "string",
+          "minLength": 10,
+          "description": "What player loses on failure"
+        },
+        "owner": {
+          "type": "string",
+          "enum": ["player", "npc", "faction", "both"],
+          "description": "Who owns these stakes"
+        },
+        "magnitude": {
+          "type": "string",
+          "enum": ["minor", "moderate", "major", "critical"],
+          "description": "Stakes magnitude for XP scaling"
+        }
+      },
+      "required": ["gain", "loss", "owner", "magnitude"]
+    }
+  }
+}

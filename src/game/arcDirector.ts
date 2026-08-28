@@ -80,6 +80,34 @@ export interface ArcDirectorState {
   // WS-5 Wave A: PYOA Delayed Consequences
   /** WS-5 Wave A — Delayed consequences (T50 choice → T150 payoff) */
   pyoaDelayedConsequences?: import('./pyoaDelayedConsequences').DelayedConsequence[];
+  
+  // WS-7 Wave 1: Social Crisis + Leverage
+  /** WS-7 Wave 1 — Active social crises with committed stakes */
+  socialCrises?: Array<{
+    id: import('./socialCrisisTypes').CrisisPattern;
+    name: string;
+    spawnedTurn: number;
+    stakes?: import('./socialCrisisTypes').SocialStakes;
+    resolution?: import('./socialCrisisTypes').SocialResolution;
+    propositionFingerprints?: string[];
+  }>;
+  /** WS-7 Wave 1 — Leverage assets (tracked per NPC target) */
+  leverageAssets?: import('./socialCrisisTypes').LeverageAsset[];
+  /** WS-7 Wave 1 — Leverage pressure profiles (per NPC) */
+  leveragePressureProfiles?: import('./socialCrisisTypes').LeveragePressureProfile[];
+  /** WS-7 Wave 1 — NPC relationships (trust, respect, fear, milestones) */
+  npcRelationships?: Array<{
+    npcName: string;
+    trust: number;
+    respect?: number;
+    fear?: number;
+    affinity?: number;
+    milestones?: Array<{
+      type: string;
+      turn: number;
+      summary: string;
+    }>;
+  }>;
 }
 
 export interface ArcDirectorResult {
@@ -435,6 +463,18 @@ export function runArcDirectorBeforeGm(
   const turnsSinceCombat = working.arcDirector?.turnsSinceCombatReceipt ?? working.turn;
   const intentStreak = countPlayerIntentStreak(working);
   const loiterStreak = countLoiterFamilyStreak(working);
+
+  // WS-7 Wave 1: Social crisis selection (P2 priority — after combat, before generic beats)
+  let socialCrisisSelected: import('./socialCrisis').SocialCrisis | null = null;
+  if (!working.activeEncounter) {
+    const { selectEligibleCrisis } = require('./socialCrisis');
+    socialCrisisSelected = selectEligibleCrisis(working);
+    if (socialCrisisSelected) {
+      mandates.push(
+        `SOCIAL CRISIS (${socialCrisisSelected.id}): ${socialCrisisSelected.name} — Two-party dispute, requires player mediation.`
+      );
+    }
+  }
 
   let contract = selectDueBeat(working, committed);
   // 29b — Free T12 durable delta (runtime, not eval-only)

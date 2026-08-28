@@ -1,0 +1,127 @@
+{
+  "schemaVersion": "1.0.0",
+  "catalogId": "ws4.stakes.v1",
+  "globalRules": {
+    "declareBeforeCommit": true,
+    "displayOnlyResolvableActions": true,
+    "requireChangedStateOnEveryResult": true,
+    "preserveSuccessOnPartial": true,
+    "forbidIdenticalStateRetry": true,
+    "maximumHiddenDeltas": 0
+  },
+  "stakesSchema": {
+    "required": [
+      "encounterId",
+      "headline",
+      "oppositionIntent",
+      "commitPoint",
+      "approaches",
+      "terminalFallback"
+    ],
+    "approachRequired": [
+      "id",
+      "label",
+      "availability",
+      "method",
+      "success",
+      "failure",
+      "retryPolicy"
+    ],
+    "allowedMethods": ["deterministic", "d20", "combat", "clock", "fork"],
+    "allowedTerminalStates": ["victory", "defeat", "fled", "negotiated", "partial", "crisisEnding"]
+  },
+  "outcomeTemplates": [
+    {
+      "id": "combat.win",
+      "labelTemplate": "Defeat {opposition}",
+      "displayTemplate": "Win: end the threat, gain {rewardPreview}, and advance {questOrLocation}. Cost still carried: spent HP/resources.",
+      "requiredDeltas": ["opposition_terminal", "xp_or_progression", "loot_or_quest", "dungeon_or_faction"],
+      "terminalState": "victory"
+    },
+    {
+      "id": "combat.lose",
+      "labelTemplate": "Fight until overcome",
+      "displayTemplate": "Lose: suffer {lossConsequence}; {failForwardHook} remains available. No unbounded unconscious loop.",
+      "requiredDeltas": ["player_condition_or_hp", "resource_or_position", "quest_or_location"],
+      "terminalState": "defeat"
+    },
+    {
+      "id": "combat.flee",
+      "labelTemplate": "Flee via {route}",
+      "displayTemplate": "Flee: {method}; success ends combat at {destination} with {cost}; failure advances {danger} and changes the next attempt.",
+      "requiredDeltas": ["location_or_range", "resource_or_danger", "encounter_terminal_on_success"],
+      "terminalState": "fled",
+      "retryPolicy": "A failed flee must change route, position, DC, danger clock, or resource cost."
+    },
+    {
+      "id": "combat.negotiate",
+      "labelTemplate": "Offer {concession} for {desiredResult}",
+      "displayTemplate": "Negotiate: requires {leverageOrThreshold}; success ends hostility under {terms}; failure consumes or discredits the offer and escalates {fallback}.",
+      "requiredDeltas": ["leverage_consumption", "faction_or_npc", "encounter_terminal_on_success"],
+      "terminalState": "negotiated",
+      "retryPolicy": "The same concession cannot be offered again after acceptance, rejection, exposure, or consumption."
+    },
+    {
+      "id": "check.success",
+      "labelTemplate": "{actionVerb} using {abilityOrSkill}",
+      "displayTemplate": "Success at {target}: {effect}; record {receipt}. Failure: {meaningfulConsequence} and {lockoutOrEscalation}.",
+      "requiredDeltas": ["goal_progress_or_terminal", "check_receipt"],
+      "terminalState": "victory"
+    },
+    {
+      "id": "check.partial",
+      "labelTemplate": "Accept progress with a cost",
+      "displayTemplate": "Partial: achieve {preservedEffect}, but also {separateCost}. The cost does not cancel the achieved effect.",
+      "requiredDeltas": ["preserved_success_delta", "cost_delta"],
+      "terminalState": "partial"
+    },
+    {
+      "id": "social.leverage",
+      "labelTemplate": "Spend {leverage} to demand {concession}",
+      "displayTemplate": "Leverage value: {value}/{required}. On success: {concession}. On refusal: {fallback}; the leverage becomes {consumedOrDiscredited}.",
+      "requiredDeltas": ["leverage_consumption", "concession_or_danger", "npc_or_faction"],
+      "terminalState": "negotiated",
+      "retryPolicy": "Consumption or discrediting is immediate and permanent for this encounter."
+    },
+    {
+      "id": "social.withdraw",
+      "labelTemplate": "Withdraw and concede {concession}",
+      "displayTemplate": "Withdraw: end the confrontation now; preserve {preservedAsset}, concede {cost}, and schedule {followup}.",
+      "requiredDeltas": ["encounter_terminal", "cost_delta", "followup_hook"],
+      "terminalState": "fled"
+    },
+    {
+      "id": "crisis.exclusive-fork",
+      "labelTemplate": "{choiceLabel}",
+      "displayTemplate": "Choose {choiceLabel}: set {exclusiveFact}; lock {excludedFact}; schedule {delayedPayoff}; qualify for {endingPath}.",
+      "requiredDeltas": ["exclusive_fact", "opposed_fact_lock", "callback_schedule", "ending_eligibility"],
+      "terminalState": "crisisEnding",
+      "retryPolicy": "Fork commits once and cannot be reopened except by an explicitly authored reversal crisis."
+    },
+    {
+      "id": "deadline.timeout",
+      "labelTemplate": "Let the deadline expire",
+      "displayTemplate": "At timeout: {actor} executes {fallback}; apply {cost}; the encounter ends and opens {failForwardHook}.",
+      "requiredDeltas": ["deadline_terminal", "cost_delta", "followup_hook"],
+      "terminalState": "defeat"
+    }
+  ],
+  "modeRequirements": {
+    "litrpg": {
+      "requiredWhenPlausible": ["combat.win", "combat.lose", "combat.flee", "combat.negotiate"],
+      "mustExpose": ["enemyTier", "hpOrObjective", "rewardPreview", "maxTurns"]
+    },
+    "dnd": {
+      "requiredWhenPlausible": ["check.success", "combat.flee", "combat.negotiate"],
+      "mustExpose": ["d20Type", "abilityOrSkill", "dcOrAc", "modifierSource", "advantageDisadvantage", "failureConsequence"]
+    },
+    "rpg": {
+      "requiredWhenPlausible": ["social.leverage", "social.withdraw", "deadline.timeout"],
+      "mustExpose": ["oppositionIntent", "demand", "leverageRequirement", "clockState", "factionOrNpcDelta"]
+    },
+    "pyoa": {
+      "requiredWhenPlausible": ["crisis.exclusive-fork", "deadline.timeout"],
+      "mustExpose": ["forkLabels", "exclusiveFacts", "delayedPayoff", "endingEligibility", "convergencePolicy"]
+    }
+  }
+}

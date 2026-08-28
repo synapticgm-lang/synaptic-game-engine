@@ -1,0 +1,152 @@
+{
+  "suiteId": "ws7-social-gameplay-v1",
+  "description": "Pass/fail gates for social crisis depth, skill resolution, leverage, relationship persistence, and progression parity.",
+  "runPolicy": {
+    "deterministicSeeds": 100,
+    "turnsPerRun": 100,
+    "modes": ["dnd", "rpg", "pyoa", "litrpg"],
+    "requiredModesForSpawnGate": ["rpg", "pyoa"],
+    "retainFailureReplayPackets": true,
+    "zeroCriticalInvariantViolationsRequired": true
+  },
+  "gates": [
+    {
+      "gateId": "G1",
+      "name": "Non-combat crisis patterns wired",
+      "criterion": "At least ten distinct crisis patterns are eligible and can reach a terminal or transformed state in both RPG and PYOA modes.",
+      "measurementMethod": {
+        "fixture": "Run 100 deterministic 100-turn storyfollower simulations per required mode with crisis opportunities forced at valid pacing windows.",
+        "metrics": [
+          "distinctEligiblePatternIds",
+          "distinctSpawnedPatternIds",
+          "terminalResolutionRate",
+          "samePatternSuppressionViolations",
+          "unchangedStateAfterResolutionCount"
+        ],
+        "instrumentation": ["crisis_eligible", "crisis_spawned", "crisis_committed", "crisis_resolved", "state_mutation_applied"]
+      },
+      "passThreshold": {
+        "distinctEligiblePatternIdsPerRequiredMode": { "minimum": 10 },
+        "distinctSpawnedPatternIdsPerRequiredMode": { "minimum": 10 },
+        "terminalResolutionRate": { "minimum": 0.95 },
+        "samePatternSuppressionViolations": { "maximum": 0 },
+        "unchangedStateAfterResolutionCount": { "maximum": 0 }
+      },
+      "failureEvidence": ["seed", "mode", "turn", "patternId", "eligibilityReasons", "stateBeforeHash", "stateAfterHash", "replayPacket"]
+    },
+    {
+      "gateId": "G2",
+      "name": "Social skill checks functional",
+      "criterion": "Persuade, Intimidate, Deceive, and Insight resolve plausible high-stakes propositions with committed success, partial, and failure consequences.",
+      "measurementMethod": {
+        "fixture": "Execute a cross-product of four skills, five DC bands, three relationship attitudes, and three evidence bands with fixed RNG boundary values.",
+        "metrics": [
+          "skillsCovered",
+          "outcomeBandsCovered",
+          "preCommitMutationCoverage",
+          "impossibleOutcomeRollCount",
+          "exactRepeatRerollCount",
+          "proseCommitContradictionCount"
+        ],
+        "instrumentation": ["social_check_tier", "social_check_commit", "mutation_transaction", "prose_warden_verdict"]
+      },
+      "passThreshold": {
+        "skillsCovered": { "equals": 4 },
+        "requiredOutcomeBandsCovered": ["success", "partial", "failure"],
+        "preCommitMutationCoverage": { "minimum": 1.0 },
+        "impossibleOutcomeRollCount": { "maximum": 0 },
+        "exactRepeatRerollCount": { "maximum": 0 },
+        "proseCommitContradictionCount": { "maximum": 0 }
+      },
+      "failureEvidence": ["proposition", "relationshipSnapshot", "evidenceSnapshot", "leverageSnapshot", "dc", "roll", "modifiers", "committedBand", "prose", "wardenReasons"]
+    },
+    {
+      "gateId": "G3",
+      "name": "Leverage conditionality and cooldown enforced",
+      "criterion": "Leverage succeeds or fails from evidence, target fit, authority, relationship, resistance, and concession size; one leverage instance affects the same NPC at most once.",
+      "measurementMethod": {
+        "fixture": "Test every leverage type against matching and mismatching pressure profiles, then replay the same use and attempt escalation with new evidence.",
+        "metrics": [
+          "leverageTypesCovered",
+          "conditionalSuccessCases",
+          "conditionalFailureCases",
+          "sameAssetSameNpcSuccessfulUseMaximum",
+          "blockedRepeatRate",
+          "crossNpcPropagationCoverage",
+          "unearnedGlobalKnowledgeCount"
+        ],
+        "instrumentation": ["leverage_registered", "leverage_resolved", "leverage_ledger_written", "knowledge_propagated"]
+      },
+      "passThreshold": {
+        "leverageTypesCovered": { "equals": 6 },
+        "conditionalSuccessCases": { "minimum": 6 },
+        "conditionalFailureCases": { "minimum": 6 },
+        "sameAssetSameNpcSuccessfulUseMaximum": { "maximum": 1 },
+        "blockedRepeatRate": { "minimum": 1.0 },
+        "crossNpcPropagationCoverage": { "minimum": 0.9 },
+        "unearnedGlobalKnowledgeCount": { "maximum": 0 }
+      },
+      "failureEvidence": ["leverageAsset", "targetProfile", "ledgerBefore", "result", "ledgerAfter", "propagationEvents", "replayPacket"]
+    },
+    {
+      "gateId": "G4",
+      "name": "Relationship tracking persists and affects outcomes",
+      "criterion": "Disposition, trust, milestones, promises, knowledge, and boundaries survive save/load and influence later scenes; betrayal at turn 50 is behaviorally active at turn 100.",
+      "measurementMethod": {
+        "fixture": "Create an alliance, record a turn-50 betrayal, save/load, advance to turn 100, and attempt an allied-only request before and after explicit repair.",
+        "metrics": [
+          "saveLoadFieldEquality",
+          "betrayalMilestonePresentAtTurn100",
+          "alliedRequestBlockedBeforeRepair",
+          "repairRequirementsEnforced",
+          "dispositionDerivedFromLedger",
+          "boundaryOverrideViolations"
+        ],
+        "instrumentation": ["relationship_event", "relationship_saved", "relationship_loaded", "disposition_derived", "relationship_gate_checked"]
+      },
+      "passThreshold": {
+        "saveLoadFieldEquality": { "minimum": 1.0 },
+        "betrayalMilestonePresentAtTurn100": { "equals": true },
+        "alliedRequestBlockedBeforeRepair": { "equals": true },
+        "repairRequirementsEnforced": { "equals": true },
+        "dispositionDerivedFromLedger": { "equals": true },
+        "boundaryOverrideViolations": { "maximum": 0 }
+      },
+      "failureEvidence": ["relationshipAtTurn49", "betrayalEvent", "serializedLedger", "relationshipAtTurn100", "gateDecision", "repairEvents", "replayPacket"]
+    },
+    {
+      "gateId": "G5",
+      "name": "Talk path XP and progress parity",
+      "criterion": "Across matched 100-turn runs, completed talk routes earn at least 80% of combat-route XP and at least 90% of combat-route quest progress without repeat farming.",
+      "measurementMethod": {
+        "fixture": "Run at least 20 completed talk and 20 completed fight samples for each matched objective across 100 deterministic seeds.",
+        "metrics": [
+          "talkMedianXp",
+          "fightMedianXp",
+          "talkToFightXpRatio",
+          "talkToFightQuestProgressRatio",
+          "duplicateNoveltyXpAwards",
+          "idleDialogueXp",
+          "objectiveParityTopUpCount"
+        ],
+        "instrumentation": ["xp_awarded", "novelty_key_consumed", "objective_completed", "route_parity_report"]
+      },
+      "passThreshold": {
+        "completedTalkSamples": { "minimum": 20 },
+        "completedFightSamples": { "minimum": 20 },
+        "talkToFightXpRatio": { "minimum": 0.8 },
+        "talkToFightQuestProgressRatio": { "minimum": 0.9 },
+        "duplicateNoveltyXpAwards": { "maximum": 0 },
+        "idleDialogueXp": { "maximum": 0 }
+      },
+      "failureEvidence": ["objectiveId", "talkSamples", "fightSamples", "xpEvents", "noveltyLedger", "parityCalculation", "replayPackets"]
+    }
+  ],
+  "criticalInvariants": [
+    { "id": "I1", "assertion": "Every committed social resolution mutates state, consumes a resource, advances a clock, reveals actionable information, or changes path availability." },
+    { "id": "I2", "assertion": "Exact-repeat propositions against unchanged state never reroll." },
+    { "id": "I3", "assertion": "The same leverage instance influences the same NPC at most once." },
+    { "id": "I4", "assertion": "No roll overrides consent, hard capability, or established world fact." },
+    { "id": "I5", "assertion": "GM prose cannot reverse or omit committed outcome mutations." }
+  ]
+}

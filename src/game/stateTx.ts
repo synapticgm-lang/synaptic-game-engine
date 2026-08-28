@@ -21,6 +21,8 @@ export type StateTxKind =
   | 'combat'
   | 'open_ask'
   | 'correction'
+  | 'social_crisis_commit'
+  | 'leverage_consumed'
   | 'other';
 
 export interface BeatStateTxExtras {

@@ -108,6 +108,46 @@ export function buildSituationPacket(state: GameState): SituationPacket {
     ? `q=${state.currentCoordinates.q} r=${state.currentCoordinates.r} tier=${state.currentCoordinates.tier} z=${state.currentCoordinates.z ?? 0}`
     : undefined;
 
+  // WS-7 Wave 1: Build social context if any social crises or leverage assets exist
+  let socialContext: SituationPacket['socialContext'];
+  const arc = state.arcDirector;
+  const activeCrisis = arc?.socialCrises?.find((c) => !c.resolution);
+  const availableLeverage = arc?.leverageAssets?.filter((l) => !l.exhausted) ?? [];
+  const relationships = arc?.npcRelationships ?? [];
+
+  if (activeCrisis || availableLeverage.length > 0 || relationships.length > 0) {
+    socialContext = {
+      crisisId: activeCrisis?.id,
+      crisisName: activeCrisis?.name,
+      stakes: activeCrisis?.stakes
+        ? {
+            gain: activeCrisis.stakes.gain,
+            loss: activeCrisis.stakes.loss,
+            owner: activeCrisis.stakes.owner,
+            deadline: activeCrisis.stakes.deadline,
+          }
+        : undefined,
+      leverage: availableLeverage.map((l) => ({
+        type: l.type,
+        targetNpc: l.targetNpc,
+        exhausted: l.exhausted,
+      })),
+      relationships: relationships.map((r) => {
+        let disposition = 'neutral';
+        if (r.trust >= 60) disposition = 'ally';
+        else if (r.trust <= 20) disposition = 'hostile';
+        else if (r.fear && r.fear >= 40) disposition = 'intimidated';
+        else if (r.respect && r.respect >= 60) disposition = 'respectful';
+        
+        return {
+          npcName: r.npcName,
+          trust: r.trust,
+          disposition,
+        };
+      }),
+    };
+  }
+
   return {
     location: playerFacingLocation(state) || (dungeon ? dungeon.dungeonName : 'unspecified'),
     coordinates: coords,
@@ -120,6 +160,7 @@ export function buildSituationPacket(state: GameState): SituationPacket {
       : ['none established'],
     activeQuests: activeQuests.length ? activeQuests : ['none'],
     recentFacts: (state.timeline ?? []).slice(-8).map((f) => `T${f.turn}: ${f.text}`),
+    socialContext,
   };
 }
 

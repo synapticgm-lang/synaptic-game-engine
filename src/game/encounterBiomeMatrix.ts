@@ -1,264 +1,338 @@
 /**
- * WS-4 Wave A: Encounter Biome Matrix
+ * WS-4 Wave 1: Encounter Biome Matrix
  * 
- * Biome-appropriate spawn filters (no Keep Wraith on Shattered Coast).
- * Hard-coded filter prevents wrong-bible encounters.
+ * Hard filters encounters by biome/bible to prevent wrong-context spawns
+ * (e.g., Keep Wraith on Shattered Coast).
  */
 
-import type { GameState } from './types';
+import type { EngineMode } from './types';
 import type { EncounterTemplate } from './encounterBible';
 
 // ============================================================================
-// BIOME DETECTION
+// BIOME MATRIX SCHEMA
 // ============================================================================
 
+export interface BiomeMatrixEntry {
+  mode: EngineMode;
+  bibleId: string;
+  biomeId: string;
+  siteTags: string[];
+  allowedEncounterTypes: string[];
+  allowedActors: string[];
+  excludedActors: string[];
+  minTier: number;
+  maxTier: number;
+  droughtFallback: string;
+  notes: string;
+}
+
+export interface BiomeMatrix {
+  version: string;
+  entries: BiomeMatrixEntry[];
+}
+
+// ============================================================================
+// MATRIX LOADING
+// ============================================================================
+
+let _matrixCache: BiomeMatrix | null = null;
+
 /**
- * Detect biome from location
+ * Load the biome spawn matrix from CSV.
+ * Cached after first load.
  */
-export function detectBiome(location: string): string {
-  const lower = location.toLowerCase();
-  
-  // Urban
-  if (/\b(city|town|settlement|outpost|hub)\b/.test(lower)) {
-    if (/\b(ruin|destroyed|abandoned|desolate)\b/.test(lower)) {
-      return 'urban_ruin';
+export async function loadBiomeMatrix(): Promise<BiomeMatrix> {
+  if (_matrixCache) {
+    return _matrixCache;
+  }
+
+  try {
+    const response = await fetch('/data/encounters/D10_biome_spawn_matrix.csv');
+    if (!response.ok) {
+      throw new Error(`Failed to load biome matrix: ${response.statusText}`);
     }
-    return 'urban';
+    
+    const csvText = await response.text();
+    const matrix = parseBiomeMatrixCsv(csvText);
+    _matrixCache = matrix;
+    return matrix;
+  } catch (error) {
+    console.error('Failed to load biome matrix:', error);
+    // Return empty matrix as fallback
+    return {
+      version: '1.0.0',
+      entries: [],
+    };
   }
-  
-  // Dungeon
-  if (/\b(dungeon|crypt|tomb|vault|keep)\b/.test(lower)) {
-    return 'dungeon';
-  }
-  if (/\b(cave|cavern|grotto|underground)\b/.test(lower)) {
-    return 'dungeon_natural';
-  }
-  
-  // Wilderness
-  if (/\b(forest|woods|jungle)\b/.test(lower)) {
-    return 'wilderness';
-  }
-  if (/\b(swamp|marsh)\b/.test(lower)) {
-    return 'wilderness';
-  }
-  if (/\b(plains|grassland|field|meadow)\b/.test(lower)) {
-    return 'wilderness_open';
-  }
-  if (/\b(mountain|hills|peak|cliff)\b/.test(lower)) {
-    return 'wilderness_mountain';
-  }
-  
-  // Coastal
-  if (/\b(coast|shore|beach|harbor|dock)\b/.test(lower)) {
-    return 'coastal';
-  }
-  if (/\b(sea|ocean|bay|inlet)\b/.test(lower)) {
-    return 'coastal_water';
-  }
-  
-  // Road
-  if (/\b(road|path|trail|highway|route)\b/.test(lower)) {
-    return 'road';
-  }
-  
-  // Special
-  if (/\b(desert|dunes|wasteland|badlands)\b/.test(lower)) {
-    return 'desert';
-  }
-  if (/\b(tundra|ice|snow|frozen)\b/.test(lower)) {
-    return 'arctic';
-  }
-  if (/\b(volcano|lava|ash|crater)\b/.test(lower)) {
-    return 'volcanic';
-  }
-  
-  // Default
-  return 'unknown';
-}
-
-// ============================================================================
-// WRONG-BIBLE DETECTION
-// ============================================================================
-
-/**
- * Bible-specific encounter exclusions
- * 
- * Hard-coded to prevent wrong-bible spawns like Keep Wraith on Shattered Coast.
- */
-export const BIBLE_EXCLUSIONS: Record<string, string[]> = {
-  'summoned-pact': [
-    'Keep Wraith',        // Cursed Keep only
-    'Saltmar Raider',     // Shattered Coast only
-    'Salt Road Bandit',   // Salt Road only
-  ],
-  'cursed-keep': [
-    'Pact-Hunter',        // Summoned Pact only
-    'Saltmar Raider',     // Shattered Coast only
-    'Hub Patrol',         // Urban only
-  ],
-  'shattered-coast': [
-    'Keep Wraith',        // Cursed Keep only
-    'Pact-Hunter',        // Summoned Pact only
-    'Salt Road Bandit',   // Salt Road only
-  ],
-  'salt-road-heist': [
-    'Keep Wraith',        // Cursed Keep only
-    'Pact-Hunter',        // Summoned Pact only
-    'Saltmar Raider',     // Shattered Coast only
-  ],
-};
-
-/**
- * Check if encounter is wrong-bible
- */
-export function isWrongBibleEncounter(
-  encounterName: string,
-  bibleId: string
-): boolean {
-  const exclusions = BIBLE_EXCLUSIONS[bibleId];
-  if (!exclusions) return false;
-  
-  return exclusions.some(excluded => 
-    encounterName.toLowerCase().includes(excluded.toLowerCase())
-  );
 }
 
 /**
- * Filter out wrong-bible encounters
+ * Parse CSV text into BiomeMatrix.
  */
-export function filterWrongBibleEncounters(
+function parseBiomeMatrixCsv(csvText: string): BiomeMatrix {
+  const lines = csvText.trim().split('\n');
+  
+  // Skip header row
+  const dataLines = lines.slice(1);
+  
+  const entries: BiomeMatrixEntry[] = [];
+  
+  for (const line of dataLines) {
+    if (!line.trim()) continue;
+    
+    // Parse CSV line (basic implementation)
+    const parts = parseCsvLine(line);
+    
+    if (parts.length < 11) continue;
+    
+    const entry: BiomeMatrixEntry = {
+      mode: parts[0] as EngineMode,
+      bibleId: parts[1],
+      biomeId: parts[2],
+      siteTags: parts[3].split('|').map((s) => s.trim()),
+      allowedEncounterTypes: parts[4].split('|').map((s) => s.trim()),
+      allowedActors: parts[5].split('|').map((s) => s.trim()),
+      excludedActors: parts[6].split('|').map((s) => s.trim()),
+      minTier: parseInt(parts[7], 10) || 1,
+      maxTier: parseInt(parts[8], 10) || 10,
+      droughtFallback: parts[9],
+      notes: parts[10],
+    };
+    
+    entries.push(entry);
+  }
+  
+  return {
+    version: '1.0.0',
+    entries,
+  };
+}
+
+/**
+ * Parse a single CSV line, handling quoted fields.
+ */
+function parseCsvLine(line: string): string[] {
+  const parts: string[] = [];
+  let currentPart = '';
+  let inQuotes = false;
+  
+  for (let i = 0; i < line.length; i++) {
+    const char = line[i];
+    
+    if (char === '"') {
+      inQuotes = !inQuotes;
+    } else if (char === ',' && !inQuotes) {
+      parts.push(currentPart.trim());
+      currentPart = '';
+    } else {
+      currentPart += char;
+    }
+  }
+  
+  // Add the last part
+  if (currentPart) {
+    parts.push(currentPart.trim());
+  }
+  
+  return parts;
+}
+
+/**
+ * Clear the matrix cache (for testing).
+ */
+export function clearBiomeMatrixCache(): void {
+  _matrixCache = null;
+}
+
+// ============================================================================
+// FILTERING LOGIC
+// ============================================================================
+
+/**
+ * Filter templates by biome constraints.
+ * Returns only templates that are legal for the given biome and bible.
+ */
+export function filterByBiome(
   templates: EncounterTemplate[],
-  bibleId: string
+  bibleId: string,
+  biomeId: string,
+  mode: EngineMode,
+  matrix: BiomeMatrix
 ): EncounterTemplate[] {
-  return templates.filter(t => !isWrongBibleEncounter(t.name, bibleId));
+  // Find matching matrix entries
+  const matrixEntries = matrix.entries.filter(
+    (e) => e.mode === mode && e.bibleId === bibleId && e.biomeId === biomeId
+  );
+  
+  if (matrixEntries.length === 0) {
+    // No specific rules for this biome - allow all templates from same bible
+    return templates.filter((t) => t.bibleId === bibleId && t.mode === mode);
+  }
+  
+  // Collect all allowed and excluded actors across matching entries
+  const allowedActors = new Set<string>();
+  const excludedActors = new Set<string>();
+  const allowedTypes = new Set<string>();
+  let minTier = 1;
+  let maxTier = 10;
+  
+  for (const entry of matrixEntries) {
+    entry.allowedActors.forEach((a) => allowedActors.add(a));
+    entry.excludedActors.forEach((a) => excludedActors.add(a));
+    entry.allowedEncounterTypes.forEach((t) => allowedTypes.add(t));
+    minTier = Math.max(minTier, entry.minTier);
+    maxTier = Math.min(maxTier, entry.maxTier);
+  }
+  
+  // Filter templates
+  return templates.filter((template) => {
+    // Must be from the same bible
+    if (template.bibleId !== bibleId) {
+      return false;
+    }
+    
+    // Must be in tier range
+    if (template.tierRange[0] > maxTier || template.tierRange[1] < minTier) {
+      return false;
+    }
+    
+    // Check if template contains excluded actors
+    for (const excludedActor of excludedActors) {
+      if (template.name.toLowerCase().includes(excludedActor.toLowerCase())) {
+        return false;
+      }
+    }
+    
+    // If allowed types are specified, template must match one
+    if (allowedTypes.size > 0) {
+      const templateType = template.densityRole;
+      // Map density roles to encounter types
+      const typeMatch = 
+        allowedTypes.has(templateType) ||
+        allowedTypes.has(`${templateType}-encounter`) ||
+        allowedTypes.has('random-encounter') ||
+        allowedTypes.has('combat');
+      
+      if (!typeMatch) {
+        return false;
+      }
+    }
+    
+    return true;
+  });
 }
 
-// ============================================================================
-// BIOME VALIDATION
-// ============================================================================
-
 /**
- * Validate that encounter matches biome
+ * Check if a specific template is legal for a biome/bible combination.
  */
-export function validateEncounterBiome(
+export function isTemplateLegalForBiome(
   template: EncounterTemplate,
-  location: string
-): {
-  valid: boolean;
-  reason?: string;
-} {
-  const biome = detectBiome(location);
-  const constraints = template.biomeConstraints;
+  bibleId: string,
+  biomeId: string,
+  mode: EngineMode,
+  matrix: BiomeMatrix
+): { legal: boolean; reason?: string } {
+  // Bible mismatch is always illegal
+  if (template.bibleId !== bibleId) {
+    return { 
+      legal: false, 
+      reason: `Wrong-bible spawn: ${template.id} is for ${template.bibleId}, not ${bibleId}` 
+    };
+  }
   
-  // Check excluded biomes
-  if (constraints.excludedBiomes) {
-    for (const excluded of constraints.excludedBiomes) {
-      if (biome === excluded) {
+  // Find matching matrix entries
+  const matrixEntries = matrix.entries.filter(
+    (e) => e.mode === mode && e.bibleId === bibleId && e.biomeId === biomeId
+  );
+  
+  if (matrixEntries.length === 0) {
+    // No specific rules - allow if same bible
+    return { legal: true };
+  }
+  
+  // Check excluded actors
+  for (const entry of matrixEntries) {
+    for (const excludedActor of entry.excludedActors) {
+      if (template.name.toLowerCase().includes(excludedActor.toLowerCase())) {
         return {
-          valid: false,
-          reason: `Encounter excluded from ${biome} biome`,
+          legal: false,
+          reason: `Excluded actor: ${excludedActor} not allowed in ${biomeId}`,
         };
       }
     }
   }
   
-  // Check allowed biomes
-  const biomeMatch = constraints.allowedBiomes.includes(biome);
-  if (!biomeMatch) {
-    return {
-      valid: false,
-      reason: `Encounter not allowed in ${biome} biome (allowed: ${constraints.allowedBiomes.join(', ')})`,
-    };
-  }
-  
-  // Check required locations
-  if (constraints.requiredLocations) {
-    const locationLower = location.toLowerCase();
-    const hasRequired = constraints.requiredLocations.some(req =>
-      locationLower.includes(req.toLowerCase())
-    );
-    
-    if (!hasRequired) {
+  // Check tier range
+  for (const entry of matrixEntries) {
+    if (template.tierRange[0] > entry.maxTier || template.tierRange[1] < entry.minTier) {
       return {
-        valid: false,
-        reason: `Encounter requires location type: ${constraints.requiredLocations.join(' or ')}`,
+        legal: false,
+        reason: `Tier mismatch: template tier ${template.tierRange[0]}-${template.tierRange[1]} outside ${entry.minTier}-${entry.maxTier}`,
       };
     }
   }
   
-  // Check excluded locations
-  if (constraints.excludedLocations) {
-    const locationLower = location.toLowerCase();
-    const hasExcluded = constraints.excludedLocations.some(excl =>
-      locationLower.includes(excl.toLowerCase())
-    );
-    
-    if (hasExcluded) {
-      return {
-        valid: false,
-        reason: `Encounter excluded from ${location} type locations`,
-      };
+  return { legal: true };
+}
+
+/**
+ * Get drought fallback encounter type for a biome when no legal templates exist.
+ */
+export function getDroughtFallback(
+  bibleId: string,
+  biomeId: string,
+  mode: EngineMode,
+  matrix: BiomeMatrix
+): string | null {
+  const entry = matrix.entries.find(
+    (e) => e.mode === mode && e.bibleId === bibleId && e.biomeId === biomeId
+  );
+  
+  return entry?.droughtFallback ?? null;
+}
+
+/**
+ * Validate that the matrix prevents known wrong-bible spawns.
+ * Used in tests to ensure hard filter catches regression cases.
+ */
+export function validateWrongBiblePrevention(matrix: BiomeMatrix): {
+  valid: boolean;
+  errors: string[];
+} {
+  const errors: string[] = [];
+  
+  // Test case 1: Keep Wraith should be excluded from Summoned Pact biomes
+  const summonedPactEntries = matrix.entries.filter(
+    (e) => e.bibleId === 'summoned-pact'
+  );
+  
+  for (const entry of summonedPactEntries) {
+    if (!entry.excludedActors.some((a) => a.toLowerCase().includes('keep-wraith'))) {
+      errors.push(
+        `Keep Wraith not excluded from summoned-pact biome: ${entry.biomeId}`
+      );
     }
   }
   
-  return { valid: true };
-}
-
-// ============================================================================
-// BIOME MATRIX QUERY
-// ============================================================================
-
-/**
- * Get valid encounters for biome
- */
-export function getValidEncountersForBiome(
-  templates: EncounterTemplate[],
-  location: string,
-  bibleId: string
-): EncounterTemplate[] {
-  // Filter out wrong-bible first
-  let valid = filterWrongBibleEncounters(templates, bibleId);
+  // Test case 2: Summoned Pact actors should be excluded from Cursed Keep
+  const cursedKeepEntries = matrix.entries.filter(
+    (e) => e.bibleId === 'cursed-keep'
+  );
   
-  // Then validate biome
-  valid = valid.filter(t => validateEncounterBiome(t, location).valid);
-  
-  return valid;
-}
-
-/**
- * Build biome situation section
- */
-export function buildBiomeSituationSection(
-  location: string,
-  state: GameState
-): string {
-  const biome = detectBiome(location);
-  
-  const lines: string[] = ['### BIOME'];
-  lines.push(`Current biome: **${biome.replace(/_/g, ' ')}**`);
-  lines.push(`Location: ${location}`);
-  
-  // Add biome-specific notes
-  switch (biome) {
-    case 'urban':
-      lines.push('*Urban area: patrols, merchants, officials*');
-      break;
-    case 'urban_ruin':
-      lines.push('*Ruined urban: ambushes, scavengers, hidden threats*');
-      break;
-    case 'dungeon':
-      lines.push('*Dungeon: structured encounters, traps, boss at end*');
-      break;
-    case 'coastal':
-      lines.push('*Coastal area: maritime threats, smugglers, storms*');
-      break;
-    case 'road':
-      lines.push('*Road: bandits, travelers, random encounters*');
-      break;
-    case 'wilderness':
-      lines.push('*Wilderness: beasts, weather, navigation challenges*');
-      break;
+  for (const entry of cursedKeepEntries) {
+    const hasSummonedPactExclusion = entry.excludedActors.some(
+      (a) => a.toLowerCase().includes('summoned') || a.toLowerCase().includes('pact')
+    );
+    
+    if (!hasSummonedPactExclusion) {
+      errors.push(
+        `Summoned Pact actors not excluded from cursed-keep biome: ${entry.biomeId}`
+      );
+    }
   }
   
-  return lines.join('\n');
+  return {
+    valid: errors.length === 0,
+    errors,
+  };
 }

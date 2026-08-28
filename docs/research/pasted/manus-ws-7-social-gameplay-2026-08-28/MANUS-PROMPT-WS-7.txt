@@ -1,0 +1,225 @@
+WS-7: Social Gameplay & Non-Combat Systems Research Commission
+
+COMMISSION REQUEST
+
+Please research and deliver: Social gameplay depth framework with stakes design, non-combat crisis patterns, social skill systems, and relationship mechanics to make the talk path as rewarding as combat.
+
+---
+
+PROBLEM STATEMENT
+
+Player Evidence:
+
+Gemini RPG s137 (Cape District, 27w):
+- Walk Away pads 240-260× (no non-combat resolution)
+- Leverage topics loop (same threat works forever, no consequence)
+- Social NPCs have no relationship memory
+- No social standoffs (confrontation → pad loop, not stakes)
+- Gemini verdict: "Pad loops; leverage broken; 1/10"
+
+Current state (28a-29c):
+- Social milestone XP: 15-25 once per NPC node (28a)
+- NPC topic FSM: unraised → hinted → contested → revealed → exhausted (28a)
+- NPC role obligations: Partial (B023, needs WS-2 specs)
+- Faction standings: Code exists, thin integration
+- No social skills: persuade/intimidate/deceive checks missing
+- No non-combat stakes: dialogue is exposition, not crisis resolution
+
+What's missing:
+❌ Social stakes design (what's at risk in dialogue beyond lore?)
+❌ Non-combat crisis patterns (≥10 patterns for RPG/PYOA modes)
+❌ Social skill system (persuade/intimidate/deceive/insight checks)
+❌ Leverage mechanics (when does threat work? when does it fail?)
+❌ Relationship tracking (disposition, trust, betrayal consequences)
+❌ Non-combat resolution outcomes (unlock path, close path, faction shift, NPC transform)
+
+---
+
+TARGET DELIVERABLES (10 Items)
+
+D1: Social Gameplay Constitution
+Format: Markdown specification + design principles
+Contents: Social stakes philosophy
+- Social stakes categories (access, information, alliance, betrayal, moral weight)
+- Non-combat resolution principles (outcomes as meaningful as combat)
+- Social skill design (when to roll vs when GM narrates)
+- Relationship tracking philosophy (disposition, trust, relationship milestones)
+- Genre alignment (DnD Charisma checks, RPG leverage, PYOA inner thoughts, LitRPG faction standings)
+
+D2: Non-Combat Crisis Catalog (≥10 Patterns)
+Format: 10-15 crisis patterns (JSON schema + prose example each)
+Contents: Social standoff, betrayal reveal, deadline pressure, faction confrontation, moral dilemma, exposure threat, leverage negotiation, trust test, alliance proposal, hostage situation, public humiliation, blackmail, inheritance dispute, succession crisis, romantic entanglement
+- Per-pattern: Telegraph, stakes, resolution paths (success/failure/partial), aftermath, genre filters
+
+D3: Social Skill System Spec
+Format: TypeScript interfaces + skill resolution algorithm
+Contents: Persuade, Intimidate, Deceive, Insight skills
+- Skill check mechanics (d20 + modifier vs DC, or LLM judgment?)
+- Success outcomes (unlock dialogue, reveal secret, shift disposition, avoid combat)
+- Failure outcomes (NPC hostile, door closed, consequence delayed)
+- Partial outcomes (success with cost, failure with benefit)
+- Genre variants (DnD Charisma, RPG leverage, PYOA inner comment, LitRPG faction weight)
+
+D4: Leverage Mechanics Spec
+Format: Leverage catalog + resolution table
+Contents: When does leverage work?
+- Leverage types (physical threat, exposure, moral appeal, faction authority, debt owed, blackmail)
+- Leverage success conditions (NPC disposition, relationship tier, faction weight, evidence strength)
+- Leverage failure consequences (NPC hostile, faction shift, leverage exhausted, escalation)
+- Leverage cooldown (same leverage can't work twice on same NPC)
+- Cross-NPC leverage sync (betray one merchant → other merchants know)
+
+D5: Relationship Tracking Schema
+Format: TypeScript interface + JSON schema + example ledger
+Contents: NpcRelationship schema
+- Disposition states (hostile, wary, neutral, friendly, allied, loyal)
+- Trust score (-100 to +100, shifts from betrayal/favor)
+- Relationship milestones (first_meet, favor_granted, betrayal, alliance, romance, rivalry)
+- Disposition change rules (what shifts hostile → wary → neutral → friendly)
+- UI display (character sheet relationships tab, journal NPC section)
+
+D6: Social Stakes Templates (Per-Mode)
+Format: Stakes templates for DnD, RPG, PYOA, LitRPG
+Contents: Genre-specific social stakes
+- DnD: Persuade guard (DC 15), intimidate merchant (DC 12), deceive faction leader (DC 18)
+- RPG: Leverage informant (expose vs protect), moral dilemma (save one, lose other), betrayal choice (faction A or B)
+- PYOA: Inner comment stakes (trust vs doubt miller), delayed payoff (lie now, consequence T+50)
+- LitRPG: Faction standing gates (Guild access requires +50 rep), System notice social milestones
+
+D7: Non-Combat Resolution Outcomes
+Format: Outcome catalog + consequence table
+Contents: What happens when social succeeds/fails?
+- Unlock path: Persuade guard → dungeon access, no combat
+- Close path: Intimidate merchant → shop closed, faction -10
+- Faction shift: Betray lord → rebels +20, loyalists -30
+- NPC transform: Deceive ally → ally becomes enemy, turnover triggered
+- Quest tick: Leverage informant → reveal clue, quest advances
+- Relationship milestone: Favor granted → trust +15, disposition friendly → allied
+
+D8: Social Progression System
+Format: Social skill tree + XP integration
+Contents: How does social gameplay scale?
+- Social XP sources (successful persuasion, leverage win, favor granted, relationship milestone)
+- Social skill tree (unlock persuade → intimidate → deceive → insight → master diplomat)
+- Relationship unlocks (allied NPCs offer quests, loyal NPCs reveal secrets)
+- Faction reputation gates (Guild membership, Court access, Underground trust)
+- Social vs Combat balance (talk path earns same XP/progress as fight path)
+
+D9: Competitor Social Mechanics Analysis
+Format: Competitor analysis table + lessons
+Contents: Disco Elysium, Planescape Torment, Fallout New Vegas, Mass Effect
+- Per-competitor: Social skill systems, dialogue stakes, reputation mechanics, non-combat resolution depth
+- Lessons: What makes social rewarding (Disco Elysium thought cabinet), what fails (Mass Effect blue/red binary)
+- Genre adaptations: Which patterns work for text-based AI GM?
+
+D10: Implementation Backlog + Eval Harness
+Format: CSV backlog (30-40 tasks) + JSON validation gates
+Contents: P0/P1/P2 tasks + five validation gates
+- G1: Non-combat crisis patterns wired (10+ patterns spawn in RPG/PYOA)
+- G2: Social skill checks functional (persuade/intimidate/deceive resolve with stakes)
+- G3: Leverage mechanics work (success/failure/cooldown enforced)
+- G4: Relationship tracking persists (disposition changes, trust shifts, milestones recorded)
+- G5: Social path XP parity (talk path earns 80%+ XP vs fight path over 100t)
+
+---
+
+FORMAT EXPECTATIONS
+
+Follow the BIG CHANGES pattern:
+- Constitution (D1): Design principles + social stakes philosophy + genre alignment
+- Crisis catalog (D2): 10-15 patterns (JSON schema + prose example + full lifecycle)
+- System specs (D3-D5): TypeScript interfaces + JSON examples + integration points
+- Template libraries (D6-D7): Per-mode stakes templates + outcome tables
+- Progression system (D8): Social skill tree + XP integration + relationship unlocks
+- Competitor analysis (D9): Lessons from Disco Elysium, Planescape, Fallout, Mass Effect
+- Implementation backlog (D10): CSV with columns: ID, Priority, Task, Complexity, Integration, Notes
+- Eval harness (D10): JSON with gate ID, criteria, measurement method, pass/fail threshold
+
+---
+
+INTEGRATION POINTS
+
+Code Integration:
+- socialCrisis.ts: Non-combat crisis catalog (10-15 patterns)
+- socialSkills.ts: Persuade/intimidate/deceive/insight skill system
+- leverageMechanics.ts: Leverage catalog + resolution logic + cooldown ledger
+- npcRelationships.ts: Relationship tracking schema + disposition FSM + trust scores
+- socialStakes.ts: Per-mode stakes templates + resolution outcomes
+- socialProgression.ts: Social skill tree + XP integration + faction gates
+- arcDirector.ts extension: Pre-GM social crisis commit + stakes setup + resolution
+- situationPacket.ts extension: Include social stakes, leverage state, relationship context
+- proseWarden.ts extension: Verify GM honors social resolution, leverage outcomes, disposition shifts
+- evalHarness.ts: Social gameplay validation gates + per-run metrics
+
+Design Alignment:
+- Path A architecture: Pre-GM commits for deterministic social outcomes
+- WS-2 coordination: NPC relationship tracking syncs with NPC role obligations + memory
+- WS-4 coordination: Non-combat crisis patterns complement encounter templates
+- Quality governance: Social progression enforces forward progress (not pad loops)
+
+---
+
+SUCCESS METRICS
+
+Measurable Targets:
+- Non-combat resolution: Walk Away pads 240-260× → Non-combat crisis resolves with stakes
+- Leverage functionality: Same threat works forever → Leverage success/failure/cooldown enforced
+- Relationship tracking: 0 memory → Disposition, trust, milestones persist and affect outcomes
+- Social XP parity: Talk path thin → Talk path earns 80%+ XP vs fight path over 100t
+- Gemini social score: RPG ~1/10 → ~6-8/10
+
+Quality Gates (Pass/Fail):
+- G1: 10+ non-combat crisis patterns spawn in RPG/PYOA modes
+- G2: Social skills resolve with stakes (success/failure/partial outcomes)
+- G3: Leverage cooldown enforced (same leverage max 1× per NPC)
+- G4: Relationship milestones persist (betrayal at T50 affects disposition at T100)
+- G5: Talk path XP 80%+ of fight path (measured over 100t storyfollower runs)
+
+---
+
+TIMELINE
+
+Research Phase: 4-6 days
+- Days 1-2: D1 (Constitution) + D9 (Competitor analysis) — design principles + lessons
+- Days 3-4: D2 (Non-combat crisis catalog 10-15 patterns) + D6 (Per-mode stakes templates)
+- Days 5-6: D3 (Social skills) + D4 (Leverage) + D5 (Relationships) + D7 (Outcomes) + D8 (Progression) + D10 (Backlog/Eval)
+
+Implementation (After Research): 8-12 days
+- Wave 1: Social crisis catalog + leverage mechanics (2-3 days)
+- Wave 2: Social skill system + relationship tracking (3-4 days)
+- Wave 3: Per-mode stakes templates + ArcDirector integration (2-3 days)
+- Wave 4: Eval harness + quality gates + validation (1-2 days)
+
+---
+
+DESIGN QUESTIONS TO RESOLVE
+
+1. Social skill checks: Always d20 roll / LLM judgment (RECOMMENDED) / Hybrid (roll for high stakes)
+2. Leverage strictness: Always works (broken) / Conditional success (RECOMMENDED) / Rarely works (frustrating)
+3. Relationship granularity: 3 states (hostile/neutral/friendly) / 6 states (RECOMMENDED) / 10 states (complex)
+4. Social XP parity: 50% of combat / 80% of combat (RECOMMENDED) / 100% parity
+5. Non-combat crisis frequency: Every 50t / Every 30t (RECOMMENDED) / Every 20t (too frequent)
+6. Disposition persistence: Session-only / Permanent (RECOMMENDED) / Decay over time
+
+Recommendation: Use defaults above unless research uncovers compelling evidence otherwise.
+
+---
+
+REFERENCES
+
+- Gemini RPG s137: docs/bugs/gemini-reviews-2026-08-27/gemini-11-rpg-completionist-27w-300t.md
+- Deep research opportunities: docs/research/deep-research-opportunities-2026-08-28.md (R4.3)
+- Player-driven decisions: docs/research/player-driven-decisions-2026-08-28.md
+- Manus BIG CHANGES: docs/research/pasted/manus-big-changes-2026-08-27/T2 — Ranked Architectural Intervention Matrix.md
+- WS-2 (NPC roles): docs/research/MANUS-PROMPT-WS-2.txt (relationship tracking complements role obligations)
+
+---
+
+CONTEXT
+
+Current game state: 2026-08-30d (wave 3 sealed manifests shipped)
+Path A status: Wave 1 complete (B026-B028), Wave 2 research phase (B014-B025 needs specs)
+Evidence base: Gemini RPG reviews show social path is broken (leverage loops, no stakes, pad spam)
+Prior Manus packages: BIG CHANGES (T1-T12), Premium Themes (T1-T14), WS-2/4/5 (commissioned)
+
+Note: This research complements WS-2 (NPC memory/roles). WS-2 handles NPC lifecycle + turnover; WS-7 handles social stakes + non-combat resolution. Together they make the talk path as deep as the fight path.

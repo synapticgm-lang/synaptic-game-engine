@@ -1,0 +1,90 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.invalid/ws7/social-crisis-catalog.schema.json",
+  "title": "WS-7 Non-Combat Crisis Catalog",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["version", "spawn_policy", "patterns"],
+  "properties": {
+    "version": { "type": "string", "const": "1.0.0" },
+    "spawn_policy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["target_interval_turns", "minimum_patterns_per_mode", "repeat_suppression_turns", "commit_before_prose"],
+      "properties": {
+        "target_interval_turns": { "type": "integer", "const": 30 },
+        "minimum_patterns_per_mode": { "type": "integer", "minimum": 10 },
+        "repeat_suppression_turns": { "type": "integer", "minimum": 30 },
+        "commit_before_prose": { "type": "boolean", "const": true }
+      }
+    },
+    "patterns": {
+      "type": "array",
+      "minItems": 10,
+      "maxItems": 15,
+      "uniqueItems": true,
+      "items": { "$ref": "#/$defs/crisisPattern" }
+    }
+  },
+  "$defs": {
+    "mode": { "type": "string", "enum": ["dnd", "rpg", "pyoa", "litrpg"] },
+    "skill": { "type": "string", "enum": ["persuade", "intimidate", "deceive", "insight", "none"] },
+    "stake": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["category", "asset", "owner", "loss", "gain"],
+      "properties": {
+        "category": { "type": "string", "enum": ["access", "information", "alliance", "betrayal", "moral_weight", "status", "safety", "time", "resources", "identity"] },
+        "asset": { "type": "string", "minLength": 1 },
+        "owner": { "type": "string", "minLength": 1 },
+        "loss": { "type": "string", "minLength": 1 },
+        "gain": { "type": "string", "minLength": 1 }
+      }
+    },
+    "resolution": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["success", "partial", "failure"],
+      "properties": {
+        "success": { "type": "array", "minItems": 1, "items": { "type": "string" } },
+        "partial": { "type": "array", "minItems": 1, "items": { "type": "string" } },
+        "failure": { "type": "array", "minItems": 1, "items": { "type": "string" } }
+      }
+    },
+    "genreFilter": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["mode", "weight", "presentation"],
+      "properties": {
+        "mode": { "$ref": "#/$defs/mode" },
+        "weight": { "type": "integer", "minimum": 0, "maximum": 100 },
+        "presentation": { "type": "string", "minLength": 1 }
+      }
+    },
+    "crisisPattern": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "name", "premise", "telegraph", "stakes", "required_context", "primary_skills", "resolution", "aftermath", "reopen_conditions", "anti_loop_rule", "genre_filters", "prose_example"],
+      "properties": {
+        "id": { "type": "string", "pattern": "^SC-[0-9]{2}$" },
+        "name": { "type": "string", "minLength": 3 },
+        "premise": { "type": "string", "minLength": 20 },
+        "telegraph": { "type": "array", "minItems": 2, "items": { "type": "string" } },
+        "stakes": { "type": "array", "minItems": 2, "items": { "$ref": "#/$defs/stake" } },
+        "required_context": { "type": "array", "minItems": 1, "items": { "type": "string" } },
+        "primary_skills": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/skill" } },
+        "resolution": { "$ref": "#/$defs/resolution" },
+        "aftermath": { "type": "array", "minItems": 2, "items": { "type": "string" } },
+        "reopen_conditions": { "type": "array", "minItems": 1, "items": { "type": "string" } },
+        "anti_loop_rule": { "type": "string", "minLength": 20 },
+        "genre_filters": {
+          "type": "array",
+          "minItems": 4,
+          "maxItems": 4,
+          "items": { "$ref": "#/$defs/genreFilter" }
+        },
+        "prose_example": { "type": "string", "minLength": 80 }
+      }
+    }
+  }
+}

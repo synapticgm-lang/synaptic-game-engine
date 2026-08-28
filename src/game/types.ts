@@ -832,6 +832,35 @@ export interface SituationPacket {
   presentEntities: string[];
   activeQuests: string[];
   recentFacts: string[];
+  
+  // WS-7 Wave 1: Social Context
+  socialContext?: {
+    /** Active crisis (if any) */
+    crisisId?: string;
+    crisisName?: string;
+    
+    /** Committed stakes */
+    stakes?: {
+      gain: string;
+      loss: string;
+      owner: string;
+      deadline?: number;
+    };
+    
+    /** Available leverage assets */
+    leverage?: Array<{
+      type: string;
+      targetNpc: string;
+      exhausted: boolean;
+    }>;
+    
+    /** NPC relationships (visible to GM for tone/reaction) */
+    relationships?: Array<{
+      npcName: string;
+      trust: number;
+      disposition: string;
+    }>;
+  };
 }
 
 export type NpcMood = 'friendly' | 'angry' | 'scared' | 'sad' | 'cautious' | 'neutral' | 'unknown';

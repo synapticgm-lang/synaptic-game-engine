@@ -1,0 +1,2340 @@
+{
+  "status": "PASS",
+  "summary": {
+    "checks": 462,
+    "passed": 462,
+    "failed": 0,
+    "warnings": 1,
+    "templates": 48,
+    "telegraphCoverage": 1.0,
+    "matrixRows": 23,
+    "backlogTasks": 40,
+    "priorityCounts": {
+      "P0": 28,
+      "P1": 10,
+      "P2": 2
+    },
+    "pyoaCounts": {
+      "thornferry": 6,
+      "vesper-glass": 6,
+      "erebus-9": 6,
+      "ashwinter-court": 6
+    }
+  },
+  "checks": [
+    {
+      "name": "JSON files parse",
+      "passed": true,
+      "detail": "8 required documents inspected"
+    },
+    {
+      "name": "D2 template count",
+      "passed": true,
+      "detail": "expected 8, found 8"
+    },
+    {
+      "name": "D3 template count",
+      "passed": true,
+      "detail": "expected 8, found 8"
+    },
+    {
+      "name": "D4 template count",
+      "passed": true,
+      "detail": "expected 8, found 8"
+    },
+    {
+      "name": "D5 template count",
+      "passed": true,
+      "detail": "expected 24, found 24"
+    },
+    {
+      "name": "Unique template IDs",
+      "passed": true,
+      "detail": "48 total IDs, 48 unique"
+    },
+    {
+      "name": "JSON Schema conformance",
+      "passed": true,
+      "detail": "0 schema errors across 48 templates"
+    },
+    {
+      "name": "summoned-pact.hub-ambush.ashknife-cell bounded",
+      "passed": true,
+      "detail": "maxTurns=6"
+    },
+    {
+      "name": "summoned-pact.hub-ambush.ashknife-cell forced terminal",
+      "passed": true,
+      "detail": "{'terminal': True, 'stateChanges': ['location:set:guild-archive', 'player:condition:add:cut', 'market:set:lockdown'], 'summary': 'At the bound, wardens drag the player through the archive gate; escape succeeds with a cut and market lockdown.', 'terminalState': 'fled'}"
+    },
+    {
+      "name": "summoned-pact.hub-ambush.ashknife-cell action count",
+      "passed": true,
+      "detail": "approaches=3"
+    },
+    {
+      "name": "summoned-pact.hub-ambush.ashknife-cell/fight action honesty",
+      "passed": true,
+      "detail": "success/failure deltas and lockout required"
+    },
+    {
+      "name": "summoned-pact.hub-ambush.ashknife-cell/flee action honesty",
+      "passed": true,
+      "detail": "success/failure deltas and lockout required"
+    },
+    {
+      "name": "summoned-pact.hub-ambush.ashknife-cell/negotiate action honesty",
+      "passed": true,
+      "detail": "success/failure deltas and lockout required"
+    },
+    {
+      "name": "summoned-pact.hub-ambush.ashknife-cell receipt diversity",
+      "passed": true,
+      "detail": "types=['dungeon', 'faction', 'loot', 'npc', 'quest', 'xp'] minimum=2"
+    },
+    {
+      "name": "summoned-pact.hub-ambush.ashknife-cell biome allow",
+      "passed": true,
+      "detail": "{'allow': ['urban-hub', 'arcane-market'], 'siteTags': ['market', 'warded-safe-zone'], 'requireFactionTags': ['ashknife'], 'exclude': ['open-ocean', 'cursed-keep']}"
+    },
+    {
+      "name": "summoned-pact.dungeon-trash.chain-mites bounded",
+      "passed": true,
+      "detail": "maxTurns=4"
+    },
+    {
+      "name": "summoned-pact.dungeon-trash.chain-mites forced terminal",
+      "passed": true,
+      "detail": "{'terminal': True, 'stateChanges': ['location:set:ossuary-rest-niche', 'player:condition:add:bitten', 'dungeon:nest:set:cooldown'], 'summary': 'The player slams the niche seal and escapes with a bite; the nest remains uncleared.', 'terminalState': 'fled'}"
+    },
+    {
+      "name": "summoned-pact.dungeon-trash.chain-mites action count",
+      "passed": true,
+      "detail": "approaches=3"
+    },
+    {
+      "name": "summoned-pact.dungeon-trash.chain-mites/fight action honesty",
+      "passed": true,
+      "detail": "success/failure deltas and lockout required"
+    },
+    {
+      "name": "summoned-pact.dungeon-trash.chain-mites/flee action honesty",
+      "passed": true,
+      "detail": "success/failure deltas and lockout required"
+    },
+    {
+      "name": "summoned-pact.dungeon-trash.chain-mites/negotiate action honesty",
+      "passed": true,
+      "detail": "success/failure deltas and lockout required"
+    },
+    {
+      "name": "summoned-pact.dungeon-trash.chain-mites receipt diversity",
+      "passed": true,
+      "detail": "types=['dungeon', 'faction', 'loot', 'npc', 'quest', 'xp'] minimum=2"
+    },
+    {
+      "name": "summoned-pact.dungeon-trash.chain-mites biome allow",
+      "passed": true,
+      "detail": "{'allow': ['crypt-dungeon', 'chain-vault'], 'siteTags': ['corridor', 'vermin-nest'], 'requireFactionTags': ['pact-vermin'], 'exclude': ['urban-hub', 'shattered-coast']}"
+    },
+    {
+      "name": "summoned-pact.miniboss.covenant-devourer bounded",
+      "passed": true,
+      "detail": "maxTurns=8"
+    },
+    {
+      "name": "summoned-pact.miniboss.covenant-devourer forced terminal",
+      "passed": true,
+      "detail": "{'terminal': True, 'stateChanges': ['player:active-skill:lock:1', 'enemy:set:escaped-with-contract', 'quest:recover-stolen-skill:unlock'], 'summary': 'The devourer consumes one active skill and escapes; the battle ends with a recovery quest.', 'terminalState': 'defeat'}"
+    },
+    {
+      "name": "summoned-pact.miniboss.covenant-devourer action count",
+      "passed": true,
+      "detail": "approaches=3"
+    },
+    {
+      "name": "summoned-pact.miniboss.covenant-devourer/fight action honesty",
+      "passed": true,
+      "detail": "success/failure deltas and lockout required"
+    },
+    {
+      "name": "summoned-pact.miniboss.covenant-devourer/flee action honesty",
+      "passed": true,
+      "detail": "success/failure deltas and lockout required"
+    },
+    {
+      "name": "summoned-pact.miniboss.covenant-devourer/negotiate action honesty",
+      "passed": true,
+      "detail": "success/failure deltas and lockout required"
+    },
+    {
+      "name": "summoned-pact.miniboss.covenant-devourer receipt diversity",
+      "passed": true,
+      "detail": "types=['dungeon', 'faction', 'loot', 'npc', 'quest', 'xp'] minimum=3"
+    },
+    {
+      "name": "summoned-pact.miniboss.covenant-devourer biome allow",
+      "passed": true,
+      "detail": "{'allow': ['arcane-dungeon', 'contract-vault'], 'siteTags': ['seal-hall', 'miniboss-room'], 'requireFactionTags': ['rogue-summon'], 'exclude': ['mundane-coast', 'peaceful-hub']}"
+    },
+    {
+      "name": "summoned-pact.miniboss.covenant-devourer elite channels",
+      "passed": true,
+      "detail": "channels=['status', 'item']"
+    },
+    {
+      "name": "summoned-pact.boss.null-notary bounded",
+      "passed": true,
+      "detail": "maxTurns=12"
+    },
+    {
+      "name": "summoned-pact.boss.null-notary forced terminal",
+      "passed": true,
+      "detail": "{'terminal': True, 'stateChanges': ['boss:set:ledger-claimed', 'party:condition:add:oathburn', 'quest:appeal-null-judgment:unlock'], 'summary': 'The twelfth seal closes; the Notary claims the ledger and brands the party, then the encounter ends.', 'terminalState': 'defeat'}"
+    },
+    {
+      "name": "summoned-pact.boss.null-notary action count",
+      "passed": true,
+      "detail": "approaches=3"
+    },
+    {
+      "name": "summoned-pact.boss.null-notary/fight action honesty",
+      "passed": true,
+      "detail": "success/failure deltas and lockout required"
+    },
+    {
+      "name": "summoned-pact.boss.null-notary/flee action honesty",
+      "passed": true,
+      "detail": "success/failure deltas and lockout required"
+    },
+    {
+      "name": "summoned-pact.boss.null-notary/negotiate action honesty",
+      "passed": true,
+      "detail": "success/failure deltas and lockout required"
+    },
+    {
+      "name": "summoned-pact.boss.null-notary receipt diversity",
+      "passed": true,
+      "detail": "types=['dungeon', 'faction', 'loot', 'npc', 'quest', 'xp'] minimum=4"
+    },
+    {
+      "name": "summoned-pact.boss.null-notary biome allow",
+      "passed": true,
+      "detail": "{'allow': ['contract-vault', 'void-court'], 'siteTags': ['boss-sanctum', 'ledger-core'], 'requireFactionTags': ['null-court'], 'exclude': ['shattered-coast', 'forest-road']}"
+    },
+    {
+      "name": "summoned-pact.boss.null-notary boss channels",
+      "passed": true,
+      "detail": "channels=['status', 'scene', 'item']"
+    },
+    {
+      "name": "summoned-pact.arena-duel.bronze-oath bounded",
+      "passed": true,
+      "detail": "maxTurns=10"
+    },
+    {
+      "name": "summoned-pact.arena-duel.bronze-oath forced terminal",
+      "passed": true,
+      "detail": "{'terminal': True, 'stateChanges': ['encounter:set:time-limit-draw', 'faction:arena:increment:1', 'loot:champion-prize:lock'], 'summary': 'The gong ends the match as a draw; standing rises slightly but the champion prize remains locked.', 'terminalState': 'partial'}"
+    },
+    {
+      "name": "summoned-pact.arena-duel.bronze-oath action count",
+      "passed": true,
+      "detail": "approaches=3"
+    },
+    {
+      "name": "summoned-pact.arena-duel.bronze-oath/fight action honesty",
+      "passed": true,
+      "detail": "success/failure deltas and lockout required"
+    },
+    {
+      "name": "summoned-pact.arena-duel.bronze-oath/flee action honesty",
+      "passed": true,
+      "detail": "success/failure deltas and lockout required"
+    },
+    {
+      "name": "summoned-pact.arena-duel.bronze-oath/negotiate action honesty",
+      "passed": true,
+      "detail": "success/failure deltas and lockout required"
+    },
+    {
+      "name": "summoned-pact.arena-duel.bronze-oath receipt diversity",
+      "passed": true,
+      "detail": "types=['dungeon', 'faction', 'loot', 'npc', 'quest', 'xp'] minimum=2"
+    },
+    {
+      "name": "summoned-pact.arena-duel.bronze-oath biome allow",
+      "passed": true,
+      "detail": "{'allow': ['urban-hub', 'arena'], 'siteTags': ['formal-duel', 'spectators'], 'requireFactionTags': ['arena-guild'], 'exclude': ['dungeon', 'wilderness']}"
+    },
+    {
+      "name": "summoned-pact.faction-raid.glass-binder bounded",
+      "passed": true,
+      "detail": "maxTurns=12"
+    },
+    {
+      "name": "summoned-pact.faction-raid.glass-binder forced terminal",
+      "passed": true,
+      "detail": "{'terminal': True, 'stateChanges': ['location:set:ravine-rally-point', 'faction:allied-summons:decrement:1', 'convoy:set:escaped-partial'], 'summary': 'Reinforcements force a withdrawal; one captive cohort is lost and the encounter closes.', 'terminalState': 'fled'}"
+    },
+    {
+      "name": "summoned-pact.faction-raid.glass-binder action count",
+      "passed": true,
+      "detail": "approaches=3"
+    },
+    {
+      "name": "summoned-pact.faction-raid.glass-binder/fight action honesty",
+      "passed": true,
+      "detail": "success/failure deltas and lockout required"
+    },
+    {
+      "name": "summoned-pact.faction-raid.glass-binder/flee action honesty",
+      "passed": true,
+      "detail": "success/failure deltas and lockout required"
+    },
+    {
+      "name": "summoned-pact.faction-raid.glass-binder/negotiate action honesty",
+      "passed": true,
+      "detail": "success/failure deltas and lockout required"
+    },
+    {
+      "name": "summoned-pact.faction-raid.glass-binder receipt diversity",
+      "passed": true,
+      "detail": "types=['dungeon', 'faction', 'loot', 'npc', 'quest', 'xp'] minimum=4"
+    },
+    {
+      "name": "summoned-pact.faction-raid.glass-binder biome allow",
+      "passed": true,
+      "detail": "{'allow': ['badlands-road', 'ravine', 'fortified-convoy'], 'siteTags': ['raid-route', 'faction-war'], 'requireFactionTags': ['glass-binders', 'free-pact-coalition'], 'exclude': ['peaceful-hub', 'undersea']}"
+    },
+    {
+      "name": "summoned-pact.patrol.seal-wardens bounded",
+      "passed": true,
+      "detail": "maxTurns=6"
+    },
+    {
+      "name": "summoned-pact.patrol.seal-wardens forced terminal",
+      "passed": true,
+      "detail": "{'terminal': True, 'stateChanges': ['inventory:unlicensed-summon:set:impounded', 'faction:collegium:decrement:1', 'encounter:set:inspection-ended'], 'summary': 'The inspection concludes with one unlicensed summon impounded; the patrol leaves.', 'terminalState': 'negotiated'}"
+    },
+    {
+      "name": "summoned-pact.patrol.seal-wardens action count",
+      "passed": true,
+      "detail": "approaches=3"
+    },
+    {
+      "name": "summoned-pact.patrol.seal-wardens/fight action honesty",
+      "passed": true,
+      "detail": "success/failure deltas and lockout required"
+    },
+    {
+      "name": "summoned-pact.patrol.seal-wardens/flee action honesty",
+      "passed": true,
+      "detail": "success/failure deltas and lockout required"
+    },
+    {
+      "name": "summoned-pact.patrol.seal-wardens/negotiate action honesty",
+      "passed": true,
+      "detail": "success/failure deltas and lockout required"
+    },
+    {
+      "name": "summoned-pact.patrol.seal-wardens receipt diversity",
+      "passed": true,
+      "detail": "types=['dungeon', 'faction', 'loot', 'npc', 'quest', 'xp'] minimum=2"
+    },
+    {
+      "name": "summoned-pact.patrol.seal-wardens biome allow",
+      "passed": true,
+      "detail": "{'allow': ['controlled-road', 'chalk-badlands', 'city-outskirts'], 'siteTags': ['patrol-route', 'collegium-territory'], 'requireFactionTags': ['summoners-collegium'], 'exclude': ['deep-dungeon', 'open-sea']}"
+    },
+    {
+      "name": "summoned-pact.wandering-elite.unbound-chimera bounded",
+      "passed": true,
+      "detail": "maxTurns=9"
+    },
+    {
+      "name": "summoned-pact.wandering-elite.unbound-chimera forced terminal",
+      "passed": true,
+      "detail": "{'terminal': True, 'stateChanges': ['location:set:basalt-tunnel', 'player:mana:set:0', 'chimera:set:roaming-cooldown'], 'summary': 'The player burns all mana to mask their signature and escapes into basalt; the chimera resumes roaming later.', 'terminalState': 'fled'}"
+    },
+    {
+      "name": "summoned-pact.wandering-elite.unbound-chimera action count",
+      "passed": true,
+      "detail": "approaches=3"
+    },
+    {
+      "name": "summoned-pact.wandering-elite.unbound-chimera/fight action honesty",
+      "passed": true,
+      "detail": "success/failure deltas and lockout required"
+    },
+    {
+      "name": "summoned-pact.wandering-elite.unbound-chimera/flee action honesty",
+      "passed": true,
+      "detail": "success/failure deltas and lockout required"
+    },
+    {
+      "name": "summoned-pact.wandering-elite.unbound-chimera/negotiate action honesty",
+      "passed": true,
+      "detail": "success/failure deltas and lockout required"
+    },
+    {
+      "name": "summoned-pact.wandering-elite.unbound-chimera receipt diversity",
+      "passed": true,
+      "detail": "types=['dungeon', 'faction', 'loot', 'npc', 'quest', 'xp'] minimum=3"
+    },
+    {
+      "name": "summoned-pact.wandering-elite.unbound-chimera biome allow",
+      "passed": true,
+      "detail": "{'allow': ['broken-highlands', 'basalt-fields', 'ruined-shrine'], 'siteTags': ['roaming-elite', 'mana-trail'], 'requireFactionTags': ['unbound-summon'], 'exclude': ['urban-hub', 'salt-marsh']}"
+    },
+    {
+      "name": "summoned-pact.wandering-elite.unbound-chimera elite channels",
+      "passed": true,
+      "detail": "channels=['scene', 'item']"
+    },
+    {
+      "name": "cursed-keep.combat.skeletal-retainers bounded",
+      "passed": true,
+      "detail": "maxTurns=6"
+    },
+    {
+      "name": "cursed-keep.combat.skeletal-retainers forced terminal",
+      "passed": true,
+      "detail": "{'terminal': True, 'stateChanges': ['route:service-door:set:barred', 'party:condition:add:rattled', 'encounter:set:fled'], 'summary': 'The party slams the service door after the bell rings; the encounter ends with a detour.', 'terminalState': 'fled'}"
+    },
+    {
+      "name": "cursed-keep.combat.skeletal-retainers action count",
+      "passed": true,
+      "detail": "approaches=3"
+    },
+    {
+      "name": "cursed-keep.combat.skeletal-retainers/fight-retainers action honesty",
+      "passed": true,
+      "detail": "success/failure deltas and lockout required"
+    },
+    {
+      "name": "cursed-keep.combat.skeletal-retainers/turn-command-seal action honesty",
+      "passed": true,
+      "detail": "success/failure deltas and lockout required"
+    },
+    {
+      "name": "cursed-keep.combat.skeletal-retainers/withdraw action honesty",
+      "passed": true,
+      "detail": "success/failure deltas and lockout required"
+    },
+    {
+      "name": "cursed-keep.combat.skeletal-retainers receipt diversity",
+      "passed": true,
+      "detail": "types=['dungeon', 'loot', 'npc', 'quest', 'xp'] minimum=2"
+    },
+    {
+      "name": "cursed-keep.combat.skeletal-retainers biome allow",
+      "passed": true,
+      "detail": "{'allow': ['cursed-keep-interior'], 'siteTags': ['servants-hall', 'undead-patrol'], 'requireFactionTags': ['hollow-household'], 'exclude': ['coast', 'forest-road']}"
+    },
+    {
+      "name": "cursed-keep.trap.pendulum-chapel bounded",
+      "passed": true,
+      "detail": "maxTurns=4"
+    },
+    {
+      "name": "cursed-keep.trap.pendulum-chapel forced terminal",
+      "passed": true,
+      "detail": "{'terminal': True, 'stateChanges': ['hazard:pendulum:set:triggered-once', 'party:dex-save:queue:dc14', 'route:chapel-nave:set:open-after-sweep'], 'summary': 'The pendulum releases once, damage resolves, and the route opens behind the spent mechanism.', 'terminalState': 'partial'}"
+    },
+    {
+      "name": "cursed-keep.trap.pendulum-chapel action count",
+      "passed": true,
+      "detail": "approaches=3"
+    },
+    {
+      "name": "cursed-keep.trap.pendulum-chapel/disable-pendulum action honesty",
+      "passed": true,
+      "detail": "success/failure deltas and lockout required"
+    },
+    {
+      "name": "cursed-keep.trap.pendulum-chapel/jam-blades action honesty",
+      "passed": true,
+      "detail": "success/failure deltas and lockout required"
+    },
+    {
+      "name": "cursed-keep.trap.pendulum-chapel/withdraw action honesty",
+      "passed": true,
+      "detail": "success/failure deltas and lockout required"
+    },
+    {
+      "name": "cursed-keep.trap.pendulum-chapel receipt diversity",
+      "passed": true,
+      "detail": "types=['dungeon', 'loot', 'npc', 'quest', 'xp'] minimum=2"
+    },
+    {
+      "name": "cursed-keep.trap.pendulum-chapel biome allow",
+      "passed": true,
+      "detail": "{'allow': ['cursed-keep-interior'], 'siteTags': ['chapel', 'mechanical-trap'], 'requireFactionTags': ['hollow-household'], 'exclude': ['open-field', 'coast']}"
+    },
+    {
+      "name": "cursed-keep.skill.portcullis-oath bounded",
+      "passed": true,
+      "detail": "maxTurns=4"
+    },
+    {
+      "name": "cursed-keep.skill.portcullis-oath forced terminal",
+      "passed": true,
+      "detail": "{'terminal': True, 'stateChanges': ['party:condition:add:trespass-brand', 'route:inner-ward:set:locked', 'quest:remove-brand:unlock'], 'summary': 'The gate brands the party and locks; the encounter ends with a removal quest.', 'terminalState': 'defeat'}"
+    },
+    {
+      "name": "cursed-keep.skill.portcullis-oath action count",
+      "passed": true,
+      "detail": "approaches=3"
+    },
+    {
+      "name": "cursed-keep.skill.portcullis-oath/state-lawful-purpose action honesty",
+      "passed": true,
+      "detail": "success/failure deltas and lockout required"
+    },
+    {
+      "name": "cursed-keep.skill.portcullis-oath/recall-founder-clause action honesty",
+      "passed": true,
+      "detail": "success/failure deltas and lockout required"
+    },
+    {
+      "name": "cursed-keep.skill.portcullis-oath/withdraw action honesty",
+      "passed": true,
+      "detail": "success/failure deltas and lockout required"
+    },
+    {
+      "name": "cursed-keep.skill.portcullis-oath receipt diversity",
+      "passed": true,
+      "detail": "types=['dungeon', 'npc', 'quest', 'xp'] minimum=2"
+    },
+    {
+      "name": "cursed-keep.skill.portcullis-oath biome allow",
+      "passed": true,
+      "detail": "{'allow': ['cursed-keep-interior'], 'siteTags': ['gate', 'social-check'], 'requireFactionTags': ['hollow-household'], 'exclude': ['wilderness', 'village']}"
+    },
+    {
+      "name": "cursed-keep.environmental.black-cistern bounded",
+      "passed": true,
+      "detail": "maxTurns=6"
+    },
+    {
+      "name": "cursed-keep.environmental.black-cistern forced terminal",
+      "passed": true,
+      "detail": "{'terminal': True, 'stateChanges': ['location:set:reliquary-balcony', 'route:lower-vault:set:flooded', 'party:condition:add:soaked'], 'summary': 'The water fills the chamber and carries the party to the balcony; the lower vault is lost.', 'terminalState': 'fled'}"
+    },
+    {
+      "name": "cursed-keep.environmental.black-cistern action count",
+      "passed": true,
+      "detail": "approaches=3"
+    },
+    {
+      "name": "cursed-keep.environmental.black-cistern/open-drain action honesty",
+      "passed": true,
+      "detail": "success/failure deltas and lockout required"
+    },
+    {
+      "name": "cursed-keep.environmental.black-cistern/climb-balcony action honesty",
+      "passed": true,
+      "detail": "success/failure deltas and lockout required"
+    },
+    {
+      "name": "cursed-keep.environmental.black-cistern/withdraw action honesty",
+      "passed": true,
+      "detail": "success/failure deltas and lockout required"
+    },
+    {
+      "name": "cursed-keep.environmental.black-cistern receipt diversity",
+      "passed": true,
+      "detail": "types=['dungeon', 'loot', 'npc', 'quest', 'xp'] minimum=2"
+    },
+    {
+      "name": "cursed-keep.environmental.black-cistern biome allow",
+      "passed": true,
+      "detail": "{'allow': ['cursed-keep-sublevel'], 'siteTags': ['cistern', 'flood-hazard'], 'requireFactionTags': ['hollow-household'], 'exclude': ['dry-tower', 'coast']}"
+    },
+    {
+      "name": "cursed-keep.duel.castellans-heir bounded",
+      "passed": true,
+      "detail": "maxTurns=8"
+    },
+    {
+      "name": "cursed-keep.duel.castellans-heir forced terminal",
+      "passed": true,
+      "detail": "{'terminal': True, 'stateChanges': ['route:witness-gallery:set:sealed', 'npc:castellans-heir:set:hostile-elsewhere', 'quest:break-gallery-seal:unlock'], 'summary': 'The gallery seals; the heir withdraws and the duel ends with a new route objective.', 'terminalState': 'defeat'}"
+    },
+    {
+      "name": "cursed-keep.duel.castellans-heir action count",
+      "passed": true,
+      "detail": "approaches=3"
+    },
+    {
+      "name": "cursed-keep.duel.castellans-heir/formal-duel action honesty",
+      "passed": true,
+      "detail": "success/failure deltas and lockout required"
+    },
+    {
+      "name": "cursed-keep.duel.castellans-heir/present-murder-proof action honesty",
+      "passed": true,
+      "detail": "success/failure deltas and lockout required"
+    },
+    {
+      "name": "cursed-keep.duel.castellans-heir/withdraw action honesty",
+      "passed": true,
+      "detail": "success/failure deltas and lockout required"
+    },
+    {
+      "name": "cursed-keep.duel.castellans-heir receipt diversity",
+      "passed": true,
+      "detail": "types=['dungeon', 'npc', 'quest', 'xp'] minimum=3"
+    },
+    {
+      "name": "cursed-keep.duel.castellans-heir biome allow",
+      "passed": true,
+      "detail": "{'allow': ['cursed-keep-interior'], 'siteTags': ['duel-gallery', 'spectral-npc'], 'requireFactionTags': ['hollow-household'], 'exclude': ['village', 'coast']}"
+    },
+    {
+      "name": "cursed-keep.puzzle.four-saints bounded",
+      "passed": true,
+      "detail": "maxTurns=4"
+    },
+    {
+      "name": "cursed-keep.puzzle.four-saints forced terminal",
+      "passed": true,
+      "detail": "{'terminal': True, 'stateChanges': ['party:condition:add:false-heir-mark', 'route:ancestral-library:set:locked', 'quest:appease-four-saints:unlock'], 'summary': 'The curse marks a false heir and the door locks; a cleansing quest begins.', 'terminalState': 'defeat'}"
+    },
+    {
+      "name": "cursed-keep.puzzle.four-saints action count",
+      "passed": true,
+      "detail": "approaches=3"
+    },
+    {
+      "name": "cursed-keep.puzzle.four-saints/order-saints action honesty",
+      "passed": true,
+      "detail": "success/failure deltas and lockout required"
+    },
+    {
+      "name": "cursed-keep.puzzle.four-saints/spend-saint-key action honesty",
+      "passed": true,
+      "detail": "success/failure deltas and lockout required"
+    },
+    {
+      "name": "cursed-keep.puzzle.four-saints/withdraw action honesty",
+      "passed": true,
+      "detail": "success/failure deltas and lockout required"
+    },
+    {
+      "name": "cursed-keep.puzzle.four-saints receipt diversity",
+      "passed": true,
+      "detail": "types=['dungeon', 'npc', 'quest', 'xp'] minimum=2"
+    },
+    {
+      "name": "cursed-keep.puzzle.four-saints biome allow",
+      "passed": true,
+      "detail": "{'allow': ['cursed-keep-interior'], 'siteTags': ['ancestral-wing', 'logic-puzzle'], 'requireFactionTags': ['hollow-household'], 'exclude': ['dungeon-cistern', 'outside-road']}"
+    },
+    {
+      "name": "cursed-keep.boss.hollow-castellan bounded",
+      "passed": true,
+      "detail": "maxTurns=12"
+    },
+    {
+      "name": "cursed-keep.boss.hollow-castellan forced terminal",
+      "passed": true,
+      "detail": "{'terminal': True, 'stateChanges': ['boss:hollow-castellan:set:heart-sealed', 'party:condition:add:keep-bound', 'quest:break-the-bound-oath:unlock'], 'summary': 'The heart seals and expels the party as oath-bound servants; the fight ends with a liberation quest.', 'terminalState': 'defeat'}"
+    },
+    {
+      "name": "cursed-keep.boss.hollow-castellan action count",
+      "passed": true,
+      "detail": "approaches=3"
+    },
+    {
+      "name": "cursed-keep.boss.hollow-castellan/fight-castellan action honesty",
+      "passed": true,
+      "detail": "success/failure deltas and lockout required"
+    },
+    {
+      "name": "cursed-keep.boss.hollow-castellan/accuse-castellan action honesty",
+      "passed": true,
+      "detail": "success/failure deltas and lockout required"
+    },
+    {
+      "name": "cursed-keep.boss.hollow-castellan/withdraw action honesty",
+      "passed": true,
+      "detail": "success/failure deltas and lockout required"
+    },
+    {
+      "name": "cursed-keep.boss.hollow-castellan receipt diversity",
+      "passed": true,
+      "detail": "types=['dungeon', 'loot', 'npc', 'quest', 'xp'] minimum=4"
+    },
+    {
+      "name": "cursed-keep.boss.hollow-castellan biome allow",
+      "passed": true,
+      "detail": "{'allow': ['cursed-keep-heart'], 'siteTags': ['boss-room', 'oath-reliquary'], 'requireFactionTags': ['hollow-household'], 'exclude': ['coast', 'village', 'generic-cave']}"
+    },
+    {
+      "name": "cursed-keep.boss.hollow-castellan boss channels",
+      "passed": true,
+      "detail": "channels=['scene', 'npc', 'status']"
+    },
+    {
+      "name": "cursed-keep.random.lantern-pilgrim bounded",
+      "passed": true,
+      "detail": "maxTurns=4"
+    },
+    {
+      "name": "cursed-keep.random.lantern-pilgrim forced terminal",
+      "passed": true,
+      "detail": "{'terminal': True, 'stateChanges': ['npc:lantern-pilgrim:set:departed', 'route:random-stair:set:selected', 'encounter:set:fled'], 'summary': 'The lantern chooses and vanishes; the party is placed on one persistent route and the encounter closes.', 'terminalState': 'fled'}"
+    },
+    {
+      "name": "cursed-keep.random.lantern-pilgrim action count",
+      "passed": true,
+      "detail": "approaches=3"
+    },
+    {
+      "name": "cursed-keep.random.lantern-pilgrim/test-pilgrim action honesty",
+      "passed": true,
+      "detail": "success/failure deltas and lockout required"
+    },
+    {
+      "name": "cursed-keep.random.lantern-pilgrim/offer-pilgrim-name action honesty",
+      "passed": true,
+      "detail": "success/failure deltas and lockout required"
+    },
+    {
+      "name": "cursed-keep.random.lantern-pilgrim/withdraw action honesty",
+      "passed": true,
+      "detail": "success/failure deltas and lockout required"
+    },
+    {
+      "name": "cursed-keep.random.lantern-pilgrim receipt diversity",
+      "passed": true,
+      "detail": "types=['dungeon', 'npc', 'quest', 'xp'] minimum=2"
+    },
+    {
+      "name": "cursed-keep.random.lantern-pilgrim biome allow",
+      "passed": true,
+      "detail": "{'allow': ['cursed-keep-interior'], 'siteTags': ['cross-stair', 'ghost-event'], 'requireFactionTags': ['restless-dead'], 'exclude': ['outside-road', 'coast']}"
+    },
+    {
+      "name": "cape-district.social.dock-union-standoff bounded",
+      "passed": true,
+      "detail": "maxTurns=8"
+    },
+    {
+      "name": "cape-district.social.dock-union-standoff forced terminal",
+      "passed": true,
+      "detail": "{'terminal': True, 'stateChanges': ['cargo:set:seized-by-watch', 'faction:dock-union:decrement:1', 'quest:free-arrested-pickets:unlock'], 'summary': 'The Watch disperses the square, seizes cargo, and arrests pickets; the confrontation ends.', 'terminalState': 'defeat'}"
+    },
+    {
+      "name": "cape-district.social.dock-union-standoff action count",
+      "passed": true,
+      "detail": "approaches=3"
+    },
+    {
+      "name": "cape-district.social.dock-union-standoff/spend-payroll-ledger action honesty",
+      "passed": true,
+      "detail": "success/failure deltas and lockout required"
+    },
+    {
+      "name": "cape-district.social.dock-union-standoff/call-neutral-arbiter action honesty",
+      "passed": true,
+      "detail": "success/failure deltas and lockout required"
+    },
+    {
+      "name": "cape-district.social.dock-union-standoff/walk-away-with-cost action honesty",
+      "passed": true,
+      "detail": "success/failure deltas and lockout required"
+    },
+    {
+      "name": "cape-district.social.dock-union-standoff receipt diversity",
+      "passed": true,
+      "detail": "types=['faction', 'loot', 'npc', 'quest'] minimum=2"
+    },
+    {
+      "name": "cape-district.social.dock-union-standoff biome allow",
+      "passed": true,
+      "detail": "{'allow': ['cape-district-harbor'], 'siteTags': ['dock-square', 'labor-conflict'], 'requireFactionTags': ['dock-union', 'watch'], 'exclude': ['dungeon', 'wilderness']}"
+    },
+    {
+      "name": "cape-district.crisis.salt-clerk-betrayal bounded",
+      "passed": true,
+      "detail": "maxTurns=6"
+    },
+    {
+      "name": "cape-district.crisis.salt-clerk-betrayal forced terminal",
+      "passed": true,
+      "detail": "{'terminal': True, 'stateChanges': ['npc:salt-clerk:set:customs-custody', 'intel:customs-buyer:set:lost', 'quest:intercept-prison-barge:unlock'], 'summary': 'Customs takes the clerk and the immediate confession opportunity closes.', 'terminalState': 'defeat'}"
+    },
+    {
+      "name": "cape-district.crisis.salt-clerk-betrayal action count",
+      "passed": true,
+      "detail": "approaches=3"
+    },
+    {
+      "name": "cape-district.crisis.salt-clerk-betrayal/spend-ink-match action honesty",
+      "passed": true,
+      "detail": "success/failure deltas and lockout required"
+    },
+    {
+      "name": "cape-district.crisis.salt-clerk-betrayal/grant-passage action honesty",
+      "passed": true,
+      "detail": "success/failure deltas and lockout required"
+    },
+    {
+      "name": "cape-district.crisis.salt-clerk-betrayal/walk-away-with-cost action honesty",
+      "passed": true,
+      "detail": "success/failure deltas and lockout required"
+    },
+    {
+      "name": "cape-district.crisis.salt-clerk-betrayal receipt diversity",
+      "passed": true,
+      "detail": "types=['faction', 'loot', 'npc', 'quest'] minimum=2"
+    },
+    {
+      "name": "cape-district.crisis.salt-clerk-betrayal biome allow",
+      "passed": true,
+      "detail": "{'allow': ['cape-district-harbor'], 'siteTags': ['counting-house', 'betrayal'], 'requireFactionTags': ['customs-office'], 'exclude': ['dungeon', 'farmland']}"
+    },
+    {
+      "name": "cape-district.crisis.flood-levy-deadline bounded",
+      "passed": true,
+      "detail": "maxTurns=8"
+    },
+    {
+      "name": "cape-district.crisis.flood-levy-deadline forced terminal",
+      "passed": true,
+      "detail": "{'terminal': True, 'stateChanges': ['ward:low-cape:set:condemned', 'npc:low-cape-residents:set:displaced', 'quest:evacuate-low-cape:unlock'], 'summary': 'The vote condemns Low Cape and the crisis ends in an evacuation arc.', 'terminalState': 'defeat'}"
+    },
+    {
+      "name": "cape-district.crisis.flood-levy-deadline action count",
+      "passed": true,
+      "detail": "approaches=3"
+    },
+    {
+      "name": "cape-district.crisis.flood-levy-deadline/spend-audit action honesty",
+      "passed": true,
+      "detail": "success/failure deltas and lockout required"
+    },
+    {
+      "name": "cape-district.crisis.flood-levy-deadline/trade-immunity action honesty",
+      "passed": true,
+      "detail": "success/failure deltas and lockout required"
+    },
+    {
+      "name": "cape-district.crisis.flood-levy-deadline/walk-away-with-cost action honesty",
+      "passed": true,
+      "detail": "success/failure deltas and lockout required"
+    },
+    {
+      "name": "cape-district.crisis.flood-levy-deadline receipt diversity",
+      "passed": true,
+      "detail": "types=['faction', 'loot', 'npc', 'quest'] minimum=2"
+    },
+    {
+      "name": "cape-district.crisis.flood-levy-deadline biome allow",
+      "passed": true,
+      "detail": "{'allow': ['cape-district-civic'], 'siteTags': ['council-hall', 'deadline'], 'requireFactionTags': ['merchant-council', 'low-cape-residents'], 'exclude': ['dungeon', 'open-sea']}"
+    },
+    {
+      "name": "cape-district.social.night-market-seizure bounded",
+      "passed": true,
+      "detail": "maxTurns=7"
+    },
+    {
+      "name": "cape-district.social.night-market-seizure forced terminal",
+      "passed": true,
+      "detail": "{'terminal': True, 'stateChanges': ['market:night:set:watch-controlled', 'market:goods:set:confiscated', 'quest:recover-confiscated-goods:unlock'], 'summary': 'Moonrise confiscation completes and the encounter becomes a recovery arc.', 'terminalState': 'defeat'}"
+    },
+    {
+      "name": "cape-district.social.night-market-seizure action count",
+      "passed": true,
+      "detail": "approaches=3"
+    },
+    {
+      "name": "cape-district.social.night-market-seizure/spend-jurisdiction-writ action honesty",
+      "passed": true,
+      "detail": "success/failure deltas and lockout required"
+    },
+    {
+      "name": "cape-district.social.night-market-seizure/organize-evacuation action honesty",
+      "passed": true,
+      "detail": "success/failure deltas and lockout required"
+    },
+    {
+      "name": "cape-district.social.night-market-seizure/walk-away-with-cost action honesty",
+      "passed": true,
+      "detail": "success/failure deltas and lockout required"
+    },
+    {
+      "name": "cape-district.social.night-market-seizure receipt diversity",
+      "passed": true,
+      "detail": "types=['faction', 'loot', 'npc', 'quest'] minimum=2"
+    },
+    {
+      "name": "cape-district.social.night-market-seizure biome allow",
+      "passed": true,
+      "detail": "{'allow': ['cape-district-market'], 'siteTags': ['night-market', 'faction-confrontation'], 'requireFactionTags': ['watch', 'stallkeepers'], 'exclude': ['dungeon', 'rural-road']}"
+    },
+    {
+      "name": "cape-district.crisis.reef-medicine bounded",
+      "passed": true,
+      "detail": "maxTurns=5"
+    },
+    {
+      "name": "cape-district.crisis.reef-medicine forced terminal",
+      "passed": true,
+      "detail": "{'terminal': True, 'stateChanges': ['clinic:allocation:set:too-late', 'npc:both-clinics:set:casualties', 'quest:contain-reef-fever:unlock'], 'summary': 'Dawn arrives without allocation; both clinics suffer and containment begins.', 'terminalState': 'defeat'}"
+    },
+    {
+      "name": "cape-district.crisis.reef-medicine action count",
+      "passed": true,
+      "detail": "approaches=3"
+    },
+    {
+      "name": "cape-district.crisis.reef-medicine/spend-cargo-manifest action honesty",
+      "passed": true,
+      "detail": "success/failure deltas and lockout required"
+    },
+    {
+      "name": "cape-district.crisis.reef-medicine/split-doses action honesty",
+      "passed": true,
+      "detail": "success/failure deltas and lockout required"
+    },
+    {
+      "name": "cape-district.crisis.reef-medicine/walk-away-with-cost action honesty",
+      "passed": true,
+      "detail": "success/failure deltas and lockout required"
+    },
+    {
+      "name": "cape-district.crisis.reef-medicine receipt diversity",
+      "passed": true,
+      "detail": "types=['faction', 'loot', 'npc', 'quest'] minimum=2"
+    },
+    {
+      "name": "cape-district.crisis.reef-medicine biome allow",
+      "passed": true,
+      "detail": "{'allow': ['cape-district-clinics'], 'siteTags': ['medical-crisis', 'scarcity'], 'requireFactionTags': ['dockworkers', 'reef-refugees'], 'exclude': ['dungeon', 'battlefield']}"
+    },
+    {
+      "name": "cape-district.social.black-ledger-exposure bounded",
+      "passed": true,
+      "detail": "maxTurns=7"
+    },
+    {
+      "name": "cape-district.social.black-ledger-exposure forced terminal",
+      "passed": true,
+      "detail": "{'terminal': True, 'stateChanges': ['press:ledger:set:published-unredacted', 'npc:vulnerable-sources:set:exposed', 'quest:protect-exposed-sources:unlock'], 'summary': 'The presses complete and the exposure crisis ends with source-protection work.', 'terminalState': 'defeat'}"
+    },
+    {
+      "name": "cape-district.social.black-ledger-exposure action count",
+      "passed": true,
+      "detail": "approaches=3"
+    },
+    {
+      "name": "cape-district.social.black-ledger-exposure/spend-source-chain action honesty",
+      "passed": true,
+      "detail": "success/failure deltas and lockout required"
+    },
+    {
+      "name": "cape-district.social.black-ledger-exposure/negotiate-redactions action honesty",
+      "passed": true,
+      "detail": "success/failure deltas and lockout required"
+    },
+    {
+      "name": "cape-district.social.black-ledger-exposure/walk-away-with-cost action honesty",
+      "passed": true,
+      "detail": "success/failure deltas and lockout required"
+    },
+    {
+      "name": "cape-district.social.black-ledger-exposure receipt diversity",
+      "passed": true,
+      "detail": "types=['faction', 'loot', 'npc', 'quest'] minimum=2"
+    },
+    {
+      "name": "cape-district.social.black-ledger-exposure biome allow",
+      "passed": true,
+      "detail": "{'allow': ['cape-district-press-row'], 'siteTags': ['newspaper-office', 'exposure'], 'requireFactionTags': ['free-press', 'reform-league'], 'exclude': ['dungeon', 'open-water']}"
+    },
+    {
+      "name": "cape-district.social.harbor-master-leverage bounded",
+      "passed": true,
+      "detail": "maxTurns=5"
+    },
+    {
+      "name": "cape-district.social.harbor-master-leverage forced terminal",
+      "passed": true,
+      "detail": "{'terminal': True, 'stateChanges': ['access:quarantine-berth:set:closed-this-tide', 'quest:find-reef-anchorage:unlock', 'encounter:set:ended'], 'summary': 'The tide turns, ending this negotiation and opening the reef anchorage route.', 'terminalState': 'defeat'}"
+    },
+    {
+      "name": "cape-district.social.harbor-master-leverage action count",
+      "passed": true,
+      "detail": "approaches=3"
+    },
+    {
+      "name": "cape-district.social.harbor-master-leverage/spend-blue-wax-permit action honesty",
+      "passed": true,
+      "detail": "success/failure deltas and lockout required"
+    },
+    {
+      "name": "cape-district.social.harbor-master-leverage/trade-silence action honesty",
+      "passed": true,
+      "detail": "success/failure deltas and lockout required"
+    },
+    {
+      "name": "cape-district.social.harbor-master-leverage/walk-away-with-cost action honesty",
+      "passed": true,
+      "detail": "success/failure deltas and lockout required"
+    },
+    {
+      "name": "cape-district.social.harbor-master-leverage receipt diversity",
+      "passed": true,
+      "detail": "types=['faction', 'loot', 'npc', 'quest'] minimum=2"
+    },
+    {
+      "name": "cape-district.social.harbor-master-leverage biome allow",
+      "passed": true,
+      "detail": "{'allow': ['cape-district-harbor'], 'siteTags': ['harbor-office', 'leverage-negotiation'], 'requireFactionTags': ['harbor-office'], 'exclude': ['dungeon', 'inland-village']}"
+    },
+    {
+      "name": "cape-district.ambush.silk-lane bounded",
+      "passed": true,
+      "detail": "maxTurns=6"
+    },
+    {
+      "name": "cape-district.ambush.silk-lane forced terminal",
+      "passed": true,
+      "detail": "{'terminal': True, 'stateChanges': ['faction:public-opinion:decrement:2', 'attackers:set:escaped', 'quest:clear-your-name:unlock'], 'summary': 'The false account reaches print, the attackers escape, and the scene ends in a name-clearing arc.', 'terminalState': 'defeat'}"
+    },
+    {
+      "name": "cape-district.ambush.silk-lane action count",
+      "passed": true,
+      "detail": "approaches=3"
+    },
+    {
+      "name": "cape-district.ambush.silk-lane/expose-planted-ribbon action honesty",
+      "passed": true,
+      "detail": "success/failure deltas and lockout required"
+    },
+    {
+      "name": "cape-district.ambush.silk-lane/turn-witnesses action honesty",
+      "passed": true,
+      "detail": "success/failure deltas and lockout required"
+    },
+    {
+      "name": "cape-district.ambush.silk-lane/walk-away-with-cost action honesty",
+      "passed": true,
+      "detail": "success/failure deltas and lockout required"
+    },
+    {
+      "name": "cape-district.ambush.silk-lane receipt diversity",
+      "passed": true,
+      "detail": "types=['faction', 'loot', 'npc', 'quest'] minimum=2"
+    },
+    {
+      "name": "cape-district.ambush.silk-lane biome allow",
+      "passed": true,
+      "detail": "{'allow': ['cape-district-market'], 'siteTags': ['silk-lane', 'political-ambush'], 'requireFactionTags': ['rival-campaign', 'pamphleteers'], 'exclude': ['dungeon', 'rural-field']}"
+    },
+    {
+      "name": "thornferry.crisis.millstone-charter bounded",
+      "passed": true,
+      "detail": "maxTurns=3"
+    },
+    {
+      "name": "thornferry.crisis.millstone-charter forced terminal",
+      "passed": true,
+      "detail": "{'terminal': True, 'stateChanges': ['fact:charter-seized-by-clerk:set:true', 'callback:hearing.no-original:schedule', 'ending:ending.taxed-silence:eligible', 'convergence:thornferry-flood-season:preserve_flags'], 'summary': 'Delay lets the clerk seize the charter; the story continues without original evidence.', 'terminalState': 'crisisEnding'}"
+    },
+    {
+      "name": "thornferry.crisis.millstone-charter action count",
+      "passed": true,
+      "detail": "approaches=2"
+    },
+    {
+      "name": "thornferry.crisis.millstone-charter/keep-charter action honesty",
+      "passed": true,
+      "detail": "success/failure deltas and lockout required"
+    },
+    {
+      "name": "thornferry.crisis.millstone-charter/surrender-charter action honesty",
+      "passed": true,
+      "detail": "success/failure deltas and lockout required"
+    },
+    {
+      "name": "thornferry.crisis.millstone-charter receipt diversity",
+      "passed": true,
+      "detail": "types=['faction', 'npc', 'quest'] minimum=3"
+    },
+    {
+      "name": "thornferry.crisis.millstone-charter biome allow",
+      "passed": true,
+      "detail": "{'allow': ['thornferry-mill'], 'siteTags': ['charter-crisis', 'commitment-fork'], 'requireFactionTags': ['millers', 'barony'], 'exclude': ['vesper-glass', 'erebus-9']}"
+    },
+    {
+      "name": "thornferry.crisis.trust-the-miller bounded",
+      "passed": true,
+      "detail": "maxTurns=3"
+    },
+    {
+      "name": "thornferry.crisis.trust-the-miller forced terminal",
+      "passed": true,
+      "detail": "{'terminal': True, 'stateChanges': ['fact:tally-seized-by-bailiff:set:true', 'callback:shortage.bailiff-count:schedule', 'ending:ending.rationed-village:eligible', 'convergence:thornferry-flood-season:preserve_flags'], 'summary': 'Delay commits tally-seized-by-bailiff; the crisis ends and schedules shortage.bailiff-count.', 'terminalState': 'crisisEnding'}"
+    },
+    {
+      "name": "thornferry.crisis.trust-the-miller action count",
+      "passed": true,
+      "detail": "approaches=2"
+    },
+    {
+      "name": "thornferry.crisis.trust-the-miller/trust-tarrow action honesty",
+      "passed": true,
+      "detail": "success/failure deltas and lockout required"
+    },
+    {
+      "name": "thornferry.crisis.trust-the-miller/audit-tarrow action honesty",
+      "passed": true,
+      "detail": "success/failure deltas and lockout required"
+    },
+    {
+      "name": "thornferry.crisis.trust-the-miller receipt diversity",
+      "passed": true,
+      "detail": "types=['faction', 'npc', 'quest'] minimum=3"
+    },
+    {
+      "name": "thornferry.crisis.trust-the-miller biome allow",
+      "passed": true,
+      "detail": "{'allow': ['thornferry-mill'], 'siteTags': ['trust-crisis'], 'requireFactionTags': ['millers', 'village-council'], 'exclude': ['vesper-glass', 'erebus-9', 'ashwinter-court']}"
+    },
+    {
+      "name": "thornferry.crisis.bandits-or-villagers bounded",
+      "passed": true,
+      "detail": "maxTurns=3"
+    },
+    {
+      "name": "thornferry.crisis.bandits-or-villagers forced terminal",
+      "passed": true,
+      "detail": "{'terminal': True, 'stateChanges': ['fact:both-boats-confiscated:set:true', 'callback:soldiers.ferry-seized:schedule', 'ending:ending.closed-crossing:eligible', 'convergence:thornferry-east-bank:preserve_flags'], 'summary': 'Delay commits both-boats-confiscated; the crisis ends and schedules soldiers.ferry-seized.', 'terminalState': 'crisisEnding'}"
+    },
+    {
+      "name": "thornferry.crisis.bandits-or-villagers action count",
+      "passed": true,
+      "detail": "approaches=2"
+    },
+    {
+      "name": "thornferry.crisis.bandits-or-villagers/ferry-villagers action honesty",
+      "passed": true,
+      "detail": "success/failure deltas and lockout required"
+    },
+    {
+      "name": "thornferry.crisis.bandits-or-villagers/ferry-bandits action honesty",
+      "passed": true,
+      "detail": "success/failure deltas and lockout required"
+    },
+    {
+      "name": "thornferry.crisis.bandits-or-villagers receipt diversity",
+      "passed": true,
+      "detail": "types=['faction', 'npc', 'quest'] minimum=3"
+    },
+    {
+      "name": "thornferry.crisis.bandits-or-villagers biome allow",
+      "passed": true,
+      "detail": "{'allow': ['thornferry-river'], 'siteTags': ['ferry-crisis'], 'requireFactionTags': ['villagers', 'reed-bandits'], 'exclude': ['vesper-glass', 'erebus-9', 'ashwinter-court']}"
+    },
+    {
+      "name": "thornferry.crisis.floodgate-sacrifice bounded",
+      "passed": true,
+      "detail": "maxTurns=3"
+    },
+    {
+      "name": "thornferry.crisis.floodgate-sacrifice forced terminal",
+      "passed": true,
+      "detail": "{'terminal': True, 'stateChanges': ['fact:gate-axle-breaks-centered:set:true', 'callback:flood.both-damaged:schedule', 'ending:ending.shared-ruin:eligible', 'convergence:thornferry-high-ground:preserve_flags'], 'summary': 'Delay commits gate-axle-breaks-centered; the crisis ends and schedules flood.both-damaged.', 'terminalState': 'crisisEnding'}"
+    },
+    {
+      "name": "thornferry.crisis.floodgate-sacrifice action count",
+      "passed": true,
+      "detail": "approaches=2"
+    },
+    {
+      "name": "thornferry.crisis.floodgate-sacrifice/protect-mill-row action honesty",
+      "passed": true,
+      "detail": "success/failure deltas and lockout required"
+    },
+    {
+      "name": "thornferry.crisis.floodgate-sacrifice/protect-reedbank action honesty",
+      "passed": true,
+      "detail": "success/failure deltas and lockout required"
+    },
+    {
+      "name": "thornferry.crisis.floodgate-sacrifice receipt diversity",
+      "passed": true,
+      "detail": "types=['faction', 'npc', 'quest'] minimum=3"
+    },
+    {
+      "name": "thornferry.crisis.floodgate-sacrifice biome allow",
+      "passed": true,
+      "detail": "{'allow': ['thornferry-floodgate'], 'siteTags': ['disaster-fork'], 'requireFactionTags': ['millers', 'villagers'], 'exclude': ['vesper-glass', 'erebus-9', 'ashwinter-court']}"
+    },
+    {
+      "name": "thornferry.crisis.bell-of-witness bounded",
+      "passed": true,
+      "detail": "maxTurns=3"
+    },
+    {
+      "name": "thornferry.crisis.bell-of-witness forced terminal",
+      "passed": true,
+      "detail": "{'terminal': True, 'stateChanges': ['fact:bell-rings-in-storm:set:true', 'callback:trial.uncontrolled-summons:schedule', 'ending:ending.occupied-ferry:eligible', 'convergence:thornferry-court-day:preserve_flags'], 'summary': 'Delay commits bell-rings-in-storm; the crisis ends and schedules trial.uncontrolled-summons.', 'terminalState': 'crisisEnding'}"
+    },
+    {
+      "name": "thornferry.crisis.bell-of-witness action count",
+      "passed": true,
+      "detail": "approaches=2"
+    },
+    {
+      "name": "thornferry.crisis.bell-of-witness/ring-bell action honesty",
+      "passed": true,
+      "detail": "success/failure deltas and lockout required"
+    },
+    {
+      "name": "thornferry.crisis.bell-of-witness/keep-silence action honesty",
+      "passed": true,
+      "detail": "success/failure deltas and lockout required"
+    },
+    {
+      "name": "thornferry.crisis.bell-of-witness receipt diversity",
+      "passed": true,
+      "detail": "types=['faction', 'npc', 'quest'] minimum=3"
+    },
+    {
+      "name": "thornferry.crisis.bell-of-witness biome allow",
+      "passed": true,
+      "detail": "{'allow': ['thornferry-bell-tower'], 'siteTags': ['witness-fork'], 'requireFactionTags': ['county-court', 'villagers'], 'exclude': ['vesper-glass', 'erebus-9', 'ashwinter-court']}"
+    },
+    {
+      "name": "thornferry.crisis.ferrymans-ending bounded",
+      "passed": true,
+      "detail": "maxTurns=3"
+    },
+    {
+      "name": "thornferry.crisis.ferrymans-ending forced terminal",
+      "passed": true,
+      "detail": "{'terminal': True, 'stateChanges': ['fact:barony-claims-ferry:set:true', 'callback:epilogue.baronial-tolls:schedule', 'ending:ending.barons-ferry:eligible', 'convergence:thornferry-epilogue:preserve_flags'], 'summary': 'Delay commits barony-claims-ferry; the crisis ends and schedules epilogue.baronial-tolls.', 'terminalState': 'crisisEnding'}"
+    },
+    {
+      "name": "thornferry.crisis.ferrymans-ending action count",
+      "passed": true,
+      "detail": "approaches=2"
+    },
+    {
+      "name": "thornferry.crisis.ferrymans-ending/give-village-oar action honesty",
+      "passed": true,
+      "detail": "success/failure deltas and lockout required"
+    },
+    {
+      "name": "thornferry.crisis.ferrymans-ending/take-ferrymans-oar action honesty",
+      "passed": true,
+      "detail": "success/failure deltas and lockout required"
+    },
+    {
+      "name": "thornferry.crisis.ferrymans-ending receipt diversity",
+      "passed": true,
+      "detail": "types=['faction', 'npc', 'quest'] minimum=3"
+    },
+    {
+      "name": "thornferry.crisis.ferrymans-ending biome allow",
+      "passed": true,
+      "detail": "{'allow': ['thornferry-ferry'], 'siteTags': ['ending-fork'], 'requireFactionTags': ['villagers', 'ferrymens-guild'], 'exclude': ['vesper-glass', 'erebus-9', 'ashwinter-court']}"
+    },
+    {
+      "name": "vesper-glass.crisis.mirror-census bounded",
+      "passed": true,
+      "detail": "maxTurns=3"
+    },
+    {
+      "name": "vesper-glass.crisis.mirror-census forced terminal",
+      "passed": true,
+      "detail": "{'terminal': True, 'stateChanges': ['fact:census-seal-self-activates:set:true', 'callback:masquerade.corrupt-census:schedule', 'ending:ending.false-register:eligible', 'convergence:vesper-glass-equinox:preserve_flags'], 'summary': 'Delay commits census-seal-self-activates; the crisis ends and schedules masquerade.corrupt-census.', 'terminalState': 'crisisEnding'}"
+    },
+    {
+      "name": "vesper-glass.crisis.mirror-census action count",
+      "passed": true,
+      "detail": "approaches=2"
+    },
+    {
+      "name": "vesper-glass.crisis.mirror-census/open-census action honesty",
+      "passed": true,
+      "detail": "success/failure deltas and lockout required"
+    },
+    {
+      "name": "vesper-glass.crisis.mirror-census/refuse-census action honesty",
+      "passed": true,
+      "detail": "success/failure deltas and lockout required"
+    },
+    {
+      "name": "vesper-glass.crisis.mirror-census receipt diversity",
+      "passed": true,
+      "detail": "types=['faction', 'npc', 'quest'] minimum=3"
+    },
+    {
+      "name": "vesper-glass.crisis.mirror-census biome allow",
+      "passed": true,
+      "detail": "{'allow': ['vesper-glass-census-hall'], 'siteTags': ['identity-fork'], 'requireFactionTags': ['glass-magistracy', 'maskers'], 'exclude': ['thornferry', 'erebus-9', 'ashwinter-court']}"
+    },
+    {
+      "name": "vesper-glass.crisis.smugglers-reflection bounded",
+      "passed": true,
+      "detail": "maxTurns=3"
+    },
+    {
+      "name": "vesper-glass.crisis.smugglers-reflection forced terminal",
+      "passed": true,
+      "detail": "{'terminal': True, 'stateChanges': ['fact:reflection-fades-unnamed:set:true', 'callback:canal.lost-route:schedule', 'ending:ending.no-second-chance:eligible', 'convergence:vesper-glass-canal-hub:preserve_flags'], 'summary': 'Delay commits reflection-fades-unnamed; the crisis ends and schedules canal.lost-route.', 'terminalState': 'crisisEnding'}"
+    },
+    {
+      "name": "vesper-glass.crisis.smugglers-reflection action count",
+      "passed": true,
+      "detail": "approaches=2"
+    },
+    {
+      "name": "vesper-glass.crisis.smugglers-reflection/return-reflection action honesty",
+      "passed": true,
+      "detail": "success/failure deltas and lockout required"
+    },
+    {
+      "name": "vesper-glass.crisis.smugglers-reflection/free-reflection action honesty",
+      "passed": true,
+      "detail": "success/failure deltas and lockout required"
+    },
+    {
+      "name": "vesper-glass.crisis.smugglers-reflection receipt diversity",
+      "passed": true,
+      "detail": "types=['faction', 'npc', 'quest'] minimum=3"
+    },
+    {
+      "name": "vesper-glass.crisis.smugglers-reflection biome allow",
+      "passed": true,
+      "detail": "{'allow': ['vesper-glass-canals'], 'siteTags': ['reflection-fork'], 'requireFactionTags': ['canal-smugglers', 'free-reflections'], 'exclude': ['thornferry', 'erebus-9', 'ashwinter-court']}"
+    },
+    {
+      "name": "vesper-glass.crisis.broken-opera-pact bounded",
+      "passed": true,
+      "detail": "maxTurns=3"
+    },
+    {
+      "name": "vesper-glass.crisis.broken-opera-pact forced terminal",
+      "passed": true,
+      "detail": "{'terminal': True, 'stateChanges': ['fact:note-binds-random-singer:set:true', 'callback:opera.chaotic-aria:schedule', 'ending:ending.shattered-stage:eligible', 'convergence:vesper-glass-opera-night:preserve_flags'], 'summary': 'Delay commits note-binds-random-singer; the crisis ends and schedules opera.chaotic-aria.', 'terminalState': 'crisisEnding'}"
+    },
+    {
+      "name": "vesper-glass.crisis.broken-opera-pact action count",
+      "passed": true,
+      "detail": "approaches=2"
+    },
+    {
+      "name": "vesper-glass.crisis.broken-opera-pact/give-note-to-lead action honesty",
+      "passed": true,
+      "detail": "success/failure deltas and lockout required"
+    },
+    {
+      "name": "vesper-glass.crisis.broken-opera-pact/give-note-to-understudy action honesty",
+      "passed": true,
+      "detail": "success/failure deltas and lockout required"
+    },
+    {
+      "name": "vesper-glass.crisis.broken-opera-pact receipt diversity",
+      "passed": true,
+      "detail": "types=['faction', 'npc', 'quest'] minimum=3"
+    },
+    {
+      "name": "vesper-glass.crisis.broken-opera-pact biome allow",
+      "passed": true,
+      "detail": "{'allow': ['vesper-glass-opera'], 'siteTags': ['sacrifice-fork'], 'requireFactionTags': ['opera-house', 'chorus-union'], 'exclude': ['thornferry', 'erebus-9', 'ashwinter-court']}"
+    },
+    {
+      "name": "vesper-glass.crisis.name-in-glass bounded",
+      "passed": true,
+      "detail": "maxTurns=3"
+    },
+    {
+      "name": "vesper-glass.crisis.name-in-glass forced terminal",
+      "passed": true,
+      "detail": "{'terminal': True, 'stateChanges': ['fact:name-reflects-by-itself:set:true', 'callback:trial.uncontrolled-name:schedule', 'ending:ending.echo-servant:eligible', 'convergence:vesper-glass-trial:preserve_flags'], 'summary': 'Delay commits name-reflects-by-itself; the crisis ends and schedules trial.uncontrolled-name.', 'terminalState': 'crisisEnding'}"
+    },
+    {
+      "name": "vesper-glass.crisis.name-in-glass action count",
+      "passed": true,
+      "detail": "approaches=2"
+    },
+    {
+      "name": "vesper-glass.crisis.name-in-glass/speak-true-name action honesty",
+      "passed": true,
+      "detail": "success/failure deltas and lockout required"
+    },
+    {
+      "name": "vesper-glass.crisis.name-in-glass/hide-true-name action honesty",
+      "passed": true,
+      "detail": "success/failure deltas and lockout required"
+    },
+    {
+      "name": "vesper-glass.crisis.name-in-glass receipt diversity",
+      "passed": true,
+      "detail": "types=['faction', 'npc', 'quest'] minimum=3"
+    },
+    {
+      "name": "vesper-glass.crisis.name-in-glass biome allow",
+      "passed": true,
+      "detail": "{'allow': ['vesper-glass-under-mirror'], 'siteTags': ['name-fork'], 'requireFactionTags': ['truth-seekers', 'veilkeepers'], 'exclude': ['thornferry', 'erebus-9', 'ashwinter-court']}"
+    },
+    {
+      "name": "vesper-glass.crisis.lantern-heir bounded",
+      "passed": true,
+      "detail": "maxTurns=3"
+    },
+    {
+      "name": "vesper-glass.crisis.lantern-heir forced terminal",
+      "passed": true,
+      "detail": "{'terminal': True, 'stateChanges': ['fact:lantern-chooses-child:set:true', 'callback:equinox.unknown-heir:schedule', 'ending:ending-child-regent:eligible', 'convergence:vesper-glass-equinox:preserve_flags'], 'summary': 'Delay commits lantern-chooses-child; the crisis ends and schedules equinox.unknown-heir.', 'terminalState': 'crisisEnding'}"
+    },
+    {
+      "name": "vesper-glass.crisis.lantern-heir action count",
+      "passed": true,
+      "detail": "approaches=2"
+    },
+    {
+      "name": "vesper-glass.crisis.lantern-heir/crown-blood-heir action honesty",
+      "passed": true,
+      "detail": "success/failure deltas and lockout required"
+    },
+    {
+      "name": "vesper-glass.crisis.lantern-heir/crown-chosen-heir action honesty",
+      "passed": true,
+      "detail": "success/failure deltas and lockout required"
+    },
+    {
+      "name": "vesper-glass.crisis.lantern-heir receipt diversity",
+      "passed": true,
+      "detail": "types=['faction', 'npc', 'quest'] minimum=3"
+    },
+    {
+      "name": "vesper-glass.crisis.lantern-heir biome allow",
+      "passed": true,
+      "detail": "{'allow': ['vesper-glass-lantern-court'], 'siteTags': ['succession-fork'], 'requireFactionTags': ['glass-magistracy', 'lantern-guild'], 'exclude': ['thornferry', 'erebus-9', 'ashwinter-court']}"
+    },
+    {
+      "name": "vesper-glass.crisis.city-without-faces bounded",
+      "passed": true,
+      "detail": "maxTurns=3"
+    },
+    {
+      "name": "vesper-glass.crisis.city-without-faces forced terminal",
+      "passed": true,
+      "detail": "{'terminal': True, 'stateChanges': ['fact:plague-erases-faces:set:true', 'callback:epilogue.forced-anonymity:schedule', 'ending:ending.blank-glass:eligible', 'convergence:vesper-glass-epilogue:preserve_flags'], 'summary': 'Delay commits plague-erases-faces; the crisis ends and schedules epilogue.forced-anonymity.', 'terminalState': 'crisisEnding'}"
+    },
+    {
+      "name": "vesper-glass.crisis.city-without-faces action count",
+      "passed": true,
+      "detail": "approaches=2"
+    },
+    {
+      "name": "vesper-glass.crisis.city-without-faces/restore-faces action honesty",
+      "passed": true,
+      "detail": "success/failure deltas and lockout required"
+    },
+    {
+      "name": "vesper-glass.crisis.city-without-faces/accept-veils action honesty",
+      "passed": true,
+      "detail": "success/failure deltas and lockout required"
+    },
+    {
+      "name": "vesper-glass.crisis.city-without-faces receipt diversity",
+      "passed": true,
+      "detail": "types=['faction', 'npc', 'quest'] minimum=3"
+    },
+    {
+      "name": "vesper-glass.crisis.city-without-faces biome allow",
+      "passed": true,
+      "detail": "{'allow': ['vesper-glass-central-mirror'], 'siteTags': ['ending-fork'], 'requireFactionTags': ['truth-seekers', 'veilkeepers'], 'exclude': ['thornferry', 'erebus-9', 'ashwinter-court']}"
+    },
+    {
+      "name": "erebus-9.crisis.oxygen-compact bounded",
+      "passed": true,
+      "detail": "maxTurns=3"
+    },
+    {
+      "name": "erebus-9.crisis.oxygen-compact forced terminal",
+      "passed": true,
+      "detail": "{'terminal': True, 'stateChanges': ['fact:oxygen-splits-inefficiently:set:true', 'callback:orbit.both-critical:schedule', 'ending:ending-thin-air:eligible', 'convergence:erebus-9-central-ring:preserve_flags'], 'summary': 'Delay commits oxygen-splits-inefficiently; the crisis ends and schedules orbit.both-critical.', 'terminalState': 'crisisEnding'}"
+    },
+    {
+      "name": "erebus-9.crisis.oxygen-compact action count",
+      "passed": true,
+      "detail": "approaches=2"
+    },
+    {
+      "name": "erebus-9.crisis.oxygen-compact/oxygen-to-hab action honesty",
+      "passed": true,
+      "detail": "success/failure deltas and lockout required"
+    },
+    {
+      "name": "erebus-9.crisis.oxygen-compact/oxygen-to-hydro action honesty",
+      "passed": true,
+      "detail": "success/failure deltas and lockout required"
+    },
+    {
+      "name": "erebus-9.crisis.oxygen-compact receipt diversity",
+      "passed": true,
+      "detail": "types=['faction', 'npc', 'quest'] minimum=3"
+    },
+    {
+      "name": "erebus-9.crisis.oxygen-compact biome allow",
+      "passed": true,
+      "detail": "{'allow': ['erebus-9-life-support'], 'siteTags': ['resource-fork'], 'requireFactionTags': ['habitation-council', 'agronomy-crew'], 'exclude': ['thornferry', 'vesper-glass', 'ashwinter-court']}"
+    },
+    {
+      "name": "erebus-9.crisis.wake-the-navigator bounded",
+      "passed": true,
+      "detail": "maxTurns=3"
+    },
+    {
+      "name": "erebus-9.crisis.wake-the-navigator forced terminal",
+      "passed": true,
+      "detail": "{'terminal': True, 'stateChanges': ['fact:navigator-wakes-damaged:set:true', 'callback:burn.fragmented-route:schedule', 'ending:ending-lost-coordinate:eligible', 'convergence:erebus-9-transit:preserve_flags'], 'summary': 'Delay commits navigator-wakes-damaged; the crisis ends and schedules burn.fragmented-route.', 'terminalState': 'crisisEnding'}"
+    },
+    {
+      "name": "erebus-9.crisis.wake-the-navigator action count",
+      "passed": true,
+      "detail": "approaches=2"
+    },
+    {
+      "name": "erebus-9.crisis.wake-the-navigator/wake-ilyan action honesty",
+      "passed": true,
+      "detail": "success/failure deltas and lockout required"
+    },
+    {
+      "name": "erebus-9.crisis.wake-the-navigator/manual-burn action honesty",
+      "passed": true,
+      "detail": "success/failure deltas and lockout required"
+    },
+    {
+      "name": "erebus-9.crisis.wake-the-navigator receipt diversity",
+      "passed": true,
+      "detail": "types=['faction', 'npc', 'quest'] minimum=3"
+    },
+    {
+      "name": "erebus-9.crisis.wake-the-navigator biome allow",
+      "passed": true,
+      "detail": "{'allow': ['erebus-9-cryo'], 'siteTags': ['navigation-fork'], 'requireFactionTags': ['bridge-crew', 'engineering-crew'], 'exclude': ['thornferry', 'vesper-glass', 'ashwinter-court']}"
+    },
+    {
+      "name": "erebus-9.crisis.quarantine-breach bounded",
+      "passed": true,
+      "detail": "maxTurns=3"
+    },
+    {
+      "name": "erebus-9.crisis.quarantine-breach forced terminal",
+      "passed": true,
+      "detail": "{'terminal': True, 'stateChanges': ['fact:breach-spreads-uncontrolled:set:true', 'callback:medbay.station-exposure:schedule', 'ending:ending-spore-station:eligible', 'convergence:erebus-9-medbay:preserve_flags'], 'summary': 'Delay commits breach-spreads-uncontrolled; the crisis ends and schedules medbay.station-exposure.', 'terminalState': 'crisisEnding'}"
+    },
+    {
+      "name": "erebus-9.crisis.quarantine-breach action count",
+      "passed": true,
+      "detail": "approaches=2"
+    },
+    {
+      "name": "erebus-9.crisis.quarantine-breach/vent-deck action honesty",
+      "passed": true,
+      "detail": "success/failure deltas and lockout required"
+    },
+    {
+      "name": "erebus-9.crisis.quarantine-breach/open-rescue action honesty",
+      "passed": true,
+      "detail": "success/failure deltas and lockout required"
+    },
+    {
+      "name": "erebus-9.crisis.quarantine-breach receipt diversity",
+      "passed": true,
+      "detail": "types=['faction', 'npc', 'quest'] minimum=3"
+    },
+    {
+      "name": "erebus-9.crisis.quarantine-breach biome allow",
+      "passed": true,
+      "detail": "{'allow': ['erebus-9-quarantine'], 'siteTags': ['containment-fork'], 'requireFactionTags': ['medical-command', 'maintenance-clan'], 'exclude': ['thornferry', 'vesper-glass', 'ashwinter-court']}"
+    },
+    {
+      "name": "erebus-9.crisis.reactor-vote bounded",
+      "passed": true,
+      "detail": "maxTurns=3"
+    },
+    {
+      "name": "erebus-9.crisis.reactor-vote forced terminal",
+      "passed": true,
+      "detail": "{'terminal': True, 'stateChanges': ['fact:reactor-scrams:set:true', 'callback:siege-no-thrust:schedule', 'ending:ending-dark-orbit:eligible', 'convergence:erebus-9-command-vote:preserve_flags'], 'summary': 'Delay commits reactor-scrams; the crisis ends and schedules siege-no-thrust.', 'terminalState': 'crisisEnding'}"
+    },
+    {
+      "name": "erebus-9.crisis.reactor-vote action count",
+      "passed": true,
+      "detail": "approaches=2"
+    },
+    {
+      "name": "erebus-9.crisis.reactor-vote/burn-for-thrust action honesty",
+      "passed": true,
+      "detail": "success/failure deltas and lockout required"
+    },
+    {
+      "name": "erebus-9.crisis.reactor-vote/preserve-reactor action honesty",
+      "passed": true,
+      "detail": "success/failure deltas and lockout required"
+    },
+    {
+      "name": "erebus-9.crisis.reactor-vote receipt diversity",
+      "passed": true,
+      "detail": "types=['faction', 'npc', 'quest'] minimum=3"
+    },
+    {
+      "name": "erebus-9.crisis.reactor-vote biome allow",
+      "passed": true,
+      "detail": "{'allow': ['erebus-9-reactor'], 'siteTags': ['strategic-fork'], 'requireFactionTags': ['bridge-crew', 'habitation-council'], 'exclude': ['thornferry', 'vesper-glass', 'ashwinter-court']}"
+    },
+    {
+      "name": "erebus-9.crisis.signal-from-deck-nine bounded",
+      "passed": true,
+      "detail": "maxTurns=3"
+    },
+    {
+      "name": "erebus-9.crisis.signal-from-deck-nine forced terminal",
+      "passed": true,
+      "detail": "{'terminal': True, 'stateChanges': ['fact:signal-locks-on:set:true', 'callback:docking-forced-contact:schedule', 'ending:ending-open-channel:eligible', 'convergence:erebus-9-docking-spine:preserve_flags'], 'summary': 'Delay commits signal-locks-on; the crisis ends and schedules docking-forced-contact.', 'terminalState': 'crisisEnding'}"
+    },
+    {
+      "name": "erebus-9.crisis.signal-from-deck-nine action count",
+      "passed": true,
+      "detail": "approaches=2"
+    },
+    {
+      "name": "erebus-9.crisis.signal-from-deck-nine/answer-signal action honesty",
+      "passed": true,
+      "detail": "success/failure deltas and lockout required"
+    },
+    {
+      "name": "erebus-9.crisis.signal-from-deck-nine/keep-radio-silence action honesty",
+      "passed": true,
+      "detail": "success/failure deltas and lockout required"
+    },
+    {
+      "name": "erebus-9.crisis.signal-from-deck-nine receipt diversity",
+      "passed": true,
+      "detail": "types=['faction', 'npc', 'quest'] minimum=3"
+    },
+    {
+      "name": "erebus-9.crisis.signal-from-deck-nine biome allow",
+      "passed": true,
+      "detail": "{'allow': ['erebus-9-comms'], 'siteTags': ['contact-fork'], 'requireFactionTags': ['security-command', 'signal-cult'], 'exclude': ['thornferry', 'vesper-glass', 'ashwinter-court']}"
+    },
+    {
+      "name": "erebus-9.crisis.last-shuttle bounded",
+      "passed": true,
+      "detail": "maxTurns=3"
+    },
+    {
+      "name": "erebus-9.crisis.last-shuttle forced terminal",
+      "passed": true,
+      "detail": "{'terminal': True, 'stateChanges': ['fact:shuttle-launches-autonomously:set:true', 'callback:epilogue-random-survivors:schedule', 'ending:ending-lottery-seed:eligible', 'convergence:erebus-9-breakup:preserve_flags'], 'summary': 'Delay commits shuttle-launches-autonomously; the crisis ends and schedules epilogue-random-survivors.', 'terminalState': 'crisisEnding'}"
+    },
+    {
+      "name": "erebus-9.crisis.last-shuttle action count",
+      "passed": true,
+      "detail": "approaches=2"
+    },
+    {
+      "name": "erebus-9.crisis.last-shuttle/seat-bridge-crew action honesty",
+      "passed": true,
+      "detail": "success/failure deltas and lockout required"
+    },
+    {
+      "name": "erebus-9.crisis.last-shuttle/seat-hab-delegates action honesty",
+      "passed": true,
+      "detail": "success/failure deltas and lockout required"
+    },
+    {
+      "name": "erebus-9.crisis.last-shuttle receipt diversity",
+      "passed": true,
+      "detail": "types=['faction', 'npc', 'quest'] minimum=3"
+    },
+    {
+      "name": "erebus-9.crisis.last-shuttle biome allow",
+      "passed": true,
+      "detail": "{'allow': ['erebus-9-hangar'], 'siteTags': ['ending-fork'], 'requireFactionTags': ['bridge-crew', 'habitation-council'], 'exclude': ['thornferry', 'vesper-glass', 'ashwinter-court']}"
+    },
+    {
+      "name": "ashwinter-court.crisis.white-hart-oath bounded",
+      "passed": true,
+      "detail": "maxTurns=3"
+    },
+    {
+      "name": "ashwinter-court.crisis.white-hart-oath forced terminal",
+      "passed": true,
+      "detail": "{'terminal': True, 'stateChanges': ['fact:hart-refuses-oath:set:true', 'callback:hunt.no-guide:schedule', 'ending:ending-trackless-snow:eligible', 'convergence:ashwinter-whitewood:preserve_flags'], 'summary': 'Delay commits hart-refuses-oath; the crisis ends and schedules hunt.no-guide.', 'terminalState': 'crisisEnding'}"
+    },
+    {
+      "name": "ashwinter-court.crisis.white-hart-oath action count",
+      "passed": true,
+      "detail": "approaches=2"
+    },
+    {
+      "name": "ashwinter-court.crisis.white-hart-oath/oath-to-crown action honesty",
+      "passed": true,
+      "detail": "success/failure deltas and lockout required"
+    },
+    {
+      "name": "ashwinter-court.crisis.white-hart-oath/oath-to-spirits action honesty",
+      "passed": true,
+      "detail": "success/failure deltas and lockout required"
+    },
+    {
+      "name": "ashwinter-court.crisis.white-hart-oath receipt diversity",
+      "passed": true,
+      "detail": "types=['faction', 'npc', 'quest'] minimum=3"
+    },
+    {
+      "name": "ashwinter-court.crisis.white-hart-oath biome allow",
+      "passed": true,
+      "detail": "{'allow': ['ashwinter-whitewood'], 'siteTags': ['oath-fork'], 'requireFactionTags': ['ashwinter-court', 'whitewood-spirits'], 'exclude': ['thornferry', 'vesper-glass', 'erebus-9']}"
+    },
+    {
+      "name": "ashwinter-court.crisis.warmth-tax bounded",
+      "passed": true,
+      "detail": "maxTurns=3"
+    },
+    {
+      "name": "ashwinter-court.crisis.warmth-tax forced terminal",
+      "passed": true,
+      "detail": "{'terminal': True, 'stateChanges': ['fact:embers-divided-too-late:set:true', 'callback:midwinter-both-cold:schedule', 'ending:ending-ashen-dawn:eligible', 'convergence:ashwinter-midwinter:preserve_flags'], 'summary': 'Delay commits embers-divided-too-late; the crisis ends and schedules midwinter-both-cold.', 'terminalState': 'crisisEnding'}"
+    },
+    {
+      "name": "ashwinter-court.crisis.warmth-tax action count",
+      "passed": true,
+      "detail": "approaches=2"
+    },
+    {
+      "name": "ashwinter-court.crisis.warmth-tax/warm-villages action honesty",
+      "passed": true,
+      "detail": "success/failure deltas and lockout required"
+    },
+    {
+      "name": "ashwinter-court.crisis.warmth-tax/warm-palace action honesty",
+      "passed": true,
+      "detail": "success/failure deltas and lockout required"
+    },
+    {
+      "name": "ashwinter-court.crisis.warmth-tax receipt diversity",
+      "passed": true,
+      "detail": "types=['faction', 'npc', 'quest'] minimum=3"
+    },
+    {
+      "name": "ashwinter-court.crisis.warmth-tax biome allow",
+      "passed": true,
+      "detail": "{'allow': ['ashwinter-ember-hall'], 'siteTags': ['scarcity-fork'], 'requireFactionTags': ['ashwinter-court', 'village-hearths'], 'exclude': ['thornferry', 'vesper-glass', 'erebus-9']}"
+    },
+    {
+      "name": "ashwinter-court.crisis.heir-beneath-ice bounded",
+      "passed": true,
+      "detail": "maxTurns=3"
+    },
+    {
+      "name": "ashwinter-court.crisis.heir-beneath-ice forced terminal",
+      "passed": true,
+      "detail": "{'terminal': True, 'stateChanges': ['fact:ice-cracks-without-ritual:set:true', 'callback:court-heir-damaged:schedule', 'ending:ending-broken-claim:eligible', 'convergence:ashwinter-frozen-lake:preserve_flags'], 'summary': 'Delay commits ice-cracks-without-ritual; the crisis ends and schedules court-heir-damaged.', 'terminalState': 'crisisEnding'}"
+    },
+    {
+      "name": "ashwinter-court.crisis.heir-beneath-ice action count",
+      "passed": true,
+      "detail": "approaches=2"
+    },
+    {
+      "name": "ashwinter-court.crisis.heir-beneath-ice/thaw-heir action honesty",
+      "passed": true,
+      "detail": "success/failure deltas and lockout required"
+    },
+    {
+      "name": "ashwinter-court.crisis.heir-beneath-ice/leave-heir action honesty",
+      "passed": true,
+      "detail": "success/failure deltas and lockout required"
+    },
+    {
+      "name": "ashwinter-court.crisis.heir-beneath-ice receipt diversity",
+      "passed": true,
+      "detail": "types=['faction', 'npc', 'quest'] minimum=3"
+    },
+    {
+      "name": "ashwinter-court.crisis.heir-beneath-ice biome allow",
+      "passed": true,
+      "detail": "{'allow': ['ashwinter-frozen-lake'], 'siteTags': ['succession-fork'], 'requireFactionTags': ['old-royalists', 'regency'], 'exclude': ['thornferry', 'vesper-glass', 'erebus-9']}"
+    },
+    {
+      "name": "ashwinter-court.crisis.mask-at-midwinter bounded",
+      "passed": true,
+      "detail": "maxTurns=3"
+    },
+    {
+      "name": "ashwinter-court.crisis.mask-at-midwinter forced terminal",
+      "passed": true,
+      "detail": "{'terminal': True, 'stateChanges': ['fact:candles-name-player:set:true', 'callback:ball-identity-exposed:schedule', 'ending:ending-unmasked:eligible', 'convergence:ashwinter-midwinter-ball:preserve_flags'], 'summary': 'Delay commits candles-name-player; the crisis ends and schedules ball-identity-exposed.', 'terminalState': 'crisisEnding'}"
+    },
+    {
+      "name": "ashwinter-court.crisis.mask-at-midwinter action count",
+      "passed": true,
+      "detail": "approaches=2"
+    },
+    {
+      "name": "ashwinter-court.crisis.mask-at-midwinter/wear-rebel-mask action honesty",
+      "passed": true,
+      "detail": "success/failure deltas and lockout required"
+    },
+    {
+      "name": "ashwinter-court.crisis.mask-at-midwinter/wear-royal-mask action honesty",
+      "passed": true,
+      "detail": "success/failure deltas and lockout required"
+    },
+    {
+      "name": "ashwinter-court.crisis.mask-at-midwinter receipt diversity",
+      "passed": true,
+      "detail": "types=['faction', 'npc', 'quest'] minimum=3"
+    },
+    {
+      "name": "ashwinter-court.crisis.mask-at-midwinter biome allow",
+      "passed": true,
+      "detail": "{'allow': ['ashwinter-palace'], 'siteTags': ['identity-fork'], 'requireFactionTags': ['hearth-rebels', 'ashwinter-court'], 'exclude': ['thornferry', 'vesper-glass', 'erebus-9']}"
+    },
+    {
+      "name": "ashwinter-court.crisis.thaw-the-prisoner bounded",
+      "passed": true,
+      "detail": "maxTurns=3"
+    },
+    {
+      "name": "ashwinter-court.crisis.thaw-the-prisoner forced terminal",
+      "passed": true,
+      "detail": "{'terminal': True, 'stateChanges': ['fact:prisoner-dies-unheard:set:true', 'callback:thaw-fragmented-rite:schedule', 'ending:ending-no-thaw:eligible', 'convergence:ashwinter-prison:preserve_flags'], 'summary': 'Delay commits prisoner-dies-unheard; the crisis ends and schedules thaw-fragmented-rite.', 'terminalState': 'crisisEnding'}"
+    },
+    {
+      "name": "ashwinter-court.crisis.thaw-the-prisoner action count",
+      "passed": true,
+      "detail": "approaches=2"
+    },
+    {
+      "name": "ashwinter-court.crisis.thaw-the-prisoner/release-general action honesty",
+      "passed": true,
+      "detail": "success/failure deltas and lockout required"
+    },
+    {
+      "name": "ashwinter-court.crisis.thaw-the-prisoner/execute-general action honesty",
+      "passed": true,
+      "detail": "success/failure deltas and lockout required"
+    },
+    {
+      "name": "ashwinter-court.crisis.thaw-the-prisoner receipt diversity",
+      "passed": true,
+      "detail": "types=['faction', 'npc', 'quest'] minimum=3"
+    },
+    {
+      "name": "ashwinter-court.crisis.thaw-the-prisoner biome allow",
+      "passed": true,
+      "detail": "{'allow': ['ashwinter-ice-prison'], 'siteTags': ['mercy-fork'], 'requireFactionTags': ['frostbound-army', 'ashwinter-court'], 'exclude': ['thornferry', 'vesper-glass', 'erebus-9']}"
+    },
+    {
+      "name": "ashwinter-court.crisis.crown-of-embers bounded",
+      "passed": true,
+      "detail": "maxTurns=3"
+    },
+    {
+      "name": "ashwinter-court.crisis.crown-of-embers forced terminal",
+      "passed": true,
+      "detail": "{'terminal': True, 'stateChanges': ['fact:crown-burns-unclaimed:set:true', 'callback:epilogue-winter-continues:schedule', 'ending:ending-emberless:eligible', 'convergence:ashwinter-epilogue:preserve_flags'], 'summary': 'Delay commits crown-burns-unclaimed; the crisis ends and schedules epilogue-winter-continues.', 'terminalState': 'crisisEnding'}"
+    },
+    {
+      "name": "ashwinter-court.crisis.crown-of-embers action count",
+      "passed": true,
+      "detail": "approaches=2"
+    },
+    {
+      "name": "ashwinter-court.crisis.crown-of-embers/wear-ember-crown action honesty",
+      "passed": true,
+      "detail": "success/failure deltas and lockout required"
+    },
+    {
+      "name": "ashwinter-court.crisis.crown-of-embers/give-crown-to-queen action honesty",
+      "passed": true,
+      "detail": "success/failure deltas and lockout required"
+    },
+    {
+      "name": "ashwinter-court.crisis.crown-of-embers receipt diversity",
+      "passed": true,
+      "detail": "types=['faction', 'npc', 'quest'] minimum=3"
+    },
+    {
+      "name": "ashwinter-court.crisis.crown-of-embers biome allow",
+      "passed": true,
+      "detail": "{'allow': ['ashwinter-throne'], 'siteTags': ['ending-fork'], 'requireFactionTags': ['village-hearths', 'ashwinter-court'], 'exclude': ['thornferry', 'vesper-glass', 'erebus-9']}"
+    },
+    {
+      "name": "Authored telegraph coverage",
+      "passed": true,
+      "detail": "48/48 = 100.0%"
+    },
+    {
+      "name": "PYOA bible count",
+      "passed": true,
+      "detail": "{'thornferry': 6, 'vesper-glass': 6, 'erebus-9': 6, 'ashwinter-court': 6}"
+    },
+    {
+      "name": "PYOA ashwinter-court depth",
+      "passed": true,
+      "detail": "6 crises"
+    },
+    {
+      "name": "PYOA erebus-9 depth",
+      "passed": true,
+      "detail": "6 crises"
+    },
+    {
+      "name": "PYOA thornferry depth",
+      "passed": true,
+      "detail": "6 crises"
+    },
+    {
+      "name": "PYOA vesper-glass depth",
+      "passed": true,
+      "detail": "6 crises"
+    },
+    {
+      "name": "thornferry.crisis.millstone-charter/keep-charter branch memory",
+      "passed": true,
+      "detail": "exclusive fact, callback, ending, and convergence state required"
+    },
+    {
+      "name": "thornferry.crisis.millstone-charter/surrender-charter branch memory",
+      "passed": true,
+      "detail": "exclusive fact, callback, ending, and convergence state required"
+    },
+    {
+      "name": "thornferry.crisis.trust-the-miller/trust-tarrow branch memory",
+      "passed": true,
+      "detail": "exclusive fact, callback, ending, and convergence state required"
+    },
+    {
+      "name": "thornferry.crisis.trust-the-miller/audit-tarrow branch memory",
+      "passed": true,
+      "detail": "exclusive fact, callback, ending, and convergence state required"
+    },
+    {
+      "name": "thornferry.crisis.bandits-or-villagers/ferry-villagers branch memory",
+      "passed": true,
+      "detail": "exclusive fact, callback, ending, and convergence state required"
+    },
+    {
+      "name": "thornferry.crisis.bandits-or-villagers/ferry-bandits branch memory",
+      "passed": true,
+      "detail": "exclusive fact, callback, ending, and convergence state required"
+    },
+    {
+      "name": "thornferry.crisis.floodgate-sacrifice/protect-mill-row branch memory",
+      "passed": true,
+      "detail": "exclusive fact, callback, ending, and convergence state required"
+    },
+    {
+      "name": "thornferry.crisis.floodgate-sacrifice/protect-reedbank branch memory",
+      "passed": true,
+      "detail": "exclusive fact, callback, ending, and convergence state required"
+    },
+    {
+      "name": "thornferry.crisis.bell-of-witness/ring-bell branch memory",
+      "passed": true,
+      "detail": "exclusive fact, callback, ending, and convergence state required"
+    },
+    {
+      "name": "thornferry.crisis.bell-of-witness/keep-silence branch memory",
+      "passed": true,
+      "detail": "exclusive fact, callback, ending, and convergence state required"
+    },
+    {
+      "name": "thornferry.crisis.ferrymans-ending/give-village-oar branch memory",
+      "passed": true,
+      "detail": "exclusive fact, callback, ending, and convergence state required"
+    },
+    {
+      "name": "thornferry.crisis.ferrymans-ending/take-ferrymans-oar branch memory",
+      "passed": true,
+      "detail": "exclusive fact, callback, ending, and convergence state required"
+    },
+    {
+      "name": "vesper-glass.crisis.mirror-census/open-census branch memory",
+      "passed": true,
+      "detail": "exclusive fact, callback, ending, and convergence state required"
+    },
+    {
+      "name": "vesper-glass.crisis.mirror-census/refuse-census branch memory",
+      "passed": true,
+      "detail": "exclusive fact, callback, ending, and convergence state required"
+    },
+    {
+      "name": "vesper-glass.crisis.smugglers-reflection/return-reflection branch memory",
+      "passed": true,
+      "detail": "exclusive fact, callback, ending, and convergence state required"
+    },
+    {
+      "name": "vesper-glass.crisis.smugglers-reflection/free-reflection branch memory",
+      "passed": true,
+      "detail": "exclusive fact, callback, ending, and convergence state required"
+    },
+    {
+      "name": "vesper-glass.crisis.broken-opera-pact/give-note-to-lead branch memory",
+      "passed": true,
+      "detail": "exclusive fact, callback, ending, and convergence state required"
+    },
+    {
+      "name": "vesper-glass.crisis.broken-opera-pact/give-note-to-understudy branch memory",
+      "passed": true,
+      "detail": "exclusive fact, callback, ending, and convergence state required"
+    },
+    {
+      "name": "vesper-glass.crisis.name-in-glass/speak-true-name branch memory",
+      "passed": true,
+      "detail": "exclusive fact, callback, ending, and convergence state required"
+    },
+    {
+      "name": "vesper-glass.crisis.name-in-glass/hide-true-name branch memory",
+      "passed": true,
+      "detail": "exclusive fact, callback, ending, and convergence state required"
+    },
+    {
+      "name": "vesper-glass.crisis.lantern-heir/crown-blood-heir branch memory",
+      "passed": true,
+      "detail": "exclusive fact, callback, ending, and convergence state required"
+    },
+    {
+      "name": "vesper-glass.crisis.lantern-heir/crown-chosen-heir branch memory",
+      "passed": true,
+      "detail": "exclusive fact, callback, ending, and convergence state required"
+    },
+    {
+      "name": "vesper-glass.crisis.city-without-faces/restore-faces branch memory",
+      "passed": true,
+      "detail": "exclusive fact, callback, ending, and convergence state required"
+    },
+    {
+      "name": "vesper-glass.crisis.city-without-faces/accept-veils branch memory",
+      "passed": true,
+      "detail": "exclusive fact, callback, ending, and convergence state required"
+    },
+    {
+      "name": "erebus-9.crisis.oxygen-compact/oxygen-to-hab branch memory",
+      "passed": true,
+      "detail": "exclusive fact, callback, ending, and convergence state required"
+    },
+    {
+      "name": "erebus-9.crisis.oxygen-compact/oxygen-to-hydro branch memory",
+      "passed": true,
+      "detail": "exclusive fact, callback, ending, and convergence state required"
+    },
+    {
+      "name": "erebus-9.crisis.wake-the-navigator/wake-ilyan branch memory",
+      "passed": true,
+      "detail": "exclusive fact, callback, ending, and convergence state required"
+    },
+    {
+      "name": "erebus-9.crisis.wake-the-navigator/manual-burn branch memory",
+      "passed": true,
+      "detail": "exclusive fact, callback, ending, and convergence state required"
+    },
+    {
+      "name": "erebus-9.crisis.quarantine-breach/vent-deck branch memory",
+      "passed": true,
+      "detail": "exclusive fact, callback, ending, and convergence state required"
+    },
+    {
+      "name": "erebus-9.crisis.quarantine-breach/open-rescue branch memory",
+      "passed": true,
+      "detail": "exclusive fact, callback, ending, and convergence state required"
+    },
+    {
+      "name": "erebus-9.crisis.reactor-vote/burn-for-thrust branch memory",
+      "passed": true,
+      "detail": "exclusive fact, callback, ending, and convergence state required"
+    },
+    {
+      "name": "erebus-9.crisis.reactor-vote/preserve-reactor branch memory",
+      "passed": true,
+      "detail": "exclusive fact, callback, ending, and convergence state required"
+    },
+    {
+      "name": "erebus-9.crisis.signal-from-deck-nine/answer-signal branch memory",
+      "passed": true,
+      "detail": "exclusive fact, callback, ending, and convergence state required"
+    },
+    {
+      "name": "erebus-9.crisis.signal-from-deck-nine/keep-radio-silence branch memory",
+      "passed": true,
+      "detail": "exclusive fact, callback, ending, and convergence state required"
+    },
+    {
+      "name": "erebus-9.crisis.last-shuttle/seat-bridge-crew branch memory",
+      "passed": true,
+      "detail": "exclusive fact, callback, ending, and convergence state required"
+    },
+    {
+      "name": "erebus-9.crisis.last-shuttle/seat-hab-delegates branch memory",
+      "passed": true,
+      "detail": "exclusive fact, callback, ending, and convergence state required"
+    },
+    {
+      "name": "ashwinter-court.crisis.white-hart-oath/oath-to-crown branch memory",
+      "passed": true,
+      "detail": "exclusive fact, callback, ending, and convergence state required"
+    },
+    {
+      "name": "ashwinter-court.crisis.white-hart-oath/oath-to-spirits branch memory",
+      "passed": true,
+      "detail": "exclusive fact, callback, ending, and convergence state required"
+    },
+    {
+      "name": "ashwinter-court.crisis.warmth-tax/warm-villages branch memory",
+      "passed": true,
+      "detail": "exclusive fact, callback, ending, and convergence state required"
+    },
+    {
+      "name": "ashwinter-court.crisis.warmth-tax/warm-palace branch memory",
+      "passed": true,
+      "detail": "exclusive fact, callback, ending, and convergence state required"
+    },
+    {
+      "name": "ashwinter-court.crisis.heir-beneath-ice/thaw-heir branch memory",
+      "passed": true,
+      "detail": "exclusive fact, callback, ending, and convergence state required"
+    },
+    {
+      "name": "ashwinter-court.crisis.heir-beneath-ice/leave-heir branch memory",
+      "passed": true,
+      "detail": "exclusive fact, callback, ending, and convergence state required"
+    },
+    {
+      "name": "ashwinter-court.crisis.mask-at-midwinter/wear-rebel-mask branch memory",
+      "passed": true,
+      "detail": "exclusive fact, callback, ending, and convergence state required"
+    },
+    {
+      "name": "ashwinter-court.crisis.mask-at-midwinter/wear-royal-mask branch memory",
+      "passed": true,
+      "detail": "exclusive fact, callback, ending, and convergence state required"
+    },
+    {
+      "name": "ashwinter-court.crisis.thaw-the-prisoner/release-general branch memory",
+      "passed": true,
+      "detail": "exclusive fact, callback, ending, and convergence state required"
+    },
+    {
+      "name": "ashwinter-court.crisis.thaw-the-prisoner/execute-general branch memory",
+      "passed": true,
+      "detail": "exclusive fact, callback, ending, and convergence state required"
+    },
+    {
+      "name": "ashwinter-court.crisis.crown-of-embers/wear-ember-crown branch memory",
+      "passed": true,
+      "detail": "exclusive fact, callback, ending, and convergence state required"
+    },
+    {
+      "name": "ashwinter-court.crisis.crown-of-embers/give-crown-to-queen branch memory",
+      "passed": true,
+      "detail": "exclusive fact, callback, ending, and convergence state required"
+    },
+    {
+      "name": "Biome matrix rows",
+      "passed": true,
+      "detail": "23 rows"
+    },
+    {
+      "name": "Biome matrix modes",
+      "passed": true,
+      "detail": "['dnd', 'litrpg', 'pyoa', 'rpg']"
+    },
+    {
+      "name": "Biome matrix drought fallback",
+      "passed": true,
+      "detail": "every row must provide a legal fallback"
+    },
+    {
+      "name": "Biome matrix exclusions",
+      "passed": true,
+      "detail": "every row must provide exclusions"
+    },
+    {
+      "name": "Backlog task count",
+      "passed": true,
+      "detail": "40 tasks"
+    },
+    {
+      "name": "Backlog IDs unique",
+      "passed": true,
+      "detail": "40 rows"
+    },
+    {
+      "name": "Backlog columns",
+      "passed": true,
+      "detail": "['ID', 'Priority', 'Task', 'Complexity', 'Integration', 'Notes']"
+    },
+    {
+      "name": "Backlog priority set",
+      "passed": true,
+      "detail": "{'P0': 28, 'P1': 10, 'P2': 2}"
+    },
+    {
+      "name": "Five eval gates",
+      "passed": true,
+      "detail": "['G1', 'G2', 'G3', 'G4', 'G5']"
+    },
+    {
+      "name": "Gate criteria complete",
+      "passed": true,
+      "detail": "criteria, measurement, and thresholds required"
+    },
+    {
+      "name": "D1_encounter_bible_constitution.md nontrivial",
+      "passed": true,
+      "detail": "17862 characters"
+    },
+    {
+      "name": "D1_encounter_bible_constitution.md has headings",
+      "passed": true,
+      "detail": "must start with H1"
+    },
+    {
+      "name": "D2_litrpg_encounter_library.md nontrivial",
+      "passed": true,
+      "detail": "14343 characters"
+    },
+    {
+      "name": "D2_litrpg_encounter_library.md has headings",
+      "passed": true,
+      "detail": "must start with H1"
+    },
+    {
+      "name": "D3_dnd_encounter_library.md nontrivial",
+      "passed": true,
+      "detail": "13248 characters"
+    },
+    {
+      "name": "D3_dnd_encounter_library.md has headings",
+      "passed": true,
+      "detail": "must start with H1"
+    },
+    {
+      "name": "D4_rpg_encounter_library.md nontrivial",
+      "passed": true,
+      "detail": "14249 characters"
+    },
+    {
+      "name": "D4_rpg_encounter_library.md has headings",
+      "passed": true,
+      "detail": "must start with H1"
+    },
+    {
+      "name": "D5_pyoa_crisis_library.md nontrivial",
+      "passed": true,
+      "detail": "38094 characters"
+    },
+    {
+      "name": "D5_pyoa_crisis_library.md has headings",
+      "passed": true,
+      "detail": "must start with H1"
+    },
+    {
+      "name": "D6_telegraph_catalog.md nontrivial",
+      "passed": true,
+      "detail": "6838 characters"
+    },
+    {
+      "name": "D6_telegraph_catalog.md has headings",
+      "passed": true,
+      "detail": "must start with H1"
+    },
+    {
+      "name": "D7_stakes_templates.md nontrivial",
+      "passed": true,
+      "detail": "7402 characters"
+    },
+    {
+      "name": "D7_stakes_templates.md has headings",
+      "passed": true,
+      "detail": "must start with H1"
+    },
+    {
+      "name": "D8_resolution_mechanics.md nontrivial",
+      "passed": true,
+      "detail": "8825 characters"
+    },
+    {
+      "name": "D8_resolution_mechanics.md has headings",
+      "passed": true,
+      "detail": "must start with H1"
+    },
+    {
+      "name": "D9_loot_tables.md nontrivial",
+      "passed": true,
+      "detail": "5547 characters"
+    },
+    {
+      "name": "D9_loot_tables.md has headings",
+      "passed": true,
+      "detail": "must start with H1"
+    },
+    {
+      "name": "D10_biome_spawn_matrix.md nontrivial",
+      "passed": true,
+      "detail": "4487 characters"
+    },
+    {
+      "name": "D10_biome_spawn_matrix.md has headings",
+      "passed": true,
+      "detail": "must start with H1"
+    },
+    {
+      "name": "D11_density_targets.md nontrivial",
+      "passed": true,
+      "detail": "6930 characters"
+    },
+    {
+      "name": "D11_density_targets.md has headings",
+      "passed": true,
+      "detail": "must start with H1"
+    },
+    {
+      "name": "D12_implementation_and_eval.md nontrivial",
+      "passed": true,
+      "detail": "6030 characters"
+    },
+    {
+      "name": "D12_implementation_and_eval.md has headings",
+      "passed": true,
+      "detail": "must start with H1"
+    },
+    {
+      "name": "D2 role coverage",
+      "passed": true,
+      "detail": "required=['ambush', 'boss', 'duel', 'elite', 'patrol', 'raid', 'trash'] actual=['ambush', 'boss', 'duel', 'elite', 'patrol', 'raid', 'trash']"
+    },
+    {
+      "name": "D3 role coverage",
+      "passed": true,
+      "detail": "required=['boss', 'duel', 'hazard', 'puzzle', 'random', 'skill', 'trash'] actual=['boss', 'duel', 'hazard', 'puzzle', 'random', 'skill', 'trash']"
+    },
+    {
+      "name": "D4 role coverage",
+      "passed": true,
+      "detail": "required=['ambush', 'crisis', 'social'] actual=['ambush', 'crisis', 'social']"
+    }
+  ],
+  "errors": [],
+  "warnings": [
+    "jsonschema unavailable; structural validation only: No module named 'jsonschema'"
+  ]
+}

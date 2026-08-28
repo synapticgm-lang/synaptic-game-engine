@@ -1,0 +1,416 @@
+{
+  "version": "1.0.0",
+  "spawn_policy": {
+    "target_interval_turns": 30,
+    "minimum_patterns_per_mode": 10,
+    "repeat_suppression_turns": 60,
+    "commit_before_prose": true
+  },
+  "patterns": [
+    {
+      "id": "SC-01",
+      "name": "Social Standoff",
+      "premise": "Two sides refuse to yield while the scene accumulates witnesses, time pressure, and a credible risk of violence or institutional rupture.",
+      "telegraph": ["An ultimatum is stated with a visible deadline.", "Both sides identify something they cannot publicly surrender."],
+      "stakes": [
+        {"category": "safety", "asset": "peaceful control of the scene", "owner": "all present", "loss": "violence begins", "gain": "both sides stand down under terms"},
+        {"category": "status", "asset": "authority before witnesses", "owner": "the disputants", "loss": "public loss of face", "gain": "recognized settlement authority"}
+      ],
+      "required_context": ["two opposed actors", "credible escalation vector", "at least one concession each side could make"],
+      "primary_skills": ["persuade", "intimidate", "insight"],
+      "resolution": {
+        "success": ["both sides accept a face-saving settlement", "combat is removed from the immediate encounter"],
+        "partial": ["one side stands down but demands a debt, hostage, or public concession", "violence is delayed and a deadline clock starts"],
+        "failure": ["the standoff escalates", "the player's standing falls with the side whose red line was ignored"]
+      },
+      "aftermath": ["record which side preserved face", "create a settlement obligation and witness memory"],
+      "reopen_conditions": ["new mediator", "new evidence", "a material shift in force or authority"],
+      "anti_loop_rule": "After one approach resolves, fails, or partially succeeds, the identical appeal is unavailable until a named reopen condition changes the balance.",
+      "genre_filters": [
+        {"mode": "dnd", "weight": 100, "presentation": "initiative-adjacent parley with explicit DC and hostile-attitude ceiling"},
+        {"mode": "rpg", "weight": 100, "presentation": "faction confrontation with visible concessions and persistent reputation"},
+        {"mode": "pyoa", "weight": 90, "presentation": "close perspective with inner reads on fear, pride, and the cost of delay"},
+        {"mode": "litrpg", "weight": 85, "presentation": "system tracks de-escalation, authority, and faction standing changes"}
+      ],
+      "prose_example": "The watch captain lowers her spear only far enough to speak. Across the bridge, the miners tighten their line. You can expose the forged arrest order, promise a tribunal that costs the guild influence, or threaten to call the duke's troops and accept the blood that follows."
+    },
+    {
+      "id": "SC-02",
+      "name": "Betrayal Reveal",
+      "premise": "Evidence shows that an ally broke faith, forcing the player to choose exposure, private confrontation, forgiveness, or strategic concealment.",
+      "telegraph": ["Earlier testimony conflicts with a discovered fact.", "The suspected ally seeks access, silence, or premature departure."],
+      "stakes": [
+        {"category": "betrayal", "asset": "the relationship", "owner": "player and ally", "loss": "alliance fractures", "gain": "truth, repair, or controlled separation"},
+        {"category": "information", "asset": "proof of disloyalty", "owner": "the player", "loss": "evidence becomes unusable", "gain": "credible leverage or exoneration"}
+      ],
+      "required_context": ["trusted NPC", "verifiable contradiction", "third-party beneficiary or victim"],
+      "primary_skills": ["insight", "persuade", "deceive"],
+      "resolution": {
+        "success": ["the ally confesses or is exposed on the player's terms", "the player chooses repair, exile, or counterintelligence"],
+        "partial": ["the truth is learned but the ally escapes, retaliates, or demands forgiveness at a moral cost"],
+        "failure": ["the accusation misfires or proof is destroyed", "trust falls and the betrayer gains initiative"]
+      },
+      "aftermath": ["record betrayal, forgiveness, or severance milestone", "propagate a version of events to relevant factions"],
+      "reopen_conditions": ["new proof", "a witness recants", "the ally voluntarily confesses"],
+      "anti_loop_rule": "An accusation consumes its evidence opportunity; repeating it without new proof worsens trust and cannot trigger another success check.",
+      "genre_filters": [
+        {"mode": "dnd", "weight": 90, "presentation": "Insight establishes suspicion; proof and Charisma determine confrontation outcome"},
+        {"mode": "rpg", "weight": 100, "presentation": "branching alliance outcome with faction propagation"},
+        {"mode": "pyoa", "weight": 100, "presentation": "inner narration contrasts remembered intimacy with present evidence"},
+        {"mode": "litrpg", "weight": 90, "presentation": "betrayal milestone, trust loss, and title changes are surfaced by the System"}
+      ],
+      "prose_example": "The seal on Mira's letter is genuine; the date is not. She warned the raiders before you arrived. Confronting her now may save tonight's convoy, but doing so before the council will end any chance of learning who paid her."
+    },
+    {
+      "id": "SC-03",
+      "name": "Deadline Pressure",
+      "premise": "A social objective must be secured before a clock expires, making delay, investigation, and repeated appeals materially costly.",
+      "telegraph": ["A messenger, ceremony, departure, vote, or sentence sets a precise deadline.", "Each conversational detour advances the clock."],
+      "stakes": [
+        {"category": "time", "asset": "remaining negotiation window", "owner": "the player", "loss": "the decision becomes irreversible", "gain": "a binding commitment before expiry"},
+        {"category": "access", "asset": "audience or intervention", "owner": "the target", "loss": "target departs or becomes unavailable", "gain": "decision-maker remains engaged"}
+      ],
+      "required_context": ["visible clock", "at least two approaches with different time costs"],
+      "primary_skills": ["persuade", "deceive", "insight"],
+      "resolution": {
+        "success": ["objective is secured before the deadline", "unused time converts to preparation or bonus information"],
+        "partial": ["commitment is obtained with incomplete terms", "the player must sacrifice another timed objective"],
+        "failure": ["the clock expires and the world advances", "a replacement crisis spawns from the missed intervention"]
+      },
+      "aftermath": ["persist expired or satisfied deadline", "remove obsolete dialogue branches"],
+      "reopen_conditions": ["rare legal appeal", "interception before the target reaches the next stage"],
+      "anti_loop_rule": "Every substantive exchange advances the clock; exact-repeat dialogue spends time but never rerolls the same unresolved proposition.",
+      "genre_filters": [
+        {"mode": "dnd", "weight": 85, "presentation": "rounds or exploration turns bound a negotiation"},
+        {"mode": "rpg", "weight": 100, "presentation": "quest timer with mutually exclusive social objectives"},
+        {"mode": "pyoa", "weight": 100, "presentation": "chapter beats and inner urgency make delay legible"},
+        {"mode": "litrpg", "weight": 95, "presentation": "System countdown and objective-state transitions"}
+      ],
+      "prose_example": "The execution bell will ring after three exchanges. You can challenge the witness, bargain with the magistrate, or send your companion to delay the procession. None of those actions is free, and silence will not stop the clock."
+    },
+    {
+      "id": "SC-04",
+      "name": "Faction Confrontation",
+      "premise": "Representatives of rival groups demand a public choice, making neutrality, alignment, and reputation concrete resources.",
+      "telegraph": ["Both factions send named representatives.", "Each representative states a demand and a consequence for refusal."],
+      "stakes": [
+        {"category": "alliance", "asset": "faction support", "owner": "the player", "loss": "services and safe access", "gain": "troops, information, or institutional cover"},
+        {"category": "status", "asset": "public reputation", "owner": "the player", "loss": "infamy with opposed groups", "gain": "recognized standing"}
+      ],
+      "required_context": ["two or more factions", "incompatible demands", "witness or public record"],
+      "primary_skills": ["persuade", "intimidate", "deceive"],
+      "resolution": {
+        "success": ["one faction commits or a narrow coalition forms", "a route, service, or quest line opens"],
+        "partial": ["temporary cooperation forms around one objective", "both sides attach enforceable conditions"],
+        "failure": ["one or more factions withdraw or become hostile", "neutral services become gated"]
+      },
+      "aftermath": ["apply positive and negative faction events separately", "notify cross-NPC knowledge graph"],
+      "reopen_conditions": ["complete restitution quest", "leadership turnover", "major shared threat"],
+      "anti_loop_rule": "A public position becomes an immutable event; it can be answered only through restitution, leadership change, or a new crisis, not conversational repetition.",
+      "genre_filters": [
+        {"mode": "dnd", "weight": 90, "presentation": "court, council, or guild audience with attitude-sensitive checks"},
+        {"mode": "rpg", "weight": 100, "presentation": "branching faction gates and visible reputation deltas"},
+        {"mode": "pyoa", "weight": 85, "presentation": "emphasize identity, witness perception, and internal conflict"},
+        {"mode": "litrpg", "weight": 100, "presentation": "faction thresholds, titles, and access requirements are explicit"}
+      ],
+      "prose_example": "The guildmaster places a trade seal on the table; the dock union sets a bloodied glove beside it. Signing either charter wins passage tonight and closes the other's quarter by dawn unless you can define a common enemy both will publicly accept."
+    },
+    {
+      "id": "SC-05",
+      "name": "Moral Dilemma",
+      "premise": "Every available resolution protects one value by violating another, and the system refuses to label one path as consequence-free.",
+      "telegraph": ["The incompatible values are named before commitment.", "Affected people are represented by concrete NPCs, not abstract numbers alone."],
+      "stakes": [
+        {"category": "moral_weight", "asset": "an upheld principle", "owner": "the player", "loss": "complicity or hypocrisy", "gain": "integrity with a visible cost"},
+        {"category": "safety", "asset": "a person or community", "owner": "affected NPCs", "loss": "harm to one group", "gain": "protection for another"}
+      ],
+      "required_context": ["two valid values", "no perfect outcome", "durable witnesses or self-concept"],
+      "primary_skills": ["insight", "persuade", "none"],
+      "resolution": {
+        "success": ["the chosen value is protected and the sacrifice is acknowledged", "allies who share the value deepen trust"],
+        "partial": ["harm is reduced but the player incurs debt, delay, or divided responsibility"],
+        "failure": ["indecision lets another actor choose", "the player suffers both opportunity loss and reputational interpretation"]
+      },
+      "aftermath": ["record value-choice milestone", "schedule delayed reactions from beneficiaries and victims"],
+      "reopen_conditions": ["new resource makes reparations possible", "previously unknown third option emerges after the irreversible choice"],
+      "anti_loop_rule": "Once the commitment window closes, the moral choice cannot be undone by dialogue; only restitution can alter later relationships.",
+      "genre_filters": [
+        {"mode": "dnd", "weight": 85, "presentation": "roleplay-first decision; roll only to implement a risky method"},
+        {"mode": "rpg", "weight": 100, "presentation": "quest branches and faction reactions encode tradeoffs"},
+        {"mode": "pyoa", "weight": 100, "presentation": "inner narration tracks rationalization, regret, and delayed recognition"},
+        {"mode": "litrpg", "weight": 85, "presentation": "titles and faction deltas show interpretation but do not declare moral truth"}
+      ],
+      "prose_example": "The antidote can save the fever ward or keep the miners alive long enough to hold the floodgate. No argument creates a second vial. Your social skill can organize consent, share blame, or secure a future repayment, but it cannot erase the sacrifice."
+    },
+    {
+      "id": "SC-06",
+      "name": "Exposure Threat",
+      "premise": "A secret may become public unless the player bargains, discredits the source, confesses first, or accepts the resulting identity shift.",
+      "telegraph": ["The source demonstrates partial knowledge.", "A publication channel or named audience is within reach."],
+      "stakes": [
+        {"category": "identity", "asset": "concealed history or persona", "owner": "the player or ally", "loss": "public exposure", "gain": "controlled disclosure or continued secrecy"},
+        {"category": "status", "asset": "credibility", "owner": "the threatened actor", "loss": "status collapse", "gain": "authenticity or narrative control"}
+      ],
+      "required_context": ["secret", "credible audience", "source with motive"],
+      "primary_skills": ["deceive", "persuade", "intimidate", "insight"],
+      "resolution": {
+        "success": ["disclosure is prevented or reframed", "the source accepts terms or loses credibility"],
+        "partial": ["only part of the secret leaks", "the player chooses which relationship absorbs the damage"],
+        "failure": ["the secret spreads", "affected factions and relationships reevaluate the actor"]
+      },
+      "aftermath": ["propagate knowledge by channel and witness", "invalidate dialogue that assumes secrecy"],
+      "reopen_conditions": ["obtain stronger counterevidence", "make public confession before final publication"],
+      "anti_loop_rule": "Once the source rejects an approach, repeating it accelerates exposure; only a changed evidence, audience, or incentive state permits a new check.",
+      "genre_filters": [
+        {"mode": "dnd", "weight": 85, "presentation": "rumor network, court scandal, or secret identity"},
+        {"mode": "rpg", "weight": 100, "presentation": "knowledge propagation alters quests and faction gates"},
+        {"mode": "pyoa", "weight": 100, "presentation": "shame, self-image, and the urge to confess become inner stakes"},
+        {"mode": "litrpg", "weight": 85, "presentation": "hidden title or reputation tag risks public reveal"}
+      ],
+      "prose_example": "The pamphleteer recites the first line of your sealed confession and points to the noon crowd. You can offer proof that her patron forged the rest, confess before she speaks, or threaten the printer whose family owes you. Each route changes who owns the story."
+    },
+    {
+      "id": "SC-07",
+      "name": "Leverage Negotiation",
+      "premise": "The player offers or threatens a concrete consequence whose force depends on evidence, relevance, credibility, and the target's values.",
+      "telegraph": ["The target's want, fear, or obligation has been discovered.", "The player possesses a specific asset or proof tied to that pressure point."],
+      "stakes": [
+        {"category": "information", "asset": "leverage asset", "owner": "the player", "loss": "exhaustion or counterexposure", "gain": "concession"},
+        {"category": "alliance", "asset": "future cooperation", "owner": "target", "loss": "resentful compliance or hostility", "gain": "negotiated exchange"}
+      ],
+      "required_context": ["registered leverage asset", "target-specific pressure point", "credible action path"],
+      "primary_skills": ["intimidate", "persuade", "deceive", "insight"],
+      "resolution": {
+        "success": ["target grants the bounded concession", "leverage is marked consumed or publicly spent"],
+        "partial": ["target complies but demands secrecy, payment, or future service", "trust falls despite objective success"],
+        "failure": ["target calls the bluff, counters, or preempts", "leverage becomes exhausted and hostility or exposure increases"]
+      },
+      "aftermath": ["write cooldown ledger entry", "propagate coercion or deal knowledge to connected NPCs"],
+      "reopen_conditions": ["new leverage asset", "materially stronger evidence", "target's pressure point changes"],
+      "anti_loop_rule": "A leverage instance may influence a target only once; future attempts require a different registered asset or a stronger, newly evidenced version.",
+      "genre_filters": [
+        {"mode": "dnd", "weight": 100, "presentation": "advantage or DC shift from credible leverage, not automatic victory"},
+        {"mode": "rpg", "weight": 100, "presentation": "inventory-like leverage topics with irreversible consumption"},
+        {"mode": "pyoa", "weight": 95, "presentation": "inner voice weighs whether using the pressure point changes who the protagonist is"},
+        {"mode": "litrpg", "weight": 95, "presentation": "evidence strength and authority modifiers are surfaced by the System"}
+      ],
+      "prose_example": "You can show Venn the ledger proving his partner skimmed the tithe. The proof is strong and his fear is real, but once shown it cannot surprise him again. He may open the gate, yet the merchants' network will remember that you trade in secrets."
+    },
+    {
+      "id": "SC-08",
+      "name": "Trust Test",
+      "premise": "An NPC demands a costly signal that distinguishes genuine commitment from cheap words and updates the relationship accordingly.",
+      "telegraph": ["The NPC names a past reason for doubt.", "The requested proof costs time, secrecy, status, or opportunity."],
+      "stakes": [
+        {"category": "alliance", "asset": "trust", "owner": "NPC relationship", "loss": "continued suspicion", "gain": "deeper access or loyalty"},
+        {"category": "resources", "asset": "costly signal", "owner": "the player", "loss": "resource or alternate opportunity", "gain": "credible commitment"}
+      ],
+      "required_context": ["relationship below allied", "specific doubt", "costly but feasible proof"],
+      "primary_skills": ["persuade", "insight", "none"],
+      "resolution": {
+        "success": ["trust rises and a relationship milestone unlocks", "NPC reveals a secret, quest, or vulnerability"],
+        "partial": ["NPC accepts a substitute but sets monitoring or a probation clock", "some access opens with restrictions"],
+        "failure": ["refusal or deceit confirms suspicion", "trust falls and the requested opportunity closes"]
+      },
+      "aftermath": ["record the exact promise and fulfillment state", "schedule a later callback to verify consistency"],
+      "reopen_conditions": ["complete an unsolicited favor", "take responsibility for a later cost"],
+      "anti_loop_rule": "Verbal reassurance cannot repeat after rejection; the next attempt must present a new costly action or fulfilled promise.",
+      "genre_filters": [
+        {"mode": "dnd", "weight": 90, "presentation": "favor or oath shifts attitude before any roll"},
+        {"mode": "rpg", "weight": 100, "presentation": "relationship-gated quest and persistent promise ledger"},
+        {"mode": "pyoa", "weight": 100, "presentation": "interiority emphasizes fear of dependence and the meaning of sacrifice"},
+        {"mode": "litrpg", "weight": 95, "presentation": "trust threshold unlock and oath milestone are explicit"}
+      ],
+      "prose_example": "Sera does not ask whether you believe her. She asks you to burn the warrant that could clear your own name. Keeping it preserves your defense; destroying it proves that you will not trade her life for your status."
+    },
+    {
+      "id": "SC-09",
+      "name": "Alliance Proposal",
+      "premise": "An actor offers cooperation with explicit benefits, obligations, and exit costs that must be negotiated rather than accepted as free content.",
+      "telegraph": ["The proposer states what they provide and what they expect.", "At least one clause conflicts with an existing duty or faction."],
+      "stakes": [
+        {"category": "alliance", "asset": "formal cooperation", "owner": "both parties", "loss": "future support", "gain": "shared capabilities and access"},
+        {"category": "betrayal", "asset": "existing commitments", "owner": "third parties", "loss": "trust or faction standing", "gain": "renegotiated loyalty"}
+      ],
+      "required_context": ["potential ally", "defined exchange", "conflict or obligation"],
+      "primary_skills": ["persuade", "insight", "deceive"],
+      "resolution": {
+        "success": ["alliance forms under explicit terms", "quests, services, or crisis support unlock"],
+        "partial": ["limited alliance forms for one objective", "exit penalty or collateral is imposed"],
+        "failure": ["proposal is withdrawn or offered to a rival", "the player's unreliability may become known"]
+      },
+      "aftermath": ["create reciprocal obligations", "register breach triggers and benefits"],
+      "reopen_conditions": ["complete shared objective", "change representative", "offer materially improved terms"],
+      "anti_loop_rule": "Rejected terms remain rejected; a new proposal must alter consideration, duration, risk allocation, or guarantor.",
+      "genre_filters": [
+        {"mode": "dnd", "weight": 90, "presentation": "patron, guild, or war council pact"},
+        {"mode": "rpg", "weight": 100, "presentation": "branching alliance with quest and service unlocks"},
+        {"mode": "pyoa", "weight": 90, "presentation": "focus on intimacy, doubt, and self-binding promises"},
+        {"mode": "litrpg", "weight": 100, "presentation": "contract terms, faction gains, and breach conditions are explicit"}
+      ],
+      "prose_example": "The rebels offer safehouses and scouts if you place their insignia over the captured keep. You can negotiate a private alliance, accept public alignment, or demand a hostage guarantee. Each version creates a different obligation ledger."
+    },
+    {
+      "id": "SC-10",
+      "name": "Hostage Situation",
+      "premise": "A person, secret, or critical resource is held under credible threat while time and emotional pressure constrain negotiation.",
+      "telegraph": ["The captor demonstrates control and a credible threat.", "A deadline or trigger condition prevents endless dialogue."],
+      "stakes": [
+        {"category": "safety", "asset": "hostage life or integrity", "owner": "hostage", "loss": "harm or death", "gain": "safe release"},
+        {"category": "resources", "asset": "ransom or concession", "owner": "the player or faction", "loss": "material or strategic capacity", "gain": "retained leverage against future crises"}
+      ],
+      "required_context": ["captor with motive", "credible control", "deadline", "at least two rescue or negotiation routes"],
+      "primary_skills": ["persuade", "intimidate", "deceive", "insight"],
+      "resolution": {
+        "success": ["hostage is released or secured without combat", "captor accepts surrender, exchange, or safe exit"],
+        "partial": ["hostage survives but captor escapes, payment is made, or another asset is lost"],
+        "failure": ["the captor executes the threat or moves the hostage", "combat or pursuit begins under worse conditions"]
+      },
+      "aftermath": ["record trauma, gratitude, blame, and promises", "apply reputation based on witnessed method"],
+      "reopen_conditions": ["captor relocates and creates a new scene", "new line of sight, proof, or bargaining asset"],
+      "anti_loop_rule": "Each failed exchange advances the threat clock or changes captor demands; no static demand-response loop is permitted.",
+      "genre_filters": [
+        {"mode": "dnd", "weight": 100, "presentation": "round-bound parley with readied actions and explicit DC"},
+        {"mode": "rpg", "weight": 100, "presentation": "multi-route quest resolution and companion consequences"},
+        {"mode": "pyoa", "weight": 95, "presentation": "close perspective carries fear, bluff uncertainty, and hostage reactions"},
+        {"mode": "litrpg", "weight": 90, "presentation": "threat clock and objective state are visible without revealing hidden resolve"}
+      ],
+      "prose_example": "The archivist holds a flame over the only treaty copy while her apprentice kneels at knifepoint. You may trade safe passage, convince the apprentice to resist, bluff that a duplicate exists, or attack and accept the calculated risk."
+    },
+    {
+      "id": "SC-11",
+      "name": "Public Humiliation",
+      "premise": "An actor attacks status before witnesses, forcing a response that can preserve dignity, redirect blame, absorb the insult, or escalate the feud.",
+      "telegraph": ["The challenger selects an audience that matters.", "The insult targets a known insecurity, office, or social norm."],
+      "stakes": [
+        {"category": "status", "asset": "public standing", "owner": "targeted actor", "loss": "authority and social access", "gain": "dignity or dominance"},
+        {"category": "alliance", "asset": "witness support", "owner": "audience factions", "loss": "confidence", "gain": "sympathy or respect"}
+      ],
+      "required_context": ["audience", "status hierarchy", "social norm"],
+      "primary_skills": ["persuade", "intimidate", "deceive", "insight"],
+      "resolution": {
+        "success": ["the attack is reframed or answered", "witnesses shift support toward the player"],
+        "partial": ["status is preserved by accepting a duel, debt, confession, or future test"],
+        "failure": ["the humiliation sticks", "prices, obedience, or access worsen until repaired"]
+      },
+      "aftermath": ["record audience-specific interpretation", "spawn rivalry, sympathy, or restitution path"],
+      "reopen_conditions": ["public achievement", "challenger's hypocrisy is exposed", "formal apology"],
+      "anti_loop_rule": "The scene resolves on the first public answer; later recovery requires a new witnessed action, not replaying the same retort.",
+      "genre_filters": [
+        {"mode": "dnd", "weight": 80, "presentation": "courtly insult, tavern challenge, or guild censure"},
+        {"mode": "rpg", "weight": 95, "presentation": "status affects services, obedience, and faction responses"},
+        {"mode": "pyoa", "weight": 100, "presentation": "inner shame, anger, and self-command shape options"},
+        {"mode": "litrpg", "weight": 90, "presentation": "prestige, title, or notoriety shifts are surfaced"}
+      ],
+      "prose_example": "Before the court, Lord Kes repeats the nickname you earned in defeat. Laughing with him may buy time, exposing his hidden debt may win the room at a cost, and striking him will settle the insult in a language everyone understands."
+    },
+    {
+      "id": "SC-12",
+      "name": "Blackmail",
+      "premise": "A secret is exchanged for compelled action, making evidence custody, target resistance, retaliation, and moral cost explicit.",
+      "telegraph": ["The blackmailer proves possession of damaging evidence.", "The demanded action and publication trigger are specific."],
+      "stakes": [
+        {"category": "information", "asset": "damaging evidence", "owner": "blackmailer", "loss": "loss of control through theft or exposure", "gain": "coerced compliance"},
+        {"category": "moral_weight", "asset": "freedom from coercion", "owner": "target", "loss": "compelled betrayal or crime", "gain": "resistance, confession, or counterdeal"}
+      ],
+      "required_context": ["secret", "evidence custody", "specific demand", "retaliation capability"],
+      "primary_skills": ["intimidate", "deceive", "persuade", "insight"],
+      "resolution": {
+        "success": ["the coercion is neutralized or converted to a bounded agreement", "evidence is secured, discredited, or preempted"],
+        "partial": ["the demand is reduced but not removed", "one disclosure, payment, or betrayal occurs"],
+        "failure": ["the blackmailer escalates or publishes", "the target complies under resentment or suffers exposure"]
+      },
+      "aftermath": ["mark evidence copies and knowledge holders", "record coercion as a relationship milestone"],
+      "reopen_conditions": ["locate another copy", "obtain counterleverage", "confess to the threatened audience"],
+      "anti_loop_rule": "A blackmail demand has one response window; failed bargaining changes the demand or executes the threat rather than resetting the conversation.",
+      "genre_filters": [
+        {"mode": "dnd", "weight": 85, "presentation": "criminal guild, noble scandal, or forbidden pact"},
+        {"mode": "rpg", "weight": 100, "presentation": "evidence ownership and faction knowledge drive branches"},
+        {"mode": "pyoa", "weight": 100, "presentation": "fear of exposure and temptation to betray become explicit inner conflict"},
+        {"mode": "litrpg", "weight": 90, "presentation": "secret tags and evidence integrity are mechanically legible"}
+      ],
+      "prose_example": "The physician has your brother's forged exemption and demands the prison key by sunset. You can steal the original, confess to the warden, threaten his clinic license, or comply and become complicit in the escape."
+    },
+    {
+      "id": "SC-13",
+      "name": "Inheritance Dispute",
+      "premise": "Several claimants contest property, title, memory, or obligation, combining documentary proof with legitimacy, family history, and public acceptance.",
+      "telegraph": ["Competing claims cite different laws, promises, or customs.", "The estate or title cannot be divided without changing its function."],
+      "stakes": [
+        {"category": "resources", "asset": "estate, title, or artifact", "owner": "contested", "loss": "claimant dispossession", "gain": "recognized control"},
+        {"category": "alliance", "asset": "family or institutional unity", "owner": "claimants", "loss": "lasting feud", "gain": "accepted settlement"}
+      ],
+      "required_context": ["two claimants", "conflicting evidence or norms", "authority able to recognize outcome"],
+      "primary_skills": ["persuade", "insight", "deceive"],
+      "resolution": {
+        "success": ["a claim or settlement is recognized", "the chosen heir grants access, aid, or a quest line"],
+        "partial": ["temporary stewardship or divided rights prevent immediate violence", "a later test, debt, or appeal remains"],
+        "failure": ["claimants split into a feud", "assets are seized, hidden, or destroyed"]
+      },
+      "aftermath": ["record legitimacy judgments and beneficiary obligations", "update family and faction relationships"],
+      "reopen_conditions": ["new will or witness", "claimant renounces claim", "recognized authority changes"],
+      "anti_loop_rule": "Submitted evidence and judgments become part of the public record; a rehearing requires genuinely new proof or jurisdiction.",
+      "genre_filters": [
+        {"mode": "dnd", "weight": 85, "presentation": "noble title, clan relic, or temple office"},
+        {"mode": "rpg", "weight": 95, "presentation": "quest hub control and claimant alliances branch"},
+        {"mode": "pyoa", "weight": 90, "presentation": "family memory and the protagonist's belonging carry the emotional stakes"},
+        {"mode": "litrpg", "weight": 90, "presentation": "ownership, title, and authority gates are explicit"}
+      ],
+      "prose_example": "The will grants the mill to the eldest child; the old river covenant grants it to whoever keeps the floodgates. The eldest has the seal, the youngest saved the valley, and the workers will follow neither without your testimony."
+    },
+    {
+      "id": "SC-14",
+      "name": "Succession Crisis",
+      "premise": "A leadership vacancy creates rival candidates, unstable institutions, and an urgent need to establish legitimacy before violence or collapse.",
+      "telegraph": ["The ruler, commander, or guildmaster is dead, missing, or incapacitated.", "Rivals begin securing symbols, witnesses, and armed support."],
+      "stakes": [
+        {"category": "status", "asset": "legitimate authority", "owner": "the institution", "loss": "schism or coup", "gain": "recognized leadership"},
+        {"category": "alliance", "asset": "coalition support", "owner": "candidate", "loss": "desertion or rebellion", "gain": "governable mandate"}
+      ],
+      "required_context": ["vacant office", "multiple candidates", "legitimacy rules", "escalation clock"],
+      "primary_skills": ["persuade", "intimidate", "deceive", "insight"],
+      "resolution": {
+        "success": ["a successor or council is recognized", "institutional services and quests stabilize"],
+        "partial": ["regency or coalition postpones conflict", "power-sharing obligations and coup risk persist"],
+        "failure": ["schism, coup, or civil conflict begins", "regions and NPCs choose sides"]
+      },
+      "aftermath": ["record who backed, opposed, or abstained", "change faction leadership and obligation graphs"],
+      "reopen_conditions": ["candidate dies or abdicates", "new legitimacy proof", "shared external threat forces a conclave"],
+      "anti_loop_rule": "Votes, oaths, and public endorsements are persistent events; changing sides carries betrayal cost and cannot reset the tally for free.",
+      "genre_filters": [
+        {"mode": "dnd", "weight": 90, "presentation": "clan moot, royal council, temple election"},
+        {"mode": "rpg", "weight": 100, "presentation": "world-state branch with leaders, services, and faction war"},
+        {"mode": "pyoa", "weight": 90, "presentation": "private loyalties and fear of rule are foregrounded"},
+        {"mode": "litrpg", "weight": 100, "presentation": "leadership title, faction thresholds, and governance buffs are explicit"}
+      ],
+      "prose_example": "Three banners enter the council hall before the queen's body is cold. Your endorsement could settle the guard, but each claimant asks for a promise that will outlive the funeral. Abstention leaves the first move to the general."
+    },
+    {
+      "id": "SC-15",
+      "name": "Romantic Entanglement",
+      "premise": "Affection collides with trust, prior commitments, power imbalance, or conflicting duties, and intimacy becomes a source of meaningful choice rather than a reward meter.",
+      "telegraph": ["The NPC expresses a desire and a boundary.", "A competing relationship, duty, or risk is made explicit before commitment."],
+      "stakes": [
+        {"category": "alliance", "asset": "intimate trust", "owner": "the relationship", "loss": "hurt, rivalry, or withdrawal", "gain": "reciprocal closeness"},
+        {"category": "moral_weight", "asset": "consent and integrity", "owner": "both actors", "loss": "manipulation or broken commitment", "gain": "honest boundary or mutual choice"}
+      ],
+      "required_context": ["adult consenting characters", "established rapport", "named boundary or conflicting duty"],
+      "primary_skills": ["insight", "persuade", "none"],
+      "resolution": {
+        "success": ["mutual relationship milestone forms under explicit boundaries", "new confidences or joint scenes unlock"],
+        "partial": ["feelings are acknowledged but timing, secrecy, or duty delays commitment", "a promise or jealousy risk is created"],
+        "failure": ["pressure, deception, or boundary violation reduces trust", "romance path closes or becomes rivalry/estrangement"]
+      },
+      "aftermath": ["record consent, exclusivity, promises, and boundaries", "propagate only what witnesses or confidants can know"],
+      "reopen_conditions": ["apology and repaired trust", "conflicting duty resolved", "NPC reinitiates after time"],
+      "anti_loop_rule": "A declined advance cannot be rerolled or repeated; only changed circumstances plus NPC-initiated openness can reopen the path.",
+      "genre_filters": [
+        {"mode": "dnd", "weight": 55, "presentation": "roleplay-led bond; no roll can override consent"},
+        {"mode": "rpg", "weight": 80, "presentation": "relationship branch with duties and companion consequences"},
+        {"mode": "pyoa", "weight": 100, "presentation": "interiority, uncertainty, and boundaries are central"},
+        {"mode": "litrpg", "weight": 65, "presentation": "milestones may display, but consent and emotion are never reduced to a success percentage"}
+      ],
+      "prose_example": "Aren admits the feeling, then names the boundary: no secret affair while you command their unit. You may step back, transfer authority at real strategic cost, or deceive them and destroy the trust the scene depends on."
+    }
+  ]
+}

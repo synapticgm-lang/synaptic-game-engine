@@ -1,0 +1,235 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.invalid/ws4/encounter-template.schema.json",
+  "title": "WS-4 Encounter Template",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "templateVersion",
+    "id",
+    "mode",
+    "bibleId",
+    "name",
+    "role",
+    "telegraph",
+    "stakes",
+    "resolution",
+    "aftermath",
+    "biomeFilter",
+    "turnWindow",
+    "governance",
+    "example"
+  ],
+  "properties": {
+    "schemaVersion": { "const": "1.0.0" },
+    "templateVersion": { "type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$" },
+    "id": { "type": "string", "pattern": "^[a-z0-9]+(?:[._-][a-z0-9]+)*$" },
+    "mode": { "enum": ["litrpg", "dnd", "rpg", "pyoa"] },
+    "bibleId": { "type": "string", "minLength": 1 },
+    "name": { "type": "string", "minLength": 3 },
+    "role": {
+      "enum": [
+        "trash",
+        "elite",
+        "boss",
+        "duel",
+        "raid",
+        "patrol",
+        "hazard",
+        "skill",
+        "puzzle",
+        "social",
+        "crisis",
+        "ambush",
+        "random"
+      ]
+    },
+    "summary": { "type": "string" },
+    "telegraph": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["required", "channels", "cues", "responseWindowTurns"],
+      "properties": {
+        "required": { "type": "boolean" },
+        "channels": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": { "enum": ["status", "npc", "scene", "item", "faction"] }
+        },
+        "cues": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/telegraphCue" }
+        },
+        "responseWindowTurns": { "type": "integer", "minimum": 0, "maximum": 10 },
+        "surpriseEligible": { "type": "boolean", "default": false },
+        "openingSeverityCap": { "enum": ["none", "minor", "moderate"] }
+      }
+    },
+    "stakes": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["headline", "approaches"],
+      "properties": {
+        "headline": { "type": "string", "minLength": 3 },
+        "approaches": {
+          "type": "array",
+          "minItems": 2,
+          "items": { "$ref": "#/$defs/approach" }
+        }
+      }
+    },
+    "resolution": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["mechanic", "terminalStates", "maxTurns", "forcedTerminal"],
+      "properties": {
+        "mechanic": { "enum": ["combat", "d20", "clock", "fork", "deterministic", "hybrid"] },
+        "config": { "type": "object" },
+        "terminalStates": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": { "enum": ["victory", "defeat", "fled", "negotiated", "partial", "crisisEnding"] }
+        },
+        "maxTurns": { "type": "integer", "minimum": 1, "maximum": 30 },
+        "forcedTerminal": { "$ref": "#/$defs/outcome" },
+        "antiRepeatRule": { "type": "string", "minLength": 1 }
+      }
+    },
+    "aftermath": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["minimumReceiptTypes", "byTerminal"],
+      "properties": {
+        "minimumReceiptTypes": { "type": "integer", "minimum": 2, "maximum": 6 },
+        "byTerminal": {
+          "type": "object",
+          "minProperties": 1,
+          "additionalProperties": {
+            "type": "array",
+            "minItems": 2,
+            "items": { "$ref": "#/$defs/receiptMutation" }
+          }
+        }
+      }
+    },
+    "biomeFilter": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["allow", "exclude"],
+      "properties": {
+        "allow": { "type": "array", "minItems": 1, "items": { "type": "string" } },
+        "siteTags": { "type": "array", "items": { "type": "string" } },
+        "requireFactionTags": { "type": "array", "items": { "type": "string" } },
+        "exclude": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "turnWindow": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["earliest", "latest", "cooldown"],
+      "properties": {
+        "earliest": { "type": "integer", "minimum": 0 },
+        "latest": { "type": "integer", "minimum": 1 },
+        "cooldown": { "type": "integer", "minimum": 0 },
+        "droughtEligible": { "type": "boolean" }
+      }
+    },
+    "governance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["stage", "contentHash", "owner"],
+      "properties": {
+        "stage": { "enum": ["draft", "shadow", "canary", "stable", "deprecated"] },
+        "contentHash": { "type": "string", "minLength": 8 },
+        "owner": { "type": "string", "minLength": 1 },
+        "replaces": { "type": ["string", "null"] }
+      }
+    },
+    "example": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["telegraphProse", "stakesProse", "resolutionProse", "receiptProse"],
+      "properties": {
+        "telegraphProse": { "type": "string" },
+        "stakesProse": { "type": "string" },
+        "resolutionProse": { "type": "string" },
+        "receiptProse": { "type": "string" }
+      }
+    }
+  },
+  "$defs": {
+    "telegraphCue": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["channel", "signal", "inference", "actionHook"],
+      "properties": {
+        "channel": { "enum": ["status", "npc", "scene", "item", "faction"] },
+        "signal": { "type": "string", "minLength": 1 },
+        "inference": { "type": "string", "minLength": 1 },
+        "actionHook": { "type": "string", "minLength": 1 }
+      }
+    },
+    "approach": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "label", "requirements", "method", "onSuccess", "onFailure", "lockout"],
+      "properties": {
+        "id": { "type": "string", "pattern": "^[a-z0-9_-]+$" },
+        "label": { "type": "string", "minLength": 3 },
+        "requirements": { "type": "array", "items": { "type": "string" } },
+        "method": { "enum": ["deterministic", "d20", "combat", "clock", "fork"] },
+        "check": { "$ref": "#/$defs/check" },
+        "onSuccess": { "$ref": "#/$defs/outcome" },
+        "onPartial": { "$ref": "#/$defs/outcome" },
+        "onFailure": { "$ref": "#/$defs/outcome" },
+        "lockout": { "type": "string", "minLength": 1 }
+      }
+    },
+    "check": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "ability": { "type": "string" },
+        "skill": { "type": "string" },
+        "dc": { "type": "integer", "minimum": 5, "maximum": 30 },
+        "modifierSource": { "type": "string" },
+        "advantageWhen": { "type": "array", "items": { "type": "string" } },
+        "disadvantageWhen": { "type": "array", "items": { "type": "string" } },
+        "clock": {
+          "type": "object",
+          "required": ["successSegments", "dangerSegments"],
+          "properties": {
+            "successSegments": { "type": "integer", "minimum": 1, "maximum": 12 },
+            "dangerSegments": { "type": "integer", "minimum": 1, "maximum": 12 }
+          }
+        }
+      }
+    },
+    "outcome": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["terminal", "stateChanges", "summary"],
+      "properties": {
+        "terminal": { "type": "boolean" },
+        "terminalState": { "enum": ["victory", "defeat", "fled", "negotiated", "partial", "crisisEnding"] },
+        "stateChanges": { "type": "array", "minItems": 1, "items": { "type": "string" } },
+        "summary": { "type": "string", "minLength": 1 }
+      }
+    },
+    "receiptMutation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["type", "target", "operation", "value"],
+      "properties": {
+        "type": { "enum": ["xp", "loot", "faction", "quest", "npc", "dungeon"] },
+        "target": { "type": "string", "minLength": 1 },
+        "operation": { "enum": ["add", "remove", "set", "increment", "decrement", "unlock", "lock"] },
+        "value": {}
+      }
+    }
+  }
+}

@@ -1,0 +1,121 @@
+{
+  "version": "1.0.0",
+  "crises": [
+    {
+      "id": "SC-01",
+      "name": "Social Standoff",
+      "modes": ["dnd", "rpg", "pyoa"],
+      "eligibility": {
+        "minTurn": 10,
+        "requiresTwoActors": true,
+        "requiresFaction": false,
+        "requiresQuest": false,
+        "incompatibleWithCombat": true
+      },
+      "stakesTemplates": [
+        {
+          "gain": "Both parties agree to truce, player gains trust from both",
+          "loss": "Standoff escalates to combat or one party leaves in anger",
+          "owner": "both",
+          "magnitude": "moderate"
+        },
+        {
+          "gain": "One party concedes, player gains favor from winner",
+          "loss": "Standoff unresolved, both parties blame player",
+          "owner": "both",
+          "magnitude": "minor"
+        }
+      ],
+      "suppressionTurns": 60,
+      "targetCadence": 30
+    },
+    {
+      "id": "SC-02",
+      "name": "Public Challenge",
+      "modes": ["dnd", "rpg", "litrpg"],
+      "eligibility": {
+        "minTurn": 15,
+        "requiresTwoActors": false,
+        "requiresFaction": false,
+        "requiresQuest": false,
+        "incompatibleWithCombat": true
+      },
+      "stakesTemplates": [
+        {
+          "gain": "Authority backs down, player gains reputation",
+          "loss": "Authority prevails, player loses face or access",
+          "owner": "both",
+          "magnitude": "moderate"
+        }
+      ],
+      "suppressionTurns": 60,
+      "targetCadence": 30
+    },
+    {
+      "id": "SC-03",
+      "name": "Faction Dispute",
+      "modes": ["dnd", "rpg", "litrpg"],
+      "eligibility": {
+        "minTurn": 20,
+        "requiresTwoActors": false,
+        "requiresFaction": true,
+        "requiresQuest": false,
+        "incompatibleWithCombat": true
+      },
+      "stakesTemplates": [
+        {
+          "gain": "Alliance with chosen faction, standing +20",
+          "loss": "Enemy status with rejected faction, standing -30",
+          "owner": "faction",
+          "magnitude": "major"
+        }
+      ],
+      "suppressionTurns": 80,
+      "targetCadence": 40
+    },
+    {
+      "id": "SC-05",
+      "name": "Resource Competition",
+      "modes": ["dnd", "rpg", "litrpg", "pyoa"],
+      "eligibility": {
+        "minTurn": 12,
+        "requiresTwoActors": true,
+        "requiresFaction": false,
+        "requiresQuest": false,
+        "incompatibleWithCombat": true
+      },
+      "stakesTemplates": [
+        {
+          "gain": "Player gets resource, NPC accepts alternate compensation",
+          "loss": "NPC takes resource, player must find alternate",
+          "owner": "both",
+          "magnitude": "moderate"
+        }
+      ],
+      "suppressionTurns": 50,
+      "targetCadence": 25
+    },
+    {
+      "id": "SC-07",
+      "name": "Social Debt",
+      "modes": ["dnd", "rpg", "pyoa"],
+      "eligibility": {
+        "minTurn": 18,
+        "requiresTwoActors": false,
+        "requiresFaction": false,
+        "requiresQuest": false,
+        "incompatibleWithCombat": true
+      },
+      "stakesTemplates": [
+        {
+          "gain": "Debt repaid, relationship restored or improved",
+          "loss": "Debt unpaid, NPC becomes hostile or spreads rumor",
+          "owner": "npc",
+          "magnitude": "moderate"
+        }
+      ],
+      "suppressionTurns": 60,
+      "targetCadence": 30
+    }
+  ]
+}

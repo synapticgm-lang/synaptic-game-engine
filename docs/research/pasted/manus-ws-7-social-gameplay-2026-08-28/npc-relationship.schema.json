@@ -1,0 +1,107 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.invalid/ws7/npc-relationship.schema.json",
+  "title": "WS-7 NPC Relationship Ledger",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "npcId", "playerId", "disposition", "trust", "respect", "fear", "intimacy", "familiarity", "firstMetTurn", "lastInteractionTurn", "milestones", "promises", "knowledge", "boundaries", "roles", "factionIds", "availableUnlocks", "closedPaths", "revision"],
+  "properties": {
+    "schemaVersion": { "type": "integer", "const": 1 },
+    "npcId": { "type": "string", "minLength": 1 },
+    "playerId": { "type": "string", "minLength": 1 },
+    "disposition": { "type": "string", "enum": ["hostile", "wary", "neutral", "friendly", "allied", "loyal"] },
+    "trust": { "type": "integer", "minimum": -100, "maximum": 100 },
+    "respect": { "type": "integer", "minimum": 0, "maximum": 100 },
+    "fear": { "type": "integer", "minimum": 0, "maximum": 100 },
+    "intimacy": { "type": "integer", "minimum": 0, "maximum": 100 },
+    "familiarity": { "type": "integer", "minimum": 0, "maximum": 100 },
+    "firstMetTurn": { "type": "integer", "minimum": 0 },
+    "lastInteractionTurn": { "type": "integer", "minimum": 0 },
+    "milestones": { "type": "array", "items": { "$ref": "#/$defs/milestone" } },
+    "promises": { "type": "array", "items": { "$ref": "#/$defs/promise" } },
+    "knowledge": { "type": "array", "items": { "$ref": "#/$defs/knowledge" } },
+    "boundaries": { "type": "array", "items": { "$ref": "#/$defs/boundary" } },
+    "roles": { "type": "array", "items": { "type": "string" } },
+    "factionIds": { "type": "array", "items": { "type": "string" } },
+    "availableUnlocks": { "type": "array", "items": { "type": "string" }, "uniqueItems": true },
+    "closedPaths": { "type": "array", "items": { "$ref": "#/$defs/closedPath" } },
+    "revision": { "type": "integer", "minimum": 0 }
+  },
+  "$defs": {
+    "milestoneType": { "type": "string", "enum": ["first_meet", "favor_granted", "favor_received", "promise_made", "promise_kept", "promise_broken", "betrayal", "forgiveness", "alliance", "loyalty", "romance", "romance_declined", "rivalry", "public_support", "public_humiliation", "leverage_used", "life_saved", "abandoned"] },
+    "milestone": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["milestoneId", "type", "turn", "sourceEventId", "summary", "valence", "salience", "permanent", "relatedNpcIds", "relatedFactionIds", "tags"],
+      "properties": {
+        "milestoneId": { "type": "string" },
+        "type": { "$ref": "#/$defs/milestoneType" },
+        "turn": { "type": "integer", "minimum": 0 },
+        "sourceEventId": { "type": "string" },
+        "summary": { "type": "string" },
+        "valence": { "type": "integer", "minimum": -100, "maximum": 100 },
+        "salience": { "type": "integer", "minimum": 0, "maximum": 100 },
+        "permanent": { "type": "boolean" },
+        "relatedNpcIds": { "type": "array", "items": { "type": "string" } },
+        "relatedFactionIds": { "type": "array", "items": { "type": "string" } },
+        "tags": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "promise": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["promiseId", "madeTurn", "description", "status", "trustDeltaOnKeep", "trustDeltaOnBreak", "beneficiaries", "witnesses"],
+      "properties": {
+        "promiseId": { "type": "string" },
+        "madeTurn": { "type": "integer", "minimum": 0 },
+        "dueTurn": { "type": "integer", "minimum": 0 },
+        "description": { "type": "string" },
+        "status": { "type": "string", "enum": ["open", "kept", "broken", "waived", "impossible"] },
+        "trustDeltaOnKeep": { "type": "integer", "minimum": -100, "maximum": 100 },
+        "trustDeltaOnBreak": { "type": "integer", "minimum": -100, "maximum": 100 },
+        "beneficiaries": { "type": "array", "items": { "type": "string" } },
+        "witnesses": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "knowledge": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["factId", "proposition", "learnedTurn", "channel", "sourceActorId", "confidence", "salience", "contradictedBy", "tags"],
+      "properties": {
+        "factId": { "type": "string" },
+        "proposition": { "type": "string" },
+        "learnedTurn": { "type": "integer", "minimum": 0 },
+        "channel": { "type": "string", "enum": ["observed", "told", "rumor", "public_record", "faction_report"] },
+        "sourceActorId": { "type": "string" },
+        "confidence": { "type": "integer", "minimum": 0, "maximum": 100 },
+        "salience": { "type": "integer", "minimum": 0, "maximum": 100 },
+        "expiryTurn": { "type": "integer", "minimum": 0 },
+        "contradictedBy": { "type": "array", "items": { "type": "string" } },
+        "tags": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "boundary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["boundaryId", "category", "statement", "establishedTurn", "active", "breachConsequence"],
+      "properties": {
+        "boundaryId": { "type": "string" },
+        "category": { "type": "string", "enum": ["consent", "privacy", "duty", "romance", "violence", "faction"] },
+        "statement": { "type": "string" },
+        "establishedTurn": { "type": "integer", "minimum": 0 },
+        "active": { "type": "boolean" },
+        "breachConsequence": { "type": "string" }
+      }
+    },
+    "closedPath": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["pathId", "reason", "reopenConditions"],
+      "properties": {
+        "pathId": { "type": "string" },
+        "reason": { "type": "string" },
+        "reopenConditions": { "type": "array", "minItems": 1, "items": { "type": "string" } }
+      }
+    }
+  }
+}

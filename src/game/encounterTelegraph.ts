@@ -1,164 +1,211 @@
 /**
- * WS-4 Wave A: Encounter Telegraph
+ * WS-4 Wave 1: Encounter Telegraph System
  * 
- * Warning patterns before engagement (STATUS, NPC, scene, item, faction).
+ * Manages pre-engagement warnings and cues to make encounters legible before commitment.
  */
 
-import type { GameState } from './types';
+import type { GameState, EngineMode } from './types';
 import type { EncounterTemplate, TelegraphPattern } from './encounterBible';
 
 // ============================================================================
-// TELEGRAPH GENERATION
+// TELEGRAPH CATALOG SCHEMA
+// ============================================================================
+
+export interface TelegraphCatalogEntry {
+  id: string;
+  channel: 'status' | 'npc' | 'scene' | 'item' | 'faction';
+  appliesTo: EngineMode[];
+  signalTemplate: string;
+  inference: string;
+  actionHooks: string[];
+  minResponseTurns: number;
+  example: string;
+}
+
+export interface TelegraphCatalog {
+  schemaVersion: string;
+  catalogId: string;
+  selectionPolicy: {
+    preEngagementCoverageTarget: number;
+    defaultMinimumChannels: number;
+    eliteMinimumChannels: number;
+    bossMinimumChannels: number;
+    maxSamePatternConsecutive: number;
+    surprisePolicy: {
+      maximumShare: number;
+      requiresSurpriseEligibleTemplate: boolean;
+      requiresSuspicionCueOrReactionWindow: boolean;
+      openingSeverityCap: string;
+    };
+  };
+  patterns: TelegraphCatalogEntry[];
+}
+
+// ============================================================================
+// CATALOG LOADING
+// ============================================================================
+
+let _catalogCache: TelegraphCatalog | null = null;
+
+/**
+ * Load the telegraph catalog from JSON.
+ * Cached after first load.
+ */
+export async function loadTelegraphCatalog(): Promise<TelegraphCatalog> {
+  if (_catalogCache) {
+    return _catalogCache;
+  }
+
+  try {
+    const response = await fetch('/data/encounters/D6_telegraph_catalog.json');
+    if (!response.ok) {
+      throw new Error(`Failed to load telegraph catalog: ${response.statusText}`);
+    }
+    
+    const catalog = await response.json() as TelegraphCatalog;
+    _catalogCache = catalog;
+    return catalog;
+  } catch (error) {
+    console.error('Failed to load telegraph catalog:', error);
+    // Return a minimal fallback catalog
+    return {
+      schemaVersion: '1.0.0',
+      catalogId: 'ws4.telegraph.fallback',
+      selectionPolicy: {
+        preEngagementCoverageTarget: 0.8,
+        defaultMinimumChannels: 1,
+        eliteMinimumChannels: 2,
+        bossMinimumChannels: 3,
+        maxSamePatternConsecutive: 2,
+        surprisePolicy: {
+          maximumShare: 0.2,
+          requiresSurpriseEligibleTemplate: true,
+          requiresSuspicionCueOrReactionWindow: true,
+          openingSeverityCap: 'moderate',
+        },
+      },
+      patterns: [],
+    };
+  }
+}
+
+/**
+ * Clear the catalog cache (for testing).
+ */
+export function clearTelegraphCache(): void {
+  _catalogCache = null;
+}
+
+// ============================================================================
+// CUE SELECTION
 // ============================================================================
 
 /**
- * Generate telegraph for encounter
- * 
- * Picks appropriate pattern and format based on timing and type.
+ * Select telegraph cues for a template based on its role and channels.
  */
-export function generateTelegraph(
+export function selectTelegraphCues(
   template: EncounterTemplate,
-  state: GameState,
-  seed: number
-): {
-  type: 'status' | 'npc' | 'scene' | 'item' | 'faction' | 'none';
-  text: string;
-  timing: 'none' | 'same-turn' | '1-turn-before' | '2-turns-before';
-} | null {
-  const telegraph = template.telegraph;
+  mode: EngineMode,
+  catalog: TelegraphCatalog
+): TelegraphPattern[] {
+  const { role } = template;
+  const requiredChannels = template.telegraph.channels;
   
-  if (telegraph.timing === 'none' || telegraph.patterns.length === 0) {
-    return null;
+  // Determine minimum channels based on role
+  let minChannels = catalog.selectionPolicy.defaultMinimumChannels;
+  if (role === 'elite' || role === 'duel') {
+    minChannels = catalog.selectionPolicy.eliteMinimumChannels;
+  } else if (role === 'boss' || role === 'raid') {
+    minChannels = catalog.selectionPolicy.bossMinimumChannels;
   }
   
-  // Pick pattern based on seed and probabilities
-  const roll = (Math.abs(seed) % 100) / 100;
-  let cumulative = 0;
+  // Filter patterns that match mode and required channels
+  const eligiblePatterns = catalog.patterns.filter(
+    (p) => p.appliesTo.includes(mode) && requiredChannels.includes(p.channel)
+  );
   
-  for (const pattern of telegraph.patterns) {
-    cumulative += pattern.probability;
-    if (roll <= cumulative) {
-      return {
-        type: pattern.type,
-        text: pattern.text,
-        timing: telegraph.timing,
-      };
+  if (eligiblePatterns.length === 0) {
+    return [];
+  }
+  
+  // Select patterns ensuring coverage across channels
+  const selectedPatterns: TelegraphPattern[] = [];
+  const channelCoverage = new Set<string>();
+  
+  // First, ensure we have at least one pattern per required channel
+  for (const channel of requiredChannels) {
+    const channelPatterns = eligiblePatterns.filter((p) => p.channel === channel);
+    if (channelPatterns.length > 0) {
+      // Pick a random pattern for this channel (in Wave 1, just pick first)
+      const pattern = channelPatterns[0];
+      selectedPatterns.push({
+        type: pattern.channel,
+        text: pattern.inference,
+        probability: 1.0,
+      });
+      channelCoverage.add(channel);
     }
   }
   
-  // Fallback to first pattern
-  return {
-    type: telegraph.patterns[0].type,
-    text: telegraph.patterns[0].text,
-    timing: telegraph.timing,
-  };
-}
-
-// ============================================================================
-// TELEGRAPH FORMATTING
-// ============================================================================
-
-/**
- * Format telegraph as STATUS alert
- */
-export function formatStatusTelegraph(text: string, encounterName: string): string {
-  return `**STATUS ALERT:** ${text}`;
-}
-
-/**
- * Format telegraph as NPC warning
- */
-export function formatNpcTelegraph(
-  text: string,
-  npcName: string | null
-): string {
-  if (!npcName) {
-    return `Someone nearby warns: "${text}"`;
+  // If we still need more patterns to meet minimum channels, add more
+  while (selectedPatterns.length < minChannels && eligiblePatterns.length > selectedPatterns.length) {
+    for (const pattern of eligiblePatterns) {
+      if (selectedPatterns.length >= minChannels) break;
+      
+      // Skip if we already have this pattern
+      if (selectedPatterns.some((p) => p.text === pattern.inference)) {
+        continue;
+      }
+      
+      selectedPatterns.push({
+        type: pattern.channel,
+        text: pattern.inference,
+        probability: 0.8,
+      });
+    }
   }
-  return `${npcName} warns: "${text}"`;
+  
+  return selectedPatterns;
 }
 
 /**
- * Format telegraph as scene cue
+ * Build telegraph section for situation packet.
  */
-export function formatSceneTelegraph(text: string): string {
-  return text; // Descriptive prose, no prefix
+export function buildTelegraphContext(
+  template: EncounterTemplate | null,
+  state: GameState
+): string | null {
+  if (!template || !template.telegraph.required) {
+    return null;
+  }
+  
+  const { timing, patterns } = template.telegraph;
+  
+  if (timing === 'none' || patterns.length === 0) {
+    return null;
+  }
+  
+  const cueTexts = patterns.map((p) => `[${p.type.toUpperCase()}] ${p.text}`);
+  
+  return `TELEGRAPH (${timing}):\n${cueTexts.join('\n')}`;
 }
 
 /**
- * Format telegraph as item hint
+ * Check if a template should be a surprise encounter (no telegraph).
  */
-export function formatItemTelegraph(text: string): string {
-  return `You notice: ${text}`;
-}
-
-/**
- * Format telegraph as faction intel
- */
-export function formatFactionTelegraph(text: string, factionName: string): string {
-  return `${factionName} intel: ${text}`;
-}
-
-// ============================================================================
-// TELEGRAPH INTEGRATION
-// ============================================================================
-
-/**
- * Build telegraph section for situation packet
- */
-export function buildTelegraphSituationSection(
+export function isSurpriseEligible(
   template: EncounterTemplate,
-  state: GameState,
-  seed: number
-): string {
-  const telegraph = generateTelegraph(template, state, seed);
-  if (!telegraph) return '';
-  
-  const lines: string[] = ['### ENCOUNTER TELEGRAPH'];
-  
-  switch (telegraph.type) {
-    case 'status':
-      lines.push(formatStatusTelegraph(telegraph.text, template.name));
-      break;
-    case 'npc':
-      const npc = (state.sceneFacts?.present ?? [])[0] ?? null;
-      lines.push(formatNpcTelegraph(telegraph.text, npc));
-      break;
-    case 'scene':
-      lines.push(formatSceneTelegraph(telegraph.text));
-      break;
-    case 'item':
-      lines.push(formatItemTelegraph(telegraph.text));
-      break;
-    case 'faction':
-      const faction = Object.keys(state.worldLedger?.factionStandings ?? {})[0] ?? 'Unknown';
-      lines.push(formatFactionTelegraph(telegraph.text, faction));
-      break;
+  state: GameState
+): boolean {
+  if (!template.telegraph.avoidable) {
+    return false;
   }
   
-  // Add avoidance note
-  if (template.telegraph.avoidable) {
-    lines.push('*(This encounter can be avoided if you act carefully)*');
+  // Check if this is an opening encounter (should not be severe surprise)
+  const turn = state.turn ?? 0;
+  if (turn < 5 && template.tierRange[0] > 1) {
+    return false;
   }
   
-  return lines.join('\n');
-}
-
-/**
- * Check if player is ignoring telegraphs
- * 
- * If player has seen 3+ telegraphs and hasn't avoided any, flag it.
- */
-export function checkTelegraphIgnorance(state: GameState): {
-  ignoringTelegraphs: boolean;
-  telegraphCount: number;
-  avoidedCount: number;
-} {
-  // This would track telegraph history
-  // For Wave A, return stub data
-  return {
-    ignoringTelegraphs: false,
-    telegraphCount: 0,
-    avoidedCount: 0,
-  };
+  return true;
 }
