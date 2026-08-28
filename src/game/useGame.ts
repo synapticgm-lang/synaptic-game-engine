@@ -5057,7 +5057,14 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
         });
       }
     } catch (err: any) {
-      setError(err?.message ?? 'Auto-fight failed.');
+      const message = err?.message ?? 'Auto-fight failed.';
+      const stack = err instanceof Error ? err.stack : undefined;
+      debugLogger.record('ERROR', 'Auto-fight failed', { error: message, stack });
+      logErrorStack(`Auto-fight failed: ${message}`, stack, {
+        saveId: liveCurrent.saveId,
+        turn: liveCurrent.turn,
+      });
+      setError(message);
     } finally {
       setBusy(false);
     }

@@ -12,6 +12,7 @@ import {
 } from './gmProxy';
 import { gmProxyTimeoutMsForState } from './errorRepairWarden';
 import { effectiveWriterTier } from './testLab';
+import { logApiLatency } from '../services/telemetryService';
 
 export type { GmResult } from './aiServiceShared';
 export { RateLimitError, withRetry } from './aiServiceShared';
@@ -79,8 +80,37 @@ export async function callOpeningGm(
   const timeoutMs = gmProxyTimeoutMsForState(state, {
     writerTier: effectiveWriterTier(settings.subscriptionTier ?? 'free'),
   });
-  const result = await callGm(state, playerInput, settings, [], undefined, signal, timeoutMs);
-  return (result.text ?? '').trim();
+  const started = Date.now();
+  try {
+    const result = await callGm(state, playerInput, settings, [], undefined, signal, timeoutMs);
+    const text = (result.text ?? '').trim();
+    logApiLatency({
+      label: 'callOpeningGm',
+      latencyMs: Date.now() - started,
+      provider: settings.aiProvider,
+      engineMode: state.engineMode,
+      playerInput: playerInput || '(opening)',
+      aiResponse: text || undefined,
+      failed: !text,
+      extra: { saveId: state.saveId, turn: state.turn },
+    });
+    return text;
+  } catch (err) {
+    logApiLatency({
+      label: 'callOpeningGm',
+      latencyMs: Date.now() - started,
+      provider: settings.aiProvider,
+      engineMode: state.engineMode,
+      playerInput: playerInput || '(opening)',
+      failed: true,
+      stack: err instanceof Error ? err.stack : undefined,
+      extra: {
+        saveId: state.saveId,
+        error: err instanceof Error ? err.message : String(err),
+      },
+    });
+    throw err;
+  }
 }
 
 export async function callGmAutoFight(
@@ -89,30 +119,67 @@ export async function callGmAutoFight(
   settings: Settings,
   onRetry?: (attempt: number, delayMs: number) => void
 ): Promise<string> {
-  const preferProxy = isGmProxyRequired() || isGmProxyAvailable();
+  const started = Date.now();
+  try {
+    const preferProxy = isGmProxyRequired() || isGmProxyAvailable();
 
-  if (preferProxy && isGmProxyAvailable()) {
-    try {
-      const text = await invokeGmProxy({
-        mode: 'auto-fight',
-        state,
-        playerInput: autoFightPrompt,
-        settings,
-        onRetry,
-      });
-      return text.trim();
-    } catch (err) {
-      if (isGmProxyRequired() || !isClientGmAllowed()) throw err;
-      logger.warn('ai-proxy', 'GM auto-fight proxy failed — client fallback', {
-        message: err instanceof Error ? err.message : String(err),
-      });
+    if (preferProxy && isGmProxyAvailable()) {
+      try {
+        const text = (await invokeGmProxy({
+          mode: 'auto-fight',
+          state,
+          playerInput: autoFightPrompt,
+          settings,
+          onRetry,
+        })).trim();
+        logApiLatency({
+          label: 'callGmAutoFight',
+          latencyMs: Date.now() - started,
+          provider: settings.aiProvider,
+          engineMode: state.engineMode,
+          playerInput: autoFightPrompt.slice(0, 4000),
+          aiResponse: text,
+          extra: { saveId: state.saveId },
+        });
+        return text;
+      } catch (err) {
+        if (isGmProxyRequired() || !isClientGmAllowed()) throw err;
+        logger.warn('ai-proxy', 'GM auto-fight proxy failed — client fallback', {
+          message: err instanceof Error ? err.message : String(err),
+        });
+      }
     }
-  }
 
-  if (import.meta.env.DEV || import.meta.env.VITE_ALLOW_CLIENT_GM === 'true') {
-    const direct = await import('./aiService.direct');
-    return direct.callGmAutoFightDirect(state, autoFightPrompt, settings, onRetry);
-  }
+    if (import.meta.env.DEV || import.meta.env.VITE_ALLOW_CLIENT_GM === 'true') {
+      const direct = await import('./aiService.direct');
+      const text = await direct.callGmAutoFightDirect(state, autoFightPrompt, settings, onRetry);
+      logApiLatency({
+        label: 'callGmAutoFight',
+        latencyMs: Date.now() - started,
+        provider: settings.aiProvider,
+        engineMode: state.engineMode,
+        playerInput: autoFightPrompt.slice(0, 4000),
+        aiResponse: text,
+        extra: { saveId: state.saveId },
+      });
+      return text;
+    }
 
-  throw new Error('GM proxy required for auto-fight. Deploy supabase function gm-turn.');
+    throw new Error('GM proxy required for auto-fight. Deploy supabase function gm-turn.');
+  } catch (err) {
+    logApiLatency({
+      label: 'callGmAutoFight',
+      latencyMs: Date.now() - started,
+      provider: settings.aiProvider,
+      engineMode: state.engineMode,
+      playerInput: autoFightPrompt.slice(0, 4000),
+      failed: true,
+      stack: err instanceof Error ? err.stack : undefined,
+      extra: {
+        saveId: state.saveId,
+        error: err instanceof Error ? err.message : String(err),
+      },
+    });
+    throw err;
+  }
 }
