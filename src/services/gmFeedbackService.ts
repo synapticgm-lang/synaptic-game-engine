@@ -1,6 +1,6 @@
 /**
  * GM Response Feedback Service
- * Allows testers to rate each GM response with thumbs up/down and optional comments.
+ * Allows all users to rate each GM response with thumbs up/down and optional comments.
  */
 
 import { supabase, isSupabaseConfigured } from '@/lib/supabase';
