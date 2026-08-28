@@ -7,6 +7,19 @@ import { canonicalizeIntent } from './semanticLoopDetector';
 
 export type NpcTopicFsmState = Record<string, string[]>;
 
+/** Wave B: Topic version and cooldown tracking */
+export interface TopicVersion {
+  topic: string;
+  version: number;
+  exhaustedAt: number;
+  revivalReason?: 'evidence' | 'contradiction' | 'story_beat';
+  cooldownUntil?: number;
+}
+
+export interface TopicCooldownLedger {
+  [npcKey: string]: TopicVersion[];
+}
+
 /** B023 — NPC role types for lifecycle tracking */
 export type NpcRole =
   | 'guide' // Opening NPC who explains rules
@@ -316,4 +329,116 @@ export function formatNpcExitMandate(exits: string[]): string | null {
   if (!exits.length) return null;
   const names = exits.slice(0, 3).join(', ');
   return `NPC ROLE DEADLINE: ${names} must exit scene — role obligation complete or deadline exceeded. Do not keep them lingering indefinitely.`;
+}
+
+// ============================================================================
+// Wave B: Topic Revival and Cooldown
+// ============================================================================
+
+/**
+ * Wave B: Revive an exhausted topic with new evidence or story beat
+ * 
+ * Creates a new version of the topic that can be asked again, with cooldown.
+ */
+export function reviveTopicVersion(
+  state: GameState,
+  npc: string,
+  topic: string,
+  reason: 'evidence' | 'contradiction' | 'story_beat',
+  currentTurn: number
+): GameState {
+  const key = npcKey(npc);
+  const ledger = state.arcDirector?.topicCooldownLedger ?? {};
+  const versions = ledger[key] ?? [];
+  
+  // Find current version
+  const existingVersion = versions.find(v => v.topic === topic);
+  const currentVersion = existingVersion?.version ?? 0;
+  const nextVersion = currentVersion + 1;
+  
+  // Calculate cooldown based on reason
+  const cooldownTurns = reason === 'evidence' ? 8 : reason === 'contradiction' ? 12 : 0;
+  const cooldownUntil = currentTurn + cooldownTurns;
+  
+  // Create new version entry
+  const newVersion: TopicVersion = {
+    topic,
+    version: nextVersion,
+    exhaustedAt: currentTurn,
+    revivalReason: reason,
+    cooldownUntil: cooldownTurns > 0 ? cooldownUntil : undefined
+  };
+  
+  // Update ledger
+  const updatedVersions = [...versions.filter(v => v.topic !== topic), newVersion];
+  const updatedLedger = { ...ledger, [key]: updatedVersions };
+  
+  // Remove from exhausted topics to allow re-asking
+  const npcTopics = state.arcDirector?.npcTopics ?? {};
+  const exhaustedTopics = npcTopics[key] ?? [];
+  const filteredTopics = exhaustedTopics.filter(t => t !== topic);
+  
+  return {
+    ...state,
+    arcDirector: {
+      ...state.arcDirector,
+      topicCooldownLedger: updatedLedger,
+      npcTopics: { ...npcTopics, [key]: filteredTopics }
+    }
+  };
+}
+
+/**
+ * Wave B: Check if topic is on cooldown
+ */
+export function isTopicOnCooldown(
+  npc: string,
+  topic: string,
+  currentTurn: number,
+  ledger: TopicCooldownLedger | undefined
+): boolean {
+  if (!ledger) return false;
+  
+  const key = npcKey(npc);
+  const versions = ledger[key] ?? [];
+  const version = versions.find(v => v.topic === topic);
+  
+  if (!version || !version.cooldownUntil) return false;
+  
+  return currentTurn < version.cooldownUntil;
+}
+
+/**
+ * Wave B: Get current topic version
+ */
+export function getTopicVersion(
+  npc: string,
+  topic: string,
+  ledger: TopicCooldownLedger | undefined
+): number {
+  if (!ledger) return 0;
+  
+  const key = npcKey(npc);
+  const versions = ledger[key] ?? [];
+  const version = versions.find(v => v.topic === topic);
+  
+  return version?.version ?? 0;
+}
+
+/**
+ * Wave B: Format cooldown mandate for situation packet
+ */
+export function formatCooldownMandate(
+  npc: string,
+  topic: string,
+  version: TopicVersion
+): string {
+  const turnsRemaining = version.cooldownUntil ? version.cooldownUntil - version.exhaustedAt : 0;
+  const reasonText = version.revivalReason === 'evidence' 
+    ? 'new evidence revealed'
+    : version.revivalReason === 'contradiction'
+    ? 'contradictory information found'
+    : 'story beat triggered';
+  
+  return `TOPIC REVIVAL: ${npc} topic "${topic}" v${version.version} (${reasonText}). On cooldown for ${turnsRemaining} turns. Do not rehash until cooldown expires.`;
 }

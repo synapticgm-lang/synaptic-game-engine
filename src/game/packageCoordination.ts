@@ -139,9 +139,10 @@ function deliverDueConsequences(state: GameState): GameState {
  * @returns Updated game state
  */
 function checkNpcLifecycles(state: GameState): GameState {
-  // WS-2 Wave A implementation
+  // WS-2 Wave A + Wave B implementation
   const { updateAllNpcLifecycles } = require('./npcLifecycleFsm');
   const { cleanupOldMemories } = require('./npcMemoryLedger');
+  const { decideTurnover, spawnSuccessor, createTurnoverReceipt } = require('./npcTurnover');
   
   console.debug(`[PackageCoordination] Phase 2: Checking NPC lifecycles`);
   
@@ -156,8 +157,38 @@ function checkNpcLifecycles(state: GameState): GameState {
     console.debug(`[PackageCoordination] NPC mandates:`, result.mandates);
   }
   
+  let updatedState = result.state;
+  
+  // Wave B: Check turnover for NPCs that transitioned to exiting/debt_satisfied
+  const lifecycles = updatedState.arcDirector?.npcLifecycles ?? [];
+  
+  for (const lifecycle of lifecycles) {
+    if (lifecycle.state === 'debt_satisfied' || lifecycle.state === 'exiting') {
+      // Evaluate turnover decision
+      const trigger = lifecycle.state === 'debt_satisfied' ? 'completion' : 'deadline';
+      const decision = decideTurnover(updatedState, lifecycle, trigger);
+      
+      if (decision.action !== 'remain') {
+        console.debug(`[PackageCoordination] Turnover: ${lifecycle.npcId} -> ${decision.action}`);
+        
+        // Handle successor spawning if needed
+        let successor = undefined;
+        if (decision.action === 'delegate' || decision.action === 'replace') {
+          successor = spawnSuccessor(updatedState, decision, lifecycle);
+          console.debug(`[PackageCoordination] Spawned successor: ${successor.actorId}`);
+        }
+        
+        // Create turnover receipt
+        const receipt = createTurnoverReceipt(decision, lifecycle, successor);
+        
+        // Append receipt to ledger
+        updatedState = appendReceipt(receipt, updatedState);
+      }
+    }
+  }
+  
   // Cleanup old memories
-  let updatedState = cleanupOldMemories(result.state);
+  updatedState = cleanupOldMemories(updatedState);
   
   return updatedState;
 }

@@ -343,3 +343,258 @@ export function buildJournalConsequenceHints(state: GameState): string[] {
   
   return hints;
 }
+
+// ============================================================================
+// Wave B: Enhanced Delivery and Ending Gates
+// ============================================================================
+
+export interface EndingGate {
+  endingId: string;
+  requirements: EndingRequirement[];
+  eligible: boolean;
+  reason?: string;
+}
+
+export interface EndingRequirement {
+  type: 'fact' | 'consequence' | 'relationship' | 'turn';
+  required: string | number;
+  current: string | number;
+  satisfied: boolean;
+}
+
+/**
+ * Wave B: Deliver consequence with enhanced patterns
+ */
+export function deliverEnhancedConsequence(
+  consequence: DelayedConsequence,
+  state: GameState
+): {
+  state: GameState;
+  narrative: string;
+  effects: string[];
+} {
+  const { type, payload } = consequence;
+  let narrative = payload.narrativeBeat;
+  const effects: string[] = [];
+  
+  // Apply based on pattern
+  switch (type) {
+    case 'echo':
+      // Echo: subtle reminder with minor consequences
+      narrative = `**Echo of your choice:** ${narrative}`;
+      effects.push('Memory surfaces');
+      break;
+      
+    case 'return':
+      // Return: delayed consequence materializes
+      narrative = `**The consequence returns:** ${narrative}`;
+      for (const delta of payload.resourceDeltas) {
+        effects.push(`${delta.resourceType}: ${delta.amount > 0 ? '+' : ''}${delta.amount}`);
+      }
+      break;
+      
+    case 'reckoning':
+      // Reckoning: major plot consequence
+      narrative = `**Reckoning:** ${narrative}`;
+      for (const delta of payload.relationshipDeltas) {
+        effects.push(`Relationship with ${delta.entity}: ${delta.change > 0 ? '+' : ''}${delta.change}`);
+      }
+      break;
+  }
+  
+  // Apply resource deltas
+  let nextState = state;
+  for (const delta of payload.resourceDeltas) {
+    nextState = applyResourceDelta(delta, nextState);
+  }
+  
+  // Apply relationship deltas
+  for (const delta of payload.relationshipDeltas) {
+    nextState = applyRelationshipDelta(delta, nextState);
+  }
+  
+  // Mark as delivered
+  nextState = markConsequenceDelivered(consequence.id, nextState);
+  
+  return {
+    state: nextState,
+    narrative,
+    effects
+  };
+}
+
+/**
+ * Wave B: Check T150 deadline enforcement
+ */
+export function enforceT150Deadline(state: GameState): {
+  enforced: boolean;
+  pendingCount: number;
+  reason?: string;
+} {
+  if (state.turn < 150) {
+    return { enforced: false, pendingCount: 0 };
+  }
+  
+  const pending = getPendingConsequences(state);
+  
+  if (pending.length === 0) {
+    return { enforced: false, pendingCount: 0 };
+  }
+  
+  return {
+    enforced: true,
+    pendingCount: pending.length,
+    reason: `T150 deadline reached with ${pending.length} undelivered consequences. Story must conclude.`
+  };
+}
+
+/**
+ * Wave B: Check ending gate eligibility
+ */
+export function checkEndingEligibility(
+  endingId: string,
+  state: GameState
+): EndingGate {
+  // Get ending requirements from catalog
+  const requirements = getEndingRequirements(endingId, state);
+  
+  // Check each requirement
+  const checkedRequirements = requirements.map(req => ({
+    ...req,
+    satisfied: checkRequirement(req, state)
+  }));
+  
+  const allSatisfied = checkedRequirements.every(r => r.satisfied);
+  
+  return {
+    endingId,
+    requirements: checkedRequirements,
+    eligible: allSatisfied,
+    reason: allSatisfied 
+      ? undefined 
+      : `Missing requirements: ${checkedRequirements.filter(r => !r.satisfied).map(r => r.type).join(', ')}`
+  };
+}
+
+/**
+ * Wave B: Get all eligible endings
+ */
+export function getEligibleEndings(state: GameState): EndingGate[] {
+  // Get all possible endings for current campaign
+  const endingIds = getCampaignEndings(state);
+  
+  return endingIds
+    .map(id => checkEndingEligibility(id, state))
+    .filter(gate => gate.eligible);
+}
+
+/**
+ * Wave B: Build fog-of-war journal entry
+ */
+export function buildFogOfWarEntry(
+  consequence: DelayedConsequence,
+  revealed: boolean
+): {
+  visible: string;
+  hidden: string;
+} {
+  if (revealed) {
+    return {
+      visible: consequence.payload.journalHint,
+      hidden: consequence.payload.narrativeBeat
+    };
+  }
+  
+  // Obscured - only vague hints
+  const vagueness = Math.floor((consequence.dueAtTurn - consequence.committedAtTurn) / 20);
+  const vagueHints = [
+    'Something you did will matter...',
+    'A choice echoes forward...',
+    'Consequences loom...',
+    'The past is not forgotten...',
+    'Your decision will return...'
+  ];
+  
+  return {
+    visible: vagueHints[Math.min(vagueness, vagueHints.length - 1)],
+    hidden: '[Hidden until delivery]'
+  };
+}
+
+// ============================================================================
+// Helper Functions
+// ============================================================================
+
+function applyResourceDelta(delta: ResourceDelta, state: GameState): GameState {
+  // Simplified - real implementation would handle all resource types
+  if (delta.resourceType === 'hp') {
+    return {
+      ...state,
+      hp: Math.max(0, Math.min((state.hp ?? 100) + delta.amount, state.maxHp ?? 100))
+    };
+  }
+  
+  return state;
+}
+
+function applyRelationshipDelta(delta: RelationshipDelta, state: GameState): GameState {
+  // Simplified - real implementation would update faction standings
+  return state;
+}
+
+function getEndingRequirements(
+  endingId: string,
+  state: GameState
+): EndingRequirement[] {
+  // Placeholder - real implementation would load from campaign catalog
+  return [
+    {
+      type: 'fact',
+      required: 'ally_chosen',
+      current: 'unknown',
+      satisfied: false
+    },
+    {
+      type: 'turn',
+      required: 50,
+      current: state.turn,
+      satisfied: state.turn >= 50
+    }
+  ];
+}
+
+function checkRequirement(req: EndingRequirement, state: GameState): boolean {
+  switch (req.type) {
+    case 'turn':
+      return state.turn >= (req.required as number);
+    case 'fact':
+      // Check if fact exists in exclusive facts registry
+      return false; // Placeholder
+    case 'consequence':
+      // Check if consequence was delivered
+      return false; // Placeholder
+    case 'relationship':
+      // Check relationship threshold
+      return false; // Placeholder
+    default:
+      return false;
+  }
+}
+
+function getCampaignEndings(state: GameState): string[] {
+  // Placeholder - real implementation would load from campaign bible
+  const bibleId = state.bibleId;
+  
+  if (bibleId === 'thornferry-road') {
+    return [
+      'thornferry_ally_ending',
+      'thornferry_betray_ending',
+      'thornferry_solo_ending',
+      'thornferry_party_ending',
+      'thornferry_inner_ending',
+      'thornferry_outer_ending'
+    ];
+  }
+  
+  return [];
+}
