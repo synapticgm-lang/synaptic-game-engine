@@ -5,7 +5,7 @@
 
 import type { WorldOutlineDef, WorldOutlineSettlement } from '@/data/worldOutlines';
 import type { GameState, PlaceRecord, WorldAtlasState } from './types';
-import { placeIdFromName } from './places';
+import { placeIdFromName } from './placeUtils';
 
 /** Quest / site tags that must match settlement biomes. */
 const BIOME_QUEST_ALLOW: Record<string, string[]> = {

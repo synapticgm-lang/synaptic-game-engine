@@ -11,7 +11,7 @@
  */
 
 import type { GameState, WorldAtlasSettlement } from './types';
-import { placeIdFromName } from './places';
+import { placeIdFromName } from './placeUtils';
 import { normalizeLocationName } from './worldMapAuthority';
 
 /**
