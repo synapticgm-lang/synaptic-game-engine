@@ -38,7 +38,18 @@ export function LeftDrawer({ state, open, onClose, onResumeMain }: Props) {
 function WorldSection({ state }: { state: GameState }) {
   const ledger = normalizeWorldLedger(state.worldLedger);
   const deals = ledger.deals.filter((d) => d.active);
-  const factions = ledger.factionStandings ?? [];
+  // Pack 12 fog-of-war: only show factions from discovered locations
+  const allFactions = ledger.factionStandings ?? [];
+  const factions = allFactions.filter((f) => {
+    // Always show factions with notes (implies interaction)
+    if (f.notes?.trim()) return true;
+    // Check if faction is from a discovered location
+    const factionKey = f.name.toLowerCase();
+    return state.discoveredLocations?.some((locId) => {
+      const locKey = locId.toLowerCase();
+      return locKey.includes(factionKey) || factionKey.includes(locKey);
+    }) ?? false;
+  });
   const hasWork =
     deals.length > 0 || ledger.holdings.length > 0 || ledger.hostiles.length > 0 || factions.length > 0;
 

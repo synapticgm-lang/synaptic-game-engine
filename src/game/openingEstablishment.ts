@@ -10,6 +10,7 @@ import { applyUsualSelfToCharacter, loadPlayerProfile, type PlayerProfile } from
 import { isPlayerQuestion } from './actionResolution';
 import { pickQuickResponseButtons, supportsQuickResponseButtons, generateQuickResponse } from './quickResponseButtons';
 import { loadSettings } from './db';
+import { discoverLocation } from './locationDiscovery';
 
 const GENERIC_NAMES = /^(adventurer|survivor|unknown survivor|hero|wanderer|unknown)$/i;
 
@@ -1675,10 +1676,13 @@ export async function applyOpeningAnswer(
     : '';
   const writerNotes = [aside, cheatLine, continueNotes].filter(Boolean).join(' ');
 
+  // Pack 12 fog-of-war: discover the resolved opening location
+  const withDiscovery = lockedWhere ? discoverLocation(nextState, lockedWhere) : nextState;
+
   return {
     generateOpening: true,
     state: {
-      ...nextState,
+      ...withDiscovery,
       currentLocation: lockedWhere,
       campaignPremise: premise,
       openingEstablishment: {

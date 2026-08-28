@@ -31,6 +31,7 @@ import { generateComicImage, generateVideo, VideoProviderNotConfiguredError } fr
 import { enforcePerspective } from './perspectiveWarden';
 import { applyProseWarden, calculateCrowdSize, collectSceneObjectNames } from './proseWarden';
 import { applyLocalityWarden } from './locality';
+import { detectAndDiscoverLocations, discoverLocation } from './locationDiscovery';
 import {
   bindSessionImageCache,
   clearSessionImageCache,
@@ -4057,6 +4058,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
         pendingContentRewrite: null,
         previousSceneFacts: liveCurrent.sceneFacts,
         sceneFacts: applyCommittedNarrative(liveCurrent, cleanText, nextTurn, sanitizedInput),
+        discoveredLocations: liveCurrent.discoveredLocations,
         campaignPremise: workingState.campaignPremise ?? liveCurrent.campaignPremise,
         campaignBibleId: workingState.campaignBibleId ?? liveCurrent.campaignBibleId,
         pendingTurn: null,
@@ -4128,6 +4130,11 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
         ...mergedState,
         recentBeatFingerprints: [...(liveCurrent.recentBeatFingerprints ?? []), fp].slice(-12),
       };
+      // Pack 12 fog-of-war: detect and mark locations discovered in this turn
+      mergedState = detectAndDiscoverLocations(mergedState, cleanText);
+      if (finalLocationName?.trim()) {
+        mergedState = discoverLocation(mergedState, finalLocationName);
+      }
       {
         const govCommit = applyGovernanceCommit(liveCurrent, mergedState, sanitizedInput);
         if (govCommit.xpAward && govCommit.xpAward.amount > 0) {

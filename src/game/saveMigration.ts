@@ -69,12 +69,22 @@ export function repairSaveSchema(state: GameState): SaveRepairResult {
       worldLedger: { ...ledger, factionStandings: [] },
     };
     note('hydrate worldLedger.factionStandings', 'cosmetic');
-  } else if (!ledger) {
+  } else   if (!ledger) {
     next = {
       ...next,
       worldLedger: emptyWorldLedger(),
     };
     note('hydrate empty worldLedger with factionStandings', 'cosmetic');
+  }
+
+  // Pack 12 fog-of-war: ensure discoveredLocations exists
+  if (!Array.isArray(next.discoveredLocations)) {
+    const startingLocation = next.currentLocation?.trim();
+    next = {
+      ...next,
+      discoveredLocations: startingLocation ? [startingLocation] : [],
+    };
+    note('hydrate discoveredLocations with starting location', 'cosmetic');
   }
 
   if (dirty) {

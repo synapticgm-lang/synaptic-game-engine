@@ -127,6 +127,7 @@ export function createInitialState(storyName?: string, engineMode: EngineMode = 
       lastTurnSummaryTurn: 0,
     },
     statusReveal: 'minimal',
+    discoveredLocations: [],
     pendingTurn: null,
     stateTxLog: [],
     campaignContract: null,

@@ -7,6 +7,7 @@ import { syncContainerOccupancy } from './inventory';
 import { stampMysteryCulprit } from './mysteryCulprit';
 import { seedWorldAtlas } from './worldAtlas';
 import { archetypePrefersBlankCanvas, blankBibleIdForMode } from './customBlank';
+import { discoverLocation } from './locationDiscovery';
 
 function snippetType(category: string): LoreCardType {
   if (category === 'faction') return 'faction';
@@ -87,6 +88,7 @@ export function seedStateFromCampaignBible(
     'No opening quest yet — do not invent quest log entries. Guide Book hooks stay unspoken until the System reveals them.';
   const kitRail = formatKitRail(bible, loadout.inventory);
 
+  const startingLocation = state.currentLocation || inferStartingLocation(bible);
   const seeded = syncContainerOccupancy({
     ...state,
     character,
@@ -100,7 +102,7 @@ export function seedStateFromCampaignBible(
     quests,
     inventory: loadout.inventory,
     containers: loadout.containers,
-    currentLocation: state.currentLocation || inferStartingLocation(bible),
+    currentLocation: startingLocation,
     timeline: [
       ...(state.timeline ?? []),
       {
@@ -113,7 +115,9 @@ export function seedStateFromCampaignBible(
     ],
   });
 
-  return seedWorldAtlas(seeded, bible);
+  // Pack 12 fog-of-war: discover starting location
+  const withAtlas = seedWorldAtlas(seeded, bible);
+  return discoverLocation(withAtlas, startingLocation);
 }
 
 /** Resolve catalog bible or player-authored snapshot. */

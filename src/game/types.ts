@@ -486,6 +486,8 @@ export interface GameState {
   locationSheet?: LocationSheet | null;
   /** Sheet for the place just left — injected with current for dual-location memory. */
   previousLocationSheet?: LocationSheet | null;
+  /** Pack 12 fog-of-war: locations the player has discovered (place IDs / settlement IDs). */
+  discoveredLocations?: string[];
   /** Pack 1 pity: consecutive non-Epic+ chests per danger tier. */
   lootPity?: LootPityState;
   /** Pack 3 first-session beat sheet. */
