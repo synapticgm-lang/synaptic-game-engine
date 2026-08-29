@@ -1,6 +1,8 @@
 # Path A — Josie authority owners (2026-08-31c)
 
-Site-wide ledger owners for the remaining WHY-DRIFT holes. Not NEVER-LINES. Mid writer **OFF**. HUD `2026-08-31c` / BUILD `2026-08-30v`.
+Site-wide ledger owners for the remaining WHY-DRIFT holes. Not NEVER-LINES. Mid writer **OFF**. HUD `2026-08-31d` / BUILD `2026-08-30w`.
+
+Force-latest (same push): `src/game/forceLatest.ts` — boot + visibility compare running HUD/BUILD to deployed `sgm-build` / `/version.json`; one-shot hard reload; SW + caches cleared; saves/login/settings kept. Old 30S `present[]` chrome (`Place`, blue panel) still stripped on Continue via `applySaveRepair` → `repairChromePresent` (rev 4+, now 5).
 
 Evidence: `docs/bugs/playtest-2026-08-30-josie/WHY-DRIFT.md`.
 

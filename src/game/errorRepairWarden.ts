@@ -11,7 +11,9 @@ import { getCampaignBibleById } from '@/data/campaigns';
 import { filterChromeFromPresent, isChromePersonToken } from './chromeAuthority';
 import { attachHookLock, backfillHookLockFromSave } from './hookLock';
 
-/** Bump when adding load-time repairs that must re-run on old saves. */
+/** Bump when adding load-time repairs that must re-run on old saves.
+ *  Rev 4 = 30Y chrome-as-people strip (Place / blue panel out of present[]).
+ *  Rev 5 = hookLock backfill. repairChromePresent still runs every Continue. */
 export const CURRENT_ERROR_REPAIR_REVISION = 5;
 
 export type FailureClass =

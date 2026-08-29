@@ -3,7 +3,8 @@ import { Component, lazy, type ComponentType, type ReactNode } from 'react';
 const CHUNK_LOAD_RE =
   /Failed to fetch dynamically imported module|Loading chunk [\w-]+ failed|Importing a module script failed|error loading dynamically imported module/i;
 
-const RELOAD_KEY = 'sgm-lazy-chunk-reload';
+export const CHUNK_RELOAD_KEY = 'sgm-lazy-chunk-reload';
+const RELOAD_KEY = CHUNK_RELOAD_KEY;
 
 export function isChunkLoadError(error: unknown): boolean {
   const msg = error instanceof Error ? error.message : String(error ?? '');

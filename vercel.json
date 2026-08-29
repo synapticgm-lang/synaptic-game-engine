@@ -1,5 +1,8 @@
 {
-  "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }],
+  "rewrites": [
+    { "source": "/version.json", "destination": "/version.json" },
+    { "source": "/(.*)", "destination": "/index.html" }
+  ],
   "headers": [
     {
       "source": "/",
@@ -12,6 +15,15 @@
     },
     {
       "source": "/index.html",
+      "headers": [
+        { "key": "Cache-Control", "value": "no-cache, no-store, must-revalidate, max-age=0" },
+        { "key": "Pragma", "value": "no-cache" },
+        { "key": "CDN-Cache-Control", "value": "no-store" },
+        { "key": "Vercel-CDN-Cache-Control", "value": "no-store" }
+      ]
+    },
+    {
+      "source": "/version.json",
       "headers": [
         { "key": "Cache-Control", "value": "no-cache, no-store, must-revalidate, max-age=0" },
         { "key": "Pragma", "value": "no-cache" },

@@ -19,7 +19,7 @@
 | **E. Chrome / HUD** | Stamp vs bug chip; HP/MP squash on ~384px; theme frame over name | `HudLayout` contract + viewport tests | Weak — cosmetic stamps keep “fixing” without layout ownership |
 | **F. Hosted art** | Model ID churn; Free blamed for missing key; Milestone fail slab; CORS | `generate-image` + memorable policy | Better; still fragile when OpenRouter renames models |
 | **G. Save schema drift** | New fields break old Continue | `repairSaveSchema` / revision bump | Good pattern — extend, don’t fork |
-| **H. Deploy / ops** | Build syntax; edge not redeployed; HUD stamp vs CDN cache | Checklist + stamp discipline | Process, not warden |
+| **H. Deploy / ops** | Build syntax; edge not redeployed; HUD stamp vs CDN / stale tab (Josie 30S) | Checklist + `forceLatest` boot gate (31d) | **Shipped 31d** — one-shot reload vs deployed `sgm-build` / `version.json`; SW + caches cleared, saves kept |
 
 ---
 
