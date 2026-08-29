@@ -4,6 +4,14 @@
  */
 
 import type { GameState } from './types';
+import {
+  applyCraftLearning,
+  compileCraftRules,
+  stampCraftApplied,
+  type CraftSignal,
+} from './craftBookCompiler';
+import { isDeniedPcName } from './pcNameAuthority';
+import { detectHookContradiction, resolveHookLock } from './hookLock';
 import { buildArcDirectorSnapshotLines, applyArcDirectorCommit } from './arcDirector';
 import { compileChoices } from './choiceCompiler';
 import { formatPressureClockSnippet } from './pressureClock';
@@ -116,6 +124,8 @@ export interface QualityGovernanceState {
   };
   recoveryMandate?: string;
   recentXpAwards?: Array<{ amount: number; reason: string; type: string; turn: number }>;
+  /** Last-turn craft flags (collage / atmosphere / name / pad / hook). */
+  craftSignals?: CraftSignal[];
 }
 
 function qg(state: GameState): QualityGovernanceState {
@@ -375,6 +385,42 @@ export function applyGovernanceToProse(
   return { prose: out, notes, rejectClone };
 }
 
+export function collectCraftSignals(opts: {
+  previous: GameState;
+  prose: string;
+  playerInput: string;
+  notes?: string[];
+  nextChoices?: string[];
+}): CraftSignal[] {
+  const found = new Set<CraftSignal>();
+  const blob = (opts.notes ?? []).join('\n');
+  if (/collage/i.test(blob)) found.add('collage');
+  if (/atmosphere reprint/i.test(blob)) found.add('atmosphere');
+  if (/recycle pad|rejected choice/i.test(blob)) found.add('pad_irrelevant');
+
+  const recent = recentGmBeatTexts(opts.previous);
+  if (!playerAsksRepeat(opts.playerInput)) {
+    const collage = detectLeadingCollage(opts.prose, recent);
+    if (collage.hit) found.add('collage');
+    if (detectAtmosphereReprint(opts.prose, recent)) found.add('atmosphere');
+  }
+  const nameToken = opts.playerInput.replace(/\s+/g, ' ').trim();
+  if (nameToken && isDeniedPcName(nameToken)) found.add('name_deny');
+  if (detectHookContradiction(opts.prose, resolveHookLock(opts.previous))) {
+    found.add('hook_contradiction');
+  }
+  const lastOffered =
+    [...(opts.previous.log ?? [])].reverse().find((e) => e?.role === 'gm')?.offeredChoices
+    ?? opts.previous.choices
+    ?? [];
+  const nowPad = opts.nextChoices ?? [];
+  const stall = (s: string) => /\b(wait|inspect|examine|look around|buy time)\b/i.test(s);
+  if (lastOffered.filter(stall).length >= 2 && nowPad.filter(stall).length >= 2) {
+    found.add('pad_irrelevant');
+  }
+  return [...found];
+}
+
 /** Choice pad filter (P0.1, P0.3). */
 export function filterGovernanceChoices(
   state: GameState,
@@ -525,13 +571,33 @@ export function applyGovernanceCommit(
 
   const arcPatch = applyArcDirectorCommit(previous, nextWithNpc, nextWithNpc.choices ?? []);
 
+  const compiled = compileCraftRules(previous, playerInput);
+  const signals = collectCraftSignals({
+    previous,
+    prose: gmProse,
+    playerInput,
+    notes: systemNotes,
+    nextChoices: nextWithNpc.choices ?? next.choices,
+  });
+  qualityGovernance.craftSignals = signals;
+  const craftLedger = applyCraftLearning(
+    previous.craftLedger,
+    signals,
+    previous.engineMode ?? 'rpg',
+    compiled.ruleIds
+  );
+
   // Merge nextWithNpc updates into final patches
   const finalPatches: Partial<GameState> = {
     progressGovernor,
     qualityGovernance,
+    craftLedger,
     ...arcPatch,
     ...(invCheck.valid ? {} : { inventory: previous.inventory }),
   };
+  const logForStamp = finalPatches.log ?? nextWithNpc.log ?? next.log;
+  const stampedLog = stampCraftApplied(logForStamp, compiled.ruleIds);
+  if (stampedLog !== logForStamp) finalPatches.log = stampedLog;
   
   // Carry forward Wave 2 state updates
   if (nextWithNpc.arcDirector !== next.arcDirector) {

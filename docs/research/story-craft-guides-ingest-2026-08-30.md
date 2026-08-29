@@ -3,7 +3,7 @@
 **Zip:** `How to Write a Complete Guide.zip` (178 KB, 2026-08-30)  
 **Verbatim dump:** `docs/research/pasted/manus-story-craft-guides-2026-08-30/`  
 **Commission:** `docs/research/MANUS-PROMPT-story-craft-guides-2026-08-30.txt`  
-**Status:** Research ingested. **SC-001 shipped 2026-08-30S** (four mode AUTHORITY sentences). Mid writer stays OFF. No new LLM critic. No WOF.
+**Status:** Research ingested. **SC-001 shipped 2026-08-30S** (four mode AUTHORITY sentences). **Path A compiler shipped 2026-08-31g** (`craftBookCompiler` — ≤2 CRAFT lines/turn; full D2 still research-only). Mid writer stays OFF. No new LLM critic. No WOF.
 
 This is the commissioned **WS-STORY** pack (filename prefix `SynapticGM_story_craft_guides_2026-08-30`), not a generic “how to write” dump.
 

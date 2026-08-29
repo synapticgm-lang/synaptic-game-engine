@@ -464,6 +464,8 @@ export interface GameState {
   progressGovernor?: import('./forwardProgressGovernor').ProgressGovernorState;
   /** P0+P1 quality governance telemetry (2026-08-27w). */
   qualityGovernance?: import('./qualityGovernance').QualityGovernanceState;
+  /** Craft-book compiler boosts + last signals (2026-08-31g). */
+  craftLedger?: import('./craftBookCompiler').CraftLedger;
   /** Path A ArcDirector — authoritative beat commits (2026-08-28a). */
   arcDirector?: import('./arcDirector').ArcDirectorState;
   /** Immutable run manifest for eval/replay binding. */
@@ -729,6 +731,8 @@ export interface LogEntry {
    * Absent on older saves — transcript omits the Options section.
    */
   offeredChoices?: string[];
+  /** Craft-book rule ids compiled for this beat (Debug / Download play). */
+  craftApplied?: string[];
 }
 
 /** Distinct rule engines chosen at campaign setup. `'dnd'` is tabletop fantasy (saved key). */

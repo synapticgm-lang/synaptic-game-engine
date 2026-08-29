@@ -159,6 +159,11 @@ export function buildPlayTranscript(state: GameState): string {
         }
         lines.push('');
       }
+      const craftIds = entry.craftApplied;
+      if (Array.isArray(craftIds) && craftIds.length > 0) {
+        lines.push(`**Craft:** ${craftIds.filter(Boolean).join(', ')}`);
+        lines.push('');
+      }
       const sys = entry.systemLog;
       if (Array.isArray(sys) && sys.length > 0) {
         const useful = sys.map((s) => String(s ?? '').trim()).filter(Boolean).slice(0, 12);
@@ -267,6 +272,11 @@ export function buildStoryReviewExport(
           const label = String(choice ?? '').trim();
           if (label) lines.push(`- ${label}`);
         }
+        lines.push('');
+      }
+      const craftDump = entry.craftApplied;
+      if (Array.isArray(craftDump) && craftDump.length > 0) {
+        lines.push(`**Craft:** ${craftDump.filter(Boolean).join(', ')}`);
         lines.push('');
       }
       const sys = entry.systemLog;

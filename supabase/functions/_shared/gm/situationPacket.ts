@@ -34,7 +34,7 @@ import {
   formatPresenceForSnapshot,
 } from './crowdAuthority.ts';
 import { formatWorldMapAuthorityBlock } from './worldMapAuthority.ts';
-import { formatModeStoryAuthorityLine } from './fluidProseRails.ts';
+import { formatCraftSnapshotLines } from './craftBookCompiler.ts';
 import { formatCoverChromeBindingLine } from './chromeAuthority.ts';
 import { alignFactionNotesToHook, formatHookBindingLine, resolveHookLock } from './hookLock.ts';
 import { formatCameraBindingLine } from './travelAuthority.ts';
@@ -337,7 +337,7 @@ export function formatSceneSnapshotForPrompt(state: GameState): string {
   lines.push(
     'AUTHORITY: SNAPSHOT + ledger win on facts (kit, exits, presence, HP, crowd count, hook why, outcomes). Do not invent items, doors, named people, or numeric results absent above. Do not recycle a prior beat, location essay, crisis line, or choice pad unless the player asked to repeat or restate.'
   );
-  lines.push(formatModeStoryAuthorityLine(state.engineMode));
+  lines.push(...formatCraftSnapshotLines(state));
   lines.push(
     'PROSE LICENSE: Full artistic freedom on sensory detail, metaphor, pacing, and NPC manner — dramatize the OUTCOME token; never invert it. Stakes stay honest (no auto-win, no invented kit).'
   );
