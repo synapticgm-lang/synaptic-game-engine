@@ -11,6 +11,7 @@ import {
   type TurnPhase,
 } from '@/game/streamReveal';
 import { BeautyMomentOfferLink } from './BeautyMomentOffer';
+import { BubbleSpeakControl } from './BubbleSpeakControl';
 import { GmResponseFeedback } from './GmResponseFeedback';
 import {
   ChevronRight, ChevronDown, Zap, Sword, Shield, Sparkles,
@@ -30,6 +31,11 @@ interface Props {
   saveId?: string | null;
   /** Bible ID for feedback context */
   bibleId?: string | null;
+  ttsEnabled?: boolean;
+  voiceSpeaking?: boolean;
+  speakingEntryId?: string | null;
+  onSpeakEntry?: (entryId: string, text: string) => void;
+  onStopSpeaking?: () => void;
 }
 
 type ActionKind = 'crit' | 'damage' | 'heal' | 'skill' | 'defeat' | 'miss';
@@ -79,7 +85,7 @@ function extractActions(log: LogEntry[], engineMode: EngineMode = 'litrpg'): Act
   return cards.slice(-20).reverse();
 }
 
-export function NarrativeView({ log, busy, turnPhase = 'idle', streamingReveal = null, engineMode = 'litrpg', contentMode, onAcceptBeautyOffer, onDismissBeautyOffer, saveId, bibleId }: Props) {
+export function NarrativeView({ log, busy, turnPhase = 'idle', streamingReveal = null, engineMode = 'litrpg', contentMode, onAcceptBeautyOffer, onDismissBeautyOffer, saveId, bibleId, ttsEnabled = false, voiceSpeaking = false, speakingEntryId = null, onSpeakEntry, onStopSpeaking }: Props) {
   const [streamOpen, setStreamOpen] = useState(true);
   const actionCards = useMemo(() => extractActions(log, engineMode), [log, engineMode]);
   const turnUiBlocked = isTurnUiBlocked(!!busy, turnPhase, streamingReveal);
@@ -104,6 +110,11 @@ export function NarrativeView({ log, busy, turnPhase = 'idle', streamingReveal =
                 saveId={saveId}
                 bibleId={bibleId}
                 log={log}
+                ttsEnabled={ttsEnabled}
+                voiceSpeaking={voiceSpeaking}
+                speakingEntryId={speakingEntryId}
+                onSpeakEntry={onSpeakEntry}
+                onStopSpeaking={onStopSpeaking}
               />
             )
           ))}
@@ -134,8 +145,19 @@ export function NarrativeView({ log, busy, turnPhase = 'idle', streamingReveal =
 
 /* ============ NARRATIVE ENTRY DISPATCHER ============ */
 
-function NarrativeEntry({ entry, engineMode, showTurnAsk, streamingReveal, onAcceptBeautyOffer, onDismissBeautyOffer, contentMode, saveId, bibleId, log }: { entry: LogEntry; engineMode: EngineMode; showTurnAsk: boolean; streamingReveal?: StreamingRevealState | null; onAcceptBeautyOffer?: (entryId: string) => void; onDismissBeautyOffer?: (entryId: string) => void; contentMode?: string | null; saveId?: string | null; bibleId?: string | null; log: LogEntry[] }) {
-  if (entry.role === 'player') return <PlayerBubble entry={entry} />;
+function NarrativeEntry({ entry, engineMode, showTurnAsk, streamingReveal, onAcceptBeautyOffer, onDismissBeautyOffer, contentMode, saveId, bibleId, log, ttsEnabled = false, voiceSpeaking = false, speakingEntryId = null, onSpeakEntry, onStopSpeaking }: { entry: LogEntry; engineMode: EngineMode; showTurnAsk: boolean; streamingReveal?: StreamingRevealState | null; onAcceptBeautyOffer?: (entryId: string) => void; onDismissBeautyOffer?: (entryId: string) => void; contentMode?: string | null; saveId?: string | null; bibleId?: string | null; log: LogEntry[]; ttsEnabled?: boolean; voiceSpeaking?: boolean; speakingEntryId?: string | null; onSpeakEntry?: (entryId: string, text: string) => void; onStopSpeaking?: () => void }) {
+  if (entry.role === 'player') {
+    return (
+      <PlayerBubble
+        entry={entry}
+        ttsEnabled={ttsEnabled}
+        voiceSpeaking={voiceSpeaking}
+        speakingEntryId={speakingEntryId}
+        onSpeakEntry={onSpeakEntry}
+        onStopSpeaking={onStopSpeaking}
+      />
+    );
+  }
   if (entry.role === 'system') return <SystemMessage entry={entry} />;
   if (!hasRealGmStory(entry) && !showTurnAsk) {
     return null;
@@ -157,13 +179,18 @@ function NarrativeEntry({ entry, engineMode, showTurnAsk, streamingReveal, onAcc
       saveId={saveId}
       bibleId={bibleId}
       playerAction={previousPlayerEntry?.content}
+      ttsEnabled={ttsEnabled}
+      voiceSpeaking={voiceSpeaking}
+      speakingEntryId={speakingEntryId}
+      onSpeakEntry={onSpeakEntry}
+      onStopSpeaking={onStopSpeaking}
     />
   );
 }
 
 /* ============ 1. AI DM NARRATION PANEL ============ */
 
-function DmNarration({ entry, engineMode, showTurnAsk, streamingReveal, onAcceptBeautyOffer, onDismissBeautyOffer, contentMode, saveId, bibleId, playerAction }: { entry: LogEntry; engineMode: EngineMode; showTurnAsk: boolean; streamingReveal?: StreamingRevealState | null; onAcceptBeautyOffer?: (entryId: string) => void; onDismissBeautyOffer?: (entryId: string) => void; contentMode?: string | null; saveId?: string | null; bibleId?: string | null; playerAction?: string }) {
+function DmNarration({ entry, engineMode, showTurnAsk, streamingReveal, onAcceptBeautyOffer, onDismissBeautyOffer, contentMode, saveId, bibleId, playerAction, ttsEnabled = false, voiceSpeaking = false, speakingEntryId = null, onSpeakEntry, onStopSpeaking }: { entry: LogEntry; engineMode: EngineMode; showTurnAsk: boolean; streamingReveal?: StreamingRevealState | null; onAcceptBeautyOffer?: (entryId: string) => void; onDismissBeautyOffer?: (entryId: string) => void; contentMode?: string | null; saveId?: string | null; bibleId?: string | null; playerAction?: string; ttsEnabled?: boolean; voiceSpeaking?: boolean; speakingEntryId?: string | null; onSpeakEntry?: (entryId: string, text: string) => void; onStopSpeaking?: () => void }) {
   const { text: displayContent, isRevealing } = resolveRevealContent(entry.id, entry.content, streamingReveal);
   const segments = useMemo(() => parseSegments(stripTurnCloser(displayContent)), [displayContent]);
   const systemLines = useMemo(
@@ -207,6 +234,17 @@ function DmNarration({ entry, engineMode, showTurnAsk, streamingReveal, onAccept
               </p>
             );
           })}
+          {onSpeakEntry && onStopSpeaking && (
+            <BubbleSpeakControl
+              visible={ttsEnabled && !isRevealing}
+              entryId={entry.id}
+              text={entry.content}
+              speaking={voiceSpeaking}
+              speakingEntryId={speakingEntryId}
+              onPlay={onSpeakEntry}
+              onStop={onStopSpeaking}
+            />
+          )}
         </div>
 
         {hasSystemLog && hasRealGmStory(entry) && (
@@ -252,7 +290,7 @@ function DmNarration({ entry, engineMode, showTurnAsk, streamingReveal, onAccept
 
 /* ============ 2. DIALOGUE BUBBLES ============ */
 
-function PlayerBubble({ entry }: { entry: LogEntry }) {
+function PlayerBubble({ entry, ttsEnabled = false, voiceSpeaking = false, speakingEntryId = null, onSpeakEntry, onStopSpeaking }: { entry: LogEntry; ttsEnabled?: boolean; voiceSpeaking?: boolean; speakingEntryId?: string | null; onSpeakEntry?: (entryId: string, text: string) => void; onStopSpeaking?: () => void }) {
   return (
     <div className="flex justify-end">
       <div className="flex max-w-[80%] items-start gap-2">
@@ -265,6 +303,17 @@ function PlayerBubble({ entry }: { entry: LogEntry }) {
               <span className="font-serif text-[10px] font-semibold uppercase tracking-wider text-crimson-400">Player</span>
             </div>
             <p className="leading-relaxed">{entry.content}</p>
+            {onSpeakEntry && onStopSpeaking && (
+              <BubbleSpeakControl
+                visible={ttsEnabled}
+                entryId={entry.id}
+                text={entry.content}
+                speaking={voiceSpeaking}
+                speakingEntryId={speakingEntryId}
+                onPlay={onSpeakEntry}
+                onStop={onStopSpeaking}
+              />
+            )}
           </div>
           {/* Tail pointing right */}
           <div className="absolute -bottom-1.5 right-3 h-3 w-3 rotate-45 border-b border-r border-crimson-500/30 bg-crimson-950/30" />

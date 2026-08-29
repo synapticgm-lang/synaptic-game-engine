@@ -64,7 +64,13 @@ describe('26o XP — reasons + look-around suppress', () => {
   it('isLookAroundAction catches playtest look verbs', () => {
     expect(isLookAroundAction('Have a look around the area whats near by')).toBe(true);
     expect(isLookAroundAction('Looking around the outside of the building')).toBe(true);
+    expect(isLookAroundAction('explore-the-cell')).toBe(true);
+    expect(isLookAroundAction('Explore my cell')).toBe(true);
+    expect(isLookAroundAction('Inspect the room')).toBe(true);
+    expect(isLookAroundAction('Inspect the cell')).toBe(true);
+    expect(isLookAroundAction('Get your bearings')).toBe(true);
     expect(isLookAroundAction('Travel toward Lowmarket')).toBe(false);
+    expect(isLookAroundAction('Examine the notice slate')).toBe(false);
   });
 
   it('strips bare GM XP; keeps reasoned code notes', () => {
@@ -119,6 +125,63 @@ describe('26o XP — reasons + look-around suppress', () => {
     });
     expect(look.xp).toBe(0);
     expect(look.notes).toEqual([]);
+  });
+
+  it('explore-the-cell / bearings tick awards no quest-tick XP', () => {
+    const before = [
+      {
+        id: 'sp-quest-1',
+        name: "The Circle's Price",
+        description: 'Bearings',
+        status: 'active' as const,
+        type: 'main' as const,
+        revealed: true,
+        objectives: [
+          {
+            id: 'a',
+            description: 'Get your bearings in this arrival (floor, cell, )',
+            completed: false,
+          },
+        ],
+      },
+    ];
+    const after = [
+      {
+        ...before[0],
+        objectives: [{ ...before[0].objectives[0], completed: true }],
+      },
+    ];
+    const state = {
+      ...createInitialState('Jax', 'litrpg'),
+      campaignBibleId: 'summoned-pact',
+      places: [],
+      sandboxAwardKeys: [] as string[],
+      worldLedger: emptyWorldLedger(),
+      currentLocation: 'iron-bar cell',
+    };
+    const explore = applySandboxXpAwards(state, {
+      playerAction: 'explore-the-cell',
+      locationName: 'iron-bar cell',
+      previousLocationName: 'iron-bar cell',
+      questsBefore: before,
+      questsAfter: after,
+      events: [],
+      turn: 3,
+    });
+    expect(explore.xp).toBe(0);
+    expect(explore.notes).toEqual([]);
+
+    const typedHello = applySandboxXpAwards(state, {
+      playerAction: 'hello',
+      locationName: 'iron-bar cell',
+      previousLocationName: 'iron-bar cell',
+      questsBefore: before,
+      questsAfter: after,
+      events: [],
+      turn: 3,
+    });
+    expect(typedHello.xp).toBe(0);
+    expect(typedHello.notes).toEqual([]);
   });
 
   it('travel to hub awards discover XP once with reason', () => {

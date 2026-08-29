@@ -6,12 +6,33 @@
 
 import type { EngineMode } from './types';
 
+/**
+ * One craft AUTHORITY sentence per engine mode (WS-STORY SC-001).
+ * Shared recycle rule stays in SNAPSHOT AUTHORITY + NO RECYCLE — do not restack it here.
+ */
+export const MODE_STORY_AUTHORITY: Record<EngineMode, string> = {
+  litrpg:
+    'Resolve the story beat first; then report only earned, ledger-backed System changes, and make repeat inspection yield a new fact, a brief reminder, or honest exhaustion—never the same essay.',
+  dnd:
+    'Portray the changed situation, honor the declared action and fair ruling, let success stand with fiction-led consequences, share spotlight, then ask what the player does.',
+  rpg:
+    'Advance one relationship through leverage, loyalty, or moral cost; change the NPC’s tactic, preserve the player’s interiority, and leave at least two socially distinct futures.',
+  pyoa:
+    'Resolve the chosen fork, lock what it closed, change the page-local crisis, then offer 2–4 choices that lead to distinct futures—never four phrasings of the same delay.',
+};
+
+export function formatModeStoryAuthorityLine(engineMode: EngineMode): string {
+  const craft = MODE_STORY_AUTHORITY[engineMode] ?? MODE_STORY_AUTHORITY.rpg;
+  return `MODE AUTHORITY (${engineMode}): ${craft}`;
+}
+
 const GLOBAL_RAILS = `=== FLUID GM PROSE RAILS (BINDING) ===
 * RENDERER FIREWALL: Personality / tone is diction only — applied after authority, StateTx, evidence, and SNAPSHOT. Preserve every fact, number, permit, inventory item, HP, quest flag, presence, exit, and location. Never invent a result for tone.
 * RHYTHM: Vary sentence length. Mix short punches with one longer sensory line. Avoid telegram fragments and same-length stacks.
 * TONE: Match the configured System/GM voice and engine diction below — confident narrator, not a help desk or apologetic chatbot.
 * VOCABULARY: Full natural English. Prefer concrete nouns and verbs (light, weight, grit, draft, scrape) over abstract filler. Descriptive engaging language and narrative flair are required. Factual details (stats, inventory, exits, who is here, damage) MUST match the SNAPSHOT / data sheets / ledger. Do not invent items, doors, named NPCs, or numeric results.
 * MOMENTUM: Every turn advances something visible — answer, reveal, cost, resistance, or a new affordance. End on playable pressure, not a soft reset.
+* NO RECYCLE: Do not repeat a prior beat, location essay, NPC topic, or crisis line unless the player asked to hear it again. Player-asked continuation (keep searching / keep walking) must still yield new concrete details.
 * ANSWER FIRST: If the player asked a direct question, put the answer, honest unknown, or in-world boundary in the first 1–2 sentences — before atmosphere.
 * ONE CLEAR BEAT: Default to one pressure change. Extra beats only for compound intent or a true set-piece.
 * AGENCY: You are the world and NPCs. Never assign the PC's decisions, feelings, beliefs, or speech.
@@ -57,5 +78,5 @@ Length target: standard ~90–180 words; short ~70+; set-piece up to ~220.`,
 
 export function formatFluidProseRailsForPrompt(engineMode: EngineMode): string {
   const engine = ENGINE_TEMPLATES[engineMode] ?? ENGINE_TEMPLATES.rpg;
-  return `${GLOBAL_RAILS}\n\n${engine}`;
+  return `${GLOBAL_RAILS}\n\n${formatModeStoryAuthorityLine(engineMode)}\n\n${engine}`;
 }

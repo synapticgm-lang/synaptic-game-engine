@@ -40,31 +40,58 @@ function questTypeXp(q: Quest): number {
   return q.type === 'main' ? SANDBOX_XP.questCompleteMain : SANDBOX_XP.questCompleteSide;
 }
 
+/** Room/cell/floor scout nouns — looking at these is bearings, not a named landmark. */
+const GENERIC_SCOUT_TARGET =
+  /^(?:area|room|ruin|cell|floor|surroundings|vicinity|place|scene|immediate(?:\s+surroundings)?|bars|iron\s+bars|cage|chamber|vault|camp|arrival|environment|here|inside|building|outside)$/i;
+
+/**
+ * Normalize chip labels (`explore-the-cell`) and typed lines to comparable text.
+ */
+function normalizeActionText(action: string): string {
+  return (action ?? '').replace(/[-_]+/g, ' ').replace(/\s+/g, ' ').trim().toLowerCase();
+}
+
+/**
+ * Circle's Price "get your bearings" / orient steps — journal may tick, but no quest-tick XP.
+ */
+export function isBearingsStyleObjective(description: string): boolean {
+  const d = (description ?? '').replace(/\s+/g, ' ').trim().toLowerCase();
+  if (!d) return false;
+  return /\bbearings?\b/.test(d) || /\borient(?:ation|ing)?\b/.test(d);
+}
+
 /**
  * True look-around / same-place re-scout — no explore/discover/quest-tick XP.
  * Specific examine/inspect/listen of a named target is NOT look-around (FO3 inspect reward).
  */
 export function isLookAroundAction(action: string): boolean {
-  const a = (action ?? '').replace(/\s+/g, ' ').trim().toLowerCase();
+  const a = normalizeActionText(action);
   if (!a) return false;
   if (/^(?:travel\s+toward|return\s+to)\b/.test(a)) return false;
-  // Named-target inspect/examine/search/listen → not a generic re-scout.
+  if (/\b(?:get|take)\s+(?:your|my|our)\s+bearings\b/.test(a)) return true;
   if (
-    /\b(?:inspect|examine|search|check|study|listen(?:\s+(?:at|to|from))?|ask|talk|speak|tell|browse|buy|sell|fight|attack|engage|map|travel|walk\s+the|watch\s+the)\b/i.test(
+    /\b(?:look\s+around|have\s+a\s+look|looking\s+around|whats?\s+near|what'?s\s+nearby|inspect\s+the\s+immediate|scout\s+the\s+(?:area|room|ruin)|examine\s+the\s+(?:area|room|surroundings)|search\s+the\s+ruin\s+carefully|wait\s+and\s+listen)\b/.test(
       a
     )
-    && !/^(?:look\s+around|have\s+a\s+look|looking\s+around|whats?\s+near|what'?s\s+nearby|scout\s+the\s+(?:area|room|ruin)|examine\s+the\s+(?:area|room|surroundings)|inspect\s+the\s+immediate|search\s+the\s+ruin\s+carefully|wait\s+and\s+listen|wait|observe)\b/i.test(
+    || /^(?:look|wait|observe)\b/.test(a)
+    || /^(?:explore|scout)(?:\s+(?:here|inside|around))?$/.test(a)
+  ) {
+    return true;
+  }
+  const scout = a.match(
+    /\b(?:explore|scout|search|inspect|examine|check|study|look(?:\s+at)?)\s+(?:the\s+|my\s+|this\s+|a\s+)?([\w\s'’.]{2,48}?)(?:\s+more\s+closely)?[.?!]?$/
+  );
+  const target = (scout?.[1] ?? '').replace(/\s+/g, ' ').trim();
+  if (target && GENERIC_SCOUT_TARGET.test(target)) return true;
+  // Named-target inspect/examine/search/listen → not a generic re-scout.
+  if (
+    /\b(?:inspect|examine|search|check|study|listen(?:\s+(?:at|to|from))?|ask|talk|speak|tell|browse|buy|sell|fight|attack|engage|map|travel|walk\s+the|watch\s+the)\b/.test(
       a
     )
   ) {
     return false;
   }
-  return (
-    /\b(?:look\s+around|have\s+a\s+look|looking\s+around|whats?\s+near|what'?s\s+nearby|inspect\s+the\s+immediate|scout\s+the\s+(?:area|room|ruin)|examine\s+the\s+(?:area|room|surroundings)|search\s+the\s+ruin\s+carefully|wait\s+and\s+listen)\b/i.test(
-      a
-    )
-    || /^(?:look|wait|observe)\b/.test(a)
-  );
+  return false;
 }
 
 function normalizeNpcKey(name: string): string {
@@ -205,10 +232,7 @@ export function applySandboxXpAwards(
       /\b(?:inspect|examine|check|study|map|search)\s+(?:the\s+)?([\w\s'’\-.]{3,48}?)(?:\s+more\s+closely)?[.?!]?$/i
     );
     const target = (m?.[1] ?? '').replace(/\s+/g, ' ').trim();
-    if (
-      target
-      && !/^(?:area|room|surroundings|immediate|ruin|vicinity|place|scene)$/i.test(target)
-    ) {
+    if (target && !GENERIC_SCOUT_TARGET.test(target)) {
       const placeSlug = normalizeNpcKey(locKey || 'here');
       const key = `landmark:${placeSlug}:${normalizeNpcKey(target)}`;
       if (!hasAward(awardKeys, key)) {
@@ -224,11 +248,12 @@ export function applySandboxXpAwards(
     const before = beforeById.get(after.id);
     if (!before) continue;
 
-    // Look-around must not farm quest-tick XP from GM falsely completing bearings objectives.
+    // Look-around / generic bearings must not farm quest-tick XP (ArcDirector may still journal-tick).
     if (!lookAround) {
       const beforeDone = new Set((before.objectives ?? []).filter((o) => o.completed).map((o) => o.id));
       for (const obj of after.objectives ?? []) {
         if (!obj.completed || beforeDone.has(obj.id)) continue;
+        if (isBearingsStyleObjective(obj.description)) continue;
         const key = `quest-tick:${after.id}:${obj.id}`;
         if (hasAward(awardKeys, key)) continue;
         xp += SANDBOX_XP.questTick;

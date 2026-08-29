@@ -22,6 +22,7 @@ import {
   type TurnPhase,
 } from '@/game/streamReveal';
 import { BeautyMomentOfferLink } from './BeautyMomentOffer';
+import { BubbleSpeakControl } from './BubbleSpeakControl';
 import { splashPlateLabel, splashUnavailableLine } from '@/game/memorableMoments';
 import { MemorablePlateChrome } from './comic/MemorablePlateChrome';
 import { stripRepairMarkdown } from '@/game/repairEngine';
@@ -207,6 +208,10 @@ export function CenterPanel({ state, busy, turnPhase = 'idle', streamingReveal =
     setInput('');
   };
 
+  const handleSpeakEntry = (entryId: string, text: string) => {
+    voice.speak(text, { entryId, fromUserGesture: true });
+  };
+
   return (
     <div className="sgm-play-center relative flex min-h-0 flex-1 flex-col">
       {bgImage && (
@@ -253,6 +258,11 @@ export function CenterPanel({ state, busy, turnPhase = 'idle', streamingReveal =
               contentMode={contentMode}
               saveId={state.saveId}
               bibleId={state.bibleId}
+              ttsEnabled={voice.ttsEnabled}
+              voiceSpeaking={voice.speaking}
+              speakingEntryId={voice.speakingEntryId}
+              onSpeakEntry={handleSpeakEntry}
+              onStopSpeaking={onStopSpeaking}
             />
         </div>
       ) : (
@@ -276,6 +286,11 @@ export function CenterPanel({ state, busy, turnPhase = 'idle', streamingReveal =
                   onDismissBeautyOffer={onDismissBeautyOffer}
                   onRetryMemorableImage={onRetryMemorableImage}
                   contentMode={contentMode}
+                  ttsEnabled={voice.ttsEnabled}
+                  voiceSpeaking={voice.speaking}
+                  speakingEntryId={voice.speakingEntryId}
+                  onSpeakEntry={handleSpeakEntry}
+                  onStopSpeaking={onStopSpeaking}
                 />
               )
             ))}
@@ -555,7 +570,7 @@ export function CenterPanel({ state, busy, turnPhase = 'idle', streamingReveal =
   );
 }
 
-function LogRow({ entry, lorebook, showSystemLog, statVerbosity, engineMode, showTurnAsk, streamingReveal, onAcceptBeautyOffer, onDismissBeautyOffer, onRetryMemorableImage, contentMode }: { entry: LogEntry; lorebook?: LoreCard[]; showSystemLog: boolean; statVerbosity: StatVerbosity; engineMode: EngineMode; showTurnAsk: boolean; streamingReveal?: StreamingRevealState | null; onAcceptBeautyOffer?: (entryId: string) => void; onDismissBeautyOffer?: (entryId: string) => void; onRetryMemorableImage?: (entryId: string) => void; contentMode?: string | null }) {
+function LogRow({ entry, lorebook, showSystemLog, statVerbosity, engineMode, showTurnAsk, streamingReveal, onAcceptBeautyOffer, onDismissBeautyOffer, onRetryMemorableImage, contentMode, ttsEnabled = false, voiceSpeaking = false, speakingEntryId = null, onSpeakEntry, onStopSpeaking }: { entry: LogEntry; lorebook?: LoreCard[]; showSystemLog: boolean; statVerbosity: StatVerbosity; engineMode: EngineMode; showTurnAsk: boolean; streamingReveal?: StreamingRevealState | null; onAcceptBeautyOffer?: (entryId: string) => void; onDismissBeautyOffer?: (entryId: string) => void; onRetryMemorableImage?: (entryId: string) => void; contentMode?: string | null; ttsEnabled?: boolean; voiceSpeaking?: boolean; speakingEntryId?: string | null; onSpeakEntry?: (entryId: string, text: string) => void; onStopSpeaking?: () => void }) {
   const { text: displayContent, isRevealing } = resolveRevealContent(entry.id, entry.content, streamingReveal);
   // Classic memorable plate: a rare, GM-flagged full-page illustration — rendered large and
   // distinct from the routine text log, instead of only surfacing via the small image strip.
@@ -610,6 +625,17 @@ function LogRow({ entry, lorebook, showSystemLog, statVerbosity, engineMode, sho
       <div className="flex justify-end">
         <div className="max-w-[85%] rounded-lg rounded-br-sm border border-slate-700 bg-slate-800 px-3 py-2 text-sm text-slate-200">
           {entry.content}
+          {onSpeakEntry && onStopSpeaking && (
+            <BubbleSpeakControl
+              visible={ttsEnabled}
+              entryId={entry.id}
+              text={entry.content}
+              speaking={voiceSpeaking}
+              speakingEntryId={speakingEntryId}
+              onPlay={onSpeakEntry}
+              onStop={onStopSpeaking}
+            />
+          )}
         </div>
       </div>
     );
@@ -629,6 +655,17 @@ function LogRow({ entry, lorebook, showSystemLog, statVerbosity, engineMode, sho
           <FormattedText content={displayContent} lorebook={lorebook} />
           {isRevealing && (
             <span className="ml-0.5 inline-block h-3.5 w-0.5 animate-pulse bg-crimson-400/70 align-text-bottom" aria-hidden />
+          )}
+          {onSpeakEntry && onStopSpeaking && (
+            <BubbleSpeakControl
+              visible={ttsEnabled && !isRevealing}
+              entryId={entry.id}
+              text={entry.content}
+              speaking={voiceSpeaking}
+              speakingEntryId={speakingEntryId}
+              onPlay={onSpeakEntry}
+              onStop={onStopSpeaking}
+            />
           )}
         </div>
       )}

@@ -422,3 +422,105 @@ export function trackLoopMetrics(
     repeatedPurpose: detection.repeatedIntent?.purpose ?? 'none',
   };
 }
+
+/** Player asked the GM to restate the last beat — allow prose clones. */
+export function playerAsksRepeat(input: string): boolean {
+  const s = (input ?? '').toLowerCase().replace(/\s+/g, ' ').trim();
+  if (!s) return false;
+  return (
+    /\b(say|tell|read|repeat|recite)\b.{0,24}\b(again|once more)\b/.test(s)
+    || /\b(say|tell|read) (that|it|this) again\b/.test(s)
+    || /\brepeat (that|it|this|the last|what you said)\b/.test(s)
+    || /\bread (that|it|this) (back|again)\b/.test(s)
+    || /\bwhat did you (just )?say\b/.test(s)
+    || /\bgo over (that|it) again\b/.test(s)
+  );
+}
+
+/**
+ * Player asked to keep doing the same action (search / walk / wait).
+ * That is continuation, not a license to recycle the last GM essay.
+ */
+export function playerAsksContinuation(input: string): boolean {
+  const s = (input ?? '').toLowerCase().replace(/\s+/g, ' ').trim();
+  if (!s) return false;
+  return (
+    /\bkeep (on )?(doing|searching|walking|looking|going|trying|waiting|listening|moving|heading|inspecting|checking)\b/.test(s)
+    || /\b(continue|carry on) (searching|walking|looking|going|waiting|listening|moving|inspecting)\b/.test(s)
+    || /\bdo (that|it) again\b/.test(s)
+    || /\bonce more\b/.test(s)
+    || /\bsame (room|road|path|cell|hall)\b/.test(s)
+  );
+}
+
+function optionFamilyKey(choice: string): string {
+  const intent = canonicalizeIntent(choice, 0);
+  return `${intent.action}:${intent.target}:${intent.purpose}`;
+}
+
+export function lastOfferedChoiceSets(
+  state: { log?: Array<{ role?: string; offeredChoices?: string[] }> },
+  maxSets = 2
+): string[][] {
+  const sets: string[][] = [];
+  const log = state.log ?? [];
+  for (let i = log.length - 1; i >= 0 && sets.length < maxSets; i--) {
+    const offered = log[i]?.role === 'gm' ? log[i]?.offeredChoices : undefined;
+    if (!Array.isArray(offered) || !offered.length) continue;
+    const labels = offered.map((c) => String(c ?? '').trim()).filter(Boolean);
+    if (labels.length) sets.push(labels);
+  }
+  return sets;
+}
+
+export function isStallPadChoice(choice: string): boolean {
+  const intent = canonicalizeIntent(choice, 0);
+  if (intent.action === 'wait' || intent.action === 'listen') return true;
+  if (intent.action === 'disengage') return true;
+  if (
+    intent.action === 'inspect'
+    && (intent.target === 'environment' || intent.target === 'ground' || intent.target === 'ambient_location')
+  ) {
+    return true;
+  }
+  return false;
+}
+
+/**
+ * Drop stall chips that already sat on the last 1–2 pads unless the player
+ * asked to repeat or continue that family. Named legal actions stay.
+ */
+export function filterRecycledStallChoices(
+  choices: string[],
+  state: { log?: Array<{ role?: string; offeredChoices?: string[] }> },
+  playerInput = ''
+): { filtered: string[]; removed: string[] } {
+  if (playerAsksRepeat(playerInput)) {
+    return { filtered: [...choices], removed: [] };
+  }
+  const recent = new Set<string>();
+  for (const set of lastOfferedChoiceSets(state, 2)) {
+    for (const c of set) recent.add(optionFamilyKey(c));
+  }
+  if (!recent.size) return { filtered: [...choices], removed: [] };
+
+  const continueIntent = playerAsksContinuation(playerInput)
+    ? canonicalizeIntent(playerInput, 0)
+    : null;
+  const filtered: string[] = [];
+  const removed: string[] = [];
+  for (const choice of choices) {
+    const key = optionFamilyKey(choice);
+    const stall = isStallPadChoice(choice);
+    if (stall && recent.has(key)) {
+      if (continueIntent && continueIntent.action === canonicalizeIntent(choice, 0).action) {
+        filtered.push(choice);
+        continue;
+      }
+      removed.push(choice);
+      continue;
+    }
+    filtered.push(choice);
+  }
+  return { filtered, removed };
+}

@@ -116,6 +116,7 @@ import { validateEvalRun, type EvalHarnessResult } from './evalHarness';
 import { playerInputGateBlock } from './choiceCompiler';
 import { filterSystemLogForEngine, reconcileXpStatusLines } from './systemLog';
 import { beatFingerprint, isSameBeat, isNearClone, buildBeatNoveltyRetryBlock, beatSimilarity } from './beatFingerprint';
+import { playerAsksRepeat, playerAsksContinuation } from './semanticLoopDetector';
 import { enforcePerspective } from './perspectiveWarden';
 import { buildPlayTranscript, buildStoryReviewExport, resolveOfferedChoices, withOfferedChoices } from './playTranscript';
 import {
@@ -890,12 +891,18 @@ Do NOT print dice notation or CODE ENFORCED.
   }
 
   // Novelty retry on same-beat OR near-verbatim clone (merchant ×20 loops).
+  // Skip only when the player asked to hear the last beat again.
   const travelHubEarly = parseTravelDestination(playerInput, meta.bibleId);
   const fps = state.recentBeatFingerprints ?? [];
+  const askedRepeat = playerAsksRepeat(playerInput);
+  const askedContinue = playerAsksContinuation(playerInput);
+  const nearClone = isNearClone(gmText, fps);
+  const sameBeatHit = isSameBeat(gmText, fps);
   if (
     !error
+    && !askedRepeat
     && storyHasBody(gmText)
-    && (isSameBeat(gmText, fps) || isNearClone(gmText, fps))
+    && (nearClone || (sameBeatHit && !askedContinue))
     && transportRetries === 0
   ) {
     const novelty = buildBeatNoveltyRetryBlock(fps);
@@ -967,7 +974,7 @@ Do NOT print dice notation or CODE ENFORCED.
   const leak = scanAndScrubLeaks(cleanText);
   if (leak.notes.length) cleanText = leak.clean;
   {
-    const govProse = applyGovernanceToProse(working, cleanText);
+    const govProse = applyGovernanceToProse(working, cleanText, playerInput);
     cleanText = govProse.prose;
     if (govProse.notes.length) warden.notes.push(...govProse.notes);
   }
@@ -1013,7 +1020,7 @@ Do NOT print dice notation or CODE ENFORCED.
     playerInput
   );
   {
-    const govChoices = filterGovernanceChoices(working, finalChoices);
+    const govChoices = filterGovernanceChoices(working, finalChoices, playerInput);
     finalChoices = govChoices.choices;
     if (govChoices.notes.length) warden.notes.push(...govChoices.notes);
   }
@@ -1098,7 +1105,7 @@ Do NOT print dice notation or CODE ENFORCED.
   }
   const dailyMilestone = applyDailyQuestMilestone(
     { ...working, sandboxAwardKeys: sandboxKeys },
-    { questsBefore, questsAfter: updatedQuests }
+    { questsBefore, questsAfter: updatedQuests, playerAction: playerInput }
   );
   if (dailyMilestone) {
     sandboxNotes.push(dailyMilestone.note);

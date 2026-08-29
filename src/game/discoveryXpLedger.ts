@@ -13,6 +13,7 @@
  */
 
 import type { GameState } from './types';
+import { isLookAroundAction } from './sandboxXp';
 
 export interface DiscoveryKey {
   /** What was discovered (location name, object, fact, NPC, etc.) */
@@ -170,8 +171,9 @@ export function calculateDiscoveryXp(
     }
   }
   
-  // Object inspection
+  // Object inspection — generic room/cell scout is look-around, not a landmark.
   if (/\b(inspect|examine|check|look at|study|investigate)\b/i.test(lower)) {
+    if (isLookAroundAction(action)) return null;
     const objectMatch = lower.match(/(?:inspect|examine|check|look at|study)\s+(?:the\s+)?([a-z\s]+)/i);
     if (objectMatch) {
       const object = objectMatch[1].trim();

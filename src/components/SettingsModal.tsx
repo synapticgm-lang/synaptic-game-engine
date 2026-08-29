@@ -35,6 +35,7 @@ import {
   type HostedAiTier,
 } from '@/game/testLab';
 import { setActiveSubscriptionTier } from '@/game/subscriptionTiers';
+import { pickSpeechVoice, primeTts, sortSpeechVoices, speakTtsNow, stopAllSpeech } from '@/game/useVoice';
 
 interface Props {
   settings: Settings;
@@ -761,7 +762,38 @@ export function SettingsModal({ settings, storyName, engineMode, gameState, onSa
 
           {/* Voice & Audio */}
           <Section icon={<Volume2 size={16} />} title="Voice & Audio" visible={activeTab === 'general'}>
-            <ToggleRow icon={<Volume2 size={15} />} label="GM Narration (TTS)" description="The GM reads responses aloud" checked={draft.ttsEnabled} onChange={(v) => update('ttsEnabled', v)} />
+            <ToggleRow
+              icon={<Volume2 size={15} />}
+              label="GM Narration (TTS)"
+              description="Reads new GM beats aloud. Play on any chat to replay. This toggle applies immediately."
+              checked={draft.ttsEnabled}
+              onChange={(v) => {
+                update('ttsEnabled', v);
+                const next = { ...settings, ttsEnabled: v, ttsVoiceURI: draft.ttsVoiceURI };
+                onSave(next);
+                window.dispatchEvent(new CustomEvent(SETTINGS_EVENT_NAME, { detail: next }));
+                if (v) {
+                  primeTts();
+                  speakTtsNow('Voice on.', draft.ttsVoiceURI);
+                } else {
+                  stopAllSpeech();
+                }
+              }}
+            />
+            <TtsVoicePicker
+              value={draft.ttsVoiceURI}
+              enabled={draft.ttsEnabled}
+              onChange={(uri) => {
+                update('ttsVoiceURI', uri);
+                const next = { ...settings, ttsEnabled: draft.ttsEnabled, ttsVoiceURI: uri };
+                onSave(next);
+                window.dispatchEvent(new CustomEvent(SETTINGS_EVENT_NAME, { detail: next }));
+                if (draft.ttsEnabled) {
+                  primeTts();
+                  speakTtsNow('This is how I will read the story.', uri);
+                }
+              }}
+            />
             <ToggleRow icon={<Mic size={15} />} label="Voice Input (STT)" description="Speak your actions" checked={draft.sttEnabled} onChange={(v) => update('sttEnabled', v)} />
           </Section>
 
@@ -1013,13 +1045,18 @@ export function SettingsModal({ settings, storyName, engineMode, gameState, onSa
                 )}
               </div>
               {onDownloadTranscript && (
-                <button
-                  type="button"
-                  onClick={onDownloadTranscript}
-                  className="mt-2 flex w-full items-center justify-center gap-2 rounded-lg border border-slate-700 bg-slate-800/40 px-3 py-2 text-sm text-slate-200 hover:bg-slate-800/70 transition-colors"
-                >
-                  <ScrollText size={15} /> Download play transcript
-                </button>
+                <>
+                  <button
+                    type="button"
+                    onClick={onDownloadTranscript}
+                    className="mt-2 flex w-full items-center justify-center gap-2 rounded-lg border border-slate-700 bg-slate-800/40 px-3 py-2 text-sm text-slate-200 hover:bg-slate-800/70 transition-colors"
+                  >
+                    <ScrollText size={15} /> Download play
+                  </button>
+                  <p className="mt-1 text-[11px] leading-relaxed text-slate-500">
+                    Downloads this play — GM, player, options, and session facts. Available on any signed-in account for your own save.
+                  </p>
+                </>
               )}
               {onDeleteSave && (
                 <SaveSlotsManager
@@ -1493,6 +1530,63 @@ function KeyStatusBadge({ status, error, onTest }: { status: KeyStatus; error: s
   if (status === 'valid') return <span className="flex items-center gap-1.5 rounded-full border border-emerald-600/50 bg-emerald-950/40 px-2.5 py-1 text-xs text-emerald-300"><Check size={12} />Connected</span>;
   if (status === 'invalid') return <span className="flex items-center gap-1.5 rounded-full border border-rose-600/50 bg-rose-950/40 px-2.5 py-1 text-xs text-rose-300" title={error ?? 'Failed'}><X size={12} />Failed</span>;
   return <button type="button" onClick={onTest} className="flex items-center gap-1.5 rounded-full border border-slate-600 bg-slate-800 px-2.5 py-1 text-xs text-slate-300 hover:bg-slate-700 transition-colors"><RefreshCw size={12} />Test Key</button>;
+}
+
+function TtsVoicePicker({
+  value,
+  enabled,
+  onChange,
+}: {
+  value: string;
+  enabled: boolean;
+  onChange: (uri: string) => void;
+}) {
+  const [voices, setVoices] = useState<SpeechSynthesisVoice[]>([]);
+  const supported = typeof window !== 'undefined' && 'speechSynthesis' in window;
+
+  useEffect(() => {
+    if (!supported) return;
+    const load = () => {
+      const list = window.speechSynthesis.getVoices();
+      if (list.length) setVoices(list);
+    };
+    load();
+    window.speechSynthesis.addEventListener('voiceschanged', load);
+    return () => window.speechSynthesis.removeEventListener('voiceschanged', load);
+  }, [supported]);
+
+  const sorted = sortSpeechVoices(voices);
+  const picked = pickSpeechVoice(sorted, value);
+  const selectValue = picked?.voiceURI ?? '';
+
+  return (
+    <div className="rounded-lg border border-slate-700 bg-slate-800/40 px-3 py-2.5">
+      <label htmlFor="sgm-tts-voice" className="block text-sm font-medium text-slate-200">
+        Reader voice
+      </label>
+      <p className="mb-2 text-xs text-slate-500">
+        Browser voices on this device. Used for new GM beats and play on any chat.
+      </p>
+      <select
+        id="sgm-tts-voice"
+        value={selectValue}
+        disabled={!supported || sorted.length === 0}
+        onChange={(e) => onChange(e.target.value)}
+        className="min-h-[40px] w-full rounded-md border border-slate-600 bg-slate-900 px-2.5 py-2 text-sm text-slate-100 focus:border-crimson-500 focus:outline-none focus:ring-1 focus:ring-crimson-500 disabled:cursor-not-allowed disabled:opacity-50"
+      >
+        {!supported && <option value="">Text-to-speech is not available here</option>}
+        {supported && sorted.length === 0 && <option value="">Loading voices…</option>}
+        {sorted.map((v) => (
+          <option key={v.voiceURI} value={v.voiceURI}>
+            {v.name} ({v.lang})
+          </option>
+        ))}
+      </select>
+      {!enabled && supported && (
+        <p className="mt-1.5 text-[11px] text-slate-500">Turn on GM Narration to hear this voice.</p>
+      )}
+    </div>
+  );
 }
 
 function ToggleRow({ icon, label, description, checked, onChange, disabled = false }: { icon: React.ReactNode; label: string; description: string; checked: boolean; onChange: (v: boolean) => void; disabled?: boolean }) {

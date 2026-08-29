@@ -12,6 +12,9 @@ import {
   detectSemanticLoop,
   buildEscalationResponse,
   formatEscalationMandate,
+  playerAsksRepeat,
+  filterRecycledStallChoices,
+  lastOfferedChoiceSets,
 } from './semanticLoopDetector';
 import {
   extractEntityContext,
@@ -217,6 +220,13 @@ export function buildGovernanceSnapshotLines(state: GameState): string[] {
     }
   }
 
+  const lastPad = lastOfferedChoiceSets(state, 1)[0];
+  if (lastPad?.length) {
+    lines.push(
+      `LAST PAD: ${lastPad.slice(0, 4).join(' · ')} — do not re-offer these stall chips unless the player asked.`
+    );
+  }
+
   const loop = detectSemanticLoop(state);
   const activeObjective = hasActiveObjectives(state);
   if (loop.isLoop) {
@@ -285,7 +295,11 @@ export function processMetaInput(state: GameState, input: string): {
 }
 
 /** Post-GM prose scrub (P0.1). */
-export function applyGovernanceToProse(state: GameState, prose: string): {
+export function applyGovernanceToProse(
+  state: GameState,
+  prose: string,
+  playerInput = ''
+): {
   prose: string;
   notes: string[];
   rejectClone?: boolean;
@@ -325,10 +339,9 @@ export function applyGovernanceToProse(state: GameState, prose: string): {
   let rejectClone = false;
   if (!clone.novel && clone.similarity != null) {
     notes.push(`Novelty: paragraph clone (${(clone.similarity * 100).toFixed(0)}% similar)`);
-    // 29c — opening / early Free window: hard-reject near-verbatim clones
-    if ((state.turn ?? 0) <= 12 && clone.similarity >= 0.85) {
+    if (!playerAsksRepeat(playerInput) && clone.similarity >= 0.85) {
       rejectClone = true;
-      notes.push('Opening clone reject');
+      notes.push('Beat recycle reject');
     }
   }
 
@@ -336,7 +349,11 @@ export function applyGovernanceToProse(state: GameState, prose: string): {
 }
 
 /** Choice pad filter (P0.1, P0.3). */
-export function filterGovernanceChoices(state: GameState, choices: string[]): {
+export function filterGovernanceChoices(
+  state: GameState,
+  choices: string[],
+  playerInput = ''
+): {
   choices: string[];
   notes: string[];
 } {
@@ -370,7 +387,15 @@ export function filterGovernanceChoices(state: GameState, choices: string[]): {
     notes.push(`Diversity: ${diversityViolations.length} violation(s)`);
   }
 
-  return { choices: filtered.length ? filtered : choices.slice(0, 3), notes };
+  const recycled = filterRecycledStallChoices(filtered, state, playerInput);
+  if (recycled.removed.length) {
+    notes.push(`Recycle pad dropped ${recycled.removed.length}`);
+    filtered = recycled.filtered;
+  }
+
+  if (filtered.length) return { choices: filtered, notes };
+  const fallback = filterRecycledStallChoices(choices.slice(0, 3), state, playerInput).filtered;
+  return { choices: fallback.length ? fallback : choices.slice(0, 3), notes };
 }
 
 export interface GovernanceCommitResult {

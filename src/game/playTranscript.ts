@@ -8,6 +8,9 @@ import {
 import { establishmentChoices, isOpeningEstablishmentPending } from './openingEstablishment';
 import { filterInventedContextChoices } from './choiceWarden';
 import { buildGeminiCriticPrompt } from './geminiCriticPrompt';
+import { BUILD_STAMP } from './runManifest';
+import { canonicalizeIntent, detectSemanticLoop } from './semanticLoopDetector';
+import { beatFingerprint, beatSimilarity } from './beatFingerprint';
 
 const FALLBACK_CHOICE = '🎲 Let Fate Decide';
 
@@ -89,15 +92,30 @@ export function playTranscriptFilename(state: GameState): string {
  * Chronological readable transcript: GM → Options offered → player.
  * Missing `offeredChoices` on old saves omits that section (no crash).
  */
+function playMetaLines(state: GameState): string[] {
+  const quests = (state.quests ?? [])
+    .filter((q) => q.revealed || q.status === 'active' || q.status === 'completed')
+    .slice(0, 8)
+    .map((q) => `${q.name} [${q.status}]`);
+  return [
+    `- Save: ${state.saveId || '(none)'}`,
+    `- Engine: ${state.engineMode || 'unknown'}`,
+    `- Bible: ${state.campaignBibleId || '(none)'}`,
+    `- Stamp: ${state.runManifest?.buildStamp || BUILD_STAMP}`,
+    `- Turn: ${state.turn ?? 0}`,
+    `- Location: ${state.currentLocation || '(unknown)'}`,
+    `- Character: ${state.character?.name ?? '?'} · Level ${state.character?.level ?? '?'} · XP ${state.character?.xp ?? 0}/${state.character?.xpToNext ?? '?'}`,
+    `- Quests: ${quests.length ? quests.join('; ') : '(none revealed)'}`,
+    `- Exported: ${new Date().toISOString()}`,
+  ];
+}
+
 export function buildPlayTranscript(state: GameState): string {
   const title = state.storyName?.trim() || state.character?.name?.trim() || 'Play transcript';
   const lines: string[] = [
     `# ${title}`,
     '',
-    `- Save: ${state.saveId || '(none)'}`,
-    `- Engine: ${state.engineMode || 'unknown'}`,
-    `- Turn: ${state.turn ?? 0}`,
-    `- Exported: ${new Date().toISOString()}`,
+    ...playMetaLines(state),
     '',
     '---',
     '',
@@ -258,12 +276,171 @@ export function buildStoryReviewExport(
 }
 
 export function downloadPlayTranscript(state: GameState): void {
-  const markdown = buildPlayTranscript(state);
-  const blob = new Blob([markdown], { type: 'text/markdown;charset=utf-8' });
+  downloadTextFile(playTranscriptFilename(state), buildPlayTranscript(state), 'text/markdown;charset=utf-8');
+}
+
+function downloadTextFile(filename: string, content: string, mime: string): void {
+  const blob = new Blob([content], { type: mime });
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
   a.href = url;
-  a.download = playTranscriptFilename(state);
+  a.download = filename;
   a.click();
   URL.revokeObjectURL(url);
+}
+
+export function playDumpFilename(state: GameState): string {
+  return playTranscriptFilename(state).replace('synaptic-transcript-', 'synaptic-play-');
+}
+
+function pairPlayTurns(state: GameState): Array<{
+  turn: number;
+  gmText: string;
+  offeredChoices: string[];
+  playerInput: string;
+  systemLog: string[];
+}> {
+  const turns: Array<{
+    turn: number;
+    gmText: string;
+    offeredChoices: string[];
+    playerInput: string;
+    systemLog: string[];
+  }> = [];
+  let pending: (typeof turns)[number] | null = null;
+  for (const entry of state.log ?? []) {
+    if (!entry || typeof entry !== 'object') continue;
+    if (entry.role === 'gm') {
+      if (pending) turns.push(pending);
+      pending = {
+        turn: entry.turn ?? turns.length + 1,
+        gmText: (entry.content ?? '').trim(),
+        offeredChoices: (entry.offeredChoices ?? []).map((c) => String(c ?? '').trim()).filter(Boolean),
+        playerInput: '',
+        systemLog: (entry.systemLog ?? []).map((s) => String(s ?? '').trim()).filter(Boolean),
+      };
+    } else if (entry.role === 'player' && pending) {
+      pending.playerInput = (entry.content ?? '').trim();
+      turns.push(pending);
+      pending = null;
+    }
+  }
+  if (pending) turns.push(pending);
+  return turns;
+}
+
+/** Autoplay-shaped JSONL from fields the live save actually has. */
+export function buildPlayTurnsJsonl(state: GameState): string {
+  const bibleId = state.campaignBibleId ?? state.runManifest?.bibleId ?? '';
+  const personalityId = state.systemPersonality ?? state.gmPersonality ?? '';
+  const lines = pairPlayTurns(state).map((t) =>
+    JSON.stringify({
+      turn: t.turn,
+      bibleId,
+      engineMode: state.engineMode,
+      personalityId,
+      seed: state.seed ?? state.runManifest?.seed ?? null,
+      offeredChoices: t.offeredChoices,
+      playerInput: t.playerInput,
+      gmText: t.gmText,
+      systemLog: t.systemLog,
+      location: state.currentLocation ?? null,
+      level: state.character?.level ?? null,
+      characterXp: state.character?.xp ?? null,
+      xpToNext: state.character?.xpToNext ?? null,
+      fatePick: null,
+      durationMs: null,
+      transportRetries: null,
+      failKind: null,
+    })
+  );
+  return lines.join('\n') + (lines.length ? '\n' : '');
+}
+
+function buildLoopReview(state: GameState): string {
+  const turns = pairPlayTurns(state);
+  const loop = detectSemanticLoop(state);
+  const padFamilies = new Map<string, number>();
+  const gmFps: string[] = [];
+  let recycledBeats = 0;
+  for (const t of turns) {
+    for (const c of t.offeredChoices) {
+      const intent = canonicalizeIntent(c, t.turn);
+      const key = `${intent.action}:${intent.target}`;
+      padFamilies.set(key, (padFamilies.get(key) ?? 0) + 1);
+    }
+    if (t.gmText) {
+      const fp = beatFingerprint(t.gmText);
+      if (gmFps.some((prev) => beatSimilarity(fp, prev) >= 0.72)) recycledBeats += 1;
+      gmFps.push(fp);
+    }
+  }
+  const topPads = [...padFamilies.entries()].sort((a, b) => b[1] - a[1]).slice(0, 6);
+  const lines = [
+    '## Loop review (from this save)',
+    '',
+    `- Player semantic loop: ${loop.isLoop ? `yes (${loop.loopCount}× ${loop.repeatedIntent?.action ?? ''} ${loop.repeatedIntent?.target ?? ''})` : 'no'}`,
+    `- GM beats similar to an earlier beat: ${recycledBeats}`,
+    `- Top choice families: ${topPads.length ? topPads.map(([k, n]) => `${k}×${n}`).join('; ') : '(none recorded)'}`,
+    '',
+    'Live saves do not store per-turn SNAPSHOT, latency, Fate pick, or transport retries — those exist only on headless autoplay `turns.jsonl`. The appendix below uses the autoplay field names and leaves those null.',
+    '',
+  ];
+  return lines.join('\n');
+}
+
+/** Settings / Debug: transcript + loop flags + JSONL appendix. */
+export function buildPlayDump(state: GameState): string {
+  const jsonl = buildPlayTurnsJsonl(state);
+  return [
+    buildPlayTranscript(state).trimEnd(),
+    '',
+    '---',
+    '',
+    buildLoopReview(state).trimEnd(),
+    '',
+    '---',
+    '',
+    '## Turns (JSONL)',
+    '',
+    '```jsonl',
+    jsonl.trimEnd() || '(empty)',
+    '```',
+    '',
+  ].join('\n');
+}
+
+export function downloadPlayDump(state: GameState): void {
+  downloadTextFile(playDumpFilename(state), buildPlayDump(state), 'text/markdown;charset=utf-8');
+}
+
+/** Debug / staff: same play dump plus a JSON sidecar (no eval-harness copy). */
+export function downloadPlayDumpStaff(state: GameState): void {
+  downloadPlayDump(state);
+  const sidecar = {
+    exportedAt: new Date().toISOString(),
+    buildStamp: state.runManifest?.buildStamp || BUILD_STAMP,
+    engineMode: state.engineMode,
+    bibleId: state.campaignBibleId ?? null,
+    saveId: state.saveId,
+    turn: state.turn ?? 0,
+    location: state.currentLocation ?? null,
+    character: {
+      name: state.character?.name,
+      level: state.character?.level,
+      xp: state.character?.xp,
+      xpToNext: state.character?.xpToNext,
+    },
+    quests: (state.quests ?? []).map((q) => ({ id: q.id, name: q.name, status: q.status, revealed: q.revealed })),
+    recentBeatFingerprints: state.recentBeatFingerprints ?? [],
+    residuals: [
+      'Headless-only autoplay fields not on live saves: durationMs, fatePick, transportRetries, failKind, startedAt/endedAt, receiptCounts, replayHash.',
+    ],
+    turnsJsonl: buildPlayTurnsJsonl(state),
+  };
+  downloadTextFile(
+    playDumpFilename(state).replace(/\.md$/i, '.json'),
+    JSON.stringify(sidecar, null, 2) + '\n',
+    'application/json;charset=utf-8'
+  );
 }

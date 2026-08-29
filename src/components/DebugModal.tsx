@@ -3,6 +3,7 @@ import { X, Copy, Download, Trash2, Bug, Cpu, Monitor, Smartphone, Fingerprint, 
 import { debugLogger, type DebugLogEntry } from '../game/debugLogger';
 import type { GameState, Settings } from '../game/types';
 import type { Toast } from './ToastStack';
+import { downloadPlayDumpStaff } from '../game/playTranscript';
 
 interface Props {
   state: GameState;
@@ -52,6 +53,15 @@ export function DebugModal({ state, settings, onClose, addToast }: Props) {
   const handleDownload = () => {
     debugLogger.downloadUnifiedLog(state, settings, filter === 'error' ? 'error' : 'event');
     addToast('Downloaded synaptic-debug-latest.json + session file', 'success');
+  };
+
+  const handleDownloadPlay = () => {
+    if (!state.log?.length) {
+      addToast('No play log to download.', 'info');
+      return;
+    }
+    downloadPlayDumpStaff(state);
+    addToast('Downloaded play (.md + .json)', 'success');
   };
 
   const handleClear = () => {
@@ -237,6 +247,15 @@ export function DebugModal({ state, settings, onClose, addToast }: Props) {
           >
             <Copy size={16} />
             Copy full session log
+          </button>
+          <button
+            onClick={handleDownloadPlay}
+            className="flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 text-sm font-medium transition-colors"
+            title="Download this play"
+            aria-label="Download play"
+          >
+            <Download size={16} />
+            Download play
           </button>
           <button
             onClick={handleDownload}

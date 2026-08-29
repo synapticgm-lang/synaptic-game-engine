@@ -1,8 +1,10 @@
 /**
- * B045 — Daily milestone XP: +20 on first quest objective tick per UTC day (LitRPG retention).
+ * B045 — Daily milestone XP: +20 on first real quest objective tick per UTC day (LitRPG retention).
+ * Look-around / inspect-room / explore-cell / bearings-style ticks do not count.
  */
 
 import type { GameState, Quest } from './types';
+import { isBearingsStyleObjective, isLookAroundAction } from './sandboxXp';
 
 export const DAILY_QUEST_MILESTONE_XP = 20;
 
@@ -14,12 +16,13 @@ function hasAward(keys: string[] | undefined, key: string): boolean {
   return (keys ?? []).includes(key);
 }
 
-/** First quest objective completion of the UTC day earns a bonus milestone. */
+/** First real quest objective completion of the UTC day earns a bonus milestone. */
 export function applyDailyQuestMilestone(
   state: GameState,
-  opts: { questsBefore: Quest[]; questsAfter: Quest[] }
+  opts: { questsBefore: Quest[]; questsAfter: Quest[]; playerAction?: string }
 ): { xp: number; note: string; awardKey: string } | null {
   if (state.engineMode !== 'litrpg') return null;
+  if (isLookAroundAction(opts.playerAction ?? '')) return null;
 
   const day = utcDayKey();
   const awardKey = `daily-quest-tick:${day}`;
@@ -34,6 +37,7 @@ export function applyDailyQuestMilestone(
     );
     for (const obj of after.objectives ?? []) {
       if (!obj.completed || beforeDone.has(obj.id)) continue;
+      if (isBearingsStyleObjective(obj.description)) continue;
       return {
         xp: DAILY_QUEST_MILESTONE_XP,
         note: `XP Gained: ${DAILY_QUEST_MILESTONE_XP} (daily quest milestone)`,

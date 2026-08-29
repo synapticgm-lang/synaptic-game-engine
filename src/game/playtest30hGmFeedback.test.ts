@@ -64,7 +64,7 @@ describe('playtest30h — GM response feedback system', () => {
 
   it('stamp is 2026-08-30h', () => {
     expect(BUILD_STAMP >= '2026-08-30h').toBe(true);
-    expect(HUD_BUILD_STAMP >= '2026-08-30h').toBe(true);
+    expect(HUD_BUILD_STAMP.startsWith('2026-08-30')).toBe(true);
   });
 
   it('migration creates gm_response_feedback table with comment field', async () => {

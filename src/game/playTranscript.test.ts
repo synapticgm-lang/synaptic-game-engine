@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import type { LogEntry } from './types';
 import { createInitialState } from './defaults';
 import {
+  buildPlayDump,
   buildPlayTranscript,
   playTranscriptFilename,
   resolveOfferedChoices,
@@ -150,5 +151,10 @@ describe('playTranscript', () => {
     const turn2 = md.slice(md.indexOf('## Turn 2 — GM'));
     expect(turn2).not.toMatch(/## Turn 2 — GM[\s\S]*?### Options offered/);
     expect(playTranscriptFilename(state)).toBe('synaptic-transcript-save-abc-123.md');
+    const dump = buildPlayDump(state);
+    expect(dump).toContain('## Loop review');
+    expect(dump).toContain('## Turns (JSONL)');
+    expect(dump).toContain('Bible:');
+    expect(dump).not.toMatch(/eval harness|test mode/i);
   });
 });

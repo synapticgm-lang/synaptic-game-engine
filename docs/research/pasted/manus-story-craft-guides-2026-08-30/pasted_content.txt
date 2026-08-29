@@ -1,0 +1,158 @@
+WS-STORY: Mode writing-craft guides for SynapticGM (LitRPG / Tabletop / Story RPG / PYOA)
+
+COMMISSION REQUEST
+
+Please research and deliver: a SynapticGM-ready writing-craft constitution for the four live engine modes — how to write a turn of story in each mode — thinned so it can become short AUTHORITY lines, not another mandate pile.
+
+This is NOT another quality-governance / detector pack. We already have rails and ledgers. We do NOT have a how-to for writing PYOA vs tabletop vs story RPG vs LitRPG.
+
+---
+
+PROBLEM STATEMENT
+
+Player + founder evidence (2026-08-30):
+- Testers and John: PYOA is very repetitive; LitRPG too.
+- John: “I don’t want any mode to be repetitive unless player asks for something to be repeated.”
+- John: “being repetitive would be a do not do rule when write stories. have we not got a guide of what to do and not do in stories to support guiding the AI?”
+- John: “also check if we have a guide to writing storys and text based games to support the ai. if we dont please give me a manus prompt for that. pyoa, table top games, rpg, litrpg there must be guides for all these out there.”
+
+What already exists (DO NOT redo):
+
+(a) LIVE prompt rails the GM sees (thin, already shipped):
+- src/game/situationPacket.ts — AUTHORITY + PROSE LICENSE
+- src/game/fluidProseRails.ts — rhythm / tone / one-beat / NO RECYCLE bullet
+- src/game/gmVoiceProfile.ts — NEVER-LINES (diction, not craft)
+- src/game/systemPrompt.ts / masterPrompt.ts — inventory / kit / presence authority
+
+(b) Research constitutions (receipts / anti-patterns, NOT writing craft):
+- docs/research/pasted/manus-big-changes-2026-08-27/ T1 Quality-Governance Constitution, T4 Per-Mode Deterministic Experience Specifications, T10 Ranked Anti-Patterns
+- docs/research/pasted/fluid-natural-gm-chat-manus-2026-08-19/ Fluid GM Chat Constitution
+- docs/research/pasted/manus-ws-4-encounter-bible-2026-08-28/ encounter constitution
+- docs/research/pasted/manus-ws-5-pyoa-persistence-2026-08-28/ branch persistence (ledger, not prose craft)
+- docs/research/pasted/manus-ws-2-npc-roles-memory-2026-08-28/ NPC roles (lifecycle, not dialogue craft)
+- docs/research/pasted/manus-ws-7-social-gameplay-2026-08-28/ social gameplay
+
+(c) Code ledgers already enforcing some of this (2026-08-30R):
+- semanticLoopDetector / beatFingerprint near-clone retry
+- optionDiversityContract + ChoiceCompiler hub-beat / inspect exhaustion
+- qualityGovernance rejectClone on all turns unless playerAsksRepeat
+- stall-pad recycle filter unless player asked continue/repeat
+- Free no longer soft-skips same-beat unless the player asked to keep doing X
+
+What’s missing:
+- A real writing-craft guide: pacing, choice grammar, branch structure, voice, anti-repetition, mode-specific “grammar of play”
+- Public, citable prior art turned into SynapticGM do / don’t per mode
+- Rules short enough to survive the 29d prompt diet (John already rejected mandate-heavy 27w piles)
+
+---
+
+PRODUCT CONSTRAINTS (must honor)
+
+SynapticGM is a hosted AI RPG (browser + Android). Four engine modes:
+
+| Mode | Saved key | Flagship feel | Must NOT become |
+|---|---|---|---|
+| LitRPG | litrpg | System chrome after story; honest XP/HP; inspect once | MMO recap / same cell essay / fake XP |
+| Tabletop Fantasy | dnd | Fair rulings, fail-forward, spotlight, not a novel | Boxed-text dump / railroad / unnamed D&D setting IP |
+| Story RPG | rpg | Leverage, relationship, moral pressure | Combat-default / karma meter / stolen PC interiority |
+| Pick Your Own Adventure | pyoa | Decisive forks, branch lock, endings | Four paraphrases of one path / Wait-Wait-Wait crisis loop |
+
+Writer: Free = Gemini 2.5 Flash Lite (ignores long mandate piles). Mid writer stays OFF.
+Code owns facts (kit, exits, presence, HP, quests, map). Prose dramatizes committed outcomes.
+Anti-repetition is HARD: do not recycle a beat / location essay / crisis line / choice pad unless the player asked to repeat or restate. “Keep searching / keep walking” is continuation — new concrete details, not the last paragraph again.
+No licensed worlds: no named D&D settings, no Solo Leveling, no Wandering Inn copy, no Blizzard/WoW, no Capcom. Public-domain craft + original examples only.
+Kid Mode exists — keep examples clean.
+
+---
+
+TARGET DELIVERABLES (10 items)
+
+D1: Source inventory (citable, public)
+Format: Markdown table
+For each mode, 8–15 public sources with URL, author, year, what craft lesson it gives, license/citation note.
+Must include (or justify omission):
+- PYOA / CYOA / gamebooks: ChooseCo-style choice grammar commentary that is freely citable; Choice of Games ChoiceScript docs; “standard pattern of failed choices”; fake-choice vs real fork
+- Tabletop: Apocalypse World / PbtA public SRD-adjacent advice only if freely citable; OSR fail-forward essays; “don’t write a novel, run a game”; spotlight / prep-vs-play (The Alexandrian, Justin Alexander — if public); Blades in the Dark public SRD principles if citable
+- Story / narrative RPG: Monsterhearts / PbtA strings-and-leverage public commentary; “play to find out”; relationship clocks
+- LitRPG / progression: craft essays on System voice vs story (NOT licensed series recaps); honest rewards; inspect-not-loop
+- Interactive fiction / text games: Emily Short essays; Sam Kabo Ashwell “Standard Patterns in Choice-Based Games”; Twine Cookbook / IFComp postmortems; parser-IF “why examine loops die”; Inform / IF Theory
+Mark anything that cannot be quoted (copyright) as “cite-only, paraphrase”.
+
+D2: Per-mode do / don’t constitution (the main ask)
+Format: One markdown file, four sections (litrpg / dnd / rpg / pyoa)
+Each section:
+- 8–12 DO rules (how to write the next turn)
+- 8–12 DON’T rules (including anti-repetition)
+- 1 worked original example (before / after) using SynapticGM original names only (Summoned Pact / Cursed Keep / Salt Road or Cape District / Thornferry or Vesper-Glass — no licensed places)
+- 3 “AUTHORITY line” candidates ≤ 240 chars that a prompt diet can keep
+Shared hard rule in every mode: Do not recycle a prior beat, location essay, crisis line, or choice pad unless the player asked to repeat or restate.
+
+D3: Choice grammar
+Format: Table + short prose
+- Real fork vs fake choice vs delay-the-same-crisis
+- PYOA branch lock / delayed consequence / no “buy time” pad after lock
+- Tabletop: investigate / position / talk / disengage as distinct outcomes
+- Story RPG: leverage / moral / relationship — three different futures
+- LitRPG: Direct / Diplomatic / Solitary — not four Inspect-the-same-cell chips
+Anti-pattern: Wait-Wait-Wait, inspect loop, same NPC topic, same crisis line
+
+D4: Turn shape (one beat)
+Format: Per-mode reply skeleton (5 lines max each)
+What MUST happen in the first 2 sentences vs what belongs after (System chrome, STATUS, dice receipt).
+Value floor vs “don’t novelize” tension — resolve it honestly per mode (tabletop shorter; LitRPG story-then-System; PYOA page-local).
+
+D5: Anti-repetition craft (not detector design)
+We already detect clones. Teach the WRITER:
+- When restating is correct (player said “say that again”)
+- When continuation must still be new (keep searching the same room → new angle or empty-honest)
+- How to advance a location without a new map pin
+- How to keep an NPC without repeating their first speech
+- How to keep a PYOA crisis hot without reprinting the same paragraph
+
+D6: Ranked anti-patterns (writing-only)
+Format: Ranked list like T10, but craft not engineering
+Top 15 things Gemini Flash Lite actually does (location essay recycle, crisis reprint, pad paraphrase, inspect drip, stranger lecture). Rejection criteria a human editor would use.
+
+D7: Thinning map (27w lesson)
+Format: Table
+For each D2 rule: keep as AUTHORITY line / keep as ledger (code already owns it) / drop.
+Honest: Flash Lite ignores long piles. Prefer ≤ 1 new AUTHORITY sentence per mode plus ledger.
+
+D8: Implementation backlog
+Format: CSV + markdown (same shape as T9 / WS-2 D9)
+Columns: id, mode, priority (P0/P1/P2), owner (prompt vs ledger vs eval), effort, depends-on, acceptance test
+Do NOT propose a new Continuity-Warden LLM critic. Do NOT propose Mid writer. Do NOT touch WOF.
+
+D9: Eval / critic addendum
+Format: 12 yes/no gates a Gemini critic can score on a 20–50 turn transcript without inventing setting IP
+Include: no recycled beat unless player asked; distinct choice outcomes; mode-correct turn shape.
+
+D10: Executive summary (1 page)
+What to wire this week vs research-only. Honest score ceiling if we only thin AUTHORITY vs if we also ship 2–3 ledger items.
+
+---
+
+METHOD
+
+- NEW Manus project. Research only — no game code.
+- Public sources only. Quote sparingly; paraphrase copyrighted craft books.
+- Filename prefix: SynapticGM_story_craft_guides_2026-08-30
+- Attach if John uploads: this prompt; docs/research/story-do-dont-live-rails-2026-08-30r.md; T4 + T10 from manus-big-changes-2026-08-27; fluidProseRails.ts; situationPacket AUTHORITY block; one PYOA + one LitRPG Gemini review from docs/bugs/gemini-reviews-2026-08-27/
+- Do not invent SynapticGM features that contradict Path A authority inversion (ArcDirector / BeatContract / ChoiceCompiler already exist).
+- Timeline: 4–6 research days.
+
+---
+
+OUT OF SCOPE
+
+- WOF / World of Fantasy
+- Mid writer / stagnation writer upgrade
+- New LLM critic path
+- Licensed setting bibles
+- Rewriting T1 quality constitution (point at it; don’t replace)
+
+---
+
+SUCCESS LOOKS LIKE
+
+John can paste 4 short AUTHORITY lines (one per mode) and a one-page do/don’t that a human writer would recognize as craft — not another “DO NOT invent items” pile.

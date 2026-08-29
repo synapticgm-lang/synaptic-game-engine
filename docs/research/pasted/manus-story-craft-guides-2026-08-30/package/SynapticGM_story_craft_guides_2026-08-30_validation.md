@@ -1,0 +1,63 @@
+# Validation Report
+
+- PASS — D1 present
+- PASS — D2 present
+- PASS — D3 present
+- PASS — D4 present
+- PASS — D5 present
+- PASS — D6 present
+- PASS — D7 present
+- PASS — D8 present
+- PASS — D9 present
+- PASS — D10 present
+- PASS — `litrpg` mode present
+- PASS — `dnd` mode present
+- PASS — `rpg` mode present
+- PASS — `pyoa` mode present
+- PASS — litrpg DO count 8-12 (10)
+- PASS — litrpg DONT count 8-12 (10)
+- PASS — litrpg shared hard rule exact
+- PASS — litrpg worked before/after
+- PASS — litrpg exactly 3 authority candidates (3)
+- PASS — litrpg authority 1 <=240 chars (203)
+- PASS — litrpg authority 2 <=240 chars (139)
+- PASS — litrpg authority 3 <=240 chars (170)
+- PASS — dnd DO count 8-12 (10)
+- PASS — dnd DONT count 8-12 (10)
+- PASS — dnd shared hard rule exact
+- PASS — dnd worked before/after
+- PASS — dnd exactly 3 authority candidates (3)
+- PASS — dnd authority 1 <=240 chars (183)
+- PASS — dnd authority 2 <=240 chars (167)
+- PASS — dnd authority 3 <=240 chars (174)
+- PASS — rpg DO count 8-12 (10)
+- PASS — rpg DONT count 8-12 (10)
+- PASS — rpg shared hard rule exact
+- PASS — rpg worked before/after
+- PASS — rpg exactly 3 authority candidates (3)
+- PASS — rpg authority 1 <=240 chars (189)
+- PASS — rpg authority 2 <=240 chars (166)
+- PASS — rpg authority 3 <=240 chars (148)
+- PASS — pyoa DO count 8-12 (10)
+- PASS — pyoa DONT count 8-12 (10)
+- PASS — pyoa shared hard rule exact
+- PASS — pyoa worked before/after
+- PASS — pyoa exactly 3 authority candidates (3)
+- PASS — pyoa authority 1 <=240 chars (181)
+- PASS — pyoa authority 2 <=240 chars (162)
+- PASS — pyoa authority 3 <=240 chars (174)
+- PASS — pyoa_sources count 8-15 (11)
+- PASS — dnd_sources count 8-15 (10)
+- PASS — rpg_sources count 8-15 (9)
+- PASS — litrpg_sources count 8-15 (10)
+- PASS — D6 has 15 ranked rows
+- PASS — D7 maps 80 rules
+- PASS — D9 has 12 gates
+- PASS — CSV required columns (['id', 'mode', 'priority', 'owner', 'effort', 'depends-on', 'acceptance test'])
+- PASS — CSV has backlog items (18)
+- PASS — CSV priorities valid
+- PASS — CSV owners valid
+- PASS — All citations defined (missing=[])
+- PASS — At least 20 references (27)
+
+**Summary:** 59/59 checks passed.

@@ -23,6 +23,7 @@ describe('26t sandbox XP FO3 drip', () => {
   it('narrows look-around so named examine is not suppressed', () => {
     expect(isLookAroundAction('Look around')).toBe(true);
     expect(isLookAroundAction('Inspect the immediate surroundings')).toBe(true);
+    expect(isLookAroundAction('explore the cell')).toBe(true);
     expect(isLookAroundAction('Examine the notice slate')).toBe(false);
     expect(isLookAroundAction('Ask about Earth junk prices')).toBe(false);
     expect(isLookAroundAction('Travel toward Lowmarket')).toBe(false);

@@ -59,6 +59,7 @@
 | 15f–16a era | First Blood / Wave leak | Lock until opening complete; retire leaked saves |
 | 20e | Alone still “hear Pellane” | `adaptStarterQuestsForArrival` |
 | 20e open | Continue of pre-20e alone save | Soft repair via Error Repair Warden rev bump |
+| **26o/30f** | Explore-cell + bearings paid +12 quest-tick and +20 daily | `isLookAroundAction` + bearings-style skip in `sandboxXp` / `dailyMilestoneLedger` |
 
 ### Continuity (Class D)
 

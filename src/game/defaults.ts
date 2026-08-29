@@ -147,6 +147,7 @@ export function createInitialState(storyName?: string, engineMode: EngineMode = 
 export function createDefaultSettings(): Settings {
   return {
     ttsEnabled: false,
+    ttsVoiceURI: '',
     sttEnabled: false,
     diceAnimation: 'normal',
     contentMode: 'adult',

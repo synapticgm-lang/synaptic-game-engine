@@ -29,6 +29,7 @@ import {
 import { buildGovernanceSnapshotLines } from './qualityGovernance';
 import { formatWorldAtlasBlock } from './worldAtlas';
 import { formatWorldMapAuthorityBlock } from './worldMapAuthority';
+import { formatModeStoryAuthorityLine } from './fluidProseRails';
 // WS-2 Wave C: NPC Memory sections
 import {
   buildNpcPacket,
@@ -322,8 +323,9 @@ export function formatSceneSnapshotForPrompt(state: GameState): string {
   lines.push('');
   // 29d — one AUTHORITY + PROSE LICENSE block (no duplicate STAGNATION / QUEST essays)
   lines.push(
-    'AUTHORITY: SNAPSHOT + ledger win on facts (kit, exits, presence, HP, outcomes). Do not invent items, doors, named people, or numeric results absent above.'
+    'AUTHORITY: SNAPSHOT + ledger win on facts (kit, exits, presence, HP, outcomes). Do not invent items, doors, named people, or numeric results absent above. Do not recycle a prior beat, location essay, crisis line, or choice pad unless the player asked to repeat or restate.'
   );
+  lines.push(formatModeStoryAuthorityLine(state.engineMode));
   lines.push(
     'PROSE LICENSE: Full artistic freedom on sensory detail, metaphor, pacing, and NPC manner — dramatize the OUTCOME token; never invert it. Stakes stay honest (no auto-win, no invented kit).'
   );

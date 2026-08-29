@@ -12,7 +12,7 @@ import { parseLooseItemPickup, pickUpLooseItem } from './looseItems';
 import { applyPlayPhaseAfterHp, deathQuestReceipt, isPlayInputLocked } from './playPhase';
 import { applyQuestHooksFromLedger } from './questHooks';
 import { loadGame, saveGame, deleteGame, loadSettings, saveSettings, exportSave, importSave } from './db';
-import { downloadPlayTranscript, withOfferedChoices } from './playTranscript';
+import { downloadPlayDump, withOfferedChoices } from './playTranscript';
 import {
   syncGameToCloud,
   fetchLatestCloudSave,
@@ -270,6 +270,7 @@ import {
   filterGovernanceChoices,
   processMetaInput,
 } from './qualityGovernance';
+import { playerAsksRepeat, playerAsksContinuation } from './semanticLoopDetector';
 import {
   runArcDirectorBeforeGm,
   formatArcDirectorMandateBlock,
@@ -422,8 +423,8 @@ interface VideoGenJob {
 }
 
 type PostCommitSpeech =
-  | { kind: 'sequence'; texts: string[] }
-  | { kind: 'text'; text: string };
+  | { kind: 'sequence'; texts: string[]; entryId?: string }
+  | { kind: 'text'; text: string; entryId?: string };
 
 interface PostCommitTurnEffects {
   snapshot: GameState;
@@ -612,7 +613,7 @@ export function useGame() {
   const [postCommitTurnEpoch, setPostCommitTurnEpoch] = useState(0);
   const postCommitTurnRunningRef = useRef(false);
 
-  const voice = useVoice(settings.ttsEnabled, settings.voicePackId);
+  const voice = useVoice(settings.ttsEnabled, settings.voicePackId, settings.ttsVoiceURI);
 
   const clearRevealTimer = useCallback(() => {
     if (revealTimerRef.current) {
@@ -1544,12 +1545,6 @@ export function useGame() {
             });
           }
 
-          if (batch.speech.kind === 'sequence') {
-            voice.speakSequence(batch.speech.texts);
-          } else {
-            voice.speak(batch.speech.text);
-          }
-
           for (const imageJob of batch.imageJobs) {
             enqueueImageGen(imageJob);
           }
@@ -1566,7 +1561,7 @@ export function useGame() {
     };
 
     void runPostCommitEffects();
-  }, [postCommitTurnEpoch, enqueueImageGen, enqueueVideoGen, persist, voice]);
+  }, [postCommitTurnEpoch, enqueueImageGen, enqueueVideoGen, persist]);
 
   // Explicitly defined loadDungeon function to resolve the ReferenceError
   const loadDungeon = useCallbackRef((blueprintId: string, dungeonName: string, isProcedural: boolean = false, tier: MapTier = 4, nodeCount?: number) => {
@@ -1748,6 +1743,11 @@ export function useGame() {
         'info'
       );
       return;
+    }
+
+    // Unlock TTS in this tap so the later async GM speak is allowed on Android Chrome.
+    if (settingsRef.current.ttsEnabled) {
+      voice.primeTts();
     }
 
     if (
@@ -2324,6 +2324,9 @@ export function useGame() {
         };
         stateRef.current = committed;
         setState(committed);
+        if (settingsRef.current.ttsEnabled) {
+          voice.speak(cleanOpening, { entryId: openingGm.id });
+        }
         void persist(committed);
         if (openingUnlocks.length) setUnlockedQuests(openingUnlocks);
         if (
@@ -2741,17 +2744,24 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
           liveCurrent.campaignBibleId
         );
         const nearClone = isNearClone(probeText, liveCurrent.recentBeatFingerprints ?? []);
+        const askedRepeat = playerAsksRepeat(sanitizedInput);
+        const askedContinue = playerAsksContinuation(sanitizedInput);
+        // Free may skip a moderate same-beat retry only when the player asked to keep doing X.
+        // Near-clones and unprompted recycle always retry — all modes.
         const freeSoftSameBeatOnly =
           effectiveWriterTier(settingsRef.current.subscriptionTier ?? 'free') === 'free'
           && sameBeat
           && !nearClone
           && !travelAction
+          && askedContinue
+          && !askedRepeat
           && storyHasBody(probeText)
           && obligationCoverage.ok
           && !isUnresolvedActionNarrative(sanitizedInput, probeText, intentForMandate, previousGm)
           && !probeLocks.some((l) => l.kind === 'weapon' || l.kind === 'cleared');
         const needsStoryRetry =
-          !softLedgerOnly
+          !askedRepeat
+          && !softLedgerOnly
           && !freeSoftSameBeatOnly
           && (!storyHasBody(probeText)
             || isUnresolvedActionNarrative(sanitizedInput, probeText, intentForMandate, previousGm)
@@ -3029,7 +3039,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
       });
       cleanText = ensureTurnProse(cleanText, sanitizedInput);
       {
-        const govProse = applyGovernanceToProse(liveCurrent, cleanText);
+        const govProse = applyGovernanceToProse(liveCurrent, cleanText, sanitizedInput);
         cleanText = govProse.prose;
         if (govProse.notes.length) warden.notes.push(...govProse.notes);
       }
@@ -3105,7 +3115,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
         sanitizedInput
       );
       {
-        const govChoices = filterGovernanceChoices(suggestionState, finalChoices);
+        const govChoices = filterGovernanceChoices(suggestionState, finalChoices, sanitizedInput);
         finalChoices = govChoices.choices;
         if (govChoices.notes.length) warden.notes.push(...govChoices.notes);
       }
@@ -3976,7 +3986,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
         let sandboxKeys = sandboxXp.awardKeys;
         const dailyMilestone = applyDailyQuestMilestone(
           { ...workingState, sandboxAwardKeys: sandboxKeys },
-          { questsBefore: questsAtTurnStart, questsAfter: updatedQuests }
+          { questsBefore: questsAtTurnStart, questsAfter: updatedQuests, playerAction: sanitizedInput }
         );
         if (dailyMilestone) {
           sandboxNotes.push(dailyMilestone.note);
@@ -4251,8 +4261,8 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
         imageJobs: postCommitImageJobs,
         videoJob: postCommitVideoJob,
         speech: isComicView && comicPanelsForLog.length > 0
-          ? { kind: 'sequence' as const, texts: buildComicSpeechQueue(comicPanelsForLog) }
-          : { kind: 'text' as const, text: cleanText },
+          ? { kind: 'sequence' as const, texts: buildComicSpeechQueue(comicPanelsForLog), entryId: gmEntry.id }
+          : { kind: 'text' as const, text: cleanText, entryId: gmEntry.id },
       };
 
       // Pending-turn confirm is off for normal play — send action, get story back immediately.
@@ -4301,6 +4311,13 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
         stateRef.current = mergedState;
         setState(mergedState);
         setRestoreDraft(null);
+        if (settingsRef.current.ttsEnabled) {
+          if (effectsPayload.speech.kind === 'sequence') {
+            voice.speakSequence(effectsPayload.speech.texts, { entryId: gmEntry.id });
+          } else {
+            voice.speak(effectsPayload.speech.text, { entryId: gmEntry.id });
+          }
+        }
         try {
           await persist(mergedState);
         } catch (persistError) {
@@ -4421,6 +4438,13 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
     const effects = pendingEffectsRef.current;
     pendingEffectsRef.current = null;
     if (effects) {
+      if (settingsRef.current.ttsEnabled) {
+        if (effects.speech.kind === 'sequence') {
+          voice.speakSequence(effects.speech.texts, { entryId: effects.speech.entryId });
+        } else {
+          voice.speak(effects.speech.text, { entryId: effects.speech.entryId });
+        }
+      }
       postCommitTurnEffectsRef.current.push({ ...effects, snapshot: committed });
       setPostCommitTurnEpoch((epoch) => epoch + 1);
     }
@@ -4498,6 +4522,9 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
     useUsualSelf?: boolean,
   ) => {
     debugLogger.beginPlaySession('new-game');
+    if (settingsRef.current.ttsEnabled) {
+      voice.primeTts();
+    }
     if (!googleUserRef.current || googleUserRef.current.isGuest) {
       addToast('Sign in with Google to play.', 'error');
       setBootPhase('auth');
@@ -4829,6 +4856,9 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
       };
       stateRef.current = committed;
       setState(committed);
+      if (settingsRef.current.ttsEnabled) {
+        voice.speak(cleanOpening, { entryId: openingGm.id });
+      }
       void persist(committed);
       if (openingUnlocks.length) setUnlockedQuests(openingUnlocks);
       if (
@@ -5318,11 +5348,11 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
   const handleDownloadTranscript = useCallbackRef(() => {
     const current = stateRef.current;
     if (current?.log?.length) {
-      downloadPlayTranscript(current);
+      downloadPlayDump(current);
       return;
     }
     void loadGame().then((local) => {
-      if (local?.log?.length) downloadPlayTranscript(local);
+      if (local?.log?.length) downloadPlayDump(local);
       else addToast('No play log to download.', 'error');
     });
   });

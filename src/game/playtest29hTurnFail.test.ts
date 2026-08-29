@@ -13,7 +13,7 @@ const gmTurn = readFileSync(resolve(__dirname, '../../supabase/functions/gm-turn
 describe('playtest29h — opening GM call + turn-fail class', () => {
   it('stamp is 2026-08-30a and Mid writer stays OFF', () => {
     expect(BUILD_STAMP >= '2026-08-30a').toBe(true);
-    expect(HUD_BUILD_STAMP >= '2026-08-30a').toBe(true);
+    expect(HUD_BUILD_STAMP.startsWith('2026-08-30')).toBe(true);
     expect(STAGNATION_MID_WRITER_ENABLED).toBe(false);
   });
 

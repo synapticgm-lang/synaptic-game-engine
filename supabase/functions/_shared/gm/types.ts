@@ -1067,6 +1067,8 @@ export const ART_STYLE_PRESETS: Array<{ value: ArtStylePreset; label: string; de
 
 export interface Settings {
   ttsEnabled: boolean;
+  /** Browser speechSynthesis voiceURI. Empty = auto (en-US / en-GB / first English). */
+  ttsVoiceURI: string;
   sttEnabled: boolean;
   diceAnimation: DiceAnimationMode;
   contentMode: ContentMode;
