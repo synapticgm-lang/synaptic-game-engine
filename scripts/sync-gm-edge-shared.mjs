@@ -38,6 +38,7 @@ const FILES = [
   'seededRng.ts',
   'dungeonSeed.ts',
   'placeAuthority.ts',
+  'placeUtils.ts',
   'places.ts',
   'campaignMemory.ts',
   'claimGrounding.ts',
