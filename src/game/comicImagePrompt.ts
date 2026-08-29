@@ -2,6 +2,7 @@ import type { ArtStylePreset, EngineMode, Settings } from './types';
 import type { CampaignArchetype } from './archetypes';
 import { formatWorldCanonForPrompt, kidSafeArtDirective } from './visualCanon';
 import { hostedImagesAllowed } from './testLab';
+import { formatSceneArtLock, type SceneArtFactsInput } from './sceneArtLock';
 
 export type ImagePromptKind =
   | 'comic-panel'
@@ -24,6 +25,10 @@ export interface ImagePromptContext {
   campaignPremise?: string;
   campaignArchetype?: CampaignArchetype;
   campaignBibleId?: string | null;
+  /** Last committed GM prose — SCENE AUTHORITY for plates. */
+  storyText?: string;
+  sceneFacts?: SceneArtFactsInput | null;
+  pickedHook?: string;
 }
 
 /**
@@ -176,6 +181,14 @@ function withDeterministicContext(scenePrompt: string, context?: ImagePromptCont
   }
   if (context?.playerActionContext?.trim()) {
     parts.push(`The scene must visually depict the player's action: "${context.playerActionContext.trim()}"`);
+  }
+  if (context?.storyText || context?.sceneFacts || context?.currentLocation) {
+    parts.push(formatSceneArtLock({
+      storyText: context.storyText,
+      pickedHook: context.pickedHook,
+      location: context.currentLocation,
+      sceneFacts: context.sceneFacts,
+    }));
   }
   parts.push(scrubFranchiseStyleLeak(scenePrompt.trim()));
   if (context?.characterLook?.trim()) {

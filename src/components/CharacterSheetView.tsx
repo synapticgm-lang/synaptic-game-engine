@@ -33,7 +33,7 @@ export function CharacterSheetView({ state, uiThemeId }: Props) {
   return (
     <div className="flex h-full flex-col">
       <LayoutToggle layout={layout} onChange={setLayout} />
-      <div className="flex-1 overflow-y-auto p-3 sm:p-4">
+      <div className="sgm-modal-body flex-1 p-3 sm:p-4">
         {layout === 'dnd' && <DndDashboard state={state} uiThemeId={uiThemeId} />}
         {layout === 'litrpg' && <LitRpgStatus state={state} uiThemeId={uiThemeId} />}
         {layout === 'cards' && <PreMadeCards state={state} />}

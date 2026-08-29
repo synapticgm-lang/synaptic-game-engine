@@ -12,13 +12,15 @@ import { detectSceneContradiction } from './sceneFacts';
 import { detectFactLockViolations } from './factLocks';
 import { resolveSeededRarity } from './dungeonSeed';
 import { scrubInventedProperNouns } from './narrativeScrub';
-import { applyProseWarden, applyProseWardenAsync, calculateCrowdSize, collectSceneObjectNames } from './proseWarden';
+import { applyProseWarden, applyProseWardenAsync, crowdSizeForWarden, collectSceneObjectNames } from './proseWarden';
+import { hookLockForWarden } from './hookLock';
 import { findManifestInventions } from './sceneManifest';
 import { continuityStrict } from './opsKillSwitches';
 import { isInteriorMap } from './placeAuthority';
 import { listInteriorExitsFromHere } from './mapEngine';
 import { isAloneArrivalOpening } from './openingEstablishment';
 import { buildBindingConstraints, detectConstraintViolations, repairConstraintViolations } from './bindingConstraints';
+import { isChromePersonToken } from './chromeAuthority';
 
 export interface WardenResult {
   /** Events allowed after sheet checks. */
@@ -236,8 +238,11 @@ export async function runWarden(
     aloneArrival: isAloneArrivalOpening(state),
     hasMappedDoorExits: doorish.length > 0,
     adjacentRoomNames: exits.map((e) => e.name),
-    crowdSize: calculateCrowdSize(state),
-    crowdPresent: state.sceneFacts?.crowd === 'present',
+    crowdSize: crowdSizeForWarden(state, narrativeText),
+    crowdPresent:
+      state.sceneFacts?.crowd === 'present' ||
+      state.sceneFacts?.crowd === 'sparse' ||
+      crowdSizeForWarden(state, narrativeText) > 0,
     currentTimeOfDay: state.sceneFacts?.timeOfDay,
     previousTimeOfDay: prevFacts?.timeOfDay,
     isIndoor: state.sceneFacts?.indoor,
@@ -250,7 +255,7 @@ export async function runWarden(
     lastGmProse:
       [...(state.log ?? [])].reverse().find((e) => e.role === 'gm')?.content ?? '',
     presentNames: (state.sceneFacts?.present ?? []).filter(
-      (n) => typeof n === 'string' && n.trim().length >= 2
+      (n) => typeof n === 'string' && n.trim().length >= 2 && !isChromePersonToken(n)
     ),
     groundedWeapons: undefined,
     playerName: state.character?.name,
@@ -258,6 +263,7 @@ export async function runWarden(
     recentlyClearedEncounter:
       state.arcDirector?.lastEncounterClearedTurn === state.turn ||
       state.arcDirector?.lastEncounterClearedTurn === state.turn - 1,
+    hookLock: hookLockForWarden(state, narrativeText),
   };
   
   const polishedBase = enableGrammarCheck

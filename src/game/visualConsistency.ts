@@ -2,6 +2,7 @@ import type { GameState, LoreCard } from './types';
 import { characterLikeness } from './inventoryArt';
 import { equippedWeaponName } from './ledgerCombat';
 import { formatWorldCanonForPrompt } from './visualCanon';
+import { formatSceneArtLock } from './sceneArtLock';
 
 /**
  * Visual Consistency Manager.
@@ -77,6 +78,11 @@ export function buildVisualConsistencyBlock(
     if (props.length) {
       lines.push(`Place anchors: ${props.join('; ')}`);
     }
+    lines.push(formatSceneArtLock({
+      storyText: state.sceneFacts?.lastBeat,
+      location: place.trim(),
+      sceneFacts: state.sceneFacts,
+    }));
   }
   lines.push(formatWorldCanonForPrompt(state));
   lines.push(

@@ -82,6 +82,8 @@ export function resolveThreatTier(state: GameState): number | null {
 
 export function resolveMapScale(state: GameState): MapScale {
   const dungeon = state.activeDungeon;
+  const camera = state.sceneFacts?.cameraLock;
+  if (camera?.scale === 'outdoor' && !isExplorableDungeon(dungeon)) return 'street';
   if (isInteriorMap(dungeon)) return 'interior';
   if (isStreetMap(dungeon)) return 'street';
   if (isExplorableDungeon(dungeon)) return 'dungeon';

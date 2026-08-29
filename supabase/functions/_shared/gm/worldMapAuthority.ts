@@ -5,7 +5,12 @@
 
 import type { WorldOutlineDef, WorldOutlineSettlement } from './worldOutlines.ts';
 import type { GameState, PlaceRecord, WorldAtlasState } from './types.ts';
-import { placeIdFromName } from './places.ts';
+import { placeIdFromName } from './placeUtils.ts';
+
+/** Normalize location name for comparison. */
+export function normalizeLocationName(name: string): string {
+  return name.trim().toLowerCase();
+}
 
 /** Quest / site tags that must match settlement biomes. */
 const BIOME_QUEST_ALLOW: Record<string, string[]> = {

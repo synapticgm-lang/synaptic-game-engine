@@ -93,7 +93,7 @@ const CHOICE_LINE_REGEX = /^\s*(?:\*\*|\*)?\s*(?:(?:Option\s+)?\d+[.):]|\[\d+\]|
 const NUMBERED_CHOICE_PREFIX =
   /(?:\*\*)?(?:(?:Option\s+)?\d+[.):]|\[\d+\]|\(\d+\))\s+(?:\*\*)?/i;
 const CHOICE_OFFER_VERBS =
-  /^(?:ask|inquire|inspect|examine|talk|speak|tell|approach|leave|walk away|refuse|offer|demand|listen|wait|search|look|follow|challenge|bow|kneel|accept|decline|press|probe|question|bargain|help|protect|thank|apologiz|observe|check|call|shout|whisper|confront|defy|agree)\b/i;
+  /^(?:ask|inquire|inspect|examine|talk|speak|tell|approach|leave|walk away|refuse|offer|demand|listen|wait|search|look|follow|challenge|bow|kneel|accept|decline|press|probe|question|bargain|help|protect|thank|apologiz|observe|check|call|shout|whisper|confront|defy|agree|scan|try|sit)\b/i;
 const IN_PROSE_OFFER_SENTENCE =
   /(?:^|[.!?]\s+)((?:Inquire about|Ask (?:the \w+|him|her|them)(?: to| about)|Ask about)\b[^.!?\n]{8,140})/gi;
 const MECHANIC_SYSTEM_BODY =
@@ -212,6 +212,11 @@ export function stripChoiceList(text: string): string {
   if (inlineIdx >= 0 && inlineIdx > result.length * 0.25) {
     result = result.slice(0, inlineIdx).trim();
   }
+  // Singleton numbered offer glued to the last sentence (Josie T0: "…mosaic. 1. Scan…").
+  result = result.replace(
+    /(?:^|[.!?]\s+)\d+[.)]\s+([^\n]{4,160})\s*$/g,
+    (full, body: string) => (looksLikeChoiceOffer(String(body ?? '')) ? (full.match(/^[.!?]/)?.[0] ?? '') : full)
+  );
   result = result.replace(/\s+\d+[.)]\s+what do you do\??\s*$/i, '').trim();
   // Singleton numbered / "Inquire about…" lines left in the paragraph are fake menus.
   result = stripHarvestedChoiceOffers(result);

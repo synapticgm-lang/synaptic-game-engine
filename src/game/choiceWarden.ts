@@ -7,6 +7,9 @@
 
 import type { GameState } from './types';
 import { choiceNamesUnnarratedObject, isBrokenChoiceLabel } from './choicePipeline';
+import { isNameOriginKitCoverChoice, isPlayDemand, playerEngagesOpeningCover } from './openingEstablishment';
+import { isLookAroundAction } from './sandboxXp';
+import { isChromeTalkChoice } from './chromeAuthority';
 
 /**
  * References that require story context to exist.
@@ -75,6 +78,14 @@ function lastGmStory(state: GameState): string {
   return '';
 }
 
+function lastPlayerAction(state: GameState): string {
+  for (let i = (state.log ?? []).length - 1; i >= 0; i--) {
+    const entry = state.log[i];
+    if (entry?.role === 'player' && entry.content) return entry.content;
+  }
+  return '';
+}
+
 /**
  * Check if a choice references context that doesn't exist in the story.
  */
@@ -122,10 +133,23 @@ export function filterInventedContextChoices(
     .join(' ');
 
   const pcName = state.character?.name;
+  const lastPlayer = lastPlayerAction(state);
 
   return choices.filter((choice) => {
     if (isBarePcNameChoice(choice, pcName)) {
       console.log(`[Choice Filter] Removed bare PC-name choice: "${choice}"`);
+      return false;
+    }
+    if (
+      isLookAroundAction(lastPlayer)
+      && !playerEngagesOpeningCover(lastPlayer)
+      && isNameOriginKitCoverChoice(choice)
+    ) {
+      console.log(`[Choice Filter] Removed name/origin/kit cover after inspect: "${choice}"`);
+      return false;
+    }
+    if (isPlayDemand(lastPlayer) && isNameOriginKitCoverChoice(choice)) {
+      console.log(`[Choice Filter] Removed name cover after demand: "${choice}"`);
       return false;
     }
     if (isBrokenChoiceLabel(choice)) {
@@ -149,6 +173,10 @@ export function filterInventedContextChoices(
     // Matrix-40: scrub damage turned NPCs into "the official" and polluted pads.
     if (/\bthe official\b|\ban official\b/i.test(choice)) {
       console.log(`[Choice Filter] Removed official-placeholder choice: "${choice}"`);
+      return false;
+    }
+    if (isChromeTalkChoice(choice)) {
+      console.log(`[Choice Filter] Removed chrome/slot talk pad: "${choice}"`);
       return false;
     }
     if (/\bthe official of the official\b|\bscan the official\b|\bapproach the official\b/i.test(choice)) {

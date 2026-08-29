@@ -12,6 +12,7 @@ export interface GmFeedbackRecord {
   user_id: string;
   save_id: string;
   turn_number: number;
+  log_entry_id?: string | null;
   feedback_type: GmFeedbackType;
   comment: string | null;
   created_at: string;
@@ -25,6 +26,8 @@ export interface GmFeedbackRecord {
 export interface SubmitGmFeedbackInput {
   saveId: string;
   turnNumber: number;
+  /** Per-bubble key so opening (turn 0) and later same-turn GM lines do not collide. */
+  logEntryId?: string | null;
   feedbackType: GmFeedbackType;
   comment?: string | null;
   gmStory?: string | null;
@@ -60,10 +63,13 @@ export async function submitGmFeedback(
     return { ok: false, error: 'Comment must be 500 characters or less.' };
   }
 
+  const logEntryId = (input.logEntryId ?? '').trim() || `turn-${input.turnNumber}`;
+
   const payload: Partial<GmFeedbackRecord> = {
     user_id: user.id,
     save_id: input.saveId,
     turn_number: input.turnNumber,
+    log_entry_id: logEntryId,
     feedback_type: input.feedbackType,
     comment: trimmedComment,
     gm_story: input.gmStory || null,
@@ -75,7 +81,7 @@ export async function submitGmFeedback(
   const { data, error } = await supabase
     .from('gm_response_feedback')
     .upsert(payload, {
-      onConflict: 'user_id,save_id,turn_number',
+      onConflict: 'user_id,save_id,log_entry_id',
       ignoreDuplicates: false,
     })
     .select()
@@ -94,20 +100,24 @@ export async function submitGmFeedback(
  */
 export async function getGmFeedback(
   saveId: string,
-  turnNumber: number
+  turnNumber: number,
+  logEntryId?: string | null
 ): Promise<GmFeedbackRecord | null> {
   if (!isSupabaseConfigured || !supabase) return null;
 
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return null;
 
-  const { data, error } = await supabase
+  const entryKey = (logEntryId ?? '').trim() || `turn-${turnNumber}`;
+
+  let query = supabase
     .from('gm_response_feedback')
     .select('*')
     .eq('user_id', user.id)
     .eq('save_id', saveId)
-    .eq('turn_number', turnNumber)
-    .maybeSingle();
+    .eq('log_entry_id', entryKey);
+
+  const { data, error } = await query.maybeSingle();
 
   if (error) {
     console.error('Failed to fetch GM feedback:', error);
@@ -122,7 +132,8 @@ export async function getGmFeedback(
  */
 export async function deleteGmFeedback(
   saveId: string,
-  turnNumber: number
+  turnNumber: number,
+  logEntryId?: string | null
 ): Promise<{ ok: boolean; error?: string }> {
   if (!isSupabaseConfigured || !supabase) {
     return { ok: false, error: 'Feedback is not available (Supabase not configured).' };
@@ -133,12 +144,14 @@ export async function deleteGmFeedback(
     return { ok: false, error: 'You must be signed in to delete feedback.' };
   }
 
+  const entryKey = (logEntryId ?? '').trim() || `turn-${turnNumber}`;
+
   const { error } = await supabase
     .from('gm_response_feedback')
     .delete()
     .eq('user_id', user.id)
     .eq('save_id', saveId)
-    .eq('turn_number', turnNumber);
+    .eq('log_entry_id', entryKey);
 
   if (error) {
     console.error('Failed to delete GM feedback:', error);

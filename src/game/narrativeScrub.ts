@@ -6,6 +6,7 @@
 import type { GameState } from './types';
 import { findUngroundedNamedClaims } from './suggestionValidation';
 import { isAloneArrivalOpening } from './openingEstablishment';
+import { realPresentPeople } from './chromeAuthority';
 
 const ALWAYS_ALLOW = new Set(
   [
@@ -95,10 +96,12 @@ function atNamedInterior(state: GameState): boolean {
 
 /** Prefer a grounded present role over the old default "the official" (matrix-40 leak). */
 function personSlotFromScene(state: GameState): GenericSlot {
-  const present = (state.sceneFacts?.present ?? [])
-    .map((p) => (typeof p === 'string' ? p : (p as { name?: string })?.name ?? ''))
-    .map((s) => s.trim())
-    .filter((s) => s.length > 1 && !/^(you|pc|player|unknown)$/i.test(s));
+  const present = realPresentPeople(
+    (state.sceneFacts?.present ?? [])
+      .map((p) => (typeof p === 'string' ? p : (p as { name?: string })?.name ?? ''))
+      .map((s) => s.trim())
+      .filter((s) => s.length > 1 && !/^(you|pc|player|unknown)$/i.test(s))
+  );
   if (present[0]) {
     const n = present[0];
     const bare = /^the\s+/i.test(n) ? n : `the ${n}`;

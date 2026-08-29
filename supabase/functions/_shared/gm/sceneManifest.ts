@@ -9,6 +9,7 @@ import { playerFacingLocation } from './locationName.ts';
 import { resolveDangerTier, resolveMapScale, dangerTierLabel, mapScaleLabel, isInteriorMap } from './placeAuthority.ts';
 import { introductionPermitForName } from './introductionPermit.ts';
 import { formatInteriorExploreAuthority, listInteriorExitsFromHere } from './mapEngine.ts';
+import { isChromePersonToken } from './chromeAuthority.ts';
 
 function isAloneScene(state: GameState): boolean {
   return state.openingEstablishment?.aloneArrival === true;
@@ -49,7 +50,7 @@ export function compileSceneManifest(state: GameState): SceneManifest {
   const alone = isAloneScene(state);
   if (!alone) {
     for (const who of state.sceneFacts?.present ?? []) {
-      if (who.trim()) roster.add(who.trim());
+      if (who.trim() && !isChromePersonToken(who)) roster.add(who.trim());
     }
   }
   for (const c of state.companions ?? []) {
@@ -132,7 +133,7 @@ export function formatSceneManifestForPrompt(state: GameState): string {
     : '';
   return `=== SCENE MANIFEST (AUTHORITY — reserved; do not invent outside this list) ===
 Revision: ${m.revision} | Turn: ${m.turn}
-Place: ${m.place}
+Location: ${m.place}
 Map scale: ${m.mapScale} | Danger: ${m.danger}
 Roster (who may be named as present): ${m.roster.join(', ') || 'player only'}
 Visible kit (player): ${m.visibleKit.join(', ') || 'none listed'}

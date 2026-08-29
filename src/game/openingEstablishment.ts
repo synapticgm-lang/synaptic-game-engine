@@ -11,6 +11,7 @@ import { isPlayerQuestion } from './actionResolution';
 import { pickQuickResponseButtons, supportsQuickResponseButtons, generateQuickResponse } from './quickResponseButtons';
 import { loadSettings } from './db';
 import { discoverLocation } from './locationDiscovery';
+import { isLookAroundAction } from './sandboxXp';
 
 const GENERIC_NAMES = /^(adventurer|survivor|unknown survivor|hero|wanderer|unknown)$/i;
 
@@ -154,6 +155,57 @@ function appendOpeningPlayerBubble(log: LogEntry[], turn: number, display: strin
       timestamp: Date.now(),
     },
   ];
+}
+
+/** Explicit name give or name-refuse — not a protest / send-me-back demand. */
+export function playerGivesOrRefusesName(raw: string): boolean {
+  const t = raw.replace(/\s+/g, ' ').trim();
+  if (!t) return false;
+  if (/\b(i refuse|i protest|i demand|send me|get me out)\b/i.test(t) && !/\bname\b/i.test(t)) {
+    return false;
+  }
+  if (extractGivenName(t)) return true;
+  return /\b(my name is|call me|i(?:'m| am) called|won'?t give|no name|won'?t say (?:my )?name|i (?:will )?not (?:give|say) (?:you )?(?:my )?name|i refuse (?:to )?(?:give|say) (?:my )?name)\b/i.test(
+    t
+  );
+}
+
+/**
+ * In-world demand / protest / send-me-back — play, not a failed name cover.
+ * “well send me back to my world!” must never become “still waiting for a name.”
+ */
+export function isPlayDemand(raw: string): boolean {
+  const t = raw.replace(/\s+/g, ' ').trim();
+  if (!t) return false;
+  if (playerGivesOrRefusesName(t)) return false;
+  return /\b(send me (?:back|home)|send me back to|get me (?:out|home|back)|take me (?:back|home|out)|i (?:want to )?(?:go|leave|get) (?:back|home|out)|i refuse|i protest|i demand|let me (?:go|leave|out)|i don'?t want to be (?:here|a pawn|summoned)|i won'?t (?:stay|play|be (?:your|a))|back to (?:my |the )?(?:world|earth|home))\b/i.test(
+    t
+  );
+}
+
+/** Player is answering / refusing a name, origin, or kit cover — not a room scout. */
+export function playerEngagesOpeningCover(raw: string): boolean {
+  const t = raw.replace(/\s+/g, ' ').trim();
+  if (!t) return false;
+  if (isPlayDemand(t) && !playerGivesOrRefusesName(t)) return false;
+  if (isOpeningSetupChipLabel(t)) return true;
+  if (/^random\s+(name|designation)\b/i.test(t)) return true;
+  if (extractGivenName(t)) return true;
+  if (isSetupRefusal(t)) return true;
+  if (/\b(my name is|call me|i(?:'m| am) called|won'?t give|no name|won'?t say (?:my )?name)\b/i.test(t)) {
+    return true;
+  }
+  if (/\b(earth city|i was at home|pat yourself|what am i wearing|everyday street clothes)\b/i.test(t)) {
+    return true;
+  }
+  return false;
+}
+
+/** Cover-form chips that must not spawn after inspect / look-around. */
+export function isNameOriginKitCoverChoice(choice: string): boolean {
+  const t = choice.replace(/\s+/g, ' ').trim();
+  if (!t) return false;
+  return /give them (?:your |a )?name|tell them who you are|tell them your name|random designation|waiting for a name you will own|confirm designation|what do we call you|give (?:them )?your name|say your name|offer your name|earth city|random earth|i was at home|pat yourself down|what are you wearing|random (?:name|designation)/i.test(t);
 }
 
 export function isLocationishOpeningUtterance(raw: string): boolean {
@@ -457,7 +509,7 @@ export function normalizeOpeningHookCard(card: OpeningHookCard): {
   }
   const lines: string[] = [];
   const location = card.location?.trim() || undefined;
-  if (location) lines.push(`Place: ${location}`);
+  if (location) lines.push(`Location: ${location}`);
   if (card.faction?.trim()) lines.push(`Who is here / who summoned: ${card.faction.trim()}`);
   if (card.summonIntent?.trim()) lines.push(`Why this happened: ${card.summonIntent.trim()}`);
   if (card.openingOffer?.trim()) {
@@ -939,6 +991,7 @@ const NAME_STOP = new Set([
   'my', 'name', 'its', 'it', 'is', 'who', 'are', 'you', 'im', 'i', 'am', 'in', 'at', 'on',
   'the', 'a', 'an', 'what', 'whats', 'going', 'on', 'please', 'confirm', 'uk', 'usa',
   'hello', 'hi', 'hey', 'yes', 'no', 'ok', 'okay',
+  'refuse', 'protest', 'demand', 'wait', 'look', 'inspect', 'leave', 'stay', 'send', 'back',
 ]);
 
 function titleName(raw: string): string {
@@ -1453,7 +1506,24 @@ export async function applyOpeningAnswer(
       && !isPlayerQuestion(answer)
       && acceptCurrentField(currentKind, answer, state)
     );
+  if (
+    est.sceneWritten
+    && isPlayDemand(answer)
+    && !playerGivesOrRefusesName(answer)
+    && !locationTalkOnName
+  ) {
+    return { state, generateOpening: false, deferToPlay: true };
+  }
   if (est.sceneWritten && isPlayerQuestion(answer) && !acceptsCover && !locationTalkOnName) {
+    return { state, generateOpening: false, deferToPlay: true };
+  }
+  if (
+    est.sceneWritten
+    && isLookAroundAction(answer)
+    && !playerEngagesOpeningCover(answer)
+    && !acceptsCover
+    && !locationTalkOnName
+  ) {
     return { state, generateOpening: false, deferToPlay: true };
   }
 
@@ -1622,10 +1692,14 @@ export async function applyOpeningAnswer(
   if (stillPending.length) {
     const next = stillPending[0];
     const extra = [aside, cheatLine].filter(Boolean).join('\n');
-    const parseFail = est.pending[0]?.kind === 'name' && !harvest.name
-      ? 'They are still waiting for a name you will own.'
-      : '';
-    const coverChoices = establishmentChoices(stillPending, nextState);
+    const lookAroundNotCover =
+      isLookAroundAction(answer) && !playerEngagesOpeningCover(answer);
+    const demandNotCover = isPlayDemand(answer) && !playerGivesOrRefusesName(answer);
+    const parseFail =
+      est.pending[0]?.kind === 'name' && !harvest.name && !lookAroundNotCover && !demandNotCover
+        ? 'They are still waiting for a name you will own.'
+        : '';
+    const coverChoices = lookAroundNotCover ? [] : establishmentChoices(stillPending, nextState);
     const gmEntry = {
       id: crypto.randomUUID(),
       turn: nextState.turn,

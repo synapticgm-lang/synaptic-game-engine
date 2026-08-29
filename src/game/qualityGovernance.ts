@@ -15,6 +15,9 @@ import {
   playerAsksRepeat,
   filterRecycledStallChoices,
   lastOfferedChoiceSets,
+  detectLeadingCollage,
+  stripRecycledPrefix,
+  recentGmBeatTexts,
 } from './semanticLoopDetector';
 import {
   extractEntityContext,
@@ -345,6 +348,25 @@ export function applyGovernanceToProse(
     }
   }
 
+  // Prefix / stitch collage — 30R whole-beat ≥0.85 misses recycled openings + new tails.
+  if (!playerAsksRepeat(playerInput)) {
+    const collage = detectLeadingCollage(out, recentGmBeatTexts(state));
+    if (collage.hit && collage.tailHasNewContent) {
+      const stripped = stripRecycledPrefix(out, collage);
+      if (stripped !== out) {
+        out = stripped;
+        notes.push(
+          collage.kind === 'stitch'
+            ? 'Collage strip: stitch of prior beats'
+            : 'Collage strip: recycled prefix'
+        );
+      }
+    } else if (collage.hit) {
+      rejectClone = true;
+      notes.push('Collage reject: no new tail');
+    }
+  }
+
   return { prose: out, notes, rejectClone };
 }
 
@@ -374,7 +396,7 @@ export function filterGovernanceChoices(
   }
   filtered = cooldownResult.filtered;
 
-  const compiled = compileChoices(state, filtered, Object.fromEntries(cooldownMap(state)));
+  const compiled = compileChoices(state, filtered, Object.fromEntries(cooldownMap(state)), playerInput);
   if (compiled.notes.length) {
     notes.push(...compiled.notes);
   }

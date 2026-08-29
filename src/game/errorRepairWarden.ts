@@ -8,9 +8,11 @@ import type { GameState, Quest } from './types';
 import { isAloneArrivalPick, isAloneArrivalOpening } from './openingEstablishment';
 import { adaptStarterQuestsForArrival } from './questPlay';
 import { getCampaignBibleById } from '@/data/campaigns';
+import { filterChromeFromPresent, isChromePersonToken } from './chromeAuthority';
+import { attachHookLock, backfillHookLockFromSave } from './hookLock';
 
 /** Bump when adding load-time repairs that must re-run on old saves. */
-export const CURRENT_ERROR_REPAIR_REVISION = 3;
+export const CURRENT_ERROR_REPAIR_REVISION = 5;
 
 export type FailureClass =
   | 'turn_proxy'
@@ -268,12 +270,57 @@ function repairOrphanCircleBlessing(state: GameState, notes: ErrorRepairNote[]):
  * Idempotent load/continue repairs for known recurrence classes.
  * Safe to call every Continue; only mutates when content is wrong.
  */
+function repairChromePresent(state: GameState, notes: ErrorRepairNote[]): GameState {
+  const present = state.sceneFacts?.present ?? [];
+  const cleanedPresent = filterChromeFromPresent(present);
+  const pinned = (state.openingEstablishment?.pinnedNpcNames ?? []).filter((n) => !isChromePersonToken(n));
+  const lorebook = (state.lorebook ?? []).filter((c) => !(c.type === 'npc' && isChromePersonToken(c.name)));
+  const npcMemories = (state.npcMemories ?? []).filter((n) => !isChromePersonToken(n.npcName));
+  const presentDirty = cleanedPresent.length !== present.length;
+  const pinnedDirty = pinned.length !== (state.openingEstablishment?.pinnedNpcNames ?? []).length;
+  const loreDirty = lorebook.length !== (state.lorebook ?? []).length;
+  const memDirty = npcMemories.length !== (state.npcMemories ?? []).length;
+  if (!presentDirty && !pinnedDirty && !loreDirty && !memDirty) return state;
+  notes.push({
+    class: 'continuity_prose',
+    code: 'ERR_CHROME_PRESENT',
+    detail: 'stripped UI chrome / cover-slot labels from present, pins, and harvest NPC rows',
+  });
+  return {
+    ...state,
+    sceneFacts: state.sceneFacts ? { ...state.sceneFacts, present: cleanedPresent } : state.sceneFacts,
+    openingEstablishment: state.openingEstablishment
+      ? { ...state.openingEstablishment, pinnedNpcNames: pinned }
+      : state.openingEstablishment,
+    lorebook,
+    npcMemories,
+  };
+}
+
+function repairHookLock(state: GameState, notes: ErrorRepairNote[]): GameState {
+  if (state.sceneFacts?.hookLock && state.openingEstablishment?.hookLock) return state;
+  const lock = backfillHookLockFromSave(state);
+  if (!lock) return state;
+  const already =
+    state.sceneFacts?.hookLock?.nature === lock.nature
+    && state.openingEstablishment?.hookLock?.nature === lock.nature;
+  if (already) return attachHookLock(state, lock);
+  notes.push({
+    class: 'continuity_prose',
+    code: 'ERR_HOOK_LOCK',
+    detail: `locked hook why (${lock.nature}) from ${lock.source}`,
+  });
+  return attachHookLock(state, lock);
+}
+
 export function applyErrorRepairs(state: GameState): ErrorRepairResult {
   const notes: ErrorRepairNote[] = [];
   let next = stampAloneArrival(state, notes);
   next = repairAloneStarterQuest(next, notes);
   next = repairOrphanCircleBlessing(next, notes);
   next = repairCircleBlessingSlot(next, notes);
+  next = repairChromePresent(next, notes);
+  next = repairHookLock(next, notes);
   const needsRev = (next.errorRepairRevision ?? 0) < CURRENT_ERROR_REPAIR_REVISION;
   if (notes.length === 0 && !needsRev) {
     return { state, dirty: false, notes: [] };
@@ -310,7 +357,7 @@ export const FAILURE_CLASS_OWNERS: Record<
     log: 'ERROR-FIX-LOG Class C',
   },
   continuity_prose: {
-    owner: 'runWarden + proseWarden',
+    owner: 'runWarden + proseWarden + hookLock',
     log: 'ERROR-FIX-LOG Class D',
   },
   chrome_hud: {

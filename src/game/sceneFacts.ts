@@ -1,6 +1,10 @@
 import type { GameState, SceneFacts } from './types';
 import { applyFactLocks } from './factLocks';
 import { applySearchContinuityToFacts } from './searchContinuity';
+import { harvestCrowdIntoSceneFacts } from './crowdAuthority';
+import { harvestHookIntoSceneFacts } from './hookLock';
+import { filterChromeFromPresent } from './chromeAuthority';
+import { harvestCameraIntoSceneFacts } from './travelAuthority';
 
 const EMPTY_STREET =
   /\b(eerily silent|unnervingly quiet|empty (?:street|buildings|road)|no one (?:is )?(?:here|around|responds)|deserted|abandoned street|world feels frozen|holding its breath)\b/i;
@@ -72,7 +76,6 @@ export function extractSceneFacts(narrative: string, prev?: SceneFacts, turn = 0
   const present = new Set(prev?.present ?? []);
   if (crowd === 'present') present.add('bystanders');
   if (crowd === 'none') present.delete('bystanders');
-  if (PANEL.test(text)) present.add('blue panel');
 
   const props = new Set(prev?.props ?? []);
   if (PANEL.test(text)) props.add('blue panel');
@@ -117,7 +120,7 @@ export function extractSceneFacts(narrative: string, prev?: SceneFacts, turn = 0
   return {
     crowd,
     noise,
-    present: [...present],
+    present: filterChromeFromPresent([...present]),
     props: [...props],
     lastBeat: lastBeat || prev?.lastBeat || '',
     updatedTurn: turn,
@@ -125,6 +128,10 @@ export function extractSceneFacts(narrative: string, prev?: SceneFacts, turn = 0
     weather,
     indoor,
     tension,
+    crowdCount: prev?.crowdCount,
+    hookLock: prev?.hookLock,
+    cameraLock: prev?.cameraLock,
+    lastPlayerIntent: prev?.lastPlayerIntent,
   };
 }
 
@@ -133,7 +140,7 @@ export function mergeSceneFacts(prev: SceneFacts | undefined, next: SceneFacts):
   return {
     crowd: next.crowd !== 'unknown' ? next.crowd : prev.crowd,
     noise: next.noise !== 'unknown' ? next.noise : prev.noise,
-    present: Array.from(new Set([...prev.present, ...next.present])),
+    present: filterChromeFromPresent(Array.from(new Set([...prev.present, ...next.present]))),
     props: Array.from(new Set([...prev.props, ...next.props])),
     lastBeat: next.lastBeat || prev.lastBeat,
     updatedTurn: next.updatedTurn,
@@ -143,10 +150,15 @@ export function mergeSceneFacts(prev: SceneFacts | undefined, next: SceneFacts):
     tension: next.tension !== 'unknown' ? next.tension : prev.tension,
     searchedEmpty: Array.from(new Set([...(prev.searchedEmpty ?? []), ...(next.searchedEmpty ?? [])])),
     emptyContainers: Array.from(new Set([...(prev.emptyContainers ?? []), ...(next.emptyContainers ?? [])])),
+    crowdCount: next.crowdCount ?? prev.crowdCount,
+    hookLock: next.hookLock ?? prev.hookLock,
+    cameraLock: next.cameraLock ?? prev.cameraLock,
+    lastPlayerIntent: next.lastPlayerIntent ?? prev.lastPlayerIntent,
   };
 }
 
 export function seedOpeningSceneFacts(state: GameState): SceneFacts {
+  const hookLock = state.sceneFacts?.hookLock ?? state.openingEstablishment?.hookLock;
   const integration = /system integration|every human on earth|integration protocol/i.test(
     state.campaignPremise ?? ''
   );
@@ -154,7 +166,7 @@ export function seedOpeningSceneFacts(state: GameState): SceneFacts {
     return {
       crowd: 'present',
       noise: 'shouting',
-      present: ['bystanders', 'blue panel'],
+      present: ['bystanders'],
       props: ['blue panel', 'cracked street'],
       lastBeat: 'Crowd on the street, shouting; System panel at eye level.',
       updatedTurn: state.turn,
@@ -162,39 +174,44 @@ export function seedOpeningSceneFacts(state: GameState): SceneFacts {
       weather: 'clear',
       indoor: false,
       tension: 'tense',
+      hookLock,
     };
   }
   
-  // Pack 12 Fix: Non-alone openings should start with crowd present
+  // People may be present; headcount stays unlocked until harvest locks a number.
   const alone = state.openingEstablishment?.aloneArrival === true;
   if (!alone) {
     return {
       crowd: 'present',
       noise: 'voices',
-      present: ['blue panel', 'handlers'],
+      present: [],
       props: ['blue panel'],
-      lastBeat: 'People are present; handlers dealing with arrival.',
+      lastBeat: 'People are present.',
       updatedTurn: state.turn,
       timeOfDay: 'unknown',
       weather: 'unknown',
       indoor: undefined,
       tension: 'tense',
+      hookLock,
     };
   }
   
-  return extractSceneFacts(
+  const extracted = extractSceneFacts(
     state.log.filter((e) => e.role === 'gm').slice(-1)[0]?.content ?? '',
     state.sceneFacts,
     state.turn
   );
+  return { ...extracted, hookLock: extracted.hookLock ?? hookLock };
 }
 
 export function formatSceneFactsForPrompt(facts?: SceneFacts): string {
   if (!facts || (facts.crowd === 'unknown' && !facts.lastBeat)) return '';
   const present = facts.present.length ? facts.present.join(', ') : 'none listed';
   const props = facts.props.length ? facts.props.join(', ') : 'none listed';
+  const countLine =
+    typeof facts.crowdCount === 'number' ? `\nCrowd count: ${facts.crowdCount}` : '';
   return `SCENE FACTS (AUTHORITY — last committed beat; do not invert without time passing):
-Crowd: ${facts.crowd}
+Crowd: ${facts.crowd}${countLine}
 Noise: ${facts.noise}
 Present: ${present}
 Props: ${props}
@@ -245,13 +262,16 @@ export function applyCommittedNarrative(
 ): SceneFacts {
   const extracted = extractSceneFacts(narrative, state.sceneFacts, turn);
   let merged: SceneFacts;
-  if (state.sceneFacts?.crowd === 'present' && extracted.crowd === 'none' && !TIME_PASSED.test(narrative)) {
+  const crowdWasHere =
+    state.sceneFacts?.crowd === 'present' || state.sceneFacts?.crowd === 'sparse';
+  if (crowdWasHere && extracted.crowd === 'none' && !TIME_PASSED.test(narrative)) {
     merged = {
       ...mergeSceneFacts(state.sceneFacts, extracted),
-      crowd: 'present',
+      crowd: state.sceneFacts!.crowd,
       noise: state.sceneFacts.noise === 'shouting' ? 'shouting' : extracted.noise,
       lastBeat: state.sceneFacts.lastBeat,
       updatedTurn: turn,
+      crowdCount: state.sceneFacts.crowdCount,
     };
   } else {
     merged = mergeSceneFacts(state.sceneFacts, extracted);
@@ -264,7 +284,33 @@ export function applyCommittedNarrative(
       turn,
       state.currentLocation ?? state.locationSheet?.name
     );
-    if (withSearch) return withSearch;
+    if (withSearch) merged = withSearch;
   }
-  return merged;
+  const crowded = harvestCrowdIntoSceneFacts(merged, narrative, turn);
+  const hooked = harvestHookIntoSceneFacts(crowded, narrative, turn, playerInput);
+  const camera = harvestCameraIntoSceneFacts(
+    hooked,
+    narrative,
+    turn,
+    playerInput,
+    state.currentLocation ?? state.locationSheet?.name
+  );
+  if (!playerInput?.trim()) return camera;
+  const t = playerInput.replace(/\s+/g, ' ').trim();
+  const family: NonNullable<SceneFacts['lastPlayerIntent']>['family'] =
+    /\b(send me (?:back|home)|get me (?:out|back)|i refuse|i protest|i demand|back to (?:my )?(?:world|earth))\b/i.test(t)
+      ? 'demand'
+      : /\b(run away|flee|escape|retreat)\b/i.test(t)
+        ? 'flee'
+        : /\b(inspect|examine|look around|scan|get bearings)\b/i.test(t)
+          ? 'inspect'
+          : /\b(travel|enter|go through|walk through)\b/i.test(t)
+            ? 'travel'
+            : /\b(ask|talk|speak|say|tell)\b/i.test(t)
+              ? 'talk'
+              : 'other';
+  return {
+    ...camera,
+    lastPlayerIntent: { family, text: t.slice(0, 160), turn },
+  };
 }

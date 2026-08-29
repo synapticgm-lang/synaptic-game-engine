@@ -383,6 +383,8 @@ export interface OpeningEstablishment {
   aloneArrival?: boolean;
   /** 29c — opening NPC names pinned into scene presence for early turns. */
   pinnedNpcNames?: string[];
+  /** Locked why-you’re-here from the hook card (first lock; sceneFacts is live authority). */
+  hookLock?: import('./hookLock').HookLock;
 }
 
 export interface GameState {
@@ -815,6 +817,27 @@ export interface SceneFacts {
   searchedEmpty?: string[];
   /** Named containers established empty (box / crate / bag when declared empty). */
   emptyContainers?: string[];
+  /**
+   * Locked headcount of people here (named + unnamed occupancy).
+   * Writer cannot invent a larger or smaller gathering unless someone enters or leaves.
+   */
+  crowdCount?: number;
+  /**
+   * Locked why-you’re-here / summon nature (accident vs intended vs bargain vs pawn).
+   * Writer cannot reverse it unless the player or a ledger event changes it.
+   */
+  hookLock?: import('./hookLock').HookLock;
+  /**
+   * Locked camera (outdoor vs indoor + label). Map/dungeon cannot snap rooms
+   * without a player travel/enter commit.
+   */
+  cameraLock?: import('./travelAuthority').CameraLock;
+  /** Last committed player intent family — choice pad follows this, not leftover covers. */
+  lastPlayerIntent?: {
+    family: 'demand' | 'inspect' | 'flee' | 'name' | 'talk' | 'travel' | 'other';
+    text: string;
+    turn: number;
+  };
 }
 
 export interface TimelineFact {

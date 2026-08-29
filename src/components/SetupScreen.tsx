@@ -22,10 +22,10 @@ export function SetupScreen({ initialContentMode, onComplete }: Props) {
   const store = isStoreDistribution();
 
   return (
-    <div className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden bg-slate-950 px-4 py-8">
+    <div className="sgm-scroll-page relative flex min-h-0 flex-col items-center bg-slate-950 px-4 py-8">
       <BackgroundFx />
 
-      <div className="relative z-10 w-full max-w-md">
+      <div className="relative z-10 my-auto w-full max-w-md">
         <div className="mb-6 flex flex-col items-center gap-2 text-center">
           <img src="/game-logo.jpg" alt="Game logo" className="w-24 h-24 object-cover mix-blend-screen rounded-full drop-shadow-lg mb-4" />
           <h1 className="font-serif text-2xl font-bold tracking-tight text-slate-100">Prepare Your Adventure</h1>

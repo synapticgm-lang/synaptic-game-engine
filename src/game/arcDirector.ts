@@ -41,6 +41,7 @@ import { countPlayerIntentStreak, countLoiterFamilyStreak } from './beatFingerpr
 import { pickStatusVoiceLine } from './voiceCadenceSystem';
 import { hasDurableDeltaByT12, forceFreeT12DurableDelta } from './freeT12Hook';
 import { ensureOpeningNpcPinned, formatOpeningPinMandate } from './openingPin';
+import { resolveHookLock, talkContradictsLockedWhy } from './hookLock';
 import { selectEligibleCrisis, type SocialCrisis } from './socialCrisis';
 // WS-4 Wave D+: Encounter Density Governance
 import {
@@ -331,6 +332,7 @@ function shouldCommitBeat(
   const talkish = /\b(ask|talk|speak|listen|overhear|negotiate|tell|who|why|what|where)\b/i.test(lower);
 
   if (contract.id === 'sp-beat-hear-reason') {
+    if (talkContradictsLockedWhy(playerInput, resolveHookLock(state))) return false;
     return talkish || turn >= 6;
   }
   if (contract.id === 'sp-beat-orient') {
@@ -526,7 +528,7 @@ export function runArcDirectorBeforeGm(
   }
 
   const social = detectSocialMilestone(playerInput, working);
-  if (social) {
+  if (social && !talkContradictsLockedWhy(playerInput, resolveHookLock(working))) {
     working = applySocialMilestone(working, social);
     xpAwards.push({ amount: social.amount, reason: social.reason });
     systemReceipts.push(`Social: +${social.amount} XP (${social.kind})`);

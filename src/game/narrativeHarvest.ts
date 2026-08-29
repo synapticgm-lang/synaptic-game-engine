@@ -4,7 +4,10 @@
  */
 
 import type { GameState, LoreCard, NpcMemory } from './types';
+import { harvestCrowdIntoSceneFacts } from './crowdAuthority';
+import { harvestHookIntoSceneFacts } from './hookLock';
 import { looksLikeGeographyInvent, isLegalMapPlace } from './worldMapAuthority';
+import { isChromePersonToken } from './chromeAuthority';
 
 const NAME_PATTERNS = [
   /\b(?:named|called|is)\s+([A-Z][a-z]{2,}(?:\s+[A-Z][a-z]+)?)\b/g,
@@ -23,7 +26,7 @@ function extractCandidateNames(prose: string): string[] {
     while ((m = re.exec(prose))) {
       const name = (m[1] ?? '').trim();
       if (name.length < 3 || name.length > 40) continue;
-      if (BLOCKLIST.test(name)) continue;
+      if (BLOCKLIST.test(name) || isChromePersonToken(name)) continue;
       if (looksLikeGeographyInvent(name)) continue;
       found.add(name);
     }
@@ -88,7 +91,16 @@ export function harvestNarrativeIntoLedger(
 ): GameState {
   if (!prose?.trim()) return state;
   const names = extractCandidateNames(prose);
-  if (!names.length) return state;
+  if (!names.length) {
+    return {
+      ...state,
+      sceneFacts: harvestHookIntoSceneFacts(
+        harvestCrowdIntoSceneFacts(state.sceneFacts, prose, turn),
+        prose,
+        turn
+      ),
+    };
+  }
 
   let next = state;
   let lorebook = [...(next.lorebook ?? [])];
@@ -97,13 +109,14 @@ export function harvestNarrativeIntoLedger(
 
   for (const name of names) {
     // Skip if this string is actually a map settlement (already canonical)
+    if (isChromePersonToken(name)) continue;
     if (isLegalMapPlace(next, name) && looksLikeGeographyInvent(name)) continue;
     lorebook = ensureNpcLore(lorebook, name, turn);
     npcMemories = ensureNpcMemory({ ...next, npcMemories }, name, turn);
     present.add(name);
   }
 
-  return {
+  const withNames = {
     ...next,
     lorebook,
     npcMemories,
@@ -111,6 +124,14 @@ export function harvestNarrativeIntoLedger(
       ...(next.sceneFacts ?? {}),
       present: [...present].slice(0, 12),
     },
+  };
+  return {
+    ...withNames,
+    sceneFacts: harvestHookIntoSceneFacts(
+      harvestCrowdIntoSceneFacts(withNames.sceneFacts, prose, turn),
+      prose,
+      turn
+    ),
   };
 }
 

@@ -4,6 +4,7 @@
 
 import type { CampaignBible } from './campaignBibleTypes';
 import type { GameState } from './types';
+import { isChromePersonToken } from './chromeAuthority';
 
 const OPENING_PIN_TURN_CAP = 20;
 
@@ -19,6 +20,9 @@ export function extractNamesFromHookText(text: string | undefined): string[] {
     'Before', 'After', 'Beside', 'Armored', 'Guild', 'System', 'Status', 'Earth',
     'Circle', 'Sevenfold', 'Harbor', 'Quay', 'Keep', 'Inn', 'Church', 'Road',
     'Salt', 'Camp', 'Waystation', 'Alley', 'Ward', 'Rest', 'Ashline', 'Yard',
+    'Place', 'Name', 'Look', 'Kit', 'Wear', 'Where', 'Origin', 'Appearance',
+    'Designation', 'Registration', 'Panel', 'Official', 'Speaker', 'Palm',
+    'Eye', 'Level', 'Location',
   ]);
   while ((m = re.exec(text)) !== null) {
     const n = m[1]!;
@@ -55,6 +59,7 @@ export function resolveOpeningPinnedNames(
   const merged = [...fromHook, ...fromBible];
   const out: string[] = [];
   for (const n of merged) {
+    if (isChromePersonToken(n)) continue;
     if (!out.some((x) => x.toLowerCase() === n.toLowerCase())) out.push(n);
     if (out.length >= 2) break;
   }
@@ -75,6 +80,7 @@ export function ensureOpeningNpcPinned(
   const present = [...(state.sceneFacts?.present ?? [])];
   let changed = false;
   for (const n of pinned) {
+    if (isChromePersonToken(n)) continue;
     if (!present.some((p) => p.toLowerCase() === n.toLowerCase())) {
       present.push(n);
       changed = true;

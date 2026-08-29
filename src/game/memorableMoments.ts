@@ -13,6 +13,7 @@ import type { GameEvent, LootVideoRequest, MilestoneRequest } from './parser';
 import { storyHasBody } from './turnAsk';
 import { isUnsalvageableKidImagePrompt, prepareKidSafeImagePrompt, stripKidUnsafeImageLexicon } from './visualCanon';
 import { characterLookForArt, subjectAgeDirective } from './comicImagePrompt';
+import { formatSceneArtLock, type SceneArtFactsInput } from './sceneArtLock';
 
 /** Skip this many story turns after a splash (death/ending ignore it). */
 export const MEMORABLE_COOLDOWN_TURNS = 3;
@@ -206,7 +207,7 @@ const ORIGIN_ASK_SENTENCE =
 
 const OPENING_HERE_RAILS =
   'Camera is HERE in this room now. ONE picture filling the frame — not an open book, not two pages, not fake writing, not a comic grid, not a manga page of Earth daily life. '
-  + 'If the beat has the person on their back on stone, show them lying on the floor in this place. '
+  + 'Follow SCENE AUTHORITY for stance and floor — do not default to a fallen body on plain slabs. '
   + 'Do not draw Earth streets, shopping arcades, malls, train stations, city crowds, or a flashback to before they arrived. '
   + 'Earth clothes are garments on this body in THIS scene only.';
 
@@ -216,6 +217,7 @@ export function pinOpeningHereScene(opts: {
   location?: string;
   pickedHook?: string;
   characterLook?: string;
+  sceneFacts?: SceneArtFactsInput | null;
 }): string {
   const place = opts.location?.trim();
   const hook = opts.pickedHook?.trim();
@@ -227,14 +229,17 @@ export function pinOpeningHereScene(opts: {
     .join(' ')
     .replace(/\s+/g, ' ')
     .trim();
-  const hereBody = hook || stripped || excerptForImage(opts.storyText);
-  const floorBeat = /on (?:your|their) back|lying|summoning circle|cold stone/i.test(hereBody)
-    ? 'The viewpoint character is lying on the floor in this room, looking up. '
-    : '';
+  const hereBody = stripped || hook || excerptForImage(opts.storyText);
+  const lock = formatSceneArtLock({
+    storyText: stripped,
+    pickedHook: hook,
+    location: place,
+    sceneFacts: opts.sceneFacts,
+  });
   const placeBit = place ? `HERE: ${place}. ` : 'HERE: the opening scene. ';
   const look = opts.characterLook?.trim();
   const lookBit = look ? `LOOK: ${look}. ` : '';
-  return `${placeBit}${lookBit}${floorBeat}${excerptForImage(hereBody)} ${OPENING_HERE_RAILS} ${subjectAgeDirective(look)}`;
+  return `${placeBit}${lookBit}${lock} ${excerptForImage(hereBody)} ${OPENING_HERE_RAILS} ${subjectAgeDirective(look)}`;
 }
 
 export function synthesizeMemorablePrompt(opts: {
@@ -245,6 +250,7 @@ export function synthesizeMemorablePrompt(opts: {
   kidMode?: boolean;
   pickedHook?: string;
   characterLook?: string;
+  sceneFacts?: SceneArtFactsInput | null;
 }): string {
   const kid = opts.kidMode === true;
   const excerpt = kid
@@ -253,12 +259,19 @@ export function synthesizeMemorablePrompt(opts: {
   const extra = kid
     ? stripKidUnsafeImageLexicon(opts.extra?.trim() ?? '')
     : opts.extra?.trim();
+  const lock = formatSceneArtLock({
+    storyText: opts.storyText,
+    pickedHook: opts.pickedHook,
+    location: opts.location,
+    sceneFacts: opts.sceneFacts,
+  });
   if (opts.beat === 'opening') {
     const shot = pinOpeningHereScene({
       storyText: opts.storyText,
       location: opts.location,
       pickedHook: opts.pickedHook,
       characterLook: opts.characterLook,
+      sceneFacts: opts.sceneFacts,
     });
     return kid
       ? `Kid-safe establishing shot, bright and welcoming, no frightening imagery. ${shot}`
@@ -266,47 +279,47 @@ export function synthesizeMemorablePrompt(opts: {
   }
   if (opts.beat === 'death') {
     return kid
-      ? `Kid-safe close: the hero at rest after a hard journey. No injury shown, no blood, no corpse. ${excerpt}`
-      : `The fatal moment. ${excerpt}`;
+      ? `${lock} Kid-safe close: the hero at rest after a hard journey. No injury shown, no blood, no corpse. ${excerpt}`
+      : `${lock} The fatal moment. ${excerpt}`;
   }
   if (opts.beat === 'ending') {
-    const at = place ? ` at ${place}` : '';
+    const at = opts.location?.trim() ? ` at ${opts.location.trim()}` : '';
     return kid
-      ? `Kid-safe closing illustration${at}, everyone fully clothed, no blood, no corpse, no frightening imagery. ${excerpt}`
-      : `The campaign's closing plate${at}. ${excerpt}`;
+      ? `${lock} Kid-safe closing illustration${at}, everyone fully clothed, no blood, no corpse, no frightening imagery. ${excerpt}`
+      : `${lock} The campaign's closing plate${at}. ${excerpt}`;
   }
   if (opts.beat === 'dungeon-boss') {
     if (kid) {
       const foe = extra || "the first dungeon's final foe";
-      return `Victory: ${foe} slumped asleep or knocked out on the floor, hero standing triumphant. No blood, no wounds, no corpse close-up. ${excerpt}`;
+      return `${lock} Victory: ${foe} slumped asleep or knocked out on the floor, hero standing triumphant. No blood, no wounds, no corpse close-up. ${excerpt}`;
     }
     return extra
-      ? `The first dungeon's final foe falls: ${extra}. ${excerpt}`
-      : `The first dungeon's final foe falls. ${excerpt}`;
+      ? `${lock} The first dungeon's final foe falls: ${extra}. ${excerpt}`
+      : `${lock} The first dungeon's final foe falls. ${excerpt}`;
   }
   if (opts.beat === 'legendary') {
     const reveal = extra
       ? `A legendary item revealed: ${extra}. ${excerpt}`
       : `A legendary prize revealed. ${excerpt}`;
-    return kid ? `Kid-safe wonder, no gore. ${reveal}` : reveal;
+    return kid ? `${lock} Kid-safe wonder, no gore. ${reveal}` : `${lock} ${reveal}`;
   }
   if (opts.beat === 'ruler-audience') {
     const audience = extra
       ? `First royal audience with ${extra}. ${excerpt}`
       : `A first audience with a ruler. ${excerpt}`;
     return kid
-      ? `Kid-safe courtly scene, everyone fully clothed, no frightening imagery. ${audience}`
-      : audience;
+      ? `${lock} Kid-safe courtly scene, everyone fully clothed, no frightening imagery. ${audience}`
+      : `${lock} ${audience}`;
   }
   if (opts.beat === 'beauty-offer') {
     const look = extra
       ? `A striking first look at ${extra}. ${excerpt}`
       : `A striking first look at someone noteworthy. ${excerpt}`;
     return kid
-      ? `Kid-safe, tasteful, fully clothed, non-suggestive portrait. ${look}`
-      : look;
+      ? `${lock} Kid-safe, tasteful, fully clothed, non-suggestive portrait. ${look}`
+      : `${lock} ${look}`;
   }
-  return kid ? `Kid-safe moment, fully clothed, no blood. ${excerpt}` : excerpt;
+  return kid ? `${lock} Kid-safe moment, fully clothed, no blood. ${excerpt}` : `${lock} ${excerpt}`;
 }
 
 function excerptForImage(text: string): string {
@@ -548,6 +561,7 @@ function detectOpening(
       location: input.state.currentLocation,
       pickedHook: input.state.openingEstablishment?.pickedHook,
       characterLook: lookFromInput(input),
+      sceneFacts: input.state.sceneFacts,
       kidMode: kidModeOn(input.settings),
     });
   }
@@ -559,6 +573,7 @@ function detectOpening(
     location: input.state.currentLocation,
     pickedHook: input.state.openingEstablishment?.pickedHook,
     characterLook: lookFromInput(input),
+    sceneFacts: input.state.sceneFacts,
     kidMode: kidModeOn(input.settings),
   });
 }
@@ -788,6 +803,8 @@ export function resolveMemorableMoment(input: ResolveMemorableInput): MemorableD
       synthesizeMemorablePrompt({
         beat: 'death',
         storyText: input.storyText,
+        location: input.state.currentLocation,
+        sceneFacts: input.state.sceneFacts,
         kidMode: kidModeOn(input.settings),
       })
     );
@@ -822,6 +839,7 @@ export function resolveMemorableMoment(input: ResolveMemorableInput): MemorableD
           storyText: input.storyText,
           extra: bossKill.label,
           location: input.state.currentLocation,
+          sceneFacts: input.state.sceneFacts,
           kidMode: kidModeOn(input.settings),
         }),
         {
@@ -841,6 +859,7 @@ export function resolveMemorableMoment(input: ResolveMemorableInput): MemorableD
         beat: 'ending',
         storyText: input.storyText,
         location: input.state.currentLocation,
+        sceneFacts: input.state.sceneFacts,
         kidMode: kidModeOn(input.settings),
       }),
       { skipImageForLootVideo: Boolean(input.lootVideo) }
@@ -858,6 +877,8 @@ export function resolveMemorableMoment(input: ResolveMemorableInput): MemorableD
       beat: 'legendary',
       storyText: input.storyText,
       extra: legendaryItem?.name ?? input.lootVideo?.itemName,
+      location: input.state.currentLocation,
+      sceneFacts: input.state.sceneFacts,
       kidMode: kidModeOn(input.settings),
     });
     if (input.lootVideo) {
@@ -878,6 +899,8 @@ export function resolveMemorableMoment(input: ResolveMemorableInput): MemorableD
       beat: 'ruler-audience',
       storyText: input.storyText,
       extra: ruler.label,
+      location: input.state.currentLocation,
+      sceneFacts: input.state.sceneFacts,
       kidMode: kidModeOn(input.settings),
     });
     if (kidModeOn(input.settings) && isUnsalvageableKidImagePrompt(rulerPrompt)) {
@@ -899,7 +922,12 @@ export function resolveMemorableMoment(input: ResolveMemorableInput): MemorableD
   }
 
   if (input.writerTag?.imagePrompt?.trim()) {
-    let writerPrompt = input.writerTag.imagePrompt.trim();
+    const lock = formatSceneArtLock({
+      storyText: input.storyText,
+      location: input.state.currentLocation,
+      sceneFacts: input.state.sceneFacts,
+    });
+    let writerPrompt = `${lock} ${input.writerTag.imagePrompt.trim()}`;
     if (kidModeOn(input.settings)) {
       const prepared = prepareKidSafeImagePrompt(writerPrompt, { skipIfUnsalvageable: true });
       if (prepared.skip) return idle;
@@ -921,6 +949,8 @@ export function resolveMemorableMoment(input: ResolveMemorableInput): MemorableD
       beat: 'beauty-offer',
       storyText: input.storyText,
       extra: beauty.label,
+      location: input.state.currentLocation,
+      sceneFacts: input.state.sceneFacts,
       kidMode: false,
     });
     if (kidModeOn(input.settings) && isUnsalvageableKidImagePrompt(rawLook)) {
@@ -930,6 +960,8 @@ export function resolveMemorableMoment(input: ResolveMemorableInput): MemorableD
       beat: 'beauty-offer',
       storyText: input.storyText,
       extra: beauty.label,
+      location: input.state.currentLocation,
+      sceneFacts: input.state.sceneFacts,
       kidMode: kidModeOn(input.settings),
     });
     if (kidModeOn(input.settings)) {

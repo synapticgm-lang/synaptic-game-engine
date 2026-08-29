@@ -23,6 +23,7 @@ import {
 } from '@/game/streamReveal';
 import { BeautyMomentOfferLink } from './BeautyMomentOffer';
 import { BubbleSpeakControl } from './BubbleSpeakControl';
+import { GmResponseFeedback } from './GmResponseFeedback';
 import { splashPlateLabel, splashUnavailableLine } from '@/game/memorableMoments';
 import { MemorablePlateChrome } from './comic/MemorablePlateChrome';
 import { stripRepairMarkdown } from '@/game/repairEngine';
@@ -257,7 +258,7 @@ export function CenterPanel({ state, busy, turnPhase = 'idle', streamingReveal =
               onDismissBeautyOffer={onDismissBeautyOffer}
               contentMode={contentMode}
               saveId={state.saveId}
-              bibleId={state.bibleId}
+              bibleId={state.campaignBibleId}
               ttsEnabled={voice.ttsEnabled}
               voiceSpeaking={voice.speaking}
               speakingEntryId={voice.speakingEntryId}
@@ -286,6 +287,9 @@ export function CenterPanel({ state, busy, turnPhase = 'idle', streamingReveal =
                   onDismissBeautyOffer={onDismissBeautyOffer}
                   onRetryMemorableImage={onRetryMemorableImage}
                   contentMode={contentMode}
+                  saveId={state.saveId}
+                  bibleId={state.campaignBibleId}
+                  log={state.log}
                   ttsEnabled={voice.ttsEnabled}
                   voiceSpeaking={voice.speaking}
                   speakingEntryId={voice.speakingEntryId}
@@ -570,7 +574,7 @@ export function CenterPanel({ state, busy, turnPhase = 'idle', streamingReveal =
   );
 }
 
-function LogRow({ entry, lorebook, showSystemLog, statVerbosity, engineMode, showTurnAsk, streamingReveal, onAcceptBeautyOffer, onDismissBeautyOffer, onRetryMemorableImage, contentMode, ttsEnabled = false, voiceSpeaking = false, speakingEntryId = null, onSpeakEntry, onStopSpeaking }: { entry: LogEntry; lorebook?: LoreCard[]; showSystemLog: boolean; statVerbosity: StatVerbosity; engineMode: EngineMode; showTurnAsk: boolean; streamingReveal?: StreamingRevealState | null; onAcceptBeautyOffer?: (entryId: string) => void; onDismissBeautyOffer?: (entryId: string) => void; onRetryMemorableImage?: (entryId: string) => void; contentMode?: string | null; ttsEnabled?: boolean; voiceSpeaking?: boolean; speakingEntryId?: string | null; onSpeakEntry?: (entryId: string, text: string) => void; onStopSpeaking?: () => void }) {
+function LogRow({ entry, lorebook, showSystemLog, statVerbosity, engineMode, showTurnAsk, streamingReveal, onAcceptBeautyOffer, onDismissBeautyOffer, onRetryMemorableImage, contentMode, saveId, bibleId, log, ttsEnabled = false, voiceSpeaking = false, speakingEntryId = null, onSpeakEntry, onStopSpeaking }: { entry: LogEntry; lorebook?: LoreCard[]; showSystemLog: boolean; statVerbosity: StatVerbosity; engineMode: EngineMode; showTurnAsk: boolean; streamingReveal?: StreamingRevealState | null; onAcceptBeautyOffer?: (entryId: string) => void; onDismissBeautyOffer?: (entryId: string) => void; onRetryMemorableImage?: (entryId: string) => void; contentMode?: string | null; saveId?: string | null; bibleId?: string | null; log?: LogEntry[]; ttsEnabled?: boolean; voiceSpeaking?: boolean; speakingEntryId?: string | null; onSpeakEntry?: (entryId: string, text: string) => void; onStopSpeaking?: () => void }) {
   const { text: displayContent, isRevealing } = resolveRevealContent(entry.id, entry.content, streamingReveal);
   // Classic memorable plate: a rare, GM-flagged full-page illustration — rendered large and
   // distinct from the routine text log, instead of only surfacing via the small image strip.
@@ -675,6 +679,17 @@ function LogRow({ entry, lorebook, showSystemLog, statVerbosity, engineMode, sho
           <SystemLogPanel lines={lines} verbosity={statVerbosity} />
         ) : null;
       })()}
+      {saveId && hasRealGmStory(entry) && !isRevealing && (
+        <GmResponseFeedback
+          saveId={saveId}
+          turnNumber={entry.turn}
+          logEntryId={entry.id}
+          gmStory={displayContent}
+          playerAction={(log ?? []).slice(0, (log ?? []).findIndex((e) => e.id === entry.id)).reverse().find((e) => e.role === 'player')?.content}
+          gameMode={engineMode}
+          bibleId={bibleId}
+        />
+      )}
       <BeautyMomentOfferLink
         offer={entry.beautyOffer}
         contentMode={contentMode}

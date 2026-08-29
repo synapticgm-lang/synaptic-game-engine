@@ -6,24 +6,16 @@
  */
 
 import type { GameState, Item } from './types';
+import { playerTypedDialogue } from './intentParser';
 import {
   scrubInventedEmptySearchLoot,
   scrubInventedWeapons,
 } from './searchContinuity';
+import { scrubInventedCrowdSize } from './crowdAuthority';
+import { rewriteChromePersonClauses } from './chromeAuthority';
+import { scrubHookReversals, type HookLock } from './hookLock';
 
-/**
- * Calculate tracked crowd size from game state for consistency checking.
- */
-export function calculateCrowdSize(state: GameState): number {
-  const alone = state.openingEstablishment?.aloneArrival === true;
-  if (alone && !state.activeEncounter) return 0;
-  
-  const present = state.sceneFacts?.present ?? [];
-  const companions = state.companions?.length ?? 0;
-  const encounter = state.activeEncounter ? 1 : 0;
-  
-  return Math.max(0, present.length + companions + encounter);
-}
+export { calculateCrowdSize, crowdSizeForWarden, scrubInventedCrowdSize } from './crowdAuthority';
 
 /** Names from scene props, containers, interactables, and floor loose items. */
 export function collectSceneObjectNames(state: GameState): string[] {
@@ -86,6 +78,8 @@ export type ProseWardenContext = {
   hasLiveEncounter?: boolean;
   /** Encounter cleared this turn — allow victory language. */
   recentlyClearedEncounter?: boolean;
+  /** Locked why-you’re-here — rewrite accident ↛ pawn (and reverse). */
+  hookLock?: HookLock;
 };
 
 /** Interiors that already name "here" — nearby is for things that are not here. */
@@ -289,7 +283,10 @@ export function scrubStrangerArtifact(
   if (!text || !/\bthe stranger\b/i.test(text)) return text;
 
   const namedPerson = presentNames.find(
-    (n) => n.length >= 2 && !/\b(?:you|your|panel|system|status)\b/i.test(n)
+    (n) =>
+      n.length >= 2
+      && !/\b(?:you|your|panel|system|status)\b/i.test(n)
+      && !/^(bystanders?|handlers?|onlookers?|watchers?|crowd|people|voices)$/i.test(n)
   );
 
   const replacement = (() => {
@@ -516,38 +513,6 @@ export function scrubAnthropomorphizedLocation(text: string): string {
   return tidyClauses(next);
 }
 
-/**
- * Scrub invented large crowd claims that contradict tracked presence.
- * Catches "hundred people", "fifty onlookers", etc. when scene has small group.
- * Also catches contradictory "empty" / "no crowd" when crowd is tracked as present.
- */
-export function scrubInventedCrowdSize(text: string, trackedCrowdSize: number, crowdPresent?: boolean): string {
-  if (!text) return text;
-  
-  // If crowd is present, scrub contradictory "empty" / "no crowd" claims
-  if (crowdPresent) {
-    const EMPTY_CLAIMS = /\b((?:the )?(?:square|street|room|hall|place) is (?:empty|deserted)|no (?:one|people|crowd|voices)|(?:empty|deserted) (?:square|street|room|hall))\b/gi;
-    if (EMPTY_CLAIMS.test(text)) {
-      text = text.replace(EMPTY_CLAIMS, (match) => {
-        if (/no (?:one|people|crowd)/i.test(match)) return 'a few people still';
-        if (/no voices/i.test(match)) return 'quiet voices';
-        return 'a handful of people in the $1'.replace('$1', match.match(/(?:square|street|room|hall|place)/i)?.[0] || 'area');
-      });
-    }
-  }
-  
-  if (trackedCrowdSize >= 20) return text; // Large crowds are allowed if tracked
-  
-  // Pattern: number + crowd words
-  const largeNumber = /\b(?:dozens?|scores?|hundreds?|fifty|sixty|seventy|eighty|ninety|hundred|two hundred|three hundred)\s+(?:of\s+)?(?:people|figures|onlookers|bystanders|watchers|voices|hands|faces|souls|bodies)\b/gi;
-  
-  if (!largeNumber.test(text)) return text;
-  
-  // If tracked crowd is small (<=8), rewrite large crowd mentions
-  const replacement = trackedCrowdSize <= 3 ? 'a few people' : 'several people';
-  
-  return text.replace(largeNumber, replacement);
-}
 
 /**
  * Pack 12 Extended Validation: Time Skip
@@ -689,9 +654,64 @@ export function scrubInventedContainers(
 }
 
 /**
+ * Strip leaked safer-scene rewrite meta from GM story (any object, not panel-only).
+ * Owner: player-agency / rewrite path — crowd-count agent should keep `scrubInventedCrowdSize`.
+ */
+export function scrubSaferSceneMeta(text: string): string {
+  if (!text) return text;
+  let next = text;
+  next = next.replace(
+    /["'“]I scan[\s\S]{0,80}before committing["'”][,.]?\s*(?:you state[,.]?\s*)?/gi,
+    ''
+  );
+  next = next.replace(
+    /["'“]?if none is present[,.]?\s*I stay alert and choose a safer scene action\.?["'”]?/gi,
+    ''
+  );
+  next = next.replace(/\bI scan(?:\s+\w+){0,8}\s+before committing\b[,.]?/gi, '');
+  next = next.replace(/\bchoose a safer scene action\b[,.]?/gi, '');
+  next = next.replace(/\bif none is present\b[,.]?/gi, '');
+  next = next.replace(/\bstay alert and choose a safer\b[\s\S]{0,24}/gi, '');
+  next = next.replace(/\bbefore committing\b/gi, '');
+  return tidyClauses(next);
+}
+
+/**
+ * If the player did not speak (no quotes / say / ask / talk), do not narrate the act as dialogue.
+ */
+export function scrubFalseSpokenAction(text: string, playerInput?: string): string {
+  if (!text) return text;
+  if (playerTypedDialogue(playerInput ?? '')) return text;
+  let next = text;
+  next = next.replace(
+    /["'“]([^"'”]{8,160})["'”]\s*,?\s*you state\b([^.]{0,80})[,.]?\s*["'“]([^"'”]{8,160})["'”]/gi,
+    (_, a: string, _mid: string, b: string) => `${String(a).trim()} ${String(b).trim()}`
+  );
+  next = next.replace(
+    /["'“]([^"'”]{8,200})["'”]\s*,?\s*you state\b[^.]{0,100}\./gi,
+    (_, quoted: string) => `${String(quoted).trim()}.`
+  );
+  next = next.replace(/\byou state,\s*your voice[^,]{0,80},\s*/gi, '');
+  next = next.replace(/\byou state\b/gi, 'you act');
+  next = next.replace(/\byou declare\b/gi, 'you move');
+  next = next.replace(/\byou announce\b/gi, 'you act');
+  return tidyClauses(next);
+}
+
+/**
+ * UI chrome + cover-slot dummy names are not people.
+ * Rewrites chrome-as-person: posture clauses, dialogue tags (states/says/their voice),
+ * and want/need. Hum of the panel stays. Handlers never become the speaker name.
+ */
+export function scrubChromeAsPerson(text: string, presentNames: string[] = []): string {
+  return tidyClauses(rewriteChromePersonClauses(text, presentNames));
+}
+
+/**
  * Synchronous prose warden - fast regex-based fixes.
  * Use this for immediate, in-memory corrections.
  */
+
 export function applyProseWarden(text: string, ctx?: ProseWardenContext): string {
   if (!text) return text;
   const alone = ctx?.aloneArrival === true;
@@ -699,6 +719,7 @@ export function applyProseWarden(text: string, ctx?: ProseWardenContext): string
   next = scrubSomeoneNearbyPlaceholder(next, alone);
   next = scrubUiQuestVerbs(next, alone);
   next = scrubSpeakerPlaceholder(next, alone);
+  next = scrubChromeAsPerson(next, ctx?.presentNames ?? []);
   next = scrubStrangerArtifact(next, ctx?.presentNames ?? [], alone);
   next = scrubUnearnedVictory(next, {
     hasLiveEncounter: ctx?.hasLiveEncounter === true,
@@ -714,6 +735,9 @@ export function applyProseWarden(text: string, ctx?: ProseWardenContext): string
   );
   next = scrubAnthropomorphizedLocation(next);
   next = scrubInventedCrowdSize(next, ctx?.crowdSize ?? 0, ctx?.crowdPresent);
+  next = scrubHookReversals(next, ctx?.hookLock);
+  next = scrubSaferSceneMeta(next);
+  next = scrubFalseSpokenAction(next, ctx?.playerInput);
   next = scrubInventedContainers(next, ctx?.inventory ?? [], ctx?.sceneProps ?? []);
   next = scrubInventedEmptySearchLoot(next, ctx?.searchedEmpty ?? [], ctx?.playerInput);
   next = scrubInventedWeapons(next, ctx?.groundedWeapons ?? [], 'bare hands', ctx?.playerName);

@@ -5,8 +5,13 @@ import {
   padChoicesToCount,
   sanitizeChoiceLabel,
 } from './choicePipeline';
-import { establishmentChoices, isOpeningEstablishmentPending } from './openingEstablishment';
+import {
+  establishmentChoices,
+  isOpeningEstablishmentPending,
+  playerEngagesOpeningCover,
+} from './openingEstablishment';
 import { filterInventedContextChoices } from './choiceWarden';
+import { isLookAroundAction } from './sandboxXp';
 import { buildGeminiCriticPrompt } from './geminiCriticPrompt';
 import { BUILD_STAMP } from './runManifest';
 import { canonicalizeIntent, detectSemanticLoop } from './semanticLoopDetector';
@@ -42,10 +47,23 @@ function lastGmOfferedChoices(state: GameState): string[] {
  * Opening covers use establishment chips when present; otherwise last GM
  * `offeredChoices` (fastSetupChips off used to return [] and hide ActionBar).
  */
+function lastPlayerActionFromLog(state: GameState): string {
+  for (let i = (state.log ?? []).length - 1; i >= 0; i--) {
+    const entry = state.log[i];
+    if (entry?.role === 'player' && entry.content) return entry.content;
+  }
+  return '';
+}
+
 export function resolveOfferedChoices(state: GameState): string[] {
   if (isOpeningEstablishmentPending(state)) {
-    const cover = establishmentChoices(state.openingEstablishment?.pending ?? [], state).slice(0, 4);
-    if (cover.length) return cover;
+    const lastPlayer = lastPlayerActionFromLog(state);
+    const skipCoverChips =
+      isLookAroundAction(lastPlayer) && !playerEngagesOpeningCover(lastPlayer);
+    if (!skipCoverChips) {
+      const cover = establishmentChoices(state.openingEstablishment?.pending ?? [], state).slice(0, 4);
+      if (cover.length) return cover;
+    }
   }
   const storyProse = lastGmStoryProse(state);
   const fromState = (state.choices ?? [])

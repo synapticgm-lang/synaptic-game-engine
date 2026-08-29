@@ -29,7 +29,7 @@ import type { EnemyStats } from './combat';
 import { isAutoFightWarningDismissed } from '@/components/AutoFightWarningModal';
 import { generateComicImage, generateVideo, VideoProviderNotConfiguredError } from '@/services/openRouterService';
 import { enforcePerspective } from './perspectiveWarden';
-import { applyProseWarden, calculateCrowdSize, collectSceneObjectNames } from './proseWarden';
+import { applyProseWarden, crowdSizeForWarden, collectSceneObjectNames } from './proseWarden';
 import { applyLocalityWarden } from './locality';
 import { detectAndDiscoverLocations, discoverLocation } from './locationDiscovery';
 import {
@@ -107,6 +107,7 @@ import {
   ensureSealedOpeningBag,
 } from './openingEstablishment';
 import { ensureOpeningNpcPinned, resolveOpeningPinnedNames } from './openingPin';
+import { hookLockForWarden, seedHookLockFromPickedHook } from './hookLock';
 import {
   applyOpeningContract,
   ensureStarterLookCharacter,
@@ -118,7 +119,7 @@ import { applyFactLocks, detectFactLockViolations } from './factLocks';
 import { dropInsultGear } from './wornGear';
 import { formatCampaignStoryName, getCampaignBibleById, isNsfwCampaign } from '@/data/campaigns';
 import { applyAccusationFromInput } from './mysteryCulprit';
-import { parsePlayerIntent, groundPlayerAction, isSpeechOrProtest, isRoomLayoutExploreAsk } from './intentParser';
+import { parsePlayerIntent, groundPlayerAction, playerVisibleActionText, gmFacingPlayerAction, isSaferSceneLeak, playerTypedDialogue, isSpeechOrProtest, isRoomLayoutExploreAsk } from './intentParser';
 import { validateActionHard } from './actionValidation';
 import {
   checkObligationCoverage,
@@ -169,6 +170,12 @@ import { canOfferRewardedMemorable } from './rewardedAds';
 import { clipCustomTabletopRules } from './customTabletopRules';
 import { touchPlaceVisit, upsertPlaceFromSheet } from './places';
 import { isExplorableDungeon, isInteriorMap, isInteriorPlace, normalizeSheetAuthority } from './placeAuthority';
+import {
+  cameraAllowsInteriorMap,
+  enforceCameraOnProse,
+  enforceCameraOnState,
+  honestLocationName,
+} from './travelAuthority';
 import {
   seedDungeonState,
   mergeSheetWithNode,
@@ -261,6 +268,7 @@ import { harvestNarrativeIntoLedger, scrubInventedGeography } from './narrativeH
 import { maybeAutoCloseDungeon } from './dungeonLifecycle';
 import { maybeRevealFromLocation } from './worldAtlas';
 import { scrubOfficialPlaceholder } from './narrativeScrub';
+import { isChromePersonToken } from './chromeAuthority';
 import { hubBeatAwardKey, resolveHubArrival } from './hubEncounters';
 import { applySandboxXpAwards } from './sandboxXp';
 import { applyCharacterXpGain } from './characterXp';
@@ -270,7 +278,12 @@ import {
   filterGovernanceChoices,
   processMetaInput,
 } from './qualityGovernance';
-import { playerAsksRepeat, playerAsksContinuation } from './semanticLoopDetector';
+import {
+  playerAsksRepeat,
+  playerAsksContinuation,
+  recentGmBeatTexts,
+  shouldRetryUnaskedCollage,
+} from './semanticLoopDetector';
 import {
   runArcDirectorBeforeGm,
   formatArcDirectorMandateBlock,
@@ -892,6 +905,7 @@ export function useGame() {
     playerActionContext?: string
   ): ImagePromptContext => {
     const s = stateRef.current;
+    const lastGm = [...(s?.log ?? [])].reverse().find((e) => e.role === 'gm')?.content;
     return {
       visualConsistency,
       playerActionContext,
@@ -901,6 +915,8 @@ export function useGame() {
       campaignPremise: s?.campaignPremise ?? undefined,
       campaignArchetype: s?.campaignArchetype,
       campaignBibleId: s?.campaignBibleId,
+      storyText: lastGm,
+      sceneFacts: s?.sceneFacts,
     };
   }, []);
 
@@ -1626,7 +1642,10 @@ export function useGame() {
         landmarks,
         previous.currentCoordinates,
         previous.seed || previous.saveId || 'interior',
-        { visitedLandmarkNames: visitedHubLandmarkNames(previous) }
+        {
+          visitedLandmarkNames: visitedHubLandmarkNames(previous),
+          allowInterior: cameraAllowsInteriorMap(previous),
+        }
       );
     }
     const nextLocation =
@@ -1899,7 +1918,6 @@ export function useGame() {
       }
     }
 
-    let hardGateRewritten: string | undefined;
     if (
       !skipRepairDetection
       && !freeOpeningTurn
@@ -1946,7 +1964,6 @@ export function useGame() {
         turnInFlightRef.current = false;
         return;
       }
-      if (validation.rewritten) hardGateRewritten = validation.rewritten;
     }
 
     const honeymoonLeft = Math.max(0, current.storyStartTextTurnsRemaining ?? 0);
@@ -1977,7 +1994,7 @@ export function useGame() {
 
     // Diegetic content rewrite confirm (Pack 7)
     const pendingRewrite = current.pendingContentRewrite;
-    let rewriteSource = hardGateRewritten ?? mediated.text;
+    let rewriteSource = mediated.text;
     if (pendingRewrite) {
       const proceed = /^(proceed|yes|y|ok|okay|confirm|continue)\b/i.test(mediated.text.trim())
         || mediated.text.trim().toLowerCase() === pendingRewrite.rewritten.toLowerCase();
@@ -2034,14 +2051,14 @@ export function useGame() {
       }
     }
 
-    const contentSanitized = mode === 'kid' ? filterKidModeText(rewriteSource) : rewriteSource;
+    const contentSanitized = playerVisibleActionText(rewriteSource, mode);
     const lastGmForGround = current.log.filter((l) => l.role === 'gm').pop()?.content ?? '';
     const storyProseForGround = normalizeStoryCorpus(lastGmForGround);
     const openingPending = isOpeningEstablishmentPending(current);
     const grounded = openingPending
       ? { text: contentSanitized, intent: parsePlayerIntent(contentSanitized, current), rewritten: false, notes: [] as string[] }
       : groundPlayerAction(contentSanitized, current, storyProseForGround);
-    sanitizedInput = grounded.text;
+    sanitizedInput = gmFacingPlayerAction(contentSanitized, grounded);
     if (!openingPending) {
       const gate = playerInputGateBlock(current, sanitizedInput);
       if (gate.state !== current) {
@@ -2052,7 +2069,7 @@ export function useGame() {
         addToast(gate.message, 'info');
       }
     }
-    if (grounded.rewritten) {
+    if (grounded.rewritten && sanitizedInput !== contentSanitized) {
       addToast(`Action grounded: ${grounded.notes[0] ?? 'adjusted to match scene/inventory'}`, 'info');
     }
 
@@ -2234,6 +2251,8 @@ export function useGame() {
             aloneArrival: isAloneArrivalOpening(openingState),
             inventory: openingState.inventory,
             sceneProps: collectSceneObjectNames(openingState),
+            playerInput: contentSanitized,
+            hookLock: hookLockForWarden(openingState, openingText),
           },
         );
         if (settingsRef.current.contentMode === 'kid') {
@@ -2369,7 +2388,13 @@ export function useGame() {
         skipModel: grounded.intent.kind !== 'other' || grounded.rewritten,
       });
       if (!grounded.rewritten && interpreted.messy && interpreted.meaning) {
-        sanitizedInput = interpreted.meaning;
+        const meaning = interpreted.meaning;
+        if (
+          !isSaferSceneLeak(meaning)
+          && (playerTypedDialogue(typedAction) || !/\bI address\b/i.test(meaning))
+        ) {
+          sanitizedInput = meaning;
+        }
       }
 
       const intentForMandate =
@@ -2393,7 +2418,7 @@ export function useGame() {
         snapshotRef.current = null;
         setCanRewind(false);
         refundSpentTextTurn();
-        keepSentLineOnFail(sanitizedInput || lastInputRef.current || input);
+        keepSentLineOnFail(contentSanitized || lastInputRef.current || input);
         resetTurnUi();
         addToast('Combat in progress — fight, flee, or talk before moving.', 'error');
         turnInFlightRef.current = false;
@@ -2427,7 +2452,7 @@ export function useGame() {
             turn: nextTurn,
             log: [
               ...snap.log,
-              { id: uid(), turn: liveCurrent.turn, role: 'player', content: sanitizedInput, timestamp: Date.now() },
+              { id: uid(), turn: liveCurrent.turn, role: 'player', content: contentSanitized, timestamp: Date.now() },
               {
                 id: uid(),
                 turn: nextTurn,
@@ -2743,7 +2768,9 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
           sanitizedInput,
           liveCurrent.campaignBibleId
         );
+        const recentGmBeats = recentGmBeatTexts(liveCurrent);
         const nearClone = isNearClone(probeText, liveCurrent.recentBeatFingerprints ?? []);
+        const collageReject = shouldRetryUnaskedCollage(probeText, recentGmBeats, sanitizedInput);
         const askedRepeat = playerAsksRepeat(sanitizedInput);
         const askedContinue = playerAsksContinuation(sanitizedInput);
         // Free may skip a moderate same-beat retry only when the player asked to keep doing X.
@@ -2752,6 +2779,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
           effectiveWriterTier(settingsRef.current.subscriptionTier ?? 'free') === 'free'
           && sameBeat
           && !nearClone
+          && !collageReject
           && !travelAction
           && askedContinue
           && !askedRepeat
@@ -2768,6 +2796,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
             || !obligationCoverage.ok
             || sameBeat
             || nearClone
+            || collageReject
             || probeLocks.some((l) => l.kind === 'weapon' || l.kind === 'cleared'));
         // Fact-lock slips are cut locally after this. Only burn extra GM calls when
         // the turn did not resolve the player's action at all, or returned no story.
@@ -2787,6 +2816,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
             factLocks: probeLocks.map((v) => v.kind),
             obligationMissing: obligationCoverage.missing.map((o) => o.kind),
             sameBeat,
+            collageReject,
           });
           const firstResult = result;
           const firstProbe = probeText;
@@ -2798,11 +2828,16 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
           );
           const firstObligations = checkObligationCoverage(turnMandate.intentContract, firstProbe);
           const firstSameBeat = isSameBeat(firstProbe, liveCurrent.recentBeatFingerprints ?? []);
+          const firstCollageReject = shouldRetryUnaskedCollage(
+            firstProbe,
+            recentGmBeats,
+            sanitizedInput
+          );
           const extraBlocks = [
             !firstObligations.ok
               ? buildObligationRetryBlock(turnMandate.intentContract, firstObligations)
               : '',
-            firstSameBeat
+            firstSameBeat || firstCollageReject
               ? buildBeatNoveltyRetryBlock(liveCurrent.recentBeatFingerprints ?? [])
               : '',
           ]
@@ -3384,7 +3419,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
             turn: liveCurrent.turn,
           });
           refundSpentTextTurn();
-          keepSentLineOnFail(sanitizedInput || lastInputRef.current);
+          keepSentLineOnFail(contentSanitized || lastInputRef.current || input);
           setError('The story did not come through. Try that action again — this attempt was not charged.');
           return;
         }
@@ -3441,8 +3476,11 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
           aloneArrival: isAloneArrivalOpening(workingState) || isAloneArrivalOpening(liveCurrent),
           hasMappedDoorExits: doorish.length > 0,
           adjacentRoomNames: exits.map((e) => e.name),
-          crowdSize: calculateCrowdSize(workingState),
-          crowdPresent: workingState.sceneFacts?.crowd === 'present',
+          crowdSize: crowdSizeForWarden(workingState, cleanText),
+          crowdPresent:
+            workingState.sceneFacts?.crowd === 'present' ||
+            workingState.sceneFacts?.crowd === 'sparse' ||
+            crowdSizeForWarden(workingState, cleanText) > 0,
           currentTimeOfDay: workingState.sceneFacts?.timeOfDay,
           previousTimeOfDay: workingState.previousSceneFacts?.timeOfDay,
           isIndoor: workingState.sceneFacts?.indoor,
@@ -3469,7 +3507,8 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
             ...(workingState.sceneFacts?.present ?? []),
             ...(liveCurrent.sceneFacts?.present ?? []),
             ...((workingState.npcMemories ?? liveCurrent.npcMemories ?? []).map((n) => n.npcName)),
-          ].filter(Boolean),
+          ].filter((n) => n && !isChromePersonToken(n)),
+          hookLock: hookLockForWarden(workingState, cleanText),
         });
         cleanText = scrubOfficialPlaceholder(cleanText, workingState);
         cleanText = scrubInventedGeography(cleanText, workingState);
@@ -3664,7 +3703,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
         [
           ...(workingState.companions ?? []).map((c) => c.name).filter((n): n is string => Boolean(n)),
           ...(workingState.sceneFacts?.present ?? []).filter(
-            (n) => n.trim().length > 1 && !/^(bystanders|blue panel|cracked street)$/i.test(n)
+            (n) => n.trim().length > 1 && !isChromePersonToken(n) && !/^(bystanders|cracked street)$/i.test(n)
           ),
         ]
       );
@@ -3687,7 +3726,11 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
       );
       const mapName = mapAnchorName(resolvedLocation, harvested);
       let finalLocationName =
-        isGenericMapPlace(resolvedLocation) && mapName ? mapName : resolvedLocation;
+        honestLocationName(
+          workingState,
+          isGenericMapPlace(resolvedLocation) && mapName ? mapName : resolvedLocation,
+          sanitizedInput
+        ) ?? resolvedLocation;
       // Act-4: Travel toward / Return to a known hub snaps location for banks + XP.
       {
         const travelHub = parseTravelDestination(sanitizedInput, workingState.campaignBibleId ?? liveCurrent.campaignBibleId);
@@ -3698,6 +3741,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
         }
       }
       const landmarks = isInteriorPlace(mapName || finalLocationName)
+        && cameraAllowsInteriorMap(workingState, sanitizedInput)
         ? harvested
         : mergeHubLandmarks(
             harvested,
@@ -3747,10 +3791,22 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
               campaignBibleId: workingState.campaignBibleId ?? liveCurrent.campaignBibleId,
               places: workingState.places ?? liveCurrent.places,
             }),
+            allowInterior: cameraAllowsInteriorMap(workingState, sanitizedInput),
           }
         );
       }
       locationSheet = normalizeSheetAuthority(locationSheet, areaMap);
+      workingState = {
+        ...workingState,
+        currentLocation: finalLocationName,
+        locationSheet,
+        activeDungeon: areaMap,
+      };
+      workingState = enforceCameraOnState(workingState, sanitizedInput);
+      cleanText = enforceCameraOnProse(cleanText, workingState, sanitizedInput);
+      areaMap = workingState.activeDungeon ?? areaMap;
+      locationSheet = workingState.locationSheet ?? locationSheet;
+      finalLocationName = workingState.currentLocation ?? finalLocationName;
 
       let places = upsertPlaceFromSheet(
         touchPlaceVisit(
@@ -3862,7 +3918,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
         const presentNames = [
           ...(workingState.companions ?? []).map((c) => c.name).filter((n): n is string => Boolean(n)),
           ...(workingState.sceneFacts?.present ?? []).filter(
-            (n) => n.trim().length > 1 && !/^(bystanders|blue panel|cracked street)$/i.test(n)
+            (n) => n.trim().length > 1 && !isChromePersonToken(n) && !/^(bystanders|cracked street)$/i.test(n)
           ),
         ];
         let factions = mutateFactionOnStance(
@@ -4041,7 +4097,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
         ...workingState,
         ...updates,
         character: baseChar,
-        sceneFacts: applyCommittedNarrative(liveCurrent, cleanText, nextTurn, sanitizedInput),
+        sceneFacts: applyCommittedNarrative(workingState, cleanText, nextTurn, sanitizedInput),
         choices: committedChoices,
         openingEstablishment: liveCurrent.openingEstablishment,
         log: [...liveCurrent.log, gmLogEntryBase],
@@ -4067,7 +4123,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
         statusReveal,
         pendingContentRewrite: null,
         previousSceneFacts: liveCurrent.sceneFacts,
-        sceneFacts: applyCommittedNarrative(liveCurrent, cleanText, nextTurn, sanitizedInput),
+        sceneFacts: applyCommittedNarrative(workingState, cleanText, nextTurn, sanitizedInput),
         discoveredLocations: liveCurrent.discoveredLocations,
         campaignPremise: workingState.campaignPremise ?? liveCurrent.campaignPremise,
         campaignBibleId: workingState.campaignBibleId ?? liveCurrent.campaignBibleId,
@@ -4356,7 +4412,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
         debugLogger.record('WARN', 'sendAction aborted — player line kept');
         resetTurnUi();
         refundSpentTextTurn();
-        keepSentLineOnFail(sanitizedInput || lastInputRef.current || input);
+        keepSentLineOnFail(contentSanitized || lastInputRef.current || input);
         addToast('Turn cancelled — your line is still in the box.', 'info');
         return;
       }
@@ -4380,7 +4436,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
         stack,
       });
       refundSpentTextTurn();
-      keepSentLineOnFail(sanitizedInput || lastInputRef.current || input);
+      keepSentLineOnFail(contentSanitized || lastInputRef.current || input);
       resetTurnUi();
       const failKind = classifyTurnFailure(e);
       const playerMsg =
@@ -4622,6 +4678,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
     const pendingCovers = pendingRequiredCovers(openingPrompts, mergedCharacter, openingMode);
     const pickedHook = picked?.text;
     const pickedHookFallback = picked?.fallback;
+    const seededHookLock = seedHookLockFromPickedHook(pickedHook, pickedHookFallback, 0);
     const honeymoon = storyStartTextTurnsForTier(settingsRef.current.subscriptionTier ?? 'free');
     const rawNewState: GameState = clampLeakedOpeningQuests({
       ...namedSeeded,
@@ -4654,6 +4711,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
         pickedHook,
         pickedHookFallback,
         aloneArrival,
+        hookLock: seededHookLock,
       },
       customTabletopRules:
         engineMode === 'dnd' ? clipCustomTabletopRules(customTabletopRules).text || undefined : undefined,
@@ -4766,6 +4824,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
           aloneArrival: isAloneArrivalOpening(newState),
           inventory: newState.inventory,
           sceneProps: collectSceneObjectNames(newState),
+          hookLock: hookLockForWarden(newState, openingText),
         },
       );
       if (settingsRef.current.contentMode === 'kid') {

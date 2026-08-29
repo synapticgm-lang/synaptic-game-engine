@@ -5,7 +5,7 @@ import { CREDIT_SECTIONS, CREDITS_LAST_UPDATED, CREDITS_PATH } from '@/legal/cre
 /** Public credits page — fonts, icons, folklore, and other free / third-party materials. */
 export function CreditsPage() {
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-200">
+    <div className="sgm-scroll-page bg-slate-950 text-slate-200">
       <header className="border-b border-slate-800 bg-slate-900/80 backdrop-blur sticky top-0 z-10">
         <div className="mx-auto flex max-w-3xl items-center justify-between gap-4 px-4 py-3">
           <a

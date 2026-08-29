@@ -8,6 +8,7 @@ import { COMIC_TEXT_ANCHORS, normalizeTextAnchor } from '../types/comicScript';
 import { resolvePanelBudget } from './panelBudget';
 import { scrubFranchiseStyleLeak } from './comicImagePrompt';
 import { storyHasBody } from './turnAsk';
+import { formatSceneArtLock } from './sceneArtLock';
 
 export type BeatRole =
   | 'establishing'
@@ -176,6 +177,11 @@ export function buildDeterministicOnePanel(opts: {
   const artPrompt = scrubFranchiseStyleLeak(
     [
       `Single frozen moment: ${boundary}`,
+      formatSceneArtLock({
+        storyText: opts.storyText,
+        location: placeId,
+        sceneFacts: opts.state.sceneFacts,
+      }),
       `FOCAL: ${focal}${second}. Exact count: ${Math.max(1, roster.length)} named person(s) — do not add extras.`,
       `PLACE: ${placeAnchors || 'neutral interior'}.`,
       opts.playerAction.trim()

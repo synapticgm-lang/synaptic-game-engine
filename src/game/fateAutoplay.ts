@@ -67,6 +67,9 @@ import {
   resolveOpeningRegistrar,
   seedCoverAnswers,
 } from './openingEstablishment';
+import { applyCommittedNarrative } from './sceneFacts';
+import { hookLockForWarden, seedHookLockFromPickedHook } from './hookLock';
+import { enforceCameraOnProse, enforceCameraOnState, honestLocationName } from './travelAuthority';
 import { applyOpeningContract, ensureStarterLookCharacter, stitchOpeningScene } from './openingStitch';
 import {
   seedOutdoorHubPlaces,
@@ -86,6 +89,7 @@ import {
   eventsToQuestUpdates,
 } from './parser';
 import { scrubOfficialPlaceholder } from './narrativeScrub';
+import { isChromePersonToken } from './chromeAuthority';
 import { applyDailyQuestMilestone } from './dailyMilestoneLedger';
 import { countTurnReceipts, countRunReceipts, type ReceiptCounts } from './receiptTelemetry';
 import type { RunManifest } from './runManifest';
@@ -116,12 +120,17 @@ import { validateEvalRun, type EvalHarnessResult } from './evalHarness';
 import { playerInputGateBlock } from './choiceCompiler';
 import { filterSystemLogForEngine, reconcileXpStatusLines } from './systemLog';
 import { beatFingerprint, isSameBeat, isNearClone, buildBeatNoveltyRetryBlock, beatSimilarity } from './beatFingerprint';
-import { playerAsksRepeat, playerAsksContinuation } from './semanticLoopDetector';
+import {
+  playerAsksRepeat,
+  playerAsksContinuation,
+  recentGmBeatTexts,
+  shouldRetryUnaskedCollage,
+} from './semanticLoopDetector';
 import { enforcePerspective } from './perspectiveWarden';
 import { buildPlayTranscript, buildStoryReviewExport, resolveOfferedChoices, withOfferedChoices } from './playTranscript';
 import {
   applyProseWarden,
-  calculateCrowdSize,
+  crowdSizeForWarden,
   collectSceneObjectNames,
 } from './proseWarden';
 import {
@@ -504,6 +513,7 @@ export function buildNewGameState(opts: {
       pickedHook: picked?.text,
       pickedHookFallback: picked?.fallback,
       aloneArrival,
+      hookLock: seedHookLockFromPickedHook(picked?.text, picked?.fallback, 0),
     },
     gmPersonality: voices.gmPersonality,
     systemPersonality: voices.systemPersonality,
@@ -750,6 +760,7 @@ export async function headlessFateTurn(
     playerInput = mediated.text;
   }
 
+  const displayLine = playerInput;
   const lastGm = [...state.log].reverse().find((e) => e.role === 'gm')?.content ?? '';
   const hard = validateActionHard(playerInput, state, lastGm);
   if (!hard.valid) {
@@ -795,7 +806,7 @@ export async function headlessFateTurn(
       id: uid(),
       turn: state.turn,
       role: 'player',
-      content: playerInput,
+      content: displayLine,
       timestamp: Date.now(),
     };
     const gmBase: LogEntry = {
@@ -898,11 +909,12 @@ Do NOT print dice notation or CODE ENFORCED.
   const askedContinue = playerAsksContinuation(playerInput);
   const nearClone = isNearClone(gmText, fps);
   const sameBeatHit = isSameBeat(gmText, fps);
+  const collageReject = shouldRetryUnaskedCollage(gmText, recentGmBeatTexts(state), playerInput);
   if (
     !error
     && !askedRepeat
     && storyHasBody(gmText)
-    && (nearClone || (sameBeatHit && !askedContinue))
+    && (nearClone || collageReject || (sameBeatHit && !askedContinue))
     && transportRetries === 0
   ) {
     const novelty = buildBeatNoveltyRetryBlock(fps);
@@ -945,8 +957,11 @@ Do NOT print dice notation or CODE ENFORCED.
   cleanText = applyProseWarden(cleanText, {
     currentLocation: working.currentLocation ?? state.currentLocation,
     aloneArrival: isAloneArrivalOpening(working) || isAloneArrivalOpening(state),
-    crowdSize: calculateCrowdSize(working),
-    crowdPresent: working.sceneFacts?.crowd === 'present',
+    crowdSize: crowdSizeForWarden(working, cleanText),
+    crowdPresent:
+      working.sceneFacts?.crowd === 'present' ||
+      working.sceneFacts?.crowd === 'sparse' ||
+      crowdSizeForWarden(working, cleanText) > 0,
     inventory: working.inventory ?? state.inventory,
     sceneProps: collectSceneObjectNames(working),
     searchedEmpty: listEmptySearchTargets(working.sceneFacts ?? state.sceneFacts),
@@ -964,11 +979,16 @@ Do NOT print dice notation or CODE ENFORCED.
       ...(working.sceneFacts?.present ?? []),
       ...(state.sceneFacts?.present ?? []),
       ...((working.npcMemories ?? state.npcMemories ?? []).map((n) => n.npcName)),
-    ].filter(Boolean),
+    ].filter((n) => n && !isChromePersonToken(n)),
+    hookLock: hookLockForWarden(working, cleanText),
   });
   cleanText = scrubOfficialPlaceholder(cleanText, working);
   cleanText = scrubInventedGeography(cleanText, working);
   working = harvestNarrativeIntoLedger(working, cleanText, state.turn + 1);
+  working = {
+    ...working,
+    sceneFacts: applyCommittedNarrative(working, cleanText, state.turn + 1),
+  };
   working = maybeRevealFromLocation(working, working.currentLocation);
   working = maybeAutoCloseDungeon(working);
   const leak = scanAndScrubLeaks(cleanText);
@@ -989,7 +1009,10 @@ Do NOT print dice notation or CODE ENFORCED.
     };
   }
   if (updates.currentLocation) {
-    working = { ...working, currentLocation: updates.currentLocation };
+    working = {
+      ...working,
+      currentLocation: honestLocationName(working, updates.currentLocation, playerInput) ?? updates.currentLocation,
+    };
   }
 
   // Hard gate: Travel toward / Return to snaps location (was missing in headless → theater travel).
@@ -1003,6 +1026,8 @@ Do NOT print dice notation or CODE ENFORCED.
     };
     cleanText = ensureTravelArrivalProse(cleanText, travelHub.name, fromLoc);
   }
+  working = enforceCameraOnState(working, playerInput);
+  cleanText = enforceCameraOnProse(cleanText, working, playerInput);
 
   const pipeline = await resolvePipelineChoices({
     gmText: narrativeSource,
@@ -1157,7 +1182,7 @@ Do NOT print dice notation or CODE ENFORCED.
     id: uid(),
     turn: state.turn,
     role: 'player',
-    content: playerInput,
+    content: displayLine,
     timestamp: Date.now(),
   };
   const gmBase: LogEntry = {

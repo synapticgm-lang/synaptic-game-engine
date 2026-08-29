@@ -6,20 +6,10 @@
  */
 
 import type { GameState, Item } from './types.ts';
+import { calculateCrowdSize, scrubInventedCrowdSize } from './crowdAuthority.ts';
+import { rewriteChromePersonClauses } from './chromeAuthority.ts';
 
-/**
- * Calculate tracked crowd size from game state for consistency checking.
- */
-export function calculateCrowdSize(state: GameState): number {
-  const alone = state.openingEstablishment?.aloneArrival === true;
-  if (alone && !state.activeEncounter) return 0;
-  
-  const present = state.sceneFacts?.present ?? [];
-  const companions = state.companions?.length ?? 0;
-  const encounter = state.activeEncounter ? 1 : 0;
-  
-  return Math.max(0, present.length + companions + encounter);
-}
+export { calculateCrowdSize, crowdSizeForWarden, scrubInventedCrowdSize } from './crowdAuthority.ts';
 
 /** Names from scene props, containers, interactables, and floor loose items. */
 export function collectSceneObjectNames(state: GameState): string[] {
@@ -362,52 +352,6 @@ export function scrubAnthropomorphizedLocation(text: string): string {
   return tidyClauses(next);
 }
 
-/**
- * Scrub invented large crowd claims that contradict tracked presence.
- * Catches "hundred people", "fifty onlookers", etc. when scene has small group.
- * Also catches contradictory "empty" / "no crowd" when crowd is tracked as present.
- */
-export function scrubInventedCrowdSize(text: string, trackedCrowdSize: number, crowdPresent?: boolean): string {
-  if (!text) return text;
-  
-  // If crowd is present, scrub contradictory "empty" / "no crowd" claims
-  if (crowdPresent) {
-    const EMPTY_CLAIMS = /\b((?:the )?(?:square|street|room|hall|place) is (?:empty|deserted)|no (?:one|people|crowd|voices)|(?:empty|deserted) (?:square|street|room|hall))\b/gi;
-    if (EMPTY_CLAIMS.test(text)) {
-      text = text.replace(EMPTY_CLAIMS, (match) => {
-        if (/no (?:one|people|crowd)/i.test(match)) return 'a few people still';
-        if (/no voices/i.test(match)) return 'quiet voices';
-        return 'a handful of people in the $1'.replace('$1', match.match(/(?:square|street|room|hall|place)/i)?.[0] || 'area');
-      });
-    }
-  }
-  
-  if (trackedCrowdSize >= 20) return text; // Large crowds are allowed if tracked
-  
-  // Pattern: number + crowd words
-  const largeNumber = /\b(?:dozens?|scores?|hundreds?|fifty|sixty|seventy|eighty|ninety|hundred|two hundred|three hundred)\s+(?:of\s+)?(?:people|figures|onlookers|bystanders|watchers|voices|hands|faces|souls|bodies)\b/gi;
-  
-  if (!largeNumber.test(text)) return text;
-  
-  // If tracked crowd is small (<=8), rewrite large crowd mentions
-  const replacement = trackedCrowdSize <= 3 ? 'a few people' : 'several people';
-  
-  return text.replace(largeNumber, replacement);
-}
-
-/**
- * Calculate tracked crowd size from game state for consistency checking.
- */
-export function calculateCrowdSize(state: GameState): number {
-  const alone = state.openingEstablishment?.aloneArrival === true;
-  if (alone && !state.activeEncounter) return 0;
-  
-  const present = state.sceneFacts?.present ?? [];
-  const companions = state.companions?.length ?? 0;
-  const encounter = state.activeEncounter ? 1 : 0;
-  
-  return Math.max(0, present.length + companions + encounter);
-}
 
 /**
  * Pack 12 Extended Validation: Time Skip
@@ -594,6 +538,10 @@ export function scrubInventedContainers(
   );
 }
 
+export function scrubChromeAsPerson(text: string, presentNames: string[] = []): string {
+  return rewriteChromePersonClauses(text, presentNames);
+}
+
 export function applyProseWarden(text: string, ctx?: ProseWardenContext): string {
   if (!text) return text;
   const alone = ctx?.aloneArrival === true;
@@ -601,6 +549,7 @@ export function applyProseWarden(text: string, ctx?: ProseWardenContext): string
   next = scrubSomeoneNearbyPlaceholder(next, alone);
   next = scrubUiQuestVerbs(next, alone);
   next = scrubSpeakerPlaceholder(next, alone);
+  next = scrubChromeAsPerson(next, ctx?.presentNames ?? []);
   next = scrubPlaceholderNouns(next, ctx?.currentLocation);
   next = scrubPrematureSecrets(next);
   next = scrubInventedAlonePresence(next, alone);

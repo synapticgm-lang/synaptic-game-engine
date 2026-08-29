@@ -13,7 +13,7 @@ export function WelcomeSplash({ onTap }: { onTap: () => void }) {
   return (
     <button
       onClick={onTap}
-      className="group relative flex min-h-screen w-full flex-col items-center justify-center overflow-hidden bg-slate-950 transition-colors"
+      className="sgm-scroll-page group relative flex min-h-0 w-full flex-col items-center justify-center bg-slate-950 transition-colors"
     >
       <img
         src="/backgrounds/bg-landscape.png"
@@ -71,7 +71,7 @@ export function BootSplash({ phase }: { phase: BootPhase }) {
     : 'Connecting to the Game Realm...';
 
   return (
-    <div className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden bg-slate-950">
+    <div className="sgm-scroll-page relative flex min-h-0 flex-col items-center justify-center bg-slate-950">
       <div className="pointer-events-none absolute inset-0">
         <div className="absolute left-1/2 top-1/2 h-[500px] w-[500px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-crimson-900/10 blur-[120px]" />
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_rgba(15,23,42,0)_0%,_rgba(2,6,23,0.8)_70%)]" />

@@ -75,7 +75,7 @@ describe('playtest30e — tester gate', () => {
 
   it('stamp advanced; Mid writer stays OFF', () => {
     expect(BUILD_STAMP >= '2026-08-30e').toBe(true);
-    expect(HUD_BUILD_STAMP.startsWith('2026-08-30')).toBe(true);
+    expect(HUD_BUILD_STAMP >= '2026-08-30e').toBe(true);
     expect(STAGNATION_MID_WRITER_ENABLED).toBe(false);
   });
 

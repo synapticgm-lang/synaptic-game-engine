@@ -89,7 +89,7 @@ export function MainMenu({
 
   return (
     <div
-      className="relative flex min-h-screen flex-col items-center overflow-hidden px-4 py-8"
+      className="sgm-home sgm-scroll-page relative flex h-full min-h-0 w-full flex-1 flex-col items-center overflow-x-hidden overflow-y-auto px-4 pt-8"
       style={{
         backgroundColor: 'var(--sgm-bg, #020617)',
         color: 'var(--sgm-text, #e2e8f0)',
@@ -107,21 +107,23 @@ export function MainMenu({
         Settings
       </button>
 
-      <div className="relative z-10 flex w-full max-w-3xl flex-col items-center gap-6 pt-6">
+      <div className="relative z-10 flex w-full min-h-0 max-w-3xl flex-col items-center gap-6 pt-6">
         <div className="flex flex-col items-center gap-3 text-center">
-          <div className="w-full max-w-[220px] aspect-square overflow-hidden">
+          <div className="aspect-square w-full max-w-[140px] overflow-hidden sm:max-w-[220px]">
             <img
               src="/assets/images/1785421156244~2 copy.png"
               alt="SYNAPTIC GM"
               className="w-full h-auto object-cover object-top drop-shadow-[0_0_20px_rgba(220,38,38,0.35)] filter brightness-110"
             />
           </div>
-          <h1 className="font-serif text-2xl font-bold tracking-tight sm:text-3xl" style={{ color: 'var(--sgm-text, #f1f5f9)' }}>
-            SYNAPTIC GM
-          </h1>
-          <p className="text-sm" style={{ color: 'var(--sgm-muted, #64748b)' }}>
-            A dark fantasy world awaits your decisions.
-          </p>
+          <div className="sgm-home-title-panel flex flex-col items-center gap-1.5 rounded-xl border px-5 py-3 text-center">
+            <h1 className="font-serif text-2xl font-bold tracking-tight sm:text-3xl" style={{ color: 'var(--sgm-text, #f1f5f9)' }}>
+              SYNAPTIC GM
+            </h1>
+            <p className="text-sm" style={{ color: 'var(--sgm-muted, #94a3b8)' }}>
+              A dark fantasy world awaits your decisions.
+            </p>
+          </div>
         </div>
 
         <div className="flex w-full max-w-md rounded-xl border border-slate-800 bg-slate-950/70 p-1">
@@ -211,7 +213,7 @@ function PlayTab({
       )}
 
       {hasSave && (localSlot || cloudSlot) && (
-        <div className="w-full rounded-lg border border-slate-800 bg-slate-900/40 px-4 py-3">
+        <div className="sgm-home-active-save w-full rounded-lg border border-slate-800 bg-slate-900/40 px-4 py-3">
           <div className="flex items-center gap-2 text-xs text-slate-500">
             <BookOpen size={12} />
             <span className="font-medium text-slate-400">Active Save:</span>

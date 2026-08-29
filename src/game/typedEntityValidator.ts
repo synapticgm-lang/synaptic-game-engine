@@ -15,6 +15,7 @@
 
 import type { GameState } from './types';
 import { buildProtectedEntityNames } from './narrativeScrub';
+import { isChromePersonToken } from './chromeAuthority';
 
 /** Never emit these as automatic scrub replacements (29a constitution). */
 export const FORBIDDEN_SCRUB_REPLACEMENTS = [
@@ -70,7 +71,12 @@ export interface TypedEntityContext {
  * Extract typed entity context from game state for validation.
  */
 export function extractEntityContext(state: GameState): TypedEntityContext {
-  const presentNpcs = [...(state.sceneFacts?.present ?? [])];
+  const presentNpcs = [...(state.sceneFacts?.present ?? [])].filter(
+    (n) =>
+      n.trim().length > 1
+      && !isChromePersonToken(n)
+      && !/^(bystanders?|handlers?|onlookers?|watchers?|crowd|people|voices|cracked street)$/i.test(n)
+  );
   const companions = (state.companions ?? []).map(c => c.name).filter(Boolean);
   const locationName = state.currentLocation;
   
@@ -81,7 +87,7 @@ export function extractEntityContext(state: GameState): TypedEntityContext {
     const entry = log[i];
     if (entry?.role === 'gm' && entry.content) {
       const speakerMatch = entry.content.match(/\b([A-Z][a-z]+(?:\s+[A-Z][a-z]+)?)\s+(?:says?|asks?|replies?|tells?|speaks?)/);
-      if (speakerMatch) {
+      if (speakerMatch && !isChromePersonToken(speakerMatch[1] ?? '')) {
         lastSpeaker = speakerMatch[1];
         break;
       }

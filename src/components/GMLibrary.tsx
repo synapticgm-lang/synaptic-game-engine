@@ -288,7 +288,7 @@ export function GMLibrary({ open, contentMode, onClose, onSelectCampaign, onSele
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-2 sm:p-4">
       <div
-        className="sgm-turn-frame sgm-info-panel relative flex h-full max-h-[96vh] w-full max-w-6xl flex-col overflow-hidden rounded-xl border shadow-2xl"
+        className="sgm-turn-frame sgm-info-panel relative flex h-full min-h-0 max-h-[min(96vh,100dvh)] w-full max-w-6xl flex-col overflow-hidden rounded-xl border shadow-2xl"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="sgm-turn-frame-bar h-1 w-full shrink-0" />
@@ -324,7 +324,7 @@ export function GMLibrary({ open, contentMode, onClose, onSelectCampaign, onSele
         </div>
 
         {/* Content */}
-        <div className="flex-1 overflow-y-auto p-4 sm:p-6">
+        <div className="sgm-modal-body flex-1 p-4 sm:p-6">
           {tab === 'campaigns' && (
             <CampaignCarousel
               visible={carouselVisible}

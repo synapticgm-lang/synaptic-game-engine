@@ -8,6 +8,7 @@ import {
   resolveOfferedChoices,
   withOfferedChoices,
 } from './playTranscript';
+import { filterInventedContextChoices } from './choiceWarden';
 
 describe('playTranscript', () => {
   it('preserves offeredChoices on LogEntry via withOfferedChoices', () => {
@@ -67,6 +68,68 @@ describe('playTranscript', () => {
       },
     };
     expect(resolveOfferedChoices(state)).toEqual(offered);
+  });
+
+  it('after inspect surroundings drops name-cover chips while the name cover is still pending', () => {
+    const base = createInitialState('Test Tale', 'litrpg');
+    const state = {
+      ...base,
+      character: { ...base.character, name: 'Unknown Survivor' },
+      choices: [
+        'Give them your name',
+        'Tell them who you are',
+        'Approach the doorway',
+        'Wait and listen carefully',
+      ],
+      log: [
+        {
+          id: 'g1',
+          turn: 0,
+          role: 'gm' as const,
+          content:
+            'The ceremonial circle is rubble and weeds. Silence, damp earth, crumbling stone.',
+          timestamp: 1,
+          offeredChoices: ['Inspect the immediate surroundings', 'Wait and listen carefully'],
+        },
+        {
+          id: 'p1',
+          turn: 0,
+          role: 'player' as const,
+          content: 'Inspect the immediate surroundings',
+          timestamp: 2,
+        },
+        {
+          id: 'g2',
+          turn: 0,
+          role: 'gm' as const,
+          content: 'Weeds cling to the broken stones. A gap opens toward a corridor of ash.',
+          timestamp: 3,
+        },
+      ],
+      sceneFacts: {
+        crowd: 'none' as const,
+        noise: 'quiet',
+        present: [],
+        props: ['weeds', 'rubble', 'stones'],
+        lastBeat: 'inspect',
+        updatedTurn: 0,
+        indoor: false,
+      },
+      openingEstablishment: {
+        complete: false,
+        pending: [{ id: 'name', kind: 'name' as const, question: 'A name. What do we call you?' }],
+        answers: {},
+        sceneWritten: true,
+      },
+    };
+    const filtered = filterInventedContextChoices(
+      ['Give them your name', 'Tell them who you are', 'Waiting for a name you will own', 'Approach the doorway'],
+      state
+    );
+    expect(filtered.join(' ')).not.toMatch(/give them your name|tell them who you are|waiting for a name you will own/i);
+    expect(resolveOfferedChoices({ ...state, choices: filtered }).join(' ')).not.toMatch(
+      /give them your name|tell them who you are|waiting for a name you will own/i
+    );
   });
 
   it('falls back to last GM offeredChoices when opening is complete and state.choices is empty', () => {

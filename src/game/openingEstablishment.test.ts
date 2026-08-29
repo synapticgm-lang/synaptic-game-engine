@@ -7,6 +7,7 @@ import {
   establishmentChoices,
   harvestEarthOriginFromProse,
   isLocationishOpeningUtterance,
+  isNameOriginKitCoverChoice,
   isOpeningSetupChipLabel,
   mergePreferredProfileIntoOpening,
   openingAnswerDisplay,
@@ -159,6 +160,23 @@ describe('opening player bubbles', () => {
     expect(playerLines.some((l) => /peterborough|manchester|leeds|birmingham|sheffield|london/i.test(l))).toBe(
       true
     );
+  });
+
+  it('treats give-them-a-name chips as cover form, not inspect follow-up', () => {
+    expect(isNameOriginKitCoverChoice('Give them your name')).toBe(true);
+    expect(isNameOriginKitCoverChoice('Tell them who you are')).toBe(true);
+    expect(isNameOriginKitCoverChoice('Waiting for a name you will own')).toBe(true);
+    expect(isNameOriginKitCoverChoice('Approach the doorway')).toBe(false);
+  });
+
+  it('defers inspect / look-around to play and never emits name-waiting prose', async () => {
+    const result = await applyOpeningAnswer(summonedNameCover(), 'Inspect the immediate surroundings');
+    expect(result.deferToPlay).toBe(true);
+    expect(result.generateOpening).toBe(false);
+    const gm = [...result.state.log].reverse().find((e) => e.role === 'gm')?.content ?? '';
+    expect(gm).not.toMatch(/They are still waiting for a name you will own/i);
+    expect(result.state.openingEstablishment?.pending[0]?.kind).toBe('name');
+    expect(result.state.character.name).toBe('Unknown Survivor');
   });
 
   it('defers in-world questions to play while covers remain after sceneWritten', async () => {

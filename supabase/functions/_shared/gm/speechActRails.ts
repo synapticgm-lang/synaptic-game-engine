@@ -15,5 +15,7 @@ Honor the player's social move; do not rewrite it into a different action.
 * STAY SILENT → silence is not consent; scene may advance with pressure.
 * OOC SAFETY ("make this less intense") → apply boundary before fiction; Kid Mode stays strict.
 Never open with ritual "I understand." Prove it in the beat.
+Physical / inspect / flee / leave are ACTIONS, not speech. If the player did not use quotes or say/ask/talk, narrate third-person action — never "you state" their typed line, and never quote a system rewrite.
+Never write "safer scene action", "if none is present", or "scan … before committing" as spoken dialogue or as the player's words.
 =============================`;
 }

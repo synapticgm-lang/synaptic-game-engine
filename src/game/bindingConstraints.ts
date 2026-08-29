@@ -7,6 +7,8 @@
  */
 
 import type { GameState, SceneFacts, Item } from './types';
+import { formatCrowdBindingLine } from './crowdAuthority';
+import { formatHookBindingLine } from './hookLock';
 import { listInteriorExitsFromHere } from './mapEngine';
 import { isInteriorMap } from './placeAuthority';
 import { currentDungeonNode } from './dungeonSeed';
@@ -167,6 +169,14 @@ function buildPresenceConstraints(state: GameState): BindingConstraint[] {
 function buildSceneConstraints(facts: SceneFacts, state: GameState): BindingConstraint[] {
   const constraints: BindingConstraint[] = [];
   const alone = state.openingEstablishment?.aloneArrival === true;
+  const hookRule = formatHookBindingLine(state);
+  if (hookRule) {
+    constraints.push({
+      category: 'scene',
+      rule: hookRule,
+      authority: 'sceneFacts.hookLock',
+    });
+  }
 
   if (alone && !state.activeEncounter) {
     constraints.push({
@@ -177,12 +187,20 @@ function buildSceneConstraints(facts: SceneFacts, state: GameState): BindingCons
     return constraints;
   }
 
-  if (facts.crowd === 'present') {
+  if (facts.crowd === 'present' || facts.crowd === 'sparse') {
     constraints.push({
       category: 'scene',
       rule: 'People are present in this scene — do not write an empty street, silent area, or "no one around" unless you narrate them leaving',
       authority: 'sceneFacts.crowd',
     });
+    const countRule = formatCrowdBindingLine(state);
+    if (countRule) {
+      constraints.push({
+        category: 'scene',
+        rule: countRule,
+        authority: 'sceneFacts.crowdCount',
+      });
+    }
   } else if (facts.crowd === 'none') {
     constraints.push({
       category: 'scene',

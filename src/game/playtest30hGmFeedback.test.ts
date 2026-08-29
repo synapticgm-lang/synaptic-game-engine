@@ -2,40 +2,42 @@ import { describe, expect, it, vi, beforeEach, afterEach } from 'vitest';
 import { BUILD_STAMP } from './runManifest';
 import { HUD_BUILD_STAMP } from '../components/Hud';
 
-// Mock Supabase
-const mockSupabase = {
-  auth: {
-    getUser: vi.fn(),
-  },
-  from: vi.fn(() => ({
-    upsert: vi.fn(() => ({
-      select: vi.fn(() => ({
-        single: vi.fn(() => Promise.resolve({ data: null, error: null })),
+const { mockSupabase } = vi.hoisted(() => {
+  const mockSupabase = {
+    auth: {
+      getUser: vi.fn(),
+    },
+    from: vi.fn(() => ({
+      upsert: vi.fn(() => ({
+        select: vi.fn(() => ({
+          single: vi.fn(() => Promise.resolve({ data: null, error: null })),
+        })),
       })),
-    })),
-    select: vi.fn(() => ({
-      eq: vi.fn(() => ({
+      select: vi.fn(() => ({
         eq: vi.fn(() => ({
           eq: vi.fn(() => ({
-            maybeSingle: vi.fn(() => Promise.resolve({ data: null, error: null })),
+            eq: vi.fn(() => ({
+              maybeSingle: vi.fn(() => Promise.resolve({ data: null, error: null })),
+            })),
+          })),
+        })),
+        order: vi.fn(() => ({
+          limit: vi.fn(() => ({
+            range: vi.fn(() => Promise.resolve({ data: [], error: null, count: 0 })),
           })),
         })),
       })),
-      order: vi.fn(() => ({
-        limit: vi.fn(() => ({
-          range: vi.fn(() => Promise.resolve({ data: [], error: null, count: 0 })),
-        })),
-      })),
-    })),
-    delete: vi.fn(() => ({
-      eq: vi.fn(() => ({
+      delete: vi.fn(() => ({
         eq: vi.fn(() => ({
-          eq: vi.fn(() => Promise.resolve({ error: null })),
+          eq: vi.fn(() => ({
+            eq: vi.fn(() => Promise.resolve({ error: null })),
+          })),
         })),
       })),
     })),
-  })),
-};
+  };
+  return { mockSupabase };
+});
 
 vi.mock('@/lib/supabase', () => ({
   isSupabaseConfigured: true,
@@ -64,7 +66,7 @@ describe('playtest30h — GM response feedback system', () => {
 
   it('stamp is 2026-08-30h', () => {
     expect(BUILD_STAMP >= '2026-08-30h').toBe(true);
-    expect(HUD_BUILD_STAMP.startsWith('2026-08-30')).toBe(true);
+    expect(HUD_BUILD_STAMP >= '2026-08-30h').toBe(true);
   });
 
   it('migration creates gm_response_feedback table with comment field', async () => {
@@ -78,6 +80,16 @@ describe('playtest30h — GM response feedback system', () => {
     expect(migration).toContain('feedback_type text not null');
     expect(migration).toContain("check (feedback_type in ('positive', 'negative'))");
     expect(migration).toContain('unique(user_id, save_id, turn_number)');
+  });
+
+  it('021 keys feedback per log entry so opening / turn 0 can rate separately', async () => {
+    const fs = await import('node:fs/promises');
+    const path = await import('node:path');
+    const migrationPath = path.resolve(__dirname, '../../supabase/migrations/021_gm_feedback_log_entry.sql');
+    const migration = await fs.readFile(migrationPath, 'utf-8');
+    expect(migration).toContain('log_entry_id');
+    expect(migration).toContain('unique (user_id, save_id, log_entry_id)');
+    expect(migration).toContain('Testers cannot read other people');
   });
 
   it('submitGmFeedback validates comment length', async () => {
@@ -198,6 +210,10 @@ describe('playtest30h — GM response feedback system', () => {
     expect(component).toContain('comment');
     expect(component).toContain('MAX_COMMENT_LENGTH');
     expect(component).toContain('500');
+    expect(component).toContain('min-h-11');
+    expect(component).not.toMatch(/isTestLabEnabled|isFounderPlayAccount|isStaffEmail|isTesterCohort/);
+    expect(component).not.toMatch(/from ['"]@\/game\/testLab['"]/);
+    expect(component).toContain('logEntryId');
   });
 
   it('NarrativeView passes saveId and bibleId to GmResponseFeedback', async () => {
@@ -210,6 +226,22 @@ describe('playtest30h — GM response feedback system', () => {
     expect(narrative).toContain('<GmResponseFeedback');
     expect(narrative).toContain('saveId={saveId}');
     expect(narrative).toContain('bibleId={bibleId}');
+    expect(narrative).toContain('logEntryId={entry.id}');
+    expect(narrative).not.toMatch(/isTestLabEnabled|play_access|isStaff/);
+  });
+
+  it('CenterPanel classic LogRow also mounts thumbs and uses campaignBibleId', async () => {
+    const fs = await import('node:fs/promises');
+    const path = await import('node:path');
+    const centerPath = path.resolve(__dirname, '../components/CenterPanel.tsx');
+    const center = await fs.readFile(centerPath, 'utf-8');
+    
+    expect(center).toContain('saveId={state.saveId}');
+    expect(center).toContain('bibleId={state.campaignBibleId}');
+    expect(center).toContain('import { GmResponseFeedback }');
+    expect(center).toContain('<GmResponseFeedback');
+    expect(center).toContain('logEntryId={entry.id}');
+    expect(center).not.toMatch(/isTestLabEnabled|play_access|isStaff/);
   });
 
   it('CenterPanel passes saveId and bibleId to NarrativeView', async () => {
@@ -219,7 +251,7 @@ describe('playtest30h — GM response feedback system', () => {
     const center = await fs.readFile(centerPath, 'utf-8');
     
     expect(center).toContain('saveId={state.saveId}');
-    expect(center).toContain('bibleId={state.bibleId}');
+    expect(center).toContain('bibleId={state.campaignBibleId}');
   });
 
   it('admin review component exists', async () => {

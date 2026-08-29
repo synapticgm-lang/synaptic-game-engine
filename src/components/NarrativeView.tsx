@@ -94,7 +94,7 @@ export function NarrativeView({ log, busy, turnPhase = 'idle', streamingReveal =
   return (
     <div className="relative flex h-full overflow-hidden">
       {/* Main narrative column */}
-      <div className="flex-1 overflow-y-auto px-3 py-4 sm:px-6">
+      <div className="min-h-0 flex-1 overflow-y-auto px-3 py-4 sm:px-6">
         <div className="mx-auto max-w-2xl space-y-4">
           {log.map((entry, index) => (
             shouldSkipDuplicatePlayerBubble(log, index) ? null : (
@@ -263,11 +263,12 @@ function DmNarration({ entry, engineMode, showTurnAsk, streamingReveal, onAccept
         )}
       </div>
       
-      {/* GM Response Feedback - only show for completed turns with real GM content */}
+      {/* Any signed-in account can rate every GM story bubble, including opening / turn 0. */}
       {saveId && hasRealGmStory(entry) && !isRevealing && (
         <GmResponseFeedback
           saveId={saveId}
           turnNumber={entry.turn}
+          logEntryId={entry.id}
           gmStory={displayContent}
           playerAction={playerAction}
           gameMode={engineMode}

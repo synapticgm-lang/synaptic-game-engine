@@ -14,6 +14,7 @@
  */
 
 import type { GameState, EngineMode } from './types';
+import { normalizeProseTokens, tokenJaccard } from './beatFingerprint';
 
 export interface SemanticIntent {
   /** Canonical action type (inspect, ask, listen, travel, wait, attack, etc.) */
@@ -523,4 +524,174 @@ export function filterRecycledStallChoices(
     filtered.push(choice);
   }
   return { filtered, removed };
+}
+
+const COLLAGE_LOOKBACK = 8;
+const COLLAGE_SENTENCE_JACCARD = 0.68;
+const COLLAGE_CONTAINMENT = 0.85;
+const COLLAGE_MIN_INTER = 5;
+const COLLAGE_PREFIX_WORDS = 40;
+const NEW_TAIL_WORDS = 25;
+const NEW_TAIL_CUE_WORDS = 8;
+
+const CONCRETE_TAIL_CUE =
+  /\b(?:a|an|the)\s+(?:man|woman|figure|stranger|official|warden|handler|registrar|girl|boy|soldier|merchant|priest)\b|\b(?:steps?|walks?|enters?|emerges?|watches|stands|waits|speaks|says)\b|[“"][^”"]{8,}[”"]/i;
+
+export interface LeadingCollageHit {
+  hit: boolean;
+  kind: 'none' | 'prefix' | 'stitch';
+  recycledSentenceCount: number;
+  recycledWordCount: number;
+  stripIndex: number;
+  tailHasNewContent: boolean;
+  sourceBeats: number[];
+}
+
+function wordCount(text: string): number {
+  return ((text ?? '').match(/[A-Za-z']+/g) ?? []).length;
+}
+
+/** Split story prose into sentences. Short fragments stay attached to the nearest period. */
+export function splitStorySentences(text: string): string[] {
+  const cleaned = (text ?? '').replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
+  if (!cleaned) return [];
+  const parts = cleaned.match(/[^.!?]+[.!?]+(?:["”'])?|[^.!?]+$/g) ?? [cleaned];
+  return parts.map((s) => s.trim()).filter((s) => s.length > 0);
+}
+
+export function isSubstantialSentence(sentence: string): boolean {
+  if (wordCount(sentence) < 8) return false;
+  return normalizeProseTokens(sentence).length >= 4;
+}
+
+function sentenceMatches(a: string, b: string): boolean {
+  if (!isSubstantialSentence(a) || !isSubstantialSentence(b)) return false;
+  const j = tokenJaccard(a, b);
+  if (j >= COLLAGE_SENTENCE_JACCARD) return true;
+  const A = new Set(normalizeProseTokens(a));
+  const B = new Set(normalizeProseTokens(b));
+  let inter = 0;
+  for (const t of A) if (B.has(t)) inter++;
+  const smaller = Math.min(A.size, B.size);
+  return smaller > 0 && inter / smaller >= COLLAGE_CONTAINMENT && inter >= COLLAGE_MIN_INTER;
+}
+
+function bestSourceBeat(sentence: string, recentBeats: string[]): number {
+  if (!isSubstantialSentence(sentence)) return -1;
+  let bestIdx = -1;
+  let bestScore = 0;
+  for (let i = 0; i < recentBeats.length; i++) {
+    for (const other of splitStorySentences(recentBeats[i] ?? '')) {
+      if (!sentenceMatches(sentence, other)) continue;
+      const score = tokenJaccard(sentence, other);
+      if (score > bestScore) {
+        bestScore = score;
+        bestIdx = i;
+      }
+    }
+  }
+  return bestIdx;
+}
+
+function tailHasConcreteContent(sentences: string[]): boolean {
+  const tail = sentences.join(' ').replace(/\s+/g, ' ').trim();
+  if (!tail) return false;
+  const words = wordCount(tail);
+  if (words >= NEW_TAIL_WORDS && isSubstantialSentence(tail)) return true;
+  if (words >= NEW_TAIL_CUE_WORDS && CONCRETE_TAIL_CUE.test(tail)) return true;
+  return false;
+}
+
+/** Last K committed GM story beats, oldest-in-window first. */
+export function recentGmBeatTexts(
+  state: { log?: Array<{ role?: string; content?: string }> },
+  lastK = COLLAGE_LOOKBACK
+): string[] {
+  const found: string[] = [];
+  const log = state.log ?? [];
+  for (let i = log.length - 1; i >= 0 && found.length < lastK; i--) {
+    const text = log[i]?.role === 'gm' ? String(log[i]?.content ?? '').trim() : '';
+    if (text) found.push(text);
+  }
+  return found.reverse();
+}
+
+/**
+ * Leading-sentence collage: the opening of this beat reuses sentences from one
+ * or two prior GM beats even when the whole-paragraph fingerprint stays below
+ * the 0.85 near-clone bar. Short shared phrases (“the door”) are ignored.
+ */
+export function detectLeadingCollage(
+  draft: string,
+  recentGmBeats: string[],
+  lastK = COLLAGE_LOOKBACK
+): LeadingCollageHit {
+  const empty: LeadingCollageHit = {
+    hit: false,
+    kind: 'none',
+    recycledSentenceCount: 0,
+    recycledWordCount: 0,
+    stripIndex: 0,
+    tailHasNewContent: false,
+    sourceBeats: [],
+  };
+  const beats = (recentGmBeats ?? []).filter((b) => String(b ?? '').trim()).slice(-lastK);
+  const sentences = splitStorySentences(draft);
+  if (!beats.length || sentences.length < 1) return empty;
+
+  const sources = sentences.map((s) => bestSourceBeat(s, beats));
+  let stripIndex = 0;
+  while (stripIndex < sentences.length) {
+    if (sources[stripIndex] >= 0) {
+      stripIndex += 1;
+      continue;
+    }
+    const shortBridge =
+      !isSubstantialSentence(sentences[stripIndex] ?? '')
+      && stripIndex + 1 < sentences.length
+      && sources[stripIndex + 1] >= 0;
+    if (shortBridge) {
+      stripIndex += 1;
+      continue;
+    }
+    break;
+  }
+
+  const leadingSources = sources.slice(0, stripIndex).filter((s) => s >= 0);
+  const uniqueSources = [...new Set(leadingSources)];
+  const recycledSentenceCount = leadingSources.length;
+  const recycledWordCount = wordCount(sentences.slice(0, stripIndex).join(' '));
+  const stitch = uniqueSources.length >= 2;
+  const prefixHit = recycledSentenceCount >= 2 || recycledWordCount >= COLLAGE_PREFIX_WORDS;
+  const hit = stripIndex > 0 && (prefixHit || stitch);
+  if (!hit) return empty;
+
+  const tail = sentences.slice(stripIndex);
+  return {
+    hit: true,
+    kind: stitch ? 'stitch' : 'prefix',
+    recycledSentenceCount,
+    recycledWordCount,
+    stripIndex,
+    tailHasNewContent: tailHasConcreteContent(tail),
+    sourceBeats: uniqueSources,
+  };
+}
+
+export function stripRecycledPrefix(draft: string, hit: LeadingCollageHit): string {
+  if (!hit.hit || hit.stripIndex <= 0) return draft;
+  const sentences = splitStorySentences(draft);
+  const tail = sentences.slice(hit.stripIndex).join(' ').replace(/\s+/g, ' ').trim();
+  return tail || draft;
+}
+
+/** No salvageable tail — same retry as an unasked near-clone. */
+export function shouldRetryUnaskedCollage(
+  draft: string,
+  recentGmBeats: string[],
+  playerInput: string
+): boolean {
+  if (playerAsksRepeat(playerInput)) return false;
+  const hit = detectLeadingCollage(draft, recentGmBeats);
+  return hit.hit && !hit.tailHasNewContent;
 }

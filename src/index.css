@@ -1568,6 +1568,36 @@ html[data-sgm-material='1'] body {
   flex: 1 1 0%;
   flex-direction: column;
 }
+/* Shared scroll columns under html/#root overflow:hidden (Class E 30V).
+   Play shell stays overflow:hidden; story/drawers keep their own min-h-0 scroll. */
+.sgm-scroll-page,
+.sgm-home {
+  height: 100%;
+  max-height: 100dvh;
+  min-height: 0;
+  flex: 1 1 auto;
+  overflow-x: hidden;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  padding-bottom: max(2rem, env(safe-area-inset-bottom, 0px));
+}
+.sgm-modal-body {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+}
+.sgm-home-title-panel {
+  background-color: color-mix(in srgb, var(--sgm-panel, #0f172a) 92%, #000);
+  border-color: color-mix(in srgb, var(--sgm-accent, #64748b) 40%, #1e293b);
+  box-shadow: 0 8px 24px rgb(2 6 23 / 0.45);
+}
+html[data-sgm-material='1'] .sgm-home-title-panel {
+  background-color: color-mix(in srgb, var(--sgm-panel, #0f172a) 90%, #000);
+  background-image: none;
+}
 .sgm-play-story-panel {
   background-color: rgb(2 6 23 / 0.9);
 }

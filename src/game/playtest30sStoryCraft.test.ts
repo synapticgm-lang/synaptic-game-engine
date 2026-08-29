@@ -24,7 +24,7 @@ describe('playtest30s — mode story AUTHORITY sentences', () => {
   it('Mid writer stays OFF; stamps advanced past 30R / 30k', () => {
     expect(STAGNATION_MID_WRITER_ENABLED).toBe(false);
     expect(BUILD_STAMP >= '2026-08-30l').toBe(true);
-    expect(HUD_BUILD_STAMP).toBe('2026-08-30S');
+    expect(HUD_BUILD_STAMP >= '2026-08-30S').toBe(true);
   });
 
   it('each mode sentence appears in SNAPSHOT and fluid rails for that mode only', () => {

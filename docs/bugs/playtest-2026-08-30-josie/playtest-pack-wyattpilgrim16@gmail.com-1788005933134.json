@@ -1,0 +1,1093 @@
+{
+  "exportedAt": "2026-08-29T12:18:53.134Z",
+  "playerId": "f72d30b5-0bf8-4865-b2ef-ac5dd0552dea",
+  "profile": {
+    "id": "f72d30b5-0bf8-4865-b2ef-ac5dd0552dea",
+    "email": "wyattpilgrim16@gmail.com",
+    "display_name": "Josie Pilgrim",
+    "play_access": "staff",
+    "created_at": "2026-08-08T20:54:19.226825+00:00",
+    "staff_notes": ""
+  },
+  "telemetry": [
+    {
+      "id": "8cf969c5-1eb2-4c83-b9a4-2d4452f87e30",
+      "created_at": "2026-08-29T12:11:49.243556+00:00",
+      "event_type": "API_LATENCY",
+      "component": "NarrativeStream",
+      "action_target": "callGm",
+      "latency": 4740,
+      "message": "callGm ok in 4740ms",
+      "stack": null,
+      "session_id": "f6ecf80d-7bb9-49df-a6b1-2809b0c40cc6",
+      "device_id": "5fae522e-daf9-4c3d-a037-024ddf80df32",
+      "payload": null
+    },
+    {
+      "id": "be4aa69c-5aca-4315-ab96-293b0909f273",
+      "created_at": "2026-08-29T12:11:46.978763+00:00",
+      "event_type": "WARN",
+      "component": "NarrativeStream",
+      "action_target": "Unresolved or empty action narrative — resolution retry",
+      "latency": null,
+      "message": "Unresolved or empty action narrative — resolution retry",
+      "stack": null,
+      "session_id": "f6ecf80d-7bb9-49df-a6b1-2809b0c40cc6",
+      "device_id": "5fae522e-daf9-4c3d-a037-024ddf80df32",
+      "payload": {
+        "turn": 7,
+        "empty": false,
+        "intent": "talk",
+        "sameBeat": false,
+        "factLocks": [],
+        "obligationMissing": [
+          "talk"
+        ]
+      }
+    },
+    {
+      "id": "325c988e-3ad9-45c3-8e91-2b41b51ab927",
+      "created_at": "2026-08-29T12:11:44.607139+00:00",
+      "event_type": "ROLL_RESULT",
+      "component": "DiceTray",
+      "action_target": "action_check",
+      "latency": null,
+      "message": "action_check=20 (Dialogue — no contested check)",
+      "stack": null,
+      "session_id": "f6ecf80d-7bb9-49df-a6b1-2809b0c40cc6",
+      "device_id": "5fae522e-daf9-4c3d-a037-024ddf80df32",
+      "payload": {
+        "rolls": [
+          {
+            "label": "action_check",
+            "total": 20,
+            "detail": "Dialogue — no contested check"
+          }
+        ]
+      }
+    },
+    {
+      "id": "57b897c1-4ccd-401a-9fbf-c2a4d85558fa",
+      "created_at": "2026-08-29T12:11:44.358826+00:00",
+      "event_type": "TURN_START",
+      "component": "NarrativeStream",
+      "action_target": "sendAction invoked",
+      "latency": null,
+      "message": "sendAction invoked",
+      "stack": null,
+      "session_id": "f6ecf80d-7bb9-49df-a6b1-2809b0c40cc6",
+      "device_id": "5fae522e-daf9-4c3d-a037-024ddf80df32",
+      "payload": {
+        "busy": false,
+        "input": "\"I don't want to be a pawn\" I say",
+        "currentTurn": 7
+      }
+    },
+    {
+      "id": "d1b199a2-0f95-463f-b74f-04a64601a2c4",
+      "created_at": "2026-08-29T12:11:44.347399+00:00",
+      "event_type": "PLAYER_ACTION",
+      "component": "ChatInput",
+      "action_target": "\"I don't want to be a pawn\" I say",
+      "latency": null,
+      "message": "\"I don't want to be a pawn\" I say",
+      "stack": null,
+      "session_id": "f6ecf80d-7bb9-49df-a6b1-2809b0c40cc6",
+      "device_id": "5fae522e-daf9-4c3d-a037-024ddf80df32",
+      "payload": {
+        "turn": 7,
+        "saveId": "22a4f976-fc6f-467c-9af7-6927eaefd5d5",
+        "engineMode": "litrpg"
+      }
+    },
+    {
+      "id": "079ea099-c8d5-46eb-993d-05f9647922e5",
+      "created_at": "2026-08-29T12:07:43.387924+00:00",
+      "event_type": "API_LATENCY",
+      "component": "NarrativeStream",
+      "action_target": "callGm",
+      "latency": 6054,
+      "message": "callGm ok in 6054ms",
+      "stack": null,
+      "session_id": "f6ecf80d-7bb9-49df-a6b1-2809b0c40cc6",
+      "device_id": "5fae522e-daf9-4c3d-a037-024ddf80df32",
+      "payload": null
+    },
+    {
+      "id": "4bedb121-b377-4a84-bf65-a8c16e025355",
+      "created_at": "2026-08-29T12:07:40.268677+00:00",
+      "event_type": "WARN",
+      "component": "NarrativeStream",
+      "action_target": "Unresolved or empty action narrative — resolution retry",
+      "latency": null,
+      "message": "Unresolved or empty action narrative — resolution retry",
+      "stack": null,
+      "session_id": "f6ecf80d-7bb9-49df-a6b1-2809b0c40cc6",
+      "device_id": "5fae522e-daf9-4c3d-a037-024ddf80df32",
+      "payload": {
+        "turn": 6,
+        "empty": false,
+        "intent": "talk",
+        "sameBeat": false,
+        "factLocks": [],
+        "obligationMissing": []
+      }
+    },
+    {
+      "id": "70a61e29-da84-4f79-86ad-072a92985655",
+      "created_at": "2026-08-29T12:07:37.537844+00:00",
+      "event_type": "ROLL_RESULT",
+      "component": "DiceTray",
+      "action_target": "action_check",
+      "latency": null,
+      "message": "action_check=20 (Dialogue — no contested check)",
+      "stack": null,
+      "session_id": "f6ecf80d-7bb9-49df-a6b1-2809b0c40cc6",
+      "device_id": "5fae522e-daf9-4c3d-a037-024ddf80df32",
+      "payload": {
+        "rolls": [
+          {
+            "label": "action_check",
+            "total": 20,
+            "detail": "Dialogue — no contested check"
+          }
+        ]
+      }
+    },
+    {
+      "id": "e6efa00b-8137-4f3f-8de3-559703f2ad18",
+      "created_at": "2026-08-29T12:07:37.248086+00:00",
+      "event_type": "TURN_START",
+      "component": "NarrativeStream",
+      "action_target": "sendAction invoked",
+      "latency": null,
+      "message": "sendAction invoked",
+      "stack": null,
+      "session_id": "f6ecf80d-7bb9-49df-a6b1-2809b0c40cc6",
+      "device_id": "5fae522e-daf9-4c3d-a037-024ddf80df32",
+      "payload": {
+        "busy": false,
+        "input": "Ask why I was bought here ",
+        "currentTurn": 6
+      }
+    },
+    {
+      "id": "33fcf520-c90c-492d-8bfd-af7d1d524700",
+      "created_at": "2026-08-29T12:07:37.247222+00:00",
+      "event_type": "PLAYER_ACTION",
+      "component": "ChatInput",
+      "action_target": "Ask why I was bought here",
+      "latency": null,
+      "message": "Ask why I was bought here",
+      "stack": null,
+      "session_id": "f6ecf80d-7bb9-49df-a6b1-2809b0c40cc6",
+      "device_id": "5fae522e-daf9-4c3d-a037-024ddf80df32",
+      "payload": {
+        "turn": 6,
+        "saveId": "22a4f976-fc6f-467c-9af7-6927eaefd5d5",
+        "engineMode": "litrpg"
+      }
+    },
+    {
+      "id": "521d5c5b-3d3c-465b-a80f-aaba4e67dfdc",
+      "created_at": "2026-08-29T12:04:54.95942+00:00",
+      "event_type": "API_LATENCY",
+      "component": "NarrativeStream",
+      "action_target": "callGm",
+      "latency": 2433,
+      "message": "callGm ok in 2433ms",
+      "stack": null,
+      "session_id": "f6ecf80d-7bb9-49df-a6b1-2809b0c40cc6",
+      "device_id": "5fae522e-daf9-4c3d-a037-024ddf80df32",
+      "payload": null
+    },
+    {
+      "id": "43c057c2-e990-4b99-843f-f97124cab374",
+      "created_at": "2026-08-29T12:04:52.540925+00:00",
+      "event_type": "ROLL_RESULT",
+      "component": "DiceTray",
+      "action_target": "action_check",
+      "latency": null,
+      "message": "action_check=21 (d20=19 mod=2 dc=12 General check SUCCESS)",
+      "stack": null,
+      "session_id": "f6ecf80d-7bb9-49df-a6b1-2809b0c40cc6",
+      "device_id": "5fae522e-daf9-4c3d-a037-024ddf80df32",
+      "payload": {
+        "rolls": [
+          {
+            "label": "action_check",
+            "total": 21,
+            "detail": "d20=19 mod=2 dc=12 General check SUCCESS"
+          }
+        ]
+      }
+    },
+    {
+      "id": "992aea30-6a60-4397-8a6d-b5f459f8dfeb",
+      "created_at": "2026-08-29T12:04:52.374518+00:00",
+      "event_type": "PLAYER_ACTION",
+      "component": "ChatInput",
+      "action_target": "Examine the room you've just entered.",
+      "latency": null,
+      "message": "Examine the room you've just entered.",
+      "stack": null,
+      "session_id": "f6ecf80d-7bb9-49df-a6b1-2809b0c40cc6",
+      "device_id": "5fae522e-daf9-4c3d-a037-024ddf80df32",
+      "payload": {
+        "turn": 5,
+        "saveId": "22a4f976-fc6f-467c-9af7-6927eaefd5d5",
+        "engineMode": "litrpg"
+      }
+    },
+    {
+      "id": "60e30361-ea61-431d-9e7e-d91bc1fd0259",
+      "created_at": "2026-08-29T12:04:52.374518+00:00",
+      "event_type": "TURN_START",
+      "component": "NarrativeStream",
+      "action_target": "sendAction invoked",
+      "latency": null,
+      "message": "sendAction invoked",
+      "stack": null,
+      "session_id": "f6ecf80d-7bb9-49df-a6b1-2809b0c40cc6",
+      "device_id": "5fae522e-daf9-4c3d-a037-024ddf80df32",
+      "payload": {
+        "busy": false,
+        "input": "Examine the room you've just entered.",
+        "currentTurn": 5
+      }
+    },
+    {
+      "id": "77302418-7119-4b88-9759-22c002eaba5e",
+      "created_at": "2026-08-29T11:59:40.132563+00:00",
+      "event_type": "WARN",
+      "component": "NarrativeStream",
+      "action_target": "[console] [Embeddings] Failed to load model (will use keyword fallback): Unexpected token '<', \"<!doctype \"... is not va",
+      "latency": null,
+      "message": "[console] [Embeddings] Failed to load model (will use keyword fallback): Unexpected token '<', \"<!doctype \"... is not valid JSON",
+      "stack": null,
+      "session_id": "f6ecf80d-7bb9-49df-a6b1-2809b0c40cc6",
+      "device_id": "5fae522e-daf9-4c3d-a037-024ddf80df32",
+      "payload": null
+    },
+    {
+      "id": "187872aa-0418-46be-9024-90f4b6b02fbb",
+      "created_at": "2026-08-29T11:59:40.120416+00:00",
+      "event_type": "WARN",
+      "component": "NarrativeStream",
+      "action_target": "[console] Unable to determine content-length from response headers. Will expand buffer when needed.",
+      "latency": null,
+      "message": "[console] Unable to determine content-length from response headers. Will expand buffer when needed.",
+      "stack": null,
+      "session_id": "f6ecf80d-7bb9-49df-a6b1-2809b0c40cc6",
+      "device_id": "5fae522e-daf9-4c3d-a037-024ddf80df32",
+      "payload": null
+    },
+    {
+      "id": "72db6234-4e73-441e-82cc-8f49f83112cc",
+      "created_at": "2026-08-29T11:59:40.064721+00:00",
+      "event_type": "WARN",
+      "component": "NarrativeStream",
+      "action_target": "[console] Unable to determine content-length from response headers. Will expand buffer when needed.",
+      "latency": null,
+      "message": "[console] Unable to determine content-length from response headers. Will expand buffer when needed.",
+      "stack": null,
+      "session_id": "f6ecf80d-7bb9-49df-a6b1-2809b0c40cc6",
+      "device_id": "5fae522e-daf9-4c3d-a037-024ddf80df32",
+      "payload": null
+    },
+    {
+      "id": "15dd1b02-80b2-4b71-a756-079dd7caf7e6",
+      "created_at": "2026-08-29T11:59:40.064238+00:00",
+      "event_type": "WARN",
+      "component": "NarrativeStream",
+      "action_target": "[console] Unable to determine content-length from response headers. Will expand buffer when needed.",
+      "latency": null,
+      "message": "[console] Unable to determine content-length from response headers. Will expand buffer when needed.",
+      "stack": null,
+      "session_id": "f6ecf80d-7bb9-49df-a6b1-2809b0c40cc6",
+      "device_id": "5fae522e-daf9-4c3d-a037-024ddf80df32",
+      "payload": null
+    },
+    {
+      "id": "09f8dec5-f29f-4b9d-a463-b35a11414677",
+      "created_at": "2026-08-29T11:59:39.207425+00:00",
+      "event_type": "API_LATENCY",
+      "component": "NarrativeStream",
+      "action_target": "callGm",
+      "latency": 4470,
+      "message": "callGm ok in 4470ms",
+      "stack": null,
+      "session_id": "f6ecf80d-7bb9-49df-a6b1-2809b0c40cc6",
+      "device_id": "5fae522e-daf9-4c3d-a037-024ddf80df32",
+      "payload": null
+    },
+    {
+      "id": "3becd6b9-2125-4a7a-964e-2264ce59f645",
+      "created_at": "2026-08-29T11:59:37.505737+00:00",
+      "event_type": "WARN",
+      "component": "NarrativeStream",
+      "action_target": "Unresolved or empty action narrative — resolution retry",
+      "latency": null,
+      "message": "Unresolved or empty action narrative — resolution retry",
+      "stack": null,
+      "session_id": "f6ecf80d-7bb9-49df-a6b1-2809b0c40cc6",
+      "device_id": "5fae522e-daf9-4c3d-a037-024ddf80df32",
+      "payload": {
+        "turn": 4,
+        "empty": false,
+        "intent": "move",
+        "sameBeat": false,
+        "factLocks": [],
+        "obligationMissing": []
+      }
+    },
+    {
+      "id": "50fa59b4-0782-4827-b328-f9a1f7b50e2b",
+      "created_at": "2026-08-29T11:59:34.787107+00:00",
+      "event_type": "ROLL_RESULT",
+      "component": "DiceTray",
+      "action_target": "action_check",
+      "latency": null,
+      "message": "action_check=5 (d20=3 mod=2 dc=12 Athletics FAILURE)",
+      "stack": null,
+      "session_id": "f6ecf80d-7bb9-49df-a6b1-2809b0c40cc6",
+      "device_id": "5fae522e-daf9-4c3d-a037-024ddf80df32",
+      "payload": {
+        "rolls": [
+          {
+            "label": "action_check",
+            "total": 5,
+            "detail": "d20=3 mod=2 dc=12 Athletics FAILURE"
+          }
+        ]
+      }
+    },
+    {
+      "id": "9eb62762-179b-4400-8d17-6a35bc304088",
+      "created_at": "2026-08-29T11:59:34.545147+00:00",
+      "event_type": "TURN_START",
+      "component": "NarrativeStream",
+      "action_target": "sendAction invoked",
+      "latency": null,
+      "message": "sendAction invoked",
+      "stack": null,
+      "session_id": "f6ecf80d-7bb9-49df-a6b1-2809b0c40cc6",
+      "device_id": "5fae522e-daf9-4c3d-a037-024ddf80df32",
+      "payload": {
+        "busy": false,
+        "input": "I walk nervously through the door he gestures to",
+        "currentTurn": 4
+      }
+    },
+    {
+      "id": "4dc28690-677d-4ec0-9995-7dd6badc5291",
+      "created_at": "2026-08-29T11:59:34.544624+00:00",
+      "event_type": "PLAYER_ACTION",
+      "component": "ChatInput",
+      "action_target": "I walk nervously through the door he gestures to",
+      "latency": null,
+      "message": "I walk nervously through the door he gestures to",
+      "stack": null,
+      "session_id": "f6ecf80d-7bb9-49df-a6b1-2809b0c40cc6",
+      "device_id": "5fae522e-daf9-4c3d-a037-024ddf80df32",
+      "payload": {
+        "turn": 4,
+        "saveId": "22a4f976-fc6f-467c-9af7-6927eaefd5d5",
+        "engineMode": "litrpg"
+      }
+    },
+    {
+      "id": "c06dbd51-a6de-4a37-ae65-49d65fadf845",
+      "created_at": "2026-08-29T11:52:09.464462+00:00",
+      "event_type": "API_LATENCY",
+      "component": "NarrativeStream",
+      "action_target": "callGm",
+      "latency": 5529,
+      "message": "callGm ok in 5529ms",
+      "stack": null,
+      "session_id": "f6ecf80d-7bb9-49df-a6b1-2809b0c40cc6",
+      "device_id": "5fae522e-daf9-4c3d-a037-024ddf80df32",
+      "payload": null
+    },
+    {
+      "id": "3f1476c8-b799-4772-9250-dd2437e5e181",
+      "created_at": "2026-08-29T11:52:06.96621+00:00",
+      "event_type": "WARN",
+      "component": "NarrativeStream",
+      "action_target": "Unresolved or empty action narrative — resolution retry",
+      "latency": null,
+      "message": "Unresolved or empty action narrative — resolution retry",
+      "stack": null,
+      "session_id": "f6ecf80d-7bb9-49df-a6b1-2809b0c40cc6",
+      "device_id": "5fae522e-daf9-4c3d-a037-024ddf80df32",
+      "payload": {
+        "turn": 3,
+        "empty": false,
+        "intent": "talk",
+        "sameBeat": false,
+        "factLocks": [],
+        "obligationMissing": [
+          "open_ask"
+        ]
+      }
+    },
+    {
+      "id": "0e103529-fc7b-42df-8f4e-2195dd8fc739",
+      "created_at": "2026-08-29T11:52:03.904051+00:00",
+      "event_type": "ROLL_RESULT",
+      "component": "DiceTray",
+      "action_target": "action_check",
+      "latency": null,
+      "message": "action_check=20 (Dialogue — no contested check)",
+      "stack": null,
+      "session_id": "f6ecf80d-7bb9-49df-a6b1-2809b0c40cc6",
+      "device_id": "5fae522e-daf9-4c3d-a037-024ddf80df32",
+      "payload": {
+        "rolls": [
+          {
+            "label": "action_check",
+            "total": 20,
+            "detail": "Dialogue — no contested check"
+          }
+        ]
+      }
+    },
+    {
+      "id": "ff4e8b2c-895b-41f6-82a0-5bbec4ffdbe4",
+      "created_at": "2026-08-29T11:52:03.702093+00:00",
+      "event_type": "PLAYER_ACTION",
+      "component": "ChatInput",
+      "action_target": "I address a bystander who is actually here, not \"for any hostile threat\". My words stay: I scan for any hostile threat b",
+      "latency": null,
+      "message": "I address a bystander who is actually here, not \"for any hostile threat\". My words stay: I scan for any hostile threat before committing — if none is present, I stay alert and choose a safer scene action.",
+      "stack": null,
+      "session_id": "f6ecf80d-7bb9-49df-a6b1-2809b0c40cc6",
+      "device_id": "5fae522e-daf9-4c3d-a037-024ddf80df32",
+      "payload": {
+        "turn": 3,
+        "saveId": "22a4f976-fc6f-467c-9af7-6927eaefd5d5",
+        "engineMode": "litrpg"
+      }
+    },
+    {
+      "id": "cd84c8b0-9702-4965-b21c-d9440dc24892",
+      "created_at": "2026-08-29T11:52:03.682952+00:00",
+      "event_type": "TURN_START",
+      "component": "NarrativeStream",
+      "action_target": "sendAction invoked",
+      "latency": null,
+      "message": "sendAction invoked",
+      "stack": null,
+      "session_id": "f6ecf80d-7bb9-49df-a6b1-2809b0c40cc6",
+      "device_id": "5fae522e-daf9-4c3d-a037-024ddf80df32",
+      "payload": {
+        "busy": false,
+        "input": "Run away ",
+        "currentTurn": 3
+      }
+    },
+    {
+      "id": "6baf80ac-cc10-42b5-8579-1f3b162d1c10",
+      "created_at": "2026-08-29T11:50:36.127164+00:00",
+      "event_type": "API_LATENCY",
+      "component": "NarrativeStream",
+      "action_target": "callOpeningGm",
+      "latency": 1991,
+      "message": "callOpeningGm ok in 1991ms",
+      "stack": null,
+      "session_id": "f6ecf80d-7bb9-49df-a6b1-2809b0c40cc6",
+      "device_id": "5fae522e-daf9-4c3d-a037-024ddf80df32",
+      "payload": {
+        "turn": 2,
+        "saveId": "22a4f976-fc6f-467c-9af7-6927eaefd5d5"
+      }
+    },
+    {
+      "id": "7957677d-afb0-46fc-8fdf-b9c85e0195fc",
+      "created_at": "2026-08-29T11:50:34.10063+00:00",
+      "event_type": "PLAYER_ACTION",
+      "component": "ChatInput",
+      "action_target": "Josie",
+      "latency": null,
+      "message": "Josie",
+      "stack": null,
+      "session_id": "f6ecf80d-7bb9-49df-a6b1-2809b0c40cc6",
+      "device_id": "5fae522e-daf9-4c3d-a037-024ddf80df32",
+      "payload": {
+        "turn": 2,
+        "saveId": "22a4f976-fc6f-467c-9af7-6927eaefd5d5",
+        "engineMode": "litrpg"
+      }
+    },
+    {
+      "id": "696bbb68-2e1b-4920-8108-94017b26b470",
+      "created_at": "2026-08-29T11:50:34.100599+00:00",
+      "event_type": "TURN_START",
+      "component": "NarrativeStream",
+      "action_target": "sendAction invoked",
+      "latency": null,
+      "message": "sendAction invoked",
+      "stack": null,
+      "session_id": "f6ecf80d-7bb9-49df-a6b1-2809b0c40cc6",
+      "device_id": "5fae522e-daf9-4c3d-a037-024ddf80df32",
+      "payload": {
+        "busy": false,
+        "input": "Josie",
+        "currentTurn": 2
+      }
+    },
+    {
+      "id": "7384bc9e-0797-4131-b9e0-b7e3b21c672a",
+      "created_at": "2026-08-29T11:50:01.574115+00:00",
+      "event_type": "TURN_START",
+      "component": "NarrativeStream",
+      "action_target": "sendAction invoked",
+      "latency": null,
+      "message": "sendAction invoked",
+      "stack": null,
+      "session_id": "f6ecf80d-7bb9-49df-a6b1-2809b0c40cc6",
+      "device_id": "5fae522e-daf9-4c3d-a037-024ddf80df32",
+      "payload": {
+        "busy": false,
+        "input": "\"well send me back to my world!\" I demand ",
+        "currentTurn": 2
+      }
+    },
+    {
+      "id": "a6defae6-2e41-4a50-82ef-3f64055151f6",
+      "created_at": "2026-08-29T11:50:01.573159+00:00",
+      "event_type": "PLAYER_ACTION",
+      "component": "ChatInput",
+      "action_target": "\"well send me back to my world!\" I demand",
+      "latency": null,
+      "message": "\"well send me back to my world!\" I demand",
+      "stack": null,
+      "session_id": "f6ecf80d-7bb9-49df-a6b1-2809b0c40cc6",
+      "device_id": "5fae522e-daf9-4c3d-a037-024ddf80df32",
+      "payload": {
+        "turn": 2,
+        "saveId": "22a4f976-fc6f-467c-9af7-6927eaefd5d5",
+        "engineMode": "litrpg"
+      }
+    },
+    {
+      "id": "074a89bf-13a7-46ad-988d-f3bf54302d4b",
+      "created_at": "2026-08-29T11:48:50.739959+00:00",
+      "event_type": "SESSION",
+      "component": "NarrativeStream",
+      "action_target": "Play session started (continue)",
+      "latency": null,
+      "message": "Play session started (continue)",
+      "stack": null,
+      "session_id": "f6ecf80d-7bb9-49df-a6b1-2809b0c40cc6",
+      "device_id": "5fae522e-daf9-4c3d-a037-024ddf80df32",
+      "payload": {
+        "reason": "continue",
+        "sessionId": "f6ecf80d-7bb9-49df-a6b1-2809b0c40cc6"
+      }
+    },
+    {
+      "id": "ce51b630-d025-4b3e-8782-f5f47d3ab8a2",
+      "created_at": "2026-08-29T11:42:15.517864+00:00",
+      "event_type": "API_LATENCY",
+      "component": "NarrativeStream",
+      "action_target": "callGm",
+      "latency": 3714,
+      "message": "callGm ok in 3714ms",
+      "stack": null,
+      "session_id": "c2ea554f-8a32-4655-9626-37fc167cf4c6",
+      "device_id": "5fae522e-daf9-4c3d-a037-024ddf80df32",
+      "payload": null
+    },
+    {
+      "id": "df0bd962-d37d-4ea8-86f2-349d5638c250",
+      "created_at": "2026-08-29T11:42:12.010426+00:00",
+      "event_type": "ROLL_RESULT",
+      "component": "DiceTray",
+      "action_target": "action_check",
+      "latency": null,
+      "message": "action_check=20 (Dialogue — no contested check)",
+      "stack": null,
+      "session_id": "c2ea554f-8a32-4655-9626-37fc167cf4c6",
+      "device_id": "5fae522e-daf9-4c3d-a037-024ddf80df32",
+      "payload": {
+        "rolls": [
+          {
+            "label": "action_check",
+            "total": 20,
+            "detail": "Dialogue — no contested check"
+          }
+        ]
+      }
+    },
+    {
+      "id": "1f7da685-a89b-40af-b96a-c9d82ac4161e",
+      "created_at": "2026-08-29T11:42:11.670977+00:00",
+      "event_type": "TURN_START",
+      "component": "NarrativeStream",
+      "action_target": "sendAction invoked",
+      "latency": null,
+      "message": "sendAction invoked",
+      "stack": null,
+      "session_id": "c2ea554f-8a32-4655-9626-37fc167cf4c6",
+      "device_id": "5fae522e-daf9-4c3d-a037-024ddf80df32",
+      "payload": {
+        "busy": false,
+        "input": "Ask what is going on",
+        "currentTurn": 1
+      }
+    },
+    {
+      "id": "63a23e71-10f1-401c-b26e-2fde8074078b",
+      "created_at": "2026-08-29T11:42:11.66813+00:00",
+      "event_type": "PLAYER_ACTION",
+      "component": "ChatInput",
+      "action_target": "Ask what is going on",
+      "latency": null,
+      "message": "Ask what is going on",
+      "stack": null,
+      "session_id": "c2ea554f-8a32-4655-9626-37fc167cf4c6",
+      "device_id": "5fae522e-daf9-4c3d-a037-024ddf80df32",
+      "payload": {
+        "turn": 1,
+        "saveId": "22a4f976-fc6f-467c-9af7-6927eaefd5d5",
+        "engineMode": "litrpg"
+      }
+    },
+    {
+      "id": "d5439bb7-22a9-45a3-af2d-bc4720c0d47f",
+      "created_at": "2026-08-29T11:41:15.441945+00:00",
+      "event_type": "API_LATENCY",
+      "component": "NarrativeStream",
+      "action_target": "callOpeningGm",
+      "latency": 2399,
+      "message": "callOpeningGm ok in 2399ms",
+      "stack": null,
+      "session_id": "c2ea554f-8a32-4655-9626-37fc167cf4c6",
+      "device_id": "5fae522e-daf9-4c3d-a037-024ddf80df32",
+      "payload": {
+        "turn": 0,
+        "saveId": "22a4f976-fc6f-467c-9af7-6927eaefd5d5"
+      }
+    },
+    {
+      "id": "125d9545-0db3-4171-b330-cd708588d82f",
+      "created_at": "2026-08-29T11:41:13.140017+00:00",
+      "event_type": "SESSION",
+      "component": "NarrativeStream",
+      "action_target": "Play session started (new-game)",
+      "latency": null,
+      "message": "Play session started (new-game)",
+      "stack": null,
+      "session_id": "c2ea554f-8a32-4655-9626-37fc167cf4c6",
+      "device_id": "5fae522e-daf9-4c3d-a037-024ddf80df32",
+      "payload": {
+        "reason": "new-game",
+        "sessionId": "c2ea554f-8a32-4655-9626-37fc167cf4c6"
+      }
+    },
+    {
+      "id": "9596b05c-b2e7-4a22-a12c-9379739b9b8c",
+      "created_at": "2026-08-29T11:36:16.050024+00:00",
+      "event_type": "API_LATENCY",
+      "component": "NarrativeStream",
+      "action_target": "callGm",
+      "latency": 3385,
+      "message": "callGm ok in 3385ms",
+      "stack": null,
+      "session_id": "ac8abb69-a403-4828-a79f-4a2c253080e6",
+      "device_id": "5fae522e-daf9-4c3d-a037-024ddf80df32",
+      "payload": null
+    },
+    {
+      "id": "e8935deb-2916-4704-9801-5288e52cd91f",
+      "created_at": "2026-08-29T11:36:14.316738+00:00",
+      "event_type": "WARN",
+      "component": "NarrativeStream",
+      "action_target": "Unresolved or empty action narrative — resolution retry",
+      "latency": null,
+      "message": "Unresolved or empty action narrative — resolution retry",
+      "stack": null,
+      "session_id": "ac8abb69-a403-4828-a79f-4a2c253080e6",
+      "device_id": "5fae522e-daf9-4c3d-a037-024ddf80df32",
+      "payload": {
+        "turn": 1,
+        "empty": false,
+        "intent": "talk",
+        "sameBeat": false,
+        "factLocks": [],
+        "obligationMissing": [
+          "talk"
+        ]
+      }
+    },
+    {
+      "id": "0769c510-e2e8-4f72-a00f-934ac4f56fc8",
+      "created_at": "2026-08-29T11:36:12.645131+00:00",
+      "event_type": "ROLL_RESULT",
+      "component": "DiceTray",
+      "action_target": "action_check",
+      "latency": null,
+      "message": "action_check=20 (Dialogue — no contested check)",
+      "stack": null,
+      "session_id": "ac8abb69-a403-4828-a79f-4a2c253080e6",
+      "device_id": "5fae522e-daf9-4c3d-a037-024ddf80df32",
+      "payload": {
+        "rolls": [
+          {
+            "label": "action_check",
+            "total": 20,
+            "detail": "Dialogue — no contested check"
+          }
+        ]
+      }
+    },
+    {
+      "id": "952448dc-b9e1-4772-b45d-9d6118234809",
+      "created_at": "2026-08-29T11:36:12.551497+00:00",
+      "event_type": "PLAYER_ACTION",
+      "component": "ChatInput",
+      "action_target": "Who is waiting?",
+      "latency": null,
+      "message": "Who is waiting?",
+      "stack": null,
+      "session_id": "ac8abb69-a403-4828-a79f-4a2c253080e6",
+      "device_id": "5fae522e-daf9-4c3d-a037-024ddf80df32",
+      "payload": {
+        "turn": 1,
+        "saveId": "004dc417-1e89-432e-b59a-ff37b01d1505",
+        "engineMode": "litrpg"
+      }
+    },
+    {
+      "id": "7385019b-61f2-4011-849f-86c6f9058742",
+      "created_at": "2026-08-29T11:36:12.551315+00:00",
+      "event_type": "TURN_START",
+      "component": "NarrativeStream",
+      "action_target": "sendAction invoked",
+      "latency": null,
+      "message": "sendAction invoked",
+      "stack": null,
+      "session_id": "ac8abb69-a403-4828-a79f-4a2c253080e6",
+      "device_id": "5fae522e-daf9-4c3d-a037-024ddf80df32",
+      "payload": {
+        "busy": false,
+        "input": "Who is waiting?",
+        "currentTurn": 1
+      }
+    },
+    {
+      "id": "2c8a7498-c970-4d8f-8cbe-ffe7b20973d2",
+      "created_at": "2026-08-29T11:35:51.949617+00:00",
+      "event_type": "PLAYER_ACTION",
+      "component": "ChatInput",
+      "action_target": "Inspect the immediate surroundings",
+      "latency": null,
+      "message": "Inspect the immediate surroundings",
+      "stack": null,
+      "session_id": "ac8abb69-a403-4828-a79f-4a2c253080e6",
+      "device_id": "5fae522e-daf9-4c3d-a037-024ddf80df32",
+      "payload": {
+        "turn": 1,
+        "saveId": "004dc417-1e89-432e-b59a-ff37b01d1505",
+        "engineMode": "litrpg"
+      }
+    },
+    {
+      "id": "19c92a6b-7df6-4023-92ae-25e3842570ee",
+      "created_at": "2026-08-29T11:35:51.924904+00:00",
+      "event_type": "TURN_START",
+      "component": "NarrativeStream",
+      "action_target": "sendAction invoked",
+      "latency": null,
+      "message": "sendAction invoked",
+      "stack": null,
+      "session_id": "ac8abb69-a403-4828-a79f-4a2c253080e6",
+      "device_id": "5fae522e-daf9-4c3d-a037-024ddf80df32",
+      "payload": {
+        "busy": false,
+        "input": "Inspect the immediate surroundings",
+        "currentTurn": 1
+      }
+    },
+    {
+      "id": "87f018c6-2eb0-4bf2-ad19-b7bab6618e7c",
+      "created_at": "2026-08-29T11:34:14.395555+00:00",
+      "event_type": "API_LATENCY",
+      "component": "NarrativeStream",
+      "action_target": "callOpeningGm",
+      "latency": 2306,
+      "message": "callOpeningGm ok in 2306ms",
+      "stack": null,
+      "session_id": "ac8abb69-a403-4828-a79f-4a2c253080e6",
+      "device_id": "5fae522e-daf9-4c3d-a037-024ddf80df32",
+      "payload": {
+        "turn": 0,
+        "saveId": "004dc417-1e89-432e-b59a-ff37b01d1505"
+      }
+    },
+    {
+      "id": "8a80ad77-76e3-4d91-92fc-03a28ac919b6",
+      "created_at": "2026-08-29T11:34:12.288266+00:00",
+      "event_type": "SESSION",
+      "component": "NarrativeStream",
+      "action_target": "Play session started (new-game)",
+      "latency": null,
+      "message": "Play session started (new-game)",
+      "stack": null,
+      "session_id": "ac8abb69-a403-4828-a79f-4a2c253080e6",
+      "device_id": "5fae522e-daf9-4c3d-a037-024ddf80df32",
+      "payload": {
+        "reason": "new-game",
+        "sessionId": "ac8abb69-a403-4828-a79f-4a2c253080e6"
+      }
+    }
+  ],
+  "aiTraffic": [
+    {
+      "id": "9d0b66b1-9fcb-4c55-90c3-5651d4e484c1",
+      "created_at": "2026-08-29T12:11:49.237848+00:00",
+      "engine_mode": "LitRPG",
+      "provider": "OpenAI",
+      "latency": 4740,
+      "token_count": null,
+      "status": "200 OK",
+      "player_input": "\"I don't want to be a pawn\" I say",
+      "ai_response": "The words hang in the air, a small rebellion against the oppressive silence. Your voice, though firm, carries a tremor of uncertainty, a stark contrast to the steady hum of the blue System panel and the distant, muffled sounds of the ongoing bombardment outside. The rough-hewn stone walls of the chamber seem to absorb your statement, offering no immediate comfort or reply, merely pressing in with their damp, earthy scent and the faint, sharp tang of ozone.\n\nA figure in dark, functional attire steps forward from the shadows near the doorway. Their face is impassive, etched with a weariness that speaks of long hours and difficult duties. \"Pawn or not,\" the figure states, their voice a low, even monotone that cuts through the tension, \"you were summoned. And Pellane has need. The Ash Court grows bolder with each passing cycle. You are here to turn the tide, or the kingdom falls.\"\n\n1. Ask the figure about the Ash Court.\n2. Demand to know who they are.\n3. Scan the room more thoroughly for any hidden details or items.\n4. Remain silent and observe the figure.",
+      "error_stack": null,
+      "save_id": "22a4f976-fc6f-467c-9af7-6927eaefd5d5"
+    },
+    {
+      "id": "2ce61b2e-aede-4492-b2b7-14ea2742fc52",
+      "created_at": "2026-08-29T12:07:43.370421+00:00",
+      "engine_mode": "LitRPG",
+      "provider": "OpenAI",
+      "latency": 6054,
+      "token_count": null,
+      "status": "200 OK",
+      "player_input": "Ask why I was bought here",
+      "ai_response": "The heavy door groans in protest as you push the blue panel, its hinges protesting with a sound like a dying beast. The air in the room hangs heavy, thick with the smell of damp earth and the faint, sharp tang of ozone, a lingering scent from the bombardment. Dust motes dance in the weak light filtering from the doorway you just passed through, illuminating the stark, unfinished nature of this space. Cracked stone walls rise around you, rough-hewn and unadorned, suggesting this is a foundational or utilitarian area rather than a place of comfort.\n\nA man with a stern, weathered face, clad in simple, practical guard's armor, stands near the entrance. He gestures vaguely with a gauntleted hand, his expression unreadable. \"You were bought here,\" he states flatly, his voice rough, \"as a piece. A pawn for Pellane's game against the Ash Court.\" He looks you up and down, a flicker of something unreadable in his eyes. \"The King believes you're the key to turning the tide. Whether you are or not, that's for the battlefield to decide.\"\n\n1. Ask for more details about the Ash Court.\n2. Inquire about what kind of \"game\" Pellane is playing.\n3. Demand to know who he is.\n4. Observe the scattered debris more closely.",
+      "error_stack": null,
+      "save_id": "22a4f976-fc6f-467c-9af7-6927eaefd5d5"
+    },
+    {
+      "id": "be194cae-b46e-4c7d-830e-aad4e2b34abc",
+      "created_at": "2026-08-29T12:04:54.953915+00:00",
+      "engine_mode": "LitRPG",
+      "provider": "OpenAI",
+      "latency": 2433,
+      "token_count": null,
+      "status": "200 OK",
+      "player_input": "Examine the room you've just entered.",
+      "ai_response": "The air in the room hangs heavy, thick with the smell of damp earth and the faint, sharp tang of ozone, a lingering scent from the bombardment. Dust motes dance in the weak light filtering from the doorway you just passed through, illuminating the stark, unfinished nature of this space. Cracked stone walls rise around you, rough-hewn and unadorned, suggesting this is a foundational or utilitarian area rather than a place of comfort. A few scattered, unidentifiable debris items litter the uneven floor, testament to the recent violence. To your left, a stout, reinforced-looking doorway stands shut, its surface bearing the same rough texture as the walls.\n\n1. Examine the scattered debris more closely.\n2. Try to open the reinforced doorway to your left.\n3. Call out to Place, who is still at the threshold.\n4. Look back towards the doorway you entered from.",
+      "error_stack": null,
+      "save_id": "22a4f976-fc6f-467c-9af7-6927eaefd5d5"
+    },
+    {
+      "id": "cb212879-7660-4afb-9120-60122d082023",
+      "created_at": "2026-08-29T11:59:39.20131+00:00",
+      "engine_mode": "LitRPG",
+      "provider": "OpenAI",
+      "latency": 4470,
+      "token_count": null,
+      "status": "200 OK",
+      "player_input": "I walk nervously through the door he gestures to",
+      "ai_response": "The heavy door groans in protest as you push it open, its hinges protesting with a sound like a dying beast. The worn fabric of your clothes snags on a splintered edge, a sharp tug that makes your heart leap into your throat. Beyond the threshold lies not an immediate escape, but a dimly lit space that smells of damp earth and something faintly metallic, the air still heavy with the recent violence of the bombardment. The official, Place, remains at the threshold, his posture tense.\n\n1. Examine the room you've just entered.\n2. Ask Place what this room is.\n3. Turn back to the street.\n4. Try to re-secure the door.",
+      "error_stack": null,
+      "save_id": "22a4f976-fc6f-467c-9af7-6927eaefd5d5"
+    },
+    {
+      "id": "3181e405-7b64-423b-8f17-0a44e05f2634",
+      "created_at": "2026-08-29T11:52:09.463821+00:00",
+      "engine_mode": "LitRPG",
+      "provider": "OpenAI",
+      "latency": 5529,
+      "token_count": null,
+      "status": "200 OK",
+      "player_input": "I address a bystander who is actually here, not \"for any hostile threat\". My words stay: I scan for any hostile threat before committing — if none is present, I stay alert and choose a safer scene action.",
+      "ai_response": "The air in the \"Entry\" of the Sevenfold Circle is thick with the scent of ozone and dust, a sharp contrast to the lingering memory of your old world. Shouts echo from the street outside, muffled by stone but insistent, punctuated by the distant rumble of something heavy. You look towards the two figures who were present when you arrived. One, a man in what appears to be official-looking garb, stands near the doorway leading further into the building, his face set in a grim line. The other, a woman whose clothes seem practical and worn, watches the street with a sharp, assessing gaze. Neither of them moves to intercept your words as you speak, their attention seemingly divided between you and the chaotic sounds from beyond the stone walls.\n\n\"I scan for any hostile threat before committing,\" you state, your voice cutting through the low hum of unease, \"if none is present, I stay alert and choose a safer scene action.\"\n\nThe man in official garb, whom you've identified as a Warden by his bearing and the faint insignia on his tunic, turns his gaze towards you. He doesn't immediately answer your query about threats, his eyes sweeping over you with a mixture of weariness and professional assessment. \"The threat is the war, girl,\" he finally says, his voice raspy, \"and it's outside. The King's men are dealing with it. What matters to us is understanding why *you* are here.\" He gestures with a thumb towards the doorway. \"And whether you're going to help or hinder.\"\n\n1. Ask the Warden what he means by \"why you are here.\"\n2. Ask the woman if she's seen any immediate dangers inside the building.\n3. Examine the doorway leading further into the building.\n4. Step back and continue observing the street sounds.",
+      "error_stack": null,
+      "save_id": "22a4f976-fc6f-467c-9af7-6927eaefd5d5"
+    },
+    {
+      "id": "df755c5a-1b80-4e9c-953d-7f3646ba57a5",
+      "created_at": "2026-08-29T11:50:36.116859+00:00",
+      "engine_mode": "LitRPG",
+      "provider": "OpenAI",
+      "latency": 1991,
+      "token_count": null,
+      "status": "200 OK",
+      "player_input": "Josie",
+      "ai_response": "The air hangs thick with the scent of ozone and dust, a sharp contrast to the lingering memory of your old world. Shouts echo from the street outside, muffled by stone but insistent, punctuated by the distant rumble of something heavy. The space you stand in, designated as the \"Entry,\" is relatively intact, though a fine layer of grit coats everything, and a spiderweb of cracks mars the flagstone floor. To your left, a stout wooden door, its varnish chipped and dull, leads into what the map indicates is the Foyer. The light filtering in from the street is weak, casting long, dancing shadows that do little to ease the tension coiling in your gut.\n\n1. Examine the cracks on the floor more closely.\n2. Try the stout wooden door leading to the Foyer.\n3. Call out a greeting into the Entry.\n4. Step back outside to see what's happening in the street.\n\nWhat do you do?",
+      "error_stack": null,
+      "save_id": "22a4f976-fc6f-467c-9af7-6927eaefd5d5"
+    },
+    {
+      "id": "6d7cf284-2774-4676-8174-e46ba5c43c6b",
+      "created_at": "2026-08-29T11:42:15.500566+00:00",
+      "engine_mode": "LitRPG",
+      "provider": "OpenAI",
+      "latency": 3714,
+      "token_count": null,
+      "status": "200 OK",
+      "player_input": "Ask what is going on",
+      "ai_response": "The world coalesces around you with the jarring finality of a dropped anvil. One moment, the mundane reality of your Earthly existence; the next, the guttural roar of distant explosions and the acrid bite of smoke filling your lungs. You stand on a circular mosaic of cracked stone, the air vibrating with the concussive force of impacts not far away. Jagged cracks spiderweb across the ancient tiles beneath your feet, and the sky above is a bruised canvas of smoke and fire. Around you, a scattered group of individuals in varying states of disarray begin to stir, their eyes wide with a mixture of terror and confusion, murmuring amongst themselves about the sudden shift in reality. A figure in ornate, but torn, ceremonial robes kneels nearby, clutching a broken staff.\n\n\"What is happening?\" you ask, your voice feeling strangely distant in the cacophony.\n\nThe robed figure looks up, their eyes wide and unfocused as if struggling to grasp the enormity of the situation. \"The ritual... it has gone awry,\" they stammer, their voice raspy. \"The Sevenfold Circle is supposed to be a place of sanctuary, a nexus point... but the bombardment... it has fractured the veil. You have been pulled through from... elsewhere. And so have others.\" They gesture vaguely at the stunned individuals beginning to gather their bearings. \"We are caught between worlds, and the war outside... it does not care for our plight.\"\n\n1. Ask the robed figure who they are and what the \"ritual\" was.\n2. Look around at the other stunned individuals who were also seemingly pulled through.\n3. Inspect your own clothes and the bag to see if anything has changed.\n4. Cautiously approach the edge of the circular mosaic to get a better look at the surrounding area.",
+      "error_stack": null,
+      "save_id": "22a4f976-fc6f-467c-9af7-6927eaefd5d5"
+    },
+    {
+      "id": "24f58fdb-1fcd-46f7-bcf8-d31225be44d4",
+      "created_at": "2026-08-29T11:41:15.430992+00:00",
+      "engine_mode": "LitRPG",
+      "provider": "OpenAI",
+      "latency": 2399,
+      "token_count": null,
+      "status": "200 OK",
+      "player_input": "(opening)",
+      "ai_response": "The world coalesces around you with the jarring finality of a dropped anvil. One moment, the mundane reality of your Earthly existence; the next, the guttural roar of distant explosions and the acrid bite of smoke filling your lungs. You stand on a circular mosaic of cracked stone, the air vibrating with the concussive force of impacts not far away. Jagged cracks spiderweb across the ancient tiles beneath your feet, and the sky above is a bruised canvas of smoke and fire. Around you, a scattered few individuals in roughspun clothing huddle against unseen fortifications, their faces etched with grim determination or stark terror.\n\n1. Scan your surroundings for immediate threats or points of interest.\n2. Attempt to hail one of the huddled figures nearby.\n3. Check the contents of your bag.\n4. Assess the damage to the Sevenfold Circle.",
+      "error_stack": null,
+      "save_id": "22a4f976-fc6f-467c-9af7-6927eaefd5d5"
+    },
+    {
+      "id": "e28e5fe6-9a76-46bd-a30e-adbb69a9ba81",
+      "created_at": "2026-08-29T11:36:16.036858+00:00",
+      "engine_mode": "LitRPG",
+      "provider": "OpenAI",
+      "latency": 3385,
+      "token_count": null,
+      "status": "200 OK",
+      "player_input": "Who is waiting",
+      "ai_response": "The rasp of hurried footsteps echoes from the alleyway, punctuated by sharp, urgent calls. A burly figure, clad in the utilitarian grey of the Meridian Clearance Authority, emerges from the narrow gap between two buildings, his hand resting on the butt of a sidearm holstered at his hip. He scans the small gathering with narrowed eyes, his gaze flicking from the cracked pavement to the nearby debris, before settling on you. \"You,\" he barks, his voice rough, \"The ones who don't look like they belong. Who's waiting?\" He gestures vaguely with his chin towards the direction he came from, implying the alley.\n\n1. Gesture towards the alleyway and ask for clarification.\n2. Stand your ground and demand to know who *he* is.\n3. Look around for an escape route.\n4. Remain silent and observe.",
+      "error_stack": null,
+      "save_id": "004dc417-1e89-432e-b59a-ff37b01d1505"
+    },
+    {
+      "id": "f1322752-8624-4f6d-b561-9a08cba0ddfa",
+      "created_at": "2026-08-29T11:34:14.41373+00:00",
+      "engine_mode": "LitRPG",
+      "provider": "OpenAI",
+      "latency": 2306,
+      "token_count": null,
+      "status": "200 OK",
+      "player_input": "(opening)",
+      "ai_response": "The sterile scent of antiseptic and something faintly metallic prickles your nose as you slowly regain awareness. A dull ache throbs behind your eyes, and the rough texture of worn fabric beneath you is the first concrete sensation you register. The dim lighting of what feels like a private room casts long shadows, and a low, rhythmic beeping emanates from somewhere nearby. You attempt to shift, the movement feeling sluggish, as if your limbs are heavy and uncooperative.\n\n1. Try to sit up and look around the room.\n2. Call out to see if anyone is nearby.\n3. Focus on the sensation of the \"Wake Residue\" item, trying to understand its nature.\n4. Remain still and try to piece together how you got here.",
+      "error_stack": null,
+      "save_id": "004dc417-1e89-432e-b59a-ff37b01d1505"
+    }
+  ],
+  "sessions": [
+    {
+      "id": "b58c9e44-e2c3-4f46-9a2c-ecf50bd90481",
+      "save_id": "310e1d21-76e7-461a-bffb-c6c83eef2ae9",
+      "campaign": "Salt Road Heist — 15 Aug 2026",
+      "engine_mode": "rpg",
+      "ai_status": "Active",
+      "last_prompt": null,
+      "updated_at": "2026-08-15T16:06:54.973+00:00",
+      "last_turn_at": "2026-08-15T16:06:54.973+00:00"
+    },
+    {
+      "id": "26095f55-cb0c-434e-ab5d-79748cd107ac",
+      "save_id": "10b3e780-3084-47fe-8362-8003b667d2f4",
+      "campaign": "Glass Harbor Letters — 15 Aug 2026",
+      "engine_mode": "rpg",
+      "ai_status": "Active",
+      "last_prompt": null,
+      "updated_at": "2026-08-15T16:22:52.296+00:00",
+      "last_turn_at": "2026-08-15T16:22:52.296+00:00"
+    },
+    {
+      "id": "bae1e2e8-ffd0-4b15-9ed3-32d0c7b5de53",
+      "save_id": "37cd9a85-6abd-47b7-95a4-6ce335308853",
+      "campaign": "System Integration — 15 Aug 2026",
+      "engine_mode": "litrpg",
+      "ai_status": "Active",
+      "last_prompt": null,
+      "updated_at": "2026-08-15T13:13:26.766+00:00",
+      "last_turn_at": "2026-08-15T13:13:26.766+00:00"
+    },
+    {
+      "id": "77c00623-a18d-43da-a134-f763472573b2",
+      "save_id": "22a4f976-fc6f-467c-9af7-6927eaefd5d5",
+      "campaign": "The Summoned Pact — 29 Aug 2026",
+      "engine_mode": "litrpg",
+      "ai_status": "Active",
+      "last_prompt": "\"I don't want to be a pawn\" I say",
+      "updated_at": "2026-08-29T12:11:50.304+00:00",
+      "last_turn_at": "2026-08-29T12:11:50.304+00:00"
+    },
+    {
+      "id": "0bc21ce6-d584-4410-819b-37d4e6b276fd",
+      "save_id": "004dc417-1e89-432e-b59a-ff37b01d1505",
+      "campaign": "Hero Awakening — 29 Aug 2026",
+      "engine_mode": "litrpg",
+      "ai_status": "Active",
+      "last_prompt": "Who is waiting?",
+      "updated_at": "2026-08-29T11:36:16.46+00:00",
+      "last_turn_at": "2026-08-29T11:36:16.46+00:00"
+    }
+  ],
+  "saves": [
+    {
+      "id": "1bc233f1-27fe-4bab-b61b-45f259bd36aa",
+      "save_id": "37cd9a85-6abd-47b7-95a4-6ce335308853",
+      "story_name": "System Integration — 15 Aug 2026",
+      "engine_mode": "litrpg",
+      "turn": 0,
+      "updated_at": "2026-08-15T13:13:26.696+00:00"
+    },
+    {
+      "id": "20c617ca-0811-41e5-8ab3-a40f56dbf086",
+      "save_id": "004dc417-1e89-432e-b59a-ff37b01d1505",
+      "story_name": "Hero Awakening — 29 Aug 2026",
+      "engine_mode": "litrpg",
+      "turn": 2,
+      "updated_at": "2026-08-29T11:36:16.386+00:00"
+    },
+    {
+      "id": "ca160983-93c4-42e6-8dd1-77bf8572ac8c",
+      "save_id": "310e1d21-76e7-461a-bffb-c6c83eef2ae9",
+      "story_name": "Salt Road Heist — 15 Aug 2026",
+      "engine_mode": "rpg",
+      "turn": 2,
+      "updated_at": "2026-08-15T16:06:54.838+00:00"
+    },
+    {
+      "id": "3dd5e66c-f6ad-448e-8549-c7d16a063cb7",
+      "save_id": "10b3e780-3084-47fe-8362-8003b667d2f4",
+      "story_name": "Glass Harbor Letters — 15 Aug 2026",
+      "engine_mode": "rpg",
+      "turn": 3,
+      "updated_at": "2026-08-15T16:22:52.189+00:00"
+    },
+    {
+      "id": "2c1020da-73c8-451f-acfb-af31f1894bb1",
+      "save_id": "22a4f976-fc6f-467c-9af7-6927eaefd5d5",
+      "story_name": "The Summoned Pact — 29 Aug 2026",
+      "engine_mode": "litrpg",
+      "turn": 8,
+      "updated_at": "2026-08-29T12:11:49.744+00:00"
+    }
+  ],
+  "moderation": [
+    {
+      "id": "6acedd34-b384-4507-a90b-118d45b0b745",
+      "created_at": "2026-08-15T13:22:44.107703+00:00",
+      "status": "Pending",
+      "source": "auto_error",
+      "reason": "Client auto-flag: 500 API Error",
+      "excerpt": "Wait for the perfect opening",
+      "campaign": "310e1d21-76e7-461a-bffb-c6c83eef2ae9"
+    },
+    {
+      "id": "b708dd20-da3a-4d72-931d-eaf9cd647e25",
+      "created_at": "2026-08-15T16:23:25.598654+00:00",
+      "status": "Pending",
+      "source": "auto_error",
+      "reason": "Client auto-flag: 500 API Error",
+      "excerpt": "Ask for a story about the area",
+      "campaign": "10b3e780-3084-47fe-8362-8003b667d2f4"
+    }
+  ],
+  "feedback": []
+}

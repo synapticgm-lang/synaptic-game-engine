@@ -28,16 +28,40 @@ import {
 } from './forwardProgressGovernor.ts';
 import { buildGovernanceSnapshotLines } from './qualityGovernance.ts';
 import { formatWorldAtlasBlock } from './worldAtlas.ts';
+import {
+  formatCrowdBindingLine,
+  formatCrowdSnapshotLine,
+  formatPresenceForSnapshot,
+} from './crowdAuthority.ts';
 import { formatWorldMapAuthorityBlock } from './worldMapAuthority.ts';
 import { formatModeStoryAuthorityLine } from './fluidProseRails.ts';
+import { formatCoverChromeBindingLine } from './chromeAuthority.ts';
+import { alignFactionNotesToHook, formatHookBindingLine, resolveHookLock } from './hookLock.ts';
+import { formatCameraBindingLine } from './travelAuthority.ts';
+// WS-2 Wave C: NPC Memory sections
+import {
+  buildNpcPacket,
+  formatNpcPacketSection,
+} from './npcMemoryRetrieval.ts';
+// WS-5 Wave B: PYOA Branch State
+import {
+  buildDelayedConsequencesSituationSection,
+  buildJournalConsequenceHints,
+} from './pyoaDelayedConsequences.ts';
+// WS-6 Wave C: Spine Map and Exhaustion
+import {
+  formatExhaustionSummary,
+  type ContentDensityState,
+} from './exhaustionCurve.ts';
 
 export function effectivePowerScaling(state: GameState): PowerScaling {
   return state.powerScaling ?? 'balanced';
 }
 
-function formatFactionMatrix(standings: FactionStanding[]): string {
+function formatFactionMatrix(standings: FactionStanding[], state?: GameState): string {
   if (!standings.length) return '';
-  const parts = standings.map((f) => {
+  const aligned = alignFactionNotesToHook(standings, state ? resolveHookLock(state) : undefined);
+  const parts = aligned.map((f) => {
     const influence =
       typeof f.influence === 'number' && Number.isFinite(f.influence)
         ? ` influence=${f.influence}`
@@ -56,7 +80,7 @@ function formatSimulationistBlocks(state: GameState): string[] {
     blocks.push(`[ZONE THREAT: Tier ${threat} vs Player Level ${level}]`);
   }
   const factions = state.worldLedger?.factionStandings ?? [];
-  const matrix = formatFactionMatrix(factions);
+  const matrix = formatFactionMatrix(factions, state);
   if (matrix) blocks.push(matrix);
   blocks.push(`[POWER SCALING: ${effectivePowerScaling(state)}]`);
   return blocks;
@@ -75,7 +99,7 @@ export function buildSituationPacket(state: GameState): SituationPacket {
   const presentEntities: string[] = [];
   const alone = state.openingEstablishment?.aloneArrival === true;
   if (!alone) {
-    for (const who of state.sceneFacts?.present ?? []) {
+    for (const who of formatPresenceForSnapshot(state.sceneFacts?.present)) {
       presentEntities.push(who);
     }
   }
@@ -109,6 +133,46 @@ export function buildSituationPacket(state: GameState): SituationPacket {
     ? `q=${state.currentCoordinates.q} r=${state.currentCoordinates.r} tier=${state.currentCoordinates.tier} z=${state.currentCoordinates.z ?? 0}`
     : undefined;
 
+  // WS-7 Wave 1: Build social context if any social crises or leverage assets exist
+  let socialContext: SituationPacket['socialContext'];
+  const arc = state.arcDirector;
+  const activeCrisis = arc?.socialCrises?.find((c) => !c.resolution);
+  const availableLeverage = arc?.leverageAssets?.filter((l) => !l.exhausted) ?? [];
+  const relationships = arc?.npcRelationships ?? [];
+
+  if (activeCrisis || availableLeverage.length > 0 || relationships.length > 0) {
+    socialContext = {
+      crisisId: activeCrisis?.id,
+      crisisName: activeCrisis?.name,
+      stakes: activeCrisis?.stakes
+        ? {
+            gain: activeCrisis.stakes.gain,
+            loss: activeCrisis.stakes.loss,
+            owner: activeCrisis.stakes.owner,
+            deadline: activeCrisis.stakes.deadline,
+          }
+        : undefined,
+      leverage: availableLeverage.map((l) => ({
+        type: l.type,
+        targetNpc: l.targetNpc,
+        exhausted: l.exhausted,
+      })),
+      relationships: relationships.map((r) => {
+        let disposition = 'neutral';
+        if (r.trust >= 60) disposition = 'ally';
+        else if (r.trust <= 20) disposition = 'hostile';
+        else if (r.fear && r.fear >= 40) disposition = 'intimidated';
+        else if (r.respect && r.respect >= 60) disposition = 'respectful';
+        
+        return {
+          npcName: r.npcName,
+          trust: r.trust,
+          disposition,
+        };
+      }),
+    };
+  }
+
   return {
     location: playerFacingLocation(state) || (dungeon ? dungeon.dungeonName : 'unspecified'),
     coordinates: coords,
@@ -121,6 +185,7 @@ export function buildSituationPacket(state: GameState): SituationPacket {
       : ['none established'],
     activeQuests: activeQuests.length ? activeQuests : ['none'],
     recentFacts: (state.timeline ?? []).slice(-8).map((f) => `T${f.turn}: ${f.text}`),
+    socialContext,
   };
 }
 
@@ -139,20 +204,7 @@ export function formatSceneSnapshotForPrompt(state: GameState): string {
         ? s.presentEntities.slice(0, 6).join('; ')
         : 'none established';
 
-  const crowdTracked = alone && !state.activeEncounter ? 'none' : (state.sceneFacts?.crowd ?? 'unknown');
-  const crowdSize = alone ? 0 : Math.max(0, s.presentEntities.filter((e) => e !== 'none established').length);
-  const crowdLabel =
-    crowdTracked === 'none' || (alone && !state.activeEncounter)
-      ? 'none'
-      : crowdTracked === 'present' || crowdSize > 0
-        ? crowdSize <= 3
-          ? `present / intimate (~${Math.max(crowdSize, 1)})`
-          : crowdSize <= 8
-            ? `present / small (~${crowdSize})`
-            : crowdSize <= 15
-              ? `present / modest (~${crowdSize})`
-              : `present / large (${crowdSize}+)`
-        : 'not established';
+  const crowdLabel = formatCrowdSnapshotLine(state);
 
   let exits = 'none established';
   if (state.activeDungeon && isInteriorMap(state.activeDungeon)) {
@@ -266,8 +318,15 @@ export function formatSceneSnapshotForPrompt(state: GameState): string {
   lines.push(`- ${weaponAuthorityLine(state)}`);
   lines.push('');
   // 29d — one AUTHORITY + PROSE LICENSE block (no duplicate STAGNATION / QUEST essays)
+  const crowdBind = formatCrowdBindingLine(state);
+  if (crowdBind) lines.push(`- ${crowdBind}`);
+  const hookBind = formatHookBindingLine(state);
+  if (hookBind) lines.push(`- ${hookBind}`);
+  const cameraBind = formatCameraBindingLine(state);
+  if (cameraBind) lines.push(`- ${cameraBind}`);
+  lines.push(`- ${formatCoverChromeBindingLine()}`);
   lines.push(
-    'AUTHORITY: SNAPSHOT + ledger win on facts (kit, exits, presence, HP, outcomes). Do not invent items, doors, named people, or numeric results absent above. Do not recycle a prior beat, location essay, crisis line, or choice pad unless the player asked to repeat or restate.'
+    'AUTHORITY: SNAPSHOT + ledger win on facts (kit, exits, presence, HP, crowd count, hook why, outcomes). Do not invent items, doors, named people, or numeric results absent above. Do not recycle a prior beat, location essay, crisis line, or choice pad unless the player asked to repeat or restate.'
   );
   lines.push(formatModeStoryAuthorityLine(state.engineMode));
   lines.push(
@@ -298,6 +357,17 @@ export function formatSituationForPrompt(state: GameState): string {
   const s = buildSituationPacket(state);
   const alone = state.openingEstablishment?.aloneArrival === true;
   const snapshot = formatSceneSnapshotForPrompt(state);
+
+  // WS-2 Wave C: Build NPC memory packets
+  const presentNpcs = state.sceneFacts?.present?.filter(p => p && !/^(a|an|the|some)\s/i.test(p)) ?? [];
+  const npcPackets = presentNpcs.slice(0, 3).map(npcId => 
+    buildNpcPacket(npcId, state, {
+      includeFullMemories: false,
+      includeObligations: true,
+      includeTopics: true,
+    })
+  );
+  const npcMemoryBlock = npcPackets.map(p => formatNpcPacketSection(p)).join('\n\n');
 
   const npcBlock = (state.npcMemories ?? [])
     .slice(0, 5)
@@ -333,6 +403,16 @@ export function formatSituationForPrompt(state: GameState): string {
       : '';
   const simulationist = formatSimulationistBlocks(state);
   const none = '(none)';
+  // WS-5 Wave B: PYOA delayed consequences section
+  const delayedConsequencesBlock = state.engineMode === 'pyoa' 
+    ? buildDelayedConsequencesSituationSection(state)
+    : '';
+
+  // WS-6 Wave C: Exhaustion summary
+  const exhaustionBlock = state.arcDirector?.contentDensityState
+    ? `EXHAUSTION: ${formatExhaustionSummary(state.arcDirector.contentDensityState)}`
+    : '';
+
   const lines = [
     snapshot,
     '',
@@ -347,6 +427,7 @@ export function formatSituationForPrompt(state: GameState): string {
     formatHubArrivalForPrompt(state),
     `Dungeon: ${s.dungeon}`,
     interiorExplore || '',
+    npcMemoryBlock ? `=== NPC MEMORY PACKETS (WS-2 AUTHORITY) ===\n${npcMemoryBlock}\n===` : '',
     'NPC memories (how they were treated sticks — no karma meter):',
     npcBlock || none,
     'Place-scoped facts (current + last location):',
@@ -357,8 +438,11 @@ export function formatSituationForPrompt(state: GameState): string {
     alone
       ? 'ALONE ARRIVAL: Empty ruin — no handlers or "people who saw you arrive." Do not invent voices outside or watchers at the wall.'
       : '',
+    delayedConsequencesBlock || '',
+    exhaustionBlock || '',
     'RAILS: SNAPSHOT + ledger + WORLD MAP are fact authority. Narrate richly inside listed settlements. Do not invent new cities, towns, shores, or continents. Do not invent named threats, loot, or doors absent above. Quest sites must fit biome. Dungeons open at allowsDungeon sites then close when cleared.',
     'HIDDEN QUESTS: Never spoil quests with status hidden or revealed=false.',
+    'PROSE LICENSE: Full artistic freedom on sensory detail, metaphor, pacing, and NPC manner. Descriptive engaging language and narrative flair are required.',
     formatWorldLedgerBlock(state.worldLedger),
   ];
   return lines.filter((line) => line !== '').join('\n');

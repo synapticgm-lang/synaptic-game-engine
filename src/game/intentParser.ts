@@ -1,10 +1,30 @@
 import type { GameState } from './types';
+import { filterKidModeText } from './kidModeSafety';
 import {
   findUnsupportedItemClaims,
   findUngroundedNamedClaims,
   referencesAbsentCompanion,
   fallbackSuggestionForState,
 } from './suggestionValidation';
+
+/**
+ * Deleted injection (2026-08-30W). Was `groundPlayerAction` for attack/flee
+ * with no threat. Must never appear on the bubble, in GM playerAction, or in prose.
+ */
+export const CANNED_SAFER_SCENE_LINE =
+  'I scan for any hostile threat before committing — if none is present, I stay alert and choose a safer scene action.';
+
+export function isSaferSceneLeak(text: string): boolean {
+  const t = (text ?? '').replace(/\s+/g, ' ').trim();
+  if (!t) return false;
+  if (t.includes(CANNED_SAFER_SCENE_LINE)) return true;
+  return (
+    /\bchoose a safer scene action\b/i.test(t)
+    || /\bif none is present\b/i.test(t)
+    || /\bscan\b[\s\S]{0,80}\bbefore committing\b/i.test(t)
+    || /\bstay alert and choose a safer\b/i.test(t)
+  );
+}
 
 export type IntentKind =
   | 'observe'
@@ -34,6 +54,57 @@ export interface GroundedPlayerAction {
   notes: string[];
 }
 
+/**
+ * Visible player bubble. Typed/spoken words stay, any mode, opening or later.
+ * Kid Mode may mask slurs / sex / gore. No safer-scene, stance, flee, or repair template.
+ */
+export function playerVisibleActionText(
+  typed: string,
+  contentMode?: string | null
+): string {
+  const trimmed = (typed ?? '').replace(/\s+/g, ' ').trim();
+  if (!trimmed) return trimmed;
+  if (contentMode === 'kid') return filterKidModeText(trimmed);
+  return trimmed;
+}
+
+/** Log line + optional GM-grounded text. Bubble is never the grounded rewrite. */
+export function resolvePlayerActionLines(
+  typed: string,
+  state: GameState,
+  storyProse = '',
+  contentMode?: string | null
+): { displayText: string; gmText: string; intent: PlayerIntent; rewritten: boolean; notes: string[] } {
+  const displayText = playerVisibleActionText(typed, contentMode);
+  const grounded = groundPlayerAction(displayText, state, storyProse);
+  const gmText = gmFacingPlayerAction(displayText, grounded);
+  return {
+    displayText,
+    gmText,
+    intent: grounded.intent,
+    rewritten: grounded.rewritten && gmText !== displayText,
+    notes: grounded.notes,
+  };
+}
+
+/** GM playerAction: typed words, never the safer-scene template or inspect→speech rewrite. */
+export function gmFacingPlayerAction(typed: string, grounded: GroundedPlayerAction): string {
+  const display = (typed ?? '').replace(/\s+/g, ' ').trim();
+  if (!display) return grounded.text;
+  if (isSaferSceneLeak(grounded.text) || isSaferSceneLeak(display)) return display;
+  if (!playerTypedDialogue(display) && /\bI address\b/i.test(grounded.text)) return display;
+  return grounded.text;
+}
+
+/** Quotes or say/ask/talk — not scan/inspect/flee/leave. */
+export function playerTypedDialogue(action: string): boolean {
+  const t = (action ?? '').replace(/\s+/g, ' ').trim();
+  if (!t) return false;
+  if (/^["'“]/.test(t)) return true;
+  if (/\b(say|said|ask|tell|speak|talk|shout|yell|whisper|call out)\b/i.test(t)) return true;
+  return isSpeechOrProtest(t);
+}
+
 const RULES: { kind: IntentKind; re: RegExp; label: string }[] = [
   { kind: 'flee', re: /\b(flee|run away|retreat|escape|back away)\b/i, label: 'Flee / disengage' },
   {
@@ -53,9 +124,6 @@ const RULES: { kind: IntentKind; re: RegExp; label: string }[] = [
   { kind: 'rest', re: /\b(rest|sleep|camp|recover|bandage)\b/i, label: 'Rest' },
 ];
 
-const THREAT_PRESENT =
-  /\b(creature|enemy|beast|monster|figure|silhouette|threat|hostile|attacker|foe|adversary|bandit|raider|goblin|predator)\b/i;
-
 /** Player wants a nearby person to answer — not a narrator lecture. */
 export function isAskNearbyPerson(action: string): boolean {
   return (
@@ -69,7 +137,7 @@ export function isAskNearbyPerson(action: string): boolean {
 }
 
 const LOOK_OR_PHYSICAL =
-  /\b(look around|look towards?|look at|look for|scout|search|inspect|enter|sneak|attack|go to|walk to|head to|approach|circle|survey|what'?s?\s+(?:is\s+)?around|around me|surroundings)\b/i;
+  /\b(look around|look towards?|look at|look for|scout|search|inspect|scan|examin|assess|watch|study|enter|sneak|attack|go to|walk to|walk away|head to|approach|circle|survey|flee|run away|retreat|escape|back away|leave|what'?s?\s+(?:is\s+)?around|around me|surroundings)\b/i;
 
 const SPEECH_OR_PROTEST =
   /\b(who'?s in charge|who is in charge|didn'?t agree|don'?t agree|are you joking|are you (?:serious|kidding)|i didn'?t (?:sign(?:\s+up)?|ask for|agree)|not agreeing|good luck\b|who'?s responsible|who (?:runs|controls) this|this is (?:a joke|ridiculous)|i didn'?t (?:ask|want) (?:for )?this|bend the knee|why should i|not much use|what(?:'s| is) (?:in )?it for me|don'?t (?:tell me|order me|make me)|who (?:are you|do you think)|i(?:'| a)?m not (?:your|here to)|i just (?:bend|kneel|obey|agree))\b/i;
@@ -110,7 +178,7 @@ export function isSpeechOrProtest(action: string): boolean {
     return true;
   }
   if (
-    !/\b(search|loot|attack|run|walk|go|enter|grab|draw|swing|look around)\b/i.test(t)
+    !/\b(search|loot|attack|run|walk|go|enter|grab|draw|swing|look around|scan|inspect|flee|leave|retreat|escape)\b/i.test(t)
     && (/\b(i|i'm|i'd|we|you can'?t|not if|not much)\b/i.test(t) || /^["'“]/.test(t))
     && t.split(/\s+/).length <= 40
   ) {
@@ -178,11 +246,6 @@ export function parsePlayerIntent(input: string, _state?: GameState): PlayerInte
   return { kind: 'other', label: 'Free action', targets: [] };
 }
 
-function sceneHasThreat(state: GameState, storyProse: string): boolean {
-  if (state.activeEncounter) return true;
-  return THREAT_PRESENT.test(storyProse);
-}
-
 function sceneSpeaker(state: GameState): string {
   const present = state.sceneFacts?.present ?? [];
   if (present.some((p) => /bystander/i.test(p))) return 'a bystander';
@@ -230,16 +293,6 @@ export function groundPlayerAction(
     );
   }
 
-  if (
-    (intent.kind === 'attack' || intent.kind === 'flee') &&
-    !sceneHasThreat(state, storyProse)
-  ) {
-    notes.push('No established threat for combat/flee');
-    parts.push(
-      'I scan for any hostile threat before committing — if none is present, I stay alert and choose a safer scene action.'
-    );
-  }
-
   const ungrounded = findUngroundedNamedClaims(trimmed, state, storyProse);
   if (ungrounded.length && intent.kind !== 'other') {
     // Soft-rewrite when the claim is central (attack/search/use/talk), not every Proper noun.
@@ -248,7 +301,7 @@ export function groundPlayerAction(
       parts.push(
         `I focus on what is actually here instead of assuming "${ungrounded[0]}" exists — ${fallbackSuggestionForState(state).toLowerCase()}.`
       );
-    } else if (intent.kind === 'talk' || intent.kind === 'refuse' || intent.kind === 'observe') {
+    } else if (intent.kind === 'talk' || intent.kind === 'refuse') {
       notes.push(`Ungrounded talk target(s): ${ungrounded.join(', ')}`);
       const who = sceneSpeaker(state);
       parts.push(

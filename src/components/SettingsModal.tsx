@@ -244,7 +244,7 @@ export function SettingsModal({ settings, storyName, engineMode, gameState, onSa
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4" onClick={onClose}>
       <div
-        className="sgm-modal-shell sgm-turn-frame sgm-info-panel relative flex max-h-[90vh] w-full max-w-md flex-col overflow-hidden rounded-xl border border-crimson-700/50 bg-slate-900 shadow-2xl shadow-crimson-900/20"
+        className="sgm-modal-shell sgm-turn-frame sgm-info-panel relative flex min-h-0 max-h-[min(90vh,100dvh)] w-full max-w-md flex-col overflow-hidden rounded-xl border border-crimson-700/50 bg-slate-900 shadow-2xl shadow-crimson-900/20"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="sgm-turn-frame-bar h-1 w-full shrink-0" />
@@ -280,7 +280,7 @@ export function SettingsModal({ settings, storyName, engineMode, gameState, onSa
         </nav>
 
         {/* Scrollable Body */}
-        <div className="flex-1 space-y-5 overflow-y-auto px-6 py-4">
+        <div className="sgm-modal-body flex-1 space-y-5 px-6 py-4">
           {/* General: Post-Login Destination */}
           <Section icon={<Home size={16} />} title="General" visible={activeTab === 'general'}>
             <div>

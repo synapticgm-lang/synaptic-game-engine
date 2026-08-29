@@ -364,7 +364,26 @@ export function outdoorHubTravelChoices(state: GameState, max = 2): string[] {
   const hubs = hubsForBibleId(state.campaignBibleId);
   if (!hubs.length) return [];
   const here = (state.currentLocation ?? '').toLowerCase();
-  const candidates = hubs.filter((h) => !here.includes(h.name.toLowerCase()));
+  const discovered = state.discoveredLocations ?? [];
+  
+  // Pack 12 fog-of-war: only offer travel to discovered locations
+  const candidates = hubs.filter((h) => {
+    if (here.includes(h.name.toLowerCase())) return false;
+    
+    // Check if discovered
+    const hubKey = h.id;
+    const nameKey = placeIdFromName(h.name);
+    if (discovered.includes(hubKey) || discovered.includes(nameKey)) return true;
+    
+    // Check aliases
+    if (h.aliases?.some((a) => discovered.includes(placeIdFromName(a)))) return true;
+    
+    // Allow first few locations from starting point during opening
+    if (state.turn <= 5 && discovered.length === 1) return true;
+    
+    return false;
+  });
+  
   const activeIds = new Set(
     (state.quests ?? []).filter((q) => q.status === 'active' && q.revealed).map((q) => q.id)
   );

@@ -12,7 +12,7 @@ export function LegalPage({ docId }: Props) {
   const other = docId === 'terms' ? PRIVACY_DOC : TERMS_DOC;
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-200">
+    <div className="sgm-scroll-page bg-slate-950 text-slate-200">
       <header className="border-b border-slate-800 bg-slate-900/80 backdrop-blur sticky top-0 z-10">
         <div className="mx-auto flex max-w-3xl items-center justify-between gap-4 px-4 py-3">
           <a

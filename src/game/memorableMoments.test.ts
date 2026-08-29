@@ -57,6 +57,21 @@ describe('Chapter One opener vs weekly cap', () => {
     expect(fields.imageStatus).toBe('pending');
   });
 
+  it('follows committed standing + mosaic over a fallen-hook card', () => {
+    const prompt = pinOpeningHereScene({
+      storyText:
+        'You stand on a circular mosaic of cracked stone. Jagged cracks spiderweb across the ancient tiles beneath your feet.',
+      location: 'The Sevenfold Circle under bombardment',
+      pickedHook:
+        'Light, then a vault under fire. You are on your back in the seven-ring circle while dust and ash fall.',
+      sceneFacts: { props: ['circular mosaic', 'cracked tiles'], present: ['handlers'] },
+    });
+    expect(prompt).toMatch(/STANCE:.*standing/i);
+    expect(prompt).toMatch(/circular mosaic/i);
+    expect(prompt).not.toMatch(/The viewpoint character is lying on the floor/i);
+    expect(prompt).toMatch(/SCENE AUTHORITY/i);
+  });
+
   it('pins Chapter One art to the floor beat and strips the Earth-origin ask', () => {
     const originAsk =
       'Light, then cold stone. You are on your back inside a seven-ring summoning circle under a cathedral vault. '

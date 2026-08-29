@@ -51,6 +51,7 @@
 | 20e open | Copy-paste covers + turn feel | *Noted* | No OpeningContract |
 | 20f | Instant stitch | Banks + cards | Continue still used bible `startingLocation` |
 | 20k | War camp → cathedral after covers; bag glued to clothes | `resolveLockedOpeningPlace` + kit not concat onto appearance | Class B place lock |
+| **30T** | Inspect surroundings → canned “They are still waiting for a name you will own.” | `applyOpeningAnswer` defers look-around to play; pad drops name/origin/kit chips | Cover parse treated inspect as a failed name |
 
 ### Quest / journal (Class C)
 
@@ -68,6 +69,11 @@
 | Pack 11 / 17 / 19 | IntentContract, claim scrub, prose warden, folk voice, fluid chat rails |
 | **26a** | NPC body-part perspective scope; PC-name/chore choice filter; Free English + sleeper rail |
 | **26p** | `sceneFacts.searchedEmpty` / emptyContainers + SNAPSHOT/binding; invent-loot scrub on re-search; auto-fight + prose `scrubInventedWeapons` (PC-attributed; sealed kit stays unarmed) |
+| **30X** | `crowdAuthority` locks headcount (present people + companions + encounter). Warden rewrites any size-class mismatch (pair ↔ group ↔ few ↔ large), not only hundreds. Harvest writes occupancy; enter/leave required to change. |
+| **30Y** | `chromeAuthority` — UI chrome / cover slots (blue panel, Place, Registration, Eye Level) are not people. Strip from `present[]` / pins / harvest; warden rewrites chrome+slot+body-pronoun clauses; talk-to-Place pads drop. |
+| **30Z** | Leading-sentence collage: first N sentences / ~40–80 words vs last K GM beats. Strip recycled prefix when tail is a new beat; retry once if no tail. 30R whole-beat ≥0.85 still stands. |
+| **31a** | `hookLock` — first committed why-you’re-here (accident / intended / bargain / pawn) persists. SNAPSHOT BINDING + warden + sealedManifest block silent reversals (accident ↛ pawn) unless player/ledger revises. |
+| **31b** | `rewriteChromeSpeakerTags` — chrome may hum; never `states`/`says`/`their voice`/`has need`. Reattribute to named person or “the handler” role; `handlers` is not a name slot. |
 
 ### Chrome (Class E)
 
@@ -80,6 +86,8 @@
 | **26l** | Hide text shows title art; Hide toggles undo after remount | `invisible` punched static bg through story panel; 25f clear-ref reset on remount. Opaque flex spacer + sessionStorage cleared-for saveId |
 | **29e live** | Hide text = black void; Hide options no-op at opening; saveId flip re-clears | `userSetHideRef`; never key `'opening'` then flip to saveId |
 | **29f live** | Hide text hid story; Hide options hid TURN_ASK | Hide text = bottom action box; Hide options = choice chips only |
+| **30U live** | Home cannot scroll; Active Save clipped; title floats on art | `html/#root` `overflow:hidden` + `MainMenu` `min-h-screen overflow-hidden`. `.sgm-home` `min-h-0 overflow-y-auto`; opaque `.sgm-home-title-panel` |
+| **30V live** | Site-wide no-scroll; HUD “Dark Elf Umb…” dead truncate | Same `#root overflow:hidden`; modal `flex-1` without `min-h-0`. `.sgm-scroll-page` + `.sgm-modal-body`; HUD two-row + tap popover for equipped set |
 
 ### Quest / STATUS (Class C)
 

@@ -2,8 +2,31 @@
  * beatFingerprint — content hash of accepted prose so retries cannot resample the same beat.
  */
 
+/** Normalize prose into 4+ letter tokens (full set — not the every-3rd sketch). */
+export function normalizeProseTokens(prose: string): string[] {
+  const norm = (prose ?? '')
+    .replace(/<[^>]+>/g, ' ')
+    .replace(/["“”']/g, '')
+    .toLowerCase()
+    .replace(/[^a-z0-9\s]/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+  return norm.match(/[a-z]{4,}/g) ?? [];
+}
+
+/** Jaccard on the full 4+ letter token sets (sentence-scale; not the beat sketch). */
+export function tokenJaccard(a: string, b: string): number {
+  const A = new Set(normalizeProseTokens(a));
+  const B = new Set(normalizeProseTokens(b));
+  if (!A.size || !B.size) return 0;
+  let inter = 0;
+  for (const t of A) if (B.has(t)) inter++;
+  const union = A.size + B.size - inter;
+  return union ? inter / union : 0;
+}
+
 export function beatFingerprint(prose: string): string {
-  const norm = prose
+  const norm = (prose ?? '')
     .replace(/<[^>]+>/g, ' ')
     .replace(/["“”']/g, '')
     .toLowerCase()

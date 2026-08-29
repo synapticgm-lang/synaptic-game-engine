@@ -171,7 +171,7 @@ function baseSceneFromCard(state: GameState): string {
     || picked?.fallback
     || state.openingEstablishment?.pickedHook?.trim()
     || picked?.text;
-  const looksLikePointers = !!hook && /^(Place:|Who is here|Why this happened|Opening offer)/m.test(hook);
+  const looksLikePointers = !!hook && /^(Place:|Location:|Who is here|Why this happened|Opening offer)/m.test(hook);
   if (looksLikePointers) {
     return (
       picked?.fallback

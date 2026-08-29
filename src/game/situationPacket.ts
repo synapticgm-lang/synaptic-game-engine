@@ -28,8 +28,16 @@ import {
 } from './forwardProgressGovernor';
 import { buildGovernanceSnapshotLines } from './qualityGovernance';
 import { formatWorldAtlasBlock } from './worldAtlas';
+import {
+  formatCrowdBindingLine,
+  formatCrowdSnapshotLine,
+  formatPresenceForSnapshot,
+} from './crowdAuthority';
 import { formatWorldMapAuthorityBlock } from './worldMapAuthority';
 import { formatModeStoryAuthorityLine } from './fluidProseRails';
+import { formatCoverChromeBindingLine } from './chromeAuthority';
+import { alignFactionNotesToHook, formatHookBindingLine, resolveHookLock } from './hookLock';
+import { formatCameraBindingLine } from './travelAuthority';
 // WS-2 Wave C: NPC Memory sections
 import {
   buildNpcPacket,
@@ -50,9 +58,10 @@ export function effectivePowerScaling(state: GameState): PowerScaling {
   return state.powerScaling ?? 'balanced';
 }
 
-function formatFactionMatrix(standings: FactionStanding[]): string {
+function formatFactionMatrix(standings: FactionStanding[], state?: GameState): string {
   if (!standings.length) return '';
-  const parts = standings.map((f) => {
+  const aligned = alignFactionNotesToHook(standings, state ? resolveHookLock(state) : undefined);
+  const parts = aligned.map((f) => {
     const influence =
       typeof f.influence === 'number' && Number.isFinite(f.influence)
         ? ` influence=${f.influence}`
@@ -71,7 +80,7 @@ function formatSimulationistBlocks(state: GameState): string[] {
     blocks.push(`[ZONE THREAT: Tier ${threat} vs Player Level ${level}]`);
   }
   const factions = state.worldLedger?.factionStandings ?? [];
-  const matrix = formatFactionMatrix(factions);
+  const matrix = formatFactionMatrix(factions, state);
   if (matrix) blocks.push(matrix);
   blocks.push(`[POWER SCALING: ${effectivePowerScaling(state)}]`);
   return blocks;
@@ -90,7 +99,7 @@ export function buildSituationPacket(state: GameState): SituationPacket {
   const presentEntities: string[] = [];
   const alone = state.openingEstablishment?.aloneArrival === true;
   if (!alone) {
-    for (const who of state.sceneFacts?.present ?? []) {
+    for (const who of formatPresenceForSnapshot(state.sceneFacts?.present)) {
       presentEntities.push(who);
     }
   }
@@ -195,20 +204,7 @@ export function formatSceneSnapshotForPrompt(state: GameState): string {
         ? s.presentEntities.slice(0, 6).join('; ')
         : 'none established';
 
-  const crowdTracked = alone && !state.activeEncounter ? 'none' : (state.sceneFacts?.crowd ?? 'unknown');
-  const crowdSize = alone ? 0 : Math.max(0, s.presentEntities.filter((e) => e !== 'none established').length);
-  const crowdLabel =
-    crowdTracked === 'none' || (alone && !state.activeEncounter)
-      ? 'none'
-      : crowdTracked === 'present' || crowdSize > 0
-        ? crowdSize <= 3
-          ? `present / intimate (~${Math.max(crowdSize, 1)})`
-          : crowdSize <= 8
-            ? `present / small (~${crowdSize})`
-            : crowdSize <= 15
-              ? `present / modest (~${crowdSize})`
-              : `present / large (${crowdSize}+)`
-        : 'not established';
+  const crowdLabel = formatCrowdSnapshotLine(state);
 
   let exits = 'none established';
   if (state.activeDungeon && isInteriorMap(state.activeDungeon)) {
@@ -322,8 +318,15 @@ export function formatSceneSnapshotForPrompt(state: GameState): string {
   lines.push(`- ${weaponAuthorityLine(state)}`);
   lines.push('');
   // 29d — one AUTHORITY + PROSE LICENSE block (no duplicate STAGNATION / QUEST essays)
+  const crowdBind = formatCrowdBindingLine(state);
+  if (crowdBind) lines.push(`- ${crowdBind}`);
+  const hookBind = formatHookBindingLine(state);
+  if (hookBind) lines.push(`- ${hookBind}`);
+  const cameraBind = formatCameraBindingLine(state);
+  if (cameraBind) lines.push(`- ${cameraBind}`);
+  lines.push(`- ${formatCoverChromeBindingLine()}`);
   lines.push(
-    'AUTHORITY: SNAPSHOT + ledger win on facts (kit, exits, presence, HP, outcomes). Do not invent items, doors, named people, or numeric results absent above. Do not recycle a prior beat, location essay, crisis line, or choice pad unless the player asked to repeat or restate.'
+    'AUTHORITY: SNAPSHOT + ledger win on facts (kit, exits, presence, HP, crowd count, hook why, outcomes). Do not invent items, doors, named people, or numeric results absent above. Do not recycle a prior beat, location essay, crisis line, or choice pad unless the player asked to repeat or restate.'
   );
   lines.push(formatModeStoryAuthorityLine(state.engineMode));
   lines.push(

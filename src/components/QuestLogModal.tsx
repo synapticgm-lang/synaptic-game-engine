@@ -63,7 +63,7 @@ export const QuestLogModal: React.FC<QuestLogModalProps> = ({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
-      <div className="sgm-turn-frame sgm-info-panel relative w-full max-w-4xl h-[80vh] rounded-xl shadow-2xl flex flex-col overflow-hidden">
+      <div className="sgm-turn-frame sgm-info-panel relative flex h-[min(80vh,100dvh)] min-h-0 w-full max-w-4xl flex-col overflow-hidden rounded-xl shadow-2xl">
         <div className="sgm-turn-frame-bar h-1 w-full shrink-0" />
         <div className="flex items-center justify-between px-6 py-4 border-b border-slate-800/80 bg-black/20">
           <div className="flex items-center gap-3">
@@ -97,7 +97,7 @@ export const QuestLogModal: React.FC<QuestLogModalProps> = ({
         </div>
 
         <div className="flex-1 flex overflow-hidden">
-          <div className="w-1/3 border-r border-slate-800/60 overflow-y-auto p-4 space-y-2">
+          <div className="sgm-modal-body w-1/3 space-y-2 border-r border-slate-800/60 p-4">
             {filteredQuests.length === 0 ? (
               <div className="text-center py-8 text-slate-500 text-sm">
                 No quests found in this category.
@@ -132,7 +132,7 @@ export const QuestLogModal: React.FC<QuestLogModalProps> = ({
             )}
           </div>
 
-          <div className="flex-1 overflow-y-auto p-6 bg-slate-950/30">
+          <div className="sgm-modal-body flex-1 bg-slate-950/30 p-6">
             {selectedQuest ? (
               <div className="space-y-6">
                 <div>

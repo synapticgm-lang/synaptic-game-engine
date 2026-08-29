@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import type { GameState, GoogleUser, Settings as GameSettings } from '../game/types';
 import { Bug, ChevronDown, ChevronUp, Settings, Map, Compass, Recycle, Backpack } from 'lucide-react';
 import { loadCapacityLedger } from '../game/capacityLedger';
@@ -8,9 +8,9 @@ import { effectiveWriterTier, hasUnlimitedTextCapacity, isFounderPlayAccount } f
 import { equippedSetLabel, equippedSetName } from '../game/uiTheme';
 
 /** Visible after a hard refresh -- if this is missing, Vercel is still serving the 16 Aug bundle. */
-export const HUD_BUILD_STAMP = '2026-08-30S';
+export const HUD_BUILD_STAMP = '2026-08-31c';
 const HUD_BUILD_TITLE =
-  'Debug 2026-08-30S - Mode craft + play dump';
+  'Debug 2026-08-31c - Josie authority owners';
 
 interface Props {
   state: GameState;
@@ -34,6 +34,7 @@ interface Props {
 
 export function Hud({ state, settings, onSettings, onOpenMap, onOpenQuestLog, onOpenCharacter, onOpenMerchant, onOpenDebug, lastSavedTurn }: Props) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [setNameOpen, setSetNameOpen] = useState(false);
 
   const c = state?.character;
   const hpPercent = c && c.maxHp > 0 ? Math.round((c.hp / c.maxHp) * 100) : 100;
@@ -77,32 +78,49 @@ export function Hud({ state, settings, onSettings, onOpenMap, onOpenQuestLog, on
   const setLabel = equippedSetLabel(settings.uiThemeId);
   const setName = equippedSetName(settings.uiThemeId);
 
+  useEffect(() => {
+    if (!setNameOpen) return;
+    const close = () => setSetNameOpen(false);
+    window.addEventListener('pointerdown', close);
+    return () => window.removeEventListener('pointerdown', close);
+  }, [setNameOpen]);
+
   return (
-    <header className="sgm-hud shrink-0 border-b px-2 py-2 sm:px-4 sm:py-2.5 flex items-center justify-between text-xs text-slate-200 sticky top-0 z-40 backdrop-blur w-full">
+    <header className="sgm-hud relative sticky top-0 z-40 flex w-full shrink-0 flex-col gap-1.5 border-b px-2 py-2 text-xs text-slate-200 backdrop-blur sm:flex-row sm:items-center sm:justify-between sm:px-4 sm:py-2.5">
       
-      {/* Left Spacer / Branding or status if needed */}
-      <div className="flex items-center gap-1 w-auto sm:w-1/4 shrink min-w-0 overflow-hidden">
-        <div className="hidden md:flex min-w-0 max-w-[11rem] flex-col leading-tight mr-1">
+      {/* Left: equipped set (tappable on mobile) + stamp / turns */}
+      <div className="flex min-w-0 w-full items-center gap-1.5 sm:w-1/4">
+        <div className="mr-1 hidden min-w-0 max-w-[11rem] flex-col leading-tight md:flex">
           <span className="sgm-hud-brand font-bold">Synaptic GM</span>
           <span className="sgm-equipped-set truncate" title={setLabel}>{setLabel}</span>
         </div>
-        <span className="md:hidden sgm-equipped-set truncate max-w-[4.5rem]" title={setLabel}>{setName}</span>
-        <span className="font-mono text-[9px] text-rose-300/80 whitespace-nowrap sm:hidden" title={HUD_BUILD_TITLE}>
+        <button
+          type="button"
+          className="sgm-hud-set-name sgm-equipped-set min-w-0 flex-1 truncate text-left md:hidden"
+          title={setLabel}
+          aria-expanded={setNameOpen}
+          aria-label={setLabel}
+          onPointerDown={(e) => e.stopPropagation()}
+          onClick={() => setSetNameOpen((open) => !open)}
+        >
+          {setName}
+        </button>
+        <span className="shrink-0 whitespace-nowrap font-mono text-[9px] text-rose-300/80 sm:hidden" title={HUD_BUILD_TITLE}>
           {HUD_BUILD_STAMP}
         </span>
         <span
-          className="hidden sm:inline font-mono text-[10px] sm:text-[11px] text-rose-300/90 whitespace-nowrap"
+          className="hidden shrink-0 whitespace-nowrap font-mono text-[10px] text-rose-300/90 sm:inline sm:text-[11px]"
           title={HUD_BUILD_TITLE}
         >
           {HUD_BUILD_STAMP}
         </span>
         {lastSavedTurn != null && (
-          <span className="hidden sm:inline font-mono text-[10px] text-slate-500" title="Last committed turn saved on this device">
+          <span className="hidden shrink-0 font-mono text-[10px] text-slate-500 sm:inline" title="Last committed turn saved on this device">
             T{lastSavedTurn} saved
           </span>
         )}
         <span
-          className="font-mono text-[10px] sm:text-[11px] text-amber-200/90 whitespace-nowrap shrink-0"
+          className="shrink-0 whitespace-nowrap font-mono text-[10px] text-amber-200/90 sm:text-[11px]"
           title={turnsTitle}
         >
           {unlimitedText ? (
@@ -111,7 +129,7 @@ export function Hud({ state, settings, onSettings, onOpenMap, onOpenQuestLog, on
             <>
               {turnsLeft} turn{turnsLeft === '1' ? '' : 's'}
               {storyStartLeft > 0 ? (
-                <span className="hidden sm:inline text-amber-200/60"> · {storyStartLeft} start</span>
+                <span className="hidden text-amber-200/60 sm:inline"> · {storyStartLeft} start</span>
               ) : null}
             </>
           )}
@@ -119,7 +137,7 @@ export function Hud({ state, settings, onSettings, onOpenMap, onOpenQuestLog, on
         {(state.stateTxLog?.length ?? 0) > 0 ? (
           <button
             type="button"
-            className="hidden sm:inline font-mono text-[10px] text-slate-500 hover:text-cyan-300 underline-offset-2 hover:underline"
+            className="hidden font-mono text-[10px] text-slate-500 underline-offset-2 hover:text-cyan-300 hover:underline sm:inline"
             title={recentStateTxReceipts(state, 3).join(' · ') || 'Ledger'}
             onClick={() => {
               window.alert(explainWhy(state));
@@ -128,12 +146,40 @@ export function Hud({ state, settings, onSettings, onOpenMap, onOpenQuestLog, on
             Why?
           </button>
         ) : null}
+        <div className="ml-auto flex shrink-0 items-center gap-1 md:hidden">
+          <button
+            onClick={handleBugClick}
+            title={`${HUD_BUILD_TITLE}${lastSavedTurn != null ? ` · last saved T${lastSavedTurn}` : ''}`}
+            className="flex items-center justify-center rounded border border-rose-800 bg-rose-950/60 p-1.5 text-rose-400 transition-colors hover:bg-rose-900"
+            aria-label={`Debug ${HUD_BUILD_STAMP}`}
+          >
+            <Bug size={14} />
+          </button>
+          <button
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            className="flex items-center justify-center rounded border border-slate-700 bg-slate-900 p-1.5 text-slate-300"
+            title="Toggle Menu Icons"
+            aria-label="Toggle menu"
+          >
+            {mobileMenuOpen ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
+          </button>
+        </div>
       </div>
 
-      {/* DEAD CENTER: Permanent Health & Mana/Resource Bars */}
-      <div className="flex items-center justify-center gap-1.5 sm:gap-6 flex-1 max-w-[11rem] xs:max-w-sm sm:max-w-lg mx-auto min-w-0">
+      {setNameOpen && (
+        <div
+          className="sgm-hud-set-popover absolute left-2 top-full z-50 mt-1 max-w-[min(20rem,calc(100vw-1rem))] rounded-lg border border-slate-700 bg-slate-950 px-3 py-2 shadow-xl md:hidden"
+          onPointerDown={(e) => e.stopPropagation()}
+        >
+          <div className="text-[10px] font-semibold uppercase tracking-[0.14em] text-slate-500">Equipped set</div>
+          <div className="mt-0.5 text-sm text-slate-100">{setName}</div>
+        </div>
+      )}
+
+      {/* HP / MP — full-width second row on phone so bars are not squeezed */}
+      <div className="mx-auto flex min-w-0 w-full items-center justify-center gap-2 sm:max-w-lg sm:flex-1 sm:gap-6">
         {/* HP Bar — value above bar on narrow so numbers never collide */}
-        <div className="flex flex-col gap-0.5 flex-1 min-w-0 max-w-[5.5rem] sm:max-w-none">
+        <div className="flex min-w-0 flex-1 flex-col gap-0.5">
           <div className="flex items-center justify-between gap-1 sm:hidden">
             <span className="text-[9px] font-bold text-rose-400 font-mono shrink-0">HP</span>
             <span className="text-[9px] font-mono font-bold text-slate-100 whitespace-nowrap tabular-nums">
@@ -150,7 +196,7 @@ export function Hud({ state, settings, onSettings, onOpenMap, onOpenQuestLog, on
         </div>
 
         {/* Adaptive Resource Bar (MP / SP / Energy) */}
-        <div className="flex flex-col gap-0.5 flex-1 min-w-0 max-w-[5.5rem] sm:max-w-none">
+        <div className="flex min-w-0 flex-1 flex-col gap-0.5">
           <div className="flex items-center justify-between gap-1 sm:hidden">
             <span className="text-[9px] font-bold text-sky-400 font-mono shrink-0">{secondaryLabel}</span>
             <span className="text-[9px] font-mono font-bold text-slate-100 whitespace-nowrap tabular-nums">
@@ -167,31 +213,9 @@ export function Hud({ state, settings, onSettings, onOpenMap, onOpenQuestLog, on
         </div>
       </div>
 
-      {/* Right: Controls & Icon Trays */}
-      <div className="flex items-center justify-end gap-1 sm:gap-2 w-auto sm:w-1/4 shrink-0">
-        
-        {/* Mobile Dropdown & Bug Button */}
-        <div className="flex items-center gap-1 md:hidden shrink-0">
-          <button
-            onClick={handleBugClick}
-            title={`${HUD_BUILD_TITLE}${lastSavedTurn != null ? ` · last saved T${lastSavedTurn}` : ''}`}
-            className="p-1.5 bg-rose-950/60 border border-rose-800 text-rose-400 rounded hover:bg-rose-900 transition-colors flex items-center justify-center"
-            aria-label={`Debug ${HUD_BUILD_STAMP}`}
-          >
-            <Bug size={14} />
-          </button>
-          <button
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="p-1.5 bg-slate-900 border border-slate-700 text-slate-300 rounded flex items-center justify-center"
-            title="Toggle Menu Icons"
-            aria-label="Toggle menu"
-          >
-            {mobileMenuOpen ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
-          </button>
-        </div>
-
-        {/* Desktop Icon Tray (Always Visible on Large Screens) */}
-        <div className="hidden md:flex items-center gap-2">
+      {/* Desktop icon tray */}
+      <div className="hidden w-auto shrink-0 items-center justify-end gap-2 sm:w-1/4 md:flex">
+        <div className="flex items-center gap-2">
           <button
             onClick={handleBugClick}
             title={`${HUD_BUILD_TITLE}${lastSavedTurn != null ? ` · last saved T${lastSavedTurn}` : ''}`}

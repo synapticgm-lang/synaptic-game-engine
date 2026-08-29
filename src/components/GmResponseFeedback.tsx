@@ -11,6 +11,8 @@ import { isSupabaseConfigured } from '@/lib/supabase';
 interface Props {
   saveId: string;
   turnNumber: number;
+  /** Per-bubble id so opening / turn-0 / later same-turn GM lines each rate separately. */
+  logEntryId?: string | null;
   gmStory: string;
   playerAction?: string | null;
   gameMode?: string | null;
@@ -22,6 +24,7 @@ const MAX_COMMENT_LENGTH = 500;
 export function GmResponseFeedback({
   saveId,
   turnNumber,
+  logEntryId,
   gmStory,
   playerAction,
   gameMode,
@@ -30,19 +33,17 @@ export function GmResponseFeedback({
   const [feedbackType, setFeedbackType] = useState<GmFeedbackType | null>(null);
   const [comment, setComment] = useState('');
   const [showCommentBox, setShowCommentBox] = useState(false);
-  const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Load existing feedback on mount
+  // Any signed-in play account (tester / player / staff / admin) can rate.
+  // Own-row RLS only — no role or lab gate.
   useEffect(() => {
     if (!isSupabaseConfigured) return;
-    
-    setLoading(true);
-    void getGmFeedback(saveId, turnNumber)
+
+    void getGmFeedback(saveId, turnNumber, logEntryId)
       .then((existing) => {
-        setLoading(false);
         if (existing) {
           setFeedbackType(existing.feedback_type);
           setComment(existing.comment || '');
@@ -50,10 +51,9 @@ export function GmResponseFeedback({
         }
       })
       .catch((err) => {
-        setLoading(false);
         console.error('Failed to load GM feedback:', err);
       });
-  }, [saveId, turnNumber]);
+  }, [saveId, turnNumber, logEntryId]);
 
   const handleFeedbackClick = async (type: GmFeedbackType) => {
     setError(null);
@@ -61,7 +61,7 @@ export function GmResponseFeedback({
     // Toggle off if clicking the same type
     if (feedbackType === type) {
       setSaving(true);
-      const result = await deleteGmFeedback(saveId, turnNumber);
+      const result = await deleteGmFeedback(saveId, turnNumber, logEntryId);
       setSaving(false);
       
       if (result.ok) {
@@ -85,6 +85,7 @@ export function GmResponseFeedback({
     const result = await submitGmFeedback({
       saveId,
       turnNumber,
+      logEntryId,
       feedbackType: type,
       comment: comment || null,
       gmStory,
@@ -112,6 +113,7 @@ export function GmResponseFeedback({
     const result = await submitGmFeedback({
       saveId,
       turnNumber,
+      logEntryId,
       feedbackType,
       comment: trimmedComment || null,
       gmStory,
@@ -130,41 +132,42 @@ export function GmResponseFeedback({
   };
 
   if (!isSupabaseConfigured) return null;
-  if (loading) return null; // Hide while loading to prevent flicker
 
   const commentCharCount = comment.length;
   const commentOverLimit = commentCharCount > MAX_COMMENT_LENGTH;
 
   return (
     <div className="flex items-start gap-2 px-1">
-      {/* Feedback buttons */}
+      {/* Feedback buttons — any signed-in tester/player/staff/admin. */}
       <div className="flex items-center gap-1">
         <button
           type="button"
           onClick={() => void handleFeedbackClick('positive')}
           disabled={saving}
-          className={`group relative flex h-7 w-7 items-center justify-center rounded-md border transition-all ${
+          className={`group relative flex min-h-11 min-w-11 items-center justify-center rounded-md border transition-all ${
             feedbackType === 'positive'
               ? 'border-emerald-500/60 bg-emerald-500/20 text-emerald-400'
               : 'border-slate-700/60 bg-slate-900/40 text-slate-500 hover:border-emerald-500/40 hover:bg-emerald-500/10 hover:text-emerald-400'
           } ${saving ? 'cursor-not-allowed opacity-50' : ''}`}
           title="Good response"
+          aria-label="Good response"
         >
-          <ThumbsUp size={14} />
+          <ThumbsUp size={18} />
         </button>
 
         <button
           type="button"
           onClick={() => void handleFeedbackClick('negative')}
           disabled={saving}
-          className={`group relative flex h-7 w-7 items-center justify-center rounded-md border transition-all ${
+          className={`group relative flex min-h-11 min-w-11 items-center justify-center rounded-md border transition-all ${
             feedbackType === 'negative'
               ? 'border-rose-500/60 bg-rose-500/20 text-rose-400'
               : 'border-slate-700/60 bg-slate-900/40 text-slate-500 hover:border-rose-500/40 hover:bg-rose-500/10 hover:text-rose-400'
           } ${saving ? 'cursor-not-allowed opacity-50' : ''}`}
           title="Poor response"
+          aria-label="Poor response"
         >
-          <ThumbsDown size={14} />
+          <ThumbsDown size={18} />
         </button>
 
         {/* Status indicators */}

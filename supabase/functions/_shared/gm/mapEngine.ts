@@ -1436,11 +1436,30 @@ export function resolvePlayAreaMap(
   landmarks: string[] = [],
   parentCoords?: Location3D,
   seed = 'interior',
-  opts?: { visitedLandmarkNames?: string[] }
+  opts?: {
+    visitedLandmarkNames?: string[];
+    /** Outdoor camera lock — do not author Entry/Foyer without a travel commit. */
+    allowInterior?: boolean;
+  }
 ): ActiveDungeonState | null {
   if (isExplorableDungeon(existing ?? null)) return existing ?? null;
   const here = (place ?? '').replace(/\s+/g, ' ').trim();
   let next: ActiveDungeonState | null = null;
+  if (opts?.allowInterior === false) {
+    if (existing && isStreetMap(existing)) {
+      next = presentLocalAreaMap(existing, here || existing.dungeonName);
+      for (const named of landmarks) next = addLandmarkToLocalMap(next, named);
+    } else if (here || existing) {
+      next = buildLocalAreaMap(
+        here || existing?.dungeonName || 'Local streets',
+        landmarks,
+        parentCoords ?? existing?.parentCoordinates,
+        { visitedLandmarkNames: opts?.visitedLandmarkNames }
+      );
+    }
+    if (existing && sameAreaMap(next, existing)) return existing;
+    return next;
+  }
   if (isInteriorPlace(here)) {
     const rooms = landmarks.filter((n) => n.toLowerCase() !== here.toLowerCase());
     if (existing && isInteriorMap(existing) && !needsAuthoredInteriorRebuild(existing, here)) {

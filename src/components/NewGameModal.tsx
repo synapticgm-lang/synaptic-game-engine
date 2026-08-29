@@ -344,7 +344,7 @@ export function NewGameModal({ contentMode, onStart, onClose }: Props) {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 backdrop-blur-sm p-3" onClick={onClose}>
       <div
-        className={`sgm-modal-shell sgm-turn-frame sgm-info-panel relative flex max-h-[92vh] w-full flex-col overflow-hidden rounded-xl border border-crimson-700/50 bg-slate-900 shadow-2xl ${
+        className={`sgm-modal-shell sgm-turn-frame sgm-info-panel relative flex min-h-0 max-h-[min(92vh,100dvh)] w-full flex-col overflow-hidden rounded-xl border border-crimson-700/50 bg-slate-900 shadow-2xl ${
           wideModal ? 'max-w-2xl' : 'max-w-lg'
         }`}
         onClick={(e) => e.stopPropagation()}
@@ -376,7 +376,7 @@ export function NewGameModal({ contentMode, onStart, onClose }: Props) {
           </div>
         )}
 
-        <div className="flex-1 space-y-4 overflow-y-auto p-4 text-xs">
+        <div className="sgm-modal-body flex-1 space-y-4 p-4 text-xs">
           {step === 'path' && (
             <div className="space-y-3">
               <p className="text-slate-400 text-xs">

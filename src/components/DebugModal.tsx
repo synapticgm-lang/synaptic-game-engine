@@ -227,7 +227,7 @@ export function DebugModal({ state, settings, onClose, addToast }: Props) {
         </div>
 
         {/* Log List */}
-        <div className="flex-1 overflow-y-auto px-4 py-3 space-y-1.5">
+        <div className="sgm-modal-body flex-1 space-y-1.5 px-4 py-3">
           {filteredLogs.length === 0 && (
             <div className="flex flex-col items-center justify-center h-full text-slate-600 gap-2">
               <Bug size={32} className="opacity-30" />

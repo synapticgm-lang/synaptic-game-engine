@@ -11,6 +11,53 @@ import { enumerateLegalEdges, edgesToChoiceLabels } from './choiceEdge';
 import { isEncounterEngaged, fleeAvailable, parleyAvailable } from './encounterTerminalFsm';
 import { countPlayerIntentStreak, countLoiterFamilyStreak } from './beatFingerprint';
 import { isPyoaBranchLocked } from './pyoaBranchLedger';
+import { isNameOriginKitCoverChoice, isPlayDemand } from './openingEstablishment';
+import { isLookAroundAction } from './sandboxXp';
+
+export type PlayerIntentFamily = 'demand' | 'inspect' | 'flee' | 'name' | 'talk' | 'travel' | 'other';
+
+export type LastPlayerIntent = {
+  family: PlayerIntentFamily;
+  text: string;
+  turn: number;
+};
+
+export function classifyPlayerIntent(input: string | undefined): PlayerIntentFamily {
+  const t = (input ?? '').replace(/\s+/g, ' ').trim();
+  if (!t) return 'other';
+  if (isPlayDemand(t)) return 'demand';
+  if (/\b(run away|flee|escape|retreat)\b/i.test(t)) return 'flee';
+  if (isLookAroundAction(t) || /\b(inspect|examine|look around|scan)\b/i.test(t)) return 'inspect';
+  if (/\b(travel|enter|go through|walk through|head to)\b/i.test(t)) return 'travel';
+  if (isNameOriginKitCoverChoice(t) || /^(?:[A-Z][a-z'-]{1,20})$/.test(t)) return 'name';
+  if (/\b(ask|talk|speak|say|tell)\b/i.test(t)) return 'talk';
+  return 'other';
+}
+
+function lastPlayerLine(state: GameState): string {
+  if (state.sceneFacts?.lastPlayerIntent?.text) return state.sceneFacts.lastPlayerIntent.text;
+  for (let i = (state.log ?? []).length - 1; i >= 0; i--) {
+    const e = state.log[i];
+    if (e.role === 'player' && e.content?.trim()) return e.content.trim();
+  }
+  return '';
+}
+
+function leftoverCoverOrOpeningChip(choice: string): boolean {
+  return (
+    isNameOriginKitCoverChoice(choice)
+    || /\b(give them (?:your |a )?name|tell them who you are|waiting for a name|ask what is going on|approach the doorway)\b/i.test(
+      choice
+    )
+  );
+}
+
+function intentSupplements(family: PlayerIntentFamily): string[] {
+  if (family === 'demand') return ['Demand they send you back', 'Argue you do not belong here', 'Wait and watch'];
+  if (family === 'inspect') return ['Examine the room', 'Check the exits', 'Wait and watch'];
+  if (family === 'flee') return ['Keep running', 'Look for an exit', 'Find cover'];
+  return [];
+}
 
 export type ChoiceFingerprintFamily =
   | 'walk_away'
@@ -302,10 +349,13 @@ function hubBeatExhausted(state: GameState, choice: string): boolean {
 export function compileChoices(
   state: GameState,
   choices: string[],
-  optionCooldowns?: Record<string, OptionCooldown>
+  optionCooldowns?: Record<string, OptionCooldown>,
+  playerInput?: string
 ): CompileChoicesResult {
   const notes: string[] = [];
   const turn = state.turn;
+  const intentText = (playerInput ?? lastPlayerLine(state)).trim();
+  const intent = classifyPlayerIntent(intentText);
   const fingerprints = state.arcDirector?.choiceFingerprints ?? [];
   const cooldownMap = new Map(Object.entries(optionCooldowns ?? state.qualityGovernance?.optionCooldowns ?? {}));
   const legalEdges = enumerateLegalEdges(state);
@@ -354,17 +404,24 @@ export function compileChoices(
       return false;
     }
     // Drop exhausted inspect targets
-    const intent = canonicalizeIntent(c, turn);
-    if (intent.action === 'inspect' && intent.target) {
+    const canon = canonicalizeIntent(c, turn);
+    if (canon.action === 'inspect' && canon.target) {
       const ledger = state.qualityGovernance?.discoveryLedger ?? {};
-      const evidenceKey = `object:${intent.target.toLowerCase()}@${(state.currentLocation ?? 'unknown').toLowerCase()}`;
+      const evidenceKey = `object:${canon.target.toLowerCase()}@${(state.currentLocation ?? 'unknown').toLowerCase()}`;
       if (ledger[evidenceKey]?.inspectionCount >= 1) {
-        notes.push(`Inspect exhausted: ${intent.target}`);
+        notes.push(`Inspect exhausted: ${canon.target}`);
         return false;
       }
     }
     if (hubBeatExhausted(state, c)) {
       notes.push(`Hub beat exhausted: ${c.slice(0, 32)}`);
+      return false;
+    }
+    if (
+      (intent === 'demand' || intent === 'inspect' || intent === 'flee')
+      && leftoverCoverOrOpeningChip(c)
+    ) {
+      notes.push(`Intent pad drop: ${c.slice(0, 32)}`);
       return false;
     }
     return true;
@@ -431,6 +488,16 @@ export function compileChoices(
       if (filtered.length >= 3) break;
     }
     notes.push(supplements.length ? 'Supplemented from edges/fallback' : 'Supplemented legal beat edges');
+  }
+
+  const intentPads = intentSupplements(intent);
+  if (intentPads.length) {
+    for (const pad of intentPads) {
+      if (!filtered.some((f) => f.toLowerCase() === pad.toLowerCase())) {
+        filtered.unshift(pad);
+      }
+    }
+    notes.push(`Intent pads: ${intent}`);
   }
 
   return {

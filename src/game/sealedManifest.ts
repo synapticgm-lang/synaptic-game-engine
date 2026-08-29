@@ -10,6 +10,7 @@ import { scrubProseControlTags, applyStatusFirewall } from './statusFirewall';
 import type { GameState } from './types';
 import type { ArcDirectorResult } from './arcDirector';
 import { contractById } from './beatContract';
+import { detectHookContradiction, hookForbiddenReversal, hookManifestFact, resolveHookLock } from './hookLock';
 
 export interface SceneManifest {
   turn: number;
@@ -96,6 +97,11 @@ export function buildSealedManifest(
   if (contract) {
     requiredFacts.push(`Beat: ${contract.summary}`);
   }
+
+  const hookLock = resolveHookLock(state);
+  if (hookLock) {
+    requiredFacts.push(hookManifestFact(hookLock));
+  }
   
   const gist =
     arc?.mandate?.split('\n').find((l) => l.trim())?.trim() ??
@@ -120,6 +126,10 @@ export function buildSealedManifest(
   // Add encounter terminal locks
   if (state.activeEncounter?.hp === 0) {
     forbiddenReversals.push(`${state.activeEncounter.name} is defeated and cannot heal`);
+  }
+
+  if (hookLock) {
+    forbiddenReversals.push(hookForbiddenReversal(hookLock));
   }
 
   return {
@@ -191,6 +201,12 @@ export function validateProseAgainstManifest(
       }
     }
     
+    if (forbidden.includes('locked hook why')) {
+      const hookLock = resolveHookLock(state);
+      const hookHit = detectHookContradiction(prose, hookLock);
+      if (hookHit) contradictions.push(hookHit);
+    }
+
     // Check for quest reversal
     if (forbidden.includes('Quest') && forbidden.includes('cannot revert')) {
       const questMatch = forbidden.match(/Quest (.+?) is (completed|failed)/);

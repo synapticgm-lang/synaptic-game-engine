@@ -89,7 +89,7 @@ export function formatLocalityForPrompt(state: Pick<GameState, 'currentLocation'
     token.emergencyNumber && `Emergency number ${token.emergencyNumber}.`,
   ].filter(Boolean);
   return `LOCALITY CONTRACT (CODE — BINDING):
-Place: ${state.currentLocation || 'unspecified'}. Country hint: ${token.country}.
+Location: ${state.currentLocation || 'unspecified'}. Country hint: ${token.country}.
 ${gun}
 ${words.join(' ')}
 Do not invent branded chains the player did not name.`.trim();
