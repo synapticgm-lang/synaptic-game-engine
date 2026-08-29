@@ -1,5 +1,6 @@
 import type { GameState, SaveSlotInfo } from './types';
 import { isPlayableSave } from './defaults';
+import { displayAdventurerName } from './pcNameAuthority';
 
 const DRIVE_SCOPE = 'https://www.googleapis.com/auth/drive.appdata';
 const SAVE_FILENAME = 'litrpg_save_active.json';
@@ -105,7 +106,7 @@ export function buildCloudSave(state: GameState): CloudSave {
     storyName: state.storyName,
     engineMode: state.engineMode,
     lastUpdated: state.lastUpdated,
-    characterName: state.character.name,
+    characterName: displayAdventurerName(state.character.name),
     timestamp: Date.now(),
     version: state.version,
     character: state.character,

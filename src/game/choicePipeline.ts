@@ -12,7 +12,7 @@ import { CHOICE_TIER_PROMPT_RULES, formatChoiceTierModeDna } from './choiceTierR
 import { applyStanceDensity, classifyPath, classifyStance, isCombatLockedTurn } from './stanceDensity';
 import { outdoorHubTravelChoices } from './outdoorHubs';
 import { atMappedHubAfterOpening, hubArrivalChoicePads } from './hubEncounters';
-import { resumeMainTravelChoice } from './questPlay';
+import { isAtmospherePlaceName, resumeMainTravelChoice } from './questPlay';
 import { isAloneArrivalOpening } from './openingEstablishment';
 import { isInteriorMap } from './placeAuthority';
 import { listInteriorExitsFromHere } from './mapEngine';
@@ -692,7 +692,9 @@ export function sceneSafeFallbacks(
       const exits = listInteriorExitsFromHere(dungeon);
       const door = exits.find((e) => e.kind === 'door' || e.kind === 'stairs');
       if (door) {
-        options.push(`Approach the ${door.noun} to ${door.name}`);
+        if (!isAtmospherePlaceName(door.name)) {
+          options.push(`Approach the ${door.noun} to ${door.name}`);
+        }
         hasDungeonExitChoice = true;
       } else if (exits[0]) {
         options.push(`Approach the ${exits[0].noun} cautiously`);

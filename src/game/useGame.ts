@@ -26,6 +26,12 @@ import { callGm, callGmAutoFight, callOpeningGm, type GmResult } from './aiServi
 import { gmProxyHost } from './gmProxy';
 import { simulateCombat, buildAutoFightPrompt } from './combat';
 import type { EnemyStats } from './combat';
+import {
+  autoFightSpawnPreface,
+  commitAutoFightLedger,
+  lastGmMentionsEnemy,
+  scrubBeastifiedHumanoid,
+} from './combatAuthority';
 import { isAutoFightWarningDismissed } from '@/components/AutoFightWarningModal';
 import { generateComicImage, generateVideo, VideoProviderNotConfiguredError } from '@/services/openRouterService';
 import { enforcePerspective } from './perspectiveWarden';
@@ -3509,6 +3515,12 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
             ...((workingState.npcMemories ?? liveCurrent.npcMemories ?? []).map((n) => n.npcName)),
           ].filter((n) => n && !isChromePersonToken(n)),
           hookLock: hookLockForWarden(workingState, cleanText),
+          lastKill: workingState.sceneFacts?.lastKill ?? liveCurrent.sceneFacts?.lastKill,
+          enemyName:
+            workingState.activeEncounter?.name
+            ?? liveCurrent.activeEncounter?.name
+            ?? workingState.sceneFacts?.lastKill?.name
+            ?? liveCurrent.sceneFacts?.lastKill?.name,
         });
         cleanText = scrubOfficialPlaceholder(cleanText, workingState);
         cleanText = scrubInventedGeography(cleanText, workingState);
@@ -5060,6 +5072,20 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
         'bare hands',
         liveCurrent.character?.name
       );
+      narrativeText = scrubBeastifiedHumanoid(narrativeText, enemy.name);
+      if (!lastGmMentionsEnemy(liveCurrent, enemy.name)) {
+        narrativeText = `${autoFightSpawnPreface(enemy.name)} ${narrativeText}`;
+      }
+      narrativeText = applyProseWarden(narrativeText, {
+        currentLocation: liveCurrent.currentLocation,
+        playerName: liveCurrent.character?.name,
+        groundedWeapons: groundedWeaponNames(liveCurrent),
+        recentlyClearedEncounter: result.victory,
+        enemyName: enemy.name,
+        lastKill: result.victory
+          ? { name: enemy.name, outcome: 'victory', turn: liveCurrent.turn + 1, remains: true }
+          : liveCurrent.sceneFacts?.lastKill,
+      });
 
       const newTurn = liveCurrent.turn + 1;
       const autoEvents = parseActionTags(narrativeText);
@@ -5123,15 +5149,23 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
 
       const updatedInventory = [...liveCurrent.inventory, ...result.loot];
 
+      const ledger = commitAutoFightLedger(
+        { ...liveCurrent, turn: newTurn },
+        { victory: result.victory, finalPlayerHp: result.finalPlayerHp }
+      );
       const updated: GameState = {
-        ...liveCurrent,
+        ...ledger,
         character: updatedCharacter,
         inventory: updatedInventory,
         gold: liveCurrent.gold + result.goldGained,
-        activeEncounter: null,
-        turn: newTurn,
         memorableMoments: autoMemorable.nextState,
         log: [...liveCurrent.log, playerEntry, gmEntry],
+        sceneFacts: {
+          ...(ledger.sceneFacts ?? liveCurrent.sceneFacts),
+          lastKill: ledger.sceneFacts?.lastKill ?? liveCurrent.sceneFacts?.lastKill,
+          lastBeat: narrativeText.slice(0, 180),
+          updatedTurn: newTurn,
+        },
         lastUpdated: Date.now(),
       };
 

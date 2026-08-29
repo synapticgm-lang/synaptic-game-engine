@@ -838,6 +838,8 @@ export interface SceneFacts {
     text: string;
     turn: number;
   };
+  /** Auto-fight / terminal victory — corpse stays until looted or left. */
+  lastKill?: import('./combatAuthority').LastKill;
 }
 
 export interface TimelineFact {

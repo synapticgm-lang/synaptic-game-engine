@@ -48,6 +48,14 @@ describe('map pin deny — sentence fragments are not places', () => {
     expect(pins.some((p) => /vault/i.test(p))).toBe(true);
     expect(pins.some((p) => /vestry/i.test(p))).toBe(true);
   });
+
+  it('rejects atmosphere-clause room titles from hanging-heavy prose', () => {
+    const pins = extractNamedPlaces(
+      'The air in this chamber hangs heavy, thick with the scent of dust. Approach the doorway to This Chamber Hangs Heavy.'
+    );
+    expect(pins.some((p) => /hangs heavy/i.test(p))).toBe(false);
+    expect(isGenericMapPlace('This Chamber Hangs Heavy')).toBe(true);
+  });
 });
 
 describe('indoor vs street — cathedral currentLocation', () => {

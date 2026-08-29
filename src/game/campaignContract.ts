@@ -5,6 +5,7 @@
 
 import type { GameState } from './types';
 import type { CampaignBible } from './campaignBibleTypes';
+import { displayAdventurerName } from './pcNameAuthority';
 
 export interface CampaignContract {
   bibleId: string | null;
@@ -53,7 +54,7 @@ export function freezeCampaignContract(
     storyName: state.storyName,
     engineMode: state.engineMode,
     premise: state.campaignPremise ?? bible?.premise?.slice(0, 280) ?? null,
-    characterName: state.character?.name?.trim() || 'Adventurer',
+    characterName: displayAdventurerName(state.character?.name),
     startingLocation: state.currentLocation || bible?.startingLocation || '',
     kitRail,
     starterQuestIds,

@@ -80,6 +80,8 @@ export function extractSceneFacts(narrative: string, prev?: SceneFacts, turn = 0
   const props = new Set(prev?.props ?? []);
   if (PANEL.test(text)) props.add('blue panel');
   if (CRACKS.test(text)) props.add('cracked street');
+  if (/\b(?:wooden |iron-bound |sturdy )?(?:chest|coffer|trunk)\b/i.test(text)) props.add('wooden chest');
+  if (/\b(?:silver |tarnished )?locket\b/i.test(text)) props.add('locket');
 
   // Pack 12 Extended Extraction
   let timeOfDay: SceneFacts['timeOfDay'] = prev?.timeOfDay ?? 'unknown';
@@ -132,6 +134,7 @@ export function extractSceneFacts(narrative: string, prev?: SceneFacts, turn = 0
     hookLock: prev?.hookLock,
     cameraLock: prev?.cameraLock,
     lastPlayerIntent: prev?.lastPlayerIntent,
+    lastKill: prev?.lastKill,
   };
 }
 
@@ -154,6 +157,7 @@ export function mergeSceneFacts(prev: SceneFacts | undefined, next: SceneFacts):
     hookLock: next.hookLock ?? prev.hookLock,
     cameraLock: next.cameraLock ?? prev.cameraLock,
     lastPlayerIntent: next.lastPlayerIntent ?? prev.lastPlayerIntent,
+    lastKill: next.lastKill ?? prev.lastKill,
   };
 }
 

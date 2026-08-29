@@ -18,6 +18,7 @@ import {
   detectLeadingCollage,
   stripRecycledPrefix,
   recentGmBeatTexts,
+  detectAtmosphereReprint,
 } from './semanticLoopDetector';
 import {
   extractEntityContext,
@@ -364,6 +365,10 @@ export function applyGovernanceToProse(
     } else if (collage.hit) {
       rejectClone = true;
       notes.push('Collage reject: no new tail');
+    }
+    if (!rejectClone && detectAtmosphereReprint(out, recentGmBeatTexts(state))) {
+      rejectClone = true;
+      notes.push('Atmosphere reprint: same-room essay, no delta');
     }
   }
 

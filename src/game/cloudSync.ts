@@ -3,6 +3,7 @@ import { isPlayableSave } from './defaults';
 import { supabase, isSupabaseConfigured } from '@/lib/supabase';
 import { flushPlaytimeToProfile } from './playtime';
 import { ingestCampaignPlatesMany } from './playerProfile';
+import { displayAdventurerName } from './pcNameAuthority';
 
 function lastPlayerLine(state: GameState): string | null {
   const log = Array.isArray(state.log) ? state.log : [];
@@ -27,7 +28,7 @@ function slotFromState(state: GameState, source: 'local' | 'cloud', updatedAtMs?
   return {
     saveId: state.saveId,
     storyName: state.storyName ?? 'Campaign',
-    characterName: String(character.name ?? 'Adventurer'),
+    characterName: displayAdventurerName(character.name),
     lastUpdated: updatedAtMs ?? state.lastUpdated ?? 0,
     turn: state.turn ?? 0,
     level: Number(character.level ?? 1),
@@ -93,7 +94,7 @@ function slotFromCloudRow(row: {
   return {
     saveId: state?.saveId || row.save_id,
     storyName: state?.storyName ?? row.story_name ?? 'Campaign',
-    characterName: String(character.name ?? 'Adventurer'),
+    characterName: displayAdventurerName(character.name),
     lastUpdated: Number.isFinite(updatedAtMs) ? updatedAtMs : 0,
     turn: state?.turn ?? row.turn ?? 0,
     level: Number(character.level ?? 1),

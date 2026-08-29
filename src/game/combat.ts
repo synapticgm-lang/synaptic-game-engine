@@ -1,6 +1,7 @@
 import type { GameState, Item, Rarity } from './types';
 import { equippedWeaponName } from './ledgerCombat';
 import { groundedWeaponNames, weaponAuthorityLine } from './searchContinuity';
+import { enemyBodyAuthorityLine } from './combatAuthority';
 
 export interface EnemyStats {
   name: string;
@@ -190,5 +191,5 @@ export function buildAutoFightPrompt(state: GameState, enemy: EnemyStats, result
     }
   }
 
-  return `Here is the raw data of an auto-resolved fight. Write a single, fast-paced, visceral LitRPG paragraph describing this combat summary. Do not include action tags, system logs, or image prompts — just the narrative paragraph.\n\n${weaponAuthorityLine(state)}\nDo not invent a dagger, sword, or knife unless listed above.\n\n${lines.join('\n')}`;
+  return `Here is the raw data of an auto-resolved fight. Write a single, fast-paced, visceral LitRPG paragraph describing this combat summary. Do not include action tags, system logs, or image prompts — just the narrative paragraph.\n\n${weaponAuthorityLine(state)}\n${enemyBodyAuthorityLine(enemy.name)}\nDo not invent a dagger, sword, or knife unless listed above.\n\n${lines.join('\n')}`;
 }

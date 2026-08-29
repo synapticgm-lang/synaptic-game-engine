@@ -444,8 +444,20 @@ function clipPlace(raw: string): string {
     .trim();
 }
 
+/** Atmosphere clause harvested as a Title-Case room (John: "This Chamber Hangs Heavy"). */
+const ATMOSPHERE_PLACE =
+  /\b(hangs heavy|thick with|scent of|dust motes|cloying|air in this|chamber hangs|room is thick|silence presses|perfume that)\b/i;
+
+export function isAtmospherePlaceName(name: string | undefined): boolean {
+  const n = (name ?? '').replace(/\s+/g, ' ').trim();
+  if (!n) return false;
+  if (ATMOSPHERE_PLACE.test(n)) return true;
+  return /\b(chamber|room|hall|air)\s+(hangs|is thick|smells|presses)\b/i.test(n);
+}
+
 function isIncompletePlacePhrase(name: string): boolean {
   const n = name.replace(/\s+/g, ' ').trim();
+  if (isAtmospherePlaceName(n)) return true;
   if (PLACE_FRAGMENT.test(n)) return true;
   if (/\b(against|yet|from|into|onto|toward|towards|with|without|and|or|the|a|an|to|of|for|our|your|their|by|as)$/i.test(n)) {
     return true;
@@ -683,6 +695,7 @@ export function isGenericMapPlace(name: string | undefined): boolean {
   if (JUNK_PLACE.test(n) || PIN_DENY.test(n) || PLACE_FRAGMENT.test(n)) return true;
   if (DUMMY_STREET_NODE.test(n)) return true;
   if (isIncompletePlacePhrase(n)) return true;
+  if (isAtmospherePlaceName(n)) return true;
   return /^the opening of /i.test(n) || /^your surroundings$/i.test(n) || /^a cracked city street$/i.test(n);
 }
 

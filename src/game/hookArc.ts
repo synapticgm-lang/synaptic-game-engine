@@ -6,6 +6,7 @@
 
 import type { GameState } from './types';
 import { adsKilled } from './opsKillSwitches';
+import { isLockablePcName } from './pcNameAuthority';
 
 export type HookArcStage =
   | 'pre_identity'
@@ -34,7 +35,7 @@ export function emptyHookArc(): HookArcState {
 
 function hasIdentity(state: GameState): boolean {
   const name = state.character?.name?.trim() ?? '';
-  if (!name || /^(survivor|adventurer|hero|player|you)$/i.test(name)) {
+  if (!name || !isLockablePcName(name)) {
     // Still ok if opening marked complete with answers
     const answers = state.openingEstablishment?.answers;
     if (answers?.name || answers?.appearance || answers?.kit) return true;

@@ -13,6 +13,7 @@ import { countPlayerIntentStreak, countLoiterFamilyStreak } from './beatFingerpr
 import { isPyoaBranchLocked } from './pyoaBranchLedger';
 import { isNameOriginKitCoverChoice, isPlayDemand } from './openingEstablishment';
 import { isLookAroundAction } from './sandboxXp';
+import { isAtmospherePlaceName } from './questPlay';
 
 export type PlayerIntentFamily = 'demand' | 'inspect' | 'flee' | 'name' | 'talk' | 'travel' | 'other';
 
@@ -374,13 +375,18 @@ export function compileChoices(
       notes.push(`Branch lock drop: ${c.slice(0, 32)}`);
       return false;
     }
+    const doorwayDest = c.match(/doorway(?: leading)? to\s+["“]?([^"”]+?)["”]?\s*$/i)?.[1];
+    if (doorwayDest && isAtmospherePlaceName(doorwayDest)) {
+      notes.push(`Atmosphere doorway drop: ${c.slice(0, 40)}`);
+      return false;
+    }
     if (engaged) {
       // 29a combat pad lock — no travel / merchant / Earth junk / generic hub inspect
       if (/\b(travel toward|go to|head to|browse|merchant|shop|earth junk|phone|headphones|leatherman|keys from earth)\b/.test(lower)) {
         notes.push(`Encounter lock: ${c.slice(0, 32)}`);
         return false;
       }
-      if (/\b(inspect|examine|check|study)\b/.test(lower) && !/\b(enemy|threat|wraith|hunter|wound|blade|guard|raider|bandit)\b/.test(lower)) {
+      if (/\b(inspect|examine|check|study|look around|whats going on|where am i|wait and watch|walk away)\b/.test(lower) && !/\b(enemy|threat|wraith|hunter|wound|blade|guard|raider|bandit)\b/.test(lower)) {
         notes.push(`Encounter lock inspect: ${c.slice(0, 32)}`);
         return false;
       }

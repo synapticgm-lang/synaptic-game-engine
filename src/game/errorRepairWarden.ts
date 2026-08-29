@@ -10,11 +10,18 @@ import { adaptStarterQuestsForArrival } from './questPlay';
 import { getCampaignBibleById } from '@/data/campaigns';
 import { filterChromeFromPresent, isChromePersonToken } from './chromeAuthority';
 import { attachHookLock, backfillHookLockFromSave } from './hookLock';
+import { displayAdventurerName, isLockablePcName, UNNAMED_ADVENTURER } from './pcNameAuthority';
+import { isAtmospherePlaceName } from './questPlay';
+import { isInteriorMap } from './placeAuthority';
+import { shortRoomLabel } from './mapEngine';
+import { attachLastKill, lastKillFromAutoFightLog } from './combatAuthority';
 
 /** Bump when adding load-time repairs that must re-run on old saves.
  *  Rev 4 = 30Y chrome-as-people strip (Place / blue panel out of present[]).
- *  Rev 5 = hookLock backfill. repairChromePresent still runs every Continue. */
-export const CURRENT_ERROR_REPAIR_REVISION = 5;
+ *  Rev 5 = hookLock backfill. repairChromePresent still runs every Continue.
+ *  Rev 6 = deny-list PC name (here / Place / you). repairDeniedPcName runs every Continue.
+ *  Rev 7 = atmosphere room pins + lastKill backfill from auto-fight log. */
+export const CURRENT_ERROR_REPAIR_REVISION = 7;
 
 export type FailureClass =
   | 'turn_proxy'
@@ -299,6 +306,58 @@ function repairChromePresent(state: GameState, notes: ErrorRepairNote[]): GameSt
   };
 }
 
+function repairAtmosphereMapRooms(state: GameState, notes: ErrorRepairNote[]): GameState {
+  const dungeon = state.activeDungeon;
+  if (!dungeon || !isInteriorMap(dungeon)) return state;
+  let dirty = false;
+  const nodes = dungeon.nodes.map((n) => {
+    if (!isAtmospherePlaceName(n.name)) return n;
+    dirty = true;
+    return { ...n, name: shortRoomLabel(n.name, 'Chamber') };
+  });
+  if (!dirty) return state;
+  notes.push({
+    class: 'continuity_prose',
+    code: 'ERR_ATMOSPHERE_ROOM',
+    detail: 'rewrote atmosphere-clause room pins to short labels',
+  });
+  return { ...state, activeDungeon: { ...dungeon, nodes } };
+}
+
+function repairLastKillFromLog(state: GameState, notes: ErrorRepairNote[]): GameState {
+  if (state.sceneFacts?.lastKill?.remains) return state;
+  const kill = lastKillFromAutoFightLog(state);
+  if (!kill) return state;
+  notes.push({
+    class: 'continuity_prose',
+    code: 'ERR_LAST_KILL',
+    detail: `backfilled lastKill (${kill.name}) from auto-fight log`,
+  });
+  return attachLastKill(state, kill);
+}
+
+function repairDeniedPcName(state: GameState, notes: ErrorRepairNote[]): GameState {
+  const raw = state.character?.name?.trim() ?? '';
+  const answerName = state.openingEstablishment?.answers?.name?.trim() ?? '';
+  const nameDirty = raw.length > 0 && !isLockablePcName(raw);
+  const answerDirty = answerName.length > 0 && !isLockablePcName(answerName);
+  if (!nameDirty && !answerDirty) return state;
+  notes.push({
+    class: 'opening_contract',
+    code: 'ERR_DENIED_PC_NAME',
+    detail: `cleared deny-list name (${displayAdventurerName(raw) === UNNAMED_ADVENTURER ? raw || 'empty' : raw})`,
+  });
+  const answers = { ...(state.openingEstablishment?.answers ?? {}) };
+  if (answerDirty) delete answers.name;
+  return {
+    ...state,
+    character: { ...state.character, name: UNNAMED_ADVENTURER },
+    openingEstablishment: state.openingEstablishment
+      ? { ...state.openingEstablishment, answers }
+      : state.openingEstablishment,
+  };
+}
+
 function repairHookLock(state: GameState, notes: ErrorRepairNote[]): GameState {
   if (state.sceneFacts?.hookLock && state.openingEstablishment?.hookLock) return state;
   const lock = backfillHookLockFromSave(state);
@@ -323,6 +382,9 @@ export function applyErrorRepairs(state: GameState): ErrorRepairResult {
   next = repairCircleBlessingSlot(next, notes);
   next = repairChromePresent(next, notes);
   next = repairHookLock(next, notes);
+  next = repairDeniedPcName(next, notes);
+  next = repairAtmosphereMapRooms(next, notes);
+  next = repairLastKillFromLog(next, notes);
   const needsRev = (next.errorRepairRevision ?? 0) < CURRENT_ERROR_REPAIR_REVISION;
   if (notes.length === 0 && !needsRev) {
     return { state, dirty: false, notes: [] };

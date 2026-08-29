@@ -14,6 +14,7 @@ import { filterInventedContextChoices } from './choiceWarden';
 import { isLookAroundAction } from './sandboxXp';
 import { buildGeminiCriticPrompt } from './geminiCriticPrompt';
 import { BUILD_STAMP } from './runManifest';
+import { displayAdventurerName } from './pcNameAuthority';
 import { canonicalizeIntent, detectSemanticLoop } from './semanticLoopDetector';
 import { beatFingerprint, beatSimilarity } from './beatFingerprint';
 
@@ -122,7 +123,7 @@ function playMetaLines(state: GameState): string[] {
     `- Stamp: ${state.runManifest?.buildStamp || BUILD_STAMP}`,
     `- Turn: ${state.turn ?? 0}`,
     `- Location: ${state.currentLocation || '(unknown)'}`,
-    `- Character: ${state.character?.name ?? '?'} · Level ${state.character?.level ?? '?'} · XP ${state.character?.xp ?? 0}/${state.character?.xpToNext ?? '?'}`,
+    `- Character: ${displayAdventurerName(state.character?.name)} · Level ${state.character?.level ?? '?'} · XP ${state.character?.xp ?? 0}/${state.character?.xpToNext ?? '?'}`,
     `- Quests: ${quests.length ? quests.join('; ') : '(none revealed)'}`,
     `- Exported: ${new Date().toISOString()}`,
   ];
@@ -222,7 +223,7 @@ export function buildStoryReviewExport(
     `- AI agent mode: ${meta?.aiAgentMode ?? 'n/a'}`,
     `- Seed: ${meta?.seed ?? '(n/a)'}`,
     `- Turns completed: ${state.turn ?? 0}`,
-    `- Character: ${state.character?.name ?? '?'} · Level ${state.character?.level ?? '?'} · XP ${state.character?.xp ?? 0}/${state.character?.xpToNext ?? '?'}`,
+    `- Character: ${displayAdventurerName(state.character?.name)} · Level ${state.character?.level ?? '?'} · XP ${state.character?.xp ?? 0}/${state.character?.xpToNext ?? '?'}`,
     `- Code baseline: ${meta?.codeBaseline ?? 'unknown — treat findings as baseline-agnostic'}`,
     `- Exported: ${new Date().toISOString()}`,
     '',

@@ -693,5 +693,51 @@ export function shouldRetryUnaskedCollage(
 ): boolean {
   if (playerAsksRepeat(playerInput)) return false;
   const hit = detectLeadingCollage(draft, recentGmBeats);
-  return hit.hit && !hit.tailHasNewContent;
+  if (hit.hit && !hit.tailHasNewContent) return true;
+  return detectAtmosphereReprint(draft, recentGmBeats);
+}
+
+const ATMOS_TOKEN =
+  /\b(dust|motes?|gloom|decay|ozone|scent|smell|odou?r|perfume|acrid|metallic|tang|damp|earth|air|light|shafts?|slivers?|silence|debris|rubble|concrete|rebar|creak|timber|groan|cloying|hangs?|pierc(?:e|ing)|mournful|ruin|rott(?:ing|en)|stagnant)\b/gi;
+
+const BEAT_DELTA_CUE =
+  /\b(?:a|an|the)\s+(?:man|woman|figure|stranger|official|warden|handler|registrar|girl|boy|soldier|merchant|priest|beast|skirmisher)\b|\b(?:steps?|walks?|enters?|emerges?|speaks?|says|asks|demands|offers?|attacks?|lunges?)\b|[“"][^”"]{8,}[”"]|\b(?:chest|locket|hole|gap|damage|blood)\b|\b(?:nothing new|already searched|same as before)\b/i;
+
+export function atmosphereSignature(text: string): Set<string> {
+  const found = new Set<string>();
+  const re = new RegExp(ATMOS_TOKEN.source, 'gi');
+  let m: RegExpExecArray | null;
+  while ((m = re.exec(text ?? ''))) {
+    found.add((m[1] ?? m[0]).toLowerCase());
+  }
+  return found;
+}
+
+export function isAtmosphereOnlyBeat(text: string): boolean {
+  const sig = atmosphereSignature(text);
+  if (sig.size < 4) return false;
+  const withoutEmpty = (text ?? '').replace(
+    /\b(?:no (?:glint|kill|treasure|loot)|nothing (?:new|of use|useful)|no obvious signs?)\b/gi,
+    ' '
+  );
+  return !BEAT_DELTA_CUE.test(withoutEmpty);
+}
+
+function signatureJaccard(a: Set<string>, b: Set<string>): number {
+  if (!a.size || !b.size) return 0;
+  let inter = 0;
+  for (const t of a) if (b.has(t)) inter++;
+  return inter / new Set([...a, ...b]).size;
+}
+
+/** Same-room smell/light essay with no new fact, person tactic, travel, or cost. */
+export function detectAtmosphereReprint(draft: string, recentGmBeats: string[]): boolean {
+  if (!isAtmosphereOnlyBeat(draft)) return false;
+  const sig = atmosphereSignature(draft);
+  for (const beat of recentGmBeats ?? []) {
+    if (!String(beat ?? '').trim()) continue;
+    const prior = atmosphereSignature(beat);
+    if (prior.size >= 3 && signatureJaccard(sig, prior) >= 0.45) return true;
+  }
+  return false;
 }

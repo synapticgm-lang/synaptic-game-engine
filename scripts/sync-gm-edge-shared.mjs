@@ -22,6 +22,9 @@ const FILES = [
   'hookLock.ts',
   'travelAuthority.ts',
   'chromeAuthority.ts',
+  'pcNameAuthority.ts',
+  'combatAuthority.ts',
+  'encounterTerminalFsm.ts',
   'sceneManifest.ts',
   'introductionPermit.ts',
   'campaignContract.ts',
@@ -94,6 +97,15 @@ for (const file of FILES) {
     next = next
       .replace(/^export \{ KID_MODE_RULES \} from '\.\/contentModeRules';\r?\n/m, '')
       .replace(/^export \{ buildImagePromptModifier \} from '\.\/imagePromptModifier';\r?\n/m, '');
+  }
+  if (file === 'situationPacket.ts') {
+    // sandboxXp pulls parser/faction graph; edge only needs look/wait for BEAT DELTA.
+    next = next
+      .replace(/import \{ isLookAroundAction \} from '\.\/sandboxXp';\r?\n/, '')
+      .replace(
+        /lastPlayer && \(isLookAroundAction\(lastPlayer\) \|\| \/\\bwait\\b\/i\.test\(lastPlayer\)\)/,
+        "lastPlayer && /\\b(look around|examine the (?:area|room|surroundings)|wait)\\b/i.test(lastPlayer)"
+      );
   }
   fs.writeFileSync(path.join(destDir, file), rewriteImports(next, file), 'utf8');
   console.log('synced', file);

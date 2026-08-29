@@ -12,6 +12,11 @@ import { pickQuickResponseButtons, supportsQuickResponseButtons, generateQuickRe
 import { loadSettings } from './db';
 import { discoverLocation } from './locationDiscovery';
 import { isLookAroundAction } from './sandboxXp';
+import {
+  isDeniedPcName,
+  isLockablePcName,
+  sanitizePcName,
+} from './pcNameAuthority';
 
 const GENERIC_NAMES = /^(adventurer|survivor|unknown survivor|hero|wanderer|unknown)$/i;
 
@@ -89,7 +94,7 @@ export function tryHandleQuickResponseButton(
 
 export function characterNameIsGeneric(name?: string): boolean {
   const n = name?.trim() ?? '';
-  return !n || GENERIC_NAMES.test(n);
+  return !n || GENERIC_NAMES.test(n) || isDeniedPcName(n) || !isLockablePcName(n);
 }
 
 const NAME_PROMPT: OpeningPrompt = {
@@ -1023,10 +1028,14 @@ export function extractGivenName(raw: string): string | null {
   for (const re of patterns) {
     const m = text.match(re);
     const token = m?.[1]?.trim();
-    if (token && !NAME_STOP.has(token.toLowerCase())) return titleName(token);
+    if (token && !NAME_STOP.has(token.toLowerCase()) && !isDeniedPcName(token)) {
+      return titleName(token);
+    }
   }
   const lonely = text.match(/^([A-Za-z][A-Za-z'-]{1,20})$/);
-  if (lonely && !NAME_STOP.has(lonely[1].toLowerCase())) return titleName(lonely[1]);
+  if (lonely && !NAME_STOP.has(lonely[1].toLowerCase()) && !isDeniedPcName(lonely[1])) {
+    return titleName(lonely[1]);
+  }
   return null;
 }
 
@@ -1219,7 +1228,7 @@ export function sanitizeOpeningAnswer(
       .trim();
   }
   if (kind === 'name') {
-    const name = extractGivenName(raw) ?? extractGivenName(text);
+    const name = sanitizePcName(extractGivenName(raw) ?? extractGivenName(text));
     return { text: (name ?? '').slice(0, 40), cheated, mundaneNames: [] };
   }
   if (kind === 'location') {
@@ -1278,7 +1287,9 @@ function grantMundaneStartingItems(inventory: Item[], names: string[]): Item[] {
 function applyKindToState(state: GameState, prompt: OpeningPrompt, answer: string): GameState {
   const clean = sanitizeOpeningAnswer(prompt.kind, answer);
   if (prompt.kind === 'name') {
-    return { ...state, character: { ...state.character, name: clean.text.slice(0, 40) } };
+    const locked = sanitizePcName(clean.text);
+    if (!locked) return state;
+    return { ...state, character: { ...state.character, name: locked.slice(0, 40) } };
   }
   if (prompt.kind === 'location') {
     const place = clean.text.slice(0, 80);
@@ -1450,7 +1461,9 @@ export async function applyOpeningAnswer(
     harvest.appearance = null;
   }
   if (harvest.kit && isJunkSetupValue(harvest.kit)) harvest.kit = null;
-  if (harvest.name && isJunkSetupValue(harvest.name)) harvest.name = null;
+  if (harvest.name && (isJunkSetupValue(harvest.name) || !isLockablePcName(harvest.name))) {
+    harvest.name = null;
+  }
   if ((isSetupRefusal(answer) || isMetaOnly(answer)) && !harvest.appearance && !CLOTHES_NOUN.test(answer)) {
     harvest.appearance = null;
     harvest.kit = null;
@@ -1561,11 +1574,12 @@ export async function applyOpeningAnswer(
       settings,
       forceModel: !!(currentKind && !fieldForKind(currentKind, harvest)),
     });
-    const readName = read.answers.name && extractGivenName(read.answers.name)
+    const readNameRaw = read.answers.name && extractGivenName(read.answers.name)
       ? extractGivenName(read.answers.name)
       : read.answers.name && !isLocationishOpeningUtterance(read.answers.name)
         ? read.answers.name
         : null;
+    const readName = sanitizePcName(readNameRaw);
     harvest.name = harvest.name ?? readName;
     harvest.location = harvest.location ?? read.answers.location;
     harvest.appearance = harvest.appearance ?? read.answers.appearance;
@@ -1575,7 +1589,7 @@ export async function applyOpeningAnswer(
     harvest.askedWhat = harvest.askedWhat || read.askedWhat;
     if (currentKind && !fieldForKind(currentKind, harvest) && read.meaning && !read.questionOnly && !isJunkSetupValue(read.meaning)) {
       if (currentKind === 'name') {
-        const named = extractGivenName(read.meaning);
+        const named = sanitizePcName(extractGivenName(read.meaning));
         if (named) harvest.name = harvest.name ?? named;
       }
       if (currentKind === 'location' && !isOpeningSetupChipLabel(read.meaning)) {
@@ -1595,6 +1609,17 @@ export async function applyOpeningAnswer(
   }
   if (currentKind === 'name' && harvest.name && (isLocationishOpeningUtterance(harvest.name) || isOpeningSetupChipLabel(harvest.name))) {
     harvest.name = extractGivenName(harvest.name);
+  }
+  if (harvest.name && !isLockablePcName(harvest.name)) harvest.name = null;
+  if (
+    est.sceneWritten
+    && currentKind === 'name'
+    && !harvest.name
+    && !playerGivesOrRefusesName(answer)
+    && !isOpeningSetupChipLabel(answer)
+    && !/^random\s+(name|designation)\b/i.test(answer)
+  ) {
+    return { state, generateOpening: false, deferToPlay: true };
   }
   const registrar = {
     ...(est.registrar ?? {

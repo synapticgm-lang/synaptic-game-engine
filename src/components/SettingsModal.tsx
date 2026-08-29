@@ -36,6 +36,7 @@ import {
 } from '@/game/testLab';
 import { setActiveSubscriptionTier } from '@/game/subscriptionTiers';
 import { pickSpeechVoice, primeTts, sortSpeechVoices, speakTtsNow, stopAllSpeech } from '@/game/useVoice';
+import { displayAdventurerName } from '@/game/pcNameAuthority';
 
 interface Props {
   settings: Settings;
@@ -1209,7 +1210,7 @@ export function SettingsModal({ settings, storyName, engineMode, gameState, onSa
           <Section icon={<MessageSquareMore size={16} />} title="Send feedback" visible={activeTab === 'general'}>
             <FeedbackPanel
               playerId={supportUserId}
-              characterName={gameState?.character?.name ?? null}
+              characterName={displayAdventurerName(gameState?.character?.name)}
               campaign={storyNameDraft || storyName || gameState?.storyName || null}
               engineMode={engineMode}
               turn={gameState?.turn ?? null}

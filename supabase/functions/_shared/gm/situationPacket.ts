@@ -38,6 +38,7 @@ import { formatModeStoryAuthorityLine } from './fluidProseRails.ts';
 import { formatCoverChromeBindingLine } from './chromeAuthority.ts';
 import { alignFactionNotesToHook, formatHookBindingLine, resolveHookLock } from './hookLock.ts';
 import { formatCameraBindingLine } from './travelAuthority.ts';
+import { formatLastKillSnapshotLine } from './combatAuthority.ts';
 // WS-2 Wave C: NPC Memory sections
 import {
   buildNpcPacket,
@@ -315,6 +316,8 @@ export function formatSceneSnapshotForPrompt(state: GameState): string {
   if (openAsks.length) lines.push(`- Open asks: ${openAsks.join('; ')}`);
   const emptySearch = emptySearchAuthorityLine(state.sceneFacts);
   if (emptySearch) lines.push(`- ${emptySearch}`);
+  const lastKillLine = formatLastKillSnapshotLine(state.sceneFacts?.lastKill);
+  if (lastKillLine) lines.push(`- ${lastKillLine}`);
   lines.push(`- ${weaponAuthorityLine(state)}`);
   lines.push('');
   // 29d — one AUTHORITY + PROSE LICENSE block (no duplicate STAGNATION / QUEST essays)
@@ -325,6 +328,12 @@ export function formatSceneSnapshotForPrompt(state: GameState): string {
   const cameraBind = formatCameraBindingLine(state);
   if (cameraBind) lines.push(`- ${cameraBind}`);
   lines.push(`- ${formatCoverChromeBindingLine()}`);
+  const lastPlayer = [...(state.log ?? [])].reverse().find((e) => e?.role === 'player')?.content ?? '';
+  if (lastPlayer && /\b(look around|examine the (?:area|room|surroundings)|wait)\b/i.test(lastPlayer)) {
+    lines.push(
+      'BEAT DELTA: After look/wait, add one new fact, person tactic, cost, or honest empty — do not reprint this room\'s smell/light essay.'
+    );
+  }
   lines.push(
     'AUTHORITY: SNAPSHOT + ledger win on facts (kit, exits, presence, HP, crowd count, hook why, outcomes). Do not invent items, doors, named people, or numeric results absent above. Do not recycle a prior beat, location essay, crisis line, or choice pad unless the player asked to repeat or restate.'
   );

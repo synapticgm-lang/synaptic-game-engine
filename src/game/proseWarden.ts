@@ -14,6 +14,7 @@ import {
 import { scrubInventedCrowdSize } from './crowdAuthority';
 import { rewriteChromePersonClauses } from './chromeAuthority';
 import { scrubHookReversals, type HookLock } from './hookLock';
+import { scrubBeastifiedHumanoid, scrubDeniedKill, type LastKill } from './combatAuthority';
 
 export { calculateCrowdSize, crowdSizeForWarden, scrubInventedCrowdSize } from './crowdAuthority';
 
@@ -78,6 +79,10 @@ export type ProseWardenContext = {
   hasLiveEncounter?: boolean;
   /** Encounter cleared this turn — allow victory language. */
   recentlyClearedEncounter?: boolean;
+  /** Auto-fight / terminal last kill — deny-loot scrub. */
+  lastKill?: LastKill | null;
+  /** Live or just-cleared enemy name — humanoid body lock. */
+  enemyName?: string;
   /** Locked why-you’re-here — rewrite accident ↛ pawn (and reverse). */
   hookLock?: HookLock;
 };
@@ -741,6 +746,8 @@ export function applyProseWarden(text: string, ctx?: ProseWardenContext): string
   next = scrubInventedContainers(next, ctx?.inventory ?? [], ctx?.sceneProps ?? []);
   next = scrubInventedEmptySearchLoot(next, ctx?.searchedEmpty ?? [], ctx?.playerInput);
   next = scrubInventedWeapons(next, ctx?.groundedWeapons ?? [], 'bare hands', ctx?.playerName);
+  next = scrubBeastifiedHumanoid(next, ctx?.enemyName);
+  next = scrubDeniedKill(next, ctx?.lastKill);
   next = scrubInventedTimeSkip(next, ctx?.currentTimeOfDay, ctx?.previousTimeOfDay);
   next = scrubInventedLocationChange(next, ctx?.isIndoor, ctx?.wasIndoor, ctx?.exitNarrated);
   next = scrubInventedTensionChange(next, ctx?.currentTension, ctx?.previousTension);

@@ -7,6 +7,7 @@ import {
   type IntentKind,
   type PlayerIntent,
 } from './intentParser';
+import { sanitizePcName } from './pcNameAuthority';
 
 /**
  * One interpreter for messy player chat — opening answers and in-play actions.
@@ -284,7 +285,7 @@ export async function interpretPlayerUtterance(params: {
       ? parsed.questions.filter((q): q is string => typeof q === 'string' && q.trim().length > 0)
       : local.questions;
     const answers = mergeAnswers(local.answers, {
-      name: asStr('name'),
+      name: sanitizePcName(asStr('name')),
       location: asStr('location'),
       appearance: asStr('appearance'),
       kit: asStr('kit'),

@@ -7,7 +7,7 @@ import {
   isInteriorPlace,
   isStreetMap,
 } from './placeAuthority.ts';
-import { isDummyStreetNodeName, isGenericMapPlace, isInteriorRoomName } from './questPlay.ts';
+import { isAtmospherePlaceName, isDummyStreetNodeName, isGenericMapPlace, isInteriorRoomName } from './questPlay.ts';
 import { createHashRng } from './seededRng.ts';
 
 export type MobRole = 'trash' | 'elite' | 'miniBoss' | 'boss';
@@ -581,6 +581,13 @@ const GENERIC_ROOM_LABELS = new Set(
 export function shortRoomLabel(raw: string, fallback = 'Chamber'): string {
   const n = (raw ?? '').replace(/\s+/g, ' ').trim();
   if (!n) return fallback;
+  if (isAtmospherePlaceName(n)) {
+    const phrase = n.match(ROOM_PHRASE);
+    if (phrase?.[0] && !isAtmospherePlaceName(phrase[0])) {
+      return phrase[0].replace(/\s+/g, ' ').trim().slice(0, MAX_ROOM_LABEL);
+    }
+    return fallback;
+  }
   if (
     n.length <= MAX_ROOM_LABEL &&
     !/[—,]/.test(n) &&
@@ -1324,7 +1331,10 @@ export function presentInteriorMap(
     const label = shortRoomLabel(n.name, isHere ? 'Entry' : 'Chamber');
     const junk = isHere ? !usableInteriorHere(n.name) && label === 'Chamber' && n.name.length > MAX_ROOM_LABEL : false;
     if (junk && !isHere) continue;
-    const essay = n.name.length > MAX_ROOM_LABEL || /\balone in\b|\boff the\b|\bsomewhere\b/i.test(n.name);
+    const essay =
+      n.name.length > MAX_ROOM_LABEL
+      || isAtmospherePlaceName(n.name)
+      || /\balone in\b|\boff the\b|\bsomewhere\b/i.test(n.name);
     keep.push({
       ...n,
       name: essay || (isHere && n.name === dungeon.dungeonName) ? label : shortRoomLabel(n.name, n.name),
