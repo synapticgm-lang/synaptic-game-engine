@@ -61,7 +61,7 @@ export function scoreMemoryRelevance(
     activeFactions?: string[];
     activeQuests?: string[];
     currentTurn: number;
-    unresolved Obligations?: string[];
+    unresolvedObligations?: string[];
   }
 ): MemoryRelevanceScore {
   const signals = {
@@ -278,7 +278,7 @@ export function buildNpcPacket(
   npcId: string,
   gs: GameState,
   context: {
-    includeFull Memories?: boolean;
+    includeFullMemories?: boolean;
     includeObligations?: boolean;
     includeTopics?: boolean;
   }

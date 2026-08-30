@@ -8,9 +8,9 @@ import { effectiveWriterTier, hasUnlimitedTextCapacity, isFounderPlayAccount } f
 import { equippedSetLabel, equippedSetName } from '../game/uiTheme';
 
 /** Visible after a hard refresh -- if this is missing, Vercel is still serving the 16 Aug bundle. */
-export const HUD_BUILD_STAMP = '2026-08-31j';
+export const HUD_BUILD_STAMP = '2026-08-31k';
 const HUD_BUILD_TITLE =
-  'Debug 2026-08-31j - critic Batch C+D';
+  'Debug 2026-08-31k - restore autoplayWriter for Vercel build';
 
 interface Props {
   state: GameState;
