@@ -14,6 +14,11 @@
     "sync:gm-edge": "node scripts/sync-gm-edge-shared.mjs",
     "fate-autoplay": "node ./node_modules/vite-node/vite-node.mjs --config vite.config.ts scripts/fate-autoplay/run.ts --",
     "fate-autoplay:detach": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/fate-autoplay/start-detached.ps1",
+    "fate-dual-review": "node ./node_modules/vite-node/vite-node.mjs --config vite.config.ts scripts/fate-autoplay/dualReview.ts --",
+    "fate-auto-improve": "node ./node_modules/vite-node/vite-node.mjs --config vite.config.ts scripts/fate-autoplay/autoImprove.ts --",
+    "fate-curriculum": "node ./node_modules/vite-node/vite-node.mjs --config vite.config.ts scripts/fate-autoplay/curriculumImprove.ts --",
+    "fate-curriculum:detach": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/fate-autoplay/start-curriculum-detached.ps1 --",
+    "fate-gemini-pastes": "node ./node_modules/vite-node/vite-node.mjs --config vite.config.ts scripts/fate-autoplay/writeGeminiPastes.ts --",
     "eval:12x300": "npm run fate-autoplay -- --modes-agents-300 --turns 300 --seed 100"
   },
   "dependencies": {

@@ -75,6 +75,8 @@ export type ProseWardenContext = {
   playerName?: string;
   /** 29b — player exit/flee authority this turn; do not scrub outdoor transitions. */
   exitNarrated?: boolean;
+  /** Other named places (hubs / atlas) — dual-location scrub. */
+  knownPlaces?: string[];
   /** Live ledger encounter — skip unearned-victory scrub. */
   hasLiveEncounter?: boolean;
   /** Encounter cleared this turn — allow victory language. */
@@ -574,6 +576,75 @@ export function scrubInventedLocationChange(
 }
 
 /**
+ * Batch D — one camera per beat. Fallback/fail paths sometimes stack
+ * "At Lowmarket…" with "At the Weighing Cup…" or dual place openings.
+ * Keep the committed currentLocation framing; demote other place openings.
+ */
+export function scrubDualLocationOpenings(
+  text: string,
+  currentLocation?: string,
+  knownPlaces: string[] = []
+): string {
+  if (!text || !currentLocation?.trim()) return text;
+  const loc = currentLocation.trim();
+  const others = knownPlaces
+    .map((p) => p.trim())
+    .filter((p) => p.length >= 3 && p.toLowerCase() !== loc.toLowerCase());
+  if (!others.length && !/^At\s+/im.test(text)) return text;
+
+  let next = text;
+  // Collapse repeated "At X," openings when X is not current location
+  const atOpen = /^At\s+([^,—.\n]{2,60})\s*[,—]/gim;
+  next = next.replace(atOpen, (full, place: string) => {
+    const p = String(place ?? '').trim();
+    if (!p) return full;
+    if (p.toLowerCase() === loc.toLowerCase() || loc.toLowerCase().includes(p.toLowerCase())) {
+      return full;
+    }
+    if (
+      others.some(
+        (o) =>
+          o.toLowerCase() === p.toLowerCase() ||
+          p.toLowerCase().includes(o.toLowerCase()) ||
+          o.toLowerCase().includes(p.toLowerCase())
+      )
+    ) {
+      return `Still at ${loc},`;
+    }
+    return full;
+  });
+
+  // Second sentence that teleports: "… Cup. At Lowmarket, Void-Touched…"
+  for (const other of others) {
+    const esc = other.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const dual = new RegExp(
+      `([.!?])\\s+At\\s+${esc}\\b`,
+      'gi'
+    );
+    if (dual.test(next) && new RegExp(`\\b${loc.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`, 'i').test(next)) {
+      next = next.replace(dual, `$1 Still here,`);
+    }
+  }
+
+  // "in Lowmarket … at the Weighing Cup" same-beat without travel
+  if (others.length && new RegExp(`\\b${loc.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`, 'i').test(next)) {
+    for (const other of others) {
+      const esc = other.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      const teleport = new RegExp(
+        `\\b(?:you (?:are|stand|arrive|find yourself) (?:at|in) (?:the )?${esc}|at (?:the )?${esc}(?:,|\\s+(?:the|a|an|void|pact|skirmish)))`,
+        'gi'
+      );
+      next = next.replace(teleport, (m) => {
+        if (new RegExp(`\\b${loc.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`, 'i').test(m)) return m;
+        return m.replace(new RegExp(esc, 'i'), loc);
+      });
+    }
+  }
+
+  return next;
+}
+
+/**
  * Pack 12 Extended Validation: Tension
  * Scrubs "calm settles" or "danger passes" if tension state didn't actually change.
  */
@@ -750,6 +821,9 @@ export function applyProseWarden(text: string, ctx?: ProseWardenContext): string
   next = scrubDeniedKill(next, ctx?.lastKill);
   next = scrubInventedTimeSkip(next, ctx?.currentTimeOfDay, ctx?.previousTimeOfDay);
   next = scrubInventedLocationChange(next, ctx?.isIndoor, ctx?.wasIndoor, ctx?.exitNarrated);
+  if (!ctx?.exitNarrated) {
+    next = scrubDualLocationOpenings(next, ctx?.currentLocation, ctx?.knownPlaces ?? []);
+  }
   next = scrubInventedTensionChange(next, ctx?.currentTension, ctx?.previousTension);
   next = scrubLocationTautology(next, ctx?.currentLocation);
   next = scrubAwakeSpeakerAsSleeper(next, {

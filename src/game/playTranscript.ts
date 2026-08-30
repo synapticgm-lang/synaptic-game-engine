@@ -17,6 +17,8 @@ import { BUILD_STAMP } from './runManifest';
 import { displayAdventurerName } from './pcNameAuthority';
 import { canonicalizeIntent, detectSemanticLoop } from './semanticLoopDetector';
 import { beatFingerprint, beatSimilarity } from './beatFingerprint';
+import { compileChoices } from './choiceCompiler';
+import { isBannedFallbackStub, isEngineRecoveryProse } from './sealedManifest';
 
 const FALLBACK_CHOICE = '🎲 Let Fate Decide';
 
@@ -75,7 +77,13 @@ export function resolveOfferedChoices(state: GameState): string[] {
     .filter((c) => !inventsPresenceOnEmptyScene(c, state, storyProse));
 
   const contextFiltered = filterInventedContextChoices(gmChoices, state);
-  const deduped = Array.from(new Set(contextFiltered.map((c) => c.trim()).filter(Boolean)));
+  const compiled = compileChoices(
+    state,
+    contextFiltered,
+    undefined,
+    lastPlayerActionFromLog(state) || state.sceneFacts?.lastPlayerIntent?.text
+  );
+  const deduped = Array.from(new Set(compiled.choices.map((c) => c.trim()).filter(Boolean)));
   if (deduped.length >= 3) return deduped.slice(0, 4);
   return padChoicesToCount(deduped, state, storyProse, 3);
 }
@@ -125,6 +133,11 @@ function playMetaLines(state: GameState): string[] {
     `- Location: ${state.currentLocation || '(unknown)'}`,
     `- Character: ${displayAdventurerName(state.character?.name)} · Level ${state.character?.level ?? '?'} · XP ${state.character?.xp ?? 0}/${state.character?.xpToNext ?? '?'}`,
     `- Quests: ${quests.length ? quests.join('; ') : '(none revealed)'}`,
+    ...(state.arcDirector?.t12HookReceipt
+      ? [
+          `- T12 hook: ${state.arcDirector.t12HookReceipt.fired ? 'FIRED' : 'MISSED'} (${state.arcDirector.t12HookReceipt.reason}${state.arcDirector.t12HookReceipt.forced ? ', forced' : ''}) @T${state.arcDirector.t12HookReceipt.turn}`,
+        ]
+      : []),
     `- Exported: ${new Date().toISOString()}`,
   ];
 }
@@ -302,6 +315,138 @@ export function buildStoryReviewExport(
   }
 
   return lines.join('\n').trimEnd() + '\n';
+}
+
+/**
+ * Batch D — Gemini story-lens paste: Narration bodies only.
+ * Collapses consecutive engine recovery / banned stubs to `[engine fallback ×N]`.
+ * Game-lens pastes should keep the full Options/STATUS transcript.
+ */
+export function buildNarrationOnlyStoryExport(
+  state: GameState,
+  meta?: {
+    personalityId?: string;
+    aiAgentMode?: string;
+    seed?: number;
+    codeBaseline?: string;
+    errorNote?: string;
+  }
+): string {
+  const title = state.storyName?.trim() || state.character?.name?.trim() || 'Story review';
+  const personalityId =
+    meta?.personalityId ?? state.systemPersonality ?? state.gmPersonality ?? undefined;
+  const header = [
+    `# Story quality review pack (Narration-only) — ${title}`,
+    '',
+    '## Meta',
+    '',
+    `- Bible / story: ${title}`,
+    `- Engine: ${state.engineMode || 'unknown'}`,
+    `- Personality: ${personalityId ?? '(default)'}`,
+    `- Turns completed: ${state.turn ?? 0}`,
+    `- Code baseline: ${meta?.codeBaseline ?? BUILD_STAMP}`,
+    `- Format: Narration-only (Options / STATUS / Craft omitted). Ignore engine chrome.`,
+    meta?.errorNote ? `- Errors: ${meta.errorNote}` : '',
+    `- Exported: ${new Date().toISOString()}`,
+    '',
+    '---',
+    '',
+    '## Transcript (Narration-only)',
+    '',
+  ].filter((l) => l !== '');
+
+  const turns: Array<{ turn: number | string; body: string }> = [];
+  for (const entry of state.log ?? []) {
+    if (!entry || entry.role !== 'gm') continue;
+    turns.push({
+      turn: entry.turn ?? turns.length + 1,
+      body: (entry.content ?? '').trim() || '_(empty)_',
+    });
+  }
+  return header.join('\n') + '\n' + collapseEngineFallbackNarration(turns) + '\n';
+}
+
+/** Collapse consecutive banned/recovery stubs across turn bodies for critic pastes. */
+export function collapseEngineFallbackNarration(
+  turns: Array<{ turn: number | string; body: string }>
+): string {
+  const lines: string[] = [];
+  let stubRun = 0;
+  let stubStartTurn: number | string | null = null;
+
+  const flushStubs = () => {
+    if (stubRun <= 0) return;
+    if (stubRun === 1) {
+      lines.push(`### Turn ${stubStartTurn} — Narration`);
+      lines.push('');
+      lines.push('[engine fallback ×1]');
+      lines.push('');
+    } else {
+      lines.push(`### Turns ${stubStartTurn}–… — Narration`);
+      lines.push('');
+      lines.push(`[engine fallback ×${stubRun}]`);
+      lines.push('');
+    }
+    stubRun = 0;
+    stubStartTurn = null;
+  };
+
+  for (const t of turns) {
+    const stub =
+      isBannedFallbackStub(t.body) ||
+      isEngineRecoveryProse(t.body) ||
+      /^\[engine fallback/i.test(t.body);
+    if (stub) {
+      if (stubRun === 0) stubStartTurn = t.turn;
+      stubRun += 1;
+      continue;
+    }
+    flushStubs();
+    lines.push(`### Turn ${t.turn} — Narration`);
+    lines.push('');
+    lines.push(t.body);
+    lines.push('');
+  }
+  flushStubs();
+  return lines.join('\n').trimEnd();
+}
+
+/**
+ * Strip Options/STATUS/Player/Craft from an existing story-for-gemini transcript body
+ * and collapse consecutive engine stubs — for morning paste tooling.
+ */
+export function narrationOnlyFromTranscriptMarkdown(transcriptBody: string): string {
+  const chunks = transcriptBody.split(/^### Turn\s+/im);
+  const turns: Array<{ turn: number | string; body: string }> = [];
+  for (let i = 1; i < chunks.length; i++) {
+    const chunk = chunks[i]!;
+    const m = chunk.match(/^(\d+|\?)\s*[—-]\s*Narration\s*\n+([\s\S]*?)(?=(?:\n\*\*Options:|\n\*\*Craft:|\n\*\*STATUS|\n\*\*Player:|\n###\s|$))/i);
+    if (!m) {
+      const turnMatch = chunk.match(/^(\d+|\?)/);
+      const body = chunk
+        .replace(/^(\d+|\?)\s*[—-]\s*Narration\s*/i, '')
+        .replace(/\n\*\*(?:Options|Craft|STATUS \/ System):\*\*[\s\S]*$/i, '')
+        .replace(/\n\*\*Player:\*\*[\s\S]*$/i, '')
+        .trim();
+      turns.push({ turn: turnMatch?.[1] ?? i, body: body || '_(empty)_' });
+      continue;
+    }
+    turns.push({ turn: m[1]!, body: (m[2] ?? '').trim() || '_(empty)_' });
+  }
+  if (!turns.length) {
+    // Fallback: drop option/status blocks from whole body
+    const stripped = transcriptBody
+      .replace(/\n\*\*Options:\*\*\n(?:- .+\n)*/gi, '\n')
+      .replace(/\n\*\*Craft:\*\*.+\n/gi, '\n')
+      .replace(/\n\*\*STATUS \/ System:\*\*\n(?:- .+\n)*/gi, '\n')
+      .replace(/\n\*\*Player:\*\*.+\n/gi, '\n');
+    return stripped.trim();
+  }
+  return (
+    '## Transcript (Narration-only)\n\n' +
+    '_Options / STATUS / Player lines omitted. Consecutive engine stubs collapsed._\n\n' +
+    collapseEngineFallbackNarration(turns)
+  );
 }
 
 export function downloadPlayTranscript(state: GameState): void {

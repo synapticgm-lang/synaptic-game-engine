@@ -6,6 +6,11 @@
 
 import type { GameState } from './types';
 import { hubsForBibleId, matchHub, type OutdoorHub } from './outdoorHubs';
+import {
+  filterPadsAgainstOpenVignette,
+  formatVignetteBindingLine,
+  isOpenVignette,
+} from './vignetteLock';
 
 export type HubBeatKind = 'explore' | 'social' | 'threat' | 'hook';
 
@@ -503,6 +508,21 @@ export function atMappedHubAfterOpening(state: GameState): boolean {
 }
 
 export function formatHubArrivalForPrompt(state: GameState): string {
+  const open = state.sceneFacts?.openVignette;
+  if (isOpenVignette(open)) {
+    const bind = formatVignetteBindingLine(state);
+    return (
+      '[HUB VIGNETTE LOCK — ' +
+      open.hubName +
+      ' / ' +
+      open.kind +
+      ']: Continue with ' +
+      open.cast.join(', ') +
+      (open.props.length ? ' · ' + open.props.join(', ') : '') +
+      (open.stakes ? '. ' + open.stakes : '.') +
+      (bind ? ' ' + bind : '')
+    );
+  }
   const resolved = resolveHubArrival(state, state.currentLocation);
   if (!resolved) return '';
   const { hub, beat } = resolved;
@@ -524,6 +544,16 @@ export function formatHubArrivalForPrompt(state: GameState): string {
 }
 
 export function hubArrivalChoicePads(state: GameState, max = 2): string[] {
+  const open = state.sceneFacts?.openVignette;
+  if (isOpenVignette(open)) {
+    const lead = open.cast[0] ?? 'the contact';
+    const pads = [
+      `Talk to ${lead}`,
+      open.props[0] ? `Inspect the ${open.props[0]}` : `Press ${lead} on the dispute`,
+      `Walk away from ${lead}`,
+    ];
+    return filterPadsAgainstOpenVignette(state, pads).slice(0, max);
+  }
   const resolved = resolveHubArrival(state, state.currentLocation);
   if (!resolved) return [];
   const { beat } = resolved;

@@ -39,7 +39,9 @@ import {
 } from './pyoaBranchLedger';
 import { countPlayerIntentStreak, countLoiterFamilyStreak } from './beatFingerprint';
 import { pickStatusVoiceLine } from './voiceCadenceSystem';
-import { hasDurableDeltaByT12, forceFreeT12DurableDelta } from './freeT12Hook';
+import { hasDurableDeltaByT12, forceFreeT12DurableDelta, recordT12HookReceipt } from './freeT12Hook';
+import { foeVisibleInScene, markPendingSpawnPreface } from './combatAuthority';
+import { isLookAroundAction } from './sandboxXp';
 import { ensureOpeningNpcPinned, formatOpeningPinMandate } from './openingPin';
 import { resolveHookLock, talkContradictsLockedWhy } from './hookLock';
 import { selectEligibleCrisis, type SocialCrisis } from './socialCrisis';
@@ -103,6 +105,13 @@ export interface ArcDirectorState {
   voiceAsideLastUsed?: Record<string, number>;
   /** 29b — Free T12 durable delta forced */
   freeT12Forced?: boolean;
+  /** 31h — Debug/Download receipt: whether T12 durable delta fired (or was forced). */
+  t12HookReceipt?: {
+    turn: number;
+    fired: boolean;
+    forced: boolean;
+    reason: string;
+  };
   /** 29d — turn soft threat / leverage pressure opened (resolve within 6 turns) */
   softThreatOpenedTurn?: number;
   /** B023 Wave 2 — NPC role obligations + exit deadlines */
@@ -333,6 +342,10 @@ function shouldCommitBeat(
 
   if (contract.id === 'sp-beat-hear-reason') {
     if (talkContradictsLockedWhy(playerInput, resolveHookLock(state))) return false;
+    // Scout / look-around must not pay hear-reason (31e/31h residual).
+    if (isLookAroundAction(playerInput) || /\b(scout|get bearings|explore (?:the )?(?:cell|room|ruin))\b/i.test(playerInput)) {
+      return false;
+    }
     return talkish || turn >= 6;
   }
   if (contract.id === 'sp-beat-orient') {
@@ -401,7 +414,12 @@ function applyBeatEffects(
       next = { ...next, activeEncounter: preview };
       receipts.push(`Encounter: ${next.activeEncounter!.name}`);
       extras.encounterName = next.activeEncounter!.name;
-      
+      // 31h — drought/arc spawn without on-screen foe → pending preface (auto-fight / GM prepend).
+      if (!foeVisibleInScene(next, preview.name)) {
+        next = markPendingSpawnPreface(next, preview.name);
+        receipts.push(`Encounter preface pending: ${preview.name}`);
+      }
+
       // Update density state after spawn
       const role = preview.threatTier === 'boss' ? 'boss' : preview.threatTier === 'elite' ? 'elite' : 'trash';
       const encounterId = `${contract.id}-${next.turn}`;
@@ -528,7 +546,14 @@ export function runArcDirectorBeforeGm(
   }
 
   const social = detectSocialMilestone(playerInput, working);
-  if (social && !talkContradictsLockedWhy(playerInput, resolveHookLock(working))) {
+  const scoutish =
+    isLookAroundAction(playerInput)
+    || /\b(scout|get bearings|explore (?:the )?(?:cell|room|ruin))\b/i.test(playerInput);
+  if (
+    social
+    && !scoutish
+    && !talkContradictsLockedWhy(playerInput, resolveHookLock(working))
+  ) {
     working = applySocialMilestone(working, social);
     xpAwards.push({ amount: social.amount, reason: social.reason });
     systemReceipts.push(`Social: +${social.amount} XP (${social.kind})`);
@@ -783,6 +808,12 @@ export function runArcDirectorBeforeGm(
       pressureClock,
     },
   };
+
+  // 31h — persist T12 durable-delta receipt for Debug / Download play (no new LLM).
+  working = recordT12HookReceipt(working, {
+    beatCommitted,
+    freeT12Forced: !!working.arcDirector?.freeT12Forced,
+  });
 
   return {
     state: working,

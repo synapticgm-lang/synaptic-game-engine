@@ -14,8 +14,11 @@
  */
 
 import type { GameState } from './types';
-import { buildProtectedEntityNames } from './narrativeScrub';
-import { isChromePersonToken } from './chromeAuthority';
+import {
+  buildProtectedEntityNames,
+  withProtectedChromeBlocks,
+} from './narrativeScrub';
+import { isChromePersonToken, isPolityFactionOrPlaceToken } from './chromeAuthority';
 
 /** Never emit these as automatic scrub replacements (29a constitution). */
 export const FORBIDDEN_SCRUB_REPLACEMENTS = [
@@ -75,6 +78,7 @@ export function extractEntityContext(state: GameState): TypedEntityContext {
     (n) =>
       n.trim().length > 1
       && !isChromePersonToken(n)
+      && !isPolityFactionOrPlaceToken(n)
       && !/^(bystanders?|handlers?|onlookers?|watchers?|crowd|people|voices|cracked street)$/i.test(n)
   );
   const companions = (state.companions ?? []).map(c => c.name).filter(Boolean);
@@ -241,17 +245,22 @@ export function validateChoiceReference(
 }
 
 /**
- * Living speakers only — never kit / inventory display names.
+ * Living speakers only — never kit / inventory display names / polity-place tokens.
  * 29c: kit→pronoun scrub (clothes / Worn Iron / Crew Token / Coat) was Free=NO root cause.
+ * 31i: Pellane / Lowmarket / Ash Court must never replace "the panel" / "the figure".
  */
 function speakerPreferred(context: TypedEntityContext): string | undefined {
-  return context.encounterName || context.presentNpcs[0] || context.lastSpeaker || undefined;
+  const raw = context.encounterName || context.presentNpcs[0] || context.lastSpeaker || undefined;
+  if (!raw) return undefined;
+  if (isPolityFactionOrPlaceToken(raw) || isChromePersonToken(raw)) return undefined;
+  return raw;
 }
 
 function isKitLikeName(name: string | undefined, context: TypedEntityContext): boolean {
   if (!name) return true;
   const lower = name.toLowerCase();
   if (FORBIDDEN_SCRUB_REPLACEMENTS.includes(lower as never)) return true;
+  if (isPolityFactionOrPlaceToken(name) || isChromePersonToken(name)) return true;
   if (context.inventoryItems.some((i) => i.toLowerCase() === lower)) return true;
   // Starter-kit / garment patterns that must never replace pronouns
   if (
@@ -268,54 +277,60 @@ function isKitLikeName(name: string | undefined, context: TypedEntityContext): b
  * Rewrite prose to replace invalid references with explicit nouns.
  * This is the fallback when regeneration would be too expensive.
  * 29c: NEVER map they/them/their (or env nouns) onto inventory kit names.
+ * 31i: Never rewrite inside REGISTRATION/STATUS chrome; never map panel/mark onto polity.
  */
 export function rewriteInvalidReferences(
   prose: string,
   context: TypedEntityContext,
   report: InvalidReferenceReport
 ): string {
-  let rewritten = prose;
-  const speaker = speakerPreferred(context);
-  const place = context.locationName;
+  return withProtectedChromeBlocks(prose, (body) => {
+    let rewritten = body;
+    const speaker = speakerPreferred(context);
+    const place = context.locationName;
 
-  // 29c — do NOT blind-replace they/them/their. Kit fallback destroyed English
-  // (Crew Token're / clothes-as-NPC). Leave pronouns; retry mandate names speakers.
-  // Exception: when exactly one NPC is present, safe to replace orphan "them"
-  if (report.themCount > 0 && speaker && !isKitLikeName(speaker, context)) {
-    const presentNpcs = context.presentNpcs.filter(n => !isKitLikeName(n, context));
-    if (presentNpcs.length === 1) {
-      // Safe to replace "them" when only one NPC present
-      rewritten = rewritten.replace(/\bwatch them\b/gi, `watch ${speaker}`);
-      rewritten = rewritten.replace(/\bsee them\b/gi, `see ${speaker}`);
-      rewritten = rewritten.replace(/\btell them\b/gi, `tell ${speaker}`);
-      rewritten = rewritten.replace(/\bask them\b/gi, `ask ${speaker}`);
+    // 29c — do NOT blind-replace they/them/their. Kit fallback destroyed English
+    // (Crew Token're / clothes-as-NPC). Leave pronouns; retry mandate names speakers.
+    // Exception: when exactly one NPC is present, safe to replace orphan "them"
+    if (report.themCount > 0 && speaker && !isKitLikeName(speaker, context)) {
+      const presentNpcs = context.presentNpcs.filter(
+        (n) => !isKitLikeName(n, context) && !isPolityFactionOrPlaceToken(n)
+      );
+      if (presentNpcs.length === 1) {
+        // Safe to replace "them" when only one NPC present
+        rewritten = rewritten.replace(/\bwatch them\b/gi, `watch ${speaker}`);
+        rewritten = rewritten.replace(/\bsee them\b/gi, `see ${speaker}`);
+        rewritten = rewritten.replace(/\btell them\b/gi, `tell ${speaker}`);
+        rewritten = rewritten.replace(/\bask them\b/gi, `ask ${speaker}`);
+      }
     }
-  }
 
-  if (report.thisPlaceCount > 0 && place && !isKitLikeName(place, context)) {
-    rewritten = rewritten.replace(/\bthis place\b/gi, place);
-    rewritten = rewritten.replace(/\bthe place\b/gi, place);
-  }
+    if (report.thisPlaceCount > 0 && place && !isKitLikeName(place, context)) {
+      rewritten = rewritten.replace(/\bthis place\b/gi, place);
+      rewritten = rewritten.replace(/\bthe place\b/gi, place);
+    }
 
-  if (report.strangerCount > 0 && speaker && !isKitLikeName(speaker, context)) {
-    rewritten = rewritten.replace(/\bthe stranger\b/gi, speaker);
-    rewritten = rewritten.replace(/\ba stranger\b/gi, speaker);
-    rewritten = rewritten.replace(/\bthe figure\b/gi, speaker);
-    rewritten = rewritten.replace(/\ba figure\b/gi, speaker);
-  }
+    if (report.strangerCount > 0 && speaker && !isKitLikeName(speaker, context)) {
+      rewritten = rewritten.replace(/\bthe stranger\b/gi, speaker);
+      rewritten = rewritten.replace(/\ba stranger\b/gi, speaker);
+      rewritten = rewritten.replace(/\bthe figure\b/gi, speaker);
+      rewritten = rewritten.replace(/\ba figure\b/gi, speaker);
+    }
 
-  // 29a/29c — collateral tokens → speaker or place only (never kit)
-  // 29d — only rewrite when a real speaker/place exists; never invent roles
-  if (speaker && !isKitLikeName(speaker, context)) {
-    rewritten = rewritten.replace(/\bthe mark\b/gi, speaker);
-    rewritten = rewritten.replace(/\bthe panel\b/gi, speaker);
-  }
-  if (place && !isKitLikeName(place, context)) {
-    rewritten = rewritten.replace(/\ba nearby building\b/gi, place);
-    rewritten = rewritten.replace(/\bthe nearby building\b/gi, place);
-  }
+    // 29a/29c — collateral tokens → speaker or place only (never kit / polity)
+    // 29d — only rewrite when a real speaker/place exists; never invent roles
+    // 31i — never map the panel / the mark onto Pellane
+    if (speaker && !isKitLikeName(speaker, context) && !isPolityFactionOrPlaceToken(speaker)) {
+      rewritten = rewritten.replace(/\bthe mark\b/gi, speaker);
+      rewritten = rewritten.replace(/\bthe panel\b/gi, speaker);
+    }
+    if (place && !isKitLikeName(place, context) && !isPolityFactionOrPlaceToken(place)) {
+      rewritten = rewritten.replace(/\ba nearby building\b/gi, place);
+      rewritten = rewritten.replace(/\bthe nearby building\b/gi, place);
+    }
 
-  return rewritten;
+    return rewritten;
+  });
 }
 
 /** Assert protected names still appear after scrub (telemetry helper). */

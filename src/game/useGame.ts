@@ -29,6 +29,7 @@ import type { EnemyStats } from './combat';
 import {
   autoFightSpawnPreface,
   commitAutoFightLedger,
+  ensureEncounterSpawnPreface,
   lastGmMentionsEnemy,
   scrubBeastifiedHumanoid,
 } from './combatAuthority';
@@ -268,6 +269,8 @@ import {
   mergeHubLandmarks,
   visitedHubLandmarkNames,
   ensureTravelArrivalProse,
+  matchHub,
+  hubsForBibleId,
 } from './outdoorHubs';
 import { seedWorldMapPlaces } from './worldMapAuthority';
 import { harvestNarrativeIntoLedger, scrubInventedGeography } from './narrativeHarvest';
@@ -276,6 +279,10 @@ import { maybeRevealFromLocation } from './worldAtlas';
 import { scrubOfficialPlaceholder } from './narrativeScrub';
 import { isChromePersonToken } from './chromeAuthority';
 import { hubBeatAwardKey, resolveHubArrival } from './hubEncounters';
+import {
+  clearVignetteOnHubLeave,
+  openVignetteFromHubBeat,
+} from './vignetteLock';
 import { applySandboxXpAwards } from './sandboxXp';
 import { applyCharacterXpGain } from './characterXp';
 import {
@@ -301,6 +308,10 @@ import {
   buildSealedManifest,
   formatSealedManifestBlock,
   applyRenderFallback,
+  consecutiveRecoveryExceeded,
+  clearEngineRecoveryStreak,
+  isBannedFallbackStub,
+  markEngineRecoveryCommit,
 } from './sealedManifest';
 import { recordReplayHash } from './replayHash';
 import { playerInputGateBlock } from './choiceCompiler';
@@ -2739,7 +2750,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
             });
             setRetryStatus(retryMsg);
             addToast(retryMsg, 'info');
-            await new Promise((r) => setTimeout(r, transportRetryBackoffMs(attempt)));
+            await new Promise((r) => setTimeout(r, transportRetryBackoffMs(attempt, kind)));
           }
         }
         throw lastErr instanceof Error ? lastErr : new Error('GM transport retries exhausted');
@@ -3412,23 +3423,48 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
       }
       if (!storyHasBody(cleanText)) {
         const manifest = liveCurrent.sealedManifest;
-        if (manifest) {
-          const fallback = applyRenderFallback(manifest, liveCurrent, 'empty');
-          cleanText = fallback.prose;
-          liveCurrent = attachSealedManifest(liveCurrent, fallback.manifestUpdated);
-          debugLogger.record('WARN', 'GM empty — deterministic fallback from sealed manifest', {
-            turn: liveCurrent.turn,
-            hash: manifest.beatEffectsHash,
-          });
+        // 31i — never ship banned HUD stubs; one diegetic stitch max, else Class A FAIL
+        if (
+          manifest &&
+          !consecutiveRecoveryExceeded(liveCurrent) &&
+          !isBannedFallbackStub(
+            [...(liveCurrent.log ?? [])].reverse().find((e) => e.role === 'gm')?.content
+          )
+        ) {
+          try {
+            const fallback = applyRenderFallback(manifest, liveCurrent, 'empty');
+            if (isBannedFallbackStub(fallback.prose)) {
+              throw new Error('banned stub');
+            }
+            cleanText = fallback.prose;
+            liveCurrent = markEngineRecoveryCommit(
+              attachSealedManifest(liveCurrent, fallback.manifestUpdated)
+            );
+            debugLogger.record('WARN', 'GM empty — diegetic recovery stitch from sealed manifest', {
+              turn: liveCurrent.turn,
+              hash: manifest.beatEffectsHash,
+            });
+          } catch {
+            debugLogger.record('WARN', 'Refusing System-only turn — recovery blocked', {
+              turn: liveCurrent.turn,
+            });
+            refundSpentTextTurn();
+            keepSentLineOnFail(contentSanitized || lastInputRef.current || input);
+            setError('The story did not come through. Try that action again — this attempt was not charged.');
+            return;
+          }
         } else {
           debugLogger.record('WARN', 'Refusing System-only turn — no story body', {
             turn: liveCurrent.turn,
+            recoveryStreak: liveCurrent.sceneFacts?.engineRecoveryStreak ?? 0,
           });
           refundSpentTextTurn();
           keepSentLineOnFail(contentSanitized || lastInputRef.current || input);
           setError('The story did not come through. Try that action again — this attempt was not charged.');
           return;
         }
+      } else {
+        liveCurrent = clearEngineRecoveryStreak(liveCurrent);
       }
 
       debugLogger.record('STATE_UPDATE', 'Merging GM response into game state', {
@@ -3494,6 +3530,11 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
           exitNarrated:
             (workingState.sceneFacts?.exitAuthorityTurn ?? 0) >= nextTurn - 1 ||
             (liveCurrent.sceneFacts?.exitAuthorityTurn ?? 0) >= nextTurn - 1,
+          knownPlaces: [
+            ...(workingState.places ?? liveCurrent.places ?? []).map((p) => p.name).filter(Boolean),
+            workingState.previousLocationSheet?.name,
+            liveCurrent.currentLocation,
+          ].filter((n): n is string => !!n && n.trim().length > 2),
           currentTension: workingState.sceneFacts?.tension,
           previousTension: workingState.previousSceneFacts?.tension,
           inventory: workingState.inventory ?? liveCurrent.inventory,
@@ -3522,6 +3563,11 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
             ?? workingState.sceneFacts?.lastKill?.name
             ?? liveCurrent.sceneFacts?.lastKill?.name,
         });
+        {
+          const prefaced = ensureEncounterSpawnPreface(workingState, cleanText);
+          cleanText = prefaced.prose;
+          workingState = prefaced.state;
+        }
         cleanText = scrubOfficialPlaceholder(cleanText, workingState);
         cleanText = scrubInventedGeography(cleanText, workingState);
         workingState = harvestNarrativeIntoLedger(workingState, cleanText, nextTurn);
@@ -4010,12 +4056,23 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
                   lastBeat: '',
                   updatedTurn: nextTurn,
                 };
+                const openVignette = openVignetteFromHubBeat({
+                  hubId: arrival.hub.id,
+                  hubName: arrival.hub.name,
+                  beatId: arrival.beat.id,
+                  kind: arrival.beat.kind,
+                  contactName: arrival.beat.contactName,
+                  pressure: arrival.beat.pressure,
+                  turn: nextTurn,
+                  prev: baseFacts.openVignette,
+                });
                 workingState = {
                   ...workingState,
                   sceneFacts: {
                     ...baseFacts,
                     present,
                     crowd: baseFacts.crowd === 'none' ? 'present' : (baseFacts.crowd ?? 'present'),
+                    ...(openVignette ? { openVignette } : {}),
                   },
                 };
                 const presentNames2 = [
@@ -4024,6 +4081,35 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
                 ];
                 factions = mutateFactionOnStance(factions, sanitizedInput, presentNames2);
                 worldLedger = { ...worldLedger, factionStandings: factions };
+              } else if (/^(social|vendor)$/i.test(arrival.beat.kind)) {
+                const baseFacts = workingState.sceneFacts;
+                const openVignette = openVignetteFromHubBeat({
+                  hubId: arrival.hub.id,
+                  hubName: arrival.hub.name,
+                  beatId: arrival.beat.id,
+                  kind: arrival.beat.kind,
+                  pressure: arrival.beat.pressure,
+                  turn: nextTurn,
+                  prev: baseFacts?.openVignette,
+                });
+                if (openVignette && baseFacts) {
+                  workingState = {
+                    ...workingState,
+                    sceneFacts: { ...baseFacts, openVignette },
+                  };
+                }
+              }
+              // Leaving a prior hub closes its vignette
+              {
+                const cleared = clearVignetteOnHubLeave(
+                  workingState.sceneFacts,
+                  liveCurrent.currentLocation,
+                  finalLocationName,
+                  (name) => matchHub(hubsForBibleId(workingState.campaignBibleId ?? liveCurrent.campaignBibleId), name)?.id ?? null
+                );
+                if (cleared && cleared !== workingState.sceneFacts) {
+                  workingState = { ...workingState, sceneFacts: cleared };
+                }
               }
               if (arrival.beat.revealQuestId) {
                 updatedQuests = revealQuestsFromBanks(
@@ -5046,10 +5132,11 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
     await runAutoFight(enemy, liveCurrent);
   });
 
-  const runAutoFight = useCallbackRef(async (enemy: EnemyStats, liveCurrent: GameState) => {
+  const runAutoFight = useCallbackRef(async (enemy: EnemyStats, startState: GameState) => {
     setBusy(true);
     setError(null);
     try {
+      let liveCurrent = startState;
       const result = simulateCombat(liveCurrent, enemy);
       const prompt = buildAutoFightPrompt(liveCurrent, enemy, result);
 
@@ -5075,6 +5162,11 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
       narrativeText = scrubBeastifiedHumanoid(narrativeText, enemy.name);
       if (!lastGmMentionsEnemy(liveCurrent, enemy.name)) {
         narrativeText = `${autoFightSpawnPreface(enemy.name)} ${narrativeText}`;
+      }
+      {
+        const prefaced = ensureEncounterSpawnPreface(liveCurrent, narrativeText);
+        narrativeText = prefaced.prose;
+        liveCurrent = prefaced.state;
       }
       narrativeText = applyProseWarden(narrativeText, {
         currentLocation: liveCurrent.currentLocation,

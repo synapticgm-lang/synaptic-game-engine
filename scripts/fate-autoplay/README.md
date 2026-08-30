@@ -50,6 +50,37 @@ Progress for matrix batches: `scripts/fate-autoplay/runs/matrix-progress-<timest
 
 ---
 
+## MiniMax writer + dual review + auto-improve + curriculum
+
+```bash
+# GM turns via MiniMax (AI_GATEWAY_API_KEY → free m3; else OpenRouter paid minimax/minimax-m3)
+npm run fate-autoplay -- --writer minimax --turns 20 --seed 1
+
+# After a run: MiniMax + Gemini Pro × (standalone story | game vibe/pace)
+npm run fate-dual-review -- --run-dir scripts/fate-autoplay/runs/<dir>
+
+# Single-bible closed loop
+npm run fate-auto-improve -- --turns 8 --max-iters 2 --writer minimax
+
+# Every ready premade × escalating turns (50→100→200→300). Advances ladder only when ALL are smooth.
+npm run fate-curriculum -- --ladder 50,100,200,300 --max-iters 3 --writer minimax
+
+# Same, detached (survives Cursor chat teardown)
+npm run fate-curriculum:detach -- --ladder 50,100,200,300 --writer minimax
+```
+
+Curriculum stop rule: if any premade still has P0 tickets after `--max-iters` at tier N, **do not** raise turns — fix/allowlist that cell first.
+
+Auto-improve / curriculum **will** edit allowlisted `src/game/*` files without asking. Rails:
+- allowlist only (`autoImproveAllowlist.ts`)
+- vitest gate + git checkout revert on fail
+- **never** commits, pushes, WOF / auth / billing / edge secrets
+- Mid writer stays OFF
+
+Add `AI_GATEWAY_API_KEY` to `.env` for free Vercel MiniMax (promo ends ~2026-09-06). **Required** — OpenRouter fallback is off so the harness stays $0.
+
+Gemini Pro: dual-review writes `*__gemini-pro-PASTE.md` for morning paste — **never** called via OpenRouter.
+
 ## Free-tier limits (autoplay only)
 
 - `enableAutoplayTestLab()` in `src/game/testLab.ts` forces `isTestLabEnabled()` for **this Node process only**.

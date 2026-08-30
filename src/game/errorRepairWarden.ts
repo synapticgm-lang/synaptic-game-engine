@@ -67,9 +67,13 @@ export const GM_PROXY_TIMEOUT_FREE_DEFAULT_MS = 60_000;
 export const GM_PROXY_TIMEOUT_EARLY_MS = 55_000;
 export const GM_PROXY_TIMEOUT_FIRST_POST_OPEN_MS = 75_000;
 
-/** Initial attempt + this many transport retries (timeout / network / empty). */
+/** Initial attempt + this many transport retries (timeout / network / empty / rate_limit). */
 export const TURN_TRANSPORT_MAX_AUTO_RETRIES = 2;
 export const TURN_TRANSPORT_RETRY_BACKOFF_MS = [700, 1800] as const;
+/** Free MiniMax / Gateway 429 — longer sleeps so curriculum does not stamp instant stubs. */
+export const TURN_TRANSPORT_RATE_LIMIT_BACKOFF_MS = [2500, 8000, 15000] as const;
+/** DNS ENOTFOUND (ai-gateway) — pause before retry; harness aborts cell after streak. */
+export const TURN_TRANSPORT_DNS_PAUSE_MS = 20_000;
 
 /**
  * Longer budget for the first real GM turns after opening covers (and early honeymoon).
@@ -161,17 +165,37 @@ export function turnFailExhaustedMessage(kind: TurnFailKind): string {
 export function turnTransportRetryMessage(attempt: number, kind: TurnFailKind): string {
   if (kind === 'network') return `Connection glitch — retrying (${attempt})…`;
   if (kind === 'timeout') return `Timed out — retrying (${attempt})…`;
+  if (kind === 'rate_limit') return `Rate limited — backing off (${attempt})…`;
   return `Empty reply — retrying (${attempt})…`;
 }
 
 /** Prefer auto-retry for flaky transport; never for auth/client bugs. */
 export function shouldAutoRetryTurn(kind: TurnFailKind): boolean {
   // unknown: matrix-40 PYOA bursts were often unclassified provider glitches — one retry is cheap vs dead runs.
-  return kind === 'timeout' || kind === 'network' || kind === 'empty' || kind === 'unknown';
+  // rate_limit: Free MiniMax Gateway 429 — backoff + retry before empty→stub (critic Batch A).
+  return (
+    kind === 'timeout' ||
+    kind === 'network' ||
+    kind === 'empty' ||
+    kind === 'unknown' ||
+    kind === 'rate_limit'
+  );
 }
 
-export function transportRetryBackoffMs(retryIndex: number): number {
+export function transportRetryBackoffMs(
+  retryIndex: number,
+  kind?: TurnFailKind
+): number {
+  if (kind === 'rate_limit') {
+    return TURN_TRANSPORT_RATE_LIMIT_BACKOFF_MS[retryIndex] ?? 15_000;
+  }
   return TURN_TRANSPORT_RETRY_BACKOFF_MS[retryIndex] ?? 2000;
+}
+
+/** True when the failure is DNS resolution (ENOTFOUND) — harness should pause / abort cell. */
+export function isDnsResolutionFailure(err: unknown): boolean {
+  const msg = err instanceof Error ? err.message : String(err ?? '');
+  return /ENOTFOUND|getaddrinfo|EAI_AGAIN/i.test(msg);
 }
 
 function stampAloneArrival(state: GameState, notes: ErrorRepairNote[]): GameState {

@@ -5,6 +5,11 @@ import { harvestCrowdIntoSceneFacts } from './crowdAuthority';
 import { harvestHookIntoSceneFacts } from './hookLock';
 import { filterChromeFromPresent } from './chromeAuthority';
 import { harvestCameraIntoSceneFacts } from './travelAuthority';
+import {
+  clearVignetteOnHubLeave,
+  harvestVignetteIntoSceneFacts,
+} from './vignetteLock';
+import { matchHub, hubsForBibleId } from './outdoorHubs';
 
 const EMPTY_STREET =
   /\b(eerily silent|unnervingly quiet|empty (?:street|buildings|road)|no one (?:is )?(?:here|around|responds)|deserted|abandoned street|world feels frozen|holding its breath)\b/i;
@@ -135,29 +140,47 @@ export function extractSceneFacts(narrative: string, prev?: SceneFacts, turn = 0
     cameraLock: prev?.cameraLock,
     lastPlayerIntent: prev?.lastPlayerIntent,
     lastKill: prev?.lastKill,
+    pendingSpawnPreface: prev?.pendingSpawnPreface,
+    engineRecoveryStreak: prev?.engineRecoveryStreak,
+    openVignette: prev?.openVignette,
   };
 }
 
 export function mergeSceneFacts(prev: SceneFacts | undefined, next: SceneFacts): SceneFacts {
   if (!prev) return next;
+  const asList = (v: unknown): string[] =>
+    Array.isArray(v) ? v.filter((x): x is string => typeof x === 'string') : [];
+  const prevPresent = asList(prev.present);
+  const nextPresent = asList(next.present);
+  const prevProps = asList(prev.props);
+  const nextProps = asList(next.props);
   return {
     crowd: next.crowd !== 'unknown' ? next.crowd : prev.crowd,
     noise: next.noise !== 'unknown' ? next.noise : prev.noise,
-    present: filterChromeFromPresent(Array.from(new Set([...prev.present, ...next.present]))),
-    props: Array.from(new Set([...prev.props, ...next.props])),
+    present: filterChromeFromPresent(Array.from(new Set([...prevPresent, ...nextPresent]))),
+    props: Array.from(new Set([...prevProps, ...nextProps])),
     lastBeat: next.lastBeat || prev.lastBeat,
     updatedTurn: next.updatedTurn,
     timeOfDay: next.timeOfDay !== 'unknown' ? next.timeOfDay : prev.timeOfDay,
     weather: next.weather !== 'unknown' ? next.weather : prev.weather,
     indoor: next.indoor !== undefined ? next.indoor : prev.indoor,
     tension: next.tension !== 'unknown' ? next.tension : prev.tension,
-    searchedEmpty: Array.from(new Set([...(prev.searchedEmpty ?? []), ...(next.searchedEmpty ?? [])])),
-    emptyContainers: Array.from(new Set([...(prev.emptyContainers ?? []), ...(next.emptyContainers ?? [])])),
+    searchedEmpty: Array.from(new Set([...asList(prev.searchedEmpty), ...asList(next.searchedEmpty)])),
+    emptyContainers: Array.from(new Set([...asList(prev.emptyContainers), ...asList(next.emptyContainers)])),
     crowdCount: next.crowdCount ?? prev.crowdCount,
     hookLock: next.hookLock ?? prev.hookLock,
     cameraLock: next.cameraLock ?? prev.cameraLock,
     lastPlayerIntent: next.lastPlayerIntent ?? prev.lastPlayerIntent,
     lastKill: next.lastKill ?? prev.lastKill,
+    pendingSpawnPreface:
+      next.pendingSpawnPreface !== undefined
+        ? next.pendingSpawnPreface
+        : prev.pendingSpawnPreface,
+    engineRecoveryStreak:
+      next.engineRecoveryStreak !== undefined
+        ? next.engineRecoveryStreak
+        : prev.engineRecoveryStreak,
+    openVignette: next.openVignette ?? prev.openVignette,
   };
 }
 
@@ -299,7 +322,23 @@ export function applyCommittedNarrative(
     playerInput,
     state.currentLocation ?? state.locationSheet?.name
   );
-  if (!playerInput?.trim()) return camera;
+  const loc = state.currentLocation ?? state.locationSheet?.name;
+  const hub = matchHub(hubsForBibleId(state.campaignBibleId), loc);
+  let withVignette = harvestVignetteIntoSceneFacts(
+    camera,
+    narrative,
+    turn,
+    hub ? { id: hub.id, name: hub.name } : loc ? { id: loc, name: loc } : null,
+    playerInput
+  );
+  withVignette =
+    clearVignetteOnHubLeave(
+      withVignette,
+      state.previousLocationSheet?.name ?? state.sceneFacts?.cameraLock?.label,
+      loc,
+      (name) => matchHub(hubsForBibleId(state.campaignBibleId), name)?.id ?? null
+    ) ?? withVignette;
+  if (!playerInput?.trim()) return withVignette;
   const t = playerInput.replace(/\s+/g, ' ').trim();
   const family: NonNullable<SceneFacts['lastPlayerIntent']>['family'] =
     /\b(send me (?:back|home)|get me (?:out|back)|i refuse|i protest|i demand|back to (?:my )?(?:world|earth))\b/i.test(t)
@@ -314,7 +353,7 @@ export function applyCommittedNarrative(
               ? 'talk'
               : 'other';
   return {
-    ...camera,
+    ...withVignette,
     lastPlayerIntent: { family, text: t.slice(0, 160), turn },
   };
 }

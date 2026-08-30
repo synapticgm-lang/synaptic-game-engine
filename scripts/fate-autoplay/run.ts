@@ -22,6 +22,7 @@ import {
 } from '../../src/game/fateAutoplay';
 import { runModesAgentsBatch } from './modesAgents300';
 import { regenerateModeGeminiPacks } from './splitModesGemini';
+import { loadDotEnv } from './loadDotEnv';
 
 /** Minimal localStorage for Node (Test Lab / capacity / settings never touch John's browser). */
 function installNodeShims(): void {
@@ -61,6 +62,7 @@ Options:
   --personality ID     LitRPG systemPersonality or gmPersonality
   --engine MODE        litrpg | dnd | rpg | pyoa
   --ai-tier free|mid|high
+  --writer default|minimax   minimax = client MiniMax (Gateway free / OpenRouter)
   --pick-mode fate|first-pad
   --ai-agent-mode MODE default|maxlevel|storyfollower|completionist (goal-oriented AI)
   --modes-agents-300   4 modes × 3 AI agents × 300 turns → 4 mode Gemini packs + telemetry
@@ -81,6 +83,12 @@ Options:
 
 Capacity: process-local Test Lab unlimited (does not change production Free limits).
 Outputs per run: transcript.md, turns.jsonl, summary.json, meta.json
+
+Related:
+  npm run fate-dual-review -- --run-dir <run>
+  npm run fate-auto-improve -- --turns 8 --max-iters 2 --writer minimax
+  npm run fate-curriculum -- --ladder 50,100,200,300 --writer minimax
+  npm run fate-curriculum:detach -- --ladder 50,100,200,300 --writer minimax
 `);
   for (const line of matrixBudgetLines(20)) console.log(line);
 }
@@ -156,6 +164,7 @@ async function runNightStoryforge(
       dryRun: opts.dryRun,
       outRoot: opts.outRoot,
       characterName: opts.characterName,
+      writer: opts.writer,
     });
     summaries.push({ block: 'A', aiAgentMode: s.mode, ...summary });
     log(
@@ -199,6 +208,7 @@ async function runNightStoryforge(
         dryRun: opts.dryRun,
         outRoot: opts.outRoot,
         characterName: opts.characterName,
+        writer: opts.writer,
       });
       summaries.push({ block: `B${round + 1}`, aiAgentMode: 'default', ...summary });
       log(
@@ -224,6 +234,7 @@ async function runNightStoryforge(
 }
 
 async function main(): Promise<void> {
+  loadDotEnv();
   installNodeShims();
   const opts = parseFateArgs(process.argv.slice(2));
   if (opts.turns < 0) {
@@ -234,11 +245,13 @@ async function main(): Promise<void> {
   const supabaseUrl = (import.meta.env.VITE_SUPABASE_URL as string | undefined)?.trim();
   const supabaseKey = (import.meta.env.VITE_SUPABASE_ANON_KEY as string | undefined)?.trim();
   const hasEnv = Boolean(supabaseUrl && supabaseKey);
+  const usesClientWriter = opts.writer === 'minimax';
 
-  if (!opts.dryRun && !hasEnv) {
+  if (!opts.dryRun && !hasEnv && !usesClientWriter) {
     console.error(
       '[fate-autoplay] Missing VITE_SUPABASE_URL / VITE_SUPABASE_ANON_KEY — cannot call gm-turn.\n' +
         '  Put them in .env / .env.local, or run with --dry-run to smoke the harness.\n' +
+        '  Or use --writer minimax with AI_GATEWAY_API_KEY / OPENROUTER_API_KEY (client GM path).\n' +
         '  Exact live command once secrets exist:\n' +
         '    npm run fate-autoplay -- --night-storyforge\n' +
         '  ETA (~420 turns @ 45–75s/turn): ~6–7.5 hours sequential. Cost ≤~$1 Free Flash Lite.\n'
@@ -330,6 +343,7 @@ async function main(): Promise<void> {
           dryRun: opts.dryRun,
           outRoot: opts.outRoot,
           characterName: opts.characterName,
+          writer: opts.writer,
         });
         summaries.push(summary);
         log(
@@ -363,6 +377,7 @@ async function main(): Promise<void> {
         dryRun: opts.dryRun,
         outRoot: opts.outRoot,
         characterName: opts.characterName,
+        writer: opts.writer,
       });
       log(`Done → ${summary.outDir}`);
       console.log(JSON.stringify(summary, null, 2));

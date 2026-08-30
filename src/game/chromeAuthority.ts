@@ -50,11 +50,37 @@ export function isChromePersonToken(token: string): boolean {
   return isCoverSlotLabel(t) || isUiChromeNoun(t);
 }
 
-export function filterChromeFromPresent(present: string[] | undefined): string[] {
-  return (present ?? []).filter((p) => typeof p === 'string' && p.trim() && !isChromePersonToken(p));
+/**
+ * Polity / faction / hub / settlement names are places — never person slots.
+ * "Pellane" in present[] → "the Pellane" contagion (critic Batch B).
+ */
+const POLITY_FACTION_PLACE_EXACT =
+  /^(pellane|pellane crown|ash court|the ash court|valespire|lowmarket|west wall|the weighing cup|weighing cup|contract hall|cathedral close|cinderflow|cinderflow road|harbor quay|pellane war camp|war camp|kitchen saint|kitchen saint alley|palace approach|circle|sevenfold circle|pactborn|calamity mark)$/i;
+
+const POLITY_FACTION_PLACE_HEAD =
+  /^(?:the\s+)?(?:pellane(?:\s+crown)?|ash\s+court|valespire|lowmarket|weighing\s+cup|contract\s+hall|cathedral\s+close|cinderflow(?:\s+road)?|harbor\s+quay|war\s+camp|kitchen\s+saint(?:\s+alley)?|palace\s+approach)\b/i;
+
+export function isPolityFactionOrPlaceToken(token: string): boolean {
+  const t = normalizeChromeToken(token);
+  if (!t) return false;
+  if (POLITY_FACTION_PLACE_EXACT.test(t)) return true;
+  if (POLITY_FACTION_PLACE_HEAD.test(t)) return true;
+  // Bare polity adjective used as a name slot ("Pellane" alone)
+  if (/^(pellane|valespire|lowmarket)$/i.test(t)) return true;
+  return false;
 }
 
-/** Named people only — no chrome, aggregates, or occupancy figures. */
+export function filterChromeFromPresent(present: string[] | undefined): string[] {
+  return (present ?? []).filter(
+    (p) =>
+      typeof p === 'string' &&
+      p.trim() &&
+      !isChromePersonToken(p) &&
+      !isPolityFactionOrPlaceToken(p)
+  );
+}
+
+/** Named people only — no chrome, aggregates, polity/place, or occupancy figures. */
 export function realPresentPeople(present: string[] | undefined): string[] {
   return filterChromeFromPresent(present).filter((p) => {
     const t = p.trim();
@@ -62,6 +88,7 @@ export function realPresentPeople(present: string[] | undefined): string[] {
       return false;
     }
     if (/^figure\s+\d+$/i.test(t)) return false;
+    if (isPolityFactionOrPlaceToken(t)) return false;
     return t.length >= 2;
   });
 }

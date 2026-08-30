@@ -83,18 +83,20 @@ export function enumerateLegalEdges(state: GameState): ChoiceEdge[] {
         }
       );
     } else if (contract.kind === 'encounter') {
+      // 31i — this branch only runs when activeEncounter is absent (live engagers
+      // return early above). Never offer "Engage the threat" without a real foe —
+      // that pad fed sealed stubs. Scout / ready instead until ArcDirector spawns.
       edges.push(
         {
-          id: `${contract.id}-fight`,
-          label: 'Engage the threat',
-          kind: 'combat',
+          id: `${contract.id}-scout-threat`,
+          label: 'Scout for danger',
+          kind: 'inspect',
           beatId: contract.id,
-          risk: 'high',
         },
         {
-          id: `${contract.id}-position`,
-          label: 'Change position',
-          kind: 'combat',
+          id: `${contract.id}-ready`,
+          label: 'Ready yourself and watch',
+          kind: 'inspect',
           beatId: contract.id,
           risk: 'med',
         }
@@ -134,7 +136,17 @@ export function enumerateLegalEdges(state: GameState): ChoiceEdge[] {
   }
 
   if (state.engineMode === 'litrpg') {
-    edges.push({ id: 'litrpg-status', label: 'Check Status', kind: 'quest' });
+    // 31i — Status at most once per 4 turns; never under drought/recovery pad spam
+    const mandate = state.arcDirector?.lastMandate ?? '';
+    const droughtPad =
+      /DROUGHT|STAGNATION|LOITER INTERRUPT/i.test(mandate) ||
+      (state.sceneFacts?.engineRecoveryStreak ?? 0) > 0;
+    const recentStatus = (state.recentChoices ?? [])
+      .slice(-4)
+      .some((r) => (r.choices ?? []).some((c) => /check status/i.test(c)));
+    if (!droughtPad && !recentStatus) {
+      edges.push({ id: 'litrpg-status', label: 'Check Status', kind: 'quest' });
+    }
   }
   if (state.engineMode === 'dnd' && engineAllowsCombat(state) && !state.activeEncounter) {
     edges.push({ id: 'dnd-investigate', label: 'Investigate the keep', kind: 'inspect' });
@@ -186,9 +198,13 @@ export function enumerateLegalEdges(state: GameState): ChoiceEdge[] {
   }
 
   // 29c — drop Wait under loiter / when RPG leverage is due
+  // 31i — also drop Wait after engine recovery / drought (feeds same dead path)
+  const mandateNow = state.arcDirector?.lastMandate ?? '';
   const skipWait =
     (state.engineMode === 'pyoa' && isPyoaBranchLocked(state)) ||
-    (state.arcDirector?.lastMandate ?? '').includes('LOITER INTERRUPT');
+    mandateNow.includes('LOITER INTERRUPT') ||
+    /DROUGHT|STAGNATION/i.test(mandateNow) ||
+    (state.sceneFacts?.engineRecoveryStreak ?? 0) > 0;
   if (!skipWait) {
     edges.push({ id: 'wait', label: 'Wait and watch', kind: 'wait', risk: 'low' });
   }

@@ -56,6 +56,20 @@ function extractNpcFromInput(input: string, state: GameState): string | null {
   return null;
 }
 
+/** Primary present NPC for choice-pad tactic disposition (not chrome). */
+export function presentNpcForPads(state: GameState): string | null {
+  const present = (state.sceneFacts?.present ?? []).filter(Boolean);
+  if (!present.length) return null;
+  if (present.length === 1) return present[0];
+  // Prefer someone who already has topic history
+  const fsm = state.arcDirector?.npcTopics ?? {};
+  for (const name of present) {
+    const key = npcKey(name);
+    if ((fsm[key] ?? []).length > 0) return name;
+  }
+  return present[0];
+}
+
 function topicKey(input: string): string {
   const intent = canonicalizeIntent(input, 0);
   const lower = (input || '').toLowerCase();

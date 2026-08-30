@@ -844,6 +844,21 @@ export interface SceneFacts {
   };
   /** Auto-fight / terminal victory — corpse stays until looted or left. */
   lastKill?: import('./combatAuthority').LastKill;
+  /**
+   * Drought/arc attached an encounter before the foe was narrated.
+   * Next combat beat must show this name (preface) before fight prose.
+   */
+  pendingSpawnPreface?: string;
+  /**
+   * Consecutive sealed-manifest recovery stitches committed as GM body.
+   * Cap at 1 — next empty GM must FAIL (Class A), not another stub.
+   */
+  engineRecoveryStreak?: number;
+  /**
+   * Open hub social/argument vignette — locked cast + props until leave/resolve.
+   * Drought must not invent a brand-new argument cast each turn.
+   */
+  openVignette?: import('./vignetteLock').OpenVignette;
 }
 
 export interface TimelineFact {

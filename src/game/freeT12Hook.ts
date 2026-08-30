@@ -19,6 +19,60 @@ export function hasDurableDeltaByT12(state: GameState): boolean {
   return false;
 }
 
+export function durableDeltaReason(state: GameState): string {
+  if ((state.character?.level ?? 1) >= 2) return 'level>=2';
+  if ((state.arcDirector?.encounterClearedReceipts ?? []).length >= 1) return 'encounterCleared';
+  if (state.pyoaBranchLedger?.branchLocked || state.pyoaBranchLedger?.branchClosed) {
+    return `branchLocked:${state.pyoaBranchLedger?.branchLocked || 'closed'}`;
+  }
+  if (Object.keys(state.arcDirector?.topicCommits ?? {}).length > 0) return 'topicCommit';
+  for (const q of state.quests ?? []) {
+    const done = (q.objectives ?? []).filter((o) => o.completed).length;
+    if (done >= 1 && (q.status === 'active' || q.status === 'completed')) {
+      return `questStage:${q.id}`;
+    }
+  }
+  return 'none';
+}
+
+/**
+ * 31h — Persist whether Free T12 durable delta fired (or was forced) for Debug/Download.
+ * Idempotent once a positive fire is recorded.
+ */
+export function recordT12HookReceipt(
+  state: GameState,
+  opts?: { beatCommitted?: boolean; freeT12Forced?: boolean }
+): GameState {
+  if (state.turn < 12) return state;
+  const existing = state.arcDirector?.t12HookReceipt;
+  if (existing?.fired) return state;
+
+  const fired = hasDurableDeltaByT12(state);
+  const forced = !!(opts?.freeT12Forced || state.arcDirector?.freeT12Forced);
+  const committedForce = forced && !!opts?.beatCommitted;
+  const effectiveFired = fired || committedForce;
+  const reason = fired
+    ? durableDeltaReason(state)
+    : committedForce
+      ? 'forced-commit'
+      : forced
+        ? 'forced-pending'
+        : 'missed';
+
+  return {
+    ...state,
+    arcDirector: {
+      ...state.arcDirector,
+      t12HookReceipt: {
+        turn: state.turn,
+        fired: effectiveFired,
+        forced,
+        reason,
+      },
+    },
+  };
+}
+
 /**
  * Force a durable delta beat when Free window reaches T12 without one.
  * Prefer mode-honest commits: PYOA crisis/branch, LitRPG/DnD quest stage or skirmish,

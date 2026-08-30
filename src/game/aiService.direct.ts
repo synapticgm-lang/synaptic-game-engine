@@ -10,6 +10,7 @@ import type { GmResult } from './aiServiceShared';
 import { RateLimitError, withRetry, processGmCompletion } from './aiServiceShared';
 import { resolveWriterModel } from './subscriptionTiers';
 import { effectiveWriterTier, isTestLabEnabled } from './testLab';
+import { getAutoplayWriterOverride } from './autoplayWriter';
 
 const AI_REQUEST_TIMEOUT_MS = 45_000;
 const AI_MAX_OUTPUT_TOKENS = 4_096;
@@ -57,16 +58,25 @@ function logError(provider: string, err: unknown) {
 }
 
 function normalizeProvider(settings: Settings): { provider: string; apiKey: string; model?: string } {
-  const apiKey = (settings.openrouterApiKey || settings.geminiApiKey || '').trim();
+  const autoplay = getAutoplayWriterOverride();
+  const apiKey = (
+    autoplay?.apiKey ||
+    settings.openrouterApiKey ||
+    settings.geminiApiKey ||
+    ''
+  ).trim();
   if (settings.subscriptionTier === 'admin' && settings.contentMode !== 'kid' && !apiKey) {
     throw new Error('Admin BYOK needs an OpenRouter text key in Settings. Hosted AI is not included on this tier.');
   }
+  const customModelId =
+    autoplay?.model ||
+    (isTestLabEnabled() && !autoplay ? null : settings.customModelId);
   const model = resolveWriterModel({
     aiProvider: 'openrouter',
-    customModelId: isTestLabEnabled() ? null : settings.customModelId,
+    customModelId,
     tier: effectiveWriterTier(settings.subscriptionTier),
   });
-  return { provider: 'openrouter', apiKey, model };
+  return { provider: 'openrouter', apiKey, model: autoplay?.model || model };
 }
 
 async function callGoogle(prompt: string, systemPrompt: string, apiKey: string, model?: string): Promise<string> {
@@ -277,7 +287,8 @@ async function dispatchLlm(
     return withRetry(() => callGoogle(prompt, systemPrompt, apiKey, model), onRetry);
   }
   if (provider === 'openrouter') {
-    return withRetry(() => callOpenRouter(prompt, systemPrompt, apiKey, model, settings.baseUrl), onRetry);
+    const baseUrl = getAutoplayWriterOverride()?.baseUrl || settings.baseUrl;
+    return withRetry(() => callOpenRouter(prompt, systemPrompt, apiKey, model, baseUrl), onRetry);
   }
   if (provider === 'anthropic') {
     return withRetry(() => callAnthropic(prompt, systemPrompt, apiKey, model), onRetry);

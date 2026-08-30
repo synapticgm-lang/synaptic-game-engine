@@ -6,7 +6,7 @@
 import type { GameState } from './types';
 import { findUngroundedNamedClaims } from './suggestionValidation';
 import { isAloneArrivalOpening } from './openingEstablishment';
-import { realPresentPeople } from './chromeAuthority';
+import { realPresentPeople, isPolityFactionOrPlaceToken } from './chromeAuthority';
 
 const ALWAYS_ALLOW = new Set(
   [
@@ -94,16 +94,25 @@ function atNamedInterior(state: GameState): boolean {
   );
 }
 
-/** Prefer a grounded present role over the old default "the official" (matrix-40 leak). */
+/** Prefer a grounded present *person* over the old default "the official" (matrix-40 leak).
+ * Never use polity/faction/place tokens (Pellane → "the Pellane" contagion).
+ */
 function personSlotFromScene(state: GameState): GenericSlot {
   const present = realPresentPeople(
     (state.sceneFacts?.present ?? [])
       .map((p) => (typeof p === 'string' ? p : (p as { name?: string })?.name ?? ''))
       .map((s) => s.trim())
       .filter((s) => s.length > 1 && !/^(you|pc|player|unknown)$/i.test(s))
-  );
+  ).filter((n) => !isPolityFactionOrPlaceToken(n));
   if (present[0]) {
     const n = present[0];
+    // Already a "the X" role phrase — keep; never invent "the Pellane"
+    if (/^the\s+/i.test(n) && !isPolityFactionOrPlaceToken(n.replace(/^the\s+/i, ''))) {
+      return { afterThe: n, afterA: n.replace(/^the\s+/i, 'a '), bare: n };
+    }
+    if (isPolityFactionOrPlaceToken(n)) {
+      return { afterThe: 'the stranger', afterA: 'a stranger', bare: 'the stranger' };
+    }
     const bare = /^the\s+/i.test(n) ? n : `the ${n}`;
     return { afterThe: bare, afterA: bare.replace(/^the\s+/i, 'a '), bare };
   }
@@ -216,9 +225,13 @@ export function scrubSomeoneNearbyActor(text: string, alone = false): string {
 /**
  * "the official" was the default invented-name slot and leaked into prose + choice pads (~329 matrix hits).
  * Keep it only when the scene already has an official/registrar; else → stranger / panel / grounded present.
+ * Never rewrite REGISTRATION / STATUS chrome fields (Batch B — the Pellane: spam).
  */
 export function scrubOfficialPlaceholder(text: string, state: GameState): string {
-  if (!text || !/\bthe official\b|\ban official\b/i.test(text)) return text;
+  if (!text) return text;
+  if (!/\bthe official\b|\ban official\b/i.test(text)) {
+    return scrubPolityBleedInChrome(text);
+  }
   const grounded =
     /\b(official|registrar|clerk|envoy|taxman|alderman)\b/i.test(
       [
@@ -231,20 +244,56 @@ export function scrubOfficialPlaceholder(text: string, state: GameState): string
     );
   if (grounded) return text;
   const alone = isAloneArrivalOpening(state);
-  const slot = alone
-    ? { the: 'the panel', a: 'a panel', poss: "the panel's" }
-    : (() => {
-        const s = personSlotFromScene(state);
-        return {
-          the: s.afterThe,
-          a: s.afterA,
-          poss: s.afterThe.replace(/\bthe\b/i, "the") + "'s",
-        };
-      })();
-  return text
-    .replace(/\bthe official(?:'s|’s)\b/gi, slot.poss)
-    .replace(/\ban official\b/gi, slot.a)
-    .replace(/\bthe official\b/gi, slot.the);
+  let the = alone ? 'the panel' : personSlotFromScene(state).afterThe;
+  let a = alone ? 'a panel' : personSlotFromScene(state).afterA;
+  let poss = `${the}'s`;
+  // Never emit polity as the slot
+  if (isPolityFactionOrPlaceToken(the.replace(/^the\s+/i, ''))) {
+    the = alone ? 'the panel' : 'the stranger';
+    a = alone ? 'a panel' : 'a stranger';
+    poss = alone ? "the panel's" : "the stranger's";
+  }
+  return withProtectedChromeBlocks(text, (body) =>
+    body
+      .replace(/\bthe official(?:'s|’s)\b/gi, poss)
+      .replace(/\ban official\b/gi, a)
+      .replace(/\bthe official\b/gi, the)
+  );
+}
+
+/** Run a rewrite on prose while freezing REGISTRATION / STATUS chrome blocks. */
+export function withProtectedChromeBlocks(text: string, rewrite: (body: string) => string): string {
+  const blocks: string[] = [];
+  const masked = text.replace(
+    /((?:^|\n)\s*(?:REGISTRATION|STATUS)\b[\s\S]*?)(?=(?:\n\s*\n)|$)/gi,
+    (m) => {
+      const i = blocks.length;
+      blocks.push(m);
+      return `\n\u0000CHROME${i}\u0000`;
+    }
+  );
+  let out = rewrite(masked);
+  out = out.replace(/\u0000CHROME(\d+)\u0000/g, (_, i) => blocks[Number(i)] ?? '');
+  return scrubPolityBleedInChrome(out);
+}
+
+/**
+ * Heal "the Pellane: the Pellane:" field-label contagion inside REGISTRATION / STATUS chrome.
+ * Does not invent person slots — only strips polity tokens used as chrome labels.
+ */
+export function scrubPolityBleedInChrome(text: string): string {
+  if (!text || !/\b(REGISTRATION|STATUS)\b/i.test(text)) return text;
+  let next = text.replace(
+    /(REGISTRATION\s*[—\-–:]?\s*)(?:(?:the\s+)?(?:Pellane|Lowmarket|Valespire|Ash Court)\s*:?\s*)+/gi,
+    'REGISTRATION — '
+  );
+  next = next.replace(
+    /(STATUS\s*[—\-–:]?\s*)(?:(?:the\s+)?(?:Pellane|Lowmarket|Valespire|Ash Court)\s*:?\s*)+/gi,
+    'STATUS — '
+  );
+  next = next.replace(/\[\s*the\s+sign\s*\]/gi, '[Mark]');
+  next = next.replace(/\bthe\s+(?:Pellane|Lowmarket|Valespire|Ash Court)\s*:/gi, '');
+  return next.replace(/[ \t]{2,}/g, ' ');
 }
 
 /**

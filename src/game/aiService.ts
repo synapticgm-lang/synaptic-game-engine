@@ -13,6 +13,7 @@ import {
 import { gmProxyTimeoutMsForState } from './errorRepairWarden';
 import { effectiveWriterTier } from './testLab';
 import { logApiLatency } from '../services/telemetryService';
+import { getAutoplayWriterOverride } from './autoplayWriter';
 
 export type { GmResult } from './aiServiceShared';
 export { RateLimitError, withRetry } from './aiServiceShared';
@@ -21,6 +22,7 @@ export { RateLimitError, withRetry } from './aiServiceShared';
  * Resolve narrative generation.
  * Prefer the Supabase `gm-turn` edge proxy (prompts stay server-side).
  * Client-side assembly is DEV / explicit VITE_ALLOW_CLIENT_GM only (tree-shaken from prod otherwise).
+ * Fate autoplay `--writer minimax` forces client direct so edge Free clamp cannot rewrite the model.
  */
 export async function callGm(
   state: GameState,
@@ -31,6 +33,24 @@ export async function callGm(
   signal?: AbortSignal,
   timeoutMs?: number
 ): Promise<GmResult> {
+  const autoplayWriter = getAutoplayWriterOverride();
+  if (autoplayWriter) {
+    if (!(import.meta.env.DEV || import.meta.env.VITE_ALLOW_CLIENT_GM === 'true')) {
+      throw new Error(
+        'Autoplay writer override requires DEV or VITE_ALLOW_CLIENT_GM=true (Node fate-autoplay is fine).'
+      );
+    }
+    const patched: Settings = {
+      ...settings,
+      aiProvider: 'openrouter',
+      customModelId: autoplayWriter.model,
+      baseUrl: autoplayWriter.baseUrl,
+      openrouterApiKey: autoplayWriter.apiKey,
+    };
+    const direct = await import('./aiService.direct');
+    return direct.callGmDirect(state, playerInput, patched, activeLoreCards, onRetry);
+  }
+
   const preferProxy = isGmProxyRequired() || isGmProxyAvailable();
 
   if (preferProxy && isGmProxyAvailable()) {

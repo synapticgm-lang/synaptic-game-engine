@@ -16,6 +16,11 @@ import {
   type CampaignBible,
 } from '@/data/campaigns';
 import { callGm } from './aiService';
+import {
+  enableAutoplayWriter,
+  getAutoplayWriterOverride,
+  type AutoplayWriterKind,
+} from './autoplayWriter';
 import { buildResolutionUserPayload } from './actionResolution';
 import { validateActionHard } from './actionValidation';
 import { seedStateFromCampaignBible, applyCampaignCharacter } from './campaignSeed';
@@ -33,7 +38,9 @@ export type AiAgentMode = 'default' | 'maxlevel' | 'storyfollower' | 'completion
 import {
   classifyTurnFailure,
   gmProxyTimeoutMsForState,
+  isDnsResolutionFailure,
   shouldAutoRetryTurn,
+  TURN_TRANSPORT_DNS_PAUSE_MS,
   TURN_TRANSPORT_MAX_AUTO_RETRIES,
   transportRetryBackoffMs,
 } from './errorRepairWarden';
@@ -75,8 +82,14 @@ import {
   seedOutdoorHubPlaces,
   parseTravelDestination,
   ensureTravelArrivalProse,
+  matchHub,
+  hubsForBibleId,
 } from './outdoorHubs';
 import { resolveHubArrival, hubBeatAwardKey } from './hubEncounters';
+import {
+  clearVignetteOnHubLeave,
+  openVignetteFromHubBeat,
+} from './vignetteLock';
 import { seedWorldMapPlaces } from './worldMapAuthority';
 import { maybeRevealFromLocation } from './worldAtlas';
 import { harvestNarrativeIntoLedger, scrubInventedGeography } from './narrativeHarvest';
@@ -93,6 +106,7 @@ import { isChromePersonToken } from './chromeAuthority';
 import { applyDailyQuestMilestone } from './dailyMilestoneLedger';
 import { countTurnReceipts, countRunReceipts, type ReceiptCounts } from './receiptTelemetry';
 import type { RunManifest } from './runManifest';
+import { BUILD_STAMP } from './runManifest';
 import { applySandboxXpAwards } from './sandboxXp';
 import { applyCharacterXpGain } from './characterXp';
 import {
@@ -113,6 +127,11 @@ import {
   buildSealedManifest,
   formatSealedManifestBlock,
   applyRenderFallback,
+  canUseFallback,
+  consecutiveRecoveryExceeded,
+  clearEngineRecoveryStreak,
+  isBannedFallbackStub,
+  markEngineRecoveryCommit,
   type RenderFallbackReason,
 } from './sealedManifest';
 import { recordReplayHash, hashCanonicalState } from './replayHash';
@@ -127,12 +146,13 @@ import {
   shouldRetryUnaskedCollage,
 } from './semanticLoopDetector';
 import { enforcePerspective } from './perspectiveWarden';
-import { buildPlayTranscript, buildStoryReviewExport, resolveOfferedChoices, withOfferedChoices } from './playTranscript';
+import { buildPlayTranscript, buildStoryReviewExport, buildNarrationOnlyStoryExport, resolveOfferedChoices, withOfferedChoices } from './playTranscript';
 import {
   applyProseWarden,
   crowdSizeForWarden,
   collectSceneObjectNames,
 } from './proseWarden';
+import { ensureEncounterSpawnPreface } from './combatAuthority';
 import {
   syncQuestsFromPlay,
   questsLockedDuringOpening,
@@ -196,6 +216,8 @@ export type FateAutoplayCliOpts = {
   batchDir?: string;
   outRoot: string;
   characterName: string;
+  /** GM writer for this process: default (hosted Free via edge) or minimax (client direct). */
+  writer?: AutoplayWriterKind;
 };
 
 export type MatrixCombo = {
@@ -232,6 +254,8 @@ export type TurnTelemetry = {
   error?: string;
   failKind?: string;
   transportRetries: number;
+  /** Gateway DNS ENOTFOUND — harness pauses / aborts cell. */
+  dnsFailure?: boolean;
   repairNote?: string;
   dryRun?: boolean;
   receiptCounts?: ReceiptCounts;
@@ -310,6 +334,35 @@ export function enumerateLaunchMatrix(baseSeed = 1): MatrixCombo[] {
         });
         i += 1;
       }
+    }
+  }
+  return combos;
+}
+
+/**
+ * One cell per ready premade (skip blank): first Launch narrator for that mode.
+ * Used by auto-improve curriculum so we cover every bible without full cartesian.
+ */
+export function enumeratePremadesOnce(baseSeed = 1): MatrixCombo[] {
+  const combos: MatrixCombo[] = [];
+  const modes: EngineMode[] = ['litrpg', 'dnd', 'rpg', 'pyoa'];
+  let i = 0;
+  for (const engineMode of modes) {
+    const bibles = getCampaignBiblesByEngineMode(engineMode).filter((b) => !isBlankCanvasBible(b.id));
+    const personalities =
+      engineMode === 'litrpg'
+        ? LAUNCH_LITRPG_SYSTEM_PERSONALITY_IDS
+        : LAUNCH_GM_PERSONALITY_IDS;
+    const personalityId = personalities[0]!;
+    for (const bible of bibles) {
+      combos.push({
+        engineMode,
+        bibleId: bible.id,
+        bibleTitle: bible.title,
+        personalityId,
+        seed: baseSeed + i,
+      });
+      i += 1;
     }
   }
   return combos;
@@ -694,9 +747,16 @@ async function callGmWithRetries(
   state: GameState,
   payload: string,
   settings: Settings
-): Promise<{ text: string; systemLog: string[]; transportRetries: number; failKind?: string }> {
+): Promise<{
+  text: string;
+  systemLog: string[];
+  transportRetries: number;
+  failKind?: string;
+  dnsFailure?: boolean;
+}> {
   let lastErr: unknown;
   let transportRetries = 0;
+  let sawDns = false;
   const timeoutMs = gmProxyTimeoutMsForState(state, {
     writerTier: settings.subscriptionTier === 'mid' || settings.subscriptionTier === 'high'
       ? settings.subscriptionTier
@@ -713,16 +773,21 @@ async function callGmWithRetries(
     } catch (err) {
       lastErr = err;
       const kind = classifyTurnFailure(err);
+      if (isDnsResolutionFailure(err)) sawDns = true;
       if (!shouldAutoRetryTurn(kind) || attempt >= TURN_TRANSPORT_MAX_AUTO_RETRIES) {
         return {
           text: '',
           systemLog: [],
           transportRetries,
           failKind: kind,
+          dnsFailure: sawDns || isDnsResolutionFailure(err),
         };
       }
       transportRetries = attempt + 1;
-      await new Promise((r) => setTimeout(r, transportRetryBackoffMs(attempt)));
+      const pauseMs = isDnsResolutionFailure(err)
+        ? TURN_TRANSPORT_DNS_PAUSE_MS
+        : transportRetryBackoffMs(attempt, kind);
+      await new Promise((r) => setTimeout(r, pauseMs));
     }
   }
   return {
@@ -730,6 +795,7 @@ async function callGmWithRetries(
     systemLog: [],
     transportRetries,
     failKind: classifyTurnFailure(lastErr),
+    dnsFailure: sawDns || isDnsResolutionFailure(lastErr),
   };
 }
 
@@ -884,21 +950,96 @@ Do NOT print dice notation or CODE ENFORCED.
   let transportRetries = gmResult.transportRetries;
   let renderFallbackUsed = false;
   if (!gmText.trim()) {
-    error = gmResult.failKind
-      ? `GM empty/fail (${gmResult.failKind})`
-      : 'GM returned empty content';
-    const manifest = arcState.sealedManifest ?? buildSealedManifest(arcState, playerInput, arcResult);
-    const reason: RenderFallbackReason =
-      gmResult.failKind === 'timeout'
-        ? 'timeout'
+    const failLabel = gmResult.dnsFailure
+      ? 'network_dns'
+      : gmResult.failKind === 'rate_limit'
+        ? 'rate_limit'
         : gmResult.failKind
-          ? 'fail'
+          ? gmResult.failKind
           : 'empty';
-    const fallback = applyRenderFallback(manifest, arcState, reason);
-    gmText = fallback.prose;
-    gmSystemLog = [...gmSystemLog, ...fallback.systemLog];
-    arcState = attachSealedManifest(arcState, fallback.manifestUpdated);
-    renderFallbackUsed = true;
+    error = `GM empty/fail (${failLabel})`;
+    // 31i — never commit banned HUD stubs; one diegetic stitch max, then FAIL empty
+    const sealed = arcState.sealedManifest ?? buildSealedManifest(arcState, playerInput, arcResult);
+    if (consecutiveRecoveryExceeded(arcState) || !canUseFallback(sealed)) {
+      gmText = '';
+      gmSystemLog = [
+        ...gmSystemLog,
+        'Turn FAIL — refused second engine recovery / exhausted transport (ledger unchanged)',
+      ];
+      renderFallbackUsed = false;
+    } else {
+      const reason: RenderFallbackReason =
+        gmResult.failKind === 'timeout'
+          ? 'timeout'
+          : gmResult.failKind
+            ? 'fail'
+            : 'empty';
+      try {
+        const fallback = applyRenderFallback(sealed, arcState, reason);
+        gmText = fallback.prose;
+        if (isBannedFallbackStub(gmText)) {
+          gmText = '';
+          gmSystemLog = [...gmSystemLog, ...fallback.systemLog, 'Turn FAIL — banned stub blocked'];
+        } else {
+          gmSystemLog = [...gmSystemLog, ...fallback.systemLog];
+          arcState = markEngineRecoveryCommit(attachSealedManifest(arcState, fallback.manifestUpdated));
+          renderFallbackUsed = true;
+        }
+      } catch {
+        gmText = '';
+        gmSystemLog = [...gmSystemLog, 'Turn FAIL — manifest fallback exhausted'];
+      }
+    }
+  } else {
+    arcState = clearEngineRecoveryStreak(arcState);
+  }
+
+  // Hard FAIL — do not invent story; keep prior world, stamp telemetry
+  if (!gmText.trim() && error) {
+    const ended = Date.now();
+    const failTurn = state.turn + 1;
+    return {
+      state: {
+        ...arcState,
+        turn: failTurn,
+        log: [
+          ...(arcState.log ?? state.log ?? []),
+          {
+            id: `fail-${failTurn}-${ended}`,
+            role: 'system' as const,
+            content: error,
+            timestamp: ended,
+          },
+        ],
+      },
+      telemetry: {
+        turn: failTurn,
+        startedAt,
+        endedAt: new Date(ended).toISOString(),
+        durationMs: ended - started,
+        bibleId: meta.bibleId,
+        engineMode: state.engineMode,
+        personalityId: meta.personalityId,
+        seed: meta.seed,
+        fatePick,
+        offeredChoices: offered,
+        offeredChoiceIds: offered.map((_, i) => `choice-${failTurn}-${i}`),
+        playerInput,
+        gmText: '',
+        systemLog: gmSystemLog,
+        questUnlocks: [],
+        itemsEquipped: [],
+        itemsUsed: [],
+        loopFlags: { officialCount: 0, atmosphereRepeat: false, strangerCount: 0 },
+        error,
+        failKind: gmResult.dnsFailure
+          ? 'network_dns'
+          : gmResult.failKind ?? 'empty',
+        transportRetries,
+        dnsFailure: gmResult.dnsFailure === true,
+        renderFallbackUsed: false,
+      },
+    };
   }
 
   // Novelty retry on same-beat OR near-verbatim clone (merchant ×20 loops).
@@ -968,6 +1109,11 @@ Do NOT print dice notation or CODE ENFORCED.
     playerInput,
     groundedWeapons: groundedWeaponNames(working),
     playerName: working.character?.name ?? state.character?.name,
+    knownPlaces: [
+      ...(working.places ?? state.places ?? []).map((p) => p.name).filter(Boolean),
+      state.currentLocation,
+      working.previousLocationSheet?.name,
+    ].filter((n): n is string => !!n && n.trim().length > 2),
     hasLiveEncounter: !!(working.activeEncounter ?? state.activeEncounter),
     recentlyClearedEncounter:
       (working.arcDirector?.lastEncounterClearedTurn ??
@@ -982,6 +1128,11 @@ Do NOT print dice notation or CODE ENFORCED.
     ].filter((n) => n && !isChromePersonToken(n)),
     hookLock: hookLockForWarden(working, cleanText),
   });
+  {
+    const prefaced = ensureEncounterSpawnPreface(working, cleanText);
+    cleanText = prefaced.prose;
+    working = prefaced.state;
+  }
   cleanText = scrubOfficialPlaceholder(cleanText, working);
   cleanText = scrubInventedGeography(cleanText, working);
   working = harvestNarrativeIntoLedger(working, cleanText, state.turn + 1);
@@ -1094,7 +1245,48 @@ Do NOT print dice notation or CODE ENFORCED.
             arrival.hub.name
           );
           updatedQuests = applyBiomeSaneQuestSites(working, updatedQuests);
-          working = { ...working, sandboxAwardKeys: keys };
+          let sceneFacts = working.sceneFacts;
+          if (arrival.beat.contactName && sceneFacts) {
+            const present = [...(sceneFacts.present ?? [])];
+            if (!present.some((p) => p.toLowerCase() === arrival.beat.contactName!.toLowerCase())) {
+              present.push(arrival.beat.contactName);
+            }
+            const openVignette = openVignetteFromHubBeat({
+              hubId: arrival.hub.id,
+              hubName: arrival.hub.name,
+              beatId: arrival.beat.id,
+              kind: arrival.beat.kind,
+              contactName: arrival.beat.contactName,
+              pressure: arrival.beat.pressure,
+              turn: nextTurn,
+              prev: sceneFacts.openVignette,
+            });
+            sceneFacts = {
+              ...sceneFacts,
+              present,
+              crowd: sceneFacts.crowd === 'none' ? 'present' : (sceneFacts.crowd ?? 'present'),
+              ...(openVignette ? { openVignette } : {}),
+            };
+          } else if (/^(social|vendor)$/i.test(arrival.beat.kind) && sceneFacts) {
+            const openVignette = openVignetteFromHubBeat({
+              hubId: arrival.hub.id,
+              hubName: arrival.hub.name,
+              beatId: arrival.beat.id,
+              kind: arrival.beat.kind,
+              pressure: arrival.beat.pressure,
+              turn: nextTurn,
+              prev: sceneFacts.openVignette,
+            });
+            if (openVignette) sceneFacts = { ...sceneFacts, openVignette };
+          }
+          sceneFacts =
+            clearVignetteOnHubLeave(
+              sceneFacts,
+              state.currentLocation,
+              working.currentLocation,
+              (name) => matchHub(hubsForBibleId(meta.bibleId), name)?.id ?? null
+            ) ?? sceneFacts;
+          working = { ...working, sandboxAwardKeys: keys, sceneFacts };
         }
       }
     }
@@ -1251,6 +1443,7 @@ Do NOT print dice notation or CODE ENFORCED.
       error,
       failKind: gmResult.failKind,
       transportRetries,
+      dnsFailure: gmResult.dnsFailure === true,
       repairNote,
       receiptCounts,
       arcStatusReceipts,
@@ -1273,9 +1466,20 @@ export async function runFateAutoplay(opts: {
   dryRun: boolean;
   outRoot: string;
   characterName: string;
+  /** When set, forces MiniMax (or default) for this run via client GM path. */
+  writer?: AutoplayWriterKind;
 }): Promise<RunSummary> {
   enableAutoplayTestLab(opts.aiTier);
   setActiveSubscriptionTier(opts.aiTier);
+  const writerKind = opts.writer ?? 'default';
+  const writerOverride =
+    writerKind === 'minimax' ? enableAutoplayWriter('minimax') : enableAutoplayWriter('default');
+  if (writerOverride) {
+    // eslint-disable-next-line no-console
+    console.log(
+      `[autoplay-writer] ${writerOverride.route} model=${writerOverride.model} — ${writerOverride.note}`
+    );
+  }
 
   const settings: Settings = {
     ...createDefaultSettings(),
@@ -1303,6 +1507,7 @@ export async function runFateAutoplay(opts: {
   const turns: TurnTelemetry[] = [];
   const startedAt = new Date().toISOString();
   let fatal: string | undefined;
+  let dnsFailStreak = 0;
   const turnsPath = join(outDir, 'turns.jsonl');
   const heartbeatPath = join(outDir, 'heartbeat.json');
   const crashPath = join(outDir, 'crash.log');
@@ -1343,6 +1548,18 @@ export async function runFateAutoplay(opts: {
         if (result.telemetry.error && result.telemetry.failKind === 'auth') {
           fatal = result.telemetry.error;
           break;
+        }
+        // 31i — DNS ENOTFOUND: pause cell after 2 consecutive (do not stamp 34 instant stubs)
+        if (result.telemetry.dnsFailure || result.telemetry.failKind === 'network_dns') {
+          dnsFailStreak += 1;
+          if (dnsFailStreak >= 2) {
+            fatal = 'DNS ENOTFOUND — pausing curriculum cell (Gateway unreachable)';
+            // eslint-disable-next-line no-console
+            console.warn(`[fate-autoplay] ${fatal} after turn ${turnNo}`);
+            break;
+          }
+        } else {
+          dnsFailStreak = 0;
         }
       } catch (err) {
         const msg = err instanceof Error ? `${err.name}: ${err.message}\n${err.stack || ''}` : String(err);
@@ -1432,6 +1649,19 @@ export async function runFateAutoplay(opts: {
           : 'no turn errors recorded in summary',
     })
   );
+  writeFileSync(
+    join(outDir, 'story-narration-only.md'),
+    buildNarrationOnlyStoryExport(state, {
+      personalityId,
+      aiAgentMode: opts.aiAgentMode,
+      seed: opts.seed,
+      codeBaseline: BUILD_STAMP,
+      errorNote:
+        summary.errorCount > 0
+          ? `${summary.errorCount} errors / ${summary.timeoutCount} timeouts`
+          : undefined,
+    })
+  );
   writeFileSync(join(outDir, 'turns.jsonl'), turns.map((t) => JSON.stringify(t)).join('\n') + '\n');
   writeFileSync(join(outDir, 'summary.json'), JSON.stringify(summary, null, 2) + '\n');
   writeFileSync(join(outDir, 'eval.json'), JSON.stringify(summary.evalHarness, null, 2) + '\n');
@@ -1443,6 +1673,26 @@ export async function runFateAutoplay(opts: {
         fatal,
         capacity: 'autoplay Test Lab override (unlimited text/memorable for this process only)',
         note: 'For review + optional StoryForge/SFT ingest. Not auto-trained into live GM.',
+        writer: writerOverride
+          ? {
+              kind: writerOverride.kind,
+              model: writerOverride.model,
+              baseUrl: writerOverride.baseUrl,
+              route: writerOverride.route,
+              note: writerOverride.note,
+            }
+          : {
+              kind: 'default',
+              model: '(hosted Free via gm-turn)',
+              route: 'edge-free',
+              note: 'No --writer override; edge clamps non-privileged to Flash Lite.',
+            },
+        activeOverride: getAutoplayWriterOverride()
+          ? {
+              model: getAutoplayWriterOverride()!.model,
+              route: getAutoplayWriterOverride()!.route,
+            }
+          : null,
       },
       null,
       2
@@ -1468,6 +1718,7 @@ export function parseFateArgs(argv: string[]): FateAutoplayCliOpts {
     modesAgents300: false,
     outRoot: join(process.cwd(), 'scripts', 'fate-autoplay', 'runs'),
     characterName: 'Jax',
+    writer: 'default',
   };
   const out = { ...defaults };
   for (let i = 0; i < argv.length; i++) {
@@ -1489,6 +1740,9 @@ export function parseFateArgs(argv: string[]): FateAutoplayCliOpts {
       out.aiAgentMode = ['maxlevel', 'storyfollower', 'completionist'].includes(m)
         ? (m as AiAgentMode)
         : 'default';
+    } else if (a === '--writer') {
+      const w = next().toLowerCase();
+      out.writer = w === 'minimax' || w === 'minimax-m3' ? 'minimax' : 'default';
     } else if (a === '--dry-run') out.dryRun = true;
     else if (a === '--matrix-40' || a === '--matrix40') out.matrix40 = true;
     else if (a === '--matrix') out.matrix = true;

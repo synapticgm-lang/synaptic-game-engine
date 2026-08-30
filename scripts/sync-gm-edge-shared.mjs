@@ -21,6 +21,7 @@ const FILES = [
   'sceneFacts.ts',
   'crowdAuthority.ts',
   'hookLock.ts',
+  'vignetteLock.ts',
   'travelAuthority.ts',
   'chromeAuthority.ts',
   'pcNameAuthority.ts',

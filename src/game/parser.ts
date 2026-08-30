@@ -93,7 +93,7 @@ const CHOICE_LINE_REGEX = /^\s*(?:\*\*|\*)?\s*(?:(?:Option\s+)?\d+[.):]|\[\d+\]|
 const NUMBERED_CHOICE_PREFIX =
   /(?:\*\*)?(?:(?:Option\s+)?\d+[.):]|\[\d+\]|\(\d+\))\s+(?:\*\*)?/i;
 const CHOICE_OFFER_VERBS =
-  /^(?:ask|inquire|inspect|examine|talk|speak|tell|approach|leave|walk away|refuse|offer|demand|listen|wait|search|look|follow|challenge|bow|kneel|accept|decline|press|probe|question|bargain|help|protect|thank|apologiz|observe|check|call|shout|whisper|confront|defy|agree|scan|try|sit)\b/i;
+  /^(?:ask|inquire|inspect|examine|talk|speak|tell|approach|leave|walk away|refuse|offer|demand|listen|wait|search|look|follow|challenge|bow|kneel|accept|decline|press|probe|question|bargain|help|protect|thank|apologiz|observe|check|call|shout|whisper|confront|defy|agree|scan|try|sit|get|find|go|move|stand|open|take|use|push|pull|read|pick|run|flee|scout|sift|explore|bearings|slip|head|return|enter|travel|step|dash|creep|sneak|force|engage|change)\b/i;
 const IN_PROSE_OFFER_SENTENCE =
   /(?:^|[.!?]\s+)((?:Inquire about|Ask (?:the \w+|him|her|them)(?: to| about)|Ask about)\b[^.!?\n]{8,140})/gi;
 const MECHANIC_SYSTEM_BODY =
@@ -213,9 +213,45 @@ export function stripChoiceList(text: string): string {
     result = result.slice(0, inlineIdx).trim();
   }
   // Singleton numbered offer glued to the last sentence (Josie T0: "…mosaic. 1. Scan…").
+  // Also catch "Get your bearings" / verb-expanded offers / critic T13 "1. Slip toward…".
+  const OFFER_VERB_LEAD =
+    /^(?:get|find|go|move|stand|open|take|use|scout|sift|explore|slip|head|return|enter|travel|step|dash|creep|sneak|force|engage|change|walk|run|flee|ask|talk|inspect|examine|look|wait|check|press|approach|leave)\b/i;
   result = result.replace(
     /(?:^|[.!?]\s+)\d+[.)]\s+([^\n]{4,160})\s*$/g,
-    (full, body: string) => (looksLikeChoiceOffer(String(body ?? '')) ? (full.match(/^[.!?]/)?.[0] ?? '') : full)
+    (full, body: string) => {
+      const b = String(body ?? '');
+      if (looksLikeChoiceOffer(b) || OFFER_VERB_LEAD.test(b)) {
+        return full.match(/^[.!?]/)?.[0] ?? '';
+      }
+      return full;
+    }
+  );
+  // Bare leading / mid-body numbered menu line (opening stitch leak without prior sentence).
+  result = result.replace(
+    /(^|\n)\s*\d+[.)]\s+([^\n]{4,160})\s*(?=\n|$)/g,
+    (full, lead: string, body: string) => {
+      const b = String(body ?? '');
+      if (looksLikeChoiceOffer(b) || OFFER_VERB_LEAD.test(b)) {
+        return lead === '\n' ? '\n' : '';
+      }
+      return full;
+    }
+  );
+  // Inline mid-paragraph "…ears. 1. Slip toward…" when only one numbered offer (no 2.)
+  result = result.replace(
+    /([.!?])\s+\d+[.)]\s+([A-Z][^\n]{6,140}?)(?=\s*$|\s*\n)/g,
+    (full, punct: string, body: string) => {
+      if (looksLikeChoiceOffer(body) || OFFER_VERB_LEAD.test(body)) return punct;
+      return full;
+    }
+  );
+  // Markdown option leakage: bare `- Slip toward…` / `* Engage the threat` glued after prose
+  result = result.replace(
+    /([.!?])\s+[-*•]\s+([A-Z][^\n]{6,140}?)(?=\s*$|\s*\n)/g,
+    (full, punct: string, body: string) => {
+      if (looksLikeChoiceOffer(body) || OFFER_VERB_LEAD.test(body)) return punct;
+      return full;
+    }
   );
   result = result.replace(/\s+\d+[.)]\s+what do you do\??\s*$/i, '').trim();
   // Singleton numbered / "Inquire about…" lines left in the paragraph are fake menus.

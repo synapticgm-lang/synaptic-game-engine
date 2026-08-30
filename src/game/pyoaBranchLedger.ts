@@ -179,6 +179,35 @@ export function isPyoaBranchLocked(state: GameState): boolean {
   return !!(state.pyoaBranchLedger?.branchLocked || state.pyoaBranchLedger?.branchClosed);
 }
 
+/**
+ * 31h — After branch lock, only eligible futures (no Wait-Wait / buy-time delay of the same crisis).
+ */
+export function eligiblePyoaPadsAfterLock(state: GameState, choice: string): boolean {
+  if (!isPyoaBranchLocked(state)) return true;
+  const lower = (choice ?? '').toLowerCase();
+  // Delay / same-crisis stall pads are never legal after lock
+  if (
+    /\b(buy time|call for help|wait and watch|^wait$|wait\b|stand around|do nothing|inspect the crisis|study the crisis|delay|stall)\b/i.test(
+      lower
+    )
+  ) {
+    return false;
+  }
+  const locked = String(state.pyoaBranchLedger?.branchLocked ?? '');
+  // Locked branch reopen without a new event
+  if (locked === 'solo-road' && /\b(trust silas|smuggler|ally with|join (?:them|him|her))\b/i.test(lower)) {
+    return false;
+  }
+  if (locked === 'ally-path' && /\b(leave silas|go alone|solo road|betray)\b/i.test(lower)) {
+    return false;
+  }
+  if (locked === 'millstone-commit' && /\b(burn (?:the )?charter|sell to pell)\b/i.test(lower)) {
+    return false;
+  }
+  // Eligible: face crisis / risky fork / leverage / locked-path advances
+  return true;
+}
+
 /** B025 — Compute state hash for convergence detection */
 function computeBranchStateHash(state: GameState): string {
   // Hash based on key convergence indicators

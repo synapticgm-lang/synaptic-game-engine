@@ -98,11 +98,103 @@ export function lastGmMentionsEnemy(state: GameState, enemyName: string): boolea
   return last.toLowerCase().includes(enemyName.toLowerCase());
 }
 
+export function proseMentionsEnemy(prose: string, enemyName: string): boolean {
+  const name = (enemyName ?? '').trim();
+  if (!name || !prose) return false;
+  return prose.toLowerCase().includes(name.toLowerCase());
+}
+
+/** Foe is on-screen: present[], last GM beat, or this draft already names them. */
+export function foeVisibleInScene(
+  state: GameState,
+  enemyName: string,
+  draftProse?: string
+): boolean {
+  const name = (enemyName ?? '').trim();
+  if (!name) return false;
+  const needle = name.toLowerCase();
+  const present = state.sceneFacts?.present ?? [];
+  if (present.some((p) => String(p).toLowerCase().includes(needle))) return true;
+  if (lastGmMentionsEnemy(state, name)) return true;
+  if (draftProse && proseMentionsEnemy(draftProse, name)) return true;
+  return false;
+}
+
 export function autoFightSpawnPreface(enemyName: string): string {
   if (isHumanoidEnemyName(enemyName)) {
     return `A human figure — ${enemyName} — breaks from the debris, already committed.`;
   }
   return `${enemyName} is already on you.`;
+}
+
+/** Mark drought/arc spawn so the next combat beat must show the foe before fight prose. */
+export function markPendingSpawnPreface(state: GameState, enemyName: string): GameState {
+  const name = (enemyName ?? '').trim();
+  if (!name) return state;
+  const base: SceneFacts = state.sceneFacts ?? {
+    crowd: 'unknown',
+    noise: 'unknown',
+    present: [],
+    props: [],
+    lastBeat: '',
+    updatedTurn: state.turn,
+  };
+  return {
+    ...state,
+    sceneFacts: {
+      ...base,
+      pendingSpawnPreface: name,
+    },
+  };
+}
+
+/**
+ * If ArcDirector attached a fight before the foe was narrated, force a visible spawn line.
+ * Clears pendingSpawnPreface and adds the foe to present[] once shown.
+ */
+export function ensureEncounterSpawnPreface(
+  state: GameState,
+  prose: string
+): { prose: string; state: GameState; prepended: boolean } {
+  const pending =
+    state.sceneFacts?.pendingSpawnPreface?.trim()
+    || (state.activeEncounter?.name?.trim() && !foeVisibleInScene(state, state.activeEncounter.name, prose)
+      ? state.activeEncounter.name.trim()
+      : '');
+  if (!pending) return { prose, state, prepended: false };
+
+  let nextProse = prose ?? '';
+  let prepended = false;
+  if (!proseMentionsEnemy(nextProse, pending)) {
+    nextProse = `${autoFightSpawnPreface(pending)} ${nextProse}`.trim();
+    prepended = true;
+  }
+
+  const base: SceneFacts = state.sceneFacts ?? {
+    crowd: 'unknown',
+    noise: 'unknown',
+    present: [],
+    props: [],
+    lastBeat: '',
+    updatedTurn: state.turn,
+  };
+  const present = [...(base.present ?? [])];
+  if (!present.some((p) => String(p).toLowerCase().includes(pending.toLowerCase()))) {
+    present.push(pending);
+  }
+  return {
+    prose: nextProse,
+    state: {
+      ...state,
+      sceneFacts: {
+        ...base,
+        present,
+        pendingSpawnPreface: undefined,
+        tension: 'combat',
+      },
+    },
+    prepended,
+  };
 }
 
 /**

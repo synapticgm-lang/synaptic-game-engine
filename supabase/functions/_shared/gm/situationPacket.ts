@@ -37,6 +37,10 @@ import { formatWorldMapAuthorityBlock } from './worldMapAuthority.ts';
 import { formatCraftSnapshotLines } from './craftBookCompiler.ts';
 import { formatCoverChromeBindingLine } from './chromeAuthority.ts';
 import { alignFactionNotesToHook, formatHookBindingLine, resolveHookLock } from './hookLock.ts';
+import {
+  formatVignetteBindingLine,
+  formatVignetteSnapshotLine,
+} from './vignetteLock.ts';
 import { formatCameraBindingLine } from './travelAuthority.ts';
 import { formatLastKillSnapshotLine } from './combatAuthority.ts';
 // WS-2 Wave C: NPC Memory sections
@@ -318,6 +322,8 @@ export function formatSceneSnapshotForPrompt(state: GameState): string {
   if (emptySearch) lines.push(`- ${emptySearch}`);
   const lastKillLine = formatLastKillSnapshotLine(state.sceneFacts?.lastKill);
   if (lastKillLine) lines.push(`- ${lastKillLine}`);
+  const vignetteSnap = formatVignetteSnapshotLine(state);
+  if (vignetteSnap) lines.push(`- ${vignetteSnap}`);
   lines.push(`- ${weaponAuthorityLine(state)}`);
   lines.push('');
   // 29d — one AUTHORITY + PROSE LICENSE block (no duplicate STAGNATION / QUEST essays)
@@ -325,6 +331,8 @@ export function formatSceneSnapshotForPrompt(state: GameState): string {
   if (crowdBind) lines.push(`- ${crowdBind}`);
   const hookBind = formatHookBindingLine(state);
   if (hookBind) lines.push(`- ${hookBind}`);
+  const vignetteBind = formatVignetteBindingLine(state);
+  if (vignetteBind) lines.push(`- ${vignetteBind}`);
   const cameraBind = formatCameraBindingLine(state);
   if (cameraBind) lines.push(`- ${cameraBind}`);
   lines.push(`- ${formatCoverChromeBindingLine()}`);

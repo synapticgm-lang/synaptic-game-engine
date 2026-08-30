@@ -11,6 +11,8 @@ import {
   type PlayerIntent,
 } from './intentParser';
 import { isOfferOnlyUnansweredBeat } from './actionResolution';
+import { isPlayDemand } from './openingEstablishment';
+import { isAtmosphereOnlyBeat } from './semanticLoopDetector';
 
 function isPlayerQuestion(action: string): boolean {
   const t = action.replace(/\s+/g, ' ').trim();
@@ -28,7 +30,8 @@ export type ObligationKind =
   | 'talk'
   | 'observe'
   | 'open_ask'
-  | 'silenced_thread';
+  | 'silenced_thread'
+  | 'demand';
 
 export interface Obligation {
   id: string;
@@ -124,6 +127,16 @@ export function buildIntentContract(args: {
       kind: 'refuse',
       must: 'Treat this as refusal/protest. Narrate acknowledgment of the refusal in-fiction. Do not force compliance or invent consent.',
       source: typed.slice(0, 120),
+    });
+  }
+
+  // 31h — clear send-back / leave-room demand must not be answered with atmosphere-only
+  if (isPlayDemand(typed) || isPlayDemand(job)) {
+    obligations.push({
+      id: uid('demand', i++),
+      kind: 'demand',
+      must: `Acknowledge the player's demand in-fiction (send-back / leave / protest): "${job.slice(0, 120)}". Do not answer with smell/light atmosphere alone.`,
+      source: typed.slice(0, 160),
     });
   }
 
@@ -281,6 +294,24 @@ export function checkObligationCoverage(
           );
         if (!covered) notes.push('Talk/refuse obligation: no spoken exchange detected');
         break;
+      case 'demand': {
+        const demandAck =
+          /\b(send(?:s|ing)? (?:you |me )?(?:back|home)|cannot send|won'?t send|refuse(?:s|d)?|protest|go (?:back )?home|back to (?:your |my )?(?:world|earth)|not a pawn|bargain|acknowledge|hears? (?:you|your demand)|your demand)\b/i.test(
+            prose
+          )
+          || (/["“][^"”]{2,}["”]/.test(prose)
+            && /\b(back|home|earth|world|refuse|cannot|won'?t)\b/i.test(prose));
+        if (isAtmosphereOnlyBeat(prose) && !demandAck) {
+          covered = false;
+          notes.push('Demand obligation: atmosphere-only beat ignored player demand');
+        } else if (!demandAck) {
+          covered = false;
+          notes.push('Demand obligation: no in-fiction acknowledgment of send-back/leave');
+        } else {
+          covered = true;
+        }
+        break;
+      }
       case 'answer':
       case 'open_ask': {
         if (isOfferOnlyUnansweredBeat(prose)) {

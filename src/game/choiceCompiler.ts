@@ -5,15 +5,20 @@
 import type { GameState } from './types';
 import { canonicalizeIntent } from './semanticLoopDetector';
 import { filterCooldownChoices, type OptionCooldown } from './optionDiversityContract';
-import { isTopicExhausted } from './npcTopicFsm';
+import {
+  isTopicExhausted,
+  shouldForceNpcStageAdvance,
+  presentNpcForPads,
+} from './npcTopicFsm';
 import { hubsForBibleId, matchHub } from './outdoorHubs';
 import { enumerateLegalEdges, edgesToChoiceLabels } from './choiceEdge';
 import { isEncounterEngaged, fleeAvailable, parleyAvailable } from './encounterTerminalFsm';
 import { countPlayerIntentStreak, countLoiterFamilyStreak } from './beatFingerprint';
-import { isPyoaBranchLocked } from './pyoaBranchLedger';
+import { isPyoaBranchLocked, eligiblePyoaPadsAfterLock } from './pyoaBranchLedger';
 import { isNameOriginKitCoverChoice, isPlayDemand } from './openingEstablishment';
 import { isLookAroundAction } from './sandboxXp';
 import { isAtmospherePlaceName } from './questPlay';
+import { filterPadsAgainstOpenVignette } from './vignetteLock';
 
 export type PlayerIntentFamily = 'demand' | 'inspect' | 'flee' | 'name' | 'talk' | 'travel' | 'other';
 
@@ -53,11 +58,83 @@ function leftoverCoverOrOpeningChip(choice: string): boolean {
   );
 }
 
-function intentSupplements(family: PlayerIntentFamily): string[] {
+function isLookOrExamineRoomPad(choice: string): boolean {
+  return /\b(look around|examine the room|inspect the room|scout the (?:area|room|cell)|get (?:your )?bearings|whats going on|where am i)\b/i.test(
+    choice
+  );
+}
+
+function isGenericInspectPad(choice: string): boolean {
+  return (
+    isLookOrExamineRoomPad(choice)
+    || /\b(sift|search the (?:same|debris|rubble|room again)|look for anything else)\b/i.test(choice)
+  );
+}
+
+function isFirstSpeechLecturePad(choice: string): boolean {
+  return /\b(ask who (?:they|he|she) (?:are|is)|ask (?:them|him|her) (?:their|his|her) name|introduce yourself|ask what(?:'s| is) going on|ask (?:them )?to explain (?:everything|the situation)|hear (?:their|his|her) story)\b/i.test(
+    choice
+  );
+}
+
+function intentSupplements(family: PlayerIntentFamily, engaged: boolean): string[] {
+  if (engaged) {
+    if (family === 'flee') return ['Keep running', 'Try to flee', 'Find cover'];
+    if (family === 'demand') return ['Demand they stand down', 'Press the attack'];
+    return [];
+  }
   if (family === 'demand') return ['Demand they send you back', 'Argue you do not belong here', 'Wait and watch'];
-  if (family === 'inspect') return ['Examine the room', 'Check the exits', 'Wait and watch'];
+  if (family === 'inspect') return ['Check the exits', 'Wait and watch'];
   if (family === 'flee') return ['Keep running', 'Look for an exit', 'Find cover'];
+  if (family === 'talk') return ['Ask a direct question', 'Press for leverage'];
   return [];
+}
+
+/** Named interactable from last beat / props (chest, door, panel) for pad supplement. */
+export function namedPropPadsFromBeat(state: GameState): string[] {
+  const props = state.sceneFacts?.props ?? [];
+  const last = (state.sceneFacts?.lastBeat ?? '').toLowerCase();
+  const pads: string[] = [];
+  const consider = (re: RegExp, pad: string) => {
+    if (props.some((p) => re.test(p)) || re.test(last)) {
+      pads.push(pad);
+    }
+  };
+  consider(/\bchests?\b/i, 'Check the chest');
+  consider(/\bcrates?\b/i, 'Open the crate');
+  consider(/\b(door|doorway)\b/i, 'Try the door');
+  consider(/\b(blue )?panel\b/i, 'Inspect the panel');
+  return pads;
+}
+
+function inspectTargetExhausted(state: GameState, choice: string): boolean {
+  const canon = canonicalizeIntent(choice, state.turn);
+  const loc = (state.currentLocation ?? 'unknown').toLowerCase();
+  const ledger = state.qualityGovernance?.discoveryLedger ?? {};
+  const searchedEmpty = state.sceneFacts?.searchedEmpty ?? [];
+  const emptyContainers = state.sceneFacts?.emptyContainers ?? [];
+
+  if (isGenericInspectPad(choice)) {
+    const roomKey = `object:room@${loc}`;
+    const hereKey = `object:here@${loc}`;
+    if ((ledger[roomKey]?.inspectionCount ?? 0) >= 1 || (ledger[hereKey]?.inspectionCount ?? 0) >= 1) {
+      return true;
+    }
+    if (searchedEmpty.some((t) => /\b(here|room|debris|rubble|cell)\b/i.test(t))) return true;
+  }
+
+  if (canon.action === 'inspect' && canon.target) {
+    const target = canon.target.toLowerCase();
+    const evidenceKey = `object:${target}@${loc}`;
+    if ((ledger[evidenceKey]?.inspectionCount ?? 0) >= 1) return true;
+    if (searchedEmpty.some((t) => t.toLowerCase() === target || t.toLowerCase().includes(target))) {
+      return true;
+    }
+    if (emptyContainers.some((t) => t.toLowerCase() === target || t.toLowerCase().includes(target))) {
+      return true;
+    }
+  }
+  return false;
 }
 
 export type ChoiceFingerprintFamily =
@@ -220,10 +297,10 @@ export function recordHubBeat(
   gateType: HubGateType
 ): GameState {
   const records = state.arcDirector?.hubBeatRecords ?? [];
-  const existing = records.find(r => 
+  const existing = records.find(r =>
     r.hubId === hubId && r.gateType === gateType && r.turn === state.turn
   );
-  
+
   let nextRecords: HubBeatRecord[];
   if (existing) {
     nextRecords = records.map(r =>
@@ -235,7 +312,7 @@ export function recordHubBeat(
       { hubId, gateType, turn: state.turn, count: 1 }
     ].slice(-40); // Keep last 40 records
   }
-  
+
   return {
     ...state,
     arcDirector: {
@@ -248,25 +325,25 @@ export function recordHubBeat(
 /** B024 — Check if LitRPG hub exit deadline exceeded */
 export function shouldForceLitrpgHubExit(state: GameState): boolean {
   if (state.engineMode !== 'litrpg') return false;
-  
+
   const hub = matchHub(hubsForBibleId(state.campaignBibleId), state.currentLocation);
   if (!hub) return false;
-  
+
   const records = state.arcDirector?.hubBeatRecords ?? [];
   const hubRecords = records.filter(r => r.hubId === hub.id);
   if (!hubRecords.length) return false;
-  
+
   // Count non-travel beats
-  const loiterBeats = hubRecords.filter(r => 
+  const loiterBeats = hubRecords.filter(r =>
     r.gateType === 'loiter' || r.gateType === 'vendor'
   );
   const totalLoiter = loiterBeats.reduce((sum, r) => sum + r.count, 0);
-  
+
   // Force exit if too much loitering
   if (totalLoiter >= 4 && state.turn >= LITRPG_HUB_EXIT_DEADLINE) {
     return true;
   }
-  
+
   return false;
 }
 
@@ -299,7 +376,7 @@ export function checkGateDisposition(
       message: `Hub beats exhausted at this location — pick a crisis fork or talk path instead of ${target}.`,
     };
   }
-  
+
   // B024 — Check typed gate caps
   const hub = matchHub(hubsForBibleId(state.campaignBibleId), state.currentLocation);
   if (hub) {
@@ -313,7 +390,7 @@ export function checkGateDisposition(
       };
     }
   }
-  
+
   return null;
 }
 
@@ -369,9 +446,18 @@ export function compileChoices(
   const hardLoiter = loiter.count >= 4 && loiter.key === 'loiter';
   const stallInterrupt = hardStreak || hardLoiter;
   const pyoaLocked = state.engineMode === 'pyoa' && isPyoaBranchLocked(state);
+  const npc = presentNpcForPads(state);
+  const npcKey = npc
+    ? npc.toLowerCase().replace(/[^a-z0-9]+/g, '-').slice(0, 40)
+    : '';
+  const npcTacticAdvance =
+    !!npc
+    && (shouldForceNpcStageAdvance(state, npc)
+      || Object.keys(state.arcDirector?.topicCommits ?? {}).some((k) => k.includes(npcKey)));
+
   let filtered = choices.filter((c) => {
     const lower = c.toLowerCase();
-    if (pyoaLocked && /\b(buy time|call for help|wait and watch|wait)\b/.test(lower)) {
+    if (pyoaLocked && !eligiblePyoaPadsAfterLock(state, c)) {
       notes.push(`Branch lock drop: ${c.slice(0, 32)}`);
       return false;
     }
@@ -381,12 +467,16 @@ export function compileChoices(
       return false;
     }
     if (engaged) {
-      // 29a combat pad lock — no travel / merchant / Earth junk / generic hub inspect
+      // 29a/31h combat pad lock — no travel / merchant / Earth junk / look-around / examine room
       if (/\b(travel toward|go to|head to|browse|merchant|shop|earth junk|phone|headphones|leatherman|keys from earth)\b/.test(lower)) {
         notes.push(`Encounter lock: ${c.slice(0, 32)}`);
         return false;
       }
-      if (/\b(inspect|examine|check|study|look around|whats going on|where am i|wait and watch|walk away)\b/.test(lower) && !/\b(enemy|threat|wraith|hunter|wound|blade|guard|raider|bandit)\b/.test(lower)) {
+      if (isLookOrExamineRoomPad(c)) {
+        notes.push(`Encounter lock look/examine: ${c.slice(0, 32)}`);
+        return false;
+      }
+      if (/\b(inspect|examine|check|study|look around|whats going on|where am i|wait and watch|walk away)\b/.test(lower) && !/\b(enemy|threat|wraith|hunter|wound|blade|guard|raider|bandit|chest|corpse|body)\b/.test(lower)) {
         notes.push(`Encounter lock inspect: ${c.slice(0, 32)}`);
         return false;
       }
@@ -396,6 +486,17 @@ export function compileChoices(
       }
       if (/\b(parley|negotiate)\b/.test(lower) && !parleyAvailable(state.activeEncounter)) {
         notes.push('Parley exhausted');
+        return false;
+      }
+    } else if (/^engage the threat$/i.test(c.trim()) || /^change position$/i.test(c.trim())) {
+      // 31i — meta combat pads without a live encounter feed sealed stubs
+      notes.push(`No-threat combat drop: ${c.slice(0, 32)}`);
+      return false;
+    }
+    // 31i — after engine recovery, drop Wait/Status/Force-path that re-hit stubs
+    if ((state.sceneFacts?.engineRecoveryStreak ?? 0) > 0) {
+      if (/^(wait and watch|check status|force a path forward|change position|engage the threat)$/i.test(c.trim())) {
+        notes.push(`Post-recovery meta drop: ${c.slice(0, 32)}`);
         return false;
       }
     }
@@ -409,15 +510,10 @@ export function compileChoices(
       notes.push(`Cooldown family: ${family}`);
       return false;
     }
-    // Drop exhausted inspect targets
-    const canon = canonicalizeIntent(c, turn);
-    if (canon.action === 'inspect' && canon.target) {
-      const ledger = state.qualityGovernance?.discoveryLedger ?? {};
-      const evidenceKey = `object:${canon.target.toLowerCase()}@${(state.currentLocation ?? 'unknown').toLowerCase()}`;
-      if (ledger[evidenceKey]?.inspectionCount >= 1) {
-        notes.push(`Inspect exhausted: ${canon.target}`);
-        return false;
-      }
+    // P1-5 — Drop exhausted inspect / sift-same targets (not CRAFT-only)
+    if (inspectTargetExhausted(state, c)) {
+      notes.push(`Inspect exhausted: ${c.slice(0, 32)}`);
+      return false;
     }
     if (hubBeatExhausted(state, c)) {
       notes.push(`Hub beat exhausted: ${c.slice(0, 32)}`);
@@ -429,6 +525,27 @@ export function compileChoices(
     ) {
       notes.push(`Intent pad drop: ${c.slice(0, 32)}`);
       return false;
+    }
+    // After demand / flee, do not re-offer Examine the room as the lead stall
+    if ((intent === 'demand' || intent === 'flee') && isLookOrExamineRoomPad(c)) {
+      notes.push(`Intent stall drop: ${c.slice(0, 32)}`);
+      return false;
+    }
+    // P1-6 — NPC tactic: drop first-speech lecture chips once topics advanced
+    if (npcTacticAdvance && isFirstSpeechLecturePad(c)) {
+      notes.push(`NPC tactic drop: ${c.slice(0, 32)}`);
+      return false;
+    }
+    if (npc) {
+      const canon = canonicalizeIntent(c, turn);
+      const topic = `${canon.action}:${canon.target || 'general'}`.slice(0, 48);
+      if (
+        isTopicExhausted(npc, topic, state.arcDirector?.npcTopics)
+        && /\b(ask|talk|speak|listen|press)\b/i.test(c)
+      ) {
+        notes.push(`Topic exhausted pad: ${c.slice(0, 32)}`);
+        return false;
+      }
     }
     return true;
   });
@@ -451,6 +568,8 @@ export function compileChoices(
   if (legalEdges.length >= 3) {
     for (const label of edgeLabels) {
       if (filtered.some((f) => f.toLowerCase() === label.toLowerCase())) continue;
+      if (engaged && isLookOrExamineRoomPad(label)) continue;
+      if (pyoaLocked && !eligiblePyoaPadsAfterLock(state, label)) continue;
       filtered.push(label);
       if (filtered.length >= 6) break;
     }
@@ -459,6 +578,8 @@ export function compileChoices(
     const supplements: string[] = [];
     for (const label of edgeLabels) {
       if (!filtered.some((f) => f.toLowerCase() === label.toLowerCase())) {
+        if (engaged && isLookOrExamineRoomPad(label)) continue;
+        if (pyoaLocked && !eligiblePyoaPadsAfterLock(state, label)) continue;
         supplements.push(label);
       }
     }
@@ -474,13 +595,17 @@ export function compileChoices(
         } else {
           supplements.push('Choose the risky fork', 'Buy time', 'Call for help');
         }
+      } else if (npcTacticAdvance) {
+        supplements.push('Press for leverage', 'Change the subject', 'Walk away with consequence');
       } else if (state.engineMode === 'litrpg') {
-        supplements.push('Check Status', 'Ask what they want', 'Scout the exit');
+        // 31i — no Check Status / Wait spam under drought (same dead path)
+        supplements.push('Ask what they want', 'Scout the exit', 'Inspect the immediate surroundings');
       } else if (stallInterrupt) {
         // 29b/29c — no wait/walk-away/travel refill under hard streak/loiter
         supplements.push('Ask a direct question', 'Press for leverage', 'Scout the exit');
       } else {
-        supplements.push('Ask a direct question', 'Change position', 'Wait and watch');
+        // 31i — drop Change position / Wait (meta verbs that mapped to stubs)
+        supplements.push('Ask a direct question', 'Scout the exit', 'Inspect the surroundings');
       }
     }
     for (const s of supplements) {
@@ -488,6 +613,7 @@ export function compileChoices(
         const fam = classifyChoiceFamily(s);
         if (isStallFamily(fam)) continue;
       }
+      if (pyoaLocked && !eligiblePyoaPadsAfterLock(state, s)) continue;
       if (!filtered.some((f) => f.toLowerCase() === s.toLowerCase())) {
         filtered.push(s);
       }
@@ -496,14 +622,40 @@ export function compileChoices(
     notes.push(supplements.length ? 'Supplemented from edges/fallback' : 'Supplemented legal beat edges');
   }
 
-  const intentPads = intentSupplements(intent);
+  // Chest / named prop pads when GM named them and not exhausted
+  for (const pad of namedPropPadsFromBeat(state)) {
+    if (engaged && !/\bchest|crate|corpse|body\b/i.test(pad)) continue;
+    if (inspectTargetExhausted(state, pad)) continue;
+    if (!filtered.some((f) => f.toLowerCase() === pad.toLowerCase())) {
+      filtered.unshift(pad);
+      notes.push(`Prop pad: ${pad}`);
+    }
+  }
+
+  const intentPads = intentSupplements(intent, engaged);
   if (intentPads.length) {
     for (const pad of intentPads) {
+      if (pyoaLocked && !eligiblePyoaPadsAfterLock(state, pad)) continue;
+      if (inspectTargetExhausted(state, pad)) continue;
       if (!filtered.some((f) => f.toLowerCase() === pad.toLowerCase())) {
         filtered.unshift(pad);
       }
     }
     notes.push(`Intent pads: ${intent}`);
+  }
+
+  // Final pass: never leave Examine the room / Wait-Wait on locked PYOA or live encounter
+  filtered = filtered.filter((c) => {
+    if (engaged && isLookOrExamineRoomPad(c)) return false;
+    if (pyoaLocked && !eligiblePyoaPadsAfterLock(state, c)) return false;
+    return true;
+  });
+
+  // Batch C — open hub vignette: do not invent a brand-new social cast
+  const beforeVig = filtered.length;
+  filtered = filterPadsAgainstOpenVignette(state, filtered);
+  if (filtered.length < beforeVig) {
+    notes.push(`Vignette cast lock dropped ${beforeVig - filtered.length}`);
   }
 
   return {
