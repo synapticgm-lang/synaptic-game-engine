@@ -13,10 +13,17 @@ import { spawnSync } from 'node:child_process';
 import { existsSync, mkdirSync, readFileSync, readdirSync, writeFileSync } from 'node:fs';
 import { join, relative, resolve } from 'node:path';
 import { AUTO_IMPROVE_PATCH_ALLOWLIST } from '../../src/game/autoImproveAllowlist';
-import { resolveMinimaxAutoplayWriter } from '../../src/game/autoplayWriter';
+import {
+  MINIMAX_GATEWAY_FREE_MODEL,
+  MINIMAX_GATEWAY_FREE_MODEL_ALT,
+  resolveMinimaxAutoplayWriter,
+} from '../../src/game/autoplayWriter';
+import { STAGNATION_MID_WRITER_ENABLED } from '../../src/game/writerPolicy';
 import { enumeratePremadesOnce, type MatrixCombo } from '../../src/game/fateAutoplay';
 import { loadDotEnv } from './loadDotEnv';
 
+/** Keep in sync with Hud.tsx / index.html sgm-build. */
+const HUD_BUILD_STAMP = '2026-08-31k';
 const ROOT = resolve(process.cwd());
 
 type CellResult = {
@@ -338,9 +345,34 @@ async function main(): Promise<void> {
   );
   mkdirSync(curriculumRoot, { recursive: true });
 
+  // Stamp code baseline for morning review (no git commit).
+  const backupDir = join(opts.outRoot, '_pre-curriculum-backup');
+  mkdirSync(backupDir, { recursive: true });
+  const backupNote = {
+    at: new Date().toISOString(),
+    curriculumRoot: relative(ROOT, curriculumRoot),
+    hud: HUD_BUILD_STAMP,
+    midWriter: STAGNATION_MID_WRITER_ENABLED,
+    freeWriters: {
+      primary: MINIMAX_GATEWAY_FREE_MODEL,
+      secondary: MINIMAX_GATEWAY_FREE_MODEL_ALT,
+      policy: 'rotate on 429; never OpenRouter paid',
+    },
+    note: 'Restart from T50 ladder; dual free MiniMax rotation; Gemini Narration-only + game pad pastes.',
+  };
+  writeFileSync(
+    join(backupDir, `restart-${new Date().toISOString().replace(/[:.]/g, '-')}.json`),
+    JSON.stringify(backupNote, null, 2) + '\n'
+  );
+  writeFileSync(join(curriculumRoot, 'code-baseline.json'), JSON.stringify(backupNote, null, 2) + '\n');
+
   if (!opts.dryRun && opts.writer === 'minimax') {
     const w = resolveMinimaxAutoplayWriter();
     console.log(`[curriculum] writer ${w.route} ${w.model} — ${w.note}`);
+    console.log(
+      `[curriculum] free rotate pair: ${MINIMAX_GATEWAY_FREE_MODEL} ↔ ${MINIMAX_GATEWAY_FREE_MODEL_ALT}`
+    );
+    console.log(`[curriculum] mid writer OFF=${!STAGNATION_MID_WRITER_ENABLED} hud=${HUD_BUILD_STAMP}`);
   }
 
   let cells = enumeratePremadesOnce(opts.seed);

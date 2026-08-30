@@ -19,6 +19,8 @@ import { callGm } from './aiService';
 import {
   enableAutoplayWriter,
   getAutoplayWriterOverride,
+  getFreeWriterRotationState,
+  rotateFreeGatewayWriterOnRateLimit,
   type AutoplayWriterKind,
 } from './autoplayWriter';
 import { buildResolutionUserPayload } from './actionResolution';
@@ -784,6 +786,9 @@ async function callGmWithRetries(
         };
       }
       transportRetries = attempt + 1;
+      if (kind === 'rate_limit') {
+        rotateFreeGatewayWriterOnRateLimit('callGmWithRetries-rate_limit');
+      }
       const pauseMs = isDnsResolutionFailure(err)
         ? TURN_TRANSPORT_DNS_PAUSE_MS
         : transportRetryBackoffMs(attempt, kind);
@@ -1676,10 +1681,11 @@ export async function runFateAutoplay(opts: {
         writer: writerOverride
           ? {
               kind: writerOverride.kind,
-              model: writerOverride.model,
+              model: getAutoplayWriterOverride()?.model ?? writerOverride.model,
               baseUrl: writerOverride.baseUrl,
               route: writerOverride.route,
-              note: writerOverride.note,
+              note: getAutoplayWriterOverride()?.note ?? writerOverride.note,
+              startedModel: writerOverride.model,
             }
           : {
               kind: 'default',
@@ -1693,6 +1699,7 @@ export async function runFateAutoplay(opts: {
               route: getAutoplayWriterOverride()!.route,
             }
           : null,
+        writerRotation: getFreeWriterRotationState(),
       },
       null,
       2

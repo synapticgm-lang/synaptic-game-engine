@@ -287,8 +287,14 @@ async function dispatchLlm(
     return withRetry(() => callGoogle(prompt, systemPrompt, apiKey, model), onRetry);
   }
   if (provider === 'openrouter') {
-    const baseUrl = getAutoplayWriterOverride()?.baseUrl || settings.baseUrl;
-    return withRetry(() => callOpenRouter(prompt, systemPrompt, apiKey, model, baseUrl), onRetry);
+    // Re-read override each attempt so 429 rotation (m3-free ↔ m2.7-free) takes effect.
+    return withRetry(() => {
+      const autoplay = getAutoplayWriterOverride();
+      const key = autoplay?.apiKey || apiKey;
+      const m = autoplay?.model || model;
+      const base = autoplay?.baseUrl || settings.baseUrl;
+      return callOpenRouter(prompt, systemPrompt, key, m, base);
+    }, onRetry);
   }
   if (provider === 'anthropic') {
     return withRetry(() => callAnthropic(prompt, systemPrompt, apiKey, model), onRetry);

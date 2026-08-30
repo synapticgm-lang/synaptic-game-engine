@@ -2,11 +2,14 @@ import { describe, expect, it } from 'vitest';
 import { AUTO_IMPROVE_PATCH_ALLOWLIST } from './autoImproveAllowlist';
 import {
   MINIMAX_GATEWAY_FREE_MODEL,
+  MINIMAX_GATEWAY_FREE_MODEL_ALT,
   clearAutoplayWriterOverride,
   enableAutoplayWriter,
   getAutoplayWriterOverride,
+  getFreeWriterRotationState,
   resolveMinimaxAutoplayWriter,
   resolveMinimaxFreeCritic,
+  rotateFreeGatewayWriterOnRateLimit,
 } from './autoplayWriter';
 import {
   buildGameVibePaceCriticPrompt,
@@ -82,4 +85,32 @@ describe('autoplayWriter + dual critic + auto-improve rails', () => {
       expect(p.includes('supabase')).toBe(false);
     }
   });
+
+  it('rotates between two free Gateway models on 429 (never OpenRouter)', () => {
+    clearAutoplayWriterOverride();
+    const prevGw = process.env.AI_GATEWAY_API_KEY;
+    process.env.AI_GATEWAY_API_KEY = 'vercel-test-key';
+    try {
+      enableAutoplayWriter('minimax');
+      expect(getAutoplayWriterOverride()?.model).toBe(MINIMAX_GATEWAY_FREE_MODEL);
+      const next = rotateFreeGatewayWriterOnRateLimit('test');
+      expect(next).toBe(MINIMAX_GATEWAY_FREE_MODEL_ALT);
+      expect(getAutoplayWriterOverride()?.model).toBe(MINIMAX_GATEWAY_FREE_MODEL_ALT);
+      expect(getAutoplayWriterOverride()?.route).toBe('vercel-gateway-free');
+      const back = rotateFreeGatewayWriterOnRateLimit('test-2');
+      expect(back).toBe(MINIMAX_GATEWAY_FREE_MODEL);
+      const rot = getFreeWriterRotationState();
+      expect(rot.primary).toBe(MINIMAX_GATEWAY_FREE_MODEL);
+      expect(rot.secondary).toBe(MINIMAX_GATEWAY_FREE_MODEL_ALT);
+      expect(rot.switchCount).toBe(2);
+      const c = resolveMinimaxFreeCritic();
+      expect(c.alternateModels).toContain(MINIMAX_GATEWAY_FREE_MODEL_ALT);
+      expect(c.alternateModels.every((m) => m.includes('-free'))).toBe(true);
+    } finally {
+      if (prevGw === undefined) delete process.env.AI_GATEWAY_API_KEY;
+      else process.env.AI_GATEWAY_API_KEY = prevGw;
+      clearAutoplayWriterOverride();
+    }
+  });
+
 });

@@ -79,6 +79,10 @@ Auto-improve / curriculum **will** edit allowlisted `src/game/*` files without a
 
 Add `AI_GATEWAY_API_KEY` to `.env` for free Vercel MiniMax (promo ends ~2026-09-06). **Required** — OpenRouter fallback is off so the harness stays $0.
 
+**Dual free rotation on 429:** `minimax/minimax-m3-free` ↔ `minimax/minimax-m2.7-free` (same Gateway key). Tracked in `meta.json` → `writerRotation`. Never paid OpenRouter.
+
+**Gemini morning pastes:** Story lens = Narration-only (`story-narration-only.md`); Game lens = full Options/STATUS transcript. Auto MiniMax dual-critic still runs overnight.
+
 Gemini Pro: dual-review writes `*__gemini-pro-PASTE.md` for morning paste — **never** called via OpenRouter.
 
 ## Free-tier limits (autoplay only)

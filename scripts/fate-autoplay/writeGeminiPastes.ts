@@ -75,7 +75,7 @@ function writePastesForRun(runDir: string, outRoot?: string, maxChars = 100_000)
       writerModel,
       agent,
     }) +
-    '\n\nNOTE: Transcript is **Narration-only**. Ignore Options/STATUS/Craft chrome. Treat `[engine fallback ×N]` as collapsed stubs, not book prose.';
+    '\n\nNOTE: Transcript is **Narration-only** (prose chapters only). Ignore Options chips / STATUS / Craft chrome entirely — those are for the GAME lens. Treat `[engine fallback ×N]` as collapsed stubs, not book prose.';
   const gameBrief = buildGameVibePaceCriticPrompt({
     bibleTitle,
     engineMode,

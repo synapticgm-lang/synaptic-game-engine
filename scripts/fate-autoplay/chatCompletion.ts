@@ -1,6 +1,7 @@
 /**
  * Shared OpenAI-compatible chat helper for autoplay critic / patcher.
  * Batch D: retry on 429 / rate_limit / DNS with backoff (do not poison ladder).
+ * Dual free: on 429, try alternateModels (m3-free <-> m2.7-free) before failing.
  */
 export async function chatCompletion(opts: {
   baseUrl: string;
@@ -13,10 +14,17 @@ export async function chatCompletion(opts: {
   timeoutMs?: number;
   /** Max attempts including the first (default 3). */
   maxAttempts?: number;
+  /** Free Gateway alternates to try after 429 (never paid OpenRouter). */
+  alternateModels?: string[];
 }): Promise<string> {
   const base = opts.baseUrl.replace(/\/$/, '');
   const url = `${base}/chat/completions`;
   const maxAttempts = Math.max(1, Math.min(5, opts.maxAttempts ?? 3));
+  const modelQueue = [opts.model, ...(opts.alternateModels ?? [])].filter(
+    (m, i, a) => !!m && a.indexOf(m) === i
+  );
+  let modelIdx = 0;
+  let model = modelQueue[0];
   let lastErr: Error | null = null;
 
   for (let attempt = 1; attempt <= maxAttempts; attempt++) {
@@ -31,7 +39,7 @@ export async function chatCompletion(opts: {
         },
         signal: controller.signal,
         body: JSON.stringify({
-          model: opts.model,
+          model,
           temperature: opts.temperature ?? 0.2,
           max_tokens: opts.maxTokens ?? 8192,
           messages: [
@@ -46,15 +54,21 @@ export async function chatCompletion(opts: {
           res.status === 429 ||
           res.status === 503 ||
           /rate[_ ]?limit|too many requests/i.test(errBody);
-        const err = new Error(`chat ${opts.model} HTTP ${res.status}: ${errBody.slice(0, 500)}`);
+        const err = new Error(`chat ${model} HTTP ${res.status}: ${errBody.slice(0, 500)}`);
         if (retryable && attempt < maxAttempts) {
+          if (res.status === 429 && modelIdx + 1 < modelQueue.length) {
+            modelIdx += 1;
+            const next = modelQueue[modelIdx];
+            console.warn(`[chatCompletion] 429 on ${model} — rotate to free alternate ${next}`);
+            model = next;
+          }
           const retryAfter = Number(res.headers.get('retry-after') || 0);
           const waitMs = Math.max(
             retryAfter > 0 ? retryAfter * 1000 : 0,
             2000 * attempt * attempt
           );
           console.warn(
-            `[chatCompletion] ${res.status} attempt ${attempt}/${maxAttempts} — backoff ${waitMs}ms`
+            `[chatCompletion] ${res.status} attempt ${attempt}/${maxAttempts} model=${model} — backoff ${waitMs}ms`
           );
           await sleep(waitMs);
           lastErr = err;

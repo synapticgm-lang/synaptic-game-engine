@@ -117,7 +117,7 @@ async function main(): Promise<void> {
     const body = isStory ? storyBody : fullBody;
     const brief = isStory
       ? buildStoryStandaloneCriticPrompt({ bibleTitle, engineMode, turns, writerModel, agent }) +
-        '\n\nNOTE: Transcript is Narration-only. Treat `[engine fallback ×N]` as collapsed stubs.'
+        '\n\nNOTE: Transcript is **Narration-only** (no Options chips, no STATUS). Do NOT judge choice pads as book prose. Treat `[engine fallback ×N]` as collapsed stubs, not chapters.'
       : buildGameVibePaceCriticPrompt({ bibleTitle, engineMode, turns, writerModel, agent });
 
     // Morning paste pack for Gemini Pro (no API call) — always written
@@ -148,11 +148,12 @@ async function main(): Promise<void> {
         baseUrl: critic.baseUrl,
         apiKey: critic.apiKey,
         model: critic.model,
+        alternateModels: critic.alternateModels,
         system: brief,
         user: body + jsonTail,
         temperature: 0.2,
         maxTokens: 6144,
-        maxAttempts: 3,
+        maxAttempts: 4,
       });
       writeFileSync(join(outDir, file), text + '\n', 'utf8');
       index.push({ file, reviewer: 'minimax', model: critic.model, route: critic.route, lens, status: 'ok' });
