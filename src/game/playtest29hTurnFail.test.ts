@@ -47,7 +47,8 @@ describe('playtest29h — opening GM call + turn-fail class', () => {
   });
 
   it('callOpeningGm sends a non-empty opening sentinel to callGm', () => {
-    expect(aiService).toContain("trim() || '(opening)'");
+    expect(aiService).toContain("|| '(opening)'");
+    expect(aiService).toContain('buildOpeningGmPlayerInput');
     expect(aiService).toContain('openingInput');
     expect(gmTurn).not.toMatch(/error:\s*'playerInput is required'/);
     expect(gmTurn).toContain("|| '(opening)'");

@@ -14,6 +14,7 @@ import { gmProxyTimeoutMsForState } from './errorRepairWarden';
 import { effectiveWriterTier } from './testLab';
 import { logApiLatency } from '../services/telemetryService';
 import { getAutoplayWriterOverride } from './autoplayWriter';
+import { buildOpeningGmPlayerInput } from './openingPointerCard';
 
 export type { GmResult } from './aiServiceShared';
 export { RateLimitError, withRetry } from './aiServiceShared';
@@ -102,7 +103,10 @@ export async function callOpeningGm(
   });
   const started = Date.now();
   // New Game / first-page continue used to send '' — gm-turn 400'd "playerInput is required".
-  const openingInput = (playerInput ?? '').trim() || '(opening)';
+  const typed = (playerInput ?? '').trim();
+  const openingInput = (typed && typed !== '(opening)'
+    ? typed
+    : buildOpeningGmPlayerInput(state, typed)) || '(opening)';
   try {
     const result = await callGm(state, openingInput, settings, [], undefined, signal, timeoutMs);
     const text = (result.text ?? '').trim();

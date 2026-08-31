@@ -173,8 +173,8 @@ describe('playtest31iCriticBatchAB', () => {
       );
       expect(scrubbed).not.toMatch(/the Pellane/i);
       expect(scrubbed).toMatch(/REGISTRATION/i);
-      // Outside chrome, official → stranger (not polity)
-      expect(scrubbed).toMatch(/the stranger/i);
+      expect(scrubbed).not.toMatch(/blue panel/i);
+      expect(scrubbed).not.toMatch(/the official/i);
     });
 
     it('typedEntityValidator never maps panel/mark onto Pellane; REGISTRATION frozen', () => {

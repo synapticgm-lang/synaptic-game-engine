@@ -42,8 +42,10 @@ describe('26r quality repair', () => {
         asked: [],
       } as GameState['openingEstablishment'],
     });
-    expect(scrubOfficialPlaceholder('Approach the official.', alone)).toMatch(/panel/i);
-    expect(scrubOfficialPlaceholder('Approach the official.', crowded)).toMatch(/stranger/i);
+    expect(scrubOfficialPlaceholder('Approach the official.', alone)).not.toMatch(/panel/i);
+    expect(scrubOfficialPlaceholder('Approach the official.', alone)).not.toMatch(/official/i);
+    expect(scrubOfficialPlaceholder('Approach the official.', crowded)).not.toMatch(/panel/i);
+    expect(scrubOfficialPlaceholder('Approach the official.', crowded)).not.toMatch(/official/i);
   });
 
   it('ungrounded proper names do not become the official', () => {

@@ -30,6 +30,7 @@ import { resolvePanelBudget } from './panelBudget.ts';
 import { buildArchetypeRules, getDefaultArchetype } from './archetypes.ts';
 import { formatCustomTabletopRulesForPrompt } from './customTabletopRules.ts';
 import { calculateMemoryBudget } from './campaignMemory.ts';
+import { compileLitrpgCoreIdentity } from './openingPointerCard.ts';
 
 /**
  * ═══════════════════════════════════════════════════════════════════════════
@@ -134,7 +135,7 @@ ENGINE MODE DNA — LITRPG (BINDING)
 
 【 CORE IDENTITY 】
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Modern Integration Earth. Blue System panels. Dungeon cores. Wave threats.
+{{LITRPG_CORE_IDENTITY}}
 Visceral physics: weight, impact, stamina. Zone threat is HONEST — no soft-scaling.
 
 【 NARRATIVE VOICE 】
@@ -168,10 +169,10 @@ HIDDEN CHECK MATH (MANDATORY):
 
 【 TURN STRUCTURE TEMPLATE 】
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-1. NARRATIVE (2-6 sentences | 100-180 words)
+1. NARRATIVE (one new concrete — a fact, tactic, cost, exit, or honest empty)
    • Answer player's action with concrete physics
    • Visceral body consequences
-   • Scene grounding (light, weight, sound)
+   • Scene grounding only when it serves the delta — do not pad smell/light essays
 
 2. SYSTEM CHROME (optional, only if material)
    <system>Level Up! INT +1. Skill Unlocked: Mana Sense</system>
@@ -513,7 +514,7 @@ export function buildMasterPrompt(
   
   // Select active mode block
   const modeBlock = {
-    litrpg: MODE_LITRPG,
+    litrpg: MODE_LITRPG.replace('{{LITRPG_CORE_IDENTITY}}', compileLitrpgCoreIdentity(state)),
     dnd: MODE_DND,
     rpg: MODE_RPG,
     pyoa: MODE_PYOA,

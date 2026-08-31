@@ -12,6 +12,7 @@ const destDir = path.join(root, 'supabase', 'functions', '_shared', 'gm');
 const FILES = [
   'types.ts',
   'systemPrompt.ts',
+  'masterPrompt.ts',
   'archetypes.ts',
   'inventory.ts',
   'panelBudget.ts',
@@ -30,6 +31,7 @@ const FILES = [
   'sceneManifest.ts',
   'introductionPermit.ts',
   'campaignContract.ts',
+  'openingPointerCard.ts',
   'gmVoiceProfile.ts',
   'fluidProseRails.ts',
   'folkVoiceExpectations.ts',

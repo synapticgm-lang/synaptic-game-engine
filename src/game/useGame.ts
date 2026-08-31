@@ -22,15 +22,16 @@ import {
   gameStateToLocalSlot,
 } from './cloudSync';
 import { filterSystemLogForEngine, suppressNoOpStatusEcho, reconcileXpStatusLines } from './systemLog';
-import { callGm, callGmAutoFight, callOpeningGm, type GmResult } from './aiService';
+import { callGm, callOpeningGm, type GmResult } from './aiService';
 import { gmProxyHost } from './gmProxy';
-import { simulateCombat, buildAutoFightPrompt } from './combat';
+import { simulateCombat } from './combat';
 import type { EnemyStats } from './combat';
 import {
   autoFightSpawnPreface,
   commitAutoFightLedger,
   ensureEncounterSpawnPreface,
   lastGmMentionsEnemy,
+  narrateAutoFightTemplate,
   scrubBeastifiedHumanoid,
 } from './combatAuthority';
 import { isAutoFightWarningDismissed } from '@/components/AutoFightWarningModal';
@@ -121,6 +122,12 @@ import {
   stitchOpeningContinue,
   stitchOpeningScene,
 } from './openingStitch';
+import {
+  classifyOpeningContinue,
+  compilePointerCardSlots,
+  formatOpeningCardChrome,
+  openingInventBudgetZero,
+} from './openingPointerCard';
 import { applyCommittedNarrative, extractSceneFacts, seedOpeningSceneFacts, rewriteContinuityBreak, detectSceneContradiction } from './sceneFacts';
 import { applyFactLocks, detectFactLockViolations } from './factLocks';
 import { dropInsultGear } from './wornGear';
@@ -2222,9 +2229,12 @@ export function useGame() {
               turnAbort.signal,
             );
             if (story) {
-              openingRaw = story;
-              openingText = story;
-              gmAuthored = true;
+              const classified = classifyOpeningContinue(openingState, story);
+              if (classified.accept && classified.prose.trim()) {
+                openingRaw = story;
+                openingText = classified.prose;
+                gmAuthored = true;
+              }
             }
           } catch (gmError) {
             debugLogger.record('WARN', 'Opening continue GM failed — stitch fallback', {
@@ -2241,9 +2251,12 @@ export function useGame() {
               turnAbort.signal,
             );
             if (story) {
-              openingRaw = story;
-              openingText = story;
-              gmAuthored = true;
+              const classified = classifyOpeningContinue(openingState, story);
+              if (classified.accept && classified.prose.trim()) {
+                openingRaw = story;
+                openingText = classified.prose;
+                gmAuthored = true;
+              }
             }
           } catch (gmError) {
             debugLogger.record('WARN', 'Opening GM failed — stitch fallback', {
@@ -2787,6 +2800,9 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
         );
         const recentGmBeats = recentGmBeatTexts(liveCurrent);
         const nearClone = isNearClone(probeText, liveCurrent.recentBeatFingerprints ?? []);
+        const inventGate = openingInventBudgetZero(liveCurrent)
+          ? classifyOpeningContinue(liveCurrent, probeText)
+          : { accept: true, prose: probeText, reasons: [] as string[] };
         const collageReject = shouldRetryUnaskedCollage(probeText, recentGmBeats, sanitizedInput);
         const askedRepeat = playerAsksRepeat(sanitizedInput);
         const askedContinue = playerAsksContinuation(sanitizedInput);
@@ -2814,6 +2830,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
             || sameBeat
             || nearClone
             || collageReject
+            || !inventGate.accept
             || probeLocks.some((l) => l.kind === 'weapon' || l.kind === 'cleared'));
         // Fact-lock slips are cut locally after this. Only burn extra GM calls when
         // the turn did not resolve the player's action at all, or returned no story.
@@ -2915,6 +2932,14 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
             turn: liveCurrent.turn,
             factLocks: probeLocks.map((v) => v.kind),
           });
+        }
+
+        if (openingInventBudgetZero(liveCurrent)) {
+          const gated = classifyOpeningContinue(liveCurrent, probeText);
+          if (gated.prose && gated.prose !== probeText) {
+            probeText = gated.prose;
+            result = { ...result, text: gated.prose };
+          }
         }
 
         // Paid-turn value floor: skimpy 1–2 liners get one free expand (same turn charge).
@@ -4776,6 +4801,18 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
     const pendingCovers = pendingRequiredCovers(openingPrompts, mergedCharacter, openingMode);
     const pickedHook = picked?.text;
     const pickedHookFallback = picked?.fallback;
+    const pickedHookId = compilePointerCardSlots({
+      ...namedSeeded,
+      currentLocation: picked?.location || namedSeeded.currentLocation,
+      openingEstablishment: {
+        pending: [],
+        answers: {},
+        complete: false,
+        pickedHook,
+        pickedHookFallback,
+        aloneArrival,
+      },
+    } as GameState)?.id;
     const seededHookLock = seedHookLockFromPickedHook(pickedHook, pickedHookFallback, 0);
     const honeymoon = storyStartTextTurnsForTier(settingsRef.current.subscriptionTier ?? 'free');
     const rawNewState: GameState = clampLeakedOpeningQuests({
@@ -4807,6 +4844,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
         sceneWritten: false,
         mode: openingMode,
         pickedHook,
+        pickedHookId,
         pickedHookFallback,
         aloneArrival,
         hookLock: seededHookLock,
@@ -4890,28 +4928,61 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
     setBusy(true);
     setError(null);
     try {
-      // GM-authored opener (silent fallback to stitch on fail)
-      let openingRaw = '';
-      let openingText = '';
+      // Stitch first — page 1 is a committed card scene. GM continues that lock.
+      const stitchText = stitchOpeningScene(newState);
+      const openingTurnEarly = newState.turn + 1;
+      const seededEarly = seedOpeningSceneFacts({ ...newState, turn: openingTurnEarly });
+      const factsEarly = applyCommittedNarrative(
+        { ...newState, sceneFacts: seededEarly, turn: openingTurnEarly },
+        stitchText,
+        openingTurnEarly
+      );
+      const lockedEst = newState.openingEstablishment
+        ? { ...newState.openingEstablishment, sceneWritten: true }
+        : newState.openingEstablishment;
+      const stitchGmEarly: LogEntry = {
+        id: uid(),
+        turn: newState.turn,
+        role: 'gm',
+        content: stitchText,
+        timestamp: Date.now(),
+        systemLog: [formatOpeningCardChrome(newState)],
+      };
+      const lockedOpening: GameState = {
+        ...newState,
+        turn: openingTurnEarly,
+        sceneFacts: factsEarly,
+        log: [stitchGmEarly],
+        openingEstablishment: lockedEst,
+        lastUpdated: Date.now(),
+      };
+      stateRef.current = lockedOpening;
+      setState(lockedOpening);
+      void persist(lockedOpening);
+
+      let openingRaw = stitchText;
+      let openingText = stitchText;
       let gmAuthored = false;
-      
+
       try {
-        const story = await callOpeningGm(newState, '', settingsRef.current);
+        const story = await callOpeningGm(lockedOpening, '', settingsRef.current);
         if (story) {
-          openingRaw = story;
-          openingText = story;
-          gmAuthored = true;
+          const classified = classifyOpeningContinue(lockedOpening, story);
+          if (classified.accept && classified.prose.trim()) {
+            openingRaw = story;
+            openingText = classified.prose;
+            gmAuthored = true;
+          }
         }
       } catch (gmError) {
-        debugLogger.record('WARN', 'New Game opening GM failed — stitch fallback', {
+        debugLogger.record('WARN', 'New Game opening GM failed — keep stitch', {
           error: gmError instanceof Error ? gmError.message : String(gmError),
         });
         logger.debug('Opening GM call failed, using stitch fallback', gmError);
       }
-      
-      // Fallback to stitch if GM failed
+
       if (!gmAuthored) {
-        openingText = stitchOpeningScene(newState);
+        openingText = stitchText;
       }
       
       openingText = ensureSystemReceipt(newState, sanitizeOpeningNarration(openingText));
@@ -4982,6 +5053,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
         content: cleanOpening,
         timestamp: Date.now(),
         systemLog: [
+          formatOpeningCardChrome(newState),
           ...litrpgOpeningSystemPing(newState),
           ...openingUnlocks.map((q) => `Quest Unlocked: ${q.name}`),
         ],
@@ -5138,16 +5210,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
     try {
       let liveCurrent = startState;
       const result = simulateCombat(liveCurrent, enemy);
-      const prompt = buildAutoFightPrompt(liveCurrent, enemy, result);
-
-      let narrativeText: string;
-      try {
-        narrativeText = await callGmAutoFight(liveCurrent, prompt, settingsRef.current, (attempt, delayMs) => {
-          debugLogger.record('API_RETRY', `callGmAutoFight retry ${attempt}`, { delayMs });
-        });
-      } catch {
-        narrativeText = result.summary;
-      }
+      let narrativeText = narrateAutoFightTemplate(enemy.name, result);
 
       narrativeText = postFilterGmOutput(narrativeText, settingsRef.current);
       if (settingsRef.current.contentMode === 'kid') {

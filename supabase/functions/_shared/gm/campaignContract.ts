@@ -58,7 +58,11 @@ export function freezeCampaignContract(
     startingLocation: state.currentLocation || bible?.startingLocation || '',
     kitRail,
     starterQuestIds,
-    pickedHookId: state.openingEstablishment?.pickedHook ?? null,
+    pickedHookId:
+      state.openingEstablishment?.pickedHookId
+      ?? (state.openingEstablishment?.pickedHook
+        ? state.openingEstablishment.pickedHook.slice(0, 48)
+        : null),
     frozenTurn: state.turn,
     frozenAt: Date.now(),
   };
@@ -138,12 +142,13 @@ export function mergeCampaignDivergences(state: GameState): GameState {
 export function formatCampaignContractForPrompt(state: GameState): string {
   const c = state.campaignContract;
   if (!c) return '';
+  const hookId = c.pickedHookId?.trim();
   return `=== CAMPAIGN CONTRACT (IMMUTABLE OPENING RAILS) ===
 Story: ${c.storyName}
 Bible: ${c.bibleId || 'none'}
 Hero: ${c.characterName}
 Start place: ${c.startingLocation || '—'}
-Kit rail: ${c.kitRail.join(', ') || 'none'}
+${hookId ? `Pointer card: ${hookId.slice(0, 80)}\n` : ''}Kit rail: ${c.kitRail.join(', ') || 'none'}
 Premise: ${(c.premise || '—').slice(0, 220)}
 RULES: Do not rewrite the hero's established name/identity without a player correction. Do not replace the premise with a different campaign. New named kit beyond the rail needs Introduction Permit or player naming.
 =======================================================`;

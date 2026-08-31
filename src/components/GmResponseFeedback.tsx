@@ -7,6 +7,7 @@ import {
   type GmFeedbackType,
 } from '@/services/gmFeedbackService';
 import { isSupabaseConfigured } from '@/lib/supabase';
+import { noteThumbsDownFeedback } from '@/game/craftBookCompiler';
 
 interface Props {
   saveId: string;
@@ -96,6 +97,7 @@ export function GmResponseFeedback({
     setSaving(false);
     
     if (result.ok) {
+      if (type === 'down') noteThumbsDownFeedback(turnNumber);
       setSaved(true);
       setTimeout(() => setSaved(false), 2000);
     } else {

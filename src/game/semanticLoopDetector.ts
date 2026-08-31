@@ -484,6 +484,9 @@ export function isStallPadChoice(choice: string): boolean {
   ) {
     return true;
   }
+  // Repeated area-scouting verbs that pad the same beat in different words.
+  const lower = choice.toLowerCase();
+  if (/\b(scout (?:for )?(?:danger|the (?:area|room|exit|surroundings?|perimeter))|scout (?:the )?(?:area|room|exit|surroundings?|perimeter)|scout ahead|scout the (?:area|room|exit|surroundings?))\b/i.test(lower)) return true;
   return false;
 }
 

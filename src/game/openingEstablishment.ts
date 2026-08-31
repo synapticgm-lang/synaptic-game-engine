@@ -17,6 +17,7 @@ import {
   isLockablePcName,
   sanitizePcName,
 } from './pcNameAuthority';
+import { compilePointerCardSlots, formatPointerCardSlotBlock } from './openingPointerCard';
 
 const GENERIC_NAMES = /^(adventurer|survivor|unknown survivor|hero|wanderer|unknown)$/i;
 
@@ -1844,54 +1845,30 @@ export function ensureSystemReceipt(state: GameState, narrative: string): string
 }
 
 export function buildOpeningSceneMandate(state: GameState, notes?: string): string {
-  const canon = formatPlayerCanon(state) || 'Use the campaign bible. Do not invent a different premise.';
   const extra = notes?.trim() ? `\nPlayer just said/asked: ${notes.trim()}\n` : '';
-  const bible = resolveActiveCampaignBible(state);
   const cover = state.openingEstablishment?.pending[0];
   const coverLine = cover
-    ? `End by weaving this ONE in-world question into the scene (not a form, not [ SYSTEM ] unless the bible is a System-panel moment): ${cover.question}`
-    : 'Do not ask chargen questions. The first page is playable.';
-  const systemPing =
-    state.engineMode === 'litrpg'
-      ? 'LitRPG: emit one short <system> registration ping (readable lines, not “incomprehensible symbols”). Code also paints the Status window — glance at the panel, do not replace it with mysticism.'
-      : '';
-  const hookText = state.openingEstablishment?.pickedHook?.trim()
-    || resolveOpeningHook(bible, state.seed);
-  const hook = hookText
-    ? `Hook POINTER CARD (expand into a unique first page — do not reprint as a script, do not lecture the player):\n${hookText}\n`
+    ? `Weave this ONE in-world question into the continued beat (not a form): ${cover.question}`
+    : 'Do not ask chargen questions.';
+  const slots = compilePointerCardSlots(state);
+  const slotBlock = slots
+    ? formatPointerCardSlotBlock(slots, state.openingEstablishment?.sceneWritten ? 'continue' : 'establish')
     : '';
   if (state.openingEstablishment?.sceneWritten) {
     return `=== OPENING CONTINUE (BINDING) ===
-${canon}
+${slotBlock}
 ${extra}
-The opening scene is ALREADY written. Do not restart. Do not reprint a registration form. Do not write "The particulars settle" or any form-lock line.
-Continue THIS scene (same place, same people) in 3–6 sentences.
-Show the locked look and kit as visible facts in the camera — code already owns the ledger.
-Honor the configured PERSPECTIVE for the entire beat. Spoken lines must be grammatical. Never emit "a figure" as a name, "the a", or "unlock someone".
-The camera is HERE. Do not relocate the PC by calling this interior "a nearby building/place/hall." Nearby is for things that are not here.
-Then 3–4 local choices grounded in the continued beat. At least one must change the situation — kind/help, hard/refuse, talk/ask, or walk away — not three flavours of look around.
+The opening scene is ALREADY written. Continue THIS scene (same place, same people, same why).
+Do not restart. Do not invent a new room, crowd, or summon-why.
+${coverLine}
 ================================================`;
   }
   return `=== OPENING (BINDING) ===
-${canon}
+${slotBlock}
 ${extra}
-${hook}
-Write THIS run's first page from the pointer card and the campaign bible. Unique camera each New Game — not a template, not a registration form, not a reprint of the pointers.
-
-Genre practice (honor the story type):
-- CYOA / Choice of Games / PYOA: drop into the crisis. No name form.
-- LitRPG / System apocalypse: ordinary street first, then the panel as a moment. Earth is NOT being ingested.
-- Isekai summon: arrive in THIS run's picked place (not always a cathedral circle — may be alone in a ruin with no summoners). People talk when people are present; clothes are a look-down; origin is the Earth place the light took you from. Camera is HERE, not Earth. If the pointer card includes an opening offer, someone in the scene can voice it — the player may refuse. Alone cards: no welcoming NPC on page one; name/look/kit covers come from the blue panel or a look-down, never “someone in the scene.”
-- Mystery / romance / space horror: body, door, or bulkhead already in motion.
-
-1) 4–7 sentences of story in the seeded place. Honor the configured PERSPECTIVE for the entire beat. Full grammatical English — no telegram fragments ("Mass summon. Politics in the first breath.").
-2) Never print Confirm designation / Visual profile / Location logged / Setup complete.
-3) ${coverLine}
-4) Do not add weapons or rare items to the sheet. NPCs may OFFER gear as a bargain (pact, enlistment, release). Describe the offer; do not invent it onto inventory until the player accepts. Until then, only kit already on the sheet exists. Do not lecture "nobody gets a sword."
-5) Spoken lines must be grammatical. Never emit "a figure" as a name, "the a", or "unlock someone".
-6) The camera is HERE. Do not relocate the PC by calling this interior "a nearby building/place/hall." Nearby is for things that are not here.
-7) ${systemPing}
-8) Then 3–4 local choices grounded in THAT opening. At least one choice must change the situation (kind/help, hard/refuse, talk a stake, or walk away) — not three flavours of look around / wait.
+Write THIS run's first page from the slots above. Do not lecture genre. Do not reprint the slots as a script.
+${coverLine}
+Do not add weapons to the sheet. Do not invent named people or places beyond WHERE / WHO.
 ================================================`;
 }
 

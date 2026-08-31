@@ -15,7 +15,7 @@ import { atMappedHubAfterOpening, hubArrivalChoicePads } from './hubEncounters';
 import { isAtmospherePlaceName, resumeMainTravelChoice } from './questPlay';
 import { isAloneArrivalOpening } from './openingEstablishment';
 import { isInteriorMap } from './placeAuthority';
-import { listInteriorExitsFromHere } from './mapEngine';
+import { graphExitPads, listInteriorExitsFromHere } from './mapEngine';
 
 /**
  * 4-tier narrative pipeline (authoritative ordering for choice generation):
@@ -689,16 +689,22 @@ export function sceneSafeFallbacks(
     const dungeon = state.activeDungeon;
     let hasDungeonExitChoice = false;
     if (dungeon && isInteriorMap(dungeon)) {
-      const exits = listInteriorExitsFromHere(dungeon);
-      const door = exits.find((e) => e.kind === 'door' || e.kind === 'stairs');
-      if (door) {
-        if (!isAtmospherePlaceName(door.name)) {
-          options.push(`Approach the ${door.noun} to ${door.name}`);
+      const graphPads = graphExitPads(dungeon);
+      if (graphPads.length) {
+        options.push(...graphPads);
+        hasDungeonExitChoice = true;
+      } else {
+        const exits = listInteriorExitsFromHere(dungeon);
+        const door = exits.find((e) => e.kind === 'door' || e.kind === 'stairs');
+        if (door) {
+          if (!isAtmospherePlaceName(door.name)) {
+            options.push(`Approach the ${door.noun} to ${door.name}`);
+          }
+          hasDungeonExitChoice = true;
+        } else if (exits[0]) {
+          options.push(`Approach the ${exits[0].noun} cautiously`);
+          hasDungeonExitChoice = true;
         }
-        hasDungeonExitChoice = true;
-      } else if (exits[0]) {
-        options.push(`Approach the ${exits[0].noun} cautiously`);
-        hasDungeonExitChoice = true;
       }
     }
     if (/\b(gap|door|arch|doorway|rubble|debris|stone|corridor)\b/i.test(storyProse)) {

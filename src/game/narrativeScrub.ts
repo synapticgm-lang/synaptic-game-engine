@@ -227,37 +227,61 @@ export function scrubSomeoneNearbyActor(text: string, alone = false): string {
  * Keep it only when the scene already has an official/registrar; else → stranger / panel / grounded present.
  * Never rewrite REGISTRATION / STATUS chrome fields (Batch B — the Pellane: spam).
  */
+function dropPlaceholderActorClauses(text: string): string {
+  return text
+    .replace(/\b(?:the|an) official(?:'s|’s)?\b/gi, '')
+    .replace(/\bthe king(?:'s|’s)?\b/gi, '')
+    .replace(/\b(?:a|the) (?:lone )?figure\b/gi, '')
+    .replace(/\s{2,}/g, ' ')
+    .replace(/\s+([,.;:!?])/g, '$1')
+    .replace(/^[,\s]+/gm, '')
+    .replace(/\(\s*\)/g, '')
+    .trim();
+}
+
+/**
+ * Allowlist-only: official / King / figure may become a *real present person*.
+ * Never map them onto the blue panel. If no person, drop the clause.
+ */
 export function scrubOfficialPlaceholder(text: string, state: GameState): string {
   if (!text) return text;
-  if (!/\bthe official\b|\ban official\b/i.test(text)) {
+  if (!/\bthe official\b|\ban official\b|\bthe king\b|\ba figure\b|\bthe figure\b/i.test(text)) {
     return scrubPolityBleedInChrome(text);
   }
-  const grounded =
+  const groundedOfficial =
     /\b(official|registrar|clerk|envoy|taxman|alderman)\b/i.test(
       [
-        ...(state.sceneFacts?.present ?? []).map((p) =>
-          typeof p === 'string' ? p : (p as { name?: string })?.name ?? ''
+        ...realPresentPeople(
+          (state.sceneFacts?.present ?? []).map((p) =>
+            typeof p === 'string' ? p : (p as { name?: string })?.name ?? ''
+          )
         ),
         state.sceneFacts?.lastBeat ?? '',
-        ...(state.sceneFacts?.props ?? []),
       ].join(' ')
     );
-  if (grounded) return text;
-  const alone = isAloneArrivalOpening(state);
-  let the = alone ? 'the panel' : personSlotFromScene(state).afterThe;
-  let a = alone ? 'a panel' : personSlotFromScene(state).afterA;
-  let poss = `${the}'s`;
-  // Never emit polity as the slot
-  if (isPolityFactionOrPlaceToken(the.replace(/^the\s+/i, ''))) {
-    the = alone ? 'the panel' : 'the stranger';
-    a = alone ? 'a panel' : 'a stranger';
-    poss = alone ? "the panel's" : "the stranger's";
+  if (groundedOfficial && /\bthe official\b|\ban official\b/i.test(text)) {
+    return scrubPolityBleedInChrome(text);
   }
+  const people = realPresentPeople(
+    (state.sceneFacts?.present ?? []).map((p) =>
+      typeof p === 'string' ? p : (p as { name?: string })?.name ?? ''
+    )
+  ).filter((n) => !isPolityFactionOrPlaceToken(n));
+  const person = people[0];
+  if (!person) {
+    return withProtectedChromeBlocks(text, dropPlaceholderActorClauses);
+  }
+  const the = /^the\s+/i.test(person) ? person : `the ${person}`;
+  const a = the.replace(/^the\s+/i, 'a ');
+  const poss = `${the}'s`;
   return withProtectedChromeBlocks(text, (body) =>
     body
       .replace(/\bthe official(?:'s|’s)\b/gi, poss)
       .replace(/\ban official\b/gi, a)
       .replace(/\bthe official\b/gi, the)
+      .replace(/\bthe king(?:'s|’s)\b/gi, poss)
+      .replace(/\bthe king\b/gi, the)
+      .replace(/\b(?:a|the) (?:lone )?figure\b/gi, the)
   );
 }
 

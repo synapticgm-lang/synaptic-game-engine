@@ -44,6 +44,11 @@ import {
 import { formatCameraBindingLine } from './travelAuthority';
 import { formatLastKillSnapshotLine } from './combatAuthority';
 import { isLookAroundAction } from './sandboxXp';
+import {
+  formatLastSnapshotGistLine,
+  formatPointerCardForSnapshot,
+  openingInventBudgetZero,
+} from './openingPointerCard';
 // WS-2 Wave C: NPC Memory sections
 import {
   buildNpcPacket,
@@ -338,10 +343,25 @@ export function formatSceneSnapshotForPrompt(state: GameState): string {
   if (cameraBind) lines.push(`- ${cameraBind}`);
   lines.push(`- ${formatCoverChromeBindingLine()}`);
   const lastPlayer = [...(state.log ?? [])].reverse().find((e) => e?.role === 'player')?.content ?? '';
-  if (lastPlayer && (isLookAroundAction(lastPlayer) || /\bwait\b/i.test(lastPlayer))) {
+  const gistLine = formatLastSnapshotGistLine(state);
+  if (gistLine) {
+    lines.push(`- ${gistLine}`);
+    lines.push(
+      'BEAT DELTA: Change one concrete from LAST SNAPSHOT — a fact, tactic, cost, exit, or honest empty. Do not reprint that gist.'
+    );
+  } else if (lastPlayer && (isLookAroundAction(lastPlayer) || /\bwait\b/i.test(lastPlayer))) {
     lines.push(
       'BEAT DELTA: After look/wait, add one new fact, person tactic, cost, or honest empty — do not reprint this room\'s smell/light essay.'
     );
+  }
+  if (openingInventBudgetZero(state)) {
+    lines.push(
+      'OPENING INVENT BUDGET: 0 — no new named people, places, or why beyond the pointer card until a cover is harvested or the player travels.'
+    );
+  }
+  const pointerBlock = formatPointerCardForSnapshot(state);
+  if (pointerBlock) {
+    lines.push(pointerBlock);
   }
   lines.push(
     'AUTHORITY: SNAPSHOT + ledger win on facts (kit, exits, presence, HP, crowd count, hook why, outcomes). Do not invent items, doors, named people, or numeric results absent above. Do not recycle a prior beat, location essay, crisis line, or choice pad unless the player asked to repeat or restate.'

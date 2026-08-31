@@ -7,6 +7,7 @@ import type { GameState } from './types';
 import {
   applyCraftLearning,
   compileCraftRules,
+  consumeThumbsDownSignal,
   stampCraftApplied,
   type CraftSignal,
 } from './craftBookCompiler';
@@ -408,6 +409,12 @@ export function collectCraftSignals(opts: {
   if (nameToken && isDeniedPcName(nameToken)) found.add('name_deny');
   if (detectHookContradiction(opts.prose, resolveHookLock(opts.previous))) {
     found.add('hook_contradiction');
+  }
+  if (
+    consumeThumbsDownSignal(opts.previous.turn)
+    || (opts.previous.log ?? []).some((e) => e?.role === 'gm' && e.gmFeedback === 'down')
+  ) {
+    found.add('thumbs_down');
   }
   const lastOffered =
     [...(opts.previous.log ?? [])].reverse().find((e) => e?.role === 'gm')?.offeredChoices

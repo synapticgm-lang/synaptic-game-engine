@@ -19,6 +19,8 @@ import { isNameOriginKitCoverChoice, isPlayDemand } from './openingEstablishment
 import { isLookAroundAction } from './sandboxXp';
 import { isAtmospherePlaceName } from './questPlay';
 import { filterPadsAgainstOpenVignette } from './vignetteLock';
+import { isInteriorMap } from './placeAuthority';
+import { graphExitPads } from './mapEngine';
 
 export type PlayerIntentFamily = 'demand' | 'inspect' | 'flee' | 'name' | 'talk' | 'travel' | 'other';
 
@@ -466,6 +468,14 @@ export function compileChoices(
       notes.push(`Atmosphere doorway drop: ${c.slice(0, 40)}`);
       return false;
     }
+    if (
+      state.activeDungeon
+      && isInteriorMap(state.activeDungeon)
+      && /\b(to the left|to the right|on your left|on your right|camera-left|go left|go right)\b/i.test(c)
+    ) {
+      notes.push(`Camera L/R drop: ${c.slice(0, 32)}`);
+      return false;
+    }
     if (engaged) {
       // 29a/31h combat pad lock — no travel / merchant / Earth junk / look-around / examine room
       if (/\b(travel toward|go to|head to|browse|merchant|shop|earth junk|phone|headphones|leatherman|keys from earth)\b/.test(lower)) {
@@ -562,6 +572,16 @@ export function compileChoices(
   filtered = cooldownResult.filtered;
   if (cooldownResult.removed.length) {
     notes.push(`Pad cooldown removed ${cooldownResult.removed.length}`);
+  }
+
+  if (state.activeDungeon && isInteriorMap(state.activeDungeon)) {
+    for (const pad of graphExitPads(state.activeDungeon)) {
+      if (filtered.some((f) => f.toLowerCase() === pad.toLowerCase())) continue;
+      if (isAtmospherePlaceName(pad.replace(/^.*\s+to\s+/i, ''))) continue;
+      filtered.push(pad);
+      notes.push(`Graph exit pad: ${pad.slice(0, 40)}`);
+      if (filtered.length >= 6) break;
+    }
   }
 
   // B018–B021 — pad primarily from legal beat edges when available

@@ -76,7 +76,7 @@ import {
   resolveOpeningRegistrar,
   seedCoverAnswers,
 } from './openingEstablishment';
-import { applyCommittedNarrative } from './sceneFacts';
+import { applyCommittedNarrative, seedOpeningSceneFacts } from './sceneFacts';
 import { hookLockForWarden, seedHookLockFromPickedHook } from './hookLock';
 import { enforceCameraOnProse, enforceCameraOnState, honestLocationName } from './travelAuthority';
 import { applyOpeningContract, ensureStarterLookCharacter, stitchOpeningScene } from './openingStitch';
@@ -566,6 +566,9 @@ export function buildNewGameState(opts: {
       sceneWritten: true,
       mode: openingMode,
       pickedHook: picked?.text,
+      pickedHookId: picked?.location
+        ? picked.location.toLowerCase().replace(/[^a-z0-9]+/g, '-').slice(0, 48)
+        : undefined,
       pickedHookFallback: picked?.fallback,
       aloneArrival,
       hookLock: seedHookLockFromPickedHook(picked?.text, picked?.fallback, 0),
@@ -590,6 +593,8 @@ export function buildNewGameState(opts: {
 
 function stampOpening(state: GameState): GameState {
   const text = stitchOpeningScene(state);
+  const seeded = seedOpeningSceneFacts({ ...state, turn: 1 });
+  const facts = applyCommittedNarrative({ ...state, sceneFacts: seeded, turn: 1 }, text, 1);
   const gmBase: LogEntry = {
     id: uid(),
     turn: 0,
@@ -607,6 +612,8 @@ function stampOpening(state: GameState): GameState {
   const gm = withOfferedChoices(gmBase, withChoices);
   const next: GameState = {
     ...withChoices,
+    turn: 1,
+    sceneFacts: facts,
     log: [gm],
     choices: gm.offeredChoices ?? resolveOfferedChoices(withChoices),
   };

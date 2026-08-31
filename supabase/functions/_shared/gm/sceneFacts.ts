@@ -10,6 +10,7 @@ import {
   harvestVignetteIntoSceneFacts,
 } from './vignetteLock.ts';
 import { matchHub, hubsForBibleId } from './outdoorHubs.ts';
+import { applyCardCrowdToFacts, buildSnapshotGist } from './openingPointerCard.ts';
 
 const EMPTY_STREET =
   /\b(eerily silent|unnervingly quiet|empty (?:street|buildings|road)|no one (?:is )?(?:here|around|responds)|deserted|abandoned street|world feels frozen|holding its breath)\b/i;
@@ -143,6 +144,7 @@ export function extractSceneFacts(narrative: string, prev?: SceneFacts, turn = 0
     pendingSpawnPreface: prev?.pendingSpawnPreface,
     engineRecoveryStreak: prev?.engineRecoveryStreak,
     openVignette: prev?.openVignette,
+    lastSnapshotGist: prev?.lastSnapshotGist,
   };
 }
 
@@ -181,6 +183,7 @@ export function mergeSceneFacts(prev: SceneFacts | undefined, next: SceneFacts):
         ? next.engineRecoveryStreak
         : prev.engineRecoveryStreak,
     openVignette: next.openVignette ?? prev.openVignette,
+    lastSnapshotGist: next.lastSnapshotGist ?? prev.lastSnapshotGist,
   };
 }
 
@@ -190,7 +193,7 @@ export function seedOpeningSceneFacts(state: GameState): SceneFacts {
     state.campaignPremise ?? ''
   );
   if (integration) {
-    return {
+    return applyCardCrowdToFacts(state, {
       crowd: 'present',
       noise: 'shouting',
       present: ['bystanders'],
@@ -202,33 +205,39 @@ export function seedOpeningSceneFacts(state: GameState): SceneFacts {
       indoor: false,
       tension: 'tense',
       hookLock,
-    };
+      crowdCount: 5,
+    });
   }
-  
-  // People may be present; headcount stays unlocked until harvest locks a number.
+
   const alone = state.openingEstablishment?.aloneArrival === true;
-  if (!alone) {
-    return {
-      crowd: 'present',
-      noise: 'voices',
-      present: [],
-      props: ['blue panel'],
-      lastBeat: 'People are present.',
-      updatedTurn: state.turn,
-      timeOfDay: 'unknown',
-      weather: 'unknown',
-      indoor: undefined,
-      tension: 'tense',
-      hookLock,
-    };
-  }
-  
+  const seeded = applyCardCrowdToFacts(state, {
+    crowd: alone ? 'none' : 'present',
+    noise: alone ? 'quiet' : 'voices',
+    present: [],
+    props: ['blue panel'],
+    lastBeat: alone ? 'The room is empty of other people.' : 'Scene not yet numbered.',
+    updatedTurn: state.turn,
+    timeOfDay: 'unknown',
+    weather: 'unknown',
+    indoor: undefined,
+    tension: 'tense',
+    hookLock,
+    crowdCount: alone ? 0 : undefined,
+  });
+  if (!alone) return seeded;
+
   const extracted = extractSceneFacts(
     state.log.filter((e) => e.role === 'gm').slice(-1)[0]?.content ?? '',
     state.sceneFacts,
     state.turn
   );
-  return { ...extracted, hookLock: extracted.hookLock ?? hookLock };
+  return applyCardCrowdToFacts(state, {
+    ...extracted,
+    hookLock: extracted.hookLock ?? hookLock,
+    crowd: 'none',
+    crowdCount: 0,
+    present: [],
+  });
 }
 
 export function formatSceneFactsForPrompt(facts?: SceneFacts): string {
@@ -338,22 +347,33 @@ export function applyCommittedNarrative(
       loc,
       (name) => matchHub(hubsForBibleId(state.campaignBibleId), name)?.id ?? null
     ) ?? withVignette;
-  if (!playerInput?.trim()) return withVignette;
-  const t = playerInput.replace(/\s+/g, ' ').trim();
-  const family: NonNullable<SceneFacts['lastPlayerIntent']>['family'] =
-    /\b(send me (?:back|home)|get me (?:out|back)|i refuse|i protest|i demand|back to (?:my )?(?:world|earth))\b/i.test(t)
-      ? 'demand'
-      : /\b(run away|flee|escape|retreat)\b/i.test(t)
-        ? 'flee'
-        : /\b(inspect|examine|look around|scan|get bearings)\b/i.test(t)
-          ? 'inspect'
-          : /\b(travel|enter|go through|walk through)\b/i.test(t)
-            ? 'travel'
-            : /\b(ask|talk|speak|say|tell)\b/i.test(t)
-              ? 'talk'
-              : 'other';
+  const withIntent = !playerInput?.trim()
+    ? withVignette
+    : (() => {
+        const t = playerInput.replace(/\s+/g, ' ').trim();
+        const family: NonNullable<SceneFacts['lastPlayerIntent']>['family'] =
+          /\b(send me (?:back|home)|get me (?:out|back)|i refuse|i protest|i demand|back to (?:my )?(?:world|earth))\b/i.test(t)
+            ? 'demand'
+            : /\b(run away|flee|escape|retreat)\b/i.test(t)
+              ? 'flee'
+              : /\b(inspect|examine|look around|scan|get bearings)\b/i.test(t)
+                ? 'inspect'
+                : /\b(travel|enter|go through|walk through)\b/i.test(t)
+                  ? 'travel'
+                  : /\b(ask|talk|speak|say|tell)\b/i.test(t)
+                    ? 'talk'
+                    : 'other';
+        return {
+          ...withVignette,
+          lastPlayerIntent: { family, text: t.slice(0, 160), turn },
+        };
+      })();
   return {
-    ...withVignette,
-    lastPlayerIntent: { family, text: t.slice(0, 160), turn },
+    ...withIntent,
+    lastSnapshotGist: buildSnapshotGist({
+      ...state,
+      turn,
+      sceneFacts: withIntent,
+    }),
   };
 }

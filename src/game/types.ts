@@ -377,6 +377,8 @@ export interface OpeningEstablishment {
   mode?: 'scene' | 'weave';
   /** Seed-picked opener from bible.openingHooks (stable for the run). */
   pickedHook?: string;
+  /** Short card id (location slug) for packet / contract. */
+  pickedHookId?: string;
   /** Player-facing fallback if the writer call fails. */
   pickedHookFallback?: string;
   /** True when this run’s opener has no summoners on page one. */
@@ -733,6 +735,8 @@ export interface LogEntry {
   offeredChoices?: string[];
   /** Craft-book rule ids compiled for this beat (Debug / Download play). */
   craftApplied?: string[];
+  /** Last thumbs vote on this GM bubble (CRAFT boost, optional). */
+  gmFeedback?: 'up' | 'down';
 }
 
 /** Distinct rule engines chosen at campaign setup. `'dnd'` is tabletop fantasy (saved key). */
@@ -859,6 +863,8 @@ export interface SceneFacts {
    * Drought must not invent a brand-new argument cast each turn.
    */
   openVignette?: import('./vignetteLock').OpenVignette;
+  /** Last committed SNAPSHOT gist — next turn is a delta from this. */
+  lastSnapshotGist?: import('./openingPointerCard').SnapshotGist;
 }
 
 export interface TimelineFact {

@@ -13,7 +13,8 @@ export type CraftSignal =
   | 'atmosphere'
   | 'name_deny'
   | 'pad_irrelevant'
-  | 'hook_contradiction';
+  | 'hook_contradiction'
+  | 'thumbs_down';
 
 export interface CraftRule {
   id: string;
@@ -39,6 +40,17 @@ export interface CraftCompileResult {
   when: CraftWhen | null;
 }
 
+let lastThumbsDownTurn = -1;
+
+/** Cheap thumbs-down → next-turn CRAFT boost (no extra LLM). */
+export function noteThumbsDownFeedback(turn: number): void {
+  lastThumbsDownTurn = turn;
+}
+
+export function consumeThumbsDownSignal(currentTurn: number): boolean {
+  return lastThumbsDownTurn >= 0 && currentTurn - lastThumbsDownTurn <= 2;
+}
+
 const MAX_CRAFT_LINES = 2;
 const AUTHORITY_MAX = 200;
 const WHEN_SCORE = 10;
@@ -61,7 +73,7 @@ export const CRAFT_RULES: CraftRule[] = [
     when: ['inspect'],
     authority:
       'Repeat inspect: one new fact, a brief reminder, or honest exhaustion—never the same cell essay.',
-    boostOn: ['atmosphere', 'collage'],
+    boostOn: ['atmosphere', 'collage', 'thumbs_down'],
   },
   {
     id: 'litrpg-inspect-exhaust',
@@ -140,7 +152,7 @@ export const CRAFT_RULES: CraftRule[] = [
     when: ['inspect', 'wait', 'talk'],
     authority:
       'After a recycled prefix or same-room essay, change knowledge, person, or cost—do not stitch old lines.',
-    boostOn: ['collage', 'atmosphere'],
+    boostOn: ['collage', 'atmosphere', 'thumbs_down'],
   },
 
   // --- dnd (12) ---

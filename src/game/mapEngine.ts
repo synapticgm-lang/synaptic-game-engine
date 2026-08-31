@@ -1071,6 +1071,35 @@ export function listInteriorExitsFromHere(dungeon: ActiveDungeonState): Array<{
     });
 }
 
+function exitFacingLabel(
+  here: MapNode,
+  dest: MapNode
+): 'north' | 'south' | 'east' | 'west' | null {
+  const a = here.coordinates;
+  const b = dest.coordinates;
+  if (!a || !b) return null;
+  const dx = b.x - a.x;
+  const dy = b.y - a.y;
+  if (Math.abs(dx) < 0.04 && Math.abs(dy) < 0.04) return null;
+  if (Math.abs(dx) >= Math.abs(dy)) return dx > 0 ? 'east' : 'west';
+  return dy > 0 ? 'south' : 'north';
+}
+
+/** Choice pads from the floor-plan graph — named door / facing, not camera-left. */
+export function graphExitPads(dungeon: ActiveDungeonState): string[] {
+  const here = dungeon.nodes.find((n) => n.id === dungeon.currentNodeId);
+  if (!here) return [];
+  return listInteriorExitsFromHere(dungeon)
+    .filter((e) => e.name.trim() && !/hangs heavy|this chamber|atmosphere/i.test(e.name))
+    .map((e) => {
+      const dest = dungeon.nodes.find((n) => n.name === e.name);
+      const facing = dest ? exitFacingLabel(here, dest) : null;
+      const door = facing ? `${facing} ${e.noun}` : e.noun;
+      return `Go through the ${door} to ${e.name}`;
+    })
+    .slice(0, 4);
+}
+
 /** Prompt authority: exits from the current room with door vs gap language. */
 export function formatInteriorExitAuthority(dungeon: ActiveDungeonState): string {
   const exits = listInteriorExitsFromHere(dungeon);

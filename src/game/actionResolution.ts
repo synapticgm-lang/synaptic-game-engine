@@ -135,8 +135,8 @@ Your prior reply resolved the action but was too thin for a spent turn (~${wordC
 Player action: "${action}"
 REQUIRED:
 1. Keep the same facts, map geometry, alone/crowd truth, and outcome — do not invent new doors, people, or loot.
-2. Rewrite as a FULL standard beat: roughly two short paragraphs (~100–180 words) with natural rhythm.
-3. Include: answer/impact first, concrete sensory grounding (light, sound, weight, air), consequence, and a playable handoff.
+2. Rewrite as a complete beat that adds one new concrete (fact, tactic, cost, exit, or honest empty) — do not pad smell/light essays to hit a word count.
+3. Include: answer/impact first, one concrete sensory anchor if it serves the delta, consequence, and a playable handoff.
 4. Vocabulary may be free and literary inside SCENE STATE — no telegram one-liners.
 5. Then 3–4 numbered choices grounded in what you just described.
 ===========================================================`;

@@ -223,6 +223,25 @@ export function commitAutoFightLedger(
   return next;
 }
 
+/**
+ * Ledger + body-type template for the Auto Fight button.
+ * No second novelist — lastKill / FSM stay on the code path.
+ */
+export function narrateAutoFightTemplate(
+  enemyName: string,
+  result: { victory: boolean; rounds?: number }
+): string {
+  const name = (enemyName || 'the foe').trim();
+  const humanoid = isHumanoidEnemyName(name);
+  const body = humanoid
+    ? `${name} is a person — steel, weight, boots. Not an animal.`
+    : `${name} keeps the body type the name already has.`;
+  if (result.victory) {
+    return `You close with ${name}. ${body} The exchange is short. ${name} drops. The body stays on the floor — loot is legal.`;
+  }
+  return `You close with ${name}. ${body} The exchange goes badly. You go down.`;
+}
+
 export function lastKillFromAutoFightLog(state: GameState): LastKill | null {
   const log = state.log ?? [];
   for (let i = log.length - 1; i >= 0; i--) {
