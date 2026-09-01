@@ -138,7 +138,7 @@ describe('playtest31pBatchE', () => {
       const preface = autoFightSpawnPreface(name, 'cathedral infirmary');
       expect(preface).not.toMatch(/already on you/i);
       expect(preface).toMatch(/Calamity Remnant/i);
-      expect(preface).toMatch(/telegraph|doorway|forces/i);
+      expect(preface).toMatch(/doorway|forces|pushes|scrape|commits/i);
 
       let state = createInitialState(undefined, 'litrpg');
       state.currentLocation = 'cathedral infirmary';

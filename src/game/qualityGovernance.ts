@@ -31,7 +31,7 @@ import {
   detectAtmosphereReprint,
   detectSameRoomEssayHard,
 } from './semanticLoopDetector';
-import { classifyBeatCommit, repairRejectedBeat, stitchCommitDelta, isVerbatimStallStub } from './beatCommitGate';
+import { classifyBeatCommit, repairRejectedBeat, stitchCommitDelta, isVerbatimStallStub, isDirectorChromeLeak, scrubDirectorChrome } from './beatCommitGate';
 import { isBannedFallbackStub } from './sealedManifest';
 import {
   extractEntityContext,
@@ -424,10 +424,22 @@ export function applyGovernanceToProse(
     }
   }
 
-  // Batch E — never commit verbatim stall chrome as story.
-  if (isBannedFallbackStub(out) || isVerbatimStallStub(out)) {
+  // Batch E/G — never commit verbatim stall / director chrome as story.
+  {
+    const scrub = scrubDirectorChrome(out);
+    if (scrub.scrubbed) {
+      out = scrub.prose;
+      notes.push('Director chrome scrubbed from prose');
+      if (!out.trim() || isDirectorChromeLeak(out) || isVerbatimStallStub(out)) {
+        rejectClone = true;
+        out = stitchCommitDelta(state);
+        notes.push('Director chrome — diegetic stitch');
+      }
+    }
+  }
+  if (isBannedFallbackStub(out) || isVerbatimStallStub(out) || isDirectorChromeLeak(out)) {
     rejectClone = true;
-    notes.push('Banned stall/fallback stub — reject');
+    notes.push('Banned stall/fallback/director stub — reject');
     out = stitchCommitDelta(state);
   }
 

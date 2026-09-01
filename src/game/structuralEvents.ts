@@ -13,6 +13,7 @@ import {
 import { advanceLocationMemory } from './locationMemory';
 import { ensureLocationSheet } from './pendingTurn';
 import { closePlaceArc, upsertPlaceFromSheet } from './places';
+import { exhaustOpenedContainer, shouldBlockContainerItemGain } from './searchContinuity';
 
 function uid(): string {
   return crypto.randomUUID();
@@ -25,7 +26,7 @@ function uid(): string {
 export function applyStructuralEvents(
   state: GameState,
   events: GameEvent[],
-  options: { strictEncumbrance?: boolean } = {}
+  options: { strictEncumbrance?: boolean; playerInput?: string } = {}
 ): {
   state: GameState;
   gainedItems: Item[];
@@ -35,9 +36,14 @@ export function applyStructuralEvents(
   const gainedItems: Item[] = [];
   const notes: string[] = [];
   const strict = options.strictEncumbrance ?? false;
+  const playerInput = options.playerInput ?? '';
 
   for (const e of events) {
     if (e.type === 'item-gain' && e.name) {
+      if (shouldBlockContainerItemGain(next, playerInput, e.name)) {
+        notes.push(`Blocked duplicate/exhausted container loot: ${e.name}`);
+        continue;
+      }
       const qty = Math.max(1, e.qty ?? 1);
       const seeded = resolveSeededRarity(next.activeDungeon, e.name, e.rarity, {
         pity: next.lootPity,
@@ -233,6 +239,15 @@ export function applyStructuralEvents(
     const name = locCard?.name?.trim() ?? '';
     if (name && !/&/.test(name) && !/\bzones?\b/i.test(name)) {
       next = { ...next, currentLocation: name };
+    }
+  }
+
+  // Batch G — open crate/chest once: exhaust container even if empty or after loot
+  if (playerInput) {
+    const before = next.sceneFacts?.emptyContainers?.length ?? 0;
+    next = exhaustOpenedContainer(next, playerInput);
+    if ((next.sceneFacts?.emptyContainers?.length ?? 0) > before) {
+      notes.push('Container exhausted after open');
     }
   }
 

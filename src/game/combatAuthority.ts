@@ -147,10 +147,11 @@ export function autoFightSpawnPreface(enemyName: string, location?: string): str
   const name = (enemyName ?? '').trim() || 'A threat';
   const loc = (location ?? '').trim();
   const where = loc ? ` into ${loc}` : '';
+  // Batch G — diegetic only (no "no prior cast" / "telegraph first" director chrome).
   if (isHumanoidEnemyName(name)) {
-    return `${name} pushes${where || ' in'} from the edge of the room — no debris, no prior cast — and commits toward you.`;
+    return `${name} pushes${where || ' in'} from the edge of the room and commits toward you.`;
   }
-  return `${name} forces the doorway${where} with a scrape of wrong motion — telegraph first, then steel.`;
+  return `${name} forces the doorway${where} with a scrape of wrong motion.`;
 }
 
 /**
@@ -241,7 +242,7 @@ export function ensureEncounterSpawnPreface(
   const bareAlready =
     !!name
     && new RegExp(`${esc}\\s+is already on you`, 'i').test(nextProse)
-    && !/\b(doorway|telegraph|pushes|forces|commits|edge of the room)\b/i.test(nextProse);
+    && !/\b(doorway|pushes|forces|commits|edge of the room|scrape)\b/i.test(nextProse);
   if (name && (!proseMentionsEnemy(nextProse, name) || bareAlready)) {
     const preface = autoFightSpawnPreface(name, state.currentLocation);
     if (bareAlready) {

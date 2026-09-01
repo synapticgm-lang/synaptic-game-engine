@@ -61,7 +61,9 @@ export function canonicalizeIntent(input: string, turn: number): SemanticIntent 
   
   // Extract action
   let action = 'generic';
-  if (/\b(inspect|examine|check|look at|study|investigate)\b/i.test(lower)) {
+  if (/\b(open|check)\b/i.test(lower) && /\b(crate|chest|box|barrel|trunk)\b/i.test(lower)) {
+    action = 'inspect';
+  } else if (/\b(inspect|examine|check|look at|study|investigate)\b/i.test(lower)) {
     action = 'inspect';
   } else if (/\b(ask|question|inquire|talk to|speak (?:to|with))\b/i.test(lower)) {
     action = 'ask';
@@ -87,7 +89,15 @@ export function canonicalizeIntent(input: string, turn: number): SemanticIntent 
   
   // Extract target (simplified - look for key nouns)
   let target = 'environment';
-  if (/\b(bag|pack|pockets?|inventory)\b/i.test(lower)) {
+  if (/\b(crate|crates)\b/i.test(lower)) {
+    target = 'crate';
+  } else if (/\b(chest|chests)\b/i.test(lower)) {
+    target = 'chest';
+  } else if (/\b(barrel|barrels)\b/i.test(lower)) {
+    target = 'barrel';
+  } else if (/\b(box|boxes|trunk)\b/i.test(lower)) {
+    target = 'box';
+  } else if (/\b(bag|pack|pockets?|inventory)\b/i.test(lower)) {
     target = 'bag';
   } else if (/\b(door|entrance|exit|gate)\b/i.test(lower)) {
     target = 'door';

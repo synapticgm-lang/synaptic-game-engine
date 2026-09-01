@@ -93,23 +93,36 @@ export function classifyBeatCommit(
 
 /**
  * Diegetic one-line delta when a beat is rejected.
- * Never emit "the moment has not moved on" / "figure N is still here" stall chrome (Batch E).
+ * Never emit stall chrome (Batch E) or "holds the beat / glance, a breath…" (Batch G).
  */
 export function stitchCommitDelta(state: GameState): string {
   const slots = compilePointerCardSlots(state);
   const loc = (state.currentLocation || slots?.where || 'this room').replace(/\.$/, '');
   const people = (state.sceneFacts?.present ?? [])
     .map((p) => String(p).trim())
-    .filter((p) => p && !/^figure\s+\d+$/i.test(p));
+    .filter((p) => p && !/^figure\s+\d+$/i.test(p) && !/^bystanders?$/i.test(p) && !/^it$/i.test(p));
   const present = people[0];
-  const prop = (state.sceneFacts?.props ?? []).map((p) => String(p).trim()).filter(Boolean)[0];
-  const pressure = (slots?.firstPressure ?? '').trim();
-  if (present) {
-    return `${present} holds the beat in ${loc} — a glance, a breath, a cost still unpaid.`;
-  }
-  if (pressure) return `${pressure} In ${loc}, something concrete still asks for an answer.`;
-  if (prop) return `The ${prop} in ${loc} still offers a next move — look closer, speak, or leave.`;
-  return `In ${loc}, the empty is honest: choose an exit, a person, or a stake.`;
+  const props = (state.sceneFacts?.props ?? []).map((p) => String(p).trim()).filter(Boolean);
+  const empty = state.sceneFacts?.emptyContainers ?? [];
+  const prop = props.find((p) => !empty.some((e) => p.toLowerCase().includes(e.toLowerCase()))) ?? props[0];
+  const exitHint = (slots?.firstPressure ?? '').trim();
+  const turn = state.turn ?? 0;
+  const bank = [
+    present
+      ? `${present} shifts weight in ${loc} and leaves you one clear next move.`
+      : '',
+    prop
+      ? `The ${prop} in ${loc} is done yielding — speak, leave, or take a stake.`
+      : '',
+    empty.length
+      ? `The ${empty[0]} in ${loc} is empty. The room asks for an exit or a person, not another sift.`
+      : '',
+    exitHint
+      ? `In ${loc}, a way out still waits — ${String(exitHint).slice(0, 48).replace(/\.$/, '')}.`
+      : '',
+    `In ${loc}, the empty is honest: choose an exit, a person, or a stake.`,
+  ].filter(Boolean);
+  return bank[turn % bank.length] || bank[bank.length - 1]!;
 }
 
 /** Banned verbatim stall loops from older commit-gate / recovery stitches. */
@@ -119,7 +132,36 @@ export function isVerbatimStallStub(text: string | undefined): boolean {
     /\bthe moment has not moved on\b/i.test(text)
     || /\bfigure\s+\d+\s+is still here\b/i.test(text)
     || /\bis still here in [^—.\n]{2,60}\s*[—-]\s*the moment has not moved on\b/i.test(text)
+    || /\bholds the beat\b/i.test(text)
+    || /\ba glance,\s*a breath(?:,\s*a cost still unpaid)?\b/i.test(text)
+    || /\ba cost still unpaid\b/i.test(text)
   );
+}
+
+/** Director / CRAFT / AUTHORITY chrome must never commit as GM body (Batch G). */
+export function isDirectorChromeLeak(text: string | undefined): boolean {
+  if (!text?.trim()) return false;
+  return (
+    /\bdo not invent\b/i.test(text)
+    || /\btelegraph first\b/i.test(text)
+    || /\bno prior cast\b/i.test(text)
+    || /\bno debris,\s*no prior\b/i.test(text)
+    || /\bFORBID:\s*/i.test(text)
+    || /\bCRAFT:\s*/i.test(text)
+    || /\bAUTHORITY:\s*/i.test(text)
+    || /\bARC (?:BEAT|DIRECTOR)\b/i.test(text)
+    || /\bTURN JOB:\s*/i.test(text)
+    || /\bSNAPSHOT\b/i.test(text) && /\bPresence:\s*/i.test(text)
+  );
+}
+
+/** Strip director chrome sentences; leave diegetic prose. */
+export function scrubDirectorChrome(text: string): { prose: string; scrubbed: boolean } {
+  if (!text?.trim()) return { prose: text ?? '', scrubbed: false };
+  const parts = text.split(/(?<=[.!?])\s+/);
+  const kept = parts.filter((s) => !isDirectorChromeLeak(s));
+  const prose = kept.join(' ').replace(/\s{2,}/g, ' ').trim();
+  return { prose, scrubbed: prose !== text.trim() };
 }
 
 export function repairRejectedBeat(
@@ -159,9 +201,9 @@ export function repairRejectedBeat(
   }
 
   // Never leave banned stall chrome in the repaired draft.
-  if (isVerbatimStallStub(next)) {
+  if (isVerbatimStallStub(next) || isDirectorChromeLeak(next)) {
     next = stitchCommitDelta(state);
-    notes.push('Commit gate: replaced verbatim stall stub');
+    notes.push('Commit gate: replaced verbatim stall/director stub');
   }
 
   return { prose: next.trim(), repaired: notes.length > 0 && next.trim() !== (prose ?? '').trim(), notes };

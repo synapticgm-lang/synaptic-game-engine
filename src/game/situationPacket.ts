@@ -59,6 +59,7 @@ import {
   buildDelayedConsequencesSituationSection,
   buildJournalConsequenceHints,
 } from './pyoaDelayedConsequences';
+import { formatPyoaSpineSnapshotLines } from './pyoaSpine';
 // WS-6 Wave C: Spine Map and Exhaustion
 import {
   formatExhaustionSummary,
@@ -321,6 +322,10 @@ export function formatSceneSnapshotForPrompt(state: GameState): string {
 
   for (const mandate of governanceLines) {
     lines.push(`- ${mandate.replace(/^-\s*/, '')}`);
+  }
+
+  for (const spineLine of formatPyoaSpineSnapshotLines(state)) {
+    lines.push(`- ${spineLine}`);
   }
 
   if (timeLabel) lines.push(`- Time of Day: ${timeLabel}`);

@@ -75,6 +75,19 @@ function isAttackIntent(input: string): boolean {
   return /\b(attack|fight|strike|press the attack|engage|slash|stab|shoot|cast)\b/i.test(input);
 }
 
+/** Idle under threat: loot / scout / wait / room inspect — must not farm max_engaged victory XP. */
+export function isEncounterIdleIntent(input: string): boolean {
+  const t = (input ?? '').trim();
+  if (!t) return true;
+  if (isAttackIntent(t) || isFleeIntent(t) || isParleyIntent(t)) return false;
+  return (
+    /\b(open|check|search|loot|rummage|scavenge)\b/i.test(t)
+    || /\b(crate|chest|box|barrel|trunk|bag|pockets?)\b/i.test(t)
+    || /\b(scout|wait|watch|look around|examine the (?:room|area)|inspect the (?:room|area)|get (?:your )?bearings)\b/i.test(t)
+    || /\b(travel|go to|head to|browse|merchant|shop)\b/i.test(t)
+  );
+}
+
 export function fleeAvailable(enc: ActiveEncounter | null | undefined): boolean {
   if (!enc || enc.phase === 'resolving' || enc.phase === 'terminal') return false;
   return (enc.failedFleeCount ?? 0) < (enc.maxFailedFlee ?? 2);
@@ -89,8 +102,12 @@ function resolveForcedOutcome(enc: ActiveEncounter, reason: string): TerminalOut
   if (enc.hp <= 0) return 'victory';
   if (reason === 'flee_success') return 'escape';
   if (reason === 'parley_success') return 'parleyResolved';
-  if (reason === 'flee_cap' || reason === 'max_engaged') {
-    // Prefer escape when flee budget exhausted (retreat edge), else victory (minimal clear)
+  if (reason === 'flee_cap') {
+    if ((enc.failedFleeCount ?? 0) >= (enc.maxFailedFlee ?? 2)) return 'escape';
+    return 'victory';
+  }
+  if (reason === 'max_engaged') {
+    // Attack-clock clear only — never treat idle loot/scout as a free victory path.
     if ((enc.failedFleeCount ?? 0) >= (enc.maxFailedFlee ?? 2)) return 'escape';
     return 'victory';
   }
@@ -145,9 +162,13 @@ export function tickEncounterTerminal(
     return commitClear(state, enc, 'parleyResolved', 'parley_success');
   }
 
+  const idle = isEncounterIdleIntent(input);
   enc = {
     ...enc,
-    engagedTurnCount: (enc.engagedTurnCount ?? 0) + 1,
+    // Batch G — only fight/flee/parley advance the clear clock; idle loot/scout never farms victory XP.
+    engagedTurnCount: idle
+      ? (enc.engagedTurnCount ?? 0)
+      : (enc.engagedTurnCount ?? 0) + 1,
     phase: 'engaged',
   };
 
@@ -168,9 +189,11 @@ export function tickEncounterTerminal(
     if (enc.hp <= 0) {
       return commitClear(state, enc, 'victory', 'enemy_hp_zero');
     }
+  } else if (idle) {
+    receipts.push('Threat still live — idle loot/scout does not clear the encounter');
   }
 
-  if ((enc.engagedTurnCount ?? 0) >= (enc.maxEngagedTurns ?? 8)) {
+  if (!idle && (enc.engagedTurnCount ?? 0) >= (enc.maxEngagedTurns ?? 8)) {
     return commitClear(state, enc, resolveForcedOutcome(enc, 'max_engaged'), 'max_engaged');
   }
 

@@ -10,6 +10,7 @@ import {
   engineAllowsCombat,
   forcedEncounterBeat,
   resolveBiblePrefix,
+  resolveTurnJob,
   selectDueBeat,
 } from './beatContract';
 import { updateChoiceFingerprints } from './choiceCompiler';
@@ -22,6 +23,12 @@ import {
   advanceNpcTopicExhaustion,
 } from './npcTopicFsm';
 import { recordPyoaBranchChoice, formatPyoaBranchMandate } from './pyoaBranchLedger';
+import {
+  advancePyoaSpine,
+  ensurePyoaSpine,
+  formatPyoaSpineSnapshotLines,
+  spineBibleSupported,
+} from './pyoaSpine';
 import {
   applySocialMilestone,
   detectSocialMilestone,
@@ -87,6 +94,8 @@ export interface ArcDirectorState {
   committedBeatIds?: string[];
   activeBeatId?: string | null;
   lastMandate?: string;
+  /** Batch G — compact TURN JOB one-liner for SNAPSHOT (not a mandate pile). */
+  lastTurnJob?: string;
   turnsSinceCombatReceipt?: number;
   pressureClock?: PressureClockState;
   npcTopics?: Record<string, string[]>;
@@ -540,6 +549,11 @@ export function runArcDirectorBeforeGm(
   working = recordPyoaBranchChoice(working, playerInput);
   working = lockPyoaBranchOnCrisis(working);
   working = exhaustDelayPads(working, playerInput);
+  // PYOA spine v1 — Thornferry curated nodes (other bibles unchanged)
+  if (spineBibleSupported(working.campaignBibleId)) {
+    working = ensurePyoaSpine(working);
+    working = advancePyoaSpine(working, playerInput);
+  }
   const pyoaMandate = formatPyoaBranchMandate(working);
   if (pyoaMandate) mandates.push(pyoaMandate);
 
@@ -830,6 +844,15 @@ export function runArcDirectorBeforeGm(
     freeT12Forced: !!working.arcDirector?.freeT12Forced,
   });
 
+  const turnJob = resolveTurnJob(working, playerInput);
+  working = {
+    ...working,
+    arcDirector: {
+      ...working.arcDirector,
+      lastTurnJob: turnJob,
+    },
+  };
+
   return {
     state: working,
     mandate: mandates.filter(Boolean).join('\n'),
@@ -873,13 +896,22 @@ function applyExitAuthorityOnFlee(state: GameState, playerInput: string): GameSt
 export function buildArcDirectorSnapshotLines(state: GameState): string[] {
   const lines: string[] = [];
   const ad = state.arcDirector;
+  const job = ad?.lastTurnJob?.trim() || resolveTurnJob(state);
+  if (job) lines.push(`TURN JOB: ${job}`);
+  for (const spineLine of formatPyoaSpineSnapshotLines(state)) {
+    lines.push(spineLine);
+  }
   if (ad?.activeBeatId) {
     lines.push(
       `ArcDirector beat: ${ad.activeBeatId} (committed: ${(ad.committedBeatIds ?? []).join(', ') || 'none'})`
     );
   }
-  if (ad?.lastMandate?.trim()) {
-    lines.push(ad.lastMandate.trim());
+  // Batch G — prefer compact TURN JOB; keep lastMandate only when short and not duplicating job
+  if (ad?.lastMandate?.trim() && ad.lastMandate.trim().length <= 160) {
+    const m = ad.lastMandate.trim();
+    if (!job || !m.toLowerCase().includes(job.slice(0, 24).toLowerCase())) {
+      lines.push(m);
+    }
   }
   const forced = forcedEncounterBeat(state, ad?.turnsSinceCombatReceipt ?? state.turn, new Set(ad?.committedBeatIds ?? []));
   if (forced && !(ad?.committedBeatIds ?? []).includes(forced.id)) {

@@ -3147,6 +3147,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
       // Apply previously-unwired structural tags (items, dungeon, hex) after Warden filter.
       const structural = applyStructuralEvents(liveCurrent, events, {
         strictEncumbrance: settingsRef.current.strictEncumbrance === true,
+        playerInput: sanitizedInput,
       });
       let workingState = structural.state;
       const parsedPanels = parsePanels(result.text);

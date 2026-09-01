@@ -8,7 +8,10 @@ import type { GameState, Item, SceneFacts } from './types';
 import { equippedWeaponName } from './ledgerCombat';
 
 const SEARCH_ACTION =
-  /\b(search|searches|searching|rummage|rummaging|scavenge|scavenging|look(?:ing)? (?:around|for|through)|dig(?:ging)?|sift(?:ing)?|check(?:ing)? (?:the )?(?:ash|rubble|debris|ruin|area|floor|ground)|inspect(?:ing)? (?:the )?(?:ruin|debris|rubble|ash))\b/i;
+  /\b(search|searches|searching|rummage|rummaging|scavenge|scavenging|look(?:ing)? (?:around|for|through)|dig(?:ging)?|sift(?:ing)?|check(?:ing)? (?:the )?(?:ash|rubble|debris|ruin|area|floor|ground|crate|chest|box|barrel|trunk)|inspect(?:ing)? (?:the )?(?:ruin|debris|rubble|ash|crate|chest|box|barrel)|open(?:ing)? (?:the )?(?:crate|chest|box|barrel|trunk|container))\b/i;
+
+const OPEN_CONTAINER =
+  /\b(open|check|search|loot|rummage|inspect|examine)\b[\w\s-]{0,24}\b(crate|chest|box|barrel|trunk|container)\b|\b(crate|chest|box|barrel|trunk)\b/i;
 
 const EMPTY_CLAIM =
   /\b(?:(?:find(?:s|ing)?|found|yield(?:s|ed)?|offers?|reveals?)\s+(?:nothing|no(?:thing)?(?:\s+\w+){0,4})|nothing\s+(?:here|there|useful|of\s+use|left)|no\s+(?:immediate\s+)?(?:treasures?|loot|items?|gear|weapons?|tools?|hidden\s+compartments?)|picked\s+clean|fruitless|comes?\s+up\s+empty|empty[- ]handed|no\s+hidden|yields?\s+only\s+more)\b/i;
@@ -26,6 +29,10 @@ export function normalizeSearchTarget(
 ): string {
   const text = `${playerInput} ${locationHint ?? ''}`.toLowerCase();
   if (/\b(bag|backpack|pockets?|kit)\b/.test(text)) return 'bag';
+  if (/\bcrates?\b/.test(text)) return 'crate';
+  if (/\bchests?\b/.test(text)) return 'chest';
+  if (/\bbarrels?\b/.test(text)) return 'barrel';
+  if (/\b(box|boxes|trunk)\b/.test(text)) return 'box';
   if (/\b(exterior|outside|out\s+of)\b/.test(text)) return 'exterior';
   if (/\b(basement|cellar)\b/.test(text)) return 'basement';
   if (/\b(debris|rubble|ash|dirt)\b/.test(text)) return 'debris';
@@ -37,8 +44,13 @@ export function normalizeSearchTarget(
   return 'here';
 }
 
+export function isOpenContainerAction(playerInput: string): boolean {
+  const t = playerInput ?? '';
+  return OPEN_CONTAINER.test(t) && /\b(open|check|search|loot|rummage|inspect|examine)\b/i.test(t);
+}
+
 export function isSearchAction(playerInput: string): boolean {
-  return SEARCH_ACTION.test(playerInput ?? '');
+  return SEARCH_ACTION.test(playerInput ?? '') || isOpenContainerAction(playerInput ?? '');
 }
 
 export function claimsSearchEmpty(narrative: string): boolean {
@@ -108,8 +120,8 @@ export function clearEmptySearchOnCircumstance(
 }
 
 /**
- * After a committed GM beat: if player searched and prose says empty, stamp the target.
- * If player searches an already-empty target without new circumstance, keep the stamp.
+ * After a committed GM beat: if player searched/opened a container, stamp empty
+ * (loot once or honest empty). Re-open of an exhausted target stays empty.
  */
 export function applySearchContinuityToFacts(
   facts: SceneFacts | undefined,
@@ -118,13 +130,46 @@ export function applySearchContinuityToFacts(
   turn: number,
   locationHint?: string
 ): SceneFacts | undefined {
-  if (!isSearchAction(playerInput)) return facts;
+  if (!isSearchAction(playerInput) && !isOpenContainerAction(playerInput)) return facts;
   const target = normalizeSearchTarget(playerInput, locationHint);
   let next = clearEmptySearchOnCircumstance(facts, playerInput, target) ?? facts;
-  if (claimsSearchEmpty(narrative)) {
+  const openedContainer = isOpenContainerAction(playerInput)
+    || /^(crate|chest|box|barrel|bag)$/.test(target);
+  if (openedContainer || claimsSearchEmpty(narrative)) {
     next = recordEmptySearch(next, target, turn);
   }
   return next;
+}
+
+/**
+ * After opening a container (loot or empty): stamp emptyContainers so pads drop
+ * and bird/locket cannot infinitely respawn (Batch G).
+ */
+export function exhaustOpenedContainer(
+  state: GameState,
+  playerInput: string
+): GameState {
+  if (!isOpenContainerAction(playerInput)) return state;
+  const target = normalizeSearchTarget(playerInput, state.currentLocation);
+  return {
+    ...state,
+    sceneFacts: recordEmptySearch(state.sceneFacts, target, state.turn),
+  };
+}
+
+/** Block second grant of the same item name from an already-empty container. */
+export function shouldBlockContainerItemGain(
+  state: GameState,
+  playerInput: string,
+  itemName: string
+): boolean {
+  if (!itemName?.trim()) return false;
+  if (!isOpenContainerAction(playerInput)) return false;
+  const target = normalizeSearchTarget(playerInput, state.currentLocation);
+  if (isSearchTargetEmpty(state.sceneFacts, target)) return true;
+  const needle = itemName.toLowerCase().trim();
+  const already = (state.inventory ?? []).some((i) => i.name.toLowerCase().trim() === needle);
+  return already;
 }
 
 /** Strip invent-loot sentences when re-searching an established-empty target. */

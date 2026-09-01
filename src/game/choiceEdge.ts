@@ -10,6 +10,12 @@ import {
 } from './beatContract';
 import { hubsForBibleId, matchHub } from './outdoorHubs';
 import { isPyoaBranchExhausted, isPyoaBranchLocked } from './pyoaBranchLedger';
+import {
+  ensurePyoaSpine,
+  legalSpineExits,
+  spineBibleSupported,
+  spineForceEdgeAfterDelay,
+} from './pyoaSpine';
 import { fleeAvailable, parleyAvailable } from './encounterTerminalFsm';
 import { countLoiterFamilyStreak } from './beatFingerprint';
 
@@ -58,6 +64,36 @@ export function enumerateLegalEdges(state: GameState): ChoiceEdge[] {
     return dedupeEdges(edges);
   }
 
+  // PYOA spine v1 — Thornferry: pads = legal exits from current node
+  if (state.engineMode === 'pyoa' && spineBibleSupported(state.campaignBibleId)) {
+    const spineState = ensurePyoaSpine(state);
+    const exits = legalSpineExits(spineState);
+    const force = spineForceEdgeAfterDelay(spineState);
+    for (const ex of exits) {
+      edges.push({
+        id: `spine-${ex.id}`,
+        label: ex.label,
+        kind: 'branch',
+        risk: getSpineNodeMajor(ex.to) ? 'high' : 'med',
+      });
+    }
+    if (spineState.pyoaSpine?.endingId) {
+      edges.push({
+        id: 'spine-ending',
+        label: 'Accept the ending that follows',
+        kind: 'branch',
+        risk: 'high',
+      });
+      return dedupeEdges(edges);
+    }
+    if (!force && exits.length) {
+      // One delay pad allowed before force
+      edges.push({ id: 'wait', label: 'Wait and watch', kind: 'wait', risk: 'low' });
+    }
+    if (exits.length) return dedupeEdges(edges);
+    // Fall through to legacy PYOA edges if spine not seeded somehow
+  }
+
   if (contract) {
     if (contract.kind === 'crisis' || contract.kind === 'branch') {
       edges.push(
@@ -91,7 +127,7 @@ export function enumerateLegalEdges(state: GameState): ChoiceEdge[] {
         edges.push(
           {
             id: `${contract.id}-exit`,
-            label: 'Scout the exit',
+            label: 'Leave through the nearest exit',
             kind: 'travel',
             beatId: contract.id,
           },
@@ -227,6 +263,10 @@ export function enumerateLegalEdges(state: GameState): ChoiceEdge[] {
     edges.push({ id: 'wait', label: 'Wait and watch', kind: 'wait', risk: 'low' });
   }
   return dedupeEdges(edges);
+}
+
+function getSpineNodeMajor(toId: string): boolean {
+  return /tf-(streets|proof|gate|end)/.test(toId);
 }
 
 function dedupeEdges(edges: ChoiceEdge[]): ChoiceEdge[] {

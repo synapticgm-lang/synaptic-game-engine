@@ -4,6 +4,7 @@
  */
 
 import type { EngineMode, GameState } from './types';
+import { formatPyoaSpineTurnJob } from './pyoaSpine';
 
 export type BeatKind =
   | 'quest_stage'
@@ -215,6 +216,43 @@ export function contractsForState(state: GameState): BeatContract[] {
 
 export function contractById(id: string): BeatContract | undefined {
   return CONTRACTS.find((c) => c.id === id);
+}
+
+/**
+ * One-line TURN JOB for SNAPSHOT — clear Fate job without mandate spam (Batch G).
+ */
+export function resolveTurnJob(state: GameState, playerInput?: string): string {
+  if (state.activeEncounter && (state.activeEncounter.phase == null || state.activeEncounter.phase === 'engaged' || state.activeEncounter.phase === 'resolving')) {
+    return `Combat vs ${state.activeEncounter.name}: fight, flee, or parley — no loot AFK.`;
+  }
+  const spineJob = formatPyoaSpineTurnJob(state);
+  if (spineJob?.trim()) return spineJob;
+  const input = (playerInput ?? '').toLowerCase();
+  if (/\b(travel|go to|head to|leave|exit)\b/.test(input)) {
+    return 'Arrival/travel: land the move — new room pressure or honest blocked path.';
+  }
+  if (/\b(ask|talk|speak|parley|tell)\b/.test(input)) {
+    return 'Talk: answer or refuse with a cost — no lecture stall.';
+  }
+  if (/\b(open|check|search)\b/.test(input) && /\b(crate|chest|box|barrel)\b/.test(input)) {
+    return 'Container: one open — loot once or honest empty; then move on.';
+  }
+  if (/\b(attack|fight|strike|engage)\b/.test(input)) {
+    return 'Combat beat: steel or consequence this turn.';
+  }
+  const ad = state.arcDirector;
+  if (ad?.activeBeatId) {
+    const c = contractById(ad.activeBeatId.replace(/-repeat$/, ''));
+    if (c?.summary) return `Progress: ${c.summary}.`;
+  }
+  const empty = state.sceneFacts?.emptyContainers ?? [];
+  if (empty.length) {
+    return `Honest exhaust: ${empty[0]} is empty — exit, talk, or take a stake.`;
+  }
+  if (state.openingEstablishment && !state.openingEstablishment.complete) {
+    return 'Opening: establish HERE from the card — one concrete, no director chrome.';
+  }
+  return 'Advance one concrete: arrival, talk, threat, or honest empty.';
 }
 
 /** Pick the next due contract not yet committed. */

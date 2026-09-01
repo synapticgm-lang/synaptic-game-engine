@@ -68,6 +68,7 @@ const FILES = [
   'dungeonLifecycle.ts',
   'dungeonMobLedger.ts',
   'outdoorHubs.ts',
+  'pyoaSpine.ts',
 ];
 
 function rewriteImports(source, file) {

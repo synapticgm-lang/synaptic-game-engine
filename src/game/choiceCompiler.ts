@@ -15,6 +15,13 @@ import { enumerateLegalEdges, edgesToChoiceLabels } from './choiceEdge';
 import { isEncounterEngaged, fleeAvailable, parleyAvailable } from './encounterTerminalFsm';
 import { countPlayerIntentStreak, countLoiterFamilyStreak } from './beatFingerprint';
 import { isPyoaBranchLocked, eligiblePyoaPadsAfterLock } from './pyoaBranchLedger';
+import {
+  ensurePyoaSpine,
+  spineBibleSupported,
+  spineChoiceLabels,
+  spineForceEdgeAfterDelay,
+  isSpineDelayPad,
+} from './pyoaSpine';
 import { isNameOriginKitCoverChoice, isPlayDemand } from './openingEstablishment';
 import { isLookAroundAction } from './sandboxXp';
 import { isAtmospherePlaceName } from './questPlay';
@@ -115,6 +122,19 @@ function inspectTargetExhausted(state: GameState, choice: string): boolean {
   const ledger = state.qualityGovernance?.discoveryLedger ?? {};
   const searchedEmpty = state.sceneFacts?.searchedEmpty ?? [];
   const emptyContainers = state.sceneFacts?.emptyContainers ?? [];
+  const lower = choice.toLowerCase();
+
+  // Batch G — open/check crate|chest|box|barrel even when action isn't "inspect"
+  const containerMatch = lower.match(/\b(crate|chest|box|barrel|trunk)\b/);
+  if (containerMatch && /\b(open|check|search|loot|rummage|inspect|examine)\b/.test(lower)) {
+    const target = containerMatch[1]!;
+    if (
+      emptyContainers.some((t) => t.toLowerCase() === target || t.toLowerCase().includes(target))
+      || searchedEmpty.some((t) => t.toLowerCase() === target || t.toLowerCase().includes(target))
+    ) {
+      return true;
+    }
+  }
 
   if (isGenericInspectPad(choice)) {
     const roomKey = `object:room@${loc}`;
@@ -137,6 +157,22 @@ function inspectTargetExhausted(state: GameState, choice: string): boolean {
     }
   }
   return false;
+}
+
+/** True when a pad is loot/scout/wait under a live encounter (Batch G combat lock). */
+function isEncounterForbiddenPad(choice: string): boolean {
+  const lower = choice.toLowerCase();
+  if (/\b(flee|run away|escape|retreat|parley|negotiate|press the attack|attack|fight|strike|engage|change position)\b/.test(lower)) {
+    return false;
+  }
+  if (/\b(enemy|threat|wound|blade|guard|raider|bandit|corpse|body)\b/.test(lower) && /\b(inspect|examine|check|study)\b/.test(lower)) {
+    return false;
+  }
+  return (
+    /\b(open|check|loot|rummage)\b/.test(lower) && /\b(crate|chest|box|barrel|trunk|bag)\b/.test(lower)
+  )
+    || /\b(scout|wait and watch|^wait$|look around|examine the (?:room|area)|inspect the (?:room|area)|get (?:your )?bearings)\b/.test(lower)
+    || isLookOrExamineRoomPad(choice);
 }
 
 export type ChoiceFingerprintFamily =
@@ -482,16 +518,16 @@ export function compileChoices(
       return false;
     }
     if (engaged) {
-      // 29a/31h combat pad lock — no travel / merchant / Earth junk / look-around / examine room
+      // 29a/31h/31r combat pad lock — fight/flee/parley only (no crate/scout/wait/travel)
       if (/\b(travel toward|go to|head to|browse|merchant|shop|earth junk|phone|headphones|leatherman|keys from earth)\b/.test(lower)) {
         notes.push(`Encounter lock: ${c.slice(0, 32)}`);
         return false;
       }
-      if (isLookOrExamineRoomPad(c)) {
-        notes.push(`Encounter lock look/examine: ${c.slice(0, 32)}`);
+      if (isEncounterForbiddenPad(c)) {
+        notes.push(`Encounter lock idle/loot: ${c.slice(0, 32)}`);
         return false;
       }
-      if (/\b(inspect|examine|check|study|look around|whats going on|where am i|wait and watch|walk away)\b/.test(lower) && !/\b(enemy|threat|wraith|hunter|wound|blade|guard|raider|bandit|chest|corpse|body)\b/.test(lower)) {
+      if (/\b(inspect|examine|check|study|look around|whats going on|where am i|wait and watch|walk away)\b/.test(lower) && !/\b(enemy|threat|wraith|hunter|wound|blade|guard|raider|bandit|corpse|body)\b/.test(lower)) {
         notes.push(`Encounter lock inspect: ${c.slice(0, 32)}`);
         return false;
       }
@@ -649,10 +685,9 @@ export function compileChoices(
     notes.push(supplements.length ? 'Supplemented from edges/fallback' : 'Supplemented legal beat edges');
   }
 
-  // Batch E — after inspect/wait/scout treadmill, force exit / talk / quest pads.
+  // Batch E/G — after inspect/wait/scout treadmill, force world-moving pads (not Scout/Wait).
   if (stallInterrupt && !engaged) {
     const interruptPads = [
-      'Scout the exit',
       'Ask a direct question',
       'Press for leverage',
     ];
@@ -663,6 +698,11 @@ export function compileChoices(
         break;
       }
     }
+    if (state.activeEncounter) {
+      interruptPads.unshift('Press the attack');
+    } else {
+      interruptPads.push('Leave through the nearest exit');
+    }
     for (const pad of interruptPads) {
       if (pyoaLocked && !eligiblePyoaPadsAfterLock(state, pad)) continue;
       if (!filtered.some((f) => f.toLowerCase() === pad.toLowerCase())) {
@@ -671,11 +711,20 @@ export function compileChoices(
       }
       if (filtered.length >= 4) break;
     }
+    // G6 — strip Scout/Wait after interrupt so Fate cannot soft-lock the novel
+    filtered = filtered.filter((c) => {
+      const lower = c.toLowerCase();
+      if (/^(wait and watch|wait)$/i.test(c.trim()) || /\bscout\b/.test(lower)) {
+        notes.push(`Post-loiter scout/wait drop: ${c.slice(0, 32)}`);
+        return false;
+      }
+      return true;
+    });
   }
 
-  // Chest / named prop pads when GM named them and not exhausted
+  // Chest / named prop pads when GM named them and not exhausted (never under live encounter)
   for (const pad of namedPropPadsFromBeat(state)) {
-    if (engaged && !/\bchest|crate|corpse|body\b/i.test(pad)) continue;
+    if (engaged) continue;
     if (inspectTargetExhausted(state, pad)) continue;
     if (!filtered.some((f) => f.toLowerCase() === pad.toLowerCase())) {
       filtered.unshift(pad);
@@ -697,16 +746,72 @@ export function compileChoices(
 
   // Final pass: never leave Examine the room / Wait-Wait on locked PYOA or live encounter
   filtered = filtered.filter((c) => {
-    if (engaged && isLookOrExamineRoomPad(c)) return false;
+    if (engaged && (isLookOrExamineRoomPad(c) || isEncounterForbiddenPad(c))) return false;
     if (pyoaLocked && !eligiblePyoaPadsAfterLock(state, c)) return false;
     return true;
   });
+
+  // Batch G — Fate soft-lock guard: after loiter exhaust, always keep ≥1 world-moving option
+  if (!engaged && stallInterrupt) {
+    const worldMoving = filtered.some((c) =>
+      /\b(travel|leave|exit|ask|press for leverage|quest|attack|flee|parley|doorway|face the)\b/i.test(c)
+    );
+    if (!worldMoving) {
+      const fallback = 'Leave through the nearest exit';
+      if (!filtered.some((f) => f.toLowerCase() === fallback.toLowerCase())) {
+        filtered.unshift(fallback);
+        notes.push('Fate world-moving pad forced');
+      }
+    }
+  }
 
   // Batch C — open hub vignette: do not invent a brand-new social cast
   const beforeVig = filtered.length;
   filtered = filterPadsAgainstOpenVignette(state, filtered);
   if (filtered.length < beforeVig) {
     notes.push(`Vignette cast lock dropped ${beforeVig - filtered.length}`);
+  }
+
+  // Engaged: ensure combat options exist for Fate
+  if (engaged) {
+    if (!filtered.some((c) => /\b(attack|fight|press the attack|engage)\b/i.test(c))) {
+      filtered.unshift('Press the attack');
+    }
+    if (fleeAvailable(state.activeEncounter) && !filtered.some((c) => /\bflee\b/i.test(c))) {
+      filtered.push('Try to flee');
+    }
+    if (parleyAvailable(state.activeEncounter) && !filtered.some((c) => /\bparley\b/i.test(c))) {
+      filtered.push('Parley');
+    }
+  }
+
+  // PYOA spine v1 — Thornferry pads = legal exits (Fate = turn the page)
+  if (!engaged && state.engineMode === 'pyoa' && spineBibleSupported(state.campaignBibleId)) {
+    const spineState = ensurePyoaSpine(state);
+    const legal = spineChoiceLabels(spineState);
+    const forceEdge = spineForceEdgeAfterDelay(spineState);
+    if (legal.length) {
+      if (forceEdge) {
+        filtered = filtered.filter((c) => !isSpineDelayPad(c));
+        notes.push('PYOA spine delay exhausted — force legal edge');
+      }
+      for (const label of legal) {
+        if (!filtered.some((f) => f.toLowerCase() === label.toLowerCase())) {
+          filtered.unshift(label);
+          notes.push(`PYOA spine edge: ${label.slice(0, 32)}`);
+        }
+      }
+      // Prefer spine exits; keep at most 2 non-spine pads
+      const spineSet = new Set(legal.map((l) => l.toLowerCase()));
+      const spineFirst = filtered.filter((c) => spineSet.has(c.toLowerCase()));
+      const rest = filtered.filter((c) => !spineSet.has(c.toLowerCase()) && !isSpineDelayPad(c));
+      filtered = [...spineFirst, ...rest.slice(0, forceEdge ? 0 : 2)].slice(0, 6);
+    } else if (spineState.pyoaSpine?.endingId) {
+      filtered = filtered.filter((c) => !isSpineDelayPad(c));
+      if (!filtered.some((c) => /\b(aftermath|close|end|accept)\b/i.test(c))) {
+        filtered.unshift('Accept the ending that follows');
+      }
+    }
   }
 
   return {

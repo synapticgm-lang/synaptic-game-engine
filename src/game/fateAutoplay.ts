@@ -1110,6 +1110,7 @@ Do NOT print dice notation or CODE ENFORCED.
 
   const structural = applyStructuralEvents(arcState, events, {
     strictEncumbrance: settings.strictEncumbrance === true,
+    playerInput,
   });
   let working = structural.state;
 

@@ -275,7 +275,7 @@ export function validateProseAgainstManifest(
 
 /** Old HUD stubs that must never appear as player-facing GM narration (critic Batch A + E stall). */
 const BANNED_FALLBACK_STUB =
-  /something shifts\s*[—-]\s*a footstep|forcing the moment forward|closes in\s*[—-]\s*steel and breath|You act while the ledger still counts|the crisis will not wait\.|the arc moves anyway\.|the moment has not moved on|figure\s+\d+\s+is still here/i;
+  /something shifts\s*[—-]\s*a footstep|forcing the moment forward|closes in\s*[—-]\s*steel and breath|You act while the ledger still counts|the crisis will not wait\.|the arc moves anyway\.|the moment has not moved on|figure\s+\d+\s+is still here|holds the beat|a glance,\s*a breath|a cost still unpaid|telegraph first|no prior cast|Do not invent/i;
 
 /** HUD fact bleed that used to append into fallback prose. */
 const HUD_FACT_BLEED = /\bPC:\s*\S+.*\bHP:\s*\d|\bXP:\s*\d{1,4}\b(?!\s*(?:Gained|from|for))/i;

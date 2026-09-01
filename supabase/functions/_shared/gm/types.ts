@@ -478,6 +478,8 @@ export interface GameState {
   replayHashes?: import('./replayHash').ReplayHashRecord[];
   /** B025 PYOA branch ledger — Millstone Charter paths. */
   pyoaBranchLedger?: import('./pyoaBranchLedger').PyoaBranchLedger;
+  /** PYOA spine v1 — Thornferry curated nodes (other bibles omit). */
+  pyoaSpine?: import('./pyoaSpine').PyoaSpineState;
   /** Frozen opening invariants for this run. */
   campaignContract?: import('./campaignContract').CampaignContract | null;
   /** Soft drifts against campaignContract (Expert / continuity). */
