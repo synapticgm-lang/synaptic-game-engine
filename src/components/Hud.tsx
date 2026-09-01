@@ -8,9 +8,9 @@ import { effectiveWriterTier, hasUnlimitedTextCapacity, isFounderPlayAccount } f
 import { equippedSetLabel, equippedSetName } from '../game/uiTheme';
 
 /** Visible after a hard refresh -- if this is missing, Vercel is still serving the 16 Aug bundle. */
-export const HUD_BUILD_STAMP = '2026-08-31s';
+export const HUD_BUILD_STAMP = '2026-08-31t';
 const HUD_BUILD_TITLE =
-  'Debug 2026-08-31s - Gemini T50 P0 ledger (labels/crowd/entity/dialogue)';
+  'Debug 2026-08-31t - Batch T deixis/crowd/stitch/choice/spatial';
 
 interface Props {
   state: GameState;

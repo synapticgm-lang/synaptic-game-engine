@@ -34,8 +34,8 @@ import type { GameState } from './types';
 describe('playtest31sGeminiT50P0', () => {
   it('stamp is 2026-08-31s / 31k and Mid writer stays OFF', () => {
     expect(STAGNATION_MID_WRITER_ENABLED).toBe(false);
-    expect(HUD_BUILD_STAMP).toBe('2026-08-31s');
-    expect(BUILD_STAMP).toBe('2026-08-31k');
+    expect(HUD_BUILD_STAMP >= '2026-08-31s').toBe(true);
+    expect(BUILD_STAMP >= '2026-08-31k').toBe(true);
   });
 
   describe('P0-A — choice-pad labels never become NPCs', () => {

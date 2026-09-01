@@ -16,6 +16,9 @@ import {
   recentGmBeatTexts,
   stripRecycledPrefix,
 } from './semanticLoopDetector';
+import { isUnresolvedDeixisToken, realPresentPeople } from './chromeAuthority';
+import { isEncounterEngaged } from './encounterTerminalFsm';
+import { hubsForBibleId } from './outdoorHubs';
 
 export type CommitGateReason =
   | 'atmosphere-only'
@@ -98,42 +101,47 @@ export function classifyBeatCommit(
 }
 
 /**
- * Diegetic one-line delta when a beat is rejected.
- * Never emit stall chrome (Batch E) or "holds the beat / glance, a breath…" (Batch G).
+ * Diegetic scene-move when a beat is rejected.
+ * Batch T — never ship deixis subjects, empty-crate bank chrome, or "room asks" as the sole beat.
+ * Always force exit / talk / encounter language a player can act on.
  */
 export function stitchCommitDelta(state: GameState): string {
   const slots = compilePointerCardSlots(state);
   const loc = (state.currentLocation || slots?.where || 'this room').replace(/\.$/, '');
-  const people = (state.sceneFacts?.present ?? [])
-    .map((p) => String(p).trim())
-    .filter(
-      (p) =>
-        p
-        && !/^figure\s+\d+$/i.test(p)
-        && !/^bystanders?$/i.test(p)
-        && !/^it$/i.test(p)
-        && !/^(they|them|one|press|scattered\s+scale)$/i.test(p)
-    );
+  const people = realPresentPeople(state.sceneFacts?.present ?? []).filter(
+    (p) => p && !isUnresolvedDeixisToken(p)
+  );
   const present = people[0];
-  const props = (state.sceneFacts?.props ?? []).map((p) => String(p).trim()).filter(Boolean);
-  const empty = state.sceneFacts?.emptyContainers ?? [];
-  const prop = props.find((p) => !empty.some((e) => p.toLowerCase().includes(e.toLowerCase()))) ?? props[0];
+  const foe =
+    state.activeEncounter?.name?.trim()
+    || state.sceneFacts?.pendingEncounter?.name?.trim()
+    || '';
+  const engaged = isEncounterEngaged(state) || !!state.sceneFacts?.pendingEncounter;
   const exitHint = (slots?.firstPressure ?? '').trim();
+  const hubAlt = hubsForBibleId(state.campaignBibleId)
+    .map((h) => h.name)
+    .find((n) => n.toLowerCase() !== loc.toLowerCase());
   const turn = state.turn ?? 0;
+
+  if (engaged && foe) {
+    const combatBank = [
+      `${foe} still holds the line in ${loc} — strike, parley, or break contact now.`,
+      `The fight in ${loc} does not wait: face ${foe}, or leave through the nearest exit.`,
+    ];
+    return combatBank[turn % combatBank.length]!;
+  }
+
   const bank = [
     present
-      ? `${present} shifts weight in ${loc} and leaves you one clear next move.`
-      : '',
-    prop
-      ? `The ${prop} in ${loc} is done yielding — speak, leave, or take a stake.`
-      : '',
-    empty.length
-      ? `The ${empty[0]} in ${loc} is empty. The room asks for an exit or a person, not another sift.`
+      ? `${present} in ${loc} waits on a real answer — speak, leave, or take a stake.`
       : '',
     exitHint
-      ? `In ${loc}, a way out still waits — ${String(exitHint).slice(0, 48).replace(/\.$/, '')}.`
+      ? `In ${loc}, a way out still waits — ${String(exitHint).slice(0, 48).replace(/\.$/, '')}. Leave or commit.`
       : '',
-    `In ${loc}, the empty is honest: choose an exit, a person, or a stake.`,
+    hubAlt
+      ? `Nothing more yields here. Leave ${loc} toward ${hubAlt}, or talk to someone who will move.`
+      : '',
+    `In ${loc}, the beat needs an exit, a spoken commit, or a stake — not another sift.`,
   ].filter(Boolean);
   return bank[turn % bank.length] || bank[bank.length - 1]!;
 }
@@ -148,6 +156,12 @@ export function isVerbatimStallStub(text: string | undefined): boolean {
     || /\bholds the beat\b/i.test(text)
     || /\ba glance,\s*a breath(?:,\s*a cost still unpaid)?\b/i.test(text)
     || /\ba cost still unpaid\b/i.test(text)
+    // Batch T — old diegetic stitch banks read as system logs
+    || /\bis done yielding\b/i.test(text)
+    || /\bthe room asks for\b/i.test(text)
+    || /\bleaves you one clear next move\b/i.test(text)
+    || /\bshifts weight in .+\band leaves you one clear\b/i.test(text)
+    || /\bencou?nter initiated\b/i.test(text)
   );
 }
 
@@ -165,6 +179,7 @@ export function isDirectorChromeLeak(text: string | undefined): boolean {
     || /\bARC (?:BEAT|DIRECTOR)\b/i.test(text)
     || /\bTURN JOB:\s*/i.test(text)
     || /\bSNAPSHOT\b/i.test(text) && /\bPresence:\s*/i.test(text)
+    || /\bencou?nter initiated\s*:/i.test(text)
   );
 }
 
@@ -202,15 +217,15 @@ export function repairRejectedBeat(
       || _reasons.includes('craft-ignore')
       || isAtmosphereOnlyBeat(prose)
       || missingPointerCardSlot(state, prose);
-    if (collage.hit && collage.tailHasNewContent && next.trim() && !_reasons.includes('same-room-essay')) {
-      next = `${next} ${stitch}`.trim();
-    } else if (hardEssay) {
+    // Batch T — never leave collage tail + stitch as a chrome sandwich; force a real scene move.
+    if (hardEssay || _reasons.includes('atmosphere-only') || _reasons.includes('recycle-without-delta')) {
       next = stitch;
+    } else if (collage.hit && collage.tailHasNewContent && next.trim() && next.trim().length > 40) {
+      next = `${next} ${stitch}`.trim();
     } else {
-      const first = (prose.match(/^[^.!?]+[.!?]/) ?? [''])[0].trim();
-      next = first && first.length > 12 ? `${first} ${stitch}`.trim() : stitch;
+      next = stitch;
     }
-    notes.push('Commit gate: stitched one concrete');
+    notes.push('Commit gate: stitched scene move');
   }
 
   // Never leave banned stall chrome in the repaired draft.

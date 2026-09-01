@@ -93,7 +93,7 @@ const CHOICE_LINE_REGEX = /^\s*(?:\*\*|\*)?\s*(?:(?:Option\s+)?\d+[.):]|\[\d+\]|
 const NUMBERED_CHOICE_PREFIX =
   /(?:\*\*)?(?:(?:Option\s+)?\d+[.):]|\[\d+\]|\(\d+\))\s+(?:\*\*)?/i;
 const CHOICE_OFFER_VERBS =
-  /^(?:(?:carefully|slowly|quietly|quickly|gently|cautiously|softly)\s+)?(?:ask|inquire|inspect|examine|talk|speak|tell|approach|leave|walk away|refuse|offer|demand|listen|wait|search|look|follow|challenge|bow|kneel|accept|decline|press|probe|question|bargain|help|protect|thank|apologiz|observe|continue|remain|duck|ready|touch|check|call|shout|whisper|confront|defy|agree|scan|try|sit|get|find|go|move|stand|open|take|use|push|pull|read|pick|run|flee|scout|sift|explore|bearings|slip|head|return|enter|travel|step|dash|creep|sneak|force|engage|change)\b/i;
+  /^(?:(?:carefully|slowly|quietly|quickly|gently|cautiously|softly)\s+)?(?:ask|inquire|inspect|examine|talk|speak|tell|approach|leave|walk away|refuse|offer|demand|listen|wait|search|look|follow|challenge|bow|kneel|accept|decline|press|probe|question|bargain|help|protect|thank|apologiz|observe|continue|remain|duck|ready|touch|check|call|shout|whisper|confront|defy|agree|scan|try|sit|get|find|go|move|stand|open|take|use|push|pull|read|pick|run|flee|scout|sift|explore|bearings|slip|head|return|enter|travel|step|dash|creep|sneak|force|engage|change|ascend|draw|intervene|peer|give|maintain)\b/i;
 const IN_PROSE_OFFER_SENTENCE =
   /(?:^|[.!?]\s+)((?:Inquire about|Ask (?:the \w+|him|her|them)(?: to| about)|Ask about)\b[^.!?\n]{8,140})/gi;
 const MECHANIC_SYSTEM_BODY =
@@ -215,7 +215,7 @@ export function stripChoiceList(text: string): string {
   // Singleton numbered offer glued to the last sentence (Josie T0: "…mosaic. 1. Scan…").
   // Also catch "Get your bearings" / verb-expanded offers / critic T13 "1. Slip toward…".
   const OFFER_VERB_LEAD =
-    /^(?:(?:carefully|slowly|quietly|quickly|gently|cautiously|softly)\s+)?(?:(?:attempt|try)\s+to\s+)?(?:get|find|go|move|stand|open|take|use|scout|sift|explore|slip|head|return|enter|travel|step|dash|creep|sneak|force|engage|change|walk|run|flee|ask|talk|inspect|examine|look|wait|check|press|approach|leave|continue|remain|duck|ready|touch|observe|attempt)\b/i;
+    /^(?:(?:carefully|slowly|quietly|quickly|gently|cautiously|softly)\s+)?(?:(?:attempt|try)\s+to\s+)?(?:get|find|go|move|stand|open|take|use|scout|sift|explore|slip|head|return|enter|travel|step|dash|creep|sneak|force|engage|change|walk|run|flee|ask|talk|inspect|examine|look|wait|check|press|approach|leave|continue|remain|duck|ready|touch|observe|attempt|ascend|draw|intervene|peer|give|maintain)\b/i;
   result = result.replace(
     /(?:^|[.!?]\s+)\d+[.)]\s+([^.!?\n]{4,160}[.!?]?)(?=\s+\S|\s*$)/g,
     (full, body: string) => {
@@ -253,9 +253,9 @@ export function stripChoiceList(text: string): string {
       return full;
     }
   );
-  // Mid-body leftover "1. Carefully examine…" / "1. Continue observing…" / "1. Attempt to…" with more prose after.
+  // Mid-body leftover "1. Carefully examine…" / "1. Ascend…" / "1. Draw…" with more prose after.
   result = result.replace(
-    /(?:^|[.!?]\s+)\d+[.)]\s+((?:carefully|slowly|quietly|quickly|gently|cautiously|softly)\s+)?(?:(?:attempt|try)\s+to\s+)?(?:inspect|examine|look|scan|scout|search|ask|talk|wait|approach|slip|engage|get|find|go|try|check|press|leave|walk|run|flee|explore|bearings|continue|remain|duck|ready|touch|observe|attempt)\b[^.!?\n]{0,140}[.!?]?/gi,
+    /(?:^|[.!?]\s+)\d+[.)]\s+((?:carefully|slowly|quietly|quickly|gently|cautiously|softly)\s+)?(?:(?:attempt|try)\s+to\s+)?(?:inspect|examine|look|scan|scout|search|ask|talk|wait|approach|slip|engage|get|find|go|try|check|press|leave|walk|run|flee|explore|bearings|continue|remain|duck|ready|touch|observe|attempt|ascend|draw|intervene|peer|give|maintain)\b[^.!?\n]{0,140}[.!?]?/gi,
     (full) => (full.match(/^[.!?]/)?.[0] ?? '')
   );
   // Trailing orphan menu crumbs: "…cots 4." / bare "4." after an offer strip.

@@ -121,6 +121,7 @@ function tidyClauses(text: string): string {
  * "You reach the cathedral infirmary." while already there.
  * Batch S — also strip arrival to a *different* known/opening place (Sevenfold Circle
  * under bombardment spam while standing in Lowmarket / West Wall).
+ * Batch T — strip Sevenfold false-arrival even when glued before a real leave/reach line.
  */
 export function scrubFalseArrivalWhenHere(
   text: string,
@@ -178,6 +179,16 @@ export function scrubFalseArrivalWhenHere(
   if (loc && !/sevenfold\s+circle/i.test(loc)) {
     foreign.add('The Sevenfold Circle under bombardment');
     foreign.add('Sevenfold Circle');
+    // Batch T — bare prefix even mid-paragraph / glued to real travel
+    next = next
+      .replace(
+        /\bYou reach\s+(?:the\s+)?(?:Sevenfold\s+Circle)(?:\s+under\s+bombardment)?[.!]?\s*/gi,
+        ''
+      )
+      .replace(
+        /\bYou (?:arrive(?: at)?|enter)\s+(?:the\s+)?(?:Sevenfold\s+Circle)(?:\s+under\s+bombardment)?[.!]?\s*/gi,
+        ''
+      );
   }
   for (const place of foreign) stripReach(place);
 
@@ -186,12 +197,13 @@ export function scrubFalseArrivalWhenHere(
 
 /**
  * Choice-pad pronouns/verbs quoted as NPC names: known as "They", "One" and "Press".
+ * Batch T — also strip deixis nouns used as people/places ("the Ahead", "figure 1").
  */
 export function scrubChoicePadPersonNames(text: string): string {
   if (!text) return text;
   let next = text;
   const PAD =
-    'They|Them|Their|One|Ones|Press|Wait|Ready|Scout|Inspect|Check|Ask|Talk|Leave|Open|Hold|Flee|Parley|Leverage|Attack|Status|Travel|Engage';
+    'They|Them|Their|One|Ones|Press|Wait|Ready|Scout|Inspect|Check|Ask|Talk|Leave|Open|Hold|Flee|Parley|Leverage|Attack|Status|Travel|Engage|Ahead|Behind|Ascend|Draw|Intervene|Peer|Give|Maintain';
   next = next.replace(
     new RegExp(
       `\\b(?:the\\s+)?(?:Scattered\\s+Scale\\s+)?(?:known\\s+as|called|named)\\s+[“"']?(?:${PAD})[”"']?\\b`,
@@ -205,6 +217,57 @@ export function scrubChoicePadPersonNames(text: string): string {
   );
   next = next.replace(new RegExp(`\\bthe figures of\\s+[“"'](?:${PAD})[”"'](?:\\s+and\\s+[“"'](?:${PAD})[”"'])*`, 'gi'), 'the figures nearby');
   next = next.replace(new RegExp(`\\b(?:Approach|Ask|Observe)\\s+[“"'](?:${PAD})[”"']`, 'gi'), 'Approach a nearby figure');
+  return tidyClauses(next);
+}
+
+/**
+ * Batch T — unresolved deixis / occupancy nouns never stay as people, loot, or places.
+ * Tape: "the Ahead half-hidden", "tarnished the Ahead", "figure 1 priests", "silhouette of figure 1".
+ */
+export function scrubUnresolvedDeixisNouns(text: string, currentLocation?: string): string {
+  if (!text) return text;
+  const loc = (currentLocation ?? '').trim();
+  const place = loc
+    ? `the ${loc.replace(/^(the\s+)/i, '').split(/[,—–-]/)[0]!.trim().slice(0, 40)}`
+    : 'the street ahead';
+  let next = text;
+  // Occupancy figure N as noun
+  next = next.replace(/\bfigure\s+(\d+)\s+priests?\b/gi, 'priests');
+  next = next.replace(/\bsilhouette of\s+figure\s+\d+\b/gi, 'silhouette nearby');
+  next = next.replace(/\bof\s+figure\s+\d+\b/gi, 'nearby');
+  next = next.replace(/\bfigure\s+\d+\s+ramparts?\b/gi, 'the ramparts');
+  next = next.replace(/\b(?:the\s+)?figure\s+\d+\b/gi, 'someone nearby');
+  // Deixis as proper noun / loot / fortification
+  const DEIXIS = 'Ahead|Behind|Beside|Nearby|Above|Below|Left|Right|Forward';
+  next = next.replace(
+    new RegExp(`\\btarnished\\s+(?:the\\s+)?(?:${DEIXIS})\\b`, 'gi'),
+    'tarnished silver token'
+  );
+  next = next.replace(
+    new RegExp(`\\b(?:fortifications|walls?|spires?|edifice)\\s+of\\s+(?:the\\s+)?(?:${DEIXIS})\\b`, 'gi'),
+    (_m) => `fortifications of ${place}`
+  );
+  next = next.replace(
+    new RegExp(`\\bstudy\\s+(?:the\\s+)?(?:${DEIXIS})\\b`, 'gi'),
+    'study the scene'
+  );
+  next = next.replace(
+    new RegExp(`\\b(?:the\\s+)?(?:${DEIXIS})\\s+half-hidden\\b`, 'gi'),
+    'someone half-hidden'
+  );
+  next = next.replace(
+    new RegExp(`\\b(?:scattering of\\s+)?(?:tarnished\\s+)?(?:the\\s+)?(?:${DEIXIS})\\b(?=\\s*[,.]|\\s+(?:half-|shifts|remains|stands|breaks?))`, 'gi'),
+    'someone nearby'
+  );
+  next = next.replace(
+    new RegExp(`\\bthe\\s+(?:${DEIXIS})\\b`, 'gi'),
+    'the way ahead'
+  );
+  // Stitch pollution subjects: "Ahead shifts weight…"
+  next = next.replace(
+    new RegExp(`\\b(?:${DEIXIS})\\s+shifts\\s+weight\\b`, 'gi'),
+    'Someone nearby shifts weight'
+  );
   return tidyClauses(next);
 }
 
@@ -961,6 +1024,7 @@ export function applyProseWarden(text: string, ctx?: ProseWardenContext): string
   next = scrubSpeakerPlaceholder(next, alone);
   next = scrubChromeAsPerson(next, ctx?.presentNames ?? []);
   next = scrubChoicePadPersonNames(next);
+  next = scrubUnresolvedDeixisNouns(next, ctx?.currentLocation);
   next = scrubFactionAsLootOrTarget(next);
   next = scrubStrangerArtifact(next, ctx?.presentNames ?? [], alone);
   next = scrubUnearnedVictory(next, {

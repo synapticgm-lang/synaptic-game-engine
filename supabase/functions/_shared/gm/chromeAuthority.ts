@@ -63,9 +63,25 @@ const POLITY_FACTION_PLACE_HEAD =
 /**
  * Choice-pad / pronoun tokens that must never become present[] person slots.
  * Transcript T22: "They" / "One" / "Press" harvested from pad text ("Press for leverage").
+ * Batch T: Ascend/Draw/Intervene/Peer/Give + spatial deixis (Ahead/Behind/…).
  */
 const CHOICE_PAD_PERSON_EXACT =
-  /^(they|them|their|theirs|one|ones|press|wait|ready|scout|inspect|check|ask|talk|leave|open|hold|attempt|continue|fate|options?|leverage|attack|flee|parley|status|travel|engage|examine|observe|approach|remain|ignore|demand|listen|walk|run|duck|slip|scan|search|unroll|unfold|show|call|try|keep|find|push|dash|meet|state|provide|inquire|step|turn|maintain|focus|move|glance)$/i;
+  /^(they|them|their|theirs|one|ones|press|wait|ready|scout|inspect|check|ask|talk|leave|open|hold|attempt|continue|fate|options?|leverage|attack|flee|parley|status|travel|engage|examine|observe|approach|remain|ignore|demand|listen|walk|run|duck|slip|scan|search|unroll|unfold|show|call|try|keep|find|push|dash|meet|state|provide|inquire|step|turn|maintain|focus|move|glance|ascend|draw|intervene|peer|give|ahead|behind|beside|nearby|above|below|left|right|forward|back|around|here|there)$/i;
+
+/**
+ * Unresolved deixis / occupancy nouns — never person slots, pads, or stitch subjects.
+ * Batch T tape: "the Ahead", "figure 1 priests", "silhouette of figure 1".
+ */
+const UNRESOLVED_DEIXIS_EXACT =
+  /^(ahead|behind|beside|nearby|above|below|left|right|forward|back|around|here|there|north|south|east|west)$/i;
+
+export function isUnresolvedDeixisToken(token: string): boolean {
+  const t = normalizeChromeToken(token);
+  if (!t) return false;
+  if (UNRESOLVED_DEIXIS_EXACT.test(t)) return true;
+  if (/^figure\s+\d+$/i.test(t)) return true;
+  return false;
+}
 
 export function isPolityFactionOrPlaceToken(token: string): boolean {
   const t = normalizeChromeToken(token);
@@ -95,6 +111,7 @@ export function isRoleAdjectivePersonSlot(token: string): boolean {
 export function isChoicePadPersonToken(token: string): boolean {
   const t = normalizeChromeToken(token);
   if (!t) return false;
+  if (isUnresolvedDeixisToken(t)) return true;
   if (t.includes(' ')) return false;
   return CHOICE_PAD_PERSON_EXACT.test(t);
 }
@@ -115,6 +132,7 @@ export function filterChromeFromPresent(present: string[] | undefined): string[]
       !isPolityFactionOrPlaceToken(p) &&
       !isRoleAdjectivePersonSlot(p) &&
       !isChoicePadPersonToken(p) &&
+      !isUnresolvedDeixisToken(p) &&
       !isFactionOrOrgToken(p)
   );
 }
@@ -126,7 +144,7 @@ export function realPresentPeople(present: string[] | undefined): string[] {
     if (isAggregatePersonToken(t) || /^(cracked street)$/i.test(t)) {
       return false;
     }
-    if (/^figure\s+\d+$/i.test(t)) return false;
+    if (isUnresolvedDeixisToken(t)) return false;
     if (isPolityFactionOrPlaceToken(t)) return false;
     if (isRoleAdjectivePersonSlot(t)) return false;
     if (isChoicePadPersonToken(t)) return false;

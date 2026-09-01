@@ -16,11 +16,12 @@ const NAME_PATTERNS = [
 ];
 
 const BLOCKLIST =
-  /^(The|You|Your|System|Status|Quest|Turn|North|South|East|West|Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday|Chapter|They|Them|Their|One|Press|Wait|Ready|Scout|Ask|Talk|Leave|Open|Hold|Flee|Parley|Leverage|Attack)$/i;
+  /^(The|You|Your|System|Status|Quest|Turn|North|South|East|West|Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday|Chapter|They|Them|Their|One|Press|Wait|Ready|Scout|Ask|Talk|Leave|Open|Hold|Flee|Parley|Leverage|Attack|Ahead|Behind|Beside|Nearby|Ascend|Draw|Intervene|Peer|Give|Maintain|Figure)$/i;
 
 function isBlockedHarvestName(name: string): boolean {
   if (BLOCKLIST.test(name) || isChromePersonToken(name)) return true;
   if (isChoicePadPersonToken(name)) return true;
+  if (/^figure\s+\d+$/i.test(name.trim())) return true;
   if (isPolityFactionOrPlaceToken(name) || isFactionOrOrgToken(name)) return true;
   return false;
 }

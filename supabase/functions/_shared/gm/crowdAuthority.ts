@@ -252,13 +252,16 @@ export function formatPresenceForSnapshot(present: string[] | undefined): string
   return (present ?? []).filter((p) => isNamedPersonToken(p) && !isOccupancyToken(p));
 }
 
+/**
+ * Keep named people + props. Crowd headcount lives on crowdCount — never invent
+ * `figure N` occupancy nouns into present[] (Batch T: "figure 1 priests").
+ */
 export function syncPresentToCount(present: string[], count: number): string[] {
-  const named = present.filter((p) => isNamedPersonToken(p));
+  const named = present.filter((p) => isNamedPersonToken(p) && !isOccupancyToken(p));
   const props = present.filter((p) => isNonPersonToken(p));
   if (count <= 0) return [...props];
-  const need = Math.max(0, count - named.length);
-  const figures = Array.from({ length: need }, (_, i) => `figure ${i + 1}`);
-  return [...props, ...named, ...figures];
+  // Named floor may be below count; do not pad with figure-N placeholders.
+  return [...props, ...named];
 }
 
 function parseNumberWord(raw: string): number | null {
@@ -365,9 +368,12 @@ function applyCase(sample: string, replacement: string): string {
 export function normalizeCrowdRewriteArtifacts(text: string): string {
   if (!text) return text;
   let next = text;
-  // "herehere" / "here here" / "here hereere"
+  // "herehere" / "here here" / "here hereere" / pluralized "heres"
+  next = next.replace(/\bheres\b/gi, 'here');
   next = next.replace(/\bhere(?:\s*here)+\b/gi, 'here');
   next = next.replace(/\bhereere\b/gi, 'here');
+  // "people heres" / "crowd heres"
+  next = next.replace(/\b(people|crowd|person|two people|few people)\s+heres\b/gi, '$1 here');
   // "the sparse the crowd here" / "the modest the people here"
   next = next.replace(
     /\bthe\s+(?:sparse|modest|small|large|scattered|meager)\s+the\s+(crowd|people|person|two people|few people)\s+here\b/gi,
@@ -382,6 +388,15 @@ export function normalizeCrowdRewriteArtifacts(text: string): string {
   );
   // "the people here passes" grammar after rewrite — light fix
   next = next.replace(/\bthe people here passes\b/gi, 'no one passes');
+  // Personified crowd-as-monster: "The crowd here, hunched and bestial, break…"
+  next = next.replace(
+    /\bthe\s+(crowd|people|two people|few people)\s+here\s*,\s*(?:hunched|bestial|coiled|snarling|feral|monstrous)(?:\s+and\s+\w+)?\s*,/gi,
+    (_m, noun: string) => `the ${String(noun).toLowerCase()} here,`
+  );
+  next = next.replace(
+    /\bthe\s+(crowd|people)\s+here\s*,\s*hunched and bestial\b/gi,
+    (_m, noun: string) => `the ${String(noun).toLowerCase()} here`
+  );
   return next.replace(/\s{2,}/g, ' ').replace(/\s+([.,;:])/g, '$1');
 }
 

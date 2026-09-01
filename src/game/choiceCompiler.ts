@@ -175,6 +175,23 @@ function isEncounterForbiddenPad(choice: string): boolean {
     || isLookOrExamineRoomPad(choice);
 }
 
+/** Batch T — travel yo-yo lock while fight / standoff / parked drought encounter is live. */
+function hasLiveStakes(state: GameState): boolean {
+  return (
+    isEncounterEngaged(state)
+    || !!state.activeEncounter
+    || !!state.sceneFacts?.pendingEncounter
+  );
+}
+
+function isTravelPad(choice: string): boolean {
+  const lower = choice.toLowerCase();
+  return (
+    /\b(travel(?:\s+(?:toward|to|into))?|go to|head (?:to|for|toward)|move to|leave for|walk to)\b/.test(lower)
+    || /^travel\b/i.test(choice.trim())
+  );
+}
+
 export type ChoiceFingerprintFamily =
   | 'walk_away'
   | 'inspect'
@@ -481,6 +498,7 @@ export function compileChoices(
   const edgeLabels = edgesToChoiceLabels(legalEdges);
 
   const engaged = isEncounterEngaged(state);
+  const liveStakes = hasLiveStakes(state);
   const streak = countPlayerIntentStreak(state);
   const loiter = countLoiterFamilyStreak(state);
   const hardStreak = streak.count >= 5 && streak.key !== 'empty';
@@ -524,9 +542,14 @@ export function compileChoices(
       notes.push(`Camera L/R drop: ${c.slice(0, 32)}`);
       return false;
     }
+    // Batch T — travel yo-yo lock under live fight/standoff/pending drought encounter
+    if (liveStakes && isTravelPad(c)) {
+      notes.push(`Travel yo-yo lock: ${c.slice(0, 32)}`);
+      return false;
+    }
     if (engaged) {
       // 29a/31h/31r combat pad lock — fight/flee/parley only (no crate/scout/wait/travel)
-      if (/\b(travel toward|go to|head to|browse|merchant|shop|earth junk|phone|headphones|leatherman|keys from earth)\b/.test(lower)) {
+      if (/\b(travel toward|travel to|go to|head to|head for|browse|merchant|shop|earth junk|phone|headphones|leatherman|keys from earth)\b/.test(lower)) {
         notes.push(`Encounter lock: ${c.slice(0, 32)}`);
         return false;
       }
@@ -696,18 +719,21 @@ export function compileChoices(
 
   // Batch E/G — after inspect/wait/scout treadmill, force world-moving pads (not Scout/Wait).
   // Batch S — dialogue recycle drops Press/Ask and forces Leave/Travel.
+  // Batch T — never offer Travel yo-yo while live stakes are up.
   if (stallInterrupt && !engaged) {
     const interruptPads = talkRecycle
       ? ['Leave through the nearest exit', 'Walk away with consequence']
       : ['Ask a direct question', 'Press for leverage'];
     const here = (state.currentLocation ?? '').toLowerCase();
-    for (const h of hubsForBibleId(state.campaignBibleId).slice(0, 3)) {
-      if (h.name.toLowerCase() !== here) {
-        interruptPads.unshift(`Travel toward ${h.name}`);
-        break;
+    if (!liveStakes) {
+      for (const h of hubsForBibleId(state.campaignBibleId).slice(0, 3)) {
+        if (h.name.toLowerCase() !== here) {
+          interruptPads.unshift(`Travel toward ${h.name}`);
+          break;
+        }
       }
     }
-    if (state.activeEncounter) {
+    if (state.activeEncounter || state.sceneFacts?.pendingEncounter) {
       interruptPads.unshift('Press the attack');
     } else if (!talkRecycle) {
       interruptPads.push('Leave through the nearest exit');
@@ -760,6 +786,7 @@ export function compileChoices(
   // Final pass: never leave Examine the room / Wait-Wait on locked PYOA or live encounter
   filtered = filtered.filter((c) => {
     if (engaged && (isLookOrExamineRoomPad(c) || isEncounterForbiddenPad(c))) return false;
+    if (liveStakes && isTravelPad(c)) return false;
     if (pyoaLocked && !eligiblePyoaPadsAfterLock(state, c)) return false;
     if (talkRecycle && /\b(press for leverage|ask a direct question|talk to|ready yourself)\b/i.test(c)) {
       return false;
