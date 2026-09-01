@@ -698,7 +698,8 @@ export function compileChoices(
   const legalEdges = enumerateLegalEdges(state);
   const edgeLabels = edgesToChoiceLabels(legalEdges);
 
-  const engaged = isEncounterEngaged(state);
+  // Batch Z — check BOTH active and pending encounters for engaged state
+  const engaged = isEncounterEngaged(state) || !!state.sceneFacts?.pendingEncounter;
   const liveStakes = hasLiveStakes(state);
   const travelStarve = shouldStarveTravelPads(state, liveStakes);
   const streak = countPlayerIntentStreak(state);
