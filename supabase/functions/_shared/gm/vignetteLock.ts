@@ -6,7 +6,12 @@
  */
 
 import type { GameState, SceneFacts } from './types.ts';
-import { isChromePersonToken } from './chromeAuthority.ts';
+import {
+  isChromePersonToken,
+  isChoicePadPersonToken,
+  isDialogueVerbPersonToken,
+  isNonPersonNameToken,
+} from './chromeAuthority.ts';
 
 export type VignetteKind = 'social' | 'argument' | 'vendor';
 
@@ -38,8 +43,9 @@ function uniqNames(names: string[]): string[] {
   for (const raw of names) {
     const n = String(raw ?? '').replace(/\s+/g, ' ').trim();
     if (n.length < 2 || n.length > 48) continue;
-    if (isChromePersonToken(n)) continue;
-    if (/^(bystanders|someone|stranger|figure|official|handlers?)$/i.test(n)) continue;
+    if (isNonPersonNameToken(n) || isChromePersonToken(n)) continue;
+    if (isChoicePadPersonToken(n) || isDialogueVerbPersonToken(n)) continue;
+    if (/^(bystanders|someone|stranger|figure|official|handlers?|they|them|one|press)$/i.test(n)) continue;
     const key = n.toLowerCase();
     if (seen.has(key)) continue;
     seen.add(key);
@@ -71,9 +77,20 @@ function extractCastFromProse(prose: string, knownPresent: string[]): string[] {
   let m: RegExpExecArray | null;
   while ((m = re.exec(prose)) !== null) {
     const n = m[1]!;
-    if (/^(The|A|An|You|Your|At|In|On|With|From|And|But|Then|When|After|Before|Status|System|Class|Hp|Mp|Xp)$/i.test(n)) {
+    if (/^(The|A|An|You|Your|At|In|On|With|From|And|But|Then|When|After|Before|Status|System|Class|Hp|Mp|Xp|They|Them|Their|One|Press|He|She|It)$/i.test(n)) {
       continue;
     }
+    // Batch V — never promote dialogue verbs / pad tokens via Title-Case scrape.
+    if (isDialogueVerbPersonToken(n) || isChoicePadPersonToken(n) || isNonPersonNameToken(n)) {
+      continue;
+    }
+    // Require speech/role cue nearby so bare verbs ("Rasped") never become cast.
+    const around = prose.slice(Math.max(0, m.index - 24), Math.min(prose.length, m.index + n.length + 40));
+    const looksLikePerson =
+      /\b(?:named|called|known as|stall owner|fence|sergeant|warden|merchant|handler|contact)\b/i.test(around)
+      || /\b(?:says|said|asks|asked|replies|nods|smiles|frowns|growls|whispers)\b/i.test(around)
+      || (knownPresent.some((k) => k.toLowerCase() === n.toLowerCase()));
+    if (!looksLikePerson) continue;
     titleCase.push(n);
   }
   return uniqNames([...fromKnown, ...titleCase]).slice(0, 4);

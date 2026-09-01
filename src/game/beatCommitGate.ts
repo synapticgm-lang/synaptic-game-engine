@@ -11,6 +11,7 @@ import {
   detectLeadingCollage,
   detectSameRoomEssayHard,
   detectDialogueTreadmillHard,
+  detectCombatPurgatoryHard,
   isAtmosphereOnlyBeat,
   playerAsksRepeat,
   recentGmBeatTexts,
@@ -97,12 +98,18 @@ export function classifyBeatCommit(
     if (!reasons.includes('recycle-without-delta')) reasons.push('recycle-without-delta');
   }
 
+  // Batch V — combat purgatory (identical fist / little-true-effect loops).
+  if (detectCombatPurgatoryHard(text, recent, playerInput ?? '')) {
+    if (!reasons.includes('recycle-without-delta')) reasons.push('recycle-without-delta');
+  }
+
   return { accept: reasons.length === 0, reasons };
 }
 
 /**
  * Diegetic scene-move when a beat is rejected — coded prose, never director bank strings.
- * Batch U — stitch/commit-gate meta lines must not commit as GM body (Gemini Batch T T3/9/23/24/27/40).
+ * Batch U — stitch/commit-gate meta lines must not commit as GM body.
+ * Batch V — never emit "Nothing in X shifts until…" / truncated hook recycle (Gemini T43-44 / T4).
  */
 export function codedSceneMove(state: GameState): string {
   const slots = compilePointerCardSlots(state);
@@ -116,31 +123,34 @@ export function codedSceneMove(state: GameState): string {
     || state.sceneFacts?.pendingEncounter?.name?.trim()
     || '';
   const engaged = isEncounterEngaged(state) || !!state.sceneFacts?.pendingEncounter;
-  const exitHint = (slots?.firstPressure ?? '').trim();
   const hubAlt = hubsForBibleId(state.campaignBibleId)
     .map((h) => h.name)
     .find((n) => n.toLowerCase() !== loc.toLowerCase());
   const turn = state.turn ?? 0;
+  const enc = state.activeEncounter;
+  const hpLine =
+    engaged && foe && enc && typeof enc.hp === 'number' && typeof enc.maxHp === 'number'
+      ? ` ${foe} still stands (${Math.max(0, enc.hp)}/${enc.maxHp} HP).`
+      : '';
 
   if (engaged && foe) {
     const combatBank = [
-      `${foe} keeps the alley mouth in ${loc}, blade ready. You could press the attack, break contact, or offer parley.`,
-      `Steel catches the light as ${foe} holds ground in ${loc}. The skirmish waits on your next move.`,
+      `${foe} keeps the alley mouth in ${loc}, blade ready.${hpLine} You could press the attack, break contact, or offer parley.`,
+      `Steel catches the light as ${foe} holds ground in ${loc}.${hpLine} The skirmish waits on your next move.`,
+      `Dust kicks up under ${foe}'s boots in ${loc}.${hpLine} Strike hard, break contact, or talk them down — standing still costs you.`,
     ];
     return combatBank[turn % combatBank.length]!;
   }
 
   const bank = [
     present
-      ? `${present} watches from the stall lip in ${loc}, waiting for you to speak or move on.`
-      : '',
-    exitHint
-      ? `A way out still waits in ${loc} — ${String(exitHint).slice(0, 48).replace(/\.$/, '')}. You could take it or speak to someone who will move.`
+      ? `${present} watches from the stall lip in ${loc}. A question hangs; you could answer it, walk the next street, or take a harder stake.`
       : '',
     hubAlt
-      ? `The cracked street in ${loc} offers nothing new. You could leave toward ${hubAlt}, or take a stake in what's unfolding.`
+      ? `Wind cuts along the cracked stones of ${loc}. A side lane toward ${hubAlt} stays open, and so does a direct ask of whoever is still watching.`
       : '',
-    `Nothing in ${loc} shifts until you leave, speak, or commit to a stake.`,
+    `In ${loc}, ash still sifts between the stones. Someone at a nearby stall shifts weight, waiting to see if you speak, buy, or leave for the next street.`,
+    `The market din in ${loc} thins for a breath. A shuttered stall and an open lane both invite a real move — talk, trade, or travel.`,
   ].filter(Boolean);
   return bank[turn % bank.length] || bank[bank.length - 1]!;
 }
@@ -163,6 +173,12 @@ export function isStitchBankFingerprint(text: string | undefined): boolean {
     || /\bLeave or commit\b/i.test(text)
     || /\btalk to someone who will move\b/i.test(text)
     || /\bdoes not wait:\s*face\b/i.test(text)
+    // Batch V — prior codedSceneMove meta + truncated hook recycle
+    || /\bNothing in .+ shifts until you leave,\s*speak,\s*or commit to a stake\b/i.test(text)
+    || /\buntil you leave,\s*speak,\s*or commit to a stake\b/i.test(text)
+    || /\boffers nothing new\. You could leave toward\b/i.test(text)
+    || /\bA way out still waits in\b/i.test(text)
+    || /\bVault under fire\. Dust and ash falling through\b/i.test(text)
   );
 }
 

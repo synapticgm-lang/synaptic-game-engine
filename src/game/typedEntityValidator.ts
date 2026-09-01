@@ -18,7 +18,7 @@ import {
   buildProtectedEntityNames,
   withProtectedChromeBlocks,
 } from './narrativeScrub';
-import { isChromePersonToken, isPolityFactionOrPlaceToken, isChoicePadPersonToken, isFactionOrOrgToken } from './chromeAuthority';
+import { isChromePersonToken, isPolityFactionOrPlaceToken, isChoicePadPersonToken, isDialogueVerbPersonToken, isFactionOrOrgToken } from './chromeAuthority';
 
 /** Never emit these as automatic scrub replacements (29a constitution). */
 export const FORBIDDEN_SCRUB_REPLACEMENTS = [
@@ -80,6 +80,7 @@ export function extractEntityContext(state: GameState): TypedEntityContext {
       && !isChromePersonToken(n)
       && !isPolityFactionOrPlaceToken(n)
       && !isChoicePadPersonToken(n)
+      && !isDialogueVerbPersonToken(n)
       && !isFactionOrOrgToken(n)
       && !/^(bystanders?|handlers?|onlookers?|watchers?|crowd|people|voices|cracked street)$/i.test(n)
   );
@@ -255,6 +256,8 @@ function speakerPreferred(context: TypedEntityContext): string | undefined {
   const raw = context.encounterName || context.presentNpcs[0] || context.lastSpeaker || undefined;
   if (!raw) return undefined;
   if (isPolityFactionOrPlaceToken(raw) || isChromePersonToken(raw)) return undefined;
+  // Batch V — never inject dialogue verbs / pad pronouns as speaker replacements
+  if (isDialogueVerbPersonToken(raw) || isChoicePadPersonToken(raw)) return undefined;
   return raw;
 }
 
@@ -312,19 +315,13 @@ export function rewriteInvalidReferences(
       rewritten = rewritten.replace(/\bthe place\b/gi, place);
     }
 
-    if (report.strangerCount > 0 && speaker && !isKitLikeName(speaker, context)) {
+    // Batch V — never map the mark / the panel onto speaker (token-injection root for "Rasped").
+    // Only rewrite generic stranger/figure when a real living speaker exists.
+    if (report.strangerCount > 0 && speaker && !isKitLikeName(speaker, context) && !isDialogueVerbPersonToken(speaker)) {
       rewritten = rewritten.replace(/\bthe stranger\b/gi, speaker);
       rewritten = rewritten.replace(/\ba stranger\b/gi, speaker);
       rewritten = rewritten.replace(/\bthe figure\b/gi, speaker);
       rewritten = rewritten.replace(/\ba figure\b/gi, speaker);
-    }
-
-    // 29a/29c — collateral tokens → speaker or place only (never kit / polity)
-    // 29d — only rewrite when a real speaker/place exists; never invent roles
-    // 31i — never map the panel / the mark onto Pellane
-    if (speaker && !isKitLikeName(speaker, context) && !isPolityFactionOrPlaceToken(speaker)) {
-      rewritten = rewritten.replace(/\bthe mark\b/gi, speaker);
-      rewritten = rewritten.replace(/\bthe panel\b/gi, speaker);
     }
     if (place && !isKitLikeName(place, context) && !isPolityFactionOrPlaceToken(place)) {
       rewritten = rewritten.replace(/\ba nearby building\b/gi, place);

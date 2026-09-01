@@ -72,7 +72,7 @@ function isParleyIntent(input: string): boolean {
 }
 
 function isAttackIntent(input: string): boolean {
-  return /\b(attack|fight|strike|press the attack|engage|slash|stab|shoot|cast)\b/i.test(input);
+  return /\b(attack|fight|strike|press the attack|engage|slash|stab|shoot|cast|punch|fists?|continue (?:the )?(?:assault|attack|pressing)|follow-up strike|lash out)\b/i.test(input);
 }
 
 /** Idle under threat: loot / scout / wait / room inspect — must not farm max_engaged victory XP. */
@@ -184,8 +184,15 @@ export function tickEncounterTerminal(
     receipts.push('Parley in progress — resolve from beat');
   } else if (isAttackIntent(input)) {
     // Soft HP pressure so long loops still reach victory without ledger combat
-    const dmg = Math.max(2, Math.floor((enc.maxHp || 16) / Math.max(4, enc.maxEngagedTurns ?? 8)));
-    enc = { ...enc, hp: Math.max(0, enc.hp - dmg) };
+    const maxHp = Math.max(1, enc.maxHp || enc.hp || 16);
+    const curHp = typeof enc.hp === 'number' && !Number.isNaN(enc.hp) ? enc.hp : maxHp;
+    const dmg = Math.max(3, Math.floor(maxHp / Math.max(3, enc.maxEngagedTurns ?? 8)));
+    enc = {
+      ...enc,
+      maxHp,
+      hp: Math.max(0, curHp - dmg),
+    };
+    receipts.push(`${enc.name} HP: ${enc.hp}/${maxHp} (−${dmg})`);
     if (enc.hp <= 0) {
       return commitClear(state, enc, 'victory', 'enemy_hp_zero');
     }

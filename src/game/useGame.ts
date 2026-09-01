@@ -2655,7 +2655,13 @@ export function useGame() {
         stateRef.current = liveCurrent;
       }
 
-      const unsupportedItems = findUnsupportedItemClaims(sanitizedInput, liveCurrent);
+      const leaveOrTravelPad =
+        /\b(leave(?:\s+through)?|travel|walk away|go another direction|head (?:to|toward)|exit|return to)\b/i.test(
+          sanitizedInput
+        );
+      const unsupportedItems = leaveOrTravelPad
+        ? []
+        : findUnsupportedItemClaims(sanitizedInput, liveCurrent);
       const inventoryGate = unsupportedItems.length
         ? `\n[INVENTORY GATE — MANDATORY]: Player attempted to use item(s) NOT in inventory: ${unsupportedItems.join(', ')}. REJECT the use. Do not invent the item. Narrate the failed attempt, emit <system>Action failed: item not in inventory.</system>, and offer alternatives based on Equipped Gear / Inventory only.`
         : '';

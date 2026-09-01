@@ -116,6 +116,35 @@ export function isChoicePadPersonToken(token: string): boolean {
   return CHOICE_PAD_PERSON_EXACT.test(t);
 }
 
+/**
+ * Batch V — dialogue attribution verbs / past-participles must never become present[] names.
+ * Tape: GM wrote `"…" Rasped, their voice` → vignette Title-Case harvest promoted "Rasped"
+ * into cast → SNAPSHOT / rewriteInvalidReferences / codedSceneMove injected it as direction,
+ * monster, and cast ("Rasped and They").
+ */
+const DIALOGUE_VERB_PERSON_EXACT =
+  /^(rasped|rasp|whispered|whisper|growled|growl|murmured|murmur|hissed|hiss|snarled|snarl|barked|bark|croaked|croak|grunted|grunt|snapped|snap|muttered|mutter|chuckled|chuckle|laughed|laugh|sighed|sigh|gasped|gasp|coughed|cough|sneered|sneer|spat|spits?|drawled|drawl|intoned|intone|boomed|boom|cried|cry|shouted|shout|yelled|yell|called|call|replied|reply|answered|answer|asked|ask|said|says?|stated|state|declared|declare|announced|announce|demanded|demand|insisted|insist|warned|warn|promised|promise|offered|offer|nodded|nod|smiled|smile|frowned|frown|gestured|gesture|shrugged|shrug|leaned|lean|lunged|lunge|charged|charge|pressed|press|waited|wait|watched|watch|scouted|scout|traveled|travel|attacked|attack|fled|flee|parleyed|parley|engaged|engage|maintained|maintain|intervened|intervene|ascended|ascend|drew|draw|gave|give|peered|peer)$/i;
+
+export function isDialogueVerbPersonToken(token: string): boolean {
+  const t = normalizeChromeToken(token);
+  if (!t) return false;
+  if (t.includes(' ')) return false;
+  return DIALOGUE_VERB_PERSON_EXACT.test(t);
+}
+
+/** Any token that must never occupy a person slot (chrome / pad / deixis / dialogue verb). */
+export function isNonPersonNameToken(token: string): boolean {
+  return (
+    isChromePersonToken(token)
+    || isChoicePadPersonToken(token)
+    || isUnresolvedDeixisToken(token)
+    || isDialogueVerbPersonToken(token)
+    || isPolityFactionOrPlaceToken(token)
+    || isRoleAdjectivePersonSlot(token)
+    || isFactionOrOrgToken(token)
+  );
+}
+
 /** Faction / polity nouns locked as non-loot, non-person-slot entities. */
 export function isFactionOrOrgToken(token: string): boolean {
   const t = normalizeChromeToken(token);
@@ -128,12 +157,7 @@ export function filterChromeFromPresent(present: string[] | undefined): string[]
     (p) =>
       typeof p === 'string' &&
       p.trim() &&
-      !isChromePersonToken(p) &&
-      !isPolityFactionOrPlaceToken(p) &&
-      !isRoleAdjectivePersonSlot(p) &&
-      !isChoicePadPersonToken(p) &&
-      !isUnresolvedDeixisToken(p) &&
-      !isFactionOrOrgToken(p)
+      !isNonPersonNameToken(p)
   );
 }
 

@@ -7,7 +7,7 @@ import type { GameState, LoreCard, NpcMemory } from './types';
 import { harvestCrowdIntoSceneFacts } from './crowdAuthority';
 import { harvestHookIntoSceneFacts } from './hookLock';
 import { looksLikeGeographyInvent, isLegalMapPlace } from './worldMapAuthority';
-import { isChromePersonToken, isChoicePadPersonToken, isFactionOrOrgToken, isPolityFactionOrPlaceToken } from './chromeAuthority';
+import { isChromePersonToken, isChoicePadPersonToken, isDialogueVerbPersonToken, isFactionOrOrgToken, isPolityFactionOrPlaceToken } from './chromeAuthority';
 
 const NAME_PATTERNS = [
   /\b(?:named|called|is)\s+([A-Z][a-z]{2,}(?:\s+[A-Z][a-z]+)?)\b/g,
@@ -16,11 +16,11 @@ const NAME_PATTERNS = [
 ];
 
 const BLOCKLIST =
-  /^(The|You|Your|System|Status|Quest|Turn|North|South|East|West|Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday|Chapter|They|Them|Their|One|Press|Wait|Ready|Scout|Ask|Talk|Leave|Open|Hold|Flee|Parley|Leverage|Attack|Ahead|Behind|Beside|Nearby|Ascend|Draw|Intervene|Peer|Give|Maintain|Figure)$/i;
+  /^(The|You|Your|System|Status|Quest|Turn|North|South|East|West|Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday|Chapter|They|Them|Their|One|Press|Wait|Ready|Scout|Ask|Talk|Leave|Open|Hold|Flee|Parley|Leverage|Attack|Ahead|Behind|Beside|Nearby|Ascend|Draw|Intervene|Peer|Give|Maintain|Figure|Rasped|He|She|It)$/i;
 
 function isBlockedHarvestName(name: string): boolean {
   if (BLOCKLIST.test(name) || isChromePersonToken(name)) return true;
-  if (isChoicePadPersonToken(name)) return true;
+  if (isChoicePadPersonToken(name) || isDialogueVerbPersonToken(name)) return true;
   if (/^figure\s+\d+$/i.test(name.trim())) return true;
   if (isPolityFactionOrPlaceToken(name) || isFactionOrOrgToken(name)) return true;
   return false;

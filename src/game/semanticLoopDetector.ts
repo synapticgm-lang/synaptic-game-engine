@@ -813,6 +813,36 @@ export function detectDialogueTreadmillHard(
   return false;
 }
 
+const COMBAT_NULL_DELTA =
+  /\b(little true effect|absorb(?:s|ed)? (?:much of )?the (?:impact|blow)|seems to have little|hisses?,?\s+its burning eyes narrowing|bring your fists|lash out with your fists)\b/i;
+
+function isCombatAttackIntent(input: string): boolean {
+  return /\b(attack|fight|strike|press the attack|engage|punch|fists?|continue (?:the )?(?:assault|attack|pressing)|follow-up|lash out)\b/i.test(
+    input ?? ''
+  );
+}
+
+/**
+ * Batch V — combat purgatory: identical fist/null-delta loops must not keep committing.
+ */
+export function detectCombatPurgatoryHard(
+  draft: string,
+  recentGmBeats: string[],
+  playerInput: string
+): boolean {
+  if (!isCombatAttackIntent(playerInput)) return false;
+  if (playerAsksRepeat(playerInput)) return false;
+  const text = (draft ?? '').trim();
+  if (!text || !COMBAT_NULL_DELTA.test(text)) return false;
+  const prior = [...(recentGmBeats ?? [])]
+    .slice(-4)
+    .filter((b) => COMBAT_NULL_DELTA.test(String(b ?? '')));
+  if (prior.length >= 1) return true;
+  const last = [...(recentGmBeats ?? [])].reverse().find((b) => String(b ?? '').trim());
+  if (last && COMBAT_NULL_DELTA.test(last) && tokenJaccard(text, last) >= 0.32) return true;
+  return false;
+}
+
 export function hasBeatDeltaCue(text: string): boolean {
   return BEAT_DELTA_CUE.test(text ?? '');
 }

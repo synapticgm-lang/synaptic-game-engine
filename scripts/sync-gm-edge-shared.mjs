@@ -65,6 +65,7 @@ const FILES = [
   'worldMapAuthority.ts',
   'worldAtlas.ts',
   'narrativeHarvest.ts',
+  'proseWarden.ts',
   'dungeonLifecycle.ts',
   'dungeonMobLedger.ts',
   'outdoorHubs.ts',

@@ -207,7 +207,28 @@ function countRecentTravelPicks(state: GameState, window = 5): number {
 }
 
 function shouldStarveTravelPads(state: GameState, liveStakes: boolean): boolean {
-  return liveStakes && countRecentTravelPicks(state) >= 2;
+  // Batch U — starve travel under live/pending encounter after 2 travel picks in 5T
+  if (liveStakes && countRecentTravelPicks(state) >= 2) return true;
+  // Batch V — hub treadmill without combat: ≥3 travel OR walk-away in last 6 player picks
+  const travelOrWalk = countRecentTravelOrWalkPicks(state, 6);
+  if (!liveStakes && travelOrWalk >= 3) return true;
+  return false;
+}
+
+function countRecentTravelOrWalkPicks(state: GameState, window = 6): number {
+  const log = state.log ?? [];
+  let seen = 0;
+  let count = 0;
+  for (let i = log.length - 1; i >= 0 && seen < window; i--) {
+    const e = log[i];
+    if (e?.role !== 'player') continue;
+    seen += 1;
+    const t = e.content ?? '';
+    if (isTravelPad(t) || /\b(walk away|leave through|go another direction)\b/i.test(t)) {
+      count += 1;
+    }
+  }
+  return count;
 }
 
 export type ChoiceFingerprintFamily =
@@ -562,6 +583,7 @@ export function compileChoices(
       return false;
     }
     // Batch T/U — travel yo-yo lock under live fight/standoff/pending drought encounter
+    // Batch V — also starve travel on hub walk/travel treadmill without combat
     if ((liveStakes || travelStarve) && isTravelPad(c)) {
       notes.push(`Travel yo-yo lock: ${c.slice(0, 32)}`);
       return false;
@@ -845,6 +867,30 @@ export function compileChoices(
     if (parleyAvailable(state.activeEncounter) && !filtered.some((c) => /\bparley\b/i.test(c))) {
       filtered.push('Parley');
     }
+  }
+
+  // Batch V — hub travel treadmill without combat: force talk/stake pads (not another Travel)
+  if (travelStarve && !engaged && !liveStakes) {
+    const stakePads = [
+      'Ask a direct question',
+      'Press for leverage',
+      'Listen for the real answer',
+      'Take a stake in what is unfolding',
+    ];
+    for (const pad of stakePads) {
+      if (!filtered.some((f) => f.toLowerCase() === pad.toLowerCase())) {
+        filtered.unshift(pad);
+        notes.push(`Travel-starve stake pad: ${pad.slice(0, 40)}`);
+      }
+      if (filtered.length >= 4) break;
+    }
+    filtered = filtered.filter((c) => {
+      if (isTravelPad(c)) {
+        notes.push(`Travel-starve drop: ${c.slice(0, 32)}`);
+        return false;
+      }
+      return true;
+    });
   }
 
   // PYOA spine v1 — Thornferry pads = legal exits (Fate = turn the page)

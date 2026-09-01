@@ -19,6 +19,27 @@ function uid(): string {
   return crypto.randomUUID();
 }
 
+function isLeaveOrTravelPad(input: string): boolean {
+  return /\b(leave(?:\s+through)?|travel|walk away|go another direction|head (?:to|toward)|exit|return to)\b/i.test(
+    input ?? ''
+  );
+}
+
+/** Batch V — no free pocket loot when the player walked away / checked Status instead of taking the offer. */
+function shouldBlockUnearnedOfferGain(playerInput: string, itemName: string): boolean {
+  const t = (playerInput ?? '').trim();
+  const name = (itemName ?? '').trim();
+  if (!t || !name) return false;
+  if (/\b(take|accept|buy|purchase|pocket|grab|claim|pick up|i'?ll take|hand it over)\b/i.test(t)) {
+    return false;
+  }
+  const declined =
+    /\b(check status|status|walk away|leave|travel|ignore|refuse|no thanks|not interested)\b/i.test(t)
+    || /^(wait|ready yourself)/i.test(t);
+  if (!declined) return false;
+  return /\b(shard|token|scrap|trinket|coin|offer|metal)\b/i.test(name);
+}
+
 /**
  * Apply previously-parsed but unwired structural tags:
  * item-gain / item-use, dungeon-load / move / exit, and opportunistic location hints.
@@ -40,6 +61,10 @@ export function applyStructuralEvents(
 
   for (const e of events) {
     if (e.type === 'item-gain' && e.name) {
+      if (shouldBlockUnearnedOfferGain(playerInput, e.name)) {
+        notes.push(`Blocked unearned offer loot (player did not take it): ${e.name}`);
+        continue;
+      }
       if (shouldBlockContainerItemGain(next, playerInput, e.name)) {
         notes.push(`Blocked duplicate/exhausted container loot: ${e.name}`);
         continue;
@@ -117,6 +142,11 @@ export function applyStructuralEvents(
     }
 
     if (e.type === 'item-use' && (e.name || e.id)) {
+      // Batch V — Leave/travel pads must never surface "item not in inventory"
+      if (isLeaveOrTravelPad(playerInput)) {
+        notes.push(`Skipped item-use on leave/travel pad: ${e.name ?? e.id}`);
+        continue;
+      }
       const qty = Math.max(1, e.qty ?? 1);
       const idx = next.inventory.findIndex(
         (i) =>

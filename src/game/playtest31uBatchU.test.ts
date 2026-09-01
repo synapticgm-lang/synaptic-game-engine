@@ -27,10 +27,8 @@ import { HUD_BUILD_STAMP } from '../components/Hud';
 import type { GameState } from './types';
 
 describe('playtest31uBatchU', () => {
-  it('stamp is 2026-08-31u / 31m and Mid writer stays OFF', () => {
+  it('Mid writer stays OFF (stamp advanced by later batches)', () => {
     expect(STAGNATION_MID_WRITER_ENABLED).toBe(false);
-    expect(HUD_BUILD_STAMP).toBe('2026-08-31u');
-    expect(BUILD_STAMP).toBe('2026-08-31m');
   });
 
   describe('P0-1 — stitch bank never commits', () => {

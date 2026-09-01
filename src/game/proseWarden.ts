@@ -198,12 +198,13 @@ export function scrubFalseArrivalWhenHere(
 /**
  * Choice-pad pronouns/verbs quoted as NPC names: known as "They", "One" and "Press".
  * Batch T — also strip deixis nouns used as people/places ("the Ahead", "figure 1").
+ * Batch V — dialogue verbs like "Rasped" treated the same.
  */
 export function scrubChoicePadPersonNames(text: string): string {
   if (!text) return text;
   let next = text;
   const PAD =
-    'They|Them|Their|One|Ones|Press|Wait|Ready|Scout|Inspect|Check|Ask|Talk|Leave|Open|Hold|Flee|Parley|Leverage|Attack|Status|Travel|Engage|Ahead|Behind|Ascend|Draw|Intervene|Peer|Give|Maintain';
+    'They|Them|Their|One|Ones|Press|Wait|Ready|Scout|Inspect|Check|Ask|Talk|Leave|Open|Hold|Flee|Parley|Leverage|Attack|Status|Travel|Engage|Ahead|Behind|Ascend|Draw|Intervene|Peer|Give|Maintain|Rasped';
   next = next.replace(
     new RegExp(
       `\\b(?:the\\s+)?(?:Scattered\\s+Scale\\s+)?(?:known\\s+as|called|named)\\s+[“"']?(?:${PAD})[”"']?\\b`,
@@ -217,6 +218,91 @@ export function scrubChoicePadPersonNames(text: string): string {
   );
   next = next.replace(new RegExp(`\\bthe figures of\\s+[“"'](?:${PAD})[”"'](?:\\s+and\\s+[“"'](?:${PAD})[”"'])*`, 'gi'), 'the figures nearby');
   next = next.replace(new RegExp(`\\b(?:Approach|Ask|Observe)\\s+[“"'](?:${PAD})[”"']`, 'gi'), 'Approach a nearby figure');
+  return tidyClauses(next);
+}
+
+/**
+ * Batch V — scrub dialogue-verb tokens promoted to nouns (direction / monster / cast).
+ * Tape quotes: "to your Rasped", "a Rasped, lunged", "Rasped and They", "fists Rasped".
+ */
+export function scrubDialogueVerbAsNoun(text: string, encounterName?: string): string {
+  if (!text || !/\brasped\b/i.test(text)) return text;
+  let next = text;
+  const foe = (encounterName ?? '').trim() || 'the creature';
+  // Cast pair: "Rasped and They"
+  next = next.replace(
+    /\bRasped\s+and\s+They\b/gi,
+    'other figures nearby'
+  );
+  next = next.replace(
+    /\b(?:the\s+)?(?:other\s+)?figures?\s+present,?\s+Rasped\s+and\s+They\b/gi,
+    'the other figures present'
+  );
+  // Direction / body: "to your Rasped", "on your Rasped"
+  next = next.replace(/\bto your Rasped\b/gi, 'to your left');
+  next = next.replace(/\bon your Rasped\b/gi, 'on your right');
+  next = next.replace(/\btoward(?:s)?(?:\s+the)?\s+Rasped\b/gi, 'toward the street');
+  next = next.replace(/\bbulk of the Rasped\b/gi, 'bulk of the wall');
+  next = next.replace(/\bfiltered the Rasped\b/gi, 'filtered through');
+  // Monster / target slots
+  next = next.replace(/\b(?:the\s+)?snarling\s+(?:creature,?\s+)?(?:a\s+)?Rasped\b/gi, `the snarling ${foe}`);
+  next = next.replace(/\b(?:a|the)\s+Rasped\b/gi, foe.startsWith('the ') ? foe : `the ${foe.replace(/^the\s+/i, '')}`);
+  next = next.replace(/\bapproach the Rasped\b/gi, 'approach the stall');
+  next = next.replace(/\bTalk to Rasped\b/gi, 'Talk to the fence');
+  next = next.replace(/\bExamine the Rasped\b/gi, 'Examine the stall');
+  next = next.replace(/\bStand your ground and face the Rasped\b/gi, `Stand your ground and face ${foe}`);
+  // Mad-lib verb slots: "fists Rasped", "charge the Rasped", "threw yourself Rasped", "hovering Rasped"
+  next = next.replace(/\bfists\s+Rasped\b/gi, 'fists forward');
+  next = next.replace(/\blunge\s+Rasped\b/gi, 'lunge forward');
+  next = next.replace(/\bcharge the Rasped\b/gi, `charge ${foe}`);
+  next = next.replace(/\bmet its charge the Rasped\b/gi, 'met its charge');
+  next = next.replace(/\bthrew yourself Rasped\b/gi, 'threw yourself forward');
+  next = next.replace(/\bhovering Rasped\b/gi, 'hovering nearby');
+  next = next.replace(/\bstill hovering Rasped\b/gi, 'still hovering nearby');
+  // Apposition / speaker false name: "stall owner, Rasped," / bare "Rasped, their voice"
+  next = next.replace(/\b(?:stall owner|fence|merchant),?\s+Rasped,?\b/gi, 'stall owner');
+  next = next.replace(
+    /(["'“][^"'”]{3,200}["'”])\s*Rasped,\s*(their|his|her)\s+voice/gi,
+    '$1 he rasped, $2 voice'
+  );
+  next = next.replace(/\bRasped,\s+their voice\b/gi, 'he rasped, their voice');
+  // Residual bare proper Rasped as subject
+  next = next.replace(/\bRasped\s+(watches|leans|gestures|remains|stands|shifts)\b/gi, 'The stall owner $1');
+  return tidyClauses(next);
+}
+
+/**
+ * Batch V — strip pocket/holding claims for offered loot the player never took.
+ * Tape: Check Status after Fence offer → "Tarnished Metal Shard in your pocket".
+ */
+export function scrubUnearnedPocketLoot(
+  text: string,
+  inventoryNames: string[] = []
+): string {
+  if (!text) return text;
+  const inv = new Set(inventoryNames.map((n) => n.toLowerCase()));
+  let next = text;
+  const re =
+    /\b(?:the\s+)?(Tarnished Metal Shard|tarnished metal shard|[A-Z][a-z]+(?:\s+[A-Z][a-z]+){0,3}\s+Shard)\b(?:\s+in your (?:pocket|hand|hands)|\s+you'?ve been holding)?/gi;
+  next = next.replace(re, (full, name: string) => {
+    if (inv.has(String(name).toLowerCase())) return full;
+    if (/\bin your (?:pocket|hand)/i.test(full) || /you'?ve been holding/i.test(full)) {
+      return 'the offered scrap still on the stall';
+    }
+    return full;
+  });
+  next = next.replace(
+    /\b(?:briefly\s+)?touch the (?:Tarnished Metal Shard|[^.]+Shard) in your pocket\b/gi,
+    'glance at the stall where the offer still sits'
+  );
+  next = next.replace(
+    /\bSpeak with the Tarnished Metal Shard\b/gi,
+    'Ask about the offered scrap'
+  );
+  next = next.replace(
+    /\bDraw the Tarnished Metal Shard\b/gi,
+    'Ready your fists'
+  );
   return tidyClauses(next);
 }
 
@@ -315,6 +401,12 @@ export function scrubStitchBankLeaks(text: string): string {
       && !/\bwaits on a real answer\b/i.test(s)
       && !/\bnot another sift\b/i.test(s)
       && !/\btalk to someone who will move\b/i.test(s)
+      // Batch V — codedSceneMove meta still leaking as sole beat
+      && !/\bNothing in .+ shifts until you leave,\s*speak,\s*or commit to a stake\b/i.test(s)
+      && !/\buntil you leave,\s*speak,\s*or commit to a stake\b/i.test(s)
+      && !/\boffers nothing new\. You could leave toward\b/i.test(s)
+      && !/\bA way out still waits in\b/i.test(s)
+      && !/\bVault under fire\. Dust and ash falling through\b/i.test(s)
   );
   return tidyClauses(kept.join(' '));
 }
@@ -339,6 +431,10 @@ export function scrubEntityMadLibs(text: string, encounterName?: string): string
   next = next.replace(/\bpeople hereed\b/gi, 'people here');
   next = next.replace(/\bthe two people here around you\b/gi, 'the few people around you');
   next = next.replace(/\bthe people here continues to flow\b/gi, 'the crowd continues to flow');
+  // Batch V — "the crowd here strength" word salad
+  next = next.replace(/\bthe crowd here strength\b/gi, 'with renewed strength');
+  next = next.replace(/\bwithin it the crowd here\b/gi, 'within it gathers');
+  next = next.replace(/\bit the crowd here strength\b/gi, 'it gathers strength');
   if (encounterName) {
     const esc = encounterName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
     next = next.replace(
@@ -1071,6 +1167,11 @@ export function applyProseWarden(text: string, ctx?: ProseWardenContext): string
   next = scrubSpeakerPlaceholder(next, alone);
   next = scrubChromeAsPerson(next, ctx?.presentNames ?? []);
   next = scrubChoicePadPersonNames(next);
+  next = scrubDialogueVerbAsNoun(next, ctx?.enemyName);
+  next = scrubUnearnedPocketLoot(
+    next,
+    (ctx?.inventory ?? []).map((i) => (typeof i === 'string' ? i : i.name))
+  );
   next = scrubUnresolvedDeixisNouns(next, ctx?.currentLocation);
   next = scrubFactionAsLootOrTarget(next);
   next = scrubStitchBankLeaks(next);
