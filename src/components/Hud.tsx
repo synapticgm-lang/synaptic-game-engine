@@ -8,9 +8,9 @@ import { effectiveWriterTier, hasUnlimitedTextCapacity, isFounderPlayAccount } f
 import { equippedSetLabel, equippedSetName } from '../game/uiTheme';
 
 /** Visible after a hard refresh -- if this is missing, Vercel is still serving the 16 Aug bundle. */
-export const HUD_BUILD_STAMP = '2026-08-31w';
+export const HUD_BUILD_STAMP = '2026-08-31x';
 const HUD_BUILD_TITLE =
-  'Debug 2026-08-31w - Batch W entity/combat/stitch';
+  'Debug 2026-08-31x - Batch X hub-role/combat/spawn';
 
 interface Props {
   state: GameState;

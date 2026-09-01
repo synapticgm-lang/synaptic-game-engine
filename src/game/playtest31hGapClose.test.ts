@@ -64,8 +64,8 @@ describe('playtest31h — gap close P0 ledger owners', () => {
       const fightProse = 'Steel rings. You duck a blade and strike back hard.';
       const ensured = ensureEncounterSpawnPreface(arc.state, fightProse);
       expect(ensured.prepended).toBe(true);
-      expect(ensured.prose).toMatch(new RegExp(name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i'));
-      expect(ensured.prose.startsWith(autoFightSpawnPreface(name).slice(0, 12))).toBe(true);
+      expect(ensured.spawnReceipt).toMatch(new RegExp(name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i'));
+      expect(ensured.prose).not.toMatch(/pushes into|from the edge of the room/i);
       expect(ensured.state.sceneFacts?.pendingSpawnPreface).toBeUndefined();
       expect(ensured.state.sceneFacts?.present.some((p) => p.includes(name))).toBe(true);
     } else {
@@ -76,7 +76,8 @@ describe('playtest31h — gap close P0 ledger owners', () => {
         'Dust motes hang in the gloom. The air smells of decay and ozone.'
       );
       expect(ensured.prepended).toBe(true);
-      expect(ensured.prose).toMatch(/Pact-Hunter/i);
+      expect(ensured.spawnReceipt).toMatch(/Pact-Hunter/i);
+      expect(ensured.prose).not.toMatch(/pushes into|from the edge of the room/i);
     }
   });
 

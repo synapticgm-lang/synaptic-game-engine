@@ -108,8 +108,7 @@ function resolveForcedOutcome(enc: ActiveEncounter, reason: string): TerminalOut
     return 'victory';
   }
   if (reason === 'max_engaged') {
-    // Attack-clock clear only — never treat idle loot/scout as a free victory path.
-    if ((enc.failedFleeCount ?? 0) >= (enc.maxFailedFlee ?? 2)) return 'escape';
+    // Batch X — clock clear is victory on the ledger, never a free escape.
     return 'victory';
   }
   if (reason === 'parley_cap') return 'victory';
@@ -200,7 +199,8 @@ export function tickEncounterTerminal(
     receipts.push('Threat still live — idle loot/scout does not clear the encounter');
   }
 
-  if (!idle && (enc.engagedTurnCount ?? 0) >= (enc.maxEngagedTurns ?? 8)) {
+  const terminalIntent = isAttackIntent(input) || isFleeIntent(input) || isParleyIntent(input);
+  if (terminalIntent && (enc.engagedTurnCount ?? 0) >= (enc.maxEngagedTurns ?? 8)) {
     return commitClear(state, enc, resolveForcedOutcome(enc, 'max_engaged'), 'max_engaged');
   }
 

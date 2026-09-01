@@ -163,11 +163,21 @@ function inspectTargetExhausted(state: GameState, choice: string): boolean {
 /** True when a pad is loot/scout/wait under a live encounter (Batch G combat lock). */
 function isEncounterForbiddenPad(choice: string): boolean {
   const lower = choice.toLowerCase();
-  if (/\b(flee|run away|escape|retreat|parley|negotiate|press the attack|attack|fight|strike|engage|change position)\b/.test(lower)) {
+  if (/\b(flee|run away|escape|retreat|parley|negotiate|press the attack|attack|fight|strike|engage|change position|find cover|keep running)\b/.test(lower)) {
     return false;
   }
   if (/\b(enemy|threat|wound|blade|guard|raider|bandit|corpse|body)\b/.test(lower) && /\b(inspect|examine|check|study)\b/.test(lower)) {
     return false;
+  }
+  // Batch X — stall/fence browse under live fight
+  if (
+    /\b(inspect|examine|browse|pick up|study|check)\b/.test(lower)
+    && /\b(stall|stalls|fence|wares|goods|trinkets|scrap|stones?|market)\b/.test(lower)
+  ) {
+    return true;
+  }
+  if (/\btalk to\b/.test(lower) && /\b(fence|stall|vendor|merchant)\b/.test(lower)) {
+    return true;
   }
   return (
     /\b(open|check|loot|rummage)\b/.test(lower) && /\b(crate|chest|box|barrel|trunk|bag)\b/.test(lower)
@@ -219,7 +229,9 @@ function shouldStarveTravelPads(state: GameState, liveStakes: boolean): boolean 
 /** Batch W — generic leverage/ask pads that ignore live scene context. */
 function isAbstractGenericPad(choice: string): boolean {
   const t = choice.trim();
-  return /^(?:press for leverage|ask a direct question|listen for the real answer)$/i.test(t);
+  return /^(?:press for leverage|ask a direct question|listen for the real answer|leave through the nearest exit)$/i.test(
+    t
+  );
 }
 
 function countRecentAbstractPadUses(state: GameState, window = 8): number {
@@ -625,15 +637,21 @@ export function compileChoices(
       notes.push(`Travel yo-yo lock: ${c.slice(0, 32)}`);
       return false;
     }
-    // Batch W — starve abstract leverage/ask when scene has named people or live fight
+    // Batch W/X — starve abstract leverage/ask/leave when scene has named people or live fight
     const scenePeople = realPresentPeople(state.sceneFacts?.present ?? []);
-    if (
-      (engaged || scenePeople.length > 0)
-      && isAbstractGenericPad(c)
-      && (countRecentAbstractPadUses(state) >= 1 || engaged)
-    ) {
+    if ((engaged || scenePeople.length > 0) && isAbstractGenericPad(c)) {
       notes.push(`Abstract pad starve: ${c.slice(0, 32)}`);
       return false;
+    }
+    if (state.activeEncounter?.caught) {
+      const combatOnly =
+        /\b(press the attack|try to flee|parley|find cover|keep running|attack|strike|engage|continue (?:your )?assault)\b/i.test(
+          c
+        );
+      if (!combatOnly) {
+        notes.push(`Caught lock: ${c.slice(0, 32)}`);
+        return false;
+      }
     }
     if (engaged) {
       // 29a/31h/31r combat pad lock — fight/flee/parley only (no crate/scout/wait/travel)

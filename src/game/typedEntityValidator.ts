@@ -18,7 +18,7 @@ import {
   buildProtectedEntityNames,
   withProtectedChromeBlocks,
 } from './narrativeScrub';
-import { isChromePersonToken, isPolityFactionOrPlaceToken, isChoicePadPersonToken, isDialogueVerbPersonToken, isFactionOrOrgToken } from './chromeAuthority';
+import { isChromePersonToken, isPolityFactionOrPlaceToken, isChoicePadPersonToken, isDialogueVerbPersonToken, isFactionOrOrgToken, detectHubRoleMadlib } from './chromeAuthority';
 
 /** Never emit these as automatic scrub replacements (29a constitution). */
 export const FORBIDDEN_SCRUB_REPLACEMENTS = [
@@ -45,6 +45,8 @@ export interface InvalidReferenceReport {
   strangerCount: number;
   /** Number of broken option labels like "Check the stranger" when no stranger exists */
   brokenChoiceCount: number;
+  /** Hub+role compounds misused as verb/object slots (Batch X) */
+  hubRoleMadlibCount: number;
   /** All invalid references found */
   references: EntityReference[];
   /** Should prose be regenerated? */
@@ -192,13 +194,16 @@ export function validateEntityReferences(
   }
   
   // Should regenerate if there are significant invalid references
-  const shouldRegenerate = themCount >= 3 || thisPlaceCount >= 2 || strangerCount >= 2;
+  const hubRoleMadlibCount = detectHubRoleMadlib(prose) ? 1 : 0;
+  const shouldRegenerate =
+    themCount >= 3 || thisPlaceCount >= 2 || strangerCount >= 2 || hubRoleMadlibCount >= 1;
   
   return {
     themCount,
     thisPlaceCount,
     strangerCount,
-    brokenChoiceCount: 0, // Will be filled by choice validator
+    brokenChoiceCount: 0,
+    hubRoleMadlibCount, // Will be filled by choice validator
     references,
     shouldRegenerate,
   };

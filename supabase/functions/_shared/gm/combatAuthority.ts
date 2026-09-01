@@ -154,6 +154,30 @@ export function autoFightSpawnPreface(enemyName: string, location?: string): str
   return `${name} forces the doorway${where} with a scrape of wrong motion.`;
 }
 
+/** Batch X — combat spawn engine lines belong in STATUS, not GM story body. */
+export function scrubCombatSpawnLog(text: string): string {
+  if (!text) return text;
+  return text
+    .replace(
+      /\b[A-Z][\w-]+(?:\s+Skirmisher)?\s+pushes(?:\s+into\s+[^.]+)?\s+from the edge of the room and commits toward you\.?\s*/gi,
+      ''
+    )
+    .replace(
+      /\b[A-Z][\w-]+(?:\s+Skirmisher)?\s+forces the doorway[^.]*\.?\s*/gi,
+      ''
+    )
+    .replace(/\s{2,}/g, ' ')
+    .trim();
+}
+
+export function hasCombatSpawnLogInBody(text: string): boolean {
+  if (!text?.trim()) return false;
+  return (
+    /\bpushes(?:\s+into\s+[^.]+)?\s+from the edge of the room and commits toward you\b/i.test(text)
+    || /\bforces the doorway\b/i.test(text)
+  );
+}
+
 /**
  * Batch F — after drought preface, strip unsupported spawn geometry
  * ("breaks from debris", rubble eruptions, wall-phase invent).
@@ -224,7 +248,7 @@ export function markPendingSpawnPreface(state: GameState, enemyName: string): Ga
 export function ensureEncounterSpawnPreface(
   state: GameState,
   prose: string
-): { prose: string; state: GameState; prepended: boolean } {
+): { prose: string; state: GameState; prepended: boolean; spawnReceipt?: string } {
   const parked = state.sceneFacts?.pendingEncounter;
   const pending =
     state.sceneFacts?.pendingSpawnPreface?.trim()
@@ -232,11 +256,13 @@ export function ensureEncounterSpawnPreface(
     || (state.activeEncounter?.name?.trim() && !foeVisibleInScene(state, state.activeEncounter.name, prose)
       ? state.activeEncounter.name.trim()
       : '');
-  if (!pending && !parked) return { prose, state, prepended: false };
+  if (!pending && !parked) {
+    return { prose: scrubCombatSpawnLog(prose ?? ''), state, prepended: false };
+  }
 
   const name = pending || parked?.name?.trim() || '';
-  let nextProse = prose ?? '';
-  let prepended = false;
+  let nextProse = scrubCombatSpawnLog(prose ?? '');
+  let spawnReceipt: string | undefined;
   // Never leave bare "already on you" combat without a setup line.
   const esc = name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
   const bareAlready =
@@ -244,12 +270,10 @@ export function ensureEncounterSpawnPreface(
     && new RegExp(`${esc}\\s+is already on you`, 'i').test(nextProse)
     && !/\b(doorway|pushes|forces|commits|edge of the room|scrape)\b/i.test(nextProse);
   if (name && (!proseMentionsEnemy(nextProse, name) || bareAlready)) {
-    const preface = autoFightSpawnPreface(name, state.currentLocation);
+    spawnReceipt = autoFightSpawnPreface(name, state.currentLocation);
     if (bareAlready) {
       nextProse = nextProse.replace(new RegExp(`${esc}\\s+is already on you\\.?`, 'gi'), '').trim();
     }
-    nextProse = `${preface} ${nextProse}`.trim();
-    prepended = true;
   }
 
   // Batch F — drought/arc attach must not invent debris-break / wall-phase geometry.
@@ -257,7 +281,6 @@ export function ensureEncounterSpawnPreface(
     const invent = scrubDroughtSpawnInvent(nextProse, name);
     if (invent.scrubbed) {
       nextProse = invent.prose;
-      prepended = true;
     }
   }
 
@@ -283,9 +306,10 @@ export function ensureEncounterSpawnPreface(
   }
 
   return {
-    prose: nextProse,
+    prose: scrubCombatSpawnLog(nextProse),
     state: nextState,
-    prepended,
+    prepended: !!spawnReceipt,
+    spawnReceipt,
   };
 }
 

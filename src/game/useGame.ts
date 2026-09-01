@@ -3621,6 +3621,12 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
           const prefaced = ensureEncounterSpawnPreface(workingState, cleanText);
           cleanText = prefaced.prose;
           workingState = prefaced.state;
+          if (prefaced.spawnReceipt) {
+            workingState = {
+              ...workingState,
+              systemLog: [...(workingState.systemLog ?? []), prefaced.spawnReceipt],
+            };
+          }
         }
         {
           // Batch F — parley success must ledger-resolve from diegetic cues (not free-clear).
@@ -5277,12 +5283,18 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
       );
       narrativeText = scrubBeastifiedHumanoid(narrativeText, enemy.name);
       if (!lastGmMentionsEnemy(liveCurrent, enemy.name)) {
-        narrativeText = `${autoFightSpawnPreface(enemy.name, liveCurrent.currentLocation)} ${narrativeText}`;
+        // Spawn receipt goes to STATUS via ensureEncounterSpawnPreface (Batch X).
       }
       {
         const prefaced = ensureEncounterSpawnPreface(liveCurrent, narrativeText);
         narrativeText = prefaced.prose;
         liveCurrent = prefaced.state;
+        if (prefaced.spawnReceipt) {
+          liveCurrent = {
+            ...liveCurrent,
+            systemLog: [...(liveCurrent.systemLog ?? []), prefaced.spawnReceipt],
+          };
+        }
       }
       narrativeText = applyProseWarden(narrativeText, {
         currentLocation: liveCurrent.currentLocation,

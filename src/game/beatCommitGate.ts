@@ -183,8 +183,7 @@ export function isStitchBankFingerprint(text: string | undefined): boolean {
     || /\buntil you leave,\s*speak,\s*or commit to a stake\b/i.test(text)
     || /\boffers nothing new\. You could leave toward\b/i.test(text)
     || /\bA way out still waits in\b/i.test(text)
-    || /\bVault under fire\. Dust and ash falling through\b/i.test(text)
-    // Batch W — prior + current codedSceneMove UI bleed
+    // Batch W — prior codedSceneMove UI bleed (Vault hook is valid opening contract — not a stitch leak)
     || /\binvite a real move\b/i.test(text)
     || /\bA question hangs\b/i.test(text)
     || /\bash still sifts between the stones\b/i.test(text)

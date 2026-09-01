@@ -277,6 +277,11 @@ export function stripChoiceList(text: string): string {
     /(?:^|[.!?]\s+)\d+[.)]\s+Plunge into\b[^.!?\n]{0,120}[.!?]?/gi,
     (full) => full.match(/^[.!?]/)?.[0] ?? ''
   );
+  // Batch X — "1. Turn to the Lowmarket Fence…" numbered chip in GM body (T7).
+  result = result.replace(
+    /(?:^|[.!?]\s+)\d+[.)]\s+Turn to\b[^.!?\n]{0,160}[.!?]?/gi,
+    (full) => full.match(/^[.!?]/)?.[0] ?? ''
+  );
   // Singleton numbered / "Inquire about…" lines left in the paragraph are fake menus.
   result = stripHarvestedChoiceOffers(result);
   return stripTurnCloser(result);
@@ -288,8 +293,18 @@ export function hasNumberedChoiceLeak(text: string): boolean {
   if (stripChoiceList(text) !== text.trim()) return true;
   return (
     /\d+[.)]\s+["""][^"""\n]{4,}/.test(text)
-    || /\d+[.)]\s+(?:Meet|Descend|Re-approach|Observe|Scan|Inquire|Plunge)\b/.test(text)
+    || /\d+[.)]\s+(?:Meet|Descend|Re-approach|Observe|Scan|Inquire|Plunge|Turn to)\b/.test(text)
     || /(?:^|[.!?]\s+)\d+[.)]\s+[A-Z][^.!?\n]{8,120}[.!?]?\s*$/.test(text.trim())
+  );
+}
+
+/** Batch X — quest journal stage labels leaked into GM narration. */
+export function hasQuestTrackerLeak(text: string): boolean {
+  if (!text?.trim()) return false;
+  return (
+    /\b(?:Circle's Price|Return to Circle's Price)\s*\(Stage\s+\d+/i.test(text)
+    || /\bStage\s+\d+:\s*(?:the\s+)?Reason Heard\b/i.test(text)
+    || /\bobjective was clear in your mind:[^.]*\(Stage\s+\d+/i.test(text)
   );
 }
 

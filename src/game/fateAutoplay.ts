@@ -1164,6 +1164,12 @@ Do NOT print dice notation or CODE ENFORCED.
     const prefaced = ensureEncounterSpawnPreface(working, cleanText);
     cleanText = prefaced.prose;
     working = prefaced.state;
+    if (prefaced.spawnReceipt) {
+      working = {
+        ...working,
+        systemLog: [...(working.systemLog ?? []), prefaced.spawnReceipt],
+      };
+    }
   }
   {
     const settled = settleParleyAfterProse(working, cleanText, playerInput);

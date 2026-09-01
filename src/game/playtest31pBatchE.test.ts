@@ -145,8 +145,9 @@ describe('playtest31pBatchE', () => {
       state = markPendingSpawnPreface(state, name);
       const ensured = ensureEncounterSpawnPreface(state, `${name} is already on you. Steel rings.`);
       expect(ensured.prepended).toBe(true);
+      expect(ensured.spawnReceipt).toMatch(/Calamity Remnant/i);
       expect(ensured.prose).not.toMatch(/is already on you/i);
-      expect(ensured.prose).toMatch(/Calamity Remnant/i);
+      expect(ensured.prose).not.toMatch(/pushes into|from the edge of the room/i);
       expect(ensured.state.sceneFacts?.pendingSpawnPreface).toBeUndefined();
       expect(ensured.state.sceneFacts?.present?.some((p) => /Calamity Remnant/i.test(p))).toBe(
         true
@@ -157,7 +158,7 @@ describe('playtest31pBatchE', () => {
   describe('P1 — role adjective / HP dump / parley', () => {
     it('drops Field person slot and body HP/MP dumps', () => {
       expect(isRoleAdjectivePersonSlot('Field')).toBe(true);
-      expect(realPresentPeople(['Field', 'Mira', 'chirurgeon'])).toEqual(['Mira', 'chirurgeon']);
+      expect(realPresentPeople(['Field', 'Mira', 'chirurgeon'])).toEqual(['Mira']);
       expect(
         scrubRoleAdjectivePersonSlot('The chirurgeon, Field, watches you with stillness.')
       ).not.toMatch(/,\s*Field\b/);

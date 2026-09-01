@@ -14,7 +14,7 @@ import {
 import { scrubInventedCrowdSize } from './crowdAuthority.ts';
 import { rewriteChromePersonClauses } from './chromeAuthority.ts';
 import { scrubHookReversals, type HookLock } from './hookLock.ts';
-import { scrubBeastifiedHumanoid, scrubDeniedKill, type LastKill } from './combatAuthority.ts';
+import { scrubBeastifiedHumanoid, scrubDeniedKill, scrubCombatSpawnLog, type LastKill } from './combatAuthority.ts';
 
 export { calculateCrowdSize, crowdSizeForWarden, scrubInventedCrowdSize } from './crowdAuthority.ts';
 
@@ -406,8 +406,7 @@ export function scrubStitchBankLeaks(text: string): string {
       && !/\buntil you leave,\s*speak,\s*or commit to a stake\b/i.test(s)
       && !/\boffers nothing new\. You could leave toward\b/i.test(s)
       && !/\bA way out still waits in\b/i.test(s)
-      && !/\bVault under fire\. Dust and ash falling through\b/i.test(s)
-      // Batch W — codedSceneMove / stitch UI bleed
+      // Batch W — codedSceneMove / stitch UI bleed (opening vault hook is valid GM contract)
       && !/\binvite a real move\b/i.test(s)
       && !/\bA question hangs\b/i.test(s)
       && !/\bcommit to a stake\b/i.test(s)
@@ -477,6 +476,31 @@ export function scrubEntityMadLibs(text: string, encounterName?: string): string
       'just ahead'
     );
   }
+  // Batch X — hub+role compounds as verb/dir/object mad-libs (Lowmarket Fence tape)
+  const HUB_ROLE = '(?:Lowmarket\\s+Fence|Wall\\s+Sergeant|Pact-Hunter(?:\\s+Skirmisher)?)';
+  next = next.replace(
+    new RegExp(
+      `\\b(?:lunged?|leaned|steps?|walks?|runs?|heads?|turned|swung|struck|swiped|as you)\\s+(?:the\\s+)?${HUB_ROLE}\\b`,
+      'gi'
+    ),
+    'struck forward'
+  );
+  next = next.replace(
+    new RegExp(
+      `\\b(?:to|toward|towards|into|at|on|from|near|beside|your)\\s+(?:the\\s+)?${HUB_ROLE}\\b`,
+      'gi'
+    ),
+    'toward the fence'
+  );
+  next = next.replace(/\ba\s+Lowmarket\s+Fence,\s*(greyish|tarnished|cracked)/gi, 'a $1');
+  next = next.replace(
+    /\b(?:sky|overcast\s+sky|bruised,\s+overcast\s+sky)\s+Scattered\s+Scale\b/gi,
+    'sky above'
+  );
+  next = next.replace(/\bthe\s+Lowmarket\s+Fence\s+clad\b/gi, 'the skirmisher clad');
+  next = next.replace(/\bthe\s+Lowmarket\s+Fence\s+staggered\b/gi, 'the skirmisher staggered');
+  next = next.replace(/\bimposing silhouette of the Lowmarket\s+Fence\b/gi, 'imposing market wall');
+  next = next.replace(/\bscrap\.\s*"\s*/gi, '');
   return tidyClauses(next);
 }
 
@@ -652,7 +676,15 @@ export function scrubUiQuestVerbs(text: string, alone = false): string {
   return text
     .replace(/\bunlock(?:s|ed|ing)?\s+someone(?:\s+nearby)?\b/gi, look)
     .replace(/\bunlock\s+(?:a|the)\s+(?:quest|journal|starter|guide\s*book)\b/gi, 'take the next step')
-    .replace(/\bquest\s+unlocked\b/gi, 'a task comes into focus');
+    .replace(/\bquest\s+unlocked\b/gi, 'a task comes into focus')
+    // Batch X — quest tracker stage labels belong in STATUS, not GM thoughts
+    .replace(/\b(?:Circle's Price|Circle's Price)\s*\(Stage\s+\d+[^)]*\)/gi, "Circle's Price")
+    .replace(/\bReturn to Circle's Price\s*\(Stage\s+\d+[^)]*\)/gi, 'Return to the quest')
+    .replace(
+      /\b(?:objective|quest)\s+(?:was|is)\s+clear in your mind:\s*[^.]*\(Stage\s+\d+[^)]*\)/gi,
+      'the objective stayed fixed in your mind'
+    )
+    .replace(/\b(?:Stage\s+\d+:\s*(?:the\s+)?Reason Heard)\b/gi, 'the next lead');
 }
 
 /** Soft name-slot must not act as a dialogue subject. */
@@ -810,6 +842,11 @@ export function scrubPronounSubjectSlips(text: string): string {
   );
   next = next.replace(/\btilted your head\b/gi, 'tilted their head');
   next = next.replace(/\binclines? your head\b/gi, 'inclines their head');
+  // Batch X — unrequested PC name in third-person slips ("Jax watches him")
+  next = next.replace(
+    /\b([A-Z][a-z]{2,})\s+watches?\s+(?:him|her|them)\b/g,
+    'You watch them'
+  );
   next = next.replace(/\bthem feels\b/gi, 'it feels');
   next = next.replace(/\bthem emerges\b/gi, 'they emerge');
   next = next.replace(/\bthem emerge\b/gi, 'they emerge');
@@ -1229,6 +1266,7 @@ export function applyProseWarden(text: string, ctx?: ProseWardenContext): string
   next = scrubFactionAsLootOrTarget(next);
   next = scrubStitchBankLeaks(next);
   next = scrubEntityMadLibs(next, ctx?.enemyName);
+  next = scrubCombatSpawnLog(next);
   next = scrubStrangerArtifact(next, ctx?.presentNames ?? [], alone);
   next = scrubUnearnedVictory(next, {
     hasLiveEncounter: ctx?.hasLiveEncounter === true,

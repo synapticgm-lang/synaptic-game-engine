@@ -32,7 +32,9 @@ import {
   detectSameRoomEssayHard,
 } from './semanticLoopDetector';
 import { classifyBeatCommit, repairRejectedBeat, codedSceneMove, isVerbatimStallStub, isDirectorChromeLeak, scrubDirectorChrome, isStitchBankFingerprint } from './beatCommitGate';
-import { hasNumberedChoiceLeak, stripChoiceList } from './parser';
+import { hasNumberedChoiceLeak, hasQuestTrackerLeak, stripChoiceList } from './parser';
+import { hasCombatSpawnLogInBody } from './combatAuthority';
+import { detectHubRoleMadlib } from './chromeAuthority';
 import { isBannedFallbackStub } from './sealedManifest';
 import {
   extractEntityContext,
@@ -448,6 +450,17 @@ export function applyGovernanceToProse(
       rejectClone = true;
       notes.push('Choice leak reject: numbered chip in GM body');
     }
+  }
+  if (hasQuestTrackerLeak(out)) {
+    rejectClone = true;
+    notes.push('Quest tracker leak reject');
+    out = codedSceneMove(state);
+  }
+  if (hasCombatSpawnLogInBody(out) || detectHubRoleMadlib(out)) {
+    rejectClone = true;
+    notes.push('Spawn log / hub-role mad-lib reject');
+    const repaired = repairRejectedBeat(state, out, ['recycle-without-delta']);
+    if (repaired.repaired) out = repaired.prose;
   }
   if (isStitchBankFingerprint(out)) {
     rejectClone = true;

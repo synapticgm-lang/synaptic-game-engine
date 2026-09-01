@@ -127,6 +127,39 @@ export function isRoleContactLabel(token: string): boolean {
   return false;
 }
 
+/** Hub + role compounds ("Lowmarket Fence") are valid NPC names when used as people. */
+const HUB_ROLE_SUFFIX =
+  /^(?:fence|sergeant|guard|merchant|vendor|handler|warden|contact|skirmisher|thug|priest|registrar|chirurgeon|hand|owner)$/i;
+
+export function isHubRoleCompoundToken(token: string): boolean {
+  const t = (token ?? '').replace(/\s+/g, ' ').trim();
+  if (!t || !/\s/.test(t)) return false;
+  const parts = t.split(/\s+/);
+  const last = parts[parts.length - 1] ?? '';
+  if (!HUB_ROLE_SUFFIX.test(last)) return false;
+  return parts.length >= 2 && /^[A-Z]/.test(parts[0] ?? '');
+}
+
+/** Location+role promoted into verb/preposition/object slots (Batch X mad-lib). */
+export function detectHubRoleMadlib(text: string): boolean {
+  if (!text?.trim()) return false;
+  const hubRole = '(?:Lowmarket\\s+Fence|Wall\\s+Sergeant|Pact-Hunter(?:\\s+Skirmisher)?)';
+  return (
+    new RegExp(
+      `\\b(?:lunged?|leaned|steps?|walks?|runs?|heads?|turned|swung|struck|swiped|as you)\\s+(?:the\\s+)?${hubRole}\\b`,
+      'i'
+    ).test(text)
+    || new RegExp(
+      `\\b(?:to|toward|towards|into|at|on|from|near|your)\\s+(?:the\\s+)?${hubRole}\\b`,
+      'i'
+    ).test(text)
+    || /\ba\s+Lowmarket\s+Fence,\s*(?:greyish|tarnished|cracked)/i.test(text)
+    || /\b(?:sky|overcast\s+sky|bruised,\s+overcast\s+sky)\s+Scattered\s+Scale\b/i.test(text)
+    || /\bthe\s+Lowmarket\s+Fence\s+(?:clad|staggered)\b/i.test(text)
+    || /\bscrap\.\s*"\s*$/i.test(text.trim())
+  );
+}
+
 /** True when a harvested "name" is a choice-pad verb/pronoun, not a person. */
 export function isChoicePadPersonToken(token: string): boolean {
   const t = normalizeChromeToken(token);
