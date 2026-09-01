@@ -12,7 +12,7 @@ import {
 } from './npcTopicFsm';
 import { hubsForBibleId, matchHub } from './outdoorHubs';
 import { enumerateLegalEdges, edgesToChoiceLabels } from './choiceEdge';
-import { isEncounterEngaged, fleeAvailable, parleyAvailable } from './encounterTerminalFsm';
+import { isEncounterEngaged, fleeAvailable, parleyAvailable, encounterBlocksTravel } from './encounterTerminalFsm';
 import { countPlayerIntentStreak, countLoiterFamilyStreak } from './beatFingerprint';
 import { isPyoaBranchLocked, eligiblePyoaPadsAfterLock } from './pyoaBranchLedger';
 import {
@@ -26,6 +26,7 @@ import { isNameOriginKitCoverChoice, isPlayDemand } from './openingEstablishment
 import { isLookAroundAction } from './sandboxXp';
 import { isAtmospherePlaceName } from './questPlay';
 import { filterPadsAgainstOpenVignette } from './vignetteLock';
+import { realPresentPeople } from './chromeAuthority';
 import { isInteriorMap } from './placeAuthority';
 import { graphExitPads, isCameraRelativePad } from './mapEngine';
 
@@ -207,12 +208,48 @@ function countRecentTravelPicks(state: GameState, window = 5): number {
 }
 
 function shouldStarveTravelPads(state: GameState, liveStakes: boolean): boolean {
-  // Batch U — starve travel under live/pending encounter after 2 travel picks in 5T
-  if (liveStakes && countRecentTravelPicks(state) >= 2) return true;
+  // Batch W — always starve travel under live/pending/caught encounter
+  if (liveStakes || encounterBlocksTravel(state)) return true;
   // Batch V — hub treadmill without combat: ≥3 travel OR walk-away in last 6 player picks
   const travelOrWalk = countRecentTravelOrWalkPicks(state, 6);
-  if (!liveStakes && travelOrWalk >= 3) return true;
+  if (travelOrWalk >= 3) return true;
   return false;
+}
+
+/** Batch W — generic leverage/ask pads that ignore live scene context. */
+function isAbstractGenericPad(choice: string): boolean {
+  const t = choice.trim();
+  return /^(?:press for leverage|ask a direct question|listen for the real answer)$/i.test(t);
+}
+
+function countRecentAbstractPadUses(state: GameState, window = 8): number {
+  const log = state.log ?? [];
+  let seen = 0;
+  let count = 0;
+  for (let i = log.length - 1; i >= 0 && seen < window; i--) {
+    const e = log[i];
+    if (e?.role !== 'player') continue;
+    seen += 1;
+    if (isAbstractGenericPad(e.content ?? '')) count += 1;
+  }
+  return count;
+}
+
+function sceneGroundedPads(state: GameState): string[] {
+  const people = realPresentPeople(state.sceneFacts?.present ?? []);
+  const foe = state.activeEncounter?.name?.trim();
+  const out: string[] = [];
+  if (foe) {
+    out.push('Press the attack');
+    if (fleeAvailable(state.activeEncounter)) out.push('Try to flee');
+    if (parleyAvailable(state.activeEncounter)) out.push('Parley');
+  }
+  for (const p of people.slice(0, 2)) {
+    if (/sergeant|guard|warden/i.test(p)) out.push(`Talk to ${p}`);
+    else if (/fence|contact|handler|merchant|vendor/i.test(p)) out.push(`Talk to ${p}`);
+    else out.push(`Ask ${p} what they want`);
+  }
+  return out;
 }
 
 function countRecentTravelOrWalkPicks(state: GameState, window = 6): number {
@@ -588,6 +625,16 @@ export function compileChoices(
       notes.push(`Travel yo-yo lock: ${c.slice(0, 32)}`);
       return false;
     }
+    // Batch W — starve abstract leverage/ask when scene has named people or live fight
+    const scenePeople = realPresentPeople(state.sceneFacts?.present ?? []);
+    if (
+      (engaged || scenePeople.length > 0)
+      && isAbstractGenericPad(c)
+      && (countRecentAbstractPadUses(state) >= 1 || engaged)
+    ) {
+      notes.push(`Abstract pad starve: ${c.slice(0, 32)}`);
+      return false;
+    }
     if (engaged) {
       // 29a/31h/31r combat pad lock — fight/flee/parley only (no crate/scout/wait/travel)
       if (/\b(travel toward|travel to|go to|head to|head for|browse|merchant|shop|earth junk|phone|headphones|leatherman|keys from earth)\b/.test(lower)) {
@@ -720,8 +767,13 @@ export function compileChoices(
       }
     }
     if (!supplements.length) {
+      const grounded = sceneGroundedPads(state);
+      if (grounded.length) {
+        supplements.push(...grounded);
+        notes.push('Scene-grounded pad refill');
+      }
       const mandate = state.arcDirector?.lastMandate ?? '';
-      if (state.activeEncounter) {
+      if (state.activeEncounter && !supplements.length) {
         supplements.push('Press the attack');
         if (fleeAvailable(state.activeEncounter)) supplements.push('Try to flee');
         if (parleyAvailable(state.activeEncounter)) supplements.push('Parley');

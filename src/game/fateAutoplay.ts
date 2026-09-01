@@ -1222,7 +1222,7 @@ Do NOT print dice notation or CODE ENFORCED.
   // Hard gate: Travel toward / Return to snaps location (was missing in headless → theater travel).
   const fromLoc = state.currentLocation;
   const travelHub = parseTravelDestination(playerInput, meta.bibleId);
-  if (travelHub && !working.activeDungeon && !state.activeDungeon) {
+  if (travelHub && !working.activeDungeon && !state.activeDungeon && !working.activeEncounter && !state.activeEncounter) {
     working = {
       ...working,
       currentLocation: travelHub.name,

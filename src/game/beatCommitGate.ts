@@ -103,6 +103,11 @@ export function classifyBeatCommit(
     if (!reasons.includes('recycle-without-delta')) reasons.push('recycle-without-delta');
   }
 
+  // Batch W — stitch / codedSceneMove UI bleed must never commit.
+  if (isStitchBankFingerprint(text)) {
+    if (!reasons.includes('recycle-without-delta')) reasons.push('recycle-without-delta');
+  }
+
   return { accept: reasons.length === 0, reasons };
 }
 
@@ -135,7 +140,7 @@ export function codedSceneMove(state: GameState): string {
 
   if (engaged && foe) {
     const combatBank = [
-      `${foe} keeps the alley mouth in ${loc}, blade ready.${hpLine} You could press the attack, break contact, or offer parley.`,
+      `${foe} keeps the alley mouth in ${loc}, blade ready.${hpLine} Press the attack, break contact, or offer parley.`,
       `Steel catches the light as ${foe} holds ground in ${loc}.${hpLine} The skirmish waits on your next move.`,
       `Dust kicks up under ${foe}'s boots in ${loc}.${hpLine} Strike hard, break contact, or talk them down — standing still costs you.`,
     ];
@@ -144,13 +149,13 @@ export function codedSceneMove(state: GameState): string {
 
   const bank = [
     present
-      ? `${present} watches from the stall lip in ${loc}. A question hangs; you could answer it, walk the next street, or take a harder stake.`
+      ? `Rain drums the awning while ${present} watches you from the stall — waiting for your next word in ${loc}.`
       : '',
     hubAlt
-      ? `Wind cuts along the cracked stones of ${loc}. A side lane toward ${hubAlt} stays open, and so does a direct ask of whoever is still watching.`
+      ? `Grit stings your eyes on ${loc}. The road toward ${hubAlt} lies open if you mean to leave.`
       : '',
-    `In ${loc}, ash still sifts between the stones. Someone at a nearby stall shifts weight, waiting to see if you speak, buy, or leave for the next street.`,
-    `The market din in ${loc} thins for a breath. A shuttered stall and an open lane both invite a real move — talk, trade, or travel.`,
+    `A vendor under a patched tarp meets your glance in ${loc}, then looks away — the moment is yours to break.`,
+    `Copper and wet stone smell thick in ${loc}. Someone nearby shifts, expecting you to act.`,
   ].filter(Boolean);
   return bank[turn % bank.length] || bank[bank.length - 1]!;
 }
@@ -179,6 +184,14 @@ export function isStitchBankFingerprint(text: string | undefined): boolean {
     || /\boffers nothing new\. You could leave toward\b/i.test(text)
     || /\bA way out still waits in\b/i.test(text)
     || /\bVault under fire\. Dust and ash falling through\b/i.test(text)
+    // Batch W — prior + current codedSceneMove UI bleed
+    || /\binvite a real move\b/i.test(text)
+    || /\bA question hangs\b/i.test(text)
+    || /\bash still sifts between the stones\b/i.test(text)
+    || /\bWind cuts along the cracked stones\b/i.test(text)
+    || /\bside lane toward\b/i.test(text)
+    || /\bwaiting to see if you speak,\s*buy,\s*or leave\b/i.test(text)
+    || /\bmarket din in .+ thins for a breath\b/i.test(text)
   );
 }
 

@@ -90,6 +90,7 @@ export function isEncounterIdleIntent(input: string): boolean {
 
 export function fleeAvailable(enc: ActiveEncounter | null | undefined): boolean {
   if (!enc || enc.phase === 'resolving' || enc.phase === 'terminal') return false;
+  if (enc.caught) return false;
   return (enc.failedFleeCount ?? 0) < (enc.maxFailedFlee ?? 2);
 }
 
@@ -103,7 +104,7 @@ function resolveForcedOutcome(enc: ActiveEncounter, reason: string): TerminalOut
   if (reason === 'flee_success') return 'escape';
   if (reason === 'parley_success') return 'parleyResolved';
   if (reason === 'flee_cap') {
-    if ((enc.failedFleeCount ?? 0) >= (enc.maxFailedFlee ?? 2)) return 'escape';
+    // Batch W — caught, not escaped. Stay engaged until fight/parley/victory.
     return 'victory';
   }
   if (reason === 'max_engaged') {
@@ -173,11 +174,10 @@ export function tickEncounterTerminal(
   };
 
   if (isFleeIntent(input)) {
-    enc = { ...enc, failedFleeCount: (enc.failedFleeCount ?? 0) + 1 };
+    enc = { ...enc, failedFleeCount: (enc.failedFleeCount ?? 0) + 1, caught: true };
     receipts.push(`Flee attempt failed (${enc.failedFleeCount}/${enc.maxFailedFlee})`);
-    if ((enc.failedFleeCount ?? 0) >= (enc.maxFailedFlee ?? 2)) {
-      return commitClear(state, enc, resolveForcedOutcome(enc, 'flee_cap'), 'flee_cap');
-    }
+    receipts.push('Caught — fight, parley, or press the attack to resolve');
+    // Batch W — flee cap does not soft-clear; threat stays live on the ledger.
   } else if (isParleyIntent(input)) {
     // Batch F — park as resolving; success/fail settled from GM prose (not auto-clear).
     enc = { ...enc, phase: 'resolving' };
@@ -363,4 +363,9 @@ export function forceClearIfStale(state: GameState, maxTurnSpan = 50): TickEncou
 export function isEncounterEngaged(state: GameState): boolean {
   const p = state.activeEncounter?.phase;
   return !!state.activeEncounter && (p == null || p === 'engaged' || p === 'resolving');
+}
+
+/** Batch W — live encounter blocks travel snap / soft clear. */
+export function encounterBlocksTravel(state: GameState): boolean {
+  return isEncounterEngaged(state) || !!state.activeEncounter || !!state.sceneFacts?.pendingEncounter;
 }

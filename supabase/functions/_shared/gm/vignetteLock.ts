@@ -143,7 +143,7 @@ export function openVignetteFromHubBeat(opts: {
     hubId: opts.hubId,
     hubName: opts.hubName,
     kind: /vendor/i.test(opts.kind) ? 'vendor' : 'social',
-    cast: cast.length ? cast : ['stall contact'],
+    cast,
     props: [],
     stakes: opts.pressure?.slice(0, 140),
     openedTurn: opts.turn,

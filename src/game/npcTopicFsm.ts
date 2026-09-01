@@ -151,10 +151,30 @@ export function formatNpcTopicMandate(
   return `NPC TOPIC EXHAUSTED (${npc} / ${topic}): Do not repeat this dialogue basin — advance quest stage, introduce new fact, or end the conversation with consequence.`;
 }
 
-/** After 2+ dialogue-basin topics with same NPC, mandate stage advance (29c tighter). */
+/** After 1+ dialogue-basin topics with same NPC, mandate stage advance (Batch W tighter). */
 export function shouldForceNpcStageAdvance(state: GameState, npc: string): boolean {
   const used = state.arcDirector?.npcTopics?.[npcKey(npc)] ?? [];
-  return used.length >= 2;
+  if (used.length >= 2) return true;
+  // Batch W — Press/talk treadmill on same NPC without topic delta
+  const streak = countNpcPressStreak(state, npc);
+  return streak >= 3;
+}
+
+function countNpcPressStreak(state: GameState, npc: string): number {
+  const key = npc.toLowerCase();
+  const log = state.log ?? [];
+  let count = 0;
+  for (let i = log.length - 1; i >= 0; i--) {
+    const e = log[i];
+    if (e?.role !== 'player') continue;
+    const t = (e.content ?? '').toLowerCase();
+    if (t.includes(key) || (/\bpress\b/i.test(t) && key.includes('sergeant'))) {
+      count += 1;
+      continue;
+    }
+    break;
+  }
+  return count;
 }
 
 /** B022–B023 — full topic exhaustion → quest stage advance or close branch. */

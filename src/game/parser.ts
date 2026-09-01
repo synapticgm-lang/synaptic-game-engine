@@ -272,6 +272,11 @@ export function stripChoiceList(text: string): string {
     ' '
   ).replace(/\s{2,}/g, ' ').trim();
   result = result.replace(/\s+\d+[.)]\s+what do you do\??\s*$/i, '').trim();
+  // Mid-body "1. Plunge into…" menu leak (Batch W T27).
+  result = result.replace(
+    /(?:^|[.!?]\s+)\d+[.)]\s+Plunge into\b[^.!?\n]{0,120}[.!?]?/gi,
+    (full) => full.match(/^[.!?]/)?.[0] ?? ''
+  );
   // Singleton numbered / "Inquire about…" lines left in the paragraph are fake menus.
   result = stripHarvestedChoiceOffers(result);
   return stripTurnCloser(result);
@@ -283,7 +288,7 @@ export function hasNumberedChoiceLeak(text: string): boolean {
   if (stripChoiceList(text) !== text.trim()) return true;
   return (
     /\d+[.)]\s+["""][^"""\n]{4,}/.test(text)
-    || /\d+[.)]\s+(?:Meet|Descend|Re-approach|Observe|Scan|Inquire)\b/.test(text)
+    || /\d+[.)]\s+(?:Meet|Descend|Re-approach|Observe|Scan|Inquire|Plunge)\b/.test(text)
     || /(?:^|[.!?]\s+)\d+[.)]\s+[A-Z][^.!?\n]{8,120}[.!?]?\s*$/.test(text.trim())
   );
 }

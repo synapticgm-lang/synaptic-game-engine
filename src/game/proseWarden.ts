@@ -407,6 +407,14 @@ export function scrubStitchBankLeaks(text: string): string {
       && !/\boffers nothing new\. You could leave toward\b/i.test(s)
       && !/\bA way out still waits in\b/i.test(s)
       && !/\bVault under fire\. Dust and ash falling through\b/i.test(s)
+      // Batch W — codedSceneMove / stitch UI bleed
+      && !/\binvite a real move\b/i.test(s)
+      && !/\bA question hangs\b/i.test(s)
+      && !/\bcommit to a stake\b/i.test(s)
+      && !/\bash still sifts between the stones\b/i.test(s)
+      && !/\bWind cuts along the cracked stones\b/i.test(s)
+      && !/\bside lane toward\b/i.test(s)
+      && !/\bwaiting to see if you speak,\s*buy,\s*or leave\b/i.test(s)
   );
   return tidyClauses(kept.join(' '));
 }
@@ -418,6 +426,33 @@ export function scrubStitchBankLeaks(text: string): string {
 export function scrubEntityMadLibs(text: string, encounterName?: string): string {
   if (!text) return text;
   let next = text;
+  // Batch W — faction name as comma-splice direction / verb mad-lib
+  next = next.replace(/\bScattered Scale,\s+/gi, 'Ahead, ');
+  next = next.replace(/\byou just Scattered Scale\b/gi, 'you just left');
+  next = next.replace(/\bjust Scattered Scale\b/gi, 'just ahead');
+  next = next.replace(
+    /\b(?:turned|left|had been|were|was|you)\s+Scattered Scale\b/gi,
+    'turned away'
+  );
+  next = next.replace(/\b(?:the|a)\s+Scattered Scale\b/gi, 'the priests');
+  next = next.replace(/\bbursts from the crowd here\b/gi, 'bursts from the crowd');
+  // Batch W — role/contact label substitution collapse
+  next = next.replace(
+    /\b(?:leans?|steps?|lunges?|turns?|walks?|runs?|heads?|moves?|goes?|reaches?|approaches?|takes?|had|would|could|should|might|will|can)\s+(?:the\s+)?stall contact\b/gi,
+    'steps closer'
+  );
+  next = next.replace(/\b(?:the\s+)?stall contact decree\b/gi, 'a crown decree');
+  next = next.replace(/\b(?:the\s+)?stall contact across\b/gi, 'the fence across');
+  next = next.replace(/\b(?:the\s+)?stall contact clad\b/gi, 'the hunter clad');
+  next = next.replace(/\b(?:the\s+)?stall contact tending\b/gi, 'the vendor tending');
+  next = next.replace(/\b(?:on|from|in|at|toward|towards|into|through|along|across|past|near|beside|behind|before|under|over|around|between|within|without|companion on)\s+(?:the\s+)?stall contact\b/gi, 'nearby');
+  next = next.replace(/\b(?:the\s+)?stall contact,\s+/gi, 'The fence, ');
+  next = next.replace(/\bthe stall contact the stall contact\b/gi, 'the fence');
+  // Batch W — NPC role subject + PC face slip ("crossing your face")
+  next = next.replace(
+    /\b((?:the\s+)?(?:stall contact|fence|handler|vendor|sergeant|guard|merchant|warden)[^.!?]{0,100}?)\bcrossing your face\b/gi,
+    '$1crossing their face'
+  );
   next = next.replace(/\bactivity\s+Scattered\s+Scale\b/gi, 'murmur of activity');
   next = next.replace(/\b(?:murmur of|sound of)\s+activity\s+Scattered\s+Scale\b/gi, 'murmur of activity');
   next = next.replace(
@@ -1009,6 +1044,24 @@ export function scrubDualLocationOpenings(
         return m.replace(new RegExp(esc, 'i'), loc);
       });
     }
+  }
+
+  // Batch W — "You leave X and reach Y. In X, …" spatial ping-pong (T20/T23 tape).
+  for (const other of others) {
+    const esc = other.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const locEsc = loc.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    next = next.replace(
+      new RegExp(`\\bYou leave ${esc} behind and reach ${locEsc}\\.\\s+In ${esc}\\b`, 'gi'),
+      `You reach ${loc}.`
+    );
+    next = next.replace(
+      new RegExp(`\\bYou leave ${locEsc} behind and reach ${esc}\\.\\s+In ${locEsc}\\b`, 'gi'),
+      `You reach ${other}.`
+    );
+    next = next.replace(
+      new RegExp(`\\bYou leave ${esc} behind and reach ${locEsc}\\.\\s+The [^.]{10,80}\\bin ${esc}\\b`, 'gi'),
+      `You reach ${loc}.`
+    );
   }
 
   return next;

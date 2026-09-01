@@ -352,6 +352,8 @@ export interface ActiveEncounter {
   terminalOutcome?: 'escape' | 'victory' | 'defeat' | 'capture' | 'parleyResolved';
   source?: string;
   forcedSpawnKey?: string;
+  /** Batch W — flee fail caught on the ledger; no casual travel clear. */
+  caught?: boolean;
 }
 
 export interface OpeningEstablishment {

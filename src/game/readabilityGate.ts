@@ -6,13 +6,15 @@
 import type { GameState } from './types';
 import { isStitchBankFingerprint } from './beatCommitGate';
 import { hasNumberedChoiceLeak } from './parser';
-import { scrubFalseArrivalWhenHere } from './proseWarden';
+import { scrubFalseArrivalWhenHere, scrubEntityMadLibs } from './proseWarden';
 
 export type ReadabilityViolationKind =
   | 'stitch-leak'
   | 'false-arrival'
   | 'choice-leak'
-  | 'travel-streak';
+  | 'travel-streak'
+  | 'entity-madlib'
+  | 'ui-bleed';
 
 export interface ReadabilityViolation {
   kind: ReadabilityViolationKind;
@@ -27,6 +29,16 @@ function gmEntries(state: GameState): Array<{ turn: number; content: string }> {
   return (state.log ?? [])
     .filter((e) => e.role === 'gm' && e.content?.trim())
     .map((e) => ({ turn: e.turn ?? 0, content: e.content!.trim() }));
+}
+
+const ENTITY_MADLIB =
+  /\b(?:you just Scattered Scale|just Scattered Scale|leans? stall contact|steps? stall contact|the stall contact decree|bursts from the crowd here|activity Scattered Scale)\b/i;
+
+const UI_BLEED =
+  /\b(?:invite a real move|A question hangs|ash still sifts between the stones|Wind cuts along the cracked stones|side lane toward)\b/i;
+
+function scanEntityMadlib(text: string): boolean {
+  return ENTITY_MADLIB.test(text) || scrubEntityMadLibs(text) !== text;
 }
 
 function clipQuote(text: string, max = 120): string {
@@ -47,6 +59,12 @@ export function scanReadabilityViolations(state: GameState): ReadabilityViolatio
     }
     if (hasNumberedChoiceLeak(content)) {
       out.push({ kind: 'choice-leak', turn, quote: clipQuote(content) });
+    }
+    if (scanEntityMadlib(content)) {
+      out.push({ kind: 'entity-madlib', turn, quote: clipQuote(content) });
+    }
+    if (UI_BLEED.test(content)) {
+      out.push({ kind: 'ui-bleed', turn, quote: clipQuote(content) });
     }
     const here = loc || prevLoc;
     if (here && !/sevenfold\s+circle/i.test(here) && FALSE_SEVENFOLD.test(content)) {

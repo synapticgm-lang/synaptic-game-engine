@@ -68,6 +68,13 @@ export function rewritePlayerBodyPossessives(text: string, characterName?: strin
     );
     const clause = before.slice(breakAt + 1);
     if (clauseIsNpcSubject(clause, characterName)) return match;
+    // Batch W — "the stall contact … crossing your face" → their face
+    if (
+      /\b(?:stall contact|fence|handler|vendor|sergeant|guard|merchant)\b/i.test(clause)
+      && /\bface\b/i.test(body)
+    ) {
+      return `their ${body}`;
+    }
     return `your ${body}`;
   });
 }

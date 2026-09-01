@@ -7,7 +7,7 @@ import type { GameState, LoreCard, NpcMemory } from './types';
 import { harvestCrowdIntoSceneFacts } from './crowdAuthority';
 import { harvestHookIntoSceneFacts } from './hookLock';
 import { looksLikeGeographyInvent, isLegalMapPlace } from './worldMapAuthority';
-import { isChromePersonToken, isChoicePadPersonToken, isDialogueVerbPersonToken, isFactionOrOrgToken, isPolityFactionOrPlaceToken } from './chromeAuthority';
+import { isChromePersonToken, isChoicePadPersonToken, isDialogueVerbPersonToken, isFactionOrOrgToken, isPolityFactionOrPlaceToken, isRoleContactLabel } from './chromeAuthority';
 
 const NAME_PATTERNS = [
   /\b(?:named|called|is)\s+([A-Z][a-z]{2,}(?:\s+[A-Z][a-z]+)?)\b/g,
@@ -23,6 +23,7 @@ function isBlockedHarvestName(name: string): boolean {
   if (isChoicePadPersonToken(name) || isDialogueVerbPersonToken(name)) return true;
   if (/^figure\s+\d+$/i.test(name.trim())) return true;
   if (isPolityFactionOrPlaceToken(name) || isFactionOrOrgToken(name)) return true;
+  if (isRoleContactLabel(name)) return true;
   return false;
 }
 

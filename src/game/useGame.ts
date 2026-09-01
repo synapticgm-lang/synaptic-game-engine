@@ -3868,7 +3868,8 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
       // Act-4: Travel toward / Return to a known hub snaps location for banks + XP.
       {
         const travelHub = parseTravelDestination(sanitizedInput, workingState.campaignBibleId ?? liveCurrent.campaignBibleId);
-        if (travelHub && !workingState.activeDungeon && !liveCurrent.activeDungeon) {
+        const liveEnc = workingState.activeEncounter ?? liveCurrent.activeEncounter;
+        if (travelHub && !workingState.activeDungeon && !liveCurrent.activeDungeon && !liveEnc) {
           const fromLoc = liveCurrent.currentLocation;
           finalLocationName = travelHub.name;
           cleanText = ensureTravelArrivalProse(cleanText, travelHub.name, fromLoc);

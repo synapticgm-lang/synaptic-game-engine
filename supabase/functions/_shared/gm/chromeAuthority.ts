@@ -86,6 +86,10 @@ export function isUnresolvedDeixisToken(token: string): boolean {
 export function isPolityFactionOrPlaceToken(token: string): boolean {
   const t = normalizeChromeToken(token);
   if (!t) return false;
+  // Batch W — "Lowmarket Fence" / "Wall Sergeant" are people, not place slots.
+  if (/\b(?:fence|sergeant|guard|merchant|vendor|handler|warden|contact|hand|owner|chirurgeon|registrar|skirmisher|thug|priest)\b/i.test(t)) {
+    return false;
+  }
   if (POLITY_FACTION_PLACE_EXACT.test(t)) return true;
   if (POLITY_FACTION_PLACE_HEAD.test(t)) return true;
   // Bare polity adjective used as a name slot ("Pellane" alone)
@@ -105,6 +109,22 @@ export function isRoleAdjectivePersonSlot(token: string): boolean {
   if (!t) return false;
   if (t.includes(' ')) return false;
   return ROLE_ADJECTIVE_EXACT.test(t);
+}
+
+/**
+ * Batch W — role / contact labels are not person slots or prose substitution tokens.
+ * Tape: "stall contact" promoted into cast → "leans stall contact" / "the stall contact decree".
+ */
+const ROLE_CONTACT_LABEL =
+  /^(?:the\s+)?(?:stall[- ]?contact|stall[- ]?hand|fence|handler|contact|vendor|merchant|sergeant|warden|guard|official|chirurgeon|registrar|skirmisher|thug|priest|stall owner)$/i;
+
+export function isRoleContactLabel(token: string): boolean {
+  const t = (token ?? '').replace(/\s+/g, ' ').trim();
+  if (!t) return false;
+  if (ROLE_CONTACT_LABEL.test(t)) return true;
+  if (/\bstall contact\b/i.test(t)) return true;
+  if (/\bstall[- ]hand\b/i.test(t)) return true;
+  return false;
 }
 
 /** True when a harvested "name" is a choice-pad verb/pronoun, not a person. */
@@ -142,6 +162,7 @@ export function isNonPersonNameToken(token: string): boolean {
     || isPolityFactionOrPlaceToken(token)
     || isRoleAdjectivePersonSlot(token)
     || isFactionOrOrgToken(token)
+    || isRoleContactLabel(token)
   );
 }
 

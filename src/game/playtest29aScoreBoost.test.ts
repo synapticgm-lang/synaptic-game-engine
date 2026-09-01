@@ -25,7 +25,7 @@ describe('playtest29a — Manus score boost terminal authority', () => {
     expect(STAGNATION_MID_WRITER_ENABLED).toBe(false);
   });
 
-  it('Encounter Terminal FSM clears after flee cap', () => {
+  it('Encounter Terminal FSM caught after flee cap — stays engaged (Batch W)', () => {
     let state = createInitialState(undefined, 'litrpg');
     state.turn = 10;
     state.activeEncounter = initEncounterTerminal(
@@ -50,12 +50,14 @@ describe('playtest29a — Manus score boost terminal authority', () => {
     state = tick.state;
     expect(state.activeEncounter).toBeTruthy();
     expect(state.activeEncounter!.failedFleeCount).toBe(1);
+    expect(state.activeEncounter!.caught).toBe(true);
+    expect(fleeAvailable(state.activeEncounter)).toBe(false);
 
     tick = tickEncounterTerminal(state, 'Flee again');
     state = tick.state;
-    expect(state.activeEncounter).toBeNull();
-    expect(tick.cleared?.outcome).toBe('escape');
-    expect(state.arcDirector?.encounterClearedReceipts?.length).toBe(1);
+    expect(state.activeEncounter).toBeTruthy();
+    expect(state.activeEncounter!.failedFleeCount).toBe(2);
+    expect(tick.cleared).toBeUndefined();
   });
 
   it('Encounter Terminal FSM clears at max engaged turns', () => {
