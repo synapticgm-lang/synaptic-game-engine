@@ -18,6 +18,7 @@ import { formatFluidProseRailsForPrompt } from './fluidProseRails.ts';
 import { formatFolkVoiceForPrompt } from './folkVoiceExpectations.ts';
 import { formatSpeechActRailsForPrompt } from './speechActRails.ts';
 import { isInteriorMap } from './placeAuthority.ts';
+import { inferIntent } from './intentEnums.ts';
 import { formatInteriorExploreAuthority } from './mapEngine.ts';
 
 // Re-exports for legacy imports (prefer contentModeRules / imagePromptModifier directly).
@@ -628,7 +629,16 @@ export function buildContextPrompt(
   let tier4MacroSection = '';
   if (macroWindow.length > 0) {
     for (const l of macroWindow) {
-      tier4MacroSection += `${l.role.toUpperCase()}: ${l.content.slice(0, RECENT_LOG_CHAR_CAP)}\n`;
+      // Batch Y Milestone 1 — Y-2: Convert player choices to intent enums to prevent UI string regurgitation
+      let content = l.content.slice(0, RECENT_LOG_CHAR_CAP);
+      if (l.role === 'player') {
+        const intent = inferIntent(l.content);
+        // If we can identify a semantic intent, use it instead of the display label
+        if (intent !== 'INTENT_OTHER' && intent !== 'INTENT_CONTINUE') {
+          content = intent;
+        }
+      }
+      tier4MacroSection += `${l.role.toUpperCase()}: ${content}\n`;
     }
   } else {
     tier4MacroSection += `[Scene Initialization]\n`;

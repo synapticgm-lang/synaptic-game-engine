@@ -48,6 +48,7 @@ import {
   formatPointerCardForSnapshot,
   openingInventBudgetZero,
 } from './openingPointerCard.ts';
+import { inferIntent, PlayerIntent } from './intentEnums.ts';
 // WS-2 Wave C: NPC Memory sections
 import {
   buildNpcPacket,
@@ -100,6 +101,14 @@ function formatSimulationistBlocks(state: GameState): string[] {
  * Rebuild the live Situation packet from structured state.
  * This is what the GM must treat as "where we are right now."
  */
+/**
+ * Batch Y Milestone 1 — Y-2: Convert choice labels to intent enums for LLM context.
+ * Display labels stay in ActionBar; SNAPSHOT gets semantic enums only.
+ */
+function choicesToIntentEnums(choices: string[]): PlayerIntent[] {
+  return choices.map((c) => inferIntent(c));
+}
+
 export function buildSituationPacket(state: GameState): SituationPacket {
   const dungeon = state.activeDungeon;
   const currentNode = dungeon?.nodes.find((n) => n.id === dungeon.currentNodeId);

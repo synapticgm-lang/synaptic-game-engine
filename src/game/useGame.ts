@@ -35,6 +35,12 @@ import {
   scrubBeastifiedHumanoid,
 } from './combatAuthority';
 import { settleParleyAfterProse } from './encounterTerminalFsm';
+import { 
+  rollCombatOutcome, 
+  applyCombatOutcome, 
+  formatCombatOutcomeForPrompt,
+  type CombatOutcome,
+} from './combatResolution';
 import { isAutoFightWarningDismissed } from '@/components/AutoFightWarningModal';
 import { generateComicImage, generateVideo, VideoProviderNotConfiguredError } from '@/services/openRouterService';
 import { enforcePerspective } from './perspectiveWarden';
@@ -2556,6 +2562,45 @@ export function useGame() {
           ledgerFlee = resolved.round;
         }
       }
+      
+      // Batch Z Milestone 2 — Z-2: Ledger-first combat resolution
+      // Roll combat outcome BEFORE GM call to prevent combat purgatory
+      let ledgerCombatOutcome: CombatOutcome | null = null;
+      let ledgerCombatPrompt = '';
+      if (liveCurrent.activeEncounter && !ledgerRound && !ledgerFlee) {
+        const isAttack = /\b(attack|strike|fight|engage|press the attack|slash|stab)\b/i.test(sanitizedInput);
+        const isFleeManual = /\b(flee|run|escape|retreat)\b/i.test(sanitizedInput);
+        const isParley = /\b(parley|negotiate|talk.*down|truce)\b/i.test(sanitizedInput);
+        const isStruggle = /\b(struggle|resist|break free)\b/i.test(sanitizedInput);
+        const isPlead = /\b(plead|beg|mercy)\b/i.test(sanitizedInput);
+        
+        if (isAttack || isFleeManual || isParley || isStruggle || isPlead) {
+          const action = isAttack ? 'attack' 
+            : isFleeManual ? 'flee' 
+            : isParley ? 'parley'
+            : isStruggle ? 'struggle'
+            : 'plead';
+          
+          try {
+            ledgerCombatOutcome = rollCombatOutcome(action, liveCurrent);
+            liveCurrent = applyCombatOutcome(liveCurrent, ledgerCombatOutcome);
+            ledgerCombatPrompt = formatCombatOutcomeForPrompt(ledgerCombatOutcome);
+            stateRef.current = liveCurrent;
+            
+            debugLogger.record('INFO', 'Ledger-first combat outcome', {
+              action,
+              damage: ledgerCombatOutcome.damage,
+              enemyHp: `${ledgerCombatOutcome.enemyHpBefore}→${ledgerCombatOutcome.enemyHpAfter}`,
+              enemyDied: ledgerCombatOutcome.enemyDied,
+            });
+          } catch (err) {
+            debugLogger.record('ERROR', 'Combat resolution failed', {
+              error: err instanceof Error ? err.message : String(err),
+            });
+          }
+        }
+      }
+      
       const outcomeToken = buildOutcomeToken(check, intentForMandate, {
         kitWeapon: equippedWeaponName(liveCurrent),
         combat: ledgerRound ?? undefined,
@@ -2668,7 +2713,11 @@ export function useGame() {
       const groundingGate = grounded.notes.length
         ? `\n[SCENE GROUNDING GATE]: Player input was soft-corrected for: ${grounded.notes.join('; ')}. Stay inside Situation Packet + Inventory + Timeline. Do not invent the rejected premise.`
         : '';
-      const actionGates = `${inventoryGate}${groundingGate}${refuseGate}${arcMandateBlock}${sealedManifestBlock}${arcReceiptLine}`;
+      // Batch Z Milestone 2 — Z-2: Add ledger-first combat outcome to action gates
+      const combatOutcomeGate = ledgerCombatPrompt 
+        ? `\n${ledgerCombatPrompt}`
+        : '';
+      const actionGates = `${inventoryGate}${groundingGate}${refuseGate}${arcMandateBlock}${sealedManifestBlock}${arcReceiptLine}${combatOutcomeGate}`;
       const outcomeBlock = formatOutcomeTokenForPrompt(outcomeToken, !isDndEngine);
 
       // LitRPG/RPG: keep dice math out of the model-facing story cue so it is less likely to echo into prose.

@@ -12,7 +12,16 @@ import {
 } from './npcTopicFsm';
 import { hubsForBibleId, matchHub } from './outdoorHubs';
 import { enumerateLegalEdges, edgesToChoiceLabels } from './choiceEdge';
-import { isEncounterEngaged, fleeAvailable, parleyAvailable, encounterBlocksTravel } from './encounterTerminalFsm';
+import { 
+  isEncounterEngaged, 
+  fleeAvailable, 
+  parleyAvailable, 
+  encounterBlocksTravel,
+  canTravelInFsmState,
+  canInspectInFsmState,
+  canShopInFsmState,
+  getAllowedCombatActions,
+} from './encounterTerminalFsm';
 import { countPlayerIntentStreak, countLoiterFamilyStreak } from './beatFingerprint';
 import { isPyoaBranchLocked, eligiblePyoaPadsAfterLock } from './pyoaBranchLedger';
 import {
@@ -29,6 +38,7 @@ import { filterPadsAgainstOpenVignette } from './vignetteLock';
 import { realPresentPeople } from './chromeAuthority';
 import { isInteriorMap } from './placeAuthority';
 import { graphExitPads, isCameraRelativePad } from './mapEngine';
+import { inferIntent, isCombatIntent, isTravelIntent, isInspectIntent, PlayerIntent } from './intentEnums';
 
 export type PlayerIntentFamily = 'demand' | 'inspect' | 'flee' | 'name' | 'talk' | 'travel' | 'other';
 
@@ -280,6 +290,107 @@ function countRecentTravelOrWalkPicks(state: GameState, window = 6): number {
   return count;
 }
 
+/**
+ * Batch Z Milestone 2 — Z-1: Filter pads by FSM state to prevent false-arrival violations.
+ * Caught → combat-only pads
+ * In combat → no travel/shop
+ * Cleared → all pads allowed
+ */
+function filterPadsByFsmState(state: GameState, pads: string[], notes: string[]): string[] {
+  const enc = state.activeEncounter ?? state.pendingEncounter;
+  
+  // Caught: ONLY combat pads (attack, plead, struggle, surrender)
+  if (enc?.caught) {
+    const allowed = getAllowedCombatActions(state);
+    const filtered = pads.filter((pad) => {
+      const intent = inferIntent(pad);
+      const lower = pad.toLowerCase();
+      
+      // Allow only desperate combat actions
+      if (allowed.attack && (intent === PlayerIntent.INTENT_ATTACK || /\b(attack|strike|fight|press the attack)\b/i.test(lower))) return true;
+      if (allowed.plead && (intent === PlayerIntent.INTENT_PLEAD || /\b(plead|beg)\b/i.test(lower))) return true;
+      if (allowed.struggle && (intent === PlayerIntent.INTENT_STRUGGLE || /\b(struggle|resist)\b/i.test(lower))) return true;
+      if (allowed.surrender && (intent === PlayerIntent.INTENT_SURRENDER || /\b(surrender|yield)\b/i.test(lower))) return true;
+      
+      notes.push(`FSM caught drop: ${pad.slice(0, 40)}`);
+      return false;
+    });
+    if (filtered.length === 0) {
+      // Ensure at least one combat action
+      filtered.push('Press the attack');
+    }
+    return filtered;
+  }
+  
+  // In combat (not caught): combat actions + flee/parley if allowed, NO travel/shop
+  if (isEncounterEngaged(state)) {
+    const allowed = getAllowedCombatActions(state);
+    return pads.filter((pad) => {
+      const intent = inferIntent(pad);
+      const lower = pad.toLowerCase();
+      
+      // Block travel pads
+      if (isTravelIntent(intent) || /\b(travel|go to|head to|leave for)\b/i.test(lower)) {
+        notes.push(`FSM combat drop travel: ${pad.slice(0, 40)}`);
+        return false;
+      }
+      
+      // Block shop pads
+      if (intent === PlayerIntent.INTENT_SHOP || /\b(shop|merchant|buy|trade)\b/i.test(lower)) {
+        notes.push(`FSM combat drop shop: ${pad.slice(0, 40)}`);
+        return false;
+      }
+      
+      // Allow combat actions if FSM allows
+      if (intent === PlayerIntent.INTENT_ATTACK || /\b(attack|strike|fight|engage)\b/i.test(lower)) return true;
+      if (allowed.flee && (intent === PlayerIntent.INTENT_FLEE || /\b(flee|run|escape)\b/i.test(lower))) return true;
+      if (allowed.parley && (intent === PlayerIntent.INTENT_PARLEY || /\b(parley|negotiate|talk.*down)\b/i.test(lower))) return true;
+      
+      // Allow inspect if FSM allows
+      if (isInspectIntent(intent) || /\b(inspect|examine|look|search)\b/i.test(lower)) {
+        return canInspectInFsmState(state);
+      }
+      
+      // Allow other non-travel/shop pads
+      return true;
+    });
+  }
+  
+  // No active combat: apply normal FSM restrictions
+  const filtered = pads.filter((pad) => {
+    const intent = inferIntent(pad);
+    const lower = pad.toLowerCase();
+    
+    // Check travel restriction
+    if (isTravelIntent(intent) || /\b(travel|go to|head to|leave for|enter|exit)\b/i.test(lower)) {
+      if (!canTravelInFsmState(state)) {
+        notes.push(`FSM pending-enc drop travel: ${pad.slice(0, 40)}`);
+        return false;
+      }
+    }
+    
+    // Check shop restriction
+    if (intent === PlayerIntent.INTENT_SHOP || /\b(shop|merchant|buy|trade)\b/i.test(lower)) {
+      if (!canShopInFsmState(state)) {
+        notes.push(`FSM drop shop: ${pad.slice(0, 40)}`);
+        return false;
+      }
+    }
+    
+    // Check inspect restriction
+    if (isInspectIntent(intent) || /\b(inspect|examine|look|search)\b/i.test(lower)) {
+      if (!canInspectInFsmState(state)) {
+        notes.push(`FSM caught drop inspect: ${pad.slice(0, 40)}`);
+        return false;
+      }
+    }
+    
+    return true;
+  });
+  
+  return filtered;
+}
+
 export type ChoiceFingerprintFamily =
   | 'walk_away'
   | 'inspect'
@@ -402,6 +513,8 @@ export interface CompileChoicesResult {
   choices: string[];
   notes: string[];
   gateBlocked?: GateDisposition;
+  /** Batch Y Milestone 1 — Y-2: Intent enums for SNAPSHOT (semantic actions, not UI strings). */
+  intentEnums?: string[];
 }
 
 function gateTravelTarget(input: string): string | null {
@@ -992,9 +1105,17 @@ export function compileChoices(
     }
   }
 
+  // Batch Z Milestone 2 — Z-1: Filter pads by FSM state before finalizing
+  const preFiltered = filtered.length ? filtered.slice(0, 6) : edgeLabels.slice(0, 3);
+  const finalChoices = filterPadsByFsmState(state, preFiltered, notes);
+  
+  // Batch Y Milestone 1 — Y-2: Generate intent enums for SNAPSHOT context
+  const intentEnums = finalChoices.map((c) => inferIntent(c));
+  
   return {
-    choices: filtered.length ? filtered.slice(0, 6) : edgeLabels.slice(0, 3),
+    choices: finalChoices,
     notes,
+    intentEnums,
   };
 }
 
