@@ -117,7 +117,13 @@ export const ENCOUNTER_REENGAGE_COOLDOWN = 12;
 export function tickEncounterTerminal(
   state: GameState,
   playerInput: string,
-  opts?: { fleeSucceeded?: boolean; enemyDead?: boolean; playerDead?: boolean }
+  opts?: {
+    fleeSucceeded?: boolean;
+    enemyDead?: boolean;
+    playerDead?: boolean;
+    /** Batch F — explicit ledger success (not unearned free-clear). */
+    parleySucceeded?: boolean;
+  }
 ): TickEncounterResult {
   const enc0 = state.activeEncounter;
   if (!enc0) return { state, receipts: [], forcedTerminal: false };
@@ -135,6 +141,9 @@ export function tickEncounterTerminal(
   if (opts?.fleeSucceeded) {
     return commitClear(state, enc, 'escape', 'flee_success');
   }
+  if (opts?.parleySucceeded) {
+    return commitClear(state, enc, 'parleyResolved', 'parley_success');
+  }
 
   enc = {
     ...enc,
@@ -149,12 +158,9 @@ export function tickEncounterTerminal(
       return commitClear(state, enc, resolveForcedOutcome(enc, 'flee_cap'), 'flee_cap');
     }
   } else if (isParleyIntent(input)) {
-    enc = { ...enc, failedParleyCount: (enc.failedParleyCount ?? 0) + 1 };
-    receipts.push(`Parley refused (${enc.failedParleyCount}/${enc.maxFailedParley})`);
-    // Batch E — exhausted parley must NOT free-clear the fight (no XP for talk alone).
-    if ((enc.failedParleyCount ?? 0) >= (enc.maxFailedParley ?? 1)) {
-      receipts.push('Parley exhausted — combat continues on the ledger');
-    }
+    // Batch F — park as resolving; success/fail settled from GM prose (not auto-clear).
+    enc = { ...enc, phase: 'resolving' };
+    receipts.push('Parley in progress — resolve from beat');
   } else if (isAttackIntent(input)) {
     // Soft HP pressure so long loops still reach victory without ledger combat
     const dmg = Math.max(2, Math.floor((enc.maxHp || 16) / Math.max(4, enc.maxEngagedTurns ?? 8)));
@@ -170,6 +176,60 @@ export function tickEncounterTerminal(
 
   return {
     state: { ...state, activeEncounter: enc },
+    receipts,
+    forcedTerminal: false,
+  };
+}
+
+/** Diegetic cues that the foe accepted a truce / stood down (Batch F). */
+export function detectParleySuccessInProse(prose: string): boolean {
+  const t = prose ?? '';
+  if (!t.trim()) return false;
+  const refused =
+    /\b(refuses?|rejects?|won't hear|will not (?:hear|listen)|lunges?|strikes?|attacks?|charges?)\b/i.test(t)
+    && !/\b(?:then|before|until|but).{0,48}\b(?:stands? down|backs? (?:off|away)|lowers?)\b/i.test(t);
+  if (refused) return false;
+  return (
+    /\b(stands?\s+down|backs?\s+(?:off|away)|lowers?\s+(?:their|his|her|the|its)\s+(?:weapon|blade|guard|spear))\b/i.test(t)
+    || /\b(accepts?\s+(?:the\s+)?(?:truce|terms|parley)|agrees?\s+to\s+(?:talk|leave|withdraw|a truce))\b/i.test(t)
+    || /\b(withdraws?(?:\s+from (?:the )?(?:fight|melee))?|walks?\s+away|lets?\s+you\s+(?:pass|go)|truce\s+(?:holds|accepted)|parley\s+succeeds)\b/i.test(t)
+  );
+}
+
+/**
+ * After GM narrates a parley attempt: ledger-resolve on success cues;
+ * otherwise count a refusal (exhausted still keeps combat — Batch E).
+ */
+export function settleParleyAfterProse(
+  state: GameState,
+  prose: string,
+  playerInput: string
+): TickEncounterResult {
+  const enc0 = state.activeEncounter;
+  if (!enc0) return { state, receipts: [], forcedTerminal: false };
+
+  const pending =
+    enc0.phase === 'resolving'
+    || isParleyIntent(playerInput || '');
+  if (!pending) return { state, receipts: [], forcedTerminal: false };
+
+  const enc = initEncounterTerminal(enc0, state);
+  if (detectParleySuccessInProse(prose)) {
+    return commitClear(state, enc, 'parleyResolved', 'parley_success');
+  }
+
+  const failed = (enc.failedParleyCount ?? 0) + 1;
+  const next: ActiveEncounter = {
+    ...enc,
+    failedParleyCount: failed,
+    phase: 'engaged',
+  };
+  const receipts = [`Parley refused (${failed}/${next.maxFailedParley ?? 1})`];
+  if (failed >= (next.maxFailedParley ?? 1)) {
+    receipts.push('Parley exhausted — combat continues on the ledger');
+  }
+  return {
+    state: { ...state, activeEncounter: next },
     receipts,
     forcedTerminal: false,
   };

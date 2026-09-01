@@ -9,13 +9,19 @@ import { compilePointerCardSlots } from './openingPointerCard';
 import {
   detectAtmosphereReprint,
   detectLeadingCollage,
+  detectSameRoomEssayHard,
   isAtmosphereOnlyBeat,
   playerAsksRepeat,
   recentGmBeatTexts,
   stripRecycledPrefix,
 } from './semanticLoopDetector';
 
-export type CommitGateReason = 'atmosphere-only' | 'missing-pointer-slot' | 'recycle-without-delta';
+export type CommitGateReason =
+  | 'atmosphere-only'
+  | 'missing-pointer-slot'
+  | 'recycle-without-delta'
+  | 'same-room-essay'
+  | 'craft-ignore';
 
 export type CommitGateResult = {
   accept: boolean;
@@ -76,6 +82,12 @@ export function classifyBeatCommit(
     }
   }
 
+  // Batch F — HARD same-room essay on inspect/wait/scout (pad interrupt alone is not enough).
+  if (detectSameRoomEssayHard(text, recent, playerInput ?? '')) {
+    if (!reasons.includes('same-room-essay')) reasons.push('same-room-essay');
+    if (!reasons.includes('recycle-without-delta')) reasons.push('recycle-without-delta');
+  }
+
   return { accept: reasons.length === 0, reasons };
 }
 
@@ -130,9 +142,14 @@ export function repairRejectedBeat(
   const stillBad = !classifyBeatCommit(state, next).accept;
   if (stillBad) {
     const stitch = stitchCommitDelta(state);
-    if (collage.hit && collage.tailHasNewContent && next.trim()) {
+    const hardEssay =
+      _reasons.includes('same-room-essay')
+      || _reasons.includes('craft-ignore')
+      || isAtmosphereOnlyBeat(prose)
+      || missingPointerCardSlot(state, prose);
+    if (collage.hit && collage.tailHasNewContent && next.trim() && !_reasons.includes('same-room-essay')) {
       next = `${next} ${stitch}`.trim();
-    } else if (isAtmosphereOnlyBeat(prose) || missingPointerCardSlot(state, prose)) {
+    } else if (hardEssay) {
       next = stitch;
     } else {
       const first = (prose.match(/^[^.!?]+[.!?]/) ?? [''])[0].trim();

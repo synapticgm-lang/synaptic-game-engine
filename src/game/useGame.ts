@@ -34,6 +34,7 @@ import {
   narrateAutoFightTemplate,
   scrubBeastifiedHumanoid,
 } from './combatAuthority';
+import { settleParleyAfterProse } from './encounterTerminalFsm';
 import { isAutoFightWarningDismissed } from '@/components/AutoFightWarningModal';
 import { generateComicImage, generateVideo, VideoProviderNotConfiguredError } from '@/services/openRouterService';
 import { enforcePerspective } from './perspectiveWarden';
@@ -3613,6 +3614,28 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
           const prefaced = ensureEncounterSpawnPreface(workingState, cleanText);
           cleanText = prefaced.prose;
           workingState = prefaced.state;
+        }
+        {
+          // Batch F — parley success must ledger-resolve from diegetic cues (not free-clear).
+          const settled = settleParleyAfterProse(workingState, cleanText, sanitizedInput);
+          workingState = settled.state;
+          if (settled.xpAward && settled.xpAward.amount > 0) {
+            const leveled = applyCharacterXpGain(workingState.character, settled.xpAward.amount);
+            workingState = {
+              ...workingState,
+              character: leveled.character,
+              systemLog: [
+                ...(workingState.systemLog ?? []),
+                ...settled.receipts,
+                `XP Gained: ${settled.xpAward.amount} (${settled.xpAward.reason})`,
+              ],
+            };
+          } else if (settled.receipts.length) {
+            workingState = {
+              ...workingState,
+              systemLog: [...(workingState.systemLog ?? []), ...settled.receipts],
+            };
+          }
         }
         cleanText = scrubOfficialPlaceholder(cleanText, workingState);
         cleanText = scrubInventedGeography(cleanText, workingState);

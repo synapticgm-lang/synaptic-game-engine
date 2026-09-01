@@ -153,6 +153,48 @@ export function autoFightSpawnPreface(enemyName: string, location?: string): str
   return `${name} forces the doorway${where} with a scrape of wrong motion — telegraph first, then steel.`;
 }
 
+/**
+ * Batch F — after drought preface, strip unsupported spawn geometry
+ * ("breaks from debris", rubble eruptions, wall-phase invent).
+ */
+export function scrubDroughtSpawnInvent(
+  prose: string,
+  enemyName?: string
+): { prose: string; scrubbed: boolean } {
+  let next = prose ?? '';
+  let scrubbed = false;
+  const replaceWith = 'forces the doorway with a scrape of wrong motion';
+  const patterns: RegExp[] = [
+    /\b(?:breaks?|bursts?|erupts?|claws?(?:\s+(?:its|their)\s+way)?|tears?|rises?|emerges?|lurches?|crawls?|pours?|surges?|explodes?)\s+(?:free\s+)?(?:from|out of|through|up from)\s+(?:the\s+)?(?:debris|rubble|wreckage|ash(?:\s+pile)?|ruin|floorboards?)\b/gi,
+    /\b(?:steps?|climbs?|scrambles?)\s+(?:out\s+)?from\s+(?:behind|under|inside)\s+(?:a\s+)?(?:pile of\s+)?(?:debris|rubble|wreckage)\b/gi,
+    /\b(?:appears?|materializes?|spawns?)\s+(?:from\s+)?(?:nowhere|thin air|the (?:shadows?|debris|rubble))\b/gi,
+    /\b(?:through the (?:solid )?(?:wall|floor|ceiling)|out of the (?:stone|concrete) itself)\b/gi,
+  ];
+  for (const re of patterns) {
+    if (re.test(next)) {
+      scrubbed = true;
+      next = next.replace(re, replaceWith);
+    }
+  }
+  // "NAME breaks from the debris" leftover glue
+  const name = (enemyName ?? '').trim();
+  if (name) {
+    const esc = name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const named = new RegExp(
+      `${esc}\\s+(?:breaks?|bursts?|erupts?|emerges?)\\s+(?:free\\s+)?from\\s+(?:the\\s+)?(?:debris|rubble)`,
+      'gi'
+    );
+    if (named.test(next)) {
+      scrubbed = true;
+      next = next.replace(named, `${name} ${replaceWith}`);
+    }
+  }
+  if (scrubbed) {
+    next = next.replace(/\s{2,}/g, ' ').replace(/\s+([,.])/g, '$1').trim();
+  }
+  return { prose: next, scrubbed };
+}
+
 /** Mark drought/arc spawn so the next combat beat must show the foe before fight prose. */
 export function markPendingSpawnPreface(state: GameState, enemyName: string): GameState {
   const name = (enemyName ?? '').trim();
@@ -207,6 +249,15 @@ export function ensureEncounterSpawnPreface(
     }
     nextProse = `${preface} ${nextProse}`.trim();
     prepended = true;
+  }
+
+  // Batch F — drought/arc attach must not invent debris-break / wall-phase geometry.
+  {
+    const invent = scrubDroughtSpawnInvent(nextProse, name);
+    if (invent.scrubbed) {
+      nextProse = invent.prose;
+      prepended = true;
+    }
   }
 
   const base = sceneFactsBase(state);

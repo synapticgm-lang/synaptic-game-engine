@@ -626,3 +626,76 @@ export function stampCraftApplied(log: LogEntry[] | undefined, ruleIds: string[]
   }
   return log;
 }
+
+/**
+ * Batch F — commit-side check: specific CRAFT lines were applied but prose still
+ * ignores them (atmosphere recycle / no delta). Mid writer stays OFF; boost+retry.
+ */
+export function proseIgnoresCraft(
+  ruleIds: string[],
+  prose: string,
+  recentGmBeats: string[],
+  when?: CraftWhen | null
+): { ignored: boolean; ids: string[] } {
+  const text = (prose ?? '').trim();
+  const ignored: string[] = [];
+  if (!text || !ruleIds.length) return { ignored: false, ids: ignored };
+
+  // Lazy import pattern avoided — callers pass recent beats; use local heuristics
+  // matching semanticLoopDetector atmosphere/delta cues (keep craftBook free of cycles).
+  const atmosTokens =
+    text.match(
+      /\b(dust|motes?|gloom|decay|ozone|scent|smell|odou?r|perfume|acrid|metallic|tang|damp|earth|air|light|shafts?|slivers?|silence|debris|rubble|concrete|rebar|creak|timber|groan|cloying|hangs?|pierc(?:e|ing)|mournful|ruin|rott(?:ing|en)|stagnant)\b/gi
+    ) ?? [];
+  const hasDelta =
+    /\b(?:a|an|the)\s+(?:man|woman|figure|stranger|official|warden|handler|registrar|girl|boy|soldier|merchant|priest|beast|skirmisher)\b|\b(?:steps?|walks?|enters?|emerges?|speaks?|says|asks|demands|offers?|attacks?|lunges?)\b|[“"][^”"]{8,}[”"]|\b(?:chest|locket|hole|gap|damage|blood)\b|\b(?:nothing new|already searched|same as before|nothing else)\b/i.test(
+      text
+    );
+  const sensoryHeavy = atmosTokens.length >= 3 && !hasDelta;
+  const exhaustedCue = /\b(nothing (?:else|new|more)|already known|already searched|no further|same as before)\b/i.test(
+    text
+  );
+
+  for (const id of ruleIds) {
+    if (!id || /default$/i.test(id)) continue;
+    if (/inspect-delta|wait-delta|collage-cut/i.test(id)) {
+      if (sensoryHeavy || (!hasDelta && atmosTokens.length >= 2 && (when === 'inspect' || when === 'wait'))) {
+        ignored.push(id);
+      }
+    } else if (/inspect-exhaust/i.test(id)) {
+      if (!exhaustedCue && sensoryHeavy) ignored.push(id);
+    } else if (/travel-arrival/i.test(id)) {
+      if (sensoryHeavy) ignored.push(id);
+    }
+  }
+
+  // Near-clone of last GM under a delta CRAFT also counts as ignore.
+  const last = [...(recentGmBeats ?? [])].reverse().find((b) => String(b ?? '').trim());
+  if (last && ignored.length === 0) {
+    const deltaRules = ruleIds.filter((id) => /inspect-delta|wait-delta|collage-cut/i.test(id));
+    if (deltaRules.length) {
+      const a = new Set(
+        text
+          .toLowerCase()
+          .replace(/[^a-z0-9\s]/g, ' ')
+          .split(/\s+/)
+          .filter((w) => w.length > 3)
+      );
+      const b = new Set(
+        last
+          .toLowerCase()
+          .replace(/[^a-z0-9\s]/g, ' ')
+          .split(/\s+/)
+          .filter((w) => w.length > 3)
+      );
+      let inter = 0;
+      for (const t of a) if (b.has(t)) inter++;
+      const union = new Set([...a, ...b]).size || 1;
+      if (inter / union >= 0.55 && !hasDelta) {
+        ignored.push(...deltaRules);
+      }
+    }
+  }
+
+  return { ignored: ignored.length > 0, ids: [...new Set(ignored)] };
+}

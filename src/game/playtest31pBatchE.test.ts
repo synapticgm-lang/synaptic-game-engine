@@ -31,7 +31,7 @@ import {
   normalizePlayerIntentKey,
 } from './beatFingerprint';
 import { compileChoices } from './choiceCompiler';
-import { tickEncounterTerminal } from './encounterTerminalFsm';
+import { settleParleyAfterProse, tickEncounterTerminal } from './encounterTerminalFsm';
 import { isRoleAdjectivePersonSlot, realPresentPeople } from './chromeAuthority';
 import type { ActiveEncounter } from './types';
 
@@ -187,10 +187,16 @@ describe('playtest31pBatchE', () => {
       let state = createInitialState(undefined, 'litrpg');
       state.activeEncounter = enc;
       const tick = tickEncounterTerminal(state, 'Parley');
-      expect(tick.state.activeEncounter).toBeTruthy();
-      expect(tick.state.activeEncounter?.hp).toBe(20);
-      expect(tick.receipts.some((r) => /parley exhausted|parley refused/i.test(r))).toBe(true);
-      expect(tick.forcedTerminal).toBe(false);
+      expect(tick.state.activeEncounter?.phase).toBe('resolving');
+      const settled = settleParleyAfterProse(
+        tick.state,
+        'The hunter refuses and raises steel.',
+        'Parley'
+      );
+      expect(settled.state.activeEncounter).toBeTruthy();
+      expect(settled.state.activeEncounter?.hp).toBe(20);
+      expect(settled.receipts.some((r) => /parley exhausted|parley refused/i.test(r))).toBe(true);
+      expect(settled.forcedTerminal).toBe(false);
     });
   });
 });

@@ -8,6 +8,7 @@ import {
   applyCraftLearning,
   compileCraftRules,
   consumeThumbsDownSignal,
+  proseIgnoresCraft,
   stampCraftApplied,
   type CraftSignal,
 } from './craftBookCompiler';
@@ -28,6 +29,7 @@ import {
   stripRecycledPrefix,
   recentGmBeatTexts,
   detectAtmosphereReprint,
+  detectSameRoomEssayHard,
 } from './semanticLoopDetector';
 import { classifyBeatCommit, repairRejectedBeat, stitchCommitDelta, isVerbatimStallStub } from './beatCommitGate';
 import { isBannedFallbackStub } from './sealedManifest';
@@ -383,6 +385,32 @@ export function applyGovernanceToProse(
       rejectClone = true;
       notes.push('Atmosphere reprint: same-room essay, no delta');
     }
+    if (!rejectClone && detectSameRoomEssayHard(out, recentGmBeatTexts(state), playerInput)) {
+      rejectClone = true;
+      notes.push('Same-room essay HARD: loiter recycle without delta');
+    }
+  }
+
+  // Batch F — CRAFT applied but Flash Lite ignored (boost + reject/stitch; Mid writer OFF).
+  {
+    const compiled = compileCraftRules(state, playerInput);
+    if (compiled.replacedModeLine && compiled.ruleIds.length) {
+      const ignore = proseIgnoresCraft(
+        compiled.ruleIds,
+        out,
+        recentGmBeatTexts(state),
+        compiled.when
+      );
+      if (ignore.ignored) {
+        rejectClone = true;
+        notes.push(`CRAFT ignore: ${ignore.ids.join(',')}`);
+        const repaired = repairRejectedBeat(state, out, ['craft-ignore']);
+        if (repaired.repaired) {
+          out = repaired.prose;
+          notes.push(...repaired.notes);
+        }
+      }
+    }
   }
 
   const gate = classifyBeatCommit(state, out, playerInput);
@@ -416,7 +444,11 @@ export function collectCraftSignals(opts: {
   const found = new Set<CraftSignal>();
   const blob = (opts.notes ?? []).join('\n');
   if (/collage/i.test(blob)) found.add('collage');
-  if (/atmosphere reprint/i.test(blob)) found.add('atmosphere');
+  if (/atmosphere reprint|same-room essay/i.test(blob)) found.add('atmosphere');
+  if (/CRAFT ignore/i.test(blob)) {
+    found.add('atmosphere');
+    found.add('collage');
+  }
   if (/recycle pad|rejected choice/i.test(blob)) found.add('pad_irrelevant');
 
   const recent = recentGmBeatTexts(opts.previous);

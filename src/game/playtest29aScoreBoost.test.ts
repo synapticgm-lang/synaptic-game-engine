@@ -5,6 +5,7 @@ import {
   tickEncounterTerminal,
   fleeAvailable,
   parleyAvailable,
+  settleParleyAfterProse,
 } from './encounterTerminalFsm';
 import { compileChoices } from './choiceCompiler';
 import { enumerateLegalEdges } from './choiceEdge';
@@ -119,7 +120,7 @@ describe('playtest29a — Manus score boost terminal authority', () => {
     expect(notes.some((n) => /Encounter lock/i.test(n))).toBe(true);
   });
 
-  it('Parley removed after cap (LitRPG maxFailedParley=1)', () => {
+  it('Parley exhausted keeps combat on ledger (no free-clear); success clears via prose', () => {
     let state = createInitialState(undefined, 'litrpg');
     state.activeEncounter = initEncounterTerminal(
       {
@@ -138,8 +139,15 @@ describe('playtest29a — Manus score boost terminal authority', () => {
     );
     expect(parleyAvailable(state.activeEncounter)).toBe(true);
     const tick = tickEncounterTerminal(state, 'Parley with the hunter');
-    expect(tick.state.activeEncounter).toBeNull();
-    expect(tick.cleared?.resolutionReason).toBe('parley_cap');
+    expect(tick.state.activeEncounter?.phase).toBe('resolving');
+    const refused = settleParleyAfterProse(
+      tick.state,
+      'The hunter refuses your offer and holds the line.',
+      'Parley with the hunter'
+    );
+    expect(refused.state.activeEncounter).not.toBeNull();
+    expect(parleyAvailable(refused.state.activeEncounter)).toBe(false);
+    expect(refused.forcedTerminal).toBe(false);
   });
 
   it('STATUS firewall strips GM_VOICE / PYOA / RenderFallback tags', () => {

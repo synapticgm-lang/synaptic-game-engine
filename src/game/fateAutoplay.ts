@@ -156,6 +156,7 @@ import {
   collectSceneObjectNames,
 } from './proseWarden';
 import { ensureEncounterSpawnPreface } from './combatAuthority';
+import { settleParleyAfterProse } from './encounterTerminalFsm';
 import { classifyBeatCommit, repairRejectedBeat } from './beatCommitGate';
 import { compactTrafficGist } from './openingPointerCard';
 import {
@@ -1156,6 +1157,27 @@ Do NOT print dice notation or CODE ENFORCED.
     const prefaced = ensureEncounterSpawnPreface(working, cleanText);
     cleanText = prefaced.prose;
     working = prefaced.state;
+  }
+  {
+    const settled = settleParleyAfterProse(working, cleanText, playerInput);
+    working = settled.state;
+    if (settled.xpAward && settled.xpAward.amount > 0) {
+      const leveled = applyCharacterXpGain(working.character, settled.xpAward.amount);
+      working = {
+        ...working,
+        character: leveled.character,
+        systemLog: [
+          ...(working.systemLog ?? []),
+          ...settled.receipts,
+          `XP Gained: ${settled.xpAward.amount} (${settled.xpAward.reason})`,
+        ],
+      };
+    } else if (settled.receipts.length) {
+      working = {
+        ...working,
+        systemLog: [...(working.systemLog ?? []), ...settled.receipts],
+      };
+    }
   }
   cleanText = scrubOfficialPlaceholder(cleanText, working);
   cleanText = scrubInventedGeography(cleanText, working);

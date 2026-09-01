@@ -744,3 +744,54 @@ export function detectAtmosphereReprint(draft: string, recentGmBeats: string[]):
   }
   return false;
 }
+
+/** Inspect / wait / scout / look-around — same-room loiter family (Batch F). */
+export function isSameRoomLoiterIntent(input: string): boolean {
+  const s = (input ?? '').toLowerCase().replace(/\s+/g, ' ').trim();
+  if (!s) return false;
+  if (
+    /\b(wait(?:\s+and\s+(?:watch|listen))?|scout(?:\s+for\s+danger)?|ready yourself|look around|examine the (?:room|area|cell|surroundings)|inspect(?:\s+the\s+room)?|get bearings|observe(?:\s+the\s+room)?)\b/i.test(
+      s
+    )
+  ) {
+    return true;
+  }
+  if (/^(?:look|observe|explore|scout|wait|examine|inspect)\b/i.test(s)) return true;
+  return false;
+}
+
+export function hasBeatDeltaCue(text: string): boolean {
+  return BEAT_DELTA_CUE.test(text ?? '');
+}
+
+/**
+ * Batch F HARD gate: same-location loiter prose that recycles atmosphere without a
+ * concrete delta must not commit (beyond ChoiceCompiler pad interrupt from E).
+ */
+export function detectSameRoomEssayHard(
+  draft: string,
+  recentGmBeats: string[],
+  playerInput: string
+): boolean {
+  if (!isSameRoomLoiterIntent(playerInput)) return false;
+  if (playerAsksRepeat(playerInput)) return false;
+  const text = (draft ?? '').trim();
+  if (!text) return false;
+
+  if (detectAtmosphereReprint(text, recentGmBeats)) return true;
+  if (isAtmosphereOnlyBeat(text)) return true;
+
+  const last = [...(recentGmBeats ?? [])].reverse().find((b) => String(b ?? '').trim());
+  if (!last) {
+    // First loiter with pure sensory pile and no person/travel/cost cue.
+    return !hasBeatDeltaCue(text) && atmosphereSignature(text).size >= 3;
+  }
+
+  const sig = atmosphereSignature(text);
+  const prior = atmosphereSignature(last);
+  if (sig.size >= 2 && prior.size >= 2 && signatureJaccard(sig, prior) >= 0.35 && !hasBeatDeltaCue(text)) {
+    return true;
+  }
+  if (tokenJaccard(text, last) >= 0.55 && !hasBeatDeltaCue(text)) return true;
+  return false;
+}
