@@ -65,6 +65,15 @@ export function isNoisySystemLogLine(line: string): boolean {
     || /^social\s+check:\s*(?:success|failure)(?:\s*\(.*\))?\s*$/i.test(line)
     || /\[?\s*system\s+roll/i.test(line)
     || /\bd20\b.*\b(?:mod|dc)\b/i.test(line)
+    // Director mandates must not surface as STATUS without mechanical pads (Batch S)
+    || /^SOCIAL CRISIS\b/i.test(line)
+    || /^NPC TOPIC EXHAUSTED\b/i.test(line)
+    || /^NPC STAGE ADVANCE\b/i.test(line)
+    || /^NPC TOPIC SUITE\b/i.test(line)
+    || /^FREE T12 HOOK\b/i.test(line)
+    || /^LOITER INTERRUPT\b/i.test(line)
+    || /^ENCOUNTER TERMINAL\b/i.test(line)
+    || /^ARC (?:PENDING|BEAT|DIRECTOR)\b/i.test(line)
     || isNoOpCheckSuccessLine(line)
   );
 }

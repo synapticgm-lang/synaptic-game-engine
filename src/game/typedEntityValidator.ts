@@ -18,7 +18,7 @@ import {
   buildProtectedEntityNames,
   withProtectedChromeBlocks,
 } from './narrativeScrub';
-import { isChromePersonToken, isPolityFactionOrPlaceToken } from './chromeAuthority';
+import { isChromePersonToken, isPolityFactionOrPlaceToken, isChoicePadPersonToken, isFactionOrOrgToken } from './chromeAuthority';
 
 /** Never emit these as automatic scrub replacements (29a constitution). */
 export const FORBIDDEN_SCRUB_REPLACEMENTS = [
@@ -79,6 +79,8 @@ export function extractEntityContext(state: GameState): TypedEntityContext {
       n.trim().length > 1
       && !isChromePersonToken(n)
       && !isPolityFactionOrPlaceToken(n)
+      && !isChoicePadPersonToken(n)
+      && !isFactionOrOrgToken(n)
       && !/^(bystanders?|handlers?|onlookers?|watchers?|crowd|people|voices|cracked street)$/i.test(n)
   );
   const companions = (state.companions ?? []).map(c => c.name).filter(Boolean);

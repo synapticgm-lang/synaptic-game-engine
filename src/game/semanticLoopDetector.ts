@@ -770,6 +770,49 @@ export function isSameRoomLoiterIntent(input: string): boolean {
   return false;
 }
 
+/** Talk / press / listen basin — Wall Sergeant treadmill (Batch S). */
+export function isDialogueTalkIntent(input: string): boolean {
+  const s = (input ?? '').toLowerCase().replace(/\s+/g, ' ').trim();
+  if (!s) return false;
+  return /\b(talk(?:\s+to)?|ask(?:\s+a\s+direct\s+question)?|press(?:\s+for\s+leverage)?|listen|speak(?:\s+with)?|say|tell)\b/i.test(
+    s
+  );
+}
+
+const DIALOGUE_STALL_CUE =
+  /\b(?:names?\s+and\s+business|state your (?:name|business)|worn leather|shifts?\s+(?:his|her|their)\s+weight|persistent\s+drizzl|speak\s+plainly|leverage\?|not some throne room|get out of the way)\b/i;
+
+/**
+ * Batch S HARD gate: recycled talk beat (rain / leather / names-and-business) with no
+ * durable delta must not commit — ChoiceCompiler also forces Leave/Travel pads.
+ */
+export function detectDialogueTreadmillHard(
+  draft: string,
+  recentGmBeats: string[],
+  playerInput: string
+): boolean {
+  if (!isDialogueTalkIntent(playerInput)) return false;
+  if (playerAsksRepeat(playerInput)) return false;
+  const text = (draft ?? '').trim();
+  if (!text || !DIALOGUE_STALL_CUE.test(text)) return false;
+
+  const priorStall = [...(recentGmBeats ?? [])]
+    .slice(-5)
+    .filter((b) => String(b ?? '').trim() && DIALOGUE_STALL_CUE.test(b));
+  if (priorStall.length >= 2) return true;
+
+  const last = [...(recentGmBeats ?? [])].reverse().find((b) => String(b ?? '').trim());
+  if (
+    last
+    && DIALOGUE_STALL_CUE.test(last)
+    && tokenJaccard(text, last) >= 0.28
+    && !hasBeatDeltaCue(text)
+  ) {
+    return true;
+  }
+  return false;
+}
+
 export function hasBeatDeltaCue(text: string): boolean {
   return BEAT_DELTA_CUE.test(text ?? '');
 }

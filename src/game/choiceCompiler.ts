@@ -487,7 +487,6 @@ export function compileChoices(
   const hardLoiter = loiter.count >= 4 && loiter.key === 'loiter';
   // Batch E — inspect/wait/scout treadmill in one room: interrupt earlier (≥3).
   const inspectTreadmill = loiter.count >= 3 && loiter.key === 'loiter';
-  const stallInterrupt = hardStreak || hardLoiter || inspectTreadmill;
   const pyoaLocked = state.engineMode === 'pyoa' && isPyoaBranchLocked(state);
   const npc = presentNpcForPads(state);
   const npcKey = npc
@@ -497,6 +496,14 @@ export function compileChoices(
     !!npc
     && (shouldForceNpcStageAdvance(state, npc)
       || Object.keys(state.arcDirector?.topicCommits ?? {}).some((k) => k.includes(npcKey)));
+  // Batch S — talk/press recycle with same NPC: force scene move (not another leverage pad)
+  const talkRecycle =
+    !engaged
+    && !!npc
+    && (shouldForceNpcStageAdvance(state, npc)
+      || (/\b(talk|ask|press|listen)\b/i.test(intentText)
+        && (state.arcDirector?.npcTopics?.[npcKey] ?? []).length >= 2));
+  const stallInterrupt = hardStreak || hardLoiter || inspectTreadmill || talkRecycle;
 
   let filtered = choices.filter((c) => {
     const lower = c.toLowerCase();
@@ -603,11 +610,13 @@ export function compileChoices(
 
   if (stallInterrupt) {
     notes.push(
-      hardLoiter
-        ? `Hard loiter interrupt: ×${loiter.count}`
-        : inspectTreadmill && !hardStreak
-          ? `Inspect treadmill interrupt: ×${loiter.count}`
-          : `Hard streak interrupt: ${streak.key}×${streak.count}`
+      talkRecycle
+        ? `Dialogue treadmill interrupt: ${npc ?? 'npc'}`
+        : hardLoiter
+          ? `Hard loiter interrupt: ×${loiter.count}`
+          : inspectTreadmill && !hardStreak
+            ? `Inspect treadmill interrupt: ×${loiter.count}`
+            : `Hard streak interrupt: ${streak.key}×${streak.count}`
     );
   }
 
@@ -686,11 +695,11 @@ export function compileChoices(
   }
 
   // Batch E/G — after inspect/wait/scout treadmill, force world-moving pads (not Scout/Wait).
+  // Batch S — dialogue recycle drops Press/Ask and forces Leave/Travel.
   if (stallInterrupt && !engaged) {
-    const interruptPads = [
-      'Ask a direct question',
-      'Press for leverage',
-    ];
+    const interruptPads = talkRecycle
+      ? ['Leave through the nearest exit', 'Walk away with consequence']
+      : ['Ask a direct question', 'Press for leverage'];
     const here = (state.currentLocation ?? '').toLowerCase();
     for (const h of hubsForBibleId(state.campaignBibleId).slice(0, 3)) {
       if (h.name.toLowerCase() !== here) {
@@ -700,7 +709,7 @@ export function compileChoices(
     }
     if (state.activeEncounter) {
       interruptPads.unshift('Press the attack');
-    } else {
+    } else if (!talkRecycle) {
       interruptPads.push('Leave through the nearest exit');
     }
     for (const pad of interruptPads) {
@@ -718,6 +727,10 @@ export function compileChoices(
         notes.push(`Post-loiter scout/wait drop: ${c.slice(0, 32)}`);
         return false;
       }
+      if (talkRecycle && /\b(press for leverage|ask a direct question|talk to|ready yourself)\b/i.test(lower)) {
+        notes.push(`Post-dialogue talk drop: ${c.slice(0, 32)}`);
+        return false;
+      }
       return true;
     });
   }
@@ -732,7 +745,7 @@ export function compileChoices(
     }
   }
 
-  const intentPads = intentSupplements(intent, engaged);
+  const intentPads = talkRecycle ? [] : intentSupplements(intent, engaged);
   if (intentPads.length) {
     for (const pad of intentPads) {
       if (pyoaLocked && !eligiblePyoaPadsAfterLock(state, pad)) continue;
@@ -748,6 +761,9 @@ export function compileChoices(
   filtered = filtered.filter((c) => {
     if (engaged && (isLookOrExamineRoomPad(c) || isEncounterForbiddenPad(c))) return false;
     if (pyoaLocked && !eligiblePyoaPadsAfterLock(state, c)) return false;
+    if (talkRecycle && /\b(press for leverage|ask a direct question|talk to|ready yourself)\b/i.test(c)) {
+      return false;
+    }
     return true;
   });
 

@@ -631,11 +631,12 @@ export function runArcDirectorBeforeGm(
     }
   }
 
-  // WS-7 Wave 1: Social crisis selection (P2 priority — after combat, before generic beats)
+  // WS-7 Wave 1: Social crisis — mandate only when we can materialize pads (suppress false STATUS)
   let socialCrisisSelected: SocialCrisis | null = null;
   if (!working.activeEncounter) {
     socialCrisisSelected = selectEligibleCrisis(working);
-    if (socialCrisisSelected) {
+    // Prefer suppress: chrome without mediation pads trains dead System. Wire pads later.
+    if (socialCrisisSelected && working.engineMode === 'rpg') {
       mandates.push(
         `SOCIAL CRISIS (${socialCrisisSelected.id}): ${socialCrisisSelected.name} — Two-party dispute, requires player mediation.`
       );

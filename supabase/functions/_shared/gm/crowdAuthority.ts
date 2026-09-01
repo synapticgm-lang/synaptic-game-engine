@@ -64,7 +64,7 @@ const LARGE_SPAN =
   /\b(?:dozens?|scores?|hundreds?|fifty|sixty|seventy|eighty|ninety|hundred|two hundred|three hundred)(?:\s+of)?\s+(?:the\s+)?(?:people|figures|individuals|onlookers|bystanders|watchers|voices|souls|bodies)\b/gi;
 
 const GROUP_SPAN =
-  /\b(?:a\s+)?(?:scattered\s+)?(?:small\s+|large\s+)?(?:group|crowd|gathering)\s+of\s+(?:the\s+)?(?:people|figures|individuals|onlookers|bystanders|strangers)|(?:several|many)\s+(?:people|figures|individuals|onlookers|bystanders)|(?:a\s+)?(?:small\s+|large\s+)?crowd\b/gi;
+  /\b(?:a\s+)?(?:scattered\s+|sparse\s+|modest\s+|small\s+|large\s+|meager\s+)?(?:group|crowd|gathering)(?:\s+of\s+(?:the\s+)?(?:people|figures|individuals|onlookers|bystanders|strangers))?|(?:several|many)\s+(?:people|figures|individuals|onlookers|bystanders)\b/gi;
 
 const FEW_SPAN =
   /\b(?:a\s+)?(?:few|handful of)\s+(?:people|figures|individuals|onlookers|bystanders)\b/gi;
@@ -74,6 +74,10 @@ const PAIR_SPAN =
 
 const SOLO_SPAN =
   /\b(?:a\s+)?(?:single|lone|solitary)\s+(?:figure|person|individual|stranger)|(?:the\s+)?(?:one|only)\s+(?:other\s+)?(?:figure|person|individual)\b/gi;
+
+/** Already-canonical warden phrases — never re-match / re-expand these. */
+const CANONICAL_CROWD_PHRASE =
+  /\bthe\s+(?:person|two people|few people|people|crowd)\s+here\b/gi;
 
 const NUMBERED_SPAN = new RegExp(
   `\\b(\\d{1,3}|one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve)\\s+(${PEOPLE_NOUN})\\b`,
@@ -287,6 +291,7 @@ export function detectCrowdMention(text: string): CrowdMention | null {
     while ((m = re.exec(text)) !== null) {
       const span = m[0];
       if (OBJECT_PAIR.test(span) || TWO_OF_YOU.test(span)) continue;
+      if (spansCanonicalPhrase(text, m.index, span.length)) continue;
       if (bucket === 'pair' && /arrived/i.test(span) && /you arrived/i.test(text.slice(Math.max(0, m.index - 8), m.index + span.length))) {
         /* "who were present when you arrived" is still a pair mention */
       }
@@ -307,6 +312,7 @@ export function detectCrowdMention(text: string): CrowdMention | null {
     if (n == null) continue;
     const span = m[0];
     if (OBJECT_PAIR.test(span) || TWO_OF_YOU.test(span)) continue;
+    if (spansCanonicalPhrase(text, m.index, span.length)) continue;
     found.push(mention(m.index, span, crowdBucket(n), n));
   }
 
@@ -324,6 +330,7 @@ export function listCrowdMentions(text: string): CrowdMention[] {
     while ((m = re.exec(text)) !== null) {
       const span = m[0];
       if (OBJECT_PAIR.test(span) || TWO_OF_YOU.test(span)) continue;
+      if (spansCanonicalPhrase(text, m.index, span.length)) continue;
       found.push(mention(m.index, span, bucket, count));
     }
   };
@@ -339,6 +346,7 @@ export function listCrowdMentions(text: string): CrowdMention[] {
     if (n == null) continue;
     const span = m[0];
     if (OBJECT_PAIR.test(span) || TWO_OF_YOU.test(span)) continue;
+    if (spansCanonicalPhrase(text, m.index, span.length)) continue;
     found.push(mention(m.index, span, crowdBucket(n), n));
   }
   found.sort((a, b) => a.index - b.index);
@@ -351,6 +359,41 @@ function applyCase(sample: string, replacement: string): string {
     return replacement.charAt(0).toUpperCase() + replacement.slice(1);
   }
   return replacement;
+}
+
+/** Collapse double-apply corruption: "the sparse the crowd here here". */
+export function normalizeCrowdRewriteArtifacts(text: string): string {
+  if (!text) return text;
+  let next = text;
+  // "herehere" / "here here" / "here hereere"
+  next = next.replace(/\bhere(?:\s*here)+\b/gi, 'here');
+  next = next.replace(/\bhereere\b/gi, 'here');
+  // "the sparse the crowd here" / "the modest the people here"
+  next = next.replace(
+    /\bthe\s+(?:sparse|modest|small|large|scattered|meager)\s+the\s+(crowd|people|person|two people|few people)\s+here\b/gi,
+    (_m, noun: string) => `the ${String(noun).toLowerCase()} here`
+  );
+  // "the people herehere" already handled; "the the crowd here"
+  next = next.replace(/\bthe\s+the\s+(crowd|people|person|two people|few people)\s+here\b/gi, 'the $1 here');
+  // Stranded adjective before canonical: "sparse the crowd here" / "modest the crowd here"
+  next = next.replace(
+    /\b(?:sparse|modest|small|large|scattered|meager)\s+the\s+(crowd|people|person|two people|few people)\s+here\b/gi,
+    (_m, noun: string) => `the ${String(noun).toLowerCase()} here`
+  );
+  // "the people here passes" grammar after rewrite — light fix
+  next = next.replace(/\bthe people here passes\b/gi, 'no one passes');
+  return next.replace(/\s{2,}/g, ' ').replace(/\s+([.,;:])/g, '$1');
+}
+
+function spansCanonicalPhrase(text: string, index: number, length: number): boolean {
+  CANONICAL_CROWD_PHRASE.lastIndex = 0;
+  let m: RegExpExecArray | null;
+  while ((m = CANONICAL_CROWD_PHRASE.exec(text)) !== null) {
+    const start = m.index;
+    const end = start + m[0].length;
+    if (index >= start && index + length <= end) return true;
+  }
+  return false;
 }
 
 /**
@@ -385,7 +428,7 @@ export function scrubInventedCrowdSize(
     }
   }
 
-  if (crowdFluxInText(next)) return next;
+  if (crowdFluxInText(next)) return normalizeCrowdRewriteArtifacts(next);
 
   if (trackedCrowdSize < 0) {
     LARGE_SPAN.lastIndex = 0;
@@ -393,29 +436,35 @@ export function scrubInventedCrowdSize(
       LARGE_SPAN.lastIndex = 0;
       next = next.replace(LARGE_SPAN, (span) => applyCase(span, 'people here'));
     }
-    return next;
+    return normalizeCrowdRewriteArtifacts(next);
   }
 
   if (trackedCrowdSize >= 20) {
     const mentions = listCrowdMentions(next);
     if (!mentions.some((x) => x.bucket === 'solo' || x.bucket === 'pair' || x.bucket === 'few')) {
-      return next;
+      return normalizeCrowdRewriteArtifacts(next);
     }
   }
 
   const target = crowdBucket(trackedCrowdSize);
   const mentions = listCrowdMentions(next);
-  if (!mentions.length) return next;
+  if (!mentions.length) return normalizeCrowdRewriteArtifacts(next);
 
   let rebuilt = next;
   for (const hit of [...mentions].reverse()) {
     if (hit.bucket === target) continue;
     if (trackedCrowdSize >= 20 && hit.bucket === 'group') continue;
     if (trackedCrowdSize >= 20 && hit.bucket === 'large') continue;
+    // Never expand a span that already ends with " here" into another "… here"
+    if (/\bhere\b/i.test(hit.text) && canonicalCrowdPhrase(target).includes('here')) {
+      continue;
+    }
     const phrase = applyCase(hit.text, canonicalCrowdPhrase(target));
     rebuilt = rebuilt.slice(0, hit.index) + phrase + rebuilt.slice(hit.index + hit.length);
   }
-  return rebuilt.replace(/\s{2,}/g, ' ').replace(/\s+([.,;:])/g, '$1');
+  return normalizeCrowdRewriteArtifacts(
+    rebuilt.replace(/\s{2,}/g, ' ').replace(/\s+([.,;:])/g, '$1')
+  );
 }
 
 /**

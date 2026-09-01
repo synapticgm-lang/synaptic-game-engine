@@ -45,20 +45,42 @@ function npcKey(name: string): string {
 }
 
 function extractNpcFromInput(input: string, state: GameState): string | null {
-  const m = input.match(/(?:talk to|speak with|ask|greet|listen to|press)\s+([A-Z][a-z]+(?:\s+[A-Z][a-z]+)?)/);
-  if (m) return m[1].trim();
-  const present = state.sceneFacts?.present ?? [];
-  // 29c — Listen / Press / Wait dialogue pads bind to the sole present NPC
+  const m = input.match(
+    /(?:talk(?:\s+to)?|speak(?:\s+with)?|ask|greet|listen(?:\s+to)?)\s+([A-Z][a-z]+(?:\s+[A-Z][a-z]+)?)/i
+  );
+  if (m?.[1]) return m[1].trim();
+  // Explicit role titles in pads ("Talk to Wall Sergeant")
+  const role = input.match(/\b(?:wall\s+sergeant|sergeant|fence|priest|handler|registrar)\b/i);
+  if (role) {
+    const titled = role[0].replace(/\b\w/g, (c) => c.toUpperCase());
+    const present = state.sceneFacts?.present ?? [];
+    const hit = present.find((p) => p.toLowerCase().includes(role[0].toLowerCase()));
+    return hit ?? titled;
+  }
+  const present = (state.sceneFacts?.present ?? []).filter(
+    (p) => p && !/^(they|them|one|press|scattered\s+scale|bystanders?|handlers?)$/i.test(p)
+  );
+  // 29c — Listen / Press / Wait dialogue pads bind to a real present NPC (not pad tokens)
   if (present.length === 1) return present[0];
   if (present.length > 0 && /\b(listen|press|wait|ask|talk)\b/i.test(input)) {
+    // Prefer someone with prior topic history (active conversation)
+    const fsm = state.arcDirector?.npcTopics ?? {};
+    for (const name of present) {
+      const key = npcKey(name);
+      if ((fsm[key] ?? []).length > 0) return name;
+    }
     return present[0];
   }
   return null;
 }
 
-/** Primary present NPC for choice-pad tactic disposition (not chrome). */
+/** Primary present NPC for choice-pad tactic disposition (not chrome / pad tokens / factions). */
 export function presentNpcForPads(state: GameState): string | null {
-  const present = (state.sceneFacts?.present ?? []).filter(Boolean);
+  const present = (state.sceneFacts?.present ?? []).filter(
+    (p) =>
+      p &&
+      !/^(they|them|one|press|scattered\s+scale|bystanders?|handlers?|figure\s+\d+)$/i.test(p)
+  );
   if (!present.length) return null;
   if (present.length === 1) return present[0];
   // Prefer someone who already has topic history

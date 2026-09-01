@@ -55,10 +55,17 @@ export function isChromePersonToken(token: string): boolean {
  * "Pellane" in present[] → "the Pellane" contagion (critic Batch B).
  */
 const POLITY_FACTION_PLACE_EXACT =
-  /^(pellane|pellane crown|ash court|the ash court|valespire|lowmarket|west wall|the weighing cup|weighing cup|contract hall|cathedral close|cinderflow|cinderflow road|harbor quay|pellane war camp|war camp|kitchen saint|kitchen saint alley|palace approach|circle|sevenfold circle|pactborn|calamity mark)$/i;
+  /^(pellane|pellane crown|ash court|the ash court|valespire|lowmarket|west wall|the weighing cup|weighing cup|contract hall|cathedral close|cinderflow|cinderflow road|harbor quay|pellane war camp|war camp|kitchen saint|kitchen saint alley|palace approach|circle|sevenfold circle|the sevenfold circle|scattered scale|the scattered scale|pactborn|calamity mark)$/i;
 
 const POLITY_FACTION_PLACE_HEAD =
-  /^(?:the\s+)?(?:pellane(?:\s+crown)?|ash\s+court|valespire|lowmarket|weighing\s+cup|contract\s+hall|cathedral\s+close|cinderflow(?:\s+road)?|harbor\s+quay|war\s+camp|kitchen\s+saint(?:\s+alley)?|palace\s+approach)\b/i;
+  /^(?:the\s+)?(?:pellane(?:\s+crown)?|ash\s+court|valespire|lowmarket|weighing\s+cup|contract\s+hall|cathedral\s+close|cinderflow(?:\s+road)?|harbor\s+quay|war\s+camp|kitchen\s+saint(?:\s+alley)?|palace\s+approach|scattered\s+scale|sevenfold\s+circle)\b/i;
+
+/**
+ * Choice-pad / pronoun tokens that must never become present[] person slots.
+ * Transcript T22: "They" / "One" / "Press" harvested from pad text ("Press for leverage").
+ */
+const CHOICE_PAD_PERSON_EXACT =
+  /^(they|them|their|theirs|one|ones|press|wait|ready|scout|inspect|check|ask|talk|leave|open|hold|attempt|continue|fate|options?|leverage|attack|flee|parley|status|travel|engage|examine|observe|approach|remain|ignore|demand|listen|walk|run|duck|slip|scan|search|unroll|unfold|show|call|try|keep|find|push|dash|meet|state|provide|inquire|step|turn|maintain|focus|move|glance)$/i;
 
 export function isPolityFactionOrPlaceToken(token: string): boolean {
   const t = normalizeChromeToken(token);
@@ -84,6 +91,21 @@ export function isRoleAdjectivePersonSlot(token: string): boolean {
   return ROLE_ADJECTIVE_EXACT.test(t);
 }
 
+/** True when a harvested "name" is a choice-pad verb/pronoun, not a person. */
+export function isChoicePadPersonToken(token: string): boolean {
+  const t = normalizeChromeToken(token);
+  if (!t) return false;
+  if (t.includes(' ')) return false;
+  return CHOICE_PAD_PERSON_EXACT.test(t);
+}
+
+/** Faction / polity nouns locked as non-loot, non-person-slot entities. */
+export function isFactionOrOrgToken(token: string): boolean {
+  const t = normalizeChromeToken(token);
+  if (!t) return false;
+  return /^(?:the\s+)?scattered\s+scale$/i.test(t) || /^(?:pactborn|calamity\s+mark|ash\s+court|pellane\s+crown)$/i.test(t);
+}
+
 export function filterChromeFromPresent(present: string[] | undefined): string[] {
   return (present ?? []).filter(
     (p) =>
@@ -91,11 +113,13 @@ export function filterChromeFromPresent(present: string[] | undefined): string[]
       p.trim() &&
       !isChromePersonToken(p) &&
       !isPolityFactionOrPlaceToken(p) &&
-      !isRoleAdjectivePersonSlot(p)
+      !isRoleAdjectivePersonSlot(p) &&
+      !isChoicePadPersonToken(p) &&
+      !isFactionOrOrgToken(p)
   );
 }
 
-/** Named people only — no chrome, aggregates, polity/place, or occupancy figures. */
+/** Named people only — no chrome, aggregates, polity/place, pad tokens, or occupancy figures. */
 export function realPresentPeople(present: string[] | undefined): string[] {
   return filterChromeFromPresent(present).filter((p) => {
     const t = p.trim();
@@ -105,6 +129,8 @@ export function realPresentPeople(present: string[] | undefined): string[] {
     if (/^figure\s+\d+$/i.test(t)) return false;
     if (isPolityFactionOrPlaceToken(t)) return false;
     if (isRoleAdjectivePersonSlot(t)) return false;
+    if (isChoicePadPersonToken(t)) return false;
+    if (isFactionOrOrgToken(t)) return false;
     return t.length >= 2;
   });
 }

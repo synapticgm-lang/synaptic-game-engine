@@ -10,6 +10,7 @@ import {
   detectAtmosphereReprint,
   detectLeadingCollage,
   detectSameRoomEssayHard,
+  detectDialogueTreadmillHard,
   isAtmosphereOnlyBeat,
   playerAsksRepeat,
   recentGmBeatTexts,
@@ -88,6 +89,11 @@ export function classifyBeatCommit(
     if (!reasons.includes('recycle-without-delta')) reasons.push('recycle-without-delta');
   }
 
+  // Batch S — HARD dialogue treadmill (Wall Sergeant rain/leather recycle).
+  if (detectDialogueTreadmillHard(text, recent, playerInput ?? '')) {
+    if (!reasons.includes('recycle-without-delta')) reasons.push('recycle-without-delta');
+  }
+
   return { accept: reasons.length === 0, reasons };
 }
 
@@ -100,7 +106,14 @@ export function stitchCommitDelta(state: GameState): string {
   const loc = (state.currentLocation || slots?.where || 'this room').replace(/\.$/, '');
   const people = (state.sceneFacts?.present ?? [])
     .map((p) => String(p).trim())
-    .filter((p) => p && !/^figure\s+\d+$/i.test(p) && !/^bystanders?$/i.test(p) && !/^it$/i.test(p));
+    .filter(
+      (p) =>
+        p
+        && !/^figure\s+\d+$/i.test(p)
+        && !/^bystanders?$/i.test(p)
+        && !/^it$/i.test(p)
+        && !/^(they|them|one|press|scattered\s+scale)$/i.test(p)
+    );
   const present = people[0];
   const props = (state.sceneFacts?.props ?? []).map((p) => String(p).trim()).filter(Boolean);
   const empty = state.sceneFacts?.emptyContainers ?? [];

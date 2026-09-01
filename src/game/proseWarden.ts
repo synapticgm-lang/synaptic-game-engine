@@ -119,31 +119,123 @@ function tidyClauses(text: string): string {
 /**
  * Batch E — strip false arrival when the player never left currentLocation.
  * "You reach the cathedral infirmary." while already there.
+ * Batch S — also strip arrival to a *different* known/opening place (Sevenfold Circle
+ * under bombardment spam while standing in Lowmarket / West Wall).
  */
-export function scrubFalseArrivalWhenHere(text: string, currentLocation?: string): string {
-  if (!text || !currentLocation?.trim()) return text;
-  const loc = currentLocation.trim();
-  const esc = loc.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-  const arrival = new RegExp(
-    `\\b(?:[Yy]ou (?:reach|arrive(?: at)?|enter)|[Yy]ou leave [^.]{2,40} behind and reach)\\s+(?:the\\s+)?${esc}\\b[.!?]?`,
-    'g'
-  );
-  let next = text.replace(arrival, '').replace(/\s{2,}/g, ' ').trim();
-  // Also catch partial name match (cathedral infirmary vs The Cathedral Infirmary)
-  const short = loc.split(/\s+/).filter((w) => w.length >= 4).slice(-2).join(' ');
-  if (short.length >= 6 && short.toLowerCase() !== loc.toLowerCase()) {
-    const escShort = short.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+export function scrubFalseArrivalWhenHere(
+  text: string,
+  currentLocation?: string,
+  knownPlaces: string[] = []
+): string {
+  if (!text) return text;
+  let next = text;
+  const loc = (currentLocation ?? '').trim();
+
+  const stripReach = (place: string) => {
+    const p = place.trim();
+    if (p.length < 3) return;
+    const esc = p.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
     next = next
       .replace(
         new RegExp(
-          `\\b(?:[Yy]ou (?:reach|arrive(?: at)?))\\s+(?:the\\s+)?${escShort}\\b[.!?]?`,
-          'gi'
+          `\\b(?:[Yy]ou (?:reach|arrive(?: at)?|enter)|[Yy]ou leave [^.]{2,40} behind and reach)\\s+(?:the\\s+)?${esc}\\b(?:\\s+under\\s+bombardment)?[.!?]?`,
+          'g'
         ),
         ''
       )
       .replace(/\s{2,}/g, ' ')
       .trim();
+    const short = p.split(/\s+/).filter((w) => w.length >= 4).slice(-2).join(' ');
+    if (short.length >= 6 && short.toLowerCase() !== p.toLowerCase()) {
+      const escShort = short.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      next = next
+        .replace(
+          new RegExp(
+            `\\b(?:[Yy]ou (?:reach|arrive(?: at)?))\\s+(?:the\\s+)?${escShort}\\b(?:\\s+under\\s+bombardment)?[.!?]?`,
+            'gi'
+          ),
+          ''
+        )
+        .replace(/\s{2,}/g, ' ')
+        .trim();
+    }
+  };
+
+  if (loc) stripReach(loc);
+
+  // Opening / prior places that are NOT where we are — false arrival spam
+  const foreign = new Set<string>();
+  for (const place of knownPlaces) {
+    const p = (place ?? '').trim();
+    if (!p || !loc) continue;
+    if (p.toLowerCase() === loc.toLowerCase()) continue;
+    if (loc.toLowerCase().includes(p.toLowerCase()) || p.toLowerCase().includes(loc.toLowerCase())) {
+      continue;
+    }
+    foreign.add(p);
   }
+  // Always scrub the Summoned Pact opening plate when not currently there
+  if (loc && !/sevenfold\s+circle/i.test(loc)) {
+    foreign.add('The Sevenfold Circle under bombardment');
+    foreign.add('Sevenfold Circle');
+  }
+  for (const place of foreign) stripReach(place);
+
+  return tidyClauses(next);
+}
+
+/**
+ * Choice-pad pronouns/verbs quoted as NPC names: known as "They", "One" and "Press".
+ */
+export function scrubChoicePadPersonNames(text: string): string {
+  if (!text) return text;
+  let next = text;
+  const PAD =
+    'They|Them|Their|One|Ones|Press|Wait|Ready|Scout|Inspect|Check|Ask|Talk|Leave|Open|Hold|Flee|Parley|Leverage|Attack|Status|Travel|Engage';
+  next = next.replace(
+    new RegExp(
+      `\\b(?:the\\s+)?(?:Scattered\\s+Scale\\s+)?(?:known\\s+as|called|named)\\s+[“"']?(?:${PAD})[”"']?\\b`,
+      'gi'
+    ),
+    'a nearby figure'
+  );
+  next = next.replace(
+    new RegExp(`[“"'](${PAD})[”"'](?:\\s+and\\s+[“"'](?:${PAD})[”"'])+`, 'gi'),
+    'other onlookers'
+  );
+  next = next.replace(new RegExp(`\\bthe figures of\\s+[“"'](?:${PAD})[”"'](?:\\s+and\\s+[“"'](?:${PAD})[”"'])*`, 'gi'), 'the figures nearby');
+  next = next.replace(new RegExp(`\\b(?:Approach|Ask|Observe)\\s+[“"'](?:${PAD})[”"']`, 'gi'), 'Approach a nearby figure');
+  return tidyClauses(next);
+}
+
+/**
+ * Faction/org names must not shapeshift into loot / sketches / lunge targets.
+ * "tarnished the Scattered Scale" / "drawn the Scattered Scale" / "take a Scattered Scale".
+ */
+export function scrubFactionAsLootOrTarget(text: string): string {
+  if (!text || !/scattered\s+scale/i.test(text)) return text;
+  let next = text;
+  next = next.replace(
+    /\b(?:a\s+)?(?:single,?\s+)?tarnished\s+(?:the\s+)?Scattered\s+Scale\b/gi,
+    'a single tarnished silver token'
+  );
+  next = next.replace(
+    /\b(?:crudely\s+)?(?:drawn|folded)\s+(?:the\s+)?Scattered\s+Scale\b/gi,
+    'a crudely drawn sketch'
+  );
+  next = next.replace(
+    /\b(?:inspect|examine|unfold|unroll|show)\s+(?:the\s+)?Scattered\s+Scale\b/gi,
+    'inspect the sketch'
+  );
+  next = next.replace(
+    /\btake\s+a\s+Scattered\s+Scale\b/gi,
+    'take a step'
+  );
+  next = next.replace(
+    /\bstrike\s+the\s+Scattered\s+Scale\b/gi,
+    'strike lands'
+  );
+  next = next.replace(/\bpush\s+the\s+Scattered\s+Scale\b/gi, 'push the point');
   return tidyClauses(next);
 }
 
@@ -868,6 +960,8 @@ export function applyProseWarden(text: string, ctx?: ProseWardenContext): string
   next = scrubUiQuestVerbs(next, alone);
   next = scrubSpeakerPlaceholder(next, alone);
   next = scrubChromeAsPerson(next, ctx?.presentNames ?? []);
+  next = scrubChoicePadPersonNames(next);
+  next = scrubFactionAsLootOrTarget(next);
   next = scrubStrangerArtifact(next, ctx?.presentNames ?? [], alone);
   next = scrubUnearnedVictory(next, {
     hasLiveEncounter: ctx?.hasLiveEncounter === true,
@@ -898,7 +992,7 @@ export function applyProseWarden(text: string, ctx?: ProseWardenContext): string
   }
   next = scrubInventedTensionChange(next, ctx?.currentTension, ctx?.previousTension);
   next = scrubLocationTautology(next, ctx?.currentLocation);
-  next = scrubFalseArrivalWhenHere(next, ctx?.currentLocation);
+  next = scrubFalseArrivalWhenHere(next, ctx?.currentLocation, ctx?.knownPlaces ?? []);
   next = scrubBodyStatusDumps(next);
   next = scrubRoleAdjectivePersonSlot(next);
   next = scrubAwakeSpeakerAsSleeper(next, {
