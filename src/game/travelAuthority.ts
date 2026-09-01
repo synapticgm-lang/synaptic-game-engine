@@ -153,12 +153,16 @@ export function enforceCameraOnProse(
   let next = prose ?? '';
   const lock = resolveCameraLock(state);
   const traveled = playerCommittedTravel(playerInput);
-  const here = (lock?.label || state.currentLocation || '').trim();
+  const dest = (state.currentLocation ?? '').trim();
+  const from = (state.previousLocationSheet?.name ?? '').trim();
 
-  if (traveled && here) {
-    return ensureTravelArrivalProse(next, here, state.previousLocationSheet?.name ?? null);
+  // Batch U — arrival prepend ONLY on real location change; use travel snap, not stale camera lock.
+  if (traveled && dest) {
+    if (from && from.toLowerCase() === dest.toLowerCase()) return next;
+    return ensureTravelArrivalProse(next, dest, from || null);
   }
 
+  const here = (lock?.label || dest || '').trim();
   if (!lock || lock.scale !== 'outdoor' || !here) return next;
   if (INDOOR_ROOM.test(next)) {
     next = next.replace(INDOOR_ROOM, here);

@@ -31,7 +31,8 @@ import {
   detectAtmosphereReprint,
   detectSameRoomEssayHard,
 } from './semanticLoopDetector';
-import { classifyBeatCommit, repairRejectedBeat, stitchCommitDelta, isVerbatimStallStub, isDirectorChromeLeak, scrubDirectorChrome } from './beatCommitGate';
+import { classifyBeatCommit, repairRejectedBeat, codedSceneMove, isVerbatimStallStub, isDirectorChromeLeak, scrubDirectorChrome, isStitchBankFingerprint } from './beatCommitGate';
+import { hasNumberedChoiceLeak, stripChoiceList } from './parser';
 import { isBannedFallbackStub } from './sealedManifest';
 import {
   extractEntityContext,
@@ -424,23 +425,39 @@ export function applyGovernanceToProse(
     }
   }
 
-  // Batch E/G — never commit verbatim stall / director chrome as story.
+  // Batch E/G/U — never commit verbatim stall / director chrome / stitch bank as story.
   {
     const scrub = scrubDirectorChrome(out);
     if (scrub.scrubbed) {
       out = scrub.prose;
       notes.push('Director chrome scrubbed from prose');
-      if (!out.trim() || isDirectorChromeLeak(out) || isVerbatimStallStub(out)) {
+      if (!out.trim() || isDirectorChromeLeak(out) || isVerbatimStallStub(out) || isStitchBankFingerprint(out)) {
         rejectClone = true;
-        out = stitchCommitDelta(state);
-        notes.push('Director chrome — diegetic stitch');
+        out = codedSceneMove(state);
+        notes.push('Director/stitch chrome — coded scene move');
       }
     }
   }
-  if (isBannedFallbackStub(out) || isVerbatimStallStub(out) || isDirectorChromeLeak(out)) {
+  if (hasNumberedChoiceLeak(out)) {
+    const stripped = stripChoiceList(out);
+    if (stripped.trim().length >= 16) {
+      out = stripped;
+      notes.push('Choice leak stripped from GM body');
+    }
+    if (hasNumberedChoiceLeak(out)) {
+      rejectClone = true;
+      notes.push('Choice leak reject: numbered chip in GM body');
+    }
+  }
+  if (isStitchBankFingerprint(out)) {
     rejectClone = true;
-    notes.push('Banned stall/fallback/director stub — reject');
-    out = stitchCommitDelta(state);
+    notes.push('Stitch bank fingerprint reject');
+    out = codedSceneMove(state);
+  }
+  if (isBannedFallbackStub(out) || isVerbatimStallStub(out) || isDirectorChromeLeak(out) || isStitchBankFingerprint(out)) {
+    rejectClone = true;
+    notes.push('Banned stall/fallback/director/stitch stub — reject');
+    out = codedSceneMove(state);
   }
 
   return { prose: out, notes, rejectClone };

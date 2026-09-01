@@ -302,6 +302,53 @@ export function scrubFactionAsLootOrTarget(text: string): string {
   return tidyClauses(next);
 }
 
+/** Batch U — commit-gate / stitch bank strings must never stay in committed prose. */
+export function scrubStitchBankLeaks(text: string): string {
+  if (!text?.trim()) return text;
+  const parts = text.split(/(?<=[.!?])\s+/);
+  const kept = parts.filter(
+    (s) =>
+      !/\bthe beat needs an exit\b/i.test(s)
+      && !/\bstill holds the line in\b/i.test(s)
+      && !/\bstrike,\s*parley,\s*or break contact now\b/i.test(s)
+      && !/\bNothing more yields here\b/i.test(s)
+      && !/\bwaits on a real answer\b/i.test(s)
+      && !/\bnot another sift\b/i.test(s)
+      && !/\btalk to someone who will move\b/i.test(s)
+  );
+  return tidyClauses(kept.join(' '));
+}
+
+/**
+ * Batch U — encounter/faction names dropped into preposition slots without a proper clause.
+ * Tape: "activity Scattered Scale", "just Pact-Hunter Skirmisher", "leaned Pact-Hunter Skirmisher".
+ */
+export function scrubEntityMadLibs(text: string, encounterName?: string): string {
+  if (!text) return text;
+  let next = text;
+  next = next.replace(/\bactivity\s+Scattered\s+Scale\b/gi, 'murmur of activity');
+  next = next.replace(/\b(?:murmur of|sound of)\s+activity\s+Scattered\s+Scale\b/gi, 'murmur of activity');
+  next = next.replace(
+    /\b(?:just|near|beside|toward|towards|into|at|on|from|leaned|lunges?|approaches?)\s+Pact-Hunter(?:\s+Skirmisher)?\b/gi,
+    'just ahead'
+  );
+  next = next.replace(
+    /\b(?:somewhere|anywhere|everywhere)\s+Pact-Hunter(?:\s+Skirmisher)?\b/gi,
+    'somewhere ahead'
+  );
+  next = next.replace(/\bpeople hereed\b/gi, 'people here');
+  next = next.replace(/\bthe two people here around you\b/gi, 'the few people around you');
+  next = next.replace(/\bthe people here continues to flow\b/gi, 'the crowd continues to flow');
+  if (encounterName) {
+    const esc = encounterName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    next = next.replace(
+      new RegExp(`\\b(?:just|near|beside|toward|towards|into|at|on|from|leaned|lunges?)\\s+${esc}\\b`, 'gi'),
+      'just ahead'
+    );
+  }
+  return tidyClauses(next);
+}
+
 /**
  * Strip raw HP/MP sheet dumps from story body (STATUS owns numbers).
  */
@@ -1026,6 +1073,8 @@ export function applyProseWarden(text: string, ctx?: ProseWardenContext): string
   next = scrubChoicePadPersonNames(next);
   next = scrubUnresolvedDeixisNouns(next, ctx?.currentLocation);
   next = scrubFactionAsLootOrTarget(next);
+  next = scrubStitchBankLeaks(next);
+  next = scrubEntityMadLibs(next, ctx?.enemyName);
   next = scrubStrangerArtifact(next, ctx?.presentNames ?? [], alone);
   next = scrubUnearnedVictory(next, {
     hasLiveEncounter: ctx?.hasLiveEncounter === true,

@@ -5,11 +5,18 @@
  * There is no general "does this make sense" critic — that would be a second LLM.
  */
 
-import type { GameState, Item } from './types.ts';
-import { calculateCrowdSize, scrubInventedCrowdSize } from './crowdAuthority.ts';
-import { rewriteChromePersonClauses } from './chromeAuthority.ts';
+import type { GameState, Item } from './types';
+import { playerTypedDialogue } from './intentParser';
+import {
+  scrubInventedEmptySearchLoot,
+  scrubInventedWeapons,
+} from './searchContinuity';
+import { scrubInventedCrowdSize } from './crowdAuthority';
+import { rewriteChromePersonClauses } from './chromeAuthority';
+import { scrubHookReversals, type HookLock } from './hookLock';
+import { scrubBeastifiedHumanoid, scrubDeniedKill, type LastKill } from './combatAuthority';
 
-export { calculateCrowdSize, crowdSizeForWarden, scrubInventedCrowdSize } from './crowdAuthority.ts';
+export { calculateCrowdSize, crowdSizeForWarden, scrubInventedCrowdSize } from './crowdAuthority';
 
 /** Names from scene props, containers, interactables, and floor loose items. */
 export function collectSceneObjectNames(state: GameState): string[] {
@@ -44,7 +51,11 @@ export type ProseWardenContext = {
   wasIndoor?: boolean;
   currentTension?: string;
   previousTension?: string;
-
+  
+  // Pack 13 Grammar Quality
+  /** Enable LanguageTool grammar check (async, adds ~50-100ms). Default: true for High tier, false for Free/Mid. */
+  enableGrammarCheck?: boolean;
+  
   // Phase 1: Deterministic State Architecture
   /** Player inventory for invented container detection. */
   inventory?: Item[];
@@ -54,8 +65,28 @@ export type ProseWardenContext = {
   lastGmProse?: string;
   /** Named present NPCs from SNAPSHOT / sceneFacts. */
   presentNames?: string[];
-  /** 29b — player exit/flee authority; do not scrub outdoor transitions. */
+  /** Empty-search targets — scrub invent loot on re-search. */
+  searchedEmpty?: string[];
+  /** Player input this turn (search continuity). */
+  playerInput?: string;
+  /** Grounded weapon names from inventory/props — scrub invent weapons. */
+  groundedWeapons?: string[];
+  /** PC name for possessive weapon scrub (Jax's dagger). */
+  playerName?: string;
+  /** 29b — player exit/flee authority this turn; do not scrub outdoor transitions. */
   exitNarrated?: boolean;
+  /** Other named places (hubs / atlas) — dual-location scrub. */
+  knownPlaces?: string[];
+  /** Live ledger encounter — skip unearned-victory scrub. */
+  hasLiveEncounter?: boolean;
+  /** Encounter cleared this turn — allow victory language. */
+  recentlyClearedEncounter?: boolean;
+  /** Auto-fight / terminal last kill — deny-loot scrub. */
+  lastKill?: LastKill | null;
+  /** Live or just-cleared enemy name — humanoid body lock. */
+  enemyName?: string;
+  /** Locked why-you’re-here — rewrite accident ↛ pawn (and reverse). */
+  hookLock?: HookLock;
 };
 
 /** Interiors that already name "here" — nearby is for things that are not here. */
@@ -83,6 +114,280 @@ function tidyClauses(text: string): string {
     .replace(/,\s+\./g, '.')
     .replace(/^,+\s*/, '')
     .trim();
+}
+
+/**
+ * Batch E — strip false arrival when the player never left currentLocation.
+ * "You reach the cathedral infirmary." while already there.
+ * Batch S — also strip arrival to a *different* known/opening place (Sevenfold Circle
+ * under bombardment spam while standing in Lowmarket / West Wall).
+ * Batch T — strip Sevenfold false-arrival even when glued before a real leave/reach line.
+ */
+export function scrubFalseArrivalWhenHere(
+  text: string,
+  currentLocation?: string,
+  knownPlaces: string[] = []
+): string {
+  if (!text) return text;
+  let next = text;
+  const loc = (currentLocation ?? '').trim();
+
+  const stripReach = (place: string) => {
+    const p = place.trim();
+    if (p.length < 3) return;
+    const esc = p.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    next = next
+      .replace(
+        new RegExp(
+          `\\b(?:[Yy]ou (?:reach|arrive(?: at)?|enter)|[Yy]ou leave [^.]{2,40} behind and reach)\\s+(?:the\\s+)?${esc}\\b(?:\\s+under\\s+bombardment)?[.!?]?`,
+          'g'
+        ),
+        ''
+      )
+      .replace(/\s{2,}/g, ' ')
+      .trim();
+    const short = p.split(/\s+/).filter((w) => w.length >= 4).slice(-2).join(' ');
+    if (short.length >= 6 && short.toLowerCase() !== p.toLowerCase()) {
+      const escShort = short.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      next = next
+        .replace(
+          new RegExp(
+            `\\b(?:[Yy]ou (?:reach|arrive(?: at)?))\\s+(?:the\\s+)?${escShort}\\b(?:\\s+under\\s+bombardment)?[.!?]?`,
+            'gi'
+          ),
+          ''
+        )
+        .replace(/\s{2,}/g, ' ')
+        .trim();
+    }
+  };
+
+  if (loc) stripReach(loc);
+
+  // Opening / prior places that are NOT where we are — false arrival spam
+  const foreign = new Set<string>();
+  for (const place of knownPlaces) {
+    const p = (place ?? '').trim();
+    if (!p || !loc) continue;
+    if (p.toLowerCase() === loc.toLowerCase()) continue;
+    if (loc.toLowerCase().includes(p.toLowerCase()) || p.toLowerCase().includes(loc.toLowerCase())) {
+      continue;
+    }
+    foreign.add(p);
+  }
+  // Always scrub the Summoned Pact opening plate when not currently there
+  if (loc && !/sevenfold\s+circle/i.test(loc)) {
+    foreign.add('The Sevenfold Circle under bombardment');
+    foreign.add('Sevenfold Circle');
+    // Batch T — bare prefix even mid-paragraph / glued to real travel
+    next = next
+      .replace(
+        /\bYou reach\s+(?:the\s+)?(?:Sevenfold\s+Circle)(?:\s+under\s+bombardment)?[.!]?\s*/gi,
+        ''
+      )
+      .replace(
+        /\bYou (?:arrive(?: at)?|enter)\s+(?:the\s+)?(?:Sevenfold\s+Circle)(?:\s+under\s+bombardment)?[.!]?\s*/gi,
+        ''
+      );
+  }
+  for (const place of foreign) stripReach(place);
+
+  return tidyClauses(next);
+}
+
+/**
+ * Choice-pad pronouns/verbs quoted as NPC names: known as "They", "One" and "Press".
+ * Batch T — also strip deixis nouns used as people/places ("the Ahead", "figure 1").
+ */
+export function scrubChoicePadPersonNames(text: string): string {
+  if (!text) return text;
+  let next = text;
+  const PAD =
+    'They|Them|Their|One|Ones|Press|Wait|Ready|Scout|Inspect|Check|Ask|Talk|Leave|Open|Hold|Flee|Parley|Leverage|Attack|Status|Travel|Engage|Ahead|Behind|Ascend|Draw|Intervene|Peer|Give|Maintain';
+  next = next.replace(
+    new RegExp(
+      `\\b(?:the\\s+)?(?:Scattered\\s+Scale\\s+)?(?:known\\s+as|called|named)\\s+[“"']?(?:${PAD})[”"']?\\b`,
+      'gi'
+    ),
+    'a nearby figure'
+  );
+  next = next.replace(
+    new RegExp(`[“"'](${PAD})[”"'](?:\\s+and\\s+[“"'](?:${PAD})[”"'])+`, 'gi'),
+    'other onlookers'
+  );
+  next = next.replace(new RegExp(`\\bthe figures of\\s+[“"'](?:${PAD})[”"'](?:\\s+and\\s+[“"'](?:${PAD})[”"'])*`, 'gi'), 'the figures nearby');
+  next = next.replace(new RegExp(`\\b(?:Approach|Ask|Observe)\\s+[“"'](?:${PAD})[”"']`, 'gi'), 'Approach a nearby figure');
+  return tidyClauses(next);
+}
+
+/**
+ * Batch T — unresolved deixis / occupancy nouns never stay as people, loot, or places.
+ * Tape: "the Ahead half-hidden", "tarnished the Ahead", "figure 1 priests", "silhouette of figure 1".
+ */
+export function scrubUnresolvedDeixisNouns(text: string, currentLocation?: string): string {
+  if (!text) return text;
+  const loc = (currentLocation ?? '').trim();
+  const place = loc
+    ? `the ${loc.replace(/^(the\s+)/i, '').split(/[,—–-]/)[0]!.trim().slice(0, 40)}`
+    : 'the street ahead';
+  let next = text;
+  // Occupancy figure N as noun
+  next = next.replace(/\bfigure\s+(\d+)\s+priests?\b/gi, 'priests');
+  next = next.replace(/\bsilhouette of\s+figure\s+\d+\b/gi, 'silhouette nearby');
+  next = next.replace(/\bof\s+figure\s+\d+\b/gi, 'nearby');
+  next = next.replace(/\bfigure\s+\d+\s+ramparts?\b/gi, 'the ramparts');
+  next = next.replace(/\b(?:the\s+)?figure\s+\d+\b/gi, 'someone nearby');
+  // Deixis as proper noun / loot / fortification
+  const DEIXIS = 'Ahead|Behind|Beside|Nearby|Above|Below|Left|Right|Forward';
+  next = next.replace(
+    new RegExp(`\\btarnished\\s+(?:the\\s+)?(?:${DEIXIS})\\b`, 'gi'),
+    'tarnished silver token'
+  );
+  next = next.replace(
+    new RegExp(`\\b(?:fortifications|walls?|spires?|edifice)\\s+of\\s+(?:the\\s+)?(?:${DEIXIS})\\b`, 'gi'),
+    (_m) => `fortifications of ${place}`
+  );
+  next = next.replace(
+    new RegExp(`\\bstudy\\s+(?:the\\s+)?(?:${DEIXIS})\\b`, 'gi'),
+    'study the scene'
+  );
+  next = next.replace(
+    new RegExp(`\\b(?:the\\s+)?(?:${DEIXIS})\\s+half-hidden\\b`, 'gi'),
+    'someone half-hidden'
+  );
+  next = next.replace(
+    new RegExp(`\\b(?:scattering of\\s+)?(?:tarnished\\s+)?(?:the\\s+)?(?:${DEIXIS})\\b(?=\\s*[,.]|\\s+(?:half-|shifts|remains|stands|breaks?))`, 'gi'),
+    'someone nearby'
+  );
+  next = next.replace(
+    new RegExp(`\\bthe\\s+(?:${DEIXIS})\\b`, 'gi'),
+    'the way ahead'
+  );
+  // Stitch pollution subjects: "Ahead shifts weight…"
+  next = next.replace(
+    new RegExp(`\\b(?:${DEIXIS})\\s+shifts\\s+weight\\b`, 'gi'),
+    'Someone nearby shifts weight'
+  );
+  return tidyClauses(next);
+}
+
+/**
+ * Faction/org names must not shapeshift into loot / sketches / lunge targets.
+ * "tarnished the Scattered Scale" / "drawn the Scattered Scale" / "take a Scattered Scale".
+ */
+export function scrubFactionAsLootOrTarget(text: string): string {
+  if (!text || !/scattered\s+scale/i.test(text)) return text;
+  let next = text;
+  next = next.replace(
+    /\b(?:a\s+)?(?:single,?\s+)?tarnished\s+(?:the\s+)?Scattered\s+Scale\b/gi,
+    'a single tarnished silver token'
+  );
+  next = next.replace(
+    /\b(?:crudely\s+)?(?:drawn|folded)\s+(?:the\s+)?Scattered\s+Scale\b/gi,
+    'a crudely drawn sketch'
+  );
+  next = next.replace(
+    /\b(?:inspect|examine|unfold|unroll|show)\s+(?:the\s+)?Scattered\s+Scale\b/gi,
+    'inspect the sketch'
+  );
+  next = next.replace(
+    /\btake\s+a\s+Scattered\s+Scale\b/gi,
+    'take a step'
+  );
+  next = next.replace(
+    /\bstrike\s+the\s+Scattered\s+Scale\b/gi,
+    'strike lands'
+  );
+  next = next.replace(/\bpush\s+the\s+Scattered\s+Scale\b/gi, 'push the point');
+  return tidyClauses(next);
+}
+
+/** Batch U — commit-gate / stitch bank strings must never stay in committed prose. */
+export function scrubStitchBankLeaks(text: string): string {
+  if (!text?.trim()) return text;
+  const parts = text.split(/(?<=[.!?])\s+/);
+  const kept = parts.filter(
+    (s) =>
+      !/\bthe beat needs an exit\b/i.test(s)
+      && !/\bstill holds the line in\b/i.test(s)
+      && !/\bstrike,\s*parley,\s*or break contact now\b/i.test(s)
+      && !/\bNothing more yields here\b/i.test(s)
+      && !/\bwaits on a real answer\b/i.test(s)
+      && !/\bnot another sift\b/i.test(s)
+      && !/\btalk to someone who will move\b/i.test(s)
+  );
+  return tidyClauses(kept.join(' '));
+}
+
+/**
+ * Batch U — encounter/faction names dropped into preposition slots without a proper clause.
+ * Tape: "activity Scattered Scale", "just Pact-Hunter Skirmisher", "leaned Pact-Hunter Skirmisher".
+ */
+export function scrubEntityMadLibs(text: string, encounterName?: string): string {
+  if (!text) return text;
+  let next = text;
+  next = next.replace(/\bactivity\s+Scattered\s+Scale\b/gi, 'murmur of activity');
+  next = next.replace(/\b(?:murmur of|sound of)\s+activity\s+Scattered\s+Scale\b/gi, 'murmur of activity');
+  next = next.replace(
+    /\b(?:just|near|beside|toward|towards|into|at|on|from|leaned|lunges?|approaches?)\s+Pact-Hunter(?:\s+Skirmisher)?\b/gi,
+    'just ahead'
+  );
+  next = next.replace(
+    /\b(?:somewhere|anywhere|everywhere)\s+Pact-Hunter(?:\s+Skirmisher)?\b/gi,
+    'somewhere ahead'
+  );
+  next = next.replace(/\bpeople hereed\b/gi, 'people here');
+  next = next.replace(/\bthe two people here around you\b/gi, 'the few people around you');
+  next = next.replace(/\bthe people here continues to flow\b/gi, 'the crowd continues to flow');
+  if (encounterName) {
+    const esc = encounterName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    next = next.replace(
+      new RegExp(`\\b(?:just|near|beside|toward|towards|into|at|on|from|leaned|lunges?)\\s+${esc}\\b`, 'gi'),
+      'just ahead'
+    );
+  }
+  return tidyClauses(next);
+}
+
+/**
+ * Strip raw HP/MP sheet dumps from story body (STATUS owns numbers).
+ */
+export function scrubBodyStatusDumps(text: string): string {
+  if (!text) return text;
+  let next = text
+    .replace(
+      /\byour health is full at\s+\d+\s*\/\s*\d+(?:,?\s*your mana reserves? (?:are|is) at\s+\d+\s*\/\s*\d+)?\.?/gi,
+      ''
+    )
+    .replace(
+      /\byour (?:hp|health)(?:\s+is)?\s*(?:at|:)?\s*\d+\s*\/\s*\d+(?:,?\s*(?:mp|mana)(?:\s+reserves?)?(?:\s+(?:are|is))?\s*(?:at|:)?\s*\d+\s*\/\s*\d+)?\.?/gi,
+      ''
+    )
+    .replace(/\b(?:HP|MP):\s*\d+\s*\/\s*\d+\b/g, '')
+    .replace(/\s{2,}/g, ' ')
+    .trim();
+  return tidyClauses(next);
+}
+
+/**
+ * "The chirurgeon, Field," — role adjective harvested as a person name.
+ */
+export function scrubRoleAdjectivePersonSlot(text: string): string {
+  if (!text) return text;
+  const ROLE_ADJ =
+    'Field|Ward|Gate|Street|Harbor|Kitchen|Palace|Circle|Court|Market|Road|Ash|Salt|Void|Pact';
+  let next = text.replace(
+    new RegExp(
+      `\\b((?:the\\s+)?(?:field\\s+)?chirurgeon|medic|warden|guard|official|handler),\\s+(?:${ROLE_ADJ})\\b`,
+      'gi'
+    ),
+    '$1'
+  );
+  next = next.replace(
+    new RegExp(`\\b(?:${ROLE_ADJ}),\\s+(?:the\\s+)?(?:field\\s+)?chirurgeon\\b`, 'gi'),
+    'the field chirurgeon'
+  );
+  return tidyClauses(next);
 }
 
 /**
@@ -196,23 +501,23 @@ export function scrubArticleCollisions(text: string): string {
  */
 export function scrubFigurePlaceholder(text: string, alone = false): string {
   if (!text) return text;
-  const personSlot = alone ? 'the panel' : 'the official';
+  const personSlot = alone ? 'the panel' : 'the stranger';
   return text
     .replace(/\bthe\s+glowing\s+a\s+figure\b/gi, 'the glowing mark')
     .replace(/\bglowing\s+a\s+figure\b/gi, 'glowing mark')
     .replace(/\bthe\s+war\s+with\s+(?:the\s+)?a\s+figure\b/gi, 'the war')
-    .replace(/\b(?:you\s+carry|carries)\s+the\s+a\s+figure\b/gi, 'you carry the mark')
+    .replace(/\b(?:you\s+carry|carries)\s+the\s+a\s+figure\b/gi, alone ? 'you carry the sealed bag' : 'you carry the sign')
     .replace(/\ba\s+figure\s+is\s+not\b/gi, 'that mark is not')
     .replace(/\bthe\s+a\s+figure\b/gi, personSlot)
     .replace(/\b(?:the\s+)?(?:glowing\s+)?a figure\b/gi, (hit) =>
-      /glowing/i.test(hit) ? 'the glowing mark' : personSlot
+      /glowing/i.test(hit) ? (alone ? 'the glowing panel' : personSlot) : personSlot
     );
 }
 
 /** UI / journal verbs must not be spoken in-world. */
 export function scrubUiQuestVerbs(text: string, alone = false): string {
   if (!text) return text;
-  const look = alone ? 'look to the panel' : 'look to the official';
+  const look = alone ? 'look to the panel' : 'look to the stranger';
   return text
     .replace(/\bunlock(?:s|ed|ing)?\s+someone(?:\s+nearby)?\b/gi, look)
     .replace(/\bunlock\s+(?:a|the)\s+(?:quest|journal|starter|guide\s*book)\b/gi, 'take the next step')
@@ -222,8 +527,8 @@ export function scrubUiQuestVerbs(text: string, alone = false): string {
 /** Soft name-slot must not act as a dialogue subject. */
 export function scrubSomeoneNearbyPlaceholder(text: string, alone = false): string {
   if (!text || !/someone nearby/i.test(text)) return text;
-  const role = alone ? 'the panel' : 'the official';
-  const rolePoss = alone ? "the panel's" : "the official's";
+  const role = alone ? 'the panel' : 'the stranger';
+  const rolePoss = alone ? "the panel's" : "the stranger's";
   return text
     .replace(/\bsomeone nearby(?:'s|’s)\b/gi, rolePoss)
     .replace(/\bsomeone nearby\s+(does|doesn't|does not|did|said|states?|turns?|inclines?|remains?|stands?|listens?|regards?|gestures?|speaks?|asks?|replies?|nods?)\b/gi, `${role} $1`)
@@ -243,6 +548,143 @@ export function scrubSpeakerPlaceholder(text: string, alone = false): string {
     next = next.replace(/\bthe speaker\b/gi, 'the panel');
     next = next.replace(/\ba speaker\b/gi, 'a panel');
   }
+  return next;
+}
+
+/**
+ * "the stranger" is a scrub artifact that replaced person/role slots.
+ * 29d: ONLY replace with a present named person or alone→panel.
+ * Never invent merchant/guard from keyword scan of the whole beat (Gemini mush).
+ */
+export function scrubStrangerArtifact(
+  text: string,
+  presentNames: string[] = [],
+  alone = false
+): string {
+  if (!text || !/\bthe stranger\b/i.test(text)) return text;
+
+  const namedPerson = presentNames.find(
+    (n) =>
+      n.length >= 2
+      && !/\b(?:you|your|panel|system|status)\b/i.test(n)
+      && !/^(bystanders?|handlers?|onlookers?|watchers?|crowd|people|voices)$/i.test(n)
+  );
+
+  const replacement = (() => {
+    if (namedPerson) return namedPerson;
+    if (alone) return 'the panel';
+    return 'the stranger';
+  })();
+
+  if (replacement === 'the stranger') return text;
+
+  let next = text;
+  const possessiveRepl = namedPerson ? `${namedPerson}'s` : `${replacement}'s`;
+  next = next.replace(/\bthe stranger(?:'s|’s)\b/gi, possessiveRepl);
+  next = next.replace(/\bthe stranger\b/gi, replacement);
+
+  return next;
+}
+
+/**
+ * 29d — unearned victory when no live encounter (and not just cleared).
+ * Soften absolute win language so the GM cannot auto-win outside the ledger.
+ */
+export function scrubUnearnedVictory(
+  text: string,
+  opts?: { hasLiveEncounter?: boolean; recentlyCleared?: boolean }
+): string {
+  if (!text || opts?.hasLiveEncounter || opts?.recentlyCleared) return text;
+  let next = text;
+  next = next.replace(
+    /\byou (?:easily )?(?:defeat|defeated|slay|slew|slain|kill|killed|vanquish|vanquished)\b/gi,
+    'you drive back'
+  );
+  next = next.replace(
+    /\b(?:the enemy|the foe|your opponent) (?:falls|collapses|dies|is dead|is defeated)\b/gi,
+    'the threat falters'
+  );
+  next = next.replace(/\byou win the (?:fight|battle|skirmish)\b/gi, 'you hold your ground');
+  next = next.replace(/\bvictory is (?:yours|assured)\b/gi, 'the moment hangs unresolved');
+  return next;
+}
+
+/**
+ * Kill unresolved placeholder nouns left by claim-scrub / bad generation
+ * ("this place", orphan "them", "imposing this place").
+ */
+export function scrubPlaceholderNouns(text: string, currentLocation?: string): string {
+  if (!text) return text;
+  const loc = (currentLocation ?? '').trim();
+  const locShort = loc
+    ? loc.replace(/^(the\s+)/i, '').split(/[,—–-]/)[0]!.trim().slice(0, 48)
+    : '';
+  const place = locShort ? `the ${locShort}` : 'the building';
+  let next = text;
+  next = next.replace(/\bthe imposing this place\b/gi, `the imposing mass of ${place}`);
+  next = next.replace(/\bstructure of this place\b/gi, `structure of ${place}`);
+  next = next.replace(/\bspires of this place\b/gi, `spires of ${place}`);
+  next = next.replace(/\bedifice of this place\b/gi, `edifice of ${place}`);
+  next = next.replace(/\bgrand entrance of this place\b/gi, `grand entrance of ${place}`);
+  next = next.replace(/\bApproach this place\b/gi, `Approach ${place}`);
+  next = next.replace(/\btowards? this place\b/gi, `toward ${place}`);
+  next = next.replace(/\bback towards? this place\b/gi, `back toward ${place}`);
+  // Orphan object "them" (not "ask them" / "tell them" / "with them").
+  next = next.replace(/\bpresence of them\b/gi, 'presence ahead');
+  next = next.replace(/\bopen them\b/gi, 'the open way');
+  next = next.replace(/\bassume is them\b/gi, 'assume lies ahead');
+  next = next.replace(/\brumored them\b/gi, 'rumored place');
+  next = next.replace(/\bcluster of them\b/gi, 'cluster of debris');
+  next = next.replace(/\bsurfaces of them\b/gi, 'surfaces of the items');
+  next = next.replace(/\btwo them\b/gi, 'two items');
+  next = next.replace(/\bfour them\b/gi, 'four items');
+  next = next.replace(/\bthree them\b/gi, 'three items');
+  next = next.replace(/\ba few them\b/gi, 'a few items');
+  // Rarity-tagged inventory mush: "[Uncommon] them" (count forms first).
+  next = next.replace(
+    /\b(two|three|four|several)\s+\[(Common|Uncommon|Rare|Epic|Legendary|Unique)\]\s+them\b/gi,
+    '$1 [$2] items'
+  );
+  next = next.replace(
+    /\[(Common|Uncommon|Rare|Epic|Legendary|Unique)\]\s+them\b/gi,
+    '[$1] item'
+  );
+  next = next.replace(/\bCheck your them\b/gi, 'Check your items');
+  next = next.replace(/\bExamine (?:your )?them clues\b/gi, 'Examine the clues');
+  next = next.replace(/\bInspect them\b(?!\s+\w)/gi, 'Inspect it');
+  next = next.replace(/\bPick up them\b/gi, 'Pick it up');
+  next = next.replace(/\bof them in your (bag|pack|pockets?)\b/gi, 'of your items in your $1');
+  next = next.replace(/\bthe them\b/gi, 'them');
+  next = next.replace(/\b(?:a|an)\s+them\b/gi, 'someone');
+  next = next.replace(/\breads\s+['']them\s*[-–—]\s*them['']/gi, "reads a worn brass nameplate");
+  return next;
+}
+
+/** Fix mid-sentence lowercase "your eyes" NPC slips and orphan "them" subjects. */
+export function scrubPronounSubjectSlips(text: string): string {
+  if (!text) return text;
+  let next = text;
+  next = next.replace(/([.!?]\s+)your eyes\b/g, '$1Their eyes');
+  // NPC agent + your body kit (perspective over-rewrite).
+  next = next.replace(
+    /\b(He|She)\s+((?:[^.]|\.(?!\s)){0,120}?)\byour (head|eyes|face|hand|hands|shoulders?|gaze)\b/gi,
+    (_m, who: string, mid: string, body: string) => {
+      const poss = String(who).toLowerCase() === 'she' ? 'her' : 'his';
+      return `${who} ${mid}${poss} ${body}`;
+    }
+  );
+  next = next.replace(
+    /\b(They)\s+((?:[^.]|\.(?!\s)){0,120}?)\byour (head|eyes|face|hand|hands|shoulders?|gaze)\b/gi,
+    (_m, who: string, mid: string, body: string) => `${who} ${mid}their ${body}`
+  );
+  next = next.replace(/\btilted your head\b/gi, 'tilted their head');
+  next = next.replace(/\binclines? your head\b/gi, 'inclines their head');
+  next = next.replace(/\bthem feels\b/gi, 'it feels');
+  next = next.replace(/\bthem emerges\b/gi, 'they emerge');
+  next = next.replace(/\bthem emerge\b/gi, 'they emerge');
+  next = next.replace(/\bAsk about them\b/gi, 'Ask about it');
+  next = next.replace(/\bExamine them\b(?!\s+\w)/gi, 'Examine it');
+  next = next.replace(/\bFocus on them\b/gi, 'Focus on it');
   return next;
 }
 
@@ -380,7 +822,7 @@ export function scrubInventedTimeSkip(text: string, currentTime?: string, prevTi
 /**
  * Pack 12 Extended Validation: Indoor/Outdoor
  * Scrubs "you step outside" if location is marked interior and player didn't use an exit.
- * 29b — skip outdoor scrub when exitNarrated is set.
+ * 29b — skip outdoor scrub when exitAuthority / exitNarrated is set.
  */
 export function scrubInventedLocationChange(
   text: string,
@@ -394,10 +836,12 @@ export function scrubInventedLocationChange(
   const OUTDOOR_TRANSITIONS = /\b(you (?:step|walk|go|move|head) (?:outside|outdoors|into (?:the )?(?:street|open air|sunlight|rain))|(?:exit(?:ing)?|leav(?:e|ing)) (?:the )?(?:building|room|hall))\b/i;
   const INDOOR_TRANSITIONS = /\b(you (?:step|walk|go|move|enter) (?:inside|indoors|into (?:the )?(?:building|room|hall)))\b/i;
 
+  // Scrub outdoor transition if we're still indoors
   if (isIndoor && OUTDOOR_TRANSITIONS.test(text)) {
     return text.replace(OUTDOOR_TRANSITIONS, 'you move forward');
   }
 
+  // Scrub indoor transition if we're still outdoors (snap-back after exit)
   if (isIndoor === false && INDOOR_TRANSITIONS.test(text)) {
     return text.replace(INDOOR_TRANSITIONS, 'you continue');
   }
@@ -406,50 +850,71 @@ export function scrubInventedLocationChange(
 }
 
 /**
- * 29b sync — rarity-them / this-place mush (client parity).
+ * Batch D — one camera per beat. Fallback/fail paths sometimes stack
+ * "At Lowmarket…" with "At the Weighing Cup…" or dual place openings.
+ * Keep the committed currentLocation framing; demote other place openings.
  */
-export function scrubPlaceholderNouns(text: string, currentLocation?: string): string {
-  if (!text) return text;
-  const loc = (currentLocation ?? '').trim();
-  const locShort = loc
-    ? loc.replace(/^(the\s+)/i, '').split(/[,—–-]/)[0]!.trim().slice(0, 48)
-    : '';
-  const place = locShort ? `the ${locShort}` : 'the building';
+export function scrubDualLocationOpenings(
+  text: string,
+  currentLocation?: string,
+  knownPlaces: string[] = []
+): string {
+  if (!text || !currentLocation?.trim()) return text;
+  const loc = currentLocation.trim();
+  const others = knownPlaces
+    .map((p) => p.trim())
+    .filter((p) => p.length >= 3 && p.toLowerCase() !== loc.toLowerCase());
+  if (!others.length && !/^At\s+/im.test(text)) return text;
+
   let next = text;
-  next = next.replace(/\bthe imposing this place\b/gi, `the imposing mass of ${place}`);
-  next = next.replace(/\bstructure of this place\b/gi, `structure of ${place}`);
-  next = next.replace(/\bspires of this place\b/gi, `spires of ${place}`);
-  next = next.replace(/\bedifice of this place\b/gi, `edifice of ${place}`);
-  next = next.replace(/\bgrand entrance of this place\b/gi, `grand entrance of ${place}`);
-  next = next.replace(/\bApproach this place\b/gi, `Approach ${place}`);
-  next = next.replace(/\btowards? this place\b/gi, `toward ${place}`);
-  next = next.replace(/\bback towards? this place\b/gi, `back toward ${place}`);
-  next = next.replace(/\bpresence of them\b/gi, 'presence ahead');
-  next = next.replace(/\bopen them\b/gi, 'the open way');
-  next = next.replace(/\bassume is them\b/gi, 'assume lies ahead');
-  next = next.replace(/\brumored them\b/gi, 'rumored place');
-  next = next.replace(/\bcluster of them\b/gi, 'cluster of debris');
-  next = next.replace(/\bsurfaces of them\b/gi, 'surfaces of the items');
-  next = next.replace(/\btwo them\b/gi, 'two items');
-  next = next.replace(/\bfour them\b/gi, 'four items');
-  next = next.replace(/\bthree them\b/gi, 'three items');
-  next = next.replace(/\ba few them\b/gi, 'a few items');
-  next = next.replace(
-    /\b(two|three|four|several)\s+\[(Common|Uncommon|Rare|Epic|Legendary|Unique)\]\s+them\b/gi,
-    '$1 [$2] items'
-  );
-  next = next.replace(
-    /\[(Common|Uncommon|Rare|Epic|Legendary|Unique)\]\s+them\b/gi,
-    '[$1] item'
-  );
-  next = next.replace(/\bCheck your them\b/gi, 'Check your items');
-  next = next.replace(/\bExamine (?:your )?them clues\b/gi, 'Examine the clues');
-  next = next.replace(/\bInspect them\b(?!\s+\w)/gi, 'Inspect it');
-  next = next.replace(/\bPick up them\b/gi, 'Pick it up');
-  next = next.replace(/\bof them in your (bag|pack|pockets?)\b/gi, 'of your items in your $1');
-  next = next.replace(/\bthe them\b/gi, 'them');
-  next = next.replace(/\b(?:a|an)\s+them\b/gi, 'someone');
-  next = next.replace(/\breads\s+['']them\s*[-–—]\s*them['']/gi, "reads a worn brass nameplate");
+  // Collapse repeated "At X," openings when X is not current location
+  const atOpen = /^At\s+([^,—.\n]{2,60})\s*[,—]/gim;
+  next = next.replace(atOpen, (full, place: string) => {
+    const p = String(place ?? '').trim();
+    if (!p) return full;
+    if (p.toLowerCase() === loc.toLowerCase() || loc.toLowerCase().includes(p.toLowerCase())) {
+      return full;
+    }
+    if (
+      others.some(
+        (o) =>
+          o.toLowerCase() === p.toLowerCase() ||
+          p.toLowerCase().includes(o.toLowerCase()) ||
+          o.toLowerCase().includes(p.toLowerCase())
+      )
+    ) {
+      return `Still at ${loc},`;
+    }
+    return full;
+  });
+
+  // Second sentence that teleports: "… Cup. At Lowmarket, Void-Touched…"
+  for (const other of others) {
+    const esc = other.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const dual = new RegExp(
+      `([.!?])\\s+At\\s+${esc}\\b`,
+      'gi'
+    );
+    if (dual.test(next) && new RegExp(`\\b${loc.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`, 'i').test(next)) {
+      next = next.replace(dual, `$1 Still here,`);
+    }
+  }
+
+  // "in Lowmarket … at the Weighing Cup" same-beat without travel
+  if (others.length && new RegExp(`\\b${loc.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`, 'i').test(next)) {
+    for (const other of others) {
+      const esc = other.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      const teleport = new RegExp(
+        `\\b(?:you (?:are|stand|arrive|find yourself) (?:at|in) (?:the )?${esc}|at (?:the )?${esc}(?:,|\\s+(?:the|a|an|void|pact|skirmish)))`,
+        'gi'
+      );
+      next = next.replace(teleport, (m) => {
+        if (new RegExp(`\\b${loc.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`, 'i').test(m)) return m;
+        return m.replace(new RegExp(esc, 'i'), loc);
+      });
+    }
+  }
+
   return next;
 }
 
@@ -538,9 +1003,64 @@ export function scrubInventedContainers(
   );
 }
 
-export function scrubChromeAsPerson(text: string, presentNames: string[] = []): string {
-  return rewriteChromePersonClauses(text, presentNames);
+/**
+ * Strip leaked safer-scene rewrite meta from GM story (any object, not panel-only).
+ * Owner: player-agency / rewrite path — crowd-count agent should keep `scrubInventedCrowdSize`.
+ */
+export function scrubSaferSceneMeta(text: string): string {
+  if (!text) return text;
+  let next = text;
+  next = next.replace(
+    /["'“]I scan[\s\S]{0,80}before committing["'”][,.]?\s*(?:you state[,.]?\s*)?/gi,
+    ''
+  );
+  next = next.replace(
+    /["'“]?if none is present[,.]?\s*I stay alert and choose a safer scene action\.?["'”]?/gi,
+    ''
+  );
+  next = next.replace(/\bI scan(?:\s+\w+){0,8}\s+before committing\b[,.]?/gi, '');
+  next = next.replace(/\bchoose a safer scene action\b[,.]?/gi, '');
+  next = next.replace(/\bif none is present\b[,.]?/gi, '');
+  next = next.replace(/\bstay alert and choose a safer\b[\s\S]{0,24}/gi, '');
+  next = next.replace(/\bbefore committing\b/gi, '');
+  return tidyClauses(next);
 }
+
+/**
+ * If the player did not speak (no quotes / say / ask / talk), do not narrate the act as dialogue.
+ */
+export function scrubFalseSpokenAction(text: string, playerInput?: string): string {
+  if (!text) return text;
+  if (playerTypedDialogue(playerInput ?? '')) return text;
+  let next = text;
+  next = next.replace(
+    /["'“]([^"'”]{8,160})["'”]\s*,?\s*you state\b([^.]{0,80})[,.]?\s*["'“]([^"'”]{8,160})["'”]/gi,
+    (_, a: string, _mid: string, b: string) => `${String(a).trim()} ${String(b).trim()}`
+  );
+  next = next.replace(
+    /["'“]([^"'”]{8,200})["'”]\s*,?\s*you state\b[^.]{0,100}\./gi,
+    (_, quoted: string) => `${String(quoted).trim()}.`
+  );
+  next = next.replace(/\byou state,\s*your voice[^,]{0,80},\s*/gi, '');
+  next = next.replace(/\byou state\b/gi, 'you act');
+  next = next.replace(/\byou declare\b/gi, 'you move');
+  next = next.replace(/\byou announce\b/gi, 'you act');
+  return tidyClauses(next);
+}
+
+/**
+ * UI chrome + cover-slot dummy names are not people.
+ * Rewrites chrome-as-person: posture clauses, dialogue tags (states/says/their voice),
+ * and want/need. Hum of the panel stays. Handlers never become the speaker name.
+ */
+export function scrubChromeAsPerson(text: string, presentNames: string[] = []): string {
+  return tidyClauses(rewriteChromePersonClauses(text, presentNames));
+}
+
+/**
+ * Synchronous prose warden - fast regex-based fixes.
+ * Use this for immediate, in-memory corrections.
+ */
 
 export function applyProseWarden(text: string, ctx?: ProseWardenContext): string {
   if (!text) return text;
@@ -550,6 +1070,16 @@ export function applyProseWarden(text: string, ctx?: ProseWardenContext): string
   next = scrubUiQuestVerbs(next, alone);
   next = scrubSpeakerPlaceholder(next, alone);
   next = scrubChromeAsPerson(next, ctx?.presentNames ?? []);
+  next = scrubChoicePadPersonNames(next);
+  next = scrubUnresolvedDeixisNouns(next, ctx?.currentLocation);
+  next = scrubFactionAsLootOrTarget(next);
+  next = scrubStitchBankLeaks(next);
+  next = scrubEntityMadLibs(next, ctx?.enemyName);
+  next = scrubStrangerArtifact(next, ctx?.presentNames ?? [], alone);
+  next = scrubUnearnedVictory(next, {
+    hasLiveEncounter: ctx?.hasLiveEncounter === true,
+    recentlyCleared: ctx?.recentlyClearedEncounter === true,
+  });
   next = scrubPlaceholderNouns(next, ctx?.currentLocation);
   next = scrubPrematureSecrets(next);
   next = scrubInventedAlonePresence(next, alone);
@@ -560,11 +1090,24 @@ export function applyProseWarden(text: string, ctx?: ProseWardenContext): string
   );
   next = scrubAnthropomorphizedLocation(next);
   next = scrubInventedCrowdSize(next, ctx?.crowdSize ?? 0, ctx?.crowdPresent);
+  next = scrubHookReversals(next, ctx?.hookLock);
+  next = scrubSaferSceneMeta(next);
+  next = scrubFalseSpokenAction(next, ctx?.playerInput);
   next = scrubInventedContainers(next, ctx?.inventory ?? [], ctx?.sceneProps ?? []);
+  next = scrubInventedEmptySearchLoot(next, ctx?.searchedEmpty ?? [], ctx?.playerInput);
+  next = scrubInventedWeapons(next, ctx?.groundedWeapons ?? [], 'bare hands', ctx?.playerName);
+  next = scrubBeastifiedHumanoid(next, ctx?.enemyName);
+  next = scrubDeniedKill(next, ctx?.lastKill);
   next = scrubInventedTimeSkip(next, ctx?.currentTimeOfDay, ctx?.previousTimeOfDay);
   next = scrubInventedLocationChange(next, ctx?.isIndoor, ctx?.wasIndoor, ctx?.exitNarrated);
+  if (!ctx?.exitNarrated) {
+    next = scrubDualLocationOpenings(next, ctx?.currentLocation, ctx?.knownPlaces ?? []);
+  }
   next = scrubInventedTensionChange(next, ctx?.currentTension, ctx?.previousTension);
   next = scrubLocationTautology(next, ctx?.currentLocation);
+  next = scrubFalseArrivalWhenHere(next, ctx?.currentLocation, ctx?.knownPlaces ?? []);
+  next = scrubBodyStatusDumps(next);
+  next = scrubRoleAdjectivePersonSlot(next);
   next = scrubAwakeSpeakerAsSleeper(next, {
     lastGmProse: ctx?.lastGmProse,
     presentNames: ctx?.presentNames,
@@ -572,5 +1115,28 @@ export function applyProseWarden(text: string, ctx?: ProseWardenContext): string
   next = scrubFreeEnglishSlips(next);
   next = scrubSpokenQuoteStart(next);
   next = scrubArticleCollisions(next);
+  next = scrubPronounSubjectSlips(next);
+  return next;
+}
+
+/**
+ * Async prose warden - includes grammar checking via LanguageTool.
+ * Use this for full quality pass (adds ~50-100ms).
+ */
+export async function applyProseWardenAsync(text: string, ctx?: ProseWardenContext): Promise<string> {
+  // First apply all fast regex rules
+  let next = applyProseWarden(text, ctx);
+  
+  // Then apply grammar check if enabled
+  if (ctx?.enableGrammarCheck !== false) {
+    try {
+      const { quickGrammarCheck } = await import('./grammarCheck');
+      next = await quickGrammarCheck(next);
+    } catch (error) {
+      console.error('[proseWarden] Grammar check failed:', error);
+      // Silent failure - return regex-fixed version
+    }
+  }
+  
   return next;
 }

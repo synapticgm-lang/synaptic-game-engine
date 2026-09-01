@@ -101,11 +101,10 @@ export function classifyBeatCommit(
 }
 
 /**
- * Diegetic scene-move when a beat is rejected.
- * Batch T — never ship deixis subjects, empty-crate bank chrome, or "room asks" as the sole beat.
- * Always force exit / talk / encounter language a player can act on.
+ * Diegetic scene-move when a beat is rejected — coded prose, never director bank strings.
+ * Batch U — stitch/commit-gate meta lines must not commit as GM body (Gemini Batch T T3/9/23/24/27/40).
  */
-export function stitchCommitDelta(state: GameState): string {
+export function codedSceneMove(state: GameState): string {
   const slots = compilePointerCardSlots(state);
   const loc = (state.currentLocation || slots?.where || 'this room').replace(/\.$/, '');
   const people = realPresentPeople(state.sceneFacts?.present ?? []).filter(
@@ -125,25 +124,46 @@ export function stitchCommitDelta(state: GameState): string {
 
   if (engaged && foe) {
     const combatBank = [
-      `${foe} still holds the line in ${loc} — strike, parley, or break contact now.`,
-      `The fight in ${loc} does not wait: face ${foe}, or leave through the nearest exit.`,
+      `${foe} keeps the alley mouth in ${loc}, blade ready. You could press the attack, break contact, or offer parley.`,
+      `Steel catches the light as ${foe} holds ground in ${loc}. The skirmish waits on your next move.`,
     ];
     return combatBank[turn % combatBank.length]!;
   }
 
   const bank = [
     present
-      ? `${present} in ${loc} waits on a real answer — speak, leave, or take a stake.`
+      ? `${present} watches from the stall lip in ${loc}, waiting for you to speak or move on.`
       : '',
     exitHint
-      ? `In ${loc}, a way out still waits — ${String(exitHint).slice(0, 48).replace(/\.$/, '')}. Leave or commit.`
+      ? `A way out still waits in ${loc} — ${String(exitHint).slice(0, 48).replace(/\.$/, '')}. You could take it or speak to someone who will move.`
       : '',
     hubAlt
-      ? `Nothing more yields here. Leave ${loc} toward ${hubAlt}, or talk to someone who will move.`
+      ? `The cracked street in ${loc} offers nothing new. You could leave toward ${hubAlt}, or take a stake in what's unfolding.`
       : '',
-    `In ${loc}, the beat needs an exit, a spoken commit, or a stake — not another sift.`,
+    `Nothing in ${loc} shifts until you leave, speak, or commit to a stake.`,
   ].filter(Boolean);
   return bank[turn % bank.length] || bank[bank.length - 1]!;
+}
+
+/** @deprecated alias — use codedSceneMove */
+export function stitchCommitDelta(state: GameState): string {
+  return codedSceneMove(state);
+}
+
+/** Batch U — meta stitch / commit-gate / director bank fingerprints (never commit as story). */
+export function isStitchBankFingerprint(text: string | undefined): boolean {
+  if (!text?.trim()) return false;
+  return (
+    /\bthe beat needs an exit\b/i.test(text)
+    || /\bstill holds the line in\b/i.test(text)
+    || /\bstrike,\s*parley,\s*or break contact now\b/i.test(text)
+    || /\bNothing more yields here\b/i.test(text)
+    || /\bwaits on a real answer\b/i.test(text)
+    || /\bnot another sift\b/i.test(text)
+    || /\bLeave or commit\b/i.test(text)
+    || /\btalk to someone who will move\b/i.test(text)
+    || /\bdoes not wait:\s*face\b/i.test(text)
+  );
 }
 
 /** Banned verbatim stall loops from older commit-gate / recovery stitches. */
@@ -211,27 +231,27 @@ export function repairRejectedBeat(
 
   const stillBad = !classifyBeatCommit(state, next).accept;
   if (stillBad) {
-    const stitch = stitchCommitDelta(state);
+    const move = codedSceneMove(state);
     const hardEssay =
       _reasons.includes('same-room-essay')
       || _reasons.includes('craft-ignore')
       || isAtmosphereOnlyBeat(prose)
       || missingPointerCardSlot(state, prose);
-    // Batch T — never leave collage tail + stitch as a chrome sandwich; force a real scene move.
+    // Batch U — never sandwich collage + meta stitch; force a single coded scene move.
     if (hardEssay || _reasons.includes('atmosphere-only') || _reasons.includes('recycle-without-delta')) {
-      next = stitch;
+      next = move;
     } else if (collage.hit && collage.tailHasNewContent && next.trim() && next.trim().length > 40) {
-      next = `${next} ${stitch}`.trim();
+      next = `${next} ${move}`.trim();
     } else {
-      next = stitch;
+      next = move;
     }
-    notes.push('Commit gate: stitched scene move');
+    notes.push('Commit gate: coded scene move');
   }
 
-  // Never leave banned stall chrome in the repaired draft.
-  if (isVerbatimStallStub(next) || isDirectorChromeLeak(next)) {
-    next = stitchCommitDelta(state);
-    notes.push('Commit gate: replaced verbatim stall/director stub');
+  // Never leave banned stall / stitch bank / director chrome in the repaired draft.
+  if (isVerbatimStallStub(next) || isDirectorChromeLeak(next) || isStitchBankFingerprint(next)) {
+    next = codedSceneMove(state);
+    notes.push('Commit gate: replaced stall/stitch-bank stub');
   }
 
   return { prose: next.trim(), repaired: notes.length > 0 && next.trim() !== (prose ?? '').trim(), notes };

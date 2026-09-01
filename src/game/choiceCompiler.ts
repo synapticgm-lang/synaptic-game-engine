@@ -192,6 +192,24 @@ function isTravelPad(choice: string): boolean {
   );
 }
 
+/** Batch U — count travel picks in the last N player lines. */
+function countRecentTravelPicks(state: GameState, window = 5): number {
+  const log = state.log ?? [];
+  let count = 0;
+  let seen = 0;
+  for (let i = log.length - 1; i >= 0 && seen < window; i--) {
+    const e = log[i];
+    if (e?.role !== 'player') continue;
+    seen += 1;
+    if (isTravelPad(e.content ?? '')) count += 1;
+  }
+  return count;
+}
+
+function shouldStarveTravelPads(state: GameState, liveStakes: boolean): boolean {
+  return liveStakes && countRecentTravelPicks(state) >= 2;
+}
+
 export type ChoiceFingerprintFamily =
   | 'walk_away'
   | 'inspect'
@@ -499,6 +517,7 @@ export function compileChoices(
 
   const engaged = isEncounterEngaged(state);
   const liveStakes = hasLiveStakes(state);
+  const travelStarve = shouldStarveTravelPads(state, liveStakes);
   const streak = countPlayerIntentStreak(state);
   const loiter = countLoiterFamilyStreak(state);
   const hardStreak = streak.count >= 5 && streak.key !== 'empty';
@@ -542,8 +561,8 @@ export function compileChoices(
       notes.push(`Camera L/R drop: ${c.slice(0, 32)}`);
       return false;
     }
-    // Batch T — travel yo-yo lock under live fight/standoff/pending drought encounter
-    if (liveStakes && isTravelPad(c)) {
+    // Batch T/U — travel yo-yo lock under live fight/standoff/pending drought encounter
+    if ((liveStakes || travelStarve) && isTravelPad(c)) {
       notes.push(`Travel yo-yo lock: ${c.slice(0, 32)}`);
       return false;
     }
@@ -725,7 +744,7 @@ export function compileChoices(
       ? ['Leave through the nearest exit', 'Walk away with consequence']
       : ['Ask a direct question', 'Press for leverage'];
     const here = (state.currentLocation ?? '').toLowerCase();
-    if (!liveStakes) {
+    if (!liveStakes && !travelStarve) {
       for (const h of hubsForBibleId(state.campaignBibleId).slice(0, 3)) {
         if (h.name.toLowerCase() !== here) {
           interruptPads.unshift(`Travel toward ${h.name}`);
@@ -786,7 +805,7 @@ export function compileChoices(
   // Final pass: never leave Examine the room / Wait-Wait on locked PYOA or live encounter
   filtered = filtered.filter((c) => {
     if (engaged && (isLookOrExamineRoomPad(c) || isEncounterForbiddenPad(c))) return false;
-    if (liveStakes && isTravelPad(c)) return false;
+    if ((liveStakes || travelStarve) && isTravelPad(c)) return false;
     if (pyoaLocked && !eligiblePyoaPadsAfterLock(state, c)) return false;
     if (talkRecycle && /\b(press for leverage|ask a direct question|talk to|ready yourself)\b/i.test(c)) {
       return false;

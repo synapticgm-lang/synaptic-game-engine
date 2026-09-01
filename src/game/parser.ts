@@ -215,7 +215,12 @@ export function stripChoiceList(text: string): string {
   // Singleton numbered offer glued to the last sentence (Josie T0: "…mosaic. 1. Scan…").
   // Also catch "Get your bearings" / verb-expanded offers / critic T13 "1. Slip toward…".
   const OFFER_VERB_LEAD =
-    /^(?:(?:carefully|slowly|quietly|quickly|gently|cautiously|softly)\s+)?(?:(?:attempt|try)\s+to\s+)?(?:get|find|go|move|stand|open|take|use|scout|sift|explore|slip|head|return|enter|travel|step|dash|creep|sneak|force|engage|change|walk|run|flee|ask|talk|inspect|examine|look|wait|check|press|approach|leave|continue|remain|duck|ready|touch|observe|attempt|ascend|draw|intervene|peer|give|maintain)\b/i;
+    /^(?:(?:carefully|slowly|quietly|quickly|gently|cautiously|softly)\s+)?(?:(?:attempt|try)\s+to\s+)?(?:get|find|go|move|stand|open|take|use|scout|sift|explore|slip|head|return|enter|travel|step|dash|creep|sneak|force|engage|change|walk|run|flee|ask|talk|inspect|examine|look|wait|check|press|approach|leave|continue|remain|duck|ready|touch|observe|attempt|ascend|draw|intervene|peer|give|maintain|descend|re-approach|meet)\b/i;
+  // Batch U — quoted dialogue chips glued to prose ("1. \"I don't want to fight…\"")
+  result = result.replace(
+    /(?:^|[.!?]\s+)\d+[.)]\s+["""][^"""\n]{4,160}["""]\s*/g,
+    (full) => full.match(/^[.!?]/)?.[0] ?? ''
+  );
   result = result.replace(
     /(?:^|[.!?]\s+)\d+[.)]\s+([^.!?\n]{4,160}[.!?]?)(?=\s+\S|\s*$)/g,
     (full, body: string) => {
@@ -270,6 +275,17 @@ export function stripChoiceList(text: string): string {
   // Singleton numbered / "Inquire about…" lines left in the paragraph are fake menus.
   result = stripHarvestedChoiceOffers(result);
   return stripTurnCloser(result);
+}
+
+/** Batch U — numbered choice / chip leak still present in GM body (commit reject). */
+export function hasNumberedChoiceLeak(text: string): boolean {
+  if (!text?.trim()) return false;
+  if (stripChoiceList(text) !== text.trim()) return true;
+  return (
+    /\d+[.)]\s+["""][^"""\n]{4,}/.test(text)
+    || /\d+[.)]\s+(?:Meet|Descend|Re-approach|Observe|Scan|Inquire)\b/.test(text)
+    || /(?:^|[.!?]\s+)\d+[.)]\s+[A-Z][^.!?\n]{8,120}[.!?]?\s*$/.test(text.trim())
+  );
 }
 
 /**

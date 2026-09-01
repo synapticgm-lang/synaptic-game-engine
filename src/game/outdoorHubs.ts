@@ -446,6 +446,10 @@ export function ensureTravelArrivalProse(
     && new RegExp(from.replace(/[.*+?^${}()|[\]\\]/g, '\\$&').slice(0, 40), 'i').test(text.slice(0, 280))
     && !mentionsHub;
   if (mentionsHub && !stillAtFrom) return text;
+  // Batch U — never prepend opening-plate Sevenfold when traveling between hubs.
+  if (/sevenfold\s+circle/i.test(hub) && from && !/sevenfold\s+circle/i.test(from)) {
+    return text;
+  }
   const leave = from
     ? `You leave ${from} behind and reach ${hub}.`
     : `You reach ${hub}.`;

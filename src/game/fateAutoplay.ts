@@ -158,6 +158,7 @@ import {
 import { ensureEncounterSpawnPreface } from './combatAuthority';
 import { settleParleyAfterProse } from './encounterTerminalFsm';
 import { classifyBeatCommit, repairRejectedBeat } from './beatCommitGate';
+import { readabilityGatePass } from './readabilityGate';
 import { compactTrafficGist } from './openingPointerCard';
 import {
   syncQuestsFromPlay,
@@ -296,6 +297,11 @@ export type RunSummary = {
   receiptTotals?: ReceiptCounts;
   evalHarness?: EvalHarnessResult;
   finalReplayHash?: string;
+  readabilityGate?: {
+    pass: boolean;
+    p0Count: number;
+    violations: Array<{ kind: string; turn: number; quote: string }>;
+  };
 };
 
 function uid(): string {
@@ -1679,6 +1685,12 @@ export async function runFateAutoplay(opts: {
     finalReplayHash: hashCanonicalState(state),
   };
   summary.evalHarness = validateEvalRun(state, summary, turns);
+  const readability = readabilityGatePass(state);
+  summary.readabilityGate = {
+    pass: readability.pass,
+    p0Count: readability.p0Count,
+    violations: readability.violations,
+  };
 
   writeFileSync(join(outDir, 'transcript.md'), buildPlayTranscript(state));
   if (state.runManifest) {
