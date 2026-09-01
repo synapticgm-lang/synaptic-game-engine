@@ -50,23 +50,29 @@ Progress for matrix batches: `scripts/fate-autoplay/runs/matrix-progress-<timest
 
 ---
 
-## MiniMax writer + dual review + auto-improve + curriculum
+## Flash Lite writer + dual review + auto-improve + curriculum
 
 ```bash
-# GM turns via MiniMax (AI_GATEWAY_API_KEY → free m3; else OpenRouter paid minimax/minimax-m3)
+# GM turns via OpenRouter Flash Lite (needs OPENROUTER_API_KEY)
+npm run fate-autoplay -- --writer flash-lite --turns 20 --seed 1
+# Alias:
+npm run fate-autoplay -- --writer openrouter --turns 20 --seed 1
+
+# Optional $0: MiniMax via Vercel Gateway (AI_GATEWAY_API_KEY)
 npm run fate-autoplay -- --writer minimax --turns 20 --seed 1
 
-# After a run: MiniMax + Gemini Pro × (standalone story | game vibe/pace)
+# After a run: Flash Lite critic + Gemini Pro paste packs
 npm run fate-dual-review -- --run-dir scripts/fate-autoplay/runs/<dir>
 
-# Single-bible closed loop
-npm run fate-auto-improve -- --turns 8 --max-iters 2 --writer minimax
+# Single-bible closed loop (default writer = flash-lite)
+npm run fate-auto-improve -- --turns 8 --max-iters 2
 
-# Every ready premade × escalating turns (50→100→200→300). Advances ladder only when ALL are smooth.
-npm run fate-curriculum -- --ladder 50,100,200,300 --max-iters 3 --writer minimax
+# Flagship T50 review→repair (default: 4 mode flagships + Flash Lite)
+npm run fate-curriculum -- --ladder 50 --max-iters 3
+npm run fate-curriculum:detach -- --ladder 50 --max-iters 3
 
-# Same, detached (survives Cursor chat teardown)
-npm run fate-curriculum:detach -- --ladder 50,100,200,300 --writer minimax
+# Optional breadth (≤6): add LitRPG mid-flight bibles
+npm run fate-curriculum:detach -- --ladder 50 --premades summoned-pact,hero-awakening,system-integration,cursed-keep,salt-road-heist,thornferry-road
 ```
 
 Curriculum stop rule: if any premade still has P0 tickets after `--max-iters` at tier N, **do not** raise turns — fix/allowlist that cell first.
@@ -77,11 +83,11 @@ Auto-improve / curriculum **will** edit allowlisted `src/game/*` files without a
 - **never** commits, pushes, WOF / auth / billing / edge secrets
 - Mid writer stays OFF
 
-Add `AI_GATEWAY_API_KEY` to `.env` for free Vercel MiniMax (promo ends ~2026-09-06). **Required** — OpenRouter fallback is off so the harness stays $0.
+**Env:** `OPENROUTER_API_KEY` (or `VITE_OPENROUTER_API_KEY`) for Flash Lite. Optional `AI_GATEWAY_API_KEY` for `--writer minimax`.
 
-**Dual free rotation on 429:** `minimax/minimax-m3-free` ↔ `minimax/minimax-m2.7-free` (same Gateway key). Tracked in `meta.json` → `writerRotation`. Never paid OpenRouter.
+**Dual free rotation on 429 (minimax only):** `minimax/minimax-m3-free` ↔ `minimax/minimax-m2.7-free`. Tracked in `meta.json` → `writerRotation`.
 
-**Gemini morning pastes:** Story lens = Narration-only (`story-narration-only.md`); Game lens = full Options/STATUS transcript. Auto MiniMax dual-critic still runs overnight.
+**Gemini morning pastes:** Story lens = Narration-only (`story-narration-only.md`); Game lens = full Options/STATUS transcript. Auto Flash Lite dual-critic runs overnight.
 
 Gemini Pro: dual-review writes `*__gemini-pro-PASTE.md` for morning paste — **never** called via OpenRouter.
 

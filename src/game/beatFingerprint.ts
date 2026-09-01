@@ -114,8 +114,13 @@ export function normalizePlayerIntentKey(input: string): string {
   if (/\bbrowse\b.*\bstall\b|\bnearest stall\b/.test(s)) return 'browse_stall';
   if (/\bwalk away\b|\bgo another direction\b/.test(s)) return 'walk_away';
   if (/\bchange position\b/.test(s)) return 'change_position';
-  if (/\bwait(?:\s+and\s+watch)?\b|\bstand around\b|\bdo nothing\b/.test(s)) return 'wait_watch';
-  if (/\b(inspect|examine|check|study)\b/.test(s) && !/\bstatus\b/.test(s)) {
+  if (/\bwait(?:\s+and\s+watch)?\b|\bstand around\b|\bdo nothing\b|\bready yourself\b/.test(s)) {
+    return 'wait_watch';
+  }
+  if (/\bscout(?:\s+for\s+danger)?\b|\bscout the (?:area|room|exit|cell)\b/.test(s)) {
+    return 'scout_danger';
+  }
+  if (/\b(inspect|examine|check|study|look around|get (?:your )?bearings)\b/.test(s) && !/\bstatus\b/.test(s)) {
     return `inspect_${s.slice(0, 24).replace(/\W+/g, '_')}`;
   }
   if (/\bcheck (?:the )?(?:contents of )?your (?:bag|pack|pockets?)\b|\bcheck your bag\b/.test(s)) {
@@ -133,6 +138,7 @@ export function loiterFamilyKey(intentKey: string): string | null {
   if (!intentKey || intentKey === 'empty') return null;
   if (intentKey.startsWith('travel_')) return 'travel';
   if (intentKey.startsWith('inspect_')) return 'inspect';
+  if (intentKey === 'scout_danger') return 'scout';
   if (
     intentKey === 'wait_watch' ||
     intentKey === 'walk_away' ||

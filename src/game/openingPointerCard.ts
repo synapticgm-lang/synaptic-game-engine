@@ -25,10 +25,12 @@ export type PointerCardSlots = {
 export type SnapshotGist = {
   location: string;
   crowd: string;
+  crowdCount?: number;
   presence: string;
   hookWhy?: string;
   lastBeat: string;
   turn: number;
+  stamp?: string;
 };
 
 const TITLE_NAME =
@@ -282,11 +284,18 @@ export function buildSnapshotGist(state: GameState): SnapshotGist {
   return {
     location: state.currentLocation || 'unknown',
     crowd,
+    crowdCount: typeof count === 'number' ? count : undefined,
     presence: present.join(', ') || 'none',
     hookWhy: state.sceneFacts?.hookLock?.nature,
     lastBeat: (state.sceneFacts?.lastBeat ?? '').slice(0, 180),
     turn: state.turn ?? 0,
+    stamp: state.runManifest?.buildStamp,
   };
+}
+
+/** Compact gist for ai_traffic / GM log — never the full prompt. */
+export function compactTrafficGist(state: GameState): SnapshotGist {
+  return buildSnapshotGist(state);
 }
 
 export function persistSnapshotGist(state: GameState, lastBeat?: string): GameState {

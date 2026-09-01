@@ -430,8 +430,17 @@ export function ensureTravelArrivalProse(
   const text = (prose ?? '').trim();
   const hub = hubName.trim();
   if (!hub) return text;
-  const mentionsHub = new RegExp(hub.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i').test(text);
   const from = (fromLocation ?? '').trim();
+  // Already here — never invent a second arrival (Batch E location amnesia).
+  if (
+    from
+    && (from.toLowerCase() === hub.toLowerCase()
+      || from.toLowerCase().includes(hub.toLowerCase())
+      || hub.toLowerCase().includes(from.toLowerCase()))
+  ) {
+    return text;
+  }
+  const mentionsHub = new RegExp(hub.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i').test(text);
   const stillAtFrom =
     from.length > 3
     && new RegExp(from.replace(/[.*+?^${}()|[\]\\]/g, '\\$&').slice(0, 40), 'i').test(text.slice(0, 280))

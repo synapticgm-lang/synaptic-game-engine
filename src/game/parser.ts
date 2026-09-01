@@ -93,7 +93,7 @@ const CHOICE_LINE_REGEX = /^\s*(?:\*\*|\*)?\s*(?:(?:Option\s+)?\d+[.):]|\[\d+\]|
 const NUMBERED_CHOICE_PREFIX =
   /(?:\*\*)?(?:(?:Option\s+)?\d+[.):]|\[\d+\]|\(\d+\))\s+(?:\*\*)?/i;
 const CHOICE_OFFER_VERBS =
-  /^(?:ask|inquire|inspect|examine|talk|speak|tell|approach|leave|walk away|refuse|offer|demand|listen|wait|search|look|follow|challenge|bow|kneel|accept|decline|press|probe|question|bargain|help|protect|thank|apologiz|observe|check|call|shout|whisper|confront|defy|agree|scan|try|sit|get|find|go|move|stand|open|take|use|push|pull|read|pick|run|flee|scout|sift|explore|bearings|slip|head|return|enter|travel|step|dash|creep|sneak|force|engage|change)\b/i;
+  /^(?:(?:carefully|slowly|quietly|quickly|gently|cautiously|softly)\s+)?(?:ask|inquire|inspect|examine|talk|speak|tell|approach|leave|walk away|refuse|offer|demand|listen|wait|search|look|follow|challenge|bow|kneel|accept|decline|press|probe|question|bargain|help|protect|thank|apologiz|observe|continue|remain|duck|ready|touch|check|call|shout|whisper|confront|defy|agree|scan|try|sit|get|find|go|move|stand|open|take|use|push|pull|read|pick|run|flee|scout|sift|explore|bearings|slip|head|return|enter|travel|step|dash|creep|sneak|force|engage|change)\b/i;
 const IN_PROSE_OFFER_SENTENCE =
   /(?:^|[.!?]\s+)((?:Inquire about|Ask (?:the \w+|him|her|them)(?: to| about)|Ask about)\b[^.!?\n]{8,140})/gi;
 const MECHANIC_SYSTEM_BODY =
@@ -215,9 +215,9 @@ export function stripChoiceList(text: string): string {
   // Singleton numbered offer glued to the last sentence (Josie T0: "…mosaic. 1. Scan…").
   // Also catch "Get your bearings" / verb-expanded offers / critic T13 "1. Slip toward…".
   const OFFER_VERB_LEAD =
-    /^(?:get|find|go|move|stand|open|take|use|scout|sift|explore|slip|head|return|enter|travel|step|dash|creep|sneak|force|engage|change|walk|run|flee|ask|talk|inspect|examine|look|wait|check|press|approach|leave)\b/i;
+    /^(?:(?:carefully|slowly|quietly|quickly|gently|cautiously|softly)\s+)?(?:get|find|go|move|stand|open|take|use|scout|sift|explore|slip|head|return|enter|travel|step|dash|creep|sneak|force|engage|change|walk|run|flee|ask|talk|inspect|examine|look|wait|check|press|approach|leave|continue|remain|duck|ready|touch|observe)\b/i;
   result = result.replace(
-    /(?:^|[.!?]\s+)\d+[.)]\s+([^\n]{4,160})\s*$/g,
+    /(?:^|[.!?]\s+)\d+[.)]\s+([^.!?\n]{4,160}[.!?]?)(?=\s+\S|\s*$)/g,
     (full, body: string) => {
       const b = String(body ?? '');
       if (looksLikeChoiceOffer(b) || OFFER_VERB_LEAD.test(b)) {
@@ -237,9 +237,9 @@ export function stripChoiceList(text: string): string {
       return full;
     }
   );
-  // Inline mid-paragraph "…ears. 1. Slip toward…" when only one numbered offer (no 2.)
+  // Inline mid-paragraph "…ears. 1. Slip toward…" — one offer sentence, keep prose after it.
   result = result.replace(
-    /([.!?])\s+\d+[.)]\s+([A-Z][^\n]{6,140}?)(?=\s*$|\s*\n)/g,
+    /([.!?])\s+\d+[.)]\s+([A-Z][^.!?\n]{6,140}[.!?]?)(?=\s+\S|\s*$|\s*\n)/g,
     (full, punct: string, body: string) => {
       if (looksLikeChoiceOffer(body) || OFFER_VERB_LEAD.test(body)) return punct;
       return full;
@@ -253,6 +253,19 @@ export function stripChoiceList(text: string): string {
       return full;
     }
   );
+  // Mid-body leftover "1. Carefully examine…" / "1. Continue observing…" with more prose after.
+  result = result.replace(
+    /(?:^|[.!?]\s+)\d+[.)]\s+((?:carefully|slowly|quietly|quickly|gently|cautiously|softly)\s+)?(?:inspect|examine|look|scan|scout|search|ask|talk|wait|approach|slip|engage|get|find|go|try|check|press|leave|walk|run|flee|explore|bearings|continue|remain|duck|ready|touch|observe)\b[^.!?\n]{0,140}[.!?]?/gi,
+    (full) => (full.match(/^[.!?]/)?.[0] ?? '')
+  );
+  // Trailing orphan menu crumbs: "…cots 4." / bare "4." after an offer strip.
+  result = result.replace(/\s+\d+[.)]\s*$/g, '').trim();
+  result = result.replace(/\s+\d+[.)](?=\s*[.!?]|[,;:]|\s*$)/g, '').trim();
+  // "What do you do?" bleed incl. glued fragments ("What do you do? touch.")
+  result = result.replace(
+    /\bwhat do you do\??(?:\s+(?:touch|look|wait|scout|continue|observe|inspect|examine)[^.!?\n]{0,40})?[.!]?\s*/gi,
+    ' '
+  ).replace(/\s{2,}/g, ' ').trim();
   result = result.replace(/\s+\d+[.)]\s+what do you do\??\s*$/i, '').trim();
   // Singleton numbered / "Inquire about…" lines left in the paragraph are fake menus.
   result = stripHarvestedChoiceOffers(result);

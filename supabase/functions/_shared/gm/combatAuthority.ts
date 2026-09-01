@@ -6,6 +6,29 @@
 import type { ActiveEncounter, GameState, SceneFacts } from './types.ts';
 import { tickEncounterTerminal } from './encounterTerminalFsm.ts';
 
+function sceneFactsBase(state: GameState): SceneFacts {
+  return state.sceneFacts ?? {
+    crowd: 'unknown',
+    noise: 'unknown',
+    present: [],
+    props: [],
+    lastBeat: '',
+    updatedTurn: state.turn,
+  };
+}
+
+/** Live fight only when a foe is on-screen or this turn committed a spawn preface. */
+export function canAttachLiveFight(
+  state: GameState,
+  enemyName: string,
+  draftProse?: string,
+  prefaceCommittedThisTurn = false
+): boolean {
+  if (foeVisibleInScene(state, enemyName, draftProse)) return true;
+  if (prefaceCommittedThisTurn) return true;
+  return false;
+}
+
 export type LastKill = {
   name: string;
   outcome: 'victory' | 'defeat' | 'escape';
@@ -120,11 +143,14 @@ export function foeVisibleInScene(
   return false;
 }
 
-export function autoFightSpawnPreface(enemyName: string): string {
-  if (isHumanoidEnemyName(enemyName)) {
-    return `A human figure — ${enemyName} — breaks from the debris, already committed.`;
+export function autoFightSpawnPreface(enemyName: string, location?: string): string {
+  const name = (enemyName ?? '').trim() || 'A threat';
+  const loc = (location ?? '').trim();
+  const where = loc ? ` into ${loc}` : '';
+  if (isHumanoidEnemyName(name)) {
+    return `${name} pushes${where || ' in'} from the edge of the room — no debris, no prior cast — and commits toward you.`;
   }
-  return `${enemyName} is already on you.`;
+  return `${name} forces the doorway${where} with a scrape of wrong motion — telegraph first, then steel.`;
 }
 
 /** Mark drought/arc spawn so the next combat beat must show the foe before fight prose. */
@@ -149,50 +175,64 @@ export function markPendingSpawnPreface(state: GameState, enemyName: string): Ga
 }
 
 /**
- * If ArcDirector attached a fight before the foe was narrated, force a visible spawn line.
- * Clears pendingSpawnPreface and adds the foe to present[] once shown.
+ * If ArcDirector parked a drought spawn, force a visible spawn line then attach
+ * the live fight. Clears pendingSpawnPreface / pendingEncounter once shown.
  */
 export function ensureEncounterSpawnPreface(
   state: GameState,
   prose: string
 ): { prose: string; state: GameState; prepended: boolean } {
+  const parked = state.sceneFacts?.pendingEncounter;
   const pending =
     state.sceneFacts?.pendingSpawnPreface?.trim()
+    || parked?.name?.trim()
     || (state.activeEncounter?.name?.trim() && !foeVisibleInScene(state, state.activeEncounter.name, prose)
       ? state.activeEncounter.name.trim()
       : '');
-  if (!pending) return { prose, state, prepended: false };
+  if (!pending && !parked) return { prose, state, prepended: false };
 
+  const name = pending || parked?.name?.trim() || '';
   let nextProse = prose ?? '';
   let prepended = false;
-  if (!proseMentionsEnemy(nextProse, pending)) {
-    nextProse = `${autoFightSpawnPreface(pending)} ${nextProse}`.trim();
+  // Never leave bare "already on you" combat without a setup line.
+  const esc = name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const bareAlready =
+    !!name
+    && new RegExp(`${esc}\\s+is already on you`, 'i').test(nextProse)
+    && !/\b(doorway|telegraph|pushes|forces|commits|edge of the room)\b/i.test(nextProse);
+  if (name && (!proseMentionsEnemy(nextProse, name) || bareAlready)) {
+    const preface = autoFightSpawnPreface(name, state.currentLocation);
+    if (bareAlready) {
+      nextProse = nextProse.replace(new RegExp(`${esc}\\s+is already on you\\.?`, 'gi'), '').trim();
+    }
+    nextProse = `${preface} ${nextProse}`.trim();
     prepended = true;
   }
 
-  const base: SceneFacts = state.sceneFacts ?? {
-    crowd: 'unknown',
-    noise: 'unknown',
-    present: [],
-    props: [],
-    lastBeat: '',
-    updatedTurn: state.turn,
-  };
+  const base = sceneFactsBase(state);
   const present = [...(base.present ?? [])];
-  if (!present.some((p) => String(p).toLowerCase().includes(pending.toLowerCase()))) {
-    present.push(pending);
+  if (name && !present.some((p) => String(p).toLowerCase().includes(name.toLowerCase()))) {
+    present.push(name);
   }
+
+  let nextState: GameState = {
+    ...state,
+    sceneFacts: {
+      ...base,
+      present,
+      pendingSpawnPreface: undefined,
+      pendingEncounter: undefined,
+      tension: name || parked ? 'combat' : base.tension,
+    },
+  };
+
+  if (parked && !nextState.activeEncounter) {
+    nextState = { ...nextState, activeEncounter: parked };
+  }
+
   return {
     prose: nextProse,
-    state: {
-      ...state,
-      sceneFacts: {
-        ...base,
-        present,
-        pendingSpawnPreface: undefined,
-        tension: 'combat',
-      },
-    },
+    state: nextState,
     prepended,
   };
 }

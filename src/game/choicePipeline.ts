@@ -15,7 +15,7 @@ import { atMappedHubAfterOpening, hubArrivalChoicePads } from './hubEncounters';
 import { isAtmospherePlaceName, resumeMainTravelChoice } from './questPlay';
 import { isAloneArrivalOpening } from './openingEstablishment';
 import { isInteriorMap } from './placeAuthority';
-import { graphExitPads, listInteriorExitsFromHere } from './mapEngine';
+import { graphExitPads, isCameraRelativePad, listInteriorExitsFromHere } from './mapEngine';
 
 /**
  * 4-tier narrative pipeline (authoritative ordering for choice generation):
@@ -843,6 +843,9 @@ export function padChoicesToCount(
   );
   if (isLookAroundChoice(lastPlayerAction)) {
     merged = merged.filter((c) => !isLookAroundChoice(c));
+  }
+  if (state.activeDungeon && isInteriorMap(state.activeDungeon)) {
+    merged = merged.filter((c) => !isCameraRelativePad(c));
   }
   // Act-4: resume main when off-spine
   const resumeChoice = resumeMainTravelChoice(state);

@@ -124,10 +124,12 @@ import {
 } from './openingStitch';
 import {
   classifyOpeningContinue,
+  compactTrafficGist,
   compilePointerCardSlots,
   formatOpeningCardChrome,
   openingInventBudgetZero,
 } from './openingPointerCard';
+import { classifyBeatCommit, repairRejectedBeat } from './beatCommitGate';
 import { applyCommittedNarrative, extractSceneFacts, seedOpeningSceneFacts, rewriteContinuityBreak, detectSceneContradiction } from './sceneFacts';
 import { applyFactLocks, detectFactLockViolations } from './factLocks';
 import { dropInsultGear } from './wornGear';
@@ -2804,6 +2806,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
           ? classifyOpeningContinue(liveCurrent, probeText)
           : { accept: true, prose: probeText, reasons: [] as string[] };
         const collageReject = shouldRetryUnaskedCollage(probeText, recentGmBeats, sanitizedInput);
+        const commitGate = classifyBeatCommit(liveCurrent, probeText, sanitizedInput);
         const askedRepeat = playerAsksRepeat(sanitizedInput);
         const askedContinue = playerAsksContinuation(sanitizedInput);
         // Free may skip a moderate same-beat retry only when the player asked to keep doing X.
@@ -2830,6 +2833,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
             || sameBeat
             || nearClone
             || collageReject
+            || !commitGate.accept
             || !inventGate.accept
             || probeLocks.some((l) => l.kind === 'weapon' || l.kind === 'cleared'));
         // Fact-lock slips are cut locally after this. Only burn extra GM calls when
@@ -2942,6 +2946,21 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
           }
         }
 
+        {
+          const stillGate = classifyBeatCommit(liveCurrent, probeText, sanitizedInput);
+          if (!stillGate.accept && !playerAsksRepeat(sanitizedInput)) {
+            const repaired = repairRejectedBeat(liveCurrent, probeText, stillGate.reasons);
+            if (repaired.repaired) {
+              probeText = repaired.prose;
+              result = { ...result, text: repaired.prose };
+              debugLogger.record('WARN', 'Commit gate repaired beat (no CRAFT)', {
+                turn: liveCurrent.turn,
+                reasons: stillGate.reasons,
+              });
+            }
+          }
+        }
+
         // Paid-turn value floor: skimpy 1–2 liners get one free expand (same turn charge).
         // Free is already slow — skip expand when near the floor (≥70 words) to avoid a second call.
         // Also skip after transport retry so the player is not stacked into another long wait.
@@ -3011,6 +3030,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
         engineMode: liveCurrent.engineMode,
         playerInput: sanitizedInput,
         aiResponse: result.text,
+        extra: { snapshotGist: compactTrafficGist(liveCurrent) },
       });
       if (result.rolls?.length) {
         logRollResults(
@@ -3036,6 +3056,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
         content: result.text,
         timestamp: Date.now(),
         systemLog: Array.from(new Set(filteredSystemLog)),
+        snapshotGist: compactTrafficGist(liveCurrent),
       };
 
       // `events`/derived requests must be parsed BEFORE anything below references them
@@ -4557,6 +4578,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
         playerInput: sanitizedInput,
         failed: true,
         stack,
+        extra: { snapshotGist: compactTrafficGist(current) },
       });
       refundSpentTextTurn();
       keepSentLineOnFail(contentSanitized || lastInputRef.current || input);
@@ -5224,7 +5246,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
       );
       narrativeText = scrubBeastifiedHumanoid(narrativeText, enemy.name);
       if (!lastGmMentionsEnemy(liveCurrent, enemy.name)) {
-        narrativeText = `${autoFightSpawnPreface(enemy.name)} ${narrativeText}`;
+        narrativeText = `${autoFightSpawnPreface(enemy.name, liveCurrent.currentLocation)} ${narrativeText}`;
       }
       {
         const prefaced = ensureEncounterSpawnPreface(liveCurrent, narrativeText);

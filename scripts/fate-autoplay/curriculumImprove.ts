@@ -1,29 +1,37 @@
 /**
- * Escalating curriculum across every ready premade:
+ * Escalating curriculum across flagship premades (default: 1 per mode = 4):
  *   for turns in [50, 100, 200, 300…]:
  *     for each premade:
  *       run → dual review → allowlisted patch → vitest → re-run
  *       until no P0 (smooth) or max-iters
  *     advance turn ladder only when ALL premades are smooth at this tier
  *
- *   npm run fate-curriculum -- --ladder 50,100,200,300 --max-iters 3 --writer minimax
- *   npm run fate-curriculum:detach -- --ladder 50,100,200,300 --writer minimax
+ *   npm run fate-curriculum -- --ladder 50 --max-iters 3
+ *   npm run fate-curriculum -- --ladder 50 --writer flash-lite
+ *   npm run fate-curriculum -- --writer minimax   # optional $0 Gateway
+ *   npm run fate-curriculum:detach -- --ladder 50 --max-iters 3
+ *   --premades / CURRICULUM_PREMADES override (optional +hero-awakening,+system-integration for breadth ≤6)
  */
 import { spawnSync } from 'node:child_process';
 import { existsSync, mkdirSync, readFileSync, readdirSync, writeFileSync } from 'node:fs';
 import { join, relative, resolve } from 'node:path';
 import { AUTO_IMPROVE_PATCH_ALLOWLIST } from '../../src/game/autoImproveAllowlist';
 import {
+  AUTOPLAY_HARNESS_DEFAULT_WRITER,
+  CURRICULUM_FLAGSHIP_PREMADES,
+  FLASH_LITE_OPENROUTER_MODEL,
   MINIMAX_GATEWAY_FREE_MODEL,
   MINIMAX_GATEWAY_FREE_MODEL_ALT,
-  resolveMinimaxAutoplayWriter,
+  parseAutoplayWriterKind,
+  resolveAutoplayWriter,
+  type AutoplayWriterKind,
 } from '../../src/game/autoplayWriter';
 import { STAGNATION_MID_WRITER_ENABLED } from '../../src/game/writerPolicy';
 import { enumeratePremadesOnce, type MatrixCombo } from '../../src/game/fateAutoplay';
 import { loadDotEnv } from './loadDotEnv';
 
 /** Keep in sync with Hud.tsx / index.html sgm-build. */
-const HUD_BUILD_STAMP = '2026-08-31k';
+const HUD_BUILD_STAMP = '2026-08-31n';
 const ROOT = resolve(process.cwd());
 
 type CellResult = {
@@ -43,12 +51,14 @@ function parseArgs(argv: string[]) {
   const out = {
     ladder: [50, 100, 200, 300] as number[],
     maxIters: 3,
-    writer: 'minimax' as 'minimax' | 'default',
+    writer: AUTOPLAY_HARNESS_DEFAULT_WRITER as AutoplayWriterKind,
     agent: 'default',
     seed: 100,
     outRoot: join(ROOT, 'scripts', 'fate-autoplay', 'runs'),
     limit: 0,
     modes: '' as string,
+    /** Comma-separated bible ids; also honors CURRICULUM_PREMADES env. */
+    premades: '' as string,
     skipPatch: false,
     dryRun: false,
   };
@@ -62,14 +72,23 @@ function parseArgs(argv: string[]) {
         .filter((n) => Number.isFinite(n) && n >= 2);
       if (!out.ladder.length) out.ladder = [50, 100, 200, 300];
     } else if (a === '--max-iters') out.maxIters = Math.max(1, Math.min(10, Number(next()) || 3));
-    else if (a === '--writer') out.writer = next() === 'default' ? 'default' : 'minimax';
+    else if (a === '--writer') out.writer = parseAutoplayWriterKind(next());
     else if (a === '--ai-agent-mode') out.agent = next() || 'default';
     else if (a === '--seed') out.seed = Number(next()) || 100;
     else if (a === '--out') out.outRoot = next();
     else if (a === '--limit') out.limit = Math.max(0, Number(next()) || 0);
     else if (a === '--modes') out.modes = next();
+    else if (a === '--premades' || a === '--ids') out.premades = next();
     else if (a === '--skip-patch') out.skipPatch = true;
     else if (a === '--dry-run') out.dryRun = true;
+  }
+  if (!out.premades && process.env.CURRICULUM_PREMADES) {
+    out.premades = process.env.CURRICULUM_PREMADES;
+  }
+  // Optimal T50 set: 1 flagship per mode (4). Override with --premades / CURRICULUM_PREMADES.
+  // Breadth add-ons (optional): hero-awakening, system-integration → up to 6.
+  if (!out.premades.trim()) {
+    out.premades = CURRICULUM_FLAGSHIP_PREMADES;
   }
   return out;
 }
@@ -135,8 +154,16 @@ function collectP0Count(runDir: string): number {
     let m: RegExpExecArray | null;
     while ((m = re.exec(text))) {
       try {
-        const b = JSON.parse(m[1]!) as { p0?: unknown[] };
-        n += Array.isArray(b.p0) ? b.p0.length : 0;
+        const b = JSON.parse(m[1]!) as { p0?: Array<{ title?: string; quote?: string }> };
+        if (!Array.isArray(b.p0)) continue;
+        // Skip schema-echo placeholders (… / EXAMPLE_ONLY) so ladder is not poisoned
+        n += b.p0.filter((t) => {
+          const title = String(t?.title ?? '').trim();
+          if (!title) return false;
+          if (/^(?:\.{3}|…)$/.test(title)) return false;
+          if (/^EXAMPLE_ONLY/i.test(title)) return false;
+          return true;
+        }).length;
       } catch {
         /* ignore */
       }
@@ -225,7 +252,18 @@ function improveCell(
       // still review — errors are also issues
     }
 
-    const review = runNpm(['run', 'fate-dual-review', '--', '--run-dir', runDir], `review-${cell.bibleId}`);
+    const review = runNpm(
+      [
+        'run',
+        'fate-dual-review',
+        '--',
+        '--run-dir',
+        runDir,
+        '--writer',
+        opts.writer,
+      ],
+      `review-${cell.bibleId}`
+    );
     writeFileSync(join(iterDir, 'review.log'), review.out);
     // Batch D: dual-review exits 0 when pastes exist; only hard-fail if process crashed
     if (!review.ok) {
@@ -354,11 +392,13 @@ async function main(): Promise<void> {
     hud: HUD_BUILD_STAMP,
     midWriter: STAGNATION_MID_WRITER_ENABLED,
     freeWriters: {
-      primary: MINIMAX_GATEWAY_FREE_MODEL,
-      secondary: MINIMAX_GATEWAY_FREE_MODEL_ALT,
-      policy: 'rotate on 429; never OpenRouter paid',
+      harnessDefault: FLASH_LITE_OPENROUTER_MODEL,
+      minimaxPrimary: MINIMAX_GATEWAY_FREE_MODEL,
+      minimaxSecondary: MINIMAX_GATEWAY_FREE_MODEL_ALT,
+      policy: 'default OpenRouter Flash Lite; optional --writer minimax Gateway free rotate',
     },
-    note: 'Restart from T50 ladder; dual free MiniMax rotation; Gemini Narration-only + game pad pastes.',
+    flagshipPremades: CURRICULUM_FLAGSHIP_PREMADES,
+    note: 'Flash Lite OpenRouter harness; 4 mode flagships default; Gemini Narration-only + game pad pastes.',
   };
   writeFileSync(
     join(backupDir, `restart-${new Date().toISOString().replace(/[:.]/g, '-')}.json`),
@@ -366,12 +406,16 @@ async function main(): Promise<void> {
   );
   writeFileSync(join(curriculumRoot, 'code-baseline.json'), JSON.stringify(backupNote, null, 2) + '\n');
 
-  if (!opts.dryRun && opts.writer === 'minimax') {
-    const w = resolveMinimaxAutoplayWriter();
-    console.log(`[curriculum] writer ${w.route} ${w.model} — ${w.note}`);
-    console.log(
-      `[curriculum] free rotate pair: ${MINIMAX_GATEWAY_FREE_MODEL} ↔ ${MINIMAX_GATEWAY_FREE_MODEL_ALT}`
-    );
+  if (!opts.dryRun && opts.writer !== 'default') {
+    const w = resolveAutoplayWriter(opts.writer);
+    if (w) {
+      console.log(`[curriculum] writer ${w.route} ${w.model} — ${w.note}`);
+      if (opts.writer === 'minimax') {
+        console.log(
+          `[curriculum] free rotate pair: ${MINIMAX_GATEWAY_FREE_MODEL} ↔ ${MINIMAX_GATEWAY_FREE_MODEL_ALT}`
+        );
+      }
+    }
     console.log(`[curriculum] mid writer OFF=${!STAGNATION_MID_WRITER_ENABLED} hud=${HUD_BUILD_STAMP}`);
   }
 
@@ -384,6 +428,26 @@ async function main(): Promise<void> {
         .filter(Boolean)
     );
     cells = cells.filter((c) => allow.has(c.engineMode));
+  }
+  if (opts.premades) {
+    const allow = new Set(
+      opts.premades
+        .split(',')
+        .map((s) => s.trim().toLowerCase())
+        .filter(Boolean)
+    );
+    const before = cells.length;
+    cells = cells.filter((c) => allow.has(c.bibleId.toLowerCase()));
+    const missing = [...allow].filter((id) => !cells.some((c) => c.bibleId.toLowerCase() === id));
+    console.log(
+      `[curriculum] premade filter ${before}→${cells.length}: ${cells.map((c) => c.bibleId).join(', ')}`
+    );
+    if (missing.length) {
+      console.warn(`[curriculum] unknown / not-ready premade ids skipped: ${missing.join(', ')}`);
+    }
+    if (!cells.length) {
+      throw new Error(`[curriculum] --premades matched zero cells (got: ${opts.premades})`);
+    }
   }
   if (opts.limit > 0) cells = cells.slice(0, opts.limit);
 
@@ -399,6 +463,7 @@ async function main(): Promise<void> {
         ladder: opts.ladder,
         maxIters: opts.maxIters,
         writer: opts.writer,
+        premades: opts.premades || null,
         at: new Date().toISOString(),
       },
       null,

@@ -1,6 +1,8 @@
 # Launch fate-curriculum outside the Cursor agent job tree.
 # Usage:
-#   powershell -File scripts/fate-autoplay/start-curriculum-detached.ps1 -- --ladder 50,100,200,300 --writer minimax
+#   powershell -File scripts/fate-autoplay/start-curriculum-detached.ps1 -- --ladder 50 --max-iters 3
+#   powershell -File scripts/fate-autoplay/start-curriculum-detached.ps1 -- --ladder 50 --writer flash-lite
+#   powershell -File scripts/fate-autoplay/start-curriculum-detached.ps1 -- --writer minimax
 
 $ErrorActionPreference = 'Stop'
 $Root = Resolve-Path (Join-Path $PSScriptRoot '..\..')
@@ -15,7 +17,8 @@ if ($args.Count -gt 0) {
 }
 
 if ($FateArgs.Count -eq 0) {
-  $FateArgs = @('--ladder', '50,100,200,300', '--max-iters', '3', '--writer', 'minimax')
+  # Default: Flash Lite OpenRouter + 4 mode flagships (curriculumImprove applies flagship filter)
+  $FateArgs = @('--ladder', '50,100,200,300', '--max-iters', '3', '--writer', 'flash-lite')
 }
 
 $stamp = Get-Date -Format 'yyyy-MM-ddTHH-mm-ss'

@@ -14,7 +14,7 @@ import { gmProxyTimeoutMsForState } from './errorRepairWarden';
 import { effectiveWriterTier } from './testLab';
 import { logApiLatency } from '../services/telemetryService';
 import { getAutoplayWriterOverride } from './autoplayWriter';
-import { buildOpeningGmPlayerInput } from './openingPointerCard';
+import { buildOpeningGmPlayerInput, compactTrafficGist } from './openingPointerCard';
 
 export type { GmResult } from './aiServiceShared';
 export { RateLimitError, withRetry } from './aiServiceShared';
@@ -23,7 +23,7 @@ export { RateLimitError, withRetry } from './aiServiceShared';
  * Resolve narrative generation.
  * Prefer the Supabase `gm-turn` edge proxy (prompts stay server-side).
  * Client-side assembly is DEV / explicit VITE_ALLOW_CLIENT_GM only (tree-shaken from prod otherwise).
- * Fate autoplay `--writer minimax` forces client direct so edge Free clamp cannot rewrite the model.
+ * Fate autoplay `--writer flash-lite` / `--writer minimax` forces client direct so edge Free clamp cannot rewrite the model.
  */
 export async function callGm(
   state: GameState,
@@ -118,7 +118,7 @@ export async function callOpeningGm(
       playerInput: openingInput,
       aiResponse: text || undefined,
       failed: !text,
-      extra: { saveId: state.saveId, turn: state.turn },
+      extra: { saveId: state.saveId, turn: state.turn, snapshotGist: compactTrafficGist(state) },
     });
     return text;
   } catch (err) {
@@ -133,6 +133,7 @@ export async function callOpeningGm(
       extra: {
         saveId: state.saveId,
         error: err instanceof Error ? err.message : String(err),
+        snapshotGist: compactTrafficGist(state),
       },
     });
     throw err;
@@ -165,7 +166,7 @@ export async function callGmAutoFight(
           engineMode: state.engineMode,
           playerInput: autoFightPrompt.slice(0, 4000),
           aiResponse: text,
-          extra: { saveId: state.saveId },
+          extra: { saveId: state.saveId, snapshotGist: compactTrafficGist(state) },
         });
         return text;
       } catch (err) {
@@ -186,7 +187,7 @@ export async function callGmAutoFight(
         engineMode: state.engineMode,
         playerInput: autoFightPrompt.slice(0, 4000),
         aiResponse: text,
-        extra: { saveId: state.saveId },
+        extra: { saveId: state.saveId, snapshotGist: compactTrafficGist(state) },
       });
       return text;
     }
@@ -204,6 +205,7 @@ export async function callGmAutoFight(
       extra: {
         saveId: state.saveId,
         error: err instanceof Error ? err.message : String(err),
+        snapshotGist: compactTrafficGist(state),
       },
     });
     throw err;

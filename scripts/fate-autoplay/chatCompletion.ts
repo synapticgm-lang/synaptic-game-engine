@@ -19,7 +19,8 @@ export async function chatCompletion(opts: {
 }): Promise<string> {
   const base = opts.baseUrl.replace(/\/$/, '');
   const url = `${base}/chat/completions`;
-  const maxAttempts = Math.max(1, Math.min(5, opts.maxAttempts ?? 3));
+  // Free Gateway: default 5 attempts so m3↔m2.7 can rotate then cool down.
+  const maxAttempts = Math.max(1, Math.min(6, opts.maxAttempts ?? 5));
   const modelQueue = [opts.model, ...(opts.alternateModels ?? [])].filter(
     (m, i, a) => !!m && a.indexOf(m) === i
   );
@@ -57,16 +58,20 @@ export async function chatCompletion(opts: {
         const err = new Error(`chat ${model} HTTP ${res.status}: ${errBody.slice(0, 500)}`);
         if (retryable && attempt < maxAttempts) {
           if (res.status === 429 && modelIdx + 1 < modelQueue.length) {
+            const prev = model;
             modelIdx += 1;
-            const next = modelQueue[modelIdx];
-            console.warn(`[chatCompletion] 429 on ${model} — rotate to free alternate ${next}`);
-            model = next;
+            model = modelQueue[modelIdx]!;
+            console.warn(`[chatCompletion] 429 on ${prev} — rotate to free alternate ${model}`);
+          } else if (res.status === 429 && modelQueue.length > 1) {
+            // Both free models already tried — flip back to the other for cool-down retry.
+            modelIdx = (modelIdx + 1) % modelQueue.length;
+            model = modelQueue[modelIdx]!;
+            console.warn(`[chatCompletion] 429 — flip free rotate to ${model}`);
           }
           const retryAfter = Number(res.headers.get('retry-after') || 0);
-          const waitMs = Math.max(
-            retryAfter > 0 ? retryAfter * 1000 : 0,
-            2000 * attempt * attempt
-          );
+          // Strong free-tier cooldown: 20s, 45s, 90s, 150s… (was 2s/8s — too short for Gateway).
+          const freeBackoff = 15_000 + 15_000 * attempt * attempt;
+          const waitMs = Math.max(retryAfter > 0 ? retryAfter * 1000 : 0, freeBackoff);
           console.warn(
             `[chatCompletion] ${res.status} attempt ${attempt}/${maxAttempts} model=${model} — backoff ${waitMs}ms`
           );

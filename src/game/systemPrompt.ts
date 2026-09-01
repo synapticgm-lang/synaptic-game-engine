@@ -594,6 +594,10 @@ RADICAL FORM CHANGES (species/base-body transformation, e.g. human -> reptilian 
 This tells the image pipeline to STOP depicting the player's previous equipped gear (human clothes, armor, weapons) on the new body, since it would be an absurd hybrid. Only omit form-change (or set it "false") for cosmetic changes (new armor, injury, disguise) where the body plan stays human/humanoid and existing gear still visually makes sense.`.trim();
 }
 
+/** Raw recent log window for RECENT CHAT BEATS. SNAPSHOT / timeline still win on conflicts. */
+export const RECENT_LOG_WINDOW = 4;
+export const RECENT_LOG_CHAR_CAP = 500;
+
 export function buildContextPrompt(
   state: GameState,
   playerInput: string,
@@ -622,11 +626,11 @@ export function buildContextPrompt(
       : 'none';
 
   const logEntries = state.log;
-  const macroWindow = logEntries.slice(-2);
+  const macroWindow = logEntries.slice(-RECENT_LOG_WINDOW);
   let tier4MacroSection = '';
   if (macroWindow.length > 0) {
     for (const l of macroWindow) {
-      tier4MacroSection += `${l.role.toUpperCase()}: ${l.content.slice(0, 500)}\n`;
+      tier4MacroSection += `${l.role.toUpperCase()}: ${l.content.slice(0, RECENT_LOG_CHAR_CAP)}\n`;
     }
   } else {
     tier4MacroSection += `[Scene Initialization]\n`;

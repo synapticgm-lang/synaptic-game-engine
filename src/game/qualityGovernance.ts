@@ -29,6 +29,8 @@ import {
   recentGmBeatTexts,
   detectAtmosphereReprint,
 } from './semanticLoopDetector';
+import { classifyBeatCommit, repairRejectedBeat, stitchCommitDelta, isVerbatimStallStub } from './beatCommitGate';
+import { isBannedFallbackStub } from './sealedManifest';
 import {
   extractEntityContext,
   validateEntityReferences,
@@ -381,6 +383,24 @@ export function applyGovernanceToProse(
       rejectClone = true;
       notes.push('Atmosphere reprint: same-room essay, no delta');
     }
+  }
+
+  const gate = classifyBeatCommit(state, out, playerInput);
+  if (!gate.accept) {
+    rejectClone = true;
+    notes.push(`Commit gate: ${gate.reasons.join(',')}`);
+    const repaired = repairRejectedBeat(state, out, gate.reasons);
+    if (repaired.repaired) {
+      out = repaired.prose;
+      notes.push(...repaired.notes);
+    }
+  }
+
+  // Batch E — never commit verbatim stall chrome as story.
+  if (isBannedFallbackStub(out) || isVerbatimStallStub(out)) {
+    rejectClone = true;
+    notes.push('Banned stall/fallback stub — reject');
+    out = stitchCommitDelta(state);
   }
 
   return { prose: out, notes, rejectClone };

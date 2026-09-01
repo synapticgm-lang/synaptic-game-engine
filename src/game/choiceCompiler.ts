@@ -20,7 +20,7 @@ import { isLookAroundAction } from './sandboxXp';
 import { isAtmospherePlaceName } from './questPlay';
 import { filterPadsAgainstOpenVignette } from './vignetteLock';
 import { isInteriorMap } from './placeAuthority';
-import { graphExitPads } from './mapEngine';
+import { graphExitPads, isCameraRelativePad } from './mapEngine';
 
 export type PlayerIntentFamily = 'demand' | 'inspect' | 'flee' | 'name' | 'talk' | 'travel' | 'other';
 
@@ -193,6 +193,9 @@ const FAMILY_COOLDOWN = 8;
 function classifyChoiceFamily(choice: string): ChoiceFingerprintFamily {
   const lower = choice.toLowerCase();
   if (/\b(walk away|leave|go another|step back)\b/.test(lower)) return 'walk_away';
+  if (/\b(scout(?:\s+for\s+danger)?|ready yourself|look around|get (?:your )?bearings)\b/.test(lower)) {
+    return 'inspect';
+  }
   if (/\b(inspect|examine|check|study|investigate|look at)\b/.test(lower)) return 'inspect';
   if (/\b(charter|millstone)\b/.test(lower)) return 'charter';
   if (/\b(gate|queue|registration|registrar)\b/.test(lower)) return 'gate_queue';
@@ -446,7 +449,9 @@ export function compileChoices(
   const loiter = countLoiterFamilyStreak(state);
   const hardStreak = streak.count >= 5 && streak.key !== 'empty';
   const hardLoiter = loiter.count >= 4 && loiter.key === 'loiter';
-  const stallInterrupt = hardStreak || hardLoiter;
+  // Batch E — inspect/wait/scout treadmill in one room: interrupt earlier (≥3).
+  const inspectTreadmill = loiter.count >= 3 && loiter.key === 'loiter';
+  const stallInterrupt = hardStreak || hardLoiter || inspectTreadmill;
   const pyoaLocked = state.engineMode === 'pyoa' && isPyoaBranchLocked(state);
   const npc = presentNpcForPads(state);
   const npcKey = npc
@@ -471,7 +476,7 @@ export function compileChoices(
     if (
       state.activeDungeon
       && isInteriorMap(state.activeDungeon)
-      && /\b(to the left|to the right|on your left|on your right|camera-left|go left|go right)\b/i.test(c)
+      && isCameraRelativePad(c)
     ) {
       notes.push(`Camera L/R drop: ${c.slice(0, 32)}`);
       return false;
@@ -564,7 +569,9 @@ export function compileChoices(
     notes.push(
       hardLoiter
         ? `Hard loiter interrupt: ×${loiter.count}`
-        : `Hard streak interrupt: ${streak.key}×${streak.count}`
+        : inspectTreadmill && !hardStreak
+          ? `Inspect treadmill interrupt: ×${loiter.count}`
+          : `Hard streak interrupt: ${streak.key}×${streak.count}`
     );
   }
 
@@ -640,6 +647,30 @@ export function compileChoices(
       if (filtered.length >= 3) break;
     }
     notes.push(supplements.length ? 'Supplemented from edges/fallback' : 'Supplemented legal beat edges');
+  }
+
+  // Batch E — after inspect/wait/scout treadmill, force exit / talk / quest pads.
+  if (stallInterrupt && !engaged) {
+    const interruptPads = [
+      'Scout the exit',
+      'Ask a direct question',
+      'Press for leverage',
+    ];
+    const here = (state.currentLocation ?? '').toLowerCase();
+    for (const h of hubsForBibleId(state.campaignBibleId).slice(0, 3)) {
+      if (h.name.toLowerCase() !== here) {
+        interruptPads.unshift(`Travel toward ${h.name}`);
+        break;
+      }
+    }
+    for (const pad of interruptPads) {
+      if (pyoaLocked && !eligiblePyoaPadsAfterLock(state, pad)) continue;
+      if (!filtered.some((f) => f.toLowerCase() === pad.toLowerCase())) {
+        filtered.unshift(pad);
+        notes.push(`Treadmill interrupt pad: ${pad.slice(0, 40)}`);
+      }
+      if (filtered.length >= 4) break;
+    }
   }
 
   // Chest / named prop pads when GM named them and not exhausted

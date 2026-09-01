@@ -142,6 +142,7 @@ export function extractSceneFacts(narrative: string, prev?: SceneFacts, turn = 0
     lastPlayerIntent: prev?.lastPlayerIntent,
     lastKill: prev?.lastKill,
     pendingSpawnPreface: prev?.pendingSpawnPreface,
+    pendingEncounter: prev?.pendingEncounter,
     engineRecoveryStreak: prev?.engineRecoveryStreak,
     openVignette: prev?.openVignette,
     lastSnapshotGist: prev?.lastSnapshotGist,
@@ -178,6 +179,8 @@ export function mergeSceneFacts(prev: SceneFacts | undefined, next: SceneFacts):
       next.pendingSpawnPreface !== undefined
         ? next.pendingSpawnPreface
         : prev.pendingSpawnPreface,
+    pendingEncounter:
+      next.pendingEncounter !== undefined ? next.pendingEncounter : prev.pendingEncounter,
     engineRecoveryStreak:
       next.engineRecoveryStreak !== undefined
         ? next.engineRecoveryStreak

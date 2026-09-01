@@ -1,6 +1,6 @@
 /**
  * Auto-improve loop (no human approval gate):
- *   Fate run (MiniMax) → dual review → allowlisted patch → vitest → re-run
+ *   Fate run (Flash Lite) → dual review → allowlisted patch → vitest → re-run
  *
  * Safety rails (hard):
  * - Only patch files in PATCH_ALLOWLIST
@@ -9,7 +9,9 @@
  * - Never commits / pushes / touches WOF / auth / billing / edge secrets
  * - Stops when no P0 tickets or patcher returns no edits
  *
- *   npm run fate-auto-improve -- --turns 8 --max-iters 2 --writer minimax
+ *   npm run fate-auto-improve -- --turns 8 --max-iters 2
+ *   npm run fate-auto-improve -- --turns 8 --max-iters 2 --writer flash-lite
+ *   npm run fate-auto-improve -- --writer minimax   # optional $0 Gateway
  */
 import { spawnSync } from 'node:child_process';
 import {
@@ -21,7 +23,19 @@ import {
 } from 'node:fs';
 import { join, relative, resolve } from 'node:path';
 import { AUTO_IMPROVE_PATCH_ALLOWLIST } from '../../src/game/autoImproveAllowlist';
-import { resolveMinimaxFreeCritic, resolveMinimaxAutoplayWriter } from '../../src/game/autoplayWriter';
+import {
+  applySearchReplaceOnce,
+  filterRealTickets,
+  isIncompleteSearchReplace,
+  parseSearchReplaceBlocks,
+} from '../../src/game/autoImprovePatch';
+import {
+  AUTOPLAY_HARNESS_DEFAULT_WRITER,
+  parseAutoplayWriterKind,
+  resolveAutoplayCritic,
+  resolveAutoplayWriter,
+  type AutoplayWriterKind,
+} from '../../src/game/autoplayWriter';
 import { chatCompletion } from './chatCompletion';
 import { loadDotEnv } from './loadDotEnv';
 
@@ -30,6 +44,9 @@ const ROOT = resolve(process.cwd());
 /** Only these owners may be auto-edited. Keep tight. */
 export const PATCH_ALLOWLIST = AUTO_IMPROVE_PATCH_ALLOWLIST;
 
+/** Cap per-file dump so Flash Lite can finish REPLACE fences (was 40k → truncate). */
+const PATCH_FILE_MAX_CHARS = 12_000;
+
 const VITEST_GATES = [
   'src/game/playtest30zCollagePrefix.test.ts',
   'src/game/playtest30yChromePerson.test.ts',
@@ -37,6 +54,7 @@ const VITEST_GATES = [
   'src/game/playtest31aHookLock.test.ts',
   'src/game/playtest31eNameAtmosphere.test.ts',
   'src/game/playtest31gCraftBook.test.ts',
+  'src/game/playtest31oAutoImprovePatch.test.ts',
 ];
 
 type Ticket = {
@@ -54,7 +72,7 @@ function parseArgs(argv: string[]) {
     seed: 42,
     bible: 'summoned-pact',
     personality: 'cold-system',
-    writer: 'minimax' as 'minimax' | 'default',
+    writer: AUTOPLAY_HARNESS_DEFAULT_WRITER as AutoplayWriterKind,
     maxIters: 3,
     agent: 'default',
     outRoot: join(ROOT, 'scripts', 'fate-autoplay', 'runs'),
@@ -68,7 +86,7 @@ function parseArgs(argv: string[]) {
     else if (a === '--seed') out.seed = Number(next()) || 42;
     else if (a === '--bible') out.bible = next();
     else if (a === '--personality') out.personality = next();
-    else if (a === '--writer') out.writer = next() === 'default' ? 'default' : 'minimax';
+    else if (a === '--writer') out.writer = parseAutoplayWriterKind(next());
     else if (a === '--max-iters') out.maxIters = Math.max(1, Math.min(8, Number(next()) || 3));
     else if (a === '--ai-agent-mode') out.agent = next() || 'default';
     else if (a === '--out') out.outRoot = next();
@@ -169,26 +187,15 @@ function collectTickets(runDir: string): Ticket[] {
       }
     }
   }
-  // Dedupe by title
+  // Drop example-JSON placeholders (… / EXAMPLE_ONLY), then dedupe by title
+  const real = filterRealTickets(tickets);
   const seen = new Set<string>();
-  return tickets.filter((t) => {
+  return real.filter((t) => {
     const k = t.title.toLowerCase().trim();
     if (seen.has(k)) return false;
     seen.add(k);
     return true;
   });
-}
-
-function parseSearchReplaceBlocks(text: string): Array<{ path: string; old: string; next: string }> {
-  const blocks: Array<{ path: string; old: string; next: string }> = [];
-  const re =
-    /<<<<<<<\s*SEARCH\s+path=([^\n]+)\n([\s\S]*?)=======\n([\s\S]*?)>>>>>>>\s*REPLACE/g;
-  let m: RegExpExecArray | null;
-  while ((m = re.exec(text))) {
-    const path = m[1]!.trim().replace(/\\/g, '/');
-    blocks.push({ path, old: m[2]!, next: m[3]! });
-  }
-  return blocks;
 }
 
 function applyAllowlistedEdits(
@@ -211,14 +218,10 @@ function applyAllowlistedEdits(
       continue;
     }
     const before = readFileSync(abs, 'utf8');
-    if (!before.includes(b.old)) {
+    // CRLF-safe: Flash Lite SEARCH is often LF while Windows checkout is CRLF
+    const { after, matched } = applySearchReplaceOnce(before, b.old, b.next);
+    if (!matched) {
       skipped.push(`no-match:${rel}`);
-      continue;
-    }
-    // Only first occurrence — safer
-    const after = before.replace(b.old, b.next);
-    if (after === before) {
-      skipped.push(`unchanged:${rel}`);
       continue;
     }
     writeFileSync(abs, after, 'utf8');
@@ -233,14 +236,20 @@ function applyAllowlistedEdits(
   return { applied, skipped };
 }
 
-async function proposePatches(tickets: Ticket[], logDir: string): Promise<string> {
-  const patcher = resolveMinimaxFreeCritic();
+async function proposePatchesOnce(
+  tickets: Ticket[],
+  writer: AutoplayWriterKind,
+  surgicalRetry: boolean
+): Promise<string> {
+  const patcher = resolveAutoplayCritic(writer);
 
   const fileBundles = PATCH_ALLOWLIST.map((rel) => {
     const abs = join(ROOT, rel);
     if (!existsSync(abs)) return null;
     let body = readFileSync(abs, 'utf8');
-    if (body.length > 40_000) body = body.slice(0, 40_000) + '\n/* …truncated… */\n';
+    if (body.length > PATCH_FILE_MAX_CHARS) {
+      body = body.slice(0, PATCH_FILE_MAX_CHARS) + '\n/* …truncated… */\n';
+    }
     return `### FILE ${rel}\n\`\`\`ts\n${body}\n\`\`\``;
   })
     .filter(Boolean)
@@ -259,30 +268,68 @@ async function proposePatches(tickets: Ticket[], logDir: string): Promise<string
     'Rules:',
     '- Only edit allowlisted files listed below.',
     '- Prefer smallest deterministic fix (regex scrub, deny-list, craft flag) — no new LLM critic paths.',
+    '- SURGICAL ONLY: each SEARCH block ≤ 40 lines / ≤ 1200 chars. Never dump whole functions.',
+    '- Max 3 blocks total. Every SEARCH must end with >>>>>>> REPLACE (never truncate mid-block).',
     '- Do not touch WOF, auth, billing, supabase secrets, or HUD stamps.',
     '- If nothing safe to fix, output exactly: NO_PATCH',
     '- Mid writer must stay OFF; do not enable STAGNATION_MID_WRITER.',
-  ].join('\n');
+    surgicalRetry
+      ? '- RETRY: Your previous reply was truncated (missing REPLACE fence). Emit 1 tiny complete block only.'
+      : '',
+  ]
+    .filter(Boolean)
+    .join('\n');
 
   const user = [
     '## P0/P1 tickets from dual review',
-    JSON.stringify(tickets.slice(0, 12), null, 2),
+    JSON.stringify(tickets.slice(0, surgicalRetry ? 4 : 12), null, 2),
     '',
     '## Allowlisted file contents',
     fileBundles,
   ].join('\n');
 
-  const text = await chatCompletion({
+  return chatCompletion({
     baseUrl: patcher.baseUrl,
     apiKey: patcher.apiKey,
     model: patcher.model,
+    alternateModels: patcher.alternateModels,
     system,
     user,
     temperature: 0.1,
-    maxTokens: 8192,
+    // Safer headroom with smaller dumps; still capped so Free models finish fences
+    maxTokens: surgicalRetry ? 4096 : 6144,
     timeoutMs: 240_000,
+    maxAttempts: 5,
   });
+}
+
+async function proposePatches(
+  tickets: Ticket[],
+  logDir: string,
+  writer: AutoplayWriterKind
+): Promise<string> {
+  let text = await proposePatchesOnce(tickets, writer, false);
   writeFileSync(join(logDir, 'patcher-raw.md'), text + '\n');
+
+  if (isIncompleteSearchReplace(text)) {
+    console.warn('[auto-improve] incomplete SEARCH/REPLACE (truncate) — retry once surgical');
+    writeFileSync(join(logDir, 'patcher-raw-incomplete.md'), text + '\n');
+    text = await proposePatchesOnce(tickets, writer, true);
+    writeFileSync(join(logDir, 'patcher-raw.md'), text + '\n');
+    if (isIncompleteSearchReplace(text)) {
+      writeFileSync(
+        join(logDir, 'patcher-reject.json'),
+        JSON.stringify(
+          { reason: 'incomplete-search-replace-after-retry', at: new Date().toISOString() },
+          null,
+          2
+        ) + '\n'
+      );
+      console.warn('[auto-improve] still incomplete after retry — reject (NO_PATCH)');
+      return 'NO_PATCH';
+    }
+  }
+
   return text;
 }
 
@@ -308,9 +355,9 @@ async function main(): Promise<void> {
   console.log('[auto-improve] NO human approval — stops on NO_PATCH / no P0 / vitest fail / max iters');
 
   // Prove credentials early
-  if (!opts.dryRun && opts.writer === 'minimax') {
-    const w = resolveMinimaxAutoplayWriter();
-    console.log(`[auto-improve] writer ${w.route} ${w.model}`);
+  if (!opts.dryRun && opts.writer !== 'default') {
+    const w = resolveAutoplayWriter(opts.writer);
+    if (w) console.log(`[auto-improve] writer ${w.route} ${w.model} — ${w.note}`);
   }
 
   let lastRunDir: string | null = null;
@@ -364,7 +411,7 @@ async function main(): Promise<void> {
     }
 
     const review = runNpm(
-      ['run', 'fate-dual-review', '--', '--run-dir', lastRunDir],
+      ['run', 'fate-dual-review', '--', '--run-dir', lastRunDir, '--writer', opts.writer],
       `dual-review-iter-${iter}`
     );
     writeFileSync(join(iterDir, 'review.log'), review.out);
@@ -408,14 +455,28 @@ async function main(): Promise<void> {
       break;
     }
 
-    const patchRaw = await proposePatches(p0.length ? p0 : tickets, iterDir);
-    if (/^\s*NO_PATCH\s*$/m.test(patchRaw) || !patchRaw.includes('<<<<<<< SEARCH')) {
-      history.push({ iter, runDir: lastRunDir, tickets: tickets.length, stop: 'no-patch' });
-      console.log('[auto-improve] patcher returned NO_PATCH — stopping.');
+    const patchRaw = await proposePatches(p0.length ? p0 : tickets, iterDir, opts.writer);
+    if (
+      /^\s*NO_PATCH\s*$/m.test(patchRaw) ||
+      !patchRaw.includes('<<<<<<< SEARCH') ||
+      isIncompleteSearchReplace(patchRaw)
+    ) {
+      history.push({
+        iter,
+        runDir: lastRunDir,
+        tickets: tickets.length,
+        stop: isIncompleteSearchReplace(patchRaw) ? 'incomplete-patch-rejected' : 'no-patch',
+      });
+      console.log('[auto-improve] patcher returned NO_PATCH / incomplete — stopping.');
       break;
     }
 
     const blocks = parseSearchReplaceBlocks(patchRaw);
+    if (!blocks.length) {
+      history.push({ iter, runDir: lastRunDir, tickets: tickets.length, stop: 'no-parseable-blocks' });
+      console.log('[auto-improve] no parseable SEARCH/REPLACE blocks — stopping.');
+      break;
+    }
     const { applied, skipped } = applyAllowlistedEdits(blocks, iterDir);
     console.log(`[auto-improve] applied=${applied} skipped=${skipped.length}`);
     if (applied === 0) {

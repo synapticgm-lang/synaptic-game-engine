@@ -70,13 +70,28 @@ export function isPolityFactionOrPlaceToken(token: string): boolean {
   return false;
 }
 
+/**
+ * Role / workplace adjectives harvested as person names ("Field" from field chirurgeon).
+ * Never a present[] person slot.
+ */
+const ROLE_ADJECTIVE_EXACT =
+  /^(field|ward|gate|street|harbor|kitchen|palace|circle|court|market|road|ash|salt|void|pact|system|blue|official)$/i;
+
+export function isRoleAdjectivePersonSlot(token: string): boolean {
+  const t = normalizeChromeToken(token);
+  if (!t) return false;
+  if (t.includes(' ')) return false;
+  return ROLE_ADJECTIVE_EXACT.test(t);
+}
+
 export function filterChromeFromPresent(present: string[] | undefined): string[] {
   return (present ?? []).filter(
     (p) =>
       typeof p === 'string' &&
       p.trim() &&
       !isChromePersonToken(p) &&
-      !isPolityFactionOrPlaceToken(p)
+      !isPolityFactionOrPlaceToken(p) &&
+      !isRoleAdjectivePersonSlot(p)
   );
 }
 
@@ -89,6 +104,7 @@ export function realPresentPeople(present: string[] | undefined): string[] {
     }
     if (/^figure\s+\d+$/i.test(t)) return false;
     if (isPolityFactionOrPlaceToken(t)) return false;
+    if (isRoleAdjectivePersonSlot(t)) return false;
     return t.length >= 2;
   });
 }

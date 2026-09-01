@@ -411,12 +411,27 @@ function applyBeatEffects(
     } else if (!shouldSpawn && !droughtCheck.isDrought) {
       receipts.push(`Encounter density: spawn rate limit — deferred`);
     } else {
-      next = { ...next, activeEncounter: preview };
-      receipts.push(`Encounter: ${next.activeEncounter!.name}`);
-      extras.encounterName = next.activeEncounter!.name;
-      // 31h — drought/arc spawn without on-screen foe → pending preface (auto-fight / GM prepend).
-      if (!foeVisibleInScene(next, preview.name)) {
-        next = markPendingSpawnPreface(next, preview.name);
+      extras.encounterName = preview.name;
+      // 31m — no live fight until present[] has the foe or preface commits this turn.
+      if (foeVisibleInScene(next, preview.name)) {
+        next = { ...next, activeEncounter: preview };
+        receipts.push(`Encounter: ${preview.name}`);
+      } else {
+        const base = next.sceneFacts ?? {
+          crowd: 'unknown',
+          noise: 'unknown',
+          present: [],
+          props: [],
+          lastBeat: '',
+          updatedTurn: next.turn,
+        };
+        next = markPendingSpawnPreface({
+          ...next,
+          sceneFacts: {
+            ...base,
+            pendingEncounter: preview,
+          },
+        }, preview.name);
         receipts.push(`Encounter preface pending: ${preview.name}`);
       }
 

@@ -117,6 +117,78 @@ function tidyClauses(text: string): string {
 }
 
 /**
+ * Batch E — strip false arrival when the player never left currentLocation.
+ * "You reach the cathedral infirmary." while already there.
+ */
+export function scrubFalseArrivalWhenHere(text: string, currentLocation?: string): string {
+  if (!text || !currentLocation?.trim()) return text;
+  const loc = currentLocation.trim();
+  const esc = loc.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const arrival = new RegExp(
+    `\\b(?:[Yy]ou (?:reach|arrive(?: at)?|enter)|[Yy]ou leave [^.]{2,40} behind and reach)\\s+(?:the\\s+)?${esc}\\b[.!?]?`,
+    'g'
+  );
+  let next = text.replace(arrival, '').replace(/\s{2,}/g, ' ').trim();
+  // Also catch partial name match (cathedral infirmary vs The Cathedral Infirmary)
+  const short = loc.split(/\s+/).filter((w) => w.length >= 4).slice(-2).join(' ');
+  if (short.length >= 6 && short.toLowerCase() !== loc.toLowerCase()) {
+    const escShort = short.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    next = next
+      .replace(
+        new RegExp(
+          `\\b(?:[Yy]ou (?:reach|arrive(?: at)?))\\s+(?:the\\s+)?${escShort}\\b[.!?]?`,
+          'gi'
+        ),
+        ''
+      )
+      .replace(/\s{2,}/g, ' ')
+      .trim();
+  }
+  return tidyClauses(next);
+}
+
+/**
+ * Strip raw HP/MP sheet dumps from story body (STATUS owns numbers).
+ */
+export function scrubBodyStatusDumps(text: string): string {
+  if (!text) return text;
+  let next = text
+    .replace(
+      /\byour health is full at\s+\d+\s*\/\s*\d+(?:,?\s*your mana reserves? (?:are|is) at\s+\d+\s*\/\s*\d+)?\.?/gi,
+      ''
+    )
+    .replace(
+      /\byour (?:hp|health)(?:\s+is)?\s*(?:at|:)?\s*\d+\s*\/\s*\d+(?:,?\s*(?:mp|mana)(?:\s+reserves?)?(?:\s+(?:are|is))?\s*(?:at|:)?\s*\d+\s*\/\s*\d+)?\.?/gi,
+      ''
+    )
+    .replace(/\b(?:HP|MP):\s*\d+\s*\/\s*\d+\b/g, '')
+    .replace(/\s{2,}/g, ' ')
+    .trim();
+  return tidyClauses(next);
+}
+
+/**
+ * "The chirurgeon, Field," — role adjective harvested as a person name.
+ */
+export function scrubRoleAdjectivePersonSlot(text: string): string {
+  if (!text) return text;
+  const ROLE_ADJ =
+    'Field|Ward|Gate|Street|Harbor|Kitchen|Palace|Circle|Court|Market|Road|Ash|Salt|Void|Pact';
+  let next = text.replace(
+    new RegExp(
+      `\\b((?:the\\s+)?(?:field\\s+)?chirurgeon|medic|warden|guard|official|handler),\\s+(?:${ROLE_ADJ})\\b`,
+      'gi'
+    ),
+    '$1'
+  );
+  next = next.replace(
+    new RegExp(`\\b(?:${ROLE_ADJ}),\\s+(?:the\\s+)?(?:field\\s+)?chirurgeon\\b`, 'gi'),
+    'the field chirurgeon'
+  );
+  return tidyClauses(next);
+}
+
+/**
  * "Nearby" is for things that are not here. If the beat is already at a named
  * interior (cathedral / circle / court / currentLocation), strip "a nearby
  * building/place/hall" used as the current room.
@@ -826,6 +898,9 @@ export function applyProseWarden(text: string, ctx?: ProseWardenContext): string
   }
   next = scrubInventedTensionChange(next, ctx?.currentTension, ctx?.previousTension);
   next = scrubLocationTautology(next, ctx?.currentLocation);
+  next = scrubFalseArrivalWhenHere(next, ctx?.currentLocation);
+  next = scrubBodyStatusDumps(next);
+  next = scrubRoleAdjectivePersonSlot(next);
   next = scrubAwakeSpeakerAsSleeper(next, {
     lastGmProse: ctx?.lastGmProse,
     presentNames: ctx?.presentNames,

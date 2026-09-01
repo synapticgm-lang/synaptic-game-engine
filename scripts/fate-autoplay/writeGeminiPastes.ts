@@ -158,10 +158,15 @@ function writePastesForRun(runDir: string, outRoot?: string, maxChars = 100_000)
 function main(): void {
   loadDotEnv();
   const argv = process.argv.slice(2);
-  const outRoot = join(process.cwd(), 'scripts', 'fate-autoplay', 'runs', 'morning-review-2026-08-30');
+  let outRoot = join(process.cwd(), 'scripts', 'fate-autoplay', 'runs', 'morning-review-2026-08-30');
+  const runDirs: string[] = [];
+  for (let i = 0; i < argv.length; i++) {
+    if (argv[i] === '--out' || argv[i] === '--out-root') outRoot = argv[++i] ?? outRoot;
+    else if (argv[i] === '--run-dir') runDirs.push(argv[++i] ?? '');
+  }
   mkdirSync(outRoot, { recursive: true });
 
-  if (argv.includes('--morning') || argv.length === 0) {
+  if (argv.includes('--morning') || (argv.length === 0 && !runDirs.length)) {
     const runs = [
       'scripts/fate-autoplay/runs/2026-08-29T22-00-25-590Z_system-integration_cold-system_s100',
       'scripts/fate-autoplay/runs/2026-08-29T23-16-30-015Z_summoned-pact_cold-system_s101',
@@ -195,15 +200,17 @@ function main(): void {
     return;
   }
 
-  let runDir = '';
-  for (let i = 0; i < argv.length; i++) {
-    if (argv[i] === '--run-dir') runDir = argv[++i] ?? '';
-  }
-  if (!runDir) {
-    console.error('Usage: --morning   OR   --run-dir <path>');
+  if (!runDirs.length) {
+    console.error('Usage: --morning   OR   --run-dir <path> [--run-dir <path>…] [--out <dir>]');
     process.exit(2);
   }
-  writePastesForRun(runDir, outRoot);
+  for (const runDir of runDirs) {
+    if (!runDir || !existsSync(runDir)) {
+      console.error('missing', runDir);
+      continue;
+    }
+    writePastesForRun(runDir, outRoot);
+  }
 }
 
 main();

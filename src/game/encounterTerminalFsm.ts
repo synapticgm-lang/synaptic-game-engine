@@ -151,8 +151,9 @@ export function tickEncounterTerminal(
   } else if (isParleyIntent(input)) {
     enc = { ...enc, failedParleyCount: (enc.failedParleyCount ?? 0) + 1 };
     receipts.push(`Parley refused (${enc.failedParleyCount}/${enc.maxFailedParley})`);
+    // Batch E — exhausted parley must NOT free-clear the fight (no XP for talk alone).
     if ((enc.failedParleyCount ?? 0) >= (enc.maxFailedParley ?? 1)) {
-      return commitClear(state, enc, resolveForcedOutcome(enc, 'parley_cap'), 'parley_cap');
+      receipts.push('Parley exhausted — combat continues on the ledger');
     }
   } else if (isAttackIntent(input)) {
     // Soft HP pressure so long loops still reach victory without ledger combat

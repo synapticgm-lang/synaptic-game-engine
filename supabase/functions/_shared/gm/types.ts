@@ -737,6 +737,8 @@ export interface LogEntry {
   craftApplied?: string[];
   /** Last thumbs vote on this GM bubble (CRAFT boost, optional). */
   gmFeedback?: 'up' | 'down';
+  /** Compact SNAPSHOT the writer saw — dumps diagnose packet lies. Never the full prompt. */
+  snapshotGist?: import('./openingPointerCard').SnapshotGist;
 }
 
 /** Distinct rule engines chosen at campaign setup. `'dnd'` is tabletop fantasy (saved key). */
@@ -853,6 +855,11 @@ export interface SceneFacts {
    * Next combat beat must show this name (preface) before fight prose.
    */
   pendingSpawnPreface?: string;
+  /**
+   * Drought/arc preview parked until the foe is in present[] or the
+   * spawn preface is committed this turn. Not a live fight.
+   */
+  pendingEncounter?: ActiveEncounter;
   /**
    * Consecutive sealed-manifest recovery stitches committed as GM body.
    * Cap at 1 — next empty GM must FAIL (Class A), not another stub.

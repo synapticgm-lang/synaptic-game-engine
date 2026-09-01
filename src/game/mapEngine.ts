@@ -1085,6 +1085,38 @@ function exitFacingLabel(
   return dy > 0 ? 'south' : 'north';
 }
 
+/** Camera-relative L/R that fights the floor-plan — never a pad label. */
+export function isCameraRelativePad(choice: string): boolean {
+  return /\b(to the left|to the right|on your left|on your right|camera-left|camera-right|go left|go right|turn left|turn right)\b/i.test(
+    choice ?? ''
+  );
+}
+
+/** Named or cardinal token from the graph. No coords → doorway/stairs, never left/right. */
+export function formatGraphExitToken(
+  here: MapNode,
+  dest: MapNode | undefined,
+  noun: string,
+  kind: InteriorEdgeKind
+): string {
+  const facing = dest ? exitFacingLabel(here, dest) : null;
+  if (facing) return `${facing} ${noun}`;
+  if (kind === 'stairs') return 'stairs';
+  return 'doorway';
+}
+
+function graphExitPadLabel(here: MapNode, dest: MapNode | undefined, e: {
+  name: string;
+  kind: InteriorEdgeKind;
+  noun: string;
+}): string {
+  const token = formatGraphExitToken(here, dest, e.noun, e.kind);
+  if (e.kind === 'stairs' && !/\bnorth|south|east|west\b/i.test(token)) {
+    return `Take the stairs to ${e.name}`;
+  }
+  return `Go through the ${token} to ${e.name}`;
+}
+
 /** Choice pads from the floor-plan graph — named door / facing, not camera-left. */
 export function graphExitPads(dungeon: ActiveDungeonState): string[] {
   const here = dungeon.nodes.find((n) => n.id === dungeon.currentNodeId);
@@ -1093,20 +1125,25 @@ export function graphExitPads(dungeon: ActiveDungeonState): string[] {
     .filter((e) => e.name.trim() && !/hangs heavy|this chamber|atmosphere/i.test(e.name))
     .map((e) => {
       const dest = dungeon.nodes.find((n) => n.name === e.name);
-      const facing = dest ? exitFacingLabel(here, dest) : null;
-      const door = facing ? `${facing} ${e.noun}` : e.noun;
-      return `Go through the ${door} to ${e.name}`;
+      return graphExitPadLabel(here, dest, e);
     })
     .slice(0, 4);
 }
 
 /** Prompt authority: exits from the current room with door vs gap language. */
 export function formatInteriorExitAuthority(dungeon: ActiveDungeonState): string {
+  const here = dungeon.nodes.find((n) => n.id === dungeon.currentNodeId);
   const exits = listInteriorExitsFromHere(dungeon);
   if (exits.length === 0) return 'Exits from here: none mapped yet.';
+  const listed = exits.map((e) => {
+    const dest = dungeon.nodes.find((n) => n.name === e.name);
+    const token = here ? formatGraphExitToken(here, dest, e.noun, e.kind) : e.noun;
+    return `${token}→${e.name}`;
+  });
   return (
-    `Exits from here: ${exits.map((e) => `${e.noun}→${e.name}`).join(', ')}. ` +
+    `Exits from here: ${listed.join(', ')}. ` +
     'Prefer door / doorway / corridor into mapped adjacent rooms. ' +
+    'Named or cardinal exits only. If a room has no coordinates, say the doorway or destination — never camera-left/right. ' +
     'Use crack / gap / broken wall only for broken gap or sealed passage edges — never as the default first exit.'
   );
 }

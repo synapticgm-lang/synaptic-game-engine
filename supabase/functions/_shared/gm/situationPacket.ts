@@ -16,7 +16,7 @@ import { formatCampaignMemoryForPrompt } from './campaignMemory.ts';
 import { formatTutorialBeatMandate } from './tutorialBeats.ts';
 import { formatLocalityForPrompt } from './locality.ts';
 import { formatHiddenCulpritRail } from './mysteryCulprit.ts';
-import { formatInteriorExploreAuthority, listInteriorExitsFromHere } from './mapEngine.ts';
+import { formatGraphExitToken, formatInteriorExploreAuthority, listInteriorExitsFromHere } from './mapEngine.ts';
 import { formatOutdoorHubsForPrompt } from './outdoorHubs.ts';
 import { formatHubArrivalForPrompt } from './hubEncounters.ts';
 import { emptySearchAuthorityLine, weaponAuthorityLine } from './searchContinuity.ts';
@@ -218,9 +218,15 @@ export function formatSceneSnapshotForPrompt(state: GameState): string {
 
   let exits = 'none established';
   if (state.activeDungeon && isInteriorMap(state.activeDungeon)) {
-    const listed = listInteriorExitsFromHere(state.activeDungeon);
+    const dungeon = state.activeDungeon;
+    const here = dungeon.nodes.find((n) => n.id === dungeon.currentNodeId);
+    const listed = listInteriorExitsFromHere(dungeon);
     exits = listed.length
-      ? listed.map((e) => `${e.noun}→${e.name}`).join(', ')
+      ? listed.map((e) => {
+          const dest = dungeon.nodes.find((n) => n.name === e.name);
+          const token = here ? formatGraphExitToken(here, dest, e.noun, e.kind) : 'doorway';
+          return `${token}→${e.name}`;
+        }).join(', ')
       : 'none mapped from this room';
   } else {
     const sheetExits = (state.locationSheet?.exits ?? []).map((e) => e.label).filter(Boolean);

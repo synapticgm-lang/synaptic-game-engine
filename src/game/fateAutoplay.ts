@@ -20,6 +20,7 @@ import {
   enableAutoplayWriter,
   getAutoplayWriterOverride,
   getFreeWriterRotationState,
+  parseAutoplayWriterKind,
   rotateFreeGatewayWriterOnRateLimit,
   type AutoplayWriterKind,
 } from './autoplayWriter';
@@ -155,6 +156,8 @@ import {
   collectSceneObjectNames,
 } from './proseWarden';
 import { ensureEncounterSpawnPreface } from './combatAuthority';
+import { classifyBeatCommit, repairRejectedBeat } from './beatCommitGate';
+import { compactTrafficGist } from './openingPointerCard';
 import {
   syncQuestsFromPlay,
   questsLockedDuringOpening,
@@ -218,7 +221,7 @@ export type FateAutoplayCliOpts = {
   batchDir?: string;
   outRoot: string;
   characterName: string;
-  /** GM writer for this process: default (hosted Free via edge) or minimax (client direct). */
+  /** GM writer: default (hosted Free via edge), flash-lite / openrouter (OpenRouter), or minimax (Gateway). */
   writer?: AutoplayWriterKind;
 };
 
@@ -265,6 +268,7 @@ export type TurnTelemetry = {
   sealedManifestHash?: string;
   replayHash?: string;
   renderFallbackUsed?: boolean;
+  snapshotGist?: import('./openingPointerCard').SnapshotGist;
 };
 
 export type RunSummary = {
@@ -1063,11 +1067,12 @@ Do NOT print dice notation or CODE ENFORCED.
   const nearClone = isNearClone(gmText, fps);
   const sameBeatHit = isSameBeat(gmText, fps);
   const collageReject = shouldRetryUnaskedCollage(gmText, recentGmBeatTexts(state), playerInput);
+  const commitGate = classifyBeatCommit(arcState, gmText, playerInput);
   if (
     !error
     && !askedRepeat
     && storyHasBody(gmText)
-    && (nearClone || collageReject || (sameBeatHit && !askedContinue))
+    && (nearClone || collageReject || !commitGate.accept || (sameBeatHit && !askedContinue))
     && transportRetries === 0
   ) {
     const novelty = buildBeatNoveltyRetryBlock(fps);
@@ -1084,9 +1089,16 @@ Do NOT print dice notation or CODE ENFORCED.
     });
     const retry = await callGmWithRetries(arcState, retryPayload, settings);
     transportRetries += retry.transportRetries + 1;
-    if (retry.text.trim() && (!isSameBeat(retry.text, fps) || travelHubEarly)) {
+    if (retry.text.trim() && (!isSameBeat(retry.text, fps) || travelHubEarly || classifyBeatCommit(arcState, retry.text, playerInput).accept)) {
       gmText = retry.text;
       if (!error) error = undefined;
+    }
+  }
+  {
+    const stillGate = classifyBeatCommit(arcState, gmText, playerInput);
+    if (!stillGate.accept && !askedRepeat && storyHasBody(gmText)) {
+      const repaired = repairRejectedBeat(arcState, gmText, stillGate.reasons);
+      if (repaired.repaired) gmText = repaired.prose;
     }
   }
 
@@ -1396,6 +1408,7 @@ Do NOT print dice notation or CODE ENFORCED.
     content: cleanText,
     timestamp: Date.now(),
     systemLog: filteredSystemLog,
+    snapshotGist: compactTrafficGist(arcState),
   };
   const mid: GameState = {
     ...working,
@@ -1443,6 +1456,7 @@ Do NOT print dice notation or CODE ENFORCED.
       offeredChoiceIds: offered.map((_, i) => `choice-${nextTurn}-${i}`),
       playerInput,
       gmText: cleanText,
+      snapshotGist: compactTrafficGist(arcState),
       systemLog: filteredSystemLog,
       questUnlocks,
       itemsEquipped: extractEquippedItems(state, next),
@@ -1478,14 +1492,13 @@ export async function runFateAutoplay(opts: {
   dryRun: boolean;
   outRoot: string;
   characterName: string;
-  /** When set, forces MiniMax (or default) for this run via client GM path. */
+  /** When set, forces Flash Lite / MiniMax (or default hosted) for this run via client GM path. */
   writer?: AutoplayWriterKind;
 }): Promise<RunSummary> {
   enableAutoplayTestLab(opts.aiTier);
   setActiveSubscriptionTier(opts.aiTier);
   const writerKind = opts.writer ?? 'default';
-  const writerOverride =
-    writerKind === 'minimax' ? enableAutoplayWriter('minimax') : enableAutoplayWriter('default');
+  const writerOverride = enableAutoplayWriter(writerKind);
   if (writerOverride) {
     // eslint-disable-next-line no-console
     console.log(
@@ -1755,8 +1768,7 @@ export function parseFateArgs(argv: string[]): FateAutoplayCliOpts {
         ? (m as AiAgentMode)
         : 'default';
     } else if (a === '--writer') {
-      const w = next().toLowerCase();
-      out.writer = w === 'minimax' || w === 'minimax-m3' ? 'minimax' : 'default';
+      out.writer = parseAutoplayWriterKind(next());
     } else if (a === '--dry-run') out.dryRun = true;
     else if (a === '--matrix-40' || a === '--matrix40') out.matrix40 = true;
     else if (a === '--matrix') out.matrix = true;

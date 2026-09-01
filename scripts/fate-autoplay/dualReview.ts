@@ -1,16 +1,23 @@
 /**
  * Dual critic packs:
- * - Auto: MiniMax free (Vercel AI Gateway only) × story + vibe/pace
- * - Manual: paste-ready Gemini Pro packs for morning (no API call, $0)
+ * - Auto: Flash Lite via OpenRouter (default) × story + vibe/pace
+ * - Optional: `--writer minimax` → Gateway free MiniMax critic
+ * - Manual: paste-ready Gemini Pro packs for morning (no API call)
  *
  * Batch D: per-lens critic failures do not abort the whole review — pastes always
  * write; INDEX records review-deferred so curriculum does not poison the ladder.
  *
  *   npm run fate-dual-review -- --run-dir scripts/fate-autoplay/runs/<dir>
+ *   npm run fate-dual-review -- --run-dir <dir> --writer flash-lite
+ *   npm run fate-dual-review -- --run-dir <dir> --writer minimax
  */
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
-import { resolveMinimaxFreeCritic } from '../../src/game/autoplayWriter';
+import {
+  parseAutoplayWriterKind,
+  resolveAutoplayCritic,
+  type AutoplayWriterKind,
+} from '../../src/game/autoplayWriter';
 import {
   buildGameVibePaceCriticPrompt,
   buildStoryStandaloneCriticPrompt,
@@ -27,29 +34,49 @@ function extractTranscript(storyPath: string): string {
   return raw.slice(idx);
 }
 
-function parseArgs(argv: string[]): { runDir: string; maxChars: number; minimaxOnly: boolean } {
+function writerFromMeta(meta: Record<string, unknown>): AutoplayWriterKind | null {
+  const w = meta.writer;
+  if (!w || typeof w !== 'object') return null;
+  const kind = (w as { kind?: string }).kind;
+  if (kind === 'minimax' || kind === 'flash-lite' || kind === 'default') return kind;
+  const model = String((w as { model?: string }).model ?? '');
+  if (/minimax/i.test(model)) return 'minimax';
+  if (/gemini-2\.5-flash-lite|flash-lite/i.test(model)) return 'flash-lite';
+  return null;
+}
+
+function parseArgs(argv: string[]): {
+  runDir: string;
+  maxChars: number;
+  writer: AutoplayWriterKind | null;
+  alsoCallGemini: boolean;
+} {
   let runDir = '';
   let maxChars = 120_000;
-  let minimaxOnly = true;
+  let writer: AutoplayWriterKind | null = null;
+  let alsoCallGemini = false;
   for (let i = 0; i < argv.length; i++) {
     const a = argv[i];
     if (a === '--run-dir' || a === '--dir') runDir = argv[++i] ?? '';
     else if (a === '--max-chars') maxChars = Math.max(20_000, Number(argv[++i]) || 120_000);
-    else if (a === '--also-call-gemini') minimaxOnly = false;
+    else if (a === '--writer') writer = parseAutoplayWriterKind(argv[++i] ?? 'flash-lite');
+    else if (a === '--also-call-gemini') alsoCallGemini = true;
   }
-  return { runDir, maxChars, minimaxOnly };
+  return { runDir, maxChars, writer, alsoCallGemini };
 }
 
 async function main(): Promise<void> {
   loadDotEnv();
-  const { runDir, maxChars, minimaxOnly } = parseArgs(process.argv.slice(2));
+  const { runDir, maxChars, writer: writerFlag, alsoCallGemini } = parseArgs(process.argv.slice(2));
   if (!runDir || !existsSync(runDir)) {
-    console.error('Usage: npm run fate-dual-review -- --run-dir <fate run folder>');
+    console.error(
+      'Usage: npm run fate-dual-review -- --run-dir <fate run folder> [--writer flash-lite|minimax]'
+    );
     process.exit(2);
   }
-  if (!minimaxOnly) {
+  if (alsoCallGemini) {
     console.error(
-      '[dual-review] --also-call-gemini is disabled for $0 policy. Gemini packs are paste-only (morning).'
+      '[dual-review] --also-call-gemini is disabled. Gemini packs are paste-only (morning). Auto critic is Flash Lite (or --writer minimax).'
     );
     process.exit(2);
   }
@@ -99,7 +126,8 @@ async function main(): Promise<void> {
       storyBody.slice(-Math.floor(maxChars * 0.4));
   }
 
-  const critic = resolveMinimaxFreeCritic();
+  const writerKind = writerFlag ?? writerFromMeta(meta) ?? 'flash-lite';
+  const critic = resolveAutoplayCritic(writerKind);
   const outDir = join(runDir, 'dual-review');
   mkdirSync(outDir, { recursive: true });
 
@@ -108,9 +136,10 @@ async function main(): Promise<void> {
   let criticOk = 0;
   let criticFail = 0;
 
+  // Use EXAMPLE_ONLY_* so harvest never treats the schema sample as a real P0 (… polluted overnight).
   const jsonTail =
-    '\n\n---\nAfter the prose review, also emit a JSON block:\n' +
-    '```json\n{"p0":[{"title":"…","turns":[1],"quote":"…","owner":"proseWarden|choicePad|arcDirector|craft|opening|other"}],"pass":false}\n```\n';
+    '\n\n---\nAfter the prose review, also emit a JSON block (real findings only — never copy EXAMPLE_ONLY rows):\n' +
+    '```json\n{"p0":[{"title":"EXAMPLE_ONLY_replace_with_real_finding","turns":[1],"quote":"short quote from transcript","owner":"proseWarden|choicePad|arcDirector|craft|opening|other"}],"pass":false,"scores":{"story":null,"vibe":null,"pace":null}}\n```\n';
 
   for (const lens of lenses) {
     const isStory = lens === 'story-standalone';
@@ -140,9 +169,9 @@ async function main(): Promise<void> {
     );
     index.push({ file: pasteName, reviewer: 'gemini-pro', route: 'manual-paste', lens });
 
-    // Auto MiniMax free critic — per-lens try/catch (Batch D)
-    const file = `${lens}__minimax.md`;
-    console.log(`[dual-review] ${file} via ${critic.route} / ${critic.model} ($0)…`);
+    // Auto critic (Flash Lite default, or MiniMax when opted in)
+    const file = `${lens}__${critic.reviewer}.md`;
+    console.log(`[dual-review] ${file} via ${critic.route} / ${critic.model}…`);
     try {
       const text = await chatCompletion({
         baseUrl: critic.baseUrl,
@@ -153,10 +182,17 @@ async function main(): Promise<void> {
         user: body + jsonTail,
         temperature: 0.2,
         maxTokens: 6144,
-        maxAttempts: 4,
+        maxAttempts: critic.reviewer === 'minimax' ? 4 : 3,
       });
       writeFileSync(join(outDir, file), text + '\n', 'utf8');
-      index.push({ file, reviewer: 'minimax', model: critic.model, route: critic.route, lens, status: 'ok' });
+      index.push({
+        file,
+        reviewer: critic.reviewer,
+        model: critic.model,
+        route: critic.route,
+        lens,
+        status: 'ok',
+      });
       criticOk += 1;
     } catch (err) {
       criticFail += 1;
@@ -168,7 +204,7 @@ async function main(): Promise<void> {
       );
       index.push({
         file,
-        reviewer: 'minimax',
+        reviewer: critic.reviewer,
         model: critic.model,
         route: critic.route,
         lens,
@@ -182,6 +218,11 @@ async function main(): Promise<void> {
   const status =
     criticFail === 0 ? 'ok' : criticOk > 0 ? 'partial' : 'review-deferred';
 
+  const policy =
+    critic.reviewer === 'minimax'
+      ? 'minimax-gateway-free-auto + gemini-pro-manual-paste'
+      : 'openrouter-flash-lite-auto + gemini-pro-manual-paste';
+
   writeFileSync(
     join(outDir, 'INDEX.json'),
     JSON.stringify(
@@ -191,7 +232,8 @@ async function main(): Promise<void> {
         status,
         criticOk,
         criticFail,
-        policy: 'minimax-gateway-free-auto + gemini-pro-manual-paste; no OpenRouter',
+        writerKind,
+        policy,
         note:
           status === 'ok'
             ? undefined
@@ -205,7 +247,6 @@ async function main(): Promise<void> {
   console.log(`[dual-review] wrote ${index.length} files → ${outDir} (status=${status})`);
 
   // Exit 0 when pastes exist even if critics deferred — curriculum must not poison ladder.
-  // Exit 1 only when both critics failed AND we want auto-improve to skip patch (still 0 for pastes).
   if (status === 'review-deferred') {
     writeFileSync(join(outDir, 'REVIEW_DEFERRED'), `${new Date().toISOString()}\n`, 'utf8');
   }

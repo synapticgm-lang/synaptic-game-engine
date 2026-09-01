@@ -68,9 +68,9 @@ export function isLookAroundAction(action: string): boolean {
   const a = normalizeActionText(action);
   if (!a) return false;
   if (/^(?:travel\s+toward|return\s+to)\b/.test(a)) return false;
-  if (/\b(?:get|take)\s+(?:your|my|our)\s+bearings\b/.test(a)) return true;
+  if (/\b(?:get|take)(?:\s+(?:your|my|our))?\s+bearings\b/.test(a)) return true;
   if (
-    /\b(?:look\s+around|have\s+a\s+look|looking\s+around|whats?\s+near|what'?s\s+nearby|inspect\s+the\s+immediate|scout\s+the\s+(?:area|room|ruin)|examine\s+the\s+(?:area|room|surroundings)|search\s+the\s+ruin\s+carefully|wait\s+and\s+listen)\b/.test(
+    /\b(?:look\s+around|have\s+a\s+look|looking\s+around|whats?\s+near|what'?s\s+nearby|inspect\s+the\s+immediate|scout\s+the\s+(?:area|room|ruin|cell|chamber)|examine\s+the\s+(?:area|room|surroundings)|search\s+the\s+ruin\s+carefully|wait\s+and\s+listen)\b/.test(
       a
     )
     || /^(?:look|wait|observe)\b/.test(a)

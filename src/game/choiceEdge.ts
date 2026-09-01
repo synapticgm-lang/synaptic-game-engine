@@ -11,6 +11,7 @@ import {
 import { hubsForBibleId, matchHub } from './outdoorHubs';
 import { isPyoaBranchExhausted, isPyoaBranchLocked } from './pyoaBranchLedger';
 import { fleeAvailable, parleyAvailable } from './encounterTerminalFsm';
+import { countLoiterFamilyStreak } from './beatFingerprint';
 
 export type ChoiceEdgeKind =
   | 'combat'
@@ -83,24 +84,41 @@ export function enumerateLegalEdges(state: GameState): ChoiceEdge[] {
         }
       );
     } else if (contract.kind === 'encounter') {
-      // 31i — this branch only runs when activeEncounter is absent (live engagers
-      // return early above). Never offer "Engage the threat" without a real foe —
-      // that pad fed sealed stubs. Scout / ready instead until ArcDirector spawns.
-      edges.push(
-        {
-          id: `${contract.id}-scout-threat`,
-          label: 'Scout for danger',
-          kind: 'inspect',
-          beatId: contract.id,
-        },
-        {
-          id: `${contract.id}-ready`,
-          label: 'Ready yourself and watch',
-          kind: 'inspect',
-          beatId: contract.id,
-          risk: 'med',
-        }
-      );
+      // 31i/31p — no live foe yet. Under loiter treadmill, skip Scout/Ready recycle;
+      // offer exit/talk instead so inspect loops cannot self-feed.
+      const loiter = countLoiterFamilyStreak(state);
+      if (loiter.count >= 3 && loiter.key === 'loiter') {
+        edges.push(
+          {
+            id: `${contract.id}-exit`,
+            label: 'Scout the exit',
+            kind: 'travel',
+            beatId: contract.id,
+          },
+          {
+            id: `${contract.id}-ask`,
+            label: 'Ask a direct question',
+            kind: 'talk',
+            beatId: contract.id,
+          }
+        );
+      } else {
+        edges.push(
+          {
+            id: `${contract.id}-scout-threat`,
+            label: 'Scout for danger',
+            kind: 'inspect',
+            beatId: contract.id,
+          },
+          {
+            id: `${contract.id}-ready`,
+            label: 'Ready yourself and watch',
+            kind: 'inspect',
+            beatId: contract.id,
+            risk: 'med',
+          }
+        );
+      }
     } else if (
       contract.kind === 'quest_stage' ||
       contract.kind === 'leverage' ||
