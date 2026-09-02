@@ -4,7 +4,7 @@
  * Never trust an unverified JWT payload — gm-turn / generate-image have verify_jwt=false.
  */
 
-const FREE_WRITER_OPENROUTER = 'google/gemini-2.5-flash-lite';
+const FREE_WRITER_OPENROUTER = 'deepseek/deepseek-v4-flash-0731';
 
 function founderEmailAllowlist(): string[] {
   const raw = Deno.env.get('FOUNDER_EMAILS') ?? '';
