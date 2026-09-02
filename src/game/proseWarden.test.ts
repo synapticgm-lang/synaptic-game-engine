@@ -102,3 +102,80 @@ describe('Free English slips', () => {
     expect(cleaned.toLowerCase()).not.toMatch(/half an moments/);
   });
 });
+
+describe('Batch X+1: Flee-fail false-arrival scrubbing', () => {
+  it('strips arrival narration when flee attempt failed (Turn 17 case)', () => {
+    const raw = 'You reach Greyhollow Inn. The door is locked. The hunter closes in behind you.';
+    const cleaned = applyProseWarden(raw, {
+      currentLocation: 'Keep Gate',
+      fleeFailed: true,
+    });
+    expect(cleaned).not.toMatch(/You reach Greyhollow Inn/i);
+    expect(cleaned).toMatch(/The door is locked/);
+    expect(cleaned).toMatch(/The hunter closes in/);
+  });
+
+  it('strips "You arrive at" when flee failed', () => {
+    const raw = 'You arrive at the sanctuary. But the enemy grabs you.';
+    const cleaned = applyProseWarden(raw, {
+      currentLocation: 'Dark Alley',
+      fleeFailed: true,
+    });
+    expect(cleaned).not.toMatch(/You arrive at the sanctuary/i);
+    expect(cleaned).toMatch(/the enemy grabs you/i);
+  });
+
+  it('strips "You enter" when flee failed', () => {
+    const raw = 'You enter the tavern. The bouncer blocks your path.';
+    const cleaned = applyProseWarden(raw, {
+      currentLocation: 'Street Corner',
+      fleeFailed: true,
+    });
+    expect(cleaned).not.toMatch(/You enter the tavern/i);
+    expect(cleaned).toMatch(/The bouncer blocks your path/i);
+  });
+
+  it('strips "You leave X and reach Y" when flee failed', () => {
+    const raw = 'You leave the courtyard behind and reach the stables. The guards catch you.';
+    const cleaned = applyProseWarden(raw, {
+      currentLocation: 'Courtyard',
+      fleeFailed: true,
+    });
+    expect(cleaned).not.toMatch(/You leave the courtyard/i);
+    expect(cleaned).not.toMatch(/reach the stables/i);
+    expect(cleaned).toMatch(/The guards catch you/i);
+  });
+
+  it('still strips same-location arrival even when fleeFailed = false (location amnesia)', () => {
+    const raw = 'You reach the sanctuary. You are safe for now.';
+    const cleaned = applyProseWarden(raw, {
+      currentLocation: 'Sanctuary',
+      fleeFailed: false,
+    });
+    // Should strip because currentLocation = Sanctuary (same-location false-arrival)
+    expect(cleaned).not.toMatch(/You reach the sanctuary/i);
+    expect(cleaned).toMatch(/You are safe for now/i);
+  });
+
+  it('strips arrival to same location when priorLocation matches (Turn 8 case)', () => {
+    const raw = 'You reach Keep Gate. The sergeant eyes you warily.';
+    const cleaned = applyProseWarden(raw, {
+      currentLocation: 'Keep Gate',
+      priorLocation: 'Keep Gate',
+      fleeFailed: false,
+    });
+    expect(cleaned).not.toMatch(/You reach Keep Gate/i);
+    expect(cleaned).toMatch(/The sergeant eyes you warily/i);
+  });
+
+  it('strips arrival patterns with "Reaching" gerund form', () => {
+    const raw = 'Reaching the Keep Gate, you pause. The wall looms.';
+    const cleaned = applyProseWarden(raw, {
+      currentLocation: 'Keep Gate',
+      fleeFailed: false,
+    });
+    expect(cleaned).not.toMatch(/Reaching the Keep Gate/i);
+    expect(cleaned).toMatch(/you pause/i);
+    expect(cleaned).toMatch(/The wall looms/i);
+  });
+});

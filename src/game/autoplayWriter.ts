@@ -154,7 +154,7 @@ export function rotateFreeGatewayWriterOnRateLimit(reason = '429'): string | nul
     reason,
   };
   rotationEvents.push(ev);
-  // eslint-disable-next-line no-console
+   
   console.warn(`[autoplay-writer] 429 rotate ${from} → ${to} (${reason})`);
   return to;
 }

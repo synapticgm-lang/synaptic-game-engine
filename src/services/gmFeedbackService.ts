@@ -110,7 +110,7 @@ export async function getGmFeedback(
 
   const entryKey = (logEntryId ?? '').trim() || `turn-${turnNumber}`;
 
-  let query = supabase
+  const query = supabase
     .from('gm_response_feedback')
     .select('*')
     .eq('user_id', user.id)

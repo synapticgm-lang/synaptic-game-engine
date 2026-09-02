@@ -64,7 +64,7 @@ function extractActions(log: LogEntry[], engineMode: EngineMode = 'litrpg'): Act
     for (const line of lines) {
       const lower = line.toLowerCase();
       let kind: ActionKind | null = null;
-      let detail = line;
+      const detail = line;
       if (/crit(ical)?/.test(lower)) kind = 'crit';
       else if (/defeat|slain|killed|dead/.test(lower)) kind = 'defeat';
       else if (/heal|restor/.test(lower)) kind = 'heal';

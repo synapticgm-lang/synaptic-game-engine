@@ -61,7 +61,7 @@ describe('playtest29a — Manus score boost terminal authority', () => {
   });
 
   it('Encounter Terminal FSM clears at max engaged turns', () => {
-    let state = createInitialState(undefined, 'dnd');
+    const state = createInitialState(undefined, 'dnd');
     state.turn = 20;
     state.activeEncounter = initEncounterTerminal(
       {
@@ -123,7 +123,7 @@ describe('playtest29a — Manus score boost terminal authority', () => {
   });
 
   it('Parley exhausted keeps combat on ledger (no free-clear); success clears via prose', () => {
-    let state = createInitialState(undefined, 'litrpg');
+    const state = createInitialState(undefined, 'litrpg');
     state.activeEncounter = initEncounterTerminal(
       {
         name: 'Pact-Hunter Skirmisher',
@@ -245,7 +245,7 @@ describe('playtest29a — Manus score boost terminal authority', () => {
   });
 
   it('ArcDirector tick clears long combat purgatory under flee spam', () => {
-    let state = createInitialState(undefined, 'dnd');
+    const state = createInitialState(undefined, 'dnd');
     state.campaignBibleId = 'cursed-keep';
     state.turn = 17;
     state.openingEstablishment = { ...state.openingEstablishment!, complete: true };

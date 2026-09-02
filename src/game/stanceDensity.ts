@@ -268,7 +268,7 @@ export function applyPathDensity(
 ): string[] {
   if (isOpeningCoverTurn(state) || isCombatLockedTurn(state)) return choices.slice(0, 4);
 
-  let kept = [...choices];
+  const kept = [...choices];
   const alone = isAloneScene(state, storyProse);
   const hasCompanions = (state.companions ?? []).some((c) => c.name?.trim());
   const buckets = new Set(kept.map(classifyPath));

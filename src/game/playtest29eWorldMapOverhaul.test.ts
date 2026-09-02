@@ -62,7 +62,7 @@ describe('playtest29e — world map overhaul', () => {
 
   it('applyBiomeSaneQuestSites relocates farm quest off desert', () => {
     const outline = getWorldOutlineById('crescent-isles')!;
-    let state = createInitialState(undefined, 'litrpg');
+    const state = createInitialState(undefined, 'litrpg');
     state.worldAtlas = instantiateWorldAtlas(outline);
     const quests = applyBiomeSaneQuestSites(state, [
       {
@@ -81,7 +81,7 @@ describe('playtest29e — world map overhaul', () => {
 
   it('rejects inventing new city into place registry', () => {
     const outline = getWorldOutlineById('spine-marches')!;
-    let state = createInitialState(undefined, 'dnd');
+    const state = createInitialState(undefined, 'dnd');
     state.worldAtlas = instantiateWorldAtlas(outline);
     state.places = seedWorldMapPlaces([], state.worldAtlas);
     const before = state.places.length;
@@ -108,7 +108,7 @@ describe('playtest29e — world map overhaul', () => {
   });
 
   it('scrubInventedGeography rewrites unknown city-of names', () => {
-    let state = createInitialState(undefined, 'litrpg');
+    const state = createInitialState(undefined, 'litrpg');
     state.worldAtlas = instantiateWorldAtlas(getWorldOutlineById('crescent-isles')!);
     const out = scrubInventedGeography('You ride toward the city of Fakeopolis.', state);
     expect(out).not.toMatch(/Fakeopolis/);
@@ -128,7 +128,7 @@ describe('playtest29e — world map overhaul', () => {
   });
 
   it('situation packet includes WORLD MAP AUTHORITY', () => {
-    let state = createInitialState(undefined, 'litrpg');
+    const state = createInitialState(undefined, 'litrpg');
     state.worldAtlas = instantiateWorldAtlas(getWorldOutlineById('grid-metro')!);
     const block = formatWorldMapAuthorityBlock(state);
     expect(block).toMatch(/WORLD MAP AUTHORITY/);

@@ -88,7 +88,7 @@ describe('playtest31pBatchE', () => {
     it('scout/ready/wait count as loiter family and interrupt injects exit/talk', () => {
       expect(normalizePlayerIntentKey('Scout for danger')).toBe('scout_danger');
       expect(normalizePlayerIntentKey('Ready yourself and watch')).toBe('wait_watch');
-      let state = createInitialState(undefined, 'litrpg');
+      const state = createInitialState(undefined, 'litrpg');
       state.campaignBibleId = 'summoned-pact';
       state.currentLocation = 'cathedral infirmary';
       state.openingEstablishment = { ...state.openingEstablishment!, complete: true };
@@ -185,7 +185,7 @@ describe('playtest31pBatchE', () => {
         failedParleyCount: 0,
         maxFailedParley: 1,
       };
-      let state = createInitialState(undefined, 'litrpg');
+      const state = createInitialState(undefined, 'litrpg');
       state.activeEncounter = enc;
       const tick = tickEncounterTerminal(state, 'Parley');
       expect(tick.state.activeEncounter?.phase).toBe('resolving');

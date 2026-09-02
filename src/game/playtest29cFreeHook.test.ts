@@ -111,7 +111,7 @@ describe('playtest29c — kit scrub kill + Free-hook recovery', () => {
   });
 
   it('loiter interrupt forces consequence and drops travel/wait pads', () => {
-    let state = createInitialState(undefined, 'litrpg');
+    const state = createInitialState(undefined, 'litrpg');
     state.campaignBibleId = 'summoned-pact';
     state.turn = 16;
     state.openingEstablishment = { ...state.openingEstablishment!, complete: true };

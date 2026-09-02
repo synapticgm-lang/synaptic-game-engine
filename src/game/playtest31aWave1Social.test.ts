@@ -200,7 +200,7 @@ describe('WS-7 Wave 1: Leverage Registry', () => {
 describe('WS-7 Wave 1: Leverage Exhaustion', () => {
   it('Test 4: Second leverage use against same NPC is blocked', () => {
     // First use
-    let state: GameState = {
+    const state: GameState = {
       engineMode: 'dnd',
       turn: 20,
       arcDirector: {

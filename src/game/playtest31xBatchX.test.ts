@@ -196,7 +196,7 @@ describe('playtest31xBatchX', () => {
     });
 
     it('talk during live fight does not auto-clear on max_engaged clock alone', () => {
-      let state = createInitialState(undefined, 'litrpg');
+      const state = createInitialState(undefined, 'litrpg');
       state.turn = 16;
       state.activeEncounter = {
         ...initEncounterTerminal(

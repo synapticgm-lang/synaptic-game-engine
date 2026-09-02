@@ -15,13 +15,15 @@ import { isAtmospherePlaceName } from './questPlay';
 import { isInteriorMap } from './placeAuthority';
 import { shortRoomLabel } from './mapEngine';
 import { attachLastKill, lastKillFromAutoFightLog } from './combatAuthority';
+import { isRegisteredNpc } from './entityRegistry';
 
 /** Bump when adding load-time repairs that must re-run on old saves.
  *  Rev 4 = 30Y chrome-as-people strip (Place / blue panel out of present[]).
  *  Rev 5 = hookLock backfill. repairChromePresent still runs every Continue.
  *  Rev 6 = deny-list PC name (here / Place / you). repairDeniedPcName runs every Continue.
- *  Rev 7 = atmosphere room pins + lastKill backfill from auto-fight log. */
-export const CURRENT_ERROR_REPAIR_REVISION = 7;
+ *  Rev 7 = atmosphere room pins + lastKill backfill from auto-fight log.
+ *  Rev 8 = Batch Y-1: strip unregistered entities from present[] (entity registry lockdown). */
+export const CURRENT_ERROR_REPAIR_REVISION = 8;
 
 export type FailureClass =
   | 'turn_proxy'
@@ -330,6 +332,45 @@ function repairChromePresent(state: GameState, notes: ErrorRepairNote[]): GameSt
   };
 }
 
+/**
+ * Batch Y-1: Strip unregistered entities from present[].
+ * Only entities in the entity registry can exist in present[].
+ * This stops hallucinated NPCs like "Lowmarket Fence", "Rasped", "Scattered Scale".
+ */
+function repairUnregisteredEntities(state: GameState, notes: ErrorRepairNote[]): GameState {
+  const present = state.sceneFacts?.present ?? [];
+  const bibleId = state.bibleId ?? state.campaignBibleId;
+  
+  // Filter out any entity that is not in the NPC registry
+  const registeredPresent = present.filter((name) => {
+    // Keep if it's a registered NPC
+    if (isRegisteredNpc(name, bibleId)) return true;
+    
+    // Keep if it's a chrome token (already handled by repairChromePresent)
+    if (isChromePersonToken(name)) return false; // Will be removed by repairChromePresent
+    
+    // Otherwise reject
+    return false;
+  });
+  
+  if (registeredPresent.length === present.length) return state;
+  
+  const removed = present.filter((n) => !registeredPresent.includes(n));
+  
+  notes.push({
+    class: 'continuity_prose',
+    code: 'ERR_UNREGISTERED_ENTITY',
+    detail: `stripped ${removed.length} unregistered entities from present: ${removed.join(', ')}`,
+  });
+  
+  return {
+    ...state,
+    sceneFacts: state.sceneFacts 
+      ? { ...state.sceneFacts, present: registeredPresent }
+      : state.sceneFacts,
+  };
+}
+
 function repairAtmosphereMapRooms(state: GameState, notes: ErrorRepairNote[]): GameState {
   const dungeon = state.activeDungeon;
   if (!dungeon || !isInteriorMap(dungeon)) return state;
@@ -405,6 +446,7 @@ export function applyErrorRepairs(state: GameState): ErrorRepairResult {
   next = repairOrphanCircleBlessing(next, notes);
   next = repairCircleBlessingSlot(next, notes);
   next = repairChromePresent(next, notes);
+  next = repairUnregisteredEntities(next, notes); // Batch Y-1
   next = repairHookLock(next, notes);
   next = repairDeniedPcName(next, notes);
   next = repairAtmosphereMapRooms(next, notes);

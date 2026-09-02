@@ -128,7 +128,7 @@ export function harvestNarrativeIntoLedger(
     };
   }
 
-  let next = state;
+  const next = state;
   let lorebook = [...(next.lorebook ?? [])];
   let npcMemories = [...(next.npcMemories ?? [])];
   const present = new Set([...(next.sceneFacts?.present ?? [])]);

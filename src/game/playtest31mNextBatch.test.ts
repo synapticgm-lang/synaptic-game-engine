@@ -146,7 +146,7 @@ describe('playtest31mNextBatch', () => {
   });
 
   it('drought does not attach a live fight until foe is present or preface commits', () => {
-    let state = summoned(16);
+    const state = summoned(16);
     state.arcDirector = {
       committedBeatIds: ['sp-beat-orient', 'sp-beat-hear-reason'],
       turnsSinceCombatReceipt: 20,

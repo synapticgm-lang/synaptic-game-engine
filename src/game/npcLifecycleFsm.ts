@@ -286,7 +286,7 @@ export function updateNpcLifecycle(
   mandate?: string;
 } {
   const currentState = lifecycle.state;
-  let next = { ...lifecycle };
+  const next = { ...lifecycle };
   let transition: { from: NpcLifecycleState; to: NpcLifecycleState; reason: string } | undefined;
   let mandate: string | undefined;
   

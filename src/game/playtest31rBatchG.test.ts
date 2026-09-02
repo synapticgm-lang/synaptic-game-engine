@@ -203,7 +203,7 @@ describe('playtest31rBatchG', () => {
     });
 
     it('after loiter exhaust, pad keeps a world-moving option', () => {
-      let state = createInitialState(undefined, 'litrpg');
+      const state = createInitialState(undefined, 'litrpg');
       state.openingEstablishment = { ...state.openingEstablishment!, complete: true };
       state.turn = 15;
       state.currentLocation = 'ruin chamber';

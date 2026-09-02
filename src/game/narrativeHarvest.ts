@@ -1,5 +1,13 @@
 /**
- * 29e — Harvest AI inventions into the ledger (NPCs / local detail), then lock them.
+ * Batch Y Milestone 1 — Entity Registry Lockdown
+ * 
+ * DELETED: Title-Case heuristic that auto-harvested capitalized tokens.
+ * NEW: Only names in the entity registry can enter present[].
+ * 
+ * Root cause fix: Title-Case heuristic saw capitalized words in LLM garbage
+ * ("Lowmarket Fence", "Rasped", "Scattered Scale") and flagged them as present[]
+ * entities. Next turn, engine injected them as valid NPCs.
+ * 
  * Does NOT harvest new cities/towns/shores — those stay on the premade world map.
  */
 
@@ -8,39 +16,44 @@ import { harvestCrowdIntoSceneFacts } from './crowdAuthority';
 import { harvestHookIntoSceneFacts } from './hookLock';
 import { looksLikeGeographyInvent, isLegalMapPlace } from './worldMapAuthority';
 import { isChromePersonToken, isChoicePadPersonToken, isDialogueVerbPersonToken, isFactionOrOrgToken, isPolityFactionOrPlaceToken, isRoleContactLabel } from './chromeAuthority';
+import { isRegisteredNpc, getRegisteredNpcs } from './entityRegistry';
 
-const NAME_PATTERNS = [
-  /\b(?:named|called|is)\s+([A-Z][a-z]{2,}(?:\s+[A-Z][a-z]+)?)\b/g,
-  /\b([A-Z][a-z]{2,})\s+(?:says|said|asks|asked|replies|nods|smiles|frowns|growls|whispers)\b/g,
-  /\b(?:meet|meets|met|greets|approach(?:es)?)\s+([A-Z][a-z]{2,}(?:\s+[A-Z][a-z]+)?)\b/g,
-];
-
-const BLOCKLIST =
-  /^(The|You|Your|System|Status|Quest|Turn|North|South|East|West|Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday|Chapter|They|Them|Their|One|Press|Wait|Ready|Scout|Ask|Talk|Leave|Open|Hold|Flee|Parley|Leverage|Attack|Ahead|Behind|Beside|Nearby|Ascend|Draw|Intervene|Peer|Give|Maintain|Figure|Rasped|He|She|It)$/i;
-
-function isBlockedHarvestName(name: string): boolean {
-  if (BLOCKLIST.test(name) || isChromePersonToken(name)) return true;
-  if (isChoicePadPersonToken(name) || isDialogueVerbPersonToken(name)) return true;
-  if (/^figure\s+\d+$/i.test(name.trim())) return true;
-  if (isPolityFactionOrPlaceToken(name) || isFactionOrOrgToken(name)) return true;
-  if (isRoleContactLabel(name)) return true;
-  return false;
-}
-
-function extractCandidateNames(prose: string): string[] {
+/**
+ * Extract NPC names from prose that are in the entity registry.
+ * DELETED: Title-Case heuristic (NAME_PATTERNS) that auto-harvested capitalized words.
+ * NEW: Only harvest names that exist in the immutable NPC registry for this campaign.
+ */
+function extractRegisteredNpcs(prose: string, bibleId?: string | null): string[] {
+  if (!prose?.trim()) return [];
+  
+  // Get all valid NPCs for this campaign
+  const validNpcs = getRegisteredNpcs(bibleId);
+  if (!validNpcs.length) return [];
+  
   const found = new Set<string>();
-  for (const re of NAME_PATTERNS) {
-    re.lastIndex = 0;
-    let m: RegExpExecArray | null;
-    while ((m = re.exec(prose))) {
-      const name = (m[1] ?? '').trim();
-      if (name.length < 3 || name.length > 40) continue;
-      if (isBlockedHarvestName(name)) continue;
-      if (looksLikeGeographyInvent(name)) continue;
-      found.add(name);
+  const lower = prose.toLowerCase();
+  
+  // Only find NPCs that are explicitly in the registry
+  for (const npcName of validNpcs) {
+    const npcLower = npcName.toLowerCase();
+    // Simple word boundary check
+    const pattern = new RegExp(`\\b${npcLower.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`, 'i');
+    if (pattern.test(lower)) {
+      found.add(npcName);
     }
   }
-  return [...found].slice(0, 6);
+  
+  // Also check for explicit <npc>Name</npc> tags (if LLM uses them)
+  const tagPattern = /<npc>([^<]+)<\/npc>/gi;
+  let tagMatch: RegExpExecArray | null;
+  while ((tagMatch = tagPattern.exec(prose))) {
+    const taggedName = (tagMatch[1] ?? '').trim();
+    if (taggedName.length >= 2 && isRegisteredNpc(taggedName, bibleId)) {
+      found.add(taggedName);
+    }
+  }
+  
+  return [...found].slice(0, 8);
 }
 
 function ensureNpcMemory(state: GameState, name: string, turn: number): NpcMemory[] {
@@ -91,6 +104,7 @@ function ensureNpcLore(lorebook: LoreCard[], name: string, turn: number): LoreCa
 
 /**
  * After GM prose: harvest named NPCs into lorebook + npcMemories.
+ * Only registered NPCs from the entity registry can be harvested.
  * Geography invents (new cities) are ignored — map authority owns those.
  */
 export function harvestNarrativeIntoLedger(
@@ -99,8 +113,11 @@ export function harvestNarrativeIntoLedger(
   turn: number
 ): GameState {
   if (!prose?.trim()) return state;
-  const names = extractCandidateNames(prose);
-  if (!names.length) {
+  
+  // Batch Y Milestone 1: Only harvest NPCs that are in the entity registry
+  const registeredNpcs = extractRegisteredNpcs(prose, state.bibleId);
+  
+  if (!registeredNpcs.length) {
     return {
       ...state,
       sceneFacts: harvestHookIntoSceneFacts(
@@ -111,15 +128,21 @@ export function harvestNarrativeIntoLedger(
     };
   }
 
-  let next = state;
+  const next = state;
   let lorebook = [...(next.lorebook ?? [])];
   let npcMemories = [...(next.npcMemories ?? [])];
   const present = new Set([...(next.sceneFacts?.present ?? [])]);
 
-  for (const name of names) {
+  for (const name of registeredNpcs) {
+    // Double-check: only add if registered (should always be true here)
+    if (!isRegisteredNpc(name, state.bibleId)) {
+      console.warn(`[narrativeHarvest Y-1] Rejected unregistered NPC: ${name}`);
+      continue;
+    }
+    
     // Skip if this string is actually a map settlement (already canonical)
-    if (isBlockedHarvestName(name)) continue;
     if (isLegalMapPlace(next, name) && looksLikeGeographyInvent(name)) continue;
+    
     lorebook = ensureNpcLore(lorebook, name, turn);
     npcMemories = ensureNpcMemory({ ...next, npcMemories }, name, turn);
     present.add(name);

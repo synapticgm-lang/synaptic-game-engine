@@ -49,7 +49,7 @@ describe('playtest31h — gap close P0 ledger owners', () => {
   });
 
   it('P0-1 drought spawn without visible foe marks pending preface; ensure prepends', () => {
-    let state = summoned(16);
+    const state = summoned(16);
     state.arcDirector = {
       committedBeatIds: ['sp-beat-orient', 'sp-beat-hear-reason'],
       turnsSinceCombatReceipt: 20,

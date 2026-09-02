@@ -352,7 +352,7 @@ export function applyOutcomeMutations(
   state: GameState,
   mutations: OutcomeMutation[]
 ): GameState {
-  let nextState = state;
+  const nextState = state;
   
   for (const mutation of mutations) {
     // Simple path resolution - in production this would be more sophisticated

@@ -184,7 +184,7 @@ describe('WS-7 Wave A: Leverage Mechanics', () => {
     });
     
     it('should return existing asset if already registered', () => {
-      let gs = createMockGameState();
+      const gs = createMockGameState();
       
       const { state: state1, assetId: id1 } = registerLeverageAsset(
         'physical_threat',
@@ -207,7 +207,7 @@ describe('WS-7 Wave A: Leverage Mechanics', () => {
   
   describe('exhaustLeverageAsset', () => {
     it('should mark asset as exhausted', () => {
-      let gs = createMockGameState();
+      const gs = createMockGameState();
       
       const { state, assetId } = registerLeverageAsset(
         'social_exposure',
@@ -224,7 +224,7 @@ describe('WS-7 Wave A: Leverage Mechanics', () => {
   
   describe('resolveLeverage', () => {
     it('should resolve leverage with positive modifier', () => {
-      let gs = createMockGameState();
+      const gs = createMockGameState();
       
       const { state, assetId } = registerLeverageAsset(
         'moral_appeal',
@@ -244,7 +244,7 @@ describe('WS-7 Wave A: Leverage Mechanics', () => {
     });
     
     it('should fail if leverage already exhausted', () => {
-      let gs = createMockGameState();
+      const gs = createMockGameState();
       
       const { state, assetId } = registerLeverageAsset(
         'physical_threat',
@@ -739,7 +739,7 @@ describe('WS-7 Wave C: Social Stakes Templates', () => {
     });
     
     it('should block exhausted leverage', () => {
-      let gs = createMockGameState();
+      const gs = createMockGameState();
       
       const { state, assetId } = registerLeverageAsset(
         'social_exposure',
@@ -1038,7 +1038,7 @@ describe('WS-7 Wave D+: Social Progression', () => {
 describe('WS-7 Integration: Full Social Resolution Flow', () => {
   it('should complete full social resolution with all waves', () => {
     // Start with neutral NPC
-    let gs = createMockGameState();
+    const gs = createMockGameState();
     
     // Wave A: Register leverage
     const { state: state1, assetId } = registerLeverageAsset(
@@ -1052,7 +1052,7 @@ describe('WS-7 Integration: Full Social Resolution Flow', () => {
     
     // Wave B: Create relationship
     const relationship = getOrCreateRelationship(state1, 'Ally NPC');
-    let state2 = updateRelationship(state1, relationship);
+    const state2 = updateRelationship(state1, relationship);
     
     expect(state2.arcDirector?.npcRelationships).toHaveLength(1);
     

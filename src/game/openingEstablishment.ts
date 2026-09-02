@@ -77,7 +77,7 @@ export function tryHandleQuickResponseButton(
   };
   
   // Apply answer to character state
-  let nextState = applyKindToState(state, currentPrompt, answer);
+  const nextState = applyKindToState(state, currentPrompt, answer);
   
   return {
     ...nextState,

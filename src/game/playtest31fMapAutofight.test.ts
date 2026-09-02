@@ -65,7 +65,7 @@ describe('playtest31f — map essay rooms + autofight last-kill', () => {
   });
 
   it('combat pad drops look-around while a skirmisher is live', () => {
-    let state = createInitialState('The Summoned Pact', 'litrpg');
+    const state = createInitialState('The Summoned Pact', 'litrpg');
     state.activeEncounter = initEncounterTerminal(
       {
         name: 'Pact-Hunter Skirmisher',

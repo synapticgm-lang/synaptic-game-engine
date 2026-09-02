@@ -250,7 +250,7 @@ export function isSpineDelayPad(choice: string): boolean {
 export function advancePyoaSpine(state: GameState, playerInput: string): GameState {
   if (state.engineMode !== 'pyoa') return state;
   if (!spineBibleSupported(state.campaignBibleId)) return state;
-  let working = ensurePyoaSpine(state);
+  const working = ensurePyoaSpine(state);
   const spine = working.pyoaSpine!;
   if (spine.endingId) return working;
 

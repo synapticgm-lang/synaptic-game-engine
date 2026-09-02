@@ -628,7 +628,7 @@ export function scrubEntityMadLibs(text: string, encounterName?: string): string
  */
 export function scrubBodyStatusDumps(text: string): string {
   if (!text) return text;
-  let next = text
+  const next = text
     .replace(
       /\byour health is full at\s+\d+\s*\/\s*\d+(?:,?\s*your mana reserves? (?:are|is) at\s+\d+\s*\/\s*\d+)?\.?/gi,
       ''

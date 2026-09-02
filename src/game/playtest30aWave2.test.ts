@@ -186,7 +186,7 @@ describe('Wave 2 B024 — Hub beat caps', () => {
 
 describe('Wave 2 B025 — PYOA branch convergence', () => {
   it('detects convergence when branches reach same quest stage', () => {
-    let state = initGameState('vesper-glass-cipher', 'pyoa');
+    const state = initGameState('vesper-glass-cipher', 'pyoa');
     state.engineMode = 'pyoa';
     state.turn = 20;
     state.currentLocation = 'Convergence Point';
@@ -265,7 +265,7 @@ describe('Wave 2 B025 — PYOA branch convergence', () => {
   });
 
   it('formats convergence mandate', () => {
-    let state = initGameState('vesper-glass-cipher', 'pyoa');
+    const state = initGameState('vesper-glass-cipher', 'pyoa');
     state.engineMode = 'pyoa';
     state.currentLocation = 'Convergence Point';
     state.pyoaBranchLedger = {
@@ -289,7 +289,7 @@ describe('Wave 2 B025 — PYOA branch convergence', () => {
   });
 
   it('does not detect convergence without locked branch', () => {
-    let state = initGameState('vesper-glass-cipher', 'pyoa');
+    const state = initGameState('vesper-glass-cipher', 'pyoa');
     state.engineMode = 'pyoa';
     state.turn = 5;
     state.pyoaBranchLedger = {

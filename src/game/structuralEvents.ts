@@ -197,7 +197,7 @@ export function applyStructuralEvents(
     }
 
     if (e.type === 'dungeon-move' && e.nodeId && next.activeDungeon) {
-      let moved = moveToNode(next.activeDungeon, e.nodeId);
+      const moved = moveToNode(next.activeDungeon, e.nodeId);
       // Run floor becomes eligible once half the site is visited.
       if (
         !moved.runFloorMet &&

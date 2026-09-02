@@ -26,7 +26,7 @@ describe('playtest29b — optimise after terminal authority', () => {
   });
 
   it('combat HP ledger: GM enemy-appear cannot heal live foe', () => {
-    let state = createInitialState(undefined, 'litrpg');
+    const state = createInitialState(undefined, 'litrpg');
     state.turn = 12;
     state.activeEncounter = initEncounterTerminal(
       {
@@ -68,7 +68,7 @@ describe('playtest29b — optimise after terminal authority', () => {
   });
 
   it('encounter clear awards XP + STATUS + re-engage cooldown', () => {
-    let state = createInitialState(undefined, 'litrpg');
+    const state = createInitialState(undefined, 'litrpg');
     state.turn = 15;
     state.activeEncounter = initEncounterTerminal(
       {
@@ -114,7 +114,7 @@ describe('playtest29b — optimise after terminal authority', () => {
   });
 
   it('Free T12 durable delta is enforced in ArcDirector (not eval-only)', () => {
-    let state = createInitialState(undefined, 'litrpg');
+    const state = createInitialState(undefined, 'litrpg');
     state.campaignBibleId = 'summoned-pact';
     state.turn = 12;
     state.openingEstablishment = { pending: [], answers: {}, complete: true };
@@ -188,7 +188,7 @@ describe('playtest29b — optimise after terminal authority', () => {
   });
 
   it('hard streak interrupt drops wait/walk_away/inspect pads', () => {
-    let state = createInitialState(undefined, 'rpg');
+    const state = createInitialState(undefined, 'rpg');
     state.turn = 40;
     state.log = [
       { role: 'player', content: 'Walk away', timestamp: 1 },

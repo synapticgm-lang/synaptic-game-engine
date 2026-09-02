@@ -289,7 +289,7 @@ function opposingNatures(locked: HookNature): HookNature[] {
  */
 export function scrubHookReversals(text: string, lock: HookLock | undefined): string {
   if (!text) return text;
-  let next = scrubBoughtHereSlip(text);
+  const next = scrubBoughtHereSlip(text);
   const effective = lock ?? lockHookFromText(next, 0, 'harvest');
   if (!effective) return next;
 

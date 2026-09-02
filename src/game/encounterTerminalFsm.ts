@@ -369,3 +369,102 @@ export function isEncounterEngaged(state: GameState): boolean {
 export function encounterBlocksTravel(state: GameState): boolean {
   return isEncounterEngaged(state) || !!state.activeEncounter || !!state.sceneFacts?.pendingEncounter;
 }
+
+// ============================================================================
+// Batch Z Milestone 2 — State-Lock Combat & Travel
+// FSM helpers for ChoiceCompiler pad filtering
+// ============================================================================
+
+/**
+ * Can the player travel in the current FSM state?
+ * Caught or in combat = NO travel pads.
+ */
+export function canTravelInFsmState(state: GameState): boolean {
+  const enc = state.activeEncounter ?? state.pendingEncounter;
+  
+  // Caught: no travel
+  if (enc?.caught) return false;
+  
+  // In combat: no travel
+  if (isEncounterEngaged(state)) return false;
+  
+  // Pending encounter: no travel
+  if (state.sceneFacts?.pendingEncounter) return false;
+  
+  return true;
+}
+
+/**
+ * Can the player inspect in the current FSM state?
+ * Caught = NO inspection pads (must fight/plead/struggle).
+ */
+export function canInspectInFsmState(state: GameState): boolean {
+  const enc = state.activeEncounter ?? state.pendingEncounter;
+  
+  // Caught: no inspect
+  if (enc?.caught) return false;
+  
+  return true;
+}
+
+/**
+ * Can the player shop/merchant in the current FSM state?
+ * In combat = NO shop pads.
+ */
+export function canShopInFsmState(state: GameState): boolean {
+  // In combat: no shop
+  if (isEncounterEngaged(state)) return false;
+  
+  return true;
+}
+
+/**
+ * Get the allowed combat actions for the current FSM state.
+ * Caught = only [Attack, Plead, Struggle, Surrender].
+ * In combat (not caught) = [Attack, Flee, Parley] (if caps allow).
+ * No combat = all actions allowed.
+ */
+export function getAllowedCombatActions(state: GameState): {
+  attack: boolean;
+  flee: boolean;
+  parley: boolean;
+  plead: boolean;
+  struggle: boolean;
+  surrender: boolean;
+} {
+  const enc = state.activeEncounter ?? state.pendingEncounter;
+  
+  // Caught: only desperate actions
+  if (enc?.caught) {
+    return {
+      attack: true,
+      flee: false,
+      parley: false,
+      plead: true,
+      struggle: true,
+      surrender: true,
+    };
+  }
+  
+  // In combat (not caught): combat actions
+  if (enc && isEncounterEngaged(state)) {
+    return {
+      attack: true,
+      flee: fleeAvailable(enc),
+      parley: parleyAvailable(enc),
+      plead: false,
+      struggle: false,
+      surrender: false,
+    };
+  }
+  
+  // No combat: all allowed
+  return {
+    attack: true,
+    flee: true,
+    parley: true,
+    plead: true,
+    struggle: true,
+    surrender: true,
+  };
+}

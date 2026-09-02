@@ -1129,12 +1129,14 @@ Do NOT print dice notation or CODE ENFORCED.
   cleanText = enforcePerspective(cleanText, settings, state.character.name);
   cleanText = applyProseWarden(cleanText, {
     currentLocation: working.currentLocation ?? state.currentLocation,
+    priorLocation: state.previousSceneFacts?.location ?? state.currentLocation,
     aloneArrival: isAloneArrivalOpening(working) || isAloneArrivalOpening(state),
     crowdSize: crowdSizeForWarden(working, cleanText),
     crowdPresent:
       working.sceneFacts?.crowd === 'present' ||
       working.sceneFacts?.crowd === 'sparse' ||
       crowdSizeForWarden(working, cleanText) > 0,
+    fleeFailed: working.activeEncounter?.caught === true,
     inventory: working.inventory ?? state.inventory,
     sceneProps: collectSceneObjectNames(working),
     searchedEmpty: listEmptySearchTargets(working.sceneFacts ?? state.sceneFacts),
@@ -1372,7 +1374,7 @@ Do NOT print dice notation or CODE ENFORCED.
   );
   let character = working.character;
   let levelNotes: string[] = [];
-  let sandboxNotes = [...sandboxXp.notes];
+  const sandboxNotes = [...sandboxXp.notes];
   let sandboxKeys = sandboxXp.awardKeys;
   if (sandboxXp.xp > 0) {
     const leveled = applyCharacterXpGain(character, sandboxXp.xp);
@@ -1535,7 +1537,7 @@ export async function runFateAutoplay(opts: {
   const writerKind = opts.writer ?? 'default';
   const writerOverride = enableAutoplayWriter(writerKind);
   if (writerOverride) {
-    // eslint-disable-next-line no-console
+     
     console.log(
       `[autoplay-writer] ${writerOverride.route} model=${writerOverride.model} — ${writerOverride.note}`
     );
@@ -1614,7 +1616,7 @@ export async function runFateAutoplay(opts: {
           dnsFailStreak += 1;
           if (dnsFailStreak >= 2) {
             fatal = 'DNS ENOTFOUND — pausing curriculum cell (Gateway unreachable)';
-            // eslint-disable-next-line no-console
+             
             console.warn(`[fate-autoplay] ${fatal} after turn ${turnNo}`);
             break;
           }

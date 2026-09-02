@@ -233,8 +233,25 @@ export async function runWarden(
   // Pack 13: Enable grammar check for High tier (capacityTier === 'high')
   const enableGrammarCheck = (state.capacityTier ?? 'free') === 'high';
   
+  // DEBUG LOGGING - Phase 2
+  const debugEnabled = false; // Set to false after debugging
+  const fleeFailed = state.activeEncounter?.caught === true;
+  const priorLoc = prevFacts?.location ?? state.previousSceneFacts?.location;
+  const currentLoc = state.locationSheet?.name || state.currentLocation;
+  
+  if (debugEnabled && (fleeFailed || /\bYou reach\b/i.test(narrativeText))) {
+    console.log('[warden] CONTEXT FOR PROSE SCRUB:', {
+      turn: state.turn,
+      currentLocation: currentLoc,
+      priorLocation: priorLoc ?? 'undefined',
+      fleeFailed,
+      encounterCaught: state.activeEncounter?.caught ?? 'no encounter',
+      hasYouReach: /\bYou reach\b/i.test(narrativeText),
+    });
+  }
+  
   const wardenCtx = {
-    currentLocation: state.locationSheet?.name || state.currentLocation,
+    currentLocation: currentLoc,
     aloneArrival: isAloneArrivalOpening(state),
     hasMappedDoorExits: doorish.length > 0,
     adjacentRoomNames: exits.map((e) => e.name),
@@ -264,6 +281,9 @@ export async function runWarden(
       state.arcDirector?.lastEncounterClearedTurn === state.turn ||
       state.arcDirector?.lastEncounterClearedTurn === state.turn - 1,
     hookLock: hookLockForWarden(state, narrativeText),
+    selectedIntentKind: intent?.kind,
+    fleeFailed,
+    priorLocation: priorLoc,
   };
   
   const polishedBase = enableGrammarCheck

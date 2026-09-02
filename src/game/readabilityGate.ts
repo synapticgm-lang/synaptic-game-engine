@@ -55,7 +55,7 @@ export function scanReadabilityViolations(state: GameState): ReadabilityViolatio
   const out: ReadabilityViolation[] = [];
   const loc = state.currentLocation ?? '';
   const knownPlaces = (state.places ?? []).map((p) => p.name).filter(Boolean) as string[];
-  let prevLoc = '';
+  const prevLoc = '';
 
   for (const { turn, content } of gmEntries(state)) {
     if (isStitchBankFingerprint(content)) {

@@ -52,7 +52,7 @@ describe('playtest31qBatchF', () => {
       expect(isSameRoomLoiterIntent('Scout for danger')).toBe(true);
       expect(isSameRoomLoiterIntent('Wait and watch')).toBe(true);
 
-      let state = createInitialState(undefined, 'litrpg');
+      const state = createInitialState(undefined, 'litrpg');
       state.openingEstablishment = { ...state.openingEstablishment!, complete: true };
       state.turn = 12;
       state.currentLocation = 'cathedral infirmary';
@@ -101,7 +101,7 @@ describe('playtest31qBatchF', () => {
 
   describe('P0 — CRAFT ignore harden', () => {
     it('flags inspect-delta CRAFT when prose is atmosphere-only and stitches', () => {
-      let state = createInitialState(undefined, 'litrpg');
+      const state = createInitialState(undefined, 'litrpg');
       state.openingEstablishment = { ...state.openingEstablishment!, complete: true };
       state.turn = 8;
       state.currentLocation = 'burnt husk';
@@ -145,7 +145,7 @@ describe('playtest31qBatchF', () => {
       );
       expect(detectParleySuccessInProse('The hunter refuses and lunges.')).toBe(false);
 
-      let state = createInitialState(undefined, 'litrpg');
+      const state = createInitialState(undefined, 'litrpg');
       state.activeEncounter = initEncounterTerminal(
         {
           name: 'Pact-Hunter Skirmisher',
@@ -205,7 +205,7 @@ describe('playtest31qBatchF', () => {
     });
 
     it('opts.parleySucceeded ledger-clears without unearned auto-cap', () => {
-      let state = createInitialState(undefined, 'litrpg');
+      const state = createInitialState(undefined, 'litrpg');
       state.activeEncounter = initEncounterTerminal(
         {
           name: 'Pact-Hunter Skirmisher',

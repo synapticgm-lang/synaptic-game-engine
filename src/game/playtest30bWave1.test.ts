@@ -134,7 +134,7 @@ describe('WS-5 Wave 1 — State Authority', () => {
   // Test 1: Crisis receipt idempotency (same key returns same receipt)
   it('should return existing receipt on idempotent retry', () => {
     const runId = 'run-001';
-    let ledger = initPyoaBranchLedger(runId, testBibleId, 'seed-123', '1.0.0');
+    const ledger = initPyoaBranchLedger(runId, testBibleId, 'seed-123', '1.0.0');
 
     // First commit
     const { ledger: ledger1, receipt: receipt1 } = commitCrisisFork(

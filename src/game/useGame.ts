@@ -2632,7 +2632,7 @@ export function useGame() {
       // Never silently apply HP for failed skill checks — damage must come from explicit
       // <damage> tags (and be narrated). Silent -2 on every fail made HP drop "for no reason".
       // Crit-fail trap risk is hinted to the GM via code outcome; sticky HP still needs <damage>.
-      let engineHpDelta = 0;
+      const engineHpDelta = 0;
 
       let worldLedger = normalizeWorldLedger(liveCurrent.worldLedger);
       const preTick = tickWorld(
@@ -3618,6 +3618,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
         const doorish = exits.filter((e) => e.kind === 'door' || e.kind === 'stairs');
         cleanText = applyProseWarden(cleanText, {
           currentLocation: workingState.currentLocation ?? liveCurrent.currentLocation,
+          priorLocation: liveCurrent.previousSceneFacts?.location ?? liveCurrent.currentLocation,
           aloneArrival: isAloneArrivalOpening(workingState) || isAloneArrivalOpening(liveCurrent),
           hasMappedDoorExits: doorish.length > 0,
           adjacentRoomNames: exits.map((e) => e.name),
@@ -3630,6 +3631,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
           previousTimeOfDay: workingState.previousSceneFacts?.timeOfDay,
           isIndoor: workingState.sceneFacts?.indoor,
           wasIndoor: workingState.previousSceneFacts?.indoor,
+          fleeFailed: workingState.activeEncounter?.caught === true,
           exitNarrated:
             (workingState.sceneFacts?.exitAuthorityTurn ?? 0) >= nextTurn - 1 ||
             (liveCurrent.sceneFacts?.exitAuthorityTurn ?? 0) >= nextTurn - 1,
@@ -3737,7 +3739,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
       }
 
       // Stamp comic-lite job keys onto panels before they enter the committed log (idempotency).
-      let comicPanelJobKeys: string[] = [];
+      const comicPanelJobKeys: string[] = [];
       let comicBeatRevision = 0;
       if (isComicView && comicPanelsForLog.length > 0 && eligibility.eligible) {
         comicBeatRevision = nextLedgerRevision(liveCurrent);
@@ -4268,7 +4270,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
             turn: nextTurn,
           }
         );
-        let sandboxNotes = [...sandboxXp.notes];
+        const sandboxNotes = [...sandboxXp.notes];
         let sandboxKeys = sandboxXp.awardKeys;
         const dailyMilestone = applyDailyQuestMilestone(
           { ...workingState, sandboxAwardKeys: sandboxKeys },
@@ -5347,9 +5349,11 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
       }
       narrativeText = applyProseWarden(narrativeText, {
         currentLocation: liveCurrent.currentLocation,
+        priorLocation: liveCurrent.previousSceneFacts?.location ?? liveCurrent.currentLocation,
         playerName: liveCurrent.character?.name,
         groundedWeapons: groundedWeaponNames(liveCurrent),
         recentlyClearedEncounter: result.victory,
+        fleeFailed: result.caught === true,
         enemyName: enemy.name,
         lastKill: result.victory
           ? { name: enemy.name, outcome: 'victory', turn: liveCurrent.turn + 1, remains: true }

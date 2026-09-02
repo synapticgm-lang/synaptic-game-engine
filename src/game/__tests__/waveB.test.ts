@@ -425,7 +425,7 @@ describe('WS-4 Wave B: Flee Mechanics', () => {
   });
   
   it('should catch player after max attempts', () => {
-    let progress = initFleeProgress(2);
+    const progress = initFleeProgress(2);
     const rng = createSeededRng('test');
     
     let currentRng = rng;

@@ -447,7 +447,7 @@ export function resolveSeededRarity(
 
     const count = pity?.byTier?.[tier] ?? 0;
     const rng = createHashRng(seed, dungeon!.blueprintId, target.id, 'open', count);
-    let rolled = rollLootRarityWithPity(tier, rng, count);
+    const rolled = rollLootRarityWithPity(tier, rng, count);
     let rarity = rolled.rarity;
     let runFloorApplied = false;
 
