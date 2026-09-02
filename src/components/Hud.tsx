@@ -8,9 +8,9 @@ import { effectiveWriterTier, hasUnlimitedTextCapacity, isFounderPlayAccount } f
 import { equippedSetLabel, equippedSetName } from '../game/uiTheme';
 
 /** Visible after a hard refresh -- if this is missing, Vercel is still serving the 16 Aug bundle. */
-export const HUD_BUILD_STAMP = '2026-09-02a';
+export const HUD_BUILD_STAMP = '2026-09-02b';
 const HUD_BUILD_TITLE =
-  'Debug 2026-09-02a - RPG T50 residuals (Tavern/you-stool/loiter)';
+  'Debug 2026-09-02b - Flash Lite Input Sanitization Architecture';
 
 interface Props {
   state: GameState;
