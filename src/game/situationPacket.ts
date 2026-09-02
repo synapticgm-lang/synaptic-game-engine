@@ -413,7 +413,7 @@ export function formatSceneSnapshotForPrompt(state: GameState): string {
   }
   
   // Apply loiter delta directive if needed
-  const streak = countPlayerIntentStreak(state);
+  // Reuse streak variable from line 306 (already calculated above for stagnation check)
   const snapshotBase = lines.join('\n');
   const snapshotWithLoiterDelta = injectLoiterDelta(snapshotBase, streak, state);
   
