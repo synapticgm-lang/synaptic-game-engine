@@ -155,8 +155,8 @@ export const INTENT_DISPLAY_LABELS: Record<PlayerIntent, string> = {
 export function inferIntent(text: string): PlayerIntent {
   const lower = text.toLowerCase().trim();
   
-  // Combat
-  if (/\b(attack|strike|fight|engage|press the attack|swing|slash|stab)\b/.test(lower)) {
+  // Combat - BATCH YZ: Added lunge, charge, rush to catch more attack patterns
+  if (/\b(attack|strike|fight|engage|press the attack|swing|slash|stab|lunge|charge|rush)\b/.test(lower)) {
     return PlayerIntent.INTENT_ATTACK;
   }
   if (/\b(flee|run|escape|retreat|withdraw)\b/.test(lower)) {
@@ -224,11 +224,11 @@ export function inferIntent(text: string): PlayerIntent {
     return PlayerIntent.INTENT_INSPECT;
   }
   
-  // Social
-  if (/\b(press|pressure|insist|push)\b/.test(lower)) {
+  // Social - BATCH YZ: Strengthened to catch "press for X" and "leverage" patterns
+  if (/\b(press(?:\s+for)?|pressure|insist|push|leverage)\b/.test(lower)) {
     return PlayerIntent.INTENT_PRESS;
   }
-  if (/\b(demand|insist|require)\b/.test(lower)) {
+  if (/\b(demand|insist|require|confront)\b/.test(lower)) {
     return PlayerIntent.INTENT_DEMAND;
   }
   if (/\b(ask|question|inquire)\b/.test(lower)) {

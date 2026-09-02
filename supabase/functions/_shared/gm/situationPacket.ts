@@ -48,7 +48,6 @@ import {
   formatPointerCardForSnapshot,
   openingInventBudgetZero,
 } from './openingPointerCard.ts';
-import { inferIntent, PlayerIntent } from './intentEnums.ts';
 // WS-2 Wave C: NPC Memory sections
 import {
   buildNpcPacket,
@@ -106,14 +105,6 @@ function formatSimulationistBlocks(state: GameState): string[] {
  * Rebuild the live Situation packet from structured state.
  * This is what the GM must treat as "where we are right now."
  */
-/**
- * Batch Y Milestone 1 — Y-2: Convert choice labels to intent enums for LLM context.
- * Display labels stay in ActionBar; SNAPSHOT gets semantic enums only.
- */
-function choicesToIntentEnums(choices: string[]): PlayerIntent[] {
-  return choices.map((c) => inferIntent(c));
-}
-
 export function buildSituationPacket(state: GameState): SituationPacket {
   const dungeon = state.activeDungeon;
   const currentNode = dungeon?.nodes.find((n) => n.id === dungeon.currentNodeId);
@@ -286,16 +277,6 @@ export function formatSceneSnapshotForPrompt(state: GameState): string {
   const lines = [
     '### SNAPSHOT',
     `- Location: ${s.location}`,
-    '', // Empty line for spacing before LOCATION AUTHORITY
-    'LOCATION AUTHORITY (BINDING):',
-    `Current location: ${s.location}`,
-    'You are ALREADY HERE. Do not narrate arrival unless location changed from prior turn.',
-    'Travel actions require explicit Travel choice and cameraLock update.',
-    // BATCH YZ: PYOA-specific location binding (Issue 3 fix)
-    state.engineMode === 'pyoa' 
-      ? 'PYOA LOCATION LOCK: In PYOA mode, location changes only occur at crisis resolution fork points marked by numbered spine exits. Do NOT invent travel, "you reach X", or location changes during exploration/investigation beats. The player is at the CURRENT LOCATION until a spine choice explicitly moves them.'
-      : '',
-    '', // Empty line after LOCATION AUTHORITY
     threat != null
       ? `- Zone Threat: Tier ${threat} vs Player Level ${level}`
       : `- Zone Threat: none (street/outdoors or unset)`,
@@ -431,8 +412,8 @@ export function formatSceneSnapshotForPrompt(state: GameState): string {
   }
   
   // Apply loiter delta directive if needed
-  const streak = countPlayerIntentStreak(state);
-  const snapshotBase = lines.filter((line) => line !== '').join('\n');
+  // Reuse streak variable from line 306 (already calculated above for stagnation check)
+  const snapshotBase = lines.join('\n');
   const snapshotWithLoiterDelta = injectLoiterDelta(snapshotBase, streak, state);
   
   // Prepend CAST block and narrative state

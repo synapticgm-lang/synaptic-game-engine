@@ -5,19 +5,19 @@
  * There is no general "does this make sense" critic — that would be a second LLM.
  */
 
-import type { GameState, Item } from './types';
-import { playerTypedDialogue } from './intentParser';
+import type { GameState, Item } from './types.ts';
+import { playerTypedDialogue } from './intentParser.ts';
 import {
   scrubInventedEmptySearchLoot,
   scrubInventedWeapons,
-} from './searchContinuity';
-import { scrubInventedCrowdSize } from './crowdAuthority';
-import { rewriteChromePersonClauses } from './chromeAuthority';
-import { scrubHookReversals, type HookLock } from './hookLock';
-import { scrubBeastifiedHumanoid, scrubDeniedKill, scrubCombatSpawnLog, type LastKill } from './combatAuthority';
-import { scrubMetaRecoveryStrings } from './diegeticFallbacks';
+} from './searchContinuity.ts';
+import { scrubInventedCrowdSize } from './crowdAuthority.ts';
+import { rewriteChromePersonClauses } from './chromeAuthority.ts';
+import { scrubHookReversals, type HookLock } from './hookLock.ts';
+import { scrubBeastifiedHumanoid, scrubDeniedKill, scrubCombatSpawnLog, type LastKill } from './combatAuthority.ts';
+import { scrubMetaRecoveryStrings } from './diegeticFallbacks.ts';
 
-export { calculateCrowdSize, crowdSizeForWarden, scrubInventedCrowdSize } from './crowdAuthority';
+export { calculateCrowdSize, crowdSizeForWarden, scrubInventedCrowdSize } from './crowdAuthority.ts';
 
 /** Names from scene props, containers, interactables, and floor loose items. */
 export function collectSceneObjectNames(state: GameState): string[] {
