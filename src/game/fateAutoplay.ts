@@ -1512,6 +1512,29 @@ Do NOT print dice notation or CODE ENFORCED.
   };
 }
 
+/** JSON that cannot throw on cycles (CAST/state leaks) or kill a T50 write. */
+function safeJsonLine(value: unknown, pretty = false): string {
+  const seen = new WeakSet<object>();
+  try {
+    return JSON.stringify(
+      value,
+      (_key, val) => {
+        if (val && typeof val === 'object') {
+          if (seen.has(val as object)) return '[Circular]';
+          seen.add(val as object);
+        }
+        if (typeof val === 'string' && val.length > 200_000) {
+          return `${val.slice(0, 200_000)}…[truncated]`;
+        }
+        return val;
+      },
+      pretty ? 2 : undefined
+    );
+  } catch (err) {
+    return JSON.stringify({ error: err instanceof Error ? err.message : String(err) });
+  }
+}
+
 export async function runFateAutoplay(opts: {
   turns: number;
   seed: number;
@@ -1601,7 +1624,13 @@ export async function runFateAutoplay(opts: {
         });
         state = result.state;
         turns.push(result.telemetry);
-        appendFileSync(turnsPath, JSON.stringify(result.telemetry) + '\n');
+        appendFileSync(turnsPath, safeJsonLine(result.telemetry) + '\n');
+         
+        console.log(
+          `[fate-autoplay] turn ${turnNo}/${opts.turns} ${result.telemetry.durationMs}ms pick="${String(result.telemetry.fatePick ?? '').slice(0, 56)}"${
+            result.telemetry.error ? ` ERR=${result.telemetry.error}` : ''
+          }${result.telemetry.failKind ? ` kind=${result.telemetry.failKind}` : ''}`
+        );
         if (result.telemetry.error && result.telemetry.failKind === 'auth') {
           fatal = result.telemetry.error;
           break;
@@ -1649,7 +1678,7 @@ export async function runFateAutoplay(opts: {
           failKind: 'client_bug',
         };
         turns.push(failTel);
-        appendFileSync(turnsPath, JSON.stringify(failTel) + '\n');
+        appendFileSync(turnsPath, safeJsonLine(failTel) + '\n');
         // Keep going — one bad turn must not kill a multi-hour batch.
       }
     }
@@ -1725,9 +1754,9 @@ export async function runFateAutoplay(opts: {
           : undefined,
     })
   );
-  writeFileSync(join(outDir, 'turns.jsonl'), turns.map((t) => JSON.stringify(t)).join('\n') + '\n');
-  writeFileSync(join(outDir, 'summary.json'), JSON.stringify(summary, null, 2) + '\n');
-  writeFileSync(join(outDir, 'eval.json'), JSON.stringify(summary.evalHarness, null, 2) + '\n');
+  writeFileSync(join(outDir, 'turns.jsonl'), turns.map((t) => safeJsonLine(t)).join('\n') + '\n');
+  writeFileSync(join(outDir, 'summary.json'), safeJsonLine(summary, true) + '\n');
+  writeFileSync(join(outDir, 'eval.json'), safeJsonLine(summary.evalHarness, true) + '\n');
   writeFileSync(
     join(outDir, 'meta.json'),
     JSON.stringify(

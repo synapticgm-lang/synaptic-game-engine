@@ -351,6 +351,28 @@ const PURE_GENERIC_PAD =
   /^(wait(?:\s+and\s+listen(?:\s+carefully)?)?|listen(?:\s+carefully)?|ask what is going on|rest|hide|look around|approach cautiously|check (?:your |my )?(?:gear|inventory|wounds)|inspect the immediate surroundings|observe the environment carefully|examine the (?:surroundings|environment|area|scene|room)|inspect the (?:surroundings|environment|area|scene|room))\b/i;
 
 /**
+ * Compiler / stance / hub pads. These are ledger-legal, not invented props.
+ * "Inspect the crystals…" must NOT match — that stays under choiceNamesUnnarratedObject.
+ */
+export function isLegalEnginePad(choice: string): boolean {
+  const t = (choice ?? '').replace(/^[\s✨🎲⭐️•\-–—]+/u, '').trim();
+  if (!t) return false;
+  if (
+    /^(wait(?:\s+and\s+(?:watch|listen(?:\s+carefully)?))?|look around|ask a direct question|ask what (?:they want|is going on)|press (?:the attack|for leverage)|try to flee|parley|check status|check the exits?|force a path forward|leave through the nearest exit|call out to a bystander|scout (?:the )?(?:exit|area|room|cell)|inspect the (?:immediate )?surroundings|listen for the real answer|walk away|ready yourself|change position|walk the battlement)$/i.test(
+      t
+    )
+  ) {
+    return true;
+  }
+  if (/^travel (?:to|toward|towards)\s+\S/i.test(t)) return true;
+  if (/^talk to\s+\S/i.test(t)) return true;
+  if (/^walk away from\s+\S/i.test(t)) return true;
+  if (/^offer a kindness(?:\s+to\s+.+)?$/i.test(t)) return true;
+  if (/^press\s+.+\s+on the dispute$/i.test(t)) return true;
+  return false;
+}
+
+/**
  * Inspect/examine/check… targets without articles, plus optional place after on/in/at…
  * e.g. "Inspect crystals on street" → crystals, street.
  */
@@ -383,6 +405,8 @@ export function choiceNamesUnnarratedObject(
   // Allow short pure generics (Wait / Ask what… / Inspect the surroundings).
   // Do NOT early-exit every "Inspect …" — that let "Inspect the crystals breaking the street" through.
   if (PURE_GENERIC_PAD.test(trimmed) && trimmed.length < 56) return false;
+  // Compiler/hub pads ("Ask a direct question", "Travel toward X") are not invented props.
+  if (isLegalEnginePad(trimmed)) return false;
 
   const hay = [
     storyProse,
@@ -869,19 +893,36 @@ export function padChoicesToCount(
   if (merged.length >= min) {
     return applyStanceDensity(merged.slice(0, 4), state, storyProse, lastPlayerAction);
   }
-  for (const extra of sceneSafeFallbacks(state, storyProse, lastPlayerAction)) {
+  
+  // First fallback pass: collect grounded choices from sceneSafeFallbacks
+  const fallbacks = sceneSafeFallbacks(state, storyProse, lastPlayerAction);
+  let fallbacksAdded = 0;
+  for (const extra of fallbacks) {
     if (merged.length >= min) break;
+    if (fallbacksAdded >= fallbacks.length) break; // Safety: prevent re-checking same items
     if (!isChoiceGroundedInTurn(extra, storyProse, state)) continue;
-    if (!merged.some((c) => c.toLowerCase() === extra.toLowerCase())) merged.push(extra);
+    if (!merged.some((c) => c.toLowerCase() === extra.toLowerCase())) {
+      merged.push(extra);
+      fallbacksAdded++;
+    }
   }
+  
   // Last resort: still pad with grounded-or-generic alone-safe lines (never invent crowd).
-  if (merged.length < min) {
-    for (const extra of sceneSafeFallbacks(state, storyProse, lastPlayerAction)) {
+  // Only try this if first pass didn't get us to min and we haven't already tried all fallbacks
+  if (merged.length < min && fallbacksAdded < fallbacks.length) {
+    for (const extra of fallbacks) {
       if (merged.length >= min) break;
-      if (inventsPresenceOnEmptyScene(extra, state, storyProse)) continue;
+      if (inventsPresenceOnEmptyScene(extra, storyProse)) continue;
       if (!merged.some((c) => c.toLowerCase() === extra.toLowerCase())) merged.push(extra);
     }
   }
+  
+  // Emergency fallback: if still no choices, add a generic safe option
+  if (merged.length === 0) {
+    console.warn('[padChoicesToCount] All choices filtered - adding emergency fallback');
+    merged.push('Look around');
+  }
+  
   return applyStanceDensity(merged.slice(0, 4), state, storyProse, lastPlayerAction);
 }
 

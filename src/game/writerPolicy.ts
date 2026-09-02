@@ -1,7 +1,7 @@
 /**
  * Writer escalation policy — Manus Option 10 explicitly disabled (Wave 5 only).
  *
- * Free stays on Gemini 2.5 Flash Lite. Mid/High tiers use their subscription writer
+ * Free stays on DeepSeek V4 Flash. Mid/High tiers use their subscription writer
  * only — never auto-escalate on stagnation until John authorizes Wave 5 gates.
  *
  * 29d — optional OpenRouter failover model id for Free (same physics; swap renderer only).
@@ -21,7 +21,11 @@ export const FREE_WRITER_FAILOVER_OPENROUTER = 'meta-llama/llama-3.1-8b-instruct
  */
 export function resolveFreeWriterFailover(primaryModelId: string): string | null {
   const id = primaryModelId.toLowerCase();
-  if (id.includes('flash-lite') || id.includes('gemini-2.5-flash-lite')) {
+  if (
+    id.includes('flash-lite') ||
+    id.includes('gemini-2.5-flash-lite') ||
+    id.includes('deepseek')
+  ) {
     return FREE_WRITER_FAILOVER_OPENROUTER;
   }
   return null;

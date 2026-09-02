@@ -151,20 +151,31 @@ export function loiterFamilyKey(intentKey: string): string | null {
   return null;
 }
 
+/** Coerce a log `content` field to text. Objects (CAST/state leaks) never walk as strings. */
+export function coerceLogContent(content: unknown): string {
+  return typeof content === 'string' ? content : '';
+}
+
+export type IntentStreak = { key: string; count: number };
+
+/** Max log entries walked for streak (consecutive-from-end; older rows cannot extend the streak). */
+const STREAK_WALK_CAP = 80;
+
 /**
  * 29c — consecutive travel/wait/inspect/change-position intents (hubs may differ).
  * Catches Ward Rest↔Ashline and Camp↔Waystation triangles that never hit same-key streak≥5.
  */
 export function countLoiterFamilyStreak(state: {
-  log?: Array<{ role?: string; content?: string }>;
-}): { key: string; count: number } {
+  log?: Array<{ role?: string; content?: unknown }>;
+}): IntentStreak {
   const log = state.log ?? [];
+  const start = Math.max(0, log.length - STREAK_WALK_CAP);
   let family = '';
   let count = 0;
-  for (let i = log.length - 1; i >= 0; i--) {
+  for (let i = log.length - 1; i >= start; i--) {
     const e = log[i];
     if (e?.role !== 'player') continue;
-    const raw = normalizePlayerIntentKey(e.content ?? '');
+    const raw = normalizePlayerIntentKey(coerceLogContent(e.content));
     const fam = loiterFamilyKey(raw);
     if (!fam) break;
     // Any loiter family continues the loiter streak (travel A → travel B still counts)
@@ -180,15 +191,16 @@ export function countLoiterFamilyStreak(state: {
 
 /** Count consecutive identical intent keys from the end of the player log. */
 export function countPlayerIntentStreak(state: {
-  log?: Array<{ role?: string; content?: string }>;
-}): { key: string; count: number } {
+  log?: Array<{ role?: string; content?: unknown }>;
+}): IntentStreak {
   const log = state.log ?? [];
+  const start = Math.max(0, log.length - STREAK_WALK_CAP);
   let key = '';
   let count = 0;
-  for (let i = log.length - 1; i >= 0; i--) {
+  for (let i = log.length - 1; i >= start; i--) {
     const e = log[i];
     if (e?.role !== 'player') continue;
-    const k = normalizePlayerIntentKey(e.content ?? '');
+    const k = normalizePlayerIntentKey(coerceLogContent(e.content));
     if (!key) {
       key = k;
       count = 1;

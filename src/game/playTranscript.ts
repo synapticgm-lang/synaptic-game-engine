@@ -23,10 +23,12 @@ import { isBannedFallbackStub, isEngineRecoveryProse } from './sealedManifest';
 const FALLBACK_CHOICE = '🎲 Let Fate Decide';
 
 function lastGmStoryProse(state: GameState): string {
-  for (let i = (state.log ?? []).length - 1; i >= 0; i--) {
-    const entry = state.log[i];
-    if (entry?.role === 'gm' && entry.content) {
-      return normalizeStoryCorpus(entry.content);
+  const log = state.log ?? [];
+  for (let i = log.length - 1; i >= 0; i--) {
+    const entry = log[i];
+    const content = typeof entry?.content === 'string' ? entry.content : '';
+    if (entry?.role === 'gm' && content) {
+      return normalizeStoryCorpus(content);
     }
   }
   return '';
@@ -51,9 +53,11 @@ function lastGmOfferedChoices(state: GameState): string[] {
  * `offeredChoices` (fastSetupChips off used to return [] and hide ActionBar).
  */
 function lastPlayerActionFromLog(state: GameState): string {
-  for (let i = (state.log ?? []).length - 1; i >= 0; i--) {
-    const entry = state.log[i];
-    if (entry?.role === 'player' && entry.content) return entry.content;
+  const log = state.log ?? [];
+  for (let i = log.length - 1; i >= 0; i--) {
+    const entry = log[i];
+    const content = typeof entry?.content === 'string' ? entry.content : '';
+    if (entry?.role === 'player' && content) return content;
   }
   return '';
 }
@@ -156,7 +160,7 @@ export function buildPlayTranscript(state: GameState): string {
   for (const entry of state.log ?? []) {
     if (!entry || typeof entry !== 'object') continue;
     const role = entry.role;
-    const content = (entry.content ?? '').trim();
+    const content = (typeof entry.content === 'string' ? entry.content : '').trim();
     if (role === 'gm') {
       lines.push(`## Turn ${entry.turn ?? '?'} — GM`);
       lines.push('');
@@ -272,7 +276,7 @@ export function buildStoryReviewExport(
   for (const entry of state.log ?? []) {
     if (!entry || typeof entry !== 'object') continue;
     const role = entry.role;
-    const content = (entry.content ?? '').trim();
+    const content = (typeof entry.content === 'string' ? entry.content : '').trim();
     if (role === 'gm') {
       lines.push(`### Turn ${entry.turn ?? '?'} — Narration`);
       lines.push('');

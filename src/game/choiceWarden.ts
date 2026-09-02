@@ -6,7 +6,8 @@
  */
 
 import type { GameState } from './types';
-import { choiceNamesUnnarratedObject, isBrokenChoiceLabel } from './choicePipeline';
+import { choiceNamesUnnarratedObject, isBrokenChoiceLabel, isLegalEnginePad } from './choicePipeline';
+import { coerceLogContent } from './beatFingerprint';
 import { isNameOriginKitCoverChoice, isPlayDemand, playerEngagesOpeningCover } from './openingEstablishment';
 import { isLookAroundAction } from './sandboxXp';
 import { isChromeTalkChoice } from './chromeAuthority';
@@ -71,17 +72,23 @@ export function isBarePcNameChoice(choice: string, characterName?: string): bool
 }
 
 function lastGmStory(state: GameState): string {
-  for (let i = (state.log ?? []).length - 1; i >= 0; i--) {
-    const entry = state.log[i];
-    if (entry?.role === 'gm' && entry.content) return entry.content;
+  const log = state.log ?? [];
+  const start = Math.max(0, log.length - 80);
+  for (let i = log.length - 1; i >= start; i--) {
+    const entry = log[i];
+    const content = coerceLogContent(entry?.content);
+    if (entry?.role === 'gm' && content) return content;
   }
   return '';
 }
 
 function lastPlayerAction(state: GameState): string {
-  for (let i = (state.log ?? []).length - 1; i >= 0; i--) {
-    const entry = state.log[i];
-    if (entry?.role === 'player' && entry.content) return entry.content;
+  const log = state.log ?? [];
+  const start = Math.max(0, log.length - 80);
+  for (let i = log.length - 1; i >= start; i--) {
+    const entry = log[i];
+    const content = coerceLogContent(entry?.content);
+    if (entry?.role === 'player' && content) return content;
   }
   return '';
 }
@@ -115,6 +122,11 @@ export function choiceInventsContext(
   return false;
 }
 
+// Circuit breaker to prevent infinite loops
+let filterCallCount = 0;
+let lastFilterResetTime = Date.now();
+const MAX_FILTER_CALLS_PER_SECOND = 100;
+
 /**
  * Filter out choices that invent non-existent context.
  * Grounds against the last GM story + sceneFacts.props (not older log turns).
@@ -123,6 +135,21 @@ export function filterInventedContextChoices(
   choices: string[],
   state: GameState
 ): string[] {
+  // Circuit breaker: reset counter every second
+  const now = Date.now();
+  if (now - lastFilterResetTime > 1000) {
+    filterCallCount = 0;
+    lastFilterResetTime = now;
+  }
+  
+  filterCallCount++;
+  
+  // If we've exceeded the limit, log error and return all choices to break the loop
+  if (filterCallCount > MAX_FILTER_CALLS_PER_SECOND) {
+    console.error(`[CIRCUIT BREAKER] filterInventedContextChoices called ${filterCallCount} times in 1 second - returning all choices to prevent infinite loop`);
+    return choices;
+  }
+  
   const recentStory = lastGmStory(state);
 
   const scenePropsCorpus = [
@@ -195,6 +222,8 @@ export function filterInventedContextChoices(
       return false;
     }
     if (!recentStory && !scenePropsCorpus) return true;
+    // Compiler/hub pads are not invented context — filtering them caused Fate pad-empty spam.
+    if (isLegalEnginePad(choice)) return true;
     const invents = choiceInventsContext(choice, recentStory, scenePropsCorpus, state);
     if (invents) {
       console.log(`[Choice Filter] Removed invented-context choice: "${choice}"`);

@@ -9,8 +9,9 @@
  * P0: Strict Entity Isolation via CAST Block
  */
 
-import type { GameState, NpcMemory, Encounter, LogEntry } from './types.ts';
+import type { GameState, Encounter } from './types.ts';
 import { isUiLabel } from './narrativeTranslator.ts';
+import { isHubRoleCompoundToken } from './chromeAuthority.ts';
 import * as hubEncounters from './hubEncounters.ts';
 
 export interface CastMember {
@@ -74,6 +75,7 @@ function extractNamedCharacters(state: GameState): CastMember[] {
   const named: CastMember[] = [];
   
   for (const token of present) {
+    if (typeof token !== 'string' || !token.trim()) continue;
     // Skip UI labels
     if (isUiLabel(token)) continue;
     
@@ -87,11 +89,10 @@ function extractNamedCharacters(state: GameState): CastMember[] {
         firstSeen: findFirstSeenTurn(token, timeline),
         pinned: pinned.includes(token),
       });
-    } else if (isProperName(token)) {
-      // Looks like a proper name - treat as named even without memory
+    } else if (isProperName(token) || isHubRoleCompoundToken(token)) {
       named.push({
         name: token,
-        role: 'character',
+        role: isHubRoleCompoundToken(token) ? 'hub contact' : 'character',
         disposition: 'neutral',
         firstSeen: state.turn ?? 0,
         pinned: pinned.includes(token),
@@ -320,9 +321,12 @@ function formatCastBlock(cast: Cast): string {
 /**
  * Find first turn when entity appeared in timeline
  */
-function findFirstSeenTurn(entityName: string, timeline: LogEntry[]): number {
+function findFirstSeenTurn(
+  entityName: string,
+  timeline: Array<{ turn?: number; text?: string }>
+): number {
   for (const entry of timeline) {
-    if (entry.sceneFacts?.present?.includes(entityName)) {
+    if (typeof entry.text === 'string' && entry.text.includes(entityName)) {
       return entry.turn ?? 0;
     }
   }

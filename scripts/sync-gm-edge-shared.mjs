@@ -71,6 +71,7 @@ const FILES = [
   'outdoorHubs.ts',
   'hubEncounters.ts',
   'pyoaSpine.ts',
+  'openRouterChat.ts',
 ];
 
 function rewriteImports(source, file) {

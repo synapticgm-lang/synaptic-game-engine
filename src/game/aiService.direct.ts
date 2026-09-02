@@ -11,6 +11,11 @@ import { RateLimitError, withRetry, processGmCompletion } from './aiServiceShare
 import { resolveWriterModel } from './subscriptionTiers';
 import { effectiveWriterTier, isTestLabEnabled } from './testLab';
 import { getAutoplayWriterOverride } from './autoplayWriter';
+import {
+  extractChatCompletionText,
+  openRouterChatBody,
+  openRouterChatHeaders,
+} from './openRouterChat';
 
 const AI_REQUEST_TIMEOUT_MS = 45_000;
 const AI_MAX_OUTPUT_TOKENS = 4_096;
@@ -141,16 +146,8 @@ async function callOpenRouter(
       url,
       {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${apiKey}` },
-        body: JSON.stringify({
-          model: modelName,
-          messages: [
-            { role: 'system', content: systemPrompt },
-            { role: 'user', content: prompt },
-          ],
-          temperature: 0.9,
-          max_tokens: AI_MAX_OUTPUT_TOKENS,
-        }),
+        headers: openRouterChatHeaders(apiKey),
+        body: JSON.stringify(openRouterChatBody(modelName, systemPrompt, prompt, AI_MAX_OUTPUT_TOKENS)),
       },
       'OpenRouter'
     );
@@ -169,7 +166,7 @@ async function callOpenRouter(
     throw new Error(errBody?.error?.message ?? `OpenRouter error ${res.status}`);
   }
   const data = await res.json();
-  return data.choices?.[0]?.message?.content ?? '';
+  return extractChatCompletionText(data);
 }
 
 async function callAnthropic(prompt: string, systemPrompt: string, apiKey: string, model?: string): Promise<string> {

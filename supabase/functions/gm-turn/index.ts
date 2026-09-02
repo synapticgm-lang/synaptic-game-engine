@@ -1,5 +1,10 @@
 import { buildSystemPrompt, buildContextPrompt } from '../_shared/gm/masterPrompt.ts';
 import { freeWriterModelId, isPrivilegedPlayRequest } from '../_shared/playPrivileges.ts';
+import {
+  extractChatCompletionText,
+  openRouterChatBody,
+  openRouterChatHeaders,
+} from '../_shared/gm/openRouterChat.ts';
 
 const AI_MAX_OUTPUT_TOKENS = 4096;
 const CORS_HEADERS: Record<string, string> = {
@@ -134,21 +139,28 @@ async function callOpenAICompat(
   model: string,
   baseUrl: string
 ): Promise<string> {
+  const openRouter = /openrouter\.ai/i.test(baseUrl);
   const res = await fetch(`${baseUrl.replace(/\/$/, '')}/chat/completions`, {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${apiKey}`,
-    },
-    body: JSON.stringify({
-      model,
-      messages: [
-        { role: 'system', content: systemPrompt },
-        { role: 'user', content: prompt },
-      ],
-      temperature: 0.9,
-      max_tokens: AI_MAX_OUTPUT_TOKENS,
-    }),
+    headers: openRouter
+      ? openRouterChatHeaders(apiKey)
+      : {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${apiKey}`,
+        },
+    body: JSON.stringify(
+      openRouter
+        ? openRouterChatBody(model, systemPrompt, prompt, AI_MAX_OUTPUT_TOKENS)
+        : {
+            model,
+            messages: [
+              { role: 'system', content: systemPrompt },
+              { role: 'user', content: prompt },
+            ],
+            temperature: 0.9,
+            max_tokens: AI_MAX_OUTPUT_TOKENS,
+          }
+    ),
   });
   if (res.status === 429) {
     const err = new Error('Rate limit exceeded (429).');
@@ -160,7 +172,7 @@ async function callOpenAICompat(
     throw new Error(errBody?.error?.message ?? `OpenAI-compat error ${res.status}`);
   }
   const data = await res.json();
-  return data.choices?.[0]?.message?.content ?? '';
+  return extractChatCompletionText(data);
 }
 
 async function callAnthropic(prompt: string, systemPrompt: string, apiKey: string, model?: string): Promise<string> {
@@ -251,12 +263,13 @@ Deno.serve(async (req) => {
   }
 
   try {
-    let text = '';
-    if (provider === 'gemini') {
-      text = await callGoogle(userPrompt, systemPrompt, apiKey, model);
-    } else if (provider === 'anthropic') {
-      text = await callAnthropic(userPrompt, systemPrompt, apiKey, model);
-    } else {
+    const runOnce = async (modelOverride?: string): Promise<string> => {
+      if (provider === 'gemini') {
+        return callGoogle(userPrompt, systemPrompt, apiKey, modelOverride || model);
+      }
+      if (provider === 'anthropic') {
+        return callAnthropic(userPrompt, systemPrompt, apiKey, modelOverride || model);
+      }
       const base =
         provider === 'openrouter'
           ? baseUrl?.trim() || 'https://openrouter.ai/api/v1'
@@ -266,13 +279,32 @@ Deno.serve(async (req) => {
               ? 'http://localhost:11434/v1'
               : baseUrl?.trim() || 'https://api.openai.com/v1';
       const modelName =
+        modelOverride ||
         model ||
         (provider === 'openrouter'
-          ? 'deepseek/deepseek-chat'
+          ? 'deepseek/deepseek-v4-flash-0731'
           : provider === 'groq'
             ? 'llama-3.3-70b-versatile'
             : 'gpt-4o-mini');
-      text = await callOpenAICompat(userPrompt, systemPrompt, apiKey, modelName, base);
+      return callOpenAICompat(userPrompt, systemPrompt, apiKey, modelName, base);
+    };
+
+    const tryCall = async (modelOverride?: string): Promise<string> => {
+      try {
+        return await runOnce(modelOverride);
+      } catch (err) {
+        if ((err as { status?: number })?.status === 429) throw err;
+        if (provider !== 'openrouter') throw err;
+        return '';
+      }
+    };
+
+    let text = await tryCall();
+    if (!text.trim() && provider === 'openrouter') {
+      text = await tryCall();
+    }
+    if (!text.trim() && provider === 'openrouter' && !String(model ?? '').includes('llama-3.1-8b')) {
+      text = await tryCall('meta-llama/llama-3.1-8b-instruct');
     }
 
     if (!text) {
