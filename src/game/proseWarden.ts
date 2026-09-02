@@ -15,6 +15,7 @@ import { scrubInventedCrowdSize } from './crowdAuthority';
 import { rewriteChromePersonClauses } from './chromeAuthority';
 import { scrubHookReversals, type HookLock } from './hookLock';
 import { scrubBeastifiedHumanoid, scrubDeniedKill, scrubCombatSpawnLog, type LastKill } from './combatAuthority';
+import { scrubMetaRecoveryStrings } from './diegeticFallbacks';
 
 export { calculateCrowdSize, crowdSizeForWarden, scrubInventedCrowdSize } from './crowdAuthority';
 
@@ -87,6 +88,12 @@ export type ProseWardenContext = {
   enemyName?: string;
   /** Locked why-you’re-here — rewrite accident ↛ pawn (and reverse). */
   hookLock?: HookLock;
+  /** Batch Z-2 — last player intent kind for extra action scrub. */
+  selectedIntentKind?: string;
+  /** Batch X+1 — flee attempt failed this turn (caught = true); strip arrival narration. */
+  fleeFailed?: boolean;
+  /** Previous location for same-location checks (aids Turn 8 debugging). */
+  priorLocation?: string;
 };
 
 /** Interiors that already name "here" — nearby is for things that are not here. */
@@ -122,37 +129,89 @@ function tidyClauses(text: string): string {
  * Batch S — also strip arrival to a *different* known/opening place (Sevenfold Circle
  * under bombardment spam while standing in Lowmarket / West Wall).
  * Batch T — strip Sevenfold false-arrival even when glued before a real leave/reach line.
+ * Batch X+1 — strip arrival narration when flee attempt failed (caught = true).
  */
 export function scrubFalseArrivalWhenHere(
   text: string,
   currentLocation?: string,
-  knownPlaces: string[] = []
+  knownPlaces: string[] = [],
+  fleeFailed = false,
+  priorLocation?: string
 ): string {
   if (!text) return text;
   let next = text;
   const loc = (currentLocation ?? '').trim();
+  
+  // DEBUG LOGGING - Phase 2
+  const debugEnabled = true; // Set to false after debugging
+  if (debugEnabled && (fleeFailed || /\bYou reach\b/i.test(text))) {
+    console.log('[scrubFalseArrival] INPUT:', {
+      fleeFailed,
+      currentLocation: loc,
+      priorLocation: priorLocation ?? 'undefined',
+      textSnippet: text.slice(0, 100) + '...',
+      hasYouReach: /\bYou reach\b/i.test(text),
+    });
+  }
+  
+  // Batch X+1: If flee failed, strip ALL arrival narration (player is caught/stuck)
+  if (fleeFailed) {
+    next = next
+      .replace(
+        /\b(?:[Yy]ou (?:reach|arrive(?: at)?|enter)|[Yy]ou leave [^.]{2,80} (?:behind )?and reach)[^.]*?\./g,
+        ''
+      )
+      .replace(/\s{2,}/g, ' ')
+      .trim();
+    // DEBUG LOGGING
+    if (debugEnabled) {
+      console.log('[scrubFalseArrival] FLEE-FAIL STRIP:', {
+        before: text.slice(0, 100),
+        after: next.slice(0, 100),
+        wasChanged: text !== next,
+      });
+    }
+    // Early return - flee-fail strips all arrivals regardless of location
+    return tidyClauses(next);
+  }
 
   const stripReach = (place: string) => {
     const p = place.trim();
     if (p.length < 3) return;
     const esc = p.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    
+    // DEBUG LOGGING - Phase 2
+    const beforeStrip = next;
+    
+    // Batch X+1: More aggressive pattern - strips arrival even mid-sentence
+    // Use 'gi' flag for case-insensitive matching (e.g. "Sanctuary" vs "the sanctuary")
     next = next
       .replace(
         new RegExp(
-          `\\b(?:[Yy]ou (?:reach|arrive(?: at)?|enter)|[Yy]ou leave [^.]{2,40} behind and reach)\\s+(?:the\\s+)?${esc}\\b(?:\\s+under\\s+bombardment)?[.!?]?`,
-          'g'
+          `\\b(?:[Yy]ou (?:reach|arrive(?: at)?|enter)|[Yy]ou leave [^.]{2,40} behind and reach|[Rr]eaching|[Ee]ntering)\\s+(?:the\\s+)?${esc}\\b(?:\\s+under\\s+bombardment)?(?:[.,!?]\\s*)?`,
+          'gi'
         ),
         ''
       )
       .replace(/\s{2,}/g, ' ')
       .trim();
+      
+    // DEBUG LOGGING
+    if (debugEnabled && beforeStrip !== next) {
+      console.log('[scrubFalseArrival] STRIPPED PLACE:', {
+        place: p,
+        pattern: `You reach/arrive ${p}`,
+        before: beforeStrip.slice(0, 100),
+        after: next.slice(0, 100),
+      });
+    }
     const short = p.split(/\s+/).filter((w) => w.length >= 4).slice(-2).join(' ');
     if (short.length >= 6 && short.toLowerCase() !== p.toLowerCase()) {
       const escShort = short.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
       next = next
         .replace(
           new RegExp(
-            `\\b(?:[Yy]ou (?:reach|arrive(?: at)?))\\s+(?:the\\s+)?${escShort}\\b(?:\\s+under\\s+bombardment)?[.!?]?`,
+            `\\b(?:[Yy]ou (?:reach|arrive(?: at)?)|[Rr]eaching)\\s+(?:the\\s+)?${escShort}\\b(?:\\s+under\\s+bombardment)?(?:[.,!?]\\s*)?`,
             'gi'
           ),
           ''
@@ -162,7 +221,23 @@ export function scrubFalseArrivalWhenHere(
     }
   };
 
-  if (loc) stripReach(loc);
+  // BATCH YZ FIX: Only strip if location UNCHANGED (prior === current)
+  // If location changed (prior !== current), ALLOW legitimate travel narration
+  const locationChanged = priorLocation && priorLocation.trim().length >= 3
+    && priorLocation.trim().toLowerCase() !== loc.toLowerCase();
+  
+  // Strip arrival to current location ONLY if we didn't just travel here
+  if (!locationChanged) {
+    if (loc) stripReach(loc);
+  }
+  
+  // Strip arrival to prior location ONLY if location UNCHANGED (false same-room arrival)
+  if (!locationChanged && priorLocation && priorLocation.trim().length >= 3) {
+    const prior = priorLocation.trim();
+    if (prior.toLowerCase() === loc.toLowerCase()) {
+      stripReach(prior);
+    }
+  }
 
   // Opening / prior places that are NOT where we are — false arrival spam
   const foreign = new Set<string>();
@@ -191,6 +266,17 @@ export function scrubFalseArrivalWhenHere(
       );
   }
   for (const place of foreign) stripReach(place);
+
+  // DEBUG LOGGING - Phase 2: Final result
+  if (debugEnabled && /\bYou reach\b/i.test(text)) {
+    const finalNext = tidyClauses(next);
+    console.log('[scrubFalseArrival] FINAL RESULT:', {
+      wasChanged: text !== finalNext,
+      stillHasYouReach: /\bYou reach\b/i.test(finalNext),
+      outputSnippet: finalNext.slice(0, 100) + '...',
+    });
+    return finalNext;
+  }
 
   return tidyClauses(next);
 }
@@ -501,6 +587,39 @@ export function scrubEntityMadLibs(text: string, encounterName?: string): string
   next = next.replace(/\bthe\s+Lowmarket\s+Fence\s+staggered\b/gi, 'the skirmisher staggered');
   next = next.replace(/\bimposing silhouette of the Lowmarket\s+Fence\b/gi, 'imposing market wall');
   next = next.replace(/\bscrap\.\s*"\s*/gi, '');
+  // Batch 02a — "Tavern" mad-lib scrubbing (generic building type used as character/direction)
+  next = next.replace(
+    /\b(?:the\s+)?Tavern\s+(?:watches|looks|waits|stands|sits|remains)\b/gi,
+    'the vendor watches'
+  );
+  next = next.replace(
+    /\btoward(?:s)?\s+(?:the\s+)?Tavern(?!\s+(?:door|window|entrance|keeper))\b/gi,
+    'toward the waystation'
+  );
+  next = next.replace(
+    /\bfrom\s+(?:the\s+)?Tavern(?!\s+(?:door|window|entrance|keeper))\b/gi,
+    'from the waystation'
+  );
+  next = next.replace(
+    /\b(?:at|near|beside)\s+(?:the\s+)?Tavern(?!\s+(?:door|window|entrance|keeper))\b/gi,
+    'at the waystation'
+  );
+  next = next.replace(
+    /\bthat swallows the (?:Salt Road\s+)?Tavern\b/gi,
+    'that swallows the waystation'
+  );
+  next = next.replace(
+    /\b(?:Tavern),\s+(?:the\s+)?passage\b/gi,
+    'Further along, the passage'
+  );
+  next = next.replace(
+    /\ba\s+Tavern\s+(dim|faint|soft|weak|flickering)\b/gi,
+    'a $1'
+  );
+  next = next.replace(
+    /\btake a\s+Tavern\b/gi,
+    'take a step'
+  );
   return tidyClauses(next);
 }
 
@@ -857,6 +976,37 @@ export function scrubPronounSubjectSlips(text: string): string {
 }
 
 /**
+ * Batch 02a — Possessive determiner drops: "you stool" → "your stool".
+ * Flash Lite drops possessive determiners, writing subject pronoun + noun
+ * instead of possessive determiner + noun.
+ */
+export function scrubPossessiveDeterminerSlips(text: string): string {
+  if (!text) return text;
+  let next = text;
+  // Preposition + you + furniture/object/body → preposition + your + noun
+  next = next.replace(
+    /\b(on|at|in|near|beside|from|over|across|through|behind|before|under|around|beside|along|past|toward|towards|into|onto|upon)\s+you\s+(stool|chair|bench|table|mug|bag|pack|pouch|sack|knife|sword|dagger|weapon|blade|axe|staff|shield|armor|cloak|hood|face|eyes|head|hand|hands|shoulder|shoulders|chest|back|arm|arms|leg|legs|side|sides|belt|boots?|gloves?|wrist|ankle|neck|throat|brow|cheek|jaw|chin|nose|ear|mouth|lips?)\b/gi,
+    '$1 your $2'
+  );
+  // Verb participle + on you + furniture → verb + on your + furniture
+  next = next.replace(
+    /\b(perched|sitting|seated|standing|leaning|resting|lying|crouched|hunched)\s+on\s+you\s+(stool|chair|bench|table|bed|cot|mat)\b/gi,
+    '$1 on your $2'
+  );
+  // Verb + you + body part → verb + your + body part (catches "crosses you face")
+  next = next.replace(
+    /\b(crosses?|crossing|draws?|drawing|touches?|touching|brushes?|brushing|covers?|covering|shadows?|shadowing|lights?|lighting|strikes?|striking|hits?|hitting|passes?|passing)\s+you\s+(face|eyes|head|hand|hands|shoulder|shoulders|brow|cheek|jaw|chest|side|back)\b/gi,
+    '$1 your $2'
+  );
+  // Possessive context: "you + body part + verb" (mid-clause only, not sentence start)
+  next = next.replace(
+    /([^.!?]\s+)you\s+(face|eyes|head|hand|hands|gaze|voice|expression)\s+((?:turns?|shifts?|narrows?|widens?|darkens?|softens?|hardens?|tightens?|relaxes?|crosses?|flickers?|drops?|lifts?|rises?|falls?))\b/gi,
+    '$1your $2 $3'
+  );
+  return next;
+}
+
+/**
  * Kill premature "secrets" framing on an empty first look (explore opener filler).
  * Prefer sensory-only until the ledger has actual finds.
  */
@@ -1105,6 +1255,46 @@ export function scrubDualLocationOpenings(
 }
 
 /**
+ * Batch Z-2 — scrub player actions beyond the selected choice.
+ * "You press him..." when player selected "Wait and observe" (passive intent).
+ * Detects GM narrating player actions that weren't selected.
+ */
+export function scrubExtraPlayerActions(
+  text: string,
+  selectedIntentKind?: string
+): string {
+  if (!text) return text;
+  
+  // Forbidden active action patterns
+  const forbiddenActions = [
+    /\bYou (?:press|ask|speak|turn|move|step|reach|grab|take|pull|push|strike|demand|insist)\s+/gi,
+    /\b(?:Pressing|Asking|Speaking|Turning|Moving|Stepping|Reaching|Grabbing|Taking)\s+/gi,
+    /\bYou then\s+/gi,
+    /\bYou also\s+/gi,
+  ];
+  
+  // Passive intent kinds that should not have active verbs added
+  // Maps to IntentKind from intentParser.ts
+  const passiveIntentKinds = [
+    'observe',    // Wait, Observe, Look around
+    'rest',       // Rest, Wait
+    'search',     // Inspect (when not attacking)
+    // 'other' is too generic to filter
+  ];
+  
+  // If selected intent kind was passive, strip active verbs
+  if (selectedIntentKind && passiveIntentKinds.includes(selectedIntentKind)) {
+    let next = text;
+    for (const pattern of forbiddenActions) {
+      next = next.replace(pattern, '');
+    }
+    return tidyClauses(next);
+  }
+  
+  return text;
+}
+
+/**
  * Pack 12 Extended Validation: Tension
  * Scrubs "calm settles" or "danger passes" if tension state didn't actually change.
  */
@@ -1251,7 +1441,10 @@ export function scrubChromeAsPerson(text: string, presentNames: string[] = []): 
 export function applyProseWarden(text: string, ctx?: ProseWardenContext): string {
   if (!text) return text;
   const alone = ctx?.aloneArrival === true;
-  let next = scrubFigurePlaceholder(text, alone);
+  // Batch Y-3: Strip meta/recovery strings FIRST (before any other scrubs)
+  let next = scrubMetaRecoveryStrings(text);
+  if (!next || next.length < 10) return ''; // If we scrubbed everything, return empty
+  next = scrubFigurePlaceholder(next, alone);
   next = scrubSomeoneNearbyPlaceholder(next, alone);
   next = scrubUiQuestVerbs(next, alone);
   next = scrubSpeakerPlaceholder(next, alone);
@@ -1297,7 +1490,13 @@ export function applyProseWarden(text: string, ctx?: ProseWardenContext): string
   }
   next = scrubInventedTensionChange(next, ctx?.currentTension, ctx?.previousTension);
   next = scrubLocationTautology(next, ctx?.currentLocation);
-  next = scrubFalseArrivalWhenHere(next, ctx?.currentLocation, ctx?.knownPlaces ?? []);
+  next = scrubFalseArrivalWhenHere(
+    next,
+    ctx?.currentLocation,
+    ctx?.knownPlaces ?? [],
+    ctx?.fleeFailed,
+    ctx?.priorLocation
+  );
   next = scrubBodyStatusDumps(next);
   next = scrubRoleAdjectivePersonSlot(next);
   next = scrubAwakeSpeakerAsSleeper(next, {
@@ -1308,6 +1507,11 @@ export function applyProseWarden(text: string, ctx?: ProseWardenContext): string
   next = scrubSpokenQuoteStart(next);
   next = scrubArticleCollisions(next);
   next = scrubPronounSubjectSlips(next);
+  next = scrubPossessiveDeterminerSlips(next);
+  // Batch Z-2: scrub extra player actions (requires selectedIntentKind in context)
+  if (ctx?.selectedIntentKind) {
+    next = scrubExtraPlayerActions(next, ctx.selectedIntentKind);
+  }
   return next;
 }
 

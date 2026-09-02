@@ -706,8 +706,8 @@ export function compileChoices(
   const loiter = countLoiterFamilyStreak(state);
   const hardStreak = streak.count >= 5 && streak.key !== 'empty';
   const hardLoiter = loiter.count >= 4 && loiter.key === 'loiter';
-  // Batch E — inspect/wait/scout treadmill in one room: interrupt earlier (≥3).
-  const inspectTreadmill = loiter.count >= 3 && loiter.key === 'loiter';
+  // Batch E → 02a — inspect/wait/scout treadmill in one room: tightened from ≥3 to ≥2.
+  const inspectTreadmill = loiter.count >= 2 && loiter.key === 'loiter';
   const pyoaLocked = state.engineMode === 'pyoa' && isPyoaBranchLocked(state);
   const npc = presentNpcForPads(state);
   const npcKey = npc
