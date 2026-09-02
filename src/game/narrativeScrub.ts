@@ -7,6 +7,7 @@ import type { GameState } from './types';
 import { findUngroundedNamedClaims } from './suggestionValidation';
 import { isAloneArrivalOpening } from './openingEstablishment';
 import { realPresentPeople, isPolityFactionOrPlaceToken } from './chromeAuthority';
+import { hubsForBibleId } from './outdoorHubs';
 
 const ALWAYS_ALLOW = new Set(
   [
@@ -390,10 +391,8 @@ function buildLooseGroundSet(state: GameState, prose: string): Set<string> {
     if (state.activeDungeon?.visitedNodeIds?.includes(node.id)) add(node.name);
   }
   // P1-6: Hub authority whitelist — never scrub known hub names
-  // (Import at top of file needed for hubsForBibleId)
   if (state.campaignBibleId) {
     try {
-      const { hubsForBibleId } = require('./outdoorHubs');
       const hubs = hubsForBibleId(state.campaignBibleId);
       for (const hub of hubs) {
         add(hub.name);

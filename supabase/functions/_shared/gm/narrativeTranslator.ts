@@ -8,7 +8,7 @@
  * P0: Pre-LLM State Translation
  */
 
-import type { GameState, NpcMemory, Exit, Encounter, LocationSheet, Place } from './types.ts';
+import type { GameState, NpcMemory, Exit, Encounter, LocationSheet, Place, Quest, Item, SceneFacts } from './types.ts';
 
 // UI labels that should never appear as entity names
 const UI_LABELS = [
@@ -237,15 +237,15 @@ function naturalizeExitLabel(
  * Translate quest objectives to natural language
  */
 function translateObjectives(
-  quests: unknown[] | undefined,
+  quests: Quest[] | undefined,
   questFocus: string | undefined
 ): string {
   if (!quests || quests.length === 0) return '';
   
   // Find active quest
-  const activeQuest = quests.find((q: any) => 
+  const activeQuest = quests.find((q) => 
     q.id === questFocus || q.state === 'active'
-  ) as any;
+  );
   
   if (!activeQuest) return '';
   
@@ -256,14 +256,14 @@ function translateObjectives(
 /**
  * Translate inventory to natural summary
  */
-function translateInventory(inventory: any[] | undefined): string {
+function translateInventory(inventory: Item[] | undefined): string {
   if (!inventory || inventory.length === 0) {
     return 'The player has no items.';
   }
   
   const items = inventory
-    .filter((item: any) => item?.name && item.name !== 'Bag' && !item.sealed)
-    .map((item: any) => item.name);
+    .filter((item) => item?.name && item.name !== 'Bag' && !item.sealed)
+    .map((item) => item.name);
   
   if (items.length === 0) {
     return 'The player has basic street clothes and a sealed bag.';
@@ -338,8 +338,8 @@ function translateUiToken(token: string): string | null {
 export function choiceContainsUngroundedReferences(
   choice: string,
   lastGmStory: string,
-  sceneFacts: any,
-  inventory: any[]
+  sceneFacts: SceneFacts | undefined,
+  inventory: Item[]
 ): boolean {
   // Extract noun phrases from choice
   const nounMatches = choice.match(/\b(?:the|a|an)\s+([a-z]+(?:\s+[a-z]+){0,2})/gi);
@@ -358,7 +358,7 @@ export function choiceContainsUngroundedReferences(
     if (sceneFacts?.props?.some((p: string) => p.toLowerCase().includes(noun))) continue;
     
     // Check if in inventory
-    if (inventory.some((item: any) => item.name?.toLowerCase().includes(noun))) continue;
+    if (inventory.some((item) => item.name?.toLowerCase().includes(noun))) continue;
     
     // Check if in location
     if (sceneFacts?.location?.toLowerCase().includes(noun)) continue;

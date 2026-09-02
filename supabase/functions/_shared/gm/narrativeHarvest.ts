@@ -15,7 +15,6 @@ import type { GameState, LoreCard, NpcMemory } from './types.ts';
 import { harvestCrowdIntoSceneFacts } from './crowdAuthority.ts';
 import { harvestHookIntoSceneFacts } from './hookLock.ts';
 import { looksLikeGeographyInvent, isLegalMapPlace } from './worldMapAuthority.ts';
-import { isChromePersonToken, isChoicePadPersonToken, isDialogueVerbPersonToken, isFactionOrOrgToken, isPolityFactionOrPlaceToken, isRoleContactLabel } from './chromeAuthority.ts';
 import { isRegisteredNpc, getRegisteredNpcs } from './entityRegistry.ts';
 
 /**

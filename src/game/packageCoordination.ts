@@ -25,6 +25,12 @@ import type { GameState } from './types';
 import type { Receipt } from './types/crossPackageContracts';
 import { appendReceipt, getReceipts } from './receiptLedger';
 import { assertExclusiveFacts } from './exclusiveFactsRegistry';
+import { getDueConsequences, deliverConsequence } from './pyoaDelayedConsequences';
+import { updateAllNpcLifecycles } from './npcLifecycleFsm';
+import { cleanupOldMemories } from './npcMemoryLedger';
+import { decideTurnover, spawnSuccessor, createTurnoverReceipt } from './npcTurnover';
+import { pickCrisis } from './pyoaCrisisRegistry';
+import * as receiptLedger from './receiptLedger';
 
 // ============================================================================
 // PRE-GM COMMIT SEQUENCE
@@ -94,7 +100,6 @@ export function preGmCommitSequence(state: GameState): GameState {
  */
 function deliverDueConsequences(state: GameState): GameState {
   // WS-5 Wave A implementation
-  const { getDueConsequences, deliverConsequence } = require('./pyoaDelayedConsequences');
   
   const dueConsequences = getDueConsequences(state);
   
@@ -140,9 +145,6 @@ function deliverDueConsequences(state: GameState): GameState {
  */
 function checkNpcLifecycles(state: GameState): GameState {
   // WS-2 Wave A + Wave B implementation
-  const { updateAllNpcLifecycles } = require('./npcLifecycleFsm');
-  const { cleanupOldMemories } = require('./npcMemoryLedger');
-  const { decideTurnover, spawnSuccessor, createTurnoverReceipt } = require('./npcTurnover');
   
   console.debug(`[PackageCoordination] Phase 2: Checking NPC lifecycles`);
   
@@ -266,8 +268,6 @@ function maybeSpawnCrisis(state: GameState): GameState {
   if (state.engineMode !== 'pyoa') {
     return state;
   }
-  
-  const { pickCrisis } = require('./pyoaCrisisRegistry');
   
   // Use bible ID from game state (would need to add this to GameState)
   const bibleId = 'thornferry-road'; // Hardcoded for Wave A
@@ -431,7 +431,7 @@ export function validatePackageIntegration(): void {
   
   // Check that receipt ledger is working
   try {
-    const stats = require('./receiptLedger').getStoreStats();
+    const stats = receiptLedger.getStoreStats();
     console.info(`  ✓ Receipt ledger OK (${stats.totalReceipts} receipts)`);
   } catch (error) {
     console.error('  ✗ Receipt ledger failed:', error);

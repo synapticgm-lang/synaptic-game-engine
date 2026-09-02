@@ -9,8 +9,9 @@
  * P0: Strict Entity Isolation via CAST Block
  */
 
-import type { GameState, NpcMemory, Encounter } from './types.ts';
+import type { GameState, NpcMemory, Encounter, LogEntry } from './types.ts';
 import { isUiLabel } from './narrativeTranslator.ts';
+import * as hubEncounters from './hubEncounters.ts';
 
 export interface CastMember {
   name: string;
@@ -128,8 +129,6 @@ function extractNamedCharacters(state: GameState): CastMember[] {
  * Added 2026-09-02c to fix 02b regression (30+ madlib violations)
  */
 function extractHubArrivalContact(state: GameState): CastMember | null {
-  // Import locally to avoid circular dependency
-  const hubEncounters = require('./hubEncounters');
   const resolved = hubEncounters.resolveHubArrival(state, state.currentLocation);
   
   if (!resolved?.beat.contactName) return null;
@@ -321,7 +320,7 @@ function formatCastBlock(cast: Cast): string {
 /**
  * Find first turn when entity appeared in timeline
  */
-function findFirstSeenTurn(entityName: string, timeline: any[]): number {
+function findFirstSeenTurn(entityName: string, timeline: LogEntry[]): number {
   for (const entry of timeline) {
     if (entry.sceneFacts?.present?.includes(entityName)) {
       return entry.turn ?? 0;
