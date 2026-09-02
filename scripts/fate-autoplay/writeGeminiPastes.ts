@@ -42,7 +42,7 @@ function writePastesForRun(runDir: string, outRoot?: string, maxChars = 100_000)
   const writerModel =
     typeof meta.writer === 'object' && meta.writer && 'model' in (meta.writer as object)
       ? String((meta.writer as { model?: string }).model ?? '')
-      : 'minimax/minimax-m3-free';
+      : 'google/gemini-2.5-flash-lite';
   const agent = String(meta.aiAgentMode ?? summary.aiAgentMode ?? 'default');
   const bibleId = String(meta.bibleId ?? summary.bibleId ?? basename(runDir));
 

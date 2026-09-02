@@ -19,9 +19,7 @@ import { callGm } from './aiService';
 import {
   enableAutoplayWriter,
   getAutoplayWriterOverride,
-  getFreeWriterRotationState,
   parseAutoplayWriterKind,
-  rotateFreeGatewayWriterOnRateLimit,
   type AutoplayWriterKind,
 } from './autoplayWriter';
 import { buildResolutionUserPayload } from './actionResolution';
@@ -223,7 +221,7 @@ export type FateAutoplayCliOpts = {
   batchDir?: string;
   outRoot: string;
   characterName: string;
-  /** GM writer: default (hosted Free via edge), flash-lite / openrouter (OpenRouter), or minimax (Gateway). */
+  /** GM writer: default (hosted Free via edge) or flash-lite / openrouter (OpenRouter). */
   writer?: AutoplayWriterKind;
 };
 
@@ -804,9 +802,6 @@ async function callGmWithRetries(
         };
       }
       transportRetries = attempt + 1;
-      if (kind === 'rate_limit') {
-        rotateFreeGatewayWriterOnRateLimit('callGmWithRetries-rate_limit');
-      }
       const pauseMs = isDnsResolutionFailure(err)
         ? TURN_TRANSPORT_DNS_PAUSE_MS
         : transportRetryBackoffMs(attempt, kind);
@@ -1529,7 +1524,7 @@ export async function runFateAutoplay(opts: {
   dryRun: boolean;
   outRoot: string;
   characterName: string;
-  /** When set, forces Flash Lite / MiniMax (or default hosted) for this run via client GM path. */
+  /** When set, forces Flash Lite (or default hosted) for this run via client GM path. */
   writer?: AutoplayWriterKind;
 }): Promise<RunSummary> {
   enableAutoplayTestLab(opts.aiTier);
@@ -1762,7 +1757,6 @@ export async function runFateAutoplay(opts: {
               route: getAutoplayWriterOverride()!.route,
             }
           : null,
-        writerRotation: getFreeWriterRotationState(),
       },
       null,
       2

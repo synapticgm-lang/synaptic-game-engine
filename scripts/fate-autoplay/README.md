@@ -58,9 +58,6 @@ npm run fate-autoplay -- --writer flash-lite --turns 20 --seed 1
 # Alias:
 npm run fate-autoplay -- --writer openrouter --turns 20 --seed 1
 
-# Optional $0: MiniMax via Vercel Gateway (AI_GATEWAY_API_KEY)
-npm run fate-autoplay -- --writer minimax --turns 20 --seed 1
-
 # After a run: Flash Lite critic + Gemini Pro paste packs
 npm run fate-dual-review -- --run-dir scripts/fate-autoplay/runs/<dir>
 
@@ -83,9 +80,7 @@ Auto-improve / curriculum **will** edit allowlisted `src/game/*` files without a
 - **never** commits, pushes, WOF / auth / billing / edge secrets
 - Mid writer stays OFF
 
-**Env:** `OPENROUTER_API_KEY` (or `VITE_OPENROUTER_API_KEY`) for Flash Lite. Optional `AI_GATEWAY_API_KEY` for `--writer minimax`.
-
-**Dual free rotation on 429 (minimax only):** `minimax/minimax-m3-free` ↔ `minimax/minimax-m2.7-free`. Tracked in `meta.json` → `writerRotation`.
+**Env:** `OPENROUTER_API_KEY` (or `VITE_OPENROUTER_API_KEY`) for Flash Lite.
 
 **Gemini morning pastes:** Story lens = Narration-only (`story-narration-only.md`); Game lens = full Options/STATUS transcript. Auto Flash Lite dual-critic runs overnight.
 

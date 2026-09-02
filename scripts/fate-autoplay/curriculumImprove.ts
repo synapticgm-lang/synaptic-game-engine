@@ -8,7 +8,6 @@
  *
  *   npm run fate-curriculum -- --ladder 50 --max-iters 3
  *   npm run fate-curriculum -- --ladder 50 --writer flash-lite
- *   npm run fate-curriculum -- --writer minimax   # optional $0 Gateway
  *   npm run fate-curriculum:detach -- --ladder 50 --max-iters 3
  *   --premades / CURRICULUM_PREMADES override (optional +hero-awakening,+system-integration for breadth ≤6)
  */
@@ -20,8 +19,6 @@ import {
   AUTOPLAY_HARNESS_DEFAULT_WRITER,
   CURRICULUM_FLAGSHIP_PREMADES,
   FLASH_LITE_OPENROUTER_MODEL,
-  MINIMAX_GATEWAY_FREE_MODEL,
-  MINIMAX_GATEWAY_FREE_MODEL_ALT,
   parseAutoplayWriterKind,
   resolveAutoplayWriter,
   type AutoplayWriterKind,
@@ -393,9 +390,7 @@ async function main(): Promise<void> {
     midWriter: STAGNATION_MID_WRITER_ENABLED,
     freeWriters: {
       harnessDefault: FLASH_LITE_OPENROUTER_MODEL,
-      minimaxPrimary: MINIMAX_GATEWAY_FREE_MODEL,
-      minimaxSecondary: MINIMAX_GATEWAY_FREE_MODEL_ALT,
-      policy: 'default OpenRouter Flash Lite; optional --writer minimax Gateway free rotate',
+      policy: 'OpenRouter Flash Lite only',
     },
     flagshipPremades: CURRICULUM_FLAGSHIP_PREMADES,
     note: 'Flash Lite OpenRouter harness; 4 mode flagships default; Gemini Narration-only + game pad pastes.',
@@ -410,11 +405,6 @@ async function main(): Promise<void> {
     const w = resolveAutoplayWriter(opts.writer);
     if (w) {
       console.log(`[curriculum] writer ${w.route} ${w.model} — ${w.note}`);
-      if (opts.writer === 'minimax') {
-        console.log(
-          `[curriculum] free rotate pair: ${MINIMAX_GATEWAY_FREE_MODEL} ↔ ${MINIMAX_GATEWAY_FREE_MODEL_ALT}`
-        );
-      }
     }
     console.log(`[curriculum] mid writer OFF=${!STAGNATION_MID_WRITER_ENABLED} hud=${HUD_BUILD_STAMP}`);
   }

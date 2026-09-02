@@ -1,7 +1,6 @@
 /**
  * Dual critic packs:
  * - Auto: Flash Lite via OpenRouter (default) × story + vibe/pace
- * - Optional: `--writer minimax` → Gateway free MiniMax critic
  * - Manual: paste-ready Gemini Pro packs for morning (no API call)
  *
  * Batch D: per-lens critic failures do not abort the whole review — pastes always
@@ -9,7 +8,6 @@
  *
  *   npm run fate-dual-review -- --run-dir scripts/fate-autoplay/runs/<dir>
  *   npm run fate-dual-review -- --run-dir <dir> --writer flash-lite
- *   npm run fate-dual-review -- --run-dir <dir> --writer minimax
  */
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
@@ -38,9 +36,8 @@ function writerFromMeta(meta: Record<string, unknown>): AutoplayWriterKind | nul
   const w = meta.writer;
   if (!w || typeof w !== 'object') return null;
   const kind = (w as { kind?: string }).kind;
-  if (kind === 'minimax' || kind === 'flash-lite' || kind === 'default') return kind;
+  if (kind === 'flash-lite' || kind === 'default') return kind;
   const model = String((w as { model?: string }).model ?? '');
-  if (/minimax/i.test(model)) return 'minimax';
   if (/gemini-2\.5-flash-lite|flash-lite/i.test(model)) return 'flash-lite';
   return null;
 }
@@ -70,13 +67,13 @@ async function main(): Promise<void> {
   const { runDir, maxChars, writer: writerFlag, alsoCallGemini } = parseArgs(process.argv.slice(2));
   if (!runDir || !existsSync(runDir)) {
     console.error(
-      'Usage: npm run fate-dual-review -- --run-dir <fate run folder> [--writer flash-lite|minimax]'
+      'Usage: npm run fate-dual-review -- --run-dir <fate run folder> [--writer flash-lite]'
     );
     process.exit(2);
   }
   if (alsoCallGemini) {
     console.error(
-      '[dual-review] --also-call-gemini is disabled. Gemini packs are paste-only (morning). Auto critic is Flash Lite (or --writer minimax).'
+      '[dual-review] --also-call-gemini is disabled. Gemini packs are paste-only (morning). Auto critic is Flash Lite.'
     );
     process.exit(2);
   }
@@ -169,7 +166,7 @@ async function main(): Promise<void> {
     );
     index.push({ file: pasteName, reviewer: 'gemini-pro', route: 'manual-paste', lens });
 
-    // Auto critic (Flash Lite default, or MiniMax when opted in)
+    // Auto critic (Flash Lite)
     const file = `${lens}__${critic.reviewer}.md`;
     console.log(`[dual-review] ${file} via ${critic.route} / ${critic.model}…`);
     try {
@@ -182,7 +179,7 @@ async function main(): Promise<void> {
         user: body + jsonTail,
         temperature: 0.2,
         maxTokens: 6144,
-        maxAttempts: critic.reviewer === 'minimax' ? 4 : 3,
+        maxAttempts: 3,
       });
       writeFileSync(join(outDir, file), text + '\n', 'utf8');
       index.push({
@@ -218,10 +215,7 @@ async function main(): Promise<void> {
   const status =
     criticFail === 0 ? 'ok' : criticOk > 0 ? 'partial' : 'review-deferred';
 
-  const policy =
-    critic.reviewer === 'minimax'
-      ? 'minimax-gateway-free-auto + gemini-pro-manual-paste'
-      : 'openrouter-flash-lite-auto + gemini-pro-manual-paste';
+  const policy = 'openrouter-flash-lite-auto + gemini-pro-manual-paste';
 
   writeFileSync(
     join(outDir, 'INDEX.json'),

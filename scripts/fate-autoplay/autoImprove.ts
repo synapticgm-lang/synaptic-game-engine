@@ -11,7 +11,6 @@
  *
  *   npm run fate-auto-improve -- --turns 8 --max-iters 2
  *   npm run fate-auto-improve -- --turns 8 --max-iters 2 --writer flash-lite
- *   npm run fate-auto-improve -- --writer minimax   # optional $0 Gateway
  */
 import { spawnSync } from 'node:child_process';
 import {

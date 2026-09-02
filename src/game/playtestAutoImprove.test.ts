@@ -4,19 +4,13 @@ import {
   AUTOPLAY_HARNESS_DEFAULT_WRITER,
   CURRICULUM_FLAGSHIP_PREMADES,
   FLASH_LITE_OPENROUTER_MODEL,
-  MINIMAX_GATEWAY_FREE_MODEL,
-  MINIMAX_GATEWAY_FREE_MODEL_ALT,
   clearAutoplayWriterOverride,
   enableAutoplayWriter,
   getAutoplayWriterOverride,
-  getFreeWriterRotationState,
   isClientAutoplayWriter,
   parseAutoplayWriterKind,
   resolveAutoplayCritic,
   resolveFlashLiteAutoplayWriter,
-  resolveMinimaxAutoplayWriter,
-  resolveMinimaxFreeCritic,
-  rotateFreeGatewayWriterOnRateLimit,
 } from './autoplayWriter';
 import {
   buildGameVibePaceCriticPrompt,
@@ -35,10 +29,8 @@ describe('autoplayWriter + dual critic + auto-improve rails', () => {
     ]);
     expect(parseAutoplayWriterKind('openrouter')).toBe('flash-lite');
     expect(parseAutoplayWriterKind('flash-lite')).toBe('flash-lite');
-    expect(parseAutoplayWriterKind('minimax')).toBe('minimax');
     expect(parseAutoplayWriterKind('default')).toBe('default');
     expect(isClientAutoplayWriter('flash-lite')).toBe(true);
-    expect(isClientAutoplayWriter('minimax')).toBe(true);
     expect(isClientAutoplayWriter('default')).toBe(false);
   });
 
@@ -93,49 +85,6 @@ describe('autoplayWriter + dual critic + auto-improve rails', () => {
     }
   });
 
-  it('requires AI_GATEWAY_API_KEY for MiniMax and never falls back to OpenRouter by default', () => {
-    clearAutoplayWriterOverride();
-    const prevGw = process.env.AI_GATEWAY_API_KEY;
-    const prevOr = process.env.OPENROUTER_API_KEY;
-    const prevVite = process.env.VITE_OPENROUTER_API_KEY;
-    delete process.env.AI_GATEWAY_API_KEY;
-    delete process.env.VERCEL_AI_GATEWAY_API_KEY;
-    process.env.OPENROUTER_API_KEY = 'sk-or-test-key';
-    try {
-      expect(() => resolveMinimaxAutoplayWriter()).toThrow(/AI_GATEWAY_API_KEY/);
-    } finally {
-      if (prevGw === undefined) delete process.env.AI_GATEWAY_API_KEY;
-      else process.env.AI_GATEWAY_API_KEY = prevGw;
-      if (prevOr === undefined) delete process.env.OPENROUTER_API_KEY;
-      else process.env.OPENROUTER_API_KEY = prevOr;
-      if (prevVite === undefined) delete process.env.VITE_OPENROUTER_API_KEY;
-      else process.env.VITE_OPENROUTER_API_KEY = prevVite;
-      clearAutoplayWriterOverride();
-    }
-  });
-
-  it('uses Vercel free MiniMax when gateway key exists (--writer minimax)', () => {
-    clearAutoplayWriterOverride();
-    const prevGw = process.env.AI_GATEWAY_API_KEY;
-    process.env.AI_GATEWAY_API_KEY = 'vercel-test-key';
-    try {
-      const w = resolveMinimaxAutoplayWriter();
-      expect(w.model).toBe(MINIMAX_GATEWAY_FREE_MODEL);
-      expect(w.route).toBe('vercel-gateway-free');
-      expect(w.baseUrl).toContain('ai-gateway.vercel.sh');
-      enableAutoplayWriter('minimax');
-      expect(getAutoplayWriterOverride()?.model).toBe(MINIMAX_GATEWAY_FREE_MODEL);
-      const c = resolveMinimaxFreeCritic();
-      expect(c.model).toBe(MINIMAX_GATEWAY_FREE_MODEL);
-      expect(c.reviewer).toBe('minimax');
-      enableAutoplayWriter('default');
-      expect(getAutoplayWriterOverride()).toBeNull();
-    } finally {
-      if (prevGw === undefined) delete process.env.AI_GATEWAY_API_KEY;
-      else process.env.AI_GATEWAY_API_KEY = prevGw;
-      clearAutoplayWriterOverride();
-    }
-  });
 
   it('builds distinct story vs vibe critic briefs', () => {
     const story = buildStoryStandaloneCriticPrompt({
@@ -160,38 +109,6 @@ describe('autoplayWriter + dual critic + auto-improve rails', () => {
       expect(p.startsWith('src/game/')).toBe(true);
       expect(p.includes('wof')).toBe(false);
       expect(p.includes('supabase')).toBe(false);
-    }
-  });
-
-  it('rotates between two free Gateway models on 429 (never OpenRouter)', () => {
-    clearAutoplayWriterOverride();
-    const prevGw = process.env.AI_GATEWAY_API_KEY;
-    process.env.AI_GATEWAY_API_KEY = 'vercel-test-key';
-    try {
-      enableAutoplayWriter('minimax');
-      expect(getAutoplayWriterOverride()?.model).toBe(MINIMAX_GATEWAY_FREE_MODEL);
-      const next = rotateFreeGatewayWriterOnRateLimit('test');
-      expect(next).toBe(MINIMAX_GATEWAY_FREE_MODEL_ALT);
-      expect(getAutoplayWriterOverride()?.model).toBe(MINIMAX_GATEWAY_FREE_MODEL_ALT);
-      expect(getAutoplayWriterOverride()?.route).toBe('vercel-gateway-free');
-      const back = rotateFreeGatewayWriterOnRateLimit('test-2');
-      expect(back).toBe(MINIMAX_GATEWAY_FREE_MODEL);
-      const rot = getFreeWriterRotationState();
-      expect(rot.primary).toBe(MINIMAX_GATEWAY_FREE_MODEL);
-      expect(rot.secondary).toBe(MINIMAX_GATEWAY_FREE_MODEL_ALT);
-      expect(rot.switchCount).toBe(2);
-      const c = resolveMinimaxFreeCritic();
-      expect(c.alternateModels).toContain(MINIMAX_GATEWAY_FREE_MODEL_ALT);
-      expect(c.alternateModels.every((m) => m.includes('-free'))).toBe(true);
-      // Flash Lite path does not rotate Gateway models
-      clearAutoplayWriterOverride();
-      process.env.OPENROUTER_API_KEY = process.env.OPENROUTER_API_KEY || 'sk-or-test-key';
-      enableAutoplayWriter('flash-lite');
-      expect(rotateFreeGatewayWriterOnRateLimit('noop')).toBeNull();
-    } finally {
-      if (prevGw === undefined) delete process.env.AI_GATEWAY_API_KEY;
-      else process.env.AI_GATEWAY_API_KEY = prevGw;
-      clearAutoplayWriterOverride();
     }
   });
 });

@@ -23,7 +23,7 @@ export { RateLimitError, withRetry } from './aiServiceShared';
  * Resolve narrative generation.
  * Prefer the Supabase `gm-turn` edge proxy (prompts stay server-side).
  * Client-side assembly is DEV / explicit VITE_ALLOW_CLIENT_GM only (tree-shaken from prod otherwise).
- * Fate autoplay `--writer flash-lite` / `--writer minimax` forces client direct so edge Free clamp cannot rewrite the model.
+ * Fate autoplay `--writer flash-lite` forces client direct so edge Free clamp cannot rewrite the model.
  */
 export async function callGm(
   state: GameState,

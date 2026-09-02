@@ -65,8 +65,8 @@ for (const r of RUNS) {
   const turns = Number(meta.completedTurns ?? summary.completedTurns ?? 50);
   const writerModel =
     typeof meta.writer === 'object' && meta.writer && 'model' in (meta.writer as object)
-      ? String((meta.writer as { model?: string }).model ?? 'minimax/minimax-m3-free')
-      : 'minimax/minimax-m3-free';
+      ? String((meta.writer as { model?: string }).model ?? 'google/gemini-2.5-flash-lite')
+      : 'google/gemini-2.5-flash-lite';
   const agent = String(meta.aiAgentMode ?? summary.aiAgentMode ?? 'default');
   const body = truncate(extractTranscript(storyPath));
 
@@ -116,7 +116,7 @@ writeFileSync(
   [
     '# Gemini Pro morning paste packs',
     '',
-    'For each of the **3 real MiniMax Fate tapes**, paste **both** files into Gemini Pro (two chats or two turns):',
+    'For each of the **3 real Fate tapes**, paste **both** files into Gemini Pro (two chats or two turns):',
     '',
     '1. `*__story-standalone__GEMINI-PRO-PASTE.md` — book / story quality',
     '2. `*__game-vibe-pace__GEMINI-PRO-PASTE.md` — game vibe, pace, Free hook',

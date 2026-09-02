@@ -6,7 +6,6 @@ import {
 } from './narrativeSanitize';
 import { filterSystemLogForEngine } from './systemLog';
 import { logger } from './logger';
-import { rotateFreeGatewayWriterOnRateLimit } from './autoplayWriter';
 
 export interface GmResult {
   text: string;
@@ -53,8 +52,6 @@ export async function withRetry<T>(
         );
         throw e;
       }
-      // Free Gateway: flip m3-free ↔ m2.7-free before backoff so the next attempt uses the other model.
-      rotateFreeGatewayWriterOnRateLimit('withRetry-429');
       const serverDelay = e instanceof RateLimitError && e.retryAfterMs ? e.retryAfterMs : undefined;
       const delay = serverDelay ?? BACKOFF_DELAYS_MS[attempt] ?? BASE_DELAY_MS * Math.pow(2, attempt);
       logger.warn('ai-retry', `retrying in ${Math.round(delay / 1000)}s (attempt ${attempt + 1}/${MAX_RETRIES})`, {

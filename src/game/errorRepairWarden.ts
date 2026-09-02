@@ -72,9 +72,9 @@ export const GM_PROXY_TIMEOUT_FIRST_POST_OPEN_MS = 75_000;
 /** Initial attempt + this many transport retries (timeout / network / empty / rate_limit). */
 export const TURN_TRANSPORT_MAX_AUTO_RETRIES = 2;
 export const TURN_TRANSPORT_RETRY_BACKOFF_MS = [700, 1800] as const;
-/** Free MiniMax / Gateway 429 — longer sleeps so curriculum does not stamp instant stubs. */
+/** Rate limit 429 — longer sleeps so curriculum does not stamp instant stubs. */
 export const TURN_TRANSPORT_RATE_LIMIT_BACKOFF_MS = [2500, 8000, 15000] as const;
-/** DNS ENOTFOUND (ai-gateway) — pause before retry; harness aborts cell after streak. */
+/** DNS ENOTFOUND — pause before retry; harness aborts cell after streak. */
 export const TURN_TRANSPORT_DNS_PAUSE_MS = 20_000;
 
 /**
@@ -174,7 +174,7 @@ export function turnTransportRetryMessage(attempt: number, kind: TurnFailKind): 
 /** Prefer auto-retry for flaky transport; never for auth/client bugs. */
 export function shouldAutoRetryTurn(kind: TurnFailKind): boolean {
   // unknown: matrix-40 PYOA bursts were often unclassified provider glitches — one retry is cheap vs dead runs.
-  // rate_limit: Free MiniMax Gateway 429 — backoff + retry before empty→stub (critic Batch A).
+  // rate_limit: OpenRouter 429 — backoff + retry before empty→stub (critic Batch A).
   return (
     kind === 'timeout' ||
     kind === 'network' ||

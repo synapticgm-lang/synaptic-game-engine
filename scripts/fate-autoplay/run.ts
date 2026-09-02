@@ -62,9 +62,8 @@ Options:
   --personality ID     LitRPG systemPersonality or gmPersonality
   --engine MODE        litrpg | dnd | rpg | pyoa
   --ai-tier free|mid|high
-  --writer default|flash-lite|openrouter|minimax
+  --writer default|flash-lite|openrouter
                        flash-lite/openrouter = OpenRouter google/gemini-2.5-flash-lite (needs OPENROUTER_API_KEY)
-                       minimax = Vercel Gateway free MiniMax (needs AI_GATEWAY_API_KEY)
                        default = hosted Free via edge gm-turn
   --pick-mode fate|first-pad
   --ai-agent-mode MODE default|maxlevel|storyfollower|completionist (goal-oriented AI)
@@ -248,14 +247,13 @@ async function main(): Promise<void> {
   const supabaseUrl = (import.meta.env.VITE_SUPABASE_URL as string | undefined)?.trim();
   const supabaseKey = (import.meta.env.VITE_SUPABASE_ANON_KEY as string | undefined)?.trim();
   const hasEnv = Boolean(supabaseUrl && supabaseKey);
-  const usesClientWriter = opts.writer === 'minimax' || opts.writer === 'flash-lite';
+  const usesClientWriter = opts.writer === 'flash-lite';
 
   if (!opts.dryRun && !hasEnv && !usesClientWriter) {
     console.error(
       '[fate-autoplay] Missing VITE_SUPABASE_URL / VITE_SUPABASE_ANON_KEY — cannot call gm-turn.\n' +
         '  Put them in .env / .env.local, or run with --dry-run to smoke the harness.\n' +
-        '  Or use --writer flash-lite with OPENROUTER_API_KEY (client GM path),\n' +
-        '  or --writer minimax with AI_GATEWAY_API_KEY.\n' +
+        '  Or use --writer flash-lite with OPENROUTER_API_KEY (client GM path).\n' +
         '  Exact live command once secrets exist:\n' +
         '    npm run fate-autoplay -- --night-storyforge\n' +
         '  ETA (~420 turns @ 45–75s/turn): ~6–7.5 hours sequential. Cost ≤~$1 Free Flash Lite.\n'

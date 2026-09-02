@@ -2,7 +2,6 @@
 # Usage:
 #   powershell -File scripts/fate-autoplay/start-curriculum-detached.ps1 -- --ladder 50 --max-iters 3
 #   powershell -File scripts/fate-autoplay/start-curriculum-detached.ps1 -- --ladder 50 --writer flash-lite
-#   powershell -File scripts/fate-autoplay/start-curriculum-detached.ps1 -- --writer minimax
 
 $ErrorActionPreference = 'Stop'
 $Root = Resolve-Path (Join-Path $PSScriptRoot '..\..')
