@@ -526,7 +526,8 @@ export function formatHubArrivalForPrompt(state: GameState): string {
   const resolved = resolveHubArrival(state, state.currentLocation);
   if (!resolved) return '';
   const { hub, beat } = resolved;
-  const contact = beat.contactName ? (' Contact=' + beat.contactName + '.') : '';
+  // 2026-09-02c fix: Reference CAST instead of injecting raw contact name
+  const contact = beat.contactName ? ' Hub contact is present (see CAST for identity).' : '';
   const quest = beat.revealQuestId ? (' Soft-hook=' + beat.revealQuestId + '.') : '';
   return (
     '[HUB ARRIVAL — ' +

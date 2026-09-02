@@ -43,6 +43,9 @@ export interface Cast {
 
 /**
  * Main function - builds complete CAST block
+ * 
+ * Now includes hub arrival contacts to prevent madlib injection
+ * (2026-09-02c fix for 02b regression)
  */
 export function buildEntityCast(state: GameState): string {
   const cast: Cast = {
@@ -57,6 +60,9 @@ export function buildEntityCast(state: GameState): string {
 
 /**
  * Extract named characters (NPCs with memory/personality)
+ * 
+ * Now includes hub arrival contacts to prevent madlib injection
+ * (2026-09-02c fix for 02b regression)
  */
 function extractNamedCharacters(state: GameState): CastMember[] {
   const present = state.sceneFacts?.present ?? [];
@@ -104,7 +110,37 @@ function extractNamedCharacters(state: GameState): CastMember[] {
     });
   }
   
+  // Add hub arrival contact if present (2026-09-02c fix)
+  const hubContact = extractHubArrivalContact(state);
+  if (hubContact && !named.some(n => n.name === hubContact.name)) {
+    named.push(hubContact);
+  }
+  
   return named;
+}
+
+/**
+ * Extract hub arrival contact if present
+ * 
+ * Prevents "Lowmarket Fence" / "Scattered Scale" madlib injection
+ * by including hub contacts in the CAST whitelist.
+ * 
+ * Added 2026-09-02c to fix 02b regression (30+ madlib violations)
+ */
+function extractHubArrivalContact(state: GameState): CastMember | null {
+  // Import locally to avoid circular dependency
+  const hubEncounters = require('./hubEncounters');
+  const resolved = hubEncounters.resolveHubArrival(state, state.currentLocation);
+  
+  if (!resolved?.beat.contactName) return null;
+  
+  return {
+    name: resolved.beat.contactName,
+    role: resolved.beat.kind === 'social' ? 'hub contact' : 'character',
+    disposition: 'neutral',
+    firstSeen: state.turn ?? 0,
+    pinned: false,
+  };
 }
 
 /**
