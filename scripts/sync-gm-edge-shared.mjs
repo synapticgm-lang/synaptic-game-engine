@@ -69,6 +69,7 @@ const FILES = [
   'dungeonLifecycle.ts',
   'dungeonMobLedger.ts',
   'outdoorHubs.ts',
+  'hubEncounters.ts',
   'pyoaSpine.ts',
 ];
 
@@ -156,3 +157,4 @@ Do not edit these copies by hand — change the src files and re-sync.
 );
 
 console.log('Done →', destDir);
+
