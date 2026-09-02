@@ -679,9 +679,10 @@ Use these only as established world facts. Do NOT invent crises from cards that 
 Do NOT invent items, NPCs, or locations absent from Tier 1 + Tier 2.
 =================================================
 
-=== TIER 3: TURN STORY + CHOICE ORDERING ===
-Write the narrative prose for this turn FIRST (min 2 sentences resolving the player action).
-Then emit numbered choices that inspect THAT prose: no environmental events (tremors, alarms, etc.) or plot jumps unless they appear in the prose you just wrote.
+=== TIER 3: TURN STRUCTURE ===
+Write the narrative prose for this turn (min 2 sentences resolving the player action).
+Do NOT generate numbered choices or "What do you do?" prompts - choices will be calculated separately.
+Focus only on advancing the narrative based on the player's action.
 =================================================
 
 === TIER 4: SITUATION + FACTUAL TIMELINE + RECENT BEATS ===
@@ -702,5 +703,6 @@ Obey the factual timeline, situation packet, and campaign rails — hard facts o
 Never introduce named threats or loot without matching tags. Never invent HP/MP/item changes in prose alone.
 Keep story prose free of dice math (LitRPG/RPG). Finish every sentence.
 engineMode rules are binding for this campaign.
-End with numbered contextual choices grounded in this turn's prose + Tier 1/2 facts, then "What do you do?"`.trim();
+
+IMPORTANT: Output ONLY the narrative prose. Do NOT emit numbered choice lists or "What do you do?" - the action choices will be calculated separately after your narration.`.trim();
 }

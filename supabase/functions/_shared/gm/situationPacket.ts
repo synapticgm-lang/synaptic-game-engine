@@ -65,6 +65,11 @@ import {
   formatExhaustionSummary,
   type ContentDensityState,
 } from './exhaustionCurve.ts';
+// Flash Lite Input Sanitization (2026-09-02)
+import { translateStateToNarrative } from './narrativeTranslator.ts';
+import { buildEntityCast } from './entityCast.ts';
+import { injectLoiterDelta } from './loiterDeltaDirective.ts';
+import { formatPovRailsForPrompt } from './povRails.ts';
 
 export function effectivePowerScaling(state: GameState): PowerScaling {
   return state.powerScaling ?? 'balanced';
@@ -217,6 +222,13 @@ export function formatSceneSnapshotForPrompt(state: GameState): string {
   const alone = state.openingEstablishment?.aloneArrival === true;
   const threat = resolveThreatTier(state);
   const level = Math.max(1, state.character?.level ?? 1);
+  
+  // Flash Lite Input Sanitization: Build CAST block first
+  const castBlock = buildEntityCast(state);
+  
+  // Natural language state translation
+  const narrativeState = translateStateToNarrative(state);
+  
   const presence =
     alone && !state.activeEncounter
       ? 'alone — no established NPCs'
@@ -274,6 +286,16 @@ export function formatSceneSnapshotForPrompt(state: GameState): string {
   const lines = [
     '### SNAPSHOT',
     `- Location: ${s.location}`,
+    '', // Empty line for spacing before LOCATION AUTHORITY
+    'LOCATION AUTHORITY (BINDING):',
+    `Current location: ${s.location}`,
+    'You are ALREADY HERE. Do not narrate arrival unless location changed from prior turn.',
+    'Travel actions require explicit Travel choice and cameraLock update.',
+    // BATCH YZ: PYOA-specific location binding (Issue 3 fix)
+    state.engineMode === 'pyoa' 
+      ? 'PYOA LOCATION LOCK: In PYOA mode, location changes only occur at crisis resolution fork points marked by numbered spine exits. Do NOT invent travel, "you reach X", or location changes during exploration/investigation beats. The player is at the CURRENT LOCATION until a spine choice explicitly moves them.'
+      : '',
+    '', // Empty line after LOCATION AUTHORITY
     threat != null
       ? `- Zone Threat: Tier ${threat} vs Player Level ${level}`
       : `- Zone Threat: none (street/outdoors or unset)`,
@@ -407,7 +429,19 @@ export function formatSceneSnapshotForPrompt(state: GameState): string {
       'SPEAKER CONTINUITY: Named people in Presence who just spoke stay present this beat unless Time/Location changes.'
     );
   }
-  return lines.join('\n');
+  
+  // Apply loiter delta directive if needed
+  const streak = countPlayerIntentStreak(state);
+  const snapshotBase = lines.filter((line) => line !== '').join('\n');
+  const snapshotWithLoiterDelta = injectLoiterDelta(snapshotBase, streak, state);
+  
+  // Prepend CAST block and narrative state
+  return `${castBlock}
+
+### CURRENT SCENE (NATURAL LANGUAGE)
+${narrativeState}
+
+${snapshotWithLoiterDelta}`;
 }
 
 export function formatSituationForPrompt(state: GameState): string {
@@ -574,11 +608,12 @@ PLAYER ACTION FIDELITY (BINDING): Answer the player's last action first (e.g. se
 
 export function formatFullMemoryBlock(state: GameState, tokenBudget?: number): string {
   const rails = formatCampaignRails(state);
+  const povRails = formatPovRailsForPrompt(state);
   const situation = formatSituationForPrompt(state);
   const budget = tokenBudget ?? 2000; // Default 2k, can be increased dynamically
   const memoryCore = formatCampaignMemoryForPrompt(state, situation, state.currentLocation ?? '', budget);
   const timeline = formatTimelineForPrompt(state.timeline, 12);
-  return `${rails ? `${rails}\n\n` : ''}${memoryCore}
+  return `${rails ? `${rails}\n\n` : ''}${povRails ? `${povRails}\n\n` : ''}${memoryCore}
 
 === FACTUAL TIMELINE (NO FLUFF — AUTHORITATIVE MEMORY, TRIMMED) ===
 ${timeline}
