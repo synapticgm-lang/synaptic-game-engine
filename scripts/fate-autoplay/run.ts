@@ -88,6 +88,8 @@ Outputs per run: transcript.md, turns.jsonl, summary.json, meta.json
 
 Related:
   npm run fate-dual-review -- --run-dir <run>
+  npm run fate-gemini-pastes -- --run-dir <run>
+  npm run fate-gemini-review -- --dir <paste-dir>
   npm run fate-auto-improve -- --turns 8 --max-iters 2 --writer flash-lite
   npm run fate-curriculum -- --ladder 50 --writer flash-lite
   npm run fate-curriculum:detach -- --ladder 50 --max-iters 3

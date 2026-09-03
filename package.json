@@ -19,6 +19,7 @@
     "fate-curriculum": "node ./node_modules/vite-node/vite-node.mjs --config vite.config.ts scripts/fate-autoplay/curriculumImprove.ts --",
     "fate-curriculum:detach": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/fate-autoplay/start-curriculum-detached.ps1 --",
     "fate-gemini-pastes": "node ./node_modules/vite-node/vite-node.mjs --config vite.config.ts scripts/fate-autoplay/writeGeminiPastes.ts --",
+    "fate-gemini-review": "node ./node_modules/vite-node/vite-node.mjs --config vite.config.ts scripts/fate-autoplay/geminiReview.ts --",
     "eval:12x300": "npm run fate-autoplay -- --modes-agents-300 --turns 300 --seed 100"
   },
   "dependencies": {

@@ -80,11 +80,35 @@ Auto-improve / curriculum **will** edit allowlisted `src/game/*` files without a
 - **never** commits, pushes, WOF / auth / billing / edge secrets
 - Mid writer stays OFF
 
-**Env:** `OPENROUTER_API_KEY` (or `VITE_OPENROUTER_API_KEY`) for Flash Lite.
+**Env:** `OPENROUTER_API_KEY` (or `VITE_OPENROUTER_API_KEY`) for the game writer **and** the overnight Gemini Pro critic.
 
 **Gemini morning pastes:** Story lens = Narration-only (`story-narration-only.md`); Game lens = full Options/STATUS transcript. Auto Flash Lite dual-critic runs overnight.
 
-Gemini Pro: dual-review writes `*__gemini-pro-PASTE.md` for morning paste — **never** called via OpenRouter.
+Gemini Pro paste packs (`*__gemini-pro-PASTE.md`) are local files. The overnight critic now calls **OpenRouter** `google/gemini-2.5-pro` (not Flash, not DeepSeek). Game writer stays `--writer default`.
+
+## Overnight Gemini Pro critic (unattended)
+
+After 4×T50 + paste packs, score each **story** pack with OpenRouter Gemini 2.5 Pro. Critic only — does **not** edit game code.
+
+```bash
+# Needs local .env OPENROUTER_API_KEY (gitignored; same key as the game) + OpenRouter credits.
+# Default model: google/gemini-2.5-pro. Overnight cheaper Flex: add --flex
+# Optional AI Studio: --provider google (needs GEMINI_API_KEY)
+npm run fate-gemini-review -- --dir scripts/fate-autoplay/runs/gemini-paste-2026-09-02f-smoke --stamp 02f
+
+# Single file
+npm run fate-gemini-review -- --file path/to/01-LITRPG__story-standalone__gemini-pro-PASTE.md --stamp 02f
+```
+
+Replies: `docs/bugs/gemini-reviews-2026-09-02/gemini-0N-<mode>-story-02f-reply.md`  
+(`--beside` writes next to the packs; `--out <dir>` overrides.)
+
+### Overnight sequence
+
+1. `npx supabase functions deploy gm-turn` (hosted writer — do this before T50)
+2. 4×T50 — `npm run fate-autoplay -- --turns 50 --writer default --stamp 2026-09-02f` (one flagship per mode; see Grok guide)
+3. Build paste packs — `npm run fate-gemini-pastes -- --run-dir <each-run>` then copy the four `story-standalone__gemini-pro-PASTE.md` files into `scripts/fate-autoplay/runs/gemini-paste-2026-09-02f-t50/` as `01-LITRPG__…` / `02-DND__…` / `03-RPG__…` / `04-PYOA__…` (same layout as `gemini-paste-2026-09-02e-t50`)
+4. `npm run fate-gemini-review -- --dir scripts/fate-autoplay/runs/gemini-paste-2026-09-02f-t50 --stamp 02f` (OpenRouter `google/gemini-2.5-pro`; needs `OPENROUTER_API_KEY` + credits)
 
 ## Free-tier limits (autoplay only)
 
