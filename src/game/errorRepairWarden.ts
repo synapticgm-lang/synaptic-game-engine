@@ -8,14 +8,7 @@ import type { GameState, Quest } from './types';
 import { isAloneArrivalPick, isAloneArrivalOpening } from './openingEstablishment';
 import { adaptStarterQuestsForArrival } from './questPlay';
 import { getCampaignBibleById } from '@/data/campaigns';
-import { filterChromeFromPresent, isChromePersonToken } from './chromeAuthority';
-import { attachHookLock, backfillHookLockFromSave } from './hookLock';
-import { displayAdventurerName, isLockablePcName, UNNAMED_ADVENTURER } from './pcNameAuthority';
-import { isAtmospherePlaceName } from './questPlay';
-import { isInteriorMap } from './placeAuthority';
-import { shortRoomLabel } from './mapEngine';
-import { attachLastKill, lastKillFromAutoFightLog } from './combatAuthority';
-import { isRegisteredNpc } from './entityRegistry';
+import { filterChromeFromPresent, isChromePersonToken, isHubRoleCompoundToken } from './chromeAuthority';
 
 /** Bump when adding load-time repairs that must re-run on old saves.
  *  Rev 4 = 30Y chrome-as-people strip (Place / blue panel out of present[]).
@@ -101,6 +94,13 @@ export function classifyTurnFailure(err: unknown): TurnFailKind {
   const msg = err instanceof Error ? err.message : String(err ?? '');
   const name = err instanceof Error ? err.name : '';
   if (!msg.trim()) return 'network';
+  
+  // P0-4 Batch 02f: Reject Han (Chinese) characters in GM response
+  // Treat as 'empty' → retry same-model → failover to Llama
+  if (/[\u4e00-\u9fff]/.test(msg)) {
+    return 'empty';
+  }
+  
   if (/still compiling|aborted|AbortError|timed?\s*out/i.test(msg) || name === 'AbortError') {
     return 'timeout';
   }
@@ -343,13 +343,9 @@ function repairUnregisteredEntities(state: GameState, notes: ErrorRepairNote[]):
   
   // Filter out any entity that is not in the NPC registry
   const registeredPresent = present.filter((name) => {
-    // Keep if it's a registered NPC
-    if (isRegisteredNpc(name, bibleId)) return true;
-    
-    // Keep if it's a chrome token (already handled by repairChromePresent)
-    if (isChromePersonToken(name)) return false; // Will be removed by repairChromePresent
-    
-    // Otherwise reject
+    if (isChromePersonToken(name)) return false;
+    if (isHubRoleCompoundToken(name)) return true;
+    if (canHarvestAsNamedPerson(name, bibleId)) return true;
     return false;
   });
   

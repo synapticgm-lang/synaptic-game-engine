@@ -15,8 +15,8 @@ import type { GameState, LoreCard, NpcMemory } from './types';
 import { harvestCrowdIntoSceneFacts } from './crowdAuthority';
 import { harvestHookIntoSceneFacts } from './hookLock';
 import { looksLikeGeographyInvent, isLegalMapPlace } from './worldMapAuthority';
-import { isChromePersonToken, isChoicePadPersonToken, isDialogueVerbPersonToken, isFactionOrOrgToken, isPolityFactionOrPlaceToken, isRoleContactLabel } from './chromeAuthority';
-import { isRegisteredNpc, getRegisteredNpcs } from './entityRegistry';
+import { isHubRoleCompoundToken, isNonPersonNameToken } from './chromeAuthority';
+import { getRegisteredNpcs, canHarvestAsNamedPerson } from './entityRegistry';
 
 /**
  * Extract NPC names from prose that are in the entity registry.
@@ -33,8 +33,9 @@ function extractRegisteredNpcs(prose: string, bibleId?: string | null): string[]
   const found = new Set<string>();
   const lower = prose.toLowerCase();
   
-  // Only find NPCs that are explicitly in the registry
+  // Only find NPCs that are explicitly in the registry AND eligible as named people
   for (const npcName of validNpcs) {
+    if (!canHarvestAsNamedPerson(npcName, bibleId)) continue;
     const npcLower = npcName.toLowerCase();
     // Simple word boundary check
     const pattern = new RegExp(`\\b${npcLower.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`, 'i');
@@ -48,12 +49,33 @@ function extractRegisteredNpcs(prose: string, bibleId?: string | null): string[]
   let tagMatch: RegExpExecArray | null;
   while ((tagMatch = tagPattern.exec(prose))) {
     const taggedName = (tagMatch[1] ?? '').trim();
-    if (taggedName.length >= 2 && isRegisteredNpc(taggedName, bibleId)) {
+    if (taggedName.length >= 2 && canHarvestAsNamedPerson(taggedName, bibleId)) {
       found.add(taggedName);
     }
   }
   
   return [...found].slice(0, 8);
+}
+
+/** Lock B — harvest multi-word proper names / hub contacts from prose (not COMMON_NPCS). */
+function extractProperNamesFromProse(prose: string, bibleId?: string | null): string[] {
+  if (!prose?.trim()) return [];
+  const found = new Set<string>();
+  const patterns = [
+    /\b(?:Brother|Sister|Father|Captain|High Chanter|Envoy)\s+[A-Z][a-z'-]+\b/g,
+    /\b[A-Z][a-z'-]+\s+(?:Fence|Sergeant|Vane|Quill|Tam|Holt|Ash|Clerk)\b/g,
+    /\bWren\s+Holt\b/g,
+  ];
+  for (const re of patterns) {
+    let m: RegExpExecArray | null;
+    while ((m = re.exec(prose))) {
+      const name = (m[0] ?? '').trim();
+      if (name.length >= 3 && canHarvestAsNamedPerson(name, bibleId)) {
+        found.add(name);
+      }
+    }
+  }
+  return [...found];
 }
 
 function ensureNpcMemory(state: GameState, name: string, turn: number): NpcMemory[] {
@@ -115,7 +137,10 @@ export function harvestNarrativeIntoLedger(
   if (!prose?.trim()) return state;
   
   // Batch Y Milestone 1: Only harvest NPCs that are in the entity registry
-  const registeredNpcs = extractRegisteredNpcs(prose, state.bibleId);
+  const registeredNpcs = [
+    ...extractRegisteredNpcs(prose, state.bibleId ?? state.campaignBibleId),
+    ...extractProperNamesFromProse(prose, state.bibleId ?? state.campaignBibleId),
+  ].filter((n, i, arr) => arr.findIndex((x) => x.toLowerCase() === n.toLowerCase()) === i);
   
   if (!registeredNpcs.length) {
     return {
@@ -134,11 +159,12 @@ export function harvestNarrativeIntoLedger(
   const present = new Set([...(next.sceneFacts?.present ?? [])]);
 
   for (const name of registeredNpcs) {
-    // Double-check: only add if registered (should always be true here)
-    if (!isRegisteredNpc(name, state.bibleId)) {
-      console.warn(`[narrativeHarvest Y-1] Rejected unregistered NPC: ${name}`);
+    if (!canHarvestAsNamedPerson(name, state.bibleId ?? state.campaignBibleId)) {
+      console.warn(`[narrativeHarvest 02j] Rejected role/anonymous NPC: ${name}`);
       continue;
     }
+    // P0-3 Batch 02f: They / Child / hub-role compounds never enter present[] / CAST.
+    if (isNonPersonNameToken(name) || isHubRoleCompoundToken(name)) continue;
     
     // Skip if this string is actually a map settlement (already canonical)
     if (isLegalMapPlace(next, name) && looksLikeGeographyInvent(name)) continue;

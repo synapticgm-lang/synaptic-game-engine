@@ -16,6 +16,7 @@ import { isDeniedPcName } from './pcNameAuthority';
 import { detectHookContradiction, resolveHookLock } from './hookLock';
 import { buildArcDirectorSnapshotLines, applyArcDirectorCommit } from './arcDirector';
 import { compileChoices } from './choiceCompiler';
+import { closedUniverseFallbacks, excludedPadFamilies, isExcludedPadLabel } from './padUniverse';
 import { formatPressureClockSnippet } from './pressureClock';
 import { hasActiveObjectives, initProgressGovernor, updateProgressGovernor } from './forwardProgressGovernor';
 import {
@@ -31,7 +32,7 @@ import {
   detectAtmosphereReprint,
   detectSameRoomEssayHard,
 } from './semanticLoopDetector';
-import { classifyBeatCommit, repairRejectedBeat, codedSceneMove, isVerbatimStallStub, isDirectorChromeLeak, scrubDirectorChrome, isStitchBankFingerprint } from './beatCommitGate';
+import { classifyBeatCommit, repairRejectedBeat, codedSceneMove, isVerbatimStallStub, isDirectorChromeLeak, scrubDirectorChrome, isStitchBankFingerprint, isTokenSaladLeak } from './beatCommitGate';
 import { hasNumberedChoiceLeak, hasQuestTrackerLeak, stripChoiceList } from './parser';
 import { hasCombatSpawnLogInBody } from './combatAuthority';
 import { detectHubRoleMadlib } from './chromeAuthority';
@@ -467,7 +468,12 @@ export function applyGovernanceToProse(
     notes.push('Stitch bank fingerprint reject');
     out = codedSceneMove(state);
   }
-  if (isBannedFallbackStub(out) || isVerbatimStallStub(out) || isDirectorChromeLeak(out) || isStitchBankFingerprint(out)) {
+  if (isTokenSaladLeak(out)) {
+    rejectClone = true;
+    notes.push('Token-salad leak reject');
+    out = codedSceneMove(state);
+  }
+  if (isBannedFallbackStub(out) || isVerbatimStallStub(out) || isDirectorChromeLeak(out) || isStitchBankFingerprint(out) || isTokenSaladLeak(out)) {
     rejectClone = true;
     notes.push('Banned stall/fallback/director/stitch stub — reject');
     out = codedSceneMove(state);
@@ -567,9 +573,11 @@ export function filterGovernanceChoices(
     filtered = recycled.filtered;
   }
 
+  filtered = filtered.filter((c) => !isExcludedPadLabel(c, excludedPadFamilies(state)));
   if (filtered.length) return { choices: filtered, notes };
-  const fallback = filterRecycledStallChoices(choices.slice(0, 3), state, playerInput).filtered;
-  return { choices: fallback.length ? fallback : choices.slice(0, 3), notes };
+  // 02i — never re-merge raw Travel/Leave from the pre-compile list
+  const universe = closedUniverseFallbacks(state, excludedPadFamilies(state));
+  return { choices: universe.slice(0, 3), notes };
 }
 
 export interface GovernanceCommitResult {

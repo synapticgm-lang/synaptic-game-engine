@@ -2,6 +2,7 @@ import type { GameState } from './types';
 import { isAloneArrivalOpening } from './openingEstablishment';
 import { isInteriorMap } from './placeAuthority';
 import { listInteriorExitsFromHere } from './mapEngine';
+import { excludedPadFamilies } from './padUniverse';
 
 /**
  * Opportunity density: non-lethal beats should offer stance, not three look-arounds.
@@ -333,7 +334,7 @@ export function applyStanceDensity(
 
   const present = someonePresent(state, storyProse) || conversation;
   const alone = isAloneScene(state, storyProse);
-  const walkOk = canWalkAway(state, storyProse);
+  const walkOk = canWalkAway(state, storyProse) && !excludedPadFamilies(state).has('leave');
   const buckets = new Set(kept.map(classifyStance));
   const fallbacks = stanceFallbacks(state);
   const needed: Array<'kind' | 'hard' | 'curious' | 'walkaway'> = [];

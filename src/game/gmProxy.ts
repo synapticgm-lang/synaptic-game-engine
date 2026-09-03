@@ -14,6 +14,7 @@ import {
 import { forceFreeModel } from './opsKillSwitches';
 import { GM_PROXY_TIMEOUT_DEFAULT_MS } from './errorRepairWarden';
 import { resolveFreeWriterFailover } from './writerPolicy';
+import { hasHanScript } from './openRouterChat';
 
 export type GmProxyMode = 'turn' | 'auto-fight';
 
@@ -219,9 +220,13 @@ export async function invokeGmProxy(params: {
     }
 
     const text = typeof payload?.text === 'string' ? payload.text : '';
-    if (!text) {
+    // P0-4 Batch 02f: Han in committed story is empty-GM (same-model retry then Llama).
+    if (!text || hasHanScript(text)) {
       if (attempt === 0 && (tier === 'free' || forceFreeModel()) && resolveFreeWriterFailover(modelId)) {
-        logger.warn('ai-proxy', 'Free writer empty — retrying with Llama failover');
+        logger.warn(
+          'ai-proxy',
+          hasHanScript(text) ? 'Free writer Han script — retrying with Llama failover' : 'Free writer empty — retrying with Llama failover'
+        );
         return run(1);
       }
       throw new Error('GM proxy returned empty content.');

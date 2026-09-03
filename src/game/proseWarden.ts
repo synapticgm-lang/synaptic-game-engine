@@ -66,6 +66,8 @@ export type ProseWardenContext = {
   lastGmProse?: string;
   /** Named present NPCs from SNAPSHOT / sceneFacts. */
   presentNames?: string[];
+  /** Lock B — CAST named[] only (not role nouns). */
+  namedCast?: string[];
   /** Empty-search targets — scrub invent loot on re-search. */
   searchedEmpty?: string[];
   /** Player input this turn (search continuity). */
@@ -94,6 +96,8 @@ export type ProseWardenContext = {
   fleeFailed?: boolean;
   /** Previous location for same-location checks (aids Turn 8 debugging). */
   priorLocation?: string;
+  /** P0-5 — destroyed PYOA key items that must not resurrect in kit/prose. */
+  destroyedItems?: string[];
 };
 
 /** Interiors that already name "here" — nearby is for things that are not here. */
@@ -143,7 +147,7 @@ export function scrubFalseArrivalWhenHere(
   const loc = (currentLocation ?? '').trim();
   
   // DEBUG LOGGING - Phase 2
-  const debugEnabled = true; // Set to false after debugging
+  const debugEnabled = false;
   if (debugEnabled && (fleeFailed || /\bYou reach\b/i.test(text))) {
     console.log('[scrubFalseArrival] INPUT:', {
       fleeFailed,
@@ -205,6 +209,19 @@ export function scrubFalseArrivalWhenHere(
         after: next.slice(0, 100),
       });
     }
+    
+    // P0-5 Batch 02f: PYOA compound location hardening
+    // "mill landing at Thornferry" / "mill landing" should match when already at that location
+    if (/\bmill\s+landing\b/i.test(p) || /\bthornferry\b/i.test(p) || /\bthe ford\b/i.test(p)) {
+      next = next
+        .replace(
+          /\b(?:[Yy]ou (?:reach|arrive(?: at)?)|[Rr]eaching)\s+(?:the\s+)?mill\s+landing(?:\s+at\s+)?(?:Thornferry)?\b(?:[.,!?]\\s*)?/gi,
+          ''
+        )
+        .replace(/\s{2,}/g, ' ')
+        .trim();
+    }
+    
     const short = p.split(/\s+/).filter((w) => w.length >= 4).slice(-2).join(' ');
     if (short.length >= 6 && short.toLowerCase() !== p.toLowerCase()) {
       const escShort = short.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
@@ -221,10 +238,14 @@ export function scrubFalseArrivalWhenHere(
     }
   };
 
-  // BATCH YZ FIX: Only strip if location UNCHANGED (prior === current)
-  // If location changed (prior !== current), ALLOW legitimate travel narration
-  const locationChanged = priorLocation && priorLocation.trim().length >= 3
-    && priorLocation.trim().toLowerCase() !== loc.toLowerCase();
+  // BATCH YZ / 02g: alias cluster (mill landing ↔ Thornferry) is not a real change.
+  const thornAlias = (s: string) =>
+    /\b(thornferry|mill\s+landing|the ford|harbor quay)\b/i.test(s);
+  const priorTrim = (priorLocation ?? '').trim();
+  const locationChanged =
+    priorTrim.length >= 3 &&
+    priorTrim.toLowerCase() !== loc.toLowerCase() &&
+    !(thornAlias(priorTrim) && thornAlias(loc));
   
   // Strip arrival to current location ONLY if we didn't just travel here
   if (!locationChanged) {
@@ -290,7 +311,7 @@ export function scrubChoicePadPersonNames(text: string): string {
   if (!text) return text;
   let next = text;
   const PAD =
-    'They|Them|Their|One|Ones|Press|Wait|Ready|Scout|Inspect|Check|Ask|Talk|Leave|Open|Hold|Flee|Parley|Leverage|Attack|Status|Travel|Engage|Ahead|Behind|Ascend|Draw|Intervene|Peer|Give|Maintain|Rasped';
+    'They|Them|Their|One|Ones|Press|Wait|Ready|Scout|Inspect|Check|Ask|Talk|Leave|Open|Hold|Flee|Parley|Leverage|Attack|Status|Travel|Engage|Ahead|Behind|Ascend|Draw|Intervene|Peer|Give|Maintain|Rasped|Easy';
   next = next.replace(
     new RegExp(
       `\\b(?:the\\s+)?(?:Scattered\\s+Scale\\s+)?(?:known\\s+as|called|named)\\s+[“"']?(?:${PAD})[”"']?\\b`,
@@ -409,35 +430,44 @@ export function scrubUnresolvedDeixisNouns(text: string, currentLocation?: strin
   next = next.replace(/\bof\s+figure\s+\d+\b/gi, 'nearby');
   next = next.replace(/\bfigure\s+\d+\s+ramparts?\b/gi, 'the ramparts');
   next = next.replace(/\b(?:the\s+)?figure\s+\d+\b/gi, 'someone nearby');
-  // Deixis as proper noun / loot / fortification
+  
+  // P0-2 Batch 02f: Deixis as proper noun — only match CAPITALIZED
+  // "the Ahead" / "tarnished Forward" → deixis-as-noun (rewrite)
+  // "the forward" / "walk forward" → direction (keep unchanged)
   const DEIXIS = 'Ahead|Behind|Beside|Nearby|Above|Below|Left|Right|Forward';
+  
+  // Remove 'i' flag from all deixis patterns - only match Title Case
   next = next.replace(
-    new RegExp(`\\btarnished\\s+(?:the\\s+)?(?:${DEIXIS})\\b`, 'gi'),
+    new RegExp(`\\btarnished\\s+(?:the\\s+)?(?:${DEIXIS})\\b`, 'g'),
     'tarnished silver token'
   );
   next = next.replace(
-    new RegExp(`\\b(?:fortifications|walls?|spires?|edifice)\\s+of\\s+(?:the\\s+)?(?:${DEIXIS})\\b`, 'gi'),
+    new RegExp(`\\b(?:fortifications|walls?|spires?|edifice)\\s+of\\s+(?:the\\s+)?(?:${DEIXIS})\\b`, 'g'),
     (_m) => `fortifications of ${place}`
   );
   next = next.replace(
-    new RegExp(`\\bstudy\\s+(?:the\\s+)?(?:${DEIXIS})\\b`, 'gi'),
+    new RegExp(`\\bstudy\\s+(?:the\\s+)?(?:${DEIXIS})\\b`, 'g'),
     'study the scene'
   );
   next = next.replace(
-    new RegExp(`\\b(?:the\\s+)?(?:${DEIXIS})\\s+half-hidden\\b`, 'gi'),
+    new RegExp(`\\b(?:the\\s+)?(?:${DEIXIS})\\s+half-hidden\\b`, 'g'),
     'someone half-hidden'
   );
   next = next.replace(
-    new RegExp(`\\b(?:scattering of\\s+)?(?:tarnished\\s+)?(?:the\\s+)?(?:${DEIXIS})\\b(?=\\s*[,.]|\\s+(?:half-|shifts|remains|stands|breaks?))`, 'gi'),
+    new RegExp(`\\b(?:scattering of\\s+)?(?:tarnished\\s+)?(?:the\\s+)?(?:${DEIXIS})\\b(?=\\s*[,.]|\\s+(?:half-|shifts|remains|stands|breaks?))`, 'g'),
     'someone nearby'
   );
+  // P0-2 Batch 02f: Only rewrite CAPITALIZED deixis-as-noun in final pattern
+  // "the Ahead" → "the way ahead" (capitalized deixis-as-noun)
+  // "the right" / "the forward" stays unchanged (lowercase direction)
+  // The DEIXIS variable already has capitalized versions, so just match them directly
   next = next.replace(
-    new RegExp(`\\bthe\\s+(?:${DEIXIS})\\b`, 'gi'),
+    new RegExp(`\\bthe\\s+(${DEIXIS})\\b`, 'g'),
     'the way ahead'
   );
-  // Stitch pollution subjects: "Ahead shifts weight…"
+  // Stitch pollution subjects: "Ahead shifts weight…" (capitalized only)
   next = next.replace(
-    new RegExp(`\\b(?:${DEIXIS})\\s+shifts\\s+weight\\b`, 'gi'),
+    new RegExp(`\\b(${DEIXIS})\\s+shifts\\s+weight\\b`, 'g'),
     'Someone nearby shifts weight'
   );
   return tidyClauses(next);
@@ -544,6 +574,23 @@ export function scrubEntityMadLibs(text: string, encounterName?: string): string
     /\b(?:just|near|beside|toward|towards|into|at|on|from|leaned|lunges?|approaches?)\s+Pact-Hunter(?:\s+Skirmisher)?\b/gi,
     'just ahead'
   );
+  // 02g — class name used as a weapon / pulled object ("You pull Pact-Hunter Skirmisher, the blade")
+  next = next.replace(
+    /\b(?:pull|draw|grab|raise|swing|wield|take)\s+Pact-Hunter(?:\s+Skirmisher)?\b/gi,
+    'draw your blade'
+  );
+  // 02g — class name as sentence-starter tic ("Pact-Hunter Skirmisher, the street splits")
+  next = next.replace(/\bPact-Hunter(?:\s+Skirmisher)?,\s+/g, '');
+  // 02g — capitalized pad token "the Easy" is not a person/object
+  next = next.replace(/\bthe Easy\b/g, 'the stall');
+  // 02h — novel CAST tokens Gemini named (Fine / Don / Cup / Now / traveler)
+  next = next.replace(/\bopen the Fine\b/g, 'open your hands');
+  next = next.replace(/\bthe Fine\b/g, 'the stall');
+  next = next.replace(/\bthe Don\b/g, 'the vendor');
+  next = next.replace(/\bthe Cup\b/g, 'the inn');
+  next = next.replace(/\bthe Now\b/g, 'the moment');
+  next = next.replace(/\bthe traveler\b/g, 'someone nearby');
+  next = next.replace(/\btake Scattered Scale that\b/gi, 'take the stair that');
   next = next.replace(
     /\b(?:somewhere|anywhere|everywhere)\s+Pact-Hunter(?:\s+Skirmisher)?\b/gi,
     'somewhere ahead'
@@ -566,7 +613,7 @@ export function scrubEntityMadLibs(text: string, encounterName?: string): string
   const HUB_ROLE = '(?:Lowmarket\\s+Fence|Wall\\s+Sergeant|Pact-Hunter(?:\\s+Skirmisher)?)';
   next = next.replace(
     new RegExp(
-      `\\b(?:lunged?|leaned|steps?|walks?|runs?|heads?|turned|swung|struck|swiped|as you)\\s+(?:the\\s+)?${HUB_ROLE}\\b`,
+      `\\b(?:lunged?|leaned|steps?|walks?|runs?|heads?|turned|swung|struck|swiped|pull|draw|grab|raise|wield|as you)\\s+(?:the\\s+)?${HUB_ROLE}\\b`,
       'gi'
     ),
     'struck forward'
@@ -1383,6 +1430,84 @@ export function scrubInventedContainers(
  * Strip leaked safer-scene rewrite meta from GM story (any object, not panel-only).
  * Owner: player-agency / rewrite path — crowd-count agent should keep `scrubInventedCrowdSize`.
  */
+/** P0-5 — burned Millstone Charter must not reappear as held kit. */
+export function scrubDestroyedPyoaItems(text: string, destroyedItems?: string[]): string {
+  if (!text || !destroyedItems?.some((d) => /charter|millstone/i.test(d))) return text;
+  let next = text;
+  next = next.replace(
+    /\b(?:you (?:still )?(?:hold|clutch|carry|draw|produce|unroll|unfold) (?:the )?(?:Millstone )?Charter)\b/gi,
+    'the burned charter is gone'
+  );
+  next = next.replace(
+    /\b(?:the )?(?:Millstone )?Charter (?:is|rests|weighs|sits) (?:still )?(?:in your (?:pack|hand|hands|kit|bag|coat)|at your (?:belt|side))\b/gi,
+    'the space where the charter was'
+  );
+  next = next.replace(
+    /\b(?:the )?(?:Millstone )?Charter still clutched in your hand\b/gi,
+    'the space where the charter was'
+  );
+  next = next.replace(
+    /\b(?:the )?(?:Millstone )?Charter\b[^.!?]{0,48}\b(?:clutched|sits|rests|weighs)\b[^.!?]{0,40}\b(?:hand|hands|coat|pack|pocket)\b/gi,
+    'the space where the charter was'
+  );
+  next = next.replace(
+    /\bthe charter in (?:her|his|their) hand\b/gi,
+    'the empty space where the charter was'
+  );
+  next = next.replace(/<item-gain\b[^>]*[Cc]harter[^>]*\/?>/g, '');
+  next = next.replace(
+    /\b(?:you\s+)?still\s+clutch(?:ed|ing)?\s+(?:the\s+)?(?:millstone\s+)?charter\b/gi,
+    'the burned charter is gone'
+  );
+  next = next.replace(
+    /\bWill you\s+(?:forge|burn)(?:\s+or\s+(?:forge|burn))?\s+(?:the\s+)?(?:millstone\s+)?charter\??/gi,
+    'The charter is already destroyed'
+  );
+  next = next.replace(
+    /\b(?:leave|trust)\s+(?:the\s+)?charter(?:'s)?\s+fate\s+to\b/gi,
+    'the charter is already destroyed'
+  );
+  return tidyClauses(next);
+}
+
+/** Lock B — named CAST members must not become object/verb slots (Brother Tam splice). */
+export function scrubNamedCastAsObject(text: string, namedPeople: string[] = []): string {
+  if (!text?.trim() || !namedPeople.length) return text;
+  let next = text;
+  for (const name of namedPeople) {
+    const esc = name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    next = next.replace(
+      new RegExp(`\\b(?:examine|inspect|study|watch|read)\\s+the\\s+${esc}\\b`, 'gi'),
+      `look at ${name}`
+    );
+    next = next.replace(
+      new RegExp(`\\bthe\\s+${esc}\\s+(?:read|watch|examine)\\s+the\\s+${esc}\\b`, 'gi'),
+      `${name} reads quietly`
+    );
+    next = next.replace(
+      new RegExp(`\\bpatterns etched into (?:the\\s+)?${esc}\\b`, 'gi'),
+      `the marks on ${name}'s ledger`
+    );
+  }
+  return tidyClauses(next);
+}
+
+/** Lock C — dead foe must not re-engage without a new spawn. */
+export function scrubDeadFoeReengage(text: string, lastKill?: LastKill | null, liveEncounter?: boolean): string {
+  if (!text || !lastKill?.name || liveEncounter) return text;
+  if (lastKill.outcome !== 'victory') return text;
+  const esc = lastKill.name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  let next = text;
+  next = next.replace(
+    new RegExp(
+      `\\b(?:the\\s+)?${esc}\\b[^.!?]{0,80}\\b(?:remains? fixed|still (?:here|fixed|watching)|turns? (?:on|toward) you|commits? toward you|lunges?|strikes?|attacks?)\\b`,
+      'gi'
+    ),
+    `the fallen ${lastKill.name} lies where you left them`
+  );
+  return tidyClauses(next);
+}
+
 export function scrubSaferSceneMeta(text: string): string {
   if (!text) return text;
   let next = text;
@@ -1455,6 +1580,9 @@ export function applyProseWarden(text: string, ctx?: ProseWardenContext): string
     next,
     (ctx?.inventory ?? []).map((i) => (typeof i === 'string' ? i : i.name))
   );
+  next = scrubDestroyedPyoaItems(next, ctx?.destroyedItems);
+  next = scrubNamedCastAsObject(next, ctx?.namedCast ?? ctx?.presentNames ?? []);
+  next = scrubDeadFoeReengage(next, ctx?.lastKill, ctx?.hasLiveEncounter === true);
   next = scrubUnresolvedDeixisNouns(next, ctx?.currentLocation);
   next = scrubFactionAsLootOrTarget(next);
   next = scrubStitchBankLeaks(next);

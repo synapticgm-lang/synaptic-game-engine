@@ -3,7 +3,13 @@
  * Two lenses (standalone story vs game vibe/pace) — not a single mushy 1–10 card.
  */
 
+import { buildPlayerCapacityContext } from './geminiCriticPrompt';
+
 export type CriticLens = 'story-standalone' | 'game-vibe-pace';
+
+/** One-line Free hook bar for story-standalone packs (full table lives on the game-vibe lens). */
+const STORY_FREE_HOOK_BAR =
+  '**Free hook bar:** first **8–12** turns are the critical hook; day-1 window **~20** (8 story-start + 12 daily). Judge page-turns against that, not the 50-turn tape.';
 
 const SHARED_RULES = [
   '## Shared rules (both lenses)',
@@ -42,6 +48,8 @@ export function buildStoryStandaloneCriticPrompt(meta: {
     `| Turns | ${meta.turns ?? '(unknown)'} |`,
     `| Writer model | ${meta.writerModel ?? '(unknown)'} |`,
     `| Autoplay agent | ${meta.agent ?? 'fate/default'} |`,
+    '',
+    STORY_FREE_HOOK_BAR,
     '',
     SHARED_RULES,
     '## Lens focus',
@@ -95,6 +103,8 @@ export function buildGameVibePaceCriticPrompt(meta: {
     `| Writer model | ${meta.writerModel ?? '(unknown)'} |`,
     `| Autoplay agent | ${meta.agent ?? 'fate/default'} |`,
     '',
+    buildPlayerCapacityContext().trim(),
+    '',
     SHARED_RULES,
     '## Mode expectation',
     '',
@@ -102,7 +112,9 @@ export function buildGameVibePaceCriticPrompt(meta: {
     '',
     '## Lens focus',
     '',
-    '- **Hook (T1–12):** Would a Free player come back tomorrow?',
+    '- **Hook (T1–12):** Would a Free player come back tomorrow? First **8–12** turns are the critical band; day-1 window **~20**.',
+    '- **T12 durable delta:** quest stage / fight resolved / branch lock / level tick — did it land?',
+    '- **Day 2+ wall:** only **12** daily turns. Do not treat a 50-turn tape as one Free session.',
     '- **Pace:** stalls, inspect/wait loops, combat purgatory, dialogue treadmill.',
     '- **Agency:** do offered options imply different futures?',
     '- **Progression feel:** quest/combat/social movement a player can feel.',
@@ -114,7 +126,7 @@ export function buildGameVibePaceCriticPrompt(meta: {
     '2. **Vibe score** + **Pace score** — each 1–10 + one sentence',
     '3. **Findings** — P0/P1/P2 tickets with quotes (loops, dead pads, mode bleed)',
     '4. **YES/NO gates** — the five shared craft gates',
-    '5. **Free hook call** — YES/NO would return tomorrow after ~20 turns',
+    '5. **Free hook call** — YES/MAYBE/NO would a Free player return tomorrow (day-1 ~20 turns; T12 durable delta yes/no)',
     '',
   ].join('\n');
 }

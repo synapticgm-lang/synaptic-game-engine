@@ -16,7 +16,6 @@ import {
   isEncounterEngaged, 
   fleeAvailable, 
   parleyAvailable, 
-  encounterBlocksTravel,
   canTravelInFsmState,
   canInspectInFsmState,
   canShopInFsmState,
@@ -39,6 +38,14 @@ import { realPresentPeople } from './chromeAuthority';
 import { isInteriorMap } from './placeAuthority';
 import { graphExitPads, isCameraRelativePad } from './mapEngine';
 import { inferIntent, isCombatIntent, isTravelIntent, isInspectIntent, PlayerIntent } from './intentEnums';
+import {
+  closedUniverseFallbacks,
+  excludedPadFamilies,
+  isExcludedPadLabel,
+  isTravelPad,
+  shouldStarveLeavePads,
+  shouldStarveTravelPads,
+} from './padUniverse';
 
 export type PlayerIntentFamily = 'demand' | 'inspect' | 'flee' | 'name' | 'talk' | 'travel' | 'other';
 
@@ -205,37 +212,6 @@ function hasLiveStakes(state: GameState): boolean {
   );
 }
 
-function isTravelPad(choice: string): boolean {
-  const lower = choice.toLowerCase();
-  return (
-    /\b(travel(?:\s+(?:toward|to|into))?|go to|head (?:to|for|toward)|move to|leave for|walk to)\b/.test(lower)
-    || /^travel\b/i.test(choice.trim())
-  );
-}
-
-/** Batch U — count travel picks in the last N player lines. */
-function countRecentTravelPicks(state: GameState, window = 5): number {
-  const log = state.log ?? [];
-  let count = 0;
-  let seen = 0;
-  for (let i = log.length - 1; i >= 0 && seen < window; i--) {
-    const e = log[i];
-    if (e?.role !== 'player') continue;
-    seen += 1;
-    if (isTravelPad(e.content ?? '')) count += 1;
-  }
-  return count;
-}
-
-function shouldStarveTravelPads(state: GameState, liveStakes: boolean): boolean {
-  // Batch W — always starve travel under live/pending/caught encounter
-  if (liveStakes || encounterBlocksTravel(state)) return true;
-  // Batch V — hub treadmill without combat: ≥3 travel OR walk-away in last 6 player picks
-  const travelOrWalk = countRecentTravelOrWalkPicks(state, 6);
-  if (travelOrWalk >= 3) return true;
-  return false;
-}
-
 /** Batch W — generic leverage/ask pads that ignore live scene context. */
 function isAbstractGenericPad(choice: string): boolean {
   const t = choice.trim();
@@ -253,39 +229,6 @@ function countRecentAbstractPadUses(state: GameState, window = 8): number {
     if (e?.role !== 'player') continue;
     seen += 1;
     if (isAbstractGenericPad(e.content ?? '')) count += 1;
-  }
-  return count;
-}
-
-function sceneGroundedPads(state: GameState): string[] {
-  const people = realPresentPeople(state.sceneFacts?.present ?? []);
-  const foe = state.activeEncounter?.name?.trim();
-  const out: string[] = [];
-  if (foe) {
-    out.push('Press the attack');
-    if (fleeAvailable(state.activeEncounter)) out.push('Try to flee');
-    if (parleyAvailable(state.activeEncounter)) out.push('Parley');
-  }
-  for (const p of people.slice(0, 2)) {
-    if (/sergeant|guard|warden/i.test(p)) out.push(`Talk to ${p}`);
-    else if (/fence|contact|handler|merchant|vendor/i.test(p)) out.push(`Talk to ${p}`);
-    else out.push(`Ask ${p} what they want`);
-  }
-  return out;
-}
-
-function countRecentTravelOrWalkPicks(state: GameState, window = 6): number {
-  const log = state.log ?? [];
-  let seen = 0;
-  let count = 0;
-  for (let i = log.length - 1; i >= 0 && seen < window; i--) {
-    const e = log[i];
-    if (e?.role !== 'player') continue;
-    seen += 1;
-    const t = e.content ?? '';
-    if (isTravelPad(t) || /\b(walk away|leave through|go another direction)\b/i.test(t)) {
-      count += 1;
-    }
   }
   return count;
 }
@@ -695,13 +638,15 @@ export function compileChoices(
   const intent = classifyPlayerIntent(intentText);
   const fingerprints = state.arcDirector?.choiceFingerprints ?? [];
   const cooldownMap = new Map(Object.entries(optionCooldowns ?? state.qualityGovernance?.optionCooldowns ?? {}));
+  const excluded = excludedPadFamilies(state);
   const legalEdges = enumerateLegalEdges(state);
   const edgeLabels = edgesToChoiceLabels(legalEdges);
 
   // Batch Z — check BOTH active and pending encounters for engaged state
   const engaged = isEncounterEngaged(state) || !!state.sceneFacts?.pendingEncounter;
   const liveStakes = hasLiveStakes(state);
-  const travelStarve = shouldStarveTravelPads(state, liveStakes);
+  const travelStarve = excluded.has('travel') || shouldStarveTravelPads(state);
+  const leaveStarve = excluded.has('leave') || shouldStarveLeavePads(state);
   const streak = countPlayerIntentStreak(state);
   const loiter = countLoiterFamilyStreak(state);
   const hardStreak = streak.count >= 5 && streak.key !== 'empty';
@@ -728,7 +673,7 @@ export function compileChoices(
 
   let filtered = choices.filter((c) => {
     const lower = c.toLowerCase();
-    if (pyoaLocked && !eligiblePyoaPadsAfterLock(state, c)) {
+    if (state.engineMode === 'pyoa' && !eligiblePyoaPadsAfterLock(state, c)) {
       notes.push(`Branch lock drop: ${c.slice(0, 32)}`);
       return false;
     }
@@ -745,10 +690,10 @@ export function compileChoices(
       notes.push(`Camera L/R drop: ${c.slice(0, 32)}`);
       return false;
     }
-    // Batch T/U — travel yo-yo lock under live fight/standoff/pending drought encounter
-    // Batch V — also starve travel on hub walk/travel treadmill without combat
-    if ((liveStakes || travelStarve) && isTravelPad(c)) {
-      notes.push(`Travel yo-yo lock: ${c.slice(0, 32)}`);
+    if (isExcludedPadLabel(c, excluded)) {
+      notes.push(
+        isTravelPad(c) ? `Travel yo-yo lock: ${c.slice(0, 32)}` : `Leave treadmill lock: ${c.slice(0, 32)}`
+      );
       return false;
     }
     // Batch W/X — starve abstract leverage/ask/leave when scene has named people or live fight
@@ -880,11 +825,13 @@ export function compileChoices(
   }
 
   // B018–B021 — pad primarily from legal beat edges when available
+  // 02i — never re-birth a family the universe excluded
   if (legalEdges.length >= 3) {
     for (const label of edgeLabels) {
       if (filtered.some((f) => f.toLowerCase() === label.toLowerCase())) continue;
+      if (isExcludedPadLabel(label, excluded)) continue;
       if (engaged && isLookOrExamineRoomPad(label)) continue;
-      if (pyoaLocked && !eligiblePyoaPadsAfterLock(state, label)) continue;
+      if (state.engineMode === 'pyoa' && !eligiblePyoaPadsAfterLock(state, label)) continue;
       filtered.push(label);
       if (filtered.length >= 6) break;
     }
@@ -892,14 +839,15 @@ export function compileChoices(
   } else if (filtered.length < 3) {
     const supplements: string[] = [];
     for (const label of edgeLabels) {
+      if (isExcludedPadLabel(label, excluded)) continue;
       if (!filtered.some((f) => f.toLowerCase() === label.toLowerCase())) {
         if (engaged && isLookOrExamineRoomPad(label)) continue;
-        if (pyoaLocked && !eligiblePyoaPadsAfterLock(state, label)) continue;
+        if (state.engineMode === 'pyoa' && !eligiblePyoaPadsAfterLock(state, label)) continue;
         supplements.push(label);
       }
     }
     if (!supplements.length) {
-      const grounded = sceneGroundedPads(state);
+      const grounded = closedUniverseFallbacks(state, excluded);
       if (grounded.length) {
         supplements.push(...grounded);
         notes.push('Scene-grounded pad refill');
@@ -916,7 +864,8 @@ export function compileChoices(
           supplements.push('Choose the risky fork', 'Buy time', 'Call for help');
         }
       } else if (npcTacticAdvance) {
-        supplements.push('Press for leverage', 'Change the subject', 'Walk away with consequence');
+        supplements.push('Press for leverage', 'Change the subject');
+        if (!excluded.has('leave')) supplements.push('Walk away with consequence');
       } else if (state.engineMode === 'litrpg') {
         // 31i — no Check Status / Wait spam under drought (same dead path)
         supplements.push('Ask what they want', 'Scout the exit', 'Inspect the immediate surroundings');
@@ -933,7 +882,8 @@ export function compileChoices(
         const fam = classifyChoiceFamily(s);
         if (isStallFamily(fam)) continue;
       }
-      if (pyoaLocked && !eligiblePyoaPadsAfterLock(state, s)) continue;
+      if (isExcludedPadLabel(s, excluded)) continue;
+      if (state.engineMode === 'pyoa' && !eligiblePyoaPadsAfterLock(state, s)) continue;
       if (!filtered.some((f) => f.toLowerCase() === s.toLowerCase())) {
         filtered.push(s);
       }
@@ -947,10 +897,12 @@ export function compileChoices(
   // Batch T — never offer Travel yo-yo while live stakes are up.
   if (stallInterrupt && !engaged) {
     const interruptPads = talkRecycle
-      ? ['Leave through the nearest exit', 'Walk away with consequence']
+      ? excluded.has('leave')
+        ? closedUniverseFallbacks(state, excluded).slice(0, 2)
+        : ['Leave through the nearest exit', 'Walk away with consequence']
       : ['Ask a direct question', 'Press for leverage'];
     const here = (state.currentLocation ?? '').toLowerCase();
-    if (!liveStakes && !travelStarve) {
+    if (!liveStakes && !travelStarve && !excluded.has('travel')) {
       for (const h of hubsForBibleId(state.campaignBibleId).slice(0, 3)) {
         if (h.name.toLowerCase() !== here) {
           interruptPads.unshift(`Travel toward ${h.name}`);
@@ -960,11 +912,12 @@ export function compileChoices(
     }
     if (state.activeEncounter || state.sceneFacts?.pendingEncounter) {
       interruptPads.unshift('Press the attack');
-    } else if (!talkRecycle) {
+    } else if (!talkRecycle && !excluded.has('leave')) {
       interruptPads.push('Leave through the nearest exit');
     }
     for (const pad of interruptPads) {
-      if (pyoaLocked && !eligiblePyoaPadsAfterLock(state, pad)) continue;
+      if (isExcludedPadLabel(pad, excluded)) continue;
+      if (state.engineMode === 'pyoa' && !eligiblePyoaPadsAfterLock(state, pad)) continue;
       if (!filtered.some((f) => f.toLowerCase() === pad.toLowerCase())) {
         filtered.unshift(pad);
         notes.push(`Treadmill interrupt pad: ${pad.slice(0, 40)}`);
@@ -999,7 +952,8 @@ export function compileChoices(
   const intentPads = talkRecycle ? [] : intentSupplements(intent, engaged);
   if (intentPads.length) {
     for (const pad of intentPads) {
-      if (pyoaLocked && !eligiblePyoaPadsAfterLock(state, pad)) continue;
+      if (isExcludedPadLabel(pad, excluded)) continue;
+      if (state.engineMode === 'pyoa' && !eligiblePyoaPadsAfterLock(state, pad)) continue;
       if (inspectTargetExhausted(state, pad)) continue;
       if (!filtered.some((f) => f.toLowerCase() === pad.toLowerCase())) {
         filtered.unshift(pad);
@@ -1011,8 +965,8 @@ export function compileChoices(
   // Final pass: never leave Examine the room / Wait-Wait on locked PYOA or live encounter
   filtered = filtered.filter((c) => {
     if (engaged && (isLookOrExamineRoomPad(c) || isEncounterForbiddenPad(c))) return false;
-    if ((liveStakes || travelStarve) && isTravelPad(c)) return false;
-    if (pyoaLocked && !eligiblePyoaPadsAfterLock(state, c)) return false;
+    if (isExcludedPadLabel(c, excluded)) return false;
+    if (state.engineMode === 'pyoa' && !eligiblePyoaPadsAfterLock(state, c)) return false;
     if (talkRecycle && /\b(press for leverage|ask a direct question|talk to|ready yourself)\b/i.test(c)) {
       return false;
     }
@@ -1025,8 +979,10 @@ export function compileChoices(
       /\b(travel|leave|exit|ask|press for leverage|quest|attack|flee|parley|doorway|face the)\b/i.test(c)
     );
     if (!worldMoving) {
-      const fallback = 'Leave through the nearest exit';
-      if (!filtered.some((f) => f.toLowerCase() === fallback.toLowerCase())) {
+      const fallback = excluded.has('leave')
+        ? closedUniverseFallbacks(state, excluded)[0] ?? 'Ask a direct question'
+        : 'Leave through the nearest exit';
+      if (!isExcludedPadLabel(fallback, excluded) && !filtered.some((f) => f.toLowerCase() === fallback.toLowerCase())) {
         filtered.unshift(fallback);
         notes.push('Fate world-moving pad forced');
       }
@@ -1088,6 +1044,7 @@ export function compileChoices(
         notes.push('PYOA spine delay exhausted — force legal edge');
       }
       for (const label of legal) {
+        if (isExcludedPadLabel(label, excluded)) continue;
         if (!filtered.some((f) => f.toLowerCase() === label.toLowerCase())) {
           filtered.unshift(label);
           notes.push(`PYOA spine edge: ${label.slice(0, 32)}`);
@@ -1100,15 +1057,30 @@ export function compileChoices(
       filtered = [...spineFirst, ...rest.slice(0, forceEdge ? 0 : 2)].slice(0, 6);
     } else if (spineState.pyoaSpine?.endingId) {
       filtered = filtered.filter((c) => !isSpineDelayPad(c));
-      if (!filtered.some((c) => /\b(aftermath|close|end|accept)\b/i.test(c))) {
+      if (
+        !excluded.has('leave') &&
+        !filtered.some((c) => /\b(aftermath|close|end|accept)\b/i.test(c))
+      ) {
         filtered.unshift('Accept the ending that follows');
       }
     }
+    filtered = filtered.filter((c) => !isExcludedPadLabel(c, excluded));
   }
 
   // Batch Z Milestone 2 — Z-1: Filter pads by FSM state before finalizing
-  const preFiltered = filtered.length ? filtered.slice(0, 6) : edgeLabels.slice(0, 3);
-  const finalChoices = filterPadsByFsmState(state, preFiltered, notes);
+  // 02i — never refill from raw edgeLabels (those still include starved Travel/Leave)
+  const preFiltered = filtered.length
+    ? filtered.filter((c) => !isExcludedPadLabel(c, excluded)).slice(0, 6)
+    : closedUniverseFallbacks(state, excluded).slice(0, 3);
+  const fsmChoices = filterPadsByFsmState(state, preFiltered, notes);
+  let finalChoices = (fsmChoices.length
+    ? fsmChoices
+    : closedUniverseFallbacks(state, excluded)
+  ).filter((c) => !isExcludedPadLabel(c, excluded));
+  if (!finalChoices.length) {
+    finalChoices = closedUniverseFallbacks(state, excluded);
+    notes.push('Closed-universe empty-pad refill');
+  }
   
   // Batch Y Milestone 1 — Y-2: Generate intent enums for SNAPSHOT context
   const intentEnums = finalChoices.map((c) => inferIntent(c));

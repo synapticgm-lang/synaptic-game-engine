@@ -29,4 +29,12 @@ describe('extractChatCompletionText', () => {
   it('returns empty for missing choices', () => {
     expect(extractChatCompletionText({})).toBe('');
   });
+
+  it('treats Han story content as empty', () => {
+    expect(
+      extractChatCompletionText({
+        choices: [{ message: { content: '你好世界' } }],
+      })
+    ).toBe('');
+  });
 });

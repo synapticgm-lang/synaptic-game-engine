@@ -55,7 +55,7 @@ export function isChromePersonToken(token: string): boolean {
  * "Pellane" in present[] → "the Pellane" contagion (critic Batch B).
  */
 const POLITY_FACTION_PLACE_EXACT =
-  /^(pellane|pellane crown|ash court|the ash court|valespire|lowmarket|west wall|the weighing cup|weighing cup|contract hall|cathedral close|cinderflow|cinderflow road|harbor quay|pellane war camp|war camp|kitchen saint|kitchen saint alley|palace approach|circle|sevenfold circle|the sevenfold circle|scattered scale|the scattered scale|pactborn|calamity mark)$/i;
+  /^(pellane|pellane crown|ash court|the ash court|valespire|lowmarket|west wall|the weighing cup|weighing cup|contract hall|cathedral close|cinderflow|cinderflow road|harbor quay|pellane war camp|war camp|kitchen saint|kitchen saint alley|palace approach|circle|sevenfold circle|the sevenfold circle|scattered scale|the scattered scale|pactborn|calamity mark|highmark|nowhere)$/i;
 
 const POLITY_FACTION_PLACE_HEAD =
   /^(?:the\s+)?(?:pellane(?:\s+crown)?|ash\s+court|valespire|lowmarket|weighing\s+cup|contract\s+hall|cathedral\s+close|cinderflow(?:\s+road)?|harbor\s+quay|war\s+camp|kitchen\s+saint(?:\s+alley)?|palace\s+approach|scattered\s+scale|sevenfold\s+circle)\b/i;
@@ -64,9 +64,10 @@ const POLITY_FACTION_PLACE_HEAD =
  * Choice-pad / pronoun tokens that must never become present[] person slots.
  * Transcript T22: "They" / "One" / "Press" harvested from pad text ("Press for leverage").
  * Batch T: Ascend/Draw/Intervene/Peer/Give + spatial deixis (Ahead/Behind/…).
+ * Batch 02f P0-3: Added "They" (pronoun harvest) and "Child" (generic descriptor).
  */
 const CHOICE_PAD_PERSON_EXACT =
-  /^(they|them|their|theirs|one|ones|press|wait|ready|scout|inspect|check|ask|talk|leave|open|hold|attempt|continue|fate|options?|leverage|attack|flee|parley|status|travel|engage|examine|observe|approach|remain|ignore|demand|listen|walk|run|duck|slip|scan|search|unroll|unfold|show|call|try|keep|find|push|dash|meet|state|provide|inquire|step|turn|maintain|focus|move|glance|ascend|draw|intervene|peer|give|ahead|behind|beside|nearby|above|below|left|right|forward|back|around|here|there)$/i;
+  /^(they|them|their|theirs|one|ones|press|wait|ready|scout|inspect|check|ask|talk|leave|open|hold|attempt|continue|fate|options?|leverage|attack|flee|parley|status|travel|engage|examine|observe|approach|remain|ignore|demand|listen|walk|run|duck|slip|scan|search|unroll|unfold|show|call|try|keep|find|push|dash|meet|state|provide|inquire|step|turn|maintain|focus|move|glance|ascend|draw|intervene|peer|give|ahead|behind|beside|nearby|above|below|left|right|forward|back|around|here|there|child|easy|fine|don|traveler|cup|now|somewhere|nowhere|told|thanks|most|that|alright|weighed|buried|something|well|go|what|trader|clerk)$/i;
 
 /**
  * Unresolved deixis / occupancy nouns — never person slots, pads, or stitch subjects.
@@ -114,9 +115,10 @@ export function isRoleAdjectivePersonSlot(token: string): boolean {
 /**
  * Batch W — role / contact labels are not person slots or prose substitution tokens.
  * Tape: "stall contact" promoted into cast → "leans stall contact" / "the stall contact decree".
+ * Batch 02f P0-3: Extended to catch "They" pronoun and "Child" generic descriptor.
  */
 const ROLE_CONTACT_LABEL =
-  /^(?:the\s+)?(?:stall[- ]?contact|stall[- ]?hand|fence|handler|contact|vendor|merchant|sergeant|warden|guard|official|chirurgeon|registrar|skirmisher|thug|priest|stall owner)$/i;
+  /^(?:the\s+)?(?:stall[- ]?contact|stall[- ]?hand|fence|handler|contact|vendor|merchant|trader|clerk|sergeant|warden|guard|official|chirurgeon|registrar|skirmisher|thug|priest|stall owner|they|child)$/i;
 
 export function isRoleContactLabel(token: string): boolean {
   const t = (token ?? '').replace(/\s+/g, ' ').trim();
@@ -146,7 +148,7 @@ export function detectHubRoleMadlib(text: string): boolean {
   const hubRole = '(?:Lowmarket\\s+Fence|Wall\\s+Sergeant|Pact-Hunter(?:\\s+Skirmisher)?)';
   return (
     new RegExp(
-      `\\b(?:lunged?|leaned|steps?|walks?|runs?|heads?|turned|swung|struck|swiped|as you)\\s+(?:the\\s+)?${hubRole}\\b`,
+      `\\b(?:lunged?|leaned|steps?|walks?|runs?|heads?|turned|swung|struck|swiped|pull|draw|grab|raise|swing|wield|as you)\\s+(?:the\\s+)?${hubRole}\\b`,
       'i'
     ).test(text)
     || new RegExp(
@@ -174,9 +176,10 @@ export function isChoicePadPersonToken(token: string): boolean {
  * Tape: GM wrote `"…" Rasped, their voice` → vignette Title-Case harvest promoted "Rasped"
  * into cast → SNAPSHOT / rewriteInvalidReferences / codedSceneMove injected it as direction,
  * monster, and cast ("Rasped and They").
+ * Batch 02f P0-3: Extended to catch "Child" (when used as dialogue-like token in harvest).
  */
 const DIALOGUE_VERB_PERSON_EXACT =
-  /^(rasped|rasp|whispered|whisper|growled|growl|murmured|murmur|hissed|hiss|snarled|snarl|barked|bark|croaked|croak|grunted|grunt|snapped|snap|muttered|mutter|chuckled|chuckle|laughed|laugh|sighed|sigh|gasped|gasp|coughed|cough|sneered|sneer|spat|spits?|drawled|drawl|intoned|intone|boomed|boom|cried|cry|shouted|shout|yelled|yell|called|call|replied|reply|answered|answer|asked|ask|said|says?|stated|state|declared|declare|announced|announce|demanded|demand|insisted|insist|warned|warn|promised|promise|offered|offer|nodded|nod|smiled|smile|frowned|frown|gestured|gesture|shrugged|shrug|leaned|lean|lunged|lunge|charged|charge|pressed|press|waited|wait|watched|watch|scouted|scout|traveled|travel|attacked|attack|fled|flee|parleyed|parley|engaged|engage|maintained|maintain|intervened|intervene|ascended|ascend|drew|draw|gave|give|peered|peer)$/i;
+  /^(rasped|rasp|whispered|whisper|growled|growl|murmured|murmur|hissed|hiss|snarled|snarl|barked|bark|croaked|croak|grunted|grunt|snapped|snap|muttered|mutter|chuckled|chuckle|laughed|laugh|sighed|sigh|gasped|gasp|coughed|cough|sneered|sneer|spat|spits?|drawled|drawl|intoned|intone|boomed|boom|cried|cry|shouted|shout|yelled|yell|called|call|replied|reply|answered|answer|asked|ask|said|says?|stated|state|declared|declare|announced|announce|demanded|demand|insisted|insist|warned|warn|promised|promise|offered|offer|nodded|nod|smiled|smile|frowned|frown|gestured|gesture|shrugged|shrug|leaned|lean|lunged|lunge|charged|charge|pressed|press|waited|wait|watched|watch|scouted|scout|traveled|travel|attacked|attack|fled|flee|parleyed|parley|engaged|engage|maintained|maintain|intervened|intervene|ascended|ascend|drew|draw|gave|give|peered|peer|child)$/i;
 
 export function isDialogueVerbPersonToken(token: string): boolean {
   const t = normalizeChromeToken(token);
@@ -227,6 +230,7 @@ export function realPresentPeople(present: string[] | undefined): string[] {
     if (isRoleAdjectivePersonSlot(t)) return false;
     if (isChoicePadPersonToken(t)) return false;
     if (isFactionOrOrgToken(t)) return false;
+    if (isHubRoleCompoundToken(t)) return false;
     return t.length >= 2;
   });
 }

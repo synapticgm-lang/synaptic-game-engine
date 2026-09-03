@@ -36,6 +36,15 @@ export function playerCommittedTravel(input: string | undefined): boolean {
   return TRAVEL_COMMIT.test(t);
 }
 
+/** Arrival snap only — not Leave / Walk away / Exit (those are not "You reach dest"). */
+export function playerCommittedArrivalTravel(input: string | undefined): boolean {
+  const t = (input ?? '').replace(/\s+/g, ' ').trim();
+  if (!t) return false;
+  return /^(?:travel\s+toward|return\s+to|enter\b|go (?:inside|in|through|into)|head (?:inside|through|into|to))\b/i.test(
+    t
+  );
+}
+
 export function detectCameraScale(text: string): CameraScale | null {
   if (!text) return null;
   if (OUTDOOR_CAMERA.test(text) && !INDOOR_ROOM.test(text)) return 'outdoor';
@@ -157,7 +166,8 @@ export function enforceCameraOnProse(
   const from = (state.previousLocationSheet?.name ?? '').trim();
 
   // Batch U — arrival prepend ONLY on real location change; use travel snap, not stale camera lock.
-  if (traveled && dest) {
+  // Batch 02g — Leave / Walk away / Exit must not invent "You reach <current dest>".
+  if (traveled && dest && playerCommittedArrivalTravel(playerInput)) {
     if (from && from.toLowerCase() === dest.toLowerCase()) return next;
     return ensureTravelArrivalProse(next, dest, from || null);
   }

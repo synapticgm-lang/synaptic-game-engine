@@ -388,6 +388,8 @@ export function normalizeCrowdRewriteArtifacts(text: string): string {
   );
   // "the people here passes" grammar after rewrite — light fix
   next = next.replace(/\bthe people here passes\b/gi, 'no one passes');
+  // 02h — 02f stopped rewriting "no one" into occupancy, but "through the no one" is leftover mush
+  next = next.replace(/\bthrough the no one\b/gi, 'through the empty street');
   // Personified crowd-as-monster: "The crowd here, hunched and bestial, break…"
   next = next.replace(
     /\bthe\s+(crowd|people|two people|few people)\s+here\s*,\s*(?:hunched|bestial|coiled|snarling|feral|monstrous)(?:\s+and\s+\w+)?\s*,/gi,
@@ -424,24 +426,10 @@ export function scrubInventedCrowdSize(
   if (!text) return text;
   let next = text;
 
-  if (crowdPresent || trackedCrowdSize > 0) {
-    EMPTY_CLAIMS.lastIndex = 0;
-    if (EMPTY_CLAIMS.test(next)) {
-      EMPTY_CLAIMS.lastIndex = 0;
-      const fill =
-        trackedCrowdSize === 2
-          ? 'the two people here'
-          : trackedCrowdSize === 1
-            ? 'the person here'
-            : trackedCrowdSize >= 5
-              ? 'the people here'
-              : 'people still here';
-      next = next.replace(EMPTY_CLAIMS, (match) => {
-        if (/no voices/i.test(match)) return 'quiet voices';
-        return fill;
-      });
-    }
-  }
+  // P0-1 Batch 02f: DELETED empty-claim rewrite
+  // If the writer says "no one" / "nobody", leave it unchanged.
+  // Never inject occupancy fillers like "people still here" / "the two people here".
+  // crowdPresent and trackedCrowdSize are still tracked for other wardens.
 
   if (crowdFluxInText(next)) return normalizeCrowdRewriteArtifacts(next);
 

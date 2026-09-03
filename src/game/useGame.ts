@@ -44,7 +44,7 @@ import {
 import { isAutoFightWarningDismissed } from '@/components/AutoFightWarningModal';
 import { generateComicImage, generateVideo, VideoProviderNotConfiguredError } from '@/services/openRouterService';
 import { enforcePerspective } from './perspectiveWarden';
-import { applyProseWarden, crowdSizeForWarden, collectSceneObjectNames } from './proseWarden';
+import { applyProseWarden, crowdSizeForWarden, collectSceneObjectNames, scrubFalseArrivalWhenHere } from './proseWarden';
 import { applyLocalityWarden } from './locality';
 import { detectAndDiscoverLocations, discoverLocation } from './locationDiscovery';
 import {
@@ -295,6 +295,7 @@ import { maybeRevealFromLocation } from './worldAtlas';
 import { scrubOfficialPlaceholder } from './narrativeScrub';
 import { isChromePersonToken } from './chromeAuthority';
 import { hubBeatAwardKey, resolveHubArrival } from './hubEncounters';
+import { applyPresentTrimOnTravel } from './presentAuthority';
 import {
   clearVignetteOnHubLeave,
   openVignetteFromHubBeat,
@@ -3996,6 +3997,13 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
       };
       workingState = enforceCameraOnState(workingState, sanitizedInput);
       cleanText = enforceCameraOnProse(cleanText, workingState, sanitizedInput);
+      cleanText = scrubFalseArrivalWhenHere(
+        cleanText,
+        finalLocationName,
+        [],
+        false,
+        liveCurrent.currentLocation
+      );
       areaMap = workingState.activeDungeon ?? areaMap;
       locationSheet = workingState.locationSheet ?? locationSheet;
       finalLocationName = workingState.currentLocation ?? finalLocationName;
@@ -4145,6 +4153,13 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
             !!finalLocationName
             && !!liveCurrent.currentLocation
             && finalLocationName !== liveCurrent.currentLocation;
+          if (traveled || justArrived) {
+            workingState = applyPresentTrimOnTravel(
+              workingState,
+              liveCurrent.currentLocation ?? '',
+              finalLocationName ?? ''
+            );
+          }
           const arrival =
             traveled || justArrived
               ? resolveHubArrival(

@@ -6,6 +6,11 @@
 
 type ChatPart = { text?: unknown } | string;
 
+/** CJK Unified Ideographs — DeepSeek T15 combat beat was full Han. Treat as empty-GM. */
+export function hasHanScript(text: string): boolean {
+  return /[\u4e00-\u9fff]/.test(text ?? '');
+}
+
 export function extractChatCompletionText(data: unknown): string {
   if (!data || typeof data !== 'object') return '';
   const choice = (data as { choices?: unknown[] }).choices?.[0];
@@ -22,10 +27,11 @@ export function extractChatCompletionText(data: unknown): string {
   const candidates: unknown[] = [msg.content, rec.text];
   for (const raw of candidates) {
     const text = flattenChatContent(raw);
-    if (text) return text;
+    if (text) return hasHanScript(text) ? '' : text;
   }
   // Last resort: some DeepSeek routes only populate reasoning. Do not prefer it.
-  return flattenChatContent(msg.reasoning) || flattenChatContent(msg.reasoning_content);
+  const fallback = flattenChatContent(msg.reasoning) || flattenChatContent(msg.reasoning_content);
+  return hasHanScript(fallback) ? '' : fallback;
 }
 
 function flattenChatContent(raw: unknown): string {

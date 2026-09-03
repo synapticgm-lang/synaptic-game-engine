@@ -16,6 +16,12 @@ import { isAtmospherePlaceName, resumeMainTravelChoice } from './questPlay';
 import { isAloneArrivalOpening } from './openingEstablishment';
 import { isInteriorMap } from './placeAuthority';
 import { graphExitPads, isCameraRelativePad, listInteriorExitsFromHere } from './mapEngine';
+import {
+  closedUniverseFallbacks,
+  excludedPadFamilies,
+  isExcludedPadLabel,
+  sealPadUniverse,
+} from './padUniverse';
 
 /**
  * 4-tier narrative pipeline (authoritative ordering for choice generation):
@@ -852,11 +858,13 @@ export function padChoicesToCount(
   min = 3,
   lastPlayerAction = ''
 ): string[] {
+  const excluded = excludedPadFamilies(state);
   let merged = Array.from(
     new Set(
       choices
         .map((c) => sanitizeChoiceLabel(c))
         .filter(Boolean)
+        .filter((c) => !isExcludedPadLabel(c, excluded))
         .filter((c) => {
           const name = (state.character?.name ?? '').trim();
           if (name.length >= 2 && c.toLowerCase() === name.toLowerCase()) return false;
@@ -871,9 +879,9 @@ export function padChoicesToCount(
   if (state.activeDungeon && isInteriorMap(state.activeDungeon)) {
     merged = merged.filter((c) => !isCameraRelativePad(c));
   }
-  // Act-4: resume main when off-spine
+  // Act-4: resume main when off-spine — 02i: not if travel is excluded
   const resumeChoice = resumeMainTravelChoice(state);
-  if (resumeChoice && merged.length < 4) {
+  if (resumeChoice && merged.length < 4 && !isExcludedPadLabel(resumeChoice, excluded)) {
     if (!inventsPresenceOnEmptyScene(resumeChoice, state, storyProse)) {
       if (!merged.some((c) => c.toLowerCase() === resumeChoice.toLowerCase())) merged.push(resumeChoice);
     }
@@ -881,21 +889,30 @@ export function padChoicesToCount(
   // Act-4: hub arrival beat pads
   for (const hubPad of hubArrivalChoicePads(state, 2)) {
     if (merged.length >= 4) break;
+    if (isExcludedPadLabel(hubPad, excluded)) continue;
     if (inventsPresenceOnEmptyScene(hubPad, state, storyProse)) continue;
     if (!merged.some((c) => c.toLowerCase() === hubPad.toLowerCase())) merged.push(hubPad);
   }
   // Outdoor hub travel pads (Act-3) — light, alone-safe, no invent-crowd.
+  // 02i — closed universe: never re-birth Travel after starve
   for (const hubChoice of outdoorHubTravelChoices(state, 2)) {
     if (merged.length >= 4) break;
+    if (isExcludedPadLabel(hubChoice, excluded)) continue;
     if (inventsPresenceOnEmptyScene(hubChoice, state, storyProse)) continue;
     if (!merged.some((c) => c.toLowerCase() === hubChoice.toLowerCase())) merged.push(hubChoice);
   }
   if (merged.length >= min) {
-    return applyStanceDensity(merged.slice(0, 4), state, storyProse, lastPlayerAction);
+    return sealPadUniverse(
+      applyStanceDensity(merged.slice(0, 4), state, storyProse, lastPlayerAction),
+      state,
+      excluded
+    );
   }
   
   // First fallback pass: collect grounded choices from sceneSafeFallbacks
-  const fallbacks = sceneSafeFallbacks(state, storyProse, lastPlayerAction);
+  const fallbacks = sceneSafeFallbacks(state, storyProse, lastPlayerAction).filter(
+    (c) => !isExcludedPadLabel(c, excluded)
+  );
   let fallbacksAdded = 0;
   for (const extra of fallbacks) {
     if (merged.length >= min) break;
@@ -917,13 +934,21 @@ export function padChoicesToCount(
     }
   }
   
-  // Emergency fallback: if still no choices, add a generic safe option
+  // Emergency fallback: scene-grounded non-travel banks only (never Travel/Leave)
   if (merged.length === 0) {
-    console.warn('[padChoicesToCount] All choices filtered - adding emergency fallback');
-    merged.push('Look around');
+    console.warn('[padChoicesToCount] All choices filtered - adding closed-universe fallback');
+    merged.push(...closedUniverseFallbacks(state, excluded));
+  }
+  merged = merged.filter((c) => !isExcludedPadLabel(c, excluded));
+  if (merged.length === 0) {
+    merged.push(...closedUniverseFallbacks(state, excluded));
   }
   
-  return applyStanceDensity(merged.slice(0, 4), state, storyProse, lastPlayerAction);
+  return sealPadUniverse(
+    applyStanceDensity(merged.slice(0, 4), state, storyProse, lastPlayerAction),
+    state,
+    excluded
+  );
 }
 
 export interface ChoicePipelineResult {

@@ -106,10 +106,18 @@ export function attachLastKill(state: GameState, kill: LastKill): GameState {
     lastBeat: '',
     updatedTurn: state.turn,
   };
+  const needle = kill.name.toLowerCase();
+  const present = (base.present ?? []).filter((p) => {
+    const pl = p.toLowerCase();
+    if (pl === needle || pl.includes(needle)) return false;
+    if (/skirmisher/i.test(kill.name) && /skirmisher/i.test(pl)) return false;
+    return true;
+  });
   return {
     ...state,
     sceneFacts: {
       ...base,
+      present,
       lastKill: kill,
       tension: kill.outcome === 'victory' ? 'tense' : base.tension,
     },

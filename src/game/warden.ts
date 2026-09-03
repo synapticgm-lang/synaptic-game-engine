@@ -284,6 +284,7 @@ export async function runWarden(
     selectedIntentKind: intent?.kind,
     fleeFailed,
     priorLocation: priorLoc,
+    destroyedItems: state.pyoaBranchLedger?.destroyedItems,
   };
   
   const polishedBase = enableGrammarCheck

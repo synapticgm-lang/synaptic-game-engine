@@ -406,6 +406,11 @@ export function outdoorHubTravelChoices(state: GameState, max = 2): string[] {
   return scored.slice(0, max).map((h) => `Travel toward ${h.name}`);
 }
 
+/** Thornferry mill / ford / landing / quay are one already-here cluster (02f / 02g). */
+export function isThornferryCluster(s: string): boolean {
+  return /\b(thornferry|mill\s+landing|the ford|harbor quay)\b/i.test(s ?? '');
+}
+
 /** Parse "Travel toward X" / "Return to X" into a known hub when possible. */
 export function parseTravelDestination(
   action: string,
@@ -437,6 +442,23 @@ export function ensureTravelArrivalProse(
     && (from.toLowerCase() === hub.toLowerCase()
       || from.toLowerCase().includes(hub.toLowerCase())
       || hub.toLowerCase().includes(from.toLowerCase()))
+  ) {
+    return text;
+  }
+  // P0-5 / 02g: Thornferry mill / ford / landing aliases are the same already-here cluster.
+  if (from && isThornferryCluster(from) && isThornferryCluster(hub)) {
+    return text;
+  }
+  // 02g: unknown from + mill dest = already-here default (do not invent arrival).
+  if (!from && isThornferryCluster(hub)) {
+    return text;
+  }
+  // 02g: body is already leaving / standing on the landing — no second arrival.
+  if (
+    isThornferryCluster(hub) &&
+    /\b(mill landing|road out of Thornferry|already shrinking|step off the mill|track (?:north|away|climbs)|leave the landing|ferry rope)\b/i.test(
+      text
+    )
   ) {
     return text;
   }

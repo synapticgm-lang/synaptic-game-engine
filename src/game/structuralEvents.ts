@@ -14,6 +14,7 @@ import { advanceLocationMemory } from './locationMemory';
 import { ensureLocationSheet } from './pendingTurn';
 import { closePlaceArc, upsertPlaceFromSheet } from './places';
 import { exhaustOpenedContainer, shouldBlockContainerItemGain } from './searchContinuity';
+import { isPyoaItemDestroyed } from './pyoaBranchLedger';
 
 function uid(): string {
   return crypto.randomUUID();
@@ -61,6 +62,10 @@ export function applyStructuralEvents(
 
   for (const e of events) {
     if (e.type === 'item-gain' && e.name) {
+      if (isPyoaItemDestroyed(next, e.name)) {
+        notes.push(`Blocked destroyed PYOA item resurrection: ${e.name}`);
+        continue;
+      }
       if (shouldBlockUnearnedOfferGain(playerInput, e.name)) {
         notes.push(`Blocked unearned offer loot (player did not take it): ${e.name}`);
         continue;

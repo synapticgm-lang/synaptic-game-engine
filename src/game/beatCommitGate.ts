@@ -20,6 +20,7 @@ import {
 import { isUnresolvedDeixisToken, realPresentPeople } from './chromeAuthority';
 import { isEncounterEngaged } from './encounterTerminalFsm';
 import { hubsForBibleId } from './outdoorHubs';
+import { isPyoaItemDestroyed } from './pyoaBranchLedger';
 
 export type CommitGateReason =
   | 'atmosphere-only'
@@ -108,7 +109,45 @@ export function classifyBeatCommit(
     if (!reasons.includes('recycle-without-delta')) reasons.push('recycle-without-delta');
   }
 
+  // 02h — SYSTEM / marker / mill-panel token salad must never commit.
+  if (isTokenSaladLeak(text)) {
+    if (!reasons.includes('recycle-without-delta')) reasons.push('recycle-without-delta');
+  }
+
+  // 02j Lock C — destroyed charter / dead foe cannot reopen as live facts.
+  if (isFactClosedViolation(state, text)) {
+    if (!reasons.includes('recycle-without-delta')) reasons.push('recycle-without-delta');
+  }
+
   return { accept: reasons.length === 0, reasons };
+}
+
+/** Lock C — prose that reopens a ledger-closed fact. */
+export function isFactClosedViolation(state: GameState, text: string): boolean {
+  const body = (text ?? '').trim();
+  if (!body) return false;
+  if (isPyoaItemDestroyed(state, 'charter')) {
+    if (
+      /\b(?:millstone\s+)?charter\b/i.test(body)
+      && /\b(?:clutch|hold|forge|burn|unused|fate|leave it to|will you (?:forge|burn))\b/i.test(body)
+      && !/\b(?:burned|destroyed|gone|ashes)\b/i.test(body)
+    ) {
+      return true;
+    }
+  }
+  const kill = state.sceneFacts?.lastKill;
+  if (kill?.name && kill.outcome === 'victory' && !state.activeEncounter) {
+    const esc = kill.name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    if (
+      new RegExp(
+        `\\b(?:the\\s+)?${esc}\\b[^.!?]{0,80}\\b(?:remains? fixed|still (?:here|watching)|commits? toward you|lunges?)\\b`,
+        'i'
+      ).test(body)
+    ) {
+      return true;
+    }
+  }
+  return false;
 }
 
 /**
@@ -191,6 +230,36 @@ export function isStitchBankFingerprint(text: string | undefined): boolean {
     || /\bside lane toward\b/i.test(text)
     || /\bwaiting to see if you speak,\s*buy,\s*or leave\b/i.test(text)
     || /\bmarket din in .+ thins for a breath\b/i.test(text)
+  );
+}
+
+/** 02j Lock D — shape heuristic for novel entropy dumps (not fingerprint-only). */
+export function isEntropyShapeSalad(text: string | undefined): boolean {
+  if (!text?.trim()) return false;
+  const t = text;
+  if (/\bXP_next\b|controlXP|SECRETAR|lyricwe\b/i.test(t)) return true;
+  if (/[•▁]/.test(t) && /\b\w+_\w+\b/.test(t)) return true;
+  if (/\b\w+[A-Z]\w*_\w+\b/.test(t) && /[a-z]{3,}[A-Z]/.test(t)) return true;
+  const words = t.split(/\s+/).filter(Boolean);
+  if (words.length < 6) return false;
+  const weird = words.filter((w) => /[_•▁]/.test(w) || /\d/.test(w) && /[a-zA-Z]/.test(w)).length;
+  return weird / words.length > 0.25;
+}
+
+/** 02h — model/system token salad that Gemini stop-early'd (RPG T32, D&D T14, PYOA T13). */
+export function isTokenSaladLeak(text: string | undefined): boolean {
+  if (isEntropyShapeSalad(text)) return true;
+  if (!text?.trim()) return false;
+  return (
+    /Spine-free/i.test(text)
+    || /<\/=SYSTEM/i.test(text)
+    || /<\/litAwn_marker>/i.test(text)
+    || /begin▁of▁file/i.test(text)
+    || /begin_of_file/i.test(text)
+    || /\\f===/.test(text)
+    || /\f===/.test(text)
+    || /A MILL AT the panel/i.test(text)
+    || /Obliged thesaurus/i.test(text)
   );
 }
 

@@ -87,6 +87,7 @@ import {
   hubsForBibleId,
 } from './outdoorHubs';
 import { resolveHubArrival, hubBeatAwardKey } from './hubEncounters';
+import { applyPresentTrimOnTravel } from './presentAuthority';
 import {
   clearVignetteOnHubLeave,
   openVignetteFromHubBeat,
@@ -152,6 +153,7 @@ import {
   applyProseWarden,
   crowdSizeForWarden,
   collectSceneObjectNames,
+  scrubFalseArrivalWhenHere,
 } from './proseWarden';
 import { ensureEncounterSpawnPreface } from './combatAuthority';
 import { settleParleyAfterProse } from './encounterTerminalFsm';
@@ -1235,6 +1237,14 @@ Do NOT print dice notation or CODE ENFORCED.
   }
   working = enforceCameraOnState(working, playerInput);
   cleanText = enforceCameraOnProse(cleanText, working, playerInput);
+  // 02g — prepend can land after the warden; strip mill / already-here arrivals once more.
+  cleanText = scrubFalseArrivalWhenHere(
+    cleanText,
+    working.currentLocation,
+    [],
+    false,
+    fromLoc
+  );
 
   const pipeline = await resolvePipelineChoices({
     gmText: narrativeSource,
@@ -1277,6 +1287,11 @@ Do NOT print dice notation or CODE ENFORCED.
       !!state.currentLocation &&
       working.currentLocation !== state.currentLocation;
     if (traveled || justArrived) {
+      working = applyPresentTrimOnTravel(
+        working,
+        state.currentLocation ?? '',
+        working.currentLocation ?? ''
+      );
       const arrival = resolveHubArrival(
         {
           ...working,

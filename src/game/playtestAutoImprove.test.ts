@@ -98,8 +98,15 @@ describe('autoplayWriter + dual critic + auto-improve rails', () => {
       turns: 20,
     });
     expect(story).toMatch(/Standalone story/);
+    expect(story).toMatch(/Free hook bar/);
+    expect(story).toMatch(/8–12/);
     expect(vibe).toMatch(/Game vibe/);
     expect(vibe).toMatch(/Free hook/);
+    expect(vibe).toMatch(/PLAYER CAPACITY CONTEXT/);
+    expect(vibe).toMatch(/\*\*12\*\*/);
+    expect(vibe).toMatch(/\+8/);
+    expect(vibe).toMatch(/YES\/MAYBE\/NO/);
+    expect(vibe).toMatch(/T12/);
     expect(story).not.toEqual(vibe);
   });
 

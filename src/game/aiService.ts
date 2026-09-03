@@ -15,9 +15,18 @@ import { effectiveWriterTier } from './testLab';
 import { logApiLatency } from '../services/telemetryService';
 import { getAutoplayWriterOverride } from './autoplayWriter';
 import { buildOpeningGmPlayerInput, compactTrafficGist } from './openingPointerCard';
+import { hasHanScript } from './openRouterChat';
 
 export type { GmResult } from './aiServiceShared';
 export { RateLimitError, withRetry } from './aiServiceShared';
+
+/** P0-4 — Han in a successful beat is empty-GM so useGame / Fate retry + failover. */
+function rejectHanGmResult(result: GmResult): GmResult {
+  if (hasHanScript(result.text ?? '')) {
+    throw new Error('GM proxy returned empty content.');
+  }
+  return result;
+}
 
 /**
  * Resolve narrative generation.
@@ -49,7 +58,9 @@ export async function callGm(
       openrouterApiKey: autoplayWriter.apiKey,
     };
     const direct = await import('./aiService.direct');
-    return direct.callGmDirect(state, playerInput, patched, activeLoreCards, onRetry);
+    return rejectHanGmResult(
+      await direct.callGmDirect(state, playerInput, patched, activeLoreCards, onRetry)
+    );
   }
 
   const preferProxy = isGmProxyRequired() || isGmProxyAvailable();
@@ -66,7 +77,7 @@ export async function callGm(
         signal,
         timeoutMs,
       });
-      return processGmCompletion(text, state.engineMode);
+      return rejectHanGmResult(processGmCompletion(text, state.engineMode));
     } catch (err) {
       if (isGmProxyRequired() || !isClientGmAllowed()) {
         logger.error('ai-proxy', 'GM proxy failed and client GM path is disabled', {
@@ -83,7 +94,9 @@ export async function callGm(
   // Build-time constants so Vite can drop aiService.direct + systemPrompt from prod bundles.
   if (import.meta.env.DEV || import.meta.env.VITE_ALLOW_CLIENT_GM === 'true') {
     const direct = await import('./aiService.direct');
-    return direct.callGmDirect(state, playerInput, settings, activeLoreCards, onRetry);
+    return rejectHanGmResult(
+      await direct.callGmDirect(state, playerInput, settings, activeLoreCards, onRetry)
+    );
   }
 
   throw new Error(

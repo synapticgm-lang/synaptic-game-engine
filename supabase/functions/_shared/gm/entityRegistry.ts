@@ -11,7 +11,7 @@
  * This registry is the single source of truth for what entities can exist.
  */
 
-import type { CampaignBible } from '@/data/campaigns/types';
+import type { CampaignBible } from './campaignBibleTypes.ts';
 
 // ============================================================================
 // LOCATION REGISTRY — All valid location names from hubs, quests, and opening cards

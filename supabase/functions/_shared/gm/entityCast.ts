@@ -9,9 +9,10 @@
  * P0: Strict Entity Isolation via CAST Block
  */
 
-import type { GameState, Encounter } from './types.ts';
+import type { GameState, Encounter, TimelineFact } from './types.ts';
 import { isUiLabel } from './narrativeTranslator.ts';
-import { isHubRoleCompoundToken } from './chromeAuthority.ts';
+import { isHubRoleCompoundToken, isNonPersonNameToken } from './chromeAuthority.ts';
+import { canHarvestAsNamedPerson } from './entityRegistry.ts';
 import * as hubEncounters from './hubEncounters.ts';
 
 export interface CastMember {
@@ -74,14 +75,22 @@ function extractNamedCharacters(state: GameState): CastMember[] {
   
   const named: CastMember[] = [];
   
+  const bibleId = state.campaignBibleId ?? state.bibleId;
+  
   for (const token of present) {
     if (typeof token !== 'string' || !token.trim()) continue;
     // Skip UI labels
     if (isUiLabel(token)) continue;
+    // P0-3 Batch 02f: They / Child / hub-role compounds stay chrome, not CAST names.
+    if (isNonPersonNameToken(token)) continue;
+    // Lock B — hub compounds enter CAST via extractHubArrivalContact only.
+    if (isHubRoleCompoundToken(token)) continue;
+    
+    const namedEligible = canHarvestAsNamedPerson(token, bibleId);
     
     // Check if this is a known NPC
     const memory = memories.find(m => m.npcName === token);
-    if (memory) {
+    if (memory && namedEligible) {
       named.push({
         name: token,
         role: memory.role ?? 'character',
@@ -89,10 +98,10 @@ function extractNamedCharacters(state: GameState): CastMember[] {
         firstSeen: findFirstSeenTurn(token, timeline),
         pinned: pinned.includes(token),
       });
-    } else if (isProperName(token) || isHubRoleCompoundToken(token)) {
+    } else if (namedEligible) {
       named.push({
         name: token,
-        role: isHubRoleCompoundToken(token) ? 'hub contact' : 'character',
+        role: 'character',
         disposition: 'neutral',
         firstSeen: state.turn ?? 0,
         pinned: pinned.includes(token),
@@ -133,9 +142,15 @@ function extractHubArrivalContact(state: GameState): CastMember | null {
   const resolved = hubEncounters.resolveHubArrival(state, state.currentLocation);
   
   if (!resolved?.beat.contactName) return null;
+  const contactName = resolved.beat.contactName;
+  const bibleId = state.campaignBibleId ?? state.bibleId;
+  if (isNonPersonNameToken(contactName)) return null;
+  if (!canHarvestAsNamedPerson(contactName, bibleId) && !isHubRoleCompoundToken(contactName)) {
+    return null;
+  }
   
   return {
-    name: resolved.beat.contactName,
+    name: contactName,
     role: resolved.beat.kind === 'social' ? 'hub contact' : 'character',
     disposition: 'neutral',
     firstSeen: state.turn ?? 0,
@@ -323,7 +338,7 @@ function formatCastBlock(cast: Cast): string {
  */
 function findFirstSeenTurn(
   entityName: string,
-  timeline: Array<{ turn?: number; text?: string }>
+  timeline: Array<TimelineFact | { turn?: number; text?: string }>
 ): number {
   for (const entry of timeline) {
     if (typeof entry.text === 'string' && entry.text.includes(entityName)) {

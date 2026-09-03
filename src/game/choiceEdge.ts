@@ -9,7 +9,7 @@ import {
   engineAllowsCombat,
 } from './beatContract';
 import { hubsForBibleId, matchHub } from './outdoorHubs';
-import { isPyoaBranchExhausted, isPyoaBranchLocked } from './pyoaBranchLedger';
+import { isPyoaBranchExhausted, isPyoaBranchLocked, isPyoaItemDestroyed } from './pyoaBranchLedger';
 import {
   ensurePyoaSpine,
   legalSpineExits,
@@ -18,6 +18,7 @@ import {
 } from './pyoaSpine';
 import { fleeAvailable, parleyAvailable } from './encounterTerminalFsm';
 import { countLoiterFamilyStreak } from './beatFingerprint';
+import { excludedPadFamilies, isExcludedEdge } from './padUniverse';
 
 export type ChoiceEdgeKind =
   | 'combat'
@@ -42,9 +43,15 @@ function hubBeatCount(state: GameState, hubId: string): number {
   return (state.sandboxAwardKeys ?? []).filter((k) => k.startsWith(`hub-beat:${hubId}:`)).length;
 }
 
+function closeEdgeUniverse(state: GameState, edges: ChoiceEdge[]): ChoiceEdge[] {
+  const excluded = excludedPadFamilies(state);
+  return dedupeEdges(edges.filter((e) => !isExcludedEdge(e, excluded)));
+}
+
 /** Enumerate legal outgoing edges for the active beat + scene (B018–B021). */
 export function enumerateLegalEdges(state: GameState): ChoiceEdge[] {
   const edges: ChoiceEdge[] = [];
+  const excluded = excludedPadFamilies(state);
   const activeBeat = state.arcDirector?.activeBeatId;
   const contract = activeBeat
     ? contractById(activeBeat.replace(/-repeat$/, ''))
@@ -61,7 +68,7 @@ export function enumerateLegalEdges(state: GameState): ChoiceEdge[] {
       edges.push({ id: 'enc-parley', label: 'Parley', kind: 'talk', risk: 'low' });
     }
     // 29a — while engaged, only encounter edges (no travel/inspect padding below)
-    return dedupeEdges(edges);
+    return closeEdgeUniverse(state, edges);
   }
 
   // PYOA spine v1 — Thornferry: pads = legal exits from current node
@@ -77,20 +84,20 @@ export function enumerateLegalEdges(state: GameState): ChoiceEdge[] {
         risk: getSpineNodeMajor(ex.to) ? 'high' : 'med',
       });
     }
-    if (spineState.pyoaSpine?.endingId) {
+    if (spineState.pyoaSpine?.endingId && !excluded.has('leave')) {
       edges.push({
         id: 'spine-ending',
         label: 'Accept the ending that follows',
         kind: 'branch',
         risk: 'high',
       });
-      return dedupeEdges(edges);
+      return closeEdgeUniverse(state, edges);
     }
     if (!force && exits.length) {
       // One delay pad allowed before force
       edges.push({ id: 'wait', label: 'Wait and watch', kind: 'wait', risk: 'low' });
     }
-    if (exits.length) return dedupeEdges(edges);
+    if (exits.length) return closeEdgeUniverse(state, edges);
     // Fall through to legacy PYOA edges if spine not seeded somehow
   }
 
@@ -124,20 +131,20 @@ export function enumerateLegalEdges(state: GameState): ChoiceEdge[] {
       // offer exit/talk instead so inspect loops cannot self-feed.
       const loiter = countLoiterFamilyStreak(state);
       if (loiter.count >= 3 && loiter.key === 'loiter') {
-        edges.push(
-          {
+        if (!excluded.has('leave')) {
+          edges.push({
             id: `${contract.id}-exit`,
             label: 'Leave through the nearest exit',
             kind: 'travel',
             beatId: contract.id,
-          },
-          {
-            id: `${contract.id}-ask`,
-            label: 'Ask a direct question',
-            kind: 'talk',
-            beatId: contract.id,
-          }
-        );
+          });
+        }
+        edges.push({
+          id: `${contract.id}-ask`,
+          label: 'Ask a direct question',
+          kind: 'talk',
+          beatId: contract.id,
+        });
       } else {
         edges.push(
           {
@@ -179,7 +186,7 @@ export function enumerateLegalEdges(state: GameState): ChoiceEdge[] {
 
   const allHubs = hubsForBibleId(state.campaignBibleId);
   const hub = matchHub(allHubs, state.currentLocation);
-  if (hub && hubBeatCount(state, hub.id) < 2) {
+  if (hub && hubBeatCount(state, hub.id) < 2 && !excluded.has('travel')) {
     for (const target of allHubs.filter((h) => h.id !== hub.id).slice(0, 2)) {
       edges.push({
         id: `travel-${target.id}`,
@@ -209,14 +216,16 @@ export function enumerateLegalEdges(state: GameState): ChoiceEdge[] {
     edges.push({ id: 'rpg-leverage', label: 'Press for leverage', kind: 'leverage', risk: 'med' });
   }
   if (state.engineMode === 'pyoa') {
-    if (!isPyoaBranchExhausted(state, 'millstone-charter')) {
+    if (isPyoaItemDestroyed(state, 'charter')) {
+      // P0-5: burned charter is gone — no Use pad.
+    } else if (!isPyoaBranchExhausted(state, 'millstone-charter')) {
       edges.push({
         id: 'pyoa-charter-use',
         label: 'Use the Millstone Charter',
         kind: 'branch',
         beatId: 'pyoa-beat-branch',
       });
-    } else {
+    } else if (!excluded.has('leave')) {
       edges.push({
         id: 'pyoa-charter-refuse',
         label: 'Walk away from the charter',
@@ -262,7 +271,7 @@ export function enumerateLegalEdges(state: GameState): ChoiceEdge[] {
   if (!skipWait) {
     edges.push({ id: 'wait', label: 'Wait and watch', kind: 'wait', risk: 'low' });
   }
-  return dedupeEdges(edges);
+  return closeEdgeUniverse(state, edges);
 }
 
 function getSpineNodeMajor(toId: string): boolean {

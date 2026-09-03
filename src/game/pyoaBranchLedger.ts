@@ -19,6 +19,8 @@ export interface PyoaBranchLedger {
     branches: string[];
     stateHash: string;
   }>;
+  /** P0-5 Batch 02f — destroyed key items that cannot resurrect */
+  destroyedItems?: string[];
 }
 
 export function initPyoaBranchLedger(): PyoaBranchLedger {
@@ -28,7 +30,23 @@ export function initPyoaBranchLedger(): PyoaBranchLedger {
     charterUses: 0, 
     branchClosed: false,
     convergencePoints: [],
+    destroyedItems: [],
   };
+}
+
+/** P0-5 Batch 02f — Check if a PYOA key item has been destroyed and locked. */
+export function isPyoaItemDestroyed(state: GameState, itemName: string): boolean {
+  if (state.engineMode !== 'pyoa') return false;
+  const ledger = state.pyoaBranchLedger ?? initPyoaBranchLedger();
+  const destroyed = (ledger.destroyedItems ?? []).map(d => d.toLowerCase());
+  const itemLower = itemName.toLowerCase();
+  
+  // Check exact match or partial match for charter/millstone
+  return destroyed.some(d => 
+    d === itemLower 
+    || (d.includes('charter') && itemLower.includes('charter'))
+    || (d.includes('millstone') && itemLower.includes('millstone'))
+  );
 }
 
 export function isPyoaBranchExhausted(state: GameState, branch: PyoaBranchId): boolean {
@@ -45,6 +63,16 @@ export function recordPyoaBranchChoice(state: GameState, playerInput: string): G
   if (state.engineMode !== 'pyoa') return state;
   const lower = playerInput.toLowerCase();
   let ledger = state.pyoaBranchLedger ?? initPyoaBranchLedger();
+
+  // P0-5 Batch 02f: Track charter destruction (burn/destroy/discard)
+  if (/\b(burn|destroy|discard|throw away|get rid of|toss)\s+(?:the\s+)?(?:millstone\s+)?charter\b/.test(lower)) {
+    ledger = {
+      ...ledger,
+      destroyedItems: [...(ledger.destroyedItems ?? []), 'millstone-charter'].filter(
+        (item, index, self) => self.indexOf(item) === index
+      ),
+    };
+  }
 
   if (/\b(millstone|charter)\b/.test(lower)) {
     const uses = (ledger.charterUses ?? 0) + 1;
@@ -92,7 +120,12 @@ export function recordPyoaBranchChoice(state: GameState, playerInput: string): G
     };
   }
 
-  return { ...state, pyoaBranchLedger: ledger };
+  // P0-5: burned charter leaves the kit — no resurrection via leftover inventory.
+  const inventory = (ledger.destroyedItems ?? []).some((d) => /charter|millstone/i.test(d))
+    ? (state.inventory ?? []).filter((i) => !/charter|millstone/i.test(i.name ?? ''))
+    : state.inventory;
+
+  return { ...state, pyoaBranchLedger: ledger, inventory };
 }
 
 export function formatPyoaBranchMandate(state: GameState): string | null {
@@ -183,8 +216,16 @@ export function isPyoaBranchLocked(state: GameState): boolean {
  * 31h — After branch lock, only eligible futures (no Wait-Wait / buy-time delay of the same crisis).
  */
 export function eligiblePyoaPadsAfterLock(state: GameState, choice: string): boolean {
-  if (!isPyoaBranchLocked(state)) return true;
   const lower = (choice ?? '').toLowerCase();
+  // P0-5: destroyed charter cannot be used / presented again.
+  if (
+    isPyoaItemDestroyed(state, 'charter')
+    && /\b(millstone\s+)?charter\b/i.test(lower)
+    && /\b(use|read|show|present|unroll|keep|clutch|forge|burn|fate|unused|leave it|rain)\b/i.test(lower)
+  ) {
+    return false;
+  }
+  if (!isPyoaBranchLocked(state)) return true;
   // Delay / same-crisis stall pads are never legal after lock
   if (
     /\b(buy time|call for help|wait and watch|^wait$|wait\b|stand around|do nothing|inspect the crisis|study the crisis|delay|stall)\b/i.test(
