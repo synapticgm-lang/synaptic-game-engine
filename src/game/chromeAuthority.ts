@@ -55,10 +55,10 @@ export function isChromePersonToken(token: string): boolean {
  * "Pellane" in present[] → "the Pellane" contagion (critic Batch B).
  */
 const POLITY_FACTION_PLACE_EXACT =
-  /^(pellane|pellane crown|ash court|the ash court|valespire|lowmarket|west wall|the weighing cup|weighing cup|contract hall|cathedral close|cinderflow|cinderflow road|harbor quay|pellane war camp|war camp|kitchen saint|kitchen saint alley|palace approach|circle|sevenfold circle|the sevenfold circle|scattered scale|the scattered scale|pactborn|calamity mark|highmark|nowhere)$/i;
+  /^(pellane|pellane crown|ash court|the ash court|valespire|lowmarket|west wall|the weighing cup|weighing cup|contract hall|cathedral close|cinderflow|cinderflow road|harbor quay|pellane war camp|war camp|kitchen saint|kitchen saint alley|palace approach|circle|sevenfold circle|the sevenfold circle|scattered scale|the scattered scale|pactborn|calamity mark|highmark|nowhere|thornferry|thornferry road|the thornferry road)$/i;
 
 const POLITY_FACTION_PLACE_HEAD =
-  /^(?:the\s+)?(?:pellane(?:\s+crown)?|ash\s+court|valespire|lowmarket|weighing\s+cup|contract\s+hall|cathedral\s+close|cinderflow(?:\s+road)?|harbor\s+quay|war\s+camp|kitchen\s+saint(?:\s+alley)?|palace\s+approach|scattered\s+scale|sevenfold\s+circle)\b/i;
+  /^(?:the\s+)?(?:pellane(?:\s+crown)?|ash\s+court|valespire|lowmarket|weighing\s+cup|contract\s+hall|cathedral\s+close|cinderflow(?:\s+road)?|harbor\s+quay|war\s+camp|kitchen\s+saint(?:\s+alley)?|palace\s+approach|scattered\s+scale|sevenfold\s+circle|thornferry(?:\s+road)?)\b/i;
 
 /**
  * Choice-pad / pronoun tokens that must never become present[] person slots.
@@ -362,6 +362,19 @@ export function rewriteChromePersonClauses(text: string, presentPeople: string[]
 
   // Official-placeholder → panel left a chrome crowd: "the blue panel men"
   next = next.replace(/\bthe\s+(?:blue\s+)?panel\s+men\b/gi, 'the people');
+
+  // 02l — chrome-as-prop / chrome-as-actor (panel charges, steps, shatters).
+  const chromeAgency = new RegExp(
+    `\\b${CHROME_NOUN}\\s+(?:doesn(?:'t|’t)|does not)\\s+charge\\b[^.]{0,80}|\\b${CHROME_NOUN}\\s+(?:charges?|steps?|walks?|nods?|looks?\\s+up|smashes?|shatters?|takes?\\s+(?:one\\s+|a\\s+)?(?:deliberate\\s+)?step)\\b[^.]{0,80}`,
+    'gi'
+  );
+  next = next.replace(chromeAgency, () => (anchor ? `${anchor} stays still` : 'nothing moves'));
+  if (/\b(?:shatter|glass|power outage)\b/i.test(next)) {
+    next = next.replace(
+      /\bpush(?:es|ed|ing)?\s+against\s+(?:the\s+)?(?:blue\s+)?panel\b/gi,
+      'look at the panel'
+    );
+  }
 
   next = rewriteChromeSpeakerTags(next, presentPeople);
 

@@ -12,6 +12,7 @@
  */
 
 import type { CampaignBible } from '@/data/campaigns/types';
+import { isPolityFactionOrPlaceToken } from './chromeAuthority';
 
 // ============================================================================
 // LOCATION REGISTRY — All valid location names from hubs, quests, and opening cards
@@ -178,7 +179,16 @@ const SHATTERED_COAST_LOCATIONS = [
   'Stonevein Quarry', 'Stonevein', 'the quarry',
 ];
 
+/** Thornferry Road locations — bible title is a place, never a person. */
+const THORNFERRY_ROAD_LOCATIONS = [
+  'Thornferry', 'Thornferry Road', 'the Thornferry Road',
+  'Mill landing', 'the mill landing', 'Thornferry mill',
+  'Quiet Bell', 'the chapel',
+  'Highmark', 'Highmark gate',
+];
+
 const LOCATION_REGISTRY_BY_BIBLE: Record<string, string[]> = {
+  'thornferry-road': THORNFERRY_ROAD_LOCATIONS,
   'summoned-pact': SUMMONED_PACT_LOCATIONS,
   'hero-awakening': HERO_AWAKENING_LOCATIONS,
   'system-integration': SYSTEM_INTEGRATION_LOCATIONS,
@@ -427,6 +437,7 @@ export function isHubContactProperName(name: string): boolean {
 export function canHarvestAsNamedPerson(name: string, bibleId?: string | null): boolean {
   const t = (name ?? '').trim();
   if (!t || t.length < 2) return false;
+  if (isPolityFactionOrPlaceToken(t) || isRegisteredLocation(t, bibleId)) return false;
   if (isCommonRoleNpc(t) && !isHubContactProperName(t)) return false;
   if (isHubContactProperName(t)) return true;
   if (bibleId) {

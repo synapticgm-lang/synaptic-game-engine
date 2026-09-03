@@ -9,7 +9,7 @@ import {
   engineAllowsCombat,
 } from './beatContract';
 import { hubsForBibleId, matchHub } from './outdoorHubs';
-import { isPyoaBranchExhausted, isPyoaBranchLocked, isPyoaItemDestroyed } from './pyoaBranchLedger';
+import { isPyoaBranchExhausted, isPyoaBranchLocked, isPyoaCharterClosed, isPyoaItemDestroyed } from './pyoaBranchLedger';
 import {
   ensurePyoaSpine,
   legalSpineExits,
@@ -216,7 +216,7 @@ export function enumerateLegalEdges(state: GameState): ChoiceEdge[] {
     edges.push({ id: 'rpg-leverage', label: 'Press for leverage', kind: 'leverage', risk: 'med' });
   }
   if (state.engineMode === 'pyoa') {
-    if (isPyoaItemDestroyed(state, 'charter')) {
+    if (isPyoaCharterClosed(state) || isPyoaItemDestroyed(state, 'charter')) {
       // P0-5: burned charter is gone — no Use pad.
     } else if (!isPyoaBranchExhausted(state, 'millstone-charter')) {
       edges.push({

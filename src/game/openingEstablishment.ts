@@ -613,6 +613,8 @@ export function isAloneArrivalPick(picked?: {
 }
 
 export function isAloneArrivalOpening(state: GameState): boolean {
+  // 02l — mid-game "the panel" substitution: alone-cover mapping dies once covers complete.
+  if (state.openingEstablishment?.complete) return false;
   if (state.openingEstablishment?.aloneArrival === true) return true;
   if (state.openingEstablishment?.aloneArrival === false) return false;
   return isAloneArrivalPick({

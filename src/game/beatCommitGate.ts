@@ -20,7 +20,7 @@ import {
 import { isUnresolvedDeixisToken, realPresentPeople } from './chromeAuthority';
 import { isEncounterEngaged } from './encounterTerminalFsm';
 import { hubsForBibleId } from './outdoorHubs';
-import { isPyoaItemDestroyed } from './pyoaBranchLedger';
+import { isPyoaCharterClosed } from './pyoaBranchLedger';
 import { isDeadFoeReopenedAsLiving } from './combatAuthority';
 
 export type CommitGateReason =
@@ -127,11 +127,11 @@ export function classifyBeatCommit(
 export function isFactClosedViolation(state: GameState, text: string): boolean {
   const body = (text ?? '').trim();
   if (!body) return false;
-  if (isPyoaItemDestroyed(state, 'charter')) {
+  if (isPyoaCharterClosed(state)) {
     if (
       /\b(?:millstone\s+)?charter\b/i.test(body)
-      && /\b(?:clutch|hold|forge|burn|unused|fate|leave it to|will you (?:forge|burn))\b/i.test(body)
-      && !/\b(?:burned|destroyed|gone|ashes)\b/i.test(body)
+      && /\b(?:clutch|hold|forge|burn|unused|fate|leave it to|will you (?:forge|burn)|takes? the charter|from your (?:hands|pack|pocket)|sell(?:s|ing)?|sold|hand(?:s|ed)? over|in your (?:pack|hand|hands|pocket)|re-offers?|offers? you)\b/i.test(body)
+      && !/\b(?:burned|destroyed|gone|ashes|already sold|empty pocket|nothing left)\b/i.test(body)
     ) {
       return true;
     }

@@ -1473,6 +1473,23 @@ export function scrubDestroyedPyoaItems(text: string, destroyedItems?: string[])
     /\b(?:leave|trust)\s+(?:the\s+)?charter(?:'s)?\s+fate\s+to\b/gi,
     'the charter is already destroyed'
   );
+  // 02l — sale-replay: clerk/Pell must not take or re-offer a disposed charter.
+  next = next.replace(
+    /\b(?:the\s+)?(?:clerk|pell)\s+takes?\s+(?:the\s+)?(?:millstone\s+)?charter(?:\s+from your hands)?\b/gi,
+    'the charter is already gone'
+  );
+  next = next.replace(
+    /\b(?:takes?|took)\s+(?:the\s+)?(?:millstone\s+)?charter\s+from your hands\b/gi,
+    'finds your hands empty of the charter'
+  );
+  next = next.replace(
+    /\b(?:re-offers?|offers?)\s+(?:you\s+)?(?:the\s+)?(?:millstone\s+)?charter\b/gi,
+    'has nothing left to offer on the charter'
+  );
+  next = next.replace(
+    /\b(?:sell|sold|selling)\s+(?:the\s+)?(?:millstone\s+)?charter\s+(?:to\s+)?(?:pell|the clerk)?\b/gi,
+    'the charter is already gone'
+  );
   return tidyClauses(next);
 }
 

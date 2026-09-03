@@ -49,6 +49,27 @@ export function isPyoaItemDestroyed(state: GameState, itemName: string): boolean
   );
 }
 
+/** 02l — charter is gone from the story: burned, sold, delivered, or kit-empty after a use. */
+export function isPyoaCharterClosed(state: GameState): boolean {
+  if (state.engineMode !== 'pyoa') return false;
+  if (isPyoaItemDestroyed(state, 'charter')) return true;
+  const resolution = state.pyoaSpine?.flags?.resolution;
+  if (
+    resolution === 'pell'
+    || resolution === 'mill'
+    || resolution === 'burn'
+    || resolution === 'honest'
+  ) {
+    return true;
+  }
+  const ledger = state.pyoaBranchLedger ?? initPyoaBranchLedger();
+  const inKit = (state.inventory ?? []).some((i) => /charter|millstone/i.test(i.name ?? ''));
+  if (!inKit && ((ledger.charterUses ?? 0) >= 1 || ledger.branchClosed === true)) {
+    return true;
+  }
+  return false;
+}
+
 export function isPyoaBranchExhausted(state: GameState, branch: PyoaBranchId): boolean {
   const ledger = state.pyoaBranchLedger;
   if (branch === 'millstone-charter') return (ledger?.charterUses ?? 0) >= 3;
@@ -65,7 +86,12 @@ export function recordPyoaBranchChoice(state: GameState, playerInput: string): G
   let ledger = state.pyoaBranchLedger ?? initPyoaBranchLedger();
 
   // P0-5 Batch 02f: Track charter destruction (burn/destroy/discard)
-  if (/\b(burn|destroy|discard|throw away|get rid of|toss)\s+(?:the\s+)?(?:millstone\s+)?charter\b/.test(lower)) {
+  // 02l — sale / deliver also disposes the held charter (kit lock already held; dialogue replay did not).
+  if (
+    /\b(burn|destroy|discard|throw away|get rid of|toss)\s+(?:the\s+)?(?:millstone\s+)?charter\b/.test(lower)
+    || /\b(sell|sold|hand(?:ed)? over|deliver(?:ed)?)\b[\w\s']{0,48}\b(?:millstone\s+)?charter\b/.test(lower)
+    || /\b(?:millstone\s+)?charter\b[\w\s']{0,40}\b(?:to pell|to the clerk)\b/.test(lower)
+  ) {
     ledger = {
       ...ledger,
       destroyedItems: [...(ledger.destroyedItems ?? []), 'millstone-charter'].filter(
