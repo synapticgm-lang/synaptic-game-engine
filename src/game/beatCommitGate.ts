@@ -21,6 +21,7 @@ import { isUnresolvedDeixisToken, realPresentPeople } from './chromeAuthority';
 import { isEncounterEngaged } from './encounterTerminalFsm';
 import { hubsForBibleId } from './outdoorHubs';
 import { isPyoaItemDestroyed } from './pyoaBranchLedger';
+import { isDeadFoeReopenedAsLiving } from './combatAuthority';
 
 export type CommitGateReason =
   | 'atmosphere-only'
@@ -137,15 +138,7 @@ export function isFactClosedViolation(state: GameState, text: string): boolean {
   }
   const kill = state.sceneFacts?.lastKill;
   if (kill?.name && kill.outcome === 'victory' && !state.activeEncounter) {
-    const esc = kill.name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-    if (
-      new RegExp(
-        `\\b(?:the\\s+)?${esc}\\b[^.!?]{0,80}\\b(?:remains? fixed|still (?:here|watching)|commits? toward you|lunges?)\\b`,
-        'i'
-      ).test(body)
-    ) {
-      return true;
-    }
+    if (isDeadFoeReopenedAsLiving(body, kill, false)) return true;
   }
   return false;
 }

@@ -97,6 +97,47 @@ export function formatLastKillSnapshotLine(lastKill?: LastKill | null): string |
   return `Last kill: ${lastKill.name} (${lastKill.outcome}, T${lastKill.turn}).`;
 }
 
+/** True when `token` is the lastKill foe (full name or last token ≥5 chars). */
+export function matchesLastKillName(token: string, lastKill?: LastKill | null): boolean {
+  const needle = (lastKill?.name ?? '').trim().toLowerCase();
+  const t = (token ?? '').trim().toLowerCase().replace(/^(?:the|a|an)\s+/, '');
+  if (!needle || !t) return false;
+  if (t === needle || t.includes(needle) || needle.includes(t)) return true;
+  const last = needle.split(/\s+/).pop() ?? '';
+  return last.length >= 5 && (t === last || t.endsWith(` ${last}`));
+}
+
+const DEAD_FOE_CORPSE_OK =
+  /\b(?:fallen|corpse|body|(?:the\s+)?remains\b(?!\s+fixed)|dissolv|crumpl(?:ed|ing)?|dead|ichor|loot|downed|defeated|lies where)\b/i;
+const DEAD_FOE_COMBAT_REENGAGE =
+  /\b(?:remains? fixed|still (?:here|fixed|watching)|turns? (?:on|toward) you|commits? toward you|lunges?|strikes?|attacks?)\b/i;
+/** Innkeeper / greeter rez — 02k LitRPG T38–T40 Void-Touched Scavenger. */
+const DEAD_FOE_LIVING_REZ =
+  /\b(?:looks? up|nods?(?:\s+in\s+greeting)?|waves?|greets?|smiles?|asks?|sits?|sitting|sipping|polishing|mug of ale|good to see|stout man|bushy beard|takes? a seat|common (?:table|room)|wiping a (?:clay )?cup)\b/i;
+
+function lastKillMentionRe(name: string): RegExp {
+  const esc = name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  return new RegExp(`\\b(?:the\\s+)?${esc}\\b`, 'i');
+}
+
+export function shouldRewriteDeadFoeSentence(sent: string, lastKill?: LastKill | null): boolean {
+  if (!lastKill?.name || !sent) return false;
+  if (!lastKillMentionRe(lastKill.name).test(sent)) return false;
+  if (DEAD_FOE_CORPSE_OK.test(sent)) return false;
+  return DEAD_FOE_LIVING_REZ.test(sent) || DEAD_FOE_COMBAT_REENGAGE.test(sent);
+}
+
+/** Lock C — dead foe used as a living greeter / combatant after victory. */
+export function isDeadFoeReopenedAsLiving(
+  text: string,
+  lastKill?: LastKill | null,
+  liveEncounter?: boolean
+): boolean {
+  if (!text || !lastKill?.name || liveEncounter) return false;
+  if (lastKill.outcome !== 'victory') return false;
+  return text.split(/(?<=[.!?])\s+/).some((sent) => shouldRewriteDeadFoeSentence(sent, lastKill));
+}
+
 export function attachLastKill(state: GameState, kill: LastKill): GameState {
   const base: SceneFacts = state.sceneFacts ?? {
     crowd: 'unknown',
@@ -106,13 +147,7 @@ export function attachLastKill(state: GameState, kill: LastKill): GameState {
     lastBeat: '',
     updatedTurn: state.turn,
   };
-  const needle = kill.name.toLowerCase();
-  const present = (base.present ?? []).filter((p) => {
-    const pl = p.toLowerCase();
-    if (pl === needle || pl.includes(needle)) return false;
-    if (/skirmisher/i.test(kill.name) && /skirmisher/i.test(pl)) return false;
-    return true;
-  });
+  const present = (base.present ?? []).filter((p) => !matchesLastKillName(p, kill));
   return {
     ...state,
     sceneFacts: {

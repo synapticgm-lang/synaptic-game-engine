@@ -14,7 +14,13 @@ import {
 import { scrubInventedCrowdSize } from './crowdAuthority';
 import { rewriteChromePersonClauses } from './chromeAuthority';
 import { scrubHookReversals, type HookLock } from './hookLock';
-import { scrubBeastifiedHumanoid, scrubDeniedKill, scrubCombatSpawnLog, type LastKill } from './combatAuthority';
+import {
+  scrubBeastifiedHumanoid,
+  scrubDeniedKill,
+  scrubCombatSpawnLog,
+  shouldRewriteDeadFoeSentence,
+  type LastKill,
+} from './combatAuthority';
 import { scrubMetaRecoveryStrings } from './diegeticFallbacks';
 
 export { calculateCrowdSize, crowdSizeForWarden, scrubInventedCrowdSize } from './crowdAuthority';
@@ -1492,19 +1498,15 @@ export function scrubNamedCastAsObject(text: string, namedPeople: string[] = [])
   return tidyClauses(next);
 }
 
-/** Lock C — dead foe must not re-engage without a new spawn. */
+/** Lock C — dead foe must not re-engage or greet as a living NPC without a new spawn. */
 export function scrubDeadFoeReengage(text: string, lastKill?: LastKill | null, liveEncounter?: boolean): string {
   if (!text || !lastKill?.name || liveEncounter) return text;
   if (lastKill.outcome !== 'victory') return text;
-  const esc = lastKill.name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-  let next = text;
-  next = next.replace(
-    new RegExp(
-      `\\b(?:the\\s+)?${esc}\\b[^.!?]{0,80}\\b(?:remains? fixed|still (?:here|fixed|watching)|turns? (?:on|toward) you|commits? toward you|lunges?|strikes?|attacks?)\\b`,
-      'gi'
-    ),
-    `the fallen ${lastKill.name} lies where you left them`
-  );
+  const replacement = `The fallen ${lastKill.name} lies where you left them.`;
+  const next = text
+    .split(/(?<=[.!?])\s+/)
+    .map((sent) => (shouldRewriteDeadFoeSentence(sent, lastKill) ? replacement : sent))
+    .join(' ');
   return tidyClauses(next);
 }
 

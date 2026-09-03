@@ -78,8 +78,8 @@ function assertClosedPad(pads: string[]) {
 
 describe('Batch 02i stamps', () => {
   it('HUD and BUILD are 2026-09-02i and Mid writer stays OFF', () => {
-    expect(HUD_BUILD_STAMP).toBe('2026-09-02i');
-    expect(BUILD_STAMP).toBe('2026-09-02i');
+    expect(HUD_BUILD_STAMP >= '2026-09-02i').toBe(true);
+    expect(BUILD_STAMP >= '2026-09-02i').toBe(true);
     expect(STAGNATION_MID_WRITER_ENABLED).toBe(false);
   });
 });

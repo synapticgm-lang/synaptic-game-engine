@@ -17,6 +17,7 @@ import { harvestHookIntoSceneFacts } from './hookLock';
 import { looksLikeGeographyInvent, isLegalMapPlace } from './worldMapAuthority';
 import { isHubRoleCompoundToken, isNonPersonNameToken } from './chromeAuthority';
 import { getRegisteredNpcs, canHarvestAsNamedPerson } from './entityRegistry';
+import { matchesLastKillName } from './combatAuthority';
 
 /**
  * Extract NPC names from prose that are in the entity registry.
@@ -163,6 +164,14 @@ export function harvestNarrativeIntoLedger(
       console.warn(`[narrativeHarvest 02j] Rejected role/anonymous NPC: ${name}`);
       continue;
     }
+    const lastKill = state.sceneFacts?.lastKill;
+    if (
+      lastKill?.outcome === 'victory' &&
+      !state.activeEncounter &&
+      matchesLastKillName(name, lastKill)
+    ) {
+      continue;
+    }
     // P0-3 Batch 02f: They / Child / hub-role compounds never enter present[] / CAST.
     if (isNonPersonNameToken(name) || isHubRoleCompoundToken(name)) continue;
     
@@ -174,13 +183,18 @@ export function harvestNarrativeIntoLedger(
     present.add(name);
   }
 
+  const lastKill = state.sceneFacts?.lastKill;
+  let presentList = [...present];
+  if (lastKill?.outcome === 'victory' && !state.activeEncounter) {
+    presentList = presentList.filter((p) => !matchesLastKillName(p, lastKill));
+  }
   const withNames = {
     ...next,
     lorebook,
     npcMemories,
     sceneFacts: {
       ...(next.sceneFacts ?? {}),
-      present: [...present].slice(0, 12),
+      present: presentList.slice(0, 12),
     },
   };
   return {
