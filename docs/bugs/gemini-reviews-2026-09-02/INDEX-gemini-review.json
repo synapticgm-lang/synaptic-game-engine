@@ -1,70 +1,50 @@
 {
-  "at": "2026-09-03T22:24:25.737Z",
+  "at": "2026-09-04T06:07:06.866Z",
   "provider": "openrouter",
   "model": "google/gemini-2.5-pro",
   "serviceTier": "default",
-  "stamp": "02k3x",
-  "source": "C:\\Users\\littl\\OneDrive\\Documents\\synapticgm\\game\\project\\scripts\\fate-autoplay\\runs\\gemini-paste-2026-09-02k-3x",
+  "stamp": "02l2x",
+  "source": "C:\\Users\\littl\\OneDrive\\Documents\\synapticgm\\game\\project\\scripts\\fate-autoplay\\runs\\gemini-paste-2026-09-02l-2x-t30",
   "outDir": "C:\\Users\\littl\\OneDrive\\Documents\\synapticgm\\game\\project\\docs\\bugs\\gemini-reviews-2026-09-02",
   "files": [
     {
       "pack": "01-LITRPG-s42__story-standalone__gemini-pro-PASTE.md",
-      "reply": "gemini-01-litrpg-story-02k3x-reply.md",
+      "reply": "gemini-01-litrpg-story-02l2x-reply.md",
       "status": "ok"
     },
     {
       "pack": "02-DND-s42__story-standalone__gemini-pro-PASTE.md",
-      "reply": "gemini-02-dnd-story-02k3x-reply.md",
+      "reply": "gemini-02-dnd-story-02l2x-reply.md",
       "status": "ok"
     },
     {
       "pack": "03-RPG-s42__story-standalone__gemini-pro-PASTE.md",
-      "reply": "gemini-03-rpg-story-02k3x-reply.md",
+      "reply": "gemini-03-rpg-story-02l2x-reply.md",
       "status": "ok"
     },
     {
       "pack": "04-PYOA-s42__story-standalone__gemini-pro-PASTE.md",
-      "reply": "gemini-04-pyoa-story-02k3x-reply.md",
+      "reply": "gemini-04-pyoa-story-02l2x-reply.md",
       "status": "ok"
     },
     {
       "pack": "05-LITRPG-s43__story-standalone__gemini-pro-PASTE.md",
-      "reply": "gemini-05-litrpg-story-02k3x-reply.md",
+      "reply": "gemini-05-litrpg-story-02l2x-reply.md",
       "status": "ok"
     },
     {
       "pack": "06-DND-s43__story-standalone__gemini-pro-PASTE.md",
-      "reply": "gemini-06-dnd-story-02k3x-reply.md",
+      "reply": "gemini-06-dnd-story-02l2x-reply.md",
       "status": "ok"
     },
     {
       "pack": "07-RPG-s43__story-standalone__gemini-pro-PASTE.md",
-      "reply": "gemini-07-rpg-story-02k3x-reply.md",
+      "reply": "gemini-07-rpg-story-02l2x-reply.md",
       "status": "ok"
     },
     {
       "pack": "08-PYOA-s43__story-standalone__gemini-pro-PASTE.md",
-      "reply": "gemini-08-pyoa-story-02k3x-reply.md",
-      "status": "ok"
-    },
-    {
-      "pack": "09-LITRPG-s44__story-standalone__gemini-pro-PASTE.md",
-      "reply": "gemini-09-litrpg-story-02k3x-reply.md",
-      "status": "ok"
-    },
-    {
-      "pack": "10-DND-s44__story-standalone__gemini-pro-PASTE.md",
-      "reply": "gemini-10-dnd-story-02k3x-reply.md",
-      "status": "ok"
-    },
-    {
-      "pack": "11-RPG-s44__story-standalone__gemini-pro-PASTE.md",
-      "reply": "gemini-11-rpg-story-02k3x-reply.md",
-      "status": "ok"
-    },
-    {
-      "pack": "12-PYOA-s44__story-standalone__gemini-pro-PASTE.md",
-      "reply": "gemini-12-pyoa-story-02k3x-reply.md",
+      "reply": "gemini-08-pyoa-story-02l2x-reply.md",
       "status": "ok"
     }
   ],
