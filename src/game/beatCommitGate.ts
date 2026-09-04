@@ -22,6 +22,8 @@ import { isEncounterEngaged } from './encounterTerminalFsm';
 import { hubsForBibleId } from './outdoorHubs';
 import { isPyoaCharterClosed } from './pyoaBranchLedger';
 import { isDeadFoeReopenedAsLiving } from './combatAuthority';
+import { isInventedClosedScenePerson } from './closedScenePerson';
+import { isOneCameraFightViolation } from './oneCameraFight';
 
 export type CommitGateReason =
   | 'atmosphere-only'
@@ -145,6 +147,10 @@ export function isFactClosedViolation(state: GameState, text: string): boolean {
   if (kill?.name && kill.outcome === 'victory' && !state.activeEncounter) {
     if (isDeadFoeReopenedAsLiving(body, kill, false)) return true;
   }
+  // 02p — role person who is not in this scene.
+  if (isInventedClosedScenePerson(state, body)) return true;
+  // 02q — one camera / one fight (leave-reach + steel, or closed foe blade-rez).
+  if (isOneCameraFightViolation(state, body)) return true;
   return false;
 }
 

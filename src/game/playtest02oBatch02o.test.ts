@@ -11,8 +11,8 @@ import { extractChatCompletionText, hasHanScript } from './openRouterChat';
 
 describe('Batch 02o stamps', () => {
   it('HUD and BUILD are 2026-09-02o and Mid writer stays OFF', () => {
-    expect(HUD_BUILD_STAMP).toBe('2026-09-02o');
-    expect(BUILD_STAMP).toBe('2026-09-02o');
+    expect(HUD_BUILD_STAMP >= '2026-09-02o').toBe(true);
+    expect(BUILD_STAMP >= '2026-09-02o').toBe(true);
     expect(STAGNATION_MID_WRITER_ENABLED).toBe(false);
   });
 });

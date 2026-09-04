@@ -11,6 +11,7 @@ import {
   isEncounterEngaged,
   parleyAvailable,
 } from './encounterTerminalFsm';
+import { filterClosedScenePersonPads } from './closedScenePerson';
 
 export type ExcludedPadFamily = 'travel' | 'leave';
 
@@ -120,9 +121,11 @@ export function isExcludedEdge(
 
 export function filterPadsByUniverse(
   pads: string[],
-  excluded: ReadonlySet<ExcludedPadFamily>
+  excluded: ReadonlySet<ExcludedPadFamily>,
+  state?: GameState
 ): string[] {
-  return pads.filter((p) => !isExcludedPadLabel(p, excluded));
+  const family = pads.filter((p) => !isExcludedPadLabel(p, excluded));
+  return state ? filterClosedScenePersonPads(family, state) : family;
 }
 
 /** Scene-grounded talk / inspect / combat — never Travel or Leave. */
@@ -162,7 +165,7 @@ export function closedUniverseFallbacks(
   for (const pad of banks) {
     if (!out.some((c) => c.toLowerCase() === pad.toLowerCase())) out.push(pad);
   }
-  const kept = filterPadsByUniverse(out, excluded);
+  const kept = filterPadsByUniverse(out, excluded, state);
   if (kept.length) return kept;
   return ['Inspect the immediate surroundings'];
 }
@@ -172,7 +175,7 @@ export function ensureClosedUniversePad(
   state: GameState,
   excluded: ReadonlySet<ExcludedPadFamily> = excludedPadFamilies(state)
 ): string[] {
-  const kept = filterPadsByUniverse(pads.filter((p) => !!p?.trim()), excluded);
+  const kept = filterPadsByUniverse(pads.filter((p) => !!p?.trim()), excluded, state);
   if (kept.length) return kept;
   return closedUniverseFallbacks(state, excluded);
 }

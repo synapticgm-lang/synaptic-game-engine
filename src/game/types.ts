@@ -815,6 +815,11 @@ export interface SceneFacts {
   crowd: CrowdPresence;
   noise: SceneNoise;
   present: string[];
+  /**
+   * Location-bound anonymous roles (clerk, trader). Occupancy only — never CAST named[].
+   * Dropped on real travel. 02p closed-scene person.
+   */
+  anonymousRoles?: string[];
   props: string[];
   lastBeat: string;
   updatedTurn: number;

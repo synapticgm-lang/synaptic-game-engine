@@ -14,6 +14,7 @@ import {
 import { scrubInventedCrowdSize } from './crowdAuthority';
 import { rewriteChromePersonClauses } from './chromeAuthority';
 import { scrubHookReversals, type HookLock } from './hookLock';
+import { scrubLeaveReachDuringFight } from './oneCameraFight';
 import {
   scrubBeastifiedHumanoid,
   scrubDeniedKill,
@@ -1644,6 +1645,7 @@ export function applyProseWarden(text: string, ctx?: ProseWardenContext): string
     ctx?.fleeFailed,
     ctx?.priorLocation
   );
+  next = scrubLeaveReachDuringFight(next, ctx?.hasLiveEncounter === true);
   next = scrubBodyStatusDumps(next);
   next = scrubRoleAdjectivePersonSlot(next);
   next = scrubAwakeSpeakerAsSleeper(next, {

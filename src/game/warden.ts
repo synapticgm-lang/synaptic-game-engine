@@ -276,7 +276,8 @@ export async function runWarden(
     ),
     groundedWeapons: undefined,
     playerName: state.character?.name,
-    hasLiveEncounter: !!state.activeEncounter,
+    hasLiveEncounter:
+      !!state.activeEncounter || !!state.sceneFacts?.pendingEncounter,
     recentlyClearedEncounter:
       state.arcDirector?.lastEncounterClearedTurn === state.turn ||
       state.arcDirector?.lastEncounterClearedTurn === state.turn - 1,

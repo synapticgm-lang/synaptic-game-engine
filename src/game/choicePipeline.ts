@@ -22,6 +22,7 @@ import {
   isExcludedPadLabel,
   sealPadUniverse,
 } from './padUniverse';
+import { isClosedScenePersonPad } from './closedScenePerson';
 
 /**
  * 4-tier narrative pipeline (authoritative ordering for choice generation):
@@ -865,6 +866,7 @@ export function padChoicesToCount(
         .map((c) => sanitizeChoiceLabel(c))
         .filter(Boolean)
         .filter((c) => !isExcludedPadLabel(c, excluded))
+        .filter((c) => !isClosedScenePersonPad(c, state))
         .filter((c) => {
           const name = (state.character?.name ?? '').trim();
           if (name.length >= 2 && c.toLowerCase() === name.toLowerCase()) return false;
@@ -889,7 +891,7 @@ export function padChoicesToCount(
   // Act-4: hub arrival beat pads
   for (const hubPad of hubArrivalChoicePads(state, 2)) {
     if (merged.length >= 4) break;
-    if (isExcludedPadLabel(hubPad, excluded)) continue;
+    if (isExcludedPadLabel(hubPad, excluded) || isClosedScenePersonPad(hubPad, state)) continue;
     if (inventsPresenceOnEmptyScene(hubPad, state, storyProse)) continue;
     if (!merged.some((c) => c.toLowerCase() === hubPad.toLowerCase())) merged.push(hubPad);
   }

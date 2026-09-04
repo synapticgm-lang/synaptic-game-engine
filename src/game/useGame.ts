@@ -34,7 +34,7 @@ import {
   narrateAutoFightTemplate,
   scrubBeastifiedHumanoid,
 } from './combatAuthority';
-import { settleParleyAfterProse } from './encounterTerminalFsm';
+import { encounterBlocksTravel, settleParleyAfterProse } from './encounterTerminalFsm';
 import { 
   rollCombatOutcome, 
   applyCombatOutcome, 
@@ -3927,7 +3927,11 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
       {
         const travelHub = parseTravelDestination(sanitizedInput, workingState.campaignBibleId ?? liveCurrent.campaignBibleId);
         const liveEnc = workingState.activeEncounter ?? liveCurrent.activeEncounter;
-        if (travelHub && !workingState.activeDungeon && !liveCurrent.activeDungeon && !liveEnc) {
+        const fightBlocksTravel =
+          !!liveEnc
+          || encounterBlocksTravel(workingState)
+          || encounterBlocksTravel(liveCurrent);
+        if (travelHub && !workingState.activeDungeon && !liveCurrent.activeDungeon && !fightBlocksTravel) {
           const fromLoc = liveCurrent.currentLocation;
           finalLocationName = travelHub.name;
           cleanText = ensureTravelArrivalProse(cleanText, travelHub.name, fromLoc);

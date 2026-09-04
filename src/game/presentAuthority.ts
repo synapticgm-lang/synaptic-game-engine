@@ -4,6 +4,7 @@
  */
 
 import type { GameState } from './types';
+import { trimAnonymousRolesOnLocationChange } from './closedScenePerson';
 
 function thornferryClusterCore(s: string): boolean {
   return /\b(mill\s+landing|the ford|harbor quay)\b/i.test(s ?? '');
@@ -46,8 +47,13 @@ export function applyPresentTrimOnTravel(
   toLocation: string
 ): GameState {
   const trimmed = trimPresentOnLocationChange(state, fromLocation, toLocation);
+  const sameLoc = locationsEquivalentForPresence(fromLocation, toLocation);
+  const nextRoles = trimAnonymousRolesOnLocationChange(state, sameLoc);
   const prev = state.sceneFacts?.present ?? [];
-  if (trimmed.length === prev.length && trimmed.every((p, i) => p === prev[i])) {
+  const prevRoles = state.sceneFacts?.anonymousRoles ?? [];
+  const presentSame = trimmed.length === prev.length && trimmed.every((p, i) => p === prev[i]);
+  const rolesSame = nextRoles.length === prevRoles.length && nextRoles.every((r, i) => r === prevRoles[i]);
+  if (presentSame && rolesSame) {
     return state;
   }
   const base = state.sceneFacts ?? {
@@ -63,6 +69,7 @@ export function applyPresentTrimOnTravel(
     sceneFacts: {
       ...base,
       present: trimmed,
+      anonymousRoles: nextRoles,
     },
   };
 }
