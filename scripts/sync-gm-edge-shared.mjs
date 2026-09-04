@@ -12,6 +12,7 @@ const destDir = path.join(root, 'supabase', 'functions', '_shared', 'gm');
 const FILES = [
   'types.ts',
   'systemPrompt.ts',
+  'sceneContextTail.ts',
   'masterPrompt.ts',
   'archetypes.ts',
   'inventory.ts',
@@ -24,6 +25,7 @@ const FILES = [
   'hookLock.ts',
   'vignetteLock.ts',
   'travelAuthority.ts',
+  'oneCameraFight.ts',
   'chromeAuthority.ts',
   'pcNameAuthority.ts',
   'combatAuthority.ts',

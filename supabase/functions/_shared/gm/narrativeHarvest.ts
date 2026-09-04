@@ -18,6 +18,7 @@ import { looksLikeGeographyInvent, isLegalMapPlace } from './worldMapAuthority.t
 import { isHubRoleCompoundToken, isNonPersonNameToken } from './chromeAuthority.ts';
 import { getRegisteredNpcs, canHarvestAsNamedPerson } from './entityRegistry.ts';
 import { matchesLastKillName } from './combatAuthority.ts';
+import { harvestRoleOccupancy } from './closedScenePerson.ts';
 
 /**
  * Extract NPC names from prose that are in the entity registry.
@@ -144,7 +145,7 @@ export function harvestNarrativeIntoLedger(
   ].filter((n, i, arr) => arr.findIndex((x) => x.toLowerCase() === n.toLowerCase()) === i);
   
   if (!registeredNpcs.length) {
-    return {
+    const crowded = {
       ...state,
       sceneFacts: harvestHookIntoSceneFacts(
         harvestCrowdIntoSceneFacts(state.sceneFacts, prose, turn),
@@ -152,6 +153,7 @@ export function harvestNarrativeIntoLedger(
         turn
       ),
     };
+    return harvestRoleOccupancy(crowded, prose);
   }
 
   const next = state;
@@ -197,7 +199,7 @@ export function harvestNarrativeIntoLedger(
       present: presentList.slice(0, 12),
     },
   };
-  return {
+  const crowded = {
     ...withNames,
     sceneFacts: harvestHookIntoSceneFacts(
       harvestCrowdIntoSceneFacts(withNames.sceneFacts, prose, turn),
@@ -205,6 +207,7 @@ export function harvestNarrativeIntoLedger(
       turn
     ),
   };
+  return harvestRoleOccupancy(crowded, prose);
 }
 
 /** Strip / rewrite invented city/town names that are not on the world map. */

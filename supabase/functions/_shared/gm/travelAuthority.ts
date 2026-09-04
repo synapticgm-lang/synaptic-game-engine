@@ -8,6 +8,7 @@
 import type { GameState, SceneFacts } from './types.ts';
 import { isExplorableDungeon, isInteriorMap } from './placeAuthority.ts';
 import { ensureTravelArrivalProse } from './outdoorHubs.ts';
+import { shouldSkipTravelArrivalPrepend } from './oneCameraFight.ts';
 
 export type CameraScale = 'outdoor' | 'indoor';
 
@@ -169,6 +170,7 @@ export function enforceCameraOnProse(
   // Batch 02g — Leave / Walk away / Exit must not invent "You reach <current dest>".
   if (traveled && dest && playerCommittedArrivalTravel(playerInput)) {
     if (from && from.toLowerCase() === dest.toLowerCase()) return next;
+    if (shouldSkipTravelArrivalPrepend(state)) return next;
     return ensureTravelArrivalProse(next, dest, from || null);
   }
 

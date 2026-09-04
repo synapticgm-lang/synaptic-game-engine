@@ -24,6 +24,7 @@ import { isPyoaCharterClosed } from './pyoaBranchLedger';
 import { isDeadFoeReopenedAsLiving } from './combatAuthority';
 import { isInventedClosedScenePerson } from './closedScenePerson';
 import { isOneCameraFightViolation } from './oneCameraFight';
+import { isStaleContextBleed } from './sceneContextTail';
 
 export type CommitGateReason =
   | 'atmosphere-only'
@@ -151,6 +152,8 @@ export function isFactClosedViolation(state: GameState, text: string): boolean {
   if (isInventedClosedScenePerson(state, body)) return true;
   // 02q — one camera / one fight (leave-reach + steel, or closed foe blade-rez).
   if (isOneCameraFightViolation(state, body)) return true;
+  // 02r — old-room camera or post-clear steel after a recent scene change.
+  if (isStaleContextBleed(state, body)) return true;
   return false;
 }
 

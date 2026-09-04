@@ -19,6 +19,7 @@ import { formatFolkVoiceForPrompt } from './folkVoiceExpectations';
 import { formatSpeechActRailsForPrompt } from './speechActRails';
 import { isInteriorMap } from './placeAuthority';
 import { formatInteriorExploreAuthority } from './mapEngine';
+import { selectRecentLogForContext } from './sceneContextTail';
 
 // Re-exports for legacy imports (prefer contentModeRules / imagePromptModifier directly).
 export { KID_MODE_RULES } from './contentModeRules';
@@ -594,7 +595,8 @@ RADICAL FORM CHANGES (species/base-body transformation, e.g. human -> reptilian 
 This tells the image pipeline to STOP depicting the player's previous equipped gear (human clothes, armor, weapons) on the new body, since it would be an absurd hybrid. Only omit form-change (or set it "false") for cosmetic changes (new armor, injury, disguise) where the body plan stays human/humanoid and existing gear still visually makes sense.`.trim();
 }
 
-/** Raw recent log window for RECENT CHAT BEATS. SNAPSHOT / timeline still win on conflicts. */
+/** Raw recent log window for RECENT CHAT BEATS. SNAPSHOT / timeline still win on conflicts.
+ *  02r — window still 4, but lines must belong to this camera / this fight. */
 export const RECENT_LOG_WINDOW = 4;
 export const RECENT_LOG_CHAR_CAP = 500;
 
@@ -626,7 +628,7 @@ export function buildContextPrompt(
       : 'none';
 
   const logEntries = state.log;
-  const macroWindow = logEntries.slice(-RECENT_LOG_WINDOW);
+  const macroWindow = selectRecentLogForContext(state, RECENT_LOG_WINDOW);
   let tier4MacroSection = '';
   if (macroWindow.length > 0) {
     for (const l of macroWindow) {

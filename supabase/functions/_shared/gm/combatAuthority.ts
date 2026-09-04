@@ -110,7 +110,7 @@ export function matchesLastKillName(token: string, lastKill?: LastKill | null): 
 const DEAD_FOE_CORPSE_OK =
   /\b(?:fallen|corpse|body|(?:the\s+)?remains\b(?!\s+fixed)|dissolv|crumpl(?:ed|ing)?|dead|ichor|loot|downed|defeated|lies where)\b/i;
 const DEAD_FOE_COMBAT_REENGAGE =
-  /\b(?:remains? fixed|still (?:here|fixed|watching)|turns? (?:on|toward) you|commits? toward you|lunges?|strikes?|attacks?)\b/i;
+  /\b(?:remains? fixed|still (?:here|fixed|watching)|turns? (?:on|toward) you|commits? toward you|lunges?|strikes?|attacks?|blade (?:stops? )?mid-arc|handspan from your throat|blade bites|cold line against)\b/i;
 /** Innkeeper / greeter rez — 02k LitRPG T38–T40 Void-Touched Scavenger. */
 const DEAD_FOE_LIVING_REZ =
   /\b(?:looks? up|nods?(?:\s+in\s+greeting)?|waves?|greets?|smiles?|asks?|sits?|sitting|sipping|polishing|mug of ale|good to see|stout man|bushy beard|takes? a seat|common (?:table|room)|wiping a (?:clay )?cup)\b/i;
