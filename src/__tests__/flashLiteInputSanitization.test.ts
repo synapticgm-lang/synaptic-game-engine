@@ -171,8 +171,8 @@ describe('entityCast', () => {
     expect(cast).toContain('Just');
     expect(cast).toContain('ANONYMOUS ENTITIES');
     expect(cast).toContain('guards');
-    expect(cast).toContain('CONSTRAINTS');
-    expect(cast).toContain('Do NOT invent');
+    expect(cast).not.toContain('CONSTRAINTS');
+    expect(cast).toContain('Only listed entities');
   });
   
   test('marks opening pinned NPCs', () => {

@@ -34,7 +34,6 @@ import {
   formatPresenceForSnapshot,
 } from './crowdAuthority.ts';
 import { formatWorldMapAuthorityBlock } from './worldMapAuthority.ts';
-import { formatCraftSnapshotLines } from './craftBookCompiler.ts';
 import { formatCoverChromeBindingLine } from './chromeAuthority.ts';
 import { alignFactionNotesToHook, formatHookBindingLine, resolveHookLock } from './hookLock.ts';
 import {
@@ -388,7 +387,6 @@ export function formatSceneSnapshotForPrompt(state: GameState): string {
   lines.push(
     'AUTHORITY: SNAPSHOT + ledger win on facts (kit, exits, presence, HP, crowd count, hook why, outcomes). Do not invent items, doors, named people, or numeric results absent above. Do not recycle a prior beat, location essay, crisis line, or choice pad unless the player asked to repeat or restate.'
   );
-  lines.push(...formatCraftSnapshotLines(state));
   lines.push(
     'PROSE LICENSE: Full artistic freedom on sensory detail, metaphor, pacing, and NPC manner — dramatize the OUTCOME token; never invert it. Stakes stay honest (no auto-win, no invented kit).'
   );
@@ -512,9 +510,7 @@ export function formatSituationForPrompt(state: GameState): string {
       : '',
     delayedConsequencesBlock || '',
     exhaustionBlock || '',
-    'RAILS: SNAPSHOT + ledger + WORLD MAP are fact authority. Narrate richly inside listed settlements. Do not invent new cities, towns, shores, or continents. Do not invent named threats, loot, or doors absent above. Quest sites must fit biome. Dungeons open at allowsDungeon sites then close when cleared.',
     'HIDDEN QUESTS: Never spoil quests with status hidden or revealed=false.',
-    'PROSE LICENSE: Full artistic freedom on sensory detail, metaphor, pacing, and NPC manner. Descriptive engaging language and narrative flair are required.',
     formatWorldLedgerBlock(state.worldLedger),
   ];
   return lines.filter((line) => line !== '').join('\n');

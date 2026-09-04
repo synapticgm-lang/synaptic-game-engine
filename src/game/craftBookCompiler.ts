@@ -1,10 +1,11 @@
 /**
  * Craft-book compiler — Path A: the constitution lives in a typed registry.
- * Each turn the writer sees 1–2 CRAFT lines, not D2. No extra LLM.
+ * Compiler still picks 1–2 rules internally for craftApplied / ignore-stitch.
+ * Writer packet does not receive CRAFT or MODE AUTHORITY lines (02n diet).
  */
 
 import type { EngineMode, GameState, LogEntry } from './types';
-import { formatModeStoryAuthorityLine, MODE_STORY_AUTHORITY } from './fluidProseRails';
+import { MODE_STORY_AUTHORITY } from './fluidProseRails';
 
 export type CraftWhen = 'opening' | 'inspect' | 'talk' | 'travel' | 'combat' | 'wait';
 
@@ -572,13 +573,9 @@ export function compileCraftRules(state: GameState, playerInput?: string): Craft
   };
 }
 
-/** SNAPSHOT lines: CRAFT (1–2) or the static MODE AUTHORITY sentence. */
-export function formatCraftSnapshotLines(state: GameState, playerInput?: string): string[] {
-  const compiled = compileCraftRules(state, playerInput);
-  if (compiled.replacedModeLine) {
-    return compiled.lines.slice(0, MAX_CRAFT_LINES).map((line) => `CRAFT: ${line}`);
-  }
-  return [formatModeStoryAuthorityLine(state.engineMode ?? 'rpg')];
+/** Writer-facing SNAPSHOT injection is off — compiler still picks via compileCraftRules. */
+export function formatCraftSnapshotLines(_state?: GameState, _playerInput?: string): string[] {
+  return [];
 }
 
 export function applyCraftLearning(

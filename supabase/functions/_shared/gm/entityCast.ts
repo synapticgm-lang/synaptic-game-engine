@@ -279,9 +279,7 @@ function generateConstraints(state: GameState): string[] {
 function formatCastBlock(cast: Cast): string {
   const lines = [
     '<CAST>',
-    'This is the complete list of entities physically present in this scene.',
-    'ONLY entities explicitly listed below may appear, speak, or act in your narration.',
-    'You MUST NOT invent additional people, creatures, or speakers beyond this list.',
+    'Only listed entities may appear, speak, or act.',
     '',
   ];
   
@@ -321,13 +319,7 @@ function formatCastBlock(cast: Cast): string {
     lines.push('ACTIVE THREATS: None');
     lines.push('');
   }
-  
-  // Constraints
-  lines.push('CONSTRAINTS:');
-  for (const constraint of cast.constraints) {
-    lines.push(`- ${constraint}`);
-  }
-  
+
   lines.push('</CAST>');
   
   return lines.join('\n');

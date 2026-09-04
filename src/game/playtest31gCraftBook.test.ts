@@ -67,10 +67,10 @@ describe('playtest31g — craft book compiler', () => {
     expect(compiled.ruleIds.length).toBeLessThanOrEqual(2);
 
     const snap = formatSceneSnapshotForPrompt(state);
-    expect(snap).toMatch(/CRAFT:.*new fact/i);
+    expect(snap).not.toMatch(/^CRAFT:/m);
     expect(snap).not.toContain(formatModeStoryAuthorityLine('litrpg'));
-    expect(countCraftLines(snap)).toBeGreaterThanOrEqual(1);
-    expect(countCraftLines(snap)).toBeLessThanOrEqual(2);
+    expect(countCraftLines(snap)).toBe(0);
+    expect(formatCraftSnapshotLines(state)).toEqual([]);
   });
 
   it('pyoa wait → fork rule', () => {
@@ -82,31 +82,33 @@ describe('playtest31g — craft book compiler', () => {
     expect(compiled.ruleIds.length).toBeLessThanOrEqual(2);
 
     const snap = formatSceneSnapshotForPrompt(state);
-    expect(snap).toMatch(/CRAFT:.*Wait-Wait-Wait/i);
+    expect(snap).not.toMatch(/^CRAFT:/m);
     expect(snap).not.toContain(formatModeStoryAuthorityLine('pyoa'));
-    expect(countCraftLines(snap)).toBeLessThanOrEqual(2);
+    expect(countCraftLines(snap)).toBe(0);
   });
 
-  it('dnd and rpg still get their mode lines when no specific drought matches', () => {
+  it('compiler still picks mode rules internally; SNAPSHOT gets no CRAFT or MODE AUTHORITY', () => {
     for (const mode of ['dnd', 'rpg'] as EngineMode[]) {
       const state = playing(mode);
       const snap = formatSceneSnapshotForPrompt(state);
-      const lines = formatCraftSnapshotLines(state);
-      expect(lines).toHaveLength(1);
-      expect(lines[0]).toBe(formatModeStoryAuthorityLine(mode));
-      expect(snap).toContain(MODE_STORY_AUTHORITY[mode]);
+      expect(formatCraftSnapshotLines(state)).toEqual([]);
+      expect(snap).not.toContain(MODE_STORY_AUTHORITY[mode]);
       expect(countCraftLines(snap)).toBe(0);
     }
 
-    const dndTalk = formatSceneSnapshotForPrompt(withPlayer(playing('dnd'), 'Ask the captain what she heard'));
-    expect(dndTalk).toMatch(/CRAFT:/);
-    expect(dndTalk).toMatch(/motive|spotlight|desire/i);
-    expect(countCraftLines(dndTalk)).toBeLessThanOrEqual(2);
+    const dndTalkState = withPlayer(playing('dnd'), 'Ask the captain what she heard');
+    const dndCompiled = compileCraftRules(dndTalkState);
+    expect(dndCompiled.replacedModeLine).toBe(true);
+    const dndTalk = formatSceneSnapshotForPrompt(dndTalkState);
+    expect(dndTalk).not.toMatch(/^CRAFT:/m);
+    expect(countCraftLines(dndTalk)).toBe(0);
 
-    const rpgTalk = formatSceneSnapshotForPrompt(withPlayer(playing('rpg'), 'Talk to Mara about the pass'));
-    expect(rpgTalk).toMatch(/CRAFT:/);
-    expect(rpgTalk).toMatch(/tactic|leverage|interiority|futures/i);
-    expect(countCraftLines(rpgTalk)).toBeLessThanOrEqual(2);
+    const rpgTalkState = withPlayer(playing('rpg'), 'Talk to Mara about the pass');
+    const rpgCompiled = compileCraftRules(rpgTalkState);
+    expect(rpgCompiled.replacedModeLine).toBe(true);
+    const rpgTalk = formatSceneSnapshotForPrompt(rpgTalkState);
+    expect(rpgTalk).not.toMatch(/^CRAFT:/m);
+    expect(countCraftLines(rpgTalk)).toBe(0);
   });
 
   it('never emits more than 2 CRAFT lines even with stacked boosts', () => {
@@ -122,7 +124,7 @@ describe('playtest31g — craft book compiler', () => {
     };
     const compiled = compileCraftRules(state);
     expect(compiled.ruleIds.length).toBeLessThanOrEqual(2);
-    expect(countCraftLines(formatSceneSnapshotForPrompt(state))).toBeLessThanOrEqual(2);
+    expect(countCraftLines(formatSceneSnapshotForPrompt(state))).toBe(0);
   });
 
   it('learns from last-turn atmosphere without a new LLM — inspect rule is boosted next turn', () => {

@@ -25,7 +25,6 @@ import {
   formatEscalationMandate,
   playerAsksRepeat,
   filterRecycledStallChoices,
-  lastOfferedChoiceSets,
   detectLeadingCollage,
   stripRecycledPrefix,
   recentGmBeatTexts,
@@ -243,12 +242,7 @@ export function buildGovernanceSnapshotLines(state: GameState): string[] {
     }
   }
 
-  const lastPad = lastOfferedChoiceSets(state, 1)[0];
-  if (lastPad?.length) {
-    lines.push(
-      `LAST PAD: ${lastPad.slice(0, 4).join(' · ')} — do not re-offer these stall chips unless the player asked.`
-    );
-  }
+  // LAST PAD chip labels stay compiler-only (padUniverse / ChoiceCompiler / Fate).
 
   const loop = detectSemanticLoop(state);
   const activeObjective = hasActiveObjectives(state);
