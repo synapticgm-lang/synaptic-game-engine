@@ -6,9 +6,13 @@
 
 type ChatPart = { text?: unknown } | string;
 
-/** CJK Unified Ideographs — DeepSeek T15 combat beat was full Han. Treat as empty-GM. */
+/**
+ * Non-Latin script the Free writer must not commit.
+ * 02f: CJK Unified Ideographs (Han).
+ * 02o: Hangul + Thai — RPG s42 T10 committed Hangul+log dump because 02f only matched Han.
+ */
 export function hasHanScript(text: string): boolean {
-  return /[\u4e00-\u9fff]/.test(text ?? '');
+  return /[\u4e00-\u9fff\uac00-\ud7af\u0e00-\u0e7f]/.test(text ?? '');
 }
 
 export function extractChatCompletionText(data: unknown): string {

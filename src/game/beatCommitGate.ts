@@ -258,6 +258,10 @@ export function isTokenSaladLeak(text: string | undefined): boolean {
     || /\f===/.test(text)
     || /A MILL AT the panel/i.test(text)
     || /Obliged thesaurus/i.test(text)
+    // 02o — 4×4 T30: conversation-log dump + glued nonce (heartikuha / carefullyikuha)
+    || /Consulting the FULL/i.test(text)
+    || /Respond in the following exact XML/i.test(text)
+    || /ikuha/i.test(text)
   );
 }
 
