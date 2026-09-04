@@ -137,6 +137,7 @@ import {
   openingInventBudgetZero,
 } from './openingPointerCard';
 import { classifyBeatCommit, repairRejectedBeat } from './beatCommitGate';
+import { scrubOneCameraFight, stampTravelArrivalIfSafe } from './oneCameraFight';
 import { applyCommittedNarrative, extractSceneFacts, seedOpeningSceneFacts, rewriteContinuityBreak, detectSceneContradiction } from './sceneFacts';
 import { applyFactLocks, detectFactLockViolations } from './factLocks';
 import { dropInsultGear } from './wornGear';
@@ -284,7 +285,6 @@ import {
   parseTravelDestination,
   mergeHubLandmarks,
   visitedHubLandmarkNames,
-  ensureTravelArrivalProse,
   matchHub,
   hubsForBibleId,
 } from './outdoorHubs';
@@ -3934,7 +3934,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
         if (travelHub && !workingState.activeDungeon && !liveCurrent.activeDungeon && !fightBlocksTravel) {
           const fromLoc = liveCurrent.currentLocation;
           finalLocationName = travelHub.name;
-          cleanText = ensureTravelArrivalProse(cleanText, travelHub.name, fromLoc);
+          cleanText = stampTravelArrivalIfSafe(cleanText, travelHub.name, fromLoc, workingState);
         }
       }
       const landmarks = isInteriorPlace(mapName || finalLocationName)
@@ -4001,6 +4001,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
       };
       workingState = enforceCameraOnState(workingState, sanitizedInput);
       cleanText = enforceCameraOnProse(cleanText, workingState, sanitizedInput);
+      cleanText = scrubOneCameraFight(cleanText, workingState, sanitizedInput);
       cleanText = scrubFalseArrivalWhenHere(
         cleanText,
         finalLocationName,

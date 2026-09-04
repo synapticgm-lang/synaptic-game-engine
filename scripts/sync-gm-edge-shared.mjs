@@ -26,6 +26,7 @@ const FILES = [
   'vignetteLock.ts',
   'travelAuthority.ts',
   'oneCameraFight.ts',
+  'slotGlue.ts',
   'chromeAuthority.ts',
   'pcNameAuthority.ts',
   'combatAuthority.ts',

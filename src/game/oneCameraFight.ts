@@ -1,12 +1,14 @@
 /**
- * 02q — One camera / one fight.
+ * 02q / 02s — One camera / one fight.
  * Ledger owns HERE and the live foe. Arrival prepend and last-beat steel
- * cannot share a page. No SNAPSHOT / CRAFT / NEVER lines.
+ * cannot share a page. 02s: the stamp runs after commit — refuse it on steel.
+ * No SNAPSHOT / CRAFT / NEVER lines.
  */
 
 import type { GameState } from './types';
 import { isEncounterEngaged } from './encounterTerminalFsm';
 import { isDeadFoeReopenedAsLiving, matchesLastKillName } from './combatAuthority';
+import { ensureTravelArrivalProse } from './outdoorHubs';
 
 const LEAVE_REACH =
   /\bYou leave\s+.+?\s+behind and reach\s+.+?\./i;
@@ -30,6 +32,28 @@ export function isLeaveReachFightBleed(text: string): boolean {
   const t = (text ?? '').trim();
   if (!t || !LEAVE_REACH.test(t)) return false;
   return FIGHT_BLEED.test(t);
+}
+
+export function proseHasFightBleed(text: string): boolean {
+  return FIGHT_BLEED.test((text ?? '').trim());
+}
+
+/**
+ * Post-commit arrival stamp. Never glue `You leave X and reach Y` onto a
+ * steel beat (02r D&D T28 / RPG T14). Live fight skips the stamp entirely.
+ */
+export function stampTravelArrivalIfSafe(
+  prose: string,
+  dest: string,
+  from: string | null | undefined,
+  state?: Pick<GameState, 'activeEncounter' | 'sceneFacts'>
+): string {
+  const body = prose ?? '';
+  if (state && shouldSkipTravelArrivalPrepend(state as GameState)) return body;
+  if (proseHasFightBleed(body)) return body;
+  const stamped = ensureTravelArrivalProse(body, dest, from ?? null);
+  if (isLeaveReachFightBleed(stamped)) return body;
+  return stamped;
 }
 
 export function isOneCameraFightViolation(state: GameState, text: string): boolean {
@@ -78,7 +102,7 @@ export function scrubOneCameraFight(
   const arrival = /^(?:travel\s+toward|return\s+to|enter\b|go (?:inside|in|through|into)|head (?:inside|through|into|to))\b/i.test(
     (playerInput ?? '').trim()
   );
-  if (arrival && !live && isLeaveReachFightBleed(next)) {
+  if (arrival && !live && (isLeaveReachFightBleed(next) || proseHasFightBleed(next))) {
     const kept = dropFightBleedSentences(next);
     if (kept.length > 12) next = kept;
   }

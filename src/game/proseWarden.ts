@@ -15,6 +15,7 @@ import { scrubInventedCrowdSize } from './crowdAuthority';
 import { rewriteChromePersonClauses } from './chromeAuthority';
 import { scrubHookReversals, type HookLock } from './hookLock';
 import { scrubLeaveReachDuringFight } from './oneCameraFight';
+import { scrubSlotGlue } from './slotGlue';
 import {
   scrubBeastifiedHumanoid,
   scrubDeniedKill,
@@ -441,7 +442,7 @@ export function scrubUnresolvedDeixisNouns(text: string, currentLocation?: strin
   // P0-2 Batch 02f: Deixis as proper noun — only match CAPITALIZED
   // "the Ahead" / "tarnished Forward" → deixis-as-noun (rewrite)
   // "the forward" / "walk forward" → direction (keep unchanged)
-  const DEIXIS = 'Ahead|Behind|Beside|Nearby|Above|Below|Left|Right|Forward';
+  const DEIXIS = 'Ahead|Behind|Beside|Nearby|Above|Below|Left|Right|Forward|Across';
   
   // Remove 'i' flag from all deixis patterns - only match Title Case
   next = next.replace(
@@ -1604,6 +1605,7 @@ export function applyProseWarden(text: string, ctx?: ProseWardenContext): string
   next = scrubNamedCastAsObject(next, ctx?.namedCast ?? ctx?.presentNames ?? []);
   next = scrubDeadFoeReengage(next, ctx?.lastKill, ctx?.hasLiveEncounter === true);
   next = scrubUnresolvedDeixisNouns(next, ctx?.currentLocation);
+  next = scrubSlotGlue(next);
   next = scrubFactionAsLootOrTarget(next);
   next = scrubStitchBankLeaks(next);
   next = scrubEntityMadLibs(next, ctx?.enemyName);

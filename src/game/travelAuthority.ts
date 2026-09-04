@@ -7,8 +7,7 @@
 
 import type { GameState, SceneFacts } from './types';
 import { isExplorableDungeon, isInteriorMap } from './placeAuthority';
-import { ensureTravelArrivalProse } from './outdoorHubs';
-import { shouldSkipTravelArrivalPrepend } from './oneCameraFight';
+import { stampTravelArrivalIfSafe } from './oneCameraFight';
 
 export type CameraScale = 'outdoor' | 'indoor';
 
@@ -170,8 +169,7 @@ export function enforceCameraOnProse(
   // Batch 02g — Leave / Walk away / Exit must not invent "You reach <current dest>".
   if (traveled && dest && playerCommittedArrivalTravel(playerInput)) {
     if (from && from.toLowerCase() === dest.toLowerCase()) return next;
-    if (shouldSkipTravelArrivalPrepend(state)) return next;
-    return ensureTravelArrivalProse(next, dest, from || null);
+    return stampTravelArrivalIfSafe(next, dest, from || null, state);
   }
 
   const here = (lock?.label || dest || '').trim();

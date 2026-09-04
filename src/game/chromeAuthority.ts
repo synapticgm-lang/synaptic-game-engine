@@ -74,7 +74,7 @@ const CHOICE_PAD_PERSON_EXACT =
  * Batch T tape: "the Ahead", "figure 1 priests", "silhouette of figure 1".
  */
 const UNRESOLVED_DEIXIS_EXACT =
-  /^(ahead|behind|beside|nearby|above|below|left|right|forward|back|around|here|there|north|south|east|west)$/i;
+  /^(ahead|behind|beside|nearby|above|below|left|right|forward|back|around|across|here|there|north|south|east|west)$/i;
 
 export function isUnresolvedDeixisToken(token: string): boolean {
   const t = normalizeChromeToken(token);

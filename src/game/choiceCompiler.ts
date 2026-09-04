@@ -47,6 +47,7 @@ import {
   shouldStarveTravelPads,
 } from './padUniverse';
 import { isClosedScenePersonPad } from './closedScenePerson';
+import { isObjectPersonPad } from './slotGlue';
 
 export type PlayerIntentFamily = 'demand' | 'inspect' | 'flee' | 'name' | 'talk' | 'travel' | 'other';
 
@@ -701,6 +702,10 @@ export function compileChoices(
       notes.push(`Closed-scene person drop: ${c.slice(0, 32)}`);
       return false;
     }
+    if (isObjectPersonPad(c)) {
+      notes.push(`Object-as-person pad drop: ${c.slice(0, 32)}`);
+      return false;
+    }
     // Batch W/X — starve abstract leverage/ask/leave when scene has named people or live fight
     const scenePeople = realPresentPeople(state.sceneFacts?.present ?? []);
     if ((engaged || scenePeople.length > 0) && isAbstractGenericPad(c)) {
@@ -972,6 +977,7 @@ export function compileChoices(
     if (engaged && (isLookOrExamineRoomPad(c) || isEncounterForbiddenPad(c))) return false;
     if (isExcludedPadLabel(c, excluded)) return false;
     if (isClosedScenePersonPad(c, state)) return false;
+    if (isObjectPersonPad(c)) return false;
     if (state.engineMode === 'pyoa' && !eligiblePyoaPadsAfterLock(state, c)) return false;
     if (talkRecycle && /\b(press for leverage|ask a direct question|talk to|ready yourself)\b/i.test(c)) {
       return false;

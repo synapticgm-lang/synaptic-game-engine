@@ -437,6 +437,7 @@ export function isHubContactProperName(name: string): boolean {
 export function canHarvestAsNamedPerson(name: string, bibleId?: string | null): boolean {
   const t = (name ?? '').trim();
   if (!t || t.length < 2) return false;
+  if (/^(charter|millstone)$/i.test(t.replace(/^(the|a|an)\s+/i, ''))) return false;
   if (isPolityFactionOrPlaceToken(t) || isRegisteredLocation(t, bibleId)) return false;
   if (isCommonRoleNpc(t) && !isHubContactProperName(t)) return false;
   if (isHubContactProperName(t)) return true;

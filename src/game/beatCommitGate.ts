@@ -25,6 +25,7 @@ import { isDeadFoeReopenedAsLiving } from './combatAuthority';
 import { isInventedClosedScenePerson } from './closedScenePerson';
 import { isOneCameraFightViolation } from './oneCameraFight';
 import { isStaleContextBleed } from './sceneContextTail';
+import { isSlotGlueViolation } from './slotGlue';
 
 export type CommitGateReason =
   | 'atmosphere-only'
@@ -154,6 +155,8 @@ export function isFactClosedViolation(state: GameState, text: string): boolean {
   if (isOneCameraFightViolation(state, body)) return true;
   // 02r — old-room camera or post-clear steel after a recent scene change.
   if (isStaleContextBleed(state, body)) return true;
+  // 02t — deixis / kit object used as a person slot.
+  if (isSlotGlueViolation(body)) return true;
   return false;
 }
 

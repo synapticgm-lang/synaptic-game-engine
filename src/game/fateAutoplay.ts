@@ -82,7 +82,6 @@ import { applyOpeningContract, ensureStarterLookCharacter, stitchOpeningScene } 
 import {
   seedOutdoorHubPlaces,
   parseTravelDestination,
-  ensureTravelArrivalProse,
   matchHub,
   hubsForBibleId,
 } from './outdoorHubs';
@@ -158,6 +157,7 @@ import {
 import { ensureEncounterSpawnPreface } from './combatAuthority';
 import { encounterBlocksTravel, settleParleyAfterProse } from './encounterTerminalFsm';
 import { classifyBeatCommit, repairRejectedBeat } from './beatCommitGate';
+import { scrubOneCameraFight, stampTravelArrivalIfSafe } from './oneCameraFight';
 import { readabilityGatePass } from './readabilityGate';
 import { compactTrafficGist } from './openingPointerCard';
 import {
@@ -1239,10 +1239,11 @@ Do NOT print dice notation or CODE ENFORCED.
       currentLocation: travelHub.name,
       places: touchPlaceVisit(working.places ?? state.places ?? [], travelHub.name, state.turn + 1),
     };
-    cleanText = ensureTravelArrivalProse(cleanText, travelHub.name, fromLoc);
+    cleanText = stampTravelArrivalIfSafe(cleanText, travelHub.name, fromLoc, working);
   }
   working = enforceCameraOnState(working, playerInput);
   cleanText = enforceCameraOnProse(cleanText, working, playerInput);
+  cleanText = scrubOneCameraFight(cleanText, working, playerInput);
   // 02g — prepend can land after the warden; strip mill / already-here arrivals once more.
   cleanText = scrubFalseArrivalWhenHere(
     cleanText,
