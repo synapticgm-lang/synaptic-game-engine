@@ -4,7 +4,7 @@
  */
 
 import type { GameState } from './types';
-import { isStitchBankFingerprint } from './beatCommitGate';
+import { isStitchBankFingerprint, isWriterMonologueLeak } from './beatCommitGate';
 import { hasNumberedChoiceLeak, hasQuestTrackerLeak } from './parser';
 import { scrubFalseArrivalWhenHere, scrubEntityMadLibs } from './proseWarden';
 import { detectHubRoleMadlib } from './chromeAuthority';
@@ -60,6 +60,9 @@ export function scanReadabilityViolations(state: GameState): ReadabilityViolatio
   for (const { turn, content } of gmEntries(state)) {
     if (isStitchBankFingerprint(content)) {
       out.push({ kind: 'stitch-leak', turn, quote: clipQuote(content) });
+    }
+    if (isWriterMonologueLeak(content)) {
+      out.push({ kind: 'ui-bleed', turn, quote: clipQuote(content) });
     }
     if (hasNumberedChoiceLeak(content)) {
       out.push({ kind: 'choice-leak', turn, quote: clipQuote(content) });

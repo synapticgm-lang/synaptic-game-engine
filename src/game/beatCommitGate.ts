@@ -110,6 +110,11 @@ export function classifyBeatCommit(
     if (!reasons.includes('recycle-without-delta')) reasons.push('recycle-without-delta');
   }
 
+  // 02m — writer planning notes / instruction echo must never commit as story.
+  if (isWriterMonologueLeak(text) || isDirectorChromeLeak(text)) {
+    if (!reasons.includes('recycle-without-delta')) reasons.push('recycle-without-delta');
+  }
+
   // 02h — SYSTEM / marker / mill-panel token salad must never commit.
   if (isTokenSaladLeak(text)) {
     if (!reasons.includes('recycle-without-delta')) reasons.push('recycle-without-delta');
@@ -275,11 +280,32 @@ export function isVerbatimStallStub(text: string | undefined): boolean {
   );
 }
 
+/**
+ * 02m — model planning notes leaked as GM body (RPG s42 T5, LitRPG s43 T6, D&D s43 T7).
+ * Fingerprints only — not a novel deny-list of story nouns.
+ */
+export function isWriterMonologueLeak(text: string | undefined): boolean {
+  if (!text?.trim()) return false;
+  return (
+    /\bLet me write (?:this with good prose|it cleanly)\b/i.test(text)
+    || /\bcompletes stage-2 receipt\b/i.test(text)
+    || /\bStory first,\s*then\s+(?:system-log|system log|<xp-gain)\b/i.test(text)
+    || /\bchoices are calculated separately\b/i.test(text)
+    || /\bI only output narrative prose\b/i.test(text)
+    || /\bThe instruction says\b/i.test(text)
+    || /\bDo NOT emit numbered choice lists\b/i.test(text)
+    || /\bI should keep it tight\b/i.test(text)
+    || /\bI(?:['’]ll| will) make sure the prose follows\b/i.test(text)
+    || /\bLet me write this with good prose\b/i.test(text)
+  );
+}
+
 /** Director / CRAFT / AUTHORITY chrome must never commit as GM body (Batch G). */
 export function isDirectorChromeLeak(text: string | undefined): boolean {
   if (!text?.trim()) return false;
   return (
-    /\bdo not invent\b/i.test(text)
+    isWriterMonologueLeak(text)
+    || /\bdo not invent\b/i.test(text)
     || /\btelegraph first\b/i.test(text)
     || /\bno prior cast\b/i.test(text)
     || /\bno debris,\s*no prior\b/i.test(text)

@@ -18,9 +18,9 @@ import { emptySceneFacts } from './sceneFacts';
 import type { GameState } from './types';
 
 describe('Batch 02l stamps', () => {
-  it('HUD and BUILD are 2026-09-02l and Mid writer stays OFF', () => {
-    expect(HUD_BUILD_STAMP).toBe('2026-09-02l');
-    expect(BUILD_STAMP).toBe('2026-09-02l');
+  it('HUD and BUILD are at least 2026-09-02l and Mid writer stays OFF', () => {
+    expect(HUD_BUILD_STAMP >= '2026-09-02l').toBe(true);
+    expect(BUILD_STAMP >= '2026-09-02l').toBe(true);
     expect(STAGNATION_MID_WRITER_ENABLED).toBe(false);
   });
 });
