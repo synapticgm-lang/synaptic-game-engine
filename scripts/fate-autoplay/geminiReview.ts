@@ -265,6 +265,12 @@ export function inferSeqFromName(name: string): string {
   return m?.[1] ?? '01';
 }
 
+/** `01-LITRPG-s42__story…` → `s42`. Packs without a seed stay empty. */
+export function inferSeedFromName(name: string): string {
+  const m = basename(name).match(/(?:^|[-_])s(\d{2,4})(?=[-_.]|$)/i);
+  return m ? `s${m[1]}` : '';
+}
+
 /** `2026-09-02f` → `02f`; `02f` stays `02f`. */
 export function shortStamp(raw: string): string {
   const s = raw.trim();
@@ -294,9 +300,11 @@ export function inferReplyFilename(packPath: string, stamp: string): string {
   const base = basename(packPath);
   const seq = inferSeqFromName(base);
   const mode = inferModeFromName(base);
+  const seed = inferSeedFromName(base);
   const lens = inferLensFromName(base);
   const st = shortStamp(stamp) || 'reply';
-  return `gemini-${seq}-${mode}-${lens}-${st}-reply.md`;
+  const seedBit = seed ? `-${seed}` : '';
+  return `gemini-${seq}-${mode}${seedBit}-${lens}-${st}-reply.md`;
 }
 
 export function defaultOutDir(sourcePath: string): string {

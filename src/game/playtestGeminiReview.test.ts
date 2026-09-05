@@ -118,6 +118,18 @@ describe('playtestGeminiReview', () => {
         '02f'
       )
     ).toBe('gemini-01-litrpg-story-02f-reply.md');
+    expect(
+      inferReplyFilename(
+        'scripts/fate-autoplay/runs/_overnight-02t/01-LITRPG-s42__story-standalone__gemini-pro-PASTE.md',
+        '02t100'
+      )
+    ).toBe('gemini-01-litrpg-s42-story-02t100-reply.md');
+    expect(
+      inferReplyFilename(
+        'scripts/fate-autoplay/runs/_overnight-02t/01-LITRPG-s43__story-standalone__gemini-pro-PASTE.md',
+        '02t100'
+      )
+    ).toBe('gemini-01-litrpg-s43-story-02t100-reply.md');
     expect(inferStampFromPath('scripts/fate-autoplay/runs/gemini-paste-2026-09-02f-t50', undefined, '')).toBe(
       '02f'
     );
