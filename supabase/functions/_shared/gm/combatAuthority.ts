@@ -108,22 +108,38 @@ export function matchesLastKillName(token: string, lastKill?: LastKill | null): 
 }
 
 const DEAD_FOE_CORPSE_OK =
-  /\b(?:fallen|corpse|body|(?:the\s+)?remains\b(?!\s+fixed)|dissolv|crumpl(?:ed|ing)?|dead|ichor|loot|downed|defeated|lies where)\b/i;
+  /\b(?:fallen(?!\s+(?:blade|sword|knife|weapon|axe|spear))|corpse|body|(?:the\s+)?remains\b(?!\s+fixed)|dissolv|crumpl(?:ed|ing)?|dead|ichor|loot|downed|defeated|already\s+down|lashed|lies where)\b/i;
 const DEAD_FOE_COMBAT_REENGAGE =
-  /\b(?:remains? fixed|still (?:here|fixed|watching)|turns? (?:on|toward) you|commits? toward you|lunges?|strikes?|attacks?|blade (?:stops? )?mid-arc|handspan from your throat|blade bites|cold line against)\b/i;
+  /\b(?:remains? fixed|still (?:here|fixed|watching)|turns? (?:on|toward) you|commits? toward you|lunges?|strikes?|attacks?|swings? again|stirs?|twitch(?:es|ing)?|blade (?:stops? )?mid-arc|handspan from your throat|blade bites|cold line against)\b/i;
 /** Innkeeper / greeter rez — 02k LitRPG T38–T40 Void-Touched Scavenger. */
 const DEAD_FOE_LIVING_REZ =
-  /\b(?:looks? up|nods?(?:\s+in\s+greeting)?|waves?|greets?|smiles?|asks?|sits?|sitting|sipping|polishing|mug of ale|good to see|stout man|bushy beard|takes? a seat|common (?:table|room)|wiping a (?:clay )?cup)\b/i;
+  /\b(?:looks? up|nods?(?:\s+in\s+greeting)?|waves?|greets?|smiles?|asks?|answers?|responds?|speaks? to you|sits?|sitting|sipping|polishing|mug of ale|good to see|stout man|bushy beard|takes? a seat|common (?:table|room)|wiping a (?:clay )?cup)\b/i;
 
 function lastKillMentionRe(name: string): RegExp {
   const esc = name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
   return new RegExp(`\\b(?:the\\s+)?${esc}\\b`, 'i');
 }
 
+/** Full lastKill name or last token ≥5 (`Pact-Hunter Skirmisher` → `the skirmisher`). */
+export function sentenceMentionsLastKill(sent: string, lastKill?: LastKill | null): boolean {
+  if (!lastKill?.name || !sent) return false;
+  if (lastKillMentionRe(lastKill.name).test(sent)) return true;
+  const last = lastKill.name.trim().split(/\s+/).pop() ?? '';
+  if (last.length >= 5) {
+    const esc = last.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    if (new RegExp(`\\b(?:the\\s+)?${esc}\\b`, 'i').test(sent)) return true;
+  }
+  return sent.split(/[^\w'-]+/).some((t) => matchesLastKillName(t, lastKill));
+}
+
+export function isDeadFoeCorpseOk(sent: string): boolean {
+  return DEAD_FOE_CORPSE_OK.test(sent);
+}
+
 export function shouldRewriteDeadFoeSentence(sent: string, lastKill?: LastKill | null): boolean {
   if (!lastKill?.name || !sent) return false;
-  if (!lastKillMentionRe(lastKill.name).test(sent)) return false;
-  if (DEAD_FOE_CORPSE_OK.test(sent)) return false;
+  if (!sentenceMentionsLastKill(sent, lastKill)) return false;
+  if (isDeadFoeCorpseOk(sent)) return false;
   return DEAD_FOE_LIVING_REZ.test(sent) || DEAD_FOE_COMBAT_REENGAGE.test(sent);
 }
 

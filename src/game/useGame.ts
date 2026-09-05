@@ -3659,6 +3659,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
           presentNames: [
             ...(workingState.sceneFacts?.present ?? []),
             ...(liveCurrent.sceneFacts?.present ?? []),
+            ...((workingState.companions ?? liveCurrent.companions ?? []).map((c) => c.name)),
             ...((workingState.npcMemories ?? liveCurrent.npcMemories ?? []).map((n) => n.npcName)),
           ].filter((n) => n && !isChromePersonToken(n)),
           hookLock: hookLockForWarden(workingState, cleanText),

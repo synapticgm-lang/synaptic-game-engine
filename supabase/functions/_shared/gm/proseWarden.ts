@@ -1605,7 +1605,7 @@ export function applyProseWarden(text: string, ctx?: ProseWardenContext): string
   next = scrubNamedCastAsObject(next, ctx?.namedCast ?? ctx?.presentNames ?? []);
   next = scrubDeadFoeReengage(next, ctx?.lastKill, ctx?.hasLiveEncounter === true);
   next = scrubUnresolvedDeixisNouns(next, ctx?.currentLocation);
-  next = scrubSlotGlue(next);
+  next = scrubSlotGlue(next, ctx?.namedCast ?? ctx?.presentNames ?? []);
   next = scrubFactionAsLootOrTarget(next);
   next = scrubStitchBankLeaks(next);
   next = scrubEntityMadLibs(next, ctx?.enemyName);

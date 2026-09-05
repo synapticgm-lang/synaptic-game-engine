@@ -25,7 +25,7 @@ import { isDeadFoeReopenedAsLiving } from './combatAuthority';
 import { isInventedClosedScenePerson } from './closedScenePerson';
 import { isOneCameraFightViolation } from './oneCameraFight';
 import { isStaleContextBleed } from './sceneContextTail';
-import { isSlotGlueViolation } from './slotGlue';
+import { isSlotGlueViolation, ledgerSlotPeople } from './slotGlue';
 
 export type CommitGateReason =
   | 'atmosphere-only'
@@ -155,8 +155,8 @@ export function isFactClosedViolation(state: GameState, text: string): boolean {
   if (isOneCameraFightViolation(state, body)) return true;
   // 02r — old-room camera or post-clear steel after a recent scene change.
   if (isStaleContextBleed(state, body)) return true;
-  // 02t — deixis / kit object used as a person slot.
-  if (isSlotGlueViolation(body)) return true;
+  // 02t / 02v — deixis / kit object / companion name used as a slot.
+  if (isSlotGlueViolation(body, ledgerSlotPeople(state))) return true;
   return false;
 }
 
@@ -301,8 +301,9 @@ export function isVerbatimStallStub(text: string | undefined): boolean {
 }
 
 /**
- * 02m — model planning notes leaked as GM body (RPG s42 T5, LitRPG s43 T6, D&D s43 T7).
- * Fingerprints only — not a novel deny-list of story nouns.
+ * 02m / 02v — model planning notes leaked as GM body.
+ * Fingerprints + planning-voice only — not a novel deny-list of story nouns.
+ * 02v tapes: LitRPG s42 T8, D&D s42 T18, RPG s42 T8.
  */
 export function isWriterMonologueLeak(text: string | undefined): boolean {
   if (!text?.trim()) return false;
@@ -317,6 +318,17 @@ export function isWriterMonologueLeak(text: string | undefined): boolean {
     || /\bI should keep it tight\b/i.test(text)
     || /\bI(?:['’]ll| will) make sure the prose follows\b/i.test(text)
     || /\bLet me write this with good prose\b/i.test(text)
+    // 02v — planning-voice residual (in-character / tiers / tension meter)
+    || /\bThis is a (?:good|strong) in-character (?:answer|response)\b/i.test(text)
+    || /\bI should present this cleanly\b/i.test(text)
+    || /\bwait for \w+ to choose\b/i.test(text)
+    || /\bLet me re-read\b/i.test(text)
+    || /\bper my typing obligations\b/i.test(text)
+    || /\bUnder the above tiers\b/i.test(text)
+    || /\bI must pick one concrete beat\b/i.test(text)
+    || /\bnarrative tension is (?:maybe )?\d+\s*\/\s*10\b/i.test(text)
+    || /\bif I want TENSION\b/i.test(text)
+    || /\bI(?:['’]ll| will) write short,\s*evocative\b/i.test(text)
   );
 }
 

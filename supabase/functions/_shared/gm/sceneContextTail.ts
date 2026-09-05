@@ -25,7 +25,7 @@ const FIGHT_BLEED =
   /\b(blade|throat|handspan|skirmisher|mid-arc|press(?:es)? the attack|parry|lunges?)\b/i;
 
 const CORPSE_OK =
-  /\b(?:fallen|corpse|body|remains|dissolv|crumpl(?:ed|ing)?|dead|ichor|loot|downed|defeated|lies where)\b/i;
+  /\b(?:fallen(?!\s+(?:blade|sword|knife|weapon|axe|spear))|corpse|body|remains|dissolv|crumpl(?:ed|ing)?|dead|ichor|loot|downed|defeated|already\s+down|lashed|lies where)\b/i;
 
 function escapeRe(s: string): string {
   return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');

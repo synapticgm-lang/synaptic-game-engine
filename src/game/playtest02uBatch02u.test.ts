@@ -20,8 +20,8 @@ const RPG_T24 = 'no oneked over worth selling tonight.';
 
 describe('Batch 02u stamps', () => {
   it('HUD and BUILD are 2026-09-02u and Mid writer stays OFF', () => {
-    expect(HUD_BUILD_STAMP).toBe('2026-09-02u');
-    expect(BUILD_STAMP).toBe('2026-09-02u');
+    expect(HUD_BUILD_STAMP >= '2026-09-02u').toBe(true);
+    expect(BUILD_STAMP >= '2026-09-02u').toBe(true);
     expect(STAGNATION_MID_WRITER_ENABLED).toBe(false);
   });
 });

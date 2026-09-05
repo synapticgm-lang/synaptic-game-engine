@@ -1155,8 +1155,10 @@ Do NOT print dice notation or CODE ENFORCED.
     presentNames: [
       ...(working.sceneFacts?.present ?? []),
       ...(state.sceneFacts?.present ?? []),
+      ...((working.companions ?? state.companions ?? []).map((c) => c.name)),
       ...((working.npcMemories ?? state.npcMemories ?? []).map((n) => n.npcName)),
     ].filter((n) => n && !isChromePersonToken(n)),
+    lastKill: working.sceneFacts?.lastKill ?? state.sceneFacts?.lastKill,
     hookLock: hookLockForWarden(working, cleanText),
   });
   {

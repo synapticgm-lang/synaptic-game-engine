@@ -271,9 +271,13 @@ export async function runWarden(
     sceneProps: collectSceneObjectNames(state),
     lastGmProse:
       [...(state.log ?? [])].reverse().find((e) => e.role === 'gm')?.content ?? '',
-    presentNames: (state.sceneFacts?.present ?? []).filter(
+    presentNames: [
+      ...(state.sceneFacts?.present ?? []),
+      ...((state.companions ?? []).map((c) => c.name)),
+    ].filter(
       (n) => typeof n === 'string' && n.trim().length >= 2 && !isChromePersonToken(n)
     ),
+    lastKill: state.sceneFacts?.lastKill,
     groundedWeapons: undefined,
     playerName: state.character?.name,
     hasLiveEncounter:
