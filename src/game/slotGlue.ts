@@ -29,6 +29,24 @@ export function isObjectPersonPad(choice: string): boolean {
   return /\b(?:talk(?:\s+to)?|ask|meet|press)\s+(?:the\s+)?charter\b/i.test(choice ?? '');
 }
 
+/** 02u — "no one" conjugated into a fake noun/adjective. Legal "no one else" stays. */
+export function isNobodyInflectionSalad(text: string): boolean {
+  const t = text ?? '';
+  if (!t.trim()) return false;
+  return /\bno\s+oneed\b/i.test(t) || /\bno\s+ones\b/i.test(t) || /\bno\s+oneked\b/i.test(t);
+}
+
+export function scrubNobodyInflection(text: string): string {
+  let next = text ?? '';
+  if (!next) return next;
+  next = next.replace(/\bno\s+oneed\b/gi, 'empty');
+  next = next.replace(/\bno\s+oneked\b/gi, '');
+  next = next.replace(/\bthe\s+no\s+ones\b/gi, 'the lanes');
+  next = next.replace(/\bno\s+ones\b/gi, 'lanes');
+  next = next.replace(/\bin the no one\b/gi, 'in the lane');
+  return next.replace(/\s{2,}/g, ' ').trim();
+}
+
 export function scrubSlotGlue(text: string): string {
   let next = text ?? '';
   if (!next) return next;
@@ -39,5 +57,6 @@ export function scrubSlotGlue(text: string): string {
   next = next.replace(/\bopen(?:s|ed|ing)?\s+the\s+stranger\b/gi, 'open');
   next = next.replace(new RegExp(`\\bCharter\\s+(${PERSON_VERB})\\b`, 'g'), 'Someone $1');
   next = next.replace(/\bthe\s+stranger\s+call\b/gi, 'they call');
+  next = scrubNobodyInflection(next);
   return next.replace(/\s{2,}/g, ' ').trim();
 }

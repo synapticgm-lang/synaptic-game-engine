@@ -274,6 +274,10 @@ export function isTokenSaladLeak(text: string | undefined): boolean {
     || /Consulting the FULL/i.test(text)
     || /Respond in the following exact XML/i.test(text)
     || /ikuha/i.test(text)
+    // 02u — 02t T30: "no one" inflected as a noun/adj (LitRPG s43 + RPG s43)
+    || /\bno\s+oneed\b/i.test(text)
+    || /\bno\s+ones\b/i.test(text)
+    || /\bno\s+oneked\b/i.test(text)
   );
 }
 
