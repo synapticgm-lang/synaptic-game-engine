@@ -1,14 +1,26 @@
 /**
- * 02t / 02v — Slot / object glue.
+ * 02t / 02v / 02y — Slot / object glue.
  * Deixis and kit objects are not people. `the Across`, `open the stranger`,
  * and `Charter looks up` are grammar slots, not CAST. Named companions are
- * not take/push objects. No SNAPSHOT / CRAFT.
+ * not take/push objects. Locked place titles are not body/kit objects.
+ * No SNAPSHOT / CRAFT.
  */
+
+import { isAtmospherePlaceName } from './questPlay';
+import { getRegisteredLocations } from './entityRegistry';
 
 const PERSON_VERB =
   '(?:looks?|stands?|says?|asks?|nods?|watches?|sits?|steps?|waits?|calls?)';
 
-const OBJECT_TAKE = '(?:take|grab|push|pull)';
+const OBJECT_TAKE = '(?:take|grab|push|pull|open)';
+
+const PLACE_TITLE_STOP = new Set([
+  'the', 'and', 'under', 'from', 'into', 'near', 'with', 'this', 'that',
+  'your', 'over', 'road', 'street', 'place', 'at', 'of',
+]);
+
+const BODY_OR_KIT =
+  '(?:hands?|hand|coat|chest|seal|lid|pocket|bag|pack|shoulders?|sleeve|collar|wrist)';
 
 /** After `the <Name>`, legal person/prep grammar — not a slot noun. */
 const AFTER_NAME_OK =
@@ -56,7 +68,82 @@ export function isCompanionObjectGlue(text: string, names: string[] = []): boole
   return false;
 }
 
-export function isSlotGlueViolation(text: string, namedPeople: string[] = []): boolean {
+/** Distinctive tokens from a ledger place title — not a Sevenfold deny list. */
+export function placeTitleNeedles(name: string | undefined | null): string[] {
+  const raw = (name ?? '').replace(/\s+/g, ' ').trim();
+  if (!raw || raw.length < 3) return [];
+  const out: string[] = [];
+  const push = (s: string) => {
+    const n = s.replace(/\s+/g, ' ').trim();
+    if (n.length < 3) return;
+    if (!out.some((x) => x.toLowerCase() === n.toLowerCase())) out.push(n);
+  };
+  push(raw);
+  const bare = raw.replace(/^(the|a|an)\s+/i, '');
+  push(bare);
+  if (bare.length >= 4) push(`The ${bare}`);
+  for (const w of bare.split(/\s+/)) {
+    const tok = w.replace(/[^A-Za-z'-]/g, '');
+    if (tok.length >= 6 && !PLACE_TITLE_STOP.has(tok.toLowerCase())) push(tok);
+    if (tok.length >= 6) push(`The ${tok}`);
+  }
+  return out;
+}
+
+export function ledgerPlaceTitles(state?: {
+  currentLocation?: string;
+  previousLocationSheet?: { name?: string } | null;
+  locationSheet?: { name?: string } | null;
+  openingEstablishment?: { answers?: { where?: string } } | null;
+  places?: Array<{ name?: string; loreName?: string; aliases?: string[] }>;
+  worldAtlas?: { settlements?: Array<{ name?: string }> } | null;
+  bibleId?: string | null;
+  campaignBibleId?: string | null;
+} | null): string[] {
+  const out: string[] = [];
+  const add = (raw?: string | null) => {
+    for (const n of placeTitleNeedles(raw)) {
+      if (!out.some((x) => x.toLowerCase() === n.toLowerCase())) out.push(n);
+    }
+  };
+  add(state?.currentLocation);
+  add(state?.locationSheet?.name);
+  add(state?.previousLocationSheet?.name);
+  add(state?.openingEstablishment?.answers?.where);
+  for (const p of state?.places ?? []) {
+    add(p.name);
+    add(p.loreName);
+    for (const a of p.aliases ?? []) add(a);
+  }
+  for (const s of state?.worldAtlas?.settlements ?? []) add(s.name);
+  for (const loc of getRegisteredLocations(state?.bibleId ?? state?.campaignBibleId)) add(loc);
+  return out;
+}
+
+/** `take The Sevenfold hands` / `open your The Sevenfold` — place title stuffed into an object slot. */
+export function isPlaceTitleObjectGlue(text: string, placeTitles: string[] = []): boolean {
+  const t = text ?? '';
+  if (!t.trim() || !placeTitles.length) return false;
+  for (const title of placeTitles) {
+    if (isAtmospherePlaceName(title)) continue;
+    const esc = escapeRe(title);
+    if (new RegExp(`\\b${OBJECT_TAKE}\\s+(?:your\\s+)?(?:the\\s+)?${esc}\\s+${BODY_OR_KIT}\\b`, 'i').test(t)) {
+      return true;
+    }
+    if (new RegExp(`\\b(?:open|take|grab)\\s+your\\s+(?:the\\s+)?${esc}\\b`, 'i').test(t)) {
+      return true;
+    }
+    const adj = t.match(new RegExp(`\\b(?:the|your)\\s+${esc}\\s+([a-z]{3,})\\b`, 'i'));
+    if (adj?.[1] && new RegExp(`^${BODY_OR_KIT}$`, 'i').test(adj[1])) return true;
+  }
+  return false;
+}
+
+export function isSlotGlueViolation(
+  text: string,
+  namedPeople: string[] = [],
+  placeTitles: string[] = []
+): boolean {
   const t = text ?? '';
   if (!t.trim()) return false;
   if (/\bthe\s+Across\b/.test(t)) return true;
@@ -70,6 +157,7 @@ export function isSlotGlueViolation(text: string, namedPeople: string[] = []): b
     return true;
   }
   if (isCompanionObjectGlue(t, namedPeople)) return true;
+  if (isPlaceTitleObjectGlue(t, placeTitles)) return true;
   return false;
 }
 
@@ -101,7 +189,11 @@ export function scrubNobodyInflection(text: string): string {
   return next.replace(/\s{2,}/g, ' ').trim();
 }
 
-export function scrubSlotGlue(text: string, namedPeople: string[] = []): string {
+export function scrubSlotGlue(
+  text: string,
+  namedPeople: string[] = [],
+  placeTitles: string[] = []
+): string {
   let next = text ?? '';
   if (!next) return next;
   next = next.replace(/\bthe\s+Across\b/g, 'the far side');
@@ -121,6 +213,17 @@ export function scrubSlotGlue(text: string, namedPeople: string[] = []): string 
     next = next.replace(
       new RegExp(`\\bthe\\s+${esc}\\s+([a-z]{3,})\\b`, 'g'),
       (full, word: string) => (AFTER_NAME_OK.test(word) ? full : `the ${word}`)
+    );
+  }
+  for (const title of placeTitles) {
+    const esc = escapeRe(title);
+    next = next.replace(
+      new RegExp(`\\b(${OBJECT_TAKE}\\s+)(?:your\\s+)?(?:the\\s+)?${esc}\\s+(${BODY_OR_KIT})\\b`, 'gi'),
+      '$1the $2'
+    );
+    next = next.replace(
+      new RegExp(`\\b((?:open|take|grab)\\s+)your\\s+(?:the\\s+)?${esc}\\b`, 'gi'),
+      '$1'
     );
   }
   next = scrubNobodyInflection(next);

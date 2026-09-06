@@ -3,7 +3,7 @@
  */
 
 import type { GameState } from './types';
-import { canonicalizeIntent } from './semanticLoopDetector';
+import { canonicalizeIntent, isTalkUltimatumExhausted } from './semanticLoopDetector';
 import { filterCooldownChoices, type OptionCooldown } from './optionDiversityContract';
 import {
   isTopicExhausted,
@@ -668,6 +668,7 @@ export function compileChoices(
     !engaged
     && !!npc
     && (shouldForceNpcStageAdvance(state, npc)
+      || isTalkUltimatumExhausted(state)
       || (/\b(talk|ask|press|listen)\b/i.test(intentText)
         && (state.arcDirector?.npcTopics?.[npcKey] ?? []).length >= 2));
   const stallInterrupt = hardStreak || hardLoiter || inspectTreadmill || talkRecycle;
@@ -799,6 +800,10 @@ export function compileChoices(
         && /\b(ask|talk|speak|listen|press)\b/i.test(c)
       ) {
         notes.push(`Topic exhausted pad: ${c.slice(0, 32)}`);
+        return false;
+      }
+      if (isTalkUltimatumExhausted(state) && /\b(ask|talk|speak|listen|press)\b/i.test(c)) {
+        notes.push(`Talk ultimatum recycle drop: ${c.slice(0, 32)}`);
         return false;
       }
     }

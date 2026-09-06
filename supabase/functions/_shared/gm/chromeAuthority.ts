@@ -188,6 +188,40 @@ export function isDialogueVerbPersonToken(token: string): boolean {
   return DIALOGUE_VERB_PERSON_EXACT.test(t);
 }
 
+/**
+ * 02y — UI / pronoun / planner fragments are never people.
+ * Shape, not a Gemini quote list: trailing speaker labels, contractions,
+ * bare pronouns, discourse particles, evaluative status chips.
+ */
+const BARE_PRONOUN_NAME =
+  /^(i|me|my|mine|you|your|yours|he|him|his|she|her|hers|we|us|our|ours|they|them|their|theirs|it|its)$/i;
+
+const DISCOURSE_PARTICLE_NAME =
+  /^(no|yes|ok|okay|exactly|sure|right|smart|alright)$/i;
+
+const PLANNER_CONTRACTION =
+  /\b(?:i['’]m|i['’]ll|i['’]d|i['’]ve|we['’]re|we['’]ll|you['’]re|you['’]ll|don['’]t|can['’]t|won['’]t)\b/i;
+
+export function isPlannerUiPersonToken(token: string): boolean {
+  const raw = (token ?? '').trim();
+  if (!raw) return false;
+  if (/:$/.test(raw)) return true;
+  const t = raw.replace(/:+$/, '').replace(/\s+/g, ' ').trim();
+  if (!t) return true;
+  if (PLANNER_CONTRACTION.test(t)) return true;
+  const bare = t.replace(/^(the|a|an)\s+/i, '');
+  if (!/\s/.test(bare) && BARE_PRONOUN_NAME.test(bare)) return true;
+  if (!/\s/.test(bare) && DISCOURSE_PARTICLE_NAME.test(bare)) return true;
+  const parts = t.split(/\s+/);
+  if (parts.length >= 2 && /^(so|well|then|now|if|when)$/i.test(parts[0] ?? '')) {
+    const rest = parts.slice(1).join(' ');
+    if (BARE_PRONOUN_NAME.test(parts[1] ?? '') || PLANNER_CONTRACTION.test(rest) || /['’]/.test(rest)) {
+      return true;
+    }
+  }
+  return false;
+}
+
 /** Any token that must never occupy a person slot (chrome / pad / deixis / dialogue verb). */
 export function isNonPersonNameToken(token: string): boolean {
   return (
@@ -199,6 +233,7 @@ export function isNonPersonNameToken(token: string): boolean {
     || isRoleAdjectivePersonSlot(token)
     || isFactionOrOrgToken(token)
     || isRoleContactLabel(token)
+    || isPlannerUiPersonToken(token)
   );
 }
 

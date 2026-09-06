@@ -9,6 +9,8 @@ import { isAloneArrivalPick, isAloneArrivalOpening } from './openingEstablishmen
 import { adaptStarterQuestsForArrival } from './questPlay';
 import { getCampaignBibleById } from '@/data/campaigns';
 import { filterChromeFromPresent, isChromePersonToken, isHubRoleCompoundToken } from './chromeAuthority';
+import { canHarvestAsNamedPerson } from './entityRegistry';
+import { applyPyoaCharterProseBurn } from './pyoaBranchLedger';
 
 /** Bump when adding load-time repairs that must re-run on old saves.
  *  Rev 4 = 30Y chrome-as-people strip (Place / blue panel out of present[]).
@@ -447,6 +449,18 @@ export function applyErrorRepairs(state: GameState): ErrorRepairResult {
   next = repairDeniedPcName(next, notes);
   next = repairAtmosphereMapRooms(next, notes);
   next = repairLastKillFromLog(next, notes);
+  {
+    const lastGm = [...(next.log ?? [])].reverse().find((e) => e.role === 'gm')?.content ?? '';
+    const burned = applyPyoaCharterProseBurn(next, lastGm);
+    if (burned !== next) {
+      notes.push({
+        class: 'continuity_prose',
+        code: 'ERR_CHARTER_PROSE_BURN',
+        detail: 'locked destroyed charter from committed burn prose',
+      });
+      next = burned;
+    }
+  }
   const needsRev = (next.errorRepairRevision ?? 0) < CURRENT_ERROR_REPAIR_REVISION;
   if (notes.length === 0 && !needsRev) {
     return { state, dirty: false, notes: [] };

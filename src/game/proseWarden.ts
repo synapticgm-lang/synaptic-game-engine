@@ -15,7 +15,7 @@ import { scrubInventedCrowdSize } from './crowdAuthority';
 import { rewriteChromePersonClauses } from './chromeAuthority';
 import { scrubHookReversals, type HookLock } from './hookLock';
 import { scrubLeaveReachDuringFight } from './oneCameraFight';
-import { scrubSlotGlue } from './slotGlue';
+import { placeTitleNeedles, scrubSlotGlue } from './slotGlue';
 import {
   scrubBeastifiedHumanoid,
   scrubDeniedKill,
@@ -1630,7 +1630,15 @@ export function applyProseWarden(text: string, ctx?: ProseWardenContext): string
   next = scrubNamedCastAsObject(next, ctx?.namedCast ?? ctx?.presentNames ?? []);
   next = scrubDeadFoeReengage(next, ctx?.lastKill, ctx?.hasLiveEncounter === true);
   next = scrubUnresolvedDeixisNouns(next, ctx?.currentLocation);
-  next = scrubSlotGlue(next, ctx?.namedCast ?? ctx?.presentNames ?? []);
+  next = scrubSlotGlue(
+    next,
+    ctx?.namedCast ?? ctx?.presentNames ?? [],
+    [
+      ...(ctx?.knownPlaces ?? []),
+      ctx?.currentLocation ?? '',
+      ctx?.priorLocation ?? '',
+    ].flatMap((n) => placeTitleNeedles(n))
+  );
   next = scrubFactionAsLootOrTarget(next);
   next = scrubStitchBankLeaks(next);
   next = scrubEntityMadLibs(next, ctx?.enemyName);

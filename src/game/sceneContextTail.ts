@@ -21,6 +21,15 @@ const TRAVEL_LINE =
 const LEAVE_BEHIND =
   /\b(?:leave|left|leaving)\b[\w\s,'-]{0,48}\bbehind\b|\bbehind and reach\b|\breach(?:ed|es)?\s+(?:the\s+)?|\barrive(?:d|s)? at\b/i;
 
+const DEPARTURE_FAREWELL =
+  /\b(?:watching you go|until the (?:fog|dark|rain|dust|night) swallows|left behind|stays? behind|does not follow|as you (?:leave|go|walk away))\b/i;
+
+const HERE_ACTOR =
+  /\b(?:waits?|stands?|looks? up|nods?|asks?|says?|greets?|watches? you(?!\s+go)|steps?|holds?)\b/i;
+
+const OPENING_PIN_ROLE =
+  /\b(?:handler|priests?|scale priests?)\b/i;
+
 const FIGHT_BLEED =
   /\b(blade|throat|handspan|skirmisher|mid-arc|press(?:es)? the attack|parry|lunges?)\b/i;
 
@@ -179,9 +188,36 @@ export function isStaleContextBleed(state: GameState, text: string): boolean {
   );
 }
 
+export function openingPinNames(state: GameState): string[] {
+  const pins = [...(state.openingEstablishment?.pinnedNpcNames ?? [])];
+  const out: string[] = [];
+  for (const p of pins) {
+    const n = (p ?? '').trim();
+    if (n && !out.some((x) => x.toLowerCase() === n.toLowerCase())) out.push(n);
+  }
+  return out;
+}
+
+export function isLeaveBehindFarewell(text: string): boolean {
+  return DEPARTURE_FAREWELL.test(text ?? '');
+}
+
+function openingPinActsHere(body: string, state: GameState): boolean {
+  if (isLeaveBehindFarewell(body) && !mentionsPlace(body, state.openingEstablishment?.answers?.where)) {
+    return false;
+  }
+  const pinHit =
+    OPENING_PIN_ROLE.test(body)
+    || openingPinNames(state).some((pin) => {
+      if (pin.length < 3) return false;
+      return new RegExp(`\\b${escapeRe(pin)}\\b`, 'i').test(body);
+    });
+  return pinHit && HERE_ACTOR.test(body);
+}
+
 /**
  * After a committed leave/travel, the opening room is not HERE unless we returned.
- * Ledger: opening answers.where vs current camera — not a phrase list.
+ * Ledger: opening answers.where + opening pins vs current camera — not a phrase list.
  */
 export function isOpeningOccupancyReset(state: GameState, text: string): boolean {
   const body = (text ?? '').trim();
@@ -189,7 +225,7 @@ export function isOpeningOccupancyReset(state: GameState, text: string): boolean
   const here = hereLocation(state);
   const openingWhere = (state.openingEstablishment?.answers?.where ?? '').trim();
   if (!openingWhere || !placesDiffer(here, openingWhere)) return false;
-  if (!mentionsPlace(body, openingWhere)) return false;
-  if (mentionsPlace(body, here)) return false;
-  return true;
+  if (mentionsPlace(body, openingWhere) && !mentionsPlace(body, here)) return true;
+  if (openingPinActsHere(body, state)) return true;
+  return false;
 }

@@ -12,7 +12,7 @@
  */
 
 import type { CampaignBible } from '@/data/campaigns/types';
-import { isHubRoleCompoundToken, isNonPersonNameToken, isPolityFactionOrPlaceToken } from './chromeAuthority';
+import { isHubRoleCompoundToken, isNonPersonNameToken, isPlannerUiPersonToken, isPolityFactionOrPlaceToken } from './chromeAuthority';
 
 // ============================================================================
 // LOCATION REGISTRY — All valid location names from hubs, quests, and opening cards
@@ -454,6 +454,7 @@ function isRegistryProperName(name: string, bibleId?: string | null): boolean {
 export function isHubContactProperName(name: string): boolean {
   const t = (name ?? '').trim();
   if (!t || t.length < 3) return false;
+  if (isPlannerUiPersonToken(t)) return false;
   if (/^(?:Brother|Sister|Father|Captain|High Chanter|Envoy)\s+[A-Z]/i.test(t)) return true;
   if (
     /^[A-Z][\w'-]+\s+(?:Fence|Sergeant|Guard|Clerk|Registrar|Chirurgeon|Handler|Skirmisher|Thug|Priest|Contact|Hand|Owner|Vane|Quill|Tam|Ash|Holt)$/i.test(
@@ -473,6 +474,7 @@ export function isHubContactProperName(name: string): boolean {
 export function canHarvestAsNamedPerson(name: string, bibleId?: string | null): boolean {
   const t = (name ?? '').trim();
   if (!t || t.length < 2) return false;
+  if (isPlannerUiPersonToken(t)) return false;
   if (/^(charter|millstone)$/i.test(t.replace(/^(the|a|an)\s+/i, ''))) return false;
   if (isPolityFactionOrPlaceToken(t) || isRegisteredLocation(t, bibleId)) return false;
   if (isNonPersonNameToken(t)) return false;

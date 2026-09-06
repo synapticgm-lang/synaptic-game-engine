@@ -813,6 +813,43 @@ export function detectDialogueTreadmillHard(
   return false;
 }
 
+const TALK_ULTIMATUM_RECYCLE = 0.72;
+
+/**
+ * 02y — near-exact NPC ultimatum recycle in the last 5 GM bodies.
+ * Third close copy rejects. First ask and player-asked repeat stay legal.
+ * A leave/travel or other concrete delta still commits.
+ */
+export function detectTalkUltimatumRecycle(
+  draft: string,
+  recentGmBeats: string[],
+  playerInput: string
+): boolean {
+  if (playerAsksRepeat(playerInput)) return false;
+  const text = (draft ?? '').trim();
+  if (text.length < 40) return false;
+  if (hasBeatDeltaCue(text) && /\b(?:leave|left|travel|reach|exit|walk away)\b/i.test(text)) {
+    return false;
+  }
+  const window = [...(recentGmBeats ?? [])].slice(-5);
+  const near = window.filter((b) => {
+    const prior = String(b ?? '').trim();
+    if (prior.length < 24) return false;
+    return tokenJaccard(text, prior) >= TALK_ULTIMATUM_RECYCLE;
+  });
+  return near.length >= 2;
+}
+
+export function isTalkUltimatumExhausted(state: {
+  log?: Array<{ role?: string; content?: string }>;
+}): boolean {
+  const recent = recentGmBeatTexts(state, 5);
+  if (recent.length < 3) return false;
+  const last = recent[recent.length - 1] ?? '';
+  if (last.length < 40) return false;
+  return recent.filter((b) => tokenJaccard(last, b) >= TALK_ULTIMATUM_RECYCLE).length >= 3;
+}
+
 const COMBAT_NULL_DELTA =
   /\b(little true effect|absorb(?:s|ed)? (?:much of )?the (?:impact|blow)|seems to have little|hisses?,?\s+its burning eyes narrowing|bring your fists|lash out with your fists)\b/i;
 

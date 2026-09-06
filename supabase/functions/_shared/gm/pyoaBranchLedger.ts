@@ -49,6 +49,46 @@ export function isPyoaItemDestroyed(state: GameState, itemName: string): boolean
   );
 }
 
+/**
+ * 02y — committed / warden-seen prose that destroys the charter (not a quote list).
+ * Shape: charter + catch/curl/die/ash/hearth/flame/eat-the-last-corner in one window.
+ */
+export function isPyoaCharterProseBurn(text: string): boolean {
+  const body = (text ?? '').trim();
+  if (!body || !/\b(?:millstone\s+)?charter\b/i.test(body)) return false;
+  if (/\bwill you\s+(?:forge|burn)\b/i.test(body) && !/\b(?:ash|hearth|flames?|curls?|dies|eats?)\b/i.test(body)) {
+    return false;
+  }
+  const window =
+    /\b(?:millstone\s+)?charter\b[\s\S]{0,96}\b(?:ash(?:es)?|hearth|flames?|fire|curl(?:s|ed|ing)?|dies|died|dying|eats? the last corner|last corner|catches?|caught)\b/i;
+  const windowRev =
+    /\b(?:ash(?:es)?|hearth|flames?|fire|curl(?:s|ed|ing)?|dies|died|eats? the last corner|last corner|catches?|caught)\b[\s\S]{0,96}\b(?:millstone\s+)?charter\b/i;
+  return window.test(body) || windowRev.test(body);
+}
+
+/** Mark the charter destroyed now — kit strip, same lock as ≥3 uses. */
+export function applyPyoaCharterProseBurn(state: GameState, text: string): GameState {
+  if (state.engineMode !== 'pyoa') return state;
+  if (isPyoaItemDestroyed(state, 'charter')) return state;
+  if (!isPyoaCharterProseBurn(text)) return state;
+  const ledger = state.pyoaBranchLedger ?? initPyoaBranchLedger();
+  const destroyed = [...(ledger.destroyedItems ?? []), 'millstone-charter'].filter(
+    (item, index, self) => self.indexOf(item) === index
+  );
+  const inventory = (state.inventory ?? []).filter((i) => !/charter|millstone/i.test(i.name ?? ''));
+  return {
+    ...state,
+    inventory,
+    pyoaBranchLedger: {
+      ...ledger,
+      destroyedItems: destroyed,
+      branchClosed: true,
+      activeBranch: 'millstone-charter',
+      committedPaths: [...(ledger.committedPaths ?? []), 'millstone-charter:prose-burn'].slice(-24),
+    },
+  };
+}
+
 /** 02l — charter is gone from the story: burned, sold, delivered, or kit-empty after a use. */
 export function isPyoaCharterClosed(state: GameState): boolean {
   if (state.engineMode !== 'pyoa') return false;

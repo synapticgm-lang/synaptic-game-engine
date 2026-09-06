@@ -19,6 +19,13 @@ import { isHubRoleCompoundToken, isNonPersonNameToken } from './chromeAuthority'
 import { getRegisteredNpcs, canHarvestAsNamedPerson } from './entityRegistry';
 import { matchesLastKillName } from './combatAuthority';
 import { harvestRoleOccupancy } from './closedScenePerson';
+import { applyPyoaCharterProseBurn } from './pyoaBranchLedger';
+import {
+  isLeaveBehindFarewell,
+  locationChangedRecently,
+  openingPinNames,
+} from './sceneContextTail';
+import { isPlannerUiPersonToken } from './chromeAuthority';
 
 /**
  * Extract NPC names from prose that are in the entity registry.
@@ -153,7 +160,7 @@ export function harvestNarrativeIntoLedger(
         turn
       ),
     };
-    return harvestRoleOccupancy(crowded, prose);
+    return applyPyoaCharterProseBurn(harvestRoleOccupancy(crowded, prose), prose);
   }
 
   const next = state;
@@ -161,11 +168,23 @@ export function harvestNarrativeIntoLedger(
   let npcMemories = [...(next.npcMemories ?? [])];
   const present = new Set([...(next.sceneFacts?.present ?? [])]);
 
+  const traveled = locationChangedRecently(state);
+  const openingPins = openingPinNames(state).map((n) => n.toLowerCase());
+  const leaveBehindBeat = isLeaveBehindFarewell(prose);
+
   for (const name of registeredNpcs) {
     if (!canHarvestAsNamedPerson(name, state.bibleId ?? state.campaignBibleId)) {
       console.warn(`[narrativeHarvest 02j] Rejected role/anonymous NPC: ${name}`);
       continue;
     }
+    if (isPlannerUiPersonToken(name)) continue;
+    if (
+      traveled
+      && (openingPins.includes(name.toLowerCase()) || /^(handler|priests?)$/i.test(name))
+    ) {
+      continue;
+    }
+    if (leaveBehindBeat && traveled && /^(handler|priests?)$/i.test(name)) continue;
     const lastKill = state.sceneFacts?.lastKill;
     if (
       lastKill?.outcome === 'victory' &&
@@ -190,6 +209,7 @@ export function harvestNarrativeIntoLedger(
   if (lastKill?.outcome === 'victory' && !state.activeEncounter) {
     presentList = presentList.filter((p) => !matchesLastKillName(p, lastKill));
   }
+  presentList = presentList.filter((p) => !isPlannerUiPersonToken(p));
   const withNames = {
     ...next,
     lorebook,
@@ -207,7 +227,7 @@ export function harvestNarrativeIntoLedger(
       turn
     ),
   };
-  return harvestRoleOccupancy(crowded, prose);
+  return applyPyoaCharterProseBurn(harvestRoleOccupancy(crowded, prose), prose);
 }
 
 /** Strip / rewrite invented city/town names that are not on the world map. */

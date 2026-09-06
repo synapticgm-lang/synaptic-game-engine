@@ -11,6 +11,7 @@ import {
   detectLeadingCollage,
   detectSameRoomEssayHard,
   detectDialogueTreadmillHard,
+  detectTalkUltimatumRecycle,
   detectCombatPurgatoryHard,
   isAtmosphereOnlyBeat,
   playerAsksRepeat,
@@ -25,7 +26,7 @@ import { isClosedKillRecycle, isDeadFoeReopenedAsLiving } from './combatAuthorit
 import { isInventedClosedScenePerson } from './closedScenePerson';
 import { isOneCameraFightViolation } from './oneCameraFight';
 import { isStaleContextBleed } from './sceneContextTail';
-import { isSlotGlueViolation, ledgerSlotPeople } from './slotGlue';
+import { isSlotGlueViolation, ledgerPlaceTitles, ledgerSlotPeople } from './slotGlue';
 
 export type CommitGateReason =
   | 'atmosphere-only'
@@ -104,6 +105,10 @@ export function classifyBeatCommit(
     if (!reasons.includes('recycle-without-delta')) reasons.push('recycle-without-delta');
   }
 
+  if (detectTalkUltimatumRecycle(text, recent, playerInput ?? '')) {
+    if (!reasons.includes('recycle-without-delta')) reasons.push('recycle-without-delta');
+  }
+
   // Batch V — combat purgatory (identical fist / little-true-effect loops).
   if (detectCombatPurgatoryHard(text, recent, playerInput ?? '')) {
     if (!reasons.includes('recycle-without-delta')) reasons.push('recycle-without-delta');
@@ -167,7 +172,7 @@ export function isFactClosedViolation(state: GameState, text: string): boolean {
   // 02r — old-room camera or post-clear steel after a recent scene change.
   if (isStaleContextBleed(state, body)) return true;
   // 02t / 02v — deixis / kit object / companion name used as a slot.
-  if (isSlotGlueViolation(body, ledgerSlotPeople(state))) return true;
+  if (isSlotGlueViolation(body, ledgerSlotPeople(state), ledgerPlaceTitles(state))) return true;
   return false;
 }
 
@@ -342,6 +347,17 @@ export function isWriterMonologueLeak(text: string | undefined): boolean {
     || /\bthat isn['’]t (?:real|needed|required)\b/i.test(text)
     || /\b(?:passes|line(?:s)? up with)\s+(?:a concrete fact|the atlas)\b/i.test(text)
     || /\bthe interruption is good\b/i.test(text)
+    // 02y — imperative craft / writer-order (shape, not a Gemini quote list)
+    || /\bin no more than\s+\d+\s+words\b/i.test(text)
+    || /\bdo not narrate\b/i.test(text)
+    || /\bdo not address anyone\b/i.test(text)
+    || /\bskip the (?:comma|period|colon|semicolon|tag)\b/i.test(text)
+    || /\bdon['’]t add any closing words\b/i.test(text)
+    || /\busing only sensory(?: detail)?\b/i.test(text)
+    || /\bdo not write (?:single )?(?:you )?sentences\b/i.test(text)
+    || /(?:^|[.!?]\s+)(?:Do not|Don't|Skip|Using only|In no more than)\b[^.]{0,80}\b(?:words?|narrate|address|comma|sentences?|closing words|sensory)\b/m.test(
+      text
+    )
   );
 }
 
