@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Sync GM prompt modules into supabase/functions/_shared/gm for the edge runtime.
  * Run after editing prompt sources: node scripts/sync-gm-edge-shared.mjs
  */
@@ -75,6 +75,7 @@ const FILES = [
   'proseWarden.ts',
   'dungeonLifecycle.ts',
   'dungeonMobLedger.ts',
+  'padUniverse.ts',
   'outdoorHubs.ts',
   'hubEncounters.ts',
   'pyoaSpine.ts',
@@ -159,10 +160,10 @@ fs.writeFileSync(
   `# GM prompt shared modules (edge)
 
 Auto-synced from \`src/game\` via \`node scripts/sync-gm-edge-shared.mjs\`.
-Do not edit these copies by hand — change the src files and re-sync.
+Do not edit these copies by hand â€” change the src files and re-sync.
 `,
   'utf8'
 );
 
-console.log('Done →', destDir);
+console.log('Done â†’', destDir);
 
