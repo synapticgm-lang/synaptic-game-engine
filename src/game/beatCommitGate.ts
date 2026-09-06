@@ -21,7 +21,7 @@ import { isUnresolvedDeixisToken, realPresentPeople } from './chromeAuthority';
 import { isEncounterEngaged } from './encounterTerminalFsm';
 import { hubsForBibleId } from './outdoorHubs';
 import { isPyoaCharterClosed } from './pyoaBranchLedger';
-import { isDeadFoeReopenedAsLiving } from './combatAuthority';
+import { isClosedKillRecycle, isDeadFoeReopenedAsLiving } from './combatAuthority';
 import { isInventedClosedScenePerson } from './closedScenePerson';
 import { isOneCameraFightViolation } from './oneCameraFight';
 import { isStaleContextBleed } from './sceneContextTail';
@@ -124,6 +124,16 @@ export function classifyBeatCommit(
     if (!reasons.includes('recycle-without-delta')) reasons.push('recycle-without-delta');
   }
 
+  // 02x Lock D — HUD / RECORD / bracket-slot / SNAPSHOT chrome as the beat.
+  if (isHudCombatChromeLeak(text) || isEngineChromeOnlyBeat(text)) {
+    if (!reasons.includes('recycle-without-delta')) reasons.push('recycle-without-delta');
+  }
+
+  // 02x Lock C — exact prior GM body recycle (player-asked repeat already returned).
+  if (isExactPriorGmBody(state, text)) {
+    if (!reasons.includes('recycle-without-delta')) reasons.push('recycle-without-delta');
+  }
+
   // 02j Lock C — destroyed charter / dead foe cannot reopen as live facts.
   if (isFactClosedViolation(state, text)) {
     if (!reasons.includes('recycle-without-delta')) reasons.push('recycle-without-delta');
@@ -139,8 +149,8 @@ export function isFactClosedViolation(state: GameState, text: string): boolean {
   if (isPyoaCharterClosed(state)) {
     if (
       /\b(?:millstone\s+)?charter\b/i.test(body)
-      && /\b(?:clutch|hold|forge|burn|unused|fate|leave it to|will you (?:forge|burn)|takes? the charter|from your (?:hands|pack|pocket)|sell(?:s|ing)?|sold|hand(?:s|ed)? over|in your (?:pack|hand|hands|pocket)|re-offers?|offers? you)\b/i.test(body)
-      && !/\b(?:burned|destroyed|gone|ashes|already sold|empty pocket|nothing left)\b/i.test(body)
+      && /\b(?:clutch|hold|forge|burn|unused|fate|leave it to|will you (?:forge|burn)|takes? the charter|from your (?:hands|pack|pocket)|sell(?:s|ing)?|sold|hand(?:s|ed)? over|in your (?:pack|hand|hands|pocket|coat|kit|bag)|re-offers?|offers? you|weight|chest|tucked|against your|item-gain)\b/i.test(body)
+      && !/\b(?:burned|destroyed|gone|ashes|already sold|empty pocket|nothing left|space where the charter)\b/i.test(body)
     ) {
       return true;
     }
@@ -148,6 +158,7 @@ export function isFactClosedViolation(state: GameState, text: string): boolean {
   const kill = state.sceneFacts?.lastKill;
   if (kill?.name && kill.outcome === 'victory' && !state.activeEncounter) {
     if (isDeadFoeReopenedAsLiving(body, kill, false)) return true;
+    if (isClosedKillRecycle(body, kill, false)) return true;
   }
   // 02p — role person who is not in this scene.
   if (isInventedClosedScenePerson(state, body)) return true;
@@ -181,17 +192,11 @@ export function codedSceneMove(state: GameState): string {
     .map((h) => h.name)
     .find((n) => n.toLowerCase() !== loc.toLowerCase());
   const turn = state.turn ?? 0;
-  const enc = state.activeEncounter;
-  const hpLine =
-    engaged && foe && enc && typeof enc.hp === 'number' && typeof enc.maxHp === 'number'
-      ? ` ${foe} still stands (${Math.max(0, enc.hp)}/${enc.maxHp} HP).`
-      : '';
-
   if (engaged && foe) {
     const combatBank = [
-      `${foe} keeps the alley mouth in ${loc}, blade ready.${hpLine} Press the attack, break contact, or offer parley.`,
-      `Steel catches the light as ${foe} holds ground in ${loc}.${hpLine} The skirmish waits on your next move.`,
-      `Dust kicks up under ${foe}'s boots in ${loc}.${hpLine} Strike hard, break contact, or talk them down — standing still costs you.`,
+      `${foe} keeps the alley mouth in ${loc}, blade ready. Press the attack, break contact, or offer parley.`,
+      `Steel catches the light as ${foe} holds ground in ${loc}. The skirmish waits on your next move.`,
+      `Dust kicks up under ${foe}'s boots in ${loc}. Strike hard, break contact, or talk them down — standing still costs you.`,
     ];
     return combatBank[turn % combatBank.length]!;
   }
@@ -329,6 +334,14 @@ export function isWriterMonologueLeak(text: string | undefined): boolean {
     || /\bnarrative tension is (?:maybe )?\d+\s*\/\s*10\b/i.test(text)
     || /\bif I want TENSION\b/i.test(text)
     || /\bI(?:['’]ll| will) write short,\s*evocative\b/i.test(text)
+    // 02x — planner / imperative instruction-voice (shape, not a Gemini quote list)
+    || /(?:^|[.!?]\s+)(?:No|Do not|Don't)\s+[a-z][^.]{2,60}\.\s*(?:No|Do not|Don't)\s+/m.test(text)
+    || /(?:^|[.!?]\s+)End with (?:the|a|an)\b/m.test(text)
+    || /\bno\s+(?:numbers?|tags?|loot)\b(?:\s*,\s*|\s+)no\s+(?:numbers?|tags?|loot|new named)/i.test(text)
+    || /(?:^|[.!?]\s+)No\s+(?:tag|loot|numbers?|named)\b/m.test(text)
+    || /\bthat isn['’]t (?:real|needed|required)\b/i.test(text)
+    || /\b(?:passes|line(?:s)? up with)\s+(?:a concrete fact|the atlas)\b/i.test(text)
+    || /\bthe interruption is good\b/i.test(text)
   );
 }
 
@@ -346,9 +359,49 @@ export function isDirectorChromeLeak(text: string | undefined): boolean {
     || /\bAUTHORITY:\s*/i.test(text)
     || /\bARC (?:BEAT|DIRECTOR)\b/i.test(text)
     || /\bTURN JOB:\s*/i.test(text)
-    || /\bSNAPSHOT\b/i.test(text) && /\bPresence:\s*/i.test(text)
+    || /\bSNAPSHOT\b/i.test(text) && /\b(?:Location|Presence|Crowd|Exits):\s*/i.test(text)
+    || /\bSNAPSHOT\b/i.test(text) && /={3,}/.test(text)
     || /\bencou?nter initiated\s*:/i.test(text)
   );
+}
+
+/** Lock D — combat HUD / RECORD / bracket-slot templates in the book. */
+export function isHudCombatChromeLeak(text: string | undefined): boolean {
+  if (!text?.trim()) return false;
+  return (
+    /\(\s*\d+\s*\/\s*\d+\s*HP\s*\)/i.test(text)
+    || /\bstill stands\s*\(\s*\d+/i.test(text)
+    || /\bRECORD\s+\d+\b/.test(text)
+    || /\[(?:the|a|an)\s+[a-z][a-z'-]{1,24}\]/.test(text)
+  );
+}
+
+/** Lock D — the whole turn is engine chrome (31i sealed-manifest stub shape). */
+export function isEngineChromeOnlyBeat(text: string | undefined): boolean {
+  const raw = (text ?? '').trim();
+  if (!raw) return false;
+  const stripped = raw
+    .replace(/\(\s*\d+\s*\/\s*\d+\s*HP\s*\)/gi, '')
+    .replace(/\bstill stands\s*\([^)]*\)/gi, '')
+    .replace(/\bRECORD\s+\d+\b[^.]*\.?/g, '')
+    .replace(/\[(?:the|a|an)\s+[^\]]+\]/gi, '')
+    .replace(/={2,}/g, '')
+    .replace(/\bSNAPSHOT\b[:\s]*/gi, '')
+    .replace(/\b(?:Location|Presence|Crowd|Exits|HP|MP):\s*[^\n]*/gi, '')
+    .replace(/\s+/g, ' ')
+    .trim();
+  return (isHudCombatChromeLeak(raw) || isDirectorChromeLeak(raw)) && stripped.length < 28;
+}
+
+function normalizeCommittedBeat(s: string): string {
+  return (s ?? '').replace(/\s+/g, ' ').trim().toLowerCase();
+}
+
+/** Lock C — exact duplicate of a recent committed GM body. */
+export function isExactPriorGmBody(state: GameState, text: string): boolean {
+  const body = normalizeCommittedBeat(text);
+  if (body.length < 24) return false;
+  return recentGmBeatTexts(state, 6).some((b) => normalizeCommittedBeat(b) === body);
 }
 
 /** Strip director chrome sentences; leave diegetic prose. */

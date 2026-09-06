@@ -12,7 +12,7 @@
  */
 
 import type { CampaignBible } from '@/data/campaigns/types';
-import { isPolityFactionOrPlaceToken } from './chromeAuthority';
+import { isHubRoleCompoundToken, isNonPersonNameToken, isPolityFactionOrPlaceToken } from './chromeAuthority';
 
 // ============================================================================
 // LOCATION REGISTRY — All valid location names from hubs, quests, and opening cards
@@ -395,6 +395,7 @@ const COMMON_NPCS = [
   'priest', 'healer', 'cook', 'smith', 'blacksmith',
   'captain', 'sergeant', 'corporal', 'lieutenant',
   'official', 'officer', 'clerk', 'scribe',
+  'handler', 'skirmisher',
 ];
 
 // ============================================================================
@@ -409,6 +410,41 @@ export function isCommonRoleNpc(name: string): boolean {
   if (!t) return false;
   const bare = t.replace(/^(the|a|an)\s+/i, '').toLowerCase();
   return COMMON_ROLE_SET.has(bare) || COMMON_ROLE_SET.has(t.toLowerCase());
+}
+
+/** Bare honorific / rank with no given name — role, not CAST. */
+export function isBareHonorificTitle(name: string): boolean {
+  const bare = (name ?? '').trim().replace(/^(the|a|an)\s+/i, '');
+  return /^(?:Brother|Sister|Father|Mother|Captain|Envoy|Priest|Handler|Sergeant|Corporal)$/i.test(
+    bare
+  );
+}
+
+/** Title + given (`Brother Tam`) — needs a registry person, not a free invent. */
+export function isTitlePlusGiven(name: string): boolean {
+  return /^(?:Brother|Sister|Father|Mother|Captain|High Chanter|Envoy)\s+[A-Z][a-z'-]+$/.test(
+    (name ?? '').trim()
+  );
+}
+
+function isRegistryProperName(name: string, bibleId?: string | null): boolean {
+  const t = (name ?? '').trim();
+  if (!t || !bibleId) return false;
+  const campaignNpcs = NPC_REGISTRY_BY_BIBLE[bibleId] ?? [];
+  const hit = (needle: string) =>
+    campaignNpcs.find((n) => n.toLowerCase() === needle.toLowerCase());
+  const match = hit(t);
+  if (match) {
+    if (isCommonRoleNpc(match) && !isHubContactProperName(match)) return false;
+    if (isBareHonorificTitle(match)) return false;
+    return true;
+  }
+  if (isTitlePlusGiven(t)) {
+    const given = t.replace(/^(?:Brother|Sister|Father|Mother|Captain|High Chanter|Envoy)\s+/i, '');
+    const givenMatch = hit(given);
+    return !!(givenMatch && !isCommonRoleNpc(givenMatch) && !isBareHonorificTitle(givenMatch));
+  }
+  return false;
 }
 
 /**
@@ -439,18 +475,13 @@ export function canHarvestAsNamedPerson(name: string, bibleId?: string | null): 
   if (!t || t.length < 2) return false;
   if (/^(charter|millstone)$/i.test(t.replace(/^(the|a|an)\s+/i, ''))) return false;
   if (isPolityFactionOrPlaceToken(t) || isRegisteredLocation(t, bibleId)) return false;
+  if (isNonPersonNameToken(t)) return false;
+  if (isHubRoleCompoundToken(t)) return false;
+  if (isBareHonorificTitle(t)) return false;
   if (isCommonRoleNpc(t) && !isHubContactProperName(t)) return false;
+  if (isTitlePlusGiven(t)) return isRegistryProperName(t, bibleId);
   if (isHubContactProperName(t)) return true;
-  if (bibleId) {
-    const campaignNpcs = NPC_REGISTRY_BY_BIBLE[bibleId] ?? [];
-    const match = campaignNpcs.find((n) => n.toLowerCase() === t.toLowerCase());
-    if (match) {
-      if (isCommonRoleNpc(match) && !isHubContactProperName(match)) return false;
-      if (isHubContactProperName(match)) return true;
-      if (/^[A-Z][a-z'-]+$/.test(match) && !isCommonRoleNpc(match)) return true;
-    }
-  }
-  if (/^[A-Z][a-z'-]{1,24}$/.test(t) && !isCommonRoleNpc(t)) return true;
+  if (isRegistryProperName(t, bibleId)) return true;
   return false;
 }
 

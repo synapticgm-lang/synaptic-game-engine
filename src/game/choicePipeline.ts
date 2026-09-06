@@ -897,13 +897,14 @@ export function padChoicesToCount(
     if (inventsPresenceOnEmptyScene(hubPad, state, storyProse)) continue;
     if (!merged.some((c) => c.toLowerCase() === hubPad.toLowerCase())) merged.push(hubPad);
   }
-  // Outdoor hub travel pads (Act-3) — light, alone-safe, no invent-crowd.
-  // 02i — closed universe: never re-birth Travel after starve
-  for (const hubChoice of outdoorHubTravelChoices(state, 2)) {
-    if (merged.length >= 4) break;
-    if (isExcludedPadLabel(hubChoice, excluded)) continue;
-    if (inventsPresenceOnEmptyScene(hubChoice, state, storyProse)) continue;
-    if (!merged.some((c) => c.toLowerCase() === hubChoice.toLowerCase())) merged.push(hubChoice);
+  // Outdoor hub travel pads (Act-3) — only if the universe still allows Travel.
+  if (!excluded.has('travel')) {
+    for (const hubChoice of outdoorHubTravelChoices(state, 2)) {
+      if (merged.length >= 4) break;
+      if (isExcludedPadLabel(hubChoice, excluded)) continue;
+      if (inventsPresenceOnEmptyScene(hubChoice, state, storyProse)) continue;
+      if (!merged.some((c) => c.toLowerCase() === hubChoice.toLowerCase())) merged.push(hubChoice);
+    }
   }
   if (merged.length >= min) {
     return sealPadUniverse(

@@ -9,6 +9,7 @@
 
 import type { CampaignBible } from '@/data/campaigns/types';
 import type { GameState, PlaceRecord } from './types';
+import { excludedPadFamilies } from './padUniverse';
 import { placeIdFromName } from './places';
 
 export interface OutdoorHub {
@@ -358,6 +359,9 @@ export function formatOutdoorHubsForPrompt(state: GameState): string {
 
 /** Light travel pads when outdoors — never invent crowd; skip during opening covers / alone first beats. */
 export function outdoorHubTravelChoices(state: GameState, max = 2): string[] {
+  // 02w — starve at emission. Callers also gate, but this function must not
+  // birth Travel after the closed universe excluded the family.
+  if (excludedPadFamilies(state).has('travel')) return [];
   if (state.openingEstablishment?.complete === false) return [];
   if (state.activeDungeon) return [];
   if (state.activeEncounter) return [];

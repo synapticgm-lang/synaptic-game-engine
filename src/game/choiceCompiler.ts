@@ -42,8 +42,8 @@ import {
   closedUniverseFallbacks,
   excludedPadFamilies,
   isExcludedPadLabel,
+  isLeaveFamilyPad,
   isTravelPad,
-  shouldStarveLeavePads,
   shouldStarveTravelPads,
 } from './padUniverse';
 import { isClosedScenePersonPad } from './closedScenePerson';
@@ -648,7 +648,6 @@ export function compileChoices(
   const engaged = isEncounterEngaged(state) || !!state.sceneFacts?.pendingEncounter;
   const liveStakes = hasLiveStakes(state);
   const travelStarve = excluded.has('travel') || shouldStarveTravelPads(state);
-  const leaveStarve = excluded.has('leave') || shouldStarveLeavePads(state);
   const streak = countPlayerIntentStreak(state);
   const loiter = countLoiterFamilyStreak(state);
   const hardStreak = streak.count >= 5 && streak.key !== 'empty';
@@ -903,29 +902,30 @@ export function compileChoices(
   }
 
   // Batch E/G — after inspect/wait/scout treadmill, force world-moving pads (not Scout/Wait).
-  // Batch S — dialogue recycle drops Press/Ask and forces Leave/Travel.
-  // Batch T — never offer Travel yo-yo while live stakes are up.
+  // 02w — interrupt never births Travel/Leave. Talk/inspect/legal non-travel edges only.
   if (stallInterrupt && !engaged) {
-    const interruptPads = talkRecycle
-      ? excluded.has('leave')
-        ? closedUniverseFallbacks(state, excluded).slice(0, 2)
-        : ['Leave through the nearest exit', 'Walk away with consequence']
-      : ['Ask a direct question', 'Press for leverage'];
-    const here = (state.currentLocation ?? '').toLowerCase();
-    if (!liveStakes && !travelStarve && !excluded.has('travel')) {
-      for (const h of hubsForBibleId(state.campaignBibleId).slice(0, 3)) {
-        if (h.name.toLowerCase() !== here) {
-          interruptPads.unshift(`Travel toward ${h.name}`);
-          break;
-        }
-      }
-    }
+    const interruptPads: string[] = [];
     if (state.activeEncounter || state.sceneFacts?.pendingEncounter) {
       interruptPads.unshift('Press the attack');
-    } else if (!talkRecycle && !excluded.has('leave')) {
-      interruptPads.push('Leave through the nearest exit');
+    }
+    for (const label of edgeLabels) {
+      if (isExcludedPadLabel(label, excluded)) continue;
+      if (isTravelPad(label) || isLeaveFamilyPad(label)) continue;
+      if (engaged && isLookOrExamineRoomPad(label)) continue;
+      if (!interruptPads.some((p) => p.toLowerCase() === label.toLowerCase())) {
+        interruptPads.push(label);
+      }
+      if (interruptPads.length >= 2) break;
+    }
+    if (interruptPads.length < 2) {
+      interruptPads.push(
+        ...(talkRecycle
+          ? closedUniverseFallbacks(state, excluded).slice(0, 2)
+          : ['Ask a direct question', 'Press for leverage'])
+      );
     }
     for (const pad of interruptPads) {
+      if (isTravelPad(pad) || isLeaveFamilyPad(pad)) continue;
       if (isExcludedPadLabel(pad, excluded)) continue;
       if (state.engineMode === 'pyoa' && !eligiblePyoaPadsAfterLock(state, pad)) continue;
       if (!filtered.some((f) => f.toLowerCase() === pad.toLowerCase())) {
@@ -991,9 +991,7 @@ export function compileChoices(
       /\b(travel|leave|exit|ask|press for leverage|quest|attack|flee|parley|doorway|face the)\b/i.test(c)
     );
     if (!worldMoving) {
-      const fallback = excluded.has('leave')
-        ? closedUniverseFallbacks(state, excluded)[0] ?? 'Ask a direct question'
-        : 'Leave through the nearest exit';
+      const fallback = closedUniverseFallbacks(state, excluded)[0] ?? 'Ask a direct question';
       if (!isExcludedPadLabel(fallback, excluded) && !filtered.some((f) => f.toLowerCase() === fallback.toLowerCase())) {
         filtered.unshift(fallback);
         notes.push('Fate world-moving pad forced');

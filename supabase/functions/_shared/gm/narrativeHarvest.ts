@@ -65,7 +65,7 @@ function extractProperNamesFromProse(prose: string, bibleId?: string | null): st
   const found = new Set<string>();
   const patterns = [
     /\b(?:Brother|Sister|Father|Captain|High Chanter|Envoy)\s+[A-Z][a-z'-]+\b/g,
-    /\b[A-Z][a-z'-]+\s+(?:Fence|Sergeant|Vane|Quill|Tam|Holt|Ash|Clerk)\b/g,
+    /\b[A-Z][a-z'-]+\s+[A-Z][a-z'-]+\b/g,
     /\bWren\s+Holt\b/g,
   ];
   for (const re of patterns) {

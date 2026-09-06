@@ -60,9 +60,11 @@ describe('Batch 02j — Lock B: CAST named-only', () => {
     expect(isHubContactProperName('Brother Tam')).toBe(true);
     expect(isHubContactProperName('Lowmarket Fence')).toBe(true);
     expect(isHubContactProperName('Wren Holt')).toBe(true);
-    expect(canHarvestAsNamedPerson('Brother Tam', 'summoned-pact')).toBe(true);
-    expect(canHarvestAsNamedPerson('Lowmarket Fence', 'summoned-pact')).toBe(true);
+    expect(canHarvestAsNamedPerson('Brother Tam', 'summoned-pact')).toBe(false);
+    expect(canHarvestAsNamedPerson('Lowmarket Fence', 'summoned-pact')).toBe(false);
     expect(canHarvestAsNamedPerson('Orel Vane', 'summoned-pact')).toBe(true);
+    expect(canHarvestAsNamedPerson('Father Karel', 'summoned-pact')).toBe(true);
+    expect(canHarvestAsNamedPerson('Wren Holt', 'thornferry-road')).toBe(true);
   });
 
   it('does not promote trader/clerk into CAST named[]', () => {
@@ -73,16 +75,16 @@ describe('Batch 02j — Lock B: CAST named-only', () => {
       currentLocation: 'Lowmarket',
       sceneFacts: {
         ...emptySceneFacts(5),
-        present: ['trader', 'clerk', 'Brother Tam'],
+        present: ['trader', 'clerk', 'Father Karel'],
       },
     };
     const cast = buildEntityCast(state);
-    expect(cast).toMatch(/Brother Tam/);
+    expect(cast).toMatch(/Father Karel/);
     expect(cast).not.toMatch(/NAMED CHARACTERS[^]*\btrader\b/i);
     expect(cast).not.toMatch(/NAMED CHARACTERS[^]*\bclerk\b/i);
   });
 
-  it('harvest skips trader from prose but keeps Brother Tam', () => {
+  it('harvest skips trader from prose but keeps Father Karel', () => {
     let state = createInitialState(undefined, 'litrpg') as GameState;
     state = {
       ...state,
@@ -92,12 +94,12 @@ describe('Batch 02j — Lock B: CAST named-only', () => {
     };
     const harvested = harvestNarrativeIntoLedger(
       state,
-      'The trader waves. Brother Tam nods from the stall.',
+      'The trader waves. Father Karel nods from the stall.',
       3
     );
     const present = harvested.sceneFacts?.present ?? [];
     expect(present.some((p) => /trader/i.test(p))).toBe(false);
-    expect(present.some((p) => /Brother Tam/i.test(p))).toBe(true);
+    expect(present.some((p) => /Father Karel/i.test(p))).toBe(true);
   });
 
   it('rewrites Brother Tam object splice', () => {

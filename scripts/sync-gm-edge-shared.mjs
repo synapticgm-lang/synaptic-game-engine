@@ -70,6 +70,8 @@ const FILES = [
   'narrativeHarvest.ts',
   'entityRegistry.ts',
   'entityCast.ts',
+  'closedScenePerson.ts',
+  'pyoaBranchLedger.ts',
   'proseWarden.ts',
   'dungeonLifecycle.ts',
   'dungeonMobLedger.ts',

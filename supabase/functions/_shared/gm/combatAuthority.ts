@@ -113,7 +113,10 @@ const DEAD_FOE_COMBAT_REENGAGE =
   /\b(?:remains? fixed|still (?:here|fixed|watching)|turns? (?:on|toward) you|commits? toward you|lunges?|strikes?|attacks?|swings? again|stirs?|twitch(?:es|ing)?|blade (?:stops? )?mid-arc|handspan from your throat|blade bites|cold line against)\b/i;
 /** Innkeeper / greeter rez — 02k LitRPG T38–T40 Void-Touched Scavenger. */
 const DEAD_FOE_LIVING_REZ =
-  /\b(?:looks? up|nods?(?:\s+in\s+greeting)?|waves?|greets?|smiles?|asks?|answers?|responds?|speaks? to you|sits?|sitting|sipping|polishing|mug of ale|good to see|stout man|bushy beard|takes? a seat|common (?:table|room)|wiping a (?:clay )?cup)\b/i;
+  /\b(?:looks? up|nods?(?:\s+in\s+greeting)?|waves?|greets?|smiles?|asks?|answers?|responds?|speaks? to you|talks?(?:\s+to)?|talking|sits?|sitting|sipping|polishing|mug of ale|good to see|stout man|bushy beard|takes? a seat|common (?:table|room)|wiping a (?:clay )?cup)\b/i;
+
+const FRESH_KILL_CONNECT =
+  /\b(?:the\s+)?(?:rock|stone|blow|strike)\s+connects?\b|\blands?\s+hard\b|\bconnects?,?\s+and\s+\w+\s+lands?\s+hard\b/i;
 
 function lastKillMentionRe(name: string): RegExp {
   const esc = name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
@@ -152,6 +155,17 @@ export function isDeadFoeReopenedAsLiving(
   if (!text || !lastKill?.name || liveEncounter) return false;
   if (lastKill.outcome !== 'victory') return false;
   return text.split(/(?<=[.!?])\s+/).some((sent) => shouldRewriteDeadFoeSentence(sent, lastKill));
+}
+
+/** Lock C — same kill beat replayed after lastKill already committed. */
+export function isClosedKillRecycle(
+  text: string,
+  lastKill?: LastKill | null,
+  liveEncounter?: boolean
+): boolean {
+  if (!text || !lastKill?.name || liveEncounter) return false;
+  if (lastKill.outcome !== 'victory') return false;
+  return FRESH_KILL_CONNECT.test(text);
 }
 
 export function attachLastKill(state: GameState, kill: LastKill): GameState {

@@ -5,11 +5,11 @@
  * "clerk falls into step") is a fact-close — not a SNAPSHOT line.
  */
 
-import type { GameState } from './types';
-import { canHarvestAsNamedPerson, isCommonRoleNpc, isHubContactProperName, isTitlePlusGiven } from './entityRegistry';
-import { resolveHubArrival } from './hubEncounters';
-import { isPyoaCharterClosed } from './pyoaBranchLedger';
-import { locationChangedRecently } from './sceneContextTail';
+import type { GameState } from './types.ts';
+import { canHarvestAsNamedPerson, isCommonRoleNpc, isHubContactProperName, isTitlePlusGiven } from './entityRegistry.ts';
+import { resolveHubArrival } from './hubEncounters.ts';
+import { isPyoaCharterClosed } from './pyoaBranchLedger.ts';
+import { locationChangedRecently } from './sceneContextTail.ts';
 
 const ROLE_ACTOR_VERBS =
   /(?:falls?\s+into\s+step|falls?\s+in\s+beside|keeps?\s+pace|takes?|says?|asks?|nods?|watches?|hands?|counts?|offers?|steps?|follows?|arrives?|waits?|bars?|greets?|looks\s+up|walks?)\b/i;

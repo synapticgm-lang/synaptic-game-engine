@@ -2,7 +2,7 @@
  * B025 — PYOA branch ledger (Millstone Charter paths + ally/betray/solo).
  */
 
-import type { GameState } from './types';
+import type { GameState } from './types.ts';
 
 export type PyoaBranchId = 'millstone-charter' | 'solo-road' | 'ally-path' | 'none';
 

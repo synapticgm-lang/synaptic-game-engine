@@ -66,6 +66,9 @@ export function isSlotGlueViolation(text: string, namedPeople: string[] = []): b
   if (/\bgroans\s+open\s+the\s+stranger\b/i.test(t)) return true;
   if (new RegExp(`\\bCharter\\s+${PERSON_VERB}\\b`).test(t)) return true;
   if (/\bthe\s+stranger\s+call\b/i.test(t)) return true;
+  if (/\b(?:examine|inspect|study|tip|nod(?:s)?\s+toward)\s+the\s+(?:Brother|Sister|Father|Mother|Captain)\s+[A-Z][a-z'-]+\b/i.test(t)) {
+    return true;
+  }
   if (isCompanionObjectGlue(t, namedPeople)) return true;
   return false;
 }
@@ -108,6 +111,10 @@ export function scrubSlotGlue(text: string, namedPeople: string[] = []): string 
   next = next.replace(/\bopen(?:s|ed|ing)?\s+the\s+stranger\b/gi, 'open');
   next = next.replace(new RegExp(`\\bCharter\\s+(${PERSON_VERB})\\b`, 'g'), 'Someone $1');
   next = next.replace(/\bthe\s+stranger\s+call\b/gi, 'they call');
+  next = next.replace(
+    /\b((?:examine|inspect|study|tip|nod(?:s)?\s+toward)\s+)the\s+((?:Brother|Sister|Father|Mother|Captain)\s+[A-Z][a-z'-]+)\b/gi,
+    '$1$2'
+  );
   for (const name of namedPeople) {
     const esc = escapeRe(name);
     next = next.replace(new RegExp(`\\b(${OBJECT_TAKE}\\s+)the\\s+${esc}\\b`, 'gi'), '$1');

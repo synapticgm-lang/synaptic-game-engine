@@ -31,7 +31,7 @@ import {
   detectAtmosphereReprint,
   detectSameRoomEssayHard,
 } from './semanticLoopDetector';
-import { classifyBeatCommit, repairRejectedBeat, codedSceneMove, isVerbatimStallStub, isDirectorChromeLeak, scrubDirectorChrome, isStitchBankFingerprint, isTokenSaladLeak } from './beatCommitGate';
+import { classifyBeatCommit, repairRejectedBeat, codedSceneMove, isVerbatimStallStub, isDirectorChromeLeak, scrubDirectorChrome, isStitchBankFingerprint, isTokenSaladLeak, isHudCombatChromeLeak, isEngineChromeOnlyBeat } from './beatCommitGate';
 import { hasNumberedChoiceLeak, hasQuestTrackerLeak, stripChoiceList } from './parser';
 import { hasCombatSpawnLogInBody } from './combatAuthority';
 import { detectHubRoleMadlib } from './chromeAuthority';
@@ -467,7 +467,7 @@ export function applyGovernanceToProse(
     notes.push('Token-salad leak reject');
     out = codedSceneMove(state);
   }
-  if (isBannedFallbackStub(out) || isVerbatimStallStub(out) || isDirectorChromeLeak(out) || isStitchBankFingerprint(out) || isTokenSaladLeak(out)) {
+  if (isBannedFallbackStub(out) || isVerbatimStallStub(out) || isDirectorChromeLeak(out) || isStitchBankFingerprint(out) || isTokenSaladLeak(out) || isHudCombatChromeLeak(out) || isEngineChromeOnlyBeat(out)) {
     rejectClone = true;
     notes.push('Banned stall/fallback/director/stitch stub — reject');
     out = codedSceneMove(state);

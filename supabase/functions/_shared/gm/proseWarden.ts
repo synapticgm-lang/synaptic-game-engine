@@ -693,6 +693,10 @@ export function scrubBodyStatusDumps(text: string): string {
       ''
     )
     .replace(/\b(?:HP|MP):\s*\d+\s*\/\s*\d+\b/g, '')
+    .replace(/\(\s*\d+\s*\/\s*\d+\s*HP\s*\)/gi, '')
+    .replace(/\bstill stands\s*\(\s*\d+\s*\/\s*\d+\s*HP\s*\)/gi, 'still stands')
+    .replace(/\bRECORD\s+\d+\b/g, '')
+    .replace(/\[(?:the|a|an)\s+[a-z][a-z'-]{1,24}\]/g, '')
     .replace(/\s{2,}/g, ' ')
     .trim();
   return tidyClauses(next);
@@ -1492,13 +1496,34 @@ export function scrubDestroyedPyoaItems(text: string, destroyedItems?: string[])
     /\b(?:sell|sold|selling)\s+(?:the\s+)?(?:millstone\s+)?charter\s+(?:to\s+)?(?:pell|the clerk)?\b/gi,
     'the charter is already gone'
   );
+  next = next.replace(
+    /\b(?:the\s+)?(?:millstone\s+)?charter['’]?s?\s+weight\s+(?:sits\s+)?against your chest\b/gi,
+    'the space where the charter was'
+  );
+  next = next.replace(
+    /\b(?:weight|paper)\s+against your chest\b/gi,
+    'empty space at your chest'
+  );
+  next = next.replace(
+    /\b(?:tucked|back)\s+(?:the\s+)?(?:millstone\s+)?charter\s+(?:against|on|into)\s+(?:your\s+)?chest\b/gi,
+    'the burned charter is gone'
+  );
+  next = next.replace(
+    /\b(?:the\s+)?(?:millstone\s+)?charter\s+(?:is\s+)?(?:back\s+)?on (?:your\s+)?chest\b/gi,
+    'the burned charter is gone'
+  );
   return tidyClauses(next);
 }
 
 /** Lock B — named CAST members must not become object/verb slots (Brother Tam splice). */
 export function scrubNamedCastAsObject(text: string, namedPeople: string[] = []): string {
-  if (!text?.trim() || !namedPeople.length) return text;
+  if (!text?.trim()) return text;
   let next = text;
+  next = next.replace(
+    /\b((?:examine|inspect|study|tip|nod(?:s)?\s+toward)\s+)the\s+((?:Brother|Sister|Father|Mother|Captain)\s+[A-Z][a-z'-]+)\b/gi,
+    '$1$2'
+  );
+  if (!namedPeople.length) return tidyClauses(next);
   for (const name of namedPeople) {
     const esc = name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
     next = next.replace(

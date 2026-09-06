@@ -1,6 +1,6 @@
 /**
  * Lock C — location-bound present[] trim on real travel.
- * NPCs do not teleport when the player leaves; companions and opening pins persist.
+ * NPCs do not teleport when the player leaves; companions persist. Opening pins do not.
  */
 
 import type { GameState } from './types';
@@ -28,15 +28,12 @@ export function trimPresentOnLocationChange(
     return state.sceneFacts?.present ?? [];
   }
   const present = state.sceneFacts?.present ?? [];
-  const pinned = new Set(
-    (state.openingEstablishment?.pinnedNpcNames ?? []).map((n) => n.toLowerCase())
-  );
   const keepLower = new Set<string>();
   if (state.companion) keepLower.add(state.companion.toLowerCase());
   for (const c of state.companions ?? []) {
     if (c.name) keepLower.add(c.name.toLowerCase());
   }
-  for (const p of pinned) keepLower.add(p);
+  // Opening pins stay in the opening room only — leave must not restore that occupancy.
 
   return present.filter((p) => keepLower.has(p.toLowerCase()));
 }

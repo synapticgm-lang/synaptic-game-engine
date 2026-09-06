@@ -18,7 +18,7 @@ import {
 } from './pyoaSpine';
 import { fleeAvailable, parleyAvailable } from './encounterTerminalFsm';
 import { countLoiterFamilyStreak } from './beatFingerprint';
-import { excludedPadFamilies, isExcludedEdge } from './padUniverse';
+import { excludedPadFamilies, isExcludedEdge, isExcludedPadLabel } from './padUniverse';
 
 export type ChoiceEdgeKind =
   | 'combat'
@@ -77,6 +77,8 @@ export function enumerateLegalEdges(state: GameState): ChoiceEdge[] {
     const exits = legalSpineExits(spineState);
     const force = spineForceEdgeAfterDelay(spineState);
     for (const ex of exits) {
+      // 02w — do not birth Leave/Travel spine labels when the universe excluded them
+      if (isExcludedPadLabel(ex.label, excluded)) continue;
       edges.push({
         id: `spine-${ex.id}`,
         label: ex.label,

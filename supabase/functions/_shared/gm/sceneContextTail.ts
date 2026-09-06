@@ -172,5 +172,24 @@ export function isStaleFightBleed(state: GameState, text: string): boolean {
 export function isStaleContextBleed(state: GameState, text: string): boolean {
   const body = (text ?? '').trim();
   if (!body) return false;
-  return isStaleLocationBleed(state, body) || isStaleFightBleed(state, body);
+  return (
+    isStaleLocationBleed(state, body)
+    || isStaleFightBleed(state, body)
+    || isOpeningOccupancyReset(state, body)
+  );
+}
+
+/**
+ * After a committed leave/travel, the opening room is not HERE unless we returned.
+ * Ledger: opening answers.where vs current camera — not a phrase list.
+ */
+export function isOpeningOccupancyReset(state: GameState, text: string): boolean {
+  const body = (text ?? '').trim();
+  if (!body || !locationChangedRecently(state)) return false;
+  const here = hereLocation(state);
+  const openingWhere = (state.openingEstablishment?.answers?.where ?? '').trim();
+  if (!openingWhere || !placesDiffer(here, openingWhere)) return false;
+  if (!mentionsPlace(body, openingWhere)) return false;
+  if (mentionsPlace(body, here)) return false;
+  return true;
 }
