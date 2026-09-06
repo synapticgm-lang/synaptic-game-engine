@@ -178,6 +178,26 @@ export function isStaleFightBleed(state: GameState, text: string): boolean {
   );
 }
 
+export function leftBehindNames(state: GameState): string[] {
+  const out: string[] = [];
+  for (const p of state.sceneFacts?.leftBehind ?? []) {
+    const n = (p ?? '').trim();
+    if (n && !out.some((x) => x.toLowerCase() === n.toLowerCase())) out.push(n);
+  }
+  return out;
+}
+
+export function isLeftBehindActingHere(state: GameState, text: string): boolean {
+  const body = (text ?? '').trim();
+  if (!body || !locationChangedRecently(state)) return false;
+  if (isLeaveBehindFarewell(body)) return false;
+  if (mentionsPlace(body, hereLocation(state))) return false;
+  return leftBehindNames(state).some((name) => {
+    if (name.length < 3) return false;
+    return new RegExp(`\\b${escapeRe(name)}\\b`, 'i').test(body) && HERE_ACTOR.test(body);
+  });
+}
+
 export function isStaleContextBleed(state: GameState, text: string): boolean {
   const body = (text ?? '').trim();
   if (!body) return false;
@@ -185,6 +205,7 @@ export function isStaleContextBleed(state: GameState, text: string): boolean {
     isStaleLocationBleed(state, body)
     || isStaleFightBleed(state, body)
     || isOpeningOccupancyReset(state, body)
+    || isLeftBehindActingHere(state, body)
   );
 }
 

@@ -2,34 +2,21 @@
  * MASTER SYSTEM PROMPT - Hierarchical Architecture
  * 
  * Design Philosophy:
- * 1. CRITICAL DIRECTIVES at top (inventory, agency, state integrity)
+ * 1. CRITICAL DIRECTIVES at top (HERE/CAST + agency — no kit dump)
  * 2. MODE-SPECIFIC BEHAVIOR in isolated blocks (mutually exclusive)
  * 3. TURN STRUCTURE enforcement (narrative → mechanics → choices)
- * 4. SUPPORTING RAILS (voice, prose, content safety)
+ * 4. SAFETY + MODE-VOICE only (no SNAPSHOT/CRAFT/GROUND TRUTH rails)
  * 
  * This replaces the scattered rule soup in systemPrompt.ts with a clear hierarchy.
  */
 
 import type { GameState, Settings, LoreCard } from './types.ts';
-import { formatFluidProseRailsForPrompt } from './fluidProseRails.ts';
 import { formatChoiceTierModeDna } from './choiceTierRules.ts';
 import { formatGmVoiceForPrompt, resolveVoiceIdForState } from './gmVoiceProfile.ts';
 import { formatMaturityRules } from './maturity.ts';
 import { KID_MODE_RULES, ADULT_MODE_RULES, NSFW_CAMPAIGN_RULES } from './contentModeRules.ts';
 import { campaignIsNsfw } from './campaignNsfw.ts';
-import { formatFullMemoryBlock } from './situationPacket.ts';
-import { formatClaimGroundingDirective } from './claimGrounding.ts';
-import { formatFolkVoiceForPrompt } from './folkVoiceExpectations.ts';
-import { formatSpeechActRailsForPrompt } from './speechActRails.ts';
-import { computeInventoryCapacity } from './inventory.ts';
-import { playerFacingLocation } from './locationName.ts';
-import { formatTimelineForPrompt } from './timelineFormat.ts';
-import { isInteriorMap } from './placeAuthority.ts';
-import { formatInteriorExploreAuthority } from './mapEngine.ts';
-import { resolvePanelBudget } from './panelBudget.ts';
-import { buildArchetypeRules, getDefaultArchetype } from './archetypes.ts';
 import { formatCustomTabletopRulesForPrompt } from './customTabletopRules.ts';
-import { calculateMemoryBudget } from './campaignMemory.ts';
 import { compileLitrpgCoreIdentity } from './openingPointerCard.ts';
 
 /**
@@ -45,59 +32,19 @@ const CRITICAL_DIRECTIVES = `
 │ CRITICAL DIRECTIVES - BLOCKING RULES (HIGHEST PRIORITY)            │
 └─────────────────────────────────────────────────────────────────────┘
 
-【 RULE 1: INVENTORY & GOLD AUTHORITY (ABSOLUTE) 】
+【 RULE 1: FACTS 】
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-The ONLY items/gold the player possesses are in:
-  • Inventory / Equipped Gear
-  • Materials  
-  • Gold amount
+Code owns kit, HP, gold, and exits. Do not invent items, named people, or numeric results.
+HERE and CAST on the beat card win. Atmosphere is free.
+If the player tries to use missing gear: empty hands — never improvise an item into existence.
+Emit <item-gain> / <heal> / <damage> only when the beat actually changes those facts.
 
-NEVER narrate using, drawing, throwing, drinking, swinging, or consuming ANY:
-  • Weapons not in Equipped Gear (no phantom swords, guns, grenades)
-  • Consumables not in Inventory (no phantom potions, med-kits)
-  • Tools not in Inventory (no phantom lockpicks, rope, tire irons)
-  • Gold amounts exceeding their current total
-
-If player attempts impossible item use:
-  ✗ DO NOT improvise the item into existence
-  ✓ DESCRIBE patting empty pockets / realizing they don't have it
-  ✓ EMIT: <system>Action failed: item not in inventory.</system>
-  ✓ OFFER valid alternatives from actual inventory
-
-NEVER offer numbered choices requiring:
-  • Missing weapons/tools
-  • Unaffordable gold amounts
-  • Containers not in their Containers list
-
-【 RULE 2: WORLD STATE INTEGRITY (ABSOLUTE) 】
+【 RULE 2: HERE / CAST 】
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Ground truth sources (in order of authority):
-  1. Active Game State (HP, location, equipped gear, companions)
-  2. SNAPSHOT in context (location, crowd, exits, props, presence, inventory)
-  3. Factual Timeline / ledger
-  4. WORLD LEDGER facts
-
-Player wording = ATTEMPTED ACTION, not a state commit.
-
-FLAIR vs FACTS:
-  • Descriptive engaging language and narrative flair are REQUIRED
-  • Factual details (stats, inventory, exits, who is here, damage) MUST match the SNAPSHOT / data sheets / ledger
-  • Do not invent items, doors, named NPCs, or numeric results
-  • Atmosphere (smell, rust, cadence, metaphor, NPC mannerism) is free
-
-NEVER invent:
-  • Companions (only those in "Active Companions" exist)
-  • Party members (if companions list = "none", player is ALONE)
-  • Named NPCs unless established in this scene or timeline
-  • Locations not in location sheet
-  • Items without <item-gain> tag
-  • HP/XP/Gold changes without tags
-
-When ALONE ARRIVAL = true OR Crowd = none:
-  ✗ DO NOT invent handlers, bystanders, "people who saw you"
-  ✓ Honor the empty scene
-
-Lore cards = encyclopedia entries. They prove an NPC EXISTS in the world, but NOT that they are physically present HERE.
+The camera is the last committed HERE. Named people who act are only those on CAST.
+Lore cards prove a person exists in the world, not that they are physically here.
+When CAST is none, do not invent a crowd, handler, or "people who saw you."
+Player wording is an attempted action, not a state commit.
 
 【 RULE 3: PLAYER AGENCY (ABSOLUTE) 】
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -502,17 +449,18 @@ Rules:
 `;
 
 /**
- * Build the master prompt by assembling sections
+ * Live writer system prompt. Mode-voice + safety only.
+ * Kit / SNAPSHOT / CRAFT / GROUND TRUTH inventory stay off this path (02z hole-close).
+ * Beat card + last beats live in `buildContextPrompt`.
  */
 export function buildMasterPrompt(
   state: GameState,
   settings: Settings,
-  activeLoreCards: LoreCard[] = []
+  _activeLoreCards: LoreCard[] = []
 ): string {
   const kidMode = settings.contentMode === 'kid';
   const nsfw = campaignIsNsfw(state);
-  
-  // Select active mode block
+
   const modeBlock = {
     litrpg: MODE_LITRPG.replace('{{LITRPG_CORE_IDENTITY}}', compileLitrpgCoreIdentity(state)),
     dnd: MODE_DND,
@@ -520,55 +468,26 @@ export function buildMasterPrompt(
     pyoa: MODE_PYOA,
   }[state.engineMode] ?? MODE_RPG;
 
-  // Content safety rules
-  const contentRules = kidMode 
+  const contentRules = kidMode
     ? KID_MODE_RULES
     : nsfw
       ? NSFW_CAMPAIGN_RULES
       : ADULT_MODE_RULES;
 
-  // Supporting rails
   const voiceRail = formatGmVoiceForPrompt(
     resolveVoiceIdForState(state, settings.gmVoiceProfileId),
     { engineMode: state.engineMode, kidMode }
   );
-  
-  const fluidRails = formatFluidProseRailsForPrompt(state.engineMode);
+
   const choiceDna = formatChoiceTierModeDna(state.engineMode);
-  const folkRails = formatFolkVoiceForPrompt(state, { kidMode });
-  const speechRails = formatSpeechActRailsForPrompt();
-  const claimGrounding = formatClaimGroundingDirective();
-  
-  // Calculate dynamic memory budget (Pack 12)
-  // Most models have 128k context, allocate adaptively
-  const systemPromptEstimate = 8000; // Rough estimate of this prompt's token count
-  const memoryBudget = calculateMemoryBudget(128000, systemPromptEstimate, 200, 4096);
-  
-  const memoryBlock = formatFullMemoryBlock(state, memoryBudget);
-  
-  // Archetype rules (campaign-specific flavor)
-  const archetypeRules = buildArchetypeRules(
-    state.engineMode,
-    state.campaignArchetype ?? getDefaultArchetype(state.engineMode),
-    { skipTabletopCore: false },
-  );
-  
-  // Tabletop custom rules
   const playerRules = state.engineMode === 'dnd'
     ? formatCustomTabletopRulesForPrompt(state.customTabletopRules, kidMode)
     : '';
 
-  // Ground truth ledger
-  const ledger = buildGroundTruthLedger(state);
-  
-  // Lore context
-  const loreContext = activeLoreCards.length > 0 ? buildLoreContext(activeLoreCards) : '';
-
   return `
 ═══════════════════════════════════════════════════════════════════════════
- SYNAPTIC GM - MASTER SYSTEM PROMPT v2.0 (Pack 12 Memory)
- Hierarchical Architecture: Critical → Mode → Structure → Safety
- Dynamic Memory Budget: ${memoryBudget} tokens (adaptive based on context)
+ SYNAPTIC GM — LIVE SYSTEM PROMPT
+ Critical → Mode → Safety. Facts live on the beat card, not a kit dump.
 ═══════════════════════════════════════════════════════════════════════════
 
 ${CRITICAL_DIRECTIVES}
@@ -583,96 +502,16 @@ ${TURN_STRUCTURE}
 
 ${OUTPUT_FORMATTING}
 
-───────────────────────────────────────────────────────────────────────────
- SUPPORTING RAILS
-───────────────────────────────────────────────────────────────────────────
-
 ${voiceRail}
-
-${fluidRails}
-
-${speechRails}
-
-${folkRails}
 
 ${choiceDna}
 
 ${playerRules}
 
-${archetypeRules}
-
 ${contentRules}
 
 ${formatMaturityRules(settings, { nsfw })}
-
-───────────────────────────────────────────────────────────────────────────
- GROUND TRUTH STATE & MEMORY
-───────────────────────────────────────────────────────────────────────────
-
-${ledger}
-
-${claimGrounding}
-
-${memoryBlock}
-
-${loreContext}
-
-═══════════════════════════════════════════════════════════════════════════
- END MASTER PROMPT - Ready for Turn Context
-═══════════════════════════════════════════════════════════════════════════
 `.trim();
-}
-
-function buildGroundTruthLedger(state: GameState): string {
-  const c = state.character;
-  const invList = state.inventory
-    .map((i) => `${i.name} x${i.quantity}${i.description ? ` — ${i.description}` : ''}`)
-    .join('; ') || 'None';
-  const companions = (state.companions ?? [])
-    .map(companion => `${companion.name} [${companion.type}; ${companion.role}; assignment: ${companion.assignment || 'none'}]`)
-    .join('; ') || 'None';
-  const statusList = c.conditions.length > 0 ? c.conditions.join(', ') : 'None';
-  
-  const mainQuests = (state.quests ?? []).filter(q => q.type === 'main');
-  const sideQuests = (state.quests ?? []).filter(q => q.type === 'side' && q.status === 'active');
-  
-  const mainQuestStr = mainQuests.length > 0 
-    ? mainQuests.map(q => `[MAIN] ${q.name} (${q.status})`).join('; ')
-    : 'None active';
-    
-  const sideQuestStr = sideQuests.length > 0
-    ? sideQuests.map(q => `[SIDE] ${q.name}`).join('; ')
-    : 'None active';
-
-  const cap = computeInventoryCapacity(state);
-  const equippedGear = state.inventory.filter(i => i.equipped).map(i => `${i.name}${i.slot ? ` (${i.slot})` : ''}`).join(', ') || 'None';
-  const containerInfo = cap.containerBreakdown.map(c => `${c.name} [${c.storageType}, ${c.kind}] ${c.used}/${c.capacity} slots`).join('; ') || 'None';
-  const isTabletop = state.engineMode === 'dnd';
-  const header = isTabletop
-    ? '=== TABLETOP CHARACTER STATE (GENERIC TTRPG TERMS ONLY) ==='
-    : '=== GROUND TRUTH CHARACTER & QUEST STATE ===';
-  const progressLine = isTabletop
-    ? `Level: ${c.level} | Do not mention Integration, Wave, Salvage, Foundation Core, or First Blood.`
-    : `Level: ${c.level} | XP: ${c.xp}/${c.xpToNext}`;
-
-  return `${header}
-HP: ${c.hp}/${c.maxHp} | Mana: ${c.mp}/${c.maxMp} | Gold: ${state.gold ?? 0}
-${progressLine}
-Location: ${playerFacingLocation(state)}
-Equipped Gear: ${equippedGear}
-Inventory: ${invList} (${cap.usedSlots}/${cap.totalSlots} slots used)
-Active Companions: ${companions}
-Containers: ${containerInfo}
-Materials: ${state.materials.map(m => `${m.name} x${m.quantity}`).join(', ') || 'None'}${cap.hasMagicalContainer ? ' (infinite stacking)' : ''}
-Status Effects: ${statusList}
-Active Main Story: ${mainQuestStr}
-Active Side Quests: ${sideQuestStr}
-===================================`;
-}
-
-function buildLoreContext(cards: LoreCard[]): string {
-  const summaries = cards.map(c => `[${c.type.toUpperCase()}] ${c.name} — ${c.summary}`).join('\n');
-  return `=== RELEVANT WORLD LORE & TIMELINE MILESTONES ===\n${summaries}\n===================================================`;
 }
 
 // Re-export for compatibility

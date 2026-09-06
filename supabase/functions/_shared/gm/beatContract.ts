@@ -4,11 +4,11 @@
  * 02z — sealed HERE/CAST/VERB/CLOSED/TONE card is the writer leaf; code stays trunk.
  */
 
-import type { GameState, LogEntry } from './types';
-import { formatPyoaSpineTurnJob } from './pyoaSpine';
-import { canHarvestAsNamedPerson, isRegisteredLocation } from './entityRegistry';
-import { isPlannerUiPersonToken, realPresentPeople } from './chromeAuthority';
-import { playerFacingLocation } from './locationName';
+import type { GameState, LogEntry } from './types.ts';
+import { formatPyoaSpineTurnJob } from './pyoaSpine.ts';
+import { canHarvestAsNamedPerson, isRegisteredLocation } from './entityRegistry.ts';
+import { isPlannerUiPersonToken, realPresentPeople } from './chromeAuthority.ts';
+import { playerFacingLocation } from './locationName.ts';
 import {
   hereLocation,
   locationChangedRecently,
@@ -16,10 +16,10 @@ import {
   priorLocation,
   placesDiffer,
   selectRecentLogForContext,
-} from './sceneContextTail';
-import { isPyoaCharterClosed, isPyoaItemDestroyed } from './pyoaBranchLedger';
-import { hubsForBibleId } from './outdoorHubs';
-import { MODE_STORY_AUTHORITY } from './fluidProseRails';
+} from './sceneContextTail.ts';
+import { isPyoaCharterClosed, isPyoaItemDestroyed } from './pyoaBranchLedger.ts';
+import { hubsForBibleId } from './outdoorHubs.ts';
+import { MODE_STORY_AUTHORITY } from './fluidProseRails.ts';
 
 export type BeatKind =
   | 'quest_stage'

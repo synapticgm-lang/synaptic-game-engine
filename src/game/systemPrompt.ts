@@ -1,25 +1,16 @@
 import type { GameState, Settings, LoreCard, GmStrictness } from './types';
-import { buildArchetypeRules, getDefaultArchetype } from './archetypes';
 import { computeInventoryCapacity } from './inventory';
 import { resolvePanelBudget } from './panelBudget';
 import { CHOICE_TIER_PROMPT_RULES, formatChoiceTierModeDna } from './choiceTierRules';
 import { ADULT_MODE_RULES, KID_MODE_RULES, NSFW_CAMPAIGN_RULES } from './contentModeRules';
 import { campaignIsNsfw } from './campaignNsfw';
-import { formatFullMemoryBlock } from './situationPacket';
-import { formatClaimGroundingDirective } from './claimGrounding';
-import { formatTimelineForPrompt } from './timelineFormat';
+import { formatWriterFacingPacket } from './beatContract';
 import { playerFacingLocation } from './locationName';
 import { formatMaturityRules } from './maturity';
 import {
   formatCustomTabletopRulesForPrompt,
 } from './customTabletopRules';
 import { formatGmVoiceForPrompt, resolveVoiceIdForState } from './gmVoiceProfile';
-import { formatFluidProseRailsForPrompt } from './fluidProseRails';
-import { formatFolkVoiceForPrompt } from './folkVoiceExpectations';
-import { formatSpeechActRailsForPrompt } from './speechActRails';
-import { isInteriorMap } from './placeAuthority';
-import { formatInteriorExploreAuthority } from './mapEngine';
-import { selectRecentLogForContext } from './sceneContextTail';
 
 // Re-exports for legacy imports (prefer contentModeRules / imagePromptModifier directly).
 export { KID_MODE_RULES } from './contentModeRules';
@@ -340,56 +331,27 @@ function engineModeRules(engineMode: GameState['engineMode']): string {
   return LITRPG_RULES;
 }
 
-export function buildSystemPrompt(state: GameState, settings: Settings, activeLoreCards: LoreCard[] = []): string {
+/** Legacy assembler. Live hosted/client path is `masterPrompt.buildMasterPrompt`. */
+export function buildSystemPrompt(state: GameState, settings: Settings, _activeLoreCards: LoreCard[] = []): string {
   const nsfw = campaignIsNsfw(state);
   const kidMode = settings.contentMode === 'kid';
   const playerRules = state.engineMode === 'dnd'
     ? formatCustomTabletopRulesForPrompt(state.customTabletopRules, kidMode)
     : '';
   const modeRules = engineModeRules(state.engineMode);
-  const archetypeRules = buildArchetypeRules(
-    state.engineMode,
-    state.campaignArchetype ?? getDefaultArchetype(state.engineMode),
-    { skipTabletopCore: Boolean(playerRules) },
-  );
   const contentRules = kidMode
     ? KID_MODE_RULES
     : nsfw
       ? NSFW_CAMPAIGN_RULES
       : ADULT_MODE_RULES;
-  const strictnessRules = STRICTNESS_RULES[state.gmStrictness ?? 'standard'];
-  const diceNote = state.engineMode === 'dnd'
-    ? settings.diceAnimation !== 'static'
-      ? 'DICE DISPLAY: Visual dice animation enabled.'
-      : 'DICE DISPLAY: Text-only mode.'
-    : '';
-
-  const statRules = buildStatRules(settings, state);
   const narrativePreferenceRules = buildNarrativePreferenceRules(settings, nsfw);
-  const dndModeRules = state.engineMode === 'dnd' || settings.dndMode ? DND_MODE_FORMATTING_RULES : '';
-
-  const ledger = buildGroundTruthLedger(state);
-  const claimGrounding = formatClaimGroundingDirective();
-  const memoryBlock = formatFullMemoryBlock(state);
-  const loreContext = activeLoreCards.length > 0 ? buildLoreContext(activeLoreCards) : '';
-  const actionTags = ACTION_TAG_INSTRUCTIONS;
-  const turnFrame = TURN_FRAME_INSTRUCTIONS;
-  const multiPanel = buildMultiPanelInstructions(
-    resolvePanelBudget(settings),
-    state.engineMode,
-    state.campaignBibleId,
-  );
-  const publishingEngine = buildPublishingEngineInstructions(settings);
   const voiceRail = formatGmVoiceForPrompt(
     resolveVoiceIdForState(state, settings.gmVoiceProfileId),
     { engineMode: state.engineMode, kidMode },
   );
-  const fluidRails = formatFluidProseRailsForPrompt(state.engineMode);
   const choiceModeDna = formatChoiceTierModeDna(state.engineMode);
-  const folkRails = formatFolkVoiceForPrompt(state, { kidMode });
-  const speechRails = formatSpeechActRailsForPrompt();
 
-  return `${BASE_PROMPT}\n\n${choiceModeDna}\n\n${voiceRail}\n\n${fluidRails}\n\n${speechRails}\n\n${folkRails}\n\n${modeRules}\n\n${playerRules}\n\n${archetypeRules}\n\n${strictnessRules}\n\n${contentRules}\n\n${narrativePreferenceRules}\n\n${diceNote}\n\n${statRules}\n\n${dndModeRules}\n\n${ledger}\n\n${claimGrounding}\n\n${memoryBlock}\n\n${loreContext}\n\n${actionTags}\n\n${turnFrame}\n\n${multiPanel}\n\n${publishingEngine}`.trim();
+  return `${BASE_PROMPT}\n\n${choiceModeDna}\n\n${voiceRail}\n\n${modeRules}\n\n${playerRules}\n\n${contentRules}\n\n${narrativePreferenceRules}`.trim();
 }
 
 function buildGroundTruthLedger(state: GameState): string {
@@ -603,108 +565,7 @@ export const RECENT_LOG_CHAR_CAP = 500;
 export function buildContextPrompt(
   state: GameState,
   playerInput: string,
-  activeLoreCards: LoreCard[] = []
+  _activeLoreCards: LoreCard[] = []
 ): string {
-  const c = state.character;
-  const cap = computeInventoryCapacity(state);
-  const inv = state.inventory
-    .map((i) => `[${i.rarity}] ${i.name} x${i.quantity}${i.equipped ? ' (equipped)' : ''}`)
-    .join('\n');
-  const quests = (state.quests ?? [])
-    .filter((q) => q.revealed === true && (q.status === 'active' || q.status === 'completed'))
-    .map((q) => `[${q.type.toUpperCase()}] ${q.status}: ${q.name}`)
-    .join('\n');
-  const companions = (state.companions ?? [])
-    .map((companion) =>
-      `${companion.name} [${companion.type}] — role: ${companion.role}; assignment: ${companion.assignment || 'none'}; HP ${companion.hp}/${companion.maxHp}`
-    )
-    .join('\n');
-
-  const loreBlock =
-    activeLoreCards.length > 0
-      ? activeLoreCards
-          .map((card) => `[${card.type.toUpperCase()}] ${card.name} — ${card.summary}`)
-          .join('\n')
-      : 'none';
-
-  const logEntries = state.log;
-  const macroWindow = selectRecentLogForContext(state, RECENT_LOG_WINDOW);
-  let tier4MacroSection = '';
-  if (macroWindow.length > 0) {
-    for (const l of macroWindow) {
-      tier4MacroSection += `${l.role.toUpperCase()}: ${l.content.slice(0, RECENT_LOG_CHAR_CAP)}\n`;
-    }
-  } else {
-    tier4MacroSection += `[Scene Initialization]\n`;
-  }
-
-  const timeline = formatTimelineForPrompt(state.timeline, 20);
-  const dungeon = state.activeDungeon;
-  const node = dungeon?.nodes.find((n) => n.id === dungeon.currentNodeId);
-  const roomList =
-    dungeon && isInteriorMap(dungeon)
-      ? dungeon.nodes
-          .filter((n) => !n.isSecret || (n.tags ?? []).includes('secret-unlocked') || dungeon.visitedNodeIds.includes(n.id))
-          .map((n) => n.name)
-          .join(', ')
-      : '';
-  const dungeonBlock = dungeon
-    ? isInteriorMap(dungeon)
-      ? `Interior floor plan LOCKED: ${dungeon.dungeonName} | Here: ${node?.name ?? dungeon.currentNodeId} | Rooms on map: ${roomList}. ${formatInteriorExploreAuthority(dungeon)} Stay inside this graph — do not invent contradictory wings, floors, or exits. Secret/dashed rooms stay sealed until the player discovers them with skill or story.`
-      : `Dungeon: ${dungeon.dungeonName} | Node: ${node?.name ?? dungeon.currentNodeId} | Visited: ${dungeon.visitedNodeIds.length}/${dungeon.nodes.length}`
-    : 'Dungeon: none';
-
-  return `
-=== TIER 1: GROUND-TRUTH STATE (AUTHORITATIVE) ===
-Name: ${c.name} | Level: ${c.level} | XP: ${c.xp}/${c.xpToNext}
-HP: ${c.hp}/${c.maxHp} | MP: ${c.mp}/${c.maxMp} | SP: ${c.sp}/${c.maxSp} | Gold: ${state.gold ?? 0}
-Location: ${playerFacingLocation(state)}
-${dungeonBlock}
-Encounter: ${state.activeEncounter?.name ?? 'none'}
-Attributes: STR ${c.attributes.STR} DEX ${c.attributes.DEX} CON ${c.attributes.CON} INT ${c.attributes.INT} WIS ${c.attributes.WIS} CHA ${c.attributes.CHA}
-Conditions: ${c.conditions.join(', ') || 'none'}
-Inventory (${cap.usedSlots}/${cap.totalSlots} slots${cap.hasMagicalContainer ? ' + magical container' : ''}):
-${inv || 'empty'}
-Equipped Gear:
-${state.inventory.filter((i) => i.equipped).map((i) => `${i.name} (${i.slot ?? 'slot'})`).join('\n') || 'none'}
-Active Companions:
-${companions || 'none'}
-Materials:
-${state.materials.map((m) => `${m.name} x${m.quantity}`).join('\n') || 'none'}
-Active Quest Log:
-${quests || 'none'}
-=================================================
-
-=== TIER 2: ACTIVE INFO / LORE CARDS (STRICT CONSTRAINTS) ===
-${loreBlock}
-Use these only as established world facts. Do NOT invent crises from cards that the scene has not activated.
-Do NOT invent items, NPCs, or locations absent from Tier 1 + Tier 2.
-=================================================
-
-=== TIER 3: TURN STRUCTURE ===
-Write the narrative prose for this turn (min 2 sentences resolving the player action).
-Do NOT generate numbered choices or "What do you do?" prompts - choices will be calculated separately.
-Focus only on advancing the narrative based on the player's action.
-=================================================
-
-=== TIER 4: SITUATION + FACTUAL TIMELINE + RECENT BEATS ===
-${dungeonBlock}
-FACTUAL TIMELINE:
-${timeline}
-
-RECENT CHAT BEATS (flavor — SCENE FACTS + timeline win on conflicts):
-${tier4MacroSection}=================================================
-
-PLAYER ACTION:
-${playerInput}
-
-Respond as the GM, and write System / narrator extras in the same turn when the campaign needs them. Follow the 4-tier pipeline and all system rules.
-Resolve PLAYER ACTION above first — do not substitute a quest beat.
-Validate the action against Inventory / Equipped Gear / Gold above before narrating success.
-Obey the factual timeline, situation packet, and campaign rails — hard facts override improvisation.
-Never introduce named threats or loot without matching tags. Never invent HP/MP/item changes in prose alone.
-Keep story prose free of dice math (LitRPG/RPG). Finish every sentence.
-engineMode rules are binding for this campaign.
-
-IMPORTANT: Output ONLY the narrative prose. Do NOT emit numbered choice lists or "What do you do?" - the action choices will be calculated separately after your narration.`.trim();
+  return formatWriterFacingPacket(state, playerInput);
 }

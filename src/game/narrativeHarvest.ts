@@ -171,6 +171,11 @@ export function harvestNarrativeIntoLedger(
   const traveled = locationChangedRecently(state);
   const openingPins = openingPinNames(state).map((n) => n.toLowerCase());
   const leaveBehindBeat = isLeaveBehindFarewell(prose);
+  const companionsKeep = new Set<string>();
+  if (state.companion) companionsKeep.add(state.companion.toLowerCase());
+  for (const c of state.companions ?? []) {
+    if (c.name) companionsKeep.add(c.name.toLowerCase());
+  }
 
   for (const name of registeredNpcs) {
     if (!canHarvestAsNamedPerson(name, state.bibleId ?? state.campaignBibleId)) {
@@ -178,13 +183,18 @@ export function harvestNarrativeIntoLedger(
       continue;
     }
     if (isPlannerUiPersonToken(name)) continue;
+    const leftBehind = (state.sceneFacts?.leftBehind ?? []).map((n) => n.toLowerCase());
     if (
       traveled
-      && (openingPins.includes(name.toLowerCase()) || /^(handler|priests?)$/i.test(name))
+      && (
+        openingPins.includes(name.toLowerCase())
+        || leftBehind.includes(name.toLowerCase())
+        || /^(handler|priests?)$/i.test(name)
+      )
     ) {
       continue;
     }
-    if (leaveBehindBeat && traveled && /^(handler|priests?)$/i.test(name)) continue;
+    if (leaveBehindBeat && traveled && !companionsKeep.has(name.toLowerCase())) continue;
     const lastKill = state.sceneFacts?.lastKill;
     if (
       lastKill?.outcome === 'victory' &&

@@ -27,6 +27,8 @@ import { isInventedClosedScenePerson } from './closedScenePerson';
 import { isOneCameraFightViolation } from './oneCameraFight';
 import { isStaleContextBleed } from './sceneContextTail';
 import { isSlotGlueViolation, ledgerPlaceTitles, ledgerSlotPeople } from './slotGlue';
+import { isSealedCardViolation, sealedCastNames } from './beatContract';
+import { isExcludedPadProgress } from './padUniverse';
 
 export type CommitGateReason =
   | 'atmosphere-only'
@@ -144,6 +146,11 @@ export function classifyBeatCommit(
     if (!reasons.includes('recycle-without-delta')) reasons.push('recycle-without-delta');
   }
 
+  // 02z — sealed card: invented CAST, wrong HERE, excluded-pad-only progress.
+  if (isSealedCardViolation(state, text, playerInput) || isExcludedPadProgress(state, text, playerInput)) {
+    if (!reasons.includes('recycle-without-delta')) reasons.push('recycle-without-delta');
+  }
+
   return { accept: reasons.length === 0, reasons };
 }
 
@@ -184,9 +191,7 @@ export function isFactClosedViolation(state: GameState, text: string): boolean {
 export function codedSceneMove(state: GameState): string {
   const slots = compilePointerCardSlots(state);
   const loc = (state.currentLocation || slots?.where || 'this room').replace(/\.$/, '');
-  const people = realPresentPeople(state.sceneFacts?.present ?? []).filter(
-    (p) => p && !isUnresolvedDeixisToken(p)
-  );
+  const people = sealedCastNames(state).filter((p) => p && !isUnresolvedDeixisToken(p));
   const present = people[0];
   const foe =
     state.activeEncounter?.name?.trim()

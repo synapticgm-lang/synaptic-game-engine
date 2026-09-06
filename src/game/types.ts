@@ -820,6 +820,8 @@ export interface SceneFacts {
    * Dropped on real travel. 02p closed-scene person.
    */
   anonymousRoles?: string[];
+  /** People trimmed on the last committed leave/travel — not CAST/HERE until a legal return. */
+  leftBehind?: string[];
   props: string[];
   lastBeat: string;
   updatedTurn: number;

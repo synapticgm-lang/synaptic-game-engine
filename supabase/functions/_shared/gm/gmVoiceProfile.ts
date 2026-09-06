@@ -63,7 +63,7 @@ const COMMON_NEVER = [
   'Never mock, shame, taunt, or blame the player.',
   'Never joke in repair, consent, payment, safety, death, or data-loss copy.',
   'Never write like a living author or licensed series.',
-  'Never invent entities, exits, timers, rewards, or numbers not in SNAPSHOT / ledger.',
+  'Never invent entities, exits, timers, rewards, or numbers not on the beat card / ledger.',
 ];
 
 export const GM_VOICE_PROFILES: GmVoiceProfile[] = [

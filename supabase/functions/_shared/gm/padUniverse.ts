@@ -4,7 +4,6 @@
  */
 
 import type { GameState } from './types.ts';
-import { realPresentPeople } from './chromeAuthority.ts';
 import {
   encounterBlocksTravel,
   fleeAvailable,
@@ -12,8 +11,10 @@ import {
   parleyAvailable,
 } from './encounterTerminalFsm.ts';
 import { filterClosedScenePersonPads } from './closedScenePerson.ts';
+import { sealedCastNames } from './beatContract.ts';
+import { isPyoaCharterClosed, isPyoaItemDestroyed } from './pyoaBranchLedger.ts';
 
-export type ExcludedPadFamily = 'travel' | 'leave';
+export type ExcludedPadFamily = 'travel' | 'leave' | 'talk' | 'use' | 'ask';
 
 export function isTravelPad(choice: string): boolean {
   const lower = choice.toLowerCase();
@@ -27,6 +28,41 @@ export function isTravelPad(choice: string): boolean {
 /** Leave / Walk away / Accept-ending — the PYOA mill-loop family. */
 export function isLeaveFamilyPad(choice: string): boolean {
   return /\b(leave through|walk away|go another direction|accept the ending)\b/i.test(choice);
+}
+
+export function isNamedTalkPad(choice: string): boolean {
+  const t = (choice ?? '').trim();
+  if (!t || /^ask a direct question$/i.test(t)) return false;
+  return /\b(talk to|ask)\s+\S/i.test(t);
+}
+
+export function isUseCharterPad(choice: string): boolean {
+  return /\b(use|inspect|read|hand over)\b[\w\s']{0,28}\b(?:millstone\s+)?charter\b/i.test(choice);
+}
+
+export function shouldStarveTalkPads(state: GameState): boolean {
+  return sealedCastNames(state).length === 0;
+}
+
+export function shouldStarveUsePads(state: GameState): boolean {
+  return isPyoaCharterClosed(state) || isPyoaItemDestroyed(state, 'charter');
+}
+
+/** Ask-topic family starved after the same talk/ask pad 3× in the last 5 player turns. */
+export function shouldStarveAskPads(state: GameState): boolean {
+  const picks: string[] = [];
+  const log = state.log ?? [];
+  let seen = 0;
+  for (let i = log.length - 1; i >= 0 && seen < 5; i--) {
+    const e = log[i];
+    if (e?.role !== 'player') continue;
+    seen += 1;
+    const t = (e.content ?? '').replace(/\s+/g, ' ').trim().toLowerCase();
+    if (/\b(ask|talk|press|listen)\b/.test(t)) picks.push(t);
+  }
+  if (picks.length < 3) return false;
+  const last = picks[0];
+  return picks.filter((p) => p === last).length >= 3;
 }
 
 function countRecentMatchingPicks(
@@ -97,6 +133,9 @@ export function excludedPadFamilies(state: GameState): ReadonlySet<ExcludedPadFa
     out.add('leave');
     out.add('travel');
   }
+  if (shouldStarveTalkPads(state)) out.add('talk');
+  if (shouldStarveUsePads(state)) out.add('use');
+  if (shouldStarveAskPads(state)) out.add('ask');
   return out;
 }
 
@@ -107,6 +146,9 @@ export function isExcludedPadLabel(
   if (!choice.trim()) return false;
   if (excluded.has('travel') && isTravelPad(choice)) return true;
   if (excluded.has('leave') && isLeaveFamilyPad(choice)) return true;
+  if (excluded.has('talk') && isNamedTalkPad(choice)) return true;
+  if (excluded.has('use') && isUseCharterPad(choice)) return true;
+  if (excluded.has('ask') && isNamedTalkPad(choice) && /\b(ask|press|listen)\b/i.test(choice)) return true;
   return false;
 }
 
@@ -116,6 +158,11 @@ export function isExcludedEdge(
 ): boolean {
   if (excluded.has('travel') && (edge.kind === 'travel' || isTravelPad(edge.label))) return true;
   if (excluded.has('leave') && isLeaveFamilyPad(edge.label)) return true;
+  if (excluded.has('talk') && (edge.kind === 'talk' || isNamedTalkPad(edge.label))) return true;
+  if (excluded.has('use') && isUseCharterPad(edge.label)) return true;
+  if (excluded.has('ask') && isNamedTalkPad(edge.label) && /\b(ask|press|listen)\b/i.test(edge.label)) {
+    return true;
+  }
   return false;
 }
 
@@ -143,7 +190,7 @@ export function closedUniverseFallbacks(
     if (fleeAvailable(state.activeEncounter)) out.push('Try to flee');
     if (parleyAvailable(state.activeEncounter)) out.push('Parley');
   }
-  const people = realPresentPeople(state.sceneFacts?.present ?? []);
+  const people = sealedCastNames(state);
   for (const p of people.slice(0, 2)) {
     if (/sergeant|guard|warden/i.test(p)) out.push(`Talk to ${p}`);
     else if (/fence|contact|handler|merchant|vendor/i.test(p)) out.push(`Talk to ${p}`);
@@ -187,4 +234,32 @@ export function sealPadUniverse(
   excluded: ReadonlySet<ExcludedPadFamily> = excludedPadFamilies(state)
 ): string[] {
   return ensureClosedUniversePad(pads, state, excluded);
+}
+
+const TRAVEL_ONLY_PROGRESS =
+  /\byou leave\b[\s\S]{0,80}\breach\b|\btravel toward\b|\byou reach\b/i;
+
+/** Post-call: the beat's only progress is a pad family the ledger already excluded. */
+export function isExcludedPadProgress(
+  state: GameState,
+  prose: string,
+  _playerInput?: string
+): boolean {
+  const body = (prose ?? '').trim();
+  if (!body) return false;
+  const excluded = excludedPadFamilies(state);
+  const hasOther =
+    /\b(ask|talk|says?|nods?|blade|strike|inspect|search|wait)\b/i.test(body);
+  if (excluded.has('travel') && TRAVEL_ONLY_PROGRESS.test(body) && !hasOther) return true;
+  if (excluded.has('leave') && /\b(walk away|leave through|accept the ending)\b/i.test(body) && !hasOther) {
+    return true;
+  }
+  if (
+    excluded.has('use')
+    && /\b(?:millstone\s+)?charter\b/i.test(body)
+    && /\b(use|clutch|from your (?:hands|pack|pocket))\b/i.test(body)
+  ) {
+    return true;
+  }
+  return false;
 }

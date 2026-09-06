@@ -3,8 +3,8 @@
  * NPCs do not teleport when the player leaves; companions persist. Opening pins do not.
  */
 
-import type { GameState } from './types';
-import { trimAnonymousRolesOnLocationChange } from './closedScenePerson';
+import type { GameState } from './types.ts';
+import { trimAnonymousRolesOnLocationChange } from './closedScenePerson.ts';
 
 function thornferryClusterCore(s: string): boolean {
   return /\b(mill\s+landing|the ford|harbor quay)\b/i.test(s ?? '');

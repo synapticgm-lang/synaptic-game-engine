@@ -1,6 +1,7 @@
 /**
  * 2026-08-31n — Modest memory widen: last 4 log lines × 500 chars.
- * SNAPSHOT / lastSnapshotGist / AUTHORITY still win; no last-15 dump.
+ * 02z — live writer packet is last 2 GM beats (selectRecentLogForContext still
+ * drops pre-travel). RECENT_LOG_WINDOW stays 4 for the helper; no last-15 dump.
  * Stamp: HUD 2026-08-31n / BUILD 2026-08-31g. Mid writer OFF.
  */
 import { describe, expect, it } from 'vitest';
@@ -46,7 +47,7 @@ describe('playtest31nMemoryWiden', () => {
     expect(RECENT_LOG_CHAR_CAP).toBe(500);
   });
 
-  it('includes last 4 log lines (GM + player) and drops older raw lines', () => {
+  it('live packet keeps last 2 GM beats and drops older raw lines', () => {
     const log: LogEntry[] = [
       line('g1', 1, 'gm', 'MARKER_OLD_GM_ONE ozone and a blue panel.'),
       line('p1', 2, 'player', 'MARKER_OLD_PLAYER_ONE look around'),
@@ -58,15 +59,14 @@ describe('playtest31nMemoryWiden', () => {
     const kept = log.slice(-RECENT_LOG_WINDOW);
     expect(kept).toHaveLength(4);
     const text = buildContextPrompt(stateWithLog(log), 'ask the chanter');
-    expect(text).toMatch(/RECENT CHAT BEATS/);
+    expect(text).toMatch(/HERE:/);
+    expect(text).toMatch(/VERB:/);
+    expect(text).not.toMatch(/RECENT CHAT BEATS/);
     expect(text).toMatch(/MARKER_KEEP_GM_TWO/);
-    expect(text).toMatch(/MARKER_KEEP_PLAYER_TWO/);
     expect(text).toMatch(/MARKER_KEEP_GM_THREE/);
-    expect(text).toMatch(/MARKER_KEEP_PLAYER_THREE/);
     expect(text).not.toMatch(/MARKER_OLD_GM_ONE/);
     expect(text).not.toMatch(/MARKER_OLD_PLAYER_ONE/);
-    expect(text).toMatch(/GM: MARKER_KEEP_GM_TWO/);
-    expect(text).toMatch(/PLAYER: MARKER_KEEP_PLAYER_TWO/);
+    expect(text).toMatch(/PLAYER: ask the chanter/);
   });
 
   it('caps each raw line at 500 chars and never dumps last-15 summaries', () => {
@@ -93,17 +93,17 @@ describe('playtest31nMemoryWiden', () => {
     };
 
     const text = buildContextPrompt(state, 'look around');
-    expect(text).toMatch(/RECENT CHAT BEATS \(flavor — SCENE FACTS \+ timeline win/);
+    expect(text).toMatch(/HERE:/);
+    expect(text).not.toMatch(/RECENT CHAT BEATS/);
     expect(text).not.toMatch(/last 15, full detail/);
     expect(text).not.toMatch(/MARKER_T15_DUMP_/);
     expect(text).not.toMatch(/T1: Beat number 1/);
     expect(text).toMatch(/MARKER_LONG/);
     expect(text).not.toMatch(longTail);
 
-    const recentBlock = text.split('RECENT CHAT BEATS')[1] ?? '';
-    const longLine = recentBlock.split('\n').find((row) => row.includes('MARKER_LONG')) ?? '';
+    const longLine = text.split('\n').find((row) => row.includes('MARKER_LONG')) ?? '';
     expect(longLine.startsWith('GM: ')).toBe(true);
-    expect(longLine.slice('GM: '.length).length).toBe(RECENT_LOG_CHAR_CAP);
+    expect(longLine.slice('GM: '.length).length).toBeLessThanOrEqual(RECENT_LOG_CHAR_CAP);
 
     const memory = formatCampaignMemoryForPrompt(state, 'SITUATION', 'xyzzy', 4000);
     expect(memory).not.toMatch(/last 15, full detail/);

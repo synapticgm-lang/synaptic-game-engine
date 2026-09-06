@@ -69,6 +69,7 @@ import { translateStateToNarrative } from './narrativeTranslator';
 import { buildEntityCast } from './entityCast';
 import { injectLoiterDelta } from './loiterDeltaDirective';
 import { formatPovRailsForPrompt } from './povRails';
+import { formatWriterFacingPacket } from './beatContract';
 
 export function effectivePowerScaling(state: GameState): PowerScaling {
   return state.powerScaling ?? 'balanced';
@@ -584,18 +585,7 @@ PLAYER ACTION FIDELITY (BINDING): Answer the player's last action first (e.g. se
 ===========================================================`;
 }
 
-export function formatFullMemoryBlock(state: GameState, tokenBudget?: number): string {
-  const rails = formatCampaignRails(state);
-  const povRails = formatPovRailsForPrompt(state);
-  const situation = formatSituationForPrompt(state);
-  const budget = tokenBudget ?? 2000; // Default 2k, can be increased dynamically
-  const memoryCore = formatCampaignMemoryForPrompt(state, situation, state.currentLocation ?? '', budget);
-  const timeline = formatTimelineForPrompt(state.timeline, 12);
-  return `${rails ? `${rails}\n\n` : ''}${povRails ? `${povRails}\n\n` : ''}${memoryCore}
-
-=== FACTUAL TIMELINE (NO FLUFF — AUTHORITATIVE MEMORY, TRIMMED) ===
-${timeline}
-=================================================
-OUTCOME TOKEN RECAP: Obey the structured outcome token supplied with this turn; never invert success/fail.
-FLUIDITY: Descriptive language and narrative flair are required. Atmosphere and unnamed detail are free. Factual details (stats, inventory, exits, who is here, damage) MUST match the SNAPSHOT / data sheets / ledger — do not invent items, doors, named NPCs, or numeric results.`;
+export function formatFullMemoryBlock(state: GameState, _tokenBudget?: number): string {
+  // 02z — live writer leaf is the sealed card, not a SNAPSHOT essay.
+  return formatWriterFacingPacket(state);
 }

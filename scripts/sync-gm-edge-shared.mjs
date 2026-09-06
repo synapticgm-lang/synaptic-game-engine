@@ -76,6 +76,8 @@ const FILES = [
   'dungeonLifecycle.ts',
   'dungeonMobLedger.ts',
   'padUniverse.ts',
+  'beatContract.ts',
+  'presentAuthority.ts',
   'outdoorHubs.ts',
   'hubEncounters.ts',
   'pyoaSpine.ts',

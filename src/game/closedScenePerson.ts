@@ -109,9 +109,11 @@ function occupancyHasName(state: GameState, name: string): boolean {
     ...(state.sceneFacts?.present ?? []),
     ...(state.companions ?? []).map((c) => c.name),
     state.companion ?? '',
-    ...(state.openingEstablishment?.pinnedNpcNames ?? []),
+    ...(!locationChangedRecently(state) ? (state.openingEstablishment?.pinnedNpcNames ?? []) : []),
     ...(state.npcMemories ?? []).map((m) => m.npcName),
   ];
+  const left = new Set((state.sceneFacts?.leftBehind ?? []).map((n) => n.toLowerCase()));
+  if (left.has(want)) return false;
   return tokens.some((t) => (t ?? '').trim().toLowerCase() === want);
 }
 
