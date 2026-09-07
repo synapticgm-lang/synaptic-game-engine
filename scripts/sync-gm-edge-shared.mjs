@@ -27,6 +27,8 @@ const FILES = [
   'travelAuthority.ts',
   'oneCameraFight.ts',
   'slotGlue.ts',
+  'neverCast.ts',
+  'closedFactLedger.ts',
   'chromeAuthority.ts',
   'pcNameAuthority.ts',
   'combatAuthority.ts',

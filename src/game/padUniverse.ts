@@ -13,6 +13,20 @@ import {
 import { filterClosedScenePersonPads } from './closedScenePerson';
 import { sealedCastNames } from './beatContract';
 import { isPyoaCharterClosed, isPyoaItemDestroyed } from './pyoaBranchLedger';
+import { isPlaceTitleTalkPad, ledgerPlaceTitles } from './slotGlue';
+import { ledgerNeverCastTitles } from './neverCast';
+
+const TALK_QA_SHAPE =
+  /\b(?:what\s+do\s+i\s+want|what\s+i\s+want|what\s+do\s+you\s+want|i\s+want\s+(?:the|that|this)|you\s+want\s+something\s+from\s+me|i\s+told\s+you\s+what\s+i\s+want)\b/i;
+
+function isTalkQaLoopStarved(state: GameState): boolean {
+  const bodies: string[] = [];
+  const log = state.log ?? [];
+  for (let i = log.length - 1; i >= 0 && bodies.length < 3; i--) {
+    if (log[i]?.role === 'gm' && log[i]?.content?.trim()) bodies.push(String(log[i].content));
+  }
+  return bodies.length >= 3 && bodies.every((b) => TALK_QA_SHAPE.test(b));
+}
 
 export type ExcludedPadFamily = 'travel' | 'leave' | 'talk' | 'use' | 'ask';
 
@@ -41,7 +55,9 @@ export function isUseCharterPad(choice: string): boolean {
 }
 
 export function shouldStarveTalkPads(state: GameState): boolean {
-  return sealedCastNames(state).length === 0;
+  if (sealedCastNames(state).length === 0) return true;
+  if (isTalkQaLoopStarved(state)) return true;
+  return false;
 }
 
 export function shouldStarveUsePads(state: GameState): boolean {
@@ -50,6 +66,7 @@ export function shouldStarveUsePads(state: GameState): boolean {
 
 /** Ask-topic family starved after the same talk/ask pad 3× in the last 5 player turns. */
 export function shouldStarveAskPads(state: GameState): boolean {
+  if (isTalkQaLoopStarved(state)) return true;
   const picks: string[] = [];
   const log = state.log ?? [];
   let seen = 0;
@@ -133,7 +150,10 @@ export function excludedPadFamilies(state: GameState): ReadonlySet<ExcludedPadFa
     out.add('leave');
     out.add('travel');
   }
-  if (shouldStarveTalkPads(state)) out.add('talk');
+  if (shouldStarveTalkPads(state)) {
+    out.add('talk');
+    if (isTalkQaLoopStarved(state)) out.add('ask');
+  }
   if (shouldStarveUsePads(state)) out.add('use');
   if (shouldStarveAskPads(state)) out.add('ask');
   return out;
@@ -172,7 +192,11 @@ export function filterPadsByUniverse(
   state?: GameState
 ): string[] {
   const family = pads.filter((p) => !isExcludedPadLabel(p, excluded));
-  return state ? filterClosedScenePersonPads(family, state) : family;
+  const titles = state ? ledgerNeverCastTitles(state) : [];
+  const grounded = titles.length
+    ? family.filter((p) => !isPlaceTitleTalkPad(p, titles) && !isPlaceTitleTalkPad(p, ledgerPlaceTitles(state)))
+    : family;
+  return state ? filterClosedScenePersonPads(grounded, state) : grounded;
 }
 
 /** Scene-grounded talk / inspect / combat — never Travel or Leave. */

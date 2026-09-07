@@ -10,7 +10,7 @@ import { isAtmospherePlaceName } from './questPlay';
 import { getRegisteredLocations } from './entityRegistry';
 
 const PERSON_VERB =
-  '(?:looks?|stands?|says?|asks?|nods?|watches?|sits?|steps?|waits?|calls?)';
+  '(?:looks?|stands?|says?|asks?|nods?|watches?|sits?|steps?|waits?|calls?|shifts?|answers?|speaks?|holds?|glances?|reads?)';
 
 const OBJECT_TAKE = '(?:take|grab|push|pull|open)';
 
@@ -82,6 +82,7 @@ export function placeTitleNeedles(name: string | undefined | null): string[] {
   const bare = raw.replace(/^(the|a|an)\s+/i, '');
   push(bare);
   if (bare.length >= 4) push(`The ${bare}`);
+  if (bare.length >= 3) push(`At ${bare}`);
   for (const w of bare.split(/\s+/)) {
     const tok = w.replace(/[^A-Za-z'-]/g, '');
     if (tok.length >= 6 && !PLACE_TITLE_STOP.has(tok.toLowerCase())) push(tok);
@@ -110,6 +111,7 @@ export function ledgerPlaceTitles(state?: {
   add(state?.locationSheet?.name);
   add(state?.previousLocationSheet?.name);
   add(state?.openingEstablishment?.answers?.where);
+  add((state as { sceneFacts?: { cameraLock?: { label?: string } } } | null)?.sceneFacts?.cameraLock?.label);
   for (const p of state?.places ?? []) {
     add(p.name);
     add(p.loreName);
@@ -158,6 +160,22 @@ export function isSlotGlueViolation(
   }
   if (isCompanionObjectGlue(t, namedPeople)) return true;
   if (isPlaceTitleObjectGlue(t, placeTitles)) return true;
+  if (isPlaceTitleAsPersonSubject(t, placeTitles)) return true;
+  return false;
+}
+
+/** Ledger title used as a person subject / possessor — not a place adverbial. */
+export function isPlaceTitleAsPersonSubject(text: string, placeTitles: string[] = []): boolean {
+  const t = text ?? '';
+  if (!t.trim() || !placeTitles.length) return false;
+  for (const title of placeTitles) {
+    if (isAtmospherePlaceName(title)) continue;
+    const esc = escapeRe(title);
+    if (new RegExp(`\\b${esc}['’]s\\s+(?:${PERSON_VERB}|eyes?|fingers?|voice|jaw|hand|hands|gaze)\\b`, 'i').test(t)) {
+      return true;
+    }
+    if (new RegExp(`\\b${esc}\\s+${PERSON_VERB}\\b`, 'i').test(t)) return true;
+  }
   return false;
 }
 
@@ -169,6 +187,18 @@ export function isObjectPersonPad(choice: string, namedPeople: string[] = []): b
     if (new RegExp(`\\b${OBJECT_TAKE}\\s+(?:the\\s+)?${esc}\\b`, 'i').test(c)) return true;
   }
   return false;
+}
+
+export function isPlaceTitleTalkPad(choice: string, placeTitles: string[] = []): boolean {
+  const c = (choice ?? '').trim();
+  if (!c || !placeTitles.length) return false;
+  const m = c.match(/\b(?:talk(?:\s+to)?|ask|meet|press)\s+(?:the\s+)?(.+)$/i);
+  if (!m?.[1]) return false;
+  const target = m[1].replace(/\s+/g, ' ').trim().toLowerCase();
+  return placeTitles.some((title) => {
+    const n = title.toLowerCase();
+    return n === target || target === `the ${n}` || target.endsWith(n);
+  });
 }
 
 /** 02u — "no one" conjugated into a fake noun/adjective. Legal "no one else" stays. */
@@ -217,6 +247,11 @@ export function scrubSlotGlue(
   }
   for (const title of placeTitles) {
     const esc = escapeRe(title);
+    next = next.replace(
+      new RegExp(`\\b${esc}['’]s\\s+(${PERSON_VERB}|eyes?|fingers?|voice|jaw|hand|hands|gaze)\\b`, 'gi'),
+      'Someone nearby $1'
+    );
+    next = next.replace(new RegExp(`\\b${esc}\\s+(${PERSON_VERB})\\b`, 'gi'), 'Someone nearby $1');
     next = next.replace(
       new RegExp(`\\b(${OBJECT_TAKE}\\s+)(?:your\\s+)?(?:the\\s+)?${esc}\\s+(${BODY_OR_KIT})\\b`, 'gi'),
       '$1the $2'

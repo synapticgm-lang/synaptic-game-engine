@@ -1096,6 +1096,13 @@ export function compileChoices(
     finalChoices = closedUniverseFallbacks(state, excluded);
     notes.push('Closed-universe empty-pad refill');
   }
+  if (
+    excluded.has('talk')
+    && !finalChoices.some((c) => /\binspect\b/i.test(c))
+  ) {
+    finalChoices.push('Inspect the immediate surroundings');
+    notes.push('Talk-loop world-moving pad');
+  }
   
   // Batch Y Milestone 1 — Y-2: Generate intent enums for SNAPSHOT context
   const intentEnums = finalChoices.map((c) => inferIntent(c));

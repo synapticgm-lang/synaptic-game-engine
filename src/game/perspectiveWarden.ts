@@ -102,5 +102,22 @@ export function enforcePerspective(
   next = next.replace(/\b(on|at|toward|towards|behind|beside)\s+him\b/gi, '$1 you');
   next = next.replace(/\b(on|at|toward|towards|behind|beside)\s+her\b/gi, '$1 you');
   next = rewritePlayerBodyPossessives(next, name || undefined);
+  next = rewriteNpcSubjectPcBody(next);
   return next;
+}
+
+/**
+ * 02aa — if the clause subject is an NPC, body/kit cannot attach to the PC.
+ * "She crosses your arms" → "She crosses her arms". Legal "You … your" stays.
+ */
+export function rewriteNpcSubjectPcBody(text: string): string {
+  if (!text) return text;
+  return text.replace(
+    /([^.!?\n]*?)(\b(?:She|He|They)\b)([^.!?\n]*?)\b(?:your|you)\s+(hand|hands|fingers|finger|arm|arms|wrist|chest|face|head|neck|knee|knees|leg|legs|foot|feet|palm|palms|thumb|thumbs|eyes|eye|shoulder|shoulders)\b/gi,
+    (full, before: string, subj: string, mid: string, body: string) => {
+      if (/\b(?:you|your)\b/i.test(`${before}`)) return full;
+      const poss = /^she$/i.test(subj) ? 'her' : /^he$/i.test(subj) ? 'his' : 'their';
+      return `${before}${subj}${mid}${poss} ${body}`;
+    }
+  );
 }

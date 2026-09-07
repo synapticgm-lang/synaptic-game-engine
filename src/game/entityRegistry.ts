@@ -451,10 +451,20 @@ function isRegistryProperName(name: string, bibleId?: string | null): boolean {
  * Hub contacts and multi-word proper names (Brother Tam, Lowmarket Fence, Wren Holt).
  * Inverse of 02b: these stay named; bare role nouns do not.
  */
+/** Last word of a two-word Title-Case slot that is place morphology, not a surname. */
+const PLACE_SLOT_LAST =
+  /^(wall|garrison|road|hall|quay|market|alley|circle|camp|scale|cup|close|gate|yard|plaza|harbor|keep|ferry|landing|street|bridge)$/i;
+
 export function isHubContactProperName(name: string): boolean {
   const t = (name ?? '').trim();
   if (!t || t.length < 3) return false;
   if (isPlannerUiPersonToken(t)) return false;
+  // 02aa — "The Mark" / "At Saltmeet" is article+title, not First Last.
+  if (/^(?:the|a|an|at|in|on|from|into|near|under|over)\s+/i.test(t)) return false;
+  const lastWord = (t.split(/\s+/).pop() ?? '');
+  if (PLACE_SLOT_LAST.test(lastWord) && !/^(?:Fence|Sergeant|Guard|Clerk|Registrar|Handler|Skirmisher)$/i.test(lastWord)) {
+    return false;
+  }
   if (/^(?:Brother|Sister|Father|Captain|High Chanter|Envoy)\s+[A-Z]/i.test(t)) return true;
   if (
     /^[A-Z][\w'-]+\s+(?:Fence|Sergeant|Guard|Clerk|Registrar|Chirurgeon|Handler|Skirmisher|Thug|Priest|Contact|Hand|Owner|Vane|Quill|Tam|Ash|Holt)$/i.test(
@@ -520,12 +530,21 @@ export function isRegisteredLocation(name: string, bibleId?: string | null): boo
   if (!name || name.length < 2) return false;
   
   const normalized = name.trim().toLowerCase();
+  const bare = normalized.replace(/^(the|a|an|at|in|on)\s+/, '');
   
   // Check campaign-specific locations
   if (bibleId) {
     const campaignLocations = LOCATION_REGISTRY_BY_BIBLE[bibleId] ?? [];
     if (campaignLocations.some(l => l.toLowerCase() === normalized)) {
       return true;
+    }
+    // 02aa — "The Weighing" matches registered "The Weighing Cup"
+    for (const loc of campaignLocations) {
+      const locBare = loc.toLowerCase().replace(/^(the|a|an)\s+/, '');
+      if (locBare === bare || locBare === normalized) return true;
+      for (const w of locBare.split(/\s+/)) {
+        if (w.length >= 6 && (w === bare || `the ${w}` === normalized)) return true;
+      }
     }
   }
   

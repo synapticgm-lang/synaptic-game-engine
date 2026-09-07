@@ -8,6 +8,7 @@ import type { GameState, LogEntry } from './types';
 import { formatPyoaSpineTurnJob } from './pyoaSpine';
 import { canHarvestAsNamedPerson, isRegisteredLocation } from './entityRegistry';
 import { isPlannerUiPersonToken, realPresentPeople } from './chromeAuthority';
+import { isNeverCastTitle } from './neverCast';
 import { playerFacingLocation } from './locationName';
 import {
   hereLocation,
@@ -380,6 +381,7 @@ export function sealedCastNames(state: GameState): string[] {
     const name = (raw ?? '').trim();
     if (!name || seen.has(name.toLowerCase())) return;
     if (isPlannerUiPersonToken(name)) return;
+    if (isNeverCastTitle(name, state)) return;
     if (pinsOut && (pinSet.has(name.toLowerCase()) || /^(handler|priests?)$/i.test(name))) return;
     if (!canHarvestAsNamedPerson(name, bibleId)) return;
     seen.add(name.toLowerCase());

@@ -843,11 +843,60 @@ export function detectTalkUltimatumRecycle(
 export function isTalkUltimatumExhausted(state: {
   log?: Array<{ role?: string; content?: string }>;
 }): boolean {
+  if (isTalkQaLoopStarved(state)) return true;
   const recent = recentGmBeatTexts(state, 5);
   if (recent.length < 3) return false;
   const last = recent[recent.length - 1] ?? '';
   if (last.length < 40) return false;
   return recent.filter((b) => tokenJaccard(last, b) >= TALK_ULTIMATUM_RECYCLE).length >= 3;
+}
+
+/** Q&A / "what do I want" shape — not exact string. Legal first ask stays. */
+const TALK_QA_SHAPE =
+  /\b(?:what\s+do\s+i\s+want|what\s+i\s+want|what\s+do\s+you\s+want|i\s+want\s+(?:the|that|this)|you\s+want\s+something\s+from\s+me|i\s+told\s+you\s+what\s+i\s+want)\b/i;
+
+export function hasTalkQaShape(text: string): boolean {
+  return TALK_QA_SHAPE.test(text ?? '');
+}
+
+export function isTalkQaLoopStarved(state: {
+  log?: Array<{ role?: string; content?: string }>;
+}): boolean {
+  const recent = recentGmBeatTexts(state, 5);
+  if (recent.length < 3) return false;
+  const lastThree = recent.slice(-3);
+  return lastThree.every((b) => hasTalkQaShape(b));
+}
+
+export function detectTalkQaShapeLoop(
+  draft: string,
+  recentGmBeats: string[],
+  playerInput: string
+): boolean {
+  if (playerAsksRepeat(playerInput)) return false;
+  if (!hasTalkQaShape(draft)) return false;
+  const prior = [...(recentGmBeats ?? [])].slice(-5).filter((b) => hasTalkQaShape(String(b ?? '')));
+  return prior.length >= 2;
+}
+
+/** Sensory atmosphere + "{someone|name} shifts, expecting you to act" — not all "shifts". */
+export function ambientStubFingerprint(text: string): string | null {
+  const t = text ?? '';
+  if (!t.trim()) return null;
+  const shiftExpect = /shifts?,?\s+expecting you to act/i.test(t);
+  const copper = /copper and wet stone smell thick/i.test(t);
+  if (shiftExpect && copper) return 'copper-stone+shift-expect';
+  return null;
+}
+
+export function isAmbientStubRecycle(
+  state: { log?: Array<{ role?: string; content?: string }> },
+  draft: string
+): boolean {
+  const fp = ambientStubFingerprint(draft);
+  if (!fp) return false;
+  const recent = recentGmBeatTexts(state, 10);
+  return recent.filter((b) => ambientStubFingerprint(b) === fp).length >= 2;
 }
 
 const COMBAT_NULL_DELTA =

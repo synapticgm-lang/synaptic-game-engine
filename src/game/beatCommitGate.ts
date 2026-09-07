@@ -12,6 +12,8 @@ import {
   detectSameRoomEssayHard,
   detectDialogueTreadmillHard,
   detectTalkUltimatumRecycle,
+  detectTalkQaShapeLoop,
+  isAmbientStubRecycle,
   detectCombatPurgatoryHard,
   isAtmosphereOnlyBeat,
   playerAsksRepeat,
@@ -26,9 +28,11 @@ import { isClosedKillRecycle, isDeadFoeReopenedAsLiving } from './combatAuthorit
 import { isInventedClosedScenePerson } from './closedScenePerson';
 import { isOneCameraFightViolation } from './oneCameraFight';
 import { isStaleContextBleed } from './sceneContextTail';
-import { isSlotGlueViolation, ledgerPlaceTitles, ledgerSlotPeople } from './slotGlue';
+import { isSlotGlueViolation, ledgerSlotPeople } from './slotGlue';
 import { isSealedCardViolation, sealedCastNames } from './beatContract';
 import { isExcludedPadProgress } from './padUniverse';
+import { isClosedLedgerViolation } from './closedFactLedger';
+import { ledgerNeverCastTitles } from './neverCast';
 
 export type CommitGateReason =
   | 'atmosphere-only'
@@ -111,6 +115,14 @@ export function classifyBeatCommit(
     if (!reasons.includes('recycle-without-delta')) reasons.push('recycle-without-delta');
   }
 
+  if (detectTalkQaShapeLoop(text, recent, playerInput ?? '')) {
+    if (!reasons.includes('recycle-without-delta')) reasons.push('recycle-without-delta');
+  }
+
+  if (isAmbientStubRecycle(state, text)) {
+    if (!reasons.includes('recycle-without-delta')) reasons.push('recycle-without-delta');
+  }
+
   // Batch V — combat purgatory (identical fist / little-true-effect loops).
   if (detectCombatPurgatoryHard(text, recent, playerInput ?? '')) {
     if (!reasons.includes('recycle-without-delta')) reasons.push('recycle-without-delta');
@@ -179,7 +191,8 @@ export function isFactClosedViolation(state: GameState, text: string): boolean {
   // 02r — old-room camera or post-clear steel after a recent scene change.
   if (isStaleContextBleed(state, body)) return true;
   // 02t / 02v — deixis / kit object / companion name used as a slot.
-  if (isSlotGlueViolation(body, ledgerSlotPeople(state), ledgerPlaceTitles(state))) return true;
+  if (isSlotGlueViolation(body, ledgerSlotPeople(state), ledgerNeverCastTitles(state))) return true;
+  if (isClosedLedgerViolation(state, body)) return true;
   return false;
 }
 
@@ -211,6 +224,8 @@ export function codedSceneMove(state: GameState): string {
     return combatBank[turn % combatBank.length]!;
   }
 
+  const recent = recentGmBeatTexts(state, 10);
+  const stubUsed = recent.filter((b) => /shifts?,?\s+expecting you to act/i.test(b)).length;
   const bank = [
     present
       ? `Rain drums the awning while ${present} watches you from the stall — waiting for your next word in ${loc}.`
@@ -219,7 +234,9 @@ export function codedSceneMove(state: GameState): string {
       ? `Grit stings your eyes on ${loc}. The road toward ${hubAlt} lies open if you mean to leave.`
       : '',
     `A vendor under a patched tarp meets your glance in ${loc}, then looks away — the moment is yours to break.`,
-    `Copper and wet stone smell thick in ${loc}. Someone nearby shifts, expecting you to act.`,
+    stubUsed >= 2
+      ? `The air on ${loc} tastes of wet stone. The next move is still yours.`
+      : `Copper and wet stone smell thick in ${loc}. Someone nearby shifts, expecting you to act.`,
   ].filter(Boolean);
   return bank[turn % bank.length] || bank[bank.length - 1]!;
 }

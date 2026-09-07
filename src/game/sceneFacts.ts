@@ -146,6 +146,8 @@ export function extractSceneFacts(narrative: string, prev?: SceneFacts, turn = 0
     engineRecoveryStreak: prev?.engineRecoveryStreak,
     openVignette: prev?.openVignette,
     lastSnapshotGist: prev?.lastSnapshotGist,
+    givenAway: prev?.givenAway,
+    resolvedCrises: prev?.resolvedCrises,
   };
 }
 
@@ -187,6 +189,8 @@ export function mergeSceneFacts(prev: SceneFacts | undefined, next: SceneFacts):
         : prev.engineRecoveryStreak,
     openVignette: next.openVignette ?? prev.openVignette,
     lastSnapshotGist: next.lastSnapshotGist ?? prev.lastSnapshotGist,
+    givenAway: Array.from(new Set([...asList(prev.givenAway), ...asList(next.givenAway)])),
+    resolvedCrises: Array.from(new Set([...asList(prev.resolvedCrises), ...asList(next.resolvedCrises)])),
   };
 }
 
