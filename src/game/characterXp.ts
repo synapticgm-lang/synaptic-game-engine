@@ -21,7 +21,7 @@ export function applyCharacterXpGain(
   }
   let xp = (character.xp ?? 0) + xpGain;
   let level = character.level ?? 1;
-  let xpToNext = Math.max(1, character.xpToNext ?? 300);
+  let xpToNext = Math.max(1, character.xpToNext ?? 150);
   let maxHp = character.maxHp ?? character.hp ?? 20;
   let hp = character.hp ?? maxHp;
   let levelsGained = 0;

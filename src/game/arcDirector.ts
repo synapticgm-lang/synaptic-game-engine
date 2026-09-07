@@ -13,6 +13,8 @@ import {
   resolveTurnJob,
   selectDueBeat,
 } from './beatContract';
+import { buildBeatContractFromTemplate, getBeatTemplate } from './beatRegistry';
+import { FAST_XP_AWARDS } from './xpPolicy';
 import { updateChoiceFingerprints } from './choiceCompiler';
 import { ensureRunManifest, nextEventSeq } from './runManifest';
 import { tickPressureClock, type PressureClockState } from './pressureClock';
@@ -213,6 +215,79 @@ export function droughtSkirmishTable(state: GameState): string[] {
   return ['Road Bandit', 'Hired Blade'];
 }
 
+/**
+ * Combat drought gate (02ac). Honors live/pending encounter, lastKill cooldown,
+ * and existing engineAllowsCombat — never double-spawns.
+ */
+export function shouldSpawnCombat(state: GameState): boolean {
+  if (!state.openingEstablishment?.complete) return false;
+  if (state.activeEncounter || state.sceneFacts?.pendingEncounter) return false;
+  if (!engineAllowsCombat(state)) return false;
+  if (state.arcDirector?.lastEncounterClearedTurn === state.turn) return false;
+  if (isEncounterOnCooldown(state, state.sceneFacts?.lastKill?.name ?? '')) return false;
+  const lastKillTurn = state.sceneFacts?.lastKill?.turn;
+  if (typeof lastKillTurn === 'number' && state.turn - lastKillTurn <= 1) return false;
+  const turnsSinceLast = state.arcDirector?.turnsSinceCombatReceipt ?? state.turn;
+  const mode = state.engineMode;
+  if (mode === 'rpg') return turnsSinceLast >= (state.turn < 25 ? 15 : 20);
+  if (mode === 'pyoa') return false;
+  if (state.turn < 25) {
+    const cadence = mode === 'dnd' ? 12 : 8;
+    return turnsSinceLast >= cadence;
+  }
+  return turnsSinceLast >= (mode === 'dnd' ? 15 : 12);
+}
+
+export function selectCombatBeat(state: GameState): string | null {
+  if (!engineAllowsCombat(state)) return null;
+  const prefix = resolveBiblePrefix(state);
+  const turn = state.turn;
+  const threat =
+    (state as GameState & { currentLocation?: { threatTier?: string } }).currentLocation &&
+    typeof state.currentLocation === 'object'
+      ? (state.currentLocation as { threatTier?: string }).threatTier
+      : undefined;
+
+  if (turn <= 15) {
+    if (prefix === 'summoned-pact') return 'sp-beat-skirmish';
+    if (prefix === 'cursed-keep') return 'ck-beat-hostility';
+    return 'generic-beat-trash';
+  }
+
+  const dungeon = state.activeDungeon;
+  if (dungeon && (threat === 'high' || /boss|keep|undercroft/i.test(String(state.currentLocation ?? '')))) {
+    const bossId = prefix === 'summoned-pact' ? 'sp-beat-boss' : `${prefix}-beat-boss`;
+    if (getBeatTemplate(bossId)) return bossId;
+  }
+
+  if (prefix === 'summoned-pact') return 'sp-beat-skirmish';
+  if (prefix === 'cursed-keep') return 'ck-beat-hostility';
+  return 'generic-beat-trash';
+}
+
+export function selectQuestStageBeat(state: GameState): string | null {
+  const activeQuest = (state.quests ?? []).find((q) => q.status === 'active');
+  if (!activeQuest) return null;
+  const nextObj = (activeQuest.objectives ?? []).find((o) => !o.completed);
+  if (!nextObj) return getBeatTemplate('quest-stage-complete') ? 'quest-stage-complete' : null;
+  const committed = committedSet(state);
+  const due = selectDueBeat(state, committed);
+  if (due?.kind === 'quest_stage') return due.id;
+  return null;
+}
+
+function resolveCombatContract(state: GameState, committed: Set<string>): BeatContract | null {
+  const beatId = selectCombatBeat(state);
+  if (!beatId) return null;
+  const template = getBeatTemplate(beatId);
+  if (template) return buildBeatContractFromTemplate(template, state);
+  const existing = contractById(beatId);
+  if (existing && existing.once && committed.has(existing.id)) {
+    return forcedEncounterBeat(state, 15, committed);
+  }
+  return existing ?? null;
+}
+
 function hubSkirmishEncounter(state: GameState): ActiveEncounter {
   const lvl = state.character?.level ?? 1;
   const hp = 12 + lvl * 4;
@@ -378,11 +453,32 @@ function shouldCommitBeat(
 function applyBeatEffects(
   state: GameState,
   contract: BeatContract,
-  seq: number
+  seq: number,
+  opts?: { forceSpawn?: boolean }
 ): { state: GameState; xp: number; receipts: string[] } {
   let next = { ...state };
   const receipts: string[] = [];
-  const xp = contract.xpChunk ?? 0;
+  const isCombat = !!(contract.spawnEncounter || contract.kind === 'encounter');
+  const combatTier = /boss/i.test(contract.id)
+    ? 'boss'
+    : /elite/i.test(contract.id)
+      ? 'elite'
+      : 'trash';
+  let xp = contract.xpChunk ?? 0;
+  if (isCombat) {
+    xp =
+      combatTier === 'boss'
+        ? FAST_XP_AWARDS.combatBoss
+        : combatTier === 'elite'
+          ? FAST_XP_AWARDS.combatElite
+          : FAST_XP_AWARDS.combatTrash;
+  } else if (contract.kind === 'quest_stage' && !(contract.xpChunk && contract.xpChunk > 0)) {
+    xp = /complete|closure/i.test(contract.id)
+      ? FAST_XP_AWARDS.questComplete
+      : /accept|orient/i.test(contract.id)
+        ? FAST_XP_AWARDS.questAccept
+        : FAST_XP_AWARDS.questTick;
+  }
   const extras: BeatStateTxExtras = {
     beatId: contract.id,
     eventSeq: seq,
@@ -417,7 +513,7 @@ function applyBeatEffects(
     
     if (isEncounterOnCooldown(next, spawnKey)) {
       receipts.push(`Encounter cooldown: ${spawnKey} — skipped re-engage`);
-    } else if (!shouldSpawn && !droughtCheck.isDrought) {
+    } else if (!opts?.forceSpawn && !shouldSpawn && !droughtCheck.isDrought) {
       receipts.push(`Encounter density: spawn rate limit — deferred`);
     } else {
       extras.encounterName = preview.name;
@@ -441,6 +537,7 @@ function applyBeatEffects(
             pendingEncounter: preview,
           },
         }, preview.name);
+        receipts.push(`Encounter: ${preview.name}`);
         receipts.push(`Encounter preface pending: ${preview.name}`);
       }
 
@@ -462,7 +559,11 @@ function applyBeatEffects(
   next = pushBeatStateTx(next, contract.summary, extras, state.turn + 1);
 
   if (xp > 0) {
-    receipts.push(`Arc XP: +${xp} (${contract.summary})`);
+    receipts.push(
+      isCombat
+        ? `XP Gained: ${xp} (combat)`
+        : `Arc XP: +${xp} (${contract.summary})`
+    );
   }
 
   return { state: next, xp, receipts };
@@ -478,6 +579,8 @@ export function formatArcStatusReceipts(result: ArcDirectorResult): string[] {
       const m = r.match(/Arc XP: \+(\d+) \((.+)\)/);
       if (m) lines.push(`XP Gained: ${m[1]} (arc: ${m[2]})`);
       else lines.push(r);
+    } else if (r.startsWith('XP Gained:')) {
+      lines.push(r);
     } else if (r.startsWith('Encounter:')) {
       lines.push(r);
     } else if (r.startsWith('Encounter cleared:')) {
@@ -689,10 +792,19 @@ export function runArcDirectorBeforeGm(
       contract;
   }
 
+  let forceDroughtSpawn = false;
+  if (shouldSpawnCombat(working) && !working.activeEncounter) {
+    const droughtContract = resolveCombatContract(working, committed);
+    if (droughtContract) {
+      contract = droughtContract;
+      forceDroughtSpawn = true;
+    }
+  }
+
   if (contract && (!contract.once || !committed.has(contract.id)) && shouldCommitBeat(contract, working, playerInput)) {
     const { seq, state: seqState } = nextEventSeq(working);
     working = seqState;
-    const applied = applyBeatEffects(working, contract, seq);
+    const applied = applyBeatEffects(working, contract, seq, { forceSpawn: forceDroughtSpawn });
     working = applied.state;
     if (applied.xp > 0) {
       xpAwards.push({ amount: applied.xp, reason: contract.summary });

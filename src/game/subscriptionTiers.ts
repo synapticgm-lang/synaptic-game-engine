@@ -270,7 +270,7 @@ export const SUBSCRIPTION_TIERS: Record<SubscriptionTierId, TierDefinition> = {
     id: 'free',
     name: 'Free',
     priceGbp: 0,
-    writerOpenRouterId: 'google/gemini-2.5-flash-lite',
+    writerOpenRouterId: 'deepseek/deepseek-v4-flash-0731',
     writerGeminiId: 'gemini-2.5-flash-lite',
     textTurnsPerDay: 12,
     memorableImagesPerWeek: 0,

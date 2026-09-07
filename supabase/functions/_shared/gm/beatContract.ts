@@ -8,6 +8,7 @@ import type { GameState, LogEntry } from './types.ts';
 import { formatPyoaSpineTurnJob } from './pyoaSpine.ts';
 import { canHarvestAsNamedPerson, isRegisteredLocation } from './entityRegistry.ts';
 import { isPlannerUiPersonToken, realPresentPeople } from './chromeAuthority.ts';
+import { isNeverCastTitle } from './neverCast.ts';
 import { playerFacingLocation } from './locationName.ts';
 import {
   hereLocation,
@@ -45,6 +46,10 @@ export interface BeatContract {
   questId?: string;
   xpChunk?: number;
   spawnEncounter?: boolean;
+  /** 02ac registry — optional versioned template fields. */
+  version?: string;
+  proseHints?: string[];
+  wordCountTarget?: number;
 }
 
 const CONTRACTS: BeatContract[] = [
@@ -380,6 +385,7 @@ export function sealedCastNames(state: GameState): string[] {
     const name = (raw ?? '').trim();
     if (!name || seen.has(name.toLowerCase())) return;
     if (isPlannerUiPersonToken(name)) return;
+    if (isNeverCastTitle(name, state)) return;
     if (pinsOut && (pinSet.has(name.toLowerCase()) || /^(handler|priests?)$/i.test(name))) return;
     if (!canHarvestAsNamedPerson(name, bibleId)) return;
     seen.add(name.toLowerCase());
@@ -500,7 +506,10 @@ export function formatWriterFacingPacket(state: GameState, playerInput?: string)
   const rhythm = beats.length
     ? beats.map((e) => `GM: ${String(e.content ?? '').slice(0, WRITER_RHYTHM_CHAR_CAP)}`).join('\n')
     : 'GM: (opening)';
-  return `${formatSealedBeatCard(card)}
+  const beatLine = state.arcDirector?.activeBeatId
+    ? `\nBEAT: Honor the committed ledger beat in 50–100 words. Do not invent HP, XP, or quest ticks.`
+    : '';
+  return `${formatSealedBeatCard(card)}${beatLine}
 
 ${formatModeVoiceLine(state)}
 

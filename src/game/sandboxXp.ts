@@ -11,11 +11,11 @@ import { hubsForBibleId, matchHub } from './outdoorHubs';
 import { placeIdFromName } from './places';
 
 export const SANDBOX_XP = {
-  discoverHub: 12,
-  clearIncidental: 15,
-  questTick: 12,
+  discoverHub: 20,
+  clearIncidental: 25,
+  questTick: 20,
   questCompleteSide: 30,
-  questCompleteMain: 45,
+  questCompleteMain: 50,
   nonLethalResolve: 18,
   /** First real talk/ask with a named present NPC. */
   npcMeet: 8,

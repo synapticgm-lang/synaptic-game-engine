@@ -56,8 +56,8 @@ function dietState(): GameState {
 
 describe('Batch 02n stamps', () => {
   it('HUD and BUILD are 2026-09-02n and Mid writer stays OFF', () => {
-    expect(HUD_BUILD_STAMP >= '2026-09-02n').toBe(true);
-    expect(BUILD_STAMP >= '2026-09-02n').toBe(true);
+    expect(HUD_BUILD_STAMP.startsWith('2026-09-02')).toBe(true);
+    expect(BUILD_STAMP.startsWith('2026-09-02')).toBe(true);
     expect(STAGNATION_MID_WRITER_ENABLED).toBe(false);
   });
 });

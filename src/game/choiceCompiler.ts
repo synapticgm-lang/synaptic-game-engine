@@ -12,6 +12,7 @@ import {
 } from './npcTopicFsm';
 import { hubsForBibleId, matchHub } from './outdoorHubs';
 import { enumerateLegalEdges, edgesToChoiceLabels } from './choiceEdge';
+import { compileGraphChoiceLabels } from './graphChoices';
 import { 
   isEncounterEngaged, 
   fleeAvailable, 
@@ -643,6 +644,15 @@ export function compileChoices(
   const excluded = excludedPadFamilies(state);
   const legalEdges = enumerateLegalEdges(state);
   const edgeLabels = edgesToChoiceLabels(legalEdges);
+  const sealedBeat =
+    !!state.arcDirector?.activeBeatId || !!state.activeEncounter || !!state.sceneFacts?.pendingEncounter;
+  const graphLabels = sealedBeat ? compileGraphChoiceLabels(state) : [];
+  if (graphLabels.length) {
+    notes.push(`Sealed-beat graph pads: ${graphLabels.length}`);
+    if (state.activeEncounter || state.sceneFacts?.pendingEncounter) {
+      notes.push('Encounter lock: graph pads only');
+    }
+  }
 
   // Batch Z — check BOTH active and pending encounters for engaged state
   const engaged = isEncounterEngaged(state) || !!state.sceneFacts?.pendingEncounter;
@@ -673,7 +683,7 @@ export function compileChoices(
         && (state.arcDirector?.npcTopics?.[npcKey] ?? []).length >= 2));
   const stallInterrupt = hardStreak || hardLoiter || inspectTreadmill || talkRecycle;
 
-  let filtered = choices.filter((c) => {
+  let filtered = (graphLabels.length ? graphLabels : choices).filter((c) => {
     const lower = c.toLowerCase();
     if (state.engineMode === 'pyoa' && !eligiblePyoaPadsAfterLock(state, c)) {
       notes.push(`Branch lock drop: ${c.slice(0, 32)}`);

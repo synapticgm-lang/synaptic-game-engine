@@ -123,6 +123,7 @@ import {
   preserveArcQuestProgress,
   type ArcDirectorResult,
 } from './arcDirector';
+import { beatCommitFromReceipts, validateProseAgainstBeat } from './beatCommit';
 import {
   attachSealedManifest,
   buildSealedManifest,
@@ -1124,6 +1125,18 @@ Do NOT print dice notation or CODE ENFORCED.
   cleanText = ensureTurnProse(cleanText, playerInput);
   cleanText = applyFactLocks(state, cleanText, playerInput);
   cleanText = enforcePerspective(cleanText, settings, state.character.name);
+  if (arcResult?.beatCommitted) {
+    validateProseAgainstBeat(
+      beatCommitFromReceipts({
+        type: arcResult.systemReceipts.some((r) => /^Encounter:/i.test(r))
+          ? 'combat'
+          : 'quest_stage',
+        receipts: arcResult.systemReceipts,
+        xpAwards: arcResult.xpAwards,
+      }),
+      cleanText
+    );
+  }
   cleanText = applyProseWarden(cleanText, {
     currentLocation: working.currentLocation ?? state.currentLocation,
     priorLocation: state.previousSceneFacts?.location ?? state.currentLocation,

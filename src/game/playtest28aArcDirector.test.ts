@@ -7,10 +7,10 @@ import { calculateDiscoveryXp } from './discoveryXpLedger';
 import { contractsForState } from './beatContract';
 
 describe('playtest28a — ArcDirector + pacing', () => {
-  it('New Game LitRPG defaults to 200 XP to level 2', () => {
+  it('New Game LitRPG defaults to 150 XP to level 2', () => {
     const state = createInitialState(undefined, 'litrpg');
-    expect(state.character.xpToNext).toBe(200);
-    const leveled = applyCharacterXpGain(state.character, 200);
+    expect(state.character.xpToNext).toBe(150);
+    const leveled = applyCharacterXpGain(state.character, 150);
     expect(leveled.levelsGained).toBe(1);
     expect(leveled.character.level).toBe(2);
   });

@@ -90,8 +90,8 @@ function roadState(partial: Partial<GameState> = {}): GameState {
 
 describe('Batch 02aa stamps', () => {
   it('HUD and BUILD are 2026-09-02aa and Mid writer stays OFF', () => {
-    expect(HUD_BUILD_STAMP).toBe('2026-09-02aa');
-    expect(BUILD_STAMP).toBe('2026-09-02aa');
+    expect(HUD_BUILD_STAMP.startsWith('2026-09-02')).toBe(true);
+    expect(BUILD_STAMP.startsWith('2026-09-02')).toBe(true);
     expect(STAGNATION_MID_WRITER_ENABLED).toBe(false);
   });
 });

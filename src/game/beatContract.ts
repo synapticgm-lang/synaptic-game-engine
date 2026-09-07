@@ -46,6 +46,10 @@ export interface BeatContract {
   questId?: string;
   xpChunk?: number;
   spawnEncounter?: boolean;
+  /** 02ac registry — optional versioned template fields. */
+  version?: string;
+  proseHints?: string[];
+  wordCountTarget?: number;
 }
 
 const CONTRACTS: BeatContract[] = [
@@ -502,7 +506,10 @@ export function formatWriterFacingPacket(state: GameState, playerInput?: string)
   const rhythm = beats.length
     ? beats.map((e) => `GM: ${String(e.content ?? '').slice(0, WRITER_RHYTHM_CHAR_CAP)}`).join('\n')
     : 'GM: (opening)';
-  return `${formatSealedBeatCard(card)}
+  const beatLine = state.arcDirector?.activeBeatId
+    ? `\nBEAT: Honor the committed ledger beat in 50–100 words. Do not invent HP, XP, or quest ticks.`
+    : '';
+  return `${formatSealedBeatCard(card)}${beatLine}
 
 ${formatModeVoiceLine(state)}
 

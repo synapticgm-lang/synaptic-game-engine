@@ -319,7 +319,9 @@ import {
   formatArcDirectorMandateBlock,
   formatArcStatusReceipts,
   preserveArcQuestProgress,
+  type ArcDirectorResult,
 } from './arcDirector';
+import { beatCommitFromReceipts, validateProseAgainstBeat } from './beatCommit';
 import {
   attachSealedManifest,
   buildSealedManifest,
@@ -2674,8 +2676,10 @@ export function useGame() {
       let arcReceiptLine = '';
       let sealedManifestBlock = '';
       let pendingArcStatusReceipts: string[] = [];
+      let systemsArc: ArcDirectorResult | undefined;
       if (!freeOpeningTurn && liveCurrent.openingEstablishment?.complete) {
         const arc = runArcDirectorBeforeGm(liveCurrent, sanitizedInput);
+        systemsArc = arc;
         liveCurrent = arc.state;
         const manifest = buildSealedManifest(liveCurrent, sanitizedInput, arc);
         liveCurrent = attachSealedManifest(liveCurrent, manifest);
@@ -3617,6 +3621,18 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
         const exits =
           dungeon && isInteriorMap(dungeon) ? listInteriorExitsFromHere(dungeon) : [];
         const doorish = exits.filter((e) => e.kind === 'door' || e.kind === 'stairs');
+        if (systemsArc?.beatCommitted) {
+          validateProseAgainstBeat(
+            beatCommitFromReceipts({
+              type: systemsArc.systemReceipts.some((r) => /^Encounter:/i.test(r))
+                ? 'combat'
+                : 'quest_stage',
+              receipts: systemsArc.systemReceipts,
+              xpAwards: systemsArc.xpAwards,
+            }),
+            cleanText
+          );
+        }
         cleanText = applyProseWarden(cleanText, {
           currentLocation: workingState.currentLocation ?? liveCurrent.currentLocation,
           priorLocation: liveCurrent.previousSceneFacts?.location ?? liveCurrent.currentLocation,

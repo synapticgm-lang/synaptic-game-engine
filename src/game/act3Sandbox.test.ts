@@ -94,6 +94,7 @@ describe('Act-3 outdoor hubs', () => {
       activeEncounter: null,
       quests: [],
       places: [],
+      discoveredLocations: ['sp-hub-lowmarket', 'sp-hub-west-wall'],
     };
     const choices = outdoorHubTravelChoices(state, 2);
     expect(choices.length).toBeGreaterThan(0);
@@ -206,7 +207,7 @@ describe('Act-3 off-spine XP', () => {
       turn: 3,
     });
     expect(first.xp).toBe(SANDBOX_XP.discoverHub);
-    expect(first.notes.some((n) => /XP Gained: 12/.test(n))).toBe(true);
+    expect(first.notes.some((n) => new RegExp(`XP Gained: ${SANDBOX_XP.discoverHub}`).test(n))).toBe(true);
     const second = applySandboxXpAwards(
       { ...base, places: first.places, sandboxAwardKeys: first.awardKeys },
       {
@@ -273,4 +274,4 @@ describe('Act-3 off-spine XP', () => {
     expect(done.xp).toBe(SANDBOX_XP.questCompleteSide);
   });
 });
-
+
