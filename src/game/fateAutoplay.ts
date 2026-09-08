@@ -131,8 +131,7 @@ import {
 } from './completedEventPacket';
 import {
   composeFreeMudTurn,
-  formatMicroFlavorPrompt,
-  shouldSkipMicroFlavor,
+  planMicroFlavor,
   shouldUseFreeMudPresentation,
   type FreeMudTurn,
 } from './freeMudPresentation';
@@ -995,12 +994,22 @@ OUTCOME FOR THIS ACTION: Narrate consequences of the player action. Story first.
 Do NOT print dice notation or CODE ENFORCED.
 -------------------------------------------------
 `;
-  const silentMud = useMud && shouldSkipMicroFlavor();
+  // 08e Sparse flavor — DeepSeek only on lethal / level-up / new HERE / first Talk.
+  let mudFlavorPlan = useMud
+    ? planMicroFlavor({
+        state: arcState,
+        packet: preparedEvent.packet,
+        arcReceipts: arcStatusReceipts,
+      })
+    : null;
+  if (mudFlavorPlan) {
+    arcState = mudFlavorPlan.state;
+  }
+  const silentMud = useMud && (!mudFlavorPlan || mudFlavorPlan.skip);
   const payload = useMud
-    ? (silentMud ? '' : formatMicroFlavorPrompt(preparedEvent.packet))
+    ? (silentMud ? '' : mudFlavorPlan!.prompt)
     : eventWriterFacing;
 
-  // 08d Silent Engine — receipts only; never call DeepSeek for micro-flavor.
   const gmResult = silentMud
     ? { text: '', systemLog: [] as string[], transportRetries: 0 }
     : await callGmWithRetries(arcState, payload, settings);
@@ -1011,7 +1020,7 @@ Do NOT print dice notation or CODE ENFORCED.
   let renderFallbackUsed = false;
 
   if (useMud) {
-    // Free MUD: receipt is primary; Silent Engine never invents a flavor quote.
+    // Free MUD: receipt is primary; sparse flavor only when threshold fired.
     mudTurn = composeFreeMudTurn(preparedEvent.packet, {
       arcReceipts: arcStatusReceipts,
       flavorRaw: silentMud ? '' : gmResult.text,

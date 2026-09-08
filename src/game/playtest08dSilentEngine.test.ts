@@ -61,22 +61,24 @@ function baseState(over: Partial<GameState> = {}): GameState {
   };
 }
 
-describe('08d — Silent Engine', () => {
-  it('locks Silent Engine on + Mid OFF + stamp 08d', () => {
+describe('08d — Silent Engine / pad locks (held under 08e sparse)', () => {
+  it('locks Mid OFF + mud on + stamp 08e path keeps pad/spatial locks', () => {
     expect(FREE_MUD_PRESENTATION_ENABLED).toBe(true);
-    expect(SILENT_ENGINE).toBe(true);
-    expect(shouldSkipMicroFlavor()).toBe(true);
+    // 08e: Silent Engine off; sparse flavor owns thresholds. Pad prune still required.
+    expect(SILENT_ENGINE).toBe(false);
+    expect(shouldSkipMicroFlavor()).toBe(false);
     expect(shouldUseFreeMudPresentation('free')).toBe(true);
     expect(STAGNATION_MID_WRITER_ENABLED).toBe(false);
-    expect(HUD_BUILD_STAMP).toBe('2026-09-08d');
-    expect(BUILD_STAMP).toBe('2026-09-08d');
+    expect(HUD_BUILD_STAMP).toBe('2026-09-08e');
+    expect(BUILD_STAMP).toBe('2026-09-08e');
   });
 
-  it('composeFreeMudTurn never emits flavor under Silent Engine', () => {
+  it('composeFreeMudTurn can force silent receipts (no flavor)', () => {
     const packet = buildCompletedEventPacket(baseState(), 'Look around');
     const turn = composeFreeMudTurn(packet, {
       flavorRaw: 'Dust hung in the Lowmarket air.',
       arcReceipts: ['XP Gained: 5'],
+      silent: true,
     });
     expect(turn.flavorQuote).toBe('');
     expect(turn.content).toBe('');

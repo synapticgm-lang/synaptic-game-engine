@@ -900,6 +900,14 @@ export interface SceneFacts {
    * Not a full JSON bible matrix; thin stub only.
    */
   worldTags?: string[];
+  /**
+   * 08e Sparse flavor memory — first arrival / first Talk keys already flavored.
+   * Survives travel; capped in freeMudPresentation.rememberSparseFlavor.
+   */
+  sparseFlavor?: {
+    arrivalKeys?: string[];
+    talkKeys?: string[];
+  };
 }
 
 export interface TimelineFact {

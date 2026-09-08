@@ -1,10 +1,13 @@
 /**
  * Batch 08c — Free MUD-modern presentation (Option 2).
  * Batch 08d — Silent Engine: receipts only (no DeepSeek micro-flavor calls).
+ * Batch 08e — Sparse flavor: DeepSeek ONLY on lethal / level-up / new HERE / first Talk.
  * Free is NOT a 50–100 word Retrospective Narrator novelist on this path.
  */
 
 import type { CompletedEventPacket } from './completedEventPacket';
+import type { GameState, SceneFacts } from './types';
+import { matchesLastKillName } from './combatAuthority';
 import type { HostedAiTier } from './testLab';
 import { effectiveWriterTier } from './testLab';
 
@@ -13,11 +16,19 @@ export const FREE_MUD_PRESENTATION_ENABLED = true;
 
 /**
  * 08d Silent Engine — no Free flavor micro-prompt / DeepSeek calls.
- * Receipts only (100% mechanical). Flip false to restore 08c Option 2 flavor.
+ * 08e branch default: false (sparse thresholds own flavor).
  */
-export const SILENT_ENGINE = true;
+export const SILENT_ENGINE = false;
+
+/**
+ * 08e Sparse flavor — Free mud path calls DeepSeek only on thresholds.
+ * When true with SILENT_ENGINE false: not every-turn (08c), not silent (08d).
+ */
+export const SPARSE_FLAVOR = true;
 
 export type MudPresentationKind = 'mud-receipt' | 'standard';
+
+export type SparseFlavorKind = 'lethal' | 'level-up' | 'arrival' | 'first-talk';
 
 export type FreeMudTurn = {
   /** Optional 1-sentence flavor (may be empty). */
@@ -29,10 +40,25 @@ export type FreeMudTurn = {
   flavorSource: 'ai' | 'none';
 };
 
+export type SparseFlavorContext = {
+  state: GameState;
+  packet: CompletedEventPacket;
+  arcReceipts?: string[];
+};
+
+export type MicroFlavorPlan = {
+  skip: boolean;
+  kind: SparseFlavorKind | null;
+  prompt: string;
+  state: GameState;
+};
+
 const INSTRUCTION_VOICE =
   /\b(my instruction|you should|do the following|as an ai|write a|narrate this|completed event)\b/i;
 const NUMBERED_LIST = /^\s*\d+[\.)]\s+/m;
 const MULTI_SENTENCE = /[.!?]["']?\s+[A-Z]/;
+const CHROME_LEAK =
+  /\b(?:HERE:|ACT:|OUTCOME:|CLEAR:|CORPSE:|CAST:|XP:|DMG:|ENCOUNTER:)|(?:FOE HP|SNAPSHOT|CRAFT|STATUS|Level Up!)/i;
 
 export function shouldUseFreeMudPresentation(
   subscriptionTier: HostedAiTier | string | undefined
@@ -41,9 +67,187 @@ export function shouldUseFreeMudPresentation(
   return effectiveWriterTier(subscriptionTier) === 'free';
 }
 
-/** True when Free mud path should skip the AI flavor round-trip entirely. */
+/**
+ * True when Silent Engine is on (no flavor calls at all).
+ * Under SPARSE_FLAVOR, use `planMicroFlavor` — do not treat this as sparse skip.
+ */
 export function shouldSkipMicroFlavor(): boolean {
   return SILENT_ENGINE === true;
+}
+
+function normKey(raw: string): string {
+  return String(raw ?? '')
+    .replace(/\s+/g, ' ')
+    .trim()
+    .toLowerCase();
+}
+
+function sparseMemory(state: GameState): NonNullable<SceneFacts['sparseFlavor']> {
+  return {
+    arrivalKeys: [...(state.sceneFacts?.sparseFlavor?.arrivalKeys ?? [])],
+    talkKeys: [...(state.sceneFacts?.sparseFlavor?.talkKeys ?? [])],
+  };
+}
+
+function inferWeaponNoun(packet: CompletedEventPacket): string {
+  const pool = [...(packet.allowlist ?? []), packet.playerAction, packet.verb]
+    .join(' ')
+    .toLowerCase();
+  if (/\b(sword|blade|knife|dagger|axe|mace|spear|bow|arrow|staff|club|fist|steel)\b/.test(pool)) {
+    const m = pool.match(/\b(sword|blade|knife|dagger|axe|mace|spear|bow|arrow|staff|club|fist|steel)\b/);
+    return m?.[1] ?? 'steel';
+  }
+  return 'steel';
+}
+
+function corpseOrFoeNoun(packet: CompletedEventPacket): string {
+  const name = packet.lastKill?.name ?? packet.target ?? 'foe';
+  const last = name.trim().split(/\s+/).pop() ?? 'foe';
+  return last.toLowerCase();
+}
+
+/** Resolve which sparse threshold fires this turn (priority order). */
+export function resolveSparseFlavorThreshold(
+  ctx: SparseFlavorContext
+): SparseFlavorKind | null {
+  const { packet, state, arcReceipts = [] } = ctx;
+  const mem = sparseMemory(state);
+
+  if (packet.justKilled || packet.outcome === 'killed') {
+    return 'lethal';
+  }
+
+  if (arcReceipts.some((r) => /Level Up!/i.test(String(r ?? '')))) {
+    return 'level-up';
+  }
+
+  const arrived =
+    packet.outcome === 'arrived'
+    || packet.verb === 'traveled'
+    || packet.verb === 'left';
+  if (arrived) {
+    const here = normKey(packet.location);
+    if (here && !mem.arrivalKeys.includes(here)) return 'arrival';
+  }
+
+  if (packet.verb === 'spoke' && packet.target) {
+    if (matchesLastKillName(packet.target, packet.lastKill ?? state.sceneFacts?.lastKill)) {
+      return null;
+    }
+    const talkKey = normKey(packet.target);
+    if (talkKey && !mem.talkKeys.includes(talkKey)) return 'first-talk';
+  }
+
+  return null;
+}
+
+/** Persist threshold memory so arrival/first-talk fire once per key. */
+export function rememberSparseFlavor(
+  state: GameState,
+  kind: SparseFlavorKind,
+  packet: CompletedEventPacket
+): GameState {
+  const mem = sparseMemory(state);
+  if (kind === 'arrival') {
+    const here = normKey(packet.location);
+    if (here && !mem.arrivalKeys.includes(here)) mem.arrivalKeys.push(here);
+  } else if (kind === 'first-talk' && packet.target) {
+    const talkKey = normKey(packet.target);
+    if (talkKey && !mem.talkKeys.includes(talkKey)) mem.talkKeys.push(talkKey);
+  } else {
+    return state;
+  }
+  return {
+    ...state,
+    sceneFacts: {
+      ...(state.sceneFacts ?? {
+        crowd: 'unknown',
+        noise: 'unknown',
+        present: [],
+        props: [],
+        lastBeat: '',
+        updatedTurn: state.turn,
+      }),
+      sparseFlavor: {
+        arrivalKeys: mem.arrivalKeys.slice(-40),
+        talkKeys: mem.talkKeys.slice(-40),
+      },
+    },
+  };
+}
+
+/**
+ * Ultra-lean sparse prompts — one sentence; ledger nouns; fail-closed NONE.
+ */
+export function formatSparseFlavorPrompt(
+  packet: CompletedEventPacket,
+  kind: SparseFlavorKind
+): string {
+  const allow = packet.allowlist.length
+    ? packet.allowlist.slice(0, 8).join(', ')
+    : 'none';
+  if (kind === 'lethal') {
+    const noun = corpseOrFoeNoun(packet);
+    const weapon = inferWeaponNoun(packet);
+    return [
+      `Write exactly one sentence describing ${noun} dying by ${weapon}.`,
+      'No names. No pronouns. No lists. No second sentence.',
+      'If you cannot stay inside the ledger, reply with exactly: NONE',
+      `YOU MAY ONLY MENTION: ${allow}.`,
+    ].join(' ');
+  }
+  if (kind === 'level-up') {
+    return [
+      'Write exactly one sentence describing a level threshold crossing as a quiet body rush.',
+      'No names. No pronouns inventing people. No XP numbers. No lists.',
+      'If you cannot, reply with exactly: NONE',
+      `YOU MAY ONLY MENTION: ${allow}.`,
+    ].join(' ');
+  }
+  if (kind === 'arrival') {
+    const place = packet.location || 'here';
+    return [
+      `Write exactly one sentence describing arrival at ${place}.`,
+      'No invented people. No pronouns inventing cast. No lists.',
+      'If you cannot, reply with exactly: NONE',
+      `YOU MAY ONLY MENTION: ${allow}.`,
+    ].join(' ');
+  }
+  const who = packet.target || 'someone';
+  return [
+    `Write exactly one spoken or gestured first-meeting sentence with ${who}.`,
+    'Past tense. No lists. No invented loot or places.',
+    'If you cannot stay inside the allowlist, reply with exactly: NONE',
+    `YOU MAY ONLY MENTION: ${allow}.`,
+  ].join(' ');
+}
+
+/**
+ * Plan whether this Free mud turn requests DeepSeek flavor.
+ * Marks arrival/first-talk memory when a threshold fires (even if AI later fails).
+ */
+export function planMicroFlavor(ctx: SparseFlavorContext): MicroFlavorPlan {
+  if (SILENT_ENGINE) {
+    return { skip: true, kind: null, prompt: '', state: ctx.state };
+  }
+  if (!SPARSE_FLAVOR) {
+    return {
+      skip: false,
+      kind: null,
+      prompt: formatMicroFlavorPrompt(ctx.packet),
+      state: ctx.state,
+    };
+  }
+  const kind = resolveSparseFlavorThreshold(ctx);
+  if (!kind) {
+    return { skip: true, kind: null, prompt: '', state: ctx.state };
+  }
+  return {
+    skip: false,
+    kind,
+    prompt: formatSparseFlavorPrompt(ctx.packet, kind),
+    state: rememberSparseFlavor(ctx.state, kind, ctx.packet),
+  };
 }
 
 /** Factual receipt from sealed packet + ArcDirector STATUS lines — never AI. */
@@ -102,7 +306,7 @@ export function buildFactualReceipt(
 
 /**
  * Micro-prompt only: one sensory/dialogue sentence from the sealed event.
- * Noun allowlist; never invent items/people/outcomes.
+ * Noun allowlist; never invent items/people/outcomes. (08c every-turn path)
  */
 export function formatMicroFlavorPrompt(packet: CompletedEventPacket): string {
   const target = packet.target ? ` ${packet.target}` : '';
@@ -158,7 +362,8 @@ function allowlistCovers(allowlist: string[], token: string): boolean {
 }
 
 /**
- * Gate: ≤1 sentence, no invent Title-Case outside allowlist, no instruction voice.
+ * Gate: ≤1 sentence, no invent Title-Case outside allowlist, no instruction voice,
+ * no receipt/chrome leak (08e fail-closed).
  */
 export function gateMicroFlavorQuote(
   raw: string,
@@ -179,6 +384,7 @@ export function gateMicroFlavorQuote(
   if (text.length > 220) return { ok: false, reason: 'too-long' };
   if (NUMBERED_LIST.test(text)) return { ok: false, reason: 'list' };
   if (INSTRUCTION_VOICE.test(text)) return { ok: false, reason: 'instruction' };
+  if (CHROME_LEAK.test(text)) return { ok: false, reason: 'chrome-leak' };
   if (MULTI_SENTENCE.test(text.slice(0, -1))) {
     // already sliced to first sentence; soft OK
   }
@@ -200,7 +406,7 @@ export function gateMicroFlavorQuote(
   return { ok: true, quote: text };
 }
 
-/** Compose Free turn: receipt always; flavor only if AI gate passes (off under Silent Engine). */
+/** Compose Free turn: receipt always; flavor only if AI gate passes (off under Silent / non-threshold sparse). */
 export function composeFreeMudTurn(
   packet: CompletedEventPacket,
   opts: {
@@ -214,7 +420,8 @@ export function composeFreeMudTurn(
   const receiptLines = buildFactualReceipt(packet, opts.arcReceipts ?? [], {
     gold: opts.gold,
   });
-  const silent = opts.silent === true || shouldSkipMicroFlavor();
+  // Callers pass silent:true for non-threshold sparse / full Silent Engine.
+  const silent = opts.silent === true || SILENT_ENGINE === true;
   if (silent) {
     return {
       content: '',

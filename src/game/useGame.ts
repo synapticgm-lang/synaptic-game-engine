@@ -329,8 +329,7 @@ import {
 } from './completedEventPacket';
 import {
   composeFreeMudTurn,
-  formatMicroFlavorPrompt,
-  shouldSkipMicroFlavor,
+  planMicroFlavor,
   shouldUseFreeMudPresentation,
   type FreeMudTurn,
 } from './freeMudPresentation';
@@ -2800,15 +2799,29 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
         stateRef.current = { ...liveCurrent };
       }
       const turnMandate = buildTurnMandate(sanitizedInput, intentForMandate, liveCurrent, typedAction);
+      // 08e Sparse flavor — DeepSeek only on lethal / level-up / new HERE / first Talk.
+      let mudFlavorPlan = useMud
+        ? planMicroFlavor({
+            state: liveCurrent,
+            packet: preparedEvent.packet,
+            arcReceipts: pendingArcStatusReceipts,
+          })
+        : null;
+      if (mudFlavorPlan) {
+        liveCurrent = mudFlavorPlan.state;
+        stateRef.current = liveCurrent;
+      }
+      const silentMud = useMud && (!mudFlavorPlan || mudFlavorPlan.skip);
       const gmPlayerPayload = useMud
-        ? (shouldSkipMicroFlavor() ? '' : formatMicroFlavorPrompt(preparedEvent.packet))
+        ? (silentMud ? '' : mudFlavorPlan!.prompt)
         : eventWriterFacing;
 
       debugLogger.record('API_REQUEST', 'Calling callGm for narrative generation', {
         turn: liveCurrent.turn,
         inputLength: sanitizedInput.length,
         mudPresentation: useMud,
-        silentEngine: useMud && shouldSkipMicroFlavor(),
+        silentEngine: silentMud,
+        sparseFlavor: mudFlavorPlan?.kind ?? null,
         aiProvider: settingsRef.current.aiProvider,
         hasApiKey: !!(settingsRef.current.geminiApiKey || settingsRef.current.openrouterApiKey)
       });
@@ -2867,17 +2880,17 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
         }
         throw lastErr instanceof Error ? lastErr : new Error('GM transport retries exhausted');
       };
-      // 08d Silent Engine — receipt only; skip DeepSeek micro-flavor entirely.
+      // 08e — receipt path; DeepSeek only when sparse threshold fires.
       let result: GmResult =
-        useMud && shouldSkipMicroFlavor()
+        silentMud
           ? { text: '', imagePrompt: null, rolls: [], systemLog: [] }
           : await callGmDurable(gmPlayerPayload);
       if (useMud) {
         mudTurnLive = composeFreeMudTurn(preparedEvent.packet, {
           arcReceipts: pendingArcStatusReceipts,
-          flavorRaw: shouldSkipMicroFlavor() ? '' : result.text,
+          flavorRaw: silentMud ? '' : result.text,
           gold: liveCurrent.gold,
-          silent: shouldSkipMicroFlavor(),
+          silent: silentMud,
         });
         liveCurrent = applyCombatClearTag(liveCurrent, preparedEvent.packet);
         stateRef.current = liveCurrent;
