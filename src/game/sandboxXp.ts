@@ -9,6 +9,7 @@ import type { GameState, Quest } from './types';
 import { detectStanceTreatment } from './factionStandings';
 import { hubsForBibleId, matchHub } from './outdoorHubs';
 import { placeIdFromName } from './places';
+import { matchesLastKillName } from './combatAuthority';
 
 export const SANDBOX_XP = {
   discoverHub: 20,
@@ -192,15 +193,23 @@ export function applySandboxXpAwards(
   }
 
   // NPC meet — first talk/ask with a named present person (FO3/Fable social XP drip).
+  // 08d — never award meet XP for lastKill / corpse.
   if (/\b(?:ask|talk|speak|tell|greet|approach|inquire)\b/i.test(action)) {
+    const lastKill = state.sceneFacts?.lastKill;
     const present = [
       ...(state.sceneFacts?.present ?? []),
       ...(state.companions ?? []).map((c) => c.name).filter(Boolean),
-    ];
+    ].filter((raw) => {
+      const name = (raw ?? '').trim();
+      if (!name) return false;
+      if (lastKill?.outcome === 'victory' && matchesLastKillName(name, lastKill)) return false;
+      return true;
+    });
     for (const raw of present) {
       const name = (raw ?? '').trim();
       if (name.length < 2) continue;
       if (/^(?:you|your|panel|system|status|crowd|people|someone|stranger|figure)$/i.test(name)) continue;
+      if (lastKill?.outcome === 'victory' && matchesLastKillName(action, lastKill)) continue;
       const key = `npc-meet:${normalizeNpcKey(name)}`;
       if (hasAward(awardKeys, key)) continue;
       // Prefer names that appear in the action, else first unmet present.

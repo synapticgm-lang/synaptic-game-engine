@@ -8,9 +8,9 @@ import { effectiveWriterTier, hasUnlimitedTextCapacity, isFounderPlayAccount } f
 import { equippedSetLabel, equippedSetName } from '../game/uiTheme';
 
 /** Visible after a hard refresh -- if this is missing, Vercel is still serving the 16 Aug bundle. */
-export const HUD_BUILD_STAMP = '2026-09-08c';
+export const HUD_BUILD_STAMP = '2026-09-08d';
 const HUD_BUILD_TITLE =
-  'Batch 08c - Free MUD-modern (receipt + micro-flavor) + Tag & Trigger stub';
+  'Batch 08d - Silent Engine (receipts only) + FSM pad prune + spatial HERE';
 
 interface Props {
   state: GameState;

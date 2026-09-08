@@ -51,12 +51,16 @@ export function applyPresentTrimOnTravel(
   const dropped = sameLoc
     ? (state.sceneFacts?.leftBehind ?? [])
     : prev.filter((p) => !trimmed.some((t) => t.toLowerCase() === p.toLowerCase()));
+  // 08d — leaving the scene clears corpse occupancy + parked drought for the old room
+  const clearCorpse = !sameLoc;
   const presentSame = trimmed.length === prev.length && trimmed.every((p, i) => p === prev[i]);
   const rolesSame = nextRoles.length === prevRoles.length && nextRoles.every((r, i) => r === prevRoles[i]);
   const behindSame =
     (state.sceneFacts?.leftBehind ?? []).length === dropped.length
     && dropped.every((p, i) => p === (state.sceneFacts?.leftBehind ?? [])[i]);
-  if (presentSame && rolesSame && behindSame) {
+  const killSame = !clearCorpse || !state.sceneFacts?.lastKill;
+  const pendingSame = !clearCorpse || !state.sceneFacts?.pendingEncounter;
+  if (presentSame && rolesSame && behindSame && killSame && pendingSame) {
     return state;
   }
   const base = state.sceneFacts ?? {
@@ -74,6 +78,13 @@ export function applyPresentTrimOnTravel(
       present: trimmed,
       anonymousRoles: nextRoles,
       leftBehind: dropped,
+      ...(clearCorpse
+        ? {
+            lastKill: undefined,
+            pendingEncounter: undefined,
+            pendingSpawnPreface: undefined,
+          }
+        : {}),
     },
   };
 }

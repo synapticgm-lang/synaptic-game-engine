@@ -3,6 +3,7 @@
  */
 
 import type { GameState } from './types';
+import { matchesLastKillName } from './combatAuthority';
 
 export type SocialMilestoneKind = 'overhear' | 'talk' | 'negotiate' | 'listen';
 
@@ -40,6 +41,15 @@ export function detectSocialMilestone(
 
   const npcMatch = lower.match(/(?:talk to|speak with|ask|tell|listen to)\s+([a-z][a-z\s'-]{2,30})/i);
   const target = (npcMatch?.[1] ?? 'scene').trim();
+  // 08d — no talk XP on a corpse / lastKill.
+  const lastKill = state.sceneFacts?.lastKill;
+  if (
+    lastKill?.name
+    && lastKill.outcome === 'victory'
+    && (matchesLastKillName(target, lastKill) || matchesLastKillName(input, lastKill))
+  ) {
+    return null;
+  }
   const key = milestoneKey(kind, target, loc);
   const node = nodeKey(target, loc);
 

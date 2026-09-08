@@ -49,7 +49,7 @@ import {
 } from './padUniverse';
 import { isClosedScenePersonPad } from './closedScenePerson';
 import { isObjectPersonPad, ledgerSlotPeople } from './slotGlue';
-import { isLastKillTalkPad } from './combatAuthority';
+import { isLastKillTalkPad, matchesLastKillName } from './combatAuthority';
 import { tagTriggerPads } from './tagTrigger';
 
 export type PlayerIntentFamily = 'demand' | 'inspect' | 'flee' | 'name' | 'talk' | 'travel' | 'other';
@@ -1085,11 +1085,20 @@ export function compileChoices(
       filtered = [...spineFirst, ...rest.slice(0, forceEdge ? 0 : 2)].slice(0, 6);
     } else if (spineState.pyoaSpine?.endingId) {
       filtered = filtered.filter((c) => !isSpineDelayPad(c));
+      // 08d — once ending accepted / play ended, never re-offer Accept-ending buy-time.
+      const endingDone =
+        state.playPhase === 'ended'
+        || spineState.pyoaSpine.flags?.endingAccepted === '1';
       if (
+        !endingDone &&
         !excluded.has('leave') &&
         !filtered.some((c) => /\b(aftermath|close|end|accept)\b/i.test(c))
       ) {
         filtered.unshift('Accept the ending that follows');
+      }
+      if (endingDone) {
+        filtered = filtered.filter((c) => !/\baccept the ending\b/i.test(c));
+        if (!filtered.length) filtered = ['Look around'];
       }
     }
     filtered = filtered.filter((c) => !isExcludedPadLabel(c, excluded));
@@ -1097,19 +1106,68 @@ export function compileChoices(
 
   // Batch Z Milestone 2 — Z-1: Filter pads by FSM state before finalizing
   // 02i — never refill from raw edgeLabels (those still include starved Travel/Leave)
-  const preFiltered = filtered.length
+  // 08d — hard-cull corpse social + topic-exhausted social before pad finalize
+  const lastKill = state.sceneFacts?.lastKill;
+  const topicForce =
+    !!npc && shouldForceNpcStageAdvance(state, npc);
+  const preFiltered = (filtered.length
     ? filtered.filter((c) => !isExcludedPadLabel(c, excluded)).slice(0, 6)
-    : closedUniverseFallbacks(state, excluded).slice(0, 3);
+    : closedUniverseFallbacks(state, excluded).slice(0, 3)
+  ).filter((c) => {
+    if (isLastKillTalkPad(c, lastKill)) {
+      notes.push(`08d corpse social cull: ${c.slice(0, 36)}`);
+      return false;
+    }
+    if (
+      topicForce
+      && npc
+      && /\b(ask|talk|speak|listen|press|offer|bargain)\b/i.test(c)
+      && (c.toLowerCase().includes(npc.toLowerCase()) || matchesLastKillName(c, lastKill))
+    ) {
+      notes.push(`08d topic-exhaust social cull: ${c.slice(0, 36)}`);
+      return false;
+    }
+    return true;
+  });
   const fsmChoices = filterPadsByFsmState(state, preFiltered, notes);
   let finalChoices = (fsmChoices.length
     ? fsmChoices
     : closedUniverseFallbacks(state, excluded)
   ).filter(
-    (c) => !isExcludedPadLabel(c, excluded) && !isLastKillTalkPad(c, state.sceneFacts?.lastKill)
+    (c) => !isExcludedPadLabel(c, excluded) && !isLastKillTalkPad(c, lastKill)
   );
   if (!finalChoices.length) {
     finalChoices = closedUniverseFallbacks(state, excluded);
     notes.push('Closed-universe empty-pad refill');
+  }
+  // 08d — after CLEAR / topic exhaust, force Leave/Loot/Travel if social was culled empty of progress
+  if (
+    lastKill?.name
+    && lastKill.outcome === 'victory'
+    && lastKill.remains
+    && !state.activeEncounter
+  ) {
+    const hasProgress = finalChoices.some(
+      (c) =>
+        /\b(loot|leave|travel|walk away|inspect|claim)\b/i.test(c)
+        && !isLastKillTalkPad(c, lastKill)
+    );
+    if (!hasProgress) {
+      const forcePads = [
+        `Loot the body of ${lastKill.name}`,
+        'Leave the scene',
+        'Inspect the immediate surroundings',
+      ].filter((p) => !isExcludedPadLabel(p, excluded));
+      finalChoices = [...forcePads, ...finalChoices].slice(0, 6);
+      notes.push('08d post-CLEAR force Leave/Loot');
+    }
+  }
+  if (topicForce && !finalChoices.some((c) => /\b(leave|travel|walk away|loot|inspect)\b/i.test(c))) {
+    const force = closedUniverseFallbacks(state, excluded).filter(
+      (c) => !/\b(ask|talk|speak|listen|press|offer)\b/i.test(c)
+    );
+    finalChoices = [...force.slice(0, 2), ...finalChoices].slice(0, 6);
+    notes.push('08d topic-exhaust force Leave/Travel/Inspect');
   }
   if (
     excluded.has('talk')

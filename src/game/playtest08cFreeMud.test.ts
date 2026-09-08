@@ -63,13 +63,14 @@ function baseState(over: Partial<GameState> = {}): GameState {
 }
 
 describe('08c — Free MUD presentation', () => {
-  it('locks Free mud on + Mid writer OFF + stamp 08c', () => {
+  it('locks Free mud on + Mid writer OFF + stamp 08c path still mud', () => {
     expect(FREE_MUD_PRESENTATION_ENABLED).toBe(true);
     expect(shouldUseFreeMudPresentation('free')).toBe(true);
     expect(shouldUseFreeMudPresentation('mid')).toBe(false);
     expect(STAGNATION_MID_WRITER_ENABLED).toBe(false);
-    expect(HUD_BUILD_STAMP).toBe('2026-09-08c');
-    expect(BUILD_STAMP).toBe('2026-09-08c');
+    // Stamp moved to 08d Silent Engine — mud path still on.
+    expect(HUD_BUILD_STAMP).toMatch(/^2026-09-08/);
+    expect(BUILD_STAMP).toMatch(/^2026-09-08/);
   });
 
   it('builds factual receipt from packet (no AI)', () => {

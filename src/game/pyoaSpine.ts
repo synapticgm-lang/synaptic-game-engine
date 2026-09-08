@@ -252,7 +252,18 @@ export function advancePyoaSpine(state: GameState, playerInput: string): GameSta
   if (!spineBibleSupported(state.campaignBibleId)) return state;
   const working = ensurePyoaSpine(state);
   const spine = working.pyoaSpine!;
-  if (spine.endingId) return working;
+
+  // 08d — Accept the ending must terminate, not infinite-loop as buy-time.
+  if (spine.endingId) {
+    if (/\baccept the ending\b/i.test(playerInput) || /\bclose the (?:book|road|chapter)\b/i.test(playerInput)) {
+      return {
+        ...working,
+        playPhase: 'ended',
+        pyoaSpine: { ...spine, flags: { ...spine.flags, endingAccepted: '1' } },
+      };
+    }
+    return working;
+  }
 
   const node = getSpineNode(spine.currentNodeId);
   if (!node) return working;

@@ -167,6 +167,8 @@ export function isChoicePadPersonToken(token: string): boolean {
   const t = normalizeChromeToken(token);
   if (!t) return false;
   if (isUnresolvedDeixisToken(t)) return true;
+  // 08d — pad-fragment harvest ("Saying Your", "Your Name")
+  if (/^(?:saying(?:\s+your)?|your(?:\s+name)?|yours)$/i.test(t)) return true;
   if (t.includes(' ')) return false;
   return CHOICE_PAD_PERSON_EXACT.test(t);
 }

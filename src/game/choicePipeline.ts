@@ -24,6 +24,7 @@ import {
 } from './padUniverse';
 import { isClosedScenePersonPad } from './closedScenePerson';
 import { isObjectPersonPad, ledgerSlotPeople } from './slotGlue';
+import { isLastKillTalkPad } from './combatAuthority';
 
 /**
  * 4-tier narrative pipeline (authoritative ordering for choice generation):
@@ -867,6 +868,7 @@ export function padChoicesToCount(
         .map((c) => sanitizeChoiceLabel(c))
         .filter(Boolean)
         .filter((c) => !isExcludedPadLabel(c, excluded))
+        .filter((c) => !isLastKillTalkPad(c, state.sceneFacts?.lastKill))
         .filter((c) => !isClosedScenePersonPad(c, state))
         .filter((c) => !isObjectPersonPad(c, ledgerSlotPeople(state)))
         .filter((c) => {

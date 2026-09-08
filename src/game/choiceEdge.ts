@@ -87,12 +87,17 @@ export function enumerateLegalEdges(state: GameState): ChoiceEdge[] {
       });
     }
     if (spineState.pyoaSpine?.endingId && !excluded.has('leave')) {
-      edges.push({
-        id: 'spine-ending',
-        label: 'Accept the ending that follows',
-        kind: 'branch',
-        risk: 'high',
-      });
+      const endingDone =
+        state.playPhase === 'ended'
+        || spineState.pyoaSpine.flags?.endingAccepted === '1';
+      if (!endingDone) {
+        edges.push({
+          id: 'spine-ending',
+          label: 'Accept the ending that follows',
+          kind: 'branch',
+          risk: 'high',
+        });
+      }
       return closeEdgeUniverse(state, edges);
     }
     if (!force && exits.length) {

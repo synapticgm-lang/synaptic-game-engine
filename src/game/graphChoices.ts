@@ -107,7 +107,7 @@ export function enumerateLegalEdges(state: GameState): StateEdge[] {
       if (!hub.name || hub.name.toLowerCase() === here) continue;
       edges.push({
         type: 'travel',
-        label: `Travel to ${hub.name}`,
+        label: `Travel toward ${hub.name}`,
         intent: PlayerIntent.INTENT_TRAVEL_HUB,
         target: hub.name,
         cooldown: 2,

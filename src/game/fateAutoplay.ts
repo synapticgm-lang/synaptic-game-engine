@@ -82,6 +82,8 @@ import { applyOpeningContract, ensureStarterLookCharacter, stitchOpeningScene } 
 import {
   seedOutdoorHubPlaces,
   parseTravelDestination,
+  isLeaveSceneAction,
+  resolveLeaveSceneDestination,
   matchHub,
   hubsForBibleId,
 } from './outdoorHubs';
@@ -130,6 +132,7 @@ import {
 import {
   composeFreeMudTurn,
   formatMicroFlavorPrompt,
+  shouldSkipMicroFlavor,
   shouldUseFreeMudPresentation,
   type FreeMudTurn,
 } from './freeMudPresentation';
@@ -992,11 +995,15 @@ OUTCOME FOR THIS ACTION: Narrate consequences of the player action. Story first.
 Do NOT print dice notation or CODE ENFORCED.
 -------------------------------------------------
 `;
+  const silentMud = useMud && shouldSkipMicroFlavor();
   const payload = useMud
-    ? formatMicroFlavorPrompt(preparedEvent.packet)
+    ? (silentMud ? '' : formatMicroFlavorPrompt(preparedEvent.packet))
     : eventWriterFacing;
 
-  const gmResult = await callGmWithRetries(arcState, payload, settings);
+  // 08d Silent Engine — receipts only; never call DeepSeek for micro-flavor.
+  const gmResult = silentMud
+    ? { text: '', systemLog: [] as string[], transportRetries: 0 }
+    : await callGmWithRetries(arcState, payload, settings);
   let error: string | undefined;
   let gmText = gmResult.text;
   let gmSystemLog = gmResult.systemLog ?? [];
@@ -1004,16 +1011,17 @@ Do NOT print dice notation or CODE ENFORCED.
   let renderFallbackUsed = false;
 
   if (useMud) {
-    // Free MUD: receipt is primary; empty/gated flavor is OK — never stitch a novel paragraph.
+    // Free MUD: receipt is primary; Silent Engine never invents a flavor quote.
     mudTurn = composeFreeMudTurn(preparedEvent.packet, {
       arcReceipts: arcStatusReceipts,
-      flavorRaw: gmResult.text,
+      flavorRaw: silentMud ? '' : gmResult.text,
       gold: arcState.gold,
+      silent: silentMud,
     });
     arcState = applyCombatClearTag(arcState, preparedEvent.packet);
     gmText = mudTurn.content;
     gmSystemLog = [...mudTurn.receiptLines];
-    if (gmResult.failKind === 'auth' || gmResult.dnsFailure) {
+    if (!silentMud && (gmResult.failKind === 'auth' || gmResult.dnsFailure)) {
       error = `GM empty/fail (${gmResult.dnsFailure ? 'network_dns' : gmResult.failKind ?? 'empty'})`;
     }
     arcState = clearEngineRecoveryStreak(arcState);
@@ -1290,11 +1298,20 @@ Do NOT print dice notation or CODE ENFORCED.
     };
   }
 
-  // Hard gate: Travel toward / Return to snaps location (was missing in headless → theater travel).
+  // Hard gate: Travel toward/to / Leave the scene must mutate HERE (08d spatial pointer).
   const fromLoc = state.currentLocation;
   const travelHub = parseTravelDestination(playerInput, meta.bibleId);
+  const leaveDestName =
+    !travelHub && isLeaveSceneAction(playerInput)
+      ? resolveLeaveSceneDestination({
+          ...working,
+          campaignBibleId: meta.bibleId,
+          previousLocationSheet: working.previousLocationSheet ?? state.previousLocationSheet,
+        })
+      : null;
+  const travelDestName = travelHub?.name ?? leaveDestName;
   if (
-    travelHub
+    travelDestName
     && !working.activeDungeon
     && !state.activeDungeon
     && !encounterBlocksTravel(working)
@@ -1302,10 +1319,11 @@ Do NOT print dice notation or CODE ENFORCED.
   ) {
     working = {
       ...working,
-      currentLocation: travelHub.name,
-      places: touchPlaceVisit(working.places ?? state.places ?? [], travelHub.name, state.turn + 1),
+      currentLocation: travelDestName,
+      places: touchPlaceVisit(working.places ?? state.places ?? [], travelDestName, state.turn + 1),
     };
-    cleanText = stampTravelArrivalIfSafe(cleanText, travelHub.name, fromLoc, working);
+    working = applyPresentTrimOnTravel(working, fromLoc ?? '', travelDestName);
+    cleanText = stampTravelArrivalIfSafe(cleanText, travelDestName, fromLoc, working);
   }
   working = enforceCameraOnState(working, playerInput);
   cleanText = enforceCameraOnProse(cleanText, working, playerInput);
@@ -1354,7 +1372,9 @@ Do NOT print dice notation or CODE ENFORCED.
 
   // 29e — hub linkedQuestIds reveal on travel / location change (parity with useGame)
   {
-    const traveled = !!parseTravelDestination(playerInput, meta.bibleId);
+    const traveled =
+      !!parseTravelDestination(playerInput, meta.bibleId)
+      || isLeaveSceneAction(playerInput);
     const justArrived =
       !!working.currentLocation &&
       !!state.currentLocation &&
@@ -1634,6 +1654,7 @@ Do NOT print dice notation or CODE ENFORCED.
       replayHash: hashCanonicalState(governed),
       renderFallbackUsed,
       presentation: useMud ? 'mud-receipt' : 'standard',
+      location: governed.currentLocation,
       flavorQuote: mudTurn?.flavorQuote || undefined,
       receiptLines: mudTurn?.receiptLines,
     },

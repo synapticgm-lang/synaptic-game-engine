@@ -283,6 +283,8 @@ import {
 import {
   seedOutdoorHubPlaces,
   parseTravelDestination,
+  isLeaveSceneAction,
+  resolveLeaveSceneDestination,
   mergeHubLandmarks,
   visitedHubLandmarkNames,
   matchHub,
@@ -328,6 +330,7 @@ import {
 import {
   composeFreeMudTurn,
   formatMicroFlavorPrompt,
+  shouldSkipMicroFlavor,
   shouldUseFreeMudPresentation,
   type FreeMudTurn,
 } from './freeMudPresentation';
@@ -2798,13 +2801,14 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
       }
       const turnMandate = buildTurnMandate(sanitizedInput, intentForMandate, liveCurrent, typedAction);
       const gmPlayerPayload = useMud
-        ? formatMicroFlavorPrompt(preparedEvent.packet)
+        ? (shouldSkipMicroFlavor() ? '' : formatMicroFlavorPrompt(preparedEvent.packet))
         : eventWriterFacing;
 
       debugLogger.record('API_REQUEST', 'Calling callGm for narrative generation', {
         turn: liveCurrent.turn,
         inputLength: sanitizedInput.length,
         mudPresentation: useMud,
+        silentEngine: useMud && shouldSkipMicroFlavor(),
         aiProvider: settingsRef.current.aiProvider,
         hasApiKey: !!(settingsRef.current.geminiApiKey || settingsRef.current.openrouterApiKey)
       });
@@ -2863,12 +2867,17 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
         }
         throw lastErr instanceof Error ? lastErr : new Error('GM transport retries exhausted');
       };
-      let result = await callGmDurable(gmPlayerPayload);
+      // 08d Silent Engine — receipt only; skip DeepSeek micro-flavor entirely.
+      let result: GmResult =
+        useMud && shouldSkipMicroFlavor()
+          ? { text: '', imagePrompt: null, rolls: [], systemLog: [] }
+          : await callGmDurable(gmPlayerPayload);
       if (useMud) {
         mudTurnLive = composeFreeMudTurn(preparedEvent.packet, {
           arcReceipts: pendingArcStatusReceipts,
-          flavorRaw: result.text,
+          flavorRaw: shouldSkipMicroFlavor() ? '' : result.text,
           gold: liveCurrent.gold,
+          silent: shouldSkipMicroFlavor(),
         });
         liveCurrent = applyCombatClearTag(liveCurrent, preparedEvent.packet);
         stateRef.current = liveCurrent;
@@ -3997,18 +4006,30 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
           isGenericMapPlace(resolvedLocation) && mapName ? mapName : resolvedLocation,
           sanitizedInput
         ) ?? resolvedLocation;
-      // Act-4: Travel toward / Return to a known hub snaps location for banks + XP.
+      // Act-4 / 08d: Travel toward/to / Leave the scene must mutate HERE.
       {
-        const travelHub = parseTravelDestination(sanitizedInput, workingState.campaignBibleId ?? liveCurrent.campaignBibleId);
+        const bibleId = workingState.campaignBibleId ?? liveCurrent.campaignBibleId;
+        const travelHub = parseTravelDestination(sanitizedInput, bibleId);
+        const leaveDest =
+          !travelHub && isLeaveSceneAction(sanitizedInput)
+            ? resolveLeaveSceneDestination({
+                ...workingState,
+                currentLocation: liveCurrent.currentLocation,
+                previousLocationSheet:
+                  workingState.previousLocationSheet ?? liveCurrent.previousLocationSheet,
+                campaignBibleId: bibleId,
+              })
+            : null;
+        const destName = travelHub?.name ?? leaveDest;
         const liveEnc = workingState.activeEncounter ?? liveCurrent.activeEncounter;
         const fightBlocksTravel =
           !!liveEnc
           || encounterBlocksTravel(workingState)
           || encounterBlocksTravel(liveCurrent);
-        if (travelHub && !workingState.activeDungeon && !liveCurrent.activeDungeon && !fightBlocksTravel) {
+        if (destName && !workingState.activeDungeon && !liveCurrent.activeDungeon && !fightBlocksTravel) {
           const fromLoc = liveCurrent.currentLocation;
-          finalLocationName = travelHub.name;
-          cleanText = stampTravelArrivalIfSafe(cleanText, travelHub.name, fromLoc, workingState);
+          finalLocationName = destName;
+          cleanText = stampTravelArrivalIfSafe(cleanText, destName, fromLoc, workingState);
         }
       }
       const landmarks = isInteriorPlace(mapName || finalLocationName)
@@ -4224,10 +4245,12 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
 
         // Act-4: hub arrival beat — only on travel / location change
         {
-          const traveled = !!parseTravelDestination(
-            sanitizedInput,
-            workingState.campaignBibleId ?? liveCurrent.campaignBibleId
-          );
+          const traveled =
+            !!parseTravelDestination(
+              sanitizedInput,
+              workingState.campaignBibleId ?? liveCurrent.campaignBibleId
+            )
+            || isLeaveSceneAction(sanitizedInput);
           const justArrived =
             !!finalLocationName
             && !!liveCurrent.currentLocation

@@ -1,6 +1,6 @@
 /**
  * Batch 08c — Free MUD-modern presentation (Option 2).
- * Code-owned factual receipt + optional 1-sentence AI flavor quote.
+ * Batch 08d — Silent Engine: receipts only (no DeepSeek micro-flavor calls).
  * Free is NOT a 50–100 word Retrospective Narrator novelist on this path.
  */
 
@@ -10,6 +10,12 @@ import { effectiveWriterTier } from './testLab';
 
 /** Feature lock — Free path only. Mid novelization stays future upsell. */
 export const FREE_MUD_PRESENTATION_ENABLED = true;
+
+/**
+ * 08d Silent Engine — no Free flavor micro-prompt / DeepSeek calls.
+ * Receipts only (100% mechanical). Flip false to restore 08c Option 2 flavor.
+ */
+export const SILENT_ENGINE = true;
 
 export type MudPresentationKind = 'mud-receipt' | 'standard';
 
@@ -33,6 +39,11 @@ export function shouldUseFreeMudPresentation(
 ): boolean {
   if (!FREE_MUD_PRESENTATION_ENABLED) return false;
   return effectiveWriterTier(subscriptionTier) === 'free';
+}
+
+/** True when Free mud path should skip the AI flavor round-trip entirely. */
+export function shouldSkipMicroFlavor(): boolean {
+  return SILENT_ENGINE === true;
 }
 
 /** Factual receipt from sealed packet + ArcDirector STATUS lines — never AI. */
@@ -189,18 +200,30 @@ export function gateMicroFlavorQuote(
   return { ok: true, quote: text };
 }
 
-/** Compose Free turn: receipt always; flavor only if AI gate passes. */
+/** Compose Free turn: receipt always; flavor only if AI gate passes (off under Silent Engine). */
 export function composeFreeMudTurn(
   packet: CompletedEventPacket,
   opts: {
     arcReceipts?: string[];
     flavorRaw?: string;
     gold?: number;
+    /** Force silent even if SILENT_ENGINE later flips — tests / callers. */
+    silent?: boolean;
   } = {}
 ): FreeMudTurn {
   const receiptLines = buildFactualReceipt(packet, opts.arcReceipts ?? [], {
     gold: opts.gold,
   });
+  const silent = opts.silent === true || shouldSkipMicroFlavor();
+  if (silent) {
+    return {
+      content: '',
+      flavorQuote: '',
+      receiptLines,
+      presentation: 'mud-receipt',
+      flavorSource: 'none',
+    };
+  }
   const gated = gateMicroFlavorQuote(opts.flavorRaw ?? '', packet);
   const flavorQuote = gated.ok ? gated.quote : '';
   return {

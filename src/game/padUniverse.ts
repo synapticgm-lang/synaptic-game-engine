@@ -15,7 +15,7 @@ import { sealedCastNames } from './beatContract';
 import { isPyoaCharterClosed, isPyoaItemDestroyed } from './pyoaBranchLedger';
 import { isPlaceTitleTalkPad, ledgerPlaceTitles } from './slotGlue';
 import { ledgerNeverCastTitles } from './neverCast';
-import { isLastKillTalkPad } from './combatAuthority';
+import { isLastKillTalkPad, matchesLastKillName } from './combatAuthority';
 
 const TALK_QA_SHAPE =
   /\b(?:what\s+do\s+i\s+want|what\s+i\s+want|what\s+do\s+you\s+want|i\s+want\s+(?:the|that|this)|you\s+want\s+something\s+from\s+me|i\s+told\s+you\s+what\s+i\s+want)\b/i;
@@ -216,7 +216,9 @@ export function closedUniverseFallbacks(
     if (parleyAvailable(state.activeEncounter)) out.push('Parley');
   }
   const lastKill = state.sceneFacts?.lastKill;
-  const people = sealedCastNames(state).filter((p) => !isLastKillTalkPad(`Talk to ${p}`, lastKill));
+  const people = sealedCastNames(state).filter(
+    (p) => !matchesLastKillName(p, lastKill) && !isLastKillTalkPad(`Talk to ${p}`, lastKill)
+  );
   for (const p of people.slice(0, 2)) {
     if (/sergeant|guard|warden/i.test(p)) out.push(`Talk to ${p}`);
     else if (/fence|contact|handler|merchant|vendor/i.test(p)) out.push(`Talk to ${p}`);
