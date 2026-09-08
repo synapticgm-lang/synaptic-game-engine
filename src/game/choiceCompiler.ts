@@ -49,6 +49,8 @@ import {
 } from './padUniverse';
 import { isClosedScenePersonPad } from './closedScenePerson';
 import { isObjectPersonPad, ledgerSlotPeople } from './slotGlue';
+import { isLastKillTalkPad } from './combatAuthority';
+import { tagTriggerPads } from './tagTrigger';
 
 export type PlayerIntentFamily = 'demand' | 'inspect' | 'flee' | 'name' | 'talk' | 'travel' | 'other';
 
@@ -992,6 +994,7 @@ export function compileChoices(
     if (engaged && (isLookOrExamineRoomPad(c) || isEncounterForbiddenPad(c))) return false;
     if (isExcludedPadLabel(c, excluded)) return false;
     if (isClosedScenePersonPad(c, state)) return false;
+    if (isLastKillTalkPad(c, state.sceneFacts?.lastKill)) return false;
     if (isObjectPersonPad(c, ledgerSlotPeople(state))) return false;
     if (state.engineMode === 'pyoa' && !eligiblePyoaPadsAfterLock(state, c)) return false;
     if (talkRecycle && /\b(press for leverage|ask a direct question|talk to|ready yourself)\b/i.test(c)) {
@@ -1101,7 +1104,9 @@ export function compileChoices(
   let finalChoices = (fsmChoices.length
     ? fsmChoices
     : closedUniverseFallbacks(state, excluded)
-  ).filter((c) => !isExcludedPadLabel(c, excluded));
+  ).filter(
+    (c) => !isExcludedPadLabel(c, excluded) && !isLastKillTalkPad(c, state.sceneFacts?.lastKill)
+  );
   if (!finalChoices.length) {
     finalChoices = closedUniverseFallbacks(state, excluded);
     notes.push('Closed-universe empty-pad refill');
@@ -1114,6 +1119,17 @@ export function compileChoices(
     notes.push('Talk-loop world-moving pad');
   }
   
+  // 08c Tag & Trigger — thin bounty pad when worldTags fire (Summoned Pact hub).
+  if (!engaged) {
+    for (const pad of tagTriggerPads(state)) {
+      if (isExcludedPadLabel(pad, excluded)) continue;
+      if (!finalChoices.some((c) => c.toLowerCase() === pad.toLowerCase())) {
+        finalChoices = [pad, ...finalChoices].slice(0, 6);
+        notes.push(`Tag trigger pad: ${pad.slice(0, 40)}`);
+      }
+    }
+  }
+
   // Batch Y Milestone 1 — Y-2: Generate intent enums for SNAPSHOT context
   const intentEnums = finalChoices.map((c) => inferIntent(c));
   

@@ -883,6 +883,10 @@ export interface SceneFacts {
   openVignette?: import('./vignetteLock').OpenVignette;
   /** Last committed SNAPSHOT gist — next turn is a delta from this. */
   lastSnapshotGist?: import('./openingPointerCard').SnapshotGist;
+  /** 02aa — items given/delivered this scene; prose cannot put them back in hand. */
+  givenAway?: string[];
+  /** 02aa — crises resolved this scene (flood/gate); prose cannot rewind them live. */
+  resolvedCrises?: string[];
 }
 
 export interface TimelineFact {

@@ -26,6 +26,8 @@ import {
   openingPinNames,
 } from './sceneContextTail.ts';
 import { isPlannerUiPersonToken } from './chromeAuthority.ts';
+import { isNeverCastTitle } from './neverCast.ts';
+import { applyClosedFactHarvest } from './closedFactLedger.ts';
 
 /**
  * Extract NPC names from prose that are in the entity registry.
@@ -160,7 +162,10 @@ export function harvestNarrativeIntoLedger(
         turn
       ),
     };
-    return applyPyoaCharterProseBurn(harvestRoleOccupancy(crowded, prose), prose);
+    return applyClosedFactHarvest(
+      applyPyoaCharterProseBurn(harvestRoleOccupancy(crowded, prose), prose),
+      prose
+    );
   }
 
   const next = state;
@@ -183,6 +188,7 @@ export function harvestNarrativeIntoLedger(
       continue;
     }
     if (isPlannerUiPersonToken(name)) continue;
+    if (isNeverCastTitle(name, state)) continue;
     const leftBehind = (state.sceneFacts?.leftBehind ?? []).map((n) => n.toLowerCase());
     if (
       traveled
@@ -219,7 +225,7 @@ export function harvestNarrativeIntoLedger(
   if (lastKill?.outcome === 'victory' && !state.activeEncounter) {
     presentList = presentList.filter((p) => !matchesLastKillName(p, lastKill));
   }
-  presentList = presentList.filter((p) => !isPlannerUiPersonToken(p));
+  presentList = presentList.filter((p) => !isPlannerUiPersonToken(p) && !isNeverCastTitle(p, state));
   const withNames = {
     ...next,
     lorebook,
@@ -237,7 +243,10 @@ export function harvestNarrativeIntoLedger(
       turn
     ),
   };
-  return applyPyoaCharterProseBurn(harvestRoleOccupancy(crowded, prose), prose);
+  return applyClosedFactHarvest(
+    applyPyoaCharterProseBurn(harvestRoleOccupancy(crowded, prose), prose),
+    prose
+  );
 }
 
 /** Strip / rewrite invented city/town names that are not on the world map. */

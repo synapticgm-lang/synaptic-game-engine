@@ -52,7 +52,14 @@ export function isEmptyStatusNoiseLine(line: string): boolean {
 }
 
 /** Player-facing Status panel — strip internal jargon and idle sheet dumps. */
+export function isMudReceiptLine(line: string): boolean {
+  return /^(HERE|ACT|OUTCOME|DMG|FOE HP|CLEAR|CORPSE|XP:|LOOT:|CAST:|ENCOUNTER:|BOUNTY:|GOLD:)\b/i.test(
+    line.trim()
+  );
+}
+
 export function isNoisySystemLogLine(line: string): boolean {
+  if (isMudReceiptLine(line)) return false;
   return (
     /CODE\s*ENFORCED/i.test(line)
     || /^action\s+resolved:/i.test(line)

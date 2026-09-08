@@ -14,6 +14,7 @@ import { hubsForBibleId, matchHub } from './outdoorHubs';
 import { realPresentPeople } from './chromeAuthority';
 import { excludedPadFamilies, isExcludedPadLabel } from './padUniverse';
 import { canHarvestAsNamedPerson } from './entityRegistry';
+import { isLastKillTalkPad, matchesLastKillName } from './combatAuthority';
 
 export type EdgeType =
   | 'attack'
@@ -115,15 +116,35 @@ export function enumerateLegalEdges(state: GameState): StateEdge[] {
     }
   }
 
+  const lastKill = state.sceneFacts?.lastKill;
   if (!excluded.has('talk')) {
     for (const npc of realPresentPeople(state.sceneFacts?.present ?? [])) {
       if (!canHarvestAsNamedPerson(npc, bibleId)) continue;
+      if (matchesLastKillName(npc, lastKill)) continue;
       edges.push({
         type: 'talk',
         label: `Talk to ${npc}`,
         intent: PlayerIntent.INTENT_TALK,
         target: npc,
         cooldown: 3,
+      });
+    }
+  }
+
+  if (lastKill?.name && lastKill.outcome === 'victory' && lastKill.remains && !state.activeEncounter) {
+    edges.push({
+      type: 'loot',
+      label: `Loot the body of ${lastKill.name}`,
+      intent: PlayerIntent.INTENT_SEARCH,
+      target: lastKill.name,
+      cooldown: 1,
+    });
+    if (!excluded.has('travel') && !excluded.has('leave')) {
+      edges.push({
+        type: 'travel',
+        label: 'Leave the scene',
+        intent: PlayerIntent.INTENT_TRAVEL_HUB,
+        cooldown: 2,
       });
     }
   }
@@ -202,14 +223,16 @@ export function compileGraphChoiceLabels(state: GameState): string[] {
   const graph = applySemanticCooldown(enumerateLegalEdges(state), historyFromRecentChoices(state));
   const labels = edgesToChoiceLabels(graph);
   const beatLabels = beatEdgesToLabels(enumerateBeatEdges(state));
+  const lastKill = state.sceneFacts?.lastKill;
   const seen = new Set(labels.map((l) => l.toLowerCase()));
   for (const label of beatLabels) {
     const key = label.toLowerCase();
     if (seen.has(key)) continue;
+    if (isLastKillTalkPad(label, lastKill)) continue;
     seen.add(key);
     labels.push(label);
   }
-  return labels.slice(0, 6);
+  return labels.filter((l) => !isLastKillTalkPad(l, lastKill)).slice(0, 6);
 }
 
 export function inferEdgeIntent(label: string): PlayerIntent {

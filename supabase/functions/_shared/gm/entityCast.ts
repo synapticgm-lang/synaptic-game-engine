@@ -13,6 +13,7 @@ import type { GameState, Encounter, TimelineFact } from './types.ts';
 import { isUiLabel } from './narrativeTranslator.ts';
 import { isHubRoleCompoundToken, isNonPersonNameToken } from './chromeAuthority.ts';
 import { canHarvestAsNamedPerson } from './entityRegistry.ts';
+import { isNeverCastTitle } from './neverCast.ts';
 import * as hubEncounters from './hubEncounters.ts';
 
 export interface CastMember {
@@ -83,6 +84,7 @@ function extractNamedCharacters(state: GameState): CastMember[] {
     if (isUiLabel(token)) continue;
     // P0-3 Batch 02f: They / Child / hub-role compounds stay chrome, not CAST names.
     if (isNonPersonNameToken(token)) continue;
+    if (isNeverCastTitle(token, state)) continue;
     // Lock B — hub compounds enter CAST via extractHubArrivalContact only.
     if (isHubRoleCompoundToken(token)) continue;
     

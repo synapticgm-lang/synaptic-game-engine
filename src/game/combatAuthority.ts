@@ -97,6 +97,14 @@ export function formatLastKillSnapshotLine(lastKill?: LastKill | null): string |
   return `Last kill: ${lastKill.name} (${lastKill.outcome}, T${lastKill.turn}).`;
 }
 
+/** Talk/Ask/Listen pads that name lastKill as if they were still living. Loot/body inspect stay legal. */
+export function isLastKillTalkPad(label: string, lastKill?: LastKill | null): boolean {
+  if (!lastKill?.name || lastKill.outcome !== 'victory') return false;
+  if (!/\b(talk(?:\s+to)?|ask|speak|listen|press for)\b/i.test(label)) return false;
+  if (/\b(loot|search the (?:body|corpse)|inspect (?:the )?(?:body|corpse))\b/i.test(label)) return false;
+  return matchesLastKillName(label, lastKill);
+}
+
 /** True when `token` is the lastKill foe (full name or last token ≥5 chars). */
 export function matchesLastKillName(token: string, lastKill?: LastKill | null): boolean {
   const needle = (lastKill?.name ?? '').trim().toLowerCase();

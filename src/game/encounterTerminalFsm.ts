@@ -274,6 +274,39 @@ function clearXpForOutcome(enc: ActiveEncounter, outcome: TerminalOutcome): numb
   return 0;
 }
 
+/** Same-commit lastKill when HP hits 0 / victory — before GM. Avoids combatAuthority cycle. */
+function attachLastKillOnVictory(
+  state: GameState,
+  enc: ActiveEncounter,
+  outcome: TerminalOutcome
+): GameState {
+  if (outcome !== 'victory') return state;
+  const name = (enc.name ?? '').trim();
+  if (!name) return state;
+  const base = state.sceneFacts ?? {
+    crowd: 'unknown' as const,
+    noise: 'unknown' as const,
+    present: [],
+    props: [],
+    lastBeat: '',
+    updatedTurn: state.turn,
+  };
+  const needle = name.toLowerCase();
+  const present = (base.present ?? []).filter((p) => {
+    const t = String(p).toLowerCase();
+    return t !== needle && !t.includes(needle) && !needle.includes(t);
+  });
+  return {
+    ...state,
+    sceneFacts: {
+      ...base,
+      present,
+      lastKill: { name, outcome: 'victory', turn: state.turn, remains: true },
+      tension: 'tense',
+    },
+  };
+}
+
 function commitClear(
   state: GameState,
   enc: ActiveEncounter,
@@ -305,9 +338,10 @@ function commitClear(
   if (xpAmount > 0) {
     receipts.push(`Arc XP: +${xpAmount} (encounter clear: ${enc.name})`);
   }
+  const clearedState = attachLastKillOnVictory(state, enc, outcome);
   return {
     state: {
-      ...state,
+      ...clearedState,
       activeEncounter: null,
       arcDirector: {
         ...state.arcDirector,

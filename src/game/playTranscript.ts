@@ -278,10 +278,32 @@ export function buildStoryReviewExport(
     const role = entry.role;
     const content = (typeof entry.content === 'string' ? entry.content : '').trim();
     if (role === 'gm') {
-      lines.push(`### Turn ${entry.turn ?? '?'} — Narration`);
+      const isMud = entry.presentation === 'mud-receipt';
+      lines.push(`### Turn ${entry.turn ?? '?'} — ${isMud ? 'Receipt / Flavor' : 'Narration'}`);
       lines.push('');
-      lines.push(content || '_(empty)_');
-      lines.push('');
+      if (isMud) {
+        const sys = entry.systemLog;
+        if (Array.isArray(sys) && sys.length > 0) {
+          lines.push('**RECEIPT:**');
+          for (const s of sys.map((x) => String(x ?? '').trim()).filter(Boolean).slice(0, 16)) {
+            lines.push(`- \`${s}\``);
+          }
+          lines.push('');
+        }
+        const quote = String(entry.flavorQuote ?? content ?? '').trim();
+        if (quote) {
+          lines.push('**Flavor:**');
+          lines.push('');
+          lines.push(`_${quote}_`);
+          lines.push('');
+        } else {
+          lines.push('_(receipt only — no flavor quote)_');
+          lines.push('');
+        }
+      } else {
+        lines.push(content || '_(empty)_');
+        lines.push('');
+      }
       const offered = entry.offeredChoices;
       if (Array.isArray(offered) && offered.length > 0) {
         lines.push('**Options:**');
@@ -296,20 +318,22 @@ export function buildStoryReviewExport(
         lines.push(`**Craft:** ${craftDump.filter(Boolean).join(', ')}`);
         lines.push('');
       }
-      const sys = entry.systemLog;
-      if (Array.isArray(sys) && sys.length > 0) {
-        const useful = sys
-          .map((s) => String(s ?? '').trim())
-          .filter(Boolean)
-          .filter((s) =>
-            /XP Gained|Level|STATUS|Quest|item|loot|HP|MP|faction|discover|combat/i.test(s)
-            && !/^Warden:/i.test(s)
-          )
-          .slice(0, 16);
-        if (useful.length) {
-          lines.push('**STATUS / System:**');
-          for (const s of useful) lines.push(`- ${s}`);
-          lines.push('');
+      if (!isMud) {
+        const sys = entry.systemLog;
+        if (Array.isArray(sys) && sys.length > 0) {
+          const useful = sys
+            .map((s) => String(s ?? '').trim())
+            .filter(Boolean)
+            .filter((s) =>
+              /XP Gained|Level|STATUS|Quest|item|loot|HP|MP|faction|discover|combat|HERE:|ACT:|OUTCOME:|CLEAR:|BOUNTY:/i.test(s)
+              && !/^Warden:/i.test(s)
+            )
+            .slice(0, 16);
+          if (useful.length) {
+            lines.push('**STATUS / System:**');
+            for (const s of useful) lines.push(`- ${s}`);
+            lines.push('');
+          }
         }
       }
     } else if (role === 'player') {

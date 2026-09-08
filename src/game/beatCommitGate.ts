@@ -33,13 +33,15 @@ import { isSealedCardViolation, sealedCastNames } from './beatContract';
 import { isExcludedPadProgress } from './padUniverse';
 import { isClosedLedgerViolation } from './closedFactLedger';
 import { ledgerNeverCastTitles } from './neverCast';
+import { assemblePacketStitch, proseViolatesEventPacket } from './completedEventPacket';
 
 export type CommitGateReason =
   | 'atmosphere-only'
   | 'missing-pointer-slot'
   | 'recycle-without-delta'
   | 'same-room-essay'
-  | 'craft-ignore';
+  | 'craft-ignore'
+  | 'event-packet';
 
 export type CommitGateResult = {
   accept: boolean;
@@ -160,6 +162,12 @@ export function classifyBeatCommit(
 
   // 02z — sealed card: invented CAST, wrong HERE, excluded-pad-only progress.
   if (isSealedCardViolation(state, text, playerInput) || isExcludedPadProgress(state, text, playerInput)) {
+    if (!reasons.includes('recycle-without-delta')) reasons.push('recycle-without-delta');
+  }
+
+  // 08b — packet: ledger contradictions only (living lastKill, instruction, lists, loot-too-early, wrong HERE).
+  if (state.completedEvent && proseViolatesEventPacket(text, state.completedEvent)) {
+    if (!reasons.includes('event-packet')) reasons.push('event-packet');
     if (!reasons.includes('recycle-without-delta')) reasons.push('recycle-without-delta');
   }
 
@@ -470,10 +478,13 @@ export function repairRejectedBeat(
 
   const stillBad = !classifyBeatCommit(state, next).accept;
   if (stillBad) {
-    const move = codedSceneMove(state);
+    const move = state.completedEvent
+      ? assemblePacketStitch(state.completedEvent, recentGmBeatTexts(state, 10))
+      : codedSceneMove(state);
     const hardEssay =
       _reasons.includes('same-room-essay')
       || _reasons.includes('craft-ignore')
+      || _reasons.includes('event-packet')
       || isAtmosphereOnlyBeat(prose)
       || missingPointerCardSlot(state, prose);
     // Batch U — never sandwich collage + meta stitch; force a single coded scene move.
@@ -484,12 +495,14 @@ export function repairRejectedBeat(
     } else {
       next = move;
     }
-    notes.push('Commit gate: coded scene move');
+    notes.push(state.completedEvent ? 'Commit gate: packet stitch' : 'Commit gate: coded scene move');
   }
 
   // Never leave banned stall / stitch bank / director chrome in the repaired draft.
   if (isVerbatimStallStub(next) || isDirectorChromeLeak(next) || isStitchBankFingerprint(next)) {
-    next = codedSceneMove(state);
+    next = state.completedEvent
+      ? assemblePacketStitch(state.completedEvent, recentGmBeatTexts(state, 10))
+      : codedSceneMove(state);
     notes.push('Commit gate: replaced stall/stitch-bank stub');
   }
 

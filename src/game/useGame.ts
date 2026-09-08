@@ -321,6 +321,20 @@ import {
   preserveArcQuestProgress,
   type ArcDirectorResult,
 } from './arcDirector';
+import {
+  formatWriterFacingEvent,
+  prepareRetrospectiveWriterInput,
+} from './completedEventPacket';
+import {
+  composeFreeMudTurn,
+  formatMicroFlavorPrompt,
+  shouldUseFreeMudPresentation,
+  type FreeMudTurn,
+} from './freeMudPresentation';
+import {
+  applyCombatClearTag,
+  consumeTagTriggerOnInput,
+} from './tagTrigger';
 import { beatCommitFromReceipts, validateProseAgainstBeat } from './beatCommit';
 import {
   attachSealedManifest,
@@ -2705,6 +2719,27 @@ export function useGame() {
         stateRef.current = liveCurrent;
       }
 
+      const arcXp = (systemsArc?.xpAwards ?? []).reduce((n, a) => n + (a.amount ?? 0), 0);
+      {
+        const claimed = consumeTagTriggerOnInput(liveCurrent, sanitizedInput);
+        if (claimed.receipt) {
+          liveCurrent = claimed.state;
+          pendingArcStatusReceipts = [...pendingArcStatusReceipts, claimed.receipt];
+          stateRef.current = liveCurrent;
+        }
+      }
+      const preparedEvent = prepareRetrospectiveWriterInput(liveCurrent, sanitizedInput, {
+        xp: arcXp,
+      });
+      liveCurrent = preparedEvent.state;
+      stateRef.current = liveCurrent;
+      const eventWriterFacing = preparedEvent.writerFacing;
+      const useMud =
+        shouldUseFreeMudPresentation(settingsRef.current.subscriptionTier)
+        && !freeOpeningTurn
+        && liveCurrent.openingEstablishment?.complete === true;
+      let mudTurnLive: FreeMudTurn | null = null;
+
       const leaveOrTravelPad =
         /\b(leave(?:\s+through)?|travel|walk away|go another direction|head (?:to|toward)|exit|return to)\b/i.test(
           sanitizedInput
@@ -2762,17 +2797,14 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
         stateRef.current = { ...liveCurrent };
       }
       const turnMandate = buildTurnMandate(sanitizedInput, intentForMandate, liveCurrent, typedAction);
-      const gmPlayerPayload = buildResolutionUserPayload({
-        mandateBlock: turnMandate.block,
-        playerAction: sanitizedInput,
-        deterministicBlock: deterministicStateBlock,
-        retry: false,
-        intent: intentForMandate,
-      });
+      const gmPlayerPayload = useMud
+        ? formatMicroFlavorPrompt(preparedEvent.packet)
+        : eventWriterFacing;
 
       debugLogger.record('API_REQUEST', 'Calling callGm for narrative generation', {
         turn: liveCurrent.turn,
         inputLength: sanitizedInput.length,
+        mudPresentation: useMud,
         aiProvider: settingsRef.current.aiProvider,
         hasApiKey: !!(settingsRef.current.geminiApiKey || settingsRef.current.openrouterApiKey)
       });
@@ -2832,10 +2864,25 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
         throw lastErr instanceof Error ? lastErr : new Error('GM transport retries exhausted');
       };
       let result = await callGmDurable(gmPlayerPayload);
+      if (useMud) {
+        mudTurnLive = composeFreeMudTurn(preparedEvent.packet, {
+          arcReceipts: pendingArcStatusReceipts,
+          flavorRaw: result.text,
+          gold: liveCurrent.gold,
+        });
+        liveCurrent = applyCombatClearTag(liveCurrent, preparedEvent.packet);
+        stateRef.current = liveCurrent;
+        result = {
+          ...result,
+          text: mudTurnLive.content,
+          systemLog: [...mudTurnLive.receiptLines, ...(result.systemLog ?? [])],
+        };
+      }
 
       // System-wide: if the model returned bridge-only / empty / no findings, regenerate.
       // Never swap a real GM beat for a local story template.
-      {
+      // 08c Free MUD: skip novelist quality retry / stitch — receipt is enough.
+      if (!useMud) {
         const probeOf = (text: string) =>
           ensureTurnProse(
             stripResidualMechanicTags(stripChoiceList(stripActionTags(text))),
@@ -2944,15 +2991,17 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
             .join('\n\n');
           setRetryStatus('Refining story resolution…');
           result = await callGmDurable(
-            buildResolutionUserPayload({
-              mandateBlock: turnMandate.block,
-              playerAction: sanitizedInput,
-              deterministicBlock: deterministicStateBlock,
-              retry: true,
-              intent: intentForMandate,
-              factLocks: probeLocks,
-              extraRetryBlock: extraBlocks || undefined,
-            }),
+            liveCurrent.completedEvent
+              ? formatWriterFacingEvent(liveCurrent.completedEvent, { stricter: true })
+              : buildResolutionUserPayload({
+                  mandateBlock: turnMandate.block,
+                  playerAction: sanitizedInput,
+                  deterministicBlock: deterministicStateBlock,
+                  retry: true,
+                  intent: intentForMandate,
+                  factLocks: probeLocks,
+                  extraRetryBlock: extraBlocks || undefined,
+                }),
           );
           probeText = probeOf(result.text);
           const retryUnresolved = isUnresolvedActionNarrative(
@@ -3106,18 +3155,26 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
           ? `Action Check: d20(${d20Roll}) + Mod(${strMod}) = ${outcome.totalScore} vs DC ${difficultyClass} — ${narrativeOutcomeLabel}`
           : null;
       const rawSystemLog = [
+        ...(mudTurnLive ? mudTurnLive.receiptLines : []),
         ...(result.systemLog ?? []),
         ...(codeSystemLogLine ? [codeSystemLogLine] : []),
+        ...pendingArcStatusReceipts,
       ];
       const filteredSystemLog = filterSystemLogForEngine(rawSystemLog, liveCurrent.engineMode);
       const gmEntry: LogEntry = {
         id: uid(),
         turn: liveCurrent.turn + 1,
         role: 'gm',
-        content: result.text,
+        content: mudTurnLive ? mudTurnLive.content : result.text,
         timestamp: Date.now(),
         systemLog: Array.from(new Set(filteredSystemLog)),
         snapshotGist: compactTrafficGist(liveCurrent),
+        ...(mudTurnLive
+          ? {
+              presentation: 'mud-receipt' as const,
+              flavorQuote: mudTurnLive.flavorQuote || undefined,
+            }
+          : {}),
       };
 
       // `events`/derived requests must be parsed BEFORE anything below references them

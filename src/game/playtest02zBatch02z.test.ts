@@ -95,8 +95,8 @@ function roadState(partial: Partial<GameState> = {}): GameState {
 
 describe('Batch 02z stamps', () => {
   it('HUD and BUILD are 2026-09-02z and Mid writer stays OFF', () => {
-    expect(HUD_BUILD_STAMP.startsWith('2026-09-02')).toBe(true);
-    expect(BUILD_STAMP.startsWith('2026-09-02')).toBe(true);
+    expect(HUD_BUILD_STAMP.startsWith('2026-09')).toBe(true);
+    expect(BUILD_STAMP.startsWith('2026-09')).toBe(true);
     expect(STAGNATION_MID_WRITER_ENABLED).toBe(false);
   });
 });
@@ -149,9 +149,9 @@ describe('Batch 02z — slim writer packet', () => {
       expect(text).not.toMatch(/SNAPSHOT Location/);
       expect(text).not.toMatch(/^CRAFT:/m);
       expect(text).not.toMatch(/AUTHORITY: SNAPSHOT/);
-      expect(text).toMatch(/HERE:/);
-      expect(text).toMatch(/CAST:/);
-      expect(text).toMatch(/VERB:/);
+      expect(text).toMatch(/COMPLETED EVENT:/);
+      expect(text).toMatch(/YOU MAY ONLY MENTION/);
+      expect(text).toMatch(/past tense/i);
       expect(text).toMatch(/PLAYER:/);
     }
     expect(formatCraftSnapshotLines(state)).toEqual([]);

@@ -59,8 +59,8 @@ describe('playtest31nMemoryWiden', () => {
     const kept = log.slice(-RECENT_LOG_WINDOW);
     expect(kept).toHaveLength(4);
     const text = buildContextPrompt(stateWithLog(log), 'ask the chanter');
-    expect(text).toMatch(/HERE:/);
-    expect(text).toMatch(/VERB:/);
+    expect(text).toMatch(/COMPLETED EVENT:/);
+    expect(text).toMatch(/YOU MAY ONLY MENTION/);
     expect(text).not.toMatch(/RECENT CHAT BEATS/);
     expect(text).toMatch(/MARKER_KEEP_GM_TWO/);
     expect(text).toMatch(/MARKER_KEEP_GM_THREE/);
@@ -93,7 +93,7 @@ describe('playtest31nMemoryWiden', () => {
     };
 
     const text = buildContextPrompt(state, 'look around');
-    expect(text).toMatch(/HERE:/);
+    expect(text).toMatch(/COMPLETED EVENT:/);
     expect(text).not.toMatch(/RECENT CHAT BEATS/);
     expect(text).not.toMatch(/last 15, full detail/);
     expect(text).not.toMatch(/MARKER_T15_DUMP_/);

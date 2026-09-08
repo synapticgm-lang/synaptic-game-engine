@@ -79,6 +79,7 @@ const FILES = [
   'dungeonMobLedger.ts',
   'padUniverse.ts',
   'beatContract.ts',
+  'completedEventPacket.ts',
   'presentAuthority.ts',
   'outdoorHubs.ts',
   'hubEncounters.ts',

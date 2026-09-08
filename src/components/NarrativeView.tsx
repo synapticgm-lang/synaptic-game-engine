@@ -220,25 +220,39 @@ function DmNarration({ entry, engineMode, showTurnAsk, streamingReveal, onAccept
 
         {/* Body */}
         <div className="px-4 py-3">
-          {segments.map((seg, i) => {
-            if (seg.type === 'dialogue') return <NpcDialogue key={i} text={seg.text} />;
-            if (seg.type === 'thought') return <ThoughtBlock key={i} text={seg.text} />;
-            if (seg.type === 'system') return <InlineSystemTag key={i} text={seg.text} />;
-            const isLast = i === segments.length - 1;
-            return (
-              <p key={i} className="mb-3 font-serif text-sm leading-relaxed text-slate-200 last:mb-0">
-                {seg.text}
-                {isRevealing && isLast && (
-                  <span className="ml-0.5 inline-block h-3.5 w-0.5 animate-pulse bg-crimson-400/70 align-text-bottom" aria-hidden />
-                )}
-              </p>
-            );
-          })}
+          {entry.presentation === 'mud-receipt' ? (
+            <div className="space-y-3">
+              {(entry.flavorQuote || entry.content)?.trim() ? (
+                <p className="font-serif text-sm italic leading-relaxed text-slate-300/95">
+                  {(entry.flavorQuote || entry.content).trim()}
+                </p>
+              ) : (
+                <p className="font-mono text-[11px] text-slate-500">
+                  (receipt only — no flavor quote)
+                </p>
+              )}
+            </div>
+          ) : (
+            segments.map((seg, i) => {
+              if (seg.type === 'dialogue') return <NpcDialogue key={i} text={seg.text} />;
+              if (seg.type === 'thought') return <ThoughtBlock key={i} text={seg.text} />;
+              if (seg.type === 'system') return <InlineSystemTag key={i} text={seg.text} />;
+              const isLast = i === segments.length - 1;
+              return (
+                <p key={i} className="mb-3 font-serif text-sm leading-relaxed text-slate-200 last:mb-0">
+                  {seg.text}
+                  {isRevealing && isLast && (
+                    <span className="ml-0.5 inline-block h-3.5 w-0.5 animate-pulse bg-crimson-400/70 align-text-bottom" aria-hidden />
+                  )}
+                </p>
+              );
+            })
+          )}
           {onSpeakEntry && onStopSpeaking && (
             <BubbleSpeakControl
               visible={ttsEnabled && !isRevealing}
               entryId={entry.id}
-              text={entry.content}
+              text={entry.flavorQuote || entry.content}
               speaking={voiceSpeaking}
               speakingEntryId={speakingEntryId}
               onPlay={onSpeakEntry}
@@ -247,16 +261,23 @@ function DmNarration({ entry, engineMode, showTurnAsk, streamingReveal, onAccept
           )}
         </div>
 
-        {hasSystemLog && hasRealGmStory(entry) && (
-          <div className="border-t border-blue-500/40 bg-blue-950/40 px-4 py-2">
-            <div className="mb-1 flex items-center gap-1 font-mono text-[10px] uppercase tracking-[0.18em] text-blue-300">
+        {hasSystemLog && (hasRealGmStory(entry) || entry.presentation === 'mud-receipt') && (
+          <div className={`border-t px-4 py-2 ${entry.presentation === 'mud-receipt' ? 'border-emerald-500/40 bg-emerald-950/30' : 'border-blue-500/40 bg-blue-950/40'}`}>
+            <div className={`mb-1 flex items-center gap-1 font-mono text-[10px] uppercase tracking-[0.18em] ${entry.presentation === 'mud-receipt' ? 'text-emerald-300' : 'text-blue-300'}`}>
               <Terminal size={10} />
-              Status
-              <span className="font-sans normal-case tracking-normal text-[9px] text-blue-300/70">Turn results</span>
+              {entry.presentation === 'mud-receipt' ? 'Receipt' : 'Status'}
+              <span className={`font-sans normal-case tracking-normal text-[9px] ${entry.presentation === 'mud-receipt' ? 'text-emerald-300/70' : 'text-blue-300/70'}`}>
+                {entry.presentation === 'mud-receipt' ? 'Turn facts (code)' : 'Turn results'}
+              </span>
             </div>
             <div className="space-y-0.5">
               {systemLines.map((line, i) => (
-                <div key={i} className="font-mono text-[11px] text-blue-100/90">{line}</div>
+                <div
+                  key={i}
+                  className={`font-mono text-[11px] ${entry.presentation === 'mud-receipt' ? 'text-emerald-100/90' : 'text-blue-100/90'}`}
+                >
+                  {line}
+                </div>
               ))}
             </div>
           </div>

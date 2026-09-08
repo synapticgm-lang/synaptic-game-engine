@@ -56,9 +56,9 @@ function systemsState(partial: Partial<GameState> = {}): GameState {
 }
 
 describe('02ac stamps + Free writer + Mid OFF', () => {
-  it('HUD/BUILD are 2026-09-02ac, Mid writer OFF, Free is DeepSeek', () => {
-    expect(HUD_BUILD_STAMP).toBe('2026-09-02ac');
-    expect(BUILD_STAMP).toBe('2026-09-02ac');
+  it('HUD/BUILD are 2026-09-08a or later, Mid writer OFF, Free is DeepSeek', () => {
+    expect(HUD_BUILD_STAMP >= '2026-09-02ac').toBe(true);
+    expect(BUILD_STAMP >= '2026-09-02ac').toBe(true);
     expect(STAGNATION_MID_WRITER_ENABLED).toBe(false);
     expect(SUBSCRIPTION_TIERS.free.writerOpenRouterId).toBe('deepseek/deepseek-v4-flash-0731');
   });

@@ -123,6 +123,20 @@ import {
   preserveArcQuestProgress,
   type ArcDirectorResult,
 } from './arcDirector';
+import {
+  formatWriterFacingEvent,
+  prepareRetrospectiveWriterInput,
+} from './completedEventPacket';
+import {
+  composeFreeMudTurn,
+  formatMicroFlavorPrompt,
+  shouldUseFreeMudPresentation,
+  type FreeMudTurn,
+} from './freeMudPresentation';
+import {
+  applyCombatClearTag,
+  consumeTagTriggerOnInput,
+} from './tagTrigger';
 import { beatCommitFromReceipts, validateProseAgainstBeat } from './beatCommit';
 import {
   attachSealedManifest,
@@ -272,6 +286,10 @@ export type TurnTelemetry = {
   replayHash?: string;
   renderFallbackUsed?: boolean;
   snapshotGist?: import('./openingPointerCard').SnapshotGist;
+  /** 08c Free MUD — optional flavor quote + receipt lines for scoring. */
+  presentation?: 'mud-receipt' | 'standard';
+  flavorQuote?: string;
+  receiptLines?: string[];
 };
 
 export type RunSummary = {
@@ -887,6 +905,24 @@ export async function headlessFateTurn(
     }
   }
 
+  // 08c Tag & Trigger — consume claim pad before packet/writer.
+  {
+    const claimed = consumeTagTriggerOnInput(arcState, playerInput);
+    if (claimed.receipt) {
+      arcState = claimed.state;
+      arcStatusReceipts = [...arcStatusReceipts, claimed.receipt];
+    }
+  }
+
+  const arcXp = (arcResult?.xpAwards ?? []).reduce((n, a) => n + (a.amount ?? 0), 0);
+  const preparedEvent = prepareRetrospectiveWriterInput(arcState, playerInput, { xp: arcXp });
+  arcState = preparedEvent.state;
+  const eventWriterFacing = preparedEvent.writerFacing;
+  const useMud =
+    shouldUseFreeMudPresentation(settings.subscriptionTier)
+    && arcState.openingEstablishment?.complete === true;
+  let mudTurn: FreeMudTurn | null = null;
+
   if (meta.dryRun) {
     const stubGm = `(dry-run) Fate picked: ${fatePick}. Offered: ${offered.join(' | ')}`;
     const playerEntry: LogEntry = {
@@ -956,13 +992,9 @@ OUTCOME FOR THIS ACTION: Narrate consequences of the player action. Story first.
 Do NOT print dice notation or CODE ENFORCED.
 -------------------------------------------------
 `;
-  const payload = buildResolutionUserPayload({
-    mandateBlock: turnMandate.block + arcBlock + sealedManifestBlock,
-    playerAction: playerInput,
-    deterministicBlock,
-    retry: false,
-    intent,
-  });
+  const payload = useMud
+    ? formatMicroFlavorPrompt(preparedEvent.packet)
+    : eventWriterFacing;
 
   const gmResult = await callGmWithRetries(arcState, payload, settings);
   let error: string | undefined;
@@ -970,7 +1002,22 @@ Do NOT print dice notation or CODE ENFORCED.
   let gmSystemLog = gmResult.systemLog ?? [];
   let transportRetries = gmResult.transportRetries;
   let renderFallbackUsed = false;
-  if (!gmText.trim()) {
+
+  if (useMud) {
+    // Free MUD: receipt is primary; empty/gated flavor is OK — never stitch a novel paragraph.
+    mudTurn = composeFreeMudTurn(preparedEvent.packet, {
+      arcReceipts: arcStatusReceipts,
+      flavorRaw: gmResult.text,
+      gold: arcState.gold,
+    });
+    arcState = applyCombatClearTag(arcState, preparedEvent.packet);
+    gmText = mudTurn.content;
+    gmSystemLog = [...mudTurn.receiptLines];
+    if (gmResult.failKind === 'auth' || gmResult.dnsFailure) {
+      error = `GM empty/fail (${gmResult.dnsFailure ? 'network_dns' : gmResult.failKind ?? 'empty'})`;
+    }
+    arcState = clearEngineRecoveryStreak(arcState);
+  } else if (!gmText.trim()) {
     const failLabel = gmResult.dnsFailure
       ? 'network_dns'
       : gmResult.failKind === 'rate_limit'
@@ -1016,7 +1063,8 @@ Do NOT print dice notation or CODE ENFORCED.
   }
 
   // Hard FAIL — do not invent story; keep prior world, stamp telemetry
-  if (!gmText.trim() && error) {
+  // 08c Free MUD: receipt-only turns are valid — never hard-fail on empty flavor.
+  if (!useMud && !gmText.trim() && error) {
     const ended = Date.now();
     const failTurn = state.turn + 1;
     return {
@@ -1065,6 +1113,7 @@ Do NOT print dice notation or CODE ENFORCED.
 
   // Novelty retry on same-beat OR near-verbatim clone (merchant ×20 loops).
   // Skip only when the player asked to hear the last beat again.
+  // 08c Free MUD: never novelist retry / packet stitch — receipt already committed.
   const travelHubEarly = parseTravelDestination(playerInput, meta.bibleId);
   const fps = state.recentBeatFingerprints ?? [];
   const askedRepeat = playerAsksRepeat(playerInput);
@@ -1074,24 +1123,26 @@ Do NOT print dice notation or CODE ENFORCED.
   const collageReject = shouldRetryUnaskedCollage(gmText, recentGmBeatTexts(state), playerInput);
   const commitGate = classifyBeatCommit(arcState, gmText, playerInput);
   if (
-    !error
+    !useMud
+    && !error
     && !askedRepeat
     && storyHasBody(gmText)
     && (nearClone || collageReject || !commitGate.accept || (sameBeatHit && !askedContinue))
     && transportRetries === 0
   ) {
-    const novelty = buildBeatNoveltyRetryBlock(fps);
-    const retryPayload = buildResolutionUserPayload({
-      mandateBlock: turnMandate.block,
-      playerAction: playerInput,
-      deterministicBlock: `${deterministicBlock}\n${novelty}${
-        travelHubEarly
-          ? `\nTRAVEL AUTHORITY: Player is traveling to ${travelHubEarly.name}. Narrate arrival THERE — do not keep them in the previous room.`
-          : ''
-      }`,
-      retry: true,
-      intent,
-    });
+    const retryPayload = arcState.completedEvent
+      ? formatWriterFacingEvent(arcState.completedEvent, { stricter: true })
+      : buildResolutionUserPayload({
+          mandateBlock: turnMandate.block,
+          playerAction: playerInput,
+          deterministicBlock: `${deterministicBlock}\n${buildBeatNoveltyRetryBlock(fps)}${
+            travelHubEarly
+              ? `\nTRAVEL AUTHORITY: Player is traveling to ${travelHubEarly.name}. Narrate arrival THERE — do not keep them in the previous room.`
+              : ''
+          }`,
+          retry: true,
+          intent,
+        });
     const retry = await callGmWithRetries(arcState, retryPayload, settings);
     transportRetries += retry.transportRetries + 1;
     if (retry.text.trim() && (!isSameBeat(retry.text, fps) || travelHubEarly || classifyBeatCommit(arcState, retry.text, playerInput).accept)) {
@@ -1101,7 +1152,7 @@ Do NOT print dice notation or CODE ENFORCED.
   }
   {
     const stillGate = classifyBeatCommit(arcState, gmText, playerInput);
-    if (!stillGate.accept && !askedRepeat && storyHasBody(gmText)) {
+    if (!useMud && !stillGate.accept && !askedRepeat && storyHasBody(gmText)) {
       const repaired = repairRejectedBeat(arcState, gmText, stillGate.reasons);
       if (repaired.repaired) gmText = repaired.prose;
     }
@@ -1110,7 +1161,7 @@ Do NOT print dice notation or CODE ENFORCED.
   const rawEvents = parseActionTags(gmText);
   const warden = await runWarden(state, rawEvents, gmText, playerInput, intent, lastGm);
   const events = warden.events;
-  const narrativeSource = warden.scrubbedNarrative ?? gmText;
+  const narrativeSource = useMud ? gmText : (warden.scrubbedNarrative ?? gmText);
 
   const structural = applyStructuralEvents(arcState, events, {
     strictEncumbrance: settings.strictEncumbrance === true,
@@ -1438,6 +1489,23 @@ Do NOT print dice notation or CODE ENFORCED.
     arcDirector: arcState.arcDirector,
     runManifest: arcState.runManifest,
   };
+  if (arcState.sceneFacts?.worldTags?.length) {
+    working = {
+      ...working,
+      sceneFacts: {
+        crowd: working.sceneFacts?.crowd ?? 'unknown',
+        noise: working.sceneFacts?.noise ?? 'unknown',
+        present: working.sceneFacts?.present ?? [],
+        props: working.sceneFacts?.props ?? [],
+        lastBeat: working.sceneFacts?.lastBeat ?? '',
+        updatedTurn: nextTurn,
+        ...working.sceneFacts,
+        worldTags: Array.from(
+          new Set([...(working.sceneFacts?.worldTags ?? []), ...arcState.sceneFacts.worldTags])
+        ),
+      },
+    };
+  }
 
   // Track recent choices for live-style dedupe (agent + pipeline).
   const recentChoices = [
@@ -1446,14 +1514,27 @@ Do NOT print dice notation or CODE ENFORCED.
   ].slice(-10);
 
   let filteredSystemLog = filterSystemLogForEngine(
-    [...gmSystemLog, ...(warden.notes.length ? [`Warden: ${warden.notes.slice(0, 3).join('; ')}`] : [])],
+    useMud && mudTurn
+      ? [...mudTurn.receiptLines, ...arcStatusReceipts, ...sandboxNotes, ...levelNotes]
+      : [...gmSystemLog, ...(warden.notes.length ? [`Warden: ${warden.notes.slice(0, 3).join('; ')}`] : [])],
     state.engineMode
   );
-  filteredSystemLog = reconcileXpStatusLines(filteredSystemLog, [
-    ...arcStatusReceipts,
-    ...sandboxNotes,
-    ...levelNotes,
-  ]);
+  if (!useMud) {
+    filteredSystemLog = reconcileXpStatusLines(filteredSystemLog, [
+      ...arcStatusReceipts,
+      ...sandboxNotes,
+      ...levelNotes,
+    ]);
+  } else {
+    // Dedupe receipt lines while keeping order
+    const seen = new Set<string>();
+    filteredSystemLog = filteredSystemLog.filter((l) => {
+      const k = l.toLowerCase();
+      if (seen.has(k)) return false;
+      seen.add(k);
+      return true;
+    });
+  }
 
   const questUnlocks = updatedQuests
     .filter((q) => {
@@ -1462,7 +1543,8 @@ Do NOT print dice notation or CODE ENFORCED.
     })
     .map((q) => q.name);
 
-  const fp = beatFingerprint(cleanText);
+  const mudBody = useMud && mudTurn ? mudTurn.content : cleanText;
+  const fp = beatFingerprint(mudBody || filteredSystemLog.join(' '));
   const playerEntry: LogEntry = {
     id: uid(),
     turn: state.turn,
@@ -1474,10 +1556,16 @@ Do NOT print dice notation or CODE ENFORCED.
     id: uid(),
     turn: nextTurn,
     role: 'gm',
-    content: cleanText,
+    content: mudBody,
     timestamp: Date.now(),
     systemLog: filteredSystemLog,
     snapshotGist: compactTrafficGist(arcState),
+    ...(useMud && mudTurn
+      ? {
+          presentation: 'mud-receipt' as const,
+          flavorQuote: mudTurn.flavorQuote || undefined,
+        }
+      : {}),
   };
   const mid: GameState = {
     ...working,
@@ -1524,7 +1612,7 @@ Do NOT print dice notation or CODE ENFORCED.
       offeredChoices: offered,
       offeredChoiceIds: offered.map((_, i) => `choice-${nextTurn}-${i}`),
       playerInput,
-      gmText: cleanText,
+      gmText: mudBody,
       snapshotGist: compactTrafficGist(arcState),
       systemLog: filteredSystemLog,
       questUnlocks,
@@ -1534,7 +1622,7 @@ Do NOT print dice notation or CODE ENFORCED.
       level: governed.character?.level,
       characterXp: governed.character?.xp,
       xpToNext: governed.character?.xpToNext,
-      loopFlags: detectLoopFlags(cleanText, state),
+      loopFlags: detectLoopFlags(mudBody, state),
       error,
       failKind: gmResult.failKind,
       transportRetries,
@@ -1545,6 +1633,9 @@ Do NOT print dice notation or CODE ENFORCED.
       sealedManifestHash: arcState.sealedManifest?.beatEffectsHash,
       replayHash: hashCanonicalState(governed),
       renderFallbackUsed,
+      presentation: useMud ? 'mud-receipt' : 'standard',
+      flavorQuote: mudTurn?.flavorQuote || undefined,
+      receiptLines: mudTurn?.receiptLines,
     },
   };
 }

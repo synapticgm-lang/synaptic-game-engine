@@ -4,7 +4,7 @@
  * 02z — sealed HERE/CAST/VERB/CLOSED/TONE card is the writer leaf; code stays trunk.
  */
 
-import type { GameState, LogEntry } from './types';
+import type { GameState } from './types';
 import { formatPyoaSpineTurnJob } from './pyoaSpine';
 import { canHarvestAsNamedPerson, isRegisteredLocation } from './entityRegistry';
 import { isPlannerUiPersonToken, realPresentPeople } from './chromeAuthority';
@@ -20,7 +20,7 @@ import {
 } from './sceneContextTail';
 import { isPyoaCharterClosed, isPyoaItemDestroyed } from './pyoaBranchLedger';
 import { hubsForBibleId } from './outdoorHubs';
-import { MODE_STORY_AUTHORITY } from './fluidProseRails';
+import { buildCompletedEventPacket, formatWriterFacingEvent } from './completedEventPacket';
 
 export type BeatKind =
   | 'quest_stage'
@@ -484,38 +484,13 @@ export function formatSealedBeatCard(card: SealedBeatCard): string {
   return lines.join('\n');
 }
 
-function formatModeVoiceLine(state: GameState): string {
-  const mode = state.engineMode ?? 'rpg';
-  const sentence = MODE_STORY_AUTHORITY[mode] ?? MODE_STORY_AUTHORITY.rpg;
-  return sentence.replace(/\s+/g, ' ').trim();
-}
-
-function rhythmBeats(state: GameState): LogEntry[] {
-  const tail = selectRecentLogForContext(state, Math.max(WRITER_RHYTHM_WINDOW * 4, 8));
-  return tail.filter((e) => e.role === 'gm').slice(-WRITER_RHYTHM_WINDOW);
-}
-
 /**
- * Live writer leaf. Card + last 2 GM beats + player line + one mode sentence.
+ * Live writer leaf (08a). Completed-event packet + last 2 GM beats + allowlist.
  * No SNAPSHOT essay, kit dump, CRAFT, or AUTHORITY rails.
  */
 export function formatWriterFacingPacket(state: GameState, playerInput?: string): string {
-  const action = lastPlayerAction(state, playerInput);
-  const card = buildSealedBeatCard(state, action);
-  const beats = rhythmBeats(state);
-  const rhythm = beats.length
-    ? beats.map((e) => `GM: ${String(e.content ?? '').slice(0, WRITER_RHYTHM_CHAR_CAP)}`).join('\n')
-    : 'GM: (opening)';
-  const beatLine = state.arcDirector?.activeBeatId
-    ? `\nBEAT: Honor the committed ledger beat in 50–100 words. Do not invent HP, XP, or quest ticks.`
-    : '';
-  return `${formatSealedBeatCard(card)}${beatLine}
-
-${formatModeVoiceLine(state)}
-
-${rhythm}
-
-PLAYER: ${action || '(opening)'}`.trim();
+  const packet = state.completedEvent ?? buildCompletedEventPacket(state, playerInput);
+  return formatWriterFacingEvent(packet);
 }
 
 const TITLE_NAME =

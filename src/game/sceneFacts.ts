@@ -148,6 +148,7 @@ export function extractSceneFacts(narrative: string, prev?: SceneFacts, turn = 0
     lastSnapshotGist: prev?.lastSnapshotGist,
     givenAway: prev?.givenAway,
     resolvedCrises: prev?.resolvedCrises,
+    worldTags: prev?.worldTags,
   };
 }
 
@@ -191,6 +192,7 @@ export function mergeSceneFacts(prev: SceneFacts | undefined, next: SceneFacts):
     lastSnapshotGist: next.lastSnapshotGist ?? prev.lastSnapshotGist,
     givenAway: Array.from(new Set([...asList(prev.givenAway), ...asList(next.givenAway)])),
     resolvedCrises: Array.from(new Set([...asList(prev.resolvedCrises), ...asList(next.resolvedCrises)])),
+    worldTags: Array.from(new Set([...asList(prev.worldTags), ...asList(next.worldTags)])),
   };
 }
 

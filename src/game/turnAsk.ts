@@ -36,6 +36,13 @@ export function gmStoryText(entry: LogEntry | undefined): string {
 }
 
 export function hasRealGmStory(entry: LogEntry | undefined): boolean {
+  if (!entry) return false;
+  // 08c Free MUD — receipt and/or short flavor quote counts as a real turn.
+  if (entry.presentation === 'mud-receipt') {
+    const quote = String(entry.flavorQuote ?? entry.content ?? '').trim();
+    if ((entry.systemLog?.length ?? 0) > 0) return true;
+    if (quote.length >= 8) return true;
+  }
   const story = gmStoryText(entry);
   return story.length >= 24 && /[a-z]/i.test(story);
 }

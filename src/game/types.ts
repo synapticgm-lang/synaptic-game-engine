@@ -476,6 +476,8 @@ export interface GameState {
   runManifest?: import('./runManifest').RunManifest;
   /** B026 sealed manifest snapshot (pre-GM). */
   sealedManifest?: import('./sealedManifest').SceneManifest;
+  /** 08a — completed event packet attached after mechanics, before GM. */
+  completedEvent?: import('./completedEventPacket').CompletedEventPacket;
   /** B007 replay hash chain for eval verifier. */
   replayHashes?: import('./replayHash').ReplayHashRecord[];
   /** B025 PYOA branch ledger — Millstone Charter paths. */
@@ -743,6 +745,12 @@ export interface LogEntry {
   gmFeedback?: 'up' | 'down';
   /** Compact SNAPSHOT the writer saw — dumps diagnose packet lies. Never the full prompt. */
   snapshotGist?: import('./openingPointerCard').SnapshotGist;
+  /**
+   * 08c Free MUD-modern: `mud-receipt` = code receipt is primary; content/flavorQuote is optional 1-liner.
+   */
+  presentation?: 'mud-receipt' | 'standard';
+  /** Optional italic flavor quote under the receipt (Free micro-prompt). */
+  flavorQuote?: string;
 }
 
 /** Distinct rule engines chosen at campaign setup. `'dnd'` is tabletop fantasy (saved key). */
@@ -887,6 +895,11 @@ export interface SceneFacts {
   givenAway?: string[];
   /** 02aa — crises resolved this scene (flood/gate); prose cannot rewind them live. */
   resolvedCrises?: string[];
+  /**
+   * 08c Tag & Trigger — namespaced bool-ish flags (e.g. `sgm.sp.skirmishClearBounty`).
+   * Not a full JSON bible matrix; thin stub only.
+   */
+  worldTags?: string[];
 }
 
 export interface TimelineFact {
