@@ -19,6 +19,11 @@ import { updateChoiceFingerprints } from './choiceCompiler';
 import { ensureRunManifest, nextEventSeq } from './runManifest';
 import { tickPressureClock, type PressureClockState } from './pressureClock';
 import {
+  shouldForceHubAmbush,
+  tickHubStall,
+  readHubStall,
+} from './hubStallEscalation';
+import {
   formatNpcTopicMandate,
   recordNpcTopic,
   shouldForceNpcStageAdvance,
@@ -793,11 +798,25 @@ export function runArcDirectorBeforeGm(
   }
 
   let forceDroughtSpawn = false;
-  if (shouldSpawnCombat(working) && !working.activeEncounter) {
+  // 08f — hub stall ambush only when drought ready AND peril>0; else progression (pads handle)
+  if (shouldForceHubAmbush(working) && !working.activeEncounter) {
     const droughtContract = resolveCombatContract(working, committed);
     if (droughtContract) {
       contract = droughtContract;
       forceDroughtSpawn = true;
+      mandates.push('08f HUB STALL AMBUSH: drought+peril — spawn before another ambient loop.');
+      systemReceipts.push('HUB STALL: ambush');
+    }
+  } else if (shouldSpawnCombat(working) && !working.activeEncounter) {
+    const droughtContract = resolveCombatContract(working, committed);
+    if (droughtContract) {
+      contract = droughtContract;
+      forceDroughtSpawn = true;
+    }
+  } else {
+    const stall = readHubStall(working);
+    if (stall.phase === 'progress' || stall.phase === 'prune') {
+      systemReceipts.push(`HUB STALL: ${stall.phase} (${stall.consecutiveNoDelta} no-delta)`);
     }
   }
 
@@ -1035,7 +1054,7 @@ export function buildArcDirectorSnapshotLines(state: GameState): string[] {
   return lines;
 }
 
-/** Post-commit: bump combat receipt counter, record choice fingerprints. */
+/** Post-commit: bump combat receipt counter, record choice fingerprints, hub stall. */
 export function applyArcDirectorCommit(
   previous: GameState,
   next: GameState,
@@ -1046,6 +1065,15 @@ export function applyArcDirectorCommit(
     !!next.activeEncounter ||
     (previous.activeEncounter && !next.activeEncounter) ||
     (next.stateTxLog ?? []).some((t) => t.turn === next.turn && t.kind === 'combat');
+
+  const hadDelta =
+    hadCombat
+    || previous.currentLocation !== next.currentLocation
+    || (previous.character?.xp ?? 0) !== (next.character?.xp ?? 0)
+    || (previous.gold ?? 0) !== (next.gold ?? 0)
+    || (previous.quests?.length ?? 0) !== (next.quests?.length ?? 0);
+
+  const stalled = tickHubStall(next, { hadDelta });
 
   return {
     arcDirector: {
@@ -1058,6 +1086,7 @@ export function applyArcDirectorCommit(
         prevAd.choiceFingerprints
       ),
     },
+    sceneFacts: stalled.sceneFacts,
   };
 }
 

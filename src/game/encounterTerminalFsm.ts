@@ -75,16 +75,22 @@ function isAttackIntent(input: string): boolean {
   return /\b(attack|fight|strike|press the attack|engage|slash|stab|shoot|cast|punch|fists?|continue (?:the )?(?:assault|attack|pressing)|follow-up strike|lash out)\b/i.test(input);
 }
 
+function isTacticalItemIntent(input: string): boolean {
+  return /\b(use a tactical item|change position|find cover|throw|toss|drink a|apply a|bandage|smoke|flash|distract)\b/i.test(
+    input
+  );
+}
+
 /** Idle under threat: loot / scout / wait / room inspect — must not farm max_engaged victory XP. */
 export function isEncounterIdleIntent(input: string): boolean {
   const t = (input ?? '').trim();
   if (!t) return true;
-  if (isAttackIntent(t) || isFleeIntent(t) || isParleyIntent(t)) return false;
+  if (isAttackIntent(t) || isFleeIntent(t) || isParleyIntent(t) || isTacticalItemIntent(t)) return false;
   return (
     /\b(open|check|search|loot|rummage|scavenge)\b/i.test(t)
     || /\b(crate|chest|box|barrel|trunk|bag|pockets?)\b/i.test(t)
     || /\b(scout|wait|watch|look around|examine the (?:room|area)|inspect the (?:room|area)|get (?:your )?bearings)\b/i.test(t)
-    || /\b(travel|go to|head to|browse|merchant|shop)\b/i.test(t)
+    || /\b(travel|go to|head to|browse|merchant|shop|take a stake|press for leverage|inspect (?:the )?(?:fence|stall))\b/i.test(t)
   );
 }
 
@@ -195,11 +201,36 @@ export function tickEncounterTerminal(
     if (enc.hp <= 0) {
       return commitClear(state, enc, 'victory', 'enemy_hp_zero');
     }
+  } else if (isTacticalItemIntent(input)) {
+    // 08f — non-attack valid combat round MUST move foe HP/status/distance (never static FOE HP).
+    const maxHp = Math.max(1, enc.maxHp || enc.hp || 16);
+    const curHp = typeof enc.hp === 'number' && !Number.isNaN(enc.hp) ? enc.hp : maxHp;
+    const bands: Array<'close' | 'near' | 'far'> = ['close', 'near', 'far'];
+    const curBand = enc.distanceBand ?? 'close';
+    const idx = bands.indexOf(curBand);
+    const nextBand = bands[Math.min(bands.length - 1, Math.max(0, idx + (/\bfind cover|change position\b/i.test(input) ? 1 : 0)))]!;
+    const chip = Math.max(1, Math.floor(maxHp / 10));
+    enc = {
+      ...enc,
+      maxHp,
+      hp: Math.max(0, curHp - chip),
+      combatStatus: /\bitem\b/i.test(input) ? 'pressured' : 'repositioned',
+      distanceBand: nextBand,
+    };
+    receipts.push(`FOE STATUS: ${enc.combatStatus} · distance ${enc.distanceBand}`);
+    receipts.push(`${enc.name} HP: ${enc.hp}/${maxHp} (−${chip})`);
+    if (enc.hp <= 0) {
+      return commitClear(state, enc, 'victory', 'enemy_hp_zero');
+    }
   } else if (idle) {
     receipts.push('Threat still live — idle loot/scout does not clear the encounter');
   }
 
-  const terminalIntent = isAttackIntent(input) || isFleeIntent(input) || isParleyIntent(input);
+  const terminalIntent =
+    isAttackIntent(input)
+    || isFleeIntent(input)
+    || isParleyIntent(input)
+    || isTacticalItemIntent(input);
   if (terminalIntent && (enc.engagedTurnCount ?? 0) >= (enc.maxEngagedTurns ?? 8)) {
     return commitClear(state, enc, resolveForcedOutcome(enc, 'max_engaged'), 'max_engaged');
   }

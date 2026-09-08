@@ -243,6 +243,47 @@ export function isSpineDelayPad(choice: string): boolean {
   );
 }
 
+/** 08f — non-progression pads (delay/inspect/stall) are single-use on a visited node. */
+export function isPyoaNonProgressionPad(choice: string): boolean {
+  return isSpineDelayPad(choice)
+    || /\b(inspect|look around|wait|listen|smell|browse|take a stake)\b/i.test(choice);
+}
+
+export function isPyoaAmbientEdgeExhausted(state: GameState, choice: string): boolean {
+  if (state.engineMode !== 'pyoa') return false;
+  if (!isPyoaNonProgressionPad(choice)) return false;
+  const spine = state.pyoaSpine;
+  if (!spine) return false;
+  // Only after node has been visited (revisit / same-node linger)
+  const visits = (spine.visited ?? []).filter((id) => id === spine.currentNodeId).length;
+  if (visits < 1 && (spine.delayCount ?? 0) < 1) return false;
+  const used = state.sceneFacts?.pyoaUsedAmbientEdges ?? [];
+  const key = `${spine.currentNodeId}::${choice.trim().toLowerCase().slice(0, 64)}`;
+  return used.includes(key);
+}
+
+export function recordPyoaAmbientEdgeUse(state: GameState, choice: string): GameState {
+  if (state.engineMode !== 'pyoa' || !isPyoaNonProgressionPad(choice)) return state;
+  const spine = state.pyoaSpine;
+  if (!spine) return state;
+  const key = `${spine.currentNodeId}::${choice.trim().toLowerCase().slice(0, 64)}`;
+  const prev = state.sceneFacts?.pyoaUsedAmbientEdges ?? [];
+  if (prev.includes(key)) return state;
+  return {
+    ...state,
+    sceneFacts: {
+      crowd: state.sceneFacts?.crowd ?? 'unknown',
+      noise: state.sceneFacts?.noise ?? 'unknown',
+      present: state.sceneFacts?.present ?? [],
+      props: state.sceneFacts?.props ?? [],
+      lastBeat: state.sceneFacts?.lastBeat ?? '',
+      updatedTurn: state.turn,
+      ...state.sceneFacts,
+      pyoaUsedAmbientEdges: [...prev, key].slice(-40),
+    },
+  };
+}
+
 /**
  * Advance spine from a player choice label (or exit id).
  * Delay pads: count once, then force first legal exit.
@@ -280,14 +321,15 @@ export function advancePyoaSpine(state: GameState, playerInput: string): GameSta
 
   if (isSpineDelayPad(playerInput)) {
     const delayCount = (spine.delayCount ?? 0) + 1;
+    let next = recordPyoaAmbientEdgeUse(working, playerInput);
     if (delayCount < 2 || !exits.length) {
       return {
-        ...working,
-        pyoaSpine: { ...spine, delayCount },
+        ...next,
+        pyoaSpine: { ...(next.pyoaSpine ?? spine), delayCount },
       };
     }
     // Force first legal edge after one delay exhaust
-    return applyExit(working, exits[0]!);
+    return applyExit(next, exits[0]!);
   }
 
   const match =
@@ -334,6 +376,9 @@ function applyExit(state: GameState, exit: PyoaSpineExit): GameState {
   const endingId = dest?.endingId ?? null;
   return {
     ...state,
+    sceneFacts: state.sceneFacts
+      ? { ...state.sceneFacts, pyoaUsedAmbientEdges: [] }
+      : state.sceneFacts,
     pyoaSpine: {
       ...spine,
       currentNodeId: to,

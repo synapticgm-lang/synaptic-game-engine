@@ -69,8 +69,8 @@ describe('08d — Silent Engine / pad locks (held under 08e sparse)', () => {
     expect(shouldSkipMicroFlavor()).toBe(false);
     expect(shouldUseFreeMudPresentation('free')).toBe(true);
     expect(STAGNATION_MID_WRITER_ENABLED).toBe(false);
-    expect(HUD_BUILD_STAMP).toBe('2026-09-08e');
-    expect(BUILD_STAMP).toBe('2026-09-08e');
+    expect(HUD_BUILD_STAMP).toBe('2026-09-08f');
+    expect(BUILD_STAMP).toBe('2026-09-08f');
   });
 
   it('composeFreeMudTurn can force silent receipts (no flavor)', () => {

@@ -51,6 +51,14 @@ import { isClosedScenePersonPad } from './closedScenePerson';
 import { isObjectPersonPad, ledgerSlotPeople } from './slotGlue';
 import { isLastKillTalkPad, matchesLastKillName } from './combatAuthority';
 import { tagTriggerPads } from './tagTrigger';
+import { isAmbientPadExhausted } from './padExhaustion';
+import {
+  hubProgressionPads,
+  pruneAmbientForStall,
+  readHubStall,
+  shouldForceHubAmbush,
+} from './hubStallEscalation';
+import { isPyoaAmbientEdgeExhausted } from './pyoaSpine';
 
 export type PlayerIntentFamily = 'demand' | 'inspect' | 'flee' | 'name' | 'talk' | 'travel' | 'other';
 
@@ -783,6 +791,15 @@ export function compileChoices(
       notes.push(`Inspect exhausted: ${c.slice(0, 32)}`);
       return false;
     }
+    // 08f — ambient/inspect/stake single-use at THIS node
+    if (isAmbientPadExhausted(state, c)) {
+      notes.push(`08f ambient exhausted: ${c.slice(0, 32)}`);
+      return false;
+    }
+    if (state.engineMode === 'pyoa' && isPyoaAmbientEdgeExhausted(state, c)) {
+      notes.push(`08f PYOA ambient edge: ${c.slice(0, 32)}`);
+      return false;
+    }
     if (hubBeatExhausted(state, c)) {
       notes.push(`Hub beat exhausted: ${c.slice(0, 32)}`);
       return false;
@@ -1024,17 +1041,38 @@ export function compileChoices(
     notes.push(`Vignette cast lock dropped ${beforeVig - filtered.length}`);
   }
 
-  // Engaged: ensure combat options exist for Fate
+  // Engaged: ensure combat 3-slot only (08f) — Offense / Mitigation / Tactical
   if (engaged) {
+    const combatOnly = filtered.filter((c) =>
+      /\b(press the attack|attack|fight|engage|try to flee|flee|find cover|parley|use a tactical item|change position)\b/i.test(
+        c
+      )
+    );
+    filtered = combatOnly.length ? combatOnly : filtered;
     if (!filtered.some((c) => /\b(attack|fight|press the attack|engage)\b/i.test(c))) {
       filtered.unshift('Press the attack');
     }
-    if (fleeAvailable(state.activeEncounter) && !filtered.some((c) => /\bflee\b/i.test(c))) {
+    if (
+      fleeAvailable(state.activeEncounter)
+      && !filtered.some((c) => /\b(flee|find cover)\b/i.test(c))
+    ) {
       filtered.push('Try to flee');
+    } else if (!filtered.some((c) => /\b(flee|find cover)\b/i.test(c))) {
+      filtered.push('Find cover');
     }
-    if (parleyAvailable(state.activeEncounter) && !filtered.some((c) => /\bparley\b/i.test(c))) {
-      filtered.push('Parley');
+    if (!filtered.some((c) => /\b(parley|tactical item|change position)\b/i.test(c))) {
+      filtered.push('Change position');
     }
+    // Hard strip ambient hub pads during live fight
+    filtered = filtered.filter((c) => {
+      if (/\b(take a stake|inspect (?:the )?(?:fence|stall)|press for leverage|browse|wait and watch|look around)\b/i.test(c)) {
+        notes.push(`08f encounter ambient strip: ${c.slice(0, 32)}`);
+        return false;
+      }
+      return true;
+    });
+    filtered = filtered.slice(0, 3);
+    notes.push('08f encounter 3-slot lock');
   }
 
   // Batch V — hub travel treadmill without combat: force talk/stake pads (not another Travel)
@@ -1188,7 +1226,52 @@ export function compileChoices(
     }
   }
 
+  // 08f — hub stall escalation: T3 prune ambient; T4+ progression pads; ambush note only
+  if (!engaged) {
+    const stall = readHubStall(state);
+    if (stall.phase === 'prune' || stall.phase === 'progress' || stall.phase === 'ambush') {
+      const before = finalChoices.length;
+      finalChoices = pruneAmbientForStall(finalChoices, stall.phase);
+      if (finalChoices.length < before) {
+        notes.push(`08f stall prune ambient (−${before - finalChoices.length})`);
+      }
+    }
+    if (stall.phase === 'progress' || stall.phase === 'ambush') {
+      if (!shouldForceHubAmbush(state) || stall.phase === 'progress') {
+        for (const pad of hubProgressionPads(state)) {
+          if (isExcludedPadLabel(pad, excluded)) continue;
+          if (!finalChoices.some((c) => c.toLowerCase() === pad.toLowerCase())) {
+            finalChoices = [pad, ...finalChoices].slice(0, 6);
+            notes.push(`08f stall progress pad: ${pad.slice(0, 36)}`);
+          }
+        }
+      } else {
+        notes.push('08f stall ambush eligible (drought+peril)');
+      }
+    }
+  }
+
   // Batch Y Milestone 1 — Y-2: Generate intent enums for SNAPSHOT context
+  // 08f — final encounter 3-slot (wins over talk-loop / post-CLEAR injects)
+  if (state.activeEncounter || state.sceneFacts?.pendingEncounter) {
+    finalChoices = finalChoices.filter((c) =>
+      /\b(press the attack|attack|fight|engage|try to flee|flee|find cover|parley|use a tactical item|change position)\b/i.test(
+        c
+      )
+    );
+    if (!finalChoices.some((c) => /\b(attack|press the attack|fight)\b/i.test(c))) {
+      finalChoices.unshift('Press the attack');
+    }
+    if (!finalChoices.some((c) => /\b(flee|find cover)\b/i.test(c))) {
+      finalChoices.push(state.activeEncounter?.caught ? 'Find cover' : 'Try to flee');
+    }
+    if (!finalChoices.some((c) => /\b(parley|tactical item|change position)\b/i.test(c))) {
+      finalChoices.push('Change position');
+    }
+    finalChoices = finalChoices.slice(0, 3);
+    notes.push('08f final encounter 3-slot');
+  }
+
   const intentEnums = finalChoices.map((c) => inferIntent(c));
   
   return {

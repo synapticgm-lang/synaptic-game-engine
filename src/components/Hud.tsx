@@ -8,7 +8,7 @@ import { effectiveWriterTier, hasUnlimitedTextCapacity, isFounderPlayAccount } f
 import { equippedSetLabel, equippedSetName } from '../game/uiTheme';
 
 /** Visible after a hard refresh -- if this is missing, Vercel is still serving the 16 Aug bundle. */
-export const HUD_BUILD_STAMP = '2026-09-08e';
+export const HUD_BUILD_STAMP = '2026-09-08f';
 const HUD_BUILD_TITLE =
   'Batch 08e - Sparse flavor (threshold DeepSeek) + Silent pad/spatial locks';
 

@@ -139,6 +139,8 @@ import {
   applyCombatClearTag,
   consumeTagTriggerOnInput,
 } from './tagTrigger';
+import { recordAmbientPadUse } from './padExhaustion';
+import { recordPyoaAmbientEdgeUse } from './pyoaSpine';
 import { beatCommitFromReceipts, validateProseAgainstBeat } from './beatCommit';
 import {
   attachSealedManifest,
@@ -915,6 +917,9 @@ export async function headlessFateTurn(
       arcStatusReceipts = [...arcStatusReceipts, claimed.receipt];
     }
   }
+  // 08f — stamp single-use ambient / PYOA non-progression pads
+  arcState = recordAmbientPadUse(arcState, playerInput);
+  arcState = recordPyoaAmbientEdgeUse(arcState, playerInput);
 
   const arcXp = (arcResult?.xpAwards ?? []).reduce((n, a) => n + (a.amount ?? 0), 0);
   const preparedEvent = prepareRetrospectiveWriterInput(arcState, playerInput, { xp: arcXp });
@@ -1026,7 +1031,10 @@ Do NOT print dice notation or CODE ENFORCED.
       flavorRaw: silentMud ? '' : gmResult.text,
       gold: arcState.gold,
       silent: silentMud,
+      state: arcState,
+      trackAttempt: !silentMud,
     });
+    if (mudTurn.state) arcState = mudTurn.state;
     arcState = applyCombatClearTag(arcState, preparedEvent.packet);
     gmText = mudTurn.content;
     gmSystemLog = [...mudTurn.receiptLines];
@@ -1666,6 +1674,9 @@ Do NOT print dice notation or CODE ENFORCED.
       location: governed.currentLocation,
       flavorQuote: mudTurn?.flavorQuote || undefined,
       receiptLines: mudTurn?.receiptLines,
+      flavorRejectReason: mudTurn && 'rejectReason' in mudTurn ? (mudTurn as { rejectReason?: string }).rejectReason : undefined,
+      flavorAttempts: governed.sceneFacts?.sparseFlavor?.flavorAttempts,
+      flavorRejects: governed.sceneFacts?.sparseFlavor?.flavorRejects,
     },
   };
 }
@@ -1881,6 +1892,17 @@ export async function runFateAutoplay(opts: {
     p0Count: readability.p0Count,
     violations: readability.violations,
   };
+  {
+    const flavAttempts = state.sceneFacts?.sparseFlavor?.flavorAttempts ?? 0;
+    const flavRejects = state.sceneFacts?.sparseFlavor?.flavorRejects ?? 0;
+    (summary as RunSummary & {
+      flavorMetrics?: { attempts: number; rejects: number; rejectRate: number };
+    }).flavorMetrics = {
+      attempts: flavAttempts,
+      rejects: flavRejects,
+      rejectRate: flavAttempts > 0 ? flavRejects / flavAttempts : 0,
+    };
+  }
 
   writeFileSync(join(outDir, 'transcript.md'), buildPlayTranscript(state));
   if (state.runManifest) {

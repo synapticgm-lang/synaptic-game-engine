@@ -25,6 +25,7 @@ import {
 import { isClosedScenePersonPad } from './closedScenePerson';
 import { isObjectPersonPad, ledgerSlotPeople } from './slotGlue';
 import { isLastKillTalkPad } from './combatAuthority';
+import { isAmbientPadExhausted } from './padExhaustion';
 
 /**
  * 4-tier narrative pipeline (authoritative ordering for choice generation):
@@ -900,7 +901,7 @@ export function padChoicesToCount(
     if (!merged.some((c) => c.toLowerCase() === hubPad.toLowerCase())) merged.push(hubPad);
   }
   // Outdoor hub travel pads (Act-3) — only if the universe still allows Travel.
-  if (!excluded.has('travel')) {
+  if (!excluded.has('travel') && !state.activeEncounter && !state.sceneFacts?.pendingEncounter) {
     for (const hubChoice of outdoorHubTravelChoices(state, 2)) {
       if (merged.length >= 4) break;
       if (isExcludedPadLabel(hubChoice, excluded)) continue;
@@ -908,6 +909,25 @@ export function padChoicesToCount(
       if (!merged.some((c) => c.toLowerCase() === hubChoice.toLowerCase())) merged.push(hubChoice);
     }
   }
+  // 08f — before early return: combat 3-slot / ambient exhaust
+  if (state.activeEncounter || state.sceneFacts?.pendingEncounter) {
+    merged = merged.filter((c) =>
+      /\b(press the attack|attack|fight|engage|try to flee|flee|find cover|parley|use a tactical item|change position)\b/i.test(
+        c
+      )
+    );
+    if (!merged.some((c) => /\b(attack|press the attack|fight)\b/i.test(c))) {
+      merged.unshift('Press the attack');
+    }
+    if (!merged.some((c) => /\b(flee|find cover)\b/i.test(c))) {
+      merged.push(state.activeEncounter?.caught ? 'Find cover' : 'Try to flee');
+    }
+    if (!merged.some((c) => /\b(parley|tactical item|change position)\b/i.test(c))) {
+      merged.push('Change position');
+    }
+    return sealPadUniverse(merged.slice(0, 3), state, excluded);
+  }
+  merged = merged.filter((c) => !isAmbientPadExhausted(state, c));
   if (merged.length >= min) {
     return sealPadUniverse(
       applyStanceDensity(merged.slice(0, 4), state, storyProse, lastPlayerAction),
@@ -950,6 +970,27 @@ export function padChoicesToCount(
   if (merged.length === 0) {
     merged.push(...closedUniverseFallbacks(state, excluded));
   }
+
+  // 08f — live encounter: hard 3-slot; never refill ambient hub pads.
+  if (state.activeEncounter || state.sceneFacts?.pendingEncounter) {
+    merged = merged.filter((c) =>
+      /\b(press the attack|attack|fight|engage|try to flee|flee|find cover|parley|use a tactical item|change position)\b/i.test(
+        c
+      )
+    );
+    if (!merged.some((c) => /\b(attack|press the attack|fight)\b/i.test(c))) {
+      merged.unshift('Press the attack');
+    }
+    if (!merged.some((c) => /\b(flee|find cover)\b/i.test(c))) {
+      merged.push(state.activeEncounter?.caught ? 'Find cover' : 'Try to flee');
+    }
+    if (!merged.some((c) => /\b(parley|tactical item|change position)\b/i.test(c))) {
+      merged.push('Change position');
+    }
+    return sealPadUniverse(merged.slice(0, 3), state, excluded);
+  }
+
+  merged = merged.filter((c) => !isAmbientPadExhausted(state, c));
   
   return sealPadUniverse(
     applyStanceDensity(merged.slice(0, 4), state, storyProse, lastPlayerAction),

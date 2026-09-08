@@ -354,6 +354,9 @@ export interface ActiveEncounter {
   forcedSpawnKey?: string;
   /** Batch W — flee fail caught on the ledger; no casual travel clear. */
   caught?: boolean;
+  /** 08f — non-attack combat round status / distance deltas. */
+  combatStatus?: string;
+  distanceBand?: 'close' | 'near' | 'far';
 }
 
 export interface OpeningEstablishment {
@@ -903,11 +906,33 @@ export interface SceneFacts {
   /**
    * 08e Sparse flavor memory — first arrival / first Talk keys already flavored.
    * Survives travel; capped in freeMudPresentation.rememberSparseFlavor.
+   * 08f adds recentQuotes + reject metrics for fail-closed gate.
    */
   sparseFlavor?: {
     arrivalKeys?: string[];
     talkKeys?: string[];
+    /** Last accepted flavor quotes (Jaccard recycle). */
+    recentQuotes?: string[];
+    flavorAttempts?: number;
+    flavorRejects?: number;
   };
+  /**
+   * 08f — single-use ambient/inspect/stake pads keyed by HERE node.
+   * Resets when node key changes / clearAmbientPadsForNode.
+   */
+  usedAmbientPads?: Record<string, string[]>;
+  /**
+   * 08f — hub stall escalation (hash of HERE+inv+quest; consecutive no-delta).
+   */
+  hubStall?: {
+    hash: string;
+    consecutiveNoDelta: number;
+    phase?: 'none' | 'prune' | 'progress' | 'ambush';
+  };
+  /**
+   * 08f PYOA — used non-progression edge ids at current spine node.
+   */
+  pyoaUsedAmbientEdges?: string[];
 }
 
 export interface TimelineFact {

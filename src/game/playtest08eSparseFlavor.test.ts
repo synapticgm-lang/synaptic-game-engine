@@ -58,8 +58,8 @@ describe('08e — Sparse flavor flags + stamp', () => {
     expect(SILENT_ENGINE).toBe(false);
     expect(shouldSkipMicroFlavor()).toBe(false);
     expect(STAGNATION_MID_WRITER_ENABLED).toBe(false);
-    expect(HUD_BUILD_STAMP).toBe('2026-09-08e');
-    expect(BUILD_STAMP).toBe('2026-09-08e');
+    expect(HUD_BUILD_STAMP).toBe('2026-09-08f');
+    expect(BUILD_STAMP).toBe('2026-09-08f');
   });
 });
 
@@ -195,7 +195,7 @@ describe('08e — flavor fail-closed on chrome leak', () => {
     expect(gateMicroFlavorQuote('HERE: Lowmarket ACT: waited', packet).ok).toBe(false);
     expect(gateMicroFlavorQuote('OUTCOME: resolved in the stall.', packet).ok).toBe(false);
     expect(gateMicroFlavorQuote('Lord Vexarion winked from the throne.', packet).ok).toBe(false);
-    const ok = gateMicroFlavorQuote('Dust hung over the stall.', packet);
+    const ok = gateMicroFlavorQuote('Dust hung thick over the quiet stall boards.', packet);
     expect(ok.ok).toBe(true);
   });
 

@@ -72,6 +72,7 @@ export function enumerateLegalEdges(state: GameState): StateEdge[] {
   const bibleId = state.campaignBibleId ?? (state as GameState & { bibleId?: string }).bibleId;
 
   if (state.activeEncounter) {
+    // 08f — hard 3-slot: Offense / Mitigation-Flee / Tactical-Item. No ambient hub pads.
     edges.push({
       type: 'attack',
       label: 'Press the attack',
@@ -81,12 +82,29 @@ export function enumerateLegalEdges(state: GameState): StateEdge[] {
     if (fleeAvailable(state.activeEncounter)) {
       edges.push({
         type: 'flee',
-        label: 'Try to flee',
+        label: state.activeEncounter.caught ? 'Find cover' : 'Try to flee',
+        intent: PlayerIntent.INTENT_FLEE,
+        cooldown: 1,
+      });
+    } else {
+      edges.push({
+        type: 'flee',
+        label: 'Find cover',
         intent: PlayerIntent.INTENT_FLEE,
         cooldown: 1,
       });
     }
-    if (parleyAvailable(state.activeEncounter)) {
+    const hasItem = (state.inventory ?? []).some((i) => {
+      const n = String(i?.name ?? '').toLowerCase();
+      return n && !/clothes|bag|empty/.test(n);
+    });
+    edges.push({
+      type: 'parley',
+      label: hasItem ? 'Use a tactical item' : 'Change position',
+      intent: hasItem ? PlayerIntent.INTENT_STRUGGLE : PlayerIntent.INTENT_LEAVE,
+      cooldown: 1,
+    });
+    if (parleyAvailable(state.activeEncounter) && edges.length < 3) {
       edges.push({
         type: 'parley',
         label: 'Parley',
@@ -94,7 +112,7 @@ export function enumerateLegalEdges(state: GameState): StateEdge[] {
         cooldown: 1,
       });
     }
-    return edges.filter((e) => !isExcludedPadLabel(e.label, excluded));
+    return edges.filter((e) => !isExcludedPadLabel(e.label, excluded)).slice(0, 3);
   }
 
   if (state.openingEstablishment?.complete && isOutdoorScene(state) && !excluded.has('travel')) {

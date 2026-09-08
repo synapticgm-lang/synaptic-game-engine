@@ -2,6 +2,7 @@
  * Batch 08c — Free MUD-modern presentation (Option 2).
  * Batch 08d — Silent Engine: receipts only (no DeepSeek micro-flavor calls).
  * Batch 08e — Sparse flavor: DeepSeek ONLY on lethal / level-up / new HERE / first Talk.
+ * Batch 08f — fail-closed flavor gate (1st person / PC name / invent / Jaccard / length).
  * Free is NOT a 50–100 word Retrospective Narrator novelist on this path.
  */
 
@@ -86,7 +87,76 @@ function sparseMemory(state: GameState): NonNullable<SceneFacts['sparseFlavor']>
   return {
     arrivalKeys: [...(state.sceneFacts?.sparseFlavor?.arrivalKeys ?? [])],
     talkKeys: [...(state.sceneFacts?.sparseFlavor?.talkKeys ?? [])],
+    recentQuotes: [...(state.sceneFacts?.sparseFlavor?.recentQuotes ?? [])],
+    flavorAttempts: state.sceneFacts?.sparseFlavor?.flavorAttempts ?? 0,
+    flavorRejects: state.sceneFacts?.sparseFlavor?.flavorRejects ?? 0,
   };
+}
+
+const FIRST_PERSON =
+  /\b(i|me|my|mine|we|us|our|ours|i'm|i've|i'd|we're|we've)\b/i;
+
+const OPENING_SPAM_FP =
+  /\b(street clothes|everyday clothes|light took you|ozone and earth|blue panel (?:hum|glows)|registration (?:ping|awaits))\b/i;
+
+function wordCount(text: string): number {
+  return text.trim().split(/\s+/).filter(Boolean).length;
+}
+
+function tokenSet(text: string): Set<string> {
+  return new Set(
+    text
+      .toLowerCase()
+      .replace(/[^a-z0-9\s]/g, ' ')
+      .split(/\s+/)
+      .filter((t) => t.length >= 3)
+  );
+}
+
+export function jaccardSimilarity(a: string, b: string): number {
+  const A = tokenSet(a);
+  const B = tokenSet(b);
+  if (!A.size || !B.size) return 0;
+  let inter = 0;
+  for (const t of A) if (B.has(t)) inter += 1;
+  return inter / (A.size + B.size - inter);
+}
+
+function pcNameBanned(text: string, pcName: string | undefined): boolean {
+  const name = String(pcName ?? '').trim();
+  if (!name || name.length < 2) return false;
+  const escaped = name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  return new RegExp(`\\b${escaped}\\b`, 'i').test(text);
+}
+
+function foeYouConflation(text: string, foeName: string | undefined): boolean {
+  if (!foeName) return false;
+  const last = foeName.trim().split(/\s+/).pop() ?? '';
+  if (last.length < 4) return false;
+  const esc = last.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  return new RegExp(`\\byou[, ]+(?:the\\s+)?${esc}\\b|\\b${esc}\\s+you\\b`, 'i').test(text);
+}
+
+/** Allowlist for Title-Case: HERE + ledger actors (not PC) + lastKill/encounter foes. */
+function flavorTitleAllowlist(
+  packet: CompletedEventPacket,
+  state?: GameState
+): string[] {
+  const allow = new Set<string>(packet.allowlist ?? []);
+  if (packet.location) allow.add(packet.location);
+  for (const w of packet.witnesses ?? []) allow.add(w);
+  if (packet.lastKill?.name) allow.add(packet.lastKill.name);
+  if (packet.target) allow.add(packet.target);
+  const enc = state?.activeEncounter?.name;
+  if (enc) allow.add(enc);
+  // Sensory commons always ok
+  for (const s of [
+    'Dust', 'Stone', 'Light', 'Shadow', 'Steel', 'Blood', 'Air', 'Silence',
+    'Breath', 'Floor', 'Wall', 'Door', 'Street', 'Lane', 'Room', 'Blade',
+  ]) {
+    allow.add(s);
+  }
+  return [...allow];
 }
 
 function inferWeaponNoun(packet: CompletedEventPacket): string {
@@ -171,6 +241,9 @@ export function rememberSparseFlavor(
       sparseFlavor: {
         arrivalKeys: mem.arrivalKeys.slice(-40),
         talkKeys: mem.talkKeys.slice(-40),
+        recentQuotes: mem.recentQuotes?.slice(-5),
+        flavorAttempts: mem.flavorAttempts,
+        flavorRejects: mem.flavorRejects,
       },
     },
   };
@@ -178,45 +251,73 @@ export function rememberSparseFlavor(
 
 /**
  * Ultra-lean sparse prompts — one sentence; ledger nouns; fail-closed NONE.
+ * 08f PYOA: environmental/sensory only — no CAST/NPC invent; strip actor slots.
  */
 export function formatSparseFlavorPrompt(
   packet: CompletedEventPacket,
-  kind: SparseFlavorKind
+  kind: SparseFlavorKind,
+  opts?: { pyoaEnvOnly?: boolean; pcName?: string }
 ): string {
-  const allow = packet.allowlist.length
-    ? packet.allowlist.slice(0, 8).join(', ')
-    : 'none';
+  const pyoa = opts?.pyoaEnvOnly === true;
+  const rawAllow = pyoa
+    ? packet.allowlist.filter((n) => {
+        const t = n.toLowerCase();
+        if (packet.witnesses.some((w) => w.toLowerCase() === t)) return false;
+        if (packet.target && packet.target.toLowerCase() === t) return false;
+        return true;
+      })
+    : packet.allowlist;
+  const allow = rawAllow.length ? rawAllow.slice(0, 8).join(', ') : 'none';
+  const noPc = opts?.pcName
+    ? ` Never write the name ${opts.pcName} in any casing.`
+    : '';
+  const noFirst = ' Never use I/me/my/mine/we/us/our.';
   if (kind === 'lethal') {
     const noun = corpseOrFoeNoun(packet);
     const weapon = inferWeaponNoun(packet);
     return [
-      `Write exactly one sentence describing ${noun} dying by ${weapon}.`,
+      `Write exactly one sentence (6–22 words) describing ${noun} dying by ${weapon}.`,
       'No names. No pronouns. No lists. No second sentence.',
+      noFirst + noPc,
       'If you cannot stay inside the ledger, reply with exactly: NONE',
       `YOU MAY ONLY MENTION: ${allow}.`,
     ].join(' ');
   }
   if (kind === 'level-up') {
     return [
-      'Write exactly one sentence describing a level threshold crossing as a quiet body rush.',
+      'Write exactly one sentence (6–22 words) describing a level threshold crossing as a quiet body rush.',
       'No names. No pronouns inventing people. No XP numbers. No lists.',
+      noFirst + noPc,
       'If you cannot, reply with exactly: NONE',
       `YOU MAY ONLY MENTION: ${allow}.`,
     ].join(' ');
   }
-  if (kind === 'arrival') {
+  if (kind === 'arrival' || (pyoa && kind !== 'first-talk')) {
     const place = packet.location || 'here';
     return [
-      `Write exactly one sentence describing arrival at ${place}.`,
-      'No invented people. No pronouns inventing cast. No lists.',
+      `Write exactly one sensory sentence (6–22 words) about arrival at ${place}.`,
+      pyoa
+        ? 'Environmental/sensory only. No people. No NPC. No CAST invent.'
+        : 'No invented people. No pronouns inventing cast. No lists.',
+      noFirst + noPc,
+      'If you cannot, reply with exactly: NONE',
+      `YOU MAY ONLY MENTION: ${allow}.`,
+    ].join(' ');
+  }
+  if (pyoa) {
+    return [
+      `Write exactly one sensory sentence (6–22 words) about ${packet.location || 'here'}.`,
+      'Environmental only. No people. No dialogue.',
+      noFirst + noPc,
       'If you cannot, reply with exactly: NONE',
       `YOU MAY ONLY MENTION: ${allow}.`,
     ].join(' ');
   }
   const who = packet.target || 'someone';
   return [
-    `Write exactly one spoken or gestured first-meeting sentence with ${who}.`,
+    `Write exactly one spoken or gestured first-meeting sentence (6–22 words) with ${who}.`,
     'Past tense. No lists. No invented loot or places.',
+    noFirst + noPc,
     'If you cannot stay inside the allowlist, reply with exactly: NONE',
     `YOU MAY ONLY MENTION: ${allow}.`,
   ].join(' ');
@@ -242,10 +343,17 @@ export function planMicroFlavor(ctx: SparseFlavorContext): MicroFlavorPlan {
   if (!kind) {
     return { skip: true, kind: null, prompt: '', state: ctx.state };
   }
+  const pyoaEnvOnly = ctx.state.engineMode === 'pyoa';
+  // PYOA: first-talk invent off — treat as arrival/env if somehow spoke.
+  const effectiveKind: SparseFlavorKind =
+    pyoaEnvOnly && kind === 'first-talk' ? 'arrival' : kind;
   return {
     skip: false,
-    kind,
-    prompt: formatSparseFlavorPrompt(ctx.packet, kind),
+    kind: effectiveKind,
+    prompt: formatSparseFlavorPrompt(ctx.packet, effectiveKind, {
+      pyoaEnvOnly,
+      pcName: ctx.state.character?.name,
+    }),
     state: rememberSparseFlavor(ctx.state, kind, ctx.packet),
   };
 }
@@ -362,12 +470,17 @@ function allowlistCovers(allowlist: string[], token: string): boolean {
 }
 
 /**
- * Gate: ≤1 sentence, no invent Title-Case outside allowlist, no instruction voice,
- * no receipt/chrome leak (08e fail-closed).
+ * Gate: 1 sentence ~6–22 words; fail-closed on 1st person, PC name, invent Title-Case,
+ * foe/you conflation, Jaccard>0.35 vs last 5, opening-spam fingerprint, chrome (08f).
  */
 export function gateMicroFlavorQuote(
   raw: string,
-  packet: CompletedEventPacket
+  packet: CompletedEventPacket,
+  opts?: {
+    state?: GameState;
+    recentQuotes?: string[];
+    pcName?: string;
+  }
 ): { ok: true; quote: string } | { ok: false; reason: string } {
   let text = String(raw ?? '')
     .replace(/```[\s\S]*?```/g, ' ')
@@ -377,23 +490,38 @@ export function gateMicroFlavorQuote(
   if (!text || /^none\.?$/i.test(text)) {
     return { ok: false, reason: 'empty' };
   }
-  // Take first sentence only
   const first = text.match(/^(.+?[.!?])(?:\s|$)/)?.[1] ?? text;
   text = first.trim();
-  if (text.length < 8) return { ok: false, reason: 'too-short' };
-  if (text.length > 220) return { ok: false, reason: 'too-long' };
+  const words = wordCount(text);
+  if (words < 6) return { ok: false, reason: 'too-short' };
+  if (words > 22) return { ok: false, reason: 'too-long' };
   if (NUMBERED_LIST.test(text)) return { ok: false, reason: 'list' };
   if (INSTRUCTION_VOICE.test(text)) return { ok: false, reason: 'instruction' };
   if (CHROME_LEAK.test(text)) return { ok: false, reason: 'chrome-leak' };
-  if (MULTI_SENTENCE.test(text.slice(0, -1))) {
-    // already sliced to first sentence; soft OK
+  if (FIRST_PERSON.test(text)) return { ok: false, reason: 'first-person' };
+  const pcName = opts?.pcName ?? opts?.state?.character?.name;
+  if (pcNameBanned(text, pcName)) return { ok: false, reason: 'pc-name' };
+  if (OPENING_SPAM_FP.test(text)) return { ok: false, reason: 'opening-spam' };
+  if (foeYouConflation(text, packet.lastKill?.name)) {
+    return { ok: false, reason: 'foe-you-conflation' };
   }
+  if (foeYouConflation(text, opts?.state?.activeEncounter?.name)) {
+    return { ok: false, reason: 'foe-you-conflation' };
+  }
+  const allow = flavorTitleAllowlist(packet, opts?.state);
+  // PC name never allowed even if somehow in actors
+  const allowNoPc = allow.filter((a) => !pcName || a.toLowerCase() !== pcName.toLowerCase());
   for (const tok of titleCaseTokens(text)) {
-    if (!allowlistCovers(packet.allowlist, tok)) {
+    if (!allowlistCovers(allowNoPc, tok)) {
       return { ok: false, reason: `invent:${tok}` };
     }
   }
-  // Living lastKill talk
+  const recent = opts?.recentQuotes ?? opts?.state?.sceneFacts?.sparseFlavor?.recentQuotes ?? [];
+  for (const prev of recent.slice(-5)) {
+    if (jaccardSimilarity(text, prev) > 0.35) {
+      return { ok: false, reason: 'jaccard-recycle' };
+    }
+  }
   if (
     packet.lastKill?.name
     && packet.lastKill.remains
@@ -406,6 +534,49 @@ export function gateMicroFlavorQuote(
   return { ok: true, quote: text };
 }
 
+export function flavorRejectRate(state: GameState): number {
+  const mem = state.sceneFacts?.sparseFlavor;
+  const attempts = mem?.flavorAttempts ?? 0;
+  const rejects = mem?.flavorRejects ?? 0;
+  if (attempts <= 0) return 0;
+  return rejects / attempts;
+}
+
+/** Persist attempt/reject + accepted quote history after a flavor call. */
+export function recordFlavorGateResult(
+  state: GameState,
+  result: { ok: boolean; quote?: string }
+): GameState {
+  const mem = sparseMemory(state);
+  mem.flavorAttempts = (mem.flavorAttempts ?? 0) + 1;
+  if (!result.ok) {
+    mem.flavorRejects = (mem.flavorRejects ?? 0) + 1;
+  } else if (result.quote) {
+    mem.recentQuotes = [...(mem.recentQuotes ?? []), result.quote].slice(-5);
+  }
+  return {
+    ...state,
+    sceneFacts: {
+      crowd: state.sceneFacts?.crowd ?? 'unknown',
+      noise: state.sceneFacts?.noise ?? 'unknown',
+      present: state.sceneFacts?.present ?? [],
+      props: state.sceneFacts?.props ?? [],
+      lastBeat: state.sceneFacts?.lastBeat ?? '',
+      updatedTurn: state.turn,
+      ...state.sceneFacts,
+      sparseFlavor: {
+        arrivalKeys: mem.arrivalKeys?.slice(-40),
+        talkKeys: mem.talkKeys?.slice(-40),
+        recentQuotes: mem.recentQuotes?.slice(-5),
+        flavorAttempts: mem.flavorAttempts,
+        flavorRejects: mem.flavorRejects,
+      },
+    },
+  };
+}
+
+export type FreeMudComposeResult = FreeMudTurn & { state?: GameState; rejectReason?: string };
+
 /** Compose Free turn: receipt always; flavor only if AI gate passes (off under Silent / non-threshold sparse). */
 export function composeFreeMudTurn(
   packet: CompletedEventPacket,
@@ -415,12 +586,14 @@ export function composeFreeMudTurn(
     gold?: number;
     /** Force silent even if SILENT_ENGINE later flips — tests / callers. */
     silent?: boolean;
+    state?: GameState;
+    /** When flavorRaw was attempted (threshold fired), count metrics even if silent false. */
+    trackAttempt?: boolean;
   } = {}
-): FreeMudTurn {
+): FreeMudComposeResult {
   const receiptLines = buildFactualReceipt(packet, opts.arcReceipts ?? [], {
     gold: opts.gold,
   });
-  // Callers pass silent:true for non-threshold sparse / full Silent Engine.
   const silent = opts.silent === true || SILENT_ENGINE === true;
   if (silent) {
     return {
@@ -429,9 +602,21 @@ export function composeFreeMudTurn(
       receiptLines,
       presentation: 'mud-receipt',
       flavorSource: 'none',
+      state: opts.state,
     };
   }
-  const gated = gateMicroFlavorQuote(opts.flavorRaw ?? '', packet);
+  const gated = gateMicroFlavorQuote(opts.flavorRaw ?? '', packet, {
+    state: opts.state,
+    pcName: opts.state?.character?.name,
+    recentQuotes: opts.state?.sceneFacts?.sparseFlavor?.recentQuotes,
+  });
+  let nextState = opts.state;
+  if (opts.trackAttempt !== false && opts.state && (opts.flavorRaw ?? '').trim()) {
+    nextState = recordFlavorGateResult(opts.state, {
+      ok: gated.ok,
+      quote: gated.ok ? gated.quote : undefined,
+    });
+  }
   const flavorQuote = gated.ok ? gated.quote : '';
   return {
     content: flavorQuote,
@@ -439,6 +624,8 @@ export function composeFreeMudTurn(
     receiptLines,
     presentation: 'mud-receipt',
     flavorSource: gated.ok ? 'ai' : 'none',
+    state: nextState,
+    rejectReason: gated.ok ? undefined : gated.reason,
   };
 }
 

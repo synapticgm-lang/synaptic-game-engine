@@ -337,6 +337,8 @@ import {
   applyCombatClearTag,
   consumeTagTriggerOnInput,
 } from './tagTrigger';
+import { recordAmbientPadUse } from './padExhaustion';
+import { recordPyoaAmbientEdgeUse } from './pyoaSpine';
 import { beatCommitFromReceipts, validateProseAgainstBeat } from './beatCommit';
 import {
   attachSealedManifest,
@@ -2730,6 +2732,9 @@ export function useGame() {
           stateRef.current = liveCurrent;
         }
       }
+      liveCurrent = recordAmbientPadUse(liveCurrent, sanitizedInput);
+      liveCurrent = recordPyoaAmbientEdgeUse(liveCurrent, sanitizedInput);
+      stateRef.current = liveCurrent;
       const preparedEvent = prepareRetrospectiveWriterInput(liveCurrent, sanitizedInput, {
         xp: arcXp,
       });
@@ -2891,7 +2896,10 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
           flavorRaw: silentMud ? '' : result.text,
           gold: liveCurrent.gold,
           silent: silentMud,
+          state: liveCurrent,
+          trackAttempt: !silentMud,
         });
+        if (mudTurnLive.state) liveCurrent = mudTurnLive.state;
         liveCurrent = applyCombatClearTag(liveCurrent, preparedEvent.packet);
         stateRef.current = liveCurrent;
         result = {
