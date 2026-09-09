@@ -1010,7 +1010,7 @@ function stripChoicePrefix(raw: string): string {
 const NAME_STOP = new Set([
   'my', 'name', 'its', 'it', 'is', 'who', 'are', 'you', 'im', 'i', 'am', 'in', 'at', 'on',
   'the', 'a', 'an', 'what', 'whats', 'going', 'on', 'please', 'confirm', 'uk', 'usa',
-  'hello', 'hi', 'hey', 'yes', 'no', 'ok', 'okay',
+  'hello', 'hi', 'hey', 'yes', 'no', 'ok', 'okay', 'why',
   'refuse', 'protest', 'demand', 'wait', 'look', 'inspect', 'leave', 'stay', 'send', 'back',
 ]);
 

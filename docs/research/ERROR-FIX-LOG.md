@@ -52,6 +52,7 @@
 | 20f | Instant stitch | Banks + cards | Continue still used bible `startingLocation` |
 | 20k | War camp → cathedral after covers; bag glued to clothes | `resolveLockedOpeningPlace` + kit not concat onto appearance | Class B place lock |
 | **30T** | Inspect surroundings → canned “They are still waiting for a name you will own.” | `applyOpeningAnswer` defers look-around to play; pad drops name/origin/kit chips | Cover parse treated inspect as a failed name |
+| **09c** | Cover-continue novelist echo / `","` HERE / Inspect chip dump | Cover-continue is local `stitchOpeningContinue` (never `callOpeningGm`); `classifyOpeningContinue` + `isWriterMonologueLeak` reject packet lecture; Silent empty uses `mudDisplayBody`; fallback never prints `lastBeat` chips or `At alone in…` | 09b only locked page 1; covers + Silent empty still hit the 08a packet / 31i chip fallback |
 
 ### Quest / journal (Class C)
 

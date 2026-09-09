@@ -4,6 +4,7 @@ import { createInitialState } from './defaults';
 import {
   applyHarvestedOpeningCovers,
   applyOpeningAnswer,
+  extractGivenName,
   establishmentChoices,
   harvestEarthOriginFromProse,
   isLocationishOpeningUtterance,
@@ -91,6 +92,18 @@ describe('opening utterance — name cover vs location-talk', () => {
   it('still accepts a real given name on the name cover', async () => {
     const { state } = await applyOpeningAnswer(summonedNameCover(), 'Sam');
     expect(state.character.name).toBe('Sam');
+  });
+
+  it('locks Jax from a thought-line even when the same line searches the room', async () => {
+    expect(
+      extractGivenName("Think in your head 'why does it need to know my name is Jax' search the room")
+    ).toBe('Jax');
+    const { state, deferToPlay } = await applyOpeningAnswer(
+      summonedNameCover(),
+      "Think in your head 'why does it need to know my name is Jax' search the room you are in for anything of use or intel"
+    );
+    expect(deferToPlay).toBeFalsy();
+    expect(state.character.name).toBe('Jax');
   });
 
   it('name + who/where acknowledges Jax and never re-asks for a name', async () => {

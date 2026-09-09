@@ -6,12 +6,16 @@
 import type { CampaignBible, OpeningPrompt, OpeningPromptKind } from '@/data/campaigns/types';
 import type { GameState } from './types';
 import { resolveActiveCampaignBible } from './campaignSeed';
+import { cleanPlaceLabel } from './locationName';
+import { isLockablePcName } from './pcNameAuthority';
 import {
   isAloneArrivalOpening,
   isEarthOriginPrompt,
   resolveLockedOpeningPlace,
   resolveOpeningHookPick,
 } from './openingEstablishment';
+
+export { cleanPlaceLabel };
 
 function hashSeed(raw: string): number {
   let h = 2166136261;
@@ -26,30 +30,6 @@ function pickBank<T>(bank: readonly T[], seed: string, salt: string): T {
   const idx = hashSeed(`${seed}|${salt}`) % bank.length;
   return bank[idx]!;
 }
-
-const PRESSURE_CROWD = [
-  'Someone is already deciding what you are worth.',
-  'Eyes find you before anyone speaks.',
-  'The next word in this room will cost something.',
-  'Nobody looks ready to wait long.',
-  'A scribe has a slate ready and an empty line.',
-  'Two people start a sentence at the same time and both stop.',
-  'Whoever holds rank here has not decided if you are cargo.',
-  'Someone takes a half-step closer, then thinks better of it.',
-  'The offer is still in the air — kit, oath, or a door — and nobody has handed it over.',
-  'A voice at the edge says your arrival was not the plan.',
-] as const;
-
-const PRESSURE_ALONE = [
-  'The panel is the only thing that treats you as real.',
-  'Nothing else moves in this room.',
-  'Whatever pulled you here did not stay to explain.',
-  'Dust and broken stone — no footsteps but yours.',
-  'The doorway stays empty. No one is coming in to greet you.',
-  'If there was a rite, the people who ran it are already gone.',
-  'You could stand up. Nothing in the room argues about it.',
-  'The quiet is not peaceful. It is unfinished.',
-] as const;
 
 const NAME_ASKS_CROWD = [
   'Someone in the room needs a name for you. What do they call you?',
@@ -98,7 +78,7 @@ const ALONE_ROOM_GROUND = [
 ] as const;
 
 const CROWD_ROOM_GROUND = [
-  'The people who were dealing with you are still here, waiting on your next move.',
+  'The people who were dealing with you have not left. They wait on your next move.',
   'Eyes stay on you. The offer — or the demand — has not left the room.',
   'Whatever they wanted from you is still on the table.',
 ] as const;
@@ -203,35 +183,63 @@ export function synthesizeOpeningScene(state: GameState): string {
   return stitchOpeningScene(state);
 }
 
-/** Strip leading "alone in …" meta from place labels so grammar stays clean. */
-function cleanPlaceLabel(place: string): string {
-  return place
-    .replace(/^\s*alone\s+in\s+/i, '')
-    .replace(/^\s*alone\s*,\s*/i, '')
-    .replace(/\s+/g, ' ')
-    .trim() || 'here';
+function lockedCoverName(state: GameState): string | null {
+  const n = (state.character?.name ?? state.openingEstablishment?.answers?.name ?? '').trim();
+  if (!n || /unknown survivor/i.test(n) || !isLockablePcName(n)) return null;
+  return n;
+}
+
+function continueIsAlone(state: GameState, place: string): boolean {
+  if (state.openingEstablishment?.aloneArrival === true) return true;
+  if (state.openingEstablishment?.aloneArrival === false) return false;
+  return /\b(?:ruin|watchtower|barn|bathhouse|waystation|husk|shell|foundation)\b/i.test(place);
+}
+
+function inPlacePhrase(place: string): string {
+  return /^(?:a|an|the)\s/i.test(place) ? `in ${place}` : `in the ${place}`;
 }
 
 /**
- * After weave covers — continue locally. No network.
- * Advance room detail / agency only — do not rehash locked name/look/kit as a paragraph.
+ * After page 1 — continue locally. No network, no pad list in prose.
+ * Answers why-name / search / inspect from the last player line.
  */
-export function stitchOpeningContinue(state: GameState): string {
+export function stitchOpeningContinue(state: GameState, playerInput = ''): string {
   const seed = state.seed ?? state.saveId ?? '0';
-  const bridge = pickBank(CONTINUE_BRIDGES, seed, 'continue');
   const a = state.openingEstablishment?.answers ?? {};
   const place = cleanPlaceLabel(resolveLockedOpeningPlace(state, a) || a.where || state.currentLocation || 'here');
-  const alone = isAloneArrivalOpening(state);
+  const alone = continueIsAlone(state, place);
   const ground = alone
     ? pickBank(ALONE_ROOM_GROUND, seed, 'continue-ground')
     : pickBank(CROWD_ROOM_GROUND, seed, 'continue-ground');
-  const pressure = pickBank(alone ? PRESSURE_ALONE : PRESSURE_CROWD, seed, 'continue-pressure');
-  return `${bridge} You are in ${place}. ${ground} ${pressure}
+  const act = (playerInput ?? '').replace(/\s+/g, ' ').trim();
+  const name = lockedCoverName(state);
+  const here = inPlacePhrase(place);
+  const searches =
+    /\bsearch\b|\bintel\b|\banything of use\b|\blook around\b|\bexplore\b/i.test(act);
 
-1. Get your bearings
-2. ${alone ? 'Search the ruin' : 'Speak to whoever is dealing with you'}
-3. Check the blue panel
-4. ${alone ? 'Find a way out' : 'Walk away from their offer'}`;
+  if (/\binspect(?:\s+the)?\s+(?:blue\s+)?panel\b|\bcheck(?:\s+the)?\s+(?:blue\s+)?panel\b/i.test(act)) {
+    if (name) {
+      return `The panel holds the name ${name}. It does not explain itself. ${ground}`;
+    }
+    return `The panel stays at eye level ${here}. A blank line waits. It does not say why it wants a name. ${ground}`;
+  }
+
+  if (searches) {
+    const found = alone
+      ? `You search ${here}. Broken stone, a dark doorway, dust. Nothing useful has been left for you.`
+      : `You take in the room again. ${ground}`;
+    return name ? `${found} The panel still shows ${name}.` : `${found} The panel has not moved.`;
+  }
+
+  if (/\bwhy\b.*\bname\b|\bwant (?:that|my name|a name)\b|\bwhat'?s going on\b/i.test(act)) {
+    if (name) {
+      return `The panel already has ${name}. It offers no further reason. You are still ${here}. ${ground}`;
+    }
+    return `The panel wants a name to write. It does not say why. You are still ${here}. ${ground}`;
+  }
+
+  const bridge = pickBank(CONTINUE_BRIDGES, seed, 'continue');
+  return `${bridge} You are ${here}. ${ground}`;
 }
 
 /** True when this tier may attempt a non-blocking polish (reserved; page-1 never waits). */

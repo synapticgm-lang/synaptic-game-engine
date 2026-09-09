@@ -307,6 +307,22 @@ export function classifyOpeningContinue(
   if (slots?.why && /bought here as a pawn|pellane'?s game/i.test(next) && !/pawn/i.test(slots.why)) {
     reasons.push('invented-why');
   }
+  if (
+    /\bnarrate this completed event\b/i.test(next)
+    || /\bcompleted event in past tense\b/i.test(next)
+    || /\bhere is the narrative of the completed event\b/i.test(next)
+    || /\badhering to the (?:provided )?guidelines\b/i.test(next)
+    || /\bYOU MAY ONLY MENTION\b/.test(next)
+    || /\bCOMPLETED EVENT:\s*/.test(next)
+  ) {
+    reasons.push('writer-monologue');
+  }
+  if (
+    /\b(?:later )?learned was called\s*[,“"']?\s*,/.test(next)
+    || /\bcalled\s+[“"']\s*,\s*[”"']/.test(next)
+  ) {
+    reasons.push('empty-here');
+  }
   const extras = inventedTitleNames(next, pointerCardAllowlist(state));
   if (openingInventBudgetZero(state) && extras.length > 0) {
     reasons.push('invent-budget');
@@ -315,7 +331,9 @@ export function classifyOpeningContinue(
   const accept =
     !reasons.includes('invented-earth-street')
     && !reasons.includes('invented-why')
-    && !reasons.includes('invent-smash');
+    && !reasons.includes('invent-smash')
+    && !reasons.includes('writer-monologue')
+    && !reasons.includes('empty-here');
   return { accept, prose: next.trim(), reasons };
 }
 

@@ -388,6 +388,13 @@ export function isWriterMonologueLeak(text: string | undefined): boolean {
     || /(?:^|[.!?]\s+)(?:Do not|Don't|Skip|Using only|In no more than)\b[^.]{0,80}\b(?:words?|narrate|address|comma|sentences?|closing words|sensory)\b/m.test(
       text
     )
+    // 09c — packet instruction echoed as story
+    || /\bnarrate this completed event\b/i.test(text)
+    || /\bcompleted event in past tense\b/i.test(text)
+    || /\bhere is the narrative of the completed event\b/i.test(text)
+    || /\badhering to the (?:provided )?guidelines\b/i.test(text)
+    || /\bYOU MAY ONLY MENTION\b/.test(text)
+    || /\bCOMPLETED EVENT:\s*/.test(text)
   );
 }
 

@@ -132,6 +132,7 @@ import {
 import {
   composeFreeMudTurn,
   formatMicroFlavorPrompt,
+  mudDisplayBody,
   shouldSkipMicroFlavor,
   shouldUseFreeMudPresentation,
   type FreeMudTurn,
@@ -1019,7 +1020,7 @@ Do NOT print dice notation or CODE ENFORCED.
       silent: silentMud,
     });
     arcState = applyCombatClearTag(arcState, preparedEvent.packet);
-    gmText = mudTurn.content;
+    gmText = mudTurn.content.trim() || mudDisplayBody(mudTurn);
     gmSystemLog = [...mudTurn.receiptLines];
     if (!silentMud && (gmResult.failKind === 'auth' || gmResult.dnsFailure)) {
       error = `GM empty/fail (${gmResult.dnsFailure ? 'network_dns' : gmResult.failKind ?? 'empty'})`;
@@ -1563,7 +1564,9 @@ Do NOT print dice notation or CODE ENFORCED.
     })
     .map((q) => q.name);
 
-  const mudBody = useMud && mudTurn ? mudTurn.content : cleanText;
+  const mudBody = useMud && mudTurn
+    ? mudTurn.content.trim() || mudDisplayBody(mudTurn)
+    : cleanText;
   const fp = beatFingerprint(mudBody || filteredSystemLog.join(' '));
   const playerEntry: LogEntry = {
     id: uid(),

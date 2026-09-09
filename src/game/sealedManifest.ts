@@ -7,10 +7,13 @@
  */
 
 import { scrubProseControlTags, applyStatusFirewall } from './statusFirewall';
+import { getDiegeticFallback } from './diegeticFallbacks';
 import type { GameState } from './types';
 import type { ArcDirectorResult } from './arcDirector';
 import { contractById } from './beatContract';
 import { detectHookContradiction, hookForbiddenReversal, hookManifestFact, resolveHookLock } from './hookLock';
+import { cleanPlaceLabel, playerFacingLocation } from './locationName';
+import { shortRoomLabel } from './mapEngine';
 
 export interface SceneManifest {
   turn: number;
@@ -275,7 +278,7 @@ export function validateProseAgainstManifest(
 
 /** Old HUD stubs that must never appear as player-facing GM narration (critic Batch A + E stall). */
 const BANNED_FALLBACK_STUB =
-  /something shifts\s*[—-]\s*a footstep|forcing the moment forward|closes in\s*[—-]\s*steel and breath|You act while the ledger still counts|the crisis will not wait\.|the arc moves anyway\.|the moment has not moved on|figure\s+\d+\s+is still here|holds the beat|a glance,\s*a breath|a cost still unpaid|telegraph first|no prior cast|Do not invent/i;
+  /something shifts\s*[—-]\s*a footstep|forcing the moment forward|closes in\s*[—-]\s*steel and breath|You act while the ledger still counts|the crisis will not wait\.|the arc moves anyway\.|the moment has not moved on|figure\s+\d+\s+is still here|holds the beat|a glance,\s*a breath|a cost still unpaid|telegraph first|no prior cast|Do not invent|here is the narrative of the completed event|you can still look,\s*speak,\s*or move|At alone in\b/i;
 
 /** HUD fact bleed that used to append into fallback prose. */
 const HUD_FACT_BLEED = /\bPC:\s*\S+.*\bHP:\s*\d|\bXP:\s*\d{1,4}\b(?!\s*(?:Gained|from|for))/i;
@@ -328,15 +331,40 @@ export function clearEngineRecoveryStreak(state: GameState): GameState {
  * Diegetic local stitch when GM is empty — narrative only, never HUD PC/HP/XP lines.
  * Encounter branch narrates live ledger foe; never the closes-in template.
  */
+function fallbackPlace(state: GameState): string {
+  const raw = cleanPlaceLabel(playerFacingLocation(state) || state.currentLocation?.trim() || 'here');
+  if (!raw || /^alone\b/i.test(raw) || /,/.test(raw) || raw.length > 48) {
+    return shortRoomLabel(raw, 'this room');
+  }
+  return raw;
+}
+
+function lastBeatIsStory(raw: string): boolean {
+  const lastBeat = raw.replace(/\s+/g, ' ').trim();
+  if (lastBeat.length < 24) return false;
+  if (/;/.test(lastBeat)) return false;
+  if (
+    /\b(?:street empty|it is quiet|System panel is visible|people are present|people are shouting)\b/i.test(
+      lastBeat
+    )
+  ) {
+    return false;
+  }
+  return true;
+}
+
 export function renderDeterministicFallback(
   manifest: SceneManifest,
   state: GameState
 ): string {
-  const loc = state.currentLocation?.trim() || 'here';
+  const loc = fallbackPlace(state);
   const enc = state.activeEncounter;
   const lastBeat = (state.sceneFacts?.lastBeat ?? '').replace(/\s+/g, ' ').trim();
-  const beatHint =
-    lastBeat.length >= 24 ? `${lastBeat.slice(0, 140).replace(/[.!?]?$/, '')}.` : '';
+  const beatHint = lastBeatIsStory(lastBeat)
+    ? `${lastBeat.slice(0, 140).replace(/[.!?]?$/, '')}.`
+    : '';
+  const action = (manifest.playerAction ?? '').toLowerCase();
+  const inspectish = /\b(inspect|examine|search|look|panel)\b/i.test(action);
 
   if (enc) {
     const hp = typeof enc.hp === 'number' ? enc.hp : null;
@@ -347,14 +375,17 @@ export function renderDeterministicFallback(
   if (manifest.beatId?.includes('crisis') || manifest.beatId?.includes('branch')) {
     return `At ${loc}, the crisis has not left the room. A choice still sits in front of you — delay will cost.`;
   }
+  if (inspectish) {
+    return getDiegeticFallback(state, 'inspect exhaust');
+  }
   if (/quest stage|arc xp|encounter:/i.test(manifest.requiredFacts.join(' '))) {
     const arcHint = beatHint || 'What the ledger already committed still stands.';
-    return `At ${loc}, ${arcHint} You can still look, speak, or move.`;
+    return `At ${loc}, ${arcHint}`;
   }
   const ambient = beatHint
     ? `What you last held onto still matters: ${beatHint}`
     : 'Sound and light keep moving around you.';
-  return `At ${loc}, the beat does not freeze. ${ambient} You can still look, speak, or move.`;
+  return `At ${loc}, the beat does not freeze. ${ambient}`;
 }
 
 /** 
@@ -383,7 +414,7 @@ export function applyRenderFallback(
     .replace(/\s{2,}/g, ' ')
     .trim();
   if (isBannedFallbackStub(prose)) {
-    prose = `At ${(state.currentLocation ?? 'here').trim()}, the beat does not freeze. You can still look, speak, or move.`;
+    prose = getDiegeticFallback(state, 'inspect exhaust');
   }
   const manifestUpdated: SceneManifest = {
     ...manifest,

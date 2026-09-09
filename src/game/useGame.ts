@@ -22,7 +22,7 @@ import {
   gameStateToLocalSlot,
 } from './cloudSync';
 import { filterSystemLogForEngine, suppressNoOpStatusEcho, reconcileXpStatusLines } from './systemLog';
-import { callGm, callOpeningGm, type GmResult } from './aiService';
+import { callGm, type GmResult } from './aiService';
 import { gmProxyHost } from './gmProxy';
 import { simulateCombat } from './combat';
 import type { EnemyStats } from './combat';
@@ -330,6 +330,7 @@ import {
 import {
   composeFreeMudTurn,
   formatMicroFlavorPrompt,
+  mudDisplayBody,
   shouldSkipMicroFlavor,
   shouldUseFreeMudPresentation,
   type FreeMudTurn,
@@ -2231,10 +2232,7 @@ export function useGame() {
           ? await applyOpeningAnswer(liveCurrent, contentSanitized, settingsRef.current)
           : { state: { ...liveCurrent, pendingGeneratedOpening: false }, generateOpening: true as const };
 
-        if (stepped.deferToPlay) {
-          liveCurrent = stepped.state;
-          stateRef.current = liveCurrent;
-        } else if (!stepped.generateOpening) {
+        if (!stepped.generateOpening && !stepped.deferToPlay) {
           refundSpentTextTurn();
           stateRef.current = stepped.state;
           setState(stepped.state);
@@ -2243,45 +2241,11 @@ export function useGame() {
           return;
         } else {
         const openingState = { ...stepped.state, pendingGeneratedOpening: false };
-        
-        // GM-authored opening continue (silent fallback to stitch on fail)
-        let openingRaw = '';
-        let openingText = '';
-        let gmAuthored = false;
-        
-        if (openingState.openingEstablishment?.sceneWritten) {
-          try {
-            const story = await callOpeningGm(
-              openingState,
-              contentSanitized || '',
-              settingsRef.current,
-              turnAbort.signal,
-            );
-            if (story) {
-              const classified = classifyOpeningContinue(openingState, story);
-              if (classified.accept && classified.prose.trim()) {
-                openingRaw = story;
-                openingText = classified.prose;
-                gmAuthored = true;
-              }
-            }
-          } catch (gmError) {
-            debugLogger.record('WARN', 'Opening continue GM failed — stitch fallback', {
-              error: gmError instanceof Error ? gmError.message : String(gmError),
-            });
-            logger.debug('Opening continue GM call failed, using stitch fallback', gmError);
-          }
-        } else {
-          // First page already painted from stitch — do not generate a replacement.
-          openingText = stitchOpeningScene(openingState);
-        }
-        
-        // Fallback to stitch if GM failed
-        if (!gmAuthored) {
-          openingText = openingState.openingEstablishment?.sceneWritten
-            ? stitchOpeningContinue(openingState)
-            : stitchOpeningScene(openingState);
-        }
+        // Cover-continue stays local — never callOpeningGm / packet lecture.
+        const openingRaw = '';
+        let openingText = openingState.openingEstablishment?.sceneWritten
+          ? stitchOpeningContinue(openingState, contentSanitized)
+          : stitchOpeningScene(openingState);
         
         openingText = ensureSystemReceipt(openingState, sanitizeOpeningNarration(openingText));
         openingText = applyProseWarden(
@@ -2864,7 +2828,7 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
         stateRef.current = liveCurrent;
         result = {
           ...result,
-          text: mudTurnLive.content,
+          text: mudTurnLive.content.trim() || mudDisplayBody(mudTurnLive),
           systemLog: [...mudTurnLive.receiptLines, ...(result.systemLog ?? [])],
         };
       }
@@ -3155,7 +3119,9 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
         id: uid(),
         turn: liveCurrent.turn + 1,
         role: 'gm',
-        content: mudTurnLive ? mudTurnLive.content : result.text,
+        content: mudTurnLive
+          ? mudTurnLive.content.trim() || mudDisplayBody(mudTurnLive)
+          : result.text,
         timestamp: Date.now(),
         systemLog: Array.from(new Set(filteredSystemLog)),
         snapshotGist: compactTrafficGist(liveCurrent),
@@ -3575,6 +3541,9 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
         cleanText = stripTurnCloser(
           stripResidualMechanicTags(stripChoiceList(stripActionTags(result.text)))
         );
+      }
+      if (!storyHasBody(cleanText) && mudTurnLive) {
+        cleanText = mudDisplayBody(mudTurnLive);
       }
       if (!storyHasBody(cleanText)) {
         const manifest = liveCurrent.sealedManifest;

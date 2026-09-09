@@ -19,8 +19,14 @@ describe('playtest29h — opening GM call + turn-fail class', () => {
 
   it('opening GM no longer references freeCallRef or result.story', () => {
     expect(useGame).not.toContain('freeCallRef');
-    expect(useGame).toContain('callOpeningGm');
     expect(useGame).not.toMatch(/result\.story/);
+    expect(aiService).toContain('callOpeningGm');
+  });
+
+  it('cover-continue does not callOpeningGm — local stitch only', () => {
+    const start = useGame.indexOf('Cover-continue stays local');
+    expect(start).toBeGreaterThan(-1);
+    expect(useGame).not.toMatch(/await callOpeningGm\(/);
   });
 
   it('New Game keeps the committed stitch — no later GM swap of page 1', () => {

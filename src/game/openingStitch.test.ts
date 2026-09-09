@@ -151,7 +151,7 @@ describe('openingStitch', () => {
     expect(text).not.toMatch(/You are wearing Travel clothes/i);
     expect(text).not.toMatch(/On you: A bag/i);
     expect(text).not.toMatch(/quiet after the light is too clean|road, if there is one/i);
-    expect(text).toMatch(/1\.\s*Get your bearings/i);
+    expect(text).not.toMatch(/^\s*\d+\.\s/m);
     expect(text).not.toMatch(/Pellane wanted you/i);
   });
 

@@ -6,7 +6,7 @@
  */
 
 import type { GameState, LogEntry } from './types';
-import { playerFacingLocation } from './locationName';
+import { cleanPlaceLabel, playerFacingLocation } from './locationName';
 import { realPresentPeople } from './chromeAuthority';
 import { selectRecentLogForContext } from './sceneContextTail';
 import { shortRoomLabel } from './mapEngine';
@@ -182,8 +182,11 @@ function liveEncounterHp(state: GameState): { current: number; max: number } | u
 }
 
 function locationLabel(state: GameState): string {
-  const raw = playerFacingLocation(state) || String(state.currentLocation ?? '') || 'this room';
-  return shortRoomLabel(raw, raw.replace(/\.$/, '') || 'this room');
+  const raw = cleanPlaceLabel(
+    playerFacingLocation(state) || String(state.currentLocation ?? '') || 'this room'
+  );
+  if (raw && raw.length <= 48 && !/^alone\b/i.test(raw) && !/,/.test(raw)) return raw;
+  return shortRoomLabel(raw, 'this room');
 }
 
 function pushUnique(list: string[], seen: Set<string>, raw: string | undefined): void {

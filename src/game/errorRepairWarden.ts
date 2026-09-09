@@ -6,11 +6,16 @@
 
 import type { GameState, Quest } from './types';
 import { isAloneArrivalPick, isAloneArrivalOpening } from './openingEstablishment';
-import { adaptStarterQuestsForArrival } from './questPlay';
+import { adaptStarterQuestsForArrival, isAtmospherePlaceName } from './questPlay';
 import { getCampaignBibleById } from '@/data/campaigns';
 import { filterChromeFromPresent, isChromePersonToken, isHubRoleCompoundToken } from './chromeAuthority';
 import { canHarvestAsNamedPerson } from './entityRegistry';
 import { applyPyoaCharterProseBurn } from './pyoaBranchLedger';
+import { attachHookLock, backfillHookLockFromSave } from './hookLock';
+import { displayAdventurerName, isLockablePcName, UNNAMED_ADVENTURER } from './pcNameAuthority';
+import { attachLastKill, lastKillFromAutoFightLog } from './combatAuthority';
+import { isInteriorMap } from './placeAuthority';
+import { shortRoomLabel } from './mapEngine';
 
 /** Bump when adding load-time repairs that must re-run on old saves.
  *  Rev 4 = 30Y chrome-as-people strip (Place / blue panel out of present[]).
