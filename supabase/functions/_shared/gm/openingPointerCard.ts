@@ -36,12 +36,29 @@ export type SnapshotGist = {
 const TITLE_NAME =
   /\b([A-Z][a-z]+(?:\s+[A-Z][a-z]+)?)\b/g;
 
+/** Slot / cover words only — not a growing English adjective list. */
 const NAME_STOP = new Set([
   'The', 'You', 'Your', 'A', 'An', 'And', 'Or', 'But', 'When', 'Where', 'What',
   'Who', 'Why', 'How', 'This', 'That', 'Location', 'Opening', 'Earth', 'System',
   'Circle', 'Sevenfold', 'Place', 'Name', 'Look', 'Kit', 'Panel', 'Mark',
   'Pactborn', 'Calamity', 'Crown', 'Ash', 'Court', 'Light', 'Stone',
 ]);
+
+function stripProseChrome(prose: string): string {
+  return prose
+    .replace(/<\/?(?:i|em|b|strong|u|br)\b[^>]*>/gi, '')
+    .replace(/\s{2,}/g, ' ')
+    .replace(/\s+([,.;:!?])/g, '$1')
+    .trim();
+}
+
+/** Sentence-start capitals are English, not invented NPC names. */
+function isSentenceInitial(prose: string, index: number): boolean {
+  let i = index - 1;
+  while (i >= 0 && /[\s"'“”‘’«»([{]/.test(prose[i]!)) i--;
+  if (i < 0) return true;
+  return /[.!?…:;]/.test(prose[i]!);
+}
 
 function lineAfter(text: string, label: RegExp): string {
   const m = text.match(label);
@@ -213,31 +230,43 @@ export function pointerCardAllowlist(state: GameState): Set<string> {
   return names;
 }
 
+function considerInventedName(n: string, allow: Set<string>, found: string[]): void {
+  if (n.length < 3) return;
+  if (NAME_STOP.has(n.split(/\s+/)[0]!)) return;
+  if (allow.has(n.toLowerCase())) return;
+  if (!found.some((x) => x.toLowerCase() === n.toLowerCase())) found.push(n);
+}
+
 function inventedTitleNames(prose: string, allow: Set<string>): string[] {
   const found: string[] = [];
   let m: RegExpExecArray | null;
   const re = new RegExp(TITLE_NAME.source, 'g');
   while ((m = re.exec(prose)) !== null) {
     const n = m[1]!;
-    if (NAME_STOP.has(n.split(/\s+/)[0]!)) continue;
-    if (n.length < 3) continue;
-    if (allow.has(n.toLowerCase())) continue;
-    if (!found.some((x) => x.toLowerCase() === n.toLowerCase())) found.push(n);
+    const isTwoWord = /\s/.test(n);
+    // "She speaks" / "Soft rectangular" after a period is grammar, not a new CAST name.
+    if (!isTwoWord && isSentenceInitial(prose, m.index)) continue;
+    const [first, second] = n.split(/\s+/);
+    if (NAME_STOP.has(first!)) {
+      if (second) considerInventedName(second, allow, found);
+      continue;
+    }
+    considerInventedName(n, allow, found);
   }
   return found.slice(0, 8);
 }
 
-/** First GM-continue after stitch: keep at most one extra invented name/place. */
+/** Drop extra invented proper names only. Never rewrite English into "someone here". */
 export function stripOpeningInventQuota(state: GameState, prose: string, maxNew = 1): string {
   if (!prose) return prose;
-  const extras = inventedTitleNames(prose, pointerCardAllowlist(state));
-  if (extras.length <= maxNew) return prose;
-  let next = prose;
+  let next = stripProseChrome(prose);
+  const extras = inventedTitleNames(next, pointerCardAllowlist(state));
+  if (extras.length <= maxNew) return next;
   for (const name of extras.slice(maxNew)) {
     const re = new RegExp(`\\b${name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`, 'g');
-    next = next.replace(re, 'someone here');
+    next = next.replace(re, '');
   }
-  return next.replace(/\s{2,}/g, ' ').trim();
+  return stripProseChrome(next);
 }
 
 export function classifyOpeningContinue(

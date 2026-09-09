@@ -1613,7 +1613,7 @@ export function applyProseWarden(text: string, ctx?: ProseWardenContext): string
   if (!text) return text;
   const alone = ctx?.aloneArrival === true;
   // Batch Y-3: Strip meta/recovery strings FIRST (before any other scrubs)
-  let next = scrubMetaRecoveryStrings(text);
+  let next = scrubMetaRecoveryStrings(text).replace(/<\/?(?:i|em|b|strong|u)\b[^>]*>/gi, '');
   if (!next || next.length < 10) return ''; // If we scrubbed everything, return empty
   next = scrubFigurePlaceholder(next, alone);
   next = scrubSomeoneNearbyPlaceholder(next, alone);

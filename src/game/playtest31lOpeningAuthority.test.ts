@@ -206,6 +206,33 @@ describe('playtest31lOpeningAuthority', () => {
     expect(street.accept).toBe(false);
   });
 
+  it('does not smash opening English into "someone here" or leak italic tags', () => {
+    const state = summonedState();
+    const festival =
+      "The silence does not break on its own. One of the handlers half-lifts a hand, then lets it fall. " +
+      "A festival banner snaps somewhere behind them. The blue panel waits. Soft rectangular light, utterly patient. " +
+      "The first handler clears her throat. 'We need someone here to write. Someone to take a name.' " +
+      "<i>She speaks again. Someone has left a half-empty cup of festival tea on a crate.</i> " +
+      "One of them repeats themselves. They are still waiting.";
+    const stripped = stripOpeningInventQuota(state, festival, 0);
+    expect(stripped).not.toMatch(/someone here rectangular/i);
+    expect(stripped).not.toMatch(/someone here of them/i);
+    expect(stripped).not.toMatch(/someone here are still/i);
+    expect(stripped).not.toMatch(/<i>|<\/i>/i);
+    expect(stripped).toMatch(/Soft rectangular light/);
+    expect(stripped).toMatch(/She speaks again/);
+    expect(stripped).toMatch(/Someone has left/);
+    expect(stripped).toMatch(/They are still waiting/);
+    expect(stripped).toMatch(/We need someone here to write/);
+
+    const classified = classifyOpeningContinue(state, festival);
+    expect(classified.prose).not.toMatch(/someone here rectangular/i);
+    expect(classified.prose).not.toMatch(/<i>|<\/i>/i);
+    expect(classified.prose).toMatch(/One of the handlers/);
+    expect(classified.prose).toMatch(/Soft rectangular light/);
+    expect(classified.prose).toMatch(/They are still waiting/);
+  });
+
   it('VALUE FLOOR is one new concrete, not a 100–180 word essay', () => {
     const rails = formatFluidProseRailsForPrompt('litrpg');
     expect(rails).toMatch(/VALUE FLOOR/i);
