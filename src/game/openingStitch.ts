@@ -1,7 +1,6 @@
 /**
- * Instant opening stitch — local first page from seed-picked cards + banks.
- * Never blocks New Game on callGm. Freshness = deck pick × independent banks.
- * See docs/research/opening-speed-fresh-choices-2026-08-20.md
+ * Instant opening stitch — one authored page1 + optional cover ask.
+ * Never blocks New Game on callGm. Variety = which hook card the seed picked.
  */
 
 import type { CampaignBible, OpeningPrompt, OpeningPromptKind } from '@/data/campaigns/types';
@@ -10,9 +9,7 @@ import { resolveActiveCampaignBible } from './campaignSeed';
 import {
   isAloneArrivalOpening,
   isEarthOriginPrompt,
-  openingHookDeck,
   resolveLockedOpeningPlace,
-  resolveOpeningHookCard,
   resolveOpeningHookPick,
 } from './openingEstablishment';
 
@@ -29,26 +26,6 @@ function pickBank<T>(bank: readonly T[], seed: string, salt: string): T {
   const idx = hashSeed(`${seed}|${salt}`) % bank.length;
   return bank[idx]!;
 }
-
-/** Sensory / pressure spice so the same card still reads different each seed. Plain concrete English — no meta road/quiet lines. */
-const SENSORY_BANK = [
-  'Dust hangs in the light.',
-  'Cold soaks through your clothes.',
-  'Somewhere, metal rings once and stops.',
-  'The air smells of wet stone.',
-  'A draft finds the back of your neck.',
-  'Your ears still ring from the pull.',
-  'Ash or chalk grit sticks to your palms.',
-  'Broken plaster crunches under your hand.',
-  'Lamp-oil smoke sits in the back of your throat.',
-  'A floor-joint ticks as it cools.',
-  'Your pulse is still catching up to the room.',
-  'Grit from the landing is in your teeth.',
-  'Heat leaves the stone in uneven patches.',
-  'A moth bats once against the panel-light.',
-  'Sweat on your spine goes cold.',
-  'The floor is warmer than the air, then it is not.',
-] as const;
 
 const PRESSURE_CROWD = [
   'Someone is already deciding what you are worth.',
@@ -83,10 +60,17 @@ const NAME_ASKS_CROWD = [
   'They need a name before they will say what they want. What is yours?',
 ] as const;
 
+/** Tabletop weave — place-neutral. Never handler / slate / cargo / “someone in the room”. */
+const NAME_ASKS_TABLETOP = [
+  'What name do they get from you?',
+  'They want a name before they will deal with you. What is it?',
+  'What do you call yourself here?',
+] as const;
+
 const NAME_ASKS_ALONE = [
-  'Your blue panel waits on a designation. What name should it show?',
-  'The panel blinks once for a name. What do you enter?',
-  'No one is here to ask — only the panel. What name does it lock?',
+  'The panel waits on a name. What do you enter?',
+  'Nobody else is here to ask. What name do you give the panel?',
+  'A blank line sits on the panel. What name?',
 ] as const;
 
 const LOOK_ASKS = [
@@ -125,28 +109,38 @@ export function defaultStarterLook(): string {
   return DEFAULT_LOOK;
 }
 
-/** Drop Earth-origin covers; vary remaining ask lines by seed; alone-voice when needed. */
+/** Drop Earth-origin covers. LitRPG owns panel/handler name banks; other modes keep their bible asks. */
 export function applyOpeningContract(
   prompts: OpeningPrompt[],
-  _bible: CampaignBible | undefined,
+  bible: CampaignBible | undefined,
   alone: boolean,
   seed: string
 ): OpeningPrompt[] {
+  const mode = bible?.engineMode;
   return prompts
     .filter((p) => !(p.kind === 'location' && isEarthOriginPrompt(p)))
     .map((p) => {
       if (p.kind === 'name') {
-        const bank = alone ? NAME_ASKS_ALONE : NAME_ASKS_CROWD;
-        return {
-          ...p,
-          style: alone ? ('system' as const) : (p.style ?? 'inworld'),
-          question: pickBank(bank, seed, `name|${alone ? 'a' : 'c'}`),
-        };
+        if (mode === 'litrpg') {
+          const bank = alone ? NAME_ASKS_ALONE : NAME_ASKS_CROWD;
+          return {
+            ...p,
+            style: alone ? ('system' as const) : (p.style ?? 'inworld'),
+            question: pickBank(bank, seed, `name|${alone ? 'a' : 'c'}`),
+          };
+        }
+        if (mode === 'dnd') {
+          return {
+            ...p,
+            question: pickBank(NAME_ASKS_TABLETOP, seed, 'name|dnd'),
+          };
+        }
+        return p;
       }
-      if (p.kind === 'appearance') {
+      if (mode === 'litrpg' && p.kind === 'appearance') {
         return { ...p, question: pickBank(LOOK_ASKS, seed, 'look') };
       }
-      if (p.kind === 'kit') {
+      if (mode === 'litrpg' && p.kind === 'kit') {
         return { ...p, question: pickBank(KIT_ASKS, seed, 'kit') };
       }
       return p;
@@ -168,13 +162,15 @@ function baseSceneFromCard(state: GameState): string {
   const bible = resolveActiveCampaignBible(state);
   const picked = resolveOpeningHookPick(bible, state.seed);
   const hook = state.openingEstablishment?.pickedHookFallback?.trim()
+    || picked?.page1?.trim()
     || picked?.fallback
     || state.openingEstablishment?.pickedHook?.trim()
     || picked?.text;
   const looksLikePointers = !!hook && /^(Place:|Location:|Who is here|Why this happened|Opening offer)/m.test(hook);
   if (looksLikePointers) {
     return (
-      picked?.fallback
+      picked?.page1
+      || picked?.fallback
       || `You are in ${state.currentLocation || where}.${folkBit} People in the scene are already reacting.`
     );
   }
@@ -185,31 +181,6 @@ function baseSceneFromCard(state: GameState): string {
   return `You are in ${where}.${folkBit} The scene that was already moving is still moving.`;
 }
 
-function spiceLines(state: GameState): string[] {
-  const seed = state.seed ?? state.saveId ?? '0';
-  const alone = isAloneArrivalOpening(state);
-  const sensory = pickBank(SENSORY_BANK, seed, 'sensory');
-  const pressure = pickBank(alone ? PRESSURE_ALONE : PRESSURE_CROWD, seed, 'pressure');
-  return [sensory, pressure];
-}
-
-function extraCardBeat(state: GameState, already: string): string | undefined {
-  const bible = resolveActiveCampaignBible(state);
-  const fallback = state.openingEstablishment?.pickedHookFallback?.trim();
-  const matched = fallback
-    ? openingHookDeck(bible).find((c) => typeof c !== 'string' && c.fallback?.trim() === fallback)
-    : undefined;
-  const card = matched ?? resolveOpeningHookCard(bible, state.seed);
-  if (!card || typeof card === 'string') return undefined;
-  const candidates = (card.beats ?? [])
-    .map((b) => b.trim())
-    .filter((b) => b.length > 12);
-  const hay = already.toLowerCase();
-  const unused = candidates.filter((b) => !hay.includes(b.slice(0, 22).toLowerCase()));
-  if (!unused.length) return undefined;
-  return pickBank(unused, state.seed ?? state.saveId ?? '0', 'extra-beat');
-}
-
 function bodyAlreadyAsksCover(body: string, cover: string): boolean {
   const hay = body.toLowerCase();
   if (/what name|what do they call|designation|what do you enter/.test(hay)) return true;
@@ -218,16 +189,10 @@ function bodyAlreadyAsksCover(body: string, cover: string): boolean {
 }
 
 /**
- * Instant first page — authored card + seed banks. No network.
+ * Instant first page — one authored paragraph + optional cover ask. No collage.
  */
 export function stitchOpeningScene(state: GameState): string {
-  const base = baseSceneFromCard(state).trim();
-  const extra = extraCardBeat(state, base);
-  const grounded = extra && !base.toLowerCase().includes(extra.slice(0, 22).toLowerCase())
-    ? `${base} ${extra}`
-    : base;
-  const spice = spiceLines(state).filter((line) => !grounded.toLowerCase().includes(line.slice(0, 18).toLowerCase()));
-  const body = spice.length ? `${grounded} ${spice.join(' ')}` : grounded;
+  const body = baseSceneFromCard(state).trim();
   const cover = state.openingEstablishment?.pending[0]?.question?.trim();
   if (!cover || bodyAlreadyAsksCover(body, cover)) return body;
   return `${body}\n\n${cover}`;

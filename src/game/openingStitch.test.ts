@@ -22,7 +22,7 @@ describe('openingStitch', () => {
           {
             id: 'name',
             kind: 'name' as const,
-            question: 'Your blue panel waits on a designation. What name should it show?',
+            question: 'The panel waits on a name. What do you enter?',
           },
         ],
         answers: {},
@@ -41,8 +41,8 @@ describe('openingStitch', () => {
     expect(textA.length).toBeGreaterThan(60);
     expect(textA).toMatch(/panel|shrine|stone/i);
     expect(textA).toMatch(/designation|name/i);
-    // Different seeds → different spice lines (banks)
-    expect(textA).not.toBe(textB);
+    // Page 1 is the authored card, not seed spice. Same fallback + same cover = same page.
+    expect(textA).toBe(textB);
   });
 
   it('drops Earth-origin covers and varies ask lines', () => {
@@ -90,8 +90,10 @@ describe('openingStitch', () => {
     expect(text.match(/what name/gi)?.length).toBe(1);
   });
 
-  it('adds an unused card beat so a known hook is not only spice + name-ask', () => {
+  it('does not collage leftover beats or shared spice onto page 1', () => {
     const base = createInitialState('The Summoned Pact', 'litrpg');
+    const fallback =
+      'Light, then three other people on neighboring rings. A mass summon. The room is already arguing who is Pactborn, who is Marked, and who was extra. A blue panel hangs at eye level — private, yours. Your Earth clothes are still on you.';
     const state = {
       ...base,
       seed: 'mass-summon-extra',
@@ -109,13 +111,14 @@ describe('openingStitch', () => {
         registrar: { voice: 'inworld' as const, label: 'THE CIRCLE', startLine: 'Light.' },
         sceneWritten: false,
         mode: 'weave' as const,
-        pickedHookFallback:
-          'Light, then three other people on neighboring rings. A mass summon. The room is already arguing who is Pactborn, who is Marked, and who was extra. A blue panel hangs at eye level — private, yours. Your Earth clothes are still on you.',
+        pickedHookFallback: fallback,
         aloneArrival: false,
       },
     };
     const text = stitchOpeningScene(state);
-    expect(text).toMatch(/kit crate|not a solo hero|yours, not theirs/i);
+    expect(text.startsWith(fallback)).toBe(true);
+    expect(text).not.toMatch(/Do not invent|Ruin level:|The camera stays HERE/i);
+    expect(text).not.toMatch(/floor-joint|ears still ring from the pull|you are cargo/i);
     expect(text).toMatch(/what name/i);
   });
 

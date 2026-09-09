@@ -14,8 +14,8 @@ describe('ready-made opening hook decks', () => {
       seen.add(resolveOpeningHook(summonedPact, `seed-${i}`) ?? '');
     }
     expect(seen.size).toBeGreaterThan(6);
-    expect([...seen].some((h) => /war camp|arena|cell|shrine|festival|rival hall|treaty|harbor|infirmary|west wall/i.test(h))).toBe(true);
-    expect([...seen].some((h) => /alone|outline|burnt husk|wall-shell|half-collapsed|shabby/i.test(h))).toBe(true);
+    expect([...seen].some((h) => /war camp|arena|cell|shrine|festival|ash-adjacent|ritual hall|treaty|harbor|infirmary|west wall/i.test(h))).toBe(true);
+    expect([...seen].some((h) => /alone|outline|burnt|watchtower|barn|bathhouse|market hall|half-collapsed/i.test(h))).toBe(true);
   });
 
   it('includes alone-arrival ruin cards across ruin severity', () => {
@@ -24,7 +24,7 @@ describe('ready-made opening hook decks', () => {
     );
     expect(alone.length).toBeGreaterThanOrEqual(5);
     const blob = alone.map((c) => JSON.stringify(c)).join('\n');
-    expect(blob).toMatch(/shabby|standing/i);
+    expect(blob).toMatch(/barn|standing/i);
     expect(blob).toMatch(/half-collapsed|half collapsed/i);
     expect(blob).toMatch(/shell|outline|foundation/i);
     expect(blob).toMatch(/burnt/i);

@@ -37,6 +37,8 @@ export const summonedPact: CampaignBible = {
       summonIntent: 'They paid for a Pactborn champion to end the Ash Court war. The seventh ring stuttered; the Mark looks wrong.',
       openingOffer:
         'Swear the Pact and they will issue travel kit (a field blade, cloak, papers, a little coin). Refuse and you keep only what you arrived in.',
+      page1:
+        'Light, then cold stone. You are on your back inside a seven-ring summoning circle under a cathedral vault. Robed figures freeze mid-chant. A blue panel hangs at eye level — private, yours. One of them whispers “Pactborn.” Another, quieter: “The Mark is wrong.” Your Earth clothes are still on you. Nobody has put a weapon in your hands. The offer is still in their mouths.',
       beats: [
         'You are on your back inside a seven-ring circle under a cathedral vault. Robed figures freeze mid-chant.',
         'A blue panel hangs at eye level — private, yours. One whisper: Pactborn. Another: the Mark is wrong.',
@@ -51,6 +53,8 @@ export const summonedPact: CampaignBible = {
       summonIntent: 'They needed a body on the line yesterday. The rite was scraped into dirt, not cathedral brass.',
       openingOffer:
         'Enlist and they will kit you from the quartermaster (a service blade, a coat, a ration chit). Walk away and you keep Earth kit only.',
+      page1:
+        'The smell of churned mud and banner-smoke hits before your eyes open. You are on your back in a circle scraped into dirt outside Valespire’s walls, not cathedral brass. Horns carry toward the tree line. A blue panel hangs in the drizzle — private, yours. Armored handlers shout over the noise; a captain in dented brigandine is already deciding if you are a body for the line. The Mark on you is an argument. Nobody has handed you a blade.',
       beats: [
         'Mud, banner-smoke, a war-camp circle. Horns. Armored handlers shouting.',
         'A blue panel hangs at eye level. Someone wanted a hero. The Mark on you is already an argument.',
@@ -65,6 +69,8 @@ export const summonedPact: CampaignBible = {
       summonIntent: 'The rite succeeded in a cell, not a welcome hall. They summoned a lure, or they are hiding a failed Mark.',
       openingOffer:
         'Cooperate — name, oath, a walk above — and they will unbar the door and issue a traveler’s kit. Stay silent and you keep what is in your pockets.',
+      page1:
+        'Light, then iron bars. You are on a stone bench in a cell under the cathedral, not a welcome hall. A blue panel hangs in the dark. A handler on the other side of the grate calls you bait. Your Earth clothes are still on you. Keys jingle. The offer is release with strings, not a gift on the floor.',
       beats: [
         'Stone bench, iron bars, a panel hanging in the dark.',
         'Someone calls you bait. Your Earth clothes are still on you.',
@@ -79,6 +85,8 @@ export const summonedPact: CampaignBible = {
       summonIntent: 'Entertainment first, hero second. They summoned a body the city can watch die or win.',
       openingOffer:
         'Take the sand and they will throw you a weapon from the rack. Refuse the show and you leave with Earth kit — if they let you leave.',
+      page1:
+        'Sun and noise. You are on your back in coarse sand inside Valespire’s fighting pit. Galleries lean over the rails with wager ribbons. A blue panel hangs in the heat — private, yours. Robes at the shaded rail consult a ledger. Nobody asked if you wanted to be entertainment. A rack of blades sits at the rail — offered if you take the sand, not in your hand.',
       beats: [
         'Sand, noise, a circle while the crowd already bets.',
         'A blue panel hangs private. Nobody asked if you wanted to be entertainment.',
@@ -93,13 +101,15 @@ export const summonedPact: CampaignBible = {
       summonIntent: 'Wrong gods, wrong chant. They wanted a miracle. They got you. Someone upstairs will still call this Pellane’s summon.',
       openingOffer:
         'Join their small pact and they will press a relic-knife and a stained cloak into your hands. Walk out and you keep Earth kit — and their fear.',
+      page1:
+        'Tallow and damp earth. You are on cold flagstones in a cramped cellar shrine under Lowmarket, between casks and meal-sacks. The circle under your spine is wine and river-chalk, not Crown brass. A blue panel hangs close — private, yours. Hooded figures kneel around you; their hands are weavers’ and butchers’, not Scale priests. Someone upstairs will still call this Pellane’s summon. A wrapped relic sits on the altar — an offer, not loot.',
       beats: [
         'Candle-smoke cellar. You are on your back in a cult circle.',
         'A blue panel hangs. The people here are not the High Chanter.',
         'A relic is wrapped in cloth on the altar — an offer, not starting loot.',
       ],
       fallback:
-        'Light, then candle-smoke in a cellar. Wrong gods, wrong chant. You are on your back in a cult circle the Crown will deny. A blue panel hangs. Someone upstairs will call this Pellane’s summon anyway.',
+        'Light, then candle-smoke in a cellar. Wrong gods, wrong chant. You are on your back in a cult circle the Crown will deny. A blue panel hangs. Someone upstairs will still call this Pellane’s summon anyway.',
     },
     {
       location: 'The Sevenfold Circle under bombardment',
@@ -107,6 +117,8 @@ export const summonedPact: CampaignBible = {
       summonIntent: 'They finished the rite while the city was hit. There is no orderly welcome.',
       openingOffer:
         'Grab a fallen soldier’s kit if you help them hold the vault. Freeze or flee and you have only Earth clothes — the crate of issued blades is buried in dust.',
+      page1:
+        'A blast shudders the flagstones and dumps mortar across your face. You are on your back in the Sevenfold Circle; the outer brass rings are cracked and the vault is open to a smog sky. A blue panel hangs in the haze, untouched by the dust. Two Scale priests scramble back across rubble. A younger handler drops to one knee with a cracked tile, shouting that the seventh ring failed and the Mark is wrong. Nobody has put a weapon in your hands.',
       beats: [
         'Vault under fire. Dust and ash falling through the chant.',
         'A blue panel hangs. The Mark is wrong and the ceiling is already cracking.',
@@ -118,16 +130,18 @@ export const summonedPact: CampaignBible = {
     {
       location: 'Valespire peace-festival square',
       faction: 'Festival crowd plus panicked handlers who caught the wrong person',
-      summonIntent: 'You were in the crowd. You were not the name on the rite.',
+      summonIntent: 'The pull took you from Earth into a festival square. You were not the name on the rite.',
       openingOffer:
         'Play along as their summoned guest and they will smuggle you a cloak and a pass. Name yourself extra and they may try to hide you — or parade you — with nothing added to your pockets.',
+      page1:
+        'Light, then a wall of festival noise. You hit sunlit cobbles in a crowded Valespire square; the street you were walking is gone and the roar is already around you. A blue panel hangs above you, private, yours. Handlers in ceremonial robes freeze and drop their censers. They wanted a named savior. They caught you instead. One of them goes pale at your Earth clothes and whispers “Wrong catch.” The crowd still thinks this is a show. Nobody has offered kit. A handler steps in with a shaking ledger.',
       beats: [
         'Festival noise. Public stones. Handlers freeze.',
         'A blue panel hangs. One whisper: wrong catch.',
         'No ceremony kit unless you agree to wear their story.',
       ],
       fallback:
-        'Light, then festival noise. You were not the name on the rite — you were in the crowd. You are on the stones of a public square while handlers freeze. A blue panel hangs. One whisper: “Wrong catch.”',
+        'Light, then festival noise. You hit public stones; the street you were walking is gone. Handlers freeze. A blue panel hangs. One whisper: “Wrong catch.”',
     },
     {
       location: 'a wayside shrine on the Valespire road',
@@ -135,6 +149,8 @@ export const summonedPact: CampaignBible = {
       summonIntent: 'One mistake on a rural circle. They did not mean to pull an Earth soul this far from the city.',
       openingOffer:
         'Walk with them to Valespire under a traveler’s staff and cloak they keep for pilgrims. Stay and they will beg you to leave with only what you arrived in.',
+      page1:
+        'Beeswax and cold stone. You are on your back in a roadside shrine circle, grit under your palms. One frightened priest kneels at the rings, no capital audience, no chant left. A blue panel hangs at eye level. The Valespire road is still miles of dust. A pilgrim staff leans by the door — offered if you take their road, not in your hand.',
       beats: [
         'Quiet rural stone. One priest, one circle, miles of dust to the capital.',
         'A blue panel hangs. The road to Valespire is still long.',
@@ -146,16 +162,18 @@ export const summonedPact: CampaignBible = {
     {
       location: 'an Ash-adjacent ritual hall',
       faction: 'Ash Court priests who will swear the Crown summoned you',
-      summonIntent: 'A rival hall. They want a Calamity Mark as proof the Scale rejected Pellane.',
+      summonIntent: 'Ash Court priests want a Calamity Mark as proof the Scale rejected Pellane.',
       openingOffer:
         'Wear the Mark openly and they offer ember-ward kit and citizenship papers. Refuse and you keep Earth clothes — they may still try to keep you.',
+      page1:
+        'The air smells of burnt iron. You wake on your back in a jagged circle of iron dust, red light in the cracks, nowhere near Pellane’s brass. A blue panel hangs in the gloom — private, yours. Ash Court priests in soot-stained robes stand over you; one iron mask tilts down. A wrapped ember-blade sits on a stone side table — a deal, not yours yet. The lead priest’s voice comes rough through the mask: show the Mark, or give a name they can write on a tally.',
       beats: [
         'You are on your back in a circle that is not Pellane’s.',
         'A blue panel hangs. They will say the Crown summoned you.',
         'A wrapped ember-blade sits on a side table — a deal, not yours yet.',
       ],
       fallback:
-        'Light, then a rival hall. You are on your back in a circle that is not Pellane’s. They will say the Crown summoned you. A blue panel hangs. Your Earth clothes are still on you.',
+        'Burnt iron and a jagged circle. Ash Court priests stand over you. A blue panel hangs. A wrapped ember-blade is a deal, not yours yet.',
     },
     {
       location: 'The Sevenfold Circle — four rings occupied',
@@ -163,6 +181,8 @@ export const summonedPact: CampaignBible = {
       summonIntent: 'Four bodies. Politics in the first breath: who is Pactborn, who is Marked, who was extra.',
       openingOffer:
         'The first to swear gets issued kit. The others wait. You can swear, refuse, or watch someone else take the blade.',
+      page1:
+        'You wake on cold flagstones with three other living people coughing in the same blue glare. You are inside Valespire’s cathedral vault, in one ring of a four-part brass array. Your panel hangs private — yours, not theirs. Crown staff at the perimeter are already arguing who is Pactborn, who is Marked, and who was extra. A kit crate is open at the edge. Hands have not reached you.',
       beats: [
         'Three other living people on neighboring rings. Not a solo hero shot.',
         'A blue panel hangs private — yours, not theirs.',
@@ -177,6 +197,8 @@ export const summonedPact: CampaignBible = {
       summonIntent: 'They summoned a soul to sign a pause in the war. Both sides want you named as theirs.',
       openingOffer:
         'Pick a banner and that side issues kit and a seat at the table. Pick neither and you keep Earth kit while both sides freeze.',
+      page1:
+        'Canvas walls billow. You are on your back on a timber platform in a treaty tent beside the Cinderflow road. A blue panel hangs at chin height over maps and two seals on one table. Pellane plate on one side, Ash cloaks and iron censers on the other. Both already want your name on a banner. Two kits sit on opposite chests — offered, not equipped.',
       beats: [
         'Canvas, maps, two seals on one table. You arrived between them.',
         'A blue panel hangs. Nobody smiles.',
@@ -191,6 +213,8 @@ export const summonedPact: CampaignBible = {
       summonIntent: 'They wanted luck for a cargo run. They pulled an Earth soul. The Crown does not know yet.',
       openingOffer:
         'Keep their secret and they will kit you as crew (knife, oilskin, a bunk). Shout for the Crown and you keep Earth kit — and they may dump you at the quay.',
+      page1:
+        'Timber, tar, and bilge. You are on your back in a chalk circle in the hold of a Valespire grain-ship; the deck is already moving. A blue panel hangs over stacked sacks. Three sailors stare as if they stole a rite and it worked. The Crown does not know yet. A knife is offered hilt-first if you nod — not in your hand until you do.',
       beats: [
         'Timber, tar, a chalk circle in a ship’s hold. The boat is moving.',
         'A blue panel hangs. Someone swears. Someone laughs once and stops.',
@@ -205,6 +229,8 @@ export const summonedPact: CampaignBible = {
       summonIntent: 'The rite already failed for someone else. You are leftover. The circle is cracked and cold.',
       openingOffer:
         'The patrol will issue a militia armband and a short blade if you come quietly. The scavengers will trade junk for whatever is in your pockets. You can take neither.',
+      page1:
+        'Cold wind over cracked brass rings outside Valespire’s west wall. The sky is open and grey. A blue panel hangs over the stone — private, yours. There are no priests and no rite still running; you are leftover from a circle that already failed. Distant wall-horns. A ragged scavenger stops on the gravel and stares. Two militia step out of the brush behind him. One levels a spear and barks for a name before they decide you are salvage. What name do you give them?',
       beats: [
         'Open sky, broken brass rings, no cathedral vault.',
         'A blue panel hangs above cracked stone. Wind. Distant wall-horns.',
@@ -219,6 +245,8 @@ export const summonedPact: CampaignBible = {
       summonIntent: 'The court paid for a Pactborn who could close wounds. The Mark on you does not match the order.',
       openingOffer:
         'Agree to work their cots and they will issue a chirurgeon’s kit (wraps, a knife, a tabard). Refuse the job and you keep Earth kit while they argue over the ledger.',
+      page1:
+        'Light, then linen and boiled iron. You are on your back on a circle chalked between infirmary cots. A blue panel hangs at eye level. The chirurgeons expected a healer. You still have Earth clothes. Someone is screaming two beds over. A kit tray is ready if you say yes to the work.',
       beats: [
         'Linen, boiled iron, someone screaming two beds over. You arrived on a circle chalked between cots.',
         'A blue panel hangs. A chirurgeon is already angry at the paperwork.',
@@ -228,68 +256,88 @@ export const summonedPact: CampaignBible = {
         'Light, then linen and boiled iron. You are on your back on a circle chalked between infirmary cots. A blue panel hangs at eye level. The chirurgeons expected a healer. You still have Earth clothes.',
     },
     {
-      location: 'alone in a shabby-but-standing building somewhere in Pellane country',
+      location: 'alone in an abandoned barn in Pellane country',
       faction: 'Nobody here — the summoners are gone, delayed, or never came',
       summonIntent:
-        'A rite dumped you alone. The building still stands with ordinary wear: drafts, sticky door, stained plaster. Writer picks what it was (cottage, barn, mill, shop, watch-post, chapel annex) — not a named series inn.',
+        'A rite dumped you alone in an abandoned barn that still stands: drafts, sticky door, stained plaster stalls.',
       openingOffer:
         'No one offers kit. You may scavenge what is left inside, or walk out with only Earth clothes toward the next smoke or road.',
+      page1:
+        'Rotting hay and old dust fill your lungs before you can sit up. You are on your back in an abandoned barn in Pellane country, between empty stained-plaster stalls. Wind cuts through a gap in the timber shutters and finds the thin Earth clothes you still have on. A blue panel hangs at eye level, the only clean light in the dark. Nobody came. The dirt path outside is empty. The panel waits on a name. What do you enter?',
       beats: [
         'You are alone. No chant. No handlers. Cold floor or boards under you.',
         'A blue panel hangs at eye level — private, yours. Wind through a gap.',
+      ],
+      writerNotes: [
         'Ruin level: standing, but with a few issues (loose shutter, damp corner, roof that complains).',
         'Do not invent a welcoming NPC on turn one. Footsteps or a distant bell can be later.',
+        'Writer picks what it was (cottage, barn, mill, shop, watch-post, chapel annex) — not a named series inn.',
       ],
       fallback:
-        'Light, then quiet. You are alone on the floor of a shabby building that still has four walls and most of a roof. A blue panel hangs at eye level — private, yours. Nobody is here. Your Earth clothes are still on you.',
+        'Light, then quiet. You are alone on the floor of an abandoned barn — four walls, most of a roof, stained plaster stalls. A blue panel hangs at eye level — private, yours. Nobody is here.',
     },
     {
-      location: 'alone in a building with serious damage somewhere off the Valespire roads',
+      location: 'alone in a ruined bathhouse off the Valespire roads',
       faction: 'Nobody here — the circle worked and the people did not stay',
       summonIntent:
-        'Solo arrival. The structure is usable only if you are careful: cracked wall, rain through a hole, door off its hinges. Writer picks the building type at random (warehouse, farmhouse, toll-house, bathhouse shell).',
+        'Solo arrival in a ruined bathhouse. Usable only if careful: cracked dome, rain through the hole, door off its hinges.',
       openingOffer:
         'No issued kit. Salvage one useful thing from the mess if you search, or leave with Earth kit only.',
+      page1:
+        'Cold rain hits your face through a jagged crack in a ceramic dome. You are lying on wet tiles in a ruined bathhouse off the Valespire roads. Water pools around a fading chalk circle and soaks through your Earth clothes. A blue panel hangs in the draft, dry while you shiver. The cedar door bangs its hinges against the stone. Nobody stayed. If anything useful is left in the alcoves, you will have to take it. The panel waits on a name. What name do you give it?',
       beats: [
         'You are alone. Dust motes. A blue panel hangs.',
-        'Ruin level: still a building, but badly hurt — one room open to weather, floor soft in places.',
-        'No sword on a pedestal. Anything useful is salvage you choose to take.',
         'The Mark / Pactborn argument is only on your panel for now — no audience.',
       ],
+      writerNotes: [
+        'Ruin level: still a building, but badly hurt — one room open to weather, floor soft in places.',
+        'No sword on a pedestal. Anything useful is salvage you choose to take.',
+        'Writer picks the building type at random (warehouse, farmhouse, toll-house, bathhouse shell).',
+      ],
       fallback:
-        'Light, then dust and a draft. You are alone in a damaged building: one wall cracked, rain staining the floor, the door half off its hinges. A blue panel hangs at eye level. Nobody came to greet you.',
+        'Rain through a cracked dome. You are alone on ceramic tiles in a ruined bathhouse. A blue panel hangs in the draft. Nobody came to greet you.',
     },
     {
-      location: 'alone in a half-collapsed ruin on the edge of wild country',
+      location: 'alone in a half-collapsed watchtower on the edge of wild country',
       faction: 'Nobody here — empty ruin, empty sky',
       summonIntent:
-        'The rite left you with no witnesses. Half the roof is gone; rooms open to sky. Writer picks what the place once was (granary, tower stump, longhouse, storehouse).',
+        'The rite left you with no witnesses in a watchtower stump. Half the roof is gone; the upper floor opens to sky.',
       openingOffer:
         'No bargain. Dig in the rubble for scrap, or walk toward distant smoke with only what you arrived in.',
+      page1:
+        'A bitter wind over wild-country ash snaps you awake. You are lying on cracked blocks in the stump of a watchtower; half the circular roof is gone and the upper floor opens to grey sky. Cold finds the seams of your Earth clothes through the arrow-slits. A blue panel hangs in the freeze, untouched by weather. The stair door is empty. No priests. No handlers. The circle under you is already fading. The panel waits on a name. What do you enter?',
       beats: [
         'You are alone under open sky and broken beams.',
         'A blue panel hangs above uneven stone or ash.',
+      ],
+      writerNotes: [
         'Ruin level: half-collapsed — dangerous floors, bird nests, no furniture worth naming unless you search.',
         'Do not spawn a quest-giver in the doorway on the first page.',
+        'Writer picks what the place once was (granary, tower stump, longhouse, storehouse).',
       ],
       fallback:
-        'Light, then sky through broken beams. You are alone in a half-collapsed ruin. A blue panel hangs at eye level. Wind moves ash across the floor. Your Earth clothes are still on you.',
+        'Wind over wild-country ash. You are alone in the stump of a watchtower; half the roof is gone. A blue panel hangs in the cold. Your Earth clothes are still on you.',
     },
     {
-      location: 'alone in a wall-shell with no roof',
+      location: 'alone in a gutted market hall with no roof',
       faction: 'Nobody here — only standing walls and empty window holes',
       summonIntent:
-        'A failed or abandoned circle left you in a hollow building: walls and window gaps, no roof, weeds in the corners. Writer picks the footprint (chapel shell, manor wing, market hall, barracks).',
+        'A failed or abandoned circle left you in a gutted market hall: four stone walls, no roof, weeds in the corners.',
       openingOffer:
         'Nothing is offered. Search the corners for forgotten scrap, or leave the shell with Earth kit only.',
+      page1:
+        'You wake on your back under open sky framed by the arches of a gutted market hall. The roof is gone; four stone walls stand in tall grass, and briar has grown through the cracked paving into your Earth clothes. A blue panel hangs in the daylight, clean against the weeds. You are alone. Empty window holes look onto rolling country. Whoever drew this circle is long gone. The panel waits on a name. What name does it take?',
       beats: [
         'You are alone. Open sky. Four walls or fewer.',
         'A blue panel hangs in daylight. Birds. Distant road noise or none.',
+      ],
+      writerNotes: [
         'Ruin level: shell only — no roof, no door, grass already claiming the floor.',
         'Starting kit is Earth clothes. Salvage is a choice, not a gift.',
+        'Writer picks the footprint (chapel shell, manor wing, market hall, barracks).',
       ],
       fallback:
-        'Light, then open sky inside four ruined walls. There is no roof. Empty window holes look onto empty country. A blue panel hangs at eye level. You are alone. Your Earth clothes are still on you.',
+        'Open sky inside a gutted market hall. The roof is gone; four stone walls stand in grass. A blue panel hangs in daylight. You are alone.',
     },
     {
       location: 'alone on the stone outline of a building that is gone',
@@ -298,30 +346,40 @@ export const summonedPact: CampaignBible = {
         'The worst end of ruin: foundation stones and a rectangle in the turf where a building once stood. No walls. Writer does not invent a standing inn or shop — only the outline, and whatever scrub grew since.',
       openingOffer:
         'No kit, no hosts. Follow a track, a river, or smoke on the horizon with only what you arrived in — or dig at the outline for nothing but dirt.',
+      page1:
+        'Morning damp soaks through your clothes before you sit up. You are alone on cold foundation stones — a rectangle in the turf where a building once stood. No walls, no roof, no door. Grass and open country in every direction. A blue panel hangs in empty air over nothing but the outline. Nobody is here. The horizon is empty of people. The panel waits on a name. What do you enter?',
       beats: [
         'You are alone on cold ground. Grass through old foundation stones.',
         'A blue panel hangs over the outline of a building that is no longer there.',
+      ],
+      writerNotes: [
         'Ruin level: outline only — no walls, no roof, no door. The camera stays HERE.',
         'Do not invent townspeople for the first page. The world can answer when you move.',
+        'Writer does not invent a standing inn or shop — only the outline, and whatever scrub grew since.',
       ],
       fallback:
         'Light, then grass and cold foundation stones. You are alone on the outline of a building that is gone — a rectangle in the turf, no walls left. A blue panel hangs at eye level. Your Earth clothes are still on you. The horizon is empty of people.',
     },
     {
-      location: 'alone in a burnt husk that still has a shape',
+      location: 'alone in a burnt roadside waystation',
       faction: 'Nobody here — ash, charcoal ribs, no living summons',
       summonIntent:
-        'Fire took the place before or during the rite. Blackened posts and a floor that still remembers rooms. Writer picks the burnt type (cottage, barn, workshop, waystation) without naming licensed inns.',
+        'Fire took the roadside waystation before or during the rite. Blackened posts and a floor that still remembers rooms.',
       openingOffer:
         'No one is left to bargain. Rake ash for a nail or a buckle if you want, or walk away in Earth clothes.',
+      page1:
+        'Wet charcoal fills your lungs as you push up on scorched boards. You are alone in the burnt husk of a roadside waystation — blackened timber ribs, no roof, the old room-lines still readable under the ash on your Earth clothes. A blue panel hangs clean against the soot. Nobody is left. If there was a circle, the fire took it. The doorway opens onto an empty road. The panel waits on a name. What name do you lock?',
       beats: [
         'You are alone. Char smell. Soft ash under your hands.',
         'A blue panel hangs in the smoke-haze of an empty day.',
+      ],
+      writerNotes: [
         'Ruin level: burnt husk — shape of a building, no safe roof, charcoal ribs.',
         'Do not place a helper NPC in the doorway on turn one.',
+        'Writer picks the burnt type (cottage, barn, workshop, waystation) without naming licensed inns.',
       ],
       fallback:
-        'Light, then ash. You are alone in the burnt husk of a building — charcoal ribs, no roof, the shape of rooms still readable in the floor. A blue panel hangs at eye level. Nobody is here.',
+        'Wet charcoal. You are alone in the burnt husk of a roadside waystation — charcoal ribs, no roof, old room-lines in the floor. A blue panel hangs at eye level. Nobody is here.',
     },
   ],
   openingPrompts: [
@@ -342,7 +400,7 @@ export const summonedPact: CampaignBible = {
 
   premise: `You were an ordinary person on Earth. A ritual in another world — the Sevenfold Circle, under Valespire Cathedral — pulled you through. The kingdom of Pellane summoned a [Pactborn] to end a war with the Ash Court. The System also rolled a second stamp: [Calamity Mark]. One summoned soul can carry either, or flicker between them. The court will call you Hero. The Ash Court will call you theirs. You do not have to answer either.
 
-LOCATION LANGUAGE (BINDING): Camera is HERE — the seeded summon place for this run (cathedral circle, war camp, cell, arena, shrine, festival square, rival hall, treaty tent, harbor hold, ruined west-wall circle, infirmary, or an alone-arrival ruin of a random building). Alone-arrival cards: no summoners on page one; the writer picks the building type; ruin level is fixed by the card (shabby-standing → damaged → half-collapsed → wall-shell → burnt husk → foundation outline only). Do not teleport them to the Sevenfold Circle if Location is already somewhere else. Never call this interior "a nearby building." "The court" is Pellane's Crown / the people in this room, not the enemy. The enemy polity is the Ash Court. Do not use "the court" as both current room and the enemy in the same beat.
+LOCATION LANGUAGE (BINDING): Camera is HERE — the seeded summon place for this run (cathedral circle, war camp, cell, arena, shrine, festival square, Ash-adjacent ritual hall, treaty tent, harbor hold, ruined west-wall circle, infirmary, or a locked alone-arrival ruin: barn, bathhouse, watchtower stump, market hall, foundation outline, burnt waystation). Alone-arrival cards: no summoners on page one; the building noun is already locked by the card. Do not teleport them to the Sevenfold Circle if Location is already somewhere else. Never call this interior "a nearby building." "The court" is Pellane's Crown / the people in this room, not the enemy. The enemy polity is the Ash Court. Do not use "the court" as both current room and the enemy in the same beat.
 
 ORIGINALITY (BINDING): Never name published novels, anime, or games in play. Never import unique skill names, distinctive places, or plots from any series. Inn, guild, and dungeon are generic hubs with SynapticGM names only.
 

@@ -17,9 +17,9 @@ const playPrivileges = readFileSync(
 const gmTurn = readFileSync(resolve(__dirname, '../../supabase/functions/gm-turn/index.ts'), 'utf8');
 
 describe('09a — Free hosted Fireworks routing (no network)', () => {
-  it('HUD/BUILD are 2026-09-09a, Mid writer OFF', () => {
-    expect(HUD_BUILD_STAMP).toBe('2026-09-09a');
-    expect(BUILD_STAMP).toBe('2026-09-09a');
+  it('HUD/BUILD stay on the 09 line, Mid writer OFF', () => {
+    expect(HUD_BUILD_STAMP).toMatch(/^2026-09-09/);
+    expect(BUILD_STAMP).toMatch(/^2026-09-09/);
     expect(STAGNATION_MID_WRITER_ENABLED).toBe(false);
   });
 

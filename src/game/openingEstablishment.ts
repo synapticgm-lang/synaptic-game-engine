@@ -503,15 +503,23 @@ function hashOpenerSeed(input: string): number {
   return h >>> 0;
 }
 
+const WRITER_NOTE_BEAT =
+  /^(ruin level:|do not |writer (picks|does)|the camera stays|starting kit is earth)/i;
+
+function isWriterNoteBeat(line: string): boolean {
+  return WRITER_NOTE_BEAT.test(line.trim());
+}
+
 /** Pick a stable opener from `openingHooks` (or catalog decks, or `openingHook`). */
 export function normalizeOpeningHookCard(card: OpeningHookCard): {
   text: string;
   location?: string;
   fallback?: string;
+  page1?: string;
 } {
   if (typeof card === 'string') {
     const text = card.trim();
-    return { text, fallback: text || undefined };
+    return { text, fallback: text || undefined, page1: text || undefined };
   }
   const lines: string[] = [];
   const location = card.location?.trim() || undefined;
@@ -523,17 +531,20 @@ export function normalizeOpeningHookCard(card: OpeningHookCard): {
   }
   for (const beat of card.beats ?? []) {
     const b = beat.trim();
-    if (b) lines.push(`- ${b}`);
+    if (b && !isWriterNoteBeat(b)) lines.push(`- ${b}`);
   }
   if (card.text?.trim()) lines.push(card.text.trim());
+  const page1 = card.page1?.trim() || undefined;
   const fallback =
-    card.fallback?.trim()
+    page1
+    || card.fallback?.trim()
     || card.text?.trim()
     || (location ? `You are in ${location}.` : '');
   return {
     text: lines.join('\n'),
     location,
     fallback: fallback || undefined,
+    page1: page1 || fallback || undefined,
   };
 }
 
@@ -592,23 +603,24 @@ const BIBLE_INWORLD: Record<string, Partial<Record<OpeningPromptKind, string>>> 
 
 /** Alone-arrival Summoned Pact — no NPC audience; the panel asks. */
 const SUMMONED_ALONE_COVERS: Partial<Record<OpeningPromptKind, string>> = {
-  name: 'Your blue panel waits on a designation. What name should it show?',
+  name: 'The panel waits on a name. What do you enter?',
   appearance: 'You look down. You are still wearing what the light stole you in. What is it?',
   kit: 'Pockets, bag, whatever rode with you. What is actually on you? Nothing invented for a fight.',
 };
 
 const ALONE_ARRIVAL_MARK =
-  /\balone\b|nobody here|no summoners|no handlers|outline of a building|foundation stones|burnt husk|wall-shell|half-collapsed ruin/i;
+  /\balone\b|nobody here|no summoners|no handlers|no priests|no welcome|outline of a building|foundation stones|burnt husk|wall-shell|half-collapsed ruin/i;
 
 /** Seed-picked alone dump (ruin with no summoners on page one). */
 export function isAloneArrivalPick(picked?: {
   text?: string;
   location?: string;
   fallback?: string;
+  page1?: string;
 } | null): boolean {
   if (!picked) return false;
   return ALONE_ARRIVAL_MARK.test(
-    `${picked.location ?? ''}\n${picked.text ?? ''}\n${picked.fallback ?? ''}`
+    `${picked.location ?? ''}\n${picked.page1 ?? ''}\n${picked.text ?? ''}\n${picked.fallback ?? ''}`
   );
 }
 

@@ -250,31 +250,43 @@ export const OPENING_HOOK_DECKS: Record<string, OpeningHookCard[]> = {
   'cursed-keep': [
     {
       location: 'Greyhollow, at the inn',
+      page1:
+        'The last coach is already gone. Autumn rain hits the leaded windows of the Greyhollow Inn. You stand in the entry, water on the floorboards, an open ledger on the oak counter. The few by the hearth will not talk about the keep on the hill. Something up there already knows you are here.',
       text:
         'Last coach. Autumn rain already on the road behind you. The inn book is open. Greyhollow will not talk about the keep on the hill. Something in it already knows you are here.',
     },
     {
       location: 'Greyhollow mill lane at dusk',
+      page1:
+        'Dusk on the Greyhollow mill lane. You arrive on foot, boots in cold mud. The mill wheel turns with no water in the bed. A tattered notice says a child has been missing three nights. Ahead, the inn light is the only honest one. Exhausted faces on the porch watch you come.',
       text:
         'You arrive on foot, not by coach. The mill wheel turns with no water. A child is missing three nights. The inn light is the only honest one.',
     },
     {
       location: 'Greyhollow churchyard',
+      page1:
+        'You are left in the Greyhollow churchyard, shin-deep in wet grass. The carriage is already rattling into fog. Three fresh graves gape; the coffins are splintered from the inside. Father Aldous stands by the iron gate with a silver icon, hollow-eyed, as if you stepped out of his dream. He raises a lantern toward your face.',
       text:
         'You are dropped at the church, not the inn. Fresh graves opened from the inside. Father Aldous has not slept. He looks at you as if you were in his dream.',
     },
     {
       location: 'the washed-out road into Greyhollow',
+      page1:
+        'The road into Greyhollow is already gone. You wade the last mile through floodwater. Drained livestock float in the reeds. The keep on the hill is a silhouette that does not match the stories. Two sentries step from a ruined wall as you drag onto the bank, crossbows half-raised.',
       text:
         'The road is already gone. You wade the last mile. Livestock drained. The keep is a silhouette that does not match the stories.',
     },
     {
       location: 'Greyhollow tavern common room',
+      page1:
+        'You are already in the Greyhollow tavern common room when the mayor denies everything. The woodcutter will not sit, knuckles white on a felling axe. In the corner a priest’s hands shake around a cup. Heat from the hearth feels wrong. Nobody will name the keep. They are measuring whether you are help or another trouble.',
       text:
         'You are already in the common room when the mayor denies everything. The woodcutter will not sit. A priest’s hands shake around a cup.',
     },
     {
       location: 'Greyhollow gate after dark',
+      page1:
+        'The oak gate of Greyhollow slams and the bar slides home. They let you in because the rain and the woods left you no choice. You stand in the muddy courtyard. On the palisade a sentry watches the keep, not you. Two militia step from the guardhouse with lanterns and the look of people who already regret the night.',
       text:
         'The gate is barred. They still let you in because the rain left you no choice. Someone on the wall watches the keep, not you.',
     },
@@ -481,31 +493,43 @@ export const OPENING_HOOK_DECKS: Record<string, OpeningHookCard[]> = {
   'thornferry-road': [
     {
       location: 'the mill landing at Thornferry',
+      page1:
+        'Dawn mist on the mill landing at Thornferry. The ferry rope is wet against the current. Wren Holt stands at the end of the dock with a sealed charter, wax still red. “This has to move,” Wren says. “We walk the road together, or I walk it alone.” The rope keeps pulling. Wren waits.',
       text:
         'Dawn on the mill landing. Ferry rope wet. Wren Holt waits with a sealed charter: walk the road together, or walk it alone. The next page is that answer.',
     },
     {
       location: 'the ferry inn at Thornferry',
+      page1:
+        'The Thornferry inn is warm with mutton and wet wool. Wren Holt sits across a scarred table, already arguing Pell’s coin. The sealed charter lies between you. The oak door is at your back; you can still walk away and leave Wren the road.',
       text:
         'Inn first, landing second. Wren is already arguing with Pell’s coin. The charter is on the table. You can still walk away.',
     },
     {
       location: 'the ford below Thornferry',
+      page1:
+        'Freezing water at the rocky ford below Thornferry. The mill landing is only a shadow upstream. The crossing rope is frayed. Wren clutches a sealed charter — help, or the problem that gets you killed. On the far bank the magistrate’s man sits a black horse with a crossbow on the pommel.',
       text:
         'You meet the crisis at the ford, not the mill. Wet rope, a charter, a companion who might be a problem. The magistrate’s man is on the far bank.',
     },
     {
       location: 'Thornferry chapel stoop',
+      page1:
+        'Morning bell from the Thornferry chapel. You stand on the cracked stoop; the oak doors stay shut. Wren Holt is already on the steps with a sealed charter, blocking the easy exit. The road does not care about hymns. The next word is whether your name goes on the writ.',
       text:
         'Chapel first. Bless or refuse. Wren finds you with the charter anyway. The road does not care about hymns.',
     },
     {
       location: 'a side-path off Thornferry Road',
+      page1:
+        'Canopy keeps the side-path off Thornferry Road in twilight. The mill landing is miles behind. Wren Holt followed into the brush with the sealed charter and will not drop the partnership question. Pell still holds the coin. A branch snaps ahead — heavy feet in the undergrowth. Wren’s hand is already on a short blade. They look at you and wait.',
       text:
         'You start on a side job. The mill landing is a rumor behind you. Wren still has the question. Pell still has coin.',
     },
     {
       location: 'Thornferry mill at last light',
+      page1:
+        'Dusk paints the river at the Thornferry mill a deep purple. The ferry is already late. Wren Holt stands on the slick dock with the sealed charter tight against their chest. Something dark breaks the water by the pilings and is gone. Wren steps back. “The ferry isn’t coming. We take the ford in the dark, or we wait in the mill until dawn.” The river is still moving.',
       text:
         'Dusk, not dawn. The ferry is already late. Wren’s question is sharper. The charter is heavier.',
     },
@@ -811,31 +835,43 @@ export const OPENING_HOOK_DECKS: Record<string, OpeningHookCard[]> = {
   'salt-road-heist': [
     {
       location: 'a warehouse loft before the salt-tax score',
+      page1:
+        'The warehouse loft smells of dust and old rope. A stolen map of the Salt Road is pinned to a crate, the Consul tax ledger marked as the prize. Heat is still zero. Nobody in the crew is watching the map — they are watching each other’s hands. The muscle leans across the crate. “Talk is done. First move is yours — the plan, the cut, or the walk.”',
       text:
         'Crew. Map. Salt-tax ledger on a Consul caravan. Heat is still zero. Trust is not. First page is the plan, the cut, or the walk.',
     },
     {
       location: 'a Salt Road waystation',
+      page1:
+        'The waystation is a cramped shack on the Salt Road, woodsmoke and stale ale. You are supposed to join the crew here, a day out from the Consul caravan. Someone in the local syndicate has already sold a name, and the room is too quiet. An enforcer at the bar blocks the path to their table. “You’re late,” he says, and waits. What do you tell him?',
       text:
         'You join the crew at a waystation, not a loft. The caravan is a day out. Someone already sold a name.',
     },
     {
       location: 'the Consul caravan’s night camp',
+      page1:
+        'Night camp on the Salt Road. You are already on the job, crouched in the wagon-shadow. The tax ledger sits in an iron lockbox a few feet away. Armed hirelings move between lanterns. Go loud and Heat rises before dawn. The thief beside you has picks out and is waiting on your move.',
       text:
         'You start on the job, not the planning. The ledger is in a locked wagon. Heat will rise if you go loud.',
     },
     {
       location: 'a Salt Road tavern hire',
+      page1:
+        'Pipe smoke and cheap wine in a Salt Road tavern booth. Vessa sits across the sticky wood and wants a cutter. The score is local politics wearing a padlock; rivals are buying names before you have one. The door opens on two watchmen scanning the room. She keeps a silver pouch under her hand and waits to hear what you call yourself.',
       text:
         'Tavern. Vessa wants a cutter. The score is politics wearing a padlock. Rivals want your names before you have one.',
     },
     {
       location: 'a cliff path above the caravan road',
+      page1:
+        'Wind on the cliff path above the Salt Road. You are in the scrub, eyes on the wagons below. The crew is late. Twenty outriders surround a rumor of a ledger. Wait, strike in the pass, or abort. Down below a horse whinnies and the caravan starts to halt. The scout beside you is waiting on who leads.',
       text:
         'Eyes on the road. The crew is late. The ledger is a rumor with guards. First choice is wait, steal early, or abort.',
     },
     {
       location: 'a safehouse after a rehearsal gone loud',
+      page1:
+        'The safehouse reeks of sweat and spilled drink. The rehearsal went loud — fake guards fought, bells rang — and Heat is already up in the district. The real Salt Road score will be worse. Someone in this room wants out, and might sell the rest. The muscle stops in front of you with a bloodied crowbar, waiting to hear whose name you give if the watch kicks the door.',
       text:
         'Rehearsal already made Heat. The real score is worse. Someone wants out. The Consul does not know — yet.',
     },
