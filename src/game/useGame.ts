@@ -2272,27 +2272,8 @@ export function useGame() {
             logger.debug('Opening continue GM call failed, using stitch fallback', gmError);
           }
         } else {
-          try {
-            const story = await callOpeningGm(
-              openingState,
-              '',
-              settingsRef.current,
-              turnAbort.signal,
-            );
-            if (story) {
-              const classified = classifyOpeningContinue(openingState, story);
-              if (classified.accept && classified.prose.trim()) {
-                openingRaw = story;
-                openingText = classified.prose;
-                gmAuthored = true;
-              }
-            }
-          } catch (gmError) {
-            debugLogger.record('WARN', 'Opening GM failed — stitch fallback', {
-              error: gmError instanceof Error ? gmError.message : String(gmError),
-            });
-            logger.debug('Opening GM call failed, using stitch fallback', gmError);
-          }
+          // First page already painted from stitch — do not generate a replacement.
+          openingText = stitchOpeningScene(openingState);
         }
         
         // Fallback to stitch if GM failed
@@ -5187,30 +5168,10 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
       setState(lockedOpening);
       void persist(lockedOpening);
 
-      let openingRaw = stitchText;
+      // Page 1 is the stitch already on screen. A later GM rewrite is what
+      // swapped a readable opener for "someone here" salad on live 08d.
+      const openingRaw = stitchText;
       let openingText = stitchText;
-      let gmAuthored = false;
-
-      try {
-        const story = await callOpeningGm(lockedOpening, '', settingsRef.current);
-        if (story) {
-          const classified = classifyOpeningContinue(lockedOpening, story);
-          if (classified.accept && classified.prose.trim()) {
-            openingRaw = story;
-            openingText = classified.prose;
-            gmAuthored = true;
-          }
-        }
-      } catch (gmError) {
-        debugLogger.record('WARN', 'New Game opening GM failed — keep stitch', {
-          error: gmError instanceof Error ? gmError.message : String(gmError),
-        });
-        logger.debug('Opening GM call failed, using stitch fallback', gmError);
-      }
-
-      if (!gmAuthored) {
-        openingText = stitchText;
-      }
       
       openingText = ensureSystemReceipt(newState, sanitizeOpeningNarration(openingText));
       openingText = applyProseWarden(

@@ -256,6 +256,20 @@ function inventedTitleNames(prose: string, allow: Set<string>): string[] {
   return found.slice(0, 8);
 }
 
+/** Filter leftover — legal name-ask may keep the words; smash always repeats the stub. */
+export function hasOpeningInventSmashLeak(prose: string): boolean {
+  const withoutAsk = prose.replace(/need someone here to write/gi, '');
+  return /\bsomeone here\b/i.test(withoutAsk);
+}
+
+function openingCollidesEarthStreet(prose: string, here: string): boolean {
+  if (/\b(?:street|mall|earth|crosswalk|pavement)\b/i.test(here)) return false;
+  return (
+    /\b(?:you (?:are|wake) (?:in|on|at) (?:an? )?(?:ordinary )?(?:street|mall|apartment|earth))\b/i.test(prose)
+    || /\b(?:remember the street|cracked street|ordinary street|the street the moment)\b/i.test(prose)
+  );
+}
+
 /** Drop extra invented proper names only. Never rewrite English into "someone here". */
 export function stripOpeningInventQuota(state: GameState, prose: string, maxNew = 1): string {
   if (!prose) return prose;
@@ -276,13 +290,12 @@ export function classifyOpeningContinue(
   const reasons: string[] = [];
   let next = stripOpeningInventQuota(state, prose, openingInventBudgetZero(state) ? 0 : 1);
   const slots = compilePointerCardSlots(state);
+  if (hasOpeningInventSmashLeak(next)) {
+    reasons.push('invent-smash');
+  }
   if (slots?.where) {
     const here = slots.where.toLowerCase();
-    const moved =
-      /\b(?:you (?:are|wake) (?:in|on|at) (?:an? )?(?:ordinary )?(?:street|mall|apartment|earth))\b/i.test(next)
-      && !here.includes('street')
-      && !here.includes('earth');
-    if (moved) reasons.push('invented-earth-street');
+    if (openingCollidesEarthStreet(next, here)) reasons.push('invented-earth-street');
   }
   if (slots && slots.whoCount === 0 && /\b(handlers?|bystanders?|crowd|people who saw you)\b/i.test(next)) {
     reasons.push('invented-crowd');
@@ -299,7 +312,10 @@ export function classifyOpeningContinue(
     reasons.push('invent-budget');
     next = stripOpeningInventQuota(state, next, 0);
   }
-  const accept = !reasons.includes('invented-earth-street') && !reasons.includes('invented-why');
+  const accept =
+    !reasons.includes('invented-earth-street')
+    && !reasons.includes('invented-why')
+    && !reasons.includes('invent-smash');
   return { accept, prose: next.trim(), reasons };
 }
 

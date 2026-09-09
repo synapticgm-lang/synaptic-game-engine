@@ -206,6 +206,18 @@ describe('playtest31lOpeningAuthority', () => {
     expect(street.accept).toBe(false);
   });
 
+  it('rejects a smashed GM opener so the committed stitch stays on screen', () => {
+    const state = summonedState();
+    const smashed =
+      'On my back in the Sevenfold Circle under bombardment, I remember the street the moment the light took me. ' +
+      'someone here dust and ash falling down, shaking chunks from the chant. ' +
+      'The floor below me already a cracked street, the stones not maps anymore, just pit. ' +
+      'someone here under me more solid than a broken ground.';
+    const classified = classifyOpeningContinue(state, smashed);
+    expect(classified.accept).toBe(false);
+    expect(classified.reasons).toEqual(expect.arrayContaining(['invent-smash', 'invented-earth-street']));
+  });
+
   it('does not smash opening English into "someone here" or leak italic tags', () => {
     const state = summonedState();
     const festival =

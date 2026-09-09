@@ -23,6 +23,14 @@ describe('playtest29h — opening GM call + turn-fail class', () => {
     expect(useGame).not.toMatch(/result\.story/);
   });
 
+  it('New Game keeps the committed stitch — no later GM swap of page 1', () => {
+    const start = useGame.indexOf('Stitch first — page 1 is a committed card scene');
+    const fail = useGame.indexOf('Opening stitch failed');
+    expect(start).toBeGreaterThan(-1);
+    expect(fail).toBeGreaterThan(start);
+    expect(useGame.slice(start, fail)).not.toContain('callOpeningGm');
+  });
+
   it('phantom callback name classifies as client_bug not unknown', () => {
     expect(classifyTurnFailure(new ReferenceError('freeCallRef is not defined'))).toBe('client_bug');
   });
