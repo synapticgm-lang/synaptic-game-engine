@@ -4,7 +4,7 @@
  */
 
 export const CREDITS_PATH = '/credits';
-export const CREDITS_LAST_UPDATED = '19 August 2026';
+export const CREDITS_LAST_UPDATED = '9 September 2026';
 
 export type CreditRow = {
   work: string;
@@ -195,10 +195,17 @@ export const CREDIT_SECTIONS: CreditSection[] = [
         url: 'https://ai.google.dev',
       },
       {
+        work: 'Fireworks',
+        source: 'Fireworks AI',
+        license: 'Paid / hosted API',
+        usedFor: 'Story writing on hosted Free (DeepSeek V4 Flash)',
+        url: 'https://fireworks.ai',
+      },
+      {
         work: 'OpenRouter',
         source: 'OpenRouter',
         license: 'Paid / hosted API',
-        usedFor: 'AI routing for story and images',
+        usedFor: 'Mid/High story writers, Free Llama failover, and images',
         url: 'https://openrouter.ai',
       },
       {

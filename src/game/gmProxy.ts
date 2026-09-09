@@ -14,7 +14,7 @@ import {
 import { forceFreeModel } from './opsKillSwitches';
 import { GM_PROXY_TIMEOUT_DEFAULT_MS } from './errorRepairWarden';
 import { resolveFreeWriterFailover } from './writerPolicy';
-import { hasHanScript } from './openRouterChat';
+import { hasHanScript, hostedWriterProvider } from './openRouterChat';
 
 export type GmProxyMode = 'turn' | 'auto-fight';
 
@@ -104,11 +104,12 @@ export async function invokeGmProxy(params: {
           customModelId: isTestLabEnabled() ? null : params.settings.customModelId,
           tier,
         });
-    // 29d — Free Flash Lite empty/timeout → Llama 8B failover (same physics)
+    // 29d — Free empty/timeout → Llama 8B on OpenRouter (same physics)
     if (attempt > 0 && (tier === 'free' || forceFreeModel())) {
       const failover = resolveFreeWriterFailover(modelId);
       if (failover) modelId = failover;
     }
+    const writerProvider = hostedWriterProvider(modelId);
 
     const body = {
       mode: params.mode,
@@ -118,7 +119,7 @@ export async function invokeGmProxy(params: {
       settings: {
         contentMode: params.settings.contentMode,
         mapTriggerMode: params.settings.mapTriggerMode,
-        aiProvider: 'openrouter',
+        aiProvider: writerProvider,
         customModelId: modelId,
         subscriptionTier: tier,
         baseUrl: params.settings.baseUrl,
@@ -138,7 +139,7 @@ export async function invokeGmProxy(params: {
 
     logger.info('ai-proxy', `gm-turn ${params.mode}`, {
       turn: params.state.turn,
-      provider: 'openrouter',
+      provider: writerProvider,
       model: modelId,
       attempt,
       hasClientKey: !!body.clientApiKey,

@@ -250,6 +250,7 @@ export interface TierDefinition {
   id: SubscriptionTierId;
   name: string;
   priceGbp: number;
+  /** Writer model id. Free is a Fireworks slug; Mid/High stay OpenRouter ids. */
   writerOpenRouterId: string;
   writerGeminiId: string;
   textTurnsPerDay: number;
@@ -270,7 +271,7 @@ export const SUBSCRIPTION_TIERS: Record<SubscriptionTierId, TierDefinition> = {
     id: 'free',
     name: 'Free',
     priceGbp: 0,
-    writerOpenRouterId: 'deepseek/deepseek-v4-flash-0731',
+    writerOpenRouterId: 'accounts/fireworks/models/deepseek-v4-flash-0731',
     writerGeminiId: 'gemini-2.5-flash-lite',
     textTurnsPerDay: 12,
     memorableImagesPerWeek: 0,

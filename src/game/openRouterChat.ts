@@ -1,10 +1,52 @@
 /**
- * OpenRouter / OpenAI-compat chat helpers.
+ * OpenRouter / Fireworks / OpenAI-compat chat helpers.
  * DeepSeek V4 Flash often fills reasoning_* and leaves message.content empty —
  * that used to 502 gm-turn as "no content".
  */
 
 type ChatPart = { text?: unknown } | string;
+
+/** Fireworks OpenAI-compat inference (same pipe as synaptic-engine Free). */
+export const FIREWORKS_INFERENCE_BASE = 'https://api.fireworks.ai/inference/v1';
+
+/** Live Free hosted writer. Do not use retired `deepseek-v3p1` (404). */
+export const FREE_WRITER_FIREWORKS_MODEL = 'accounts/fireworks/models/deepseek-v4-flash-0731';
+
+export function isFireworksWriterModel(modelId: string | null | undefined): boolean {
+  const id = (modelId ?? '').trim().toLowerCase();
+  return id.startsWith('accounts/fireworks/models/') || id.startsWith('fireworks/');
+}
+
+/** Retired Fireworks slug 404s — remap to the live V4 Flash id. */
+export function normalizeFireworksWriterModel(modelId: string | null | undefined): string {
+  const id = (modelId ?? '').trim();
+  if (/deepseek-v3p1/i.test(id)) return FREE_WRITER_FIREWORKS_MODEL;
+  return id;
+}
+
+/** Hosted chat target from model id. OpenRouter ids stay on OpenRouter. */
+export function hostedWriterProvider(modelId: string | null | undefined): 'fireworks' | 'openrouter' {
+  return isFireworksWriterModel(normalizeFireworksWriterModel(modelId)) ? 'fireworks' : 'openrouter';
+}
+
+export function fireworksChatHeaders(apiKey: string): Record<string, string> {
+  return {
+    'Content-Type': 'application/json',
+    Authorization: `Bearer ${apiKey}`,
+  };
+}
+
+export function fireworksChatBody(model: string, systemPrompt: string, prompt: string, maxTokens: number) {
+  return {
+    model: normalizeFireworksWriterModel(model) || FREE_WRITER_FIREWORKS_MODEL,
+    messages: [
+      { role: 'system', content: systemPrompt },
+      { role: 'user', content: prompt },
+    ],
+    temperature: 0.9,
+    max_tokens: maxTokens,
+  };
+}
 
 /**
  * Non-Latin script the Free writer must not commit.

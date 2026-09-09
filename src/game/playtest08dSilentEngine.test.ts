@@ -68,8 +68,8 @@ describe('08d — Silent Engine', () => {
     expect(shouldSkipMicroFlavor()).toBe(true);
     expect(shouldUseFreeMudPresentation('free')).toBe(true);
     expect(STAGNATION_MID_WRITER_ENABLED).toBe(false);
-    expect(HUD_BUILD_STAMP).toBe('2026-09-08d');
-    expect(BUILD_STAMP).toBe('2026-09-08d');
+    expect(HUD_BUILD_STAMP).toBe('2026-09-09a');
+    expect(BUILD_STAMP).toBe('2026-09-09a');
   });
 
   it('composeFreeMudTurn never emits flavor under Silent Engine', () => {

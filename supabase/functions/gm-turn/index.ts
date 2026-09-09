@@ -2,6 +2,12 @@ import { buildSystemPrompt, buildContextPrompt } from '../_shared/gm/masterPromp
 import { freeWriterModelId, isPrivilegedPlayRequest } from '../_shared/playPrivileges.ts';
 import {
   extractChatCompletionText,
+  FIREWORKS_INFERENCE_BASE,
+  fireworksChatBody,
+  fireworksChatHeaders,
+  FREE_WRITER_FIREWORKS_MODEL,
+  isFireworksWriterModel,
+  normalizeFireworksWriterModel,
   openRouterChatBody,
   openRouterChatHeaders,
 } from '../_shared/gm/openRouterChat.ts';
@@ -69,10 +75,31 @@ function resolveCredentials(body: GmRequestBody): {
   const clientKey = typeof body.clientApiKey === 'string' ? body.clientApiKey.trim() : '';
   const serverOpenRouter = Deno.env.get('OPENROUTER_API_KEY')?.trim() || '';
   const serverGemini = Deno.env.get('GEMINI_API_KEY')?.trim() || '';
+  const serverFireworks = Deno.env.get('FIREWORKS_API_KEY')?.trim() || '';
 
   const tier = String(settings.subscriptionTier ?? '').toLowerCase();
   const kidMode = String(settings.contentMode ?? '') === 'kid';
   const byokNoHosted = tier === 'admin' && !kidMode;
+
+  let model = typeof settings.customModelId === 'string' && settings.customModelId.trim()
+    ? normalizeFireworksWriterModel(settings.customModelId.trim())
+    : undefined;
+
+  // Default Free hosted path is Fireworks — never send the Fireworks slug to OpenRouter.
+  const fireworksRequested =
+    provider === 'fireworks' ||
+    isFireworksWriterModel(model) ||
+    (!model && (tier === 'free' || !tier));
+
+  if (fireworksRequested && !clientKey && !byokNoHosted) {
+    if (!model) model = FREE_WRITER_FIREWORKS_MODEL;
+    return {
+      provider: 'fireworks',
+      apiKey: serverFireworks,
+      model,
+      baseUrl: FIREWORKS_INFERENCE_BASE,
+    };
+  }
 
   let apiKey = clientKey;
   if (!apiKey && !byokNoHosted) {
@@ -94,10 +121,8 @@ function resolveCredentials(body: GmRequestBody): {
     provider = 'openrouter';
   }
 
-  let model = typeof settings.customModelId === 'string' && settings.customModelId.trim()
-    ? settings.customModelId.trim()
-    : undefined;
   if (provider === 'openrouter' && !model) model = 'deepseek/deepseek-chat';
+  if (provider === 'fireworks' && !model) model = FREE_WRITER_FIREWORKS_MODEL;
 
   return {
     provider,
@@ -139,27 +164,32 @@ async function callOpenAICompat(
   model: string,
   baseUrl: string
 ): Promise<string> {
+  const fireworks = /fireworks\.ai/i.test(baseUrl);
   const openRouter = /openrouter\.ai/i.test(baseUrl);
   const res = await fetch(`${baseUrl.replace(/\/$/, '')}/chat/completions`, {
     method: 'POST',
-    headers: openRouter
-      ? openRouterChatHeaders(apiKey)
-      : {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${apiKey}`,
-        },
-    body: JSON.stringify(
-      openRouter
-        ? openRouterChatBody(model, systemPrompt, prompt, AI_MAX_OUTPUT_TOKENS)
+    headers: fireworks
+      ? fireworksChatHeaders(apiKey)
+      : openRouter
+        ? openRouterChatHeaders(apiKey)
         : {
-            model,
-            messages: [
-              { role: 'system', content: systemPrompt },
-              { role: 'user', content: prompt },
-            ],
-            temperature: 0.9,
-            max_tokens: AI_MAX_OUTPUT_TOKENS,
-          }
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${apiKey}`,
+          },
+    body: JSON.stringify(
+      fireworks
+        ? fireworksChatBody(model, systemPrompt, prompt, AI_MAX_OUTPUT_TOKENS)
+        : openRouter
+          ? openRouterChatBody(model, systemPrompt, prompt, AI_MAX_OUTPUT_TOKENS)
+          : {
+              model,
+              messages: [
+                { role: 'system', content: systemPrompt },
+                { role: 'user', content: prompt },
+              ],
+              temperature: 0.9,
+              max_tokens: AI_MAX_OUTPUT_TOKENS,
+            }
     ),
   });
   if (res.status === 429) {
@@ -244,7 +274,7 @@ Deno.serve(async (req) => {
           String(settings.subscriptionTier ?? '').toLowerCase() === 'admin'
             && String(settings.contentMode ?? '') !== 'kid'
             ? 'Admin BYOK needs an OpenRouter text key. Hosted AI is not included on this tier.'
-            : 'No API key available. Pass clientApiKey or set OPENROUTER_API_KEY on the edge function.',
+            : 'No API key available. Pass clientApiKey or set FIREWORKS_API_KEY (Free) / OPENROUTER_API_KEY (Mid/High) on the edge function.',
       },
       400
     );
@@ -270,8 +300,10 @@ Deno.serve(async (req) => {
       if (provider === 'anthropic') {
         return callAnthropic(userPrompt, systemPrompt, apiKey, modelOverride || model);
       }
-      const base =
-        provider === 'openrouter'
+      const fireworks = provider === 'fireworks' || isFireworksWriterModel(modelOverride || model);
+      const base = fireworks
+        ? FIREWORKS_INFERENCE_BASE
+        : provider === 'openrouter'
           ? baseUrl?.trim() || 'https://openrouter.ai/api/v1'
           : provider === 'groq'
             ? 'https://api.groq.com/openai/v1'
@@ -281,30 +313,50 @@ Deno.serve(async (req) => {
       const modelName =
         modelOverride ||
         model ||
-        (provider === 'openrouter'
-          ? 'deepseek/deepseek-v4-flash-0731'
-          : provider === 'groq'
-            ? 'llama-3.3-70b-versatile'
-            : 'gpt-4o-mini');
+        (fireworks
+          ? FREE_WRITER_FIREWORKS_MODEL
+          : provider === 'openrouter'
+            ? 'deepseek/deepseek-chat'
+            : provider === 'groq'
+              ? 'llama-3.3-70b-versatile'
+              : 'gpt-4o-mini');
       return callOpenAICompat(userPrompt, systemPrompt, apiKey, modelName, base);
     };
 
+    const emptyRetryProviders = provider === 'openrouter' || provider === 'fireworks';
     const tryCall = async (modelOverride?: string): Promise<string> => {
       try {
         return await runOnce(modelOverride);
       } catch (err) {
         if ((err as { status?: number })?.status === 429) throw err;
-        if (provider !== 'openrouter') throw err;
+        if (!emptyRetryProviders) throw err;
+        return '';
+      }
+    };
+
+    const tryOpenRouterLlama = async (): Promise<string> => {
+      const llamaKey = Deno.env.get('OPENROUTER_API_KEY')?.trim() || '';
+      if (!llamaKey) return '';
+      try {
+        return await callOpenAICompat(
+          userPrompt,
+          systemPrompt,
+          llamaKey,
+          'meta-llama/llama-3.1-8b-instruct',
+          'https://openrouter.ai/api/v1'
+        );
+      } catch (err) {
+        if ((err as { status?: number })?.status === 429) throw err;
         return '';
       }
     };
 
     let text = await tryCall();
-    if (!text.trim() && provider === 'openrouter') {
+    if (!text.trim() && emptyRetryProviders) {
       text = await tryCall();
     }
-    if (!text.trim() && provider === 'openrouter' && !String(model ?? '').includes('llama-3.1-8b')) {
-      text = await tryCall('meta-llama/llama-3.1-8b-instruct');
+    if (!text.trim() && emptyRetryProviders && !String(model ?? '').includes('llama-3.1-8b')) {
+      text = provider === 'fireworks' ? await tryOpenRouterLlama() : await tryCall('meta-llama/llama-3.1-8b-instruct');
     }
 
     if (!text) {

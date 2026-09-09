@@ -1,10 +1,12 @@
 /**
  * Writer escalation policy — Manus Option 10 explicitly disabled (Wave 5 only).
  *
- * Free stays on DeepSeek V4 Flash. Mid/High tiers use their subscription writer
- * only — never auto-escalate on stagnation until John authorizes Wave 5 gates.
+ * Free stays on Fireworks DeepSeek V4 Flash. Mid/High tiers use their OpenRouter
+ * subscription writer only — never auto-escalate on stagnation until John
+ * authorizes Wave 5 gates.
  *
- * 29d — optional OpenRouter failover model id for Free (same physics; swap renderer only).
+ * 29d — optional OpenRouter Llama failover when Free returns empty/timeout
+ * (same physics; swap renderer only). Mid writer stays OFF.
  */
 
 import type { HostedAiTier } from './testLab';
@@ -24,7 +26,8 @@ export function resolveFreeWriterFailover(primaryModelId: string): string | null
   if (
     id.includes('flash-lite') ||
     id.includes('gemini-2.5-flash-lite') ||
-    id.includes('deepseek')
+    id.includes('deepseek') ||
+    id.includes('fireworks')
   ) {
     return FREE_WRITER_FAILOVER_OPENROUTER;
   }
