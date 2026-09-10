@@ -8,7 +8,7 @@ import { effectiveWriterTier, hasUnlimitedTextCapacity, isFounderPlayAccount } f
 import { equippedSetLabel, equippedSetName } from '../game/uiTheme';
 
 /** Visible after a hard refresh -- if this is missing, Vercel is still serving the 16 Aug bundle. */
-export const HUD_BUILD_STAMP = '2026-09-10h';
+export const HUD_BUILD_STAMP = '2026-09-10i';
 const HUD_BUILD_TITLE =
   'Batch 10h - watchtower start: panel inspect, explore-or, locked name, System font';
 

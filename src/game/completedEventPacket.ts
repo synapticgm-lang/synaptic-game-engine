@@ -27,6 +27,7 @@ import {
   openingCastLabel,
   openingWantLine,
   openingWhoAskLineFromLabel,
+  playerAskedWhyPulled,
 } from './openingEstablishment';
 
 export type EventOutcome =
@@ -1058,7 +1059,7 @@ function renderHallTalkAnswer(packet: CompletedEventPacket, slots: StitchSlots):
   const asksWhere = hallTalkAsksWhere(act);
   const asksWho = hallTalkAsksWho(act);
   const asksPanel = hallTalkAsksPanel(act);
-  const asksWant = hallTalkAsksWant(act);
+  const asksWant = hallTalkAsksWant(act) || playerAskedWhyPulled(act);
   const bits: string[] = [];
   if (asksWhere) bits.push(`You were at ${slots.where}.`);
   if (asksWho) bits.push(openingWhoAskLineFromLabel(who));

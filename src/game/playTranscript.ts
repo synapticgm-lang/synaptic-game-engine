@@ -67,7 +67,14 @@ function lastPlayerActionFromLog(state: GameState): string {
 export function resolveOfferedChoices(state: GameState): string[] {
   const lastPlayer = lastPlayerActionFromLog(state);
   const coverBeat = isOpeningHallTalkTurn(state, lastPlayer);
-  if (coverBeat) {
+  const autoNamedOpeningPad =
+    !lastPlayer
+    && !!state.openingEstablishment?.sceneWritten
+    && (state.turn ?? 0) <= 2
+    && !state.activeEncounter
+    && !isOpeningEstablishmentPending(state)
+    && !isOpeningCoverTurn(state);
+  if (coverBeat || autoNamedOpeningPad) {
     const skipCoverChips =
       isLookAroundAction(lastPlayer) && !playerEngagesOpeningCover(lastPlayer);
     if (skipCoverChips) return [];

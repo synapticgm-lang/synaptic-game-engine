@@ -17,6 +17,8 @@ import {
   isEarthOriginPrompt,
   openingWantLine,
   openingWhoAskLine,
+  playerAskedWhyPulled,
+  playerGaveNameAndAskedMore,
   resolveLockedOpeningPlace,
   resolveOpeningHookPick,
 } from './openingEstablishment';
@@ -219,11 +221,12 @@ export function stitchOpeningContinue(state: GameState, playerInput = ''): strin
   const want = openingWantLine(state);
   const whoLine = openingWhoAskLine(state);
   const asksWhere = hallTalkAsksWhere(act);
-  const asksWhy = hallTalkAsksWant(act);
-  const asksWant = hallTalkAsksWant(act);
+  const asksWhy = hallTalkAsksWant(act) || playerAskedWhyPulled(act);
+  const asksWant = hallTalkAsksWant(act) || playerAskedWhyPulled(act);
   const asksWho = hallTalkAsksWho(act);
   const asksPanel = hallTalkAsksPanel(act);
   const gaveName = /\b(?:my name is|i am|i'm|call me)\b/i.test(act);
+  const namePlusMore = playerGaveNameAndAskedMore(act);
   const searches =
     /\bsearch\b|\bintel\b|\banything of use\b|\blook around\b|\bexplore\b/i.test(act);
 
@@ -246,10 +249,10 @@ export function stitchOpeningContinue(state: GameState, playerInput = ''): strin
 
   if (gaveName && name) {
     const bits = [`They have the name ${name}.`];
-    if (asksWhere) bits.push(`You are ${here}.`);
+    if (asksWhere || namePlusMore) bits.push(`You are ${here}.`);
     if (asksWho) bits.push(whoLine);
     if (asksPanel) bits.push('The blue panel is a System window at eye level — not a person.');
-    if (asksWant || asksWhy) bits.push(want || 'They have not said what they want yet.');
+    if (asksWant || asksWhy || namePlusMore) bits.push(want || 'They have not said what they want yet.');
     return bits.join(' ');
   }
 

@@ -981,7 +981,12 @@ export function lastPlayerLine(state: { log?: Array<{ role?: string; content?: s
 }
 
 export function hallTalkAsksWhere(raw: string): boolean {
-  return /\bwhere am(?: i)?\b|\bwhere are we\b|\bwhere is this\b/i.test(raw ?? '');
+  return (
+    /\bwhere am(?: i)?\b|\bwhere are we\b|\bwhere is this\b/i.test(raw ?? '')
+    || /\bdon'?t know (?:of )?this\b|\bnever heard of (?:this|the)\b|\bwhat is this (?:place|circle|hall|room)\b/i.test(
+      raw ?? ''
+    )
+  );
 }
 
 export function hallTalkAsksWho(raw: string): boolean {
@@ -1024,9 +1029,22 @@ export function isCoverShapedPlayerLine(raw: string): boolean {
   if (hallTalkAsksWhere(p) || hallTalkAsksWho(p) || hallTalkAsksWant(p) || hallTalkAsksPanel(p)) {
     return true;
   }
+  if (playerAskedWhyPulled(p)) return true;
   return (
     /\bgive you my name\b|\bgave you my name\b|\bmy name is\b|\bcall me\b/i.test(p)
   );
+}
+
+/** Name lock plus a real question — not a bare “My name is Jax.” */
+export function playerGaveNameAndAskedMore(raw: string): boolean {
+  const act = (raw ?? '').replace(/\s+/g, ' ').trim();
+  if (!/\b(?:my name is|i am|i'm|call me)\b/i.test(act)) return false;
+  const rest = act
+    .replace(/\b(?:my name is|i am|i'm|call me)\s+[A-Za-z][A-Za-z'-]*/gi, ' ')
+    .replace(/[^A-Za-z\s]/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+  return rest.length > 2;
 }
 
 /** Hall Q&A — where / who / panel / name — not travel or a fight. */
@@ -1136,16 +1154,21 @@ export function shortCardOffer(state: GameState): string {
   return clipCardClause(first, 180);
 }
 
-export function openingWhoAskLineFromLabel(who: string): string {
+export function openingWhoAskLineFromLabel(who: string, opts?: { nameLocked?: boolean }): string {
   const head = who ? who.charAt(0).toUpperCase() + who.slice(1) : 'They';
   const plural = /\b(people|envoys|priests|handlers|sides)\b/i.test(who) || /^both /i.test(who);
+  if (opts?.nameLocked) {
+    return plural ? `${head} are the ones asking.` : `${head} is the one asking.`;
+  }
   return plural
     ? `${head} are the ones asking. They have not given you a name back.`
     : `${head} is the one asking. They have not given you a name back.`;
 }
 
 export function openingWhoAskLine(state: GameState): string {
-  return openingWhoAskLineFromLabel(openingCastLabel(state));
+  const name = (state.openingEstablishment?.answers?.name ?? state.character?.name ?? '').trim();
+  const nameLocked = !!(name && isLockablePcName(name) && !/unknown survivor/i.test(name));
+  return openingWhoAskLineFromLabel(openingCastLabel(state), { nameLocked });
 }
 
 export function openingWantLine(state: GameState): string {

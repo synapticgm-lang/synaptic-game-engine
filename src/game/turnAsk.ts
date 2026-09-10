@@ -44,7 +44,8 @@ export function hasRealGmStory(entry: LogEntry | undefined): boolean {
     if (quote.length >= 8) return true;
   }
   const story = gmStoryText(entry);
-  return story.length >= 24 && /[a-z]/i.test(story);
+  // Any real sentence paints. 24 hid “They have the name Jax.” (23) — send looked like no reply.
+  return story.length >= 8 && /[a-z]/i.test(story);
 }
 
 function isHiddenGmRow(entry: LogEntry): boolean {

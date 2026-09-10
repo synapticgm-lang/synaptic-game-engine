@@ -1,7 +1,12 @@
 /** Edge stub — hall-talk owners live on the client. Lets completedEventPacket boot. */
 
 export function hallTalkAsksWhere(raw: string): boolean {
-  return /\bwhere am(?: i)?\b|\bwhere are we\b|\bwhere is this\b/i.test(raw ?? '');
+  return (
+    /\bwhere am(?: i)?\b|\bwhere are we\b|\bwhere is this\b/i.test(raw ?? '')
+    || /\bdon'?t know (?:of )?this\b|\bnever heard of (?:this|the)\b|\bwhat is this (?:place|circle|hall|room)\b/i.test(
+      raw ?? ''
+    )
+  );
 }
 
 export function hallTalkAsksWho(raw: string): boolean {
@@ -25,11 +30,27 @@ export function hallTalkAsksPanel(raw: string): boolean {
   );
 }
 
+export function playerAskedWhyPulled(raw: string): boolean {
+  const p = (raw ?? '').replace(/\s+/g, ' ').trim();
+  if (!p) return false;
+  return (
+    /\bwhy .{0,48}(?:summon|pull|want|here|bought|mark|rite)\b|\bwhat(?:'s| is) going on\b|\bwhat they want\b|\bask what they want\b/i.test(
+      p
+    )
+  );
+}
+
 export function isHallTalkPlayerLine(raw: string): boolean {
   const p = (raw ?? '').replace(/\s+/g, ' ').trim();
   if (!p) return false;
   if (/\b(travel|attack|flee|leave|exit)\b/i.test(p)) return false;
-  return hallTalkAsksWhere(p) || hallTalkAsksWho(p) || hallTalkAsksWant(p) || hallTalkAsksPanel(p);
+  return (
+    hallTalkAsksWhere(p)
+    || hallTalkAsksWho(p)
+    || hallTalkAsksWant(p)
+    || hallTalkAsksPanel(p)
+    || playerAskedWhyPulled(p)
+  );
 }
 
 export function openingCastLabel(_state?: unknown): string {

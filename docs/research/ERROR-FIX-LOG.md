@@ -57,6 +57,7 @@
 | **10f** | Treaty tent talk died as one-line Silent / stitch telegrams | `shouldStitchOpeningContinue` cover-only; `shouldUseSilentMudTurn` talk → `callGm`; treaty CAST + want line | 10d pad-lock kept questions on stitch; Silent CAST empty = “No one listed” |
 | **10g** | First typed line Failed to fetch; catch `contentSanitized is not defined` | Hall Q&A back on local stitch; edge `searchContinuity` / `openingEstablishment` stubs; catch uses `sanitizedInput` | 10f sent talk to `gm-turn`; edge sceneFacts imported a missing export; Silent had hidden the 503 |
 | **10h** | Watchtower: Inspect the panel → room look; explore-or → force door; name ask after Jax; “Jaxax” plate | `hallTalkAsksPanel` + Silent skip; explore compound-target; drop locked name-ask tail; System UI mono | 10g hall regex required “blue panel”; 21j skip missed `explore`; authored page1 always asks a name |
+| **10i** | Cathedral: name+why → “They have the name Jax.” (felt like no reply); who-ask denied the locked name | Stitch answers why via `playerAskedWhyPulled`; name-plus-more always gets HERE+want; who-line honors locked name; auto-named pads stay cover-only; `hasRealGmStory` paints ≥8 so a 23-char telegram is not invisible | 10f only glued want onto `whats going on` / `why.*name`; Usual Self made cover-pad lock miss; 24-char paint gate hid the stitch |
 
 ### Quest / journal (Class C)
 
@@ -99,6 +100,7 @@
 | **29f live** | Hide text hid story; Hide options hid TURN_ASK | Hide text = bottom action box; Hide options = choice chips only |
 | **30U live** | Home cannot scroll; Active Save clipped; title floats on art | `html/#root` `overflow:hidden` + `MainMenu` `min-h-screen overflow-hidden`. `.sgm-home` `min-h-0 overflow-y-auto`; opaque `.sgm-home-title-panel` |
 | **30V live** | Site-wide no-scroll; HUD “Dark Elf Umb…” dead truncate | Same `#root overflow:hidden`; modal `flex-1` without `min-h-0`. `.sgm-scroll-page` + `.sgm-modal-body`; HUD two-row + tap popover for equipped set |
+| **10i** | Send landed, bubble never painted | `hasRealGmStory` ≥24 hid “They have the name Jax.” (23). Paint floor is ≥8; empty / What-do-you-do stay hidden |
 
 ### Quest / STATUS (Class C)
 
