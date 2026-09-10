@@ -523,6 +523,7 @@ export function normalizeOpeningHookCard(card: OpeningHookCard): {
   page1?: string;
   summonIntent?: string;
   openingOffer?: string;
+  faction?: string;
 } {
   if (typeof card === 'string') {
     const text = card.trim();
@@ -554,6 +555,7 @@ export function normalizeOpeningHookCard(card: OpeningHookCard): {
     page1: page1 || fallback || undefined,
     summonIntent: card.summonIntent?.trim() || undefined,
     openingOffer: card.openingOffer?.trim() || undefined,
+    faction: card.faction?.trim() || undefined,
   };
 }
 
@@ -966,13 +968,101 @@ export function isOpeningCoverTurn(state: GameState): boolean {
   return !name || /unknown survivor/i.test(name) || !isLockablePcName(name);
 }
 
+/** Last typed player line from the log. */
+export function lastPlayerLine(state: { log?: Array<{ role?: string; content?: string }> }): string {
+  const log = state.log ?? [];
+  for (let i = log.length - 1; i >= 0; i--) {
+    const content = log[i]?.content;
+    if (log[i]?.role === 'player' && typeof content === 'string' && content.trim()) {
+      return content.trim();
+    }
+  }
+  return '';
+}
+
 /** Typed line that must stay on the local cover stitch, not the play writer. */
 export function isCoverShapedPlayerLine(raw: string): boolean {
   const p = (raw ?? '').replace(/\s+/g, ' ').trim();
   if (!p) return false;
   if (playerGivesOrRefusesName(p)) return true;
   return (
-    /\bwhere am i\b|\bwhere are we\b|\bwhy\b.*\bname\b|\bwhy should i\b|\bwhat do you want\b|\bwhat'?s going on\b|\bgive you my name\b|\bmy name is\b|\bcall me\b/i.test(
+    /\bwhere am i\b|\bwhere are we\b|\bwhere is this\b|\bwhy\b.*\bname\b|\bwhy should i\b|\bwhat do you want\b|\bwhat'?s going on\b|\bgive you my name\b|\bgave you my name\b|\bmy name is\b|\bcall me\b|\bwho (?:is|are) (?:it|that|you)\b|\bwho (?:is it that )?asks\b|\bwhat'?s yours\b|\bblue (?:screen|panel)\b/i.test(
+      p
+    )
+  );
+}
+
+/** Hall Q&A — where / who / panel / name — not travel or a fight. */
+export function isHallTalkPlayerLine(raw: string): boolean {
+  const p = (raw ?? '').replace(/\s+/g, ' ').trim();
+  if (!p) return false;
+  if (/\b(travel|attack|flee|leave|exit|head (?:to|toward)|go to|press the attack)\b/i.test(p)) {
+    return false;
+  }
+  return isCoverShapedPlayerLine(p);
+}
+
+/**
+ * Cover or post-cover hall questions stay on stitchOpeningContinue.
+ * Silent play and floor-plan doors do not take these lines.
+ */
+export function isOpeningHallTalkTurn(state: GameState, playerInput?: string): boolean {
+  if (state.activeEncounter) return false;
+  const line = (playerInput ?? lastPlayerLine(state)).replace(/\s+/g, ' ').trim();
+  if (isOpeningEstablishmentPending(state) || isOpeningCoverTurn(state)) return true;
+  if (!state.openingEstablishment?.sceneWritten) return false;
+  return isHallTalkPlayerLine(line);
+}
+
+/** Ledger who for this card — roles from faction/page1, never Ash / Ash Court as a person. */
+export function openingCastLabel(state: GameState): string {
+  if (state.openingEstablishment?.aloneArrival === true) return 'the panel';
+  const bible = resolveActiveCampaignBible(state);
+  const picked = resolveOpeningHookPick(bible, state.seed);
+  const hay = [
+    picked?.page1,
+    picked?.faction,
+    state.openingEstablishment?.pickedHookFallback,
+  ]
+    .filter(Boolean)
+    .join(' ');
+  if (/\blead priest\b/i.test(hay) || /\biron mask\b/i.test(hay)) {
+    return 'the lead priest behind the iron mask';
+  }
+  if (/\bCaptain Sera Quill\b/i.test(hay)) return 'Captain Sera Quill';
+  if (/\bhandler on the (?:far|other) side\b/i.test(hay)) return 'the handler beyond the grate';
+  if (/\bhandler\b/i.test(hay)) return 'the handler';
+  if (/\bAsh Court priests\b/i.test(hay)) return 'the priests in this hall';
+  if (/\bScale priests\b/i.test(hay)) return 'the Scale priests';
+  if (/\bpriests?\b/i.test(hay)) return 'the priests';
+  if (/\bscavenger\b/i.test(hay)) return 'the scavenger';
+  if (/\bmilitia\b/i.test(hay)) return 'the militia';
+  const first = (picked?.faction ?? '').split(/[,.]/)[0]?.replace(/\s+/g, ' ').trim() ?? '';
+  if (first && !/^(ash|the ash court|ash court)$/i.test(first) && first.length < 56) {
+    return first;
+  }
+  return 'the people who pulled you';
+}
+
+/** One clause from the card — why they pulled you — never the opener paragraph. */
+export function shortCardWant(state: GameState): string {
+  const bible = resolveActiveCampaignBible(state);
+  const picked = resolveOpeningHookPick(bible, state.seed);
+  const raw = (picked?.summonIntent ?? '').replace(/\s+/g, ' ').trim();
+  if (!raw) return '';
+  const first = raw.split(/(?<=[.!?])\s+/)[0]?.trim() || raw;
+  return first.length > 140 ? `${first.slice(0, 137).trim()}…` : first;
+}
+
+/** Player asked why they were pulled / what the room wants — not “what’s yours”. */
+export function playerAskedWhyPulled(raw: string): boolean {
+  const p = (raw ?? '').replace(/\s+/g, ' ').trim();
+  if (!p) return false;
+  if (/\bwhat'?s yours\b/i.test(p) && !/\bwhat do you want\b|\bwhat they want\b/i.test(p)) {
+    return false;
+  }
+  return (
+    /\bwho summoned\b|\bwhy (?:the )?(?:circle|they|pellane)\b|\bwhy .{0,48}(?:summon|pull|want|here|bought|mark|rite)\b|\bwhat do you want\b|\bwhat they want\b|\bwhat(?:'s| is) going on\b|\bhear(?:d)? (?:the )?reason\b|\bask about the (?:circle|war|mark|rite)\b/i.test(
       p
     )
   );

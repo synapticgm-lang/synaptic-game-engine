@@ -109,6 +109,7 @@ import {
   sanitizeOpeningNarration,
   isOpeningEstablishmentPending,
   isOpeningCoverTurn,
+  isOpeningHallTalkTurn,
   isOpeningSetupChipLabel,
   pendingRequiredCovers,
   resolveOpeningMode,
@@ -2227,6 +2228,8 @@ export function useGame() {
         isOpeningCoverTurn(current)
         || isOpeningCoverTurn(liveCurrent)
         || isOpeningEstablishmentPending(current)
+        || isOpeningHallTalkTurn(current, contentSanitized)
+        || isOpeningHallTalkTurn(liveCurrent, contentSanitized)
         || (
           !!liveCurrent.pendingGeneratedOpening
           && liveCurrent.openingEstablishment?.complete !== true

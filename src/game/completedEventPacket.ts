@@ -18,6 +18,7 @@ import {
 } from './combatAuthority';
 import { canHarvestAsNamedPerson } from './entityRegistry';
 import { isNeverCastTitle } from './neverCast';
+import { isHallTalkPlayerLine, openingCastLabel, shortCardWant } from './openingEstablishment';
 
 export type EventOutcome =
   | 'killed'
@@ -61,6 +62,9 @@ export interface CompletedEventPacket {
   waitStreak: number;
   /** Ledger noun for tier-2/3 stitch (exit, searchedEmpty, or prop). */
   focusNoun?: string;
+  /** 10d — card CAST / why, for hall-talk answers (not settle stubs). */
+  answerWho?: string;
+  answerWant?: string;
 }
 
 const WRITER_RHYTHM_WINDOW = 2;
@@ -98,6 +102,13 @@ function classifyVerb(input: string): string {
   if (/\b(travel|go to|head (?:to|for|toward)|return to|enter)\b/i.test(t)) return 'traveled';
   if (/\b(leave|exit|walk away)\b/i.test(t)) return 'left';
   if (/\b(ask|talk|speak|tell|say|press for|listen)\b/i.test(t)) return 'spoke';
+  if (
+    /\b(where am i|where are we|where is this|what(?:'s| is) going on|who (?:is|are|asks)|what'?s yours|what do you want|why should i|why .*(?:name|here|summon))\b/i.test(
+      t
+    )
+  ) {
+    return 'spoke';
+  }
   if (/\b(loot|search the (?:body|corpse)|take from)\b/i.test(t)) return 'looted';
   if (/\b(use|drink|eat|equip|wield|draw)\b/i.test(t)) return 'used';
   if (/\b(inspect|examine|look around|search|scout|check|study|watch)\b/i.test(t)) return 'inspected';
@@ -441,6 +452,8 @@ export function buildCompletedEventPacket(
     inspectStreak: streaks.inspectStreak,
     waitStreak: streaks.waitStreak,
     focusNoun: focusNoun || undefined,
+    answerWho: openingCastLabel(state) || undefined,
+    answerWant: shortCardWant(state) || undefined,
   };
 }
 
@@ -1028,11 +1041,32 @@ function pickStitchTemplate(bank: StitchTemplate[], recent: string[], salt: numb
  * Authored past-tense stitch from ledger slots only.
  * Never interpolates pad/intent remainder. Outcome follows verb.
  */
+function renderHallTalkAnswer(packet: CompletedEventPacket, slots: StitchSlots): string | null {
+  const act = packet.playerAction ?? '';
+  if (!isHallTalkPlayerLine(act)) return null;
+  const who = (packet.answerWho || slots.who || 'the people who pulled you').trim();
+  const want = (packet.answerWant ?? '').trim();
+  const asksWhere = /\bwhere am i\b|\bwhere are we\b|\bwhere is this\b/i.test(act);
+  const asksWho =
+    /\bwho (?:is|are) (?:it|that|you)\b|\bwho (?:is it that )?asks\b|\bwhat'?s yours\b/i.test(act);
+  const asksPanel = /\bblue (?:screen|panel)\b/i.test(act);
+  const asksWant = /\bwhat (?:do you|they) want\b|\bwhat'?s going on\b/i.test(act);
+  const bits: string[] = [];
+  if (asksWhere) bits.push(`You were at ${slots.where}.`);
+  if (asksWho) bits.push(`${who} did not give a name back.`);
+  if (asksPanel) bits.push('The blue panel was yours — a System window, not a person.');
+  if (asksWant) bits.push(want || `${who} had not said what they wanted yet.`);
+  if (!bits.length) bits.push(`You spoke at ${slots.where}. ${who} was still in the room.`);
+  return bits.join(' ').replace(/\s+/g, ' ').trim();
+}
+
 export function assemblePacketStitch(
   packet: CompletedEventPacket,
   recentGm: string[] = packet.recentBeats ?? []
 ): string {
   const slots = ledgerStitchSlots(packet);
+  const hall = renderHallTalkAnswer(packet, slots);
+  if (hall) return hall;
   const key = stitchBankKey(packet);
   const bank = STITCH_BANKS[key] ?? STITCH_BANKS.settle!;
   const picked = pickStitchTemplate(bank, recentGm, packet.turn);

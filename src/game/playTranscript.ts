@@ -7,9 +7,9 @@ import {
 } from './choicePipeline';
 import {
   coverContinuePads,
-  isCoverShapedPlayerLine,
   isOpeningCoverTurn,
   isOpeningEstablishmentPending,
+  isOpeningHallTalkTurn,
   playerEngagesOpeningCover,
 } from './openingEstablishment';
 import { filterInventedContextChoices } from './choiceWarden';
@@ -66,15 +66,7 @@ function lastPlayerActionFromLog(state: GameState): string {
 
 export function resolveOfferedChoices(state: GameState): string[] {
   const lastPlayer = lastPlayerActionFromLog(state);
-  const coverBeat =
-    isOpeningEstablishmentPending(state)
-    || isOpeningCoverTurn(state)
-    || (
-      !!state.openingEstablishment?.sceneWritten
-      && state.openingEstablishment.complete === true
-      && (state.turn ?? 0) <= 4
-      && isCoverShapedPlayerLine(lastPlayer)
-    );
+  const coverBeat = isOpeningHallTalkTurn(state, lastPlayer);
   if (coverBeat) {
     const skipCoverChips =
       isLookAroundAction(lastPlayer) && !playerEngagesOpeningCover(lastPlayer);

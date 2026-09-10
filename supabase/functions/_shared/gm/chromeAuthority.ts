@@ -88,13 +88,15 @@ export function isPolityFactionOrPlaceToken(token: string): boolean {
   const t = normalizeChromeToken(token);
   if (!t) return false;
   // Batch W — "Lowmarket Fence" / "Wall Sergeant" are people, not place slots.
+  // Ash Court priests stay a faction, not a named person.
+  if (/^(?:the\s+)?ash\s+court\b/i.test(t)) return true;
   if (/\b(?:fence|sergeant|guard|merchant|vendor|handler|warden|contact|hand|owner|chirurgeon|registrar|skirmisher|thug|priest)\b/i.test(t)) {
     return false;
   }
   if (POLITY_FACTION_PLACE_EXACT.test(t)) return true;
   if (POLITY_FACTION_PLACE_HEAD.test(t)) return true;
   // Bare polity adjective used as a name slot ("Pellane" alone)
-  if (/^(pellane|valespire|lowmarket)$/i.test(t)) return true;
+  if (/^(pellane|valespire|lowmarket|ash)$/i.test(t)) return true;
   return false;
 }
 

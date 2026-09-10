@@ -31,7 +31,12 @@ import {
   spineForceEdgeAfterDelay,
   isSpineDelayPad,
 } from './pyoaSpine';
-import { isNameOriginKitCoverChoice, isPlayDemand } from './openingEstablishment';
+import {
+  isHallTalkPlayerLine,
+  isNameOriginKitCoverChoice,
+  isOpeningHallTalkTurn,
+  isPlayDemand,
+} from './openingEstablishment';
 import { isLookAroundAction } from './sandboxXp';
 import { isAtmospherePlaceName } from './questPlay';
 import { filterPadsAgainstOpenVignette } from './vignetteLock';
@@ -847,7 +852,10 @@ export function compileChoices(
     notes.push(`Pad cooldown removed ${cooldownResult.removed.length}`);
   }
 
-  if (state.activeDungeon && isInteriorMap(state.activeDungeon)) {
+  const hallTalk =
+    isOpeningHallTalkTurn(state, playerInput)
+    || isHallTalkPlayerLine(playerInput || lastPlayerLine(state));
+  if (state.activeDungeon && isInteriorMap(state.activeDungeon) && !hallTalk) {
     for (const pad of graphExitPads(state.activeDungeon)) {
       if (filtered.some((f) => f.toLowerCase() === pad.toLowerCase())) continue;
       if (isAtmospherePlaceName(pad.replace(/^.*\s+to\s+/i, ''))) continue;

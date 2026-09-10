@@ -52,6 +52,11 @@ import { hasDurableDeltaByT12, forceFreeT12DurableDelta, recordT12HookReceipt } 
 import { foeVisibleInScene, markPendingSpawnPreface } from './combatAuthority';
 import { isLookAroundAction } from './sandboxXp';
 import { ensureOpeningNpcPinned, formatOpeningPinMandate } from './openingPin';
+import {
+  isHallTalkPlayerLine,
+  playerAskedWhyPulled,
+  playerGivesOrRefusesName,
+} from './openingEstablishment';
 import { resolveHookLock, talkContradictsLockedWhy } from './hookLock';
 import { selectEligibleCrisis, type SocialCrisis } from './socialCrisis';
 // WS-4 Wave D+: Encounter Density Governance
@@ -430,10 +435,17 @@ function shouldCommitBeat(
     if (isLookAroundAction(playerInput) || /\b(scout|get bearings|explore (?:the )?(?:cell|room|ruin))\b/i.test(playerInput)) {
       return false;
     }
-    return talkish || turn >= 6;
+    // Receipt-only / “what’s yours” is not hearing the reason.
+    return playerAskedWhyPulled(playerInput);
   }
   if (contract.id === 'sp-beat-orient') {
-    return turn >= 2 && (state.openingEstablishment?.complete === true || turn >= 4);
+    if (playerGivesOrRefusesName(playerInput) || isHallTalkPlayerLine(playerInput)) return false;
+    return (
+      isLookAroundAction(playerInput)
+      || /\b(get bearings|search|look around|inspect (?:the )?(?:room|cell|hall|surroundings))\b/i.test(
+        playerInput
+      )
+    );
   }
   if (contract.kind === 'encounter') {
     return true;
@@ -445,6 +457,7 @@ function shouldCommitBeat(
     return /\b(check|investigate|search|inspect|look)\b/i.test(lower) || turn >= contract.minTurn + 2;
   }
   if (contract.kind === 'leverage' || contract.kind === 'quest_stage') {
+    if (playerGivesOrRefusesName(playerInput) || isHallTalkPlayerLine(playerInput)) return false;
     return talkish || turn >= contract.minTurn + 2;
   }
   return turn >= contract.minTurn;
@@ -793,11 +806,31 @@ export function runArcDirectorBeforeGm(
   }
 
   let forceDroughtSpawn = false;
-  if (shouldSpawnCombat(working) && !working.activeEncounter) {
+  if (
+    shouldSpawnCombat(working)
+    && !working.activeEncounter
+    && !(contract && contract.kind === 'quest_stage' && shouldCommitBeat(contract, working, playerInput))
+  ) {
     const droughtContract = resolveCombatContract(working, committed);
     if (droughtContract) {
       contract = droughtContract;
       forceDroughtSpawn = true;
+    }
+  }
+
+  // Orient is look-only; if the player asked why they were pulled, take hear-reason instead.
+  if (
+    contract?.id === 'sp-beat-orient'
+    && !shouldCommitBeat(contract, working, playerInput)
+    && playerAskedWhyPulled(playerInput)
+  ) {
+    const skip = new Set(committed);
+    skip.add(contract.id);
+    const next = selectDueBeat(working, skip);
+    if (next && shouldCommitBeat(next, working, playerInput)) {
+      contract = next;
+    } else {
+      contract = null;
     }
   }
 

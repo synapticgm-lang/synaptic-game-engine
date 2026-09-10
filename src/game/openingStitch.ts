@@ -11,8 +11,10 @@ import { isLockablePcName } from './pcNameAuthority';
 import {
   isAloneArrivalOpening,
   isEarthOriginPrompt,
+  openingCastLabel,
   resolveLockedOpeningPlace,
   resolveOpeningHookPick,
+  shortCardWant,
 } from './openingEstablishment';
 
 export { cleanPlaceLabel };
@@ -185,16 +187,6 @@ function inPlacePhrase(place: string): string {
   return /^(?:a|an|the)\s/i.test(place) ? `in ${place}` : `in the ${place}`;
 }
 
-/** One clause from the card — why they pulled you — never the opener paragraph. */
-function shortCardWant(state: GameState): string {
-  const bible = resolveActiveCampaignBible(state);
-  const picked = resolveOpeningHookPick(bible, state.seed);
-  const raw = (picked?.summonIntent ?? '').replace(/\s+/g, ' ').trim();
-  if (!raw) return '';
-  const first = raw.split(/(?<=[.!?])\s+/)[0]?.trim() || raw;
-  return first.length > 140 ? `${first.slice(0, 137).trim()}…` : first;
-}
-
 /**
  * After page 1 — continue locally. No network, no pad list, no opener reprint.
  * Answers the typed line: where / why / name given / what they want.
@@ -207,21 +199,30 @@ export function stitchOpeningContinue(state: GameState, playerInput = ''): strin
   const name = lockedCoverName(state);
   const here = inPlacePhrase(place);
   const want = shortCardWant(state);
+  const who = openingCastLabel(state);
   const asksWhere = /\bwhere am i\b|\bwhere are we\b|\bwhere is this\b/i.test(act);
   const asksWhy =
     /\bwhy\b.*\bname\b|\bwhy should i\b|\bwant (?:that|my name|a name)\b|\bwhat'?s going on\b|\bgive you my name\b/i.test(
       act
     );
-  const asksWant = /\bwhat (?:do you|d'?you) want\b|\bwho are you\b|\bwhat(?:'s| is) your\b/i.test(act);
+  const asksWant = /\bwhat (?:do you|d'?you) want\b/i.test(act);
+  const asksWho =
+    /\bwho (?:is|are) (?:it|that|you)\b|\bwho (?:is it that )?asks\b|\bwhat'?s yours\b|\bwhat(?:'s| is) your(?:s| name)\b/i.test(
+      act
+    );
+  const asksPanel = /\bblue (?:screen|panel)\b|\bwhat(?:'s| is) the (?:blue\s+)?(?:screen|panel)\b/i.test(act);
   const gaveName = /\b(?:my name is|i am|i'm|call me)\b/i.test(act);
   const searches =
     /\bsearch\b|\bintel\b|\banything of use\b|\blook around\b|\bexplore\b/i.test(act);
 
-  if (/\binspect(?:\s+the)?\s+(?:blue\s+)?panel\b|\bcheck(?:\s+the)?\s+(?:blue\s+)?panel\b/i.test(act)) {
+  if (
+    /\binspect(?:\s+the)?\s+(?:blue\s+)?panel\b|\bcheck(?:\s+the)?\s+(?:blue\s+)?panel\b/i.test(act)
+    || (asksPanel && !asksWhere && !asksWho && !asksWant && !asksWhy && !gaveName)
+  ) {
     if (name) {
-      return `The panel holds the name ${name}. It does not explain itself.`;
+      return `The panel holds the name ${name}. It is a System window at eye level — not a person.`;
     }
-    return `The panel stays at eye level ${here}. A blank line waits. It does not say why it wants a name.`;
+    return `The blue panel is yours — a System window at eye level ${here}. It is not a person. A blank line waits.`;
   }
 
   if (searches) {
@@ -234,13 +235,17 @@ export function stitchOpeningContinue(state: GameState, playerInput = ''): strin
   if (gaveName && name) {
     const bits = [`They have the name ${name}.`];
     if (asksWhere) bits.push(`You are ${here}.`);
+    if (asksWho) bits.push(`${who} has not given a name back.`);
+    if (asksPanel) bits.push('The blue panel is a System window at eye level — not a person.');
     if (asksWant || asksWhy) bits.push(want || 'They have not said what they want yet.');
     return bits.join(' ');
   }
 
-  if (asksWhere || asksWhy || asksWant) {
+  if (asksWhere || asksWhy || asksWant || asksWho || asksPanel) {
     const bits: string[] = [];
     if (asksWhere) bits.push(`You are ${here}.`);
+    if (asksWho) bits.push(`${who} is the one asking.`);
+    if (asksPanel) bits.push('The blue panel is yours — a System window at eye level, not a person.');
     if (name && (asksWhy || asksWant)) {
       bits.push(`They already have the name ${name}.`);
       bits.push(want || 'They have not said what they want yet.');
@@ -248,11 +253,10 @@ export function stitchOpeningContinue(state: GameState, playerInput = ''): strin
       bits.push(want || 'The panel wants a name to write. It does not say why.');
       if (!asksWhere) bits.push(`You are ${here}.`);
       if (!name) bits.push('They still want a name before they will say more.');
-    } else if (!asksWhere) {
-      bits.push(`You are ${here}.`);
     }
-    if (name && !asksWhy && !asksWant) bits.push(`They already have the name ${name}.`);
-    else if (!name && asksWhere && !asksWhy && !asksWant) {
+    if (name && asksWhere && !asksWhy && !asksWant && !asksWho) {
+      bits.push(`They already have the name ${name}.`);
+    } else if (!name && asksWhere && !asksWhy && !asksWant && !asksWho) {
       bits.push('They still want a name before they will say more.');
     }
     return bits.filter(Boolean).join(' ');

@@ -4,7 +4,8 @@
 
 import type { CampaignBible } from './campaignBibleTypes';
 import type { GameState } from './types';
-import { isChromePersonToken } from './chromeAuthority';
+import { isChromePersonToken, isNonPersonNameToken } from './chromeAuthority';
+import { canHarvestAsNamedPerson } from './entityRegistry';
 
 const OPENING_PIN_TURN_CAP = 20;
 
@@ -22,7 +23,9 @@ export function extractNamesFromHookText(text: string | undefined): string[] {
     'Salt', 'Camp', 'Waystation', 'Alley', 'Ward', 'Rest', 'Ashline', 'Yard',
     'Place', 'Name', 'Look', 'Kit', 'Wear', 'Where', 'Origin', 'Appearance',
     'Designation', 'Registration', 'Panel', 'Official', 'Speaker', 'Palm',
-    'Eye', 'Level', 'Location',
+    'Eye', 'Level', 'Location', 'Ash', 'Court', 'Adjacent', 'Ritual', 'Hall',
+    'Burnt', 'Iron', 'Mark', 'Scale', 'Crown', 'Pactborn', 'Calamity',
+    'Sevenfold', 'Valespire', 'Pellane', 'Lowmarket', 'Circle', 'System',
   ]);
   while ((m = re.exec(text)) !== null) {
     const n = m[1]!;
@@ -58,8 +61,10 @@ export function resolveOpeningPinnedNames(
   const fromBible = openingNpcFromBible(bible);
   const merged = [...fromHook, ...fromBible];
   const out: string[] = [];
+  const bibleId = state.campaignBibleId ?? bible?.id;
   for (const n of merged) {
-    if (isChromePersonToken(n)) continue;
+    if (isChromePersonToken(n) || isNonPersonNameToken(n)) continue;
+    if (!canHarvestAsNamedPerson(n, bibleId)) continue;
     if (!out.some((x) => x.toLowerCase() === n.toLowerCase())) out.push(n);
     if (out.length >= 2) break;
   }

@@ -491,6 +491,7 @@ export function canHarvestAsNamedPerson(name: string, bibleId?: string | null): 
   if (!t || t.length < 2) return false;
   // 08d — pad-fragment harvest (Saying Your / Your Name)
   if (/^(?:saying(?:\s+your)?|your(?:\s+name)?|yours)$/i.test(t)) return false;
+  if (/^(?:the\s+)?ash(?:\s+court)?(?:\s+priests?)?$/i.test(t)) return false;
   if (isPlannerUiPersonToken(t)) return false;
   if (/^(charter|millstone)$/i.test(t.replace(/^(the|a|an)\s+/i, ''))) return false;
   if (isPolityFactionOrPlaceToken(t) || isRegisteredLocation(t, bibleId)) return false;

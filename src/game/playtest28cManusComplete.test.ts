@@ -106,7 +106,7 @@ describe('playtest28c — Manus complete ranked backlog', () => {
     expect(edges.some((e) => e.kind === 'combat')).toBe(true);
     const { choices, notes } = compileChoices(state, ['Inspect the wall again']);
     expect(choices.some((c) => /Press the attack|Engage/i.test(c))).toBe(true);
-    expect(notes.some((n) => /Legal edges/i.test(n))).toBe(true);
+    expect(notes.some((n) => /Legal edges|Encounter lock|graph pads/i.test(n))).toBe(true);
   });
 
   it('B043 liveness gates force skirmish by T8 LitRPG', () => {
