@@ -183,7 +183,7 @@ export function isSpecificActionWithCompoundTarget(playerInput: string): boolean
   // Pattern 1: "Examine/Inspect/Check/Search X for Y or Z"
   // The "or" is part of a list of what to look for, not two different actions
   if (
-    /\b(examine|inspect|check|search|look|scan|study)\b/.test(t)
+    /\b(examine|inspect|check|search|look|scan|study|explore)\b/.test(t)
     && /\bfor\b/.test(t)
     && /\bor\b/.test(t)
   ) {
@@ -208,7 +208,7 @@ export function isSpecificActionWithCompoundTarget(playerInput: string): boolean
   // Pattern 3: Choice chips are typically complete sentences with action verbs
   // If it starts with a specific action verb and has a clear target, it's not ambiguous
   if (
-    /^\s*(examine|inspect|check|search|look at|press|try|attempt|call out|shout)\b/i.test(playerInput)
+    /^\s*(examine|inspect|check|search|look at|explore|press|try|attempt|call out|shout)\b/i.test(playerInput)
     && playerInput.length > 30  // Choice chips are typically longer, specific descriptions
   ) {
     return true;
@@ -235,6 +235,13 @@ export function isExploreOrLayoutAsk(playerInput: string): boolean {
   if (
     /\b(panel|system panel|blue panel|status)\b/.test(t)
     && /\b(explore|inspect|check|read|look|open|study|info|option|menu)\b/.test(t)
+  ) {
+    return true;
+  }
+  // "Explore the room for signs of where you are or anything of use" — one search, not door/listen.
+  if (
+    /\b(explore|search|look around)\b/.test(t)
+    && /\b(room|cell|here|around|signs?|anything of use|where you are)\b/.test(t)
   ) {
     return true;
   }

@@ -8,9 +8,9 @@ import { effectiveWriterTier, hasUnlimitedTextCapacity, isFounderPlayAccount } f
 import { equippedSetLabel, equippedSetName } from '../game/uiTheme';
 
 /** Visible after a hard refresh -- if this is missing, Vercel is still serving the 16 Aug bundle. */
-export const HUD_BUILD_STAMP = '2026-09-10g';
+export const HUD_BUILD_STAMP = '2026-09-10h';
 const HUD_BUILD_TITLE =
-  'Batch 10e - show the LitRPG System window when the blue panel is in play';
+  'Batch 10h - watchtower start: panel inspect, explore-or, locked name, System font';
 
 interface Props {
   state: GameState;

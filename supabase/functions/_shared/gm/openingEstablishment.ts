@@ -15,7 +15,14 @@ export function hallTalkAsksWant(raw: string): boolean {
 }
 
 export function hallTalkAsksPanel(raw: string): boolean {
-  return /\bblue (?:screen|panel)\b/i.test(raw ?? '');
+  const t = raw ?? '';
+  if (!t.trim()) return false;
+  return (
+    /\bblue\s+(?:screen|panel|window)\b/i.test(t)
+    || /\bsystem\s+(?:panel|screen|window|interface|display)\b/i.test(t)
+    || /\b(?:inspect|examine|read|check|look at|study)\b.{0,48}\b(?:panel|screen|interface|system)\b/i.test(t)
+    || /\bwhat(?:'s| is) (?:the |this )?(?:blue )?(?:screen|panel)\b/i.test(t)
+  );
 }
 
 export function isHallTalkPlayerLine(raw: string): boolean {

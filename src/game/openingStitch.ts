@@ -160,11 +160,25 @@ function bodyAlreadyAsksCover(body: string, cover: string): boolean {
   return slice.length > 8 && hay.includes(slice);
 }
 
+/** Authored cards still end on a name ask — drop that tail when Usual Self already locked one. */
+const LOCKED_NAME_ASK_TAIL =
+  /(?:\s+The panel waits on a name\.)?(?:\s+What (?:name do you (?:give(?: them| it)?|enter|lock)|name does it take|do you enter)[^?]{0,48}\?)\s*$/i;
+
+function dropCoverNameAsk(body: string): string {
+  return body
+    .replace(LOCKED_NAME_ASK_TAIL, '')
+    .replace(/\s+The panel waits on a name\.\s*$/i, '')
+    .trim();
+}
+
 /**
  * Instant first page — one authored paragraph + optional cover ask. No collage.
  */
 export function stitchOpeningScene(state: GameState): string {
   const body = baseSceneFromCard(state).trim();
+  if (lockedCoverName(state)) {
+    return dropCoverNameAsk(body);
+  }
   const cover = state.openingEstablishment?.pending[0]?.question?.trim();
   if (!cover || bodyAlreadyAsksCover(body, cover)) return body;
   return `${body}\n\n${cover}`;

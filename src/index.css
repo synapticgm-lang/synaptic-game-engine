@@ -1601,6 +1601,13 @@ html[data-sgm-material='1'] .sgm-home-title-panel {
 .sgm-play-story-panel {
   background-color: rgb(2 6 23 / 0.9);
 }
+/* Ledger plate — never inherit Cinzel Decorative (Ashrise “Jaxax” / “lockeded”). */
+[data-sgm-system-window],
+[data-sgm-system-window] .sgm-system-window-type {
+  font-family: ui-monospace, Consolas, 'Liberation Mono', Menlo, monospace !important;
+  font-variant-ligatures: none;
+  letter-spacing: 0.02em;
+}
 html[data-sgm-material='1'] .sgm-play-story-panel {
   background-color: color-mix(in srgb, var(--sgm-bg, #020617) 90%, rgb(2 6 23));
 }

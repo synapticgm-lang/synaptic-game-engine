@@ -5094,17 +5094,19 @@ In <system-log>, only emit LitRPG/RPG progression lines when something actually 
       },
       bible
     );
-    const newState = withUpdatedHookArc(
-      ensureCampaignContract(
-        {
-          ...pinnedState,
-          quests: enrichQuests(pinnedState.quests ?? []),
-          recentBeatFingerprints: [],
-          stateTxLog: [],
-        },
-        bible
+    const newState = mergePreferredProfileIntoOpening(
+      withUpdatedHookArc(
+        ensureCampaignContract(
+          {
+            ...pinnedState,
+            quests: enrichQuests(pinnedState.quests ?? []),
+            recentBeatFingerprints: [],
+            stateTxLog: [],
+          },
+          bible
+        )
       )
-    );
+    ).state;
     setState(newState);
     stateRef.current = newState;
     bindSessionImageCache(newState.saveId);

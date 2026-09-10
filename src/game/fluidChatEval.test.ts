@@ -152,6 +152,12 @@ describe('repairEngine', () => {
       )
     ).toBeNull();
     expect(detectRepairSituation('check the panel for menus or buttons', base)).toBeNull();
+    expect(
+      detectRepairSituation(
+        'Explore the room for any signs of where you are or anything of use',
+        base
+      )
+    ).toBeNull();
   });
 
   it('does not treat examine actions with compound targets as ambiguous_action', () => {

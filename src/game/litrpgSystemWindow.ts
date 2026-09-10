@@ -2,7 +2,7 @@
  * Diegetic LitRPG System window — ledger chrome when the blue panel is in play.
  * Code-owned. Not a GM prompt. Not STATUS "Turn results".
  */
-import { characterNameIsGeneric } from './openingEstablishment';
+import { characterNameIsGeneric, hallTalkAsksPanel } from './openingEstablishment';
 import { UNNAMED_ADVENTURER, sanitizePcName } from './pcNameAuthority';
 import type { GameState, LogEntry } from './types';
 
@@ -21,14 +21,7 @@ export function storyMentionsSystemPanel(text: string): boolean {
 }
 
 export function playerAskedAboutSystemPanel(input: string): boolean {
-  const t = (input ?? '').trim();
-  if (!t) return false;
-  return (
-    /\bblue\s+(?:screen|panel|window)\b/i.test(t)
-    || /\bsystem\s+(?:panel|screen|window|interface|display)\b/i.test(t)
-    || /\b(?:inspect|examine|read|check|look at|study)\b.{0,48}\b(?:panel|screen|interface|system)\b/i.test(t)
-    || /\bwhat(?:'s| is) (?:the |this )?(?:blue )?(?:screen|panel)\b/i.test(t)
-  );
+  return hallTalkAsksPanel(input);
 }
 
 export function playerLockedNameThisLine(input: string): boolean {

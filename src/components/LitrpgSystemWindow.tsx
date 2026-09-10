@@ -14,13 +14,13 @@ export function LitrpgSystemWindowPanel({ window }: { window?: LitrpgSystemWindo
       <div className="absolute right-1 top-1 h-2 w-2 border-r-2 border-t-2 border-sky-300" />
       <div className="absolute bottom-1 left-1 h-2 w-2 border-b-2 border-l-2 border-sky-300" />
       <div className="absolute bottom-1 right-1 h-2 w-2 border-b-2 border-r-2 border-sky-300" />
-      <div className="relative mb-2 flex items-center gap-1.5 font-mono text-[10px] font-bold uppercase tracking-[0.28em] text-sky-300">
+      <div className="sgm-system-window-type relative mb-2 flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-[0.18em] text-sky-300">
         <Terminal size={11} />
         {window.heading}
       </div>
       <div className="relative space-y-0.5">
         {window.lines.map((line, i) => (
-          <div key={`${i}-${line}`} className="font-mono text-[12px] leading-relaxed text-sky-50">
+          <div key={`${i}-${line}`} className="sgm-system-window-type text-[12px] leading-relaxed text-sky-50">
             {line}
           </div>
         ))}
