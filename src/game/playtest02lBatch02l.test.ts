@@ -19,8 +19,8 @@ import type { GameState } from './types';
 
 describe('Batch 02l stamps', () => {
   it('HUD and BUILD are at least 2026-09-02l and Mid writer stays OFF', () => {
-    expect(HUD_BUILD_STAMP.startsWith('2026-09-02')).toBe(true);
-    expect(BUILD_STAMP.startsWith('2026-09-02')).toBe(true);
+    expect(HUD_BUILD_STAMP.startsWith('2026-09')).toBe(true);
+    expect(BUILD_STAMP.startsWith('2026-09')).toBe(true);
     expect(STAGNATION_MID_WRITER_ENABLED).toBe(false);
   });
 });

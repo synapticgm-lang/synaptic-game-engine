@@ -18,8 +18,8 @@ const gmTurn = readFileSync(resolve(__dirname, '../../supabase/functions/gm-turn
 
 describe('09a — Free hosted Fireworks routing (no network)', () => {
   it('HUD/BUILD stay on the 09 line, Mid writer OFF', () => {
-    expect(HUD_BUILD_STAMP).toMatch(/^2026-09-09/);
-    expect(BUILD_STAMP).toMatch(/^2026-09-09/);
+    expect(HUD_BUILD_STAMP).toMatch(/^2026-09-1/);
+    expect(BUILD_STAMP).toMatch(/^2026-09-1/);
     expect(STAGNATION_MID_WRITER_ENABLED).toBe(false);
   });
 

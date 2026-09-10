@@ -455,6 +455,10 @@ function isRegistryProperName(name: string, bibleId?: string | null): boolean {
 const PLACE_SLOT_LAST =
   /^(wall|garrison|road|hall|quay|market|alley|circle|camp|scale|cup|close|gate|yard|plaza|harbor|keep|ferry|landing|street|bridge)$/i;
 
+/** Last word of a journal / arc title — never a surname (Circle's Price, Greyhollow Quest). */
+const QUEST_SLOT_LAST =
+  /^(quest|price|objective|job|contract|mission|bounty|task|errand)$/i;
+
 export function isHubContactProperName(name: string): boolean {
   const t = (name ?? '').trim();
   if (!t || t.length < 3) return false;
@@ -465,6 +469,7 @@ export function isHubContactProperName(name: string): boolean {
   if (PLACE_SLOT_LAST.test(lastWord) && !/^(?:Fence|Sergeant|Guard|Clerk|Registrar|Handler|Skirmisher)$/i.test(lastWord)) {
     return false;
   }
+  if (QUEST_SLOT_LAST.test(lastWord)) return false;
   if (/^(?:Brother|Sister|Father|Captain|High Chanter|Envoy)\s+[A-Z]/i.test(t)) return true;
   if (
     /^[A-Z][\w'-]+\s+(?:Fence|Sergeant|Guard|Clerk|Registrar|Chirurgeon|Handler|Skirmisher|Thug|Priest|Contact|Hand|Owner|Vane|Quill|Tam|Ash|Holt)$/i.test(
@@ -484,6 +489,8 @@ export function isHubContactProperName(name: string): boolean {
 export function canHarvestAsNamedPerson(name: string, bibleId?: string | null): boolean {
   const t = (name ?? '').trim();
   if (!t || t.length < 2) return false;
+  // 08d — pad-fragment harvest (Saying Your / Your Name)
+  if (/^(?:saying(?:\s+your)?|your(?:\s+name)?|yours)$/i.test(t)) return false;
   if (isPlannerUiPersonToken(t)) return false;
   if (/^(charter|millstone)$/i.test(t.replace(/^(the|a|an)\s+/i, ''))) return false;
   if (isPolityFactionOrPlaceToken(t) || isRegisteredLocation(t, bibleId)) return false;

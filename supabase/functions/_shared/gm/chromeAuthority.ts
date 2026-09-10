@@ -167,6 +167,8 @@ export function isChoicePadPersonToken(token: string): boolean {
   const t = normalizeChromeToken(token);
   if (!t) return false;
   if (isUnresolvedDeixisToken(t)) return true;
+  // 08d — pad-fragment harvest ("Saying Your", "Your Name")
+  if (/^(?:saying(?:\s+your)?|your(?:\s+name)?|yours)$/i.test(t)) return true;
   if (t.includes(' ')) return false;
   return CHOICE_PAD_PERSON_EXACT.test(t);
 }
@@ -342,8 +344,12 @@ export function rewriteChromeSpeakerTags(text: string, presentPeople: string[] =
     new RegExp(`\\b${CHROME_NOUN}\\s+has\\s+need\\b`, 'gi'),
     'there is a need'
   );
+  // Cover ask ("the panel wants a name") is UI copy, not a speaker. Keep it.
   next = next.replace(
-    new RegExp(`\\b${CHROME_NOUN}\\s+(?:wants|needs)\\s+`, 'gi'),
+    new RegExp(
+      `\\b${CHROME_NOUN}\\s+(?:wants|needs)\\s+(?!a\\s+name|your\\s+name|a\\s+designation)`,
+      'gi'
+    ),
     'the work requires '
   );
 

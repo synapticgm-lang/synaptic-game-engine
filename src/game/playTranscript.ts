@@ -67,10 +67,9 @@ export function resolveOfferedChoices(state: GameState): string[] {
     const lastPlayer = lastPlayerActionFromLog(state);
     const skipCoverChips =
       isLookAroundAction(lastPlayer) && !playerEngagesOpeningCover(lastPlayer);
-    if (!skipCoverChips) {
-      const cover = establishmentChoices(state.openingEstablishment?.pending ?? [], state).slice(0, 4);
-      if (cover.length) return cover;
-    }
+    if (skipCoverChips) return [];
+    // Cover slot only — never fall through to the play compiler (Status / Wait / Inspect).
+    return establishmentChoices(state.openingEstablishment?.pending ?? [], state).slice(0, 4);
   }
   const storyProse = lastGmStoryProse(state);
   const fromState = (state.choices ?? [])

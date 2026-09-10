@@ -69,8 +69,8 @@ describe('08c — Free MUD presentation', () => {
     expect(shouldUseFreeMudPresentation('mid')).toBe(false);
     expect(STAGNATION_MID_WRITER_ENABLED).toBe(false);
     // Stamp moved to 08d Silent Engine — mud path still on.
-    expect(HUD_BUILD_STAMP).toMatch(/^2026-09-0/);
-    expect(BUILD_STAMP).toMatch(/^2026-09-0/);
+    expect(HUD_BUILD_STAMP).toMatch(/^2026-09-/);
+    expect(BUILD_STAMP).toMatch(/^2026-09-/);
   });
 
   it('builds factual receipt from packet (no AI)', () => {

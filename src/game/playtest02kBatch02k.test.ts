@@ -23,8 +23,8 @@ const KILL = {
 
 describe('Batch 02k stamps', () => {
   it('HUD and BUILD stay at or after 2026-09-02k and Mid writer stays OFF', () => {
-    expect(HUD_BUILD_STAMP.startsWith('2026-09-02')).toBe(true);
-    expect(BUILD_STAMP.startsWith('2026-09-02')).toBe(true);
+    expect(HUD_BUILD_STAMP.startsWith('2026-09')).toBe(true);
+    expect(BUILD_STAMP.startsWith('2026-09')).toBe(true);
     expect(STAGNATION_MID_WRITER_ENABLED).toBe(false);
   });
 });

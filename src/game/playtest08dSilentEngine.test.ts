@@ -68,8 +68,8 @@ describe('08d — Silent Engine', () => {
     expect(shouldSkipMicroFlavor()).toBe(true);
     expect(shouldUseFreeMudPresentation('free')).toBe(true);
     expect(STAGNATION_MID_WRITER_ENABLED).toBe(false);
-    expect(HUD_BUILD_STAMP).toMatch(/^2026-09-09/);
-    expect(BUILD_STAMP).toMatch(/^2026-09-09/);
+    expect(HUD_BUILD_STAMP).toMatch(/^2026-09-1/);
+    expect(BUILD_STAMP).toMatch(/^2026-09-1/);
   });
 
   it('composeFreeMudTurn never emits flavor under Silent Engine', () => {
@@ -79,7 +79,8 @@ describe('08d — Silent Engine', () => {
       arcReceipts: ['XP Gained: 5'],
     });
     expect(turn.flavorQuote).toBe('');
-    expect(turn.content).toBe('');
+    expect(turn.content.trim().length).toBeGreaterThan(20);
+    expect(turn.content).not.toMatch(/^HERE:/m);
     expect(turn.flavorSource).toBe('none');
     expect(turn.receiptLines.some((l) => /^HERE:/i.test(l))).toBe(true);
   });

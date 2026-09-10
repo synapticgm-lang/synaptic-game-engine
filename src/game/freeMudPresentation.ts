@@ -4,7 +4,7 @@
  * Free is NOT a 50–100 word Retrospective Narrator novelist on this path.
  */
 
-import type { CompletedEventPacket } from './completedEventPacket';
+import { assemblePacketStitch, type CompletedEventPacket } from './completedEventPacket';
 import type { HostedAiTier } from './testLab';
 import { effectiveWriterTier } from './testLab';
 
@@ -217,7 +217,7 @@ export function composeFreeMudTurn(
   const silent = opts.silent === true || shouldSkipMicroFlavor();
   if (silent) {
     return {
-      content: '',
+      content: assemblePacketStitch(packet),
       flavorQuote: '',
       receiptLines,
       presentation: 'mud-receipt',
@@ -235,8 +235,9 @@ export function composeFreeMudTurn(
   };
 }
 
-/** Display helper — receipt body for TTS / dumps when quote empty. */
+/** Display helper — authored stitch, then flavor, then receipt dump. */
 export function mudDisplayBody(turn: FreeMudTurn): string {
+  if (turn.content.trim()) return turn.content.trim();
   if (turn.flavorQuote.trim()) return turn.flavorQuote.trim();
   return turn.receiptLines.join('\n');
 }

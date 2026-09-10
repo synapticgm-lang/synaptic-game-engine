@@ -71,18 +71,6 @@ const CONTINUE_BRIDGES = [
   'Nothing else has entered the room.',
 ] as const;
 
-const ALONE_ROOM_GROUND = [
-  'Broken stone under your hands. A dark doorway opens into the next chamber. The blue panel waits at eye level.',
-  'Rubble piles against one wall. A doorway deeper in along the corridor. Dust motes in the panel-light.',
-  'A half-collapsed arch over a corridor threshold, a scatter of debris, and that private blue glow — nothing else moves.',
-] as const;
-
-const CROWD_ROOM_GROUND = [
-  'The people who were dealing with you have not left. They wait on your next move.',
-  'Eyes stay on you. The offer — or the demand — has not left the room.',
-  'Whatever they wanted from you is still on the table.',
-] as const;
-
 const DEFAULT_LOOK = 'everyday street clothes';
 
 export function defaultStarterLook(): string {
@@ -199,6 +187,20 @@ function inPlacePhrase(place: string): string {
   return /^(?:a|an|the)\s/i.test(place) ? `in ${place}` : `in the ${place}`;
 }
 
+/** Last authored page-1 sentence — this card, not the shared indoor-summon banks. */
+function cardContinueGround(state: GameState): string {
+  const page1 = baseSceneFromCard(state);
+  const sentences = page1
+    .split(/(?<=[.!?])\s+/)
+    .map((s) => s.replace(/\s+/g, ' ').trim())
+    .filter(
+      (s) =>
+        s.length > 15
+        && !/what name|what do they call|what do you enter|what do you call yourself|designation/i.test(s)
+    );
+  return sentences[sentences.length - 1] || sentences[0] || 'The scene has not moved on.';
+}
+
 /**
  * After page 1 — continue locally. No network, no pad list in prose.
  * Answers why-name / search / inspect from the last player line.
@@ -208,9 +210,7 @@ export function stitchOpeningContinue(state: GameState, playerInput = ''): strin
   const a = state.openingEstablishment?.answers ?? {};
   const place = cleanPlaceLabel(resolveLockedOpeningPlace(state, a) || a.where || state.currentLocation || 'here');
   const alone = continueIsAlone(state, place);
-  const ground = alone
-    ? pickBank(ALONE_ROOM_GROUND, seed, 'continue-ground')
-    : pickBank(CROWD_ROOM_GROUND, seed, 'continue-ground');
+  const ground = cardContinueGround(state);
   const act = (playerInput ?? '').replace(/\s+/g, ' ').trim();
   const name = lockedCoverName(state);
   const here = inPlacePhrase(place);

@@ -5,18 +5,18 @@
  * Classifier-only validation — no Continuity-Warden LLM, no novel-token deny-lists.
  */
 
-import type { GameState, LogEntry } from './types';
-import { cleanPlaceLabel, playerFacingLocation } from './locationName';
-import { realPresentPeople } from './chromeAuthority';
-import { selectRecentLogForContext } from './sceneContextTail';
-import { shortRoomLabel } from './mapEngine';
+import type { GameState, LogEntry } from './types.ts';
+import { cleanPlaceLabel, playerFacingLocation } from './locationName.ts';
+import { realPresentPeople } from './chromeAuthority.ts';
+import { selectRecentLogForContext } from './sceneContextTail.ts';
+import { shortRoomLabel } from './mapEngine.ts';
 import {
   isDeadFoeReopenedAsLiving,
   matchesLastKillName,
   type LastKill,
-} from './combatAuthority';
-import { canHarvestAsNamedPerson } from './entityRegistry';
-import { isNeverCastTitle } from './neverCast';
+} from './combatAuthority.ts';
+import { canHarvestAsNamedPerson } from './entityRegistry.ts';
+import { isNeverCastTitle } from './neverCast.ts';
 
 export type EventOutcome =
   | 'killed'

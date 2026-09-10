@@ -625,7 +625,7 @@ export function buildNewGameState(opts: {
   return { state, bible, personalityId: voices.personalityId };
 }
 
-function stampOpening(state: GameState): GameState {
+export function stampOpening(state: GameState): GameState {
   const text = stitchOpeningScene(state);
   const seeded = seedOpeningSceneFacts({ ...state, turn: 1 });
   const facts = applyCommittedNarrative({ ...state, sceneFacts: seeded, turn: 1 }, text, 1);
@@ -849,15 +849,26 @@ export async function headlessFateTurn(
   state: GameState,
   settings: Settings,
   rng: Rng,
-  meta: { bibleId: string; personalityId: string; seed: number; mode: FateMode; aiAgentMode: AiAgentMode; dryRun: boolean }
+  meta: {
+    bibleId: string;
+    personalityId: string;
+    seed: number;
+    mode: FateMode;
+    aiAgentMode: AiAgentMode;
+    dryRun: boolean;
+    /** Typed human line (live-drive opening script). Skips chip pick. */
+    playerInputOverride?: string;
+  }
 ): Promise<{ state: GameState; telemetry: TurnTelemetry }> {
   const started = Date.now();
   const startedAt = new Date(started).toISOString();
   const offered = resolveOfferedChoices(state);
   const fatePick =
-    meta.mode === 'first-pad'
-      ? offered[0] ?? 'Look around'
-      : pickGoalOrientedChoice(offered, state, meta.aiAgentMode, rng);
+    meta.playerInputOverride?.trim()
+      ? meta.playerInputOverride.trim()
+      : meta.mode === 'first-pad'
+        ? offered[0] ?? 'Look around'
+        : pickGoalOrientedChoice(offered, state, meta.aiAgentMode, rng);
 
   let playerInput = fatePick;
   let repairNote: string | undefined;

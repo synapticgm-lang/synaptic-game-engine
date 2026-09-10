@@ -19,8 +19,8 @@ import { compileChoices } from './choiceCompiler';
 describe('playtest02a — RPG T50 residual fixes', () => {
   it('stamps are 2026-09-02a and Mid writer stays OFF', () => {
     expect(STAGNATION_MID_WRITER_ENABLED).toBe(false);
-    expect(BUILD_STAMP.startsWith('2026-09-02')).toBe(true);
-    expect(HUD_BUILD_STAMP.startsWith('2026-09-02')).toBe(true);
+    expect(BUILD_STAMP.startsWith('2026-09')).toBe(true);
+    expect(HUD_BUILD_STAMP.startsWith('2026-09')).toBe(true);
   });
 
   describe('Fix 1: Tavern mad-lib scrubbing', () => {

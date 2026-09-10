@@ -292,6 +292,11 @@ export function establishmentChoices(
   const current = pending[0];
   if (!current) return [];
 
+  // Name cover is the current slot — Give / Refuse. Not play pads, not kit banks.
+  if (current.kind === 'name' && !openingFastSetupChipsEnabled(settings)) {
+    return ['Give your name', 'Refuse to give a name'];
+  }
+
   // Product law: natural free-text opening by default — no phone/purse/backpack chip rows.
   if (!openingFastSetupChipsEnabled(settings)) return [];
 

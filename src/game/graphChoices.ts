@@ -222,6 +222,10 @@ export function historyFromRecentChoices(state: GameState): ChoiceHistoryEntry[]
 export function compileGraphChoiceLabels(state: GameState): string[] {
   const graph = applySemanticCooldown(enumerateLegalEdges(state), historyFromRecentChoices(state));
   const labels = edgesToChoiceLabels(graph);
+  // Live fight — combat edges only. Do not merge inspect / quest / talk from the beat registry.
+  if (state.activeEncounter) {
+    return labels.slice(0, 6);
+  }
   const beatLabels = beatEdgesToLabels(enumerateBeatEdges(state));
   const lastKill = state.sceneFacts?.lastKill;
   const seen = new Set(labels.map((l) => l.toLowerCase()));
