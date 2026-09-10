@@ -121,7 +121,7 @@ describe('playtest10b — cover answers the line', () => {
       ],
     });
     const pads = coverContinuePads(named);
-    expect(pads).toEqual(['Ask what they want']);
-    expect(resolveOfferedChoices(named)).toEqual(['Ask what they want']);
+    expect(pads).toEqual(['Who are you', 'Inspect the panel']);
+    expect(resolveOfferedChoices(named)).toEqual(['Who are you', 'Inspect the panel']);
   });
 });

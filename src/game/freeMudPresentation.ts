@@ -46,6 +46,41 @@ export function shouldSkipMicroFlavor(): boolean {
   return SILENT_ENGINE === true;
 }
 
+/**
+ * Look / wait / combat / travel stay Silent receipts.
+ * Talk and questions must hit callGm — Silent talk is the one-line "game over" lock.
+ */
+export function isSilentReceiptAction(raw: string): boolean {
+  const t = (raw ?? '').replace(/\s+/g, ' ').trim();
+  if (!t) return false;
+  if (
+    /\b(ask|talk|speak|tell|say |who are you|where am|what'?s going on|what is going on|what do (?:you|they) want|what they want|why should i|my name is|call me)\b/i.test(
+      t
+    )
+  ) {
+    return false;
+  }
+  if (/\b(attack|fight|strike|engage|flee|retreat|loot|press the attack)\b/i.test(t)) return true;
+  if (/\b(wait|rest|stay|hold)\b/i.test(t)) return true;
+  if (/\b(look around|inspect|examine|search|scout)\b/i.test(t)) return true;
+  if (/\b(travel|go to|head (?:to|toward)|leave the scene|walk away)\b/i.test(t)) return true;
+  return false;
+}
+
+/** Free Silent mud only for receipt verbs after covers — not conversation. */
+export function shouldUseSilentMudTurn(opts: {
+  subscriptionTier?: string;
+  openingComplete?: boolean;
+  freeOpeningTurn?: boolean;
+  playerInput: string;
+}): boolean {
+  if (!SILENT_ENGINE) return false;
+  if (opts.freeOpeningTurn) return false;
+  if (opts.openingComplete !== true) return false;
+  if (!shouldUseFreeMudPresentation(opts.subscriptionTier)) return false;
+  return isSilentReceiptAction(opts.playerInput);
+}
+
 /** Factual receipt from sealed packet + ArcDirector STATUS lines — never AI. */
 export function buildFactualReceipt(
   packet: CompletedEventPacket,

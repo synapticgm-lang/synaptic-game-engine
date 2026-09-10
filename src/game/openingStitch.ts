@@ -9,12 +9,16 @@ import { resolveActiveCampaignBible } from './campaignSeed';
 import { cleanPlaceLabel } from './locationName';
 import { isLockablePcName } from './pcNameAuthority';
 import {
+  hallTalkAsksPanel,
+  hallTalkAsksWant,
+  hallTalkAsksWhere,
+  hallTalkAsksWho,
   isAloneArrivalOpening,
   isEarthOriginPrompt,
-  openingCastLabel,
+  openingWantLine,
+  openingWhoAskLine,
   resolveLockedOpeningPlace,
   resolveOpeningHookPick,
-  shortCardWant,
 } from './openingEstablishment';
 
 export { cleanPlaceLabel };
@@ -198,19 +202,13 @@ export function stitchOpeningContinue(state: GameState, playerInput = ''): strin
   const act = (playerInput ?? '').replace(/\s+/g, ' ').trim();
   const name = lockedCoverName(state);
   const here = inPlacePhrase(place);
-  const want = shortCardWant(state);
-  const who = openingCastLabel(state);
-  const asksWhere = /\bwhere am i\b|\bwhere are we\b|\bwhere is this\b/i.test(act);
-  const asksWhy =
-    /\bwhy\b.*\bname\b|\bwhy should i\b|\bwant (?:that|my name|a name)\b|\bwhat'?s going on\b|\bgive you my name\b/i.test(
-      act
-    );
-  const asksWant = /\bwhat (?:do you|d'?you) want\b/i.test(act);
-  const asksWho =
-    /\bwho (?:is|are) (?:it|that|you)\b|\bwho (?:is it that )?asks\b|\bwhat'?s yours\b|\bwhat(?:'s| is) your(?:s| name)\b/i.test(
-      act
-    );
-  const asksPanel = /\bblue (?:screen|panel)\b|\bwhat(?:'s| is) the (?:blue\s+)?(?:screen|panel)\b/i.test(act);
+  const want = openingWantLine(state);
+  const whoLine = openingWhoAskLine(state);
+  const asksWhere = hallTalkAsksWhere(act);
+  const asksWhy = hallTalkAsksWant(act);
+  const asksWant = hallTalkAsksWant(act);
+  const asksWho = hallTalkAsksWho(act);
+  const asksPanel = hallTalkAsksPanel(act);
   const gaveName = /\b(?:my name is|i am|i'm|call me)\b/i.test(act);
   const searches =
     /\bsearch\b|\bintel\b|\banything of use\b|\blook around\b|\bexplore\b/i.test(act);
@@ -235,7 +233,7 @@ export function stitchOpeningContinue(state: GameState, playerInput = ''): strin
   if (gaveName && name) {
     const bits = [`They have the name ${name}.`];
     if (asksWhere) bits.push(`You are ${here}.`);
-    if (asksWho) bits.push(`${who} has not given a name back.`);
+    if (asksWho) bits.push(whoLine);
     if (asksPanel) bits.push('The blue panel is a System window at eye level — not a person.');
     if (asksWant || asksWhy) bits.push(want || 'They have not said what they want yet.');
     return bits.join(' ');
@@ -244,7 +242,7 @@ export function stitchOpeningContinue(state: GameState, playerInput = ''): strin
   if (asksWhere || asksWhy || asksWant || asksWho || asksPanel) {
     const bits: string[] = [];
     if (asksWhere) bits.push(`You are ${here}.`);
-    if (asksWho) bits.push(`${who} is the one asking.`);
+    if (asksWho) bits.push(whoLine);
     if (asksPanel) bits.push('The blue panel is yours — a System window at eye level, not a person.');
     if (name && (asksWhy || asksWant)) {
       bits.push(`They already have the name ${name}.`);

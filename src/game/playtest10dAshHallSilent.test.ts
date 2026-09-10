@@ -95,8 +95,8 @@ describe('playtest10d — ash hall Silent break', () => {
     expect(STAGNATION_MID_WRITER_ENABLED).toBe(false);
   });
 
-  it('useGame keeps hall talk on local stitch after covers', () => {
-    expect(useGame).toContain('isOpeningHallTalkTurn');
+  it('useGame stitches covers only — not hall talk after complete', () => {
+    expect(useGame).toContain('shouldStitchOpeningContinue');
     expect(useGame).toContain('stitchOpeningContinue(openingState, contentSanitized)');
     expect(useGame).not.toMatch(/await callOpeningGm\(/);
   });

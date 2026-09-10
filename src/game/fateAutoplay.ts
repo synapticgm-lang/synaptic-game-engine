@@ -134,7 +134,7 @@ import {
   formatMicroFlavorPrompt,
   mudDisplayBody,
   shouldSkipMicroFlavor,
-  shouldUseFreeMudPresentation,
+  shouldUseSilentMudTurn,
   type FreeMudTurn,
 } from './freeMudPresentation';
 import {
@@ -934,9 +934,11 @@ export async function headlessFateTurn(
   const preparedEvent = prepareRetrospectiveWriterInput(arcState, playerInput, { xp: arcXp });
   arcState = preparedEvent.state;
   const eventWriterFacing = preparedEvent.writerFacing;
-  const useMud =
-    shouldUseFreeMudPresentation(settings.subscriptionTier)
-    && arcState.openingEstablishment?.complete === true;
+  const useMud = shouldUseSilentMudTurn({
+    subscriptionTier: settings.subscriptionTier,
+    openingComplete: arcState.openingEstablishment?.complete === true,
+    playerInput,
+  });
   let mudTurn: FreeMudTurn | null = null;
 
   if (meta.dryRun) {

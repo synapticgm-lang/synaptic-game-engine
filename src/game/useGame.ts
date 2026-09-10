@@ -110,7 +110,7 @@ import {
   sanitizeOpeningNarration,
   isOpeningEstablishmentPending,
   isOpeningCoverTurn,
-  isOpeningHallTalkTurn,
+  shouldStitchOpeningContinue,
   isOpeningSetupChipLabel,
   pendingRequiredCovers,
   resolveOpeningMode,
@@ -336,7 +336,7 @@ import {
   formatMicroFlavorPrompt,
   mudDisplayBody,
   shouldSkipMicroFlavor,
-  shouldUseFreeMudPresentation,
+  shouldUseSilentMudTurn,
   type FreeMudTurn,
 } from './freeMudPresentation';
 import {
@@ -2229,8 +2229,8 @@ export function useGame() {
         isOpeningCoverTurn(current)
         || isOpeningCoverTurn(liveCurrent)
         || isOpeningEstablishmentPending(current)
-        || isOpeningHallTalkTurn(current, contentSanitized)
-        || isOpeningHallTalkTurn(liveCurrent, contentSanitized)
+        || shouldStitchOpeningContinue(current, contentSanitized)
+        || shouldStitchOpeningContinue(liveCurrent, contentSanitized)
         || (
           !!liveCurrent.pendingGeneratedOpening
           && liveCurrent.openingEstablishment?.complete !== true
@@ -2695,10 +2695,12 @@ export function useGame() {
       liveCurrent = preparedEvent.state;
       stateRef.current = liveCurrent;
       const eventWriterFacing = preparedEvent.writerFacing;
-      const useMud =
-        shouldUseFreeMudPresentation(settingsRef.current.subscriptionTier)
-        && !freeOpeningTurn
-        && liveCurrent.openingEstablishment?.complete === true;
+      const useMud = shouldUseSilentMudTurn({
+        subscriptionTier: settingsRef.current.subscriptionTier,
+        openingComplete: liveCurrent.openingEstablishment?.complete === true,
+        freeOpeningTurn,
+        playerInput: sanitizedInput,
+      });
       let mudTurnLive: FreeMudTurn | null = null;
 
       const leaveOrTravelPad =

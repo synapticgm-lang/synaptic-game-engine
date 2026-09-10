@@ -980,15 +980,45 @@ export function lastPlayerLine(state: { log?: Array<{ role?: string; content?: s
   return '';
 }
 
+export function hallTalkAsksWhere(raw: string): boolean {
+  return /\bwhere am(?: i)?\b|\bwhere are we\b|\bwhere is this\b/i.test(raw ?? '');
+}
+
+export function hallTalkAsksWho(raw: string): boolean {
+  return (
+    /\bwho (?:is|are) (?:it|that|you)\b|\bwho (?:is it that )?asks\b|\bwhat'?s yours\b|\bwhat(?:'s| is) your(?:s| name)\b/i.test(
+      raw ?? ''
+    )
+  );
+}
+
+export function hallTalkAsksWant(raw: string): boolean {
+  const t = raw ?? '';
+  // Mid-play "Ask Wren Holt what they want" is not the opening pad.
+  if (/\bask\b.+\bwhat they want\b/i.test(t) && !/\bask what they want\b/i.test(t)) {
+    return false;
+  }
+  return (
+    /\bwhat (?:do you|do they|d'?you) want\b|\bask what they want\b|\bwhat they want\b|\bwhat'?s going on\b|\bwhy should i\b|\bwhy\b.*\bname\b/i.test(
+      t
+    )
+  );
+}
+
+export function hallTalkAsksPanel(raw: string): boolean {
+  return /\bblue (?:screen|panel)\b|\bwhat(?:'s| is) the (?:blue\s+)?(?:screen|panel)\b/i.test(raw ?? '');
+}
+
 /** Typed line that must stay on the local cover stitch, not the play writer. */
 export function isCoverShapedPlayerLine(raw: string): boolean {
   const p = (raw ?? '').replace(/\s+/g, ' ').trim();
   if (!p) return false;
   if (playerGivesOrRefusesName(p)) return true;
+  if (hallTalkAsksWhere(p) || hallTalkAsksWho(p) || hallTalkAsksWant(p) || hallTalkAsksPanel(p)) {
+    return true;
+  }
   return (
-    /\bwhere am i\b|\bwhere are we\b|\bwhere is this\b|\bwhy\b.*\bname\b|\bwhy should i\b|\bwhat do you want\b|\bwhat'?s going on\b|\bgive you my name\b|\bgave you my name\b|\bmy name is\b|\bcall me\b|\bwho (?:is|are) (?:it|that|you)\b|\bwho (?:is it that )?asks\b|\bwhat'?s yours\b|\bblue (?:screen|panel)\b/i.test(
-      p
-    )
+    /\bgive you my name\b|\bgave you my name\b|\bmy name is\b|\bcall me\b/i.test(p)
   );
 }
 
@@ -1003,8 +1033,17 @@ export function isHallTalkPlayerLine(raw: string): boolean {
 }
 
 /**
- * Cover or post-cover hall questions stay on stitchOpeningContinue.
- * Silent play and floor-plan doors do not take these lines.
+ * Cover / pending name-lock stays on stitchOpeningContinue.
+ * After complete, hall questions must hit the writer — perpetual stitch is the one-liner lock.
+ */
+export function shouldStitchOpeningContinue(state: GameState, _playerInput?: string): boolean {
+  if (state.activeEncounter) return false;
+  return isOpeningEstablishmentPending(state) || isOpeningCoverTurn(state);
+}
+
+/**
+ * Pad lock only — Give/Ask/Who, not Corridor doors — while the line is still hall Q&A.
+ * Does not send the turn to stitch after covers complete.
  */
 export function isOpeningHallTalkTurn(state: GameState, playerInput?: string): boolean {
   if (state.activeEncounter) return false;
@@ -1037,6 +1076,13 @@ export function openingCastLabel(state: GameState): string {
   if (/\bpriests?\b/i.test(hay)) return 'the priests';
   if (/\bscavenger\b/i.test(hay)) return 'the scavenger';
   if (/\bmilitia\b/i.test(hay)) return 'the militia';
+  if (
+    /\benvoys?\b/i.test(hay)
+    || /\btreaty tent\b/i.test(hay)
+    || (/\bPellane plate\b/i.test(hay) && /\bAsh cloaks\b/i.test(hay))
+  ) {
+    return 'the envoys at this table';
+  }
   const first = (picked?.faction ?? '').split(/[,.]/)[0]?.replace(/\s+/g, ' ').trim() ?? '';
   if (first && !/^(ash|the ash court|ash court)$/i.test(first) && first.length < 56) {
     return first;
@@ -1044,14 +1090,59 @@ export function openingCastLabel(state: GameState): string {
   return 'the people who pulled you';
 }
 
-/** One clause from the card — why they pulled you — never the opener paragraph. */
+function wantFromPickedHookBlob(blob?: string): string {
+  const m = (blob ?? '').match(/Why this happened:\s*([\s\S]+?)(?:\nOpening offer|\n- |\nLocation:|$)/i);
+  return (m?.[1] ?? '').replace(/\s+/g, ' ').trim();
+}
+
+function offerFromPickedHookBlob(blob?: string): string {
+  const m = (blob ?? '').match(/Opening offer[^:]*:\s*([\s\S]+?)(?:\n- |\nLocation:|$)/i);
+  return (m?.[1] ?? '').replace(/\s+/g, ' ').trim();
+}
+
+function clipCardClause(raw: string, max = 220): string {
+  const t = raw.replace(/\s+/g, ' ').trim();
+  if (!t) return '';
+  return t.length > max ? `${t.slice(0, max - 1).trim()}…` : t;
+}
+
+/** Why they pulled you — full card intent, never the opener paragraph. */
 export function shortCardWant(state: GameState): string {
+  const fromSave = wantFromPickedHookBlob(state.openingEstablishment?.pickedHook);
+  if (fromSave) return clipCardClause(fromSave);
   const bible = resolveActiveCampaignBible(state);
   const picked = resolveOpeningHookPick(bible, state.seed);
-  const raw = (picked?.summonIntent ?? '').replace(/\s+/g, ' ').trim();
-  if (!raw) return '';
+  return clipCardClause((picked?.summonIntent ?? '').replace(/\s+/g, ' ').trim());
+}
+
+/** Optional kit/banner offer from this card — one clause. */
+export function shortCardOffer(state: GameState): string {
+  const fromSave = offerFromPickedHookBlob(state.openingEstablishment?.pickedHook);
+  const bible = resolveActiveCampaignBible(state);
+  const picked = resolveOpeningHookPick(bible, state.seed);
+  const raw =
+    fromSave
+    || (picked?.openingOffer ?? '').replace(/\s+/g, ' ').trim();
   const first = raw.split(/(?<=[.!?])\s+/)[0]?.trim() || raw;
-  return first.length > 140 ? `${first.slice(0, 137).trim()}…` : first;
+  return clipCardClause(first, 180);
+}
+
+export function openingWhoAskLineFromLabel(who: string): string {
+  const head = who ? who.charAt(0).toUpperCase() + who.slice(1) : 'They';
+  const plural = /\b(people|envoys|priests|handlers|sides)\b/i.test(who) || /^both /i.test(who);
+  return plural
+    ? `${head} are the ones asking. They have not given you a name back.`
+    : `${head} is the one asking. They have not given you a name back.`;
+}
+
+export function openingWhoAskLine(state: GameState): string {
+  return openingWhoAskLineFromLabel(openingCastLabel(state));
+}
+
+export function openingWantLine(state: GameState): string {
+  const want = shortCardWant(state);
+  const offer = shortCardOffer(state);
+  return [want || 'They have not said what they want yet.', offer].filter(Boolean).join(' ');
 }
 
 /** Player asked why they were pulled / what the room wants — not “what’s yours”. */
@@ -1062,7 +1153,7 @@ export function playerAskedWhyPulled(raw: string): boolean {
     return false;
   }
   return (
-    /\bwho summoned\b|\bwhy (?:the )?(?:circle|they|pellane)\b|\bwhy .{0,48}(?:summon|pull|want|here|bought|mark|rite)\b|\bwhat do you want\b|\bwhat they want\b|\bwhat(?:'s| is) going on\b|\bhear(?:d)? (?:the )?reason\b|\bask about the (?:circle|war|mark|rite)\b/i.test(
+    /\bwho summoned\b|\bwhy (?:the )?(?:circle|they|pellane)\b|\bwhy .{0,48}(?:summon|pull|want|here|bought|mark|rite)\b|\bwhat do you want\b|\bwhat they want\b|\bask what they want\b|\bwhat(?:'s| is) going on\b|\bhear(?:d)? (?:the )?reason\b|\bask about the (?:circle|war|mark|rite)\b/i.test(
       p
     )
   );
@@ -1077,7 +1168,10 @@ export function coverContinuePads(state: GameState): string[] {
   }
   const name = (state.openingEstablishment?.answers?.name ?? state.character?.name ?? '').trim();
   if (name && isLockablePcName(name) && !/unknown survivor/i.test(name)) {
-    return ['Ask what they want'];
+    const askedWant = (state.log ?? []).some(
+      (e) => e.role === 'player' && hallTalkAsksWant(e.content ?? '')
+    );
+    return askedWant ? ['Who are you', 'Inspect the panel'] : ['Ask what they want'];
   }
   return ['Give your name', 'Refuse to give a name'];
 }
